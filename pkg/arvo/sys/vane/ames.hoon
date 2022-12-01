@@ -783,17 +783,6 @@
       [%wake current=message-num]
       [%prod ~]
   ==
-::  $packet-pump-gift: effect from |packet-pump
-::
-::    %send: emit message fragment
-::    %wait: set a new timer at .date
-::    %rest: cancel timer at .date
-::
-+$  packet-pump-gift
-  $%  [%send =static-fragment]
-      [%wait date=@da]
-      [%rest date=@da]
-  ==
 ::  $message-sink-task: job for |message-sink
 ::
 ::    %done: receive confirmation from vane of processing or failure
@@ -1042,320 +1031,6 @@
     --
 ::
 =>  |%
-    ::  XX out of here
-    ::  +make-packet-pump: construct |packet-pump core
-    ::
-    ++  make-packet-pump
-      |=  [state=packet-pump-state =channel]
-      =*  veb  veb.bug.channel
-      =|  gifts=(list packet-pump-gift)
-      |%
-      ++  packet-pump  .
-      ++  abet  [(flop gifts) state]
-      ++  give  |=(packet-pump-gift packet-pump(gifts [+< gifts]))
-      ++  trace
-        |=  [verb=? print=(trap tape)]
-        ^+  same
-        (^trace verb her.channel ships.bug.channel print)
-      ::  +packet-queue: type for all sent fragments, ordered by sequence number
-      ::
-      ++  packet-queue
-        %-  (ordered-map live-packet-key live-packet-val)
-        lte-packets
-      ::  +gauge: inflate a |pump-gauge to track congestion control
-      ::
-      ++  gauge  (make-pump-gauge now.channel metrics.state [her bug]:channel)
-      ::  +work: handle $packet-pump-task request
-      ::
-      ++  work
-        |=  task=packet-pump-task
-        ^+  [gifts state]
-        ::
-        =<  abet
-        ::
-        ?-  -.task
-          %hear  (on-hear [message-num fragment-num]:task)
-          %done  (on-done message-num.task)
-          %wake  (on-wake current.task)
-          %prod  on-prod
-          %halt  set-wake
-        ==
-      ::  +on-prod: reset congestion control, re-send packets
-      ::
-      ++  on-prod
-        ^+  packet-pump
-        ?:  =(~ next-wake.state)
-          packet-pump
-        ::
-        =.  metrics.state  %*(. *pump-metrics counter counter.metrics.state)
-        =.  live.state
-          %+  run:packet-queue  live.state
-          |=(p=live-packet-val p(- *packet-state))
-        ::
-        =/  sot  (max 1 num-slots:gauge)
-        =/  liv  live.state
-        |-  ^+  packet-pump
-        ?:  =(0 sot)  packet-pump
-        ?:  =(~ liv)  packet-pump
-        =^  hed  liv  (pop:packet-queue liv)
-        =.  packet-pump  (give %send (to-static-fragment hed))
-        $(sot (dec sot))
-      ::  +on-wake: handle packet timeout
-      ::
-      ++  on-wake
-        |=  current=message-num
-        ^+  packet-pump
-        ::  assert temporal coherence
-        ::
-        ?<  =(~ next-wake.state)
-        =.  next-wake.state  ~
-        ::  tell congestion control a packet timed out
-        ::
-        =.  metrics.state  on-timeout:gauge
-        ::  re-send first packet and update its state in-place
-        ::
-        =-  =*  res  -
-            =.  live.state   live.res
-            =?  packet-pump  ?=(^ static-fragment)
-              %-  %+  trace  snd.veb
-                  =/  nums  [message-num fragment-num]:u.static-fragment.res
-                  |.("dead {<nums^show:gauge>}")
-              (give %send u.static-fragment.res)
-            packet-pump
-        ::
-        =|  acc=(unit static-fragment)
-        ^+  [static-fragment=acc live=live.state]
-        ::
-        %^  (dip:packet-queue _acc)  live.state  acc
-        |=  $:  acc=_acc
-                key=live-packet-key
-                val=live-packet-val
-            ==
-        ^-  [new-val=(unit live-packet-val) stop=? _acc]
-        ::  if already acked later message, don't resend
-        ::
-        ?:  (lth message-num.key current)
-          %-  %-  slog  :_  ~
-              leaf+"ames: strange wake queue, expected {<current>}, got {<key>}"
-          [~ stop=%.n ~]
-        ::  packet has expired; update it in-place, stop, and produce it
-        ::
-        =.  last-sent.val  now.channel
-        =.  retries.val    +(retries.val)
-        ::
-        [`val stop=%.y `(to-static-fragment key val)]
-      ::  +feed: try to send a list of packets, returning unsent and effects
-      ::
-      ++  feed
-        |=  fragments=(list static-fragment)
-        ^+  [fragments gifts state]
-        ::  return unsent back to caller and reverse effects to finalize
-        ::
-        =-  [unsent (flop gifts) state]
-        ::
-        ^+  [unsent=fragments packet-pump]
-        ::  bite off as many fragments as we can send
-        ::
-        =/  num-slots  num-slots:gauge
-        =/  sent       (scag num-slots fragments)
-        =/  unsent     (slag num-slots fragments)
-        ::
-        :-  unsent
-        ^+  packet-pump
-        ::  if nothing to send, we're done
-        ::
-        ?~  sent  packet-pump
-        ::  convert $static-fragment's into +ordered-set [key val] pairs
-        ::
-        =/  send-list
-          %+  turn  sent
-          |=  static-fragment
-          ^-  [key=live-packet-key val=live-packet-val]
-          ::
-          :-  [message-num fragment-num]
-          :-  [sent-date=now.channel retries=0 skips=0]
-          [num-fragments fragment]
-        ::  update .live and .metrics
-        ::
-        =.  live.state     (gas:packet-queue live.state send-list)
-        =.  metrics.state  (on-sent:gauge (lent send-list))
-        ::  TMI
-        ::
-        =>  .(sent `(list static-fragment)`sent)
-        ::  emit a $packet-pump-gift for each packet to send
-        ::
-        %+  roll  sent
-        |=  [packet=static-fragment core=_packet-pump]
-        (give:core %send packet)
-      ::  +fast-resend-after-ack: resend timed out packets
-      ::
-      ::    After we finally receive an ack, we want to resend all the live
-      ::    packets that have been building up.
-      ::
-      ++  fast-resend-after-ack
-        |=  [=message-num =fragment-num]
-        ^+  packet-pump
-        =;  res=[resends=(list static-fragment) live=_live.state]
-          =.  live.state  live.res
-          %+  reel  resends.res
-          |=  [packet=static-fragment core=_packet-pump]
-          (give:core %send packet)
-        ::
-        =/  acc
-          resends=*(list static-fragment)
-        ::
-        %^  (dip:packet-queue _acc)  live.state  acc
-        |=  $:  acc=_acc
-                key=live-packet-key
-                val=live-packet-val
-            ==
-        ^-  [new-val=(unit live-packet-val) stop=? _acc]
-        ?:  (lte-packets key [message-num fragment-num])
-          [new-val=`val stop=%.n acc]
-        ::
-        ?:  (gth (next-expiry:gauge key val) now.channel)
-          [new-val=`val stop=%.y acc]
-        ::
-        =.  last-sent.val  now.channel
-        =.  resends.acc  [(to-static-fragment key val) resends.acc]
-        [new-val=`val stop=%.n acc]
-      ::  +on-hear: handle ack on a live packet
-      ::
-      ::    If the packet was in our queue, delete it and update our
-      ::    metrics, possibly re-sending skipped packets.  Otherwise, no-op.
-      ::
-      ++  on-hear
-        |=  [=message-num =fragment-num]
-        ^+  packet-pump
-        ::
-        =-  ::  if no sent packet matches the ack, don't apply mutations or effects
-            ::
-            ?.  found.-
-              %-  (trace snd.veb |.("miss {<show:gauge>}"))
-              packet-pump
-            ::
-            =.  metrics.state  metrics.-
-            =.  live.state     live.-
-            %-  ?.  ?|  =(0 fragment-num)
-                        =(0 (mod counter.metrics.state 20))
-                    ==
-                  same
-                (trace snd.veb |.("send: {<[fragment=fragment-num show:gauge]>}"))
-            ::  .resends is backward, so fold backward and emit
-            ::
-            =.  packet-pump
-              %+  reel  resends.-
-              |=  [packet=static-fragment core=_packet-pump]
-              (give:core %send packet)
-            (fast-resend-after-ack message-num fragment-num)
-        ::
-        =/  acc
-          :*  found=`?`%.n
-              resends=*(list static-fragment)
-              metrics=metrics.state
-          ==
-        ::
-        ^+  [acc live=live.state]
-        ::
-        %^  (dip:packet-queue _acc)  live.state  acc
-        |=  $:  acc=_acc
-                key=live-packet-key
-                val=live-packet-val
-            ==
-        ^-  [new-val=(unit live-packet-val) stop=? _acc]
-        ::
-        =/  gauge  (make-pump-gauge now.channel metrics.acc [her bug]:channel)
-        ::  is this the acked packet?
-        ::
-        ?:  =(key [message-num fragment-num])
-          ::  delete acked packet, update metrics, and stop traversal
-          ::
-          =.  found.acc    %.y
-          =.  metrics.acc  (on-ack:gauge -.val)
-          [new-val=~ stop=%.y acc]
-        ::  is this a duplicate ack?
-        ::
-        ?.  (lte-packets key [message-num fragment-num])
-          ::  stop, nothing more to do
-          ::
-          [new-val=`val stop=%.y acc]
-        ::  ack was on later packet; mark skipped, tell gauge, and continue
-        ::
-        =.  skips.val  +(skips.val)
-        =^  resend  metrics.acc  (on-skipped-packet:gauge -.val)
-        ?.  resend
-          [new-val=`val stop=%.n acc]
-        ::
-        =.  last-sent.val  now.channel
-        =.  retries.val    +(retries.val)
-        =.  resends.acc    [(to-static-fragment key val) resends.acc]
-        [new-val=`val stop=%.n acc]
-      ::  +on-done: apply ack to all packets from .message-num
-      ::
-      ++  on-done
-        |=  =message-num
-        ^+  packet-pump
-        ::
-        =-  =.  metrics.state  metrics.-
-            =.  live.state     live.-
-            ::
-            %-  (trace snd.veb |.("done {<message-num=message-num^show:gauge>}"))
-            (fast-resend-after-ack message-num `fragment-num`0)
-        ::
-        ^+  [metrics=metrics.state live=live.state]
-        ::
-        %^  (dip:packet-queue pump-metrics)  live.state  acc=metrics.state
-        |=  $:  metrics=pump-metrics
-                key=live-packet-key
-                val=live-packet-val
-            ==
-        ^-  [new-val=(unit live-packet-val) stop=? pump-metrics]
-        ::
-        =/  gauge  (make-pump-gauge now.channel metrics [her bug]:channel)
-        ::  if we get an out-of-order ack for a message, skip until it
-        ::
-        ?:  (lth message-num.key message-num)
-          [new-val=`val stop=%.n metrics]
-        ::  if packet was from acked message, delete it and continue
-        ::
-        ?:  =(message-num.key message-num)
-          [new-val=~ stop=%.n metrics=(on-ack:gauge -.val)]
-        ::  we've gone past the acked message; we're done
-        ::
-        [new-val=`val stop=%.y metrics]
-      ::  +set-wake: set, unset, or reset timer, emitting moves
-      ::
-      ++  set-wake
-        ^+  packet-pump
-        ::  if nonempty .live, pry at head to get next wake time
-        ::
-        =/  new-wake=(unit @da)
-          ?~  head=(pry:packet-queue live.state)
-            ~
-          `(next-expiry:gauge u.head)
-        ::  no-op if no change
-        ::
-        ?:  =(new-wake next-wake.state)  packet-pump
-        ::  unset old timer if non-null
-        ::
-        =?  packet-pump  !=(~ next-wake.state)
-          =/  old  (need next-wake.state)
-          =.  next-wake.state  ~
-          (give %rest old)
-        ::  set new timer if non-null
-        ::
-        =?  packet-pump  ?=(^ new-wake)
-          =.  next-wake.state  new-wake
-          (give %wait u.new-wake)
-        ::
-        packet-pump
-      ::  +to-static-fragment: convenience function for |packet-pump
-      ::
-      ++  to-static-fragment
-        |=  [live-packet-key live-packet-val]
-        ^-  static-fragment
-        [message-num num-fragments fragment-num fragment]
-      --
     ::  +make-pump-gauge: construct |pump-gauge congestion control core
     ::
     ++  make-pump-gauge
@@ -1492,13 +1167,13 @@
     --
 ::
 =>
-::  |per-event: inner event-handling core
+::  |pe: inner event-handling core
 ::
 ~%  %per-event  ..decode-packet  ~
 |%
-++  per-event
+++  pe
   =|  moves=(list move)
-  ~%  %event-gate  ..per-event  ~
+  ~%  %event-gate  ..pe  ~
   |=  [[now=@da eny=@ rof=roof] =duct =ames-state]
   =*  veb  veb.bug.ames-state
   ~%  %event-core  ..$  ~
@@ -1618,22 +1293,22 @@
     ++  send-ack
       |=  =bone
       ^+  event-core
-      ::  FIXME  mi as |_ ?
       =/  sink-core  (mi:peer-core bone *message-sink-state)
-      =.  peer-core  abet:(call:(abed:sink-core bone) %done ok=%.y)
-      =?  peer-core  (~(has in closing.peer-state) bone)
-        (handle-cork:peer-core bone)  ::  XX this can't be call ramdomly,
-                                      ::  only after we sink the message,
-                                      ::  invariant to document
-      event-core
+      =.  peer-core  abet:(call:abed:sink-core %done ok=%.y)
+      ::  XX this shouldn't be call randomly,
+      ::  only after we sink the message,
+      ::  invariant to document
+      =?  peer-core  closing:sink-core  (handle-cork:peer-core bone)
+      ::
+      abet:peer-core
     ::  failed; send message nack packet
     ::
     ++  send-nack
       |=  [=bone =^error]
       ^+  event-core
-      ::  FIXME  mi as |_ ?
-      =/  sink-core  (mi:peer-core bone *message-sink-state)
-      =.  peer-core  abet:(call:(abed:sink-core bone) %done ok=%.n)
+      =/  sink-core   (mi:peer-core bone *message-sink-state)
+      =.  peer-core   abet:(call:abed:sink-core %done ok=%.n)
+      =.  event-core  abet:peer-core
       ::
       =/  =^peer-state  (got-peer-state her)
       =/  =^channel     [[our her] now channel-state -.peer-state]
@@ -1644,10 +1319,12 @@
       =/  =message-blob  (jam naxplanation)
       ::  send nack-trace message on associated .nack-trace-bone
       ::
-      =.  peer-core              (po peer-state channel)
-      =/  nack-trace-bone=^bone  (mix 0b10 bone)
+      =.  peer-core        (po peer-state channel)
+      =/  nack-bone=^bone  (mix 0b10 bone)
+      =/  pump-core  (mu:peer-core nack-bone *message-pump-state)
+      =.  peer-core  abet:(call:abed:pump-core %memo message-blob)
       ::
-      abet:(run-message-pump:peer-core nack-trace-bone %memo message-blob)
+      abet:peer-core
     --
   ::  +on-sift: handle request to filter debug output by ship
   ::
@@ -1696,8 +1373,9 @@
       =/  peer-core  (po u.par channel)
       =/  bones      ~(tap in ~(key by snd.u.par))
       |-  ^+  event-core
-      ?~  bones  abet:peer-core
-      =.  peer-core  (run-message-pump:peer-core i.bones %prod ~)
+      ?~  bones      abet:peer-core
+      =/  pump-core  (mu:peer-core i.bones *message-pump-state)
+      =.  peer-core  abet:(call:abed:pump-core %prod ~)
       $(bones t.bones)
     --
   ::  +on-stir: recover from timer desync, setting new timers as needed
@@ -2512,6 +2190,9 @@
       ~|  %dangling-bone^her.channel^bone
       (~(got by by-bone.ossuary.peer-state) bone)
     ::
+    ++  pump-core  |=(=bone (mu bone *message-pump-state))
+    ++  sink-core  |=(=bone (mi bone *message-sink-state))
+    ::
     +|  %entry-points
     ::
     ++  on-heed  peer-core(heeds.peer-state (~(put in heeds.peer-state) duct))
@@ -2592,9 +2273,7 @@
             %-  slog
             :_  tang.u.dud
             leaf+"ames: {<her.channel>} fragment crashed {<mote.u.dud>}"
-        ::  XX FIXME *message-sink-state
-        =/  sink-core  (mi bone *message-sink-state)
-        abet:(call:(abed:sink-core bone) %hear lane shut-packet ?=(~ dud))
+        abet:(call:abed:(sink-core bone) %hear lane shut-packet ?=(~ dud))
       ::  benign ack on corked bone
       ::
       ?:  (~(has in corked.peer-state) bone)
@@ -2610,7 +2289,7 @@
           ?.  msg.veb  ~
           :-  >[bone=bone message-num=message-num meat=meat]:shut-packet<
           tang.u.dud
-      (run-message-pump bone %hear [message-num +.meat]:shut-packet)
+      abet:(call:abed:(pump-core bone) %hear [message-num +.meat]:shut-packet)
     ::  +on-memo: handle request to send message
     ::
     ++  on-memo
@@ -2626,7 +2305,7 @@
         peer-core
       ::
       =/  =message-blob  (dedup-message (jim payload))
-      =.  peer-core  (run-message-pump bone %memo message-blob)
+      =.  peer-core      abet:(call:abed:(pump-core bone) %memo message-blob)
       ::
       ?:  ?&  =(%boon valence)
               (gte now (add ~s30 last-contact.qos.peer-state))
@@ -2739,7 +2418,7 @@
         peer-core
       ::  maybe resend some timed out packets
       ::
-      (run-message-pump bone %wake ~)
+      abet:(call:abed:(pump-core bone) %wake ~)
     ::  +send-shut-packet: fire encrypted packet at rcvr and maybe sponsors
     ::
     ++  send-shut-packet
@@ -2784,133 +2463,6 @@
       ::  TODO use +trace
       ~>  %slog.0^leaf/"ames: recork {<[her.channel i.boz]>}"
       (on-memo i.boz [%$ /flow [%cork ~]] %plea)
-    ::  XX  refactor
-    ::  +run-message-pump: process $message-pump-task and its effects
-    ::
-    ++  run-message-pump
-      |=  [=bone task=message-pump-task]
-      ^+  peer-core
-      ::  pass .task to the |message-pump and apply state mutations
-      ::
-      =/  =message-pump-state
-        (~(gut by snd.peer-state) bone *message-pump-state)
-      ::
-      =/  closing=?       (~(has in closing.peer-state) bone)
-      =/  message-pump    (mu message-pump-state closing bone)
-      =^  pump-gifts      message-pump-state  (work:message-pump task)
-      =.  snd.peer-state  (~(put by snd.peer-state) bone message-pump-state)
-      ::  process effects from |message-pump
-      ::
-      |^  ^+  peer-core
-          ?~  pump-gifts  peer-core
-          =*  gift  i.pump-gifts
-          =.  peer-core
-            ?-  -.gift
-              %done  (on-pump-done [message-num error]:gift)
-              %cork  (on-pump-cork current.message-pump-state)
-              %kroc  (on-pump-kroc bone:gift)
-              %send  (on-pump-send static-fragment.gift)
-              %wait  (on-pump-wait date.gift)
-              %rest  (on-pump-rest date.gift)
-            ==
-          $(pump-gifts t.pump-gifts)
-      ::  +on-pump-done: handle |message-pump's report of message (n)ack
-      ::
-      ++  on-pump-done
-        |=  [=message-num error=(unit error)]
-        ^+  peer-core
-        ?:  ?&  =(1 (end 0 bone))
-                =(1 (end 0 (rsh 0 bone)))
-                (~(has in corked.peer-state) (mix 0b10 bone))
-            ==
-          %-  %+  po-trace  msg.veb
-              =/  dat  [her.channel bone=bone message-num=message-num -.task]
-              |.("remove naxplanation flow {<dat>}")
-          =.  snd.peer-state
-            (~(del by snd.peer-state) bone)
-          peer-core
-        ::  if odd bone, ack is on "subscription update" message; no-op
-        ::
-        ?:  =(1 (end 0 bone))
-          peer-core
-        ::  even bone; is this bone a nack-trace bone?
-        ::
-        ?:  =(1 (end 0 (rsh 0 bone)))
-          ::  nack-trace bone; assume .ok, clear nack from |message-sink
-          ::
-          =/  target-bone=^bone  (mix 0b10 bone)
-          ::
-          ::  XX FIXME *message-sink-state
-          =/   sink-core  (mi target-bone *message-sink-state)
-          abet:(call:(abed:sink-core target-bone) %drop message-num)
-        ?:  &(closing ?=(%near -.task))
-          ::  if the bone belongs to a closing flow and we got a naxplanation,
-          ::  don't relay the ack to the client vane, and wait for the next try
-          ::
-          peer-core
-        ::  not a nack-trace bone; relay ack to client vane
-        ::
-        (po-emit (got-duct bone) %give %done error)
-      ::  +on-pump-cork: kill flow on cork sender side
-      ::
-      ++  on-pump-cork
-        |=  =message-num
-        ^+  peer-core
-        ::  clear all packets from this message from the packet pump
-        ::
-        =.  message-pump  (run-packet-pump:message-pump %done message-num *@dr)
-        =/  =wire  (make-pump-timer-wire her.channel bone)
-        =/  nack-bone=^bone  (mix 0b10 bone)
-        =?  rcv.peer-state  (~(has by rcv.peer-state) nack-bone)
-          ::  if the publisher was behind we remove nacks received on that bone
-          ::
-          (~(del by rcv.peer-state) nack-bone)
-        =.  peer-state
-          =,  peer-state
-          %_  peer-state
-            snd              (~(del by snd) bone)
-            rcv              (~(del by rcv) bone)
-            corked           (~(put in corked) bone)
-            closing          (~(del in closing) bone)
-            krocs            (~(del in krocs) bone)
-            by-duct.ossuary  (~(del by by-duct.ossuary) (got-duct bone))
-            by-bone.ossuary  (~(del by by-bone.ossuary) bone)
-          ==
-        ::  since we got one cork ack, try the next one
-        ::
-        recork-one
-      ::  +on-pump-kroc: if we get a nack for a cork, add it to the recork set
-      ::
-      ++  on-pump-kroc
-        |=  =^bone
-        ^+  peer-core
-        =.  krocs.peer-state  (~(put in krocs.peer-state) bone)
-        peer-core
-      ::  +on-pump-send: emit message fragment requested by |message-pump
-      ::
-      ++  on-pump-send
-        |=  f=static-fragment
-        (send-shut-packet bone [message-num %& +]:f)
-      ::  +on-pump-wait: relay |message-pump's set-timer request
-      ::
-      ++  on-pump-wait
-        |=  date=@da
-        ^+  peer-core
-        ::
-        =/  =wire  (make-pump-timer-wire her.channel bone)
-        =/  duct   ~[/ames]
-        (po-emit duct %pass wire %b %wait date)
-      ::  +on-pump-rest: relay |message-pump's unset-timer request
-      ::
-      ++  on-pump-rest
-        |=  date=@da
-        ^+  peer-core
-        ::
-        =/  =wire  (make-pump-timer-wire her.channel bone)
-        =/  duct   ~[/ames]
-        (po-emit duct %pass wire %b %rest date)
-      --
-    ::
     ::  +handle-cork: handle flow kill after server ames has taken %done
     ::
     ++  handle-cork
@@ -2935,12 +2487,12 @@
           krocs    (~(del in krocs) bone)
         ==
       peer-core
+    ::
     +|  %internal
-    ::  XX FIXME refactor
-    ::  +mu: constructor for |message-pump message sender core
+    ::  +mu: constructor for |pump message sender core
     ::
     ++  mu
-      |=  [state=message-pump-state closing=? =bone]
+      |=  [=bone state=message-pump-state]
       =>  |%
           ::  $gift: effect from |message-pump
           ::
@@ -2961,39 +2513,65 @@
             ==
           --
       ::
-      =|  gifts=(list gift)
-      ::
       |%
-      ++  this  .
-      ++  abet  [(flop gifts) state]
-      ++  give  |=(gift this(gifts [+< gifts]))
-      ++  packet-pump  (make-packet-pump packet-pump-state.state channel)
+      +|  %helpers
+      ::
+      ++  pump  .
+      ++  abed
+        pump(state (~(gut by snd.peer-state) bone *message-pump-state))
+      ::
+      ++  abet
+        peer-core(snd.peer-state (~(put by snd.peer-state) bone state))
+      ::
+      ++  packet-pump  (pu packet-pump-state.state)
       ++  mu-trace
         |=  [verb=? print=(trap tape)]
         ^+  same
         (trace verb her.channel ships.bug.channel print)
-      ::  +work: handle a $message-pump-task
       ::
-      ++  work
-        |=  task=message-pump-task
-        ^+  [gifts state]
+      ++  closing  (~(has in closing.peer-state) bone)
+      ::  +is-message-num-in-range: %.y unless duplicate or future ack
+      ::
+      ++  is-message-num-in-range
+        |=  =message-num
+        ^-  ?
         ::
-        =~  (dispatch-task task)
-            feed-packets
-            (run-packet-pump %halt ~)
-            assert
-            abet
-        ==
+        ?:  (gte message-num next.state)
+          %.n
+        ?:  (lth message-num current.state)
+          %.n
+        !(~(has by queued-message-acks.state) message-num)
+      ::
+      +|  %entry-points
+      ::  +call: handle a $message-pump-task
+      ::
+      ++  call
+        |=  task=message-pump-task
+        ^+  pump
+        ::
+        =.  pump       (dispatch-task task)
+        =.  pump       feed-packets
+        =/  top-live   top-live:packet-pump
+        ::  sanity check to isolate error cases
+        ::
+        ?.  |(?=(~ top-live) (lte current.state message-num.key.u.top-live))
+          ~|  [%strange-current current=current.state key.u.top-live]
+          !!
+        abet:(call:packet-pump %halt ~)
+      ::
+      +|  %tasks
       ::  +dispatch-task: perform task-specific processing
       ::
       ++  dispatch-task
         |=  task=message-pump-task
-        ^+  this
+        ^+  pump
         ::
         ?-  -.task
-          %prod  (run-packet-pump %prod ~)
           %memo  (on-memo message-blob.task)
-          %wake  (run-packet-pump %wake current.state)
+          %prod  abet:(call:packet-pump %prod ~)
+          %wake  abet:(call:packet-pump %wake current.state)
+          %near  %-  on-done
+                 [[message-num %naxplanation error]:naxplanation.task %&]
           %hear
             ?-    -.ack-meat.task
                 %&
@@ -3001,49 +2579,45 @@
             ::
                 %|
               =/  cork=?
-                =/  top-live
-                  (pry:packet-queue:*make-packet-pump live.packet-pump-state.state)
+                =+  top=top-live:packet-pump
                 ::  If we send a %cork and get an ack, we can know by
                 ::  sequence number that the ack is for the %cork message
                 ::
                 ?&  closing
-                    ?=(^ top-live)
+                    ?=(^ top)
                     =(0 ~(wyt in unsent-messages.state))
                     =(0 (lent unsent-fragments.state))
                     =(1 ~(wyt by live.packet-pump-state.state))
-                    =(message-num:task message-num.key.u.top-live)
+                    =(message-num:task message-num.key.u.top)
                 ==
               =*  ack  p.ack-meat.task
-              =?  this  &(cork !ok.ack)  (give [%kroc bone])
-              =.  this
+              ::  XX  kroc is not used
+              ::  =?  pump  &(cork !ok.ack)  (give [%kroc bone])
+              =.  pump
                 %-  on-done
                 [[message-num:task ?:(ok.ack [%ok ~] [%nack ~])] cork]
-              ?.  &(!ok.ack cork)  this
-              %.  this
+              ?.  &(!ok.ack cork)  pump
+              %.  pump
               %+  mu-trace  odd.veb
               |.("got nack for %cork {<bone=bone message-num=message-num:task>}")
             ==
-          %near  (on-done [[message-num %naxplanation error]:naxplanation.task %&])
         ==
       ::  +on-memo: handle request to send a message
       ::
       ++  on-memo
-        |=  =message-blob
-        ^+  this
-        ::
-        =.  unsent-messages.state  (~(put to unsent-messages.state) message-blob)
-        this
+        |=  blob=message-blob
+        pump(unsent-messages.state (~(put to unsent-messages.state) blob))
       ::  +on-hear: handle packet acknowledgment
       ::
       ++  on-hear
         |=  [=message-num =fragment-num]
-        ^+  this
+        ^+  pump
         ::  pass to |packet-pump unless duplicate or future ack
         ::
         ?.  (is-message-num-in-range message-num)
-          %-  (mu-trace snd.veb |.("hear pump out of range"))
-          this
-        (run-packet-pump %hear message-num fragment-num)
+          %.  pump
+          (mu-trace snd.veb |.("hear pump out of range"))
+        abet:(call:packet-pump %hear message-num fragment-num)
       ::  +on-done: handle message acknowledgment
       ::
       ::    A nack-trace message counts as a valid message nack on the
@@ -3056,7 +2630,7 @@
       ::
       ++  on-done
         |=  [[=message-num =ack] cork=?]
-        ^+  this
+        ^+  pump
         ::  unsent messages from the future should never get acked
         ::
         ~|  :*  bone=bone
@@ -3070,13 +2644,13 @@
         ::  ignore duplicate message acks
         ::
         ?:  (lth message-num current.state)
-          %-  %+  mu-trace  snd.veb
-              |.("duplicate done {<current=current.state message-num=message-num>}")
-          this
+          %.  pump
+          %+  mu-trace  snd.veb
+          |.("duplicate done {<current=current.state message-num=message-num>}")
         ::  ignore duplicate and future acks
         ::
         ?.  (is-message-num-in-range message-num)
-          this
+          pump
         ::  clear and print .unsent-fragments if nonempty
         ::
         =?    unsent-fragments.state
@@ -3086,7 +2660,7 @@
           ~
         ::  clear all packets from this message from the packet pump
         ::
-        =.  this  (run-packet-pump %done message-num lag=*@dr)
+        =.  pump  abet:(call:packet-pump %done message-num lag=*@dr)
         ::  enqueue this ack to be sent back to local client vane
         ::
         ::    Don't clobber a naxplanation with just a nack packet.
@@ -3097,11 +2671,11 @@
           (~(put by queued-message-acks.state) message-num ack)
         ::  emit local acks from .queued-message-acks until incomplete
         ::
-        |-  ^+  this
+        |-  ^+  pump
         ::  if .current hasn't been fully acked, we're done
         ::
         ?~  cur=(~(get by queued-message-acks.state) current.state)
-          this
+          pump
         ::  .current is complete; pop, emit local ack, and try next message
         ::
         =.  queued-message-acks.state
@@ -3118,61 +2692,46 @@
         ::    but it's not incorrect.  pump-metrics are updated only once,
         ::    at the time when we actually delete the packet.
         ::
-        =.  this  (run-packet-pump %done current.state lag=*@dr)
+        =.  pump  abet:(call:packet-pump %done current.state lag=*@dr)
         ::  give %done to vane if we're ready
         ::
         ?-    -.u.cur
             %ok
-          =.  this
+          =.  peer-core
             ::  don't give %done for corks
             ::
-            ?:  cork  (give %cork ~)
-            (give %done current.state ~)
+            ?:  cork  (pump-cork current.state)
+            (pump-done current.state ~)
           $(current.state +(current.state))
         ::
             %nack
-          this
+          pump
         ::
             %naxplanation
-          =.  this  (give %done current.state `error.u.cur)
+          =.  peer-core  (pump-done current.state `error.u.cur)
           $(current.state +(current.state))
         ==
-      ::  +is-message-num-in-range: %.y unless duplicate or future ack
       ::
-      ++  is-message-num-in-range
-        |=  =message-num
-        ^-  ?
-        ::
-        ?:  (gte message-num next.state)
-          %.n
-        ?:  (lth message-num current.state)
-          %.n
-        !(~(has by queued-message-acks.state) message-num)
+      +|  %implementation
       ::  +feed-packets: give packets to |packet-pump until full
       ::
       ++  feed-packets
         ::  if nothing to send, no-op
         ::
         ?:  &(=(~ unsent-messages) =(~ unsent-fragments)):state
-          this
-        ::  we have unsent fragments of the current message; feed them
-        ::
+          pump
         ?.  =(~ unsent-fragments.state)
-          =/  res  (feed:packet-pump unsent-fragments.state)
-          =+  [unsent packet-pump-gifts packet-pump-state]=res
+          ::  we have unsent fragments of the current message; feed them
           ::
+          =^  unsent  pump  abut:(feed:packet-pump unsent-fragments.state)
           =.  unsent-fragments.state   unsent
-          =.  packet-pump-state.state  packet-pump-state
-          ::
-          =.  this  (process-packet-pump-gifts packet-pump-gifts)
           ::  if it sent all of them, feed it more; otherwise, we're done
           ::
-          ?~  unsent
-            feed-packets
-          this
+          ?~(unsent feed-packets pump)
         ::  .unsent-messages is nonempty; pop a message off and feed it
         ::
-        =^  =message-blob  unsent-messages.state  ~(get to unsent-messages.state)
+        =^  =message-blob  unsent-messages.state
+          ~(get to unsent-messages.state)
         ::  break .message into .chunks and set as .unsent-fragments
         ::
         =.  unsent-fragments.state  (split-message next.state message-blob)
@@ -3180,39 +2739,430 @@
         ::
         =.  next.state  +(next.state)
         feed-packets
-      ::  +run-packet-pump: call +work:packet-pump and process results
+      ::  +pump-done: handle |message-pump's report of message (n)ack
       ::
-      ++  run-packet-pump
-        |=  =packet-pump-task
-        ^+  this
+      ++  pump-done
+        |=  [=message-num error=(unit error)]
+        ^+  peer-core
+        ?:  ?&  =(1 (end 0 bone))
+                =(1 (end 0 (rsh 0 bone)))
+                (~(has in corked.peer-state) (mix 0b10 bone))
+            ==
+          %-  %+  po-trace  msg.veb
+              =/  dat  [her.channel bone=bone message-num=message-num -.task]
+              |.("remove naxplanation flow {<dat>}")
+          ::  XX FIXME this happens before abet, so we'd put the bone in again
+          ::
+          =.  snd.peer-state  (~(del by snd.peer-state) bone)
+          peer-core
+        ::  if odd bone, ack is on "subscription update" message; no-op
         ::
-        =^  packet-pump-gifts  packet-pump-state.state
-          (work:packet-pump packet-pump-task)
+        ?:  =(1 (end 0 bone))  peer-core
+        ::  even bone; is this bone a nack-trace bone?
         ::
-        (process-packet-pump-gifts packet-pump-gifts)
-      ::  +process-packet-pump-gifts: pass |packet-pump effects up the chain
+        ?:  =(1 (end 0 (rsh 0 bone)))
+          ::  nack-trace bone; assume .ok, clear nack from |message-sink
+          ::
+          =/  target-bone=^bone  (mix 0b10 bone)
+          ::
+          abet:(call:abed:(mi target-bone *message-sink-state) %drop message-num)
+        ?:  &(closing ?=(%near -.task))
+          ::  if the bone belongs to a closing flow and we got a naxplanation,
+          ::  don't relay the ack to the client vane, and wait for the next try
+          ::
+          peer-core
+        ::  not a nack-trace bone; relay ack to client vane
+        ::
+        (po-emit (got-duct bone) %give %done error)
+      ::  XX impure +abet pattern
+      ::  +pump-cork: kill flow on cork sender side
       ::
-      ++  process-packet-pump-gifts
-        |=  packet-pump-gifts=(list packet-pump-gift)
-        ^+  this
+      ++  pump-cork
+        |=  =message-num
+        ^+  peer-core
+        ::  clear all packets from this message from the packet pump
         ::
-        ?~  packet-pump-gifts
+        =.  pump   abet:(call:packet-pump %done message-num *@dr)
+        =/  =wire  (make-pump-timer-wire her.channel bone)
+        =/  nack-bone=^bone  (mix 0b10 bone)
+        =?  rcv.peer-state  (~(has by rcv.peer-state) nack-bone)
+          ::  if the publisher was behind we remove nacks received on that bone
+          ::
+          (~(del by rcv.peer-state) nack-bone)
+        =.  peer-state
+          =,  peer-state
+          %_  peer-state
+            snd              (~(del by snd) bone)
+            rcv              (~(del by rcv) bone)
+            corked           (~(put in corked) bone)
+            closing          (~(del in closing) bone)
+            krocs            (~(del in krocs) bone)
+            by-duct.ossuary  (~(del by by-duct.ossuary) (got-duct bone))
+            by-bone.ossuary  (~(del by by-bone.ossuary) bone)
+          ==
+        ::  since we got one cork ack, try the next one
+        ::
+        recork-one
+      ::  +pump-wait: relay |message-pump's set-timer request
+      ::
+      ++  pump-wait
+        |=  date=@da
+        ^+  peer-core
+        ::
+        =/  =wire  (make-pump-timer-wire her.channel bone)
+        =/  duct   ~[/ames]
+        (po-emit duct %pass wire %b %wait date)
+      ::  +pump-rest: relay |message-pump's unset-timer request
+      ::
+      ++  pump-rest
+        |=  date=@da
+        ^+  peer-core
+        ::
+        =/  =wire  (make-pump-timer-wire her.channel bone)
+        =/  duct   ~[/ames]
+        (po-emit duct %pass wire %b %rest date)
+      ::
+      +|  %internals
+      ::  +pu: construct |packet-pump core
+      ::
+      ++  pu
+        |=  state=packet-pump-state
+        =>  |%  ::  $packet-pump-gift: effect from |packet-pump
+                ::
+                ::    %send: emit message fragment
+                ::    %wait: set a new timer at .date
+                ::    %rest: cancel timer at .date
+                ::
+                +$  packet-pump-gift
+                  $%  [%send =static-fragment]
+                      [%wait date=@da]
+                      [%rest date=@da]
+                  ==
+            --
+        =|  unsent=(list static-fragment)
+        |%
+        +|  %helpers
+        ++  this  .
+        ::  XX  +abut: abet with gifts
+        ::
+        ++  abut  [unsent abet]
+        ++  abet  pump(packet-pump-state.state state)
+        ::++  pu-give  |=(packet-pump-gift packet-pump(gifts [+< gifts]))
+        ++  pu-trace
+          |=  [verb=? print=(trap tape)]
+          ^+  same
+          (trace verb her.channel ships.bug.channel print)
+        ::
+        ++  pu-emit  |=(=note (po-emit pump-duct %pass pump-wire note))
+        ::  +packet-queue: type for all sent fragments, ordered by sequence number
+        ::
+        ++  packet-queue
+          %-  (ordered-map live-packet-key live-packet-val)
+          lte-packets
+        ::  +gauge: inflate a |pump-gauge to track congestion control
+        ::
+        ++  gauge  (make-pump-gauge now.channel metrics.state [her bug]:channel)
+        ::  +to-static-fragment: convenience function for |packet-pump
+        ::
+        ++  to-static-fragment
+          |=  [live-packet-key live-packet-val]
+          ^-  static-fragment
+          [message-num num-fragments fragment-num fragment]
+        ::
+        ++  pump-wire  (make-pump-timer-wire her.channel bone)
+        ++  pump-duct  ~[/ames]
+        ++  top-live   (pry:packet-queue live.state)
+        ::
+        +|  %entry-points
+        ::  +call: handle $packet-pump-task request
+        ::
+        ++  call
+          |=  task=packet-pump-task
+          ^+  this
+          ::
+          ?-  -.task
+            %hear  (on-hear [message-num fragment-num]:task)
+            %done  (on-done message-num.task)
+            %wake  (on-wake current.task)
+            %prod  on-prod
+            %halt  set-wake
+          ==
+        ::  +feed: try to send a list of packets, returning unsent ones
+        ::
+        ++  feed
+          |=  fragments=(list static-fragment)
+          ^+  this
+          ::
+          ::  bite off as many fragments as we can send
+          ::
+          =/  num-slots  num-slots:gauge
+          =/  sent       (scag num-slots fragments)
+          =.  unsent     (slag num-slots fragments)
+          ::
+          ::  if nothing to send, we're done
+          ::
+          ?~  sent  this
+          ::  convert $static-fragment's into +ordered-set [key val] pairs
+          ::
+          =/  send-list
+            %+  turn  sent
+            |=  static-fragment
+            ^-  [key=live-packet-key val=live-packet-val]
+            ::
+            :-  [message-num fragment-num]
+            :-  [sent-date=now.channel retries=0 skips=0]
+            [num-fragments fragment]
+          ::  update .live and .metrics
+          ::
+          =.  live.state     (gas:packet-queue live.state send-list)
+          =.  metrics.state  (on-sent:gauge (lent send-list))
+          ::  TMI
+          ::
+          =>  .(sent `(list static-fragment)`sent)
+          ::  emit a $packet-pump-gift for each packet to send
+          ::
+          =.  peer-core
+            %+  roll  sent
+            |=  [packet=static-fragment core=_peer-core]
+            (send-shut-packet bone [message-num %& +]:packet)
           this
-        =.  this  (give i.packet-pump-gifts)
         ::
-        $(packet-pump-gifts t.packet-pump-gifts)
-      ::  +assert: sanity checks to isolate error cases
-      ::
-      ++  assert
-        ^+  this
-        =/  top-live
-          (pry:packet-queue:*make-packet-pump live.packet-pump-state.state)
-        ?.  |(?=(~ top-live) (lte current.state message-num.key.u.top-live))
-          ~|  [%strange-current current=current.state key.u.top-live]
-          !!
-        this
+        +|  %tasks
+        ::  +on-prod: reset congestion control, re-send packets
+        ::
+        ++  on-prod
+          ^+  this
+          ?:  =(~ next-wake.state)  this
+          ::
+          =.  metrics.state  %*(. *pump-metrics counter counter.metrics.state)
+          =.  live.state
+            %+  run:packet-queue  live.state
+            |=(p=live-packet-val p(- *packet-state))
+          ::
+          =/  sot  (max 1 num-slots:gauge)
+          =/  liv  live.state
+          |-  ^+  this
+          ?:  =(0 sot)  this
+          ?:  =(~ liv)  this
+          =^  hed  liv  (pop:packet-queue liv)
+          =.  peer-core
+            (send-shut-packet bone [message-num %& +]:(to-static-fragment hed))
+          $(sot (dec sot))
+        ::  +on-wake: handle packet timeout
+        ::
+        ++  on-wake
+          |=  current=message-num
+          ^+  this
+          ::  assert temporal coherence
+          ::
+          ?<  =(~ next-wake.state)
+          =.  next-wake.state  ~
+          ::  tell congestion control a packet timed out
+          ::
+          =.  metrics.state  on-timeout:gauge
+          ::
+          =|  acc=(unit static-fragment)
+          ::  re-send first packet and update its state in-place
+          ::
+          =;  [static-fragment=_acc live=_live.state]
+              =.  live.state   live
+              =?  peer-core  ?=(^ static-fragment)
+                %-  %+  pu-trace  snd.veb
+                    =/  nums  [message-num fragment-num]:u.static-fragment
+                    |.("dead {<nums^show:gauge>}")
+                (send-shut-packet bone [message-num %& +]:u.static-fragment)
+              this
+          ::
+          %^  (dip:packet-queue _acc)  live.state  acc
+          |=  $:  acc=_acc
+                  key=live-packet-key
+                  val=live-packet-val
+              ==
+          ^-  [new-val=(unit live-packet-val) stop=? _acc]
+          ::  if already acked later message, don't resend
+          ::
+          ?:  (lth message-num.key current)
+            %-  %-  slog  :_  ~
+                leaf+"ames: strange wake queue, expected {<current>}, got {<key>}"
+            [~ stop=%.n ~]
+          ::  packet has expired; update it in-place, stop, and produce it
+          ::
+          =.  last-sent.val  now.channel
+          =.  retries.val    +(retries.val)
+          ::
+          [`val stop=%.y `(to-static-fragment key val)]
+        ::  +on-hear: handle ack on a live packet
+        ::
+        ::    If the packet was in our queue, delete it and update our
+        ::    metrics, possibly re-sending skipped packets.  Otherwise, no-op.
+        ::
+        ++  on-hear
+          |=  [=message-num =fragment-num]
+          ^+  this
+          ::
+          =-  ::  if no sent packet matches the ack, don't apply mutations or effects
+              ::
+              ?.  found.-
+                %-  (pu-trace snd.veb |.("miss {<show:gauge>}"))
+                this
+              ::
+              =.  metrics.state  metrics.-
+              =.  live.state     live.-
+              %-  ?.  ?|  =(0 fragment-num)
+                          =(0 (mod counter.metrics.state 20))
+                      ==
+                    same
+                  (pu-trace snd.veb |.("send: {<[fragment=fragment-num show:gauge]>}"))
+              ::  .resends is backward, so fold backward and emit
+              ::
+              =.  peer-core
+                %+  reel  resends.-
+                |=  [packet=static-fragment core=_peer-core]
+                :: (pu-give:core %send packet)
+                (send-shut-packet bone [message-num %& +]:packet)
+              (fast-resend-after-ack message-num fragment-num)
+          ::
+          =/  acc
+            :*  found=`?`%.n
+                resends=*(list static-fragment)
+                metrics=metrics.state
+            ==
+          ::
+          ^+  [acc live=live.state]
+          ::
+          %^  (dip:packet-queue _acc)  live.state  acc
+          |=  $:  acc=_acc
+                  key=live-packet-key
+                  val=live-packet-val
+              ==
+          ^-  [new-val=(unit live-packet-val) stop=? _acc]
+          ::
+          =/  gauge  (make-pump-gauge now.channel metrics.acc [her bug]:channel)
+          ::  is this the acked packet?
+          ::
+          ?:  =(key [message-num fragment-num])
+            ::  delete acked packet, update metrics, and stop traversal
+            ::
+            =.  found.acc    %.y
+            =.  metrics.acc  (on-ack:gauge -.val)
+            [new-val=~ stop=%.y acc]
+          ::  is this a duplicate ack?
+          ::
+          ?.  (lte-packets key [message-num fragment-num])
+            ::  stop, nothing more to do
+            ::
+            [new-val=`val stop=%.y acc]
+          ::  ack was on later packet; mark skipped, tell gauge, and continue
+          ::
+          =.  skips.val  +(skips.val)
+          =^  resend  metrics.acc  (on-skipped-packet:gauge -.val)
+          ?.  resend
+            [new-val=`val stop=%.n acc]
+          ::
+          =.  last-sent.val  now.channel
+          =.  retries.val    +(retries.val)
+          =.  resends.acc    [(to-static-fragment key val) resends.acc]
+          [new-val=`val stop=%.n acc]
+        ::  +on-done: apply ack to all packets from .message-num
+        ::
+        ++  on-done
+          |=  =message-num
+          ^+  this
+          ::
+          =;  [metrics=_metrics.state live=_live.state]
+              =:  metrics.state  metrics
+                     live.state  live
+                ==
+              %-  %+  pu-trace  snd.veb
+                  |.("done {<message-num=message-num^show:gauge>}")
+              (fast-resend-after-ack message-num `fragment-num`0)
+          ::
+          %^  (dip:packet-queue pump-metrics)  live.state  acc=metrics.state
+          |=  $:  metrics=pump-metrics
+                  key=live-packet-key
+                  val=live-packet-val
+              ==
+          ^-  [new-val=(unit live-packet-val) stop=? pump-metrics]
+          ::
+          =/  gauge  (make-pump-gauge now.channel metrics [her bug]:channel)
+          ::  if we get an out-of-order ack for a message, skip until it
+          ::
+          ?:  (lth message-num.key message-num)
+            [new-val=`val stop=%.n metrics]
+          ::  if packet was from acked message, delete it and continue
+          ::
+          ?:  =(message-num.key message-num)
+            [new-val=~ stop=%.n metrics=(on-ack:gauge -.val)]
+          ::  we've gone past the acked message; we're done
+          ::
+          [new-val=`val stop=%.y metrics]
+        ::  +set-wake: set, unset, or reset timer, emitting moves
+        ::
+        ++  set-wake
+          ^+  this
+          ::  if nonempty .live, pry at head to get next wake time
+          ::
+          =/  new-wake=(unit @da)
+            ?~  head=(pry:packet-queue live.state)
+              ~
+            `(next-expiry:gauge u.head)
+          ::  no-op if no change
+          ::
+          ?:  =(new-wake next-wake.state)  this
+          ::  unset old timer if non-null
+          ::
+          =?  peer-core  !=(~ next-wake.state)
+            (pu-emit %b %rest (need next-wake.state))
+          ::  set new timer if non-null
+          ::
+          =?  peer-core  ?=(^ new-wake)
+            (pu-emit %b %wait u.new-wake)
+          ::
+          =?  next-wake.state  !=(~ next-wake.state)   ~  ::  unset
+          =?  next-wake.state  ?=(^ new-wake)   new-wake  ::  reset
+          ::
+          this
+        ::
+        +|  %internals
+        ::
+        ::  +fast-resend-after-ack: resend timed out packets
+        ::
+        ::    After we finally receive an ack, we want to resend all the live
+        ::    packets that have been building up.
+        ::
+        ++  fast-resend-after-ack
+          |=  [=message-num =fragment-num]
+          ^+  this
+          =;  res=[resends=(list static-fragment) live=_live.state]
+            =.  live.state  live.res
+            =.  peer-core
+              %+  reel  resends.res
+              |=  [packet=static-fragment core=_peer-core]
+              (send-shut-packet bone [message-num %& +]:packet)
+            this
+          ::
+          =/  acc
+            resends=*(list static-fragment)
+          ::
+          %^  (dip:packet-queue _acc)  live.state  acc
+          |=  $:  acc=_acc
+                  key=live-packet-key
+                  val=live-packet-val
+              ==
+          ^-  [new-val=(unit live-packet-val) stop=? _acc]
+          ?:  (lte-packets key [message-num fragment-num])
+            [new-val=`val stop=%.n acc]
+          ::
+          ?:  (gth (next-expiry:gauge key val) now.channel)
+            [new-val=`val stop=%.y acc]
+          ::
+          =.  last-sent.val  now.channel
+          =.  resends.acc  [(to-static-fragment key val) resends.acc]
+          [new-val=`val stop=%.n acc]
+
+        --
       --
-    ::  +mi: constructor for |message-sink message receiver core
+    ::  +mi: constructor for |sink message receiver core
     ::
     ++  mi
       |=  [=bone state=message-sink-state]
@@ -3231,21 +3181,17 @@
       |%
       +|  %helpers
       ++  this  .
-      ++  abed
-        |=  bone=@ud
-        this(state (~(gut by rcv.peer-state) bone *message-sink-state))
+      ++  abed  this(state (~(gut by rcv.peer-state) bone *message-sink-state))
       ::
       ++  abet
         ^+  peer-core
-        =.  rcv.peer-state
-          (~(put by rcv.peer-state) bone state)
         |-  ^+  peer-core
-        ?~  gifts  peer-core
+        ?~  gifts
+          peer-core(rcv.peer-state (~(put by rcv.peer-state) bone state))
         =*  gift  i.gifts
-        ?:  &(?=(memo -.gift) |(closing corked))
-          peer-core
-        =.  peer-core  (handle-gift gift)
-        $(gifts t.gifts)
+        ?:  &(?=(?(%plea %boon) -.gift) |(closing corked))
+          $(gifts t.gifts)
+        $(gifts t.gifts, peer-core (handle-gift gift))
       ::
       ++  mi-give  |=(gift this(gifts [+< gifts]))
       ++  mi-trace
@@ -3269,6 +3215,8 @@
           %boon
         %nack
       ::
+      ++  pump-core  |=(=^bone (mu bone *message-pump-state))
+      ::
       +|  %entry-points
       ::  +call: handle a $message-sink-task
       ::
@@ -3277,7 +3225,7 @@
         ^+  this
         ?:  corked  this
         ?-  -.task
-          %drop  this(nax.state (~(del in nax.state) message-num))
+          %drop  this(nax.state (~(del in nax.state) message-num.task))
           %done  (done ok.task)
           %hear  (hear closing [lane shut-packet ok]:task)
         ==
@@ -3414,11 +3362,12 @@
         %-  %+  mi-trace  msg.veb
             |.("hear {<her.channel>} {<seq=seq>} {<num-fragments.u.live>}kb")
         =/  message=*  (assemble-fragments [num-fragments fragments]:u.live)
+        =/  empty=?    =(~ pending-vane-ack.state)
         ::  enqueue message to be sent to local vane
         ::
         =.  pending-vane-ack.state
           (~(put to pending-vane-ack.state) seq message)
-        =?  this  =(~ pending-vane-ack.state)  (mi-give response seq message ok)
+        =?  this  empty  (mi-give response seq message ok)
         ::
         $(seq +(seq))
       ::  +done: handle confirmation of message processing from vane
@@ -3426,20 +3375,20 @@
       ++  done
         |=  ok=?
         ^+  this
-        =^  pending  pending-vane-ack.state
-          ~(get to pending-vane-ack.state)
-        =.  last-acked.state  +(last-acked.state)
+        =^  pending  pending-vane-ack.state  ~(get to pending-vane-ack.state)
         =/  =message-num  message-num.p.pending
-        =?  nax.state  !ok  (~(put in nax.state) message-num)
+        ::
+        =.  last-acked.state  +(last-acked.state)
+        =?  nax.state  !ok    (~(put in nax.state) message-num)
         ::
         =.  this  (mi-give %send message-num %| ok lag=`@dr`0)
         ?~  next=~(top to pending-vane-ack.state)
           this
-        =,  u.next
-        (mi-give response message-num message ok)
+        (mi-give response message-num.u.next message.u.next ok)
       ::
       +|  %implementation  ::  XX ?
       ::
+      ::  XX  see sink-plea FIXME
       ++  handle-gift
         |=  =gift
         |^  ^+  peer-core
@@ -3447,9 +3396,8 @@
           %plea  (sink-plea +.gift)
           %boon  (sink-boon +.gift)
           %nack  (sink-nack [message-num message]:gift)
-          %send  (send-shut-packet bone^[message-num %| ack-meat]:gift)
+          %send  (send-shut-packet [bone [message-num %| ack-meat]:gift])
         ==
-        ::
         ++  sink-plea
           |=  [=message-num message=* ok=?]
           ^+  peer-core
@@ -3460,10 +3408,9 @@
             =.  peer-core   abet:(call %done ok=%.n)
             ::  send nack-trace with blank .error for security
             ::
-            =/  nack-trace-bone=^bone  (mix 0b10 bone)
-            =/  =message-blob  (jam [message-num *error])
-            ::
-            (run-message-pump nack-trace-bone %memo message-blob)
+            =/  nack-bone=^bone  (mix 0b10 bone)
+            =/  =message-blob    (jam [message-num *error])
+            abet:(call:abed:(pump-core nack-bone) %memo message-blob)
           =+  ;;  =plea  message
           =/  =wire  (make-bone-wire her.channel her-rift.channel bone)
           ::
@@ -3543,7 +3490,7 @@
             abet:(call %done ok=%.y)
           ::  notify |message-pump that this message got naxplained
           ::
-          (run-message-pump target-bone %near ;;(naxplanation message))
+          abet:(call:abed:(pump-core target-bone) %near ;;(naxplanation message))
         --
       --
     --
@@ -3562,8 +3509,8 @@
   |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _ames-gate]
   ::
-  =/  =task  ((harden task) wrapped-task)
-  =/  event-core  (per-event [now eny rof] duct ames-state)
+  =/  =task       ((harden task) wrapped-task)
+  =/  event-core  (pe [now eny rof] duct ames-state)
   ::
   =^  moves  ames-state
     =<  abet
@@ -3600,8 +3547,7 @@
   ?^  dud
     ~|(%ames-take-dud (mean tang.u.dud))
   ::
-  ::
-  =/  event-core  (per-event [now eny rof] duct ames-state)
+  =/  event-core  (pe [now eny rof] duct ames-state)
   ::
   =^  moves  ames-state
     =<  abet
