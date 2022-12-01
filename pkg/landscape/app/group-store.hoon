@@ -186,11 +186,10 @@
   ++  on-agent
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
-    ~&  src.bol
     =^  cards  state
       ?+    wire  [- state]:(on-agent:def wire sign)
           [%pyre *]      (take-pyre:gc t.wire sign)
-          [%gladio @ ~]  (take-migrate:gc (scot %p i.t.wire) sign)
+          [%gladio @ ~]  (take-migrate:gc sign)
       ::
           [%try-rejoin @ *]
         ?>  ?=(%poke-ack -.sign)
@@ -237,7 +236,6 @@
   ^-  (quip card _state)
   =^  cards-1=(list card)  wait
     ~(migrate-start gladio bol)
-  ~&  wait
   =/  cards-2=(list card)
     %+  turn  ~(tap in wait)
     |=  =ship
@@ -256,18 +254,18 @@
   [%pass / %pyre leaf/"{<wire>} failed" u.p.sign]~
 ::
 ++  take-migrate
-  |=  [=ship =sign:agent:gall]
+  |=  =sign:agent:gall
   ^-  (quip card _state)
-  ~&  [migrating ship src.bol]
+  ~&  migrating/src.bol
   ?:  ?=(%poke-ack -.sign)
     `state
-  :_  state(wait (~(del in wait) ship))
+  :_  state(wait (~(del in wait) src.bol))
   ^-  (list card)
-  %+  welp  (~(migrate-ship gladio bol) ship)
+  %+  welp  (~(migrate-ship gladio bol) src.bol)
   ?:  ?=(%kick -.sign)  :: TODO: check queued watches don't get kicked
     *(list card)
   :_  *(list card)
-  [%pass /gladio/(scot %p ship) %agent [ship %groups] %leave ~]
+  [%pass /gladio/(scot %p src.bol) %agent [src.bol %groups] %leave ~]
 ::
 ++  peek-group
   |=  rid=resource
