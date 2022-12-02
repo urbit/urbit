@@ -716,7 +716,7 @@
                   'rtt'^(numb (div rtt ~s1))
                   'rttvar'^(numb (div rttvar ~s1))
                   'ssthresh'^(numb ssthresh)
-                  'num-live'^(numb num-live)
+                  'num-live'^(numb ~(wyt by live))
                   'cwnd'^(numb cwnd)
                   'counter'^(numb counter)
               ==

@@ -7,6 +7,7 @@
 ::    OR
 ::  :aqua &pill +solid
 ::
+::  XX: update these examples
 ::  Then try stuff:
 ::  :aqua [%init ~[~bud ~dev]]
 ::  :aqua [%dojo ~[~bud ~dev] "[our eny (add 3 5)]"]
@@ -480,14 +481,15 @@
     =^  ms  state  (poke-pill pil)
     (emit-cards ms)
   ::
-      [%swap-files ~]
+      [%swap-files @tas]
+    =/  =desk  +.val
     =.  userspace-ova.pil
-      =/  slim-dirs=(list path)
-        ~[/app /ted /gen /lib /mar /sur /hoon/sys /arvo/sys /zuse/sys]
+      ::  take all files from a userspace desk
+      =/  all-dirs=(list path)  ~[/]
       :_  ~
       %-  unix-event:pill-lib
-      %-  %*(. file-ovum:pill-lib directories slim-dirs)
-      /(scot %p our.hid)/work/(scot %da now.hid)
+      %+  %*(. file-ovum:pill-lib directories all-dirs)
+      desk  /(scot %p our.hid)/[desk]/(scot %da now.hid)
     =^  ms  state  (poke-pill pil)
     (emit-cards ms)
   ::
