@@ -747,34 +747,6 @@ _ce_patch_apply(u3_ce_patch* pat_u)
   }
 }
 
-/* _ce_loom_pure_north(): track clean pages at the bottom of memory.
-*/
-static inline void
-_ce_loom_pure_north(c3_w pgs_w)
-{
-  c3_w blk_w = pgs_w >> 5;
-  c3_w bit_w = pgs_w & 31;
-
-  memset((void*)u3P.dit_w, 0, blk_w << 2);
-  u3P.dit_w[blk_w] &= 0xffffffff << bit_w;
-}
-
-/* _ce_loom_pure_south(): track clean pages at the top of memory.
-*/
-static inline void
-_ce_loom_pure_south(c3_w pgs_w)
-{
-  c3_w blk_w = pgs_w >> 5;
-  c3_w bit_w = pgs_w & 31;
-  c3_w bas_w = ((u3P.pag_w - pgs_w) + 31) >> 5;
-
-  memset((void*)(u3P.dit_w + bas_w), 0, blk_w << 2);
-
-  //  this is safe so long as the south segment never includes all pages
-  //
-  u3P.dit_w[bas_w - 1] &= 0xffffffff >> bit_w;
-}
-
 /* _ce_loom_track_north(): [pgs_w] clean, followed by [dif_w] dirty.
 */
 void
@@ -863,39 +835,71 @@ _ce_loom_track_south(c3_w pgs_w, c3_w dif_w)
 /* _ce_loom_protect_north(): protect/track pages from the bottom of memory.
 */
 static void
-_ce_loom_protect_north(c3_w pgs_w)
+_ce_loom_protect_north(c3_w pgs_w, c3_w old_w)
 {
   if ( pgs_w ) {
     if ( 0 != mprotect((void*)u3_Loom,
                        (size_t)pgs_w << (u3a_page + 2),
                        PROT_READ) )
     {
-      fprintf(stderr, "loom: protect north (%u pages): %s\r\n",
+      fprintf(stderr, "loom: pure north (%u pages): %s\r\n",
                       pgs_w, strerror(errno));
       c3_assert(0);
     }
   }
 
-  _ce_loom_pure_north(pgs_w);
+  if ( old_w > pgs_w ) {
+    c3_w dif_w = old_w - pgs_w;
+
+    if ( 0 != mprotect((void*)(u3_Loom + (pgs_w << u3a_page)),
+                       (size_t)dif_w << (u3a_page + 2),
+                       (PROT_READ | PROT_WRITE)) )
+    {
+      fprintf(stderr, "loom: foul north (%u pages, %u old): %s\r\n",
+                      pgs_w, old_w, strerror(errno));
+      c3_assert(0);
+    }
+
+    _ce_loom_track_north(pgs_w, dif_w);
+  }
+  else {
+    _ce_loom_track_north(pgs_w, 0);
+  }
 }
 
 /* _ce_loom_protect_south(): protect/track pages from the top of memory.
 */
 static void
-_ce_loom_protect_south(c3_w pgs_w)
+_ce_loom_protect_south(c3_w pgs_w, c3_w old_w)
 {
   if ( pgs_w ) {
     if ( 0 != mprotect((void*)(u3_Loom + ((u3P.pag_w - pgs_w) << u3a_page)),
                        (size_t)pgs_w << (u3a_page + 2),
                        PROT_READ) )
     {
-      fprintf(stderr, "loom: protect south (%u pages): %s\r\n",
+      fprintf(stderr, "loom: pure south (%u pages): %s\r\n",
                       pgs_w, strerror(errno));
       c3_assert(0);
     }
   }
 
-  _ce_loom_pure_south(pgs_w);
+  if ( old_w > pgs_w ) {
+    c3_w dif_w = old_w - pgs_w;
+
+    if ( 0 != mprotect((void*)(u3_Loom + ((u3P.pag_w - old_w) << u3a_page)),
+                       (size_t)dif_w << (u3a_page + 2),
+                       (PROT_READ | PROT_WRITE)) )
+    {
+      fprintf(stderr, "loom: foul south (%u pages, %u old): %s\r\n",
+                      pgs_w, old_w, strerror(errno));
+      c3_assert(0);
+    }
+
+    _ce_loom_track_south(pgs_w, dif_w);
+  }
+  else {
+    _ce_loom_track_south(pgs_w, 0);
+  }
 }
 
 /* _ce_loom_mapf_north(): map [pgs_w] of [fid_i] into the bottom of memory
@@ -926,8 +930,10 @@ _ce_loom_mapf_north(c3_i fid_i, c3_w pgs_w, c3_w old_w)
   }
 
   if ( old_w > pgs_w ) {
+    c3_w dif_w = old_w - pgs_w;
+
     if ( MAP_FAILED == mmap((void*)(u3_Loom + (pgs_w << u3a_page)),
-                            (size_t)(old_w - pgs_w) << (u3a_page + 2),
+                            (size_t)dif_w << (u3a_page + 2),
                             (PROT_READ | PROT_WRITE),
                             (MAP_ANON | MAP_FIXED | MAP_PRIVATE),
                             -1, 0) )
@@ -936,9 +942,12 @@ _ce_loom_mapf_north(c3_i fid_i, c3_w pgs_w, c3_w old_w)
                       pgs_w, old_w, strerror(errno));
       c3_assert(0);
     }
-  }
 
-  _ce_loom_pure_north(pgs_w);
+    _ce_loom_track_north(pgs_w, dif_w);
+  }
+  else {
+    _ce_loom_track_north(pgs_w, 0);
+  }
 }
 
 /* _ce_loom_blit_north(): apply pages, in order, from the bottom of memory.
@@ -962,7 +971,7 @@ _ce_loom_blit_north(c3_i fid_i, c3_w pgs_w)
     }
   }
 
-  _ce_loom_protect_north(pgs_w);
+  _ce_loom_protect_north(pgs_w, 0);
 }
 
 /* _ce_loom_blit_south(): apply pages, reversed, from the top of memory.
@@ -991,7 +1000,7 @@ _ce_loom_blit_south(c3_i fid_i, c3_w pgs_w)
     }
   }
 
-  _ce_loom_protect_south(pgs_w);
+  _ce_loom_protect_south(pgs_w, 0);
 }
 
 #ifdef U3_SNAPSHOT_VALIDATION
@@ -1157,7 +1166,7 @@ void
 u3e_save(void)
 {
   u3_ce_patch* pat_u;
-  c3_w         nod_w;
+  c3_w  nod_w, sod_w;
 
   if ( u3C.wag_w & u3o_dryrun ) {
     return;
@@ -1168,6 +1177,7 @@ u3e_save(void)
   }
 
   nod_w = u3P.nor_u.pgs_w;
+  sod_w = u3P.sou_u.pgs_w;
 
   _ce_patch_sync(pat_u);
 
@@ -1193,13 +1203,13 @@ u3e_save(void)
 #endif
 
   if ( u3C.wag_w & u3o_no_demand ) {
-    _ce_loom_protect_north(u3P.nor_u.pgs_w);
+    _ce_loom_protect_north(u3P.nor_u.pgs_w, nod_w);
   }
   else {
     _ce_loom_mapf_north(u3P.nor_u.fid_i, u3P.nor_u.pgs_w, nod_w);
   }
 
-  _ce_loom_protect_south(u3P.sou_u.pgs_w);
+  _ce_loom_protect_south(u3P.sou_u.pgs_w, sod_w);
 
   _ce_image_sync(&u3P.nor_u);
   _ce_image_sync(&u3P.sou_u);
