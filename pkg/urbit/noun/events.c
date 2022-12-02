@@ -775,6 +775,91 @@ _ce_loom_pure_south(c3_w pgs_w)
   u3P.dit_w[bas_w - 1] &= 0xffffffff >> bit_w;
 }
 
+/* _ce_loom_track_north(): [pgs_w] clean, followed by [dif_w] dirty.
+*/
+void
+_ce_loom_track_north(c3_w pgs_w, c3_w dif_w)
+{
+  c3_w blk_w = pgs_w >> 5;
+  c3_w bit_w = pgs_w & 31;
+  c3_w off_w;
+
+  memset((void*)u3P.dit_w, 0, blk_w << 2);
+
+  if ( bit_w ) {
+    c3_w tib_w = 32 - bit_w;
+    c3_w dat_w = u3P.dit_w[blk_w];
+
+    dat_w   &= 0xffffffff << bit_w;
+
+    if ( dif_w <= tib_w ) {
+      dat_w |= ((1 << dif_w) - 1) << bit_w;
+      dif_w  = 0;
+    }
+    else {
+      dat_w |= 0xffffffff << bit_w;
+      dif_w -= tib_w;
+    }
+
+    u3P.dit_w[blk_w] = dat_w;
+    blk_w += 1;
+  }
+
+  off_w = blk_w;
+  blk_w = dif_w >> 5;
+  bit_w = dif_w & 31;
+
+  memset((void*)(u3P.dit_w + off_w), 0xff, blk_w << 2);
+
+  if ( bit_w ) {
+    u3P.dit_w[off_w + blk_w] |= (1 << bit_w) - 1;
+  }
+}
+
+/* _ce_loom_track_south(): [pgs_w] clean, preceded by [dif_w] dirty.
+*/
+void
+_ce_loom_track_south(c3_w pgs_w, c3_w dif_w)
+{
+  c3_w blk_w = pgs_w >> 5;
+  c3_w bit_w = pgs_w & 31;
+  c3_w bas_w = ((u3P.pag_w - pgs_w) + 31) >> 5;
+  c3_w off_w;
+
+  memset((void*)(u3P.dit_w + bas_w), 0, blk_w << 2);
+
+  //  the following index subtractions (bas_w, off) are safe,
+  //  so long as the south segment never includes all pages
+  //
+  if ( bit_w ) {
+    c3_w tib_w = 32 - bit_w;
+    c3_w dat_w = u3P.dit_w[--bas_w];
+
+    dat_w   &= 0xffffffff >> bit_w;
+
+    if ( dif_w <= tib_w ) {
+      dat_w |= ((1 << dif_w) - 1) << (tib_w - dif_w);
+      dif_w  = 0;
+    }
+    else {
+      dat_w |= 0xffffffff >> bit_w;
+      dif_w -= tib_w;
+    }
+
+    u3P.dit_w[bas_w] = dat_w;
+  }
+
+  blk_w = dif_w >> 5;
+  bit_w = dif_w & 31;
+  off_w = bas_w - blk_w;
+
+  memset((void*)(u3P.dit_w + off_w), 0xff, blk_w << 2);
+
+  if ( bit_w ) {
+    u3P.dit_w[off_w - 1] |= ((1 << bit_w) - 1) << (32 - bit_w);
+  }
+}
+
 /* _ce_loom_protect_north(): protect/track pages from the bottom of memory.
 */
 static void
