@@ -13,7 +13,7 @@
     /* u3e_control: memory change, control file.
     */
       typedef struct _u3e_control {
-        c3_w     ver_y;                     //  version number
+        c3_w     ver_w;                     //  version number
         c3_w     nor_w;                     //  new page count north
         c3_w     sou_w;                     //  new page count south
         c3_w     pgs_w;                     //  number of changed pages
