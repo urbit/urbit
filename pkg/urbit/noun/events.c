@@ -75,14 +75,13 @@
 //! ### limitations
 //!
 //!   - loom page size is fixed (16 KB), and must be a multiple of the
-//!     system page size. (can the size vary at runtime give south.bin's
-//!     reversed order? alternately, if system page size > ours, the fault
-//!     handler could dirty N pages at a time.)
-//!   - update atomicity is suspect: patch application must either
-//!     completely succeed or leave on-disk segments intact. unapplied
-//!     patches can be discarded (triggering event replay), but once
-//!     patch application begins it must succeed.
-//!     may require integration into the overall signal-handling regime.
+//!     system page size.
+//!   - update atomicity is crucial:
+//!     - patch application must either completely succeed or
+//!       leave on-disk segments (memory image) intact.
+//!     - unapplied patches can be discarded (triggering event replay),
+//!       but once patch application begins it must succeed.
+//!     - may require integration into the overall signal-handling regime.
 //!   - many errors are handled with assertions.
 //!
 //! ### enhancements
