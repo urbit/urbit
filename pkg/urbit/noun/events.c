@@ -50,17 +50,38 @@
 //!   - memory protections (and file-backed mappings) are re-established.
 //!   - patch files are deleted.
 //!
+//! ### invariants
+//!
+//!  definitions:
+//!    - a clean page is PROT_READ and 0 in the bitmap
+//!    - a dirty page is (PROT_READ|PROT_WRITE) and 1 in the bitmap
+//!    - the guard page is PROT_NONE and 1 in the bitmap (XX assumed)
+//!
+//!  assumptions:
+//!    - all memory access patterns are outside-in, a page at a time
+//!      - ad-hoc exceptions are supported by calling u3e_ward()
+//!
+//!  - there is a single guard page, between the segments
+//!  - dirty pages only become clean by being:
+//!    - loaded from a snapshot during initialization
+//!    - present in a snapshot after save
+//!  - clean pages only become dirty by being:
+//!    - modified (and caught by the fault handler)
+//!    - orphaned due to segment truncation (explicitly dirtied)
+//!  - at points of quiescence (initialization, after save)
+//!    - all pages of the north and south segments are clean
+//!    - all other pages are dirty
+//!
 //! ### limitations
 //!
 //!   - loom page size is fixed (16 KB), and must be a multiple of the
-//!     system page size. (can the size vary at runtime give south.bin's
-//!     reversed order? alternately, if system page size > ours, the fault
-//!     handler could dirty N pages at a time.)
-//!   - update atomicity is suspect: patch application must either
-//!     completely succeed or leave on-disk segments intact. unapplied
-//!     patches can be discarded (triggering event replay), but once
-//!     patch application begins it must succeed.
-//!     may require integration into the overall signal-handling regime.
+//!     system page size.
+//!   - update atomicity is crucial:
+//!     - patch application must either completely succeed or
+//!       leave on-disk segments (memory image) intact.
+//!     - unapplied patches can be discarded (triggering event replay),
+//!       but once patch application begins it must succeed.
+//!     - may require integration into the overall signal-handling regime.
 //!   - many errors are handled with assertions.
 //!
 //! ### enhancements
@@ -78,10 +99,10 @@
 static u3p(c3_w) gar_pag_p;
 
 //! Urbit page size in 4-byte words.
-static const size_t pag_wiz_i = (size_t)1 << u3a_page;
+#define pag_wiz_i  ((size_t)1 << u3a_page)
 
 //! Urbit page size in bytes.
-static const size_t pag_siz_i = (size_t)1 << (u3a_page + 2);
+#define pag_siz_i  ((size_t)1 << (u3a_page + 2))
 
 #ifdef U3_SNAPSHOT_VALIDATION
 /* Image check.
@@ -726,70 +747,159 @@ _ce_patch_apply(u3_ce_patch* pat_u)
   }
 }
 
-/* _ce_loom_pure_north(): track clean pages at the bottom of memory.
+/* _ce_loom_track_north(): [pgs_w] clean, followed by [dif_w] dirty.
 */
-static inline void
-_ce_loom_pure_north(c3_w pgs_w)
+void
+_ce_loom_track_north(c3_w pgs_w, c3_w dif_w)
 {
   c3_w blk_w = pgs_w >> 5;
   c3_w bit_w = pgs_w & 31;
+  c3_w off_w;
 
   memset((void*)u3P.dit_w, 0, blk_w << 2);
-  u3P.dit_w[blk_w] &= 0xffffffff << bit_w;
+
+  if ( bit_w ) {
+    c3_w tib_w = 32 - bit_w;
+    c3_w dat_w = u3P.dit_w[blk_w];
+
+    dat_w   &= 0xffffffff << bit_w;
+
+    if ( dif_w <= tib_w ) {
+      dat_w |= ((1 << dif_w) - 1) << bit_w;
+      dif_w  = 0;
+    }
+    else {
+      dat_w |= 0xffffffff << bit_w;
+      dif_w -= tib_w;
+    }
+
+    u3P.dit_w[blk_w] = dat_w;
+    blk_w += 1;
+  }
+
+  off_w = blk_w;
+  blk_w = dif_w >> 5;
+  bit_w = dif_w & 31;
+
+  memset((void*)(u3P.dit_w + off_w), 0xff, blk_w << 2);
+
+  if ( bit_w ) {
+    u3P.dit_w[off_w + blk_w] |= (1 << bit_w) - 1;
+  }
 }
 
-/* _ce_loom_pure_south(): track clean pages at the top of memory.
+/* _ce_loom_track_south(): [pgs_w] clean, preceded by [dif_w] dirty.
 */
-static inline void
-_ce_loom_pure_south(c3_w pgs_w)
+void
+_ce_loom_track_south(c3_w pgs_w, c3_w dif_w)
 {
   c3_w blk_w = pgs_w >> 5;
   c3_w bit_w = pgs_w & 31;
   c3_w bas_w = ((u3P.pag_w - pgs_w) + 31) >> 5;
+  c3_w off_w;
 
   memset((void*)(u3P.dit_w + bas_w), 0, blk_w << 2);
 
-  //  this is safe so long as the south segment never includes all pages
+  //  the following index subtractions (bas_w, off) are safe,
+  //  so long as the south segment never includes all pages
   //
-  u3P.dit_w[bas_w - 1] &= 0xffffffff >> bit_w;
+  if ( bit_w ) {
+    c3_w tib_w = 32 - bit_w;
+    c3_w dat_w = u3P.dit_w[--bas_w];
+
+    dat_w   &= 0xffffffff >> bit_w;
+
+    if ( dif_w <= tib_w ) {
+      dat_w |= ((1 << dif_w) - 1) << (tib_w - dif_w);
+      dif_w  = 0;
+    }
+    else {
+      dat_w |= 0xffffffff >> bit_w;
+      dif_w -= tib_w;
+    }
+
+    u3P.dit_w[bas_w] = dat_w;
+  }
+
+  blk_w = dif_w >> 5;
+  bit_w = dif_w & 31;
+  off_w = bas_w - blk_w;
+
+  memset((void*)(u3P.dit_w + off_w), 0xff, blk_w << 2);
+
+  if ( bit_w ) {
+    u3P.dit_w[off_w - 1] |= ((1 << bit_w) - 1) << (32 - bit_w);
+  }
 }
 
 /* _ce_loom_protect_north(): protect/track pages from the bottom of memory.
 */
 static void
-_ce_loom_protect_north(c3_w pgs_w)
+_ce_loom_protect_north(c3_w pgs_w, c3_w old_w)
 {
   if ( pgs_w ) {
     if ( 0 != mprotect((void*)u3_Loom,
                        (size_t)pgs_w << (u3a_page + 2),
                        PROT_READ) )
     {
-      fprintf(stderr, "loom: protect north (%u pages): %s\r\n",
+      fprintf(stderr, "loom: pure north (%u pages): %s\r\n",
                       pgs_w, strerror(errno));
       c3_assert(0);
     }
   }
 
-  _ce_loom_pure_north(pgs_w);
+  if ( old_w > pgs_w ) {
+    c3_w dif_w = old_w - pgs_w;
+
+    if ( 0 != mprotect((void*)(u3_Loom + (pgs_w << u3a_page)),
+                       (size_t)dif_w << (u3a_page + 2),
+                       (PROT_READ | PROT_WRITE)) )
+    {
+      fprintf(stderr, "loom: foul north (%u pages, %u old): %s\r\n",
+                      pgs_w, old_w, strerror(errno));
+      c3_assert(0);
+    }
+
+    _ce_loom_track_north(pgs_w, dif_w);
+  }
+  else {
+    _ce_loom_track_north(pgs_w, 0);
+  }
 }
 
 /* _ce_loom_protect_south(): protect/track pages from the top of memory.
 */
 static void
-_ce_loom_protect_south(c3_w pgs_w)
+_ce_loom_protect_south(c3_w pgs_w, c3_w old_w)
 {
   if ( pgs_w ) {
     if ( 0 != mprotect((void*)(u3_Loom + ((u3P.pag_w - pgs_w) << u3a_page)),
                        (size_t)pgs_w << (u3a_page + 2),
                        PROT_READ) )
     {
-      fprintf(stderr, "loom: protect south (%u pages): %s\r\n",
+      fprintf(stderr, "loom: pure south (%u pages): %s\r\n",
                       pgs_w, strerror(errno));
       c3_assert(0);
     }
   }
 
-  _ce_loom_pure_south(pgs_w);
+  if ( old_w > pgs_w ) {
+    c3_w dif_w = old_w - pgs_w;
+
+    if ( 0 != mprotect((void*)(u3_Loom + ((u3P.pag_w - old_w) << u3a_page)),
+                       (size_t)dif_w << (u3a_page + 2),
+                       (PROT_READ | PROT_WRITE)) )
+    {
+      fprintf(stderr, "loom: foul south (%u pages, %u old): %s\r\n",
+                      pgs_w, old_w, strerror(errno));
+      c3_assert(0);
+    }
+
+    _ce_loom_track_south(pgs_w, dif_w);
+  }
+  else {
+    _ce_loom_track_south(pgs_w, 0);
+  }
 }
 
 /* _ce_loom_mapf_north(): map [pgs_w] of [fid_i] into the bottom of memory
@@ -820,8 +930,10 @@ _ce_loom_mapf_north(c3_i fid_i, c3_w pgs_w, c3_w old_w)
   }
 
   if ( old_w > pgs_w ) {
+    c3_w dif_w = old_w - pgs_w;
+
     if ( MAP_FAILED == mmap((void*)(u3_Loom + (pgs_w << u3a_page)),
-                            (size_t)(old_w - pgs_w) << (u3a_page + 2),
+                            (size_t)dif_w << (u3a_page + 2),
                             (PROT_READ | PROT_WRITE),
                             (MAP_ANON | MAP_FIXED | MAP_PRIVATE),
                             -1, 0) )
@@ -830,9 +942,12 @@ _ce_loom_mapf_north(c3_i fid_i, c3_w pgs_w, c3_w old_w)
                       pgs_w, old_w, strerror(errno));
       c3_assert(0);
     }
-  }
 
-  _ce_loom_pure_north(pgs_w);
+    _ce_loom_track_north(pgs_w, dif_w);
+  }
+  else {
+    _ce_loom_track_north(pgs_w, 0);
+  }
 }
 
 /* _ce_loom_blit_north(): apply pages, in order, from the bottom of memory.
@@ -856,7 +971,7 @@ _ce_loom_blit_north(c3_i fid_i, c3_w pgs_w)
     }
   }
 
-  _ce_loom_protect_north(pgs_w);
+  _ce_loom_protect_north(pgs_w, 0);
 }
 
 /* _ce_loom_blit_south(): apply pages, reversed, from the top of memory.
@@ -885,7 +1000,7 @@ _ce_loom_blit_south(c3_i fid_i, c3_w pgs_w)
     }
   }
 
-  _ce_loom_protect_south(pgs_w);
+  _ce_loom_protect_south(pgs_w, 0);
 }
 
 #ifdef U3_SNAPSHOT_VALIDATION
@@ -1051,7 +1166,7 @@ void
 u3e_save(void)
 {
   u3_ce_patch* pat_u;
-  c3_w         nod_w;
+  c3_w  nod_w, sod_w;
 
   if ( u3C.wag_w & u3o_dryrun ) {
     return;
@@ -1062,6 +1177,7 @@ u3e_save(void)
   }
 
   nod_w = u3P.nor_u.pgs_w;
+  sod_w = u3P.sou_u.pgs_w;
 
   _ce_patch_sync(pat_u);
 
@@ -1087,13 +1203,13 @@ u3e_save(void)
 #endif
 
   if ( u3C.wag_w & u3o_no_demand ) {
-    _ce_loom_protect_north(u3P.nor_u.pgs_w);
+    _ce_loom_protect_north(u3P.nor_u.pgs_w, nod_w);
   }
   else {
     _ce_loom_mapf_north(u3P.nor_u.fid_i, u3P.nor_u.pgs_w, nod_w);
   }
 
-  _ce_loom_protect_south(u3P.sou_u.pgs_w);
+  _ce_loom_protect_south(u3P.sou_u.pgs_w, sod_w);
 
   _ce_image_sync(&u3P.nor_u);
   _ce_image_sync(&u3P.sou_u);
