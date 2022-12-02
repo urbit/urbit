@@ -860,6 +860,19 @@ _ce_loom_protect_north(c3_w pgs_w, c3_w old_w)
       c3_assert(0);
     }
 
+    //  protect guard page if clobbered
+    //
+    //    NB: < pgs_w is precluded by assertion in _ce_patch_compose()
+    //
+    if ( (gar_pag_p >> u3a_page) < old_w ) {
+      fprintf(stderr, "loom: guard on reprotect\r\n");
+      if ( 0 != mprotect(u3a_into(gar_pag_p), pag_siz_i, PROT_NONE) ) {
+        fprintf(stderr, "loom: failed to protect guard page: %s\r\n",
+                        strerror(errno));
+        c3_assert(0);
+      }
+    }
+
     _ce_loom_track_north(pgs_w, dif_w);
   }
   else {
@@ -893,6 +906,19 @@ _ce_loom_protect_south(c3_w pgs_w, c3_w old_w)
       fprintf(stderr, "loom: foul south (%u pages, %u old): %s\r\n",
                       pgs_w, old_w, strerror(errno));
       c3_assert(0);
+    }
+
+    //  protect guard page if clobbered
+    //
+    //    NB: > pgs_w is precluded by assertion in _ce_patch_compose()
+    //
+    if ( (gar_pag_p >> u3a_page) >= (u3a_pages - (old_w + 1)) ) {
+      fprintf(stderr, "loom: guard on reprotect\r\n");
+      if ( 0 != mprotect(u3a_into(gar_pag_p), pag_siz_i, PROT_NONE) ) {
+        fprintf(stderr, "loom: failed to protect guard page: %s\r\n",
+                        strerror(errno));
+        c3_assert(0);
+      }
     }
 
     _ce_loom_track_south(pgs_w, dif_w);
@@ -941,6 +967,19 @@ _ce_loom_mapf_north(c3_i fid_i, c3_w pgs_w, c3_w old_w)
       fprintf(stderr, "loom: anonymous mmap failed (%u pages, %u old): %s\r\n",
                       pgs_w, old_w, strerror(errno));
       c3_assert(0);
+    }
+
+    //  protect guard page if clobbered
+    //
+    //    NB: < pgs_w is precluded by assertion in _ce_patch_compose()
+    //
+    if ( (gar_pag_p >> u3a_page) < old_w ) {
+      fprintf(stderr, "loom: guard on remap\r\n");
+      if ( 0 != mprotect(u3a_into(gar_pag_p), pag_siz_i, PROT_NONE) ) {
+        fprintf(stderr, "loom: failed to protect guard page: %s\r\n",
+                        strerror(errno));
+        c3_assert(0);
+      }
     }
 
     _ce_loom_track_north(pgs_w, dif_w);
