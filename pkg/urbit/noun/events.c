@@ -99,10 +99,10 @@
 static u3p(c3_w) gar_pag_p;
 
 //! Urbit page size in 4-byte words.
-static const size_t pag_wiz_i = (size_t)1 << u3a_page;
+#define pag_wiz_i  ((size_t)1 << u3a_page)
 
 //! Urbit page size in bytes.
-static const size_t pag_siz_i = (size_t)1 << (u3a_page + 2);
+#define pag_siz_i  ((size_t)1 << (u3a_page + 2))
 
 #ifdef U3_SNAPSHOT_VALIDATION
 /* Image check.
