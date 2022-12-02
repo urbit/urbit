@@ -50,6 +50,28 @@
 //!   - memory protections (and file-backed mappings) are re-established.
 //!   - patch files are deleted.
 //!
+//! ### invariants
+//!
+//!  definitions:
+//!    - a clean page is PROT_READ and 0 in the bitmap
+//!    - a dirty page is (PROT_READ|PROT_WRITE) and 1 in the bitmap
+//!    - the guard page is PROT_NONE and 1 in the bitmap (XX assumed)
+//!
+//!  assumptions:
+//!    - all memory access patterns are outside-in, a page at a time
+//!      - ad-hoc exceptions are supported by calling u3e_ward()
+//!
+//!  - there is a single guard page, between the segments
+//!  - dirty pages only become clean by being:
+//!    - loaded from a snapshot during initialization
+//!    - present in a snapshot after save
+//!  - clean pages only become dirty by being:
+//!    - modified (and caught by the fault handler)
+//!    - orphaned due to segment truncation (explicitly dirtied)
+//!  - at points of quiescence (initialization, after save)
+//!    - all pages of the north and south segments are clean
+//!    - all other pages are dirty
+//!
 //! ### limitations
 //!
 //!   - loom page size is fixed (16 KB), and must be a multiple of the
