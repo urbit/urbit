@@ -2810,7 +2810,7 @@
         =|  unsent=(list static-fragment)
         |%
         +|  %helpers
-        ++  this  .
+        ++  pack  .
         ::  XX  +abut: abet with gifts
         ::
         ++  abut  [unsent abet]
@@ -2845,7 +2845,7 @@
         ::
         ++  call
           |=  task=packet-pump-task
-          ^+  this
+          ^+  pack
           ::
           ?-  -.task
             %hear  (on-hear [message-num fragment-num]:task)
@@ -2858,7 +2858,7 @@
         ::
         ++  feed
           |=  fragments=(list static-fragment)
-          ^+  this
+          ^+  pack
           ::
           ::  bite off as many fragments as we can send
           ::
@@ -2868,7 +2868,7 @@
           ::
           ::  if nothing to send, we're done
           ::
-          ?~  sent  this
+          ?~  sent  pack
           ::  convert $static-fragment's into +ordered-set [key val] pairs
           ::
           =/  send-list
@@ -2892,14 +2892,14 @@
             %+  roll  sent
             |=  [packet=static-fragment core=_peer-core]
             (send-shut-packet bone [message-num %& +]:packet)
-          this
+          pack
         ::
         +|  %tasks
         ::  +on-prod: reset congestion control, re-send packets
         ::
         ++  on-prod
-          ^+  this
-          ?:  =(~ next-wake.state)  this
+          ^+  pack
+          ?:  =(~ next-wake.state)  pack
           ::
           =.  metrics.state  %*(. *pump-metrics counter counter.metrics.state)
           =.  live.state
@@ -2908,9 +2908,9 @@
           ::
           =/  sot  (max 1 num-slots:gauge)
           =/  liv  live.state
-          |-  ^+  this
-          ?:  =(0 sot)  this
-          ?:  =(~ liv)  this
+          |-  ^+  pack
+          ?:  =(0 sot)  pack
+          ?:  =(~ liv)  pack
           =^  hed  liv  (pop:packet-queue liv)
           =.  peer-core
             (send-shut-packet bone [message-num %& +]:(to-static-fragment hed))
@@ -2919,7 +2919,7 @@
         ::
         ++  on-wake
           |=  current=message-num
-          ^+  this
+          ^+  pack
           ::  assert temporal coherence
           ::
           ?<  =(~ next-wake.state)
@@ -2938,7 +2938,7 @@
                     =/  nums  [message-num fragment-num]:u.static-fragment
                     |.("dead {<nums^show:gauge>}")
                 (send-shut-packet bone [message-num %& +]:u.static-fragment)
-              this
+              pack
           ::
           %^  (dip:packet-queue _acc)  live.state  acc
           |=  $:  acc=_acc
@@ -2965,13 +2965,13 @@
         ::
         ++  on-hear
           |=  [=message-num =fragment-num]
-          ^+  this
+          ^+  pack
           ::
           =-  ::  if no sent packet matches the ack, skip mutations or effects
               ::
               ?.  found.-
                 %-  (pu-trace snd.veb |.("miss {<show:gauge>}"))
-                this
+                pack
               ::
               =.  metrics.state  metrics.-
               =.  live.state     live.-
@@ -3035,7 +3035,7 @@
         ::
         ++  on-done
           |=  =message-num
-          ^+  this
+          ^+  pack
           ::
           =;  [metrics=_metrics.state live=_live.state]
               =:  metrics.state  metrics
@@ -3067,7 +3067,7 @@
         ::  +set-wake: set, unset, or reset timer, emitting moves
         ::
         ++  set-wake
-          ^+  this
+          ^+  pack
           ::  if nonempty .live, pry at head to get next wake time
           ::
           =/  new-wake=(unit @da)
@@ -3076,7 +3076,7 @@
             `(next-expiry:gauge u.head)
           ::  no-op if no change
           ::
-          ?:  =(new-wake next-wake.state)  this
+          ?:  =(new-wake next-wake.state)  pack
           ::  unset old timer if non-null
           ::
           =?  peer-core  !=(~ next-wake.state)
@@ -3089,7 +3089,7 @@
           =?  next-wake.state  !=(~ next-wake.state)   ~  ::  unset
           =?  next-wake.state  ?=(^ new-wake)   new-wake  ::  reset
           ::
-          this
+          pack
         ::
         +|  %internals
         ::
@@ -3100,14 +3100,14 @@
         ::
         ++  fast-resend-after-ack
           |=  [=message-num =fragment-num]
-          ^+  this
+          ^+  pack
           =;  res=[resends=(list static-fragment) live=_live.state]
             =.  live.state  live.res
             =.  peer-core
               %+  reel  resends.res
               |=  [packet=static-fragment core=_peer-core]
               (send-shut-packet bone [message-num %& +]:packet)
-            this
+            pack
           ::
           =/  acc
             resends=*(list static-fragment)
@@ -3136,8 +3136,8 @@
       |=  [=bone state=message-sink-state]
       |%
       +|  %helpers
-      ++  this  .
-      ++  abed  this(state (~(gut by rcv.peer-state) bone *message-sink-state))
+      ++  sink  .
+      ++  abed  sink(state (~(gut by rcv.peer-state) bone *message-sink-state))
       ++  abet  peer-core(rcv.peer-state (~(put by rcv.peer-state) bone state))
       ++  mi-trace
         |=  [verb=? print=(trap tape)]
@@ -3153,10 +3153,10 @@
       ::
       ++  call
         |=  task=message-sink-task
-        ^+  this
-        ?:  corked  this
+        ^+  sink
+        ?:  corked  sink
         ?-  -.task
-          %drop  this(nax.state (~(del in nax.state) message-num.task))
+          %drop  sink(nax.state (~(del in nax.state) message-num.task))
           %done  (done ok.task)
           %hear  (hear closing [lane shut-packet ok]:task)
         ==
@@ -3166,7 +3166,7 @@
       ::
       ++  hear
         |=  [closing=? =lane =shut-packet ok=?]
-        ^+  this
+        ^+  sink
         ::  we know this is a fragment, not an ack; expose into namespace
         ::
         ?>  ?=(%& -.meat.shut-packet)
@@ -3177,7 +3177,7 @@
         ::  ignore messages from far future; limit to 10 in progress
         ::
         ?:  (gte seq (add 10 last-acked.state))
-          %.  this
+          %.  sink
           %+  mi-trace  odd.veb
           |.("future %hear {<seq=seq^last-acked=last-acked.state>}")
         ::
@@ -3189,14 +3189,14 @@
             ::  single packet ack
             ::
             =.  peer-core  (send-shut-packet bone seq %| %& fragment-num)
-            %.  this
+            %.  sink
             %+  mi-trace  rcv.veb
             |.("send dupe ack {<seq=seq^fragment-num=fragment-num>}")
           ::  whole message (n)ack
           ::
           =/       ok=?  !(~(has in nax.state) seq)
           =.  peer-core  (send-shut-packet bone seq %| %| ok lag=`@dr`0)
-          %.  this
+          %.  sink
           (mi-trace rcv.veb |.("send dupe message ack {<seq=seq>} ok={<ok>}"))
         ::  last-acked<seq<=last-heard; heard message, unprocessed
         ::
@@ -3208,7 +3208,7 @@
             ::  if not from a closing bone, drop last packet,
             ::  since we don't know whether to ack or nack
             ::
-            %.  this
+            %.  sink
             %+  mi-trace  rcv.veb
             |.  ^-  tape
             =/  data
@@ -3220,7 +3220,7 @@
           ::  ack all other packets
           ::
           =.  peer-core  (send-shut-packet bone seq %| %& fragment-num)
-          %.  this
+          %.  sink
           %+  mi-trace  rcv.veb  |.
           =/  data
             :*  seq=seq  fragment-num=fragment-num
@@ -3247,13 +3247,13 @@
         ::
         ?:  already-heard-fragment
           ?:  is-last-fragment
-            %.  this
+            %.  sink
             %+  mi-trace  rcv.veb  |.
             =/  data
               [her.channel seq=seq lh=last-heard.state la=last-acked.state]
             "hear last dupe {<data>}"
           =.  peer-core  (send-shut-packet bone seq %| %& fragment-num)
-          %.  this
+          %.  sink
           %+  mi-trace  rcv.veb
           |.("send dupe ack {<her.channel^seq=seq^fragment-num=fragment-num>}")
         ::  new fragment; store in state and check if message is done
@@ -3276,19 +3276,19 @@
           (send-shut-packet bone seq %| %& fragment-num)
         ::  enqueue all completed messages starting at +(last-heard.state)
         ::
-        |-  ^+  this
+        |-  ^+  sink
         ::  if this is not the next message to ack, we're done
         ::
         ?.  =(seq +(last-heard.state))
-          this
-        ::  if we haven't heard anything from this message, we're done
+          sink
+        ::  if we haven't heard anything from sink message, we're done
         ::
         ?~  live=(~(get by live-messages.state) seq)
-          this
+          sink
         ::  if the message isn't done yet, we're done
         ::
         ?.  =(num-received num-fragments):u.live
-          this
+          sink
         ::  we have whole message; update state, assemble, and send to vane
         ::
         =.  last-heard.state     +(last-heard.state)
@@ -3303,14 +3303,14 @@
         =.  pending-vane-ack.state
           (~(put to pending-vane-ack.state) seq message)
         ::
-        =?  this  empty  (handle-sink seq message ok)
+        =?  sink  empty  (handle-sink seq message ok)
         ::
         $(seq +(seq))
       ::  +done: handle confirmation of message processing from vane
       ::
       ++  done
         |=  ok=?
-        ^+  this
+        ^+  sink
         =^  pending  pending-vane-ack.state  ~(get to pending-vane-ack.state)
         =/  =message-num  message-num.p.pending
         ::
@@ -3319,7 +3319,7 @@
         ::
         =.  peer-core  (send-shut-packet bone message-num %| %| ok lag=`@dr`0)
         ?~  next=~(top to pending-vane-ack.state)
-          this
+          sink
         (handle-sink message-num.u.next message.u.next ok)
       ::
       +|  %implementation  ::  XX ?
@@ -3332,21 +3332,21 @@
       ::
       ++  handle-sink
         |=  [=message-num message=* ok=?]
-        |^  ^+  this
+        |^  ^+  sink
         ?:  =(1 (end 0 bone))          sink-plea
         ?:  =(0 (end 0 (rsh 0 bone)))  sink-boon
         sink-nack
         ::  XX  FIXME: impure +abet pattern
         ++  sink-plea
-          ^+  this
-          ?:  |(closing corked)  this
+          ^+  sink
+          ?:  |(closing corked)  sink
           %-  %+  mi-trace  msg.veb
               =/  dat  [her.channel bone=bone message-num=message-num]
               |.("sink plea {<dat>}")
           =;  po=_peer-core
             =.  peer-core  po
-            =?  this  !ok  (call %done ok=%.n)
-            this
+            =?  sink  !ok  (call %done ok=%.n)
+            sink
           ?.  ok
             ::  send nack-trace with blank .error for security
             ::
@@ -3386,8 +3386,8 @@
         ::    in %ames itself.
         ::
         ++  sink-boon
-          ^+  this
-          ?:  |(closing corked)  this
+          ^+  sink
+          ?:  |(closing corked)  sink
           %-  %+  mi-trace  msg.veb  |.
               ::  XX -.task not visible, FIXME
               ::
@@ -3407,7 +3407,7 @@
           (call %done ok=%.y)
         ::
         ++  sink-nack
-          ^+  this
+          ^+  sink
           %-  %+  mi-trace  msg.veb
               =/  dat  [her.channel bone=bone message-num=message-num]
               |.("sink naxplanation {<dat>}")
