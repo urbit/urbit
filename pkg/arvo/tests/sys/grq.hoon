@@ -2,7 +2,7 @@
 ::
 /+  *test, v=test-ames-gall
 |%
-++  test-watch
+++  disabled-test-watch
   %-  run-chain
   |.  :-  %|
   =+  nec-bud:v
