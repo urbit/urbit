@@ -313,6 +313,7 @@
         c3_c*   puf_c;                      //  -Z, scry result format
         c3_o    con;                        //      run conn
         c3_o    doc;                        //      dock binary in pier
+        c3_o    map;                        //  --no-demand (reversed)
       } u3_opts;
 
     /* u3_host: entire host.
