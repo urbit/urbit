@@ -68,7 +68,7 @@
 ::
 |%
 +$  axle
-  $:  %~2023.2.17
+  $:  %~2023.3.16
       =server-state
   ==
 ::  +server-state: state relating to open inbound HTTP connections
@@ -84,6 +84,9 @@
       ::    the :binding into a (map (unit @t) (trie knot =action)).
       ::
       bindings=(list [=binding =duct =action])
+      ::  cache: mapping from url to versioned entry
+      ::
+      cache=(map url=@t [aeon=@ud val=(unit cache-entry)])
       ::  cors-registry: state used and managed by the +cors core
       ::
       =cors-registry
@@ -672,6 +675,11 @@
           =-  (fall - '*')
           (get-header:http 'access-control-request-headers' headers)
       ==
+    ::  handle requests to the cache
+    ::
+    =/  entry  (~(get by cache.state) url.request)
+    ?:  &(?=(^ entry) ?=(%'GET' method.request))
+      (handle-cache-req authenticated request val.u.entry)
     ::
     ?-    -.action
         %gen
@@ -764,6 +772,37 @@
       (error-response 405 "may only GET name")
     %^  return-static-data-on-duct  200  'text/plain'
     (as-octs:mimes:html (scot %p our))
+  ::  +handle-cache-req: respond with cached value, 404 or 500
+  ::
+  ++  handle-cache-req
+    |=  [authenticated=? =request:http entry=(unit cache-entry)]
+    |^  ^-  (quip move server-state)
+    ?~  entry
+      (error-response 404 "cache entry for that binding was deleted")
+    ?:  &(auth.u.entry !authenticated)
+      (error-response 403 ~)
+    =*  body  body.u.entry
+    ?-    -.body
+        %payload
+      %-  handle-response
+      :*  %start
+          response-header.simple-payload.body
+          data.simple-payload.body
+          complete=%.y
+      ==
+    ::
+        %scry
+      ?~  path.body  (error-response 500 "invalid scry path")
+      ?~  bem=(de-beam t.path.body)  (error-response 500 "invalid scry path")
+      =/  res=(unit (unit cage))  (rof ~ i.path.body u.bem)
+      ?~  res    (error-response 500 "failed scry")
+      ?~  u.res  (error-response 404 "no scry result")
+      =*  vase   q.u.u.res
+      ?.  ?=(@ q.vase)
+        (error-response 500 "scry result is not an atom")
+      %^  return-static-data-on-duct  200  'text/html'
+      (as-octs:mimes:html q.vase)
+    ==
     ::
     ++  error-response
       |=  [status=@ud =tape]
@@ -2032,6 +2071,15 @@
           %leave  ~
       ==
     --
+  ::  +set-response: remember (or update) a cache mapping
+  ::
+  ++  set-response
+    |=  [url=@t entry=(unit cache-entry)]
+    ^-  [(list move) server-state]
+    =/  aeon  ?^(prev=(~(get by cache.state) url) +(aeon.u.prev) 1)
+    =.  cache.state  (~(put by cache.state) url [aeon entry])
+    :_  state
+    [duct %give %grow /cache/(scot %u aeon)/(scot %t url)]~
   ::  +add-binding: conditionally add a pairing between binding and action
   ::
   ::    Adds =binding =action if there is no conflicting bindings.
@@ -2318,6 +2366,12 @@
     ::  save duct for future %give to unix
     ::
     =.  outgoing-duct.server-state.ax  duct
+    ::  send all cache mappings to runtime
+    ::
+    =/  cache-moves=(list move)
+      %+  turn  ~(tap by cache.server-state.ax)
+      |=  [url=@t cache-val=[aeon=@ud val=(unit cache-entry)]]
+      [duct %give %grow /cache/(scot %u aeon.cache-val)/(scot %t url)]
     ::
     :_  http-server-gate
     :*  ::  hand back default configuration for now
@@ -2329,6 +2383,8 @@
         (per-server-event [eny duct now rof] server-state.ax)
       ::
         closed-connections
+      ::
+        cache-moves
     ==
   ::
   ?:  ?=(%code-changed -.task)
@@ -2447,6 +2503,10 @@
       %spew
     =.  verb.server-state.ax  veb.task
     `http-server-gate
+  ::
+      %set-response
+    =^  moves  server-state.ax  (set-response:server +.task)
+    [moves http-server-gate]
   ==
 ::
 ++  take
@@ -2638,7 +2698,8 @@
       +$  axle-any
         $%  [%~2020.10.18 =server-state-0]
             [%~2022.7.26 =server-state-0]
-            [%~2023.2.17 =server-state]
+            [%~2023.2.17 =server-state-1]
+            [%~2023.3.16 =server-state]
         ==
       +$  server-state-0
         $:  bindings=(list [=binding =duct =action])
@@ -2651,6 +2712,18 @@
             ports=[insecure=@ud secure=(unit @ud)]
             outgoing-duct=duct
         ==
+      +$  server-state-1
+        $:  bindings=(list [=binding =duct =action])
+            =cors-registry
+            connections=(map duct outstanding-connection)
+            =authentication-state
+            =channel-state
+            domains=(set turf)
+            =http-config
+            ports=[insecure=@ud secure=(unit @ud)]
+            outgoing-duct=duct
+            verb=@
+        ==
       --
   |=  old=axle-any
   ^+  ..^$
@@ -2659,8 +2732,9 @@
     =,  server-state-0.old
     %=  ..^$
       ax  ^-  axle
-          :*  %~2023.2.17
+          :*  %~2023.3.16
               (insert-binding [[~ /~/name] outgoing-duct [%name ~]] bindings)
+              *(map url=@t [aeon=@ud val=(unit cache-entry)])
               cors-registry
               connections
               authentication-state
@@ -2676,8 +2750,9 @@
     =,  server-state-0.old
     %=  ..^$
       ax  ^-  axle
-          :*  %~2023.2.17
+          :*  %~2023.3.16
               bindings
+              *(map url=@t [aeon=@ud val=(unit cache-entry)])
               cors-registry
               connections
               authentication-state
@@ -2689,7 +2764,26 @@
               0
     ==    ==
   ::
+  ::
       %~2023.2.17
+    =,  server-state-1.old
+    %=  ..^$
+      ax  ^-  axle
+          :*  %~2023.3.16
+              bindings
+              *(map url=@t [aeon=@ud val=(unit cache-entry)])
+              cors-registry
+              connections
+              authentication-state
+              channel-state
+              domains
+              http-config
+              ports
+              outgoing-duct
+              verb
+    ==    ==
+  ::
+      %~2023.3.16
     ::  enable https redirects if certificate configured
     ::
     =.  redirect.http-config.server-state.old
@@ -2757,6 +2851,13 @@
       %-  =<  request-is-logged-in:authentication
           (per-server-event [eny *duct now rof] server-state.ax)
       %*(. *request:http header-list ['cookie' u.cookies]~)
+    ::
+        [%cache @ @ ~]
+      ?~  aeon=(slaw %u i.t.tyl)         [~ ~]
+      ?~  url=(slaw %t i.t.t.tyl)        [~ ~]
+      ?~  entry=(~(get by cache) u.url)  [~ ~]
+      ?.  =(u.aeon aeon.u.entry)         [~ ~]
+      ``noun+!>(val.u.entry)
     ==
   ?.  ?=(%$ ren)
     [~ ~]
