@@ -298,7 +298,6 @@
       hoy=(map ship rung)                               ::  foreign
       ran=rang                                          ::  hashes
       fad=flow                                          ::  ford cache
-      zuz=(map weft vase)                               ::  zuse cache
       mon=(map term beam)                               ::  mount points
       hez=(unit duct)                                   ::  sync duct
       cez=(map @ta crew)                                ::  permission groups
@@ -306,6 +305,7 @@
       tur=rock:tire                                     ::  last tire
       pud=(unit [=desk =yoki])                          ::  pending update
       bug=[veb=@ mas=@]                                 ::  verbosity
+      zuz=(map weft vase)                               ::  zuse cache
   ==                                                    ::
 ::
 ::  Unvalidated response to a request.
@@ -4861,7 +4861,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%13                                       ::  vane version
+    $:  ver=%14                                       ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
@@ -5191,7 +5191,8 @@
 ++  load
   =>  |%
       +$  raft-any
-        $%  [%13 raft-13]
+        $%  [%14 raft]
+            [%13 raft-13]
             [%12 raft-12]
             [%11 raft-11]
             [%10 raft-10]
@@ -5200,12 +5201,66 @@
             [%7 raft-7]
             [%6 raft-6]
         ==
-      +$  raft-13  raft
+      +$  raft-13
+        $:  rom=room-13
+            hoy=(map ship rung-13)
+            ran=rang
+            fad=flow-13
+            mon=(map term beam)
+            hez=(unit duct)
+            cez=(map @ta crew)
+            tyr=(set duct)
+            tur=rock:tire
+            pud=(unit [=desk =yoki])
+            bug=[veb=@ mas=@]
+        ==
+      +$  room-13
+        $:  hun=duct
+            dos=(map desk dojo-13)
+        ==
+      +$  rung-13
+        $:  rus=(map desk rede-13)
+        ==
+      +$  dojo
+        $:  qyx=cult
+            dom=dome-13
+            per=regs
+            pew=regs
+            fiz=melt
+        ==
+      +$  rede-13
+        $:  lim=@da
+            ref=(unit rind)
+            qyx=cult
+            dom=dome-13
+            per=regs
+            pew=regs
+            fiz=melt
+        ==
+      +$  dome-13
+        $:  let=aeon
+            hit=(map aeon tako)
+            lab=(map @tas aeon)
+            tom=(map tako norm)
+            nor=norm
+            mim=(map path mime)
+            fod=flue-13
+            wic=(map weft yoki)
+            liv=zest
+            ren=rein
+        ==
+      +$  flow-13  (map leak-13 [refs=@ud =soak])
+      +$  flue-13  [spill=(set leak-13) sprig=(map mist [leak=leak-13 =soak])]
+      +$  leak-13
+        $~  [*pour ~]
+        $:  =pour
+            deps=(set leak-13)
+        ==
       +$  raft-12
         $:  rom=room-11
             hoy=(map ship rung-11)
             ran=rang
-            fad=flow
+            fad=flow-13
             mon=(map term beam)
             hez=(unit duct)
             cez=(map @ta crew)
@@ -5216,7 +5271,7 @@
         $:  rom=room-11
             hoy=(map ship rung-11)
             ran=rang
-            fad=flow
+            fad=flow-13
             mon=(map term beam)
             hez=(unit duct)
             cez=(map @ta crew)
@@ -5240,7 +5295,7 @@
             tom=(map tako norm)
             nor=norm
             mim=(map path mime)
-            fod=flue
+            fod=flue-13
         ==
       +$  rung-11
         $:  rus=(map desk rede-11)
@@ -5473,7 +5528,8 @@
   =?  old  ?=(%10 -.old)  11+(raft-10-to-11 +.old)
   =?  old  ?=(%11 -.old)  12+(raft-11-to-12 +.old)
   =?  old  ?=(%12 -.old)  13+(raft-12-to-13 +.old)
-  ?>  ?=(%13 -.old)
+  =?  old  ?=(%13 -.old)  14+(raft-13-to-14 +.old)
+  ?>  ?=(%14 -.old)
   ..^^$(ruf +.old)
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
   ::
@@ -5525,7 +5581,7 @@
       |=  =dojo-8
       ^-  dojo-10
       =/  dom  dom.dojo-8
-      dojo-8(dom [ank.dom let.dom hit.dom lab.dom mim.dom *flow])
+      dojo-8(dom [ank.dom let.dom hit.dom lab.dom mim.dom *flow-13])
     ::
         hoy
       %-  ~(run by hoy.raf)
@@ -5534,7 +5590,7 @@
       |=  =rede-8
       ^-  rede-10
       =/  dom  dom.rede-8
-      rede-8(dom [ank.dom let.dom hit.dom lab.dom mim.dom *flow])
+      rede-8(dom [ank.dom let.dom hit.dom lab.dom mim.dom *flow-13])
     ==
   ::  +raft-9-to-10: add .dist-upgraded
   ::
@@ -5633,7 +5689,7 @@
       ==
     ::
         |3
-      :-  *flow
+      :-  *flow-13
       %=  |3.raf
         mon  (~(run by mon.raf) |=(=beam beam(r ud+0)))
         |3   pud.raf
@@ -5729,6 +5785,45 @@
       |=  dom=dome-11
       ^-  dome
       dom(fod [fod.dom ~ liv=%dead ren=~])
+    --
+  ::  +raft-13-to-14
+  ::
+  ::    add .wef to $dome's
+  ::    add .zuz zuse cache to $raft
+  ::    add weft to $leak
+  ::
+  ++  raft-13-to-14
+    |=  raf=raft-13
+    |^  ^-  raft
+    %=  raf
+      dos.rom  (~(run by dos.rom.raf) dojo-13-to-14)
+      hoy      (~(run by hoy.raf) rung-13-to-14)
+      fad      ~
+      bug      [bug.raf zuz=*(map weft vase)]
+    ==
+    ::
+    ++  rung-13-to-14
+      |=  rug=rung-13
+      ^-  rung
+      rug(rus (~(run by rus.rug) rede-13-to-14))
+    ::
+    ++  rede-13-to-14
+      |=  red=rede-13
+      ^-  rede
+      red(dom (dome-13-to-14 dom.red))
+    ::
+    ++  dojo-13-to-14
+      |=  doj=dojo-13
+      ^-  dojo
+      doj(dom (dome-13-to-14 dom.doj))
+    ::
+    ++  dome-13-to-14
+      |=  dom=dome-13
+      ^-  dome
+      %=  dom
+        fod  [~ ~]
+        ren  [ren.dom wef=*weft]
+      ==
     --
   --
 ::
