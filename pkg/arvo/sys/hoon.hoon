@@ -20,7 +20,7 @@
 +|  %math
 ++  add
   ~/  %add
-  ::  unsigned addition
+  ::    unsigned addition
   ::
   ::  a: augend
   ::  b: addend
@@ -32,7 +32,7 @@
 ::
 ++  dec
   ~/  %dec
-  ::  unsigned decrement by one.
+  ::    unsigned decrement by one.
   |=  a=@
   ~_  leaf+"decrement-underflow"
   ?<  =(0 a)
@@ -44,7 +44,7 @@
 ::
 ++  div
   ~/  %div
-  ::  unsigned divide
+  ::    unsigned divide
   ::
   ::  a: dividend
   ::  b: divisor
@@ -60,7 +60,7 @@
 ::
 ++  dvr
   ~/  %dvr
-  ::  unsigned divide with remainder
+  ::    unsigned divide with remainder
   ::
   ::  a: dividend
   ::  b: divisor
@@ -126,7 +126,7 @@
 ::
 ++  max
   ~/  %max
-  ::  unsigned maximum
+  ::    unsigned maximum
   |=  [a=@ b=@]
   ::  the maximum
   ^-  @
@@ -135,7 +135,7 @@
 ::
 ++  min
   ~/  %min
-  ::  unsigned minimum
+  ::    unsigned minimum
   |=  [a=@ b=@]
   ::  the minimum
   ^-  @
@@ -144,7 +144,7 @@
 ::
 ++  mod
   ~/  %mod
-  ::  unsigned modulus
+  ::    unsigned modulus
   ::
   ::  a: dividend
   ::  b: divisor
@@ -156,7 +156,7 @@
 ::
 ++  mul
   ~/  %mul
-  ::  unsigned multiplication
+  ::    unsigned multiplication
   ::
   ::  a: multiplicand
   ::  b: multiplier
@@ -170,7 +170,7 @@
 ::
 ++  sub
   ~/  %sub
-  ::  unsigned subtraction
+  ::    unsigned subtraction
   ::
   ::  a: minuend
   ::  b: subtrahend
@@ -414,25 +414,25 @@
   $@(~ [~ u=item])
 --  =>
 ::                                                      ::
-::::  2: layer two                                      ::
+::::    2: layer two                                    ::
   ::                                                    ::
-  ::    2a: unit logic                                  ::
-  ::    2b: list logic                                  ::
-  ::    2c: bit arithmetic                              ::
-  ::    2d: bit logic                                   ::
-  ::    2e: insecure hashing                            ::
-  ::    2f: noun ordering                               ::
-  ::    2g: unsigned powers                             ::
-  ::    2h: set logic                                   ::
-  ::    2i: map logic                                   ::
-  ::    2j: jar and jug logic                           ::
-  ::    2k: queue logic                                 ::
-  ::    2l: container from container                    ::
-  ::    2m: container from noun                         ::
-  ::    2n: functional hacks                            ::
-  ::    2o: normalizing containers                      ::
-  ::    2p: serialization                               ::
-  ::    2q: molds and mold builders                     ::
+  ::  2a: unit logic                                    ::
+  ::  2b: list logic                                    ::
+  ::  2c: bit arithmetic                                ::
+  ::  2d: bit logic                                     ::
+  ::  2e: insecure hashing                              ::
+  ::  2f: noun ordering                                 ::
+  ::  2g: unsigned powers                               ::
+  ::  2h: set logic                                     ::
+  ::  2i: map logic                                     ::
+  ::  2j: jar and jug logic                             ::
+  ::  2k: queue logic                                   ::
+  ::  2l: container from container                      ::
+  ::  2m: container from noun                           ::
+  ::  2n: functional hacks                              ::
+  ::  2o: normalizing containers                        ::
+  ::  2p: serialization                                 ::
+  ::  2q: molds and mold builders                       ::
   ::
 ~%  %two  +  ~
 |%
@@ -2124,15 +2124,15 @@
         ==
 --  =>
 ::                                                      ::
-::::  3: layer three                                    ::
+::::    3: layer three                                    ::
   ::                                                    ::
-  ::    3a: signed and modular ints                     ::
-  ::    3b: floating point                              ::
-  ::    3c: urbit time                                  ::
-  ::    3d: SHA hash family                             ::
-  ::    3e: (reserved)                                  ::
-  ::    3f: scrambling                                  ::
-  ::    3g: molds and mold builders                     ::
+  ::  3a: signed and modular ints                     ::
+  ::  3b: floating point                              ::
+  ::  3c: urbit time                                  ::
+  ::  3d: SHA hash family                             ::
+  ::  3e: (reserved)                                  ::
+  ::  3f: scrambling                                  ::
+  ::  3g: molds and mold builders                     ::
   ::                                                    ::
 ~%  %tri  +
   ==
@@ -4048,23 +4048,23 @@
           --                                            ::
 --  =>
 ::                                                      ::
-::::  4: layer four                                     ::
+::::    4: layer four                                   ::
   ::                                                    ::
-  ::    4a: exotic bases                                ::
-  ::    4b: text processing                             ::
-  ::    4c: tank printer                                ::
-  ::    4d: parsing (tracing)                           ::
-  ::    4e: parsing (combinators)                       ::
-  ::    4f: parsing (rule builders)                     ::
-  ::    4g: parsing (outside caller)                    ::
-  ::    4h: parsing (ascii glyphs)                      ::
-  ::    4i: parsing (useful idioms)                     ::
-  ::    4j: parsing (bases and base digits)             ::
-  ::    4k: atom printing                               ::
-  ::    4l: atom parsing                                ::
-  ::    4m: formatting functions                        ::
-  ::    4n: virtualization                              ::
-  ::    4o: molds and mold builders                     ::
+  ::  4a: exotic bases                                  ::
+  ::  4b: text processing                               ::
+  ::  4c: tank printer                                  ::
+  ::  4d: parsing (tracing)                             ::
+  ::  4e: parsing (combinators)                         ::
+  ::  4f: parsing (rule builders)                       ::
+  ::  4g: parsing (outside caller)                      ::
+  ::  4h: parsing (ascii glyphs)                        ::
+  ::  4i: parsing (useful idioms)                       ::
+  ::  4j: parsing (bases and base digits)               ::
+  ::  4k: atom printing                                 ::
+  ::  4l: atom parsing                                  ::
+  ::  4m: formatting functions                          ::
+  ::  4n: virtualization                                ::
+  ::  4o: molds and mold builders                       ::
   ::
 ~%    %qua
     +
@@ -6695,14 +6695,14 @@
   ==
 --
 ::                                                      ::
-::::  5: layer five                                     ::
+::::    5: layer five                                   ::
   ::                                                    ::
-  ::    5a: compiler utilities                          ::
-  ::    5b: macro expansion                             ::
-  ::    5c: compiler backend and prettyprinter          ::
-  ::    5d: parser                                      ::
-  ::    5e: molds and mold builders                     ::
-  ::    5f: profiling support (XX remove)               ::
+  ::  5a: compiler utilities                            ::
+  ::  5b: macro expansion                               ::
+  ::  5c: compiler backend and prettyprinter            ::
+  ::  5d: parser                                        ::
+  ::  5e: molds and mold builders                       ::
+  ::  5f: profiling support (XX remove)                 ::
   ::
 ~%    %pen
     +
