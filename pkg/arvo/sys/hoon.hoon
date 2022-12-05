@@ -11568,16 +11568,22 @@
     ::  +apex: prefix comment. may contain batch comments.
     ::
     ::    when a prefix doccord is parsed, it is possible that there is no +gap
-    ::    afterward to be consumed, so we add an additional newline and set back
-    ::    the line of the n
+    ::    afterward to be consumed, so we add an additional newline and
+    ::    decrement the line number in the `hair` of the parser
+    ::
+    ::    the reason for this is that the whitespace parsing under +vast seems
+    ::    to factor more cleanly this way, at least compared to the variations
+    ::    tried without the extra newline. this doesn't mean there isn't a
+    ::    better factorization without it, though.
     ++  apex
       %+  knee  *whit  |.  ~+
       ;~  plug
         |=  tub=nail
         =/  vex
           %.  tub
-          %-  star  %-  myth
-          ;~(pfix (punt leap) (star ace) col col ;~(pose larg smol))
+          %-  star
+          %+  cook  |*([[a=* b=*] c=*] [a b c])
+          ;~(pfix (punt leap) into ;~(pose larg smol))
         ?~  q.vex  vex
         :-  p=p.vex
         %-  some
@@ -11590,6 +11596,10 @@
       ==
     ::
     ::  +apse: postfix comment.
+    ::
+    ::    a one line comment at the end of a line (typically starting at column
+    ::    56) that attaches to the expression starting at the beginning of the
+    ::    current line. does not use a $link.
     ++  apse
     ::TODO consider an intermediate struture instead of $note
       %+  knee  *note  |.  ~+
@@ -11599,12 +11609,12 @@
         ::of a prefix comment instead of postfix
         ::TODO consider special casing $%
         ::;~(less (exit ;~(plug (plus en-link) col ace)) (exit line))
-        (exit line)
+        ;~(pfix into step line)
       ::
         (easy *note)
       ==
     ::
-    ++  leap                                            ::  whitespace less docs
+    ++  leap                                            ::  whitespace w/o docs
       %+  cold  ~
       %-  plus
       ;~  plug
@@ -11624,9 +11634,12 @@
         ;~  plug
           ;~  plug
             (plus en-link)
-            ;~(sfix ;~(pfix col ace (cook crip (star prn))) (just '\0a'))
+            ;~  pose
+              (ifix [;~(plug col ace) (just '\0a')] (cook crip (plus prn)))
+              (ifix [(star ace) (just '\0a')] (easy *cord))
+            ==
           ==
-          ;~(pfix null (rant ;~(pfix step step text)))
+          (rant ;~(pfix step step text))
         ==
       ==
     ::
@@ -11641,24 +11654,21 @@
                 ;~(sfix (plus en-link) col ace)
                 ;~(less ace (easy *cuff))
               ==
-              (cook crip (star prn))
+              ;~(less ace (cook crip (plus prn)))
             ==
             (just '\0a')
           ==
-          ;~(pfix null (rant ;~(pfix step teyt)))
+          (rant ;~(pfix step teyt))
         ==
       ==
     ::
-    ++  myth
-      |*  bod=rule
-      (cook |=([[a=cuff b=cord] c=(list sect)] [a b c]) bod)
     ::
     ++  rant
       |*  sec=rule
       %-  star
       ;~  pfix
-        (into null)
-        (plus (into sec))
+        (ifix [into (just '\0a')] (star ace))
+        (plus (ifix [into (just '\0a')] sec))
       ==
     ::
     ++  null  (cold ~ (star ace))
@@ -11669,36 +11679,22 @@
     ++  step  ;~(plug ace ace)
     ::
     ++  into
-      |*  bod=rule
-      (ifix [;~(plug col col) ;~(plug (just '\0a') (star ace))] bod)
-    ::
-    ++  exit
-      |*  bod=rule
-      ;~(pfix (star ace) col col step bod)
+      ;~(plug (star ace) col col)
     ::
     ++  en-link
       |=  a=nail  %.  a
       %+  knee  *link  |.  ~+
       %-  stew
       ^.  stet  ^.  limo
-      :~  :-  '|'
-          ;~(pfix bar (stag %chat sym))
-          :-  '.'
-          ;~(pfix dot (stag %frag sym))
-          :-  '+'
-          ;~(pfix lus (stag %funk sym))
-          :-  '$'
-          ;~(pfix buc (stag %plan sym))
-          :-  '%'
-          ;~(pfix cen (stag %cone bisk:so))
-          :-  '^'
-          ;~(pfix ket (stag %core sym))
-          :-  '_'
-          ;~(pfix cab (stag %door sym))
-          :-  '='
-          ;~(pfix tis (stag %gate sym))
-          :-  '/'
-          ;~(pfix fas (stag %path sym))
+      :~  :-  '|'  ;~(pfix bar (stag %chat sym))
+          :-  '.'  ;~(pfix dot (stag %frag sym))
+          :-  '+'  ;~(pfix lus (stag %funk sym))
+          :-  '$'  ;~(pfix buc (stag %plan sym))
+          :-  '%'  ;~(pfix cen (stag %cone bisk:so))
+          :-  '^'  ;~(pfix ket (stag %core sym))
+          :-  '_'  ;~(pfix cab (stag %door sym))
+          :-  '='  ;~(pfix tis (stag %gate sym))
+          :-  '/'  ;~(pfix fas (stag %path sym))
       ==
     --
   ::
