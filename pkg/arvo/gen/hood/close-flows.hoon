@@ -71,7 +71,7 @@
 ?~  duct  ~
 ::  inspect the wires in the duct, looking for subscriptions
 ::
-?.  ?=([%gall %use sub=@ @ %out @ @ nonce=@ pub=@ ~] i.duct)
+?.  ?=([%gall %use sub=@ @ %out @ @ nonce=@ pub=@ *] i.duct)
   $(duct t.duct)
 ::  extra security check so we know that the nonce is a number
 ::
