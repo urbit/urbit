@@ -1183,6 +1183,7 @@
       %vega  on-vega:event-core
       %plea  (on-plea:event-core [ship plea]:task)
       %cork  (on-cork:event-core ship.task)
+      %kroc  (on-kroc:event-core ship.task bone.task)
     ==
   ::
   [moves ames-gate]
@@ -1907,6 +1908,31 @@
         =/  sndr  [our our-life.channel]
         =/  rcvr  [ship her-life.channel]
         "cork plea {<sndr rcvr bone=bone vane.plea path.plea>}"
+    abet:(on-memo:(make-peer-core peer-state channel) bone plea %plea)
+  ::  +on-kroc: explicitly cork a flow on the provided bone
+  ::    TODO: refactor
+  ::
+  ++  on-kroc
+    |=  [=ship =bone]
+    ^+  event-core
+    =/  =plea       [%$ /flow [%cork ~]]
+    =/  ship-state  (~(get by peers.ames-state) ship)
+    ?.  ?=([~ %known *] ship-state)
+      %+  enqueue-alien-todo  ship
+      |=  todos=alien-agenda
+      todos(messages [[duct plea] messages.todos])
+    =/  =peer-state  +.u.ship-state
+    ?.  (~(has by by-bone.ossuary.peer-state) bone)
+      ~&  >>>  %dont-have-it^ship^bone
+      event-core
+    =/  =channel  [[our ship] now channel-state -.peer-state]
+    ::
+    =.  closing.peer-state  (~(put in closing.peer-state) bone)
+    %-  %^  trace  msg.veb  ship
+        |.  ^-  tape
+        =/  sndr  [our our-life.channel]
+        =/  rcvr  [ship her-life.channel]
+        "cork plea {<sndr^rcvr^bone=bone^vane.plea^path.plea>}"
     abet:(on-memo:(make-peer-core peer-state channel) bone plea %plea)
   ::  +on-take-wake: receive wakeup or error notification from behn
   ::

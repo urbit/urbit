@@ -352,6 +352,7 @@
   ::    %heed: track peer's responsiveness; gives %clog if slow
   ::    %jilt: stop tracking peer's responsiveness
   ::    %cork: request to delete message flow
+  ::    %kroc: request to delete message flow on a specific bone
   ::    %plea: request to send message
   ::
   ::    System and Lifecycle Tasks
@@ -370,6 +371,7 @@
         [%heed =ship]
         [%jilt =ship]
         [%cork =ship]
+        [%kroc =ship =bone]
         $>(%plea vane-task)
     ::
         $>(%born vane-task)
