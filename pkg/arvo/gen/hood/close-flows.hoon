@@ -62,12 +62,18 @@
 ?.  (~(has in forward-flows) target)  ~
 ?~  duct=(~(get by by-bone.ossuary.peer-state) target)
   ~
-=/  =wire  (snag 1 u.duct)
-::  only wires with nonces are subscriptions
+=;  =wire
+  ?~(wire ~ `[ship target])
+::  TMI
 ::
-?.  ?=([%gall %use sub=@ @ %out @ @ nonce=@ pub=@ ~] wire)
-  ~
+=>  .(duct `^duct`duct)
+|-  ^-  wire
+?~  duct  ~
+::  inspect the wires in the duct, looking for subscriptions
+::
+?.  ?=([%gall %use sub=@ @ %out @ @ nonce=@ pub=@ ~] i.duct)
+  $(duct t.duct)
 ::  extra security check so we know that the nonce is a number
 ::
-?~  (rush i.t.t.t.t.t.t.t.wire dem)  ~
-`[ship target]
+?~  (rush i.t.t.t.t.t.t.t.i.duct dem)  ~
+i.duct
