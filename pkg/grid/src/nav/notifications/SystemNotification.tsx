@@ -58,15 +58,7 @@ export const BaseBlockedNotification = ({ bin, lid }: { bin: HarkBin, lid: HarkL
   const count = blockedCharges.length;
 
   const handlePauseOTAs = useCallback(async () => {
-    const otaSponsor = basePike?.sync?.ship;
-    if (!otaSponsor) {
-      return;
-    }
-
-    await toggleInstall('base', otaSponsor);
     await useHarkStore.getState().archiveNote(bin, lid);
-
-    push('/leap/upgrading');
   }, []);
 
   const handleArchiveApps = useCallback(async () => {
@@ -94,12 +86,12 @@ export const BaseBlockedNotification = ({ bin, lid }: { bin: HarkBin, lid: HarkL
       <AppList apps={blockedCharges} labelledBy="blocked-apps" size="xs" className="font-medium" />
       <div className="space-y-6">
         <p>
-          In order to proceed with the System Update, you’ll need to temporarily archive these apps,
-          which will render them unusable, but with data intact.
+          In order to proceed with the System Update, you’ll need to temporarily suspend these apps.
+          This will render them unusable, but with data intact.
         </p>
         <p>
-          Archived apps will automatically un-archive and resume operation when their developer
-          provides an app update.
+          Suspended apps will automatically resume operation when their developer
+          provides an update.
         </p>
       </div>
       <div className="space-x-2">
@@ -110,30 +102,24 @@ export const BaseBlockedNotification = ({ bin, lid }: { bin: HarkBin, lid: HarkL
             className="space-y-6 text-base tracking-tight"
             containerClass="w-full max-w-md"
           >
-            <h2 className="h4">Skip System Update</h2>
+            <h2 className="h4">Delay System Update</h2>
             <p>
-              Skipping the application for an incoming System Update will grant you the ability to
-              continue using incompatible apps at the cost of an urbit that&apos;s not up to date.
-            </p>
-            <p>
-              You can choose to apply System Updates from System Preferences any time.{' '}
-              <a href="https://tlon.io" target="_blank" rel="noreferrer">
-                Learn More
-              </a>
+              Are you sure you want to remain on an old version of Urbit
+              until these apps have been updated?
             </p>
             <div className="flex space-x-6">
               <DialogClose as={Button} variant="secondary">
                 Cancel
               </DialogClose>
               <DialogClose as={Button} variant="caution" onClick={handlePauseOTAs}>
-                Pause OTAs
+                Remain on Old Version
               </DialogClose>
             </div>
           </DialogContent>
         </Dialog>
         <Dialog>
           <DialogTrigger as={NotificationButton}>
-            Archive ({count}) apps and Apply System Update
+            Suspend ({count}) Apps and Apply Update
           </DialogTrigger>
           <DialogContent
             showClose={false}
