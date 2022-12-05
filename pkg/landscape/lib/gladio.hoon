@@ -8,7 +8,7 @@
 +$  card  card:agent:gall
 ::  if false, indicates that OTA should be done in one go, in order to
 ::  allow for testing on partial testnets
-++  split-ota   &
+++  split-ota   |
 ++  import-club
   |=  [=^groups =associations:met =network:gra]
   %-  ~(gas by *imports:club:i)
@@ -94,6 +94,10 @@
 ++  poke-our
   |=  [=dude:gall =cage]
   [%pass /gladio %agent [our.bowl dude] %poke cage]
+::
+++  poke-our-pyre
+  |=  [=ship =dude:gall =cage]
+  [%pass /pyre/gladio/(scot %p ship) %agent [our.bowl dude] %poke cage]
 ++  migrate-start
   ^-  (quip card (set ship))
   =+  network
@@ -150,13 +154,13 @@
       ==
   =/  setup=(list card)
     %+  welp  (migrate-ship our.bowl)
-    :*  (poke-our %groups group-import+!>(imports))
-        (poke-our %chat import-flags+!>(chat-flags))
-        (poke-our %heap import-flags+!>(heap-flags))
-        (poke-our %diary import-flags+!>(diary-flags))
-        (poke-our %chat club-imports+!>(clubs))
+    :*  (poke-our-pyre our.bowl %groups group-import+!>(imports))
+        (poke-our-pyre our.bowl %chat import-flags+!>(chat-flags))
+        (poke-our-pyre our.bowl %heap import-flags+!>(heap-flags))
+        (poke-our-pyre our.bowl %diary import-flags+!>(diary-flags))
+        (poke-our-pyre our.bowl %chat club-imports+!>(clubs))
         ?~  dms  ~
-        (poke-our %chat dm-imports+!>(p.u.dms))^~
+        (poke-our-pyre our.bowl %chat dm-imports+!>(p.u.dms))^~
     ==
   ?.  split-ota
     :_  ~
@@ -184,9 +188,9 @@
     %+  turn  ~(tap in graph-flags)
     |=  =flag:i
     ^-  card
-    (poke-our %graph-store migrated+!>(flag))
-  :~  (poke-our %chat graph-imports+!>(chats))
-      (poke-our %diary graph-imports+!>(diarys))
-      (poke-our %heap graph-imports+!>(links))
-        ==
+    (poke-our-pyre her %graph-store migrated+!>(flag))
+  :~  (poke-our-pyre her %chat graph-imports+!>(chats))
+      (poke-our-pyre her %diary graph-imports+!>(diarys))
+      (poke-our-pyre her %heap graph-imports+!>(links))
+  ==
 --

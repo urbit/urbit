@@ -93,7 +93,7 @@
         :_  cards
         :~  [%pass /pyre/export %agent [our dap]:bowl %poke noun+!>(%export)]
             [%pass /pyre/migrate %agent [our dap]:bowl %poke noun+!>(%migrate)]
-            [%pass / %agent [our %hood]:bowl %poke %kiln-install !>([%groups ~zod %groups])]
+            [%pass / %agent [our %hood]:bowl %poke %kiln-install !>([%groups our.bowl %groups])]
         ==
       ==
     ::
