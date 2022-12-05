@@ -13621,15 +13621,15 @@
     ++  expn  |.  ;~  gunk  rope  loaf                  ::  wing, hoon,
                     ;~(plug loaf (easy ~))              ::  list of one hoon
                   ==                                    ::
-    ++  expo  |.(;~(gunk wise loaf loaf))               ::  =;
-    ++  expp  |.(;~(gunk (butt rick) loaf))             ::  [wing hoon]s, hoon
-    ++  expq  |.(;~(gunk rope loaf loaf))               ::  wing and two hoons
-    ++  expr  |.(;~(gunk loaf wisp))                    ::  hoon and core tail
+    ++  expo  |.(;~(goop wise loaf loaf))               ::  =;
+    ++  expp  |.(;~(goop (butt rick) loaf))             ::  [wing hoon]s, hoon
+    ++  expq  |.(;~(goop rope loaf loaf))               ::  wing and two hoons
+    ++  expr  |.(;~(goop loaf wisp))                    ::  hoon and core tail
     ++  exps  |.((butt hank))                           ::  closed gapped hoons
     ++  expt  |.(;~(gunk wise rope loaf loaf))          ::  =^
     ++  expu  |.(;~(gunk rope loaf (butt hank)))        ::  wing, hoon, hoons
    :: ++  expv  |.((butt rick))                         ::  just changes
-    ++  expw  |.(;~(gunk rope loaf loaf loaf))          ::  wing and three hoons
+    ++  expw  |.(;~(goop rope loaf loaf loaf))          ::  wing and three hoons
     ++  expx  |.(;~(goop ropa loaf loaf))               ::  wings and two hoons
     ++  expy  |.(loaf(bug &))                           ::  hoon with tracing
     ++  expz  |.(;~(goop loan loaf loaf loaf))          ::  spec and three hoons
