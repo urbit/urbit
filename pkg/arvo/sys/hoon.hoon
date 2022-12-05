@@ -13458,7 +13458,6 @@
       ==
     ::
     ++  whip                                            ::  chapter declare
-      ::TODO: handle arm batch comments written above chapter declaration
       %+  cook
         |=  [[a=whit b=term c=note] d=(map term hoon)]
         ^-  [whit (pair term (map term hoon))]
