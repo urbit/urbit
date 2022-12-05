@@ -1,6 +1,6 @@
 /-  *sole
+/+  easy-print=language-server-easy-print
 ::    a library for printing doccords
-::
 =/  debug  |
 =>
   ::    dprint-types
@@ -20,37 +20,37 @@
   ::  $item: the part of a type being inspected
   +$  item
     $%
-        ::  overview of a type
+        ::    overview of a type
         ::
         [%view items=overview]
-        ::  inspecting a full core
+        ::    inspecting a full core
         $:  %core
-            name=tape
-            docs=what
-            sut=type
-            children=(unit item)
+            name=tape                                   ::  arm that built it
+            docs=what                                   ::
+            sut=type                                    ::  [%core *]
+            children=(unit item)                        ::  compiled against
         ==
-        ::  inspecting a single arm on a core
+        ::    inspecting a single arm on a core
         $:  %arm
-            name=tape
-            adoc=what
-            pdoc=what
-            cdoc=what
-            gen=hoon
-            sut=type
+            name=tape                                   ::  arm name
+            adoc=what                                   ::  arm doc
+            pdoc=what                                   ::  product doc
+            cdoc=what                                   ::  $ arm/prod doc
+            gen=hoon                                    ::  arm hoon AST
+            sut=type                                    ::  subject of arm
         ==
-        ::  inspecting a face and what's behind it
+        ::    inspecting a face and what's behind it
         $:  %face
-            name=tape
-            docs=what
-            children=(unit item)
+            name=tape                                   ::  name of face
+            docs=what                                   ::
+            children=(unit item)                        ::  face referent
         ==
-        ::  inspecting a single chapter on a core
+        ::    inspecting a single chapter on a core
         $:  %chapter
-            name=tape
-            docs=what
-            sut=type
-            tom=tome
+            name=tape                                   ::  name of chapter
+            docs=what                                   ::
+            sut=type                                    ::  [%core *]
+            tom=tome                                    ::  tome of chapter
         ==
     ==
   ::
@@ -78,9 +78,10 @@
 ::
 ++  hunt
   |_  [topics=(lest term) sut=type]
-  ++  this  .
+  +*  this  .
   ::+|  %find
   ++  find-item
+    ~?  >>  debug  %find-item
     ^-  (unit item)
     ?-    sut
         %noun      ~
@@ -95,6 +96,7 @@
     ==
   ::
   ++  find-cell
+    ~?  >>  debug  %find-cell
     ?>  ?=([%cell *] sut)
     =/  lhs  find-item:this(sut p.sut)
     ?~  lhs
@@ -102,6 +104,7 @@
     lhs
   ::
   ++  find-core
+    ~?  >>  debug  %find-core
     ?>  ?=([%core *] sut)
     ?:  check-arm
       ?:  check-search
@@ -116,6 +119,7 @@
     recurse-core
   ::
   ++  find-face
+    ~?  >>  debug  %find-face
     ?>  ?=([%face *] sut)
     ?.  ?=(term p.sut)
       ::TODO: handle $tune case
@@ -127,6 +131,7 @@
     find-item:this(sut q.sut, topics t.topics)
   ::
   ++  find-fork
+    ~?  >>  debug  %find-fork
     ?>  ?=([%fork *] sut)
     =/  types=(list type)  ~(tap in p.sut)
     |-
@@ -137,6 +142,7 @@
     res
   ::
   ++  find-hint
+    ~?  >>  debug  %find-hint
     |^
     ?>  ?=([%hint *] sut)
     ?.  ?=([%help *] q.p.sut)
@@ -151,6 +157,7 @@
     ==
     ::
     ++  find-hint-core
+      ~?  >>  debug  %find-hint-core
       ?>  &(?=([%hint *] sut) ?=([%help *] q.p.sut) ?=([%core *] q.sut))
       ::
       ?.  ?&  ((sane %tas) summary.crib.p.q.p.sut)
@@ -162,6 +169,7 @@
       find-item:this(sut q.sut, topics t.topics)
     ::
     ++  find-hint-face
+      ~?  >>  debug  %find-hint-face
       ?>  &(?=([%hint *] sut) ?=([%help *] q.p.sut) ?=([%face *] q.sut))
       ?:  check-face:this(sut q.sut)
         ?~  t.topics
@@ -172,42 +180,61 @@
   ::
   ::+|  %recurse
   ++  recurse-core
+    ~?  >>  debug  %recurse-core
     ?>  ?=([%core *] sut)
     find-item:this(sut p.sut)
   ++  recurse-chap
+    ~?  >>  debug  %recurse-chap
     ?>  ?=([%core *] sut)
     ?~  t.topics  !!
     find-item:this(topics t.topics)
   ++  recurse-arm-core
+    ~?  >>  debug  %recurse-arm-core
     ?>  ?=([%core *] sut)
     ?~  t.topics  !!
     find-item:this(sut arm-type, topics t.topics)
   ::
   ::+|  %check
-  ++  check-arm  !=(~ (find ~[i.topics] (sloe sut)))
+  ++  check-arm
+    ~?  >>  debug  %recurse-core
+    !=(~ (find ~[i.topics] (sloe sut)))
   ++  check-chap
+    ~?  >>  debug  %check-chap
     ?>  ?=([%core *] sut)
     (~(has by q.r.q.sut) i.topics)
   ++  check-face
+    ~?  >>  debug  %check-face
     ?>  ?=([%face *] sut)
     ?.  ?=(term p.sut)
       ::TODO: handle $tune case
       %.n
     =(p.sut i.topics)
-  ++  check-search  =(~ t.topics)
+  ++  check-search
+    ~?  >>  debug  %check-search
+    =(~ t.topics)
   ++  check-arm-core
+    ~?  >>  debug  %check-arm-core
     ^-  ?
     =+  arm-list=(sloe (~(play ut sut) arm-hoon))
-    &(!=(arm-list ~) !=(arm-list ~[%$]))
+    &(!=(arm-list ~) !=(arm-list ~[%$]) ?=([%core *] arm-type))
   ::
   ::+|  %return
+  ::
+  ++  return-cell
+    ~?  >>>  debug  %return-cell
+    ^-  (unit item)
+    ?>  ?=([%cell *] sut)
+    (join-items return-item:this(sut p.sut) return-item:this(sut q.sut))
+  ::
   ++  return-core
+    ~?  >>>  debug  %return-core
     ^-  (unit item)
     ?>  ?=([%core *] sut)
-    =*  compiled-against  find-item:this(sut p.sut)
+    =*  compiled-against  return-item:this(sut p.sut)
     `[%core (trip i.topics) *what sut compiled-against]
   ::
   ++  return-face
+    ~?  >>>  debug  %return-face
     ^-  (unit item)
     ?>  ?=([%face *] sut)
     ::  TODO: handle tune case
@@ -216,6 +243,7 @@
     `[%face (trip p.sut) *what compiled-against]
   ::
   ++  return-fork
+    ~?  >>>  debug  %return-fork
     ^-  (unit item)
     ?>  ?=([%fork *] sut)
     =*  types  ~(tap in p.sut)
@@ -223,27 +251,35 @@
     (roll items join-items)
   ::
   ++  return-hint
+    ~?  >>>  debug  %return-hint
     ^-  (unit item)
     ?>  ?=([%hint *] sut)
     =*  res  return-item:this(sut q.sut)
     ?.  ?=([%help *] q.p.sut)
       ~
+    ?:  ?=([%core *] q.sut)
+      return-hint-core
+    ?:  ?=([%face *] q.sut)
+      return-hint-face
     `[%view [%header `crib.p.q.p.sut (item-as-overview res)]~]
   ::
   ++  return-arm
+    ~?  >>>  debug  %return-arm
     ^-  (unit item)
     ?>  ?=([%core *] sut)
     =+  [adoc pdoc cdoc]=(arm-docs i.topics sut)
     ::TODO: should this p.sut be sut? or the compiled type of the arm?
-    `[%arm (trip i.topics) adoc pdoc cdoc arm-hoon p.sut]
+    `[%arm (trip i.topics) adoc pdoc cdoc arm-hoon sut]
   ::
   ++  return-chap
+    ~?  >>>  debug  %return-chap
     ^-  (unit item)
     ?>  ?=([%core *] sut)
     =/  tom=tome  (~(got by q.r.q.sut) i.topics)
     `[%chapter (trip i.topics) p.tom sut (~(got by q.r.q.sut) i.topics)]
   ::
   ++  return-arm-core
+    ~?  >>>  debug  %return-arm-core
     ^-  (unit item)
     ?>  ?=([%core *] sut)
     =+  [adoc pdoc cdoc]=(arm-docs i.topics sut)
@@ -254,12 +290,13 @@
     `[%core (trip i.topics) dox at compiled-against]
   ::
   ++  return-item
+    ~?  >>>  debug  %return-item
     ^-  (unit item)
     ?-    sut
         %noun      ~
         %void      ~
         [%atom *]  ~
-        [%cell *]  (join-items return-item:this(sut p.sut) return-item:this(sut q.sut))
+        [%cell *]  return-cell
         [%core *]  return-core
         [%face *]  return-face
         [%fork *]  return-fork
@@ -268,16 +305,19 @@
     ==
   ::
   ++  return-hint-core
+    ~?  >>>  debug  %return-hint-core
     ^-  (unit item)
     ?>  &(?=([%hint *] sut) ?=([%core *] q.sut))
     (apply-hint return-core:this(sut q.sut))
   ::
   ++  return-hint-face
+    ~?  >>>  debug  %return-hint-face
     ^-  (unit item)
     ?>  &(?=([%hint *] sut) ?=([%face *] q.sut))
     (apply-hint return-face:this(sut q.sut))
   ::
   ++  apply-hint
+    ~?  >>  debug  %apply-hint
     |=  uit=(unit item)
     ^-  (unit item)
     ?~  uit  ~
@@ -442,7 +482,15 @@
   ^-  overview
   %+  turn  ~(tap by q.tom)
   |=  ar=(pair term hoon)
-  [%item (weld "+" (trip p.ar)) (arm-doc p.ar (~(play ut sut) q.ar))]
+  :*  %item
+      ::TODO make this distinguish between ++ and +$ arms
+      (weld "+" (trip p.ar))
+      =/  adoc  (arm-doc p.ar (~(play ut sut) q.ar))
+      =/  pdoc  (prod-doc (~(play ut sut) q.ar))
+      ?~  adoc
+        pdoc
+      adoc
+  ==
 ::
 ::  +item-as-overview: changes an item into an overview
 ++  item-as-overview
@@ -461,7 +509,15 @@
     (item-as-overview children.itm)
   ::
       [%arm *]
-    [%item (weld "+" name.itm) adoc.itm]~
+    :_  ~
+    ::TODO make this distinguish between ++ and +$ arms
+    :*  %item  (weld "+" name.itm)
+      ?~  adoc.itm
+        ?~  pdoc.itm
+          cdoc.itm
+        pdoc.itm
+      adoc.itm
+    ==
   ::
       [%chapter *]
     [%item (weld "|" name.itm) docs.itm]~
@@ -505,7 +561,13 @@
   ;:  weld
     (print-header (weld "^" name.item) docs.item)
   ::
-  ?~  arms
+    [%txt ""]~
+  ::
+    (print-signature ~(duck easy-print sut.item))
+  ::
+    [%txt ""]~
+  ::
+    ?~  arms
       ~
     (print-overview [%view [%header `['arms:' ~] arms]~] styles)
   ::
@@ -513,7 +575,14 @@
       ~
     (print-overview [%view [%header `['chapters:' ~] chapters]~] styles)
   ::
-    =+  compiled=(item-as-overview children.item)
+    ?~  children.item
+      ~
+    =/  child  ?:  ?=([%core *] u.children.item)
+                 u.children.item(children ~)
+               ?:  ?=([%face *] u.children.item)
+                 u.children.item(children ~)
+               u.children.item
+    =+  compiled=(item-as-overview `child)
     ?~  compiled
       ~
     (print-overview [%view [%header `['compiled against: ' ~] compiled]~] styles)
@@ -535,6 +604,12 @@
     (print-overview [%view [%header `['arms:' ~] arms]~] styles)
   ==
 ::
+::  +print-signature: turns product of duck:easy-print into a (list sole-effect)
+++  print-signature
+  |=  =tank
+  ^-  (list sole-effect)
+  (turn (wash [3 80] tank) |=(a=tape [%txt a]))
+::
 ::  +print-arm: renders documentation for a single arm in a core
 ++  print-arm
   |=  =item
@@ -544,12 +619,18 @@
   ;:  weld
     (print-header (weld "+" name.item) adoc.item)
     [%txt ""]~
+  ::
+    (print-signature ~(duck easy-print (~(play ut sut.item) gen.item)))
+  ::
+    [%txt ""]~
+  ::
     ?~  pdoc.item
       *(list sole-effect)
     %-  zing  :~  (styled [[`%br ~ `%b] 'product:']~)
                   (print-header "" pdoc.item)
                   [%txt ""]~
               ==
+  ::
     ?~  cdoc.item
       *(list sole-effect)
     %-  zing  :~  (styled [[`%br ~ `%b] 'default arm in core:']~)
@@ -566,6 +647,7 @@
   ;:  weld
     (print-header (weld "." name.item) docs.item)
     [%txt ""]~
+  ::
     ?~  children.item
       ~
     (print-item u.children.item)
