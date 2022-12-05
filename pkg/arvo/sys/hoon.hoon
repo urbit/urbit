@@ -6340,8 +6340,7 @@
           $~  [%base %null]                             ::
           $%  [%base p=base]                            ::  base type
               [%dbug p=spot q=spec]                     ::  set debug
-              ::TODO consider [%gist p=[%help p=help] q=spec]
-              [%gist p=help q=spec]                     ::  formal comment
+              [%gist p=[%help p=help] q=spec]           ::  formal comment
               [%leaf p=term q=@]                        ::  constant atom
               [%like p=wing q=(list wing)]              ::  reference
               [%loop p=term]                            ::  hygienic reference
@@ -7819,7 +7818,7 @@
     ::
       [%base *]  (decorate (basal p.mod))
       [%dbug *]  example(mod q.mod, bug [p.mod bug])
-      [%gist *]  example(mod q.mod, nut `help/p.mod)
+      [%gist *]  example(mod q.mod, nut `p.mod)
       [%leaf *]  (decorate [%rock p.mod q.mod])
       [%like *]  example(mod bcmc/(unreel p.mod q.mod))
       [%loop *]  [%limb p.mod]
@@ -8014,7 +8013,7 @@
       ::  formal comment
       ::
           [%gist *]
-        relative(mod q.mod, nut `help/p.mod)
+        relative(mod q.mod, nut `p.mod)
       ::
       ::  constant
       ::
@@ -8432,7 +8431,7 @@
                        |-
                        ?.  ?=([%gist *] body.gen)
                          [%ktcl body.gen]
-                       [%note help+[p.body.gen] $(body.gen q.body.gen)]
+                       [%note p.body.gen $(body.gen q.body.gen)]
                    %+  turn  `(list term)`sample.gen
                    |=  =term
                    ^-  spec
@@ -11705,11 +11704,11 @@
       =?  b  !=(c *note)
         ::TODO: consider commenting see apse:docs
         ?>  ?=([%help *] c)
-        [%gist p.c b]
+        [%gist help/p.c b]
       =+  docs=~(tap by bat.a)
       |-
       ?~  docs  b
-      $(docs t.docs, b [%gist i.docs b])
+      $(docs t.docs, b [%gist help/i.docs b])
     (seam fel)
   ++  scye                                              ::  with prefix doccords
     |*  fel=rule
