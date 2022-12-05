@@ -6304,19 +6304,12 @@
 +$  foot  $%  [%dry p=hoon]                             ::  dry arm, geometric
               [%wet p=hoon]                             ::  wet arm, generic
           ==                                            ::
-::TODO: only add %plan since otherwise we might need a migration
-::in the future. leave the others in another branch for future
-::recollection
 +$  link                                                ::  lexical segment
           $%  [%chat p=term]                            ::  |chapter
               [%cone p=aura q=atom]                     ::  %constant
               [%frag p=term]                            ::  .face
               [%funk p=term]                            ::  +arm
               [%plan p=term]                            ::  $spec
-              [%core p=term]                            ::  ^core
-              [%door p=term]                            ::  _door
-              [%gate p=term]                            ::  =gate
-              [%path p=term]                            ::  /path
           ==                                            ::
 +$  cuff  (list link)                                   ::  parsed lex segments
 +$  crib  [summary=cord details=(list sect)]            ::
@@ -11691,10 +11684,6 @@
           :-  '+'  ;~(pfix lus (stag %funk sym))
           :-  '$'  ;~(pfix buc (stag %plan sym))
           :-  '%'  ;~(pfix cen (stag %cone bisk:so))
-          :-  '^'  ;~(pfix ket (stag %core sym))
-          :-  '_'  ;~(pfix cab (stag %door sym))
-          :-  '='  ;~(pfix tis (stag %gate sym))
-          :-  '/'  ;~(pfix fas (stag %path sym))
       ==
     --
   ::
