@@ -11722,10 +11722,10 @@
       ?~  docs  b
       $(docs t.docs, b [%gist i.docs b])
     (seam fel)
-  ++  scye                                              ::  prefix doccords only
+  ++  scye                                              ::  with prefix doccords
     |*  fel=rule
     ;~(pose ;~(plug apex:docs ;~(pfix gap fel)) ;~(plug (easy *whit) fel))
-  ++  seam                                              ::  postfix doccords too
+  ++  seam                                              ::  with doccords
     |*  fel=rule
     (scye ;~(plug fel apse:docs))
   ::
