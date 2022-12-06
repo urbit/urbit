@@ -594,7 +594,8 @@
       ~
     =+  .^(=desk (gall-scry %d %groups))
     :~  [%pass /nuke %agent [our.bowl %hood] %poke kiln-nuke+!>([desk &])]
-        [%pass /nuke %agent [our.bowl %hood] %poke kiln-uninstall+!>(desk)]
+        [%pass /nuke %agent [our.bowl %docket] %poke docket-uninstall+!>(desk)]
+        [%pass /nuke %agent [our.bowl %docket] %poke docket-uninstall+!>(%talk)]
     ==
     ::
     ++  gall-scry
