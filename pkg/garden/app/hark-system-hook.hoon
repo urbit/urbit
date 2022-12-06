@@ -2,16 +2,16 @@
 /+  verb, dbug, default-agent, agentio
 |%
 +$  card  card:agent:gall
-+$  state-0  [%0 lagging=_|]
++$  state-1  [%1 lagging=_|]
 ::
 ++  lag-interval  ~m10
 --
 %+  verb  |
 %-  agent:dbug
 ^-  agent:gall
-=|  state-0
+=|  state-1
 =*  state  -
-=<  
+=<
 |_  =bowl:gall
 +*   this  .
      def  ~(. (default-agent this %|) bowl)
@@ -21,12 +21,23 @@
 ++  on-init
   ^-  (quip card _this)
   :_  this
-  [onboard watch:kiln check:lag ~]:cc
+  [onboard tire:cy check:lag ~]:cc
 ::
 ++  on-load
   |=  =vase
-  =+  !<(old=state-0 vase)
-  `this(state old)
+  ^-  (quip card _this)
+  |^
+  =+  !<(old=app-states vase)
+  =^  cards-1  old
+    ?.  ?=(%0 -.old)  `old
+    [[tire:cy:cc]~ old(- %1)]
+  ?>  ?=(%1 -.old)
+  =/  cards-tire  [tire:cy:cc ~]
+  [(weld cards-1 cards-tire) this(state old)]
+  ::
+  +$  app-states  $%(state-0 state-1)
+  +$  state-0  [%0 lagging=_|]
+  --
 ::
 ++  on-save  !>(state)
 ++  on-poke  on-poke:def
@@ -34,44 +45,56 @@
 ++  on-watch  on-watch:def
 ++  on-agent
   |=  [=wire =sign:agent:gall]
-  |^  
+  ^-  (quip card _this)
   ?+  wire  (on-agent:def wire sign)
-    [%kiln %vats ~]  take-kiln-vats
+    [%kiln %vats ~]    `this
   ==
-  ++  take-kiln-vats
-    ?-  -.sign
-      ?(%poke-ack %watch-ack)  (on-agent:def wire sign)
-      %kick                    :_(this (drop safe-watch:kiln:cc))
-    ::
-        %fact
-      ?.  ?=(%kiln-vats-diff-0 p.cage.sign)  `this
-      =+  !<(=diff:hood q.cage.sign)
-      ?+  -.diff  `this
-      ::
-          %commit
-        ?.  |(=(desk.diff %base) ~(has-docket de:cc desk.diff))  `this
-        =/  =action:hark  ~(commit de:cc desk.diff)
+::
+++  on-arvo
+  |=  [=wire sign=sign-arvo]
+  ^-  (quip card _this)
+  |^
+  ?+  wire  (on-arvo:def wire sign)
+    [%clay %tire ~]    take-clay-tire
+    [%clay %warp * ~]  (take-clay-warp i.t.t.wire)
+    [%check-lag ~]     take-check-lag
+  ==
+  ::
+  ++  take-check-lag
+    ^-  (quip card _this)
+    ?>  ?=([%behn %wake *] sign)
+    =+  .^(lag=? %$ (scry:io %$ /zen/lag))
+    ?:  =(lagging lag)  :_(this ~[check:lag:cc])
+    :_  this(lagging lag)
+    :_  ~[check:lag:cc]
+    ?:(lagging start:lag:cc stop:lag:cc)
+  ::
+  ++  take-clay-tire
+    ^-  (quip card _this)
+    ?>  ?=(%tire +<.sign)
+    ?-    -.p.sign
+        %&  [(turn ~(tap in ~(key by p.p.sign)) warp:cy:cc) this]
+        %|
+      ?-    -.p.p.sign
+          %zest  `this
+          %warp  `this
+          %wait
+        =/  =action:hark  (~(blocked de:cc desk.p.p.sign) weft.p.p.sign)
         :_  this
-        ~[(poke:ha:cc action)]
-      ::
-          %block
-        =/  =action:hark  (~(blocked de:cc desk.diff) blockers.diff)
-        :_  this 
         ~[(poke:ha:cc action)]
       ==
     ==
+  ::
+  ++  take-clay-warp
+    |=  =desk
+    ^-  (quip card _this)
+    ?>  ?=(%writ +<.sign)
+    =/  cards
+      ?.  |(=(desk %base) ~(has-docket de:cc desk))  ~
+      =/  =action:hark  ~(commit de:cc desk)
+      ~[(poke:ha:cc action)]
+    [[(warp:cy:cc desk) cards] this]
   --
-::
-++  on-arvo  
-  |=  [=wire sign=sign-arvo]
-  ^-  (quip card _this)
-  ?.  ?=([%check-lag ~] wire)  (on-arvo:def wire sign)
-  ?>  ?=([%behn %wake *] sign)
-  =+  .^(lag=? %$ (scry:io %$ /zen/lag))
-  ?:  =(lagging lag)  :_(this ~[check:lag:cc])
-  :_  this(lagging lag)
-  :_  ~[check:lag:cc]
-  ?:(lagging start:lag:cc stop:lag:cc)
 ::
 ++  on-fail  on-fail:def
 ++  on-leave  on-leave:def
@@ -89,7 +112,7 @@
   [~[text+'Welcome to urbit'] ~ now.bowl / /]
 ::
 ++  lag
-  |%  
+  |%
   ++  check  (~(wait pass /check-lag) (add now.bowl lag-interval))
   ++  place  [q.byk.bowl /lag]
   ++  body   `body:hark`[~[text/'Runtime lagging'] ~ now.bowl / /]
@@ -102,24 +125,23 @@
   ++  poke
     |=(=action:hark (poke-our:pass %hark-store hark-action+!>(action)))
   --
-++  kiln
+::
+++  cy
   |%
-  ++  path   /kiln/vats
-  ++  pass  ~(. ^pass path)
-  ++  watch  (watch-our:pass %hood path)
-  ++  watching  (~(has by wex.bowl) [path our.bowl %hood])
-  ++  safe-watch  `(unit card)`?:(watching ~ `watch)
+  ++  tire  ~(tire pass /clay/tire)
+  ++  warp
+    |=  =desk
+    (~(warp-our pass /clay/warp/[desk]) desk ~ %next %z da+now.bowl /)
   --
 ::
 ++  de
   |_  =desk
-  ++  scry-path  (scry:io desk /desk/docket-0)
+  ++  scry-path   (scry:io desk /desk/docket-0)
   ++  has-docket  .^(? %cu scry-path)
-  ++  docket  .^(docket:^docket %cx scry-path)
-  ++  hash    .^(@uv %cz (scry:io desk ~))
-  ++  place    `place:hark`[q.byk.bowl /desk/[desk]]
-  ++  vat
-    .^(vat:hood %gx (scry:io %hood /kiln/vat/[desk]/noun))
+  ++  docket      .^(docket:^docket %cx scry-path)
+  ++  hash        .^(@uv %cz (scry:io desk ~))
+  ++  place       `place:hark`[q.byk.bowl /desk/[desk]]
+  ++  version     ud:.^(cass:clay %cw (scry:io desk /))
   ++  body
     |=  [=path title=cord content=(unit cord)]
     ^-  body:hark
@@ -131,7 +153,7 @@
     %+  rap  3
     ?:  =(desk %base)
       ['System software' cord ~]
-    ?:  has-docket  
+    ?:  has-docket
       ['App: "' title:docket '"' cord ~]
     ['Desk: ' desk cord ~]
   ::
@@ -142,7 +164,7 @@
   ::
   ++  commit
     ^-  action:hark
-    ?:(=(1 ud.cass:vat) created updated)
+    ?:(=(1 version) created updated)
   ::
   ++  created
     ^-  action:hark
@@ -155,11 +177,11 @@
     (body /desk/[desk] (title-prefix (rap 3 ' has been updated to ' get-version ~)) ~)
   ::
   ++  blocked
-    |=  blockers=(set ^desk)
+    |=  =weft
     ^-  action:hark
     :+  %add-note  [/blocked place]
     %^  body  /blocked  (title-prefix ' is blocked from upgrading')
-    `(rap 3 'Blocking desks: ' (join ', ' ~(tap in blockers)))
+    `(rap 3 'Blocked waiting for system version: ' (scot %ud num.weft) 'K' ~)
   ::
   ++  ver
     |=  =version:^docket
@@ -172,7 +194,7 @@
   --
 ++  note
   |%
-  ++  merge  
+  ++  merge
     |=  [=desk hash=@uv]
     ^-  (list body:hark)
     :_  ~
