@@ -39,7 +39,7 @@ export const RuntimeLagNotification = () => (
 );
 
 function pikeIsBlocked(newKelvin: number, pike: Pike) {
-  return !pike.wefts?.find(({ kelvin }) => kelvin === newKelvin);
+  return pike.zest === 'live' && !pike.wefts?.find(({ kelvin }) => kelvin === newKelvin);
 }
 
 export const BaseBlockedNotification = ({ bin, lid }: { bin: HarkBin, lid: HarkLid }) => {
@@ -127,10 +127,9 @@ export const BaseBlockedNotification = ({ bin, lid }: { bin: HarkBin, lid: HarkL
             className="space-y-6 text-base tracking-tight"
             containerClass="w-full max-w-md"
           >
-            <h2 className="h4">Archive ({count}) Apps and Apply System Update</h2>
+            <h2 className="h4">Suspend ({count}) Apps and Apply System Update</h2>
             <p>
-              The following apps will be archived until their developer provides a compatible update
-              to your system.
+              The following apps will be suspended until their developer provides an update.
             </p>
             <AppList
               apps={blockedCharges}
@@ -143,7 +142,7 @@ export const BaseBlockedNotification = ({ bin, lid }: { bin: HarkBin, lid: HarkL
                 Cancel
               </DialogClose>
               <DialogClose as={Button} variant="caution" onClick={handleArchiveApps}>
-                Archive Apps
+                Suspend Apps and Upgrade
               </DialogClose>
             </div>
           </DialogContent>
