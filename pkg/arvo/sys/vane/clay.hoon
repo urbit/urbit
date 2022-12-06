@@ -175,7 +175,7 @@
       wic=(map weft yoki)                               ::  commit-in-waiting
       liv=zest                                          ::  running agents
       ren=rein                                          ::  force agents on/off
-      wef=weft                                          ::  zuse version in use
+      wef=(unit weft)                                   ::  zuse version in use
   ==                                                    ::
 ::
 ::  Over-the-wire backfill request/response
@@ -1379,7 +1379,9 @@
     =/  using=(set weft)
       %-  ~(rep by dos.rom)
       |=  [[=desk =dojo]  wefts=(set weft)]
-      (~(put in wefts) wef.dom.dojo)
+      ?~  wef=wef.dom.dojo
+        wefts
+      (~(put in wefts) u.wef)
     =/  stale=(list weft)
       ~(tap in (~(dif in ~(key by zuz)) using))
     |-
@@ -1415,8 +1417,7 @@
     ?>  ?@  -.waft
           =(waft actual)
         (~(has in p.waft) actual)
-    :+  actual
-      zuse-core
+    :-  [actual zuse-core]
     ..part(zuz (~(put by zuz) actual zuse-core))
     ::
     ++  build-zuse
@@ -1646,7 +1647,7 @@
     |=  yon=aeon
     %-  ford:fusion
     =/  files  (~(run by q:(aeon-to-yaki:ze yon)) |=(=lobe |+lobe))
-    =/  zus  (got-zuse wef.dom)
+    =^  zus=[weft vase]  ..park  (got-zuse wef.dom)
     [files lat.ran veb.bug zus fad ?:(=(yon let.dom) fod.dom [~ ~])]
   ::  Produce ford cache appropriate for the aeon
   ::
@@ -2078,7 +2079,7 @@
     ::  [wake] < [ergo] < [goad] <
     ::
     =:  let.dom  +(let.dom)
-        wef.dom  weft.zus
+        wef.dom  (some weft.zus)
         hit.dom  (~(put by hit.dom) +(let.dom) r.yaki)
         hut.ran  (~(put by hut.ran) r.yaki yaki)
         lat.ran  (~(uni by new-pages) lat.ran)
@@ -2110,7 +2111,8 @@
         $(desks t.desks)
       ?:  ?=(%base desk.i.desks)
         $(desks t.desks)
-      ?~  wat=(~(get by wic.dom.dojo.i.desks) zuse+zuse)
+      =/  wat=(~(get by wic.dom.dojo.i.desks) zuse+zuse)
+      ?:  &(?=(~ wat) ?=(~ wef.dom.dojo.i.desks)
         $(desks t.desks)
       =/  den  ((de now rof hen ruf) our desk.i.desks)
       ::  [goad] < call without goading so that we apply all the commits
@@ -5791,16 +5793,31 @@
   ::    add .wef to $dome's
   ::    add .zuz zuse cache to $raft
   ::    add weft to $leak
+  ::    build zuses for live desks lacking pending updates
   ::
   ++  raft-13-to-14
     |=  raf=raft-13
     |^  ^-  raft
-    %=  raf
-      dos.rom  (~(run by dos.rom.raf) dojo-13-to-14)
-      hoy      (~(run by hoy.raf) rung-13-to-14)
-      fad      ~
-      bug      [bug.raf zuz=*(map weft vase)]
-    ==
+    =/  new=raft
+      %=  raf
+        dos.rom  (~(run by dos.rom.raf) dojo-13-to-14)
+        hoy      (~(run by hoy.raf) rung-13-to-14)
+        bug      [bug.raf zuz=*(map weft vase)]
+      ==
+    =;  [dos den]
+      new(dos.rom dos, zuz zuz:abet:den)
+    %-  ~(rib by dos.rom.new)
+    |:  [[des=*desk doj=*dojo] den=((de now rof ~ new) our %base)]
+    ?:  ?|  =(%base des)
+            !?=(%live liv.dom.doj)
+            (~(has by wic.dom.doj) zuse+zuse)
+        ==
+      [den des doj]
+    =/  yak  (~(got by hut.ran.new) (~(got by hit.dom.doj) let.dom.doj))
+    =/  pag  (~(got by lat.ran.new) (~(got by q.yak) /sys/kelvin))
+    ?>  =(%kelvin p.pag)
+    =^  zus=[=weft =vase]  den  (got-zuse:den ;;(waft q.pag))
+    [den des doj(wef.dom weft.zus)]
     ::
     ++  rung-13-to-14
       |=  rug=rung-13
@@ -5820,10 +5837,7 @@
     ++  dome-13-to-14
       |=  dom=dome-13
       ^-  dome
-      %=  dom
-        fod  [~ ~]
-        ren  [ren.dom wef=*weft]
-      ==
+      dom(ren [ren.dom wef=*weft])
     --
   --
 ::
