@@ -80,11 +80,6 @@
       c3_o
       u3e_yolo(void);
 
-    /* u3e_foul(): dirty all the pages of the loom.
-    */
-      void
-      u3e_foul(void);
-
     /* u3e_init(): initialize guard page tracking.
     */
       void

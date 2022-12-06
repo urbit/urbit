@@ -1328,7 +1328,7 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
 
       //  mark all pages dirty (pages in the snapshot will be marked clean)
       //
-      u3e_foul();
+      _ce_loom_track_north(0, u3P.pag_w);
 
       /* Write image files to memory; reinstate protection.
       */
@@ -1387,15 +1387,11 @@ u3e_yolo(void)
     c3_assert(0);
   }
 
-  return c3y;
-}
+  //  mark all pages dirty
+  //
+  _ce_loom_track_north(0, u3P.pag_w);
 
-/* u3e_foul(): dirty all the pages of the loom.
-*/
-void
-u3e_foul(void)
-{
-  memset((void*)u3P.dit_w, 0xff, sizeof(u3P.dit_w));
+  return c3y;
 }
 
 /* u3e_init(): initialize guard page tracking.
