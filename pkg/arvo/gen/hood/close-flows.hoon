@@ -25,7 +25,7 @@
   ==
 ::
 =;  krocs=(list [=ship =bone])
-    helm-ames-kroc+[krocs dry-run]
+  helm-ames-kroc+[krocs dry-run]
 ::
 %-  zing
 %+  turn  peers
@@ -38,12 +38,12 @@
   %-  ~(gas in *(set @))
   %+  turn
     %+  sort  ~(tap by by-bone.ossuary.peer-state)
-    |=  [[a=@ *] [b=@ *]]  (lth a b)
+    |=  [[a=@ *] [b=@ *]]  (lte a b)
   head
 ::
 =/  nacks=(list bone)
   %+  turn
-    (sort ~(tap by rcv.peer-state) |=([[a=@ *] [b=@ *]] (lth a b)))
+    (sort ~(tap by rcv.peer-state) |=([[a=@ *] [b=@ *]] (lte a b)))
   head
 ::
 ^-  (list [@p @ud])
