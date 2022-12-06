@@ -11585,26 +11585,20 @@
     ++  apse
       %+  knee  *whiz  |.  ~+
       ;~  pose
-        ::TODO: if there is a $link then interpret it as the start
-        ::of a prefix comment instead of postfix
-        ::TODO consider special casing $%
-        ::;~(less (exit ;~(plug (plus en-link) col ace)) (exit line))
-        ;~(pfix into step line)
+        ;~(less ;~(plug into step en-link col ace) ;~(pfix into step line))
       ::
         (easy *whiz)
       ==
     ::
     ++  leap                                            ::  whitespace w/o docs
       %+  cold  ~
-      %-  plus
       ;~  plug
-        (star ace)
         ;~  pose
-          ;~(plug (just '\0a') (star ace))
-          ;~  plug  col  col
-            ;~(less ;~(pose larg smol) ;~(plug (star prn) (just '\0a')))
-          ==
+          (just '\0a')
+          ;~(plug gah ;~(pose gah skip))
+          skip
         ==
+        (star ;~(pose skip gah))
       ==
     ::
     ::  +smol: 2 aces then summary, 4 aces then paragraphs.
@@ -11642,13 +11636,18 @@
         ==
       ==
     ::
-    ::
     ++  rant
       |*  sec=rule
       %-  star
       ;~  pfix
         (ifix [into (just '\0a')] (star ace))
         (plus (ifix [into (just '\0a')] sec))
+      ==
+    ::
+    ++  skip                                            ::  non-doccord comment
+      ;~  plug
+        col  col
+        ;~(less ;~(pose larg smol) ;~(plug (star prn) (just '\0a')))
       ==
     ::
     ++  null  (cold ~ (star ace))
@@ -13311,6 +13310,7 @@
           ;~(pfix jump loaf)
         ==
       ==
+    ::TODO consider special casing $%
     ++  boba                                           ::  +$  arms
       %+  knee  [q=*term r=*help s=*hoon]  |.  ~+
       %+  cook
