@@ -1183,7 +1183,6 @@
       %vega  on-vega:event-core
       %plea  (on-plea:event-core [ship plea]:task)
       %cork  (on-cork:event-core ship.task)
-      %kroc  (on-kroc:event-core ship.task bone.task)
     ==
   ::
   [moves ames-gate]
@@ -1449,7 +1448,6 @@
   ~%  %event-gate  ..per-event  ~
   |=  [[now=@da eny=@ rof=roof] =duct =ames-state]
   =*  veb  veb.bug.ames-state
-  =|  cork-bone=(unit bone)  ::  modified by +on-kroc
   ~%  %event-core  ..$  ~
   |%
   ++  event-core  .
@@ -1901,15 +1899,7 @@
     =/  =peer-state  +.u.ship-state
     =/  =channel     [[our ship] now channel-state -.peer-state]
     ::
-    =/  [=bone ossuary=_ossuary.peer-state]
-      ?^  cork-bone  [u.cork-bone ossuary.peer-state]
-      (bind-duct ossuary.peer-state duct)
-    =.  ossuary.peer-state  ossuary
-    ::
-    ?.  (~(has by by-bone.ossuary.peer-state) bone)
-      %.  event-core
-      %^  trace  odd.veb  ship
-      |.("trying to cork {<bone=bone>}, not in the ossuary, ignoring")
+    =^  bone  ossuary.peer-state  (bind-duct ossuary.peer-state duct)
     ::
     =.  closing.peer-state  (~(put in closing.peer-state) bone)
     %-  %^  trace  msg.veb  ship
@@ -1918,12 +1908,6 @@
         =/  rcvr  [ship her-life.channel]
         "cork plea {<sndr rcvr bone=bone vane.plea path.plea>}"
     abet:(on-memo:(make-peer-core peer-state channel) bone plea %plea)
-  ::  +on-kroc: explicitly cork a flow on the provided bone
-  ::
-  ++  on-kroc
-    |=  [=ship =bone]
-    ^+  event-core
-    (%*(on-cork . cork-bone `bone) ship)
   ::  +on-take-wake: receive wakeup or error notification from behn
   ::
   ++  on-take-wake

@@ -249,12 +249,17 @@
   |=  [krocs=(list [=ship =bone]) dry=?]  =<  abet
   ?~  krocs  (flog %text "No %ames flow ready to be close")
   %-  emil    ^-  (list card)
+  ::  TODO: extend closing flow overview
+  ::
   :-  [%pass /di %arvo %d %flog text+"Closing {<(lent krocs)>} ames flows"]
-  ?:  dry  ~
-  %+  turn  krocs
-  |=  [=ship =bone]
-  ^-  card
-  [%pass /helm %arvo %a %kroc ship bone]
+  ::  XX uncomment when updating %lull to include a %kroc task to ames
+  ::
+  ~
+  :: ?:  dry  ~
+  :: %+  turn  krocs
+  :: |=  [=ship =bone]
+  :: ^-  card
+  :: [%pass /helm %arvo %a %kroc ship bone]
 ::
 ++  poke-knob
   |=  [error-tag=@tas level=?(%hush %soft %loud)]  =<  abet

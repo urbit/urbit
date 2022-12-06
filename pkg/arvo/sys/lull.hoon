@@ -371,7 +371,6 @@
         [%heed =ship]
         [%jilt =ship]
         [%cork =ship]
-        [%kroc =ship =bone]
         $>(%plea vane-task)
     ::
         $>(%born vane-task)
