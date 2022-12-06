@@ -50,9 +50,11 @@
     %&  ~
     %|  ['expected success - failed' p.b]
   ==
-::  $test-chain: a sequence of tests to be run
+::  $a-test-chain: a sequence of tests to be run
 ::
-+$  test-chain
+::  NB: arms shouldn't start with `test-` so that `-test % ~` runs
+::
++$  a-test-chain
   $_
   |?
   ?:  =(0 0)
@@ -61,7 +63,7 @@
 ::  +run-chain: run a sequence of tests, stopping at first failure
 ::
 ++  run-chain
-  |=  seq=test-chain
+  |=  seq=a-test-chain
   ^-  tang
   =/  res  $:seq
   ?-  -.res
