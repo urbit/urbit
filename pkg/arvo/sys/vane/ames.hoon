@@ -1159,12 +1159,9 @@
       ^+  event-core
       =/  sink-core  (mi:peer-core bone *message-sink-state)
       =.  peer-core  abet:(call:abed:sink-core %done ok=%.y)
-      ::  XX this shouldn't be call randomly,
-      ::  only after we sink the message,
-      ::  invariant to document
-      =?  peer-core  closing:sink-core  (handle-cork:peer-core bone)
+      ::  handle cork only deals with bones that are in closing
       ::
-      abet:peer-core
+      abet:(handle-cork:peer-core bone)
     ::  failed; send message nack packet
     ::
     ++  send-nack
@@ -1183,10 +1180,10 @@
       =/  =message-blob  (jam naxplanation)
       ::  send nack-trace message on associated .nack-trace-bone
       ::
-      =.  peer-core        (pe peer-state channel)
-      =/  nack-bone=^bone  (mix 0b10 bone)
-      =/  pump-core  (mu:peer-core nack-bone *message-pump-state)
-      =.  peer-core  abet:(call:abed:pump-core %memo message-blob)
+      =.  peer-core   (pe peer-state channel)
+      =/  nack=^bone  (mix 0b10 bone)
+      =/  pump-core   (mu:peer-core nack *message-pump-state)
+      =.  peer-core   abet:(call:abed:pump-core %memo message-blob)
       ::
       abet:peer-core
     --
@@ -2332,6 +2329,7 @@
     ++  handle-cork
       |=  =bone
       ^+  peer-core
+      ?.  (~(has in closing.peer-state) bone)  peer-core
       =/  =message-pump-state
         (~(gut by snd.peer-state) bone *message-pump-state)
       =?  peer-core  ?=(^ next-wake.packet-pump-state.message-pump-state)
@@ -2341,11 +2339,17 @@
         ::
         (pe-emit [/ames]~ %pass wire %b %rest next-wake)
       =/  nax-bone=^bone  (mix 0b10 bone)
+      =?  peer-core  (~(has by snd.peer-state) nax-bone)
+        %.  peer-core
+        %+  pe-trace  odd.veb
+        |.("remove naxplanation flow {<[her.channel bone=nax-bone]>}")
       =.  peer-state
         =,  peer-state
         %_  peer-state
+          ::  preemptively delete nax flows (e.g. nacks for initial %watches)
+          ::
+          snd      (~(del by (~(del by snd) bone)) nax-bone)
           rcv      (~(del by rcv) bone)
-          snd      (~(del by snd) bone)
           corked   (~(put in corked) bone)
           closing  (~(del in closing) bone)
           krocs    (~(del in krocs) bone)
@@ -2365,7 +2369,11 @@
         pump(state (~(gut by snd.peer-state) bone *message-pump-state))
       ::
       ++  abet
-        peer-core(snd.peer-state (~(put by snd.peer-state) bone state))
+        ::  if the bone was corked, it's been removed from the state,
+        ::  so we avoid adding it again.
+        ::
+        =?  snd.peer-state  !corked  (~(put by snd.peer-state) bone state)
+        peer-core
       ::
       ++  packet-pump  (pu packet-pump-state.state)
       ++  mu-trace
@@ -2374,6 +2382,7 @@
         (trace verb her.channel ships.bug.channel print)
       ::
       ++  closing  (~(has in closing.peer-state) bone)
+      ++  corked   (~(has in corked.peer-state) bone)
       ::  +is-message-num-in-range: %.y unless duplicate or future ack
       ::
       ++  is-message-num-in-range
