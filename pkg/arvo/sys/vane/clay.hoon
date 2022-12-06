@@ -2079,7 +2079,7 @@
     ::  [wake] < [ergo] < [goad] <
     ::
     =:  let.dom  +(let.dom)
-        wef.dom  (some weft.zus)
+        wef.dom  weft.zus
         hit.dom  (~(put by hit.dom) +(let.dom) r.yaki)
         hut.ran  (~(put by hut.ran) r.yaki yaki)
         lat.ran  (~(uni by new-pages) lat.ran)
@@ -2111,8 +2111,7 @@
         $(desks t.desks)
       ?:  ?=(%base desk.i.desks)
         $(desks t.desks)
-      =/  wat=(~(get by wic.dom.dojo.i.desks) zuse+zuse)
-      ?:  &(?=(~ wat) ?=(~ wef.dom.dojo.i.desks)
+      ?~  wat=(~(get by wic.dom.dojo.i.desks) zuse+zuse)
         $(desks t.desks)
       =/  den  ((de now rof hen ruf) our desk.i.desks)
       ::  [goad] < call without goading so that we apply all the commits
