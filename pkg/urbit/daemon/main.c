@@ -1114,7 +1114,7 @@ _cw_eval(c3_i argc, c3_c* argv[])
         out_y[3] = ((len_d >> 16) & 0xff);
         out_y[4] = ((len_d >> 24) & 0xff);
          
-        fclose(stdout);
+        fwrite(out_y, 1, 5, stdout);
         if( ferror(stdout))
         {
            fprintf(stderr, "Write Failed : %s\n",strerror(errno) );
