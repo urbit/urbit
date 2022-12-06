@@ -1107,21 +1107,25 @@ _cw_eval(c3_i argc, c3_c* argv[])
       } else {
         fprintf(stderr,"khan jammed noun: ");
          
-        struct khanjam{
-          c3_y zer;
-          c3_d len;
-        };
-
-        struct khanjam data = {0, len_d};
+        c3_y out_y[5];
+        out_y[0] = 0x0;
+        out_y[1] = ( len_d        & 0xff);
+        out_y[2] = ((len_d >>  8) & 0xff);
+        out_y[3] = ((len_d >> 16) & 0xff);
+        out_y[4] = ((len_d >> 24) & 0xff);
          
-        fwrite(&data, 1, 9, stdout);
-         
-
-        int p=0;
-        while (p < len_d){
-          fwrite(&(byt_y[p]), 1, 1, stdout);
-          p++;
+        fclose(stdout);
+        if( ferror(stdout))
+        {
+           fprintf(stderr, "Write Failed : %s\n",strerror(errno) );
+           exit(1);
         }
+        fwrite(byt_y, 1, len_d, stdout);
+        if( ferror(stdout))
+        {
+           fprintf(stderr, "Write Failed : %s\n",strerror(errno) );
+           exit(1);
+        }  
         fprintf(stderr, "\n");
       }
     u3z(res);
