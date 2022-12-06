@@ -26,6 +26,7 @@ export const Tile: FunctionComponent<TileProps> = ({ charge, desk, disabled = fa
   const loading = !disabled && 'install' in chad;
   const suspended = disabled || 'suspend' in chad;
   const hung = 'hung' in chad;
+  // TODO should held zest be considered inactive? suspended? also, null sync?
   const active = !disabled && chadIsRunning(chad);
   const link = getAppHref(href);
   const backgroundColor = suspended ? suspendColor : active ? tileColor || 'purple' : suspendColor;
@@ -56,6 +57,9 @@ export const Tile: FunctionComponent<TileProps> = ({ charge, desk, disabled = fa
     >
       <div>
         <div className="absolute z-10 top-4 left-4 sm:top-6 sm:left-6 flex items-center">
+          {pike?.zest === 'held' && !disabled && (
+            <Bullet className="w-4 h-4 text-orange-500 dark:text-black" />
+          )}
           {!active && (
             <>
               {loading && <Spinner className="h-6 w-6 mr-2" />}
@@ -65,9 +69,6 @@ export const Tile: FunctionComponent<TileProps> = ({ charge, desk, disabled = fa
             </>
           )}
         </div>
-        {pike?.zest === 'held' && !disabled && (
-          <Bullet className="absolute z-10 top-5 left-5 sm:top-7 sm:left-7 w-4 h-4 text-orange-500 dark:text-black" />
-        )}
         <TileMenu
           desk={desk}
           chad={chad}
