@@ -13392,11 +13392,10 @@
           :-  ?:  =(*help r.bog)
                 (weld tag duds.gob)
               [r.bog (weld tag duds.gob)]
-          ::TODO should i just throw out untagged arm-docs?
+          |-
           ?~  unt  [[q.bog s.bog] nude.gob]
-          :-  :-  q.bog
-              [%note help+[i.unt] s.bog]
-          nude.gob
+          =.  s.bog  [%note help/i.unt s.bog]
+          $(unt t.unt)
         ::
         %+  glow  duds
         |-  ^-  (map term hoon)
