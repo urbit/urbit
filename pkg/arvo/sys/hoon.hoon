@@ -6602,12 +6602,10 @@
 +$  vair  ?(%gold %iron %lead %zinc)                    ::  in/contra/bi/co
 +$  vein  (list (unit axis))                            ::  search trace
 +$  sect  (list pica)                                   ::  paragraph
-::TODO cuff may be premature, maybe make it a term for now since its
-::easy to change
-+$  whit                                                ::  doccords parse
-  $:  bat=(map cuff (pair cord (list sect)))            ::  batch comments
-      use=(set cuff)                                    ::  defs used
++$  whit                                                ::  prefix docs parse
+  $:  bat=(map cuff (pair cord (list sect)))            ::  batch comment
   ==                                                    ::
++$  whiz  cord                                          ::  postfix doc parse
 +$  what  (unit (pair cord (list sect)))                ::  help slogan/section
 +$  wing  (list limb)                                   ::  search path
 ::
@@ -11549,12 +11547,6 @@
   ++  mota  %+  cook
               |=([a=tape b=tape] (rap 3 (weld a b)))
             ;~(plug (star low) (star hig))
-  ++  glom
-    |=  [wit=whit taw=whit]
-    ^-  whit
-    :*  (~(uni by bat.wit) bat.taw)
-        (~(uni in use.wit) use.taw)
-    ==
   ++  docs
     |%
     ::  +apex: prefix comment. may contain batch comments.
@@ -11583,8 +11575,6 @@
           [p=~ q=q.u.q.vex]
         :-  p=(malt p.u.q.vex)
         q=`nail`[[(dec p.p.q.u.q.vex) q.p.q.u.q.vex] ['\0a' q.q.u.q.vex]]
-      ::
-        (easy ~)
       ==
     ::
     ::  +apse: postfix comment.
@@ -11593,17 +11583,15 @@
     ::    56) that attaches to the expression starting at the beginning of the
     ::    current line. does not use a $link.
     ++  apse
-    ::TODO consider an intermediate struture instead of $note
-      %+  knee  *note  |.  ~+
+      %+  knee  *whiz  |.  ~+
       ;~  pose
-        %+  cook  |=(a=cord `note`help+`[a]~)
         ::TODO: if there is a $link then interpret it as the start
         ::of a prefix comment instead of postfix
         ::TODO consider special casing $%
         ::;~(less (exit ;~(plug (plus en-link) col ace)) (exit line))
         ;~(pfix into step line)
       ::
-        (easy *note)
+        (easy *whiz)
       ==
     ::
     ++  leap                                            ::  whitespace w/o docs
@@ -11689,22 +11677,20 @@
   ++  clad                                              ::  hoon doccords
     |*  fel=rule
     %+  cook
-      |=  [a=whit b=hoon c=note]
-      =?  b  !=(c *note)
-        note+[c b]
+      |=  [a=whit b=hoon c=whiz]
+      =?  b  !=(c *whiz)
+        [%note help/`[c]~ b]
       =+  docs=~(tap by bat.a)
       |-
       ?~  docs  b
-      $(docs t.docs, b [%note help+[i.docs] b])
+      $(docs t.docs, b [%note help/i.docs b])
     (seam fel)
   ++  coat                                              ::  spec doccords
     |*  fel=rule
     %+  cook
-      |=  [a=whit b=spec c=note]
-      =?  b  !=(c *note)
-        ::TODO: consider commenting see apse:docs
-        ?>  ?=([%help *] c)
-        [%gist help/p.c b]
+      |=  [a=whit b=spec c=whiz]
+      =?  b  !=(c *whiz)
+        [%gist help/`[c]~ b]
       =+  docs=~(tap by bat.a)
       |-
       ?~  docs  b
@@ -13309,16 +13295,15 @@
       ==
     ::
     ++  boog  !:
-      %+  knee  [p=*whit q=*term r=*note s=*hoon]
+      %+  knee  [p=*whit q=*term r=*help s=*hoon]
       |.(~+((scye ;~(pose bola boba bota))))
     ++  bola                                           ::  ++  arms
-      %+  knee  [q=*term r=*note s=*hoon]  |.  ~+
+      %+  knee  [q=*term r=*help s=*hoon]  |.  ~+
       %+  cook
-        |=  [q=term r=note s=hoon]
-        ?:  =(r *note)
-          [q *note s]
-        ?>  ?=([%help *] r)
-        [q r(cuff.p [%funk q]~) s]
+        |=  [q=term r=whiz s=hoon]
+        ?:  =(r *whiz)
+          [q *help s]
+        [q [[%funk q]~ [r]~] s]
       ;~  pfix  (jest '++')
         ;~  plug
           ;~(pfix gap ;~(pose (cold %$ buc) sym))
@@ -13327,13 +13312,12 @@
         ==
       ==
     ++  boba                                           ::  +$  arms
-      %+  knee  [q=*term r=*note s=*hoon]  |.  ~+
+      %+  knee  [q=*term r=*help s=*hoon]  |.  ~+
       %+  cook
-        |=  [q=term r=note s=spec]
-        ?:  =(r *note)
-          [q *note [%ktcl %name q s]]
-        ?>  ?=([%help *] r)
-        [q r(cuff.p [%plan q]~) [%ktcl %name q s]]
+        |=  [q=term r=whiz s=spec]
+        ?:  =(r *whiz)
+          [q *help [%ktcl %name q s]]
+        [q [[%plan q]~ [r]~] [%ktcl %name q s]]
       ;~  pfix  (jest '+$')
         ;~  plug
           ;~(pfix gap sym)
@@ -13343,10 +13327,10 @@
       ==
     ::TODO: deprecated, remove at next kelvin bump
     ++  bota                                           ::  +*  arms
-      %+  knee  [q=*term r=*note s=*hoon]  |.  ~+
+      %+  knee  [q=*term r=*help s=*hoon]  |.  ~+
       %+  cook
         |=  [b=term d=hoon]
-        [b *note d]
+        [b *help d]
       ;~  plug
         %+  cook
           |=  [b=term c=(list term) e=spec]
@@ -13393,22 +13377,21 @@
     ::
     ++  whap  !:                                        ::  chapter
       %+  cook
-        |=  a=(list (qual whit term note hoon))
+        |=  a=(list (qual whit term help hoon))
         ::  separate $helps into their own list to be passed to +glow
         =/  [duds=(list help) nude=(list (pair term hoon))]
           %+  roll  a
           |=  $:  $=  bog
-                  (qual whit term note hoon)
+                  (qual whit term help hoon)
                 ::
                   $=  gob
                   [duds=(list help) nude=(list (pair term hoon))]
               ==
           =/  [unt=(list help) tag=(list help)]
             %+  skid  ~(tap by bat.p.bog)  |=(=help =(~ cuff.help))
-          :-  ?:  =(*note r.bog)
+          :-  ?:  =(*help r.bog)
                 (weld tag duds.gob)
-              ?>  ?=([%help *] r.bog)
-              [p.r.bog (weld tag duds.gob)]
+              [r.bog (weld tag duds.gob)]
           ::TODO should i just throw out untagged arm-docs?
           ?~  unt  [[q.bog s.bog] nude.gob]
           :-  :-  q.bog
@@ -13459,14 +13442,13 @@
     ::
     ++  whip                                            ::  chapter declare
       %+  cook
-        |=  [[a=whit b=term c=note] d=(map term hoon)]
+        |=  [[a=whit b=term c=whiz] d=(map term hoon)]
         ^-  [whit (pair term (map term hoon))]
         ?.  =(*whit a)
           [a b d]
-        ?:  =(*note c)
+        ?:  =(*whiz c)
           [*whit b d]
-        ?>  ?=([%help *] c)
-        [%*(. *whit bat (malt [[%chat b]~ crib.p.c]~)) b d]
+        [%*(. *whit bat (malt [[%chat b]~ [c]~]~)) b d]
       ;~(plug (seam ;~(pfix (jest '+|') gap cen sym)) whap)
     ::
     ++  wasp                                            ::  $brcb aliases
@@ -13504,6 +13486,7 @@
           q.wap.i.a
         [[%$ [%eror (weld "duplicate chapter: |" (trip p.wap.i.a))]] ~ ~]
       ::
+      ::TODO: allow cores with unnamed chapter as well as named chapters?
       ;~  pose
         dun
         ;~  sfix
