@@ -7537,11 +7537,12 @@
   --
 ::
 ++  ax
-  =+  :*  ::  dom: axis to home
-          ::  hay: wing to home
-          ::  cox: hygienic context
-          ::  bug: debug annotations
-          ::  def: default expression
+  =+  :*  ::  .dom: axis to home
+          ::  .hay: wing to home
+          ::  .cox: hygienic context
+          ::  .bug: debug annotations
+          ::  .nut: doccord annotations
+          ::  .def: default expression
           ::
           dom=`axis`1
           hay=*wing
