@@ -97,6 +97,7 @@
   ::
   ++  find-cell
     ~?  >>  debug  %find-cell
+    ^-  (unit item)
     ?>  ?=([%cell *] sut)
     =/  lhs  find-item:this(sut p.sut)
     ?~  lhs
@@ -105,6 +106,7 @@
   ::
   ++  find-core
     ~?  >>  debug  %find-core
+    ^-  (unit item)
     ?>  ?=([%core *] sut)
     ?:  check-arm
       ?:  check-search
@@ -120,6 +122,7 @@
   ::
   ++  find-face
     ~?  >>  debug  %find-face
+    ^-  (unit item)
     ?>  ?=([%face *] sut)
     ?.  ?=(term p.sut)
       ::TODO: handle $tune case
@@ -132,6 +135,7 @@
   ::
   ++  find-fork
     ~?  >>  debug  %find-fork
+    ^-  (unit item)
     ?>  ?=([%fork *] sut)
     =/  types=(list type)  ~(tap in p.sut)
     |-
@@ -143,6 +147,7 @@
   ::
   ++  find-hint
     ~?  >>  debug  %find-hint
+    ^-  (unit item)
     |^
     ?>  ?=([%hint *] sut)
     ?.  ?=([%help *] q.p.sut)
@@ -158,6 +163,7 @@
     ::
     ++  find-hint-core
       ~?  >>  debug  %find-hint-core
+      ^-  (unit item)
       ?>  &(?=([%hint *] sut) ?=([%help *] q.p.sut) ?=([%core *] q.sut))
       ::
       ?.  ?&  ((sane %tas) summary.crib.p.q.p.sut)
@@ -170,6 +176,7 @@
     ::
     ++  find-hint-face
       ~?  >>  debug  %find-hint-face
+      ^-  (unit item)
       ?>  &(?=([%hint *] sut) ?=([%help *] q.p.sut) ?=([%face *] q.sut))
       ?:  check-face:this(sut q.sut)
         ?~  t.topics
@@ -181,15 +188,18 @@
   ::+|  %recurse
   ++  recurse-core
     ~?  >>  debug  %recurse-core
+    ^-  (unit item)
     ?>  ?=([%core *] sut)
     find-item:this(sut p.sut)
   ++  recurse-chap
     ~?  >>  debug  %recurse-chap
+    ^-  (unit item)
     ?>  ?=([%core *] sut)
     ?~  t.topics  !!
     find-item:this(topics t.topics)
   ++  recurse-arm-core
     ~?  >>  debug  %recurse-arm-core
+    ^-  (unit item)
     ?>  ?=([%core *] sut)
     ?~  t.topics  !!
     find-item:this(sut arm-type, topics t.topics)
@@ -197,13 +207,16 @@
   ::+|  %check
   ++  check-arm
     ~?  >>  debug  %recurse-core
+    ^-  ?
     !=(~ (find ~[i.topics] (sloe sut)))
   ++  check-chap
     ~?  >>  debug  %check-chap
+    ^-  ?
     ?>  ?=([%core *] sut)
     (~(has by q.r.q.sut) i.topics)
   ++  check-face
     ~?  >>  debug  %check-face
+    ^-  ?
     ?>  ?=([%face *] sut)
     ?.  ?=(term p.sut)
       ::TODO: handle $tune case
@@ -211,6 +224,7 @@
     =(p.sut i.topics)
   ++  check-search
     ~?  >>  debug  %check-search
+    ^-  ?
     =(~ t.topics)
   ++  check-arm-core
     ~?  >>  debug  %check-arm-core
