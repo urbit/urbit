@@ -1965,7 +1965,7 @@
         ==  ==
       ::
         $:  %gall
-        $%  [%clear dude=(unit dude)]  ::  %nuke
+        $%  [%clear dude=(unit dude)]  ::  %nuke  ::TODO  ?(~ dude) ?
             [%guard ~]                 ::  %ward %wink  ::TODO  clay?
         ==  ==
       ::
@@ -2062,41 +2062,37 @@
       ==
     ::
         [%clay %write *]
-      =/  =desk  (need desk.mus)
       %+  lien  ~(tap in pes)
       |=  p=perm
       ?&  ?=([%clay %write *] p)
-          =(desk (fall desk.p desk))
+          |(?=(~ desk.p) =(desk.mus desk.p))
           |(=(/ spur.p) =(`0 (find spur.p spur.mus)))  ::TODO  find-at-head
       ==
     ::
         [%clay ?(%local %peers) *]
-      =/  =desk  (need desk.mus)
-      =/   care  (need care.mus)
       %+  lien  ~(tap in pes)
       |=  p=perm
       ?&  ?=([%clay ?(%local %peers) *] p)
           =(+<.mus +<.p)
-          =(care (fall care.p care))
-          =(desk (fall desk.p desk))
+          |(?=(~ care.p) =(care.mus care.p))
+          |(?=(~ desk.p) =(desk.mus desk.p))
           |(=(/ spur.p) =(`0 (find spur.p spur.mus)))  ::TODO  find-at-head
       ==
     ::
         [%clay ?(%label %perms %liven) *]
-      =/  =desk  (need desk.mus)
       %+  lien  ~(tap in pes)
       |=  p=perm
       ?&  ?=([%clay ?(%label %perms %liven) *] p)
           =(+<.mus +<.p)
+          |(?=(~ desk.p) =(desk.mus desk.p))
           =(desk (fall desk.p desk))
       ==
     ::
         [%gall %clear *]
-      =/  =dude  (need dude.mus)
       %+  lien  ~(tap in pes)
       |=  p=perm
       ?&  ?=([%gall %clear *] p)
-          =(dude (fall dude.p dude))
+          |(?=(~ dude.p) =(dude.mus dude.p))
       ==
     ==
   ::  +rive: split card into individual components
