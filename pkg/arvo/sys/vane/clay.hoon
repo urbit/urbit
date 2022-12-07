@@ -1379,9 +1379,9 @@
     =/  using=(set weft)
       %-  ~(rep by dos.rom)
       |=  [[=desk =dojo]  wefts=(set weft)]
-      ?~  wef=wef.dom.dojo
+      ?:  =(*weft wef.dom.dojo)
         wefts
-      (~(put in wefts) u.wef)
+      (~(put in wefts) wef.dom.dojo)
     =/  stale=(list weft)
       ~(tap in (~(dif in ~(key by zuz)) using))
     |-
@@ -2135,6 +2135,10 @@
     ::  notify unix and subscribers
     ::
     =?  ..park  mem  (ergo 0 mum.res)                   ::  [ergo] >
+    ::  garbage collect zuse cache
+    ::
+    =.  ..park  sweep-zuse-cache
+    ::
     wake:tare                                           ::  [wake] > [tare] >
     ::
     ::  +is-kernel-path: should changing .pax cause a kernel or vane reload?
