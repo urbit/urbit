@@ -1867,6 +1867,8 @@ u3m_boot(c3_c* dir_c, size_t len_i)
 {
   c3_o nuu_o;
 
+  u3C.dir_c = dir_c;
+
   /* Activate the loom.
   */
   u3m_init(len_i);
