@@ -1918,7 +1918,12 @@
       --
     --
   ::
-  +$  perm  $~([%behn %timer] $%(perm-arvo perm-gall))
+  +$  perm
+    $~  [%behn %timer]
+    $%  perm-arvo
+        perm-gall
+        [%super ~]  ::  allows everything
+    ==
   ::
   +$  burr  [desk=(unit desk) =spur]
   +$  spar  [care=(unit term) burr]
@@ -1991,6 +1996,7 @@
   ++  rite  !:
     |=  [our=ship [=view =beam] pes=(set perm)]
     ^-  ?
+    ?:  (~(has in pes) [%super ~])  &
     ?.  =(our p.beam)  |
     =/  [vane=term care=term]
       ::TODO  copied from arvo's +peek:le, should deduplicate
@@ -2031,6 +2037,7 @@
   ++  have  !:
     |=  [pes=(set perm) mus=perm]
     ^-  ?
+    ?:  (~(has in pes) [%super ~])  &
     ?+  mus  (~(has in pes) mus)
         [?(%write %watch) *]
       =/  dum=?(~ dude)
