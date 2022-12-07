@@ -7852,6 +7852,7 @@
     ::TODO: try seeing if putting %gist in here fixes %brbc
     ?:  ?=(%dbug -.mod)  factory(mod q.mod, bug [p.mod bug])
     ?:  ?=(%bcsg -.mod)  factory(mod q.mod, def `[%kthp q.mod p.mod])
+    ?:  ?=(%gist -.mod)  factory(mod q.mod, nut `p.mod)
     ^-  hoon
     ::  if we recognize an indirection
     ::
@@ -7868,6 +7869,7 @@
       ==
     ::  else build a gate
     ::
+    %-  decorate
     :+  %brcl
       [%ktsg spore]
     :+  %tsls
@@ -8422,14 +8424,8 @@
         [%yell *]  [%cncl [%limb %cain] [%zpgr [%cltr p.gen]] ~]
         [%note *]  q.gen
     ::
-    ::TODO: does %gist need to be special cased here?
         [%brbc *]  =-  ?~  -  !!
-                       :+  %brtr
-                         [%bccl -]
-                       |-
-                       ?.  ?=([%gist *] body.gen)
-                         [%ktcl body.gen]
-                       [%note p.body.gen $(body.gen q.body.gen)]
+                     [%brtr [%bccl -] [%ktcl body.gen]]
                    %+  turn  `(list term)`sample.gen
                    |=  =term
                    ^-  spec
