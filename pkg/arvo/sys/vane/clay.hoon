@@ -2050,7 +2050,7 @@
     =/  =args:ford:fusion  [files lat.ran veb.bug zus fad fod.dom]
     ::
     =^  change-cages  args  (checkout-changes args changes)
-    =/  sane-continuation  (sane-changes changes change-cages)
+    =/  sane-continuation  (sane-changes changes change-cages zus)
     =/  new-pages=(map lobe page)
       %-  malt
       %+  turn  ~(tap by change-cages)
@@ -2356,6 +2356,7 @@
     ++  sane-changes
       |=  $:  changes=(map path (each page lobe))
               change-cages=(map path [lobe cage])
+              zus=[=weft =vase]
           ==
       ^-  (unit [(map path [lobe cage]) args:ford:fusion])
       ?.  check-sane
@@ -2381,7 +2382,7 @@
         =/  original=(map path (each page lobe))
           (~(run by q.yaki) |=(=lobe |+lobe))
         (~(uni by original) changes)
-      =/  =args:ford:fusion  [all-changes lat.ran veb.bug ~ ~ ~]
+      =/  =args:ford:fusion  [all-changes lat.ran veb.bug zus ~ ~]
       =^  all-change-cages  args  (checkout-changes args all-changes)
       =/  ccs=(list [=path =lobe =cage])  ~(tap by change-cages)
       |-  ^+  *sane-changes
@@ -3230,8 +3231,9 @@
       (~(put by mon) pot [her syd ud+for-yon] spur)
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) u.yon))
     =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
+    =^  zus=[=weft =vase]  ..park  (got-zuse wef.dom)
     =/  =args:ford:fusion
-      [files lat.ran veb.bug fad ?:(=(yon let.dom) fod.dom [~ ~])]
+      [files lat.ran veb.bug zus fad ?:(=(yon let.dom) fod.dom [~ ~])]
     =^  mim  args
       (checkout-mime args ~ ~(key by files))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
