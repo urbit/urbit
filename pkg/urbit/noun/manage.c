@@ -594,7 +594,7 @@ _find_home(void)
   //  this looks risky, but there are no legitimate scenarios
   //  where it's wrong
   //
-  u3R->cap_p = u3R->mat_p = u3C.wor_i - c3_wiseof(*u3H);
+  u3R->cap_p = u3R->mat_p = u3a_outa(u3H);
 }
 
 /* u3m_pave(): instantiate or activate image.
