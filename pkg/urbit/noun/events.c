@@ -285,16 +285,7 @@ _ce_image_open(u3e_image* img_u)
   c3_i mod_i = O_RDWR | O_CREAT;
   c3_c ful_c[8193];
 
-  snprintf(ful_c, 8192, "%s", u3P.dir_c);
-  c3_mkdir(ful_c, 0700);
-
-  snprintf(ful_c, 8192, "%s/.urb", u3P.dir_c);
-  c3_mkdir(ful_c, 0700);
-
-  snprintf(ful_c, 8192, "%s/.urb/chk", u3P.dir_c);
-  c3_mkdir(ful_c, 0700);
-
-  snprintf(ful_c, 8192, "%s/.urb/chk/%s.bin", u3P.dir_c, img_u->nam_c);
+  snprintf(ful_c, 8192, "%s/%s.bin", u3P.dir_c, img_u->nam_c);
   if ( -1 == (img_u->fid_i = c3_open(ful_c, mod_i, 0666)) ) {
     fprintf(stderr, "loom: c3_open %s: %s\r\n", ful_c, strerror(errno));
     return c3n;
@@ -381,19 +372,13 @@ _ce_patch_create(u3_ce_patch* pat_u)
 {
   c3_c ful_c[8193];
 
-  snprintf(ful_c, 8192, "%s", u3P.dir_c);
-  c3_mkdir(ful_c, 0700);
-
-  snprintf(ful_c, 8192, "%s/.urb", u3P.dir_c);
-  c3_mkdir(ful_c, 0700);
-
-  snprintf(ful_c, 8192, "%s/.urb/chk/control.bin", u3P.dir_c);
+  snprintf(ful_c, 8192, "%s/control.bin", u3P.dir_c);
   if ( -1 == (pat_u->ctl_i = c3_open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0600)) ) {
     fprintf(stderr, "loom: patch c3_open control.bin: %s\r\n", strerror(errno));
     c3_assert(0);
   }
 
-  snprintf(ful_c, 8192, "%s/.urb/chk/memory.bin", u3P.dir_c);
+  snprintf(ful_c, 8192, "%s/memory.bin", u3P.dir_c);
   if ( -1 == (pat_u->mem_i = c3_open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0600)) ) {
     fprintf(stderr, "loom: patch c3_open memory.bin: %s\r\n", strerror(errno));
     c3_assert(0);
@@ -407,13 +392,13 @@ _ce_patch_delete(void)
 {
   c3_c ful_c[8193];
 
-  snprintf(ful_c, 8192, "%s/.urb/chk/control.bin", u3P.dir_c);
+  snprintf(ful_c, 8192, "%s/control.bin", u3P.dir_c);
   if ( unlink(ful_c) ) {
     fprintf(stderr, "loom: failed to delete control.bin: %s\r\n",
                     strerror(errno));
   }
 
-  snprintf(ful_c, 8192, "%s/.urb/chk/memory.bin", u3P.dir_c);
+  snprintf(ful_c, 8192, "%s/memory.bin", u3P.dir_c);
   if ( unlink(ful_c) ) {
     fprintf(stderr, "loom: failed to remove memory.bin: %s\r\n",
                     strerror(errno));
@@ -489,18 +474,12 @@ _ce_patch_open(void)
   c3_c ful_c[8193];
   c3_i ctl_i, mem_i;
 
-  snprintf(ful_c, 8192, "%s", u3P.dir_c);
-  c3_mkdir(ful_c, 0700);
-
-  snprintf(ful_c, 8192, "%s/.urb", u3P.dir_c);
-  c3_mkdir(ful_c, 0700);
-
-  snprintf(ful_c, 8192, "%s/.urb/chk/control.bin", u3P.dir_c);
+  snprintf(ful_c, 8192, "%s/control.bin", u3P.dir_c);
   if ( -1 == (ctl_i = c3_open(ful_c, O_RDWR)) ) {
     return 0;
   }
 
-  snprintf(ful_c, 8192, "%s/.urb/chk/memory.bin", u3P.dir_c);
+  snprintf(ful_c, 8192, "%s/memory.bin", u3P.dir_c);
   if ( -1 == (mem_i = c3_open(ful_c, O_RDWR)) ) {
     close(ctl_i);
 
@@ -1143,7 +1122,9 @@ _ce_backup(void)
   c3_i mod_i = O_RDWR | O_CREAT; // XX O_TRUNC ?
   c3_c ful_c[8193];
 
-  snprintf(ful_c, 8192, "%s/.urb/bhk", u3P.dir_c);
+  //  XX move directory creation?
+  //
+  snprintf(ful_c, 8192, "%s/.urb/bhk", u3C.dir_c);
 
   if ( c3_mkdir(ful_c, 0700) ) {
     if ( EEXIST != errno ) {
@@ -1152,14 +1133,14 @@ _ce_backup(void)
     return;
   }
 
-  snprintf(ful_c, 8192, "%s/.urb/bhk/%s.bin", u3P.dir_c, nop_u.nam_c);
+  snprintf(ful_c, 8192, "%s/.urb/bhk/%s.bin", u3C.dir_c, nop_u.nam_c);
 
   if ( -1 == (nop_u.fid_i = c3_open(ful_c, mod_i, 0666)) ) {
     fprintf(stderr, "loom: c3_open %s: %s\r\n", ful_c, strerror(errno));
     return;
   }
 
-  snprintf(ful_c, 8192, "%s/.urb/bhk/%s.bin", u3P.dir_c, sop_u.nam_c);
+  snprintf(ful_c, 8192, "%s/.urb/bhk/%s.bin", u3C.dir_c, sop_u.nam_c);
 
   if ( -1 == (sop_u.fid_i = c3_open(ful_c, mod_i, 0666)) ) {
     fprintf(stderr, "loom: c3_open %s: %s\r\n", ful_c, strerror(errno));
@@ -1171,9 +1152,9 @@ _ce_backup(void)
   {
 
     c3_unlink(ful_c);
-    snprintf(ful_c, 8192, "%s/.urb/bhk/%s.bin", u3P.dir_c, nop_u.nam_c);
+    snprintf(ful_c, 8192, "%s/.urb/bhk/%s.bin", u3C.dir_c, nop_u.nam_c);
     c3_unlink(ful_c);
-    snprintf(ful_c, 8192, "%s/.urb/bhk", u3P.dir_c);
+    snprintf(ful_c, 8192, "%s/.urb/bhk", u3C.dir_c);
     c3_rmdir(ful_c);
   }
 

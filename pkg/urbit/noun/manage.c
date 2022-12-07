@@ -1875,7 +1875,35 @@ u3m_boot(c3_c* dir_c, size_t len_i)
 
   /* Activate the storage system.
   */
-  nuu_o = u3e_live(c3n, dir_c);
+  {
+    c3_c ful_c[8193];
+
+    snprintf(ful_c, 8192, "%s", dir_c);
+    if ( c3_mkdir(ful_c, 0700) ) {
+      if ( EEXIST != errno ) {
+        fprintf(stderr, "loom: pier create: %s\r\n", strerror(errno));
+        c3_assert(0);
+      }
+    }
+
+    snprintf(ful_c, 8192, "%s/.urb", dir_c);
+    if ( c3_mkdir(ful_c, 0700) ) {
+      if ( EEXIST != errno ) {
+        fprintf(stderr, "loom: .urb create: %s\r\n", strerror(errno));
+        c3_assert(0);
+      }
+    }
+
+    snprintf(ful_c, 8192, "%s/.urb/chk", dir_c);
+    if ( c3_mkdir(ful_c, 0700) ) {
+      if ( EEXIST != errno ) {
+        fprintf(stderr, "loom: .urb/chk create: %s\r\n", strerror(errno));
+        c3_assert(0);
+      }
+    }
+
+    nuu_o = u3e_live(c3n, strdup(ful_c));
+  }
 
   /* Activate tracing.
   */
