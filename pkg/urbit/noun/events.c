@@ -1339,6 +1339,10 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
         u3a_print_memory(stderr, "live: mapped", nor_w << u3a_page);
         u3a_print_memory(stderr, "live: loaded", sou_w << u3a_page);
       }
+
+#ifdef U3_GUARD_PAGE
+      _ce_center_guard_page();
+#endif
     }
   }
 
