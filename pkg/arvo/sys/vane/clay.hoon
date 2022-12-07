@@ -3315,6 +3315,7 @@
   ++  set-zest                                          ::  [goad] <
     |=  liv=zest
     =?  liv  =(%base syd)  %live
+    =?  ..park  =(%live liv)  +:(got-zuse wef.dom)
     ..park(liv.dom liv)
   ::
   ++  rise                                              ::  [goad] <
