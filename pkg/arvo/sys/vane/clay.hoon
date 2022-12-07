@@ -4246,6 +4246,21 @@
           (page-to-cage:(aeon-ford yon) u.peg)
         ``cage+[-:!>(*^cage) cage]
       ::
+          %subs
+        =/  doj=(unit dojo)  (~(get by dos.rom) i.t.pax)
+        ?~  doj  ~
+        =|  sus=(set ship)
+        =/  wos  ~(tap in ~(key by qyx.u.doj))
+        |-
+        ?~  wos
+          ``noun+!>(sus)
+        ?~  for.i.wos
+          $(wos t.wos)
+        %=  $
+          wos  t.wos
+          sus  (~(put in sus) ship.u.for.i.wos)
+        ==
+      ::
           %open  ``open+!>(prelude:(aeon-ford yon))
           %late  !!  :: handled in +aver
           %case  !!  :: handled in +aver
