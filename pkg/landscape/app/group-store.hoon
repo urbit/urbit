@@ -210,12 +210,16 @@
     [cards this]
   ::
   ++  on-arvo
-    |=  [=wire =sign-arvo]
+    |=  [=(pole knot) =sign-arvo]
     ^-  (quip card _this)
-    ?.  ?=([%try-rejoin @ *] wire)
-      (on-arvo:def wire sign-arvo)
-    =/  =resource       (de-path:resource t.t.wire)
-    =/  nack-count=@ud  (slav %ud i.t.wire)
+    ?:  ?=([%gladio %backoff ship=@ ~] pole)
+      =^  cards  state
+        (take-backoff:gc (slav %p ship.pole) sign-arvo)
+      [cards this]
+    ?.  ?=([%try-rejoin count=@ res=*] pole)
+      (on-arvo:def pole sign-arvo)
+    =/  =resource       (de-path:resource res.pole)
+    =/  nack-count=@ud  (slav %ud count.pole)
     ?>  ?=([%behn %wake *] sign-arvo)
     ~?  ?=(^ error.sign-arvo)
       "behn errored in backoff timers, continuing anyway"
@@ -239,12 +243,19 @@
   =^  cards-1=(list card)  wait
     ~(migrate-start gladio bol)
   =/  cards-2=(list card)
-    %+  turn  ~(tap in wait)
-    |=  =ship
-    ^-  card
-    [%pass /gladio/(scot %p ship) %agent [ship %groups] %watch /init]
+    (turn ~(tap in wait) watch-init-migrate)
   =/  cards  (welp cards-1 cards-2)
   [cards state(wait wait)]
+::
+++  watch-init-migrate
+  |=  =ship
+  ^-  card
+  [%pass /gladio/(scot %p ship) %agent [ship %groups] %watch /init]
+::
+++  backoff-migrate
+  |=  =ship
+  ^-  card
+  [%pass /gladio/backoff/(scot %p ship) %arvo %b %wait (add ~h1 now.bol)]
 ::
 ++  take-pyre
   |=  [=wire =sign:agent:gall]
@@ -255,19 +266,33 @@
     ~
   [%pass / %pyre leaf/"{<wire>} failed" u.p.sign]~
 ::
+++  take-backoff
+  |=  [=ship sign=sign-arvo]
+  ^-  (quip card _state)
+  ?>  ?=([%behn %wake *] sign)
+  ?:  ?=(^ error.sign)
+    `state
+  :_  state
+  ~[(watch-init-migrate ship)]
+::
 ++  take-migrate
   |=  =sign:agent:gall
   ^-  (quip card _state)
-  ~&  migrating/src.bol
-  ?:  ?=(%poke-ack -.sign)
+  ?.  (~(has in wait) src.bol)
+    ::  already succeeded
     `state
-  :_  state(wait (~(del in wait) src.bol))
-  ^-  (list card)
-  %+  welp  (~(migrate-ship gladio bol) src.bol)
-  ?:  ?=(%kick -.sign)  :: TODO: check queued watches don't get kicked
-    *(list card)
-  :_  *(list card)
-  [%pass /gladio/(scot %p src.bol) %agent [src.bol %groups] %leave ~]
+  ?-    -.sign  
+      ?(%poke-ack %fact)  `state
+      %kick               :_(state (watch-init-migrate src.bol)^~)
+      %watch-ack
+    ?~  p.sign
+      ::  they have public release
+      ~&  migrating/src.bol
+      :_  state(wait (~(del in wait) src.bol))
+      (~(migrate-ship gladio bol) src.bol)
+    :_  state
+    ~[(backoff-migrate src.bol)]
+  ==
 ::
 ++  peek-group
   |=  rid=resource
