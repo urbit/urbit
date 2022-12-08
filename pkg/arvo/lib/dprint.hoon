@@ -79,7 +79,9 @@
 ++  hunt
   |_  [topics=(lest term) sut=type]
   +*  this  .
-  ::+|  %find
+  ::
+  +|  %find
+  ::
   ++  find-item
     ~?  >>  debug  %find-item
     ^-  (unit item)
@@ -204,7 +206,8 @@
     ?~  t.topics  !!
     find-item:this(sut arm-type, topics t.topics)
   ::
-  ::+|  %check
+  +|  %check
+  ::
   ++  check-arm
     ~?  >>  debug  %recurse-core
     ^-  ?
@@ -232,7 +235,7 @@
     =+  arm-list=(sloe (~(play ut sut) arm-hoon))
     &(!=(arm-list ~) !=(arm-list ~[%$]) ?=([%core *] arm-type))
   ::
-  ::+|  %return
+  +|  %return
   ::
   ++  return-cell
     ~?  >>>  debug  %return-cell
@@ -340,7 +343,7 @@
       ?([%core *] [%face *])  (some u.uit(docs `crib.p.q.p.sut))
     ==
   ::
-  ::+|  %misc
+  +|  %misc
   ++  arm-hoon
     ^-  hoon
     ?>  ?=([%core *] sut)
@@ -599,7 +602,7 @@
     =+  compiled=(item-as-overview `child)
     ?~  compiled
       ~
-    (print-overview [%view [%header `['compiled against: ' ~] compiled]~] styles)
+    (print-overview [%view [%header `['compiled against: ' ~] [i.compiled]~]~] styles)
   ==
 ::
 ::  +print-chapter: renders documentation for a single chapter
