@@ -73,7 +73,7 @@
     /* u3e_live(): start the persistence system.  Return c3y if no image.
     */
       c3_o
-      u3e_live(c3_o nuu_o, c3_c* dir_c);
+      u3e_live(c3_c* dir_c);
 
     /* u3e_yolo(): disable dirty page tracking, read/write whole loom.
     */

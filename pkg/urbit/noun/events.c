@@ -1243,8 +1243,10 @@ u3e_save(void)
 /* u3e_live(): start the checkpointing system.
 */
 c3_o
-u3e_live(c3_o nuu_o, c3_c* dir_c)
+u3e_live(c3_c* dir_c)
 {
+  c3_o nuu_o = c3n;
+
   //  XX demand paging is not supported on windows
   //
 #ifdef U3_OS_mingw

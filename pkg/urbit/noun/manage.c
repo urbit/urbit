@@ -1919,7 +1919,7 @@ u3m_boot(c3_c* dir_c, size_t len_i)
       }
     }
 
-    nuu_o = u3e_live(c3n, strdup(ful_c));
+    nuu_o = u3e_live(strdup(ful_c));
   }
 
   /* Activate tracing.
