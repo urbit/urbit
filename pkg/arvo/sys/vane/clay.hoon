@@ -1647,7 +1647,10 @@
     |=  yon=aeon
     %-  ford:fusion
     =/  files  (~(run by q:(aeon-to-yaki:ze yon)) |=(=lobe |+lobe))
-    =^  zus=[weft vase]  ..park  (got-zuse (need wef.dom))
+    =/  zus=[weft vase]
+      ?:  =(zuse+zuse (need wef.dom))
+        [zuse+zuse zuse.bud]
+      [(need wef.dom) (~(got by zuz) (need wef.dom))]
     [files lat.ran veb.bug zus fad ?:(=(yon let.dom) fod.dom [~ ~])]
   ::  Produce ford cache appropriate for the aeon
   ::
@@ -3235,7 +3238,10 @@
       (~(put by mon) pot [her syd ud+for-yon] spur)
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) u.yon))
     =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
-    =^  zus=[=weft =vase]  ..park  (got-zuse (need wef.dom))
+    =/  zus=[weft vase]
+      ?:  =(zuse+zuse (need wef.dom))
+        [zuse+zuse zuse.bud]
+      [(need wef.dom) (~(got by zuz) (need wef.dom))]
     =/  =args:ford:fusion
       [files lat.ran veb.bug zus fad ?:(=(yon let.dom) fod.dom [~ ~])]
     =^  mim  args
