@@ -1,4 +1,5 @@
 #include "all.h"
+#include "noun/events.h"
 
 /* _setup(): prepare for tests.
 */

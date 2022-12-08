@@ -34,6 +34,16 @@
         c3_i
         u3m_bail(c3_m how_m) __attribute__((noreturn));
 
+      /* u3m_fault(): handle a memory event with libsigsegv protocol.
+      */
+        c3_i
+        u3m_fault(void* adr_v, c3_i ser_i);
+
+      /* u3m_save(): update the checkpoint.
+      */
+        void
+        u3m_save(void);
+
       /* u3m_init(): start the environment.
       */
         void

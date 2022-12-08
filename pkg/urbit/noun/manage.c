@@ -2,6 +2,7 @@
 **
 */
 #include "all.h"
+#include "noun/events.h"
 #include "rsignal.h"
 #include "vere/vere.h"
 #include <errno.h>
@@ -1686,6 +1687,22 @@ _cm_limits(void)
 # endif
 }
 
+/* u3m_fault(): handle a memory event with libsigsegv protocol.
+*/
+c3_i
+u3m_fault(void* adr_v, c3_i ser_i)
+{
+  return u3e_fault(adr_v, ser_i);
+}
+
+/* u3m_save(): update the checkpoint.
+*/
+void
+u3m_save(void)
+{
+  return u3e_save();
+}
+
 /* _cm_signals(): set up interrupts, etc.
 */
 static void
@@ -1701,7 +1718,7 @@ _cm_signals(void)
   //  filter (see compat/mingw/seh_handler.c) that handles both memory
   //  access and stack overflow exceptions. It calls u3e_fault directly.
 # else
-  if ( 0 != sigsegv_install_handler(u3e_fault) ) {
+  if ( 0 != sigsegv_install_handler(u3m_fault) ) {
     u3l_log("boot: sigsegv install failed\n");
     exit(1);
   }

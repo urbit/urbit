@@ -5,9 +5,7 @@
 static void
 _setup(void)
 {
-  u3m_init(1 << 24);
-  u3m_pave(c3y);
-  u3e_init();
+  u3m_boot_lite(1 << 24);
 }
 
 static u3_noun

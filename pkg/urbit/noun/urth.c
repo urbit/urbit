@@ -2,6 +2,7 @@
 **
 */
 #include "all.h"
+#include "noun/events.h"
 #include "ur/ur.h"
 #include <errno.h>
 #include <fcntl.h>

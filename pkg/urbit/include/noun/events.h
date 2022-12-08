@@ -65,7 +65,7 @@
       c3_i
       u3e_fault(void* adr_v, c3_i ser_i);
 
-    /* u3e_save():
+    /* u3e_save(): update the checkpoint.
     */
       void
       u3e_save(void);
