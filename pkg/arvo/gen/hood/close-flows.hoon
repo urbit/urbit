@@ -34,21 +34,10 @@
         %ax  /(scot %p p.bec)//(scot %da now)/peers/(scot %p ship)
     ==
 =/  =peer-state:ames  ?>(?=(%known -.ship-state) +.ship-state)
-=/  forward-flows=(set @)
-  %-  ~(gas in *(set @))
-  %+  turn
-    %+  sort  ~(tap by by-bone.ossuary.peer-state)
-    |=  [[a=@ *] [b=@ *]]  (lte a b)
-  head
-::
-=/  nacks=(list bone)
-  %+  turn
-    (sort ~(tap by rcv.peer-state) |=([[a=@ *] [b=@ *]] (lte a b)))
-  head
 ::
 ^-  (list [@p @ud])
-%+  murn  nacks
-|=  =bone
+%+  murn  ~(tap by rcv.peer-state)
+|=  [=bone *]
 ?.  &(=(0 (end 0 bone)) =(1 (end 0 (rsh 0 bone))))
   ::  not a naxplanation ack bone
   ::
@@ -59,7 +48,6 @@
 =+  target=(mix 0b10 bone)
 ::  make sure that the nack bone has a forward flow
 ::
-?.  (~(has in forward-flows) target)  ~
 ?~  duct=(~(get by by-bone.ossuary.peer-state) target)
   ~
 =;  =wire
