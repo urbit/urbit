@@ -175,7 +175,7 @@
       wic=(map weft yoki)                               ::  commit-in-waiting
       liv=zest                                          ::  running agents
       ren=rein                                          ::  force agents on/off
-      wef=weft                                          ::  zuse version in use
+      wef=(unit weft)                                   ::  zuse version in use
   ==                                                    ::
 ::
 ::  Over-the-wire backfill request/response
@@ -1379,9 +1379,9 @@
     =/  using=(set weft)
       %-  ~(rep by dos.rom)
       |=  [[=desk =dojo] wefts=(set weft)]
-      ?:  =(*weft wef.dom.dojo)
+      ?~  wef.dom.dojo
         wefts
-      (~(put in wefts) wef.dom.dojo)
+      (~(put in wefts) u.wef.dom.dojo)
     =/  stale=(list weft)
       ~(tap in (~(dif in ~(key by zuz)) using))
     |-
@@ -1647,7 +1647,7 @@
     |=  yon=aeon
     %-  ford:fusion
     =/  files  (~(run by q:(aeon-to-yaki:ze yon)) |=(=lobe |+lobe))
-    =^  zus=[weft vase]  ..park  (got-zuse wef.dom)
+    =^  zus=[weft vase]  ..park  (got-zuse (need wef.dom))
     [files lat.ran veb.bug zus fad ?:(=(yon let.dom) fod.dom [~ ~])]
   ::  Produce ford cache appropriate for the aeon
   ::
@@ -2034,7 +2034,7 @@
     ::
     =/  old-fod  fod.dom
     =.  fod.dom
-      ?:  |(updated !=(weft.zus wef.dom))
+      ?:  |(updated !=([~ weft.zus] wef.dom))
         [~ ~]
       (promote-ford fod.dom invalid)
     =.  fad
@@ -2079,7 +2079,7 @@
     ::  [wake] < [ergo] < [goad] <
     ::
     =:  let.dom  +(let.dom)
-        wef.dom  weft.zus
+        wef.dom  (some weft.zus)
         hit.dom  (~(put by hit.dom) +(let.dom) r.yaki)
         hut.ran  (~(put by hut.ran) r.yaki yaki)
         lat.ran  (~(uni by new-pages) lat.ran)
@@ -3235,7 +3235,7 @@
       (~(put by mon) pot [her syd ud+for-yon] spur)
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) u.yon))
     =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
-    =^  zus=[=weft =vase]  ..park  (got-zuse wef.dom)
+    =^  zus=[=weft =vase]  ..park  (got-zuse (need wef.dom))
     =/  =args:ford:fusion
       [files lat.ran veb.bug zus fad ?:(=(yon let.dom) fod.dom [~ ~])]
     =^  mim  args
@@ -3321,7 +3321,7 @@
   ++  set-zest                                          ::  [goad] <
     |=  liv=zest
     =?  liv  =(%base syd)  %live
-    =?  ..park  =(%live liv)  +:(got-zuse wef.dom)
+    =?  ..park  =(%live liv)  +:(got-zuse (need wef.dom))
     ..park(liv.dom liv)
   ::
   ++  rise                                              ::  [goad] <
@@ -5825,7 +5825,7 @@
     =/  pag  (~(got by lat.ran.new) (~(got by q.yak) /sys/kelvin))
     ?>  =(%kelvin p.pag)
     =^  zus=[=weft =vase]  dan  (got-zuse:dan ;;(waft q.pag))
-    [dan des doj(wef.dom weft.zus)]
+    [dan des doj(wef.dom (some weft.zus))]
     ::
     ++  rung-13-to-14
       |=  rug=rung-13
@@ -5845,7 +5845,7 @@
     ++  dome-13-to-14
       |=  dom=dome-13
       ^-  dome
-      dom(fod [~ ~], ren [ren.dom wef=*weft])
+      dom(fod [~ ~], ren [ren.dom wef=~])
     --
   --
 ::
