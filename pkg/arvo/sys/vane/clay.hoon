@@ -175,7 +175,7 @@
       wic=(map weft yoki)                               ::  commit-in-waiting
       liv=zest                                          ::  running agents
       ren=rein                                          ::  force agents on/off
-      wef=(unit weft)                                   ::  zuse version in use
+      wef=weft                                          ::  zuse version in use
   ==                                                    ::
 ::
 ::  Over-the-wire backfill request/response
@@ -1378,7 +1378,7 @@
     ^+  ..park
     =/  using=(set weft)
       %-  ~(rep by dos.rom)
-      |=  [[=desk =dojo]  wefts=(set weft)]
+      |=  [[=desk =dojo] wefts=(set weft)]
       ?:  =(*weft wef.dom.dojo)
         wefts
       (~(put in wefts) wef.dom.dojo)
@@ -1386,13 +1386,13 @@
       ~(tap in (~(dif in ~(key by zuz)) using))
     |-
     ?~  stale
-      ..park(zuz zuz)
+      ..park
     $(stale t.stale, zuz (~(del by zuz) i.stale))
   ::
   ++  got-zuse
-    |=  =waft
+    |=  waf=waft
     |^  ^-  [[weft vase] _..park]
-    =/  wefts=(list weft)  (sort-filter-waft waft)
+    =/  wefts=(list weft)  (sort-filter-waft waf)
     ?^  cached=(try-zuse-cache wefts)
       [u.cached ..park]
     =/  oldest=weft  (rear wefts)
@@ -1414,11 +1414,11 @@
       $(aeon (dec aeon))
     =/  zuse-core=vase  (build-zuse u.files)
     =/  actual=weft  [%zuse !<(@ud (slap zuse-core %limb %zuse))]
-    ?>  ?@  -.waft
-          =(waft actual)
-        (~(has in p.waft) actual)
+    ?>  ?@  -.waf
+          =(waf actual)
+        (~(has in p.waf) actual)
     :-  [actual zuse-core]
-    ..part(zuz (~(put by zuz) actual zuse-core))
+    ..park(zuz (~(put by zuz) actual zuse-core))
     ::
     ++  build-zuse
       |=  [h=@ a=@ l=@ z=@]
@@ -1446,7 +1446,7 @@
         (some i.wefts zuse.bud)
       ?~  zuse-core=(~(get by zuz) i.wefts)
         $(wefts t.wefts)
-      (some i.wefts zuse-core)
+      (some i.wefts u.zuse-core)
     ::
     ++  sort-filter-waft
       |=  =waft
@@ -1465,7 +1465,7 @@
         ~
       ?.  ?=(%kelvin p.u.puge)
         ~
-      ((soft waft) q.u.page)
+      ((soft waft) q.u.puge)
     ::
     ++  get-kernel-files
       |=  =yaki
@@ -2386,7 +2386,7 @@
         =/  original=(map path (each page lobe))
           (~(run by q.yaki) |=(=lobe |+lobe))
         (~(uni by original) changes)
-      =/  =args:ford:fusion  [all-changes lat.ran veb.bug zus ~ ~]
+      =/  =args:ford:fusion  [all-changes lat.ran veb.bug zus ~ ~ ~]
       =^  all-change-cages  args  (checkout-changes args all-changes)
       =/  ccs=(list [=path =lobe =cage])  ~(tap by change-cages)
       |-  ^+  *sane-changes
@@ -4766,13 +4766,13 @@
       ?~  bill.i.sat
         [~ nub.f]
       =^  =vase  nub.f  (build-file:f /app/[i.bill.i.sat]/hoon)
-      =/  agent  ~|  [%building-app bill.i.sat]  !<(agent-any:gall vase)
+      =/  agent  ~|  [%building-app bill.i.sat]  !<(agent:gall vase)
       =^  =cage  nub.f  (read-file:f /sys/kelvin)
       =/  wefts  (waft-to-wefts !<(waft q.cage))
       ?.  (~(has in wefts) -.agent)
         =-  (mean leaf/- ~)
         "clay: agent {<i.bill.i.sat>} incompatible, ".
-        "{[have=-.agent need=~(tap in wefts)]}"
+        "{<[have=-.agent need=~(tap in wefts)]>}"
       =^  lid  nub.f  $(bill.i.sat t.bill.i.sat)
       [[[i.bill.i.sat [our desk.i.sat da+now] agent] lid] nub.f]
     =.  lad  (weld lad new)
@@ -5229,7 +5229,7 @@
       +$  rung-13
         $:  rus=(map desk rede-13)
         ==
-      +$  dojo
+      +$  dojo-13
         $:  qyx=cult
             dom=dome-13
             per=regs
@@ -5766,7 +5766,7 @@
     ::                      ::  maybe have kiln send one-time list of desks
     ::
     =;  rof
-      rof(dos.rom (~(jab by dos.rom.rof) %base |=(d=dojo d(liv.dom %live))))
+      rof(dos.rom (~(jab by dos.rom.rof) %base |=(d=dojo-13 d(liv.dom %live))))
     ^-  raft-13
     %=  raf
       dos.rom  (~(run by dos.rom.raf) dojo-11-to-13)
@@ -5776,22 +5776,22 @@
     ::
     ++  dojo-11-to-13
       |=  doj=dojo-11
-      ^-  dojo
+      ^-  dojo-13
       doj(dom (dome-11-to-13 dom.doj))
     ::
     ++  rung-11-to-13
       |=  rug=rung-11
-      ^-  rung
+      ^-  rung-13
       rug(rus (~(run by rus.rug) rede-11-to-13))
     ::
     ++  rede-11-to-13
       |=  red=rede-11
-      ^-  rede
+      ^-  rede-13
       red(dom (dome-11-to-13 dom.red))
     ::
     ++  dome-11-to-13
       |=  dom=dome-11
-      ^-  dome
+      ^-  dome-13
       dom(fod [fod.dom ~ liv=%dead ren=~])
     --
   ::  +raft-13-to-14
@@ -5808,22 +5808,24 @@
       %=  raf
         dos.rom  (~(run by dos.rom.raf) dojo-13-to-14)
         hoy      (~(run by hoy.raf) rung-13-to-14)
+        fad      ~
         bug      [bug.raf zuz=*(map weft vase)]
       ==
-    =;  [dos den]
-      new(dos.rom dos, zuz zuz:abet:den)
-    %-  ~(rib by dos.rom.new)
-    |:  [[des=*desk doj=*dojo] den=((de now rof ~ new) our %base)]
+    =/  den  ((de now rof ~ new) our %base)
+    =;  [don=_den dos=(map desk dojo)]
+      new(dos.rom dos, zuz zuz:abet:don)
+    %+  ~(rib by dos.rom.new)  den
+    |=  [[des=desk doj=dojo] dan=_den]
     ?:  ?|  =(%base des)
             !?=(%live liv.dom.doj)
             (~(has by wic.dom.doj) zuse+zuse)
         ==
-      [den des doj]
+      [dan des doj]
     =/  yak  (~(got by hut.ran.new) (~(got by hit.dom.doj) let.dom.doj))
     =/  pag  (~(got by lat.ran.new) (~(got by q.yak) /sys/kelvin))
     ?>  =(%kelvin p.pag)
-    =^  zus=[=weft =vase]  den  (got-zuse:den ;;(waft q.pag))
-    [den des doj(wef.dom weft.zus)]
+    =^  zus=[=weft =vase]  dan  (got-zuse:dan ;;(waft q.pag))
+    [dan des doj(wef.dom weft.zus)]
     ::
     ++  rung-13-to-14
       |=  rug=rung-13
@@ -5843,7 +5845,7 @@
     ++  dome-13-to-14
       |=  dom=dome-13
       ^-  dome
-      dom(ren [ren.dom wef=*weft])
+      dom(fod [~ ~], ren [ren.dom wef=*weft])
     --
   --
 ::
