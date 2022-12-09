@@ -34,7 +34,7 @@
 /+  gladio
 |%
 +$  card  card:agent:gall
-++  ota-host  ~marnec-dozzod-marzod
+++  ota-host  ~sogryp-dister-dozzod-dozzod
 ::
 +$  versioned-state
   $%  state-zero
