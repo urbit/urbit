@@ -154,6 +154,8 @@
     |=  =path
     ^-  (quip card _this)
     ?>  (team:title our.bowl src.bowl)
+    ?:  ?=([%wait ~] path)
+      `this
     ?>  ?=([%groups ~] path)
     :_  this
     [%give %fact ~ %group-update-0 !>([%initial groups])]~
@@ -164,6 +166,8 @@
     |=  =path
     ^-  (unit (unit cage))
     ?+  path  (on-peek:def path)
+        [%x %wait ~]
+      ``ships+!>(~(tap in wait))
         [%y %groups ~]
       ``noun+!>(`(set resource)`~(key by groups))
     ::
@@ -288,7 +292,9 @@
     ?~  p.sign
       ::  they have public release
       ~&  migrating/src.bol
-      :_  state(wait (~(del in wait) src.bol))
+      =.  wait  (~(del in wait) src.bol)
+      :_  state
+      :-  [%give %fact ~[/wait] ships+!>(wait)]
       (~(migrate-ship gladio bol) src.bol)
     :_  state
     ~[(backoff-migrate src.bol)]
