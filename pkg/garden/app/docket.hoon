@@ -351,6 +351,7 @@
       %wait  `state
       %warp  `state
       %zest  (on-zest +.wave)
+      %perm  `state  ::TODO
     ==
   ::
   ++  on-zest

@@ -785,7 +785,7 @@
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
         [%perm des=desk pax=path rit=rite]              ::  change permissions
         [%pork ~]                                       ::  resume commit
-        [%curb des=desk pes=(set perm:gall)]            ::  allowed permissions
+        [%curb des=desk pes=pers:gall]                  ::  user-approved perms
         [%rein des=desk ren=rein]                       ::  extra apps
         [%stir arg=*]                                   ::  debug
         [%tire p=(unit ~)]                              ::  app state subscribe
@@ -842,7 +842,7 @@
         nor=norm                                        ::  gen tombstone policy
         liv=zest                                        ::  desk liveness
         ren=(map dude:gall ?)                           ::  liveness override
-        pes=(set perm:gall)                             ::  opt. userspace perms
+        pes=pers:gall                                   ::  user-approved perms
     ==
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
@@ -956,11 +956,18 @@
   ::                                                    ::
   ++  tire                                              ::  app state
     |%                                                  ::
-    +$  rock  (map desk [=zest wic=(set weft)])         ::
+    +$  belt                                            ::
+      $:  =zest                                         ::  running?
+          pes=pers:gall                                 ::  granted perms
+          wic=(set weft)                                ::  waiting kelvins
+          cop=pers:gall                                 ::  missing perms
+      ==                                                ::
+    +$  rock  (map desk belt)                           ::
     +$  wave                                            ::
       $%  [%wait =desk =weft]                           ::  blocked
           [%warp =desk =weft]                           ::  unblocked
           [%zest =desk =zest]                           ::  running
+          [%perm =desk pes=pers:gall cop=pers:gall]     ::  permissions
       ==                                                ::
     ::
     ++  wash                                            ::  patch
@@ -968,21 +975,26 @@
       ^+  rock
       ?-    -.wave
           %wait
-        =/  got=[=zest wic=(set weft)]
-          (~(gut by rock) desk.wave *zest ~)
+        =/  got=belt
+          (~(gut by rock) desk.wave *belt)
         (~(put by rock) desk.wave got(wic (~(put in wic.got) weft.wave)))
       ::
           %warp
         %-  ~(run by rock)
-        |=  [=zest wic=(set weft)]
-        [zest (~(del in wic) weft.wave)]
+        |=  =belt
+        belt(wic (~(del in wic.belt) weft.wave))
       ::
           %zest
         ?:  ?=(%dead zest.wave)
           (~(del by rock) desk.wave)
-        =/  got=[=zest wic=(set weft)]
-          (~(gut by rock) desk.wave *zest ~)
+        =/  got=belt
+          (~(gut by rock) desk.wave *belt)
         (~(put by rock) desk.wave got(zest zest.wave))
+      ::
+          %perm
+        =/  got=belt
+          (~(gut by rock) desk.wave *belt)
+        (~(put by rock) desk.wave got(pes pes.wave, cop cop.wave))
       ==
     ::
     ++  walk                                            ::  diff
@@ -995,28 +1007,29 @@
         ^-  (list wave)
         %-  zing
         %+  turn  ~(tap by adds)
-        |=  [=desk =zest wic=(set weft)]
+        |=  [=desk belt]
         ^-  (list wave)
         :-  [%zest desk zest]
+        :-  [%perm desk pes cop]
         %+  turn  ~(tap in wic)
         |=  =weft
         [%wait desk weft]
       ::
         ^-  (list wave)
         %+  turn  ~(tap by dels)
-        |=  [=desk =zest wic=(set weft)]
+        |=  [=desk belt]
         ^-  wave
         [%zest desk %dead]
       ::
         ^-  (list wave)
         %-  zing
         %+  turn  ~(tap by bots)
-        |=  [=desk * *]
+        |=  [=desk *]
         ^-  (list wave)
-        =/  aa  (~(got by a) desk)
-        =/  bb  (~(got by b) desk)
-        =/  wadds  (~(dif in wic.bb) wic.aa)
-        =/  wdels  (~(dif in wic.aa) wic.bb)
+        =/  aa=belt  (~(got by a) desk)
+        =/  bb=belt  (~(got by b) desk)
+        =/  wadds    (~(dif in wic.bb) wic.aa)
+        =/  wdels    (~(dif in wic.aa) wic.bb)
         ;:  welp
           ?:  =(zest.aa zest.bb)
             ~
@@ -1031,6 +1044,10 @@
           |=  =weft
           ^-  wave
           [%warp desk weft]
+        ::
+          ?:  =([pes cop]:aa [pes cop]:bb)
+            ~
+          [%perm desk pes.bb cop.bb]~
         ==
       ==
     --
@@ -1811,13 +1828,13 @@
                   now=@da                               ::  current time
                   byk=beak                              ::  load source
               ==                                        ::
-              $:  pes=(set perm)                        ::  agent allowance
+              $:  pes=pers                              ::  agent allowance
           ==  ==                                        ::
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact
   ::TODO: change perms to a jug?
   +$  load                                              ::  loadout
-    $:  perms=(list [=desk (set perm)])                 ::  desk permissions
+    $:  perms=(list [=desk pers])                       ::  desk permissions
         dudes=(list [=dude =beak =agent])               ::  agents to run
     ==
   +$  scar                                              ::  opaque duct
@@ -1918,12 +1935,16 @@
       --
     --
   ::
+  ::NOTE  changing permission types or behaviors necessitates a kelvin bump
+  ::
   +$  perm
     $~  [%behn %timer]
     $%  perm-arvo
         perm-gall
         [%super ~]  ::  allows everything
     ==
+  ::
+  +$  pers  (set perm)
   ::
   +$  burr  [desk=(unit desk) =spur]
   +$  spar  [care=(unit term) burr]
@@ -1957,7 +1978,7 @@
             [%pulse ~]                 ::  %tire
         ==  ==
       ::
-        $:  %dill  ::TODO  revisit wrt nu-tem  ::REVIEW  %belt separate?
+        $:  %dill  ::TODO  revisit wrt nu-term  ::REVIEW  %belt separate?
         $?  %terms  ::  %belt %blew %flee %flow %hail %view
             %print  ::  %crud %talk %text
             %extra  ::  %flog
@@ -1994,7 +2015,7 @@
   ::  +rite: namespace permissions check
   ::
   ++  rite  !:
-    |=  [our=ship [=view =beam] pes=(set perm)]
+    |=  [our=ship [=view =beam] pes=pers]
     ^-  ?
     ?:  (~(has in pes) [%super ~])  &
     ?.  =(our p.beam)  |
@@ -2025,7 +2046,7 @@
   ::    easier to just check for the optional permission's presence in :pes.
   ::
   ++  cred  !:
-    |=  [our=ship pes=(set perm) =card:agent]
+    |=  [our=ship pes=pers =card:agent]
     ^-  ?
     %+  levy  (rive card)
     |=  =card:agent
@@ -2035,7 +2056,7 @@
   ::  +have: check if mus, or a broader perm, is present in pes
   ::
   ++  have  !:
-    |=  [pes=(set perm) mus=perm]
+    |=  [pes=pers mus=perm]
     ^-  ?
     ?:  (~(has in pes) [%super ~])  &
     ?+  mus  (~(has in pes) mus)

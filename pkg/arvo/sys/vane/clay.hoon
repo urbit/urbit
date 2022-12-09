@@ -174,9 +174,10 @@
       mim=(map path mime)                               ::  mime cache
       fod=flue                                          ::  ford cache
       wic=(map weft yoki)                               ::  commit-in-waiting
+      cop=(unit [yok=yoki mis=pers:gall])               ::  blocked on perms
       liv=zest                                          ::  running agents
       ren=rein                                          ::  force agents on/off
-      pes=(set perm:gall)                               ::  granted opt. perms
+      pes=(set perm:gall)                               ::  user-approved perms
   ==                                                    ::
 ::
 ::  Over-the-wire backfill request/response
@@ -1835,7 +1836,7 @@
             ==
             ?&  =(%base syd)                            ::  ready to upgrade
                 %+  levy  ~(tap by tore:(lu now rof hen ruf))
-                |=  [=desk =zest wic=(set weft)]
+                |=  [=desk belt:tire]
                 ?|  =(%base desk)
                     !?=(%live zest)
                     !=(~ (~(int in wic) kel))
@@ -1852,7 +1853,19 @@
       =?  ..park  !?=(%base syd)  wick                  ::  [wick]
       %-  (slog leaf+"clay: wait-for-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
       tare                                              ::  [tare] >
+    ::TODO  asserts that perms don't change across kelvin upgrade
+    ::
+    =/  mis=(list perm:gall)
+      ?:  =(%base syd)  ~
+      (skip req:(get-seal yoki) (cury have:gall pes.dom))
+    ?:  &(=(%live liv.dom) !=(~ mis))
+      =.  cop.dom  `[yoki (sy mis)]                     ::  [tare] <
+      %-  %+  slog  leaf+"clay: missing permissions on {(trip syd)}:"
+          (turn mis |=(p=perm:gall >p<))
+      tare                                              ::  [tare] >
+    ::
     =.  wic.dom  (~(del by wic.dom) zuse+zuse)
+    =.  cop.dom  ~
     ::
     =/  old-yaki
       ?:  =(0 let.dom)
@@ -2058,6 +2071,42 @@
         ?+    p.page  ~|(clay-bad-kelvin-mark/p.page !!)
             %kelvin  ;;(waft q.page)
             %mime    (cord-to-waft q.q:;;(mime q.page))
+        ==
+      --
+    ::
+    ::  +get-seal: read the desk's kernel version from /desk/seal
+    ::
+    ++  get-seal
+      |=  =yoki
+      ^-  seal  ::TODO  unit, if mismatch type/future kelvin?
+      |^  ?-    -.yoki
+              %|
+            ?~  lob=(~(get by q.p.yoki) /desk/seal)
+              *seal
+            (lobe-to-seal u.lob)
+          ::
+              %&
+            ?~  lob=(~(get by q.p.yoki) /desk/seal)
+              *seal
+            ?-  -.u.lob
+              %&  (page-to-seal p.u.lob)
+              %|  (lobe-to-seal p.u.lob)
+            ==
+          ==
+      ::
+      ++  lobe-to-seal
+        |=  =lobe
+        ^-  seal
+        ?~  peg=(~(get by lat.ran) lobe)
+          ~|([%desk-seal-tombstoned syd] !!)
+        (page-to-seal u.peg)
+      ::
+      ++  page-to-seal
+        |=  =page
+        ^-  seal
+        ?+  p.page  ~|(clay-bad-seal-mark+p.page !!)
+          %seal  ;;(seal q.page)
+          %mime  !<(seal (slap !>(~) (ream q.q:;;(mime q.page))))
         ==
       --
     ::
@@ -3180,10 +3229,29 @@
     |=  r=rule
     r(who (~(del in who.r) |+nom))
   ::
-  ++  set-curb
+  ++  missing-perms
+    ^-  (list perm:gall)
+    =^  res  ..park  (aver ~ %x da+now /desk/seal)
+    ?.  ?=([~ ~ *] res)  ~
+    ~|  [%reading-seal syd]
+    =/  =seal  !<(seal q.u.u.res)
+    (skip req.seal (cury have:gall pes.dom))
+  ::
+  ++  set-curb                                          ::  [goad] <
     |=  pes=(set perm:gall)
     ^+  ..park
     =?  pes  =(%base syd)  ~
+    =/  pre  missing-perms
+    =.  pes.dom  pes
+    =/  pos  missing-perms
+    ?:  &(!=(~ pos) =(%live liv.dom))
+      ~|  ?:(=(~ pre) %sane %insane-pre)
+      %-  mean
+      :-  'clay: cannot take away required permissions for live desk:'
+      (turn pos |=(p=perm:gall >p<))
+    =.  pes.dom  pes
+    ?:  ?=(^ cop.dom)
+      weck
     ..park(pes.dom pes)
   ::
   ++  set-rein
@@ -3194,6 +3262,8 @@
   ++  set-zest                                          ::  [goad] <
     |=  liv=zest
     =?  liv  =(%base syd)  %live
+    ::NOTE  we don't need a perms check for setting %live here, because
+    ::      +goad gets called later, asserts the required perms are granted.
     ..park(liv.dom liv)
   ::
   ++  rise                                              ::  [goad] <
@@ -3239,6 +3309,17 @@
     ?~  wis  ::  Every commit bottoms out here ?
       ..park
     (park | & yoki.i.wis *rang)
+  ::
+  ++  weck
+    ^+  ..park
+    (emit hen %pass /weck/[syd] %b %wait now)
+  ::
+  ++  take-weck
+    |=  err=(unit tang)
+    ?^  err
+      ((slog 'clay: failed to upgrade (weck)' u.err) ..park)
+    ?~  cop.dom  ..park
+    (park | & yok.u.cop.dom *rang)
   ::
   ::  Cancel a request.
   ::
@@ -4522,6 +4603,7 @@
   ::
   ::  [goad] Must be called any time the set of running agents changes.
   ::  This is whenever an agent is started, stopped, or updated.
+  ::  Must also be called any time granted permissions change.
   ::
   ::  This is not move-order agnostic -- you must be careful of
   ::  reentrancy as long as arvo's move order is depth-first.
@@ -4530,9 +4612,8 @@
   ::
   ++  goad
     ^+  ..abet
-    =^  per=(list [=desk (set perm:gall)])  ..abet  pers
-    =^  sat=(list [=desk =bill])            ..abet  sats
-    ::
+    =^  pes=(list [=desk =pers:gall])  ..abet  pers
+    =^  sat=(list [=desk =bill])       ..abet  sats
     =.  sat  (apply-precedence sat)
     =+  ?:  (lth veb.bug 1)  ~
         %.  ~  %-  slog
@@ -4546,8 +4627,10 @@
     ::    (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
     ::
     =.  ..abet  tare                                    ::  [tare] >
-    (emit hen %pass /lu/load %g %load per agents)
-  ::  +pers: produce list of [desk (set perm:gall)], update ford cache
+    (emit hen %pass /lu/load %g %load pes agents)
+  ::  +pers: produce list of [desk pers:gall] for live desks, update cache
+  ::
+  ::    asserts that live desks have all their required permissions
   ::
   ++  pers
     =/  desks=(list desk)  ~(tap in ~(key by dos.rom))
@@ -4555,17 +4638,26 @@
     ?~  desks
       [~ ..abet]
     =/  den  ((de now rof hen ruf) our i.desks)
+    ?.  =(%live liv.dom.den)
+      %-  (trace 2 |.("{<i.desks>} is not live"))
+      $(desks t.desks)
     =^  res  den  (aver:den ~ %x da+now /desk/seal)
     =.  ruf  +:abet:den
     ?.  ?=([~ ~ *] res)
+      ::REVIEW  block instead?
       ~&  [%clay %no-seal-in i.desks]
       $(desks t.desks)
-    =/  req=(set perm:gall)
-      ~|  [%building-seal i.desks]
-      =/  =seal  !<(seal q.u.u.res)
-      (~(gas in *(set perm:gall)) req.seal)
+    =/  mis=(list perm:gall)
+      %+  skip
+        ~|  [%reading-seal i.desks]
+        req:!<(seal q.u.u.res)
+      (cury have:gall pes.dom.den)
+    ?.  =(~ mis)
+      %-  mean
+      :-  'clay: insufficient permission to live, lacking:'
+      (turn mis |=(p=perm:gall >p<))
     =^  rest  ..abet  $(desks t.desks)
-    [[[i.desks (~(uni in req) pes:dom:den)] rest] ..abet]
+    [[[i.desks pes.dom.den] rest] ..abet]
   ::  +sats: produce list of [desk bill], update ford cache
   ::
   ++  sats
@@ -4719,7 +4811,9 @@
     ^-  rock:tire
     %-  ~(run by dos.rom)
     |=  =dojo
-    [liv.dom.dojo ~(key by wic.dom.dojo)]
+    ^-  belt:tire
+    =,  dom.dojo
+    [liv pes ~(key by wic) ?~(cop.dom.dojo ~ mis.u.cop)]
   ::
   ::  [tare] Must be called any time the zest or commits-in-waiting
   ::  might have changed for a desk.  +goad calls this uncondtionally,
@@ -5714,7 +5808,7 @@
     ++  dome-13-to-14
       |=  dom=dome-13
       ^-  dome
-      dom(ren [ren.dom pes=~])
+      dom(|7 [&8.dom cop=~ |8.dom(ren [ren.dom pes=~])])
     --
   --
 ::
@@ -5769,7 +5863,7 @@
         %domes   (domes t.path)
         %loams   (loams t.path)
         %dudes   (dudes t.path)
-        %visas   (visas t.path)
+        :: %visas   (visas t.path)
     ==
   ::
   ++  domes
@@ -5905,22 +5999,23 @@
       ``[%dude !>(`(list dude:gall)`u.dul)]
     ==
   ::
-    ++  visas
-      |=  =path
-      =/  visas=(list [=desk (set perm:gall)])
-        -:pers:(lu now rof ~ ruf)
-      ::
-      ::TODO: are the ~ and [~ ~] returns correct?
-      ?+  path  [~ ~]
-          ~
-        ``[%visas !>(visas)]
-      ::
-          [@tas ~]
-        =/  vus=(unit (set perm:gall))
-          (~(get by (~(gas by *(map desk (set perm:gall))) visas)) i.path)
-        ?~  vus  ~
-        ``[%visa !>(`(set perm:gall)`u.vus)]
-      ==
+    ::TODO  clean up as needed
+    :: ++  visas
+    ::   |=  =path
+    ::   =/  visas=(list [=desk (set perm:gall)])
+    ::     -:pers:(lu now rof ~ ruf)
+    ::   ::
+    ::   ::TODO: are the ~ and [~ ~] returns correct?
+    ::   ?+  path  [~ ~]
+    ::       ~
+    ::     ``[%visas !>(visas)]
+    ::   ::
+    ::       [@tas ~]
+    ::     =/  vus=(unit (set perm:gall))
+    ::       (~(get by (~(gas by *(map desk (set perm:gall))) visas)) i.path)
+    ::     ?~  vus  ~
+    ::     ``[%visa !>(`(set perm:gall)`u.vus)]
+    ::   ==
   --
 ::
 ::  We clear the ford cache by replacing it with its bunt as a literal,
@@ -6005,6 +6100,13 @@
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our %base)
       abet:(take-wick:den error.hin)
+    [mos ..^$]
+  ::
+  ?:  ?=([%weck @ ~] tea)
+    ?>  ?=(%wake +<.hin)
+    =^  mos  ruf
+      =/  den  ((de now rof hen ruf) our i.t.tea)
+      abet:(take-weck:den error.hin)
     [mos ..^$]
   ::
   ?:  ?=([%foreign-warp *] tea)

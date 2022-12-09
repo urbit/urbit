@@ -504,13 +504,13 @@
       [%x %kiln %pikes ~]
     =+  .^(=rock:tire %cx /(scot %p our)//(scot %da now)/tire)
     :^  ~  ~  %kiln-pikes
-    !>  ^-  pikes   
+    !>  ^-  pikes
     %-  ~(rut by rock)
-    |=  [=desk =zest wic=(set weft)]
+    |=  [=desk =belt:tire]
     ^-  pike
     =+  .^(hash=@uv %cz /(scot %p our)/[desk]/(scot %da now))
     =/  sync  (~(get by sources) desk)
-    [sync hash zest wic]
+    [sync hash belt]
   ==
 ::
 ::  +get-germ: select merge strategy into local desk
@@ -589,7 +589,7 @@
   %-  emil
   =/  cards
     %+  murn  ~(tap by rock)
-    |=  [=desk =zest wic=(set weft)]
+    |=  [=desk belt:tire]
     ?:  |(=(%base desk) !?=(%live zest) (~(has in wic) kel))
       ~
     `u=[%pass /kiln/bump/[desk] %arvo %c %zest desk %held]

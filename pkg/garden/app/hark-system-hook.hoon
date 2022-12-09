@@ -82,6 +82,11 @@
         =/  =action:hark  (~(blocked de:cc desk.p.p.sign) weft.p.p.sign)
         :_  this
         ~[(poke:ha:cc action)]
+      ::
+          %perm
+        :_  this
+        ?:  =(~ cop.p.p.sign)  ~
+        [(poke:ha:cc (~(unpermitted de:cc desk.p.p.sign) cop.p.p.sign))]~
       ==
     ==
   ::
@@ -182,6 +187,13 @@
     :+  %add-note  [/blocked place]
     %^  body  /blocked  (title-prefix ' is blocked from upgrading')
     `(rap 3 'Blocked waiting for system version: ' (scot %ud num.weft) 'K' ~)
+  ::
+  ++  unpermitted
+    |=  cop=pers:gall
+    ^-  action:hark
+    :+  %add-note  [/blocked place]
+    %^  body  /blocked  (title-prefix ' is blocked from upgrading')
+    `(rap 3 'Blocked waiting for permissions (' (scot %ud ~(wyt in cop)) ')' ~)
   ::
   ++  ver
     |=  =version:^docket

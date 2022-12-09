@@ -4,8 +4,7 @@
 +$  pike
   $:  sync=(unit [=ship =desk])
       hash=@uv
-      =zest
-      wic=(set weft)
+      belt:tire
   ==
 ::
 +$  pikes  (map desk pike)
@@ -231,5 +230,38 @@
     :~  aeon+(numb aeon.r)
         weft+(weft weft.r)
     ==
+  ::
+  ++  perm
+    |=  p=perm:gall
+    %-  pairs
+    =/  mote  |=(u=(unit @) ?~(u ~ s+u.u))
+    =/  burr  |=(b=burr:gall [desk+(mote desk.b) spur+(path spur.b) ~])
+    =/  spar  |=(s=spar:gall [care+(mote care.s) (burr +.s)])
+    ?+  p  [vane+s+-.p what+s+`@`?@(+.p +.p +<.p) ~]
+        [%super ~]
+      [what+s+'super' ~]
+    ::
+        [%write *]
+      [what+s+-.p jump+b+jump.p dude+s+`@`dude.p ~]
+    ::
+        [%watch *]
+      [what+s+-.p jump+b+jump.p dude+s+`@`dude.p path+(path path.p) ~]
+    ::
+        [%reads *]
+      [what+s+-.p vane+s+vane.p (spar +>.p)]
+    ::
+        [%clay ?(%label %perms %liven) *]
+      [vane+s+-.p what+s++<.p desk+(mote +>.p) ~]
+    ::
+        [%clay %write *]
+      [vane+s+-.p what+s++<.p (burr +>.p)]
+    ::
+        [%clay ?(%local %peers) *]
+      [vane+s+-.p what+s++<.p (spar +>.p)]
+    ::
+        [%gall %clear *]
+      [vane+s+-.p what+s++<.p dude+(mote +>.p) ~]
+    ==
+  ::
   --
 --
