@@ -245,7 +245,7 @@
 ++  poke-migrate
   ^-  (quip card _state)
   =^  cards-1=(list card)  wait
-    ~(migrate-start gladio bol)
+    (~(migrate-start gladio bol) wait)
   =/  cards-2=(list card)
     (turn ~(tap in wait) watch-init-migrate)
   =/  cards  (welp cards-1 cards-2)

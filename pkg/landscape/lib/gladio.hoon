@@ -95,6 +95,7 @@
   |=  [=dude:gall =cage]
   [%pass /gladio %agent [our.bowl dude] %poke cage]
 ++  migrate-start
+  |=  wait=(set ship)
   ^-  (quip card (set ship))
   =+  network
   =+  associations
@@ -161,7 +162,7 @@
   ?.  split-ota
     :_  ~
     (welp setup (zing (turn ~(tap in (~(del in ships) our.bowl)) migrate-ship)))
-  [setup ships]
+  [setup (~(uni in ships) wait)]
 ::
 ++  migrate-ship
   |=  her=ship
