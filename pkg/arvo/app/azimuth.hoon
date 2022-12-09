@@ -4,7 +4,7 @@
     naive,
     dice,
     default-agent,
-    verb,
+/   verb,
     dbug
 ::  To update, run from dojo:
 ::    -azimuth-snap-state %default 'version-0'
