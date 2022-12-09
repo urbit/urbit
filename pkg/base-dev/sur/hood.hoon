@@ -80,7 +80,11 @@
     ?-  zest.dek
       %live  "running"
       %dead  "suspended"
-      %held  "suspended until next update"
+    ::
+        %held
+      ?:  =(~ cop.dek)
+        "suspended until next update"
+      "suspended until permissions are granted"
     ==
   =/  kul=tape
     %+  roll
@@ -92,6 +96,10 @@
       (lte lal.a lal.b)
     |=  [=weft =tape]
     (welp " {<[lal num]:weft>}" tape)
+  =/  pen=(list $@(@tas [@tas @ud]))
+    %+  weld  ~(tap in wic.dek)
+    ?:  =(~ cop.dek)  ~
+    `(list $@(@tas [@tas @ud]))`[%perm-commit]~
   :~  leaf/"/sys/kelvin:     {kul}"
       leaf/"base hash:        {?.(=(1 (lent meb)) <meb> <(head meb)>)}"
       leaf/"%cz hash:         {<hash>}"
@@ -106,7 +114,8 @@
       leaf/"source desk:      {?~(sink <~> <sud.u.sink>)}"
       leaf/"source aeon:      {?~(sink <~> <let.u.sink>)}"
       leaf/"kids desk:        {?~(sink <~> ?~(kid.u.sink <~> <u.kid.u.sink>))}"
-      leaf/"pending updates:  {<`(list [@tas @ud])`~(tap in wic.dek)>}"
+      leaf/"pending updates:  {<pen>}"
+      leaf/"missing perms:    {<`(list perm:gall)`~(tap in cop.dek)>}"
   ==
 ::  +report-kids: non-vat cz hash report for kids desk
 ::
