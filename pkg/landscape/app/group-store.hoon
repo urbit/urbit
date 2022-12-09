@@ -294,7 +294,7 @@
       ~&  migrating/src.bol
       =.  wait  (~(del in wait) src.bol)
       :_  state
-      :-  [%give %fact ~[/wait] ships+!>(wait)]
+      :-  [%give %fact ~[/wait] ships+!>(~(tap in wait))]
       (~(migrate-ship gladio bol) src.bol)
     :_  state
     ~[(backoff-migrate src.bol)]
