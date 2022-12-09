@@ -1989,6 +1989,19 @@
       [~ ~]
     [~ ~ atom+!>(u.nonce)]
   ::
+  ?:  ?&  =(%r care)
+          ?=(~ path)
+          =([%$ %da now] coin)
+          =(our ship)
+      ==
+    =|  agents=(list [app=term sub-nonce=@ud run-nonce=@t =boat =boar])
+    :+  ~  ~
+    :-  %noun  !>  ^+  agents
+    %+  roll  ~(tap by yokes.state)
+    |=  [[agent=term =yoke] agents=_agents]
+    :_  agents
+    [agent [sub-nonce run-nonce boat boar]:yoke]
+  ::
   ?.  =(our ship)
     ~
   ?.  =([%$ %da now] coin)

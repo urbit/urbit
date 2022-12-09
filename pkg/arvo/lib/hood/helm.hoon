@@ -246,7 +246,7 @@
   (emit %pass /helm %arvo %a %stir '')
 ::
 ++  poke-ames-kroc
-  |=  [krocs=(list [=ship =bone]) dry=?]  =<  abet
+  |=  [dry=? krocs=(list [=ship =bone])]  =<  abet
   ?~  krocs  (flog %text "No %ames flow ready to be close")
   %-  emil    ^-  (list card)
   ::  TODO: extend closing flow overview
