@@ -2060,6 +2060,16 @@
     ^-  ?
     ?:  (~(has in pes) [%super ~])  &
     ?+  mus  (~(has in pes) mus)
+        [%reads *]
+      %+  lien  ~(tap in pes)
+      |=  p=perm
+      ?&  ?=([%reads *] p)
+          =(vane.mus vane.p)
+          |(?=(~ care.p) =(care.mus care.p))
+          |(?=(~ desk.p) =(desk.mus desk.p))
+          |(=(/ spur.p) =(`0 (find spur.p spur.mus)))  ::TODO  find-at-head
+      ==
+    ::
         [?(%write %watch) *]
       =/  dum=?(~ dude)
         ?-(-.mus %write dude.mus, %watch dude.mus)
