@@ -1,8 +1,6 @@
 #ifndef U3_ALLOCATE_H
 #define U3_ALLOCATE_H
 
-#include <openssl/opensslv.h>
-
 #include "manage.h"
 
   /**  Constants.
@@ -15,15 +13,15 @@
     */
 #     define u3a_page   12
 
-    /* u3a_pages: number of pages in memory.
+    /* u3a_pages: maximum number of pages in memory.
     */
 #     define u3a_pages  (1 << (u3a_bits - u3a_page))
 
-    /* u3a_words: number of words in memory.
+    /* u3a_words: maximum number of words in memory.
     */
 #     define u3a_words  (1 << u3a_bits)
 
-    /* u3a_bytes: number of bytes in memory.
+    /* u3a_bytes: maximum number of bytes in memory.
     */
 #     define u3a_bytes  (sizeof(c3_w) * u3a_words)
 
@@ -477,15 +475,6 @@
           void*
           u3a_malloc(size_t len_i);
 
-        /* u3a_malloc_ssl(): openssl-shaped malloc
-        */
-          void*
-          u3a_malloc_ssl(size_t len_i
-#if OPENSSL_VERSION_NUMBER >= 0x10100000L
-                          , const char* file, int line
-#endif
-                          );
-
         /* u3a_calloc(): aligned storage measured in bytes.
         */
           void*
@@ -496,38 +485,10 @@
           void*
           u3a_realloc(void* lag_v, size_t len_i);
 
-        /* u3a_realloc2(): gmp-shaped realloc.
-        */
-          void*
-          u3a_realloc2(void* lag_v, size_t old_i, size_t new_i);
-
-        /* u3a_realloc_ssl(): openssl-shaped realloc.
-        */
-          void*
-          u3a_realloc_ssl(void* lag_v, size_t len_i
-#if OPENSSL_VERSION_NUMBER >= 0x10100000L
-                          , const char* file, int line
-#endif
-                          );
-
         /* u3a_free(): free for aligned malloc.
         */
           void
           u3a_free(void* tox_v);
-
-        /* u3a_free2(): gmp-shaped free.
-        */
-          void
-          u3a_free2(void* tox_v, size_t siz_i);
-
-        /* u3a_free_ssl(): openssl-shaped free.
-        */
-          void
-          u3a_free_ssl(void* tox_v
-#if OPENSSL_VERSION_NUMBER >= 0x10100000L
-                          , const char* file, int line
-#endif
-                          );
 
       /* Reference and arena control.
       */

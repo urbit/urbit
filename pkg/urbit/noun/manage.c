@@ -553,7 +553,7 @@ _pave_home(void)
 {
   c3_w* mem_w = u3_Loom + 1;
   c3_w  siz_w = c3_wiseof(u3v_home);
-  c3_w  len_w = u3a_words - 1;
+  c3_w  len_w = u3C.wor_i - 1;
 
   u3H = (void *)_pave_north(mem_w, siz_w, len_w);
   u3H->ver_w = u3v_version;
@@ -574,7 +574,7 @@ _find_home(void)
   //
   c3_w* mem_w = u3_Loom + 1;
   c3_w  siz_w = c3_wiseof(u3v_home);
-  c3_w  len_w = u3a_words - 1;
+  c3_w  len_w = u3C.wor_i - 1;
 
   {
     c3_w ver_w = *((mem_w + len_w) - 1);
@@ -594,7 +594,7 @@ _find_home(void)
   //  this looks risky, but there are no legitimate scenarios
   //  where it's wrong
   //
-  u3R->cap_p = u3R->mat_p = u3a_words - c3_wiseof(*u3H);
+  u3R->cap_p = u3R->mat_p = u3C.wor_i - c3_wiseof(*u3H);
 }
 
 /* u3m_pave(): instantiate or activate image.
@@ -695,22 +695,27 @@ u3m_bail(u3_noun how)
     abort();
   }
 
-  /* Printf some metadata.
-  */
-  if ( c3__exit != how && (_(u3ud(how)) || 1 != u3h(how)) ) {
-    if ( _(u3ud(how)) ) {
-      c3_c str_c[5];
+  //  printf some metadata
+  //
+  switch ( how ) {
+    case c3__evil:
+    case c3__exit: break;
 
-      str_c[0] = ((how >> 0) & 0xff);
-      str_c[1] = ((how >> 8) & 0xff);
-      str_c[2] = ((how >> 16) & 0xff);
-      str_c[3] = ((how >> 24) & 0xff);
-      str_c[4] = 0;
-      fprintf(stderr, "\r\nbail: %s\r\n", str_c);
-    }
-    else {
-      c3_assert(_(u3ud(u3h(how))));
-      fprintf(stderr, "\r\nbail: %d\r\n", u3h(how));
+    default: {
+      if ( _(u3ud(how)) ) {
+        c3_c str_c[5];
+
+        str_c[0] = ((how >>  0) & 0xff);
+        str_c[1] = ((how >>  8) & 0xff);
+        str_c[2] = ((how >> 16) & 0xff);
+        str_c[3] = ((how >> 24) & 0xff);
+        str_c[4] = 0;
+        fprintf(stderr, "\r\nbail: %s\r\n", str_c);
+      }
+      else if ( 1 != u3h(how) ) {
+        c3_assert(_(u3ud(u3h(how))));
+        fprintf(stderr, "\r\nbail: %d\r\n", u3h(how));
+      }
     }
   }
 
@@ -1720,16 +1725,53 @@ _cm_signals(void)
 # endif
 }
 
-extern void u3je_secp_init(void);
-extern void u3je_secp_stop(void);
+/* _cm_malloc_ssl(): openssl-shaped malloc
+*/
+static void*
+_cm_malloc_ssl(size_t len_i
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+               , const char* file, int line
+#endif
+               )
+{
+  return u3a_malloc(len_i);
+}
 
+/* _cm_realloc_ssl(): openssl-shaped realloc.
+*/
+static void*
+_cm_realloc_ssl(void* lag_v, size_t len_i
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+                , const char* file, int line
+#endif
+                )
+{
+  return u3a_realloc(lag_v, len_i);
+}
+
+/* _cm_free_ssl(): openssl-shaped free.
+*/
+static void
+_cm_free_ssl(void* tox_v
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+             , const char* file, int line
+#endif
+             )
+{
+  return u3a_free(tox_v);
+}
+
+extern void u3je_secp_init(void);
+
+/* _cm_crypto(): initialize openssl and crypto jets.
+*/
 static void
 _cm_crypto()
 {
   /* Initialize OpenSSL with loom allocation functions. */
-  if ( 0 == CRYPTO_set_mem_functions(&u3a_malloc_ssl,
-                                     &u3a_realloc_ssl,
-                                     &u3a_free_ssl) ) {
+  if ( 0 == CRYPTO_set_mem_functions(&_cm_malloc_ssl,
+                                     &_cm_realloc_ssl,
+                                     &_cm_free_ssl) ) {
     u3l_log("%s\r\n", "openssl initialization failed");
     abort();
   }
@@ -1737,53 +1779,81 @@ _cm_crypto()
   u3je_secp_init();
 }
 
+/* _cm_realloc2(): gmp-shaped realloc.
+*/
+static void*
+_cm_realloc2(void* lag_v, size_t old_i, size_t new_i)
+{
+  return u3a_realloc(lag_v, new_i);
+}
+
+/* _cm_free2(): gmp-shaped free.
+*/
+static void
+_cm_free2(void* tox_v, size_t siz_i)
+{
+  return u3a_free(tox_v);
+}
+
 /* u3m_init(): start the environment.
 */
 void
-u3m_init(void)
+u3m_init(size_t len_i)
 {
   _cm_limits();
   _cm_signals();
   _cm_crypto();
 
-  /* Make sure GMP uses our malloc.
-  */
-  mp_set_memory_functions(u3a_malloc, u3a_realloc2, u3a_free2);
+  //  make sure GMP uses our malloc.
+  //
+  mp_set_memory_functions(u3a_malloc, _cm_realloc2, _cm_free2);
 
-  /* Map at fixed address.
-  */
+  //  make sure that [len_i] is a fully-addressible non-zero power of two.
+  //
+  if (  !len_i
+     || (len_i & (len_i - 1))
+     || (len_i < (1 << (u3a_page + 2)))
+     || (len_i > u3a_bytes) )
   {
-    c3_w  len_w = u3a_bytes;
-    void* map_v;
+    u3l_log("loom: bad size: %zu\r\n", len_i);
+    exit(1);
+  }
 
-    map_v = mmap((void *)u3_Loom,
-                 len_w,
-                 (PROT_READ | PROT_WRITE),
-                 (MAP_ANON | MAP_FIXED | MAP_PRIVATE),
-                 -1, 0);
+  // map at fixed address.
+  //
+  {
+    void* map_v = mmap((void *)u3_Loom,
+                       len_i,
+                       (PROT_READ | PROT_WRITE),
+                       (MAP_ANON | MAP_FIXED | MAP_PRIVATE),
+                       -1, 0);
 
     if ( -1 == (c3_ps)map_v ) {
-      void* dyn_v = mmap((void *)0,
-                         len_w,
-                         PROT_READ,
-                         MAP_ANON | MAP_PRIVATE,
-                         -1, 0);
+      map_v = mmap((void *)0,
+                   len_i,
+                   (PROT_READ | PROT_WRITE),
+                   (MAP_ANON | MAP_PRIVATE),
+                   -1, 0);
 
-      u3l_log("boot: mapping %dMB failed\r\n", (len_w / (1024 * 1024)));
+      u3l_log("boot: mapping %zuMB failed\r\n", len_i >> 20);
       u3l_log("see urbit.org/using/install/#about-swap-space"
               " for adding swap space\r\n");
-      if ( -1 != (c3_ps)dyn_v ) {
+      if ( -1 != (c3_ps)map_v ) {
         u3l_log("if porting to a new platform, try U3_OS_LoomBase %p\r\n",
-                dyn_v);
+                map_v);
       }
       exit(1);
     }
 
-    u3l_log("loom: mapped %dMB\r\n", len_w >> 20);
+    u3C.wor_i = len_i >> 2;
+    u3l_log("loom: mapped %zuMB\r\n", len_i >> 20);
   }
 }
 
-/* u3m_stop(): graceful shutdown cleanup. */
+extern void u3je_secp_stop(void);
+
+/* u3m_stop(): graceful shutdown cleanup.
+*/
 void
 u3m_stop()
 {
@@ -1793,13 +1863,13 @@ u3m_stop()
 /* u3m_boot(): start the u3 system. return next event, starting from 1.
 */
 c3_d
-u3m_boot(c3_c* dir_c)
+u3m_boot(c3_c* dir_c, size_t len_i)
 {
   c3_o nuu_o;
 
   /* Activate the loom.
   */
-  u3m_init();
+  u3m_init(len_i);
 
   /* Activate the storage system.
   */
@@ -1832,7 +1902,6 @@ u3m_boot(c3_c* dir_c)
   if ( c3n == nuu_o ) {
     u3j_ream();
     u3n_ream();
-
     return u3A->eve_d;
   }
   else {
@@ -1846,11 +1915,11 @@ u3m_boot(c3_c* dir_c)
 /* u3m_boot_lite(): start without checkpointing.
 */
 c3_d
-u3m_boot_lite(void)
+u3m_boot_lite(size_t len_i)
 {
   /* Activate the loom.
   */
-  u3m_init();
+  u3m_init(len_i);
 
   /* Activate tracing.
   */

@@ -175,7 +175,7 @@
       wic=(map weft yoki)                               ::  commit-in-waiting
       liv=zest                                          ::  running agents
       ren=rein                                          ::  force agents on/off
-      wef=weft                                          ::  zuse version in use
+      wef=(unit weft)                                   ::  zuse version in use
   ==                                                    ::
 ::
 ::  Over-the-wire backfill request/response
@@ -306,6 +306,7 @@
       tur=rock:tire                                     ::  last tire
       pud=(unit [=desk =yoki])                          ::  pending update
       bug=[veb=@ mas=@]                                 ::  verbosity
+      zuz=(map weft vase)                               ::  zuse cache
   ==                                                    ::
 ::
 ::  Unvalidated response to a request.
@@ -886,7 +887,7 @@
         (page-to-cage page)
       =^  [mark vax=vase]  nub  (page-to-cage page)
       =^  =tube  nub  (build-tube p.page mak)
-      :_(nub [mak (road |.((tube vax)))])
+      :_(nub [mak (tube vax)])
     ::
     ++  page-to-cage
       |=  =page
@@ -908,7 +909,7 @@
         [cag nub]
       =^  =tube  nub  (build-tube mok mak)
       ~|  error-running-cast+[path mok mak]
-      :_(nub [mak (road |.((tube q.cag)))])
+      :_(nub [mak (tube q.cag)])
     ::
     ++  run-pact
       |=  [old=page diff=page]
@@ -954,7 +955,7 @@
       %+  gain-leak  file+path
       |=  nob=state
       =.  nub  nob
-      =/  res=vase  (road |.((slap sut hoon.pile)))
+      =/  res=vase  (slap sut hoon.pile)
       [[%vase res] nub]
     ::
     ++  build-file
@@ -1378,19 +1379,21 @@
     ^+  ..park
     =/  using=(set weft)
       %-  ~(rep by dos.rom)
-      |=  [[=desk =dojo]  wefts=(set weft)]
-      (~(put in wefts) wef.dom.dojo)
+      |=  [[=desk =dojo] wefts=(set weft)]
+      ?~  wef.dom.dojo
+        wefts
+      (~(put in wefts) u.wef.dom.dojo)
     =/  stale=(list weft)
       ~(tap in (~(dif in ~(key by zuz)) using))
     |-
     ?~  stale
-      ..park(zuz zuz)
+      ..park
     $(stale t.stale, zuz (~(del by zuz) i.stale))
   ::
   ++  got-zuse
-    |=  =waft
+    |=  waf=waft
     |^  ^-  [[weft vase] _..park]
-    =/  wefts=(list weft)  (sort-filter-waft waft)
+    =/  wefts=(list weft)  (sort-filter-waft waf)
     ?^  cached=(try-zuse-cache wefts)
       [u.cached ..park]
     =/  oldest=weft  (rear wefts)
@@ -1412,12 +1415,11 @@
       $(aeon (dec aeon))
     =/  zuse-core=vase  (build-zuse u.files)
     =/  actual=weft  [%zuse !<(@ud (slap zuse-core %limb %zuse))]
-    ?>  ?@  -.waft
-          =(waft actual)
-        (~(has in p.waft) actual)
-    :+  actual
-      zuse-core
-    ..part(zuz (~(put by zuz) actual zuse-core))
+    ?>  ?@  -.waf
+          =(waf actual)
+        (~(has in p.waf) actual)
+    :-  [actual zuse-core]
+    ..park(zuz (~(put by zuz) actual zuse-core))
     ::
     ++  build-zuse
       |=  [h=@ a=@ l=@ z=@]
@@ -1445,7 +1447,7 @@
         (some i.wefts zuse.bud)
       ?~  zuse-core=(~(get by zuz) i.wefts)
         $(wefts t.wefts)
-      (some i.wefts zuse-core)
+      (some i.wefts u.zuse-core)
     ::
     ++  sort-filter-waft
       |=  =waft
@@ -1464,7 +1466,7 @@
         ~
       ?.  ?=(%kelvin p.u.puge)
         ~
-      ((soft waft) q.u.page)
+      ((soft waft) q.u.puge)
     ::
     ++  get-kernel-files
       |=  =yaki
@@ -1646,7 +1648,10 @@
     |=  yon=aeon
     %-  ford:fusion
     =/  files  (~(run by q:(aeon-to-yaki:ze yon)) |=(=lobe |+lobe))
-    =/  zus  (got-zuse wef.dom)
+    =/  zus=[weft vase]
+      ?:  =(zuse+zuse (need wef.dom))
+        [zuse+zuse zuse.bud]
+      [(need wef.dom) (~(got by zuz) (need wef.dom))]
     [files lat.ran veb.bug zus fad ?:(=(yon let.dom) fod.dom [~ ~])]
   ::  Produce ford cache appropriate for the aeon
   ::
@@ -2033,7 +2038,7 @@
     ::
     =/  old-fod  fod.dom
     =.  fod.dom
-      ?:  |(updated !=(weft.zus wef.dom))
+      ?:  |(updated !=([~ weft.zus] wef.dom))
         [~ ~]
       (promote-ford fod.dom invalid)
     =.  fad
@@ -2049,7 +2054,7 @@
     =/  =args:ford:fusion  [files lat.ran veb.bug zus fad fod.dom]
     ::
     =^  change-cages  args  (checkout-changes args changes)
-    =/  sane-continuation  (sane-changes changes change-cages)
+    =/  sane-continuation  (sane-changes changes change-cages zus)
     =/  new-pages=(map lobe page)
       %-  malt
       %+  turn  ~(tap by change-cages)
@@ -2078,7 +2083,7 @@
     ::  [wake] < [ergo] < [goad] <
     ::
     =:  let.dom  +(let.dom)
-        wef.dom  weft.zus
+        wef.dom  (some weft.zus)
         hit.dom  (~(put by hit.dom) +(let.dom) r.yaki)
         hut.ran  (~(put by hut.ran) r.yaki yaki)
         lat.ran  (~(uni by new-pages) lat.ran)
@@ -2134,6 +2139,10 @@
     ::  notify unix and subscribers
     ::
     =?  ..park  mem  (ergo 0 mum.res)                   ::  [ergo] >
+    ::  garbage collect zuse cache
+    ::
+    =.  ..park  sweep-zuse-cache
+    ::
     wake:tare                                           ::  [wake] > [tare] >
     ::
     ::  +is-kernel-path: should changing .pax cause a kernel or vane reload?
@@ -2355,6 +2364,7 @@
     ++  sane-changes
       |=  $:  changes=(map path (each page lobe))
               change-cages=(map path [lobe cage])
+              zus=[=weft =vase]
           ==
       ^-  (unit [(map path [lobe cage]) args:ford:fusion])
       ?.  check-sane
@@ -2380,7 +2390,7 @@
         =/  original=(map path (each page lobe))
           (~(run by q.yaki) |=(=lobe |+lobe))
         (~(uni by original) changes)
-      =/  =args:ford:fusion  [all-changes lat.ran veb.bug ~ ~ ~]
+      =/  =args:ford:fusion  [all-changes lat.ran veb.bug zus ~ ~ ~]
       =^  all-change-cages  args  (checkout-changes args all-changes)
       =/  ccs=(list [=path =lobe =cage])  ~(tap by change-cages)
       |-  ^+  *sane-changes
@@ -3229,8 +3239,12 @@
       (~(put by mon) pot [her syd ud+for-yon] spur)
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) u.yon))
     =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
+    =/  zus=[weft vase]
+      ?:  =(zuse+zuse (need wef.dom))
+        [zuse+zuse zuse.bud]
+      [(need wef.dom) (~(got by zuz) (need wef.dom))]
     =/  =args:ford:fusion
-      [files lat.ran veb.bug fad ?:(=(yon let.dom) fod.dom [~ ~])]
+      [files lat.ran veb.bug zus fad ?:(=(yon let.dom) fod.dom [~ ~])]
     =^  mim  args
       (checkout-mime args ~ ~(key by files))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
@@ -3314,6 +3328,7 @@
   ++  set-zest                                          ::  [goad] <
     |=  liv=zest
     =?  liv  =(%base syd)  %live
+    =?  ..park  =(%live liv)  +:(got-zuse (need wef.dom))
     ..park(liv.dom liv)
   ::
   ++  rise                                              ::  [goad] <
@@ -4677,8 +4692,11 @@
         |=  [=desk =bill]
         leaf+"goad: output: {<desk>}: {<bill>}"
     =^  agents  ..abet  (build-agents sat)
-    =.  ..abet
-      (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
+    ::  TODO: enable if we can reduce memory usage
+    ::
+    ::  =.  ..abet
+    ::    (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
+    ::
     =.  ..abet  tare                                    ::  [tare] >
     (emit hen %pass /lu/load %g %load agents)
   ::  +override: apply rein to bill
@@ -4748,6 +4766,7 @@
     |-  ^-  [load:gall _..abet]
     ?~  sat
       [lad ..abet]
+    =/  =weft  (need wef.dom:(~(got by dos.rom) desk.i.sat))
     =/  f  (ford our desk.i.sat ~)
     =^  new=load:gall  ..abet
       %-  wrap  :^  our  desk.i.sat  ~
@@ -4755,13 +4774,12 @@
       ?~  bill.i.sat
         [~ nub.f]
       =^  =vase  nub.f  (build-file:f /app/[i.bill.i.sat]/hoon)
-      =/  agent  ~|  [%building-app bill.i.sat]  !<(agent-any:gall vase)
-      =^  =cage  nub.f  (read-file:f /sys/kelvin)
-      =/  wefts  (waft-to-wefts !<(waft q.cage))
-      ?.  (~(has in wefts) -.agent)
-        =-  (mean leaf/- ~)
-        "clay: agent {<i.bill.i.sat>} incompatible, ".
-        "{[have=-.agent need=~(tap in wefts)]}"
+      =/  =agent:gall
+        ~|  [%building-app bill.i.sat]
+        ?+  weft  !!
+          [%zuse %417]  [[%zuse %417] !<(agent-417:gall vase)]
+          [%zuse %418]  [[%zuse %418] !<(agent-418:gall vase)]
+        ==
       =^  lid  nub.f  $(bill.i.sat t.bill.i.sat)
       [[[i.bill.i.sat [our desk.i.sat da+now] agent] lid] nub.f]
     =.  lad  (weld lad new)
@@ -4858,7 +4876,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%13                                       ::  vane version
+    $:  ver=%14                                       ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
@@ -5075,6 +5093,25 @@
         =/  den  ((de now rof hen ruf) our desk.arg.req)
         abet:(stay:den ver.arg.req)
       [moves ..^$]
+    ::
+        [%trim ~]
+      =:    fad.ruf      *flow
+            dos.rom.ruf
+          %-  ~(run by dos.rom.ruf)
+          |=  =dojo
+          dojo(fod.dom *flue)
+        ::
+            hoy.ruf
+          %-  ~(run by hoy.ruf)
+          |=  =rung
+          %=    rung
+              rus
+            %-  ~(run by rus.rung)
+            |=  =rede
+            rede(fod.dom *flue)
+          ==
+        ==
+      [~ ..^$]
     ==
   ::
       %tire
@@ -5086,25 +5123,7 @@
     [hen %give %tire %& tore:(lu now rof hen ruf)]~
   ::
       %tomb  (tomb-clue:tomb hen clue.req)
-      %trim
-    =:    fad.ruf      *flow
-          dos.rom.ruf
-        %-  ~(run by dos.rom.ruf)
-        |=  =dojo
-        dojo(fod.dom *flue)
-      ::
-          hoy.ruf
-        %-  ~(run by hoy.ruf)
-        |=  =rung
-        %=    rung
-            rus
-          %-  ~(run by rus.rung)
-          |=  =rede
-          rede(fod.dom *flue)
-        ==
-      ==
-    [~ ..^$]
-  ::
+      %trim  [~ ..^$]
       %vega
     ::  wake all desks, then send pending notifications
     ::
@@ -5187,7 +5206,8 @@
 ++  load
   =>  |%
       +$  raft-any
-        $%  [%13 raft-13]
+        $%  [%14 raft]
+            [%13 raft-13]
             [%12 raft-12]
             [%11 raft-11]
             [%10 raft-10]
@@ -5196,12 +5216,66 @@
             [%7 raft-7]
             [%6 raft-6]
         ==
-      +$  raft-13  raft
+      +$  raft-13
+        $:  rom=room-13
+            hoy=(map ship rung-13)
+            ran=rang
+            fad=flow-13
+            mon=(map term beam)
+            hez=(unit duct)
+            cez=(map @ta crew)
+            tyr=(set duct)
+            tur=rock:tire
+            pud=(unit [=desk =yoki])
+            bug=[veb=@ mas=@]
+        ==
+      +$  room-13
+        $:  hun=duct
+            dos=(map desk dojo-13)
+        ==
+      +$  rung-13
+        $:  rus=(map desk rede-13)
+        ==
+      +$  dojo-13
+        $:  qyx=cult
+            dom=dome-13
+            per=regs
+            pew=regs
+            fiz=melt
+        ==
+      +$  rede-13
+        $:  lim=@da
+            ref=(unit rind)
+            qyx=cult
+            dom=dome-13
+            per=regs
+            pew=regs
+            fiz=melt
+        ==
+      +$  dome-13
+        $:  let=aeon
+            hit=(map aeon tako)
+            lab=(map @tas aeon)
+            tom=(map tako norm)
+            nor=norm
+            mim=(map path mime)
+            fod=flue-13
+            wic=(map weft yoki)
+            liv=zest
+            ren=rein
+        ==
+      +$  flow-13  (map leak-13 [refs=@ud =soak])
+      +$  flue-13  [spill=(set leak-13) sprig=(map mist [leak=leak-13 =soak])]
+      +$  leak-13
+        $~  [*pour ~]
+        $:  =pour
+            deps=(set leak-13)
+        ==
       +$  raft-12
         $:  rom=room-11
             hoy=(map ship rung-11)
             ran=rang
-            fad=flow
+            fad=flow-13
             mon=(map term beam)
             hez=(unit duct)
             cez=(map @ta crew)
@@ -5212,7 +5286,7 @@
         $:  rom=room-11
             hoy=(map ship rung-11)
             ran=rang
-            fad=flow
+            fad=flow-13
             mon=(map term beam)
             hez=(unit duct)
             cez=(map @ta crew)
@@ -5236,7 +5310,7 @@
             tom=(map tako norm)
             nor=norm
             mim=(map path mime)
-            fod=flue
+            fod=flue-13
         ==
       +$  rung-11
         $:  rus=(map desk rede-11)
@@ -5469,7 +5543,8 @@
   =?  old  ?=(%10 -.old)  11+(raft-10-to-11 +.old)
   =?  old  ?=(%11 -.old)  12+(raft-11-to-12 +.old)
   =?  old  ?=(%12 -.old)  13+(raft-12-to-13 +.old)
-  ?>  ?=(%13 -.old)
+  =?  old  ?=(%13 -.old)  14+(raft-13-to-14 +.old)
+  ?>  ?=(%14 -.old)
   ..^^$(ruf +.old)
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
   ::
@@ -5521,7 +5596,7 @@
       |=  =dojo-8
       ^-  dojo-10
       =/  dom  dom.dojo-8
-      dojo-8(dom [ank.dom let.dom hit.dom lab.dom mim.dom *flow])
+      dojo-8(dom [ank.dom let.dom hit.dom lab.dom mim.dom *flow-13])
     ::
         hoy
       %-  ~(run by hoy.raf)
@@ -5530,7 +5605,7 @@
       |=  =rede-8
       ^-  rede-10
       =/  dom  dom.rede-8
-      rede-8(dom [ank.dom let.dom hit.dom lab.dom mim.dom *flow])
+      rede-8(dom [ank.dom let.dom hit.dom lab.dom mim.dom *flow-13])
     ==
   ::  +raft-9-to-10: add .dist-upgraded
   ::
@@ -5629,7 +5704,7 @@
       ==
     ::
         |3
-      :-  *flow
+      :-  *flow-13
       %=  |3.raf
         mon  (~(run by mon.raf) |=(=beam beam(r ud+0)))
         |3   pud.raf
@@ -5698,7 +5773,7 @@
     ::                      ::  maybe have kiln send one-time list of desks
     ::
     =;  rof
-      rof(dos.rom (~(jab by dos.rom.rof) %base |=(d=dojo d(liv.dom %live))))
+      rof(dos.rom (~(jab by dos.rom.rof) %base |=(d=dojo-13 d(liv.dom %live))))
     ^-  raft-13
     %=  raf
       dos.rom  (~(run by dos.rom.raf) dojo-11-to-13)
@@ -5708,23 +5783,76 @@
     ::
     ++  dojo-11-to-13
       |=  doj=dojo-11
-      ^-  dojo
+      ^-  dojo-13
       doj(dom (dome-11-to-13 dom.doj))
     ::
     ++  rung-11-to-13
       |=  rug=rung-11
-      ^-  rung
+      ^-  rung-13
       rug(rus (~(run by rus.rug) rede-11-to-13))
     ::
     ++  rede-11-to-13
       |=  red=rede-11
-      ^-  rede
+      ^-  rede-13
       red(dom (dome-11-to-13 dom.red))
     ::
     ++  dome-11-to-13
       |=  dom=dome-11
-      ^-  dome
+      ^-  dome-13
       dom(fod [fod.dom ~ liv=%dead ren=~])
+    --
+  ::  +raft-13-to-14
+  ::
+  ::    add .wef to $dome's
+  ::    add .zuz zuse cache to $raft
+  ::    add weft to $leak
+  ::    build zuses for live desks lacking pending updates
+  ::
+  ++  raft-13-to-14
+    |=  raf=raft-13
+    |^  ^-  raft
+    =/  new=raft
+      %=  raf
+        dos.rom  (~(run by dos.rom.raf) dojo-13-to-14)
+        hoy      (~(run by hoy.raf) rung-13-to-14)
+        fad      ~
+        bug      [bug.raf zuz=*(map weft vase)]
+      ==
+    =/  den  ((de now rof ~ new) our %base)
+    =;  [don=_den dos=(map desk dojo)]
+      new(dos.rom dos, zuz zuz:abet:don)
+    %+  ~(rib by dos.rom.new)  den
+    |=  [[des=desk doj=dojo] dan=_den]
+    ?:  ?|  =(%base des)
+            !?=(%live liv.dom.doj)
+            (~(has by wic.dom.doj) zuse+zuse)
+        ==
+      [dan des doj]
+    =/  yak  (~(got by hut.ran.new) (~(got by hit.dom.doj) let.dom.doj))
+    =/  pag  (~(got by lat.ran.new) (~(got by q.yak) /sys/kelvin))
+    ?>  =(%kelvin p.pag)
+    =^  zus=[=weft =vase]  dan  (got-zuse:dan ;;(waft q.pag))
+    [dan des doj(wef.dom (some weft.zus))]
+    ::
+    ++  rung-13-to-14
+      |=  rug=rung-13
+      ^-  rung
+      rug(rus (~(run by rus.rug) rede-13-to-14))
+    ::
+    ++  rede-13-to-14
+      |=  red=rede-13
+      ^-  rede
+      red(dom (dome-13-to-14 dom.red))
+    ::
+    ++  dojo-13-to-14
+      |=  doj=dojo-13
+      ^-  dojo
+      doj(dom (dome-13-to-14 dom.doj))
+    ::
+    ++  dome-13-to-14
+      |=  dom=dome-13
+      ^-  dome
+      dom(fod [~ ~], ren [ren.dom wef=~])
     --
   --
 ::
@@ -5867,35 +5995,7 @@
     `u=[need have leak]
   --
 ::
-::  We clear the ford cache by replacing it with its bunt as a literal,
-::  with its singleton type.  This nests within +flow and +flue without
-::  reference to +type, +hoon, or anything else in the sample of cache
-::  objects.  Otherwise we would be contravariant in those types, which
-::  makes them harder to change.
-::
-++  stay
-  =/  flu  [~ ~]
-  =+  `flue`flu
-  =/  flo  ~
-  =+  `flow`flo
-  :-  ver
-  %=    ruf
-      fad  flo
-      dos.rom
-    %-  ~(run by dos.rom.ruf)
-    |=  =dojo
-    dojo(fod.dom flu)
-  ::
-      hoy
-    %-  ~(run by hoy.ruf)
-    |=  =rung
-    %=    rung
-        rus
-      %-  ~(run by rus.rung)
-      |=  =rede
-      rede(fod.dom flu)
-    ==
-  ==
+++  stay  [ver ruf]
 ::
 ++  take                                              ::  accept response
   ~/  %clay-take
