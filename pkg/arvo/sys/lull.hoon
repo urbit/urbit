@@ -2001,7 +2001,8 @@
       ::
         $:  %jael
         $?  %moons  ::  %moon
-            %prick  ::  %private-keys %resend %rekey  ::REVIEW %rekey separate?
+            %prick  ::  %private-keys %resend
+            %creak  ::  %rekey
             %login  ::  %step
             %break  ::  %meet %ruin
             ::NOTE  always allowed, public data:
@@ -2258,11 +2259,12 @@
     ::
         %j
       ?+  +>-.note  |
-        %moon                            [%jael %moons]
-        ?(%private-keys %resend %rekey)  [%jael %prick]
-        %step                            [%jael %login]
-        ?(%meet %ruin)                   [%jael %break]
-        ?(%public-keys %nuke %turf)      &
+        %moon                        [%jael %moons]
+        ?(%private-keys %resend)     [%jael %prick]
+        %rekey                       [%jael %creak]
+        %step                        [%jael %login]
+        ?(%meet %ruin)               [%jael %break]
+        ?(%public-keys %nuke %turf)  &
       ==
     ::
         %k
