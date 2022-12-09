@@ -5872,7 +5872,9 @@
       %-  ~(gas by *cone)
       %+  turn  ~(tap by dos.rom.ruf)
       |=  [=desk =dojo]
-      [[our desk] [[let hit lab] tom nor liv ren pes]:dom.dojo]
+      =,  dom.dojo
+      =/  cop=pers:gall  ?~(cop.dom.dojo ~ mis.u.cop)
+      [[our desk] [let hit lab] tom nor liv ren pes cop]
     ::
     ::TODO: are the ~ and [~ ~] returns here correct?
     ?+  path  [~ ~]
@@ -5893,7 +5895,9 @@
         ^-  (list [[^ship desk] foam])
         %+  turn  ~(tap by rus.rung)
         |=  [=desk =rede]
-        [[ship desk] [[let hit lab] tom nor liv ren pes]:dom.rede]
+        =,  dom.rede
+        =/  cop=pers:gall  ?~(cop.dom.rede ~ mis.u.cop)
+        [[ship desk] [let hit lab] tom nor liv ren pes cop]
       ``[%domes !>(domes)]
     ==
   ::
@@ -5971,7 +5975,9 @@
       %-  ~(gas by *hone)
       %+  turn  ~(tap by dos.rom.ruf)
       |=  [=desk =dojo]
-      [desk [tom nor liv ren pes]:dom.dojo]
+      =,  dom.dojo
+      =/  cop=pers:gall  ?~(cop.dom.dojo ~ mis.u.cop)
+      [desk tom nor liv ren pes cop]
     ::TODO: are the ~ and [~ ~] returns correct?
     ?+  path  [~ ~]
         ~
