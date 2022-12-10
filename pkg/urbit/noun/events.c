@@ -880,8 +880,9 @@ _ce_loom_protect_south(c3_w pgs_w, c3_w old_w)
 
   if ( old_w > pgs_w ) {
     c3_w dif_w = old_w - pgs_w;
+    c3_w off_w = u3P.pag_w - old_w;
 
-    if ( 0 != mprotect((void*)(u3_Loom + ((u3P.pag_w - old_w) << u3a_page)),
+    if ( 0 != mprotect((void*)(u3_Loom + (off_w << u3a_page)),
                        (size_t)dif_w << (u3a_page + 2),
                        (PROT_READ | PROT_WRITE)) )
     {
@@ -893,9 +894,9 @@ _ce_loom_protect_south(c3_w pgs_w, c3_w old_w)
 #ifdef U3_GUARD_PAGE
     //  protect guard page if clobbered
     //
-    //    NB: > pgs_w is precluded by assertion in _ce_patch_compose()
+    //    NB: >= pgs_w is precluded by assertion in _ce_patch_compose()
     //
-    if ( (gar_pag_p >> u3a_page) >= (u3a_pages - (old_w + 1)) ) {
+    if ( (gar_pag_p >> u3a_page) >= off_w ) {
       fprintf(stderr, "loom: guard on reprotect\r\n");
       if ( 0 != mprotect(u3a_into(gar_pag_p), pag_siz_i, PROT_NONE) ) {
         fprintf(stderr, "loom: failed to protect guard page: %s\r\n",
