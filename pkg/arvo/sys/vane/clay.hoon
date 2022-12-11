@@ -298,7 +298,6 @@
       hoy=(map ship rung)                               ::  foreign
       ran=rang                                          ::  hashes
       fad=flow                                          ::  ford cache
-      zuz=(map weft vase)                               ::  zuse cache
       mon=(map term beam)                               ::  mount points
       hez=(unit duct)                                   ::  sync duct
       cez=(map @ta crew)                                ::  permission groups
@@ -1648,10 +1647,11 @@
     |=  yon=aeon
     %-  ford:fusion
     =/  files  (~(run by q:(aeon-to-yaki:ze yon)) |=(=lobe |+lobe))
+    =/  wef  (need wef.dom)
     =/  zus=[weft vase]
-      ?:  =(zuse+zuse (need wef.dom))
+      ?:  =(zuse+zuse wef)
         [zuse+zuse zuse.bud]
-      [(need wef.dom) (~(got by zuz) (need wef.dom))]
+      [wef (~(got by zuz) wef)]
     [files lat.ran veb.bug zus fad ?:(=(yon let.dom) fod.dom [~ ~])]
   ::  Produce ford cache appropriate for the aeon
   ::
@@ -3239,10 +3239,11 @@
       (~(put by mon) pot [her syd ud+for-yon] spur)
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) u.yon))
     =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
+    =/  wef  (need wef.dom)
     =/  zus=[weft vase]
-      ?:  =(zuse+zuse (need wef.dom))
+      ?:  =(zuse+zuse wef)
         [zuse+zuse zuse.bud]
-      [(need wef.dom) (~(got by zuz) (need wef.dom))]
+      [wef (~(got by zuz) wef)]
     =/  =args:ford:fusion
       [files lat.ran veb.bug zus fad ?:(=(yon let.dom) fod.dom [~ ~])]
     =^  mim  args
