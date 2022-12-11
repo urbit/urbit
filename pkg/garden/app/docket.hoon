@@ -394,7 +394,10 @@
         ::          !=(%kids desk)
         ::      ==
         ::    [dap.bowl %no-docket-file-for desk]
-        `state
+        ?.  (~(has by charges) desk)
+          `state
+        :-  ~[del-fact:cha]
+        state(charges (~(del by charges) desk))
       ::  always update the docket in state to match clay's
       ::
       =/  =docket            docket:cha
