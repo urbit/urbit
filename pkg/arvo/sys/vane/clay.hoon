@@ -1411,13 +1411,13 @@
     :: the oldest target weft, do not continue
     ::
     ?<  (gth num.aeon-newest num.oldest)
+    ?~  (~(int in wefts) (silt aeon-welt))
+      $(aeon (dec aeon))
     ?~  files=(get-kernel-files yaki)
       $(aeon (dec aeon))
     =/  zuse-core=vase  (build-zuse u.files)
     =/  actual=weft  [%zuse !<(@ud (slap zuse-core %limb %zuse))]
-    ?>  ?@  -.waf
-          =(waf actual)
-        (~(has in p.waf) actual)
+    ?>  (~(has in wefts) actual)
     :-  [actual zuse-core]
     ..park(zuz (~(put by zuz) actual zuse-core))
     ::
