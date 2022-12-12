@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - 'next/arvo'
+      - 'jt/merge-ota' # XX next/arvo
 jobs:
   deploy:
     runs-on: ubuntu-latest
