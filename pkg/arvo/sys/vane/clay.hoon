@@ -1392,10 +1392,11 @@
   ++  got-zuse
     |=  waf=waft
     |^  ^-  [[weft vase] _..park]
-    =/  wefts=(list weft)  (sort-filter-waft waf)
-    ?^  cached=(try-zuse-cache wefts)
+    =/  welt=(list weft)  (sort-filter-waft waf)
+    =/  wefts=(set weft)  (silt welt)
+    ?^  cached=(try-zuse-cache welt)
       [u.cached ..park]
-    =/  oldest=weft  (rear wefts)
+    =/  oldest=weft  (rear welt)
     =/  =dome  dom:(~(got by dos.rom) %base)
     =/  =aeon  let.dome
     |-
@@ -1403,9 +1404,9 @@
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dome) aeon))
     ?~  aeon-waft=(get-waft yaki)
       $(aeon (dec aeon))
-    ?~  aeon-wefts=(sort-filter-waft u.aeon-waft)
+    ?~  aeon-welt=(sort-filter-waft u.aeon-waft)
       $(aeon (dec aeon))
-    =/  aeon-newest=weft  i.aeon-wefts
+    =/  aeon-newest=weft  i.aeon-welt
     :: if the newest weft for this aeon is older than
     :: the oldest target weft, do not continue
     ::
@@ -1438,15 +1439,15 @@
       (road |.((slap lull-core (rain /sys/zuse/hoon z))))
     ::
     ++  try-zuse-cache
-      |=  wefts=(list weft)
+      |=  welt=(list weft)
       ^-  (unit [weft vase])
-      ?~  wefts
+      ?~  welt
         ~
-      ?:  =(i.wefts zuse+zuse)
-        (some i.wefts zuse.bud)
-      ?~  zuse-core=(~(get by zuz) i.wefts)
-        $(wefts t.wefts)
-      (some i.wefts u.zuse-core)
+      ?:  =(i.welt zuse+zuse)
+        (some i.welt zuse.bud)
+      ?~  zuse-core=(~(get by zuz) i.welt)
+        $(welt t.welt)
+      (some i.welt u.zuse-core)
     ::
     ++  sort-filter-waft
       |=  =waft
@@ -4778,8 +4779,8 @@
       =/  =agent:gall
         ~|  [%building-app bill.i.sat]
         ?+  weft  !!
+          [%zuse %416]  [[%zuse %416] !<(agent-416:gall vase)]
           [%zuse %417]  [[%zuse %417] !<(agent-417:gall vase)]
-          [%zuse %418]  [[%zuse %418] !<(agent-418:gall vase)]
         ==
       =^  lid  nub.f  $(bill.i.sat t.bill.i.sat)
       [[[i.bill.i.sat [our desk.i.sat da+now] agent] lid] nub.f]
