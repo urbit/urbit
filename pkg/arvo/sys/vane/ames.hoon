@@ -1183,6 +1183,7 @@
       %vega  on-vega:event-core
       %plea  (on-plea:event-core [ship plea]:task)
       %cork  (on-cork:event-core ship.task)
+      %kroc  (on-kroc:event-core dry.task)
     ==
   ::
   [moves ames-gate]
@@ -1448,6 +1449,7 @@
   ~%  %event-gate  ..per-event  ~
   |=  [[now=@da eny=@ rof=roof] =duct =ames-state]
   =*  veb  veb.bug.ames-state
+  =|  cork-bone=(unit bone)  ::  modified by +on-kroc
   ~%  %event-core  ..$  ~
   |%
   ++  event-core  .
@@ -1899,7 +1901,15 @@
     =/  =peer-state  +.u.ship-state
     =/  =channel     [[our ship] now channel-state -.peer-state]
     ::
-    =^  bone  ossuary.peer-state  (bind-duct ossuary.peer-state duct)
+    =/  [=bone ossuary=_ossuary.peer-state]
+      ?^  cork-bone  [u.cork-bone ossuary.peer-state]
+      (bind-duct ossuary.peer-state duct)
+    =.  ossuary.peer-state  ossuary
+    ::
+    ?.  (~(has by by-bone.ossuary.peer-state) bone)
+      %.  event-core
+      %^  trace  odd.veb  ship
+      |.("trying to cork {<bone=bone>}, not in the ossuary, ignoring")
     ::
     =.  closing.peer-state  (~(put in closing.peer-state) bone)
     %-  %^  trace  msg.veb  ship
@@ -1908,6 +1918,36 @@
         =/  rcvr  [ship her-life.channel]
         "cork plea {<sndr rcvr bone=bone vane.plea path.plea>}"
     abet:(on-memo:(make-peer-core peer-state channel) bone plea %plea)
+  ::  +on-kroc: cork all stale flows from failed subscriptions
+  ::
+  ++  on-kroc
+    |=  dry=?
+    ^+  event-core
+    %+  roll  ~(tap by peers.ames-state)
+    |=  [[=ship =ship-state] core=_event-core]
+    ?.  ?=(%known -.ship-state)  core
+    =/  =peer-state:ames  ?>(?=(%known -.ship-state) +.ship-state)
+    ::
+    %+  roll  ~(tap by rcv.peer-state)
+    |=  [[=bone *] core=_core]
+    ?.  &(=(0 (end 0 bone)) =(1 (end 0 (rsh 0 bone))))
+      ::  not a naxplanation ack bone
+      ::
+      core
+    ::  by only corking forward flows that have received
+    ::  a nack we avoid corking the current subscription
+    ::
+    =+  target=(mix 0b10 bone)
+    ::  make sure that the nack bone has a forward flow
+    ::
+    ?~  duct=(~(get by by-bone.ossuary.peer-state) target)
+      core
+    ?.  ?=([* [%gall %use sub=@ @ %out @ @ nonce=@ pub=@ *] *] u.duct)
+      core
+    %-  %^  trace  |(dry odd.veb)  ship
+        |.("kroc failed %watch plea {<bone=target>}")
+    ?:  dry  core
+    (%*(on-cork core cork-bone `target) ship)
   ::  +on-take-wake: receive wakeup or error notification from behn
   ::
   ++  on-take-wake

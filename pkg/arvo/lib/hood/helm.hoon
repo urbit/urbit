@@ -245,21 +245,12 @@
   |=  ~  =<  abet
   (emit %pass /helm %arvo %a %stir '')
 ::
-++  poke-ames-kroc
-  |=  [dry=? krocs=(list [=ship =bone])]  =<  abet
-  ?~  krocs  (flog %text "No %ames flow ready to be close")
+++  poke-kroc
+  |=  dry=?  =<  abet
   %-  emil    ^-  (list card)
-  ::  TODO: extend closing flow overview
-  ::
-  :-  [%pass /di %arvo %d %flog text+"Closing {<(lent krocs)>} ames flows"]
-  ::  XX uncomment when updating %lull to include a %kroc task to ames
-  ::
-  ~
-  :: ?:  dry  ~
-  :: %+  turn  krocs
-  :: |=  [=ship =bone]
-  :: ^-  card
-  :: [%pass /helm %arvo %a %kroc ship bone]
+  :~  [%pass /helm/kroc %arvo %a %kroc dry]
+      [%pass /helm/rake %arvo %g %rake ~ %r dry]
+  ==
 ::
 ++  poke-knob
   |=  [error-tag=@tas level=?(%hush %soft %loud)]  =<  abet
@@ -296,7 +287,7 @@
     %helm-ames-sift        =;(f (f !<(_+<.f vase)) poke-ames-sift)
     %helm-ames-verb        =;(f (f !<(_+<.f vase)) poke-ames-verb)
     %helm-ames-wake        =;(f (f !<(_+<.f vase)) poke-ames-wake)
-    %helm-ames-kroc        =;(f (f !<(_+<.f vase)) poke-ames-kroc)
+    %helm-kroc             =;(f (f !<(_+<.f vase)) poke-kroc)
     %helm-atom             =;(f (f !<(_+<.f vase)) poke-atom)
     %helm-automass         =;(f (f !<(_+<.f vase)) poke-automass)
     %helm-cancel-automass  =;(f (f !<(_+<.f vase)) poke-cancel-automass)

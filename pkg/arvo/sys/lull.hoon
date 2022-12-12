@@ -352,7 +352,7 @@
   ::    %heed: track peer's responsiveness; gives %clog if slow
   ::    %jilt: stop tracking peer's responsiveness
   ::    %cork: request to delete message flow
-  ::    %kroc: request to delete message flow on a specific bone
+  ::    %kroc: request to delete stale message flows
   ::    %plea: request to send message
   ::
   ::    System and Lifecycle Tasks
@@ -371,6 +371,7 @@
         [%heed =ship]
         [%jilt =ship]
         [%cork =ship]
+        [%kroc dry=?]
         $>(%plea vane-task)
     ::
         $>(%born vane-task)
@@ -1809,7 +1810,7 @@
         [%load =load]                                   ::  load agent
         [%nuke =dude]                                   ::  delete agent
         [%doff dude=(unit dude) ship=(unit ship)]       ::  kill subscriptions
-        [%rake dude=(unit dude) all=?]                  ::  reclaim old subs
+        [%rake dude=(unit dude) mode=?(%o %z %r) dry=?] ::  reclaim old subs
         $>(%init vane-task)                             ::  set owner
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
