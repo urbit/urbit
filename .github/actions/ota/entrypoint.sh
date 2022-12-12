@@ -13,7 +13,7 @@ janeway \
     --verbose \
     --credentials /service-account \
     --ssh-key /id_ssh \
-    release ota --no-commit \  # XX remove flag after testing
+    release ota --no-commit \
     arvo \
     "$1" \
     ${5:+"--ref"} ${5:+"$5"} \
