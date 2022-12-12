@@ -3,6 +3,8 @@
 ::::
   ::
 /-  *story
+/$  story-to-txt  %story  %txt
+::
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
         [[~] =desk ~]
@@ -15,9 +17,6 @@
   tang+[leaf+"Error: desk {<desk>} does not exist." ~]
 ?:  !.^(? %cu pax)
   tang+['Error: No story file found. Please use |story-init to create one.' ~]
-=/  story-to-txt
-  .^($-(story wain) %cf /(scot %p our)/[desk]/(scot cas)/story/txt)
-::
 =/  tale        .^(story %cx pax)
-=/  tale-text  (story-to-txt tale)
+=/  tale-text  (flop (story-to-txt tale))
 tang+tale-text
