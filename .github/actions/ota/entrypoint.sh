@@ -13,7 +13,7 @@ janeway \
     --verbose \
     --credentials /service-account \
     --ssh-key /id_ssh \
-    release ota --no-commit \
+    release ota \
     arvo \
     "$1" \
     ${5:+"--ref"} ${5:+"$5"} \
