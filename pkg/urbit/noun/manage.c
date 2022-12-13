@@ -998,12 +998,22 @@ u3m_flog(c3_w gof_w)
 /* u3m_water(): produce watermarks.
 */
 void
-u3m_water(c3_w* low_w, c3_w* hig_w)
+u3m_water(u3_post* low_p, u3_post* hig_p)
 {
-  c3_assert(u3R == &u3H->rod_u);
-
-  *low_w = u3a_heap(u3R);
-  *hig_w = u3a_temp(u3R) + c3_wiseof(u3v_home);
+  //  in a north road, hat points to the end of the heap + 1 word,
+  //  while cap points to the top of the stack
+  //
+  if ( c3y == u3a_is_north(u3R) ) {
+    *low_p = u3R->hat_p - 1;
+    *hig_p = u3R->cap_p;
+  }
+  //  in a south road, hat points to the end of the heap,
+  //  while cap points to the top of the stack + 1 word
+  //
+  else {
+    *low_p = u3R->cap_p - 1;
+    *hig_p = u3R->hat_p;
+  }
 }
 
 /* u3m_soft_top(): top-level safety wrapper.
@@ -1687,21 +1697,6 @@ _cm_limits(void)
 # endif
 }
 
-void
-_cm_water(u3_post* low_p, u3_post* hig_p)
-{
-  c3_w top_w, bot_w;
-
-  if ( c3y == u3a_is_north(u3R) ) {
-    *low_p = u3R->hat_p - 1;
-    *hig_p = u3R->cap_p;
-  }
-  else {
-    *low_p = u3R->cap_p - 1;
-    *hig_p = u3R->hat_p;
-  }
-}
-
 /* u3m_fault(): handle a memory event with libsigsegv protocol.
 */
 c3_i
@@ -1723,7 +1718,7 @@ u3m_fault(void* adr_v, c3_i ser_i)
     return 0;
   }
 
-  _cm_water(&low_p, &hig_p);
+  u3m_water(&low_p, &hig_p);
 
   switch ( u3e_fault(low_p, hig_p, u3a_outa(adr_w)) ) {
     //  page tracking invariants violated, fatal
@@ -1758,7 +1753,12 @@ u3m_fault(void* adr_v, c3_i ser_i)
 void
 u3m_save(void)
 {
-  return u3e_save();
+  u3_post low_p, hig_p;
+  u3m_water(&low_p, &hig_p);
+
+  c3_assert(u3R == &u3H->rod_u);
+
+  return u3e_save(low_p, hig_p);
 }
 
 /* _cm_signals(): set up interrupts, etc.

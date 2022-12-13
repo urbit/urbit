@@ -127,7 +127,7 @@
       /* u3m_water(): produce high and low watermarks.  Asserts u3R == u3H.
       */
         void
-        u3m_water(c3_w *low_w, c3_w *hig_w);
+        u3m_water(u3_post* low_p, u3_post* hig_p);
 
       /* u3m_pretty(): dumb prettyprint to string.  RETAIN.
       */
