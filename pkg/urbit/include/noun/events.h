@@ -47,6 +47,14 @@
         u3e_image sou_u;                     //  south segment
       } u3e_pool;
 
+    /* u3e_flaw: loom fault result.
+    */
+      typedef enum {
+        u3e_flaw_sham = 0,                  //  bogus state
+        u3e_flaw_base = 1,                  //  vm fail (mprotect)
+        u3e_flaw_meme = 2,                  //  bail:meme
+        u3e_flaw_good = 3                   //  handled
+      } u3e_flaw;
 
   /** Globals.
   **/
@@ -61,10 +69,10 @@
 
   /** Functions.
   **/
-    /* u3e_fault(): handle a memory event with libsigsegv protocol.
+    /* u3e_fault(): handle a memory fault.
     */
-      c3_i
-      u3e_fault(void* adr_v, c3_i ser_i);
+      u3e_flaw
+      u3e_fault(u3_post low_p, u3_post hig_p, u3_post off_p);
 
     /* u3e_save(): update the checkpoint.
     */

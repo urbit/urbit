@@ -210,107 +210,67 @@ _ce_ward_post(c3_w nop_w, c3_w sop_w)
 
 /* _ce_ward_clip(): hit the guard page.
 */
-static inline c3_i
-_ce_ward_clip(void)
+static inline u3e_flaw
+_ce_ward_clip(c3_w nop_w, c3_w sop_w)
 {
-  const c3_w  old_w = u3P.gar_w;
-  c3_w nop_w, sop_w;
-  {
-    u3_post low_p, hig_p;
-
-    if ( !u3R ) {
-      low_p = 1;
-      hig_p = u3C.wor_i - 1;
-    }
-    else if ( c3y == u3a_is_north(u3R) ) {
-      low_p = u3R->hat_p;
-      hig_p = u3R->cap_p;
-    }
-    else {
-      low_p = u3R->cap_p;
-      hig_p = u3R->hat_p;
-    }
-
-    nop_w = (low_p - 1) >> u3a_page;
-    sop_w = hig_p >> u3a_page;
-  }
+  c3_w old_w = u3P.gar_w;
 
   if ( !u3P.gar_w || ((nop_w < u3P.gar_w) && (sop_w > u3P.gar_w)) ) {
     fprintf(stderr, "loom: ward bogus (>%u %u %u<)\r\n",
                     nop_w, u3P.gar_w, sop_w);
-    return 0;
+    return u3e_flaw_sham;
   }
 
   if ( sop_w <= (nop_w + 1) ) {
-    u3m_signal(c3__meme); // doesn't return
-    return 1;
+    return u3e_flaw_meme;
   }
 
   if ( _ce_ward_post(nop_w, sop_w) ) {
-    return 0;
+    return u3e_flaw_base;
   }
 
   c3_assert( old_w != u3P.gar_w );
-  return 1;
+
+  return u3e_flaw_good;
 }
 #endif /* ifdef U3_GUARD_PAGE */
 
-/* u3e_fault(): handle a memory event with libsigsegv protocol.
+/* u3e_fault(): handle a memory fault.
 */
-c3_i
-u3e_fault(void* adr_v, c3_i ser_i)
+u3e_flaw
+u3e_fault(u3_post low_p, u3_post hig_p, u3_post off_p)
 {
-  //  Let the stack overflow handler run.
-  if ( 0 == ser_i ) {
-    return 0;
-  }
-
-  //  XX u3l_log avoid here, as it can
-  //  cause problems when handling errors
-
-  c3_w* adr_w = (c3_w*) adr_v;
-
-  if ( (adr_w < u3_Loom) || (adr_w >= (u3_Loom + u3C.wor_i)) ) {
-    fprintf(stderr, "address %p out of loom!\r\n", adr_w);
-    fprintf(stderr, "loom: [%p : %p)\r\n", u3_Loom, u3_Loom + u3C.wor_i);
-    c3_assert(0);
-    return 0;
-  }
-
-  u3p(c3_w) adr_p  = u3a_outa(adr_w);
-  c3_w      pag_w  = adr_p >> u3a_page;
-  c3_w      blk_w  = (pag_w >> 5);
-  c3_w      bit_w  = (pag_w & 31);
+  c3_w pag_w = off_p >> u3a_page;
+  c3_w blk_w = pag_w >> 5;
+  c3_w bit_w = pag_w & 31;
 
 #ifdef U3_GUARD_PAGE
   if ( pag_w == u3P.gar_w ) {
-    if ( !_ce_ward_clip() ) {
-      c3_assert(0);
-      return 0;
+    u3e_flaw fal_e = _ce_ward_clip(low_p >> u3a_page, hig_p >> u3a_page);
+
+    if ( u3e_flaw_good != fal_e ) {
+      return fal_e;
     }
 
     if ( !(u3P.dit_w[blk_w] & (1 << bit_w)) ) {
       fprintf(stderr, "loom: strange guard (%d)\r\n", pag_w);
-      c3_assert(0);
-      return 0;
+      return u3e_flaw_sham;
     }
   }
   else
 #endif
-  if ( 0 != (u3P.dit_w[blk_w] & (1 << bit_w)) ) {
-    fprintf(stderr, "strange page: %d, at %p, off %x\r\n", pag_w, adr_w, adr_p);
-    c3_assert(0);
-    return 0;
+  if ( u3P.dit_w[blk_w] & (1 << bit_w) ) {
+    fprintf(stderr, "loom: strange page (%d): %x\r\n", pag_w, off_p);
+    return u3e_flaw_sham;
   }
 
   u3P.dit_w[blk_w] |= (1 << bit_w);
 
   if ( _ce_flaw_protect(pag_w) ) {
-    c3_assert(0);
-    return 0;
+    return u3e_flaw_base;
   }
 
-  return 1;
+  return u3e_flaw_good;
 }
 
 /* _ce_image_open(): open or create image.
