@@ -88,8 +88,8 @@ export const BasicNotification = ({ notification, lid }: BasicNotificationProps)
       </header>
       {contents.length > 0 ? (
         <div className="leading-tight note-grid-body sm:leading-normal space-y-2">
-          {take(contents, MAX_CONTENTS).map((content) => (
-            <p className="">
+          {take(contents, MAX_CONTENTS).map((content, i) => (
+            <p className="" key={i}>
               <NotificationText contents={content} />
             </p>
           ))}

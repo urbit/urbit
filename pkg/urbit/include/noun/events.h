@@ -41,6 +41,7 @@
       typedef struct _u3e_pool {
         c3_c*     dir_c;                     //  path to
         c3_w      dit_w[u3a_pages >> 5];     //  touched since last save
+        c3_w      pag_w;                     //  number of pages (<= u3a_pages)
         u3e_image nor_u;                     //  north segment
         u3e_image sou_u;                     //  south segment
       } u3e_pool;
@@ -84,9 +85,14 @@
       void
       u3e_foul(void);
 
-    /* u3e_init(): initialize page tracking.
+    /* u3e_init(): initialize guard page tracking.
     */
       void
       u3e_init(void);
+
+    /* u3e_ward(): reposition guard page if needed.
+    */
+      void
+      u3e_ward(u3_post low_p, u3_post hig_p);
 
 #endif /* ifndef U3_EVENTS_H */
