@@ -2,6 +2,7 @@
 **
 */
 #include "all.h"
+#include "noun/events.h"
 #include "rsignal.h"
 #include "vere/vere.h"
 #include <errno.h>
@@ -521,6 +522,8 @@ _pave_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
   //    the stack starts at the end of the memory segment,
   //    minus space for the road structure [siz_w]
   //
+  //    NB: the returned road is "above" the stack
+  //
   c3_w* rut_w = mem_w;
   c3_w* mat_w = ((mem_w + len_w) - siz_w);
   c3_w* cap_w = mat_w;
@@ -538,6 +541,8 @@ _pave_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
   //    the heap starts at the end of the memory segment;
   //    the stack starts at the base memory pointer [mem_w],
   //    and ends after the space for the road structure [siz_w]
+  //
+  //    NB: the returned road is *on* the stack
   //
   c3_w* rut_w = (mem_w + len_w);
   c3_w* mat_w = mem_w;
@@ -594,7 +599,7 @@ _find_home(void)
   //  this looks risky, but there are no legitimate scenarios
   //  where it's wrong
   //
-  u3R->cap_p = u3R->mat_p = u3C.wor_i - c3_wiseof(*u3H);
+  u3R->cap_p = u3R->mat_p = u3a_outa(u3H);
 }
 
 /* u3m_pave(): instantiate or activate image.
@@ -813,7 +818,6 @@ u3m_leap(c3_w pad_w)
       u3R->cap_p -= len_w;
 
       rod_u = _pave_south(u3a_into(bot_p), c3_wiseof(u3a_road), len_w);
-      u3e_ward(rod_u->cap_p, rod_u->hat_p);
 #if 0
       fprintf(stderr, "leap: from north %p (cap 0x%x), to south %p\r\n",
               u3R,
@@ -826,7 +830,6 @@ u3m_leap(c3_w pad_w)
       u3R->cap_p += len_w;
 
       rod_u = _pave_north(u3a_into(bot_p), c3_wiseof(u3a_road), len_w);
-      u3e_ward(rod_u->hat_p, rod_u->cap_p);
 #if 0
       fprintf(stderr, "leap: from south %p (cap 0x%x), to north %p\r\n",
               u3R,
@@ -848,6 +851,7 @@ u3m_leap(c3_w pad_w)
   */
   {
     u3R = rod_u;
+    u3m_ward();
     _pave_parts();
   }
 #ifdef U3_MEMORY_DEBUG
@@ -997,12 +1001,22 @@ u3m_flog(c3_w gof_w)
 /* u3m_water(): produce watermarks.
 */
 void
-u3m_water(c3_w* low_w, c3_w* hig_w)
+u3m_water(u3_post* low_p, u3_post* hig_p)
 {
-  c3_assert(u3R == &u3H->rod_u);
-
-  *low_w = u3a_heap(u3R);
-  *hig_w = u3a_temp(u3R) + c3_wiseof(u3v_home);
+  //  in a north road, hat points to the end of the heap + 1 word,
+  //  while cap points to the top of the stack
+  //
+  if ( c3y == u3a_is_north(u3R) ) {
+    *low_p = u3R->hat_p - 1;
+    *hig_p = u3R->cap_p;
+  }
+  //  in a south road, hat points to the end of the heap,
+  //  while cap points to the top of the stack + 1 word
+  //
+  else {
+    *low_p = u3R->cap_p - 1;
+    *hig_p = u3R->hat_p;
+  }
 }
 
 /* u3m_soft_top(): top-level safety wrapper.
@@ -1686,6 +1700,80 @@ _cm_limits(void)
 # endif
 }
 
+/* u3m_fault(): handle a memory event with libsigsegv protocol.
+*/
+c3_i
+u3m_fault(void* adr_v, c3_i ser_i)
+{
+  //  let the stack overflow handler run.
+  //
+  if ( 0 == ser_i ) {
+    return 0;
+  }
+
+  c3_w*   adr_w = (c3_w*)adr_v;
+  u3_post low_p, hig_p;
+
+  if ( (adr_w < u3_Loom) || (adr_w >= (u3_Loom + u3C.wor_i)) ) {
+    fprintf(stderr, "loom: external fault: %p (%p : %p)\r\n\r\n",
+                    adr_w, u3_Loom, u3_Loom + u3C.wor_i);
+    c3_assert(0);
+    return 0;
+  }
+
+  u3m_water(&low_p, &hig_p);
+
+  switch ( u3e_fault(low_p, hig_p, u3a_outa(adr_w)) ) {
+    //  page tracking invariants violated, fatal
+    //
+    case u3e_flaw_sham: {
+      c3_assert(0);
+      return 0;
+    }
+
+    //  virtual memory failure (protections), possibly recoverable XX
+    //
+    case u3e_flaw_base: {
+      c3_assert(0);
+      return 0;
+    }
+
+    //  loom limits exceeded, recoverable
+    //
+    case u3e_flaw_meme: {
+      u3m_signal(c3__meme); // doesn't return
+      return 1;
+    }
+
+    case u3e_flaw_good: return 1;
+  }
+
+  c3_assert(!"unpossible");
+}
+
+/* u3m_save(): update the checkpoint.
+*/
+void
+u3m_save(void)
+{
+  u3_post low_p, hig_p;
+  u3m_water(&low_p, &hig_p);
+
+  c3_assert(u3R == &u3H->rod_u);
+
+  return u3e_save(low_p, hig_p);
+}
+
+/* u3m_ward(): tend the guard page.
+*/
+void
+u3m_ward(void)
+{
+  u3_post low_p, hig_p;
+  u3m_water(&low_p, &hig_p);
+  return u3e_ward(low_p, hig_p);
+}
+
 /* _cm_signals(): set up interrupts, etc.
 */
 static void
@@ -1701,7 +1789,7 @@ _cm_signals(void)
   //  filter (see compat/mingw/seh_handler.c) that handles both memory
   //  access and stack overflow exceptions. It calls u3e_fault directly.
 # else
-  if ( 0 != sigsegv_install_handler(u3e_fault) ) {
+  if ( 0 != sigsegv_install_handler(u3m_fault) ) {
     u3l_log("boot: sigsegv install failed\n");
     exit(1);
   }
@@ -1871,13 +1959,43 @@ u3m_boot(c3_c* dir_c, size_t len_i)
 {
   c3_o nuu_o;
 
+  u3C.dir_c = dir_c;
+
   /* Activate the loom.
   */
   u3m_init(len_i);
 
   /* Activate the storage system.
   */
-  nuu_o = u3e_live(c3n, dir_c);
+  {
+    c3_c ful_c[8193];
+
+    snprintf(ful_c, 8192, "%s", dir_c);
+    if ( c3_mkdir(ful_c, 0700) ) {
+      if ( EEXIST != errno ) {
+        fprintf(stderr, "loom: pier create: %s\r\n", strerror(errno));
+        c3_assert(0);
+      }
+    }
+
+    snprintf(ful_c, 8192, "%s/.urb", dir_c);
+    if ( c3_mkdir(ful_c, 0700) ) {
+      if ( EEXIST != errno ) {
+        fprintf(stderr, "loom: .urb create: %s\r\n", strerror(errno));
+        c3_assert(0);
+      }
+    }
+
+    snprintf(ful_c, 8192, "%s/.urb/chk", dir_c);
+    if ( c3_mkdir(ful_c, 0700) ) {
+      if ( EEXIST != errno ) {
+        fprintf(stderr, "loom: .urb/chk create: %s\r\n", strerror(errno));
+        c3_assert(0);
+      }
+    }
+
+    nuu_o = u3e_live(strdup(ful_c));
+  }
 
   /* Activate tracing.
   */
@@ -1889,10 +2007,6 @@ u3m_boot(c3_c* dir_c, size_t len_i)
   /* Construct or activate the allocator.
   */
   u3m_pave(nuu_o);
-
-  /* Place the guard page.
-  */
-  u3e_init();
 
   /* Initialize the jet system.
   */

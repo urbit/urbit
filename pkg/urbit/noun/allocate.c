@@ -425,8 +425,18 @@ _ca_willoc(c3_w len_w, c3_w ald_w, c3_w alp_w)
 
   alp_w = (alp_w + c3_wiseof(u3a_box)) % ald_w;
 
-  //  XX: this logic is totally bizarre, but preserve it.
-  //
+  /*  XX: this logic is totally bizarre, but preserve it.
+  **
+  **  This means we use the next size bigger instead of the "correct"
+  **  size.  For example, a 20 word allocation will be freed into free
+  **  list 2 but will be allocated from free list 3.
+  **
+  **  This is important to preserve because the sequential search may be
+  **  very slow.  On a real-world task involving many compilations,
+  **  removing this line made this function appear in ~80% of samples.
+  **
+  **  For reference, this was added in cgyarvin/urbit ffed9e748d8f6c.
+  */
   if ( (sel_w != 0) && (sel_w != u3a_fbox_no - 1) ) {
     sel_w += 1;
   }
