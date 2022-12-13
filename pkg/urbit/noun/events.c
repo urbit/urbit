@@ -1382,7 +1382,7 @@ void
 u3e_ward(u3_post low_p, u3_post hig_p)
 {
 #ifdef U3_GUARD_PAGE
-  c3_w nop_w = (low_p - 1) >> u3a_page;
+  c3_w nop_w = low_p >> u3a_page;
   c3_w sop_w = hig_p >> u3a_page;
   c3_w pag_w = u3P.gar_w;
 

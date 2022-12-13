@@ -814,7 +814,6 @@ u3m_leap(c3_w pad_w)
       u3R->cap_p -= len_w;
 
       rod_u = _pave_south(u3a_into(bot_p), c3_wiseof(u3a_road), len_w);
-      u3e_ward(rod_u->cap_p, rod_u->hat_p);
 #if 0
       fprintf(stderr, "leap: from north %p (cap 0x%x), to south %p\r\n",
               u3R,
@@ -827,7 +826,6 @@ u3m_leap(c3_w pad_w)
       u3R->cap_p += len_w;
 
       rod_u = _pave_north(u3a_into(bot_p), c3_wiseof(u3a_road), len_w);
-      u3e_ward(rod_u->hat_p, rod_u->cap_p);
 #if 0
       fprintf(stderr, "leap: from south %p (cap 0x%x), to north %p\r\n",
               u3R,
@@ -849,6 +847,7 @@ u3m_leap(c3_w pad_w)
   */
   {
     u3R = rod_u;
+    u3m_ward();
     _pave_parts();
   }
 #ifdef U3_MEMORY_DEBUG
@@ -1759,6 +1758,16 @@ u3m_save(void)
   c3_assert(u3R == &u3H->rod_u);
 
   return u3e_save(low_p, hig_p);
+}
+
+/* u3m_ward(): tend the guard page.
+*/
+void
+u3m_ward(void)
+{
+  u3_post low_p, hig_p;
+  u3m_water(&low_p, &hig_p);
+  return u3e_ward(low_p, hig_p);
 }
 
 /* _cm_signals(): set up interrupts, etc.
