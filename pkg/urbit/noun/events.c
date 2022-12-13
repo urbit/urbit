@@ -167,7 +167,38 @@ u3e_check(c3_c* cap_c)
 }
 #endif
 
+/* _ce_flaw_protect(): protect page after fault.
+*/
+static inline c3_i
+_ce_flaw_protect(c3_w pag_w)
+{
+  if ( 0 != mprotect((void *)(u3_Loom + (pag_w << u3a_page)),
+                     pag_siz_i,
+                     (PROT_READ | PROT_WRITE)) )
+  {
+    fprintf(stderr, "loom: fault mprotect (%u): %s\r\n",
+                     pag_w, strerror(errno));
+    return 1;
+  }
+
+  return 0;
+}
+
 #ifdef U3_GUARD_PAGE
+/* _ce_ward_protect(): protect the guard page.
+*/
+static inline c3_i
+_ce_ward_protect(void)
+{
+  if ( 0 != mprotect(u3a_into(gar_pag_p), pag_siz_i, PROT_NONE) ) {
+    fprintf(stderr, "loom: failed to protect guard page (%u): %s\r\n",
+                    gar_pag_p >> u3a_page, strerror(errno));
+    return 1;
+  }
+
+  return 0;
+}
+
 //! Place a guard page at the (approximate) middle of the free space between
 //! the heap and stack of the current road, bailing if memory has been
 //! exhausted.
@@ -204,12 +235,7 @@ _ce_center_guard_page(void)
     goto bail;
   }
 
-  if ( -1 == mprotect(u3a_into(gar_pag_p), pag_siz_i, PROT_NONE) ) {
-    fprintf(stderr,
-            "loom: failed to protect the guard page "
-            "(base address %p): %s\r\n",
-            u3a_into(gar_pag_p),
-            strerror(errno));
+  if ( _ce_ward_protect() ) {
     goto fail;
   }
 
@@ -266,11 +292,7 @@ u3e_fault(void* adr_v, c3_i ser_i)
 
   u3P.dit_w[blk_w] |= (1 << bit_w);
 
-  if ( -1 == mprotect((void *)(u3_Loom + (pag_w << u3a_page)),
-                      pag_siz_i,
-                      (PROT_READ | PROT_WRITE)) )
-  {
-    fprintf(stderr, "loom: fault mprotect: %s\r\n", strerror(errno));
+  if ( _ce_flaw_protect(pag_w) ) {
     c3_assert(0);
     return 0;
   }
@@ -847,11 +869,7 @@ _ce_loom_protect_north(c3_w pgs_w, c3_w old_w)
     //
     if ( (gar_pag_p >> u3a_page) < old_w ) {
       fprintf(stderr, "loom: guard on reprotect\r\n");
-      if ( 0 != mprotect(u3a_into(gar_pag_p), pag_siz_i, PROT_NONE) ) {
-        fprintf(stderr, "loom: failed to protect guard page: %s\r\n",
-                        strerror(errno));
-        c3_assert(0);
-      }
+      c3_assert( !_ce_ward_protect() );
     }
 #endif
 
@@ -898,11 +916,7 @@ _ce_loom_protect_south(c3_w pgs_w, c3_w old_w)
     //
     if ( (gar_pag_p >> u3a_page) >= off_w ) {
       fprintf(stderr, "loom: guard on reprotect\r\n");
-      if ( 0 != mprotect(u3a_into(gar_pag_p), pag_siz_i, PROT_NONE) ) {
-        fprintf(stderr, "loom: failed to protect guard page: %s\r\n",
-                        strerror(errno));
-        c3_assert(0);
-      }
+      c3_assert( !_ce_ward_protect() );
     }
 #endif
 
@@ -961,11 +975,7 @@ _ce_loom_mapf_north(c3_i fid_i, c3_w pgs_w, c3_w old_w)
     //
     if ( (gar_pag_p >> u3a_page) < old_w ) {
       fprintf(stderr, "loom: guard on remap\r\n");
-      if ( 0 != mprotect(u3a_into(gar_pag_p), pag_siz_i, PROT_NONE) ) {
-        fprintf(stderr, "loom: failed to protect guard page: %s\r\n",
-                        strerror(errno));
-        c3_assert(0);
-      }
+      c3_assert( !_ce_ward_protect() );
     }
 #endif
 
@@ -1377,11 +1387,7 @@ u3e_yolo(void)
   }
 
 #ifdef U3_GUARD_PAGE
-  if ( 0 != mprotect(u3a_into(gar_pag_p), pag_siz_i, PROT_NONE) ) {
-    fprintf(stderr, "loom: failed to protect guard page: %s\r\n",
-                    strerror(errno));
-    c3_assert(0);
-  }
+  c3_assert( !_ce_ward_protect() );
 #endif
 
   //  mark all pages dirty
@@ -1401,6 +1407,8 @@ u3e_init(void)
 #ifdef U3_GUARD_PAGE
   _ce_center_guard_page();
 #endif
+
+  _ce_loom_track_north(0, u3P.pag_w);
 }
 
 /* u3e_ward(): reposition guard page if needed.
@@ -1413,15 +1421,7 @@ u3e_ward(u3_post low_p, u3_post hig_p)
 
   if ( (low_p > gar_p) || (hig_p < gar_p) ) {
     _ce_center_guard_page();
-
-    if ( 0 != mprotect(u3a_into(gar_p),
-                       pag_siz_i,
-                       (PROT_READ | PROT_WRITE)) )
-    {
-      fprintf(stderr, "loom: failed to unprotect old guard page: %s\r\n",
-                      strerror(errno));
-      c3_assert(0);
-    }
+    c3_assert( !_ce_flaw_protect(gar_p >> u3a_page) );
 
     {
       c3_w pag_w = gar_p >> u3a_page;
