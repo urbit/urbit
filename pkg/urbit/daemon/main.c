@@ -1452,7 +1452,7 @@ _cw_cram(c3_i argc, c3_c* argv[])
 
   //  save even on failure, as we just did all the work of deduplication
   //
-  u3e_save();
+  u3m_save();
   u3_disk_exit(log_u);
 
   if ( c3n == ret_o ) {
@@ -1545,7 +1545,7 @@ _cw_queu(c3_i argc, c3_c* argv[])
       exit(1);
     }
 
-    u3e_save();
+    u3m_save();
     u3_disk_exit(log_u);
 
     fprintf(stderr, "urbit: queu: rock loaded at event %" PRIu64 "\r\n", eve_d);
@@ -1623,7 +1623,7 @@ _cw_meld(c3_i argc, c3_c* argv[])
   u3u_meld();
   u3a_print_memory(stderr, "urbit: meld: gained", (u3a_open(u3R) - pre_w));
 
-  u3e_save();
+  u3m_save();
   u3_disk_exit(log_u);
   u3m_stop();
 }
@@ -1763,7 +1763,7 @@ _cw_pack(c3_i argc, c3_c* argv[])
   u3m_boot(u3_Host.dir_c, (size_t)1 << u3_Host.ops_u.lom_y);
   u3a_print_memory(stderr, "urbit: pack: gained", u3m_pack());
 
-  u3e_save();
+  u3m_save();
   u3_disk_exit(log_u);
   u3m_stop();
 }

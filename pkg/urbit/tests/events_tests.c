@@ -1,4 +1,5 @@
 #include "all.h"
+#include "noun/events.h"
 
 /* _setup(): prepare for tests.
 */
@@ -92,7 +93,12 @@ _test_tracking(void)
 {
   c3_w ret_w;
 
-  u3e_foul();
+  _ce_loom_track_north(0, u3P.pag_w);
+
+  if ( u3P.pag_w != (ret_w = _check_north_dirty(0, u3P.pag_w)) ) {
+    fprintf(stderr, "test events track north dirty all %u\r\n", ret_w);
+    return 0;
+  }
 
   if ( 0 != (ret_w = _check_north_clean()) ) {
     fprintf(stderr, "test events track north init %u\r\n", ret_w);
@@ -214,6 +220,13 @@ _test_tracking(void)
 
   if ( 5 != (ret_w = _check_south_dirty(10, 5)) ) {
     fprintf(stderr, "test events track north dirty f %u\r\n", ret_w);
+    return 0;
+  }
+
+  _ce_loom_track_north(0, u3P.pag_w);
+
+  if ( u3P.pag_w != (ret_w = _check_north_dirty(0, u3P.pag_w)) ) {
+    fprintf(stderr, "test events track north dirty all %u\r\n", ret_w);
     return 0;
   }
 

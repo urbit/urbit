@@ -5,8 +5,7 @@
 static void
 _setup(void)
 {
-  u3m_init(1 << 20);
-  u3m_pave(c3y);
+  u3m_boot_lite(1 << 20);
 }
 
 /* _test_mug(): spot check u3r_mug hashes.
