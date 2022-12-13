@@ -55,7 +55,7 @@
 //!  definitions:
 //!    - a clean page is PROT_READ and 0 in the bitmap
 //!    - a dirty page is (PROT_READ|PROT_WRITE) and 1 in the bitmap
-//!    - the guard page is PROT_NONE and 1 in the bitmap (XX assumed)
+//!    - the guard page is PROT_NONE and 1 in the bitmap
 //!
 //!  assumptions:
 //!    - all memory access patterns are outside-in, a page at a time
@@ -95,9 +95,6 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-
-// Base loom offset of the guard page.
-static u3p(c3_w) gar_pag_p;
 
 //! Urbit page size in 4-byte words.
 #define pag_wiz_i  ((size_t)1 << u3a_page)
@@ -190,61 +187,71 @@ _ce_flaw_protect(c3_w pag_w)
 static inline c3_i
 _ce_ward_protect(void)
 {
-  if ( 0 != mprotect(u3a_into(gar_pag_p), pag_siz_i, PROT_NONE) ) {
+  if ( 0 != mprotect((void *)(u3_Loom + (u3P.gar_w << u3a_page)),
+                      pag_siz_i,
+                      PROT_NONE) )
+  {
     fprintf(stderr, "loom: failed to protect guard page (%u): %s\r\n",
-                    gar_pag_p >> u3a_page, strerror(errno));
+                    u3P.gar_w, strerror(errno));
     return 1;
   }
 
   return 0;
 }
 
-//! Place a guard page at the (approximate) middle of the free space between
-//! the heap and stack of the current road, bailing if memory has been
-//! exhausted.
-static c3_i
-_ce_center_guard_page(void)
+/* _ce_ward_post(): set the guard page.
+*/
+static inline c3_i
+_ce_ward_post(c3_w nop_w, c3_w sop_w)
 {
-  u3p(c3_w) bot_p, top_p;
-  if ( !u3R ) {
-    top_p = u3a_outa(u3_Loom + u3C.wor_i);
-    bot_p = u3a_outa(u3_Loom);
-  }
-  else if ( c3y == u3a_is_north(u3R) ) {
-    top_p = c3_rod(u3R->cap_p, pag_wiz_i);
-    bot_p = c3_rop(u3R->hat_p, pag_wiz_i);
-  }
-  else {
-    top_p = c3_rod(u3R->hat_p, pag_wiz_i);
-    bot_p = c3_rop(u3R->cap_p, pag_wiz_i);
+  u3P.gar_w = nop_w + ((sop_w - nop_w) / 2);
+  return _ce_ward_protect();
+}
+
+/* _ce_ward_clip(): hit the guard page.
+*/
+static inline c3_i
+_ce_ward_clip(void)
+{
+  const c3_w  old_w = u3P.gar_w;
+  c3_w nop_w, sop_w;
+  {
+    u3_post low_p, hig_p;
+
+    if ( !u3R ) {
+      low_p = 1;
+      hig_p = u3C.wor_i - 1;
+    }
+    else if ( c3y == u3a_is_north(u3R) ) {
+      low_p = u3R->hat_p;
+      hig_p = u3R->cap_p;
+    }
+    else {
+      low_p = u3R->cap_p;
+      hig_p = u3R->hat_p;
+    }
+
+    nop_w = (low_p - 1) >> u3a_page;
+    sop_w = hig_p >> u3a_page;
   }
 
-  if ( top_p < bot_p + pag_wiz_i ) {
-    fprintf(stderr,
-            "loom: not enough memory to recenter the guard page\r\n");
-    goto bail;
-  }
-  const u3p(c3_w) old_gar_p = gar_pag_p;
-  const c3_w      mid_p     = (top_p - bot_p) / 2;
-  gar_pag_p                 = bot_p + c3_rod(mid_p, pag_wiz_i);
-  if ( old_gar_p == gar_pag_p ) {
-    fprintf(stderr,
-            "loom: can't move the guard page to the same location"
-            " (base address %p)\r\n",
-            u3a_into(gar_pag_p));
-    goto bail;
+  if ( !u3P.gar_w || ((nop_w < u3P.gar_w) && (sop_w > u3P.gar_w)) ) {
+    fprintf(stderr, "loom: ward bogus (>%u %u %u<)\r\n",
+                    nop_w, u3P.gar_w, sop_w);
+    return 0;
   }
 
-  if ( _ce_ward_protect() ) {
-    goto fail;
+  if ( sop_w <= (nop_w + 1) ) {
+    u3m_signal(c3__meme); // doesn't return
+    return 1;
   }
 
+  if ( _ce_ward_post(nop_w, sop_w) ) {
+    return 0;
+  }
+
+  c3_assert( old_w != u3P.gar_w );
   return 1;
-
-bail:
-  u3m_signal(c3__meme);
-fail:
-  return 0;
 }
 #endif /* ifdef U3_GUARD_PAGE */
 
@@ -276,14 +283,20 @@ u3e_fault(void* adr_v, c3_i ser_i)
   c3_w      bit_w  = (pag_w & 31);
 
 #ifdef U3_GUARD_PAGE
-  // The fault happened in the guard page.
-  if ( gar_pag_p <= adr_p && adr_p < gar_pag_p + pag_wiz_i ) {
-    if ( 0 == _ce_center_guard_page() ) {
+  if ( pag_w == u3P.gar_w ) {
+    if ( !_ce_ward_clip() ) {
+      c3_assert(0);
+      return 0;
+    }
+
+    if ( !(u3P.dit_w[blk_w] & (1 << bit_w)) ) {
+      fprintf(stderr, "loom: strange guard (%d)\r\n", pag_w);
+      c3_assert(0);
       return 0;
     }
   }
   else
-#endif /* ifdef U3_GUARD_PAGE */
+#endif
   if ( 0 != (u3P.dit_w[blk_w] & (1 << bit_w)) ) {
     fprintf(stderr, "strange page: %d, at %p, off %x\r\n", pag_w, adr_w, adr_p);
     c3_assert(0);
@@ -591,8 +604,8 @@ _ce_patch_compose(void)
     nor_w = (nwr_w + (pag_wiz_i - 1)) >> u3a_page;
     sou_w = (swu_w + (pag_wiz_i - 1)) >> u3a_page;
 
-    c3_assert(  ((gar_pag_p >> u3a_page) >= nor_w)
-             && ((gar_pag_p >> u3a_page) <= (u3P.pag_w - (sou_w + 1))) );
+    c3_assert(  (u3P.gar_w >= nor_w)
+             && (u3P.gar_w <= (u3P.pag_w - (sou_w + 1))) );
   }
 
 #ifdef U3_SNAPSHOT_VALIDATION
@@ -867,7 +880,7 @@ _ce_loom_protect_north(c3_w pgs_w, c3_w old_w)
     //
     //    NB: < pgs_w is precluded by assertion in _ce_patch_compose()
     //
-    if ( (gar_pag_p >> u3a_page) < old_w ) {
+    if ( u3P.gar_w < old_w ) {
       fprintf(stderr, "loom: guard on reprotect\r\n");
       c3_assert( !_ce_ward_protect() );
     }
@@ -914,7 +927,7 @@ _ce_loom_protect_south(c3_w pgs_w, c3_w old_w)
     //
     //    NB: >= pgs_w is precluded by assertion in _ce_patch_compose()
     //
-    if ( (gar_pag_p >> u3a_page) >= off_w ) {
+    if ( u3P.gar_w >= off_w ) {
       fprintf(stderr, "loom: guard on reprotect\r\n");
       c3_assert( !_ce_ward_protect() );
     }
@@ -973,7 +986,7 @@ _ce_loom_mapf_north(c3_i fid_i, c3_w pgs_w, c3_w old_w)
     //
     //    NB: < pgs_w is precluded by assertion in _ce_patch_compose()
     //
-    if ( (gar_pag_p >> u3a_page) < old_w ) {
+    if ( u3P.gar_w < old_w ) {
       fprintf(stderr, "loom: guard on remap\r\n");
       c3_assert( !_ce_ward_protect() );
     }
@@ -1361,7 +1374,7 @@ u3e_live(c3_c* dir_c)
       }
 
 #ifdef U3_GUARD_PAGE
-      _ce_center_guard_page();
+      c3_assert( !_ce_ward_post(nor_w, u3P.pag_w - sou_w) );
 #endif
     }
   }
@@ -1405,7 +1418,7 @@ u3e_init(void)
   u3P.pag_w = u3C.wor_i >> u3a_page;
 
 #ifdef U3_GUARD_PAGE
-  _ce_center_guard_page();
+  c3_assert( !_ce_ward_post(0, u3P.pag_w) );
 #endif
 
   _ce_loom_track_north(0, u3P.pag_w);
@@ -1417,19 +1430,14 @@ void
 u3e_ward(u3_post low_p, u3_post hig_p)
 {
 #ifdef U3_GUARD_PAGE
-  const u3p(c3_w) gar_p = gar_pag_p;
+  c3_w nop_w = (low_p - 1) >> u3a_page;
+  c3_w sop_w = hig_p >> u3a_page;
+  c3_w pag_w = u3P.gar_w;
 
-  if ( (low_p > gar_p) || (hig_p < gar_p) ) {
-    _ce_center_guard_page();
-    c3_assert( !_ce_flaw_protect(gar_p >> u3a_page) );
-
-    {
-      c3_w pag_w = gar_p >> u3a_page;
-      c3_w blk_w = (pag_w >> 5);
-      c3_w bit_w = (pag_w & 31);
-
-      u3P.dit_w[blk_w] |= (1 << bit_w);
-    }
+  if ( !((pag_w > nop_w) && (pag_w < hig_p)) ) {
+    c3_assert( !_ce_ward_post(nop_w, sop_w) );
+    c3_assert( !_ce_flaw_protect(pag_w) );
+    c3_assert( u3P.dit_w[pag_w >> 5] & (1 << (pag_w & 31)) );
   }
 #endif
 }
