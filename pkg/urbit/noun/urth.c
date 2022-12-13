@@ -2,6 +2,7 @@
 **
 */
 #include "all.h"
+#include "noun/events.h"
 #include "ur/ur.h"
 #include <errno.h>
 #include <fcntl.h>
@@ -415,10 +416,6 @@ _cu_realloc(FILE* fil_u, ur_root_t** tor_u, ur_nvec_t* doc_u)
   //  restore event number
   //
   u3A->eve_d = eve_d;
-
-  //  mark all pages dirty
-  //
-  u3e_foul();
 
   *tor_u = rot_u;
   *doc_u = cod_u;
@@ -850,10 +847,6 @@ u3u_uncram(c3_c* dir_c, c3_d eve_d)
   //  restore event number
   //
   u3A->eve_d = eve_d;
-
-  //  mark all pages dirty
-  //
-  u3e_foul();
 
   //  leave rocks on disk
   //

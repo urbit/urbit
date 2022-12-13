@@ -62,7 +62,7 @@ _mars_grab(u3_noun sac)
       c3_c* wen_c = u3r_string(wen);
 
       c3_c nam_c[2048];
-      snprintf(nam_c, 2048, "%s/.urb/put/mass", u3P.dir_c);
+      snprintf(nam_c, 2048, "%s/.urb/put/mass", u3C.dir_c);
 
       struct stat st;
       if ( -1 == stat(nam_c, &st) ) {
@@ -573,7 +573,7 @@ _mars_damp_file(void)
       c3_c* wen_c = u3r_string(wen);
 
       c3_c nam_c[2048];
-      snprintf(nam_c, 2048, "%s/.urb/put/profile", u3P.dir_c);
+      snprintf(nam_c, 2048, "%s/.urb/put/profile", u3C.dir_c);
 
       struct stat st;
       if ( -1 == stat(nam_c, &st) ) {
@@ -628,7 +628,7 @@ top:
      && (mar_u->log_u->dun_d == mar_u->dun_d) )
   {
     if ( u3_mars_save_e == mar_u->sat_e ) {
-      u3e_save();
+      u3m_save();
       mar_u->sav_u.eve_d = mar_u->dun_d;
       _mars_gift(mar_u,
         u3nt(c3__sync, u3i_chub(mar_u->dun_d), mar_u->mug_l));
@@ -636,7 +636,7 @@ top:
       goto top;
     }
     else if ( u3_mars_exit_e == mar_u->sat_e ) {
-      u3e_save();
+      u3m_save();
       u3_disk_exit(mar_u->log_u);
       u3s_cue_xeno_done(mar_u->sil_u);
       u3t_trace_close();
@@ -885,7 +885,7 @@ u3_mars_play(u3_mars* mar_u, c3_d eve_d)
         case _play_mem_e: {
           if ( (mem_d == mar_u->dun_d) && (3 == ++try_w) ) {
             fprintf(stderr, "play (%" PRIu64 "): failed\r\n", mar_u->dun_d + 1);
-            u3e_save();
+            u3m_save();
             //  XX exit code, cb
             //
             exit(1);
@@ -910,7 +910,7 @@ u3_mars_play(u3_mars* mar_u, c3_d eve_d)
         case _play_mug_e:
         case _play_bad_e: {
           fprintf(stderr, "play (%" PRIu64 "): failed\r\n", mar_u->dun_d + 1);
-          u3e_save();
+          u3m_save();
           //  XX exit code, cb
           //
           exit(1);
@@ -1102,7 +1102,7 @@ u3_mars_init(c3_c*    dir_c,
     }
 
     mar_u->sen_d = mar_u->dun_d = mar_u->met_u.lif_w;
-    u3e_save();
+    u3m_save();
   }
 
   if ( eve_d && (eve_d <= mar_u->dun_d) ) {
@@ -1116,7 +1116,7 @@ u3_mars_init(c3_c*    dir_c,
 
   if ( mar_u->log_u->dun_d > mar_u->dun_d ) {
     u3_mars_play(mar_u, eve_d);
-    u3e_save();
+    u3m_save();
   }
 
   //  XX do something better
@@ -1533,7 +1533,7 @@ u3_mars_boot(c3_c* dir_c, u3_noun com)
     return c3n;  //  XX cleanup
   }
 
-  u3e_save();
+  u3m_save();
   u3_disk_exit(log_u);
 
   return c3y;
