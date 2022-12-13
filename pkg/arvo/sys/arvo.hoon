@@ -416,7 +416,7 @@
     ==
   --
 ::
-::  |de: axal engine
+::  |of: axal engine
 ::
 ++  of
   =|  fat=(axal)
