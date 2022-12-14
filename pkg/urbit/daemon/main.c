@@ -644,6 +644,7 @@ _cw_usage(c3_c* bin_c)
     "utilities:\n",
     "  %s cram %.*s              jam state:\n",
     "  %s dock %.*s              copy binary:\n",
+    "  %s eval %.*s              eval hoon:\n",
     "  %s grab %.*s              measure memory usage:\n",
     "  %s info %.*s              print pier info:\n",
     "  %s meld %.*s              deduplicate snapshot:\n",
@@ -652,6 +653,7 @@ _cw_usage(c3_c* bin_c)
     "  %s next %.*s              request upgrade:\n",
     "  %s queu %.*s<at-event>    cue state:\n",
     "  %s vere ARGS <output dir>    download binary:\n",
+    "  %s vile %.*s              print keyfile:\n",
     "\n  run as a 'serf':\n",
     "    %s serf <pier> <key> <flags> <cache-size> <at-event>"
 #ifdef U3_OS_mingw
@@ -2053,6 +2055,7 @@ _cw_utils(c3_i argc, c3_c* argv[])
   //    $@  ~                                             ::  usage
   //    $%  [%cram dir=@t]                                ::  jam state
   //        [%dock dir=@t]                                ::  copy binary
+  //        [%eval ~]                                     ::  eval hoon
   //        [?(%grab %mass) dir=@t]                       ::  gc
   //        [%info dir=@t]                                ::  print
   //        [%meld dir=@t]                                ::  deduplicate
