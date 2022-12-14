@@ -235,12 +235,12 @@ u3_mars_play(u3_mars* mar_u, c3_d eve_d)
 
           //  XX pack before meld?
           //
-          // if ( u3C.wag_w & u3o_auto_meld ) {
-          //   u3a_print_memory(stderr, "mars: meld: gained", u3u_meld());
-          // }
-          // else {
+          if ( u3C.wag_w & u3o_auto_meld ) {
+            u3a_print_memory(stderr, "mars: meld: gained", u3u_meld());
+          }
+          else {
             u3a_print_memory(stderr, "mars: pack: gained", u3m_pack());
-          // }
+          }
         } break;
 
         //  XX handle any specifically?

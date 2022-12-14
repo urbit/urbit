@@ -1788,9 +1788,11 @@ _cw_play(c3_i argc, c3_c* argv[])
   c3_i ch_i, lid_i;
   c3_w arg_w;
   c3_o ful_o = c3n;
+  c3_o mel_o = c3n;
 
   static struct option lop_u[] = {
     { "loom",      required_argument, NULL, c3__loom },
+    { "auto-meld", no_argument,       NULL, 4 },
     { "no-demand", no_argument,       NULL, 6 },
     { "full",      required_argument, NULL, 'f' },
     { "replay-to", no_argument,       NULL, 'n' },
@@ -1801,6 +1803,10 @@ _cw_play(c3_i argc, c3_c* argv[])
 
   while ( -1 != (ch_i=getopt_long(argc, argv, "fn:", lop_u, &lid_i)) ) {
     switch ( ch_i ) {
+      case 4: {  //  auto-meld
+        mel_o = c3y;
+      } break;
+
       case 6: {  //  no-demand
         u3_Host.ops_u.map = c3n;
         u3C.wag_w |= u3o_no_demand;
@@ -1856,6 +1862,10 @@ _cw_play(c3_i argc, c3_c* argv[])
   //  XX handle SIGTSTP so that the lockfile is not orphaned?
   //
   u3_disk* log_u = _cw_disk_init(u3_Host.dir_c); // XX s/b try_aquire lock
+
+  if ( c3y == mel_o ) {
+    u3C.wag_w |= u3o_auto_meld;
+  }
 
   u3C.wag_w |= u3o_hashless;
   u3m_boot(u3_Host.dir_c, (size_t)1 << u3_Host.ops_u.lom_y);
