@@ -2,7 +2,7 @@
 , cacert, ca-bundle, ivory                               # codegen
 , curlUrbit, ent, gmp, h2o, libsigsegv, libuv, lmdb      # libs
 , murmur3, openssl, openssl-static-osx, softfloat3       #
-, urcrypt, zlib, zlib-static-osx                         #
+, urcrypt, libwslay, zlib, zlib-static-osx                  #
 , enableStatic           ? stdenv.hostPlatform.isStatic  # opts
 , enableDebug            ? false
 , verePace               ? ""
@@ -42,6 +42,7 @@ in stdenv.mkDerivation {
     libuv
     lmdb
     murmur3
+    libwslay
     (if stdenv.isDarwin && enableStatic then openssl-static-osx else openssl)
     softfloat3
     urcrypt

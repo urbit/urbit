@@ -105,6 +105,8 @@ let
     urcrypt = callPackage ./nix/pkgs/urcrypt { inherit enableStatic; };
 
     docker-image = callPackage ./nix/pkgs/docker-image { };
+
+    libwslay = callPackage ./nix/pkgs/libwslay { inherit (pkgsNative) cmake; };
   };
 
   # Additional top-level packages and attributes exposed for convenience.
