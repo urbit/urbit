@@ -10,6 +10,7 @@
 #include <vere/serf.h>
 #include "vere/vere.h"
 #include "vere/mars.h"
+#include "noun/events.h"
 #if !defined(U3_OS_mingw)
 #include <sigsegv.h>
 #endif
@@ -1786,17 +1787,19 @@ _cw_play(c3_i argc, c3_c* argv[])
 {
   c3_i ch_i, lid_i;
   c3_w arg_w;
+  c3_o ful_o = c3n;
 
   static struct option lop_u[] = {
     { "loom",      required_argument, NULL, c3__loom },
     { "no-demand", no_argument,       NULL, 6 },
-    { "replay-to", required_argument, NULL, 'n' },
+    { "full",      required_argument, NULL, 'f' },
+    { "replay-to", no_argument,       NULL, 'n' },
     { NULL, 0, NULL, 0 }
   };
 
   u3_Host.dir_c = _main_pier_run(argv[0]);
 
-  while ( -1 != (ch_i=getopt_long(argc, argv, "n:", lop_u, &lid_i)) ) {
+  while ( -1 != (ch_i=getopt_long(argc, argv, "fn:", lop_u, &lid_i)) ) {
     switch ( ch_i ) {
       case 6: {  //  no-demand
         u3_Host.ops_u.map = c3n;
@@ -1812,6 +1815,11 @@ _cw_play(c3_i argc, c3_c* argv[])
         }
         u3_Host.ops_u.lom_y = lom_w;
       } break;
+
+      case 'f': {
+        ful_o = c3y;
+        break;
+      }
 
       case 'n': {
         u3_Host.ops_u.til_c = strdup(optarg);
@@ -1852,6 +1860,14 @@ _cw_play(c3_i argc, c3_c* argv[])
   u3C.wag_w |= u3o_hashless;
   u3m_boot(u3_Host.dir_c, (size_t)1 << u3_Host.ops_u.lom_y);
   u3C.slog_f = _cw_play_slog;
+
+  if ( c3y == ful_o ) {
+    u3l_log("mars: preparing for full replay\r\n");
+    u3e_yolo();
+    u3m_pave(c3y);
+    u3j_boot(c3y);
+    u3A->eve_d = 0;
+  }
 
   {
     u3_mars mar_u = {
