@@ -238,15 +238,36 @@
 +*  io  ~(. agentio bol)
 ++  poke-rebuild
   ^-  (quip card _state)
-  =/  wex  ~(tap by wex.bol)
-  |-
-  ?~  wex
-    `state
-  =/  [[=wire =ship =term] [acked=? =(pole knot)]]
-    i.wex
-  ?.  ?=([%gladio ship=@ ~] pole)
-    $(wex t.wex)
-  $(wex t.wex, wait (~(put in wait) (slav %p ship.pole)))
+  |^  
+  =.  wait
+    put-missing
+  =^  cards  state
+    watch-missing
+  [cards state]
+  ::
+  ++  watch-missing
+    =/  wait  ~(tap in wait)
+    =|  cards=(list card)
+    |-
+    ?~  wait
+      [cards state]
+    ?:  (~(has by wex.bol) [/gladio/(scot %p i.wait) i.wait dap.bol])
+      $(wait t.wait)
+    =.  cards
+      :_(cards (watch-init-migrate i.wait))
+    $(wait t.wait)
+  ::
+  ++  put-missing
+    =/  wex  ~(tap by wex.bol)
+    |-
+    ?~  wex
+      wait
+    =/  [[=wire =ship =term] [acked=? =(pole knot)]]
+      i.wex
+    ?.  ?=([%gladio ship=@ ~] pole)
+      $(wex t.wex)
+    $(wex t.wex, wait (~(put in wait) (slav %p ship.pole)))
+  --
 ::
 ++  poke-export
   ^-  (quip card _state)
@@ -268,8 +289,6 @@
   |=  =ship
   ^-  card
   [%pass /gladio/(scot %p ship) %agent [ship %groups] %watch /init]
-::
-
 ::
 ++  backoff-migrate
   |=  =ship
