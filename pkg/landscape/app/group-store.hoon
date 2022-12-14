@@ -140,6 +140,7 @@
         ?+  q.vase  !!
           %migrate  poke-migrate:gc
           %export   poke-export:gc
+          %rebuild  poke-rebuild:gc
         ==
       ::
           ?(%group-update-0 %group-action)
@@ -235,6 +236,18 @@
 ::
 |_  bol=bowl:gall
 +*  io  ~(. agentio bol)
+++  poke-rebuild
+  ^-  (quip card _state)
+  =/  wex  ~(tap by wex.bol)
+  |-
+  ?~  wex
+    `state
+  =/  [[=wire =ship =term] [acked=? =(pole knot)]]
+    i.wex
+  ?.  ?=([%gladio ship=@ ~] pole)
+    $(wex t.wex)
+  $(wex t.wex, wait (~(put in wait) (slav %p ship.pole)))
+::
 ++  poke-export
   ^-  (quip card _state)
   :_  state
@@ -255,6 +268,8 @@
   |=  =ship
   ^-  card
   [%pass /gladio/(scot %p ship) %agent [ship %groups] %watch /init]
+::
+
 ::
 ++  backoff-migrate
   |=  =ship
