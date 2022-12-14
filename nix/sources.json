@@ -119,5 +119,21 @@
         "type": "tarball",
         "url": "https://github.com/urbit/berkeley-softfloat-3/archive/ec4c7e31b32e07aad80e52f65ff46ac6d6aad986.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "wslay": {
+        "branch": "master",
+        "description": "The WebSocket library in C",
+        "homepage": "https://tatsuhiro-t.github.io/wslay/",
+        "owner": "tatsuhiro-t",
+        "repo": "wslay",
+        "rev": "0e7d106ff89ad6638090fd811a9b2e4c5dda8d40",
+        "sha256": "09cjcj57245nadl1i8gc4qvm3p4pw15xw7357a93zs109zchjlmn",
+        "type": "tarball",
+        "url": "https://github.com/tatsuhiro-t/wslay/archive/0e7d106ff89ad6638090fd811a9b2e4c5dda8d40.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz",
+        "pmnsh": {
+            "include": "include",
+            "prepare": "autoreconf -i && automake && autoconf && ./configure"
+        }
     }
 }
