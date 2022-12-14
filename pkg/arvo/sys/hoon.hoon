@@ -7541,7 +7541,7 @@
           ::  .hay: wing to home
           ::  .cox: hygienic context
           ::  .bug: debug annotations
-          ::  .nut: doccord annotations
+          ::  .nut: annotations
           ::  .def: default expression
           ::
           dom=`axis`1
