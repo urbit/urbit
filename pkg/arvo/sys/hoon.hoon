@@ -7715,8 +7715,7 @@
     |=  gen=hoon
     ^-  hoon
     =-  ?~(nut - [%note u.nut -])
-    ^-  hoon
-    |-  ^-  hoon
+    |-
     ?~(bug gen [%dbug i.bug $(bug t.bug)])
   ::
   ++  pieces
