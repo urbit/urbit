@@ -1269,6 +1269,8 @@
   ::                                                    ::::
 ++  eyre  ^?
   |%
+  +$  ws-message  @uxwebsockets
+  +$  fd          @uvfd
   +$  gift
     $%  ::  set-config: configures the external http server
         ::
@@ -1285,6 +1287,8 @@
         ::    not allowed.
         ::
         [%bound accepted=? =binding]
+        ::  ws-response:
+        [%ws =fd =ws-message]
     ==
   ::
   +$  task
@@ -1337,6 +1341,9 @@
         ::  start responding negatively to cors requests from origin
         ::
         [%reject-origin =origin]
+        ::
+        ::
+        [%ws =fd =ws-message]
     ==
   ::  +origin: request origin as specified in an Origin header
   ::

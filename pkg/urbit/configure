@@ -22,6 +22,7 @@ deps="          \
   pthread       \
   sigsegv       \
   softfloat3    \
+  wslay        \
 "
 
 echo '#pragma once' >include/config.h
@@ -198,8 +199,8 @@ then
   PKG_CONFIG="$PKG_CONFIG --static"
 fi
 
-CFLAGS="${CFLAGS-} $($PKG_CONFIG --cflags $pkgc_deps)"
-LDFLAGS="${LDFLAGS-} $($PKG_CONFIG --libs $pkgc_deps)"
+CFLAGS="${CFLAGS-} -I/usr/local/include $($PKG_CONFIG --cflags $pkgc_deps)"
+LDFLAGS="${LDFLAGS-} -L/usr/local/lib $($PKG_CONFIG --libs $pkgc_deps)"
 
 for dep in $deps; do
   LDFLAGS="${LDFLAGS-} -l$dep"

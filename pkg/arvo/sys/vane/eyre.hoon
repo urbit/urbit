@@ -2305,6 +2305,10 @@
   =/  server  (per-server-event event-args)
   ::
   ?-    -.task
+      ::  %ws: handle websocket message from unix
+      ::
+      %ws
+    `http-server-gate
       ::  %live: notifies us of the ports of our live http servers
       ::
       %live

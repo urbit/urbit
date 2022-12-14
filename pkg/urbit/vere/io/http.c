@@ -6,6 +6,7 @@
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 #include <h2o.h>
+#include "h2o/websocket.h"
 
 typedef struct _u3_h2o_serv {
   h2o_globalconf_t fig_u;             //  h2o global config
@@ -925,6 +926,37 @@ _http_seq_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
   return 0;
 }
 
+static void on_ws_message(h2o_websocket_conn_t *conn, const struct wslay_event_on_msg_recv_arg *arg)
+{
+    if (arg == NULL) {
+        h2o_websocket_close(conn);
+        return;
+    }
+
+    if (!wslay_is_ctrl_frame(arg->opcode)) {
+        struct wslay_event_msg msgarg = {arg->opcode, arg->msg, arg->msg_length};
+        wslay_event_queue_msg(conn->ws_ctx, &msgarg);
+    }
+}
+
+
+
+/* _http_sat_accept(): handle incoming http request on websocket
+ * endpoitn
+*/
+static c3_i
+_http_ws_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
+{
+  const c3_y *key_y;
+
+  if (h2o_is_websocket_handshake(rec_u, &key_y) != 0 || key_y == NULL) {
+      return -1;
+  }
+  h2o_upgrade_to_websocket(rec_u, key_y, NULL, on_ws_message);
+  return 0;
+}
+
+
 /* _http_sat_accept(): handle incoming http request on status endpoint
 */
 static c3_i
@@ -1472,6 +1504,12 @@ _http_serv_init_h2o(SSL_CTX* tls_u, c3_o log, c3_o red)
     pac_u = h2o_config_register_path(h2o_u->hos_u, "/~_~/healthz", 0);
     han_u = h2o_create_handler(pac_u, sizeof(*han_u));
     han_u->on_req = _http_sat_accept;
+
+    //  websockets
+    //
+    pac_u = h2o_config_register_path(h2o_u->hos_u, "/~_~/websockets", 0);
+    han_u = h2o_create_handler(pac_u, sizeof(*han_u));
+    han_u->on_req = _http_ws_accept;
   }
 
   if ( c3y == log ) {
