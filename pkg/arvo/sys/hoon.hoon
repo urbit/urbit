@@ -7849,7 +7849,6 @@
     ^-  hoon
     ::  process annotations outside construct, to catch default
     ::
-    ::TODO: try seeing if putting %gist in here fixes %brbc
     ?:  ?=(%dbug -.mod)  factory(mod q.mod, bug [p.mod bug])
     ?:  ?=(%bcsg -.mod)  factory(mod q.mod, def `[%kthp q.mod p.mod])
     ?:  ?=(%gist -.mod)  factory(mod q.mod, nut `p.mod)
@@ -7871,9 +7870,9 @@
     ::
     %-  decorate
     :+  %brcl
-      [%ktsg spore]
+      [%ktsg spore:clear]
     :+  %tsls
-      ~(relative analyze:(descend 7) 6)
+      ~(relative analyze:(descend 7):clear 6)
     ::  trigger unifying equality
     ::
     :+  %tsls  [%dtts $/14 $/2]
