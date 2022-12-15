@@ -203,7 +203,6 @@ u3_mars_play(u3_mars* mar_u, c3_d eve_d)
   }
 
   {
-    c3_d fir_d = mar_u->dun_d;  // started at
     c3_d mem_d = 0;             // last event to meme
     c3_w try_w = 0;             // [mem_d] retry count
 
@@ -222,7 +221,11 @@ u3_mars_play(u3_mars* mar_u, c3_d eve_d)
         } break;
 
         case _play_mem_e: {
-          if ( (mem_d == mar_u->dun_d) && (3 == ++try_w) ) {
+          if ( mem_d != mar_u->dun_d ) {
+            mem_d = mar_u->dun_d;
+            try_w = 0;
+          }
+          else if ( 3 == ++try_w ) {
             fprintf(stderr, "play (%" PRIu64 "): failed\r\n", mar_u->dun_d + 1);
             u3m_save();
             //  XX check loom size, suggest --loom X
@@ -230,8 +233,6 @@ u3_mars_play(u3_mars* mar_u, c3_d eve_d)
             //
             exit(1);
           }
-
-          mem_d = mar_u->dun_d;
 
           //  XX pack before meld?
           //
