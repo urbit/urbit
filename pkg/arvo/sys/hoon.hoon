@@ -7549,43 +7549,6 @@
           def=*(unit hoon)
       ==
   |_  mod=spec
-  ::
-  ++  autoname
-    ::  derive name from spec
-    ::
-    |-  ^-  (unit term)
-    ?-  -.mod
-      %base  ?.(?=([%atom *] p.mod) ~ ?:(=(%$ p.p.mod) `%atom `p.p.mod))
-      %dbug  $(mod q.mod)
-      %leaf  `p.mod
-      %loop  `p.mod
-      %like  ?~(p.mod ~ ?^(i.p.mod ?:(?=(%& -.i.p.mod) ~ q.i.p.mod) `i.p.mod))
-      %make  ~(name ap p.mod)
-      %made  $(mod q.mod)
-      %over  $(mod q.mod)
-      %name  $(mod q.mod)
-    ::
-      %bcbc  $(mod p.mod)
-      %bcbr  $(mod p.mod)
-      %bccb  ~(name ap p.mod)
-      %bccl  $(mod i.p.mod)
-      %bccn  $(mod i.p.mod)
-      %bcdt  ~
-      %bcgl  $(mod q.mod)
-      %bcgr  $(mod q.mod)
-      %bchp  $(mod p.mod)
-      %bckt  $(mod q.mod)
-      %bcls  $(mod q.mod)
-      %bcfs  ~
-      %bcmc  ~(name ap p.mod)
-      %bcpm  $(mod p.mod)
-      %bcsg  $(mod q.mod)
-      %bctc  ~
-      %bcts  $(mod q.mod)
-      %bcpt  $(mod q.mod)
-      %bcwt  $(mod i.p.mod)
-      %bczp  ~
-    ==
   ++  hint
     |=  not=note
     ^+  +>
@@ -8259,19 +8222,6 @@
         ?:  =(0 depth.skin)  ~
         [[%| 0 ~] $(depth.skin (dec depth.skin))]
       gen
-    ==
-  ::
-  ++  name
-    |-  ^-  (unit term)
-    ?+  gen  ~
-      [%wing *]  ?~  p.gen  ~
-                 ?^  i.p.gen
-                   ?:(?=(%& -.i.p.gen) ~ q.i.p.gen)
-                 `i.p.gen
-      [%limb *]  `p.gen
-      [%dbug *]  $(gen ~(open ap gen))
-      [%tsgl *]  $(gen ~(open ap gen))
-      [%tsgr *]  $(gen q.gen)
     ==
   ::
   ++  feck
@@ -12768,11 +12718,10 @@
         ;~  pfix  tis
           %+  sear
             |=  [=(unit term) =spec]
-            %+  bind
-              ~(autoname ax spec)
+            %+  bind  (name spec)
             |=  =term
-            =*  name  ?~(unit term (cat 3 u.unit (cat 3 '-' term)))
-            [%bcts name spec]
+            =*  nom  ?~(unit term (cat 3 u.unit (cat 3 '-' term)))
+            [%bcts nom spec]
           ;~  pose
             ;~(plug (stag ~ ;~(sfix sym tis)) wyde)
             (stag ~ wyde)
@@ -12895,7 +12844,7 @@
               ::
               |=  =spec
               ^-  (unit hoon)
-              %+  bind  ~(autoname ax spec)
+              %+  bind  (name spec)
               |=(=term `hoon`[%ktts term %kttr spec])
             wyde
           ==
@@ -12991,6 +12940,59 @@
       ==
     ==
   ++  sump  (ifix [kel ker] (stag %cltr (most ace wide)))
+  ::
+  ++  name
+    |=  mod=spec
+    ::  derive name from spec
+    ::
+    |^  ^-  (unit term)
+    ?-  -.mod
+      %base  ?.(?=([%atom *] p.mod) ~ ?:(=(%$ p.p.mod) `%atom `p.p.mod))
+      %dbug  $(mod q.mod)
+      %leaf  `p.mod
+      %loop  `p.mod
+      %like  ?~(p.mod ~ ?^(i.p.mod ?:(?=(%& -.i.p.mod) ~ q.i.p.mod) `i.p.mod))
+      %make  (swab p.mod)
+      %made  $(mod q.mod)
+      %over  $(mod q.mod)
+      %name  $(mod q.mod)
+    ::
+      %bcbc  $(mod p.mod)
+      %bcbr  $(mod p.mod)
+      %bccb  (swab p.mod)
+      %bccl  $(mod i.p.mod)
+      %bccn  $(mod i.p.mod)
+      %bcdt  ~
+      %bcgl  $(mod q.mod)
+      %bcgr  $(mod q.mod)
+      %bchp  $(mod p.mod)
+      %bckt  $(mod q.mod)
+      %bcls  $(mod q.mod)
+      %bcfs  ~
+      %bcmc  (swab p.mod)
+      %bcpm  $(mod p.mod)
+      %bcsg  $(mod q.mod)
+      %bctc  ~
+      %bcts  $(mod q.mod)
+      %bcpt  $(mod q.mod)
+      %bcwt  $(mod i.p.mod)
+      %bczp  ~
+    ==
+    ++  swab
+      |=  gen=hoon
+      |-  ^-  (unit term)
+      ?+  gen  ~
+        [%wing *]  ?~  p.gen  ~
+                   ?^  i.p.gen
+                     ?:(?=(%& -.i.p.gen) ~ q.i.p.gen)
+                   `i.p.gen
+        [%limb *]  `p.gen
+        [%dbug *]  $(gen q.gen)
+        [%tsgl *]  $(gen p.gen)
+        [%tsgr *]  $(gen q.gen)
+      ==
+    --
+  ::
   ++  norm                                              ::  rune regular form
     |=  tol=?
     |%
@@ -13624,7 +13626,7 @@
         %+  sear
           |=  =spec
           ^-  (unit skin)
-          %+  bind  ~(autoname ax spec)
+          %+  bind  (name spec)
           |=  =term
           [%name term %spec spec %base %noun]
         wyde
