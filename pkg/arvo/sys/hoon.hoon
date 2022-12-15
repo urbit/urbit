@@ -7590,10 +7590,6 @@
       %bcwt  $(mod i.p.mod)
       %bczp  ~
     ==
-  ++  hint
-    |=  not=note
-    ^+  +>
-    ?>(?=(~ nut) +>.$(nut `not))
   ::
   ++  function
     ::  construct a function example
