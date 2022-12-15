@@ -625,7 +625,12 @@
 ++  print-signature
   |=  =tank
   ^-  (list sole-effect)
-  (turn (wash [3 80] tank) |=(a=tape [%txt a]))
+  =/  tan  (wash [3 80] tank)
+  ?.  (gte (lent tan) 3)
+    (turn tan |=(a=tape [%txt a]))
+  %+  weld
+    (turn (scag 3 tan) |=(a=tape [%txt a]))
+  (styled [[`%br ~ `%g] '   ...']~)
 ::
 ::  +print-arm: renders documentation for a single arm in a core
 ++  print-arm
