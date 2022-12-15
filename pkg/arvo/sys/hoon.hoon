@@ -13526,8 +13526,8 @@
     ++  hank  (most mush loaf)                          ::  gapped hoons
     ++  hunk  (most mush loan)                          ::  gapped specs
     ++  jump  ;~(pose leap:docs gap)                    ::  gap before docs
-    ++  loaf  ?.(tol wide tall)                         ::  hoon
-    ++  loan  ?.(tol wyde till)                         ::  spec
+    ++  loaf  ?:(tol tall wide)                         ::  hoon
+    ++  loan  ?:(tol till wyde)                         ::  spec
     ++  lore  (sear |=(=hoon ~(flay ap hoon)) loaf)     ::  skin
     ++  lomp  ;~(plug sym (punt ;~(pfix tis wyde)))     ::  typeable name
     ++  mash  ?:(tol gap ;~(plug com ace))              ::  list separator
