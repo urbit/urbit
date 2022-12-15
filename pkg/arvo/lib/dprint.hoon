@@ -655,7 +655,7 @@
   ::
     ?~  cdoc.item
       *(list sole-effect)
-    %-  zing  :~  (styled [[`%br ~ `%b] 'default arm in core:']~)
+    %-  zing  :~  (styled [[`%br ~ `%b] '$:']~)
                   (print-header "" cdoc.item)
               ==
   ==
