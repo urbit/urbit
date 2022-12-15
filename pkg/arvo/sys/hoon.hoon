@@ -6344,6 +6344,7 @@
               [%make p=hoon q=(list spec)]              ::  composed spec
               [%name p=term q=spec]                     ::  annotate simple
               [%over p=wing q=spec]                     ::  relative to subject
+              [%tame p=spec]                            ::  =foo spec
           ::                                            ::
               [%bcgr p=spec q=spec]                     ::  $>, filter: require
               [%bcbc p=spec q=(map term spec)]          ::  $$, recursion
@@ -6382,6 +6383,7 @@
               [%leaf =aura =atom]                       ::  atomic constant
               [%help =help =skin]                       ::  describe
               [%name =term =skin]                       ::  apply label
+              [%same =spec =skin]                       ::  =foo name
               [%over =wing =skin]                       ::  relative to
               [%spec =spec =skin]                       ::  cast to
               [%wash depth=@ud]                         ::  strip faces
@@ -6427,6 +6429,7 @@
     [%limb p=term]                                      ::  take limb
     [%lost p=hoon]                                      ::  not to be taken
     [%rock p=term q=*]                                  ::  fixed constant
+    [%same p=spec]                                      ::  =foo name
     [%sand p=term q=*]                                  ::  unfixed constant
     [%tell p=(list hoon)]                               ::  render as tape
     [%tune p=$@(term tune)]                             ::  minimal face
@@ -7562,8 +7565,9 @@
       %like  ?~(p.mod ~ ?^(i.p.mod ?:(?=(%& -.i.p.mod) ~ q.i.p.mod) `i.p.mod))
       %make  ~(name ap p.mod)
       %made  $(mod q.mod)
-      %over  $(mod q.mod)
       %name  $(mod q.mod)
+      %over  $(mod q.mod)
+      %tame  $(mod p.mod)
     ::
       %bcbc  $(mod p.mod)
       %bcbr  $(mod p.mod)
@@ -7761,6 +7765,7 @@
       [%make *]  $(mod bcmc/(unfold p.mod q.mod))
       [%name *]  $(mod q.mod)
       [%over *]  $(hay p.mod, mod q.mod)
+      [%tame *]  $(mod p.mod)
     ::
       [%bcbr *]  $(mod p.mod)
       [%bccb *]  [%rock %n 0]
@@ -7819,6 +7824,7 @@
       [%make *]  example(mod bcmc/(unfold p.mod q.mod))
       [%name *]  example(mod q.mod, nut `made/[p.mod ~])
       [%over *]  example(hay p.mod, mod q.mod)
+      [%tame *]  example(mod [%bcts %name (need autoname) p.mod])
     ::
       [%bccb *]  (decorate (home p.mod))
       [%bccl *]  %-  decorate
@@ -8040,6 +8046,17 @@
           [%over *]
         relative(hay p.mod, mod q.mod)
       ::
+      ::  self-named structure
+      ::
+          [%tame *]
+                ::    |=  [=(unit term) =spec]
+          ::    %+  bind
+          ::      ~(autoname ax spec)
+          ::    |=  =term
+          ::    =*  name  ?~(unit term (cat 3 u.unit (cat 3 '-' term)))
+          ::    [%bcts name spec]
+      example(mod [%bcts %name (need autoname) p.mod])
+      ::
       ::  recursive, $$
       ::
           [%bcbc *]
@@ -8247,6 +8264,9 @@
         [%over *]
       $(skin skin.skin, rel (weld wing.skin rel))
     ::
+        [%same *]
+      $(skin [%name (need ~(autoname ax spec.skin)) skin.skin])
+    ::
         [%spec *]
       :+  %kthp
         ?~(rel spec.skin [%over rel spec.skin])
@@ -8407,6 +8427,7 @@
         [%leaf *]  ~(factory ax `spec`gen)
         [%limb *]  [%cnts [p.gen ~] ~]
         [%tell *]  [%cncl [%limb %noah] [%zpgr [%cltr p.gen]] ~]
+        [%same *]  [%ktts (need ~(autoname ax `spec`p.gen)) %kttr p.gen]
         [%wing *]  [%cnts p.gen ~]
         [%yell *]  [%cncl [%limb %cain] [%zpgr [%cltr p.gen]] ~]
         [%note *]  q.gen
@@ -8843,6 +8864,7 @@
           %help  $(skin skin.skin)
           %name  $(skin skin.skin)
           %over  $(skin skin.skin)
+          %same  $(skin skin.skin)
           %spec  $(skin skin.skin)
           %wash  [%1 1]
       ==
@@ -8930,6 +8952,7 @@
           %help  (hint [sut %help help.skin] $(skin skin.skin))
           %name  (face term.skin $(skin skin.skin))
           %over  $(skin skin.skin, sut (~(play ut sut) %wing wing.skin))
+          %same  $(skin [%name (need ~(autoname ax spec.skin)) skin.skin])
           %spec  =/  yon  $(skin skin.skin)
                  =/  hit  (~(play ut sut) ~(example ax spec.skin))
                  ?>  (~(nest ut hit) & yon)
@@ -9016,6 +9039,7 @@
           %help  $(skin skin.skin)
           %name  $(skin skin.skin)
           %over  $(skin skin.skin)
+          %same  $(skin skin.skin)
           %spec  $(skin skin.skin)
           %wash  ref
       ==
@@ -12766,16 +12790,16 @@
         ==
       :-  '='
         ;~  pfix  tis
-          %+  sear
-            |=  [=(unit term) =spec]
-            %+  bind
-              ~(autoname ax spec)
-            |=  =term
-            =*  name  ?~(unit term (cat 3 u.unit (cat 3 '-' term)))
-            [%bcts name spec]
+          ::  %+  sear
+          ::    |=  [=(unit term) =spec]
+          ::    %+  bind
+          ::      ~(autoname ax spec)
+          ::    |=  =term
+          ::    =*  name  ?~(unit term (cat 3 u.unit (cat 3 '-' term)))
+          ::    [%bcts name spec]
           ;~  pose
-            ;~(plug (stag ~ ;~(sfix sym tis)) wyde)
-            (stag ~ wyde)
+            ;~(plug (stag %tame ;~(sfix sym tis)) wyde)
+            (stag %tame wyde)
           ==
         ==
       :-  ['a' 'z']
@@ -12890,14 +12914,14 @@
           ;~  pose
             (stag %dtts (ifix [pal par] ;~(glam wide wide)))
           ::
-            %+  sear
-              ::  mainly used for +skin formation
-              ::
-              |=  =spec
-              ^-  (unit hoon)
-              %+  bind  ~(autoname ax spec)
-              |=(=term `hoon`[%ktts term %kttr spec])
-            wyde
+            ::  %+  sear
+            ::    ::  mainly used for +skin formation
+            ::    ::
+            ::    |=  =spec
+            ::    ^-  (unit hoon)
+            ::    %+  bind  ~(autoname ax spec)
+            ::    |=(=term `hoon`[%ktts term %kttr spec])
+            (stag %same wyde)
           ==
         ==
       :-  '?'
@@ -13621,12 +13645,16 @@
   ++  wise
     ;~  pose
       ;~  pfix  tis
-        %+  sear
+        ::  %+  sear
+        ::    |=  =spec
+        ::    ^-  (unit skin)
+        ::    %+  bind  ~(autoname ax spec)
+        ::    |=  =term
+        ::    [%name term %spec spec %base %noun]
+        ::  wyde
+        %+  cook
           |=  =spec
-          ^-  (unit skin)
-          %+  bind  ~(autoname ax spec)
-          |=  =term
-          [%name term %spec spec %base %noun]
+          `skin`[%same spec %spec %base %noun]
         wyde
       ==
     ::
