@@ -7536,6 +7536,14 @@
   ++  wtts  |=(mod=spec (gray [%wtts (teal mod) puce]))
   --
 ::
+::  +ax: the compiler widget that turns specs into molds, and produces bunts
+::
+::    the two main entry points to +ax are via +factory, which produces molds,
+::    and +example, which produces bunt values. there is also +autoname, which
+::    is actually a parser utility.
+::
+::    .mod is the spec we're working with, while the rest of the sample stores
+::    state for the spec->hoon
 ++  ax
   =+  :*  ::  .dom: axis to home
           ::  .hay: wing to home
@@ -7553,6 +7561,7 @@
       ==
   |_  mod=spec
   ::
+  ::  +autoname: utility for getting a name from a spec, as used for =foo syntax
   ++  autoname
     ::  derive name from spec
     ::
@@ -7651,11 +7660,12 @@
     ?~  -  gen
     [%tsgr [%wing -] gen]
   ::
+  ::  +clear: clear annotations
   ++  clear
-    ::  clear annotations
     ^+  .
     .(bug ~, def ~, nut ~)
   ::
+  ::  +basal: the base case for conversion from $spec to $hoon
   ++  basal
     ::  example base case
     ::
@@ -7689,6 +7699,7 @@
       [%zpzp ~]
     ==
   ::
+  ::  +unfold: used for
   ++  unfold
     |=  [fun=hoon arg=(list spec)]
     ^-  hoon
@@ -7798,9 +7809,8 @@
       [%bczp *]  [%rock %n 0]
     ==
   ::
+  ::  +example: produce the bunt (correctly typed default instance) of .mod
   ++  example
-    ::  produce a correctly typed default instance
-    ::
     ~+
     ^-  hoon
     ?+  mod
@@ -7839,9 +7849,8 @@
       [%bctc *]  (decorate (home (interface %zinc p.mod q.mod)))
     ==
   ::
+  ::  +factory: make a normalizing gate (mold) from .mod
   ++  factory
-    ::  make a normalizing gate (mold)
-    ::
     ^-  hoon
     ::  process annotations outside construct, to catch default
     ::
