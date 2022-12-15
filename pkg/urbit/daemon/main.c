@@ -9,6 +9,8 @@
 #include "rsignal.h"
 #include <vere/serf.h>
 #include "vere/vere.h"
+#include "vere/mars.h"
+#include "noun/events.h"
 #if !defined(U3_OS_mingw)
 #include <sigsegv.h>
 #endif
@@ -644,14 +646,17 @@ _cw_usage(c3_c* bin_c)
     "utilities:\n",
     "  %s cram %.*s              jam state:\n",
     "  %s dock %.*s              copy binary:\n",
+    "  %s eval %.*s              eval hoon:\n",
     "  %s grab %.*s              measure memory usage:\n",
     "  %s info %.*s              print pier info:\n",
     "  %s meld %.*s              deduplicate snapshot:\n",
     "  %s pack %.*s              defragment snapshot:\n",
+    "  %s play %.*s              recompute events:\n",
     "  %s prep %.*s              prepare for upgrade:\n",
     "  %s next %.*s              request upgrade:\n",
     "  %s queu %.*s<at-event>    cue state:\n",
     "  %s vere ARGS <output dir>    download binary:\n",
+    "  %s vile %.*s              print keyfile:\n",
     "\n  run as a 'serf':\n",
     "    %s serf <pier> <key> <flags> <cache-size> <at-event>"
 #ifdef U3_OS_mingw
@@ -1619,9 +1624,7 @@ _cw_meld(c3_i argc, c3_c* argv[])
   u3C.wag_w |= u3o_hashless;
   u3m_boot(u3_Host.dir_c, (size_t)1 << u3_Host.ops_u.lom_y);
 
-  pre_w = u3a_open(u3R);
-  u3u_meld();
-  u3a_print_memory(stderr, "urbit: meld: gained", (u3a_open(u3R) - pre_w));
+  u3a_print_memory(stderr, "urbit: meld: gained", u3u_meld());
 
   u3m_save();
   u3_disk_exit(log_u);
@@ -1764,6 +1767,138 @@ _cw_pack(c3_i argc, c3_c* argv[])
   u3a_print_memory(stderr, "urbit: pack: gained", u3m_pack());
 
   u3m_save();
+  u3_disk_exit(log_u);
+  u3m_stop();
+}
+
+/* _cw_play_slog(): print during replay.
+*/
+static void
+_cw_play_slog(u3_noun hod)
+{
+  u3_pier_tank(0, 0, u3k(u3t(hod)));
+  u3z(hod);
+}
+
+/* _cw_play(): replay events, but better.
+*/
+static void
+_cw_play(c3_i argc, c3_c* argv[])
+{
+  c3_i ch_i, lid_i;
+  c3_w arg_w;
+  c3_o ful_o = c3n;
+  c3_o mel_o = c3n;
+
+  static struct option lop_u[] = {
+    { "loom",      required_argument, NULL, c3__loom },
+    { "auto-meld", no_argument,       NULL, 4 },
+    { "no-demand", no_argument,       NULL, 6 },
+    { "full",      required_argument, NULL, 'f' },
+    { "replay-to", no_argument,       NULL, 'n' },
+    { NULL, 0, NULL, 0 }
+  };
+
+  u3_Host.dir_c = _main_pier_run(argv[0]);
+
+  while ( -1 != (ch_i=getopt_long(argc, argv, "fn:", lop_u, &lid_i)) ) {
+    switch ( ch_i ) {
+      case 4: {  //  auto-meld
+        mel_o = c3y;
+      } break;
+
+      case 6: {  //  no-demand
+        u3_Host.ops_u.map = c3n;
+        u3C.wag_w |= u3o_no_demand;
+      } break;
+
+      case c3__loom: {
+        c3_w lom_w;
+        c3_o res_o = _main_readw(optarg, u3a_bits + 3, &lom_w);
+        if ( (c3n == res_o) || (lom_w < 20) ) {
+          fprintf(stderr, "error: --loom must be >= 20 and <= %u\r\n", u3a_bits + 2);
+          exit(1);
+        }
+        u3_Host.ops_u.lom_y = lom_w;
+      } break;
+
+      case 'f': {
+        ful_o = c3y;
+        break;
+      }
+
+      case 'n': {
+        u3_Host.ops_u.til_c = strdup(optarg);
+        break;
+      }
+
+      case '?': {
+        fprintf(stderr, "invalid argument\r\n");
+        exit(1);
+      } break;
+    }
+  }
+
+  //  argv[optind] is always "play"
+  //
+
+  if ( !u3_Host.dir_c ) {
+    if ( optind + 1 < argc ) {
+      u3_Host.dir_c = argv[optind + 1];
+    }
+    else {
+      fprintf(stderr, "invalid command, pier required\r\n");
+      exit(1);
+    }
+
+    optind++;
+  }
+
+  if ( optind + 1 != argc ) {
+    fprintf(stderr, "invalid command\r\n");
+    exit(1);
+  }
+
+  //  XX handle SIGTSTP so that the lockfile is not orphaned?
+  //
+  u3_disk* log_u = _cw_disk_init(u3_Host.dir_c); // XX s/b try_aquire lock
+
+  if ( c3y == mel_o ) {
+    u3C.wag_w |= u3o_auto_meld;
+  }
+
+  u3C.wag_w |= u3o_hashless;
+  u3m_boot(u3_Host.dir_c, (size_t)1 << u3_Host.ops_u.lom_y);
+  u3C.slog_f = _cw_play_slog;
+
+  if ( c3y == ful_o ) {
+    u3l_log("mars: preparing for full replay\r\n");
+    u3e_yolo();
+    u3m_pave(c3y);
+    u3j_boot(c3y);
+    u3A->eve_d = 0;
+  }
+
+  {
+    u3_mars mar_u = {
+      .log_u = log_u,
+      .dir_c = u3_Host.dir_c,
+      .sen_d = u3A->eve_d,
+      .dun_d = u3A->eve_d,
+      .mug_l = u3r_mug(u3A->roc)
+    };
+    c3_d    eve_d = 0;
+    c3_c*   eve_c = u3_Host.ops_u.til_c;
+
+    if ( u3_Host.ops_u.til_c ) {
+      if ( 1 != sscanf(eve_c, "%" PRIu64 "", &eve_d) ) {
+        fprintf(stderr, "mars: replay-to invalid: '%s'\r\n", eve_c);
+      }
+    }
+
+    u3_mars_play(&mar_u, eve_d);
+  }
+
   u3_disk_exit(log_u);
   u3m_stop();
 }
@@ -2055,11 +2190,13 @@ _cw_utils(c3_i argc, c3_c* argv[])
   //    $@  ~                                             ::  usage
   //    $%  [%cram dir=@t]                                ::  jam state
   //        [%dock dir=@t]                                ::  copy binary
+  //        [%eval ~]                                     ::  eval hoon
   //        [?(%grab %mass) dir=@t]                       ::  gc
   //        [%info dir=@t]                                ::  print
   //        [%meld dir=@t]                                ::  deduplicate
   //        [?(%next %upgrade) dir=@t]                    ::  upgrade
   //        [%pack dir=@t]                                ::  defragment
+  //        [%play dir=@t]                                ::  recompute
   //        [%prep dir=@t]                                ::  prep upgrade
   //        [%queu dir=@t eve=@ud]                        ::  cue state
   //        [?(%vere %fetch-vere) dir=@t]                 ::  download vere
@@ -2100,6 +2237,7 @@ _cw_utils(c3_i argc, c3_c* argv[])
     case c3__meld: _cw_meld(argc, argv); return 1;
     case c3__next: _cw_next(argc, argv); return 2; // continue on
     case c3__pack: _cw_pack(argc, argv); return 1;
+    case c3__play: _cw_play(argc, argv); return 1;
     case c3__prep: _cw_prep(argc, argv); return 2; // continue on
     case c3__queu: _cw_queu(argc, argv); return 1;
     case c3__vere: _cw_vere(argc, argv); return 1;

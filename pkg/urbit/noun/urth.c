@@ -426,15 +426,17 @@ _cu_realloc(FILE* fil_u, ur_root_t** tor_u, ur_nvec_t* doc_u)
 /* u3u_meld(): globally deduplicate memory.
 */
 #ifdef U3_MEMORY_DEBUG
-void
+c3_w
 u3u_meld(void)
 {
   fprintf(stderr, "u3: unable to meld under U3_MEMORY_DEBUG\r\n");
+  return 0;
 }
 #else
-void
+c3_w
 u3u_meld(void)
 {
+  c3_w       pre_w = u3a_open(u3R);
   ur_root_t* rot_u;
   ur_nvec_t  cod_u;
 
@@ -446,6 +448,8 @@ u3u_meld(void)
   //
   ur_nvec_free(&cod_u);
   ur_root_free(rot_u);
+
+  return (u3a_open(u3R) - pre_w);
 }
 #endif
 
