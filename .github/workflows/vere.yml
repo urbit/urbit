@@ -125,13 +125,14 @@ jobs:
           echo -n "$version" > ./version-string
 
       - name: upload version string artifact
-        if: matrix.type == 'linux'
+        if: inputs.upload && matrix.type == 'linux'
         uses: actions/upload-artifact@v3
         with:
           name: version-string
           path: version-string
 
       - uses: google-github-actions/auth@v1
+        if: inputs.upload
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
