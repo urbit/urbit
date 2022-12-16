@@ -39,7 +39,7 @@ jobs:
       contents: none
     uses: ./.github/workflows/vere.yml
     with:
-      pace: 'often'
+      pace: 'edge' # XX s/b once?
       upload: >-
         ${{
         (github.ref_name == 'next/vere' && github.ref_type == 'branch')

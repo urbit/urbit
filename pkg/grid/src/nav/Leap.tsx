@@ -72,7 +72,6 @@ export const Leap = React.forwardRef(
 
     useEffect(() => {
       const newMatch = getMatch(rawInput);
-
       if (newMatch && rawInput) {
         useLeapStore.setState({ selectedMatch: newMatch });
       }
@@ -112,7 +111,10 @@ export const Leap = React.forwardRef(
 
     const navigateByInput = useCallback(
       (input: string) => {
-        const normalizedValue = input.trim().replace(/(~?[\w^_-]{3,13})\//, '$1/apps/');
+        const normalizedValue = input
+          .trim()
+          .replace('%', '')
+          .replace(/(~?[\w^_-]{3,13})\//, '$1/apps/$1/');
         push(`/leap/${menu}/${normalizedValue}`);
       },
       [menu]

@@ -26,8 +26,8 @@ export const Grid: FunctionComponent = () => {
         window.location.reload();
       }
       const start = performance.now();
-      await useKilnState.getState().fetchVats();
-      await useKilnState.getState().fetchVats();
+      await useKilnState.getState().fetchPikes();
+      await useKilnState.getState().fetchPikes();
       if (performance.now() - start > 5000) {
         attempt(count + 1);
       } else {

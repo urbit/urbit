@@ -25,6 +25,7 @@ let
       (import ./overlays/native.nix)
       # Specific overrides guarded by the host platform.
       (import ./overlays/musl.nix)
+      (import ./overlays/arm.nix)
     ];
   };
 

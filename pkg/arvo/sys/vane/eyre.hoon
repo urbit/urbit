@@ -251,7 +251,7 @@
       ;meta(charset "utf-8");
       ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
       ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
-      ;title:"OS1"
+      ;title:"Urbit"
       ;style:'''
              @import url("https://rsms.me/inter/inter.css");
              @font-face {
@@ -551,6 +551,18 @@
       (easy ~)
     ==
   ==
+::  +host-sans-port: strip the :<port> from a host string
+::
+++  host-sans-port
+  ;~  sfix
+    %+  cook  crip
+    %-  star
+    ;~  less
+      ;~(plug col (punt dem) ;~(less next (easy ~)))
+      next
+    ==
+    (star next)
+  ==
 ::  +per-server-event: per-event server core
 ::
 ++  per-server-event
@@ -602,6 +614,31 @@
       [action [authenticated secure address request] ~ 0]
     =.  connections.state
       (~(put by connections.state) duct connection)
+    ::  redirect to https if insecure, redirects enabled
+    ::  and secure port live
+    ::
+    ?:  ?&  !secure
+            redirect.http-config.state
+            ?=(^ secure.ports.state)
+        ==
+      =/  location=@t
+        %+  rap  3
+        :~  'https://'
+            (rash (fall host '') host-sans-port)
+            ?:  =(443 u.secure.ports.state)
+              ''
+            (crip ":{(a-co:co u.secure.ports.state)}")
+            ?:  ?=([[~ ~] ~] (parse-request-line url.request))
+              '/'
+            url.request
+        ==
+      %-  handle-response
+      :*  %start
+          :-  status-code=301
+          headers=['location' location]~
+          data=~
+          complete=%.y
+      ==
     ::  figure out whether this is a cors request,
     ::  whether the origin is approved or not,
     ::  and maybe add it to the "pending approval" set
@@ -1228,7 +1265,7 @@
       ::  the request may include a 'Last-Event-Id' header
       ::
       =/  maybe-last-event-id=(unit @ud)
-        ?~  maybe-raw-header=(get-header:http 'Last-Event-ID' header-list.request)
+        ?~  maybe-raw-header=(get-header:http 'last-event-id' header-list.request)
           ~
         (rush u.maybe-raw-header dum:ag)
       ::  flush events older than the passed in 'Last-Event-ID'
@@ -2178,7 +2215,7 @@
   ::    XX cancel active too if =(0 trim-priority) ?
   ::
   ?:  ?=(%trim -.task)
-    =/  event-args  [[eny duct now rof] server-state.ax]
+    =*  event-args  [[eny duct now rof] server-state.ax]
     =*  by-channel  by-channel:(per-server-event event-args)
     =*  channel-state  channel-state.server-state.ax
     ::
@@ -2272,6 +2309,10 @@
       ::
       %live
     =.  ports.server-state.ax  +.task
+    ::  enable http redirects if https port live and cert set
+    ::
+    =.  redirect.http-config.server-state.ax
+      &(?=(^ secure.task) ?=(^ secure.http-config.server-state.ax))
     [~ http-server-gate]
       ::  %rule: updates our http configuration
       ::
@@ -2284,6 +2325,10 @@
       ?:  =(secure.config cert.http-rule.task)
         [~ http-server-gate]
       =.  secure.config  cert.http-rule.task
+      =.  redirect.config
+        ?&  ?=(^ secure.ports.server-state.ax)
+            ?=(^ cert.http-rule.task)
+        ==
       :_  http-server-gate
       =*  out-duct  outgoing-duct.server-state.ax
       ?~  out-duct  ~
@@ -2534,6 +2579,12 @@
 ++  load
   |=  old=axle
   ^+  ..^$
+  ::  enable https redirects if certificate configured
+  ::
+  =.  redirect.http-config.server-state.old
+    ?&  ?=(^ secure.ports.server-state.old)
+        ?=(^ secure.http-config.server-state.old)
+    ==
   ..^$(ax old)
 ::  +stay: produce current state
 ::

@@ -617,7 +617,15 @@ u3_disk_acquire(c3_c* pax_c)
     else if (pid_w != getpid()) {
       c3_w i_w;
 
-      if ( -1 != kill(pid_w, SIGTERM) ) {
+      int ret = kill(pid_w, SIGTERM);
+
+      if ( -1 == ret && errno == EPERM ) {
+        u3l_log("disk: permission denied when trying to kill process %d!\n", pid_w);
+        kill(getpid(), SIGTERM);
+        sleep(1); c3_assert(0);
+      }
+
+      if ( -1 != ret ) {
         u3l_log("disk: stopping process %d, live in %s...\n",
                 pid_w, pax_c);
 
@@ -689,18 +697,14 @@ u3_disk_exit(u3_disk* log_u)
     }
   }
 
-  //  cancel write thread
+  //  try to cancel write thread
+  //  shortcircuit cleanup if we cannot
   //
-  //    XX can deadlock when called from signal handler
-  //    XX revise SIGTSTP handling
-  //
-  if ( c3y == log_u->ted_o ) {
-    c3_i sas_i;
-
-    do {
-      sas_i = uv_cancel(&log_u->req_u);
-    }
-    while ( UV_EBUSY == sas_i );
+  if (  (c3y == log_u->ted_o)
+     && (0 > uv_cancel(&log_u->req_u)) )
+  {
+    // u3l_log("disk: unable to cleanup\r\n");
+    return;
   }
 
   //  close database
@@ -885,8 +889,11 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
     //
     {
       const size_t siz_i =
-      #if (defined(U3_CPU_aarch64) && defined(U3_OS_linux)) || defined(U3_OS_mingw)
+      #if defined(U3_OS_mingw)
         0xf00000000;
+      // 500 GiB is as large as musl on aarch64 wants to allow
+      #elif (defined(U3_CPU_aarch64) && defined(U3_OS_linux))
+        0x7d00000000;
       #else
         0x10000000000;
       #endif
