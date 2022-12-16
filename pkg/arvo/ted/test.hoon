@@ -44,10 +44,6 @@
   %+  turn  ~(tap by paths-to-tests)
   |=  [=path test-arms=(list test-arm)]
   ^-  (list test)
-  ::  strip off leading 'tests' from :path
-  ::
-  ?.  ?=([%tests *] path)  ~
-  =/  path  t.path  ::NOTE  TMI
   ::  for each test, add the test's name to :path
   ::
   %+  turn  test-arms
@@ -108,7 +104,16 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
+;<  =bowl:strand  bind:m  get-bowl:strandio
 =/  paz=(list path)
+  :: if no args, test everything under /=base=/tests
+  ::
+  ?~  q.arg
+    ~[/(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/tests]
+  :: else cast path to ~[path] if needed
+  ::
+  ?@  +<.q.arg
+    [(tail !<([~ path] arg)) ~]
   (tail !<([~ (list path)] arg))
 =/  bez=(list beam)
   (turn paz |=(p=path ~|([%test-not-beam p] (need (de-beam p)))))

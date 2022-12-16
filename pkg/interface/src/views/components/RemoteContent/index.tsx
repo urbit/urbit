@@ -1,5 +1,5 @@
 import {
-  Box,
+  Box
 } from '@tlon/indigo-react';
 import React from 'react';
 import useSettingsState from '~/logic/state/settings';
@@ -103,7 +103,7 @@ function RemoteContentInner(props: RemoteContentProps) {
     return (
       <Box mt={1} mb={2} flexShrink={0}>
         <RemoteContentWrapper {...wrapperProps} noOp={transcluded} replaced>
-          <RemoteContentImageEmbed url={url} />
+          <RemoteContentImageEmbed url={url} stretch={tall} />
         </RemoteContentWrapper>
       </Box>
     );

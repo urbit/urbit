@@ -984,10 +984,6 @@
       u3j_site raq_u;
       u3j_gate_prep(&raq_u, u3k(raq));
 
-      //  check for stack overflow
-      //
-      u3a_pile_sane(&pil_u);
-
       while ( c3n == u3a_pile_done(&pil_u) ) {
         p_wag   = _last_k(par_u->har, p_wag);
         puq_wag = u3j_gate_slam(&raq_u, u3nc(par_u->res, puq_wag));

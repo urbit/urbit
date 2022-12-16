@@ -1,18 +1,18 @@
-import { pick, pickBy, partition } from 'lodash';
+import { pick, partition } from 'lodash';
 import React, { useCallback } from 'react';
-import { kilnBump } from '@urbit/api';
+import { HarkBin, HarkLid, kilnBump, Pike } from '@urbit/api';
+import { useHistory } from 'react-router-dom';
 import { AppList } from '../../components/AppList';
 import { Button } from '../../components/Button';
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from '../../components/Dialog';
 import { Elbow } from '../../components/icons/Elbow';
 import api from '../../state/api';
 import { useCharges } from '../../state/docket';
-import useKilnState, { useVat } from '../../state/kiln';
+import useKilnState, { usePike } from '../../state/kiln';
 
 import { NotificationButton } from './NotificationButton';
 import { disableDefault } from '../../state/util';
-import { Vat } from '@urbit/api';
-import {useHistory} from 'react-router-dom';
+import { useHarkStore } from '../../state/hark';
 
 export const RuntimeLagNotification = () => (
   <section
@@ -38,28 +38,33 @@ export const RuntimeLagNotification = () => (
   </section>
 );
 
-function vatIsBlocked(newKelvin: number, vat: Vat) {
-  return !(vat.arak?.rail?.next || []).find(({ aeon, weft }) => weft.kelvin === newKelvin);
+function pikeIsBlocked(newKelvin: number, pike: Pike) {
+  return pike.zest === 'live' && !pike.wefts?.find(({ kelvin }) => kelvin === newKelvin);
 }
 
-export const BaseBlockedNotification = () => {
-  const base = useVat('base');
+export const BaseBlockedNotification = ({ bin, lid }: { bin: HarkBin, lid: HarkLid }) => {
+  const basePike = usePike('base');
   const { push } = useHistory();
   // TODO: assert weft.name === 'zuse'??
-  const newKelvin = base?.arak?.rail?.next?.[0]?.weft?.kelvin || 420;
+  const newKelvin = basePike?.wefts[0]?.kelvin ?? 417;
   const charges = useCharges();
-  const [blocked, unblocked] = useKilnState((s) => {
-    const [b, u] = partition(Object.entries(s.vats), ([desk, vat]) => vatIsBlocked(newKelvin, vat));
+  const [blocked] = useKilnState((s) => {
+    const [b, u] = partition(Object.entries(s.pikes), ([, pike]) => pikeIsBlocked(newKelvin, pike));
     return [b.map(([d]) => d), u.map(([d]) => d)] as const;
   });
+  const { toggleInstall } = useKilnState();
 
   const blockedCharges = Object.values(pick(charges, blocked));
   const count = blockedCharges.length;
 
-  const handlePauseOTAs = useCallback(() => {}, []);
+  const handlePauseOTAs = useCallback(async () => {
+    await useHarkStore.getState().archiveNote(bin, lid);
+  }, []);
 
   const handleArchiveApps = useCallback(async () => {
-    api.poke(kilnBump(true));
+    await api.poke(kilnBump());
+    await useHarkStore.getState().archiveNote(bin, lid);
+
     push('/leap/upgrading');
   }, []);
 
@@ -81,12 +86,12 @@ export const BaseBlockedNotification = () => {
       <AppList apps={blockedCharges} labelledBy="blocked-apps" size="xs" className="font-medium" />
       <div className="space-y-6">
         <p>
-          In order to proceed with the System Update, you’ll need to temporarily archive these apps,
-          which will render them unusable, but with data intact.
+          In order to proceed with the System Update, you’ll need to temporarily suspend these apps.
+          This will render them unusable, but with data intact.
         </p>
         <p>
-          Archived apps will automatically un-archive and resume operation when their developer
-          provides an app update.
+          Suspended apps will automatically resume operation when their developer
+          provides an update.
         </p>
       </div>
       <div className="space-x-2">
@@ -97,30 +102,24 @@ export const BaseBlockedNotification = () => {
             className="space-y-6 text-base tracking-tight"
             containerClass="w-full max-w-md"
           >
-            <h2 className="h4">Skip System Update</h2>
+            <h2 className="h4">Delay System Update</h2>
             <p>
-              Skipping the application fo an incoming System Update will grant you the ability to
-              continue using incompatible apps at the cost of an urbit that&apos;s not up to date.
-            </p>
-            <p>
-              You can choose to apply System Updates from System Preferences any time.{' '}
-              <a href="https://tlon.io" target="_blank" rel="noreferrer">
-                Learn More
-              </a>
+              Are you sure you want to remain on an old version of Urbit
+              until these apps have been updated?
             </p>
             <div className="flex space-x-6">
               <DialogClose as={Button} variant="secondary">
                 Cancel
               </DialogClose>
               <DialogClose as={Button} variant="caution" onClick={handlePauseOTAs}>
-                Pause OTAs
+                Remain on Old Version
               </DialogClose>
             </div>
           </DialogContent>
         </Dialog>
         <Dialog>
           <DialogTrigger as={NotificationButton}>
-            Archive ({count}) apps and Apply System Update
+            Suspend ({count}) Apps and Apply Update
           </DialogTrigger>
           <DialogContent
             showClose={false}
@@ -128,10 +127,9 @@ export const BaseBlockedNotification = () => {
             className="space-y-6 text-base tracking-tight"
             containerClass="w-full max-w-md"
           >
-            <h2 className="h4">Archive ({count}) Apps and Apply System Update</h2>
+            <h2 className="h4">Suspend ({count}) Apps and Apply System Update</h2>
             <p>
-              The following apps will be archived until their developer provides a compatible update
-              to your system.
+              The following apps will be suspended until their developer provides an update.
             </p>
             <AppList
               apps={blockedCharges}
@@ -144,7 +142,7 @@ export const BaseBlockedNotification = () => {
                 Cancel
               </DialogClose>
               <DialogClose as={Button} variant="caution" onClick={handleArchiveApps}>
-                Archive Apps
+                Suspend Apps and Upgrade
               </DialogClose>
             </div>
           </DialogContent>

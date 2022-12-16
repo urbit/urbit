@@ -64,6 +64,7 @@ do
   shift
 done
 
+[ -z "${NO_GUARD_PAGE-}" ]    && defmacro U3_GUARD_PAGE 1
 [ -n "${MEMORY_DEBUG-}" ]     && defmacro U3_MEMORY_DEBUG 1
 [ -n "${MEMORY_LOG-}" ]       && defmacro U3_MEMORY_LOG 1
 [ -n "${CPU_DEBUG-}" ]        && defmacro U3_CPU_DEBUG 1
@@ -86,7 +87,7 @@ case $(tr A-Z a-z <<< $cpu) in
   i686)
      defmacro U3_OS_ENDIAN_little 1
      ;;
-  x86_64)
+  x86_64 | amd64)
      defmacro U3_OS_ENDIAN_little 1
      ;;
   arm64|aarch64)
@@ -110,7 +111,7 @@ case $(tr A-Z a-z <<< $os) in
      mpkgs=(cmake curl gcc jq make)
      pacman -S --needed autoconf automake-wrapper libtool patch ${mpkgs[@]/#/mingw-w64-x86_64-}
 
-     export MAKE=mingw32-make
+     gnumake=mingw32-make
 
      . compat/poor-mans-nix-shell.sh mingw
      compat/create-include-files.sh 'stat -c %s' /etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt
@@ -157,7 +158,28 @@ case $(tr A-Z a-z <<< $os) in
      deps="$deps kvm" # XX use new compat.mk pattern
      ;;
   *openbsd*)
+     # pkg_add bash automake libtool jq gtar cmake gmake libsigsegv gmp
+     # Tested versions:
+        # bash-5.1.8 automake-1.16.3 (autoconf-2.69p3) libtool-2.4.2p2
+        # jq-1.6p0 gtar-1.34-static cmake-3.20.3p0v0 gmake-4.3 libsigsegv-2.12
+        # gmp-6.2.1p0
+
+     gnutar=gtar
+     gnumake=gmake
+     sha256tool=sha256
+     build_openssl=yes
+     export AUTOCONF_VERSION="${AUTOCONF_VERSION-2.69}"
+     export AUTOMAKE_VERSION="${AUTOMAKE_VERSION-1.16}"
+     . compat/poor-mans-nix-shell.sh openbsd
+     compat/create-include-files.sh 'stat -f %z' /etc/ssl/cert.pem
+
      defmacro U3_OS_bsd 1
+     defmacro U3_OS_no_ubc 1
+
+     export PKG_CONFIG_PATH="${PKG_CONFIG_PATH-}"
+     deps="$deps aes_siv secp256k1"
+
+     compat="${compat-} posix openbsd"
      ;;
   *)
      echo "Unknown or unsupported OS: '$os'" >&2

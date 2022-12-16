@@ -33,10 +33,6 @@
     naive,
     naive-tx=naive-transactions,
     *strandio
-::  starting snapshot. this may not be the right starting point once we have
-::  clay tombstoning and the snapshot may be updated
-::
-/*  snap  %azimuth-snapshot  /app/azimuth/version-0/azimuth-snapshot
 ::
 =,  strand=strand:spider
 =,  jael
@@ -103,7 +99,11 @@
     ;<  =events  bind:m  (scry events /gx/azimuth/logs/noun)
     =/  [naive-contract=address chain-id=@]
       [naive chain-id]:(get-network:dice net)
-    =/  snap=snap-state:dice  snap
+    ;<  =bowl:spider  bind:m  get-bowl
+    =/  snap=snap-state:dice
+      .^  snap-state:dice  %gx
+          /(scot %p our.bowl)/azimuth/(scot %da now.bowl)/last-snap/noun
+      ==
     ::
     ;<  ~  bind:m
       %-  flog-text  %+  weld  "naive-csv: processing {<net>} ethereum logs "
