@@ -818,7 +818,8 @@
       ::
       %-  (trace 1 |.("make cast {<a>} -> {<b>}"))
       =^  old=ming  nub  (build-fit %mar a)
-      ?:  =/  ram  (mule (swat old !,(*hoon grow)))
+      =/  vox=vase  $:old
+      ?:  =/  ram  (mule |.((slap vox !,(*hoon grow))))
           ?:  ?=(%| -.ram)  %.n
           =/  lab  (mule |.((slob b p.p.ram)))
           ?:  ?=(%| -.lab)  %.n
@@ -837,7 +838,8 @@
       ::  try direct +grab
       ::
       =^  new=ming  nub  (build-fit %mar b)
-      =/  rab  (mule (swat new tsgl/[limb/a limb/%grab]))
+      =/  vax=vase  $:new
+      =/  rab  (mule |.((slap vax tsgl/[limb/a limb/%grab])))
       ?:  &(?=(%& -.rab) ?=(^ q.p.rab))
         %+  gain-leak  cast+a^b
         |=  nob=state
@@ -845,7 +847,7 @@
         :_(nub ming+|.(p.rab))
       ::  try +jump
       ::
-      =/  jum  (mule (swat old tsgl/[limb/b limb/%jump]))
+      =/  jum  (mule |.((slap vox tsgl/[limb/b limb/%jump])))
       ?:  ?=(%& -.jum)
         (compose-casts a !<(mark p.jum) b)
       ?:  ?=(%& -.rab)
