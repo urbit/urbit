@@ -238,21 +238,18 @@
 ++  corl                                                ::  compose backwards
   |*  [a=$-(* *) b=$-(* *)]
   =<  +:|.((a (b)))      ::  type check
-  =+  c=+<.b
-  |@  ++  $  (a (b c))
-  --
+  |*  c=_+<.b
+  (a (b c))
 ::
 ++  cury                                                ::  curry left
   |*  [a=$-(^ *) b=*]
-  =+  c=+<+.a
-  |@  ++  $  (a b c)
-  --
+  |*  c=_+<+.a
+  (a b c)
 ::
 ++  curr                                                ::  curry right
   |*  [a=$-(^ *) c=*]
-  =+  b=+<+.a
-  |@  ++  $  (a b c)
-  --
+  |*  b=_+<+.a
+  (a b c)
 ::
 ++  fore  |*(a=$-(* *) |*(b=$-(* *) (pair a b)))        ::  pair before
 ::
@@ -811,23 +808,17 @@
 ::
 ++  welp                                                ::  faceless weld
   ~/  %welp
-  =|  [* *]
-  |@
-  ++  $
-    ?~  +<-
-      +<-(. +<+)
-    +<-(+ $(+<- +<->))
-  --
+  |*  [* *]
+  ?~  +<-
+    +<-(. +<+)
+  +<-(+ $(+<- +<->))
 ::
 ++  zing                                                ::  promote
   ~/  %zing
-  =|  *
-  |@
-  ++  $
-    ?~  +<
-      +<
-    (welp +<- $(+< +<+))
-  --
+  |*  *
+  ?~  +<
+    +<
+  (welp +<- $(+< +<+))
 ::                                                      ::
 ::::  2c: bit arithmetic                                ::
   ::                                                    ::
@@ -1290,23 +1281,20 @@
   ::
   ++  dif                                               ::  difference
     ~/  %dif
-    =+  b=a
-    |@
-    ++  $
-      |-  ^+  a
-      ?~  b
-        a
-      =+  c=(bif n.b)
-      ?>  ?=(^ c)
-      =+  d=$(a l.c, b l.b)
-      =+  e=$(a r.c, b r.b)
-      |-  ^-  [$?(~ _a)]
-      ?~  d  e
-      ?~  e  d
-      ?:  (mor n.d n.e)
-        d(r $(d r.d))
-      e(l $(e l.e))
-    --
+    |*  b=_a
+    |-  ^+  a
+    ?~  b
+      a
+    =+  c=(bif n.b)
+    ?>  ?=(^ c)
+    =+  d=$(a l.c, b l.b)
+    =+  e=$(a r.c, b r.b)
+    |-  ^-  [$?(~ _a)]
+    ?~  d  e
+    ?~  e  d
+    ?:  (mor n.d n.e)
+      d(r $(d r.d))
+    e(l $(e l.e))
   ::
   ++  dig                                               ::  axis of a in b
     |=  b=*
@@ -1356,22 +1344,19 @@
   ::
   ++  int                                               ::  intersection
     ~/  %int
-    =+  b=a
-    |@
-    ++  $
-      |-  ^+  a
-      ?~  b
-        ~
-      ?~  a
-        ~
-      ?.  (mor n.a n.b)
-        $(a b, b a)
-      ?:  =(n.b n.a)
-        a(l $(a l.a, b l.b), r $(a r.a, b r.b))
-      ?:  (gor n.b n.a)
-        %-  uni(a $(a l.a, r.b ~))  $(b r.b)
-      %-  uni(a $(a r.a, l.b ~))  $(b l.b)
-    --
+    |*  b=_a
+    |-  ^+  a
+    ?~  b
+      ~
+    ?~  a
+      ~
+    ?.  (mor n.a n.b)
+      $(a b, b a)
+    ?:  =(n.b n.a)
+      a(l $(a l.a, b l.b), r $(a r.a, b r.b))
+    ?:  (gor n.b n.a)
+      %-  uni(a $(a l.a, r.b ~))  $(b r.b)
+    %-  uni(a $(a r.a, l.b ~))  $(b l.b)
   ::
   ++  put                                               ::  puts b in a, sorted
     ~/  %put
@@ -1420,25 +1405,22 @@
   ::
   ++  uni                                               ::  union
     ~/  %uni
-    =+  b=a
-    |@
-    ++  $
-      ?:  =(a b)  a
-      |-  ^+  a
-      ?~  b
-        a
-      ?~  a
-        b
-      ?:  =(n.b n.a)
-        b(l $(a l.a, b l.b), r $(a r.a, b r.b))
-      ?:  (mor n.a n.b)
-        ?:  (gor n.b n.a)
-          $(l.a $(a l.a, r.b ~), b r.b)
-        $(r.a $(a r.a, l.b ~), b l.b)
-      ?:  (gor n.a n.b)
-        $(l.b $(b l.b, r.a ~), a r.a)
-      $(r.b $(b r.b, l.a ~), a l.a)
-    --
+    |*  b=_a
+    ?:  =(a b)  a
+    |-  ^+  a
+    ?~  b
+      a
+    ?~  a
+      b
+    ?:  =(n.b n.a)
+      b(l $(a l.a, b l.b), r $(a r.a, b r.b))
+    ?:  (mor n.a n.b)
+      ?:  (gor n.b n.a)
+        $(l.a $(a l.a, r.b ~), b r.b)
+      $(r.a $(a r.a, l.b ~), b l.b)
+    ?:  (gor n.a n.b)
+      $(l.b $(b l.b, r.a ~), a r.a)
+    $(r.b $(b r.b, l.a ~), a l.a)
   ::
   ++  wyt                                               ::  size of set
     =<  $
@@ -1509,23 +1491,20 @@
   ::
   ++  dif                                               ::  difference
     ~/  %dif
-    =+  b=a
-    |@
-    ++  $
-      |-  ^+  a
-      ?~  b
-        a
-      =+  c=(bif p.n.b q.n.b)
-      ?>  ?=(^ c)
-      =+  d=$(a l.c, b l.b)
-      =+  e=$(a r.c, b r.b)
-      |-  ^-  [$?(~ _a)]
-      ?~  d  e
-      ?~  e  d
-      ?:  (mor p.n.d p.n.e)
-        d(r $(d r.d))
-      e(l $(e l.e))
-    --
+    |*  b=_a
+    |-  ^+  a
+    ?~  b
+      a
+    =+  c=(bif p.n.b q.n.b)
+    ?>  ?=(^ c)
+    =+  d=$(a l.c, b l.b)
+    =+  e=$(a r.c, b r.b)
+    |-  ^-  [$?(~ _a)]
+    ?~  d  e
+    ?~  e  d
+    ?:  (mor p.n.d p.n.e)
+      d(r $(d r.d))
+    e(l $(e l.e))
   ::
   ++  dig                                               ::  axis of b key
     |=  b=*
@@ -1588,26 +1567,23 @@
   ::
   ++  int                                               ::  intersection
     ~/  %int
-    =+  b=a
-    |@
-    ++  $
-      |-  ^+  a
-      ?~  b
-        ~
-      ?~  a
-        ~
-      ?:  (mor p.n.a p.n.b)
-        ?:  =(p.n.b p.n.a)
-          b(l $(a l.a, b l.b), r $(a r.a, b r.b))
-        ?:  (gor p.n.b p.n.a)
-          %-  uni(a $(a l.a, r.b ~))  $(b r.b)
-        %-  uni(a $(a r.a, l.b ~))  $(b l.b)
-      ?:  =(p.n.a p.n.b)
-        b(l $(b l.b, a l.a), r $(b r.b, a r.a))
-      ?:  (gor p.n.a p.n.b)
-        %-  uni(a $(b l.b, r.a ~))  $(a r.a)
-      %-  uni(a $(b r.b, l.a ~))  $(a l.a)
-    --
+    |*  b=_a
+    |-  ^+  a
+    ?~  b
+      ~
+    ?~  a
+      ~
+    ?:  (mor p.n.a p.n.b)
+      ?:  =(p.n.b p.n.a)
+        b(l $(a l.a, b l.b), r $(a r.a, b r.b))
+      ?:  (gor p.n.b p.n.a)
+        %-  uni(a $(a l.a, r.b ~))  $(b r.b)
+      %-  uni(a $(a r.a, l.b ~))  $(b l.b)
+    ?:  =(p.n.a p.n.b)
+      b(l $(b l.b, a l.a), r $(b r.b, a r.a))
+    ?:  (gor p.n.a p.n.b)
+      %-  uni(a $(b l.b, r.a ~))  $(a r.a)
+    %-  uni(a $(b r.b, l.a ~))  $(a l.a)
   ::
   ++  jab
     ~/  %jab
@@ -1693,47 +1669,41 @@
   ::
   ++  uni                                               ::  union, merge
     ~/  %uni
-    =+  b=a
-    |@
-    ++  $
-      |-  ^+  a
-      ?~  b
-        a
-      ?~  a
-        b
-      ?:  =(p.n.b p.n.a)
-        b(l $(a l.a, b l.b), r $(a r.a, b r.b))
-      ?:  (mor p.n.a p.n.b)
-        ?:  (gor p.n.b p.n.a)
-          $(l.a $(a l.a, r.b ~), b r.b)
-        $(r.a $(a r.a, l.b ~), b l.b)
-      ?:  (gor p.n.a p.n.b)
-        $(l.b $(b l.b, r.a ~), a r.a)
-      $(r.b $(b r.b, l.a ~), a l.a)
-    --
+    |*  b=_a
+    |-  ^+  a
+    ?~  b
+      a
+    ?~  a
+      b
+    ?:  =(p.n.b p.n.a)
+      b(l $(a l.a, b l.b), r $(a r.a, b r.b))
+    ?:  (mor p.n.a p.n.b)
+      ?:  (gor p.n.b p.n.a)
+        $(l.a $(a l.a, r.b ~), b r.b)
+      $(r.a $(a r.a, l.b ~), b l.b)
+    ?:  (gor p.n.a p.n.b)
+      $(l.b $(b l.b, r.a ~), a r.a)
+    $(r.b $(b r.b, l.a ~), a l.a)
   ::
   ++  uno                                               ::  general union
-    =+  b=a
-    |@
-    ++  $
-      |*  meg=$-([* * *] *)
-      |-  ^+  a
-      ?~  b
-        a
-      ?~  a
-        b
-      ?:  =(p.n.b p.n.a)
-        :+  [p.n.a `_?>(?=(^ a) q.n.a)`(meg p.n.a q.n.a q.n.b)]
-          $(b l.b, a l.a)
-        $(b r.b, a r.a)
-      ?:  (mor p.n.a p.n.b)
-        ?:  (gor p.n.b p.n.a)
-          $(l.a $(a l.a, r.b ~), b r.b)
-        $(r.a $(a r.a, l.b ~), b l.b)
-      ?:  (gor p.n.a p.n.b)
-        $(l.b $(b l.b, r.a ~), a r.a)
-      $(r.b $(b r.b, l.a ~), a l.a)
-    --
+    |*  b=_a
+    |*  meg=$-([* * *] *)
+    |-  ^+  a
+    ?~  b
+      a
+    ?~  a
+      b
+    ?:  =(p.n.b p.n.a)
+      :+  [p.n.a `_?>(?=(^ a) q.n.a)`(meg p.n.a q.n.a q.n.b)]
+        $(b l.b, a l.a)
+      $(b r.b, a r.a)
+    ?:  (mor p.n.a p.n.b)
+      ?:  (gor p.n.b p.n.a)
+        $(l.a $(a l.a, r.b ~), b r.b)
+      $(r.a $(a r.a, l.b ~), b l.b)
+    ?:  (gor p.n.a p.n.b)
+      $(l.b $(b l.b, r.a ~), a r.a)
+    $(r.b $(b r.b, l.a ~), a l.a)
   ::
   ::
   ++  urn                                               ::  apply gate to nodes
@@ -4043,9 +4013,8 @@
               [%1 p=*]                                  ::  block
               [%2 p=(list tank)]                        ::  stack trace
           ==                                            ::
-++  wonk  =+  veq=$:edge                                ::  product from edge
-          |@  ++  $  ?~(q.veq !! p.u.q.veq)             ::
-          --                                            ::
+++  wonk  |*  veq=_$:edge                                ::  product from edge
+          ?~(q.veq !! p.u.q.veq)             ::
 --  =>
 ::                                                      ::
 ::::  4: layer four                                     ::
@@ -4748,39 +4717,33 @@
   ::
 ++  bend                                                ::  conditional comp
   ~/  %bend
-  =+  raq=|*([a=* b=*] [~ u=[a b]])
-  |@
-  ++  $
-    ~/  %fun
-    |*  [vex=edge sab=rule]
-    ?~  q.vex
-      vex
-    =+  yit=(sab q.u.q.vex)
-    =+  yur=(last p.vex p.yit)
-    ?~  q.yit
-      [p=yur q=q.vex]
-    =+  vux=(raq p.u.q.vex p.u.q.yit)
-    ?~  vux
-      [p=yur q=q.vex]
-    [p=yur q=[~ u=[p=u.vux q=q.u.q.yit]]]
-  --
+  |*  raq=_|*([a=* b=*] [~ u=[a b]])
+  ~/  %fun
+  |*  [vex=edge sab=rule]
+  ?~  q.vex
+    vex
+  =+  yit=(sab q.u.q.vex)
+  =+  yur=(last p.vex p.yit)
+  ?~  q.yit
+    [p=yur q=q.vex]
+  =+  vux=(raq p.u.q.vex p.u.q.yit)
+  ?~  vux
+    [p=yur q=q.vex]
+  [p=yur q=[~ u=[p=u.vux q=q.u.q.yit]]]
 ::
 ++  comp
   ~/  %comp
-  =+  raq=|*([a=* b=*] [a b])                           ::  arbitrary compose
-  |@
-  ++  $
-    ~/  %fun
-    |*  [vex=edge sab=rule]
-    ~!  +<
-    ?~  q.vex
-      vex
-    =+  yit=(sab q.u.q.vex)
-    =+  yur=(last p.vex p.yit)
-    ?~  q.yit
-      [p=yur q=q.yit]
-    [p=yur q=[~ u=[p=(raq p.u.q.vex p.u.q.yit) q=q.u.q.yit]]]
-  --
+  |*  raq=_|*([a=* b=*] [a b])                           ::  arbitrary compose
+  ~/  %fun
+  |*  [vex=edge sab=rule]
+  ~!  +<
+  ?~  q.vex
+    vex
+  =+  yit=(sab q.u.q.vex)
+  =+  yur=(last p.vex p.yit)
+  ?~  q.yit
+    [p=yur q=q.yit]
+  [p=yur q=[~ u=[p=(raq p.u.q.vex p.u.q.yit) q=q.u.q.yit]]]
 ::
 ++  fail  |=(tub=nail [p=p.tub q=~])                    ::  never parse
 ++  glue                                                ::  add rule
@@ -4900,16 +4863,13 @@
 ::
 ++  here                                                ::  place-based apply
   ~/  %here
-  =+  [hez=|=([a=pint b=*] [a b]) sef=*rule]
-  |@
-  ++  $
-    ~/  %fun
-    |=  tub=nail
-    =+  vex=(sef tub)
-    ?~  q.vex
-      vex
-    [p=p.vex q=[~ u=[p=(hez [p.tub p.q.u.q.vex] p.u.q.vex) q=q.u.q.vex]]]
-  --
+  |*  [hez=_|=([a=pint b=*] [a b]) sef=rule]
+  ~/  %fun
+  |=  tub=nail
+  =+  vex=(sef tub)
+  ?~  q.vex
+    vex
+  [p=p.vex q=[~ u=[p=(hez [p.tub p.q.u.q.vex] p.u.q.vex) q=q.u.q.vex]]]
 ::
 ++  inde  |*  sef=rule                                  :: indentation block
   |=  nail  ^+  (sef)
@@ -4961,12 +4921,10 @@
   (next tub)
 ::
 ++  knee                                                ::  callbacks
-  =|  [gar=* sef=_|.(*rule)]
-  |@  ++  $
-        |=  tub=nail
-        ^-  (like _gar)
-        ((sef) tub)
-  --
+  |*  [gar=* sef=_|.(*rule)]
+  |=  tub=nail
+  ^-  (like _gar)
+  ((sef) tub)
 ::
 ++  mask                                                ::  match char in set
   ~/  %mask
