@@ -608,21 +608,21 @@
     [$:+<- +<+]
   ::
   ++  with-face
-    |=  [face=@tas vase=ming]
-    ^-  ming
-    =/  typ  p:$:vase
-    =>  [face=face typ=typ vase=vase]
+    |=  [face=@tas =ming]
+    ^+  ming
+    =/  typ  p:$:ming
+    =>  [face=face typ=typ ming=ming]
     |.  ~+
-    [[%face face typ] q:$:vase]
+    [[%face face typ] q:$:ming]
   ::
   ++  with-faces
     =|  res=(unit ming)
-    |=  vaz=(list [face=@tas vase=ming])
+    |=  maz=(list (pair @tas ming))
     ^-  ming
-    ?~  vaz  (need res)
-    =/  faz  (with-face i.vaz)
+    ?~  maz  (need res)
+    =/  faz  (with-face i.maz)
     =.  res  `?~(res faz (shed faz u.res))
-    $(vaz t.vaz)
+    $(maz t.maz)
   ::
   ++  ford
     !.
