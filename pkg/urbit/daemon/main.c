@@ -1472,12 +1472,14 @@ _cw_cram(c3_i argc, c3_c* argv[])
 static void
 _cw_queu(c3_i argc, c3_c* argv[])
 {
-  c3_i ch_i, lid_i;
-  c3_w arg_w;
+  c3_i   ch_i, lid_i;
+  c3_w  arg_w;
+  c3_c* roc_c = 0;
 
   static struct option lop_u[] = {
-    { "loom",      required_argument, NULL, c3__loom },
-    { "no-demand", no_argument,       NULL, 6 },
+    { "loom",        required_argument, NULL, c3__loom },
+    { "no-demand",   no_argument,       NULL, 6 },
+    { "replay-from", required_argument, NULL, 'r' },
     { NULL, 0, NULL, 0 }
   };
 
@@ -1500,6 +1502,10 @@ _cw_queu(c3_i argc, c3_c* argv[])
         u3_Host.ops_u.lom_y = lom_w;
       } break;
 
+      case 'r': {
+        roc_c = strdup(optarg);
+      } break;
+
       case '?': {
         fprintf(stderr, "invalid argument\r\n");
         exit(1);
@@ -1507,9 +1513,13 @@ _cw_queu(c3_i argc, c3_c* argv[])
     }
   }
 
+  if ( !roc_c ) {
+    fprintf(stderr, "invalid command, -r $EVENT required\r\n");
+    exit(1);
+  }
+
   //  argv[optind] is always "queu"
   //
-
   if ( !u3_Host.dir_c ) {
     if ( optind + 1 < argc ) {
       u3_Host.dir_c = argv[optind + 1];
@@ -1527,11 +1537,10 @@ _cw_queu(c3_i argc, c3_c* argv[])
     exit(1);
   }
 
-  c3_c* eve_c;
-  c3_d  eve_d;
+  c3_d eve_d;
 
-  if ( 1 != sscanf(eve_c, "%" PRIu64 "", &eve_d) ) {
-    fprintf(stderr, "urbit: queu: invalid number '%s'\r\n", eve_c);
+  if ( 1 != sscanf(roc_c, "%" PRIu64 "", &eve_d) ) {
+    fprintf(stderr, "urbit: queu: invalid number '%s'\r\n", roc_c);
     exit(1);
   }
   else {
