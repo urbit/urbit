@@ -1885,16 +1885,21 @@ _cw_play(c3_i argc, c3_c* argv[])
   }
 
   u3C.wag_w |= u3o_hashless;
-  u3m_boot(u3_Host.dir_c, (size_t)1 << u3_Host.ops_u.lom_y);
-  u3C.slog_f = _cw_play_slog;
 
   if ( c3y == ful_o ) {
     u3l_log("mars: preparing for full replay\r\n");
+    u3m_init((size_t)1 << u3_Host.ops_u.lom_y);
+    u3e_live(u3m_pier(u3_Host.dir_c));
     u3e_yolo();
     u3m_pave(c3y);
     u3j_boot(c3y);
     u3A->eve_d = 0;
   }
+  else {
+    u3m_boot(u3_Host.dir_c, (size_t)1 << u3_Host.ops_u.lom_y);
+  }
+
+  u3C.slog_f = _cw_play_slog;
 
   {
     u3_mars mar_u = {
