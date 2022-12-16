@@ -3,7 +3,7 @@ import moment from 'moment';
 import React, { ReactElement, ReactNode } from 'react';
 import { Sigil } from '~/logic/lib/sigil';
 import { useCopy } from '~/logic/lib/useCopy';
-import { cite, uxToHex } from '~/logic/lib/util';
+import { cite, deSig, uxToHex } from '~/logic/lib/util';
 import { useContact } from '~/logic/state/contact';
 import { useDark } from '~/logic/state/join';
 import useSettingsState, { selectCalmState, useShowNickname } from '~/logic/state/settings';
@@ -52,7 +52,7 @@ function Author(props: AuthorProps & PropFunc<typeof Box>): ReactElement {
   const { hideAvatars } = useSettingsState(selectCalmState);
   const name = showNickname && contact ? contact.nickname : cite(ship);
   const stamp = moment(date);
-  const { copyDisplay, doCopy } = useCopy(`~${ship}`, name);
+  const { copyDisplay, doCopy } = useCopy(`~${deSig(ship)}`, name);
 
   const sigil = fullNotIcon ? (
     <Sigil ship={ship} size={size} color={color} padding={sigilPadding} />

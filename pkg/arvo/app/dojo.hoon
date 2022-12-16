@@ -174,8 +174,10 @@
     ::
       ;~  pfix  fas
         ;~  pose
-          (parse-variable (cold %sur hep) ;~(pfix gap parse-cables))
-          (parse-variable (cold %lib lus) ;~(pfix gap parse-cables))
+          (parse-variable (cold %sur hep) ;~(pfix gap (parse-cables %sur)))
+          (parse-variable (cold %lib lus) ;~(pfix gap (parse-cables %lib)))
+          ;~(pfix tis gap (parse-variable sym ;~(pfix gap parse-path)))
+          ;~(pfix cen gap (parse-variable sym ;~(pfix gap parse-mark)))
         ==
       ==
     ::
@@ -194,22 +196,17 @@
     ==
   ::
   ++  parse-cables
-    %+  cook
-      |=  cables=(list cable:clay)
-      :+  0  %ex
-      ^-  hoon
-      ::
-      :-  %clsg
-      %+  turn  cables
-      |=  cable=cable:clay
-      ^-  hoon
-      ::
-      :+  %clhp
-        ?~  face.cable
-          [%rock %n ~]
-        [%clhp [%rock %n ~] [%sand %tas u.face.cable]]
-      [%sand %tas file-path.cable]
-    (most ;~(plug com gaw) parse-cable)
+    |=  base-path=@ta
+    %-  cook  :_  (most ;~(plug com gaw) parse-cable)
+    |=  cables=(list cable:clay)
+    :+  0  %tu
+    ::
+    %+  turn  cables
+    |=  cable=cable:clay
+    ^-  dojo-source
+    =+  add-face=?~(face.cable "|*(n=* n)" ;:(weld "|*(n=* ^=(" (trip u.face.cable) " n))"))
+    :^  0  %do  (scan add-face parse-hoon)
+    :+  0  %dv  [-.dir `path`[base-path file-path.cable ~]]
   ::
   ++  parse-cable
     %+  cook  |=(a=cable:clay a)
@@ -218,6 +215,16 @@
       (cook |=([face=term tis=@ file=term] [`face file]) ;~(plug sym tis sym))
       (cook |=(a=term [`a a]) sym)
     ==
+  ::
+  ++  parse-mark
+    %-  cook  :_  ;~(pfix cen sym)
+    |=  mark=@tas
+    [0 %dv -.dir `path`[~.mar mark ~]]
+  ::
+  ++  parse-path
+    %+  cook  |=(=path [0 %dv -.dir path])
+    ;~(pfix fas (more fas sym))
+  ::
   ++  parse-source  (stag 0 parse-build)
   ++  parse-build
       %+  knee  *dojo-build  |.  ~+
@@ -532,45 +539,35 @@
       ?:  ?=([%show %3] -.mad)
         (dy-rash %tan (dy-show-source q.mad) ~)
       ?:  ?=(%brev -.mad)
+        ?:  ?=(?(%eny %now %our) p.mad)
+          (dy-rash %tan (cat 3 p.mad ' is immutable') ~)
         =.  var  (~(del by var) p.mad)
         =<  dy-amok
         ?+  p.mad  .
-          $?(%eny %now %our)  !!
-          %lib  .(lib ~)
-          %sur  .(sur ~)
           %dir  .(dir [[our.hid %base ud+0] /])
         ==
       =+  cay=(~(got by rez) p.q.mad)
       ?-    -.p.mad
           %verb
+        ?:  ?=(?(%eny %now %our) p.p.mad)
+          (dy-rash %tan (cat 3 p.p.mad ' is immutable') ~)
         =.  var  (~(put by var) p.p.mad cay)
         ~|  bad-set+[p.p.mad p.q.cay]
         =<  dy-amok
         ?+  p.p.mad  .
-            %eny  ~|(%entropy-is-eternal !!)
-            %now  ~|(%time-is-immutable !!)
-            %our  ~|(%self-is-immutable !!)
-            %lib
-          %_    .
-              lib
-            ((dy-cast (list cable:clay) !>(*(list cable:clay))) q.cay)
-          ==
-        ::
-            %sur
-          %_    .
-              sur
-            ((dy-cast (list cable:clay) !>(*(list cable:clay))) q.cay)
-          ==
-        ::
-            %dir  =+  ^=  pax  ^-  path
-                      =+  pax=((dy-cast path !>(*path)) q.cay)
-                      ?:  ?=(~ pax)  ~[(scot %p our.hid) %base '0']
-                      ?:  ?=([@ ~] pax)  ~[i.pax %base '0']
-                      ?:  ?=([@ @ ~] pax)  ~[i.pax i.t.pax '0']
-                      pax
-                  =.  dir  (need (de-beam pax))
-                  =-  +>(..dy (he-diff %tan - ~))
-                  rose+[" " `~]^~[leaf+"=%" (smyt (en-beam he-beak s.dir))]
+            %dir
+          =/  bem=beam
+            %-  need  %-  de-beam
+            =+  pax=((dy-cast path !>(*path)) q.cay)
+            ?:  ?=(~ pax)  ~[(scot %p our.hid) %base '0']
+            ?:  ?=([@ ~] pax)  ~[i.pax %base '0']
+            ?:  ?=([@ @ ~] pax)  ~[i.pax i.t.pax '0']
+            pax
+          ?:  =(~ .^((list path) %ct (en-beam he-beam(dir bem))))
+            +(..dy (he-diff %tan 'dojo: dir does not exist' ~))
+          =.  dir  bem
+          =-  +>(..dy (he-diff %tan - ~))
+          rose+[" " `~]^~[leaf+"=%" (smyt (en-beam he-beak s.dir))]
         ==
       ::
           %poke
@@ -735,9 +732,9 @@
       ^+  +>+>
       =^  dat  say  (~(transceive sole say) cal)
       ?:  |(?=(^ per) ?=(^ pux) ?=(~ pro))
-        ~&  %dy-edit-busy
         =^  lic  say  (~(transmit sole say) dat)
-        (dy-diff %mor [%det lic] [%bel ~] ~)
+        =/  tip=@t  'dojo: busy (press backspace to abort)'
+        (dy-diff %mor [%det lic] [%bel ~] [%tan [tip ~]] ~)
       =>  .(per `dat)
       =/  res  (mule |.((slam u.pro !>((tufa buf.say)))))
       ?:  ?=(%| -.res)

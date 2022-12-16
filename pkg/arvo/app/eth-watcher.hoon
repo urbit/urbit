@@ -469,6 +469,10 @@
       [~ this(dogs.state (~(put by dogs.state) path u.dog(running ~)))]
     ::
         %thread-done
+      ::  if empty, that means we cancelled this thread
+      ::
+      ?:  =(*vase q.cage.sign)
+        `this
       =+  !<([vows=disavows pup=watchpup] q.cage.sign)
       =.  u.dog
         %_  u.dog
