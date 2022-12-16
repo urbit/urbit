@@ -174,7 +174,7 @@ u3_mars_play(u3_mars* mar_u, c3_d eve_d)
       fprintf(stderr, "mars: boot fail\r\n");
       //  XX exit code, cb
       //
-      exit(1);;
+      exit(1);
     }
 
     mar_u->sen_d = mar_u->dun_d = lif_w;
@@ -231,6 +231,7 @@ u3_mars_play(u3_mars* mar_u, c3_d eve_d)
             //  XX check loom size, suggest --loom X
             //  XX exit code, cb
             //
+            u3_disk_exit(log_u);
             exit(1);
           }
 
@@ -254,6 +255,7 @@ u3_mars_play(u3_mars* mar_u, c3_d eve_d)
           u3m_save();
           //  XX exit code, cb
           //
+          u3_disk_exit(log_u);
           exit(1);
         }
       }
