@@ -8,6 +8,9 @@
             "compat": {
                 "mingw": {
                     "prepare": "cmake -G\"MSYS Makefiles\" -DCMAKE_INSTALL_PREFIX=. ."
+                },
+                "openbsd": {
+                    "prepare": "cmake -DOPENSSL_ROOT_DIR=`readlink -f ../openssl/build` ."
                 }
             },
             "include": "include",
@@ -35,6 +38,10 @@
                 "mingw": {
                     "make": "aes_siv_static",
                     "prepare": "cmake -G\"MSYS Makefiles\" -DDISABLE_DOCS:BOOL=ON ."
+                },
+                "openbsd": {
+                    "make": "aes_siv_static",
+                    "prepare": "cmake -DDISABLE_DOCS:BOOL=ON -DOPENSSL_ROOT_DIR=`readlink -f ../openssl/build` ."
                 }
             }
         },
@@ -98,6 +105,10 @@
                 "mingw": {
                     "lib": "build/Win64-MinGW-w64",
                     "make": "-C build/Win64-MinGW-w64 libsoftfloat3.a"
+                },
+                "openbsd": {
+                    "lib": "build/template-FAST_INT64",
+                    "make": "-C build/template-FAST_INT64 libsoftfloat3.a"
                 }
             },
             "include": "source/include"

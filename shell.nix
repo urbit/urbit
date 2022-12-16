@@ -22,7 +22,7 @@ let
   #
   # Typically the inputs listed here also have a shell.nix in their respective
   # source directory you can use directly.
-  inputsFrom = with pkgsLocal; [ ent herb urbit urcrypt ];
+  inputsFrom = with pkgsLocal; [ ent urbit urcrypt ];
 
   # Collect the named attribute from all dependencies listed in inputsFrom.
   mergeFrom = name: pkgs.lib.concatLists (pkgs.lib.catAttrs name inputsFrom);

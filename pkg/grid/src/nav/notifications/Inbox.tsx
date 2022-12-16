@@ -13,7 +13,7 @@ function renderNotification(notification: Notification, key: string, lid: HarkLi
       return <RuntimeLagNotification key={key} />;
     }
     if (notification.bin.path === '/blocked' && notification.bin.place.path === '/desk/base') {
-      return <BaseBlockedNotification key={key} />;
+      return <BaseBlockedNotification key={key} bin={notification.bin} lid={lid} />;
     }
     if (notification.bin.place.path === '/onboard') {
       return <OnboardingNotification key={key} lid={lid} />;

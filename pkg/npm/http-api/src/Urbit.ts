@@ -28,11 +28,13 @@ export class Urbit {
   private uid: string = `${Math.floor(Date.now() / 1000)}-${hexString(6)}`;
 
   /**
-   * Last Event ID is an auto-updated index of which events have been sent over this channel
+   * lastEventId is an auto-updated index of which events have been *sent* over this channel.
+   * lastHeardEventId is the latest event we have heard back about.
+   * lastAcknowledgedEventId is the latest event we have sent an ack for.
    */
   private lastEventId: number = 0;
-
-  private lastAcknowledgedEventId: number = 0;
+  private lastHeardEventId: number = -1;
+  private lastAcknowledgedEventId: number = -1;
 
   /**
    * SSE Client is null for now; we don't want to start polling until it the channel exists
@@ -142,7 +144,7 @@ export class Urbit {
     code,
     verbose = false,
   }: AuthenticationInterface) {
-    const airlock = new Urbit(`http://${url}`, code);
+    const airlock = new Urbit(url.startsWith('http') ? url : `http://${url}`, code);
     airlock.verbose = verbose;
     airlock.ship = ship;
     await airlock.connect();
@@ -236,6 +238,13 @@ export class Urbit {
           }
           if (!event.id) return;
           const eventId = parseInt(event.id, 10);
+          if (eventId <= this.lastHeardEventId) {
+            console.log('dropping old or out-of-order event', {
+              eventId, lastHeard: this.lastHeardEventId
+            });
+            return;
+          }
+          this.lastHeardEventId = eventId;
           if (eventId - this.lastAcknowledgedEventId > 20) {
             this.ack(eventId);
           }
@@ -273,7 +282,7 @@ export class Urbit {
             ) {
               const funcs = this.outstandingSubscriptions.get(data.id);
               try {
-                funcs.event(data.json);
+                funcs.event(data.json, data.mark ?? 'json');
               } catch (e) {
                 console.error('Failed to call subscription event callback', e);
               }
@@ -320,7 +329,8 @@ export class Urbit {
     this.abort = new AbortController();
     this.uid = `${Math.floor(Date.now() / 1000)}-${hexString(6)}`;
     this.lastEventId = 0;
-    this.lastAcknowledgedEventId = 0;
+    this.lastHeardEventId = -1;
+    this.lastAcknowledgedEventId = -1;
     this.outstandingSubscriptions = new Map();
     this.outstandingPokes = new Map();
     this.sseClientInitialized = false;
@@ -330,8 +340,7 @@ export class Urbit {
    * Autoincrements the next event ID for the appropriate channel.
    */
   private getEventId(): number {
-    this.lastEventId = Number(this.lastEventId) + 1;
-    return this.lastEventId;
+    return ++this.lastEventId;
   }
 
   /**
@@ -536,7 +545,12 @@ export class Urbit {
     const response = await fetch(
       `${this.url}/~/scry/${app}${path}.json`,
       this.fetchOptions
-    );
+    )
+
+    if (!response.ok) {
+      return Promise.reject(response);
+    }
+
     return await response.json();
   }
 
