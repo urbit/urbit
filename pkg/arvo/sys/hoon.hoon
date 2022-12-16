@@ -11,11 +11,10 @@
 ++  hoon-version  +
 --  =>
 ~%  %one  +  ~
-::  #  %base
+::    layer-1
 ::
-::    basic mathematical operations
+::  basic mathematical operations
 |%
-::  #  %math
 ::    unsigned arithmetic
 +|  %math
 ++  add
@@ -181,8 +180,6 @@
   ?:  =(0 b)  a
   $(a (dec a), b (dec b))
 ::
-::  #  %tree
-::
 ::    tree addressing
 +|  %tree
 ++  cap
@@ -229,43 +226,7 @@
     %3  +((mul a 2))
     *   (add (mod b 2) (mul $(b (div b 2)) 2))
   ==
-::                                                      ::
-::::  2n: functional hacks                              ::
-  ::                                                    ::
-  ::
-++  aftr  |*(a=$-(* *) |*(b=$-(* *) (pair b a)))        ::  pair after
-++  cork  |*([a=$-(* *) b=$-(* *)] (corl b a))          ::  compose forward
-++  corl                                                ::  compose backwards
-  |*  [a=$-(* *) b=$-(* *)]
-  =<  +:|.((a (b)))      ::  type check
-  =+  c=+<.b
-  |@  ++  $  (a (b c))
-  --
-::
-++  cury                                                ::  curry left
-  |*  [a=$-(^ *) b=*]
-  =+  c=+<+.a
-  |@  ++  $  (a b c)
-  --
-::
-++  curr                                                ::  curry right
-  |*  [a=$-(^ *) c=*]
-  =+  b=+<+.a
-  |@  ++  $  (a b c)
-  --
-::
-++  fore  |*(a=$-(* *) |*(b=$-(* *) (pair a b)))        ::  pair before
-::
-++  head  |*(^ ,:+<-)                                   ::  get head
-++  same  |*(* +<)                                      ::  identity
-::
-++  succ  |=(@ +(+<))                                   ::  successor
-::
-++  tail  |*(^ ,:+<+)                                   ::  get tail
-++  test  |=(^ =(+<- +<+))                              ::  equality
-::
-++  lead  |*(* |*(* [+>+< +<]))                         ::  put head
-++  late  |*(* |*(* [+< +>+<]))                         ::  put tail
+
 ::
 ::  #  %containers
 ::
@@ -413,35 +374,14 @@
   ::
   $@(~ [~ u=item])
 --  =>
-::                                                      ::
-::::    2: layer two                                    ::
-  ::                                                    ::
-  ::  2a: unit logic                                    ::
-  ::  2b: list logic                                    ::
-  ::  2c: bit arithmetic                                ::
-  ::  2d: bit logic                                     ::
-  ::  2e: insecure hashing                              ::
-  ::  2f: noun ordering                                 ::
-  ::  2g: unsigned powers                               ::
-  ::  2h: set logic                                     ::
-  ::  2i: map logic                                     ::
-  ::  2j: jar and jug logic                             ::
-  ::  2k: queue logic                                   ::
-  ::  2l: container from container                      ::
-  ::  2m: container from noun                           ::
-  ::  2n: functional hacks                              ::
-  ::  2o: normalizing containers                        ::
-  ::  2p: serialization                                 ::
-  ::  2q: molds and mold builders                       ::
-  ::
+::
 ~%  %two  +  ~
+::    layer-2
+::
 |%
-::                                                      ::
-::::  2a: unit logic                                    ::
-  ::                                                    ::
-  ::    biff, bind, bond, both, clap, drop,             ::
-  ::    fall, flit, lift, mate, need, some              ::
-  ::
+::    2a: unit logic
++|  %unit-logc
+::
 ++  biff                                                ::  apply
   |*  [a=(unit) b=$-(* (unit))]
   ?~  a  ~
@@ -521,10 +461,8 @@
   |*  a=*
   [~ u=a]
 ::
-::::  2b: list logic                                    ::
-  ::                                                    ::
-  ::                                                    ::
-::
+::    2b: list logic
++|  %list-logic
 ::  +snoc: append an element to the end of a list
 ::
 ++  snoc
@@ -828,10 +766,10 @@
       +<
     (welp +<- $(+< +<+))
   --
-::                                                      ::
-::::  2c: bit arithmetic                                ::
-  ::                                                    ::
-  ::
+::
+::    2c: bit arithmetic
++|  %bit-arithmetic
+::
 ++  bex                                                 ::  binary exponent
   ~/  %bex
   |=  a=bloq
@@ -906,7 +844,7 @@
   (lsh [bloq (mul step i)] (end [bloq step] i.b))
 ::
 ++  rev
-  ::  reverses block order, accounting for leading zeroes
+  ::    reverses block order, accounting for leading zeroes
   ::
   ::  boz: block size
   ::  len: size of dat, in boz
@@ -989,10 +927,10 @@
   ++  sum  |=([b=@ c=@] (sit (add b c)))                ::  wrapping add
   ++  sit  |=(b=@ (end a b))                            ::  enforce modulo
   --
-::                                                      ::
-::::  2d: bit logic                                     ::
-  ::                                                    ::
-  ::
+::
+::    2d: bit logic
++|  %bit-logic
+::
 ++  con                                                 ::  binary or
   ~/  %con
   |=  [a=@ b=@]
@@ -1043,10 +981,10 @@
 ::
 ++  not  |=  [a=bloq b=@ c=@]                           ::  binary not (sized)
   (mix c (dec (bex (mul b (bex a)))))
-::                                                      ::
-::::  2e: insecure hashing                              ::
-  ::                                                    ::
-  ::
+::
+::    2e: insecure hashing
++|  %insecure-hashing
+::
 ++  muk                                                 ::  standard murmur3
   ~%  %muk  ..muk  ~
   =+  ~(. fe 5)
@@ -1123,10 +1061,9 @@
     ?.(=(0 ham) ham $(i +(i), syd +(syd)))
   --
 ::                                                      ::
-::::  2f: noun ordering                                 ::
-  ::                                                    ::
-  ::    aor, dor, gor, mor                              ::
-  ::
+::    2f: noun ordering
++|  %noun-ordering
+::
 ::  +aor: alphabetical order
 ::
 ::    Orders atoms before cells, and atoms in ascending LSB order.
@@ -1187,11 +1124,10 @@
   ?:  =(c d)
     (dor a b)
   (lth c d)
-::                                                      ::
-::::                                                    ::
-  ::  2g: unsigned powers                               ::
-  ::                                                    ::
-  ::
+::
+::    2g: unsigned powers
++|  %unsigned-powers
+::
 ++  pow                                                 ::  unsigned exponent
   ~/  %pow
   |=  [a=@ b=@]
@@ -1215,12 +1151,10 @@
   ?:  (lte t a)
     $(r s, q (dec q))
   $(q (dec q))
-::                                                      ::
-::::                                                    ::
-  ::                                                    ::
-  ::  2h: set logic                                     ::
-  ::                                                    ::
-  ::
+::
+::    2h: set logic
++|  %set-logic
+::
 ++  in                                                  ::  set engine
   ~/  %in
   =|  a=(tree)  :: (set)
@@ -1331,16 +1265,16 @@
     ~/  %has
     |*  b=*
     ^-  ?
-    ::  wrap extracted item type in a unit because bunting fails
+    ::    wrap extracted item type in a unit because bunting fails
     ::
-    ::    If we used the real item type of _?^(a n.a !!) as the sample type,
-    ::    then hoon would bunt it to create the default sample for the gate.
+    ::  If we used the real item type of _?^(a n.a !!) as the sample type,
+    ::  then hoon would bunt it to create the default sample for the gate.
     ::
-    ::    However, bunting that expression fails if :a is ~. If we wrap it
-    ::    in a unit, the bunted unit doesn't include the bunted item type.
+    ::  However, bunting that expression fails if :a is ~. If we wrap it
+    ::  in a unit, the bunted unit doesn't include the bunted item type.
     ::
-    ::    This way we can ensure type safety of :b without needing to perform
-    ::    this failing bunt. It's a hack.
+    ::  This way we can ensure type safety of :b without needing to perform
+    ::  this failing bunt. It's a hack.
     ::
     %.  [~ b]
     |=  b=(unit _?>(?=(^ a) n.a))
@@ -1446,10 +1380,10 @@
     |.  ^-  @
     ?~(a 0 +((add $(a l.a) $(a r.a))))
   --
-::                                                      ::
-::::  2i: map logic                                     ::
-  ::                                                    ::
-  ::
+::
+::    2i: map logic
++|  %map-logic
+::
 ++  by                                                  ::  map engine
   ~/  %by
   =|  a=(tree (pair))  ::  (map)
@@ -1735,7 +1669,6 @@
       $(r.b $(b r.b, l.a ~), a l.a)
     --
   ::
-  ::
   ++  urn                                               ::  apply gate to nodes
     ~/  %urn
     |*  b=$-([* *] *)
@@ -1763,10 +1696,9 @@
     ?~  a   b
     $(a r.a, b [q.n.a $(a l.a)])
   --
-::                                                      ::
-::::  2j: jar and jug logic                             ::
-  ::                                                    ::
-  ::
+::
+::    2j: jar and jug logic
++|  %jar-and-jug-logic
 ++  ja                                                  ::  jar engine
   =|  a=(tree (pair * (list)))  ::  (jar)
   |@
@@ -1816,10 +1748,10 @@
     =+  d=(get b)
     (~(put by a) b (~(put in d) c))
   --
-::                                                      ::
-::::  2k: queue logic                                   ::
-  ::                                                    ::
-  ::
+::
+::    2k: queue logic
++|  %queue-logic
+::
 ++  to                                                  ::  queue engine
   =|  a=(tree)  ::  (qeu)
   |@
@@ -1897,30 +1829,9 @@
     ?~(r.a [~ n.a] $(a r.a))
   --
 ::
-::::  2o: containers                                    ::
-  ::                                                    ::
-  ::
-++  jar  |$  [key value]  (map key (list value))        ::  map of lists
-++  jug  |$  [key value]  (map key (set value))         ::  map of sets
+::    2l: container from container
++|  %container-from-container
 ::
-++  map
-  |$  [key value]                                       ::  table
-  $|  (tree (pair key value))
-  |=(a=(tree (pair)) ?:(=(~ a) & ~(apt by a)))
-::
-++  qeu
-  |$  [item]                                            ::  queue
-  $|  (tree item)
-  |=(a=(tree) ?:(=(~ a) & ~(apt to a)))
-::
-++  set
-  |$  [item]                                            ::  set
-  $|  (tree item)
-  |=(a=(tree) ?:(=(~ a) & ~(apt in a)))
-::
-::::  2l: container from container                      ::
-  ::                                                    ::
-  ::
 ++  malt                                                ::  map from list
   |*  a=(list)
   (molt `(list [p=_-<.a q=_->.a])`a)
@@ -1933,10 +1844,10 @@
   |*  a=(list)  ::  ^-  (set _i.-.a)
   =+  b=*(tree _?>(?=(^ a) i.a))
   (~(gas in b) a)
-::                                                      ::
-::::  2m: container from noun                           ::
-  ::                                                    ::
-  ::
+::
+::    2m: container from noun
++|  %container-from-noun
+::
 ++  ly                                                  ::  list from raw noun
   le:nl
 ::
@@ -1983,53 +1894,66 @@
     [i=i.a t=$(a t.a)]
   --
 ::
-::::  2q: molds and mold builders                       ::
-  ::                                                    ::
-  ::
-+$  axis  @                                             ::  tree address
-+$  bean  ?                                             ::  0=&=yes, 1=|=no
-+$  flag  ?
-+$  char  @t                                            ::  UTF8 byte
-+$  cord  @t                                            ::  UTF8, LSB first
-+$  byts  [wid=@ud dat=@]                               ::  bytes, MSB first
-+$  date  [[a=? y=@ud] m=@ud t=tarp]                    ::  parsed date
-+$  knot  @ta                                           ::  ASCII text
-+$  noun  *                                             ::  any noun
-+$  path  (list knot)                                   ::  like unix path
-+$  stud                                                ::  standard name
-          $@  mark=@tas                                 ::  auth=urbit
-          $:  auth=@tas                                 ::  standards authority
-              type=path                                 ::  standard label
-          ==                                            ::
-+$  tang  (list tank)                                   ::  bottom-first error
+::    2n: functional hacks
++|  %functional-hacks
 ::
-::  $tank: formatted print tree
+++  aftr  |*(a=$-(* *) |*(b=$-(* *) (pair b a)))        ::  pair after
+++  cork  |*([a=$-(* *) b=$-(* *)] (corl b a))          ::  compose forward
+++  corl                                                ::  compose backwards
+  |*  [a=$-(* *) b=$-(* *)]
+  =<  +:|.((a (b)))      ::  type check
+  =+  c=+<.b
+  |@  ++  $  (a (b c))
+  --
 ::
-::    just a cord, or
-::    %leaf: just a tape
-::    %palm: backstep list
-::           flat-mid, open, flat-open, flat-close
-::    %rose: flat list
-::           flat-mid, open, close
+++  cury                                                ::  curry left
+  |*  [a=$-(^ *) b=*]
+  =+  c=+<+.a
+  |@  ++  $  (a b c)
+  --
 ::
-+$  tank
-  $~  leaf/~
-  $@  cord
-  $%  [%leaf p=tape]
-      [%palm p=(qual tape tape tape tape) q=(list tank)]
-      [%rose p=(trel tape tape tape) q=(list tank)]
-  ==
+++  curr                                                ::  curry right
+  |*  [a=$-(^ *) c=*]
+  =+  b=+<+.a
+  |@  ++  $  (a b c)
+  --
 ::
-+$  tape  (list @tD)                                    ::  utf8 string as list
-+$  tour  (list @c)                                     ::  utf32 clusters
-+$  tarp  [d=@ud h=@ud m=@ud s=@ud f=(list @ux)]        ::  parsed time
-+$  term  @tas                                          ::  ascii symbol
-+$  wain  (list cord)                                   ::  text lines
-+$  wall  (list tape)                                   ::  text lines
+++  fore  |*(a=$-(* *) |*(b=$-(* *) (pair a b)))        ::  pair before
 ::
-::::  2p: serialization                                 ::
-  ::                                                    ::
-  ::
+++  head  |*(^ ,:+<-)                                   ::  get head
+++  same  |*(* +<)                                      ::  identity
+::
+++  succ  |=(@ +(+<))                                   ::  successor
+::
+++  tail  |*(^ ,:+<+)                                   ::  get tail
+++  test  |=(^ =(+<- +<+))                              ::  equality
+::
+++  lead  |*(* |*(* [+>+< +<]))                         ::  put head
+++  late  |*(* |*(* [+< +>+<]))                         ::  put tail
+::
+::    2o: containers
++|  %containers
+++  jar  |$  [key value]  (map key (list value))        ::  map of lists
+++  jug  |$  [key value]  (map key (set value))         ::  map of sets
+::
+++  map
+  |$  [key value]                                       ::  table
+  $|  (tree (pair key value))
+  |=(a=(tree (pair)) ?:(=(~ a) & ~(apt by a)))
+::
+++  qeu
+  |$  [item]                                            ::  queue
+  $|  (tree item)
+  |=(a=(tree) ?:(=(~ a) & ~(apt to a)))
+::
+++  set
+  |$  [item]                                            ::  set
+  $|  (tree item)
+  |=(a=(tree) ?:(=(~ a) & ~(apt in a)))
+::
+::    2p: serialization
++|  %serialization
+::
 ++  cue                                                 ::  unpack
   ~/  %cue
   |=  a=@
@@ -2101,7 +2025,8 @@
   =+  e=(add (bex (dec c)) (cut 0 [d (dec c)] b))
   [(add (add c c) e) (cut 0 [(add d (dec c)) e] b)]
 ::
-++  fn  ::  float, infinity, or NaN
+++  fn  ::    float, infinity, or NaN
+        ::
         ::  s=sign, e=exponent, a=arithmetic form
         ::  (-1)^s * a * 2^e
         $%  [%f s=? e=@s a=@u]
@@ -2109,42 +2034,79 @@
             [%n ~]
         ==
 ::
-++  dn  ::  decimal float, infinity, or NaN
+++  dn  ::    decimal float, infinity, or NaN
+        ::
         ::  (-1)^s * a * 10^e
         $%  [%d s=? e=@s a=@u]
             [%i s=?]
             [%n ~]
         ==
 ::
-++  rn  ::  parsed decimal float
+++  rn  ::    parsed decimal float
         ::
         $%  [%d a=? b=[c=@ [d=@ e=@] f=? i=@]]
             [%i a=?]
             [%n ~]
         ==
+::
+::    2q: molds and mold builders
++|  %molds-and-mold-builders
+::
++$  axis  @                                             ::  tree address
++$  bean  ?                                             ::  0=&=yes, 1=|=no
++$  flag  ?
++$  char  @t                                            ::  UTF8 byte
++$  cord  @t                                            ::  UTF8, LSB first
++$  byts  [wid=@ud dat=@]                               ::  bytes, MSB first
++$  date  [[a=? y=@ud] m=@ud t=tarp]                    ::  parsed date
++$  knot  @ta                                           ::  ASCII text
++$  noun  *                                             ::  any noun
++$  path  (list knot)                                   ::  like unix path
++$  stud                                                ::  standard name
+          $@  mark=@tas                                 ::  auth=urbit
+          $:  auth=@tas                                 ::  standards authority
+              type=path                                 ::  standard label
+          ==                                            ::
++$  tang  (list tank)                                   ::  bottom-first error
+::
+::  $tank: formatted print tree
+::
+::    just a cord, or
+::    %leaf: just a tape
+::    %palm: backstep list
+::           flat-mid, open, flat-open, flat-close
+::    %rose: flat list
+::           flat-mid, open, close
+::
++$  tank
+  $~  leaf/~
+  $@  cord
+  $%  [%leaf p=tape]
+      [%palm p=(qual tape tape tape tape) q=(list tank)]
+      [%rose p=(trel tape tape tape) q=(list tank)]
+  ==
+::
++$  tape  (list @tD)                                    ::  utf8 string as list
++$  tour  (list @c)                                     ::  utf32 clusters
++$  tarp  [d=@ud h=@ud m=@ud s=@ud f=(list @ux)]        ::  parsed time
++$  term  @tas                                          ::  ascii symbol
++$  wain  (list cord)                                   ::  text lines
++$  wall  (list tape)                                   ::  text lines
+::
 --  =>
 ::                                                      ::
-::::    3: layer three                                    ::
-  ::                                                    ::
-  ::  3a: signed and modular ints                     ::
-  ::  3b: floating point                              ::
-  ::  3c: urbit time                                  ::
-  ::  3d: SHA hash family                             ::
-  ::  3e: (reserved)                                  ::
-  ::  3f: scrambling                                  ::
-  ::  3g: molds and mold builders                     ::
-  ::                                                    ::
 ~%  %tri  +
   ==
     %year  year
     %yore  yore
     %ob    ob
   ==
-|%
+::    layer-3
 ::
-::::  3a: signed and modular ints                       ::
-  ::                                                    ::
-  ::
+|%
+::    3a: signed and modular ints
++|  %signed-and-modular-ints
+::
 ++  egcd                                                ::  schneier's egcd
   |=  [a=@ b=@]
   =+  si
@@ -2248,10 +2210,9 @@
             -1
           --1
   --
-::                                                      ::
-::::  3b: floating point                                ::
-  ::                                                    ::
-  ::
+::
+::    3b: floating point
++|  %floating-point
 ::
 ++  fl                                                  ::  arb. precision fp
   =/  [[p=@u v=@s w=@u] r=$?(%n %u %d %z %a) d=$?(%d %f %i)]
@@ -2264,6 +2225,8 @@
   ::                   infinite exponent range
   =>
     ~%  %cofl  +>  ~
+    ::    cofl
+    ::
     ::  internal functions; mostly operating on [e=@s a=@u], in other words
     ::  positive numbers. many of these error out if a=0.
     |%
@@ -2358,19 +2321,21 @@
         =((lsh [0 (abs:si (dif:si e.a e.b))] a.b) a.a)
       =((lsh [0 (abs:si (dif:si e.a e.b))] a.a) a.b)
     ::
-    ::  integer binary logarithm: 2^ibl(a) <= |a| < 2^(ibl(a)+1)
+    ::    integer binary logarithm: 2^ibl(a) <= |a| < 2^(ibl(a)+1)
     ++  ibl
       |=  [a=[e=@s a=@u]]  ^-  @s
       (sum:si (sun:si (dec (met 0 a.a))) e.a)
     ::
-    ::  change to a representation where a.a is odd
-    ::  every fn has a unique representation of this kind
+    ::  +uni
+    ::
+    ::    change to a representation where a.a is odd
+    ::    every fn has a unique representation of this kind
     ++  uni
       |=  [a=[e=@s a=@u]]
       |-  ?:  =((end 0 a.a) 1)  a
       $(a.a (rsh 0 a.a), e.a (sum:si e.a --1))
     ::
-    ::  expands to either full precision or to denormalized
+    ::  +xpd: expands to either full precision or to denormalized
     ++  xpd
       |=  [a=[e=@s a=@u]]
       =+  ma=(met 0 a.a)
@@ -2382,10 +2347,11 @@
           (min q (^sub prc ma))
       a(e (dif:si e.a (sun:si -)), a (lsh [0 -] a.a))
     ::
-    ::  central rounding mechanism
-    ::  can perform: floor, ceiling, smaller, larger,
-    ::               nearest (round ties to: even, away from 0, toward 0)
-    ::  s is sticky bit: represents a value less than ulp(a) = 2^(e.a)
+    ::  +lug: central rounding mechanism
+    ::
+    ::    can perform: floor, ceiling, smaller, larger,
+    ::                 nearest (round ties to: even, away from 0, toward 0)
+    ::    s is sticky bit: represents a value less than ulp(a) = 2^(e.a)
     ::
     ++  lug
       ~/  %lug
@@ -2660,8 +2626,8 @@
     =+  b=(old:si a)
     (rou [%f -.b --0 +.b])
   ::
-  ::  comparisons return ~ in the event of a NaN
   ++  lth                                               ::  less-than
+    ::    comparisons return ~ in the event of a NaN
     |=  [a=fn b=fn]  ^-  (unit ?)
     ?:  |(?=([%n *] a) ?=([%n *] b))  ~  :-  ~
     ?:  =(a b)  |
@@ -2723,16 +2689,17 @@
     ?:  s.a  (^toj +>.a)
     =.(r swr (fli (^toj +>.a)))
   --
+::    +ff
 ::
+::  this core has no use outside of the functionality
+::  provided to ++rd, ++rs, ++rq, and ++rh
+::
+::  w=width:         bits in exponent field
+::  p=precision:     bits in fraction field
+::  b=bias:          added to exponent when storing
+::  r=rounding mode: same as in ++fl
 ++  ff                                                  ::  ieee 754 format fp
   |_  [[w=@u p=@u b=@s] r=$?(%n %u %d %z %a)]
-  ::  this core has no use outside of the functionality
-  ::  provided to ++rd, ++rs, ++rq, and ++rh
-  ::
-  ::  w=width:         bits in exponent field
-  ::  p=precision:     bits in fraction field
-  ::  b=bias:          added to exponent when storing
-  ::  r=rounding mode: same as in ++fl
   ::
   ++  sb  (bex (^add w p))                              ::  sign bit
   ++  me  (dif:si (dif:si --1 b) (sun:si p))            ::  minimum exponent
@@ -2914,8 +2881,8 @@
 ++  rs                                                  ::  single precision fp
   ~%  %rs  +>  ~
   ^|
+  ::    round to nearest, round up, round down, round to zero
   |_  r=$?(%n %u %d %z)
-  ::  round to nearest, round up, round down, round to zero
   ::
   ++  ma
     %*(. ff w 8, p 23, b --127, r r)
@@ -2993,8 +2960,8 @@
 ++  rq                                                  ::  quad precision fp
   ~%  %rq  +>  ~
   ^|
+  ::    round to nearest, round up, round down, round to zero
   |_  r=$?(%n %u %d %z)
-  ::  round to nearest, round up, round down, round to zero
   ::
   ++  ma
     %*(. ff w 15, p 112, b --16.383, r r)
@@ -3072,8 +3039,8 @@
 ++  rh                                                  ::  half precision fp
   ~%  %rh  +>  ~
   ^|
+  ::    round to nearest, round up, round down, round to zero
   |_  r=$?(%n %u %d %z)
-  ::  round to nearest, round up, round down, round to zero
   ::
   ++  ma
     %*(. ff w 5, p 10, b --15, r r)
@@ -3153,10 +3120,10 @@
   ++  drg  |=  [a=@rh]  ^-  dn  (drg:ma a)              ::  @rh to decimal float
   ++  grd  |=  [a=dn]  ^-  @rh  (grd:ma a)              ::  decimal float to @rh
   --
-::    3c: urbit time                                    ::
-::::                                                    ::
-  ::  year, yore, yell, yule, yall, yawn, yelp, yo      ::
-  ::
+::
+::    3c: urbit time
++|  %urbit-time
+::
 ++  year                                                ::  date to @d
   |=  det=date
   ^-  @da
@@ -3278,10 +3245,10 @@
       ++  qad  126.144.001            ::  (add 1 (mul 4 yer))
       ++  yer  31.536.000             ::  (mul 365 day)
   --
-::                                                      ::
-::::  3d: SHA hash family                               ::
-  ::                                                    ::
-  ::
+::
+::    3d: SHA hash family
++|  %sha-hash-family
+::
 ++  shad  |=(ruz=@ (shax (shax ruz)))                   ::  double sha-256
 ++  shaf                                                ::  half sha-256
   |=  [sal=@ ruz=@]
@@ -3700,15 +3667,9 @@
         :(sum (rol 0 5 a) fy e (wac 3 kbx) (wac j wox))
     $(j +(j), a tem, b a, c (rol 0 30 b), d c, e d)
   --
-::                                                      ::
-::::  3e: AES encryption  (XX removed)                  ::
-  ::                                                    ::
-  ::
-::                                                      ::
-::::  3f: scrambling                                    ::
-  ::                                                    ::
-  ::    ob                                              ::
-  ::
+::    3f: scrambling
++|  %scrambling
+::
 ++  un                                                  ::  =(x (wred (wren x)))
   |%
   ++  wren                                              ::  conceal structure
@@ -4014,8 +3975,9 @@
   ::
   --
 ::
-::::  3g: molds and mold builders
-  ::
+::    3g: molds and mold builders
++|  %molds-and-mold-builders
+::
 +$  coin  $~  [%$ %ud 0]                                ::  print format
           $%  [%$ p=dime]                               ::
               [%blob p=*]                               ::
@@ -4047,25 +4009,7 @@
           |@  ++  $  ?~(q.veq !! p.u.q.veq)             ::
           --                                            ::
 --  =>
-::                                                      ::
-::::    4: layer four                                   ::
-  ::                                                    ::
-  ::  4a: exotic bases                                  ::
-  ::  4b: text processing                               ::
-  ::  4c: tank printer                                  ::
-  ::  4d: parsing (tracing)                             ::
-  ::  4e: parsing (combinators)                         ::
-  ::  4f: parsing (rule builders)                       ::
-  ::  4g: parsing (outside caller)                      ::
-  ::  4h: parsing (ascii glyphs)                        ::
-  ::  4i: parsing (useful idioms)                       ::
-  ::  4j: parsing (bases and base digits)               ::
-  ::  4k: atom printing                                 ::
-  ::  4l: atom parsing                                  ::
-  ::  4m: formatting functions                          ::
-  ::  4n: virtualization                                ::
-  ::  4o: molds and mold builders                       ::
-  ::
+::
 ~%    %qua
     +
   ==
@@ -4073,10 +4017,13 @@
     %mute  mute
     %show  show
   ==
+::    layer-4
+::
 |%
 ::
-::::  4a: exotic bases
-  ::
+::    4a: exotic bases
++|  %exotic-bases
+::
 ++  po                                                  ::  phonetic base
   ~/  %po
   =+  :-  ^=  sis                                       ::  prefix syllables
@@ -4154,9 +4101,9 @@
       ~
     `b
   --
+::    4b: text processing
++|  %text-processing
 ::
-::::  4b: text processing
-  ::
 ++  at                                                  ::  basic printing
   |_  a=@
   ++  r
@@ -4491,13 +4438,14 @@
     %'~'  ['~' '~' d]
   ==
 ::
-::::  4c: tank printer
-  ::
+::  4c: tank printer
++|  %tank-printer
+::
 ++  wash                                                ::  render tank at width
   |=  [[tab=@ edg=@] tac=tank]  ^-  wall
   (~(win re tac) tab edg)
 ::
-::  |re: tank renderer
+::  +re: tank renderer
 ::
 ++  re
   |_  tac=tank
@@ -4732,8 +4680,9 @@
     ==
   --
 ::
-::::  4d: parsing (tracing)
-  ::
+::    4d: parsing (tracing)
++|  %parsing-tracing
+::
 ++  last  |=  [zyc=hair naz=hair]                       ::  farther trace
           ^-  hair
           ?:  =(p.zyc p.naz)
@@ -4744,8 +4693,9 @@
           ^-  hair
           ?:(=(`@`10 weq) [+(p.naz) 1] [p.naz +(q.naz)])
 ::
-::::  4e: parsing (combinators)
-  ::
+::    4e: parsing (combinators)
++|  %parsing-combinators
+::
 ++  bend                                                ::  conditional comp
   ~/  %bend
   =+  raq=|*([a=* b=*] [~ u=[a b]])
@@ -4835,8 +4785,9 @@
   %.  sam
   (comp |*([a=* b=*] a))
 ::
-::::  4f: parsing (rule builders)
-  ::
+::    4f: parsing (rule builders)
++|  %parsing-rule-builders
+::
 ++  bass                                                ::  leftmost base
   |*  [wuc=@ tyd=rule]
   %+  cook
@@ -5153,8 +5104,9 @@
     wag
   [p.wag [~ [p.u.q.vex p.u.q.wag] q.u.q.wag]]
 ::
-::::  4g: parsing (outside caller)
-  ::
+::    4g: parsing (outside caller)
++|  %parsing-outside-caller
+::
 ++  rash  |*([naf=@ sab=rule] (scan (trip naf) sab))
 ++  rose  |*  [los=tape sab=rule]
           =+  vex=(sab [[1 1] los])
@@ -5174,8 +5126,9 @@
             ~_(leaf+"syntax error" !!)
           p.u.q.vex
 ::
-::::  4h: parsing (ascii glyphs)
-  ::
+::    4h: parsing (ascii glyphs)
++|  %parsing-ascii-glyphs
+::
 ++  ace  (just ' ')                                     ::  spACE
 ++  bar  (just '|')                                     ::  vertical BAR
 ++  bas  (just '\\')                                    ::  Back Slash (escaped)
@@ -5210,8 +5163,9 @@
 ++  wut  (just '?')                                     ::  wut, what?
 ++  zap  (just '!')                                     ::  zap! bang! crash!!
 ::
-::::  4i: parsing (useful idioms)
-  ::
+::    4i: parsing (useful idioms)
++|  %parsing-useful-idioms
+::
 ++  alf  ;~(pose low hig)                               ::  alphabetic
 ++  aln  ;~(pose low hig nud)                           ::  alphanumeric
 ++  alp  ;~(pose low hig nud hep)                       ::  alphanumeric and -
@@ -5328,8 +5282,9 @@
            (just `@`10)
          ==
 ::
-::::  4j: parsing (bases and base digits)
-  ::
+::    4j: parsing (bases and base digits)
++|  %parsing-bases-and-base-digits
+::
 ++  ab
   |%
   ++  bix  (bass 16 (stun [2 2] six))
@@ -5450,8 +5405,9 @@
   ++  w  ?:(=(tig 63) '~' ?:(=(tig 62) '-' ?:((gte tig 36) (add tig 29) x)))
   --
 ::
-::::  4k: atom printing
-  ::
+::    4k: atom printing
++|  %atom-printing
+::
 ++  co
   !:
   ~%  %co  ..co  ~
@@ -5631,7 +5587,7 @@
   |%
   ::  +em-co: format in numeric base
   ::
-  ::  in .bas, format .min digits of .hol with .par
+  ::    in .bas, format .min digits of .hol with .par
   ::
   ::    - .hol is processed least-significant digit first
   ::    - all available digits in .hol will be processed, but
@@ -5671,8 +5627,8 @@
   ::
   ::  +ox-co: format '.'-separated digit sequences in numeric base
   ::
-  ::  in .bas, format each digit of .hol with .dug,
-  ::  with '.' separators every .gop digits.
+  ::    in .bas, format each digit of .hol with .dug,
+  ::    with '.' separators every .gop digits.
   ::
   ::    - .hol is processed least-significant digit first
   ::    - .dug handles individual digits, output is prepended
@@ -5692,8 +5648,8 @@
   ::
   ::  +ro-co: format '.'-prefixed bloqs in numeric base
   ::
-  ::  in .bas, for .buz bloqs 0 to .dop, format at least one
-  ::  digit of .hol, prefixed with '.'
+  ::    in .bas, for .buz bloqs 0 to .dop, format at least one
+  ::    digit of .hol, prefixed with '.'
   ::
   ::    - used only for @i* addresses
   ::
@@ -5711,8 +5667,9 @@
     |=([? b=@ c=tape] [(dug b) c])
   --
 ::
-::::  4l: atom parsing
-  ::
+::    4l: atom parsing
++|  %atom-parsing
+::
 ++  so
   ~%  %so  +  ~
   |%
@@ -5901,8 +5858,8 @@
     ==
   --
 ::
-::::  4m: formatting functions
-  ::
+::    4m: formatting functions
++|  %formatting-functions
 ++  scot
   ~/  %scot
   |=(mol=dime ~(rent co %$ mol))
@@ -5970,8 +5927,9 @@
     ~
   ;~(pfix fas (most fas urs:ab))
 ::
-::::  4n: virtualization
-  ::
+::    4n: virtualization
++|  %virtualization
+::
 ::  +mack: untyped, scry-less, unitary virtualization
 ::
 ++  mack
@@ -6274,8 +6232,9 @@
   |*  han=$-(* *)
   |=(fud=* (mole |.((han fud))))
 ::
-::::  4o: molds and mold builders
-  ::
+::    4o: molds and mold builders
++|  %molds-and-mold-builders
+::
 +$  abel  typo                                          ::  original sin: type
 +$  alas  (list (pair term hoon))                       ::  alias list
 +$  atom  @                                             ::  just an atom
@@ -6398,23 +6357,23 @@
   (pair tope tope)                                      ::  cell
 ++  hoot                                                ::  hoon tools
   |%
-  +$  beer  $@(char [~ p=hoon])                    ::  simple embed
-  +$  mane  $@(@tas [@tas @tas])                    ::  XML name+space
-  +$  manx  $~([[%$ ~] ~] [g=marx c=marl])          ::  dynamic XML node
-  +$  marl  (list tuna)                             ::  dynamic XML nodes
-  +$  mart  (list [n=mane v=(list beer)])           ::  dynamic XML attrs
-  +$  marx  $~([%$ ~] [n=mane a=mart])              ::  dynamic XML tag
-  +$  mare  (each manx marl)                        ::  node or nodes
-  +$  maru  (each tuna marl)                        ::  interp or nodes
-  +$  tuna                                          ::  maybe interpolation
+  +$  beer  $@(char [~ p=hoon])                         ::  simple embed
+  +$  mane  $@(@tas [@tas @tas])                        ::  XML name+space
+  +$  manx  $~([[%$ ~] ~] [g=marx c=marl])              ::  dynamic XML node
+  +$  marl  (list tuna)                                 ::  dynamic XML nodes
+  +$  mart  (list [n=mane v=(list beer)])               ::  dynamic XML attrs
+  +$  marx  $~([%$ ~] [n=mane a=mart])                  ::  dynamic XML tag
+  +$  mare  (each manx marl)                            ::  node or nodes
+  +$  maru  (each tuna marl)                            ::  interp or nodes
+  +$  tuna                                              ::  maybe interpolation
       $~  [[%$ ~] ~]
       $^  manx
       $:  ?(%tape %manx %marl %call)
           p=hoon
       ==
   --                                                    ::
-+$  hoon                                                ::
-  $~  [%zpzp ~]
++$  hoon                                                ::  hoon AST
+  $~  [%zpzp ~]                                         ::
   $^  [p=hoon q=hoon]                                   ::
   $%                                                    ::
     [%$ p=axis]                                         ::  simple leg
@@ -6684,30 +6643,24 @@
       inn=(map path @ud)                                ::  calls into
   ==
 --
-::                                                      ::
-::::    5: layer five                                   ::
-  ::                                                    ::
-  ::  5a: compiler utilities                            ::
-  ::  5b: macro expansion                               ::
-  ::  5c: compiler backend and prettyprinter            ::
-  ::  5d: parser                                        ::
-  ::  5e: molds and mold builders                       ::
-  ::  5f: profiling support (XX remove)                 ::
-  ::
+::
 ~%    %pen
     +
   ==
     %ap    ap
     %ut    ut
   ==
+::    layer-5
+::
 |%
 ::
-::::  5aa: new partial nock interpreter
-  ::
+::    5aa: new partial nock interpreter
++|  %new-partial-nock-interpreter
+::
 ++  musk  !.                                            ::  nock with block set
   |%
   ++  abet
-    ::  simplify raw result
+    ::    simplify raw result
     ::
     |=  $:  ::  noy: raw result
             ::
@@ -6730,7 +6683,7 @@
     wait/~(tap in blocks)
   ::
   ++  araw
-    ::  execute nock on partial subject
+    ::    execute nock on partial subject
     ::
     |=  $:  ::  bus: subject, a partial noun
             ::  fol: formula, a complete noun
@@ -6966,7 +6919,7 @@
     ==
   ::
   ++  apex
-    ::  execute nock on partial subject
+    ::    execute nock on partial subject
     ::
     |=  $:  ::  bus: subject, a partial noun
             ::  fol: formula, a complete noun
@@ -6981,7 +6934,7 @@
     (abet (araw bus fol))
   ::
   ++  combine
-    ::  combine a pair of seminouns
+    ::    combine a pair of seminouns
     ::
     |=  $:  ::  hed: head of pair
             ::  tal: tail of pair
@@ -7007,7 +6960,7 @@
     [full/(~(uni in blocks.mask.hed) blocks.mask.tal) ~]
   ::
   ++  complete
-    ::  complete any laziness
+    ::    complete any laziness
     ::
     |=  bus=seminoun
     ^-  seminoun
@@ -7039,7 +6992,7 @@
     ==
   ::
   ++  fragment
-    ::  seek to an axis in a seminoun
+    ::    seek to an axis in a seminoun
     ::
     |=  $:  ::  axe: tree address of subtree
             ::  bus: partial noun
@@ -7080,7 +7033,7 @@
     ==       ==
   ::
   ++  mutate
-    ::  change a single axis in a seminoun
+    ::    change a single axis in a seminoun
     ::
     |=  $:  ::  axe: axis within big to change
             ::  lit: (little) seminoun to insert within big at axe
@@ -7145,7 +7098,7 @@
     (combine hed mut)
   ::
   ++  require
-    ::  require complete intermediate step
+    ::    require complete intermediate step
     ::
     |=  $:  noy=result
             yen=$-(* result)
@@ -7169,7 +7122,7 @@
     (yen data.bus)
   ::
   ++  squash
-    ::  convert stencil to block set
+    ::    convert stencil to block set
     ::
     |=  tyn=stencil
     ^-  (set block)
@@ -7180,8 +7133,9 @@
     ==
   --
 ::
-::::  5a: compiler utilities
-  ::
+::    5a: compiler utilities
++|  %compiler-utilities
+::
 ++  bool  `type`(fork [%atom %f `0] [%atom %f `1] ~)    ::  make loobean
 ++  cell                                                ::  make %cell type
   ~/  %cell
@@ -7486,8 +7440,9 @@
     $(axe (peg axe 7), dom r.dom)
   ==
 ::
-::::  5b: macro expansion
-  ::
+::    5b: macro expansion
++|  %macro-expansions
+::
 ++  ah                                                  ::  tiki engine
   |_  tik=tiki
   ++  blue
@@ -7554,7 +7509,7 @@
   |_  mod=spec
   ::
   ++  autoname
-    ::  derive name from spec
+    ::    derive name from spec
     ::
     |-  ^-  (unit term)
     ?-  -.mod
@@ -7592,7 +7547,7 @@
     ==
   ::
   ++  function
-    ::  construct a function example
+    ::    construct a function example
     ::
     |=  [fun=spec arg=spec]
     ^-  hoon
@@ -7612,7 +7567,7 @@
     [%$ 15]
   ::
   ++  interface
-    ::  construct a core example
+    ::    construct a core example
     ::
     |=  [variance=vair payload=spec arms=(map term spec)]
     ^-  hoon
@@ -7640,7 +7595,7 @@
     [term example:clear(mod spec)]
   ::
   ++  home
-    ::  express a hoon against the original subject
+    ::    express a hoon against the original subject
     ::
     |=  gen=hoon
     ^-  hoon
@@ -7652,12 +7607,12 @@
     [%tsgr [%wing -] gen]
   ::
   ++  clear
-    ::  clear annotations
+    ::    clear annotations
     ^+  .
     .(bug ~, def ~, nut ~)
   ::
   ++  basal
-    ::  example base case
+    ::    example base case
     ::
     |=  bas=base
     ?-    bas
@@ -7700,13 +7655,13 @@
     ?~(res [%wing one] [%tsgl [%wing one] $(one i.res, res t.res)])
   ::
   ++  descend
-    ::  record an axis to original subject
+    ::    record an axis to original subject
     ::
     |=  axe=axis
     +>(dom (peg axe dom))
   ::
   ++  decorate
-    ::  apply documentation to expression
+    ::    apply documentation to expression
     ::
     |=  gen=hoon
     ^-  hoon
@@ -7715,14 +7670,14 @@
     ?~(bug gen [%dbug i.bug $(bug t.bug)])
   ::
   ++  pieces
-    ::  enumerate tuple wings
+    ::    enumerate tuple wings
     ::
     |=  =(list term)
     ^-  (^list wing)
     (turn list |=(=term `wing`[term ~]))
   ::
   ++  spore
-    ::  build default sample
+    ::    build default sample
     ::
     ^-  hoon
     ::  sample is always typeless
@@ -7799,7 +7754,7 @@
     ==
   ::
   ++  example
-    ::  produce a correctly typed default instance
+    ::    produce a correctly typed default instance
     ::
     ~+
     ^-  hoon
@@ -7840,7 +7795,7 @@
     ==
   ::
   ++  factory
-    ::  make a normalizing gate (mold)
+    ::    make a normalizing gate (mold)
     ::
     ^-  hoon
     ::  process annotations outside construct, to catch default
@@ -7874,7 +7829,7 @@
     $/6
   ::
   ++  analyze
-    ::  normalize a fragment of the subject
+    ::    normalize a fragment of the subject
     ::
     |_  $:  ::  axe: axis to fragment
             ::
@@ -7921,19 +7876,19 @@
       .(..analyze ^clear)
     ::
     ++  fetch
-      ::  load the fragment
+      ::    load the fragment
       ::
       ^-  hoon
       [%$ axe]
     ::
     ++  fetch-wing
-      ::  load, as a wing
+      ::    load, as a wing
       ::
       ^-  wing
       [[%& axe] ~]
     ::
     ++  choice
-      ::  match full models, by trying them
+      ::    match full models, by trying them
       ::
       |=  $:  ::  one: first option
               ::  rep: other options
@@ -7988,7 +7943,7 @@
       fin
     ::
     ++  relative
-      ::  local constructor
+      ::    local constructor
       ::
       ~+
       ^-  hoon
@@ -8366,6 +8321,7 @@
       `[%name term.p.gen skin]
     ==
   ::
+  ::  +open: desugarer
   ++  open
     ^-  hoon
     ?-    gen
@@ -8738,8 +8694,9 @@
     i.wig
   --
 ::
-::::  5c: compiler backend and prettyprinter
-  ::
+::    5c: compiler backend and prettyprinter
++|  %compiler-backend-and-prettyprinter
+::
 ++  ut
   ~%    %ut
       +>+
@@ -8809,7 +8766,7 @@
       ==
     |_  [ref=type =skin]
     ::
-    ::  =fish: make a $nock that tests a .ref at .axis for .skin
+    ::  +fish: make a $nock that tests a .ref at .axis for .skin
     ::
     ++  fish
       |=  =axis
@@ -8860,7 +8817,7 @@
           %wash  [%1 1]
       ==
     ::
-    ::  -gain: make a $type by restricting .ref to .skin
+    ::  +gain: make a $type by restricting .ref to .skin
     ::
     ++  gain
       |-  ^-  type
@@ -8954,7 +8911,7 @@
                  [[%| 0 ~] $(depth.skin (dec depth.skin))]
       ==
     ::
-    ::  -lose: make a $type by restricting .ref to exclude .skin
+    ::  +lose: make a $type by restricting .ref to exclude .skin
     ::
     ++  lose
       |-  ^-  type
@@ -9064,7 +9021,7 @@
     ==
   ::
   ++  burp
-    ::  expel undigested seminouns
+    ::    expel undigested seminouns
     ::
     ^-  type
     ~+
@@ -9632,7 +9589,7 @@
     (chip & gen)
   ::
   ++  hemp
-    ::  generate formula from foot
+    ::    generate formula from foot
     ::
     |=  [hud=poly gol=type gen=hoon]
     ^-  nock
@@ -9644,7 +9601,7 @@
     ==
   ::
   ++  laze
-    ::  produce lazy core generator for static execution
+    ::    produce lazy core generator for static execution
     ::
     |=  [nym=(unit term) hud=poly dom=(map term tome)]
     ~+
@@ -9773,7 +9730,7 @@
     ==
   ::
   ++  mile
-    ::  mull all chapters and feet in a core
+    ::    mull all chapters and feet in a core
     ::
     |=  [dox=type mel=vair nym=(unit term) hud=poly dom=(map term tome)]
     ^-  (pair type type)
@@ -9783,7 +9740,7 @@
     [yet hum]
   ::
   ++  mine
-    ::  mint all chapters and feet in a core
+    ::    mint all chapters and feet in a core
     ::
     |=  [gol=type mel=vair nym=(unit term) hud=poly dom=(map term tome)]
     ^-  (pair type nock)
@@ -9821,7 +9778,7 @@
     ::  all the below arms are used for gol checking and should have no
     ::  effect other than giving more specific errors
     ::
-    ::  all the possible types we could be expecting.
+    ::  +gol-type: all the possible types we could be expecting.
     ::
     +$  gol-type
       $~  %noun
@@ -9830,7 +9787,7 @@
           [%core p=type q=coil]
           [%fork p=(set gol-type)]
       ==
-    ::  check that we're looking for a core
+    ::  +core-check: check that we're looking for a core
     ::
     ++  core-check
       |=  log=type
@@ -9851,7 +9808,7 @@
         =/  b  $(tys t.tys)
         (~(put in b) a)
       ==
-    ::  check we have the expected number of chapters
+    ::  +chapters-check: check we have the expected number of chapters
     ::
     ++  chapters-check
       |=  log=gol-type
@@ -9870,7 +9827,7 @@
         =/  b  $(tys t.tys)
         log
       ==
-    ::  get map of tomes if exists
+    ::  +get-tomes: get map of tomes if exists
     ::
     ++  get-tomes
       |=  log=gol-type
@@ -9881,7 +9838,7 @@
           [%fork *]  ~  ::  maybe could be more aggressive
           [%core *]  `q.r.q.log
       ==
-    ::  get arms in tome
+    ::  +get-arms: get arms in tome
     ::
     ++  get-arms
       |=  [dog=(unit (map term tome)) nam=term]
@@ -9890,7 +9847,7 @@
       |=  a=(map term tome)
       ~_  leaf+"unexpcted-chapter.{(trip nam)}"
       q:(~(got by a) nam)
-    ::  check we have the expected number of arms
+    ::  +arms-check: check we have the expected number of arms
     ::
     ++  arms-check
       |=  [dab=(map term hoon) dag=(unit (map term hoon))]
@@ -9910,7 +9867,7 @@
             leaf+"have.{<have>}"
         (nice dag =(exp hav))
       a
-    ::  get expected type of this arm
+    ::  +get-arm-type: get expected type of this arm
     ::
     ++  get-arm-type
       |=  [log=gol-type dag=(unit (map term hoon)) nam=term]
@@ -11360,7 +11317,7 @@
 ++  seem  |=(toy=typo `type`toy)                        ::  promote typo
 ++  seer  |=(vix=vise `vase`vix)                        ::  promote vise
 ::
-::  +sell Pretty-print a vase to a tank using `deal`.
+::  +sell: pretty-print a vase to a tank using +deal.
 ::
 ++  sell
   ~/  %sell
@@ -11369,7 +11326,7 @@
   ~|  %sell
   (~(deal us p.vax) q.vax)
 ::
-::  +skol  $-(type tank) using `duck`.
+::  +skol:  $-(type tank) using duck.
 ::
 ++  skol
   |=  typ=type
@@ -11387,10 +11344,10 @@
 ::
 ::  +slab: states whether you can access an arm in a type.
 ::
-::  -- way: the access type ($vial): read, write, or read-and-write.
-::  The fourth case of $vial, %free, is not permitted because it would
-::  allow you to discover "private" information about a type,
-::  information which you could not make use of in (law-abiding) hoon anyway.
+::    .way: the access type ($vial): read, write, or read-and-write.
+::    The fourth case of $vial, %free, is not permitted because it would
+::    allow you to discover "private" information about a type,
+::    information which you could not make use of in (law-abiding) hoon anyway.
 ::
 ++  slab                                                ::  test if contains
   |=  [way=?(%read %rite %both) cog=@tas typ=type]
@@ -11502,8 +11459,9 @@
   |.  ~+
   [p.gun .*(q:$:tap q.gun)]
 ::
-::::  5d: parser
-  ::
+::    5d: parser
++|  %parser
+::
 ++  vang                                                ::  set ++vast params
   |=  [bug=? wer=path]                                  ::  bug: debug mode
   %*(. vast bug bug, wer wer)                           ::  wer: where we are
@@ -11927,8 +11885,6 @@
         (cook drop-top wide-top)
       ==
     ::
-    ::+|
-    ::
     ++  a-mane                                          ::  mane as hoon
       %+  cook
         |=  [a=@tas b=(unit @tas)]
@@ -11976,8 +11932,6 @@
         wide-attrs
       ==
     ::
-    ::+|
-    ::
     ++  tall-top                                        ::  tall top
       %+  knee  *(each manx:hoot marl:hoot)  |.  ~+
       ;~  pose
@@ -12003,8 +11957,6 @@
         ^-  manx:hoot
         [[p.a (weld q.a b)] c]
       ;~(plug tag-head tall-attrs tall-tail)
-    ::
-    ::+|
     ::
     ::REVIEW is there a better way to do this?
     ++  hopefully-quote                                 :: prefer "quote" form
@@ -12108,19 +12060,21 @@
     |%
     ++  main
       ::
-      ::  state of the parsing loop.  we maintain a construction
-      ::  stack for elements and a line stack for lines in the
-      ::  current block.  a blank line causes the current block
-      ::  to be parsed and thrown in the current element.  when
-      ::  the indent column retreats, the element stack rolls up.
+      ::    state of the parsing loop.
       ::
-      ::  verbose: debug printing enabled
-      ::  err: error position
-      ::  ind: outer and inner indent level
-      ::  hac: stack of items under construction
-      ::  cur: current item under construction
-      ::  par: current "paragraph" being read in
-      ::  [loc txt]: parsing state
+      ::  we maintain a construction stack for elements and a line
+      ::  stack for lines in the current block.  a blank line
+      ::  causes the current block to be parsed and thrown in the
+      ::  current element.  when the indent column retreats, the
+      ::  element stack rolls up.
+      ::
+      ::  .verbose: debug printing enabled
+      ::  .err: error position
+      ::  .ind: outer and inner indent level
+      ::  .hac: stack of items under construction
+      ::  .cur: current item under construction
+      ::  .par: current "paragraph" being read in
+      ::  .[loc txt]: parsing state
       ::
       =/  verbose  &
       =|  err=(unit hair)
@@ -13639,7 +13593,7 @@
                             (~(wthx ah b) a)
                   ;~(gunk lore teak)
     ::
-    ::    hint syntax
+    ::  hint syntax
     ::
     ++  hinb  |.(;~(goop bont loaf))                    ::  hint and hoon
     ++  hinc  |.                                        ::  optional =en, hoon
@@ -13859,8 +13813,9 @@
   ~<  %slog.[0 leaf/"ride: compiled"]
   (~(mint ut typ) %noun gen)
 ::
-::::  5e: molds and mold builders
-  ::
+::    5e: molds and mold builders
++|  %molds-and-mold-builders
+::
 +$  mane  $@(@tas [@tas @tas])                          ::  XML name+space
 +$  manx  $~([[%$ ~] ~] [g=marx c=marl])                ::  dynamic XML node
 +$  marl  (list manx)                                   ::  XML node list
@@ -13875,8 +13830,8 @@
 +$  spur  path                                          ::  ship desk case spur
 +$  time  @da                                           ::  galactic time
 ::
-::::  5f: profiling support (XX move)
-  ::
+::    5f: profiling support (XX move)
++|  %profiling-support
 ::
 ++  pi-heck
     |=  [nam=@tas day=doss]
