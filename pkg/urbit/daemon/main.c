@@ -1780,6 +1780,17 @@ _cw_play_slog(u3_noun hod)
   u3z(hod);
 }
 
+/* _cw_play_exit(): exit immediately.
+*/
+static void
+_cw_play_exit(c3_i int_i)
+{
+  //  explicit fprintf to avoid allocation in u3l_log
+  //
+  fprintf(stderr, "\r\n[received keyboard stop signal, exiting]\r\n");
+  raise(SIGINT);
+}
+
 /* _cw_play(): replay events, but better.
 */
 static void
@@ -1859,9 +1870,15 @@ _cw_play(c3_i argc, c3_c* argv[])
     exit(1);
   }
 
-  //  XX handle SIGTSTP so that the lockfile is not orphaned?
-  //
   u3_disk* log_u = _cw_disk_init(u3_Host.dir_c); // XX s/b try_aquire lock
+
+#if !defined(U3_OS_mingw)
+  //  Handle SIGTSTP as if it was SIGINT.
+  //
+  //    Configured here using signal() so as to be immediately available.
+  //
+  signal(SIGTSTP, _cw_play_exit);
+#endif
 
   if ( c3y == mel_o ) {
     u3C.wag_w |= u3o_auto_meld;
