@@ -8,6 +8,11 @@
         c3_d
         u3m_boot(c3_c* dir_c, size_t len_i);
 
+      /* u3m_pier(): make a pier.
+      */
+        c3_c*
+        u3m_pier(c3_c* dir_c);
+
       /* u3m_boot_lite(): start without checkpointing.
       */
         c3_d

@@ -1961,6 +1961,42 @@ u3m_stop()
   c3_free(u3D.ray_u);
 }
 
+/* u3m_pier(): make a pier.
+*/
+c3_c*
+u3m_pier(c3_c* dir_c)
+{
+  c3_c ful_c[8193];
+
+  u3C.dir_c = dir_c;
+
+  snprintf(ful_c, 8192, "%s", dir_c);
+  if ( c3_mkdir(ful_c, 0700) ) {
+    if ( EEXIST != errno ) {
+      fprintf(stderr, "loom: pier create: %s\r\n", strerror(errno));
+      c3_assert(0);
+    }
+  }
+
+  snprintf(ful_c, 8192, "%s/.urb", dir_c);
+  if ( c3_mkdir(ful_c, 0700) ) {
+    if ( EEXIST != errno ) {
+      fprintf(stderr, "loom: .urb create: %s\r\n", strerror(errno));
+      c3_assert(0);
+    }
+  }
+
+  snprintf(ful_c, 8192, "%s/.urb/chk", dir_c);
+  if ( c3_mkdir(ful_c, 0700) ) {
+    if ( EEXIST != errno ) {
+      fprintf(stderr, "loom: .urb/chk create: %s\r\n", strerror(errno));
+      c3_assert(0);
+    }
+  }
+
+  return strdup(ful_c);
+}
+
 /* u3m_boot(): start the u3 system. return next event, starting from 1.
 */
 c3_d
@@ -1968,43 +2004,13 @@ u3m_boot(c3_c* dir_c, size_t len_i)
 {
   c3_o nuu_o;
 
-  u3C.dir_c = dir_c;
-
   /* Activate the loom.
   */
   u3m_init(len_i);
 
   /* Activate the storage system.
   */
-  {
-    c3_c ful_c[8193];
-
-    snprintf(ful_c, 8192, "%s", dir_c);
-    if ( c3_mkdir(ful_c, 0700) ) {
-      if ( EEXIST != errno ) {
-        fprintf(stderr, "loom: pier create: %s\r\n", strerror(errno));
-        c3_assert(0);
-      }
-    }
-
-    snprintf(ful_c, 8192, "%s/.urb", dir_c);
-    if ( c3_mkdir(ful_c, 0700) ) {
-      if ( EEXIST != errno ) {
-        fprintf(stderr, "loom: .urb create: %s\r\n", strerror(errno));
-        c3_assert(0);
-      }
-    }
-
-    snprintf(ful_c, 8192, "%s/.urb/chk", dir_c);
-    if ( c3_mkdir(ful_c, 0700) ) {
-      if ( EEXIST != errno ) {
-        fprintf(stderr, "loom: .urb/chk create: %s\r\n", strerror(errno));
-        c3_assert(0);
-      }
-    }
-
-    nuu_o = u3e_live(strdup(ful_c));
-  }
+  nuu_o = u3e_live(u3m_pier(dir_c));
 
   /* Activate tracing.
   */
