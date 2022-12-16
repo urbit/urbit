@@ -118,7 +118,8 @@
       *flow:fusion
       *flue:fusion
     ==
-    =/  [res=vase nub=state:ford:fusion]  (build-nave:ford %mime)
+    =/  [=ming nub=state:ford:fusion]  (build-nave:ford %mime)
+    =/  res  $:ming
     =/  =leak:fusion  leak:(~(got by sprig.nub) file+/mar/mime/hoon)
     ;:  weld
       %+  expect-eq
@@ -145,7 +146,8 @@
       *flow:fusion
       *flue:fusion
     ==
-    =/  [res=vase nub=state:ford:fusion]  (build-nave:ford %udon)
+    =/  [=ming nub=state:ford:fusion]  (build-nave:ford %udon)
+    =/  res  $:ming
     =/  =leak:fusion  leak:(~(got by sprig.nub) file+/mar/udon/hoon)
     ;:  weld
       %+  expect-eq
@@ -175,7 +177,8 @@
       *flow:fusion
       *flue:fusion
     ==
-  =/  [res=vase nub=state:ford:fusion]  (build-cast:ford %html %mime)
+  =/  [=ming nub=state:ford:fusion]  (build-cast:ford %html %mime)
+  =/  res  $:ming
   %+  expect-eq
     (slam res !>('<html></html>'))
     !>  `mime`[/text/html 13 '<html></html>']
@@ -194,7 +197,8 @@
       *flow:fusion
       *flue:fusion
     ==
-  =/  [res=vase nub=state:ford:fusion]  (build-file:ford /lib/foo/hoon)
+  =/  [=ming nub=state:ford:fusion]  (build-file:ford /lib/foo/hoon)
+  =/  res  $:ming
   %+  expect-eq
     res
     !>  *mime
@@ -214,7 +218,8 @@
       *flow:fusion
       *flue:fusion
     ==
-  =/  [res=vase nub=state:ford:fusion]  (build-file:ford /lib/foo/hoon)
+  =/  [=ming nub=state:ford:fusion]  (build-file:ford /lib/foo/hoon)
+  =/  res  $:ming
   %+  expect-eq
     res
     !>  ''
@@ -228,7 +233,8 @@
       *flow:fusion
       *flue:fusion
     ==
-  =/  [res=vase nub=state:ford:fusion]  (build-file:ford /gen/hello/hoon)
+  =/  [=ming nub=state:ford:fusion]  (build-file:ford /gen/hello/hoon)
+  =/  res  $:ming
   =/  =leak:fusion  leak:(~(got by sprig.nub) file+/gen/hello/hoon)
   ;:  weld
     %+  expect-eq
@@ -254,7 +260,8 @@
       *flow:fusion
       *flue:fusion
     ==
-  =/  [res=vase nub=state:ford:fusion]  (build-file:ford /lib/strandio/hoon)
+  =/  [=ming nub=state:ford:fusion]  (build-file:ford /lib/strandio/hoon)
+  =/  res  $:ming
   =/  =leak:fusion  leak:(~(got by sprig.nub) file+/lib/strandio/hoon)
   ;:  weld
     %-  expect
