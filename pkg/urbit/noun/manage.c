@@ -1003,10 +1003,19 @@ u3m_flog(c3_w gof_w)
 void
 u3m_water(u3_post* low_p, u3_post* hig_p)
 {
+  //  allow the segfault handler to fire before the road is set
+  //
+  //    while not explicitly possible in the codebase,
+  //    compiler optimizations can reorder stores
+  //
+  if ( !u3R ) {
+    *low_p = 0;
+    *hig_p = u3C.wor_i - 1;
+  }
   //  in a north road, hat points to the end of the heap + 1 word,
   //  while cap points to the top of the stack
   //
-  if ( c3y == u3a_is_north(u3R) ) {
+  else if ( c3y == u3a_is_north(u3R) ) {
     *low_p = u3R->hat_p - 1;
     *hig_p = u3R->cap_p;
   }
