@@ -125,13 +125,14 @@ jobs:
           echo -n "$version" > ./version-string
 
       - name: upload version string artifact
-        if: matrix.type == 'linux'
+        if: inputs.upload && matrix.type == 'linux'
         uses: actions/upload-artifact@v3
         with:
           name: version-string
           path: version-string
 
       - uses: google-github-actions/auth@v1
+        if: inputs.upload
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
@@ -244,12 +245,13 @@ jobs:
     needs: [urbit, mingw]
     if: inputs.upload
     steps:
-      - uses: google-github-actions/setup-gcloud@v0.2.0
+      - uses: google-github-actions/auth@v1
         with:
-          version: '290.0.1'
-          service_account_key: ${{ secrets.GCS_SERVICE_ACCOUNT_KEY }}
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - uses: google-github-actions/setup-gcloud@v1
+        with:
           project_id: ${{ secrets.GCS_PROJECT }}
-          export_default_credentials: true
 
       - name: download version-string
         uses: actions/download-artifact@v3
