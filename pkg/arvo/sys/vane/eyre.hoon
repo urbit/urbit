@@ -239,7 +239,7 @@
 ++  login-page
   |=  [redirect-url=(unit @t) our=@p failed=?]
   ^-  octs
-  =+  redirect-str=?~(redirect-url "" (trip u.redirect-url))
+  =+  redirect-str=?~(redirect-url "/~pyro/{(scow %p our)}" (weld "/~pyro/{(scow %p our)}" (trip u.redirect-url)))
   %-  as-octs:mimes:html
   %-  crip
   %-  en-xml:html
@@ -373,7 +373,7 @@
       ;p:"Urbit ID"
       ;input(value "{(scow %p our)}", disabled "true", class "mono");
       ;p:"Access Key"
-      ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
+      ;form(action "/~pyro/{(scow %p our)}/~/login", method "post", enctype "application/x-www-form-urlencoded")
         ;input
           =type  "password"
           =name  "password"
@@ -974,7 +974,7 @@
       ::
       =/  response=$>(%start http-event:http)
         :*  %start
-            response-header=[303 ['location' '/~/login']~]
+            response-header=[303 ['location' (crip "/~pyro/{(scow %p our)}/~/login")]~]
             data=~
             complete=%.y
         ==
