@@ -155,7 +155,7 @@
   |=  [=message-num =message-blob]
   ^-  (list static-fragment)
   ::
-  =/  num-fragments=fragment-num  (met 13 message-blob)
+  =/  num-fragments=fragment-num  (met 23 message-blob)
   =|  counter=@
   ::
   |-  ^-  (list static-fragment)
@@ -179,7 +179,7 @@
       sorted
     $(index +(index), sorted [(~(got by fragments) index) sorted])
   ::
-  (cue (rep 13 (flop sorted)))
+  (cue (rep 23 (flop sorted)))
 ::  +jim: caching +jam
 ::
 ++  jim  |=(n=* ~+((jam n)))
@@ -438,11 +438,11 @@
   ::
   =?    meat.shut-packet
       ?&  ?=(%& -.meat.shut-packet)
-          (gth (met 13 fragment.p.meat.shut-packet) 1)
+          (gth (met 23 fragment.p.meat.shut-packet) 1)
       ==
     %_    meat.shut-packet
         fragment.p
-      (cut 13 [[fragment-num 1] fragment]:p.meat.shut-packet)
+      (cut 23 [[fragment-num 1] fragment]:p.meat.shut-packet)
     ==
   ::
   =/  vec  ~[sndr rcvr sndr-life rcvr-life]
@@ -2451,7 +2451,7 @@
     ++  dedup-message
       |=  =message-blob
       ^+  message-blob
-      ?:  (lte (met 13 message-blob) 1)
+      ?:  (lte (met 23 message-blob) 1)
         message-blob
       =/  peers-l=(list [=ship =ship-state])  ~(tap by peers.ames-state)
       |-  ^+  message-blob
