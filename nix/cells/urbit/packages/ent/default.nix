@@ -1,8 +1,8 @@
-{ lib, stdenv, enableParallelBuilding ? true }:
+{ self, lib, stdenv, enableParallelBuilding ? true }:
 
 stdenv.mkDerivation {
   name = "ent";
-  src = lib.cleanSource ../../../pkg/ent;
+  src = lib.cleanSource "${self}/pkg/ent";
 
   postPatch = ''
     patchShebangs ./configure

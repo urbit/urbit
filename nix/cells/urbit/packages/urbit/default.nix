@@ -8,11 +8,12 @@
 , verePace               ? ""
 , doCheck                ? true
 , enableParallelBuilding ? true
-, dontStrip              ? true }:
+, dontStrip              ? true
+, self }:
 
 let
 
-  src = lib.cleanSource ../../../pkg/urbit;
+  src = lib.cleanSource "${self}/pkg/urbit";
 
   version = builtins.readFile "${src}/version";
 

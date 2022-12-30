@@ -1,9 +1,9 @@
-{ lib, stdenvNoCC, fetchGitHubLFS, bootFakeShip, solid, urbit, arvo, curl, xxd
+{ self, lib, stdenvNoCC, fetchGitHubLFS, bootFakeShip, solid, urbit, arvo, curl, xxd
 , withRopsten ? false }:
 
 let
 
-  lfs = fetchGitHubLFS { src = ../../../bin/ivory.pill; };
+  lfs = fetchGitHubLFS { src = /. + builtins.unsafeDiscardStringContext "${self}/bin/ivory.pill"; };
 
 in {
   build = import ./builder.nix {

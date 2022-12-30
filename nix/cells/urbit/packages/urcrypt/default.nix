@@ -1,10 +1,10 @@
-{ stdenv, autoreconfHook, pkgconfig
+{ self, stdenv, autoreconfHook, pkgconfig
 , libaes_siv, openssl, openssl-static-osx, secp256k1
 , enableStatic ? stdenv.hostPlatform.isStatic }:
 
 stdenv.mkDerivation rec {
   name = "urcrypt";
-  src  = ../../../pkg/urcrypt;
+  src  = "${self}/pkg/urcrypt";
 
   # XX why are these required for darwin?
   dontDisableStatic = enableStatic;
