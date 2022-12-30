@@ -1,7 +1,7 @@
 /-  docket, *treaty
 /+  default-agent, agentio, verb, dbug
 |%
-++  default-ally  ~dister-dozzod-dozzod
+++  default-ally  ~nec
 ::
 +$  card  card:agent:gall
 +$  state-0
