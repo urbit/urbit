@@ -1,14 +1,15 @@
 import React from 'react';
 import cn from 'classnames';
 import { Link } from 'react-router-dom';
-import { HarkLid, Vats, getVatPublisher } from '@urbit/api';
+import { HarkLid, Pikes, getPikePublisher } from '@urbit/api';
 import { Button } from '../../components/Button';
-import { useCurrentTheme, useProtocolHandling } from '../../state/local';
+import { useBrowserId, useCurrentTheme } from '../../state/local';
 import { getDarkColor } from '../../state/util';
-import useKilnState from '../../state/kiln';
-import {useHarkStore} from '../../state/hark';
+import { usePikes } from '../../state/kiln';
+import { useHarkStore } from '../../state/hark';
+import { useProtocolHandling } from '../../state/settings';
 
-const getCards = (vats: Vats, protocol: boolean): OnboardingCardProps[] => {
+const getCards = (pikes: Pikes, protocol: boolean): OnboardingCardProps[] => {
   const cards = [
     {
       title: 'Terminal',
@@ -37,22 +38,8 @@ const getCards = (vats: Vats, protocol: boolean): OnboardingCardProps[] => {
       ship: '~mister-dister-dozzod-dozzod',
       desk: 'bitcoin'
     }
-    // Commenting out until we have something real
-    // {
-    //   title: 'Debug',
-    //   body: "Install a debugger. You can inspect your ship's internals using this interface",
-    //   button: 'Install',
-    //   color: '#E5E5E5',
-    //   href: '/leap/search/direct/apps/~zod/debug'
-    // }
-    // {
-    //   title: 'Build an app',
-    //   body: 'You can instantly get started building new things on Urbit.  Just right click your Landscape and select “New App”',
-    //   button: 'Learn more',
-    //   color: '#82A6CA'
-    // }
   ];
-  if('registerProtocolHandler' in window.navigator && !protocol) {
+  if ('registerProtocolHandler' in window.navigator && !protocol) {
     cards.push({
       title: 'Open Urbit-Native Links',
       body: 'Enable your Urbit to open links you find in the wild',
@@ -64,9 +51,10 @@ const getCards = (vats: Vats, protocol: boolean): OnboardingCardProps[] => {
     });
   }
 
-
-  return cards.filter(card => {
-    return !Object.values(vats).find(vat => getVatPublisher(vat) == card.ship && vat?.arak?.rail?.desk === card.desk);
+  return cards.filter((card) => {
+    return !Object.values(pikes).find(
+      (pike) => getPikePublisher(pike) === card.ship && pike.sync?.desk === card.desk
+    );
   });
 };
 
@@ -85,7 +73,7 @@ interface OnboardingCardProps {
 
 const OnboardingCard = ({ title, button, href, body, color }: OnboardingCardProps) => (
   <div
-    className="p-4 flex flex-col space-y-2 text-black bg-gray-100 justify-between rounded-xl"
+    className="flex flex-col justify-between p-4 text-black bg-gray-100 space-y-2 rounded-xl"
     style={color ? { backgroundColor: color } : {}}
   >
     <div className="space-y-1">
@@ -105,20 +93,23 @@ interface OnboardingNotificationProps {
 
 export const OnboardingNotification = ({ unread = false, lid }: OnboardingNotificationProps) => {
   const theme = useCurrentTheme();
-  const vats = useKilnState((s) => s.vats);
-  const protocolHandling = useProtocolHandling();
-  const cards = getCards(vats, protocolHandling);
+  const pikes = usePikes();
+  const browserId = useBrowserId();
+  const protocolHandling = useProtocolHandling(browserId);
+  const cards = getCards(pikes, protocolHandling);
 
-  if(cards.length === 0 && !('time' in lid)) {
-    useHarkStore.getState().archiveNote({
-      path: '/',
-      place: {
-        path: '/onboard',
-        desk: window.desk
-      }
-    }, lid);
+  if (cards.length === 0 && !('time' in lid)) {
+    useHarkStore.getState().archiveNote(
+      {
+        path: '/',
+        place: {
+          path: '/onboard',
+          desk: window.desk
+        }
+      },
+      lid
+    );
     return null;
-
   }
 
   return (

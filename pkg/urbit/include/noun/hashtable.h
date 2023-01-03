@@ -1,7 +1,6 @@
-/* include/n/h.h
-**
-** This file is in the public domain.
-*/
+#ifndef U3_HASHTABLE_H
+#define U3_HASHTABLE_H
+
   /**  Data structures.
   **/
     /**  Straightforward implementation of the classic Bagwell
@@ -182,3 +181,5 @@
       */
         c3_w
         u3h_wyt(u3p(u3h_root) har_p);
+
+#endif /* ifndef U3_HASHTABLE_H */

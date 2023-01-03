@@ -13,12 +13,26 @@
 =/  =address:ethereum  (address-from-prv:key:ethereum pk)
 ;<  expected-nonce=@ud  bind:m
   (get-next-nonce:ethio endpoint address)
-=/  batch-data=octs
-  %+  cad:naive  3
-  %-  flop
-  %+  roll  txs
-  |=  [=raw-tx:naive out=(list octs)]
-  [raw.raw-tx 65^sig.raw-tx out]
+::  Infura enforces a max calldata size (32, 64, 128 Kb?) so we calculate how
+::  many txs are included in a batch of that size, and only send those
+::
+=/  max-calldata=@ud  128.000
+=/  [n-txs=@ud batch-data=octs]
+  =|  n-txs=@ud
+  =|  size=@ud
+  =|  out=(list octs)
+  |-  ^-  [@ud octs]
+  ?~  txs
+    [n-txs (cad:naive 3 (flop out))]
+  =*  raw-tx  i.txs
+  =.  size    :(add 65 p.raw.raw-tx size)
+  ?:  (gth size max-calldata)
+    [n-txs (cad:naive 3 (flop out))]
+  %_  $
+    n-txs  +(n-txs)
+    txs    t.txs
+    out    [raw.raw-tx 65^sig.raw-tx out]
+  ==
 ::  if the batch is malformed, emit error to kick it out of sending
 ::
 ?~  (parse-roll:naive q.batch-data)
@@ -26,16 +40,15 @@
 ::  if chain expects a different nonce, don't send this transaction
 ::
 ?.  =(nonce expected-nonce)
-  ~&  >>>  [%unexpected-nonce nonce expected+expected-nonce]
   %-  pure:m
   !>  ^-  [%.n @tas @t]
   :+  %.n
     %not-sent
   ?:  (lth expected-nonce nonce)
-    ::  if ahead, it will use the same next-gas-price when resending
+    ::  if ahead, use the same next-gas-price when resending
     ::
     %ahead-nonce
-  ::  if behind, start out-of-sync flow
+  ::  if behind, start out-of-sync flow if batch was not sent before
   ::
   %behind-nonce
 ::  if a gas-price of 0 was specified, fetch the recommended one
@@ -49,22 +62,23 @@
 ::  gasLimit = G_transaction + G_txdatanonzero × dataByteLength
 ::  where
 ::      G_transaction = 21000 gas (base fee)
-::    + G_txdatanonzero = 68 gas
+::    + G_txdatanonzero = 16 gas (previously 68; see EIP-2028)
 ::    * dataByteLength = (65 + raw) * (lent txs) bytes
 ::
-:: TODO: enforce max number of tx in batch?
+::  1.000 gas are added to the base fee as extra, for emitting the log
 ::
-=/  gas-limit=@ud  (add 21.000 (mul 68 p.batch-data))
-::  if we cannot pay for the transaction, don't bother sending it out
-::
-=/  max-cost=@ud  (mul gas-limit use-gas-price)
+=/  gas-limit=@ud  (add 22.000 (mul 16 p.batch-data))
+=/  max-cost=@ud   (mul gas-limit use-gas-price)
 ;<  balance=@ud  bind:m
   (get-balance:ethio endpoint address)
 ?:  (gth max-cost balance)
+  ::  if we cannot pay for the transaction, don't bother sending it out
+  ::
   (pure:m !>(%.n^[%not-sent %insufficient-roller-balance]))
 ::
 ::NOTE  this fails the thread if sending fails, which in the app gives us
 ::      the "retry with same gas price" behavior we want
+::
 ;<  =response:rpc  bind:m
   %+  send-batch  endpoint
   =;  tx=transaction:rpc:ethereum
@@ -80,19 +94,23 @@
 ::  log batch tx-hash to getTransactionReceipt(tx-hash)
 ::
 ~?  &(?=(%result -.response) ?=(%s -.res.response))
-  ^-  [nonce=@ud batch-hash=@t gas=@ud]
-  nonce^(so:dejs:format res.response)^use-gas-price
+  ^-  [nonce=@ud batch-hash=@t gas=@ud sent-txs=@ud bytes=@ud]
+  :*  nonce
+      (so:dejs:format res.response)
+      use-gas-price
+      n-txs
+      p.batch-data
+  ==
 %-  pure:m
-!>  ^-  (each @ud [term @t])
+!>  ^-  (each [@ud @ud] [term @t])
 ::  TODO: capture if the tx fails (e.g. Runtime Error: revert)
 ::  check that tx-hash in +.response is non-zero?
-::  enforce max here, or in app?
 ::
 ?+  -.response  %.n^[%error 'unexpected rpc response']
   %error   %.n^[%error message.response]
   ::  add five gwei to gas price of next attempt
   ::
-  %result  %.y^(add use-gas-price 5.000.000.000)
+  %result  %.y^[n-txs (add use-gas-price 5.000.000.000)]
 ==
 ::
 ::TODO  should be distilled further, partially added to strandio?

@@ -1,8 +1,17 @@
 import { Action, Anchor, Box, Col, Icon, Row, Rule, Text } from '@tlon/indigo-react';
-import { Association, GraphNode, Group, markEachAsRead, removePosts, TextContent, UrlContent, ReferenceContent } from '@urbit/api';
+import {
+  Association,
+  GraphNode,
+  Group,
+  markEachAsRead,
+  removePosts,
+  TextContent,
+  UrlContent,
+  ReferenceContent,
+  roleForShip
+} from '@urbit/api';
 import React, { ReactElement, RefObject, useCallback, useEffect, useRef } from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { roleForShip } from '~/logic/lib/group';
 import { getPermalinkForGraph, referenceToPermalink } from '~/logic/lib/permalinks';
 import { useCopy } from '~/logic/lib/useCopy';
 import { useHarkStat } from '~/logic/state/hark';

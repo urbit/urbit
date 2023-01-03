@@ -1,6 +1,5 @@
-/* noun/log.h
-**
-*/
+#ifndef U3_LOG_H
+#define U3_LOG_H
 
 /* u3l_log(): logs to stderr or redirects to configured function.
 */
@@ -17,3 +16,5 @@
  */
   u3_weak
   u3l_punt(const char* name, u3_weak pro);
+
+#endif /* ifndef U3_LOG_H */

@@ -34,11 +34,14 @@ const FixedOverlay = styled(Col)`
   transition: all 0.1s ease-out;
 `;
 
-type ProfileOverlayProps = BoxProps & {
-  ship: string;
-  children?: ReactNode;
-  color?: string;
-};
+interface ProfileOverlayProps extends BoxProps {
+  /**
+   * A valid patp (without sig)
+   */
+  ship: string,
+  children?: ReactNode,
+  color?: string,
+}
 
 const selSettings = (s: SettingsState) => [s.calm.hideAvatars, s.calm.hideNicknames];
 

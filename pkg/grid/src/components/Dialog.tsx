@@ -6,7 +6,7 @@ import classNames from 'classnames';
 export const Dialog: FC<DialogPrimitive.DialogOwnProps> = ({ children, ...props }) => {
   return (
     <DialogPrimitive.Root {...props}>
-      <DialogPrimitive.Overlay className="fixed top-0 bottom-0 left-0 right-0 z-30 bg-black opacity-30" />
+      <DialogPrimitive.Overlay className="fixed top-0 bottom-0 left-0 right-0 z-30 bg-black opacity-30 transform transform-gpu" />
       {children}
     </DialogPrimitive.Root>
   );

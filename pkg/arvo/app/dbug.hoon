@@ -530,6 +530,7 @@
     ::  where an index is specified, the array is generally sorted by those.
     ::
     ::  { life: 123,
+    ::    rift: 0,
     ::    route: { direct: true, lane: 'something' },
     ::    qos: { kind: 'status', last-contact: 123456 },  // ms timestamp
     ::    flows: { forward: [snd, rcv, ...], backward: [snd, rcv, ...] }
@@ -590,6 +591,9 @@
       |=  peer-state
       %-  pairs
       :~  'life'^(numb life)
+          ::  TODO: needs to be updated in /pkg/interface/dbug
+          ::
+          'rift'^(numb rift)
         ::
           :-  'route'
           %+  maybe  route
@@ -712,7 +716,7 @@
                   'rtt'^(numb (div rtt ~s1))
                   'rttvar'^(numb (div rttvar ~s1))
                   'ssthresh'^(numb ssthresh)
-                  'num-live'^(numb num-live)
+                  'num-live'^(numb ~(wyt by live))
                   'cwnd'^(numb cwnd)
                   'counter'^(numb counter)
               ==
@@ -786,7 +790,7 @@
 ++  v-clay
   =,  clay
   |%
-  ++  start-path  /(scot %p our.bowl)/home/(scot %da now.bowl)
+  ++  start-path  /(scot %p our.bowl)/base/(scot %da now.bowl)
   ::
   +$  commit
     [=tako parents=(list tako) children=(list tako) wen=@da content-hash=@uvI]

@@ -303,28 +303,6 @@
         %^  poke-watch  hen  %azimuth
         %+  fall  node.tac
         (need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
-      =.  +>.$
-        ::  get everything from /app/azimuth because jael subscriptions
-        ::  seem to be flaky for now
-        ::
-        ?:  &
-          %-  curd  =<  abet
-          (sources:~(feel su hen now pki etn) ~ [%| %azimuth])
-        ::
-        ?-    (clan:title our)
-            %czar
-          %-  curd  =<  abet
-          (sources:~(feel su hen now pki etn) ~ [%| %azimuth])
-        ::
-            *
-          =.  +>.$
-            %-  curd  =<  abet
-            %+  sources:~(feel su hen now pki etn)
-              (silt (turn spon-points head))
-            [%| %azimuth]
-          %-  curd  =<  abet
-          (sources:~(feel su hen now pki etn) ~ [%& (need spon-ship)])
-        ==
       ::
       =.  moz
         %+  weld  moz
@@ -388,7 +366,7 @@
     ::    [%listen whos=(set ship) =source]
     ::
         %listen
-      ~&  [%jael-listen whos source]:tac
+      ::  %-  (slog leaf+"jael: listen {<whos.tac>} {<source.tac>}" ~)
       %-  curd  =<  abet
       (sources:~(feel su hen now pki etn) [whos source]:tac)
     ::
@@ -481,12 +459,12 @@
     ::    [%vega ~]
     ::
         %vega
-      +>.$::
+      +>.$
+    ::
     ::  in response to memory pressure
     ::    [%trim p=@ud]
     ::
         %trim
-      ::TODO  consider %ruin-ing long-offline comets
       +>.$
     ::
     ::  watch private keys
@@ -751,12 +729,10 @@
   ++  subscribers-on-ship
     |=  =ship
     ^-  (set duct)
-    =/  specific-subs  (~(get ju ney.zim) ship)
-    =/  general-subs=(set duct)
-      ?:  ?=(?(%czar %king %duke) (clan:title ship))
-        nel.zim
-      ~
-    (~(uni in specific-subs) general-subs)
+    ::  union of general and ship-specific subs
+    ::
+    %-  ~(uni in nel.zim)
+    (~(get ju ney.zim) ship)
   ::
   ++  feed
     |_  ::  hen: subscription source
@@ -1012,7 +988,7 @@
 =|  lex=state-2
 |=  $:  ::  now: current time
         ::  eny: unique entropy
-        ::  ski: namespace resolver
+        ::  rof: namespace resolver
         ::
         now=@da
         eny=@uvJ

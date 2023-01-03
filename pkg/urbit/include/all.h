@@ -1,7 +1,3 @@
-/* include/all.h
-**
-** This file is in the public domain.
-*/
 #   include "config.h"
   /** c3: C environment.
   **/
@@ -15,7 +11,6 @@
 #   include "noun/aliases.h"   //  general u3
 
 #   include "noun/allocate.h"  //  u3a: allocation
-#   include "noun/events.h"    //  u3e: persistence
 #   include "noun/hashtable.h" //  u3h: hashtables
 #   include "noun/imprison.h"  //  u3i: noun construction
 #   include "noun/jets.h"      //  u3j: jet control

@@ -4,6 +4,7 @@ import { Poke } from '../lib/types';
 import {
   HarkBin,
   HarkBinId,
+  HarkBody,
   HarkLid,
   HarkPlace
 } from './types';
@@ -56,6 +57,14 @@ export const setWatchOnSelf = (watchSelf: boolean): Poke<unknown> =>
 export const setDoNotDisturb = (dnd: boolean): Poke<unknown> =>
   harkAction({
     'set-dnd': dnd
+  });
+
+export const addNote = (bin: HarkBin, body: HarkBody) => 
+  harkAction({
+    'add-note': {
+      bin,
+      body
+    }
   });
 
 export const archive = (bin: HarkBin, lid: HarkLid): Poke<unknown> =>

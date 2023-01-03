@@ -1,6 +1,9 @@
 {
   "name": "root",
   "private": true,
+  "engines": {
+    "node": "16.14.0"
+  },
   "devDependencies": {
     "eslint": "^7.29.0",
     "husky": "^6.0.0",

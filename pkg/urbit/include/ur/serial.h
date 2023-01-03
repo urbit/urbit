@@ -108,4 +108,4 @@ ur_cue_test_with(ur_cue_test_t   *t,
 void
 ur_cue_test_done(ur_cue_test_t *t);
 
-#endif
+#endif /* ifndef UR_SERIAL_H */

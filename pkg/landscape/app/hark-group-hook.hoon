@@ -44,7 +44,7 @@
   ^-  (quip card _this)
   `this(state !<(state-0 old))
 ::
-++  on-watch  
+++  on-watch
   |=  =path
   ?.  ?=([%updates ~] path)
     (on-watch:def path)
@@ -148,7 +148,7 @@
   ::
   ++  add-unread
     |=  [=bin:store =body:store]
-    ^-  card 
+    ^-  card
     =-  [%pass / %agent [our.bowl %hark-store] %poke -]
     :-  %hark-action
     !>  ^-  action:store
@@ -188,7 +188,7 @@
   ::
       %remove-members
     :-  ~
-    :*  (snoc ships text+(rap 3 ' joined ' title.u.meta ~))
+    :*  (snoc ships text+(rap 3 ' left ' title.u.meta ~))
         ~
         now.bowl
         /

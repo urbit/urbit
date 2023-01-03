@@ -1,6 +1,6 @@
 import create, { SetState } from 'zustand';
 import produce from 'immer';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { omit, pick } from 'lodash';
 import {
   Allies,
@@ -27,7 +27,7 @@ import {
 import api from './api';
 import { mockAllies, mockCharges, mockTreaties } from './mock-data';
 import { fakeRequest, normalizeUrbitColor, useMockData } from './util';
-import { useAsyncCall } from '../logic/useAsyncCall';
+import { Status } from '../logic/useAsyncCall';
 
 export interface ChargeWithDesk extends Charge {
   desk: string;
@@ -269,17 +269,38 @@ export function useAllies() {
 
 export function useAllyTreaties(ship: string) {
   const allies = useAllies();
-  const { call: fetchTreaties, status } = useAsyncCall(() =>
-    useDocketState.getState().fetchAllyTreaties(ship)
-  );
+  const isAllied = ship in allies;
+  const [status, setStatus] = useState<Status>('initial');
+  const [treaties, setTreaties] = useState<Treaties>();
 
   useEffect(() => {
-    if (ship in allies) {
-      fetchTreaties();
+    if (Object.keys(allies).length > 0 && !isAllied) {
+      setStatus('loading');
+      useDocketState.getState().addAlly(ship);
     }
-  }, [ship, allies]);
+  }, [allies, isAllied, ship]);
 
-  const treaties = useDocketState(
+  useEffect(() => {
+    async function fetchTreaties() {
+      if (isAllied) {
+        setStatus('loading');
+        try {
+          const newTreaties = await useDocketState.getState().fetchAllyTreaties(ship);
+
+          if (Object.keys(newTreaties).length > 0) {
+            setTreaties(newTreaties);
+            setStatus('success');
+          }
+        } catch {
+          setStatus('error');
+        }
+      }
+    }
+
+    fetchTreaties();
+  }, [ship, isAllied]);
+
+  const storeTreaties = useDocketState(
     useCallback(
       (s) => {
         const charter = s.allies[ship];
@@ -289,7 +310,24 @@ export function useAllyTreaties(ship: string) {
     )
   );
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setStatus('error');
+    }, 30 * 1000); // wait 30 secs before timing out
+
+    if (Object.keys(storeTreaties).length > 0) {
+      setTreaties(storeTreaties);
+      setStatus('success');
+      clearTimeout(timeout);
+    }
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [storeTreaties]);
+
   return {
+    isAllied,
     treaties,
     status
   };

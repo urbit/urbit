@@ -1,8 +1,7 @@
 import { Button, Col, Icon, Label, Row, Text } from '@tlon/indigo-react';
-import { Association, deleteGroup, leaveGroup } from '@urbit/api';
+import { Association, deleteGroup, leaveGroup, resourceFromPath } from '@urbit/api';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { resourceFromPath } from '~/logic/lib/group';
 import { useModal } from '~/logic/lib/useModal';
 import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
 import airlock from '~/logic/api';

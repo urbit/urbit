@@ -161,6 +161,13 @@ class ChatWindow extends Component<
     }
   }
 
+  onTopLoaded = () => {
+    const { graphSize, unreadCount } = this.props;
+    if(graphSize >= unreadCount) {
+      this.props.dismissUnread();
+    }
+  };
+
   onBottomLoaded = () => {
     if(this.state.unreadIndex.eq(bigInt.zero)) {
       this.calculateUnreadIndex();
@@ -274,6 +281,7 @@ class ChatWindow extends Component<
           origin='bottom'
           style={virtScrollerStyle}
           onBottomLoaded={this.onBottomLoaded}
+          onTopLoaded={this.onTopLoaded}
           // @ts-ignore paging @liam-fitzgerald on virtualscroller props
           onScroll={this.onScroll}
           data={graph}

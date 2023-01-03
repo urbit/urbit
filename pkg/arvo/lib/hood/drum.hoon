@@ -112,7 +112,8 @@
 ::
 ++  de-gill                                           ::  gill from wire
   |=  way=wire  ^-  gill:gall
-  ?>(?=([@ @ ~] way) [(slav %p i.way) i.t.way])
+  ~|  way
+  ?>(?=([@ @ *] way) [(slav %p i.way) i.t.way])
 --
 ::
 |=  [hid=bowl:gall state]

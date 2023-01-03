@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import fuzzy from 'fuzzy';
 import { Treaty } from '@urbit/api';
 import { ShipName } from '../../components/ShipName';
-import useDocketState, { useAllyTreaties, useAllies } from '../../state/docket';
+import { useAllyTreaties } from '../../state/docket';
 import { useLeapStore } from '../Nav';
 import { AppList } from '../../components/AppList';
 import { addRecentDev } from './Home';
@@ -19,14 +19,12 @@ export const Apps = ({ match }: AppsProps) => {
   }));
   const provider = match?.params.ship;
   const { treaties, status } = useAllyTreaties(provider);
-  const allies = useAllies();
-  const isAllied = provider in allies;
 
   useEffect(() => {
-    if (Object.keys(allies).length > 0 && !isAllied) {
-      useDocketState.getState().addAlly(provider);
+    if (provider) {
+      addRecentDev(provider);
     }
-  }, [allies, isAllied, provider]);
+  }, [provider]);
 
   const results = useMemo(() => {
     if (!treaties) {
@@ -74,12 +72,8 @@ export const Apps = ({ match }: AppsProps) => {
     }
   }, [results]);
 
-  useEffect(() => {
-    if (provider) {
-      useDocketState.getState().fetchAllyTreaties(provider);
-      addRecentDev(provider);
-    }
-  }, [provider]);
+  const showNone =
+    status === 'error' || ((status === 'success' || status === 'initial') && results?.length === 0);
 
   return (
     <div className="dialog-inner-container md:px-6 md:py-8 h4 text-gray-400">
@@ -107,12 +101,11 @@ export const Apps = ({ match }: AppsProps) => {
           <p>That&apos;s it!</p>
         </>
       )}
-      {status === 'error' ||
-        ((status === 'success' || status === 'initial') && results?.length === 0 && (
-          <h2>
-            Unable to find software developed by <ShipName name={provider} className="font-mono" />
-          </h2>
-        ))}
+      {showNone && (
+        <h2>
+          Unable to find software developed by <ShipName name={provider} className="font-mono" />
+        </h2>
+      )}
     </div>
   );
 };

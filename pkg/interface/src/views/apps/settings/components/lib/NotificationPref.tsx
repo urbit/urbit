@@ -1,11 +1,10 @@
 import {
-  Button,
   Col,
   ManagedToggleSwitchField as Toggle, Text
 } from '@tlon/indigo-react';
 import { Form, FormikHelpers } from 'formik';
 import _ from 'lodash';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { isWatching } from '~/logic/lib/hark';
 import useHarkState from '~/logic/state/hark';
 import { FormikOnBlur } from '~/views/components/FormikOnBlur';
@@ -72,8 +71,6 @@ export function NotificationPreferences() {
     }
   }, [graphConfig, dnd]);
 
-  const [notificationsAllowed, setNotificationsAllowed] = useState('Notification' in window && Notification.permission !== 'default');
-
   return (
     <>
     <BackButton />
@@ -90,14 +87,6 @@ export function NotificationPreferences() {
       <FormikOnBlur initialValues={initialValues} onSubmit={onSubmit}>
         <Form>
           <Col gapY="4">
-            {notificationsAllowed || !('Notification' in window)
-              ? null
-              : <Button alignSelf='flex-start' onClick={() => {
-                Notification.requestPermission().then(() => {
-                  setNotificationsAllowed(Notification.permission !== 'default');
-                });
-              }}>Allow Browser Notifications</Button>
-            }
             <Toggle
               label="Do not disturb"
               id="dnd"

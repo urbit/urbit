@@ -190,6 +190,11 @@
     |%
     ++  pull-action  pull-hook-action+!>([%add ship rid])
     ::
+    ++  listen-hark
+      |=  gr=resource
+      %+  poke-our:pass:io  %hark-graph-hook
+      hark-graph-hook-action+!>([%listen gr /])
+    ::
     ++  watch-md      (watch-our:(jn-pass-io /md) %metadata-store /updates)
     ++  watch-groups  (watch-our:(jn-pass-io /groups) %group-store /groups)
     ++  watch-md-nacks  (watch-our:(jn-pass-io /md-nacks) %metadata-pull-hook /nack)
@@ -295,12 +300,14 @@
   ::
   ++  rollback
     |^
-    =/  =request:view  (~(got by joining) rid)
+    =/  =request:view     (~(got by joining) rid)
     ?+  progress.request  ~|(cannot-rollback/progress.request !!)
-      %start     start
-      %added     added
-      %metadata  metadata
+      %start                        start
+      %added                        added
+      %metadata                     metadata
+      ?(%no-perms %strange %abort)  error
     ==
+    ++  error   jn-core
     ++  start   jn-core
     ++  added   (emit del-us:pass)
     ++  metadata  (emit:added remove-pull-groups:pass)
@@ -434,6 +441,9 @@
       =?  jn-core  |(hidden autojoin.request)
         %-  emit-many
         (turn graphs pull-gra:pass)
+      =?  jn-core  hidden
+        %-  emit-many
+        (turn graphs listen-hark:pass)
       jn-core
       ::
       ++  feed-rid

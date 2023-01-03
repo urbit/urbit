@@ -13,6 +13,7 @@ import {
 } from 'formik';
 import React, { useEffect, useMemo } from 'react';
 import * as Yup from 'yup';
+import useSettingsState from '~/logic/state/settings';
 import { ShipImage } from './ShipImage';
 
 interface FormSchema {
@@ -35,6 +36,7 @@ interface CommentInputProps {
 const SubmitTextArea = (props) => {
   const { submitForm } = useFormikContext<FormSchema>();
   const [field] = useField(props.id);
+  const disableSpellcheck = useSettingsState(s => s.calm.disableSpellcheck);
   const onKeyDown = (e: KeyboardEvent) => {
     if ((e.getModifierState('Control') || e.metaKey) && e.key === 'Enter') {
       submitForm();
@@ -50,6 +52,7 @@ const SubmitTextArea = (props) => {
       fontWeight="500"
       fontSize="1"
       flexGrow={1}
+      spellCheck={!disableSpellcheck}
       style={{ resize: 'vertical' }}
       {...field}
       onKeyDown={onKeyDown}

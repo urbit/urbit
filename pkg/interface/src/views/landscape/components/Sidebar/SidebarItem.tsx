@@ -221,7 +221,6 @@ export const SidebarAssociationItem = React.memo(
       mod = association.metadata.config.graph;
     }
     const pending = useGroupState(s => association.group in s.pendingJoin);
-    console.log(pending);
     const rid = association?.resource;
     const { hideNicknames } = useSettingsState((s) => s.calm);
     const contacts = useContactState((s) => s.contacts);

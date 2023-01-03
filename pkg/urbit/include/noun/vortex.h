@@ -1,7 +1,6 @@
-/* include/g/v.h
-**
-** This file is in the public domain.
-*/
+#ifndef U3_VORTEX_H
+#define U3_VORTEX_H
+
   /**  Data structures.
   **/
     /* u3v_arvo: modern arvo structure.
@@ -68,15 +67,30 @@
       void
       u3v_time(u3_noun now);
 
+    /* u3v_lily(): parse little atom.
+    */
+      c3_o
+      u3v_lily(u3_noun fot, u3_noun txt, c3_l* tid_l);
+
     /* u3v_peek(): query the reck namespace.
     */
       u3_noun
       u3v_peek(u3_noun hap);
 
+    /* u3v_soft_peek(): softly query the reck namespace.
+    */
+      u3_noun
+      u3v_soft_peek(c3_w mil_w, u3_noun sam);
+
     /* u3v_poke(): insert and apply an input ovum (protected).
     */
       u3_noun
       u3v_poke(u3_noun ovo);
+
+    /* u3v_poke_sure(): inject an event, saving new state if successful.
+    */
+      c3_o
+      u3v_poke_sure(c3_w mil_w, u3_noun eve, u3_noun* pro);
 
     /* u3v_tank(): dump single tank.
     */
@@ -112,3 +126,5 @@
     */
       void
       u3v_rewrite_compact();
+
+#endif /* ifndef U3_VORTEX_H */

@@ -38,6 +38,7 @@
           $>  $?  %merg                                 ::  merge desks
                   %perm                                 ::  change permissions
                   %warp                                 ::  wait for clay hack
+                  %zest                                 ::
               ==                                        ::
           task:clay                                     ::
       ==                                                ::
@@ -50,10 +51,7 @@
           task:dill                                     ::
       ==                                                ::
       $:  %g                                            ::
-          $>  $?  %jolt                                 ::
-                  %deal                                 ::
-              ==                                        ::
-          task:gall                                     ::
+          $>(%deal task:gall)                           ::
       ==                                                ::
       $:  %j                                            ::
           $>  $?  %dawn                                 ::
@@ -199,6 +197,7 @@
         ^+  .
         =/  myt  (flop (fall tem ~))
         =.  tem  ~
+        =.  ..mere  (pass /zest %c %zest %base %live)
         =.  ..mere  (show-desk %kids)
         =.  ..mere  (open ~)
         |-  ^+  ..mere
@@ -239,14 +238,6 @@
       ++  show-desk                                     ::  permit reads on desk
         |=  des=desk
         (pass /show [%c %perm des / r+`[%black ~]])
-      ::
-      ++  kiln-install
-        |=  [loc=desk =ship rem=desk]
-        (deal /install %poke %kiln-install !>([loc ship rem]))
-      ::
-      ++  kiln-sync
-        |=  [loc=desk =ship rem=desk]
-        (deal /sync %poke %kiln-sync !>([loc ship rem]))
       ::
       ++  take                                          ::  receive
         |=  [tea=wire sih=sign]

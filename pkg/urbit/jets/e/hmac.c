@@ -17,13 +17,17 @@
   {
     c3_assert(_(u3a_is_cat(boq)) && _(u3a_is_cat(wik)) && _(u3a_is_cat(wid)));
 
+    // prep the hashing gate
+    u3j_site sit_u;
+    u3j_gate_prep(&sit_u, u3k(haj));
+
     // ensure key and message fit signaled lengths
     key = u3qc_end(3, wik, key);
     dat = u3qc_end(3, wid, dat);
 
     // keys longer than block size are shortened by hashing
     if (wik > boq) {
-      key = u3n_slam_on(u3k(haj), u3nc(wik, key));
+      key = u3j_gate_slam(&sit_u, u3nc(wik, key));
       wik = out;
     }
 
@@ -47,12 +51,13 @@
 
     // append inner padding to message, then hash
     u3_atom innmsg = u3ka_add(u3kc_lsh(3, wid, innkey), dat);
-    u3_atom innhaj = u3n_slam_on(u3k(haj), u3nc((wid + boq), innmsg));
+    u3_atom innhaj = u3j_gate_slam(&sit_u, u3nc((wid + boq), innmsg));
 
     // prepend outer padding to result, hash again
     u3_atom outmsg = u3ka_add(u3kc_lsh(3, out, outkey), innhaj);
-    u3_atom outhaj = u3n_slam_on(u3k(haj), u3nc((out + boq), outmsg));
+    u3_atom outhaj = u3j_gate_slam(&sit_u, u3nc((out + boq), outmsg));
 
+    u3j_gate_lose(&sit_u);
     return outhaj;
   }
 

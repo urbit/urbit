@@ -40,8 +40,9 @@ export function MentionText(props: MentionTextProps) {
 export function Mention(props: {
   ship: string;
   first?: boolean;
+  emphasis?: 'bold' | 'italic';
 } & PropFunc<typeof Text>) {
-  const { ship, first = false, ...rest } = props;
+  const { ship, first = false, emphasis, ...rest } = props;
   const contact = useContact(`~${deSig(ship)}`);
   const showNickname = useShowNickname(contact);
   const name = showNickname ? contact?.nickname : cite(ship);
@@ -51,8 +52,10 @@ export function Mention(props: {
         marginLeft={first? 0 : 1}
         marginRight={1}
         px={1}
+        bold={emphasis === 'bold' ? true : false}
         bg='washedBlue'
         color='blue'
+        fontStyle={emphasis === 'italic' ? 'italic' : undefined}
         fontSize={showNickname ? 1 : 0}
         mono={!showNickname}
         title={showNickname ? cite(ship) : contact?.nickname}

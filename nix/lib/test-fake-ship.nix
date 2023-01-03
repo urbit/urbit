@@ -1,16 +1,16 @@
-{ lib, stdenvNoCC, cacert, python3, bootFakeShip }:
+{ lib, stdenvNoCC, curl, python3, bootFakeShip }:
 
-{ urbit, herb, arvo ? null, pill, ship ? "bus", arguments ? urbit.meta.arguments
+{ urbit, arvo ? null, pill, ship ? "bus", arguments ? urbit.meta.arguments
 , doCheck ? true }:
 
 stdenvNoCC.mkDerivation {
   name = "test-${ship}";
 
-  src = bootFakeShip { inherit urbit herb arvo pill ship; };
+  src = bootFakeShip { inherit urbit arvo pill ship; };
 
   phases = [ "unpackPhase" "buildPhase" "checkPhase" ];
 
-  buildInputs = [ cacert urbit herb python3 ];
+  buildInputs = [ curl python3 urbit ];
 
   unpackPhase = ''
     cp -R $src ./pier
@@ -25,6 +25,22 @@ stdenvNoCC.mkDerivation {
     # Sledge Hammer!
     # See: https://github.com/travis-ci/travis-ci/issues/4704#issuecomment-348435959
     python3 -c $'import os\n[os.set_blocking(i, True) for i in range(3)]\n'
+
+    port=$(cat ./pier/.http.ports | grep loopback | tr -s ' ' '\n' | head -n 1)
+
+    lensd() {
+      # -f elided, this can hit server-side timeouts
+      curl -s                                                              \
+        --data "{\"source\":{\"dojo\":\"$1\"},\"sink\":{\"stdout\":null}}" \
+        "http://localhost:$port" | xargs printf %s | sed 's/\\n/\n/g'
+    }
+
+    lensa() {
+      # -f elided, this can hit server-side timeouts
+      curl -s                                                              \
+        --data "{\"source\":{\"dojo\":\"$2\"},\"sink\":{\"app\":\"$1\"}}"  \
+        "http://localhost:$port" | xargs printf %s | sed 's/\\n/\n/g'
+    }
 
     tail -F urbit-output >&2 &
 
@@ -41,69 +57,69 @@ stdenvNoCC.mkDerivation {
 
     #  measure initial memory usage
     #
-    herb ./pier -d '~&  ~  ~&  %init-mass-start  ~'
-    herb ./pier -p hood -d '+hood/mass'
-    herb ./pier -d '~&  ~  ~&  %init-mass-end  ~'
+    lensd '~&  ~  ~&  %init-mass-start  ~'
+    lensa hood '+hood/mass'
+    lensd '~&  ~  ~&  %init-mass-end  ~'
 
     #  run the unit tests
     #
-    herb ./pier -d '~&  ~  ~&  %test-unit-start  ~'
-    herb ./pier -d '####-test %/tests ~'
-    herb ./pier -d '~&  ~  ~&  %test-unit-end  ~'
+    lensd '~&  ~  ~&  %test-unit-start  ~'
+    lensd '-test %/tests ~'
+    lensd '~&  ~  ~&  %test-unit-end  ~'
 
     #  use the :test app to build all agents, generators, and marks
     #
-    herb ./pier -p hood -d '+hood/start %test'
+    lensa hood '+hood/start %test'
 
-    herb ./pier -d '~&  ~  ~&  %test-agents-start  ~'
-    herb ./pier -p test -d '%agents'
-    herb ./pier -d '~&  ~  ~&  %test-agents-end  ~'
+    lensd '~&  ~  ~&  %test-agents-start  ~'
+    lensa test '%agents'
+    lensd '~&  ~  ~&  %test-agents-end  ~'
 
-    herb ./pier -d '~&  ~  ~&  %test-generators-start  ~'
-    herb ./pier -p test -d '%generators'
-    herb ./pier -d '~&  ~  ~&  %test-generators-end  ~'
+    lensd '~&  ~  ~&  %test-generators-start  ~'
+    lensa test '%generators'
+    lensd '~&  ~  ~&  %test-generators-end  ~'
 
-    herb ./pier -d '~&  ~  ~&  %test-marks-start  ~'
-    herb ./pier -p test -d '%marks'
-    herb ./pier -d '~&  ~  ~&  %test-marks-end  ~'
+    lensd '~&  ~  ~&  %test-marks-start  ~'
+    lensa test '%marks'
+    lensd '~&  ~  ~&  %test-marks-end  ~'
 
     #  measure memory usage post tests
     #
-    herb ./pier -d '~&  ~  ~&  %test-mass-start  ~'
-    herb ./pier -p hood -d '+hood/mass'
-    herb ./pier -d '~&  ~  ~&  %test-mass-end  ~'
+    lensd '~&  ~  ~&  %test-mass-start  ~'
+    lensa hood '+hood/mass'
+    lensd '~&  ~  ~&  %test-mass-end  ~'
 
     #  defragment the loom
     #
-    herb ./pier -d '~&  ~  ~&  %pack-start  ~'
-    herb ./pier -p hood -d '+hood/pack'
-    herb ./pier -d '~&  ~  ~&  %pack-end  ~'
+    lensd '~&  ~  ~&  %pack-start  ~'
+    lensa hood '+hood/pack'
+    lensd '~&  ~  ~&  %pack-end  ~'
 
     #  reclaim space within arvo
     #
-    herb ./pier -d '~&  ~  ~&  %trim-start  ~'
-    herb ./pier -p hood -d '+hood/trim'
-    herb ./pier -d '~&  ~  ~&  %trim-end  ~'
+    lensd '~&  ~  ~&  %trim-start  ~'
+    lensa hood '+hood/trim'
+    lensd '~&  ~  ~&  %trim-end  ~'
 
     #  measure memory usage pre |meld
     #
-    herb ./pier -d '~&  ~  ~&  %trim-mass-start  ~'
-    herb ./pier -p hood -d '+hood/mass'
-    herb ./pier -d '~&  ~  ~&  %trim-mass-end  ~'
+    lensd '~&  ~  ~&  %trim-mass-start  ~'
+    lensa hood '+hood/mass'
+    lensd '~&  ~  ~&  %trim-mass-end  ~'
 
     #  globally deduplicate
     #
-    herb ./pier -d '~&  ~  ~&  %meld-start  ~'
-    herb ./pier -p hood -d '+hood/meld'
-    herb ./pier -d '~&  ~  ~&  %meld-end  ~'
+    lensd '~&  ~  ~&  %meld-start  ~'
+    lensa hood '+hood/meld'
+    lensd '~&  ~  ~&  %meld-end  ~'
 
     #  measure memory usage post |meld
     #
-    herb ./pier -d '~&  ~  ~&  %meld-mass-start  ~'
-    herb ./pier -p hood -d '+hood/mass'
-    herb ./pier -d '~&  ~  ~&  %meld-mass-end  ~'
+    lensd '~&  ~  ~&  %meld-mass-start  ~'
+    lensa hood '+hood/mass'
+    lensd '~&  ~  ~&  %meld-mass-end  ~'
 
-    herb ./pier -p hood -d '+hood/exit'
+    lensa hood '+hood/exit'
 
     cleanup
 
@@ -128,6 +144,8 @@ stdenvNoCC.mkDerivation {
     mkdir -p $out
 
     cp test-output-* $out/
+
+    set +x
   '';
 
   checkPhase = ''
@@ -145,7 +163,7 @@ stdenvNoCC.mkDerivation {
     fail=0
 
     for f in $(find "$out/" -type f); do
-      if egrep "((FAILED|CRASHED)|(ford|warn):) " $f >/dev/null; then
+      if egrep "((FAILED|CRASHED)|warn:) " $f >/dev/null; then
         if [[ $fail -eq 0 ]]; then
           hdr "Test Failures"
         fi
@@ -168,6 +186,4 @@ stdenvNoCC.mkDerivation {
   # Fix 'bind: operation not permitted' when nix.useSandbox = true on darwin.
   # See https://github.com/NixOS/nix/blob/5f6840fbb49ae5b534423bd8a4360646ee93dbaf/src/libstore/build.cc#L2961
   __darwinAllowLocalNetworking = true;
-
-  meta = { platforms = [ "x86_64-linux" ]; };
 }

@@ -1,10 +1,9 @@
 import { Col } from '@tlon/indigo-react';
-import { deSig, markCountAsRead } from '@urbit/api';
+import { deSig, markCountAsRead, resourceFromPath } from '@urbit/api';
 import React, {
   useEffect
 } from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
-import { resourceFromPath } from '~/logic/lib/group';
 import useGraphState from '~/logic/state/graph';
 import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';

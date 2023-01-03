@@ -2,6 +2,7 @@
 **
 */
 #include "all.h"
+#include "noun/events.h"
 #include "ur/ur.h"
 #include <errno.h>
 #include <fcntl.h>
@@ -416,10 +417,6 @@ _cu_realloc(FILE* fil_u, ur_root_t** tor_u, ur_nvec_t* doc_u)
   //
   u3A->eve_d = eve_d;
 
-  //  mark all pages dirty
-  //
-  u3e_foul();
-
   *tor_u = rot_u;
   *doc_u = cod_u;
 
@@ -429,15 +426,17 @@ _cu_realloc(FILE* fil_u, ur_root_t** tor_u, ur_nvec_t* doc_u)
 /* u3u_meld(): globally deduplicate memory.
 */
 #ifdef U3_MEMORY_DEBUG
-void
+c3_w
 u3u_meld(void)
 {
   fprintf(stderr, "u3: unable to meld under U3_MEMORY_DEBUG\r\n");
+  return 0;
 }
 #else
-void
+c3_w
 u3u_meld(void)
 {
+  c3_w       pre_w = u3a_open(u3R);
   ur_root_t* rot_u;
   ur_nvec_t  cod_u;
 
@@ -449,6 +448,8 @@ u3u_meld(void)
   //
   ur_nvec_free(&cod_u);
   ur_root_free(rot_u);
+
+  return (u3a_open(u3R) - pre_w);
 }
 #endif
 
@@ -509,7 +510,7 @@ _cu_rock_path_make(c3_c* dir_c, c3_d eve_d, c3_c** out_c)
       return c3n;
     }
 
-    if (  mkdir(nam_c, 0700)
+    if (  c3_mkdir(nam_c, 0700)
        && (EEXIST != errno) )
     {
       fprintf(stderr, "rock: directory create failed (%s, %" PRIu64 "): %s\r\n",
@@ -552,8 +553,8 @@ _cu_rock_save(c3_c* dir_c, c3_d eve_d, c3_d len_d, c3_y* byt_y)
       return c3n;
     }
 
-    if ( -1 == (fid_i = open(nam_c, O_RDWR | O_CREAT | O_TRUNC, 0644)) ) {
-      fprintf(stderr, "rock: open failed (%s, %" PRIu64 "): %s\r\n",
+    if ( -1 == (fid_i = c3_open(nam_c, O_RDWR | O_CREAT | O_TRUNC, 0644)) ) {
+      fprintf(stderr, "rock: c3_open failed (%s, %" PRIu64 "): %s\r\n",
                       dir_c, eve_d, strerror(errno));
       c3_free(nam_c);
       return c3n;
@@ -564,56 +565,14 @@ _cu_rock_save(c3_c* dir_c, c3_d eve_d, c3_d len_d, c3_y* byt_y)
 
   //  write jam-buffer into [fid_i]
   //
-  //    XX deduplicate with _write() wrapper in term.c
-  //
-  {
-    ssize_t ret_i;
-
-    while ( len_d > 0 ) {
-      c3_w lop_w = 0;
-      //  retry interrupt/async errors
-      //
-      do {
-        //  abort pathological retry loop
-        //
-        if ( 100 == ++lop_w ) {
-          fprintf(stderr, "rock: write loop: %s\r\n", strerror(errno));
-          close(fid_i);
-          //  XX unlink file?
-          //
-          return c3n;
-        }
-
-        ret_i = write(fid_i, byt_y, len_d);
-      }
-      while (  (ret_i < 0)
-            && (  (errno == EINTR)
-               || (errno == EAGAIN)
-               || (errno == EWOULDBLOCK) ));
-
-      //  assert on true errors
-      //
-      //    NB: can't call u3l_log here or we would re-enter _write()
-      //
-      if ( ret_i < 0 ) {
-        fprintf(stderr, "rock: write failed %s\r\n", strerror(errno));
-        close(fid_i);
-        //  XX unlink file?
-        //
-        return c3n;
-      }
-      //  continue partial writes
-      //
-      else {
-        len_d -= ret_i;
-        byt_y += ret_i;
-      }
-    }
+  ssize_t rit_i = c3_pwrite(fid_i, byt_y, len_d, 0);
+  if ( rit_i < 0 ) {
+    fprintf(stderr, "rock: write failed: %s\r\n", strerror(errno));
   }
 
   close(fid_i);
 
-  return c3y;
+  return rit_i < 0 ? c3n : c3y;
 }
 
 /* u3u_cram(): globably deduplicate memory, and write a rock to disk.
@@ -691,8 +650,8 @@ u3u_mmap_read(c3_c* cap_c, c3_c* pat_c, c3_d* out_d, c3_y** out_y)
 
   //  open file
   //
-  if ( -1 == (fid_i = open(pat_c, O_RDONLY, 0644)) ) {
-    fprintf(stderr, "%s: open failed (%s): %s\r\n",
+  if ( -1 == (fid_i = c3_open(pat_c, O_RDONLY, 0644)) ) {
+    fprintf(stderr, "%s: c3_open failed (%s): %s\r\n",
                     cap_c, pat_c, strerror(errno));
     return c3n;
   }
@@ -744,8 +703,8 @@ u3u_mmap(c3_c* cap_c, c3_c* pat_c, c3_d len_d, c3_y** out_y)
 
   //  open file
   //
-  if ( -1 == (fid_i = open(pat_c, O_RDWR | O_CREAT | O_TRUNC, 0644)) ) {
-    fprintf(stderr, "%s: open failed (%s): %s\r\n",
+  if ( -1 == (fid_i = c3_open(pat_c, O_RDWR | O_CREAT | O_TRUNC, 0644)) ) {
+    fprintf(stderr, "%s: c3_open failed (%s): %s\r\n",
                     cap_c, pat_c, strerror(errno));
     return c3n;
   }
@@ -889,13 +848,9 @@ u3u_uncram(c3_c* dir_c, c3_d eve_d)
   //
   u3A->eve_d = eve_d;
 
-  //  mark all pages dirty
-  //
-  u3e_foul();
-
   //  leave rocks on disk
   //
-  // if ( 0 != unlink(nam_c) ) {
+  // if ( 0 != c3_unlink(nam_c) ) {
   //   fprintf(stderr, "uncram: failed to delete rock (%s, %" PRIu64 "): %s\r\n",
   //                   dir_c, eve_d, strerror(errno));
   //   c3_free(nam_c);
