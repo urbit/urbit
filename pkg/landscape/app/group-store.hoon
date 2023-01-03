@@ -242,19 +242,22 @@
   =.  wait
     put-missing
   =^  cards  state
-    watch-missing
+    rewatch
   [cards state]
   ::
-  ++  watch-missing
+  ++  rewatch
     =/  wait  ~(tap in wait)
     =|  cards=(list card)
     |-
     ?~  wait
       [cards state]
-    ?:  (~(has by wex.bol) [/gladio/(scot %p i.wait) i.wait dap.bol])
-      $(wait t.wait)
+    =/  wir  /gladio/(scot %p i.wait)
     =.  cards
       :_(cards (watch-init-migrate i.wait))
+    ::  if we have a subscription already, leave first to restart
+    =?  cards
+      (~(has by wex.bol) [wir i.wait dap.bol])
+    :_(cards [%pass wir %agent [our.bol dap.bol] %leave ~])
     $(wait t.wait)
   ::
   ++  put-missing
