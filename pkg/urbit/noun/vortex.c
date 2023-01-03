@@ -208,7 +208,7 @@ u3v_lily(u3_noun fot, u3_noun txt, c3_l* tid_l)
        (c3n == u3r_safe_word(q_uco, &wad_w)) ||
        (wad_w & 0x80000000) )
   {
-    u3l_log("strange lily %s\n", u3r_string(txt));
+    u3l_log("strange lily %s", u3r_string(txt));
     u3z(txt); u3z(uco); return c3n;
   }
   else {

@@ -1512,7 +1512,7 @@ _http_serv_start_err(const c3_c* cap_c, u3_http* htp_u, c3_i sas_i)
   u3_pier* pir_u = htp_u->htd_u->car_u.pir_u;
 
   if ( UV_EADDRNOTAVAIL == sas_i ) {
-    u3l_log("http: unavailable ip address %s\r\n", u3_Host.ops_u.bin_c);
+    u3l_log("http: unavailable ip address %s", u3_Host.ops_u.bin_c);
     u3_king_bail();
     return 0;
   }
@@ -1520,7 +1520,7 @@ _http_serv_start_err(const c3_c* cap_c, u3_http* htp_u, c3_i sas_i)
   //  ports specified, no incrementing/retry
   //
   if ( c3y == htp_u->dis ) {
-    u3l_log("http: %s (%" PRIu16 "): %s\n",
+    u3l_log("http: %s (%" PRIu16 "): %s",
             cap_c, htp_u->por_s, uv_strerror(sas_i));
     u3_king_bail();
     return 0;
@@ -1554,7 +1554,7 @@ _http_serv_start_err(const c3_c* cap_c, u3_http* htp_u, c3_i sas_i)
 
   //  total failure XX bail?
   //
-  u3l_log("http: %s: %s\n", cap_c, uv_strerror(sas_i));
+  u3l_log("http: %s: %s", cap_c, uv_strerror(sas_i));
   _http_serv_free(htp_u);
   return 0;
 }

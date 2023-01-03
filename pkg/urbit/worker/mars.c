@@ -128,15 +128,15 @@ _mars_do_boot(u3_disk* log_u, c3_d eve_d)
     return c3n;
   }
 
-  u3l_log("--------------- bootstrap starting ----------------\r\n");
+  u3l_log("--------------- bootstrap starting ----------------");
 
-  u3l_log("boot: 1-%u\r\n", u3qb_lent(eve));
+  u3l_log("boot: 1-%u", u3qb_lent(eve));
 
   if ( c3n == u3v_boot(eve) ) {
     return c3n;
   }
 
-  u3l_log("--------------- bootstrap complete ----------------\r\n");
+  u3l_log("--------------- bootstrap complete ----------------");
   return c3y;
 }
 
@@ -151,8 +151,8 @@ u3_mars_play(u3_mars* mar_u, c3_d eve_d)
     eve_d = log_u->dun_d;
   }
   else if ( eve_d <= mar_u->dun_d ) {
-    u3l_log("mars: already computed %" PRIu64 "\r\n", eve_d);
-    u3l_log("      state=%" PRIu64 ", log=%" PRIu64 "\r\n",
+    u3l_log("mars: already computed %" PRIu64, eve_d);
+    u3l_log("      state=%" PRIu64 ", log=%" PRIu64,
             mar_u->dun_d, log_u->dun_d);
     return;
   }
@@ -181,23 +181,23 @@ u3_mars_play(u3_mars* mar_u, c3_d eve_d)
   }
 
   if ( mar_u->dun_d == log_u->dun_d ) {
-    u3l_log("mars: nothing to do!\r\n");
+    u3l_log("mars: nothing to do!");
     return;
   }
 
-  u3l_log("---------------- playback starting ----------------\r\n");
+  u3l_log("---------------- playback starting ----------------");
 
   if ( (1ULL + eve_d) == log_u->dun_d ) {
-    u3l_log("play: event %" PRIu64 "\r\n", log_u->dun_d);
+    u3l_log("play: event %" PRIu64, log_u->dun_d);
   }
   else if ( eve_d != log_u->dun_d ) {
-    u3l_log("play: events %" PRIu64 "-%" PRIu64 " of %" PRIu64 "\r\n",
+    u3l_log("play: events %" PRIu64 "-%" PRIu64 " of %" PRIu64,
             (c3_d)(1ULL + mar_u->dun_d),
             eve_d,
             log_u->dun_d);
   }
   else {
-    u3l_log("play: events %" PRIu64 "-%" PRIu64 "\r\n",
+    u3l_log("play: events %" PRIu64 "-%" PRIu64,
             (c3_d)(1ULL + mar_u->dun_d),
             eve_d);
   }
@@ -213,7 +213,7 @@ u3_mars_play(u3_mars* mar_u, c3_d eve_d)
       //
       switch ( _mars_play_batch(mar_u, c3y, 1024) ) {
         case _play_yes_e: {
-          u3l_log("play (%" PRIu64 "): done\r\n", mar_u->dun_d);
+          u3l_log("play (%" PRIu64 "): done", mar_u->dun_d);
           u3m_reclaim();
 
           //  XX save a snapshot every N events?
@@ -262,6 +262,6 @@ u3_mars_play(u3_mars* mar_u, c3_d eve_d)
     }
   }
 
-  u3l_log("---------------- playback complete ----------------\r\n");
+  u3l_log("---------------- playback complete ----------------");
   u3m_save();
 }

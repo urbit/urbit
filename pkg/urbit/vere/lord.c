@@ -1056,7 +1056,7 @@ _lord_on_serf_err_cb(uv_stream_t* pyp_u,
     uv_read_stop(pyp_u);
 
     if ( siz_i != UV_EOF ) {
-      u3l_log("lord: serf stderr: %s\r\n", uv_strerror(siz_i));
+      u3l_log("lord: serf stderr: %s", uv_strerror(siz_i));
     }
   }
 

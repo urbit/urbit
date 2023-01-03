@@ -726,7 +726,7 @@ _ames_ef_send(u3_ames* sam_u, u3_noun lan, u3_noun pac)
     //
     else if ( 0 == lan_u.por_s ) {
       if ( u3C.wag_w & u3o_verbose ) {
-        u3l_log("ames: inscrutable lane\n");
+        u3l_log("ames: inscrutable lane");
       }
       _ames_pact_free(pac_u);
     }
@@ -1535,7 +1535,7 @@ _ames_io_slog(u3_auto* car_u)
   u3l_log("          filtered (mug): %" PRIu64, sam_u->sat_u.mut_d);
   u3l_log("          filtered (bod): %" PRIu64, sam_u->sat_u.bod_d);
   u3l_log("                 crashed: %" PRIu64, sam_u->sat_u.fal_d);
-  u3l_log("            cached lanes: %u\n", u3h_wyt(sam_u->lax_p));
+  u3l_log("            cached lanes: %u", u3h_wyt(sam_u->lax_p));
 }
 
 /* u3_ames_io_init(): initialize ames I/O.

@@ -504,7 +504,7 @@ _pier_on_scry_done(void* ptr_v, u3_noun nun)
         ext_c = "txt";
       }
       else {
-        u3l_log("pier: cannot export cell as %s\n", u3_Host.ops_u.puf_c);
+        u3l_log("pier: cannot export cell as %s", u3_Host.ops_u.puf_c);
         out   = u3_none;
       }
       u3z(puf);

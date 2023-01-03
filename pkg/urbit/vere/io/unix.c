@@ -293,7 +293,7 @@ _unix_mkdirp(c3_c* pax_c)
   while ( fas_c ) {
     *fas_c = 0;
     if ( 0 != mkdir(pax_c, 0777) && EEXIST != errno ) {
-      u3l_log("unix: mkdir %s: %s\n", pax_c, strerror(errno));
+      u3l_log("unix: mkdir %s: %s", pax_c, strerror(errno));
       u3m_bail(c3__fail);
     }
     *fas_c++ = '/';
@@ -318,7 +318,7 @@ u3_unix_save(c3_c* pax_c, u3_atom pad)
   c3_c* ful_c;
 
   if ( !u3_unix_cane(pax_c) ) {
-    u3l_log("%s: non-canonical path\n", pax_c);
+    u3l_log("%s: non-canonical path", pax_c);
     u3z(pad); u3m_bail(c3__fail);
   }
   if ( '/' == *pax_c) {
@@ -333,7 +333,7 @@ u3_unix_save(c3_c* pax_c, u3_atom pad)
   _unix_mkdirp(ful_c);
   fid_i = c3_open(ful_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
   if ( fid_i < 0 ) {
-    u3l_log("%s: %s\n", ful_c, strerror(errno));
+    u3l_log("%s: %s", ful_c, strerror(errno));
     c3_free(ful_c);
     u3z(pad); u3m_bail(c3__fail);
   }
@@ -347,7 +347,7 @@ u3_unix_save(c3_c* pax_c, u3_atom pad)
   c3_free(pad_y);
 
   if ( rit_i < 0 ) {
-    u3l_log("%s: %s\n", ful_c, strerror(errno));
+    u3l_log("%s: %s", ful_c, strerror(errno));
     c3_free(ful_c);
     u3m_bail(c3__fail);
   }

@@ -434,7 +434,7 @@ u3m_signal(u3_noun sig_l)
 u3_noun
 u3m_file(c3_c* pas_c)
 {
-  u3l_log("Loading file: %s\r\n", pas_c);
+  u3l_log("Loading file: %s", pas_c);
   struct stat buf_b;
   c3_i        fid_i = c3_open(pas_c, O_RDONLY, 0644);
   c3_w        fln_w;
@@ -445,7 +445,7 @@ u3m_file(c3_c* pas_c)
     return u3m_bail(c3__fail);
   }
   fln_w = buf_b.st_size;
-  //u3l_log("file size: %i\r\n", fln_w);
+  //u3l_log("file size: %i", fln_w);
 
   pad_y = c3_malloc(buf_b.st_size);
 
@@ -460,7 +460,7 @@ u3m_file(c3_c* pas_c)
     u3_noun pad = u3i_bytes(fln_w, (c3_y *)pad_y);
     c3_free(pad_y);
 
-    //u3l_log("size of noun\r\n");
+    //u3l_log("size of noun");
     //u3m_p("size", u3dc("met", 3, u3k(pad)));
 
     return pad;
@@ -1875,7 +1875,7 @@ _cm_crypto()
   if ( 0 == CRYPTO_set_mem_functions(&_cm_malloc_ssl,
                                      &_cm_realloc_ssl,
                                      &_cm_free_ssl) ) {
-    u3l_log("%s\r\n", "openssl initialization failed");
+    u3l_log("%s", "openssl initialization failed");
     abort();
   }
 
@@ -1918,7 +1918,7 @@ u3m_init(size_t len_i)
      || (len_i < (1 << (u3a_page + 2)))
      || (len_i > u3a_bytes) )
   {
-    u3l_log("loom: bad size: %zu\r\n", len_i);
+    u3l_log("loom: bad size: %zu", len_i);
     exit(1);
   }
 
