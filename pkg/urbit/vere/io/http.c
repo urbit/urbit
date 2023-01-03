@@ -640,10 +640,10 @@ _http_start_respond(u3_hreq* req_u,
                     u3_noun data,
                     u3_noun complete)
 {
-  // u3l_log("start");
+  // u3l_log("start\r\n");
 
   if ( u3_rsat_plan != req_u->sat_e ) {
-    //u3l_log("duplicate response");
+    //u3l_log("duplicate response\r\n");
     return;
   }
 
@@ -724,14 +724,14 @@ _http_continue_respond(u3_hreq* req_u,
                        u3_noun data,
                        u3_noun complete)
 {
-  // u3l_log("continue");
+  // u3l_log("continue\r\n");
 
   // XX add sequence numbers for %continue effects?
   // Arvo does not (currently) guarantee effect idempotence!!
 
   // response has not yet been started
   if ( u3_rsat_ripe != req_u->sat_e ) {
-    // u3l_log("duplicate response");
+    // u3l_log("duplicate response\r\n");
     return;
   }
 
@@ -874,7 +874,7 @@ _http_seq_continue(void* vod_p, u3_noun nun)
       _http_start_respond(req_u, 403, u3_nul, u3_nul, c3y);
     }
     else if ( u3_none == aut ) {
-      u3l_log("http: authentication scry failed");
+      u3l_log("http: authentication scry failed\r\n");
       _http_start_respond(req_u, 500, u3_nul, u3_nul, c3y);
     }
     else {
@@ -1668,7 +1668,7 @@ _http_init_tls(uv_buf_t key_u, uv_buf_t cer_u)
     BIO_free(bio_u);
 
     if( 0 == sas_i ) {
-      u3l_log("http: load private key failed:");
+      u3l_log("http: load private key failed:\r\n");
       FILE* fil_u = u3_term_io_hija();
       ERR_print_errors_fp(fil_u);
       u3_term_io_loja(1, fil_u);
@@ -1687,7 +1687,7 @@ _http_init_tls(uv_buf_t key_u, uv_buf_t cer_u)
     X509_free(xer_u);
 
     if( 0 == sas_i ) {
-      u3l_log("http: load certificate failed:");
+      u3l_log("http: load certificate failed:\r\n");
       FILE* fil_u = u3_term_io_hija();
       ERR_print_errors_fp(fil_u);
       u3_term_io_loja(1,fil_u);
@@ -1896,7 +1896,7 @@ _http_serv_restart(u3_httd* htd_u)
     _http_serv_start_all(htd_u);
   }
   else {
-    u3l_log("http: restarting servers to apply configuration");
+    u3l_log("http: restarting servers to apply configuration\r\n");
 
     while ( 0 != htp_u ) {
       if ( c3y == htp_u->liv ) {
@@ -1948,7 +1948,7 @@ u3_http_ef_form(u3_httd* htd_u, u3_noun fig)
        !( c3y == pro || c3n == pro ) ||
        !( c3y == log || c3n == log ) ||
        !( c3y == red || c3n == red ) ) {
-    u3l_log("http: form: invalid card");
+    u3l_log("http: form: invalid card\r\n");
     u3z(fig);
     return;
   }
@@ -2043,14 +2043,14 @@ _http_ef_http_server(u3_httd* htd_u,
         _http_continue_respond(req_u, u3k(data), u3k(complete));
       }
       else if (c3y == u3r_sing_c("cancel", u3h(response))) {
-        u3l_log("http: %%cancel not handled yet");
+        u3l_log("http: %%cancel not handled yet\r\n");
       }
       else {
-        u3l_log("http: strange response");
+        u3l_log("http: strange response\r\n");
       }
     }
     else {
-      u3l_log("http: strange response");
+      u3l_log("http: strange response\r\n");
     }
   }
 

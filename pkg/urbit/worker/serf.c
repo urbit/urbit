@@ -112,7 +112,7 @@ _serf_grab(u3_noun sac)
 
     u3z(sac);
 
-    u3l_log("");
+    u3l_log("\r\n");
   }
 }
 
@@ -187,7 +187,7 @@ u3_serf_post(u3_serf* sef_u)
 
   if ( c3y == sef_u->pac_o ) {
     u3a_print_memory(stderr, "serf: pack: gained", u3m_pack());
-    u3l_log("");
+    u3l_log("\r\n");
     sef_u->pac_o = c3n;
   }
 }

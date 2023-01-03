@@ -169,7 +169,7 @@ u3qc_rep(u3_atom a,
     return _bit_rep(b, c);
   }
 
-  u3l_log("rep: stub");
+  u3l_log("rep: stub\r\n");
   return u3_none;
 }
 

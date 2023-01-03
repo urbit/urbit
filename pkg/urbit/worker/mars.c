@@ -128,7 +128,7 @@ _mars_do_boot(u3_disk* log_u, c3_d eve_d)
     return c3n;
   }
 
-  u3l_log("--------------- bootstrap starting ----------------");
+  u3l_log("--------------- bootstrap starting ----------------\r\n");
 
   u3l_log("boot: 1-%u", u3qb_lent(eve));
 
@@ -136,7 +136,7 @@ _mars_do_boot(u3_disk* log_u, c3_d eve_d)
     return c3n;
   }
 
-  u3l_log("--------------- bootstrap complete ----------------");
+  u3l_log("--------------- bootstrap complete ----------------\r\n");
   return c3y;
 }
 
@@ -181,11 +181,11 @@ u3_mars_play(u3_mars* mar_u, c3_d eve_d)
   }
 
   if ( mar_u->dun_d == log_u->dun_d ) {
-    u3l_log("mars: nothing to do!");
+    u3l_log("mars: nothing to do!\r\n");
     return;
   }
 
-  u3l_log("---------------- playback starting ----------------");
+  u3l_log("---------------- playback starting ----------------\r\n");
 
   if ( (1ULL + eve_d) == log_u->dun_d ) {
     u3l_log("play: event %" PRIu64, log_u->dun_d);
@@ -262,6 +262,6 @@ u3_mars_play(u3_mars* mar_u, c3_d eve_d)
     }
   }
 
-  u3l_log("---------------- playback complete ----------------");
+  u3l_log("---------------- playback complete ----------------\r\n");
   u3m_save();
 }

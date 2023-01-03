@@ -14,14 +14,14 @@ u3qe_jam(u3_atom a)
       siz_w = u3a_count_noun(u3h(som));
       tot_w += siz_w;
       if ( 0 == siz_w ) {
-        u3l_log("item: B/0");
+        u3l_log("item: B/0\r\n");
       }
       else {
         u3a_print_memory(stderr, "item", siz_w);
       }
     }
     if ( u3_blip != som ) {
-      u3l_log("forgot to terminate list!");
+      u3l_log("forgot to terminate list!\r\n");
     }
     c3_w mem_w = u3h_count(u3R->cax.har_p);
 

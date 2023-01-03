@@ -267,13 +267,13 @@ _lord_plea_live(u3_lord* god_u, u3_noun dat)
     case u3_writ_meld: {
       //  XX wire into cb
       //
-      u3l_log("pier: meld complete");
+      u3l_log("pier: meld complete\r\n");
     } break;
 
     case u3_writ_pack: {
       //  XX wire into cb
       //
-      u3l_log("pier: pack complete");
+      u3l_log("pier: pack complete\r\n");
     } break;
   }
 
@@ -1098,7 +1098,7 @@ _lord_on_serf_bail(void*       ptr_v,
   u3_lord* god_u = ptr_v;
 
   if ( UV_EOF == err_i ) {
-    u3l_log("pier: serf unexpectedly shut down");
+    u3l_log("pier: serf unexpectedly shut down\r\n");
   }
   else {
     u3l_log("pier: serf error: %s", err_c);

@@ -246,7 +246,7 @@ _king_curl_bytes(c3_c* url_c, c3_w* len_w, c3_y** hun_y, c3_t veb_t)
   uv_buf_t buf_u = uv_buf_init(c3_malloc(1), 0);
 
   if ( !(cul_u = curl_easy_init()) ) {
-    u3l_log("failed to initialize libcurl");
+    u3l_log("failed to initialize libcurl\r\n");
     exit(1);
   }
 
@@ -444,7 +444,7 @@ _git_pill_url(c3_c *out_c, c3_c *arv_c)
   assert(NULL != arv_c);
 
   if ( 0 != system("which git >> /dev/null") ) {
-    u3l_log("boot: could not find git executable");
+    u3l_log("boot: could not find git executable\r\n");
     exit(1);
   }
 
@@ -512,7 +512,7 @@ _boothack_key(u3_noun kef)
     //
     u3_noun pro = u3m_soft(0, u3ke_cue, u3k(u3t(des)));
     if ( u3_blip != u3h(pro) ) {
-      u3l_log("dawn: unable to cue keyfile");
+      u3l_log("dawn: unable to cue keyfile\r\n");
       exit(1);
     }
     seed = u3k(u3t(pro));
@@ -610,7 +610,7 @@ _boothack_doom(void)
       kef = u3i_string(u3_Host.ops_u.gen_c);
     }
     else {
-      u3l_log("boot: must specify a key with -k or -G");
+      u3l_log("boot: must specify a key with -k or -G\r\n");
       exit(1);
     }
 
@@ -715,7 +715,7 @@ _king_sign_cb(uv_signal_t* sil_u, c3_i num_i)
     }
 
     case SIGINT: {
-      u3l_log("\r\ninterrupt");
+      u3l_log("\r\ninterrupt\r\n");
       u3_term_ef_ctlc();
 
 #ifdef U3_OS_mingw
@@ -833,14 +833,14 @@ _king_boot_ivory(void)
     u3_weak        pil;
 
     if ( u3_none == (pil = u3s_cue_xeno_with(sil_u, len_d, byt_y)) ) {
-      u3l_log("lite: unable to cue ivory pill");
+      u3l_log("lite: unable to cue ivory pill\r\n");
       exit(1);
     }
 
     u3s_cue_xeno_done(sil_u);
 
     if ( c3n == u3v_boot_lite(pil)) {
-      u3l_log("lite: boot failed");
+      u3l_log("lite: boot failed\r\n");
       exit(1);
     }
   }
@@ -974,7 +974,7 @@ _king_save_file(c3_c* url_c, FILE* fil_u)
   long     cod_i;
 
   if ( !(cul_u = curl_easy_init()) ) {
-    u3l_log("failed to initialize libcurl");
+    u3l_log("failed to initialize libcurl\r\n");
     exit(1);
   }
 
@@ -1138,7 +1138,7 @@ u3_king_vere(c3_c* pac_c,  // pace
      || !(fil_u = fdopen(fid_i, "wb")) )
   {
     if ( EEXIST == errno ) {
-      u3l_log("already installed");
+      u3l_log("already installed\r\n");
       c3_free(bin_c);
       return 0;
     }
@@ -1210,7 +1210,7 @@ _king_do_upgrade(c3_c* pac_c, c3_c* ver_c)
     arc_c = u3_Host.arc_c;
   }
   else {
-    u3l_log("vere: --arch required");
+    u3l_log("vere: --arch required\r\n");
     return;
   }
 #endif
@@ -1229,13 +1229,13 @@ _king_do_upgrade(c3_c* pac_c, c3_c* ver_c)
   //  XX get link option
   //
   if ( u3_king_vere(pac_c, ver_c, arc_c, dir_c, 1) ) {
-    u3l_log("vere: upgrade failed");
+    u3l_log("vere: upgrade failed\r\n");
     u3_king_bail();
     exit(1);
   }
 
   c3_free(dir_c);
-  u3l_log("vere: upgrade succeeded");
+  u3l_log("vere: upgrade succeeded\r\n");
   //  XX print restart instructions
 }
 
@@ -1439,7 +1439,7 @@ u3_king_dock(c3_c* pac_c)
   //  XX get link option
   //
   if ( _king_copy_vere(pac_c, URBIT_VERSION, arc_c, 1) ) {
-    u3l_log("vere: binary copy failed");
+    u3l_log("vere: binary copy failed\r\n");
     u3_king_bail();
     exit(1);
   }
@@ -1447,7 +1447,7 @@ u3_king_dock(c3_c* pac_c)
     //  NB: failure ignored
     //
     _king_init_pace(pac_c);
-    u3l_log("vere: binary copy succeeded");
+    u3l_log("vere: binary copy succeeded\r\n");
     //  XX print restart instructions
   }
 }
@@ -1477,10 +1477,10 @@ u3_king_done(void)
 
   if ( u3_Host.xit_i ) {
     if ( c3y == u3_Host.nex_o ) {
-      u3l_log("vere: upgrade failed");
+      u3l_log("vere: upgrade failed\r\n");
     }
     else if ( c3y == u3_Host.pep_o ) {
-      u3l_log("vere: prep for upgrade failed");
+      u3l_log("vere: prep for upgrade failed\r\n");
     }
   }
   else {
@@ -1498,11 +1498,11 @@ u3_king_done(void)
 
       switch ( u3_king_next(pac_c, &ver_c) ) {
         case -2: {
-          u3l_log("vere: unable to check for next version");
+          u3l_log("vere: unable to check for next version\r\n");
         } break;
 
         case -1: {
-          u3l_log("vere: up to date");
+          u3l_log("vere: up to date\r\n");
         } break;
 
         case 0: {
@@ -1517,7 +1517,7 @@ u3_king_done(void)
       c3_free(pac_c);
     }
     else if ( c3y == u3_Host.pep_o ) {
-      u3l_log("vere: ready for upgrade");
+      u3l_log("vere: ready for upgrade\r\n");
     }
 
     //  copy binary into pier on boot

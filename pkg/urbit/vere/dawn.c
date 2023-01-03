@@ -71,7 +71,7 @@ _dawn_post_json(c3_c* url_c, uv_buf_t lod_u)
   uv_buf_t buf_u = uv_buf_init(c3_malloc(1), 0);
 
   if ( !(curl = curl_easy_init()) ) {
-    u3l_log("failed to initialize libcurl");
+    u3l_log("failed to initialize libcurl\r\n");
     exit(1);
   }
 
@@ -122,7 +122,7 @@ _dawn_get_jam(c3_c* url_c)
   uv_buf_t buf_u = uv_buf_init(c3_malloc(1), 0);
 
   if ( !(curl = curl_easy_init()) ) {
-    u3l_log("failed to initialize libcurl");
+    u3l_log("failed to initialize libcurl\r\n");
     exit(1);
   }
 
@@ -327,7 +327,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
     u3_noun liv = u3_nul;
     // u3_noun liv = _dawn_get_json(parent, /some/url)
 
-    u3l_log("boot: verifying keys");
+    u3l_log("boot: verifying keys\r\n");
 
     //  (each seed (lest error=@tas))
     //
@@ -339,7 +339,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
       return u3_none;
     }
 
-    u3l_log("boot: getting sponsor");
+    u3l_log("boot: getting sponsor\r\n");
     pos = _dawn_sponsor(u3k(ship), u3k(rank), u3k(pot));
     u3z(pot); u3z(liv);
   }
@@ -348,7 +348,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
   //  (map ship [=life =pass]): galaxy table
   //
   {
-    u3l_log("boot: retrieving galaxy table");
+    u3l_log("boot: retrieving galaxy table\r\n");
 
     u3_noun oct = u3v_wish("czar:give:dawn");
     u3_noun raz = _dawn_eth_rpc(url_c, u3k(oct));
@@ -364,7 +364,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
     tuf = _dawn_turf(u3_Host.ops_u.dns_c);
   }
   else {
-    u3l_log("boot: retrieving network domains");
+    u3l_log("boot: retrieving network domains\r\n");
 
     u3_noun oct = u3v_wish("turf:give:dawn");
     u3_noun fut = _dawn_eth_rpc(url_c, u3k(oct));
@@ -436,8 +436,8 @@ _dawn_come(u3_noun stars)
     c3_rand(eny_w);
     eny = u3i_words(16, eny_w);
 
-    u3l_log("boot: mining a comet. May take up to an hour.");
-    u3l_log("If you want to boot faster, get an Urbit identity.");
+    u3l_log("boot: mining a comet. May take up to an hour.\r\n");
+    u3l_log("If you want to boot faster, get an Urbit identity.\r\n");
 
     seed = u3dc("come:dawn", u3k(stars), u3k(eny));
     u3z(eny);

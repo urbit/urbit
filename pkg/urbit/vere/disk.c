@@ -856,7 +856,7 @@ u3_disk_exit(u3_disk* log_u)
   if (  (c3y == log_u->ted_o)
      && (0 > uv_cancel(&log_u->req_u)) )
   {
-    // u3l_log("disk: unable to cleanup");
+    // u3l_log("disk: unable to cleanup\r\n");
     return;
   }
 

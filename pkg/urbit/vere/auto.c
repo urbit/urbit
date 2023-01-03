@@ -376,7 +376,7 @@ u3_auto_slog(u3_auto* car_u)
 {
   u3_auto* nex_u;
 
-  u3l_log("  drivers:");
+  u3l_log("  drivers:\r\n");
 
   while ( car_u ) {
     nex_u = car_u->nex_u;

@@ -685,7 +685,7 @@ static void
 _ames_ef_send(u3_ames* sam_u, u3_noun lan, u3_noun pac)
 {
   if ( c3n == sam_u->car_u.liv_o ) {
-    u3l_log("ames: not yet live, dropping outbound");
+    u3l_log("ames: not yet live, dropping outbound\r\n");
     u3z(lan); u3z(pac);
     return;
   }
@@ -726,7 +726,7 @@ _ames_ef_send(u3_ames* sam_u, u3_noun lan, u3_noun pac)
     //
     else if ( 0 == lan_u.por_s ) {
       if ( u3C.wag_w & u3o_verbose ) {
-        u3l_log("ames: inscrutable lane");
+        u3l_log("ames: inscrutable lane\r\n");
       }
       _ames_pact_free(pac_u);
     }
@@ -870,7 +870,7 @@ _ames_forward(u3_panc* pac_u, u3_noun las)
       //  validate lane and skip self if galaxy
       //
       if ( c3n == u3r_cell(lan, &tag, &dat) ) {
-        u3l_log("ames: bogus lane");
+        u3l_log("ames: bogus lane\r\n");
         u3m_p("lan", lan);
       }
       else {
@@ -885,7 +885,7 @@ _ames_forward(u3_panc* pac_u, u3_noun las)
           {
             sen_o = c3n;
             if ( u3C.wag_w & u3o_verbose ) {
-              u3l_log("ames: forward skipping self");
+              u3l_log("ames: forward skipping self\r\n");
             }
           }
         }
@@ -918,7 +918,7 @@ _ames_lane_scry_cb(void* vod_p, u3_noun nun)
   //
   if ( u3_none == las ) {
     if ( 5 < ++sam_u->sat_u.saw_d ) {
-      u3l_log("ames: giving up scry");
+      u3l_log("ames: giving up scry\r\n");
       sam_u->fig_u.see_o = c3n;
     }
     _ames_put_packet(sam_u, _ames_serialize_packet(pac_u, c3n), pac_u->ore_u);
@@ -1190,7 +1190,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
   }
   else if ( flg_i & UV_UDP_PARTIAL ) {
     if ( u3C.wag_w & u3o_verbose ) {
-      u3l_log("ames: recv: fail: message truncated");
+      u3l_log("ames: recv: fail: message truncated\r\n");
     }
     c3_free(buf_u->base);
   }
@@ -1251,7 +1251,7 @@ _ames_io_start(u3_ames* sam_u)
       if ( (c3__czar == rac) &&
            (UV_EADDRINUSE == ret_i) )
       {
-        u3l_log("    ...perhaps you've got two copies of vere running?");
+        u3l_log("    ...perhaps you've got two copies of vere running?\r\n");
       }
 
       //  XX revise
@@ -1300,7 +1300,7 @@ _ames_ef_turf(u3_ames* sam_u, u3_noun tuf)
     u3z(tuf);
   }
   else if ( (c3n == sam_u->pir_u->fak_o) && (0 == sam_u->dns_c) ) {
-    u3l_log("ames: turf: no domains");
+    u3l_log("ames: turf: no domains\r\n");
   }
 
   //  XX is this ever necessary?
@@ -1444,7 +1444,7 @@ _ames_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
           ret_o = c3n;
         }
         else {
-          u3l_log("kick: strange send");
+          u3l_log("kick: strange send\r\n");
           ret_o = _ames_kick_newt(sam_u, u3k(tag), u3k(dat));
         }
       } break;
@@ -1521,11 +1521,11 @@ _ames_io_slog(u3_auto* car_u)
 
   //  TODO  rewrite in terms of info_f
   //
-  u3l_log("      config:");
+  u3l_log("      config:\r\n");
   u3l_log("        filtering: %s", FLAG(sam_u->fig_u.fit_o));
   u3l_log("         can send: %s", FLAG(sam_u->fig_u.net_o));
   u3l_log("         can scry: %s", FLAG(sam_u->fig_u.see_o));
-  u3l_log("      counters:");
+  u3l_log("      counters:\r\n");
   u3l_log("                 dropped: %" PRIu64, sam_u->sat_u.dop_d);
   u3l_log("        forwards dropped: %" PRIu64, sam_u->sat_u.fod_d);
   u3l_log("        forwards pending: %" PRIu64, sam_u->sat_u.foq_d);
