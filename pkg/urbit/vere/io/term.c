@@ -1439,11 +1439,6 @@ u3_term_io_hija(void)
         _term_it_send_csi(uty_u, 'r', 2, 1, uty_u->tat_u.siz.row_l - 1);
         _term_it_send_csi(uty_u, 'S', 1, 1);
         _term_it_send_csi(uty_u, 'H', 2, uty_u->tat_u.siz.row_l - 1, 1);
-        // c3_assert(c3_write(uty_u->fid_i, "\r", 1) == 1);
-        // {
-        //   uv_buf_t* buf_u = &uty_u->ufo_u.out.el_u;
-        //   c3_assert(c3_write(uty_u->fid_i, buf_u->base, buf_u->len) == buf_u->len);
-        // }
       }
     }
   }
