@@ -87,11 +87,6 @@
       u3_noun
       u3v_poke(u3_noun ovo);
 
-    /* u3v_poke_sure(): inject an event, saving new state if successful.
-    */
-      c3_o
-      u3v_poke_sure(c3_w mil_w, u3_noun eve, u3_noun* pro);
-
     /* u3v_tank(): dump single tank.
     */
       void
