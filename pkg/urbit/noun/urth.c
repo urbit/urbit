@@ -2,7 +2,6 @@
 **
 */
 #include "all.h"
-#include "noun/events.h"
 #include "ur/ur.h"
 #include <errno.h>
 #include <fcntl.h>
@@ -417,6 +416,10 @@ _cu_realloc(FILE* fil_u, ur_root_t** tor_u, ur_nvec_t* doc_u)
   //
   u3A->eve_d = eve_d;
 
+  //  mark all pages dirty
+  //
+  u3e_foul();
+
   *tor_u = rot_u;
   *doc_u = cod_u;
 
@@ -426,17 +429,15 @@ _cu_realloc(FILE* fil_u, ur_root_t** tor_u, ur_nvec_t* doc_u)
 /* u3u_meld(): globally deduplicate memory.
 */
 #ifdef U3_MEMORY_DEBUG
-c3_w
+void
 u3u_meld(void)
 {
   fprintf(stderr, "u3: unable to meld under U3_MEMORY_DEBUG\r\n");
-  return 0;
 }
 #else
-c3_w
+void
 u3u_meld(void)
 {
-  c3_w       pre_w = u3a_open(u3R);
   ur_root_t* rot_u;
   ur_nvec_t  cod_u;
 
@@ -448,8 +449,6 @@ u3u_meld(void)
   //
   ur_nvec_free(&cod_u);
   ur_root_free(rot_u);
-
-  return (u3a_open(u3R) - pre_w);
 }
 #endif
 
@@ -565,14 +564,56 @@ _cu_rock_save(c3_c* dir_c, c3_d eve_d, c3_d len_d, c3_y* byt_y)
 
   //  write jam-buffer into [fid_i]
   //
-  ssize_t rit_i = c3_pwrite(fid_i, byt_y, len_d, 0);
-  if ( rit_i < 0 ) {
-    fprintf(stderr, "rock: write failed: %s\r\n", strerror(errno));
+  //    XX deduplicate with _write() wrapper in term.c
+  //
+  {
+    ssize_t ret_i;
+
+    while ( len_d > 0 ) {
+      c3_w lop_w = 0;
+      //  retry interrupt/async errors
+      //
+      do {
+        //  abort pathological retry loop
+        //
+        if ( 100 == ++lop_w ) {
+          fprintf(stderr, "rock: write loop: %s\r\n", strerror(errno));
+          close(fid_i);
+          //  XX unlink file?
+          //
+          return c3n;
+        }
+
+        ret_i = write(fid_i, byt_y, len_d);
+      }
+      while (  (ret_i < 0)
+            && (  (errno == EINTR)
+               || (errno == EAGAIN)
+               || (errno == EWOULDBLOCK) ));
+
+      //  assert on true errors
+      //
+      //    NB: can't call u3l_log here or we would re-enter _write()
+      //
+      if ( ret_i < 0 ) {
+        fprintf(stderr, "rock: write failed %s\r\n", strerror(errno));
+        close(fid_i);
+        //  XX unlink file?
+        //
+        return c3n;
+      }
+      //  continue partial writes
+      //
+      else {
+        len_d -= ret_i;
+        byt_y += ret_i;
+      }
+    }
   }
 
   close(fid_i);
 
-  return rit_i < 0 ? c3n : c3y;
+  return c3y;
 }
 
 /* u3u_cram(): globably deduplicate memory, and write a rock to disk.
@@ -847,6 +888,10 @@ u3u_uncram(c3_c* dir_c, c3_d eve_d)
   //  restore event number
   //
   u3A->eve_d = eve_d;
+
+  //  mark all pages dirty
+  //
+  u3e_foul();
 
   //  leave rocks on disk
   //

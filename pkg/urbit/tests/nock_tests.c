@@ -5,7 +5,12 @@
 static void
 _setup(void)
 {
-  u3m_boot_lite(1 << 24);
+  //  XX at 1<<24, this succeeds on mac, but bail:exit's on linux.
+  //  investigate possible u3n_prog corruption
+  //
+  u3m_init(1 << 25);
+  u3m_pave(c3y);
+  u3e_init();
 }
 
 static u3_noun
@@ -48,7 +53,7 @@ _test_nock_meme(void)
 }
 
 static c3_i
-_test_meme(void)
+_test_nock(void)
 {
   c3_i ret_i = 1;
 
@@ -67,8 +72,8 @@ main(int argc, char* argv[])
 {
   _setup();
 
-  if ( !_test_meme() ) {
-    fprintf(stderr, "test meme: failed\r\n");
+  if ( !_test_nock() ) {
+    fprintf(stderr, "test nock: failed\r\n");
     exit(1);
   }
 
@@ -76,6 +81,6 @@ main(int argc, char* argv[])
   //
   u3m_grab(u3_none);
 
-  fprintf(stderr, "test meme: ok\r\n");
+  fprintf(stderr, "test nock: ok\r\n");
   return 0;
 }
