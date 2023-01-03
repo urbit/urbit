@@ -245,13 +245,8 @@ _king_curl_bytes(c3_c* url_c, c3_w* len_w, c3_y** hun_y, c3_t veb_t)
   long     cod_i;
   uv_buf_t buf_u = uv_buf_init(c3_malloc(1), 0);
 
-<<<<<<< HEAD
-  if ( !(curl = curl_easy_init()) ) {
-    u3l_log("failed to initialize libcurl");
-=======
   if ( !(cul_u = curl_easy_init()) ) {
-    u3l_log("failed to initialize libcurl\n");
->>>>>>> next/arvo
+    u3l_log("failed to initialize libcurl");
     exit(1);
   }
 
@@ -265,25 +260,15 @@ _king_curl_bytes(c3_c* url_c, c3_w* len_w, c3_y** hun_y, c3_t veb_t)
 
   //  XX retry?
   //
-<<<<<<< HEAD
-  if ( CURLE_OK != result ) {
-    u3l_log("failed to fetch %s: %s",
-            url_c, curl_easy_strerror(result));
-    u3_king_bail();
-    exit(1);
-  }
-  if ( 300 <= cod_l ) {
-    u3l_log("error fetching %s: HTTP %ld", url_c, cod_l);
-=======
   if ( CURLE_OK != res_i ) {
     if ( veb_t ) {
-      u3l_log("curl: failed %s: %s\n", url_c, curl_easy_strerror(res_i));
+      u3l_log("curl: failed %s: %s", url_c, curl_easy_strerror(res_i));
     }
     ret_i = -1;
   }
   if ( 300 <= cod_i ) {
     if ( veb_t ) {
-      u3l_log("curl: error %s: HTTP %ld\n", url_c, cod_i);
+      u3l_log("curl: error %s: HTTP %ld", url_c, cod_i);
     }
     ret_i = -2;
   }
@@ -306,7 +291,6 @@ _king_get_atom(c3_c* url_c)
   u3_noun pro;
 
   if ( _king_curl_bytes(url_c, &len_w, &hun_y, 1) ) {
->>>>>>> next/arvo
     u3_king_bail();
     exit(1);
   }
