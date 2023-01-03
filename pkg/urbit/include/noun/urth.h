@@ -5,7 +5,7 @@
     **/
       /* u3u_meld(): globally deduplicate memory.
       */
-        c3_w
+        void
         u3u_meld(void);
 
       /* u3u_cram(): globably deduplicate memory, and write a rock to disk.

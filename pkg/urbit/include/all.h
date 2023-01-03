@@ -11,6 +11,7 @@
 #   include "noun/aliases.h"   //  general u3
 
 #   include "noun/allocate.h"  //  u3a: allocation
+#   include "noun/events.h"    //  u3e: persistence
 #   include "noun/hashtable.h" //  u3h: hashtables
 #   include "noun/imprison.h"  //  u3i: noun construction
 #   include "noun/jets.h"      //  u3j: jet control
