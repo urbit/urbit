@@ -2,8 +2,9 @@
 /+  *server, agentio, default-agent, multipart, dbug, verb
 |%
 +$  card  card:agent:gall
-+$  state-0
-  $:  ::  local
++$  app-state
+  $:  %3
+      ::  local
       charges=(map desk charge)
   ==
 ::  $cache: impermanent state
@@ -11,7 +12,7 @@
   by-base=(map term desk)
 ::
 +$  inflated-state
-  [state-0 cache]
+  [app-state cache]
 ::  +lac: toggle verbosity
 ++  lac  &
 ::
@@ -41,7 +42,7 @@
 ++  on-init
   ^-  (quip card _this)
   :_  this
-  :~  (~(watch-our pass /kiln) %hood /kiln/vats)
+  :~  ~(tire pass /tire)
       (~(connect pass /eyre) [~ /] %docket)
       (~(wait pass /init) (add 1 now.bowl))
       (~(connect pass /eyre) [~ /apps] %docket)
@@ -50,12 +51,24 @@
 ++  on-load
   |=  =vase
   ^-  (quip card _this)
-  =+  !<(old=state-0 vase)
-  =*  cha  ~(. ch q.byk.bowl)
   |^
+  =+  !<(old=app-states vase)
+  =?  old    ?=(?(~ ^) -.old)  [%1 old]
+  =^  cards-1  old
+    ?.  ?=(%1 -.old)  `old
+    `old(- %2)
+  =^  cards-2  old
+    ?.  ?=(%2 -.old)  `old
+    :_  old(- %3)  :_  ~
+    ~(tire pass /tire)
+  ?>  ?=(%3 -.old)
+  =/  cards-tire  [~(tire pass /tire) ~]
   =.  -.state  old
+  ::  inflate-cache needs to be called after the state is set
+  ::
   =.  +.state  inflate-cache
-  `this
+  [:(weld cards-1 cards-2 cards-tire) this]
+
   ::
   ++  inflate-cache
     ^-  cache
@@ -64,8 +77,27 @@
     |=  [=desk =charge]
     ?.  ?=(%glob -.href.docket.charge)  ~
     `:_(desk base.href.docket.charge)
+  ::
+  +$  app-states
+    $^  state-0-ket
+    $%  state-0-sig
+        state-1
+        state-2
+        app-state
+    ==
+  ::
+  +$  state-2  [%2 (map desk charge)]
+  +$  state-1  [%1 (map desk charge)]
+  +$  state-0-sig
+    $:  ~
+    ==
+  ::
+  +$  state-0-ket
+    $:  (map desk charge)
+    ==
   --
 ::
+
 ++  on-save  !>(-.state)
 ++  on-poke
   |=  [=mark =vase]
@@ -161,13 +193,21 @@
     ==
     ::
       [%x %charges ~]
+    =/  tyr
+      .^(rock:tire:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/tire)
     :-  ~  :-  ~
     %-  charge-update:cg
     :-  %initial
     %-  ~(gas by *(map desk charge))
-    %+  turn  ~(tap by charges)
+    %+  murn  ~(tap by charges)
     |=  [=desk =charge]
-    [desk (get-light-charge charge)]
+    ?~  got=(~(get by tyr) desk)
+      ~
+    ?:  ?&  ?=(%dead zest.u.got)
+            ?=(~ (get-apps-have:hood our.bowl desk now.bowl))
+        ==
+      ~
+    `u=[desk (get-light-charge charge)]
     ::
       [%x %charges @ %version ~]
     ?~  charge=(~(get by charges) i.t.t.path)
@@ -182,114 +222,13 @@
   =^  cards  state
     ?+  wire  ~&(bad-docket-take+wire `state)
       ~  `state
-      [%kiln ~]  take-kiln
+      [%rein ~]      ~&(%reined `state)
+      [%nuke ~]      ~&(%nuked `state)
+      [%kiln ~]      `state
       [%charge @ *]  (take-charge i.t.wire t.t.wire)
     ==
   [cards this]
   ::
-  ++  take-kiln
-    ^-  (quip card _state)
-    ?+    -.sign  (on-agent:def:cc wire sign)
-        %kick  [(~(watch-our pass /kiln) %hood /kiln/vats)^~ state]
-        %fact
-      |^  ^-  (quip card _state)
-      ?+  p.cage.sign  ~|(take-kiln-mark/p.cage.sign !!)
-        %kiln-vats-snap-0  (on-snap !<(snap:hood q.cage.sign))
-        %kiln-vats-diff-0  (on-diff !<(diff:hood q.cage.sign))
-      ==
-      ::
-      ++  on-snap
-        |=  =snap:hood
-        ^-  (quip card _state)
-        =|  fex=(list card)
-        =/  ark  ~(tap by snap)
-        |-  ^-  (quip card _state)
-        ?~  ark  [(flop fex) state]
-        =^  caz  state  (on-commit i.ark)
-        $(ark t.ark, fex (weld (flop caz) fex))
-      ::
-      ++  on-diff
-        |=  =diff:hood
-        =+  !<(=diff:hood q.cage.sign)
-        ?-    -.diff
-            %commit   (on-commit [desk arak]:diff)
-            %suspend  (on-suspend [desk arak]:diff)
-            %revive   (on-revive [desk arak]:diff)
-            ?(%block %reset %merge-sunk %merge-fail)
-          `state
-        ==
-      ::
-      ++  on-commit
-        |=  [=desk =arak:hood]
-        ^-  (quip card _state)
-        =*  cha  ~(. ch desk)
-        ?.  docket-exists:cha
-          ~?  ?&  !=(%base desk)
-                  !=(%kids desk)
-              ==
-            [dap.bowl %no-docket-file-for desk]
-          `state
-        ::  always update the docket in state to match clay's
-        ::
-        =/  =docket            docket:cha
-        =/  pre=(unit charge)  (~(get by charges) desk)
-        =.  charges            (new-docket:cha docket)
-        ::  if the new chad is a site, we're instantly done
-        ::
-        ?:  ?=(%site -.href.docket)
-          =.  charges  (new-chad:cha %site ~)
-          :-  ~[add-fact:cha]
-          state
-        ::
-        =.  by-base  (~(put by by-base) base.href.docket desk)
-        ::  if the glob specification is unchanged, keep it
-        ::
-        ?:  &(?=(^ pre) =(href.docket.u.pre href.docket) ?=(%glob -.chad.u.pre))
-          [~[add-fact:cha] state]
-        ::  if the glob spec changed, but we already host it, keep it
-        ::  (this is the "just locally uploaded" case)
-        ::
-        ?:  ?&  ?=(^ pre)
-                ?=(%glob -.chad.u.pre)
-              ::
-                .=  [(sham glob.chad.u.pre) %ames our.bowl]
-                glob-reference.href.docket
-            ==
-          [~[add-fact:cha] state]
-        ::  if the glob changed, forget the old and fetch the new
-        ::
-        =.  charges  (new-chad:cha %install ~)
-        [[add-fact:cha fetch-glob:cha] state]
-      ::
-      ++  on-suspend
-        |=  [=desk =arak:hood]
-        ^-  (quip card _state)
-        =*  cha  ~(. ch desk)
-        ?.  (~(has by charges) desk)  `state
-        =/  glob=(unit glob)
-          =/  =chad
-            chad:(~(got by charges) desk)
-          ?:(?=(%glob -.chad) `glob.chad ~)
-        =.  charges  (new-chad:cha %suspend glob)
-        :_(state ~[add-fact:cha])
-      ::
-      ++  on-revive
-        |=  [=desk =arak:hood]
-        ^-  (quip card _state)
-        =*  cha  ~(. ch desk)
-        ?.  (~(has by charges) desk)  `state
-        =/  =charge  (~(got by charges) desk)
-        ?.  ?=(%glob -.href.docket.charge)
-          =.  charges  (new-chad:cha %site ~)
-          :_(state ~[add-fact:cha])
-        =.  charges
-          %-  new-chad:cha
-          ?.  ?=([%suspend ~ *] chad.charge)
-            [%install ~]
-          [%glob u.glob.chad.charge]
-        :_(state [add-fact fetch-glob]:cha)
-      --
-    ==
   ++  take-charge
     |=  [=desk =^wire]
     ^-  (quip card _state)
@@ -368,6 +307,7 @@
 ::
 ++  on-arvo
   |=  [=wire sign=sign-arvo]
+  |^
   =^  cards  state
     ?+  wire  (on-arvo:def wire sign)
         [%init ~]
@@ -380,8 +320,117 @@
       ?:  accepted.sign   `state
       ~&  [dap.bowl %failed-to-bind path.binding.sign]
       `state
+    ::
+        [%tire ~]
+      ?>  ?=([%clay %tire *] sign)
+      ?-  -.p.sign
+        %&  (on-rock p.p.sign)
+        %|  (on-wave p.p.sign)
+      ==
+    ::
+        [%warp * ~]
+      ?>  ?=(%writ +<.sign)
+      (on-writ i.t.wire p.sign)
     ==
   [cards this]
+  ::
+  ++  on-rock
+    |=  tyr=rock:tire:clay
+    ^-  (quip card _state)
+    =|  fex=(list card)
+    =/  ark  ~(tap by tyr)
+    |-  ^-  (quip card _state)
+    ?~  ark  [(flop fex) state]
+    =^  caz  state  (on-zest [p zest.q]:i.ark)
+    $(ark t.ark, fex (weld (flop caz) fex))
+  ::
+  ++  on-wave
+    |=  =wave:tire:clay
+    ^-  (quip card _state)
+    ?-  -.wave
+      %wait  `state
+      %warp  `state
+      %zest  (on-zest +.wave)
+    ==
+  ::
+  ++  on-zest
+    |=  [=desk =zest:clay]
+    ^-  (quip card _state)
+    =*  cha  ~(. ch desk)
+    =/  card-1
+      (~(warp-our pass /warp/[desk]) desk ~ %sing %z da+now.bowl /desk/docket-0)
+    =^  cards-2  state
+      ?.  (~(has by charges) desk)
+        `state
+      =/  =charge  (~(got by charges) desk)
+      ?-    zest
+          %live
+        ?.  ?=(%glob -.href.docket.charge)
+          =.  charges  (new-chad:cha %site ~)
+          :_(state ~[add-fact:cha])
+        :_(state ~[add-fact:cha])
+      ::
+          ?(%held %dead)
+        =/  glob=(unit glob)
+          ?:(?=(%glob -.chad.charge) `glob.chad.charge ~)
+        =.  charges  (new-chad:cha %suspend glob)
+        :_(state ~[add-fact:cha])
+      ==
+    [[card-1 cards-2] state]
+  ::
+  ++  on-writ
+    |=  [=desk =riot:clay]
+    ^-  (quip card _state)
+    =/  card-1
+      (~(warp-our pass /warp/[desk]) desk ~ %next %z da+now.bowl /desk/docket-0)
+    =^  cards-2  state
+      =*  cha   ~(. ch desk)
+      =/  tyr
+        .^(rock:tire:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/tire)
+      ?.  =(%live zest:(~(got by tyr) desk))
+        `state
+      ?.  docket-exists:cha
+        ::  ~?  ?&  !=(%base desk)
+        ::          !=(%kids desk)
+        ::      ==
+        ::    [dap.bowl %no-docket-file-for desk]
+        ?.  (~(has by charges) desk)
+          `state
+        :-  ~[del-fact:cha]
+        state(charges (~(del by charges) desk))
+      ::  always update the docket in state to match clay's
+      ::
+      =/  =docket            docket:cha
+      =/  pre=(unit charge)  (~(get by charges) desk)
+      =.  charges            (new-docket:cha docket)
+      ::  if the new chad is a site, we're instantly done
+      ::
+      ?:  ?=(%site -.href.docket)
+        =.  charges  (new-chad:cha %site ~)
+        :-  ~[add-fact:cha]
+        state
+      ::
+      =.  by-base  (~(put by by-base) base.href.docket desk)
+      ::  if the glob specification is unchanged, keep it
+      ::
+      ?:  &(?=(^ pre) =(href.docket.u.pre href.docket) ?=(%glob -.chad.u.pre))
+        [~[add-fact:cha] state]
+      ::  if the glob spec changed, but we already host it, keep it
+      ::  (this is the "just locally uploaded" case)
+      ::
+      ?:  ?&  ?=(^ pre)
+              ?=(%glob -.chad.u.pre)
+            ::
+              .=  [(sham glob.chad.u.pre) %ames our.bowl]
+              glob-reference.href.docket
+          ==
+        [~[add-fact:cha] state]
+      ::  if the glob changed, forget the old and fetch the new
+      ::
+      =.  charges  (new-chad:cha %install ~)
+      [[add-fact:cha fetch-glob:cha] state]
+    [[card-1 cards-2] state]
+  --
 ::
 ++  on-fail  on-fail:def
 ++  on-leave  on-leave:def
@@ -390,7 +439,7 @@
 |_  =bowl:gall
 ++  io    ~(. agentio bowl)
 ++  pass  pass:io
-++  def  ~(. (default-agent state %|) bowl)
+++  def   ~(. (default-agent state %|) bowl)
 ::
 ++  hash-glob  sham
 ++  cg
@@ -698,4 +747,3 @@
   ++  docket  .^(^docket %cx (scry:io desk docket-loc))
   --
 --
-

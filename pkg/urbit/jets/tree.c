@@ -403,6 +403,24 @@ static u3j_harm _140_hex_secp_secp256k1_sign_a[] = {{".2", u3we_sign, c3y}, {}};
 static c3_c* _140_hex_secp_secp256k1_reco_ha[] = { 0 };
 static u3j_harm _140_hex_secp_secp256k1_reco_a[] = {{".2", u3we_reco, c3y}, {}};
 
+static c3_c* _140_hex_secp_secp256k1_schnorr_sosi_ha[] = { 0 };
+static u3j_harm _140_hex_secp_secp256k1_schnorr_sosi_a[] =
+  {{".2", u3we_sosi}, {}};
+static c3_c* _140_hex_secp_secp256k1_schnorr_sove_ha[] = { 0 };
+static u3j_harm _140_hex_secp_secp256k1_schnorr_sove_a[] =
+  {{".2", u3we_sove}, {}};
+
+static c3_c* _140_hex_secp_secp256k1_schnorr_ha[] = { 0 };
+static u3j_core _140_hex_secp_secp256k1_schnorr_d[] =
+  { { "sosi", 7,
+      _140_hex_secp_secp256k1_schnorr_sosi_a, 0,
+      _140_hex_secp_secp256k1_schnorr_sosi_ha },
+    { "sove", 7,
+      _140_hex_secp_secp256k1_schnorr_sove_a, 0,
+      _140_hex_secp_secp256k1_schnorr_sove_ha },
+    {}
+  };
+
 static c3_c* _140_hex_secp_secp256k1_ha[] = {
   "e7fc0971a970aba7ded43bd89e9c82623eb2f346c9c720c63b22f2a646927861",
   0
@@ -411,6 +429,9 @@ static u3j_core _140_hex_secp_secp256k1_d[] =
   { { "make", 7, _140_hex_secp_secp256k1_make_a, 0, _140_hex_secp_secp256k1_make_ha },
     { "sign", 7, _140_hex_secp_secp256k1_sign_a, 0, _140_hex_secp_secp256k1_sign_ha },
     { "reco", 7, _140_hex_secp_secp256k1_reco_a, 0, _140_hex_secp_secp256k1_reco_ha },
+    { "schnorr", 7, 0,
+      _140_hex_secp_secp256k1_schnorr_d,
+      _140_hex_secp_secp256k1_schnorr_ha },
     {}
   };
 

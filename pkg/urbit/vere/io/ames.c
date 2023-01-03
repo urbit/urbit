@@ -52,6 +52,7 @@
       c3_d           foq_d;             //  forward queue size
       c3_d           fow_d;             //  forwarded count
       c3_d           fod_d;             //  forwards dropped count
+      c3_d           bad_d;             //  bad ciphertext count
     } sat_u;                            //
   } u3_ames;
 
@@ -768,51 +769,47 @@ _ames_cap_queue(u3_ames* sam_u)
   }
 }
 
-/* _ames_punt_goof(): print %bail error report(s).
-*/
-static void
-_ames_punt_goof(u3_noun lud)
-{
-  if ( 2 == u3qb_lent(lud) ) {
-    u3_pier_punt_goof("hear", u3k(u3h(lud)));
-    u3_pier_punt_goof("crud", u3k(u3h(u3t(lud))));
-  }
-  else {
-    u3_noun dul = lud;
-    c3_w len_w = 1;
-
-    while ( u3_nul != dul ) {
-      u3l_log("ames: bail %u", len_w++);
-      u3_pier_punt_goof("ames", u3k(u3h(dul)));
-      dul = u3t(dul);
-    }
-  }
-
-  u3z(lud);
-}
-
 /* _ames_hear_bail(): handle packet failure.
 */
 static void
 _ames_hear_bail(u3_ovum* egg_u, u3_noun lud)
 {
   u3_ames* sam_u = (u3_ames*)egg_u->car_u;
-  sam_u->sat_u.fal_d++;
+  c3_w     len_w = u3qb_lent(lud);
 
-  if (  (u3C.wag_w & u3o_verbose)
-     || (0 == (sam_u->sat_u.fal_d % 1000)) )
-  {
-    _ames_punt_goof(lud);
-    u3l_log("ames: packet failed (%" PRIu64 " total)", sam_u->sat_u.fal_d);
+  if ( (1 == len_w) && c3__evil == u3h(u3h(lud)) ) {
+    sam_u->sat_u.bad_d++;
+
+    if (  (u3C.wag_w & u3o_verbose)
+       || (0 == (sam_u->sat_u.bad_d % 100)) )
+    {
+      u3l_log("ames: heard bad crypto (%" PRIu64 " total), "
+              "check azimuth state",
+              sam_u->sat_u.bad_d);
+    }
   }
   else {
-    u3z(lud);
+    sam_u->sat_u.fal_d++;
 
-    if (  0 == (sam_u->sat_u.fal_d % 1000) )  {
-      u3l_log("ames: packet failed (%" PRIu64 " total)", sam_u->sat_u.fal_d);
+    if (  (u3C.wag_w & u3o_verbose)
+       || (0 == (sam_u->sat_u.fal_d % 100)) )
+    {
+      if ( 2 == len_w ) {
+        u3_pier_punt_goof("hear", u3k(u3h(lud)));
+        u3_pier_punt_goof("crud", u3k(u3h(u3t(lud))));
+      }
+      //  !2 traces is unusual, just print the first if present
+      //
+      else if ( len_w ) {
+        u3_pier_punt_goof("hear", u3k(u3h(lud)));
+      }
+
+      u3l_log("ames: packet failed (%" PRIu64 " total)",
+              sam_u->sat_u.fal_d);
     }
   }
 
+  u3z(lud);
   u3_ovum_free(egg_u);
 }
 
@@ -853,9 +850,10 @@ _ames_forward(u3_panc* pac_u, u3_noun las)
     c3_c* rec_c = u3r_string(rec);
     c3_y* pip_y = (c3_y*)&pac_u->ore_u.pip_w;
 
+    //NOTE  ip byte order assumes little-endian
     u3l_log("ames: forwarding for %s to %s from %d.%d.%d.%d:%d",
             sen_c, rec_c,
-            pip_y[0], pip_y[1], pip_y[2], pip_y[3],
+            pip_y[3], pip_y[2], pip_y[1], pip_y[0],
             pac_u->ore_u.por_s);
 
     c3_free(sen_c); c3_free(rec_c);
@@ -1488,15 +1486,41 @@ _ames_io_exit(u3_auto* car_u)
   uv_close(&sam_u->had_u, _ames_exit_cb);
 }
 
-/* _ames_io_info(): print status info.
+/* _ames_io_info(): produce status info.
+*/
+static u3_noun
+_ames_io_info(u3_auto* car_u)
+{
+  u3_ames*  sam_u = (u3_ames*)car_u;
+
+  return u3i_list(
+    u3_pier_mase("filtering",        sam_u->fig_u.fit_o),
+    u3_pier_mase("can-send",         sam_u->fig_u.net_o),
+    u3_pier_mase("can-scry",         sam_u->fig_u.see_o),
+    u3_pier_mase("dropped",          u3i_chub(sam_u->sat_u.dop_d)),
+    u3_pier_mase("forwards-dropped", u3i_chub(sam_u->sat_u.fod_d)),
+    u3_pier_mase("forwards-pending", u3i_chub(sam_u->sat_u.foq_d)),
+    u3_pier_mase("forwarded",        u3i_chub(sam_u->sat_u.fow_d)),
+    u3_pier_mase("filtered-hed",     u3i_chub(sam_u->sat_u.hed_d)),
+    u3_pier_mase("filtered-ver",     u3i_chub(sam_u->sat_u.vet_d)),
+    u3_pier_mase("filtered-mug",     u3i_chub(sam_u->sat_u.mut_d)),
+    u3_pier_mase("filtered-bod",     u3i_chub(sam_u->sat_u.bod_d)),
+    u3_pier_mase("crashed",          u3i_chub(sam_u->sat_u.fal_d)),
+    u3_pier_mase("cached-lanes",     u3i_word(u3h_wyt(sam_u->lax_p))),
+    u3_none);
+}
+
+/* _ames_io_slog(): print status info.
 */
 static void
-_ames_io_info(u3_auto* car_u)
+_ames_io_slog(u3_auto* car_u)
 {
   u3_ames* sam_u = (u3_ames*)car_u;
 
 # define FLAG(a) ( (c3y == a) ? "&" : "|" )
 
+  //  TODO  rewrite in terms of info_f
+  //
   u3l_log("      config:");
   u3l_log("        filtering: %s", FLAG(sam_u->fig_u.fit_o));
   u3l_log("         can send: %s", FLAG(sam_u->fig_u.net_o));
@@ -1511,7 +1535,7 @@ _ames_io_info(u3_auto* car_u)
   u3l_log("          filtered (mug): %" PRIu64, sam_u->sat_u.mut_d);
   u3l_log("          filtered (bod): %" PRIu64, sam_u->sat_u.bod_d);
   u3l_log("                 crashed: %" PRIu64, sam_u->sat_u.fal_d);
-  u3l_log("            cached lanes: %u", u3h_wyt(sam_u->lax_p));
+  u3l_log("            cached lanes: %u\n", u3h_wyt(sam_u->lax_p));
 }
 
 /* u3_ames_io_init(): initialize ames I/O.
@@ -1559,6 +1583,7 @@ u3_ames_io_init(u3_pier* pir_u)
   car_u->liv_o = c3n;
   car_u->io.talk_f = _ames_io_talk;
   car_u->io.info_f = _ames_io_info;
+  car_u->io.slog_f = _ames_io_slog;
   car_u->io.kick_f = _ames_io_kick;
   car_u->io.exit_f = _ames_io_exit;
 

@@ -1,9 +1,9 @@
 ::  /sys/lull
 ::  %lull: arvo structures
-::
+!:
 =>  ..part
 |%
-++  lull  %330
+++  lull  %328
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
@@ -59,7 +59,7 @@
           [r=@uxD g=@uxD b=@uxD]                        ::  24bit true color
 +$  turf  (list @t)                                     ::  domain, tld first
 ::                                                      ::::
-::::                      ++ethereum-types                ::  eth surs for jael
+::::                    ++ethereum-types                  ::  eth surs for jael
   ::                                                    ::::
 ++  ethereum-types
   |%
@@ -73,7 +73,7 @@
   ++  events  (set event-id)
   --
 ::                                                      ::::
-::::                      ++azimuth-types                 ::  az surs for jael
+::::                    ++azimuth-types                   ::  az surs for jael
   ::                                                    ::::
 ++  azimuth-types
   =,  ethereum-types
@@ -153,7 +153,7 @@
       [%plea =ship =plea:ames]
   ==
 ::                                                      ::::
-::::                      ++http                        ::
+::::                    ++http                          ::
   ::                                                    ::::
 ::  http: shared representations of http concepts
 ::
@@ -340,7 +340,7 @@
     ==
   --
 ::                                                      ::::
-::::                      ++ames                          ::  (1a) network
+::::                    ++ames                            ::  (1a) network
   ::                                                    ::::
 ++  ames  ^?
   |%
@@ -351,12 +351,14 @@
   ::    %hear: packet from unix
   ::    %heed: track peer's responsiveness; gives %clog if slow
   ::    %jilt: stop tracking peer's responsiveness
+  ::    %cork: request to delete message flow
   ::    %plea: request to send message
   ::
   ::    System and Lifecycle Tasks
   ::
   ::    %born: process restart notification
   ::    %init: vane boot
+  ::    %prod: re-send a packet per flow, to all peers if .ships is ~
   ::    %sift: limit verbosity to .ships
   ::    %spew: set verbosity toggles
   ::    %trim: release memory
@@ -366,10 +368,12 @@
     $%  [%hear =lane =blob]
         [%heed =ship]
         [%jilt =ship]
+        [%cork =ship]
         $>(%plea vane-task)
     ::
         $>(%born vane-task)
         $>(%init vane-task)
+        [%prod ships=(list ship)]
         [%sift ships=(list ship)]
         [%spew veb=(list verb)]
         [%stir arg=@t]
@@ -509,10 +513,14 @@
   ::         entry and emit a nack to the local vane that asked us to send
   ::         the message.
   ::    heeds: listeners for %clog notifications
+  ::    closing: bones closed on the sender side
+  ::    corked:  bones closed on both sender and receiver
+  ::    krocs:   bones that need to be sent again to the publisher
   ::
   +$  peer-state
     $:  $:  =symmetric-key
             =life
+            =rift
             =public-key
             sponsor=ship
         ==
@@ -523,6 +531,9 @@
         rcv=(map bone message-sink-state)
         nax=(set [=bone =message-num])
         heeds=(set duct)
+        closing=(set bone)
+        corked=(set bone)
+        krocs=(set bone)
     ==
   ::  $qos: quality of service; how is our connection to a peer doing?
   ::
@@ -743,6 +754,7 @@
         [%mere p=(each (set path) (pair term tang))]    ::  merge result
         [%ogre p=@tas]                                  ::  delete mount point
         [%rule red=dict wit=dict]                       ::  node r+w permissions
+        [%tire p=(each rock:tire wave:tire)]            ::  app state
         [%writ p=riot]                                  ::  response
         [%wris p=[%da p=@da] q=(set (pair care path))]  ::  many changes
     ==                                                  ::
@@ -765,53 +777,67 @@
             des=desk                                    ::  target desk
             bas=beak                                    ::  base desk
             con=(list [beak germ])                      ::  merges
-        ==
+        ==                                              ::
         [%mont pot=term bem=beam]                       ::  mount to unix
-        [%dirk des=desk]                                ::  mark mount dirty
-        [%ogre pot=$@(desk beam)]                       ::  delete mount point
+        [%dirk pot=term]                                ::  mark mount dirty
+        [%ogre pot=$@(term beam)]                       ::  delete mount point
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
         [%perm des=desk pax=path rit=rite]              ::  change permissions
         [%pork ~]                                       ::  resume commit
+        [%rein des=desk ren=rein]                       ::  extra apps
+        [%stir arg=*]                                   ::  debug
+        [%tire p=(unit ~)]                              ::  app state subscribe
+        [%tomb =clue]                                   ::  tombstone specific
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
         [%warp wer=ship rif=riff]                       ::  internal file req
         [%werp who=ship wer=ship rif=riff-any]          ::  external file req
+        [%wick ~]                                       ::  try upgrade
+        [%zest des=desk liv=zest]                       ::  live
         $>(%plea vane-task)                             ::  ames request
     ==                                                  ::
-  ::
+  ::                                                    ::
   ::::                                                  ::  (1c2)
-    ::
+    ::                                                  ::
   +$  aeon  @ud                                         ::  version number
-  +$  ankh                                              ::  fs node (new)
-    $~  [~ ~]
-    $:  fil=(unit [p=lobe q=cage])                      ::  file
-        dir=(map @ta ankh)                              ::  folders
-    ==                                                  ::
   +$  beam  [[p=ship q=desk r=case] s=path]             ::  global name
   +$  beak  [p=ship q=desk r=case]                      ::  path prefix
-  +$  blob                                              ::  fs blob
-    $%  [%delta p=lobe q=[p=mark q=lobe] r=page]        ::  delta on q
-        [%direct p=lobe q=page]                         ::  immediate
+  +$  cable                                             ::  lib/sur/mark ref
+    $:  face=(unit term)                                ::
+        file-path=term                                  ::
     ==                                                  ::
-  ::  +cable: a reference to something on the filesystem
-  ::    face: the face to wrap around the imported file
-  ::    file-path: location in clay
-  +$  cable
-    $:  face=(unit term)
-        file-path=term
-    ==
-  +$  care  ?(%a %b %c %d %e %f %p %r %s %t %u %v %w %x %y %z)  ::  clay submode
+  +$  care                                              ::  clay submode
+    ?(%a %b %c %d %e %f %p %r %s %t %u %v %w %x %y %z)  ::
   +$  case                                              ::  ship desk case spur
     $%  [%da p=@da]                                     ::  date
         [%tas p=@tas]                                   ::  label
         [%ud p=@ud]                                     ::  number
     ==                                                  ::
+  +$  cash                                              ::  case or tako
+    $%  [%tako p=tako]                                  ::
+        case                                            ::
+    ==                                                  ::
   +$  cass  [ud=@ud da=@da]                             ::  cases for revision
+  +$  clue                                              ::  murder weapon
+    $%  [%lobe =lobe]                                   ::  specific lobe
+        [%all ~]                                        ::  all safe targets
+        [%pick ~]                                       ::  collect garbage
+        [%norm =ship =desk =norm]                       ::  set default norm
+        [%worn =ship =desk =tako =norm]                 ::  set commit norm
+        [%seek =ship =desk =cash]                       ::  fetch source blobs
+    ==                                                  ::
+  +$  cone  (map [ship desk] foam)                      ::  domes
+  +$  foam                                              ::
+    $:  dome                                            ::
+        tom=(map tako norm)                             ::
+        nor=norm                                        ::
+        liv=zest                                        ::
+        ren=(map dude:gall ?)                           ::
+    ==                                                  ::
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
   +$  dome                                              ::  project state
-    $:  ank=ankh                                        ::  state
-        let=@ud                                         ::  top id
+    $:  let=@ud                                         ::  top id
         hit=(map @ud tako)                              ::  changes by id
         lab=(map @tas @ud)                              ::  labels
     ==                                                  ::
@@ -829,8 +855,7 @@
         %meet-that                                      ::  hers if conflict
     ==                                                  ::
   +$  lobe  @uvI                                        ::  blob ref
-  +$  maki  [p=@ta q=@ta r=@ta s=path]                  ::
-  +$  miso                                              ::  ankh delta
+  +$  miso                                              ::  file delta
     $%  [%del ~]                                        ::  delete
         [%ins p=cage]                                   ::  insert
         [%dif p=cage]                                   ::  mutate from diff
@@ -855,12 +880,12 @@
     $%  [%& p=suba]                                     ::  delta
         [%| p=@tas]                                     ::  label
     ==                                                  ::
+  +$  norm  (axal ?)                                    ::  tombstone policy
   +$  open  $-(path vase)                               ::  get prelude
-  +$  page  (cask *)                                    ::  untyped cage
-  +$  plop  blob                                        ::  unvalidated blob
+  +$  page  ^page                                       ::  export for compat
   +$  rang                                              ::  repository
     $:  hut=(map tako yaki)                             ::  changes
-        lat=(map lobe blob)                             ::  data
+        lat=(map lobe page)                             ::  data
     ==                                                  ::
   +$  rant                                              ::  response to request
     $:  p=[p=care q=case r=desk]                        ::  clade release book
@@ -878,10 +903,11 @@
         who=(pair (set ship) (map @ta crew))            ::
     ==                                                  ::
   +$  regs  (map path rule)                             ::  rules for paths
+  +$  rein  (map dude:gall ?)                           ::  extra apps
   +$  riff  [p=desk q=(unit rave)]                      ::  request+desist
-  +$  riff-any
-    $%  [%1 =riff]
-    ==
+  +$  riff-any                                          ::
+    $%  [%1 =riff]                                      ::
+    ==                                                  ::
   +$  rite                                              ::  new permissions
     $%  [%r red=(unit rule)]                            ::  for read
         [%w wit=(unit rule)]                            ::  for write
@@ -893,7 +919,7 @@
   +$  saba  [p=ship q=@tas r=moar s=dome]               ::  patch+merge
   +$  soba  (list [p=path q=miso])                      ::  delta
   +$  suba  (list [p=path q=misu])                      ::  delta
-  +$  tako  @                                           ::  yaki ref
+  +$  tako  @uvI                                        ::  yaki ref
   +$  toro  [p=@ta q=nori]                              ::  general change
   ++  unce                                              ::  change part
     |*  a=mold                                          ::
@@ -901,6 +927,9 @@
         [%| p=(list a) q=(list a)]                      ::  p -> q[chunk]
     ==                                                  ::
   ++  urge  |*(a=mold (list (unce a)))                  ::  list change
+  +$  waft                                              ::  kelvin range
+    $^  [[%1 ~] p=(set weft)]                           ::
+    weft                                                ::
   +$  whom  (each ship @ta)                             ::  ship or named crew
   +$  yoki  (each yuki yaki)                            ::  commit
   +$  yuki                                              ::  proto-commit
@@ -913,10 +942,110 @@
         r=tako                                          ::  self-reference
         t=@da                                           ::  date
     ==                                                  ::
+  +$  zest  $~(%dead ?(%dead %live %held))              ::  how live
+  ::                                                    ::
+  ++  tire                                              ::  app state
+    |%                                                  ::
+    +$  rock  (map desk [=zest wic=(set weft)])         ::
+    +$  wave                                            ::
+      $%  [%wait =desk =weft]                           ::  blocked
+          [%warp =desk =weft]                           ::  unblocked
+          [%zest =desk =zest]                           ::  running
+      ==                                                ::
+    ::
+    ++  wash                                            ::  patch
+      |=  [=rock =wave]
+      ^+  rock
+      ?-    -.wave
+          %wait
+        =/  got=[=zest wic=(set weft)]
+          (~(gut by rock) desk.wave *zest ~)
+        (~(put by rock) desk.wave got(wic (~(put in wic.got) weft.wave)))
+      ::
+          %warp
+        %-  ~(run by rock)
+        |=  [=zest wic=(set weft)]
+        [zest (~(del in wic) weft.wave)]
+      ::
+          %zest
+        ?:  ?=(%dead zest.wave)
+          (~(del by rock) desk.wave)
+        =/  got=[=zest wic=(set weft)]
+          (~(gut by rock) desk.wave *zest ~)
+        (~(put by rock) desk.wave got(zest zest.wave))
+      ==
+    ::
+    ++  walk                                            ::  diff
+      |=  [a=rock b=rock]
+      ^-  (list wave)
+      =/  adds  (~(dif by b) a)
+      =/  dels  (~(dif by a) b)
+      =/  bots  (~(int by a) b)
+      ;:  welp
+        ^-  (list wave)
+        %-  zing
+        %+  turn  ~(tap by adds)
+        |=  [=desk =zest wic=(set weft)]
+        ^-  (list wave)
+        :-  [%zest desk zest]
+        %+  turn  ~(tap in wic)
+        |=  =weft
+        [%wait desk weft]
+      ::
+        ^-  (list wave)
+        %+  turn  ~(tap by dels)
+        |=  [=desk =zest wic=(set weft)]
+        ^-  wave
+        [%zest desk %dead]
+      ::
+        ^-  (list wave)
+        %-  zing
+        %+  turn  ~(tap by bots)
+        |=  [=desk * *]
+        ^-  (list wave)
+        =/  aa  (~(got by a) desk)
+        =/  bb  (~(got by b) desk)
+        =/  wadds  (~(dif in wic.bb) wic.aa)
+        =/  wdels  (~(dif in wic.aa) wic.bb)
+        ;:  welp
+          ?:  =(zest.aa zest.bb)
+            ~
+          [%zest desk zest.bb]~
+        ::
+          %+  turn  ~(tap by wadds)
+          |=  =weft
+          ^-  wave
+          [%wait desk weft]
+        ::
+          %+  turn  ~(tap by wdels)
+          |=  =weft
+          ^-  wave
+          [%warp desk weft]
+        ==
+      ==
+    --
   ::
   ::  +page-to-lobe: hash a page to get a lobe.
   ::
   ++  page-to-lobe  |=(page (shax (jam +<)))
+  ::
+  ++  cord-to-waft
+    |=  =cord
+    ^-  waft
+    =/  wefts=(list weft)
+      %+  turn  (rash cord (star (ifix [gay gay] tall:vast)))
+      |=  =hoon
+      !<(weft (slap !>(~) hoon))
+    ?:  ?=([* ~] wefts)
+      i.wefts
+    [[%1 ~] (sy wefts)]
+  ::
+  ++  waft-to-wefts
+    |=  kal=waft
+    ^-  (set weft)
+    ?^  -.kal
+      p.kal
+    [kal ~ ~]
   ::
   ::  +make-yaki: make commit out of a list of parents, content, and date.
   ::
@@ -1629,16 +1758,20 @@
         [%sear =ship]                                   ::  clear pending queues
         [%jolt =desk =dude]                             ::  (re)start agent
         [%idle =dude]                                   ::  suspend agent
+        [%load =load]                                   ::  load agent
         [%nuke =dude]                                   ::  delete agent
+        [%doff dude=(unit dude) ship=(unit ship)]       ::  kill subscriptions
+        [%rake dude=(unit dude) all=?]                  ::  reclaim old subs
         $>(%init vane-task)                             ::  set owner
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
         $>(%plea vane-task)                             ::  network request
+        [%spew veb=(list verb)]                         ::  set verbosity
+        [%sift dudes=(list dude)]                       ::  per agent
     ==                                                  ::
   +$  bitt  (map duct (pair ship path))                 ::  incoming subs
-  +$  boat                                              ::  outgoing subs
-    %+  map  [=wire =ship =term]                        ::
-    [acked=? =path]                                     ::
+  +$  boat  (map [=wire =ship =term] [acked=? =path])   ::  outgoing subs
+  +$  boar  (map [=wire =ship =term] nonce=@)           ::  and their nonces
   +$  bowl                                              ::  standard app state
           $:  $:  our=ship                              ::  host
                   src=ship                              ::  guest
@@ -1654,6 +1787,7 @@
           ==  ==                                        ::
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact
+  +$  load  (list [=dude =beak =agent])                 ::  loadout
   +$  scar                                              ::  opaque duct
     $:  p=@ud                                           ::  bone sequence
         q=(map duct bone)                               ::  by duct
@@ -1674,6 +1808,9 @@
     $%  [%raw-fact =mark =noun]
         sign:agent
     ==
+  ::  TODO: add more flags?
+  ::
+  +$  verb  ?(%odd)
   ::
   ::  +agent: app core
   ::
@@ -2078,6 +2215,225 @@
     +$  oath  @                                         ::  signature
     --  ::  pki
   --  ::  jael
+::                                                      ::::
+::::                    ++khan                            ::  (1i) threads
+  ::                                                    ::::
+++  khan  ^?
+  |%
+  +$  gift                                              ::  out result <-$
+    $%  [%arow p=(avow cage)]                           ::  in-arvo result
+        [%avow p=(avow page)]                           ::  external result
+    ==                                                  ::
+  +$  task                                              ::  in request ->$
+    $~  [%vega ~]                                       ::
+    $%  $>(%born vane-task)                             ::  new unix process
+        [%done ~]                                       ::  socket closed
+        ::  TODO  mark ignored                          ::
+        ::                                              ::
+        [%fard p=(fyrd cage)]                           ::  in-arvo thread
+        [%fyrd p=(fyrd cast)]                           ::  external thread
+        [%lard =bear =shed]                             ::  inline thread
+        $>(%trim vane-task)                             ::  trim state
+        $>(%vega vane-task)                             ::  report upgrade
+    ==                                                  ::
+  ::                                                    ::
+  ++  avow  |$  [a]  (each a goof)                      ::  $fyrd result
+  +$  bear  $@(desk beak)                               ::  partial $beak
+  +$  cast  (pair mark page)                            ::  output mark + input
+  ++  fyrd  |$  [a]  [=bear name=term args=a]           ::  thread run request
+  ::                                                    ::
+  +$  shed  _*form:(strand:rand ,vase)                  ::  compute vase
+  --  ::khan
+::
+++  rand                                                ::  computation
+  |%
+  +$  card  card:agent:gall
+  +$  input
+    $%  [%poke =cage]
+        [%sign =wire =sign-arvo]
+        [%agent =wire =sign:agent:gall]
+        [%watch =path]
+    ==
+  +$  strand-input  [=bowl in=(unit input)]
+  +$  tid   @tatid
+  +$  bowl
+    $:  our=ship
+        src=ship
+        tid=tid
+        mom=(unit tid)
+        wex=boat:gall
+        sup=bitt:gall
+        eny=@uvJ
+        now=@da
+        byk=beak
+    ==
+  ::
+  ::  cards:  cards to send immediately.  These will go out even if a
+  ::          later stage of the computation fails, so they shouldn't have
+  ::          any semantic effect on the rest of the system.
+  ::          Alternately, they may record an entry in contracts with
+  ::          enough information to undo the effect if the computation
+  ::          fails.
+  ::  wait:   don't move on, stay here.  The next sign should come back
+  ::          to this same callback.
+  ::  skip:   didn't expect this input; drop it down to be handled
+  ::          elsewhere
+  ::  cont:   continue computation with new callback.
+  ::  fail:   abort computation; don't send effects
+  ::  done:   finish computation; send effects
+  ::
+  ++  strand-output-raw
+    |*  a=mold
+    $~  [~ %done *a]
+    $:  cards=(list card)
+        $=  next
+        $%  [%wait ~]
+            [%skip ~]
+            [%cont self=(strand-form-raw a)]
+            [%fail err=(pair term tang)]
+            [%done value=a]
+        ==
+    ==
+  ::
+  ++  strand-form-raw
+    |*  a=mold
+    $-(strand-input (strand-output-raw a))
+  ::
+  ::  Abort strand computation with error message
+  ::
+  ++  strand-fail
+    |=  err=(pair term tang)
+    |=  strand-input
+    [~ %fail err]
+  ::
+  ::  Asynchronous transcaction monad.
+  ::
+  ::  Combo of four monads:
+  ::  - Reader on input
+  ::  - Writer on card
+  ::  - Continuation
+  ::  - Exception
+  ::
+  ++  strand
+    |*  a=mold
+    |%
+    ++  output  (strand-output-raw a)
+    ::
+    ::  Type of an strand computation.
+    ::
+    ++  form  (strand-form-raw a)
+    ::
+    ::  Monadic pure.  Identity computation for bind.
+    ::
+    ++  pure
+      |=  arg=a
+      ^-  form
+      |=  strand-input
+      [~ %done arg]
+    ::
+    ::  Monadic bind.  Combines two computations, associatively.
+    ::
+    ++  bind
+      |*  b=mold
+      |=  [m-b=(strand-form-raw b) fun=$-(b form)]
+      ^-  form
+      |=  input=strand-input
+      =/  b-res=(strand-output-raw b)
+        (m-b input)
+      ^-  output
+      :-  cards.b-res
+      ?-    -.next.b-res
+        %wait  [%wait ~]
+        %skip  [%skip ~]
+        %cont  [%cont ..$(m-b self.next.b-res)]
+        %fail  [%fail err.next.b-res]
+        %done  [%cont (fun value.next.b-res)]
+      ==
+    ::
+    ::  The strand monad must be evaluted in a particular way to maintain
+    ::  its monadic character.  +take:eval implements this.
+    ::
+    ++  eval
+      |%
+      ::  Indelible state of a strand
+      ::
+      +$  eval-form
+        $:  =form
+        ==
+      ::
+      ::  Convert initial form to eval-form
+      ::
+      ++  from-form
+        |=  =form
+        ^-  eval-form
+        form
+      ::
+      ::  The cases of results of +take
+      ::
+      +$  eval-result
+        $%  [%next ~]
+            [%fail err=(pair term tang)]
+            [%done value=a]
+        ==
+      ::
+      ++  validate-mark
+        |=  [in=* =mark =bowl]
+        ^-  cage
+        =+  .^  =dais:clay  %cb
+                /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[mark]
+            ==
+        =/  res  (mule |.((vale.dais in)))
+        ?:  ?=(%| -.res)
+          ~|  %spider-mark-fail
+          (mean leaf+"spider: ames vale fail {<mark>}" p.res)
+        [mark p.res]
+      ::
+      ::  Take a new sign and run the strand against it
+      ::
+      ++  take
+        ::  cards: accumulate throughout recursion the cards to be
+        ::         produced now
+        =|  cards=(list card)
+        |=  [=eval-form =strand-input]
+        ^-  [[(list card) =eval-result] _eval-form]
+        =*  take-loop  $
+        =.  in.strand-input
+          ?~  in.strand-input  ~
+          =/  in  u.in.strand-input
+          ?.  ?=(%agent -.in)      `in
+          ?.  ?=(%fact -.sign.in)  `in
+          ::
+          :-  ~
+          :^  %agent  wire.in  %fact
+          (validate-mark q.q.cage.sign.in p.cage.sign.in bowl.strand-input)
+        ::  run the strand callback
+        ::
+        =/  =output  (form.eval-form strand-input)
+        ::  add cards to cards
+        ::
+        =.  cards
+          %+  welp
+            cards
+          ::  XX add tag to wires?
+          cards.output
+        ::  case-wise handle next steps
+        ::
+        ?-  -.next.output
+            %wait  [[cards %next ~] eval-form]
+            %skip  [[cards %next ~] eval-form]
+            %fail  [[cards %fail err.next.output] eval-form]
+            %done  [[cards %done value.next.output] eval-form]
+            %cont
+          ::  recurse to run continuation with initialization input
+          ::
+          %_  take-loop
+            form.eval-form  self.next.output
+            strand-input    [bowl.strand-input ~]
+          ==
+        ==
+      --
+    --
+  --  ::strand
 ::
 +$  gift-arvo                                           ::  out result <-$
   $~  [%doze ~]
@@ -2089,6 +2445,7 @@
       gift:gall
       gift:iris
       gift:jael
+      gift:khan
   ==
 +$  task-arvo                                           ::  in request ->$
   $%  task:ames
@@ -2099,6 +2456,7 @@
       task:gall
       task:iris
       task:jael
+      task:khan
   ==
 +$  note-arvo                                           ::  out request $->
   $~  [%b %wake ~]
@@ -2110,6 +2468,7 @@
       [%g task:gall]
       [%i task:iris]
       [%j task:jael]
+      [%k task:khan]
       [%$ %whiz ~]
       [@tas %meta vase]
   ==
@@ -2131,6 +2490,7 @@
       [%gall gift:gall]
       [%iris gift:iris]
       [%jael gift:jael]
+      [%khan gift:khan]
   ==
 ::  $unix-task: input from unix
 ::

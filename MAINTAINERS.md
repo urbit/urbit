@@ -159,6 +159,43 @@ so that I can type e.g. `git mu origin/foo 1337`.
 
 If you're making a Vere release, just play it safe and update all the pills.
 
+To produce multi pills, you will need to set up an environment with the
+appropriate desks with the appropriate contents, doing something like the
+following (where `> ` denotes an urbit command and `% ` denotes a unix shell
+command):
+
+```console
+> |merge %garden our %base
+> |merge %landscape our %base
+> |merge %bitcoin our %base
+> |merge %webterm our %base
+> |mount %
+> |mount %garden
+> |mount %landscape
+> |mount %bitcoin
+> |mount %webterm
+% rsync -avL --delete pkg/arvo/ zod/base/
+% rm -rf zod/base/tests/
+% for desk in garden landscape bitcoin webterm; do \
+    rsync -avL --delete pkg/$desk/ zod/$desk/ \
+  done
+> |commit %base
+> |commit %garden
+> |commit %landscape
+> |commit %bitcoin
+> |commit %webterm
+> .multi/pill +solid %base %garden %landscape %bitcoin %webterm
+> .multi-brass/pill +brass %base %garden %landscape %bitcoin %webterm
+```
+
+And then of course:
+
+```console
+> .solid/pill +solid
+> .brass/pill +brass
+> .ivory/pill +ivory
+```
+
 For an Urbit OS release, after all the merge commits, make a release with the
 commit message "release: urbit-os-v1.0.xx".  This commit should have up-to-date
 artifacts from pkg/interface and a new version number in the desk.docket-0 of
@@ -289,7 +326,7 @@ separate releases.
 (**Note**: the following steps are automated by some other Tlon-internal
 tooling.  Just ask `~nidsut-tomdun` for details.)
 
-For Urbit OS updates, this means copying the files into ~zod's %home desk.  The
+For Urbit OS updates, this means copying the files into ~zod's %base desk.  The
 changes should be merged into /~zod/kids and then propagated through other galaxies
 and stars to the rest of the network.
 
@@ -298,10 +335,10 @@ For consistency, I create a release tarball and then rsync the files in.
 ```
 $ wget https://github.com/urbit/urbit/archive/urbit-os-vx.y.tar.gz
 $ tar xzf urbit-os-vx.y.tar.gz
-$ herb zod -p hood -d "+hood/mount /=home="
-$ rsync -zr --delete urbit-urbit-os-vx.y/pkg/arvo/ zod/home
-$ herb zod -p hood -d "+hood/commit %home"
-$ herb zod -p hood -d "+hood/merge %kids our %home"
+$ herb zod -p hood -d "+hood/mount /=base="
+$ rsync -zr --delete urbit-urbit-os-vx.y/pkg/arvo/ zod/base
+$ herb zod -p hood -d "+hood/commit %base"
+$ herb zod -p hood -d "+hood/merge %kids our %base"
 ```
 
 For Vere updates, this means simply shutting down each desired ship, installing

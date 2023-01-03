@@ -4,7 +4,7 @@
 =>  ..lull
 ~%  %zuse  ..part  ~
 |%
-++  zuse  %419
+++  zuse  %417
 ::                                                      ::  ::
 ::::                                                    ::  ::  (2) engines
   ::                                                    ::  ::
@@ -2235,6 +2235,112 @@
         =/  pub  (from.j qj)
         ?<  =([0 0] pub)
         pub
+      ++  schnorr
+        ~%  %schnorr  ..schnorr  ~
+        =>  |%
+            ++  tagged-hash
+              |=  [tag=@ [l=@ x=@]]
+              =+  hat=(sha-256:sha (swp 3 tag))
+              %-  sha-256l:sha
+              :-  (add 64 l)
+              (can 3 ~[[l x] [32 hat] [32 hat]])
+            ++  lift-x
+              |=  x=@I
+              ^-  (unit point)
+              =/  c  curve
+              ?.  (lth x p.domain.c)
+                ~
+              =/  fop  field-p.c
+              =+  [fadd fpow]=[sum.fop exp.fop]
+              =/  cp  (fadd (fpow 3 x) 7)
+              =/  y  (fpow (rsh [0 2] +(p.domain.c)) cp)
+              ?.  =(cp (fpow 2 y))
+                ~
+              %-  some  :-  x
+              ?:  =(0 (mod y 2))
+                y
+              (sub p.domain.c y)
+            --
+        |%
+        ::
+        ++  sign                                        ::  schnorr signature
+          ~/  %sosi
+          |=  [sk=@I m=@I a=@I]
+          ^-  @J
+          ?>  (gte 32 (met 3 m))
+          ?>  (gte 32 (met 3 a))
+          =/  c  curve
+          ::  implies (gte 32 (met 3 sk))
+          ::
+          ?<  |(=(0 sk) (gte sk n.domain.c))
+          =/  pp
+            (mul-point-scalar g.domain.c sk)
+          =/  d
+            ?:  =(0 (mod y.pp 2))
+              sk
+            (sub n.domain.c sk)
+          =/  t
+            %+  mix  d
+            (tagged-hash 'BIP0340/aux' [32 a])
+          =/  rand
+            %+  tagged-hash  'BIP0340/nonce'
+            :-  96
+            (rep 8 ~[m x.pp t])
+          =/  kp  (mod rand n.domain.c)
+          ?<  =(0 kp)
+          =/  rr  (mul-point-scalar g.domain.c kp)
+          =/  k
+            ?:  =(0 (mod y.rr 2))
+              kp
+            (sub n.domain.c kp)
+          =/  e
+            %-  mod
+            :_  n.domain.c
+            %+  tagged-hash  'BIP0340/challenge'
+            :-  96
+            (rep 8 ~[m x.pp x.rr])
+          =/  sig
+            %^  cat  8
+              (mod (add k (mul e d)) n.domain.c)
+            x.rr
+          ?>  (verify x.pp m sig)
+          sig
+        ::
+        ++  verify                                      ::  schnorr verify
+          ~/  %sove
+          |=  [pk=@I m=@I sig=@J]
+          ^-  ?
+          ?>  (gte 32 (met 3 pk))
+          ?>  (gte 32 (met 3 m))
+          ?>  (gte 64 (met 3 sig))
+          =/  c  curve
+          =/  pup  (lift-x pk)
+          ?~  pup
+            %.n
+          =/  pp  u.pup
+          =/  r  (cut 8 [1 1] sig)
+          ?:  (gte r p.domain.c)
+            %.n
+          =/  s  (end 8 sig)
+          ?:  (gte s n.domain.c)
+            %.n
+          =/  e
+            %-  mod
+            :_  n.domain.c
+            %+  tagged-hash  'BIP0340/challenge'
+            :-  96
+            (rep 8 ~[m x.pp r])
+          =/  aa
+            (mul-point-scalar g.domain.c s)
+          =/  bb
+            (mul-point-scalar pp (sub n.domain.c e))
+          ?:  &(=(x.aa x.bb) !=(y.aa y.bb))             ::  infinite?
+            %.n
+          =/  rr  (add-points aa bb)
+          ?.  =(0 (mod y.rr 2))
+            %.n
+          =(r x.rr)
+        --
       --
     --
   ::
@@ -3389,6 +3495,14 @@
       |=  jon=json
       ?>  ?=([%n *] jon)
       (rash p.jon dem)
+    ::                                                  ::  ++ns:dejs:format
+    ++  ns                                              ::  number as signed
+      |=  jon=json
+      ^-  @s
+      ?>  ?=([%n *] jon)
+      %+  rash  p.jon
+      %+  cook  new:si
+      ;~(plug ;~(pose (cold %| (jest '-')) (easy %&)) dem)
     ::                                                  ::  ++no:dejs:format
     ++  no                                              ::  number as cord
       |=(jon=json ?>(?=([%n *] jon) p.jon))
@@ -3834,55 +3948,6 @@
   ++  new-desk
     |=  [=desk tako=(unit tako) files=(map path page)]
     [%c %park desk &/[(drop tako) (~(run by files) (lead %&))] *rang]
-  ::  +an: $ankh interface door
-  ::
-  ++  an
-    |_  nak=ankh
-    ::  +dug: produce ankh at path
-    ::
-    ++  dug
-      |=  =path
-      ^-  (unit ankh)
-      ?~  path  `nak
-      ?~  kid=(~(get by dir.nak) i.path)
-        ~
-      $(nak u.kid, path t.path)
-    ::  +get: produce file at path
-    ::
-    ++  get
-      |=  =path
-      ^-  (unit cage)
-      ?~  nik=(dug path)  ~
-      ?~  fil.u.nik       ~
-      `q.u.fil.u.nik
-    ::  +mup: convert sub-tree at .pre to (map path [lobe cage])
-    ::
-    ++  mup
-      |=  pre=path
-      =-  ~?  =(~ -)  [%oh-no-empty pre]
-          -
-      ^-  (map path [lobe cage])
-      =/  nek=(unit ankh)  (dug pre)
-      ?~  nek
-        ~&  [%oh-no-empty-pre pre ~(key by dir.nak)]
-        ~
-      =.  nak  u.nek
-      ~?  =(~ nak)  [%oh-no-empty-nak pre]
-      =|  pax=path
-      =|  res=(map path [=lobe =cage])
-      |-  ^+  res
-      =?  res  ?=(^ fil.nak)  (~(put by res) pax u.fil.nak)
-      :: =/  anz=(list [seg=@ta =ankh])  ~(tap by dir.nak)
-      :: |-  ^+  res
-      :: ?~  anz  res
-      :: %_  $
-      ::   anz  t.anz
-      ::   res  ^$(pax (snoc pax seg.i.anz), nak ankh.i.anz)
-      :: ==
-      %+  roll  ~(tap by dir.nak)
-      |=  [[seg=@ta =ankh] res=_res]
-      ^$(pax (snoc pax seg), nak ankh, res res)
-    --
   --
 ::                                                      ::
 ::::                      ++differ                      ::  (2d) hunt-mcilroy

@@ -134,23 +134,32 @@
     ==
   --
 ::
-++  on-peek   
+++  on-peek
+  ~/  %hark-store-peek   
   |=  =path
   ^-  (unit (unit cage))
   ?+  path  (on-peek:def path)
     ::
-      [%x %recent %inbox @ @ ~]
-    =/  date=@da
-      (slav %ud i.t.t.t.path)
-    =/  length=@ud
-      (slav %ud i.t.t.t.t.path)
-    :^  ~  ~  %hark-update
-    !>  ^-  update:store
-    :-  %more
-    %+  turn  (tab:orm archive `date length)
-    |=  [time=@da =timebox:store]
-    ^-  update:store
-    [%timebox archive+time ~(val by timebox)]
+        [%x %recent %inbox @ @ ~]
+      =/  date=@da
+        (slav %ud i.t.t.t.path)
+      =/  length=@ud
+        (slav %ud i.t.t.t.t.path)
+      :^  ~  ~  %hark-update
+      !>  ^-  update:store
+      :-  %more
+      %+  turn  (tab:orm archive `date length)
+      |=  [time=@da =timebox:store]
+      ^-  update:store
+      [%timebox archive+time ~(val by timebox)]
+    ::
+        [%x %all-stats ~]
+      :^  ~  ~  %hark-update
+      !>  ^-  update:store
+      :-  %more
+      ^-  (list update:store)
+      :~  [%all-stats places]
+    ==
   ==
 ::
 ++  on-poke

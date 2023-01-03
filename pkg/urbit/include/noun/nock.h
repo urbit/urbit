@@ -1,7 +1,6 @@
-/* i/n/n.h
-**
-** This file is in the public domain.
-*/
+#ifndef U3_NOCK_H
+#define U3_NOCK_H
+
   /** Data structures.
   ***
   **/
@@ -136,3 +135,5 @@
     */
       void
       u3n_ream(void);
+
+#endif /* ifndef U3_NOCK_H */

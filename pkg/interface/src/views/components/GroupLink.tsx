@@ -3,6 +3,7 @@ import React, { ReactElement, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import useMetadataState, { usePreview } from '~/logic/state/metadata';
 import { PropFunc } from '~/types';
+import { createJoinParams } from '../landscape/components/Join/Join';
 import { MetadataIcon } from '../landscape/components/MetadataIcon';
 
 type GroupLinkProps = {
@@ -26,7 +27,7 @@ const { preview } = usePreview(resource);
     <Row
       {...rest}
       as={Link}
-      to={joined ? `/~landscape/ship/${name}` : { search: `?join-kind=groups&join-path=/ship/${name}`}}
+      to={joined ? `/~landscape/ship/${name}` : { search: createJoinParams('groups', `/ship/${name}`) }}
       flexShrink={1}
       alignItems="center"
       width="100%"

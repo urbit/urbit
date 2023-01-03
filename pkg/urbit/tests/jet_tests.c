@@ -5,8 +5,7 @@
 static void
 _setup(void)
 {
-  u3m_init();
-  u3m_pave(c3y);
+  u3m_boot_lite(1 << 20);
 }
 
 static inline c3_i

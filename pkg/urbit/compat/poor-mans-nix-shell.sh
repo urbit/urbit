@@ -3,11 +3,18 @@ declare -a ldirs
 declare -a pdirs
 declare -A hdeps
 sources=(../../nix/sources.json ../../nix/sources-pmnsh.json)
+[ "yes" == "${build_openssl-no}" ] && sources=(../../nix/sources-openssl.json ${sources[@]})
 patches=compat/$1
 deriver=urbit-$1-build
 markfil=.$1~
 depdirs=
 nixpath=${NIX_STORE-../build}
+
+: ${gnutar:=tar}
+: ${gnumake:=make}
+: ${sha256tool:=sha256sum}
+
+export MAKE=$gnumake
 
 # LDFLAGS doesn't like absolute paths
 if [ "${nixpath:0:1}" == "/" ]
@@ -69,7 +76,7 @@ buildnixdep () {
       fi
       mkdir -p $dir
       pushd $dir
-      curl -fL "$url"|(tar --strip $strip -xzf - || true)
+      curl -fL "$url"|($gnutar --strip $strip -xzf - || true)
       popd
     fi
   else
@@ -84,7 +91,7 @@ buildnixdep () {
     [ -e $patch ] && patch -d $dir -p 1 <$patch
     pushd $dir
     eval "$cmdprep"
-    eval make "$cmdmake"
+    eval $gnumake "$cmdmake"
     touch $markfil
     popd
   fi
@@ -96,13 +103,13 @@ buildnixdep () {
     echo Uploading freshly built $hash-$key to binary cache...
     tar -C $dir -czf $hash.tar .
     local size=$(stat -c '%s' $hash.tar)
-    read filehash _ < <(sha256sum $hash.tar)
+    read filehash _ < <($sha256tool $hash.tar)
     curl -fL -H "Content-Type: application/gzip" -H "Authorization: Bearer $CACHIX_AUTH_TOKEN" --data-binary @"$hash.tar" "$cache/nar"
     curl -fL -H "Content-Type: application/json" -H "Authorization: Bearer $CACHIX_AUTH_TOKEN" --data-binary @- "$cache/${hash}.narinfo" <<EOF
 {
   "cStoreHash": "$hash",
   "cStoreSuffix": "$key",
-  "cNarHash": "sha256:$(hex2nixbase32 $filehash)",
+  "cNarHash": "$sha256tool:$(hex2nixbase32 $filehash)",
   "cNarSize": $size,
   "cFileHash": "$filehash",
   "cFileSize": $size,
@@ -127,7 +134,7 @@ do
   patch=$patches/$key.patch
   read hash _ < <((
   echo -n $json
-  [ -e $patch ] && cat $patch)|sha256sum)
+  [ -e $patch ] && cat $patch)|$sha256tool)
   hash=$(hex2nixbase32 $hash)
   hdeps[$key]=$hash
   depdirs="$depdirs|gsub(\"\\\\.\\\\./$key\";\"\\(\$d)/$hash-$key\")"

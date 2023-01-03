@@ -79,6 +79,7 @@ dependencies:
   - pretty-show
   - primitive
   - process
+  - psqueues
   - QuickCheck
   - racquire
   - random

@@ -1,6 +1,8 @@
 include config.mk
-include $(foreach dir,$(compat),$(wildcard compat/$(dir)/*.mk))
+compat_mks := $(foreach dir,$(compat),$(wildcard compat/$(dir)/*.mk))
+include $(compat_mks)
 
+c    = $(wildcard c/*.c)
 jets = jets/tree.c $(wildcard jets/*/*.c)
 noun = $(wildcard noun/*.c)
 ur   = $(wildcard ur/*.c)
@@ -12,7 +14,7 @@ bench  = $(wildcard bench/*.c)
 
 compat := $(foreach dir,$(compat),$(wildcard compat/$(dir)/*.c))
 
-common  = $(jets) $(noun) $(ur) $(vere) $(compat)
+common  = $(c) $(jets) $(noun) $(ur) $(vere) $(compat)
 headers = $(shell find include -type f)
 
 common_objs = $(shell echo $(common) | sed 's/\.c/.o/g')
@@ -24,7 +26,7 @@ all_srcs = $(common) $(daemon) $(worker)
 
 test_exes  = $(shell echo $(tests) | sed 's/tests\//.\/build\//g' | sed 's/\.c//g')
 bench_exes = $(shell echo $(bench) | sed 's/bench\//.\/build\//g' | sed 's/\.c//g')
-all_exes   = $(test_exes) $(bench_exes) ./build/urbit ./build/urbit-worker
+all_exes   = $(test_exes) $(bench_exes) ./build/urbit
 
 # -Werror promotes all warnings that are enabled into errors (this is on)
 # -Wall issues all types of errors.  This is off (for now)
@@ -32,7 +34,7 @@ CFLAGS := $(CFLAGS)
 
 ################################################################################
 
-.PHONY: all test clean mrproper
+.PHONY: all bench test clean mrproper
 
 ################################################################################
 
@@ -41,7 +43,7 @@ all: $(all_exes)
 test: $(test_exes)
 	@FAIL=0;                                         \
 	for x in $^;                                     \
-	do echo "\n$$x" && ./$$x;                        \
+	do echo $$'\n'"$$x" && ./$$x;                    \
 	if [ $$? != 0 ]; then FAIL=1; fi;                \
 	done;                                            \
 	if [ $$FAIL != 0 ]; then echo "\n" && exit 1; fi;
@@ -53,7 +55,7 @@ clean:
 	rm -f ./tags $(all_objs) $(all_exes)
 
 mrproper: clean
-	rm -f config.mk include/config.h
+	rm -f config.mk include/config.h compile_commands.json
 
 ################################################################################
 
@@ -67,12 +69,7 @@ build/%_tests: $(common_objs) tests/%_tests.o
 	@mkdir -p ./build
 	@$(CC) $^ $(LDFLAGS) -o $@
 
-build/urbit: $(common_objs) $(daemon_objs)
-	@echo CC -o $@
-	@mkdir -p ./build
-	@$(CC) $^ $(LDFLAGS) -o $@
-
-build/urbit-worker: $(common_objs) $(worker_objs)
+build/urbit: $(common_objs) $(daemon_objs) $(worker_objs)
 	@echo CC -o $@
 	@mkdir -p ./build
 	@$(CC) $^ $(LDFLAGS) -o $@
@@ -85,3 +82,15 @@ build/urbit-worker: $(common_objs) $(worker_objs)
 
 tags: $(all_srcs) $(headers)
 	ctags $^
+
+compile_commands.json: Makefile config.mk $(compat_mks)
+	@echo "[" > $@ && sep= && \
+	for src in $(all_srcs); do \
+		echo "$$sep{" >> $@; \
+		printf '"directory": "%s",\n' $$(pwd) >> $@; \
+		printf '"command": "%s",\n' "$(CC) -I./include $(CFLAGS) $$src $(CCEXTRA) -c" >> $@; \
+		printf '"file": "%s",\n' $$src >> $@; \
+		echo "}" >> $@; \
+		sep=','; \
+	done && \
+	echo "]" >> $@

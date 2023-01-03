@@ -208,3 +208,90 @@ u3we_make(u3_noun cor)
     return u3l_punt("secp-make", _cqes_make(has, prv));
   }
 }
+
+/* create a schnorr signature
+*/
+static u3_weak
+_cqes_sosi(u3_atom sk, u3_atom m, u3_atom a)
+{
+  c3_y key_y[32];
+  c3_y mes_y[32];
+  c3_y aux_y[32];
+
+  if ( (0 != u3r_bytes_fit(32, key_y, sk)) ||
+       (0 != u3r_bytes_fit(32, mes_y, m)) ||
+       (0 != u3r_bytes_fit(32, aux_y, a)) )
+  {
+    return u3m_bail(c3__exit);
+  }
+  else {
+    c3_y sig_y[64];
+
+    return
+      ( 0 == urcrypt_secp_schnorr_sign(sec_u, key_y, mes_y, aux_y, sig_y) )
+      ? u3i_bytes(64, sig_y)
+      : u3_none;
+  }
+}
+
+u3_noun
+u3we_sosi(u3_noun cor)
+{
+  u3_noun key, mes, aux;
+
+  if ( (c3n == u3r_mean(cor,
+                        u3x_sam_2,  &key,
+                        u3x_sam_6,  &mes,
+                        u3x_sam_7,  &aux,
+                        0)) ||
+       (c3n == u3ud(key)) ||
+       (c3n == u3ud(mes)) ||
+       (c3n == u3ud(aux)) )
+  {
+    return u3m_bail(c3__exit);
+  }
+  else {
+    return u3l_punt("secp-sosi", _cqes_sosi(key, mes, aux));
+  }
+}
+
+/* verify a schnorr signature
+*/
+static u3_atom
+_cqes_sove(u3_atom pk, u3_atom m, u3_atom sig)
+{
+  c3_y pub_y[32];
+  c3_y mes_y[32];
+  c3_y sig_y[64];
+
+  if ( (0 != u3r_bytes_fit(32, pub_y, pk)) ||
+       (0 != u3r_bytes_fit(32, mes_y, m)) ||
+       (0 != u3r_bytes_fit(64, sig_y, sig)) )
+  {
+    return u3m_bail(c3__exit);
+  }
+  else {
+    return __(urcrypt_secp_schnorr_veri(sec_u, sig_y, mes_y, pub_y));
+  }
+}
+
+u3_noun
+u3we_sove(u3_noun cor)
+{
+  u3_noun pub, mes, sig;
+
+  if ( (c3n == u3r_mean(cor,
+                        u3x_sam_2,  &pub,
+                        u3x_sam_6,  &mes,
+                        u3x_sam_7,  &sig,
+                        0)) ||
+       (c3n == u3ud(pub)) ||
+       (c3n == u3ud(mes)) ||
+       (c3n == u3ud(sig)) )
+  {
+    return u3m_bail(c3__exit);
+  }
+  else {
+    return _cqes_sove(pub, mes, sig);
+  }
+}

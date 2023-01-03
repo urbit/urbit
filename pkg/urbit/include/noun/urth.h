@@ -1,10 +1,11 @@
-/* include/noun/urth.h
-*/
+#ifndef U3_URTH_H
+#define U3_URTH_H
+
     /**  Functions.
     **/
       /* u3u_meld(): globally deduplicate memory.
       */
-        void
+        c3_w
         u3u_meld(void);
 
       /* u3u_cram(): globably deduplicate memory, and write a rock to disk.
@@ -35,3 +36,5 @@
       */
         c3_o
         u3u_munmap(c3_d len_d, c3_y* byt_y);
+
+#endif /* ifndef U3_URTH_H */

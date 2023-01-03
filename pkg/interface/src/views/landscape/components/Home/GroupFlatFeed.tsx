@@ -3,7 +3,6 @@ import React, {
   useEffect
 } from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
-import { resourceFromPath } from '~/logic/lib/group';
 import useGraphState, { useGraphTimesentMap } from '~/logic/state/graph';
 import { useGroup } from '~/logic/state/group';
 import { useAssocForGraph } from '~/logic/state/metadata';
@@ -12,7 +11,7 @@ import { GroupFeedHeader } from './GroupFeedHeader';
 import { PostThreadRoutes } from './Post/PostThread';
 import PostFlatTimeline from './Post/PostFlatTimeline';
 import airlock from '~/logic/api';
-import { markCountAsRead } from '@urbit/api';
+import { markCountAsRead, resourceFromPath } from '@urbit/api';
 import { PostRepliesRoutes } from './Post/PostReplies';
 import { toHarkPlace } from '~/logic/lib/util';
 

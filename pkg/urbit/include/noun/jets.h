@@ -1,7 +1,6 @@
-/* include/n/j.h
-**
-** This file is in the public domain.
-*/
+#ifndef U3_JETS_H
+#define U3_JETS_H
+
   /** Noun semantics.
   **/
 #if 0
@@ -301,3 +300,5 @@
       */
         void
         u3j_rewrite_compact();
+
+#endif /* ifndef U3_JETS_H */

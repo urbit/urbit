@@ -19,7 +19,7 @@
               [%meld ~]
               [%pack ~]
       ==  ==
-      [%peek mil=@ sam=*]  :: gang (each path $%([%once @tas @tas path] [beam @tas beam]))
+      [%peek mil=@ sam=*]  :: gang (each path $%([%once @tas @tas path] [%beam @tas beam]))
       [%play eve=@ lit=(list ?((pair @da ovum) *))]
       [%work mil=@ job=(pair @da ovum)]
   ==
@@ -1051,7 +1051,7 @@ _lord_on_serf_err_cb(uv_stream_t* pyp_u,
     //  serf used to write to 2 directly
     //  this can't be any worse than that
     //
-    u3_write_fd(2, buf_u->base, siz_i);
+    c3_assert(c3_write(STDERR_FILENO, buf_u->base, siz_i) == siz_i);
   } else {
     uv_read_stop(pyp_u);
 
@@ -1107,17 +1107,33 @@ _lord_on_serf_bail(void*       ptr_v,
   _lord_bail(god_u);
 }
 
-/* u3_lord_info(): print status info.
+/* u3_lord_info(): status info as $mass.
+*/
+u3_noun
+u3_lord_info(u3_lord* god_u)
+{
+  return u3_pier_mass(
+    c3__lord,
+    u3i_list(
+      u3_pier_mase("live",  god_u->liv_o),
+      u3_pier_mase("event", u3i_chub(god_u->eve_d)),
+      u3_pier_mase("mug",   god_u->mug_l),
+      u3_pier_mase("queue", u3i_word(god_u->dep_w)),
+      u3_newt_moat_info(&god_u->out_u),
+      u3_none));
+}
+
+/* u3_lord_slog(): print status info.
 */
 void
-u3_lord_info(u3_lord* god_u)
+u3_lord_slog(u3_lord* god_u)
 {
   u3l_log("  lord: live=%s, event=%" PRIu64 ", mug=%x, queue=%u",
           ( c3y == god_u->liv_o ) ? "&" : "|",
           god_u->eve_d,
           god_u->mug_l,
           god_u->dep_w);
-  u3_newt_moat_info(&god_u->out_u);
+  u3_newt_moat_slog(&god_u->out_u);
 }
 
 /* u3_lord_init(): instantiate child process.
@@ -1141,11 +1157,12 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
   //  spawn new process and connect to it
   //
   {
-    c3_c* arg_c[8];
+    c3_c* arg_c[10];
     c3_c  key_c[256];
     c3_c  wag_c[11];
     c3_c  hap_c[11];
     c3_c  cev_c[11];
+    c3_c  lom_c[11];
     c3_i  err_i;
 
     sprintf(key_c, "%" PRIx64 ":%" PRIx64 ":%" PRIx64 ":%" PRIx64,
@@ -1158,29 +1175,33 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
 
     sprintf(hap_c, "%u", u3_Host.ops_u.hap_w);
 
+    sprintf(lom_c, "%u", u3_Host.ops_u.lom_y);
+
     arg_c[0] = god_u->bin_c;            //  executable
     arg_c[1] = "serf";                  //  protocol
     arg_c[2] = god_u->pax_c;            //  path to checkpoint directory
     arg_c[3] = key_c;                   //  disk key
     arg_c[4] = wag_c;                   //  runtime config
     arg_c[5] = hap_c;                   //  hash table size
+    arg_c[6] = lom_c;                   //  loom bex
 
     if ( u3_Host.ops_u.roc_c ) {
       //  XX validate
       //
-      arg_c[6] = u3_Host.ops_u.roc_c;
+      arg_c[7] = u3_Host.ops_u.roc_c;
     }
     else {
-      arg_c[6] = "0";
+      arg_c[7] = "0";
     }
 
-    #if defined(U3_OS_mingw)
-    sprintf(cev_c, "%u", u3_Host.cev_u);
-    arg_c[7] = cev_c;
+#ifdef U3_OS_mingw
+    sprintf(cev_c, "%" PRIu64, u3_Host.cev_u);
+    arg_c[8] = cev_c;
+#else
     arg_c[8] = 0;
-    #else
-    arg_c[7] = 0;
-    #endif
+#endif
+
+    arg_c[9] = 0;
 
     uv_pipe_init(u3L, &god_u->inn_u.pyp_u, 0);
     uv_timer_init(u3L, &god_u->out_u.tim_u);

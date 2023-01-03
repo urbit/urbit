@@ -134,6 +134,73 @@ int err_win_to_posix(DWORD winerr)
 	return error;
 }
 
+int link(const char *path1, const char *path2)
+{
+  if ( CreateHardLinkA(path2, path1, NULL) ) {
+    return 0;
+  }
+
+  errno = err_win_to_posix(GetLastError());
+  return -1;
+}
+
+ssize_t pread(int fd, void *buf, size_t count, off_t offset)
+{
+  DWORD len = 0;
+
+  OVERLAPPED overlapped = {0};
+
+  overlapped.OffsetHigh = (sizeof(off_t) <= sizeof(DWORD)) ?
+                          (DWORD)0 : (DWORD)((offset >> 32) & 0xFFFFFFFFL);
+  overlapped.Offset     = (sizeof(off_t) <= sizeof(DWORD)) ?
+                          (DWORD)offset : (DWORD)(offset & 0xFFFFFFFFL);
+
+  HANDLE h = (HANDLE)_get_osfhandle(fd);
+
+  if ( INVALID_HANDLE_VALUE == h ) {
+    errno = EBADF;
+    return -1;
+  }
+
+  if ( !ReadFile(h, buf, count, &len, &overlapped) ) {
+    DWORD err = GetLastError();
+
+    if ( ERROR_HANDLE_EOF != err ) {
+      errno = err_win_to_posix(err);
+      return -1;
+    }
+  }
+
+  return (ssize_t)len;
+}
+
+ssize_t pwrite(int fd, const void *buf, size_t count, off_t offset)
+{
+  DWORD len = 0;
+
+  OVERLAPPED overlapped = {0};
+
+  overlapped.OffsetHigh = (sizeof(off_t) <= sizeof(DWORD)) ?
+                          (DWORD)0 : (DWORD)((offset >> 32) & 0xFFFFFFFFL);
+  overlapped.Offset     = (sizeof(off_t) <= sizeof(DWORD)) ?
+                          (DWORD)offset : (DWORD)(offset & 0xFFFFFFFFL);
+
+  HANDLE h = (HANDLE)_get_osfhandle(fd);
+
+  if ( INVALID_HANDLE_VALUE == h ) {
+    errno = EBADF;
+    return -1;
+  }
+
+  if ( !WriteFile(h, buf, count, &len, &overlapped) ) {
+    errno = err_win_to_posix(GetLastError());
+    return -1;
+  }
+
+  return (ssize_t)len;
+}
+
+
 // from msys2 mingw-packages-dev patches
 // -----------------------------------------------------------------------
 
@@ -350,6 +417,18 @@ intmax_t mdb_get_filesize(HANDLE han_u)
 
 char *realpath(const char *path, char *resolved_path)
 {
-    // TODO
-    return strdup(path);
+  //  XX  MAX_PATH
+  //
+  return _fullpath(resolved_path, path, MAX_PATH);
+}
+
+long sysconf(int name)
+{
+  SYSTEM_INFO si;
+
+  if ( _SC_PAGESIZE != name ) {
+    return -1;
+  }
+  GetNativeSystemInfo(&si);
+  return si.dwPageSize;
 }

@@ -1,5 +1,5 @@
-/* include/vere/serf.h
-*/
+#ifndef U3_VERE_SERF_H
+#define U3_VERE_SERF_H
 
   /** Data types.
   **/
@@ -59,3 +59,5 @@
     */
       void
       u3_serf_grab(void);
+
+#endif /* ifndef U3_VERE_SERF_H */

@@ -48,7 +48,7 @@ _fore_inject(u3_auto* car_u, c3_c* pax_c)
     u3l_log("pier: invalid wire in -I ovum");
   }
   else if (  (c3n == u3a_is_atom(tar))
-          || (1 < u3r_met(3, tar)) )
+          || (4 < u3r_met(3, tar)) )
   {
     u3l_log("pier: invalid target in -I wire");
   }
@@ -78,9 +78,12 @@ _fore_inject(u3_auto* car_u, c3_c* pax_c)
 static void
 _fore_import(u3_auto* car_u, c3_c* pax_c)
 {
-  u3_noun arc = u3ke_cue(u3m_file(pax_c));
-  u3_noun imp = u3dt("cat", 3, u3i_string("#import_"), arc);
+  u3_noun fil = u3m_file(pax_c);
+  //u3m_p("imp file size", u3dc("met", 3, fil));
+  u3_noun imp = u3dt("cat", 3, u3i_string("#import_"), fil);
   u3_noun siz = u3r_met(3, imp);
+  u3m_p("imp cue size", siz);
+
   u3_noun dat = u3nt(u3_nul, siz, imp);
 
   u3_noun req = u3nt(c3n,

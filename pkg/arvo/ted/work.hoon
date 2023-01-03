@@ -2,7 +2,7 @@
 ::
 ::    With no arguments, creates and mounts a %work desk.
 ::    If there are arguments, each one is created and mounted.
-::    All desks are begun by merging from our %home desk.
+::    All desks are begun by merging from our %base desk.
 ::
 /-  spider
 /+  strandio
@@ -16,10 +16,10 @@
 |-  ^-  form:m
 =*  loop  $
 ?~  desks  (pure:m !>(ok=&))
-::  |merge %work our %home
+::  |merge %work our %base
 ::
 ;<  [=ship =desk =case:clay]  bind:m  get-beak:strandio
-=/  kiln-merge  [i.desks ship %home case %auto]
+=/  kiln-merge  [i.desks ship %base case %auto]
 ;<  ~  bind:m  (poke-our:strandio %hood %kiln-merge !>(kiln-merge))
 ;<  ~  bind:m  (trace:strandio leaf+"work: merged {<i.desks>}" ~)
 ::  sleep 10ms to defer to new event

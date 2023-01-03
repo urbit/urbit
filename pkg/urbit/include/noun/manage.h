@@ -1,18 +1,22 @@
-/* i/n/m.h
-**
-** This file is in the public domain.
-*/
+#ifndef U3_MANAGE_H
+#define U3_MANAGE_H
+
     /** System management.
     **/
       /* u3m_boot(): start the u3 system. return next event, starting from 1.
       */
         c3_d
-        u3m_boot(c3_c* dir_c);
+        u3m_boot(c3_c* dir_c, size_t len_i);
+
+      /* u3m_pier(): make a pier.
+      */
+        c3_c*
+        u3m_pier(c3_c* dir_c);
 
       /* u3m_boot_lite(): start without checkpointing.
       */
         c3_d
-        u3m_boot_lite(void);
+        u3m_boot_lite(size_t len_i);
 
       /* u3m_stop(): graceful shutdown cleanup. */
         void
@@ -35,15 +39,35 @@
         c3_i
         u3m_bail(c3_m how_m) __attribute__((noreturn));
 
+      /* u3m_fault(): handle a memory event with libsigsegv protocol.
+      */
+        c3_i
+        u3m_fault(void* adr_v, c3_i ser_i);
+
+      /* u3m_save(): update the checkpoint.
+      */
+        void
+        u3m_save(void);
+
+      /* u3m_ward(): tend the guard page.
+      */
+        void
+        u3m_ward(void);
+
       /* u3m_init(): start the environment.
       */
         void
-        u3m_init();
+        u3m_init(size_t len_i);
 
       /* u3m_pave(): instantiate or activate image.
       */
         void
         u3m_pave(c3_o nuu_o);
+
+      /* u3m_signal(): treat a nock-level exception as a signal interrupt.
+      */
+        void
+        u3m_signal(u3_noun sig_l);
 
       /* u3m_file(): load file, as atom, or bail.
       */
@@ -113,7 +137,7 @@
       /* u3m_water(): produce high and low watermarks.  Asserts u3R == u3H.
       */
         void
-        u3m_water(c3_w *low_w, c3_w *hig_w);
+        u3m_water(u3_post* low_p, u3_post* hig_p);
 
       /* u3m_pretty(): dumb prettyprint to string.  RETAIN.
       */
@@ -149,3 +173,5 @@
       */
         c3_w
         u3m_pack(void);
+
+#endif /* ifndef U3_MANAGE_H */

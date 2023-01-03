@@ -110,7 +110,9 @@
   [%drum %phat (scot %p p.gyl) q.gyl ?:(=(%$ ses) ~ [ses ~])]
 ::
 ++  de-gill                                           ::  gill from wire
-  |=  way=wire  ^-  [@tas gill:gall]
+  |=  way=wire
+  ^-  [@tas gill:gall]
+  ~|  wire=way
   ?>  ?=([@ @ ?(~ [@ ~])] way)
   :-  ?~(t.t.way %$ i.t.t.way)
   [(slav %p i.way) i.t.way]

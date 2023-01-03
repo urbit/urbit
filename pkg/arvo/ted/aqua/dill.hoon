@@ -44,5 +44,5 @@
     ==
   [cards this]
 ::
-++  handle-arvo-response  _!!
+++  handle-arvo-response  |=(* !!)
 --

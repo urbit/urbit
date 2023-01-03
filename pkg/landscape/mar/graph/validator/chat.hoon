@@ -21,7 +21,7 @@
     |=  vip=vip-metadata:met
     ^-  permissions:graph
     ?+  index.p.i  !!
-      [@ ~]  [%self %self %no]
+      [@ ~]  [%yes %self %no]
     ==
   ::
   ++  notification-kind

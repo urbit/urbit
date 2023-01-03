@@ -541,7 +541,7 @@ u3i_qual(u3_noun a, u3_noun b, u3_noun c, u3_noun d)
 
 /* u3i_string(): Produce an LSB-first atom from the C string [a].
 */
-u3_noun
+u3_atom
 u3i_string(const c3_c* a_c)
 {
   return u3i_bytes(strlen(a_c), (c3_y *)a_c);
@@ -549,7 +549,7 @@ u3i_string(const c3_c* a_c)
 
 /* u3i_tape(): from a C string, to a list of bytes.
 */
-u3_atom
+u3_noun
 u3i_tape(const c3_c* txt_c)
 {
   if ( !*txt_c ) {

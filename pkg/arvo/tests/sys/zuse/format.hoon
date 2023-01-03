@@ -85,8 +85,8 @@
 ::    path)
 ::
 ++  test-beam
-  =/  b=beam  [[p=~zod q=%home r=[%ud p=12]] s=/sys/zuse/hoon]
-  =/  p=path  /~zod/home/12/sys/zuse/hoon
+  =/  b=beam  [[p=~zod q=%base r=[%ud p=12]] s=/sys/zuse/hoon]
+  =/  p=path  /~zod/base/12/sys/zuse/hoon
   ;:  weld
     ::  proper encode
     ::
@@ -107,12 +107,12 @@
     ::
     %+  expect-eq
       !>  ~
-      !>  (de-beam /~zod/home)
+      !>  (de-beam /~zod/base)
     ::  invalid ship
     ::
     %+  expect-eq
       !>  ~
-      !>  (de-beam /'~zodisok'/home/12/sys/zuse/hoon)
+      !>  (de-beam /'~zodisok'/base/12/sys/zuse/hoon)
     ::  invalid desk
     ::
     %+  expect-eq
@@ -122,7 +122,7 @@
     ::
     %+  expect-eq
       !>  ~
-      !>  (de-beam /~zod/home/~zod/sys/zuse/hoon)
+      !>  (de-beam /~zod/base/~zod/sys/zuse/hoon)
   ==
 ::  example values used in test
 ::
@@ -131,6 +131,7 @@
   ++  nul  `json`~
   ++  tru  `json`[%b &]
   ++  num  `json`[%n ~.12]
+  ++  neg  `json`[%n '-3']
   ++  str  `json`[%s 'hey']
   ++  frond  `json`(frond:enjs 'foo' num)
   ++  obj  `json`(pairs:enjs ~[['foo' num] ['bar' str]])
@@ -228,6 +229,16 @@
       !>  (ni num:ex)
     %-  expect-fail
       |.  (ni tru:ex)
+    ::  as @s
+    ::
+    %+  expect-eq
+      !>  -3
+      !>  (ns neg:ex)
+    %+  expect-eq
+      !>  --12
+      !>  (ns num:ex)
+    %-  expect-fail
+      |.  (ns tru:ex)
     ::  as cord
     ::
     %+  expect-eq

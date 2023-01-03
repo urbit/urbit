@@ -1,5 +1,5 @@
 /-  *aquarium, spider
-/+  libstrand=strand, *strandio, util=ph-util
+/+  libstrand=strand, *strandio, util=ph-util, aqua-azimuth
 =,  strand=strand:libstrand
 |%
 ++  send-events
@@ -127,7 +127,7 @@
   ;<  ~  bind:m  (send-azimuth-action %breach who)
   |-  ^-  form:m
   =*  loop  $
-  ;<  ~  bind:m  (sleep ~s1)
+  ;<  ~  bind:m  (sleep ~s10)
   ;<  =bowl:spider  bind:m  get-bowl
   =/  aqua-pax
     :-  %i
@@ -136,6 +136,18 @@
   ?:  =([~ new-rut] rut)
     (pure:m ~)
   loop
+::
+++  init-moon  ::NOTE  real moon always have the same keys
+  |=  [moon=ship fake=?]
+  ?>  ?=(%earl (clan:title moon))
+  ?:  fake  (init-ship moon &)
+  =/  m  (strand ,~)
+  ^-  form:m
+  ;<  ~  bind:m
+    %+  dojo  (^sein:title moon)
+    =/  =pass  pub:ex:(get-keys:aqua-azimuth moon 1)
+    "|moon {(scow %p moon)}, =public-key {(scow %uw pass)}"
+  (init-ship moon |)
 ::
 ++  init-ship
   |=  [=ship fake=?]

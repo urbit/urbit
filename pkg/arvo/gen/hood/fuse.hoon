@@ -13,7 +13,7 @@
 +$  fuse-arg
   $:  des=desk
       ::  specified as [germ path] instead of [path germ] so
-      ::  users can write mate//=home= instead of [/=home= %mate]
+      ::  users can write mate//=base= instead of [/=base= %mate]
       ::
       res=[?([%cancel ~] [bas=path con=(list [germ path])])]
   ==

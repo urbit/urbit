@@ -39,8 +39,8 @@ void urcrypt_ed_sign(const uint8_t *message,
 // return value means the signature was (not) verified
 bool urcrypt_ed_veri(const uint8_t *message,
                      size_t length,
-                     const uint8_t signature[64],
-                     const uint8_t public[32]);
+                     const uint8_t public[32],
+                     const uint8_t signature[64]);
 
 int urcrypt_aes_ecba_en(uint8_t key[16], uint8_t block[16], uint8_t out[16]);
 int urcrypt_aes_ecba_de(uint8_t key[16], uint8_t block[16], uint8_t out[16]);
@@ -202,6 +202,16 @@ int urcrypt_secp_reco(urcrypt_secp_context* context,
                       const uint8_t key_s[32],
                       uint8_t out_x[32],
                       uint8_t out_y[32]);
+int urcrypt_secp_schnorr_sign(urcrypt_secp_context* context,
+                              uint8_t key[32],
+                              uint8_t msg[32],
+                              uint8_t aux[32],
+                              uint8_t out_sig[64]);
+// return value means signature was (not) verified
+bool urcrypt_secp_schnorr_veri(urcrypt_secp_context* context,
+                               uint8_t sig[64],
+                               uint8_t msg[32],
+                               uint8_t pub[32]);
 
 void urcrypt_scrypt_pbkdf_sha256(const uint8_t *passwd,
                                  size_t passwdlen,

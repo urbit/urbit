@@ -8,6 +8,9 @@
             "compat": {
                 "mingw": {
                     "prepare": "cmake -G\"MSYS Makefiles\" -DCMAKE_INSTALL_PREFIX=. ."
+                },
+                "openbsd": {
+                    "prepare": "cmake -DOPENSSL_ROOT_DIR=`readlink -f ../openssl/build` ."
                 }
             },
             "include": "include",
@@ -35,6 +38,10 @@
                 "mingw": {
                     "make": "aes_siv_static",
                     "prepare": "cmake -G\"MSYS Makefiles\" -DDISABLE_DOCS:BOOL=ON ."
+                },
+                "openbsd": {
+                    "make": "aes_siv_static",
+                    "prepare": "cmake -DDISABLE_DOCS:BOOL=ON -DOPENSSL_ROOT_DIR=`readlink -f ../openssl/build` ."
                 }
             }
         },
@@ -73,15 +80,15 @@
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs": {
-        "branch": "nixos-21.11",
+        "branch": "master",
         "description": "Nix Packages collection",
         "homepage": "",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "573095944e7c1d58d30fc679c81af63668b54056",
-        "sha256": "07s5cwhskqvy82b4rld9b14ljc0013pig23i3jx3l3f957rk95pg",
+        "rev": "376d67e1cd05d5ac8a64a3f47f17b80fb6394792",
+        "sha256": "1l4ai1dppwdbkkjbvnavsivr5kx00b3q8640pilpnifskfmfc8mp",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/573095944e7c1d58d30fc679c81af63668b54056.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/376d67e1cd05d5ac8a64a3f47f17b80fb6394792.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "softfloat3": {
@@ -98,6 +105,10 @@
                 "mingw": {
                     "lib": "build/Win64-MinGW-w64",
                     "make": "-C build/Win64-MinGW-w64 libsoftfloat3.a"
+                },
+                "openbsd": {
+                    "lib": "build/template-FAST_INT64",
+                    "make": "-C build/template-FAST_INT64 libsoftfloat3.a"
                 }
             },
             "include": "source/include"

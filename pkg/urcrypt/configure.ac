@@ -58,6 +58,8 @@ AC_PROG_CC
 PKG_CHECK_MODULES([LIBSECP256K1], [libsecp256k1])
 AC_CHECK_HEADER([secp256k1_recovery.h], [],
                 [AC_MSG_ERROR([libsecp256k1 must have recovery enabled.])])
+AC_CHECK_HEADER([secp256k1_schnorrsig.h], [],
+                [AC_MSG_ERROR([libsecp256k1 must have Schnorr signatures enabled.])])
 PKG_CHECK_MODULES([LIBCRYPTO], [libcrypto])
 
 AS_IF([test "$enable_shared" == "yes"],

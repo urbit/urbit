@@ -1,7 +1,6 @@
-/* i/n/e.h
-**
-** This file is in the public domain.
-*/
+#ifndef U3_EVENTS_H
+#define U3_EVENTS_H
+
   /** Data structures.
   **/
     /* u3e_line: control line.
@@ -40,12 +39,22 @@
     /* u3e_pool: entire memory system.
     */
       typedef struct _u3e_pool {
-        c3_c*     dir_c;                     //  path to
+        c3_c*     dir_c;                     //  checkpoint dir
         c3_w      dit_w[u3a_pages >> 5];     //  touched since last save
+        c3_w      pag_w;                     //  number of pages (<= u3a_pages)
+        c3_w      gar_w;                     //  guard page
         u3e_image nor_u;                     //  north segment
         u3e_image sou_u;                     //  south segment
       } u3e_pool;
 
+    /* u3e_flaw: loom fault result.
+    */
+      typedef enum {
+        u3e_flaw_sham = 0,                  //  bogus state
+        u3e_flaw_base = 1,                  //  vm fail (mprotect)
+        u3e_flaw_meme = 2,                  //  bail:meme
+        u3e_flaw_good = 3                   //  handled
+      } u3e_flaw;
 
   /** Globals.
   **/
@@ -60,32 +69,34 @@
 
   /** Functions.
   **/
-    /* u3e_fault(): handle a memory event with libsigsegv protocol.
+    /* u3e_fault(): handle a memory fault.
     */
-      c3_i
-      u3e_fault(void* adr_v, c3_i ser_i);
+      u3e_flaw
+      u3e_fault(u3_post low_p, u3_post hig_p, u3_post off_p);
 
-    /* u3e_save():
+    /* u3e_save(): update the checkpoint.
     */
       void
-      u3e_save(void);
+      u3e_save(u3_post low_p, u3_post hig_p);
 
     /* u3e_live(): start the persistence system.  Return c3y if no image.
     */
       c3_o
-      u3e_live(c3_o nuu_o, c3_c* dir_c);
-
-    /* u3e_dirty(): count dirty pages.
-    */
-      c3_w
-      u3e_dirty(void);
+      u3e_live(c3_c* dir_c);
 
     /* u3e_yolo(): disable dirty page tracking, read/write whole loom.
     */
       c3_o
       u3e_yolo(void);
 
-    /* u3e_foul(): dirty all the pages of the loom.
+    /* u3e_init(): initialize guard page tracking.
     */
       void
-      u3e_foul(void);
+      u3e_init(void);
+
+    /* u3e_ward(): reposition guard page if needed.
+    */
+      void
+      u3e_ward(u3_post low_p, u3_post hig_p);
+
+#endif /* ifndef U3_EVENTS_H */

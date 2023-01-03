@@ -18,48 +18,6 @@ static void     _term_read_cb(uv_stream_t*    tcp_u,
                               const uv_buf_t* buf_u);
 static void     _term_it_send_stub(u3_utty* uty_u, u3_noun tub);
 
-/* u3_write_fd(): retry interrupts, continue partial writes, assert errors.
-*/
-void
-u3_write_fd(c3_i fid_i, const void* buf_v, size_t len_i)
-{
-  ssize_t ret_i;
-
-  while ( len_i > 0 ) {
-    c3_w lop_w = 0;
-    //  retry interrupt/async errors
-    //
-    do {
-      //  abort pathological retry loop
-    //
-    if ( 100 == ++lop_w ) {
-      fprintf(stderr, "term: write loop: %s\r\n", strerror(errno));
-      return;
-    }
-      ret_i = write(fid_i, buf_v, len_i);
-    }
-    while (  (ret_i < 0)
-          && (  (errno == EINTR)
-             || (errno == EAGAIN)
-             || (errno == EWOULDBLOCK) ));
-
-    //  assert on true errors
-    //
-    //    NB: can't call u3l_log here or we would re-enter u3_write_fd()
-    //
-    if ( ret_i < 0 ) {
-      fprintf(stderr, "term: write failed %s\r\n", strerror(errno));
-      c3_assert(0);
-    }
-    //  continue partial writes
-    //
-    else {
-      len_i -= ret_i;
-      buf_v += ret_i;
-    }
-  }
-}
-
 /* _term_msc_out_host(): unix microseconds from current host time.
 */
 static c3_d
@@ -216,7 +174,7 @@ u3_term_log_exit(void)
       if ( c3n == uty_u->sto_f(uty_u) ) {
         c3_assert(!"exit-tcsetattr");
       }
-      u3_write_fd(uty_u->fid_i, "\r\n", 2);
+      c3_assert(c3_write(uty_u->fid_i, "\r\n", 2) == 2);
     }
   }
 
@@ -527,14 +485,13 @@ _term_it_show_nel(u3_utty* uty_u)
 /* _term_it_path(): path for console file.
 */
 static c3_c*
-_term_it_path(c3_o fyl, u3_noun pax)
+_term_it_path(u3_noun pax)
 {
-  c3_w len_w;
+  c3_w len_w = 0;
   c3_c *pas_c;
 
   //  measure
   //
-  len_w = strlen(u3_Host.dir_c);
   {
     u3_noun wiz = pax;
 
@@ -547,16 +504,15 @@ _term_it_path(c3_o fyl, u3_noun pax)
   //  cut
   //
   pas_c = c3_malloc(len_w + 1);
-  strncpy(pas_c, u3_Host.dir_c, len_w);
   pas_c[len_w] = '\0';
   {
     u3_noun wiz   = pax;
-    c3_c*   waq_c = (pas_c + strlen(pas_c));
+    c3_c*   waq_c = pas_c;
 
     while ( u3_nul != wiz ) {
       c3_w tis_w = u3r_met(3, u3h(wiz));
 
-      if ( (c3y == fyl) && (u3_nul == u3t(wiz)) ) {
+      if ( (u3_nul == u3t(wiz)) ) {
         *waq_c++ = '.';
       } else *waq_c++ = '/';
 
@@ -576,27 +532,10 @@ _term_it_path(c3_o fyl, u3_noun pax)
 static void
 _term_it_save(u3_noun pax, u3_noun pad)
 {
-  c3_c* pax_c;
-  c3_c* bas_c = 0;
-  c3_w  xap_w = u3kb_lent(u3k(pax));
-  u3_noun xap = u3_nul;
-  u3_noun urb = c3_s4('.','u','r','b');
-  u3_noun put = c3_s3('p','u','t');
+  c3_c* pax_c = _term_it_path(pax);
 
-  // directory base and relative path
-  if ( 2 < xap_w ) {
-    u3_noun bas = u3nt(urb, put, u3_nul);
-    bas_c = _term_it_path(c3n, bas);
-    xap = u3qb_scag(xap_w - 2, pax);
-  }
-
-  pax = u3nt(urb, put, pax);
-  pax_c = _term_it_path(c3y, pax);
-
-  u3_walk_save(pax_c, 0, pad, bas_c, xap);
-
+  u3_unix_save(pax_c, pad);
   c3_free(pax_c);
-  c3_free(bas_c);
 }
 
 /* _term_ovum_plan(): plan term ovums, configuring spinner.
@@ -932,7 +871,7 @@ _term_spin_step(u3_utty* uty_u)
 
       c3_w i_w;
       for ( i_w = bac_w; i_w < sol_w; i_w++ ) {
-        if ( lef_u.len != write(fid_i, lef_u.base, lef_u.len) ) {
+        if ( c3_write(fid_i, lef_u.base, lef_u.len) < 0 ) {
           return;
         }
       }
@@ -942,7 +881,7 @@ _term_spin_step(u3_utty* uty_u)
 
     {
       c3_w len_w = cur_c - buf_c;
-      if ( len_w != write(fid_i, buf_c, len_w) ) {
+      if ( c3_write(fid_i, buf_c, len_w) < 0 ) {
         return;
       }
     }
@@ -950,7 +889,7 @@ _term_spin_step(u3_utty* uty_u)
     //  Cursor stays on spinner.
     //
     while ( sol_w-- ) {
-      if ( lef_u.len != write(fid_i, lef_u.base, lef_u.len) ) {
+      if ( c3_write(fid_i, lef_u.base, lef_u.len) < 0 ) {
         return;
       }
     }
@@ -1105,13 +1044,11 @@ u3_term_ef_ctlc(void)
 {
   u3_utty* uty_u = _term_main();
 
-  {
+  if ( uty_u->car_u ) {
     u3_noun wir = u3nt(c3__term, '1', u3_nul);
     u3_noun cad = u3nq(c3__belt, c3__mod, c3__ctl, 'c');
 
     c3_assert( 1 == uty_u->tid_l );
-    c3_assert( uty_u->car_u );
-
     _term_ovum_plan(uty_u->car_u, wir, cad);
   }
 }
@@ -1502,6 +1439,11 @@ u3_term_io_hija(void)
         _term_it_send_csi(uty_u, 'r', 2, 1, uty_u->tat_u.siz.row_l - 1);
         _term_it_send_csi(uty_u, 'S', 1, 1);
         _term_it_send_csi(uty_u, 'H', 2, uty_u->tat_u.siz.row_l - 1, 1);
+        // c3_assert(c3_write(uty_u->fid_i, "\r", 1) == 1);
+        // {
+        //   uv_buf_t* buf_u = &uty_u->ufo_u.out.el_u;
+        //   c3_assert(c3_write(uty_u->fid_i, buf_u->base, buf_u->len) == buf_u->len);
+        // }
       }
     }
   }

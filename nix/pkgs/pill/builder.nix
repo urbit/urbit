@@ -1,9 +1,9 @@
-{ stdenvNoCC, urbit, arvo, herb, name, builder, pier }:
+{ stdenvNoCC, urbit, arvo, curl, name, builder, pier }:
 
 stdenvNoCC.mkDerivation {
   name = "${name}.pill";
   src = pier;
-  buildInputs = [ urbit herb ];
+  buildInputs = [ curl urbit ];
   dontUnpack = true;
 
   buildPhase = builtins.readFile builder;

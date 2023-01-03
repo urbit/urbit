@@ -254,4 +254,4 @@ ur_walk_fore_with(ur_walk_fore_t *w,
 void
 ur_walk_fore_done(ur_walk_fore_t *w);
 
-#endif
+#endif /* ifndef UR_HASHCONS_H */

@@ -10,7 +10,7 @@ _dup_std_handle(HANDLE* new_u, DWORD typ_u)
   HANDLE han_u = GetStdHandle(typ_u);
   BOOL con_u = GetConsoleMode(han_u, &dum_u);
   if ( con_u ) {
-    han_u = (HANDLE)_get_osfhandle(open(c3_dev_null, O_RDWR, 0));
+    han_u = (HANDLE)_get_osfhandle(c3_open(c3_dev_null, O_RDWR, 0));
   }
 
   if ( !DuplicateHandle(GetCurrentProcess(), han_u, GetCurrentProcess(), new_u, 0, TRUE, DUPLICATE_SAME_ACCESS) ) {

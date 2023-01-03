@@ -27,9 +27,18 @@ u3v_life(u3_noun eve)
 c3_o
 u3v_boot(u3_noun eve)
 {
+  c3_d len_d;
+
+  {
+    u3_noun len = u3qb_lent(eve);
+    c3_assert( c3y == u3r_safe_chub(len, &len_d) );
+    u3z(len);
+  }
+
   //  ensure zero-initialized kernel
   //
-  u3A->roc = 0;
+  u3A->roc   = 0;
+  u3A->eve_d = 0;
 
   {
     u3_noun pro = u3m_soft(0, u3v_life, eve);
@@ -39,7 +48,8 @@ u3v_boot(u3_noun eve)
       return c3n;
     }
 
-    u3A->roc = u3k(u3t(pro));
+    u3A->roc   = u3k(u3t(pro));
+    u3A->eve_d = len_d;
     u3z(pro);
   }
 
@@ -184,6 +194,29 @@ _cv_time_bump(u3_reck* rec_u)
 }
 #endif
 
+/* u3v_lily(): parse little atom.
+*/
+c3_o
+u3v_lily(u3_noun fot, u3_noun txt, c3_l* tid_l)
+{
+  c3_w    wad_w;
+  u3_noun uco = u3dc("slaw", fot, u3k(txt));
+  u3_noun p_uco, q_uco;
+
+  if ( (c3n == u3r_cell(uco, &p_uco, &q_uco)) ||
+       (u3_nul != p_uco) ||
+       (c3n == u3r_safe_word(q_uco, &wad_w)) ||
+       (wad_w & 0x80000000) )
+  {
+    u3l_log("strange lily %s\n", u3r_string(txt));
+    u3z(txt); u3z(uco); return c3n;
+  }
+  else {
+    *tid_l = (c3_l)wad_w;
+    u3z(txt); u3z(uco); return c3y;
+  }
+}
+
 /* u3v_peek(): query the reck namespace (protected).
 */
 u3_noun
@@ -193,53 +226,31 @@ u3v_peek(u3_noun sam)
   return u3n_slam_on(fun, sam);
 }
 
-#if 0
-/* _cv_mole(): parse simple atomic mole.
+/* u3v_soft_peek(): softly query the reck namespace.
 */
-static c3_o
-_cv_mole(u3_noun  fot,
-         u3_noun  san,
-         c3_d*    ato_d)
+u3_noun
+u3v_soft_peek(c3_w mil_w, u3_noun sam)
 {
-  u3_noun uco = u3do("slay", san);
-  u3_noun p_uco, q_uco, r_uco, s_uco;
+  u3_noun gon = u3m_soft(mil_w, u3v_peek, sam);
+  u3_noun tag, dat;
+  u3x_cell(gon, &tag, &dat);
 
-  if ( (c3n == u3r_qual(uco, &p_uco, &q_uco, &r_uco, &s_uco)) ||
-       (0 != p_uco) ||
-       (0 != q_uco) ||
-       (c3n == u3r_sing(fot, r_uco)) )
+  //  read failed, produce trace
+  //
+  //    NB, reads *should not* fail deterministically
+  //
+  if ( u3_blip != tag ) {
+    return u3nc(c3n, gon);
+  }
+
+  //  read succeeded, produce result
+  //
   {
-    u3l_log("strange mole %s", u3r_string(san)));
-
-    u3z(fot); u3z(uco); return c3n;
-  }
-  else {
-    *ato_d = u3r_chub(0, s_uco);
-
-    u3z(fot); u3z(uco); return c3y;
+    u3_noun pro = u3nc(c3y, u3k(dat));
+    u3z(gon);
+    return pro;
   }
 }
-
-/* _cv_lily(): parse little atom.
-*/
-static c3_o
-_cv_lily(u3_noun fot, u3_noun txt, c3_l* tid_l)
-{
-  c3_d ato_d;
-
-  if ( c3n == _cv_mole(fot, txt, &ato_d) ) {
-    return c3n;
-  } else {
-    if ( ato_d >= 0x80000000ULL ) {
-      return c3n;
-    } else {
-      *tid_l = (c3_l) ato_d;
-
-      return c3y;
-    }
-  }
-}
-#endif
 
 /* u3v_poke(): insert and apply an input ovum (protected).
 */
@@ -257,6 +268,61 @@ u3v_poke(u3_noun ovo)
   }
 
   return pro;
+}
+
+/* _cv_poke_eve(): u3v_poke w/out u3A->now XX replace
+*/
+static u3_noun
+_cv_poke_eve(u3_noun sam)
+{
+  u3_noun fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(_CVX_POKE, u3A->roc)));
+  u3_noun pro;
+
+  {
+# ifdef  U3_MEMORY_DEBUG
+    c3_w cod_w = u3a_lush(u3h(u3t(u3t(sam))));
+# endif
+
+    pro = u3n_slam_on(fun, sam);
+
+# ifdef  U3_MEMORY_DEBUG
+    u3a_lop(cod_w);
+# endif
+  }
+
+  return pro;
+}
+
+/* u3v_poke_sure(): inject an event, saving new state if successful.
+*/
+c3_o
+u3v_poke_sure(c3_w mil_w, u3_noun eve, u3_noun* pro)
+{
+  u3_noun gon = u3m_soft(mil_w, _cv_poke_eve, eve);
+  u3_noun tag, dat;
+  u3x_cell(gon, &tag, &dat);
+
+  //  event failed, produce trace
+  //
+  if ( u3_blip != tag ) {
+    *pro = gon;
+    return c3n;
+  }
+
+  //  event succeeded, persist state and produce effects
+  //
+  {
+    u3_noun vir, cor;
+    u3x_cell(dat, &vir, &cor);
+
+    u3z(u3A->roc);
+    u3A->roc = u3k(cor);
+    u3A->eve_d++;
+
+    *pro = u3k(vir);
+    u3z(gon);
+    return c3y;
+  }
 }
 
 /* u3v_tank(): dump single tank.

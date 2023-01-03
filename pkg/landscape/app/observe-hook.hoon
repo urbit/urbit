@@ -22,6 +22,7 @@
       [%4 observers=(map serial observer:sur)]
       [%5 observers=(map serial observer:sur) warm-cache=_|]
       [%6 state-0]
+      [%7 state-0]
   ==
 ::
 +$  serial   @uv
@@ -35,7 +36,7 @@
 --
 ::
 %-  agent:dbug
-=|  [%6 state-0]
+=|  [%7 state-0]
 =*  state  -
 ::
 ^-  agent:gall
@@ -117,8 +118,10 @@
   =|  cards=(list card)
   |-
   ?-  -.old-state
-      %6
+      %7
     [cards this(state old-state)]
+      %6
+    $(-.old-state %7, cards :_(cards (act %warm-cache-all ~)))
   ::
       %5
     =.  cards

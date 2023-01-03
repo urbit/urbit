@@ -169,12 +169,17 @@
     %+  req-card  act
     ^-  action:rpc-types
     ?-  -.act
-      %address-info  [%get-address-info address.act]
-      %tx-info       [%get-tx-vals txid.act]
-      %raw-tx        [%get-raw-tx txid.act]
-      %broadcast-tx  [%broadcast-tx rawtx.act]
-      %ping          [%get-block-info ~]
-      %block-info    [%get-block-info block.act]
+      %address-info   [%get-address-info address.act]
+      %tx-info        [%get-tx-vals txid.act]
+      %raw-tx         [%get-raw-tx txid.act]
+      %broadcast-tx   [%broadcast-tx rawtx.act]
+      %ping           [%get-block-info ~]
+      %block-info     [%get-block-info block.act]
+      %histogram      [%get-histogram ~]
+      %block-headers  [%get-block-headers start.act count.act cp.act]
+      %tx-from-pos    [%get-tx-from-pos height.act pos.act merkle.act]
+      %fee            [%get-fee block.act]
+      %psbt           [%update-psbt psbt.act]
     ==
   ::
   ++  req-card
@@ -309,6 +314,31 @@
       ?>  ?=([%get-block-info *] r)
       :_  state
       ~[(send-update:hc [%.y %block-info network.host-info +.r] ship)]
+      :: 
+        %histogram
+      ?>  ?=([%get-histogram *] r)
+      :_  state
+      ~[(send-update:hc [%.y %histogram +.r] ship)]
+      ::
+        %block-headers
+      ?>  ?=([%get-block-headers *] r)
+      :_  state
+      ~[(send-update:hc [%.y %block-headers +.r] ship)]
+      ::
+        %tx-from-pos
+      ?>  ?=([%get-tx-from-pos *] r)
+      :_  state
+      ~[(send-update:hc [%.y %tx-from-pos +.r] ship)]
+      ::
+        %fee
+      ?>  ?=([%get-fee *] r)
+      :_  state
+      ~[(send-update:hc [%.y %fee +.r] ship)]
+      ::
+        %psbt
+      ?>  ?=([%update-psbt *] r)
+      :_  state
+      ~[(send-update:hc [%.y %psbt +.r] ship)]
     ==
   ::
   ++  connection-error
