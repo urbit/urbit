@@ -9,7 +9,8 @@ c3_w _ch_skip_slot(c3_w mug_w, c3_w lef_w);
 static void
 _setup(void)
 {
-  u3m_boot_lite(1 << 26);
+  u3m_init(1 << 26);
+  u3m_pave(c3y);
 }
 
 /* _test_bit_manipulation():
