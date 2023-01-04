@@ -84,7 +84,10 @@
     =|  cards=(list card)
     |^
     ?-    -.old
-        %3  [(flop cards) this(state old)]
+        %3  
+      :_  this(state old)
+      :_  cards
+      [%pass /pyre/rebuild %agent [our dap]:bowl %poke noun+!>(%rebuild)]
     ::
         %2
       %_    $
