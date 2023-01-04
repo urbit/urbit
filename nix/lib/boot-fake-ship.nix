@@ -4,7 +4,7 @@
 
 let
 
-  args = arguments ++ [ "-d" "-F" "${ship}" "-B" "${pill}" ]
+  args = arguments ++ [ "-t" "-d" "-F" "${ship}" "-B" "${pill}" ]
     ++ lib.optionals (arvo != null) [ "-A" "${arvo}" ];
 
 in stdenvNoCC.mkDerivation {
