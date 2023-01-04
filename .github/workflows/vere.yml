@@ -186,7 +186,7 @@ jobs:
       - run: mingw32-make build/urbit
       - run: mingw32-make test
       - run: >
-          build/urbit -l -d -B ../../bin/solid.pill -F bus &&
+          build/urbit -l -d -t -B ../../bin/solid.pill -F bus &&
           curl -f --data '{"source":{"dojo":"+hood/exit"},"sink":{"app":"hood"}}'
           http://localhost:12321
 
