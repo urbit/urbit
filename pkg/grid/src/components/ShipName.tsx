@@ -3,11 +3,12 @@ import React, { HTMLAttributes } from 'react';
 
 type ShipNameProps = {
   name: string;
+  truncate?: boolean;
 } & HTMLAttributes<HTMLSpanElement>;
 
-export const ShipName = ({ name, ...props }: ShipNameProps) => {
+export const ShipName = ({ name, truncate = true, ...props }: ShipNameProps) => {
   const separator = /([_^-])/;
-  const citedName = cite(name);
+  const citedName = truncate ? cite(name) : name;
 
   if (!citedName) {
     return null;
