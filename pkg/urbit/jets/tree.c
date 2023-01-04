@@ -2135,6 +2135,14 @@ static c3_c* _k140_ha[] = {
   0
 };
 
+u3j_core _k139_d[] =
+{ { "one", 3, 0, _140_one_d, _140_one_ha },
+  {}
+};
+static c3_c* _k139_ha[] = {
+  "9b82a903093c077afb3f0b9d4e95e1a9c9789d1ca605b57bbacf79857e3d5c52",
+  0
+};
 
 //  TODO: probably need different ha hashes
 
@@ -2203,6 +2211,7 @@ u3j_core _a50_d[] =
 
 static u3j_core _d[] = {
   { "k140", 0, 0, _k140_d, _k140_ha, 0, (u3j_core*) 140, 0 },
+  { "k139", 0, 0, _k139_d, _k139_ha, 0, (u3j_core*) 139, 0 },
   { "a50", 0, 0, _a50_d, _k140_ha, 0, (u3j_core*) c3__a50, 0 },
   {}
 };
