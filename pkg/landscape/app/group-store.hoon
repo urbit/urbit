@@ -256,8 +256,8 @@
       :_(cards (watch-init-migrate i.wait))
     ::  if we have a subscription already, leave first to restart
     =?  cards
-      (~(has by wex.bol) [wir i.wait dap.bol])
-    :_(cards [%pass wir %agent [i.wait %groups] %leave ~])
+        (~(has by wex.bol) [wir i.wait %groups])
+      :_(cards [%pass wir %agent [i.wait %groups] %leave ~])
     $(wait t.wait)
   ::
   ++  put-missing
