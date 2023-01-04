@@ -41,6 +41,7 @@
       state-one
       state-two
       state-three
+      state-four
   ==
 ::
 +$  state-zero
@@ -61,9 +62,15 @@
       =groups
       wait=(set ship)
   ==
+::
++$  state-four
+  $:  %4
+      =groups
+      wait=(set ship)
+  ==
 --
 ::
-=|  state-three
+=|  state-four
 =*  state  -
 ::
 %-  agent:dbug
@@ -84,10 +91,15 @@
     =|  cards=(list card)
     |^
     ?-    -.old
-        %3  
-      :_  this(state old)
-      :_  cards
-      [%pass /pyre/rebuild %agent [our dap]:bowl %poke noun+!>(%rebuild)]
+        %4  [(flop cards) this(state old)]
+    ::
+        %3 
+      %_    $
+          old    [%4 +.old] 
+          cards
+        :_  cards
+        [%pass /pyre/rebuild %agent [our dap]:bowl %poke noun+!>(%rebuild)]
+      ==
     ::
         %2
       %_    $
@@ -391,8 +403,8 @@
   |=  arc=*
   ^-  (quip card _state)
   |^
-  =/  sty=state-three
-    [%3 (remake-groups ;;((tree [resource tree-group]) +.arc)) ~]
+  =/  sty=state-four
+    [%4 (remake-groups ;;((tree [resource tree-group]) +.arc)) ~]
   :_  sty
   %+  roll  ~(tap by groups.sty)
   |=  [[rid=resource grp=group] out=(list card)]
