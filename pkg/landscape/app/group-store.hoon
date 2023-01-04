@@ -257,7 +257,7 @@
     ::  if we have a subscription already, leave first to restart
     =?  cards
       (~(has by wex.bol) [wir i.wait dap.bol])
-    :_(cards [%pass wir %agent [our.bol dap.bol] %leave ~])
+    :_(cards [%pass wir %agent [i.wait %groups] %leave ~])
     $(wait t.wait)
   ::
   ++  put-missing
