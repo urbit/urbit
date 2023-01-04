@@ -460,7 +460,7 @@ u3m_file(c3_c* pas_c)
     u3_noun pad = u3i_bytes(fln_w, (c3_y *)pad_y);
     c3_free(pad_y);
 
-    //u3l_log("size of noun\r\n");
+    //u3l_log("size of noun");
     //u3m_p("size", u3dc("met", 3, u3k(pad)));
 
     return pad;
@@ -1805,7 +1805,7 @@ _cm_signals(void)
   //  access and stack overflow exceptions. It calls u3e_fault directly.
 # else
   if ( 0 != sigsegv_install_handler(u3m_fault) ) {
-    u3l_log("boot: sigsegv install failed\r\n");
+    u3l_log("boot: sigsegv install failed");
     exit(1);
   }
 # endif
@@ -1875,7 +1875,7 @@ _cm_crypto()
   if ( 0 == CRYPTO_set_mem_functions(&_cm_malloc_ssl,
                                      &_cm_realloc_ssl,
                                      &_cm_free_ssl) ) {
-    u3l_log("%s", "openssl initialization failed\r\n");
+    u3l_log("%s", "openssl initialization failed");
     abort();
   }
 

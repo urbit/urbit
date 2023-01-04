@@ -1309,13 +1309,13 @@ u3e_live(c3_c* dir_c)
 
         _ce_loom_blit_south(u3P.sou_u.fid_i, sou_w);
 
-        u3l_log("boot: protected loom\r\n");
+        u3l_log("boot: protected loom");
       }
 
       /* If the images were empty, we are logically booting.
       */
       if ( !nor_w && !sou_w ) {
-        u3l_log("live: logical boot\r\n");
+        u3l_log("live: logical boot");
         nuu_o = c3y;
       }
       else  if ( u3C.wag_w & u3o_no_demand ) {

@@ -1003,7 +1003,7 @@ _cttp_ef_http_client(u3_cttp* ctp_u, u3_noun tag, u3_noun dat)
     if (  (c3n == u3r_cell(dat, &num, &req))
        || (c3n == u3r_safe_word(num, &num_l)) )
     {
-      u3l_log("cttp: strange request\r\n");
+      u3l_log("cttp: strange request");
       ret_o = c3n;
     }
     else if ( (ceq_u = _cttp_creq_new(ctp_u, num_l, u3k(req))) ) {
@@ -1018,7 +1018,7 @@ _cttp_ef_http_client(u3_cttp* ctp_u, u3_noun tag, u3_noun dat)
     c3_l num_l;
 
     if ( c3n == u3r_safe_word(dat, &num_l) ) {
-      u3l_log("cttp: strange cancel-request\r\n");
+      u3l_log("cttp: strange cancel-request");
       ret_o = c3n;
     }
     else if ( (ceq_u =_cttp_creq_find(ctp_u, num_l)) ) {
@@ -1032,7 +1032,7 @@ _cttp_ef_http_client(u3_cttp* ctp_u, u3_noun tag, u3_noun dat)
     }
   }
   else {
-    u3l_log("cttp: strange effect (unknown type)\r\n");
+    u3l_log("cttp: strange effect (unknown type)");
     ret_o = c3n;
   }
 

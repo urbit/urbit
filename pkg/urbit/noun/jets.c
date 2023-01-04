@@ -236,18 +236,18 @@ _cj_axis(u3_noun fol)
          (0 != p_fol) ||
          (!_(u3a_is_cat(q_fol))) )
     {
-      u3l_log("axis: bad a\r\n");
+      u3l_log("axis: bad a");
       return 0;
     }
     return q_fol;
   }
   else {
     if ( 9 != p_fol )
-      { u3l_log("axis: bad b\r\n"); return 0; }
+      { u3l_log("axis: bad b"); return 0; }
     if ( !_(u3a_is_cat(q_fol)) )
-      { u3l_log("axis: bad c\r\n"); return 0; }
+      { u3l_log("axis: bad c"); return 0; }
     if ( !_(u3du(r_fol)) || (0 != u3h(r_fol)) || (1 != u3t(r_fol)) )
-      { u3l_log("axis: bad d\r\n"); return 0; }
+      { u3l_log("axis: bad d"); return 0; }
 
     return q_fol;
   }
@@ -928,13 +928,13 @@ _cj_hook_in(u3_noun     cor,
   u3_noun   roc, tem, got, pat, nam, huc;
 
   if ( c3n == u3du(cor) ) {
-    u3l_log("_cj_hook_in failure: c3n == u3du(cor)\r\n");
+    u3l_log("_cj_hook_in failure: c3n == u3du(cor)");
     return u3m_bail(c3__fail);
   }
 
   loc = _cj_spot(cor, NULL);
   if ( u3_none == loc ) {
-    u3l_log("_cj_hook_in failure: u3_none == loc\r\n");
+    u3l_log("_cj_hook_in failure: u3_none == loc");
     return u3m_bail(c3__fail);
   }
 
@@ -999,7 +999,7 @@ _cj_hook_in(u3_noun     cor,
     else {
       u3_noun sat = u3t(pat);
       if ( c3y == u3h(sat) ) {
-        u3l_log("_cj_hook_in failure: c3y == u3h(sat)\r\n");
+        u3l_log("_cj_hook_in failure: c3y == u3h(sat)");
         return u3m_bail(c3__fail);
       }
       else {
@@ -1139,13 +1139,13 @@ _cj_hank_fill(_cj_hank* han_u, u3_noun tam, u3_noun cor)
   u3j_site* sit_u = &(han_u->sit_u);
 
   if ( c3n == u3du(cor) ) {
-    u3l_log("fail in _cj_hank_fill (c3n == u3du(cor))\r\n");
+    u3l_log("fail in _cj_hank_fill (c3n == u3du(cor))");
     return u3m_bail(c3__fail);
   }
 
   sit_u->bas = u3_none;
   if ( u3_none == (col = loc = _cj_spot(cor, NULL)) ) {
-    u3l_log("fail in _cj_hank_fill (_cj_spot(cor, NULL))\r\n");
+    u3l_log("fail in _cj_hank_fill (_cj_spot(cor, NULL))");
     return u3m_bail(c3__fail);
   }
 
@@ -1188,7 +1188,7 @@ _cj_hank_fill(_cj_hank* han_u, u3_noun tam, u3_noun cor)
     else {
       u3_noun sat = u3t(pat);
       if ( c3y == u3h(sat) ) {
-        u3l_log("fail in _cj_hank_fill (c3y == u3h(sat))\r\n");
+        u3l_log("fail in _cj_hank_fill (c3y == u3h(sat))");
         return u3m_bail(c3__fail);
       }
       else {
@@ -1687,7 +1687,7 @@ u3j_gate_prep(u3j_site* sit_u, u3_noun cor)
             pay = u3qc_cap(pax),
             pam = u3qc_mas(pax);
     if ( 3 != pay || 2 == pam || (3 != pam && 3 != u3qc_cap(pam)) ) {
-      u3l_log("u3j_gate_prep(): parent axis includes sample\r\n");
+      u3l_log("u3j_gate_prep(): parent axis includes sample");
       u3m_p("axis", pax);
       u3_weak act = _cj_find_warm(loc);
       c3_assert( u3_none != act );
@@ -1830,7 +1830,7 @@ _cj_mine(u3_noun cey, u3_noun cor, u3_noun bas)
         c3_y dig_y[32];
         c3_w i_w;
         u3_noun i = bal;
-        u3l_log("hot jet: \r\n");
+        u3l_log("hot jet: ");
         while ( i != u3_nul ) {
           _cj_print_tas(u3h(i));
           i = u3t(i);
@@ -1840,7 +1840,7 @@ _cj_mine(u3_noun cey, u3_noun cor, u3_noun bas)
         for ( i_w = 32; i_w > 0; ) {
           u3l_log("%02x", dig_y[--i_w]);
         }
-        u3l_log("\r\n");
+        u3l_log("");
       }
     }
 

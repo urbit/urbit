@@ -1353,16 +1353,16 @@ _unix_sync_change(u3_unix* unx_u, u3_udir* dir_u, u3_noun pax, u3_noun mim)
 
   if ( c3n == u3du(pax) ) {
     if ( u3_nul == pax ) {
-      u3l_log("can't sync out file as top-level, strange\r\n");
+      u3l_log("can't sync out file as top-level, strange");
     }
     else {
-      u3l_log("sync out: bad path\r\n");
+      u3l_log("sync out: bad path");
     }
     u3z(pax); u3z(mim);
     return;
   }
   else if ( c3n == u3du(u3t(pax)) ) {
-    u3l_log("can't sync out file as top-level, strangely\r\n");
+    u3l_log("can't sync out file as top-level, strangely");
     u3z(pax); u3z(mim);
   }
   else {
@@ -1392,7 +1392,7 @@ _unix_sync_change(u3_unix* unx_u, u3_udir* dir_u, u3_noun pax, u3_noun mim)
       }
 
       if ( c3n == nod_u->dir ) {
-        u3l_log("weird, we got a file when we weren't expecting to\r\n");
+        u3l_log("weird, we got a file when we weren't expecting to");
         c3_assert(0);
       }
 

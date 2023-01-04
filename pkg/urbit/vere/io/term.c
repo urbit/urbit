@@ -762,7 +762,7 @@ _term_suck(u3_utty* uty_u, const c3_y* buf, ssize_t siz_i)
       //  The process hangs if we do nothing (and ctrl-z
       //  then corrupts the event log), so we force shutdown.
       //
-      u3l_log("term: hangup (EOF)\r\n");
+      u3l_log("term: hangup (EOF)");
 
       //  XX revise
       //
@@ -1627,7 +1627,7 @@ _term_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
        || (u3_nul != q_pud)
        || (c3n == _reck_orchid(c3__ud, u3k(p_pud), &tid_l)) )
     {
-      u3l_log("term: bad tire\r\n");
+      u3l_log("term: bad tire");
       ret_o = c3n;
     }
     else {

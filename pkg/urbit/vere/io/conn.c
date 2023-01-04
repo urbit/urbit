@@ -764,7 +764,7 @@ _conn_born_news(u3_ovum* egg_u, u3_ovum_news new_e)
 static void
 _conn_born_bail(u3_ovum* egg_u, u3_noun lud)
 {
-  u3l_log("conn: %%born failure; %%fyrd not supported\r\n");
+  u3l_log("conn: %%born failure; %%fyrd not supported");
   u3z(lud);
   u3_ovum_free(egg_u);
 }
