@@ -1630,7 +1630,8 @@
       he-abet:(~(he-type he hid id.act ~ (~(got by hoc) id.act)) act)
     ::
         %lens-command
-      =+  !<([=id =command:lens] vase)
+      =+  !<([ses=@ta =command:lens] vase)
+      =/  =id  [our.hid ses]
       he-abet:(~(he-lens he hid id ~ (~(got by hoc) id)) command)
     ::
         %allow-remote-login
