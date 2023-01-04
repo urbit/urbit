@@ -13243,7 +13243,7 @@
     ::
     ++  boog  !:
       %+  knee  [p=*whit q=*term r=*help s=*hoon]
-      |.(~+((scye ;~(pose bola boba bota))))
+      |.(~+((scye ;~(pose bola boba))))
     ++  bola                                           ::  ++  arms
       %+  knee  [q=*term r=*help s=*hoon]  |.  ~+
       %+  cook
@@ -13271,37 +13271,6 @@
           ;~(pfix gap sym)
           apse:docs
           ;~(pfix jump loan)
-        ==
-      ==
-    ::TODO: deprecated, remove at next kelvin bump
-    ++  bota                                           ::  +*  arms
-      %+  knee  [q=*term r=*help s=*hoon]  |.  ~+
-      %+  cook
-        |=  [b=term d=hoon]
-        [b *help d]
-      ;~  plug
-        %+  cook
-          |=  [b=term c=(list term) e=spec]
-          ^-  [term hoon]
-          :-  b
-          :+  %brtr
-            :-  %bccl
-            =-  ?>(?=(^ -) -)
-            ::  for each .term in .c, produce $=(term $~(* $-(* *)))
-            ::  ie {term}=mold
-            ::
-            %+  turn  c
-            |=  =term
-            ^-  spec
-            =/  tar  [%base %noun]
-            [%bcts term [%bcsg tar [%bchp tar tar]]]
-          [%ktcl [%made [b c] e]]
-        ;~  pfix  (jest '+*')
-          ;~  plug
-            ;~(pfix gap sym)
-            ;~(pfix gap (ifix [sel ser] (most ace sym)))
-            ;~(pfix gap loan)
-          ==
         ==
       ==
    ::
