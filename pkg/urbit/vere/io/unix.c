@@ -76,6 +76,7 @@ struct _u3_ufil;
 */
   typedef struct _u3_umon {
     u3_udir          dir_u;             //  root directory, must be first
+    c3_o             fir;               //  hasn't been commited
     c3_c*            nam_c;             //  mount point name
     struct _u3_umon* nex_u;             //  internal list
   } u3_umon;
@@ -102,7 +103,7 @@ struct _u3_ufil;
   } u3_unix;
 
 void
-u3_unix_ef_look(u3_unix* unx_u, u3_noun mon, u3_noun all);
+u3_unix_ef_look(u3_unix* unx_u, u3_noun mon);
 
 /* u3_unix_cane(): true iff (unix) path is canonical.
 */
@@ -553,6 +554,7 @@ _unix_get_mount_point(u3_unix* unx_u, u3_noun mon)
   if ( !mon_u ) {
     mon_u = c3_malloc(sizeof(u3_umon));
     mon_u->nam_c = nam_c;
+    mon_u->fir = c3y;
     mon_u->dir_u.dir = c3y;
     mon_u->dir_u.dry = c3n;
     mon_u->dir_u.pax_c = strdup(unx_u->pax_c);
@@ -801,7 +803,7 @@ static void
 _unix_commit_mount_point(u3_unix* unx_u, u3_noun mon)
 {
   unx_u->dyr = c3y;
-  u3_unix_ef_look(unx_u, mon, c3n);
+  u3_unix_ef_look(unx_u, mon);
   return;
 }
 
@@ -1468,7 +1470,7 @@ u3_unix_ef_hill(u3_unix* unx_u, u3_noun hil)
 /* u3_unix_ef_look(): update the root of a specific mount point.
 */
 void
-u3_unix_ef_look(u3_unix* unx_u, u3_noun mon, u3_noun all)
+u3_unix_ef_look(u3_unix* unx_u, u3_noun mon)
 {
   if ( c3y == unx_u->dyr ) {
     c3_c* nam_c = _unix_knot_to_string(mon);
@@ -1480,7 +1482,8 @@ u3_unix_ef_look(u3_unix* unx_u, u3_noun mon, u3_noun all)
     }
     c3_free(nam_c);
     if ( mon_u ) {
-      _unix_update_mount(unx_u, mon_u, all);
+      _unix_update_mount(unx_u, mon_u, mon_u->fir);
+      mon_u->fir = c3n;
     }
   }
   u3z(mon);
