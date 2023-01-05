@@ -1,15 +1,15 @@
+import { Pikes } from '@urbit/api';
 import React, { useEffect } from 'react';
 import { Switch, Route, Redirect, RouteComponentProps } from 'react-router-dom';
 import { Spinner } from '../components/Spinner';
 import { useQuery } from '../logic/useQuery';
 import { useCharge } from '../state/docket';
-import useKilnState, { useKilnLoaded } from '../state/kiln';
+import { useKilnLoaded, usePikes } from '../state/kiln';
 import { getAppHref } from '../state/util';
 
-function getDeskByForeignRef(ship: string, desk: string): string | undefined {
-  const { vats } = useKilnState.getState();
-  const found = Object.entries(vats).find(
-    ([, vat]) => vat.arak.rail?.ship === ship && vat.arak.rail?.desk === desk
+function getDeskByForeignRef(pikes: Pikes, ship: string, desk: string): string | undefined {
+  const found = Object.entries(pikes).find(
+    ([, pike]) => pike.sync?.ship === ship && pike.sync?.desk === desk
   );
   return found ? found[0] : undefined;
 }
@@ -22,8 +22,8 @@ type AppLinkProps = RouteComponentProps<{
 
 function AppLink({ match, history, location }: AppLinkProps) {
   const { ship, desk, link = '' } = match.params;
-  const ourDesk = getDeskByForeignRef(ship, desk);
-  console.log(ourDesk);
+  const pikes = usePikes();
+  const ourDesk = getDeskByForeignRef(pikes, ship, desk);
 
   if (ourDesk) {
     return <AppLinkRedirect desk={ourDesk} link={link} />;

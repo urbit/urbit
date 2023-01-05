@@ -1,6 +1,4 @@
 import {
-  Vat,
-  Vats,
   Allies,
   Charges,
   DocketHrefGlob,
@@ -13,7 +11,8 @@ import {
   Contact,
   Contacts,
   Timebox,
-  harkBinToId
+  harkBinToId,
+  Pikes
 } from '@urbit/api';
 import _ from 'lodash';
 import systemUrl from '../assets/system.png';
@@ -341,37 +340,35 @@ export const mockContacts: Contacts = {
   }
 };
 
-export const mockVat = (desk: string, blockers?: boolean): Vat => ({
-  cass: {
-    da: '~2021.9.13..05.41.04..ae65',
-    ud: 1
+export const mockPikes: Pikes = {
+  kids: {
+    sync: null,
+    zest: 'dead',
+    wefts: [],
+    hash: '0v19.q7u27.omps3.fbhf4.53rai.co157.pben7.pu94n.63v4p.3kcb7.iafj0'
   },
-  desk,
-  arak: {
-    rein: {
-      sub: [],
-      add: []
+  garden: {
+    sync: {
+      desk: 'garden',
+      ship: '~mister-dister-dozzod-dozzod'
     },
-    rail:
-      desk === 'uniswap'
-        ? null
-        : {
-            aeon: 3,
-            desk,
-            publisher: '~zod',
-            next: blockers ? [{ aeon: 3, weft: { name: 'zuse', kelvin: 419 } }] : [],
-            ship: '~zod',
-            paused: desk === 'groups'
-          }
+    zest: 'live',
+    wefts: [],
+    hash: '0v18.hbbs6.onu15.skjkv.qrfgl.vf4oo.0igo5.2q0d3.6r3r8.2dkmo.oa04m'
   },
-  hash: '0vh.lhfn6.julg1.fs52d.g2lqj.q5kp0.2o7j3.2bljl.jdm34.hd46v.9uv5v'
-});
-
-const badVats = ['inbox', 'system', 'terminal', 'base'];
-export const mockVats = _.reduce(
-  mockCharges,
-  (vats, charge, desk) => {
-    return { ...vats, [desk]: mockVat(desk, !badVats.includes(desk)) };
+  landscape: {
+    sync: {
+      desk: 'landscape',
+      ship: '~lander-dister-dozzod-dozzod'
+    },
+    zest: 'live',
+    wefts: [],
+    hash: '0v1t.qln8k.cskmt.cn6lv.gu335.jfba6.kte90.iqqn3.aj67b.t389a.8imuo'
   },
-  { base: mockVat('base', true) } as Vats
-);
+  base: {
+    sync: null,
+    zest: 'live',
+    wefts: [],
+    hash: '0v1e.b5auh.6u82i.hqk1r.22kli.4ubef.a1cbo.3g532.6l49k.g0i8e.t6eid'
+  }
+};

@@ -22,32 +22,6 @@
     (gall-call gall-gate time *roof call-args expected-moves)
   ::
   -.res
-::  +test-jolt: test %jolt; TODO: test clay response
-::
-++  test-jolt
-  ^-  tang
-  ::
-  =/  =duct  ~[/init]
-  =/  time  (add ~1111.1.1 ~s1)
-  =/  dap=term  %my-agent
-  =/  ship  ~nec
-  ::
-  =/  call-args
-    =/  =task:gall  [%jolt %base dap]
-    [duct task]
-  ::
-  =/  =move:gall-gate
-    =/  =wire  /sys/cor/[dap]/(scot %p ship)/base/(scot %da time)
-    =/  =note-arvo
-      [%c %warp ship %base ~ %sing %a da+time /app/[dap]/hoon]
-    [duct %pass wire note-arvo]
-  ::
-  =/  expected-moves=(list move:gall-gate)  ~[move]
-  ::
-  =/  res
-    (gall-call gall-gate time *roof call-args expected-moves)
-  ::
-  -.res
 ::  +gall-call: have %gall run a +task and assert it produces expected-moves
 ::
 ++  gall-call

@@ -29,7 +29,6 @@
     %metadata-hook
     %metadata-pull-hook
     %metadata-push-hook
-    %notify
     %observe-hook
     %sane
     %weather

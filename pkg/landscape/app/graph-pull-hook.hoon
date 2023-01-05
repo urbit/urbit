@@ -54,12 +54,7 @@
 ++  on-pull-nack
   |=  [=resource =tang]
   ^-  (quip card _this)
-  %-  (slog leaf+"nacked {<resource>}" tang)
-  :_  this
-  ?.  (~(has in get-keys:gra) resource)  ~
-  =-  [%pass /pull-nack %agent [our.bowl %graph-store] %poke %graph-update-3 -]~
-  !>  ^-  update:store
-  [now.bowl [%archive-graph resource]]
+  `this
 ::
 ++  on-pull-kick
   |=  =resource

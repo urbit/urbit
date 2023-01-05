@@ -1,0 +1,75 @@
+Author: Curtis Yarvin (curtis.yarvin@gmail.com)
+Date: 3/28/2008
+Version: 0.12
+
+1. Introduction
+
+    This file defines one function, "nock." 
+    
+    nock is in the public domain.
+ 
+2. Data
+
+    A "noun" is either an "atom" or a "cell."  An "atom" is an unsigned 
+    integer of any size.  A "cell" is an ordered pair of any two nouns,
+    the "head" and "tail."
+
+3. Semantics
+
+    nock maps one noun to another.  It doesn't always terminate.
+
+4. Pseudocode
+
+    nock is defined in a pattern-matching pseudocode, below.
+
+    Parentheses enclose cells.  (a b c) is (a (b c)).
+
+5. Definition
+
+5.1 Transformations
+
+      *(a (b c) d) => (*(a b c) *(a d))
+      *(a 0 b)     => /(b a)
+      *(a 1 b)     => (b)
+      *(a 2 b c)   => *(*(a b) c)
+      *(a 3 b)     => **(a b)
+      *(a 4 b)     => &*(a b)
+      *(a 5 b)     => ^*(a b)
+      *(a 6 b)     => =*(a b)
+
+      *(a 7 b c d) => *(a 3 (0 1) 3 (1 c d) (1 0) 3 (1 2 3) (1 0) 5 5 b)
+      *(a 8 b c)   => *(a 2 (((1 0) b) c) 0 3)
+      *(a 9 b c)   => *(a c)
+
+      *(a)         => *(a)
+
+5.2 Operators
+
+5.2.1 Goto (*)
+
+      *(a)             -> nock(a)
+
+5.2.2 Deep (&)
+    
+      &(a b)           -> 0
+      &(a)             -> 1
+ 
+5.2.4 Bump (^)
+
+      ^(a b)           -> ^(a b)
+      ^(a)             -> a + 1
+
+5.2.5 Same (=)
+
+      =(a a)           -> 0
+      =(a b)           -> 1
+      =(a)             -> =(a)
+
+5.2.6 Snip (/)
+
+      /(1 a)           -> a
+      /(2 a b)         -> a
+      /(3 a b)         -> b
+      /((a + a) b)     -> /(2 /(a b))
+      /((a + a + 1) b) -> /(3 /(a b))
+      /(a)             -> /(a)
