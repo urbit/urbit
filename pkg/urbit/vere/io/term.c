@@ -18,6 +18,48 @@ static void     _term_read_cb(uv_stream_t*    tcp_u,
                               const uv_buf_t* buf_u);
 static void     _term_it_send_stub(u3_utty* uty_u, u3_noun tub);
 
+/* u3_write_fd(): retry interrupts, continue partial writes, assert errors.
+*/
+void
+u3_write_fd(c3_i fid_i, const void* buf_v, size_t len_i)
+{
+  ssize_t ret_i;
+
+  while ( len_i > 0 ) {
+    c3_w lop_w = 0;
+    //  retry interrupt/async errors
+    //
+    do {
+      //  abort pathological retry loop
+    //
+    if ( 100 == ++lop_w ) {
+      fprintf(stderr, "term: write loop: %s\r\n", strerror(errno));
+      return;
+    }
+      ret_i = write(fid_i, buf_v, len_i);
+    }
+    while (  (ret_i < 0)
+          && (  (errno == EINTR)
+             || (errno == EAGAIN)
+             || (errno == EWOULDBLOCK) ));
+
+    //  assert on true errors
+    //
+    //    NB: can't call u3l_log here or we would re-enter u3_write_fd()
+    //
+    if ( ret_i < 0 ) {
+      fprintf(stderr, "term: write failed %s\r\n", strerror(errno));
+      c3_assert(0);
+    }
+    //  continue partial writes
+    //
+    else {
+      len_i -= ret_i;
+      buf_v += ret_i;
+    }
+  }
+}
+
 /* _term_msc_out_host(): unix microseconds from current host time.
 */
 static c3_d
@@ -174,7 +216,7 @@ u3_term_log_exit(void)
       if ( c3n == uty_u->sto_f(uty_u) ) {
         c3_assert(!"exit-tcsetattr");
       }
-      c3_assert(c3_write(uty_u->fid_i, "\r\n", 2) == 2);
+      u3_write_fd(uty_u->fid_i, "\r\n", 2);
     }
   }
 
@@ -871,7 +913,7 @@ _term_spin_step(u3_utty* uty_u)
 
       c3_w i_w;
       for ( i_w = bac_w; i_w < sol_w; i_w++ ) {
-        if ( c3_write(fid_i, lef_u.base, lef_u.len) < 0 ) {
+        if ( lef_u.len != write(fid_i, lef_u.base, lef_u.len) ) {
           return;
         }
       }
@@ -881,7 +923,7 @@ _term_spin_step(u3_utty* uty_u)
 
     {
       c3_w len_w = cur_c - buf_c;
-      if ( c3_write(fid_i, buf_c, len_w) < 0 ) {
+      if ( len_w != write(fid_i, buf_c, len_w) ) {
         return;
       }
     }
@@ -889,7 +931,7 @@ _term_spin_step(u3_utty* uty_u)
     //  Cursor stays on spinner.
     //
     while ( sol_w-- ) {
-      if ( c3_write(fid_i, lef_u.base, lef_u.len) < 0 ) {
+      if ( lef_u.len != write(fid_i, lef_u.base, lef_u.len) ) {
         return;
       }
     }

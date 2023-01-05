@@ -1,6 +1,4 @@
-// (‑●‑●)> dual licensed under the WTFPL v2 and MIT licenses
-//   without any warranty.
-//   by Gregory Pakosz (@gpakosz)
+// (‑●‑●)> released under the WTFPL v2 license, by Gregory Pakosz (@gpakosz)
 // https://github.com/gpakosz/whereami
 
 // in case you want to #include "whereami.c" in a larger compilation unit
@@ -10,15 +8,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#if defined(__linux__) || defined(__CYGWIN__)
-#undef _DEFAULT_SOURCE
-#define _DEFAULT_SOURCE
-#elif defined(__APPLE__)
-#undef _DARWIN_C_SOURCE
-#define _DARWIN_C_SOURCE
-#define _DARWIN_BETTER_REALPATH
 #endif
 
 #if !defined(WAI_MALLOC) || !defined(WAI_FREE) || !defined(WAI_REALLOC)
@@ -57,9 +46,7 @@ extern "C" {
 
 #if defined(_WIN32)
 
-#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
-#endif
 #if defined(_MSC_VER)
 #pragma warning(push, 3)
 #endif
@@ -68,7 +55,6 @@ extern "C" {
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
-#include <stdbool.h>
 
 static int WAI_PREFIX(getModulePath_)(HMODULE module, char* out, int capacity, int* dirname_length)
 {
@@ -76,9 +62,8 @@ static int WAI_PREFIX(getModulePath_)(HMODULE module, char* out, int capacity, i
   wchar_t buffer2[MAX_PATH];
   wchar_t* path = NULL;
   int length = -1;
-  bool ok;
 
-  for (ok = false; !ok; ok = true)
+  for (;;)
   {
     DWORD size;
     int length_, length__;
@@ -134,12 +119,14 @@ static int WAI_PREFIX(getModulePath_)(HMODULE module, char* out, int capacity, i
     }
 
     length = length__;
+
+    break;
   }
 
   if (path != buffer1)
     WAI_FREE(path);
 
-  return ok ? length : -1;
+  return length;
 }
 
 WAI_NOINLINE WAI_FUNCSPEC
@@ -169,7 +156,7 @@ int WAI_PREFIX(getModulePath)(char* out, int capacity, int* dirname_length)
   return length;
 }
 
-#elif defined(__linux__) || defined(__CYGWIN__) || defined(__sun) || defined(WAI_USE_PROC_SELF_EXE)
+#elif defined(__linux__) || defined(__CYGWIN__) || defined(__sun)
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -183,7 +170,6 @@ int WAI_PREFIX(getModulePath)(char* out, int capacity, int* dirname_length)
 #define __STDC_FORMAT_MACROS
 #endif
 #include <inttypes.h>
-#include <stdbool.h>
 
 #if !defined(WAI_PROC_SELF_EXE)
 #if defined(__sun)
@@ -199,9 +185,8 @@ int WAI_PREFIX(getExecutablePath)(char* out, int capacity, int* dirname_length)
   char buffer[PATH_MAX];
   char* resolved = NULL;
   int length = -1;
-  bool ok;
 
-  for (ok = false; !ok; ok = true)
+  for (;;)
   {
     resolved = realpath(WAI_PROC_SELF_EXE, buffer);
     if (!resolved)
@@ -226,9 +211,11 @@ int WAI_PREFIX(getExecutablePath)(char* out, int capacity, int* dirname_length)
         }
       }
     }
+
+    break;
   }
 
-  return ok ? length : -1;
+  return length;
 }
 
 #if !defined(WAI_PROC_SELF_MAPS_RETRY)
@@ -248,7 +235,6 @@ int WAI_PREFIX(getExecutablePath)(char* out, int capacity, int* dirname_length)
 #include <sys/mman.h>
 #include <unistd.h>
 #endif
-#include <stdbool.h>
 
 WAI_NOINLINE WAI_FUNCSPEC
 int WAI_PREFIX(getModulePath)(char* out, int capacity, int* dirname_length)
@@ -295,24 +281,15 @@ int WAI_PREFIX(getModulePath)(char* out, int capacity, int* dirname_length)
               &&buffer[length - 4] == '.')
           {
             int fd = open(path, O_RDONLY);
-            if (fd == -1)
-            {
-              length = -1; // retry
-              break;
-            }
+            char* begin;
+            char* p;
 
-            char* begin = (char*)mmap(0, offset, PROT_READ, MAP_SHARED, fd, 0);
-            if (begin == MAP_FAILED)
-            {
-              close(fd);
-              length = -1; // retry
-              break;
-            }
+            begin = (char*)mmap(0, offset, PROT_READ, MAP_SHARED, fd, 0);
+            p = begin + offset;
 
-            char* p = begin + offset - 30; // minimum size of local file header
             while (p >= begin) // scan backwards
             {
-              if (*((uint32_t*)p) == 0x04034b50UL) // local file header signature found
+              if (*((uint32_t*)p) == 0x04034b50UL) // local file header found
               {
                 uint16_t length_ = *((uint16_t*)(p + 26));
 
@@ -326,7 +303,7 @@ int WAI_PREFIX(getModulePath)(char* out, int capacity, int* dirname_length)
                 break;
               }
 
-              --p;
+              p -= 4;
             }
 
             munmap(begin, offset);
@@ -364,17 +341,20 @@ int WAI_PREFIX(getModulePath)(char* out, int capacity, int* dirname_length)
       break;
   }
 
+  if (maps)
+    fclose(maps);
+
   return length;
 }
 
 #elif defined(__APPLE__)
 
+#define _DARWIN_BETTER_REALPATH
 #include <mach-o/dyld.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 #include <dlfcn.h>
-#include <stdbool.h>
 
 WAI_FUNCSPEC
 int WAI_PREFIX(getExecutablePath)(char* out, int capacity, int* dirname_length)
@@ -384,9 +364,8 @@ int WAI_PREFIX(getExecutablePath)(char* out, int capacity, int* dirname_length)
   char* path = buffer1;
   char* resolved = NULL;
   int length = -1;
-  bool ok;
 
-  for (ok = false; !ok; ok = true)
+  for (;;)
   {
     uint32_t size = (uint32_t)sizeof(buffer1);
     if (_NSGetExecutablePath(path, &size) == -1)
@@ -419,12 +398,14 @@ int WAI_PREFIX(getExecutablePath)(char* out, int capacity, int* dirname_length)
         }
       }
     }
+
+    break;
   }
 
   if (path != buffer1)
     WAI_FREE(path);
 
-  return ok ? length : -1;
+  return length;
 }
 
 WAI_NOINLINE WAI_FUNCSPEC
@@ -478,7 +459,6 @@ int WAI_PREFIX(getModulePath)(char* out, int capacity, int* dirname_length)
 #include <stdlib.h>
 #include <string.h>
 #include <dlfcn.h>
-#include <stdbool.h>
 
 #if !defined(WAI_PROC_SELF_EXE)
 #define WAI_PROC_SELF_EXE "/proc/self/exefile"
@@ -492,9 +472,8 @@ int WAI_PREFIX(getExecutablePath)(char* out, int capacity, int* dirname_length)
   char* resolved = NULL;
   FILE* self_exe = NULL;
   int length = -1;
-  bool ok;
 
-  for (ok = false; !ok; ok = true)
+  for (;;)
   {
     self_exe = fopen(WAI_PROC_SELF_EXE, "r");
     if (!self_exe)
@@ -526,11 +505,13 @@ int WAI_PREFIX(getExecutablePath)(char* out, int capacity, int* dirname_length)
         }
       }
     }
+
+    break;
   }
 
   fclose(self_exe);
 
-  return ok ? length : -1;
+  return length;
 }
 
 WAI_FUNCSPEC
@@ -578,7 +559,7 @@ int WAI_PREFIX(getModulePath)(char* out, int capacity, int* dirname_length)
 }
 
 #elif defined(__DragonFly__) || defined(__FreeBSD__) || \
-      defined(__FreeBSD_kernel__) || defined(__NetBSD__) || defined(__OpenBSD__)
+      defined(__FreeBSD_kernel__) || defined(__NetBSD__)
 
 #include <limits.h>
 #include <stdlib.h>
@@ -586,116 +567,6 @@ int WAI_PREFIX(getModulePath)(char* out, int capacity, int* dirname_length)
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include <dlfcn.h>
-#include <stdbool.h>
-
-#if defined(__OpenBSD__)
-
-#include <unistd.h>
-
-WAI_FUNCSPEC
-int WAI_PREFIX(getExecutablePath)(char* out, int capacity, int* dirname_length)
-{
-  char buffer1[4096];
-  char buffer2[PATH_MAX];
-  char buffer3[PATH_MAX];
-  char** argv = (char**)buffer1;
-  char* resolved = NULL;
-  int length = -1;
-  bool ok;
-
-  for (ok = false; !ok; ok = true)
-  {
-    int mib[4] = { CTL_KERN, KERN_PROC_ARGS, getpid(), KERN_PROC_ARGV };
-    size_t size;
-
-    if (sysctl(mib, 4, NULL, &size, NULL, 0) != 0)
-        break;
-
-    if (size > sizeof(buffer1))
-    {
-      argv = (char**)WAI_MALLOC(size);
-      if (!argv)
-        break;
-    }
-
-    if (sysctl(mib, 4, argv, &size, NULL, 0) != 0)
-        break;
-
-    if (strchr(argv[0], '/'))
-    {
-      resolved = realpath(argv[0], buffer2);
-      if (!resolved)
-        break;
-    }
-    else
-    {
-      const char* PATH = getenv("PATH");
-      if (!PATH)
-        break;
-
-      size_t argv0_length = strlen(argv[0]);
-
-      const char* begin = PATH;
-      while (1)
-      {
-        const char* separator = strchr(begin, ':');
-        const char* end = separator ? separator : begin + strlen(begin);
-
-        if (end - begin > 0)
-        {
-          if (*(end -1) == '/')
-            --end;
-
-          if (((end - begin) + 1 + argv0_length + 1) <= sizeof(buffer2))
-          {
-            memcpy(buffer2, begin, end - begin);
-            buffer2[end - begin] = '/';
-            memcpy(buffer2 + (end - begin) + 1, argv[0], argv0_length + 1);
-
-            resolved = realpath(buffer2, buffer3);
-            if (resolved)
-              break;
-          }
-        }
-
-        if (!separator)
-          break;
-
-        begin = ++separator;
-      }
-
-      if (!resolved)
-        break;
-    }
-
-    length = (int)strlen(resolved);
-    if (length <= capacity)
-    {
-      memcpy(out, resolved, length);
-
-      if (dirname_length)
-      {
-        int i;
-
-        for (i = length - 1; i >= 0; --i)
-        {
-          if (out[i] == '/')
-          {
-            *dirname_length = i;
-            break;
-          }
-        }
-      }
-    }
-  }
-
-  if (argv != (char**)buffer1)
-    WAI_FREE(argv);
-
-  return ok ? length : -1;
-}
-
-#else
 
 WAI_FUNCSPEC
 int WAI_PREFIX(getExecutablePath)(char* out, int capacity, int* dirname_length)
@@ -705,18 +576,13 @@ int WAI_PREFIX(getExecutablePath)(char* out, int capacity, int* dirname_length)
   char* path = buffer1;
   char* resolved = NULL;
   int length = -1;
-  bool ok;
 
-  for (ok = false; !ok; ok = true)
+  for (;;)
   {
-#if defined(__NetBSD__)
-    int mib[4] = { CTL_KERN, KERN_PROC_ARGS, -1, KERN_PROC_PATHNAME };
-#else
     int mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1 };
-#endif
     size_t size = sizeof(buffer1);
 
-    if (sysctl(mib, 4, path, &size, NULL, 0) != 0)
+    if (sysctl(mib, (u_int)(sizeof(mib) / sizeof(mib[0])), path, &size, NULL, 0) != 0)
         break;
 
     resolved = realpath(path, buffer2);
@@ -742,12 +608,15 @@ int WAI_PREFIX(getExecutablePath)(char* out, int capacity, int* dirname_length)
         }
       }
     }
+
+    break;
   }
 
-  return ok ? length : -1;
-}
+  if (path != buffer1)
+    WAI_FREE(path);
 
-#endif
+  return length;
+}
 
 WAI_NOINLINE WAI_FUNCSPEC
 int WAI_PREFIX(getModulePath)(char* out, int capacity, int* dirname_length)
