@@ -307,7 +307,7 @@ _king_get_pace(void)
 {
   struct stat buf_u;
   c3_c*       pat_c;
-  c3_w len_w;
+  c3_w red_w, len_w;
   c3_i ret_i, fid_i;
 
   ret_i = asprintf(&pat_c, "%s/.bin/pace", u3_Host.dir_c);
@@ -324,10 +324,10 @@ _king_get_pace(void)
 
   len_w = buf_u.st_size;
   pat_c = c3_malloc(len_w + 1);
-  ssize_t red_i = c3_pread(fid_i, pat_c, len_w, 0);
+  red_w = read(fid_i, pat_c, len_w);
   close(fid_i);
 
-  if ( red_i != len_w ) {
+  if ( len_w != red_w ) {
     c3_free(pat_c);
     u3l_log("unable to read pace file, "
             "falling back to default (\"live\")\n");
@@ -1043,6 +1043,9 @@ _king_make_pace(c3_c* pac_c)
   return 0;
 }
 
+static c3_i
+_king_write_raw(c3_i fid_i, c3_y* buf_y, size_t len_i);
+
 /* _king_init_pace(): save pace file if not present
 */
 static c3_i
@@ -1066,11 +1069,8 @@ _king_init_pace(c3_c* pac_c)
     }
   }
 
-  size_t  len_i = strlen(pac_c);
-  ssize_t wit_i = c3_pwrite(fid_i, pac_c, len_i, 0);
-  if ( wit_i != len_i ) {
-    u3l_log("dock: init pace (%s) write failed: %s\n",
-            pac_c, strerror(errno));
+  if ( _king_write_raw(fid_i, (c3_y*)pac_c, strlen(pac_c)) ) {
+    u3l_log("dock: init pace (%s): write %s\n", pac_c, strerror(errno));
     close(fid_i);
     c3_free(bin_c);
     return -1;
@@ -1244,24 +1244,62 @@ _king_do_upgrade(c3_c* pac_c, c3_c* ver_c)
   //  XX print restart instructions
 }
 
-static c3_i
-_king_copy_raw(c3_i src_i, c3_i dst_i, c3_y* buf_y, size_t pag_i)
+/* _king_read_raw: read (up to) [len_i] from [fid_i] to [buf_y]
+*/
+static ssize_t
+_king_read_raw(c3_i fid_i, c3_y* buf_y, size_t len_i)
 {
-  size_t  off_i = 0;
   ssize_t ret_i;
 
   do {
-    if ( 0 > (ret_i = c3_pread(src_i, buf_y, pag_i, off_i)) ) {
-      return ret_i;
-    }
-
-    if ( 0 > (ret_i = c3_pwrite(dst_i, buf_y, (size_t)ret_i, off_i)) ) {
-      return ret_i;
-    }
-
-    off_i += (size_t)ret_i;
+    ret_i = read(fid_i, buf_y, len_i);
   }
-  while ( ret_i );
+  while ( (ret_i < 0) && (errno == EINTR) );
+
+  return ret_i;
+}
+
+/* _king_read_raw: write [len_i] from [buf_y] to [fid_i].
+*/
+static c3_i
+_king_write_raw(c3_i fid_i, c3_y* buf_y, size_t len_i)
+{
+  ssize_t ret_i;
+
+  while ( len_i ) {
+
+    do {
+      ret_i = write(fid_i, buf_y, len_i);
+    }
+    while ( (ret_i < 0) && (errno == EINTR) );
+
+    if ( ret_i < 0 ) {
+      return -1;
+    }
+    else {
+      len_i -= ret_i;
+      buf_y += ret_i;
+    }
+  }
+
+  return 0;
+}
+
+static c3_i
+_king_copy_raw(c3_i src_i, c3_i dst_i, c3_y* buf_y, size_t pag_i)
+{
+  ssize_t red_i;
+
+  do {
+    if ( 0 > (red_i = _king_read_raw(src_i, buf_y, pag_i)) ) {
+      return -1;
+    }
+
+    if ( _king_write_raw(dst_i, buf_y, (size_t)red_i) ) {
+      return -1;
+    }
+  }
+  while ( red_i );
 
   return 0;
 }
@@ -1304,8 +1342,6 @@ _king_copy_file(c3_c* src_c, c3_c* dst_c)
       goto done1;
     }
 
-    //  XX O_TRUNC?
-    //
     if ( -1 == (dst_i = open(dst_c, O_RDWR | O_CREAT, 0755)) ) {
       err_i = errno;
       ret_i = -1;
@@ -1372,12 +1408,8 @@ _king_copy_file(c3_c* src_c, c3_c* dst_c)
     {
       size_t pag_i = 1 << 14;;
       c3_y*  buf_y = c3_malloc(pag_i);
-
-      if ( 0 > (ret_i = _king_copy_raw(src_i, dst_i, buf_y, pag_i)) ) {
-        err_i = errno;
-        ret_i = -1;
-      }
-
+      ret_i = _king_copy_raw(src_i, dst_i, buf_y, pag_i);
+      err_i = errno;
       c3_free(buf_y);
     }
 

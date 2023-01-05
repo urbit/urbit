@@ -8,7 +8,8 @@
 static void
 _setup(void)
 {
-  u3m_boot_lite(1 << 20);
+  u3m_init(1 << 20);
+  u3m_pave(c3y);
 }
 
 /* _test_u3r_chop: "extract bit slices from atom"

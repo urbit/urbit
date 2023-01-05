@@ -1504,61 +1504,6 @@ _http_serv_init_h2o(SSL_CTX* tls_u, c3_o log, c3_o red)
   return h2o_u;
 }
 
-/* _http_serv_start_err(): handle errors in starting http server.
-*/
-static c3_i
-_http_serv_start_err(const c3_c* cap_c, u3_http* htp_u, c3_i sas_i)
-{
-  u3_pier* pir_u = htp_u->htd_u->car_u.pir_u;
-
-  if ( UV_EADDRNOTAVAIL == sas_i ) {
-    u3l_log("http: unavailable ip address %s\r\n", u3_Host.ops_u.bin_c);
-    u3_king_bail();
-    return 0;
-  }
-
-  //  ports specified, no incrementing/retry
-  //
-  if ( c3y == htp_u->dis ) {
-    u3l_log("http: %s (%" PRIu16 "): %s\n",
-            cap_c, htp_u->por_s, uv_strerror(sas_i));
-    u3_king_bail();
-    return 0;
-  }
-
-  //  increment and retry
-  //
-  if ( (UV_EADDRINUSE == sas_i) || (UV_EACCES == sas_i) ) {
-    if ( (c3y == htp_u->sec) && (443 == htp_u->por_s) ) {
-      htp_u->por_s = 8443;
-    }
-    else if ( (c3n == htp_u->sec) && (80 == htp_u->por_s) ) {
-      htp_u->por_s = 8080;
-    }
-    else {
-      htp_u->por_s++;
-      //  XX
-      //
-      if ( c3n == htp_u->lop ) {
-        if ( c3y == htp_u->sec ) {
-          pir_u->pes_s = htp_u->por_s;
-        }
-        else {
-          pir_u->per_s = htp_u->por_s;
-        }
-      }
-    }
-
-    return 1;
-  }
-
-  //  total failure XX bail?
-  //
-  u3l_log("http: %s: %s\n", cap_c, uv_strerror(sas_i));
-  _http_serv_free(htp_u);
-  return 0;
-}
-
 /* _http_serv_start(): start http server.
 */
 static void
@@ -1574,12 +1519,10 @@ _http_serv_start(u3_http* htp_u)
                           INADDR_ANY;
 
   if ( 0 != u3_Host.ops_u.bin_c && c3n == htp_u->lop ) {
-    //  already validated in arguments parser
-    //
     inet_pton(AF_INET, u3_Host.ops_u.bin_c, &adr_u.sin_addr);
   }
 
-  c3_assert( !uv_tcp_init(u3L, &htp_u->wax_u) );
+  uv_tcp_init(u3L, &htp_u->wax_u);
 
   /*  Try ascending ports.
   */
@@ -1589,25 +1532,46 @@ _http_serv_start(u3_http* htp_u)
     adr_u.sin_port = htons(htp_u->por_s);
 
     if ( 0 != (sas_i = uv_tcp_bind(&htp_u->wax_u,
-                                   (const struct sockaddr*)&adr_u, 0)) )
-    {
-      if ( _http_serv_start_err("bind", htp_u, sas_i) ) {
-        continue;
+                                   (const struct sockaddr*)&adr_u, 0)) ||
+         0 != (sas_i = uv_listen((uv_stream_t*)&htp_u->wax_u,
+                                 TCP_BACKLOG, _http_serv_listen_cb)) ) {
+      if ( UV_EADDRNOTAVAIL == sas_i ) {
+        u3l_log("http: ip address not available\n");
+        u3_king_bail();
       }
-      else {
-        return;
+      if ( c3y == htp_u->dis ) {
+        u3l_log("http: listen (%" PRIu16 "): %s\n", htp_u->por_s,
+                uv_strerror(sas_i));
+        u3_king_bail();
       }
-    }
+      if ( (UV_EADDRINUSE == sas_i) || (UV_EACCES == sas_i) ) {
+        if ( (c3y == htp_u->sec) && (443 == htp_u->por_s) ) {
+          htp_u->por_s = 8443;
+        }
+        else if ( (c3n == htp_u->sec) && (80 == htp_u->por_s) ) {
+          htp_u->por_s = 8080;
+        }
+        else {
+          htp_u->por_s++;
+          //  XX
+          //
+          if ( c3n == htp_u->lop ) {
+            if ( c3y == htp_u->sec ) {
+              pir_u->pes_s = htp_u->por_s;
+            }
+            else {
+              pir_u->per_s = htp_u->por_s;
+            }
+          }
+        }
 
-    if ( 0 != (sas_i = uv_listen((uv_stream_t*)&htp_u->wax_u,
-                                 TCP_BACKLOG, _http_serv_listen_cb)) )
-    {
-      if ( _http_serv_start_err("listen", htp_u, sas_i) ) {
         continue;
       }
-      else {
-        return;
-      }
+
+      u3l_log("http: listen: %s\n", uv_strerror(sas_i));
+
+      _http_serv_free(htp_u);
+      return;
     }
 
     u3l_log("http: %s live on %s://localhost:%d",
@@ -1715,30 +1679,24 @@ _http_init_tls(uv_buf_t key_u, uv_buf_t cer_u)
 static void
 _http_write_ports_file(u3_httd* htd_u, c3_c *pax_c)
 {
+  c3_c* nam_c = ".http.ports";
+  c3_w len_w = 1 + strlen(pax_c) + 1 + strlen(nam_c);
+
+  c3_c* paf_c = c3_malloc(len_w);
+  snprintf(paf_c, len_w, "%s/%s", pax_c, nam_c);
+
+  c3_i por_i = c3_open(paf_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+  c3_free(paf_c);
+
   u3_http* htp_u = htd_u->htp_u;
   u3_pier* pir_u = htd_u->car_u.pir_u;
-  size_t   off_i = 0;
-  c3_i     por_i;
 
-  {
-    c3_c* nam_c = ".http.ports";
-    c3_w  len_w = 1 + strlen(pax_c) + 1 + strlen(nam_c);
-    c3_c* paf_c = c3_malloc(len_w);
-    snprintf(paf_c, len_w, "%s/%s", pax_c, nam_c);
-    por_i = c3_open(paf_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
-    c3_free(paf_c);
-  }
-
+  c3_c temp[32];
   while ( 0 != htp_u ) {
     if ( 0 < htp_u->por_s ) {
-      c3_c tmp_c[32];
-      c3_i len_i = snprintf(tmp_c, 32, "%u %s %s\n",
-                            htp_u->por_s,
-                            (c3y == htp_u->sec) ? "secure" : "insecure",
-                            (c3y == htp_u->lop) ? "loopback" : "public");
-      c3_assert( 0 < len_i);
-      c3_assert( c3_pwrite(por_i, tmp_c, len_i, off_i) == len_i );
-      off_i += len_i;
+      u3_write_fd(por_i, temp, snprintf(temp, 32, "%u %s %s\n", htp_u->por_s,
+                     (c3y == htp_u->sec) ? "secure" : "insecure",
+                     (c3y == htp_u->lop) ? "loopback" : "public"));
     }
 
     htp_u = htp_u->nex_u;
@@ -1754,12 +1712,13 @@ static void
 _http_release_ports_file(c3_c *pax_c)
 {
   c3_c* nam_c = ".http.ports";
-  c3_w  len_w = 1 + strlen(pax_c) + 1 + strlen(nam_c);
+  c3_w len_w = 1 + strlen(pax_c) + 1 + strlen(nam_c);
   c3_c* paf_c = c3_malloc(len_w);
   c3_i  wit_i;
 
   wit_i = snprintf(paf_c, len_w, "%s/%s", pax_c, nam_c);
-  c3_assert( len_w == (c3_w)wit_i + 1 );
+  c3_assert(wit_i > 0);
+  c3_assert(len_w == (c3_w)wit_i + 1);
 
   c3_unlink(paf_c);
   c3_free(paf_c);
