@@ -41,6 +41,7 @@
       state-one
       state-two
       state-three
+      state-four
   ==
 ::
 +$  state-zero
@@ -61,9 +62,15 @@
       =groups
       wait=(set ship)
   ==
+::
++$  state-four
+  $:  %4
+      =groups
+      wait=(set ship)
+  ==
 --
 ::
-=|  state-three
+=|  state-four
 =*  state  -
 ::
 %-  agent:dbug
@@ -84,7 +91,15 @@
     =|  cards=(list card)
     |^
     ?-    -.old
-        %3  [(flop cards) this(state old)]
+        %4  [(flop cards) this(state old)]
+    ::
+        %3 
+      %_    $
+          old    [%4 +.old] 
+          cards
+        :_  cards
+        [%pass /pyre/rebuild %agent [our dap]:bowl %poke noun+!>(%rebuild)]
+      ==
     ::
         %2
       %_    $
@@ -140,6 +155,7 @@
         ?+  q.vase  !!
           %migrate  poke-migrate:gc
           %export   poke-export:gc
+          %rebuild  poke-rebuild:gc
         ==
       ::
           ?(%group-update-0 %group-action)
@@ -235,6 +251,42 @@
 ::
 |_  bol=bowl:gall
 +*  io  ~(. agentio bol)
+++  poke-rebuild
+  ^-  (quip card _state)
+  |^  
+  =.  wait
+    put-missing
+  =^  cards  state
+    rewatch
+  [cards state]
+  ::
+  ++  rewatch
+    =/  wait  ~(tap in wait)
+    =|  cards=(list card)
+    |-
+    ?~  wait
+      [cards state]
+    =/  wir  /gladio/(scot %p i.wait)
+    =.  cards
+      :_(cards (watch-init-migrate i.wait))
+    ::  if we have a subscription already, leave first to restart
+    =?  cards
+        (~(has by wex.bol) [wir i.wait %groups])
+      :_(cards [%pass wir %agent [i.wait %groups] %leave ~])
+    $(wait t.wait)
+  ::
+  ++  put-missing
+    =/  wex  ~(tap by wex.bol)
+    |-
+    ?~  wex
+      wait
+    =/  [[=wire =ship =term] [acked=? =(pole knot)]]
+      i.wex
+    ?.  ?=([%gladio ship=@ ~] pole)
+      $(wex t.wex)
+    $(wex t.wex, wait (~(put in wait) (slav %p ship.pole)))
+  --
+::
 ++  poke-export
   ^-  (quip card _state)
   :_  state
@@ -351,8 +403,8 @@
   |=  arc=*
   ^-  (quip card _state)
   |^
-  =/  sty=state-three
-    [%3 (remake-groups ;;((tree [resource tree-group]) +.arc)) ~]
+  =/  sty=state-four
+    [%4 (remake-groups ;;((tree [resource tree-group]) +.arc)) ~]
   :_  sty
   %+  roll  ~(tap by groups.sty)
   |=  [[rid=resource grp=group] out=(list card)]
