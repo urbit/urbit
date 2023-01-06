@@ -4776,7 +4776,7 @@
       ?~  bill.i.sat
         [~ nub.f]
       =^  =vase  nub.f  (build-file:f /app/[i.bill.i.sat]/hoon)
-      =/  =agent:gall
+      =/  =agent-any:gall
         ~|  [%building-app bill.i.sat]
         ?+  weft  !!
           [%zuse %415]  [[%zuse %415] !<(agent-415:gall vase)]
