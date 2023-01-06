@@ -1415,9 +1415,9 @@
   ::  channel-event: unacknowledged channel event, vaseless sign
   ::
   +$  channel-event
-    $%  $>(%poke-ack sign:agent-417:gall)
-        $>(%watch-ack sign:agent-417:gall)
-        $>(%kick sign:agent-417:gall)
+    $%  $>(%poke-ack sign:agent:gall)
+        $>(%watch-ack sign:agent:gall)
+        $>(%kick sign:agent:gall)
         [%fact =mark =noun]
     ==
   ::  channel: connection to the browser
@@ -1802,7 +1802,7 @@
           ==  ==                                        ::
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact
-  +$  load  (list [=dude =beak =agent])                 ::  loadout
+  +$  load  (list [=dude =beak agent=agent-any])        ::  loadout
   +$  scar                                              ::  opaque duct
     $:  p=@ud                                           ::  bone sequence
         q=(map duct bone)                               ::  by duct
@@ -1817,11 +1817,11 @@
     ==
   +$  deal
     $%  [%raw-poke =mark =noun]
-        task:agent-417
+        task:agent
     ==
   +$  unto
     $%  [%raw-fact =mark =noun]
-        sign:agent-417
+        sign:agent
     ==
   ::  TODO: add more flags?
   ::
@@ -1829,9 +1829,10 @@
   ::
   ::  +agent: app core
   ::
-  ++  agent  $%([[%zuse %418] agent-418] [[%zuse %417] agent-417])
+  ++  agent-any  $%([[%zuse %417] agent-417] [[%zuse %416] agent-416])
+  ++  agent  agent-416
   ::
-    ++  agent-417
+  ++  agent-416
     =<  form
     |%
     +$  step  (quip card form)
@@ -1901,13 +1902,13 @@
         |~  [term tang]
         *(quip card _^|(..on-init))
       ::
-      ++  on-rift
-        |~  ship
-        *(quip card _^|(..on-init))
+      ::  ++  on-rift
+      ::    |~  ship
+      ::    *(quip card _^|(..on-init))
       --
     --
   ::
-  ++  agent-418
+  ++  agent-417
     =<  form
     |%
     +$  step  (quip card form)
@@ -2344,7 +2345,7 @@
   +$  input
     $%  [%poke =cage]
         [%sign =wire =sign-arvo]
-        [%agent =wire =sign:agent-417:gall]
+        [%agent =wire =sign:agent:gall]
         [%watch =path]
     ==
   +$  strand-input  [=bowl in=(unit input)]
