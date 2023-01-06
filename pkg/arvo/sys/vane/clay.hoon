@@ -4783,7 +4783,7 @@
           [%zuse %416]  [[%zuse %416] !<(agent-416:gall vase)]
         ==
       =^  lid  nub.f  $(bill.i.sat t.bill.i.sat)
-      [[[i.bill.i.sat [our desk.i.sat da+now] agent] lid] nub.f]
+      [[[i.bill.i.sat [our desk.i.sat da+now] agent-any] lid] nub.f]
     =.  lad  (weld lad new)
     $(sat t.sat)
   ::  build-dais for each mark
