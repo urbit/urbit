@@ -2140,9 +2140,6 @@
     ::  notify unix and subscribers
     ::
     =?  ..park  mem  (ergo 0 mum.res)                   ::  [ergo] >
-    ::  garbage collect zuse cache
-    ::
-    =.  ..park  sweep-zuse-cache
     ::
     wake:tare                                           ::  [wake] > [tare] >
     ::
