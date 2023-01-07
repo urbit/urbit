@@ -5823,7 +5823,6 @@
     %+  ~(rib by dos.rom.new)  den
     |=  [[des=desk doj=dojo] dan=_den]
     ?:  ?|  =(%base des)
-            !?=(%live liv.dom.doj)
             (~(has by wic.dom.doj) zuse+zuse)
         ==
       [dan des doj]
