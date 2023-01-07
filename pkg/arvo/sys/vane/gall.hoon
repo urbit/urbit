@@ -2845,7 +2845,7 @@
       |=  [a=term e=egg]
       ^-  egg
       ?-  -.e
-        [%zuse %416]  [[%zuse %415] +.e]
+        [%zuse %416]  [[%zuse %416] +.e]
         [%zuse %415]  [[%zuse %415] +.e]
       ==
     ==
