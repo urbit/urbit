@@ -3327,7 +3327,9 @@
   ++  set-zest                                          ::  [goad] <
     |=  liv=zest
     =?  liv  =(%base syd)  %live
-    =?  ..park  =(%live liv)  +:(got-zuse (need wef.dom))
+    ?>  ?|  !=(%live liv)
+            ?=([~ agent-wefts:gall] wef.dom)
+        ==
     ..park(liv.dom liv)
   ::
   ++  rise                                              ::  [goad] <
