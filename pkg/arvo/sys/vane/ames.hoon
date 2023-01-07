@@ -1931,19 +1931,22 @@
       =<  q.q  %-  need  %-  need
       (rof ~ %gf `beam`[[our %$ da+now] /])
     ::
-    =/  subs=(jar path [bone nonce=@])
+    =/  subs=(jar path [bone sub-nonce=@])
       %+  roll  ~(tap by snd.peer-state)
-      |=  [[=bone *] subs=(jar path [bone nonce=@])]
+      |=  [[=bone *] subs=(jar path [bone sub-nonce=@])]
       ?~  duct=(~(get by by-bone.ossuary.peer-state) bone)  subs
       ?.  ?=([* [%gall %use sub=@ @ %out @ @ nonce=@ pub=@ *] *] u.duct)
         subs
-      =/  nonce=@  (rash i.t.t.t.t.t.t.t.i.t.u.duct dem)
-      =/  =wire    i.t.u.duct
+      =/  =wire           i.t.u.duct
+      =/  nonce=(unit @)  (rush i.t.t.t.t.t.t.t.i.t.u.duct dem)
+      %-  ~(add ja subs)
+      :_  [bone ?~(nonce 0 u.nonce)]  :: 0 for old pre-nonce subscriptions
+      ?~  nonce  wire
       ::  don't include the sub-nonce in the key
       ::
-      (~(add ja subs) (weld (scag 7 wire) (slag 8 wire)) [bone nonce])
+      (weld (scag 7 wire) (slag 8 wire))
     %+  roll  ~(tap by subs)
-    |=  [[=wire flows=(list [bone @])] core=_core]
+    |=  [[=wire flows=(list [bone sub-nonce=@])] core=_core]
     ::
     %+  roll  flows
     |=  [[=bone sub-nonce=@] core=_core]
@@ -1954,13 +1957,11 @@
     =/  log=tape   "[bone={<bone>} nonce={<sub-nonce>} agent={<app>}] {<path>}"
     =;  corkable=?
       ?.(corkable core (%*(on-cork core cork-bone `bone) ship))
-    ::  check if the current subscription also failed
-    ::
-    ?.  =(sub-nonce nonce)
+    ?:  &((gth sub-nonce 0) (lth sub-nonce nonce))
       %.  !dry
       (trace |(dry odd.veb) ship |.((weld "stale %watch plea " log)))
     ::  we can safely cork the current subscription
-    ::  if it received a nack on backward bone
+    ::  if it received a nack on a backward bone
     ::
     =+  target=(mix 0b10 bone)
     ::  not a naxplanation ack bone

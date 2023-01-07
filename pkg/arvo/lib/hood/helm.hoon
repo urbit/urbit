@@ -247,10 +247,7 @@
 ::
 ++  poke-kroc
   |=  dry=?  =<  abet
-  %-  emil    ^-  (list card)
-  :~  [%pass /helm/kroc %arvo %a %kroc dry]
-      [%pass /helm/rake %arvo %g %rake ~ %r dry]
-  ==
+  (emit [%pass /helm/kroc %arvo %a %kroc dry])
 ::
 ++  poke-knob
   |=  [error-tag=@tas level=?(%hush %soft %loud)]  =<  abet
