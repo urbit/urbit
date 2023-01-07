@@ -1918,7 +1918,7 @@
         =/  rcvr  [ship her-life.channel]
         "cork plea {<sndr rcvr bone=bone vane.plea path.plea>}"
     abet:(on-memo:(make-peer-core peer-state channel) bone plea %plea)
-  ::  +on-kroc: cork all stale flows from failed subscriptions
+  ::  +on-kroc: cork all flows from failed subscriptions
   ::
   ++  on-kroc
     |=  dry=?
@@ -1927,27 +1927,48 @@
     |=  [[=ship =ship-state] core=_event-core]
     ?.  ?=(%known -.ship-state)  core
     =/  =peer-state:ames  ?>(?=(%known -.ship-state) +.ship-state)
+    =/  dudes  ;;  (map dude:gall nonce=@)
+      =<  q.q  %-  need  %-  need
+      (rof ~ %gf `beam`[[our %$ da+now] /])
     ::
-    %+  roll  ~(tap by rcv.peer-state)
-    |=  [[=bone *] core=_core]
-    ?.  &(=(0 (end 0 bone)) =(1 (end 0 (rsh 0 bone))))
-      ::  not a naxplanation ack bone
+    =/  subs=(jar path [bone nonce=@])
+      %+  roll  ~(tap by snd.peer-state)
+      |=  [[=bone *] subs=(jar path [bone nonce=@])]
+      ?~  duct=(~(get by by-bone.ossuary.peer-state) bone)  subs
+      ?.  ?=([* [%gall %use sub=@ @ %out @ @ nonce=@ pub=@ *] *] u.duct)
+        subs
+      =/  nonce=@  (rash i.t.t.t.t.t.t.t.i.t.u.duct dem)
+      =/  =wire    i.t.u.duct
+      ::  don't include the sub-nonce in the key
       ::
-      core
-    ::  by only corking forward flows that have received
-    ::  a nack we avoid corking the current subscription
+      (~(add ja subs) (weld (scag 7 wire) (slag 8 wire)) [bone nonce])
+    %+  roll  ~(tap by subs)
+    |=  [[=wire flows=(list [bone @])] core=_core]
+    ::
+    %+  roll  flows
+    |=  [[=bone sub-nonce=@] core=_core]
+    ?:  (~(has in closing.peer-state) bone)  core
+    =/  app=term   ?>(?=([%gall %use sub=@ *] wire) i.t.t.wire)
+    =/  nonce=@ud  (dec (~(got by dudes) app))
+    =/  =path      (slag 7 wire)
+    =/  log=tape   "[bone={<bone>} nonce={<sub-nonce>} agent={<app>}] {<path>}"
+    =;  corkable=?
+      ?.(corkable core (%*(on-cork core cork-bone `bone) ship))
+    ::  check if the current subscription also failed
+    ::
+    ?.  =(sub-nonce nonce)
+      %.  !dry
+      (trace |(dry odd.veb) ship |.((weld "stale %watch plea " log)))
+    ::  we can safely cork the current subscription
+    ::  if it received a nack on backward bone
     ::
     =+  target=(mix 0b10 bone)
-    ::  make sure that the nack bone has a forward flow
+    ::  not a naxplanation ack bone
     ::
-    ?~  duct=(~(get by by-bone.ossuary.peer-state) target)
-      core
-    ?.  ?=([* [%gall %use sub=@ @ %out @ @ nonce=@ pub=@ *] *] u.duct)
-      core
-    %-  %^  trace  |(dry odd.veb)  ship
-        |.("kroc failed %watch plea {<bone=target>}")
-    ?:  dry  core
-    (%*(on-cork core cork-bone `target) ship)
+    ?.  &(=(0 (end 0 target)) =(1 (end 0 (rsh 0 target))))
+      |
+    %.  !dry
+    (trace |(dry odd.veb) ship |.((weld "failed %watch plea " log)))
   ::  +on-take-wake: receive wakeup or error notification from behn
   ::
   ++  on-take-wake

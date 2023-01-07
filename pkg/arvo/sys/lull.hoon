@@ -1810,7 +1810,7 @@
         [%load =load]                                   ::  load agent
         [%nuke =dude]                                   ::  delete agent
         [%doff dude=(unit dude) ship=(unit ship)]       ::  kill subscriptions
-        [%rake dude=(unit dude) mode=?(%o %z %r) dry=?] ::  reclaim old subs
+        [%rake dude=(unit dude) all=?]                  ::  reclaim old subs
         $>(%init vane-task)                             ::  set owner
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade

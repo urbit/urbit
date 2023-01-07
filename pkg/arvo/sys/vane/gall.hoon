@@ -244,7 +244,7 @@
   ::  +mo-rake: send %cork's for old subscriptions if needed
   ::
   ++  mo-rake
-    |=  [dude=(unit dude) mode=?(%o %z %r) dry=?]
+    |=  [dude=(unit dude) all=?]
     ^+  mo-core
     =/  apps=(list (pair term yoke))
       ?~  dude  ~(tap by yokes.state)
@@ -252,7 +252,7 @@
     |-  ^+  mo-core
     ?~  apps  mo-core
     =/  ap-core  (ap-yoke:ap p.i.apps [~ our] q.i.apps)
-    $(apps t.apps, mo-core ap-abet:(ap-rake:ap-core mode dry))
+    $(apps t.apps, mo-core ap-abet:(ap-rake:ap-core all))
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
@@ -1512,49 +1512,36 @@
       =?  ap-core  (gte 1 (~(got by boar.yoke) wyr dok))
         (ap-pass wyr %agent dok %leave ~)
       $(subs t.subs)
-    ::  +ap-rake: clean up the dead subscriptions
-    ::
-    ::    =mode %o: kill old pre-nonce subscriptions
-    ::    =mode %z: kill old pre-nonce subscriptions, including sub-nonce = 0
-    ::    =mode %r: kills all stale resubscription flows
+    ::  +ap-rake: clean up the dead %leave's
     ::
     ++  ap-rake
-      |=  [mode=?(%o %z %r) dry=?]
+      |=  all=?
       =/  subs  ~(tap in ~(key by boat.yoke))
       |^  ^+  ap-core
       ?~  subs  ap-core
       =/  [=wire =dock]  i.subs
-      =/  non=@ud  (~(got by boar.yoke) wire dock)
-      ~&  [mode sub-nonce=sub-nonce.yoke nonce=non]
-      ?.  &(=(%zer mode) =(0 non))
+      =/  non  (~(got by boar.yoke) wire dock)
+      ?:  &(!all =(0 non))
         $(subs t.subs)
       ?~  per=(scry-peer-state p.dock)
         $(subs t.subs)
-      ::  skip current subscription in %res mode
       ::
-      ?.  ?&  =(%res mode)
-              !=(sub-nonce.yoke 0)
-              (lth non (dec sub-nonce.yoke))
-          ==
-        $(subs t.subs)
-      ::
-      =/  sub-nonce=@t  ?.(=(%res mode) '0' (scot %ud non))
       =/  dud=(set duct)
         =/  mod=^wire
           :*  %gall  %use  agent-name  run-nonce.yoke
               %out  (scot %p p.dock)  q.dock
-              sub-nonce  wire
+              '0'  wire
           ==
         %-  ~(rep by by-duct.ossuary.u.per)
         |=  [[=duct =bone] out=(set duct)]
         ^+  out
         ?.  ?&  ?=([* [%gall %use @ @ %out @ @ @ *] *] duct)
-                =(mod i.t.duct(i.t.t.t.t.t.t.t sub-nonce))
+                =(mod i.t.duct(i.t.t.t.t.t.t.t '0'))
             ==
           out
         ?:  (~(has in closing.u.per) bone)  out
         ~>  %slog.0^leaf+"gall: rake {<i.t.duct>}"
-        ?:(dry out (~(put in out) duct))
+        (~(put in out) duct)
       ::
       %-  ap-move
       (turn ~(tap in dud) |=(d=duct [+.d %pass -.d %a %cork p.dock]))
@@ -2001,19 +1988,6 @@
     ?~  nonce=(~(get by boar.u.yok) [wire ship term])
       [~ ~]
     [~ ~ atom+!>(u.nonce)]
-  ::
-  ?:  ?&  =(%r care)
-          ?=(~ path)
-          =([%$ %da now] coin)
-          =(our ship)
-      ==
-    =|  agents=(list [app=term sub-nonce=@ud run-nonce=@t =boat =boar])
-    :+  ~  ~
-    :-  %noun  !>  ^+  agents
-    %+  roll  ~(tap by yokes.state)
-    |=  [[agent=term =yoke] agents=_agents]
-    :_  agents
-    [agent [sub-nonce run-nonce boat boar]:yoke]
   ::
   ?.  =(our ship)
     ~
