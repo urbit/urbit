@@ -4779,8 +4779,8 @@
       =/  =agent-any:gall
         ~|  [%building-app bill.i.sat]
         ?+  weft  !!
+          [%zuse %415]  [[%zuse %415] !<(agent-415:gall vase)]
           [%zuse %416]  [[%zuse %416] !<(agent-416:gall vase)]
-          [%zuse %417]  [[%zuse %417] !<(agent-417:gall vase)]
         ==
       =^  lid  nub.f  $(bill.i.sat t.bill.i.sat)
       [[[i.bill.i.sat [our desk.i.sat da+now] agent-any] lid] nub.f]
