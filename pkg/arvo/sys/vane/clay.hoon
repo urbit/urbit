@@ -4673,6 +4673,9 @@
       ?.  =(%live liv.dom.den)
         %-  (trace 2 |.("{<i.desks>} is not live"))
         $(desks t.desks)
+      ?.  &(?=(^ wef.dom.den) ?=(agent-wefts:gall u.wef.dom.den))
+        %-  (trace 2 |.("{<i.desks>} Gall-incompatible kelvin"))
+        $(desks t.desks)
       =^  res  den  (aver:den ~ %x da+now /desk/bill)
       =.  ruf  +:abet:den
       ?.  ?=([~ ~ *] res)

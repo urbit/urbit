@@ -1828,8 +1828,11 @@
   +$  verb  ?(%odd)
   ::
   ::  +agent: app core
+  +$  agent-wefts  ?([%zuse %417] [%zuse %416])
   ::
-  ++  agent-any  $%([[%zuse %417] agent-417] [[%zuse %416] agent-416])
+  ++  agent-any  $%  [[%zuse %417] agent-417]
+                     [[%zuse %416] agent-416]
+                 ==
   ++  agent  agent-417
   ::
   ++  agent-416
