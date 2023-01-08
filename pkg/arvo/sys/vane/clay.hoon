@@ -175,7 +175,7 @@
       wic=(map weft yoki)                               ::  commit-in-waiting
       liv=zest                                          ::  running agents
       ren=rein                                          ::  force agents on/off
-      wef=(unit weft)                                   ::  zuse version in use
+      wef=weft                                          ::  zuse version in use
   ==                                                    ::
 ::
 ::  Over-the-wire backfill request/response
@@ -1379,9 +1379,7 @@
     =/  using=(set weft)
       %-  ~(rep by dos.rom)
       |=  [[=desk =dojo] wefts=(set weft)]
-      ?~  wef.dom.dojo
-        wefts
-      (~(put in wefts) u.wef.dom.dojo)
+      (~(put in wefts) wef.dom.dojo)
     =/  stale=(list weft)
       ~(tap in (~(dif in ~(key by zuz)) using))
     |-
@@ -1648,11 +1646,10 @@
     |=  yon=aeon
     %-  ford:fusion
     =/  files  (~(run by q:(aeon-to-yaki:ze yon)) |=(=lobe |+lobe))
-    =/  wef  (need wef.dom)
     =/  zus=[weft vase]
-      ?:  =(zuse+zuse wef)
+      ?:  =(zuse+zuse wef.dom)
         [zuse+zuse zuse.bud]
-      [wef (~(got by zuz) wef)]
+      [wef.dom (~(got by zuz) wef.dom)]
     [files lat.ran veb.bug zus fad ?:(=(yon let.dom) fod.dom [~ ~])]
   ::  Produce ford cache appropriate for the aeon
   ::
@@ -2039,7 +2036,7 @@
     ::
     =/  old-fod  fod.dom
     =.  fod.dom
-      ?:  |(updated !=([~ weft.zus] wef.dom))
+      ?:  |(updated !=(weft.zus wef.dom))
         [~ ~]
       (promote-ford fod.dom invalid)
     =.  fad
@@ -2084,7 +2081,7 @@
     ::  [wake] < [ergo] < [goad] <
     ::
     =:  let.dom  +(let.dom)
-        wef.dom  (some weft.zus)
+        wef.dom  weft.zus
         hit.dom  (~(put by hit.dom) +(let.dom) r.yaki)
         hut.ran  (~(put by hut.ran) r.yaki yaki)
         lat.ran  (~(uni by new-pages) lat.ran)
@@ -3240,11 +3237,10 @@
       (~(put by mon) pot [her syd ud+for-yon] spur)
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) u.yon))
     =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
-    =/  wef  (need wef.dom)
     =/  zus=[weft vase]
-      ?:  =(zuse+zuse wef)
+      ?:  =(zuse+zuse wef.dom)
         [zuse+zuse zuse.bud]
-      [wef (~(got by zuz) wef)]
+      [wef.dom (~(got by zuz) wef.dom)]
     =/  =args:ford:fusion
       [files lat.ran veb.bug zus fad ?:(=(yon let.dom) fod.dom [~ ~])]
     =^  mim  args
@@ -3331,7 +3327,7 @@
     |=  liv=zest
     =?  liv  =(%base syd)  %live
     ?:  ?&  =(%live liv)
-            !?=([~ agent-wefts:gall] wef.dom)
+            !?=(agent-wefts:gall wef.dom)
         ==
       ((slog leaf+"clay: failed to set {<syd>} live" ~) ..park)
     ..park(liv.dom liv)
@@ -4680,7 +4676,7 @@
         %-  (trace 2 |.("{<i.desks>} is not live"))
         $(desks t.desks)
       =/  wef  wef.dom.den
-      ?.  ?=([~ agent-wefts:gall] wef)
+      ?.  ?=(agent-wefts:gall wef)
         %-  (trace 2 |.("{<i.desks>}: Gall-incompatible kelvin"))
         $(desks t.desks)
       =^  res  den  (aver:den ~ %x da+now /desk/bill)
@@ -4775,7 +4771,7 @@
     |-  ^-  [load:gall _..abet]
     ?~  sat
       [lad ..abet]
-    =/  =weft  (need wef.dom:(~(got by dos.rom) desk.i.sat))
+    =/  wef  wef.dom:(~(got by dos.rom) desk.i.sat)
     =/  f  (ford our desk.i.sat ~)
     =^  new=load:gall  ..abet
       %-  wrap  :^  our  desk.i.sat  ~
@@ -4785,7 +4781,7 @@
       =^  =vase  nub.f  (build-file:f /app/[i.bill.i.sat]/hoon)
       =/  =agent-any:gall
         ~|  [%building-app bill.i.sat]
-        ?+  weft  !!
+        ?+  wef  !!
           [%zuse %415]  [[%zuse %415] !<(agent-415:gall vase)]
           [%zuse %416]  [[%zuse %416] !<(agent-416:gall vase)]
         ==
@@ -5840,7 +5836,7 @@
     =/  pag  (~(got by lat.ran.new) (~(got by q.yak) /sys/kelvin))
     ?>  =(%kelvin p.pag)
     =^  zus=[=weft =vase]  dan  (got-zuse:dan ;;(waft q.pag))
-    [dan des doj(wef.dom (some weft.zus))]
+    [dan des doj(wef.dom weft.zus)]
     ::
     ++  rung-13-to-14
       |=  rug=rung-13
@@ -5860,7 +5856,7 @@
     ++  dome-13-to-14
       |=  dom=dome-13
       ^-  dome
-      dom(fod [~ ~], ren [ren.dom wef=~])
+      dom(fod [~ ~], ren [ren.dom wef=*weft])
     --
   --
 ::
