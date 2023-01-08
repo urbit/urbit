@@ -2137,6 +2137,9 @@
         %dead  ..park
         %live  ?:(goat goad ..park)
       ==
+    ::  garbage collect zuse cache
+    ::
+    =?  ..park  goat  sweep-zuse-cache
     ::  notify unix and subscribers
     ::
     =?  ..park  mem  (ergo 0 mum.res)                   ::  [ergo] >
