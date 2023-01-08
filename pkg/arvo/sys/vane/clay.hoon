@@ -1374,122 +1374,6 @@
   =*  red=rede  ->+
   =<  apex
   |%
-  ++  sweep-zuse-cache
-    ^+  ..park
-    =/  using=(set weft)
-      %-  ~(rep by dos.rom)
-      |=  [[=desk =dojo] wefts=(set weft)]
-      (~(put in wefts) wef.dom.dojo)
-    =/  stale=(list weft)
-      ~(tap in (~(dif in ~(key by zuz)) using))
-    |-
-    ?~  stale
-      ..park
-    $(stale t.stale, zuz (~(del by zuz) i.stale))
-  ::
-  ++  got-zuse
-    |=  waf=waft
-    |^  ^-  [[weft vase] _..park]
-    =/  welt=(list weft)  (sort-filter-waft waf)
-    =/  wefts=(set weft)  (silt welt)
-    ?^  cached=(try-zuse-cache welt)
-      [u.cached ..park]
-    =/  oldest=weft  (rear welt)
-    =/  =dome  dom:(~(got by dos.rom) %base)
-    =/  =aeon  let.dome
-    |-
-    ?>  (gte aeon 1)
-    =/  =yaki  (~(got by hut.ran) (~(got by hit.dome) aeon))
-    ?~  aeon-waft=(get-waft yaki)
-      $(aeon (dec aeon))
-    ?~  aeon-welt=(sort-filter-waft u.aeon-waft)
-      $(aeon (dec aeon))
-    =/  aeon-newest=weft  i.aeon-welt
-    :: if the newest weft for this aeon is older than
-    :: the oldest target weft, do not continue
-    ::
-    ?<  (gth num.aeon-newest num.oldest)
-    ?~  (~(int in wefts) (silt aeon-welt))
-      $(aeon (dec aeon))
-    ?~  files=(get-kernel-files yaki)
-      $(aeon (dec aeon))
-    =/  zuse-core=vase  (build-zuse u.files)
-    =/  actual=weft  [%zuse !<(@ud (slap zuse-core %limb %zuse))]
-    ?>  (~(has in wefts) actual)
-    :-  [actual zuse-core]
-    ..park(zuz (~(put by zuz) actual zuse-core))
-    ::
-    ++  build-zuse
-      |=  [h=@ a=@ l=@ z=@]
-      ^-  vase
-      =/  hoon-core=vase
-        %-  (slog 'clay: compiling hoon' ~)
-        =-  (slot 7 -)
-        (road |.((slap *vase (ream h))))
-      =/  arvo-core=vase
-        %-  (slog 'clay: compiling arvo' ~)
-        =-  (slap - (ream '..part'))
-        (road |.((slap hoon-core (ream a))))
-      =/  lull-core=vase
-        %-  (slog 'clay: compiling lull' ~)
-        (road |.((slap arvo-core (rain /sys/lull/hoon l))))
-      %-  (slog 'clay: compiling zuse' ~)
-      (road |.((slap lull-core (rain /sys/zuse/hoon z))))
-    ::
-    ++  try-zuse-cache
-      |=  welt=(list weft)
-      ^-  (unit [weft vase])
-      ?~  welt
-        ~
-      ?:  =(i.welt zuse+zuse)
-        (some i.welt zuse.bud)
-      ?~  zuse-core=(~(get by zuz) i.welt)
-        $(welt t.welt)
-      (some i.welt u.zuse-core)
-    ::
-    ++  sort-filter-waft
-      |=  =waft
-      ^-  (list weft)
-      %+  sort
-        %+  skim  ~(tap in (waft-to-wefts waft))
-        |=(=weft =(%zuse lal.weft))
-      |=([a=weft b=weft] (lte num.a num.b))
-    ::
-    ++  get-waft
-      |=  =yaki
-      ^-  (unit waft)
-      ?~  lube=(~(get by q.yaki) /sys/kelvin)
-        ~
-      ?~  puge=(~(get by lat.ran) u.lube)
-        ~
-      ?.  ?=(%kelvin p.u.puge)
-        ~
-      ((soft waft) q.u.puge)
-    ::
-    ++  get-kernel-files
-      |=  =yaki
-      ^-  (unit [h=@ a=@ l=@ z=@])
-      ;:  both
-        (get-kernel-file yaki /sys/hoon/hoon)
-        (get-kernel-file yaki /sys/arvo/hoon)
-        (get-kernel-file yaki /sys/lull/hoon)
-        (get-kernel-file yaki /sys/zuse/hoon)
-      ==
-    ::
-    ++  get-kernel-file
-      |=  [=yaki =path]
-      ^-  (unit @)
-      ?~  lube=(~(get by q.yaki) path)
-        ~
-      ?~  puge=(~(get by lat.ran) u.lube)
-        ~
-      ?.  ?=(%hoon p.u.puge)
-        ~
-      ?^  q.u.puge
-        ~
-      (some q.u.puge)
-    --
-  ::
   ++  abet                                              ::  resolve
     ^-  [(list move) raft]
     :-  (flop mow)
@@ -2408,6 +2292,8 @@
       ^+  ..park
       ?>  =(~ pud)
       =.  pud  `[syd yoki]
+      :: cache current zuse so we don't need to rebuild
+      ::
       =.  zuz  (~(put by zuz) zuse+zuse zuse.bud)
       |^  %.  [hen %slip %c %pork ~]
           emit:(pass-what files)
@@ -2433,6 +2319,140 @@
         ^+  ..park
         (emit hen %pass /what %$ what/fil)
       --
+    --
+  ::  +sweep-zuse-cache: garbage collect zuse cache
+  ::
+  ++  sweep-zuse-cache
+    ^+  ..park
+    =/  using=(set weft)
+      %-  ~(rep by dos.rom)
+      |=  [[=desk =dojo] wefts=(set weft)]
+      (~(put in wefts) wef.dom.dojo)
+    =/  stale=(list weft)
+      ~(tap in (~(dif in ~(key by zuz)) using))
+    |-
+    ?~  stale
+      ..park
+    $(stale t.stale, zuz (~(del by zuz) i.stale))
+  ::
+  ::  +got-zuse: find and build zuse at kelvin
+  ::
+  ++  got-zuse
+    |=  waf=waft
+    |^  ^-  [[weft vase] _..park]
+    =/  welt=(list weft)  (sort-filter-waft waf)
+    =/  wefts=(set weft)  (silt welt)
+    ?^  cached=(try-zuse-cache welt)
+      [u.cached ..park]
+    =/  oldest=weft  (rear welt)
+    =/  =dome  dom:(~(got by dos.rom) %base)
+    =/  =aeon  let.dome
+    |-
+    ?.  (gte aeon 1)
+      (mean leaf+"clay: can't find zuse for {<(waft-to-wefts waf)>}" ~)    
+    =/  =yaki  (~(got by hut.ran) (~(got by hit.dome) aeon))
+    ?~  aeon-waft=(get-waft yaki)
+      $(aeon (dec aeon))
+    ?~  aeon-welt=(sort-filter-waft u.aeon-waft)
+      $(aeon (dec aeon))
+    =/  aeon-newest=weft  i.aeon-welt
+    :: if the newest weft for this aeon is older than
+    :: the oldest target weft, do not continue
+    ::
+    ?.  (gth num.aeon-newest num.oldest)
+      (mean leaf+"clay: gave up zuse search for {<(waft-to-wefts waf)>}" ~)    
+    ?~  (~(int in wefts) (silt aeon-welt))
+      $(aeon (dec aeon))
+    ?~  files=(get-kernel-files yaki)
+      $(aeon (dec aeon))
+    =/  zuse-core=vase  (build-zuse u.files)
+    =/  actual=weft  [%zuse !<(@ud (slap zuse-core %limb %zuse))]
+    ?.  (~(has in wefts) actual)
+      (mean leaf+"clay: zuse to /sys/kelvin mismatch at aeon {<aeon>}" ~)    
+    :-  [actual zuse-core]
+    ..park(zuz (~(put by zuz) actual zuse-core))
+    ::
+    ::  +build-zuse: compile zuse from given files
+    ::
+    ++  build-zuse
+      |=  [h=@ a=@ l=@ z=@]
+      ^-  vase
+      =/  hoon-core=vase
+        %-  (slog 'clay: compiling hoon' ~)
+        =-  (slot 7 -)
+        (road |.((slap *vase (ream h))))
+      =/  arvo-core=vase
+        %-  (slog 'clay: compiling arvo' ~)
+        =-  (slap - (ream '..part'))
+        (road |.((slap hoon-core (ream a))))
+      =/  lull-core=vase
+        %-  (slog 'clay: compiling lull' ~)
+        (road |.((slap arvo-core (rain /sys/lull/hoon l))))
+      %-  (slog 'clay: compiling zuse' ~)
+      (road |.((slap lull-core (rain /sys/zuse/hoon z))))
+    ::
+    ::  +try-zuse-cache: try get existing zuse from cache
+    ::
+    ++  try-zuse-cache
+      |=  welt=(list weft)
+      ^-  (unit [weft vase])
+      ?~  welt
+        ~
+      ?:  =(i.welt zuse+zuse)
+        (some i.welt zuse.bud)
+      ?~  zuse-core=(~(get by zuz) i.welt)
+        $(welt t.welt)
+      (some i.welt u.zuse-core)
+    ::
+    ::  +sort-filter-waft: %zuse-only and sort new-to-old
+    ::
+    ++  sort-filter-waft
+      |=  =waft
+      ^-  (list weft)
+      %+  sort
+        %+  skim  ~(tap in (waft-to-wefts waft))
+        |=(=weft =(%zuse lal.weft))
+      |=([a=weft b=weft] (lte num.a num.b))
+    ::
+    ::  +get-waft: try read /sys/kelvin from yaki
+    ::
+    ++  get-waft
+      |=  =yaki
+      ^-  (unit waft)
+      ?~  lube=(~(get by q.yaki) /sys/kelvin)
+        ~
+      ?~  puge=(~(get by lat.ran) u.lube)
+        ~
+      ?.  ?=(%kelvin p.u.puge)
+        ~
+      ((soft waft) q.u.puge)
+    ::
+    ::  +get-kernel-files: read kernel files from yaki
+    ::
+    ++  get-kernel-files
+      |=  =yaki
+      ^-  (unit [h=@ a=@ l=@ z=@])
+      ;:  both
+        (get-kernel-file yaki /sys/hoon/hoon)
+        (get-kernel-file yaki /sys/arvo/hoon)
+        (get-kernel-file yaki /sys/lull/hoon)
+        (get-kernel-file yaki /sys/zuse/hoon)
+      ==
+    ::
+    ::  +get-kernel-file: read hoon file from yaki
+    ::
+    ++  get-kernel-file
+      |=  [=yaki =path]
+      ^-  (unit @)
+      ?~  lube=(~(get by q.yaki) path)
+        ~
+      ?~  puge=(~(get by lat.ran) u.lube)
+        ~
+      ?.  ?=(%hoon p.u.puge)
+        ~
+      ?^  q.u.puge
+        ~
+      (some q.u.puge)
     --
   ::
   ::  [goad] Try to revive desk, but if it fails crash the event.
@@ -3326,6 +3346,8 @@
   ++  set-zest                                          ::  [goad] <
     |=  liv=zest
     =?  liv  =(%base syd)  %live
+    :: no-op if incompatible with Gall
+    ::
     ?:  ?&  =(%live liv)
             !?=(agent-wefts:gall wef.dom)
         ==
@@ -5828,10 +5850,16 @@
       new(dos.rom dos, zuz zuz:abet:don)
     %+  ~(rib by dos.rom.new)  den
     |=  [[des=desk doj=dojo] dan=_den]
+    :: skip desks which have queued updates for this zuse
+    :: as they'll be applied in +park
+    ::
     ?:  ?|  =(%base des)
             (~(has by wic.dom.doj) zuse+zuse)
         ==
       [dan des doj]
+    :: build zuses for the rest
+    ::
+    ~|  [%build-zuse-fail desk=des]
     =/  yak  (~(got by hut.ran.new) (~(got by hit.dom.doj) let.dom.doj))
     =/  pag  (~(got by lat.ran.new) (~(got by q.yak) /sys/kelvin))
     ?>  =(%kelvin p.pag)
