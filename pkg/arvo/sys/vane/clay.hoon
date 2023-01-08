@@ -3327,9 +3327,10 @@
   ++  set-zest                                          ::  [goad] <
     |=  liv=zest
     =?  liv  =(%base syd)  %live
-    ?>  ?|  !=(%live liv)
-            ?=([~ agent-wefts:gall] wef.dom)
+    ?:  ?&  =(%live liv)
+            !?=([~ agent-wefts:gall] wef.dom)
         ==
+      ((slog leaf+"clay: failed to set {<syd>} live" ~) ..park)
     ..park(liv.dom liv)
   ::
   ++  rise                                              ::  [goad] <
