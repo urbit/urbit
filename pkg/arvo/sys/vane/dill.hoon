@@ -176,13 +176,10 @@
       ++  from                                          ::  receive blit
         |=  bit=dill-blit
         ^+  +>
-        ?:  ?=(%mor -.bit)
-          |-  ^+  +>.^$
-          ?~  p.bit  +>.^$
-          $(p.bit t.p.bit, +>.^$ ^$(bit i.p.bit))
         ?:  ?=(%qit -.bit)
           (dump %logo ~)
-        (done %blit [bit ~])
+        ::TODO  so why is this a (list blit) again?
+        (done %blit bit ~)
       ::
       ++  sponsor
         ^-  ship
@@ -212,15 +209,11 @@
       ++  open
         |=  gyl=(list gill)
         ::TODO  should allow handlers from non-base desks
-        =.  +>  (pass / %g %jolt %base ram)
+        ::TODO  maybe ensure :ram is running?
         =.  +>  peer
         %+  roll  gyl
         |=  [g=gill _..open]
         (send [%yow g])
-      ::
-      ++  shut
-        ::TODO  send a %bye blit?
-        pull(eye.all (~(del by eye.all) ses))
       ::
       ++  send                                          ::  send action
         |=  bet=dill-belt
@@ -375,7 +368,12 @@
     =/  nus
       ~|  [%no-session ses]
       (need (ax hen ses))
-    =^  moz  all  abet:shut:nus
+    ::NOTE  we do deletion from state outside of the core,
+    ::      because +abet would re-insert.
+    ::TODO  send a %bye blit? xx
+    =^  moz  all  abet:pull:nus
+    =.  dug.all   (~(del by dug.all) ses)
+    =.  eye.all   (~(del by eye.all) ses)
     [moz ..^$]
   ::  %view opens a subscription to the target session, on the current duct
   ::

@@ -156,12 +156,14 @@
           c3_o    mou;                      //  M (for mouse event) received
           c3_y    ton_y;                    //  mouse button
           c3_y    col_y;                    //  column coordinate
+          c3_y    seq_y;                    //  vt sequence
         } esc;
 
-        struct {
-          c3_y syb_y[5];                    //  utf8 code buffer
-          c3_w len_w;                       //  present length
-          c3_w wid_w;                       //  total width
+        struct {                            //  input buffering
+          c3_y    syb_y[5];                 //  utf8 code buffer
+          c3_w    len_w;                    //  present length
+          c3_w    wid_w;                    //  total width
+          u3_noun imp;                      //  %txt input buffer
         } fut;
 
         struct {

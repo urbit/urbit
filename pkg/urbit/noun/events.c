@@ -1174,13 +1174,8 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
 
       /* If the images were empty, we are logically booting.
       */
-<<<<<<< HEAD
-      if ( !nor_w && !sou_w ) {
-        u3l_log("live: logical boot");
-=======
       if ( (0 == u3P.nor_u.pgs_w) && (0 == u3P.sou_u.pgs_w) ) {
-        u3l_log("live: logical boot\r\n");
->>>>>>> next/arvo
+        u3l_log("live: logical boot");
         nuu_o = c3y;
       }
       else {

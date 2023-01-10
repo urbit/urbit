@@ -504,7 +504,7 @@ _pier_on_scry_done(void* ptr_v, u3_noun nun)
         ext_c = "txt";
       }
       else {
-        u3l_log("pier: cannot export cell as %s\n", u3_Host.ops_u.puf_c);
+        u3l_log("pier: cannot export cell as %s", u3_Host.ops_u.puf_c);
         out   = u3_none;
       }
       u3z(puf);
@@ -516,13 +516,8 @@ _pier_on_scry_done(void* ptr_v, u3_noun nun)
       c3_c fil_c[256];
       snprintf(fil_c, 256, "%s.%s", pac_c + 1, ext_c);
 
-<<<<<<< HEAD
-      u3_walk_save(fil_c, 0, out, pir_u->pax_c, pad);
-      u3l_log("pier: scry result in %s", fil_c);
-=======
       u3_unix_save(fil_c, out);
-      u3l_log("pier: scry result in %s/.urb/put/%s\n", u3_Host.dir_c, fil_c);
->>>>>>> next/arvo
+      u3l_log("pier: scry result in %s/.urb/put/%s", u3_Host.dir_c, fil_c);
     }
   }
 
@@ -678,8 +673,8 @@ _pier_wyrd_fail(u3_pier* pir_u, u3_ovum* egg_u, u3_noun lud)
 //  XX organizing version constants
 //
 #define VERE_NAME  "vere"
-#define VERE_ZUSE  417
-#define VERE_LULL  328
+#define VERE_ZUSE  416
+#define VERE_LULL  327
 
 /* _pier_wyrd_aver(): check for %wend effect and version downgrade. RETAIN
 */

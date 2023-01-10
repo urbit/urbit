@@ -13,11 +13,12 @@
       %bel  b+&
       %clr  b+&
       %hop  ?@  p.blit  (numb p.blit)
-            (pairs 'r'^(numb r.p.blit) 'c'^(numb c.p.blit) ~)
+            (pairs 'x'^(numb x.p.blit) 'y'^(numb y.p.blit) ~)
       %put  a+(turn p.blit |=(c=@c s+(tuft c)))
       %nel  b+&
       %url  s+p.blit
       %wyp  b+&
+      %mor  a+(turn p.blit ^blit)
     ::
         %sag
       %-  pairs
@@ -73,7 +74,7 @@
       :~  aro+(su (perk %d %l %r %u ~))
           bac+ul
           del+ul
-          hit+(ot 'r'^ni 'c'^ni ~)
+          hit+(ot 'x'^ni 'y'^ni ~)
           ret+ul
       ==
     ::

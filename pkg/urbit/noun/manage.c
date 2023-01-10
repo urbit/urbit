@@ -1772,7 +1772,7 @@ _cm_crypto()
   if ( 0 == CRYPTO_set_mem_functions(&_cm_malloc_ssl,
                                      &_cm_realloc_ssl,
                                      &_cm_free_ssl) ) {
-    u3l_log("%s\r\n", "openssl initialization failed");
+    u3l_log("%s", "openssl initialization failed");
     abort();
   }
 
@@ -1815,7 +1815,7 @@ u3m_init(size_t len_i)
      || (len_i < (1 << (u3a_page + 2)))
      || (len_i > u3a_bytes) )
   {
-    u3l_log("loom: bad size: %zu\r\n", len_i);
+    u3l_log("loom: bad size: %zu", len_i);
     exit(1);
   }
 

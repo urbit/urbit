@@ -3,7 +3,7 @@
 !:
 =>  ..part
 |%
-++  lull  %328
+++  lull  %327
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
@@ -1209,16 +1209,17 @@
     $%  [%aro p=?(%d %l %r %u)]                         ::  arrow key
         [%bac ~]                                        ::  true backspace
         [%del ~]                                        ::  true delete
-        [%hit r=@ud c=@ud]                              ::  mouse click
+        [%hit x=@ud y=@ud]                              ::  mouse click
         [%ret ~]                                        ::  return
     ==                                                  ::
   +$  blit                                              ::  client output
     $%  [%bel ~]                                        ::  make a noise
         [%clr ~]                                        ::  clear the screen
-        [%hop p=$@(@ud [r=@ud c=@ud])]                  ::  set cursor col/pos
+        [%hop p=$@(@ud [x=@ud y=@ud])]                  ::  set cursor col/pos
         [%klr p=stub]                                   ::  put styled
-        [%put p=(list @c)]                              ::  put text at cursor
+        [%mor p=(list blit)]                            ::  multiple blits
         [%nel ~]                                        ::  newline
+        [%put p=(list @c)]                              ::  put text at cursor
         [%sag p=path q=*]                               ::  save to jamfile
         [%sav p=path q=@]                               ::  save to file
         [%url p=@t]                                     ::  activate url
@@ -1233,7 +1234,6 @@
     ==                                                  ::
   +$  dill-blit                                         ::  arvo output
     $%  blit                                            ::  client output
-        [%mor p=(list dill-blit)]                       ::  multiple blits
         [%qit ~]                                        ::  close console
     ==                                                  ::
   +$  flog                                              ::  sent to %dill

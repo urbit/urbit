@@ -147,6 +147,7 @@ u3_term_log_init(void)
 
       uty_u->tat_u.fut.len_w = 0;
       uty_u->tat_u.fut.wid_w = 0;
+      uty_u->tat_u.fut.imp   = u3_nul;
     }
 
     //  default size
@@ -384,7 +385,7 @@ _term_it_clear_line(u3_utty* uty_u)
 
   //  if we're clearing the bottom line, clear our mirror of it too
   //
-  if ( 0 == uty_u->tat_u.mir.rus_w ) {
+  if ( uty_u->tat_u.siz.row_l - 1 == uty_u->tat_u.mir.rus_w ) {
     _term_it_free_line(uty_u);
   }
 }
@@ -400,19 +401,19 @@ _term_it_show_blank(u3_utty* uty_u)
 
 /*  _term_it_move_cursor(): move cursor to row & column
  *
- *    row 0 is at the bottom, col 0 is to the left.
+ *    row 0 is at the top, col 0 is to the left.
  *    if the given position exceeds the known window size,
  *    it is clipped to stay within the window.
  */
 static void
-_term_it_move_cursor(u3_utty* uty_u, c3_w row_w, c3_w col_w)
+_term_it_move_cursor(u3_utty* uty_u, c3_w col_w, c3_w row_w)
 {
   c3_l row_l = uty_u->tat_u.siz.row_l;
   c3_l col_l = uty_u->tat_u.siz.col_l;
   if ( row_w >= row_l ) { row_w = row_l - 1; }
   if ( col_w >= col_l ) { col_w = col_l - 1; }
 
-  _term_it_send_csi(uty_u, 'H', 2, row_l - row_w, col_w + 1);
+  _term_it_send_csi(uty_u, 'H', 2, row_w + 1, col_w + 1);
   _term_it_dump_buf(uty_u, &uty_u->ufo_u.suc_u);
 
   uty_u->tat_u.mir.rus_w = row_w;
@@ -472,7 +473,7 @@ _term_it_restore_line(u3_utty* uty_u)
 {
   u3_utat* tat_u = &uty_u->tat_u;
 
-  _term_it_send_csi(uty_u, 'H', 2, tat_u->siz.row_l, 0);
+  _term_it_send_csi(uty_u, 'H', 2, tat_u->siz.row_l, 1);
   _term_it_dump_buf(uty_u, &uty_u->ufo_u.cel_u);
   _term_it_send_stub(uty_u, u3k(tat_u->mir.lin));
   //NOTE  send_stub restores cursor position
@@ -489,7 +490,8 @@ _term_it_save_stub(u3_utty* uty_u, u3_noun tub)
   //  keep track of changes to bottom-most line, to aid spinner drawing logic.
   //  -t mode doesn't need this logic, because it doesn't render the spinner.
   //
-  if ( (0 == tat_u->mir.rus_w) && (c3n == u3_Host.ops_u.tem)) {
+  if ( ( tat_u->siz.row_l - 1 == tat_u->mir.rus_w ) &&
+       ( c3n == u3_Host.ops_u.tem ) ) {
     lin = u3dq("wail:klr:format", lin, tat_u->mir.cus_w, u3k(tub), ' ');
     lin = u3do("pact:klr:format", lin);
   }
@@ -512,8 +514,8 @@ _term_it_show_nel(u3_utty* uty_u)
   }
 
   uty_u->tat_u.mir.cus_w = 0;
-  if ( uty_u->tat_u.mir.rus_w > 0 ) {
-    uty_u->tat_u.mir.rus_w--;
+  if ( uty_u->tat_u.mir.rus_w < uty_u->tat_u.siz.row_l - 1 ) {
+    uty_u->tat_u.mir.rus_w++;
   }
   else {
     //  newline at bottom of screen, so bottom line is now empty
@@ -617,8 +619,27 @@ _term_io_belt(u3_utty* uty_u, u3_noun blb)
   }
 }
 
-/* _term_io_suck_char(): process a single character.
+/* _term_io_spit(): input the buffer (if any), then input the belt (if any)
 */
+static void
+_term_io_spit(u3_utty* uty_u, u3_noun bet) {
+  u3_utat* tat_u = &uty_u->tat_u;
+  if (u3_nul != tat_u->fut.imp) {
+    _term_io_belt(uty_u, u3nc(c3__txt, u3kb_flop(tat_u->fut.imp)));
+    tat_u->fut.imp = u3_nul;
+  }
+  if (u3_none != bet) {
+    _term_io_belt(uty_u, bet);
+  }
+}
+
+/* _term_io_suck_char(): process a single character.
+ *
+ *    Note that this accumulates simple inputs in a buffer, and is not
+ *    guaranteed to flush it fully. After a call (or sequence of calls)
+ *    to this function, please call _term_io_spit(uty_u, u3_none) to
+ *    flush any remainder.
+ */
 static void
 _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
 {
@@ -628,19 +649,39 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
   //
   if ( c3y == tat_u->esc.ape ) {
     if ( c3y == tat_u->esc.bra ) {
-      switch ( cay_y ) {
-        default: {
-          _term_it_dump_buf(uty_u, &uty_u->ufo_u.bel_u);
-          break;
-        }
-        case 'A': _term_io_belt(uty_u, u3nc(c3__aro, 'u')); break;
-        case 'B': _term_io_belt(uty_u, u3nc(c3__aro, 'd')); break;
-        case 'C': _term_io_belt(uty_u, u3nc(c3__aro, 'r')); break;
-        case 'D': _term_io_belt(uty_u, u3nc(c3__aro, 'l')); break;
+      //  vt sequence
       //
-        case 'M': tat_u->esc.mou = c3y; break;
+      if ( cay_y == '~' ) {
+        switch ( tat_u->esc.seq_y ) {
+          default: {
+            _term_it_dump_buf(uty_u, &uty_u->ufo_u.bel_u);
+            break;
+          }
+          case '3': _term_io_spit(uty_u, u3nc(c3__del, u3_nul)); break;
+        }
+        tat_u->esc.ape = tat_u->esc.bra = c3n;
+        tat_u->esc.seq_y = 0;
       }
-      tat_u->esc.ape = tat_u->esc.bra = c3n;
+      else if ( cay_y <= '9' ) {
+        tat_u->esc.seq_y = cay_y;
+      }
+      //  xterm sequence
+      //
+      else {
+        switch ( cay_y ) {
+          default: {
+            _term_it_dump_buf(uty_u, &uty_u->ufo_u.bel_u);
+            break;
+          }
+          case 'A': _term_io_spit(uty_u, u3nc(c3__aro, 'u')); break;
+          case 'B': _term_io_spit(uty_u, u3nc(c3__aro, 'd')); break;
+          case 'C': _term_io_spit(uty_u, u3nc(c3__aro, 'r')); break;
+          case 'D': _term_io_spit(uty_u, u3nc(c3__aro, 'l')); break;
+        //
+          case 'M': tat_u->esc.mou = c3y; break;
+        }
+        tat_u->esc.ape = tat_u->esc.bra = c3n;
+      }
     }
     else {
       if ( (cay_y >= 'a') && (cay_y <= 'z') ) {
@@ -648,13 +689,13 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
         //  XX for backwards compatibility, check kelvin version
         //  and fallback to [%met @c]
         //
-        _term_io_belt(uty_u, u3nt(c3__mod, c3__met, cay_y));
+        _term_io_spit(uty_u, u3nt(c3__mod, c3__met, cay_y));
       }
       else if ( 8 == cay_y || 127 == cay_y ) {
         tat_u->esc.ape = c3n;
         //  XX backwards compatibility [%met @c]
         //
-        _term_io_belt(uty_u, u3nq(c3__mod, c3__met, c3__bac, u3_nul));
+        _term_io_spit(uty_u, u3nq(c3__mod, c3__met, c3__bac, u3_nul));
       }
       else if ( ('[' == cay_y) || ('O' == cay_y) ) {
         tat_u->esc.bra = c3y;
@@ -677,9 +718,9 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
     }
     else {
       c3_y row_y = cay_y - 32;
-      //  only acknowledge button 1 presses within our window
+      //  only acknowledge button 1 presses within our known window
       if ( 1 != tat_u->esc.ton_y && row_y <= tat_u->siz.row_l ) {
-        _term_io_belt(uty_u, u3nt(c3__hit, tat_u->siz.row_l - row_y, tat_u->esc.col_y - 1));
+        _term_io_spit(uty_u, u3nt(c3__hit, tat_u->esc.col_y - 1, row_y - 1));
       }
       tat_u->esc.mou = c3n;
       tat_u->esc.ton_y = tat_u->esc.col_y = 0;
@@ -699,28 +740,28 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
       wug = u3do("taft", huv);
 
       tat_u->fut.len_w = tat_u->fut.wid_w = 0;
-      _term_io_belt(uty_u, u3nt(c3__txt, wug, u3_nul));
+      tat_u->fut.imp = u3nc(wug, tat_u->fut.imp);
     }
   }
   //  individual characters
   //
   else {
     if ( (cay_y >= 32) && (cay_y < 127) ) {  //  visual ascii
-      _term_io_belt(uty_u, u3nt(c3__txt, cay_y, u3_nul));
+      tat_u->fut.imp = u3nc(cay_y, tat_u->fut.imp);
     }
     else if ( 0 == cay_y ) {  //  null
       _term_it_dump_buf(uty_u, &uty_u->ufo_u.bel_u);
     }
     else if ( 8 == cay_y || 127 == cay_y ) {  //  backspace & delete
-      _term_io_belt(uty_u, u3nc(c3__bac, u3_nul));
+      _term_io_spit(uty_u, u3nc(c3__bac, u3_nul));
     }
     else if ( 10 == cay_y || 13 == cay_y ) {  //  newline & carriage return
-      _term_io_belt(uty_u, u3nc(c3__ret, u3_nul));
+      _term_io_spit(uty_u, u3nc(c3__ret, u3_nul));
     }
     else if ( cay_y <= 26 ) {
       //  XX backwards compatibility [%ctl @c]
       //
-      _term_io_belt(uty_u, u3nt(c3__mod, c3__ctl, ('a' + (cay_y - 1))));
+      _term_io_spit(uty_u, u3nt(c3__mod, c3__ctl, ('a' + (cay_y - 1))));
     }
     else if ( 27 == cay_y ) {
       tat_u->esc.ape = c3y;
@@ -778,6 +819,7 @@ _term_suck(u3_utty* uty_u, const c3_y* buf, ssize_t siz_i)
       for ( i=0; i < siz_i; i++ ) {
         _term_io_suck_char(uty_u, buf[i]);
       }
+      _term_io_spit(uty_u, u3_none);
     }
   }
 }
@@ -865,8 +907,8 @@ _term_spin_step(u3_utty* uty_u)
       //  if we know where the bottom line is, and the cursor is not on it,
       //  move it to the bottom left
       //
-      if ( tat_u->siz.row_l && tat_u->mir.rus_w > 0 ) {
-        _term_it_send_csi(uty_u, 'H', 2, tat_u->siz.row_l, 0);
+      if ( tat_u->siz.row_l && tat_u->mir.rus_w < tat_u->siz.row_l - 1 ) {
+        _term_it_send_csi(uty_u, 'H', 2, tat_u->siz.row_l, 1);
       }
 
       c3_w i_w;
@@ -1313,7 +1355,7 @@ _term_ef_blit(u3_utty* uty_u,
     case c3__hop: {
       u3_noun pos = u3t(blt);
       if ( c3y == u3r_ud(pos) ) {
-        _term_it_move_cursor(uty_u, 0, pos);
+        _term_it_move_cursor(uty_u, pos, uty_u->tat_u.siz.row_l - 1);
       }
       else {
         _term_it_move_cursor(uty_u, u3h(pos), u3t(pos));
@@ -1325,14 +1367,24 @@ _term_ef_blit(u3_utty* uty_u,
     } break;
 
     case c3__lin: {  //TMP  backwards compatibility
-      _term_it_move_cursor(uty_u, 0, 0);
+      _term_it_move_cursor(uty_u, 0, uty_u->tat_u.siz.row_l - 1);
       _term_it_clear_line(uty_u);
     }  //
     case c3__put: {
       _term_it_show_tour(uty_u, u3k(u3t(blt)));
     } break;
 
-    case c3__mor:  //TMP  backwards compatibility
+    case c3__mor: {
+      if (u3_nul != u3t(blt)) {
+        u3_noun bis = u3t(blt);
+        while (u3_nul != bis) {
+          _term_ef_blit(uty_u, u3k(u3h(bis)));
+          bis = u3t(bis);
+        }
+        break;
+      }
+      //TMP  fall through to nel for backwards compatibility
+    }
     case c3__nel: {
       _term_it_show_nel(uty_u);
     } break;
@@ -1708,6 +1760,10 @@ _term_io_exit(u3_auto* car_u)
     //  stop mouse handling
     //
     _term_it_dump_buf(uty_u, &uty_u->ufo_u.mof_u);
+
+    //  move cursor to the end
+    //
+    _term_it_move_cursor(uty_u, 0, uty_u->tat_u.siz.row_l - 1);
 
     //  NB, closed in u3_term_log_exit()
     //

@@ -15,8 +15,7 @@
 +$  state-2  [%2 pith-2]
 ::
 +$  pith-5
-  $:  eel=(set gill:gall)                               ::  connect to
-      bin=(map @ source)                                ::  terminals
+  $:  bin=(map @ source)                                ::  terminals
   ==
 ::
 +$  pith-4
@@ -75,6 +74,7 @@
       off=@ud                                           ::  window offset
       kil=kill                                          ::  kill buffer
       inx=@ud                                           ::  ring index
+      eel=(set gill:gall)                               ::  connect to
       fug=(map gill:gall (unit target))                 ::  connections
       mir=(pair @ud stub)                               ::  mirrored terminal
   ==                                                    ::
@@ -105,15 +105,17 @@
   ::                                                    ::  ::
 |%
 ++  en-gill                                           ::  gill to wire
-  |=  gyl=gill:gall
+  |=  [ses=@tas gyl=gill:gall]
   ^-  wire
-  ::TODO  include session?
-  [%drum %phat (scot %p p.gyl) q.gyl ~]
+  [%drum %phat (scot %p p.gyl) q.gyl ?:(=(%$ ses) ~ [ses ~])]
 ::
 ++  de-gill                                           ::  gill from wire
-  |=  way=wire  ^-  gill:gall
-  ~|  way
-  ?>(?=([@ @ *] way) [(slav %p i.way) i.t.way])
+  |=  way=wire
+  ^-  [@tas gill:gall]
+  ~|  wire=way
+  ?>  ?=([@ @ ?(~ [@ ~])] way)
+  :-  ?~(t.t.way %$ i.t.t.way)
+  [(slav %p i.way) i.t.way]
 --
 ::
 |=  [hid=bowl:gall state]
@@ -122,24 +124,29 @@
 =+  (~(gut by bin) ses *source)
 =*  dev  -
 =|  moz=(list card:agent:gall)
-=|  biz=(list dill-blit:dill)
+=|  biz=(list blit:dill)  ::TODO  should be per-session
 |%
 ++  this  .
 ++  klr   klr:format
 +$  state      ^state      ::  proxy
 +$  any-state  ^any-state  ::  proxy
-++  on-init    (poke-link our.hid %dojo)
+++  on-init    (poke-link %$ our.hid %dojo)
 ::
 ++  prep
   |=  s=@tas
-  =.  ses  ses
+  =.  ses  s
   =.  dev  (~(gut by bin) ses *source)
   this
 ::
+++  open
+  %+  cork  de-gill
+  |=  [s=@tas g=gill:gall]
+  [g (prep s)]
+::
 ++  diff-sole-effect-phat                             ::  app event
   |=  [way=wire fec=sole-effect]
-  =<  se-abet  =<  se-view
-  =+  gyl=(de-gill way)
+  =<  se-abet
+  =^  gyl  this  (open way)
   ?:  (se-aint gyl)  +>.$
   (se-diff gyl fec)
 ::
@@ -149,7 +156,7 @@
     (prep i.t.pax)
   ~|  [%drum-unauthorized our+our.hid src+src.hid]    ::  ourself
   ?>  (team:title our.hid src.hid)                    ::  or our own moon
-  =<  se-abet  =<  se-view
+  =<  se-abet
   (se-text "[{<src.hid>}, driving {<our.hid>}]")
 ::
 ++  poke-dill
@@ -158,7 +165,7 @@
 ::
 ++  poke-dill-belt                                    ::  terminal event
   |=  bet=dill-belt:dill
-  =<  se-abet  =<  se-view
+  =<  se-abet
   (se-belt bet)
 ::
 ++  poke-dill-blit                                    ::  terminal output
@@ -166,21 +173,22 @@
   se-abet:(se-blit-sys bit)
 ::
 ++  poke-link                                         ::  connect app
-  |=  gyl=gill:gall
-  =<  se-abet  =<  se-view
-  (se-link gyl)
+  |=  [ses=@tas gyl=gill:gall]
+  =<  se-abet
+  (se-link:(prep ses) gyl)
 ::
 ++  poke-unlink                                       ::  disconnect app
-  |=  gyl=gill:gall
-  =<  se-abet  =<  se-view
-  (se-drop:(se-pull gyl) & gyl)
+  |=  [ses=@ta gyl=gill:gall]
+  =<  se-abet
+  (se-drop:(se-pull:(prep ses) gyl) & gyl)
 ::
 ++  poke-exit                                         ::  shutdown
   |=  ~
   se-abet:(se-blit-sys `dill-blit:dill`[%qit ~])
 ::
 ++  poke-put                                          ::  write file
-  |=  [pax=path txt=@]
+  |=  [pax=path arg=$@(@ [@tas @])]
+  =^  txt  +>  ?@(arg [arg +>] [+.arg (prep -.arg)])
   se-abet:(se-blit-sys [%sav pax txt])                ::
 ::
 ++  poke
@@ -196,16 +204,16 @@
 ::
 ++  on-load
   |=  [hood-version=@ud old=any-state]
-  =<  se-abet  =<  se-view
+  =<  se-abet
   =?  old  ?=(%2 -.old)  [%4 [eel bin]:old]
   =?  old  ?=(%3 -.old)  [%4 [eel bin]:old]
   =?  old  ?=(%4 -.old)
-    :+  %5  eel.old
-    |^  (~(run by bin.old) source-4-to-5)
+    |^  5+(~(run by bin.old) source-4-to-5)
     ++  source-4-to-5
-      |=  s=source-4
+      |=  source-4
       ^-  source
-      s(fug (~(run by fug.s) |=(t=(unit target-4) (bind t target-4-to-5))))
+      =;  fug  [edg off kil inx eel.old fug mir]
+      (~(run by fug) |=(t=(unit target-4) (bind t target-4-to-5)))
     ::
     ++  target-4-to-5
       |=  t=target-4
@@ -228,8 +236,8 @@
 ::
 ++  reap-phat                                         ::  ack connect
   |=  [way=wire saw=(unit tang)]
-  =<  se-abet  =<  se-view
-  =+  gyl=(de-gill way)
+  =<  se-abet
+  =^  gyl  this  (open way)
   ?~  saw
     (se-join gyl)
   ::  Don't print stack trace because we probably just crashed to
@@ -239,9 +247,9 @@
 ::
 ++  take-coup-phat                                    ::  ack poke
   |=  [way=wire saw=(unit tang)]
-  =<  se-abet  =<  se-view
+  =<  se-abet
   ?~  saw  +>
-  =+  gyl=(de-gill way)
+  =^  gyl  this  (open way)
   ?:  (se-aint gyl)  +>.$
   %-  se-dump:(se-drop:(se-pull gyl) & gyl)
   :_  u.saw
@@ -264,8 +272,8 @@
 ::
 ++  quit-phat                                         ::
   |=  way=wire
-  =<  se-abet  =<  se-view
-  =+  gyl=(de-gill way)
+  =<  se-abet
+  =^  gyl  this  (open way)
   ~&  [%drum-quit src.hid gyl]
   (se-drop %| gyl)
 ::                                                    ::  ::
@@ -273,14 +281,18 @@
   ::                                                  ::  ::
 ++  se-abet                                           ::  resolve
   ^-  (quip card:agent:gall state)
-  =.  .  se-subze:se-adze
+  =.  .  se-view:se-subze:se-adze
   :_  sat(bin (~(put by bin) ses dev))
   ^-  (list card:agent:gall)
   ?~  biz  (flop moz)
   :_  (flop moz)
-  =/  =dill-blit:dill  ?~(t.biz i.biz [%mor (flop biz)])
+  =/  =blit:dill  ?~(t.biz i.biz [%mor (flop biz)])
   ::TODO  remove /drum after dill cleans up
-  [%give %fact ~[/drum /dill/[ses]] %dill-blit !>(dill-blit)]
+  ::TODO  but once we remove it, the empty trailing segment of
+  ::      /dill/[ses] would prevent outsiders from subscribing
+  ::      to the default session...
+  =/  to=(list path)  [/dill/[ses] ?~(ses ~[/drum] ~)]
+  [%give %fact to %dill-blit !>(blit)]
 ::
 ++  se-adze                                           ::  update connections
   ^+  .
@@ -306,7 +318,7 @@
   =<  .(con +>)
   |:  $:,[[ses=@tas dev=source] con=_.]  ^+  con
   =+  xeno=se-subze-local:%_(con ses ses, dev dev)
-  xeno(ses ses.con, dev dev.con, bin (~(put by bin) ses dev.xeno))
+  xeno(ses ses.con, dev dev.con, bin (~(put by bin.xeno) ses dev.xeno))
 ::
 ++  se-subze-local
   ^+  .
@@ -359,7 +371,7 @@
       [%cru *]  (se-dump:(se-text (trip p.bet)) q.bet)
       [%hey *]  +>(mir [0 ~])                         ::  refresh
       [%rez *]  +>(edg (dec p.bet))                   ::  resize window
-      [%yow *]  ~&([%no-yow -.bet] +>)
+      [%yow *]  (se-link p.bet)
     ==
   =+  gul=se-agon
   ?:  |(?=(~ gul) (se-aint u.gul))
@@ -463,7 +475,7 @@
   +>(eel (~(put in eel) gyl))
 ::
 ++  se-blit                                           ::  give output
-  |=  bil=dill-blit:dill
+  |=  bil=blit:dill
   +>(biz [bil biz])
 ::
 ++  se-blit-sys                                       ::  output to system
@@ -519,19 +531,18 @@
 ::
 ++  se-poke                                           ::  send a poke
   |=  [gyl=gill:gall par=cage]
-  (se-emit %pass (en-gill gyl) %agent gyl %poke par)
+  (se-emit %pass (en-gill ses gyl) %agent gyl %poke par)
 ::
 ++  se-peer                                           ::  send a peer
   |=  gyl=gill:gall
   ~>  %slog.0^leaf/"drum: link {<[p q]:gyl>}"
-  ::TODO  include session
-  =/  =path  /sole/(cat 3 'drum_' (scot %p our.hid))
+  =/  =path  (id-to-path:sole our.hid ses)
   %-  se-emit(fug (~(put by fug) gyl ~))
-  [%pass (en-gill gyl) %agent gyl %watch path]
+  [%pass (en-gill ses gyl) %agent gyl %watch path]
 ::
 ++  se-pull                                           ::  cancel subscription
   |=  gyl=gill:gall
-  (se-emit %pass (en-gill gyl) %agent gyl %leave ~)
+  (se-emit %pass (en-gill ses gyl) %agent gyl %leave ~)
 ::
 ++  se-tame                                           ::  switch connection
   |=  gyl=gill:gall
@@ -556,7 +567,7 @@
     ^+  +>
     (ta-poke %sole-action !>(act))
   ::
-  ++  ta-id  (cat 3 'drum_' (scot %p our.hid))        ::  per-ship duct id
+  ++  ta-id  [our.hid ses]                            ::  per-ship-session id
   ::
   ++  ta-aro                                          ::  hear arrow
     |=  key=?(%d %l %r %u)
@@ -631,7 +642,7 @@
         %d  ?^  buf.say.inp
               ta-del
             ?:  =([our.hid %dojo] gyl)
-              +>(..ta (se-blit qit+~))                ::  quit pier
+              +>(..ta (se-blit-sys %qit ~))           ::  quit pier
             +>(..ta (se-klin gyl))                    ::  unlink app
         %e  +>(pos.inp (lent buf.say.inp))
         %f  (ta-aro %r)
@@ -676,13 +687,12 @@
     (ta-hom %del pos.inp)
   ::
   ++  ta-hit                                          ::  hear click
-    |=  [r=@ud c=@ud]
+    |=  [x=@ud y=@ud]
     ^+  +>
-    ?.  =(0 r)  +>
     =/  pol=@ud
       (lent-char:klr (make:klr cad.pom))
-    ?:  (lth c pol)  +>.$
-    +>.$(pos.inp (min (sub c pol) (lent buf.say.inp)))
+    =?  x  (lth x pol)  pol
+    +>.$(pos.inp (min (sub x pol) (lent buf.say.inp)))
   ::
   ++  ta-erl                                          ::  hear local error
     |=  pos=@ud

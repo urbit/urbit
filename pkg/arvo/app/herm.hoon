@@ -44,17 +44,12 @@
   ~|  path
   ?>  ?=([%session @ %view ~] path)
   =*  ses  i.t.path
-  :~  ::  subscribe to the requested session
-      ::
-      ::NOTE  multiple views do not result in multiple subscriptions
-      ::      because they go over the same wire/duct
-      ::
-      (pass-session ses %view ~)
-      ::  tell session to refresh, so new client knows what's on screen
-      ::TODO  should client be responsible for this?
-      ::
-      (pass-session ses %hail ~)
-  ==
+  ::  subscribe to the requested session
+  ::
+  ::NOTE  multiple views do not result in multiple subscriptions
+  ::      because they go over the same wire/duct
+  ::
+  [(pass-session ses %view ~)]~
 ::
 ++  on-arvo
   |=  [=wire =sign-arvo]

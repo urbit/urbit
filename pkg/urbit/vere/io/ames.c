@@ -726,7 +726,7 @@ _ames_ef_send(u3_ames* sam_u, u3_noun lan, u3_noun pac)
     //
     else if ( 0 == lan_u.por_s ) {
       if ( u3C.wag_w & u3o_verbose ) {
-        u3l_log("ames: inscrutable lane\n");
+        u3l_log("ames: inscrutable lane");
       }
       _ames_pact_free(pac_u);
     }
