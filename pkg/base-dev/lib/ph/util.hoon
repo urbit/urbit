@@ -28,8 +28,8 @@
   %+  send-events-to  who
   ^-  (list unix-event)
   :~
-    [/d/term/1 %belt %ctl `@c`%e]
-    [/d/term/1 %belt %ctl `@c`%u]
+    [/d/term/1 %belt %mod %ctl `@c`%e]
+    [/d/term/1 %belt %mod %ctl `@c`%u]
     [/d/term/1 %belt %txt ((list @c) what)]
     [/d/term/1 %belt %ret ~]
   ==
@@ -40,7 +40,7 @@
   |=  [who=ship what=term]
   ^-  (list ph-event)
   %+  send-events-to  who
-  :~  [/d/term/1 %belt %ctl (,@c what)]
+  :~  [/d/term/1 %belt %mod %ctl (,@c what)]
   ==
 ::
 ::  Inject a file into a ship
@@ -67,7 +67,7 @@
     ::
       %+  lien  p.q.uf
       |=  =blit:dill
-      ?.  ?=(%lin -.blit)
+      ?.  ?=(%put -.blit)
         |
       !=(~ (find what p.blit))
   ==

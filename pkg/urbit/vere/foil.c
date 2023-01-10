@@ -36,10 +36,10 @@ static void
 _foil_fail(const c3_c* why_c, c3_i err_i)
 {
   if ( err_i ) {
-    u3l_log("%s: error: %s\r\n", why_c, uv_strerror(err_i));
+    u3l_log("%s: error: %s", why_c, uv_strerror(err_i));
     c3_assert(0);
   } else {
-    u3l_log("%s: file error\r\n", why_c);
+    u3l_log("%s: file error", why_c);
   }
   exit(1);
 }

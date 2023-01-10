@@ -4,7 +4,7 @@
 =>  ..lull
 ~%  %zuse  ..part  ~
 |%
-++  zuse  %417
+++  zuse  %416
 ::                                                      ::  ::
 ::::                                                    ::  ::  (2) engines
   ::                                                    ::  ::
@@ -3843,6 +3843,102 @@
         ~
       (some (~(run by lum) need))
     --  ::dejs-soft
+  ::
+  ++  klr                                               ::  styx/stub engine
+    =,  dill
+    |%
+    ++  make                                            ::  stub from styx
+      |=  a=styx  ^-  stub
+      =|  b=stye
+      %+  reel
+        |-  ^-  stub
+        %-  zing  %+  turn  a
+        |=  a=$@(@t (pair styl styx))
+        ?@  a  [b (tuba (trip a))]~
+        ^$(a q.a, b (styd p.a b))
+      ::
+      |=  [a=(pair stye (list @c)) b=stub]
+      ?~  b  [a ~]
+      ?.  =(p.a p.i.b)  [a b]
+      [[p.a (weld q.a q.i.b)] t.b]
+    ::
+    ++  styd                                            ::  stye from styl
+      |=  [a=styl b=stye]  ^+  b                        ::  with inheritance
+      :+  ?~  p.a  p.b
+          ?~  u.p.a  ~
+          (~(put in p.b) u.p.a)
+        (fall p.q.a p.q.b)
+      (fall q.q.a q.q.b)
+    ::
+    ++  lent-char
+      |=  a=stub  ^-  @
+      (roll (lnts-char a) add)
+    ::
+    ++  lnts-char                                       ::  stub text lengths
+      |=  a=stub  ^-  (list @)
+      %+  turn  a
+      |=  a=(pair stye (list @c))
+      (lent q.a)
+    ::
+    ++  brek                                            ::  index + incl-len of
+      |=  [a=@ b=(list @)]                              ::  stub pair w/ idx a
+      =|  [c=@ i=@]
+      |-  ^-  (unit (pair @ @))
+      ?~  b  ~
+      =.  c  (add c i.b)
+      ?:  (gte c a)
+        `[i c]
+      $(i +(i), b t.b)
+    ::
+    ++  pact                                            ::  condense stub
+      |=  a=stub
+      ^-  stub
+      ?~  a  ~
+      ?~  t.a  a
+      ?.  =(p.i.a p.i.t.a)  [i.a $(a t.a)]
+      =.  q.i.t.a  (weld q.i.a q.i.t.a)
+      $(a t.a)
+    ::
+    ++  slag                                            ::  slag stub
+      |=  [a=@ b=stub]
+      ^-  stub
+      ?:  =(0 a)  b
+      ?~  b  ~
+      =+  c=(lent q.i.b)
+      ?:  =(c a)  t.b
+      ?:  (gth c a)
+        [[p.i.b (^slag a q.i.b)] t.b]
+      $(a (sub a c), b t.b)
+    ::
+    ++  scag                                            ::  scag stub
+      |=  [a=@ b=stub]
+      ^-  stub
+      ?:  =(0 a)  ~
+      ?~  b  ~
+      =+  c=(lent q.i.b)
+      ?:  (gth c a)
+        [p.i.b (^scag a q.i.b)]~
+      :-  i.b
+      $(a (sub a c), b t.b)
+    ::
+    ++  swag                                            ::  swag stub
+      |=  [[a=@ b=@] c=stub]
+      (scag b (slag a c))
+    ::
+    ++  wail                                            ::  overlay stub
+      |=  [a=stub b=@ c=stub d=@c]
+      ^-  stub
+      ;:  weld
+        (scag b a)
+      ::
+        =+  e=(lent-char a)
+        ?:  (lte b e)  ~
+        [*stye (reap (sub b e) d)]~
+      ::
+        c
+        (slag (add b (lent-char c)) a)
+      ==
+    --  ::  klr
   --
 ::  |cloy: clay helpers
 ::
