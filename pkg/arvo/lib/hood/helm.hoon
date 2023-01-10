@@ -159,14 +159,14 @@
   (emit %pass /pack %arvo %d %flog %pack ~)
 ::
 ++  poke-pans
-  |=  pans=(list note-arvo)
+  |=  pans=(list note-gall)
   ?~  pans  abet
   =.  this  (emit %pass /helm/pans %arvo i.pans)
   $(pans t.pans)
 ::
 ++  poke-pass
-  |=  =note-arvo  =<  abet
-  (emit %pass /helm/pass %arvo note-arvo)
+  |=  =note-gall  =<  abet
+  (emit %pass /helm/pass %arvo note-gall)
 ::
 ++  take-wake-automass
   |=  [way=wire error=(unit tang)]
