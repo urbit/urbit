@@ -41,10 +41,10 @@
 ::
 ::  $move: Arvo-level move
 ::
-+$  move  [=duct move=(wind note-arvo gift-arvo)]
-::  $state-12: overall gall state, versioned
++$  move  [=duct move=(wind note-gall gift-arvo)]
+::  $state-11: overall gall state, versioned
 ::
-+$  state-13  [%13 state]
++$  state-12  [%12 state]
 ::  $state: overall gall state
 ::
 ::    system-duct: TODO document
@@ -82,10 +82,9 @@
 ::    beak: compilation source
 ::    marks: mark conversion requests
 ::
-+$  yoke  $%([[%zuse %415] yoke-415] [[%zuse %416] yoke-416])
-::
-+$  yoke-415
-  $:  control-duct=duct
++$  yoke
+  $:  weft=agent-wefts
+      control-duct=duct
       run-nonce=@t
       sub-nonce=_1
       =stats
@@ -93,21 +92,7 @@
       =boat
       =boar
       code=*
-      agent=(each agent-415 vase)
-      =beak
-      marks=(map duct mark)
-  ==
-::
-+$  yoke-416
-  $:  control-duct=duct
-      run-nonce=@t
-      sub-nonce=_1
-      =stats
-      =bitt
-      =boat
-      =boar
-      code=*
-      agent=(each agent-416 vase)
+      agent=(each agent-any vase)
       =beak
       marks=(map duct mark)
   ==
@@ -165,7 +150,7 @@
 ::  $spore: structures for update, produced by +stay
 ::
 +$  spore
-  $:  %13
+  $:  %12
       system-duct=duct
       outstanding=(map [wire duct] (qeu remote-request))
       contacts=(set ship)
@@ -175,23 +160,9 @@
   ==
 ::  $egg: migratory agent state; $yoke with .old-state instead of .agent
 ::
-+$  egg  $%([[%zuse %415] egg-415] [[%zuse %416] egg-416])
-
-+$  egg-416
-  $:  control-duct=duct
-      run-nonce=@t
-      sub-nonce=@
-      =stats
-      =bitt
-      =boat
-      =boar
-      code=~
-      old-state=[%| vase]
-      =beak
-      marks=(map duct mark)
-  ==
-+$  egg-415
-  $:  control-duct=duct
++$  egg
+  $:  weft=agent-wefts
+      control-duct=duct
       run-nonce=@t
       sub-nonce=@
       =stats
@@ -206,7 +177,7 @@
 --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
-=|  state=state-13
+=|  state=state-12
 |=  [now=@da eny=@uvJ rof=roof]
 =*  gall-payload  .
 ~%  %gall-top  ..part  ~
@@ -234,10 +205,10 @@
   ++  mo-abed  |=(hun=duct mo-core(hen hun))
   ++  mo-abet  [(flop moves) gall-payload]
   ++  mo-give  |=(g=gift mo-core(moves [[hen give+g] moves]))
-  ++  mo-pass  |=(p=[wire note-arvo] mo-core(moves [[hen pass+p] moves]))
-  ++  mo-slip  |=(p=note-arvo mo-core(moves [[hen slip+p] moves]))
+  ++  mo-pass  |=(p=[wire note-gall] mo-core(moves [[hen pass+p] moves]))
+  ++  mo-slip  |=(p=note-gall mo-core(moves [[hen slip+p] moves]))
   ++  mo-past
-    |=  =(list [wire note-arvo])
+    |=  =(list [wire note-gall])
     ?~  list
       mo-core
     =.  mo-core  (mo-pass i.list)
@@ -250,19 +221,6 @@
     =/  =wire  /sys/cor/[dap]/(scot %p ship)/[desk]
     ..mo-core
     ::  XX  (mo-pass wire %c %jolt dap ship desk)
-  ::
-  ++  mo-ap-abed
-    |=  [dap=term =routes]
-    ::  ^-  $%([[%zuse %418] _ap-418] [[%zuse %416] _ap-416])
-    (mo-ap-yoke dap routes (~(got by yokes.state) dap))
-  ::
-  ++  mo-ap-yoke
-    |=  [dap=term =routes =yoke]
-    ::  ^-  $%([[%zuse %418] _ap-418] [[%zuse %416] _ap-416])
-    ?-  -.yoke
-      [%zuse %416]  [[%zuse %416] (ap-yoke:ap-416 dap routes +.yoke)]
-      [%zuse %415]  [[%zuse %415] (ap-yoke:ap-415 dap routes +.yoke)]
-    ==
   ::  +mo-doff: kill all outgoing subscriptions
   ::
   ++  mo-doff
@@ -273,7 +231,7 @@
       (drop (bind (~(get by yokes.state) u.dude) (lead u.dude)))
     |-  ^+  mo-core
     ?~  apps  mo-core
-    =/  ap-core  (mo-ap-yoke p.i.apps [~ our] q.i.apps)
+    =/  ap-core  (ap-yoke:ap p.i.apps [~ our] q.i.apps)
     $(apps t.apps, mo-core ap-abet:(ap-doff:ap-core ship))
   ::  +mo-rake: send %cork's for old subscriptions if needed
   ::
@@ -285,7 +243,7 @@
       (drop (bind (~(get by yokes.state) u.dude) (lead u.dude)))
     |-  ^+  mo-core
     ?~  apps  mo-core
-    =/  ap-core  (mo-ap-yoke p.i.apps [~ our] q.i.apps)
+    =/  ap-core  (ap-yoke:ap p.i.apps [~ our] q.i.apps)
     $(apps t.apps, mo-core ap-abet:(ap-rake:ap-core all))
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
@@ -301,8 +259,10 @@
   ::
   ++  mo-receive-core
     ~/  %mo-receive-core
-    |=  [dap=term bek=beak agent=agent-any]
+    |=  [dap=term bek=beak =agent-any]
     ^+  mo-core
+    ?>  ?=([%zuse %416] -.agent-any)
+    =/  agent  +.agent-any
     ::
     =/  yak  (~(get by yokes.state) dap)
     =/  tex=(unit tape)
@@ -323,49 +283,24 @@
       ::
       =.  yokes.state
         (~(put by yokes.state) dap u.yak(beak bek, code agent))
-      =/  ap-core  (mo-ap-abed dap `our)
-      ~&  [%dap dap]
-      ~&  [%ap-core -.ap-core]
-      ~&  [%agent -.agent]
-      =/  ap-core-2
-        ?-  -.ap-core
-          [%zuse %416]  ?>  ?=([%zuse %416] -.agent)  (ap-reinstall:ap-core +.agent)
-          [%zuse %415]  ?>  ?=([%zuse %415] -.agent)  (ap-reinstall:ap-core +.agent)
-        ==
-      ::  =.  ap-core  (ap-reinstall:ap-core agent)
-      =.  mo-core  ap-abet:ap-core-2
+      =/  ap-core  (ap-abed:ap dap `our)
+      =.  ap-core  (ap-reinstall:ap-core agent-any)
+      =.  mo-core  ap-abet:ap-core
       (mo-clear-queue dap)
     ::
     =.  yokes.state
       %+  ~(put by yokes.state)  dap
-      ?-  -.agent
-        [%zuse %416]
-          ^-  yoke
-          :-  [%zuse %416]
-          ^-  yoke-416
-          %*  .  *yoke-416
-            control-duct  hen
-            beak          bek
-            code          agent
-            agent         &++.agent
-            run-nonce     (scot %uw (end 5 (shas %yoke-nonce eny)))
-          ==
-        [%zuse %415]
-          ^-  yoke
-          :-  [%zuse %415]
-          ^-  yoke-415
-          %*  .  *yoke-415
-            control-duct  hen
-            beak          bek
-            code          agent
-            agent         &++.agent
-            run-nonce     (scot %uw (end 5 (shas %yoke-nonce eny)))
-          ==
+      %*  .  *yoke
+        control-duct  hen
+        beak          bek
+        code          agent
+        agent         [%.y [%zuse %416] agent]
+        run-nonce     (scot %uw (end 5 (shas %yoke-nonce eny)))
       ==
     ::
     =/  old  mo-core
     =/  wag
-      =/  ap-core  (mo-ap-abed dap `our)
+      =/  ap-core  (ap-abed:ap dap `our)
       (ap-upgrade-state:ap-core ~)
     ::
     =/  maybe-tang  -.wag
@@ -399,7 +334,7 @@
     =/  wire
       /sys/way/(scot %p ship)/[foreign-agent]
     ::
-    =/  =note-arvo
+    =/  =note-gall
       =/  =path  /ge/[foreign-agent]
       [%a %plea ship %g path ames-request-all]
     ::
@@ -408,7 +343,7 @@
         (~(gut by outstanding.state) [wire hen] *(qeu remote-request))
       %+  ~(put by outstanding.state)  [wire hen]
       (~(gas to stand) ?.(?=(%leave -.deal) ~[-.deal] ~[%leave]))
-    =.  mo-core  (mo-pass wire note-arvo)
+    =.  mo-core  (mo-pass wire note-gall)
     ?.  ?=(%leave -.deal)
       mo-core
     (mo-pass wire [%a [%cork ship]])
@@ -429,9 +364,9 @@
     =.  moves  [[system-duct.state %pass /sys/lag %a %heed ship] moves]
     ::  ask jael to track .ship's breaches
     ::
-    =/  =note-arvo  [%j %public-keys (silt ship ~)]
+    =/  =note-gall  [%j %public-keys (silt ship ~)]
     =.  moves
-      [[system-duct.state %pass /sys/era note-arvo] moves]
+      [[system-duct.state %pass /sys/era note-gall] moves]
     mo-core
   ::  +mo-untrack-ship: cancel subscriptions to ames and jael for .ship
   ::
@@ -448,9 +383,9 @@
     ::
     =.  moves  [[system-duct.state %pass /sys/lag %a %jilt ship] moves]
     ::
-    =/  =note-arvo  [%j %nuke (silt ship ~)]
+    =/  =note-gall  [%j %nuke (silt ship ~)]
     =.  moves
-      [[system-duct.state %pass /sys/era note-arvo] moves]
+      [[system-duct.state %pass /sys/era note-gall] moves]
     mo-core
   ::  +mo-breach: ship breached, so forget about them
   ::
@@ -471,7 +406,7 @@
       mo-core
     =.  mo-core
       =/  =routes  [disclosing=~ attributing=ship]
-      =/  app  (mo-ap-abed name.i.agents routes)
+      =/  app  (ap-abed:ap name.i.agents routes)
       ap-abet:(ap-breach:app ship)
     $(agents t.agents)
   ::  +mo-handle-sys: handle a +sign incoming over /sys.
@@ -510,12 +445,12 @@
     ?>  ?=([%lag ~] wire)
     ?>  ?=([%ames %clog *] sign-arvo)
     ::
-    =/  agents=(list [term yoke])  ~(tap by yokes.state)
+    =/  agents=(list term)  ~(tap in ~(key by yokes.state))
     |-  ^+  mo-core
     ?~  agents  mo-core
     ::
     =.  mo-core
-      =/  app  (mo-ap-abed -.i.agents `our)
+      =/  app  (ap-abed:ap i.agents `our)
       ap-abet:(ap-clog:app ship.sign-arvo)
     ::
     $(agents t.agents)
@@ -592,6 +527,11 @@
         ?~  error=error.sign-arvo
           ~
         `[[%leaf (trip tag.u.error)] tang.u.error]
+      ::  send a %cork if we get a nack upon initial subscription
+      ::
+      =?  mo-core
+          &(?=(^ err) |(?=(%watch-as remote-request) ?=(%watch remote-request)))
+        (mo-pass [%sys wire] %a %cork ship)
       ::
       ?-  remote-request
         %watch-as  (mo-give %unto %watch-ack err)
@@ -662,10 +602,10 @@
       =/  app
         =/  =ship  (slav %p i.t.t.wire)
         =/  =routes  [disclosing=~ attributing=ship]
-        (mo-ap-abed dap routes)
+        (ap-abed:ap dap routes)
       ::
-      =/  app2  (ap-generic-take:app t.t.t.wire sign-arvo)
-      ap-abet:app2
+      =.  app  (ap-generic-take:app t.t.t.wire sign-arvo)
+      ap-abet:app
     ?>  ?=([%out @ @ *] t.t.wire)
     =/  =ship  (slav %p i.t.t.t.wire)
     =/  =routes  [disclosing=~ attributing=ship]
@@ -681,9 +621,10 @@
       %_  mo-core
         blocked.state  (~(put by blocked.state) dap blocked)
       ==
-    =/  app  (mo-ap-abed dap routes)
-    =/  app2  (ap-specific-take:app t.t.wire unto)
-    ap-abet:app2
+    =/  app  (ap-abed:ap dap routes)
+    =.  app
+      (ap-specific-take:app t.t.wire unto)
+    ap-abet:app
   ::  +mo-clear-queue: clear blocked tasks from the specified running agent.
   ::
   ++  mo-clear-queue
@@ -734,27 +675,25 @@
   ++  mo-idle
     |=  dap=dude
     ^+  mo-core
-    =/  yoke  (~(get by yokes.state) dap)
-    ?~  yoke
+    ?.  (~(has by yokes.state) dap)
       ~>  %slog.0^leaf/"gall: ignoring %idle for {<dap>}, not running"
       mo-core
-    ap-abet:ap-idle:(mo-ap-abed dap `our)
+    ap-abet:ap-idle:(ap-abed:ap dap `our)
   ::  +mo-nuke: delete agent completely
   ::
   ++  mo-nuke
     |=  dap=dude
     ^+  mo-core
-    =/  yoke  (~(get by yokes.state) dap)
-    ?~  yoke
+    ?.  (~(has by yokes.state) dap)
       ~>  %slog.0^leaf/"gall: ignoring %nuke for {<dap>}, not running"
       mo-core
     ~>  %slog.0^leaf/"gall: nuking {<dap>}"
-    =.  mo-core  ap-abet:ap-nuke:(mo-ap-abed dap `our)
+    =.  mo-core  ap-abet:ap-nuke:(ap-abed:ap dap `our)
     mo-core(yokes.state (~(del by yokes.state) dap))
   ::  +mo-load: install agents
   ::
   ++  mo-load
-    |=  agents=(list [=dude =beak agent=agent-any])
+    |=  agents=(list [=dude =beak =agent-any])
     =.  mo-core
       |-  ^+  mo-core
       ?~  agents  mo-core
@@ -779,8 +718,7 @@
     |=  [veb=? dap=term =routes care=term =path]
     ^-  (unit (unit cage))
     ::
-    =/  yoke  (~(got by yokes.state) dap)
-    =/  app  (mo-ap-abed dap routes)
+    =/  app  (ap-abed:ap dap routes)
     (ap-peek:app veb care path)
   ::
   ++  mo-apply
@@ -838,10 +776,9 @@
   ++  mo-apply-sure
     |=  [dap=term =routes =deal]
     ^+  mo-core
-    =/  yoke  (~(got by yokes.state) dap)
-    =/  app  (mo-ap-abed dap routes)
-    =/  app2  (ap-apply:app deal)
-    ap-abet:app2
+    =/  app  (ap-abed:ap dap routes)
+    =.  app  (ap-apply:app deal)
+    ap-abet:app
   ::  +mo-handle-local: handle locally.
   ::
   ::    If the agent is not running or blocked, assign it the supplied
@@ -917,14 +854,14 @@
   ::    An inner, agent-level core.  The sample refers to the agent we're
   ::    currently focused on.
   ::
-  ++  ap-416
+  ++  ap
     ~%  %gall-ap  +>  ~
     |_  $:  agent-name=term
             agent-routes=routes
             agent-duct=duct
             agent-moves=(list move)
             agent-config=(list (each suss tang))
-            yoke=yoke-416
+            =yoke
         ==
     ::
     ++  trace
@@ -945,10 +882,15 @@
     ::    The agent must already be running in +gall -- here we simply update
     ::    +ap's state to focus on it.
     ::
+    ++  ap-abed
+      ~/  %ap-abed
+      |=  [dap=term =routes]
+      ^+  ap-core
+      (ap-yoke dap routes (~(got by yokes.state) dap))
     ::  +ap-yoke: initialize agent state, starting from a $yoke
     ::
     ++  ap-yoke
-      |=  [dap=term =routes yak=yoke-416]
+      |=  [dap=term =routes yak=^yoke]
       ^+  ap-core
       =.  stats.yak
         :+  +(change.stats.yak)
@@ -964,7 +906,7 @@
     ++  ap-abet
       ^+  mo-core
       ::
-      =/  running  (~(put by yokes.state) agent-name [[%zuse %416] yoke])
+      =/  running  (~(put by yokes.state) agent-name yoke)
       =/  moves
         =/  giver  |=(report=(each suss tang) [hen %give %onto report])
         =/  from-suss  (turn agent-config giver)
@@ -986,7 +928,7 @@
         %+  turn  ~(tap by bitt.yoke)
         |=  [=duct =ship =path]
         path
-      =/  will=(list card:agent-416)
+      =/  will=(list card:agent)
         %+  welp
           ?:  =(~ inbound-paths)
             ~
@@ -994,7 +936,7 @@
         %+  turn  ~(tap by boat.yoke)
         |=  [[=wire =dock] ? =path]
         [%pass wire %agent dock %leave ~]
-      =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent-416]))
+      =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
       ap-core
     ::  +ap-from-internal: internal move to move.
     ::
@@ -1006,19 +948,19 @@
     ::
     +$  neet
       $%  neat
-          [%huck [=ship name=term] =note-arvo]
+          [%huck [=ship name=term] =note-gall]
       ==
     ::
     ++  ap-from-internal
       ~/  %ap-from-internal
-      |=  card=(wind neet gift:agent-416)
+      |=  card=(wind neet gift:agent)
       ^-  (list move)
       ::
       ?-    -.card
           %slip  !!
       ::
           %give
-        =/  =gift:agent-416  p.card
+        =/  =gift:agent  p.card
         ?:  ?=(%kick -.gift)
           =/  ducts=(list duct)  (ap-ducts-from-paths paths.gift ship.gift)
           %+  turn  ducts
@@ -1083,13 +1025,13 @@
             %arvo   [(scot %p attributing.agent-routes) wire]
           ==
         ::
-        =/  =note-arvo
+        =/  =note-gall
           ?-  -.neet
-            %arvo   note-arvo.neet
-            %huck   note-arvo.neet
+            %arvo   note-gall.neet
+            %huck   note-gall.neet
             %agent  [%g %deal [our ship.neet] [name deal]:neet]
           ==
-        [duct %pass wire note-arvo]~
+        [duct %pass wire note-gall]~
       ==
     ::  +ap-breach: ship breached, so forget about them
     ::
@@ -1140,7 +1082,8 @@
     ::
     ++  ap-agent-core
       ?>  ?=(%& -.agent.yoke)
-      ~(. p.agent.yoke ap-construct-bowl)
+      ?>  ?=([%zuse %416] -.p.agent.yoke)
+      ~(. +.p.agent.yoke ap-construct-bowl)
     ::  +ap-ducts-from-paths: get ducts subscribed to paths
     ::
     ++  ap-ducts-from-paths
@@ -1236,7 +1179,7 @@
     ::  +ap-give: return result.
     ::
     ++  ap-give
-      |=  =gift:agent-416
+      |=  =gift:agent
       (ap-move (ap-from-internal %give gift))
     ::  +ap-pass: request action.
     ::
@@ -1263,8 +1206,9 @@
     ::
     ++  ap-reinstall
       ~/  %ap-reinstall
-      |=  agent=agent-416
+      |=  agent=agent-any
       ^+  ap-core
+      ?>  ?=([%zuse %416] -.agent)
       =/  old-state=vase
         ?:  ?=(%& -.agent.yoke)
           on-save:ap-agent-core
@@ -1340,7 +1284,7 @@
       =/  agent-wire  t.t.t.wire
       =/  nonce=@  0
       ::
-      =^  =sign:agent-416  ap-core
+      =^  =sign:agent  ap-core
         ?.  ?=(%raw-fact -.unto)
           [unto ap-core]
         =/  =case:clay  da+now
@@ -1616,11 +1560,11 @@
     ::    safely.
     ::
     ++  ap-mule
-      |=  run=_^?(|.(*step:agent-416))
-      ^-  (each step:agent-416 tang)
+      |=  run=_^?(|.(*step:agent))
+      ^-  (each step:agent tang)
       =/  res  (mock [run %9 2 %0 1] (look rof ~))
       ?-  -.res
-        %0  [%& !<(step:agent-416 [-:!>(*step:agent-416) p.res])]
+        %0  [%& !<(step:agent [-:!>(*step:agent) p.res])]
         %1  [%| (smyt ;;(path p.res)) ~]
         %2  [%| p.res]
       ==
@@ -1641,7 +1585,7 @@
     ::    rest of the moves.
     ::
     ++  ap-ingest
-      |=  [ack=?(%poke-ack %watch-ack ~) run=_^?(|.(*step:agent-416))]
+      |=  [ack=?(%poke-ack %watch-ack ~) run=_^?(|.(*step:agent))]
       ^-  [(unit tang) _ap-core]
       =/  result  (ap-mule run)
       =^  new-moves  ap-core  (ap-handle-result result)
@@ -1652,7 +1596,7 @@
       =/  ack-moves=(list move)
         %-  zing
         %-  turn  :_  ap-from-internal
-        ^-  (list card:agent-416)
+        ^-  (list card:agent)
         ?-  ack
           ~      ~
           %poke-ack   [%give %poke-ack maybe-tang]~
@@ -1666,858 +1610,12 @@
     ::
     ++  ap-handle-result
       ~/  %ap-handle-result
-      |=  result=(each step:agent-416 tang)
+      |=  result=(each step:agent tang)
       ^-  [(list move) _ap-core]
       ?:  ?=(%| -.result)
         `ap-core
       ::
-      =.  agent.yoke  &++.p.result
-      =/  moves       (zing (turn -.p.result ap-from-internal))
-      =.  bitt.yoke   (ap-handle-kicks moves)
-      (ap-handle-peers moves)
-    ::  +ap-handle-kicks: handle cancels of bitt.watches
-    ::
-    ++  ap-handle-kicks
-      ~/  %ap-handle-kicks
-      |=  moves=(list move)
-      ^-  bitt
-      =/  quits=(list duct)
-        %+  murn  moves
-        |=  =move
-        ^-  (unit duct)
-        ?.  ?=([* %give %unto %kick *] move)
-          ~
-        `duct.move
-      ::
-      =/  quit-map=bitt
-        (malt (turn quits |=(=duct [duct *[ship path]])))
-      (~(dif by bitt.yoke) quit-map)
-    ::  +ap-handle-peers: handle new boat.watches
-    ::
-    ++  ap-handle-peers
-      ~/  %ap-handle-peers
-      |=  moves=(list move)
-      ^-  [(list move) _ap-core]
-      =|  new-moves=(list move)
-      |-  ^-  [(list move) _ap-core]
-      ?~  moves
-        [(flop new-moves) ap-core]
-      =/  =move  i.moves
-      ?:  ?=([* %pass * %g %deal * * %leave *] move)
-        =/  =wire  p.move.move
-        ?>  ?=([%use @ @ %out @ @ *] wire)
-        =/  =dock           [q.p q]:q.move.move
-        =/  sys-wire=^wire  (scag 6 `^wire`wire)
-        =/  sub-wire=^wire  (slag 6 `^wire`wire)
-        ::
-        ?.  (~(has by boat.yoke) sub-wire dock)
-          %.  $(moves t.moves)
-          %^  trace  odd.veb.bug.state
-          leaf/"gall: {<agent-name>} missing subscription, got %leave"  ~
-        =/  nonce=@  (~(got by boar.yoke) sub-wire dock)
-        =.  p.move.move
-          %+  weld  sys-wire
-          (ap-nonce-wire sub-wire dock)
-        =:  boat.yoke  (~(del by boat.yoke) [sub-wire dock])
-            boar.yoke  (~(del by boar.yoke) [sub-wire dock])
-          ==
-        ::  if nonce = 0, this was a pre-nonce subscription so later
-        ::  subscriptions need to start subscribing on the next nonce
-        ::
-        =?  sub-nonce.yoke  =(nonce 0)  +(sub-nonce.yoke)
-        $(moves t.moves, new-moves [move new-moves])
-      ?.  ?=([* %pass * %g %deal * * ?(%watch %watch-as) *] move)
-        $(moves t.moves, new-moves [move new-moves])
-      =/  =wire  p.move.move
-      ?>  ?=([%use @ @ %out @ @ *] wire)
-      =/  sys-wire=^wire  (scag 6 `^wire`wire)
-      =/  sub-wire=^wire  (slag 6 `^wire`wire)
-      =/  [=dock =deal]  [[q.p q] r]:q.move.move
-      ::
-      ?:  (~(has by boat.yoke) sub-wire dock)
-        =.  ap-core
-          =/  =tang
-            ~[leaf+"subscribe wire not unique" >agent-name< >sub-wire< >dock<]
-          =/  have  (~(got by boat.yoke) sub-wire dock)
-          %-  (slog >out=have< tang)
-          (ap-error %watch-not-unique tang)  ::  reentrant, maybe bad?
-        $(moves t.moves)
-      ::
-      ::NOTE  0-check guards against pre-release bug
-      =?  p.move.move  !=(0 sub-nonce.yoke)
-        (weld sys-wire [(scot %ud sub-nonce.yoke) sub-wire])
-      %_    $
-          moves            t.moves
-          new-moves       [move new-moves]
-          sub-nonce.yoke  +(sub-nonce.yoke)
-      ::
-          boat.yoke
-        %+  ~(put by boat.yoke)  [sub-wire dock]
-        :-  acked=|
-        path=?+(-.deal !! %watch path.deal, %watch-as path.deal)
-      ::
-          boar.yoke
-        (~(put by boar.yoke) [sub-wire dock] sub-nonce.yoke)
-      ==
-    --
-
-  ::  ++  ap-418-t  $_  ap-418
-  ::  ++  ap-416-t  $_  ap-416
-  ++  ap-415
-    ~%  %gall-ap  +>  ~
-    |_  $:  agent-name=term
-            agent-routes=routes
-            agent-duct=duct
-            agent-moves=(list move)
-            agent-config=(list (each suss tang))
-            yoke=yoke-415
-        ==
-    ::
-    ++  trace
-      |=  [verb=? print=tang]
-      ^+  same
-      (^trace verb agent-name print)
-    ::
-    ++  ap-nonce-wire
-      |=  [=wire =dock]
-      ^+  wire
-      =/  nonce=@  (~(got by boar.yoke) wire dock)
-      ?:  =(0 nonce)  wire
-      [(scot %ud nonce) wire]
-    ::
-    ++  ap-core  .
-    ::  +ap-abed: initialise state for an agent, with the supplied routes.
-    ::
-    ::    The agent must already be running in +gall -- here we simply update
-    ::    +ap's state to focus on it.
-    ::
-    ::  +ap-yoke: initialize agent state, starting from a $yoke
-    ::
-    ++  ap-yoke
-      |=  [dap=term =routes yak=yoke-415]
-      ^+  ap-core
-      =.  stats.yak
-        :+  +(change.stats.yak)
-          (shaz (mix (add dap change.stats.yak) eny))  ::  TODO: so bad, use +og
-        now
-      =.  agent-name  dap
-      =.  agent-routes  routes
-      =.  yoke  yak
-      =.  agent-duct  hen
-      ap-core
-    ::  +ap-abet: resolve moves.
-    ::
-    ++  ap-abet
-      ^+  mo-core
-      ::
-      =/  running  (~(put by yokes.state) agent-name [[%zuse %415] yoke])
-      =/  moves
-        =/  giver  |=(report=(each suss tang) [hen %give %onto report])
-        =/  from-suss  (turn agent-config giver)
-        :(weld agent-moves from-suss moves)
-      ::
-      %_  mo-core
-        yokes.state  running
-        moves        moves
-      ==
-    ::
-    ++  ap-idle
-      ?:  ?=(%| -.agent.yoke)  ap-core
-      ap-core(agent.yoke |+on-save:ap-agent-core)
-    ::
-    ++  ap-nuke
-      ^+  ap-core
-      =/  inbound-paths=(set path)
-        %-  silt
-        %+  turn  ~(tap by bitt.yoke)
-        |=  [=duct =ship =path]
-        path
-      =/  will=(list card:agent-415)
-        %+  welp
-          ?:  =(~ inbound-paths)
-            ~
-          [%give %kick ~(tap in inbound-paths) ~]~
-        %+  turn  ~(tap by boat.yoke)
-        |=  [[=wire =dock] ? =path]
-        [%pass wire %agent dock %leave ~]
-      =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent-415]))
-      ap-core
-    ::  +ap-from-internal: internal move to move.
-    ::
-    ::    We convert from cards to duct-indexed moves when resolving
-    ::    them in Arvo.
-    ::
-    ::    We accept %huck to "fake" being a message to a ship but
-    ::    actually send it to a vane.
-    ::
-    +$  neet
-      $%  neat
-          [%huck [=ship name=term] =note-arvo]
-      ==
-    ::
-    ++  ap-from-internal
-      ~/  %ap-from-internal
-      |=  card=(wind neet gift:agent-415)
-      ^-  (list move)
-      ::
-      ?-    -.card
-          %slip  !!
-      ::
-          %give
-        =/  =gift:agent-415  p.card
-        ?:  ?=(%kick -.gift)
-          =/  ducts=(list duct)  (ap-ducts-from-paths paths.gift ship.gift)
-          %+  turn  ducts
-          |=  =duct
-          ~?  &(=(duct system-duct.state) !=(agent-name %hood))
-            [%agent-giving-on-system-duct agent-name -.gift]
-          [duct %give %unto %kick ~]
-        ::
-        ?.  ?=(%fact -.gift)
-          [agent-duct %give %unto gift]~
-        ::
-        =/  ducts=(list duct)  (ap-ducts-from-paths paths.gift ~)
-        =/  =cage  cage.gift
-        %-  zing
-        %+  turn  ducts
-        |=  =duct
-        ^-  (list move)
-        ~?  &(=(duct system-duct.state) !=(agent-name %hood))
-          [%agent-giving-on-system-duct agent-name -.gift]
-        =/  =mark  (~(gut by marks.yoke) duct p.cage)
-        ::
-        ?:  =(mark p.cage)
-          [duct %give %unto %fact cage.gift]~
-        =/  =mars:clay  [p.cage mark]
-        =/  =case:clay  da+now
-        =/  bek=beak    [our q.beak.yoke case]
-        =/  mars-path  /[a.mars]/[b.mars]
-        =/  sky  (rof ~ %cc bek mars-path)
-        ?-    sky
-            ?(~ [~ ~])
-          %-  (slog leaf+"watch-as fact conversion find-fail" >sky< ~)
-          (ap-kill-up-slip duct)
-        ::
-            [~ ~ *]
-          =+  !<(=tube:clay q.u.u.sky)
-          =/  res  (mule |.((tube q.cage)))
-          ?:  ?=(%| -.res)
-            %-  (slog leaf+"watch-as fact conversion failure" p.res)
-            (ap-kill-up-slip duct)
-          :~  :*  duct  %pass  /nowhere  %c  %warp  our  q.beak.yoke  ~
-                  %sing  %c  case  mars-path
-              ==
-              [duct %give %unto %fact b.mars p.res]
-          ==
-        ==
-      ::
-          %pass
-        =/  =duct  system-duct.state
-        =/  =wire  p.card
-        =/  =neet  q.card
-        ?:  ?=(%pyre -.neet)
-          %:  mean
-            leaf/"gall: %pyre from {<agent-name>}, killing event"
-            leaf/"wire: {<wire>}"
-            tang.neet
-          ==
-        =.  wire
-          :^  %use  agent-name  run-nonce.yoke
-          ?-  -.neet
-            %agent  [%out (scot %p ship.neet) name.neet wire]
-            %huck   [%out (scot %p ship.neet) name.neet wire]
-            %arvo   [(scot %p attributing.agent-routes) wire]
-          ==
-        ::
-        =/  =note-arvo
-          ?-  -.neet
-            %arvo   note-arvo.neet
-            %huck   note-arvo.neet
-            %agent  [%g %deal [our ship.neet] [name deal]:neet]
-          ==
-        [duct %pass wire note-arvo]~
-      ==
-    ::  +ap-breach: ship breached, so forget about them
-    ::
-    ++  ap-breach
-      |=  =ship
-      ^+  ap-core
-      =/  in=(list [=duct =^ship =path])  ~(tap by bitt.yoke)
-      |-  ^+  ap-core
-      ?^  in
-        =?  ap-core  =(ship ship.i.in)
-          =/  core  ap-load-delete(agent-duct duct.i.in)
-          core(agent-duct agent-duct)
-        $(in t.in)
-      ::
-      =/  out=(list [=wire =^ship =term])
-        ~(tap ^in ~(key by boat.yoke))
-      |-  ^+  ap-core
-      ?~  out
-        ap-core
-      =?  ap-core  =(ship ship.i.out)
-        =/  core
-          =.  agent-duct  system-duct.state
-          =.  wire.i.out  (ap-nonce-wire i.out)
-          =/  way         [%out (scot %p ship) term.i.out wire.i.out]
-          (ap-specific-take way %kick ~)
-        core(agent-duct agent-duct)
-      $(out t.out)
-    ::  +ap-clog: handle %clog notification from ames
-    ::
-    ::    Kills subscriptions from .ship in both directions:
-    ::      - notifies local app that subscription is dead
-    ::      - gives remote %quit to notify subscriber ship
-    ::    TODO: %drip local app notification for error isolation
-    ::
-    ++  ap-clog
-      |=  =ship
-      ^+  ap-core
-      ::
-      =/  in=(list [=duct =^ship =path])  ~(tap by bitt.yoke)
-      |-  ^+  ap-core
-      ?~  in  ap-core
-      ::
-      =?  ap-core  =(ship ship.i.in)
-        =/  core  ap-kill-up(agent-duct duct.i.in)
-        core(agent-duct agent-duct)
-      $(in t.in)
-    ::  +ap-agent-core: agent core with current bowl and state
-    ::
-    ++  ap-agent-core
-      ?>  ?=(%& -.agent.yoke)
-      ~(. p.agent.yoke ap-construct-bowl)
-    ::  +ap-ducts-from-paths: get ducts subscribed to paths
-    ::
-    ++  ap-ducts-from-paths
-      |=  [target-paths=(list path) target-ship=(unit ship)]
-      ^-  (list duct)
-      ?~  target-paths
-        ?~  target-ship
-          ~[agent-duct]
-        %+  murn  ~(tap by bitt.yoke)
-        |=  [=duct =ship =path]
-        ^-  (unit ^duct)
-        ?:  =(target-ship `ship)
-          `duct
-        ~
-      %-  zing
-      %+  turn  target-paths
-      |=  =path
-      (ap-ducts-from-path path target-ship)
-    ::  +ap-ducts-from-path: get ducts subscribed to path
-    ::
-    ++  ap-ducts-from-path
-      |=  [target-path=path target-ship=(unit ship)]
-      ^-  (list duct)
-      %+  murn  ~(tap by bitt.yoke)
-      |=  [=duct =ship =path]
-      ^-  (unit ^duct)
-      ?:  ?&  =(target-path path)
-              |(=(target-ship ~) =(target-ship `ship))
-          ==
-        `duct
-      ~
-    ::  +ap-apply: apply effect.
-    ::
-    ++  ap-apply
-      |=  =deal
-      ^+  ap-core
-      ?-  -.deal
-        %watch-as  (ap-subscribe-as +.deal)
-        %poke      (ap-poke +.deal)
-        %watch     (ap-subscribe +.deal)
-        %raw-poke  !!
-        %poke-as   !!
-        %leave     ap-load-delete
-      ==
-    ::  +ap-peek: peek.
-    ::
-    ++  ap-peek
-      ~/  %ap-peek
-      |=  [veb=? care=term tyl=path]
-      ^-  (unit (unit cage))
-      ::  take trailing mark off path for %x scrys
-      ::
-      =^  want=mark  tyl
-        ?.  ?=(%x care)  [%$ tyl]
-        =.  tyl  (flop tyl)
-        [(head tyl) (flop (tail tyl))]
-      ::  call the app's +on-peek, producing [~ ~] if it crashes
-      ::
-      =/  peek-result=(each (unit (unit cage)) tang)
-        (ap-mule-peek |.((on-peek:ap-agent-core [care tyl])))
-      ?:  ?=(%| -.peek-result)
-        ?.  veb  [~ ~]
-        ((slog leaf+"peek bad result" p.peek-result) [~ ~])
-      ::  for non-%x scries, or failed %x scries, or %x results that already
-      ::  have the requested mark, produce the result as-is
-      ::
-      ?.  ?&  ?=(%x care)
-              ?=([~ ~ *] p.peek-result)
-              !=(mark p.u.u.p.peek-result)
-          ==
-        p.peek-result
-      ::  for %x scries, attempt to convert to the requested mark if needed
-      ::
-      =*  have  p.u.u.p.peek-result
-      =*  vase  q.u.u.p.peek-result
-      =/  tub=(unit tube:clay)
-        ?:  =(have want)  `(bake same ^vase)
-        =/  tuc=(unit (unit cage))
-          (rof ~ %cc [our q.beak.yoke da+now] /[have]/[want])
-        ?.  ?=([~ ~ *] tuc)  ~
-        `!<(tube:clay q.u.u.tuc)
-      ?~  tub
-        ((slog leaf+"peek no tube from {(trip have)} to {(trip want)}" ~) ~)
-      =/  res  (mule |.((u.tub vase)))
-      ?:  ?=(%& -.res)
-        ``want^p.res
-      ((slog leaf+"peek failed tube from {(trip have)} to {(trip want)}" ~) ~)
-    ::  +ap-move: send move
-    ::
-    ++  ap-move
-      |=  =(list move)
-      ap-core(agent-moves (weld (flop list) agent-moves))
-    ::  +ap-give: return result.
-    ::
-    ++  ap-give
-      |=  =gift:agent-415
-      (ap-move (ap-from-internal %give gift))
-    ::  +ap-pass: request action.
-    ::
-    ++  ap-pass
-      |=  [=path =neet]
-      (ap-move (ap-from-internal %pass path neet))
-    ::  +ap-construct-bowl: set up bowl.
-    ::
-    ++  ap-construct-bowl
-      ^-  bowl
-      :*  :*  our                                     ::  host
-              attributing.agent-routes                ::  guest
-              agent-name                              ::  agent
-          ==                                          ::
-          :*  wex=boat.yoke                           ::  outgoing
-              sup=bitt.yoke                           ::  incoming
-          ==                                          ::
-          :*  act=change.stats.yoke                   ::  tick
-              eny=eny.stats.yoke                      ::  nonce
-              now=time.stats.yoke                     ::  time
-              byk=beak.yoke                           ::  source
-      ==  ==
-    ::  +ap-reinstall: reinstall.
-    ::
-    ++  ap-reinstall
-      ~/  %ap-reinstall
-      |=  agent=agent-415
-      ^+  ap-core
-      =/  old-state=vase
-        ?:  ?=(%& -.agent.yoke)
-          on-save:ap-agent-core
-        p.agent.yoke
-      =^  error  ap-core
-        (ap-install(agent.yoke &+agent) `old-state)
-      ?~  error
-        ap-core
-      (mean >%load-failed< u.error)
-    ::  +ap-subscribe-as: apply %watch-as.
-    ::
-    ++  ap-subscribe-as
-      |=  [=mark =path]
-      ^+  ap-core
-      =.  marks.yoke  (~(put by marks.yoke) agent-duct mark)
-      (ap-subscribe path)
-    ::  +ap-subscribe: apply %watch.
-    ::
-    ++  ap-subscribe
-      ~/  %ap-subscribe
-      |=  pax=path
-      ^+  ap-core
-      =/  incoming   [attributing.agent-routes pax]
-      =.  bitt.yoke  (~(put by bitt.yoke) agent-duct incoming)
-      =^  maybe-tang  ap-core
-        %+  ap-ingest  %watch-ack  |.
-        (on-watch:ap-agent-core pax)
-      ?^  maybe-tang
-        ap-silent-delete
-      ap-core
-    ::  +ap-poke: apply %poke.
-    ::
-    ++  ap-poke
-      ~/  %ap-poke
-      |=  =cage
-      ^+  ap-core
-      =^  maybe-tang  ap-core
-        %+  ap-ingest  %poke-ack  |.
-        (on-poke:ap-agent-core cage)
-      ap-core
-    ::  +ap-error: pour error.
-    ::
-    ++  ap-error
-      |=  [=term =tang]
-      ^+  ap-core
-      =/  form  |=(=tank [%rose [~ "! " ~] tank ~])
-      =^  maybe-tang  ap-core
-        %+  ap-ingest  ~  |.
-        (on-fail:ap-agent-core term (turn tang form))
-      ap-core
-    ::  +ap-generic-take: generic take.
-    ::
-    ++  ap-generic-take
-      ~/  %ap-generic-take
-      |=  [=wire =sign-arvo]
-      ^+  ap-core
-      =^  maybe-tang  ap-core
-        %+  ap-ingest  ~  |.
-        (on-arvo:ap-agent-core wire sign-arvo)
-      ?^  maybe-tang
-        (ap-error %arvo-response u.maybe-tang)
-      ap-core
-    ::  +ap-specific-take: specific take.
-    ::
-    ++  ap-specific-take
-      |=  [=wire =unto]
-      ^+  ap-core
-      ~|  wire=wire
-      ?>  ?=([%out @ @ *] wire)
-      =/  other-ship  (slav %p i.t.wire)
-      =/  other-agent  i.t.t.wire
-      =/  =dock  [other-ship other-agent]
-      =/  agent-wire  t.t.t.wire
-      =/  nonce=@  0
-      ::
-      =^  =sign:agent-415  ap-core
-        ?.  ?=(%raw-fact -.unto)
-          [unto ap-core]
-        =/  =case:clay  da+now
-        ?:  ?=(%spider agent-name)
-          :-  [%fact mark.unto !>(noun.unto)]
-          ap-core
-        =/  sky  (rof ~ %cb [our q.beak.yoke case] /[mark.unto])
-        ?.  ?=([~ ~ *] sky)
-          (mean leaf+"gall: ames mark fail {<mark.unto>}" ~)
-        ::
-        =+  !<(=dais:clay q.u.u.sky)
-        =/  res  (mule |.((vale:dais noun.unto)))
-        ?:  ?=(%| -.res)
-          (mean leaf+"gall: ames vale fail {<mark.unto>}" p.res)
-        :-  [%fact mark.unto p.res]
-        %-  ap-move  :_  ~
-        :^  hen  %pass  /nowhere
-        [%c %warp our q.beak.yoke ~ %sing %b case /[mark.unto]]
-      |^  ^+  ap-core
-          ::  %poke-ack has no nonce; ingest directly
-          ::
-          ?:  ?=(%poke-ack -.sign)
-            ingest-and-check-error
-          ::  if .agent-wire matches, it's an old pre-nonce subscription
-          ::
-          ?:  (~(has by boat.yoke) sub-key)
-            run-sign
-          ::  if an app happened to use a null wire, no-op
-          ::
-          ?:  =(~ agent-wire)
-            on-missing
-          =/  has-nonce=(unit @ud)  (slaw %ud (head agent-wire))
-          ?:  &(?=(~ has-nonce) ?=(%kick -.sign))
-            on-weird-kick
-          ::  pop nonce off .agent-wire and match against stored subscription
-          ::
-          ?>  ?=(^ has-nonce)
-          =:  nonce       u.has-nonce
-              agent-wire  (tail agent-wire)
-            ==
-          ?~  got=(~(get by boar.yoke) sub-key)
-            on-missing
-          ?:  =(nonce.u.got nonce)
-            run-sign
-          (on-bad-nonce nonce.u.got)
-      ::
-      ++  sub-key  [agent-wire dock]
-      ++  ingest   (ap-ingest ~ |.((on-agent:ap-agent-core agent-wire sign)))
-      ++  run-sign
-        ?-    -.sign
-            %poke-ack  !!
-            %fact
-          =^  tan  ap-core  ingest
-          ?~  tan  ap-core
-          =.  ap-core  (ap-kill-down sub-key)
-          (ap-error -.sign leaf/"take %fact failed, closing subscription" u.tan)
-        ::
-            %kick
-          =:  boar.yoke  (~(del by boar.yoke) sub-key)
-              boat.yoke  (~(del by boat.yoke) sub-key)
-            ==
-          ingest-and-check-error
-        ::
-            %watch-ack
-          ?.  (~(has by boat.yoke) sub-key)
-            %.  ap-core
-            %+  trace  odd.veb.bug.state  :~
-              leaf+"{<agent-name>}: got ack for nonexistent subscription"
-              leaf+"{<dock>}: {<agent-wire>}"
-              >wire=wire<
-            ==
-          =?  boar.yoke  ?=(^ p.sign)  (~(del by boar.yoke) sub-key)
-          ::
-          =.  boat.yoke
-            ?^  p.sign  (~(del by boat.yoke) sub-key)
-            ::
-            %+  ~(jab by boat.yoke)  sub-key
-            |=  val=[acked=? =path]
-            %.  val(acked &)
-            %^  trace  &(odd.veb.bug.state acked.val)
-            leaf/"{<agent-name>} 2nd watch-ack on {<val>}"  ~
-          ::
-          ingest-and-check-error
-        ==
-      ::
-      ++  on-missing
-        %.  ap-core
-        %+  trace  odd.veb.bug.state  :~
-          leaf+"{<agent-name>}: got {<-.sign>} for nonexistent subscription"
-          leaf+"{<dock>}: {<[nonce=nonce agent-wire]>}"
-          >wire=wire<
-        ==
-      ::
-      ++  on-weird-kick
-        %.  run-sign
-        %+  trace  odd.veb.bug.state  :~
-          leaf+"{<agent-name>}: got %kick for nonexistent subscription"
-          leaf+"{<dock>}: {<agent-wire>}"
-          >wire=wire<
-        ==
-      ::
-      ++  on-bad-nonce
-        |=  stored-nonce=@
-        %.  ap-core
-        %-  slog  :~
-          =/  nonces  [expected=stored-nonce got=nonce]
-          =/  ok  |(?=(?(%fact %kick) -.sign) =(~ p.sign))
-          leaf+"{<agent-name>}: stale {<-.sign>} {<nonces>} ok={<ok>}"
-        ::
-          leaf+"{<dock>}: {<agent-wire>}"
-          >wire=wire<
-        ==
-      ::
-      ++  ingest-and-check-error
-        ^+  ap-core
-        =^  tan  ap-core  ingest
-        ?~(tan ap-core (ap-error -.sign leaf/"take {<-.sign>} failed" u.tan))
-      --
-    ::  +ap-install: install wrapper.
-    ::
-    ++  ap-install
-      |=  old-agent-state=(unit vase)
-      ^-  [(unit tang) _ap-core]
-      ::
-      =^  maybe-tang  ap-core  (ap-upgrade-state old-agent-state)
-      ::
-      =.  agent-config
-        :_  agent-config
-        ^-  (each suss tang)
-        ?^  maybe-tang
-          |/u.maybe-tang
-        &/[agent-name ?~(old-agent-state %boot %bump) now]
-      ::
-      [maybe-tang ap-core]
-    ::  +ap-upgrade-state: low-level install.
-    ::
-    ++  ap-upgrade-state
-      ~/  %ap-upgrade-state
-      |=  maybe-vase=(unit vase)
-      ^-  [(unit tang) _ap-core]
-      ::
-      =^  maybe-tang  ap-core
-        %+  ap-ingest  ~
-        ?~  maybe-vase
-          |.  on-init:ap-agent-core
-        |.  (on-load:ap-agent-core u.maybe-vase)
-      [maybe-tang ap-core]
-    ::  +ap-silent-delete: silent delete.
-    ::
-    ++  ap-silent-delete
-      ^+  ap-core
-      ap-core(bitt.yoke (~(del by bitt.yoke) agent-duct))
-    ::  +ap-load-delete: load delete.
-    ::
-    ++  ap-load-delete
-      ^+  ap-core
-      ::
-      =/  maybe-incoming  (~(get by bitt.yoke) agent-duct)
-      ?~  maybe-incoming
-        ap-core
-      ::
-      =/  incoming   u.maybe-incoming
-      =.  bitt.yoke  (~(del by bitt.yoke) agent-duct)
-      ::
-      =^  maybe-tang  ap-core
-        %+  ap-ingest  ~  |.
-        (on-leave:ap-agent-core q.incoming)
-      ?^  maybe-tang
-        (ap-error %leave u.maybe-tang)
-      ap-core
-    ::  +ap-kill-up: 2-sided kill from publisher side
-    ::
-    ++  ap-kill-up
-      ^+  ap-core
-      ::
-      =>  ap-load-delete
-      (ap-give %kick ~ ~)
-    ::  +ap-kill-up-slip: 2-sided kill from publisher side by slip
-    ::
-    ::  +ap-kill-up is reentrant if you call it in the
-    ::  middle of processing another deal
-    ::
-    ::  Should probably call +ap-error with error message
-    ::
-    ++  ap-kill-up-slip
-      |=  =duct
-      ^-  (list move)
-      ::
-      :~  [duct %slip %g %deal [our our] agent-name %leave ~]
-          [duct %give %unto %kick ~]
-      ==
-    ::  +ap-kill-down: 2-sided kill from subscriber side
-    ::
-    ::    Must process leave first in case kick handler rewatches.
-    ::
-    ++  ap-kill-down
-      |=  [sub-wire=wire =dock]
-      ^+  ap-core
-      =.  ap-core
-        ::  we take care to include the nonce in the "kernel-facing" wire
-        ::
-        (ap-pass (ap-nonce-wire sub-wire dock) %agent dock %leave ~)
-      (ap-pass sub-wire %huck dock %b %huck `sign-arvo`[%gall %unto %kick ~])
-    ::  +ap-doff: kill old-style outgoing subscriptions
-    ::
-    ++  ap-doff
-      |=  ship=(unit ship)
-      ^+  ap-core
-      =/  subs  ~(tap in ~(key by boat.yoke))
-      |-  ^+  ap-core
-      ?~  subs  ap-core
-      =+  [wyr dok]=i.subs
-      ?:  &(?=(^ ship) !=(u.ship ship.dok))
-        $(subs t.subs)
-      ::  if we haven't created new-style (nonced) subscriptions yet,
-      ::  kick the old-style (nonceless) one that's in use right now.
-      ::
-      ::NOTE  yes, still safe for pre-release ships with nonce=1,
-      ::      this makes a new flow but cleans it up right away.
-      ::
-      =?  ap-core  (gte 1 (~(got by boar.yoke) wyr dok))
-        (ap-pass wyr %agent dok %leave ~)
-      $(subs t.subs)
-    ::  +ap-rake: clean up the dead %leave's
-    ::
-    ++  ap-rake
-      |=  all=?
-      =/  subs  ~(tap in ~(key by boat.yoke))
-      |^  ^+  ap-core
-      ?~  subs  ap-core
-      =/  [=wire =dock]  i.subs
-      =/  non  (~(got by boar.yoke) wire dock)
-      ?:  &(!all =(0 non))
-        $(subs t.subs)
-      ?~  per=(scry-peer-state p.dock)
-        $(subs t.subs)
-      ::
-      =/  dud=(set duct)
-        =/  mod=^wire
-          :*  %gall  %use  agent-name  run-nonce.yoke
-              %out  (scot %p p.dock)  q.dock
-              '0'  wire
-          ==
-        %-  ~(rep by by-duct.ossuary.u.per)
-        |=  [[=duct =bone] out=(set duct)]
-        ^+  out
-        ?.  ?&  ?=([* [%gall %use @ @ %out @ @ @ *] *] duct)
-                =(mod i.t.duct(i.t.t.t.t.t.t.t '0'))
-            ==
-          out
-        ?:  (~(has in closing.u.per) bone)  out
-        ~>  %slog.0^leaf+"gall: rake {<i.t.duct>}"
-        (~(put in out) duct)
-      ::
-      %-  ap-move
-      (turn ~(tap in dud) |=(d=duct [+.d %pass -.d %a %cork p.dock]))
-      ::
-      ++  scry-peer-state
-        |=  her=ship
-        ~+  ^-  (unit peer-state:ames)
-        =/  sky  (rof [~ ~] %ax [our %$ da+now] /peers/(scot %p her))
-        ?:  |(?=(~ sky) ?=(~ u.sky))
-          ~
-        =/  sat  !<(ship-state:ames q.u.u.sky)
-        ?>(?=(%known -.sat) (some +.sat))
-      --
-    ::  +ap-mule: run virtualized with intercepted scry, preserving type
-    ::
-    ::    Compare +mute and +mule.  Those pass through scry, which
-    ::    doesn't allow us to catch crashes due to blocking scry.  If
-    ::    you intercept scry, you can't preserve the type
-    ::    polymorphically.  By monomorphizing, we are able to do so
-    ::    safely.
-    ::
-    ++  ap-mule
-      |=  run=_^?(|.(*step:agent-415))
-      ^-  (each step:agent-415 tang)
-      =/  res  (mock [run %9 2 %0 1] (look rof ~))
-      ?-  -.res
-        %0  [%& !<(step:agent-415 [-:!>(*step:agent-415) p.res])]
-        %1  [%| (smyt ;;(path p.res)) ~]
-        %2  [%| p.res]
-      ==
-    ::  +ap-mule-peek: same as +ap-mule but for (unit (unit cage))
-    ::
-    ++  ap-mule-peek
-      |=  run=_^?(|.(*(unit (unit cage))))
-      ^-  (each (unit (unit cage)) tang)
-      =/  res  (mock [run %9 2 %0 1] (look rof ~))
-      ?-  -.res
-        %0  [%& !<((unit (unit cage)) [-:!>(*(unit (unit cage))) p.res])]
-        %1  [%| (smyt ;;(path p.res)) ~]
-        %2  [%| p.res]
-      ==
-    ::  +ap-ingest: call agent arm
-    ::
-    ::    Handle acks here because they need to be emitted before the
-    ::    rest of the moves.
-    ::
-    ++  ap-ingest
-      |=  [ack=?(%poke-ack %watch-ack ~) run=_^?(|.(*step:agent-415))]
-      ^-  [(unit tang) _ap-core]
-      =/  result  (ap-mule run)
-      =^  new-moves  ap-core  (ap-handle-result result)
-      =/  maybe-tang=(unit tang)
-        ?:  ?=(%& -.result)
-          ~
-        `p.result
-      =/  ack-moves=(list move)
-        %-  zing
-        %-  turn  :_  ap-from-internal
-        ^-  (list card:agent-415)
-        ?-  ack
-          ~      ~
-          %poke-ack   [%give %poke-ack maybe-tang]~
-          %watch-ack  [%give %watch-ack maybe-tang]~
-        ==
-      ::
-      =.  agent-moves
-        :(weld (flop new-moves) ack-moves agent-moves)
-      [maybe-tang ap-core]
-    ::  +ap-handle-result: handle result.
-    ::
-    ++  ap-handle-result
-      ~/  %ap-handle-result
-      |=  result=(each step:agent-415 tang)
-      ^-  [(list move) _ap-core]
-      ?:  ?=(%| -.result)
-        `ap-core
-      ::
-      =.  agent.yoke  &++.p.result
+      =.  agent.yoke  [%.y [%zuse %416] +.p.result]
       =/  moves       (zing (turn -.p.result ap-from-internal))
       =.  bitt.yoke   (ap-handle-kicks moves)
       (ap-handle-peers moves)
@@ -2664,20 +1762,10 @@
       =?  old  ?=(%9 -.old)   (spore-9-to-10 old)
       =?  old  ?=(%10 -.old)  (spore-10-to-11 old)
       =?  old  ?=(%11 -.old)  (spore-11-to-12 old)
-      =?  old  ?=(%12 -.old)  (spore-12-to-13 old)
-      ?>  ?=(%13 -.old)
+      ?>  ?=(%12 -.old)
       gall-payload(state old)
   ::
-  +$  spore-any  $%(spore spore-7 spore-8 spore-9 spore-10 spore-11 spore-12)
-  +$  spore-12
-    $:  %12
-        system-duct=duct
-        outstanding=(map [wire duct] (qeu remote-request))
-        contacts=(set ship)
-        eggs=(map term egg)
-        blocked=(map term (qeu blocked-move))
-        =bug
-    ==
+  +$  spore-any  $%(spore spore-7 spore-8 spore-9 spore-10 spore-11)
   +$  spore-11
     $:  %11
         system-duct=duct
@@ -2826,7 +1914,7 @@
     ==
   ++  spore-11-to-12
     |=  old=spore-11
-    ^-  spore-12
+    ^-  spore
     %=    old
         -  %12
         eggs
@@ -2834,20 +1922,6 @@
       |=  [a=term e=egg-11]
       ^-  egg
       [[%zuse %416] e]
-    ==
-  ++  spore-12-to-13
-    |=  old=spore-12
-    ^-  spore
-    %=    old
-        -  %13
-        eggs
-      %-  ~(urn by eggs.old)
-      |=  [a=term e=egg]
-      ^-  egg
-      ?-  -.e
-        [%zuse %416]  [[%zuse %416] +.e]
-        [%zuse %415]  [[%zuse %415] +.e]
-      ==
     ==
   --
 ::  +scry: standard scry
@@ -2968,11 +2042,11 @@
   %=    yoke
       code   ~
       agent
-    ?:  ?=(%| -.agent.+.yoke)
-      [%| p.agent.+.yoke]
-    ?-  -.yoke
-      [%zuse %415]  [%| on-save:p.agent.+.yoke]
-      [%zuse %416]  [%| on-save:p.agent.+.yoke]
+    ?:  ?=(%| -.agent.yoke)
+      [%| p.agent.yoke]
+    ?-  -.+.agent.yoke
+      [%zuse %415]  [%| on-save:p.agent.yoke]
+      [%zuse %416]  [%| on-save:p.agent.yoke]
     ==
   ==
 ::  +take: response
