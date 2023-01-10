@@ -697,7 +697,8 @@
     =.  mo-core
       |-  ^+  mo-core
       ?~  agents  mo-core
-      =/  [=dude =desk]  [dude q.beak]:i.agents
+      =/  [=dude =desk =agent-any]  [dude q.beak agent-any]:i.agents
+      ?>  ?=([%zuse %416] -.agent-any)
       ::  ~>  %slog.0^leaf/"gall: starting {<dude>} on {<desk>}"
       $(agents t.agents, mo-core (mo-receive-core i.agents))
     ::
