@@ -504,7 +504,7 @@
       [%x %kiln %pikes ~]
     =+  .^(=rock:tire %cx /(scot %p our)//(scot %da now)/tire)
     :^  ~  ~  %kiln-pikes
-    !>  ^-  pikes   
+    !>  ^-  pikes
     %-  ~(rut by rock)
     |=  [=desk =zest wic=(set weft)]
     ^-  pike

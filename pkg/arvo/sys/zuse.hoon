@@ -3843,6 +3843,102 @@
         ~
       (some (~(run by lum) need))
     --  ::dejs-soft
+  ::
+  ++  klr                                               ::  styx/stub engine
+    =,  dill
+    |%
+    ++  make                                            ::  stub from styx
+      |=  a=styx  ^-  stub
+      =|  b=stye
+      %+  reel
+        |-  ^-  stub
+        %-  zing  %+  turn  a
+        |=  a=$@(@t (pair styl styx))
+        ?@  a  [b (tuba (trip a))]~
+        ^$(a q.a, b (styd p.a b))
+      ::
+      |=  [a=(pair stye (list @c)) b=stub]
+      ?~  b  [a ~]
+      ?.  =(p.a p.i.b)  [a b]
+      [[p.a (weld q.a q.i.b)] t.b]
+    ::
+    ++  styd                                            ::  stye from styl
+      |=  [a=styl b=stye]  ^+  b                        ::  with inheritance
+      :+  ?~  p.a  p.b
+          ?~  u.p.a  ~
+          (~(put in p.b) u.p.a)
+        (fall p.q.a p.q.b)
+      (fall q.q.a q.q.b)
+    ::
+    ++  lent-char
+      |=  a=stub  ^-  @
+      (roll (lnts-char a) add)
+    ::
+    ++  lnts-char                                       ::  stub text lengths
+      |=  a=stub  ^-  (list @)
+      %+  turn  a
+      |=  a=(pair stye (list @c))
+      (lent q.a)
+    ::
+    ++  brek                                            ::  index + incl-len of
+      |=  [a=@ b=(list @)]                              ::  stub pair w/ idx a
+      =|  [c=@ i=@]
+      |-  ^-  (unit (pair @ @))
+      ?~  b  ~
+      =.  c  (add c i.b)
+      ?:  (gte c a)
+        `[i c]
+      $(i +(i), b t.b)
+    ::
+    ++  pact                                            ::  condense stub
+      |=  a=stub
+      ^-  stub
+      ?~  a  ~
+      ?~  t.a  a
+      ?.  =(p.i.a p.i.t.a)  [i.a $(a t.a)]
+      =.  q.i.t.a  (weld q.i.a q.i.t.a)
+      $(a t.a)
+    ::
+    ++  slag                                            ::  slag stub
+      |=  [a=@ b=stub]
+      ^-  stub
+      ?:  =(0 a)  b
+      ?~  b  ~
+      =+  c=(lent q.i.b)
+      ?:  =(c a)  t.b
+      ?:  (gth c a)
+        [[p.i.b (^slag a q.i.b)] t.b]
+      $(a (sub a c), b t.b)
+    ::
+    ++  scag                                            ::  scag stub
+      |=  [a=@ b=stub]
+      ^-  stub
+      ?:  =(0 a)  ~
+      ?~  b  ~
+      =+  c=(lent q.i.b)
+      ?:  (gth c a)
+        [p.i.b (^scag a q.i.b)]~
+      :-  i.b
+      $(a (sub a c), b t.b)
+    ::
+    ++  swag                                            ::  swag stub
+      |=  [[a=@ b=@] c=stub]
+      (scag b (slag a c))
+    ::
+    ++  wail                                            ::  overlay stub
+      |=  [a=stub b=@ c=stub d=@c]
+      ^-  stub
+      ;:  weld
+        (scag b a)
+      ::
+        =+  e=(lent-char a)
+        ?:  (lte b e)  ~
+        [*stye (reap (sub b e) d)]~
+      ::
+        c
+        (slag (add b (lent-char c)) a)
+      ==
+    --  ::  klr
   --
 ::  |cloy: clay helpers
 ::
@@ -4928,7 +5024,7 @@
         =<  q.q  %-  need  %-  need
         (rof ~ %j `beam`[[our %sein %da now] /(scot %p who)])
       --
-  ::  middle core: for userspace use, with .^
+  ::  middle core: stateless queries for default numeric sponsorship
   ::
   =>  |%
       ::                                                ::  ++clan:title
@@ -4968,7 +5064,7 @@
           %pawn  (end 4 who)
         ==
       --
-  ::  surface core: stateless queries for default numeric sponsorship
+  ::  surface core: for userspace use, with .^
   ::
   |%
   ::                                                    ::  ++cite:title
@@ -5003,13 +5099,25 @@
         %j
         /(scot %p our)/sein/(scot %da now)/(scot %p who)
     ==
+  ::  +team was created with two meanings:
+  ::    A. her / her moon
+  ::    B. whoever should be able to control her ship
+  ::
+  ::  these two things aren't obviously equal anymore,
+  ::  and it's more important for +team to satisfy B than A,
+  ::  so now +team just means "her".
+  ::
+  ::  (ships can definitely be trusted to control themselves)
   ::                                                    ::  ++team:title
-  ++  team                                              ::  our / our moon
-    |=  [our=ship who=ship]
+  ++  team                                              ::  her
+    |=  [her=ship who=ship]
     ^-  ?
-    ?|  =(our who)
-        &(?=(%earl (clan who)) =(our (^sein who)))
-    ==
+    =(her who)
+  ::                                                    ::  ++moon:title
+  ++  moon                                              ::  her moon
+    |=  [her=ship who=ship]
+    ^-  ?
+    &(=(%earl (clan who)) =(her (^sein who)))
   --  ::title
 ::                                                      ::
 ::::                      ++milly                       ::  (2k) milliseconds
