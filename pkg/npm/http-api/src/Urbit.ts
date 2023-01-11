@@ -10,6 +10,7 @@ import {
   AuthenticationInterface,
   PokeInterface,
   SubscriptionRequestInterface,
+  SubscribeOnceOptionalParams,
   headers,
   SSEOptions,
   PokeHandlers,
@@ -377,11 +378,11 @@ export class Urbit {
    *
    * @param app Name of gall agent to subscribe to
    * @param path Path to subscribe to
-   * @param timeout Optional timeout before ending subscription
+   * @param options Optional parameters for the subscription
    *
    * @returns The first fact on the subcription
    */
-  async subscribeOnce<T = any>(app: string, path: string, timeout?: number) {
+  async subscribeOnce<T = any>(app: string, path: string, options?: SubscribeOnceOptionalParams) {
     return new Promise<T>(async (resolve, reject) => {
       let done = false;
       let id: number | null = null;
@@ -396,18 +397,25 @@ export class Urbit {
           this.unsubscribe(id);
         }
       };
-      const request = { app, path, event, err: reject, quit };
+      const request = {
+        app,
+        path,
+        ship: options.ship ? options.ship : this.ship,
+        event,
+        err: reject,
+        quit
+      };
 
       id = await this.subscribe(request);
 
-      if (timeout) {
+      if (options.timeout) {
         setTimeout(() => {
           if (!done) {
             done = true;
             reject('timeout');
             this.unsubscribe(id);
           }
-        }, timeout);
+        }, options.timeout);
       }
     });
   }
@@ -456,8 +464,9 @@ export class Urbit {
    * Subscribes to a path on an app on a ship.
    *
    *
-   * @param app The app to subsribe to
+   * @param app The app to subscribe to
    * @param path The path to which to subscribe
+   * @param ship Optional ship to subscribe to. If not set, uses the ship property of the `Urbit` object.
    * @param handlers Handlers to deal with various events of the subscription
    */
   async subscribe(params: SubscriptionRequestInterface): Promise<number> {
@@ -465,8 +474,9 @@ export class Urbit {
       err: () => {},
       event: () => {},
       quit: () => {},
-      ship: this.ship,
-      ...params,
+      app: params.app,
+      path: params.path,
+      ship: params.ship ? params.ship : this.ship,
     };
 
     const message: Message = {

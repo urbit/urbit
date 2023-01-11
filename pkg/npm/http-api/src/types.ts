@@ -170,6 +170,27 @@ export interface SubscriptionRequestInterface extends SubscriptionInterface {
    * `"/keys"`
    */
   path: Path;
+  /**
+   * The ship to subscribe to, without the leading tilde
+   * @example
+   * `"sampel-palnet"`
+   */  
+  ship?: string;
+}
+
+export interface SubscribeOnceOptionalParams {
+  /**
+   * The ship to subscribe to, without the leading tilde
+   * @example
+   * `"sampel-palnet"`
+   */  
+  ship?: string;
+  /**
+   * Optional timeout before ending subscription
+   * @example
+   * `1000`
+   */
+  timeout?: number;
 }
 
 export interface headers {
