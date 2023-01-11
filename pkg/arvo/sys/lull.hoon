@@ -2601,6 +2601,7 @@
         [%text p=tape]
         [%flog p=flog:dill]
         [%knob tag=term level=?(%hush %soft %loud)] :: helm does this
+        [%shot ses=@tas task=session-task:dill]          :: herm does this
     ==  ==
       $:  %e
     $%  [%connect =binding:eyre app=term]
