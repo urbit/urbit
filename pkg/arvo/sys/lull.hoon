@@ -2597,7 +2597,7 @@
         [%hail ~]
         [%view session=~]
         [%crud p=@tas q=(list tank)]
-        [%talk p=tank]
+        [%talk p=(list tank)]
         [%text p=tape]
         [%flog p=flog:dill]
         [%knob tag=term level=?(%hush %soft %loud)] :: helm does this
