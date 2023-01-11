@@ -210,7 +210,6 @@
     |=  rup=(each suss tang)
     ^-  [wire note-gall]
     :+  /sys/say  %d
-    ^-  task:dill
     ?-  -.rup
       %&  [%text "gall: {(t q)}ed %{(t p)}":[t=trip p.rup]]
       %|  [%talk leaf+"gall: failed" (flop p.rup)]
