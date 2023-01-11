@@ -175,7 +175,7 @@ export interface SubscriptionRequestInterface extends SubscriptionInterface {
    * @example
    * `"sampel-palnet"`
    */  
-  ship?: string;
+  ship?: PatpNoSig;
 }
 
 export interface SubscribeOnceOptionalParams {
@@ -184,7 +184,7 @@ export interface SubscribeOnceOptionalParams {
    * @example
    * `"sampel-palnet"`
    */  
-  ship?: string;
+  ship?: PatpNoSig;
   /**
    * Optional timeout before ending subscription
    * @example

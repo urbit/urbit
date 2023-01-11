@@ -474,9 +474,8 @@ export class Urbit {
       err: () => {},
       event: () => {},
       quit: () => {},
-      app: params.app,
-      path: params.path,
-      ship: params.ship ? params.ship : this.ship,
+      ship: this.ship,
+      ...params,
     };
 
     const message: Message = {
