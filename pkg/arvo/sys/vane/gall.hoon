@@ -2055,7 +2055,6 @@
     ?:  ?=(%| -.agent.yoke)
       [%| p.agent.yoke]
     ?-  -.+.agent.yoke
-      [%zuse %415]  [%| on-save:p.agent.yoke]
       [%zuse %416]  [%| on-save:p.agent.yoke]
     ==
   ==

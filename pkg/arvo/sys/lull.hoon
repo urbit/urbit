@@ -1814,88 +1814,11 @@
   +$  verb  ?(%odd)
   ::
   ::  +agent: app core
-  +$  agent-wefts  ?([%zuse %416] [%zuse %415])
+  +$  agent-wefts  ?([%zuse %416])
   ::
   ++  agent-any  $%  [[%zuse %416] agent-416]
-                     [[%zuse %415] agent-415]
                  ==
   ++  agent  agent-416
-  ::
-  ++  agent-415
-    =<  form
-    |%
-    +$  step  (quip card form)
-    +$  card  (wind note gift)
-    +$  note
-      $%  [%agent [=ship name=term] =task]
-          [%arvo note-gall]
-          [%pyre =tang]
-      ==
-    +$  task
-      $%  [%watch =path]
-          [%watch-as =mark =path]
-          [%leave ~]
-          [%poke =cage]
-          [%poke-as =mark =cage]
-      ==
-    +$  gift
-      $%  [%fact paths=(list path) =cage]
-          [%kick paths=(list path) ship=(unit ship)]
-          [%watch-ack p=(unit tang)]
-          [%poke-ack p=(unit tang)]
-      ==
-    +$  sign
-      $%  [%poke-ack p=(unit tang)]
-          [%watch-ack p=(unit tang)]
-          [%fact =cage]
-          [%kick ~]
-      ==
-    ++  form
-      $_  ^|
-      |_  bowl
-      ++  on-init
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-save
-        *vase
-      ::
-      ++  on-load
-        |~  old-state=vase
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-poke
-        |~  [mark vase]
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-watch
-        |~  path
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-leave
-        |~  path
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-peek
-        |~  path
-        *(unit (unit cage))
-      ::
-      ++  on-agent
-        |~  [wire sign]
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-arvo
-        |~  [wire sign-arvo]
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-fail
-        |~  [term tang]
-        *(quip card _^|(..on-init))
-      ::
-      ::  ++  on-rift
-      ::    |~  ship
-      ::    *(quip card _^|(..on-init))
-      --
-    --
   ::
   ++  agent-416
     =<  form

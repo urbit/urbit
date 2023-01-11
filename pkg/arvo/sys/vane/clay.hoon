@@ -4807,7 +4807,6 @@
       =/  =agent-any:gall
         ~|  [%building-app bill.i.sat]
         ?+  wef  (mean 'clay: kelvin {<wef>} is Gall-incompatible' ~)
-          [%zuse %415]  [[%zuse %415] !<(agent-415:gall vase)]
           [%zuse %416]  [[%zuse %416] !<(agent-416:gall vase)]
         ==
       =^  lid  nub.f  $(bill.i.sat t.bill.i.sat)
