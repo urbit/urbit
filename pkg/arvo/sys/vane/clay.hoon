@@ -2359,7 +2359,7 @@
     :: if the newest weft for this aeon is older than
     :: the oldest target weft, do not continue
     ::
-    ?.  (gth num.aeon-newest num.oldest)
+    ?.  (gte num.aeon-newest num.oldest)
       (mean leaf+"clay: gave up zuse search for {<(waft-to-wefts waf)>}" ~)    
     ?~  (~(int in wefts) (silt aeon-welt))
       $(aeon (dec aeon))
@@ -2462,7 +2462,11 @@
     ^+  ..park
     ?^  err
       ((slog leaf+"clay: desk {<syd>} failed to unsuspend" u.err) ..park)
-    =.  liv.dom  %live
+    =.  liv.dom
+      ?:  ?=(agent-wefts:gall wef.dom)
+        %live
+      %-  (slog leaf+"clay: cannot revive {<syd>} at kelvin {<wef.dom>}" ~)
+      liv.dom
     goad
   ::
   ::  We always say we're merging from 'ali' to 'bob'.  The basic steps,
@@ -3346,12 +3350,10 @@
   ++  set-zest                                          ::  [goad] <
     |=  liv=zest
     =?  liv  =(%base syd)  %live
-    :: no-op if incompatible with Gall
-    ::
     ?:  ?&  =(%live liv)
             !?=(agent-wefts:gall wef.dom)
         ==
-      ((slog leaf+"clay: failed to set {<syd>} live" ~) ..park)
+      (mean leaf+"clay: cannot revive {<syd>} at kelvin {<wef.dom>}" ~)
     ..park(liv.dom liv)
   ::
   ++  rise                                              ::  [goad] <
@@ -4699,8 +4701,7 @@
         $(desks t.desks)
       =/  wef  wef.dom.den
       ?.  ?=(agent-wefts:gall wef)
-        %-  (trace 2 |.("{<i.desks>}: Gall-incompatible kelvin"))
-        $(desks t.desks)
+        (mean leaf+"clay: {<wef>} for desk {<i.desks>} is Gall-incompatible" ~)
       =^  res  den  (aver:den ~ %x da+now /desk/bill)
       =.  ruf  +:abet:den
       ?.  ?=([~ ~ *] res)
@@ -4803,7 +4804,7 @@
       =^  =vase  nub.f  (build-file:f /app/[i.bill.i.sat]/hoon)
       =/  =agent-any:gall
         ~|  [%building-app bill.i.sat]
-        ?+  wef  !!
+        ?+  wef  (mean 'clay: kelvin {<wef>} is Gall-incompatible' ~)
           [%zuse %415]  [[%zuse %415] !<(agent-415:gall vase)]
           [%zuse %416]  [[%zuse %416] !<(agent-416:gall vase)]
         ==
