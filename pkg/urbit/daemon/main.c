@@ -572,7 +572,7 @@ _setup_cert_store()
 {
   BIO* cbio = BIO_new_mem_buf(include_ca_bundle_crt, include_ca_bundle_crt_len);
   if ( !cbio || !(_cert_store = PEM_X509_INFO_read_bio(cbio, NULL, NULL, NULL)) ) {
-    u3l_log("boot: failed to decode embedded CA certificates\r\n");
+    u3l_log("boot: failed to decode embedded CA certificates");
     exit(1);
   }
 
@@ -1267,7 +1267,7 @@ _cw_eval(c3_i argc, c3_c* argv[])
     }
     u3s_cue_xeno_done(sil_u);
     if ( c3n == u3v_boot_lite(pil) ) {
-      u3l_log("lite: boot failed\r\n");
+      u3l_log("lite: boot failed");
       exit(1);
     }
   }
@@ -1858,7 +1858,7 @@ _cw_vere(c3_i argc, c3_c* argv[])
   //  initialize curl
   //
   if ( 0 != curl_global_init(CURL_GLOBAL_DEFAULT) ) {
-    u3l_log("boot: curl initialization failed\r\n");
+    u3l_log("boot: curl initialization failed");
     exit(1);
   }
 
@@ -1888,11 +1888,11 @@ _cw_vere(c3_i argc, c3_c* argv[])
 
 
   if ( u3_king_vere(pac_c, ver_c, arc_c, dir_c, 0) ) {
-    u3l_log("vere: download failed\r\n");
+    u3l_log("vere: download failed");
     exit(1);
   }
 
-  u3l_log("vere: download succeeded\r\n");
+  u3l_log("vere: download succeeded");
 }
 
 /* _cw_vile(): generatoe/print keyfile
@@ -2138,7 +2138,7 @@ main(c3_i   argc,
     sigemptyset(&set);
     sigaddset(&set, SIGPROF);
     if ( 0 != pthread_sigmask(SIG_BLOCK, &set, NULL) ) {
-      u3l_log("boot: thread mask SIGPROF: %s\r\n", strerror(errno));
+      u3l_log("boot: thread mask SIGPROF: %s", strerror(errno));
       exit(1);
     }
   }
@@ -2230,7 +2230,7 @@ main(c3_i   argc,
     {
       SECURITY_ATTRIBUTES sa = {sizeof(sa), NULL, TRUE};
       if ( NULL == (u3_Host.cev_u = CreateEvent(&sa, FALSE, FALSE, NULL)) ) {
-        u3l_log("boot: failed to create Ctrl-C event: %d\r\n", GetLastError());
+        u3l_log("boot: failed to create Ctrl-C event: %d", GetLastError());
         exit(1);
       }
     }
@@ -2251,7 +2251,7 @@ main(c3_i   argc,
     //  initialize curl
     //
     if ( 0 != curl_global_init(CURL_GLOBAL_DEFAULT) ) {
-      u3l_log("boot: curl initialization failed\r\n");
+      u3l_log("boot: curl initialization failed");
       exit(1);
     }
 

@@ -44,7 +44,7 @@ _n_hint(u3_noun zep,
           low_i = 1;
           if ( 0 == (u3R->pro.nox_d % 65536ULL) ) {
             if ( c3__spot == zep ) {
-              u3l_log("spot %d/%d : %d/%d\r\n",
+              u3l_log("spot %d/%d : %d/%d",
                       u3h(u3h(u3t(hod))),
                       u3t(u3h(u3t(hod))),
                       u3h(u3t(u3t(hod))),

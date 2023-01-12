@@ -242,7 +242,7 @@ u3_disk_plan(u3_disk* log_u, u3_fact* tac_u)
 {
   c3_assert( (1ULL + log_u->sen_d) == tac_u->eve_d );
   log_u->sen_d++;
-  
+
   if ( !log_u->put_u.ent_u ) {
     c3_assert( !log_u->put_u.ext_u );
     log_u->put_u.ent_u = log_u->put_u.ext_u = tac_u;
@@ -610,7 +610,7 @@ u3_disk_acquire(c3_c* pax_c)
 
   if ( NULL != (loq_u = c3_fopen(paf_c, "r")) ) {
     if ( 1 != fscanf(loq_u, "%" SCNu32, &pid_w) ) {
-      u3l_log("lockfile %s is corrupt!\n", paf_c);
+      u3l_log("lockfile %s is corrupt!", paf_c);
       kill(getpid(), SIGTERM);
       sleep(1); c3_assert(0);
     }
@@ -620,13 +620,13 @@ u3_disk_acquire(c3_c* pax_c)
       int ret = kill(pid_w, SIGTERM);
 
       if ( -1 == ret && errno == EPERM ) {
-        u3l_log("disk: permission denied when trying to kill process %d!\n", pid_w);
+        u3l_log("disk: permission denied when trying to kill process %d!", pid_w);
         kill(getpid(), SIGTERM);
         sleep(1); c3_assert(0);
       }
 
       if ( -1 != ret ) {
-        u3l_log("disk: stopping process %d, live in %s...\n",
+        u3l_log("disk: stopping process %d, live in %s...",
                 pid_w, pax_c);
 
         for ( i_w = 0; i_w < 16; i_w++ ) {
@@ -644,10 +644,10 @@ u3_disk_acquire(c3_c* pax_c)
           }
         }
         if ( 16 == i_w ) {
-          u3l_log("disk: process %d seems unkillable!\n", pid_w);
+          u3l_log("disk: process %d seems unkillable!", pid_w);
           c3_assert(0);
         }
-        u3l_log("disk: stopped old process %u\n", pid_w);
+        u3l_log("disk: stopped old process %u", pid_w);
       }
     }
     fclose(loq_u);
@@ -655,7 +655,7 @@ u3_disk_acquire(c3_c* pax_c)
   }
 
   if ( NULL == (loq_u = c3_fopen(paf_c, "w")) ) {
-    u3l_log("disk: unable to open %s\n", paf_c);
+    u3l_log("disk: unable to open %s", paf_c);
     c3_assert(0);
   }
 
@@ -703,7 +703,7 @@ u3_disk_exit(u3_disk* log_u)
   if (  (c3y == log_u->ted_o)
      && (0 > uv_cancel(&log_u->req_u)) )
   {
-    // u3l_log("disk: unable to cleanup\r\n");
+    // u3l_log("disk: unable to cleanup");
     return;
   }
 
@@ -781,7 +781,7 @@ u3_disk_info(u3_disk* log_u)
 void
 u3_disk_slog(u3_disk* log_u)
 {
-  u3l_log("  disk: live=%s, event=%" PRIu64 "\n",
+  u3l_log("  disk: live=%s, event=%" PRIu64,
           ( c3y == log_u->liv_o ) ? "&" : "|",
           log_u->dun_d);
 
@@ -789,7 +789,7 @@ u3_disk_slog(u3_disk* log_u)
     u3_read* red_u = log_u->red_u;
 
     while ( red_u ) {
-      u3l_log("    read: %" PRIu64 "-%" PRIu64 "\n",
+      u3l_log("    read: %" PRIu64 "-%" PRIu64,
               red_u->eve_d,
               (red_u->eve_d + red_u->len_d) - 1);
       red_u = red_u->nex_u;
@@ -798,12 +798,12 @@ u3_disk_slog(u3_disk* log_u)
 
   if ( log_u->put_u.ext_u ) {
     if ( log_u->put_u.ext_u != log_u->put_u.ent_u ) {
-      u3l_log("    save: %" PRIu64 "-%" PRIu64 "\n",
+      u3l_log("    save: %" PRIu64 "-%" PRIu64,
               log_u->put_u.ext_u->eve_d,
               log_u->put_u.ent_u->eve_d);
     }
     else {
-      u3l_log("    save: %" PRIu64 "\n", log_u->put_u.ext_u->eve_d);
+      u3l_log("    save: %" PRIu64, log_u->put_u.ext_u->eve_d);
     }
   }
 }
