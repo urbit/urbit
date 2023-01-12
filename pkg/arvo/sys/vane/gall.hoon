@@ -41,7 +41,9 @@
 ::
 ::  $move: Arvo-level move
 ::
-+$  move  [=duct move=(wind note-gall gift-arvo)]
++$  move  [=duct move=(wind note-arvo gift-arvo)]
+::
++$  userspace-move  [=duct move=(wind note-gall gift-arvo)]
 ::  $state-11: overall gall state, versioned
 ::
 +$  state-12  [%12 state]
@@ -208,16 +210,16 @@
   ++  mo-give  |=(g=gift mo-core(moves [[hen give+g] moves]))
   ++  mo-talk
     |=  rup=(each suss tang)
-    ^-  [wire note-gall]
+    ^-  [wire note-arvo]
     :+  /sys/say  %d
     ?-  -.rup
       %&  [%text "gall: {(t q)}ed %{(t p)}":[t=trip p.rup]]
       %|  [%talk leaf+"gall: failed" (flop p.rup)]
     ==
-  ++  mo-pass  |=(p=[wire note-gall] mo-core(moves [[hen pass+p] moves]))
-  ++  mo-slip  |=(p=note-gall mo-core(moves [[hen slip+p] moves]))
+  ++  mo-pass  |=(p=[wire note-arvo] mo-core(moves [[hen pass+p] moves]))
+  ++  mo-slip  |=(p=note-arvo mo-core(moves [[hen slip+p] moves]))
   ++  mo-past
-    |=  =(list [wire note-gall])
+    |=  =(list [wire note-arvo])
     ?~  list
       mo-core
     =.  mo-core  (mo-pass i.list)
@@ -343,7 +345,7 @@
     =/  wire
       /sys/way/(scot %p ship)/[foreign-agent]
     ::
-    =/  =note-gall
+    =/  =note-arvo
       =/  =path  /ge/[foreign-agent]
       [%a %plea ship %g path ames-request-all]
     ::
@@ -352,7 +354,7 @@
         (~(gut by outstanding.state) [wire hen] *(qeu remote-request))
       %+  ~(put by outstanding.state)  [wire hen]
       (~(gas to stand) ?.(?=(%leave -.deal) ~[-.deal] ~[%leave]))
-    =.  mo-core  (mo-pass wire note-gall)
+    =.  mo-core  (mo-pass wire note-arvo)
     ?.  ?=(%leave -.deal)
       mo-core
     (mo-pass wire [%a [%cork ship]])
@@ -373,9 +375,9 @@
     =.  moves  [[system-duct.state %pass /sys/lag %a %heed ship] moves]
     ::  ask jael to track .ship's breaches
     ::
-    =/  =note-gall  [%j %public-keys (silt ship ~)]
+    =/  =note-arvo  [%j %public-keys (silt ship ~)]
     =.  moves
-      [[system-duct.state %pass /sys/era note-gall] moves]
+      [[system-duct.state %pass /sys/era note-arvo] moves]
     mo-core
   ::  +mo-untrack-ship: cancel subscriptions to ames and jael for .ship
   ::
@@ -392,9 +394,9 @@
     ::
     =.  moves  [[system-duct.state %pass /sys/lag %a %jilt ship] moves]
     ::
-    =/  =note-gall  [%j %nuke (silt ship ~)]
+    =/  =note-arvo  [%j %nuke (silt ship ~)]
     =.  moves
-      [[system-duct.state %pass /sys/era note-gall] moves]
+      [[system-duct.state %pass /sys/era note-arvo] moves]
     mo-core
   ::  +mo-breach: ship breached, so forget about them
   ::
@@ -869,7 +871,7 @@
     |_  $:  agent-name=term
             agent-routes=routes
             agent-duct=duct
-            agent-moves=(list move)
+            agent-moves=(list userspace-move)
             agent-config=(list (each suss tang))
             =yoke
         ==
@@ -920,6 +922,7 @@
       =/  moves
         =/  talker  |=(report=(each suss tang) [hen %pass (mo-talk report)])
         =/  from-suss  (turn agent-config talker)
+        ^-  (list move)
         :(weld agent-moves from-suss moves)
       ::
       %_  mo-core
@@ -964,7 +967,7 @@
     ++  ap-from-internal
       ~/  %ap-from-internal
       |=  card=(wind neet gift:agent)
-      ^-  (list move)
+      ^-  (list userspace-move)
       ::
       ?-    -.card
           %slip  !!
@@ -987,7 +990,7 @@
         %-  zing
         %+  turn  ducts
         |=  =duct
-        ^-  (list move)
+        ^-  (list userspace-move)
         ~?  &(=(duct system-duct.state) !=(agent-name %hood))
           [%agent-giving-on-system-duct agent-name -.gift]
         =/  =mark  (~(gut by marks.yoke) duct p.cage)
@@ -1184,7 +1187,7 @@
     ::  +ap-move: send move
     ::
     ++  ap-move
-      |=  =(list move)
+      |=  =(list userspace-move)
       ap-core(agent-moves (weld (flop list) agent-moves))
     ::  +ap-give: return result.
     ::
@@ -1481,7 +1484,7 @@
     ::
     ++  ap-kill-up-slip
       |=  =duct
-      ^-  (list move)
+      ^-  (list userspace-move)
       ::
       :~  [duct %slip %g %deal [our our] agent-name %leave ~]
           [duct %give %unto %kick ~]
@@ -1603,7 +1606,7 @@
         ?:  ?=(%& -.result)
           ~
         `p.result
-      =/  ack-moves=(list move)
+      =/  ack-moves=(list userspace-move)
         %-  zing
         %-  turn  :_  ap-from-internal
         ^-  (list card:agent)
@@ -1621,7 +1624,7 @@
     ++  ap-handle-result
       ~/  %ap-handle-result
       |=  result=(each step:agent tang)
-      ^-  [(list move) _ap-core]
+      ^-  [(list userspace-move) _ap-core]
       ?:  ?=(%| -.result)
         `ap-core
       ::
@@ -1633,7 +1636,7 @@
     ::
     ++  ap-handle-kicks
       ~/  %ap-handle-kicks
-      |=  moves=(list move)
+      |=  moves=(list userspace-move)
       ^-  bitt
       =/  quits=(list duct)
         %+  murn  moves
@@ -1650,13 +1653,13 @@
     ::
     ++  ap-handle-peers
       ~/  %ap-handle-peers
-      |=  moves=(list move)
-      ^-  [(list move) _ap-core]
-      =|  new-moves=(list move)
-      |-  ^-  [(list move) _ap-core]
+      |=  moves=(list userspace-move)
+      ^-  [(list userspace-move) _ap-core]
+      =|  new-moves=(list userspace-move)
+      |-  ^-  [(list userspace-move) _ap-core]
       ?~  moves
         [(flop new-moves) ap-core]
-      =/  =move  i.moves
+      =/  move=userspace-move  i.moves
       ?:  ?=([* %pass * %g %deal * * %leave *] move)
         =/  =wire  p.move.move
         ?>  ?=([%use @ @ %out @ @ *] wire)
