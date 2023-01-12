@@ -2480,88 +2480,83 @@
   ==
 +$  note-gall                                           ::  userspace note
   $%  $:  %a
-    $%  [%sift ships=(list ship)]
-        [%spew veb=(list verb:ames)]  :: set verbosity (we want this?)
-        [%cork =ship]                 :: never userspace
-        [%heed =ship]                 :: never userspace
-        [%plea =ship =plea:ames]      :: never userspace
-        [%jilt =ship]                 :: never userspace
-        [%stir arg=@t]                :: ?? helm does this
-        [%prod ships=(list ship)]     :: ?? helm does this
+    $%  $>(%sift task:ames)
+        $>(%spew task:ames) :: set verbosity (we want this?)
+        $>(%cork task:ames) :: gall does this
+        $>(%stir task:ames) :: ?? helm does this
+        $>(%prod task:ames) :: ?? helm does this
     ==  ==
       $:  %b
-    $%  [%rest p=@da]
-        [%wait p=@da]
-        [%huck syn=sign-arvo] :: never userspace
+    $%  $>(%rest task:behn)
+        $>(%wait task:behn)
+        $>(%huck task:behn) :: gall does htis
     ==  ==
       $:  %c
-    $%  [%dirk pot=term]
-        [%mont pot=term bem=beam]
-        [%ogre pot=$@(term beam)]
-        [%cred nom=@ta cew=crew:clay]
-        [%crew ~]
-        [%perm des=desk pax=path rit=rite:clay]
-        [%info des=desk dit=nori:clay]
-        [%warp wer=ship rif=riff:clay]
-        [%rein des=desk ren=rein:clay]
-        [%zest des=desk liv=zest:clay]
-        [%tire p=(unit ~)]
-        [%merg des=desk her=@p dem=desk cas=case:clay how=germ:clay] :: kiln does this
-        [%fuse des=desk bas=beak con=(list [beak germ:clay])]        :: kiln does this
-        [%drop des=desk]                                             :: kiln does this
-        [%wick ~]                                                    :: kiln does this
+    $%  $>(%dirk task:clay)
+        $>(%mont task:clay)
+        $>(%ogre task:clay)
+        $>(%cred task:clay)
+        $>(%crew task:clay)
+        $>(%perm task:clay)
+        $>(%info task:clay)
+        $>(%warp task:clay)
+        $>(%rein task:clay)
+        $>(%zest task:clay)
+        $>(%tire task:clay)
+        $>(%merg task:clay) :: kiln does this
+        $>(%fuse task:clay) :: kiln does this
+        $>(%drop task:clay) :: kiln does this
+        $>(%wick task:clay) :: kiln does this
     ==  ==
-
       $:  %d
-    $%  [%belt p=belt:dill]
-        [%blew p=blew:dill]
-        [%flee session=~]
-        [%flow p=@tas q=(list gill:gall)]
-        [%hail ~]
-        [%view session=~]
-        [%crud p=@tas q=(list tank)]
-        [%talk p=(list tank)]
-        [%text p=tape]
-        [%flog p=flog:dill]
-        [%knob tag=term level=?(%hush %soft %loud)] :: helm does this
-        [%shot ses=@tas task=session-task:dill]          :: herm does this
+    $%  $>(%belt task:dill)
+        $>(%blew task:dill)
+        $>(%flee task:dill)
+        $>(%hail task:dill)
+        $>(%view task:dill)
+        $>(%crud task:dill)
+        $>(%talk task:dill)
+        $>(%text task:dill)
+        $>(%flog task:dill)
+        $>(%knob task:dill) :: helm does this
+        $>(%shot task:dill) :: herm does this
     ==  ==
       $:  %e
-    $%  [%connect =binding:eyre app=term]
-        [%disconnect =binding:eyre]
-        [%rule =http-rule:eyre]
-        [%approve-origin =origin:eyre]
-        [%reject-origin =origin:eyre]
-        [%serve =binding:eyre =generator:eyre] :: base desk only
+    $%  $>(%connect task:eyre)
+        $>(%disconnect task:eyre)
+        $>(%rule task:eyre)
+        $>(%approve-origin task:eyre)
+        $>(%reject-origin task:eyre)
+        $>(%serve task:eyre) :: base desk only
     ==  ==
       $:  %g
-    $%  [%nuke =dude:gall]
-        [%deal p=sock q=term r=deal:gall]              :: gall vane does this
-        [%spew veb=(list verb:gall)]                   :: helm does this
-        [%sift dudes=(list dude:gall)]                 :: helm does this
-        [%doff dude=(unit dude:gall) ship=(unit ship)] :: helm does this
-        [%sear =ship]                                  :: kiln does this
+    $%  $>(%nuke task:gall)
+        $>(%deal task:gall)
+        $>(%spew task:gall) :: helm does this
+        $>(%sift task:gall) :: helm does this
+        $>(%doff task:gall) :: helm does this
+        $>(%sear task:gall) :: kiln does this
     ==  ==
       $:  %i
-    $%  [%request =request:http =outbound-config:iris]
-        [%cancel-request ~]
+    $%  $>(%request task:iris)
+        $>(%cancel-request task:iris)
     ==  ==
       $:  %j
-    $%  [%moon =ship =udiff:point:jael]
-        [%private-keys ~]
-        [%resend ~]
-        [%rekey =life =ring]
-        [%step ~]
-        [%meet =ship =life =pass]
-        [%ruin ships=(set ship)]
-        [%nuke whos=(set ship)]
-        [%public-keys ships=(set ship)]
-        [%turf ~]
-        [%listen whos=(set ship) =source:jael] :: base desk only
+    $%  $>(%moon task:jael)
+        $>(%private-keys task:jael)
+        $>(%resend task:jael)
+        $>(%rekey task:jael)
+        $>(%step task:jael)
+        $>(%meet task:jael)
+        $>(%ruin task:jael)
+        $>(%nuke task:jael)
+        $>(%public-keys task:jael)
+        $>(%turf task:jael)
+        $>(%listen task:jael) :: base desk only
     ==  ==
       $:  %k
-    $%  [%fard p=(fyrd:khan cage)]
-        [%lard =bear:khan =shed:khan] :: kiln does this
+    $%  $>(%fard task:khan)
+        $>(%lard task:khan) :: kiln does this
     ==  ==
   ==
 ::  full vane names are required in vanes
