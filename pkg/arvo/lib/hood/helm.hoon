@@ -159,14 +159,14 @@
   (emit %pass /pack %arvo %d %flog %pack ~)
 ::
 ++  poke-pans
-  |=  pans=(list note-gall)
+  |=  pans=(list userspace-note:agent:gall)
   ?~  pans  abet
   =.  this  (emit %pass /helm/pans %arvo i.pans)
   $(pans t.pans)
 ::
 ++  poke-pass
-  |=  =note-gall  =<  abet
-  (emit %pass /helm/pass %arvo note-gall)
+  |=  =userspace-note:agent:gall  =<  abet
+  (emit %pass /helm/pass %arvo userspace-note)
 ::
 ++  take-wake-automass
   |=  [way=wire error=(unit tang)]
