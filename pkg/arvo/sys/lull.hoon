@@ -1991,7 +1991,7 @@
         *(quip card _^|(..on-init))
       ::
       ++  on-arvo
-        |~  [wire sign-arvo]
+        |~  [wire userspace-gift]
         *(quip card _^|(..on-init))
       ::
       ++  on-fail
