@@ -2,11 +2,11 @@
 ::::    /sys/hoon                                       ::
   ::                                                    ::
 =<  ride
-=>  %140  =>
+=>  %139  =>
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
-~%  %k.140  ~  ~                                        ::
+~%  %k.139  ~  ~                                        ::
 |%
 ++  hoon-version  +
 --  =>
@@ -11532,7 +11532,7 @@
     ::  +apse: postfix comment.
     ::
     ::    a one line comment at the end of a line (typically starting at column
-    ::    56) that attaches to the expression starting at the beginning of the
+    ::    57) that attaches to the expression starting at the beginning of the
     ::    current line. does not use a $link.
     ++  apse
       %+  knee  *whiz  |.  ~+
