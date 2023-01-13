@@ -43,7 +43,7 @@
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
 ::
-+$  userspace-move  [=duct move=(wind userspace-note:agent gift)]
++$  userspace-move  [=duct move=(wind userspace-note:agent userspace-gift:agent)]
 ::  $state-11: overall gall state, versioned
 ::
 +$  state-12  [%12 state]

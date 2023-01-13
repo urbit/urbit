@@ -1830,6 +1830,32 @@
           [%arvo userspace-note]
           [%pyre =tang]
       ==
+    +$  userspace-gift
+      $%  $>(%wake gift:behn)
+          $>(%heck gift:behn)
+          ::
+          $>(%wris gift:clay)
+          $>(%writ gift:clay)
+          $>(%tire gift:clay)
+          $>(%hill gift:clay)
+          $>(%mere gift:clay) :: kiln
+          $>(%cruz gift:clay)
+          $>(%croz gift:clay)
+          ::
+          $>(%blit gift:dill)
+          ::
+          $>(%bound gift:eyre)
+          ::
+          $>(%unto gift:gall)
+          ::
+          $>(%http-response gift:iris)
+          ::
+          $>(%private-keys gift:jael)
+          $>(%public-keys gift:jael)
+          $>(%turf gift:jael)
+          ::
+          $>(%arow gift:khan)
+      ==
     +$  userspace-note
       $%  $:  %a
         $%  $>(%sift task:ames)
@@ -1849,6 +1875,7 @@
             $>(%ogre task:clay)
             $>(%cred task:clay)
             $>(%crew task:clay)
+            $>(%crow task:clay) :: my add
             $>(%perm task:clay)
             $>(%info task:clay)
             $>(%warp task:clay)
@@ -1899,7 +1926,7 @@
             $>(%resend task:jael)
             $>(%rekey task:jael)
             $>(%step task:jael)
-            $>(%meet task:jael)
+            $>(%meet task:jael) :: docs say this task is deprecated and does not perform any actions
             $>(%ruin task:jael)
             $>(%nuke task:jael)
             $>(%public-keys task:jael)
