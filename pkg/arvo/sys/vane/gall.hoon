@@ -43,7 +43,7 @@
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
 ::
-+$  userspace-move  [=duct move=(wind note-gall gift-arvo)]
++$  userspace-move  [=duct move=(wind userspace-note:agent gift)]
 ::  $state-11: overall gall state, versioned
 ::
 +$  state-12  [%12 state]
@@ -961,7 +961,7 @@
     ::
     +$  neet
       $%  neat
-          [%huck [=ship name=term] =note-gall]
+          [%huck [=ship name=term] =userspace-note:agent]
       ==
     ::
     ++  ap-from-internal
@@ -1038,13 +1038,13 @@
             %arvo   [(scot %p attributing.agent-routes) wire]
           ==
         ::
-        =/  =note-gall
+        =/  =userspace-note:agent
           ?-  -.neet
-            %arvo   note-gall.neet
-            %huck   note-gall.neet
+            %arvo   userspace-note.neet
+            %huck   userspace-note.neet
             %agent  [%g %deal [our ship.neet] [name deal]:neet]
           ==
-        [duct %pass wire note-gall]~
+        [duct %pass wire userspace-note]~
       ==
     ::  +ap-breach: ship breached, so forget about them
     ::

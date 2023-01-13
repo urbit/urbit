@@ -1797,7 +1797,7 @@
   +$  suss  (trel dude @tas @da)                        ::  config report
   +$  well  (pair desk term)                            ::
   +$  neat
-    $%  [%arvo =note-gall]
+    $%  [%arvo =userspace-note:agent]
         [%agent [=ship name=term] =deal]
         [%pyre =tang]
     ==
@@ -1827,8 +1827,89 @@
     +$  card  (wind note gift)
     +$  note
       $%  [%agent [=ship name=term] =task]
-          [%arvo note-gall]
+          [%arvo userspace-note]
           [%pyre =tang]
+      ==
+    +$  userspace-note
+      $%  $:  %a
+        $%  $>(%sift task:ames)
+            $>(%spew task:ames) :: set verbosity (we want this?)
+            $>(%cork task:ames) :: gall does this
+            $>(%stir task:ames) :: ?? helm does this
+            $>(%prod task:ames) :: ?? helm does this
+        ==  ==
+          $:  %b
+        $%  $>(%rest task:behn)
+            $>(%wait task:behn)
+            $>(%huck task:behn) :: gall does htis
+        ==  ==
+          $:  %c
+        $%  $>(%dirk task:clay)
+            $>(%mont task:clay)
+            $>(%ogre task:clay)
+            $>(%cred task:clay)
+            $>(%crew task:clay)
+            $>(%perm task:clay)
+            $>(%info task:clay)
+            $>(%warp task:clay)
+            $>(%rein task:clay)
+            $>(%zest task:clay)
+            $>(%tire task:clay)
+            $>(%merg task:clay) :: kiln does this
+            $>(%fuse task:clay) :: kiln does this
+            $>(%drop task:clay) :: kiln does this
+            $>(%wick task:clay) :: kiln does this
+        ==  ==
+          $:  %d
+        $%  $>(%belt task:dill)
+            $>(%blew task:dill)
+            $>(%flee task:dill)
+            $>(%hail task:dill)
+            $>(%view task:dill)
+            $>(%crud task:dill)
+            $>(%talk task:dill)
+            $>(%text task:dill)
+            $>(%flog task:dill)
+            $>(%knob task:dill) :: helm does this
+            $>(%shot task:dill) :: herm does this
+        ==  ==
+          $:  %e
+        $%  $>(%connect task:eyre)
+            $>(%disconnect task:eyre)
+            $>(%rule task:eyre)
+            $>(%approve-origin task:eyre)
+            $>(%reject-origin task:eyre)
+            $>(%serve task:eyre) :: base desk only
+        ==  ==
+          $:  %g
+        $%  $>(%nuke task:gall)
+            $>(%deal task:gall)
+            $>(%spew task:gall) :: helm does this
+            $>(%sift task:gall) :: helm does this
+            $>(%doff task:gall) :: helm does this
+            $>(%sear task:gall) :: kiln does this
+        ==  ==
+          $:  %i
+        $%  $>(%request task:iris)
+            $>(%cancel-request task:iris)
+        ==  ==
+          $:  %j
+        $%  $>(%moon task:jael)
+            $>(%private-keys task:jael)
+            $>(%resend task:jael)
+            $>(%rekey task:jael)
+            $>(%step task:jael)
+            $>(%meet task:jael)
+            $>(%ruin task:jael)
+            $>(%nuke task:jael)
+            $>(%public-keys task:jael)
+            $>(%turf task:jael)
+            $>(%listen task:jael) :: base desk only
+        ==  ==
+          $:  %k
+        $%  $>(%fard task:khan)
+            $>(%lard task:khan) :: kiln does this
+        ==  ==
       ==
     +$  task
       $%  [%watch =path]
@@ -2478,87 +2559,6 @@
       [%$ %whiz ~]
       [@tas %meta vase]
   ==
-+$  note-gall                                           ::  userspace note
-  $%  $:  %a
-    $%  $>(%sift task:ames)
-        $>(%spew task:ames) :: set verbosity (we want this?)
-        $>(%cork task:ames) :: gall does this
-        $>(%stir task:ames) :: ?? helm does this
-        $>(%prod task:ames) :: ?? helm does this
-    ==  ==
-      $:  %b
-    $%  $>(%rest task:behn)
-        $>(%wait task:behn)
-        $>(%huck task:behn) :: gall does htis
-    ==  ==
-      $:  %c
-    $%  $>(%dirk task:clay)
-        $>(%mont task:clay)
-        $>(%ogre task:clay)
-        $>(%cred task:clay)
-        $>(%crew task:clay)
-        $>(%perm task:clay)
-        $>(%info task:clay)
-        $>(%warp task:clay)
-        $>(%rein task:clay)
-        $>(%zest task:clay)
-        $>(%tire task:clay)
-        $>(%merg task:clay) :: kiln does this
-        $>(%fuse task:clay) :: kiln does this
-        $>(%drop task:clay) :: kiln does this
-        $>(%wick task:clay) :: kiln does this
-    ==  ==
-      $:  %d
-    $%  $>(%belt task:dill)
-        $>(%blew task:dill)
-        $>(%flee task:dill)
-        $>(%hail task:dill)
-        $>(%view task:dill)
-        $>(%crud task:dill)
-        $>(%talk task:dill)
-        $>(%text task:dill)
-        $>(%flog task:dill)
-        $>(%knob task:dill) :: helm does this
-        $>(%shot task:dill) :: herm does this
-    ==  ==
-      $:  %e
-    $%  $>(%connect task:eyre)
-        $>(%disconnect task:eyre)
-        $>(%rule task:eyre)
-        $>(%approve-origin task:eyre)
-        $>(%reject-origin task:eyre)
-        $>(%serve task:eyre) :: base desk only
-    ==  ==
-      $:  %g
-    $%  $>(%nuke task:gall)
-        $>(%deal task:gall)
-        $>(%spew task:gall) :: helm does this
-        $>(%sift task:gall) :: helm does this
-        $>(%doff task:gall) :: helm does this
-        $>(%sear task:gall) :: kiln does this
-    ==  ==
-      $:  %i
-    $%  $>(%request task:iris)
-        $>(%cancel-request task:iris)
-    ==  ==
-      $:  %j
-    $%  $>(%moon task:jael)
-        $>(%private-keys task:jael)
-        $>(%resend task:jael)
-        $>(%rekey task:jael)
-        $>(%step task:jael)
-        $>(%meet task:jael)
-        $>(%ruin task:jael)
-        $>(%nuke task:jael)
-        $>(%public-keys task:jael)
-        $>(%turf task:jael)
-        $>(%listen task:jael) :: base desk only
-    ==  ==
-      $:  %k
-    $%  $>(%fard task:khan)
-        $>(%lard task:khan) :: kiln does this
-    ==  ==
-  ==
 ::  full vane names are required in vanes
 ::
 +$  sign-arvo                                           ::  in result $<-
@@ -2590,7 +2590,7 @@
       ::
       $>(%blew task:dill)
       ::  %clay: new process
-      ::
+        ::
       $>(%boat task:clay)
       ::  %behn/%eyre/%iris: new process
       ::
