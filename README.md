@@ -10,17 +10,16 @@ Urbit is a general-purpose, peer-to-peer computer and network.
 This repository contains the [Arvo Kernel][arvo]
 
 For the Runtime, see [Vere][vere].
-For Landscape (the UI), see [Garden][gard].
 For more on the identity layer, see [Azimuth][azim].
 To manage your Urbit identity, use [Bridge][brid].
 
 ## Install
 
 To install and run Urbit, please follow the instructions at
-[urbit.org/install][start]. You'll be on the live network in a
+[urbit.org/getting-started][start]. You'll be on the live network in a
 few minutes.
 
-[start]: https://urbit.org/install/
+[start]: https://urbit.org/getting-started/
 
 ## Contributing
 
@@ -42,4 +41,3 @@ For details about our release process, see the [maintainers guidelines][main]
 [list]: https://groups.google.com/a/urbit.org/forum/#!forum/dev
 [cont]: https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md
 [main]: https://github.com/urbit/urbit/blob/master/MAINTAINERS.md
-[gard]: https://github.com/urbit/garden
