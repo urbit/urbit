@@ -57,6 +57,12 @@ ph" -- but note that this may be a warning that too many changes are being
 packed into a single commit.  The 'component' and 'short description' combined
 should be no more than 50 characters.
 
+Every individual commit should at a minimum be in a compiling and runnable state.
+Broken commits or commits simply marked "wip" are not allowed. If you need to
+clean up the commits in your branch, you can soft reset to an earlier state and
+recommit with better metadata (or if the change is small enough, squash to one
+good commit at the end). 
+
 A lengthier description is encouraged, but is not always strictly required.  You
 should use the longer description to give any useful background on or motivation
 for the commit, provide a summary of what it does, link to relevant issues,
@@ -129,18 +135,36 @@ been approved, merge the pull request. If you properly included the "Resolves
 #N." directive in the pull request description, merging will automatically close
 the tracking issue associated with the pull request.
 
-### Kernel Development and Pills
+## Code style
 
-If you're making changes to the kernel (i.e., anything in `pkg/arvo/sys`) you
-need to know about pills.
+Hoon will be a less familiar language to many contributors.  We've published
+some [style guidelines for Hoon][hoon], but above all you should try to mimic
+the style of the code around you.  With regards to the style used throughout the
+codebase: the more recently the code was written, the more standard and accepted
+its style is likely to be.
+
+### Kernel Development and Pills
 
 Urbit bootstraps itself from a pill (you can see it being fetched from
 `bootstrap.urbit.org` on boot).  This is the compiled version of the kernel
 (which you can find in the `sys` directory of [Arvo][arvo]), along with a
 complete copy of the Arvo source.
 
-The procedure for creating a pill is often called "soliding." It writes the
-compiled kernel to a file. The command to solid is:
+You can find the latest solid pill, as well as the latest so-called *brass* 
+and *ivory* pills, in the `bin/` directory at the repository root.
+
+Any contribution that touches the kernel (i.e., anything in `pkg/arvo/sys`),
+should be accompanied by an updated [solid pill](#the-kernel-and-pills).  Pills
+are tracked in the repository via [git LFS][git-lfs].
+
+```
+$ git lfs init
+$ git lfs pull
+```
+
+[git-lfs]: https://git-lfs.github.com
+
+The +solid command is used to write the compiled kernel to a file.
 
 ```
 > .urbit/pill +solid
@@ -159,22 +183,6 @@ Release pills, i.e. those corresponding to vere releases, are cached at
 `https://bootstrap.urbit.org` and are indexed by the vere version number, e.g.
 `urbit-0.8.2.pill`.
 
-Pills are also cached in version control via [git LFS][git-lfs].  You can find
-the latest solid pill, as well as the latest so-called *brass* and *ivory*
-pills, in the `bin/` directory at the repository root.  Note that you'll need to
-initialise git LFS in order to check these pills out:
-
-```
-$ git lfs init
-$ git lfs pull
-```
-
-[git-lfs]: https://git-lfs.github.com
-
-Any contribution that touches the kernel (i.e., anything in `pkg/arvo/sys`),
-should be accompanied by an updated [solid pill](#the-kernel-and-pills).  Pills
-are tracked in the repository via [git LFS][git-lfs].
-
 Whenever you make a contribution to the kernel, please create a new solid pill
 via:
 
@@ -183,27 +191,6 @@ sh/update-solid-pill
 ```
 
 You should include the updated pill in the same commit that updates the source.
-
-Since anything under [`pkg/arvo/sys/`][sys]) is bootstrapped from a pill, it
-must be recompiled if any changes are made. This should happen automatically
-when you make changes, but if it doesn't, the command to manually recompile and
-install the new kernel is `|reset` in `dojo`.  This rebuilds from the `sys`
-directory in the `base` desk in `%clay`.
-
-Currently, `|reset` does not reload apps like `dojo` itself, which will still
-reference the old kernel. To force them to reload, make a trivial edit to their
-main source file (under the `app` directory) in `%clay`.
-
-[arvo]: https://github.com/urbit/urbit/tree/master/pkg/arvo
-[sys]: https://github.com/urbit/urbit/tree/master/pkg/arvo/sys
-
-## Code style
-
-Hoon will be a less familiar language to many contributors.  We've published
-some [style guidelines for Hoon][hoon], but above all you should try to mimic
-the style of the code around you.  With regards to the style used throughout the
-codebase: the more recently the code was written, the more standard and accepted
-its style is likely to be.
 
 ## Development Environment
 
@@ -224,30 +211,15 @@ $ ln -s bazel-bin/pkg/vere/urbit urbit
 $ ./urbit -F <ship>
 ```
 
-By default, booting a fake ship will use the same pre-compiled kernelspace-- a
-"pill"-- that livenet ships use, which leads to a non-trivial boot time on the
-order of tens of minutes. However, using a development specific pill-- a "solid"
-pill-- the time to boot a new fake ship can be reduced to a few minutes.
+By default, booting a fake ship will use the same pill that livenet ships use,
+which leads to a non-trivial boot time on the order of tens of minutes. However,
+using a development specific "solid" pill reduces this time to a couple minutes.
 
-The solid pill (and other pills) live in the [Urbit repo][urbit]. To boot using
-the solid pill, download the pill and then run:
+To boot using the solid pill, download or create one as described in the Kernel
+Development and Pills section above and then run the following:
 
 ```console
 $ ./urbit -F <ship> -B solid.pill
-```
-
-Instead of downloading the pill, you can also generate one yourself using
-[`dojo`][dojo]:
-
-```console
-dojo> .urbit/pill +solid
-```
-
-This will write the pill to `<pier>/.urb/put/urbit.pill` (note that `<pier>` is
-the ship directory), which you can then use to boot a new ship:
-
-```console
-$ ./urbit -F <another-ship> -B <pier>/.urb/put/urbit.pill
 ```
 
 ### Launch an Existing Fake Ship
@@ -259,7 +231,7 @@ simply the name of the ship[^1], to `urbit`:
 $ ./urbit <ship>
 ```
 
-[^1]: Unless you specify the pier using the `-c` flag.
+[^1]: Unless you specified the pier name using the `-c` flag.
 
 
 [list]: https://groups.google.com/a/urbit.org/forum/#!forum/dev
