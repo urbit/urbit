@@ -11465,7 +11465,7 @@
   %*(. vast bug bug, wer wer)                           ::  wer: where we are
 ::
 ++  vast                                                ::  main parsing core
-  =+  [bug=`?`| wer=*path]
+  =+  [bug=`?`| wer=*path doc=`?`&]
   |%
   ++  gash  %+  cook                                    ::  parse path
               |=  a=(list tyke)  ^-  tyke
@@ -11512,6 +11512,7 @@
     ::    tried without the extra newline. this doesn't mean there isn't a
     ::    better factorization without it, though.
     ++  apex
+      ?.  doc  (easy *whit)
       %+  knee  *whit  |.  ~+
       ;~  plug
         |=  tub=nail
@@ -11535,6 +11536,7 @@
     ::    57) that attaches to the expression starting at the beginning of the
     ::    current line. does not use a $link.
     ++  apse
+      ?.  doc  (easy *whiz)
       %+  knee  *whiz  |.  ~+
       ;~  pose
         ;~(less ;~(plug into step en-link col ace) ;~(pfix into step line))
