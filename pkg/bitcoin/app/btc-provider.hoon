@@ -180,6 +180,7 @@
       %tx-from-pos    [%get-tx-from-pos height.act pos.act merkle.act]
       %fee            [%get-fee block.act]
       %psbt           [%update-psbt psbt.act]
+      %block-txs      [%get-block-txs blockhash.act]
     ==
   ::
   ++  req-card
@@ -339,6 +340,11 @@
       ?>  ?=([%update-psbt *] r)
       :_  state
       ~[(send-update:hc [%.y %psbt +.r] ship)]
+      ::
+        %block-txs
+      ?>  ?=([%get-block-txs *] r)
+      :_  state
+      ~[(send-update:hc [%.y %block-txs +.r] ship)]
     ==
   ::
   ++  connection-error
