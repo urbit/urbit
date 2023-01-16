@@ -38,6 +38,7 @@
       [%tx-from-pos height=@ud pos=@ud merkle=?]
       [%fee block=@ud]
       [%psbt psbt=@t]
+      [%block-txs blockhash=hexb]
   ==
 ::
 +$  result
@@ -51,6 +52,7 @@
       [%tx-from-pos tx-hash=hexb merkle=(list hexb)]
       [%fee fee=@rd]
       [%psbt psbt=@t]
+      [%block-txs blockhash=hexb txs=(list [txid=hexb rawtx=hexb])]
   ==
 +$  error
   $%  [%not-connected status=@ud]
@@ -79,6 +81,7 @@
         [%get-tx-from-pos height=@ud pos=@ud merkle=?]
         [%get-fee block=@ud]
         [%update-psbt psbt=@t]
+        [%get-block-txs blockhash=hexb]
     ==
   ::
   +$  result
@@ -94,6 +97,7 @@
         [%get-tx-from-pos tx-hash=hexb merkle=(list hexb)]
         [%get-fee fee=@rd]
         [%update-psbt psbt=@t]
+        [%get-block-txs blockhash=hexb txs=(list [txid=hexb rawtx=hexb])]
     ==
   --
 --
