@@ -438,6 +438,9 @@
       ::
         %update-psbt
       [id.res (so res.res)]
+      ::
+        %get-block-txs
+      [id.res (block-txs res.res)]
     ==
     ::
     ++  address-info
@@ -501,6 +504,11 @@
       %-  ot
       :~  [%tx-hash (cu from-cord:hxb:bcu so)]
           [%merkle (ar (cu from-cord:hxb:bcu so))] 
+      ==
+    ++  block-txs
+      %-  ot
+      :~  [%blockhash (cu from-cord:hxb:bcu so)]
+          [%txs (ar raw-tx)]
       ==
     --
   --
@@ -572,6 +580,11 @@
     %-  get-request
     %+  mk-url  '/updatepsbt/'
     %-  en:base64:mimes:html  [(lent (trip psbt.ract)) psbt.ract]
+    ::
+      %get-block-txs
+    %-  get-request
+    %+  mk-url  '/getblocktxs/'
+    (to-cord:hxb:bcu blockhash.ract)
   ==
   ++  mk-url
     |=  [base=@t params=@t]
