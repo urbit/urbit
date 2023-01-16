@@ -615,18 +615,19 @@
         =/  =routes  [disclosing=~ attributing=ship]
         (ap-abed:ap dap routes)
       ::
-      ?>  ?=
-        $?  %wake  %heck  %wris
-            %writ  %tire  %hill
-            %mere  %cruz  %croz
-            %blit  %arow  %unto
-            %turf  %bound
-            %http-response
-            %private-keys
-            %public-keys
-        ==
-          +<.sign-arvo
-      =.  app  (ap-generic-take:app t.t.t.wire +.sign-arvo)
+      ?>  ?=  $%
+        [%behn ?(%wake %heck) *]
+        [%clay ?(%wris %writ %tire %hill %mere %cruz %croz) *]
+        [%dill %blit *]
+        [%eyre %bound *]
+        [%gall %unto *]
+        [%iris %http-response *]
+        [%jael ?(%private-keys %public-keys %turf) *]
+        [%khan %arow *]
+      ==
+        sign-arvo
+      ::
+      =.  app  (ap-generic-take:app t.t.t.wire sign-arvo)
       ap-abet:app
     ?>  ?=([%out @ @ *] t.t.wire)
     =/  =ship  (slav %p i.t.t.t.wire)
@@ -1287,11 +1288,11 @@
     ::
     ++  ap-generic-take
       ~/  %ap-generic-take
-      |=  [=wire =userspace-gift:agent]
+      |=  [=wire =sign-userspace:agent]
       ^+  ap-core
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
-        (on-arvo:ap-agent-core wire userspace-gift)
+        (on-arvo:ap-agent-core wire sign-userspace)
       ?^  maybe-tang
         (ap-error %arvo-response u.maybe-tang)
       ap-core

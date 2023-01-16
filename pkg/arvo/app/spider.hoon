@@ -215,12 +215,12 @@
   ::
   ++  on-arvo
     ~/  %on-arvo
-    |=  [=wire =sign-arvo]
+    |=  [=wire =sign-userspace:agent:gall]
     ^-  (quip card _this)
     =^  cards  state
-      ?+  wire  (on-arvo:def wire sign-arvo)
-        [%thread @ *]  (handle-sign:sc i.t.wire t.t.wire sign-arvo)
-        [%build @ ~]   (handle-build:sc i.t.wire sign-arvo)
+      ?+  wire  (on-arvo:def wire sign-userspace)
+        [%thread @ *]  (handle-sign:sc i.t.wire t.t.wire sign-userspace)
+        [%build @ ~]   (handle-build:sc i.t.wire sign-userspace)
         [%bind ~]      `state
       ==
     [cards this]
@@ -285,12 +285,12 @@
 ::
 ++  handle-sign
   ~/  %handle-sign
-  |=  [=tid =wire =sign-arvo]
+  |=  [=tid =wire =sign-userspace:agent:gall]
   =/  yarn  (~(get by tid.state) tid)
   ?~  yarn
     %-  (slog leaf+"spider got sign for non-existent {<tid>}" ~)
     `state
-  (take-input u.yarn ~ %sign wire sign-arvo)
+  (take-input u.yarn ~ %sign wire sign-userspace)
 ::
 ++  on-agent
   |=  [=tid =wire =sign:agent:gall]
@@ -356,14 +356,14 @@
 ::
 ++  handle-build
   ~/  %handle-build
-  |=  [=tid =sign-arvo]
+  |=  [=tid =sign-userspace:agent:gall]
   ^-  (quip card ^state)
   =/  =yarn  (~(got by tid.state) tid)
   =.  starting.state
     (~(jab by starting.state) yarn |=([=trying =vase] [%none vase]))
-  ~|  sign+[- +<]:sign-arvo
-  ?>  ?=([?(%behn %clay) %writ *] sign-arvo)
-  =/  =riot:clay  p.sign-arvo
+  ~|  sign+[- +<]:sign-userspace
+  ?>  ?=([?(%behn %clay) %writ *] sign-userspace)
+  =/  =riot:clay  p.sign-userspace
   ?~  riot
     (thread-fail-not-running tid %build-thread-error *tang)
   ?.  ?=(%vase p.r.u.riot)

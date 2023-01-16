@@ -1856,10 +1856,46 @@
           ::
           $>(%arow gift:khan)
       ==
+    +$  sign-userspace
+      $~  [%behn %wake ~]
+      $%  $:  %behn
+        $%  $>(%wake gift:behn)
+            $>(%heck gift:behn)
+        ==  ==
+          $:  %clay
+        $%  $>(%wris gift:clay)
+            $>(%writ gift:clay)
+            $>(%tire gift:clay)
+            $>(%hill gift:clay)
+            $>(%mere gift:clay) :: kiln
+            $>(%cruz gift:clay)
+            $>(%croz gift:clay)
+        ==  ==
+          $:  %dill
+        $%  $>(%blit gift:dill)
+        ==  ==
+          $:  %eyre
+        $%  $>(%bound gift:eyre)
+        ==  ==
+          $:  %gall
+        $%  $>(%unto gift:gall)
+        ==  ==
+          $:  %iris
+        $%  $>(%http-response gift:iris)
+        ==  ==
+          $:  %jael
+        $%  $>(%private-keys gift:jael)
+            $>(%public-keys gift:jael)
+            $>(%turf gift:jael)
+        ==  ==
+          $:  %khan
+        $%  $>(%arow gift:khan)
+        ==  ==
+      ==
     +$  userspace-note
       $%  $:  %a
         $%  $>(%sift task:ames)
-            $>(%spew task:ames) :: set verbosity (we want this?)
+            $>(%spew task:ames)
             $>(%cork task:ames) :: gall does this
             $>(%stir task:ames) :: ?? helm does this
             $>(%prod task:ames) :: ?? helm does this
@@ -1867,7 +1903,7 @@
           $:  %b
         $%  $>(%rest task:behn)
             $>(%wait task:behn)
-            $>(%huck task:behn) :: gall does htis
+            $>(%huck task:behn) :: gall does this
         ==  ==
           $:  %c
         $%  $>(%dirk task:clay)
@@ -1991,7 +2027,7 @@
         *(quip card _^|(..on-init))
       ::
       ++  on-arvo
-        |~  [wire userspace-gift]
+        |~  [wire sign-userspace]
         *(quip card _^|(..on-init))
       ::
       ++  on-fail

@@ -270,10 +270,10 @@
   --
 ::
 ++  on-arvo
-  |=  [=wire =sign-arvo]
+  |=  [=wire =sign-userspace:agent:gall]
   ^-  (quip card:agent:gall _this)
-  ?.  ?=(%bound +<.sign-arvo)
-    (on-arvo:def wire sign-arvo)
+  ?.  ?=(%bound +<.sign-userspace)
+    (on-arvo:def wire sign-userspace)
   [~ this]
 ::
 ++  on-fail   on-fail:def

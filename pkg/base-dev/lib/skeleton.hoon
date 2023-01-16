@@ -40,7 +40,7 @@
   !!
 ::
 ++  on-arvo
-  |~  [wire =sign-arvo]
+  |~  [wire sign-userspace:agent:gall]
   ^-  (quip card:agent:gall agent:gall)
   !!
 ::
