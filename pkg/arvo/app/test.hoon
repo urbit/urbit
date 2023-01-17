@@ -113,18 +113,18 @@
         ~>(%slog.[0 tank] same)
       --
   ::
-  |=  [=wire =sign-arvo]
+  |=  [=wire =sign-userspace:agent:gall]
   ^-  [(list card) _this]
   ?.  ?&  ?=([%build *] wire)
-          ?=([%clay %writ *] sign-arvo)
+          ?=([%clay %writ *] sign-userspace)
       ==
-    (on-arvo:def wire sign-arvo)
+    (on-arvo:def wire sign-userspace)
   =/  =path  t.wire
   ?+    path  ~|(path+path !!)
       [%app *]
     =/  ok
-      ?~  p.sign-arvo  |
-      (~(nest ut -:!>(*agent:gall)) | -:!<(vase q.r.u.p.sign-arvo))
+      ?~  p.sign-userspace  |
+      (~(nest ut -:!>(*agent:gall)) | -:!<(vase q.r.u.p.sign-userspace))
     %-  (report path ok)
     =?  app-ok.state  !ok  %.n
     =.  app.state  (~(del in app.state) path)
@@ -133,7 +133,7 @@
     [~ this]
   ::
       [%mar *]
-    =/  ok  ?=(^ p.sign-arvo)
+    =/  ok  ?=(^ p.sign-userspace)
     %-  (report path ok)
     =?  mar-ok.state  !ok  %.n
     =.  mar.state  (~(del in mar.state) path)
@@ -142,7 +142,7 @@
     [~ this]
   ::
       [%gen *]
-    =/  ok  ?=(^ p.sign-arvo)
+    =/  ok  ?=(^ p.sign-userspace)
     %-  (report path ok)
     =?  gen-ok.state  !ok  %.n
     =.  gen.state  (~(del in gen.state) path)

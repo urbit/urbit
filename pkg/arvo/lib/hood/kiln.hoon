@@ -997,7 +997,7 @@
     send-fuse:make-requests
   ::
   ++  take
-    |=  [wir=wire =sign-userspace]
+    |=  [wir=wire =sign-userspace:agent:gall]
     ^+  ..fuse
     ?>  =((lent wir) 3)
     =/  who=ship  (slav %p (snag 0 wir))
@@ -1044,7 +1044,7 @@
   --
 ::
 ++  take-sync
-  |=  [=wire =sign-userspace]
+  |=  [=wire =sign-userspace:agent:gall]
   ?>  ?=([@ @ @ *] wire)
   =*  syd  i.wire
   =/  her  (slav %p i.t.wire)

@@ -121,7 +121,7 @@
   ==
 ::
 ++  on-arvo
-  |=  [=wire syn=sign-arvo]
+  |=  [=wire syn=sign-userspace:agent:gall]
   ^-  step:agent:gall
   ?+  wire  ~|([%hood-bad-wire wire] !!)
     [%helm *]  =^(c helm.state (take-arvo:helm-core t.wire syn) [c this])
