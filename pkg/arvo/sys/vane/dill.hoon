@@ -8,7 +8,7 @@
 --                                                      ::
 =>  |%                                                  ::  console protocol
 +$  axle                                                ::
-  $:  %5                                                ::
+  $:  %6                                                ::
       hey=(unit duct)                                   ::  default duct
       dug=(map @tas axon)                               ::  conversations
       eye=(jug @tas duct)                               ::  outside listeners
@@ -16,6 +16,7 @@
       $=  veb                                           ::  vane verbosities
       $~  (~(put by *(map @tas log-level)) %hole %soft) ::  quiet packet crashes
       (map @tas log-level)                              ::
+      egg=_|                                            ::  see +take, removeme
   ==                                                    ::
 +$  axon                                                ::  dill session
   $:  ram=term                                          ::  console program
@@ -411,11 +412,27 @@
 ++  load                                                ::  import old state
   =<  |=  old=any-axle
       ?-  -.old
-        %5  ..^$(all old)
+        %6  ..^$(all old)
+        %5  $(old (axle-5-to-6 old))
         %4  $(old (axle-4-to-5 old))
       ==
   |%
-  +$  any-axle  $%(axle axle-4)
+  +$  any-axle  $%(axle axle-5 axle-4)
+  ::
+  +$  axle-5
+    $:  %5
+        hey=(unit duct)                                   ::  default duct
+        dug=(map @tas axon)                               ::  conversations
+        eye=(jug @tas duct)                               ::  outside listeners
+        lit=?                                             ::  boot in lite mode
+        veb=(map @tas log-level)
+    ==
+  ::
+  ++  axle-5-to-6
+    |=  a=axle-5
+    ^-  axle
+    :: [%6 hey `(map @tas axon)`dug eye lit veb |]
+    a(- %6, veb [veb.a &])
   ::
   +$  axle-4
     $:  %4
@@ -442,7 +459,7 @@
   ::
   ++  axle-4-to-5
     |=  axle-4
-    ^-  axle
+    ^-  axle-5
     :-  %5
     =-  [hey nug nay lit veb]
     %+  roll  ~(tap by dug)
@@ -509,6 +526,22 @@
   ^+  [*(list move) ..^$]
   ?^  dud
     ~|(%dill-take-dud (mean tang.u.dud))
+  ::
+  =;  [moz=(list move) lax=_..^$]
+    =?  moz  egg.all.lax
+      ::  dill pre-release (version %5) in some cases ended up in a state
+      ::  where it had both an old-style and new-style subscription open
+      ::  for the default session. here, we obliterate both and establish
+      ::  only the new-style subscription.
+      ::
+      =/  hey  (need hey.all.lax)
+      :*  [hey %pass / %g %deal [our our] %hood %leave ~]
+          [hey %pass [%peer %$ ~] %g %deal [our our] %hood %leave ~]
+          [hey %pass [%peer %$ ~] %g %deal [our our] %hood %watch [%dill %$ ~]]
+          moz
+      ==
+    =.  egg.all.lax  |
+    [moz lax]
   ::
   =/  nus  (aw hen tea)
   ?~  nus
