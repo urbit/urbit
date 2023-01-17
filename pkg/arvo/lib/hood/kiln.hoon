@@ -687,7 +687,7 @@
   abet:(emit:(spam leaf+mez ~) %pass /kiln %arvo %c [%info u.tor])
 ::
 ++  poke-install
-  |=  [loc=desk her=ship rem=desk]
+  |=  [loc=desk her=ship rem=desk once=?]
   =+  .^(=rock:tire %cx /(scot %p our)//(scot %da now)/tire)
   =/  =zest
     ?~  got=(~(get by rock) loc)
@@ -703,6 +703,8 @@
     abet:(spam (render "already syncing" loc her rem ~) ~)
   ?:  =([our loc] [her rem])
     abet
+  ?:  once
+    abet:abet:(merge:(work loc) her rem da+now %only-that)
   =/  sun  (sync loc her rem)
   ~>  %slog.(fmt "beginning install into {here:sun}")
   =<  abet:abet:init
