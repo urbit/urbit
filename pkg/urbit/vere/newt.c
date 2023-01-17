@@ -384,7 +384,7 @@ u3_newt_moat_slog(u3_moat* mot_u)
     }
 
   if ( len_w ) {
-    u3l_log("    newt: %u inbound ipc messages pending\n", len_w);
+    u3l_log("    newt: %u inbound ipc messages pending", len_w);
   }
 }
 

@@ -10,7 +10,7 @@ static void
 _fore_inject_bail(u3_ovum* egg_u, u3_noun lud)
 {
   u3_auto_bail_slog(egg_u, lud);
-  u3l_log("pier: injected event failed\n");
+  u3l_log("pier: injected event failed");
 
   u3_ovum_free(egg_u);
 }
@@ -21,7 +21,7 @@ static void
 _fore_import_bail(u3_ovum* egg_u, u3_noun lud)
 {
   u3_auto_bail_slog(egg_u, lud);
-  u3l_log("pier: import failed\n");
+  u3l_log("pier: import failed");
 
   u3_ovum_free(egg_u);
 }
@@ -37,20 +37,20 @@ _fore_inject(u3_auto* car_u, c3_c* pax_c)
   u3_noun riw, cad, tar, wir;
 
   if ( c3n == u3r_cell(ovo, &riw, &cad) ) {
-    u3l_log("pier: invalid ovum in -I\n");
+    u3l_log("pier: invalid ovum in -I");
   }
   else if (  (c3n == u3a_is_cell(cad))
           || (c3n == u3a_is_atom(u3h(cad))) )
   {
-    u3l_log("pier: invalid card in -I ovum\n");
+    u3l_log("pier: invalid card in -I ovum");
   }
   else if ( c3n == u3r_cell(riw, &tar, &wir) ) {
-    u3l_log("pier: invalid wire in -I ovum\n");
+    u3l_log("pier: invalid wire in -I ovum");
   }
   else if (  (c3n == u3a_is_atom(tar))
           || (4 < u3r_met(3, tar)) )
   {
-    u3l_log("pier: invalid target in -I wire\n");
+    u3l_log("pier: invalid target in -I wire");
   }
   else {
     {
@@ -58,7 +58,7 @@ _fore_inject(u3_auto* car_u, c3_c* pax_c)
       u3_noun ser = u3do("spat", u3k(riw));
       c3_c* wir_c = u3r_string(ser);
 
-      u3l_log("pier: injecting %%%s event on %s\n", tag_c, wir_c);
+      u3l_log("pier: injecting %%%s event on %s", tag_c, wir_c);
 
       c3_free(tag_c);
       c3_free(wir_c);
@@ -78,12 +78,9 @@ _fore_inject(u3_auto* car_u, c3_c* pax_c)
 static void
 _fore_import(u3_auto* car_u, c3_c* pax_c)
 {
-  u3_noun fil = u3m_file(pax_c);
-  //u3m_p("imp file size", u3dc("met", 3, fil));
-  u3_noun imp = u3dt("cat", 3, u3i_string("#import_"), fil);
+  u3_noun arc = u3ke_cue(u3m_file(pax_c));
+  u3_noun imp = u3dt("cat", 3, u3i_string("#import_"), arc);
   u3_noun siz = u3r_met(3, imp);
-  u3m_p("imp cue size", siz);
-
   u3_noun dat = u3nt(u3_nul, siz, imp);
 
   u3_noun req = u3nt(c3n,
