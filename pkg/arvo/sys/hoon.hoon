@@ -6243,12 +6243,6 @@
           ==                                            ::
 +$  pica  (pair ? cord)                                 ::  & prose, | code
 +$  palo  (pair vein opal)                              ::  wing trace, match
-+$  plat                                                ::
-          $?  %hoon                                     ::
-              %type                                     ::
-              %nock                                     ::
-              %tank                                     ::
-          ==                                            ::
 +$  pock  (pair axis nock)                              ::  changes
 +$  port  (each palo (pair type nock))                  ::  successful match
 +$  spec                                                ::  structure definition
