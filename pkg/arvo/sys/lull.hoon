@@ -1901,14 +1901,12 @@
       $%  $:  %a
         $%  $>(%sift task:ames)
             $>(%spew task:ames)
-            $>(%cork task:ames) :: gall does this
             $>(%stir task:ames) :: ?? helm does this
             $>(%prod task:ames) :: ?? helm does this
         ==  ==
           $:  %b
         $%  $>(%rest task:behn)
             $>(%wait task:behn)
-            $>(%huck task:behn) :: gall does this
         ==  ==
           $:  %c
         $%  $>(%dirk task:clay)
