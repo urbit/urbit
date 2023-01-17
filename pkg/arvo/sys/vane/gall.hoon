@@ -616,6 +616,7 @@
         (ap-abed:ap dap routes)
       ::
       ?>  ?=  $%
+        [%ames %done *]
         [%behn ?(%wake %heck) *]
         [%clay ?(%wris %writ %tire %hill %mere %cruz %croz) *]
         [%dill %blit *]
