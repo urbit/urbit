@@ -1831,7 +1831,9 @@
           [%pyre =tang]
       ==
     +$  userspace-gift
-      $%  $>(%wake gift:behn)
+      $%  $>(%done gift:ames) :: kiln
+          ::
+          $>(%wake gift:behn)
           $>(%heck gift:behn)
           ::
           $>(%wris gift:clay)
@@ -1858,7 +1860,10 @@
       ==
     +$  sign-userspace
       $~  [%behn %wake ~]
-      $%  $:  %behn
+      $%  $:  %ames
+        $%  $>(%done gift:ames) :: kiln
+        ==  ==
+          $:  %behn
         $%  $>(%wake gift:behn)
             $>(%heck gift:behn)
         ==  ==
