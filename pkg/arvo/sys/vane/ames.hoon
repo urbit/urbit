@@ -1619,12 +1619,12 @@
     ~/  %on-hear-packet
     |=  [=lane =packet dud=(unit goof)]
     ^+  event-core
-    %-  %^  trace  odd.veb  sndr.packet
-        |.("received packet")
+    %-  (trace odd.veb sndr.packet |.("received packet"))
     ::
     ?:  =(our sndr.packet)
       event-core
     ?:  (~(has in snub.ames-state) sndr.packet)
+      %-  (trace rcv.veb sndr.packet |.("snubbed"))
       event-core
     ::
     %.  +<
