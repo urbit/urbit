@@ -131,7 +131,16 @@ Tests will run automatically via GitHub Actions when you open a pull request or
 push new commits to an existing pull request.
 
 Once you've collected and addressed feedback, tests are passing, and your PR has
-been approved, merge the pull request. If you properly included the "Resolves
+been approved, merge the pull request.
+
+**Note**: If you are merging into develop, you *must* be syncing OTAs from
+`~binnec-dozzod-marzod` which gets the tip of develop deployed to it. If
+your merge breaks `binnec` it's your responsibility to alert people and
+fix it. Your PR is shipped when it's successfully been deployed to 
+`~binnec` and picked up by your personal ship. If you're merging on behalf
+of an external developer, this is also your responsibility.
+
+If you properly included the "Resolves
 #N." directive in the pull request description, merging will automatically close
 the tracking issue associated with the pull request.
 
