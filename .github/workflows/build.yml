@@ -16,6 +16,7 @@ on:
       - 'bin/**'
       - 'nix/**'
       - 'default.nix'
+      - 'vere-version'
   pull_request:
     paths:
       - '.github/workflows/build.yml'
@@ -31,6 +32,7 @@ on:
       - 'bin/**'
       - 'nix/**'
       - 'default.nix'
+      - 'vere-version'
 
 jobs:
   call-vere:

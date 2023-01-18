@@ -1,16 +1,15 @@
 { lib, stdenvNoCC, curl, python3, bootFakeShip }:
 
-{ urbit, arvo ? null, pill, ship ? "bus", arguments ? urbit.meta.arguments
-, doCheck ? true }:
+{ arvo ? null, pill, ship ? "bus", doCheck ? true }:
 
 stdenvNoCC.mkDerivation {
   name = "test-${ship}";
 
-  src = bootFakeShip { inherit urbit arvo pill ship; };
+  src = bootFakeShip { inherit arvo pill ship; };
 
   phases = [ "unpackPhase" "buildPhase" "checkPhase" ];
 
-  buildInputs = [ curl python3 urbit ];
+  buildInputs = [ curl python3 ];
 
   unpackPhase = ''
     cp -R $src ./pier
@@ -20,7 +19,7 @@ stdenvNoCC.mkDerivation {
   buildPhase = ''
     set -x
 
-    urbit ${lib.concatStringsSep " " arguments} -d ./pier 2> urbit-output
+    ${arvo}/urbit.jam -d ./pier 2> urbit-output
 
     # Sledge Hammer!
     # See: https://github.com/travis-ci/travis-ci/issues/4704#issuecomment-348435959

@@ -51,8 +51,6 @@ jobs:
       matrix:
         include:
           - { os: ubuntu-latest, type: linux }
-          - { os: macos-latest,  type: macos }
-          - { os: buildjet-4vcpu-ubuntu-2204-arm, type: linux }
 
     runs-on: ${{ matrix.os }}
 
@@ -76,94 +74,16 @@ jobs:
           name: ares
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      # run unit tests early on linux (x-compilation will skip them)
-      - name: build dynamic binary (and run tests)
-        if: ${{ matrix.type == 'linux' }}
-        run: nix-build -A urbit
-
-      - name: build static binary
-        run: |
-          nix-build -A urbit        \
-            --arg enableStatic true \
-            --argstr verePace ${{ env.VERE_PACE }} > ./urbit-derivation
-          cat ./urbit-derivation
-          echo -n "urbit_static=" >> $GITHUB_ENV
-          cat ./urbit-derivation >> $GITHUB_ENV
-          cat ./urbit-derivation
-
-      - name: confirm binary is mostly static
-        if: matrix.type == 'macos'
-        run: |
-          bin="${{ env.urbit_static }}/bin/urbit"
-
-          if [ ! -f "$bin" ]; then
-            echo "no binary at $bin"
-            exit 1;
-          fi
-
-          libs="$(otool -L "${{ env.urbit_static }}/bin/urbit" | tail -n +2)"
-
-          #  XX CoreFoundation?
-          if [ -z "$(echo "$libs" | grep -v libSystem)" ]; then
-            echo "it's mostly static"
-            echo "$libs"
-            exit 0
-          else
-            echo "dynamic links found:"
-            echo "$libs"
-            exit 1
-          fi
-
-      - name: get version string
-        run: |
-          if [ "real" == "$VERSION_TYPE" ]; then
-            version="$(cat ./pkg/urbit/version)"
-          else
-            version="${GITHUB_SHA:0:9}"
-          fi
-
-          echo -n "$version" > ./version-string
-
-      - name: upload version string artifact
-        if: matrix.type == 'linux'
-        uses: actions/upload-artifact@v3
-        with:
-          name: version-string
-          path: version-string
-
-      - uses: google-github-actions/auth@v1
-        with:
-          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-
-      - uses: google-github-actions/setup-gcloud@v1
-        if: inputs.upload
-        with:
-          project_id: ${{ secrets.GCS_PROJECT }}
-
-      - name: upload binary to bootstrap.urbit.org
-        if: inputs.upload
-        run: |
-          version="$(cat ./version-string)"
-          system="$(nix-instantiate --eval --expr 'builtins.currentSystem')"
-          system=${system:1:${#system}-2}
-          target="gs://${UPLOAD_BASE}/${VERE_PACE}/${version}/vere-v${version}-${system}"
-
-          gsutil cp -n "${{ env.urbit_static }}/bin/urbit" "$target"
-          exitcode=$?
-
-          test $exitcode -eq 0 &&
-            echo "upload to $target complete." ||
-            echo "upload to $target failed.";
-          exit $exitcode
-
       - if: ${{ matrix.os == 'ubuntu-latest' }}
         name: run urbit-tests
         run: |
           cp -RL tests pkg/arvo/tests
+          vere="$(cat ./vere-version | sed -e 's/\([^ ]*\) \([^ ]*\)/\1\/\2\/vere-\2/g' | tr -d '\n')"
+          echo vere $vere
+          url="$(echo https://bootstrap.urbit.org/vere/${vere}-linux-x86_64)"
+          curl -Lo pkg/arvo/urbit.jam "$url"
+          chmod +x pkg/arvo/urbit.jam
           nix-build -A urbit-tests
-
-      - if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: nix-build -A docker-image
 
   after:
     runs-on: ubuntu-latest
