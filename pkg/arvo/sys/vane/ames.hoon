@@ -115,6 +115,7 @@
   ^+  same
   ?.  verb
     same
+  ~&  %aa
   ?.  =>  [ship=ship ships=ships in=in]
       ~+  |(=(~ ships) (~(has in ships) ship))
     same
