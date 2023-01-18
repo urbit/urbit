@@ -314,14 +314,14 @@
   (flog %text "bound: {<success>}")
 ::
 ++  take-arvo
-  |=  [=wire =sign-arvo]
-  ?+  wire  ~|([%helm-bad-take-wire wire +<.sign-arvo] !!)
+  |=  [=wire =sign-userspace:agent:gall]
+  ?+  wire  ~|([%helm-bad-take-wire wire +<.sign-userspace] !!)
     [%automass *]     %+  take-wake-automass  t.wire
-                      ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
+                      ?>(?=(%wake +<.sign-userspace) +>.sign-userspace)
     [%serv *]         %+  take-bound  t.wire
-                      ?>(?=(%bound +<.sign-arvo) +>.sign-arvo)
+                      ?>(?=(%bound +<.sign-userspace) +>.sign-userspace)
     [%moon-breach *]  %+  take-wake-moon-breach  t.wire
-                      ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
+                      ?>(?=(%wake +<.sign-userspace) +>.sign-userspace)
     [%pass *]         abet
   ==
 --

@@ -10,7 +10,7 @@
     *(quip card:agent:gall _^|(..handle-unix-effect))
   ::
   ++  handle-arvo-response
-    |~  [wire sign-arvo]
+    |~  [wire sign-userspace:agent:gall]
     *(quip card:agent:gall _^|(..handle-unix-effect))
   --
 --
@@ -57,11 +57,11 @@
   |=  handler=vane-handler
   =/  m  (strand ,vane-handler)
   ^-  form:m
-  ;<  [=wire =sign-arvo]  bind:m
-    ((handle:strandio ,[wire sign-arvo]) take-sign-arvo:strandio)
+  ;<  [=wire =sign-userspace:agent:gall]  bind:m
+    ((handle:strandio ,[wire sign-userspace]) take-sign-arvo:strandio)
   ;<  =bowl:spider        bind:m  get-bowl:strandio
   =^  cards  handler
-    (~(handle-arvo-response handler bowl) wire sign-arvo)
+    (~(handle-arvo-response handler bowl) wire sign-userspace)
   ;<  ~                   bind:m  (send-raw-cards:strandio cards)
   (pure:m handler)
 --

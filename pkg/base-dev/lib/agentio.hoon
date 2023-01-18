@@ -27,9 +27,9 @@
     (poke-our dap.bowl cage)
   ::
   ++  arvo
-    |=  =note-arvo
+    |=  =note-userspace:agent:gall
     ^-  card
-    [%pass wire %arvo note-arvo]
+    [%pass wire %arvo note-userspace]
   ::
   ++  watch
     |=  [=dock =path]

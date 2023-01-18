@@ -2403,7 +2403,7 @@
   +$  card  card:agent:gall
   +$  input
     $%  [%poke =cage]
-        [%sign =wire =sign-arvo]
+        [%sign =wire =sign-userspace:agent:gall]
         [%agent =wire =sign:agent:gall]
         [%watch =path]
     ==

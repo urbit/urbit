@@ -103,11 +103,11 @@
   [cards this]
 ::
 ++  handle-arvo-response
-  |=  [=wire =sign-arvo]
-  ?>  ?=([%behn %wake *] sign-arvo)
+  |=  [=wire =sign-userspace:agent:gall]
+  ?>  ?=([%behn %wake *] sign-userspace)
   ?>  ?=([@ *] wire)
   =/  who  (,@p (slav %p i.wire))
   =^  cards  piers
-    abet-pe:(take-wake:(pe bowl who) t.wire error.sign-arvo)
+    abet-pe:(take-wake:(pe bowl who) t.wire error.sign-userspace)
   [cards this]
 --

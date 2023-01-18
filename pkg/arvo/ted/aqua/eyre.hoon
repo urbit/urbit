@@ -116,13 +116,13 @@
   [cards this]
 ::
 ++  handle-arvo-response
-  |=  [=wire =sign-arvo]
+  |=  [=wire =sign-userspace:agent:gall]
   ^-  (quip card:agent:gall _this)
-  ?>  ?=([%iris %http-response %finished *] sign-arvo)
+  ?>  ?=([%iris %http-response %finished *] sign-userspace)
   ?>  ?=([@ *] wire)
   =/  who  (,@p (slav %p i.wire))
   =/  =httr:eyre
-    (to-httr:iris [response-header full-file]:client-response.sign-arvo)
+    (to-httr:iris [response-header full-file]:client-response.sign-userspace)
   =^  cards  piers
     abet-pe:(take-sigh-httr:(pe bowl who) t.wire httr)
   [cards this]
