@@ -1,5 +1,6 @@
 ::    Ames extends Arvo's %pass/%give move semantics across the network.
 ::
+::
 ::    Ames receives packets as Arvo events and emits packets as Arvo
 ::    effects.  The runtime is responsible for transferring the bytes in
 ::    an Ames packet across a physical network to another ship.
