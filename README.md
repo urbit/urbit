@@ -36,8 +36,7 @@ For details about our release process, see the [maintainers guidelines][main]
 [arvo]: https://github.com/urbit/urbit/tree/master/pkg/arvo
 [azim]: https://github.com/urbit/azimuth
 [brid]: https://github.com/urbit/bridge
-[herb]: https://github.com/urbit/urbit/tree/master/pkg/herb
-[vere]: https://github.com/urbit/urbit/tree/master/pkg/urbit
+[vere]: https://github.com/urbit/vere
 [list]: https://groups.google.com/a/urbit.org/forum/#!forum/dev
 [cont]: https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md
 [main]: https://github.com/urbit/urbit/blob/master/MAINTAINERS.md
