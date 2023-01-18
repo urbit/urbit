@@ -1,6 +1,6 @@
 { lib, stdenvNoCC, curl }:
 
-{ urbit, arvo ? null, pill, ship, arguments ? [ "-l" ] }:
+{ arvo ? null, pill, ship, arguments ? [ "-l" ] }:
 
 let
 
@@ -10,14 +10,14 @@ let
 in stdenvNoCC.mkDerivation {
   name = "fake-${ship}";
 
-  buildInputs = [ curl urbit ];
+  buildInputs = [ curl ];
 
   phases = [ "buildPhase" "installPhase " ];
 
   buildPhase = ''
     set -xeuo pipefail
 
-    urbit ${lib.concatStringsSep " " args} ./pier
+    ${arvo}/urbit.jam ${lib.concatStringsSep " " args} ./pier
 
     cleanup () {
       if [ -f ./pier/.vere.lock ]; then
