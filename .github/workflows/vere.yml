@@ -157,7 +157,10 @@ jobs:
           exit $exitcode
 
       - if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: nix-build -A urbit-tests
+        name: run urbit-tests
+        run: |
+          cp -RL tests pkg/arvo/tests
+          nix-build -A urbit-tests
 
       - if: ${{ matrix.os == 'ubuntu-latest' }}
         run: nix-build -A docker-image
