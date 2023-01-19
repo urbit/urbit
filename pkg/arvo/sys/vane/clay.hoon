@@ -2361,7 +2361,7 @@
     :: if the newest weft for this aeon is older than
     :: the oldest target weft, do not continue
     ::
-    ?.  (gte num.aeon-newest num.oldest)
+    ?:  (gth num.aeon-newest num.oldest)
       (mean leaf+"clay: gave up zuse search for {<(waft-to-wefts waf)>}" ~)    
     ?~  (~(int in wefts) (silt aeon-welt))
       $(aeon (dec aeon))
@@ -4807,7 +4807,7 @@
       =/  =agent-any:gall
         ~|  [%building-app bill.i.sat]
         ?+  wef  (mean 'clay: kelvin {<wef>} is Gall-incompatible' ~)
-          [%zuse %416]  [[%zuse %416] !<(agent-416:gall vase)]
+          [%zuse %415]  [[%zuse %415] !<(agent-415:gall vase)]
         ==
       =^  lid  nub.f  $(bill.i.sat t.bill.i.sat)
       [[[i.bill.i.sat [our desk.i.sat da+now] agent-any] lid] nub.f]

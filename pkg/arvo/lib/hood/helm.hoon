@@ -202,10 +202,6 @@
   |=  ships=(list ship)
   abet:(emit %pass /helm/prod %arvo %a %prod ships)
 ::
-++  poke-ames-snub
-  |=  ships=(list ship)
-  abet:(emit %pass /helm/snub %arvo %a %snub ships)
-::
 ++  poke-atom
   |=  ato=@
   =+  len=(scow %ud (met 3 ato))
@@ -277,7 +273,6 @@
       ==
   ?+  mark  ~|([%poke-helm-bad-mark mark] !!)
     %helm-ames-prod        =;(f (f !<(_+<.f vase)) poke-ames-prod)
-    %helm-ames-snub        =;(f (f !<(_+<.f vase)) poke-ames-snub)
     %helm-ames-sift        =;(f (f !<(_+<.f vase)) poke-ames-sift)
     %helm-ames-verb        =;(f (f !<(_+<.f vase)) poke-ames-verb)
     %helm-ames-wake        =;(f (f !<(_+<.f vase)) poke-ames-wake)

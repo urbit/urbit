@@ -360,7 +360,6 @@
   ::    %init: vane boot
   ::    %prod: re-send a packet per flow, to all peers if .ships is ~
   ::    %sift: limit verbosity to .ships
-  ::    %snub: set packet blacklist to .ships
   ::    %spew: set verbosity toggles
   ::    %trim: release memory
   ::    %vega: kernel reload notification
@@ -376,7 +375,6 @@
         $>(%init vane-task)
         [%prod ships=(list ship)]
         [%sift ships=(list ship)]
-        [%snub ships=(list ship)]
         [%spew veb=(list verb)]
         [%stir arg=@t]
         $>(%trim vane-task)
@@ -1816,13 +1814,13 @@
   +$  verb  ?(%odd)
   ::
   ::  +agent: app core
-  +$  agent-wefts  ?([%zuse %416])
+  +$  agent-wefts  ?([%zuse %415])
   ::
-  ++  agent-any  $%  [[%zuse %416] agent-416]
+  ++  agent-any  $%  [[%zuse %415] agent-415]
                  ==
-  ++  agent  agent-416
+  ++  agent  agent-415
   ::
-  ++  agent-416
+  ++  agent-415
     =<  form
     |%
     +$  step  (quip card form)

@@ -294,7 +294,7 @@
     ~/  %mo-receive-core
     |=  [dap=term bek=beak =agent-any]
     ^+  mo-core
-    ?>  ?=([%zuse %416] -.agent-any)
+    ?>  ?=([%zuse %415] -.agent-any)
     =/  agent  +.agent-any
     ::
     =/  yak  (~(get by yokes.state) dap)
@@ -327,7 +327,7 @@
         control-duct  hen
         beak          bek
         code          agent
-        agent         [%.y [%zuse %416] agent]
+        agent         [%.y [%zuse %415] agent]
         run-nonce     (scot %uw (end 5 (shas %yoke-nonce eny)))
       ==
     ::
@@ -744,7 +744,7 @@
       |-  ^+  mo-core
       ?~  agents  mo-core
       =/  [=dude =desk =agent-any]  [dude q.beak agent-any]:i.agents
-      ?>  ?=([%zuse %416] -.agent-any)
+      ?>  ?=([%zuse %415] -.agent-any)
       ::  ~>  %slog.0^leaf/"gall: starting {<dude>} on {<desk>}"
       $(agents t.agents, mo-core (mo-receive-core i.agents))
     ::
@@ -1130,7 +1130,7 @@
     ::
     ++  ap-agent-core
       ?>  ?=(%& -.agent.yoke)
-      ?>  ?=([%zuse %416] -.p.agent.yoke)
+      ?>  ?=([%zuse %415] -.p.agent.yoke)
       ~(. +.p.agent.yoke ap-construct-bowl)
     ::  +ap-ducts-from-paths: get ducts subscribed to paths
     ::
@@ -1256,7 +1256,7 @@
       ~/  %ap-reinstall
       |=  agent=agent-any
       ^+  ap-core
-      ?>  ?=([%zuse %416] -.agent)
+      ?>  ?=([%zuse %415] -.agent)
       =/  old-state=vase
         ?:  ?=(%& -.agent.yoke)
           on-save:ap-agent-core
@@ -1663,7 +1663,7 @@
       ?:  ?=(%| -.result)
         `ap-core
       ::
-      =.  agent.yoke  [%.y [%zuse %416] +.p.result]
+      =.  agent.yoke  [%.y [%zuse %415] +.p.result]
       =/  moves       (zing (turn -.p.result ap-from-internal))
       =.  bitt.yoke   (ap-handle-kicks moves)
       (ap-handle-peers moves)
@@ -1969,7 +1969,7 @@
       %-  ~(urn by eggs.old)
       |=  [a=term e=egg-11]
       ^-  egg
-      [[%zuse %416] e]
+      [[%zuse %415] e]
     ==
   --
 ::  +scry: standard scry
@@ -2093,7 +2093,7 @@
     ?:  ?=(%| -.agent.yoke)
       [%| p.agent.yoke]
     ?-  -.+.agent.yoke
-      [%zuse %416]  [%| on-save:p.agent.yoke]
+      [%zuse %415]  [%| on-save:p.agent.yoke]
     ==
   ==
 ::  +take: response

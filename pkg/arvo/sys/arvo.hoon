@@ -3,7 +3,7 @@
 |%
 +|  %global
 ::
-++  arvo  %239
+++  arvo  %240
 ::
 ::  $arch: node identity
 ::  $axal: fundamental node, recursive (trie)
