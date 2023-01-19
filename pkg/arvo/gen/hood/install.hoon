@@ -8,7 +8,7 @@
 ::
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
-        [[her=@p rem=desk ~] local=@tas]
+        [[her=@p rem=desk ~] local=@tas once=_|]
     ==
 =/  loc=desk  ?:(=(%$ local) rem local)
-[%kiln-install loc her rem]
+[%kiln-install loc her rem once]
