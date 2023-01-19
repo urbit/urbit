@@ -687,7 +687,7 @@
   abet:(emit:(spam leaf+mez ~) %pass /kiln %arvo %c [%info u.tor])
 ::
 ++  poke-install
-  |=  [loc=desk her=ship rem=desk once=?]
+  |=  [loc=desk her=ship rem=desk]
   =+  .^(=rock:tire %cx /(scot %p our)//(scot %da now)/tire)
   =/  =zest
     ?~  got=(~(get by rock) loc)
@@ -703,8 +703,6 @@
     abet:(spam (render "already syncing" loc her rem ~) ~)
   ?:  =([our loc] [her rem])
     abet
-  ?:  once
-    abet:abet:(merge:(work loc) her rem da+now %only-that)
   =/  sun  (sync loc her rem)
   ~>  %slog.(fmt "beginning install into {here:sun}")
   =<  abet:abet:init
@@ -766,19 +764,11 @@
 ::
 ++  poke-rm
   |=  a=path
-  =|  c=(list (unit toro))
-  %+  poke-info  "removed: {<a>}"
-  =-  %+  roll  -
-      |=  [a=(unit toro) b=(unit toro)]
-      (clap a b furl)
-  |-  ^-  (list (unit toro))
   =+  b=.^(arch %cy a)
-  ?:  ?=([^ ~] b)  (snoc c `(fray a))  
-  =?  c  ?=(^ fil.b)  (snoc c `(fray a))
-  %-  zing
-  %+  turn  ~(tap by dir.b)
-  |=  [kid=@ta ~]
-  ^$(a (weld a /[kid]))
+  ?~  fil.b
+    =+  ~[leaf+"No such file:" leaf+"{<a>}"]
+    abet:(spam -)
+  (poke-info "removed" `(fray a))
 ::
 ++  poke-schedule
   |=  [where=path tym=@da eve=@t]
