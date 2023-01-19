@@ -81,6 +81,6 @@ jobs:
           vere="$(cat ./vere-version | sed -e 's/\([^ ]*\) \([^ ]*\)/\1\/\2\/vere-\2/g' | tr -d '\n')"
           url="$(echo https://bootstrap.urbit.org/vere/${vere}-linux-x86_64)"
           # put in .jam so it doesn't crash when it gets -A'd in
-          curl -Lo pkg/arvo/urbit.jam "$url"
-          chmod +x pkg/arvo/urbit.jam
+          curl -Lo pkg/arvo/vere.jam "$url"
+          chmod +x pkg/arvo/vere.jam
           nix-build -A urbit-tests
