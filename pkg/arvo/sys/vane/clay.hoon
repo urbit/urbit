@@ -432,7 +432,10 @@
           task                                          ::
       ==                                                ::
       $:  %d                                            ::  to %dill
-          $>(%flog task:dill)                           ::
+          $>  $?  %flog                                 ::
+                  %text                                 ::
+              ==                                        ::
+          task:dill                                     ::
       ==                                                ::
       $:  %g                                            ::  to %gall
           $>  $?  %deal
@@ -460,14 +463,13 @@
       ==  ==                                            ::
       $:  %clay                                         ::
           $>  $?  %mere                                 ::
-                  %note                                 ::
                   %writ                                 ::
+                  %wris                                 ::
               ==                                        ::
           gift                                          ::
       ==                                                ::
       $:  %gall
-          $>  $?  %onto
-                  %unto
+          $>  $?  %unto
               ==
           gift:gall
       ==
@@ -2209,7 +2211,8 @@
         |=  [prefix=@tD paths=(set path)]
         %+  turn  ~(tap in paths)
         |=  =path
-        [u.hun %give %note prefix (path-to-tank path)]
+        ^-  move
+        [u.hun %pass /note %d %text prefix ' ' ~(ram re (path-to-tank path))]
       ::
       ++  path-to-tank
         |=  =path
@@ -5774,8 +5777,6 @@
   ?^  dud
     ~|(%clay-take-dud (mean tang.u.dud))
   ?:  ?=([%lu %load *] tea)
-    ?:  ?=(%onto +<.hin)
-      [~ ..^$]
     ?>  ?=(%unto +<.hin)
     ?>  ?=(%poke-ack -.p.hin)
     ?~  p.p.hin
@@ -5822,6 +5823,7 @@
     [mos ..^$]
   ::
   ?:  ?=([%foreign-warp *] tea)
+    ?:  ?=(%wris +<.hin)  ~&  %dropping-wris  `..^$
     ?>  ?=(%writ +<.hin)
     :_  ..^$
     [hen %give %boon `(unit rand)`(bind `riot`p.hin rant-to-rand)]~
@@ -5950,7 +5952,6 @@
         q.p.p.+.hin
     [~ ..^$]
   ::
-      %note  [[hen %give +.hin]~ ..^$]
       %wake
     ::  TODO: handle behn errors
     ::
@@ -5973,8 +5974,8 @@
       ::
       %boon  !!
       %lost  !!
-      %onto  !!
       %unto  !!
+      %wris  ~&  %strange-wris  !!
       %writ
     %-  (slog leaf+"clay: strange writ (expected on upgrade to Fusion)" ~)
     [~ ..^$]
