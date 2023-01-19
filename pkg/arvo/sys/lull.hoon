@@ -3,7 +3,7 @@
 !:
 =>  ..part
 |%
-++  lull  %327
+++  lull  %326
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
@@ -1814,13 +1814,13 @@
   +$  verb  ?(%odd)
   ::
   ::  +agent: app core
-  +$  agent-wefts  ?([%zuse %416])
+  +$  agent-wefts  ?([%zuse %415])
   ::
-  ++  agent-any  $%  [[%zuse %416] agent-416]
+  ++  agent-any  $%  [[%zuse %415] agent-415]
                  ==
-  ++  agent  agent-416
+  ++  agent  agent-415
   ::
-  ++  agent-416
+  ++  agent-415
     =<  form
     |%
     +$  step  (quip card form)
