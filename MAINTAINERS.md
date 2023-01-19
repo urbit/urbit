@@ -13,7 +13,7 @@ also simple to reason about.
 
 The branches and their corresponding moons that comprise the stages of the
 release pipeline are:
-
+```
 ----------------------------------------------------------------------------------------------
  Branch     |            Moon          |   Target audience   |            Contains
 ----------------------------------------------------------------------------------------------
@@ -21,6 +21,7 @@ release pipeline are:
 `release`   | `~marnec-dozzod-marzod`  | Early Adopters      | Latest `release` branch commit
 `release`   | `~doznec-dozzod-marzod`  | App Developers      | Latest release candidate
 `master`    | `~zod`                   | Everyone else       | Latest release
+```
 
 **WARNING**: If you lack the requisite skills to troubleshoot and fix kernel issues, you should not sync from develop/~binnec. If you're not prepared to breach your ship in response to an issue stemming from an early release, do not use pre-release moons.
 
