@@ -1,1 +1,0 @@
-../../garden-dev/sur/settings.hoon
