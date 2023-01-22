@@ -5647,6 +5647,7 @@
         %sweep  ``[%sweep !>(sweep)]
         %rang   ``[%rang !>(ran.ruf)]
         %tomb   ``[%flag !>((tomb t.path))]
+        %cult   ``[%cult !>((cult t.path))]
         %domes  domes
         %tire   ``[%tire !>(tore:(lu now rof *duct ruf))]
         %tyre   ``[%tyre !>(tyr.ruf)]
@@ -5671,6 +5672,22 @@
       |=  [=desk =rede]
       [[ship desk] [[let hit lab] tom nor liv ren]:dom.rede]
     ``[%domes !>(`cone`domes)]
+  ::
+  ++  cult
+    |=  =path
+    ^-  (set [@p rave])
+    %-  %~  run  in
+        %~  key  by
+        ?~  path  *^cult
+        qyx:(~(gut by dos.rom.ruf) i.path *dojo)
+    |=  wove
+    :-  ship:(fall for [ship=our @ud])
+    ?-  -.rove
+      %sing  rove
+      %next  [%next mood.rove]
+      %mult  [%mult mool.rove]
+      %many  [%many [track moat]:rove]
+    ==
   ::
   ::  True if file is accessible
   ::
