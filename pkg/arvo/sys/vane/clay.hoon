@@ -612,6 +612,57 @@
     =.  res  `?~(res faz (slop faz u.res))
     $(vaz t.vaz)
   ::
+  ++  built-ins
+    |^  ^-  (list [path vase])
+        :~  [/mar/seal/hoon seal]
+        ==
+    ::
+    ++  seal  !>
+      =>  [seal=^seal ..zuse]
+      |_  =seal
+      ++  grow
+        |%
+        ++  mime  `^mime`[/text/x-seal (as-octs:mimes:html hoon)]
+        ++  noun  seal
+        ++  hoon
+          ^-  @t
+          |^  %-  crip
+              %-  of-wall:format
+              :-  ":-"
+              %+  weld
+                %+  enlist  1
+                (enhoon req.seal)
+              %+  enlist  0
+              (enhoon opt.seal)
+          ::
+          ++  enlist
+            |=  [dep=@ud taz=wall]
+            ^-  wall
+            =+  pre=(reap (mul dep 2) ' ')
+            ?~  taz  [(snoc pre '~')]~
+            :-  :(weld pre ":~  " i.taz)
+            %-  snoc  :_  (weld pre "==")
+            (turn t.taz |=(t=tape :(weld pre "    " t)))
+          ::
+          ++  enhoon
+            |=  pez=(list perm:gall)
+            ^-  wall
+            (turn pez |=(=perm:gall <`perm:gall`perm>))
+          --
+        ++  txt   (to-wain:format hoon)
+        --
+      ++  grab
+        |%
+        ++  noun  ,[(list perm:gall) (list perm:gall)]
+        ++  mime
+          |=  [=mite len=@ud tex=@]
+          ~_  tex
+          !<(^seal (slap !>(~) (ream tex)))
+        --
+      ++  grad  %noun
+      --
+    --
+  ::
   ++  ford
     !.
     =>  |%
@@ -637,6 +688,10 @@
     =.  cache.nub  cache
     =.  spill.nub  spill
     =.  sprig.nub  sprig
+    ::  trunk: built-in files
+    ::
+    =/  trunk=(map path vase)
+      (~(gas by *(map path vase)) built-ins)
     |%
     ::  +read-file: retrieve marked, validated file contents at path
     ::
@@ -935,6 +990,8 @@
       ^-  [vase state]
       =/  =path
         ?:(?=(%| -.dep) p.dep fil.p.dep)
+      ?:  (~(has by trunk) path)
+        [(~(got by trunk) path) nub]
       ~|  %error-building^path
       %-  soak-vase
       %+  gain-sprig  file+path  |.
@@ -1170,8 +1227,8 @@
       ?~  paz
         ~_(leaf/"clay: no files match /{(trip pre)}/{(trip pax)}/hoon" !!)
       =/  pux=path  pre^(snoc i.paz %hoon)
-      ?:  (~(has by files) pux)
-        pux
+      ?:  (~(has by trunk) pux)  pux
+      ?:  (~(has by files) pux)  pux
       $(paz t.paz)
     ::
     ++  all-fits

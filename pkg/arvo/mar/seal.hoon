@@ -1,1 +1,0 @@
-../../base-dev/mar/seal.hoon
