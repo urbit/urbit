@@ -106,7 +106,7 @@
     *(quip card _^|(..on-init))
   ::
   ++  on-arvo
-    |~  [wire sign-userspace:agent:gall]
+    |~  [wire sign-user:agent:gall]
     *(quip card _^|(..on-init))
   ::
   ++  on-fail
@@ -384,9 +384,9 @@
     [(deal cards) this]
   ::
   ++  on-arvo
-    |=  [=wire =sign-userspace:agent:gall]
+    |=  [=wire =sign-user:agent:gall]
     ^-  (quip card:agent:gall agent:gall)
-    =^  cards  shoe  (on-arvo:og wire sign-userspace)
+    =^  cards  shoe  (on-arvo:og wire sign-user)
     [(deal cards) this]
   ::
   ++  on-fail

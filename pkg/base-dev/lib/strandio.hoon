@@ -83,13 +83,13 @@
 ::
 ::
 ++  take-sign-arvo
-  =/  m  (strand ,[wire sign-userspace:agent:gall])
+  =/  m  (strand ,[wire sign-user:agent:gall])
   ^-  form:m
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
       [~ %sign *]
-    `[%done [wire sign-userspace]:u.in.tin]
+    `[%done [wire sign-user]:u.in.tin]
   ==
 ::
 ::  Wait for a subscription update on a wire
@@ -176,9 +176,9 @@
       [~ %sign [%wait @ ~] %behn %wake *]
     ?.  |(?=(~ until) =(`u.until (slaw %da i.t.wire.u.in.tin)))
       `[%skip ~]
-    ?~  error.sign-userspace.u.in.tin
+    ?~  error.sign-user.u.in.tin
       `[%done ~]
-    `[%fail %timer-error u.error.sign-userspace.u.in.tin]
+    `[%fail %timer-error u.error.sign-user.u.in.tin]
   ==
 ::
 ++  take-poke-ack
@@ -395,7 +395,7 @@
     ['http request was cancelled by the runtime']~
     ::
       [~ %sign [%request ~] %iris %http-response %finished *]
-    `[%done client-response.sign-userspace.u.in.tin]
+    `[%done client-response.sign-user.u.in.tin]
   ==
 ::
 ::  Wait until we get an HTTP response or cancelation and unset contract
@@ -422,7 +422,7 @@
       [~ %sign [%request ~] %iris %http-response %cancel *]
     `[%done ~]
       [~ %sign [%request ~] %iris %http-response %finished *]
-    `[%done `client-response.sign-userspace.u.in.tin]
+    `[%done `client-response.sign-user.u.in.tin]
   ==
 ::
 ++  extract-body
@@ -571,7 +571,7 @@
       [~ %sign * ?(%behn %clay) %writ *]
     ?.  =(wire wire.u.in.tin)
       `[%skip ~]
-    `[%done +>.sign-userspace.u.in.tin]
+    `[%done +>.sign-user.u.in.tin]
   ==
 ::  +check-online: require that peer respond before timeout
 ::

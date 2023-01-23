@@ -1705,7 +1705,7 @@
   [moves ..on-init]
 ::
 ++  on-arvo
-  |=  [=wire =sign-userspace:agent:gall]
+  |=  [=wire =sign-user:agent:gall]
   ^-  (quip card:agent:gall _..on-init)
   ?>  ?=([@ @ *] wire)
   =/  =id  [(slav %p i.wire) i.t.wire]
@@ -1713,9 +1713,9 @@
   =/  he-full  ~(. he hid id ~ session)
   =^  moves  state
     =<  he-abet
-    ?+    +<.sign-userspace  ~|([%dojo-bad-take +<.sign-userspace] !!)
-        %writ                (he-writ:he-full t.t.wire +>.sign-userspace)
-        %http-response       (he-http-response:he-full t.t.wire +>.sign-userspace)
+    ?+    +<.sign-user  ~|([%dojo-bad-take +<.sign-user] !!)
+        %writ                (he-writ:he-full t.t.wire +>.sign-user)
+        %http-response       (he-http-response:he-full t.t.wire +>.sign-user)
     ==
   [moves ..on-init]
 ::  if dojo fails unexpectedly, kill whatever each session is working on

@@ -95,12 +95,12 @@
     ==
   ::
   ++  on-arvo
-    |=  [=wire =sign-userspace:agent:gall]
+    |=  [=wire =sign-user:agent:gall]
     ^-  (quip card _this)
-    ?+  sign-userspace  (on-arvo:def wire sign-userspace)
+    ?+  sign-user  (on-arvo:def wire sign-user)
         [%eyre %bound *]
-      ~?  !accepted.sign-userspace
-        [dap.bowl 'bind rejected!' binding.sign-userspace]
+      ~?  !accepted.sign-user
+        [dap.bowl 'bind rejected!' binding.sign-user]
       [~ this]
     ==
   ::

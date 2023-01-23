@@ -73,12 +73,12 @@
   [[(emit-event %on-agent wire -.sign) cards] this]
 ::
 ++  on-arvo
-  |=  [=wire =sign-userspace:agent:gall]
+  |=  [=wire =sign-user:agent:gall]
   ^-  (quip card:agent:gall agent:gall)
   %-  %+  print  bowl  |.
-      "{<dap.bowl>}: on-arvo on wire {<wire>}, {<[- +<]:sign-userspace>}"
-  =^  cards  agent  (on-arvo:ag wire sign-userspace)
-  [[(emit-event %on-arvo wire [- +<]:sign-userspace) cards] this]
+      "{<dap.bowl>}: on-arvo on wire {<wire>}, {<[- +<]:sign-user>}"
+  =^  cards  agent  (on-arvo:ag wire sign-user)
+  [[(emit-event %on-arvo wire [- +<]:sign-user) cards] this]
 ::
 ++  on-fail
   |=  [=term =tang]

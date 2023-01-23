@@ -1797,7 +1797,7 @@
   +$  suss  (trel dude @tas @da)                        ::  config report
   +$  well  (pair desk term)                            ::
   +$  neat
-    $%  [%arvo =userspace-note:agent]
+    $%  [%arvo =user-note:agent]
         [%agent [=ship name=term] =deal]
         [%pyre =tang]
     ==
@@ -1827,10 +1827,10 @@
     +$  card  (wind note gift)
     +$  note
       $%  [%agent [=ship name=term] =task]
-          [%arvo userspace-note]
+          [%arvo user-note]
           [%pyre =tang]
       ==
-    +$  userspace-gift
+    +$  user-gift
       $%  $>(%done gift:ames) :: kiln
           ::
           $>(%wake gift:behn)
@@ -1858,7 +1858,7 @@
           ::
           $>(%arow gift:khan)
       ==
-    +$  sign-userspace
+    +$  sign-user
       $~  [%behn %wake ~]
       $%  $:  %ames
         $%  $>(%done gift:ames) :: kiln
@@ -1897,7 +1897,7 @@
         $%  $>(%arow gift:khan)
         ==  ==
       ==
-    +$  userspace-note
+    +$  user-note
       $%  $:  %a
         $%  $>(%sift task:ames)
             $>(%spew task:ames)
@@ -2030,7 +2030,7 @@
         *(quip card _^|(..on-init))
       ::
       ++  on-arvo
-        |~  [wire sign-userspace]
+        |~  [wire sign-user]
         *(quip card _^|(..on-init))
       ::
       ++  on-fail
@@ -2403,7 +2403,7 @@
   +$  card  card:agent:gall
   +$  input
     $%  [%poke =cage]
-        [%sign =wire =sign-userspace:agent:gall]
+        [%sign =wire =sign-user:agent:gall]
         [%agent =wire =sign:agent:gall]
         [%watch =path]
     ==

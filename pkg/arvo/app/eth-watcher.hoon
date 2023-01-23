@@ -549,9 +549,9 @@
   --
 ::
 ++  on-arvo
-  |=  [=wire =sign-userspace:agent:gall]
+  |=  [=wire =sign-user:agent:gall]
   ^-  (quip card agent:gall)
-  ?+    +<.sign-userspace  ~|([%strange-sign-userspace -.sign-userspace] !!)
+  ?+    +<.sign-user  ~|([%strange-sign-user -.sign-user] !!)
       %wake
     ?.  ?=([%timer *] wire)  ~&  weird-wire=wire  [~ this]
     =*  path  t.wire
@@ -559,7 +559,7 @@
       [~ this]
     =/  dog=watchdog
       (~(got by dogs.state) path)
-    ?^  error.sign-userspace
+    ?^  error.sign-user
       ::  failed, try again.  maybe should tell user if fails more than
       ::  5 times.
       ::

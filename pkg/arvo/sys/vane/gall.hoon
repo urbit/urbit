@@ -43,10 +43,10 @@
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
 ::
-+$  userspace-move  [=duct move=(wind userspace-note:agent userspace-gift:agent)]
++$  user-move  [=duct move=(wind user-note:agent user-gift:agent)]
 ::
 +$  gall-note
-  $%  $<(%a $<(%b userspace-note:agent))
+  $%  $<(%a $<(%b user-note:agent))
       $:  %a
     $%  $>(%sift task:ames)
         $>(%spew task:ames)
@@ -61,7 +61,7 @@
     ==  ==
   ==
 ::
-+$  gall-gift  $%  userspace-gift:agent
++$  gall-gift  $%  user-gift:agent
                    $>(%heck gift:behn)
                ==
 ::
@@ -1025,7 +1025,7 @@
         %-  zing
         %+  turn  ducts
         |=  =duct
-        ^-  (list userspace-move)
+        ^-  (list user-move)
         ~?  &(=(duct system-duct.state) !=(agent-name %hood))
           [%agent-giving-on-system-duct agent-name -.gift]
         =/  =mark  (~(gut by marks.yoke) duct p.cage)
@@ -1075,7 +1075,7 @@
         ::
         =/  =gall-note
           ?-  -.neet
-            %arvo   userspace-note.neet
+            %arvo   user-note.neet
             %huck   gall-note.neet
             %agent  [%g %deal [our ship.neet] [name deal]:neet]
           ==
@@ -1311,11 +1311,11 @@
     ::
     ++  ap-generic-take
       ~/  %ap-generic-take
-      |=  [=wire =sign-userspace:agent]
+      |=  [=wire =sign-user:agent]
       ^+  ap-core
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
-        (on-arvo:ap-agent-core wire sign-userspace)
+        (on-arvo:ap-agent-core wire sign-user)
       ?^  maybe-tang
         (ap-error %arvo-response u.maybe-tang)
       ap-core
@@ -1519,7 +1519,7 @@
     ::
     ++  ap-kill-up-slip
       |=  =duct
-      ^-  (list userspace-move)
+      ^-  (list user-move)
       ::
       :~  [duct %slip %g %deal [our our] agent-name %leave ~]
           [duct %give %unto %kick ~]

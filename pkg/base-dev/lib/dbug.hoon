@@ -141,9 +141,9 @@
     [cards this]
   ::
   ++  on-arvo
-    |=  [=wire =sign-userspace:agent:gall]
+    |=  [=wire =sign-user:agent:gall]
     ^-  (quip card:agent:gall agent:gall)
-    =^  cards  agent  (on-arvo:ag wire sign-userspace)
+    =^  cards  agent  (on-arvo:ag wire sign-user)
     [cards this]
   ::
   ++  on-fail

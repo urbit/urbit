@@ -98,12 +98,12 @@
   ++  on-agent  on-agent:def
   ++  on-arvo
     ^+  on-arvo:*agent:gall
-    |=  [=wire =sign-userspace:agent:gall]
+    |=  [=wire =sign-user:agent:gall]
     ^-  (quip card _this)
     =^  cards  state
-      ?+  sign-userspace  (on-arvo:def wire sign-userspace)
+      ?+  sign-user  (on-arvo:def wire sign-user)
         [%eyre %bound *]  `state
-        [%clay *]         (handle-build:lsp wire +.sign-userspace)
+        [%clay *]         (handle-build:lsp wire +.sign-user)
       ==
     [cards this]
   ::

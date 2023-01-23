@@ -156,9 +156,9 @@
     ==
   ::
   ++  on-arvo
-    |=  [=wire =sign-userspace:agent:gall]
+    |=  [=wire =sign-user:agent:gall]
     ^-  (quip card _this)
-    ?+  +<.sign-userspace  ~|([dap.bowl %strange-sign-userspace +<.sign-userspace] !!)
+    ?+  +<.sign-user  ~|([dap.bowl %strange-sign-user +<.sign-user] !!)
         %wake
       ?:  =(/export wire)
         [[wait-export:do export:do] this]

@@ -52,21 +52,21 @@
   [(pass-session ses %view ~)]~
 ::
 ++  on-arvo
-  |=  [=wire =sign-userspace:agent:gall]
+  |=  [=wire =sign-user:agent:gall]
   ^-  (quip card:agent:gall _this)
   ~|  wire
-  ?+  wire  (on-arvo:def wire sign-userspace)
+  ?+  wire  (on-arvo:def wire sign-user)
     [%tube *]  [~ this]  ::  we no longer care about these
   ::
     ::  pass on dill blits for the session
     ::
       [%dill @ ~]
     =*  ses  i.t.wire
-    ?.  ?=([%dill %blit *] sign-userspace)
-      ~|  [%unexpected-sign [- +<]:sign-userspace]
+    ?.  ?=([%dill %blit *] sign-user)
+      ~|  [%unexpected-sign [- +<]:sign-user]
       !!
     :_  this
-    %+  turn  p.sign-userspace
+    %+  turn  p.sign-user
     |=  =blit:dill
     [%give %fact [%session ses %view ~]~ %blit !>(blit)]
   ::

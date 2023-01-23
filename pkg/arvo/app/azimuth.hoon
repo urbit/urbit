@@ -393,17 +393,17 @@
     (jael-update:do (to-udiffs:do effects))
   ::
   ++  on-arvo
-    |=  [=wire =sign-userspace:agent:gall]
-    ?:  &(=(/al wire) ?=(%arow +<.sign-userspace))
-      ?-    -.p.sign-userspace
+    |=  [=wire =sign-user:agent:gall]
+    ?:  &(=(/al wire) ?=(%arow +<.sign-user))
+      ?-    -.p.sign-user
           %&  `this
           %|
-        %-  (slog 'loading azimuth snapshot failed! still trying' p.p.sign-userspace)
+        %-  (slog 'loading azimuth snapshot failed! still trying' p.p.sign-user)
         [~[(init-timer (add ~s10 now.bowl))] this]
       ==
-    ?.  &(=(/init wire) ?=(%wake +<.sign-userspace))
-      (on-arvo:def wire sign-userspace)
-    ?^  error.sign-userspace
+    ?.  &(=(/init wire) ?=(%wake +<.sign-user))
+      (on-arvo:def wire sign-user)
+    ?^  error.sign-user
       %-  (slog 'azimuth: failed to initialize!' ~)
       `this
     :_  this

@@ -58,8 +58,8 @@
   ==
 ::
 ++  on-arvo
-  |=  [=wire =sign-userspace:agent:gall]
-  ~|  "unexpected system response {<-.sign-userspace>} to {<dap.bowl>} on wire {<wire>}"
+  |=  [=wire =sign-user:agent:gall]
+  ~|  "unexpected system response {<-.sign-user>} to {<dap.bowl>} on wire {<wire>}"
   !!
 ::
 ++  on-fail

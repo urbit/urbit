@@ -159,14 +159,14 @@
   (emit %pass /pack %arvo %d %flog %pack ~)
 ::
 ++  poke-pans
-  |=  pans=(list userspace-note:agent:gall)
+  |=  pans=(list user-note:agent:gall)
   ?~  pans  abet
   =.  this  (emit %pass /helm/pans %arvo i.pans)
   $(pans t.pans)
 ::
 ++  poke-pass
-  |=  =userspace-note:agent:gall  =<  abet
-  (emit %pass /helm/pass %arvo userspace-note)
+  |=  =user-note:agent:gall  =<  abet
+  (emit %pass /helm/pass %arvo user-note)
 ::
 ++  take-wake-automass
   |=  [way=wire error=(unit tang)]
@@ -314,14 +314,14 @@
   (flog %text "bound: {<success>}")
 ::
 ++  take-arvo
-  |=  [=wire =sign-userspace:agent:gall]
-  ?+  wire  ~|([%helm-bad-take-wire wire +<.sign-userspace] !!)
+  |=  [=wire =sign-user:agent:gall]
+  ?+  wire  ~|([%helm-bad-take-wire wire +<.sign-user] !!)
     [%automass *]     %+  take-wake-automass  t.wire
-                      ?>(?=(%wake +<.sign-userspace) +>.sign-userspace)
+                      ?>(?=(%wake +<.sign-user) +>.sign-user)
     [%serv *]         %+  take-bound  t.wire
-                      ?>(?=(%bound +<.sign-userspace) +>.sign-userspace)
+                      ?>(?=(%bound +<.sign-user) +>.sign-user)
     [%moon-breach *]  %+  take-wake-moon-breach  t.wire
-                      ?>(?=(%wake +<.sign-userspace) +>.sign-userspace)
+                      ?>(?=(%wake +<.sign-user) +>.sign-user)
     [%pass *]         abet
   ==
 --

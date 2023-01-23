@@ -110,7 +110,7 @@
   ++  on-agent  on-agent:def
   ::
   ++  on-arvo
-    |=  [=wire sign=sign-userspace:agent:gall]
+    |=  [=wire sign=sign-user:agent:gall]
     ^-  step:agent:gall
     ?+  wire  (on-arvo:def wire sign)
         [%wait @ ~]

@@ -856,36 +856,36 @@
   ==
 ::
 ++  take-arvo
-  |=  [=wire =sign-userspace:agent:gall]
+  |=  [=wire =sign-user:agent:gall]
   ^+  abet
   ?-    wire
       [%sync %merg *]   abet
       [%find-ship *]    abet
       [%sync *]         abet
-      [%zinc *]         (take-sync t.wire sign-userspace)
+      [%zinc *]         (take-sync t.wire sign-user)
       [%autocommit *]   %+  take-wake-autocommit  t.wire
-                        ?>(?=(%wake +<.sign-userspace) +>.sign-userspace)
+                        ?>(?=(%wake +<.sign-user) +>.sign-user)
       [%vats *]         abet
       [%fuse-request @tas *]
                       =/  f  (fuzz i.t.wire now)
                       ?~  f
                         abet
-                      abet:abet:(take:u.f t.t.wire sign-userspace)
-      [%fuse @tas *]  ?>  ?=(%mere +<.sign-userspace)
+                      abet:abet:(take:u.f t.t.wire sign-user)
+      [%fuse @tas *]  ?>  ?=(%mere +<.sign-user)
                       =/  syd=desk  i.t.wire
-                      ?.  ?=([%| *] +>.sign-userspace)
-                        ?~  p.p.sign-userspace
+                      ?.  ?=([%| *] +>.sign-user)
+                        ?~  p.p.sign-user
                           abet
                         =/  msg=tape  "fuse merge conflict for {<syd>}"
-                        %-  (slog [leaf+msg >p.p.sign-userspace< ~])
+                        %-  (slog [leaf+msg >p.p.sign-user< ~])
                         abet
-                      %-  (slog leaf+"failed fuse for {<syd>}" p.p.sign-userspace)
+                      %-  (slog leaf+"failed fuse for {<syd>}" p.p.sign-user)
                       abet
       *
-    ?+    +<.sign-userspace
-        ((slog leaf+"kiln: strange card {<+<.sign-userspace wire>}" ~) abet)
-      %done  (done wire +>.sign-userspace)
-      %mere  (take-mere wire +>.sign-userspace)
+    ?+    +<.sign-user
+        ((slog leaf+"kiln: strange card {<+<.sign-user wire>}" ~) abet)
+      %done  (done wire +>.sign-user)
+      %mere  (take-mere wire +>.sign-user)
     ==
   ==
 ++  take  |=(way=wire ?>(?=([@ ~] way) (work i.way))) ::  general handler
@@ -997,7 +997,7 @@
     send-fuse:make-requests
   ::
   ++  take
-    |=  [wir=wire =sign-userspace:agent:gall]
+    |=  [wir=wire =sign-user:agent:gall]
     ^+  ..fuse
     ?>  =((lent wir) 3)
     =/  who=ship  (slav %p (snag 0 wir))
@@ -1007,8 +1007,8 @@
       ::  If the hash in the wire doesn't match the current request
       ::  this is a response for a previous fuse that we can ignore.
       ..take
-    ?>  ?=([?(%clay %behn) %writ *] sign-userspace)
-    =/  gif  +.sign-userspace
+    ?>  ?=([?(%clay %behn) %writ *] sign-user)
+    =/  gif  +.sign-user
     ?~  p.gif
       %-  (slog leaf+"|fuse request failed for {<src>} on <who> - cancelling")
       delete
@@ -1044,14 +1044,14 @@
   --
 ::
 ++  take-sync
-  |=  [=wire =sign-userspace:agent:gall]
+  |=  [=wire =sign-user:agent:gall]
   ?>  ?=([@ @ @ *] wire)
   =*  syd  i.wire
   =/  her  (slav %p i.t.wire)
   =*  sud  i.t.t.wire
   ?.  (~(has by zyn) syd her sud)
     abet
-  abet:abet:(take:(sync syd her sud) t.t.t.wire sign-userspace)
+  abet:abet:(take:(sync syd her sud) t.t.t.wire sign-user)
 ::
 ++  sync
   |=  kiln-sync
@@ -1116,7 +1116,7 @@
   ::  Instead, we do the merges to syd and kid explicitly.
   ::
   ++  take
-    |=  [=wire =sign-userspace:agent:gall]
+    |=  [=wire =sign-user:agent:gall]
     ^+  ..abet
     ?>  ?=([@ @ *] wire)
     ?.  =(nun i.wire)
@@ -1128,21 +1128,21 @@
       ?.  =(0 let)
         ~>  %slog.(fmt "sync-bad-stage {<let>} {<wire>}")
         ..abet
-      ?>  ?=(%arow +<.sign-userspace)
-      ?:  ?=(%| -.p.sign-userspace)
+      ?>  ?=(%arow +<.sign-user)
+      ?:  ?=(%| -.p.sign-user)
         ~>  %slog.(fmt "activation failed into {here}; retrying sync")
-        %-  (slog p.p.sign-userspace)
+        %-  (slog p.p.sign-user)
         init
       ::  Now that we know the revision, start main download loop
       ::
-      =.  let  !<(@ud q.p.p.sign-userspace)
+      =.  let  !<(@ud q.p.p.sign-user)
       next
     ::
         %next
-      ?>  ?=(%arow +<.sign-userspace)
-      ?:  ?=(%| -.p.sign-userspace)
+      ?>  ?=(%arow +<.sign-user)
+      ?:  ?=(%| -.p.sign-user)
         ::  ~>  %slog.(fmt "download failed into {here}; retrying sync")
-        ::  %-  (slog p.p.sign-userspace)
+        ::  %-  (slog p.p.sign-user)
         init
       ::
       ~>  %slog.(fmt "finished downloading update for {here}")
@@ -1160,18 +1160,18 @@
       next
     ::
         %main
-      ?>  ?=(%mere +<.sign-userspace)
+      ?>  ?=(%mere +<.sign-user)
       ::  This case is maintained by superstition.  If you remove it,
       ::  carefully test that if the source ship is breached, we
       ::  correctly reset let to 0
       ::
-      ?:  ?=([%| %ali-unavailable *] p.sign-userspace)
+      ?:  ?=([%| %ali-unavailable *] p.sign-user)
         =+  "kiln: merge into {here} failed, maybe because sunk; restarting"
-        %-  (slog leaf/- p.p.sign-userspace)
+        %-  (slog leaf/- p.p.sign-user)
         init
-      ?:  ?=(%| -.p.sign-userspace)
+      ?:  ?=(%| -.p.sign-user)
         =+  "kiln: merge into {here} failed, waiting for next revision"
-        %-  (slog leaf/- p.p.sign-userspace)
+        %-  (slog leaf/- p.p.sign-user)
         ..abet
       ~>  %slog.(fmt "merge into {<syd>} succeeded")
       ::  If we have a kids desk parameter, merge into that
@@ -1182,23 +1182,23 @@
       (merg /kids u.kid)
     ::
         %kids
-      ?>  ?=(%mere +<.sign-userspace)
+      ?>  ?=(%mere +<.sign-user)
       ?~  kid
         ..abet
       ::  See %main for this case
       ::
-      ?:  ?=([%| %ali-unavailable *] p.sign-userspace)
+      ?:  ?=([%| %ali-unavailable *] p.sign-user)
         =+  "kids merge to {<u.kid>} failed, maybe peer sunk; restarting"
         ~>  %slog.(fmt -)
         init
       ::  Just notify; we've already started listening for the next
       ::  version
       ::
-      ?-  -.p.sign-userspace
+      ?-  -.p.sign-user
         %&  ~>  %slog.(fmt "kids merge to {<u.kid>} succeeded")
             ..abet
         %|  ~>  %slog.(fmt "kids merge to {<u.kid>} failed")
-            %-  (slog p.p.sign-userspace)
+            %-  (slog p.p.sign-user)
             ..abet
       ==
     ==

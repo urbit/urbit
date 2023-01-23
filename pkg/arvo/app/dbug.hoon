@@ -64,12 +64,12 @@
     handle-http-request:do
   ::
   ++  on-arvo
-    |=  [=wire =sign-userspace:agent:gall]
+    |=  [=wire =sign-user:agent:gall]
     ^-  (quip card _this)
-    ?.  ?=([%eyre %bound *] sign-userspace)
-      (on-arvo:def wire sign-userspace)
-    ~?  !accepted.sign-userspace
-      [dap.bowl "bind rejected!" binding.sign-userspace]
+    ?.  ?=([%eyre %bound *] sign-user)
+      (on-arvo:def wire sign-user)
+    ~?  !accepted.sign-user
+      [dap.bowl "bind rejected!" binding.sign-user]
     [~ this]
   ::
   ++  on-peek   on-peek:def
