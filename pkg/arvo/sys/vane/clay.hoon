@@ -4212,12 +4212,12 @@
       ^-  (unit (unit cage))
       ?:  ?=([%bloc ~] pax)
         :^  ~  ~  %noun
-        :-  -:!>(*(map lobe blob))
-        ^-  (map lobe blob)
+        :-  -:!>(*(map lobe page))
+        ^-  (map lobe page)
         %-  %~  rep  in
             %-  reachable-takos
             (~(got by hit.dom) let.dom)
-        |=  [t=tako o=(map lobe blob)]
+        |=  [t=tako o=(map lobe page)]
         %-  ~(gas by o)
         %+  turn
           ~(val by q:(~(got by hut.ran) t))

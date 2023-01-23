@@ -107,7 +107,7 @@
   =-  ~&  clay-blobs+~(wyt by -)
       [/c/inflate [%prep -]]
   %+  roll  dez
-  |=  [bas=path out=(map lobe:clay blob:clay)]
+  |=  [bas=path out=(map lobe:clay page:clay)]
   %-  ~(uni by out)
   .^(_out %cs (snoc bas %bloc))
 ::
