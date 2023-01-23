@@ -24,8 +24,10 @@
   $:  %0
       make=(map @ta [next=(unit @da) =task])            ::  things to make
       hear=(set desk)                                   ::  observed desks
-      sole=@ta                                          ::  the way out
+      sole=sole-id                                      ::  the way out
   ==
+::
++$  sole-id  sole-id:sole:shoe
 ::
 +$  task
   $%  pill
@@ -77,7 +79,7 @@
   [~ this(state !<(state-0 old))]
 ::
 ++  command-parser
-  |=  sole-id=@ta
+  |=  =sole-id
   ^+  |~(nail *(like [? command]))
   %+  pick
     (cold [%see ~] wut)
@@ -111,7 +113,7 @@
   --
 ::
 ++  on-command
-  |=  [sole-id=@ta =command]
+  |=  [=sole-id =command]
   ^-  (quip card _this)
   ?-  -.command
       %put
@@ -274,7 +276,7 @@
   ==
 ::
 ++  on-connect
-  |=  sole-id=@ta
+  |=  =sole-id
   ^-  (quip card _this)
   ::TODO  actually should just poke drum to write
   [~ this(sole sole-id)]
