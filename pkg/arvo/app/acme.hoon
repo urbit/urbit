@@ -584,10 +584,11 @@
       ~|  [%no-next-domain idx=idx]
       (head (skim pending |=([turf idx=@ud ?] =(idx ^idx))))
     ::  XX should confirm that :turf points to us
-    ::  confirms that domain exists (and an urbit is on :80)
+    ::  confirms that domain exists
     ::
+    =/  sec=?  p:.^(hart:eyre %e /(scot %p our.bow)/host/(scot %da now.bow))
     =/  =purl
-        :-  [sec=| por=~ host=[%& turf.next]]
+        :-  [sec=sec por=~ host=[%& turf.next]]
         [[ext=~ path=/'~debug'] query=~]
     =/  =wire
       (acme-wire try %validate-domain /idx/(scot %ud idx.next))
@@ -754,9 +755,8 @@
     ?>  ?=(%wake sas.u.rod)
     =*  aut  u.active.aut.u.rod
     =/  pat=path  /'.well-known'/acme-challenge/[tok.cal.aut]
-    ::  note: requires port 80, just as the ACME service will
-    ::
-    =/  url=purl  [[sec=| por=~ hos=[%& dom.aut]] [ext=~ pat] hed=~]
+    =/  sec=?  p:.^(hart:eyre %e /(scot %p our.bow)/host/(scot %da now.bow))
+    =/  url=purl  [[sec=sec por=~ hos=[%& dom.aut]] [ext=~ pat] hed=~]
     ::  =/  url=purl  [[sec=| por=`8.081 hos=[%& /localhost]] [ext=~ pat] hed=~]
     ::  XX idx in wire?
     ::
