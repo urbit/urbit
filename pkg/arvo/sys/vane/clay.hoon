@@ -467,6 +467,7 @@
       $:  %clay                                         ::
           $>  $?  %mere                                 ::
                   %writ                                 ::
+                  %wris                                 ::
               ==                                        ::
           gift                                          ::
       ==                                                ::
@@ -6084,6 +6085,7 @@
     [mos ..^$]
   ::
   ?:  ?=([%foreign-warp *] tea)
+    ?:  ?=(%wris +<.hin)  ~&  %dropping-wris  `..^$
     ?>  ?=(%writ +<.hin)
     :_  ..^$
     [hen %give %boon `(unit rand)`(bind `riot`p.hin rant-to-rand)]~
@@ -6235,6 +6237,7 @@
       %boon  !!
       %lost  !!
       %unto  !!
+      %wris  ~&  %strange-wris  !!
       %writ
     %-  (slog leaf+"clay: strange writ (expected on upgrade to Fusion)" ~)
     [~ ..^$]
