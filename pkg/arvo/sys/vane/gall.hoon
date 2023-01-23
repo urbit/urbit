@@ -2092,7 +2092,7 @@
       agent
     ?:  ?=(%| -.agent.yoke)
       [%| p.agent.yoke]
-    ?-  -.+.agent.yoke
+    ?-  -.p.agent.yoke
       [%zuse %415]  [%| on-save:p.agent.yoke]
     ==
   ==
