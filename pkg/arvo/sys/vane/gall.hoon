@@ -202,11 +202,21 @@
   ::  +mo-abet: finalize, reversing moves
   ::  +mo-pass: prepend a standard %pass to the current list of moves
   ::  +mo-give: prepend a standard %give to the current list of moves
+  ::  +mo-talk: build task to print config report or failure trace
   ::
   ++  mo-core  .
   ++  mo-abed  |=(hun=duct mo-core(hen hun))
   ++  mo-abet  [(flop moves) gall-payload]
   ++  mo-give  |=(g=gift mo-core(moves [[hen give+g] moves]))
+  ++  mo-talk
+    |=  rup=(each suss tang)
+    ^-  [wire note-arvo]
+    :+  /sys/say  %d
+    ^-  task:dill
+    ?-  -.rup
+      %&  [%text "gall: {(t q)}ed %{(t p)}":[t=trip p.rup]]
+      %|  [%talk leaf+"gall: failed" (flop p.rup)]
+    ==
   ++  mo-pass  |=(p=[wire note-arvo] mo-core(moves [[hen pass+p] moves]))
   ++  mo-slip  |=(p=note-arvo mo-core(moves [[hen slip+p] moves]))
   ++  mo-past
@@ -304,12 +314,12 @@
     =/  ap-core  +.wag
     ?^  maybe-tang
       =.  mo-core  old
-      (mo-give %onto %.n u.maybe-tang)
+      (mo-pass (mo-talk %.n u.maybe-tang))
     ::
     =.  mo-core  ap-abet:ap-core
     =.  mo-core  (mo-clear-queue dap)
     =/  =suss  [dap %boot now]
-    (mo-give %onto [%.y suss])
+    (mo-pass (mo-talk %.y suss))
   ::  +mo-send-foreign-request: handle local request to .ship
   ::
   ++  mo-send-foreign-request
@@ -948,8 +958,8 @@
       ::
       =/  running  (~(put by yokes.state) agent-name yoke)
       =/  moves
-        =/  giver  |=(report=(each suss tang) [hen %give %onto report])
-        =/  from-suss  (turn agent-config giver)
+        =/  talker  |=(report=(each suss tang) [hen %pass (mo-talk report)])
+        =/  from-suss  (turn agent-config talker)
         :(weld agent-moves from-suss moves)
       ::
       %_  mo-core

@@ -11,16 +11,17 @@
       [%3 network:one:store]
       [%4 network:store]
       [%5 network:store]
-      state-6
+      [%6 network:store]
+      state-7
   ==
 ::-
-+$  state-6  [%6 network:store]
++$  state-7  [%7 network:store]
 ++  orm      orm:store
 ++  orm-log  orm-log:store
 ++  mar      %graph-update-3
 --
 ::
-=|  state-6
+=|  state-7
 =*  state  -
 ::
 %-  agent:dbug
@@ -96,7 +97,43 @@
       (scag 2 (tap:orm-log update-log))
     ==
   ::
-    %6  [cards this(state old)]
+      %6
+    =/  old-dms
+      %-  ~(gas by *(map resource:store marked-graph:store))
+      %+  skim  ~(tap by graphs.old)
+      |=([r=resource:store *] (is-old-dm:upgrade:store r))
+    =/  backup  (backup:upgrade:store bowl)
+    %_    $
+        -.old  %7
+        archive.old  ~
+        update-logs.old
+      %-  ~(gas by *(map resource:store update-log:store))
+      %+  murn  ~(tap by update-logs.old)
+      |=  [r=resource:store =update-log:store]
+      ?:  (is-old-dm:upgrade:store r)
+        ~
+      `[r (strip-sigs-log:upgrade:store update-log)]
+    ::
+        graphs.old
+      %-  ~(gas by *(map resource:store marked-graph:store))
+      %+  murn  ~(tap by graphs.old)
+      |=  [r=resource:store =graph:store mar=(unit mark)]
+      ?:  (is-old-dm:upgrade:store r)
+        ~
+      `[r (strip-sigs-graph:upgrade:store graph) mar]
+    ::
+        cards
+      ;:  welp
+        cards
+      ::
+        (nuke-groups:upgrade:store bowl)
+      ::
+        (turn ~(tap by archive.old) backup)
+        (turn ~(tap by old-dms) backup)
+      ==
+    ==
+  ::
+      %7  [cards this(state old)]
   ==
 ::
 ++  on-watch
@@ -129,8 +166,20 @@
     ?+  mark           (on-poke:def mark vase)
       %graph-update-3  (graph-update !<(update:store vase))
       %import          (poke-import q.vase)
+      %migrated        (poke-migrated !<(resource:store vase))
     ==
   [cards this]
+  ::
+  ++  poke-migrated
+    |=  r=resource:res
+    ^-  (quip card _state)
+    =/  =path  /(rap 3 'backup-' (scot %p entity.r) '-' name.r ~)/noun
+    =/  graph  (~(got by graphs) r)
+    :-  [%pass /migrate %agent [our.bowl %hood] %poke drum-put+!>([path (jam r graph)])]~
+    %_  state
+      graphs       (~(del by graphs) r)
+      update-logs  (~(del by update-logs) r)
+    ==
   ::
   ++  graph-update
     |=  =update:store
