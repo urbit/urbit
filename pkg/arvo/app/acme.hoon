@@ -584,7 +584,7 @@
       ~|  [%no-next-domain idx=idx]
       (head (skim pending |=([turf idx=@ud ?] =(idx ^idx))))
     ::  XX should confirm that :turf points to us
-    ::  confirms that domain exists
+    ::  confirms that domain exists (and an urbit is on the standard port)
     ::
     =/  sec=?  p:.^(hart:eyre %e /(scot %p our.bow)/host/(scot %da now.bow))
     =/  =purl
