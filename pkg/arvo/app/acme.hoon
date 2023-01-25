@@ -376,9 +376,9 @@
       ?+    wire  (on-arvo:def wire sign-user)
           [%acme *]
         ?+  +<.sign-user  (on-arvo:def wire sign-user)
-          %http-response       (http-response:ac wire +>.sign-user)
-          %wake                (wake:ac wire +>.sign-user)
-          %bound               (bound:ac wire +>.sign-user)
+          %http-response  (http-response:ac wire +>.sign-user)
+          %wake           (wake:ac wire +>.sign-user)
+          %bound          (bound:ac wire +>.sign-user)
         ==
       ==
     [cards this]
