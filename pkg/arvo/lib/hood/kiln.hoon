@@ -1157,7 +1157,7 @@
       ::
       ~>  %slog.(fmt "finished downloading update for {here}")
       =.  let  +(let)
-      ::  If nothing changed, just advance
+      ::  If nothing changed, just ensure %kids is up-to-date and advance
       ::
       ?.  (get-remote-diff our syd now [her sud (dec let)])
         =<  next
