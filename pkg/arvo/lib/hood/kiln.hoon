@@ -738,7 +738,11 @@
       zyn
     (~(del by zyn) loc u.got)
   =?  ..abet  ?=(%dead zest)
-    (emit %pass /kiln/install %arvo %c %zest loc ?:(=(our her) %live %held))
+    ::  we want to set the desk to %live, but this may not succeed right away.
+    ::  setting the desk to %held makes clay set it to %live as soon as it can,
+    ::  without crashing the current event if it can't right now.
+    ::
+    (emit %pass /kiln/install %arvo %c %zest loc %held)
   ?:  (~(has by zyn) loc her rem)
     abet:(spam (render "already syncing" loc her rem ~) ~)
   ?:  =([our loc] [her rem])

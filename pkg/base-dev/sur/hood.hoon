@@ -82,9 +82,11 @@
       %dead  "suspended"
     ::
         %held
+      ?.  =(~ lac.dek)
+        "suspended until permissions are granted"
       ?:  =(~ cop.dek)
         "suspended until next update"
-      "suspended until permissions are granted"
+      "suspended until next update, needs new permissions"
     ==
   =/  kul=tape
     %+  roll
@@ -99,7 +101,7 @@
   =/  pen=(list $@(@tas [@tas @ud]))
     %+  weld  ~(tap in wic.dek)
     ?:  =(~ cop.dek)  ~
-    `(list $@(@tas [@tas @ud]))`[%perm-commit]~
+    `(list $@(@tas [@tas @ud]))`[%awaiting-perms]~
   :~  leaf/"/sys/kelvin:     {kul}"
       leaf/"base hash:        {?.(=(1 (lent meb)) <meb> <(head meb)>)}"
       leaf/"%cz hash:         {<hash>}"
@@ -115,7 +117,8 @@
       leaf/"source aeon:      {?~(sink <~> <let.u.sink>)}"
       leaf/"kids desk:        {?~(sink <~> ?~(kid.u.sink <~> <u.kid.u.sink>))}"
       leaf/"pending updates:  {<pen>}"
-      leaf/"missing perms:    {<`(list perm:gall)`~(tap in cop.dek)>}"
+      leaf/" awaiting perms:  {<`(list perm:gall)`~(tap in cop.dek)>}"
+      leaf/"missing perms:    {<`(list perm:gall)`~(tap in lac.dek)>}"
   ==
 ::  +report-kids: non-vat cz hash report for kids desk
 ::

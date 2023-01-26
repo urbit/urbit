@@ -173,11 +173,12 @@
       nor=norm                                          ::  default policy
       mim=(map path mime)                               ::  mime cache
       fod=flue                                          ::  ford cache
-      wic=(map weft yoki)                               ::  commit-in-waiting
-      cop=(unit [yok=yoki mis=pers:gall])               ::  blocked on perms
-      liv=zest                                          ::  running agents
+      wic=(map weft yoki)                               ::  commit awaiting weft
+      cop=(unit [yok=yoki mis=pers:gall])               ::  commit awaiting pers
+      lac=pers:gall                                     ::  perms blocking live
+      liv=zest                                          ::  agents liveness
       ren=rein                                          ::  force agents on/off
-      pes=(set perm:gall)                               ::  user-approved perms
+      pes=pers:gall                                     ::  user-approved perms
   ==                                                    ::
 ::
 ::  Over-the-wire backfill request/response
@@ -1913,6 +1914,8 @@
       %-  (slog leaf+"clay: wait-for-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
       tare                                              ::  [tare] >
     ::TODO  asserts that perms don't change across kelvin upgrade
+    ::  if the desk is running, and this commit would leave it with
+    ::  insufficient permissions to be running, hold the commit.
     ::
     =/  mis=(list perm:gall)
       ?:  =(%base syd)  ~
@@ -1923,6 +1926,7 @@
           (turn mis |=(p=perm:gall >p<))
       tare                                              ::  [tare] >
     ::
+    =.  lac.dom  (sy mis)
     =.  wic.dom  (~(del by wic.dom) zuse+zuse)
     =.  cop.dom  ~
     ::
@@ -3289,30 +3293,42 @@
     |=  r=rule
     r(who (~(del in who.r) |+nom))
   ::
-  ++  missing-perms
-    ^-  (list perm:gall)
-    =^  res  ..park  (aver ~ %x da+now /desk/seal)
-    ?.  ?=([~ ~ *] res)  ~
-    ~|  [%reading-seal syd]
-    =/  =seal  !<(seal q.u.u.res)
-    (skip req.seal (cury have:gall pes.dom))
-  ::
   ++  set-curb                                          ::  [goad] <
     |=  pes=(set perm:gall)
     ^+  ..park
     =?  pes  =(%base syd)  ~
-    =/  pre  missing-perms
+    =/  pre  lac.dom
     =.  pes.dom  pes
-    =/  pos  missing-perms
-    ?:  &(!=(~ pos) =(%live liv.dom))
+    =.  lac.dom
+      %-  sy
+      ^-  (list perm:gall)
+      =^  res  ..park  (aver ~ %x da+now /desk/seal)
+      ?.  ?=([~ ~ *] res)  ~
+      ~|  [%reading-seal syd]
+      =/  =seal  !<(seal q.u.u.res)
+      (skip req.seal (cury have:gall pes.dom))
+    ::  if desk is already live, we cannot take away the permissions
+    ::  it needs to be live
+    ::
+    ?:  &(=(%live liv.dom) !=(~ lac.dom))
       ~|  ?:(=(~ pre) %sane %insane-pre)
       %-  mean
       :-  'clay: cannot take away required permissions for live desk:'
-      (turn pos |=(p=perm:gall >p<))
-    =.  pes.dom  pes
+      (turn ~(tap in lac.dom) |=(p=perm:gall >p<))
+    ::  if this desk has a commit that was blocked on permissions,
+    ::  try reapplying that commit
+    ::
     ?:  ?=(^ cop.dom)
+      ::REVIEW  can we ever be %held here?
+      ::        if we can, this may not set to %live if it becomes possible
       weck
-    ..park(pes.dom pes)
+    ::  if desk was held, try and make it live, it may now be allowed
+    ::
+    ?-  liv.dom
+      %held  (emit hen %pass /park-held/[syd] %b %wait now)
+      %dead  goad
+      %live  goad
+    ==
   ::
   ++  set-rein
     |=  ren=(map dude:gall ?)
@@ -3322,8 +3338,15 @@
   ++  set-zest                                          ::  [goad] <
     |=  liv=zest
     =?  liv  =(%base syd)  %live
-    ::NOTE  we don't need a perms check for setting %live here, because
-    ::      +goad gets called later, asserts the required perms are granted.
+    ::  when setting to live, we do not need to check that =(~ lac.dom) here,
+    ::  because goad gets called later, and will crash if that's the case.
+    ::  if you want to not crash in the same event that you set %live,
+    ::  set to %held instead, and clay will try to make it %live asap, but
+    ::  no sooner than the next event.
+    ::
+    ::REVIEW  suspending a desk does not apply pending cop.dom. should it?
+    =?  ..park  =(%held liv)
+      (emit hen %pass /park-held/[syd] %b %wait now)
     ..park(liv.dom liv)
   ::
   ++  rise                                              ::  [goad] <
@@ -3369,6 +3392,8 @@
     ?~  wis  ::  Every commit bottoms out here ?
       ..park
     (park | & yoki.i.wis *rang)
+  ::
+  ::  +weck: try to apply a commit that got blocked on perms
   ::
   ++  weck
     ^+  ..park
@@ -4708,6 +4733,7 @@
       ~&  [%clay %no-seal-in i.desks]
       $(desks t.desks)
     =/  mis=(list perm:gall)
+      ::REVIEW  is it ok to depend on this always being equal to lac.dom.den?
       %+  skip
         ~|  [%reading-seal i.desks]
         req:!<(seal q.u.u.res)
@@ -4873,7 +4899,7 @@
     |=  =dojo
     ^-  belt:tire
     =,  dom.dojo
-    [liv pes ~(key by wic) ?~(cop.dom.dojo ~ mis.u.cop)]
+    [liv pes ~(key by wic) ?~(cop.dom.dojo ~ mis.u.cop) lac]
   ::
   ::  [tare] Must be called any time the zest or commits-in-waiting
   ::  might have changed for a desk.  +goad calls this uncondtionally,
@@ -5868,7 +5894,7 @@
     ++  dome-13-to-14
       |=  dom=dome-13
       ^-  dome
-      dom(|7 [&8.dom cop=~ |8.dom(ren [ren.dom pes=~])])
+      dom(|7 [&8.dom cop=~ lac=~ |8.dom(ren [ren.dom pes=~])])
     --
   --
 ::

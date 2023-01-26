@@ -962,14 +962,20 @@
       $:  =zest                                         ::  running?
           pes=pers:gall                                 ::  granted perms
           wic=(set weft)                                ::  waiting kelvins
-          cop=pers:gall                                 ::  missing perms
+          cop=pers:gall                                 ::  perms blocking next
+          lac=pers:gall                                 ::  perms blocking live
       ==                                                ::
     +$  rock  (map desk belt)                           ::
     +$  wave                                            ::
       $%  [%wait =desk =weft]                           ::  blocked
           [%warp =desk =weft]                           ::  unblocked
           [%zest =desk =zest]                           ::  running
-          [%perm =desk pes=pers:gall cop=pers:gall]     ::  permissions
+          $:  %perm                                     ::  permissions:
+              =desk                                     ::  on
+              pes=pers:gall                             ::  granted
+              cop=pers:gall                             ::  blocking a commit
+              lac=pers:gall                             ::  blocking live
+          ==                                            ::
       ==                                                ::
     ::
     ++  wash                                            ::  patch
@@ -996,7 +1002,7 @@
           %perm
         =/  got=belt
           (~(gut by rock) desk.wave *belt)
-        (~(put by rock) desk.wave got(pes pes.wave, cop cop.wave))
+        (~(put by rock) desk.wave got(pes pes.wave, cop cop.wave, lac lac.wave))
       ==
     ::
     ++  walk                                            ::  diff
@@ -1012,7 +1018,7 @@
         |=  [=desk belt]
         ^-  (list wave)
         :-  [%zest desk zest]
-        :-  [%perm desk pes cop]
+        :-  [%perm desk pes cop lac]
         %+  turn  ~(tap in wic)
         |=  =weft
         [%wait desk weft]
@@ -1047,9 +1053,9 @@
           ^-  wave
           [%warp desk weft]
         ::
-          ?:  =([pes cop]:aa [pes cop]:bb)
+          ?:  =([pes cop lac]:aa [pes cop lac]:bb)
             ~
-          [%perm desk pes.bb cop.bb]~
+          [%perm desk [pes cop lac]:bb]~
         ==
       ==
     --
