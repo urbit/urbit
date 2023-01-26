@@ -786,6 +786,7 @@
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
         [%perm des=desk pax=path rit=rite]              ::  change permissions
         [%pork ~]                                       ::  resume commit
+        [%prep lat=(map lobe page)]                     ::  prime clay store
         [%rein des=desk ren=rein]                       ::  extra apps
         [%stir arg=*]                                   ::  debug
         [%tire p=(unit ~)]                              ::  app state subscribe
@@ -1177,6 +1178,7 @@
         $>(%init vane-task)                             ::  after gall ready
         [%meld ~]                                       ::  unify memory
         [%pack ~]                                       ::  compact memory
+        [%seat =desk]                                   ::  install desk
         [%shot ses=@tas task=session-task]              ::  task for session
         [%talk p=(list tank)]                           ::  print tanks
         [%text p=tape]                                  ::  print tape
@@ -2527,6 +2529,9 @@
       ::    TODO: make $yuki an option for %into?
       ::
       $>(%park task:clay)
+      ::  %clay: load blob store
+      ::
+      $>(%prep task:clay)
       ::  %eyre: learn ports of live http servers
       ::
       $>(%live task:eyre)
