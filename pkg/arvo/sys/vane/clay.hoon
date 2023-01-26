@@ -4162,6 +4162,18 @@
     ++  read-s
       |=  [yon=aeon pax=path]
       ^-  (unit (unit cage))
+      ?:  ?=([%bloc ~] pax)
+        :^  ~  ~  %noun
+        :-  -:!>(*(map lobe page))
+        ^-  (map lobe page)
+        %-  %~  rep  in
+            %-  reachable-takos
+            (~(got by hit.dom) let.dom)
+        |=  [t=tako o=(map lobe page)]
+        %-  ~(gas by o)
+        %+  turn
+          ~(val by q:(~(got by hut.ran) t))
+        |=(l=lobe [l (~(got by lat.ran) l)])
       ?.  ?=([@ * *] pax)
         `~
       ?+    i.pax  `~
@@ -4865,6 +4877,9 @@
       =/  den  ((de now rof hen ruf) our syd)
       abet:(park:den & & yoki *rang)
     [mos ..^$]
+  ::
+      %prep
+    [~ ..^$(lat.ran.ruf (~(uni by lat.req) lat.ran.ruf))]
   ::
       %perm
     =^  mos  ruf
