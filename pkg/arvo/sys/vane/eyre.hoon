@@ -2672,7 +2672,7 @@
         ?.  ?=(^ secure.ports)
           ?:(=(80 insecure.ports) ~ `insecure.ports)
         ?:(=(443 u.secure.ports) ~ secure.ports)
-      ``[secure port host]
+      ``[?=(^ secure.ports) port host]
     ==
   ==
 --
