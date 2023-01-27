@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - 'next/arvo'
+      - 'develop'
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -16,4 +16,4 @@ jobs:
           credentials: ${{ secrets.JANEWAY_SERVICE_KEY }}
           ssh-sec-key: ${{ secrets.JANEWAY_SSH_SEC_KEY }}
           ssh-pub-key: ${{ secrets.JANEWAY_SSH_PUB_KEY }}
-          ref: 'next/arvo'
+          ref: 'develop'
