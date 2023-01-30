@@ -341,7 +341,7 @@ _ames_send_cb(uv_udp_send_t* req_u, c3_i sas_i)
   u3_ames* sam_u = pac_u->sam_u;
 
   if ( sas_i && (c3y == sam_u->fig_u.net_o)  ) {
-    u3l_log("ames: send fail: %s\n", uv_strerror(sas_i));
+    u3l_log("ames: send fail: %s", uv_strerror(sas_i));
     sam_u->fig_u.net_o = c3n;
   }
   else {
@@ -380,7 +380,7 @@ _ames_send(u3_pact* pac_u)
 
       if ( sas_i ) {
         if ( c3y == sam_u->fig_u.net_o ) {
-          u3l_log("ames: send fail: %s\n", uv_strerror(sas_i));
+          u3l_log("ames: send fail: %s", uv_strerror(sas_i));
           sam_u->fig_u.net_o = c3n;
         }
 
@@ -517,7 +517,7 @@ _ames_czar_gone(u3_pact* pac_u, time_t now)
   u3_ames* sam_u = pac_u->sam_u;
 
   if ( c3y == sam_u->imp_o[pac_u->imp_y] ) {
-    u3l_log("ames: czar at %s: not found (b)\n", pac_u->dns_c);
+    u3l_log("ames: czar at %s: not found (b)", pac_u->dns_c);
     sam_u->imp_o[pac_u->imp_y] = c3n;
   }
 
@@ -547,7 +547,7 @@ _ames_czar_here(u3_pact* pac_u, time_t now, struct sockaddr_in* add_u)
     u3_noun nam = u3dc("scot", c3__if, u3i_word(pip_w));
     c3_c* nam_c = u3r_string(nam);
 
-    u3l_log("ames: czar %s: ip %s\n", pac_u->dns_c, nam_c);
+    u3l_log("ames: czar %s: ip %s", pac_u->dns_c, nam_c);
 
     c3_free(nam_c);
     u3z(nam);
@@ -612,7 +612,7 @@ _ames_czar(u3_pact* pac_u)
   if ( !sam_u->dns_c ) {
     u3_noun nam = u3dc("scot", 'p', pac_u->imp_y);
     c3_c*  nam_c = u3r_string(nam);
-    u3l_log("ames: no galaxy domain for %s, no-op\r\n", nam_c);
+    u3l_log("ames: no galaxy domain for %s, no-op", nam_c);
 
     c3_free(nam_c);
     u3z(nam);
@@ -657,7 +657,7 @@ _ames_czar(u3_pact* pac_u)
       }
 
       if ( 255 <= sas_i ) {
-        u3l_log("ames: czar: galaxy domain %s truncated\n", sam_u->dns_c);
+        u3l_log("ames: czar: galaxy domain %s truncated", sam_u->dns_c);
         _ames_pact_free(pac_u);
         return;
       }
@@ -670,7 +670,7 @@ _ames_czar(u3_pact* pac_u)
                                           _ames_czar_cb,
                                           pac_u->dns_c, 0, 0)) )
         {
-          u3l_log("ames: %s\n", uv_strerror(sas_i));
+          u3l_log("ames: %s", uv_strerror(sas_i));
           _ames_czar_gone(pac_u, now);
           return;
         }
@@ -685,7 +685,7 @@ static void
 _ames_ef_send(u3_ames* sam_u, u3_noun lan, u3_noun pac)
 {
   if ( c3n == sam_u->car_u.liv_o ) {
-    u3l_log("ames: not yet live, dropping outbound\r\n");
+    u3l_log("ames: not yet live, dropping outbound");
     u3z(lan); u3z(pac);
     return;
   }
@@ -726,7 +726,7 @@ _ames_ef_send(u3_ames* sam_u, u3_noun lan, u3_noun pac)
     //
     else if ( 0 == lan_u.por_s ) {
       if ( u3C.wag_w & u3o_verbose ) {
-        u3l_log("ames: inscrutable lane\n");
+        u3l_log("ames: inscrutable lane");
       }
       _ames_pact_free(pac_u);
     }
@@ -755,7 +755,7 @@ _ames_cap_queue(u3_ames* sam_u)
       sam_u->sat_u.dop_d++;
 
       if ( u3C.wag_w & u3o_verbose ) {
-        u3l_log("ames: packet dropped (%" PRIu64 " total)\n", sam_u->sat_u.dop_d);
+        u3l_log("ames: packet dropped (%" PRIu64 " total)", sam_u->sat_u.dop_d);
       }
     }
 
@@ -765,7 +765,7 @@ _ames_cap_queue(u3_ames* sam_u)
   if (  (sam_u->sat_u.dop_d && (0 == (sam_u->sat_u.dop_d % 1000)))
      && !(u3C.wag_w & u3o_verbose) )
   {
-    u3l_log("ames: packet dropped (%" PRIu64 " total)\n", sam_u->sat_u.dop_d);
+    u3l_log("ames: packet dropped (%" PRIu64 " total)", sam_u->sat_u.dop_d);
   }
 }
 
@@ -784,7 +784,7 @@ _ames_hear_bail(u3_ovum* egg_u, u3_noun lud)
        || (0 == (sam_u->sat_u.bad_d % 100)) )
     {
       u3l_log("ames: heard bad crypto (%" PRIu64 " total), "
-              "check azimuth state\r\n",
+              "check azimuth state",
               sam_u->sat_u.bad_d);
     }
   }
@@ -804,7 +804,7 @@ _ames_hear_bail(u3_ovum* egg_u, u3_noun lud)
         u3_pier_punt_goof("hear", u3k(u3h(lud)));
       }
 
-      u3l_log("ames: packet failed (%" PRIu64 " total)\r\n",
+      u3l_log("ames: packet failed (%" PRIu64 " total)",
               sam_u->sat_u.fal_d);
     }
   }
@@ -840,7 +840,7 @@ _ames_forward(u3_panc* pac_u, u3_noun las)
 
   sam_u->sat_u.fow_d++;
   if ( 0 == (sam_u->sat_u.fow_d % 1000000) ) {
-    u3l_log("ames: forwarded %" PRIu64 " total\n", sam_u->sat_u.fow_d);
+    u3l_log("ames: forwarded %" PRIu64 " total", sam_u->sat_u.fow_d);
   }
 
   if ( u3C.wag_w & u3o_verbose ) {
@@ -851,7 +851,7 @@ _ames_forward(u3_panc* pac_u, u3_noun las)
     c3_y* pip_y = (c3_y*)&pac_u->ore_u.pip_w;
 
     //NOTE  ip byte order assumes little-endian
-    u3l_log("ames: forwarding for %s to %s from %d.%d.%d.%d:%d\n",
+    u3l_log("ames: forwarding for %s to %s from %d.%d.%d.%d:%d",
             sen_c, rec_c,
             pip_y[3], pip_y[2], pip_y[1], pip_y[0],
             pac_u->ore_u.por_s);
@@ -870,7 +870,7 @@ _ames_forward(u3_panc* pac_u, u3_noun las)
       //  validate lane and skip self if galaxy
       //
       if ( c3n == u3r_cell(lan, &tag, &dat) ) {
-        u3l_log("ames: bogus lane\n");
+        u3l_log("ames: bogus lane");
         u3m_p("lan", lan);
       }
       else {
@@ -885,7 +885,7 @@ _ames_forward(u3_panc* pac_u, u3_noun las)
           {
             sen_o = c3n;
             if ( u3C.wag_w & u3o_verbose ) {
-              u3l_log("ames: forward skipping self\n");
+              u3l_log("ames: forward skipping self");
             }
           }
         }
@@ -918,7 +918,7 @@ _ames_lane_scry_cb(void* vod_p, u3_noun nun)
   //
   if ( u3_none == las ) {
     if ( 5 < ++sam_u->sat_u.saw_d ) {
-      u3l_log("ames: giving up scry\n");
+      u3l_log("ames: giving up scry");
       sam_u->fig_u.see_o = c3n;
     }
     _ames_put_packet(sam_u, _ames_serialize_packet(pac_u, c3n), pac_u->ore_u);
@@ -982,7 +982,7 @@ _ames_try_forward(u3_ames* sam_u,
     if ( (u3_none == lac) && (1000 < sam_u->sat_u.foq_d) ) {
       sam_u->sat_u.fod_d++;
       if ( 0 == (sam_u->sat_u.fod_d % 10000) ) {
-        u3l_log("ames: dropped %" PRIu64 " forwards total\n",
+        u3l_log("ames: dropped %" PRIu64 " forwards total",
                 sam_u->sat_u.fod_d);
       }
 
@@ -1086,7 +1086,7 @@ _ames_hear(u3_ames* sam_u,
   {
     sam_u->sat_u.hed_d++;
     if ( 0 == (sam_u->sat_u.hed_d % 100000) ) {
-      u3l_log("ames: %" PRIu64 " dropped, failed to read header\n",
+      u3l_log("ames: %" PRIu64 " dropped, failed to read header",
               sam_u->sat_u.hed_d);
     }
 
@@ -1103,7 +1103,7 @@ _ames_hear(u3_ames* sam_u,
   {
     sam_u->sat_u.vet_d++;
     if ( 0 == (sam_u->sat_u.vet_d % 100000) ) {
-      u3l_log("ames: %" PRIu64 " dropped for version mismatch\n",
+      u3l_log("ames: %" PRIu64 " dropped for version mismatch",
               sam_u->sat_u.vet_d);
     }
 
@@ -1120,7 +1120,7 @@ _ames_hear(u3_ames* sam_u,
     if ( (c3n == _ames_sift_body(&hed_u, &bod_u, bod_w, bod_y)) ) {
       sam_u->sat_u.bod_d++;
       if ( 0 == (sam_u->sat_u.bod_d % 100) ) {
-        u3l_log("ames: %" PRIu64 " dropped, failed to read body\n",
+        u3l_log("ames: %" PRIu64 " dropped, failed to read body",
                 sam_u->sat_u.bod_d);
       }
 
@@ -1133,7 +1133,7 @@ _ames_hear(u3_ames* sam_u,
     if ( bod_u.mug_l != hed_u.mug_l ) {
       sam_u->sat_u.mut_d++;
       if ( 0 == (sam_u->sat_u.mut_d % 100000) ) {
-        u3l_log("ames: %" PRIu64 " dropped for invalid mug\n",
+        u3l_log("ames: %" PRIu64 " dropped for invalid mug",
                 sam_u->sat_u.mut_d);
       }
 
@@ -1181,7 +1181,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
 {
   if ( 0 > nrd_i ) {
     if ( u3C.wag_w & u3o_verbose ) {
-      u3l_log("ames: recv: fail: %s\n", uv_strerror(nrd_i));
+      u3l_log("ames: recv: fail: %s", uv_strerror(nrd_i));
     }
     c3_free(buf_u->base);
   }
@@ -1190,7 +1190,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
   }
   else if ( flg_i & UV_UDP_PARTIAL ) {
     if ( u3C.wag_w & u3o_verbose ) {
-      u3l_log("ames: recv: fail: message truncated\n");
+      u3l_log("ames: recv: fail: message truncated");
     }
     c3_free(buf_u->base);
   }
@@ -1226,8 +1226,8 @@ _ames_io_start(u3_ames* sam_u)
       por_s = zar_s;
     }
     else if ( por_s != zar_s ) {
-      u3l_log("ames: czar: overriding port %d with -p %d\n", zar_s, por_s);
-      u3l_log("ames: czar: WARNING: %d required for discoverability\n", zar_s);
+      u3l_log("ames: czar: overriding port %d with -p %d", zar_s, por_s);
+      u3l_log("ames: czar: WARNING: %d required for discoverability", zar_s);
     }
   }
 
@@ -1246,12 +1246,12 @@ _ames_io_start(u3_ames* sam_u)
     if ( (ret_i = uv_udp_bind(&sam_u->wax_u,
                               (const struct sockaddr*)&add_u, 0)) != 0 )
     {
-      u3l_log("ames: bind: %s\n", uv_strerror(ret_i));
+      u3l_log("ames: bind: %s", uv_strerror(ret_i));
 
       if ( (c3__czar == rac) &&
            (UV_EADDRINUSE == ret_i) )
       {
-        u3l_log("    ...perhaps you've got two copies of vere running?\n");
+        u3l_log("    ...perhaps you've got two copies of vere running?");
       }
 
       //  XX revise
@@ -1266,10 +1266,10 @@ _ames_io_start(u3_ames* sam_u)
   }
 
   if ( c3y == u3_Host.ops_u.net ) {
-    u3l_log("ames: live on %d\n", sam_u->pir_u->por_s);
+    u3l_log("ames: live on %d", sam_u->pir_u->por_s);
   }
   else {
-    u3l_log("ames: live on %d (localhost only)\n", sam_u->pir_u->por_s);
+    u3l_log("ames: live on %d (localhost only)", sam_u->pir_u->por_s);
   }
 
   uv_udp_recv_start(&sam_u->wax_u, _ames_alloc, _ames_recv_cb);
@@ -1300,7 +1300,7 @@ _ames_ef_turf(u3_ames* sam_u, u3_noun tuf)
     u3z(tuf);
   }
   else if ( (c3n == sam_u->pir_u->fak_o) && (0 == sam_u->dns_c) ) {
-    u3l_log("ames: turf: no domains\n");
+    u3l_log("ames: turf: no domains");
   }
 
   //  XX is this ever necessary?
@@ -1444,7 +1444,7 @@ _ames_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
           ret_o = c3n;
         }
         else {
-          u3l_log("kick: strange send\r\n");
+          u3l_log("kick: strange send");
           ret_o = _ames_kick_newt(sam_u, u3k(tag), u3k(dat));
         }
       } break;
@@ -1521,21 +1521,21 @@ _ames_io_slog(u3_auto* car_u)
 
   //  TODO  rewrite in terms of info_f
   //
-  u3l_log("      config:\n");
-  u3l_log("        filtering: %s\n", FLAG(sam_u->fig_u.fit_o));
-  u3l_log("         can send: %s\n", FLAG(sam_u->fig_u.net_o));
-  u3l_log("         can scry: %s\n", FLAG(sam_u->fig_u.see_o));
-  u3l_log("      counters:\n");
-  u3l_log("                 dropped: %" PRIu64 "\n", sam_u->sat_u.dop_d);
-  u3l_log("        forwards dropped: %" PRIu64 "\n", sam_u->sat_u.fod_d);
-  u3l_log("        forwards pending: %" PRIu64 "\n", sam_u->sat_u.foq_d);
-  u3l_log("               forwarded: %" PRIu64 "\n", sam_u->sat_u.fow_d);
-  u3l_log("          filtered (hed): %" PRIu64 "\n", sam_u->sat_u.hed_d);
-  u3l_log("          filtered (ver): %" PRIu64 "\n", sam_u->sat_u.vet_d);
-  u3l_log("          filtered (mug): %" PRIu64 "\n", sam_u->sat_u.mut_d);
-  u3l_log("          filtered (bod): %" PRIu64 "\n", sam_u->sat_u.bod_d);
-  u3l_log("                 crashed: %" PRIu64 "\n", sam_u->sat_u.fal_d);
-  u3l_log("            cached lanes: %u\n", u3h_wyt(sam_u->lax_p));
+  u3l_log("      config:");
+  u3l_log("        filtering: %s", FLAG(sam_u->fig_u.fit_o));
+  u3l_log("         can send: %s", FLAG(sam_u->fig_u.net_o));
+  u3l_log("         can scry: %s", FLAG(sam_u->fig_u.see_o));
+  u3l_log("      counters:");
+  u3l_log("                 dropped: %" PRIu64, sam_u->sat_u.dop_d);
+  u3l_log("        forwards dropped: %" PRIu64, sam_u->sat_u.fod_d);
+  u3l_log("        forwards pending: %" PRIu64, sam_u->sat_u.foq_d);
+  u3l_log("               forwarded: %" PRIu64, sam_u->sat_u.fow_d);
+  u3l_log("          filtered (hed): %" PRIu64, sam_u->sat_u.hed_d);
+  u3l_log("          filtered (ver): %" PRIu64, sam_u->sat_u.vet_d);
+  u3l_log("          filtered (mug): %" PRIu64, sam_u->sat_u.mut_d);
+  u3l_log("          filtered (bod): %" PRIu64, sam_u->sat_u.bod_d);
+  u3l_log("                 crashed: %" PRIu64, sam_u->sat_u.fal_d);
+  u3l_log("            cached lanes: %u", u3h_wyt(sam_u->lax_p));
 }
 
 /* u3_ames_io_init(): initialize ames I/O.
