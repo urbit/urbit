@@ -3,7 +3,7 @@
 !:
 =>  ..part
 |%
-++  lull  %327
+++  lull  %326
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
@@ -360,6 +360,7 @@
   ::    %init: vane boot
   ::    %prod: re-send a packet per flow, to all peers if .ships is ~
   ::    %sift: limit verbosity to .ships
+  ::    %snub: set packet blacklist to .ships
   ::    %spew: set verbosity toggles
   ::    %trim: release memory
   ::    %vega: kernel reload notification
@@ -375,6 +376,7 @@
         $>(%init vane-task)
         [%prod ships=(list ship)]
         [%sift ships=(list ship)]
+        [%snub ships=(list ship)]
         [%spew veb=(list verb)]
         [%stir arg=@t]
         $>(%trim vane-task)
