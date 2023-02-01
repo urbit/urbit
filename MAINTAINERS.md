@@ -72,20 +72,27 @@ release branch is cut from `develop` and the process begins again.
 
 ### Tagging
 
-If it's a very trivial hotfix that you know isn't going to break anything, tag
-it as `urbit-os-vx.y`.  Here 'x' is the major version and 'y' is an OTA patch
-counter.
+When we branch release to deploy to `~marnec`, we need to tag it as a release candidate (RC), like `urbit-os-vx.y-rc1`.  Here 'x' is the major version and 'y' is an OTA patch counter.  After this any change that goes into release gets a new tag that increments the rc.
 
-Use an annotated tag, i.e.
+After we ship a release to the live network, add a tag that is not a release candidate, like `urbit-os-vx.y`, to the master branch, since that's what was released.
+
+#### Applying the Tag Locally
+
+Use an annotated tag with the `-a` git argument.  Make sure to follow
+the naming convention for RCs and live releases, described above.
+
+
+To add a tag to the local repo, run this:
 
 ```
-git tag -a urbit-os-vx.y
+git tag -a <tagname>
 ```
 
-The tag format should look something like this:
+This will bring up an editor, where you should add the release notes,
+which should look like this:
 
 ```
-urbit-os-vx.y
+<tagname>
 
 This release will be pushed to the network as an over-the-air update.
 
@@ -98,9 +105,17 @@ Contributions:
   [..]
 ```
 
-You can get the "contributions" section by the shortlog between the last release
-and this release:
+To fill in the "contributions" section, copy in the shortlog between the last release and this release, obtained by running this command:
 
 ```
 git shortlog --no-merges LAST_RELEASE..
+```
+
+#### Pushing the Tag to the Main Repo
+
+Once you have added a tag, push it to the main repository using the
+following command:
+
+```
+git push origin <tagname>
 ```
