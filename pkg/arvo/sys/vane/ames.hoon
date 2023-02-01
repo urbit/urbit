@@ -102,6 +102,7 @@
       ges=`?`%.n  ::  congestion control
       for=`?`%.n  ::  packet forwarding
       rot=`?`%.n  ::  routing attempts
+      kay=`?`%.n  ::  is ok/not responding
   ==
 =>
 ~%  %ames  ..part  ~
@@ -121,14 +122,14 @@
 ::  +qos-update-text: notice text for if connection state changes
 ::
 ++  qos-update-text
-  |=  [=ship old=qos new=qos]
+  |=  [=ship old=qos new=qos k=? ships=(set ship)]
   ^-  (unit tape)
   ::
   ?+  [-.old -.new]  ~
     [%unborn %live]  `"; {(scow %p ship)} is your neighbor"
-    [%dead %live]    `"; {(scow %p ship)} is ok"
-    [%live %dead]    `"; {(scow %p ship)} not responding still trying"
-    [%unborn %dead]  `"; {(scow %p ship)} not responding still trying"
+    [%dead %live]    ((trace k ship ships |.("is ok")) ~)
+    [%live %dead]    ((trace k ship ships |.("not responding still trying")) ~)
+    [%unborn %dead]  ((trace k ship ships |.("not responding still trying")) ~)
     [%live %unborn]  `"; {(scow %p ship)} has sunk"
     [%dead %unborn]  `"; {(scow %p ship)} has sunk"
   ==
@@ -627,7 +628,7 @@
       =unix=duct
       =life
       crypto-core=acru:ames
-      =bug
+      bug=bug-9
   ==
 ::
 +$  ship-state-4  ship-state-5
@@ -656,7 +657,7 @@
       =unix=duct
       =life
       crypto-core=acru:ames
-      =bug
+      bug=bug-9
   ==
 ::
 +$  ship-state-6
@@ -685,7 +686,7 @@
       =unix=duct
       =life
       crypto-core=acru:ames
-      =bug
+      bug=bug-9
   ==
 ::
 +$  ames-state-8
@@ -693,11 +694,25 @@
       =unix=duct
       =life
       crypto-core=acru:ames
-      =bug
+      bug=bug-9
       corks=(set wire)
   ==
 ::
-
++$  bug-9
+  $:  veb=_[`?`%.n `?`%.n `?`%.n `?`%.n `?`%.n `?`%.n `?`%.n]
+      ships=(set ship)
+  ==
+::
++$  ames-state-9
+  $:  peers=(map ship ship-state)
+      =unix=duct
+      =life
+      crypto-core=acru:ames
+      bug=bug-9
+      corks=(set wire)
+      snub=(set ship)
+  ==
+::
 ::  $bug: debug printing configuration
 ::
 ::    veb: verbosity toggles
@@ -860,7 +875,8 @@
             [%6 ames-state-6]
             [%7 ames-state-7]
             [%8 ames-state-8]
-            [%9 ^ames-state]
+            [%9 ames-state-9]
+            [%10 ^ames-state]
         ==
     ::
     |=  [now=@da eny=@ rof=roof]
@@ -983,7 +999,7 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%9 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%10 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
           $%  $:  %4
@@ -1020,8 +1036,15 @@
                       state=ames-state-8
                   ==
                   [%adult state=ames-state-8]
-              ==  == 
+              ==  ==
               $:  %9
+              $%  $:  %larva
+                      events=(qeu queued-event)
+                      state=ames-state-9
+                  ==
+                  [%adult state=ames-state-9]
+              ==  ==
+              $:  %10
               $%  $:  %larva
                       events=(qeu queued-event)
                       state=_ames-state.adult-gate
@@ -1076,12 +1099,22 @@
         =.  queued-events  events.old
         larval-gate
       ::
-          [%9 %adult *]  (load:adult-core %9 state.old)
+          [%9 %adult *]
+        =.  cached-state  `[%9 state.old]
+        ~>  %slog.0^leaf/"ames: larva reload"
+        larval-gate
       ::
           [%9 %larva *]
+        ~>  %slog.0^leaf/"ames: larva: load"
+        =.  queued-events  events.old
+        larval-gate
+      ::
+          [%10 %adult *]  (load:adult-core %10 state.old)
+      ::
+          [%10 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %9 state.old)
+        =.  adult-gate     (load:adult-core %10 state.old)
         larval-gate
        ::
       ==
@@ -1102,7 +1135,9 @@
         8+(state-7-to-8:load:adult-core +.u.cached-state)
       =?  u.cached-state  ?=(%8 -.u.cached-state)
         9+(state-8-to-9:load:adult-core +.u.cached-state)
-      ?>  ?=(%9 -.u.cached-state)
+      =?  u.cached-state  ?=(%9 -.u.cached-state)
+        10+(state-9-to-10:load:adult-core +.u.cached-state)
+      ?>  ?=(%10 -.u.cached-state)
       =.  ames-state.adult-gate  +.u.cached-state
       [moz larval-core(cached-state ~)]
     --
@@ -1178,15 +1213,15 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%9 %adult ames-state]
+++  stay  [%10 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
   =<  |=  $=  old-state
-          $%  [%9 ^ames-state]
+          $%  [%10 ^ames-state]
           ==
       ^+  ames-gate
-      ?>  ?=(%9 -.old-state)
+      ?>  ?=(%10 -.old-state)
       ames-gate(ames-state +.old-state)
   ::
   |%
@@ -1260,7 +1295,7 @@
     ==
   ++  state-8-to-9
     |=  ames-state=ames-state-8
-    ^-  ^^ames-state
+    ^-  ames-state-9
     :*  peers.ames-state
         unix-duct.ames-state
         life.ames-state
@@ -1268,6 +1303,19 @@
         bug.ames-state
         corks.ames-state
         *(set ship)
+    ==
+  ++  state-9-to-10
+    |=  ames-state=ames-state-9
+    ^-  ^^ames-state
+    :*  peers.ames-state
+        unix-duct.ames-state
+        life.ames-state
+        crypto-core.ames-state
+        %=  bug.ames-state
+          veb  [&1 &2 &3 &4 &5 &6 |6 %.n]:veb.bug.ames-state
+        ==
+        corks.ames-state
+        snub.ames-state
     ==
   --
 ::  +scry: dereference namespace
@@ -1507,6 +1555,7 @@
         %ges  acc(ges %.y)
         %for  acc(for %.y)
         %rot  acc(rot %.y)
+        %kay  acc(kay %.y)
       ==
     event-core
   ::  +on-prod: re-send a packet per flow to each of .ships
@@ -2016,7 +2065,9 @@
       =.  +.peer-state  +:*^peer-state
       ::  print change to quality of service, if any
       ::
-      =/  text=(unit tape)  (qos-update-text ship old-qos qos.peer-state)
+      =/  text=(unit tape)
+        %^  qos-update-text  ship  old-qos
+        [qos.peer-state kay.veb ships.bug.ames-state]
       ::
       =?  event-core  ?=(^ text)
         (emit duct %pass /qos %d %flog %text u.text)
@@ -2421,7 +2472,10 @@
       =^  old-qos  qos.peer-state  [qos.peer-state new-qos]
       ::  if no update worth reporting, we're done
       ::
-      ?~  text=(qos-update-text her.channel old-qos new-qos)
+      =/  text
+        %^  qos-update-text  her.channel  old-qos
+        [new-qos kay.veb ships.bug.ames-state]
+      ?~  text
         peer-core
       ::  print message
       ::
