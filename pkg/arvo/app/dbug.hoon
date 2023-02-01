@@ -27,6 +27,7 @@
   ::
   ++  on-save  !>(state)
   ::
+  ++  on-rift  |=(=ship `this)
   ++  on-load
     |=  old=vase
     ^-  (quip card _this)

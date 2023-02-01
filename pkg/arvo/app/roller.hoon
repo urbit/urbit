@@ -511,6 +511,7 @@
       ==
     --
   ::
+  ++  on-rift  |=(=ship `this)
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)

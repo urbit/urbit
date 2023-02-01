@@ -343,6 +343,7 @@
   ::
   ++  on-save   !>(state)
   ++  on-load   |=(old=vase `this(state !<(acme old)))
+  ++  on-rift  |=(=ship `this)
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)

@@ -193,6 +193,7 @@
   [cards this]
 ::  +on-arvo: handle timer firing
 ::
+++  on-rift  |=(=ship `this)
 ++  on-arvo
   |=  [=wire =sign-user:agent:gall]
   ^-  [(list card) _this]

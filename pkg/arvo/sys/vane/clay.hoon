@@ -1,3 +1,4 @@
+!:
 ::  clay (4c), revision control
 ::
 ::  The way to understand Clay is to take it section-by-section:
@@ -615,7 +616,7 @@
     $(vaz t.vaz)
   ::
   ++  ford
-    !.
+    ::  !.
     =>  |%
         +$  state
           $:  cache=flow
@@ -4202,7 +4203,7 @@
       $(p.y t.p.y)
     ::
     ++  read-a
-      !.
+      ::  !.
       |=  [=aeon =path]
       ^-  [(unit (unit cage)) _..park]
       =^  =vase  ..park
@@ -4213,7 +4214,7 @@
       :_(..park [~ ~ %vase !>(vase)])
     ::
     ++  read-b
-      !.
+      ::  !.
       |=  [=aeon =path]
       ^-  [(unit (unit cage)) _..park]
       ?.  ?=([@ ~] path)
@@ -4225,7 +4226,7 @@
       :_(..park [~ ~ %dais !>(dais)])
     ::
     ++  read-c
-      !.
+      ::  !.
       |=  [=aeon =path]
       ^-  [(unit (unit cage)) _..park]
       ?.  ?=([@ @ ~] path)
@@ -4237,7 +4238,7 @@
       :_(..park [~ ~ %tube !>(tube)])
     ::
     ++  read-e
-      !.
+      ::  !.
       |=  [=aeon =path]
       ^-  [(unit (unit cage)) _..park]
       ?.  ?=([@ ~] path)
@@ -4249,7 +4250,7 @@
       :_(..park [~ ~ %nave vase])
     ::
     ++  read-f
-      !.
+      ::  !.
       |=  [=aeon =path]
       ^-  [(unit (unit cage)) _..park]
       ?.  ?=([@ @ ~] path)
@@ -4263,7 +4264,7 @@
     ::  TODO move to +read-buc
     ::
     ++  read-d
-      !.
+      ::  !.
       |=  [=aeon =path]
       ^-  (unit (unit cage))
       ?.  =(our her)
@@ -4809,6 +4810,7 @@
         ~|  [%building-app bill.i.sat]
         ?+  wef  (mean 'clay: kelvin {<wef>} is Gall-incompatible' ~)
           [%zuse %415]  [[%zuse %415] !<(agent-415:gall vase)]
+          [%zuse %414]  [[%zuse %414] !<(agent-414:gall vase)]
         ==
       =^  lid  nub.f  $(bill.i.sat t.bill.i.sat)
       [[[i.bill.i.sat [our desk.i.sat da+now] agent-any] lid] nub.f]

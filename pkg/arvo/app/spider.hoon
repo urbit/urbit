@@ -188,6 +188,7 @@
     [cards this]
   ::
   ++  on-leave  on-leave:def
+  ++  on-rift  |=(=ship `this)
   ++  on-peek
     ~/  %on-peek
     |=  =path

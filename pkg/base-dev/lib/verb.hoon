@@ -86,6 +86,10 @@
   %-  (print bowl |.("{<dap.bowl>}: on-fail with term {<term>}"))
   =^  cards  agent  (on-fail:ag term tang)
   [[(emit-event %on-fail term) cards] this]
+++  on-rift
+  |=  =ship
+  ^-  (quip card:agent:gall agent:gall)
+  `this
 --
 ::
 ++  print

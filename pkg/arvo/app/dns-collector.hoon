@@ -44,6 +44,7 @@
   |=  old=vase
   `this(state !<(app-state old))
 ::
+++  on-rift  |=(=ship `this)
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)

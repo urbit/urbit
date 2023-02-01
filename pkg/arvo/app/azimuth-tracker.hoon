@@ -119,6 +119,7 @@
   |=  old=vase
   `this(state !<(app-state old))
 ::
+++  on-rift  |=(=ship `this)
 ++  on-poke
   |=  [=mark =vase]
   ?.  ?=(%azimuth-tracker-poke mark)

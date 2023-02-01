@@ -66,4 +66,7 @@
   |=  [=term =tang]
   %-  (slog leaf+"error in {<dap.bowl>}" >term< tang)
   `agent
+++  on-rift
+  |=  =ship
+  `agent
 --

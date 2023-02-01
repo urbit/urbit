@@ -77,6 +77,7 @@
       [cards this(state old)]
     ==
   ::
+  ++  on-rift  |=(=ship `this)
   ++  on-poke
     |=  [=mark =vase]
     ^-  step:agent:gall

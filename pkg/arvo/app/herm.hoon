@@ -51,6 +51,7 @@
   ::
   [(pass-session ses %view ~)]~
 ::
+++  on-rift  |=(=ship `this)
 ++  on-arvo
   |=  [=wire =sign-user:agent:gall]
   ^-  (quip card:agent:gall _this)

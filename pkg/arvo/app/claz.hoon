@@ -26,6 +26,7 @@
   ::
   ++  on-init   on-init:def
   ++  on-save   !>(state)
+  ++  on-rift  |=(=ship `this)
   ++  on-load   on-load:def
   ::
   ++  on-poke

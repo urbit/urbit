@@ -145,6 +145,10 @@
     ^-  (quip card:agent:gall agent:gall)
     =^  cards  agent  (on-arvo:ag wire sign-user)
     [cards this]
+  ++  on-rift
+    |=  =ship
+    ^-  (quip card:agent:gall agent:gall)
+    `this
   ::
   ++  on-fail
     |=  [=term =tang]

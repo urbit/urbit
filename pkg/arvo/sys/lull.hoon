@@ -1814,12 +1814,238 @@
   +$  verb  ?(%odd)
   ::
   ::  +agent: app core
-  +$  agent-wefts  ?([%zuse %415])
+  +$  agent-wefts  ?([%zuse %415] [%zuse %414])
   ::
-  ++  agent-any  $%  [[%zuse %415] agent-415]
+  ++  agent-any  $%  [[%zuse %414] agent-414]
+                     [[%zuse %415] agent-415]
                  ==
-  ++  agent  agent-415
+  ++  step-any   $%  [[%zuse %414] step:agent-414]
+                     [[%zuse %415] step:agent-415]
+                 ==
+  ++  agent  agent-414
   ::
+  ++  agent-414
+    =<  form
+    |%
+    +$  step  (quip card form)
+    +$  card  (wind note gift)
+    +$  note
+      $%  [%agent [=ship name=term] =task]
+          [%arvo user-note]
+          [%pyre =tang]
+      ==
+    +$  user-gift
+      $%  $>(%done gift:ames) :: kiln
+          ::
+          $>(%wake gift:behn)
+          $>(%heck gift:behn)
+          ::
+          $>(%wris gift:clay)
+          $>(%writ gift:clay)
+          $>(%tire gift:clay)
+          $>(%hill gift:clay)
+          $>(%mere gift:clay) :: kiln
+          $>(%cruz gift:clay)
+          $>(%croz gift:clay)
+          ::
+          $>(%blit gift:dill)
+          ::
+          $>(%bound gift:eyre)
+          ::
+          $>(%unto gift:gall)
+          ::
+          $>(%http-response gift:iris)
+          ::
+          $>(%private-keys gift:jael)
+          $>(%public-keys gift:jael)
+          $>(%turf gift:jael)
+          ::
+          $>(%arow gift:khan)
+      ==
+    +$  sign-user
+      $~  [%behn %wake ~]
+      $%  $:  %ames
+        $%  $>(%done gift:ames) :: kiln
+        ==  ==
+          $:  %behn
+        $%  $>(%wake gift:behn)
+            $>(%heck gift:behn)
+        ==  ==
+          $:  %clay
+        $%  $>(%wris gift:clay)
+            $>(%writ gift:clay)
+            $>(%tire gift:clay)
+            $>(%hill gift:clay)
+            $>(%mere gift:clay) :: kiln
+            $>(%cruz gift:clay)
+            $>(%croz gift:clay)
+        ==  ==
+          $:  %dill
+        $%  $>(%blit gift:dill)
+        ==  ==
+          $:  %eyre
+        $%  $>(%bound gift:eyre)
+        ==  ==
+          $:  %gall
+        $%  $>(%unto gift:gall)
+        ==  ==
+          $:  %iris
+        $%  $>(%http-response gift:iris)
+        ==  ==
+          $:  %jael
+        $%  $>(%private-keys gift:jael)
+            $>(%public-keys gift:jael)
+            $>(%turf gift:jael)
+        ==  ==
+          $:  %khan
+        $%  $>(%arow gift:khan)
+        ==  ==
+      ==
+    +$  user-note
+      $%  $:  %a
+        $%  $>(%sift task:ames)
+            $>(%spew task:ames)
+            $>(%stir task:ames) :: ?? helm does this
+            $>(%prod task:ames) :: ?? helm does this
+        ==  ==
+          $:  %b
+        $%  $>(%rest task:behn)
+            $>(%wait task:behn)
+        ==  ==
+          $:  %c
+        $%  $>(%dirk task:clay)
+            $>(%mont task:clay)
+            $>(%ogre task:clay)
+            $>(%cred task:clay)
+            $>(%crew task:clay)
+            $>(%crow task:clay) :: my add
+            $>(%perm task:clay)
+            $>(%info task:clay)
+            $>(%warp task:clay)
+            $>(%rein task:clay)
+            $>(%zest task:clay)
+            $>(%tire task:clay)
+            $>(%merg task:clay) :: kiln does this
+            $>(%fuse task:clay) :: kiln does this
+            $>(%drop task:clay) :: kiln does this
+            $>(%wick task:clay) :: kiln does this
+        ==  ==
+          $:  %d
+        $%  $>(%belt task:dill)
+            $>(%blew task:dill)
+            $>(%flee task:dill)
+            $>(%hail task:dill)
+            $>(%view task:dill)
+            $>(%crud task:dill)
+            $>(%talk task:dill)
+            $>(%text task:dill)
+            $>(%flog task:dill)
+            $>(%knob task:dill) :: helm does this
+            $>(%shot task:dill) :: herm does this
+        ==  ==
+          $:  %e
+        $%  $>(%connect task:eyre)
+            $>(%disconnect task:eyre)
+            $>(%rule task:eyre)
+            $>(%approve-origin task:eyre)
+            $>(%reject-origin task:eyre)
+            $>(%serve task:eyre) :: base desk only
+        ==  ==
+          $:  %g
+        $%  $>(%nuke task:gall)
+            $>(%deal task:gall)
+            $>(%spew task:gall) :: helm does this
+            $>(%sift task:gall) :: helm does this
+            $>(%doff task:gall) :: helm does this
+            $>(%sear task:gall) :: kiln does this
+        ==  ==
+          $:  %i
+        $%  $>(%request task:iris)
+            $>(%cancel-request task:iris)
+        ==  ==
+          $:  %j
+        $%  $>(%moon task:jael)
+            $>(%private-keys task:jael)
+            $>(%resend task:jael)
+            $>(%rekey task:jael)
+            $>(%step task:jael)
+            $>(%meet task:jael) :: docs say this task is deprecated and does not perform any actions
+            $>(%ruin task:jael)
+            $>(%nuke task:jael)
+            $>(%public-keys task:jael)
+            $>(%turf task:jael)
+            $>(%listen task:jael) :: base desk only
+        ==  ==
+          $:  %k
+        $%  $>(%fard task:khan)
+            $>(%lard task:khan) :: kiln does this
+        ==  ==
+      ==
+    +$  task
+      $%  [%watch =path]
+          [%watch-as =mark =path]
+          [%leave ~]
+          [%poke =cage]
+          [%poke-as =mark =cage]
+      ==
+    +$  gift
+      $%  [%fact paths=(list path) =cage]
+          [%kick paths=(list path) ship=(unit ship)]
+          [%watch-ack p=(unit tang)]
+          [%poke-ack p=(unit tang)]
+      ==
+    +$  sign
+      $%  [%poke-ack p=(unit tang)]
+          [%watch-ack p=(unit tang)]
+          [%fact =cage]
+          [%kick ~]
+      ==
+    ++  form
+      $_  ^|
+      |_  bowl
+      ++  on-init
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-save
+        *vase
+      ::
+      ++  on-load
+        |~  old-state=vase
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-poke
+        |~  [mark vase]
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-watch
+        |~  path
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-leave
+        |~  path
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-peek
+        |~  path
+        *(unit (unit cage))
+      ::
+      ++  on-agent
+        |~  [wire sign]
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-arvo
+        |~  [wire sign-user]
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-fail
+        |~  [term tang]
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-rift
+        |~  ship
+        *(quip card _^|(..on-init))
+      --
+    --
   ++  agent-415
     =<  form
     |%

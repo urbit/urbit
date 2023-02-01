@@ -30,6 +30,7 @@
 ::  $bug: debug printing configuration
 ::
 ::    veb: verbosity toggles
+
 ::    dudes: app filter; if ~, print for all
 ::
 +$  bug
@@ -294,7 +295,6 @@
     ~/  %mo-receive-core
     |=  [dap=term bek=beak =agent-any]
     ^+  mo-core
-    ?>  ?=([%zuse %415] -.agent-any)
     =/  agent  +.agent-any
     ::
     =/  yak  (~(get by yokes.state) dap)
@@ -327,7 +327,7 @@
         control-duct  hen
         beak          bek
         code          agent
-        agent         [%.y [%zuse %415] agent]
+        agent         [%.y agent-any]
         run-nonce     (scot %uw (end 5 (shas %yoke-nonce eny)))
       ==
     ::
@@ -744,7 +744,6 @@
       |-  ^+  mo-core
       ?~  agents  mo-core
       =/  [=dude =desk =agent-any]  [dude q.beak agent-any]:i.agents
-      ?>  ?=([%zuse %415] -.agent-any)
       ::  ~>  %slog.0^leaf/"gall: starting {<dude>} on {<desk>}"
       $(agents t.agents, mo-core (mo-receive-core i.agents))
     ::
@@ -966,8 +965,12 @@
       ==
     ::
     ++  ap-idle
-      ?:  ?=(%| -.agent.yoke)  ap-core
-      ap-core(agent.yoke |+on-save:ap-agent-core)
+      ^+  ap-core
+      ?:  ?=(%| -.agent.yoke.ap-agent-core)  ap-core
+      ?-  -.p.agent.yoke.ap-agent-core
+        [%zuse %414]  ap-core(agent.yoke |+on-save:+.p.agent.yoke.ap-agent-core)
+        [%zuse %415]  ap-core(agent.yoke |+on-save.+.p.agent.yoke.ap-agent-core)
+      ==
     ::
     ++  ap-nuke
       ^+  ap-core
@@ -984,7 +987,7 @@
         %+  turn  ~(tap by boat.yoke)
         |=  [[=wire =dock] ? =path]
         [%pass wire %agent dock %leave ~]
-      =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
+      =^  maybe-tang  ap-core  (ap-ingest ~ |.([[%zuse %414] [will *agent]]))
       ap-core
     ::  +ap-from-internal: internal move to move.
     ::
@@ -1130,8 +1133,14 @@
     ::
     ++  ap-agent-core
       ?>  ?=(%& -.agent.yoke)
-      ?>  ?=([%zuse %415] -.p.agent.yoke)
-      ~(. +.p.agent.yoke ap-construct-bowl)
+      ^+  ap-core
+      %=  ap-core
+        p.agent.yoke
+        ?-  -.p.agent.yoke
+          [%zuse %415]  [[%zuse %415] +.p.agent.yoke(+6 ap-construct-bowl)]
+          [%zuse %414]  [[%zuse %414] +.p.agent.yoke(+6 ap-construct-bowl)]
+        ==
+      ==
     ::  +ap-ducts-from-paths: get ducts subscribed to paths
     ::
     ++  ap-ducts-from-paths
@@ -1191,7 +1200,13 @@
       ::  call the app's +on-peek, producing [~ ~] if it crashes
       ::
       =/  peek-result=(each (unit (unit cage)) tang)
-        (ap-mule-peek |.((on-peek:ap-agent-core [care tyl])))
+        =/  peek
+          ?>  ?=(%.y -.agent.yoke.ap-agent-core)
+          ?-  -.p.agent.yoke.ap-agent-core
+            [%zuse %415]  |.((on-peek:+.p.agent.yoke.ap-agent-core [care tyl]))
+            [%zuse %414]  |.((on-peek:+.p.agent.yoke.ap-agent-core [care tyl]))
+          ==
+        (ap-mule-peek peek)
       ?:  ?=(%| -.peek-result)
         ?.  veb  [~ ~]
         ((slog leaf+"peek bad result" p.peek-result) [~ ~])
@@ -1254,15 +1269,17 @@
     ::
     ++  ap-reinstall
       ~/  %ap-reinstall
-      |=  agent=agent-any
+      |=  =agent-any
       ^+  ap-core
-      ?>  ?=([%zuse %415] -.agent)
       =/  old-state=vase
-        ?:  ?=(%& -.agent.yoke)
-          on-save:ap-agent-core
+        ?:  ?=(%& -.agent.yoke.ap-agent-core)
+          ?-  -.p.agent.yoke.ap-agent-core
+            [%zuse %415]  on-save:+.p.agent.yoke.ap-agent-core
+            [%zuse %414]  on-save:+.p.agent.yoke.ap-agent-core
+          ==
         p.agent.yoke
       =^  error  ap-core
-        (ap-install(agent.yoke &+agent) `old-state)
+        (ap-install(agent.yoke &+agent-any) `old-state)
       ?~  error
         ap-core
       (mean >%load-failed< u.error)
@@ -1282,8 +1299,12 @@
       =/  incoming   [attributing.agent-routes pax]
       =.  bitt.yoke  (~(put by bitt.yoke) agent-duct incoming)
       =^  maybe-tang  ap-core
+        ?>  ?=(%.y -.agent.yoke.ap-agent-core)
         %+  ap-ingest  %watch-ack  |.
-        (on-watch:ap-agent-core pax)
+          ?-  -.p.agent.yoke.ap-agent-core
+            [%zuse %415]  [[%zuse %415] (on-watch:+.p.agent.yoke.ap-agent-core pax)]
+            [%zuse %414]  [[%zuse %414] (on-watch:+.p.agent.yoke.ap-agent-core pax)]
+          ==
       ?^  maybe-tang
         ap-silent-delete
       ap-core
@@ -1294,8 +1315,12 @@
       |=  =cage
       ^+  ap-core
       =^  maybe-tang  ap-core
+        ?>  ?=(%.y -.agent.yoke.ap-agent-core)
         %+  ap-ingest  %poke-ack  |.
-        (on-poke:ap-agent-core cage)
+          ?-  -.p.agent.yoke.ap-agent-core
+            [%zuse %415]  [[%zuse %415] (on-poke:+.p.agent.yoke.ap-agent-core cage)]
+            [%zuse %414]  [[%zuse %414] (on-poke:+.p.agent.yoke.ap-agent-core cage)]
+          ==
       ap-core
     ::  +ap-error: pour error.
     ::
@@ -1304,8 +1329,12 @@
       ^+  ap-core
       =/  form  |=(=tank [%rose [~ "! " ~] tank ~])
       =^  maybe-tang  ap-core
+        ?>  ?=(%.y -.agent.yoke.ap-agent-core)
         %+  ap-ingest  ~  |.
-        (on-fail:ap-agent-core term (turn tang form))
+          ?-  -.p.agent.yoke.ap-agent-core
+            [%zuse %415]  [[%zuse %415] (on-fail:+.p.agent.yoke.ap-agent-core term (turn tang form))]
+            [%zuse %414]  [[%zuse %414] (on-fail:+.p.agent.yoke.ap-agent-core term (turn tang form))]
+          ==
       ap-core
     ::  +ap-generic-take: generic take.
     ::
@@ -1314,8 +1343,12 @@
       |=  [=wire =sign-user:agent]
       ^+  ap-core
       =^  maybe-tang  ap-core
+        ?>  ?=(%.y -.agent.yoke.ap-agent-core)
         %+  ap-ingest  ~  |.
-        (on-arvo:ap-agent-core wire sign-user)
+          ?-  -.p.agent.yoke.ap-agent-core
+            [%zuse %415]  [[%zuse %415] (on-arvo:+.p.agent.yoke.ap-agent-core wire sign-user)]
+            [%zuse %414]  [[%zuse %414] (on-arvo:+.p.agent.yoke.ap-agent-core wire sign-user)]
+          ==
       ?^  maybe-tang
         (ap-error %arvo-response u.maybe-tang)
       ap-core
@@ -1380,7 +1413,15 @@
           (on-bad-nonce nonce.u.got)
       ::
       ++  sub-key  [agent-wire dock]
-      ++  ingest   (ap-ingest ~ |.((on-agent:ap-agent-core agent-wire sign)))
+      ++  ingest
+        ?>  ?=(%.y -.agent.yoke.ap-agent-core)
+        %+  ap-ingest
+          ~
+        |.
+        ?-  -.p.agent.yoke.ap-agent-core
+          [%zuse %415]  [[%zuse %415] (on-agent:+.p.agent.yoke.ap-agent-core agent-wire sign)]
+          [%zuse %414]  [[%zuse %414] (on-agent:+.p.agent.yoke.ap-agent-core agent-wire sign)]
+        ==
       ++  run-sign
         ?-    -.sign
             %poke-ack  !!
@@ -1475,10 +1516,19 @@
       ^-  [(unit tang) _ap-core]
       ::
       =^  maybe-tang  ap-core
+        ?>  ?=(%.y -.agent.yoke.ap-agent-core)
         %+  ap-ingest  ~
         ?~  maybe-vase
-          |.  on-init:ap-agent-core
-        |.  (on-load:ap-agent-core u.maybe-vase)
+          |.
+          ?-  -.p.agent.yoke.ap-agent-core
+            [%zuse %415]  [[%zuse %415] on-init:+.p.agent.yoke.ap-agent-core]
+            [%zuse %414]  [[%zuse %414] on-init:+.p.agent.yoke.ap-agent-core]
+          ==
+        |.
+        ?-  -.p.agent.yoke.ap-agent-core
+          [%zuse %415]  [[%zuse %415] (on-load:+.p.agent.yoke.ap-agent-core u.maybe-vase)]
+          [%zuse %414]  [[%zuse %414] (on-load:+.p.agent.yoke.ap-agent-core u.maybe-vase)]
+        ==
       [maybe-tang ap-core]
     ::  +ap-silent-delete: silent delete.
     ::
@@ -1498,8 +1548,12 @@
       =.  bitt.yoke  (~(del by bitt.yoke) agent-duct)
       ::
       =^  maybe-tang  ap-core
+        ?>  ?=(%.y -.agent.yoke.ap-agent-core)
         %+  ap-ingest  ~  |.
-        (on-leave:ap-agent-core q.incoming)
+        ?-  -.p.agent.yoke.ap-agent-core
+          [%zuse %415]  [[%zuse %415] (on-leave:+.p.agent.yoke.ap-agent-core q.incoming)]
+          [%zuse %414]  [[%zuse %414] (on-leave:+.p.agent.yoke.ap-agent-core q.incoming)]
+        ==
       ?^  maybe-tang
         (ap-error %leave u.maybe-tang)
       ap-core
@@ -1608,11 +1662,11 @@
     ::    safely.
     ::
     ++  ap-mule
-      |=  run=_^?(|.(*step:agent))
-      ^-  (each step:agent tang)
+      |=  run=_^?(|.(*step-any))
+      ^-  (each step-any tang)
       =/  res  (mock [run %9 2 %0 1] (look rof ~))
       ?-  -.res
-        %0  [%& !<(step:agent [-:!>(*step:agent) p.res])]
+        %0  [%& !<(step-any [-:!>(*step-any) p.res])]
         %1  [%| (smyt ;;(path p.res)) ~]
         %2  [%| p.res]
       ==
@@ -1633,7 +1687,7 @@
     ::    rest of the moves.
     ::
     ++  ap-ingest
-      |=  [ack=?(%poke-ack %watch-ack ~) run=_^?(|.(*step:agent))]
+      |=  [ack=?(%poke-ack %watch-ack ~) run=_^?(|.(*step-any))]
       ^-  [(unit tang) _ap-core]
       =/  result  (ap-mule run)
       =^  new-moves  ap-core  (ap-handle-result result)
@@ -1658,13 +1712,17 @@
     ::
     ++  ap-handle-result
       ~/  %ap-handle-result
-      |=  result=(each step:agent tang)
+      |=  result=(each step-any tang)
       ^-  [(list gall-move) _ap-core]
       ?:  ?=(%| -.result)
         `ap-core
       ::
-      =.  agent.yoke  [%.y [%zuse %415] +.p.result]
-      =/  moves       (zing (turn -.p.result ap-from-internal))
+      =.  agent.yoke
+        ?-  -.p.result
+          [%zuse %415]  [%.y [%zuse %415] +.+.p.result]
+          [%zuse %414]  [%.y [%zuse %414] +.+.p.result]
+        ==
+      =/  moves       (zing (turn -.+.p.result ap-from-internal))
       =.  bitt.yoke   (ap-handle-kicks moves)
       (ap-handle-peers moves)
     ::  +ap-handle-kicks: handle cancels of bitt.watches
@@ -2094,6 +2152,7 @@
       [%| p.agent.yoke]
     ?-  -.p.agent.yoke
       [%zuse %415]  [%| on-save:p.agent.yoke]
+      [%zuse %414]  [%| on-save:p.agent.yoke]
     ==
   ==
 ::  +take: response

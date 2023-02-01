@@ -54,6 +54,7 @@
   ++  on-init   on-init:def
   ++  on-save   !>(state)
   ++  on-load   on-load:def
+  ++  on-rift  |=(=ship `this)
   ::
   ++  on-poke
     |=  [=mark =vase]

@@ -40,6 +40,7 @@
 ++  on-peek   on-peek:def
 ++  on-agent  on-agent:def
 ++  on-arvo   on-arvo:def
+++  on-rift  |=(=ship `this)
 ++  on-fail   on-fail:def
 ::
 ++  command-parser

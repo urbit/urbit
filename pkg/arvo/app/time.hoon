@@ -24,6 +24,7 @@
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
 ++  on-agent  on-agent:def
+++  on-rift  |=(=ship `this)
 ++  on-arvo
   |=  [=wire sign=sign-user:agent:gall]
   ^-  (quip card _this)

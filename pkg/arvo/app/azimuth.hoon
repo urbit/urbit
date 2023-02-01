@@ -410,6 +410,7 @@
     ~[start-azimuth-load]
   ::
   ++  on-fail   on-fail:def
+  ++  on-rift  |=(=ship `this)
   --
 |_  =bowl:gall
 ::

@@ -94,6 +94,7 @@
       (on-watch:def path)
     `this
   ++  on-leave  on-leave:def
+  ++  on-rift  |=(=ship `this)
   ++  on-peek  on-peek:def
   ++  on-agent  on-agent:def
   ++  on-arvo

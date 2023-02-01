@@ -1720,6 +1720,7 @@
   [moves ..on-init]
 ::  if dojo fails unexpectedly, kill whatever each session is working on
 ::
+++  on-rift  |=(=ship [~ ..on-init])
 ++  on-fail
   |=  [=term =tang]
   =/  sessions=(list (pair id session))  ~(tap by hoc)

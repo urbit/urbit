@@ -82,6 +82,7 @@
   =^  k  kiln.state  (on-load:(kiln bowl *state:kiln) -.old kiln.tup)
   [:(welp d h k) this]
 ::
+++  on-rift  |=(=ship `this)
 ++  on-poke
   |=  [=mark =vase]
   ^-  step:agent:gall
