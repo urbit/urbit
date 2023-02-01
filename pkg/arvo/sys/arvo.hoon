@@ -3,7 +3,7 @@
 |%
 +|  %global
 ::
-++  arvo  %240
+++  arvo  %239
 ::
 ::  $arch: node identity
 ::  $axal: fundamental node, recursive (trie)
@@ -415,7 +415,7 @@
     ==
   --
 ::
-::  |de: axal engine
+::  |of: axal engine
 ::
 ++  of
   =|  fat=(axal)

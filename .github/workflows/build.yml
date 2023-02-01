@@ -12,9 +12,11 @@ on:
       - 'pkg/libaes_siv/**'
       - 'pkg/urbit/**'
       - 'pkg/urcrypt/**'
+      - 'tests/**'
       - 'bin/**'
       - 'nix/**'
       - 'default.nix'
+      - 'vere-version'
   pull_request:
     paths:
       - '.github/workflows/build.yml'
@@ -26,9 +28,11 @@ on:
       - 'pkg/libaes_siv/**'
       - 'pkg/urbit/**'
       - 'pkg/urcrypt/**'
+      - 'tests/**'
       - 'bin/**'
       - 'nix/**'
       - 'default.nix'
+      - 'vere-version'
 
 permissions:
   contents: read
