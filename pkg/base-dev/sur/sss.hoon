@@ -18,13 +18,13 @@
     $:  path=paths
         from=dude
         $%  [type=%pine =what]
-            [type=%scry =what aeon=@ud]
+            [type=%scry =what =aeon]
     ==  ==
   ++  response
     |*  [=(lake) paths=mold]
     $:  path=paths
-        from=dude
-        aeon=@ud
+        =dude
+        =aeon
         $=  payload
         $@  =what
         $%  [what=%rock =rock:lake]

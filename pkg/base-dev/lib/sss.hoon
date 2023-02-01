@@ -19,7 +19,7 @@
 ++  lake-mark
   |=  =mark
   ^+  mark
-  ?>  =('sss-' (end [3 3] mark)) 
+  ?>  =('sss-' (end [3 4] mark))
   (cut 3 [4 (met 3 mark)] mark)
 ::
 ++  fled                                     ::  Like +sped but head is a path.
@@ -188,16 +188,18 @@
     ^+  pub
     %+  ~(jab by pub)  path
     |=  =tide
-    (petrify tide(rul rule))
+    (form tide(rul rule))
   ::
   ++  wipe
     |=  path=paths
     ^+  pub
     %+  ~(jab by pub)  path
     |=  =tide
-    %*  .  (petrify tide(rul [0 0]))
+    %*  .  (form tide(rul [0 1]))
       rul  rul.tide
+      wav  ~
     ==
+  ::
   ++  give
     |=  [path=paths =wave:lake]
     ^+  pub
@@ -211,25 +213,27 @@
     =/  last=[=aeon =rock:lake]  (fall (pry:rok rok.tide) *[key val]:rok)
     =.  wav.tide  (put:wav wav.tide next wave)
     ?.  =(next (add aeon.last waves.rul.tide))  tide
-    (petrify tide)
+    (form tide)
   ::
-  ++  petrify
-    ~&  %hmm
+  ++  form
     |=  =tide
     ^+  tide
-    =/  next=aeon
-      %+  max  
-        (fall (bind (pry:rok rok.tide) head) 0)
-      (fall (bind (ram:wav wav.tide) head) 0)
-    =/  last=[=aeon =rock:lake]  (fall (pry:rok rok.tide) *[key val]:rok)
+    =/  max-rock=[=aeon =rock:lake]  (fall (pry:rok rok.tide) *[key val]:rok)
+    =/  max-wave  (fall (bind (ram:wav wav.tide) head) 0)
     =.  rok.tide
       %+  gas:rok  +<-:gas:rok
       %-  tab:rok  :_  [~ +(rocks.rul.tide)]
-      %^  put:rok  rok.tide  next
-      %+  roll  (tab:wav wav.tide `aeon.last waves.rul.tide)
-      |=  [[aeon =wave:lake] =_rock.last]
-      (wash:lake rock wave)
-    ~|  %rock-none
+      ?:  ?|  =(waves.rul.tide 0)
+              (lth max-wave (add aeon.max-rock waves.rul.tide))
+          ==
+        rok.tide
+      %+  put:rok  rok.tide
+      %+  roll  (tab:wav wav.tide `aeon.max-rock max-wave)
+      |:  [*[now=aeon =wave:lake] `[prev=aeon =rock:lake]`max-rock]
+      ~|  %aeon-awry
+      ?>  =(now +(prev))
+      [now (wash:lake rock wave)]
+    ~|  %rock-zero
     tide(wav (lot:wav wav.tide (bind (ram:rok rok.tide) |=([r=@ *] (dec r))) ~))
   ::
   ++  read
@@ -242,19 +246,6 @@
     |=  [[=aeon =wave:lake] =_snap]
     ?.  =(aeon +(aeon.snap))  snap
     [aeon (wash:lake rock.snap wave)]
-  ::
-
-::    %+  ~(put by pub)  path
-::    =/  =tide  (~(gut by pub) path *tide)
-::    =^  last  rok.tide  (pop:rok rok.tide)
-::    =^  next  wav.tide
-::      %^    (dip:wav ,[aeon rock:lake])
-::          (lot:wav wav.tide `-.last ~)
-::        last
-::      |=  [[aeon =rock:lake] [=aeon =wave:lake]]
-::      ^-  [(unit wave:lake) ? [^aeon rock:lake]]
-::      [~ | aeon (wash:lake rock wave)]
-::    tide(rok (put:rok +<-:put:rok next))
   ::
   ++  apply
     |=  req=(request:poke paths)
