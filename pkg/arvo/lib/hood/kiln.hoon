@@ -1147,11 +1147,18 @@
       ::
       ~>  %slog.(fmt "finished downloading update for {here}")
       =.  let  +(let)
-      ::  If nothing changed, just advance
+      ::  If nothing changed, just ensure %kids is up-to-date and advance
       ::
       ?.  (get-remote-diff our syd now [her sud (dec let)])
-        ~>  %slog.(fmt "remote is identical to {here}, skipping")
-        next
+        =<  next
+        ?~  kid
+          ~>  %slog.(fmt "remote is identical to {here}, skipping")
+          ..abet
+        ?.  (get-remote-diff our u.kid now [her sud (dec let)])
+          ~>  %slog.(fmt "remote is identical to {here}, skipping")
+          ..abet
+        ~>  %slog.(fmt "remote is identical to {here}, merging into {<u.kid>}")
+        (merg /kids u.kid)
       ::  Else start merging, but also immediately start listening to
       ::  the next revision.  Now, all errors should no-op -- we're
       ::  already waiting for the next revision.
@@ -1178,7 +1185,7 @@
       ::
       ?~  kid
         ..abet
-      ~>  %slog.(fmt "kids merge into {<kid>}")
+      ~>  %slog.(fmt "kids merge into {<u.kid>}")
       (merg /kids u.kid)
     ::
         %kids
