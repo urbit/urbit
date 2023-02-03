@@ -4160,9 +4160,10 @@
     ::  +read-s: produce miscellaneous
     ::
     ++  read-s
-      |=  [yon=aeon pax=path]
+      |=  [yon=aeon pax=path =case]
       ^-  (unit (unit cage))
       ?:  ?=([%subs ~] pax)
+        ?.  =([%da now] case)  ~
         =|  sus=(set ship)
         =/  doj=(unit dojo)  (~(get by dos.rom) syd)
         ?~  doj
@@ -4442,7 +4443,7 @@
           %f  (read-f yon path.mun)
           %p  [(read-p path.mun) ..park]
           %r  (read-r yon path.mun)
-          %s  [(read-s yon path.mun) ..park]
+          %s  [(read-s yon path.mun case.mun) ..park]
           %t  [(read-t yon path.mun) ..park]
           %u  [(read-u yon path.mun) ..park]
           %v  [(read-v yon path.mun) ..park]
