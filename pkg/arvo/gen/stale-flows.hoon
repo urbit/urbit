@@ -59,7 +59,9 @@
       ==
     ?.  =(%21 veb)  ~
     :-  leaf+"----------------------------------"
-    %+  turn  ~(tap by pags)
+    %+  turn  %+  sort  ~(tap by pags)
+              |=  [[* v=(list)] [* w=(list)]]
+              (gth (lent v) (lent w))
     |=  [app=term v=(list [dst=term =ship =path])]
     :-  %leaf
     %+  weld  "#{<(lent v)>} flows for {<app>} with >10 retries"
