@@ -1933,17 +1933,19 @@
     ::
     =/  subs=(jar path [bone sub-nonce=@])
       %+  roll  ~(tap by snd.peer-state)
-      |=  [[=bone *] subs=(jar path [bone sub-nonce=@])]
-      ?:  (~(has in closing.peer-state) bone)
+      |=  [[=forward=bone *] subs=(jar path [bone sub-nonce=@])]
+      ?:  (~(has in closing.peer-state) forward-bone)
         subs
-      ?~  duct=(~(get by by-bone.ossuary.peer-state) bone)
+      ?~  duct=(~(get by by-bone.ossuary.peer-state) forward-bone)
         subs
       ?.  ?=([* [%gall %use sub=@ @ %out @ @ nonce=@ pub=@ *] *] u.duct)
         subs
       =/  =wire           i.t.u.duct
       =/  nonce=(unit @)  (rush (snag 7 wire) dem)
       %-  ~(add ja subs)
-      :_  [bone ?~(nonce 0 u.nonce)]  :: 0 for old pre-nonce subscriptions
+      ::  0 for old pre-nonce subscriptions
+      ::
+      :_  [forward-bone ?~(nonce 0 u.nonce)]
       ?~  nonce  wire
       ::  don't include the sub-nonce in the key
       ::
@@ -1967,10 +1969,10 @@
     ::  we can safely cork the current subscription
     ::  if it received a nack on a backward bone
     ::
-    =+  target=(mix 0b10 bone)
+    =+  backward-bone=(mix 0b10 bone)
     ::  not a naxplanation ack bone
     ::
-    ?.  &(=(0 (end 0 target)) =(1 (end 0 (rsh 0 target))))
+    ?.  =(2 (mod backward-bone 4))
       |
     %.  !dry
     (trace |(dry odd.veb) ship |.((weld "failed %watch plea " log)))
