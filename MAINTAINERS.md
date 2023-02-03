@@ -140,7 +140,7 @@ git push origin <tagname>
 
 ### Post-Release Git Cleanup
 
-- [ ] Merge master back into develop.
+- [ ] Merge `master` back into `develop`.
 - [ ] Cut a new release branch from develop.  TODO describe release branch naming
 
 ### Post-Release Checks
