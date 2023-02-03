@@ -1934,11 +1934,14 @@
     =/  subs=(jar path [bone sub-nonce=@])
       %+  roll  ~(tap by snd.peer-state)
       |=  [[=bone *] subs=(jar path [bone sub-nonce=@])]
-      ?~  duct=(~(get by by-bone.ossuary.peer-state) bone)  subs
+      ?:  (~(has in closing.peer-state) bone)
+        subs
+      ?~  duct=(~(get by by-bone.ossuary.peer-state) bone)
+        subs
       ?.  ?=([* [%gall %use sub=@ @ %out @ @ nonce=@ pub=@ *] *] u.duct)
         subs
       =/  =wire           i.t.u.duct
-      =/  nonce=(unit @)  (rush i.t.t.t.t.t.t.t.i.t.u.duct dem)
+      =/  nonce=(unit @)  (rush (snag 7 wire) dem)
       %-  ~(add ja subs)
       :_  [bone ?~(nonce 0 u.nonce)]  :: 0 for old pre-nonce subscriptions
       ?~  nonce  wire
@@ -1950,14 +1953,15 @@
     ::
     %+  roll  flows
     |=  [[=bone sub-nonce=@] core=_core]
-    ?:  (~(has in closing.peer-state) bone)  core
-    =/  app=term   ?>(?=([%gall %use sub=@ *] wire) i.t.t.wire)
-    =/  nonce=@ud  (dec (~(got by dudes) app))
-    =/  =path      (slag 7 wire)
-    =/  log=tape   "[bone={<bone>} nonce={<sub-nonce>} agent={<app>}] {<path>}"
+    =/  app=term      ?>(?=([%gall %use sub=@ *] wire) i.t.t.wire)
+    =/  last-nonce=@  (dec (~(got by dudes) app))
+    =/  =path         (slag 7 wire)
+    =/  log=tape      "[bone={<bone>} nonce={<sub-nonce>} agent={<app>}] {<path>}"
     =;  corkable=?
       ?.(corkable core (%*(on-cork core cork-bone `bone) ship))
-    ?:  &((gth sub-nonce 0) (lth sub-nonce nonce))
+    ::  checks if this a stale re-subscriptions
+    ::
+    ?:  &((gth sub-nonce 0) (lth sub-nonce last-nonce))
       %.  !dry
       (trace |(dry odd.veb) ship |.((weld "stale %watch plea " log)))
     ::  we can safely cork the current subscription
