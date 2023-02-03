@@ -4163,10 +4163,11 @@
       |=  [yon=aeon pax=path]
       ^-  (unit (unit cage))
       ?:  ?=([%subs ~] pax)
-        =/  doj=(unit dojo)  (~(get by dos.rom) syd)
-        ?~  doj  `~
-        =/  wos  ~(tap in ~(key by qyx.u.doj))
         =|  sus=(set ship)
+        =/  doj=(unit dojo)  (~(get by dos.rom) syd)
+        ?~  doj
+          ``noun+!>(sus)
+        =/  wos  ~(tap in ~(key by qyx.u.doj))
         |-
         ?~  wos
           ``noun+!>(sus)
