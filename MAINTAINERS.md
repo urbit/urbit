@@ -141,7 +141,7 @@ git push origin <tagname>
 ### Post-Release Git Cleanup
 
 - [ ] Merge `master` back into `develop`.
-- [ ] Cut a new release branch from develop.  TODO describe release branch naming
+- [ ] Cut a new release branch from `develop`.  The branch should have the format `release/urbit-os-vX.XX`
 
 ### Post-Release Checks
 - [ ] Check that `~marzod` and other distribution stars are receiving the update by running `|ames-sift ~zod` and `|ames-verb %rcv %ges`.  You should see lots of packets from `~zod`.  Once you have confirmed packets are flowing, run `|ames-sift` and `|ames-verb` with no arguments to reset the verbosity state.
