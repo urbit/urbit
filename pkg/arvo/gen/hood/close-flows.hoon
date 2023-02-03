@@ -4,6 +4,6 @@
 ::    To actually close the flows, run with |close-flows, =dry |
 ::
 :-  %say
-|=  [^ [dry=?]]
+|=  [^ arg=~ dry=?]
 ::
 [%helm-kroc dry]
