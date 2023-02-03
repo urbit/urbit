@@ -258,8 +258,8 @@
   =.  dek  ?:  =(%kids i.desks)  %base  i.desks
   =/  exists=?  .^(? %cu (en-beam bek(q dek) loc))
   ?.  exists  $(desks t.desks)
-  =+  .^(=open:clay %cs /(scot %p our.bow)/[dek]/(scot %da now.bow)/open/foo)
-  =/  =type  -:(open loc)
+  =+  .^(=open:clay %cs (en-beam bek(q dek) (weld /open loc)))
+  =/  =type  -:open
 
   =.  preludes
     (~(put by preludes) uri type)
