@@ -1012,9 +1012,15 @@
       %-  mean  %-  flop
       =/  lyn  p.hair
       =/  col  q.hair
+      =/  lyns=wain  (to-wain:format (crip tex))
+      =/  prev-lyn=@ud  (dec lyn)
+      ?:  (gth (lent lyns) prev-lyn)
+        :~  leaf+"syntax error at [{<lyn>} {<col>}] in {<pax>}"
+            leaf+(trip (snag (dec lyn) (to-wain:format (crip tex))))
+            leaf+(runt [(dec col) '-'] "^")
+        ==
       :~  leaf+"syntax error at [{<lyn>} {<col>}] in {<pax>}"
-          leaf+(trip (snag (dec lyn) (to-wain:format (crip tex))))
-          leaf+(runt [(dec col) '-'] "^")
+          leaf+"file missing a terminator"
       ==
     ::
     ++  pile-rule
