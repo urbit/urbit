@@ -687,7 +687,7 @@
   abet:(emit:(spam leaf+mez ~) %pass /kiln %arvo %c [%info u.tor])
 ::
 ++  poke-install
-  |=  [loc=desk her=ship rem=desk once=?]
+  |=  [loc=desk her=ship rem=desk]
   =+  .^(=rock:tire %cx /(scot %p our)//(scot %da now)/tire)
   =/  =zest
     ?~  got=(~(get by rock) loc)
@@ -703,8 +703,6 @@
     abet:(spam (render "already syncing" loc her rem ~) ~)
   ?:  =([our loc] [her rem])
     abet
-  ?:  once
-    abet:abet:(merge:(work loc) her rem da+now %only-that)
   =/  sun  (sync loc her rem)
   ~>  %slog.(fmt "beginning install into {here:sun}")
   =<  abet:abet:init
@@ -1157,11 +1155,18 @@
       ::
       ~>  %slog.(fmt "finished downloading update for {here}")
       =.  let  +(let)
-      ::  If nothing changed, just advance
+      ::  If nothing changed, just ensure %kids is up-to-date and advance
       ::
       ?.  (get-remote-diff our syd now [her sud (dec let)])
-        ~>  %slog.(fmt "remote is identical to {here}, skipping")
-        next
+        =<  next
+        ?~  kid
+          ~>  %slog.(fmt "remote is identical to {here}, skipping")
+          ..abet
+        ?.  (get-remote-diff our u.kid now [her sud (dec let)])
+          ~>  %slog.(fmt "remote is identical to {here}, skipping")
+          ..abet
+        ~>  %slog.(fmt "remote is identical to {here}, merging into {<u.kid>}")
+        (merg /kids u.kid)
       ::  Else start merging, but also immediately start listening to
       ::  the next revision.  Now, all errors should no-op -- we're
       ::  already waiting for the next revision.
@@ -1188,7 +1193,7 @@
       ::
       ?~  kid
         ..abet
-      ~>  %slog.(fmt "kids merge into {<kid>}")
+      ~>  %slog.(fmt "kids merge into {<u.kid>}")
       (merg /kids u.kid)
     ::
         %kids

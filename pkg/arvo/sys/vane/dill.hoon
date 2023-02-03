@@ -107,6 +107,11 @@
           %pack  (dump kyz)
           %crop  (dump trim+p.kyz)
           %verb  (pass /verb %$ kyz)
+        ::
+            %seat
+          %^  pass  /seat  %g
+          :+  %deal   [our our]
+          [%hood %poke %kiln-install !>([desk.kyz our desk.kyz])]
         ==
       ::
       ++  crud

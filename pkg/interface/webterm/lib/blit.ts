@@ -58,15 +58,15 @@ export const showBlit = (term: Terminal, blit: Blit) => {
 
 export const showSlog = (term: Terminal, slog: string) => {
   //  set scroll region to exclude the bottom line,
-  //  scroll up one line,
-  //  move cursor to start of the newly created whitespace,
+  //  move cursor to bottom left of the scroll region,
+  //  print a newline to move everything up a line,
   //  set text to grey,
   //  print the slog,
   //  restore color, scroll region, and cursor.
   //
   term.write(csi('r', 1, term.rows - 1)
-           + csi('S', 1)
            + csi('H', term.rows - 1, 1)
+           + '\n'
            + csi('m', 90)
            + slog
            + csi('m', 0)
