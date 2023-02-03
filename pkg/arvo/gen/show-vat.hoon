@@ -6,9 +6,15 @@
 :-  %tang
 %-  flop  ^-  tang
 =/  pax=path  /(scot %p p.bec)/[desk]/(scot %da now)
-=+  .^([lal=@tas num=@ud] cx+(weld pax /sys/kelvin))
+=/  welt=(list [@tas @ud])
+  =+  .^(=waft:clay cx+(weld pax /sys/kelvin))
+  %+  sort  ~(tap in (waft-to-wefts:clay waft))
+  |=  [a=weft b=weft]
+  ?:  =(lal.a lal.b)
+    (lte num.a num.b)
+  (lte lal.a lal.b)
 :~  '/sys/kelvin:'
-    leaf/"[{<lal>} {<num>}]"
+    (sell !>(welt))
     '/desk/bill:'
     (sell !>(.^((list dude:gall) cx+(weld pax /desk/bill))))
 ==

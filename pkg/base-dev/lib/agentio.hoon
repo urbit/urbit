@@ -93,11 +93,6 @@
     (arvo %e %connect binding app)
   --
 ::
-++  fact-curry
-  |*  [=mark =mold]
-  |=  [paths=(list path) fac=mold]
-  (fact mark^!>(fac) paths)
-::
 ++  fact-kick
   |=  [=path =cage]
   ^-  (list card)

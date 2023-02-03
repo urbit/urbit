@@ -191,19 +191,6 @@
       [%1 peg=(unit page)]
   ==
 ::
-::  Global ford cache
-::
-::    Refcount includes references from other items in the cache, and
-::    from spills in each desk
-::
-::    This is optimized for minimizing the number of rebuilds, and given
-::    that, minimizing the amount of memory used.  It is relatively slow
-::    to lookup, because generating a cache key can be fairly slow (for
-::    files, it requires parsing; for tubes, it even requires building
-::    the marks).
-::
-+$  flow  (map leak [refs=@ud =soak])
-::
 ::  Per-desk ford cache
 ::
 ::    Spill is the set of "roots" we have into the global ford cache.
@@ -226,41 +213,6 @@
       [%tube =mars]
       [%vale =path]
       [%arch =path]
-  ==
-::
-::  Ford build with content.
-::
-+$  pour
-  $%  [%file =path]
-      [%nave =mark]
-      [%dais =mark]
-      [%cast =mars]
-      [%tube =mars]
-      ::  leafs
-      ::
-      [%vale =path =lobe]
-      [%arch =path =(map path lobe)]
-  ==
-::
-::  Ford result.
-::
-+$  soak
-  $%  [%cage =cage]
-      [%vase =vase]
-      [%arch dir=(map @ta vase)]
-      [%dais =dais]
-      [%tube =tube]
-  ==
-::
-::  Ford cache key
-::
-::    This includes all build inputs, including transitive dependencies,
-::    recursively.
-::
-+$  leak
-  $~  [*pour ~]
-  $:  =pour
-      deps=(set leak)
   ==
 ::
 ::  New desk data.
@@ -432,7 +384,10 @@
           task                                          ::
       ==                                                ::
       $:  %d                                            ::  to %dill
-          $>(%flog task:dill)                           ::
+          $>  $?  %flog                                 ::
+                  %text                                 ::
+              ==                                        ::
+          task:dill                                     ::
       ==                                                ::
       $:  %g                                            ::  to %gall
           $>  $?  %deal
@@ -460,14 +415,13 @@
       ==  ==                                            ::
       $:  %clay                                         ::
           $>  $?  %mere                                 ::
-                  %note                                 ::
                   %writ                                 ::
+                  %wris                                 ::
               ==                                        ::
           gift                                          ::
       ==                                                ::
       $:  %gall
-          $>  $?  %onto
-                  %unto
+          $>  $?  %unto
               ==
           gift:gall
       ==
@@ -2209,7 +2163,8 @@
         |=  [prefix=@tD paths=(set path)]
         %+  turn  ~(tap in paths)
         |=  =path
-        [u.hun %give %note prefix (path-to-tank path)]
+        ^-  move
+        [u.hun %pass /note %d %text prefix ' ' ~(ram re (path-to-tank path))]
       ::
       ++  path-to-tank
         |=  =path
@@ -4221,6 +4176,18 @@
           wos  t.wos
           sus  (~(put in sus) ship.u.for.i.wos)
         ==
+      ?:  ?=([%bloc ~] pax)
+        :^  ~  ~  %noun
+        :-  -:!>(*(map lobe page))
+        ^-  (map lobe page)
+        %-  %~  rep  in
+            %-  reachable-takos
+            (~(got by hit.dom) let.dom)
+        |=  [t=tako o=(map lobe page)]
+        %-  ~(gas by o)
+        %+  turn
+          ~(val by q:(~(got by hut.ran) t))
+        |=(l=lobe [l (~(got by lat.ran) l)])
       ?.  ?=([@ * *] pax)
         `~
       ?+    i.pax  `~
@@ -4924,6 +4891,9 @@
       =/  den  ((de now rof hen ruf) our syd)
       abet:(park:den & & yoki *rang)
     [mos ..^$]
+  ::
+      %prep
+    [~ ..^$(lat.ran.ruf (~(uni by lat.req) lat.ran.ruf))]
   ::
       %perm
     =^  mos  ruf
@@ -5658,6 +5628,7 @@
         %sweep  ``[%sweep !>(sweep)]
         %rang   ``[%rang !>(ran.ruf)]
         %tomb   ``[%flag !>((tomb t.path))]
+        %flow   ``[%flow !>(fad.ruf)]
         %domes  domes
         %tire   ``[%tire !>(tore:(lu now rof *duct ruf))]
         %tyre   ``[%tyre !>(tyr.ruf)]
@@ -5788,8 +5759,6 @@
   ?^  dud
     ~|(%clay-take-dud (mean tang.u.dud))
   ?:  ?=([%lu %load *] tea)
-    ?:  ?=(%onto +<.hin)
-      [~ ..^$]
     ?>  ?=(%unto +<.hin)
     ?>  ?=(%poke-ack -.p.hin)
     ?~  p.p.hin
@@ -5836,6 +5805,7 @@
     [mos ..^$]
   ::
   ?:  ?=([%foreign-warp *] tea)
+    ?:  ?=(%wris +<.hin)  ~&  %dropping-wris  `..^$
     ?>  ?=(%writ +<.hin)
     :_  ..^$
     [hen %give %boon `(unit rand)`(bind `riot`p.hin rant-to-rand)]~
@@ -5964,7 +5934,6 @@
         q.p.p.+.hin
     [~ ..^$]
   ::
-      %note  [[hen %give +.hin]~ ..^$]
       %wake
     ::  TODO: handle behn errors
     ::
@@ -5987,8 +5956,8 @@
       ::
       %boon  !!
       %lost  !!
-      %onto  !!
       %unto  !!
+      %wris  ~&  %strange-wris  !!
       %writ
     %-  (slog leaf+"clay: strange writ (expected on upgrade to Fusion)" ~)
     [~ ..^$]
