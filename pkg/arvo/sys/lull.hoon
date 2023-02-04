@@ -1966,6 +1966,7 @@
         ==  ==
       ==
     +$  user-note
+      $~  [%b %rest *@da]
       $%  $:  %a
         $%  $>(%sift task:ames)
             $>(%spew task:ames)
