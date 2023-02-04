@@ -8,6 +8,7 @@
         [from=$~(%base desk) hard=_|]
     ==
 ::
+?>  ((sane %tas) desk)
 =;  make-new-desk
   ?.  ?&  !hard
           (~(has in .^((set ^desk) %cd (en-beam bek(q %$) /))) desk)
