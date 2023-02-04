@@ -1984,6 +1984,7 @@
             $>(%crew task:clay)
             $>(%crow task:clay) :: my add
             $>(%perm task:clay)
+            $>(%park task:clay)
             $>(%info task:clay)
             $>(%warp task:clay)
             $>(%rein task:clay)
@@ -2204,6 +2205,7 @@
             $>(%crew task:clay)
             $>(%crow task:clay) :: my add
             $>(%perm task:clay)
+            $>(%park task:clay)
             $>(%info task:clay)
             $>(%warp task:clay)
             $>(%rein task:clay)
