@@ -1774,7 +1774,22 @@
   +$  bitt  (map duct (pair ship path))                 ::  incoming subs
   +$  boat  (map [=wire =ship =term] [acked=? =path])   ::  outgoing subs
   +$  boar  (map [=wire =ship =term] nonce=@)           ::  and their nonces
-  +$  bowl                                              ::  standard app state
+  ++  bowl  bowl-414
+  +$  bowl-414                                          ::  standard app state
+          $:  $:  our=ship                              ::  host
+                  src=ship                              ::  guest
+                  dap=term                              ::  agent
+              ==                                        ::
+              $:  wex=boat                              ::  outgoing subs
+                  sup=bitt                              ::  incoming subs
+              ==                                        ::
+              $:  act=@ud                               ::  change number
+                  eny=@uvJ                              ::  entropy
+                  now=@da                               ::  current time
+                  byk=beak                              ::  load source
+                  msg=%hello                            ::  message from pyry
+          ==  ==                                        ::
+  +$  bowl-415                                          ::  standard app state
           $:  $:  our=ship                              ::  host
                   src=ship                              ::  guest
                   dap=term                              ::  agent
@@ -1824,6 +1839,9 @@
   ++  step-any   $%  [[%zuse %414] step:agent-414]
                      [[%zuse %415] step:agent-415]
                  ==
+  ++  card-any   $%  [[%zuse %414] card:agent-414]
+                     [[%zuse %415] card:agent-415]
+                 ==
   ++  agent  agent-414
   ::
   ++  agent-414
@@ -1840,7 +1858,6 @@
       $%  $>(%done gift:ames) :: kiln
           ::
           $>(%wake gift:behn)
-          $>(%heck gift:behn)
           ::
           $>(%wris gift:clay)
           $>(%writ gift:clay)
@@ -1871,7 +1888,6 @@
         ==  ==
           $:  %behn
         $%  $>(%wake gift:behn)
-            $>(%heck gift:behn)
         ==  ==
           $:  %clay
         $%  $>(%wris gift:clay)
@@ -2062,7 +2078,6 @@
       $%  $>(%done gift:ames) :: kiln
           ::
           $>(%wake gift:behn)
-          $>(%heck gift:behn)
           ::
           $>(%wris gift:clay)
           $>(%writ gift:clay)
@@ -2093,7 +2108,6 @@
         ==  ==
           $:  %behn
         $%  $>(%wake gift:behn)
-            $>(%heck gift:behn)
         ==  ==
           $:  %clay
         $%  $>(%wris gift:clay)
@@ -2201,7 +2215,7 @@
             $>(%listen task:jael) :: base desk only
         ==  ==
           $:  %k
-        $%  $>(%fard task:khan)
+        $%  [%fard p=(fyrd:khan cage)]
             $>(%lard task:khan) :: kiln does this
         ==  ==
       ==
@@ -2226,7 +2240,7 @@
       ==
     ++  form
       $_  ^|
-      |_  bowl
+      |_  bowl-415
       ++  on-init
         *(quip card _^|(..on-init))
       ::
@@ -2611,7 +2625,7 @@
         [%done ~]                                       ::  socket closed
         ::  TODO  mark ignored                          ::
         ::                                              ::
-        [%fard p=(fyrd cage)]                           ::  in-arvo thread
+        [%fard p=(fyrd cage) are-you-sure=?]            ::  in-arvo thread
         [%fyrd p=(fyrd cast)]                           ::  external thread
         [%lard =bear =shed]                             ::  inline thread
         $>(%trim vane-task)                             ::  trim state

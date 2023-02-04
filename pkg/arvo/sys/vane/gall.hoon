@@ -639,7 +639,7 @@
       ::
       ?>  ?=  $%
         [%ames %done *]
-        [%behn ?(%wake %heck) *]
+        [%behn %wake *]
         [%clay ?(%wris %writ %tire %hill %mere %cruz %croz) *]
         [%dill %blit *]
         [%eyre %bound *]
@@ -966,10 +966,11 @@
     ::
     ++  ap-idle
       ^+  ap-core
-      ?:  ?=(%| -.agent.yoke.ap-agent-core)  ap-core
-      ?-  -.p.agent.yoke.ap-agent-core
-        [%zuse %414]  ap-core(agent.yoke |+on-save:+.p.agent.yoke.ap-agent-core)
-        [%zuse %415]  ap-core(agent.yoke |+on-save.+.p.agent.yoke.ap-agent-core)
+      ?:  ?=(%| -.agent.yoke)  ap-core
+      =/  cor  ap-agent-core
+      ?-  -.cor
+        [%zuse %414]  ap-core(agent.yoke |+on-save:+.cor)
+        [%zuse %415]  ap-core(agent.yoke |+on-save.+.cor)
       ==
     ::
     ++  ap-nuke
@@ -1133,13 +1134,10 @@
     ::
     ++  ap-agent-core
       ?>  ?=(%& -.agent.yoke)
-      ^+  ap-core
-      %=  ap-core
-        p.agent.yoke
-        ?-  -.p.agent.yoke
-          [%zuse %415]  [[%zuse %415] +.p.agent.yoke(+6 ap-construct-bowl)]
-          [%zuse %414]  [[%zuse %414] +.p.agent.yoke(+6 ap-construct-bowl)]
-        ==
+      ^-  agent-any
+      ?-  -.p.agent.yoke
+        [%zuse %415]  [[%zuse %415] ~(. +.p.agent.yoke ap-construct-bowl-415)]
+        [%zuse %414]  [[%zuse %414] ~(. +.p.agent.yoke ap-construct-bowl-414)]
       ==
     ::  +ap-ducts-from-paths: get ducts subscribed to paths
     ::
@@ -1201,10 +1199,10 @@
       ::
       =/  peek-result=(each (unit (unit cage)) tang)
         =/  peek
-          ?>  ?=(%.y -.agent.yoke.ap-agent-core)
-          ?-  -.p.agent.yoke.ap-agent-core
-            [%zuse %415]  |.((on-peek:+.p.agent.yoke.ap-agent-core [care tyl]))
-            [%zuse %414]  |.((on-peek:+.p.agent.yoke.ap-agent-core [care tyl]))
+          =/  cor  ap-agent-core
+          ?-  -.cor
+            [%zuse %415]  |.((on-peek:+.cor [care tyl]))
+            [%zuse %414]  |.((on-peek:+.cor [care tyl]))
           ==
         (ap-mule-peek peek)
       ?:  ?=(%| -.peek-result)
@@ -1251,8 +1249,8 @@
       (ap-move (ap-from-internal %pass path neet))
     ::  +ap-construct-bowl: set up bowl.
     ::
-    ++  ap-construct-bowl
-      ^-  bowl
+    ++  ap-construct-bowl-415
+      ^-  bowl-415
       :*  :*  our                                     ::  host
               attributing.agent-routes                ::  guest
               agent-name                              ::  agent
@@ -1265,6 +1263,22 @@
               now=time.stats.yoke                     ::  time
               byk=beak.yoke                           ::  source
       ==  ==
+    ++  ap-construct-bowl-414
+      ^-  bowl-414
+      :*  :*  our                                     ::  host
+              attributing.agent-routes                ::  guest
+              agent-name                              ::  agent
+          ==                                          ::
+          :*  wex=boat.yoke                           ::  outgoing
+              sup=bitt.yoke                           ::  incoming
+          ==                                          ::
+          :*  act=change.stats.yoke                   ::  tick
+              eny=eny.stats.yoke                      ::  nonce
+              now=time.stats.yoke                     ::  time
+              byk=beak.yoke                           ::  source
+              msg=%hello                              ::  hello
+      ==  ==
+
     ::  +ap-reinstall: reinstall.
     ::
     ++  ap-reinstall
@@ -1272,10 +1286,11 @@
       |=  =agent-any
       ^+  ap-core
       =/  old-state=vase
-        ?:  ?=(%& -.agent.yoke.ap-agent-core)
-          ?-  -.p.agent.yoke.ap-agent-core
-            [%zuse %415]  on-save:+.p.agent.yoke.ap-agent-core
-            [%zuse %414]  on-save:+.p.agent.yoke.ap-agent-core
+        ?:  ?=(%& -.agent.yoke)
+          =/  cor  ap-agent-core
+          ?-  -.cor
+            [%zuse %415]  on-save:+.cor
+            [%zuse %414]  on-save:+.cor
           ==
         p.agent.yoke
       =^  error  ap-core
@@ -1299,11 +1314,11 @@
       =/  incoming   [attributing.agent-routes pax]
       =.  bitt.yoke  (~(put by bitt.yoke) agent-duct incoming)
       =^  maybe-tang  ap-core
-        ?>  ?=(%.y -.agent.yoke.ap-agent-core)
         %+  ap-ingest  %watch-ack  |.
-          ?-  -.p.agent.yoke.ap-agent-core
-            [%zuse %415]  [[%zuse %415] (on-watch:+.p.agent.yoke.ap-agent-core pax)]
-            [%zuse %414]  [[%zuse %414] (on-watch:+.p.agent.yoke.ap-agent-core pax)]
+          =/  cor  ap-agent-core
+          ?-  -.cor
+            [%zuse %415]  [[%zuse %415] (on-watch:+.cor pax)]
+            [%zuse %414]  [[%zuse %414] (on-watch:+.cor pax)]
           ==
       ?^  maybe-tang
         ap-silent-delete
@@ -1315,11 +1330,11 @@
       |=  =cage
       ^+  ap-core
       =^  maybe-tang  ap-core
-        ?>  ?=(%.y -.agent.yoke.ap-agent-core)
         %+  ap-ingest  %poke-ack  |.
-          ?-  -.p.agent.yoke.ap-agent-core
-            [%zuse %415]  [[%zuse %415] (on-poke:+.p.agent.yoke.ap-agent-core cage)]
-            [%zuse %414]  [[%zuse %414] (on-poke:+.p.agent.yoke.ap-agent-core cage)]
+          =/  cor  ap-agent-core
+          ?-  -.cor
+            [%zuse %415]  [[%zuse %415] (on-poke:+.cor cage)]
+            [%zuse %414]  [[%zuse %414] (on-poke:+.cor cage)]
           ==
       ap-core
     ::  +ap-error: pour error.
@@ -1329,11 +1344,11 @@
       ^+  ap-core
       =/  form  |=(=tank [%rose [~ "! " ~] tank ~])
       =^  maybe-tang  ap-core
-        ?>  ?=(%.y -.agent.yoke.ap-agent-core)
         %+  ap-ingest  ~  |.
-          ?-  -.p.agent.yoke.ap-agent-core
-            [%zuse %415]  [[%zuse %415] (on-fail:+.p.agent.yoke.ap-agent-core term (turn tang form))]
-            [%zuse %414]  [[%zuse %414] (on-fail:+.p.agent.yoke.ap-agent-core term (turn tang form))]
+          =/  cor  ap-agent-core
+          ?-  -.cor
+            [%zuse %415]  [[%zuse %415] (on-fail:+.cor term (turn tang form))]
+            [%zuse %414]  [[%zuse %414] (on-fail:+.cor term (turn tang form))]
           ==
       ap-core
     ::  +ap-generic-take: generic take.
@@ -1343,11 +1358,11 @@
       |=  [=wire =sign-user:agent]
       ^+  ap-core
       =^  maybe-tang  ap-core
-        ?>  ?=(%.y -.agent.yoke.ap-agent-core)
         %+  ap-ingest  ~  |.
-          ?-  -.p.agent.yoke.ap-agent-core
-            [%zuse %415]  [[%zuse %415] (on-arvo:+.p.agent.yoke.ap-agent-core wire sign-user)]
-            [%zuse %414]  [[%zuse %414] (on-arvo:+.p.agent.yoke.ap-agent-core wire sign-user)]
+          =/  cor  ap-agent-core
+          ?-  -.cor
+            [%zuse %415]  [[%zuse %415] (on-arvo:+.cor wire sign-user)]
+            [%zuse %414]  [[%zuse %414] (on-arvo:+.cor wire sign-user)]
           ==
       ?^  maybe-tang
         (ap-error %arvo-response u.maybe-tang)
@@ -1414,13 +1429,13 @@
       ::
       ++  sub-key  [agent-wire dock]
       ++  ingest
-        ?>  ?=(%.y -.agent.yoke.ap-agent-core)
         %+  ap-ingest
           ~
         |.
-        ?-  -.p.agent.yoke.ap-agent-core
-          [%zuse %415]  [[%zuse %415] (on-agent:+.p.agent.yoke.ap-agent-core agent-wire sign)]
-          [%zuse %414]  [[%zuse %414] (on-agent:+.p.agent.yoke.ap-agent-core agent-wire sign)]
+        =/  cor  ap-agent-core
+        ?-  -.cor
+          [%zuse %415]  [[%zuse %415] (on-agent:+.cor agent-wire sign)]
+          [%zuse %414]  [[%zuse %414] (on-agent:+.cor agent-wire sign)]
         ==
       ++  run-sign
         ?-    -.sign
@@ -1516,18 +1531,18 @@
       ^-  [(unit tang) _ap-core]
       ::
       =^  maybe-tang  ap-core
-        ?>  ?=(%.y -.agent.yoke.ap-agent-core)
         %+  ap-ingest  ~
+        =/  cor  ap-agent-core
         ?~  maybe-vase
           |.
-          ?-  -.p.agent.yoke.ap-agent-core
-            [%zuse %415]  [[%zuse %415] on-init:+.p.agent.yoke.ap-agent-core]
-            [%zuse %414]  [[%zuse %414] on-init:+.p.agent.yoke.ap-agent-core]
+          ?-  -.cor
+            [%zuse %415]  [[%zuse %415] on-init:+.cor]
+            [%zuse %414]  [[%zuse %414] on-init:+.cor]
           ==
         |.
-        ?-  -.p.agent.yoke.ap-agent-core
-          [%zuse %415]  [[%zuse %415] (on-load:+.p.agent.yoke.ap-agent-core u.maybe-vase)]
-          [%zuse %414]  [[%zuse %414] (on-load:+.p.agent.yoke.ap-agent-core u.maybe-vase)]
+        ?-  -.cor
+          [%zuse %415]  [[%zuse %415] (on-load:+.cor u.maybe-vase)]
+          [%zuse %414]  [[%zuse %414] (on-load:+.cor u.maybe-vase)]
         ==
       [maybe-tang ap-core]
     ::  +ap-silent-delete: silent delete.
@@ -1548,11 +1563,11 @@
       =.  bitt.yoke  (~(del by bitt.yoke) agent-duct)
       ::
       =^  maybe-tang  ap-core
-        ?>  ?=(%.y -.agent.yoke.ap-agent-core)
         %+  ap-ingest  ~  |.
-        ?-  -.p.agent.yoke.ap-agent-core
-          [%zuse %415]  [[%zuse %415] (on-leave:+.p.agent.yoke.ap-agent-core q.incoming)]
-          [%zuse %414]  [[%zuse %414] (on-leave:+.p.agent.yoke.ap-agent-core q.incoming)]
+        =/  cor  ap-agent-core
+        ?-  -.cor
+          [%zuse %415]  [[%zuse %415] (on-leave:+.cor q.incoming)]
+          [%zuse %414]  [[%zuse %414] (on-leave:+.cor q.incoming)]
         ==
       ?^  maybe-tang
         (ap-error %leave u.maybe-tang)
@@ -1708,6 +1723,17 @@
       =.  agent-moves
         :(weld (flop new-moves) ack-moves agent-moves)
       [maybe-tang ap-core]
+    :: +ap-modernize: modernize cards from old agents
+    ::
+    ++  ap-modernize
+      |=  =card-any
+      ^-  (wind neet gift:agent)
+      ?:  ?=([%zuse %414] -.card-any)  +.card-any
+      ?:  ?=([%slip %arvo %k %fard *] +.card-any)
+        [%slip %arvo %k %fard +.+.+.+.+.card-any are-you-sure=%.y]
+      ?:  ?=([%pass * %arvo %k %fard *] +.card-any)
+        [%pass -.+.+.card-any %arvo %k %fard +.+.+.+.+.+.card-any are-you-sure=%.y]
+      +.card-any
     ::  +ap-handle-result: handle result.
     ::
     ++  ap-handle-result
@@ -1722,7 +1748,12 @@
           [%zuse %415]  [%.y [%zuse %415] +.+.p.result]
           [%zuse %414]  [%.y [%zuse %414] +.+.p.result]
         ==
-      =/  moves       (zing (turn -.+.p.result ap-from-internal))
+      =/  crds=(list card-any)
+        ?-  -.p.result
+          [%zuse %415]  (turn -.+.p.result |=(c=card:agent-415 [[%zuse %415] c]))
+          [%zuse %414]  (turn -.+.p.result |=(c=card:agent-414 [[%zuse %414] c]))
+         ==
+      =/  moves  (zing (turn (turn crds ap-modernize) ap-from-internal))
       =.  bitt.yoke   (ap-handle-kicks moves)
       (ap-handle-peers moves)
     ::  +ap-handle-kicks: handle cancels of bitt.watches

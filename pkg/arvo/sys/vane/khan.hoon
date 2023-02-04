@@ -144,7 +144,7 @@
     =/  =vase
       (slap (vale.dais q.q.args.fyd) !,(*hoon [~ u=.]))
     =-  [[hen %pass wire -]~ khan-gate]
-    [%k %fard bear.fyd name.fyd p.q.args.fyd vase]
+    [%k %fard [bear.fyd name.fyd p.q.args.fyd vase] %.y]
   ==
 ::
 ++  bard

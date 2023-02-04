@@ -84,7 +84,7 @@
     ::
     ++  start-azimuth-load
       ^-  card
-      [%pass /al %arvo %k %fard %base %azimuth-load %noun !>(~)]
+      [%pass /al %arvo %k %fard [%base %azimuth-load %noun !>(~)] %.y]
     --
 ::
 =<
