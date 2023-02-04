@@ -360,6 +360,7 @@
   ::    %init: vane boot
   ::    %prod: re-send a packet per flow, to all peers if .ships is ~
   ::    %sift: limit verbosity to .ships
+  ::    %snub: set packet blacklist to .ships
   ::    %spew: set verbosity toggles
   ::    %trim: release memory
   ::    %vega: kernel reload notification
@@ -375,6 +376,7 @@
         $>(%init vane-task)
         [%prod ships=(list ship)]
         [%sift ships=(list ship)]
+        [%snub ships=(list ship)]
         [%spew veb=(list verb)]
         [%stir arg=@t]
         $>(%trim vane-task)
@@ -434,7 +436,7 @@
   +$  address  @uxaddress
   ::  $verb: verbosity flag for ames
   ::
-  +$  verb  ?(%snd %rcv %odd %msg %ges %for %rot)
+  +$  verb  ?(%snd %rcv %odd %msg %ges %for %rot %kay)
   ::  $blob: raw atom to or from unix, representing a packet
   ::
   +$  blob  @uxblob
@@ -884,6 +886,17 @@
   +$  norm  (axal ?)                                    ::  tombstone policy
   +$  open  $-(path vase)                               ::  get prelude
   +$  page  ^page                                       ::  export for compat
+  +$  pour                                              ::  ford build w/content
+    $%  [%file =path]
+        [%nave =mark]
+        [%dais =mark]
+        [%cast =mars]
+        [%tube =mars]
+        ::  leafs
+        ::
+        [%vale =path =lobe]
+        [%arch =path =(map path lobe)]
+    ==
   +$  rang                                              ::  repository
     $:  hut=(map tako yaki)                             ::  changes
         lat=(map lobe page)                             ::  data
@@ -918,6 +931,13 @@
   +$  rule  [mod=?(%black %white) who=(set whom)]       ::  node permission
   +$  rump  [p=care q=case r=@tas s=path]               ::  relative path
   +$  saba  [p=ship q=@tas r=moar s=dome]               ::  patch+merge
+  +$  soak                                              ::  ford result
+    $%  [%cage =cage]
+        [%vase =vase]
+        [%arch dir=(map @ta vase)]
+        [%dais =dais]
+        [%tube =tube]
+    ==
   +$  soba  (list [p=path q=miso])                      ::  delta
   +$  suba  (list [p=path q=misu])                      ::  delta
   +$  tako  @uvI                                        ::  yaki ref
@@ -1057,6 +1077,32 @@
         %^  cat  7  (sham [%yaki (roll p add) q t])
         (sham [%tako (roll p add) q t])
     [p q has t]
+  ::
+  ::  $leak: ford cache key
+  ::
+  ::    This includes all build inputs, including transitive dependencies,
+  ::    recursively.
+  ::
+  +$  leak
+    $~  [*pour *weft ~]
+    $:  =pour
+        =weft
+        deps=(set leak)
+    ==
+  ::
+  ::  $flow: global ford cache
+  ::
+  ::    Refcount includes references from other items in the cache, and
+  ::    from spills in each desk
+  ::
+  ::    This is optimized for minimizing the number of rebuilds, and given
+  ::    that, minimizing the amount of memory used.  It is relatively slow
+  ::    to lookup, because generating a cache key can be fairly slow (for
+  ::    files, it requires parsing; for tubes, it even requires building
+  ::    the marks).
+  ::
+  +$  flow  (map leak [refs=@ud =soak])
+  ::
   ::  $pile: preprocessed hoon source file
   ::
   ::    /-  sur-file            ::  surface imports from /sur
