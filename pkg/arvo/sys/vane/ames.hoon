@@ -1923,9 +1923,15 @@
   ++  on-kroc
     |=  dry=?
     ^+  event-core
+    ::
+    =;  [corks=@ core=_event-core]
+      ?.  dry  core
+      %.(core (slog leaf/"ames: #{<corks>} flows can be corked" ~))
+    ::
     %+  roll  ~(tap by peers.ames-state)
-    |=  [[=ship =ship-state] core=_event-core]
-    ?.  ?=(%known -.ship-state)  core
+    |=  [[=ship =ship-state] corks=@ core=_event-core]
+    ?.  ?=(%known -.ship-state)
+      corks^core
     =/  =peer-state:ames  ?>(?=(%known -.ship-state) +.ship-state)
     =/  dudes  ;;  (map dude:gall nonce=@)
       =<  q.q  %-  need  %-  need
@@ -1951,21 +1957,23 @@
       ::
       (weld (scag 7 wire) (slag 8 wire))
     %+  roll  ~(tap by subs)
-    |=  [[=wire flows=(list [bone sub-nonce=@])] core=_core]
+    |=  [[=wire flows=(list [bone sub-nonce=@])] corks=_corks core=_core]
     ::
     %+  roll  flows
-    |=  [[=bone sub-nonce=@] core=_core]
+    |=  [[=bone sub-nonce=@] corks=_corks core=_core]
     =/  app=term      ?>(?=([%gall %use sub=@ *] wire) i.t.t.wire)
     =/  last-nonce=@  (dec (~(got by dudes) app))
     =/  =path         (slag 7 wire)
-    =/  log=tape      "[bone={<bone>} nonce={<sub-nonce>} agent={<app>}] {<path>}"
+    =/  log=tape      "[bone={<bone>} agent={<app>}] {<path>}"
     =;  corkable=?
-      ?.(corkable core (%*(on-cork core cork-bone `bone) ship))
+      =?  corks  corkable  +(corks)
+      =?  core   &(corkable !dry) (%*(on-cork core cork-bone `bone) ship)
+      corks^core
     ::  checks if this a stale re-subscriptions
     ::
     ?:  &((gth sub-nonce 0) (lth sub-nonce last-nonce))
-      %.  !dry
-      (trace |(dry odd.veb) ship |.((weld "stale %watch plea " log)))
+      %.  &
+      (trace &(dry odd.veb) ship |.((weld "stale %watch plea " log)))
     ::  we can safely cork the current subscription
     ::  if it received a nack on a backward bone
     ::
@@ -1974,8 +1982,8 @@
     ::
     ?.  =(2 (mod backward-bone 4))
       |
-    %.  !dry
-    (trace |(dry odd.veb) ship |.((weld "failed %watch plea " log)))
+    %.  &
+    (trace &(dry odd.veb) ship |.((weld "failed %watch plea " log)))
   ::  +on-take-wake: receive wakeup or error notification from behn
   ::
   ++  on-take-wake
