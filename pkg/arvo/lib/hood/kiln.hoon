@@ -764,11 +764,19 @@
 ::
 ++  poke-rm
   |=  a=path
+  =|  c=(list (unit toro))
+  %+  poke-info  "removed: {<a>}"
+  =-  %+  roll  -
+      |=  [a=(unit toro) b=(unit toro)]
+      (clap a b furl)
+  |-  ^-  (list (unit toro))
   =+  b=.^(arch %cy a)
-  ?~  fil.b
-    =+  ~[leaf+"No such file:" leaf+"{<a>}"]
-    abet:(spam -)
-  (poke-info "removed" `(fray a))
+  ?:  ?=([^ ~] b)  (snoc c `(fray a))  
+  =?  c  ?=(^ fil.b)  (snoc c `(fray a))
+  %-  zing
+  %+  turn  ~(tap by dir.b)
+  |=  [kid=@ta ~]
+  ^$(a (weld a /[kid]))
 ::
 ++  poke-schedule
   |=  [where=path tym=@da eve=@t]

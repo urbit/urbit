@@ -1,4 +1,3 @@
-!:
 ::  clay (4c), revision control
 ::
 ::  The way to understand Clay is to take it section-by-section:
@@ -567,7 +566,7 @@
     $(vaz t.vaz)
   ::
   ++  ford
-    ::  !.
+    !.
     =>  |%
         +$  state
           $:  cache=flow
@@ -4154,7 +4153,7 @@
       $(p.y t.p.y)
     ::
     ++  read-a
-      ::  !.
+      !.
       |=  [=aeon =path]
       ^-  [(unit (unit cage)) _..park]
       =^  =vase  ..park
@@ -4165,7 +4164,7 @@
       :_(..park [~ ~ %vase !>(vase)])
     ::
     ++  read-b
-      ::  !.
+      !.
       |=  [=aeon =path]
       ^-  [(unit (unit cage)) _..park]
       ?.  ?=([@ ~] path)
@@ -4177,7 +4176,7 @@
       :_(..park [~ ~ %dais !>(dais)])
     ::
     ++  read-c
-      ::  !.
+      !.
       |=  [=aeon =path]
       ^-  [(unit (unit cage)) _..park]
       ?.  ?=([@ @ ~] path)
@@ -4189,7 +4188,7 @@
       :_(..park [~ ~ %tube !>(tube)])
     ::
     ++  read-e
-      ::  !.
+      !.
       |=  [=aeon =path]
       ^-  [(unit (unit cage)) _..park]
       ?.  ?=([@ ~] path)
@@ -4201,7 +4200,7 @@
       :_(..park [~ ~ %nave vase])
     ::
     ++  read-f
-      ::  !.
+      !.
       |=  [=aeon =path]
       ^-  [(unit (unit cage)) _..park]
       ?.  ?=([@ @ ~] path)
@@ -4215,7 +4214,7 @@
     ::  TODO move to +read-buc
     ::
     ++  read-d
-      ::  !.
+      !.
       |=  [=aeon =path]
       ^-  (unit (unit cage))
       ?.  =(our her)
@@ -6015,7 +6014,35 @@
     `u=[need have leak]
   --
 ::
-++  stay  [ver ruf]
+::  We clear the ford cache by replacing it with its bunt as a literal,
+::  with its singleton type.  This nests within +flow and +flue without
+::  reference to +type, +hoon, or anything else in the sample of cache
+::  objects.  Otherwise we would be contravariant in those types, which
+::  makes them harder to change.
+::
+++  stay
+  =/  flu  [~ ~]
+  =+  `flue`flu
+  =/  flo  ~
+  =+  `flow`flo
+  :-  ver
+  %=    ruf
+      fad  flo
+      dos.rom
+    %-  ~(run by dos.rom.ruf)
+    |=  =dojo
+    dojo(fod.dom flu)
+  ::
+      hoy
+    %-  ~(run by hoy.ruf)
+    |=  =rung
+    %=    rung
+        rus
+      %-  ~(run by rus.rung)
+      |=  =rede
+      rede(fod.dom flu)
+    ==
+  ==
 ::
 ++  take                                              ::  accept response
   ~/  %clay-take

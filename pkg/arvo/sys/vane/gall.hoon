@@ -54,6 +54,7 @@
         $>(%cork task:ames)
         $>(%stir task:ames)
         $>(%prod task:ames)
+        $>(%snub task:ames)
     ==  ==
       $:  %b
     $%  $>(%rest task:behn)
@@ -95,6 +96,7 @@
   ==
 ::  $yoke: agent runner state
 ::
+::    weft: agent version
 ::    control-duct: TODO document
 ::    run-nonce: unique for each rebuild
 ::    sub-nonce: app-wide global %watch nonce
@@ -235,6 +237,7 @@
     |=  rup=(each suss tang)
     ^-  [wire note-arvo]
     :+  /sys/say  %d
+    ^-  task:dill
     ?-  -.rup
       %&  [%text "gall: {(t q)}ed %{(t p)}":[t=trip p.rup]]
       %|  [%talk leaf+"gall: failed" (flop p.rup)]
