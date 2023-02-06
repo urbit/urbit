@@ -1928,15 +1928,15 @@
       ?.  dry  core
       %.(core (slog leaf/"ames: #{<corks>} flows can be corked" ~))
     ::
+    =/  dudes  ;;  (map dude:gall nonce=@)
+      =<  q.q  %-  need  %-  need
+      (rof ~ %gf `beam`[[our %$ da+now] /])
+    ::
     %+  roll  ~(tap by peers.ames-state)
     |=  [[=ship =ship-state] corks=@ core=_event-core]
     ?.  ?=(%known -.ship-state)
       corks^core
     =/  =peer-state:ames  ?>(?=(%known -.ship-state) +.ship-state)
-    =/  dudes  ;;  (map dude:gall nonce=@)
-      =<  q.q  %-  need  %-  need
-      (rof ~ %gf `beam`[[our %$ da+now] /])
-    ::
     =/  subs=(jar path [bone sub-nonce=@])
       %+  roll  ~(tap by snd.peer-state)
       |=  [[=forward=bone *] subs=(jar path [bone sub-nonce=@])]
