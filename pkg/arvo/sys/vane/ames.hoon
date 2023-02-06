@@ -1928,10 +1928,6 @@
       ?.  dry  core
       %.(core (slog leaf/"ames: #{<corks>} flows can be corked" ~))
     ::
-    =/  dudes  ;;  (map dude:gall nonce=@)
-      =<  q.q  %-  need  %-  need
-      (rof ~ %gf `beam`[[our %$ da+now] /])
-    ::
     %+  roll  ~(tap by peers.ames-state)
     |=  [[=ship =ship-state] corks=@ core=_event-core]
     ?.  ?=(%known -.ship-state)
@@ -1959,27 +1955,25 @@
     %+  roll  ~(tap by subs)
     |=  [[=wire flows=(list [bone sub-nonce=@])] corks=_corks core=_core]
     ::
-    %+  roll  flows
-    |=  [[=bone sub-nonce=@] corks=_corks core=_core]
-    =/  app=term      ?>(?=([%gall %use sub=@ *] wire) i.t.t.wire)
-    =/  last-nonce=@  (dec (~(got by dudes) app))
-    =/  =path         (slag 7 wire)
-    =/  log=tape      "[bone={<bone>} agent={<app>}] {<path>}"
+    %-  tail
+    %+  roll  (sort flows |=([[@ n=@] [@ m=@]] (lte n m)))
+    |=  [[=bone nonce=@] resubs=_(lent flows) corks=_corks core=_core]
+    =/  app=term  ?>(?=([%gall %use sub=@ *] wire) i.t.t.wire)
+    =/  =path     (slag 7 wire)
+    =/  log=tape  "[bone={<bone>} agent={<app>} nonce={<nonce>}] {<path>}"
     =;  corkable=?
       =?  corks  corkable  +(corks)
       =?  core   &(corkable !dry)  (%*(on-cork core cork-bone `bone) ship)
-      corks^core
-    ::  checks if this a stale re-subscriptions
+      (dec resubs)^corks^core
+    ::  checks if this is a stale re-subscription
     ::
-    ?:  &((gth sub-nonce 0) (lth sub-nonce last-nonce))
+    ?.  =(resubs 1)
       %.  &
       (trace &(dry odd.veb) ship |.((weld "stale %watch plea " log)))
-    ::  we can safely cork the current subscription
-    ::  if it received a nack on a backward bone
+    ::  the current subscription can be safely corked if there
+    ::  is a flow with a naxplanation ack  on a backward bone
     ::
     =+  backward-bone=(mix 0b10 bone)
-    ::  the backward bone is a naxplanation ack bone and we have a flow for it
-    ::
     ?.  =(2 (mod backward-bone 4))
       |
     ?~  (~(get by rcv.peer-state) backward-bone)
