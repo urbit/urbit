@@ -166,10 +166,10 @@
       (on-load on-save)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
-        %spider-input  (on-poke-input:sc !<(input vase))
-        %spider-start  (handle-start-thread:sc !<(start-args:spider vase))
-        %spider-stop   (handle-stop-thread:sc !<([tid ?] vase))
-      ::
+          %spider-input   (on-poke-input:sc !<(input vase))
+          %spider-start   (handle-start-thread:sc !<(start-args:spider vase))
+          %spider-inline  (handle-inline-thread:sc !<(inline-args:spider vase))
+          %spider-stop    (handle-stop-thread:sc !<([tid ?] vase))
           %handle-http-request
         (handle-http-request:sc !<([@ta =inbound-request:eyre] vase))
       ==
@@ -303,12 +303,31 @@
 ++  handle-start-thread
   ~/  %handle-start-thread
   |=  [parent-tid=(unit tid) use=(unit tid) =beak file=term =vase]
+  (prep-thread parent-tid use beak %| file vase)
+::
+++  handle-inline-thread
+  ~/  %handle-inline-thread
+  |=  [parent-tid=(unit tid) use=(unit tid) =beak =shed:khan]
+  (prep-thread parent-tid use beak %& shed)
+::
+++  prep-thread
+  |=  $:  parent-tid=(unit tid)  use=(unit tid)  =beak
+          source=(each shed:khan [file=term =vase])
+      ==
   ^-  (quip card ^state)
   =/  parent-yarn=yarn
     ?~  parent-tid
       /
     (~(got by tid.state) u.parent-tid)
-  =/  new-tid  (fall use (new-thread-id file))
+  =/  new-tid
+    ?^  use
+      u.use
+    %-  new-thread-id
+    ?-  -.source
+      %&  (cat 3 'inline-' q.beak)
+      %|  file.p.source
+    ==
+  ::
   =/  =yarn  (snoc parent-yarn new-tid)
   ::
   ?:  (~(has of running.state) yarn)
@@ -321,16 +340,19 @@
   =?  serving.state  !(~(has by serving.state) new-tid)
     (~(put by serving.state) new-tid [~ %noun q.beak])
   ::
-  =:  starting.state  (~(put by starting.state) yarn [%build vase])
-      tid.state       (~(put by tid.state) new-tid yarn)
+  =.  tid.state       (~(put by tid.state) new-tid yarn)
+  ?-    -.source
+      %&  (begin-shed yarn p.source)
+      %|
+    =.  starting.state  (~(put by starting.state) yarn [%build vase.p.source])
+    =/  pax=path
+      ~|  no-file-for-thread+file.p.source
+      (need (get-fit:clay beak %ted file.p.source))
+    :_  state
+    :_  ~
+    :+  %pass  /build/[new-tid]
+    [%arvo %c %warp p.beak q.beak ~ %sing %a r.beak pax]
   ==
-  =/  pax=path
-    ~|  no-file-for-thread+file
-    (need (get-fit:clay beak %ted file))
-  :_  state
-  :_  ~
-  :+  %pass  /build/[new-tid]
-  [%arvo %c %warp p.beak q.beak ~ %sing %a r.beak pax]
 ::
 ++  handle-build
   ~/  %handle-build
@@ -349,23 +371,25 @@
   =/  maybe-thread  (mule |.(!<(thread !<(vase q.r.u.riot))))
   ?:  ?=(%| -.maybe-thread)
     (thread-fail-not-running tid %thread-not-thread ~)
-  (start-thread yarn p.maybe-thread)
+  (slam-thread yarn p.maybe-thread)
 ::
-++  start-thread
-  ~/  %start-thread
+++  slam-thread
+  ~/  %slam-thread
   |=  [=yarn =thread]
   ^-  (quip card ^state)
   =/  =vase  vase:(~(got by starting.state) yarn)
-  ?<  (~(has of running.state) yarn)
-  =/  m  (strand ,^vase)
   =/  res  (mule |.((thread vase)))
   ?:  ?=(%| -.res)
     (thread-fail-not-running (yarn-to-tid yarn) %false-start p.res)
-  =/  =eval-form:eval:m
-    (from-form:eval:m p.res)
-  =:  starting.state  (~(del by starting.state) yarn)
-      running.state   (~(put of running.state) yarn eval-form)
-    ==
+  =.  starting.state  (~(del by starting.state) yarn)
+  (begin-shed yarn p.res)
+::
+++  begin-shed
+  |=  [=yarn =shed:khan]
+  ?<  (~(has of running.state) yarn)
+  =/  m  (strand ,vase)
+  =/  =eval-form:eval:m  (from-form:eval:m shed)
+  =.  running.state  (~(put of running.state) yarn eval-form)
   (take-input yarn ~)
 ::
 ++  handle-stop-thread

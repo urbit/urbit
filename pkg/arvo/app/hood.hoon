@@ -2,8 +2,8 @@
 /+  drum=hood-drum, helm=hood-helm, kiln=hood-kiln
 |%
 +$  state
-  $~  [%23 *state:drum *state:helm *state:kiln]
-  $>(%23 any-state)
+  $~  [%25 *state:drum *state:helm *state:kiln]
+  $>(%25 any-state)
 ::
 +$  any-state
   $%  [ver=?(%1 %2 %3 %4 %5 %6) lac=(map @tas fin-any-state)]
@@ -24,6 +24,8 @@
       [%21 drum=state-4:drum helm=state-1:helm kiln=state-8:kiln]
       [%22 drum=state-4:drum helm=state-1:helm kiln=state-9:kiln]
       [%23 drum=state-4:drum helm=state-2:helm kiln=state-9:kiln]
+      [%24 drum=state-4:drum helm=state-2:helm kiln=state-10:kiln]
+      [%25 drum=state-5:drum helm=state-2:helm kiln=state-10:kiln]
   ==
 +$  any-state-tuple
   $:  drum=any-state:drum
@@ -91,8 +93,7 @@
   ::
   ?+  mark  (on-poke:def mark vase)
     %atom            poke-helm(mark %helm-atom)
-    %dill-belt       poke-drum(mark %drum-dill-belt)
-    %dill-blit       poke-drum(mark %drum-dill-blit)
+    %dill-poke       poke-drum
     %hood-sync       poke-kiln(mark %kiln-sync)
     %write-sec-atom  poke-helm(mark %helm-write-sec-atom)
   ==
@@ -107,6 +108,7 @@
   ?+  path  (on-watch:def +<)
     [%drum *]  =^(c drum.state (peer:drum-core t.path) [c this])
     [%kiln *]  =^(c kiln.state (peer:kiln-core t.path) [c this])
+    [%dill *]  =^(c drum.state (peer:drum-core +<) [c this])
   ==
 ::
 ++  on-agent

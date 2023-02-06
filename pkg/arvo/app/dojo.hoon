@@ -3,16 +3,16 @@
   ::                                                    ::    ::
 /?  309                                                 ::  arvo kelvin
 /-  *sole, lens                                         ::  console structures
-/+  sole, pprint,                                       ::
+/+  sole, pprint, dprint,                               ::
     auto=language-server-complete,                      ::
     easy-print=language-server-easy-print               ::
 ::                                                      ::  ::
 ::::                                                    ::  ::::
   ::                                                    ::    ::
 =>  |%                                                  ::  external structures
-    +$  id  @tasession                                  ::  session id
+    +$  id  sole-id                                     ::  session id
     +$  house                                           ::  all state
-      $:  %8
+      $:  %9
           egg=@u                                        ::  command count
           hoc=(map id session)                          ::  conversations
           acl=(set ship)                                ::  remote access whitelist
@@ -54,6 +54,7 @@
               r=@t
           ==
           [%poke p=goal]                                ::  poke app
+          [%help p=(list term)]                                ::  doccords
           [%show p=?(%0 %1 %2 %3 %4 %5)]                ::  val/type/hoon/xray
           [%verb p=term]                                ::  store variable
       ==                                                ::
@@ -174,8 +175,22 @@
     ::
       ;~  pfix  fas
         ;~  pose
-          (parse-variable (cold %sur hep) ;~(pfix gap parse-cables))
-          (parse-variable (cold %lib lus) ;~(pfix gap parse-cables))
+          (parse-variable (cold %sur hep) ;~(pfix gap (parse-cables %sur)))
+          (parse-variable (cold %lib lus) ;~(pfix gap (parse-cables %lib)))
+          ;~(pfix tis gap (parse-variable sym ;~(pfix gap parse-path)))
+          ;~(pfix cen gap (parse-variable sym ;~(pfix gap parse-mark)))
+        ==
+      ==
+    ::
+      ;~  pfix  hax
+        ;~  pose
+          ;~  pfix  ace
+            %+  cook
+              |=  a=(list term)
+              [[%help (flop a)] 0 %ex [%cnts p=~[[%.y p=1]] q=~]]
+            (most fas sym)
+          ==
+          (easy [[%help ~[%$]] 0 %ex [%cnts p=~[[%.y p=1]] q=~]])
         ==
       ==
     ::
@@ -194,22 +209,17 @@
     ==
   ::
   ++  parse-cables
-    %+  cook
-      |=  cables=(list cable:clay)
-      :+  0  %ex
-      ^-  hoon
-      ::
-      :-  %clsg
-      %+  turn  cables
-      |=  cable=cable:clay
-      ^-  hoon
-      ::
-      :+  %clhp
-        ?~  face.cable
-          [%rock %n ~]
-        [%clhp [%rock %n ~] [%sand %tas u.face.cable]]
-      [%sand %tas file-path.cable]
-    (most ;~(plug com gaw) parse-cable)
+    |=  base-path=@ta
+    %-  cook  :_  (most ;~(plug com gaw) parse-cable)
+    |=  cables=(list cable:clay)
+    :+  0  %tu
+    ::
+    %+  turn  cables
+    |=  cable=cable:clay
+    ^-  dojo-source
+    =+  add-face=?~(face.cable "|*(n=* n)" ;:(weld "|*(n=* ^=(" (trip u.face.cable) " n))"))
+    :^  0  %do  (scan add-face parse-hoon)
+    :+  0  %dv  [-.dir `path`[base-path file-path.cable ~]]
   ::
   ++  parse-cable
     %+  cook  |=(a=cable:clay a)
@@ -218,6 +228,16 @@
       (cook |=([face=term tis=@ file=term] [`face file]) ;~(plug sym tis sym))
       (cook |=(a=term [`a a]) sym)
     ==
+  ::
+  ++  parse-mark
+    %-  cook  :_  ;~(pfix cen sym)
+    |=  mark=@tas
+    [0 %dv -.dir `path`[~.mar mark ~]]
+  ::
+  ++  parse-path
+    %+  cook  |=(=path [0 %dv -.dir path])
+    ;~(pfix fas (more fas sym))
+  ::
   ++  parse-source  (stag 0 parse-build)
   ++  parse-build
       %+  knee  *dojo-build  |.  ~+
@@ -537,8 +557,6 @@
         =.  var  (~(del by var) p.mad)
         =<  dy-amok
         ?+  p.mad  .
-          %lib  .(lib ~)
-          %sur  .(sur ~)
           %dir  .(dir [[our.hid %base ud+0] /])
         ==
       =+  cay=(~(got by rez) p.q.mad)
@@ -550,29 +568,19 @@
         ~|  bad-set+[p.p.mad p.q.cay]
         =<  dy-amok
         ?+  p.p.mad  .
-            %lib
-          %_    .
-              lib
-            ((dy-cast (list cable:clay) !>(*(list cable:clay))) q.cay)
-          ==
-        ::
-            %sur
-          %_    .
-              sur
-            ((dy-cast (list cable:clay) !>(*(list cable:clay))) q.cay)
-          ==
-        ::
-            %dir  =+  ^=  pax  ^-  path
-                      =+  pax=((dy-cast path !>(*path)) q.cay)
-                      ?:  ?=(~ pax)  ~[(scot %p our.hid) %base '0']
-                      ?:  ?=([@ ~] pax)  ~[i.pax %base '0']
-                      ?:  ?=([@ @ ~] pax)  ~[i.pax i.t.pax '0']
-                      pax
-                  ?:  =(~ .^((list path) %ct pax))
-                    +(..dy (he-diff %tan 'dojo: dir does not exist' ~))
-                  =.  dir  (need (de-beam pax))
-                  =-  +>(..dy (he-diff %tan - ~))
-                  rose+[" " `~]^~[leaf+"=%" (smyt (en-beam he-beak s.dir))]
+            %dir
+          =/  bem=beam
+            %-  need  %-  de-beam
+            =+  pax=((dy-cast path !>(*path)) q.cay)
+            ?:  ?=(~ pax)  ~[(scot %p our.hid) %base '0']
+            ?:  ?=([@ ~] pax)  ~[i.pax %base '0']
+            ?:  ?=([@ @ ~] pax)  ~[i.pax i.t.pax '0']
+            pax
+          ?:  =(~ .^((list path) %ct (en-beam he-beam(dir bem))))
+            +(..dy (he-diff %tan 'dojo: dir does not exist' ~))
+          =.  dir  bem
+          =-  +>(..dy (he-diff %tan - ~))
+          rose+[" " `~]^~[leaf+"=%" (smyt (en-beam he-beak s.dir))]
         ==
       ::
           %poke
@@ -626,6 +634,9 @@
         ++  maar  ?:  =(%noun p.cay)  ~
                   [[%rose [~ "    " ~] >p.cay< ~] ~]
         --
+      ::
+          %help
+        (dy-inspect p.p.mad p.q.cay)
       ==
     ::
     ++  dy-show  |=(cay=cage (dy-print cay ~))
@@ -665,6 +676,20 @@
           :-  i=""
           t=(turn `wain`?~(r.hit ~ (to-wain:format q.u.r.hit)) trip)
       ==
+    ::
+    ++  dy-inspect
+      |=  [topics=(list term) sut=type]
+      %+  dy-rash  %mor
+      =+  to-display=(mule |.((find-item-in-type:dprint (flop topics) sut)))
+      ?:  ?=(%| -.to-display)
+        [%tan [%leaf "Could not find help A"] p.to-display]~
+      ?~  p.to-display
+        [%tan [%leaf "Could not find help B"]~]~
+      =/  item  (mule |.((print-item:dprint u.p.to-display)))
+      ?:  ?=(%| -.item)
+        [%tan [%leaf "Could not find help C"] p.item]~
+      p.item
+    ::
   ++  dy-show-type-noun
     |=  a=type  ^-  tank
     =-  >[-]<
@@ -681,11 +706,16 @@
       [%face ^]  a(q $(a q.a))
       [%cell ^]  a(p $(a p.a), q $(a q.a))
       [%fork *]  a(p (silt (turn ~(tap in p.a) |=(b=type ^$(a b)))))
-      [%hint *]  ?.  ?=(%know -.q.p.a)  $(a q.a)
-                 ?@  p.q.p.a  [(cat 3 '#' mark.p.q.p.a)]~
-                 [(rap 3 '#' auth.p.q.p.a (spat type.p.q.p.a) ~)]~
+      [%hint *]  ?+    q.p.a  $(a q.a)
+                     [%know *]
+                   ?@  p.q.p.a  [(cat 3 '#' mark.p.q.p.a)]~
+                   [(rap 3 '#' auth.p.q.p.a (spat type.p.q.p.a) ~)]~
+                 ::
+                     [%help *]
+                   [summary.crib.p.q.p.a]~
+                 ==
       [%core ^]  `wain`/core
-      [%hold *]  a(p $(a p.a))
+      [%hold *]  $(a (~(play ut p.a) q.a))
     ==
   ::
   ::  XX needs filter
@@ -825,12 +855,23 @@
       =/  poz=vase  (dy-sore p.cig)
       =/  kev=vase
         =/  kuv=(unit vase)  (slew 7 som)
-        ?:  =(~ q.cig)
-          (fall kuv !>(~))
         =/  soz=(list [var=term vax=vase])
           %~  tap  by
           %-  ~(run by q.cig)
           |=(val=(unit dojo-source) ?~(val !>([~ ~]) (dy-vase p.u.val)))
+        ::  if the generator takes a named argument "drum-session",
+        ::  then if a value isn't already supplied, we set it to the session
+        ::  that this dojo instance is being run in.
+        ::  (dojo is, indeed, quite coupled with drum.)
+        ::
+        =?    soz
+            ?&  ?=(^ kuv)
+                (slab %both %drum-session p.u.kuv)
+                !(~(has by q.cig) %drum-session)
+            ==
+          [[%drum-session !>(ses.id)] soz]  ::TODO  does the who matter?
+        ?:  =(~ soz)
+          (fall kuv !>(~))
         ~|  keyword-arg-failure+~(key by q.cig)
         %+  slap
           (with-faces kuv+(need kuv) rep+(with-faces soz) ~)
@@ -1023,13 +1064,14 @@
     |=  =card:agent:gall
     ^+  +>
     =?  card  ?=(%pass -.card)
-      card(p [id p.card])
+      ^-  card:agent:gall
+      card(p [(scot %p who.id) ses.id p.card])
     %_(+> moz [card moz])
   ::
   ++  he-diff                                           ::  emit update
     |=  fec=sole-effect
     ^+  +>
-    (he-card %give %fact ~[/sole/[id]] %sole-effect !>(fec))
+    (he-card %give %fact ~[(id-to-path:sole id)] %sole-effect !>(fec))
   ::
   ++  he-stop                                           ::  abort work
     ^+  .
@@ -1537,21 +1579,47 @@
 ::
 ++  on-load
   |=  ole=vase
+  ^-  (quip card:agent:gall _..on-init)
   |^  =+  old=!<(house-any ole)
       =?  old  ?=(%5 -.old)
+        ^-  house-any
+        ^-  house-6
         (house-5-to-6 old)
       =?  old  ?=(?(%6 %7) -.old)
         (house-6-7-to-8 +.old)
-      ?>  ?=(%8 -.old)
-      `..on-init(state old)
+      =^  caz  old
+        ?.  ?=(%8 -.old)  [~ old]
+        (house-8-to-9 old)
+      ?>  ?=(%9 -.old)
+      [caz ..on-init(state old)]
   ::
-  +$  house-any  $%(house house-7 house-6 house-5)
+  +$  house-any  $%(house house-8 house-7 house-6 house-5)
+  ::
+  +$  id-8  @tasession
+  +$  house-8
+      $:  %8
+          egg=@u
+          hoc=(map id-8 session)
+          acl=(set ship)
+      ==
+  ++  house-8-to-9
+    |=  old=house-8
+    ^-  (quip card:agent:gall house)
+    :-  %+  turn  ~(tap in ~(key by hoc.old))
+        |=  id=@ta
+        ^-  card:agent:gall
+        [%give %kick ~[/sole/[id]] ~]
+    =-  [%9 egg.old - acl.old]
+    %-  ~(gas by *(map sole-id session))
+    %+  murn  ~(tap by hoc.old)
+    |=  [id=@ta s=session]
+    (bind (upgrade-id:sole id) (late s))
   ::
   +$  house-7        [%7 house-6-7]
   +$  house-6        [%6 house-6-7]
   +$  house-6-7
     $:  egg=@u                                        ::  command count
-        hoc=(map id session-6)                        ::  conversations
+        hoc=(map id-8 session-6)                      ::  conversations
         acl=(set ship)                                ::  remote access whitelist
     ==                                                ::
   +$  session-6                                       ::  per conversation
@@ -1578,9 +1646,10 @@
     old(poy ~, -.dir [our.hid %base ud+0])
   ::
   +$  house-5
-    [%5 egg=@u hoc=(map id session)]
+    [%5 egg=@u hoc=(map id-8 session-6)]
   ++  house-5-to-6
     |=  old=house-5
+    ^-  house-6
     [%6 egg.old hoc.old *(set ship)]
   --
 ::
@@ -1596,7 +1665,8 @@
       he-abet:(~(he-type he hid id.act ~ (~(got by hoc) id.act)) act)
     ::
         %lens-command
-      =+  !<([=id =command:lens] vase)
+      =+  !<([ses=@ta =command:lens] vase)
+      =/  =id  [our.hid ses]
       he-abet:(~(he-lens he hid id ~ (~(got by hoc) id)) command)
     ::
         %allow-remote-login
@@ -1634,8 +1704,7 @@
   ?>  ?|  (team:title our.hid src.hid)
           (~(has in acl) src.hid)
       ==
-  ?>  ?=([%sole @ ~] path)
-  =/  id  i.t.path
+  =/  =id  (need (path-to-id:sole path))
   =?  hoc  (~(has by hoc) id)
     ~&  [%dojo-peer-replaced id]
     (~(del by hoc) id)
@@ -1647,7 +1716,7 @@
 ++  on-leave
   |=  =path
   ?>  ?=([%sole *] path)
-  =.  hoc  (~(del by hoc) t.path)
+  =.  hoc  (~(del by hoc) (need (path-to-id:sole path)))
   [~ ..on-init]
 ::
 ++  on-peek
@@ -1656,13 +1725,15 @@
 ::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
-  ?>  ?=([@ @ *] wire)
-  =/  =session  (~(got by hoc) i.wire)
-  =/  he-full  ~(. he hid i.wire ~ session)
+  ^-  (quip card:agent:gall _..on-init)
+  ?>  ?=([@ @ @ *] wire)
+  =/  =id  [(slav %p i.wire) i.t.wire]
+  =/  =session  (~(got by hoc) id)
+  =/  he-full  ~(. he hid id ~ session)
   =^  moves  state
     =<  he-abet
     ^+  he
-    ?+  i.t.wire  ~|([%dojo-bad-on-agent wire -.sign] !!)
+    ?+  i.t.t.wire  ~|([%dojo-bad-on-agent wire -.sign] !!)
       %poke  (he-unto:he-full t.wire sign)
       %wool  (he-wool:he-full t.wire sign)
     ==
@@ -1670,14 +1741,16 @@
 ::
 ++  on-arvo
   |=  [=wire =sign-arvo]
-  ?>  ?=([@ *] wire)
-  =/  =session  (~(got by hoc) i.wire)
-  =/  he-full  ~(. he hid i.wire ~ session)
+  ^-  (quip card:agent:gall _..on-init)
+  ?>  ?=([@ @ *] wire)
+  =/  =id  [(slav %p i.wire) i.t.wire]
+  =/  =session  (~(got by hoc) id)
+  =/  he-full  ~(. he hid id ~ session)
   =^  moves  state
     =<  he-abet
     ?+    +<.sign-arvo  ~|([%dojo-bad-take +<.sign-arvo] !!)
-        %writ           (he-writ:he-full t.wire +>.sign-arvo)
-        %http-response  (he-http-response:he-full t.wire +>.sign-arvo)
+        %writ           (he-writ:he-full t.t.wire +>.sign-arvo)
+        %http-response  (he-http-response:he-full t.t.wire +>.sign-arvo)
     ==
   [moves ..on-init]
 ::  if dojo fails unexpectedly, kill whatever each session is working on

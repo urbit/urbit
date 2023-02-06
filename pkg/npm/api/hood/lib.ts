@@ -1,9 +1,9 @@
 import { Poke, Scry } from '../lib';
-import { Vats, Vat } from './types';
+import { Pike } from './types';
 
-export const getVats: Scry = {
+export const getPikes: Scry = {
   app: 'hood',
-  path: '/kiln/vats'
+  path: '/kiln/pikes'
 };
 
 /**
@@ -17,6 +17,44 @@ export function kilnInstall(
   return {
     app: 'hood',
     mark: 'kiln-install',
+    json: {
+      ship,
+      desk,
+      local: local || desk
+    }
+  };
+}
+
+/**
+ * Sync with a foreign desk
+ */
+export function kilnSync(
+  ship: string,
+  desk: string,
+  local?: string
+): Poke<any> {
+  return {
+    app: 'hood',
+    mark: 'kiln-sync',
+    json: {
+      ship,
+      desk,
+      local: local || desk
+    }
+  };
+}
+
+/**
+ * Unsync with a foreign desk
+ */
+export function kilnUnsync(
+  ship: string,
+  desk: string,
+  local?: string
+): Poke<any> {
+  return {
+    app: 'hood',
+    mark: 'kiln-unsync',
     json: {
       ship,
       desk,
@@ -58,14 +96,11 @@ export function kilnRevive(
   };
 }
 
-export function kilnBump(force = false, except = [] as string[]) {
+export function kilnBump(): Poke<any> {
   return {
     app: 'hood',
     mark: 'kiln-bump',
-    json: {
-      force,
-      except
-    }
+    json: null,
   };
 }
 
@@ -87,35 +122,6 @@ export function kilnResume(desk: string) {
 
 export const scryLag: Scry = ({ app: 'hood', path: '/kiln/lag' });
 
-export function getBlockers(vats: Vats): string[] {
-  const blockers: string[] = [];
-  const base = vats?.base;
-  if(!base) {
-    return blockers;
-  }
-  const blockedOn = base.arak.rail?.next?.[0]?.weft?.kelvin;
-  if(!blockedOn) {
-    return blockers;
-  }
-
-  Object.entries(vats)
-    .filter(([desk]) => desk !== 'base')
-    .forEach(([desk, vat]) => {
-      // assuming only %zuse
-      const woofs = vat.arak.rail?.next || [];
-      const kelvins = woofs.map(n => n.weft.kelvin);
-      if(!(kelvins.includes(blockedOn))) {
-        blockers.push(desk);
-      }
-    });
-
-  return blockers;
-}
-
-export function getVatPublisher(vat: Vat): string | undefined {
-  if (vat.arak.rail) {
-    const { rail } = vat.arak;
-    return (rail?.publisher || rail?.ship || undefined);
-  }
-  return undefined;
+export function getPikePublisher(pike: Pike) {
+  return pike.sync?.ship;
 }

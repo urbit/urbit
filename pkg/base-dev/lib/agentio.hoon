@@ -85,15 +85,13 @@
       ?:(?=(%sing genre) [genre mood] [genre mood])
     (warp-our q.byk.bowl `rave)
   ::
+  ++  tire
+    (arvo %c %tire `~)
+  ::
   ++  connect
     |=  [=binding:eyre app=term]
     (arvo %e %connect binding app)
   --
-::
-++  fact-curry
-  |*  [=mark =mold]
-  |=  [paths=(list path) fac=mold]
-  (fact mark^!>(fac) paths)
 ::
 ++  fact-kick
   |=  [=path =cage]
