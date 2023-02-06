@@ -4249,7 +4249,7 @@
           (page-to-cage:(aeon-ford yon) u.peg)
         ``cage+[-:!>(*^cage) cage]
       ::
-          %open  ``open+!>(prelude:(aeon-ford yon))
+          %open  ``open+!>((prelude:(aeon-ford yon) t.pax))
           %late  !!  :: handled in +aver
           %case  !!  :: handled in +aver
           %base-tako
