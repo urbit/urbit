@@ -1967,7 +1967,7 @@
     =/  log=tape      "[bone={<bone>} agent={<app>}] {<path>}"
     =;  corkable=?
       =?  corks  corkable  +(corks)
-      =?  core   &(corkable !dry) (%*(on-cork core cork-bone `bone) ship)
+      =?  core   &(corkable !dry)  (%*(on-cork core cork-bone `bone) ship)
       corks^core
     ::  checks if this a stale re-subscriptions
     ::
