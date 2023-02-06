@@ -1978,9 +1978,11 @@
     ::  if it received a nack on a backward bone
     ::
     =+  backward-bone=(mix 0b10 bone)
-    ::  not a naxplanation ack bone
+    ::  the backward bone is a naxplanation ack bone and we have a flow for it
     ::
     ?.  =(2 (mod backward-bone 4))
+      |
+    ?~  (~(get by rcv.peer-state) backward-bone)
       |
     %.  &
     (trace &(dry odd.veb) ship |.((weld "failed %watch plea " log)))
