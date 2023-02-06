@@ -884,7 +884,7 @@
         [%| p=@tas]                                     ::  label
     ==                                                  ::
   +$  norm  (axal ?)                                    ::  tombstone policy
-  +$  open  $-(path vase)                               ::  get prelude
+  +$  open  vase                                        ::  get prelude
   +$  page  ^page                                       ::  export for compat
   +$  pour                                              ::  ford build w/content
     $%  [%file =path]
