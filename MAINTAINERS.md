@@ -122,7 +122,7 @@ git push origin <tagname>
 
 ## Releases
 
-- [ ] Create a pull request from the relevant release branch to `master`.
+- [ ] Create a pull request from the relevant release branch (with the format `release/urbit-os-vX.XX` to `master`.
 - [ ] ssh into `~zod` 
 - [ ] Check to ensure that nobody else is ssh'd into `~zod`, by running `screen -ls` and verifying no sessions are attached.
 - [ ] Attach to the screen session using `screen -x`
