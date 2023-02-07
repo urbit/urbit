@@ -1820,8 +1820,8 @@
   +$  bitt  (map duct (pair ship path))                 ::  incoming subs
   +$  boat  (map [=wire =ship =term] [acked=? =path])   ::  outgoing subs
   +$  boar  (map [=wire =ship =term] nonce=@)           ::  and their nonces
-  ++  bowl  bowl-414
-  +$  bowl-414                                          ::  standard app state
+  ++  bowl  bowl-413
+  +$  bowl-413                                          ::  standard app state
           $:  $:  our=ship                              ::  host
                   src=ship                              ::  guest
                   dap=term                              ::  agent
@@ -1835,7 +1835,7 @@
                   byk=beak                              ::  load source
                   msg=%hello                            ::  message from pyry
           ==  ==                                        ::
-  +$  bowl-415                                          ::  standard app state
+  +$  bowl-414                                          ::  standard app state
           $:  $:  our=ship                              ::  host
                   src=ship                              ::  guest
                   dap=term                              ::  agent
@@ -1877,20 +1877,20 @@
   +$  verb  ?(%odd)
   ::
   ::  +agent: app core
-  +$  agent-wefts  ?([%zuse %415] [%zuse %414])
+  +$  agent-wefts  ?([%zuse %413] [%zuse %414])
   ::
-  ++  agent-any  $%  [[%zuse %414] agent-414]
-                     [[%zuse %415] agent-415]
+  ++  agent-any  $%  [[%zuse %413] agent-413]
+                     [[%zuse %414] agent-414]
                  ==
-  ++  step-any   $%  [[%zuse %414] step:agent-414]
-                     [[%zuse %415] step:agent-415]
+  ++  step-any   $%  [[%zuse %413] step:agent-413]
+                     [[%zuse %414] step:agent-414]
                  ==
-  ++  card-any   $%  [[%zuse %414] card:agent-414]
-                     [[%zuse %415] card:agent-415]
+  ++  card-any   $%  [[%zuse %413] card:agent-413]
+                     [[%zuse %414] card:agent-414]
                  ==
-  ++  agent  agent-414
+  ++  agent  agent-413
   ::
-  ++  agent-414
+  ++  agent-413
     =<  form
     |%
     +$  step  (quip card form)
@@ -2113,7 +2113,7 @@
         *(quip card _^|(..on-init))
       --
     --
-  ++  agent-415
+  ++  agent-414
     =<  form
     |%
     +$  step  (quip card form)
@@ -2291,7 +2291,7 @@
       ==
     ++  form
       $_  ^|
-      |_  bowl-415
+      |_  bowl-414
       ++  on-init
         *(quip card _^|(..on-init))
       ::
