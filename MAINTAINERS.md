@@ -148,7 +148,7 @@ git push origin <tagname>
 
 ### Release Next Release Candidate
 
-We'll now need to **IMMEDIATELY** deploy the new release candidate to the pre-release moons. 
+We'll now need to **IMMEDIATELY** deploy the new release candidate to the pre-release moon(s). 
 
 - On `~marnec-dozzod-marzod`:
   - [ ] `|merge %base ~binnec-dozzod-marzod %kids, =gem %only-that` to update `~marnec` with the contents of the GH release branch
