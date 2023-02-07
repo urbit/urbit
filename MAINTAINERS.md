@@ -126,8 +126,7 @@ git push origin <tagname>
 - [ ] ssh into `~zod` 
 - [ ] Check to ensure that nobody else is ssh'd into `~zod`, by running `screen -ls` and verifying no sessions are attached.
 - [ ] Attach to the screen session using `screen -x`
-- [ ] Install the contents of the `%kids` desk on `~marnec-dozzod-marzod` into our `%base`: `|merge %base ~marnec-dozzod-marzod %kids, =gem %
-`
+- [ ] Install the contents of the `%kids` desk on `~marnec-dozzod-marzod` into our `%base`: `|merge %base ~marnec-dozzod-marzod %kids, =gem %only-that`
 - [ ] Check that `~zod` has updated to the latest release.  For a Kelvin release, you can run `zuse` in the Dojo.  Each non-Kelvin release might its own way of checking whether the update has completed, possibly through checking the `%cz` hash of the `%base` desk matches the hash on `~marnec-dozzod-marzod` by comparing the outputs of `+vat %base` on both ships.
 - [ ] Merge `~zod`'s `%base` desk into its `%kids` desk to distribute the new code to the network: `|merge %kids our %base, =gem %only-that`
 - [ ] Before exiting the screen session on `~zod`, make sure the screen session is not left in copy mode for a long period of time, since that will disrupt `~zod`'s operation.
