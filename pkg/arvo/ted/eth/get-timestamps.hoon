@@ -25,9 +25,8 @@
 ::
 ++  request-blocks
   |=  blocks=(list @ud)
-  %-  eth-provider
+  %-  request-batch-rpc-strict:eth-provider
   :*
-      %request-batch-rpc-strict  
       :: url
       :: [[~ 'u_tid'] [%eth-block-number ~]]
       %+  turn  blocks

@@ -1,36 +1,78 @@
 /-  spider, eth-provider, json-rpc
 /+  strandio, ethio, ethereum
-=,  strand=strand:spider
-=,  dejs-soft:format
-=,  strand-fail=strand-fail:libstrand:spider
+=,  ethereum-types
 =,  jael
-=<
-|=  eth-input=ethin:eth-provider
-=/  m  (strand ,ethout:eth-provider)
-^-  form:m
-;<  =bowl:spider  bind:m  get-bowl:strandio
-?>  =(src.bowl our.bowl)
-;<    state=state:eth-provider
-    bind:m
-  (scry:strandio state:eth-provider /gx/eth-provider/get-state/noun)
-?-  active.state
-  %local
-(call-ethio eth-input active.state url.local.state)
-  %provider
-(call-ethio eth-input active.state url.provider.state)
-  %client
-;<  ~  bind:m  
-  (watch:strandio /updates [~nut %eth-provider] [%updates tid.bowl ~])
-;<  ~  bind:m  
-  %+  poke:strandio 
-    [provider.client.state %eth-provider] 
-  [%provider-action !>([%provide tid.bowl eth-input])]
-;<  =cage  bind:m  (take-fact:strandio /updates)
-(pure:m !<(ethout:eth-provider q.cage))
-==
 |%
+++  request-rpc
+  |=  [id=(unit @t) req=request:rpc:ethereum]
+  (select-provider-mode [%request-rpc [id req]])
+++  request-batch-rpc-strict
+  |=  reqs=(list [id=(unit @t) req=request:rpc:ethereum])
+  (select-provider-mode [%request-batch-rpc-strict reqs])
+++  request-batch-rpc-loose
+  |=  reqs=(list [id=(unit @t) req=request:rpc:ethereum])
+  (select-provider-mode [%request-batch-rpc-loose reqs])
+++  batch-read-contract-strict
+  |=  reqs=(list proto-read-request:rpc:ethereum)
+  (select-provider-mode [%batch-read-contract-strict reqs])
+++  get-latest-block
+  |=  bool=?
+  (select-provider-mode [%get-latest-block bool])
+++  get-block-by-number
+  =,  jael
+  |=  =number:block
+  (select-provider-mode [%get-block-by-number number])
+++  get-tx-by-hash
+  |=  tx-hash=@ux
+  (select-provider-mode [%get-tx-by-hash tx-hash])
+++  get-logs-by-hash
+  |=  [=hash:block contracts=(list address) =topics:eth-provider]
+  (select-provider-mode [%get-logs-by-hash hash contracts topics])
+++  get-logs-by-range
+  |=  $:  
+          contracts=(list address)
+          =topics:eth-provider
+          from=number:block
+          to=number:block
+      ==
+  (select-provider-mode [%get-logs-by-range contracts topics from to])
+++  get-next-nonce
+  |=  =address
+  (select-provider-mode [%get-next-nonce address])
+++  get-balance
+  |=  =address
+  (select-provider-mode [%get-balance address])
+::
+++  select-provider-mode
+  =,  strand=strand:spider
+  =,  dejs-soft:format
+  |=  eth-input=ethin:eth-provider
+  =/  m  (strand ,ethout:eth-provider)
+  ^-  form:m
+  ;<  =bowl:spider  bind:m  get-bowl:strandio
+  ?>  =(src.bowl our.bowl)
+  ;<    state=state:eth-provider
+      bind:m
+    (scry:strandio state:eth-provider /gx/eth-provider/get-state/noun)
+  ?-  active.state
+    %local
+  (call-ethio eth-input active.state url.local.state)
+    %provider
+  (call-ethio eth-input active.state url.provider.state)
+    %client
+  ::  TODO subscribe to our thread id
+  ;<  ~  bind:m  
+    (watch:strandio /updates [provider.client.state %eth-provider] [%updates tid.bowl ~])
+  ;<  ~  bind:m
+    %+  poke:strandio
+      [provider.client.state %eth-provider] 
+    [%provider-action !>([%provide tid.bowl eth-input])]
+  ;<  =cage  bind:m  (take-fact:strandio /updates)
+  (pure:m !<(ethout:eth-provider q.cage))
+  ==
 ++  call-ethio
   |=  [arg=ethin:eth-provider active=active:eth-provider url=@ta]
+  =,  strand=strand:spider
   =/  m  (strand ,ethout:eth-provider)
   ;<  =bowl:spider  bind:m  get-bowl:strandio
   ?-  -.arg

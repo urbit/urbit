@@ -21,9 +21,9 @@
   %provider
 (call-ethio eth-input active.state url.provider.state)
   %client
-;<  ~  bind:m  
+;<  ~  bind:m
   (watch:strandio /updates [client.state %eth-provider] [%updates tid.bowl ~])
-;<  ~  bind:m  
+;<  ~  bind:m
   %+  poke:strandio 
     [provider.client.state %eth-provider] 
   [%provider-action !>([%provide tid.bowl eth-input])]
