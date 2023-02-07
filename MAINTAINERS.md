@@ -143,7 +143,7 @@ git push origin <tagname>
 - [ ] Merge `master` back into `develop`.
 - [ ] Cut a new release branch from `develop`.  The branch should have the format `release/urbit-os-vX.XX`
 
-### Post-Release Deployments
+### Release Next Release Candidate
 
 We'll now need to deploy the new release candidate to the pre-release moons.
 
