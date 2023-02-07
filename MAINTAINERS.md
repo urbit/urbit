@@ -134,7 +134,7 @@ git push origin <tagname>
 ### Release Communications
 
 - [ ] Tag the commit that went onto the live network as a release, using GitHub's "Releases" interface.  See the "Tagging" section of this document for details.
-- [ ] Email the urbit-dev mailing list with an "[ANNOUNCE]" prefix in the email subject.  See previous release emails for reference.
+- [ ] Update (add a response) the mailing list post to include the base hash of the new release, and indicate that this has now been deployed to the network.
 - [ ] Tweet from the `@zodisok` Twitter account linking to the GitHub release.
 - [ ] Post links to the release in the Urbit Community Development channel and a channel in the UF public group.
 
