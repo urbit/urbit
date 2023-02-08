@@ -2399,6 +2399,10 @@
         (~(del in approved) origin.task)
       (~(put in rejected) origin.task)
     [~ http-server-gate]
+  ::
+      %spew
+    =.  verb.server-state.ax  veb.task
+    `http-server-gate
   ==
 ::
 ++  take
