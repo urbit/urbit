@@ -1124,7 +1124,7 @@
         ::  POST methods are used solely for deleting channels
         (on-put-request channel-id request)
       ::
-      ~&  %session-not-a-put
+      %-  (trace 1 |.("session-not-a-put"))
       [~ state]
     ::  +on-cancel-request: cancels an ongoing subscription
     ::
@@ -1466,7 +1466,8 @@
           ::  the client sent us a weird request referring to a subscription
           ::  which isn't active.
           ::
-          ~&  [%missing-subscription-in-unsubscribe channel-id subscription-id]
+          =*  msg=tape  "{<channel-id>} {<subscription-id>}"
+          %-  (trace 1 |.("missing-subscription-in-unsubscribe {msg}"))
           $(requests t.requests)
         ::
         =.  gall-moves
@@ -1604,14 +1605,14 @@
         =/  num=@ud
           (~(gut by unacked.u.channel) request-id 0)
         :_  (~(put by unacked.u.channel) request-id +(num))
-        ?&  (gte num clog-threshold)
-            (lth (add last-ack.u.channel clog-timeout) now)
-        ==
-      ~?  clogged  [%e %clogged channel-id request-id]
+        ?:  ?&  (gte num clog-threshold)
+                (lth (add last-ack.u.channel clog-timeout) now)
+            ==
+        ((trace 1 |.("eyre: clogged {<channel-id>} {<request-id>}")) &)  |
       ::  if we're clogged, or we ran into an event we can't serialize,
       ::  kill this gall subscription.
       ::
-      =*  kicking    |(clogged ?=(~ json))
+      =/  kicking=?  |(clogged ?=(~ json))
       =?  moves      kicking
         :_  moves
         ::NOTE  this shouldn't crash because we
@@ -1876,7 +1877,7 @@
     ::  verify that this is a valid response on the duct
     ::
     ?~  connection-state=(~(get by connections.state) duct)
-      ~&  [%invalid-outstanding-connection duct]
+      %-  (trace 1 |.("invalid-outstanding-connection {<duct>}"))
       [~ state]
     ::
     |^  ^-  [(list move) server-state]
@@ -1885,7 +1886,7 @@
         ::
             %start
           ?^  response-header.u.connection-state
-            ~&  [%http-multiple-start duct]
+            %-  (trace 1 |.("http-multiple-start {<duct>}"))
             error-connection
           ::  if request was authenticated, extend the session & cookie's life
           ::
@@ -1900,7 +1901,7 @@
             ?~  session-id=(session-id-from-request request.inbound)
               ::  cookies are the only auth method, so this is unexpected
               ::
-              ~&  [%e %authenticated-without-cookie]
+              %-  (trace 1 |.("authenticated-without-cookie"))
               no-op
             ?.  (~(has by sessions) u.session-id)
               ::  if the session has expired since the request was opened,
@@ -1946,7 +1947,7 @@
         ::
             %continue
           ?~  response-header.u.connection-state
-            ~&  [%http-continue-without-start duct]
+            %-  (trace 1 |.("http-continue-without-start {<duct>}"))
             error-connection
           ::
           =.  connections.state
@@ -2533,7 +2534,7 @@
       =*  extra-wire  t.t.t.t.wire
       =/  on-gall-response
         on-gall-response:by-channel:(per-server-event event-args)
-      ::  ~&  [%gall-response sign]
+      %-  (trace 1 |.("gall-response for {<channel-id>}")) :: TODO other info might be more useful here
       =^  moves  server-state.ax
         %-  on-gall-response
         [channel-id (slav %ud request-id) extra-wire p.sign]
@@ -2625,8 +2626,7 @@
   ?.  =(our who)
     ?.  =([%da now] p.lot)
       [~ ~]
-    ~&  [%r %scry-foreign-host who]
-    ~
+    ((trace 1 |.("%r %scry-foreign-host {<who>}")) ~)
   ?:  &(?=(%x ren) ?=(~ syd))
     =,  server-state.ax
     ?+  tyl  [~ ~]
