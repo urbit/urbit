@@ -4829,7 +4829,7 @@
     ?:  =(%$ des.req)
       ~&(%merg-no-desk !!)
     ?.  ((sane %tas) des.req)
-      ~&(%merg-bad-desk-name !!)
+      ~|([%merg-bad-desk-name des.req] !!)
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our des.req)
       abet:(start-merge:den her.req dem.req cas.req how.req)
