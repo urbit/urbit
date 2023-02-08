@@ -139,5 +139,3 @@
   ~?  =(%1 veb)  "[bone={<target>} nonce={<nonce>} agent={<app>}] {<path>}"
   (~(put in nacks) [ship target])
 --
-
-
