@@ -67,12 +67,8 @@
 ::  more structures
 ::
 |%
-++  axle
-  $:  ::  date: date at which http-server's state was updated to this data structure
-      ::
-      date=%~2020.10.18
-      ::  server-state: state of inbound requests
-      ::
++$  axle
+  $:  %1
       =server-state
   ==
 ::  +server-state: state relating to open inbound HTTP connections
@@ -2587,15 +2583,52 @@
 ::  +load: migrate old state to new state (called on vane reload)
 ::
 ++  load
-  |=  old=axle
+  =>  |%
+      +$  axle-any
+        $%  [%~2020.10.18 =server-state-0]
+            [%1 =server-state]
+        ==
+      +$  server-state-0
+        $:  bindings=(list [=binding =duct =action])
+            =cors-registry
+            connections=(map duct outstanding-connection)
+            =authentication-state
+            =channel-state
+            domains=(set turf)
+            =http-config
+            ports=[insecure=@ud secure=(unit @ud)]
+            outgoing-duct=duct
+        ==
+      --
+  |=  old=axle-any
   ^+  ..^$
-  ::  enable https redirects if certificate configured
+  ?-    -.old
+      %~2020.10.18
+    =,  server-state-0.old
+    =/  new=axle
+      :*  %1
+          bindings
+          cors-registry
+          connections
+          authentication-state
+          channel-state
+          domains
+          http-config
+          ports
+          outgoing-duct
+          0
+      ==
+    ..^$(ax new)
   ::
-  =.  redirect.http-config.server-state.old
-    ?&  ?=(^ secure.ports.server-state.old)
-        ?=(^ secure.http-config.server-state.old)
-    ==
-  ..^$(ax old)
+      %1
+    ::  enable https redirects if certificate configured
+    ::
+    =.  redirect.http-config.server-state.old
+      ?&  ?=(^ secure.ports.server-state.old)
+          ?=(^ secure.http-config.server-state.old)
+      ==
+    ..^$(ax old)
+  ==
 ::  +stay: produce current state
 ::
 ++  stay  `axle`ax
