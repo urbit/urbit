@@ -2668,13 +2668,11 @@
       =*  domains  domains.server-state.ax
       =*  ports  ports.server-state.ax
       =/  =host:eyre  [%& ?^(domains n.domains /localhost)]
-      =/  secure=?  &(?=(^ secure.ports) !?=(hoke:eyre host))
       =/  port=(unit @ud)
-        ?.  secure
+        ?.  ?=(^ secure.ports)
           ?:(=(80 insecure.ports) ~ `insecure.ports)
-        ?>  ?=(^ secure.ports)
         ?:(=(443 u.secure.ports) ~ secure.ports)
-      ``[secure port host]
+      ``[?=(^ secure.ports) port host]
     ==
   ==
 --
