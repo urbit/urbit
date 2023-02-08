@@ -8,7 +8,7 @@
 |=  [[now=@da eny=@uvJ bec=beak] [target=path ~] dry=_|]
 :-  %helm-pans
 =;  cards
-?.  dry  cards
+  ?.  dry  cards
   %-  (slog leaf+"card: {<cards>}" ~)  ~
 =|  lubs=(list note-arvo)
 |-  ^-  (list note-arvo)

@@ -54,18 +54,18 @@
   --
 ::
 ++  lobes
-=|  lubs=(list lobe)
-|-  ^-  (list lobe)
-=+  .^(=arch %cy target)
-?~  fil.arch
-  =/  dirs  ~(tap by dir.arch)
-  %-  zing
-  %+  turn  dirs
-  |=  [kid=@ta ~]
-  =/  paf=path  /[kid]
-  =/  kud=path  `path`(weld target /[kid])
-  ^$(target kud)
- (snoc lubs u.fil.arch)
+  =|  lubs=(list lobe)
+  |-  ^-  (list lobe)
+  =+  .^(=arch %cy target)
+  ?~  fil.arch
+    =/  dirs  ~(tap by dir.arch)
+    %-  zing
+    %+  turn  dirs
+    |=  [kid=@ta ~]
+      =/  paf=path  /[kid]
+      =/  kud=path  `path`(weld target /[kid])
+      ^$(target kud)
+  (snoc lubs u.fil.arch)
 ::
 ++  notes
   |=  norms=(set [ship desk tako norm path])
