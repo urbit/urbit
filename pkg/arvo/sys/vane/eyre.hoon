@@ -108,9 +108,9 @@
       ::  outgoing-duct: to unix
       ::
       outgoing-duct=duct
-      ::  veb: verbosity
+      ::  verb: verbosity
       ::
-      veb=_1 :: TODO @
+      verb=@
   ==
 ::  channel-request: an action requested on a channel
 ::
@@ -2099,7 +2099,7 @@
   ::
   ++  trace
     |=  [pri=@ print=(trap tape)]
-    ?:  (lth veb.state pri)  same
+    ?:  (lth verb.state pri)  same
     (slog leaf+"eyre: {(print)}" ~)
   --
 ::
