@@ -2,7 +2,6 @@
 ::  lighter than eyre
 ::
 |=  our=ship
-=/  verb=@  1
 =,  eyre
 ::  internal data structures
 ::
@@ -113,6 +112,9 @@
       ::  outgoing-duct: to unix
       ::
       outgoing-duct=duct
+      ::  veb: verbosity
+      ::
+      veb=_1 :: TODO @
   ==
 ::  channel-request: an action requested on a channel
 ::
@@ -2098,6 +2100,11 @@
       (cury cat 3)
     ?~  ext.request-line  ''
     (cat 3 '.' u.ext.request-line)
+  ::
+  ++  trace
+    |=  [pri=@ print=(trap tape)]
+    ?:  (lth veb.state pri)  same
+    (slog leaf+"eyre: {(print)}" ~)
   --
 ::
 ++  forwarded-params
@@ -2171,11 +2178,6 @@
   |=  [channel-id=@t request-id=@ud =ship app=term]
   ^-  wire
   (weld (channel-wire channel-id request-id) /(scot %p ship)/[app])
-::
-++  trace
-  |=  [pri=@ print=(trap tape)]
-  ?:  (lth verb pri)  same
-  (slog leaf+"eyre: {(print)}" ~)
 --
 ::  end the =~
 ::
