@@ -17,41 +17,40 @@
 =-  (turn - notes)
 =-  (turn lobes -)
 |=  =lobe
-  |^
-  |-  ^-  (set [ship desk tako norm path])
-  ?~  domes
-    ~
-  =/  =aeon  1
-  %-  ~(uni in $(domes t.domes))
-  |-  ^-  (set [ship desk tako norm path])
-  ?:  (lth let.dome.i.domes aeon)
-    ~
-  =/  =tako  (~(got by hit.dome.i.domes) aeon)
-  =/  paths  (draw-tako ship.i.domes desk.i.domes +.i.domes tako aeon)
-  (~(uni in paths) $(aeon +(aeon)))
-  ::
-  ++  draw-tako
-    |=  [=ship =desk [do=dome tom=(map tako norm) nor=norm] =tako =aeon]
-    ^-  (set [^ship ^desk ^tako norm path])
-    ~+
-    ::  TODO: maybe offer to |rm here?
-    ::  ?:  =(tako (~(got by hit.do) aeon))  ~
-    =/  =yaki  (~(got by hut.rang) tako)
-    =/  takos
-      |-  ^-  (set [^ship ^desk ^tako norm path])
-      ?~  p.yaki
-        ~
-      (~(uni in $(p.yaki t.p.yaki)) ^$(tako i.p.yaki))
+|^  ^-  (set [ship desk tako norm path])
+?~  domes
+  ~
+=/  =aeon  1
+%-  ~(uni in $(domes t.domes))
+|-  ^-  (set [ship desk tako norm path])
+?:  (lth let.dome.i.domes aeon)
+  ~
+=/  =tako  (~(got by hit.dome.i.domes) aeon)
+=/  paths  (draw-tako ship.i.domes desk.i.domes +.i.domes tako aeon)
+(~(uni in paths) $(aeon +(aeon)))
+::
+++  draw-tako
+  |=  [=ship =desk [do=dome tom=(map tako norm) nor=norm] =tako =aeon]
+  ^-  (set [^ship ^desk ^tako norm path])
+  ~+
+  ::  TODO: maybe offer to |rm here?
+  ::  ?:  =(tako (~(got by hit.do) aeon))  ~
+  =/  =yaki  (~(got by hut.rang) tako)
+  =/  takos
     |-  ^-  (set [^ship ^desk ^tako norm path])
-    ?~  q.yaki
-      takos
-    %-  ~(uni in $(q.yaki l.q.yaki))
-    %-  ~(uni in $(q.yaki r.q.yaki))
-    ^-  (set [^ship ^desk ^tako norm path])
-    ?.  =(lobe q.n.q.yaki)
+    ?~  p.yaki
       ~
-    [[ship desk tako (~(gut by tom) tako nor) p.n.q.yaki] ~ ~]
-  --
+    (~(uni in $(p.yaki t.p.yaki)) ^$(tako i.p.yaki))
+  |-  ^-  (set [^ship ^desk ^tako norm path])
+  ?~  q.yaki
+    takos
+  %-  ~(uni in $(q.yaki l.q.yaki))
+  %-  ~(uni in $(q.yaki r.q.yaki))
+  ^-  (set [^ship ^desk ^tako norm path])
+  ?.  =(lobe q.n.q.yaki)
+    ~
+  [[ship desk tako (~(gut by tom) tako nor) p.n.q.yaki] ~ ~]
+--
 ::
 ++  lobes
   =|  lubs=(list lobe)
