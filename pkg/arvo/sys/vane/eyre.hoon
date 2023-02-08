@@ -1605,14 +1605,17 @@
         =/  num=@ud
           (~(gut by unacked.u.channel) request-id 0)
         :_  (~(put by unacked.u.channel) request-id +(num))
-        ?:  ?&  (gte num clog-threshold)
-                (lth (add last-ack.u.channel clog-timeout) now)
-            ==
-        ((trace 1 |.("eyre: clogged {<channel-id>} {<request-id>}")) &)  |
+        ?&  (gte num clog-threshold)
+            (lth (add last-ack.u.channel clog-timeout) now)
+        ==
       ::  if we're clogged, or we ran into an event we can't serialize,
       ::  kill this gall subscription.
       ::
-      =/  kicking=?  |(clogged ?=(~ json))
+      =/  kicking=?
+        ?:  clogged
+          ((trace 1 |.("clogged {<channel-id>} {<request-id>}")) &)
+        ?:  ?=(~ json)
+        ((trace 1 |.("can't serialize event, kicking")) &)  |
       =?  moves      kicking
         :_  moves
         ::NOTE  this shouldn't crash because we
