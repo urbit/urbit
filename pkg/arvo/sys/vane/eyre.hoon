@@ -583,8 +583,8 @@
       [act [& secure address request] ~ 0]
     ::
     =.  connections.state
-      %-  (trace 2 |.("creating local connection {<duct>}}"))
-      (~(put by connections.state) duct connection)
+      %.  (~(put by connections.state) duct connection)
+      (trace 2 |.("creating local connection {<duct>}}"))
     ::
     :_  state
     (subscribe-to-app app.act inbound-request.connection)
@@ -613,8 +613,8 @@
     =/  connection=outstanding-connection
       [action [authenticated secure address request] ~ 0]
     =.  connections.state
-      %-  (trace 2 |.("creating connection {<duct>}"))
-      (~(put by connections.state) duct connection)
+      %.  (~(put by connections.state) duct connection)
+      (trace 2 |.("creating connection {<duct>}"))
     ::  redirect to https if insecure, redirects enabled
     ::  and secure port live
     ::
@@ -839,8 +839,8 @@
       [~ state]
     ::
     =.   connections.state
-      %-  (trace 2 |.("connection cancelled {<duct>}"))
-      (~(del by connections.state) duct)
+      %.  (~(del by connections.state) duct)
+      (trace 2 |.("connection cancelled {<duct>}"))
     ::
     ?-    -.action.u.connection
         %gen  [~ state]
@@ -1128,8 +1128,7 @@
         ::  POST methods are used solely for deleting channels
         (on-put-request channel-id request)
       ::
-      %-  (trace 1 |.("session-not-a-put"))
-      [~ state]
+      ((trace 1 |.("session-not-a-put")) `state)
     ::  +on-cancel-request: cancels an ongoing subscription
     ::
     ::    One of our long lived sessions just got closed. We put the associated
@@ -1471,8 +1470,8 @@
           ::  which isn't active.
           ::
           =*  msg=tape  "{<channel-id>} {<subscription-id>}"
-          %-  (trace 1 |.("missing-subscription-in-unsubscribe {msg}"))
-          $(requests t.requests)
+          %.  $(requests t.requests)
+          (trace 1 |.("missing-subscription-in-unsubscribe {msg}"))
         ::
         =.  gall-moves
           :_  gall-moves
@@ -1528,7 +1527,6 @@
       :_  state
       :_  ~
       ^-  move
-      %-  (trace 2 |.("leaving subscription to {<app>}"))
       :^  duct  %pass
         (subscription-wire channel-id request-id ship app)
       [%g %deal [our ship] app `task:agent:gall`[%leave ~]]
@@ -1888,8 +1886,7 @@
     ::  verify that this is a valid response on the duct
     ::
     ?~  connection-state=(~(get by connections.state) duct)
-      %-  (trace 1 |.("invalid-outstanding-connection {<duct>}"))
-      [~ state]
+      ((trace 1 |.("invalid-outstanding-connection {<duct>}")) `state)
     ::
     |^  ^-  [(list move) server-state]
         ::
@@ -1897,8 +1894,7 @@
         ::
             %start
           ?^  response-header.u.connection-state
-            %-  (trace 1 |.("http-multiple-start {<duct>}"))
-            error-connection
+            ((trace 1 |.("http-multiple-start {<duct>}")) error-connection)
           ::  if request was authenticated, extend the session & cookie's life
           ::
           =^  response-header  sessions.authentication-state.state
@@ -1912,8 +1908,7 @@
             ?~  session-id=(session-id-from-request request.inbound)
               ::  cookies are the only auth method, so this is unexpected
               ::
-              %-  (trace 1 |.("authenticated-without-cookie"))
-              no-op
+              ((trace 1 |.("authenticated-without-cookie")) no-op)
             ?.  (~(has by sessions) u.session-id)
               ::  if the session has expired since the request was opened,
               ::  tough luck, we don't create/revive sessions here
@@ -1959,8 +1954,8 @@
         ::
             %continue
           ?~  response-header.u.connection-state
-            %-  (trace 1 |.("http-continue-without-start {<duct>}"))
-            error-connection
+            %.  error-connection
+            (trace 1 |.("http-continue-without-start {<duct>}"))
           ::
           =.  connections.state
             %-  (trace 2 |.("continuing connection {<duct>}}"))
@@ -1990,8 +1985,8 @@
       ::  remove all outstanding state for this connection
       ::
       =.  connections.state
-        %-  (trace 2 |.("connection completed {<duct>}"))
-        (~(del by connections.state) duct)
+        %.  (~(del by connections.state) duct)
+        (trace 2 |.("connection completed {<duct>}")) 
       state
     ::
     ++  error-connection
@@ -2000,8 +1995,8 @@
       ::  remove all outstanding state for this connection
       ::
       =.  connections.state
-        %-  (trace 2 |.("connection cancelled due to an error {<duct>}"))
-        (~(del by connections.state) duct)
+        %.  (~(del by connections.state) duct)
+        (trace 2 |.("connection cancelled due to an error {<duct>}"))
       ::  respond to outside with %error
       ::
       ^-  [(list move) server-state]
