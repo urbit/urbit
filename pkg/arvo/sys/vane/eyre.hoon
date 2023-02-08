@@ -2238,7 +2238,8 @@
     ?:  =(~ inactive)
       [~ http-server-gate]
     ::
-    %-  (trace 0 |.("trim: closing {<(lent inactive)>} inactive channels"))
+    =/  len=tape  (scow %ud (lent inactive))
+    ~>  %slog.[0 leaf+"eyre: trim: closing {len} inactive channels"]
     ::
     =|  moves=(list (list move))
     |-  ^-  [(list move) _http-server-gate]
@@ -2291,7 +2292,7 @@
     ==
   ::
   ?:  ?=(%code-changed -.task)
-    %-  (trace 0 |.("code-changed: throwing away cookies and sessions"))
+    ~>  %slog.[0 leaf+"eyre: code-changed: throwing away cookies and sessions"]
     =.  authentication-state.server-state.ax  *authentication-state
     ::
     =/  event-args  [[eny duct now rof] server-state.ax]
@@ -2536,7 +2537,7 @@
       =*  extra-wire  t.t.t.t.wire
       =/  on-gall-response
         on-gall-response:by-channel:(per-server-event event-args)
-      %-  (trace 1 |.("gall-response for {<channel-id>}")) :: TODO other info might be more useful here
+      ::  ~&  [%gall-response sign]
       =^  moves  server-state.ax
         %-  on-gall-response
         [channel-id (slav %ud request-id) extra-wire p.sign]
@@ -2579,7 +2580,7 @@
       [~ http-server-gate]
     ::  received a negative acknowledgment: XX do something
     ::
-    ((trace 0 |.("{<u.p.p.sign>}")) `http-server-gate) :: TODO this should be better
+    [((slog u.p.p.sign) ~) http-server-gate]
   --
 ::
 ++  http-server-gate  ..$
@@ -2628,7 +2629,8 @@
   ?.  =(our who)
     ?.  =([%da now] p.lot)
       [~ ~]
-    ((trace 1 |.("%r %scry-foreign-host {<who>}")) ~)
+    ~&  [%r %scry-foreign-host who]
+    ~
   ?:  &(?=(%x ren) ?=(~ syd))
     =,  server-state.ax
     ?+  tyl  [~ ~]
