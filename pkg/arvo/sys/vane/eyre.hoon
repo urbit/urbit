@@ -813,6 +813,7 @@
   ::
   ++  subscribe-to-app
     |=  [app=term =inbound-request:eyre]
+    %-  (trace 2 |.("subscribing to {<app>} on {</http-response/[eyre-id]>}"))
     ^-  (list move)
     :~  :*  duct  %pass  /watch-response/[eyre-id]
             %g  %deal  [our our]  app
@@ -842,6 +843,7 @@
         %app
       :_  state
       :_  ~
+      %-  (trace 2 |.("leaving subscription to {<app.action.u.connection>}"))
       :*  duct  %pass  /watch-response/[eyre-id]
           %g  %deal  [our our]  app.action.u.connection
           %leave  ~
@@ -1437,6 +1439,7 @@
           ^-  move
           :^  duct  %pass
             (subscription-wire channel-id request-id ship app)
+          %-  (trace 2 |.("subscribing to {<app>} on {<path>}"))
           :*  %g  %deal  [our ship]  app
               `task:agent:gall`[%watch path]
           ==
@@ -1473,6 +1476,7 @@
           =,  u.maybe-subscription
           :^  duc  %pass
             (subscription-wire channel-id subscription-id.i.requests ship app)
+          %-  (trace 2 |.("leaving subscription to {<app>}"))
           :*  %g  %deal  [our ship]  app
               `task:agent:gall`[%leave ~]
           ==
@@ -1520,6 +1524,7 @@
       :_  state
       :_  ~
       ^-  move
+      %-  (trace 2 |.("leaving subscription to {<app>}"))
       :^  duct  %pass
         (subscription-wire channel-id request-id ship app)
       [%g %deal [our ship] app `task:agent:gall`[%leave ~]]
@@ -1619,6 +1624,7 @@
         ::      - only clog on %facts, which have a subscription associated,
         ::      - and already checked whether we still have that subscription.
         =+  (~(got by subscriptions.u.channel) request-id)
+        %-  (trace 2 |.("leaving subscription to {<app>}"))
         :^  duct  %pass
           (subscription-wire channel-id request-id ship app)
         [%g %deal [our ship] app %leave ~]
@@ -1834,6 +1840,7 @@
       %+  turn  ~(tap by subscriptions.session)
       |=  [request-id=@ud ship=@p app=term =path duc=^duct]
       ^-  move
+      %-  (trace 2 |.("leaving subscription to {<app>}"))
       :^  duc  %pass
         (subscription-wire channel-id request-id ship app)
       [%g %deal [our ship] app %leave ~]
@@ -1849,6 +1856,7 @@
       ?.  ?=(%app -.action.connection)
         ~
       :_  ~
+      %-  (trace 2 |.("leaving subscription to {<app.action.connection>}"))
       :*  duct  %pass  /watch-response/[eyre-id]
           %g  %deal  [our our]  app.action.connection
           %leave  ~
@@ -1994,6 +2002,8 @@
       ?.  ?=(%app -.action.u.connection-state)
         ~
       :_  ~
+      %-  %+  trace  2
+          |.("leaving subscription to {<app.action.u.connection-state>}")
       :*  duct  %pass  /watch-response/[eyre-id]
           %g  %deal  [our our]  app.action.u.connection-state
           %leave  ~
