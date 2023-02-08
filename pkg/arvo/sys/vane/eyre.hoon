@@ -2,6 +2,7 @@
 ::  lighter than eyre
 ::
 |=  our=ship
+=/  verb=@  1
 =,  eyre
 ::  internal data structures
 ::
@@ -2168,6 +2169,11 @@
   |=  [channel-id=@t request-id=@ud =ship app=term]
   ^-  wire
   (weld (channel-wire channel-id request-id) /(scot %p ship)/[app])
+::
+++  trace
+  |=  [pri=@ print=(trap tape)]
+  ?:  (lth verb pri)  same
+  (slog leaf+"eyre: {(print)}" ~)
 --
 ::  end the =~
 ::
