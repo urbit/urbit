@@ -1136,10 +1136,9 @@
       ::  lookup the session id by duct
       ::
       ?~  maybe-channel-id=(~(get by duct-to-key.channel-state.state) duct)
-        ~>  %slog.[0 leaf+"eyre: no channel to cancel {<duct>}"]
-        [~ state]
+        ((trace 0 |.("no channel to cancel {<duct>}")) `state)
       ::
-      ~>  %slog.[0 leaf+"eyre: canceling {<duct>}"]
+      %-  (trace 0 |.("canceling {<duct>}"))
       ::
       =/  maybe-session
         (~(get by session.channel-state.state) u.maybe-channel-id)
@@ -1517,10 +1516,9 @@
         (emit-event channel-id request-id sign)
       =/  =ship     (slav %p i.extra)
       =*  app=term  i.t.extra
-      =/  =tape
-        %+  weld  "eyre: removing watch for "
-        "non-existent channel {(trip channel-id)} on {(trip app)}"
-      %-  (slog leaf+tape ~)
+      =*  msg=tape
+        "removing watch for non-existent channel {<channel-id>} {<app>}"
+      %-  (trace 0 |.(msg))
       :_  state
       :_  ~
       ^-  move
@@ -1672,11 +1670,11 @@
       ^-  (unit desk)
       =/  sub  (~(get by subscriptions.channel) request-id)
       ?~  sub
-        ((slog leaf+"eyre: no subscription for request-id {<request-id>}" ~) ~)
+        ((trace 0 |.("no subscription for request-id {<request-id>}")) ~)
       =/  des=(unit (unit cage))
         (rof ~ %gd [our app.u.sub da+now] ~)
       ?.  ?=([~ ~ *] des)
-        ((slog leaf+"eyre: no desk for app {(trip app.u.sub)}" ~) ~)
+        ((trace 0 |.("no desk for app {(trip app.u.sub)}")) ~)
       `!<(=desk q.u.u.des)
     ::  +channel-event-to-sign: attempt to recover a sign from a channel-event
     ::
@@ -1693,11 +1691,11 @@
       =/  val=(unit (unit cage))
         (rof ~ %cb [our u.des da+now] /[have])
       ?.  ?=([~ ~ *] val)
-        ((slog leaf+"eyre: no mark {(trip have)}" ~) ~)
+        ((trace 0 |.("no mark {(trip have)}")) ~)
       =+  !<(=dais:clay q.u.u.val)
       =/  res  (mule |.((vale:dais noun.event)))
       ?:  ?=(%| -.res)
-        ((slog leaf+"eyre: stale fact of mark {(trip have)}" ~) ~)
+        ((trace 0 |.("stale fact of mark {(trip have)}")) ~)
       `[%fact have p.res]
     ::  +sign-to-json: render sign from request-id as json channel event
     ::
@@ -1723,7 +1721,7 @@
           ?.  ?=([~ ~ *] cag)  ~
           `q.u.u.cag
         ?~  convert
-          ((slog leaf+"eyre: no convert {desc}" ~) [~ ~])
+          ((trace 0 |.("no convert {desc}")) [~ ~])
         ~|  "conversion failed {desc}"
         [`[u.des have] `[%fact %json (slym u.convert q.q.cage.sign)]]
       ?~  jsyn  ~
@@ -2152,8 +2150,8 @@
   ::  replace already bound paths
   ::
   ?:  =([site path]:bid [site path]:binding.new)
-    ~>  %slog.[0 leaf+"eyre: replacing existing binding at {<`path`path.bid>}"]
-    [new t.bindings]
+    %.  [new t.bindings]
+    (trace 0 |.("replacing existing binding at {<`path`path.bid>}"))
   ::  if new comes before bid, prepend it.
   ::  otherwise, continue our search.
   ::
@@ -2238,8 +2236,7 @@
     ?:  =(~ inactive)
       [~ http-server-gate]
     ::
-    =/  len=tape  (scow %ud (lent inactive))
-    ~>  %slog.[0 leaf+"eyre: trim: closing {len} inactive channels"]
+    %-  (trace 0 |.("trim: closing {<(lent inactive)>} inactive channels"))
     ::
     =|  moves=(list (list move))
     |-  ^-  [(list move) _http-server-gate]
@@ -2292,7 +2289,7 @@
     ==
   ::
   ?:  ?=(%code-changed -.task)
-    ~>  %slog.[0 leaf+"eyre: code-changed: throwing away cookies and sessions"]
+    %-  (trace 0 |.("code-changed: throwing away cookies and sessions"))
     =.  authentication-state.server-state.ax  *authentication-state
     ::
     =/  event-args  [[eny duct now rof] server-state.ax]
@@ -2580,7 +2577,7 @@
       [~ http-server-gate]
     ::  received a negative acknowledgment: XX do something
     ::
-    [((slog u.p.p.sign) ~) http-server-gate]
+    ((trace 0 |.("{<u.p.p.sign>}")) `http-server-gate) :: TODO this should be better
   --
 ::
 ++  http-server-gate  ..$
