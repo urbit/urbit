@@ -583,6 +583,7 @@
       [act [& secure address request] ~ 0]
     ::
     =.  connections.state
+      %-  (trace 2 |.("creating local connection {<duct>}}"))
       (~(put by connections.state) duct connection)
     ::
     :_  state
@@ -612,6 +613,7 @@
     =/  connection=outstanding-connection
       [action [authenticated secure address request] ~ 0]
     =.  connections.state
+      %-  (trace 2 |.("creating connection {<duct>}"))
       (~(put by connections.state) duct connection)
     ::  redirect to https if insecure, redirects enabled
     ::  and secure port live
@@ -836,7 +838,9 @@
       ::
       [~ state]
     ::
-    =.   connections.state  (~(del by connections.state) duct)
+    =.   connections.state
+      %-  (trace 2 |.("connection cancelled {<duct>}"))
+      (~(del by connections.state) duct)
     ::
     ?-    -.action.u.connection
         %gen  [~ state]
@@ -1941,6 +1945,7 @@
           ::
           =.  response-header.http-event  response-header
           =.  connections.state
+            %-  (trace 2 |.("creating connection {<duct>}"))
             %+  ~(put by connections.state)  duct
             %_  connection
               response-header  `response-header
@@ -1958,6 +1963,7 @@
             error-connection
           ::
           =.  connections.state
+            %-  (trace 2 |.("continuing connection {<duct>}}"))
             %+  ~(jab by connections.state)  duct
             |=  connection=outstanding-connection
             =+  size=?~(data.http-event 0 p.u.data.http-event)
@@ -1984,6 +1990,7 @@
       ::  remove all outstanding state for this connection
       ::
       =.  connections.state
+        %-  (trace 2 |.("connection completed {<duct>}"))
         (~(del by connections.state) duct)
       state
     ::
@@ -1993,6 +2000,7 @@
       ::  remove all outstanding state for this connection
       ::
       =.  connections.state
+        %-  (trace 2 |.("connection cancelled due to an error {<duct>}"))
         (~(del by connections.state) duct)
       ::  respond to outside with %error
       ::
