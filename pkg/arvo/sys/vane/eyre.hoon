@@ -2157,8 +2157,8 @@
   ::  replace already bound paths
   ::
   ?:  =([site path]:bid [site path]:binding.new)
-    %.  [new t.bindings]
-    (trace 0 |.("replacing existing binding at {<`path`path.bid>}"))
+    ~>  %slog.[0 leaf+"eyre: replacing existing binding at {<`path`path.bid>}"]
+    [new t.bindings]
   ::  if new comes before bid, prepend it.
   ::  otherwise, continue our search.
   ::
