@@ -1,19 +1,15 @@
 ::  +stale-flows: prints number of ames flows that can be closed
 ::
-::    |stale-flows, =veb %0  :: TODO
 ::    |stale-flows, =veb %1  :: flows from nacking initial subscriptions
 ::    |stale-flows, =veb %2  :: stale flows that keep (re)trying to connect
 ::    |stale-flows, =veb %21 :: ... per app (only forward)
 ::    |stale-flows, =veb %3  :: stale resubscriptions
-::    |stale-flows, =veb %31 :: (TODO) ... per app
 ::
 =>  |%
     +$  subs  (jar path [ship bone @])
     +$  pags  (jar app=term [dst=term =ship =path])  ::  per-agent
     +$  naks  (set [ship bone])
-    ::  verbosity:
-    ::
-
+    ::  verbosity
     ::
     +$  veb  ?(%0 %1 %2 %21 %3 %31)
     ::
@@ -50,24 +46,24 @@
   ==
 ::
 =;  [[=subs =pags backward=@ forward=@] =naks]
-    :-  %tang  %-  flop
-    %+  weld
-      :~  leaf+"#{<~(wyt in naks)>} flows from %nacking %watches"
-          leaf+"#{<backward>} backward flows with >10 retries"
-          leaf+"#{<forward>} forward flows with >10 retries"
-          leaf+"#{<(resubs subs veb)>} stale resubscriptions"
-      ==
-    ?.  =(%21 veb)  ~
-    :-  leaf+"----------------------------------"
-    %+  turn  %+  sort  ~(tap by pags)
-              |=  [[* v=(list)] [* w=(list)]]
-              (gth (lent v) (lent w))
-    |=  [app=term v=(list [dst=term =ship =path])]
-    :-  %leaf
-    %+  weld  "#{<(lent v)>} flows for {<app>} with >10 retries"
-    ?.  =(1 (lent v))  ~
-    ?>  ?=(^ v)
-    " on {<ship.i.v>} to {<dst.i.v>} at {<path.i.v>}"
+  :-  %tang  %-  flop
+  %+  weld
+    :~  leaf+"#{<~(wyt in naks)>} flows from %nacking %watches"
+        leaf+"#{<backward>} backward flows with >10 retries"
+        leaf+"#{<forward>} forward flows with >10 retries"
+        leaf+"#{<(resubs subs veb)>} stale resubscriptions"
+    ==
+  ?.  =(%21 veb)  ~
+  :-  leaf+"----------------------------------"
+  %+  turn  %+  sort  ~(tap by pags)
+            |=  [[* v=(list)] [* w=(list)]]
+            (gth (lent v) (lent w))
+  |=  [app=term v=(list [dst=term =ship =path])]
+  :-  %leaf
+  %+  weld  "#{<(lent v)>} flows for {<app>} with >10 retries"
+  ?.  =(1 (lent v))  ~
+  ?>  ?=(^ v)
+  " on {<ship.i.v>} to {<dst.i.v>} at {<path.i.v>}"
 ::
 %+  roll  peers
 |=  [=ship [=subs p=pags b=@ f=@] n=naks]
