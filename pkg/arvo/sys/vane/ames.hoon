@@ -2595,14 +2595,11 @@
           |-  ^-  ?
           ?~  pumps  |
           =.  mem
-            ;:  add  mem
-              %+  roll  ~(tap to unsent-messages.i.pumps)
-              |=([a=@ b=@ud] (add b (met 3 a)))
-            ::
-              ?~  unsent-fragments.i.pumps
-                0
-              (met 3 fragment.i.unsent-fragments.i.pumps)
-            ==
+            %+  add
+              %-  ~(rep in unsent-messages.i.pumps)
+              |=([a=@ b=_mem] (add b (met 3 a)))
+            ?~  unsent-fragments.i.pumps. 0
+            (met 3 fragment.i.unsent-fragments.i.pumps)
           ?:  (gte mem 100.000)
             &
           $(pumps t.pumps)
