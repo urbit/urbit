@@ -4,6 +4,7 @@
 /-  grp=group-store
 /-  i=migrate
 /-  *group
+/+  res=resource
 |_  =bowl:gall
 +$  card  card:agent:gall
 ::  if false, indicates that OTA should be done in one go, in order to
@@ -62,7 +63,6 @@
     ~&  missing-log/flag  :: XX: doesn't need to fail, but suspect case
     ~
   `[flag writers u.assoc u.log graph]
-
 ++  scry
   |=  [=dude:gall =path]
   %-  welp 
@@ -78,6 +78,18 @@
   .^(* (scry %graph-store /export/noun))
 ++  associations
   ~+  .^([@ =associations:met ~] (scry %metadata-store /export/noun))
+++  my-channels-associations
+  =/  assoc
+    .^(associations:met %gx [(scot %p our.bowl) %metadata-store (scot %da now.bowl) %associations %noun ~])
+  %-  ~(gas by *associations:met)
+  %+  skim
+      ~(tap by assoc)
+    |=  [m=md-resource:met [g=resource:res metdat=metadatum:met]]
+    ?&  =(| hidden.metdat)
+        =(name.g name.resource.m)
+        =(entity.g our.bowl)
+        =(%graph -.config.metdat)
+    ==
 ++  associations-raw
   .^(* (scry %metadata-store /export/noun))
 ++  export
@@ -163,6 +175,70 @@
     :_  ~
     (welp setup (zing (turn ~(tap in (~(del in ships) our.bowl)) migrate-ship)))
   [setup (~(uni in ships) wait)]
+++  migrate-my-channels
+  =+  network
+  =+  groups
+  =/  associations  my-channels-associations
+  =/  ships   (peers network)
+  =/  dms  (~(get by graphs:network) [our.bowl %dm-inbox])
+  =/  import  (import-for-mark `our.bowl groups associations network)
+  =/  clubs  (import-club groups associations network)
+  =/  chats=imports:graph:i
+    (import %graph-validator-chat)
+  =/  diarys=imports:graph:i
+    (import %graph-validator-publish)
+  =/  links=imports:graph:i
+    (import %graph-validator-link)
+  =/  =imports:groups:i
+    %-  ~(gas by *imports:groups:i)
+    %+  murn  ~(tap by groups)
+    |=  [=flag:i =group]
+    ^-  (unit [_flag import:groups:i])
+    ?:  hidden.group
+      ~
+    ?~  assoc=(~(get by associations) [%groups flag])
+      ~&  missing-group-assoc/flag
+      ~
+    =/  chans=(map flag:i association:met)
+      %-  ~(gas by *(map flag:i association:met))
+      %+  murn  ~(tap by associations)
+      |=  [res=md-resource:met ass=association:met]
+      ^-  (unit [flag:i association:met])
+      ?.  =(group.ass flag)  ~
+      `[resource.res ass]
+    =/  roles=(set flag:i)
+      %-  ~(gas in *(set flag:i))
+      %+  murn  ~(tap by chans)
+      |=  [=flag:i =association:met]
+      ^-  (unit flag:i)
+      ?^  link=(~(get by links) flag)
+        ?:  =(writers.u.link ~)  ~
+        `flag
+      ?^  diary=(~(get by diarys) flag)
+        ?:  =(writers.u.diary ~)  ~
+        `flag
+      ?^  chat=(~(get by chats) flag)
+        ?:  =(writers.u.chat ~)  ~
+        `flag
+      ~
+    `[flag u.assoc chans roles group]
+  =/  dms  (~(get by graphs:network) [our.bowl %dm-inbox])
+  =/  flag-importer  (import-flags our.bowl groups associations network)
+  =+  :*  chat-flags=(flag-importer %graph-validator-chat)
+          heap-flags=(flag-importer %graph-validator-link)
+          diary-flags=(flag-importer %graph-validator-publish)
+      ==
+  =/  setup=(list card)
+    %+  welp  (migrate-ship our.bowl)
+    :*  (poke-our %groups group-import+!>(imports))
+        (poke-our %chat import-flags+!>(chat-flags))
+        (poke-our %heap import-flags+!>(heap-flags))
+        (poke-our %diary import-flags+!>(diary-flags))
+        (poke-our %chat club-imports+!>(clubs))
+        ?~  dms  ~
+        (poke-our %chat dm-imports+!>(p.u.dms))^~
+    ==
+  setup
 ::
 ++  migrate-ship
   |=  her=ship
@@ -189,5 +265,5 @@
   :~  (poke-our %chat graph-imports+!>(chats))
       (poke-our %diary graph-imports+!>(diarys))
       (poke-our %heap graph-imports+!>(links))
-        ==
+  ==
 --

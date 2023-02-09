@@ -139,6 +139,7 @@
           %noun 
         ?+  q.vase  !!
           %migrate  poke-migrate:gc
+          %migrate-my-channels  poke-migrate-my-channels:gc
           %export   poke-export:gc
         ==
       ::
@@ -250,6 +251,9 @@
     (turn ~(tap in wait) watch-init-migrate)
   =/  cards  (welp cards-1 cards-2)
   [cards state(wait wait)]
+++  poke-migrate-my-channels
+  ^-  (quip card _state)
+  [~(migrate-my-channels gladio bol) state]
 ::
 ++  watch-init-migrate
   |=  =ship
