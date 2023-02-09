@@ -1,0 +1,19 @@
+name: ota
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'develop'
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: "make an OTA update to arvo on ~binnec-dozzod-marzod"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/ota
+        with:
+          ship: 'canary'
+          credentials: ${{ secrets.JANEWAY_SERVICE_KEY }}
+          ssh-sec-key: ${{ secrets.JANEWAY_SSH_SEC_KEY }}
+          ssh-pub-key: ${{ secrets.JANEWAY_SSH_PUB_KEY }}
+          ref: 'develop'
