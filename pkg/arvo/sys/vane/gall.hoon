@@ -1642,7 +1642,10 @@
       |=  [lyc=gang vis=view bem=beam]
       ^-  (unit (unit (cask vase)))
       ?.  (rite our [vis bem] (~(get ju perms.state) q.beak.yoke))
-        ~
+        =-  ((slog leaf+- ~) ~)
+        =/  sef=tape  "%{(trip q.beak.yoke)}/{(trip agent-name)}"
+        =/  tar=tape  "{<vis>} {(spud (en-beam bem))}"
+        "insufficient permission: {sef} scrying for {tar}"
       (rof lyc vis bem)
     ::  +ap-ingest: call agent arm, check perms, emit result
     ::
