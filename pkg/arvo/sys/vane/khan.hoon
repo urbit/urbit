@@ -102,15 +102,15 @@
   =/  =beam  (need (de-beam t.wire))
   ?>(?=([@ ~] s.beam) beam(s i.s.beam))
 ::
-++  start-spider
-  |=  =vase
-  ^-  note
-  [%g %deal [our our] %spider %poke %spider-start vase]
+++  poke-spider
+  |=  [hen=duct =cage]
+  ^-  move
+  [hen %pass //g %g %deal [our our] %spider %poke cage]
 ::
 ++  watch-spider
-  |=  =path
-  ^-  note
-  [%g %deal [our our] %spider %watch path]
+  |=  [hen=duct =path]
+  ^-  move
+  [hen %pass //g %g %deal [our our] %spider %watch path]
 --
 =|  khan-state
 =*  state  -
@@ -134,22 +134,8 @@
       %born
     [~ khan-gate(hey hen, tic 0)]
   ::
-      %fard
-    =/  tid=@ta
-      %^  cat  3
-        'khan-fyrd--'
-      (scot %uv (sham (mix tic eny)))
-    =.  tic         +(tic)
-    =*  fyd         p.task
-    =/  =beak       (get-beak bear.fyd now)
-    =/  args        [~ `tid beak name.fyd q.args.fyd]
-    :_  khan-gate
-    %+  turn
-      :~  (watch-spider /thread-result/[tid])
-          (start-spider !>(args))
-      ==
-    |=(=note ^-(move [hen %pass //g note]))
-  ::
+      %fard  (bard hen 'khan-fyrd--' bear.p.task %| [name args]:p.task)
+      %lard  (bard hen 'khan-lard--' bear.task %& shed.task)
       %fyrd
     =*  fyd         p.task
     =/  =beak       (get-beak bear.fyd now)
@@ -160,6 +146,23 @@
     =-  [[hen %pass wire -]~ khan-gate]
     [%k %fard bear.fyd name.fyd p.q.args.fyd vase]
   ==
+::
+++  bard
+  |=  [hen=duct prefix=@ta =bear payload=(each shed [name=term args=cage])]
+  ^-  [(list move) _khan-gate]
+  =/  =tid:rand  (cat 3 prefix (scot %uv (sham (mix tic eny))))
+  =/  =beak      (get-beak bear now)
+  =/  =cage
+    ?-  -.payload
+      %&  [%spider-inline !>([~ `tid beak p.payload])]
+      %|  [%spider-start !>([~ `tid beak [name q.args]:p.payload])]
+    ==
+  =.  tic  +(tic)
+  :_  khan-gate
+  :~  (watch-spider hen /thread-result/[tid])
+      (poke-spider hen cage)
+  ==
+::
 ::  +load: migrate an old state to a new khan version
 ::
 ++  load
@@ -195,7 +198,7 @@
       ?+    p.cag  ~&(bad-fact+p.cag !!)
           %thread-fail
         =/  =tang  !<(tang q.cag)
-        %-  (slog 'khan-fact' tang)
+        ::  %-  (slog 'khan-fact' tang)
         [hen %give %arow %| p.cag tang]~
       ::
           %thread-done

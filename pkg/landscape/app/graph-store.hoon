@@ -97,9 +97,43 @@
       (scag 2 (tap:orm-log update-log))
     ==
   ::
-    %6  $(-.old %7)
+      %6
+    =/  old-dms
+      %-  ~(gas by *(map resource:store marked-graph:store))
+      %+  skim  ~(tap by graphs.old)
+      |=([r=resource:store *] (is-old-dm:upgrade:store r))
+    =/  backup  (backup:upgrade:store bowl)
+    %_    $
+        -.old  %7
+        archive.old  ~
+        update-logs.old
+      %-  ~(gas by *(map resource:store update-log:store))
+      %+  murn  ~(tap by update-logs.old)
+      |=  [r=resource:store =update-log:store]
+      ?:  (is-old-dm:upgrade:store r)
+        ~
+      `[r (strip-sigs-log:upgrade:store update-log)]
+    ::
+        graphs.old
+      %-  ~(gas by *(map resource:store marked-graph:store))
+      %+  murn  ~(tap by graphs.old)
+      |=  [r=resource:store =graph:store mar=(unit mark)]
+      ?:  (is-old-dm:upgrade:store r)
+        ~
+      `[r (strip-sigs-graph:upgrade:store graph) mar]
+    ::
+        cards
+      ;:  welp
+        cards
+      ::
+        (nuke-groups:upgrade:store bowl)
+      ::
+        (turn ~(tap by archive.old) backup)
+        (turn ~(tap by old-dms) backup)
+      ==
+    ==
   ::
-    %7  [cards this(state old)]
+      %7  [cards this(state old)]
   ==
 ::
 ++  on-watch
@@ -659,6 +693,16 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+    path  (on-peek:def path)
+      [%x %whey ~]
+    =/  liv=(list mass)
+      (sort (turn ~(tap by graphs) |=([[* n=term] g=*] n^&+g)) aor)
+    =/  log=(list mass)
+      (sort (turn ~(tap by update-logs) |=([[* n=term] l=*] n^&+l)) aor)
+    =/  sil=(list mass)
+      (sort (turn ~(tap by archive) |=([[* n=term] g=*] n^&+g)) aor)
+    :^  ~  ~  %mass
+    !>(`(list mass)`[live+|+liv logs+|+log ?~(sil ~ [silo+|+sil ~])])
+  ::
     [%x %export ~]  ``noun+!>(state)
   ::
       [%x %keys ~]

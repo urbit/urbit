@@ -4,7 +4,7 @@
     naive,
     dice,
     default-agent,
-/   verb,
+    verb,
     dbug
 ::  To update, run from dojo:
 ::    -azimuth-snap-state %default 'version-0'
@@ -281,7 +281,7 @@
         ::  restart %eth-watcher
         ::
         ~&  >>  %starting-eth-watcher
-        =/  rein=[desk rein]  [%base %.y [%eth-watcher ~ ~] ~]
+        =/  rein=[desk rein]  [%base [%eth-watcher %&] ~ ~]
         :_  cards
         [%pass /rein %agent [our.bowl %hood] %poke kiln-rein+!>(rein)]
       =.  cards

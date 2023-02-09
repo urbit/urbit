@@ -12,9 +12,11 @@ on:
       - 'pkg/libaes_siv/**'
       - 'pkg/urbit/**'
       - 'pkg/urcrypt/**'
+      - 'tests/**'
       - 'bin/**'
       - 'nix/**'
       - 'default.nix'
+      - 'vere-version'
   pull_request:
     paths:
       - '.github/workflows/build.yml'
@@ -26,15 +28,17 @@ on:
       - 'pkg/libaes_siv/**'
       - 'pkg/urbit/**'
       - 'pkg/urcrypt/**'
+      - 'tests/**'
       - 'bin/**'
       - 'nix/**'
       - 'default.nix'
+      - 'vere-version'
 
 jobs:
   call-vere:
     uses: ./.github/workflows/vere.yml
     with:
-      pace: 'often'
+      pace: 'edge' # XX s/b once?
       upload: >-
         ${{
         (github.ref_name == 'next/vere' && github.ref_type == 'branch')
