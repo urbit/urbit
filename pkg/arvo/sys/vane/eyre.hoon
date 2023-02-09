@@ -839,8 +839,7 @@
       [~ state]
     ::
     =.   connections.state
-      %.  (~(del by connections.state) duct)
-      (trace 2 |.("{<duct>} connection cancelled"))
+      (~(del by connections.state) duct)
     ::
     ?-    -.action.u.connection
         %gen  [~ state]
@@ -1017,6 +1016,7 @@
         =^  moz  state
           (handle-response response)
         [(weld moves moz) state]
+      %-  (trace 1 |.("{<i.channels>} discarding channel due to logout"))
       =^  moz  state
         (discard-channel:by-channel i.channels |)
       $(moves (weld moves moz), channels t.channels)
@@ -1138,14 +1138,15 @@
       ^-  [(list move) server-state]
       ::  lookup the session id by duct
       ::
-      ?~  maybe-channel-id=(~(get by duct-to-key.channel-state.state) duct)
-        ((trace 0 |.("{<duct>} no channel to cancel")) `state)
+      %-  (trace 1 |.("{<duct>} cancelling subscription to channel"))
       ::
-      %-  (trace 1 |.("{<duct>} cancelling"))
+      ?~  maybe-channel-id=(~(get by duct-to-key.channel-state.state) duct)
+        ((trace 1 |.("{<duct>} no channel to cancel")) `state)
       ::
       =/  maybe-session
         (~(get by session.channel-state.state) u.maybe-channel-id)
-      ?~  maybe-session  [~ state]
+      ?~  maybe-session
+        ((trace 1 |.("{<maybe-session>} session doesn't exist")) `state)
       ::
       =/  heartbeat-cancel=(list move)
         ?~  heartbeat.u.maybe-session  ~
@@ -1495,6 +1496,7 @@
         $(requests t.requests)
       ::
           %delete
+        %-  (trace 1 |.("{<channel-id>} discarding due to %delete PUT"))
         =^  moves  state
           (discard-channel channel-id |)
         =.  gall-moves
@@ -1814,6 +1816,7 @@
         [~ state]
       =/  session=channel  u.usession
       ::
+      %-  (trace 1 |.("{<channel-id>} discarding channel"))
       :_  %_    state
               session.channel-state
             (~(del by session.channel-state.state) channel-id)
@@ -1841,7 +1844,7 @@
       %+  turn  ~(tap by subscriptions.session)
       |=  [request-id=@ud ship=@p app=term =path duc=^duct]
       ^-  move
-      %-  (trace 2 |.("leaving subscription to {<app>}"))
+      %-  (trace 2 |.("{<channel-id>} leaving subscription to {<app>}"))
       :^  duc  %pass
         (subscription-wire channel-id request-id ship app)
       [%g %deal [our ship] app %leave ~]
@@ -2245,9 +2248,6 @@
     ?:  =(~ inactive)
       [~ http-server-gate]
     ::
-    =/  len=tape  (scow %ud (lent inactive))
-    ~>  %slog.[0 leaf+"eyre: trim: closing {len} inactive channels"]
-    ::
     =|  moves=(list (list move))
     |-  ^-  [(list move) _http-server-gate]
     =*  channel-id  i.inactive
@@ -2525,10 +2525,10 @@
       ?>  ?=([%behn %wake *] sign)
       ?^  error.sign
         [[duct %slip %d %flog %crud %wake u.error.sign]~ http-server-gate]
-      =/  discard-channel
-        discard-channel:by-channel:(per-server-event event-args)
+      ~>  %slog.[0 leaf+"eyre: {<i.t.wire>} cancelling channel due to timeout"]
       =^  moves  server-state.ax
-        (discard-channel i.t.t.wire &)
+        %.  [i.t.t.wire &]
+        discard-channel:by-channel:(per-server-event event-args)
       [moves http-server-gate]
     ::
         %heartbeat
