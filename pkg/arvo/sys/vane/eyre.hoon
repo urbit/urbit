@@ -1016,7 +1016,7 @@
         =^  moz  state
           (handle-response response)
         [(weld moves moz) state]
-      %-  (trace 1 |.("{<i.channels>} discarding channel due to logout"))
+      %-  (trace 1 |.("{(trip i.channels)} discarding channel due to logout"))
       =^  moz  state
         (discard-channel:by-channel i.channels |)
       $(moves (weld moves moz), channels t.channels)
@@ -1816,7 +1816,6 @@
         [~ state]
       =/  session=channel  u.usession
       ::
-      %-  (trace 1 |.("{<channel-id>} discarding channel"))
       :_  %_    state
               session.channel-state
             (~(del by session.channel-state.state) channel-id)
@@ -2248,6 +2247,9 @@
     ?:  =(~ inactive)
       [~ http-server-gate]
     ::
+    =/  len=tape  (scow %ud (lent inactive))
+    ~>  %slog.[0 leaf+"eyre: trim: closing {len} inactive channels"]
+    ::
     =|  moves=(list (list move))
     |-  ^-  [(list move) _http-server-gate]
     =*  channel-id  i.inactive
@@ -2525,10 +2527,10 @@
       ?>  ?=([%behn %wake *] sign)
       ?^  error.sign
         [[duct %slip %d %flog %crud %wake u.error.sign]~ http-server-gate]
-      ~>  %slog.[0 leaf+"eyre: {<i.t.wire>} cancelling channel due to timeout"]
+      =*  id  i.t.t.wire 
+      ~>  %slog.[0 leaf+"eyre: {(trip id)} cancelling channel due to timeout"]
       =^  moves  server-state.ax
-        %.  [i.t.t.wire &]
-        discard-channel:by-channel:(per-server-event event-args)
+        (discard-channel:by-channel:(per-server-event event-args) id &)
       [moves http-server-gate]
     ::
         %heartbeat
