@@ -1,4 +1,3 @@
-/+  pill
 =*  card  card:agent:gall
 |%
 +$  state  state-2
@@ -202,6 +201,10 @@
   |=  ships=(list ship)
   abet:(emit %pass /helm/prod %arvo %a %prod ships)
 ::
+++  poke-ames-snub
+  |=  ships=(list ship)
+  abet:(emit %pass /helm/snub %arvo %a %snub ships)
+::
 ++  poke-atom
   |=  ato=@
   =+  len=(scow %ud (met 3 ato))
@@ -242,6 +245,10 @@
   |=  ~  =<  abet
   (emit %pass /helm %arvo %a %stir '')
 ::
+++  poke-kroc
+  |=  dry=?  =<  abet
+  (emit [%pass /helm/kroc %arvo %a %kroc dry])
+::
 ++  poke-knob
   |=  [error-tag=@tas level=?(%hush %soft %loud)]  =<  abet
   (emit %pass /helm %arvo %d %knob error-tag level)
@@ -273,9 +280,11 @@
       ==
   ?+  mark  ~|([%poke-helm-bad-mark mark] !!)
     %helm-ames-prod        =;(f (f !<(_+<.f vase)) poke-ames-prod)
+    %helm-ames-snub        =;(f (f !<(_+<.f vase)) poke-ames-snub)
     %helm-ames-sift        =;(f (f !<(_+<.f vase)) poke-ames-sift)
     %helm-ames-verb        =;(f (f !<(_+<.f vase)) poke-ames-verb)
     %helm-ames-wake        =;(f (f !<(_+<.f vase)) poke-ames-wake)
+    %helm-kroc             =;(f (f !<(_+<.f vase)) poke-kroc)
     %helm-atom             =;(f (f !<(_+<.f vase)) poke-atom)
     %helm-automass         =;(f (f !<(_+<.f vase)) poke-automass)
     %helm-cancel-automass  =;(f (f !<(_+<.f vase)) poke-cancel-automass)

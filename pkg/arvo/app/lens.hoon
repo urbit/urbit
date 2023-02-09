@@ -83,7 +83,8 @@
   ::
   ?+  -.source.com
     :_  this(job.state (some [eyre-id com]))
-    [%pass /sole %agent [our.bowl %dojo] %watch /sole/[eyre-id]]~
+    =/  =path  /sole/(scot %p our.bowl)/[eyre-id]
+    [%pass /sole %agent [our.bowl %dojo] %watch path]~
   ::
       %export
     :_  this(job.state (some [eyre-id com]))

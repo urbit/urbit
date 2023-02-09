@@ -105,11 +105,8 @@
           $>(%wake gift:behn)                           ::
       ==                                                ::
       $:  %gall                                         ::
-          $>  $?  %onto                                 ::
-                  %unto                                 ::
-              ==                                        ::
-          gift:gall                                ::
-      ==
+          $>(%unto gift:gall)                           ::
+      ==                                                ::
   ==                                                    ::
 --  ::
 ::                                                      ::::
@@ -507,7 +504,7 @@
         %ruin
       ::NOTE  we blast this out to _all_ known ducts, because the common
       ::      use case for this is comets, about who nobody cares.
-      =/  dus  ~(key by yen.zim.pki)
+      =/  dus  (~(uni in nel.zim.pki) ~(key by yen.zim.pki))
       =/  sus  ~(. su hen now pki etn)
       =/  sis  ~(tap in ships.tac)
       |-
@@ -550,10 +547,6 @@
       =/  ships  (~(get ju ship-sources-reverse.etn) source-id)
       %-  curd  =<  abet
       (sources:~(feel su hen now pki etn) ships source)
-    ::
-        [%gall %onto *]
-      ~&  [%jael-onto tea hin]
-      +>.$
     ::
         [%gall %unto *]
       ?-    +>-.hin

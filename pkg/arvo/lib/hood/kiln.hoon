@@ -504,7 +504,7 @@
       [%x %kiln %pikes ~]
     =+  .^(=rock:tire %cx /(scot %p our)//(scot %da now)/tire)
     :^  ~  ~  %kiln-pikes
-    !>  ^-  pikes   
+    !>  ^-  pikes
     %-  ~(rut by rock)
     |=  [=desk =zest wic=(set weft)]
     ^-  pike
@@ -764,11 +764,19 @@
 ::
 ++  poke-rm
   |=  a=path
+  =|  c=(list (unit toro))
+  %+  poke-info  "removed: {<a>}"
+  =-  %+  roll  -
+      |=  [a=(unit toro) b=(unit toro)]
+      (clap a b furl)
+  |-  ^-  (list (unit toro))
   =+  b=.^(arch %cy a)
-  ?~  fil.b
-    =+  ~[leaf+"No such file:" leaf+"{<a>}"]
-    abet:(spam -)
-  (poke-info "removed" `(fray a))
+  ?:  ?=([^ ~] b)  (snoc c `(fray a))  
+  =?  c  ?=(^ fil.b)  (snoc c `(fray a))
+  %-  zing
+  %+  turn  ~(tap by dir.b)
+  |=  [kid=@ta ~]
+  ^$(a (weld a /[kid]))
 ::
 ++  poke-schedule
   |=  [where=path tym=@da eve=@t]
@@ -1147,11 +1155,18 @@
       ::
       ~>  %slog.(fmt "finished downloading update for {here}")
       =.  let  +(let)
-      ::  If nothing changed, just advance
+      ::  If nothing changed, just ensure %kids is up-to-date and advance
       ::
       ?.  (get-remote-diff our syd now [her sud (dec let)])
-        ~>  %slog.(fmt "remote is identical to {here}, skipping")
-        next
+        =<  next
+        ?~  kid
+          ~>  %slog.(fmt "remote is identical to {here}, skipping")
+          ..abet
+        ?.  (get-remote-diff our u.kid now [her sud (dec let)])
+          ~>  %slog.(fmt "remote is identical to {here}, skipping")
+          ..abet
+        ~>  %slog.(fmt "remote is identical to {here}, merging into {<u.kid>}")
+        (merg /kids u.kid)
       ::  Else start merging, but also immediately start listening to
       ::  the next revision.  Now, all errors should no-op -- we're
       ::  already waiting for the next revision.
@@ -1178,7 +1193,7 @@
       ::
       ?~  kid
         ..abet
-      ~>  %slog.(fmt "kids merge into {<kid>}")
+      ~>  %slog.(fmt "kids merge into {<u.kid>}")
       (merg /kids u.kid)
     ::
         %kids
