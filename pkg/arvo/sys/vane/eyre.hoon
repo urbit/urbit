@@ -1141,7 +1141,7 @@
       ?~  maybe-channel-id=(~(get by duct-to-key.channel-state.state) duct)
         ((trace 0 |.("{<duct>} no channel to cancel")) `state)
       ::
-      %-  (trace 0 |.("{<duct>} cancelling"))
+      %-  (trace 1 |.("{<duct>} cancelling"))
       ::
       =/  maybe-session
         (~(get by session.channel-state.state) u.maybe-channel-id)
@@ -1893,7 +1893,7 @@
         ::
             %start
           ?^  response-header.u.connection-state
-            ((trace 1 |.("{<duct>} http-multiple-start")) error-connection)
+            ((trace 1 |.("{<duct>} error multiple start")) error-connection)
           ::  if request was authenticated, extend the session & cookie's life
           ::
           =^  response-header  sessions.authentication-state.state
@@ -1954,7 +1954,7 @@
             %continue
           ?~  response-header.u.connection-state
             %.  error-connection
-            (trace 1 |.("{<duct>} http-continue-without-start"))
+            (trace 1 |.("{<duct>} error continue without start"))
           ::
           =.  connections.state
             %-  (trace 2 |.("{<duct>} continuing "))
@@ -1971,7 +1971,7 @@
             %cancel
           ::  todo: log this differently from an ise.
           ::
-          error-connection
+          ((trace 1 |.("cancel http event")) error-connection)
         ==
     ::
     ++  pass-response
@@ -1994,8 +1994,7 @@
       ::  remove all outstanding state for this connection
       ::
       =.  connections.state
-        %.  (~(del by connections.state) duct)
-        (trace 2 |.("{<duct>} connection cancelled due to an error"))
+        (~(del by connections.state) duct)
       ::  respond to outside with %error
       ::
       ^-  [(list move) server-state]
