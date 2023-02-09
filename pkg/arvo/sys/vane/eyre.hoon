@@ -1139,7 +1139,7 @@
       %-  (trace 1 |.("{<duct>} cancelling subscription to channel"))
       ::
       ?~  maybe-channel-id=(~(get by duct-to-key.channel-state.state) duct)
-        ((trace 1 |.("{<duct>} no channel to cancel")) `state)
+        ((trace 0 |.("{<duct>} no channel to cancel")) `state)
       ::
       =/  maybe-session
         (~(get by session.channel-state.state) u.maybe-channel-id)
@@ -1470,7 +1470,7 @@
           ::
           %.  $(requests t.requests)
           =*  msg=tape  "{(trip channel-id)} {<subscription-id>}"
-          (trace 1 |.("missing-subscription-in-unsubscribe {msg}"))
+          (trace 0 |.("missing subscription in unsubscribe {msg}"))
         ::
         =.  gall-moves
           :_  gall-moves
@@ -1613,11 +1613,12 @@
       ::  if we're clogged, or we ran into an event we can't serialize,
       ::  kill this gall subscription.
       ::
+      =*  msg=tape  "on {(trip channel-id)} for {(trip request-id)}"
       =/  kicking=?
         ?:  clogged
-          ((trace 0 |.("clogged {<channel-id>} {<request-id>}")) &)
+          ((trace 0 |.("clogged {msg}")) &)
         ?:  ?=(~ json)
-        ((trace 0 |.("can't serialize event, kicking")) &)  |
+        ((trace 0 |.("can't serialize event, kicking {msg}")) &)  |
       =?  moves      kicking
         :_  moves
         ::NOTE  this shouldn't crash because we
@@ -1892,7 +1893,7 @@
         ::
             %start
           ?^  response-header.u.connection-state
-            ((trace 1 |.("{<duct>} error multiple start")) error-connection)
+            ((trace 0 |.("{<duct>} error multiple start")) error-connection)
           ::  if request was authenticated, extend the session & cookie's life
           ::
           =^  response-header  sessions.authentication-state.state
@@ -1906,7 +1907,7 @@
             ?~  session-id=(session-id-from-request request.inbound)
               ::  cookies are the only auth method, so this is unexpected
               ::
-              ((trace 1 |.("error authenticated without cookie")) no-op)
+              ((trace 0 |.("error authenticated without cookie")) no-op)
             ?.  (~(has by sessions) u.session-id)
               ::  if the session has expired since the request was opened,
               ::  tough luck, we don't create/revive sessions here
@@ -1953,7 +1954,7 @@
             %continue
           ?~  response-header.u.connection-state
             %.  error-connection
-            (trace 1 |.("{<duct>} error continue without start"))
+            (trace 0 |.("{<duct>} error continue without start"))
           ::
           =.  connections.state
             %-  (trace 2 |.("{<duct>} continuing "))
