@@ -1183,6 +1183,7 @@
       %vega  on-vega:event-core
       %plea  (on-plea:event-core [ship plea]:task)
       %cork  (on-cork:event-core ship.task)
+      %kroc  (on-kroc:event-core dry.task)
     ==
   ::
   [moves ames-gate]
@@ -1448,6 +1449,7 @@
   ~%  %event-gate  ..per-event  ~
   |=  [[now=@da eny=@ rof=roof] =duct =ames-state]
   =*  veb  veb.bug.ames-state
+  =|  cork-bone=(unit bone)  ::  modified by +on-kroc
   ~%  %event-core  ..$  ~
   |%
   ++  event-core  .
@@ -1899,7 +1901,15 @@
     =/  =peer-state  +.u.ship-state
     =/  =channel     [[our ship] now channel-state -.peer-state]
     ::
-    =^  =bone  ossuary.peer-state  (bind-duct ossuary.peer-state duct)
+    =/  [=bone ossuary=_ossuary.peer-state]
+      ?^  cork-bone  [u.cork-bone ossuary.peer-state]
+      (bind-duct ossuary.peer-state duct)
+    =.  ossuary.peer-state  ossuary
+    ::
+    ?.  (~(has by by-bone.ossuary.peer-state) bone)
+      %.  event-core
+      %^  trace  odd.veb  ship
+      |.("trying to cork {<bone=bone>}, not in the ossuary, ignoring")
     ::
     =.  closing.peer-state  (~(put in closing.peer-state) bone)
     %-  %^  trace  msg.veb  ship
@@ -1908,6 +1918,68 @@
         =/  rcvr  [ship her-life.channel]
         "cork plea {<sndr rcvr bone=bone vane.plea path.plea>}"
     abet:(on-memo:(make-peer-core peer-state channel) bone plea %plea)
+  ::  +on-kroc: cork all flows from failed subscriptions
+  ::
+  ++  on-kroc
+    |=  dry=?
+    ^+  event-core
+    ::
+    =;  [corks=@ core=_event-core]
+      ?.  dry  core
+      %.(core (slog leaf/"ames: #{<corks>} flows can be corked" ~))
+    ::
+    %+  roll  ~(tap by peers.ames-state)
+    |=  [[=ship =ship-state] corks=@ core=_event-core]
+    ?.  ?=(%known -.ship-state)
+      corks^core
+    =/  =peer-state:ames  ?>(?=(%known -.ship-state) +.ship-state)
+    =/  subs=(jar path [bone sub-nonce=@])
+      %+  roll  ~(tap by snd.peer-state)
+      |=  [[=forward=bone *] subs=(jar path [bone sub-nonce=@])]
+      ?:  (~(has in closing.peer-state) forward-bone)
+        subs
+      ?~  duct=(~(get by by-bone.ossuary.peer-state) forward-bone)
+        subs
+      ?.  ?=([* [%gall %use sub=@ @ %out @ @ nonce=@ pub=@ *] *] u.duct)
+        subs
+      =/  =wire           i.t.u.duct
+      =/  nonce=(unit @)  (rush (snag 7 wire) dem)
+      %-  ~(add ja subs)
+      ::  0 for old pre-nonce subscriptions
+      ::
+      :_  [forward-bone ?~(nonce 0 u.nonce)]
+      ?~  nonce  wire
+      ::  don't include the sub-nonce in the key
+      ::
+      (weld (scag 7 wire) (slag 8 wire))
+    %+  roll  ~(tap by subs)
+    |=  [[=wire flows=(list [bone sub-nonce=@])] corks=_corks core=_core]
+    ::
+    %-  tail
+    %+  roll  (sort flows |=([[@ n=@] [@ m=@]] (lte n m)))
+    |=  [[=bone nonce=@] resubs=_(lent flows) corks=_corks core=_core]
+    =/  app=term  ?>(?=([%gall %use sub=@ *] wire) i.t.t.wire)
+    =/  =path     (slag 7 wire)
+    =/  log=tape  "[bone={<bone>} agent={<app>} nonce={<nonce>}] {<path>}"
+    =;  corkable=?
+      =?  corks  corkable  +(corks)
+      =?  core   &(corkable !dry)  (%*(on-cork core cork-bone `bone) ship)
+      (dec resubs)^corks^core
+    ::  checks if this is a stale re-subscription
+    ::
+    ?.  =(resubs 1)
+      %.  &
+      (trace &(dry odd.veb) ship |.((weld "stale %watch plea " log)))
+    ::  the current subscription can be safely corked if there
+    ::  is a flow with a naxplanation ack  on a backward bone
+    ::
+    =+  backward-bone=(mix 0b10 bone)
+    ?.  =(2 (mod backward-bone 4))
+      |
+    ?~  (~(get by rcv.peer-state) backward-bone)
+      |
+    %.  &
+    (trace &(dry odd.veb) ship |.((weld "failed %watch plea " log)))
   ::  +on-take-wake: receive wakeup or error notification from behn
   ::
   ++  on-take-wake
