@@ -709,7 +709,7 @@
       [%hint *]  ?+    q.p.a  $(a q.a)
                      [%know *]
                    ?@  p.q.p.a  [(cat 3 '#' mark.p.q.p.a)]~
-                   [(rap 3 '#' auth.p.q.p.a (spat type.p.q.p.a) ~)]~
+                   [(rap 3 '#' auth.p.q.p.a '+' (spat type.p.q.p.a) ~)]~
                  ::
                      [%help *]
                    [summary.crib.p.q.p.a]~

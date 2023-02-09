@@ -352,6 +352,7 @@
   ::    %heed: track peer's responsiveness; gives %clog if slow
   ::    %jilt: stop tracking peer's responsiveness
   ::    %cork: request to delete message flow
+  ::    %kroc: request to delete stale message flows
   ::    %plea: request to send message
   ::
   ::    System and Lifecycle Tasks
@@ -370,6 +371,7 @@
         [%heed =ship]
         [%jilt =ship]
         [%cork =ship]
+        [%kroc dry=?]
         $>(%plea vane-task)
     ::
         $>(%born vane-task)
@@ -436,7 +438,7 @@
   +$  address  @uxaddress
   ::  $verb: verbosity flag for ames
   ::
-  +$  verb  ?(%snd %rcv %odd %msg %ges %for %rot)
+  +$  verb  ?(%snd %rcv %odd %msg %ges %for %rot %kay)
   ::  $blob: raw atom to or from unix, representing a packet
   ::
   +$  blob  @uxblob
@@ -786,6 +788,7 @@
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
         [%perm des=desk pax=path rit=rite]              ::  change permissions
         [%pork ~]                                       ::  resume commit
+        [%prep lat=(map lobe page)]                     ::  prime clay store
         [%rein des=desk ren=rein]                       ::  extra apps
         [%stir arg=*]                                   ::  debug
         [%tire p=(unit ~)]                              ::  app state subscribe
@@ -885,6 +888,17 @@
   +$  norm  (axal ?)                                    ::  tombstone policy
   +$  open  $-(path vase)                               ::  get prelude
   +$  page  ^page                                       ::  export for compat
+  +$  pour                                              ::  ford build w/content
+    $%  [%file =path]
+        [%nave =mark]
+        [%dais =mark]
+        [%cast =mars]
+        [%tube =mars]
+        ::  leafs
+        ::
+        [%vale =path =lobe]
+        [%arch =path =(map path lobe)]
+    ==
   +$  rang                                              ::  repository
     $:  hut=(map tako yaki)                             ::  changes
         lat=(map lobe page)                             ::  data
@@ -919,6 +933,13 @@
   +$  rule  [mod=?(%black %white) who=(set whom)]       ::  node permission
   +$  rump  [p=care q=case r=@tas s=path]               ::  relative path
   +$  saba  [p=ship q=@tas r=moar s=dome]               ::  patch+merge
+  +$  soak                                              ::  ford result
+    $%  [%cage =cage]
+        [%vase =vase]
+        [%arch dir=(map @ta vase)]
+        [%dais =dais]
+        [%tube =tube]
+    ==
   +$  soba  (list [p=path q=miso])                      ::  delta
   +$  suba  (list [p=path q=misu])                      ::  delta
   +$  tako  @uvI                                        ::  yaki ref
@@ -1058,6 +1079,31 @@
         %^  cat  7  (sham [%yaki (roll p add) q t])
         (sham [%tako (roll p add) q t])
     [p q has t]
+  ::
+  ::  $leak: ford cache key
+  ::
+  ::    This includes all build inputs, including transitive dependencies,
+  ::    recursively.
+  ::
+  +$  leak
+    $~  [*pour ~]
+    $:  =pour
+        deps=(set leak)
+    ==
+  ::
+  ::  $flow: global ford cache
+  ::
+  ::    Refcount includes references from other items in the cache, and
+  ::    from spills in each desk
+  ::
+  ::    This is optimized for minimizing the number of rebuilds, and given
+  ::    that, minimizing the amount of memory used.  It is relatively slow
+  ::    to lookup, because generating a cache key can be fairly slow (for
+  ::    files, it requires parsing; for tubes, it even requires building
+  ::    the marks).
+  ::
+  +$  flow  (map leak [refs=@ud =soak])
+  ::
   ::  $pile: preprocessed hoon source file
   ::
   ::    /-  sur-file            ::  surface imports from /sur
@@ -1177,6 +1223,7 @@
         $>(%init vane-task)                             ::  after gall ready
         [%meld ~]                                       ::  unify memory
         [%pack ~]                                       ::  compact memory
+        [%seat =desk]                                   ::  install desk
         [%shot ses=@tas task=session-task]              ::  task for session
         [%talk p=(list tank)]                           ::  print tanks
         [%text p=tape]                                  ::  print tape
@@ -2530,6 +2577,9 @@
       ::    TODO: make $yuki an option for %into?
       ::
       $>(%park task:clay)
+      ::  %clay: load blob store
+      ::
+      $>(%prep task:clay)
       ::  %eyre: learn ports of live http servers
       ::
       $>(%live task:eyre)

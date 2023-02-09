@@ -24,6 +24,14 @@
 ++  test-hint-xray
   ~>  %xray.[1 leaf+"test-hint-xray ~"]
   ~
+::  test that these memory-report hints
+::  are safe to run or ignore
+++  test-hilt-meme
+  ~>  %meme
+  ~
+++  test-hint-meme
+  ~>  %meme.[1 leaf+"test-hint-meme ~"]
+  ~
 ::  test that the hilt bout hint
 ::  is safe to run or ignore
 ++  test-hilt-bout
