@@ -612,8 +612,8 @@
     ::
     =/  connection=outstanding-connection
       [action [authenticated secure address request] ~ 0]
-    :: XX pretty sure this is superfluous - done in +handle-response
     =.  connections.state
+      :: XX pretty sure this is superfluous - done in +handle-response
       (~(put by connections.state) duct connection)
     ::  redirect to https if insecure, redirects enabled
     ::  and secure port live
@@ -837,8 +837,7 @@
       ::
       [~ state]
     ::
-    =.   connections.state
-      (~(del by connections.state) duct)
+    =.   connections.state  (~(del by connections.state) duct)
     ::
     ?-    -.action.u.connection
         %gen  [~ state]
@@ -1127,7 +1126,7 @@
         ::  POST methods are used solely for deleting channels
         (on-put-request channel-id request)
       ::
-      ((trace 1 |.("session-not-a-put")) `state)
+      ((trace 0 |.("session not a put")) `state)
     ::  +on-cancel-request: cancels an ongoing subscription
     ::
     ::    One of our long lived sessions just got closed. We put the associated
@@ -1470,7 +1469,7 @@
           ::  which isn't active.
           ::
           %.  $(requests t.requests)
-          =*  msg=tape  "{<channel-id>} {<subscription-id>}"
+          =*  msg=tape  "{(trip channel-id)} {<subscription-id>}"
           (trace 1 |.("missing-subscription-in-unsubscribe {msg}"))
         ::
         =.  gall-moves
@@ -1680,7 +1679,7 @@
       =/  des=(unit (unit cage))
         (rof ~ %gd [our app.u.sub da+now] ~)
       ?.  ?=([~ ~ *] des)
-        ((trace 0 |.("no desk for app {(trip app.u.sub)}")) ~)
+        ((trace 0 |.("no desk for app {<app.u.sub>}")) ~)
       `!<(=desk q.u.u.des)
     ::  +channel-event-to-sign: attempt to recover a sign from a channel-event
     ::
@@ -1908,7 +1907,7 @@
             ?~  session-id=(session-id-from-request request.inbound)
               ::  cookies are the only auth method, so this is unexpected
               ::
-              ((trace 1 |.("authenticated-without-cookie")) no-op)
+              ((trace 1 |.("error authenticated without cookie")) no-op)
             ?.  (~(has by sessions) u.session-id)
               ::  if the session has expired since the request was opened,
               ::  tough luck, we don't create/revive sessions here
