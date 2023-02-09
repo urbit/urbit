@@ -584,7 +584,7 @@
     ::
     =.  connections.state
       %.  (~(put by connections.state) duct connection)
-      (trace 2 |.("creating local connection {<duct>}}"))
+      (trace 2 |.("{<duct>} creating local"))
     ::
     :_  state
     (subscribe-to-app app.act inbound-request.connection)
@@ -612,9 +612,9 @@
     ::
     =/  connection=outstanding-connection
       [action [authenticated secure address request] ~ 0]
+    :: XX pretty sure this is superfluous - done in +handle-response
     =.  connections.state
-      %.  (~(put by connections.state) duct connection)
-      (trace 2 |.("creating connection {<duct>}"))
+      (~(put by connections.state) duct connection)
     ::  redirect to https if insecure, redirects enabled
     ::  and secure port live
     ::
@@ -815,7 +815,7 @@
   ::
   ++  subscribe-to-app
     |=  [app=term =inbound-request:eyre]
-    %-  (trace 2 |.("subscribing to {<app>} on {</http-response/[eyre-id]>}"))
+    %-  (trace 2 |.("awaiting http response from {<app>} id {<eyre-id>}"))
     ^-  (list move)
     :~  :*  duct  %pass  /watch-response/[eyre-id]
             %g  %deal  [our our]  app
@@ -840,7 +840,7 @@
     ::
     =.   connections.state
       %.  (~(del by connections.state) duct)
-      (trace 2 |.("connection cancelled {<duct>}"))
+      (trace 2 |.("{<duct>} connection cancelled"))
     ::
     ?-    -.action.u.connection
         %gen  [~ state]
@@ -1139,9 +1139,9 @@
       ::  lookup the session id by duct
       ::
       ?~  maybe-channel-id=(~(get by duct-to-key.channel-state.state) duct)
-        ((trace 0 |.("no channel to cancel {<duct>}")) `state)
+        ((trace 0 |.("{<duct>} no channel to cancel")) `state)
       ::
-      %-  (trace 0 |.("canceling {<duct>}"))
+      %-  (trace 0 |.("{<duct>} cancelling"))
       ::
       =/  maybe-session
         (~(get by session.channel-state.state) u.maybe-channel-id)
@@ -1442,7 +1442,7 @@
           ^-  move
           :^  duct  %pass
             (subscription-wire channel-id request-id ship app)
-          %-  (trace 2 |.("subscribing to {<app>} on {<path>}"))
+          %-  (trace 1 |.("subscribing to {<app>} on {<path>}"))
           :*  %g  %deal  [our ship]  app
               `task:agent:gall`[%watch path]
           ==
@@ -1469,8 +1469,8 @@
           ::  the client sent us a weird request referring to a subscription
           ::  which isn't active.
           ::
-          =*  msg=tape  "{<channel-id>} {<subscription-id>}"
           %.  $(requests t.requests)
+          =*  msg=tape  "{<channel-id>} {<subscription-id>}"
           (trace 1 |.("missing-subscription-in-unsubscribe {msg}"))
         ::
         =.  gall-moves
@@ -1521,9 +1521,8 @@
         (emit-event channel-id request-id sign)
       =/  =ship     (slav %p i.extra)
       =*  app=term  i.t.extra
-      =*  msg=tape
-        "removing watch for non-existent channel {<channel-id>} {<app>}"
-      %-  (trace 0 |.(msg))
+      =*  msg=tape  "{<channel-id>} {<app>}"
+      %-  (trace 0 |.("removing watch for non-existent channel {msg}"))
       :_  state
       :_  ~
       ^-  move
@@ -1720,12 +1719,12 @@
         ?~  des  [~ ~]
         ::
         =*  have=mark  p.cage.sign
-        =*  desc=tape  "from {(trip have)} to json"
         =/  convert=(unit vase)
           =/  cag=(unit (unit cage))
             (rof ~ %cf [our u.des da+now] /[have]/json)
           ?.  ?=([~ ~ *] cag)  ~
           `q.u.u.cag
+        =*  desc=tape  "from {(trip have)} to json"
         ?~  convert
           ((trace 0 |.("no convert {desc}")) [~ ~])
         ~|  "conversion failed {desc}"
@@ -1886,7 +1885,7 @@
     ::  verify that this is a valid response on the duct
     ::
     ?~  connection-state=(~(get by connections.state) duct)
-      ((trace 1 |.("invalid-outstanding-connection {<duct>}")) `state)
+      ((trace 1 |.("{<duct>} invalid-outstanding-connection")) `state)
     ::
     |^  ^-  [(list move) server-state]
         ::
@@ -1894,7 +1893,7 @@
         ::
             %start
           ?^  response-header.u.connection-state
-            ((trace 1 |.("http-multiple-start {<duct>}")) error-connection)
+            ((trace 1 |.("{<duct>} http-multiple-start")) error-connection)
           ::  if request was authenticated, extend the session & cookie's life
           ::
           =^  response-header  sessions.authentication-state.state
@@ -1940,7 +1939,7 @@
           ::
           =.  response-header.http-event  response-header
           =.  connections.state
-            %-  (trace 2 |.("creating connection {<duct>}"))
+            %-  (trace 2 |.("{<duct>} start"))
             %+  ~(put by connections.state)  duct
             %_  connection
               response-header  `response-header
@@ -1955,10 +1954,10 @@
             %continue
           ?~  response-header.u.connection-state
             %.  error-connection
-            (trace 1 |.("http-continue-without-start {<duct>}"))
+            (trace 1 |.("{<duct>} http-continue-without-start"))
           ::
           =.  connections.state
-            %-  (trace 2 |.("continuing connection {<duct>}}"))
+            %-  (trace 2 |.("{<duct>} continuing "))
             %+  ~(jab by connections.state)  duct
             |=  connection=outstanding-connection
             =+  size=?~(data.http-event 0 p.u.data.http-event)
@@ -1986,7 +1985,7 @@
       ::
       =.  connections.state
         %.  (~(del by connections.state) duct)
-        (trace 2 |.("connection completed {<duct>}")) 
+        (trace 2 |.("{<duct>} completed")) 
       state
     ::
     ++  error-connection
@@ -1996,7 +1995,7 @@
       ::
       =.  connections.state
         %.  (~(del by connections.state) duct)
-        (trace 2 |.("connection cancelled due to an error {<duct>}"))
+        (trace 2 |.("{<duct>} connection cancelled due to an error"))
       ::  respond to outside with %error
       ::
       ^-  [(list move) server-state]
