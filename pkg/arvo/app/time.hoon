@@ -25,7 +25,7 @@
 ++  on-peek   on-peek:def
 ++  on-agent  on-agent:def
 ++  on-arvo
-  |=  [=wire sign=sign-arvo]
+  |=  [=wire sign=sign-user:agent:gall]
   ^-  (quip card _this)
   ?+    wire  !!
       [@ ~]

@@ -587,20 +587,20 @@
     ==
   ::
   ++  on-arvo
-    |=  [=wire =sign-arvo]
+    |=  [=wire =sign-user:agent:gall]
     ^-  (quip card _this)
-    ?+    wire  (on-arvo:def wire sign-arvo)
+    ?+    wire  (on-arvo:def wire sign-user)
         [%timer ~]
-      ?+  +<.sign-arvo  (on-arvo:def wire sign-arvo)
+      ?+  +<.sign-user  (on-arvo:def wire sign-user)
         %wake  =^(cards state (on-timer:do &) [cards this])
       ==
         [%quota-timer ~]
-      ?+  +<.sign-arvo  (on-arvo:def wire sign-arvo)
+      ?+  +<.sign-user  (on-arvo:def wire sign-user)
         %wake  =^(cards state on-quota-timer:do [cards this])
       ==
     ::
         [%predict ~]
-      ?+    +<.sign-arvo  (on-arvo:def wire sign-arvo)
+      ?+    +<.sign-user  (on-arvo:def wire sign-user)
           %wake
         =^  effects  state
           (predicted-state canonical):do
@@ -610,7 +610,7 @@
         [%resend @ @ ~]
       =/  [address=@ux nonce=@ud]
         [(slav %ux i.t.wire) (slav %ud i.t.t.wire)]
-      ?+    +<.sign-arvo  (on-arvo:def wire sign-arvo)
+      ?+    +<.sign-user  (on-arvo:def wire sign-user)
           %wake
         =/  cards=(list card)  (send-roll:do address nonce)
         =?  sending

@@ -158,14 +158,14 @@
   (emit %pass /pack %arvo %d %flog %pack ~)
 ::
 ++  poke-pans
-  |=  pans=(list note-arvo)
+  |=  pans=(list user-note:agent:gall)
   ?~  pans  abet
   =.  this  (emit %pass /helm/pans %arvo i.pans)
   $(pans t.pans)
 ::
 ++  poke-pass
-  |=  =note-arvo  =<  abet
-  (emit %pass /helm/pass %arvo note-arvo)
+  |=  =user-note:agent:gall  =<  abet
+  (emit %pass /helm/pass %arvo user-note)
 ::
 ++  take-wake-automass
   |=  [way=wire error=(unit tang)]
@@ -245,10 +245,6 @@
   |=  ~  =<  abet
   (emit %pass /helm %arvo %a %stir '')
 ::
-++  poke-kroc
-  |=  dry=?  =<  abet
-  (emit [%pass /helm/kroc %arvo %a %kroc dry])
-::
 ++  poke-knob
   |=  [error-tag=@tas level=?(%hush %soft %loud)]  =<  abet
   (emit %pass /helm %arvo %d %knob error-tag level)
@@ -284,7 +280,6 @@
     %helm-ames-sift        =;(f (f !<(_+<.f vase)) poke-ames-sift)
     %helm-ames-verb        =;(f (f !<(_+<.f vase)) poke-ames-verb)
     %helm-ames-wake        =;(f (f !<(_+<.f vase)) poke-ames-wake)
-    %helm-kroc             =;(f (f !<(_+<.f vase)) poke-kroc)
     %helm-atom             =;(f (f !<(_+<.f vase)) poke-atom)
     %helm-automass         =;(f (f !<(_+<.f vase)) poke-automass)
     %helm-cancel-automass  =;(f (f !<(_+<.f vase)) poke-cancel-automass)
@@ -323,14 +318,14 @@
   (flog %text "bound: {<success>}")
 ::
 ++  take-arvo
-  |=  [=wire =sign-arvo]
-  ?+  wire  ~|([%helm-bad-take-wire wire +<.sign-arvo] !!)
+  |=  [=wire =sign-user:agent:gall]
+  ?+  wire  ~|([%helm-bad-take-wire wire +<.sign-user] !!)
     [%automass *]     %+  take-wake-automass  t.wire
-                      ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
+                      ?>(?=(%wake +<.sign-user) +>.sign-user)
     [%serv *]         %+  take-bound  t.wire
-                      ?>(?=(%bound +<.sign-arvo) +>.sign-arvo)
+                      ?>(?=(%bound +<.sign-user) +>.sign-user)
     [%moon-breach *]  %+  take-wake-moon-breach  t.wire
-                      ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
+                      ?>(?=(%wake +<.sign-user) +>.sign-user)
     [%pass *]         abet
   ==
 --

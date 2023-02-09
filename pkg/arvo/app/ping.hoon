@@ -194,11 +194,11 @@
 ::  +on-arvo: handle timer firing
 ::
 ++  on-arvo
-  |=  [=wire =sign-arvo]
+  |=  [=wire =sign-user:agent:gall]
   ^-  [(list card) _this]
   ?+    wire  !!
       [%ping-wait @ @ ~]
-    ?>  ?=(%wake +<.sign-arvo)
+    ?>  ?=(%wake +<.sign-user)
     =/  =ship      (slav %p i.t.wire)
     =/  until=@da  (slav %da i.t.t.wire)
     =/  s  (~(get by ships.state) ship)
@@ -207,7 +207,7 @@
     ?.  =([%waiting until] ship-state.u.s)
       `this
     =.  ships.state  (~(put by ships.state) ship u.s(ship-state [%idle ~]))
-    %-  (print-error "ping: wake" error.sign-arvo)
+    %-  (print-error "ping: wake" error.sign-user)
     =^  cards  state
       (send-ping our.bowl now.bowl ship)
     [cards this]
@@ -215,13 +215,13 @@
       [%jael @ ~]
     ::  whenever we get an update from Jael, kick
     ::
-    ?>  ?=(%public-keys +<.sign-arvo)
+    ?>  ?=(%public-keys +<.sign-user)
     :_  this
     [%pass /delay %arvo %b %wait now.bowl]~
   ::  Delayed until next event so that ames can clear its state
   ::
       [%delay ~]
-    ?>  ?=(%wake +<.sign-arvo)
+    ?>  ?=(%wake +<.sign-user)
     on-init
   ==
 ::

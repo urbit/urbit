@@ -709,7 +709,7 @@
       [%hint *]  ?+    q.p.a  $(a q.a)
                      [%know *]
                    ?@  p.q.p.a  [(cat 3 '#' mark.p.q.p.a)]~
-                   [(rap 3 '#' auth.p.q.p.a '+' (spat type.p.q.p.a) ~)]~
+                   [(rap 3 '#' auth.p.q.p.a (spat type.p.q.p.a) ~)]~
                  ::
                      [%help *]
                    [summary.crib.p.q.p.a]~
@@ -1740,7 +1740,7 @@
   [moves ..on-init]
 ::
 ++  on-arvo
-  |=  [=wire =sign-arvo]
+  |=  [=wire =sign-user:agent:gall]
   ^-  (quip card:agent:gall _..on-init)
   ?>  ?=([@ @ *] wire)
   =/  =id  [(slav %p i.wire) i.t.wire]
@@ -1748,9 +1748,9 @@
   =/  he-full  ~(. he hid id ~ session)
   =^  moves  state
     =<  he-abet
-    ?+    +<.sign-arvo  ~|([%dojo-bad-take +<.sign-arvo] !!)
-        %writ           (he-writ:he-full t.t.wire +>.sign-arvo)
-        %http-response  (he-http-response:he-full t.t.wire +>.sign-arvo)
+    ?+    +<.sign-user  ~|([%dojo-bad-take +<.sign-user] !!)
+        %writ           (he-writ:he-full t.t.wire +>.sign-user)
+        %http-response  (he-http-response:he-full t.t.wire +>.sign-user)
     ==
   [moves ..on-init]
 ::  if dojo fails unexpectedly, kill whatever each session is working on

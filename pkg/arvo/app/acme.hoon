@@ -370,15 +370,15 @@
   ::
   ++  on-agent  on-agent:def
   ++  on-arvo
-    |=  [=wire =sign-arvo]
+    |=  [=wire =sign-user:agent:gall]
     ^-  (quip card _this)
     =^  cards  state
-      ?+    wire  (on-arvo:def wire sign-arvo)
+      ?+    wire  (on-arvo:def wire sign-user)
           [%acme *]
-        ?+  +<.sign-arvo  (on-arvo:def wire sign-arvo)
-          %http-response  (http-response:ac wire +>.sign-arvo)
-          %wake           (wake:ac wire +>.sign-arvo)
-          %bound          (bound:ac wire +>.sign-arvo)
+        ?+  +<.sign-user  (on-arvo:def wire sign-user)
+          %http-response  (http-response:ac wire +>.sign-user)
+          %wake           (wake:ac wire +>.sign-user)
+          %bound          (bound:ac wire +>.sign-user)
         ==
       ==
     [cards this]

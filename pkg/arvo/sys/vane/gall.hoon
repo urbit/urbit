@@ -42,6 +42,36 @@
 ::  $move: Arvo-level move
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
+::
+::  $user-move: Moves emitted by userspace.
+::
++$  user-move  [=duct move=(wind user-note:agent user-gift:agent)]
+::
++$  gall-note
+  $%  $<(%a $<(%b user-note:agent))
+      $:  %a
+    $%  $>(%sift task:ames)
+        $>(%spew task:ames)
+        $>(%cork task:ames)
+        $>(%stir task:ames)
+        $>(%prod task:ames)
+        $>(%snub task:ames)
+    ==  ==
+      $:  %b
+    $%  $>(%rest task:behn)
+        $>(%wait task:behn)
+        $>(%huck task:behn)
+    ==  ==
+  ==
+::
++$  gall-gift  $%  user-gift:agent
+                   $>(%heck gift:behn)
+               ==
+::
+::  $gall-move: Moves emitted by Gall the vane.
+::
++$  gall-move  [=duct move=(wind gall-note gall-gift)]
+::
 ::  $state-11: overall gall state, versioned
 ::
 +$  state-11  [%11 state]
@@ -610,6 +640,19 @@
         =/  =routes  [disclosing=~ attributing=ship]
         (ap-abed:ap dap routes)
       ::
+      ?>  ?=  $%
+        [%ames %done *]
+        [%behn %wake *]
+        [%clay ?(%wris %writ %tire %hill %mere %cruz %croz) *]
+        [%dill %blit *]
+        [%eyre %bound *]
+        [%gall %unto *]
+        [%iris %http-response *]
+        [%jael ?(%private-keys %public-keys %turf) *]
+        [%khan %arow *]
+      ==
+        sign-arvo
+      ::
       =.  app  (ap-generic-take:app t.t.t.wire sign-arvo)
       ap-abet:app
     ?>  ?=([%out @ @ *] t.t.wire)
@@ -865,7 +908,7 @@
     |_  $:  agent-name=term
             agent-routes=routes
             agent-duct=duct
-            agent-moves=(list move)
+            agent-moves=(list gall-move)
             agent-config=(list (each suss tang))
             =yoke
         ==
@@ -954,13 +997,13 @@
     ::
     +$  neet
       $%  neat
-          [%huck [=ship name=term] =note-arvo]
+          [%huck [=ship name=term] =gall-note]
       ==
     ::
     ++  ap-from-internal
       ~/  %ap-from-internal
       |=  card=(wind neet gift:agent)
-      ^-  (list move)
+      ^-  (list gall-move)
       ::
       ?-    -.card
           %slip  !!
@@ -983,7 +1026,7 @@
         %-  zing
         %+  turn  ducts
         |=  =duct
-        ^-  (list move)
+        ^-  (list user-move)
         ~?  &(=(duct system-duct.state) !=(agent-name %hood))
           [%agent-giving-on-system-duct agent-name -.gift]
         =/  =mark  (~(gut by marks.yoke) duct p.cage)
@@ -1031,13 +1074,13 @@
             %arvo   [(scot %p attributing.agent-routes) wire]
           ==
         ::
-        =/  =note-arvo
+        =/  =gall-note
           ?-  -.neet
-            %arvo   note-arvo.neet
-            %huck   note-arvo.neet
+            %arvo   user-note.neet
+            %huck   gall-note.neet
             %agent  [%g %deal [our ship.neet] [name deal]:neet]
           ==
-        [duct %pass wire note-arvo]~
+        [duct %pass wire gall-note]~
       ==
     ::  +ap-breach: ship breached, so forget about them
     ::
@@ -1179,7 +1222,7 @@
     ::  +ap-move: send move
     ::
     ++  ap-move
-      |=  =(list move)
+      |=  =(list gall-move)
       ap-core(agent-moves (weld (flop list) agent-moves))
     ::  +ap-give: return result.
     ::
@@ -1267,11 +1310,11 @@
     ::
     ++  ap-generic-take
       ~/  %ap-generic-take
-      |=  [=wire =sign-arvo]
+      |=  [=wire =sign-user:agent]
       ^+  ap-core
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
-        (on-arvo:ap-agent-core wire sign-arvo)
+        (on-arvo:ap-agent-core wire sign-user)
       ?^  maybe-tang
         (ap-error %arvo-response u.maybe-tang)
       ap-core
@@ -1475,7 +1518,7 @@
     ::
     ++  ap-kill-up-slip
       |=  =duct
-      ^-  (list move)
+      ^-  (list user-move)
       ::
       :~  [duct %slip %g %deal [our our] agent-name %leave ~]
           [duct %give %unto %kick ~]
@@ -1597,7 +1640,7 @@
         ?:  ?=(%& -.result)
           ~
         `p.result
-      =/  ack-moves=(list move)
+      =/  ack-moves=(list gall-move)
         %-  zing
         %-  turn  :_  ap-from-internal
         ^-  (list card:agent)
@@ -1615,7 +1658,7 @@
     ++  ap-handle-result
       ~/  %ap-handle-result
       |=  result=(each step:agent tang)
-      ^-  [(list move) _ap-core]
+      ^-  [(list gall-move) _ap-core]
       ?:  ?=(%| -.result)
         `ap-core
       ::
@@ -1627,7 +1670,7 @@
     ::
     ++  ap-handle-kicks
       ~/  %ap-handle-kicks
-      |=  moves=(list move)
+      |=  moves=(list gall-move)
       ^-  bitt
       =/  quits=(list duct)
         %+  murn  moves
@@ -1644,13 +1687,13 @@
     ::
     ++  ap-handle-peers
       ~/  %ap-handle-peers
-      |=  moves=(list move)
-      ^-  [(list move) _ap-core]
-      =|  new-moves=(list move)
-      |-  ^-  [(list move) _ap-core]
+      |=  moves=(list gall-move)
+      ^-  [(list gall-move) _ap-core]
+      =|  new-moves=(list gall-move)
+      |-  ^-  [(list gall-move) _ap-core]
       ?~  moves
         [(flop new-moves) ap-core]
-      =/  =move  i.moves
+      =/  move=gall-move  i.moves
       ?:  ?=([* %pass * %g %deal * * %leave *] move)
         =/  =wire  p.move.move
         ?>  ?=([%use @ @ %out @ @ *] wire)

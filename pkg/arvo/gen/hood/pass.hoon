@@ -1,3 +1,3 @@
 :-  %say
-|=  [^ [=note-arvo ~] ~]
-[%helm-pass note-arvo]
+|=  [^ [=user-note:agent:gall ~] ~]
+[%helm-pass user-note]

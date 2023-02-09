@@ -49,7 +49,7 @@
       ~
     [[ship desk tako (~(gut by tom) tako nor) p.n.q.yaki] ~ ~]
   --
-^-  (list note-arvo)
+^-  (list user-note:agent:gall)
 %+  welp
   %+  murn  ~(tap in norms)
   |=  [=ship =desk =tako =norm =path]

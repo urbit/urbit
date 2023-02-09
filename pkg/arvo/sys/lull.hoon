@@ -1845,7 +1845,7 @@
   +$  suss  (trel dude @tas @da)                        ::  config report
   +$  well  (pair desk term)                            ::
   +$  neat
-    $%  [%arvo =note-arvo]
+    $%  [%arvo =user-note:agent]
         [%agent [=ship name=term] =deal]
         [%pyre =tang]
     ==
@@ -1870,7 +1870,7 @@
     +$  card  (wind note gift)
     +$  note
       $%  [%agent [=ship name=term] =task]
-          [%arvo note-arvo]
+          [%arvo user-note]
           [%pyre =tang]
       ==
     +$  task
@@ -1891,6 +1891,154 @@
           [%watch-ack p=(unit tang)]
           [%fact =cage]
           [%kick ~]
+      ==
+    +$  user-gift
+      $%  $>(%done gift:ames) :: kiln
+          ::
+          $>(%wake gift:behn)
+          ::
+          $>(%wris gift:clay)
+          $>(%writ gift:clay)
+          $>(%tire gift:clay)
+          $>(%hill gift:clay)
+          $>(%mere gift:clay) :: kiln
+          $>(%cruz gift:clay)
+          $>(%croz gift:clay)
+          ::
+          $>(%blit gift:dill)
+          ::
+          $>(%bound gift:eyre)
+          ::
+          $>(%unto gift:gall)
+          ::
+          $>(%http-response gift:iris)
+          ::
+          $>(%private-keys gift:jael)
+          $>(%public-keys gift:jael)
+          $>(%turf gift:jael)
+          ::
+          $>(%arow gift:khan)
+      ==
+    +$  sign-user
+      $~  [%behn %wake ~]
+      $%  $:  %ames
+        $%  $>(%done gift:ames) :: kiln
+        ==  ==
+          $:  %behn
+        $%  $>(%wake gift:behn)
+        ==  ==
+          $:  %clay
+        $%  $>(%wris gift:clay)
+            $>(%writ gift:clay)
+            $>(%tire gift:clay)
+            $>(%hill gift:clay)
+            $>(%mere gift:clay) :: kiln
+            $>(%cruz gift:clay)
+            $>(%croz gift:clay)
+        ==  ==
+          $:  %dill
+        $%  $>(%blit gift:dill)
+        ==  ==
+          $:  %eyre
+        $%  $>(%bound gift:eyre)
+        ==  ==
+          $:  %gall
+        $%  $>(%unto gift:gall)
+        ==  ==
+          $:  %iris
+        $%  $>(%http-response gift:iris)
+        ==  ==
+          $:  %jael
+        $%  $>(%private-keys gift:jael)
+            $>(%public-keys gift:jael)
+            $>(%turf gift:jael)
+        ==  ==
+          $:  %khan
+        $%  $>(%arow gift:khan)
+        ==  ==
+      ==
+    +$  user-note
+      $~  [%b %rest *@da]
+      $%  $:  %a
+        $%  $>(%sift task:ames)
+            $>(%spew task:ames)
+            $>(%stir task:ames) :: helm does this
+            $>(%prod task:ames) :: helm does this
+            $>(%snub task:ames)
+        ==  ==
+          $:  %b
+        $%  $>(%rest task:behn)
+            $>(%wait task:behn)
+        ==  ==
+          $:  %c
+        $%  $>(%dirk task:clay)
+            $>(%mont task:clay)
+            $>(%ogre task:clay)
+            $>(%cred task:clay)
+            $>(%crew task:clay)
+            $>(%crow task:clay)
+            $>(%perm task:clay)
+            $>(%park task:clay)
+            $>(%info task:clay)
+            $>(%warp task:clay)
+            $>(%rein task:clay)
+            $>(%zest task:clay)
+            $>(%tire task:clay)
+            $>(%merg task:clay) :: kiln does this
+            $>(%fuse task:clay) :: kiln does this
+            $>(%drop task:clay) :: kiln does this
+            $>(%wick task:clay) :: kiln does this
+        ==  ==
+          $:  %d
+        $%  $>(%belt task:dill)
+            $>(%blew task:dill)
+            $>(%flee task:dill)
+            $>(%hail task:dill)
+            $>(%view task:dill)
+            $>(%crud task:dill)
+            $>(%talk task:dill)
+            $>(%text task:dill)
+            $>(%flog task:dill)
+            $>(%knob task:dill) :: helm does this
+            $>(%shot task:dill) :: herm does this
+        ==  ==
+          $:  %e
+        $%  $>(%connect task:eyre)
+            $>(%disconnect task:eyre)
+            $>(%rule task:eyre)
+            $>(%approve-origin task:eyre)
+            $>(%reject-origin task:eyre)
+            $>(%serve task:eyre)
+        ==  ==
+          $:  %g
+        $%  $>(%nuke task:gall)
+            $>(%deal task:gall)
+            $>(%spew task:gall) :: helm does this
+            $>(%sift task:gall) :: helm does this
+            $>(%doff task:gall) :: helm does this
+            $>(%sear task:gall) :: kiln does this
+        ==  ==
+          $:  %i
+        $%  $>(%request task:iris)
+            $>(%cancel-request task:iris)
+        ==  ==
+          $:  %j
+        $%  $>(%moon task:jael)
+            $>(%private-keys task:jael)
+            $>(%resend task:jael)
+            $>(%rekey task:jael)
+            $>(%step task:jael)
+            $>(%meet task:jael) :: docs say this task is deprecated and does not perform any actions
+            $>(%ruin task:jael)
+            $>(%nuke task:jael)
+            $>(%public-keys task:jael)
+            $>(%turf task:jael)
+            $>(%listen task:jael) :: base desk only
+        ==  ==
+          $:  %k
+        $%  $>(%fard task:khan)
+            $>(%lard task:khan) :: kiln does this
+        ==  ==
       ==
     ++  form
       $_  ^|
@@ -1926,7 +2074,7 @@
         *(quip card _^|(..on-init))
       ::
       ++  on-arvo
-        |~  [wire sign-arvo]
+        |~  [wire sign-user]
         *(quip card _^|(..on-init))
       ::
       ++  on-fail
@@ -2299,7 +2447,7 @@
   +$  card  card:agent:gall
   +$  input
     $%  [%poke =cage]
-        [%sign =wire =sign-arvo]
+        [%sign =wire =sign-user:agent:gall]
         [%agent =wire =sign:agent:gall]
         [%watch =path]
     ==
