@@ -2621,20 +2621,20 @@
   ?-    -.old
       %~2020.10.18
     =,  server-state-0.old
-    =/  new=axle
-      :*  %1
-          bindings
-          cors-registry
-          connections
-          authentication-state
-          channel-state
-          domains
-          http-config
-          ports
-          outgoing-duct
-          0
-      ==
-    ..^$(ax new)
+    %=  ..^$
+      ax  ^-  axle
+          :*  %1
+              bindings
+              cors-registry
+              connections
+              authentication-state
+              channel-state
+              domains
+              http-config
+              ports
+              outgoing-duct
+              0
+    ==    ==
   ::
       %1
     ::  enable https redirects if certificate configured
