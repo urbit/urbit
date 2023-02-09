@@ -1973,8 +1973,9 @@
             [%pulse ~]                 ::  %tire
         ==  ==
       ::
-        $:  %dill  ::TODO  revisit wrt nu-term  ::REVIEW  %belt separate?
-        $?  %terms  ::  %belt %blew %flee %flow %hail %view
+        $:  %dill
+        $?  %views  ::  %flow %hail %view
+            %input  ::  %belt %blew
             %print  ::  %crud %talk %text
             %extra  ::  %flog
         ==  ==
@@ -2222,12 +2223,16 @@
       ==
     ::
         %d
-      ::TODO  revisit wrt nu-term
+      |-
       ?+  +>-.note  |
+        %shot  $(+>.note task.note)
         %flee  &
       ::
-          ?(%belt %blew %flow %hail %view)
-        [%dill %terms]
+          ?(%flow %hail %view)
+        [%dill %views]
+      ::
+          ?(%belt %blew)
+        [%dill %input]
       ::
         ?(%crud %talk %text)  [%dill %print]
         %flog                 [%dill %extra]
