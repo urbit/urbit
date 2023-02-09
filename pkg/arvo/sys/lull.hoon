@@ -3093,6 +3093,22 @@
   ::                                                    ::
   +$  shed  _*form:(strand:rand ,vase)                  ::  compute vase
   --  ::khan
+::                                                      ::::
+::::                    ++loch                            ::  (1b) timekeeping
+  ::                                                    ::::
+++  loch  ^?
+  |%
+  +$  gift                                              ::  out result <-$
+    $%  [%read p=(unit @da)]                            ::  next alarm
+    ==
+  +$  task                                              ::  in request ->$
+    $~  [%vega ~]                                       ::
+    $%  $>(%born vane-task)                             ::  new unix process
+        $>(%trim vane-task)                             ::  trim state
+        $>(%vega vane-task)                             ::  report upgrade
+    ==
+  --  ::loch
+
 ::
 ++  rand                                                ::  computation
   |%
@@ -3295,6 +3311,7 @@
       gift:iris
       gift:jael
       gift:khan
+      gift:loch
   ==
 +$  task-arvo                                           ::  in request ->$
   $%  task:ames
@@ -3306,6 +3323,7 @@
       task:iris
       task:jael
       task:khan
+      task:loch
   ==
 +$  note-arvo                                           ::  out request $->
   $~  [%b %wake ~]
@@ -3318,6 +3336,7 @@
       [%i task:iris]
       [%j task:jael]
       [%k task:khan]
+      [%l task:loch]
       [%$ %whiz ~]
       [@tas %meta vase]
   ==
@@ -3340,6 +3359,7 @@
       [%iris gift:iris]
       [%jael gift:jael]
       [%khan gift:khan]
+      [%loch gift:loch]
   ==
 ::  $unix-task: input from unix
 ::
