@@ -815,7 +815,6 @@
   ::
   ++  subscribe-to-app
     |=  [app=term =inbound-request:eyre]
-    %-  (trace 2 |.("awaiting http response from {<app>} id {<eyre-id>}"))
     ^-  (list move)
     :~  :*  duct  %pass  /watch-response/[eyre-id]
             %g  %deal  [our our]  app
@@ -846,7 +845,7 @@
         %app
       :_  state
       :_  ~
-      %-  (trace 2 |.("leaving subscription to {<app.action.u.connection>}"))
+      %-  (trace 1 |.("leaving subscription to {<app.action.u.connection>}"))
       :*  duct  %pass  /watch-response/[eyre-id]
           %g  %deal  [our our]  app.action.u.connection
           %leave  ~
@@ -1480,7 +1479,7 @@
           =,  u.maybe-subscription
           :^  duc  %pass
             (subscription-wire channel-id subscription-id.i.requests ship app)
-          %-  (trace 2 |.("leaving subscription to {<app>}"))
+          %-  (trace 1 |.("leaving subscription to {<app>}"))
           :*  %g  %deal  [our ship]  app
               `task:agent:gall`[%leave ~]
           ==
@@ -1523,7 +1522,7 @@
         (emit-event channel-id request-id sign)
       =/  =ship     (slav %p i.extra)
       =*  app=term  i.t.extra
-      =*  msg=tape  "{<channel-id>} {<app>}"
+      =*  msg=tape  "{(trip channel-id)} {(trip app)}"
       %-  (trace 0 |.("removing watch for non-existent channel {msg}"))
       :_  state
       :_  ~
@@ -1617,9 +1616,9 @@
       ::
       =/  kicking=?
         ?:  clogged
-          ((trace 1 |.("clogged {<channel-id>} {<request-id>}")) &)
+          ((trace 0 |.("clogged {<channel-id>} {<request-id>}")) &)
         ?:  ?=(~ json)
-        ((trace 1 |.("can't serialize event, kicking")) &)  |
+        ((trace 0 |.("can't serialize event, kicking")) &)  |
       =?  moves      kicking
         :_  moves
         ::NOTE  this shouldn't crash because we
@@ -1627,7 +1626,7 @@
         ::      - only clog on %facts, which have a subscription associated,
         ::      - and already checked whether we still have that subscription.
         =+  (~(got by subscriptions.u.channel) request-id)
-        %-  (trace 2 |.("leaving subscription to {<app>}"))
+        %-  (trace 1 |.("leaving subscription to {<app>}"))
         :^  duct  %pass
           (subscription-wire channel-id request-id ship app)
         [%g %deal [our ship] app %leave ~]
@@ -1677,7 +1676,7 @@
       ^-  (unit desk)
       =/  sub  (~(get by subscriptions.channel) request-id)
       ?~  sub
-        ((trace 0 |.("no subscription for request-id {<request-id>}")) ~)
+        ((trace 0 |.("no subscription for request-id {(trip request-id)}")) ~)
       =/  des=(unit (unit cage))
         (rof ~ %gd [our app.u.sub da+now] ~)
       ?.  ?=([~ ~ *] des)
@@ -1843,7 +1842,7 @@
       %+  turn  ~(tap by subscriptions.session)
       |=  [request-id=@ud ship=@p app=term =path duc=^duct]
       ^-  move
-      %-  (trace 2 |.("{<channel-id>} leaving subscription to {<app>}"))
+      %-  (trace 1 |.("{<channel-id>} leaving subscription to {<app>}"))
       :^  duc  %pass
         (subscription-wire channel-id request-id ship app)
       [%g %deal [our ship] app %leave ~]
@@ -1859,7 +1858,7 @@
       ?.  ?=(%app -.action.connection)
         ~
       :_  ~
-      %-  (trace 2 |.("leaving subscription to {<app.action.connection>}"))
+      %-  (trace 1 |.("leaving subscription to {<app.action.connection>}"))
       :*  duct  %pass  /watch-response/[eyre-id]
           %g  %deal  [our our]  app.action.connection
           %leave  ~
@@ -2005,7 +2004,7 @@
       ?.  ?=(%app -.action.u.connection-state)
         ~
       :_  ~
-      %-  %+  trace  2
+      %-  %+  trace  1
           |.("leaving subscription to {<app.action.u.connection-state>}")
       :*  duct  %pass  /watch-response/[eyre-id]
           %g  %deal  [our our]  app.action.u.connection-state
