@@ -1724,10 +1724,9 @@
             (rof ~ %cf [our u.des da+now] /[have]/json)
           ?.  ?=([~ ~ *] cag)  ~
           `q.u.u.cag
-        =*  desc=tape  "from {(trip have)} to json"
         ?~  convert
-          ((trace 0 |.("no convert {desc}")) [~ ~])
-        ~|  "conversion failed {desc}"
+          ((trace 0 |.("no convert from {(trip have)} to json")) [~ ~])
+        ~|  "conversion failed from {(trip have)} to json"
         [`[u.des have] `[%fact %json (slym u.convert q.q.cage.sign)]]
       ?~  jsyn  ~
       %-  some
@@ -1885,7 +1884,7 @@
     ::  verify that this is a valid response on the duct
     ::
     ?~  connection-state=(~(get by connections.state) duct)
-      ((trace 1 |.("{<duct>} invalid-outstanding-connection")) `state)
+      ((trace 0 |.("{<duct>} invalid outstanding connection")) `state)
     ::
     |^  ^-  [(list move) server-state]
         ::
