@@ -1095,6 +1095,7 @@
     %+  lard  /init
     =/  m  (strand:rand ,vase)
     ;<  =riot:clay  bind:m  (warp:strandio her sud ~ %sing %y ud+1 /)
+    ?>  ?=(^ riot)
     ~>  %slog.(fmt "activated install into {here}")
     ;<  now=@da     bind:m  get-time:strandio
     ;<  =riot:clay  bind:m  (warp:strandio her sud ~ %sing %w da+now /)
@@ -1109,6 +1110,7 @@
     %+  lard  /next
     =/  m  (strand:rand ,vase)
     ;<  =riot:clay  bind:m  (warp:strandio her sud ~ %sing %w ud+let /)
+    ?>  ?=(^ riot)
     ~>  %slog.(fmt "downloading update for {here}")
     ;<  =riot:clay  bind:m  (warp:strandio her sud ~ %sing %v ud+let /)
     ?>  ?=(^ riot)
@@ -1176,14 +1178,6 @@
     ::
         %main
       ?>  ?=(%mere +<.sign-arvo)
-      ::  This case is maintained by superstition.  If you remove it,
-      ::  carefully test that if the source ship is breached, we
-      ::  correctly reset let to 0
-      ::
-      ?:  ?=([%| %ali-unavailable *] p.sign-arvo)
-        =+  "kiln: merge into {here} failed, maybe because sunk; restarting"
-        %-  (slog leaf/- p.p.sign-arvo)
-        init
       ?:  ?=(%| -.p.sign-arvo)
         =+  "kiln: merge into {here} failed, waiting for next revision"
         %-  (slog leaf/- p.p.sign-arvo)
@@ -1200,12 +1194,6 @@
       ?>  ?=(%mere +<.sign-arvo)
       ?~  kid
         ..abet
-      ::  See %main for this case
-      ::
-      ?:  ?=([%| %ali-unavailable *] p.sign-arvo)
-        =+  "kids merge to {<u.kid>} failed, maybe peer sunk; restarting"
-        ~>  %slog.(fmt -)
-        init
       ::  Just notify; we've already started listening for the next
       ::  version
       ::
