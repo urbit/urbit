@@ -1,18 +1,55 @@
-:::  Perform minimal norm change to delete a file, use =dry & for dry run
+::  Perform minimal norm change to delete a file, use =dry & for dry run
 ::
-::  TODO: recognize when it's going to fail because it's in the head of
-::        a desk, and maybe offer to |rm
-::
+/+  *generators
+=,  space:userlib
 =,  clay
-:-  %say
+:-  %ask
 |=  [[now=@da eny=@uvJ bec=beak] [target=path ~] dry=_|]
-:-  %helm-pans
 |^
 =+  .^(=rang %cx /(scot %p p.bec)//(scot %da now)/rang)
 =+  .^(=cone %cx /(scot %p p.bec)//(scot %da now)/domes)
+=/  =beam  (need (de-beam target))
+=/  dusk=desk  q:beam
 =/  domes=(list [[=ship =desk] foam])
   ~(tap by cone)
-%+  welp  [%c %tomb %pick ~]~
+=+  .^(=cass %cw (en-beam beam(r da+now)))
+=+  .^(do=dome %cv target)
+=/  used=(list [desk path])
+  =-  (murn lobes -)
+  |=  lob=lobe
+  ^-  (unit [desk path])
+  =/  doms=(list [[=ship =desk] foam])  domes
+  |-
+  =*  dome-loop  $
+  ?~  doms  ~
+  ?:  =(0 let.i.doms)  dome-loop(doms t.doms)
+  ?:  =(dusk desk.i.doms)  dome-loop(doms t.doms)
+  =/  latest=yaki
+    %-  ~(got by hut.rang)
+    %-  ~(got by hit.i.doms)
+    let.i.doms
+  =/  yakies=(list [=path =lobe])  ~(tap by q.latest)
+  |-
+  =*  path-loop  $
+  ?~  yakies  dome-loop(doms t.doms)
+  ?:  =(lob lobe.i.yakies)
+    `[desk.i.doms path.i.yakies]
+  path-loop(yakies t.yakies)
+?:  |(=(let.do ud.cass) !=(0 (lent used)))
+    %+  print    (rap 3 'used in ' (crip <?~(used dusk used)>) ' already.' ~)
+    %+  prompt   [%& %prompt "|rm from head of {<dusk>}? (y/N) "]
+    |=  in=tape
+    ?.  |(=("y" in) =("Y" in) =("yes" in))
+      %+  prompt   [%& %prompt "|rm from head of each desk instead? (y/N) "]
+      |=  inn=tape
+      ?.  |(=("y" inn) =("Y" inn) =("yes" inn))
+        no-product
+      (produce %helm-pans (turn used |=([=desk =path] (rm (en-beam beam(q desk, s path))))))
+    (produce %helm-pans ~[(rm (en-beam beam(q dusk, s +>+:target)))])
+::
+%-  produce
+:-  %helm-pans
+=-  (snoc `(list note-arvo)`- [%c %tomb [%pick ~]])
 %-  zing
 =-  (turn - notes)
 =-  (turn lobes -)
@@ -34,8 +71,6 @@
     |=  [=ship =desk foam =tako]
     ^-  (set [^ship ^desk ^tako norm path])
     ~+
-    ::  TODO: maybe offer to |rm here?
-    ::  ?:  =(tako (~(got by hit.do) aeon))  ~
     =/  =yaki  (~(got by hut.rang) tako)
     =/  takos
       |-  ^-  (set [^ship ^desk ^tako norm path])
@@ -54,31 +89,46 @@
   --
 ::
 ++  lobes
-=|  lubs=(list lobe)
-|-  ^-  (list lobe)
-=+  .^(=arch %cy target)
-?~  fil.arch
-  =/  dirs  ~(tap by dir.arch)
+  =|  lubs=(list lobe)
+  |-  ^-  (list lobe)
+  =+  b=.^(arch %cy target)
+  ?:  ?=([^ ~] b)  (snoc lubs u.fil.b)
   %-  zing
-  %+  turn  dirs
+  %+  turn  ~(tap by dir.b)
   |=  [kid=@ta ~]
-  =/  paf=path  /[kid]
-  =/  kud=path  `path`(weld target /[kid])
-  ^$(target kud)
- (snoc lubs u.fil.arch)
+  ^$(target (weld target /[kid]))
 ::
 ++  notes
   |=  norms=(set [ship desk tako norm path])
   ^-  (list note-arvo)
-  =/  dusk=desk  q:(need (de-beam target))
   %+  murn  ~(tap in norms)
   |=  [=ship =desk =tako =norm =path]
-  ?.  =(desk dusk)
-    ~
   ?:  ?=([~ %|] (~(fit of norm) path))
     ~
   %-  (slog leaf+"tomb: {<ship desk path `@uv`tako norm path>}" ~)
   ?:  dry
     ~
   `[%c %tomb %worn ship desk tako (~(put of norm) path %|)]
+::
+++  info
+  |=  tor=(unit toro)
+  ^-  note-arvo
+  ~|  [%tomb-error "tomb: failed to delete {<target>}"]
+  [%c [%info (need tor)]]
+::
+++  rm
+  |=  a=path
+  =|  c=(list (unit toro))
+  %-  info
+  =-  %+  roll  -
+      |=  [a=(unit toro) b=(unit toro)]
+      (clap a b furl)
+  |-  ^-  (list (unit toro))
+  =+  b=.^(arch %cy a)
+  ?:  ?=([^ ~] b)  (snoc c `(fray a))
+  =?  c  ?=(^ fil.b)  (snoc c `(fray a))
+  %-  zing
+  %+  turn  ~(tap by dir.b)
+  |=  [kid=@ta ~]
+  ^$(a (weld a /[kid]))
 --
