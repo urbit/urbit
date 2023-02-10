@@ -305,7 +305,8 @@
   [cards state(wait wait)]
 ++  poke-migrate-my-channels
   ^-  (quip card _state)
-  [~(migrate-my-channels gladio bol) state]
+  =/  [cards=(list card) *]  (~(migrate-my-channels gladio bol) ~)
+  [cards state]
 ::
 ++  watch-init-migrate
   |=  =ship
