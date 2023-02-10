@@ -148,7 +148,7 @@ git push origin <tagname>
 
 ### Release Next Release Candidate
 
-We'll now need to **IMMEDIATELY** deploy the new release candidate to the pre-release moon(s). 
+We'll now need to **IMMEDIATELY** deploy the new release candidate to the pre-release moon(s). Otherwise PRs merged during this window will bypass the testing period on `~binnec` and go straight to the release candidate.
 
 - On `~marnec-dozzod-marzod`:
   - [ ] `|merge %base ~binnec-dozzod-marzod %kids, =gem %only-that` to update `~marnec` with the contents of the GH release branch
