@@ -36,7 +36,7 @@
   ;<  ~                     bind:m  (backoff:strandio try ~h1)
   ;<  rep=(unit httr:eyre)  bind:m  (hiss-request:strandio hiss)
   ?:  ?&  ?=(^ rep)
-          |(=(200 p.u.rep) =(307 p.u.rep))
+          |(=(200 p.u.rep) =(307 p.u.rep) =(301 p.u.rep))
       ==
     (pure:m &)
   ?.  ?|  ?=(~ rep)

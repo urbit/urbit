@@ -11,7 +11,7 @@
 ::
 ++  network
   $?  %mainnet
-      %ropsten
+      %goerli
       %fakenet
       [%other id=@]
   ==

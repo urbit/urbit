@@ -20,7 +20,9 @@
     |=  jon=^json  ^-  sole-action
     %-  need  %.  jon
     =>  [dejs-soft:format ..sole-action]
-    |^  (ot id+so dat+(fo %ret (of det+change tab+ni ~)) ~)
+    |^  (ot id+id dat+(fo %ret (of det+change tab+ni ~)) ~)
+    ++  id
+      (ot who+(su ;~(pfix sig fed:ag)) ses+so ~)
     ++  fo
       |*  [a=term b=fist]
       |=(c=json ?.(=([%s a] c) (b c) (some [a ~])))

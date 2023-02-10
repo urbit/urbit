@@ -26,6 +26,7 @@ interface NoteProps {
 }
 
 export function NoteContent({ post }) {
+  console.log(post.contents);
   return (
       <Box color="black" className="md" style={{ overflowWrap: 'break-word', overflow: 'hidden' }}>
         <GraphContent tall={true} contents={post.contents.slice(1)} showOurContact />

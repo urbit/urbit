@@ -49,7 +49,10 @@
     =|  cards=(list card)
     |-
     ?:  ?=(%11 -.old)
-      [cards this(state old)]
+      :_  this(state old)
+      :_  cards
+      :+  %pass  /cli-cleanup
+      [%agent [our.bol %hood] %poke %drum-unlink !>([%$ our.bol %chat-cli])]
     =.  cards
       :_  cards
       =-  [%pass /self-poke %agent [our.bol %chat-hook] %poke -]

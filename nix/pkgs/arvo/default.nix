@@ -5,16 +5,16 @@ stdenvNoCC.mkDerivation {
 
   src = marsSources;
 
-  outputs = [ "out" "ropsten" ];
+  outputs = [ "out" "goerli" ];
 
-  phases = [ "mainnetPhase" "ropstenPhase" ];
+  phases = [ "mainnetPhase" "goerliPhase" ];
 
   mainnetPhase = ''
     ln -s ${marsSources.out}/arvo $out
     '';
 
-  ropstenPhase = ''
-    ln -s ${marsSources.ropsten}/arvo $ropsten
+  goerliPhase = ''
+    ln -s ${marsSources.goerli}/arvo $goerli
     '';
 
   preferLocalBuild = true;

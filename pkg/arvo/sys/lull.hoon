@@ -1,9 +1,9 @@
 ::  /sys/lull
 ::  %lull: arvo structures
-::
+!:
 =>  ..part
 |%
-++  lull  %329
+++  lull  %326
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
@@ -351,6 +351,8 @@
   ::    %hear: packet from unix
   ::    %heed: track peer's responsiveness; gives %clog if slow
   ::    %jilt: stop tracking peer's responsiveness
+  ::    %cork: request to delete message flow
+  ::    %kroc: request to delete stale message flows
   ::    %plea: request to send message
   ::
   ::    System and Lifecycle Tasks
@@ -359,6 +361,7 @@
   ::    %init: vane boot
   ::    %prod: re-send a packet per flow, to all peers if .ships is ~
   ::    %sift: limit verbosity to .ships
+  ::    %snub: set packet blacklist to .ships
   ::    %spew: set verbosity toggles
   ::    %trim: release memory
   ::    %vega: kernel reload notification
@@ -367,12 +370,15 @@
     $%  [%hear =lane =blob]
         [%heed =ship]
         [%jilt =ship]
+        [%cork =ship]
+        [%kroc dry=?]
         $>(%plea vane-task)
     ::
         $>(%born vane-task)
         $>(%init vane-task)
         [%prod ships=(list ship)]
         [%sift ships=(list ship)]
+        [%snub ships=(list ship)]
         [%spew veb=(list verb)]
         [%stir arg=@t]
         $>(%trim vane-task)
@@ -432,7 +438,7 @@
   +$  address  @uxaddress
   ::  $verb: verbosity flag for ames
   ::
-  +$  verb  ?(%snd %rcv %odd %msg %ges %for %rot)
+  +$  verb  ?(%snd %rcv %odd %msg %ges %for %rot %kay)
   ::  $blob: raw atom to or from unix, representing a packet
   ::
   +$  blob  @uxblob
@@ -511,6 +517,9 @@
   ::         entry and emit a nack to the local vane that asked us to send
   ::         the message.
   ::    heeds: listeners for %clog notifications
+  ::    closing: bones closed on the sender side
+  ::    corked:  bones closed on both sender and receiver
+  ::    krocs:   bones that need to be sent again to the publisher
   ::
   +$  peer-state
     $:  $:  =symmetric-key
@@ -526,6 +535,9 @@
         rcv=(map bone message-sink-state)
         nax=(set [=bone =message-num])
         heeds=(set duct)
+        closing=(set bone)
+        corked=(set bone)
+        krocs=(set bone)
     ==
   ::  $qos: quality of service; how is our connection to a peer doing?
   ::
@@ -744,9 +756,9 @@
         [%hill p=(list @tas)]                           ::  mount points
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
         [%mere p=(each (set path) (pair term tang))]    ::  merge result
-        [%note p=@tD q=tank]                            ::  debug message
         [%ogre p=@tas]                                  ::  delete mount point
         [%rule red=dict wit=dict]                       ::  node r+w permissions
+        [%tire p=(each rock:tire wave:tire)]            ::  app state
         [%writ p=riot]                                  ::  response
         [%wris p=[%da p=@da] q=(set (pair care path))]  ::  many changes
     ==                                                  ::
@@ -776,12 +788,17 @@
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
         [%perm des=desk pax=path rit=rite]              ::  change permissions
         [%pork ~]                                       ::  resume commit
+        [%prep lat=(map lobe page)]                     ::  prime clay store
+        [%rein des=desk ren=rein]                       ::  extra apps
         [%stir arg=*]                                   ::  debug
+        [%tire p=(unit ~)]                              ::  app state subscribe
         [%tomb =clue]                                   ::  tombstone specific
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
         [%warp wer=ship rif=riff]                       ::  internal file req
         [%werp who=ship wer=ship rif=riff-any]          ::  external file req
+        [%wick ~]                                       ::  try upgrade
+        [%zest des=desk liv=zest]                       ::  live
         $>(%plea vane-task)                             ::  ames request
     ==                                                  ::
   ::                                                    ::
@@ -814,9 +831,14 @@
         [%worn =ship =desk =tako =norm]                 ::  set commit norm
         [%seek =ship =desk =cash]                       ::  fetch source blobs
     ==                                                  ::
-  +$  cone                                              ::  domes
-    %+  map  [ship desk]                                ::
-    [dome tom=(map tako norm) nor=norm]                 ::
+  +$  cone  (map [ship desk] foam)                      ::  domes
+  +$  foam                                              ::
+    $:  dome                                            ::
+        tom=(map tako norm)                             ::
+        nor=norm                                        ::
+        liv=zest                                        ::
+        ren=(map dude:gall ?)                           ::
+    ==                                                  ::
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
   +$  dome                                              ::  project state
@@ -866,6 +888,17 @@
   +$  norm  (axal ?)                                    ::  tombstone policy
   +$  open  $-(path vase)                               ::  get prelude
   +$  page  ^page                                       ::  export for compat
+  +$  pour                                              ::  ford build w/content
+    $%  [%file =path]
+        [%nave =mark]
+        [%dais =mark]
+        [%cast =mars]
+        [%tube =mars]
+        ::  leafs
+        ::
+        [%vale =path =lobe]
+        [%arch =path =(map path lobe)]
+    ==
   +$  rang                                              ::  repository
     $:  hut=(map tako yaki)                             ::  changes
         lat=(map lobe page)                             ::  data
@@ -886,6 +919,7 @@
         who=(pair (set ship) (map @ta crew))            ::
     ==                                                  ::
   +$  regs  (map path rule)                             ::  rules for paths
+  +$  rein  (map dude:gall ?)                           ::  extra apps
   +$  riff  [p=desk q=(unit rave)]                      ::  request+desist
   +$  riff-any                                          ::
     $%  [%1 =riff]                                      ::
@@ -899,6 +933,13 @@
   +$  rule  [mod=?(%black %white) who=(set whom)]       ::  node permission
   +$  rump  [p=care q=case r=@tas s=path]               ::  relative path
   +$  saba  [p=ship q=@tas r=moar s=dome]               ::  patch+merge
+  +$  soak                                              ::  ford result
+    $%  [%cage =cage]
+        [%vase =vase]
+        [%arch dir=(map @ta vase)]
+        [%dais =dais]
+        [%tube =tube]
+    ==
   +$  soba  (list [p=path q=miso])                      ::  delta
   +$  suba  (list [p=path q=misu])                      ::  delta
   +$  tako  @uvI                                        ::  yaki ref
@@ -909,6 +950,9 @@
         [%| p=(list a) q=(list a)]                      ::  p -> q[chunk]
     ==                                                  ::
   ++  urge  |*(a=mold (list (unce a)))                  ::  list change
+  +$  waft                                              ::  kelvin range
+    $^  [[%1 ~] p=(set weft)]                           ::
+    weft                                                ::
   +$  whom  (each ship @ta)                             ::  ship or named crew
   +$  yoki  (each yuki yaki)                            ::  commit
   +$  yuki                                              ::  proto-commit
@@ -921,10 +965,110 @@
         r=tako                                          ::  self-reference
         t=@da                                           ::  date
     ==                                                  ::
+  +$  zest  $~(%dead ?(%dead %live %held))              ::  how live
+  ::                                                    ::
+  ++  tire                                              ::  app state
+    |%                                                  ::
+    +$  rock  (map desk [=zest wic=(set weft)])         ::
+    +$  wave                                            ::
+      $%  [%wait =desk =weft]                           ::  blocked
+          [%warp =desk =weft]                           ::  unblocked
+          [%zest =desk =zest]                           ::  running
+      ==                                                ::
+    ::
+    ++  wash                                            ::  patch
+      |=  [=rock =wave]
+      ^+  rock
+      ?-    -.wave
+          %wait
+        =/  got=[=zest wic=(set weft)]
+          (~(gut by rock) desk.wave *zest ~)
+        (~(put by rock) desk.wave got(wic (~(put in wic.got) weft.wave)))
+      ::
+          %warp
+        %-  ~(run by rock)
+        |=  [=zest wic=(set weft)]
+        [zest (~(del in wic) weft.wave)]
+      ::
+          %zest
+        ?:  ?=(%dead zest.wave)
+          (~(del by rock) desk.wave)
+        =/  got=[=zest wic=(set weft)]
+          (~(gut by rock) desk.wave *zest ~)
+        (~(put by rock) desk.wave got(zest zest.wave))
+      ==
+    ::
+    ++  walk                                            ::  diff
+      |=  [a=rock b=rock]
+      ^-  (list wave)
+      =/  adds  (~(dif by b) a)
+      =/  dels  (~(dif by a) b)
+      =/  bots  (~(int by a) b)
+      ;:  welp
+        ^-  (list wave)
+        %-  zing
+        %+  turn  ~(tap by adds)
+        |=  [=desk =zest wic=(set weft)]
+        ^-  (list wave)
+        :-  [%zest desk zest]
+        %+  turn  ~(tap in wic)
+        |=  =weft
+        [%wait desk weft]
+      ::
+        ^-  (list wave)
+        %+  turn  ~(tap by dels)
+        |=  [=desk =zest wic=(set weft)]
+        ^-  wave
+        [%zest desk %dead]
+      ::
+        ^-  (list wave)
+        %-  zing
+        %+  turn  ~(tap by bots)
+        |=  [=desk * *]
+        ^-  (list wave)
+        =/  aa  (~(got by a) desk)
+        =/  bb  (~(got by b) desk)
+        =/  wadds  (~(dif in wic.bb) wic.aa)
+        =/  wdels  (~(dif in wic.aa) wic.bb)
+        ;:  welp
+          ?:  =(zest.aa zest.bb)
+            ~
+          [%zest desk zest.bb]~
+        ::
+          %+  turn  ~(tap by wadds)
+          |=  =weft
+          ^-  wave
+          [%wait desk weft]
+        ::
+          %+  turn  ~(tap by wdels)
+          |=  =weft
+          ^-  wave
+          [%warp desk weft]
+        ==
+      ==
+    --
   ::
   ::  +page-to-lobe: hash a page to get a lobe.
   ::
   ++  page-to-lobe  |=(page (shax (jam +<)))
+  ::
+  ++  cord-to-waft
+    |=  =cord
+    ^-  waft
+    =/  wefts=(list weft)
+      %+  turn  (rash cord (star (ifix [gay gay] tall:vast)))
+      |=  =hoon
+      !<(weft (slap !>(~) hoon))
+    ?:  ?=([* ~] wefts)
+      i.wefts
+    [[%1 ~] (sy wefts)]
+  ::
+  ++  waft-to-wefts
+    |=  kal=waft
+    ^-  (set weft)
+    ?^  -.kal
+      p.kal
+    [kal ~ ~]
   ::
   ::  +make-yaki: make commit out of a list of parents, content, and date.
   ::
@@ -935,6 +1079,31 @@
         %^  cat  7  (sham [%yaki (roll p add) q t])
         (sham [%tako (roll p add) q t])
     [p q has t]
+  ::
+  ::  $leak: ford cache key
+  ::
+  ::    This includes all build inputs, including transitive dependencies,
+  ::    recursively.
+  ::
+  +$  leak
+    $~  [*pour ~]
+    $:  =pour
+        deps=(set leak)
+    ==
+  ::
+  ::  $flow: global ford cache
+  ::
+  ::    Refcount includes references from other items in the cache, and
+  ::    from spills in each desk
+  ::
+  ::    This is optimized for minimizing the number of rebuilds, and given
+  ::    that, minimizing the amount of memory used.  It is relatively slow
+  ::    to lookup, because generating a cache key can be fairly slow (for
+  ::    files, it requires parsing; for tubes, it even requires building
+  ::    the marks).
+  ::
+  +$  flow  (map leak [refs=@ud =soak])
+  ::
   ::  $pile: preprocessed hoon source file
   ::
   ::    /-  sur-file            ::  surface imports from /sur
@@ -1038,9 +1207,7 @@
 ++  dill  ^?
   |%
   +$  gift                                              ::  out result <-$
-    $%  [%bbye ~]                                       ::  reset prompt
-        [%blit p=(list blit)]                           ::  terminal output
-        [%burl p=@t]                                    ::  activate url
+    $%  [%blit p=(list blit)]                           ::  terminal output
         [%logo ~]                                       ::  logout
         [%meld ~]                                       ::  unify memory
         [%pack ~]                                       ::  compact memory
@@ -1048,29 +1215,33 @@
     ==                                                  ::
   +$  task                                              ::  in request ->$
     $~  [%vega ~]                                       ::
-    $%  [%belt p=belt]                                  ::  terminal input
-        [%blew p=blew]                                  ::  terminal config
-        [%boot lit=? p=*]                               ::  weird %dill boot
+    $%  [%boot lit=? p=*]                               ::  weird %dill boot
         [%crop p=@ud]                                   ::  trim kernel state
         [%crud p=@tas q=(list tank)]                    ::  print error
-        [%flee session=~]                               ::  unwatch session
         [%flog p=flog]                                  ::  wrapped error
-        [%flow p=@tas q=(list gill:gall)]               ::  terminal config
-        [%hail ~]                                       ::  terminal refresh
         [%heft ~]                                       ::  memory report
-        [%hook ~]                                       ::  this term hung up
-        [%harm ~]                                       ::  all terms hung up
         $>(%init vane-task)                             ::  after gall ready
         [%meld ~]                                       ::  unify memory
-        [%noop ~]                                       ::  no operation
         [%pack ~]                                       ::  compact memory
-        [%talk p=tank]                                  ::
-        [%text p=tape]                                  ::
-        [%view session=~]                               ::  watch session blits
+        [%seat =desk]                                   ::  install desk
+        [%shot ses=@tas task=session-task]              ::  task for session
+        [%talk p=(list tank)]                           ::  print tanks
+        [%text p=tape]                                  ::  print tape
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
         [%verb ~]                                       ::  verbose mode
         [%knob tag=term level=?(%hush %soft %loud)]     ::  error verbosity
+        session-task                                    ::  for default session
+    ==                                                  ::
+  ::                                                    ::
+  +$  session-task                                      ::  session request
+    $%  [%belt p=belt]                                  ::  terminal input
+        [%blew p=blew]                                  ::  terminal config
+        [%flee ~]                                       ::  unwatch session
+        [%hail ~]                                       ::  terminal refresh
+        [%open p=dude:gall q=(list gill:gall)]          ::  setup session
+        [%shut ~]                                       ::  close session
+        [%view ~]                                       ::  watch session blits
     ==                                                  ::
   ::
   ::::                                                  ::  (1d2)
@@ -1078,59 +1249,41 @@
   +$  blew  [p=@ud q=@ud]                               ::  columns rows
   +$  belt                                              ::  client input
     $?  bolt                                            ::  simple input
-    $%  [%mod mod=?(%ctl %met %hyp) key=bolt]           ::  w/ modifier
+        [%mod mod=?(%ctl %met %hyp) key=bolt]           ::  w/ modifier
         [%txt p=(list @c)]                              ::  utf32 text
         ::TODO  consider moving %hey, %rez, %yow here   ::
-        ::TMP  forward backwards-compatibility          ::
-        ::                                              ::
-        [%ctl p=@c]                                     ::
-        [%met p=@c]                                     ::
-    ==  ==                                              ::
+    ==                                                  ::
   +$  bolt                                              ::  simple input
     $@  @c                                              ::  simple keystroke
     $%  [%aro p=?(%d %l %r %u)]                         ::  arrow key
         [%bac ~]                                        ::  true backspace
         [%del ~]                                        ::  true delete
-        [%hit r=@ud c=@ud]                              ::  mouse click
+        [%hit x=@ud y=@ud]                              ::  mouse click
         [%ret ~]                                        ::  return
     ==                                                  ::
-  +$  blit                                              ::  old blit
+  +$  blit                                              ::  client output
     $%  [%bel ~]                                        ::  make a noise
         [%clr ~]                                        ::  clear the screen
-        [%hop p=@ud]                                    ::  set cursor position
-        [%klr p=stub]                                   ::  set styled line
-        [%lin p=(list @c)]                              ::  set current line
-        [%mor ~]                                        ::  newline
+        [%hop p=$@(@ud [x=@ud y=@ud])]                  ::  set cursor col/pos
+        [%klr p=stub]                                   ::  put styled
+        [%mor p=(list blit)]                            ::  multiple blits
+        [%nel ~]                                        ::  newline
+        [%put p=(list @c)]                              ::  put text at cursor
         [%sag p=path q=*]                               ::  save to jamfile
         [%sav p=path q=@]                               ::  save to file
         [%url p=@t]                                     ::  activate url
+        [%wyp ~]                                        ::  wipe cursor line
     ==                                                  ::
-  +$  dill-belt                                         ::  new belt
-    $%  [%aro p=?(%d %l %r %u)]                         ::  arrow key
-        [%bac ~]                                        ::  true backspace
+  +$  dill-belt                                         ::  arvo input
+    $%  belt                                            ::  client input
         [%cru p=@tas q=(list tank)]                     ::  echo error
-        [%ctl p=@]                                      ::  control-key
-        [%del ~]                                        ::  true delete
         [%hey ~]                                        ::  refresh
-        [%met p=@]                                      ::  meta-key
-        [%ret ~]                                        ::  return
         [%rez p=@ud q=@ud]                              ::  resize, cols, rows
-        [%txt p=(list @c)]                              ::  utf32 text
         [%yow p=gill:gall]                              ::  connect to app
     ==                                                  ::
-  +$  dill-blit                                         ::  new blit
-    $%  [%bel ~]                                        ::  make a noise
-        [%clr ~]                                        ::  clear the screen
-        [%hop p=@ud]                                    ::  set cursor position
-        [%klr p=stub]                                   ::  styled text
-        [%mor p=(list dill-blit)]                       ::  multiple blits
-        [%pom p=stub]                                   ::  styled prompt
-        [%pro p=(list @c)]                              ::  show as cursor+line
+  +$  dill-blit                                         ::  arvo output
+    $%  blit                                            ::  client output
         [%qit ~]                                        ::  close console
-        [%out p=(list @c)]                              ::  send output line
-        [%sag p=path q=*]                               ::  save to jamfile
-        [%sav p=path q=@]                               ::  save to file
-        [%url p=@t]                                     ::  activate url
     ==                                                  ::
   +$  flog                                              ::  sent to %dill
     $%  [%crop p=@ud]                                   ::  trim kernel state
@@ -1140,6 +1293,11 @@
         [%pack ~]                                       ::  compact memory
         [%text p=tape]                                  ::
         [%verb ~]                                       ::  verbose mode
+    ==                                                  ::
+  ::                                                    ::
+  +$  poke                                              ::  dill to userspace
+    $:  ses=@tas                                        ::  target session
+        dill-belt                                       ::  input
     ==                                                  ::
   --  ::dill
 ::                                                      ::::
@@ -1641,7 +1799,6 @@
   +$  gift                                              ::  outgoing result
     $%  [%boon payload=*]                               ::  ames response
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
-        [%onto p=(each suss tang)]                      ::  about agent
         [%unto p=unto]                                  ::
     ==                                                  ::
   +$  task                                              ::  incoming request
@@ -1650,16 +1807,20 @@
         [%sear =ship]                                   ::  clear pending queues
         [%jolt =desk =dude]                             ::  (re)start agent
         [%idle =dude]                                   ::  suspend agent
+        [%load =load]                                   ::  load agent
         [%nuke =dude]                                   ::  delete agent
+        [%doff dude=(unit dude) ship=(unit ship)]       ::  kill subscriptions
+        [%rake dude=(unit dude) all=?]                  ::  reclaim old subs
         $>(%init vane-task)                             ::  set owner
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
         $>(%plea vane-task)                             ::  network request
+        [%spew veb=(list verb)]                         ::  set verbosity
+        [%sift dudes=(list dude)]                       ::  per agent
     ==                                                  ::
   +$  bitt  (map duct (pair ship path))                 ::  incoming subs
-  +$  boat                                              ::  outgoing subs
-    %+  map  [=wire =ship =term]                        ::
-    [acked=? =path]                                     ::
+  +$  boat  (map [=wire =ship =term] [acked=? =path])   ::  outgoing subs
+  +$  boar  (map [=wire =ship =term] nonce=@)           ::  and their nonces
   +$  bowl                                              ::  standard app state
           $:  $:  our=ship                              ::  host
                   src=ship                              ::  guest
@@ -1675,6 +1836,7 @@
           ==  ==                                        ::
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact
+  +$  load  (list [=dude =beak =agent])                 ::  loadout
   +$  scar                                              ::  opaque duct
     $:  p=@ud                                           ::  bone sequence
         q=(map duct bone)                               ::  by duct
@@ -1695,6 +1857,9 @@
     $%  [%raw-fact =mark =noun]
         sign:agent
     ==
+  ::  TODO: add more flags?
+  ::
+  +$  verb  ?(%odd)
   ::
   ::  +agent: app core
   ::
@@ -2112,10 +2277,11 @@
     $~  [%vega ~]                                       ::
     $%  $>(%born vane-task)                             ::  new unix process
         [%done ~]                                       ::  socket closed
-        ::  XX  mark ignored
-        ::
+        ::  TODO  mark ignored                          ::
+        ::                                              ::
         [%fard p=(fyrd cage)]                           ::  in-arvo thread
         [%fyrd p=(fyrd cast)]                           ::  external thread
+        [%lard =bear =shed]                             ::  inline thread
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
     ==                                                  ::
@@ -2124,7 +2290,199 @@
   +$  bear  $@(desk beak)                               ::  partial $beak
   +$  cast  (pair mark page)                            ::  output mark + input
   ++  fyrd  |$  [a]  [=bear name=term args=a]           ::  thread run request
+  ::                                                    ::
+  +$  shed  _*form:(strand:rand ,vase)                  ::  compute vase
   --  ::khan
+::
+++  rand                                                ::  computation
+  |%
+  +$  card  card:agent:gall
+  +$  input
+    $%  [%poke =cage]
+        [%sign =wire =sign-arvo]
+        [%agent =wire =sign:agent:gall]
+        [%watch =path]
+    ==
+  +$  strand-input  [=bowl in=(unit input)]
+  +$  tid   @tatid
+  +$  bowl
+    $:  our=ship
+        src=ship
+        tid=tid
+        mom=(unit tid)
+        wex=boat:gall
+        sup=bitt:gall
+        eny=@uvJ
+        now=@da
+        byk=beak
+    ==
+  ::
+  ::  cards:  cards to send immediately.  These will go out even if a
+  ::          later stage of the computation fails, so they shouldn't have
+  ::          any semantic effect on the rest of the system.
+  ::          Alternately, they may record an entry in contracts with
+  ::          enough information to undo the effect if the computation
+  ::          fails.
+  ::  wait:   don't move on, stay here.  The next sign should come back
+  ::          to this same callback.
+  ::  skip:   didn't expect this input; drop it down to be handled
+  ::          elsewhere
+  ::  cont:   continue computation with new callback.
+  ::  fail:   abort computation; don't send effects
+  ::  done:   finish computation; send effects
+  ::
+  ++  strand-output-raw
+    |*  a=mold
+    $~  [~ %done *a]
+    $:  cards=(list card)
+        $=  next
+        $%  [%wait ~]
+            [%skip ~]
+            [%cont self=(strand-form-raw a)]
+            [%fail err=(pair term tang)]
+            [%done value=a]
+        ==
+    ==
+  ::
+  ++  strand-form-raw
+    |*  a=mold
+    $-(strand-input (strand-output-raw a))
+  ::
+  ::  Abort strand computation with error message
+  ::
+  ++  strand-fail
+    |=  err=(pair term tang)
+    |=  strand-input
+    [~ %fail err]
+  ::
+  ::  Asynchronous transcaction monad.
+  ::
+  ::  Combo of four monads:
+  ::  - Reader on input
+  ::  - Writer on card
+  ::  - Continuation
+  ::  - Exception
+  ::
+  ++  strand
+    |*  a=mold
+    |%
+    ++  output  (strand-output-raw a)
+    ::
+    ::  Type of an strand computation.
+    ::
+    ++  form  (strand-form-raw a)
+    ::
+    ::  Monadic pure.  Identity computation for bind.
+    ::
+    ++  pure
+      |=  arg=a
+      ^-  form
+      |=  strand-input
+      [~ %done arg]
+    ::
+    ::  Monadic bind.  Combines two computations, associatively.
+    ::
+    ++  bind
+      |*  b=mold
+      |=  [m-b=(strand-form-raw b) fun=$-(b form)]
+      ^-  form
+      |=  input=strand-input
+      =/  b-res=(strand-output-raw b)
+        (m-b input)
+      ^-  output
+      :-  cards.b-res
+      ?-    -.next.b-res
+        %wait  [%wait ~]
+        %skip  [%skip ~]
+        %cont  [%cont ..$(m-b self.next.b-res)]
+        %fail  [%fail err.next.b-res]
+        %done  [%cont (fun value.next.b-res)]
+      ==
+    ::
+    ::  The strand monad must be evaluted in a particular way to maintain
+    ::  its monadic character.  +take:eval implements this.
+    ::
+    ++  eval
+      |%
+      ::  Indelible state of a strand
+      ::
+      +$  eval-form
+        $:  =form
+        ==
+      ::
+      ::  Convert initial form to eval-form
+      ::
+      ++  from-form
+        |=  =form
+        ^-  eval-form
+        form
+      ::
+      ::  The cases of results of +take
+      ::
+      +$  eval-result
+        $%  [%next ~]
+            [%fail err=(pair term tang)]
+            [%done value=a]
+        ==
+      ::
+      ++  validate-mark
+        |=  [in=* =mark =bowl]
+        ^-  cage
+        =+  .^  =dais:clay  %cb
+                /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[mark]
+            ==
+        =/  res  (mule |.((vale.dais in)))
+        ?:  ?=(%| -.res)
+          ~|  %spider-mark-fail
+          (mean leaf+"spider: ames vale fail {<mark>}" p.res)
+        [mark p.res]
+      ::
+      ::  Take a new sign and run the strand against it
+      ::
+      ++  take
+        ::  cards: accumulate throughout recursion the cards to be
+        ::         produced now
+        =|  cards=(list card)
+        |=  [=eval-form =strand-input]
+        ^-  [[(list card) =eval-result] _eval-form]
+        =*  take-loop  $
+        =.  in.strand-input
+          ?~  in.strand-input  ~
+          =/  in  u.in.strand-input
+          ?.  ?=(%agent -.in)      `in
+          ?.  ?=(%fact -.sign.in)  `in
+          ::
+          :-  ~
+          :^  %agent  wire.in  %fact
+          (validate-mark q.q.cage.sign.in p.cage.sign.in bowl.strand-input)
+        ::  run the strand callback
+        ::
+        =/  =output  (form.eval-form strand-input)
+        ::  add cards to cards
+        ::
+        =.  cards
+          %+  welp
+            cards
+          ::  XX add tag to wires?
+          cards.output
+        ::  case-wise handle next steps
+        ::
+        ?-  -.next.output
+            %wait  [[cards %next ~] eval-form]
+            %skip  [[cards %next ~] eval-form]
+            %fail  [[cards %fail err.next.output] eval-form]
+            %done  [[cards %done value.next.output] eval-form]
+            %cont
+          ::  recurse to run continuation with initialization input
+          ::
+          %_  take-loop
+            form.eval-form  self.next.output
+            strand-input    [bowl.strand-input ~]
+          ==
+        ==
+      --
+    --
+  --  ::strand
 ::
 +$  gift-arvo                                           ::  out result <-$
   $~  [%doze ~]
@@ -2208,9 +2566,6 @@
       ::  %ames: hear packet
       ::
       $>(%hear task:ames)
-      ::  %dill: hangup
-      ::
-      $>(%hook task:dill)
       ::  %clay: external edit
       ::
       $>(%into task:clay)
@@ -2219,6 +2574,9 @@
       ::    TODO: make $yuki an option for %into?
       ::
       $>(%park task:clay)
+      ::  %clay: load blob store
+      ::
+      $>(%prep task:clay)
       ::  %eyre: learn ports of live http servers
       ::
       $>(%live task:eyre)
@@ -2231,6 +2589,9 @@
       ::  %eyre: starts handling an backdoor http request
       ::
       $>(%request-local task:eyre)
+      ::  %dill: close session
+      ::
+      $>(%shut task:dill)
       ::  %behn: wakeup
       ::
       $>(%wake task:behn)
