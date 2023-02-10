@@ -1935,9 +1935,15 @@
     =/  =peer-state:ames  ?>(?=(%known -.ship-state) +.ship-state)
     =/  subs=(jar path [bone sub-nonce=@])
       %+  roll  ~(tap by snd.peer-state)
-      |=  [[=forward=bone *] subs=(jar path [bone sub-nonce=@])]
+      |=  $:  [=forward=bone message-pump-state:ames]
+              subs=(jar path [bone sub-nonce=@])
+          ==
       ?:  (~(has in closing.peer-state) forward-bone)
-        subs
+        %.  subs
+        %^  trace  &(dry odd.veb)  ship
+        |.
+        %+  weld  "stale flow bone={<forward-bone>} in closing, "
+        "#{<~(wyt in live:packet-pump-state)>} packets retrying"
       ?~  duct=(~(get by by-bone.ossuary.peer-state) forward-bone)
         subs
       ?.  ?=([* [%gall %use sub=@ @ %out @ @ nonce=@ pub=@ *] *] u.duct)
