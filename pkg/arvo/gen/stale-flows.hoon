@@ -24,7 +24,7 @@
       ~?  &(=(%3 veb) (gth (lent v) 1))
         "#{<(dec (lent v))>} stale resubs on {<k>}"
       ?.  (gth (lent v) 1)  num
-      (add (lent v) num)
+      (add (dec (lent v)) num)
     --
 ::
 :-  %say
