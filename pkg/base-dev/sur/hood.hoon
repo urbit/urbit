@@ -13,7 +13,7 @@
 ::
 +$  rung  [=aeon =weft]
 ::
-+$  seal        [must=(list perm:gall) may=(list perm:gall)]
++$  seal        (list perm:gall)
 +$  sync-state  [nun=@ta kid=(unit desk) let=@ud]
 +$  sink        (unit [her=@p sud=desk kid=(unit desk) let=@ud])
 ::  +report-prep: get data required for reports

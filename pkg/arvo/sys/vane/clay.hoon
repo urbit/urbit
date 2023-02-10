@@ -359,7 +359,7 @@
   ==                                                    ::
 ::
 +$  bill  (list dude:gall)
-+$  seal  [req=(list perm:gall) opt=(list perm:gall)]
++$  seal  (list perm:gall)
 ::
 ::  Active downloads
 ::
@@ -631,21 +631,15 @@
           ^-  @t
           |^  %-  crip
               %-  of-wall:format
-              :-  ":-"
-              %+  weld
-                %+  enlist  1
-                (enhoon req.seal)
-              %+  enlist  0
-              (enhoon opt.seal)
+              (enlist (enhoon seal))
           ::
           ++  enlist
-            |=  [dep=@ud taz=wall]
+            |=  taz=wall
             ^-  wall
-            =+  pre=(reap (mul dep 2) ' ')
-            ?~  taz  [(snoc pre '~')]~
-            :-  :(weld pre ":~  " i.taz)
-            %-  snoc  :_  (weld pre "==")
-            (turn t.taz |=(t=tape :(weld pre "    " t)))
+            ?~  taz  ["~"]~
+            :-  [':' '~' ' ' ' ' i.taz]
+            %-  snoc  :_  "=="
+            (turn t.taz |=(t=tape `tape`[' ' ' ' ' ' ' ' t]))
           ::
           ++  enhoon
             |=  pez=(list perm:gall)
@@ -656,7 +650,7 @@
         --
       ++  grab
         |%
-        ++  noun  ,[(list perm:gall) (list perm:gall)]
+        ++  noun  ,(list perm:gall)
         ++  mime
           |=  [=mite len=@ud tex=@]
           ~_  tex
@@ -1919,7 +1913,7 @@
     ::
     =/  mis=(list perm:gall)
       ?:  =(%base syd)  ~
-      (skip req:(get-seal yoki) (cury have:gall pes.dom))
+      (skip (get-seal yoki) (cury have:gall pes.dom))
     ?:  &(=(%live liv.dom) !=(~ mis))
       =.  cop.dom  `[yoki (sy mis)]                     ::  [tare] <
       %-  %+  slog  leaf+"clay: missing permissions on {(trip syd)}:"
@@ -3306,7 +3300,7 @@
       ?.  ?=([~ ~ *] res)  ~
       ~|  [%reading-seal syd]
       =/  =seal  !<(seal q.u.u.res)
-      (skip req.seal (cury have:gall pes.dom))
+      (skip seal (cury have:gall pes.dom))
     ::  if desk is already live, we cannot take away the permissions
     ::  it needs to be live
     ::
@@ -4736,7 +4730,7 @@
       ::REVIEW  is it ok to depend on this always being equal to lac.dom.den?
       %+  skip
         ~|  [%reading-seal i.desks]
-        req:!<(seal q.u.u.res)
+        !<(seal q.u.u.res)
       (cury have:gall pes.dom.den)
     ?.  =(~ mis)
       %-  mean
