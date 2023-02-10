@@ -49,8 +49,8 @@
   :-  %tang  %-  flop
   %+  weld
     :~  leaf+"#{<~(wyt in naks)>} flows from %nacking %watches"
-        leaf+"#{<backward>} backward flows with >10 retries"
-        leaf+"#{<forward>} forward flows with >10 retries"
+        leaf+"#{<backward>} live backward flows with (keep retrying)"
+        leaf+"#{<forward>} live forward flows with (keep retrying)"
         leaf+"#{<(resubs subs veb)>} stale resubscriptions"
     ==
   ?.  =(%21 veb)  ~
@@ -76,7 +76,10 @@
 ::
 ++  stale
   %+  roll  ~(tap by snd.peer-state)
-  |=  [[=bone message-pump-state:ames] subs=_subs pags=_p backward=_b forward=_f]
+  |=  $:  [=bone message-pump-state:ames]
+          subs=_subs   pags=_p
+          backward=_b  forward=_f
+      ==
   =,  packet-pump-state
   :-  ?~  duct=(~(get by by-bone.ossuary.peer-state) bone)  subs
       ?.  ?=([* [%gall %use sub=@ @ %out @ @ nonce=@ pub=@ *] *] u.duct)
@@ -90,7 +93,10 @@
       ::
       (weld (scag 7 wire) (slag 8 wire))
   %+  roll  ~(tap in live)
-  |=  [[* [packet-state:ames *]] pags=_pags out=[b=_backward f=_forward]]
+  |=  $:  [[msg=@ frag=@] [packet-state:ames *]]
+          pags=_pags
+          out=[b=_backward f=_forward]
+      ==
   ::
   ::  only forward flows
   ::
@@ -104,7 +110,9 @@
   ::
   ~?  &(=(%2 veb) (gth retries 10))
     =+  arrow=?:(=(0 (end 0 bone)) "<-" "->")
-    "{arrow} ({(cite:title ship)}) bone #{<bone>}, retries: #{<retries>}"
+    =+  closing=(~(has in closing.peer-state) bone)
+    %+  weld  "{arrow} ({(cite:title ship)}) bone=#{<bone>} "
+    "closing={<closing>} msg=#{<msg>} frag=#{<frag>} #{<retries>}"
   :-  pags
   =?  out  (gth retries 10)
     ?:  =(0 (end 0 bone))
