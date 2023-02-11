@@ -38,7 +38,7 @@
     `[desk.i.doms path.i.yakies]                        ::  return desk and path
   path-loop(yakies t.yakies)
 ?:  ?|  =(let.do ud.cass)                               ::  at dusk head
-        !=(0 (lent used))                              ::  at other desk head
+        !=(0 (lent used))                               ::  at other desk head
     ==
   =/  pax=path  +>+:target
   =/  hed=^beam  beam(r da+now, q dusk, s pax)
@@ -54,7 +54,6 @@
   =/  prom=$-([tint tape] sole-prompt)                  ::  styled |rm prompt
     |=  [=tint =tape]
     [%& %prompt (snoc *styx [[~ `tint ~] tape])]
-  ::
   ::  print out the paths blocking the tomb
   %+  prints  (snoc prat leaf+"tomb blocked by:")
   ::  prompt for deletion using |rm
@@ -67,7 +66,6 @@
       (print (crip "dry run: would remove {<paths>} from {<dusk>}") no-product)
     %+  produce  %helm-pans
     ~[(rm paz)]
-  ::
   ::  abort if no other desks using target
   ?~  used
     (print (crip "aborting") no-product)
@@ -82,6 +80,7 @@
   |=  confirm=tape
   ?.  |(=("y" confirm) =("Y" confirm) =("yes" confirm))
     no-product
+  ::
   ?:  dry
     (print (crip "dry run: would remove {<paths>} from {<~(tap in all)>}") no-product)
   %+  produce  %helm-pans
@@ -90,7 +89,6 @@
   %-  rm
   %-  en-beam
   beam(r da+now, q desk, s path)
-::
 ::  no blocking paths, tombstone the target recursively
 %-  produce
 :-  %helm-pans
@@ -136,7 +134,6 @@
       ~
     [[ship desk tako (~(gut by tom) tako nor) p.n.q.yaki] ~ ~]
   --
-::
 ::  +lobes: recursively list hashes under target
 ::
 ++  lobes
@@ -148,8 +145,8 @@
   %+  turn  ~(tap by dir.b)
   |=  [kid=@ta ~]
   ^$(target (weld target /[kid]))
-::
 ::  +notes: build cards for each path to tombstone
+::
 ++  notes
   |=  norms=(set [ship desk tako norm path])
   ^-  (list note-arvo)
@@ -161,6 +158,7 @@
   ?:  dry
     ~
   `[%c %tomb %worn ship desk tako (~(put of norm) path %|)]
+::    +info: toro into card
 ::
 :: XX move to a shared library
 ++  info
@@ -168,8 +166,9 @@
   ^-  note-arvo
   ~|  [%tomb-error "tomb: failed to delete {<target>}"]
   [%c [%info (need tor)]]
+::    +rm: remove a path from a desk
 ::
-:: XX move to a shared library
+::  XX move to a shared library
 ++  rm
   |=  a=path
   =|  c=(list (unit toro))
