@@ -1,1 +1,0 @@
-../../arvo/lib/tiny.hoon

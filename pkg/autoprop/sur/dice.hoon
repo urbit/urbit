@@ -1,1 +1,0 @@
-../../arvo/sur/dice.hoon

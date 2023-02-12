@@ -1,1 +1,0 @@
-../../arvo/lib/naive.hoon
