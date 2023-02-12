@@ -2,7 +2,6 @@
 
 whitespace=$(find . \
              \( -path ./.git -o \
-                -path ./nix -o \
                 -path ./bin \) -prune \
              -o -type f -exec egrep -lI " +$" {} \;);
 
