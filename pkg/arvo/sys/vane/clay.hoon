@@ -359,7 +359,7 @@
   ==                                                    ::
 ::
 +$  bill  (list dude:gall)
-+$  seal  (list perm:gall)
++$  seal  [%0 (list perm:gall)]
 ::
 ::  Active downloads
 ::
@@ -631,13 +631,14 @@
           ^-  @t
           |^  %-  crip
               %-  of-wall:format
-              (enlist (enhoon seal))
+              (enlist (enhoon +.seal))
           ::
           ++  enlist
             |=  taz=wall
             ^-  wall
-            ?~  taz  ["~"]~
-            :-  [':' '~' ' ' ' ' i.taz]
+            ?~  taz  ["[%0 ~]"]~
+            :+  ":-  %0"
+              [':' '~' ' ' ' ' i.taz]
             %-  snoc  :_  "=="
             (turn t.taz |=(t=tape `tape`[' ' ' ' ' ' ' ' t]))
           ::
@@ -650,7 +651,7 @@
         --
       ++  grab
         |%
-        ++  noun  ,(list perm:gall)
+        ++  noun  ,[%0 (list perm:gall)]
         ++  mime
           |=  [=mite len=@ud tex=@]
           ~_  tex
@@ -1913,7 +1914,7 @@
     ::
     =/  mis=(list perm:gall)
       ?:  =(%base syd)  ~
-      (skip (get-seal yoki) (cury have:gall pes.dom))
+      (skip +:(get-seal yoki) (cury have:gall pes.dom))
     ?:  &(=(%live liv.dom) !=(~ mis))
       =.  cop.dom  `[yoki (sy mis)]                     ::  [tare] <
       %-  %+  slog  leaf+"clay: missing permissions on {(trip syd)}:"
@@ -3300,7 +3301,7 @@
       ?.  ?=([~ ~ *] res)  ~
       ~|  [%reading-seal syd]
       =/  =seal  !<(seal q.u.u.res)
-      (skip seal (cury have:gall pes.dom))
+      (skip +.seal (cury have:gall pes.dom))
     ::  if desk is already live, we cannot take away the permissions
     ::  it needs to be live
     ::
@@ -4730,7 +4731,7 @@
       ::REVIEW  is it ok to depend on this always being equal to lac.dom.den?
       %+  skip
         ~|  [%reading-seal i.desks]
-        !<(seal q.u.u.res)
+        +:!<(seal q.u.u.res)
       (cury have:gall pes.dom.den)
     ?.  =(~ mis)
       %-  mean
