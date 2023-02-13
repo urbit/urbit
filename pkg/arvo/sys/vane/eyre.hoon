@@ -1092,7 +1092,7 @@
       ^-  @t
       %-  crip
       =;  max-age=tape
-        "urbauth-{(scow %p our)}={(scow %uv session)}; Path=/; Max-Age={max-age}; HttpOnly"
+        "urbauth-{(scow %p our)}={(scow %uv session)}; Path=/; Max-Age={max-age}"
       %-  format-ud-as-integer
       ?.  extend  0
       (div (msec:milly session-timeout) 1.000)
