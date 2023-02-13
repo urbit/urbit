@@ -4827,7 +4827,9 @@
   ::
       %merg                                               ::  direct state up
     ?:  =(%$ des.req)
-      ~&(%merg-no-desk !!)
+      ~|(%merg-no-desk !!)
+    ?.  ((sane %tas) des.req)
+      ~|([%merg-bad-desk-name des.req] !!)
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our des.req)
       abet:(start-merge:den her.req dem.req cas.req how.req)
@@ -4835,7 +4837,9 @@
   ::
       %fuse
     ?:  =(%$ des.req)
-      ~&(%fuse-no-desk !!)
+      ~|(%fuse-no-desk !!)
+    ?.  ((sane %tas) des.req)
+      ~|([%fuse-bad-desk-name des.req] !!)
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our des.req)
       abet:(start-fuse:den bas.req con.req)
@@ -4881,6 +4885,8 @@
     [(weld moves-1 moves-2) ..^^$]
   ::
       %park
+    ?.  ((sane %tas) des.req)
+      ~|([%park-bad-desk des.req] !!)
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our des.req)
       abet:(park:den | & [yok ran]:req)
