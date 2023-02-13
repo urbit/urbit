@@ -363,6 +363,8 @@
   ::    %sift: limit verbosity to .ships
   ::    %snub: set packet blacklist to .ships
   ::    %spew: set verbosity toggles
+  ::    %cong: adjust congestion control parameters
+  ::    %stir: recover from timer desync
   ::    %trim: release memory
   ::    %vega: kernel reload notification
   ::
@@ -380,6 +382,7 @@
         [%sift ships=(list ship)]
         [%snub ships=(list ship)]
         [%spew veb=(list verb)]
+        [%cong msg=@ud mem=@ud]
         [%stir arg=@t]
         $>(%trim vane-task)
         $>(%vega vane-task)
