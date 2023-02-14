@@ -126,7 +126,10 @@ git push origin <tagname>
 - [ ] ssh into `~zod` 
 - [ ] Check to ensure that nobody else is ssh'd into `~zod`, by running `screen -ls` and verifying no sessions are attached.
 - [ ] Attach to the screen session using `screen -x`
-- [ ] Install the contents of the `%kids` desk on `~marnec-dozzod-marzod` into our `%base`: `|merge %base ~marnec-dozzod-marzod %kids, =gem %only-that`
+- [ ] Ensure that the release candidate was correctly propagated through the prerelease moons
+  - Use `-read %z ~SHIP %DESK da+now /` to check desk hashes
+  - [ ] Run the above check on the following [SHIP DESK] pairs: [~marnec-dozzod-marzod %base], [~marnec-dozzod-marzod %kids], [~doznec-dozzod-marzod %base], [~doznec-dozzod-marzod %kids] — **they should all match**
+- [ ] Install the contents of the `%kids` desk on `~doznec-dozzod-marzod` into our `%base`: `|merge %base ~doznec-dozzod-marzod %kids, =gem %only-that`
 - [ ] Check that `~zod` has updated to the latest release.  For a Kelvin release, you can run `zuse` in the Dojo.  Each non-Kelvin release might its own way of checking whether the update has completed, possibly through checking the `%cz` hash of the `%base` desk matches the hash on `~marnec-dozzod-marzod` by comparing the outputs of `+vat %base` on both ships.
 - [ ] Merge `~zod`'s `%base` desk into its `%kids` desk to distribute the new code to the network: `|merge %kids our %base, =gem %only-that`
 - [ ] Before exiting the screen session on `~zod`, make sure the screen session is not left in copy mode for a long period of time, since that will disrupt `~zod`'s operation.
@@ -142,6 +145,17 @@ git push origin <tagname>
 
 - [ ] Merge `master` back into `develop`.
 - [ ] Cut a new release branch from `develop`.  The branch should have the format `release/urbit-os-vX.XX`
+
+### Release Next Release Candidate
+
+We'll now need to **IMMEDIATELY** deploy the new release candidate to the pre-release moon(s). Otherwise PRs merged during this window will bypass the testing period on `~binnec` and go straight to the release candidate.
+
+- On `~marnec-dozzod-marzod`:
+  - [ ] `|merge %base ~binnec-dozzod-marzod %kids, =gem %only-that` to update `~marnec` with the contents of the GH release branch
+  - [ ] `|merge %kids our %base, =gem %only-that` to OTA the release candidate to subscribers
+- When ready to deploy the release candidate to App Developers, on `~doznec-dozzod-marzod`:
+  - [ ] `|merge %base ~marnec-dozzod-marzod %kids, =gem %only-that` to update `~doznec` with the release candidate
+  - [ ] `|merge %kids our %base, =gem %only-that` to OTA the release candidate to subscribers
 
 ### Post-Release Checks
 - [ ] Check that `~marzod` and other distribution stars are receiving the update by running `|ames-sift ~zod` and `|ames-verb %rcv %ges`.  You should see lots of packets from `~zod`.  Once you have confirmed packets are flowing, run `|ames-sift` and `|ames-verb` with no arguments to reset the verbosity state.

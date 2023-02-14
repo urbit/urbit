@@ -114,29 +114,29 @@
     ::
     ::  Testnet contract addresses
     ::
-    ++  ropsten-contracts
+    ++  goerli-contracts
       |%
       ++  azimuth
-        0x308a.b6a6.024c.f198.b57e.008d.0ac9.ad02.1988.6579
+        0xbb61.fa68.3e4b.9104.18e2.7b00.a143.8a93.6234.df52
       ::
       ++  ecliptic
-        0x8b9f.86a2.8921.d9c7.05b3.113a.755f.b979.e1bd.1bce
+        0xe129.0a32.9014.5e63.e6a8.ec1e.f661.6906.856d.0c8f
       ::
       ++  linear-star-release
-        0x1f8e.dd03.1ee4.1474.0aed.b39b.84fb.8f2f.66ca.422f
+        0x0
       ::
       ++  conditional-star-release
         0x0
       ::
       ++  delegated-sending
-        0x3e8c.a510.354b.c2fd.bbd6.1502.52d9.3105.c9c2.7bbe
+        0x0
       ::
       ++  naive
-        0xe7cf.4b83.06d3.11ba.ca15.585f.e3f0.7cd0.441c.21d1
+        0x56e3.7137.cdaf.c026.a732.e8e8.40cd.621e.d50b.d210
       ::
-      ++  launch  4.601.630
-      ++  public  launch
-      ++  chain-id  3
+      ++  launch  7.834.742
+      ++  public  7.834.800
+      ++  chain-id  5
       --
     ::
     ::  Local contract addresses

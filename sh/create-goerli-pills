@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# Usage: create-goerli-pills
+
+# Build the ivory and brass goerli pills, copying them to the local directory,
+# named with the current give revision
+
+set -xeuo pipefail
+
+cd "${0%/*}/.."
+
+rev="$(git rev-parse HEAD)"
+sha="${rev:0:5}"
+
+brass="brass-goerli-${sha}.pill"
+ivory="ivory-goerli-${sha}.pill"
+
+cp -f "$(nix-build -A brass-goerli.build --no-out-link)" "$brass"
+cp -f "$(nix-build -A ivory-goerli.build --no-out-link)" "$ivory"
+
+chmod 0644 "$brass" "$ivory"
