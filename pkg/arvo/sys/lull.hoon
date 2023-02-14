@@ -786,6 +786,7 @@
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
         [%perm des=desk pax=path rit=rite]              ::  change permissions
         [%pork ~]                                       ::  resume commit
+        [%pine des=desk pes=pers:gall]                  ::  app-desired perms
         [%curb des=desk pes=pers:gall]                  ::  user-approved perms
         [%rein des=desk ren=rein]                       ::  extra apps
         [%stir arg=*]                                   ::  debug
@@ -961,6 +962,7 @@
     +$  belt                                            ::
       $:  =zest                                         ::  running?
           pes=pers:gall                                 ::  granted perms
+          pin=pers:gall                                 ::  requested perms
           wic=(set weft)                                ::  waiting kelvins
           cop=pers:gall                                 ::  perms blocking next
           lac=pers:gall                                 ::  perms blocking live
@@ -973,6 +975,7 @@
           $:  %perm                                     ::  permissions:
               =desk                                     ::  on
               pes=pers:gall                             ::  granted
+              pin=pers:gall                             ::  requested
               cop=pers:gall                             ::  blocking a commit
               lac=pers:gall                             ::  blocking live
           ==                                            ::
@@ -1002,7 +1005,8 @@
           %perm
         =/  got=belt
           (~(gut by rock) desk.wave *belt)
-        (~(put by rock) desk.wave got(pes pes.wave, cop cop.wave, lac lac.wave))
+        %+  ~(put by rock)  desk.wave
+        got(pes pes.wave, pin pin.wave, cop cop.wave, lac lac.wave)
       ==
     ::
     ++  walk                                            ::  diff
@@ -1018,7 +1022,7 @@
         |=  [=desk belt]
         ^-  (list wave)
         :-  [%zest desk zest]
-        :-  [%perm desk pes cop lac]
+        :-  [%perm desk pes pin cop lac]
         %+  turn  ~(tap in wic)
         |=  =weft
         [%wait desk weft]
@@ -1053,9 +1057,9 @@
           ^-  wave
           [%warp desk weft]
         ::
-          ?:  =([pes cop lac]:aa [pes cop lac]:bb)
+          ?:  =([pes pin cop lac]:aa [pes pin cop lac]:bb)
             ~
-          [%perm desk [pes cop lac]:bb]~
+          [%perm desk [pes pin cop lac]:bb]~
         ==
       ==
     --

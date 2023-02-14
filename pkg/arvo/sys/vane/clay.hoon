@@ -179,6 +179,7 @@
       liv=zest                                          ::  agents liveness
       ren=rein                                          ::  force agents on/off
       pes=pers:gall                                     ::  user-approved perms
+      pin=pers:gall                                     ::  requested perms
   ==                                                    ::
 ::
 ::  Over-the-wire backfill request/response
@@ -3288,6 +3289,26 @@
     |=  r=rule
     r(who (~(del in who.r) |+nom))
   ::
+  ++  set-pine
+    |=  pis=(set perm:gall)
+    ^+  ..park
+    =?  pis  =(%base syd)  ~
+    =/  pin  ~(tap in pis)
+    ::  exclude permissions that are already allowed
+    ::
+    =.  pin
+      (skip pin (cury have:gall pes.dom))
+    ::  exclude permissions that are required by the seal
+    ::
+    =.  pin
+      =^  res  ..park  (aver ~ %x da+now /desk/seal)
+      ?.  ?=([~ ~ *] res)  pin
+      ~|  [%reading-seal syd]
+      =/  reqs  +:!<(seal q.u.u.res)
+      (skip pin (cury have:gall (sy reqs)))
+    ::
+    tare(pin.dom (sy pin))
+  ::
   ++  set-curb                                          ::  [goad] <
     |=  pes=(set perm:gall)
     ^+  ..park
@@ -3302,6 +3323,8 @@
       ~|  [%reading-seal syd]
       =/  =seal  !<(seal q.u.u.res)
       (skip +.seal (cury have:gall pes.dom))
+    =.  pin.dom
+      (sy (skip ~(tap in pin.dom) (cury have:gall pes.dom)))
     ::  if desk is already live, we cannot take away the permissions
     ::  it needs to be live
     ::
@@ -4894,7 +4917,7 @@
     |=  =dojo
     ^-  belt:tire
     =,  dom.dojo
-    [liv pes ~(key by wic) ?~(cop.dom.dojo ~ mis.u.cop) lac]
+    [liv pes pin ~(key by wic) ?~(cop.dom.dojo ~ mis.u.cop) lac]
   ::
   ::  [tare] Must be called any time the zest or commits-in-waiting
   ::  might have changed for a desk.  +goad calls this uncondtionally,
@@ -5121,6 +5144,12 @@
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our des.req)
       abet:(perm:den pax.req rit.req)
+    [mos ..^$]
+  ::
+      %pine
+    =^  mos  ruf
+      =/  den  ((de now rof hen ruf) our des.req)
+      abet:(set-pine:den pes.req)
     [mos ..^$]
   ::
       %curb
@@ -5889,7 +5918,7 @@
     ++  dome-13-to-14
       |=  dom=dome-13
       ^-  dome
-      dom(|7 [&8.dom cop=~ lac=~ |8.dom(ren [ren.dom pes=~])])
+      dom(|7 [&8.dom cop=~ lac=~ |8.dom(ren [ren.dom pes=~ pin=~])])
     --
   --
 ::
