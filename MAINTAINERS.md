@@ -119,3 +119,40 @@ following command:
 ```
 git push origin <tagname>
 ```
+
+## Releases
+
+- [ ] Create a pull request from the relevant release branch (with the format `release/urbit-os-vX.XX`) to `master`.
+- [ ] ssh into `~zod` 
+- [ ] Check to ensure that nobody else is ssh'd into `~zod`, by running `screen -ls` and verifying no sessions are attached.
+- [ ] Attach to the screen session using `screen -x`
+- [ ] Install the contents of the `%kids` desk on `~marnec-dozzod-marzod` into our `%base`: `|merge %base ~marnec-dozzod-marzod %kids, =gem %only-that`
+- [ ] Check that `~zod` has updated to the latest release.  For a Kelvin release, you can run `zuse` in the Dojo.  Each non-Kelvin release might its own way of checking whether the update has completed, possibly through checking the `%cz` hash of the `%base` desk matches the hash on `~marnec-dozzod-marzod` by comparing the outputs of `+vat %base` on both ships.
+- [ ] Merge `~zod`'s `%base` desk into its `%kids` desk to distribute the new code to the network: `|merge %kids our %base, =gem %only-that`
+- [ ] Before exiting the screen session on `~zod`, make sure the screen session is not left in copy mode for a long period of time, since that will disrupt `~zod`'s operation.
+
+### Release Communications
+
+- [ ] Tag the commit that went onto the live network as a release, using GitHub's "Releases" interface.  See the "Tagging" section of this document for details.
+- [ ] Update (add a response) the mailing list post to include the base hash of the new release, and indicate that this has now been deployed to the network.
+- [ ] Tweet from the `@zodisok` Twitter account linking to the GitHub release.
+- [ ] Post links to the release in the Urbit Community Development channel and a channel in the UF public group.
+
+### Post-Release Git Cleanup
+
+- [ ] Merge `master` back into `develop`.
+- [ ] Cut a new release branch from `develop`.  The branch should have the format `release/urbit-os-vX.XX`
+
+### Post-Release Checks
+- [ ] Check that `~marzod` and other distribution stars are receiving the update by running `|ames-sift ~zod` and `|ames-verb %rcv %ges`.  You should see lots of packets from `~zod`.  Once you have confirmed packets are flowing, run `|ames-sift` and `|ames-verb` with no arguments to reset the verbosity state.
+- [ ] Check that planets are receiving the update.  They should start updating within an hour or so.
+- [ ] Monitor the Urbit Community Help channel, UF public group channels, and Twitter to make 
+
+### Post-Release Artifacts
+After waiting at least 24 hours after the release to the network, make and distribute a pill.
+- [ ] Find a ship on the network (for now, use `~halbex-palheb`, which runs the UF public group) whose sources for `%base` and the standard app desks are mainline, not devstream.
+- [ ] Ensure the `%cz` hashes of all desks match those on the distribution ships.
+- [ ] Make a pill by running `.multi-vX-XX/pill +solid %base %garden %webterm %landscape %groups %talk` (replacing `X-XX` with the appropriate version numbers, in this and later steps).
+- [ ] Boot a fakezod off that pill to make sure the pill is viable.
+- [ ] Upload the pill to `bootstrap.urbit.org` using the Google Cloud SDK by running: `gsutil cp /path/to/pier/.urb/put/multi-vX-XX.pill gs://bootstrap.urbit.org/urbit-vX.XX.pill` -- note that it should be `vX.XX`, not `vX-XX` as in the original pill filename.
+- [ ] Boot a ship with the latest binary and check that it downloads the pill from `https://bootstrap.urbit.org/urbit-vX.XX.pill` where you just uploaded it.
