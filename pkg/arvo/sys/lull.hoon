@@ -839,6 +839,7 @@
     $:  dome                                            ::
         tom=(map tako norm)                             ::
         nor=norm                                        ::
+        fod=flue                                        ::
         liv=zest                                        ::
         ren=(map dude:gall ?)                           ::
     ==                                                  ::
