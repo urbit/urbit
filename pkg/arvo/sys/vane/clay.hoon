@@ -191,30 +191,6 @@
       [%1 peg=(unit page)]
   ==
 ::
-::  Per-desk ford cache
-::
-::    Spill is the set of "roots" we have into the global ford cache.
-::    We add a root for everything referenced directly or indirectly on
-::    a desk, then invalidate them on commit only if their dependencies
-::    change.
-::
-::    Sprig is a fast-lookup index over the global ford cache.  The only
-::    goal is to make cache hits fast.
-::
-+$  flue  [spill=(set leak) sprig=(map mist [=leak =soak])]
-::
-::  Ford build without content.
-::
-+$  mist
-  $%  [%file =path]
-      [%nave =mark]
-      [%dais =mark]
-      [%cast =mars]
-      [%tube =mars]
-      [%vale =path]
-      [%arch =path]
-  ==
-::
 ::  New desk data.
 ::
 ::  Sent to other ships to update them about a particular desk.
