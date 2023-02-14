@@ -102,6 +102,7 @@
       ges=`?`%.n  ::  congestion control
       for=`?`%.n  ::  packet forwarding
       rot=`?`%.n  ::  routing attempts
+      kay=`?`%.n  ::  is ok/not responding
   ==
 =>
 ~%  %ames  ..part  ~
@@ -121,14 +122,14 @@
 ::  +qos-update-text: notice text for if connection state changes
 ::
 ++  qos-update-text
-  |=  [=ship old=qos new=qos]
+  |=  [=ship old=qos new=qos k=? ships=(set ship)]
   ^-  (unit tape)
   ::
   ?+  [-.old -.new]  ~
     [%unborn %live]  `"; {(scow %p ship)} is your neighbor"
-    [%dead %live]    `"; {(scow %p ship)} is ok"
-    [%live %dead]    `"; {(scow %p ship)} not responding still trying"
-    [%unborn %dead]  `"; {(scow %p ship)} not responding still trying"
+    [%dead %live]    ((trace k ship ships |.("is ok")) ~)
+    [%live %dead]    ((trace k ship ships |.("not responding still trying")) ~)
+    [%unborn %dead]  ((trace k ship ships |.("not responding still trying")) ~)
     [%live %unborn]  `"; {(scow %p ship)} has sunk"
     [%dead %unborn]  `"; {(scow %p ship)} has sunk"
   ==
@@ -608,6 +609,7 @@
 ::    crypto-core: interface for encryption and signing
 ::    bug:         debug printing configuration
 ::    snub:        blocklist for incoming packets
+::    cong:        parameters for marking a flow as clogged
 ::
 ::    Note: .corks is only still present for unreleased migration reasons
 ::
@@ -620,6 +622,7 @@
       =bug
       corks=(set wire)
       snub=(set ship)
+      cong=[msg=@ud mem=@ud]
   ==
 +$  ames-state-4  ames-state-5
 +$  ames-state-5
@@ -627,7 +630,7 @@
       =unix=duct
       =life
       crypto-core=acru:ames
-      =bug
+      bug=bug-9
   ==
 ::
 +$  ship-state-4  ship-state-5
@@ -656,7 +659,7 @@
       =unix=duct
       =life
       crypto-core=acru:ames
-      =bug
+      bug=bug-9
   ==
 ::
 +$  ship-state-6
@@ -685,7 +688,7 @@
       =unix=duct
       =life
       crypto-core=acru:ames
-      =bug
+      bug=bug-9
   ==
 ::
 +$  ames-state-8
@@ -693,11 +696,40 @@
       =unix=duct
       =life
       crypto-core=acru:ames
-      =bug
+      bug=bug-9
       corks=(set wire)
   ==
 ::
-
++$  bug-9
+  $:  veb=_[`?`%.n `?`%.n `?`%.n `?`%.n `?`%.n `?`%.n `?`%.n]
+      ships=(set ship)
+  ==
+::
++$  bug-10
+  $:  veb=_[`?`%.n `?`%.n `?`%.n `?`%.n `?`%.n `?`%.n `?`%.n `?`%.n]
+      ships=(set ship)
+  ==
+::
++$  ames-state-9
+  $:  peers=(map ship ship-state)
+      =unix=duct
+      =life
+      crypto-core=acru:ames
+      bug=bug-9
+      corks=(set wire)
+      snub=(set ship)
+  ==
+::
++$  ames-state-10
+  $:  peers=(map ship ship-state)
+      =unix=duct
+      =life
+      crypto-core=acru:ames
+      bug=bug-10
+      corks=(set wire)
+      snub=(set ship)
+  ==
+::
 ::  $bug: debug printing configuration
 ::
 ::    veb: verbosity toggles
@@ -860,7 +892,9 @@
             [%6 ames-state-6]
             [%7 ames-state-7]
             [%8 ames-state-8]
-            [%9 ^ames-state]
+            [%9 ames-state-9]
+            [%10 ames-state-10]
+            [%11 ^ames-state]
         ==
     ::
     |=  [now=@da eny=@ rof=roof]
@@ -983,7 +1017,7 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%9 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%11 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
           $%  $:  %4
@@ -1020,8 +1054,22 @@
                       state=ames-state-8
                   ==
                   [%adult state=ames-state-8]
-              ==  == 
+              ==  ==
               $:  %9
+              $%  $:  %larva
+                      events=(qeu queued-event)
+                      state=ames-state-9
+                  ==
+                  [%adult state=ames-state-9]
+              ==  ==
+              $:  %10
+              $%  $:  %larva
+                      events=(qeu queued-event)
+                      state=ames-state-10
+                  ==
+                  [%adult state=ames-state-10]
+              ==  ==
+              $:  %11
               $%  $:  %larva
                       events=(qeu queued-event)
                       state=_ames-state.adult-gate
@@ -1076,12 +1124,32 @@
         =.  queued-events  events.old
         larval-gate
       ::
-          [%9 %adult *]  (load:adult-core %9 state.old)
+          [%9 %adult *]
+        =.  cached-state  `[%9 state.old]
+        ~>  %slog.0^leaf/"ames: larva reload"
+        larval-gate
       ::
           [%9 %larva *]
+        ~>  %slog.0^leaf/"ames: larva: load"
+        =.  queued-events  events.old
+        larval-gate
+      ::
+          [%10 %adult *]
+        =.  cached-state  `[%10 state.old]
+        ~>  %slog.0^leaf/"ames: larva reload"
+        larval-gate
+      ::
+          [%10 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %9 state.old)
+        larval-gate
+      ::
+          [%11 %adult *]  (load:adult-core %11 state.old)
+      ::
+          [%11 %larva *]
+        ~>  %slog.1^leaf/"ames: larva: load"
+        =.  queued-events  events.old
+        =.  adult-gate     (load:adult-core %11 state.old)
         larval-gate
        ::
       ==
@@ -1102,7 +1170,11 @@
         8+(state-7-to-8:load:adult-core +.u.cached-state)
       =?  u.cached-state  ?=(%8 -.u.cached-state)
         9+(state-8-to-9:load:adult-core +.u.cached-state)
-      ?>  ?=(%9 -.u.cached-state)
+      =?  u.cached-state  ?=(%9 -.u.cached-state)
+        10+(state-9-to-10:load:adult-core +.u.cached-state)
+      =?  u.cached-state  ?=(%10 -.u.cached-state)
+        11+(state-10-to-11:load:adult-core +.u.cached-state)
+      ?>  ?=(%11 -.u.cached-state)
       =.  ames-state.adult-gate  +.u.cached-state
       [moz larval-core(cached-state ~)]
     --
@@ -1143,11 +1215,13 @@
       %sift  (on-sift:event-core ships.task)
       %snub  (on-snub:event-core ships.task)
       %spew  (on-spew:event-core veb.task)
+      %cong  (on-cong:event-core [msg mem]:task)
       %stir  (on-stir:event-core arg.task)
       %trim  on-trim:event-core
       %vega  on-vega:event-core
       %plea  (on-plea:event-core [ship plea]:task)
       %cork  (on-cork:event-core ship.task)
+      %kroc  (on-kroc:event-core dry.task)
     ==
   ::
   [moves ames-gate]
@@ -1178,19 +1252,19 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%9 %adult ames-state]
+++  stay  [%11 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
   =<  |=  $=  old-state
-          $%  [%9 ^ames-state]
+          $%  [%11 ^ames-state]
           ==
       ^+  ames-gate
-      ?>  ?=(%9 -.old-state)
+      ?>  ?=(%11 -.old-state)
       ames-gate(ames-state +.old-state)
+  ::  all state transitions are called from larval ames
   ::
   |%
-  ::  +state-4-to-5 called from larval-ames
   ::
   ++  state-4-to-5
     |=  ames-state=ames-state-4
@@ -1208,7 +1282,6 @@
         message-pump-state
       ship-state
     ames-state
-  ::  +state-5-to-6 called from larval-ames
   ::
   ++  state-5-to-6
     |=  ames-state=ames-state-5
@@ -1231,7 +1304,6 @@
     :_  +.peer-state
     =,  -.peer-state
     [symmetric-key life rift public-key sponsor]
-  ::  +state-6-to-7 called from larval-ames
   ::
   ++  state-6-to-7
     |=  ames-state=ames-state-6
@@ -1246,28 +1318,42 @@
     ^-  peer-state
     :-  +<.ship-state
     [route qos ossuary snd rcv nax heeds ~ ~ ~]:ship-state
-  ::  +state-7-to-8 called from larval-ames
   ::
   ++  state-7-to-8
     |=  ames-state=ames-state-7
     ^-  ames-state-8
-    :*  peers.ames-state
-        unix-duct.ames-state
-        life.ames-state
-        crypto-core.ames-state
-        bug.ames-state
+    =,  ames-state
+    :*  peers  unix-duct  life  crypto-core  bug
         *(set wire)
     ==
+  ::
   ++  state-8-to-9
     |=  ames-state=ames-state-8
-    ^-  ^^ames-state
-    :*  peers.ames-state
-        unix-duct.ames-state
-        life.ames-state
-        crypto-core.ames-state
-        bug.ames-state
-        corks.ames-state
+    ^-  ames-state-9
+    =,  ames-state
+    :*  peers  unix-duct  life  crypto-core  bug  corks
         *(set ship)
+    ==
+  ::
+  ++  state-9-to-10
+    |=  ames-state=ames-state-9
+    ^-  ames-state-10
+    =,  ames-state
+    :*  peers  unix-duct  life  crypto-core
+        %=  bug.ames-state
+          veb  [&1 &2 &3 &4 &5 &6 |6 %.n]:veb.bug
+        ==
+        corks  snub
+    ==
+  ::
+  ++  state-10-to-11
+    |=  ames-state=ames-state-10
+    ^-  ^^ames-state
+    =,  ames-state
+    :*  peers  unix-duct  life  crypto-core  bug  corks  snub
+        ::  5 messages and 100Kb of data outstanding
+        ::
+        [msg=5 mem=100.000]
     ==
   --
 ::  +scry: dereference namespace
@@ -1400,6 +1486,7 @@
   ~%  %event-gate  ..per-event  ~
   |=  [[now=@da eny=@ rof=roof] =duct =ames-state]
   =*  veb  veb.bug.ames-state
+  =|  cork-bone=(unit bone)  ::  modified by +on-kroc
   ~%  %event-core  ..$  ~
   |%
   ++  event-core  .
@@ -1507,6 +1594,7 @@
         %ges  acc(ges %.y)
         %for  acc(for %.y)
         %rot  acc(rot %.y)
+        %kay  acc(kay %.y)
       ==
     event-core
   ::  +on-prod: re-send a packet per flow to each of .ships
@@ -1532,6 +1620,13 @@
       =.  peer-core  (run-message-pump:peer-core i.bones %prod ~)
       $(bones t.bones)
     --
+  ::  +on-cong: adjust congestion control parameters
+  ::
+  ++  on-cong
+    |=  [msg=@ud mem=@ud]
+    ^+  event-core
+    =.  cong.ames-state  msg^mem
+    event-core
   ::  +on-stir: recover from timer desync, setting new timers as needed
   ::
   ::    .arg is unused, meant to ease future debug commands
@@ -1850,7 +1945,15 @@
     =/  =peer-state  +.u.ship-state
     =/  =channel     [[our ship] now channel-state -.peer-state]
     ::
-    =^  =bone  ossuary.peer-state  (bind-duct ossuary.peer-state duct)
+    =/  [=bone ossuary=_ossuary.peer-state]
+      ?^  cork-bone  [u.cork-bone ossuary.peer-state]
+      (bind-duct ossuary.peer-state duct)
+    =.  ossuary.peer-state  ossuary
+    ::
+    ?.  (~(has by by-bone.ossuary.peer-state) bone)
+      %.  event-core
+      %^  trace  odd.veb  ship
+      |.("trying to cork {<bone=bone>}, not in the ossuary, ignoring")
     ::
     =.  closing.peer-state  (~(put in closing.peer-state) bone)
     %-  %^  trace  msg.veb  ship
@@ -1859,6 +1962,68 @@
         =/  rcvr  [ship her-life.channel]
         "cork plea {<sndr rcvr bone=bone vane.plea path.plea>}"
     abet:(on-memo:(make-peer-core peer-state channel) bone plea %plea)
+  ::  +on-kroc: cork all flows from failed subscriptions
+  ::
+  ++  on-kroc
+    |=  dry=?
+    ^+  event-core
+    ::
+    =;  [corks=@ core=_event-core]
+      ?.  dry  core
+      %.(core (slog leaf/"ames: #{<corks>} flows can be corked" ~))
+    ::
+    %+  roll  ~(tap by peers.ames-state)
+    |=  [[=ship =ship-state] corks=@ core=_event-core]
+    ?.  ?=(%known -.ship-state)
+      corks^core
+    =/  =peer-state:ames  ?>(?=(%known -.ship-state) +.ship-state)
+    =/  subs=(jar path [bone sub-nonce=@])
+      %+  roll  ~(tap by snd.peer-state)
+      |=  [[=forward=bone *] subs=(jar path [bone sub-nonce=@])]
+      ?:  (~(has in closing.peer-state) forward-bone)
+        subs
+      ?~  duct=(~(get by by-bone.ossuary.peer-state) forward-bone)
+        subs
+      ?.  ?=([* [%gall %use sub=@ @ %out @ @ nonce=@ pub=@ *] *] u.duct)
+        subs
+      =/  =wire           i.t.u.duct
+      =/  nonce=(unit @)  (rush (snag 7 wire) dem)
+      %-  ~(add ja subs)
+      ::  0 for old pre-nonce subscriptions
+      ::
+      :_  [forward-bone ?~(nonce 0 u.nonce)]
+      ?~  nonce  wire
+      ::  don't include the sub-nonce in the key
+      ::
+      (weld (scag 7 wire) (slag 8 wire))
+    %+  roll  ~(tap by subs)
+    |=  [[=wire flows=(list [bone sub-nonce=@])] corks=_corks core=_core]
+    ::
+    %-  tail
+    %+  roll  (sort flows |=([[@ n=@] [@ m=@]] (lte n m)))
+    |=  [[=bone nonce=@] resubs=_(lent flows) corks=_corks core=_core]
+    =/  app=term  ?>(?=([%gall %use sub=@ *] wire) i.t.t.wire)
+    =/  =path     (slag 7 wire)
+    =/  log=tape  "[bone={<bone>} agent={<app>} nonce={<nonce>}] {<path>}"
+    =;  corkable=?
+      =?  corks  corkable  +(corks)
+      =?  core   &(corkable !dry)  (%*(on-cork core cork-bone `bone) ship)
+      (dec resubs)^corks^core
+    ::  checks if this is a stale re-subscription
+    ::
+    ?.  =(resubs 1)
+      %.  &
+      (trace &(dry odd.veb) ship |.((weld "stale %watch plea " log)))
+    ::  the current subscription can be safely corked if there
+    ::  is a flow with a naxplanation ack  on a backward bone
+    ::
+    =+  backward-bone=(mix 0b10 bone)
+    ?.  =(2 (mod backward-bone 4))
+      |
+    ?~  (~(get by rcv.peer-state) backward-bone)
+      |
+    %.  &
+    (trace &(dry odd.veb) ship |.((weld "failed %watch plea " log)))
   ::  +on-take-wake: receive wakeup or error notification from behn
   ::
   ++  on-take-wake
@@ -2016,7 +2181,9 @@
       =.  +.peer-state  +:*^peer-state
       ::  print change to quality of service, if any
       ::
-      =/  text=(unit tape)  (qos-update-text ship old-qos qos.peer-state)
+      =/  text=(unit tape)
+        %^  qos-update-text  ship  old-qos
+        [qos.peer-state kay.veb ships.bug.ames-state]
       ::
       =?  event-core  ?=(^ text)
         (emit duct %pass /qos %d %flog %text u.text)
@@ -2421,7 +2588,10 @@
       =^  old-qos  qos.peer-state  [qos.peer-state new-qos]
       ::  if no update worth reporting, we're done
       ::
-      ?~  text=(qos-update-text her.channel old-qos new-qos)
+      =/  text
+        %^  qos-update-text  her.channel  old-qos
+        [new-qos kay.veb ships.bug.ames-state]
+      ?~  text
         peer-core
       ::  print message
       ::
@@ -2445,27 +2615,40 @@
         ?:  =(0 (end 0 bone))
           ~
         `u=message-pump-state
-      ::  clogged: are five or more response messages unsent to this peer?
       ::
       =/  clogged=?
-        =|  acc=@ud
-        |-  ^-  ?
-        ?~  pumps
-          %.n
-        =.  acc
-          %+  add  acc
-          %+  add
-            ::  in-flight messages
-            ::
-            (sub [next current]:i.pumps)
-          ::  queued messages
-          ::
-          ~(wyt in unsent-messages.i.pumps)
+        |^  &(nuf-messages nuf-memory)
+        ::  +nuf-messages: are there enough messages to mark as clogged?
         ::
-        ?:  (gte acc 5)
-          %.y
-        $(pumps t.pumps)
-      ::  if clogged, notify client vanek
+        ++  nuf-messages
+          =|  num=@ud
+          |-  ^-  ?
+          ?~  pumps  |
+          =.  num
+            ;:  add  num
+              (sub [next current]:i.pumps)
+              ~(wyt in unsent-messages.i.pumps)
+            ==
+          ?:  (gte num msg.cong.ames-state)
+            &
+          $(pumps t.pumps)
+        ::  +nuf-memory: is enough memory used to mark as clogged?
+        ::
+        ++  nuf-memory
+          =|  mem=@ud
+          |-  ^-  ?
+          ?~  pumps  |
+          =.  mem
+            %+  add
+              %-  ~(rep in unsent-messages.i.pumps)
+              |=([a=@ b=_mem] (add b (met 3 a)))
+            ?~  unsent-fragments.i.pumps  0
+            (met 3 fragment.i.unsent-fragments.i.pumps)
+          ?:  (gte mem mem.cong.ames-state)
+            &
+          $(pumps t.pumps)
+        --
+      ::  if clogged, notify client vane
       ::
       ?.  clogged
         peer-core

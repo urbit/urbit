@@ -746,10 +746,31 @@
         %scry
       (handle-scry authenticated address request(url suburl))
     ::
+        %name
+      (handle-name authenticated request)
+    ::
         %four-oh-four
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 authenticated url.request ~)
     ==
+  ::  +handle-name: respond with our @p or 403
+  ::
+  ++  handle-name
+    |=  [authenticated=? =request:http]
+    |^  ^-  (quip move server-state)
+    ?.  authenticated
+      (error-response 403 ~)
+    ?.  =(%'GET' method.request)
+      (error-response 405 "may only GET name")
+    %^  return-static-data-on-duct  200  'text/plain'
+    (as-octs:mimes:html (scot %p our))
+    ::
+    ++  error-response
+      |=  [status=@ud =tape]
+      ^-  (quip move server-state)
+      %^  return-static-data-on-duct  status  'text/html'
+      (error-page status authenticated url.request tape)
+    --
   ::  +handle-scry: respond with scry result, 404 or 500
   ::
   ++  handle-scry
@@ -850,7 +871,7 @@
           %leave  ~
       ==
     ::
-        ?(%authentication %logout)
+        ?(%authentication %logout %name)
       [~ state]
     ::
         %channel
@@ -2224,6 +2245,7 @@
           [[~ /~/logout] duct [%logout ~]]
           [[~ /~/channel] duct [%channel ~]]
           [[~ /~/scry] duct [%scry ~]]
+          [[~ /~/name] duct [%name ~]]
       ==
     [~ http-server-gate]
   ::  %trim: in response to memory pressure
@@ -2726,13 +2748,11 @@
       =*  domains  domains.server-state.ax
       =*  ports  ports.server-state.ax
       =/  =host:eyre  [%& ?^(domains n.domains /localhost)]
-      =/  secure=?  &(?=(^ secure.ports) !?=(hoke:eyre host))
       =/  port=(unit @ud)
-        ?.  secure
+        ?.  ?=(^ secure.ports)
           ?:(=(80 insecure.ports) ~ `insecure.ports)
-        ?>  ?=(^ secure.ports)
         ?:(=(443 u.secure.ports) ~ secure.ports)
-      ``[secure port host]
+      ``[?=(^ secure.ports) port host]
     ==
   ==
 --
