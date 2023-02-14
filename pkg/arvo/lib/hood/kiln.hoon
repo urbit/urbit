@@ -536,8 +536,6 @@
     %kiln-commit             =;(f (f !<(_+<.f vase)) poke-commit)
     %kiln-fuse               =;(f (f !<(_+<.f vase)) poke-fuse)
     %kiln-fuse-list          =;(f (f !<(_+<.f vase)) poke-fuse-list)
-    %kiln-clay-free          =;(f (f !<(_+<.f vase)) poke-clay-free)
-    %kiln-clay-lock          =;(f (f !<(_+<.f vase)) poke-clay-lock)
     %kiln-clay-jolt          =;(f (f !<(_+<.f vase)) poke-clay-jolt)
     %kiln-clay-idle          =;(f (f !<(_+<.f vase)) poke-clay-idle)
     %kiln-gall-sear          =;(f (f !<(_+<.f vase)) poke-gall-sear)
@@ -679,24 +677,6 @@
   ?~  f
     abet
   abet:abet:fuse:u.f
-::
-::TODO: give warning if permissions are unchanged?
-++  poke-clay-free
-  |=  [=desk pes=(set perm:gall)]
-  =/  =loam:clay
-    .^(loam:clay %cx /(scot %p our)//(scot %da now)/loams/(scot %tas desk))
-  =/  cub  [desk (~(uni in pes.loam) pes)]
-  =<  abet
-  (emit %pass /helm/clay/free %arvo %c %curb cub)
-::
-::TODO: give warning if permissions are unchanged?
-++  poke-clay-lock
-  |=  [=desk pes=(set perm:gall)]
-  =/  =loam:clay
-    .^(loam:clay %cx /(scot %p our)//(scot %da now)/loams/(scot %tas desk))
-  =/  cub  [desk (~(dif in pes.loam) pes)]
-  =<  abet
-  (emit %pass /helm/clay/lock %arvo %c %curb cub)
 ::
 ::TODO: give warning if agent already running or doesnt exist?
 ++  poke-clay-jolt
