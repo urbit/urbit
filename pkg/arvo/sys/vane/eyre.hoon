@@ -1136,10 +1136,10 @@
       ^-  [(list move) server-state]
       ::  lookup the session id by duct
       ::
-      %-  (trace 1 |.("{<duct>} cancelling subscription to channel"))
+      %-  (trace 1 |.("{<duct>} moving channel to waiting state"))
       ::
       ?~  maybe-channel-id=(~(get by duct-to-key.channel-state.state) duct)
-        ((trace 0 |.("{<duct>} no channel to cancel")) `state)
+        ((trace 0 |.("{<duct>} no channel to move")) `state)
       ::
       =/  maybe-session
         (~(get by session.channel-state.state) u.maybe-channel-id)
