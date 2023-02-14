@@ -1962,11 +1962,14 @@
         =/  rcvr  [ship her-life.channel]
         "cork plea {<sndr rcvr bone=bone vane.plea path.plea>}"
     abet:(on-memo:(make-peer-core peer-state channel) bone plea %plea)
-  ::  +on-kroc: cork all flows from failed subscriptions
+  ::  +on-kroc: cork all stale flows from failed subscriptions
   ::
   ++  on-kroc
     |=  dry=?
     ^+  event-core
+    ::  no-op
+    ::
+    ?:  &  %.(event-core (slog leaf/"ames: %kroc task not ready" ~))
     ::
     =;  [corks=@ core=_event-core]
       ?.  dry  core
