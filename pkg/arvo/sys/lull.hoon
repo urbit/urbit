@@ -2167,6 +2167,9 @@
     ==
   ::  +must: perm required for card, or loob if guaranteed
   ::
+  ::    you should call +rive on the card prior to calling this, if there's
+  ::    any chance of it being a card that touches multiple areas.
+  ::
   ++  must  !:
     |=  [our=ship =card:agent]
     ^-  $@(? perm)
@@ -2212,7 +2215,7 @@
           %info
         ?-  -.dit.note
           %|  [%clay %label `des.note]
-          %&  ?>  ?=([* ~] p.dit.note)
+          %&  ?>  ?=([* ~] p.dit.note)  ::NOTE  see +rive
               [%clay %write `des.note p.i.p.dit.note]
         ==
       ::
