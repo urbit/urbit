@@ -1962,11 +1962,14 @@
         =/  rcvr  [ship her-life.channel]
         "cork plea {<sndr rcvr bone=bone vane.plea path.plea>}"
     abet:(on-memo:(make-peer-core peer-state channel) bone plea %plea)
-  ::  +on-kroc: cork all flows from failed subscriptions
+  ::  +on-kroc: cork all stale flows from failed subscriptions
   ::
   ++  on-kroc
     |=  dry=?
     ^+  event-core
+    ::  no-op
+    ::
+    ?:  &  %.(event-core (slog leaf/"ames: %kroc task not ready" ~))
     ::
     =;  [corks=@ core=_event-core]
       ?.  dry  core
@@ -1979,9 +1982,15 @@
     =/  =peer-state:ames  ?>(?=(%known -.ship-state) +.ship-state)
     =/  subs=(jar path [bone sub-nonce=@])
       %+  roll  ~(tap by snd.peer-state)
-      |=  [[=forward=bone *] subs=(jar path [bone sub-nonce=@])]
+      |=  $:  [=forward=bone message-pump-state:ames]
+              subs=(jar path [bone sub-nonce=@])
+          ==
       ?:  (~(has in closing.peer-state) forward-bone)
-        subs
+        %.  subs
+        %^  trace  &(dry odd.veb)  ship
+        |.
+        %+  weld  "stale flow bone={<forward-bone>} in closing, "
+        "#{<~(wyt in live:packet-pump-state)>} packets retrying"
       ?~  duct=(~(get by by-bone.ossuary.peer-state) forward-bone)
         subs
       ?.  ?=([* [%gall %use sub=@ @ %out @ @ nonce=@ pub=@ *] *] u.duct)
