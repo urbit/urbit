@@ -1973,6 +1973,7 @@
             [%peers spar]              ::  %warp for remote data
           ::
             [%perms desk=(unit desk)]  ::  %curb
+            [%plead desk=(unit desk)]  ::  %pine
             [%liven desk=(unit desk)]  ::  %rein %zest
             [%pulse ~]                 ::  %tire
         ==  ==
@@ -2118,10 +2119,10 @@
           |(=(/ spur.p) =(`0 (find spur.p spur.mus)))  ::TODO  find-at-head
       ==
     ::
-        [%clay ?(%label %perms %liven) *]
+        [%clay ?(%label %perms %plead %liven) *]
       %+  lien  ~(tap in pes)
       |=  p=perm
-      ?&  ?=([%clay ?(%label %perms %liven) *] p)
+      ?&  ?=([%clay ?(%label %perms %plead %liven) *] p)
           =(+<.mus +<.p)
           |(?=(~ desk.p) =(desk.mus desk.p))
           =(desk (fall desk.p desk))
@@ -2203,7 +2204,8 @@
       ?+  +>-.note  |
         ?(%mont %ogre %dirk)  [%clay %mount ~]
         ?(%cred %cred %perm)  [%clay %creds ~]
-        %curb                 [%clay %perms ~]
+        %curb                 [%clay %perms `des.note]
+        %pine                 [%clay %plead `des.note]
         ?(%merg %fuse)        [%clay %write `des.note /]
         %tire                 [%clay %pulse ~]
       ::
