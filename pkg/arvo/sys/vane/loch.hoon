@@ -7,13 +7,10 @@
 =>  |%
     +$  move  [p=duct q=(wite note gift)]
     +$  note                                          ::  out request $->
-      $%
-        $:  %j                                        :: to %jael
-              $>(%step task:jael)
-          ==
-         $:  %d                                        ::    to %dill
-              $>(%flog task:dill)                       ::  log output
-      ==  ==
+      $%  $:  %g                                        ::    to %gall
+              $>(%deal task:gall)                       ::  full transmission
+          ==                                            ::
+      ==                                            ::
       ::
     +$  sign
       $%  [%loch $>(%read gift)]                        :: read
@@ -39,31 +36,10 @@
   ::
   ::  +crud: handle failure of previous arvo event
   ::
-  ++  crud
-    |=  [tag=@tas error=tang]
-    ^+  [moves state]
-    [[duct %slip %d %flog %crud tag error]~ state]
+  ++  crud  [moves state]
   ::  +read: give back
   ::
   ++  read  [moves state]
-  ::  +fyrd: commands
-  ::
-  ::++  fyrd
-    ::|=  com=^fyrd
-    ::^+  [moves state]
-    ::=<  [moves state]
-    ::~&  >  fyrd+com
-    ::~!  -.com
-    ::?-  -.com
-      ::%mas  ~&  todo+com  event-core                    :: |mass
-      ::%cod
-        ::::=/  cov
-          ::[duct %pass %j %step ~]~
-        ::::~!  move+cov  event-core(moves cov)
-    ::==
-  ::  +born: in response to memory pressue
-  ::
-  ++  born  [moves state]
   ::  +trim: in response to memory pressue
   ::
   ++  trim  [moves state]
@@ -86,38 +62,31 @@
 |%
 ::  +call: handle a +task:loch request
 ::
-++  call
-  ~%  %loch-call  ..part  ~
+++  call 
   |=  $:  hen=duct
           dud=(unit goof)
           wrapped-task=(hobo task)
       ==
   ^-  [(list move) _loch-gate]
+  ~&  >  ["loch call hen:" hen]
+  ::~&  >>  ["loch call dud:" dud]
+  ~&  >>>  ["loch call wrapped-task:" wrapped-task]
   ::
   =/  =task  ((harden task) wrapped-task)
-  =/  event-core  (per-event [now hen] state)
-  ::
-  =^  moves  state
-    ::
-    ::  handle error notifications
-    ::
-    ::
-    ?^  dud
-      (crud:event-core -.task tang.u.dud)
-    ::
-    ~!  -.task
-    ?-  -.task  
-      %born  born:event-core
-      %trim  trim:event-core
-      %vega  vega:event-core                            :: vega
-      ::%read  read:event-core
-    ==
-  [moves loch-gate]
+  ~&  >>  ["loch call task:" task]
+  ::?^  dud
+    ::~|(%loch-call-dud (mean tang.u.dud))
+  ?+    -.task  
+        ~&  >>  ["loch task:" -.task]
+        [~ loch-gate]
+      %born     [~ loch-gate]
+  ==
 ::  +load: migrate an old state to a new loch version
 ::
 ++  load
   |=  old=loch-state
   ^+  loch-gate
+  ~&  >>  "loch load:"
   loch-gate(state old)
 ::  +scry: view state
 ::
@@ -125,36 +94,18 @@
   ^-  roon
   |=  [lyc=gang car=term bem=beam]
   ^-  (unit (unit cage))
-  =*  ren  car
-  =*  why=shop  &/p.bem
-  =*  syd  q.bem
-  =*  lot=coin  $/r.bem
-  =*  tyl  s.bem
-
-  ?:  &(=(ren %$) =(tyl /whey))
-    =/  maz=(list mass)
-      :~  state+&+state
-      ==
-    ``mass+!>(maz)
-  ::  only respond for the local identity, %$ desk, current timestamp
-  ::
-  ?.  ?&  =(&+our why)
-          =([%$ %da now] lot)
-          =(%$ syd)
-      ==
-    ~
-  ?.  ?=(%x ren)  ~
-  ?+  tyl  [~ ~]
-      [%debug %state ~]
-    ``state+!>([~ state])
-  ==
+  ~&  >>  "loch scry:" 
+  ~
 ::
-++  stay  state
+++  stay  
+  ~&  >>  "loch stay:"
+   state 
 ++  take
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^-  [(list move) _loch-gate]
   ?^  dud
     ~|(%loch-take-dud (mean tang.u.dud))
   ::
+  ~&  >>  "loch take:"
   [~ loch-gate]
 --
