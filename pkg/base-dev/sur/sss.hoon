@@ -16,20 +16,19 @@
   ++  request
     |*  paths=mold
     $:  path=paths
-        from=dude
-        $%  [type=%pine =what]
-            [type=%scry =what =aeon]
-    ==  ==
+        =dude
+        when=(unit aeon)
+    ==
   ++  response
     |*  [=(lake) paths=mold]
     $:  path=paths
         =dude
         =aeon
-        $=  payload
-        $@  =what
-        $%  [what=%rock =rock:lake]
-            [what=%wave =wave:lake]
-    ==  ==
+        $%  [type=?(%nigh %yore) ~]
+            $:  type=%scry
+                $%  [what=%rock =rock:lake]
+                    [what=%wave =wave:lake]
+    ==  ==  ==  ==
   ++  on-rock
     |*  [=(lake) paths=mold]
     ,[path=paths src=ship from=dude =rock:lake wave=(unit wave:lake)]
