@@ -4803,7 +4803,9 @@
   ::
       %merg                                               ::  direct state up
     ?:  =(%$ des.req)
-      ~&(%merg-no-desk !!)
+      ~|(%merg-no-desk !!)
+    ?.  ((sane %tas) des.req)
+      ~|([%merg-bad-desk-name des.req] !!)
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our des.req)
       abet:(start-merge:den her.req dem.req cas.req how.req)
@@ -4811,7 +4813,9 @@
   ::
       %fuse
     ?:  =(%$ des.req)
-      ~&(%fuse-no-desk !!)
+      ~|(%fuse-no-desk !!)
+    ?.  ((sane %tas) des.req)
+      ~|([%fuse-bad-desk-name des.req] !!)
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our des.req)
       abet:(start-fuse:den bas.req con.req)
@@ -4857,6 +4861,8 @@
     [(weld moves-1 moves-2) ..^^$]
   ::
       %park
+    ?.  ((sane %tas) des.req)
+      ~|([%park-bad-desk des.req] !!)
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our des.req)
       abet:(park:den | & [yok ran]:req)
@@ -5606,6 +5612,7 @@
         %sweep  ``[%sweep !>(sweep)]
         %rang   ``[%rang !>(ran.ruf)]
         %tomb   ``[%flag !>((tomb t.path))]
+        %cult   ``[%cult !>((cult t.path))]
         %flow   ``[%flow !>(fad.ruf)]
         %domes  domes
         %tire   ``[%tire !>(tore:(lu now rof *duct ruf))]
@@ -5631,6 +5638,22 @@
       |=  [=desk =rede]
       [[ship desk] [[let hit lab] tom nor fod liv ren]:dom.rede]
     ``[%domes !>(`cone`domes)]
+  ::
+  ++  cult
+    |=  =path
+    ^-  (set [@p rave])
+    %-  %~  run  in
+        %~  key  by
+        ?~  path  *^cult
+        qyx:(~(gut by dos.rom.ruf) i.path *dojo)
+    |=  wove
+    :-  ship:(fall for [ship=our @ud])
+    ?-  -.rove
+      %sing  rove
+      %next  [%next mood.rove]
+      %mult  [%mult mool.rove]
+      %many  [%many [track moat]:rove]
+    ==
   ::
   ::  True if file is accessible
   ::

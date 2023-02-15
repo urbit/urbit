@@ -245,6 +245,10 @@
   |=  ~  =<  abet
   (emit %pass /helm %arvo %a %stir '')
 ::
+++  poke-ames-kroc
+  |=  dry=?  =<  abet
+  (emit %pass /helm %arvo %a %kroc dry)
+::
 ++  poke-knob
   |=  [error-tag=@tas level=?(%hush %soft %loud)]  =<  abet
   (emit %pass /helm %arvo %d %knob error-tag level)
@@ -280,6 +284,7 @@
     %helm-ames-sift        =;(f (f !<(_+<.f vase)) poke-ames-sift)
     %helm-ames-verb        =;(f (f !<(_+<.f vase)) poke-ames-verb)
     %helm-ames-wake        =;(f (f !<(_+<.f vase)) poke-ames-wake)
+    %helm-ames-kroc        =;(f (f !<(_+<.f vase)) poke-ames-kroc)
     %helm-atom             =;(f (f !<(_+<.f vase)) poke-atom)
     %helm-automass         =;(f (f !<(_+<.f vase)) poke-automass)
     %helm-cancel-automass  =;(f (f !<(_+<.f vase)) poke-cancel-automass)
