@@ -2306,7 +2306,11 @@
     $%  $>(%born vane-task)                             ::  new unix process
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
+        [%read =wut dev=@tas cmd=@]                     ::  %read from device dev for cnt bytes
+        [%writ =wut dev=@tas cmd=@ dat=@ud]             ::  %writ out to device dev
     ==
+  ::
+  +$  wut  $?(%con %mem) 
   --  ::loch
 
 ::
