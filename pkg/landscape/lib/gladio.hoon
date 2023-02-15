@@ -235,6 +235,8 @@
         (~(uni by roles.port) roles.newport)
         group.port
     ==
+  ?~  chans.bigport
+    [~ ~]
   =/  mychan-import=imports:groups:i
     (~(put by *imports:groups:i) [our.bowl %my-channels] bigport)
   :_  ~
