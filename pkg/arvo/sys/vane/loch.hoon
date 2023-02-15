@@ -19,8 +19,13 @@
     +$  loch-state
       $:  %0
           unix-duct=duct
+          devices=(map @tas device)
+          commands=(list cmd)
       ==
     ::
+    +$  cmd  [cmd=@tas =wut dev=@tas =duct]
+    ::
+    +$  device  [name=@tas status=@ reg=(unit @tas)] 
     --
 ::
 =>
@@ -74,12 +79,22 @@
   ::
   =/  =task  ((harden task) wrapped-task)
   ~&  >>  ["loch call task:" task]
+  ~&  >  ["loch" unix-duct:loch-gate]
+  ~&  >  ["loch" devices:loch-gate]
+  ~&  >  ["loch" commands:loch-gate]
   ::?^  dud
     ::~|(%loch-call-dud (mean tang.u.dud))
-  ?+    -.task  
-        ~&  >>  ["loch task:" -.task]
-        [~ loch-gate]
-      %born     [~ loch-gate]
+  ?+    -.task  [~ loch-gate]
+      %born     :: When born you need to wipe your current state
+    :-  ~  
+      loch-gate(unix-duct hen, commands [~]) 
+      %read     :: When you read you need to save the command and the wire to return the results
+    =/  =wut  wut:task 
+    ::=/  =dev  dev:task
+    =/  =cmd  [%read wut %uart hen]
+    ~&  >>  ['cmd' cmd]
+    :-  ~
+      loch-gate(commands [cmd commands])
   ==
 ::  +load: migrate an old state to a new loch version
 ::
