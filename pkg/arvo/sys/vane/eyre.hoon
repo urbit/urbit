@@ -1638,8 +1638,8 @@
       =/  kicking=?
         ?:  clogged
           ((trace 0 |.("clogged {msg}")) &)
-        ?:  ?=(~ json)
-        ((trace 0 |.("can't serialize event, kicking {msg}")) &)  |
+        ?.  ?=(~ json)  |
+        ((trace 0 |.("can't serialize event, kicking {msg}")) &)
       =?  moves      kicking
         :_  moves
         ::NOTE  this shouldn't crash because we
@@ -2547,8 +2547,9 @@
       ?>  ?=([%behn %wake *] sign)
       ?^  error.sign
         [[duct %slip %d %flog %crud %wake u.error.sign]~ http-server-gate]
-      =*  id  i.t.t.wire 
-      ~>  %slog.[0 leaf+"eyre: {(trip id)} cancelling channel due to timeout"]
+      =*  id  i.t.t.wire
+      %-  %+  trace:(per-server-event event-args)  1
+          |.("{(trip id)} cancelling channel due to timeout")
       =^  moves  server-state.ax
         (discard-channel:by-channel:(per-server-event event-args) id &)
       [moves http-server-gate]
