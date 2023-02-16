@@ -70,7 +70,7 @@
 ++  axle
   $:  ::  date: date at which http-server's state was updated to this data structure
       ::
-      date=%~2020.10.18
+      date=%~2022.7.26
       ::  server-state: state of inbound requests
       ::
       =server-state
@@ -745,10 +745,31 @@
         %scry
       (handle-scry authenticated address request(url suburl))
     ::
+        %name
+      (handle-name authenticated request)
+    ::
         %four-oh-four
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 authenticated url.request ~)
     ==
+  ::  +handle-name: respond with our @p or 403
+  ::
+  ++  handle-name
+    |=  [authenticated=? =request:http]
+    |^  ^-  (quip move server-state)
+    ?.  authenticated
+      (error-response 403 ~)
+    ?.  =(%'GET' method.request)
+      (error-response 405 "may only GET name")
+    %^  return-static-data-on-duct  200  'text/plain'
+    (as-octs:mimes:html (scot %p our))
+    ::
+    ++  error-response
+      |=  [status=@ud =tape]
+      ^-  (quip move server-state)
+      %^  return-static-data-on-duct  status  'text/html'
+      (error-page status authenticated url.request tape)
+    --
   ::  +handle-scry: respond with scry result, 404 or 500
   ::
   ++  handle-scry
@@ -848,7 +869,7 @@
           %leave  ~
       ==
     ::
-        ?(%authentication %logout)
+        ?(%authentication %logout %name)
       [~ state]
     ::
         %channel
@@ -2207,6 +2228,7 @@
           [[~ /~/logout] duct [%logout ~]]
           [[~ /~/channel] duct [%channel ~]]
           [[~ /~/scry] duct [%scry ~]]
+          [[~ /~/name] duct [%name ~]]
       ==
     [~ http-server-gate]
   ::  %trim: in response to memory pressure
@@ -2577,15 +2599,36 @@
 ::  +load: migrate old state to new state (called on vane reload)
 ::
 ++  load
-  |=  old=axle
+  =>  |%
+    ++  axle-old
+      %+  cork
+        axle
+      |=  =axle
+      axle(date %~2020.10.18)
+  --
+  |=  old=$%(axle axle-old)
   ^+  ..^$
-  ::  enable https redirects if certificate configured
   ::
-  =.  redirect.http-config.server-state.old
-    ?&  ?=(^ secure.ports.server-state.old)
-        ?=(^ secure.http-config.server-state.old)
+  ?-    -.old
+      %~2020.10.18
+    %=  $
+      date.old  %~2022.7.26
+      ::
+        bindings.server-state.old
+      %+  insert-binding
+        [[~ /~/name] outgoing-duct.server-state.old [%name ~]]
+      bindings.server-state.old
     ==
-  ..^$(ax old)
+  ::
+      %~2022.7.26
+    ::  enable https redirects if certificate configured
+    ::
+    =.  redirect.http-config.server-state.old
+      ?&  ?=(^ secure.ports.server-state.old)
+          ?=(^ secure.http-config.server-state.old)
+      ==
+    ..^$(ax old)
+  ==
 ::  +stay: produce current state
 ::
 ++  stay  `axle`ax
@@ -2668,13 +2711,11 @@
       =*  domains  domains.server-state.ax
       =*  ports  ports.server-state.ax
       =/  =host:eyre  [%& ?^(domains n.domains /localhost)]
-      =/  secure=?  &(?=(^ secure.ports) !?=(hoke:eyre host))
       =/  port=(unit @ud)
-        ?.  secure
+        ?.  ?=(^ secure.ports)
           ?:(=(80 insecure.ports) ~ `insecure.ports)
-        ?>  ?=(^ secure.ports)
         ?:(=(443 u.secure.ports) ~ secure.ports)
-      ``[secure port host]
+      ``[?=(^ secure.ports) port host]
     ==
   ==
 --
