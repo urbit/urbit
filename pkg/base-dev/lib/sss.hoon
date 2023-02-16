@@ -2,9 +2,15 @@
 /+  *mip
 ::
 |%
-++  mk-subs  |*  [=(lake) paths=mold]  -:+6:(da lake paths)
-++  mk-pubs  |*  [=(lake) paths=mold]  -:+6:(du lake paths)
-++  mk-mar
+++  mk-subs                                  ::  Create sub-map.
+  |*  [=(lake) paths=mold]
+  -:+6:(da lake paths)
+::
+++  mk-pubs                                  ::  Create pub-map.
+  |*  [=(lake) paths=mold]
+  -:+6:(du lake paths)
+::
+++  mk-mar                                   ::  Create mar.
   |*  =(lake)
   |_  =(response:poke lake *)
   ++  grow
@@ -17,12 +23,6 @@
     --
   ++  grad  %noun
   --
-++  lake-mark
-  |=  =mark
-  ^+  mark
-  ?>  =('sss-' (end [3 4] mark))
-  (cut 3 [4 (met 3 mark)] mark)
-::
 ++  fled                                     ::  Like +sped but head is a path.
   |=  vax=vase
   ^-  vase
@@ -35,40 +35,23 @@
   [%bccl ~[[%leaf %ta -.pax] $(pax +.pax)]]
 ::
 ++  zoom  |=  =noun  ~|  %need-path  $/sss/;;(path noun)
-++  da
+::
+++  da                                       ::  Manage subscriptions.
   |*  [=(lake) paths=mold]
   =>
     |%
     +$  flow  [=aeon fail=_| =rock:lake]
     --
   |_  [sub=(map [ship dude paths] flow) =bowl:gall result-type=type on-rock-type=type]
-  +$  from    (on-rock:poke lake paths)
-  +$  into    (response:poke lake paths)
-  +$  result  (request:poke paths)
-  ++  behn-s25
-    |=  [=dude =aeon path=noun]
-    ^-  card:agent:gall
-    :*  %pass  (zoom sub/behn/(scot %p src.bowl)^dude^(scot %ud aeon)^path)
-        %arvo  %b  %wait  (add ~s25 now.bowl)
-    ==
-  ++  pine  |=  [ship dude paths]  (scry ~ +<)
-  ++  surf  pine
-  ++  scry
-    |=  [when=(unit aeon) who=ship which=dude where=paths]
-    ^-  card:agent:gall
-    =/  when  ?~  when  %~  (scot %ud u.when)
-    :*  %pass   (zoom request/scry/(scot %p who)^which^when^where)
-        %agent  [who which]
-        %poke   %sss-to-pub  :-  result-type  ^-  result
-        [where which ^when]
-    ==
-  ++  read
+  ++  surf  pine                             ::  Subscribe to [ship dude path].
+  ++  read                                   ::  See current subscribed states.
     ^-  (map [ship dude paths] [fail=? rock:lake])
     %-  ~(run by sub)
     |=  =flow
     [fail rock]:flow
-  ::
-  ++  chit
+  ::                                         ::  Check poke-acks for errors.
+  ::                                         ::  If an %sss-on-rock poke nacks,
+  ++  chit                                   ::  that state is flagged as failed.
     |=  [[aeon=term ship=term dude=term path=paths] =sign:agent:gall]
     ^+  sub
     ?>  ?=(%poke-ack -.sign)
@@ -77,8 +60,10 @@
     |=  =flow
     ?>  =(aeon.flow (slav %ud aeon))
     flow(fail &)
-  ::
-  ++  behn
+  ::                                         ::  Check if we're still interested
+  ::                                         ::  in a wave. If no, no-op.
+  ::                                         ::  If yes, scry.
+  ++  behn                                   ::  (See https://gist.github.com/belisarius222/7f8452bfea9b199c0ed717ab1778f35b)
     |=  [ship=term =dude aeon=term path=paths]
     ^-  (list card:agent:gall)
     =/  ship  (slav %p ship)
@@ -87,7 +72,7 @@
     ?:  (gte aeon.u.flow aeon)  ~
     ~[(scry `aeon ship dude path)]
   ::
-  ++  apply
+  ++  apply                                  ::  Handle response from publisher.
     |=  res=(response:poke lake paths)
     ^-  (quip card:agent:gall _sub)
     ?-    type.res
@@ -119,12 +104,34 @@
               [path.res src.bowl dude.res rock.flow wave]
       ==  ==
     ==
+  ::
+  ::  Non-public facing arms below
+  ::
+  +$  from    (on-rock:poke lake paths)
+  +$  into    (response:poke lake paths)
+  +$  result  (request:poke paths)
+  ++  behn-s25
+    |=  [=dude =aeon path=noun]
+    ^-  card:agent:gall
+    :*  %pass  (zoom sub/behn/(scot %p src.bowl)^dude^(scot %ud aeon)^path)
+        %arvo  %b  %wait  (add ~s25 now.bowl)
+    ==
+  ++  pine  |=  [ship dude paths]  (scry ~ +<)
+  ++  scry
+    |=  [when=(unit aeon) who=ship which=dude where=paths]
+    ^-  card:agent:gall
+    =/  when  ?~  when  %~  (scot %ud u.when)
+    :*  %pass   (zoom request/scry/(scot %p who)^which^when^where)
+        %agent  [who which]
+        %poke   %sss-to-pub  :-  result-type  ^-  result
+        [where which ^when]
+    ==
   --
-++  du
+++  du                                       ::  Manage publications.
   |*  [=(lake) paths=mold]
   =>
     |%
-    +$  rule  [rocks=_1 waves=_5]
+    +$  rule  [rocks=_1 waves=_5]            ::  Retention policy
     +$  tide
       $:  rok=((mop aeon rock:lake) gte)
           wav=((mop aeon wave:lake) lte)
@@ -136,28 +143,14 @@
   +*  rok  ((on aeon rock:lake) gte)
       wav  ((on aeon wave:lake) lte)
   ::
-  +$  into    (request:poke paths)
-  +$  result  (response:poke lake paths)
-  ++  behn-s25
-    |=  [=dude =aeon path=noun]
-    ^-  card:agent:gall
-    :*  %pass  (zoom pub/behn/(scot %p src.bowl)^dude^(scot %ud aeon)^path)
-        %arvo  %b  %wait  (add ~s25 now.bowl)
-    ==
-  ++  behn-rest
-    |=  [=ship =dude =aeon path=noun =@da]
-    ^-  card:agent:gall
-    :*  %pass  (zoom pub/behn/(scot %p ship)^dude^(scot %ud aeon)^path)
-        %arvo  %b  %rest  da
-    ==
-  ++  rule
+  ++  rule                                   ::  Set new retention policy.
     |=  [path=paths =^rule]
     ^+  pub
     %+  ~(jab by pub)  path
     |=  =tide
     (form tide(rul rule))
   ::
-  ++  wipe
+  ++  wipe                                   ::  Create new rock and wipe rest.
     |=  path=paths
     ^+  pub
     %+  ~(jab by pub)  path
@@ -166,7 +159,8 @@
       rul  rul.tide
       wav  ~
     ==
-  ++  behn
+  ::                                         ::  Remove sticky scry request.
+  ++  behn                                   ::  (See https://gist.github.com/belisarius222/7f8452bfea9b199c0ed717ab1778f35b)
     |=  [ship=term =dude aeon=term path=paths]
     ^+  pub
     %+  ~(jab by pub)  path
@@ -174,16 +168,7 @@
     ^+  tide
     tide(mem (~(del bi mem.tide) (slav %ud aeon) (slav %p ship) dude))
   ::
-  ++  send
-    |=  [payload=_|3:*(response:poke lake paths) =ship =dude =aeon path=paths]
-    ^-  card:agent:gall
-    =*  mark  (cat 3 %sss- name:lake)
-    :*  %pass   (zoom response/scry/(scot %p ship)^dude^(scot %ud aeon)^path)
-        %agent  [ship dude]
-        %poke   mark  result-type  ^-  (response:poke lake paths)
-        [path dap.bowl aeon payload]
-    ==
-  ++  give
+  ++  give                                   ::  Give a wave on a path.
     |=  [path=paths =wave:lake]
     ^-  (quip card:agent:gall _pub)
     ?~  ;;((soft ^path) path)  ~|  %need-path  !!
@@ -206,28 +191,7 @@
     :~  (behn-rest ship dude next path da)
         (send scry/wave/wave ship dude next path)
     ==
-  ++  form
-    |=  =tide
-    ^+  tide
-    =/  max-rock=[=aeon =rock:lake]  (fall (pry:rok rok.tide) *[key val]:rok)
-    =/  max-wave  (fall (bind (ram:wav wav.tide) head) 0)
-    =.  rok.tide
-      %+  gas:rok  +<-:gas:rok
-      %-  tab:rok  :_  [~ +(rocks.rul.tide)]
-      ?:  ?|  =(waves.rul.tide 0)
-              (lth max-wave (add aeon.max-rock waves.rul.tide))
-          ==
-        rok.tide
-      %+  put:rok  rok.tide
-      %+  roll  (tab:wav wav.tide `aeon.max-rock max-wave)
-      |:  [*[now=aeon =wave:lake] `[prev=aeon =rock:lake]`max-rock]
-      ~|  %aeon-awry
-      ?>  =(now +(prev))
-      [now (wash:lake rock wave)]
-    ~|  %rock-zero
-    tide(wav (lot:wav wav.tide (bind (ram:rok rok.tide) |=([r=@ *] (dec r))) ~))
-  ::
-  ++  read
+  ++  read                                   ::  See current published states.
     ^-  (map paths rock:lake)
     %-  ~(run by pub)
     |=  =tide
@@ -238,7 +202,7 @@
     ?.  =(aeon +(aeon.snap))  snap
     [aeon (wash:lake rock.snap wave)]
   ::
-  ++  apply
+  ++  apply                                  ::  Handle request from subscriber.
     |=  req=(request:poke paths)
     ^-  (quip card:agent:gall _pub)
     =/  =tide  (~(gut by pub) path.req *tide)
@@ -260,5 +224,51 @@
       %^  ~(put bi mem.tide)  u.when.req  [src.bowl dude.req]
       (add ~s25 now.bowl)
     ==
+  ::
+  ::  Non-public facing arms below
+  ::
+  +$  into    (request:poke paths)
+  +$  result  (response:poke lake paths)
+  ++  behn-s25
+    |=  [=dude =aeon path=noun]
+    ^-  card:agent:gall
+    :*  %pass  (zoom pub/behn/(scot %p src.bowl)^dude^(scot %ud aeon)^path)
+        %arvo  %b  %wait  (add ~s25 now.bowl)
+    ==
+  ++  behn-rest
+    |=  [=ship =dude =aeon path=noun =@da]
+    ^-  card:agent:gall
+    :*  %pass  (zoom pub/behn/(scot %p ship)^dude^(scot %ud aeon)^path)
+        %arvo  %b  %rest  da
+    ==
+  ++  send
+    |=  [payload=_|3:*(response:poke lake paths) =ship =dude =aeon path=paths]
+    ^-  card:agent:gall
+    =*  mark  (cat 3 %sss- name:lake)
+    :*  %pass   (zoom response/scry/(scot %p ship)^dude^(scot %ud aeon)^path)
+        %agent  [ship dude]
+        %poke   mark  result-type  ^-  (response:poke lake paths)
+        [path dap.bowl aeon payload]
+    ==
+  ++  form
+    |=  =tide
+    ^+  tide
+    =/  max-rock=[=aeon =rock:lake]  (fall (pry:rok rok.tide) *[key val]:rok)
+    =/  max-wave  (fall (bind (ram:wav wav.tide) head) 0)
+    =.  rok.tide
+      %+  gas:rok  +<-:gas:rok
+      %-  tab:rok  :_  [~ +(rocks.rul.tide)]
+      ?:  ?|  =(waves.rul.tide 0)
+              (lth max-wave (add aeon.max-rock waves.rul.tide))
+          ==
+        rok.tide
+      %+  put:rok  rok.tide
+      %+  roll  (tab:wav wav.tide `aeon.max-rock max-wave)
+      |:  [*[now=aeon =wave:lake] `[prev=aeon =rock:lake]`max-rock]
+      ~|  %aeon-awry
+      ?>  =(now +(prev))
+      [now (wash:lake rock wave)]
+    ~|  %rock-zero
+    tide(wav (lot:wav wav.tide (bind (ram:rok rok.tide) |=([r=@ *] (dec r))) ~))
   --
 --
