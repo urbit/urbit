@@ -67,9 +67,8 @@
     |=  [ship=term =dude aeon=term path=paths]
     ^-  (list card:agent:gall)
     =/  ship  (slav %p ship)
-    ?~  flow=(~(get by sub) ship dude path)  ~
     =/  aeon  (slav %ud aeon)
-    ?:  (gte aeon.u.flow aeon)  ~
+    ?:  (lte aeon aeon:(~(got by sub) ship dude path))  ~
     ~[(scry `aeon ship dude path)]
   ::
   ++  apply                                  ::  Handle response from publisher.
