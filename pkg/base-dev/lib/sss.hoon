@@ -82,8 +82,10 @@
     |=  [ship=term =dude aeon=term path=paths]
     ^-  (list card:agent:gall)
     =/  ship  (slav %p ship)
-    ?.  (~(has by sub) ship dude path)  ~
-    ~[(scry `(slav %ud aeon) ship dude path)]
+    ?~  flow=(~(get by sub) ship dude path)  ~
+    =/  aeon  (slav %ud aeon)
+    ?:  (gte aeon.u.flow aeon)  ~
+    ~[(scry `aeon ship dude path)]
   ::
   ++  apply
     |=  res=(response:poke lake paths)
@@ -104,7 +106,8 @@
         ?-  what.res
           %rock  ?>  (gte aeon.res aeon.old)
                  `[aeon.res | rock.res]
-          %wave  ?>  =(aeon.res +(aeon.old))
+          %wave  ~|  [%weird-wave res=res old=old]
+                 ?>  =(aeon.res +(aeon.old))
                  [`wave.res [aeon.res | (wash:lake rock.old wave.res)]]
         ==
       :_  (~(put by sub) current flow)
@@ -172,13 +175,13 @@
     tide(mem (~(del bi mem.tide) (slav %ud aeon) (slav %p ship) dude))
   ::
   ++  send
-    |=  [=wave:lake =ship =dude =aeon path=paths]
+    |=  [payload=_|3:*(response:poke lake paths) =ship =dude =aeon path=paths]
     ^-  card:agent:gall
     =*  mark  (cat 3 %sss- name:lake)
     :*  %pass   (zoom response/scry/(scot %p ship)^dude^(scot %ud aeon)^path)
         %agent  [ship dude]
         %poke   mark  result-type  ^-  (response:poke lake paths)
-        [path dap.bowl aeon scry/wave/wave]
+        [path dap.bowl aeon payload]
     ==
   ++  give
     |=  [path=paths =wave:lake]
@@ -201,7 +204,7 @@
     |=  [[=ship =dude] =@da]
     ^-  (list card:agent:gall)
     :~  (behn-rest ship dude next path da)
-        (send wave ship dude next path)
+        (send scry/wave/wave ship dude next path)
     ==
   ++  form
     |=  =tide
@@ -237,33 +240,25 @@
   ::
   ++  apply
     |=  req=(request:poke paths)
-    |^  ^-  (quip card:agent:gall _pub)
+    ^-  (quip card:agent:gall _pub)
     =/  =tide  (~(gut by pub) path.req *tide)
     ?~  when.req
       =/  last  (fall (pry:rok rok.tide) *[=key =val]:rok)
       :_  pub  :_  ~
-      (mk-card key.last scry/rock/val.last)
+      (send scry/rock/val.last src.bowl dude.req key.last path.req)
     ?^  dat=(get:wav wav.tide u.when.req)
       :_  pub  :_  ~
-      (mk-card u.when.req scry/wave/u.dat)
+      (send scry/wave/u.dat src.bowl [dude u.when path]:req)
     ?.  (gth u.when.req key::(fall (ram:wav wav.tide) [key=+(u.when.req) **]))
       :_  pub  :_  ~
-      (mk-card u.when.req yore/~)
-    :-  ~[(behn-s25 [dude u.when path]:req) (mk-card u.when.req nigh/~)]
+      (send yore/~ src.bowl [dude u.when path]:req)
+    :-  :~  (behn-s25 [dude u.when path]:req)
+            (send nigh/~ src.bowl [dude u.when path]:req)
+        ==
     %+  ~(put by pub)  path.req
     %=  tide  mem
       %^  ~(put bi mem.tide)  u.when.req  [src.bowl dude.req]
       (add ~s25 now.bowl)
     ==
-    ::
-    ++  mk-card
-      |=  dat=_|2:*(response:poke lake paths)
-      =*  mark  (cat 3 %sss- name:lake)
-      =*  when  ?~(when.req %$ (scot %ud u.when.req))
-      :*  %pass   (zoom response/scry/(scot %p src.bowl)^dude.req^when^path.req)
-          %agent  [src.bowl dude.req]
-          %poke   mark  result-type  path.req  dap.bowl  dat
-      ==
-    --
   --
 --
