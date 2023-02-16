@@ -63,7 +63,7 @@
         [where which ^when]
     ==
   ++  read
-    ;;  (map [ship dude path] [fail=? rock:lake])
+    ^-  (map [ship dude paths] [fail=? rock:lake])
     %-  ~(run by sub)
     |=  =flow
     [fail rock]:flow
@@ -225,7 +225,7 @@
     tide(wav (lot:wav wav.tide (bind (ram:rok rok.tide) |=([r=@ *] (dec r))) ~))
   ::
   ++  read
-    ;;  (map path rock:lake)
+    ^-  (map paths rock:lake)
     %-  ~(run by pub)
     |=  =tide
     =<  rock
