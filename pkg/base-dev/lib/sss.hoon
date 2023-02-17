@@ -112,7 +112,7 @@
   ++  behn-s25
     |=  [=dude =aeon path=noun]
     ^-  card:agent:gall
-    :*  %pass  (zoom sub/behn/(scot %p src.bowl)^dude^(scot %ud aeon)^path)
+    :*  %pass  (zoom behn/(scot %p src.bowl)^dude^(scot %ud aeon)^path)
         %arvo  %b  %wait  (add ~s25 now.bowl)
     ==
   ++  pine  |=  [ship dude paths]  (scry ~ +<)
@@ -158,15 +158,6 @@
       rul  rul.tide
       wav  ~
     ==
-  ::                                         ::  Remove sticky scry request.
-  ++  behn                                   ::  (See https://gist.github.com/belisarius222/7f8452bfea9b199c0ed717ab1778f35b)
-    |=  [ship=term =dude aeon=term path=paths]
-    ^+  pub
-    %+  ~(jab by pub)  path
-    |=  =tide
-    ^+  tide
-    tide(mem (~(del bi mem.tide) (slav %ud aeon) (slav %p ship) dude))
-  ::
   ++  give                                   ::  Give a wave on a path.
     |=  [path=paths =wave:lake]
     ^-  (quip card:agent:gall _pub)
@@ -184,12 +175,10 @@
         ?.  =(next (add aeon.last waves.rul.tide))  tide
         (form tide)
     ::
-    %+  (corl zing turn)  ~(tap by (~(gut by mem.tide) next ~))
+    %+  murn  ~(tap by (~(gut by mem.tide) next ~))
     |=  [[=ship =dude] =@da]
-    ^-  (list card:agent:gall)
-    :~  (behn-rest ship dude next path da)
-        (send scry/wave/wave ship dude next path)
-    ==
+    ?:  (lth da now.bowl)  ~
+    `(send scry/wave/wave ship dude next path)
   ++  read                                   ::  See current published states.
     ^-  (map paths rock:lake)
     %-  ~(run by pub)
@@ -215,9 +204,7 @@
     ?.  (gth u.when.req key::(fall (ram:wav wav.tide) [key=+(u.when.req) **]))
       :_  pub  :_  ~
       (send yore/~ src.bowl [dude u.when path]:req)
-    :-  :~  (behn-s25 [dude u.when path]:req)
-            (send nigh/~ src.bowl [dude u.when path]:req)
-        ==
+    :-  ~[(send nigh/~ src.bowl [dude u.when path]:req)]
     %+  ~(put by pub)  path.req
     %=  tide  mem
       %^  ~(put bi mem.tide)  u.when.req  [src.bowl dude.req]
@@ -228,18 +215,6 @@
   ::
   +$  into    (request:poke paths)
   +$  result  (response:poke lake paths)
-  ++  behn-s25
-    |=  [=dude =aeon path=noun]
-    ^-  card:agent:gall
-    :*  %pass  (zoom pub/behn/(scot %p src.bowl)^dude^(scot %ud aeon)^path)
-        %arvo  %b  %wait  (add ~s25 now.bowl)
-    ==
-  ++  behn-rest
-    |=  [=ship =dude =aeon path=noun =@da]
-    ^-  card:agent:gall
-    :*  %pass  (zoom pub/behn/(scot %p ship)^dude^(scot %ud aeon)^path)
-        %arvo  %b  %rest  da
-    ==
   ++  send
     |=  [payload=_|3:*(response:poke lake paths) =ship =dude =aeon path=paths]
     ^-  card:agent:gall
