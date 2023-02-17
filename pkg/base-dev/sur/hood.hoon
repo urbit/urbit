@@ -73,9 +73,9 @@
     ?~  sink  [hash]~
     (mergebase-hashes our syd now her.u.sink sud.u.sink)
   =/  dek  (~(got by tyr) syd)
-  =/  =foam  (~(got by cone) our syd)
+  =/  =dome  (~(got by cone) our syd)
   =/  [on=(list [@tas ?]) of=(list [@tas ?])]
-    (skid ~(tap by ren.foam) |=([* ?] +<+))
+    (skid ~(tap by ren.dome) |=([* ?] +<+))
   =/  sat
     ?-  zest.dek
       %live  "running"
@@ -130,7 +130,7 @@
   =/  syd  (scot %tas desk)
   =/  yon  (scot %ud aeon)
   ::
-  =/  dom  .^(dome cv/~[her syd yon])
+  =/  dom  .^(domo cv/~[her syd yon])
   =/  tak  ~|  aeons=~(key by hit.dom)
            (scot %uv (~(got by hit.dom) aeon))
   =/  yak  .^(yaki cs/~[her syd yon %yaki tak])

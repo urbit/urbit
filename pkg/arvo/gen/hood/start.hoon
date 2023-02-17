@@ -16,6 +16,6 @@
   ?>  ((sane %tas) +<.arg)
   [-.arg +<.arg]
 =+  .^(=cone:clay %cx /(scot %p p.bec)//(scot %da now)/domes)
-=/  =foam:clay  (~(gut by cone) [p.bec des] *foam:clay)
-=+  ((slog ?:(=(%live liv.foam) ~ ['kiln: desk not live' ~])) ~)
-[%kiln-rein des (~(put by ren.foam) dap &)]
+=/  =dome:clay  (~(gut by cone) [p.bec des] *dome:clay)
+=+  ((slog ?:(=(%live liv.dome) ~ ['kiln: desk not live' ~])) ~)
+[%kiln-rein des (~(put by ren.dome) dap &)]
