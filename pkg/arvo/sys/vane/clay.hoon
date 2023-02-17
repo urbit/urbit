@@ -138,7 +138,7 @@
 ::  `sto` stores the data needed to merge, and `bas` is the base
 ::  beak for the merge.
 ::
-+$  melt  [bas=beak con=(list [beak germ]) sto=(map beak (unit dome:clay))]
++$  melt  [bas=beak con=(list [beak germ]) sto=(map beak (unit domo))]
 ::
 ::  Domestic desk state.
 ::
@@ -152,30 +152,6 @@
       pew=regs                                          ::  write perms per path
       fiz=melt                                          ::  state for mega merges
   ==
-::
-::  Desk state.
-::
-::  Includes a checked-out ankh with current content, most recent version, map
-::  of all version numbers to commit hashes (commits are in hut.rang), and map
-::  of labels to version numbers.
-::
-::  `mim` is a cache of the content in the directories that are mounted
-::  to unix.  Often, we convert to/from mime without anything really
-::  having changed; this lets us short-circuit that in some cases.
-::  Whenever you give an `%ergo`, you must update this.
-::
-+$  dome
-  $:  let=aeon                                          ::  top id
-      hit=(map aeon tako)                               ::  versions by id
-      lab=(map @tas aeon)                               ::  labels
-      tom=(map tako norm)                               ::  tomb policies
-      nor=norm                                          ::  default policy
-      mim=(map path mime)                               ::  mime cache
-      fod=flue                                          ::  ford cache
-      wic=(map weft yoki)                               ::  commit-in-waiting
-      liv=zest                                          ::  running agents
-      ren=rein                                          ::  force agents on/off
-  ==                                                    ::
 ::
 ::  Over-the-wire backfill request/response
 ::
@@ -2259,9 +2235,9 @@
     |=  [bas=beak con=(list [beak germ])]
     ^-  melt
     :+  bas  con
-    %-  ~(gas by *(map beak (unit dome:clay)))
-    :-  [bas *(unit dome:clay)]
-    (turn con |=(a=[beak germ] [-.a *(unit dome:clay)]))
+    %-  ~(gas by *(map beak (unit domo)))
+    :-  [bas *(unit domo)]
+    (turn con |=(a=[beak germ] [-.a *(unit domo)]))
   ::
   ++  start-fuse
     |=  [bas=beak con=(list [beak germ])]
@@ -2284,7 +2260,7 @@
       =/  discarded=tang
         %+  turn
           ~(tap in sto.fiz)
-        |=  [k=beak v=(unit dome:clay)]
+        |=  [k=beak v=(unit domo)]
         ^-  tank
         =/  received=tape  ?~(v "missing" "received")
         leaf+"{<(en-beam k ~)>} {received}"
@@ -2311,17 +2287,17 @@
       ((slog [leaf+"clay: got strange fuse response {<msg>}"]~) ..take-fuse)
     =.  fiz
         :+  bas.fiz  con.fiz
-        (~(put by sto.fiz) bec `!<(dome:clay q.r.u.riot))
+        (~(put by sto.fiz) bec `!<(domo q.r.u.riot))
     =/  all-done=flag
       %-  ~(all by sto.fiz)
-      |=  res=(unit dome:clay)
+      |=  res=(unit domo)
       ^-  flag
       !=(res ~)
     ?.  all-done
       ..take-fuse
     =|  rag=rang
     =/  clean-state  ..take-fuse
-    =/  initial-dome=dome:clay  (need (~(got by sto.fiz) bas.fiz))
+    =/  initial-dome=domo  (need (~(got by sto.fiz) bas.fiz))
     =/  next-yaki=yaki
       (~(got by hut.ran) (~(got by hit.initial-dome) let.initial-dome))
     =/  parents=(list tako)  ~[(~(got by hit.initial-dome) let.initial-dome)]
@@ -2332,7 +2308,7 @@
       =.  ..take-fuse  (done-fuse clean-state %& ~)
       (park | & [%| next-yaki(p (flop parents))] rag)
     =/  [bec=beak g=germ]  i.merges
-    =/  ali-dom=dome:clay  (need (~(got by sto.fiz) bec))
+    =/  ali-dom=domo  (need (~(got by sto.fiz) bec))
     =/  result  (merge-helper p.bec q.bec g ali-dom `next-yaki)
     ?-    -.result
         %|
@@ -2398,10 +2374,10 @@
     ^+  ..merge
     ?~  riot
       (done %| %ali-unavailable ~[>[ali-ship ali-desk germ]<])
-    =/  ali-dome=dome:clay
+    =/  ali-dome=domo
       ?:  &(?=(@ -.q.q.r.u.riot) !=(~ -.q.q.r.u.riot))
-        !<(dome:clay q.r.u.riot)
-      +:!<([* dome:clay] q.r.u.riot)
+        !<(domo q.r.u.riot)
+      +:!<([* domo] q.r.u.riot)
     =/  result=(each (unit merge-result) (pair term tang))
       (merge-helper ali-ship ali-desk germ ali-dome ~)
     ?-    -.result
@@ -2417,7 +2393,7 @@
   +$  merge-result  [conflicts=(set path) new=yoki lat=(map lobe page)]
   ::
   ++  merge-helper
-    |=  [=ali=ship =ali=desk =germ ali-dome=dome:clay next-yaki=(unit yaki)]
+    |=  [=ali=ship =ali=desk =germ ali-dome=domo next-yaki=(unit yaki)]
     ^-  (each (unit merge-result) [term tang])
     |^
     ^-  (each (unit merge-result) [term tang])
@@ -4294,17 +4270,17 @@
     ::
     ++  read-v
       |=  [yon=aeon pax=path]
-      ^-  (unit (unit [%dome (hypo dome:clay)]))
+      ^-  (unit (unit [%dome (hypo domo)]))
       ?:  (lth yon let.dom)
-        :*  ~  ~  %dome  -:!>(*dome:clay)
-            ^-  dome:clay
+        :*  ~  ~  %dome  -:!>(*domo)
+            ^-  domo
             :*  let=yon
                 hit=(molt (skim ~(tap by hit.dom) |=([p=@ud *] (lte p yon))))
                 lab=(molt (skim ~(tap by lab.dom) |=([* p=@ud] (lte p yon))))
         ==  ==
       ?:  (gth yon let.dom)
         ~
-      ``[%dome -:!>(*dome:clay) [let hit lab]:dom]
+      ``[%dome -:!>(*domo) [let hit lab]:dom]
     ::
     ::  Gets all cases refering to the same revision as the given case.
     ::
@@ -5624,19 +5600,19 @@
       %-  ~(gas by *cone)
       %+  turn  ~(tap by dos.rom.ruf)
       |=  [=desk =dojo]
-      [[our desk] [[let hit lab] tom nor fod liv ren]:dom.dojo]
+      [[our desk] dom.dojo]
     =.  domes
       %-  ~(uni by domes)
       %-  ~(gas by *cone)
-      ^-  (list [[ship desk] foam])
+      ^-  (list [[ship desk] dome])
       %-  zing
-      ^-  (list (list [[ship desk] foam]))
+      ^-  (list (list [[ship desk] dome]))
       %+  turn  ~(tap by hoy.ruf)
       |=  [=ship =rung]
-      ^-  (list [[^ship desk] foam])
+      ^-  (list [[^ship desk] dome])
       %+  turn  ~(tap by rus.rung)
       |=  [=desk =rede]
-      [[ship desk] [[let hit lab] tom nor fod liv ren]:dom.rede]
+      [[ship desk] dom.rede]
     ``[%domes !>(`cone`domes)]
   ::
   ++  cult

@@ -834,18 +834,34 @@
         [%worn =ship =desk =tako =norm]                 ::  set commit norm
         [%seek =ship =desk =cash]                       ::  fetch source blobs
     ==                                                  ::
-  +$  cone  (map [ship desk] foam)                      ::  domes
-  +$  foam                                              ::
-    $:  dome                                            ::
-        tom=(map tako norm)                             ::
-        nor=norm                                        ::
-        fod=flue                                        ::
-        liv=zest                                        ::
-        ren=(map dude:gall ?)                           ::
+  +$  cone  (map [ship desk] dome)                      ::  domes
+  ::
+  ::  Desk state.
+  ::
+  ::  Includes a checked-out ankh with current content, most recent version, map
+  ::  of all version numbers to commit hashes (commits are in hut.rang), and map
+  ::  of labels to version numbers.
+  ::
+  ::  `mim` is a cache of the content in the directories that are mounted
+  ::  to unix.  Often, we convert to/from mime without anything really
+  ::  having changed; this lets us short-circuit that in some cases.
+  ::  Whenever you give an `%ergo`, you must update this.
+  ::
+  +$  dome
+    $:  let=aeon                                        ::  top id
+        hit=(map aeon tako)                             ::  versions by id
+        lab=(map @tas aeon)                             ::  labels
+        tom=(map tako norm)                             ::  tomb policies
+        nor=norm                                        ::  default policy
+        mim=(map path mime)                             ::  mime cache
+        fod=flue                                        ::  ford cache
+        wic=(map weft yoki)                             ::  commit-in-waiting
+        liv=zest                                        ::  running agents
+        ren=rein                                        ::  force agents on/off
     ==                                                  ::
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
-  +$  dome                                              ::  project state
+  +$  domo                                              ::  project state
     $:  let=@ud                                         ::  top id
         hit=(map @ud tako)                              ::  changes by id
         lab=(map @tas @ud)                              ::  labels
