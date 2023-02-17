@@ -68,7 +68,7 @@
 ::
 |%
 +$  axle
-  $:  %1
+  $:  %~2023.2.17
       =server-state
   ==
 ::  +server-state: state relating to open inbound HTTP connections
@@ -2637,7 +2637,8 @@
   =>  |%
       +$  axle-any
         $%  [%~2020.10.18 =server-state-0]
-            [%1 =server-state]
+            [%~2022.7.26 =server-state-0]
+            [%~2023.2.17 =server-state]
         ==
       +$  server-state-0
         $:  bindings=(list [=binding =duct =action])
@@ -2658,7 +2659,24 @@
     =,  server-state-0.old
     %=  ..^$
       ax  ^-  axle
-          :*  %1
+          :*  %~2023.2.17
+              (insert-binding [[~ /~/name] outgoing-duct [%name ~]] bindings)
+              cors-registry
+              connections
+              authentication-state
+              channel-state
+              domains
+              http-config
+              ports
+              outgoing-duct
+              0
+    ==    ==
+  ::
+      %~2022.7.26
+    =,  server-state-0.old
+    %=  ..^$
+      ax  ^-  axle
+          :*  %~2023.2.17
               bindings
               cors-registry
               connections
@@ -2671,7 +2689,7 @@
               0
     ==    ==
   ::
-      %1
+      %~2023.2.17
     ::  enable https redirects if certificate configured
     ::
     =.  redirect.http-config.server-state.old
