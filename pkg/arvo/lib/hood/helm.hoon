@@ -1,4 +1,3 @@
-/+  pill
 =*  card  card:agent:gall
 |%
 +$  state  state-2
@@ -202,6 +201,10 @@
   |=  ships=(list ship)
   abet:(emit %pass /helm/prod %arvo %a %prod ships)
 ::
+++  poke-ames-snub
+  |=  ships=(list ship)
+  abet:(emit %pass /helm/snub %arvo %a %snub ships)
+::
 ++  poke-atom
   |=  ato=@
   =+  len=(scow %ud (met 3 ato))
@@ -230,9 +233,21 @@
   |=  veb=(list verb:ames)  =<  abet
   (emit %pass /helm %arvo %a %spew veb)
 ::
+++  poke-gall-sift
+  |=  dudes=(list dude:gall)  =<  abet
+  (emit %pass /helm %arvo %g %sift dudes)
+::
+++  poke-gall-verb
+  |=  veb=(list verb:gall)  =<  abet
+  (emit %pass /helm %arvo %g %spew veb)
+::
 ++  poke-ames-wake
   |=  ~  =<  abet
   (emit %pass /helm %arvo %a %stir '')
+::
+++  poke-ames-kroc
+  |=  dry=?  =<  abet
+  (emit %pass /helm %arvo %a %kroc dry)
 ::
 ++  poke-knob
   |=  [error-tag=@tas level=?(%hush %soft %loud)]  =<  abet
@@ -252,6 +267,11 @@
   =<  abet
   (emit %pass /helm/cors/reject %arvo %e %reject-origin origin)
 ::
+++  poke-doff
+  |=  [dude=(unit dude:gall) ship=(unit ship)]
+  =<  abet
+  (emit %pass /helm/doff %arvo %g %doff dude ship)
+::
 ++  poke
   |=  [=mark =vase]
   ?>  ?|  ?=(%helm-hi mark)
@@ -260,15 +280,20 @@
       ==
   ?+  mark  ~|([%poke-helm-bad-mark mark] !!)
     %helm-ames-prod        =;(f (f !<(_+<.f vase)) poke-ames-prod)
+    %helm-ames-snub        =;(f (f !<(_+<.f vase)) poke-ames-snub)
     %helm-ames-sift        =;(f (f !<(_+<.f vase)) poke-ames-sift)
     %helm-ames-verb        =;(f (f !<(_+<.f vase)) poke-ames-verb)
     %helm-ames-wake        =;(f (f !<(_+<.f vase)) poke-ames-wake)
+    %helm-ames-kroc        =;(f (f !<(_+<.f vase)) poke-ames-kroc)
     %helm-atom             =;(f (f !<(_+<.f vase)) poke-atom)
     %helm-automass         =;(f (f !<(_+<.f vase)) poke-automass)
     %helm-cancel-automass  =;(f (f !<(_+<.f vase)) poke-cancel-automass)
     %helm-code             =;(f (f !<(_+<.f vase)) poke-code)
     %helm-cors-approve     =;(f (f !<(_+<.f vase)) poke-cors-approve)
     %helm-cors-reject      =;(f (f !<(_+<.f vase)) poke-cors-reject)
+    %helm-doff             =;(f (f !<(_+<.f vase)) poke-doff)
+    %helm-gall-sift        =;(f (f !<(_+<.f vase)) poke-gall-sift)
+    %helm-gall-verb        =;(f (f !<(_+<.f vase)) poke-gall-verb)
     %helm-hi               =;(f (f !<(_+<.f vase)) poke-hi)
     %helm-knob             =;(f (f !<(_+<.f vase)) poke-knob)
     %helm-pans             =;(f (f !<(_+<.f vase)) poke-pans)

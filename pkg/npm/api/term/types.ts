@@ -25,17 +25,15 @@ export type Stub = {
 export type Blit =
   | { bel: null }                                       //  make a noise
   | { clr: null }                                       //  clear the screen
-  | { hop: number | { r: number, c: number } }          //  set cursor col/pos
+  | { hop: number | { x: number, y: number } }          //  set cursor col/pos
   | { klr: Stub[] }                                     //  put styled
-  | { put: string[] }                                   //  put text at cursor
+  | { mor: Blit[] }                                     //  multiple blits
   | { nel: null }                                       //  newline
+  | { put: string[] }                                   //  put text at cursor
   | { sag: { path: string, file: string } }             //  save to jamfile
   | { sav: { path: string, file: string } }             //  save to file
   | { url: string }                                     //  activate url
   | { wyp: null }                                       //  wipe cursor line
-  //
-  | { lin: string[] }  //  legacy put
-  | { mor: true }  //  legacy nel
 
 //  inputs
 //
@@ -45,21 +43,19 @@ export type Bolt =
   | { aro: 'd' | 'l' | 'r' | 'u' }
   | { bac: null }
   | { del: null }
-  | { hit: { r: number, c: number } }
+  | { hit: { x: number, y: number } }
   | { ret: null }
 
 export type Belt =
   | Bolt
   | { mod: { mod: 'ctl' | 'met' | 'hyp', key: Bolt } }
   | { txt: Array<string> }
-  //
-  | { ctl: string };  //  legacy mod
 
 export type Task =
   | { belt: Belt }
   | { blew: { w: number, h: number } }
-  | { flow: { term: string, apps: Array<{ who: string, app: string }> } }
   | { hail: null }
-  | { hook: null }
+  | { open: { term: string, apps: Array<{ who: string, app: string }> } }
+  | { shut: null }
 
 export type SessionTask = { session: string } & Task

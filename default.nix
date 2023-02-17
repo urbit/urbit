@@ -40,7 +40,9 @@
 , crossOverlays ? [ ]
   # Whether to use pkgs.pkgsStatic.* to obtain statically linked package
   # dependencies - ie. when building fully-static libraries or executables.
-, enableStatic ? false }:
+, enableStatic ? false
+  # release channel (when static)
+, verePace ? "" }:
 
 let
 
@@ -55,7 +57,10 @@ let
       if system == "x86_64-linux" && crossSystem == null && enableStatic then
         "x86_64-unknown-linux-musl"
       else
-        crossSystem;
+        if system == "aarch64-linux" && crossSystem == null && enableStatic then
+          "aarch64-unknown-linux-musl"
+        else
+          crossSystem;
   };
 
   # Use nixpkgs' top-level/static overlay if enableStatic = true.
@@ -95,8 +100,6 @@ let
 
     marsSources = callPackage ./nix/pkgs/marsSources { };
 
-    urbit = callPackage ./nix/pkgs/urbit { inherit enableStatic; };
-
     urcrypt = callPackage ./nix/pkgs/urcrypt { inherit enableStatic; };
 
     docker-image = callPackage ./nix/pkgs/docker-image { };
@@ -107,16 +110,14 @@ let
     # Expose packages with local customisations (like patches) for dev access.
     inherit (pkgsStatic) libsigsegv lmdb;
 
-    urbit-debug = urbit.override { enableDebug = true; };
     urbit-tests = libLocal.testFakeShip {
       inherit arvo;
 
-      urbit = urbit-debug;
       pill = solid.lfs;
     };
 
-    ivory-ropsten = ivory.override { arvo = arvo.ropsten; };
-    brass-ropsten = brass.override { arvo = arvo.ropsten; };
+    ivory-goerli = ivory.override { arvo = arvo.goerli; };
+    brass-goerli = brass.override { arvo = arvo.goerli; };
 
     # Create a .tgz of the primary binaries.
     tarball = let

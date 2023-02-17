@@ -74,7 +74,7 @@ export function GraphPermissions(props: GraphPermissionsProps) {
   const writers = _.get(
     group?.tags,
     ['graph', association.resource, 'writers'],
-    new Set()
+    []
   );
 
   let [, , hostShip] = association.resource.split('/');
@@ -91,7 +91,7 @@ export function GraphPermissions(props: GraphPermissionsProps) {
 
   const initialValues = {
     writePerms,
-    writers: Array.from(writers)
+    writers: [...writers]
       .filter(x => x !== hostShip),
     readerComments: association.metadata.vip === 'reader-comments'
   };
@@ -104,7 +104,7 @@ export function GraphPermissions(props: GraphPermissionsProps) {
       resource: association.resource,
       tag: 'writers'
     };
-    const allWriters = Array.from(writers).map(w => `~${w}`);
+    const allWriters = [...writers].map(w => `~${w}`);
     if (values.readerComments !== readerComments) {
       await airlock.poke(metadataEdit(association, {
         vip: values.readerComments ? 'reader-comments' : ''
@@ -170,7 +170,7 @@ export function GraphPermissions(props: GraphPermissionsProps) {
           <Col>
             <Label mb={2}>Permissions Summary</Label>
             <PermissionsSummary
-              writersSize={writers.size}
+              writersSize={writers.length}
               vip={association.metadata.vip}
             />
           </Col>

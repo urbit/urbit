@@ -6,7 +6,7 @@ import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/markdown/markdown';
 import { useFormikContext } from 'formik';
 import React, { useCallback, useRef } from 'react';
-import { UnControlled as CodeEditor } from 'react-codemirror2';
+import { UnControlled as CodeEditor } from 'react-codemirror2-react-17';
 import { Prompt } from 'react-router-dom';
 import { useFileUpload } from '~/logic/lib/useFileUpload';
 import { IuseStorage } from '~/logic/lib/useStorage';
@@ -23,6 +23,7 @@ interface MarkdownEditorProps {
   value: string;
   onChange: (s: string) => void;
   onBlur?: (e: any) => void;
+  disabled?: boolean;
 }
 
 const PromptIfDirty = () => {
@@ -39,7 +40,7 @@ const PromptIfDirty = () => {
 export function MarkdownEditor(
   props: MarkdownEditorProps & PropFunc<typeof Box>
 ) {
-  const { onBlur, placeholder, value, onChange, ...boxProps } = props;
+  const { onBlur, placeholder, value, onChange, disabled, ...boxProps } = props;
 
   const options = {
     mode: MARKDOWN_CONFIG,
@@ -56,7 +57,9 @@ export function MarkdownEditor(
 
   const handleChange = useCallback(
     (_e, _d, v: string) => {
-      onChange(v);
+      if (!disabled) {
+        onChange(v);
+      }
     },
     [onChange]
   );
@@ -93,6 +96,7 @@ export function MarkdownEditor(
       p={1}
       border={1}
       borderColor="lightGray"
+      backgroundColor={disabled ? 'lightGray' : 'white'}
       borderRadius={2}
       height={['calc(100% - 22vh)', '100%']}
       {...boxProps}
