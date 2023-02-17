@@ -83,10 +83,13 @@
   %+  skim
       ~(tap by assoc)
     |=  [m=md-resource:met [g=resource:res metdat=metadatum:met]]
-    ?&  =(| hidden.metdat)
-        =(name.g name.resource.m)
-        =(entity.g our.bowl)
-        =(%graph -.config.metdat)
+    ?+  config.metdat  %.n
+        [%graph @]
+      ?&  =(| hidden.metdat)
+          =(name.g name.resource.m)
+          =(entity.g our.bowl)
+          !=(%chat module.config.metdat)
+      ==
     ==
 ++  associations-raw
   .^(* (scry %metadata-store /export/noun))
