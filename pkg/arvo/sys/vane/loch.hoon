@@ -73,28 +73,33 @@
           wrapped-task=(hobo task)
       ==
   ^-  [(list move) _loch-gate]
-  ~&  >  ["loch call hen:" hen]
-  ::~&  >>  ["loch call dud:" dud]
-  ~&  >>>  ["loch call wrapped-task:" wrapped-task]
   ::
   =/  =task  ((harden task) wrapped-task)
-  ~&  >>  ["loch call task:" task]
-  ~&  >  ["loch" unix-duct:loch-gate]
-  ~&  >  ["loch" devices:loch-gate]
-  ~&  >  ["loch" commands:loch-gate]
+  ~&  >  ["loch call task:" task]
+  ~&  >  :^  "loch" 
+            ["unix duct" unix-duct:loch-gate]
+            ["devices" devices:loch-gate]
+            ["commands" commands:loch-gate]
   ::?^  dud
     ::~|(%loch-call-dud (mean tang.u.dud))
   ?+    -.task  [~ loch-gate]
       %born     :: When born you need to wipe your current state
     :-  ~  
-      loch-gate(unix-duct hen, commands [~]) 
+      loch-gate(unix-duct hen, commands [~], devices ~) 
+    ::
       %read     :: When you read you need to save the command and the wire to return the results
-    =/  =wut  wut:task 
-    ::=/  =dev  dev:task
-    =/  =cmd  [%read wut %uart hen]
-    ~&  >>  ['cmd' cmd]
+    =/  =param  param:task 
+    ~&  >>  ['param' param]
+    :-  ~[[unix-duct.state %give [%read param]]]
+      loch-gate
+    ::
+      %devs  
+    =/  dev  +.task 
+    ~&  >  dev
     :-  ~
-      loch-gate(commands [cmd commands])
+      %_  loch-gate
+        devices  (~(put by devices) name.dev [name.dev stat.dev ~])
+      ==
   ==
 ::  +load: migrate an old state to a new loch version
 ::
