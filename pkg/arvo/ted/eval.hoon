@@ -1,16 +1,11 @@
-/-  spider
+/-  spider, eval=ted-eval
 /+  strandio
 =,  strand=strand:spider
-=>
-|%
-+$  deps  (list path)
-+$  inpt  $@(cord (pair cord deps))
---
 ^-  thread:spider
 |=  raw=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<(arg=(unit inpt) raw)
+=+  !<(arg=(unit inpt:eval) raw)
 ?~  arg
   (strand-fail:strand %no-input ~)
 ?@  u.arg
