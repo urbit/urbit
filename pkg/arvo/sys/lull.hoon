@@ -352,6 +352,7 @@
   ::    %heed: track peer's responsiveness; gives %clog if slow
   ::    %jilt: stop tracking peer's responsiveness
   ::    %cork: request to delete message flow
+  ::    %kroc: request to delete stale message flows
   ::    %plea: request to send message
   ::
   ::    System and Lifecycle Tasks
@@ -362,6 +363,8 @@
   ::    %sift: limit verbosity to .ships
   ::    %snub: set packet blacklist to .ships
   ::    %spew: set verbosity toggles
+  ::    %cong: adjust congestion control parameters
+  ::    %stir: recover from timer desync
   ::    %trim: release memory
   ::    %vega: kernel reload notification
   ::
@@ -370,6 +373,7 @@
         [%heed =ship]
         [%jilt =ship]
         [%cork =ship]
+        [%kroc dry=?]
         $>(%plea vane-task)
     ::
         $>(%born vane-task)
@@ -378,6 +382,7 @@
         [%sift ships=(list ship)]
         [%snub ships=(list ship)]
         [%spew veb=(list verb)]
+        [%cong msg=@ud mem=@ud]
         [%stir arg=@t]
         $>(%trim vane-task)
         $>(%vega vane-task)
@@ -1549,6 +1554,10 @@
         ::  gall scry endpoint
         ::
         [%scry ~]
+        ::  respond with the @p the requester is authenticated as
+        ::  TODO: put this back in when we burn the next kelvin
+        ::
+        ::  [%name ~]
         ::  respond with the default file not found page
         ::
         [%four-oh-four ~]
