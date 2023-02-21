@@ -10,14 +10,19 @@
       state-3
       state-2
   ==
-+$  state-6  [%6 pith-5]
++$  state-6  [%6 pith-6]
 +$  state-5  [%5 pith-5]
 +$  state-4  [%4 pith-4]
 +$  state-3  [%3 pith-3]
 +$  state-2  [%2 pith-2]
 ::
-+$  pith-5
++$  pith-6
   $:  bin=(map @ source)                                ::  terminals
+      nob=(map @tas ?(%hush %soft %loud))
+  ==
+::
++$  pith-5
+  $:  bin=(map @ source)
   ==
 ::
 +$  pith-4
@@ -195,11 +200,16 @@
   =^  txt  +>  ?@(arg [arg +>] [+.arg (prep -.arg)])
   se-abet:(se-blit-sys [%sav pax txt])                ::
 ::
+++  poke-knob
+  |=  [tag=@tas lev=?(%hush %soft %loud)]
+  se-abet(nob (~(put by nob) tag lev))
+::
 ++  poke
   |=  [=mark =vase]
   ?>  =(our src):hid
   ?+  mark  ~|([%poke-drum-bad-mark mark] !!)
     %dill-poke           =;(f (f !<(_+<.f vase)) poke-dill)
+    %drum-knob           =;(f (f !<(_+<.f vase)) poke-knob)
     %drum-exit           =;(f (f !<(_+<.f vase)) poke-exit)
     %drum-link           =;(f (f !<(_+<.f vase)) poke-link)
     %drum-put            =;(f (f !<(_+<.f vase)) poke-put)
@@ -234,7 +244,7 @@
     --
   ::
   =?  moz  ?=(%5 -.old)  [hear-logs moz]
-  =?  old  ?=(%5 -.old)  old(- %6)
+  =?  old  ?=(%5 -.old)  [%6 bin.old ~]
   ?>  ?=(%6 -.old)
   =.  sat  old
   =.  dev  (~(gut by bin) ses *source)
@@ -382,7 +392,10 @@
   |=  =told:dill
   ^+  +>
   ?-  -.told
-    %crud  =.  +>  (se-text "crud: %{(trip p.told)} event failed")
+    %crud  =/  lev  (~(gut by nob) p.told %loud)
+           =?  +>.$  !=(%hush lev)
+             (se-text "crud: %{(trip p.told)} event failed")
+           ?.  =(%loud lev)  +>.$
            (se-dump q.told)
     %talk  (se-dump (flop p.told))  ::NOTE  +se-dump flops internally
     %text  (se-text p.told)
