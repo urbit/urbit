@@ -1285,7 +1285,7 @@
     ==                                                  ::
   +$  dill-belt                                         ::  arvo input
     $%  belt                                            ::  client input
-        [%cru p=@tas q=(list tank)]                     ::  echo error
+        [%cru p=@tas q=(list tank)]                     ::  errmsg (deprecated)
         [%hey ~]                                        ::  refresh
         [%rez p=@ud q=@ud]                              ::  resize, cols, rows
         [%yow p=gill:gall]                              ::  connect to app
