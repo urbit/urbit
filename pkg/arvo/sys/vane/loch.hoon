@@ -13,7 +13,8 @@
       ==                                            ::
       ::
     +$  sign
-      $%  [%loch $>(%read gift)]                        :: read
+      $%  [%loch $>(%red gift)]                        :: read
+          [%loch $>(%read gift)]
       ==
     ::
     +$  loch-state
@@ -21,9 +22,10 @@
           unix-duct=duct
           devices=(map @tas device)
           commands=(list cmd)
+          pathing=(map dev duct)
       ==
     ::
-    +$  cmd  [cmd=@tas =wut dev=@tas =duct]
+    +$  cmd  [cmd=@tas =wut =dev =duct]
     ::
     +$  device  [name=@tas status=@ reg=(unit @tas)] 
     --
@@ -75,31 +77,40 @@
   ^-  [(list move) _loch-gate]
   ::
   =/  =task  ((harden task) wrapped-task)
-  ~&  >  ["loch call task:" task]
-  ~&  >  :^  "loch" 
-            ["unix duct" unix-duct:loch-gate]
-            ["devices" devices:loch-gate]
-            ["commands" commands:loch-gate]
+  ~&  >  ["1 loch call task:" task]
+  ~&  >>  ["2 loch hen:" hen]
+  ::~&  >>  :*  "loch" 
+            ::["unix duct" unix-duct:loch-gate]
+            ::["devices" devices:loch-gate]
+            ::["commands" commands:loch-gate]
+            ::["pathing" pathing:loch-gate]
+          ::==
   ::?^  dud
     ::~|(%loch-call-dud (mean tang.u.dud))
-  ?+    -.task  [~ loch-gate]
+  ?+   -.task  [~ loch-gate]
       %born     :: When born you need to wipe your current state
     :-  ~  
-      loch-gate(unix-duct hen, commands [~], devices ~) 
+      loch-gate(unix-duct hen, commands [~], devices ~, pathing ~) 
     ::
       %read     :: When you read you need to save the command and the wire to return the results
     =/  =param  param:task 
-    ~&  >>  ['param' param]
+    ::~&  >>  ['param' param]
     :-  ~[[unix-duct.state %give [%read param]]]
-      loch-gate
+      %_  loch-gate
+        pathing  (~(put by pathing) dev.param hen)
+      ==
     ::
       %devs  
     =/  dev  +.task 
-    ~&  >  dev
     :-  ~
       %_  loch-gate
         devices  (~(put by devices) name.dev [name.dev stat.dev ~])
       ==
+    ::
+      %turn
+    =/  duct  (~(get by pathing) dev.task)
+    :-  ~[[+.duct %give %red dev.task dat.task]]
+      loch-gate
   ==
 ::  +load: migrate an old state to a new loch version
 ::

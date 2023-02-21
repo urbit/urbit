@@ -3100,20 +3100,26 @@
   |%
   +$  gift                                              ::  out result <-$
     $%  [%read =param]                            ::  next alarm
-    ::$%  [%writ =param dat=@ud]                            ::  next alarm
+        [%red =dev dat=@ud]
+        ::[%writ =param dat=@ud]                            ::  next alarm
     ==
   +$  task                                              ::  in request ->$
     $~  [%vega ~]                                       ::
     $%  $>(%born vane-task)                             ::  new unix process
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
+        [%turn =dev =act dat=@ud]
         [%read =param]                     ::  %read from device dev for cnt bytes
-        [%writ =param dat=@ud]             ::  %writ out to device dev
+        ::[%writ =param dat=@ud]             ::  %writ out to device dev
         [%devs name=@tas stat=@]                        ::  provide a device with status
+        ::[%red =dev dat=@ud]
+        ::[%wrot dat=@ud]
     ==
   ::
   +$  wut  $?(%con %mem) 
-  +$  param  [=wut dev=@tas cmd=@]
+  +$  dev  @tas
+  +$  param  [=wut =dev cmd=@]
+  +$  act  $?(%read %writ)
   --  ::loch
 
 ::
