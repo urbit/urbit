@@ -2116,7 +2116,7 @@
         =*  her          her.u.parsed
         =/  =peer-state  (got-peer-state her)
         =/  =channel     [[our her] now channel-state -.peer-state]
-        =/  peer-core    (make-peer-core peer-state channel)
+        =/  peer-core    (pe peer-state channel)
         |^
         ?:  ?&  ?=([%new *] u.parsed)
                 (lth rift.u.parsed rift.peer-state)
@@ -2159,7 +2159,7 @@
           =/  =message-blob  (jam naxplanation)
           ::  send nack-trace message on associated .nack-trace-bone
           ::
-          =.  peer-core              (make-peer-core peer-state channel)
+          =.  peer-core              (pe peer-state channel)
           =/  nack-trace-bone=^bone  (mix 0b10 bone)
           ::
           abet:(run-message-pump:peer-core nack-trace-bone %memo message-blob)
@@ -2216,7 +2216,7 @@
           =/  par  (get-peer-state her)
           ?~  par  event-core
           =/  =channel  [[our her] now channel-state -.u.par]
-          =/  peer-core  (make-peer-core u.par channel)
+          =/  peer-core  (pe u.par channel)
           =/  bones  ~(tap in ~(key by snd.u.par))
           |-  ^+  event-core
           ?~  bones  abet:peer-core
@@ -2291,7 +2291,7 @@
         ::
         =/  =peer-state  +.u.ship-state
         =/  =channel     [[our ship] now channel-state -.peer-state]
-        abet:on-heed:(make-peer-core peer-state channel)
+        abet:on-heed:(pe peer-state channel)
       ::  +on-jilt: handle request to stop tracking .ship's responsiveness
       ::
       ++  on-jilt
@@ -2305,7 +2305,7 @@
         ::
         =/  =peer-state  +.u.ship-state
         =/  =channel     [[our ship] now channel-state -.peer-state]
-        abet:on-jilt:(make-peer-core peer-state channel)
+        abet:on-jilt:(pe peer-state channel)
       ::  +on-hear: handle raw packet receipt
       ::
       ++  on-hear
@@ -2470,7 +2470,7 @@
           `[direct=%.n |+u.origin.packet]
         ::  perform peer-specific handling of packet
         ::
-        =/  peer-core  (make-peer-core peer-state channel)
+        =/  peer-core  (pe peer-state channel)
         abet:(on-hear-shut-packet:peer-core lane shut-packet dud)
       ::  +on-take-boon: receive request to give message to peer
       ::
@@ -2485,7 +2485,7 @@
         =*  her          her.u.parsed
         =/  =peer-state  (got-peer-state her)
         =/  =channel     [[our her] now channel-state -.peer-state]
-        =/  peer-core    (make-peer-core peer-state channel)
+        =/  peer-core    (pe peer-state channel)
         ::
         ?:  ?&  ?=([%new *] u.parsed)
                 (lth rift.u.parsed rift.peer-state)
@@ -2533,7 +2533,7 @@
             =/  sndr  [our our-life.channel]
             =/  rcvr  [ship her-life.channel]
             "plea {<sndr rcvr bone=bone vane.plea path.plea>}"
-        abet:(on-memo:(make-peer-core peer-state channel) bone plea %plea)
+        abet:(on-memo:(pe peer-state channel) bone plea %plea)
       ::  +on-cork: handle request to kill a flow
       ::
       ++  on-cork
@@ -2564,7 +2564,7 @@
             =/  sndr  [our our-life.channel]
             =/  rcvr  [ship her-life.channel]
             "cork plea {<sndr rcvr bone=bone vane.plea path.plea>}"
-        abet:(on-memo:(make-peer-core peer-state channel) bone plea %plea)
+        abet:(on-memo:(pe peer-state channel) bone plea %plea)
       ::  +on-kroc: cork all stale flows from failed subscriptions
       ::
       ++  on-kroc
@@ -2669,7 +2669,7 @@
             [leaf+"ames: got timer for strange ship: {<her.u.res>}, ignoring" ~]
           ::
           =/  =channel  [[our her.u.res] now channel-state -.u.state]
-          abet:(on-wake:(make-peer-core u.state channel) bone.u.res error)
+          abet:(on-wake:(pe u.state channel) bone.u.res error)
         ::
         =.  event-core
           (emit duct %pass /recork %b %wait `@da`(add now ~d1))
@@ -2687,7 +2687,7 @@
           $(pez t.pez)
         =*  peer-state  +.sat
         =/  =channel  [[our her] now channel-state -.peer-state]
-        =/  peer-core  (make-peer-core peer-state channel)
+        =/  peer-core  (pe peer-state channel)
         $(pez t.pez, event-core abet:recork-one:peer-core)
       ::  +on-init: first boot; subscribe to our info from jael
       ::
@@ -3170,14 +3170,14 @@
         ?.  ?=([~ %known *] ship-state)
           *peer-state
         +.u.ship-state
-      ::  +make-peer-core: create nested |peer-core for per-peer processing
+      ::  +pe: create nested |peer-core for per-peer processing
       ::
-      ++  make-peer-core
+      ++  pe
         |=  [=peer-state =channel]
         =*  veb  veb.bug.channel
         |%
         ++  peer-core  .
-        ++  emit  |=(move peer-core(event-core (^emit +<)))
+        ++  pe-emit  |=(move peer-core(event-core (emit +<)))
         ++  abet
           ^+  event-core
           ::
@@ -3185,7 +3185,7 @@
             (~(put by peers.ames-state) her.channel %known peer-state)
           ::
           event-core
-        ++  trace
+        ++  pe-trace
           |=  [verb=? print=(trap tape)]
           ^+  same
           (ev-trace verb her.channel print)
@@ -3207,7 +3207,7 @@
             peer-core
           ::  print message
           ::
-          =.  peer-core  (emit duct %pass /qos %d %flog %text u.text)
+          =.  peer-core  (pe-emit duct %pass /qos %d %flog %text u.text)
           ::  if peer has stopped responding, check if %boon's are backing up
           ::
           ?.  ?=(?(%dead %unborn) -.qos.peer-state)
@@ -3265,7 +3265,7 @@
           ?.  clogged
             peer-core
           %+  roll  ~(tap in heeds.peer-state)
-          |=([d=^duct core=_peer-core] (emit:core d %give %clog her.channel))
+          |=([d=^duct core=_peer-core] (pe-emit:core d %give %clog her.channel))
         ::  +on-hear-shut-packet: handle receipt of ack or message fragment
         ::
         ++  on-hear-shut-packet
@@ -3367,7 +3367,7 @@
           ::
           ?^  error
             =.  peer-core
-              (emit duct %pass /wake-fail %d %flog %crud %ames-wake u.error)
+              (pe-emit duct %pass /wake-fail %d %flog %crud %ames-wake u.error)
             ::
             ?~  message-pump-state=(~(get by snd.peer-state) bone)
               peer-core
@@ -3380,7 +3380,7 @@
               peer-core
             ::
             =/  =wire  (make-pump-timer-wire her.channel bone)
-            (emit duct %pass wire %b %wait (add now.channel ~s30))
+            (pe-emit duct %pass wire %b %wait (add now.channel ~s30))
           ::  update and print connection state
           ::
           =.  peer-core  %-  update-qos
@@ -3519,7 +3519,7 @@
                     =(1 (end 0 (rsh 0 bone)))
                     (~(has in corked.peer-state) (mix 0b10 bone))
                 ==
-              %-  %+  trace  msg.veb
+              %-  %+  pe-trace  msg.veb
                   =/  dat  [her.channel bone=bone message-num=message-num -.task]
                   |.("remove naxplanation flow {<dat>}")
               =.  snd.peer-state
@@ -3544,7 +3544,7 @@
               peer-core
             ::  not a nack-trace bone; relay ack to client vane
             ::
-            (emit (got-duct bone) %give %done error)
+            (pe-emit (got-duct bone) %give %done error)
           ::  +on-pump-cork: kill flow on cork sender side
           ::
           ++  on-pump-cork
@@ -3593,7 +3593,7 @@
             ::
             =/  =wire  (make-pump-timer-wire her.channel bone)
             =/  duct   ~[/ames]
-            (emit duct %pass wire %b %wait date)
+            (pe-emit duct %pass wire %b %wait date)
           ::  +on-pump-rest: relay |message-pump's unset-timer request
           ::
           ++  on-pump-rest
@@ -3602,7 +3602,7 @@
             ::
             =/  =wire  (make-pump-timer-wire her.channel bone)
             =/  duct   ~[/ames]
-            (emit duct %pass wire %b %rest date)
+            (pe-emit duct %pass wire %b %rest date)
           --
         ::  +run-message-sink: process $message-sink-task and its effects
         ::
@@ -3642,11 +3642,11 @@
               =/  =wire  (make-pump-timer-wire her.channel bone)
               :: resetting timer for boons
               ::
-              (emit [/ames]~ %pass wire %b %rest next-wake)
+              (pe-emit [/ames]~ %pass wire %b %rest next-wake)
             =/  nax-bone=^bone  (mix 0b10 bone)
             =?  peer-core  (~(has by snd.peer-state) nax-bone)
               %.  peer-core
-              %+  trace  odd.veb
+              %+  pe-trace  odd.veb
               =/  dat  [her.channel bone=nax-bone message-num=message-num -.task]
               |.("remove naxplanation flow {<dat>}")
             =.  peer-state
@@ -3700,19 +3700,19 @@
               peer-core
             ::  send ack unconditionally
             ::
-            =.  peer-core  (emit (got-duct bone) %give %boon message)
+            =.  peer-core  (pe-emit (got-duct bone) %give %boon message)
             =.  peer-core  (run-message-sink bone %done ok=%.y cork=%.n)
             ::
             ?.  ?=([%hear * * ok=%.n] task)
               ::  fresh boon; give message to client vane
               ::
-              %-  %+  trace  msg.veb
+              %-  %+  pe-trace  msg.veb
                   =/  dat  [her.channel bone=bone message-num=message-num -.task]
                   |.("sink boon {<dat>}")
               peer-core
             ::  we previously crashed on this message; notify client vane
             ::
-            %-  %+  trace  msg.veb
+            %-  %+  pe-trace  msg.veb
                 =/  dat  [her.channel bone=bone message-num=message-num -.task]
                 |.("crashed on sink boon {<dat>}")
             boon-to-lost
@@ -3732,7 +3732,7 @@
           ++  on-sink-nack-trace
             |=  [=message-num message=*]
             ^+  peer-core
-            %-  %+  trace  msg.veb
+            %-  %+  pe-trace  msg.veb
                 =/  dat  [her.channel bone=bone message-num=message-num]
                 |.("sink naxplanation {<dat>}")
             ::
@@ -3752,7 +3752,7 @@
             ::  if we get a naxplanation for a %cork, the publisher is behind
             ::  receiving the OTA.  The /recork timer will retry eventually.
             ::
-            %-  %+  trace  msg.veb
+            %-  %+  pe-trace  msg.veb
                 |.("old publisher, %cork nacked on bone={<target-bone>}")
             peer-core
           ::  +on-sink-plea: handle request message received by |message-sink
@@ -3765,7 +3765,7 @@
                 ==
               peer-core
             |^
-            %-  %+  trace  msg.veb
+            %-  %+  pe-trace  msg.veb
                 =/  dat  [her.channel bone=bone message-num=message-num]
                 |.("sink plea {<dat>}")
             ::  is this the first time we're trying to process this message?
@@ -3781,16 +3781,16 @@
             ::
             ?.  =(vane.plea %$)
               ?+  vane.plea  ~|  %ames-evil-vane^our^her.channel^vane.plea  !!
-                %c  (emit duct %pass wire %c %plea her.channel plea)
-                %g  (emit duct %pass wire %g %plea her.channel plea)
-                %j  (emit duct %pass wire %j %plea her.channel plea)
+                %c  (pe-emit duct %pass wire %c %plea her.channel plea)
+                %g  (pe-emit duct %pass wire %g %plea her.channel plea)
+                %j  (pe-emit duct %pass wire %j %plea her.channel plea)
               ==
             ::  a %cork plea is handled using %$ as the recipient vane to
             ::  account for publishers that still handle ames-to-ames %pleas
             ::
             ?>  &(?=([%cork *] payload.plea) ?=(%flow -.path.plea))
             =.  closing.peer-state  (~(put in closing.peer-state) bone)
-            (emit duct %pass wire %a %plea her.channel [%a /close ~])
+            (pe-emit duct %pass wire %a %plea her.channel [%a /close ~])
             ::
             ++  nack-plea
               ^+  peer-core
