@@ -8,10 +8,11 @@
 --                                                      ::
 =>  |%                                                  ::  console protocol
 +$  axle                                                ::
-  $:  %6                                                ::
+  $:  %7                                                ::
       hey=(unit duct)                                   ::  default duct
       dug=(map @tas axon)                               ::  conversations
-      eye=(jug @tas duct)                               ::  outside listeners
+      eye=(jug @tas duct)                               ::  outside observers
+      ear=(set duct)                                    ::  syslog listeners
       lit=?                                             ::  boot in lite mode
       $=  veb                                           ::  vane verbosities
       $~  (~(put by *(map @tas log-level)) %hole %soft) ::  quiet packet crashes
@@ -400,6 +401,18 @@
   ?:  ?=(%flee -.task)
     :-  ~
     ..^$(eye.all (~(del ju eye.all) ses hen))
+  ::  %logs opens or closes a subscription to system output
+  ::
+  ?:  ?=(%logs -.task)
+    =.  ear.all
+      ?~  p.task  (~(del in ear.all) hen)
+      (~(put in ear.all) hen)
+    [~ ..^$]
+  ::  if we were $told something, give %logs to all interested parties
+  ::
+  ?:  ?=(?(%crud %talk %text) -.task)
+    :_  ..^$
+    (turn ~(tap in ear.all) (late %give %logs task))
   ::
   =/  nus
     (ax hen ses)
@@ -408,8 +421,7 @@
     ::  could be before %boot (or %boot failed)
     ::
     ~&  [%dill-call-no-session ses hen -.task]
-    =/  tan  ?:(?=(%crud -.task) q.task ~)
-    [((slog (flop tan)) ~) ..^$]
+    [~ ..^$]
   ::
   =^  moz  all  abet:(call:u.nus task)
   [moz ..^$]
@@ -417,12 +429,28 @@
 ++  load                                                ::  import old state
   =<  |=  old=any-axle
       ?-  -.old
-        %6  ..^$(all old)
+        %7  ..^$(all old)
+        %6  $(old (axle-6-to-7 old))
         %5  $(old (axle-5-to-6 old))
         %4  $(old (axle-4-to-5 old))
       ==
   |%
-  +$  any-axle  $%(axle axle-5 axle-4)
+  +$  any-axle  $%(axle axle-6 axle-5 axle-4)
+  ::
+  +$  axle-6
+    $:  %6
+        hey=(unit duct)
+        dug=(map @tas axon)
+        eye=(jug @tas duct)
+        lit=?
+        veb=(map @tas log-level)
+        egg=_|
+    ==
+  ::
+  ++  axle-6-to-7
+    |=  a=axle-6
+    ^-  axle
+    a(- %7, |4 [~ |4.a])
   ::
   +$  axle-5
     $:  %5
@@ -435,7 +463,7 @@
   ::
   ++  axle-5-to-6
     |=  a=axle-5
-    ^-  axle
+    ^-  axle-6
     :: [%6 hey `(map @tas axon)`dug eye lit veb |]
     a(- %6, veb [veb.a &])
   ::
