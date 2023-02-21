@@ -2080,13 +2080,13 @@
 
     --
 ::
-=>  ::  |per-event: inner event-handling core
+=>  ::  |ev: inner event-handling core
     ::
     ~%  %per-event  ..decode-packet  ~
     |%
-    ++  per-event
+    ++  ev
       =|  moves=(list move)
-      ~%  %event-gate  ..per-event  ~
+      ~%  %event-gate  ..ev  ~
       |=  [[now=@da eny=@ rof=roof] =duct =ames-state]
       =*  veb  veb.bug.ames-state
       =|  cork-bone=(unit bone)  ::  modified by +on-kroc
@@ -2096,10 +2096,10 @@
       ++  abet  [(flop moves) ames-state]
       ++  emit  |=(=move event-core(moves [move moves]))
       ++  channel-state  [life crypto-core bug]:ames-state
-      ++  trace
+      ++  ev-trace
         |=  [verb=? =ship print=(trap tape)]
         ^+  same
-        (^trace verb ship ships.bug.ames-state print)
+        (trace verb ship ships.bug.ames-state print)
       ::  +on-take-done: handle notice from vane that it processed a message
       ::
       ++  on-take-done
@@ -2123,13 +2123,13 @@
             ==
           ::  ignore events from an old rift
           ::
-          %-  %^  trace  odd.veb  her
+          %-  %^  ev-trace  odd.veb  her
               |.("dropping old rift wire: {(spud wire)}")
           event-core
         =/  =bone
           ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
         =?  peer-core  ?=([%old *] u.parsed)
-          %-  %^  trace  odd.veb  her
+          %-  %^  ev-trace  odd.veb  her
               |.("parsing old wire: {(spud wire)}")
           peer-core
         ?~  error
@@ -2317,12 +2317,12 @@
         ~/  %on-hear-packet
         |=  [=lane =packet dud=(unit goof)]
         ^+  event-core
-        %-  (trace odd.veb sndr.packet |.("received packet"))
+        %-  (ev-trace odd.veb sndr.packet |.("received packet"))
         ::
         ?:  =(our sndr.packet)
           event-core
         ?:  (~(has in snub.ames-state) sndr.packet)
-          %-  (trace rcv.veb sndr.packet |.("snubbed"))
+          %-  (ev-trace rcv.veb sndr.packet |.("snubbed"))
           event-core
         ::
         %.  +<
@@ -2347,7 +2347,7 @@
         ~/  %on-hear-forward
         |=  [=lane =packet dud=(unit goof)]
         ^+  event-core
-        %-  %^  trace  for.veb  sndr.packet
+        %-  %^  ev-trace  for.veb  sndr.packet
             |.("forward: {<sndr.packet>} -> {<rcvr.packet>}")
         ::  set .origin.packet if it doesn't already have one, re-encode, and send
         ::
@@ -2366,7 +2366,7 @@
       ++  on-hear-keys
         ~/  %on-hear-keys
         |=  [=lane =packet dud=(unit goof)]
-        =+  %^  trace  msg.veb  sndr.packet
+        =+  %^  ev-trace  msg.veb  sndr.packet
             |.("requested attestation")
         ?.  =(%pawn (clan:title our))
           event-core
@@ -2377,7 +2377,7 @@
         ~/  %on-hear-open
         |=  [=lane =packet dud=(unit goof)]
         ^+  event-core
-        =+  %^  trace  msg.veb  sndr.packet
+        =+  %^  ev-trace  msg.veb  sndr.packet
             |.("got attestation")
         ::  assert the comet can't pretend to be a moon or other address
         ::
@@ -2492,13 +2492,13 @@
             ==
           ::  ignore events from an old rift
           ::
-          %-  %^  trace  odd.veb  her
+          %-  %^  ev-trace  odd.veb  her
               |.("dropping old rift wire: {(spud wire)}")
           event-core
         =/  =bone
           ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
         =?  peer-core  ?=([%old *] u.parsed)
-          %-  %^  trace  odd.veb  her
+          %-  %^  ev-trace  odd.veb  her
               |.("parsing old wire: {(spud wire)}")
           peer-core
         abet:(on-memo:peer-core bone payload %boon)
@@ -2528,7 +2528,7 @@
         =/  =channel     [[our ship] now channel-state -.peer-state]
         ::
         =^  =bone  ossuary.peer-state  (bind-duct ossuary.peer-state duct)
-        %-  %^  trace  msg.veb  ship
+        %-  %^  ev-trace  msg.veb  ship
             |.  ^-  tape
             =/  sndr  [our our-life.channel]
             =/  rcvr  [ship her-life.channel]
@@ -2555,11 +2555,11 @@
         ::
         ?.  (~(has by by-bone.ossuary.peer-state) bone)
           %.  event-core
-          %^  trace  odd.veb  ship
+          %^  ev-trace  odd.veb  ship
           |.("trying to cork {<bone=bone>}, not in the ossuary, ignoring")
         ::
         =.  closing.peer-state  (~(put in closing.peer-state) bone)
-        %-  %^  trace  msg.veb  ship
+        %-  %^  ev-trace  msg.veb  ship
             |.  ^-  tape
             =/  sndr  [our our-life.channel]
             =/  rcvr  [ship her-life.channel]
@@ -2590,7 +2590,7 @@
               ==
           ?:  (~(has in closing.peer-state) forward-bone)
             %.  subs
-            %^  trace  &(dry odd.veb)  ship
+            %^  ev-trace  &(dry odd.veb)  ship
             |.
             %+  weld  "stale flow bone={<forward-bone>} in closing, "
             "#{<~(wyt in live:packet-pump-state)>} packets retrying"
@@ -2625,7 +2625,7 @@
         ::
         ?.  =(resubs 1)
           %.  &
-          (trace &(dry odd.veb) ship |.((weld "stale %watch plea " log)))
+          (ev-trace &(dry odd.veb) ship |.((weld "stale %watch plea " log)))
         ::  the current subscription can be safely corked if there
         ::  is a flow with a naxplanation ack  on a backward bone
         ::
@@ -2635,7 +2635,7 @@
         ?~  (~(get by rcv.peer-state) backward-bone)
           |
         %.  &
-        (trace &(dry odd.veb) ship |.((weld "failed %watch plea " log)))
+        (ev-trace &(dry odd.veb) ship |.((weld "failed %watch plea " log)))
       ::  +on-take-wake: receive wakeup or error notification from behn
       ::
       ++  on-take-wake
@@ -3041,7 +3041,7 @@
       ++  request-attestation
         |=  =ship
         ^+  event-core
-        =+  (trace msg.veb ship |.("requesting attestion"))
+        =+  (ev-trace msg.veb ship |.("requesting attestion"))
         =.  event-core  (send-blob | ship (sendkeys-packet ship))
         =/  =wire  /alien/(scot %p ship)
         (emit duct %pass wire %b %wait (add now ~s30))
@@ -3058,7 +3058,7 @@
         |=  [for=? =ship =blob]
         ::
         =/  final-ship  ship
-        %-  (trace rot.veb final-ship |.("send-blob: to {<ship>}"))
+        %-  (ev-trace rot.veb final-ship |.("send-blob: to {<ship>}"))
         |-
         |^  ^+  event-core
             ::
@@ -3099,10 +3099,10 @@
               (try-next-sponsor sponsor.peer-state)
             ::
             ?~  route=route.peer-state
-              %-  (trace rot.veb final-ship |.("no route to:  {<ship>}"))
+              %-  (ev-trace rot.veb final-ship |.("no route to:  {<ship>}"))
               (try-next-sponsor sponsor.peer-state)
             ::
-            %-  (trace rot.veb final-ship |.("trying route: {<ship>}"))
+            %-  (ev-trace rot.veb final-ship |.("trying route: {<ship>}"))
             =.  event-core
               (emit unix-duct.ames-state %give %send lane.u.route blob)
             ::
@@ -3188,7 +3188,7 @@
         ++  trace
           |=  [verb=? print=(trap tape)]
           ^+  same
-          (^trace verb her.channel print)
+          (ev-trace verb her.channel print)
         ++  on-heed  peer-core(heeds.peer-state (~(put in heeds.peer-state) duct))
         ++  on-jilt  peer-core(heeds.peer-state (~(del in heeds.peer-state) duct))
         ::  +update-qos: update and maybe print connection status
@@ -3820,8 +3820,8 @@
   |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _ames-gate]
   ::
-  =/  =task  ((harden task) wrapped-task)
-  =/  event-core  (per-event [now eny rof] duct ames-state)
+  =/  =task       ((harden task) wrapped-task)
+  =/  event-core  (ev [now eny rof] duct ames-state)
   ::
   =^  moves  ames-state
     =<  abet
@@ -3862,7 +3862,7 @@
     ~|(%ames-take-dud (mean tang.u.dud))
   ::
   ::
-  =/  event-core  (per-event [now eny rof] duct ames-state)
+  =/  event-core  (ev [now eny rof] duct ames-state)
   ::
   =^  moves  ames-state
     =<  abet
