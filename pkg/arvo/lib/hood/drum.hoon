@@ -1,14 +1,16 @@
 /-  *sole
 /+  sole
 |%
-+$  state  state-5
++$  state  state-6
 +$  any-state
   $~  *state
-  $%  state-5
+  $%  state-6
+      state-5
       state-4
       state-3
       state-2
   ==
++$  state-6  [%6 pith-5]
 +$  state-5  [%5 pith-5]
 +$  state-4  [%4 pith-4]
 +$  state-3  [%3 pith-3]
@@ -130,7 +132,9 @@
 ++  klr   klr:format
 +$  state      ^state      ::  proxy
 +$  any-state  ^any-state  ::  proxy
-++  on-init    (poke-link %$ our.hid %dojo)
+++  on-init
+  =+  out=(poke-link %$ our.hid %dojo)
+  out(- [hear-logs -.out])
 ::
 ++  prep
   |=  s=@tas
@@ -229,7 +233,9 @@
       [%mod -.b p.b]
     --
   ::
-  ?>  ?=(%5 -.old)
+  =?  moz  ?=(%5 -.old)  [hear-logs moz]
+  =?  old  ?=(%5 -.old)  old(- %6)
+  ?>  ?=(%6 -.old)
   =.  sat  old
   =.  dev  (~(gut by bin) ses *source)
   this
@@ -276,6 +282,15 @@
   =^  gyl  this  (open way)
   ~&  [%drum-quit src.hid gyl]
   (se-drop %| gyl)
+::
+++  hear-logs
+  `card:agent:gall`[%pass /drum/dill/logs %arvo %d %logs [~ ~]]
+::
+++  take-arvo
+  |=  [way=wire syn=sign-arvo]
+  ?>  =(/dill/logs way)
+  ?>  ?=(%logs +<.syn)
+  se-abet:(se-told:(prep %$) told.syn)
 ::                                                    ::  ::
 ::::                                                  ::  ::
   ::                                                  ::  ::
@@ -363,6 +378,16 @@
   ~|  [inx=inx wag=wag fug=fug eel=eel]
   `(snag inx `(list gill:gall)`wag)
 ::
+++  se-told                                           ::  render system output
+  |=  =told:dill
+  ^+  +>
+  ?-  -.told
+    %crud  =.  +>  (se-text "crud: %{(trip p.told)} event failed")
+           (se-dump q.told)
+    %talk  (se-dump (flop p.told))  ::NOTE  +se-dump flops internally
+    %text  (se-text p.told)
+  ==
+::
 ++  se-belt                                           ::  handle input
   |=  bet=dill-belt:dill
   ^+  +>
@@ -438,7 +463,7 @@
   (se-blit %mor [%hop 0] [%wyp ~] lin [%nel ~] ~)
 ::
 ++  se-dump                                           ::  print tanks
-  |=  tac=(list tank)
+  |=  tac=tang
   ^+  +>
   =/  wol=wall
     (zing (turn (flop tac) |=(a=tank (~(win re a) [0 edg]))))
