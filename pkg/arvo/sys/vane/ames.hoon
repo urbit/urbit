@@ -2092,6 +2092,8 @@
       =|  cork-bone=(unit bone)  ::  modified by +on-kroc
       ~%  %event-core  ..$  ~
       |%
+      +|  %helpers
+      ::
       ++  event-core  .
       ++  abet  [(flop moves) ames-state]
       ++  emit  |=(=move event-core(moves [move moves]))
@@ -2100,6 +2102,8 @@
         |=  [verb=? =ship print=(trap tape)]
         ^+  same
         (trace verb ship ships.bug.ames-state print)
+      ::
+      +|  %tasks
       ::  +on-take-done: handle notice from vane that it processed a message
       ::
       ++  on-take-done
@@ -3005,6 +3009,8 @@
             |=  m=message-pump-state
             !=(~ unsent-fragments.m)
         ==
+      ::
+      +|  %implementation
       ::  +enqueue-alien-todo: helper to enqueue a pending request
       ::
       ::    Also requests key and life from Jael on first request.
@@ -3170,6 +3176,8 @@
         ?.  ?=([~ %known *] ship-state)
           *peer-state
         +.u.ship-state
+      ::
+      +|  %internals
       ::  +pe: create nested |peer-core for per-peer processing
       ::
       ++  pe
