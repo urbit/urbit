@@ -1182,131 +1182,6 @@
 =>  |%
     ::  XX out of here
     ::
-    ::  +make-pump-gauge: construct |pump-gauge congestion control core
-    ::
-    ++  make-pump-gauge
-      |=  [pump-metrics live-packets=@ud now=@da =ship =bug]
-      ::  TODO rename live-packets num-live
-      =*  veb  veb.bug
-      =*  metrics  +<-
-      |%
-      ++  trace
-        |=  [verb=? print=(trap tape)]
-        ^+  same
-        (^trace verb ship ships.bug print)
-      ::  +next-expiry: when should a newly sent fresh packet time out?
-      ::
-      ::    Use rtt + 4*sigma, where sigma is the mean deviation of rtt.
-      ::    This should make it unlikely that a packet would time out from a
-      ::    delay, as opposed to an actual packet loss.
-      ::
-      ++  next-expiry
-        |=  [live-packet-key live-packet-val]
-        ^-  @da
-        (add last-sent rto)
-      ::  +num-slots: how many packets can we send right now?
-      ::
-      ++  num-slots
-        ^-  @ud
-        (sub-safe cwnd live-packets)
-      ::  +on-ack: adjust metrics based on a packet getting acknowledged
-      ::
-      ++  on-ack
-        |=  =packet-state
-        ^-  pump-metrics
-        ::
-        =.  counter  +(counter)
-        ::  if below congestion threshold, add 1; else, add avg. 1 / cwnd
-        ::
-        =.  cwnd
-          ?:  in-slow-start
-            +(cwnd)
-          (add cwnd !=(0 (mod (mug now) cwnd)))
-        ::  if this was a re-send, don't adjust rtt or downstream state
-        ::
-        ?.  =(0 retries.packet-state)
-          metrics
-        ::  rtt-datum: new rtt measurement based on this packet roundtrip
-        ::
-        =/  rtt-datum=@dr  (sub-safe now last-sent.packet-state)
-        ::  rtt-error: difference between this rtt measurement and expected
-        ::
-        =/  rtt-error=@dr
-          ?:  (gte rtt-datum rtt)
-            (sub rtt-datum rtt)
-          (sub rtt rtt-datum)
-        ::  exponential weighting ratio for .rtt and .rttvar
-        ::
-        %-  %+  trace  ges.veb
-            |.("ack update {<show rtt-datum=rtt-datum rtt-error=rtt-error>}")
-        =.  rtt     (div (add rtt-datum (mul rtt 7)) 8)
-        =.  rttvar  (div (add rtt-error (mul rttvar 7)) 8)
-        =.  rto     (clamp-rto (add rtt (mul 4 rttvar)))
-        ::
-        metrics
-      ::  +on-skipped-packet: handle misordered ack
-      ::
-      ++  on-skipped-packet
-        |=  packet-state
-        ^-  [resend=? pump-metrics]
-        ::
-        =/  resend=?  &(=(0 retries) |(in-recovery (gte skips 3)))
-        :-  resend
-        ::
-        =?  cwnd  !in-recovery  (max 2 (div cwnd 2))
-        %-  %+  trace  snd.veb
-            |.("skip {<resend=resend in-recovery=in-recovery show>}")
-        metrics
-      ::  +on-timeout: (re)enter slow-start mode on packet loss
-      ::
-      ++  on-timeout
-        ^-  pump-metrics
-        ::
-        %-  (trace ges.veb |.("timeout update {<show>}"))
-        =:  ssthresh  (max 1 (div cwnd 2))
-                cwnd  1
-                rto  (clamp-rto (mul rto 2))
-          ==
-        metrics
-      ::  +clamp-rto: apply min and max to an .rto value
-      ::
-      ++  clamp-rto
-        |=  rto=@dr
-        ^+  rto
-        (min ~m2 (max ^~((div ~s1 5)) rto))
-      ::  +in-slow-start: %.y iff we're in "slow-start" mode
-      ::
-      ++  in-slow-start
-        ^-  ?
-        (lth cwnd ssthresh)
-      ::  +in-recovery: %.y iff we're recovering from a skipped packet
-      ::
-      ::    We finish recovering when .live-packets finally dips back down to
-      ::    .cwnd.
-      ::
-      ++  in-recovery
-        ^-  ?
-        (gth live-packets cwnd)
-      ::  +sub-safe: subtract with underflow protection
-      ::
-      ++  sub-safe
-        |=  [a=@ b=@]
-        ^-  @
-        ?:((lte a b) 0 (sub a b))
-      ::  +show: produce a printable version of .metrics
-      ::
-      ++  show
-        =/  ms  (div ~s1 1.000)
-        ::
-        :*  rto=(div rto ms)
-            rtt=(div rtt ms)
-            rttvar=(div rttvar ms)
-            ssthresh=ssthresh
-            cwnd=cwnd
-            num-live=live-packets
-            counter=counter
-        ==
-      --
     ::  +make-message-sink: construct |message-sink message receiver core
     ::
     ++  make-message-sink
@@ -3285,7 +3160,7 @@
               ~(wyt by live.state)
             ::  +gauge: inflate a |pump-gauge to track congestion control
             ::
-            ++  gauge  (make-pump-gauge metrics.state live-packets [now her bug]:channel)
+            ++  gauge  (ga metrics.state)
             ::  +to-static-fragment: convenience function for |packet-pump
             ::
             ++  to-static-fragment
@@ -3492,7 +3367,7 @@
                   ==
               ^-  [new-val=(unit live-packet-val) stop=? _acc]
               ::
-              =/  gauge  (make-pump-gauge metrics.acc live-packets [now her bug]:channel)
+              =/  gauge  (ga metrics.acc)
               ::  is this the acked packet?
               ::
               ?:  =(key [message-num fragment-num])
@@ -3539,7 +3414,7 @@
                   ==
               ^-  [new-val=(unit live-packet-val) stop=? pump-metrics]
               ::
-              =/  gauge  (make-pump-gauge metrics live-packets [now her bug]:channel)
+              =/  gauge  (ga metrics)
               ::  if we get an out-of-order ack for a message, skip until it
               ::
               ?:  (lth message-num.key message-num)
@@ -3577,6 +3452,138 @@
               =?  next-wake.state  ?=(^ new-wake)   new-wake  ::  reset
               ::
               pack
+            ::
+            +|  %internals
+            ::  +ga: construct |pump-gauge congestion control core
+            ::
+            ++  ga
+              |=  pump-metrics
+              =*  ship     her.channel
+              =*  now      now.channel
+              =*  metrics  +<
+              |%
+              +|  %helpers
+              ::
+              ++  ga-trace
+                |=  [verb=? print=(trap tape)]
+                ^+  same
+                (trace verb ship ships.bug.channel print)
+              ::  +next-expiry: when should a newly sent fresh packet time out?
+              ::
+              ::    Use rtt + 4*sigma, where sigma is the mean deviation of rtt.
+              ::    This should make it unlikely that a packet would time out from a
+              ::    delay, as opposed to an actual packet loss.
+              ::
+              ++  next-expiry
+                |=  [live-packet-key live-packet-val]
+                ^-  @da
+                (add last-sent rto)
+              ::  +num-slots: how many packets can we send right now?
+              ::
+              ++  num-slots
+                ^-  @ud
+                (sub-safe cwnd live-packets)
+              ::
+              ::  +clamp-rto: apply min and max to an .rto value
+              ::
+              ++  clamp-rto
+                |=  rto=@dr
+                ^+  rto
+                (min ~m2 (max ^~((div ~s1 5)) rto))
+              ::  +in-slow-start: %.y iff we're in "slow-start" mode
+              ::
+              ++  in-slow-start
+                ^-  ?
+                (lth cwnd ssthresh)
+              ::  +in-recovery: %.y iff we're recovering from a skipped packet
+              ::
+              ::    We finish recovering when .live-packets finally dips back down to
+              ::    .cwnd.
+              ::
+              ++  in-recovery
+                ^-  ?
+                (gth live-packets cwnd)
+              ::  +sub-safe: subtract with underflow protection
+              ::
+              ++  sub-safe
+                |=  [a=@ b=@]
+                ^-  @
+                ?:((lte a b) 0 (sub a b))
+              ::  +show: produce a printable version of .metrics
+              ::
+              ++  show
+                =/  ms  (div ~s1 1.000)
+                ::
+                :*  rto=(div rto ms)
+                    rtt=(div rtt ms)
+                    rttvar=(div rttvar ms)
+                    ssthresh=ssthresh
+                    cwnd=cwnd
+                    num-live=live-packets
+                    counter=counter
+                ==
+              ::
+              +|  %entry-points
+              ::  +on-ack: adjust metrics based on a packet getting acknowledged
+              ::
+              ++  on-ack
+                |=  =packet-state
+                ^-  pump-metrics
+                ::
+                =.  counter  +(counter)
+                ::  if below congestion threshold, add 1; else, add avg. 1 / cwnd
+                ::
+                =.  cwnd
+                  ?:  in-slow-start
+                    +(cwnd)
+                  (add cwnd !=(0 (mod (mug now) cwnd)))
+                ::  if this was a re-send, don't adjust rtt or downstream state
+                ::
+                ?.  =(0 retries.packet-state)
+                  metrics
+                ::  rtt-datum: new rtt measurement based on this packet roundtrip
+                ::
+                =/  rtt-datum=@dr  (sub-safe now last-sent.packet-state)
+                ::  rtt-error: difference between this rtt measurement and expected
+                ::
+                =/  rtt-error=@dr
+                  ?:  (gte rtt-datum rtt)
+                    (sub rtt-datum rtt)
+                  (sub rtt rtt-datum)
+                ::  exponential weighting ratio for .rtt and .rttvar
+                ::
+                %-  %+  ga-trace  ges.veb
+                    |.("ack update {<show rtt-datum=rtt-datum rtt-error=rtt-error>}")
+                =.  rtt     (div (add rtt-datum (mul rtt 7)) 8)
+                =.  rttvar  (div (add rtt-error (mul rttvar 7)) 8)
+                =.  rto     (clamp-rto (add rtt (mul 4 rttvar)))
+                ::
+                metrics
+              ::  +on-skipped-packet: handle misordered ack
+              ::
+              ++  on-skipped-packet
+                |=  packet-state
+                ^-  [resend=? pump-metrics]
+                ::
+                =/  resend=?  &(=(0 retries) |(in-recovery (gte skips 3)))
+                :-  resend
+                ::
+                =?  cwnd  !in-recovery  (max 2 (div cwnd 2))
+                %-  %+  ga-trace  snd.veb
+                    |.("skip {<resend=resend in-recovery=in-recovery show>}")
+                metrics
+              ::  +on-timeout: (re)enter slow-start mode on packet loss
+              ::
+              ++  on-timeout
+                ^-  pump-metrics
+                ::
+                %-  (ga-trace ges.veb |.("timeout update {<show>}"))
+                =:  ssthresh  (max 1 (div cwnd 2))
+                        cwnd  1
+                        rto  (clamp-rto (mul rto 2))
+                  ==
+                metrics
+              --
             --
           --
         ::  +run-message-sink: process $message-sink-task and its effects
