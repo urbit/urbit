@@ -1406,6 +1406,32 @@
         |=  [verb=? =ship print=(trap tape)]
         ^+  same
         (trace verb ship ships.bug.ames-state print)
+      ::  +get-peer-state: lookup .her state or ~
+      ::
+      ++  get-peer-state
+        |=  her=ship
+        ^-  (unit peer-state)
+        ::
+        =-  ?.(?=([~ %known *] -) ~ `+.u)
+        (~(get by peers.ames-state) her)
+      ::  +got-peer-state: lookup .her state or crash
+      ::
+      ++  got-peer-state
+        |=  her=ship
+        ^-  peer-state
+        ::
+        ~|  %freaky-alien^her
+        =-  ?>(?=(%known -<) ->)
+        (~(got by peers.ames-state) her)
+      ::  +gut-peer-state: lookup .her state or default
+      ::
+      ++  gut-peer-state
+        |=  her=ship
+        ^-  peer-state
+        =/  ship-state  (~(get by peers.ames-state) her)
+        ?.  ?=([~ %known *] ship-state)
+          *peer-state
+        +.u.ship-state
       ::
       +|  %tasks
       ::  +on-take-done: handle notice from vane that it processed a message
@@ -2457,32 +2483,6 @@
         ?>  ?=(%pawn (clan:title her))
         %-  encode-packet
         (encode-keys-packet our her life.ames-state)
-      ::  +get-peer-state: lookup .her state or ~
-      ::
-      ++  get-peer-state
-        |=  her=ship
-        ^-  (unit peer-state)
-        ::
-        =-  ?.(?=([~ %known *] -) ~ `+.u)
-        (~(get by peers.ames-state) her)
-      ::  +got-peer-state: lookup .her state or crash
-      ::
-      ++  got-peer-state
-        |=  her=ship
-        ^-  peer-state
-        ::
-        ~|  %freaky-alien^her
-        =-  ?>(?=(%known -<) ->)
-        (~(got by peers.ames-state) her)
-      ::  +gut-peer-state: lookup .her state or default
-      ::
-      ++  gut-peer-state
-        |=  her=ship
-        ^-  peer-state
-        =/  ship-state  (~(get by peers.ames-state) her)
-        ?.  ?=([~ %known *] ship-state)
-          *peer-state
-        +.u.ship-state
       ::
       +|  %internals
       ::  +pe: create nested |peer-core for per-peer processing
