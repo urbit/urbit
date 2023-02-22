@@ -1561,8 +1561,9 @@
         ::
         [%scry ~]
         ::  respond with the @p the requester is authenticated as
+        ::  TODO: put this back in when we burn the next kelvin
         ::
-        [%name ~]
+        ::  [%name ~]
         ::  respond with the default file not found page
         ::
         [%four-oh-four ~]
