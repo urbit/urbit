@@ -2838,8 +2838,7 @@
                 (pump-done current.state ~)
               $(current.state +(current.state))
             ::
-                %nack
-              pump
+                %nack  pump
             ::
                 %naxplanation
               =.  peer-core  (pump-done current.state `error.u.cur)
@@ -2920,7 +2919,6 @@
             ::  clear all packets from this message from the packet pump
             ::
             =.  pump  abet:(call:packet-pump %done message-num lag=*@dr)
-            =/  =wire  (make-pump-timer-wire her bone)
             =/  nack-bone=^bone  (mix 0b10 bone)
             =?  rcv.peer-state  (~(has by rcv.peer-state) nack-bone)
               ::  if the publisher was behind we remove nacks on that bone
@@ -2940,21 +2938,6 @@
             ::  since we got one cork ack, try the next one
             ::
             recork-one
-          ::  XX refactor wait/rest
-          ::  +pump-wait: relay |message-pump's set-timer request
-          ::
-          ++  pump-wait
-            |=  date=@da
-            ^+  peer-core
-            %+  pe-emit  ~[/ames]
-            [%pass (make-pump-timer-wire her bone) %b %wait date]
-          ::  +pump-rest: relay |message-pump's unset-timer request
-          ::
-          ++  pump-rest
-            |=  date=@da
-            ^+  peer-core
-            %+  pe-emit  ~[/ames]
-            [%pass (make-pump-timer-wire her bone) %b %rest date]
           ::  +pu: construct |packet-pump core
           ::
           ++  pu
@@ -2973,7 +2956,8 @@
               ^+  same
               (trace verb her ships.bug.channel print)
             ::
-            ++  pu-emit  |=(=note (pe-emit pump-duct %pass pump-wire note))
+            ++  pu-wire  (make-pump-timer-wire her bone)
+            ++  pu-emit  |=(=note (pe-emit pump-duct %pass pu-wire note))
             ::  +packet-queue: type for all sent fragments (order: seq number)
             ::
             ++  packet-queue
@@ -2994,7 +2978,6 @@
               ^-  static-fragment
               [message-num num-fragments fragment-num fragment]
             ::
-            ++  pump-wire  (make-pump-timer-wire her bone)
             ++  pump-duct  ~[/ames]
             ++  top-live   (pry:packet-queue live.state)
             ::
