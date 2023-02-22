@@ -2639,7 +2639,7 @@
             ==
           peer-core
         +|  %internals
-        ::  +mu: constructor for |message-pump
+        ::  +mu: constructor for |pump message sender core
         ::
         ++  mu
           |=  [=bone state=message-pump-state]
@@ -2823,7 +2823,7 @@
             ::
             ::    This is slightly inefficient because we run this twice for
             ::    each packet and it may emit a few unnecessary packets, but
-            ::    but it's not incorrect.  pump-metrics are updated only once,
+            ::    it's not incorrect.  pump-metrics are updated only once,
             ::    at the time when we actually delete the packet.
             ::
             =.  pump  abet:(call:packet-pump %done current.state lag=*@dr)
@@ -3396,7 +3396,7 @@
               --
             --
           --
-        ::  +mi: construct |message-sink message receiver core
+        ::  +mi: constructor for |sink message receiver core
         ::
         ++  mi
           |=  [=bone state=message-sink-state]
@@ -3585,15 +3585,16 @@
             |=  ok=?
             ^+  sink
             ::
-            =^  pending  pending-vane-ack.state  ~(get to pending-vane-ack.state)
+            =^  pending  pending-vane-ack.state
+              ~(get to pending-vane-ack.state)
             =/  =message-num  message-num.p.pending
             ::
             =.  last-acked.state  +(last-acked.state)
             =?  nax.state  !ok  (~(put in nax.state) message-num)
             ::
-            =.  peer-core  (send-shut-packet bone message-num %| %| ok lag=`@dr`0)
-            ?~  next=~(top to pending-vane-ack.state)
-              sink
+            =.  peer-core
+              (send-shut-packet bone message-num %| %| ok lag=`@dr`0)
+            ?~  next=~(top to pending-vane-ack.state)  sink
             (handle-sink message-num.u.next message.u.next ok)
           ::
           +|  %implementation
@@ -3606,9 +3607,9 @@
           ++  handle-sink
             |=  [=message-num message=* ok=?]
             |^  ^+  sink
-            ?:  =(1 (end 0 bone))          sink-plea
-            ?:  =(0 (end 0 (rsh 0 bone)))  sink-boon
-            sink-nack
+                ?:  =(1 (end 0 bone))          sink-plea
+                ?:  =(0 (end 0 (rsh 0 bone)))  sink-boon
+                sink-nack
             ::  XX  FIXME: impure +abet pattern
             ++  sink-plea
               ^+  sink
@@ -3689,7 +3690,7 @@
               =/  target=^bone  (mix 0b10 bone)
               ::  XX not used, remove
               =?  peer-core  (~(has in krocs.peer-state) target)
-                ::  if we get a naxplanation for a %cork, the publisher hans't
+                ::  if we get a naxplanation for a %cork, the publisher hasn't
                 ::  received the OTA. The /recork timer will retry eventually.
                 ::
                 %.  peer-core
