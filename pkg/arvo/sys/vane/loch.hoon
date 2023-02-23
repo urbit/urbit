@@ -6,16 +6,16 @@
 |=  our=ship
 =>  |%
     +$  move  [p=duct q=(wite note gift)]
-    +$  note                                          ::  out request $->
-      $%  $:  %g                                        ::    to %gall
-              $>(%deal task:gall)                       ::  full transmission
-          ==                                            ::
-      ==                                            ::
+    +$  note  ~                                        ::  out request $->
+      ::$%  $:  %g                                        ::    to %gall
+              ::$>(%deal task:gall)                       ::  full transmission
+          ::==                                            ::
+      ::==                                            ::
       ::
-    +$  sign
-      $%  [%loch $>(%red gift)]                        :: read
-          [%loch $>(%read gift)]
-      ==
+    +$  sign  ~
+      ::$%  [%loch $>(%red gift)]                        :: read
+      ::    [%loch $>(%read gift)]
+      ::==
     ::
     +$  loch-state
       $:  %0
@@ -107,9 +107,9 @@
         devices  (~(put by devices) name.dev [name.dev stat.dev ~])
       ==
     ::
-      %turn
+      %seen
     =/  duct  (~(get by pathing) dev.task)
-    :-  ~[[+.duct %give %red dev.task dat.task]]
+    :-  ~[[+.duct %give %seen dev.task dat.task]]
       loch-gate
   ==
 ::  +load: migrate an old state to a new loch version
