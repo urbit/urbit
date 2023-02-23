@@ -813,23 +813,6 @@
       [%prod ~]
       [%wake ~]
   ==
-::  $message-pump-gift: effect from |message-pump
-::
-::    %done: report message acknowledgment
-::    %cork: kill flow
-::    %kroc: recork this bone
-::    %send: emit message fragment
-::    %wait: set a new timer at .date
-::    %rest: cancel timer at .date
-::
-+$  message-pump-gift
-  $%  [%done =message-num error=(unit error)]
-      [%cork ~]
-      [%kroc =bone]
-      [%send =static-fragment]
-      [%wait date=@da]
-      [%rest date=@da]
-  ==
 ::  $packet-pump-task: job for |packet-pump
 ::
 ::    %hear: deal with a packet acknowledgment
@@ -845,17 +828,6 @@
       [%wake current=message-num]
       [%prod ~]
   ==
-::  $packet-pump-gift: effect from |packet-pump
-::
-::    %send: emit message fragment
-::    %wait: set a new timer at .date
-::    %rest: cancel timer at .date
-::
-+$  packet-pump-gift
-  $%  [%send =static-fragment]
-      [%wait date=@da]
-      [%rest date=@da]
-  ==
 ::  $message-sink-task: job for |message-sink
 ::
 ::    %done: receive confirmation from vane of processing or failure
@@ -867,16 +839,6 @@
   $%  [%done ok=?]
       [%drop =message-num]
       [%hear =lane =shut-packet ok=?]
-  ==
-::  $message-sink-gift: effect from |message-sink
-::
-::    %memo: assembled from received packets
-::    %send: emit an ack packet
-::
-+$  message-sink-gift
-  $%  [%memo =message-num message=*]
-      [%send =message-num =ack-meat]
-      [%cork ~]
   ==
 --
 ::  external vane interface
@@ -3762,7 +3724,6 @@
   ^-  [(list move) _ames-gate]
   ?^  dud
     ~|(%ames-take-dud (mean tang.u.dud))
-  ::
   ::
   =/  event-core  (ev [now eny rof] duct ames-state)
   ::
