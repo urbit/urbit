@@ -3099,21 +3099,21 @@
 ++  loch  ^?
   |%
   +$  gift                                              ::  out result <-$
-    $%  [%read =param]                            ::  next alarm
-        [%red =dev dat=@ud]
-        ::[%writ =param dat=@ud]                            ::  next alarm
+    $%  [%read =param]                                  ::  Gift to unix read
+        [%rite =param dat=@]                                  ::  Gift to unix write    
+        [%seen =dev dat=@]                              ::  Gift iof read data back to duct
+        [%rote =dev tus=@]                              ::  Gift of wrote status to duct
     ==
   +$  task                                              ::  in request ->$
     $~  [%vega ~]                                       ::
     $%  $>(%born vane-task)                             ::  new unix process
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
-        [%turn =dev =act dat=@ud]
         [%read =param]                     ::  %read from device dev for cnt bytes
-        ::[%writ =param dat=@ud]             ::  %writ out to device dev
+        [%rite =param dat=@]             ::  %writ out to device dev
+        [%seen =dev dat=@]
+        [%rote =dev tus=@]
         [%devs name=@tas stat=@]                        ::  provide a device with status
-        ::[%red =dev dat=@ud]
-        ::[%wrot dat=@ud]
     ==
   ::
   +$  wut  $?(%con %mem) 
