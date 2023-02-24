@@ -14,9 +14,6 @@
       eye=(jug @tas duct)                               ::  outside observers
       ear=(set duct)                                    ::  syslog listeners
       lit=?                                             ::  boot in lite mode
-      $=  veb                                           ::  vane verbosities
-      $~  (~(put by *(map @tas log-level)) %hole %soft) ::  quiet packet crashes
-      (map @tas log-level)                              ::
       egg=_|                                            ::  see +take, removeme
   ==                                                    ::
 +$  axon                                                ::  dill session
@@ -308,10 +305,13 @@
   ::
   ?:  ?=(?(%trim %vega) -.task)
     [~ ..^$]
-  ::  %knob sets a verbosity level for an error tag
+  ::  %knob used to set a verbosity level for an error tag,
+  ::  but dill no longer prints errors itself, so implementing %knob
+  ::  has become a recommendation to error printers (like drum).
+  ::  remove this when %knob gets removed from lull, next™ kelvin release.
   ::
   ?:  ?=(%knob -.task)
-    =.  veb.all  (~(put by veb.all) tag.task level.task)
+    ~&  [%dill %knob-deprecated]
     [~ ..^$]
   ::  %open opens a new dill session
   ::
@@ -408,7 +408,7 @@
   ++  axle-6-to-7
     |=  a=axle-6
     ^-  axle
-    a(- %7, |4 [~ |4.a])
+    [%7 hey dug eye ~ lit egg]:a
   ::
   +$  axle-5
     $:  %5

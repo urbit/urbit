@@ -1232,7 +1232,7 @@
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
         [%verb ~]                                       ::  verbose mode
-        [%knob tag=term level=?(%hush %soft %loud)]     ::  error verbosity
+        [%knob tag=term level=?(%hush %soft %loud)]     ::  deprecated removeme
         session-task                                    ::  for default session
         told                                            ::  system output
     ==                                                  ::
