@@ -1215,26 +1215,26 @@
         [%meld ~]                                       ::  unify memory
         [%pack ~]                                       ::  compact memory
         [%trim p=@ud]                                   ::  trim kernel state
+        [%logs =told]                                   ::  system output
     ==                                                  ::
   +$  task                                              ::  in request ->$
     $~  [%vega ~]                                       ::
     $%  [%boot lit=? p=*]                               ::  weird %dill boot
         [%crop p=@ud]                                   ::  trim kernel state
-        [%crud p=@tas q=(list tank)]                    ::  print error
         [%flog p=flog]                                  ::  wrapped error
         [%heft ~]                                       ::  memory report
         $>(%init vane-task)                             ::  after gall ready
+        [%logs p=(unit ~)]                              ::  watch system output
         [%meld ~]                                       ::  unify memory
         [%pack ~]                                       ::  compact memory
         [%seat =desk]                                   ::  install desk
         [%shot ses=@tas task=session-task]              ::  task for session
-        [%talk p=(list tank)]                           ::  print tanks
-        [%text p=tape]                                  ::  print tape
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
         [%verb ~]                                       ::  verbose mode
-        [%knob tag=term level=?(%hush %soft %loud)]     ::  error verbosity
+        [%knob tag=term level=?(%hush %soft %loud)]     ::  deprecated removeme
         session-task                                    ::  for default session
+        told                                            ::  system output
     ==                                                  ::
   ::                                                    ::
   +$  session-task                                      ::  session request
@@ -1245,6 +1245,12 @@
         [%open p=dude:gall q=(list gill:gall)]          ::  setup session
         [%shut ~]                                       ::  close session
         [%view ~]                                       ::  watch session blits
+    ==                                                  ::
+  ::                                                    ::
+  +$  told                                              ::  system output
+    $%  [%crud p=@tas q=tang]                           ::  error
+        [%talk p=(list tank)]                           ::  tanks (in order)
+        [%text p=tape]                                  ::  tape
     ==                                                  ::
   ::
   ::::                                                  ::  (1d2)
@@ -1279,7 +1285,7 @@
     ==                                                  ::
   +$  dill-belt                                         ::  arvo input
     $%  belt                                            ::  client input
-        [%cru p=@tas q=(list tank)]                     ::  echo error
+        [%cru p=@tas q=(list tank)]                     ::  errmsg (deprecated)
         [%hey ~]                                        ::  refresh
         [%rez p=@ud q=@ud]                              ::  resize, cols, rows
         [%yow p=gill:gall]                              ::  connect to app
@@ -1290,11 +1296,11 @@
     ==                                                  ::
   +$  flog                                              ::  sent to %dill
     $%  [%crop p=@ud]                                   ::  trim kernel state
-        [%crud p=@tas q=(list tank)]                    ::
+        $>(%crud told)                                  ::
         [%heft ~]                                       ::
         [%meld ~]                                       ::  unify memory
         [%pack ~]                                       ::  compact memory
-        [%text p=tape]                                  ::
+        $>(%text told)                                  ::
         [%verb ~]                                       ::  verbose mode
     ==                                                  ::
   ::                                                    ::
