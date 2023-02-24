@@ -93,11 +93,15 @@
       loch-gate(unix-duct hen, commands [~], devices ~, pathing ~) 
     ::
       %read     :: When you read you need to save the command and the wire to return the results
-    =/  =param  param:task 
-    ::~&  >>  ['param' param]
-    :-  ~[[unix-duct.state %give [%read param]]]
+    :-  ~[[unix-duct.state %give [%read dev.task wut.task cmd.task cnt.task]]]
       %_  loch-gate
-        pathing  (~(put by pathing) dev.param hen)
+        pathing  (~(put by pathing) dev.task hen)
+      ==
+    ::
+      %rite     :: When you read you need to save the command and the wire to return the results
+    :-  ~[[unix-duct.state %give [%rite dev.task wut.task cmd.task dat.task cnt.task]]]
+      %_  loch-gate
+        pathing  (~(put by pathing) dev.task hen)
       ==
     ::
       %devs  
@@ -109,7 +113,12 @@
     ::
       %seen
     =/  duct  (~(get by pathing) dev.task)
-    :-  ~[[+.duct %give %seen dev.task dat.task]]
+    :-  ~[[+.duct %give %seen dev.task dat.task tus.task]]
+      loch-gate
+    ::
+      %rote
+    =/  duct  (~(get by pathing) dev.task)
+    :-  ~[[+.duct %give %rote dev.task tus.task]]
       loch-gate
   ==
 ::  +load: migrate an old state to a new loch version

@@ -2299,9 +2299,9 @@
 ++  loch  ^?
   |%
   +$  gift                                              ::  out result <-$
-    $%  [%read =param]                                  ::  Gift to unix read
-        [%rite =param dat=@]                                  ::  Gift to unix write    
-        [%seen =dev dat=@]                              ::  Gift iof read data back to duct
+    $%  [%read =dev =wut =cmd =cnt]                     ::  Gift to unix read
+        [%rite =dev =wut =cmd dat=@ =cnt]               ::  Gift to unix write    
+        [%seen =dev dat=@ tus=@]                        ::  Gift of read data back to duct
         [%rote =dev tus=@]                              ::  Gift of wrote status to duct
     ==
   +$  task                                              ::  in request ->$
@@ -2309,16 +2309,17 @@
     $%  $>(%born vane-task)                             ::  new unix process
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
-        [%read =param]                     ::  %read from device dev for cnt bytes
-        [%rite =param dat=@]             ::  %writ out to device dev
-        [%seen =dev dat=@]
-        [%rote =dev tus=@]
+        [%read =dev =wut =cmd =cnt]                     ::  %read from device dev for cnt bytes
+        [%rite =dev =wut =cmd dat=@ =cnt]               ::  %rite out to device dev
+        [%seen =dev dat=@ tus=@]                        ::  data read from device
+        [%rote =dev tus=@]                              ::  data wrote from device
         [%devs name=@tas stat=@]                        ::  provide a device with status
     ==
   ::
   +$  wut  $?(%con %mem) 
   +$  dev  @tas
-  +$  param  [=wut =dev cmd=@]
+  +$  cmd  @
+  +$  cnt  @
   +$  act  $?(%read %writ)
   --  ::loch
 
