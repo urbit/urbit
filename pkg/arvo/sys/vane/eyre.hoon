@@ -565,6 +565,21 @@
     ==
     (star next)
   ==
+::  +scry-to-mime: scry a path, converting to mime
+::
+++  scry-to-mime
+  |=  [rof=roof =desk =path]
+  ^-  (unit mime)
+  ?~  path  ~
+  ?~  bem=(de-beam t.path)  ~
+  =/  res=(unit (unit cage))  (rof ~ i.path u.bem)
+  ?.  ?=([~ ~ *] res)  ~
+  =/  convert=(unit vase)
+    =/  res=(unit (unit cage))  (rof ~ %cf desk /[p.u.u.res]/mime)
+    ?.  ?=([~ ~ *] res)  ~
+    `q.u.u.res
+  ?~  convert  ~
+  `!<(mime (slym u.convert q.q.u.u.res))
 ::  +per-server-event: per-event server core
 ::
 ++  per-server-event
@@ -765,22 +780,22 @@
   ::
   ++  handle-name
     |=  [authenticated=? =request:http]
-    |^  ^-  (quip move server-state)
+    ^-  (quip move server-state)
     ?.  authenticated
-      (error-response 403 ~)
+      (error-response url.request authenticated 403 ~)
     ?.  =(%'GET' method.request)
-      (error-response 405 "may only GET name")
+      (error-response url.request authenticated 405 "may only GET name")
     %^  return-static-data-on-duct  200  'text/plain'
     (as-octs:mimes:html (scot %p our))
   ::  +handle-cache-req: respond with cached value, 404 or 500
   ::
   ++  handle-cache-req
     |=  [authenticated=? =request:http entry=(unit cache-entry)]
-    |^  ^-  (quip move server-state)
+    ^-  (quip move server-state)
     ?~  entry
-      (error-response 404 "cache entry for that binding was deleted")
+      (error-response url.request authenticated 404 "cache entry for that binding was deleted")
     ?:  &(auth.u.entry !authenticated)
-      (error-response 403 ~)
+      (error-response url.request authenticated 403 ~)
     =*  body  body.u.entry
     ?-    -.body
         %payload
@@ -792,57 +807,43 @@
       ==
     ::
         %scry
-      ?~  path.body  (error-response 500 "invalid scry path")
-      ?~  bem=(de-beam t.path.body)  (error-response 500 "invalid scry path")
-      =/  res=(unit (unit cage))  (rof ~ i.path.body u.bem)
-      ?~  res    (error-response 500 "failed scry")
-      ?~  u.res  (error-response 404 "no scry result")
-      =*  vase   q.u.u.res
-      ?.  ?=(@ q.vase)
-        (error-response 500 "scry result is not an atom")
-      %^  return-static-data-on-duct  200  'text/html'
-      (as-octs:mimes:html q.vase)
+      =/  res=(unit mime)  (scry-to-mime rof [our %base da+now] path.body)
+      ?~  res  (error-response url.request authenticated 500 "failed scry")
+      (return-static-data-on-duct 200 'text/html' q.u.res)
     ==
-    ::
-    ++  error-response
-      |=  [status=@ud =tape]
-      ^-  (quip move server-state)
-      %^  return-static-data-on-duct  status  'text/html'
-      (error-page status authenticated url.request tape)
-    --
   ::  +handle-scry: respond with scry result, 404 or 500
   ::
   ++  handle-scry
     |=  [authenticated=? =address =request:http]
     |^  ^-  (quip move server-state)
     ?.  authenticated
-      (error-response 403 ~)
+      (error-response url.request authenticated 403 ~)
     ?.  =(%'GET' method.request)
-      (error-response 405 "may only GET scries")
+      (error-response url.request authenticated 405 "may only GET scries")
     ::  make sure the path contains an app to scry into
     ::
     =+  req=(parse-request-line url.request)
     ?.  ?=(^ site.req)
-      (error-response 400 "scry path must start with app name")
+      (error-response url.request authenticated 400 "scry path must start with app name")
     ::  attempt the scry that was asked for
     ::
     =/  res=(unit (unit cage))
       (do-scry %gx i.site.req (snoc t.site.req (fall ext.req %mime)))
-    ?~  res    (error-response 500 "failed scry")
-    ?~  u.res  (error-response 404 "no scry result")
+    ?~  res    (error-response url.request authenticated 500 "failed scry")
+    ?~  u.res  (error-response url.request authenticated 404 "no scry result")
     =*  mark   p.u.u.res
     =*  vase   q.u.u.res
     ::  attempt to find conversion gate to mime
     ::
     =/  tub=(unit tube:clay)
       (find-tube i.site.req mark %mime)
-    ?~  tub  (error-response 500 "no tube from {(trip mark)} to mime")
+    ?~  tub  (error-response url.request authenticated 500 "no tube from {(trip mark)} to mime")
     ::  attempt conversion, then send results
     ::
     =/  mym=(each mime tang)
       (mule |.(!<(mime (u.tub vase))))
     ?-  -.mym
-      %|  (error-response 500 "failed tube from {(trip mark)} to mime")
+      %|  (error-response url.request authenticated 500 "failed tube from {(trip mark)} to mime")
       %&  %+  return-static-data-on-duct  200
           [(rsh 3 (spat p.p.mym)) q.p.mym]
     ==
@@ -864,12 +865,6 @@
       |=  [care=term =desk =path]
       ^-  (unit (unit cage))
       (rof ~ care [our desk da+now] path)
-    ::
-    ++  error-response
-      |=  [status=@ud =tape]
-      ^-  (quip move server-state)
-      %^  return-static-data-on-duct  status  'text/html'
-      (error-page status authenticated url.request tape)
     --
   ::  +subscribe-to-app: subscribe to app and poke it with request data
   ::
@@ -937,6 +932,13 @@
         data=[~ data]
         complete=%.y
     ==
+  ::  +error-response: respond with an error message
+  ::
+  ++  error-response
+    |=  [url=@t authenticated=? status=@ud =tape]
+    ^-  (quip move server-state)
+    %^  return-static-data-on-duct  status  'text/html'
+    (error-page status authenticated url tape)
   ::  +authentication: per-event authentication as this Urbit's owner
   ::
   ::    Right now this hard codes the authentication page using the old +code
@@ -2079,7 +2081,7 @@
     =/  aeon  ?^(prev=(~(get by cache.state) url) +(aeon.u.prev) 1)
     =.  cache.state  (~(put by cache.state) url [aeon entry])
     :_  state
-    [duct %give %grow /cache/(scot %u aeon)/(scot %t url)]~
+    [outgoing-duct.state %give %grow /cache/(scot %ud aeon)/(scot %t url)]~
   ::  +add-binding: conditionally add a pairing between binding and action
   ::
   ::    Adds =binding =action if there is no conflicting bindings.
@@ -2382,9 +2384,7 @@
         =<  give-session-tokens
         (per-server-event [eny duct now rof] server-state.ax)
       ::
-        closed-connections
-      ::
-        cache-moves
+        (zing ~[closed-connections cache-moves])
     ==
   ::
   ?:  ?=(%code-changed -.task)
@@ -2853,11 +2853,32 @@
       %*(. *request:http header-list ['cookie' u.cookies]~)
     ::
         [%cache @ @ ~]
-      ?~  aeon=(slaw %u i.t.tyl)         [~ ~]
+      ?~  aeon=(slaw %ud i.t.tyl)        [~ ~]
       ?~  url=(slaw %t i.t.t.tyl)        [~ ~]
       ?~  entry=(~(get by cache) u.url)  [~ ~]
       ?.  =(u.aeon aeon.u.entry)         [~ ~]
-      ``noun+!>(val.u.entry)
+      ?~  val.u.entry                    [~ ~]
+      =*  val  u.val.u.entry
+      ?:  ?=(%payload -.body.val)
+        ``noun+!>(`cache-entry`val)
+      ::  body is a scry path; scry it to get a payload
+      ::
+      =/  res=(unit mime)  (scry-to-mime rof [our %base da+now] path.body.val)
+      ?~  res  [~ ~]
+      =*  data  q.u.res
+      =/  =simple-payload:http
+        :-  :-  status-code=200
+          ^=  headers
+            :~  ['content-type' 'text/html']
+                ['content-length' (crip (format-ud-as-integer p.data))]
+            ==
+        data=[~ data]
+      =/  pval=cache-entry
+        :*
+          auth=auth.val
+          body=[%payload simple-payload]
+        ==
+      ``noun+!>(pval)
     ==
   ?.  ?=(%$ ren)
     [~ ~]
