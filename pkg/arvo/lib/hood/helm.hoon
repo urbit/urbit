@@ -245,13 +245,9 @@
   |=  ~  =<  abet
   (emit %pass /helm %arvo %a %stir '')
 ::
-++  poke-kroc
+++  poke-ames-kroc
   |=  dry=?  =<  abet
-  (emit [%pass /helm/kroc %arvo %a %kroc dry])
-::
-++  poke-knob
-  |=  [error-tag=@tas level=?(%hush %soft %loud)]  =<  abet
-  (emit %pass /helm %arvo %d %knob error-tag level)
+  (emit %pass /helm %arvo %a %kroc dry)
 ::
 ++  poke-serve
   |=  [=binding:eyre =generator:eyre]  =<  abet
@@ -284,7 +280,7 @@
     %helm-ames-sift        =;(f (f !<(_+<.f vase)) poke-ames-sift)
     %helm-ames-verb        =;(f (f !<(_+<.f vase)) poke-ames-verb)
     %helm-ames-wake        =;(f (f !<(_+<.f vase)) poke-ames-wake)
-    %helm-kroc             =;(f (f !<(_+<.f vase)) poke-kroc)
+    %helm-ames-kroc        =;(f (f !<(_+<.f vase)) poke-ames-kroc)
     %helm-atom             =;(f (f !<(_+<.f vase)) poke-atom)
     %helm-automass         =;(f (f !<(_+<.f vase)) poke-automass)
     %helm-cancel-automass  =;(f (f !<(_+<.f vase)) poke-cancel-automass)
@@ -295,7 +291,6 @@
     %helm-gall-sift        =;(f (f !<(_+<.f vase)) poke-gall-sift)
     %helm-gall-verb        =;(f (f !<(_+<.f vase)) poke-gall-verb)
     %helm-hi               =;(f (f !<(_+<.f vase)) poke-hi)
-    %helm-knob             =;(f (f !<(_+<.f vase)) poke-knob)
     %helm-pans             =;(f (f !<(_+<.f vase)) poke-pans)
     %helm-mass             =;(f (f !<(_+<.f vase)) poke-mass)
     %helm-meld             =;(f (f !<(_+<.f vase)) poke-meld)

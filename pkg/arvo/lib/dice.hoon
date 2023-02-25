@@ -32,9 +32,9 @@
   ^-  [azimuth=@ux naive=@ux chain-id=@ launch=@]
   =<  [azimuth naive chain-id launch]
   =,  azimuth
-  ?-  net
+  ?+  net  !!
     %mainnet  mainnet-contracts
-    %ropsten  ropsten-contracts
+    %goerli   goerli-contracts
     %local    local-contracts
     %default  contracts
   ==
