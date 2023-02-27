@@ -57,19 +57,6 @@
   ::  print out the paths blocking the tomb
   %+  prints  (snoc prat leaf+"tomb blocked by:")
   ::  prompt for deletion using |rm
-  %+  prompt
-    (prom %m "|rm {<pax>} from head ({<let.do>}) of {<dusk>} instead? (y/N)")
-  |=  rm-hed=tape
-  ?:  |(=("y" rm-hed) =("Y" rm-hed) =("yes" rm-hed))
-    =/  paz=path  (en-beam hed)
-    ?:  dry
-      (print (crip "dry run: would remove {<paths>} from {<dusk>}") no-product)
-    %+  produce  %helm-pans
-    ~[(rm paz)]
-  ::  abort if no other desks using target
-  ?~  used
-    (print (crip "aborting") no-product)
-  ::
   %+  prompt   (prom %r "|rm from head of each desk instead (DANGER)? (y/N)")
   |=  rm-all=tape
   ?.  |(=("y" rm-all) =("Y" rm-all) =("yes" rm-all))
