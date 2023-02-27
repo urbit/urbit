@@ -113,6 +113,10 @@
     ::
       %seen
     =/  duct  (~(get by pathing) dev.task)
+    ~&  >  ["Data" `@ux`dat.task]
+    ~&  >  ["Data" `@ta`dat.task]
+    ~&  >  ["Data" (trip dat.task)]
+    ~&  >>  ["duct" +.duct]
     :-  ~[[+.duct %give %seen dev.task dat.task tus.task]]
       loch-gate
     ::
