@@ -70,10 +70,36 @@
 ++  axle
   $:  ::  date: date at which http-server's state was updated to this data structure
       ::
-      date=%~2020.10.18
+      date=%~2022.7.26
       ::  server-state: state of inbound requests
       ::
       =server-state
+  ==
+::
+::  +outstanding-connection-new: intermediate type to enable
+::                               /~/name endpoint without
+::                               breaking type change in lull
+::
++$  outstanding-connection-new
+    $:  ::  action: the action that had matched
+        ::
+        action=action-new
+        ::  inbound-request: the original request which caused this connection
+        ::
+        =inbound-request
+        ::  response-header: set when we get our first %start
+        ::
+        response-header=(unit response-header:http)
+        ::  bytes-sent: the total bytes sent in response
+        ::
+        bytes-sent=@ud
+    ==
+::  +action-new: intermediate type to enable /~/name endpoint
+::               without  breaking type change in lull
+::
++$  action-new
+  $%  action
+     [%name ~]
   ==
 ::  +server-state: state relating to open inbound HTTP connections
 ::
@@ -87,13 +113,13 @@
       ::    TODO: It would be nice if we had a path trie. We could decompose
       ::    the :binding into a (map (unit @t) (trie knot =action)).
       ::
-      bindings=(list [=binding =duct =action])
+      bindings=(list [=binding =duct action=action-new])
       ::  cors-registry: state used and managed by the +cors core
       ::
       =cors-registry
       ::  connections: open http connections not fully complete
       ::
-      connections=(map duct outstanding-connection)
+      connections=(map duct outstanding-connection-new)
       ::  authentication-state: state managed by the +authentication core
       ::
       =authentication-state
@@ -580,7 +606,7 @@
     ::
     =/  act  [%app app=%lens]
     ::
-    =/  connection=outstanding-connection
+    =/  connection=outstanding-connection-new
       [act [& secure address request] ~ 0]
     ::
     =.  connections.state
@@ -604,13 +630,13 @@
       (fall (forwarded-for u.forwards) address)
     ::
     =/  host  (get-header:http 'host' headers)
-    =/  [=action suburl=@t]
+    =/  [action=action-new suburl=@t]
       (get-action-for-binding host url.request)
     ::
     =/  authenticated  (request-is-logged-in:authentication request)
     ::  record that we started an asynchronous response
     ::
-    =/  connection=outstanding-connection
+    =/  connection=outstanding-connection-new
       [action [authenticated secure address request] ~ 0]
     =.  connections.state
       (~(put by connections.state) duct connection)
@@ -745,10 +771,31 @@
         %scry
       (handle-scry authenticated address request(url suburl))
     ::
+        %name
+      (handle-name authenticated request)
+    ::
         %four-oh-four
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 authenticated url.request ~)
     ==
+  ::  +handle-name: respond with our @p or 403
+  ::
+  ++  handle-name
+    |=  [authenticated=? =request:http]
+    |^  ^-  (quip move server-state)
+    ?.  authenticated
+      (error-response 403 ~)
+    ?.  =(%'GET' method.request)
+      (error-response 405 "may only GET name")
+    %^  return-static-data-on-duct  200  'text/plain'
+    (as-octs:mimes:html (scot %p our))
+    ::
+    ++  error-response
+      |=  [status=@ud =tape]
+      ^-  (quip move server-state)
+      %^  return-static-data-on-duct  status  'text/html'
+      (error-page status authenticated url.request tape)
+    --
   ::  +handle-scry: respond with scry result, 404 or 500
   ::
   ++  handle-scry
@@ -848,7 +895,7 @@
           %leave  ~
       ==
     ::
-        ?(%authentication %logout)
+        ?(%authentication %logout %name)
       [~ state]
     ::
         %channel
@@ -937,6 +984,7 @@
         (session-cookie-string session &)
       ::
       =;  out=[moves=(list move) server-state]
+        =.  moves.out  [give-session-tokens moves.out]
         ::  if we didn't have any cookies previously, start the expiry timer
         ::
         ?.  first-session  out
@@ -1011,7 +1059,7 @@
       ?~  channels
         =^  moz  state
           (handle-response response)
-        [(weld moves moz) state]
+        [[give-session-tokens (weld moves moz)] state]
       =^  moz  state
         (discard-channel:by-channel i.channels |)
       $(moves (weld moves moz), channels t.channels)
@@ -1914,7 +1962,7 @@
               (session-cookie-string u.session-id &)
             headers.response-header.http-event
           ::
-          =/  connection=outstanding-connection
+          =/  connection=outstanding-connection-new
             (~(got by connections.state) duct)
           ::  if the request was a simple cors request from an approved origin
           ::  append the necessary cors headers to the response
@@ -1950,7 +1998,7 @@
           ::
           =.  connections.state
             %+  ~(jab by connections.state)  duct
-            |=  connection=outstanding-connection
+            |=  connection=outstanding-connection-new
             =+  size=?~(data.http-event 0 p.u.data.http-event)
             connection(bytes-sent (add bytes-sent.connection size))
           ::
@@ -2003,7 +2051,7 @@
   ::    Adds =binding =action if there is no conflicting bindings.
   ::
   ++  add-binding
-    |=  [=binding =action]
+    |=  [=binding action=action-new]
     ^-  [(list move) server-state]
     =^  success  bindings.state
       ::  prevent binding in reserved namespaces
@@ -2024,7 +2072,7 @@
     %_    state
         bindings
       %+  skip  bindings.state
-      |=  [item-binding=^binding item-duct=^duct =action]
+      |=  [item-binding=^binding item-duct=^duct action=action-new]
       ^-  ?
       &(=(item-binding binding) =(item-duct duct))
     ==
@@ -2032,7 +2080,7 @@
   ::
   ++  get-action-for-binding
     |=  [raw-host=(unit @t) url=@t]
-    ^-  [=action suburl=@t]
+    ^-  [action=action-new suburl=@t]
     ::  process :raw-host
     ::
     ::    If we are missing a 'Host:' header, if that header is a raw IP
@@ -2095,6 +2143,13 @@
       (cury cat 3)
     ?~  ext.request-line  ''
     (cat 3 '.' u.ext.request-line)
+  ::  +give-session-tokens: send valid session tokens to unix
+  ::
+  ++  give-session-tokens
+    ^-  move
+    :-  outgoing-duct.state
+    =*  ses  sessions.authentication-state.state
+    [%give %sessions (~(run in ~(key by ses)) (cury scot %uv))]
   --
 ::
 ++  forwarded-params
@@ -2138,8 +2193,8 @@
 ::  +insert-binding: add a new binding, replacing any existing at its path
 ::
 ++  insert-binding
-  |=  $:  new=[=binding =duct =action]
-          bindings=(list [=binding =duct =action])
+  |=  $:  new=[=binding =duct action=action-new]
+          bindings=(list [=binding =duct action=action-new])
       ==
   ^+  bindings
   ?~  bindings  [new]~
@@ -2202,11 +2257,12 @@
     ::
     =.  bindings.server-state.ax
       =-  (roll - insert-binding)
-      ^-  (list [binding ^duct action])
+      ^-  (list [binding ^duct action-new])
       :~  [[~ /~/login] duct [%authentication ~]]
           [[~ /~/logout] duct [%logout ~]]
           [[~ /~/channel] duct [%channel ~]]
           [[~ /~/scry] duct [%scry ~]]
+          [[~ /~/name] duct [%name ~]]
       ==
     [~ http-server-gate]
   ::  %trim: in response to memory pressure
@@ -2273,12 +2329,15 @@
     =.  outgoing-duct.server-state.ax  duct
     ::
     :_  http-server-gate
-    ;:  weld
-      ::  hand back default configuration for now
+    :*  ::  hand back default configuration for now
+        ::
+        [duct %give %set-config http-config.server-state.ax]
+        ::  provide a list of valid auth tokens
+        ::
+        =<  give-session-tokens
+        (per-server-event [eny duct now rof] server-state.ax)
       ::
-      [duct %give %set-config http-config.server-state.ax]~
-    ::
-      closed-connections
+        closed-connections
     ==
   ::
   ?:  ?=(%code-changed -.task)
@@ -2552,6 +2611,8 @@
     ::
     ^-  [(list move) _http-server-gate]
     :_  http-server-gate
+    :-  =<  give-session-tokens
+        (per-server-event [eny duct now rof] server-state.ax)
     ?:  =(~ sessions)  ~
     =;  next-expiry=@da
       [duct %pass /sessions/expire %b %wait next-expiry]~
@@ -2574,18 +2635,64 @@
   --
 ::
 ++  http-server-gate  ..$
+::  +bindings-old: filter /~/name endpoint from bindings
+::
+++  bindings-old
+  |=  new=(list [b=binding d=duct a=action-new])
+  =|  old=(list [binding duct action])
+  |-  ^+  old
+  ?~  new  old
+  =/  l
+    ?:  ?=([%name ~] a.i.new)
+      old
+    (snoc old [b.i.new d.i.new a.i.new])
+  $(new t.new, old l)
+::  +connections-old: filter /~/name endpoint from connections
+::
+++  connections-old
+  |=  new=(map duct outstanding-connection-new)
+  =|  old=(map duct outstanding-connection)
+  =/  l=(list [d=duct o=outstanding-connection-new])  ~(tap by new)
+  |-  ^+  old
+  ?~  l  old
+  =/  x
+    ?:  ?=([%name ~] -.o.i.l)
+      old
+    (~(put by old) d.i.l o.i.l)
+  $(l t.l, old x)
 ::  +load: migrate old state to new state (called on vane reload)
 ::
 ++  load
-  |=  old=axle
+  =>  |%
+    ++  axle-old
+      %+  cork
+        axle
+      |=  =axle
+      axle(date %~2020.10.18)
+  --
+  |=  old=$%(axle axle-old)
   ^+  ..^$
-  ::  enable https redirects if certificate configured
   ::
-  =.  redirect.http-config.server-state.old
-    ?&  ?=(^ secure.ports.server-state.old)
-        ?=(^ secure.http-config.server-state.old)
+  ?-    -.old
+      %~2020.10.18
+    %=  $
+      date.old  %~2022.7.26
+      ::
+        bindings.server-state.old
+      %+  insert-binding
+        [[~ /~/name] outgoing-duct.server-state.old [%name ~]]
+      bindings.server-state.old
     ==
-  ..^$(ax old)
+  ::
+      %~2022.7.26
+    ::  enable https redirects if certificate configured
+    ::
+    =.  redirect.http-config.server-state.old
+      ?&  ?=(^ secure.ports.server-state.old)
+          ?=(^ secure.http-config.server-state.old)
+      ==
+    ..^$(ax old)
+  ==
 ::  +stay: produce current state
 ::
 ++  stay  `axle`ax
@@ -2607,9 +2714,9 @@
   =*  who  p.why
   ?:  =(tyl /whey)
     =/  maz=(list mass)
-      :~  bindings+&+bindings.server-state.ax
+      :~  bindings+&+(bindings-old bindings.server-state.ax)
           auth+&+authentication-state.server-state.ax
-          connections+&+connections.server-state.ax
+          connections+&+(connections-old connections.server-state.ax)
           channels+&+channel-state.server-state.ax
           axle+&+ax
       ==
@@ -2649,8 +2756,8 @@
   ?.  ?=(%$ ren)
     [~ ~]
   ?+  syd  [~ ~]
-    %bindings              ``noun+!>(bindings.server-state.ax)
-    %connections           ``noun+!>(connections.server-state.ax)
+    %bindings              ``noun+!>((bindings-old bindings.server-state.ax))
+    %connections           ``noun+!>((connections-old connections.server-state.ax))
     %authentication-state  ``noun+!>(authentication-state.server-state.ax)
     %channel-state         ``noun+!>(channel-state.server-state.ax)
   ::
