@@ -256,6 +256,7 @@
       %-  (slog 'on-wake vers failed' u.error.sign)
       [[next]~ this]
     ?:  =(rev vers)  [[next]~ this]
+    =.  vers  rev
     =/  tasks=(list @ta)  ~(tap in ~(key by make))
     =|  cards=(list card)
     |-
