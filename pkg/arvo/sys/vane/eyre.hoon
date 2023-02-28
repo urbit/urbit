@@ -984,7 +984,6 @@
         (session-cookie-string session &)
       ::
       =;  out=[moves=(list move) server-state]
-        =.  moves.out  [give-session-tokens moves.out]
         ::  if we didn't have any cookies previously, start the expiry timer
         ::
         ?.  first-session  out
@@ -1059,7 +1058,7 @@
       ?~  channels
         =^  moz  state
           (handle-response response)
-        [[give-session-tokens (weld moves moz)] state]
+        [(weld moves moz) state]
       =^  moz  state
         (discard-channel:by-channel i.channels |)
       $(moves (weld moves moz), channels t.channels)
@@ -2143,13 +2142,6 @@
       (cury cat 3)
     ?~  ext.request-line  ''
     (cat 3 '.' u.ext.request-line)
-  ::  +give-session-tokens: send valid session tokens to unix
-  ::
-  ++  give-session-tokens
-    ^-  move
-    :-  outgoing-duct.state
-    =*  ses  sessions.authentication-state.state
-    [%give %sessions (~(run in ~(key by ses)) (cury scot %uv))]
   --
 ::
 ++  forwarded-params
@@ -2329,15 +2321,12 @@
     =.  outgoing-duct.server-state.ax  duct
     ::
     :_  http-server-gate
-    :*  ::  hand back default configuration for now
-        ::
-        [duct %give %set-config http-config.server-state.ax]
-        ::  provide a list of valid auth tokens
-        ::
-        =<  give-session-tokens
-        (per-server-event [eny duct now rof] server-state.ax)
+    ;:  weld
+      ::  hand back default configuration for now
       ::
-        closed-connections
+      [duct %give %set-config http-config.server-state.ax]~
+    ::
+      closed-connections
     ==
   ::
   ?:  ?=(%code-changed -.task)
@@ -2611,8 +2600,6 @@
     ::
     ^-  [(list move) _http-server-gate]
     :_  http-server-gate
-    :-  =<  give-session-tokens
-        (per-server-event [eny duct now rof] server-state.ax)
     ?:  =(~ sessions)  ~
     =;  next-expiry=@da
       [duct %pass /sessions/expire %b %wait next-expiry]~

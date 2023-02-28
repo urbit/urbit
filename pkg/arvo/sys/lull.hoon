@@ -1315,9 +1315,6 @@
         ::    so we can apply configurations on a per-site basis
         ::
         [%set-config =http-config]
-        ::  sessions: valid authentication cookie strings
-        ::
-        [%sessions ses=(set @t)]
         ::  response: response to an event from earth
         ::
         [%response =http-event:http]
