@@ -3389,7 +3389,13 @@
           ++  call
             |=  task=message-sink-task
             ^+  sink
-            ?:  corked  sink
+            ::  if we get a plea request and have corked this flow, always ack
+            ::
+            ?:  corked
+              =?  peer-core  &(?=(%hear -.task) =(1 (end 0 bone)))
+                %+  send-shut-packet  bone
+                [message-num.shut-packet.task %| %| ok=& lag=*@dr]
+              sink
             ?-  -.task
               %drop  sink(nax.state (~(del in nax.state) message-num.task))
               %done  (done ok.task)
