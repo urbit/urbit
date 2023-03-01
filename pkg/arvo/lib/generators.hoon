@@ -4,6 +4,11 @@
 ++  produce                                             ::  construct result
   |*  pro=*                                             ::
   [p=*(list tank) q=[%& p=[~ u=pro]]]                   ::
+::
+++  prints                                              ::  add output tanks
+  |*  [tan=(list tank) res=(sole-result)]               ::
+  ?@  res  res                                          ::
+  [p=`(list tank)`(welp tan p.res) q=q.res]             ::
 ::                                                      ::
 ++  print                                               ::  add output tank
   |*  [tan=tank res=(sole-result)]                      ::
