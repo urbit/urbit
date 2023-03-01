@@ -50,12 +50,7 @@
   |:  [a=`@`1 b=`@`1]
   ::  quotient
   ^-  @
-  ~_  leaf+"divide-by-zero"
-  ?<  =(0 b)
-  =+  c=0
-  |-
-  ?:  (lth a b)  c
-  $(a (sub a b), c +(c))
+  -:(dvr a b)
 ::
 ++  dvr
   ~/  %dvr
@@ -63,11 +58,16 @@
   ::
   ::  a: dividend
   ::  b: divisor
-  |=  [a=@ b=@]
+  |:  [a=`@`1 b=`@`1]
   ::  p: quotient
   ::  q: remainder
   ^-  [p=@ q=@]
-  [(div a b) (mod a b)]
+  ~_  leaf+"divide-by-zero"
+  ?<  =(0 b)
+  =+  c=0
+  |-
+  ?:  (lth a b)  [c a]
+  $(a (sub a b), c +(c))
 ::
 ++  gte
   ~/  %gte
@@ -150,8 +150,7 @@
   |:  [a=`@`1 b=`@`1]
   ::  the remainder
   ^-  @
-  ?<  =(0 b)
-  (sub a (mul b (div a b)))
+  +:(dvr a b)
 ::
 ++  mul
   ~/  %mul
