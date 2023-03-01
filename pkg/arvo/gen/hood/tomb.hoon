@@ -87,40 +87,40 @@
 =-  (turn - notes)                                      ::  produce cards
 =-  (turn lobes -)                                      ::  hashes
 |=  =lobe
-  |^
-  |-  ^-  (set [ship desk tako norm path])
-  ?~  domes
-    ~
-  =/  =aeon  1
-  %-  ~(uni in $(domes t.domes))
-  |-  ^-  (set [ship desk tako norm path])
-  ?:  (lth let.i.domes aeon)                            ::  only past aeons
-    ~
-  =/  =tako  (~(got by hit.i.domes) aeon)
-  =/  paths
-    (draw-tako ship.i.domes desk.i.domes +.i.domes tako)
-  (~(uni in paths) $(aeon +(aeon)))
-  ::
-  ++  draw-tako
-    |=  [=ship =desk foam =tako]
-    ^-  (set [^ship ^desk ^tako norm path])
-    ~+
-    =/  =yaki  (~(got by hut.rang) tako)
-    =/  takos
-      |-  ^-  (set [^ship ^desk ^tako norm path])
-      ?~  p.yaki
-        ~
-      (~(uni in $(p.yaki t.p.yaki)) ^$(tako i.p.yaki))
+|^
+|-  ^-  (set [ship desk tako norm path])
+?~  domes
+  ~
+=/  =aeon  1
+%-  ~(uni in $(domes t.domes))
+|-  ^-  (set [ship desk tako norm path])
+?:  (lth let.i.domes aeon)                            ::  only past aeons
+  ~
+=/  =tako  (~(got by hit.i.domes) aeon)
+=/  paths
+  (draw-tako ship.i.domes desk.i.domes +.i.domes tako)
+(~(uni in paths) $(aeon +(aeon)))
+::
+++  draw-tako
+  |=  [=ship =desk foam =tako]
+  ^-  (set [^ship ^desk ^tako norm path])
+  ~+
+  =/  =yaki  (~(got by hut.rang) tako)
+  =/  takos
     |-  ^-  (set [^ship ^desk ^tako norm path])
-    ?~  q.yaki
-      takos
-    %-  ~(uni in $(q.yaki l.q.yaki))
-    %-  ~(uni in $(q.yaki r.q.yaki))
-    ^-  (set [^ship ^desk ^tako norm path])
-    ?.  =(lobe q.n.q.yaki)
+    ?~  p.yaki
       ~
-    [[ship desk tako (~(gut by tom) tako nor) p.n.q.yaki] ~ ~]
-  --
+    (~(uni in $(p.yaki t.p.yaki)) ^$(tako i.p.yaki))
+  |-  ^-  (set [^ship ^desk ^tako norm path])
+  ?~  q.yaki
+    takos
+  %-  ~(uni in $(q.yaki l.q.yaki))
+  %-  ~(uni in $(q.yaki r.q.yaki))
+  ^-  (set [^ship ^desk ^tako norm path])
+  ?.  =(lobe q.n.q.yaki)
+    ~
+  [[ship desk tako (~(gut by tom) tako nor) p.n.q.yaki] ~ ~]
+--
 ::  +lobes: recursively list hashes under target
 ::
 ++  lobes
