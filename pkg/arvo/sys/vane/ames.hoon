@@ -3012,6 +3012,7 @@
       ::
       ?:  &(=(1 (end 0 bone)) (~(has in corked.peer-state) bone))
         ?>  ?=(%hear -.task)
+        %-  (trace odd.veb |.("plea on a closing bone={<bone>}"))
         (send-shut-packet bone message-num.shut-packet.task %| %| ok=& lag=*@dr)
       ::  pass .task to the |message-sink and apply state mutations
       ::
