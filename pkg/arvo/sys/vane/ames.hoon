@@ -622,7 +622,7 @@
       crypto-core=acru:ames
       =bug
       corks=(set wire)
-      snub=(set ship)
+      snub=[form=?(%allow %deny) ships=(set ship)]
       cong=[msg=@ud mem=@ud]
   ==
 +$  ames-state-4  ames-state-5
@@ -729,6 +729,16 @@
       bug=bug-10
       corks=(set wire)
       snub=(set ship)
+  ==
++$  ames-state-11
+  $:  peers=(map ship ship-state)
+      =unix=duct
+      =life
+      crypto-core=acru:ames
+      bug=bug-10
+      corks=(set wire)
+      snub=(set ship)
+      cong=[msg=@ud mem=@ud]
   ==
 ::
 ::  $bug: debug printing configuration
@@ -895,7 +905,8 @@
             [%8 ames-state-8]
             [%9 ames-state-9]
             [%10 ames-state-10]
-            [%11 ^ames-state]
+            [%11 ames-state-11]
+            [%12 ^ames-state]
         ==
     ::
     |=  [now=@da eny=@ rof=roof]
@@ -1018,7 +1029,7 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%11 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%12 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
           $%  $:  %4
@@ -1071,6 +1082,13 @@
                   [%adult state=ames-state-10]
               ==  ==
               $:  %11
+              $%  $:  %larva
+                      events=(qeu queued-event)
+                      state=ames-state-11
+                  ==
+                  [%adult state=ames-state-11]
+              ==  ==
+              $:  %12
               $%  $:  %larva
                       events=(qeu queued-event)
                       state=_ames-state.adult-gate
@@ -1145,12 +1163,22 @@
         =.  queued-events  events.old
         larval-gate
       ::
-          [%11 %adult *]  (load:adult-core %11 state.old)
+          [%11 %adult *]
+        =.  cached-state  `[%11 state.old]
+        ~>  %slog.0^leaf/"ames: larva reload"
+        larval-gate
       ::
           [%11 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %11 state.old)
+        larval-gate
+       ::
+          [%12 %adult *]  (load:adult-core %12 state.old)
+       ::
+          [%12 %larva *]
+        ~>  %slog.1^leaf/"ames: larva: load"
+        =.  queued-events  events.old
+        =.  adult-gate     (load:adult-core %12 state.old)
         larval-gate
        ::
       ==
@@ -1175,7 +1203,9 @@
         10+(state-9-to-10:load:adult-core +.u.cached-state)
       =?  u.cached-state  ?=(%10 -.u.cached-state)
         11+(state-10-to-11:load:adult-core +.u.cached-state)
-      ?>  ?=(%11 -.u.cached-state)
+      =?  u.cached-state  ?=(%11 -.u.cached-state)
+        12+(state-11-to-12:load:adult-core +.u.cached-state)
+      ?>  ?=(%12 -.u.cached-state)
       =.  ames-state.adult-gate  +.u.cached-state
       [moz larval-core(cached-state ~)]
     --
@@ -1214,7 +1244,7 @@
       %jilt  (on-jilt:event-core ship.task)
       %prod  (on-prod:event-core ships.task)
       %sift  (on-sift:event-core ships.task)
-      %snub  (on-snub:event-core ships.task)
+      %snub  (on-snub:event-core [form ships]:task)
       %spew  (on-spew:event-core veb.task)
       %cong  (on-cong:event-core [msg mem]:task)
       %stir  (on-stir:event-core arg.task)
@@ -1253,15 +1283,15 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%11 %adult ames-state]
+++  stay  [%12 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
   =<  |=  $=  old-state
-          $%  [%11 ^ames-state]
+          $%  [%12 ^ames-state]
           ==
       ^+  ames-gate
-      ?>  ?=(%11 -.old-state)
+      ?>  ?=(%12 -.old-state)
       ames-gate(ames-state +.old-state)
   ::  all state transitions are called from larval ames
   ::
@@ -1349,12 +1379,18 @@
   ::
   ++  state-10-to-11
     |=  ames-state=ames-state-10
-    ^-  ^^ames-state
+    ^-  ames-state-11
     =,  ames-state
     :*  peers  unix-duct  life  crypto-core  bug  corks  snub
         ::  5 messages and 100Kb of data outstanding
         ::
         [msg=5 mem=100.000]
+    ==
+  ++  state-11-to-12
+    |=  ames-state=ames-state-11
+    ^-  ^^ames-state
+    =,  ames-state
+    :*  peers  unix-duct  life  crypto-core  bug  corks  [%deny snub]  cong
     ==
   --
 ::  +scry: dereference namespace
@@ -1394,6 +1430,7 @@
   ::  /ax/bones/[ship]               [snd=(set bone) rcv=(set bone)]
   ::  /ax/snd-bones/[ship]/[bone]    vase
   ::  /ax/corks                      (list wire)
+  ::  /ax/snubbed                    (?(%allow %deny) (list ship))
   ::
   ?.  ?=(%x ren)  ~
   ?+    tyl  ~
@@ -1476,6 +1513,9 @@
   ::
       [%corks ~]
     ``noun+!>(~(tap in corks.ames-state))
+  ::
+      [%snubbed ~]
+    ``noun+!>([form.snub.ames-state ~(tap in ships.snub.ames-state)])
   ==
 --
 ::  |per-event: inner event-handling core
@@ -1572,9 +1612,9 @@
   ::  +on-snub: handle request to change ship blacklist
   ::
   ++  on-snub
-    |=  ships=(list ship)
+    |=  [form=?(%allow %deny) ships=(list ship)]
     ^+  event-core
-    =.  snub.ames-state  (sy ships)
+    =.  snub.ames-state  [form (sy ships)]
     event-core
   ::  +on-spew: handle request to set verbosity toggles on debug output
   ::
@@ -1719,7 +1759,8 @@
     ::
     ?:  =(our sndr.packet)
       event-core
-    ?:  (~(has in snub.ames-state) sndr.packet)
+    ?:  .=  =(%deny form.snub.ames-state)
+        (~(has in ships.snub.ames-state) sndr.packet)
       %-  (trace rcv.veb sndr.packet |.("snubbed"))
       event-core
     ::

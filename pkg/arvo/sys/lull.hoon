@@ -361,7 +361,7 @@
   ::    %init: vane boot
   ::    %prod: re-send a packet per flow, to all peers if .ships is ~
   ::    %sift: limit verbosity to .ships
-  ::    %snub: set packet blacklist to .ships
+  ::    %snub: set packet blocklist to .ships
   ::    %spew: set verbosity toggles
   ::    %cong: adjust congestion control parameters
   ::    %stir: recover from timer desync
@@ -380,7 +380,7 @@
         $>(%init vane-task)
         [%prod ships=(list ship)]
         [%sift ships=(list ship)]
-        [%snub ships=(list ship)]
+        [%snub form=?(%allow %deny) ships=(list ship)]
         [%spew veb=(list verb)]
         [%cong msg=@ud mem=@ud]
         [%stir arg=@t]
