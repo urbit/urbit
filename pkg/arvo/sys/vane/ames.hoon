@@ -3007,7 +3007,13 @@
     ++  run-message-sink
       |=  [=bone task=message-sink-task]
       ^+  peer-core
-      ?:  (~(has in corked.peer-state) bone)  peer-core
+      ::  if we have corked this flow and it's
+      ::  a plea request, ack unconditionally
+      ::
+      ?:  &(=(1 (end 0 bone)) (~(has in corked.peer-state) bone))
+        ?>  ?=(%hear -.task)
+        %-  (trace odd.veb |.("plea on a closing bone={<bone>}"))
+        (send-shut-packet bone message-num.shut-packet.task %| %| ok=& lag=*@dr)
       ::  pass .task to the |message-sink and apply state mutations
       ::
       =/  =message-sink-state
