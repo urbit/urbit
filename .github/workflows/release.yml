@@ -3,7 +3,7 @@ name: Push to release branch
 on:
   push:
     branches:
-      - 'next/*'
+      - 'release/*'
     paths:
       - '.github/workflows/feature.yml'
       - '.github/workflows/develop.yml'
