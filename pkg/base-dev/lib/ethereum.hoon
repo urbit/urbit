@@ -948,8 +948,7 @@
   %-  prefix-hex
   ?:  =(0 n)
     "0"
-  %-  render-hex-bytes-minimal
-  (as-octs:mimes:html n)
+  ((x-co:co 1) n)
 ::
 ++  address-to-hex
   |=  a=address
@@ -988,12 +987,6 @@
   |=  a=octs
   ^-  tape
   ((x-co:co (mul 2 p.a)) q.a)
-::
-++  render-hex-bytes-minimal
-  :: atom to string of hex bytes without 0x prefix and dots, minimal representation (no padding).
-  |=  a=octs
-  ^-  tape
-  ((x-co:co 1) q.a)
 ::
 ++  pad-to-multiple
   |=  [wat=tape mof=@ud wer=?(%left %right)]
