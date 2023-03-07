@@ -733,7 +733,7 @@
     ::
         %eth-get-block-by-number
       :-  'eth_getBlockByNumber'
-      :~  (tape (num-to-hex bon.req))
+      :~  (tape (num-to-hex-minimal bon.req))
           b+txs.req
       ==
     ::
@@ -942,6 +942,15 @@
   %-  render-hex-bytes
   (as-octs:mimes:html n)
 ::
+++  num-to-hex-minimal
+  |=  n=@
+  ^-  tape
+  %-  prefix-hex
+  ?:  =(0 n)
+    "0"
+  %-  render-hex-bytes-minimal
+  (as-octs:mimes:html n)
+::
 ++  address-to-hex
   |=  a=address
   ^-  tape
@@ -979,6 +988,12 @@
   |=  a=octs
   ^-  tape
   ((x-co:co (mul 2 p.a)) q.a)
+::
+++  render-hex-bytes-minimal
+  :: atom to string of hex bytes without 0x prefix and dots, minimal representation (no padding).
+  |=  a=octs
+  ^-  tape
+  ((x-co:co 1) q.a)
 ::
 ++  pad-to-multiple
   |=  [wat=tape mof=@ud wer=?(%left %right)]
