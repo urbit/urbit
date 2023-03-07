@@ -946,8 +946,6 @@
   |=  n=@
   ^-  tape
   %-  prefix-hex
-  ?:  =(0 n)
-    "0"
   ((x-co:co 1) n)
 ::
 ++  address-to-hex
