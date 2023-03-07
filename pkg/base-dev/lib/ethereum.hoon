@@ -733,7 +733,7 @@
     ::
         %eth-get-block-by-number
       :-  'eth_getBlockByNumber'
-      :~  (tape (num-to-hex bon.req))
+      :~  (tape (num-to-hex-minimal bon.req))
           b+txs.req
       ==
     ::
@@ -941,6 +941,12 @@
     "0"
   %-  render-hex-bytes
   (as-octs:mimes:html n)
+::
+++  num-to-hex-minimal
+  |=  n=@
+  ^-  tape
+  %-  prefix-hex
+  ((x-co:co 1) n)
 ::
 ++  address-to-hex
   |=  a=address
