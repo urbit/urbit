@@ -4217,12 +4217,21 @@
         $(inx +(inx))
     ==
   |-  ^-  ?
-  ?:  =(0 b)  &
-  =+  cur=(end 3 b)
+  ?:  =(inx len)  &
+  =+  cur=(cut 3 [inx 1] b)
   ?:  &((lth cur 32) !=(10 cur))  |
-  =+  len=(teff cur)
-  ?&  |(=(1 len) =+(i=1 |-(|(=(i len) &((gte (cut 3 [i 1] b) 128) $(i +(i)))))))
-      $(b (rsh [3 len] b))
+  =+  tef=(teff cur)
+  ::  ==
+  ?&  ?|
+          =(1 tef)
+          =+  i=1
+        |-  ?|
+            =(i tef)
+            ?&  (gte (cut 3 [(add i inx) 1] b) 128)
+                $(i +(i))
+        ==  ==
+      ==
+      $(inx +(inx))
   ==
 ::
 ++  ruth                                                ::  biblical sanity
