@@ -4221,7 +4221,6 @@
   =+  cur=(cut 3 [inx 1] b)
   ?:  &((lth cur 32) !=(10 cur))  |
   =+  tef=(teff cur)
-  ::  ==
   ?&  ?|
           =(1 tef)
           =+  i=1
