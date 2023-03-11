@@ -69,7 +69,7 @@
 ::
 +$  path-state
   $:  bob=(unit @ud)
-      fan=(map @ud (each noun @uvI))
+      fan=(map @ud (each noun @uvI))  ::  TODO +mop?
   ==
 ::  $routes: new cuff; TODO: document
 ::
@@ -294,7 +294,23 @@
   ++  mo-tomb
     |=  =path
     ^+  mo-core
-    !!
+    =/  pit  (scrub-case path)
+    =/  yon  (snag-case path)
+    =/  old  (~(get by sky.state) pit)
+    ?~  old  ::  no-op if nonexistent
+      mo-core  ::  TODO trace
+    =/  val  (~(get by fan.u.old) yon)
+    ?~  val  ::  no-op if nonexistent
+      mo-core  ::  TODO trace
+    ?-    -.u.val
+        %|  mo-core  ::  already tombstoned
+        %&
+      =.  sky.state  ::  replace with hash
+        %+  ~(put by sky.state)  pit
+        u.old(fan (~(put by fan.u.old) yon [%| (shax (jam p.u.val))]))
+      mo-core
+    ==
+  ::
   ++  mo-cull
     |=  =path
     ^+  mo-core
