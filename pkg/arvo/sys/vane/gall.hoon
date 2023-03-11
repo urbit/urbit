@@ -275,6 +275,11 @@
         %+  ~(put by sky.state)  pit
         `(~(put by fan:*path-state) yon [%& noun])
       mo-core
+    =>  ?~  bob.u.old
+          .
+        ~|  gall-grow-bob+[path actual=yon max=u.bob.u.old]
+        ?>  (gth yon u.bob.u.old)
+        .
     =/  val  (~(get by fan.u.old) yon)
     ?~  val  ::  insert binding at new case
       =.  sky.state
