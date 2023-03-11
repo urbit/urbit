@@ -319,7 +319,19 @@
   ++  mo-cull
     |=  =path
     ^+  mo-core
-    !!
+    =/  pit  (scrub-case path)
+    =/  yon  (snag-case path)
+    =/  old  (~(get by sky.state) pit)
+    ?~  old  ::  no-op if nonexistent
+      mo-core  ::  TODO trace
+    =.  sky.state  ::  delete all older paths
+      %+  ~(put by sky.state)  pit
+      :-  bob=`yon
+      %-  ~(gas by fan:*path-state)
+      %+  skim  ~(tap by fan.u.old)
+      |=  [yin=@ud val=(each noun @uvI)]
+      (gth yin yon)
+    mo-core
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
