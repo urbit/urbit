@@ -69,8 +69,10 @@
 ::
 +$  path-state
   $:  bob=(unit @ud)
-      fan=(map @ud (each noun @uvI))  ::  TODO +mop?
+      fan=((mop @ud (each noun @uvI)) lte)
   ==
+::
+++  on-path  ((on @ud (each noun @uvI)) lte)
 ::  $routes: new cuff; TODO: document
 ::
 +$  routes
@@ -267,24 +269,30 @@
   ++  mo-grow
     |=  [=path =noun]
     ^+  mo-core
+    ::  TODO check if path makes any sense
+    ::  - from our ship (or signed by other ship?)
+    ::  - not claiming to be another vane (or agent?)
+    ::  - has a numeric case
+    ::  - up only?
+    ::  - enforce no skipped aeons?
     =/  pit  (scrub-case path)
     =/  yon  (snag-case path)
     =/  old  (~(get by sky.state) pit)
     ?~  old  ::  insert binding at new path
       =.  sky.state
         %+  ~(put by sky.state)  pit
-        `(~(put by fan:*path-state) yon [%& noun])
+        `(put:on-path fan:*path-state yon [%& noun])
       mo-core
     =>  ?~  bob.u.old
           .
         ~|  gall-grow-bob+[path actual=yon max=u.bob.u.old]
         ?>  (gth yon u.bob.u.old)
         .
-    =/  val  (~(get by fan.u.old) yon)
+    =/  val  (get:on-path fan.u.old yon)
     ?~  val  ::  insert binding at new case
       =.  sky.state
         %+  ~(put by sky.state)  pit
-        u.old(fan (~(put by fan.u.old) yon [%& noun]))
+        u.old(fan (put:on-path fan.u.old yon [%& noun]))
       mo-core
     ?-  -.u.val
       %&  ?>  =(p.u.val noun)               ::  re-bind same value or die
@@ -292,7 +300,7 @@
       %|  ?>  =(p.u.val (shax (jam noun)))  ::  reinflate tombstoned case
           =.  sky.state
             %+  ~(put by sky.state)  pit
-            u.old(fan (~(put by fan.u.old) yon [%& noun]))
+            u.old(fan (put:on-path fan.u.old yon [%& noun]))
           mo-core
     ==
   ::
@@ -304,7 +312,7 @@
     =/  old  (~(get by sky.state) pit)
     ?~  old  ::  no-op if nonexistent
       mo-core  ::  TODO trace
-    =/  val  (~(get by fan.u.old) yon)
+    =/  val  (get:on-path fan.u.old yon)
     ?~  val  ::  no-op if nonexistent
       mo-core  ::  TODO trace
     ?-    -.u.val
@@ -312,7 +320,7 @@
         %&
       =.  sky.state  ::  replace with hash
         %+  ~(put by sky.state)  pit
-        u.old(fan (~(put by fan.u.old) yon [%| (shax (jam p.u.val))]))
+        u.old(fan (put:on-path fan.u.old yon [%| (shax (jam p.u.val))]))
       mo-core
     ==
   ::
@@ -326,11 +334,7 @@
       mo-core  ::  TODO trace
     =.  sky.state  ::  delete all older paths
       %+  ~(put by sky.state)  pit
-      :-  bob=`yon
-      %-  ~(gas by fan:*path-state)
-      %+  skim  ~(tap by fan.u.old)
-      |=  [yin=@ud val=(each noun @uvI)]
-      (gth yin yon)
+      [`yon (lot:on-path fan.u.old `+(yon) ~)]
     mo-core
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
