@@ -27,6 +27,9 @@
     same
   (slog print)
 ::
+++  scrub-case  |=(=path (snap path 5 ''))
+++  snag-case   |=(=path (slav %ud (snag 5 path)))
+::
 ::  $bug: debug printing configuration
 ::
 ::    veb: verbosity toggles
@@ -60,7 +63,13 @@
       contacts=(set ship)
       yokes=(map term yoke)
       blocked=(map term (qeu blocked-move))
+      sky=(map path path-state)
       =bug
+  ==
+::
++$  path-state
+  $:  bob=(unit @ud)
+      fan=(map @ud (each noun @uvI))
   ==
 ::  $routes: new cuff; TODO: document
 ::
@@ -155,6 +164,7 @@
       contacts=(set ship)
       eggs=(map term egg)
       blocked=(map term (qeu blocked-move))
+      sky=(map path path-state)
       =bug
   ==
 ::  $egg: migratory agent state; $yoke with .old-state instead of .agent
@@ -253,6 +263,42 @@
     ?~  apps  mo-core
     =/  ap-core  (ap-yoke:ap p.i.apps [~ our] q.i.apps)
     $(apps t.apps, mo-core ap-abet:(ap-rake:ap-core all))
+  ::
+  ++  mo-grow
+    |=  [=path =noun]
+    ^+  mo-core
+    =/  pit  (scrub-case path)
+    =/  yon  (snag-case path)
+    =/  old  (~(get by sky.state) pit)
+    ?~  old  ::  insert binding at new path
+      =.  sky.state
+        %+  ~(put by sky.state)  pit
+        `(~(put by fan:*path-state) yon [%& noun])
+      mo-core
+    =/  val  (~(get by fan.u.old) yon)
+    ?~  val  ::  insert binding at new case
+      =.  sky.state
+        %+  ~(put by sky.state)  pit
+        u.old(fan (~(put by fan.u.old) yon [%& noun]))
+      mo-core
+    ?-  -.u.val
+      %&  ?>  =(p.u.val noun)               ::  re-bind same value or die
+          mo-core
+      %|  ?>  =(p.u.val (shax (jam noun)))  ::  reinflate tombstoned case
+          =.  sky.state
+            %+  ~(put by sky.state)  pit
+            u.old(fan (~(put by fan.u.old) yon [%& noun]))
+          mo-core
+    ==
+  ::
+  ++  mo-tomb
+    |=  =path
+    ^+  mo-core
+    !!
+  ++  mo-cull
+    |=  =path
+    ^+  mo-core
+    !!
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
@@ -1752,6 +1798,9 @@
       %nuke  mo-abet:(mo-nuke:mo-core dude.task)
       %doff  mo-abet:(mo-doff:mo-core +.task)
       %rake  mo-abet:(mo-rake:mo-core +.task)
+      %grow  mo-abet:(mo-grow:mo-core +.task)
+      %tomb  mo-abet:(mo-tomb:mo-core +.task)
+      %cull  mo-abet:(mo-cull:mo-core +.task)
       %spew  mo-abet:(mo-spew:mo-core veb.task)
       %sift  mo-abet:(mo-sift:mo-core dudes.task)
       %trim  [~ gall-payload]
@@ -1887,6 +1936,7 @@
     ^-  spore
     %=    old
         -  %11
+        bug  [*(map path path-state) bug.old]
         eggs
       %-  ~(urn by eggs.old)
       |=  [a=term e=egg-10]
