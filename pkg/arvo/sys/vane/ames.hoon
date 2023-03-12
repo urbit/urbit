@@ -3393,6 +3393,7 @@
             ::
             ?:  corked
               =?  peer-core  &(?=(%hear -.task) =(1 (end 0 bone)))
+                %-  (mi-trace odd.veb |.("plea on a closing bone={<bone>}"))
                 %+  send-shut-packet  bone
                 [message-num.shut-packet.task %| %| ok=& lag=*@dr]
               sink
