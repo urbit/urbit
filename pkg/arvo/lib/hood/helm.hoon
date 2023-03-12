@@ -253,10 +253,6 @@
   |=  cong=[msg=@ud mem=@ud]  =<  abet
   (emit %pass /helm %arvo %a %cong cong)
 ::
-++  poke-knob
-  |=  [error-tag=@tas level=?(%hush %soft %loud)]  =<  abet
-  (emit %pass /helm %arvo %d %knob error-tag level)
-::
 ++  poke-serve
   |=  [=binding:eyre =generator:eyre]  =<  abet
   (emit %pass /helm/serv %arvo %e %serve binding generator)
@@ -300,7 +296,6 @@
     %helm-gall-sift        =;(f (f !<(_+<.f vase)) poke-gall-sift)
     %helm-gall-verb        =;(f (f !<(_+<.f vase)) poke-gall-verb)
     %helm-hi               =;(f (f !<(_+<.f vase)) poke-hi)
-    %helm-knob             =;(f (f !<(_+<.f vase)) poke-knob)
     %helm-pans             =;(f (f !<(_+<.f vase)) poke-pans)
     %helm-mass             =;(f (f !<(_+<.f vase)) poke-mass)
     %helm-meld             =;(f (f !<(_+<.f vase)) poke-meld)
