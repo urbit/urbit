@@ -2488,12 +2488,9 @@
             `u=message-pump-state
           ::  if clogged, notify client vane
           ::
-          =;  clogged=?
-            =?  peer-core  clogged
+          |^  ?.  &(nuf-messages nuf-memory)  peer-core
               %+  roll  ~(tap in heeds.peer-state)
               |=([d=^duct core=_peer-core] (pe-emit:core d %give %clog her))
-            peer-core
-          |^  &(nuf-messages nuf-memory)
           ::  +nuf-messages: are there enough messages to mark as clogged?
           ::
           ++  nuf-messages
