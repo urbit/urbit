@@ -1827,9 +1827,9 @@
         [%nuke =dude]                                   ::  delete agent
         [%doff dude=(unit dude) ship=(unit ship)]       ::  kill subscriptions
         [%rake dude=(unit dude) all=?]                  ::  reclaim old subs
-        [%grow =path =noun]                             ::  bind scry path
-        [%tomb =path]                                   ::  replace with hash
-        [%cull =path]                                   ::  delete older
+        [%grow =dude =case =spur =noun]                 ::  bind scry path
+        [%tomb =dude =case =spur]                       ::  replace with hash
+        [%cull =dude =case =spur]                       ::  delete older
         $>(%init vane-task)                             ::  set owner
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
@@ -1867,6 +1867,9 @@
     $%  [%arvo =note-arvo]
         [%agent [=ship name=term] =deal]
         [%pyre =tang]
+        [%grow =case =spur =noun]
+        [%tomb =case =spur]
+        [%cull =case =spur]
     ==
   +$  deal
     $%  [%raw-poke =mark =noun]
@@ -1891,6 +1894,10 @@
       $%  [%agent [=ship name=term] =task]
           [%arvo note-arvo]
           [%pyre =tang]
+      ::
+          [%grow =case =spur =noun]
+          [%tomb =case =spur]
+          [%cull =case =spur]
       ==
     +$  task
       $%  [%watch =path]

@@ -45,9 +45,9 @@
 ::  $move: Arvo-level move
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
-::  $state-11: overall gall state, versioned
+::  $state-12: overall gall state, versioned
 ::
-+$  state-11  [%11 state]
++$  state-12  [%12 state]
 ::  $state: overall gall state
 ::
 ::    system-duct: TODO document
@@ -63,16 +63,8 @@
       contacts=(set ship)
       yokes=(map term yoke)
       blocked=(map term (qeu blocked-move))
-      sky=(map path path-state)
       =bug
   ==
-::
-+$  path-state
-  $:  bob=(unit @ud)
-      fan=((mop @ud (each noun @uvI)) lte)
-  ==
-::
-++  on-path  ((on @ud (each noun @uvI)) lte)
 ::  $routes: new cuff; TODO: document
 ::
 +$  routes
@@ -92,6 +84,7 @@
 ::    agent: agent core
 ::    beak: compilation source
 ::    marks: mark conversion requests
+::    sky: scry bindings
 ::
 +$  yoke
   $:  control-duct=duct
@@ -105,7 +98,15 @@
       agent=(each agent vase)
       =beak
       marks=(map duct mark)
+      sky=(map spur path-state)
   ==
+::
++$  path-state
+  $:  bob=(unit @ud)
+      fan=((mop @ud (each noun @uvI)) lte)
+  ==
+::
+++  on-path  ((on @ud (each noun @uvI)) lte)
 ::  $blocked-move: enqueued move to an agent
 ::
 +$  blocked-move  [=duct =routes move=(each deal unto)]
@@ -160,13 +161,12 @@
 ::  $spore: structures for update, produced by +stay
 ::
 +$  spore
-  $:  %11
+  $:  %12
       system-duct=duct
       outstanding=(map [wire duct] (qeu remote-request))
       contacts=(set ship)
       eggs=(map term egg)
       blocked=(map term (qeu blocked-move))
-      sky=(map path path-state)
       =bug
   ==
 ::  $egg: migratory agent state; $yoke with .old-state instead of .agent
@@ -183,11 +183,12 @@
       old-state=[%| vase]
       =beak
       marks=(map duct mark)
+      sky=(map spur path-state)
   ==
 --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
-=|  state=state-11
+=|  state=state-12
 |=  [now=@da eny=@uvJ rof=roof]
 =*  gall-payload  .
 ~%  %gall-top  ..part  ~
@@ -267,22 +268,20 @@
     $(apps t.apps, mo-core ap-abet:(ap-rake:ap-core all))
   ::
   ++  mo-grow
-    |=  [=path =noun]
+    |=  [=dude =case =spur =noun]
     ^+  mo-core
     ::  TODO check if path makes any sense
-    ::  - from our ship (or signed by other ship?)
-    ::  - not claiming to be another vane (or agent?)
-    ::  - has a numeric case
     ::  - up only?
     ::  - enforce no skipped aeons?
-    =/  pit  (scrub-case path)
-    =/  yon  (snag-case path)
-    =/  old  (~(get by sky.state) pit)
+    =/  yoke  (~(got by yokes.state) dude)
+    =-  mo-core(yokes.state (~(put by yokes.state) dude yoke(sky -)))
+    =/  sky  sky.yoke
+    ^+  sky
+    =/  yon  ?>(?=(%ud -.case) p.case)
+    =/  old  (~(get by sky) spur)
     ?~  old  ::  insert binding at new path
-      =.  sky.state
-        %+  ~(put by sky.state)  pit
-        `(put:on-path fan:*path-state yon [%& noun])
-      mo-core
+      %+  ~(put by sky)  spur
+      `(put:on-path fan:*path-state yon [%& noun])
     =>  ?~  bob.u.old
           .
         ~|  gall-grow-bob+[path actual=yon max=u.bob.u.old]
@@ -290,52 +289,49 @@
         .
     =/  val  (get:on-path fan.u.old yon)
     ?~  val  ::  insert binding at new case
-      =.  sky.state
-        %+  ~(put by sky.state)  pit
-        u.old(fan (put:on-path fan.u.old yon [%& noun]))
-      mo-core
+      %+  ~(put by sky)  spur
+      u.old(fan (put:on-path fan.u.old yon [%& noun]))
     ?-  -.u.val
       %&  ?>  =(p.u.val noun)               ::  re-bind same value or die
-          mo-core
+          sky
       %|  ?>  =(p.u.val (shax (jam noun)))  ::  reinflate tombstoned case
-          =.  sky.state
-            %+  ~(put by sky.state)  pit
-            u.old(fan (put:on-path fan.u.old yon [%& noun]))
-          mo-core
+          %+  ~(put by sky)  spur
+          u.old(fan (put:on-path fan.u.old yon [%& noun]))
     ==
   ::
   ++  mo-tomb
-    |=  =path
+    |=  [=dude =case =spur]
     ^+  mo-core
-    =/  pit  (scrub-case path)
-    =/  yon  (snag-case path)
-    =/  old  (~(get by sky.state) pit)
+    =/  yoke  (~(got by yokes.state) dude)
+    =-  mo-core(yokes.state (~(put by yokes.state) dude yoke(sky -)))
+    =/  sky  sky.yoke
+    =/  yon  ?>(?=(%ud -.case) p.case)
+    =/  old  (~(get by sky) spur)
     ?~  old  ::  no-op if nonexistent
-      mo-core  ::  TODO trace
+      sky  ::  TODO trace
     =/  val  (get:on-path fan.u.old yon)
     ?~  val  ::  no-op if nonexistent
-      mo-core  ::  TODO trace
+      sky  ::  TODO trace
     ?-    -.u.val
-        %|  mo-core  ::  already tombstoned
+        %|  sky  ::  already tombstoned
         %&
-      =.  sky.state  ::  replace with hash
-        %+  ~(put by sky.state)  pit
-        u.old(fan (put:on-path fan.u.old yon [%| (shax (jam p.u.val))]))
-      mo-core
+      %+  ~(put by sky)  spur  ::  replace with hash
+      u.old(fan (put:on-path fan.u.old yon [%| (shax (jam p.u.val))]))
     ==
   ::
   ++  mo-cull
-    |=  =path
+    |=  [=dude =case =spur]
     ^+  mo-core
-    =/  pit  (scrub-case path)
-    =/  yon  (snag-case path)
-    =/  old  (~(get by sky.state) pit)
+    =/  yoke  (~(got by yokes.state) dude)
+    =-  mo-core(yokes.state (~(put by yokes.state) dude yoke(sky -)))
+    =/  sky  sky:(~(got by yokes.state) dude)
+    ^+  sky
+    =/  yon  ?>(?=(%ud -.case) p.case)
+    =/  old  (~(get by sky) spur)
     ?~  old  ::  no-op if nonexistent
-      mo-core  ::  TODO trace
-    =.  sky.state  ::  delete all older paths
-      %+  ~(put by sky.state)  pit
-      [`yon (lot:on-path fan.u.old `+(yon) ~)]
-    mo-core
+      sky  ::  TODO trace
+    %+  ~(put by sky)  spur  ::  delete all older paths
+    [`yon (lot:on-path fan.u.old `+(yon) ~)]
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
@@ -1108,10 +1104,11 @@
           ==
         =.  wire
           :^  %use  agent-name  run-nonce.yoke
-          ?-  -.neet
-            %agent  [%out (scot %p ship.neet) name.neet wire]
-            %huck   [%out (scot %p ship.neet) name.neet wire]
-            %arvo   [(scot %p attributing.agent-routes) wire]
+          ?-    -.neet
+              %agent  [%out (scot %p ship.neet) name.neet wire]
+              %huck   [%out (scot %p ship.neet) name.neet wire]
+              ?(%arvo %grow %tomb %cull)
+            [(scot %p attributing.agent-routes) wire]
           ==
         ::
         =/  =note-arvo
@@ -1119,6 +1116,9 @@
             %arvo   note-arvo.neet
             %huck   note-arvo.neet
             %agent  [%g %deal [our ship.neet] [name deal]:neet]
+            %grow   [%g %grow agent-name [case spur noun]:neet]
+            %tomb   [%g %tomb agent-name [case spur]:neet]
+            %cull   [%g %cull agent-name [case spur]:neet]
           ==
         [duct %pass wire note-arvo]~
       ==
@@ -1851,10 +1851,33 @@
       =?  old  ?=(%8 -.old)  (spore-8-to-9 old)
       =?  old  ?=(%9 -.old)  (spore-9-to-10 old)
       =?  old  ?=(%10 -.old)  (spore-10-to-11 old)
-      ?>  ?=(%11 -.old)
+      =?  old  ?=(%11 -.old)  (spore-11-to-12 old)
+      ?>  ?=(%12 -.old)
       gall-payload(state old)
   ::
-  +$  spore-any  $%(spore spore-7 spore-8 spore-9 spore-10)
+  +$  spore-any  $%(spore spore-7 spore-8 spore-9 spore-10 spore-11)
+  +$  spore-11
+    $:  %11
+        system-duct=duct
+        outstanding=(map [wire duct] (qeu remote-request))
+        contacts=(set ship)
+        eggs=(map term egg-11)
+        blocked=(map term (qeu blocked-move))
+        =bug
+    ==
+  +$  egg-11
+    $:  control-duct=duct
+        run-nonce=@t
+        sub-nonce=@
+        =stats
+        =bitt
+        =boat
+        =boar
+        code=~
+        old-state=[%| vase]
+        =beak
+        marks=(map duct mark)
+    ==
   +$  spore-10
     $:  %10
         system-duct=duct
@@ -1964,20 +1987,33 @@
     %+  murn  ~(tap to q)
     |=(r=remote-request-9 ?:(?=(%cork r) ~ `r))
   ::
+  ::  added sky
+  ::
+  ++  spore-11-to-12
+    |=  old=spore-11
+    ^-  spore
+    %=    old
+        -  %12
+        eggs
+      %-  ~(urn by eggs.old)
+      |=  [a=term e=egg-11]
+      ^-  egg
+      e(marks [marks.e sky:*egg])
+    ==
+  ::
   ::  removed live
   ::  changed old-state from (each vase vase) to [%| vase]
   ::  added code
   ::
   ++  spore-10-to-11
     |=  old=spore-10
-    ^-  spore
+    ^-  spore-11
     %=    old
         -  %11
-        bug  [*(map path path-state) bug.old]
         eggs
       %-  ~(urn by eggs.old)
       |=  [a=term e=egg-10]
-      ^-  egg
+      ^-  egg-11
       e(|3 |4.e(|4 `|8.e(old-state [%| p.old-state.e])))
     ==
   --
@@ -1992,6 +2028,21 @@
   =*  dap  q.bem
   =/  =coin  $/r.bem
   =*  path  s.bem
+  ::
+  ?:  ?=(%a care)
+    ?.  =(p.bem our)  ~
+    =/  yok  (~(get by yokes.state) q.bem)
+    ?~  yok  ~
+    =/  ski  (~(get by sky.u.yok) s.bem)
+    ?~  ski  ~
+    ?.  ?=(%ud -.r.bem)  ~
+    =/  res  (get:on-path fan.u.ski p.r.bem)
+    ?~  res  ~
+    ?-  -.u.res
+      %|  ~
+      %&  ``[%noun %noun p.u.res]
+    ==
+  ::  TODO new care to ask for hash of a sky binding
   ::
   ?.  ?=(%.y -.shop)
     ~
