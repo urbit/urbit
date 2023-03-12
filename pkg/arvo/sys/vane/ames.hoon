@@ -616,12 +616,12 @@
 ::
 ::
 +$  ames-state
-  $:  peers=(map ship ship-state)
+  $:  peers=(map ship ship-state)  :: TODO: remove krocs from peer-state
       =unix=duct
       =life
       crypto-core=acru:ames
       =bug
-      corks=(set wire)
+      corks=(set wire)             :: TODO: remove next state update
       snub=(set ship)
       cong=[msg=@ud mem=@ud]
   ==
@@ -2595,9 +2595,9 @@
               rcv      (~(del by rcv) bone)
               corked   (~(put in corked) bone)
               closing  (~(del in closing) bone)
-              krocs    (~(del in krocs) bone)
             ==
           peer-core
+        ::
         +|  %internals
         ::  +mu: constructor for |pump message sender core
         ::
@@ -2895,7 +2895,6 @@
                 rcv              (~(del by rcv) bone)
                 corked           (~(put in corked) bone)
                 closing          (~(del in closing) bone)
-                krocs            (~(del in krocs) bone)
                 by-duct.ossuary  (~(del by by-duct.ossuary) (got-duct bone))
                 by-bone.ossuary  (~(del by by-bone.ossuary) bone)
               ==
@@ -3394,7 +3393,7 @@
             ::
             ?:  corked
               =?  peer-core  &(?=(%hear -.task) =(1 (end 0 bone)))
-                %-  (mi-trace odd.veb |.("plea on a closing bone={<bone>}"))
+                %-  (mi-trace odd.veb |.("hear plea on a corked bone={<bone>}"))
                 %+  send-shut-packet  bone
                 [message-num.shut-packet.task %| %| ok=& lag=*@dr]
               sink
@@ -3653,20 +3652,15 @@
             ::
             ++  sink-nack
               ^+  sink
+              ::  if we get a naxplanation for a %cork, the publisher hasn't
+              ::  received the OTA. The /recork timer will retry eventually.
+              ::
               %-  %+  mi-trace  msg.veb
                   =/  dat  [her bone=bone message-num=message-num]
                   |.("sink naxplanation {<dat>}")
               ::  flip .bone's second bit to find referenced flow
               ::
               =/  target=^bone  (mix 0b10 bone)
-              ::  XX not used, remove
-              =?  peer-core  (~(has in krocs.peer-state) target)
-                ::  if we get a naxplanation for a %cork, the publisher hasn't
-                ::  received the OTA. The /recork timer will retry eventually.
-                ::
-                %.  peer-core
-                %+  pe-trace  msg.veb
-                |.("old publisher, %cork nacked on bone={<target>}")
               =.  peer-core
                 ::  notify |message-pump that this message got naxplained
                 ::
@@ -3892,7 +3886,6 @@
   ::  /ax/peers/[ship]/forward-lane  (list lane)
   ::  /ax/bones/[ship]               [snd=(set bone) rcv=(set bone)]
   ::  /ax/snd-bones/[ship]/[bone]    vase
-  ::  /ax/corks                      (list wire)
   ::
   ?.  ?=(%x ren)  ~
   ?+    tyl  ~
@@ -3972,8 +3965,5 @@
     =/  res
       u.mps
     ``noun+!>(!>(res))
-  ::
-      [%corks ~]
-    ``noun+!>(~(tap in corks.ames-state))
   ==
 --
