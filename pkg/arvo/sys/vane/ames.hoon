@@ -2951,9 +2951,12 @@
         ::  clear all packets from this message from the packet pump
         ::
         =.  message-pump  (run-packet-pump:message-pump %done message-num *@dr)
-        =/  =wire  (make-pump-timer-wire her.channel bone)
+        ?:  (~(has in corked.peer-state) bone)
+          %-  %+  trace  odd.veb
+              |.("trying to delete a corked bone={<bone>}")
+          peer-core
         =/  nack-bone=^bone  (mix 0b10 bone)
-        =?  rcv.peer-state  (~(has by rcv.peer-state) nack-bone)
+        =?  rcv.peer-state   (~(has by rcv.peer-state) nack-bone)
           ::  if the publisher was behind we remove nacks received on that bone
           ::
           (~(del by rcv.peer-state) nack-bone)
