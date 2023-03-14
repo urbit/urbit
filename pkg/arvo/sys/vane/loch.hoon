@@ -165,14 +165,14 @@
   ==
   ::  +read-a: scry our list of devices
   ::
-  ++  read-a    ::^-  roon
+  ++  read-a
     |=  [lyc=gang bem=beam]
     ^-  (unit (unit cage))
     =/  devs  ~(tap in ~(key by devices))
     ``[%noun !>(devs)]
   ::  +read d: get devices dat and tus
   ::
-  ++  read-d    ::^-  roon
+  ++  read-d    
     |=  [lyc=gang bem=beam]
     ^-  (unit (unit cage))
     ~&  >>>  ["lyc" lyc]
