@@ -27,9 +27,6 @@
     same
   (slog print)
 ::
-++  scrub-case  |=(=path (snap path 5 ''))
-++  snag-case   |=(=path (slav %ud (snag 5 path)))
-::
 ::  $bug: debug printing configuration
 ::
 ::    veb: verbosity toggles
