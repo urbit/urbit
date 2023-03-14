@@ -27,7 +27,7 @@
     ::
     +$  cmd  [cmd=@tas =wut =dev =duct]
     ::
-    +$  device  [name=@tas status=@ reg=(unit @tas)] 
+    +$  device  [name=@tas dat=@ tus=@] 
     --
 ::
 =>
@@ -77,8 +77,8 @@
   ^-  [(list move) _loch-gate]
   ::
   =/  =task  ((harden task) wrapped-task)
-  ~&  >  ["1 loch call task:" task]
-  ~&  >>  ["2 loch hen:" hen]
+  ~&  >  ["loch call task:" task]
+  ~&  >>  ["loch hen:" hen]
   ::~&  >>  :*  "loch" 
             ::["unix duct" unix-duct:loch-gate]
             ::["devices" devices:loch-gate]
@@ -108,22 +108,25 @@
     =/  dev  +.task 
     :-  ~
       %_  loch-gate
-        devices  (~(put by devices) name.dev [name.dev stat.dev ~])
+        devices  (~(put by devices) name.dev [name.dev ~ stat.dev])
       ==
     ::
       %seen
     =/  duct  (~(get by pathing) dev.task)
-    ~&  >  ["Data" `@ux`dat.task]
-    ~&  >  ["Data" `@ta`dat.task]
-    ~&  >  ["Data" (trip dat.task)]
-    ~&  >>  ["duct" +.duct]
+    =/  device-save  [dev.task dat.task tus.task]
+    ~&  >>  ["devicesave" device-save]
     :-  ~[[+.duct %give %seen dev.task dat.task tus.task]]
-      loch-gate
+      %_  loch-gate
+        devices  (~(put by devices) dev.task device-save)
+      ==
     ::
       %rote
     =/  duct  (~(get by pathing) dev.task)
+    =/  device-save  [dev.task 0 tus.task]
     :-  ~[[+.duct %give %rote dev.task tus.task]]
-      loch-gate
+      %_  loch-gate
+        devices  (~(put by devices) dev.task device-save)
+      ==
   ==
 ::  +load: migrate an old state to a new loch version
 ::
@@ -134,12 +137,50 @@
   loch-gate(state old)
 ::  +scry: view state
 ::
+::  %a  scry out a list of devices
+::  %d  get a device's  dat and tus
 ++  scry
   ^-  roon
   |=  [lyc=gang car=term bem=beam]
   ^-  (unit (unit cage))
+  =*  ren  car
+  =*  why=shop  &/p.bem
+  =*  syd  q.bem
+  =*  lot=coin  $/r.bem
+  =*  tyl  s.bem
   ~&  >>  "loch scry:" 
-  ~
+  ~&  >>  ["lyc" lyc]
+  ~&  >>  ["car" car]
+  ~&  >>  ["bem" bem]
+  |^
+  ::  only respond for the local identity, current timestamp
+  ::
+  ?.  ?&  =(&+our why)
+          =([%$ %da now] lot)
+      ==
+    ~
+  ?+  car  ~
+    %a  (read-a lyc bem)
+    %d  (read-d lyc bem)
+  ==
+  ::  +read-a: scry our list of devices
+  ::
+  ++  read-a    ::^-  roon
+    |=  [lyc=gang bem=beam]
+    ^-  (unit (unit cage))
+    =/  devs  ~(tap in ~(key by devices))
+    ``[%noun !>(devs)]
+  ::  +read d: get devices dat and tus
+  ::
+  ++  read-d    ::^-  roon
+    |=  [lyc=gang bem=beam]
+    ^-  (unit (unit cage))
+    ~&  >>>  ["lyc" lyc]
+    ~&  >>>  ["bem" bem]
+    =*  tyl  -.s.bem
+    =/  devs  (~(got by devices) tyl)
+    ``[%noun !>(devs)]
+  --    
 ::
 ++  stay  
   ~&  >>  "loch stay:"
