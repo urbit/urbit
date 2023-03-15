@@ -3,7 +3,7 @@
 !:
 =>  ..part
 |%
-++  lull  %326
+++  lull  %325
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
@@ -834,17 +834,34 @@
         [%worn =ship =desk =tako =norm]                 ::  set commit norm
         [%seek =ship =desk =cash]                       ::  fetch source blobs
     ==                                                  ::
-  +$  cone  (map [ship desk] foam)                      ::  domes
-  +$  foam                                              ::
-    $:  dome                                            ::
-        tom=(map tako norm)                             ::
-        nor=norm                                        ::
-        liv=zest                                        ::
-        ren=(map dude:gall ?)                           ::
+  +$  cone  (map [ship desk] dome)                      ::  domes
+  ::
+  ::  Desk state.
+  ::
+  ::  Includes a checked-out ankh with current content, most recent version, map
+  ::  of all version numbers to commit hashes (commits are in hut.rang), and map
+  ::  of labels to version numbers.
+  ::
+  ::  `mim` is a cache of the content in the directories that are mounted
+  ::  to unix.  Often, we convert to/from mime without anything really
+  ::  having changed; this lets us short-circuit that in some cases.
+  ::  Whenever you give an `%ergo`, you must update this.
+  ::
+  +$  dome
+    $:  let=aeon                                        ::  top id
+        hit=(map aeon tako)                             ::  versions by id
+        lab=(map @tas aeon)                             ::  labels
+        tom=(map tako norm)                             ::  tomb policies
+        nor=norm                                        ::  default policy
+        mim=(map path mime)                             ::  mime cache
+        fod=flue                                        ::  ford cache
+        wic=(map weft yoki)                             ::  commit-in-waiting
+        liv=zest                                        ::  running agents
+        ren=rein                                        ::  force agents on/off
     ==                                                  ::
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
-  +$  dome                                              ::  project state
+  +$  domo                                              ::  project state
     $:  let=@ud                                         ::  top id
         hit=(map @ud tako)                              ::  changes by id
         lab=(map @tas @ud)                              ::  labels
@@ -1106,6 +1123,30 @@
   ::    the marks).
   ::
   +$  flow  (map leak [refs=@ud =soak])
+  ::
+  ::  Per-desk ford cache
+  ::
+  ::    Spill is the set of "roots" we have into the global ford cache.
+  ::    We add a root for everything referenced directly or indirectly on
+  ::    a desk, then invalidate them on commit only if their dependencies
+  ::    change.
+  ::
+  ::    Sprig is a fast-lookup index over the global ford cache.  The only
+  ::    goal is to make cache hits fast.
+  ::
+  +$  flue  [spill=(set leak) sprig=(map mist [=leak =soak])]
+  ::
+  ::  Ford build without content.
+  ::
+  +$  mist
+    $%  [%file =path]
+        [%nave =mark]
+        [%dais =mark]
+        [%cast =mars]
+        [%tube =mars]
+        [%vale =path]
+        [%arch =path]
+    ==
   ::
   ::  $pile: preprocessed hoon source file
   ::
@@ -1564,9 +1605,8 @@
         ::
         [%scry ~]
         ::  respond with the @p the requester is authenticated as
-        ::  TODO: put this back in when we burn the next kelvin
         ::
-        ::  [%name ~]
+        [%name ~]
         ::  respond with the default file not found page
         ::
         [%four-oh-four ~]
