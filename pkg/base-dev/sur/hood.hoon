@@ -52,7 +52,7 @@
   ^-  tank
   =/  ego  (scot %p our)
   =/  wen  (scot %da now)
-  =+  .^(=cass %cw /[ego]/[syd]/[wen])  
+  =+  .^(=cass %cw /[ego]/[syd]/[wen])
   ?:  =(ud.cass 0)
     leaf+"desk does not yet exist: {<syd>}"
   ?:  =(%kids syd)
@@ -113,7 +113,9 @@
   ==
 
 ++  report-vat-short
-  |=  $:  $:  tyr=rock:tire  =cone  sor=(map desk [ship desk])
+  |=  $:  $:  tyr=rock:tire  
+              =cone  
+              sor=(map desk [ship desk])
               zyn=(map [desk ship desk] sync-state)
           ==
           our=ship  now=@da  syd=desk
