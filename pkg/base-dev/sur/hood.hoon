@@ -32,10 +32,13 @@
 ::  +report-vats: report on all desk installations
 ::
 ++  report-vats
-  |=  [our=@p now=@da]
+  |=  [our=@p now=@da short=_|]
   ^-  tang
   =/  desks  .^((set desk) %cd /(scot %p our)/base/(scot %da now))
   =/  prep  (report-prep our now)
+  ?:  short
+    %+  turn  ~(tap in desks) 
+    |=(syd=desk (report-vat-short prep our now syd))
   %+  turn  ~(tap in desks)
   |=(syd=desk (report-vat prep our now syd))
 ::  +report-vat: report on a single desk installation
@@ -49,7 +52,7 @@
   ^-  tank
   =/  ego  (scot %p our)
   =/  wen  (scot %da now)
-  =+  .^(=cass %cw /[ego]/[syd]/[wen])
+  =+  .^(=cass %cw /[ego]/[syd]/[wen])  
   ?:  =(ud.cass 0)
     leaf+"desk does not yet exist: {<syd>}"
   ?:  =(%kids syd)
@@ -108,6 +111,64 @@
       leaf/"kids desk:        {?~(sink <~> ?~(kid.u.sink <~> <u.kid.u.sink>))}"
       leaf/"pending updates:  {<`(list [@tas @ud])`~(tap in wic.dek)>}"
   ==
+
+++  report-vat-short
+  |=  $:  $:  tyr=rock:tire  =cone  sor=(map desk [ship desk])
+              zyn=(map [desk ship desk] sync-state)
+          ==
+          our=ship  now=@da  syd=desk
+      ==
+  ^-  tank
+  =/  ego  (scot %p our)
+  =/  wen  (scot %da now)
+  =+  .^(=cass %cw /[ego]/[syd]/[wen])
+  ?:  =(ud.cass 0)
+    leaf+"desk does not yet exist: {<syd>}"
+  ?:  =(%kids syd)
+    =+  .^(hash=@uv %cz /[ego]/[syd]/[wen])
+    leaf+"%kids %cz hash:     {<hash>}"
+  =/  kel-path
+    /[ego]/[syd]/[wen]/sys/kelvin
+  ?.  .^(? %cu kel-path)
+    leaf+"bad desk: {<syd>}"
+  =+  .^(=waft %cx kel-path)
+  :+  %rose  ["" "{<syd>}" "::"]
+  ^-  tang
+  =/  hash  .^(@uv %cz /[ego]/[syd]/[wen])
+  =/  =sink
+    ?~  s=(~(get by sor) syd)
+      ~
+    ?~  z=(~(get by zyn) syd u.s)
+      ~
+    `[-.u.s +.u.s +.u.z]
+  =/  meb=(list @uv)
+    ?~  sink  [hash]~
+    (mergebase-hashes our syd now her.u.sink sud.u.sink)
+  =/  dek  (~(got by tyr) syd)
+  =/  =foam  (~(got by cone) our syd)
+  =/  [on=(list [@tas ?]) of=(list [@tas ?])]
+    (skid ~(tap by ren.foam) |=([* ?] +<+))
+  =/  sat
+    ?-  zest.dek
+      %live  "running"
+      %dead  "suspended"
+      %held  "suspended until next update"
+    ==
+  =/  kul=tape
+    %+  roll
+      %+  sort
+        ~(tap in (waft-to-wefts:clay waft))
+      |=  [a=weft b=weft]
+      ?:  =(lal.a lal.b)
+        (lte num.a num.b)
+      (lte lal.a lal.b)
+    |=  [=weft =tape]
+    (welp " {<[lal num]:weft>}" tape)
+  :~  leaf/"/sys/kelvin:     {kul}"
+      leaf/"app status:       {sat}"
+      leaf/"pending updates:  {<`(list [@tas @ud])`~(tap in wic.dek)>}"
+  ==
+
 ::  +report-kids: non-vat cz hash report for kids desk
 ::
 ++  report-kids
