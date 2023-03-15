@@ -5319,7 +5319,7 @@
   --
 ++  ag
   |%
-  ++  ape  |*(fel=rule ;~(pose (cold 0 (just '0')) fel))
+  ++  ape  |*(fel=rule ;~(pose (cold `@`0 (just '0')) fel))
   ++  bay  (ape (bass 16 ;~(plug qeb:ab (star ;~(pfix dog qib:ab)))))
   ++  bip  =+  tod=(ape qex:ab)
            (bass 0x1.0000 ;~(plug tod (stun [7 7] ;~(pfix dog tod))))
