@@ -3372,7 +3372,11 @@
             sink(state (~(gut by rcv.peer-state) bone *message-sink-state))
           ::
           ++  abet
-            peer-core(rcv.peer-state (~(put by rcv.peer-state) bone state))
+            ::  if the bone was corked, it's been removed from the state,
+            ::  so we avoid adding it again.
+            ::
+            =?  rcv.peer-state  !corked  (~(put by rcv.peer-state) bone state)
+            peer-core
           ::
           ++  mi-trace
             |=  [verb=? print=(trap tape)]
