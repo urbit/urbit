@@ -263,72 +263,6 @@
     ?~  apps  mo-core
     =/  ap-core  (ap-yoke:ap p.i.apps [~ our] q.i.apps)
     $(apps t.apps, mo-core ap-abet:(ap-rake:ap-core all))
-  ::
-  ++  mo-grow
-    |=  [=dude =case =spur =noun]
-    ^+  mo-core
-    ::  TODO check if path makes any sense
-    ::  - up only?
-    ::  - enforce no skipped aeons?
-    =/  yoke  (~(got by yokes.state) dude)
-    =-  mo-core(yokes.state (~(put by yokes.state) dude yoke(sky -)))
-    =/  sky  sky.yoke
-    ^+  sky
-    =/  yon  ?>(?=(%ud -.case) p.case)
-    =/  old  (~(get by sky) spur)
-    ?~  old  ::  insert binding at new path
-      %+  ~(put by sky)  spur
-      `(put:on-path fan:*path-state yon [%& noun])
-    =>  ?~  bob.u.old
-          .
-        ~|  gall-grow-bob+[path actual=yon max=u.bob.u.old]
-        ?>  (gth yon u.bob.u.old)
-        .
-    =/  val  (get:on-path fan.u.old yon)
-    ?~  val  ::  insert binding at new case
-      %+  ~(put by sky)  spur
-      u.old(fan (put:on-path fan.u.old yon [%& noun]))
-    ?-  -.u.val
-      %&  ?>  =(p.u.val noun)               ::  re-bind same value or die
-          sky
-      %|  ?>  =(p.u.val (shax (jam noun)))  ::  reinflate tombstoned case
-          %+  ~(put by sky)  spur
-          u.old(fan (put:on-path fan.u.old yon [%& noun]))
-    ==
-  ::
-  ++  mo-tomb
-    |=  [=dude =case =spur]
-    ^+  mo-core
-    =/  yoke  (~(got by yokes.state) dude)
-    =-  mo-core(yokes.state (~(put by yokes.state) dude yoke(sky -)))
-    =/  sky  sky.yoke
-    =/  yon  ?>(?=(%ud -.case) p.case)
-    =/  old  (~(get by sky) spur)
-    ?~  old  ::  no-op if nonexistent
-      sky  ::  TODO trace
-    =/  val  (get:on-path fan.u.old yon)
-    ?~  val  ::  no-op if nonexistent
-      sky  ::  TODO trace
-    ?-    -.u.val
-        %|  sky  ::  already tombstoned
-        %&
-      %+  ~(put by sky)  spur  ::  replace with hash
-      u.old(fan (put:on-path fan.u.old yon [%| (shax (jam p.u.val))]))
-    ==
-  ::
-  ++  mo-cull
-    |=  [=dude =case =spur]
-    ^+  mo-core
-    =/  yoke  (~(got by yokes.state) dude)
-    =-  mo-core(yokes.state (~(put by yokes.state) dude yoke(sky -)))
-    =/  sky  sky:(~(got by yokes.state) dude)
-    ^+  sky
-    =/  yon  ?>(?=(%ud -.case) p.case)
-    =/  old  (~(get by sky) spur)
-    ?~  old  ::  no-op if nonexistent
-      sky  ::  TODO trace
-    %+  ~(put by sky)  spur  ::  delete all older paths
-    [`yon (lot:on-path fan.u.old `+(yon) ~)]
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
@@ -1020,6 +954,69 @@
         [%pass wire %agent dock %leave ~]
       =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
       ap-core
+    ::  +ap-grow: bind a path in the agent's scry namespace
+    ::
+    ++  ap-grow
+      |=  [=case =spur =noun]
+      ^+  ap-core
+      =-  ap-core(sky.yoke -)
+      =/  yon  ?>(?=(%ud -.case) p.case)
+      =/  old  (~(get by sky.yoke) spur)
+      ?~  old  ::  insert binding at new path
+        %+  ~(put by sky.yoke)  spur
+        `(put:on-path fan:*path-state yon [%& noun])
+      =>  ?~  bob.u.old
+            .
+          ~|  gall-grow-bob+[path actual=yon max=u.bob.u.old]
+          ?>  (gth yon u.bob.u.old)
+          .
+      =/  val  (get:on-path fan.u.old yon)
+      ?~  val  ::  insert binding at new case
+        %+  ~(put by sky.yoke)  spur
+        u.old(fan (put:on-path fan.u.old yon [%& noun]))
+      ?-    -.u.val
+          %&  ::  re-bind same value
+        ~|  gall-grow-dupe+[agent-name case spur]
+        ?>  =(p.u.val noun)
+        sky.yoke
+      ::
+          %|  ::  reinflate tombstone
+        ~|  gall-grow-hash+[agent-name case spur p.u.val]
+        ?>  =(p.u.val (shax (jam noun)))
+        %+  ~(put by sky.yoke)  spur
+        u.old(fan (put:on-path fan.u.old yon [%& noun]))
+      ==
+    ::  +ap-tomb: tombstone -- replace bound value with hash
+    ::
+    ++  ap-tomb
+      |=  [=case =spur]
+      ^+  ap-core
+      =-  ap-core(sky.yoke -)
+      =/  yon  ?>(?=(%ud -.case) p.case)
+      =/  old  (~(get by sky.yoke) spur)
+      ?~  old  ::  no-op if nonexistent
+        sky.yoke  ::  TODO trace
+      =/  val  (get:on-path fan.u.old yon)
+      ?~  val  ::  no-op if nonexistent
+        sky.yoke  ::  TODO trace
+      ?-    -.u.val
+          %|  sky.yoke  ::  already tombstoned
+          %&            ::  replace with hash
+        %+  ~(put by sky.yoke)  spur
+        u.old(fan (put:on-path fan.u.old yon [%| (shax (jam p.u.val))]))
+      ==
+    ::  +ap-cull: delete all bindings up to and including .case
+    ::
+    ++  ap-cull
+      |=  [=case =spur]
+      ^+  ap-core
+      =-  ap-core(sky.yoke -)
+      =/  yon  ?>(?=(%ud -.case) p.case)
+      =/  old  (~(get by sky.yoke) spur)
+      ?~  old  ::  no-op if nonexistent
+        sky.yoke  ::  TODO trace
+      %+  ~(put by sky.yoke)  spur  ::  delete all older paths
+      [`yon (lot:on-path fan.u.old `+(yon) ~)]
     ::  +ap-from-internal: internal move to move.
     ::
     ::    We convert from cards to duct-indexed moves when resolving
@@ -1028,14 +1025,19 @@
     ::    We accept %huck to "fake" being a message to a ship but
     ::    actually send it to a vane.
     ::
-    +$  neet
-      $%  neat
+    +$  carp  $+  carp  (wind neet gift:agent)
+    +$  neet  $+  neet
+      $<  %grow
+      $<  %tomb
+      $<  %cull
+      $%  note:agent
+          [%agent [=ship name=term] task=[%raw-poke =mark =noun]]
           [%huck [=ship name=term] =note-arvo]
       ==
     ::
     ++  ap-from-internal
       ~/  %ap-from-internal
-      |=  card=(wind neet gift:agent)
+      |=  card=carp
       ^-  (list move)
       ::
       ?-    -.card
@@ -1104,18 +1106,14 @@
           ?-    -.neet
               %agent  [%out (scot %p ship.neet) name.neet wire]
               %huck   [%out (scot %p ship.neet) name.neet wire]
-              ?(%arvo %grow %tomb %cull)
-            [(scot %p attributing.agent-routes) wire]
+              %arvo   [(scot %p attributing.agent-routes) wire]
           ==
         ::
         =/  =note-arvo
           ?-  -.neet
-            %arvo   note-arvo.neet
+            %arvo   +.neet
             %huck   note-arvo.neet
-            %agent  [%g %deal [our ship.neet] [name deal]:neet]
-            %grow   [%g %grow agent-name [case spur noun]:neet]
-            %tomb   [%g %tomb agent-name [case spur]:neet]
-            %cull   [%g %cull agent-name [case spur]:neet]
+            %agent  [%g %deal [our ship.neet] [name task]:neet]
           ==
         [duct %pass wire note-arvo]~
       ==
@@ -1680,7 +1678,7 @@
       =/  ack-moves=(list move)
         %-  zing
         %-  turn  :_  ap-from-internal
-        ^-  (list card:agent)
+        ^-  (list carp)
         ?-  ack
           ~      ~
           %poke-ack   [%give %poke-ack maybe-tang]~
@@ -1700,9 +1698,25 @@
         `ap-core
       ::
       =.  agent.yoke  &++.p.result
-      =/  moves       (zing (turn -.p.result ap-from-internal))
+      =^  fex  ap-core  (ap-handle-sky -.p.result)
+      =/  moves       (zing (turn fex ap-from-internal))
       =.  bitt.yoke   (ap-handle-kicks moves)
       (ap-handle-peers moves)
+    ::  +ap-handle-sky: apply effects to the agent's scry namespace
+    ::
+    ++  ap-handle-sky
+      =|  fex=(list carp)
+      |=  caz=(list card:agent)
+      ^+  [fex ap-core]
+      ?~  caz  [(flop fex) ap-core]
+      ?-  i.caz
+        [%pass * %grow *]  $(caz t.caz, ap-core (ap-grow +.q.i.caz))
+        [%pass * %tomb *]  $(caz t.caz, ap-core (ap-tomb +.q.i.caz))
+        [%pass * %cull *]  $(caz t.caz, ap-core (ap-cull +.q.i.caz))
+        [%pass * ?(%agent %arvo %pyre) *]  $(caz t.caz, fex [i.caz fex])
+        [%give *]  $(caz t.caz, fex [i.caz fex])
+        [%slip *]  !!
+      ==
     ::  +ap-handle-kicks: handle cancels of bitt.watches
     ::
     ++  ap-handle-kicks
@@ -1832,9 +1846,6 @@
       %nuke  mo-abet:(mo-nuke:mo-core dude.task)
       %doff  mo-abet:(mo-doff:mo-core +.task)
       %rake  mo-abet:(mo-rake:mo-core +.task)
-      %grow  mo-abet:(mo-grow:mo-core +.task)
-      %tomb  mo-abet:(mo-tomb:mo-core +.task)
-      %cull  mo-abet:(mo-cull:mo-core +.task)
       %spew  mo-abet:(mo-spew:mo-core veb.task)
       %sift  mo-abet:(mo-sift:mo-core dudes.task)
       %trim  [~ gall-payload]
