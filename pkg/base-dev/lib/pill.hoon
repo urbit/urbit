@@ -32,6 +32,14 @@
       [/sys/hoon hoon/hoon]
       [/sys/arvo hoon/arvo]
   ==
+::  +dirs: filter for userspace directories to include
+::     
+++  dirs
+  |=  [bas=path exc=(list spur)]
+  ?~  exc  ~(tap in dir:.^(arch %cy bas))
+  %+  skim
+    ~(tap in dir:.^(arch %cy bas))
+  |=(=spur =(~ (find ~[spur] exc)))  
 ::  +file-ovum: userspace filesystem load
 ::
 ::    bas: full path to / directory
@@ -39,12 +47,7 @@
 ++  file-ovum
   |=  [des=desk bas=path exc=(list spur)]
   ^-  unix-event
-  =/  dirs
-    ?~  exc  ~(tap in dir:.^(arch %cy bas))
-    %+  skim  
-      ~(tap in dir:.^(arch %cy bas))
-    |=(=spur =(~ (find ~[spur] exc)))
-  %.  dirs
+  %.  (dirs bas exc)
   |=  ::  sal: all spurs to load from
       ::
       sal=(list spur)
@@ -109,12 +112,7 @@
 ::
 ++  user-files
   |=  [bas=path exc=(list spur)]
-  =/  dirs
-    ?~  exc  ~(tap in dir:.^(arch %cy bas))
-    %+  skim
-      ~(tap in dir:.^(arch %cy bas))
-    |=(=spur =(~ (find ~[spur] exc)))
-  %.  dirs
+  %.  (dirs bas exc)
   |=  sal=(list spur)
   ^-  (list (pair path (cask)))
   ::
@@ -153,7 +151,7 @@
 ++  solid
   ::  sys: root path to boot system, `/~me/[desk]/now/sys`
   ::  dez: secondary desks and their root paths
-  ::  exc: list of desk folders to exlclude
+  ::  exc: list of desk folders to exclude
   ::
   |=  [sys=path dez=(list [desk path]) dub=? now=@da prime=? exc=(list spur)]
   ^-  pill
