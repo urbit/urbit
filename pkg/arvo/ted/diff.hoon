@@ -14,8 +14,8 @@
 =/  [b-path=path shallow=flag]  ?:(?=([^ *] b) b [`path`b |])
 =/  a-beam  (need (de-beam a-path))
 =/  b-beam  (need (de-beam b-path))
-;<  a-dome=dome  bind:m  (get-from-clay a-beam dome %v)
-;<  b-dome=dome  bind:m  (get-from-clay b-beam dome %v)
+;<  a-domo=domo  bind:m  (get-from-clay a-beam domo %v)
+;<  b-domo=domo  bind:m  (get-from-clay b-beam domo %v)
 ;<  diffs=(list diff-type)  bind:m  (diff-beams a-beam b-beam)
 %-  pure:m
 !>  ^-  tang
