@@ -968,7 +968,7 @@
       =>  ?~  bob.u.old
             .
           ~|  gall-grow-bob+[path actual=yon max=u.bob.u.old]
-          ?>  (gth yon u.bob.u.old)
+          ?>  (gth yon u.bob.u.old)  ::  enforce high water mark
           .
       =/  val  (get:on-path fan.u.old yon)
       ?~  val  ::  insert binding at new case
@@ -995,17 +995,28 @@
       =/  yon  ?>(?=(%ud -.case) p.case)
       =/  old  (~(get by sky.yoke) spur)
       ?~  old  ::  no-op if nonexistent
-        sky.yoke  ::  TODO trace
+        %.  sky.yoke
+        %+  trace  odd.veb.bug.state
+        [leaf+"gall: {<agent-name>}: tomb {<[case spur]>} no sky"]~
       =/  val  (get:on-path fan.u.old yon)
       ?~  val  ::  no-op if nonexistent
-        sky.yoke  ::  TODO trace
+        %.  sky.yoke
+        %+  trace  odd.veb.bug.state
+        [leaf+"gall: {<agent-name>}: tomb {<[case spur]>} no val"]~
       ?-    -.u.val
-          %|  sky.yoke  ::  already tombstoned
-          %&            ::  replace with hash
+          %|  ::  already tombstoned, no-op
+        %.  sky.yoke
+        %+  trace  odd.veb.bug.state
+        [leaf+"gall: {<agent-name>}: tomb {<[case spur]>} no-op"]~
+      ::
+          %&  ::  replace with hash
         %+  ~(put by sky.yoke)  spur
         u.old(fan (put:on-path fan.u.old yon [%| (shax (jam p.u.val))]))
       ==
     ::  +ap-cull: delete all bindings up to and including .case
+    ::
+    ::    Also store .case as the high water mark for .spur
+    ::    to prevent any deleted cases from being re-bound later.
     ::
     ++  ap-cull
       |=  [=case =spur]
@@ -1014,7 +1025,9 @@
       =/  yon  ?>(?=(%ud -.case) p.case)
       =/  old  (~(get by sky.yoke) spur)
       ?~  old  ::  no-op if nonexistent
-        sky.yoke  ::  TODO trace
+        %.  sky.yoke
+        %+  trace  odd.veb.bug.state
+        [leaf+"gall: {<agent-name>}: cull {<[case spur]>} no-op"]~
       %+  ~(put by sky.yoke)  spur  ::  delete all older paths
       [`yon (lot:on-path fan.u.old `+(yon) ~)]
     ::  +ap-from-internal: internal move to move.
