@@ -39,11 +39,6 @@ on:
         - soon
         - live
 
-env:
-  UPLOAD_BASE: bootstrap.urbit.org/vere
-  VERE_PACE: ${{ inputs.pace }}
-  VERSION_TYPE: ${{ (inputs.pace == 'soon' || inputs.pace == 'live') && 'real' || 'hash' }}
-
 jobs:
   urbit:
     strategy:
@@ -78,8 +73,10 @@ jobs:
         name: run urbit-tests
         run: |
           cp -RL tests pkg/arvo/tests
-          vere="$(cat ./vere-version | sed -e 's/\([^ ]*\) \([^ ]*\)/\1\/\2\/vere-\2/g' | tr -d '\n')"
-          url="$(echo https://bootstrap.urbit.org/vere/${vere}-linux-x86_64)"
+          vere=$(curl https://bootstrap.urbit.org/vere/${{ inputs.pace }}/last)
+          echo $vere
+          url="$(echo https://bootstrap.urbit.org/vere/${{ inputs.pace }}/v${vere}/vere-v${vere}-linux-x86_64)"
+          echo $url
           # put in .jam so it doesn't crash when it gets -A'd in
           curl -Lo pkg/arvo/vere.jam "$url"
           chmod +x pkg/arvo/vere.jam

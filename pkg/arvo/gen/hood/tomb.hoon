@@ -13,7 +13,7 @@
 =/  =lobe  u.fil.arch
 =+  .^(=rang %cx /(scot %p p.bec)//(scot %da now)/rang)
 =+  .^(=cone %cx /(scot %p p.bec)//(scot %da now)/domes)
-=/  domes=(list [[=ship =desk] foam])  ~(tap by cone)
+=/  domes=(list [[=ship =desk] dome])  ~(tap by cone)
 =/  norms
   |^
   |-  ^-  (set [ship desk tako norm path])
@@ -30,7 +30,7 @@
   (~(uni in paths) $(aeon +(aeon)))
   ::
   ++  draw-tako
-    |=  [=ship =desk foam =tako]
+    |=  [=ship =desk dome =tako]
     ^-  (set [^ship ^desk ^tako norm path])
     ~+
     =/  =yaki  (~(got by hut.rang) tako)
