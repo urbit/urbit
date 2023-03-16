@@ -1426,6 +1426,9 @@
         ::  start responding negatively to cors requests from origin
         ::
         [%reject-origin =origin]
+        ::  %spew: set verbosity toggle
+        ::
+        [%spew veb=@]
     ==
   ::  +origin: request origin as specified in an Origin header
   ::
