@@ -1116,10 +1116,10 @@
           ==
         =.  wire
           :^  %use  agent-name  run-nonce.yoke
-          ?-    -.neet
-              %agent  [%out (scot %p ship.neet) name.neet wire]
-              %huck   [%out (scot %p ship.neet) name.neet wire]
-              %arvo   [(scot %p attributing.agent-routes) wire]
+          ?-  -.neet
+            %agent  [%out (scot %p ship.neet) name.neet wire]
+            %huck   [%out (scot %p ship.neet) name.neet wire]
+            %arvo   [(scot %p attributing.agent-routes) wire]
           ==
         ::
         =/  =note-arvo
