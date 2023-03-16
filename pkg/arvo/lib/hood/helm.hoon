@@ -249,6 +249,10 @@
   |=  dry=?  =<  abet
   (emit %pass /helm %arvo %a %kroc dry)
 ::
+++  poke-ames-cong
+  |=  cong=[msg=@ud mem=@ud]  =<  abet
+  (emit %pass /helm %arvo %a %cong cong)
+::
 ++  poke-serve
   |=  [=binding:eyre =generator:eyre]  =<  abet
   (emit %pass /helm/serv %arvo %e %serve binding generator)
@@ -281,6 +285,7 @@
     %helm-ames-verb        =;(f (f !<(_+<.f vase)) poke-ames-verb)
     %helm-ames-wake        =;(f (f !<(_+<.f vase)) poke-ames-wake)
     %helm-ames-kroc        =;(f (f !<(_+<.f vase)) poke-ames-kroc)
+    %helm-ames-cong        =;(f (f !<(_+<.f vase)) poke-ames-cong)
     %helm-atom             =;(f (f !<(_+<.f vase)) poke-atom)
     %helm-automass         =;(f (f !<(_+<.f vase)) poke-automass)
     %helm-cancel-automass  =;(f (f !<(_+<.f vase)) poke-cancel-automass)

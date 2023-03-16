@@ -8,7 +8,7 @@
 %-  flop  ^-  tang
 %-  zing
 %+  turn  ~(tap by cone)
-|=  [[=ship =desk] foam]
+|=  [[=ship =desk] dome]
 :-  leaf+"{<ship>}/{<desk>}:"
 %+  turn  ~(tap of nor)
 |=  [=path keep=?]
