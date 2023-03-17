@@ -1870,6 +1870,42 @@
     [i=i.a t=$(a t.a)]
   --
 ::
+::::  2q: molds and mold builders                       ::
+  ::                                                    ::
+  ::
++$  axis  @                                             ::  tree address
++$  bean  ?                                             ::  0=&=yes, 1=|=no
++$  flag  ?
++$  char  @t                                            ::  UTF8 byte
++$  cord  @t                                            ::  UTF8, LSB first
++$  byts  [wid=@ud dat=@]                               ::  bytes, MSB first
++$  date  [[a=? y=@ud] m=@ud t=tarp]                    ::  parsed date
++$  knot  @ta                                           ::  ASCII text
++$  noun  *                                             ::  any noun
++$  path  (list knot)                                   ::  like unix path
++$  pith  (list iota)                                   ::  typed urbit path
++$  stud                                                ::  standard name
+          $@  mark=@tas                                 ::  auth=urbit
+          $:  auth=@tas                                 ::  standards authority
+              type=path                                 ::  standard label
+          ==                                            ::
++$  tang  (list tank)                                   ::  bottom-first error
+::                                                      ::
++$  iota                                                ::  typed path segment
+  $~  [%n ~]
+  $@  @tas
+  $%  [%ub @ub]  [%uc @uc]  [%ud @ud]  [%ui @ui]
+      [%ux @ux]  [%uv @uv]  [%uw @uw]
+      [%sb @sb]  [%sc @sc]  [%sd @sd]  [%si @si]
+      [%sx @sx]  [%sv @sv]  [%sw @sw]
+      [%da @da]  [%dr @dr]
+      [%f ?]     [%n ~]
+      [%if @if]  [%is @is]
+      [%t @t]    [%ta @ta]  ::  @tas
+      [%p @p]    [%q @q]
+      [%rs @rs]  [%rd @rd]  [%rh @rh]  [%rq @rq]
+  ==
+
 ::    2n: functional hacks
 +|  %functional-hacks
 ::
@@ -5894,6 +5930,39 @@
     ?.  =(~ (rear p))  `p
     ~
   ;~(pfix fas (most fas urs:ab))
+::
+++  stip                                                ::  typed path parser
+  =<  swot
+  |%
+  ++  swot  |=(n=nail (;~(pfix fas (more fas spot)) n))
+  ::
+  ++  spot
+    %+  sear  (soft iota)
+    %-  stew
+    ^.  stet  ^.  limo
+    :~  :-  'a'^'z'  (stag %tas sym)
+        :-  '$'      (cold [%tas %$] buc)
+        :-  '0'^'9'  bisk:so
+        :-  '-'      tash:so
+        :-  '.'      zust:so
+        :-  '~'      ;~(pfix sig ;~(pose crub:so (easy [%n ~])))
+        :-  '\''     (stag %t qut)
+    ==
+  --
+::
+++  pout
+  |=  =pith
+  ^-  path
+  %+  turn  pith
+  |=  i=iota
+  ?@(i i (scot i))
+::
+++  pave
+  |=  =path
+  ^-  pith
+  %+  turn  path
+  |=  i=@ta
+  (fall (rush i spot:stip) [%ta i])
 ::
 ::    4n: virtualization
 +|  %virtualization
@@ -11695,6 +11764,45 @@
       (stag %clsg poor)
     ==
   ::
+  ++  reed
+    ;~  pfix  fas
+      (stag %clsg (more fas stem))
+    ==
+  ::
+  ++  stem
+    %+  knee  *hoon  |.  ~+
+    %+  cook
+      |=  iota=$%([%hoon =hoon] iota)
+      ?@  iota  [%rock %tas iota]
+      ?:  ?=(%hoon -.iota)  hoon.iota
+      [%clhp [%rock %tas -.iota] [%sand iota]]
+    |^  %-  stew
+      ^.  stet  ^.  limo
+      :~  :-  'a'^'z'  ;~  pose
+                         (spit (stag %cncl (ifix [pal par] (most ace wide))))
+                         (spit (ifix [sel ser] wide))
+                         (slot sym)
+                       ==
+          :-  '$'      (cold %$ buc)
+          :-  '0'^'9'  (slot bisk:so)
+          :-  '-'      (slot tash:so)
+          :-  '.'      ;~(pfix dot zust:so)
+          :-  '~'      (slot ;~(pfix sig ;~(pose crub:so (easy [%n ~]))))
+          :-  '\''     (stag %t qut)
+          :-  '['      (slip (ifix [sel ser] wide))
+          :-  '('      (slip (stag %cncl (ifix [pal par] (most ace wide))))
+      ==
+    ::
+    ++  slip  |*(r=rule (stag %hoon r))
+    ++  slot  |*(r=rule (sear (soft iota) r))
+    ++  spit
+      |*  r=rule
+      %+  stag  %hoon
+      %+  cook
+        |*([a=term b=*] `hoon`[%clhp [%rock %tas a] b])
+      ;~((glue lus) sym r)
+    --
+  ::
   ++  rupl
     %+  cook
       |=  [a=? b=(list hoon) c=?]
@@ -12941,6 +13049,8 @@
         (ifix [gal gar] (stag %tell (most ace wide)))
       :-  '>'
         (ifix [gar gal] (stag %yell (most ace wide)))
+      :-  '#'
+        ;~(pfix hax reed)
     ==
   ++  soil
     ;~  pose
@@ -13019,6 +13129,68 @@
                   |=  [%cncl a=hoon b=(list spec)]
                   [%make a b]
                 (rune col %cncl exqz)
+            ==
+          ==
+        :-  '#'
+          ;~  pfix  hax  fas
+            %+  stag  %bccl
+            %+  cook
+              |=  [[i=spec t=(list spec)] e=spec]
+              [i (snoc t e)]
+            ;~  plug
+              %+  most  ;~(less ;~(plug fas tar) fas)
+              %-  stew
+              ^.  stet  ^.  limo
+              :~  :-  ['a' 'z']
+                  ;~  pose
+                    ::  /name=@aura
+                    ::
+                    %+  cook
+                      |=  [=term =aura]
+                      ^-  spec
+                      :+  %bccl
+                        [%leaf %tas aura]
+                      :_  ~
+                      :+  %bcts  term
+                      ?+  aura  [%base %atom aura]
+                        %f  [%base %flag]
+                        %n  [%base %null]
+                      ==
+                    ;~(plug sym ;~(pfix tis pat mota))
+                  ::
+                    ::  /constant
+                    ::
+                    (stag %leaf (stag %tas ;~(pose sym (cold %$ buc))))
+                  ==
+                ::
+                  ::  /@aura
+                  ::
+                  :-  '@'
+                  %+  cook
+                    |=  =aura
+                    ^-  spec
+                    :+  %bccl
+                      [%leaf %tas aura]
+                    [%base %atom aura]~
+                  ;~(pfix pat mota)
+                ::
+                  ::  /?
+                  ::
+                  :-  '?'
+                  (cold [%bccl [%leaf %tas %f] [%base %flag] ~] wut)
+                ::
+                  ::  /~
+                  ::
+                  :-  '~'
+                  (cold [%bccl [%leaf %tas %n] [%base %null] ~] sig)
+              ==
+            ::
+              ::  open-ended or fixed-length
+              ::
+              ;~  pose
+                (cold [%base %noun] ;~(plug fas tar))
+                (easy %base %null)
+              ==
             ==
           ==
       ==
