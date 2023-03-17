@@ -488,7 +488,7 @@
       :_  ~
       %-  unix-event:pill-lib
       %-  file-ovum:pill-lib  :+  desk
-      /(scot %p our.hid)/[desk]/(scot %da now.hid)  ~
+      /(scot %p our.hid)/[desk]/(scot %da now.hid)  ~[/sys]
     =^  ms  state  (poke-pill pil)
     (emit-cards ms)
   ::
