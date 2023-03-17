@@ -36,6 +36,7 @@
 ::     
 ++  dirs
   |=  [bas=path exc=(list spur)]
+  ^-  (list spur)
   ?~  exc  ~(tap in dir:.^(arch %cy bas))
   %+  skim
     ~(tap in dir:.^(arch %cy bas))
