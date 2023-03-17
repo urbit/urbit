@@ -612,20 +612,18 @@
 ::    snub:        blocklist for incoming packets
 ::    cong:        parameters for marking a flow as clogged
 ::
-::    Note: .corks is only still present for unreleased migration reasons
-::
-::
 +$  ames-state
-  $:  peers=(map ship ship-state)  :: TODO: remove krocs from peer-state
+  $:  peers=(map ship ship-state)
       =unix=duct
       =life
       crypto-core=acru:ames
       =bug
-      corks=(set wire)             :: TODO: remove next state update
-      snub=(set ship)
+      snub=[form=?(%allow %deny) ships=(set ship)]
       cong=[msg=@ud mem=@ud]
   ==
-+$  ames-state-4  ames-state-5
+::
++$  azimuth-state  [=symmetric-key =life =rift =public-key sponsor=ship]
++$  ames-state-4   ames-state-5
 +$  ames-state-5
   $:  peers=(map ship ship-state-5)
       =unix=duct
@@ -641,11 +639,7 @@
   ==
 ::
 +$  peer-state-5
-  $:  $:  =symmetric-key
-          =life
-          =public-key
-          sponsor=ship
-      ==
+  $:  azimuth-state
       route=(unit [direct=? =lane])
       =qos
       =ossuary
@@ -653,6 +647,11 @@
       rcv=(map bone message-sink-state)
       nax=(set [=bone =message-num])
       heeds=(set duct)
+  ==
+::
++$  bug-9
+  $:  veb=_[`?`%.n `?`%.n `?`%.n `?`%.n `?`%.n `?`%.n `?`%.n]
+      ships=(set ship)
   ==
 ::
 +$  ames-state-6
@@ -669,12 +668,7 @@
     ==
 ::
 +$  peer-state-6
-  $:  $:  =symmetric-key
-          =life
-          =rift
-          =public-key
-          sponsor=ship
-      ==
+  $:  azimuth-state
       route=(unit [direct=? =lane])
       =qos
       =ossuary
@@ -685,7 +679,7 @@
   ==
 ::
 +$  ames-state-7
-  $:  peers=(map ship ship-state)
+  $:  peers=(map ship ship-state-7)
       =unix=duct
       =life
       crypto-core=acru:ames
@@ -693,7 +687,7 @@
   ==
 ::
 +$  ames-state-8
-  $:  peers=(map ship ship-state)
+  $:  peers=(map ship ship-state-7)
       =unix=duct
       =life
       crypto-core=acru:ames
@@ -701,18 +695,8 @@
       corks=(set wire)
   ==
 ::
-+$  bug-9
-  $:  veb=_[`?`%.n `?`%.n `?`%.n `?`%.n `?`%.n `?`%.n `?`%.n]
-      ships=(set ship)
-  ==
-::
-+$  bug-10
-  $:  veb=_[`?`%.n `?`%.n `?`%.n `?`%.n `?`%.n `?`%.n `?`%.n `?`%.n]
-      ships=(set ship)
-  ==
-::
 +$  ames-state-9
-  $:  peers=(map ship ship-state)
+  $:  peers=(map ship ship-state-7)
       =unix=duct
       =life
       crypto-core=acru:ames
@@ -722,15 +706,54 @@
   ==
 ::
 +$  ames-state-10
-  $:  peers=(map ship ship-state)
+  $:  peers=(map ship ship-state-7)
       =unix=duct
       =life
       crypto-core=acru:ames
-      bug=bug-10
+      =bug
       corks=(set wire)
       snub=(set ship)
   ==
 ::
++$  ship-state-7
+    $%  [%alien alien-agenda]
+        [%known peer-state-7]
+    ==
+::
++$  peer-state-7
+  $:  azimuth-state
+      route=(unit [direct=? =lane])
+      =qos
+      =ossuary
+      snd=(map bone message-pump-state)
+      rcv=(map bone message-sink-state)
+      nax=(set [=bone =message-num])
+      heeds=(set duct)
+      closing=(set bone)
+      corked=(set bone)
+      krocs=(set bone)
+  ==
+::
++$  ames-state-11
+  $:  peers=(map ship ship-state-7)
+      =unix=duct
+      =life
+      crypto-core=acru:ames
+      =bug
+      corks=(set wire)
+      snub=(set ship)
+      cong=[msg=@ud mem=@ud]
+  ==
+::
++$  queued-event-11
+  $%  [%call =duct wrapped-task=(hobo task-11)]
+      [%take =wire =duct =sign]
+  ==
+::
++$  task-11
+  $%  [%snub ships=(list ship)]
+      $<(%snub task)
+  ==
 ::  $bug: debug printing configuration
 ::
 ::    veb: verbosity toggles
@@ -857,7 +880,8 @@
             [%8 ames-state-8]
             [%9 ames-state-9]
             [%10 ames-state-10]
-            [%11 ^ames-state]
+            [%11 ames-state-11]
+            [%12 ^ames-state]
         ==
     ::
     |=  [now=@da eny=@ rof=roof]
@@ -980,7 +1004,7 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%11 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%12 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
           $%  $:  %4
@@ -1033,6 +1057,13 @@
                   [%adult state=ames-state-10]
               ==  ==
               $:  %11
+              $%  $:  %larva
+                      events=(qeu queued-event-11)
+                      state=ames-state-11
+                  ==
+                  [%adult state=ames-state-11]
+              ==  ==
+              $:  %12
               $%  $:  %larva
                       events=(qeu queued-event)
                       state=_ames-state.adult-gate
@@ -1107,14 +1138,34 @@
         =.  queued-events  events.old
         larval-gate
       ::
-          [%11 %adult *]  (load:adult-core %11 state.old)
+          [%11 %adult *]
+        =.  cached-state  `[%11 state.old]
+        ~>  %slog.0^leaf/"ames: larva reload"
+        larval-gate
       ::
           [%11 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
-        =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %11 state.old)
+        =.  queued-events
+          ::  "+rep:in on a +qeu looks strange, but works fine."
+          ::
+          %-  ~(rep in events.old)
+          |=  [e=queued-event-11 q=(qeu queued-event)]
+          %-  ~(put to q)  ^-  queued-event
+          ?.  ?=(%call -.e)  e
+          =/  task=task-11  ((harden task-11) wrapped-task.e)
+          %=  e
+            wrapped-task  ?.(?=(%snub -.task) task [%snub %deny ships.task])
+          ==
         larval-gate
-       ::
+      ::
+          [%12 %adult *]  (load:adult-core %12 state.old)
+      ::
+          [%12 %larva *]
+        ~>  %slog.1^leaf/"ames: larva: load"
+        =.  queued-events  events.old
+        =.  adult-gate     (load:adult-core %12 state.old)
+        larval-gate
+      ::
       ==
     ::  +molt: re-evolve to adult-ames
     ::
@@ -1137,7 +1188,9 @@
         10+(state-9-to-10:load:adult-core +.u.cached-state)
       =?  u.cached-state  ?=(%10 -.u.cached-state)
         11+(state-10-to-11:load:adult-core +.u.cached-state)
-      ?>  ?=(%11 -.u.cached-state)
+      =?  u.cached-state  ?=(%11 -.u.cached-state)
+        12+(state-11-to-12:load:adult-core +.u.cached-state)
+      ?>  ?=(%12 -.u.cached-state)
       =.  ames-state.adult-gate  +.u.cached-state
       [moz larval-core(cached-state ~)]
     --
@@ -1269,9 +1322,9 @@
       ::  +on-snub: handle request to change ship blacklist
       ::
       ++  on-snub
-        |=  ships=(list ship)
+        |=  [form=?(%allow %deny) ships=(list ship)]
         ^+  event-core
-        =.  snub.ames-state  (sy ships)
+        =.  snub.ames-state  [form (sy ships)]
         event-core
       ::  +on-spew: handle request to set verbosity toggles on debug output
       ::
@@ -1417,7 +1470,8 @@
         ::
         ?:  =(our sndr.packet)
           event-core
-        ?:  (~(has in snub.ames-state) sndr.packet)
+        ?:  .=  =(%deny form.snub.ames-state)
+            (~(has in ships.snub.ames-state) sndr.packet)
           %-  (ev-trace rcv.veb sndr.packet |.("snubbed"))
           event-core
         ::
@@ -3712,7 +3766,7 @@
       %jilt  (on-jilt:event-core ship.task)
       %prod  (on-prod:event-core ships.task)
       %sift  (on-sift:event-core ships.task)
-      %snub  (on-snub:event-core ships.task)
+      %snub  (on-snub:event-core [form ships]:task)
       %spew  (on-spew:event-core veb.task)
       %cong  (on-cong:event-core [msg mem]:task)
       %stir  (on-stir:event-core arg.task)
@@ -3750,15 +3804,15 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%11 %adult ames-state]
+++  stay  [%12 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
   =<  |=  $=  old-state
-          $%  [%11 ^ames-state]
+          $%  [%12 ^ames-state]
           ==
       ^+  ames-gate
-      ?>  ?=(%11 -.old-state)
+      ?>  ?=(%12 -.old-state)
       ames-gate(ames-state +.old-state)
   ::  all state transitions are called from larval ames
   ::
@@ -3809,11 +3863,11 @@
     :_  +.ames-state
     %-  ~(run by peers.ames-state)
     |=  ship-state=ship-state-6
-    ^-  ^ship-state
+    ^-  ship-state-7
     ?.  ?=(%known -.ship-state)
       ship-state
     :-  %known
-    ^-  peer-state
+    ^-  peer-state-7
     :-  +<.ship-state
     [route qos ossuary snd rcv nax heeds ~ ~ ~]:ship-state
   ::
@@ -3846,12 +3900,25 @@
   ::
   ++  state-10-to-11
     |=  ames-state=ames-state-10
-    ^-  ^^ames-state
+    ^-  ames-state-11
     =,  ames-state
     :*  peers  unix-duct  life  crypto-core  bug  corks  snub
         ::  5 messages and 100Kb of data outstanding
         ::
         [msg=5 mem=100.000]
+    ==
+  ::
+  ++  state-11-to-12
+    |=  ames-state=ames-state-11
+    ^-  ^^ames-state
+    :_  [unix-duct life crypto-core bug [%deny snub] cong]:ames-state
+    %-  ~(run by peers.ames-state)
+    |=  ship-state=ship-state-7
+    ^-  ^ship-state
+    ?.  ?=(%known -.ship-state)
+      ship-state
+    %=  ship-state
+      +>  [route qos ossuary snd rcv nax heeds closing corked]:+>.ship-state
     ==
   --
 ::  +scry: dereference namespace
@@ -3890,6 +3957,7 @@
   ::  /ax/peers/[ship]/forward-lane  (list lane)
   ::  /ax/bones/[ship]               [snd=(set bone) rcv=(set bone)]
   ::  /ax/snd-bones/[ship]/[bone]    vase
+  ::  /ax/snubbed                    (?(%allow %deny) (list ship))
   ::
   ?.  ?=(%x ren)  ~
   ?+    tyl  ~
@@ -3969,5 +4037,8 @@
     =/  res
       u.mps
     ``noun+!>(!>(res))
+  ::
+      [%snubbed ~]
+    ``noun+!>([form.snub.ames-state ~(tap in ships.snub.ames-state)])
   ==
 --
