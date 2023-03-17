@@ -1153,12 +1153,13 @@
           %-  ~(put to q)  ^-  queued-event
           ?.  ?=(%call -.e)  e
           =/  task=task-11  ((harden task-11) wrapped-task.e)
-          ?.  ?=(%snub -.task)  e
-          e(wrapped-task [%snub form=%deny ships.task])
+          %=  e
+            wrapped-task  ?.(?=(%snub -.task) task [%snub %deny ships.task])
+          ==
         larval-gate
-       ::
+      ::
           [%12 %adult *]  (load:adult-core %12 state.old)
-       ::
+      ::
           [%12 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  queued-events  events.old
