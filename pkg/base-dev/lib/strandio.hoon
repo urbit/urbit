@@ -73,7 +73,9 @@
   ^-  form:m
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
-      ~  `[%wait ~]
+      ~
+    `[%wait ~]
+  ::
       [~ %poke @ *]
     ?.  =(mark p.cage.u.in.tin)
       `[%skip ~]
@@ -87,7 +89,9 @@
   ^-  form:m
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
-      ~  `[%wait ~]
+      ~
+    `[%wait ~]
+  ::
       [~ %sign *]
     `[%done [wire sign-arvo]:u.in.tin]
   ==
@@ -433,7 +437,6 @@
   %-  pure:m
   ?~  full-file.client-response  ''
   q.data.u.full-file.client-response
-
 ::
 ++  fetch-cord
   |=  url=tape
@@ -474,6 +477,18 @@
     (pure:m ~)
   ?>  =(%vase p.r.u.riot)
   (pure:m (some !<(vase q.r.u.riot)))
+::
+++  build-file-hard
+  |=  [[=ship =desk =case] =spur]
+  =*  arg  +<
+  =/  m  (strand ,vase)
+  ^-  form:m
+  ;<    =riot:clay
+      bind:m
+    (warp ship desk ~ %sing %a case spur)
+  ?>  ?=(^ riot)
+  ?>  ?=(%vase p.r.u.riot)
+  (pure:m !<(vase q.r.u.riot))
 ::  +build-mark: build a mark definition to a $dais
 ::
 ++  build-mark
@@ -585,6 +600,23 @@
   ;<  ~  bind:m
     (poke [who %hood] %helm-hi !>(~))
   (pure:m ~)
+::
+++  eval-hoon
+  |=  [gen=hoon bez=(list beam)]
+  =/  m  (strand ,vase)
+  ^-  form:m
+  =/  sut=vase  !>(..zuse)
+  |-
+  ?~  bez
+    (pure:m (slap sut gen))
+  ;<  vax=vase  bind:m  (build-file-hard i.bez)
+  $(bez t.bez, sut (slop vax sut))
+::
+++  send-thread
+  |=  [=bear:khan =shed:khan =wire]
+  =/  m  (strand ,~)
+  ^-  form:m
+  (send-raw-card %pass wire %arvo %k %lard bear shed)
 ::
 ::  Queue on skip, try next on fail %ignore
 ::

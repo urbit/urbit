@@ -31,13 +31,17 @@
 ::
 /-  *group
 /+  store=group-store, default-agent, verb, dbug, resource, *migrate, agentio
+/+  gladio
 |%
 +$  card  card:agent:gall
+++  ota-host  ~sogryp-dister-dozzod-dozzod
 ::
 +$  versioned-state
   $%  state-zero
       state-one
       state-two
+      state-three
+      state-four
   ==
 ::
 +$  state-zero
@@ -52,13 +56,25 @@
   $:  %2
       =groups
   ==
+::
++$  state-three
+  $:  %3
+      =groups
+      wait=(set ship)
+  ==
+::
++$  state-four
+  $:  %4
+      =groups
+      wait=(set ship)
+  ==
 --
 ::
-=|  state-two
+=|  state-four
 =*  state  -
 ::
 %-  agent:dbug
-%+  verb  |
+%+  verb  &
 ^-  agent:gall
 =<
   |_  =bowl:gall
@@ -72,10 +88,32 @@
   ++  on-load
     |=  =old=vase
     =/  old  !<(versioned-state old-vase)
+    =|  cards=(list card)
     |^
-    ?-  -.old
-      %2  `this(state old)
-      ::
+    ?-    -.old
+        %4  [(flop cards) this(state old)]
+    ::
+        %3 
+      %_    $
+          old    [%4 +.old] 
+          cards
+        :_  cards
+        [%pass /pyre/rebuild %agent [our dap]:bowl %poke noun+!>(%rebuild)]
+      ==
+    ::
+        %2
+      %_    $
+          old    [%3 groups.old ~]
+          cards  
+        %-  welp 
+        :_  cards
+        :~  [%pass /pyre/export %agent [our dap]:bowl %poke noun+!>(%export)]
+            [%pass /pyre/migrate %agent [our dap]:bowl %poke noun+!>(%migrate)]
+            [%pass / %agent [our %hood]:bowl %poke %kiln-install !>([%groups ota-host %groups])]
+            [%pass / %agent [our %hood]:bowl %poke %kiln-install !>([%talk ota-host %talk])]
+        ==
+      ==
+    ::
         %1  
       %_    $
         -.old  %2
@@ -113,6 +151,14 @@
       ?+    mark  (on-poke:def mark vase)
         %sane  (poke-sane:gc !<(?(%check %fix) vase))
       ::
+          %noun 
+        ?+  q.vase  !!
+          %migrate  poke-migrate:gc
+          %migrate-my-channels  poke-migrate-my-channels:gc
+          %export   poke-export:gc
+          %rebuild  poke-rebuild:gc
+        ==
+      ::
           ?(%group-update-0 %group-action)
         (poke-group-update:gc !<(update:store vase))
       ::
@@ -125,6 +171,8 @@
     |=  =path
     ^-  (quip card _this)
     ?>  (team:title our.bowl src.bowl)
+    ?:  ?=([%wait ~] path)
+      `this
     ?>  ?=([%groups ~] path)
     :_  this
     [%give %fact ~ %group-update-0 !>([%initial groups])]~
@@ -135,6 +183,8 @@
     |=  =path
     ^-  (unit (unit cage))
     ?+  path  (on-peek:def path)
+        [%x %wait ~]
+      ``ships+!>(~(tap in wait))
         [%y %groups ~]
       ``noun+!>(`(set resource)`~(key by groups))
     ::
@@ -159,28 +209,38 @@
   ++  on-agent
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
-    ?.  ?=([%try-rejoin @ *] wire)
-      (on-agent:def wire sign)
-    ?>  ?=(%poke-ack -.sign)
-    =/  rid=resource  (de-path:resource t.t.wire)
-    ?~  p.sign
-      =/  =cage
-        [%pull-hook-action !>([%add entity.rid rid])]
-      :_  this
-      [%pass / %agent [our.bowl %group-pull-hook] %poke cage]~
-    =/  nack-count=@ud  (slav %ud i.t.wire)
-    =/  wakeup=@da
-      (add now.bowl (mul ~s1 (bex (min 19 nack-count))))
-    :_  this
-    [%pass wire %arvo %b %wait wakeup]~
+    =^  cards  state
+      ?+    wire  [- state]:(on-agent:def wire sign)
+          [%pyre *]      (take-pyre:gc t.wire sign)
+          [%gladio @ ~]  (take-migrate:gc sign)
+      ::
+          [%try-rejoin @ *]
+        ?>  ?=(%poke-ack -.sign)
+        =/  rid=resource  (de-path:resource t.t.wire)
+        ?~  p.sign
+          =/  =cage
+            [%pull-hook-action !>([%add entity.rid rid])]
+          :_  state
+          [%pass / %agent [our.bowl %group-pull-hook] %poke cage]~
+        =/  nack-count=@ud  (slav %ud i.t.wire)
+        =/  wakeup=@da
+          (add now.bowl (mul ~s1 (bex (min 19 nack-count))))
+        :_  state
+        [%pass wire %arvo %b %wait wakeup]~
+      ==
+    [cards this]
   ::
   ++  on-arvo
-    |=  [=wire =sign-arvo]
+    |=  [=(pole knot) =sign-arvo]
     ^-  (quip card _this)
-    ?.  ?=([%try-rejoin @ *] wire)
-      (on-arvo:def wire sign-arvo)
-    =/  =resource       (de-path:resource t.t.wire)
-    =/  nack-count=@ud  (slav %ud i.t.wire)
+    ?:  ?=([%gladio %backoff ship=@ ~] pole)
+      =^  cards  state
+        (take-backoff:gc (slav %p ship.pole) sign-arvo)
+      [cards this]
+    ?.  ?=([%try-rejoin count=@ res=*] pole)
+      (on-arvo:def pole sign-arvo)
+    =/  =resource       (de-path:resource res.pole)
+    =/  nack-count=@ud  (slav %ud count.pole)
     ?>  ?=([%behn %wake *] sign-arvo)
     ~?  ?=(^ error.sign-arvo)
       "behn errored in backoff timers, continuing anyway"
@@ -192,6 +252,111 @@
 ::
 |_  bol=bowl:gall
 +*  io  ~(. agentio bol)
+++  poke-rebuild
+  ^-  (quip card _state)
+  |^  
+  =.  wait
+    put-missing
+  =^  cards  state
+    rewatch
+  [cards state]
+  ::
+  ++  rewatch
+    =/  wait  ~(tap in wait)
+    =|  cards=(list card)
+    |-
+    ?~  wait
+      [cards state]
+    =/  wir  /gladio/(scot %p i.wait)
+    =.  cards
+      :_(cards (watch-init-migrate i.wait))
+    ::  if we have a subscription already, leave first to restart
+    =?  cards
+        (~(has by wex.bol) [wir i.wait %groups])
+      :_(cards [%pass wir %agent [i.wait %groups] %leave ~])
+    $(wait t.wait)
+  ::
+  ++  put-missing
+    =/  wex  ~(tap by wex.bol)
+    |-
+    ?~  wex
+      wait
+    =/  [[=wire =ship =term] [acked=? =(pole knot)]]
+      i.wex
+    ?.  ?=([%gladio ship=@ ~] pole)
+      $(wex t.wex)
+    $(wex t.wex, wait (~(put in wait) (slav %p ship.pole)))
+  --
+::
+++  poke-export
+  ^-  (quip card _state)
+  :_  state
+  =;  =cage
+    [%pass /export %agent [our.bol %hood] %poke cage]~
+  drum-put+!>([/groups/jam ~(export gladio bol)])
+::
+++  poke-migrate
+  ^-  (quip card _state)
+  =^  cards-1=(list card)  wait
+    (~(migrate-start gladio bol) wait)
+  =/  cards-2=(list card)
+    (turn ~(tap in wait) watch-init-migrate)
+  =/  cards  (welp cards-1 cards-2)
+  [cards state(wait wait)]
+++  poke-migrate-my-channels
+  ^-  (quip card _state)
+  =/  [cards=(list card) *]  (~(migrate-my-channels gladio bol) ~)
+  [cards state]
+::
+++  watch-init-migrate
+  |=  =ship
+  ^-  card
+  [%pass /gladio/(scot %p ship) %agent [ship %groups] %watch /init]
+::
+++  backoff-migrate
+  |=  =ship
+  ^-  card
+  [%pass /gladio/backoff/(scot %p ship) %arvo %b %wait (add ~h1 now.bol)]
+::
+++  take-pyre
+  |=  [=wire =sign:agent:gall]
+  ^-  (quip card _state)
+  :_  state
+  ?>  ?=(%poke-ack -.sign)
+  ?~  p.sign
+    ~
+  [%pass / %pyre leaf/"{<wire>} failed" u.p.sign]~
+::
+++  take-backoff
+  |=  [=ship sign=sign-arvo]
+  ^-  (quip card _state)
+  ?>  ?=([%behn %wake *] sign)
+  ?:  ?=(^ error.sign)
+    `state
+  :_  state
+  ~[(watch-init-migrate ship)]
+::
+++  take-migrate
+  |=  =sign:agent:gall
+  ^-  (quip card _state)
+  ?.  (~(has in wait) src.bol)
+    ::  already succeeded
+    `state
+  ?-    -.sign  
+      ?(%poke-ack %fact)  `state
+      %kick               :_(state (watch-init-migrate src.bol)^~)
+      %watch-ack
+    ?~  p.sign
+      ::  they have public release
+      ~&  migrating/src.bol
+      =.  wait  (~(del in wait) src.bol)
+      :_  state
+      :-  [%give %fact ~[/wait] ships+!>(~(tap in wait))]
+      (~(migrate-ship gladio bol) src.bol)
+    :_  state
+    ~[(backoff-migrate src.bol)]
+  ==
+::
 ++  peek-group
   |=  rid=resource
   ^-  (unit group)
@@ -243,8 +408,8 @@
   |=  arc=*
   ^-  (quip card _state)
   |^
-  =/  sty=state-two
-    [%2 (remake-groups ;;((tree [resource tree-group]) +.arc))]
+  =/  sty=state-four
+    [%4 (remake-groups ;;((tree [resource tree-group]) +.arc)) ~]
   :_  sty
   %+  roll  ~(tap by groups.sty)
   |=  [[rid=resource grp=group] out=(list card)]

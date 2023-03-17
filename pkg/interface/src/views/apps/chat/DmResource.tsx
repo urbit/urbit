@@ -1,5 +1,6 @@
 import { acceptDm, cite, Content, declineDm, deSig, Post } from '@urbit/api';
 import React, { useCallback, useEffect } from 'react';
+import Helmet from 'react-helmet';
 import _ from 'lodash';
 import bigInt from 'big-integer';
 import { Box, Row, Col, Text, Center } from '@tlon/indigo-react';
@@ -47,6 +48,21 @@ function quoteReply(post: Post) {
     .map(l => `> ${l}`)
     .join('\n');
   return `${reply}\n\n~${post.author}:`;
+}
+
+export function DmHelmet(props: DmHelmetProps) {
+  const { ship } = props;
+  const hark = useHarkDm(ship);
+  const unreadCount = hark.count;
+  const contact = useContact(ship);
+  const { hideNicknames } = useSettingsState(selectCalmState);
+  const showNickname = !hideNicknames && Boolean(contact);
+  const nickname = showNickname ? contact!.nickname : cite(ship) ?? ship;
+  return(
+    <Helmet defer={false}>
+      <title>{unreadCount ? `(${String(unreadCount)}) ` : ''}{ nickname }</title>
+    </Helmet>
+  );
 }
 
 export function DmResource(props: DmResourceProps) {

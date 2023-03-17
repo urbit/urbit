@@ -70,7 +70,7 @@
 ++  axle
   $:  ::  date: date at which http-server's state was updated to this data structure
       ::
-      date=%~2020.10.18
+      date=%~2022.7.26
       ::  server-state: state of inbound requests
       ::
       =server-state
@@ -551,6 +551,18 @@
       (easy ~)
     ==
   ==
+::  +host-sans-port: strip the :<port> from a host string
+::
+++  host-sans-port
+  ;~  sfix
+    %+  cook  crip
+    %-  star
+    ;~  less
+      ;~(plug col (punt dem) ;~(less next (easy ~)))
+      next
+    ==
+    (star next)
+  ==
 ::  +per-server-event: per-event server core
 ::
 ++  per-server-event
@@ -602,6 +614,31 @@
       [action [authenticated secure address request] ~ 0]
     =.  connections.state
       (~(put by connections.state) duct connection)
+    ::  redirect to https if insecure, redirects enabled
+    ::  and secure port live
+    ::
+    ?:  ?&  !secure
+            redirect.http-config.state
+            ?=(^ secure.ports.state)
+        ==
+      =/  location=@t
+        %+  rap  3
+        :~  'https://'
+            (rash (fall host '') host-sans-port)
+            ?:  =(443 u.secure.ports.state)
+              ''
+            (crip ":{(a-co:co u.secure.ports.state)}")
+            ?:  ?=([[~ ~] ~] (parse-request-line url.request))
+              '/'
+            url.request
+        ==
+      %-  handle-response
+      :*  %start
+          :-  status-code=301
+          headers=['location' location]~
+          data=~
+          complete=%.y
+      ==
     ::  figure out whether this is a cors request,
     ::  whether the origin is approved or not,
     ::  and maybe add it to the "pending approval" set
@@ -708,10 +745,31 @@
         %scry
       (handle-scry authenticated address request(url suburl))
     ::
+        %name
+      (handle-name authenticated request)
+    ::
         %four-oh-four
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 authenticated url.request ~)
     ==
+  ::  +handle-name: respond with our @p or 403
+  ::
+  ++  handle-name
+    |=  [authenticated=? =request:http]
+    |^  ^-  (quip move server-state)
+    ?.  authenticated
+      (error-response 403 ~)
+    ?.  =(%'GET' method.request)
+      (error-response 405 "may only GET name")
+    %^  return-static-data-on-duct  200  'text/plain'
+    (as-octs:mimes:html (scot %p our))
+    ::
+    ++  error-response
+      |=  [status=@ud =tape]
+      ^-  (quip move server-state)
+      %^  return-static-data-on-duct  status  'text/html'
+      (error-page status authenticated url.request tape)
+    --
   ::  +handle-scry: respond with scry result, 404 or 500
   ::
   ++  handle-scry
@@ -811,7 +869,7 @@
           %leave  ~
       ==
     ::
-        ?(%authentication %logout)
+        ?(%authentication %logout %name)
       [~ state]
     ::
         %channel
@@ -900,6 +958,7 @@
         (session-cookie-string session &)
       ::
       =;  out=[moves=(list move) server-state]
+        =.  moves.out  [give-session-tokens moves.out]
         ::  if we didn't have any cookies previously, start the expiry timer
         ::
         ?.  first-session  out
@@ -974,7 +1033,7 @@
       ?~  channels
         =^  moz  state
           (handle-response response)
-        [(weld moves moz) state]
+        [[give-session-tokens (weld moves moz)] state]
       =^  moz  state
         (discard-channel:by-channel i.channels |)
       $(moves (weld moves moz), channels t.channels)
@@ -1228,7 +1287,7 @@
       ::  the request may include a 'Last-Event-Id' header
       ::
       =/  maybe-last-event-id=(unit @ud)
-        ?~  maybe-raw-header=(get-header:http 'Last-Event-ID' header-list.request)
+        ?~  maybe-raw-header=(get-header:http 'last-event-id' header-list.request)
           ~
         (rush u.maybe-raw-header dum:ag)
       ::  flush events older than the passed in 'Last-Event-ID'
@@ -2058,6 +2117,13 @@
       (cury cat 3)
     ?~  ext.request-line  ''
     (cat 3 '.' u.ext.request-line)
+  ::  +give-session-tokens: send valid session tokens to unix
+  ::
+  ++  give-session-tokens
+    ^-  move
+    :-  outgoing-duct.state
+    =*  ses  sessions.authentication-state.state
+    [%give %sessions (~(run in ~(key by ses)) (cury scot %uv))]
   --
 ::
 ++  forwarded-params
@@ -2170,6 +2236,7 @@
           [[~ /~/logout] duct [%logout ~]]
           [[~ /~/channel] duct [%channel ~]]
           [[~ /~/scry] duct [%scry ~]]
+          [[~ /~/name] duct [%name ~]]
       ==
     [~ http-server-gate]
   ::  %trim: in response to memory pressure
@@ -2178,7 +2245,7 @@
   ::    XX cancel active too if =(0 trim-priority) ?
   ::
   ?:  ?=(%trim -.task)
-    =/  event-args  [[eny duct now rof] server-state.ax]
+    =*  event-args  [[eny duct now rof] server-state.ax]
     =*  by-channel  by-channel:(per-server-event event-args)
     =*  channel-state  channel-state.server-state.ax
     ::
@@ -2236,12 +2303,15 @@
     =.  outgoing-duct.server-state.ax  duct
     ::
     :_  http-server-gate
-    ;:  weld
-      ::  hand back default configuration for now
+    :*  ::  hand back default configuration for now
+        ::
+        [duct %give %set-config http-config.server-state.ax]
+        ::  provide a list of valid auth tokens
+        ::
+        =<  give-session-tokens
+        (per-server-event [eny duct now rof] server-state.ax)
       ::
-      [duct %give %set-config http-config.server-state.ax]~
-    ::
-      closed-connections
+        closed-connections
     ==
   ::
   ?:  ?=(%code-changed -.task)
@@ -2272,6 +2342,10 @@
       ::
       %live
     =.  ports.server-state.ax  +.task
+    ::  enable http redirects if https port live and cert set
+    ::
+    =.  redirect.http-config.server-state.ax
+      &(?=(^ secure.task) ?=(^ secure.http-config.server-state.ax))
     [~ http-server-gate]
       ::  %rule: updates our http configuration
       ::
@@ -2284,6 +2358,10 @@
       ?:  =(secure.config cert.http-rule.task)
         [~ http-server-gate]
       =.  secure.config  cert.http-rule.task
+      =.  redirect.config
+        ?&  ?=(^ secure.ports.server-state.ax)
+            ?=(^ cert.http-rule.task)
+        ==
       :_  http-server-gate
       =*  out-duct  outgoing-duct.server-state.ax
       ?~  out-duct  ~
@@ -2507,6 +2585,8 @@
     ::
     ^-  [(list move) _http-server-gate]
     :_  http-server-gate
+    :-  =<  give-session-tokens
+        (per-server-event [eny duct now rof] server-state.ax)
     ?:  =(~ sessions)  ~
     =;  next-expiry=@da
       [duct %pass /sessions/expire %b %wait next-expiry]~
@@ -2532,9 +2612,36 @@
 ::  +load: migrate old state to new state (called on vane reload)
 ::
 ++  load
-  |=  old=axle
+  =>  |%
+    ++  axle-old
+      %+  cork
+        axle
+      |=  =axle
+      axle(date %~2020.10.18)
+  --
+  |=  old=$%(axle axle-old)
   ^+  ..^$
-  ..^$(ax old)
+  ::
+  ?-    -.old
+      %~2020.10.18
+    %=  $
+      date.old  %~2022.7.26
+      ::
+        bindings.server-state.old
+      %+  insert-binding
+        [[~ /~/name] outgoing-duct.server-state.old [%name ~]]
+      bindings.server-state.old
+    ==
+  ::
+      %~2022.7.26
+    ::  enable https redirects if certificate configured
+    ::
+    =.  redirect.http-config.server-state.old
+      ?&  ?=(^ secure.ports.server-state.old)
+          ?=(^ secure.http-config.server-state.old)
+      ==
+    ..^$(ax old)
+  ==
 ::  +stay: produce current state
 ::
 ++  stay  `axle`ax
@@ -2617,13 +2724,11 @@
       =*  domains  domains.server-state.ax
       =*  ports  ports.server-state.ax
       =/  =host:eyre  [%& ?^(domains n.domains /localhost)]
-      =/  secure=?  &(?=(^ secure.ports) !?=(hoke:eyre host))
       =/  port=(unit @ud)
-        ?.  secure
+        ?.  ?=(^ secure.ports)
           ?:(=(80 insecure.ports) ~ `insecure.ports)
-        ?>  ?=(^ secure.ports)
         ?:(=(443 u.secure.ports) ~ secure.ports)
-      ``[secure port host]
+      ``[?=(^ secure.ports) port host]
     ==
   ==
 --

@@ -716,7 +716,7 @@
                   'rtt'^(numb (div rtt ~s1))
                   'rttvar'^(numb (div rttvar ~s1))
                   'ssthresh'^(numb ssthresh)
-                  'num-live'^(numb num-live)
+                  'num-live'^(numb ~(wyt by live))
                   'cwnd'^(numb cwnd)
                   'counter'^(numb counter)
               ==
@@ -801,8 +801,8 @@
     =/  heads=(list [tako desk])
       %+  turn  ~(tap in desks)
       |=  =desk
-      =+  .^(=dome %cv /(scot %p our.bowl)/[desk]/(scot %da now.bowl))
-      =/  =tako  (~(got by hit.dome) let.dome)
+      =+  .^(=domo %cv /(scot %p our.bowl)/[desk]/(scot %da now.bowl))
+      =/  =tako  (~(got by hit.domo) let.domo)
       [tako desk]
     =/  yakis=(set yaki)
       %-  silt

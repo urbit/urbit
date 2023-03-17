@@ -5,7 +5,6 @@
     %group-store
     %invite-store
     %s3-store
-    %chat-cli
     %chat-hook
     %chat-view
     %clock
@@ -29,7 +28,6 @@
     %metadata-hook
     %metadata-pull-hook
     %metadata-push-hook
-    %notify
     %observe-hook
     %sane
     %weather

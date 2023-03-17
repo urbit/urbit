@@ -15,4 +15,7 @@
   ?@  +.arg  [q.bec -.arg]
   ?>  ((sane %tas) +<.arg)
   [-.arg +<.arg]
-[%kiln-rein des & [dap ~ ~] ~]
+=+  .^(=cone:clay %cx /(scot %p p.bec)//(scot %da now)/domes)
+=/  =dome:clay  (~(gut by cone) [p.bec des] *dome:clay)
+=+  ((slog ?:(=(%live liv.dome) ~ ['kiln: desk not live' ~])) ~)
+[%kiln-rein des (~(put by ren.dome) dap &)]
