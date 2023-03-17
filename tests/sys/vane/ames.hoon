@@ -458,7 +458,7 @@
   ::
   %+  expect-eq
     !>  [~[/g/talk] %give %done `error]
-    !>  (snag 1 `(list move:ames)`moves5)
+    !>  (snag 0 `(list move:ames)`moves5)
 ::
 ++  test-old-ames-wire  ^-  tang
   =^  moves0  bud  (call bud ~[/g/hood] %spew [%odd]~)
