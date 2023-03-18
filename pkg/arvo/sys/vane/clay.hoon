@@ -98,6 +98,7 @@
 |=  our=ship
 =,  clay
 =>  |%
++$  link  (trel path @uvJ page)
 +$  aeon  @ud                                           ::  version number
 ::
 ::  Part of ++mery, representing the set of changes between the mergebase and
@@ -847,6 +848,10 @@
         ~|(cycle+file+path^cycle.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) file+path)
       =^  cag=cage  nub  (read-file path)
+      =?  cag  =(%link p.cag)
+        =+  !<(=link q.cag)
+        ?>  =(p.r.link %hoon)
+        [%hoon ;;(@t q.r.link)]
       ?>  =(%hoon p.cag)
       =/  tex=tape  (trip !<(@t q.cag))
       =/  =pile  (parse-pile path tex)
