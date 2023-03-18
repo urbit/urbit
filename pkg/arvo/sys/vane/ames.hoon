@@ -3440,6 +3440,15 @@
           ++  closing    (~(has in closing.peer-state) bone)
           ++  corked     (~(has in corked.peer-state) bone)
           ++  pump-core  |=(=^bone (mu bone *message-pump-state))
+          ++  received
+            |=  =^bone
+            ::    odd bone:                %plea request message
+            ::    even bone, 0 second bit: %boon response message
+            ::    even bone, 1 second bit: nack-trace %boon message
+            ::
+            ?:  =(1 (end 0 bone))          %plea
+            ?:  =(0 (end 0 (rsh 0 bone)))  %boon
+            %nack
           ::
           +|  %entry-points
           ::  +call: handle a $message-sink-task
@@ -3447,18 +3456,24 @@
           ++  call
             |=  task=message-sink-task
             ^+  sink
-            ::  if we get a plea request and have corked this flow, always ack
-            ::
-            ?:  corked
-              =?  peer-core  &(?=(%hear -.task) =(1 (end 0 bone)))
-                %-  (mi-trace odd.veb |.("hear plea on a corked bone={<bone>}"))
-                %+  send-shut-packet  bone
-                [message-num.shut-packet.task %| %| ok=& lag=*@dr]
-              sink
             ?-  -.task
               %drop  sink(nax.state (~(del in nax.state) message-num.task))
               %done  (done ok.task)
-              %hear  (hear [lane shut-packet ok]:task)
+            ::
+                %hear
+              ?.  ?|  corked
+                      ?&  %*(corked sink bone (mix 0b10 bone))
+                          =(%nack (received bone))
+                  ==  ==
+               (hear [lane shut-packet ok]:task)
+              ::  if we %hear a task on a corked bone, always ack
+              ::
+              =.  peer-core
+                %+  send-shut-packet  bone
+                [message-num.shut-packet.task %| %| ok=& lag=*@dr]
+              %.  sink
+              %+  mi-trace  odd.veb
+              |.("hear {<(received bone)>} on corked bone={<bone>}")
             ==
           ::
           +|  %tasks
@@ -3628,18 +3643,12 @@
           +|  %implementation
           ::  +handle-sink: dispatch message
           ::
-          ::    odd bone:                %plea request message
-          ::    even bone, 0 second bit: %boon response message
-          ::    even bone, 1 second bit: nack-trace %boon message
-          ::
           ++  handle-sink
             |=  [=message-num message=* ok=?]
-            |^  ^+  sink
-                ?:  =(1 (end 0 bone))          sink-plea
-                ?:  =(0 (end 0 (rsh 0 bone)))  sink-boon
-                sink-nack
-            ::  XX  FIXME: impure +abet pattern
-            ++  sink-plea
+            ^+  sink
+            |^  ?-((received bone) %plea ha-plea, %boon ha-boon, %nack ha-nack)
+            ::
+            ++  ha-plea
               ^+  sink
               ?:  |(closing corked)  sink
               %-  %+  mi-trace  msg.veb
@@ -3673,7 +3682,7 @@
               =.  closing.peer-state  (~(put in closing.peer-state) bone)
               (pe-emit duct %pass wire %a %plea her [%a /close ~])
             ::
-            ::  +sink-boon: handle response message, acking unconditionally
+            ::  +ha-boon: handle response message, acking unconditionally
             ::
             ::    .bone must be mapped in .ossuary.peer-state, or we crash.
             ::    This means a malformed message will kill a flow.  We
@@ -3687,7 +3696,7 @@
             ::    TODO: This handles a previous crash in the client vane, but
             ::    not in %ames itself.
             ::
-            ++  sink-boon
+            ++  ha-boon
               ^+  sink
               ?:  |(closing corked)  sink
               %-  %+  mi-trace  msg.veb  |.
@@ -3708,7 +3717,7 @@
               ::
               (call %done ok=%.y)
             ::
-            ++  sink-nack
+            ++  ha-nack
               ^+  sink
               ::  if we get a naxplanation for a %cork, the publisher hasn't
               ::  received the OTA. The /recork timer will retry eventually.
