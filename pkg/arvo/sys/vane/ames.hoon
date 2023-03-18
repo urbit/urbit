@@ -1466,7 +1466,7 @@
         ~/  %on-hear-packet
         |=  [=lane =packet dud=(unit goof)]
         ^+  event-core
-        %-  (ev-trace odd.veb sndr.packet |.("received packet"))
+        %-  (ev-trace rcv.veb sndr.packet |.("received packet"))
         ::
         ?:  =(our sndr.packet)
           event-core
