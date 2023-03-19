@@ -1869,43 +1869,6 @@
     ?~  a  b
     [i=i.a t=$(a t.a)]
   --
-::
-::::  2q: molds and mold builders                       ::
-  ::                                                    ::
-  ::
-+$  axis  @                                             ::  tree address
-+$  bean  ?                                             ::  0=&=yes, 1=|=no
-+$  flag  ?
-+$  char  @t                                            ::  UTF8 byte
-+$  cord  @t                                            ::  UTF8, LSB first
-+$  byts  [wid=@ud dat=@]                               ::  bytes, MSB first
-+$  date  [[a=? y=@ud] m=@ud t=tarp]                    ::  parsed date
-+$  knot  @ta                                           ::  ASCII text
-+$  noun  *                                             ::  any noun
-+$  path  (list knot)                                   ::  like unix path
-+$  pith  (list iota)                                   ::  typed urbit path
-+$  stud                                                ::  standard name
-          $@  mark=@tas                                 ::  auth=urbit
-          $:  auth=@tas                                 ::  standards authority
-              type=path                                 ::  standard label
-          ==                                            ::
-+$  tang  (list tank)                                   ::  bottom-first error
-::                                                      ::
-+$  iota                                                ::  typed path segment
-  $~  [%n ~]
-  $@  @tas
-  $%  [%ub @ub]  [%uc @uc]  [%ud @ud]  [%ui @ui]
-      [%ux @ux]  [%uv @uv]  [%uw @uw]
-      [%sb @sb]  [%sc @sc]  [%sd @sd]  [%si @si]
-      [%sx @sx]  [%sv @sv]  [%sw @sw]
-      [%da @da]  [%dr @dr]
-      [%f ?]     [%n ~]
-      [%if @if]  [%is @is]
-      [%t @t]    [%ta @ta]  ::  @tas
-      [%p @p]    [%q @q]
-      [%rs @rs]  [%rd @rd]  [%rh @rh]  [%rq @rq]
-  ==
-
 ::    2n: functional hacks
 +|  %functional-hacks
 ::
@@ -2071,12 +2034,28 @@
 +$  knot  @ta                                           ::  ASCII text
 +$  noun  *                                             ::  any noun
 +$  path  (list knot)                                   ::  like unix path
++$  pith  (list iota)                                   ::  typed urbit path
 +$  stud                                                ::  standard name
           $@  mark=@tas                                 ::  auth=urbit
           $:  auth=@tas                                 ::  standards authority
               type=path                                 ::  standard label
           ==                                            ::
 +$  tang  (list tank)                                   ::  bottom-first error
+::                                                      ::
++$  iota                                                ::  typed path segment
+  $~  [%n ~]
+  $@  @tas
+  $%  [%ub @ub]  [%uc @uc]  [%ud @ud]  [%ui @ui]
+      [%ux @ux]  [%uv @uv]  [%uw @uw]
+      [%sb @sb]  [%sc @sc]  [%sd @sd]  [%si @si]
+      [%sx @sx]  [%sv @sv]  [%sw @sw]
+      [%da @da]  [%dr @dr]
+      [%f ?]     [%n ~]
+      [%if @if]  [%is @is]
+      [%t @t]    [%ta @ta]  ::  @tas
+      [%p @p]    [%q @q]
+      [%rs @rs]  [%rd @rd]  [%rh @rh]  [%rq @rq]
+  ==
 ::
 ::  $tank: formatted print tree
 ::
