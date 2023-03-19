@@ -2,6 +2,6 @@
 :-  %say
 |=  [^ [arg=path ~] ~]
 =/  =page
-  [(rear arg) q:.^(vase %cr path)]
+  [(rear arg) q:.^(vase %cr arg)]
 :-  %link
 [arg *@uv page]
