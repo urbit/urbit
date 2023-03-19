@@ -851,7 +851,7 @@
       =?  cag  =(%link p.cag)
         =+  !<(=link q.cag)
         ?>  =(p.r.link %hoon)
-        [%hoon ;;(@t q.r.link)]
+        [%hoon [%atom %t ~] ;;(@t q.r.link)]
       ?>  =(%hoon p.cag)
       =/  tex=tape  (trip !<(@t q.cag))
       =/  =pile  (parse-pile path tex)
