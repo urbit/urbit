@@ -1,5 +1,8 @@
 ::  autoprop: make pills & props when desk contents change
 ::
+::    link at the dojo command line:
+::      |link %autoprop
+::
 ::    auto-build a new .urb/put/latest-solid.pill:
 ::      +latest-solid solid %kids %garden
 ::

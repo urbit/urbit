@@ -361,7 +361,7 @@
   ::    %init: vane boot
   ::    %prod: re-send a packet per flow, to all peers if .ships is ~
   ::    %sift: limit verbosity to .ships
-  ::    %snub: set packet blacklist to .ships
+  ::    %snub: set packet blocklist to .ships
   ::    %spew: set verbosity toggles
   ::    %cong: adjust congestion control parameters
   ::    %stir: recover from timer desync
@@ -380,7 +380,7 @@
         $>(%init vane-task)
         [%prod ships=(list ship)]
         [%sift ships=(list ship)]
-        [%snub ships=(list ship)]
+        [%snub form=?(%allow %deny) ships=(list ship)]
         [%spew veb=(list verb)]
         [%cong msg=@ud mem=@ud]
         [%stir arg=@t]
@@ -522,7 +522,6 @@
   ::    heeds: listeners for %clog notifications
   ::    closing: bones closed on the sender side
   ::    corked:  bones closed on both sender and receiver
-  ::    krocs:   bones that need to be sent again to the publisher
   ::
   +$  peer-state
     $:  $:  =symmetric-key
@@ -540,7 +539,6 @@
         heeds=(set duct)
         closing=(set bone)
         corked=(set bone)
-        krocs=(set bone)
     ==
   ::  $qos: quality of service; how is our connection to a peer doing?
   ::
@@ -1426,6 +1424,9 @@
         ::  start responding negatively to cors requests from origin
         ::
         [%reject-origin =origin]
+        ::  %spew: set verbosity toggle
+        ::
+        [%spew veb=@]
     ==
   ::  +origin: request origin as specified in an Origin header
   ::

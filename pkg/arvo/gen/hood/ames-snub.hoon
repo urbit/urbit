@@ -5,6 +5,6 @@
 ::::
   ::
 :-  %say
-|=  [^ ships=(list ship) ~]
+|=  [^ [form=?(%allow %deny) ships=(list ship)] ~]
 :-  %helm-ames-snub
-ships
+[form ships]
