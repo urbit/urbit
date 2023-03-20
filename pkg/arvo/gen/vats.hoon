@@ -1,6 +1,20 @@
 /-  *hood
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
-        [arg=~ ~]
+        $@(~ [?(%suspended %running %blocking %nonexistent) ~])
+        $:  verb=?
+            show-suspended=?
+            show-running=?
+            show-blocking=?
+            show-nonexistent=?
+        ==
     ==
-[%tang (report-vats p.bec now)]
+=+  :-  verb
+    ?~  +<+<        +<+>+
+    ?-  -.+<+<
+      %suspended    [& | | |]
+      %running      [| & | |]
+      %blocking     [| | & |]
+      %nonexistent  [| | | &]
+    ==
+tang+((report-vats p.bec now) -)
