@@ -4559,7 +4559,8 @@
   ++  ford
     |=  [her=ship syd=desk yon=(unit aeon)]
     =/  den  ((de now rof hen ruf) her syd)
-    (aeon-ford:den ?~(yon let.dom:den u.yon))
+    %-  tako-ford:den
+    (~(got by hit.dom) ?~(yon let.dom:den u.yon))
   ::  +wrap: save ford cache
   ::
   ++  wrap
