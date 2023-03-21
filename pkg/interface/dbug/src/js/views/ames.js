@@ -35,6 +35,16 @@ export class Ames extends Component {
     api.getPeer(who);
   }
 
+  renderPaths(paths) {
+    const items = paths.map(path => {
+      return {
+        key: path,
+        jsx: path
+      }
+    });
+    return <SearchableList placeholder="path" items={items}/>;
+  }
+
   renderDucts(ducts) {
     const items = ducts.map(duct => {
       return {
@@ -91,7 +101,7 @@ export class Ames extends Component {
             <td>fragment-num</td>
             <td>num-fragments</td>
             <td>last-sent</td>
-            <td>retries</td>
+            <td>tries</td>
             <td>skips</td>
           </tr>
           <tr>
@@ -99,7 +109,7 @@ export class Ames extends Component {
             <td>{live['fragment-num']}</td>
             <td>{live['num-fragments']}</td>
             <td>{msToDa(live['last-sent'])}</td>
-            <td>{live.retries}</td>
+            <td>{live.tries}</td>
             <td>{live.skips}</td>
           </tr>
         </tbody></table>
@@ -213,6 +223,7 @@ export class Ames extends Component {
           Pending messages: {peer.alien.messages}
           Pending packets: {peer.alien.packets}
           Heeds: {this.renderDucts(peer.alien.heeds)}
+          Keens: {this.renderPaths(peer.alien.keens)}
         </>);
       } else if (peer.known) {
         const p = peer.known;
