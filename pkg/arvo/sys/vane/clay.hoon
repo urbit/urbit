@@ -1,3 +1,4 @@
+!:
 ::  clay (4c), revision control
 ::
 ::  The way to understand Clay is to take it section-by-section:
@@ -4399,7 +4400,7 @@
     ::
     ++  read-v
       |=  [tak=tako pax=path]
-      ^-  (unit (unit [%dome (hypo dome:clay)]))
+      ^-  (unit (unit [%dome (hypo domo:clay)]))
       =/  yon=aeon  (tako-to-aeon:ze tak)
       ?:  (lth yon let.dom)
         :*  ~  ~  %dome  -:!>(*domo)
