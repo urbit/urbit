@@ -1112,12 +1112,14 @@
           ==
         larval-gate
       ::
-          [%12 %adult *]  (load:adult-core %12 state.old)
+          [%12 %adult *]
+        =.  cached-state  `[%12 state.old]
+        ~>  %slog.0^leaf/"ames: larva reload"
+        larval-gate
       ::
           [%12 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %12 state.old)
         larval-gate
       ::
           [%13 %adult *]  (load:adult-core %13 state.old)
@@ -4078,7 +4080,7 @@
           ++  orm  ((on @ud keen-state) lte)
           ::  +gum: glue together a list of $byts into one
           ::
-          ::    TODO: move to hoon.hoon
+          ::    TODO: move to hoon.hoon (see +cad in lib/tiny)
           ::
           ++  gum
             ::~/  %gum
@@ -4724,10 +4726,9 @@
     =+  res=(rof lyc nom)
     =/  =hunk  [(slav %ud lop.tyl) (slav %ud len.tyl)]
     ::TODO  suggests we need to factor differently
-
-    =/  peer-core  (pe *peer-state *channel)
-    =/  fin  fine:(ev [now 0v0 rof] *duct ames-state)
-
+    ::
+    =/  ev-co  (ev [now 0v0 rof] *duct ames-state)
+    =/  fin  fi:(pe:ev-co *peer-state *channel)
     ?-  res
       ~        ~
       [~ ~]    ``noun+!>((etch-hunk:fin pax.tyl hunk ~))
