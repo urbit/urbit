@@ -201,7 +201,8 @@
     ?^  dat=(get:wav wav.tide u.when.req)
       :_  pub  :_  ~
       (send scry/wave/u.dat src.bowl [dude u.when path]:req)
-    ?.  (gth u.when.req key::(fall (ram:wav wav.tide) [key=+(u.when.req) **]))
+    ?:  %+  lte  u.when.req
+        key::(fall (ram:wav wav.tide) (pry:rok rok.tide) [=key val]:wav)
       :_  pub  :_  ~
       (send yore/~ src.bowl [dude u.when path]:req)
     :-  ~[(send nigh/~ src.bowl [dude u.when path]:req)]
