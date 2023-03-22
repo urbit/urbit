@@ -1446,7 +1446,7 @@
   ::
   ::  Create a ford appropriate for the aeon
   ::
-  ::  Don't forget to call +aeon-flow!
+  ::  Don't forget to call +tako-flow!
   ::
   ++  tako-ford
     |=  tak=tako
@@ -4560,14 +4560,15 @@
     |=  [her=ship syd=desk yon=(unit aeon)]
     =/  den  ((de now rof hen ruf) her syd)
     %-  tako-ford:den
-    (~(got by hit.dom) ?~(yon let.dom:den u.yon))
+    ::TODO  is this +got after +got semantically correct?
+    (~(got by hit.dom:(~(got by dos.rom) syd)) ?~(yon let.dom:den u.yon))
   ::  +wrap: save ford cache
   ::
   ++  wrap
     |*  [her=ship syd=desk yon=(unit aeon) res=* =state:ford:fusion]
     =^  moves  ruf
       =/  den  ((de now rof hen ruf) her syd)
-      abet:+:(aeon-flow:den ?~(yon let.dom:den u.yon) res cache.state &2.state)
+      abet:+:(tako-flow:den ?~(yon let.dom:den u.yon) res cache.state &2.state)
     [res (emil moves)]
   ::
   ++  trace
@@ -5145,7 +5146,7 @@
       ::  +clear-cache upgrades to +raft
       ::
       +$  raft-14
-        $:  rom=room-14
+        $:  rom=room-13
             hoy=(map ship rung-14)
             ran=rang
             fad=*
@@ -5158,41 +5159,27 @@
             sad=(map ship @da)
             bug=[veb=@ mas=@]
         ==
-      +$  room-14
-        $:  hun=duct
-            dos=(map desk dojo-14)
-        ==
-      +$  dojo-14
-        $:  qyx=cult
-            dom=dome-14
-            per=regs
-            pew=regs
-            fiz=melt
-        ==
-      +$  dome-14
-        $:  let=aeon
-            hit=(map aeon tako)
-            lab=(map @tas aeon)
-            tom=(map tako norm)
-            nor=norm
-            mim=(map path mime)
-            fod=*
-        ==
       +$  rung-14
         $:  rus=(map desk rede-14)
         ==
       +$  rede-14
         $:  lim=@da
-            ref=(unit rind)
+            ref=(unit rind-14)
             qyx=cult
-            dom=dome-14
+            dom=dome-13
             per=regs
             pew=regs
             fiz=melt
         ==
-      ::  ::
+      +$  rind-14
+        $:  nix=@ud
+            bom=(map @ud update-state)
+            fod=(map duct @ud)
+            haw=(map mood (unit cage))
+        ==
+      ::
       +$  raft-13
-        $:  rom=room
+        $:  rom=room-13
             hoy=(map ship rung-13)
             ran=rang
             fad=*
@@ -5204,57 +5191,41 @@
             pud=(unit [=desk =yoki])
             bug=[veb=@ mas=@]
         ==
+      +$  room-13
+        $:  hun=duct
+            dos=(map desk dojo-13)
+        ==
+      +$  dojo-13
+        $:  qyx=cult
+            dom=dome-13
+            per=regs
+            pew=regs
+            fiz=melt
+        ==
+      +$  dome-13
+        $:  let=aeon
+            hit=(map aeon tako)
+            lab=(map @tas aeon)
+            tom=(map tako norm)
+            nor=norm
+            mim=(map path mime)
+            fod=*
+            wic=(map weft yoki)
+            liv=zest
+            ren=rein
+        ==
       +$  rung-13
         $:  rus=(map desk rede-13)
         ==
       +$  rede-13
         $:  lim=@da
-            ref=(unit rind-13)
+            ref=(unit rind-11)
             qyx=cult
-            dom=dome
+            dom=dome-13
             per=regs
             pew=regs
             fiz=melt
         ==
-      +$  rind-13
-        $:  nix=@ud
-            bom=(map @ud update-state-13)
-            fod=(map duct @ud)
-            haw=(map mood (unit cage))
-        ==
-      +$  update-state-13
-          $:  =duct
-              =rave
-              need=(list lobe)
-              nako=(qeu (unit nako))
-              busy=_|
-          ==
-      :: ::  ::
-      +$  rung-12
-        $:  rus=(map desk rede-12)
-        ==
-      +$  rede-12
-        $:  lim=@da
-            ref=(unit rind-12)
-            qyx=cult
-            dom=dome
-            per=regs
-            pew=regs
-            fiz=melt
-        ==
-      +$  rind-12
-        $:  nix=@ud
-            bom=(map @ud update-state-12)
-            fod=(map duct @ud)
-            haw=(map mood (unit cage))
-        ==
-      +$  update-state-12
-          $:  =duct
-              =rave
-              need=(list lobe)
-              nako=(qeu (unit nako))
-              busy=_|
-          ==
       ::
       +$  raft-12
         $:  rom=room-11
@@ -5302,12 +5273,25 @@
         ==
       +$  rede-11
         $:  lim=@da
-            ref=(unit rind)
+            ref=(unit rind-11)
             qyx=cult
             dom=dome-11
             per=regs
             pew=regs
             fiz=melt
+        ==
+      +$  rind-11
+        $:  nix=@ud
+            bom=(map @ud update-state-11)
+            fod=(map duct @ud)
+            haw=(map mood (unit cage))
+        ==
+      +$  update-state-11
+        $:  =duct
+            =rave
+            need=(list lobe)
+            nako=(qeu (unit nako))
+            busy=_|
         ==
       +$  raft-10
         $:  rom=room-10
@@ -5528,7 +5512,7 @@
   =?  old  ?=(%10 -.old)  11+(raft-10-to-11 +.old)
   =?  old  ?=(%11 -.old)  12+(raft-11-to-12 +.old)
   =?  old  ?=(%12 -.old)  13+(raft-12-to-13 +.old)
-  =?  old  ?=(%13 -.old)  14+(raft-14-to-11 +.old)
+  =?  old  ?=(%13 -.old)  14+(raft-13-to-14 +.old)
   ?>  ?=(%14 -.old)
   ..^^$(ruf (clear-cache +.old))
   ::
@@ -5537,7 +5521,7 @@
   ::  Also, many of the results would be different if zuse is different.
   ::
   ++  clear-cache
-    |=  raf=raft-13
+    |=  raf=raft-14
     ^-  raft
     %=    raf
         fad  *flow
@@ -5549,11 +5533,11 @@
     ::
         hoy
       %-  ~(run by hoy.raf)
-      |=  =rung-13
-      %-  ~(run by rus.rung-13)
-      |=  =rede-13
+      |=  =rung-14
+      %-  ~(run by rus.rung-14)
+      |=  =rede-14
       ^-  rede
-      rede-13(dom dom.rede-13(fod *flue))
+      rede-14(dom dom.rede-14(fod *flue))
     ==
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
   ::
@@ -5685,7 +5669,7 @@
             bom.u
           %-  ~(run by bom.u.ref.rede-10)
           |=  =update-state-10
-          ^-  update-state-12
+          ^-  update-state-11
           %=    update-state-10
               |2
             ^-  [(list lobe) (qeu (unit nako)) _|]
@@ -5783,7 +5767,7 @@
     ::                      ::  maybe have kiln send one-time list of desks
     ::
     =;  rof
-      rof(dos.rom (~(jab by dos.rom.rof) %base |=(d=dojo d(liv.dom %live))))
+      rof(dos.rom (~(jab by dos.rom.rof) %base |=(d=dojo-13 d(liv.dom %live))))
     ^-  raft-13
     %=  raf
       dos.rom  (~(run by dos.rom.raf) dojo-11-to-13)
@@ -5793,28 +5777,28 @@
     ::
     ++  dojo-11-to-13
       |=  doj=dojo-11
-      ^-  dojo
+      ^-  dojo-13
       doj(dom (dome-11-to-13 dom.doj))
     ::
     ++  rung-11-to-13
       |=  rug=rung-11
-      ^-  rung
+      ^-  rung-13
       rug(rus (~(run by rus.rug) rede-11-to-13))
     ::
     ++  rede-11-to-13
       |=  red=rede-11
-      ^-  rede
+      ^-  rede-13
       red(dom (dome-11-to-13 dom.red))
     ::
     ++  dome-11-to-13
       |=  dom=dome-11
-      ^-  dome
+      ^-  dome-13
       dom(fod [fod.dom ~ liv=%dead ren=~])
     --
   ::
-  ::  +raft-12-to-13: add sad, change busy
+  ::  +raft-13-to-14: add sad, change busy
   ::
-  ++  raft-13-to-13
+  ++  raft-13-to-14
     |=  raf=raft-13
     ^-  raft-14
     %=    raf
@@ -5825,7 +5809,7 @@
       |=  =rung-13
       %-  ~(run by rus.rung-13)
       |=  =rede-13
-      ^-  rede
+      ^-  rede-14
       %=    rede-13
           ref
         ?~  ref.rede-13
@@ -5833,14 +5817,14 @@
         %=    ref.rede-13
             bom.u
           %-  ~(run by bom.u.ref.rede-13)
-          |=  update-state-13
+          |=  update-state-11
           ^-  update-state
           =/  busy  ?:(busy `%ames ~)
           [duct rave ~ need nako busy]
         ==
       ==
     ==
---
+  --
 ::
 ++  scry                                              ::  inspect
   ~/  %clay-scry
