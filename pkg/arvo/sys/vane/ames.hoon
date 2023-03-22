@@ -3092,11 +3092,6 @@
             ++  packet-queue
               %-  (ordered-map live-packet-key live-packet-val)
               lte-packets
-            ::  +live-packets: number of sent packets awaiting ack
-            ::
-            :: ++  live-packets
-            ::   ^-  @ud
-            ::   ~(wyt by live.state)
             ::  +gauge: inflate a |pump-gauge to track congestion control
             ::
             ++  gauge  (ga metrics.state ~(wyt by live.state))
@@ -3715,13 +3710,13 @@
               (call %done ok=%.y)
             --
           --
-        ::  +fine: construct remote scry core
+        ::  +fi: construct |fine remote scry core
         ::  XX TODO rethink core naming/structure to follow current ames
         ::
         ++  fi
           =<  |%
               ++  fine-core  .
-              :: ++  pe-abed  XX
+              :: ++  fi-abed  XX  TODO
               ++  fi-abet  abet  :: +abet:pe
               ::
               :: +|  %entry-points
@@ -4017,7 +4012,7 @@
                   =.  cor  (ke-send:cor hoot.want)
                   [`want | cor]
                 ::
-                ++  ke-gauge  (ga metrics.keen 0)  ::  XX implement length deq
+                ++  ke-gauge  (ga metrics.keen (wyt:ke-deq wan.keen))
                 ::
                 ++  ke-timer-wire
                   `wire`(welp /fine/behn/wake/(scot %p her) path)

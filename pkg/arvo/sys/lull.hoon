@@ -80,6 +80,15 @@
      [* * * * ~]  [%4 ls]
     ==
   ::
+  ++  wyt
+    |=  a=(pha val)
+    ^-  @ud
+    ?-  -.a
+      %nul  0
+      %one  1
+      %big  :(add (lent +.p.a) (lent +.r.a) $(a q.a))
+    ==
+  ::
   ++  afx-to-pha
     |=  =(afx val)
     ^-  (pha val)

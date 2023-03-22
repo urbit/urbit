@@ -9,16 +9,22 @@
   (apl:de *(pha @) big-list)
 =/  foo-list  (gulf 1 8)
 |%
-++  foo  
+++  foo
   (apl:de *(pha @) 1 2 3 4 5 6 7 8 ~)
-++  bar  
+++  bar
   `(pha @)`(apl:de *(pha @) 8 9 10 11 12 13 14 15 ~)
 ::
 ++  test-tap
-  =/  ls  
+  =/  ls
     ~>  %bout.[1 %tap]
     (tap:de big)
   (expect-eq !>(ls) !>(big-list))
+::
+++  test-wyt
+  =/  le
+    ~>  %bout.[1 %wyt]
+    (wyt:de big)
+  (expect-eq !>(le) !>(big-num))
 ::
 ++  test-left
   ^-  tang
@@ -29,7 +35,7 @@
     ~>  %bout.[1 %apl]
     (apl:de bar 1 2 3 4 5 6 ~)
   %-  zing
-  :- 
+  :-
     ~>  %bout.[1 %eq-1]
      (expect-eq !>((tap:de bar)) !>((gulf 1 15)))
   =^  val=(unit @)  bar
