@@ -1846,7 +1846,7 @@
           ::
               %fine
             =<  fi-abet
-            ke-abet:ke-take-wake:(ke-abed:keen-core:fi:peer-core wire.u.res)
+            ke-abet:ke-take-wake:(ke-abed:ke:fi:peer-core wire.u.res)
           ==
         ::
         =.  event-core
@@ -2255,7 +2255,7 @@
         =/  =channel     [[our ship] now channel-state -.peer-state]
         =/  peer-core    (pe peer-state channel)
         =<  fi-abet
-        ke-abet:(ke-unsub:(ke-abed:keen-core:fi:peer-core path) duct)
+        ke-abet:(ke-unsub:(ke-abed:ke:fi:peer-core path) duct)
       ::
       +|  %implementation
       ::  +enqueue-alien-todo: helper to enqueue a pending request
@@ -3715,11 +3715,14 @@
         ::
         ++  fi
           =<  |%
+              ::
+              +|  %helpers
+              ::
               ++  fine-core  .
               :: ++  fi-abed  XX  TODO
               ++  fi-abet  abet  :: +abet:pe
               ::
-              :: +|  %entry-points
+              +|  %entry-points
               ::
               ++  on-hear
                 |=  [=lane =shot]
@@ -3731,18 +3734,18 @@
                 ?.  (~(has by order.scry) path)
                   ~&(dead-response/peep fine-core)
                 =<  ke-abet
-                (ke-rcv:(ke-abed:keen-core path) peep meow lane)
+                (ke-rcv:(ke-abed:ke path) peep meow lane)
               ::
               ++  on-keen
                 |=  [=path =^duct]
                 ^+  fine-core
                 ?:  (~(has by order.scry) path)
                   ~>  %slog.0^leaf/"fine: dupe {(spud path)}"
-                  ke-abet:(ke-sub:(ke-abed:keen-core path) duct)
+                  ke-abet:(ke-sub:(ke-abed:ke path) duct)
                 =^  keen-id=@ud  seq.scry  [seq.scry +(seq.scry)]
                 =.  order.scry  (~(put by order.scry) path keen-id)
                 =.  keens.scry  (put:orm keens.scry keen-id *keen-state)
-                ke-abet:(ke-start:(ke-abed:keen-core path) duct)
+                ke-abet:(ke-start:(ke-abed:ke path) duct)
               ::
               ++  on-pine
                 |=  [=path =^duct]
@@ -3763,7 +3766,9 @@
                 =.  cas.u.blk  ud+case
                 (on-keen (slag 3 (en-path:balk u.blk)) duct)
               ::
-              ++  keen-core
+              +|  %internal
+              ::
+              ++  ke
                 |_  $:  =path
                         keen-id=@ud
                         keen=keen-state
