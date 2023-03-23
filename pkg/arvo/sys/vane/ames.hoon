@@ -4661,24 +4661,37 @@
     ?~  blk=(de-path-soft:balk pax.tyl)  ~
     =+  nom=(en-roof:balk u.blk)
     ~|  nom
-    ::  we only support scrying into clay,
-    ::  and only if the data is fully public.
+    |^  
+    =/  van  ?@(vis.nom (end 3 vis.nom) way.vis.nom)
+    ?+    van  ~
+        %c
+      =+  pem=(rof lyc nom(vis %cp))
+      ?.  ?=(^ pem)    ~
+      ?.  ?=(^ u.pem)  ~
+      ~|  u.u.pem
+      =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
+      ?.  =([%black ~ ~] rul.r.per)  ~
+      (en-hunk (rof lyc nom))
     ::
-    ?.  =(%c ?@(vis.nom (end 3 vis.nom) way.vis.nom))  ~
-    =+  pem=(rof lyc nom(vis %cp))
-    ?.  ?=(^ pem)    ~
-    ?.  ?=(^ u.pem)  ~
-    ~|  u.u.pem
-    =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
-    ?.  =([%black ~ ~] rul.r.per)  ~
-    =+  res=(rof lyc nom)
-    =/  =hunk  [(slav %ud lop.tyl) (slav %ud len.tyl)]
-    ::
-    =/  hu-co  (etch-hunk our [life crypto-core]:ames-state)
-    ?-  res
-      ~        ~
-      [~ ~]    ``noun+!>((etch:hu-co pax.tyl hunk ~))
-      [~ ~ *]  ``noun+!>((etch:hu-co pax.tyl hunk [p q.q]:u.u.res))
+        %g
+      =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
+      %-  en-hunk
+      ?+  kyr  ~
+        %a  (rof lyc nom)
+      ==
     ==
+    ::
+    ++  en-hunk
+      |=  res=(unit (unit cage))
+      ^+  res
+      ?~  res  ~
+      =/  =hunk  [(slav %ud lop.tyl) (slav %ud len.tyl)]
+      ::
+      =/  hu-co  (etch-hunk our [life crypto-core]:ames-state)
+      ?-  res
+        [~ ~]    ``noun+!>((etch:hu-co pax.tyl hunk ~))
+        [~ ~ *]  ``noun+!>((etch:hu-co pax.tyl hunk [p q.q]:u.u.res))
+      ==
+    --
   ==
 --
