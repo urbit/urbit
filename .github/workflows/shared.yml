@@ -78,8 +78,8 @@ jobs:
           else
             base="https://bootstrap.urbit.org/vere/${{ inputs.pace }}"
           fi
-          vere=$(curl $base/last)
-          url="$(echo $base/v${vere}/vere-v${vere}-linux-x86_64)"
+          vere=$(curl ${base}/last)
+          url="$(echo ${base}/v${vere}/vere-v${vere}-linux-x86_64)"
           echo $vere
           echo $url
           # put in .jam so it doesn't crash when it gets -A'd in
