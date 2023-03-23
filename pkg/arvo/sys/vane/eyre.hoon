@@ -568,14 +568,14 @@
 ::  +scry-to-mime: scry a path, converting to mime
 ::
 ++  scry-to-mime
-  |=  [rof=roof =desk =path]
+  |=  [rof=roof cbeak=beak =path]
   ^-  (unit mime)
   ?~  path  ~
   ?~  bem=(de-beam t.path)  ~
   =/  res=(unit (unit cage))  (rof ~ i.path u.bem)
   ?.  ?=([~ ~ *] res)  ~
   =/  convert=(unit vase)
-    =/  res=(unit (unit cage))  (rof ~ %cf desk /[p.u.u.res]/mime)
+    =/  res=(unit (unit cage))  (rof ~ %cf cbeak /[p.u.u.res]/mime)
     ?.  ?=([~ ~ *] res)  ~
     `q.u.u.res
   ?~  convert  ~
