@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-set -xeuo pipefail
-
-cd "${0%/*}/.."
-
-cp "$(nix-build -A brass.build --no-out-link)" bin/brass.pill

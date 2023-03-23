@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-set -xeuo pipefail
-
-cd "${0%/*}/.."
-
-cp "$(nix-build -A ivory.build --no-out-link)" bin/ivory.pill
