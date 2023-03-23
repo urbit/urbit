@@ -14,6 +14,11 @@ on:
         type: string
         default: 'edge'
         required: false
+      next:
+        description: 'next kelvin version'
+        type: string
+        default: null
+        required: false
     secrets:
       CACHIX_AUTH_TOKEN:
         required: false
