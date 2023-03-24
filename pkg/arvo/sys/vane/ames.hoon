@@ -1327,17 +1327,15 @@
         ++  send-ack
           |=  =bone
           ^+  peer-core
-          =+  sink-core=(mi:peer-core bone *message-sink-state)
           ::  handle cork only deals with bones that are in closing
           ::
-          (handle-cork:abet:(call:abed:sink-core %done ok=%.y) bone)
+          (handle-cork:abet:(call:(abed:mi:peer-core bone) %done ok=%.y) bone)
         ::  failed; send message nack packet
         ::
         ++  send-nack
           |=  [=bone =^error]
           ^+  peer-core
-          =/  sink-core   (mi:peer-core bone *message-sink-state)
-          =.  peer-core   abet:(call:abed:sink-core %done ok=%.n)
+          =.  peer-core   abet:(call:(abed:mi:peer-core bone) %done ok=%.n)
           =.  event-core  abet:peer-core
           ::  construct nack-trace message, referencing .failed $message-num
           ::
@@ -1345,13 +1343,10 @@
             last-acked:(~(got by rcv.peer-state.peer-core) bone)
           =/  =naxplanation  [failed error]
           =/  =message-blob  (jam naxplanation)
-          ::  send nack-trace message on associated .nack-trace-bone
+          ::  send nack-trace message on associated .nack-bone
           ::
-          =/  nack-trace-bone=^bone  (mix 0b10 bone)
-          ::
-          =/  pump-core
-            (mu:(abed-got:pe her) nack-trace-bone *message-pump-state)
-          abet:(call:abed:pump-core %memo message-blob)
+          =/  nack-bone=^bone  (mix 0b10 bone)
+          abet:(call:(abed:mu:(abed-got:pe her) nack-bone) %memo message-blob)
         --
       ::  +on-sift: handle request to filter debug output by ship
       ::
@@ -1408,8 +1403,7 @@
           =/  bones  ~(tap in ~(key by snd.u.par))
           |-  ^+  event-core
           ?~  bones      abet:peer-core
-          =/  pump-core  (mu:peer-core i.bones *message-pump-state)
-          =.  peer-core  abet:(call:abed:pump-core %prod ~)
+          =.  peer-core  abet:(call:(abed:mu:peer-core i.bones) %prod ~)
           $(bones t.bones)
         --
       ::  +on-cong: adjust congestion control parameters
@@ -1683,7 +1677,7 @@
             ::  XX use ev-trace?
             =/  =tape  "; fine dropping malformed wire {<wire>}"
             (emit duct %pass /parse-wire %d %flog %text tape)
-          abet:(on-pine-boon:fi:(abed-got:pe u.her) t.t.t.wire payload)
+          fi-abet:(on-pine-boon:fi:(abed-got:pe u.her) t.t.t.wire payload)
         ::
         ?~  parsed=(parse-bone-wire wire)
           ~>  %slog.0^leaf/"ames: dropping malformed wire: {(spud wire)}"
@@ -1896,8 +1890,7 @@
             %pump  abet:(on-wake:peer-core bone.u.res error)
           ::
               %fine
-            =<  abet
-            ke-abet:ke-take-wake:(ke-abed:ke:fi:peer-core wire.u.res)
+            fi-abet:ke-abet:ke-take-wake:(ke-abed:ke:fi:peer-core wire.u.res)
           ==
         ::
         =.  event-core
@@ -2476,9 +2469,6 @@
           ~|  %dangling-bone^her^bone
           (~(got by by-bone.ossuary.peer-state) bone)
         ::
-        ++  pump-core  |=(=bone (mu bone *message-pump-state))
-        ++  sink-core  |=(=bone (mi bone *message-sink-state))
-        ::
         +|  %tasks
         ::
         ++  on-heed
@@ -2524,7 +2514,7 @@
                 %-  slog
                 :_  tang.u.dud
                 leaf+"ames: {<her>} fragment crashed {<mote.u.dud>}"
-            abet:(call:abed:(sink-core bone) %hear lane shut-packet ?=(~ dud))
+            abet:(call:(abed:mi bone) %hear lane shut-packet ?=(~ dud))
           ::  benign ack on corked bone
           ::
           ?:  (~(has in corked.peer-state) bone)
@@ -2540,8 +2530,7 @@
               ?.  msg.veb  ~
               :-  >[bone=bone message-num=message-num meat=meat]:shut-packet<
               tang.u.dud
-          =<  abet
-          (call:abed:(pump-core bone) %hear [message-num +.meat]:shut-packet)
+          abet:(call:(abed:mu bone) %hear [message-num +.meat]:shut-packet)
         ::  +on-memo: handle request to send message
         ::
         ++  on-memo
@@ -2557,7 +2546,7 @@
             peer-core
           ::
           =/  =message-blob  (dedup-message (jim payload))
-          =.  peer-core  abet:(call:abed:(pump-core bone) %memo message-blob)
+          =.  peer-core      abet:(call:(abed:mu bone) %memo message-blob)
           ::
           ?:  ?&  =(%boon valence)
                   (gte now (add ~s30 last-contact.qos.peer-state))
@@ -2637,7 +2626,7 @@
             peer-core
           ::  maybe resend some timed out packets
           ::
-          abet:(call:abed:(pump-core bone) %wake ~)
+          abet:(call:(abed:mu bone) %wake ~)
         ::
         +|  %implementation
         ::  +dedup-message: replace with any existing copy of this message
@@ -2802,15 +2791,12 @@
         ::  +mu: constructor for |pump message sender core
         ::
         ++  mu
-          |=  [=bone state=message-pump-state]
-          |%
+          |_  [=bone state=message-pump-state]
           ::
           +|  %helpers
           ::
           ++  pump  .
-          ++  abed
-            pump(state (~(gut by snd.peer-state) bone *message-pump-state))
-          ::
+          ++  abed  |=(^bone pump(state (~(gut by snd.peer-state) +< *_state)))
           ++  abet
             ::  if the bone was corked, it's been removed from the state,
             ::  so we avoid adding it again.
@@ -3059,9 +3045,7 @@
             ?:  =(1 (end 0 (rsh 0 bone)))
               ::  nack-trace bone; assume .ok, clear nack from |message-sink
               ::
-              =/  target-bone=^bone  (mix 0b10 bone)
-              =<  abet
-             (call:abed:(mi target-bone *message-sink-state) %drop message-num)
+              abet:(call:(abed:mi (mix 0b10 bone)) %drop message-num)
             ?:  &(closing ?=(%near -.task))
               ::  if the bone belongs to a closing flow and we got a
               ::  naxplanation, don't relay  ack to the client vane
@@ -3425,15 +3409,12 @@
         ::  +mi: constructor for |sink message receiver core
         ::
         ++  mi
-          |=  [=bone state=message-sink-state]
-          |%
+          |_  [=bone state=message-sink-state]
           ::
           +|  %helpers
           ::
           ++  sink  .
-          ++  abed
-            sink(state (~(gut by rcv.peer-state) bone *message-sink-state))
-          ::
+          ++  abed  |=(^bone sink(state (~(gut by rcv.peer-state) +< *_state)))
           ++  abet
             ::  if the bone was corked, it's been removed from the state,
             ::  so we avoid adding it again.
@@ -3448,7 +3429,6 @@
           ::
           ++  closing    (~(has in closing.peer-state) bone)
           ++  corked     (~(has in corked.peer-state) bone)
-          ++  pump-core  |=(=^bone (mu bone *message-pump-state))
           ++  received
             |=  =^bone
             ::    odd bone:                %plea request message
@@ -3672,7 +3652,7 @@
                 ::
                 =/  nack-bone=^bone  (mix 0b10 bone)
                 =/  =message-blob    (jam [message-num *error])
-                abet:(call:abed:(pump-core nack-bone) %memo message-blob)
+                abet:(call:(abed:mu nack-bone) %memo message-blob)
               =+  ;;  =plea  message
               =/  =wire  (make-bone-wire her her-rift.channel bone)
               ::
@@ -3740,8 +3720,7 @@
               =.  peer-core
                 ::  notify |message-pump that this message got naxplained
                 ::
-                =<  abet
-               (call:abed:(pump-core target) %near ;;(naxplanation message))
+                abet:(call:(abed:mu target) %near ;;(naxplanation message))
               ::  ack nack-trace message (only applied if we don't later crash)
               ::
               (call %done ok=%.y)
@@ -4661,7 +4640,7 @@
     ?~  blk=(de-path-soft:balk pax.tyl)  ~
     =+  nom=(en-roof:balk u.blk)
     ~|  nom
-    |^  
+    |^
     =/  van  ?@(vis.nom (end 3 vis.nom) way.vis.nom)
     ?+    van  ~
         %c
