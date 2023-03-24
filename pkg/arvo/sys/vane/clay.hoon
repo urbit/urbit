@@ -139,7 +139,7 @@
 ::  `sto` stores the data needed to merge, and `bas` is the base
 ::  beak for the merge.
 ::
-+$  melt  [bas=beak con=(list [beak germ]) sto=(map beak (unit dome:clay))]
++$  melt  [bas=beak con=(list [beak germ]) sto=(map beak (unit domo))]
 ::
 ::  Domestic desk state.
 ::
@@ -154,34 +154,6 @@
       fiz=melt                                          ::  state for mega merges
   ==
 ::
-::  Desk state.
-::
-::  Includes a checked-out ankh with current content, most recent version, map
-::  of all version numbers to commit hashes (commits are in hut.rang), and map
-::  of labels to version numbers.
-::
-::  `mim` is a cache of the content in the directories that are mounted
-::  to unix.  Often, we convert to/from mime without anything really
-::  having changed; this lets us short-circuit that in some cases.
-::  Whenever you give an `%ergo`, you must update this.
-::
-+$  dome
-  $:  let=aeon                                          ::  top id
-      hit=(map aeon tako)                               ::  versions by id
-      lab=(map @tas aeon)                               ::  labels
-      tom=(map tako norm)                               ::  tomb policies
-      nor=norm                                          ::  default policy
-      mim=(map path mime)                               ::  mime cache
-      fod=flue                                          ::  ford cache
-      wic=(map weft yoki)                               ::  commit awaiting weft
-      cop=(unit [yok=yoki mis=pers:gall])               ::  commit awaiting pers
-      lac=pers:gall                                     ::  perms blocking live
-      liv=zest                                          ::  agents liveness
-      ren=rein                                          ::  force agents on/off
-      pes=pers:gall                                     ::  user-approved perms
-      pin=pers:gall                                     ::  requested perms
-  ==                                                    ::
-::
 ::  Over-the-wire backfill request/response
 ::
 +$  fill
@@ -194,78 +166,6 @@
       [%delta p=lobe q=[p=mark q=lobe] r=page]
       [%dead p=lobe ~]
       [%1 peg=(unit page)]
-  ==
-::
-::  Global ford cache
-::
-::    Refcount includes references from other items in the cache, and
-::    from spills in each desk
-::
-::    This is optimized for minimizing the number of rebuilds, and given
-::    that, minimizing the amount of memory used.  It is relatively slow
-::    to lookup, because generating a cache key can be fairly slow (for
-::    files, it requires parsing; for tubes, it even requires building
-::    the marks).
-::
-+$  flow  (map leak [refs=@ud =soak])
-::
-::  Per-desk ford cache
-::
-::    Spill is the set of "roots" we have into the global ford cache.
-::    We add a root for everything referenced directly or indirectly on
-::    a desk, then invalidate them on commit only if their dependencies
-::    change.
-::
-::    Sprig is a fast-lookup index over the global ford cache.  The only
-::    goal is to make cache hits fast.
-::
-+$  flue  [spill=(set leak) sprig=(map mist [=leak =soak])]
-::
-::  Ford build without content.
-::
-+$  mist
-  $%  [%file =path]
-      [%nave =mark]
-      [%dais =mark]
-      [%cast =mars]
-      [%tube =mars]
-      [%vale =path]
-      [%arch =path]
-  ==
-::
-::  Ford build with content.
-::
-+$  pour
-  $%  [%file =path]
-      [%nave =mark]
-      [%dais =mark]
-      [%cast =mars]
-      [%tube =mars]
-      ::  leafs
-      ::
-      [%vale =path =lobe]
-      [%arch =path =(map path lobe)]
-  ==
-::
-::  Ford result.
-::
-+$  soak
-  $%  [%cage =cage]
-      [%vase =vase]
-      [%arch dir=(map @ta vase)]
-      [%dais =dais]
-      [%tube =tube]
-  ==
-::
-::  Ford cache key
-::
-::    This includes all build inputs, including transitive dependencies,
-::    recursively.
-::
-+$  leak
-  $~  [*pour ~]
-  $:  =pour
-      deps=(set leak)
   ==
 ::
 ::  New desk data.
@@ -1069,8 +969,14 @@
       %-  mean  %-  flop
       =/  lyn  p.hair
       =/  col  q.hair
+      ^-  (list tank)
       :~  leaf+"syntax error at [{<lyn>} {<col>}] in {<pax>}"
-          leaf+(trip (snag (dec lyn) (to-wain:format (crip tex))))
+        ::
+          =/  =wain  (to-wain:format (crip tex))
+          ?:  (gth lyn (lent wain))
+            '<<end of file>>'
+          (snag (dec lyn) wain)
+        ::
           leaf+(runt [(dec col) '-'] "^")
       ==
     ::
@@ -2439,9 +2345,9 @@
     |=  [bas=beak con=(list [beak germ])]
     ^-  melt
     :+  bas  con
-    %-  ~(gas by *(map beak (unit dome:clay)))
-    :-  [bas *(unit dome:clay)]
-    (turn con |=(a=[beak germ] [-.a *(unit dome:clay)]))
+    %-  ~(gas by *(map beak (unit domo)))
+    :-  [bas *(unit domo)]
+    (turn con |=(a=[beak germ] [-.a *(unit domo)]))
   ::
   ++  start-fuse
     |=  [bas=beak con=(list [beak germ])]
@@ -2464,7 +2370,7 @@
       =/  discarded=tang
         %+  turn
           ~(tap in sto.fiz)
-        |=  [k=beak v=(unit dome:clay)]
+        |=  [k=beak v=(unit domo)]
         ^-  tank
         =/  received=tape  ?~(v "missing" "received")
         leaf+"{<(en-beam k ~)>} {received}"
@@ -2491,17 +2397,17 @@
       ((slog [leaf+"clay: got strange fuse response {<msg>}"]~) ..take-fuse)
     =.  fiz
         :+  bas.fiz  con.fiz
-        (~(put by sto.fiz) bec `!<(dome:clay q.r.u.riot))
+        (~(put by sto.fiz) bec `!<(domo q.r.u.riot))
     =/  all-done=flag
       %-  ~(all by sto.fiz)
-      |=  res=(unit dome:clay)
+      |=  res=(unit domo)
       ^-  flag
       !=(res ~)
     ?.  all-done
       ..take-fuse
     =|  rag=rang
     =/  clean-state  ..take-fuse
-    =/  initial-dome=dome:clay  (need (~(got by sto.fiz) bas.fiz))
+    =/  initial-dome=domo  (need (~(got by sto.fiz) bas.fiz))
     =/  next-yaki=yaki
       (~(got by hut.ran) (~(got by hit.initial-dome) let.initial-dome))
     =/  parents=(list tako)  ~[(~(got by hit.initial-dome) let.initial-dome)]
@@ -2512,7 +2418,7 @@
       =.  ..take-fuse  (done-fuse clean-state %& ~)
       (park | & [%| next-yaki(p (flop parents))] rag)
     =/  [bec=beak g=germ]  i.merges
-    =/  ali-dom=dome:clay  (need (~(got by sto.fiz) bec))
+    =/  ali-dom=domo  (need (~(got by sto.fiz) bec))
     =/  result  (merge-helper p.bec q.bec g ali-dom `next-yaki)
     ?-    -.result
         %|
@@ -2578,10 +2484,10 @@
     ^+  ..merge
     ?~  riot
       (done %| %ali-unavailable ~[>[ali-ship ali-desk germ]<])
-    =/  ali-dome=dome:clay
+    =/  ali-dome=domo
       ?:  &(?=(@ -.q.q.r.u.riot) !=(~ -.q.q.r.u.riot))
-        !<(dome:clay q.r.u.riot)
-      +:!<([* dome:clay] q.r.u.riot)
+        !<(domo q.r.u.riot)
+      +:!<([* domo] q.r.u.riot)
     =/  result=(each (unit merge-result) (pair term tang))
       (merge-helper ali-ship ali-desk germ ali-dome ~)
     ?-    -.result
@@ -2597,7 +2503,7 @@
   +$  merge-result  [conflicts=(set path) new=yoki lat=(map lobe page)]
   ::
   ++  merge-helper
-    |=  [=ali=ship =ali=desk =germ ali-dome=dome:clay next-yaki=(unit yaki)]
+    |=  [=ali=ship =ali=desk =germ ali-dome=domo next-yaki=(unit yaki)]
     ^-  (each (unit merge-result) [term tang])
     |^
     ^-  (each (unit merge-result) [term tang])
@@ -4397,8 +4303,36 @@
     ::  +read-s: produce miscellaneous
     ::
     ++  read-s
-      |=  [yon=aeon pax=path]
+      |=  [yon=aeon pax=path =case]
       ^-  (unit (unit cage))
+      ?:  ?=([%subs ~] pax)
+        ?.  =([%da now] case)  ~
+        =|  sus=(set ship)
+        =/  doj=(unit dojo)  (~(get by dos.rom) syd)
+        ?~  doj
+          ``noun+!>(sus)
+        =/  wos  ~(tap in ~(key by qyx.u.doj))
+        |-
+        ?~  wos
+          ``noun+!>(sus)
+        ?~  for.i.wos
+          $(wos t.wos)
+        %=  $
+          wos  t.wos
+          sus  (~(put in sus) ship.u.for.i.wos)
+        ==
+      ?:  ?=([%bloc ~] pax)
+        :^  ~  ~  %noun
+        :-  -:!>(*(map lobe page))
+        ^-  (map lobe page)
+        %-  %~  rep  in
+            %-  reachable-takos
+            (~(got by hit.dom) let.dom)
+        |=  [t=tako o=(map lobe page)]
+        %-  ~(gas by o)
+        %+  turn
+          ~(val by q:(~(got by hut.ran) t))
+        |=(l=lobe [l (~(got by lat.ran) l)])
       ?.  ?=([@ * *] pax)
         `~
       ?+    i.pax  `~
@@ -4527,17 +4461,17 @@
     ::
     ++  read-v
       |=  [yon=aeon pax=path]
-      ^-  (unit (unit [%dome (hypo dome:clay)]))
+      ^-  (unit (unit [%dome (hypo domo)]))
       ?:  (lth yon let.dom)
-        :*  ~  ~  %dome  -:!>(*dome:clay)
-            ^-  dome:clay
+        :*  ~  ~  %dome  -:!>(*domo)
+            ^-  domo
             :*  let=yon
                 hit=(molt (skim ~(tap by hit.dom) |=([p=@ud *] (lte p yon))))
                 lab=(molt (skim ~(tap by lab.dom) |=([* p=@ud] (lte p yon))))
         ==  ==
       ?:  (gth yon let.dom)
         ~
-      ``[%dome -:!>(*dome:clay) [let hit lab]:dom]
+      ``[%dome -:!>(*domo) [let hit lab]:dom]
     ::
     ::  Gets all cases refering to the same revision as the given case.
     ::
@@ -4652,7 +4586,7 @@
           %f  (read-f yon path.mun)
           %p  [(read-p path.mun) ..park]
           %r  (read-r yon path.mun)
-          %s  [(read-s yon path.mun) ..park]
+          %s  [(read-s yon path.mun case.mun) ..park]
           %t  [(read-t yon path.mun) ..park]
           %u  [(read-u yon path.mun) ..park]
           %v  [(read-v yon path.mun) ..park]
@@ -5073,7 +5007,9 @@
   ::
       %merg                                               ::  direct state up
     ?:  =(%$ des.req)
-      ~&(%merg-no-desk !!)
+      ~|(%merg-no-desk !!)
+    ?.  ((sane %tas) des.req)
+      ~|([%merg-bad-desk-name des.req] !!)
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our des.req)
       abet:(start-merge:den her.req dem.req cas.req how.req)
@@ -5081,7 +5017,9 @@
   ::
       %fuse
     ?:  =(%$ des.req)
-      ~&(%fuse-no-desk !!)
+      ~|(%fuse-no-desk !!)
+    ?.  ((sane %tas) des.req)
+      ~|([%fuse-bad-desk-name des.req] !!)
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our des.req)
       abet:(start-fuse:den bas.req con.req)
@@ -5127,6 +5065,8 @@
     [(weld moves-1 moves-2) ..^^$]
   ::
       %park
+    ?.  ((sane %tas) des.req)
+      ~|([%park-bad-desk des.req] !!)
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our des.req)
       abet:(park:den | & [yok ran]:req)
@@ -5139,6 +5079,9 @@
       =/  den  ((de now rof hen ruf) our syd)
       abet:(park:den & & yoki *rang)
     [mos ..^$]
+  ::
+      %prep
+    [~ ..^$(lat.ran.ruf (~(uni by lat.req) lat.ran.ruf))]
   ::
       %perm
     =^  mos  ruf
@@ -5319,9 +5262,14 @@
             hez=(unit duct)
             cez=(map @ta crew)
             tyr=(set duct)
-            tur=rock:tire
+            tur=rock-13
             pud=(unit [=desk =yoki])
             bug=[veb=@ mas=@]
+        ==
+      +$  rock-13  (map desk belt-13)
+      +$  belt-13
+        $:  =zest
+            wic=(set weft)
         ==
       +$  room-13
         $:  hun=duct
@@ -5898,6 +5846,7 @@
         %=  raf
           dos.rom  (~(run by dos.rom.raf) dojo-13-to-14)
           hoy      (~(run by hoy.raf) rung-13-to-14)
+          tur      (~(run by tur.raf) belt-13-to-14)
         ==
     ::
     ++  dojo-13-to-14
@@ -5919,6 +5868,11 @@
       |=  dom=dome-13
       ^-  dome
       dom(|7 [&8.dom cop=~ lac=~ |8.dom(ren [ren.dom pes=~ pin=~])])
+    ::
+    ++  belt-13-to-14
+      |=  belt-13
+      ^-  belt:tire
+      [zest ~ ~ wic ~ ~]
     --
   --
 ::
@@ -5973,7 +5927,6 @@
         %domes   (domes t.path)
         %loams   (loams t.path)
         %dudes   (dudes t.path)
-        :: %visas   (visas t.path)
     ==
   ::
   ++  domes
@@ -5982,33 +5935,45 @@
       %-  ~(gas by *cone)
       %+  turn  ~(tap by dos.rom.ruf)
       |=  [=desk =dojo]
-      =,  dom.dojo
-      =/  cop=pers:gall  ?~(cop.dom.dojo ~ mis.u.cop)
-      [[our desk] [let hit lab] tom nor liv ren pes cop]
+      [[our desk] dom.dojo]
     ::
     ::TODO: are the ~ and [~ ~] returns here correct?
     ?+  path  [~ ~]
         [@tas ~]
-      =/  fum=(unit foam)  (~(get by domes) [our i.path])
-      ?~  fum  ~
-      ``[%dome !>(u.fum)]
+      =/  dum=(unit dome)  (~(get by domes) [our i.path])
+      ?~  dum  ~
+      ``[%dome !>(u.dum)]
     ::
         ~
       =.  domes
         %-  ~(uni by domes)
         %-  ~(gas by *cone)
-        ^-  (list [[ship desk] foam])
+        ^-  (list [[ship desk] dome])
         %-  zing
-        ^-  (list (list [[ship desk] foam]))
+        ^-  (list (list [[ship desk] dome]))
         %+  turn  ~(tap by hoy.ruf)
         |=  [=ship =rung]
-        ^-  (list [[^ship desk] foam])
+        ^-  (list [[^ship desk] dome])
         %+  turn  ~(tap by rus.rung)
         |=  [=desk =rede]
-        =,  dom.rede
-        =/  cop=pers:gall  ?~(cop.dom.rede ~ mis.u.cop)
-        [[ship desk] [let hit lab] tom nor liv ren pes cop]
-      ``[%domes !>(domes)]
+        [[ship desk] dom.rede]
+      ``[%domes !>(`cone`domes)]
+    ==
+  ::
+  ++  cult
+    |=  =path
+    ^-  (set [@p rave])
+    %-  %~  run  in
+        %~  key  by
+        ?~  path  *^cult
+        qyx:(~(gut by dos.rom.ruf) i.path *dojo)
+    |=  wove
+    :-  ship:(fall for [ship=our @ud])
+    ?-  -.rove
+      %sing  rove
+      %next  [%next mood.rove]
+      %mult  [%mult mool.rove]
+      %many  [%many [track moat]:rove]
     ==
   ::
   ::  True if file is accessible

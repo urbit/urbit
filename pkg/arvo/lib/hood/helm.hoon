@@ -1,4 +1,3 @@
-/+  pill
 =*  card  card:agent:gall
 |%
 +$  state  state-2
@@ -202,8 +201,8 @@
   abet:(emit %pass /helm/prod %arvo %a %prod ships)
 ::
 ++  poke-ames-snub
-  |=  ships=(list ship)
-  abet:(emit %pass /helm/snub %arvo %a %snub ships)
+  |=  snub=[form=?(%allow %deny) ships=(list ship)]
+  abet:(emit %pass /helm/snub %arvo %a %snub snub)
 ::
 ++  poke-atom
   |=  ato=@
@@ -245,9 +244,13 @@
   |=  ~  =<  abet
   (emit %pass /helm %arvo %a %stir '')
 ::
-++  poke-knob
-  |=  [error-tag=@tas level=?(%hush %soft %loud)]  =<  abet
-  (emit %pass /helm %arvo %d %knob error-tag level)
+++  poke-ames-kroc
+  |=  dry=?  =<  abet
+  (emit %pass /helm %arvo %a %kroc dry)
+::
+++  poke-ames-cong
+  |=  cong=[msg=@ud mem=@ud]  =<  abet
+  (emit %pass /helm %arvo %a %cong cong)
 ::
 ++  poke-serve
   |=  [=binding:eyre =generator:eyre]  =<  abet
@@ -280,6 +283,8 @@
     %helm-ames-sift        =;(f (f !<(_+<.f vase)) poke-ames-sift)
     %helm-ames-verb        =;(f (f !<(_+<.f vase)) poke-ames-verb)
     %helm-ames-wake        =;(f (f !<(_+<.f vase)) poke-ames-wake)
+    %helm-ames-kroc        =;(f (f !<(_+<.f vase)) poke-ames-kroc)
+    %helm-ames-cong        =;(f (f !<(_+<.f vase)) poke-ames-cong)
     %helm-atom             =;(f (f !<(_+<.f vase)) poke-atom)
     %helm-automass         =;(f (f !<(_+<.f vase)) poke-automass)
     %helm-cancel-automass  =;(f (f !<(_+<.f vase)) poke-cancel-automass)
@@ -290,7 +295,6 @@
     %helm-gall-sift        =;(f (f !<(_+<.f vase)) poke-gall-sift)
     %helm-gall-verb        =;(f (f !<(_+<.f vase)) poke-gall-verb)
     %helm-hi               =;(f (f !<(_+<.f vase)) poke-hi)
-    %helm-knob             =;(f (f !<(_+<.f vase)) poke-knob)
     %helm-pans             =;(f (f !<(_+<.f vase)) poke-pans)
     %helm-mass             =;(f (f !<(_+<.f vase)) poke-mass)
     %helm-meld             =;(f (f !<(_+<.f vase)) poke-meld)

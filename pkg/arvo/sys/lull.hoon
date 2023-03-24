@@ -3,7 +3,7 @@
 !:
 =>  ..part
 |%
-++  lull  %326
+++  lull  %325
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
@@ -352,6 +352,7 @@
   ::    %heed: track peer's responsiveness; gives %clog if slow
   ::    %jilt: stop tracking peer's responsiveness
   ::    %cork: request to delete message flow
+  ::    %kroc: request to delete stale message flows
   ::    %plea: request to send message
   ::
   ::    System and Lifecycle Tasks
@@ -360,8 +361,10 @@
   ::    %init: vane boot
   ::    %prod: re-send a packet per flow, to all peers if .ships is ~
   ::    %sift: limit verbosity to .ships
-  ::    %snub: set packet blacklist to .ships
+  ::    %snub: set packet blocklist to .ships
   ::    %spew: set verbosity toggles
+  ::    %cong: adjust congestion control parameters
+  ::    %stir: recover from timer desync
   ::    %trim: release memory
   ::    %vega: kernel reload notification
   ::
@@ -370,14 +373,16 @@
         [%heed =ship]
         [%jilt =ship]
         [%cork =ship]
+        [%kroc dry=?]
         $>(%plea vane-task)
     ::
         $>(%born vane-task)
         $>(%init vane-task)
         [%prod ships=(list ship)]
         [%sift ships=(list ship)]
-        [%snub ships=(list ship)]
+        [%snub form=?(%allow %deny) ships=(list ship)]
         [%spew veb=(list verb)]
+        [%cong msg=@ud mem=@ud]
         [%stir arg=@t]
         $>(%trim vane-task)
         $>(%vega vane-task)
@@ -436,7 +441,7 @@
   +$  address  @uxaddress
   ::  $verb: verbosity flag for ames
   ::
-  +$  verb  ?(%snd %rcv %odd %msg %ges %for %rot)
+  +$  verb  ?(%snd %rcv %odd %msg %ges %for %rot %kay)
   ::  $blob: raw atom to or from unix, representing a packet
   ::
   +$  blob  @uxblob
@@ -517,7 +522,6 @@
   ::    heeds: listeners for %clog notifications
   ::    closing: bones closed on the sender side
   ::    corked:  bones closed on both sender and receiver
-  ::    krocs:   bones that need to be sent again to the publisher
   ::
   +$  peer-state
     $:  $:  =symmetric-key
@@ -535,7 +539,6 @@
         heeds=(set duct)
         closing=(set bone)
         corked=(set bone)
-        krocs=(set bone)
     ==
   ::  $qos: quality of service; how is our connection to a peer doing?
   ::
@@ -786,6 +789,7 @@
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
         [%perm des=desk pax=path rit=rite]              ::  change permissions
         [%pork ~]                                       ::  resume commit
+        [%prep lat=(map lobe page)]                     ::  prime clay store
         [%pine des=desk pes=pers:gall]                  ::  app-desired perms
         [%curb des=desk pes=pers:gall]                  ::  user-approved perms
         [%rein des=desk ren=rein]                       ::  extra apps
@@ -833,11 +837,39 @@
         [%worn =ship =desk =tako =norm]                 ::  set commit norm
         [%seek =ship =desk =cash]                       ::  fetch source blobs
     ==                                                  ::
-  +$  cone  (map [ship desk] foam)                      ::  /domes scry return
+  +$  cone  (map [ship desk] dome)                      ::  domes
   +$  hone  (map desk loam)                             ::  /loams scry return
   +$  foam                                              ::
     $:  dome                                            ::  ref transparent
         loam                                            ::  non-ref transparent
+    ==
+  ::
+  ::  Desk state.
+  ::
+  ::  Includes a checked-out ankh with current content, most recent version, map
+  ::  of all version numbers to commit hashes (commits are in hut.rang), and map
+  ::  of labels to version numbers.
+  ::
+  ::  `mim` is a cache of the content in the directories that are mounted
+  ::  to unix.  Often, we convert to/from mime without anything really
+  ::  having changed; this lets us short-circuit that in some cases.
+  ::  Whenever you give an `%ergo`, you must update this.
+  ::
+  +$  dome
+    $:  let=aeon                                        ::  top id
+        hit=(map aeon tako)                             ::  versions by id
+        lab=(map @tas aeon)                             ::  labels
+        tom=(map tako norm)                             ::  tomb policies
+        nor=norm                                        ::  default policy
+        mim=(map path mime)                             ::  mime cache
+        fod=flue                                        ::  ford cache
+        wic=(map weft yoki)                             ::  commit-in-waiting
+        cop=(unit [yok=yoki mis=pers:gall])             ::  commit awaiting pers
+        lac=pers:gall                                   ::  perms blocking live
+        liv=zest                                        ::  running agents
+        ren=rein                                        ::  force agents on/off
+        pes=pers:gall                                   ::  user-approved perms
+        pin=pers:gall                                   ::  requested perms
     ==                                                  ::
   +$  loam                                              ::  non-ref transparent
     $:  tom=(map tako norm)                             ::  tombstone override
@@ -849,7 +881,7 @@
     ==
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
-  +$  dome                                              ::  project state
+  +$  domo                                              ::  project state
     $:  let=@ud                                         ::  top id
         hit=(map @ud tako)                              ::  changes by id
         lab=(map @tas @ud)                              ::  labels
@@ -896,6 +928,17 @@
   +$  norm  (axal ?)                                    ::  tombstone policy
   +$  open  $-(path vase)                               ::  get prelude
   +$  page  ^page                                       ::  export for compat
+  +$  pour                                              ::  ford build w/content
+    $%  [%file =path]
+        [%nave =mark]
+        [%dais =mark]
+        [%cast =mars]
+        [%tube =mars]
+        ::  leafs
+        ::
+        [%vale =path =lobe]
+        [%arch =path =(map path lobe)]
+    ==
   +$  rang                                              ::  repository
     $:  hut=(map tako yaki)                             ::  changes
         lat=(map lobe page)                             ::  data
@@ -930,6 +973,13 @@
   +$  rule  [mod=?(%black %white) who=(set whom)]       ::  node permission
   +$  rump  [p=care q=case r=@tas s=path]               ::  relative path
   +$  saba  [p=ship q=@tas r=moar s=dome]               ::  patch+merge
+  +$  soak                                              ::  ford result
+    $%  [%cage =cage]
+        [%vase =vase]
+        [%arch dir=(map @ta vase)]
+        [%dais =dais]
+        [%tube =tube]
+    ==
   +$  soba  (list [p=path q=miso])                      ::  delta
   +$  suba  (list [p=path q=misu])                      ::  delta
   +$  tako  @uvI                                        ::  yaki ref
@@ -1095,6 +1145,55 @@
         %^  cat  7  (sham [%yaki (roll p add) q t])
         (sham [%tako (roll p add) q t])
     [p q has t]
+  ::
+  ::  $leak: ford cache key
+  ::
+  ::    This includes all build inputs, including transitive dependencies,
+  ::    recursively.
+  ::
+  +$  leak
+    $~  [*pour ~]
+    $:  =pour
+        deps=(set leak)
+    ==
+  ::
+  ::  $flow: global ford cache
+  ::
+  ::    Refcount includes references from other items in the cache, and
+  ::    from spills in each desk
+  ::
+  ::    This is optimized for minimizing the number of rebuilds, and given
+  ::    that, minimizing the amount of memory used.  It is relatively slow
+  ::    to lookup, because generating a cache key can be fairly slow (for
+  ::    files, it requires parsing; for tubes, it even requires building
+  ::    the marks).
+  ::
+  +$  flow  (map leak [refs=@ud =soak])
+  ::
+  ::  Per-desk ford cache
+  ::
+  ::    Spill is the set of "roots" we have into the global ford cache.
+  ::    We add a root for everything referenced directly or indirectly on
+  ::    a desk, then invalidate them on commit only if their dependencies
+  ::    change.
+  ::
+  ::    Sprig is a fast-lookup index over the global ford cache.  The only
+  ::    goal is to make cache hits fast.
+  ::
+  +$  flue  [spill=(set leak) sprig=(map mist [=leak =soak])]
+  ::
+  ::  Ford build without content.
+  ::
+  +$  mist
+    $%  [%file =path]
+        [%nave =mark]
+        [%dais =mark]
+        [%cast =mars]
+        [%tube =mars]
+        [%vale =path]
+        [%arch =path]
+    ==
+  ::
   ::  $pile: preprocessed hoon source file
   ::
   ::    /-  sur-file            ::  surface imports from /sur
@@ -1203,25 +1302,26 @@
         [%meld ~]                                       ::  unify memory
         [%pack ~]                                       ::  compact memory
         [%trim p=@ud]                                   ::  trim kernel state
+        [%logs =told]                                   ::  system output
     ==                                                  ::
   +$  task                                              ::  in request ->$
     $~  [%vega ~]                                       ::
     $%  [%boot lit=? p=*]                               ::  weird %dill boot
         [%crop p=@ud]                                   ::  trim kernel state
-        [%crud p=@tas q=(list tank)]                    ::  print error
         [%flog p=flog]                                  ::  wrapped error
         [%heft ~]                                       ::  memory report
         $>(%init vane-task)                             ::  after gall ready
+        [%logs p=(unit ~)]                              ::  watch system output
         [%meld ~]                                       ::  unify memory
         [%pack ~]                                       ::  compact memory
+        [%seat =desk]                                   ::  install desk
         [%shot ses=@tas task=session-task]              ::  task for session
-        [%talk p=(list tank)]                           ::  print tanks
-        [%text p=tape]                                  ::  print tape
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
         [%verb ~]                                       ::  verbose mode
-        [%knob tag=term level=?(%hush %soft %loud)]     ::  error verbosity
+        [%knob tag=term level=?(%hush %soft %loud)]     ::  deprecated removeme
         session-task                                    ::  for default session
+        told                                            ::  system output
     ==                                                  ::
   ::                                                    ::
   +$  session-task                                      ::  session request
@@ -1232,6 +1332,12 @@
         [%open p=dude:gall q=(list gill:gall)]          ::  setup session
         [%shut ~]                                       ::  close session
         [%view ~]                                       ::  watch session blits
+    ==                                                  ::
+  ::                                                    ::
+  +$  told                                              ::  system output
+    $%  [%crud p=@tas q=tang]                           ::  error
+        [%talk p=(list tank)]                           ::  tanks (in order)
+        [%text p=tape]                                  ::  tape
     ==                                                  ::
   ::
   ::::                                                  ::  (1d2)
@@ -1266,7 +1372,7 @@
     ==                                                  ::
   +$  dill-belt                                         ::  arvo input
     $%  belt                                            ::  client input
-        [%cru p=@tas q=(list tank)]                     ::  echo error
+        [%cru p=@tas q=(list tank)]                     ::  errmsg (deprecated)
         [%hey ~]                                        ::  refresh
         [%rez p=@ud q=@ud]                              ::  resize, cols, rows
         [%yow p=gill:gall]                              ::  connect to app
@@ -1277,11 +1383,11 @@
     ==                                                  ::
   +$  flog                                              ::  sent to %dill
     $%  [%crop p=@ud]                                   ::  trim kernel state
-        [%crud p=@tas q=(list tank)]                    ::
+        $>(%crud told)                                  ::
         [%heft ~]                                       ::
         [%meld ~]                                       ::  unify memory
         [%pack ~]                                       ::  compact memory
-        [%text p=tape]                                  ::
+        $>(%text told)                                  ::
         [%verb ~]                                       ::  verbose mode
     ==                                                  ::
   ::                                                    ::
@@ -1302,6 +1408,9 @@
         ::    so we can apply configurations on a per-site basis
         ::
         [%set-config =http-config]
+        ::  sessions: valid authentication cookie strings
+        ::
+        [%sessions ses=(set @t)]
         ::  response: response to an event from earth
         ::
         [%response =http-event:http]
@@ -1363,6 +1472,9 @@
         ::  start responding negatively to cors requests from origin
         ::
         [%reject-origin =origin]
+        ::  %spew: set verbosity toggle
+        ::
+        [%spew veb=@]
     ==
   ::  +origin: request origin as specified in an Origin header
   ::
@@ -1541,6 +1653,9 @@
         ::  gall scry endpoint
         ::
         [%scry ~]
+        ::  respond with the @p the requester is authenticated as
+        ::
+        [%name ~]
         ::  respond with the default file not found page
         ::
         [%four-oh-four ~]
@@ -2924,6 +3039,9 @@
       ::    TODO: make $yuki an option for %into?
       ::
       $>(%park task:clay)
+      ::  %clay: load blob store
+      ::
+      $>(%prep task:clay)
       ::  %eyre: learn ports of live http servers
       ::
       $>(%live task:eyre)
