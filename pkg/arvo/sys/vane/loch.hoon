@@ -27,7 +27,7 @@
     ::
     +$  cmd  [cmd=@tas =wut =dev =duct]
     ::
-    +$  device  [name=@tas dat=@ tus=@] 
+    +$  device  [name=@tas dat=(unit @) tus=@] 
     --
 ::
 =>
@@ -77,8 +77,8 @@
   ^-  [(list move) _loch-gate]
   ::
   =/  =task  ((harden task) wrapped-task)
-  ~&  >  ["loch call task:" task]
-  ~&  >>  ["loch hen:" hen]
+  ::~&  >  ["loch call task:" task]
+  ::~&  >>  ["loch hen:" hen]
   ::~&  >>  :*  "loch" 
             ::["unix duct" unix-duct:loch-gate]
             ::["devices" devices:loch-gate]
@@ -113,8 +113,8 @@
     ::
       %seen
     =/  duct  (~(get by pathing) dev.task)
-    =/  device-save  [dev.task dat.task tus.task]
-    ~&  >>  ["devicesave" device-save]
+    =/  device-save  [dev.task `dat.task tus.task]
+    ::~&  >>  ["devicesave" device-save]
     :-  ~[[+.duct %give %seen dev.task dat.task tus.task]]
       %_  loch-gate
         devices  (~(put by devices) dev.task device-save)
@@ -122,7 +122,7 @@
     ::
       %rote
     =/  duct  (~(get by pathing) dev.task)
-    =/  device-save  [dev.task 0 tus.task]
+    =/  device-save  [dev.task ~ tus.task]
     :-  ~[[+.duct %give %rote dev.task tus.task]]
       %_  loch-gate
         devices  (~(put by devices) dev.task device-save)
@@ -179,6 +179,7 @@
     ~&  >>>  ["bem" bem]
     =*  tyl  -.s.bem
     =/  devs  (~(got by devices) tyl)
+    ~&  >  devs
     ``[%noun !>(devs)]
   --    
 ::
