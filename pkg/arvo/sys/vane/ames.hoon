@@ -2805,13 +2805,8 @@
             peer-core
           ::
           ++  packet-pump  (pu packet-pump-state.state)
-          ++  mu-trace
-            |=  [verb=? print=(trap tape)]
-            ^+  same
-            (trace verb her ships.bug.channel print)
-          ::
-          ++  closing  (~(has in closing.peer-state) bone)
-          ++  corked   (~(has in corked.peer-state) bone)
+          ++  closing      (~(has in closing.peer-state) bone)
+          ++  corked       (~(has in corked.peer-state) bone)
           ::  +is-message-num-in-range: %.y unless duplicate or future ack
           ::
           ++  is-message-num-in-range
@@ -2879,7 +2874,7 @@
                     [[msg ?:(ok.ack [%ok ~] [%nack ~])] cork]
                   ?.  &(!ok.ack cork)  pump
                   %.  pump
-                  %+  mu-trace  odd.veb
+                  %+  pe-trace  odd.veb
                   |.("got nack for %cork {<bone=bone message-num=msg>}")
             ==  ==
           ::  +on-memo: handle request to send a message
@@ -2896,7 +2891,7 @@
             ::
             ?.  (is-message-num-in-range message-num)
               %.  pump
-              (mu-trace snd.veb |.("hear pump out of range"))
+              (pe-trace snd.veb |.("hear pump out of range"))
             abet:(call:packet-pump %hear message-num fragment-num)
           ::  +on-done: handle message acknowledgment
           ::
@@ -2925,7 +2920,7 @@
             ::
             ?:  (lth message-num current.state)
               %.  pump
-              %+  mu-trace  snd.veb  |.
+              %+  pe-trace  snd.veb  |.
               "duplicate done {<current=current.state message-num=message-num>}"
             ::  ignore duplicate and future acks
             ::
@@ -3422,13 +3417,8 @@
             =?  rcv.peer-state  !corked  (~(put by rcv.peer-state) bone state)
             peer-core
           ::
-          ++  mi-trace
-            |=  [verb=? print=(trap tape)]
-            ^+  same
-            (trace verb her ships.bug.channel print)
-          ::
-          ++  closing    (~(has in closing.peer-state) bone)
-          ++  corked     (~(has in corked.peer-state) bone)
+          ++  closing  (~(has in closing.peer-state) bone)
+          ++  corked   (~(has in corked.peer-state) bone)
           ++  received
             |=  =^bone
             ::    odd bone:                %plea request message
@@ -3461,7 +3451,7 @@
                 %+  send-shut-packet  bone
                 [message-num.shut-packet.task %| %| ok=& lag=*@dr]
               %.  sink
-              %+  mi-trace  odd.veb
+              %+  pe-trace  odd.veb
               |.("hear {<(received bone)>} on corked bone={<bone>}")
             ==
           ::
@@ -3481,7 +3471,7 @@
             ::  ignore messages from far future; limit to 10 in progress
             ::
             ?:  (gte seq (add 10 last-acked.state))
-              %-  %+  mi-trace  odd.veb
+              %-  %+  pe-trace  odd.veb
                   |.("future %hear {<seq=seq last-acked=last-acked.state>}")
               sink
             ::
@@ -3494,14 +3484,14 @@
                 ::
                 =.  peer-core  (send-shut-packet bone seq %| %& fragment-num)
                 %.  sink
-                %+  mi-trace  rcv.veb
+                %+  pe-trace  rcv.veb
                 |.("send dupe ack {<seq=seq^fragment-num=fragment-num>}")
               ::  whole message (n)ack
               ::
               =/       ok=?  !(~(has in nax.state) seq)
               =.  peer-core  (send-shut-packet bone seq %| %| ok lag=`@dr`0)
               %.  sink
-              %+  mi-trace  rcv.veb
+              %+  pe-trace  rcv.veb
               |.("send dupe message ack {<seq=seq>} ok={<ok>}")
             ::  last-acked<seq<=last-heard; heard message, unprocessed
             ::
@@ -3513,7 +3503,7 @@
                 ::  if not from a closing bone, drop last packet,
                 ::  since we don't know whether to ack or nack
                 ::
-                %-  %+  mi-trace  rcv.veb
+                %-  %+  pe-trace  rcv.veb
                     |.  ^-  tape
                     =/  data
                       :*  her  seq=seq  bone=bone.shut-packet
@@ -3525,7 +3515,7 @@
               ::  ack all other packets
               ::
               =.  peer-core  (send-shut-packet bone seq %| %& fragment-num)
-              %-  %+  mi-trace  rcv.veb  |.
+              %-  %+  pe-trace  rcv.veb  |.
                   =/  data
                     :*  seq=seq  fragment-num=fragment-num
                         num-fragments=num-fragments  closing=closing
@@ -3552,14 +3542,14 @@
             ::
             ?:  already-heard-fragment
               ?:  is-last-fragment
-                %-  %+  mi-trace  rcv.veb  |.
+                %-  %+  pe-trace  rcv.veb  |.
                     =/  data
                       [her seq=seq lh=last-heard.state la=last-acked.state]
                     "hear last dupe {<data>}"
                 sink
               =.  peer-core  (send-shut-packet bone seq %| %& fragment-num)
               %.  sink
-              %+  mi-trace  rcv.veb
+              %+  pe-trace  rcv.veb
               |.("send dupe ack {<her^seq=seq^fragment-num=fragment-num>}")
             ::  new fragment; store in state and check if message is done
             ::
@@ -3574,7 +3564,7 @@
             ::  ack any packet other than the last one, and continue either way
             ::
             =?  peer-core  !is-last-fragment
-              %-  %+  mi-trace  rcv.veb  |.
+              %-  %+  pe-trace  rcv.veb  |.
                   =/  data
                     [seq=seq fragment-num=fragment-num fragments=num-fragments]
                   "send ack-2 {<data>}"
@@ -3599,7 +3589,7 @@
             =.  last-heard.state     +(last-heard.state)
             =.  live-messages.state  (~(del by live-messages.state) seq)
             ::
-            %-  %+  mi-trace  msg.veb
+            %-  %+  pe-trace  msg.veb
                 |.("hear {<her>} {<seq=seq>} {<num-fragments.u.live>}kb")
             =/  message=*  (assemble-fragments [num-fragments fragments]:u.live)
             =/  empty=?    =(~ pending-vane-ack.state)
@@ -3640,7 +3630,7 @@
             ++  ha-plea
               ^+  sink
               ?:  |(closing corked)  sink
-              %-  %+  mi-trace  msg.veb
+              %-  %+  pe-trace  msg.veb
                   =/  dat  [her bone=bone message-num=message-num]
                   |.("sink plea {<dat>}")
               =;  pe=_peer-core
@@ -3688,7 +3678,7 @@
             ++  ha-boon
               ^+  sink
               ?:  |(closing corked)  sink
-              %-  %+  mi-trace  msg.veb  |.
+              %-  %+  pe-trace  msg.veb  |.
                   ::  XX -.task not visible, FIXME
                   ::
                   =/  dat  [her bone=bone message-num=message-num]
@@ -3711,7 +3701,7 @@
               ::  if we get a naxplanation for a %cork, the publisher hasn't
               ::  received the OTA. The /recork timer will retry eventually.
               ::
-              %-  %+  mi-trace  msg.veb
+              %-  %+  pe-trace  msg.veb
                   =/  dat  [her bone=bone message-num=message-num]
                   |.("sink naxplanation {<dat>}")
               ::  flip .bone's second bit to find referenced flow
