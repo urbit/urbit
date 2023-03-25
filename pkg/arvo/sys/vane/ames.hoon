@@ -2792,7 +2792,9 @@
           +|  %helpers
           ::
           ++  pump  .
-          ++  abed  |=(^bone pump(state (~(gut by snd.peer-state) +< *_state)))
+          ++  abed
+            |=  =^bone
+            pump(state (~(gut by snd.peer-state) bone *message-pump-state))
           ++  abet
             ::  if the bone was corked, it's been removed from the state,
             ::  so we avoid adding it again.
@@ -2827,8 +2829,7 @@
             ::  sanity check to isolate error cases
             ::
             ?.  |(?=(~ top) (lte current.state message-num.key.u.top))
-              ~|  [%strange-current current=current.state key.u.top]
-              !!
+              ~|([%strange-current current=current.state key.u.top] !!)
             ::  maybe trigger a timer based on congestion control calculations
             ::
             abet:(call:packet-pump %halt ~)
@@ -3405,7 +3406,9 @@
           +|  %helpers
           ::
           ++  sink  .
-          ++  abed  |=(^bone sink(state (~(gut by rcv.peer-state) +< *_state)))
+          ++  abed
+            |=  =^bone
+            sink(state (~(gut by rcv.peer-state) bone *message-sink-state))
           ++  abet
             ::  if the bone was corked, it's been removed from the state,
             ::  so we avoid adding it again.
@@ -3826,6 +3829,7 @@
             (on-keen (slag 3 (en-path:balk u.blk)) duct)
           ::
           +|  %internal
+          ::
           ++  ke
             |_  [=path keen-id=@ud keen=keen-state]
             ::
