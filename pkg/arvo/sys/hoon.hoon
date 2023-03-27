@@ -1687,6 +1687,33 @@
     |*  [b=* c=*]
     =+  d=(get b)
     (~(put by a) b [c d])
+  ::
+  ++  tap                                               ::  listify jar
+    ~/  %tap
+    =>  .(a ~(tap by a))
+    ^-  (list _?>(?=(^ a) [p.i.a ?>(?=(^ q.i.a) i.q.i.a)]))
+    |-
+    ?~  a  ~
+    |-
+    ?~  q.i.a  ^$(a t.a)
+    [i=[p.i.a i.q.i.a] t=$(q.i.a t.q.i.a)]
+  ::
+  ++  uni                                               ::  unify jars, removing
+    ~/  %uni                                            ::  duplicate list items
+    |*  b=_a
+    |-  ^+  a
+    ?~  b  a
+    ?~  a  b
+    ?:  =(p.n.b p.n.a)
+      :_  [l=$(a l.a, b l.b) r=$(a r.a, b r.b)]
+      n=[p.n.a ~(tap in (silt (weld q.n.a q.n.b)))]
+    ?:  (mor p.n.a p.n.b)
+      ?:  (gor p.n.b p.n.a)
+        $(l.a $(a l.a, r.b ~), b r.b)
+      $(r.a $(a r.a, l.b ~), b l.b)
+    ?:  (gor p.n.a p.n.b)
+      $(l.b $(b l.b, r.a ~), a r.a)
+    $(r.b $(b r.b, l.a ~), a l.a)
   --
 ++  ju                                                  ::  jug engine
   =|  a=(tree (pair * (tree)))  ::  (jug)
