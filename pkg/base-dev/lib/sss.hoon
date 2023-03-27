@@ -260,23 +260,16 @@
   ++  block                                  ::  No-ops on public paths.
     |=  [who=(list ship) whence=(list paths)]
     ^-  pubs
-    %+  edit  whence
-    |=  =buoy
-    ?@  tid.buoy  buoy
-    ?~  alo.buoy  buoy
-    %=  buoy
-      alo      `(~(dif in u.alo.buoy) (sy who))
-      mem.tid  (~(dif by mem.tid.buoy) (malt (turn who (late ~))))
-    ==
+    %+  perm  whence
+    |=  old=(unit (set ship))
+    ?~  old  ~  `(~(dif in u.old) (sy who))
   ::                                         ::  Allow ships to paths.
   ++  allow                                  ::  Any public paths will no-op.
     |=  [who=(list ship) where=(list paths)]
     ^-  pubs
-    %+  edit  where
-    |=  =buoy
-    ?@  tid.buoy  buoy
-    ?~  alo.buoy  buoy
-    buoy(alo `(~(gas in u.alo.buoy) who))
+    %+  perm  where
+    |=  old=(unit (set ship))
+    ?~  old  ~  `(~(gas in u.old) who)
   ::                                         ::  Kill a list of paths, i.e. tell
   ++  kill                                   ::  subs to not expect updates.
     (curr edit |=(=buoy buoy(tid (latest tid.buoy))))
