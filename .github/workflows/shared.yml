@@ -81,8 +81,8 @@ jobs:
           if [[ ${{ inputs.next }} == "next/kelvin/"* ]]; then
             next=$(echo ${{ inputs.next }} | sed 's/[^0-9]//g')
             base="https://bootstrap.urbit.org/vere/next/kelvin/${next}"
-          elif [[ ${{ github.ref_name }} == "next/kelvin"* ]]; then
-            next=$(echo ${{ github.ref_name }} | sed 's/[^0-9]//g')
+          elif [[ ${{ github.head_ref }} == "next/kelvin"* ]]; then
+            next=$(echo ${{ github.head_ref }} | sed 's/[^0-9]//g')
             base="https://bootstrap.urbit.org/vere/next/kelvin/${next}"
           else
             base="https://bootstrap.urbit.org/vere/${{ inputs.pace }}"
