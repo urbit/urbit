@@ -7,7 +7,7 @@ on:
       - '.github/workflows/develop.yml'
       - '.github/workflows/release.yml'
       - '.github/workflows/master.yml'
-      - '.github/workflows/vere.yml'
+      - '.github/workflows/shared.yml'
       - 'pkg/arvo/**'
       - 'pkg/docker-image/**'
       - 'pkg/ent/**'
@@ -22,7 +22,7 @@ on:
 
 jobs:
   call-vere:
-    uses: ./.github/workflows/vere.yml
+    uses: ./.github/workflows/shared.yml
     with:
       pace: 'edge'
       upload: >-
