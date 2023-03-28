@@ -250,20 +250,23 @@
   |=  [her=ship =bone]
   ^-  wire
   /pump/(scot %p her)/(scot %ud bone)
-::  +parse-pump-timer-wire: parse .her and .bone from |packet-pump wire
+::  +parse-pump-wire: parse .her and .bone from |packet-pump wire
 ::
-++  parse-pump-timer-wire
-  |=  =wire
-  ^-  (unit [%pump her=ship =bone])
-  ::
-  ~|  %ames-wire-timer^wire
-  ?.  ?=([%pump @ @ ~] wire)
+++  parse-pump-wire
+  |=  [ship=@ bone=@]
+  ^-  (unit [%pump her=^ship =^bone])
+  ?~  ship=`(unit @p)`(slaw %p ship)
     ~
-  ?~  ship=`(unit @p)`(slaw %p i.t.wire)
+  ?~  bone=`(unit @ud)`(slaw %ud bone)
     ~
-  ?~  bone=`(unit @ud)`(slaw %ud i.t.t.wire)
+  `pump/[u.ship u.bone]
+::
+++  parse-fine-wire
+  |=  [ship=@ =wire]
+  ^-  (unit [%fine her=^ship =^wire])
+  ?~  ship=`(unit @p)`(slaw %p ship)
     ~
-  `[%pump u.ship u.bone]
+  `fine/[u.ship wire]
 ::  +derive-symmetric-key: $symmetric-key from $private-key and $public-key
 ::
 ::    Assumes keys have a tag on them like the result of the |ex:crub core.
@@ -1336,7 +1339,7 @@
           |=  [=bone =^error]
           ^+  peer-core
           =.  peer-core   abet:(call:(abed:mi:peer-core bone) %done ok=%.n)
-          =.  event-core  abet:peer-core
+          =.  event-core  abet:peer-core  :: XX extraneous?
           ::  construct nack-trace message, referencing .failed $message-num
           ::
           =/  failed=message-num
@@ -1867,9 +1870,9 @@
         ::
         ?.  ?=([%recork ~] wire)
           =/  res=(unit ?([%fine her=ship =^wire] [%pump her=ship =bone]))
-            ?+  wire  ~
-              [%pump ship=@ bone=@ ~]       (parse-pump-timer-wire wire)
-              [%fine %behn %wake ship=@ *]  `fine/[i.t.t.t.wire t.t.t.t.wire]
+            ?+  wire  ~|  %ames-wire-timer^wire  !!
+              [%pump ship=@ bone=@ ~]  (parse-pump-wire &1.wire &2.wire)
+              [%fine %behn %wake @ *]  (parse-fine-wire &4.wire t.t.t.t.wire)
             ==
           ?~  res
             %-  (slog leaf+"ames: got timer for strange wire: {<wire>}" ~)
@@ -1889,8 +1892,7 @@
             fi-abet:ke-abet:ke-take-wake:(ke-abed:ke:fi:peer-core wire.u.res)
           ==
         ::
-        =.  event-core
-          (emit duct %pass /recork %b %wait `@da`(add now ~d1))
+        =.  event-core  (emit duct %pass /recork %b %wait `@da`(add now ~d1))
         ::
         ?^  error
           %-  (slog 'ames: recork timer failed' u.error)
@@ -2268,12 +2270,12 @@
         |=  [=ship =path]
         ^+  event-core
         =+  ~:(spit path)  ::  assert length
-        ?~  ship-state=(~(get by peers.ames-state) ship)
-          %+  enqueue-alien-todo  ship
-          |=  todos=alien-agenda
-          todos(keens (~(put ju keens.todos) path duct))
-        ?>  ?=([%known *] u.ship-state)
-        fi-abet:(on-keen:fi:(abed-peer:pe ship +.u.ship-state) path duct)
+        ?^  ship-state=(~(get by peers.ames-state) ship)
+          ?>  ?=([%known *] u.ship-state)
+          fi-abet:(on-keen:fi:(abed-peer:pe ship +.u.ship-state) path duct)
+        %+  enqueue-alien-todo  ship
+        |=  todos=alien-agenda
+        todos(keens (~(put ju keens.todos) path duct))
       ::
       ++  on-yawn
         |=  [=ship =path]
