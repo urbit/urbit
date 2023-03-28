@@ -78,7 +78,7 @@ jobs:
         name: run urbit-tests
         run: |
           cp -RL tests pkg/arvo/tests
-          if [[ ${{ inputs.next }} == "next/kelvin/"* ]]; then
+          if [[ ${{ inputs.next }} == "next/kelvin/"* || ${{ github.ref }} == "next/kelvin/"* ]]; then
             next=$(echo ${{ inputs.next }} | sed 's/[^0-9]//g')
             base="https://bootstrap.urbit.org/vere/next/kelvin/${next}"
           else
