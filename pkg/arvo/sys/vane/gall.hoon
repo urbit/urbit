@@ -2151,6 +2151,13 @@
       [~ ~]
     [~ ~ atom+!>(u.nonce)]
   ::
+  ?:  =(%w care)
+    ?>  &(?=(%da -.r.bem) =(p.r.bem now))
+    ?~  yok=(~(get by yokes.state) q.bem)  ~
+    ?~  ski=(~(get by sky.u.yok) s.bem)    ~
+    ?~  lat=(ram:on-path fan.u.ski)        ~
+    ``case/!>(ud/key.u.lat)
+  ::
   ?.  =(our ship)
     ~
   ?.  =([%$ %da now] coin)
