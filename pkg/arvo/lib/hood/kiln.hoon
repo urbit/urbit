@@ -583,15 +583,13 @@
     ..abet
   =/  kel  i.wic
   %-  emil
-  =/  cards
+  =/  desks=(list [=desk =zest])
     %+  murn  ~(tap by rock)
     |=  [=desk =zest wic=(set weft)]
     ?:  |(=(%base desk) !?=(%live zest) (~(has in wic) kel))
       ~
-    `u=[%pass /kiln/bump/[desk] %arvo %c %zest desk %held]
-  ?~  cards
-    [%pass /kiln/bump/wick %arvo %c %wick ~]~
-  cards
+    `u=[desk %held]
+  [%pass /kiln/bump/zeal %arvo %c %zeal desks]~
 ::
 ++  poke-cancel
   |=  a=@tas
