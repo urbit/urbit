@@ -4970,9 +4970,22 @@
   ::
       %wick
     =^  mos  ruf
-      =/  den  ((de now rof hen ruf) our %base)
-      abet:wick:den                                     ::  [wick]
+      abet:wick:((de now rof hen ruf) our %base)        ::  [wick]
     [mos ..^$]
+  ::
+      %zeal
+    =^  m1  ruf
+      =|  mos=(list move)
+      |-  ^+  [mos ruf]
+      ?~  lit.req
+        [mos ruf]
+      =/  den  ((de now rof hen ruf) our desk.i.lit.req)
+      =^  mos-new  ruf  abet:(set-zest:den zest.i.lit.req)
+      $(mos (weld mos mos-new), lit.req t.lit.req)
+    =^  m2  ruf
+      abet:wick:((de now rof hen ruf) our %base)
+    =^  m3  ruf  abet:goad:(lu now rof hen ruf)
+    [:(weld m1 m2 m3) ..^$]
   ::
       %zest
     =^  m1  ruf
