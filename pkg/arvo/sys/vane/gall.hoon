@@ -2056,13 +2056,13 @@
     ?~  yok  ~
     =/  ski  (~(get by sky.u.yok) s.bem)
     ?~  ski  ~
-    ?.  ?=(%ud -.r.bem)  ~
-    =/  res  (get:on-path fan.u.ski p.r.bem)
-    ?~  res  ~
-    ?-  -.u.res
-      %|  ~
-      %&  ``[%noun %noun p.u.res]
-    ==
+    =/  res=(unit (each noun @uvI))  
+      ?+  -.r.bem  ~
+        %ud  (get:on-path fan.u.ski p.r.bem)
+        %da  ?>(=(p.r.bem now) (bind (ram:on-path fan.u.ski) tail))
+      ==
+    ?.  ?=([~ %& *] res)  ~
+    ``[%noun %noun p.u.res]
   ::  TODO new care to ask for hash of a sky binding
   ::
   ?.  ?=(%.y -.shop)
