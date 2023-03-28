@@ -2793,8 +2793,8 @@
           ::
           ++  pump  .
           ++  abed
-            |=  =^bone
-            pump(state (~(gut by snd.peer-state) bone *message-pump-state))
+            |=  b=^bone
+            pump(bone b, state (~(gut by snd.peer-state) b *message-pump-state))
           ++  abet
             ::  if the bone was corked, it's been removed from the state,
             ::  so we avoid adding it again.
@@ -3407,8 +3407,8 @@
           ::
           ++  sink  .
           ++  abed
-            |=  =^bone
-            sink(state (~(gut by rcv.peer-state) bone *message-sink-state))
+            |=  b=^bone
+            sink(bone b, state (~(gut by rcv.peer-state) b *message-sink-state))
           ++  abet
             ::  if the bone was corked, it's been removed from the state,
             ::  so we avoid adding it again.
