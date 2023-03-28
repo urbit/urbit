@@ -972,6 +972,9 @@
           .
       =/  val  (get:on-path fan.u.old yon)
       ?~  val  ::  insert binding at new case
+        =>  ?~  lat=(ram:on-path fan.u.old)  .
+            ?>  (gte yon key.u.lat)
+            .
         %+  ~(put by sky.yoke)  spur
         u.old(fan (put:on-path fan.u.old yon [%& noun]))
       ?-    -.u.val
