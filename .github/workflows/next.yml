@@ -27,5 +27,5 @@ jobs:
     uses: ./.github/workflows/shared.yml
     with:
       upload: true
-      next: ${{ github.ref | replace('refs/heads/next/kelvin/', '') }}
+      next: ${{ github.ref_name }}
     secrets: inherit
