@@ -1966,6 +1966,19 @@
       ?~  wat=(~(get by wic.dom.dojo.i.desks) zuse+zuse)
         (mean (cat 3 'clay: missing commit-in-waiting on ' desk.i.desks) ~)
       =/  den  ((de now rof hen ruf) our desk.i.desks)
+      ::  if we are upgrading from a pre-permissions world into a world
+      ::  in which permissions exist, grandfather in all existing live apps
+      ::  by auto-granting their required permissions.
+      ::  (we must do this because, since old clay doesn't know about perms,
+      ::  it cannot warn the user about lacking ones post-upgrade, or grant
+      ::  them ahead of time, and so getting the base update here to succeed
+      ::  would require all apps be suspended, which kills the user.)
+      ::
+      =?  den  ?&  ?=([* ~ ~] old-kel)
+                   =(%zuse lal.n.old-kel)
+                   (gte num.n.old-kel %413)
+               ==
+        den(pes.dom (sy +:(get-seal u.wat)))            ::  [goad] <
       ::  [goad] < call without goading so that we apply all the commits
       ::  before trying to compile all desks to send to gall.
       ::
@@ -2043,7 +2056,7 @@
     ::
     ++  get-seal
       |=  =yoki
-      ^-  seal  ::TODO  unit, if mismatch type/future kelvin?
+      ^-  seal
       |^  ?-    -.yoki
               %|
             ?~  lob=(~(get by q.p.yoki) /desk/seal)
