@@ -5,7 +5,7 @@
 :-  %ask
 |=  $:  [now=@da eny=@uvJ bek=beak]
         [=desk ~]
-        [from=$~(%base desk) hard=_| minimal=_|]
+        [from=$~(%base desk) hard=_| gall=_|]
     ==
 ::
 =;  make-new-desk
@@ -34,7 +34,7 @@
         /mar/kelvin/hoon
         /sys/kelvin
       ==
-    =/  extra-files=(list path)  ?:  minimal  [~]
+    =/  extra-files=(list path)  ?.  gall  [~]
       :~
         /mar/bill/hoon
         /mar/mime/hoon
