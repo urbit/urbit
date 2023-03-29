@@ -1043,9 +1043,7 @@
     ::
     +$  carp  $+  carp  (wind neet gift:agent)
     +$  neet  $+  neet
-      $<  %grow
-      $<  %tomb
-      $<  %cull
+      $<  ?(%grow %tomb %cull)
       $%  note:agent
           [%agent [=ship name=term] task=[%raw-poke =mark =noun]]
           [%huck [=ship name=term] =note-arvo]
