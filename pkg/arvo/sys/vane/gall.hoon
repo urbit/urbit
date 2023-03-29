@@ -2127,8 +2127,10 @@
       [~ ~]
     [~ ~ atom+!>(u.nonce)]
   ::
-  ?:  =(%w care)
-    ?>  &(?=(%da -.r.bem) =(p.r.bem now))
+  ?:  ?&  =(%w care)
+          =([%$ %da now] coin)
+          =(our ship)
+      ==
     ?~  yok=(~(get by yokes.state) q.bem)  ~
     ?~  ski=(~(get by sky.u.yok) s.bem)    ~
     ?~  lat=(ram:on-path fan.u.ski)        ~
