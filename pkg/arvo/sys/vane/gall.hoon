@@ -1642,7 +1642,9 @@
       |=  [lyc=gang vis=view bem=beam]
       ^-  (unit (unit (cask vase)))
       ?.  (rite our [vis bem] (~(get ju perms.state) q.beak.yoke))
-        =-  ((slog leaf+- ~) ~)
+        =-  %-  (slog leaf+- ~)
+            ::TODO PERM  replace the below with ~ to start enforcing
+            (rof lyc vis bem)
         =/  sef=tape  "%{(trip q.beak.yoke)}/{(trip agent-name)}"
         =/  tar=tape  "{<vis>} {(spud (en-beam bem))}"
         "insufficient permission: {sef} scrying for {tar}"
@@ -1656,9 +1658,13 @@
       |=  [for=?(%poke %watch %fail %load ~) run=_^?(|.(*step:agent))]
       ^-  [(unit tang) _ap-core]
       =/  result  (ap-mule run)
-      =/  forbad
+      =/  forbad=(unit tang)
         ?:  ?=(%| -.result)  ~
-        (ap-douane -.p.result)
+        ::TODO PERM  _produce_ the +ap-douane output to start enforcing
+        =+  b=(ap-douane -.p.result)
+        ?~  b  ~
+        =/  sef=tape  "%{(trip q.beak.yoke)}/{(trip agent-name)}"
+        ((slog leaf+"{sef} violated permissions:" u.b) ~)
       ::  handle permission violation, except for %poke and %watch
       ::
       ?:  &(?=(^ forbad) !?=(?(%poke %watch) for))
