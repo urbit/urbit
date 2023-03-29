@@ -1354,6 +1354,11 @@
   ::                                                    ::::
 ++  eyre  ^?
   |%
+  +$  cache-entry
+    $:  auth=?
+    $=  body
+    $%  [%payload =simple-payload:http]
+    ==  ==
   +$  gift
     $%  ::  set-config: configures the external http server
         ::
@@ -1373,6 +1378,9 @@
         ::    not allowed.
         ::
         [%bound accepted=? =binding]
+        ::  notification that a cache entry has changed
+        ::
+        [%grow =path]
     ==
   ::
   +$  task
@@ -1428,6 +1436,9 @@
         ::  %spew: set verbosity toggle
         ::
         [%spew veb=@]
+        ::  remember (or update) a cache mapping
+        ::
+        [%set-response url=@t entry=(unit cache-entry)]
     ==
   ::  +origin: request origin as specified in an Origin header
   ::
