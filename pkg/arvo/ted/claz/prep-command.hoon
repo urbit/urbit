@@ -1,7 +1,7 @@
 ::  claz/pre-command: sanity-check command and gather prerequisites
 ::
-/-  *claz, ethdata=eth-provider
-/+  *claz, strandio, eth-provider
+/-  *claz
+/+  *claz, eth-provider, strandio
 =,  ethereum-types
 =,  jael
 ::
@@ -20,10 +20,10 @@
     ?^  err  (strand-fail:strandio %claz-pre-command u.err)
     ::  gather prerequisites
     ::
-    ;<  res=ethout:ethdata  bind:m
-      (eth-provider [%get-next-nonce as.command])
-    ?>  ?=(%get-next-nonce -.res)
-    =/  nonce  `@ud`+.res
+    ~&  [%gonna-get-nonce url as.command]
+    ;<  nonce=@ud  bind:m
+      (get-next-nonce:eth-provider as.command)
+    ~&  [%got-nonce nonce]
     (pure:m !>([%nonce nonce]))
 ::
 ++  check-invites
@@ -43,9 +43,8 @@
   |=  ships=(list ship)
   =/  m  (strand:strandio ,(unit tang))
   ^-  form:m
-  ;<  res=ethout:ethdata  bind:m
-    %-  eth-provider
-    :-  %batch-read-contract-strict
+  ;<  responses=(list [@t @t])  bind:m
+    %-  batch-read-contract-strict:eth-provider  
     %+  turn  ships
     |=  =ship
     ^-  proto-read-request:rpc
@@ -53,8 +52,6 @@
       ::TODO  argument?
       azimuth:contracts:azimuth
     (rights:cal ship)
-  ?>  ?=(%batch-read-contract-strict -.res)
-  =/  responses  `(list [@t @t])`+.res
   =/  taken=(list ship)
     %+  murn  responses
     |=  [id=@t res=@t]
@@ -84,20 +81,16 @@
     +((~(gut by counts) p 0))
   ;<  pool=@ud  bind:m
     =/  n  (strand:strandio ,@ud)
-    ;<  res2=ethout:ethdata  bind:n
-      %-  eth-provider
-      :-  %read-contract
+    ;<  res=@t  bind:n
+      %-  read-contract:eth-provider
       :+  `'pool'
         ::TODO pass in as argument
         delegated-sending:contracts:azimuth
       (get-pool:cal as)
-    ?>  ?=(%read-contract -.res2)
-    =/  res  `@t`+.res2
     %-  pure:n
     (decode-results:rpc res [%uint]~)
-  ;<  res=ethout:ethdata  bind:m
-    %-  eth-provider
-    :-  %batch-read-contract-strict
+  ;<  responses=(list [id=@t res=@t])  bind:m
+    %-  batch-read-contract-strict:eth-provider
     %+  turn  ~(tap by counts)
     |=  [=ship @ud]
     ^-  proto-read-request:rpc
@@ -105,20 +98,6 @@
       ::TODO pass in as argument
       delegated-sending:contracts:azimuth
     (pools:cal pool ship)
-  ?>  ?=(%batch-read-contract-strict -.res)
-  =/  responses  `(list [id=@t res=@t])`+.res
-  ::;<  res2=ethout:ethdata  bind:m
-  ::  %-  eth-provider
-  ::  :-  %batch-read-contract-strict
-  ::  %+  turn  ~(tap by counts)
-  ::  |=  [=ship @ud]
-  ::  ^-  proto-read-request:rpc
-  ::  :+  `(scot %p ship)
-  ::    ::TODO pass in as argument
-  ::    delegated-sending:contracts:azimuth
-  ::  (pools:cal pool ship)
-  ::?>  ?=(%batch-read-contract-strict -.res2)
-  ::=/  responses  `(list [id=@t res=@t])`+.res2
   =/  missing=(list [star=ship have=@ud needed=@ud])
     %+  murn  responses
     |=  [id=@t res=@t]

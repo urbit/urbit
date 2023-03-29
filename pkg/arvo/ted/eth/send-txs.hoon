@@ -2,8 +2,8 @@
 ::
 ::    produces hex string result, for use with +decode-results:rpc:ethereum
 ::
-/-  rpc=json-rpc, ethdata=eth-provider
-/+  strandio, eth-provider
+/-  rpc=json-rpc
+/+  eth-provider, strandio
 ::
 =>
   |%
@@ -22,15 +22,12 @@
 ?:  =(~ txs)  (pure:m !>(~))
 ::  send a step-size batch of transactions
 ::
-;<  res=ethout:ethdata  bind:m
-  %-  eth-provider
-  :-  %request-batch-rpc-loose
+;<  responses=(list response:rpc)  bind:m
+  %-  request-batch-rpc-loose:eth-provider
   %+  turn  (scag step-size txs)
   |=  tx=@ux
   :-  `(scot %ux (end [3 10] tx))
   [%eth-send-raw-transaction tx]
-?>  ?=(%request-batch-rpc-loose -.res)
-=/  responses  `(list response:rpc)`+.res
 ::  parse tx hashes out of responses, bailing on submission failure
 ::
 =/  pending=(each (set @ux) [term tang])
@@ -73,15 +70,12 @@
 ~&  [~(wyt in p.pending) 'txs awaiting confirmation']
 ::  get receipts
 ::
-;<  res=ethout:ethdata  bind:m
-  %-  eth-provider
-  :-  %request-batch-rpc-loose
+;<  responses=(list response:rpc)  bind:m
+  %-  request-batch-rpc-loose:eth-provider
   %+  turn  ~(tap in p.pending)
   |=  txh=@ux
   :-  `(crip '0' 'x' ((x-co:co 64) txh))
   [%eth-get-transaction-receipt txh]
-?>  ?=(%request-batch-rpc-loose -.res)
-=/  responses  `(list response:rpc)`+.res
 ::  find transactions that haven't been confirmed yet, bailing on failure
 ::
 =/  unconfirmed=(each (set @ux) [term tang])

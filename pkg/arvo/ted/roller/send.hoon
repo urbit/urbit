@@ -1,22 +1,18 @@
 ::  roller/send: send rollup tx
 ::
-/-  rpc=json-rpc, *dice, ethdata=eth-provider, spider
-/+  naive, ethereum, strandio, eth-provider
+/-  rpc=json-rpc, *dice
+/+  naive, ethereum, eth-provider, strandio
 ::
 ::
-^-  thread:spider
 |=  args=vase
 =+  !<(rpc-send-roll args)
-
 =/  m  (strand:strandio ,vase)
 |^
 ^-  form:m
 ::
-
 =/  =address:ethereum  (address-from-prv:key:ethereum pk)
-;<  res=ethout:ethdata  bind:m  (eth-provider [%get-next-nonce address])
-?>  ?=(%get-next-nonce -.res)
-=/  expected-nonce  +.res
+;<  expected-nonce=@ud  bind:m
+  (get-next-nonce:eth-provider address)
 ::  Infura enforces a max calldata size (32, 64, 128 Kb?) so we calculate how
 ::  many txs are included in a batch of that size, and only send those
 ::
@@ -73,10 +69,8 @@
 ::
 =/  gas-limit=@ud  (add 22.000 (mul 16 p.batch-data))
 =/  max-cost=@ud   (mul gas-limit use-gas-price)
-;<  res=ethout:ethdata  bind:m
-  (eth-provider [%get-balance address])
-?>  ?=(%get-balance -.res)
-=/  balance  +.res
+;<  balance=@ud  bind:m
+  (get-balance:eth-provider address)
 ?:  (gth max-cost balance)
   ::  if we cannot pay for the transaction, don't bother sending it out
   ::
@@ -159,10 +153,8 @@
   ^-  form:m
   =/  req=[(unit @t) request:rpc:ethereum]
     [`'sendRawTransaction' %eth-send-raw-transaction batch]
-  ;<  res2=ethout:ethdata  bind:m
-    (eth-provider [%request-batch-rpc-loose [req]~])
-  ?>  ?=(%request-batch-rpc-loose -.res2)
-  =/  res  `(list response:rpc)`+.res2
+  ;<  res=(list response:rpc)  bind:m
+    (request-batch-rpc-loose:eth-provider [req]~)
   ?:  ?=([* ~] res)
     (pure:m i.res)
   %+  strand-fail:strandio

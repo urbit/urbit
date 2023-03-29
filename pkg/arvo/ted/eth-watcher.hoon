@@ -1,7 +1,7 @@
 ::  eth-watcher: ethereum event log collector
 ::
-/-  spider, *eth-watcher, ethdata=eth-provider
-/+  strandio, azimuth, eth-provider
+/-  spider, *eth-watcher
+/+  strandio, eth-provider, azimuth
 =,  ethereum-types
 =,  jael
 ::
@@ -12,12 +12,8 @@
 =+  !<([~ pup=watchpup] args)
 =/  m  (strand:strandio ,vase)
 ^-  form:m
-;<  res=ethout:ethdata  bind:m  (eth-provider [%get-latest-block %.y])
-?>  ?=(%get-latest-block -.res)
-::  TODO fix this
-=/  latest-block  +.res
-:: =+  last=number.id.latest-block
-=+  last=0
+;<  =latest=block  bind:m  (get-latest-block:eth-provider %.y)
+=+  last=number.id.latest-block
 ;<  pup=watchpup   bind:m  (zoom pup last (min last (fall to.pup last)))
 =|  vows=disavows
 ;<  pup=watchpup   bind:m  (fetch-batches pup)
@@ -27,7 +23,7 @@
 :: =*  loop  $
 :: ?:  (gth number.pup number.id.latest-block)
 ::   (pure:m !>([vows pup]))
-:: ;<  =block  bind:m                (get-block-by-number:ethio url.pup number.pup)
+:: ;<  =block  bind:m                (get-block-by-number:eth-provider number.pup)
 :: ;<  [=new=disavows pup=watchpup]  bind:m  (take-block pup block)
 :: %=  loop
 ::   pup   pup
@@ -44,10 +40,8 @@
   ?:  &(?=(^ blocks.pup) !=(parent-hash.block hash.id.i.blocks.pup))
     (rewind pup block)
   =/  contracts  (weld contracts.pup batchers.pup)
-  ;<  res=ethout:ethdata  bind:m  ::  oldest first
-    (eth-provider [%get-logs-by-hash hash.id.block contracts topics.pup])
-  ?>  ?=(%get-logs-by-hash -.res)
-  =/  new-loglist  `(list event-log:rpc:ethereum)`+.res
+  ;<  =new=loglist  bind:m  ::  oldest first
+    (get-logs-by-hash:eth-provider hash.id.block contracts topics.pup)
   %-  pure:m
   :-  ~
   %_  pup
@@ -73,10 +67,8 @@
   ?:  =(parent-hash.block hash.id.i.blocks)
     (pure:m (flop vows) pup(blocks [block blocks]))
   ::  next-block: the new target block
-  ;<  res=ethout:ethdata  bind:m
-    (eth-provider [%get-block-by-number number.id.i.blocks])
-  ?>  ?=(%get-block-by-number -.res)
-  =/  next-block  +.res
+  ;<  =next=^block  bind:m
+    (get-block-by-number:eth-provider number.id.i.blocks)
   =.  pending-logs.pup  (~(del by pending-logs.pup) number.id.i.blocks)
   =.  vows  [id.block vows]
   loop(block next-block, blocks t.blocks)
@@ -123,18 +115,13 @@
         ==
       500
     zoom-step
-  ;<  res=ethout:ethdata  bind:m  ::  oldest first
-    %-  eth-provider
-    :-
-    %get-logs-by-range 
-    :*
-    (weld contracts.pup batchers.pup)
-    topics.pup
-    number.pup
-    to-number
+  ;<  =loglist  bind:m  ::  oldest first
+    %:  get-logs-by-range:eth-provider
+      (weld contracts.pup batchers.pup)
+      topics.pup
+      number.pup
+      to-number
     ==
-  ?>  ?=(%get-logs-by-range -.res)
-  =/  loglist  `(list event-log:rpc:ethereum)`+.res
   =?  pending-logs.pup  ?=(^ loglist)
     (~(put by pending-logs.pup) to-number loglist)
   loop(number.pup +(to-number))
@@ -178,10 +165,8 @@
     (pure:m log)
   ?.  (lien batchers.pup |=(=@ux =(ux address.log)))
     (pure:m log)
-  ;<  res2=ethout:ethdata  bind:m
-    (eth-provider [%get-tx-by-hash transaction-hash.u.mined.log])
-  ?>  ?=(%get-tx-by-hash -.res2)
-  =/  res  `transaction-result:rpc:ethereum`+.res2
+  ;<  res=transaction-result:rpc:ethereum  bind:m
+    (get-tx-by-hash:eth-provider transaction-hash.u.mined.log)
   (pure:m log(input.u.mined `(data-to-hex input.res)))
 ::
 ++  data-to-hex
