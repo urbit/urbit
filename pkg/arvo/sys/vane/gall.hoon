@@ -2038,7 +2038,7 @@
     =/  res=(unit (each noun @uvI))  
       ?+  -.r.bem  ~
         %ud  (get:on-path fan.u.ski p.r.bem)
-        %da  ?>(=(p.r.bem now) (bind (ram:on-path fan.u.ski) tail))
+        %da  ?.(=(p.r.bem now) ~ (bind (ram:on-path fan.u.ski) tail))
       ==
     ?.  ?=([~ %& *] res)  ~
     ``[%noun %noun p.u.res]
