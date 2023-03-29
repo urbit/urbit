@@ -957,38 +957,16 @@
     ::  +ap-grow: bind a path in the agent's scry namespace
     ::
     ++  ap-grow
-      |=  [=case =spur =noun]
+      |=  [=spur =noun]
       ^+  ap-core
       =-  ap-core(sky.yoke -)
-      =/  yon  ?>(?=(%ud -.case) p.case)
-      =/  old  (~(get by sky.yoke) spur)
-      ?~  old  ::  insert binding at new path
-        %+  ~(put by sky.yoke)  spur
-        `(put:on-path fan:*path-state yon [%& noun])
-      =>  ?~  bob.u.old
-            .
-          ~|  gall-grow-bob+[path actual=yon max=u.bob.u.old]
-          ?>  (gth yon u.bob.u.old)  ::  enforce high water mark
-          .
-      =/  val  (get:on-path fan.u.old yon)
-      ?~  val  ::  insert binding at new case
-        =>  ?~  lat=(ram:on-path fan.u.old)  .
-            ?>  (gte yon key.u.lat)
-            .
-        %+  ~(put by sky.yoke)  spur
-        u.old(fan (put:on-path fan.u.old yon [%& noun]))
-      ?-    -.u.val
-          %&  ::  re-bind same value
-        ~|  gall-grow-dupe+[agent-name case spur]
-        ?>  =(p.u.val noun)
-        sky.yoke
-      ::
-          %|  ::  reinflate tombstone
-        ~|  gall-grow-hash+[agent-name case spur p.u.val]
-        ?>  =(p.u.val (shax (jam noun)))
-        %+  ~(put by sky.yoke)  spur
-        u.old(fan (put:on-path fan.u.old yon [%& noun]))
-      ==
+      %+  ~(put by sky.yoke)  spur
+      ?~  old=(~(get by sky.yoke) spur)  ::  insert binding at new path
+        `(put:on-path fan:*path-state 0 [%& noun])
+      =-  u.old(fan (put:on-path fan.u.old - [%& noun]))
+      ?~  lat=(clap bob.u.old (bind (ram:on-path fan.u.old) head) max)
+        0
+      +(u.lat)
     ::  +ap-tomb: tombstone -- replace bound value with hash
     ::
     ++  ap-tomb

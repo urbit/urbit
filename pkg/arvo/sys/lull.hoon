@@ -2923,7 +2923,7 @@
           [%arvo note-arvo]
           [%pyre =tang]
       ::
-          [%grow =case =spur =noun]
+          [%grow =spur =noun]
           [%tomb =case =spur]
           [%cull =case =spur]
       ==
