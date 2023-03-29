@@ -84,19 +84,21 @@
 ::    sky: scry bindings
 ::
 +$  yoke
-  $:  control-duct=duct
-      run-nonce=@t
-      sub-nonce=_1
-      =stats
-      =bitt
-      =boat
-      =boar
-      code=*
-      agent=(each agent vase)
-      =beak
-      marks=(map duct mark)
-      sky=(map spur path-state)
-  ==
+  $%  [%nuke sky=(map spur @ud)]
+      $:  %live
+          control-duct=duct
+          run-nonce=@t
+          sub-nonce=_1
+          =stats
+          =bitt
+          =boat
+          =boar
+          code=*
+          agent=(each agent vase)
+          =beak
+          marks=(map duct mark)
+          sky=(map spur path-state)
+  ==  ==
 ::
 +$  path-state
   $:  bob=(unit @ud)
@@ -169,19 +171,21 @@
 ::  $egg: migratory agent state; $yoke with .old-state instead of .agent
 ::
 +$  egg
-  $:  control-duct=duct
-      run-nonce=@t
-      sub-nonce=@
-      =stats
-      =bitt
-      =boat
-      =boar
-      code=~
-      old-state=[%| vase]
-      =beak
-      marks=(map duct mark)
-      sky=(map spur path-state)
-  ==
+  $%  [%nuke sky=(map spur @ud)]
+      $:  %live
+          control-duct=duct
+          run-nonce=@t
+          sub-nonce=@
+          =stats
+          =bitt
+          =boat
+          =boar
+          code=~
+          old-state=[%| vase]
+          =beak
+          marks=(map duct mark)
+          sky=(map spur path-state)
+  ==  ==
 --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
@@ -249,6 +253,7 @@
       (drop (bind (~(get by yokes.state) u.dude) (lead u.dude)))
     |-  ^+  mo-core
     ?~  apps  mo-core
+    ?:  ?=(%nuke -.q.i.apps)  $(apps t.apps)
     =/  ap-core  (ap-yoke:ap p.i.apps [~ our] q.i.apps)
     $(apps t.apps, mo-core ap-abet:(ap-doff:ap-core ship))
   ::  +mo-rake: send %cork's for old subscriptions if needed
@@ -261,6 +266,7 @@
       (drop (bind (~(get by yokes.state) u.dude) (lead u.dude)))
     |-  ^+  mo-core
     ?~  apps  mo-core
+    ?:  ?=(%nuke -.q.i.apps)  $(apps t.apps)
     =/  ap-core  (ap-yoke:ap p.i.apps [~ our] q.i.apps)
     $(apps t.apps, mo-core ap-abet:(ap-rake:ap-core all))
   ::  +mo-receive-core: receives an app core built by %ford.
@@ -283,6 +289,7 @@
     =/  yak  (~(get by yokes.state) dap)
     =/  tex=(unit tape)
       ?~  yak  `"installing"
+      ?:  ?=(%nuke -.u.yak)  `"unnuking"  ::TODO good message here?
       ?-    -.agent.u.yak
           %|  `"reviving"
           %&
@@ -293,7 +300,7 @@
     =+  ?~  tex  ~
         ~>  %slog.[0 leaf+"gall: {u.tex} {<dap>}"]  ~
     ::
-    ?^  yak
+    ?:  ?=([~ %live *] yak)
       ?:  &(=(q.beak.u.yak q.bek) =(code.u.yak agent) =(-.agent.u.yak &))
         mo-core
       ::
@@ -306,12 +313,15 @@
     ::
     =.  yokes.state
       %+  ~(put by yokes.state)  dap
-      %*  .  *yoke
-        control-duct  hen
-        beak          bek
-        code          agent
-        agent         &+agent
-        run-nonce     (scot %uw (end 5 (shas %yoke-nonce eny)))
+      %*    .  *$>(%live yoke)
+          control-duct  hen
+          beak          bek
+          code          agent
+          agent         &+agent
+          run-nonce     (scot %uw (end 5 (shas %yoke-nonce eny)))
+          sky
+        ?~  yak  ~
+        (~(run by sky.u.yak) (corl (late ~) (lead ~)))
       ==
     ::
     =/  old  mo-core
@@ -604,7 +614,7 @@
     ::
     =/  dap=term  i.wire
     =/  yoke  (~(get by yokes.state) dap)
-    ?~  yoke
+    ?.  ?=([~ %live *] yoke)
       %-  (slog leaf+"gall: {<dap>} dead, got {<+<.sign-arvo>}" ~)
       mo-core
     ?.  =(run-nonce.u.yoke i.t.wire)
@@ -705,7 +715,14 @@
       mo-core
     ~>  %slog.0^leaf/"gall: nuking {<dap>}"
     =.  mo-core  ap-abet:ap-nuke:(ap-abed:ap dap `our)
-    mo-core(yokes.state (~(del by yokes.state) dap))
+    =-  mo-core(yokes.state -)
+    %+  ~(jab by yokes.state)  dap
+    |=  =yoke
+    ?:  ?=(%nuke -.yoke)  yoke
+    :-  %nuke
+    %-  ~(run by sky.yoke)
+    |=  path-state
+    (fall (clap bob (bind (ram:on-path fan) head) max) 0)
   ::  +mo-load: install agents
   ::
   ++  mo-load
@@ -718,7 +735,8 @@
       $(agents t.agents, mo-core (mo-receive-core i.agents))
     ::
     =/  kil
-      =/  lol  (skim ~(tap by yokes.state) |=([term yoke] -.agent))
+      =/  lol
+        (skim ~(tap by yokes.state) |=([* y=yoke] &(?=(%live -.y) -.agent.y)))
       =/  mol  (~(gas by *(map term yoke)) lol)
       =/  sol  ~(key by mol)
       =/  new  (silt (turn agents head))
@@ -746,7 +764,8 @@
     ::
         %raw-poke
       =/  =case:clay  da+now
-      =/  =desk  q.beak:(~(got by yokes.state) dap)
+      =/  yok  (~(got by yokes.state) dap)
+      =/  =desk  q.beak:?>(?=(%live -.yok) yok)  ::TODO acceptable assertion?
       =/  sky  (rof ~ %cb [our desk case] /[mark.deal])
       ?-    sky
           ?(~ [~ ~])
@@ -769,7 +788,8 @@
       =/  =case:clay  da+now
       =/  =mars:clay  [p.cage mark]:deal
       =/  mars-path   /[a.mars]/[b.mars]
-      =/  =desk  q.beak:(~(got by yokes.state) dap)
+      =/  yok  (~(got by yokes.state) dap)
+      =/  =desk  q.beak:?>(?=(%live -.yok) yok)  ::TODO acceptable assertion?
       =/  sky  (rof ~ %cc [our desk case] mars-path)
       ?-    sky
           ?(~ [~ ~])
@@ -806,7 +826,7 @@
     ::
     =/  =routes  [disclosing=~ attributing=ship]
     =/  running  (~(get by yokes.state) agent)
-    =/  is-running  ?~(running %| ?=(%& -.agent.u.running))
+    =/  is-running  &(?=([~ %live *] running) ?=(%& -.agent.u.running))
     =/  is-blocked  (~(has by blocked.state) agent)
     ::  agent is running; deliver move normally
     ::
@@ -877,7 +897,7 @@
             agent-duct=duct
             agent-moves=(list move)
             agent-config=(list (each suss tang))
-            =yoke
+            =$>(%live yoke)
         ==
     ::
     ++  trace
@@ -902,11 +922,13 @@
       ~/  %ap-abed
       |=  [dap=term =routes]
       ^+  ap-core
-      (ap-yoke dap routes (~(got by yokes.state) dap))
+      %^  ap-yoke  dap  routes
+      =<  ?>(?=(%live -) .)
+      (~(got by yokes.state) dap)
     ::  +ap-yoke: initialize agent state, starting from a $yoke
     ::
     ++  ap-yoke
-      |=  [dap=term =routes yak=^yoke]
+      |=  [dap=term =routes yak=$>(%live ^yoke)]
       ^+  ap-core
       =.  stats.yak
         :+  +(change.stats.yak)
@@ -1998,7 +2020,7 @@
       %-  ~(urn by eggs.old)
       |=  [a=term e=egg-11]
       ^-  egg
-      e(marks [marks.e sky:*egg])
+      live/e(marks [marks.e sky:*$>(%live egg)])
     ==
   ::
   ::  removed live
@@ -2031,8 +2053,8 @@
   ::
   ?:  ?=(%a care)
     ?.  =(p.bem our)  ~
-    =/  yok  (~(get by yokes.state) q.bem)
-    ?~  yok  ~
+    ?~  yok=(~(get by yokes.state) q.bem)  ~
+    ?:  ?=(%nuke -.u.yok)  ~
     =/  ski  (~(get by sky.u.yok) s.bem)
     ?~  ski  ~
     =/  res=(unit (each noun @uvI))  
@@ -2079,7 +2101,7 @@
     =;  hav=?
       [~ ~ noun+!>(hav)]
     =/  yok=(unit yoke)  (~(get by yokes.state) dap)
-    ?~(yok | -.agent.u.yok)
+    &(?=([~ %live *] yok) -.agent.u.yok)
   ::
   ?:  ?&  =(%d care)
           =(~ path)
@@ -2087,7 +2109,7 @@
           =(our ship)
       ==
     =/  yok=(unit yoke)  (~(get by yokes.state) dap)
-    ?~  yok
+    ?.  ?=([~ %live *] yok)
       [~ ~]
     [~ ~ desk+!>(q.beak.u.yok)]
   ::
@@ -2101,7 +2123,9 @@
     =*  syd=desk  dap
     %+  roll  ~(tap by yokes.state)
     |=  [[=dude =yoke] acc=(set [=dude live=?])]
-    ?.  =(syd q.beak.yoke)
+    ?.  ?&  ?=(%live -.yoke)
+            =(syd q.beak.yoke)
+        ==
       acc
     (~(put in acc) [dude -.agent.yoke])
   ::
@@ -2112,14 +2136,17 @@
       ==
     :+  ~  ~
     :-  %nonces  !>  ^-  (map dude @)
-    (~(run by yokes.state) |=(yoke sub-nonce))
+    %-  malt  %+  murn  ~(tap by yokes.state)
+    |=  [=dude =yoke]
+    ?:  ?=(%nuke -.yoke)  ~  `[dude sub-nonce.yoke]
   ::
   ?:  ?&  =(%n care)
           ?=([@ @ ^] path)
           =([%$ %da now] coin)
           =(our ship)
       ==
-    ?~  yok=(~(get by yokes.state) dap)
+    =/  yok  (~(get by yokes.state) dap)
+    ?.  ?=([~ %live *] yok)
       [~ ~]
     =/  [=^ship =term =wire]
       [(slav %p i.path) i.t.path t.t.path]
@@ -2131,9 +2158,10 @@
           =([%$ %da now] coin)
           =(our ship)
       ==
-    ?~  yok=(~(get by yokes.state) q.bem)  ~
-    ?~  ski=(~(get by sky.u.yok) s.bem)    ~
-    ?~  lat=(ram:on-path fan.u.ski)        ~
+    =/  yok  (~(get by yokes.state) q.bem)
+    ?.  ?=([~ %live *] yok)              [~ ~]
+    ?~  ski=(~(get by sky.u.yok) s.bem)  [~ ~]
+    ?~  lat=(ram:on-path fan.u.ski)      [~ ~]
     ``case/!>(ud/key.u.lat)
   ::
   ?.  =(our ship)
@@ -2156,6 +2184,7 @@
   %-  ~(run by yokes.state)
   |=  =yoke
   ^-  egg
+  ?:  ?=(%nuke -.yoke)  yoke
   %=    yoke
       code   ~
       agent
