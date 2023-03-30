@@ -1976,7 +1976,7 @@
       ::
       =?  den  ?&  ?=([* ~ ~] old-kel)
                    =(%zuse lal.n.old-kel)
-                   (gte num.n.old-kel %413)
+                   (gte num.n.old-kel %413)  ::TODO  update to match livenet kelvin on release
                ==
         den(pes.dom (sy +:(get-seal u.wat)))            ::  [goad] <
       ::  [goad] < call without goading so that we apply all the commits
