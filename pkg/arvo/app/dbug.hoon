@@ -5,7 +5,8 @@
 ::
 |%
 +$  state-0  [%0 passcode=(unit @t)]
-+$  card  card:agent:gall
++$  card     card:agent:gall
+++  orm      ((on @ud keen-state:ames) lte)
 --
 ::
 =|  state-0
@@ -586,6 +587,46 @@
     ::      message-num: 123
     ::    }, ...],
     ::    heeds: [['/paths', ...] ...]
+    ::    scries:
+    ::    ->  { =path
+    ::          keen-id=@ud
+    ::          kee-state: {
+    ::            wan: [                  //request packets, sent
+    ::              { frag: 1234,
+    ::                size: 1234,         // size, in bytes
+    ::                last-sent: 123456,  //  ms timestamp
+    ::                retries: 123,
+    ::                skips: 123
+    ::              }, ...
+    ::            ],
+    ::            nex: [                  //  request packets, unsent
+    ::              { frag: 1234,
+    ::                size: 1234,         // size, in bytes
+    ::                last-sent: 123456,  //  ms timestamp
+    ::                retries: 123,
+    ::                skips: 123
+    ::              }, ...
+    ::            ],
+    ::            hav: [                  //  response packets, backward
+    ::              {fra: 1234,
+    ::               meow: { num: 1234, size: 1234}
+    ::              }, ...
+    ::            ],
+    ::            num-fragments: 1234,
+    ::            num-received: 1234,
+    ::            next-wake: 123456,  // ms timestamp
+    ::            listeners: [['/paths', ...] ...],
+    ::            metrics: {
+    ::              rto: 123,  // seconds
+    ::              rtt: 123,  // seconds
+    ::              rttvar: 123,
+    ::              ssthresh: 123,
+    ::              num-live: 123,
+    ::              cwnd: 123,
+    ::              counter: 123
+    ::            }
+    ::          }
+    ::        }
     ::  }
     ::
     ++  known
@@ -669,6 +710,8 @@
           ==
         ::
           'heeds'^(set-array heeds from-duct)
+        ::
+          'scries'^(scries scry)
       ==
     ::
     ++  snd-with-bone
@@ -774,6 +817,66 @@
     ++  from-duct
       |=  =duct
       a+(turn duct path)
+    ::
+    ++  scries
+      |=  scry-state
+      ^-  json
+      :-  %a
+      %+  turn  ~(tap by order)
+      |=  [=^path id=@ud]
+      %-  pairs
+      :~  'keen-id'^(numb id)
+          'scry-path'^(^path path)
+          'keen-state'^(parse-keens (got:orm keens id))
+      ==
+    ::
+    ++  parse-keens
+      |=  keen-state
+      |^  ^-  json
+      %-  pairs
+      :~  'wan'^a/(turn (tap:(deq want) wan) wants)
+          'nex'^a/(turn nex wants)
+        ::
+          :-  'hav'
+          :-  %a
+          %+  turn  hav
+          |=  [fra=@ud meow]
+          %-  pairs
+          :~  'fra'^(numb fra)
+            ::
+              :-  'meow'
+              %-  pairs
+              :~  'num'^(numb num)
+                  'size'^(numb siz)
+          ==  ==
+        ::
+          'num-fragments'^(numb num-fragments)
+          'num-received'^(numb num-received)
+          'next-wake'^(maybe next-wake time)
+          'listeners'^(set-array listeners from-duct)
+        ::
+          ::  XX  refactor (see metric in snd-with-bone)
+          :-  'metrics'
+          %-  pairs
+          =,  metrics
+          :~  'rto'^(numb (div rto ~s1))  ::TODO  milliseconds?
+              'rtt'^(numb (div rtt ~s1))
+              'rttvar'^(numb (div rttvar ~s1))
+              'ssthresh'^(numb ssthresh)
+              'cwnd'^(numb cwnd)
+              'counter'^(numb counter)
+      ==  ==
+      ::
+      ++  wants
+        |=  [fra=@ud =hoot packet-state]
+        %-  pairs
+        :~  'frag'^(numb fra)
+            'size'^(numb (met 3 hoot))
+            'last-sent'^(time last-sent)
+            'tries'^(numb tries)
+            'skips'^(numb skips)
+        ==
+      --
     --
   --
 ::
