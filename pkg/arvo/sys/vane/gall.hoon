@@ -2068,6 +2068,19 @@
   ?.  ?=(%.y -.shop)
     ~
   =/  =ship  p.shop
+  ?:  ?&  =(%t care)
+          =([%$ %da now] coin)
+          =(our ship)
+      ==
+    =/  yok  (~(get by yokes.state) q.bem)
+    ?.  ?=([~ %live *] yok)  ~
+    :^  ~  ~  %file-list  !>  ^-  (list ^path)
+    %+  skim  ~(tap in ~(key by sky.u.yok))
+    |=  =spur
+    ?&  =(s.bem (scag (lent s.bem) spur))
+        !=(s.bem spur)
+    ==
+  ::
   ?:  ?&  =(%z care)
           =(our ship)
       ==
