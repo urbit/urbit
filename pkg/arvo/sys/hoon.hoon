@@ -5798,7 +5798,7 @@
     ;~  plug
       %+  cook
         |=([a=@ b=?] [b a])
-      ;~(plug dim:ag ;~(pose (cold | hep) (easy &)))
+      ;~(plug dip:ag ;~(pose (cold | hep) (easy &)))
       ;~(pfix dot mot:ag)   ::  month
       ;~(pfix dot dip:ag)   ::  day
       ;~  pose
