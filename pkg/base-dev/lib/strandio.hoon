@@ -344,6 +344,16 @@
   ?>  ?=(%tune +<.sign)
   (pure:m data.sign)
 ::
+++  pine
+  |=  [=ship =path]
+  =/  m  (strand ,(unit (cask)))
+  ^-  form:m
+  =/  =card:agent:gall  [%pass /pine %arvo %a %pine ship path]
+  ;<  ~  bind:m  (send-raw-card card)
+  ;<  [wire sign=sign-arvo]  bind:m  take-sign-arvo
+  ?>  ?=(%tune +<.sign)
+  (pure:m data.sign)
+::
 ++  sleep
   |=  for=@dr
   =/  m  (strand ,~)
