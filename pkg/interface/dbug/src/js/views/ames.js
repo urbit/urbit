@@ -259,20 +259,20 @@ export class Ames extends Component {
     );
 
     const summary = (<>
-      {/* <b>snd</b><br/> */}
-      {/* {renderDuct(snd.duct)} */}
+      <b>{scry['scry-path']}</b><br/>
+      {renderDuct(scry['keen-state'].listeners)}
       <table><tbody>
         <tr class="inter">
+          <td>id</td>
           <td>num-fragments</td>
           <td>num-received</td>
           <td>next-wake</td>
-          <td>listeners</td>
         </tr>
         <tr>
+          <td>{scry['keen-id']}</td>
           <td>{scry['keen-state']['num-fragments']}</td>
           <td>{scry['keen-state']['num-received']}</td>
           <td>{msToDa(scry['keen-state']['next-wake'])}</td>
-          <td>renderDuct(scry['keen-state'].listeners)</td>
         </tr>
       </tbody></table>
     </>);
@@ -381,6 +381,7 @@ export class Ames extends Component {
           {backward}
           {nax}
           {heeds}
+          {scry}
         </>);
       } else {
         console.log('weird peer', peer);
