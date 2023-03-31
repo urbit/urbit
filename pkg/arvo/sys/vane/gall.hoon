@@ -2059,13 +2059,21 @@
     ?:  ?=(%nuke -.u.yok)  ~
     =/  ski  (~(get by sky.u.yok) s.bem)
     ?~  ski  ~
-    =/  res=(unit (pair @da (each noun @uvI)))
-      ?+  -.r.bem  ~
-        %ud  (get:on-path fan.u.ski p.r.bem)
-        %da  ?.(=(p.r.bem now) ~ (bind (ram:on-path fan.u.ski) tail))
+    =/  res=(unit (each noun @uvI))
+      ?+    -.r.bem  ~
+          %ud  (bind (get:on-path fan.u.ski p.r.bem) tail)
+          %da
+        %-  head
+        %^    (dip:on-path (unit (each noun @uvI)))
+            fan.u.ski
+          ~
+        |=  [res=(unit (each noun @uvI)) @ud =@da val=(each noun @uvI)]
+        ^-  [new=(unit [@da _val]) stop=? res=(unit _val)]
+        :-  `[da val]
+        ?:((lte da p.r.bem) |/`val &/res)
       ==
-    ?.  ?=([~ @ %& *] res)  ~
-    ``[%noun %noun p.q.u.res]
+    ?.  ?=([~ %& *] res)  ~
+    ``[%noun %noun p.u.res]
   ::
   ?.  ?=(%.y -.shop)
     ~
