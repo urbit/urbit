@@ -2278,12 +2278,12 @@
         todos(keens (~(put ju keens.todos) path duct))
       ::
       ++  on-yawn
-        |=  [=ship =path]
+        |=  [=ship =path all=?]
         ^+  event-core
         ?~  ship-state=(~(get by peers.ames-state) ship)
           ~|(%no-ship-for-yawn !!)
         ?>  ?=([%known *] u.ship-state)
-        fi-abet:ke-abet:(ke-unsub:(ke-abed:ke:fi:(abed:pe ship) path) duct)
+        fi-abet:ke-abet:(ke-unsub:(ke-abed:ke:fi:(abed:pe ship) path) duct all)
       ::
       +|  %implementation
       ::  +enqueue-alien-todo: helper to enqueue a pending request
@@ -3966,7 +3966,32 @@
             ::  scry is autocancelled in +ke-abet if no more listeners
             ::
             ++  ke-unsub
-              |=(=^duct ke-core(listeners.keen (~(del in listeners.keen) duct)))
+              |=  [=^duct all=?]
+              ?.  |(all (~(has in listeners.keen) duct))
+                %.  ke-core
+                ::  XX TODO use trace, add fine flags? reuse ames?
+                (slog leaf/"fine: {<duct>} not a listener for {<path>}" ~)
+              ::  XX TODO: notify all listeners?
+              ::  supported subscribers are:
+              ::    %clay
+              ::    %gall (via agents or %spider threads; see -keen)
+              ::
+              ::  (-keen wire=[%gall %use %spider @ ship=@ %thread tid=@ /keen])
+              ::
+              ::    by inspecting all listener ducts we can know who
+              ::    is listening and send appropiate clean up moves
+              ::
+              :: =.  event-core
+              ::   %-  ~(rep in listeners.keen)
+              ::   |=  [=^duct c=_event-core]
+              ::   %-  emit
+              ::   ?+    duct  c
+              ::     [[%gall %use app=@ @ @ ] *]   :: XX TODO
+              ::     [[%clay *] *]                 :: XX TODO
+              ::   ==
+              ::  TODO: use ev-trace
+              %-  (slog leaf/"fine: deleting {<path>}" ~)
+              ke-core(listeners.keen ?:(all ~ (~(del in listeners.keen) duct)))
             ::
             +|  %implementation
             ::

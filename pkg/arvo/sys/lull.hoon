@@ -1102,7 +1102,7 @@
     ::
         [%keen =ship =path]
         [%pine =ship =path]
-        [%yawn =ship =path]
+        [%yawn =ship =path all=?]
     ::
         $>(%born vane-task)
         $>(%init vane-task)

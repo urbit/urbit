@@ -3240,12 +3240,12 @@
     ::
     ?.  ?=([~ ^] busy.sat)
       %.  [hen her u.nux [syd ~]]
-      send-over-ames(ref `(unit rind)`ref)      ::  XX TMI
+      send-over-ames(ref `(unit rind)`ref)    ::  XX TMI
     %-  emil
     =*  bus  u.busy.sat
     =/  =wire  (request-wire kind.bus her syd u.nux)
     ~&  %cancel-request-yawn
-    :~  [hen %pass wire %a %yawn her path.bus]
+    :~  [hen %pass wire %a %yawn her path.bus |]
         [hen %pass wire %b %rest time.bus]
     ==
   ::
@@ -3289,9 +3289,9 @@
       =/  bus  ?>(?=([~ ^] busy.sat) u.busy.sat)
       =/  =wire  (request-wire kind her syd inx)
       %-  emil
-    ~&  %retry-with-ames-yawn
+      ~&  %retry-with-ames-yawn
       :~  [hen %pass wire %b %rest time.bus]
-          [hen %pass wire %a %yawn her path.bus]
+          [hen %pass wire %a %yawn her path.bus |]
       ==
     ::  re-send over ames
     ::

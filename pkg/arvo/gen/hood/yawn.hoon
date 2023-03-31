@@ -1,8 +1,9 @@
 :-  %say
-|=  [^ [=ship pax=$@(~ [=path ~])] ~]
+|=  [^ [=ship all=? pax=$@(~ [=path ~])] ~]
 =/  =path
-  ?~  pax  /cz/(scot %p ship)/kids/1/sys
+  :: XX remove default path
+  ?~  pax  /c/x/1/kids/sys/kelvin
   ?>  ?=([@ *] path.pax)
   =,  pax
-  [i.path (scot %p ship) t.path]
-[%helm-pass %a %yawn path]
+  path
+[%helm-pass %a %yawn ship path all]
