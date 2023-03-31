@@ -1,6 +1,11 @@
 /-  *hood
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
-        [[=desk ~] ~]
+        [syd=desk ~]
+        verb=?
     ==
-[%tang ~[(report-vat (report-prep p.bec now) p.bec now desk)]]
+=+  ~(abed report-vats p.bec now)
+=+  %+  report-vat
+      verb
+    %-  vat-info  syd
+[%tang -]
