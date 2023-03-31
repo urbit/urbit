@@ -3653,6 +3653,8 @@
                   %g  (pe-emit duct %pass wire %g %plea her plea)
                   %j  (pe-emit duct %pass wire %j %plea her plea)
                 ==
+              ?:  ?=(%pine -.path.plea)
+                (pe-emit duct %pass wire %a %plea our plea)
               ::  a %cork plea is handled using %$ as the recipient vane to
               ::  account for publishers that still handle ames-to-ames %pleas
               ::
@@ -3816,9 +3818,9 @@
             ^+  fine-core
             ?~  blk=(de-part:balk her rift.peer-state life.peer-state path)
               !!  :: XX: ???
-            =+  wir=`wire`[%fine %pine (scot %p her) path]
-            =.  event-core
-              (emit duct %pass wir %a %plea her %a /pine `*`u.blk)
+            =/  =wire       [%fine %pine (scot %p her) path]
+            =/  =plea       [%$ /pine `*`u.blk]
+            =.  event-core  (emit duct %pass wire %a %plea her plea)
             fine-core
           ::
           ++  on-pine-boon
@@ -3858,18 +3860,16 @@
             ::
             ++  ke-abet
               ^+  fine-core
-              =/  gone=?
-                =,  keen
-                ::  num-fragments is 0 when unknown (i.e. no response yet)
-                ::  if no-one is listening, kill request
-                ?|  =(~ listeners.keen)
-                    &(!=(0 num-fragments) =(num-fragments num-received))
-                ==
-              ?:  gone
+              ?:  =,  keen
+                  ::  num-fragments is 0 when unknown (i.e. no response yet)
+                  ::  if no-one is listening, kill request
+                  ::
+                  ?|  =(~ listeners.keen)
+                      &(!=(0 num-fragments) =(num-fragments num-received))
+                  ==
                 ke-abet-gone
-              =.  ke-core  ke-set-wake
-              =.  keens.scry
-                (put:orm keens.scry keen-id keen)
+              =.  ke-core     ke-set-wake
+              =.  keens.scry  (put:orm keens.scry keen-id keen)
               fine-core
             ::
             ++  ke-abet-gone
@@ -3912,9 +3912,9 @@
               ~>  %slog.0^leaf/"fine: keen {(spud ke-full-path)}"
               =.  ke-core  (ke-sub duct)
               ?>  =(num-fragments.keen 0)
-              =/  fra=@  1
-              =/  req  (ke-etch-keen fra)
-              =/  =want  [fra req now 1 0]
+              =/  fra=@     1
+              =/  req=hoot  (ke-etch-keen fra)
+              =/  =want     [fra req last=now tries=1 skips=0]
               =.  wan.keen  (cons:ke-deq *(pha ^want) want)
               :: =.  metrics.keen  (on-sent:ke-gauge 1)
               (ke-send req)
@@ -4042,8 +4042,6 @@
               :: =.    metrics.keen   (on-sent:ke-gauge 1)
               =.         ke-core   (ke-send hoot.want)
               $(inx +(inx))
-            ::
-            ::
             ::
             ++  ke-sift-full
               =,  keen
