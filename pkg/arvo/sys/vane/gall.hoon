@@ -102,10 +102,10 @@
 ::
 +$  path-state
   $:  bob=(unit @ud)
-      fan=((mop @ud (each noun @uvI)) lte)
+      fan=((mop @ud (pair @da (each noun @uvI))) lte)
   ==
 ::
-++  on-path  ((on @ud (each noun @uvI)) lte)
+++  on-path  ((on @ud (pair @da (each noun @uvI))) lte)
 ::  $blocked-move: enqueued move to an agent
 ::
 +$  blocked-move  [=duct =routes move=(each deal unto)]
@@ -984,11 +984,13 @@
       =-  ap-core(sky.yoke -)
       %+  ~(put by sky.yoke)  spur
       ?~  old=(~(get by sky.yoke) spur)  ::  insert binding at new path
-        `(put:on-path fan:*path-state 0 [%& noun])
-      =-  u.old(fan (put:on-path fan.u.old - [%& noun]))
-      ?~  lat=(clap bob.u.old (bind (ram:on-path fan.u.old) head) max)
-        0
-      +(u.lat)
+        `(put:on-path fan:*path-state 0 now^[%& noun])
+      =-  u.old(fan (put:on-path fan.u.old - now^[%& noun]))
+      ?~  las=(ram:on-path fan.u.old)
+        ?~(bob.u.old 0 +(u.bob.u.old))
+      ~|  [%grow-many path=spur]
+      ?<  =(now p.val.u.las)  ::TODO better to no-op?
+      ?~(bob.u.old +(key.u.las) +((max key.u.las u.bob.u.old)))
     ::  +ap-tomb: tombstone -- replace bound value with hash
     ::
     ++  ap-tomb
@@ -1006,7 +1008,7 @@
         %.  sky.yoke
         %+  trace  odd.veb.bug.state
         [leaf+"gall: {<agent-name>}: tomb {<[case spur]>} no val"]~
-      ?-    -.u.val
+      ?-    -.q.u.val
           %|  ::  already tombstoned, no-op
         %.  sky.yoke
         %+  trace  odd.veb.bug.state
@@ -1014,7 +1016,7 @@
       ::
           %&  ::  replace with hash
         %+  ~(put by sky.yoke)  spur
-        u.old(fan (put:on-path fan.u.old yon [%| (shax (jam p.u.val))]))
+        u.old(fan (put:on-path fan.u.old yon u.val(q |/(shax (jam p.q.u.val)))))
       ==
     ::  +ap-cull: delete all bindings up to and including .case
     ::
@@ -2057,13 +2059,13 @@
     ?:  ?=(%nuke -.u.yok)  ~
     =/  ski  (~(get by sky.u.yok) s.bem)
     ?~  ski  ~
-    =/  res=(unit (each noun @uvI))  
+    =/  res=(unit (pair @da (each noun @uvI)))
       ?+  -.r.bem  ~
         %ud  (get:on-path fan.u.ski p.r.bem)
         %da  ?.(=(p.r.bem now) ~ (bind (ram:on-path fan.u.ski) tail))
       ==
-    ?.  ?=([~ %& *] res)  ~
-    ``[%noun %noun p.u.res]
+    ?.  ?=([~ @ %& *] res)  ~
+    ``[%noun %noun p.q.u.res]
   ::
   ?.  ?=(%.y -.shop)
     ~
@@ -2087,14 +2089,14 @@
     =/  yok  (~(get by yokes.state) q.bem)
     ?.  ?=([~ %live *] yok)              ~
     ?~  ski=(~(get by sky.u.yok) s.bem)  ~
-    =/  res=(unit (each noun @uvI))
+    =/  res=(unit (pair @da (each noun @uvI)))
       ?+  -.r.bem  ~
         %ud  (get:on-path fan.u.ski p.r.bem)
         %da  ?.(=(p.r.bem now) ~ (bind (ram:on-path fan.u.ski) tail))
       ==
-    ?+  res     ~
-      [~ %| *]  ``noun/!>(p.u.res)
-      [~ %& *]  ``noun/!>(`@uvI`(shax (jam p.u.res)))
+    ?+  res  ~
+      [~ @ %| *]  ``noun/!>(p.q.u.res)
+      [~ @ %& *]  ``noun/!>(`@uvI`(shax (jam p.q.u.res)))
     ==
   ::
   ?:  &(=(care %$) =(path /whey))
@@ -2189,8 +2191,8 @@
     =/  yok  (~(get by yokes.state) q.bem)
     ?.  ?=([~ %live *] yok)              [~ ~]
     ?~  ski=(~(get by sky.u.yok) s.bem)  [~ ~]
-    ?~  lat=(ram:on-path fan.u.ski)      [~ ~]
-    ``case/!>(ud/key.u.lat)
+    ?~  las=(ram:on-path fan.u.ski)      [~ ~]
+    ``case/!>(ud/key.u.las)
   ::
   ?.  =(our ship)
     ~
