@@ -1078,6 +1078,7 @@
   ::    %keen: data request from arvo
   ::    %pine: scries for the latest case of a path
   ::    %yawn: cancel request from arvo
+  ::    %wham: cancels all scry request from any vane
   ::
   ::    System and Lifecycle Tasks
   ::
@@ -1102,7 +1103,8 @@
     ::
         [%keen =ship =path]
         [%pine =ship =path]
-        [%yawn =ship =path all=?]
+        [%yawn =ship =path]
+        [%wham =ship =path]
     ::
         $>(%born vane-task)
         $>(%init vane-task)

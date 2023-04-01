@@ -2277,11 +2277,11 @@
         |=  todos=alien-agenda
         todos(keens (~(put ju keens.todos) path duct))
       ::
-      ++  on-yawn
-        |=  [=ship =path all=?]
+      ++  on-cancel-scry
+        |=  [all=? =ship =path]
         ^+  event-core
         ?~  ship-state=(~(get by peers.ames-state) ship)
-          ~|(%no-ship-for-yawn !!)
+          ~|(%cancel-scry-missing^ship^path !!)
         ?>  ?=([%known *] u.ship-state)
         fi-abet:ke-abet:(ke-unsub:(ke-abed:ke:fi:(abed:pe ship) path) duct all)
       ::
@@ -4335,7 +4335,8 @@
     ::
       %pine  (on-pine:event-core +.task)
       %keen  (on-keen:event-core +.task)
-      %yawn  (on-yawn:event-core +.task)
+      %yawn  (on-cancel-scry:event-core | +.task)
+      %wham  (on-cancel-scry:event-core & +.task)
     ==
   ::
   [moves ames-gate]

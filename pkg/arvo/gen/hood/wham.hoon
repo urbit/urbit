@@ -6,4 +6,4 @@
   ?>  ?=([@ *] path.pax)
   =,  pax
   path
-[%helm-pass %a %yawn ship path]
+[%helm-pass %a %wham ship path]
