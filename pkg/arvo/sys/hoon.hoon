@@ -3117,8 +3117,8 @@
   ^-  @da
   =+  ^=  yer
       ?:  a.det
-        (add 292.277.024.400 y.det)
-      (sub 292.277.024.400 (dec y.det))
+        (add jes:yo y.det)
+      (sub jes:yo (dec y.det))
   =+  day=(yawn yer m.det d.t.det)
   (yule day h.t.det m.t.det s.t.det f.t.det)
 ::
@@ -3127,9 +3127,9 @@
   ^-  date
   =+  rip=(yell now)
   =+  ger=(yall d.rip)
-  :-  ?:  (gth y.ger 292.277.024.400)
-        [a=& y=(sub y.ger 292.277.024.400)]
-      [a=| y=+((sub 292.277.024.400 y.ger))]
+  :-  ?:  (gth y.ger jes:yo)
+        [a=& y=(sub y.ger jes:yo)]
+      [a=| y=+((sub jes:yo y.ger))]
   [m.ger d.ger h.rip m.rip s.rip f.rip]
 ::
 ++  yell                                                ::  tarp from @d
@@ -3226,7 +3226,7 @@
       ++  day  86.400                 ::  (mul 24 hor)
       ++  era  146.097                ::  (add 1 (mul 4 cet))
       ++  hor  3.600                  ::  (mul 60 mit)
-      ++  jes  106.751.991.084.417    ::  (mul 730.692.561 era)
+      ++  jes  292.277.024.400        ::  years until Jesus
       ++  mit  60
       ++  moh  `(list @ud)`[31 28 31 30 31 30 31 31 30 31 30 31 ~]
       ++  moy  `(list @ud)`[31 29 31 30 31 30 31 31 30 31 30 31 ~]
