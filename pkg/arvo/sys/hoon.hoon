@@ -5284,7 +5284,7 @@
   ++  piv  (bass 32 (stun [5 5] siv))
   ++  piw  (bass 64 (stun [5 5] siw))
   ++  qeb  (bass 2 ;~(plug seb (stun [0 3] sib)))
-  ++  qex  (bass 16 ;~(plug sex (stun [0 3] hit)))
+  ++  qex  (bass 16 ;~(plug sex (stun [0 3] six)))
   ++  qib  (bass 2 (stun [4 4] sib))
   ++  qix  (bass 16 (stun [4 4] six))
   ++  seb  (cold 1 (just '1'))

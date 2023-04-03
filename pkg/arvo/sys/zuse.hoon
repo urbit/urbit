@@ -4381,8 +4381,8 @@
         =/  car  (cut 3 [i 1] val)
         ?:  ?&  (gth car 0x1f)
                 !=(car 0x22)
-                !=(car 0x5C)
-                !=(car 0x7F)
+                !=(car 0x5c)
+                !=(car 0x7f)
             ==
           $(i +(i))
         =/  cap
