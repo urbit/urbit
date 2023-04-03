@@ -5359,7 +5359,7 @@
            ==
   ++  fim  (sear den:fa (bass 58 (plus fem:ab)))
   ++  hex  (ape (bass 0x1.0000 ;~(plug qex:ab (star ;~(pfix dog qix:ab)))))
-  ++  lip  =+  tod=(ape ted:ab)
+  ++  lip  =+  tod=(ape (sear |=(a=@ ?:((lth a 256) (some a) ~)) ted:ab))
            (bass 256 ;~(plug tod (stun [3 3] ;~(pfix dog tod))))
   ++  mot  ;~  pose
              ;~  pfix
