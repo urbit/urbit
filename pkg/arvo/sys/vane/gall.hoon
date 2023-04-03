@@ -1295,6 +1295,7 @@
           ==                                          ::
           :*  wex=boat.yoke                           ::  outgoing
               sup=bitt.yoke                           ::  incoming
+              sky=(~(run by sky.yoke) tail)           ::  bindings
           ==                                          ::
           :*  act=change.stats.yoke                   ::  tick
               eny=eny.stats.yoke                      ::  nonce
