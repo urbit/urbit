@@ -368,7 +368,6 @@
       ~|  no-file-for-thread+file.p.source
       (need (get-fit:clay beak %ted file.p.source))
     ::  ad-hoc to work only with the -keen/-pine threads -- pine uses keen
-    ::  XX test -pine
     ::  XX TODO: expand to any thread that performs a remote scry request? how?
     ::
     =?  scries.state  ?=(?([%ted %keen *] [%ted %pine *]) pax)

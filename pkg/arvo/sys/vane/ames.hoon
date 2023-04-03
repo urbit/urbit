@@ -1714,14 +1714,6 @@
         ::
         ?:  =([%a /close ~] plea)
           (emit duct %give %done ~)
-        ::  .plea is from local vane to foreign ship
-        ::
-        =/  ship-state  (~(get by peers.ames-state) ship)
-        ::
-        ?.  ?=([~ %known *] ship-state)
-          %+  enqueue-alien-todo  ship
-          |=  todos=alien-agenda
-          todos(messages [[duct plea] messages.todos])
         ::
         ?:  &(=(/pine path.plea) =(our her:;;(balk payload.plea)))
           ::  XX TODO move to |^
@@ -1736,6 +1728,15 @@
           =~  (emit duct %give %boon ud.cass)
               (emit duct %give %done ~)
           ==
+        ::  .plea is from local vane to foreign ship
+        ::
+        =/  ship-state  (~(get by peers.ames-state) ship)
+        ::
+        ?.  ?=([~ %known *] ship-state)
+          ~&  %on-plea
+          %+  enqueue-alien-todo  ship
+          |=  todos=alien-agenda
+          todos(messages [[duct plea] messages.todos])
         ::
         =/  =peer-state  +.u.ship-state
         =/  =channel     [[our ship] now channel-state -.peer-state]
@@ -1871,7 +1872,7 @@
         ?.  ?=([%recork ~] wire)
           =/  res=(unit ?([%fine her=ship =^wire] [%pump her=ship =bone]))
             ?+  wire  ~|  %ames-wire-timer^wire  !!
-              [%pump ship=@ bone=@ ~]  (parse-pump-wire &1.wire &2.wire)
+              [%pump ship=@ bone=@ ~]  (parse-pump-wire &2.wire &3.wire)
               [%fine %behn %wake @ *]  (parse-fine-wire &4.wire t.t.t.t.wire)
             ==
           ?~  res
@@ -2249,7 +2250,7 @@
           ?~  ship-state=(~(get by peers.ames-state) ship)
             %+  enqueue-alien-todo  ship
             |=  todos=alien-agenda
-            todos(pines (~(put ju keens.todos) path duct))
+            todos(pines (~(put ju pines.todos) path duct))
           ?>  ?=([%known *] u.ship-state)
           fi-abet:(on-pine:fi:(abed-peer:pe ship +.u.ship-state) path duct)
         ::  XX: crashing correct behaviour?
