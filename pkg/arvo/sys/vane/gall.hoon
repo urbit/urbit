@@ -983,14 +983,12 @@
       ^+  ap-core
       =-  ap-core(sky.yoke -)
       %+  ~(put by sky.yoke)  spur
-      ?~  old=(~(get by sky.yoke) spur)  ::  insert binding at new path
-        `(put:on-path fan:*path-state 0 now^[%& page])
-      =-  u.old(fan (put:on-path fan.u.old - now^[%& page]))
-      ?~  las=(ram:on-path fan.u.old)
-        ?~(bob.u.old 0 +(u.bob.u.old))
-      ~|  [%grow-many path=spur]
-      ?<  =(now p.val.u.las)  ::TODO better to no-op?
-      ?~(bob.u.old +(key.u.las) +((max key.u.las u.bob.u.old)))
+      =/  ski  (~(gut by sky.yoke) spur *path-state)
+      =-  ski(fan (put:on-path fan.ski -< -> &/page))
+      ?~  las=(ram:on-path fan.ski)
+        [(fall bob.ski 0) now]
+      :_  (max now +(p.val.u.las))
+      ?~(bob.ski +(key.u.las) +((max key.u.las u.bob.ski)))
     ::  +ap-tomb: tombstone -- replace bound value with hash
     ::
     ++  ap-tomb
