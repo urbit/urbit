@@ -3911,6 +3911,21 @@
             ++  ke-send
               |=(=hoot ke-core(event-core (send-blob for=| her `@ux`hoot)))
             ::
+            ++  ke-clean-up
+              |=  [=^duct core=_event-core]
+              ?+  duct  core
+                [[%clay *] *]  core  :: XX TODO
+                ::
+                  [[%gall %use app=@ *] *]
+                ?.  ?=([%gall %use %spider *] -.duct)
+                  core    :: XX TODO
+                ?>  ?=([%gall %use %spider @ ship=@ %thread tid=@ *] -.duct)
+                =/  =cage   spider-stop+!>([&7.-.duct |])
+                =/  poke=*  [%0 %m [p q.q]:cage]
+                =/  =plea   [%g /ge/spider poke]
+                (emit:core duct %pass /fine/unsub %g %plea our plea)
+              ==
+            ::
             +|  %entry-points
             ::
             ++  ke-start
@@ -3981,20 +3996,7 @@
                 ::  notify all listeners by inspecting their
                 ::  ducts and sending appropiate clean up moves
                 ::
-                %-  ~(rep in listeners.keen)
-                |=  [d=^^duct core=_event-core]
-                ?+  d  core
-                  [[%clay *] *]  core  :: XX TODO
-                  ::
-                    [[%gall %use app=@ *] *]
-                  ?.  ?=([%gall %use %spider *] -.d)
-                    core    :: XX TODO
-                  ?>  ?=([%gall %use %spider @ ship=@ %thread tid=@ *] -.d)
-                  =/  =cage   spider-stop+!>([&7.-.d |])
-                  =/  poke=*  [%0 %m [p q.q]:cage]
-                  =/  =plea   [%g /ge/spider poke]
-                  (emit:core duct %pass /fine/unsub %g %plea our plea)
-                ==
+                (~(rep in listeners.keen) ke-clean-up)
               ::  TODO: use ev-trace
               %-  (slog leaf/"fine: deleting {<path>}" ~)
               ke-core(listeners.keen ?:(all ~ (~(del in listeners.keen) duct)))

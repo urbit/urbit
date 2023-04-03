@@ -538,9 +538,9 @@
   =/  fail-cards  (thread-say-fail tid term tang)
   =^  cards  state  (thread-clean yarn)
   =^  http-cards  state  (thread-http-fail tid term tang)
-  =^  cancel-cards  state  (cancel-scry tid)
+  =^  scry-card   state  (cancel-scry tid)
   :_  state
-  :(weld fail-cards cards http-cards cancel-cards)
+  :(weld fail-cards cards http-cards scry-card)
 ::
 ++  thread-http-response
   |=  [=tid =vase]
@@ -567,8 +567,9 @@
     ==
   =^  http-cards  state
     (thread-http-response tid vase)
+  =^  scry-card  state  (cancel-scry tid)
   =^  cards  state  (thread-clean yarn)
-  [:(weld done-cards cards http-cards) state]
+  [:(weld done-cards cards http-cards scry-card) state]
 ::
 ++  thread-clean
   |=  =yarn
