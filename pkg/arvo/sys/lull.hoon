@@ -2244,18 +2244,21 @@
   +$  boat  (map [=wire =ship =term] [acked=? =path])   ::  outgoing subs
   +$  boar  (map [=wire =ship =term] nonce=@)           ::  and their nonces
   +$  bowl                                              ::  standard app state
-          $:  $:  our=ship                              ::  host
-                  src=ship                              ::  guest
-                  dap=term                              ::  agent
-              ==                                        ::
-              $:  wex=boat                              ::  outgoing subs
-                  sup=bitt                              ::  incoming subs
-              ==                                        ::
-              $:  act=@ud                               ::  change number
-                  eny=@uvJ                              ::  entropy
-                  now=@da                               ::  current time
-                  byk=beak                              ::  load source
-          ==  ==                                        ::
+    $:  $:  our=ship                                    ::  host
+            src=ship                                    ::  guest
+            dap=term                                    ::  agent
+        ==                                              ::
+        $:  wex=boat                                    ::  outgoing subs
+            sup=bitt                                    ::  incoming subs
+            $=  sky                                     ::  scry bindings
+            %+  map  path                               ::
+            ((mop @ud (pair @da (each noun @uvI))) lte) ::
+        ==                                              ::
+        $:  act=@ud                                     ::  change number
+            eny=@uvJ                                    ::  entropy
+            now=@da                                     ::  current time
+            byk=beak                                    ::  load source
+    ==  ==                                              ::                                                  ::
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact
   +$  load  (list [=dude =beak =agent])                 ::  loadout
