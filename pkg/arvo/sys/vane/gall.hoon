@@ -2074,7 +2074,7 @@
         ?:((lte da p.r.bem) |/`val &/res)
       ==
     ?.  ?=([~ %& *] res)  ~
-    ``[%page !>(p.u.res)]  ::TODO mar/page?
+    ``p.u.res(q !>(q.p.u.res))
   ::
   ?.  ?=(%.y -.shop)
     ~
