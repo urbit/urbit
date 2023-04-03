@@ -3291,7 +3291,7 @@
             sup=bitt                                    ::  incoming subs
             $=  sky                                     ::  scry bindings
             %+  map  path                               ::
-            ((mop @ud (pair @da (each noun @uvI))) lte) ::
+            ((mop @ud (pair @da (each page @uvI))) lte) ::
         ==                                              ::
         $:  act=@ud                                     ::  change number
             eny=@uvJ                                    ::  entropy
@@ -3332,7 +3332,7 @@
           [%arvo note-arvo]
           [%pyre =tang]
       ::
-          [%grow =spur =noun]
+          [%grow =spur =page]
           [%tomb =case =spur]
           [%cull =case =spur]
       ==
