@@ -802,9 +802,7 @@
 ::    message on a "forward flow" from a peer, originally passed from
 ::    one of the peer's vanes to the peer's Ames.
 ::
-::    Ames passes a %plea to itself to trigger a heartbeat message to
-::    our sponsor.
-::
+::    Ames passes a %plea to itself to handle internal %cork and %pine moves
 ::    Ames passes a %private-keys to Jael to request our private keys.
 ::    Ames passes a %public-keys to Jael to request a peer's public
 ::    keys.
@@ -1295,9 +1293,9 @@
       ++  on-take-done
         |=  [=wire error=(unit error)]
         ^+  event-core
-        ::  relay the vane ack to the foreign peer
-        ::
-        ?:  ?=([%fine %pine *] wire)
+        ?:  ?=([%fine ?(%pine %unsub) *] wire)
+          ::  XX handle error?
+          ::
           event-core
         ?~  parsed=(parse-bone-wire wire)
           ::  no-op
@@ -1322,6 +1320,8 @@
           %-  %^  ev-trace  odd.veb  her
               |.("parsing old wire: {(spud wire)}")
           peer-core
+        ::  relay the vane ack to the foreign peer
+        ::
         =<  abet
         ?~(error (send-ack bone) (send-nack bone u.error))
         ::
@@ -2281,9 +2281,15 @@
         |=  [all=? =ship =path]
         ^+  event-core
         ?~  ship-state=(~(get by peers.ames-state) ship)
-          ~|(%cancel-scry-missing^ship^path !!)
+          ~|(%cancel-scry-missing-peer^ship^path !!)
         ?>  ?=([%known *] u.ship-state)
-        fi-abet:ke-abet:(ke-unsub:(ke-abed:ke:fi:(abed:pe ship) path) duct all)
+        =+  peer=(abed:pe ship)
+        ?.  (~(has by order.scry.peer-state.peer) path)
+          ::  XX only log if odd.veb?
+          ::
+          %-  (slog leaf+"ames: missing scry {<path>} for {<ship>}" ~)
+          event-core
+        fi-abet:ke-abet:(ke-unsub:(ke-abed:ke:fi:peer path) duct all)
       ::
       +|  %implementation
       ::  +enqueue-alien-todo: helper to enqueue a pending request
@@ -3971,24 +3977,24 @@
                 %.  ke-core
                 ::  XX TODO use trace, add fine flags? reuse ames?
                 (slog leaf/"fine: {<duct>} not a listener for {<path>}" ~)
-              ::  XX TODO: notify all listeners?
-              ::  supported subscribers are:
-              ::    %clay
-              ::    %gall (via agents or %spider threads; see -keen)
-              ::
-              ::  (-keen wire=[%gall %use %spider @ ship=@ %thread tid=@ /keen])
-              ::
-              ::    by inspecting all listener ducts we can know who
-              ::    is listening and send appropiate clean up moves
-              ::
-              :: =.  event-core
-              ::   %-  ~(rep in listeners.keen)
-              ::   |=  [=^duct c=_event-core]
-              ::   %-  emit
-              ::   ?+    duct  c
-              ::     [[%gall %use app=@ @ @ ] *]   :: XX TODO
-              ::     [[%clay *] *]                 :: XX TODO
-              ::   ==
+              =?  event-core  all
+                ::  notify all listeners by inspecting their
+                ::  ducts and sending appropiate clean up moves
+                ::
+                %-  ~(rep in listeners.keen)
+                |=  [d=^^duct core=_event-core]
+                ?+  d  core
+                  [[%clay *] *]  core  :: XX TODO
+                  ::
+                    [[%gall %use app=@ *] *]
+                  ?.  ?=([%gall %use %spider *] -.d)
+                    core    :: XX TODO
+                  ?>  ?=([%gall %use %spider @ ship=@ %thread tid=@ *] -.d)
+                  =/  =cage   spider-stop+!>([&7.-.d |])
+                  =/  poke=*  [%0 %m [p q.q]:cage]
+                  =/  =plea   [%g /ge/spider poke]
+                  (emit:core duct %pass /fine/unsub %g %plea our plea)
+                ==
               ::  TODO: use ev-trace
               %-  (slog leaf/"fine: deleting {<path>}" ~)
               ke-core(listeners.keen ?:(all ~ (~(del in listeners.keen) duct)))

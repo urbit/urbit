@@ -15,6 +15,7 @@
       running=(axal thread-form)
       tid=(map tid yarn)
       serving=(map tid [(unit @ta) =mark =desk])
+      scries=(map tid [=ship =path])
   ==
 ::
 +$  clean-slate-any
@@ -23,10 +24,20 @@
       clean-slate-1
       clean-slate-2
       clean-slate-3
+      clean-slate-4
       clean-slate
   ==
 ::
 +$  clean-slate
+  $:  %5
+      starting=(map yarn [=trying =vase])
+      running=(list yarn)
+      tid=(map tid yarn)
+      serving=(map tid [(unit @ta) =mark =desk])
+      scries=(map tid [ship path])
+  ==
+::
++$  clean-slate-4
   $:  %4
       starting=(map yarn [=trying =vase])
       running=(list yarn)
@@ -98,7 +109,8 @@
       (old-to-2 any)
     =.  any  (old-to-3 any)
     =.  any  (old-to-4 any)
-    ?>  ?=(%4 -.any)
+    =.  any  (old-to-5 any)
+    ?>  ?=(%5 -.any)
     ::
     =.  tid.state  tid.any
     =/  yarns=(list yarn)
@@ -121,8 +133,8 @@
     ++  old-to-2
       |=  old=clean-slate-any
       ^-  (quip card clean-slate-any)
-      ?>  ?=(?(%1 %2 %3 %4) -.old)
-      ?:  ?=(?(%2 %3 %4) -.old)
+      ?>  ?=(?(%1 %2 %3 %4 %5) -.old)
+      ?:  ?=(?(%2 %3 %4 %5) -.old)
         `old
       :-  ~[bind-eyre:sc]
       :*  %2
@@ -135,8 +147,8 @@
     ++  old-to-3
       |=  old=clean-slate-any
       ^-  clean-slate-any
-      ?>  ?=(?(%2 %3 %4) -.old)
-      ?:  ?=(?(%3 %4) -.old)
+      ?>  ?=(?(%2 %3 %4 %5) -.old)
+      ?:  ?=(?(%3 %4 %5) -.old)
         old
       :*  %3
         starting.old
@@ -146,9 +158,9 @@
       ==
     ++  old-to-4
       |=  old=clean-slate-any
-      ^-  clean-slate
-      ?>  ?=(?(%3 %4) -.old)
-      ?:  ?=(%4 -.old)
+      ^-  clean-slate-any
+      ?>  ?=(?(%3 %4 %5) -.old)
+      ?:  ?=(?(%4 %5) -.old)
         old
       :*  %4
         starting.old
@@ -156,6 +168,13 @@
         tid.old
         (~(run by serving.old) |=([id=@ta =mark =desk] [`id mark q.byk.bowl]))
       ==
+    ::
+    ++  old-to-5
+      |=  old=clean-slate-any
+      ^-  clean-slate
+      ?>  ?=(?(%4 %5) -.old)
+      ?:  ?=(%5 -.old)  old
+      [%5 +.old(serving [serving.old ~])]
     --
   ::
   ++  on-poke
@@ -348,6 +367,13 @@
     =/  pax=path
       ~|  no-file-for-thread+file.p.source
       (need (get-fit:clay beak %ted file.p.source))
+    ::  ad-hoc to work only with the -keen/-pine threads -- pine uses keen
+    ::  XX test -pine
+    ::  XX TODO: expand to any thread that performs a remote scry request? how?
+    ::
+    =?  scries.state  ?=(?([%ted %keen *] [%ted %pine *]) pax)
+      =+  !<([~ =ship =path] vase.p.source)
+      (~(put by scries.state) new-tid ship path)
     :_  state
     :_  ~
     :+  %pass  /build/[new-tid]
@@ -400,9 +426,11 @@
     ~&  %stopping-nonexistent-thread
     [~ state]
   ?:  (~(has of running.state) u.yarn)
-    ?:  nice
-      (thread-done u.yarn *vase)
-    (thread-fail u.yarn %cancelled ~)
+      ?.  nice
+        (thread-fail u.yarn %cancelled ~)
+      =^  cancel-cards  state  (cancel-scry tid)
+      =^  done-cards    state  (thread-done u.yarn *vase)
+      [(weld cancel-cards done-cards) state]
   ?:  (~(has by starting.state) u.yarn)
     (thread-fail-not-running tid %stopped-before-started ~)
   ~&  [%thread-not-started u.yarn]
@@ -470,6 +498,16 @@
   :~  [%give %fact ~[/thread-result/[tid]] %thread-fail !>([term tang])]
       [%give %kick ~[/thread-result/[tid]] ~]
   ==
+::
+++  cancel-scry
+  |=  =tid
+  ^-  (quip card _state)
+  ?~  scry=(~(get by scries.state) tid)
+    `state
+  :_  state(scries (~(del by scries.state) tid))
+  ::%-  (slog leaf+"cancelling {<tid>}: [{<[ship path]:u.scry>}]" ~)
+  [%pass /thread/[tid]/keen %arvo %a %yawn [ship path]:u.scry]~
+::
 ++  thread-http-fail
   |=  [=tid =term =tang]
   ^-  (quip card ^state)
@@ -500,7 +538,9 @@
   =/  fail-cards  (thread-say-fail tid term tang)
   =^  cards  state  (thread-clean yarn)
   =^  http-cards  state  (thread-http-fail tid term tang)
-  [:(weld fail-cards cards http-cards) state]
+  =^  cancel-cards  state  (cancel-scry tid)
+  :_  state
+  :(weld fail-cards cards http-cards cancel-cards)
 ::
 ++  thread-http-response
   |=  [=tid =vase]
@@ -546,7 +586,6 @@
     =/  =^yarn  i.children
     =/  =tid  (yarn-to-tid yarn)
     =:  running.state  (~(lop of running.state) yarn)
-
         tid.state      (~(del by tid.state) tid)
         serving.state  (~(del by serving.state) (yarn-to-tid yarn))
       ==
@@ -601,7 +640,7 @@
 ::
 ++  clean-state
   !>  ^-  clean-slate
-  4+state(running (turn ~(tap of running.state) head))
+  5+state(running (turn ~(tap of running.state) head))
 ::
 ++  convert-tube
   |=  [from=mark to=mark =desk =bowl:gall]
