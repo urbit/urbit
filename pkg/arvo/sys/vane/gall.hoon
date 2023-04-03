@@ -2052,6 +2052,11 @@
   =/  =coin  $/r.bem
   =*  path  s.bem
   ::
+  ?:  ?&  ?=(%da -.r.bem)
+          (gth p.r.bem now)
+      ==
+    ~
+  ::
   ?:  ?=(%a care)
     ?.  =(p.bem our)  ~
     ?~  yok=(~(get by yokes.state) q.bem)  ~
