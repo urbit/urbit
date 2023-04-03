@@ -102,10 +102,10 @@
 ::
 +$  path-state
   $:  bob=(unit @ud)
-      fan=((mop @ud (pair @da (each noun @uvI))) lte)
+      fan=((mop @ud (pair @da (each page @uvI))) lte)
   ==
 ::
-++  on-path  ((on @ud (pair @da (each noun @uvI))) lte)
+++  on-path  ((on @ud (pair @da (each page @uvI))) lte)
 ::  $blocked-move: enqueued move to an agent
 ::
 +$  blocked-move  [=duct =routes move=(each deal unto)]
@@ -979,13 +979,13 @@
     ::  +ap-grow: bind a path in the agent's scry namespace
     ::
     ++  ap-grow
-      |=  [=spur =noun]
+      |=  [=spur =page]
       ^+  ap-core
       =-  ap-core(sky.yoke -)
       %+  ~(put by sky.yoke)  spur
       ?~  old=(~(get by sky.yoke) spur)  ::  insert binding at new path
-        `(put:on-path fan:*path-state 0 now^[%& noun])
-      =-  u.old(fan (put:on-path fan.u.old - now^[%& noun]))
+        `(put:on-path fan:*path-state 0 now^[%& page])
+      =-  u.old(fan (put:on-path fan.u.old - now^[%& page]))
       ?~  las=(ram:on-path fan.u.old)
         ?~(bob.u.old 0 +(u.bob.u.old))
       ~|  [%grow-many path=spur]
@@ -2060,21 +2060,21 @@
     ?:  ?=(%nuke -.u.yok)  ~
     =/  ski  (~(get by sky.u.yok) s.bem)
     ?~  ski  ~
-    =/  res=(unit (each noun @uvI))
+    =/  res=(unit (each page @uvI))
       ?+    -.r.bem  ~
           %ud  (bind (get:on-path fan.u.ski p.r.bem) tail)
           %da
         %-  head
-        %^    (dip:on-path (unit (each noun @uvI)))
+        %^    (dip:on-path (unit (each page @uvI)))
             fan.u.ski
           ~
-        |=  [res=(unit (each noun @uvI)) @ud =@da val=(each noun @uvI)]
+        |=  [res=(unit (each page @uvI)) @ud =@da val=(each page @uvI)]
         ^-  [new=(unit [@da _val]) stop=? res=(unit _val)]
         :-  `[da val]
         ?:((lte da p.r.bem) |/`val &/res)
       ==
     ?.  ?=([~ %& *] res)  ~
-    ``[%noun %noun p.u.res]
+    ``[%page !>(p.u.res)]  ::TODO mar/page?
   ::
   ?.  ?=(%.y -.shop)
     ~
