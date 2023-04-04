@@ -3291,8 +3291,10 @@
             sup=bitt                                    ::  incoming subs
             $=  sky                                     ::  scry bindings
             %+  map  path                               ::
-            ((mop @ud (pair @da (each page @uvI))) lte) ::
-        ==                                              ::
+            $:  lyc=gang                                ::  permissions
+                $=  fan                                 ::  data
+                ((mop @ud (pair @da (each page @uvI))) lte)
+        ==  ==                                          ::
         $:  act=@ud                                     ::  change number
             eny=@uvJ                                    ::  entropy
             now=@da                                     ::  current time
@@ -3335,6 +3337,7 @@
           [%grow =spur =page]
           [%tomb =case =spur]
           [%cull =case =spur]
+          [%perm =spur diff=$-(gang gang)]
       ==
     +$  task
       $%  [%watch =path]

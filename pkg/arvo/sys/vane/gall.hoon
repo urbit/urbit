@@ -102,6 +102,7 @@
 ::
 +$  path-state
   $:  bob=(unit @ud)
+      lyc=gang
       fan=((mop @ud (pair @da (each page @uvI))) lte)
   ==
 ::
@@ -321,7 +322,7 @@
           run-nonce     (scot %uw (end 5 (shas %yoke-nonce eny)))
           sky
         ?~  yak  ~
-        (~(run by sky.u.yak) (corl (late ~) (lead ~)))
+        (~(run by sky.u.yak) (cork (lead ~) (late [~ ~])))
       ==
     ::
     =/  old  mo-core
@@ -1032,7 +1033,20 @@
         %+  trace  odd.veb.bug.state
         [leaf+"gall: {<agent-name>}: cull {<[case spur]>} no-op"]~
       %+  ~(put by sky.yoke)  spur  ::  delete all older paths
-      [`yon (lot:on-path fan.u.old `+(yon) ~)]
+      u.old(bob `yon, fan (lot:on-path fan.u.old `+(yon) ~))
+    ::  +ap-perm: change permissions on a scry path
+    ::
+    ::    If the agent so requests, we store permissions even for
+    ::    empty paths, to avoid timing issues when %grow comes
+    ::    before %perm.
+    ::
+    ++  ap-perm
+      |=  [=spur diff=$-(gang gang)]
+      ^+  ap-core
+      =-  ap-core(sky.yoke -)
+      %+  ~(put by sky.yoke)  spur
+      =/  old  (~(gut by sky.yoke) spur *path-state)
+      old(lyc (diff lyc.old))
     ::  +ap-from-internal: internal move to move.
     ::
     ::    We convert from cards to duct-indexed moves when resolving
@@ -1043,7 +1057,7 @@
     ::
     +$  carp  $+  carp  (wind neet gift:agent)
     +$  neet  $+  neet
-      $<  ?(%grow %tomb %cull)
+      $<  ?(%grow %tomb %cull %perm)
       $%  note:agent
           [%agent [=ship name=term] task=[%raw-poke =mark =noun]]
           [%huck [=ship name=term] =note-arvo]
@@ -1728,6 +1742,7 @@
         [%pass * %grow *]  $(caz t.caz, ap-core (ap-grow +.q.i.caz))
         [%pass * %tomb *]  $(caz t.caz, ap-core (ap-tomb +.q.i.caz))
         [%pass * %cull *]  $(caz t.caz, ap-core (ap-cull +.q.i.caz))
+        [%pass * %perm *]  $(caz t.caz, ap-core (ap-perm +.q.i.caz))
         [%pass * ?(%agent %arvo %pyre) *]  $(caz t.caz, fex [i.caz fex])
         [%give *]  $(caz t.caz, fex [i.caz fex])
         [%slip *]  !!
@@ -2047,7 +2062,7 @@
   ^-  roon
   |=  [lyc=gang care=term bem=beam]
   ^-  (unit (unit cage))
-  =/  =shop  &/p.bem
+  =*  ship  p.bem
   =*  dap  q.bem
   =/  =coin  $/r.bem
   =*  path  s.bem
@@ -2058,11 +2073,13 @@
     ~
   ::
   ?:  ?=(%a care)
-    ?.  =(p.bem our)  ~
+    ?.  =(p.bem our)                       ~
     ?~  yok=(~(get by yokes.state) q.bem)  ~
-    ?:  ?=(%nuke -.u.yok)  ~
-    =/  ski  (~(get by sky.u.yok) s.bem)
-    ?~  ski  ~
+    ?:  ?=(%nuke -.u.yok)                  ~
+    ?~  ski=(~(get by sky.u.yok) s.bem)    ~
+    ?:  ?&  ?=(^ lyc.u.ski)
+            !(~(has in u.lyc.u.ski) ship)
+        ==                                 ~
     =/  res=(unit (each page @uvI))
       ?+    -.r.bem  ~
           %ud  (bind (get:on-path fan.u.ski p.r.bem) tail)
@@ -2079,28 +2096,30 @@
     ?.  ?=([~ %& *] res)  ~
     ``p.u.res(q !>(q.p.u.res))
   ::
-  ?.  ?=(%.y -.shop)
-    ~
-  =/  =ship  p.shop
   ?:  ?&  =(%t care)
           =([%$ %da now] coin)
-          =(our ship)
       ==
     =/  yok  (~(get by yokes.state) q.bem)
-    ?.  ?=([~ %live *] yok)  ~
+    ?.  ?=([~ %live *] yok)  [~ ~]
     :^  ~  ~  %file-list  !>  ^-  (list ^path)
-    %+  skim  ~(tap in ~(key by sky.u.yok))
-    |=  =spur
-    ?&  =(s.bem (scag (lent s.bem) spur))
-        !=(s.bem spur)
-    ==
+    %-  ~(rep by sky.u.yok)
+    |=  [[=spur path-state] acc=(list spur)]
+    ?:  ?&  =(s.bem (scag (lent s.bem) spur))
+            !=(s.bem spur)
+            !=(~ fan)
+            ?|  ?=(~ lyc)
+                (~(has in u.lyc) ship)
+        ==  ==
+      [spur acc]
+    acc
   ::
-  ?:  ?&  =(%z care)
-          =(our ship)
-      ==
+  ?:  =(%z care)
     =/  yok  (~(get by yokes.state) q.bem)
     ?.  ?=([~ %live *] yok)              ~
     ?~  ski=(~(get by sky.u.yok) s.bem)  ~
+    ?:  ?&  ?=(^ lyc.u.ski)
+            !(~(has in u.lyc.u.ski) ship)
+        ==                               ~
     =/  res=(unit (pair @da (each noun @uvI)))
       ?+  -.r.bem  ~
         %ud  (get:on-path fan.u.ski p.r.bem)
@@ -2198,11 +2217,13 @@
   ::
   ?:  ?&  =(%w care)
           =([%$ %da now] coin)
-          =(our ship)
       ==
     =/  yok  (~(get by yokes.state) q.bem)
     ?.  ?=([~ %live *] yok)              [~ ~]
     ?~  ski=(~(get by sky.u.yok) s.bem)  [~ ~]
+    ?:  ?&  ?=(^ lyc.u.ski)
+            !(~(has in u.lyc.u.ski) ship)
+        ==                               ~
     ?~  las=(ram:on-path fan.u.ski)      [~ ~]
     ``case/!>(ud/key.u.las)
   ::
