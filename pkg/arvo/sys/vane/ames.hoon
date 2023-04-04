@@ -3988,6 +3988,13 @@
         [~ ~]
       ``noun+!>(u.peer)
     ::
+        [%last-contact ~]
+      :^  ~  ~  %noun
+      !>  ^-  (unit @da)
+      ?.  ?=([~ %known *] peer)
+        ~
+      `last-contact.qos.u.peer
+    ::
         [%forward-lane ~]
       ::
       ::  this duplicates the routing hack from +send-blob:event-core
