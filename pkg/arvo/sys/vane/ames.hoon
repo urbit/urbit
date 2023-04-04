@@ -1294,9 +1294,9 @@
         |=  [=wire error=(unit error)]
         ^+  event-core
         ?:  ?=([%fine ?(%pine %unsub) *] wire)
-          ::  XX handle error?
-          ::
-          event-core
+          ?~  error  event-core
+          %-  (slog leaf/"fine: {<tag.u.error>} {(spud +>.wire)}" ~)
+          (emit duct %give %miss +>.wire)
         ?~  parsed=(parse-bone-wire wire)
           ::  no-op
           ::
@@ -1721,10 +1721,14 @@
           ?>  &(=(our her.blk) =(%c van.blk) ?=(^ spr.blk))
           =+  nom=(en-roof:balk blk(car %w, cas da/now, spr `path`~[i.spr.blk]))
           ::
-          =.  event-core  (emit duct %give %done ~)
-          ?+  cage=(rof ~ nom)  !!
-            [~ ~]    (emit duct %give %miss (en-path:balk blk))
-            [~ ~ *]  =+(!<(c=cass:clay q.u.u.cage) (emit duct %give %boon ud:c))
+          ?+    cage=(rof ~ nom)  !!  ::  XX: crashing correct behaviour?
+              [~ ~]  (emit duct %give %done `miss/"{<(en-path:balk blk)>}")
+            ::
+              [~ ~ *]
+            =+  !<(=cass:clay q.u.u.cage)
+            =~  (emit duct %give %boon ud:cass)
+                (emit duct %give %done ~)
+            ==
           ==
         ::  .plea is from local vane to foreign ship
         ::

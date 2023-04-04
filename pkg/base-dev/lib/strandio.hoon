@@ -351,8 +351,11 @@
   =/  =card:agent:gall  [%pass /pine %arvo %a %pine ship path]
   ;<  ~  bind:m  (send-raw-card card)
   ;<  [wire sign=sign-arvo]  bind:m  take-sign-arvo
-  ?>  ?=(%tune +<.sign)
-  (pure:m data.sign)
+  ?:  ?=(%tune +<.sign)
+    (pure:m data.sign)
+  ?>  ?=(%miss +<.sign)
+  ~&  +.sign
+  (pure:m ~)
 ::
 ++  sleep
   |=  for=@dr
