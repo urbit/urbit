@@ -17,7 +17,7 @@ in stdenvNoCC.mkDerivation {
   buildPhase = ''
     set -xeuo pipefail
 
-    ${arvo}/vere.jam ${lib.concatStringsSep " " args} ./pier
+    ${arvo}/vere.jam ${lib.concatStringsSep " " args} -c ./pier
 
     cleanup () {
       if [ -f ./pier/.vere.lock ]; then
