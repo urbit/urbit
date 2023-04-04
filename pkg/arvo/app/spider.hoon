@@ -367,12 +367,6 @@
     =/  pax=path
       ~|  no-file-for-thread+file.p.source
       (need (get-fit:clay beak %ted file.p.source))
-    ::  ad-hoc to work only with the -keen/-pine threads -- pine uses keen
-    ::  XX TODO: expand to any thread that performs a remote scry request? how?
-    ::
-    =?  scries.state  ?=(?([%ted %keen *] [%ted %pine *]) pax)
-      =+  !<([~ =ship =path] vase.p.source)
-      (~(put by scries.state) new-tid ship path)
     :_  state
     :_  ~
     :+  %pass  /build/[new-tid]
@@ -459,9 +453,14 @@
     ==
   =.  running.state  (~(put of running.state) yarn eval-form)
   =/  =tid  (yarn-to-tid yarn)
-  =.  cards.r
-    %+  turn  cards.r
-    |=  =card
+  =^  new-cards  state
+    ^-  [(list card) _state]
+    %+  roll  cards.r
+    |=  [=card cards=(list card) s=_state]
+    :_  =?  scries.s  ?=([%pass ^ %arvo %a ?(%pine %keen) @ *] card)
+          (~(put by scries.s) tid &6.card +>+>+>.card)
+        s
+    :_  cards
     ^-  ^card
     ?+  card  card
         [%pass * *]  [%pass [%thread tid p.card] q.card]
@@ -472,7 +471,7 @@
       ^-  ^path
       [%thread tid path]
     ==
-  =.  cards  (weld cards cards.r)
+  =.  cards  (weld cards (flop new-cards))
   =^  final-cards=(list card)  state
     ?-  -.eval-result.r
       %next  `state
