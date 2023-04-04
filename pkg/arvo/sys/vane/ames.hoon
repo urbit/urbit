@@ -1712,21 +1712,19 @@
         ::  if it's %cork plea passed to ames from its sink,
         ::  give %done and process flow closing after +on-take-done call
         ::
-        ?:  =([%a /close ~] plea)
-          (emit duct %give %done ~)
+        ?:  =([%a /close ~] plea)  (emit duct %give %done ~)
         ::
-        ?:  &(=(/pine path.plea) =(our her:;;(balk payload.plea)))
-          ::  XX TODO move to |^
+        ?:  =([%a /cone *] plea)
+          ::  sent to ourselves from ha-plea, after sinking a remote /pine plea
+          ::
           =+  ;;(blk=balk payload.plea)
-          ?>  =(%c van.blk)
-          =.  car.blk  %w
-          =.  cas.blk  da+now
-          =.  spr.blk
-            ?>  ?=(^ spr.blk)
-            ^-(path ~[i.spr.blk])
-          =+  !<(=cass:clay q:(need (need (rof ~ (en-roof:balk blk)))))
-          =~  (emit duct %give %boon ud.cass)
-              (emit duct %give %done ~)
+          ?>  &(=(our her.blk) =(%c van.blk) ?=(^ spr.blk))
+          =+  nom=(en-roof:balk blk(car %w, cas da/now, spr `path`~[i.spr.blk]))
+          ::
+          =.  event-core  (emit duct %give %done ~)
+          ?+  cage=(rof ~ nom)  !!
+            [~ ~]    (emit duct %give %miss (en-path:balk blk))
+            [~ ~ *]  =+(!<(c=cass:clay q.u.u.cage) (emit duct %give %boon ud:c))
           ==
         ::  .plea is from local vane to foreign ship
         ::
@@ -2246,26 +2244,13 @@
       ++  on-pine
         |=  [=ship =path]
         ^+  event-core
-        ?.  =(our ship)
-          ?~  ship-state=(~(get by peers.ames-state) ship)
-            %+  enqueue-alien-todo  ship
-            |=  todos=alien-agenda
-            todos(pines (~(put ju pines.todos) path duct))
+        ?<  =(our ship)
+        ?^  ship-state=(~(get by peers.ames-state) ship)
           ?>  ?=([%known *] u.ship-state)
           fi-abet:(on-pine:fi:(abed-peer:pe ship +.u.ship-state) path duct)
-        ::  XX: crashing correct behaviour?
-        =+  blk=(need (de-part:balk our rift.ames-state life.ames-state path))
-        ?>  ?=(%c van.blk)
-        =+  nom=(en-roof:balk blk(car %w, cas [%da now]))
-        =+  cag=(rof ~ nom)
-        ?-  cag
-          ~      !!
-          [~ ~]  (emit duct %give %miss (en-path:balk blk))
-        ::
-            [~ ~ *]
-          =+  !<(=cass:clay q.u.u.cag)
-          (emit duct %give %boon `*`ud.cass)
-        ==
+        %+  enqueue-alien-todo  ship
+        |=  todos=alien-agenda
+        todos(pines (~(put ju pines.todos) path duct))
       ::
       ++  on-keen
         |=  [=ship =path]
@@ -3661,7 +3646,7 @@
                   %j  (pe-emit duct %pass wire %j %plea her plea)
                 ==
               ?:  ?=(%pine -.path.plea)
-                (pe-emit duct %pass wire %a %plea our plea)
+                (pe-emit duct %pass wire %a %plea our plea(path /cone))
               ::  a %cork plea is handled using %$ as the recipient vane to
               ::  account for publishers that still handle ames-to-ames %pleas
               ::
