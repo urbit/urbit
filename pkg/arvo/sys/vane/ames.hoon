@@ -1714,7 +1714,7 @@
         ::
         ?:  =([%a /close ~] plea)  (emit duct %give %done ~)
         ::
-        ?:  =([%a /cone *] plea)
+        ?:  ?=([%a [%cone ~] *] plea)
           ::  sent to ourselves from ha-plea, after sinking a remote /pine plea
           ::
           =+  ;;(blk=balk payload.plea)
@@ -3646,7 +3646,7 @@
                   %j  (pe-emit duct %pass wire %j %plea her plea)
                 ==
               ?:  ?=(%pine -.path.plea)
-                (pe-emit duct %pass wire %a %plea our plea(path /cone))
+                (pe-emit duct %pass wire %a %plea our plea(vane %a, path /cone))
               ::  a %cork plea is handled using %$ as the recipient vane to
               ::  account for publishers that still handle ames-to-ames %pleas
               ::
