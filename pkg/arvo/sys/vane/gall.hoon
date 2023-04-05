@@ -2057,67 +2057,6 @@
       ==
     ~
   ::
-  ?.  ?=([%$ *] path)  ::  [%$ *] is for the vane, all else is for the agent
-    ?.  ?&  =(our ship)
-            =([%$ %da now] coin)
-        ==                           ~
-    ?.  (~(has by yokes.state) dap)  [~ ~]
-    ?.  ?=(^ path)                   ~
-    =/  =routes  [~ ship]
-    (mo-peek:mo & dap routes care path)
-  ::
-  =>  .(path t.path)
-  ?:  ?=(%x care)
-    ?.  =(p.bem our)  ~
-    ?~  yok=(~(get by yokes.state) q.bem)  ~
-    ?:  ?=(%nuke -.u.yok)  ~
-    =/  ski  (~(get by sky.u.yok) path)
-    ?~  ski  ~
-    =/  res=(unit (each page @uvI))
-      ?+    -.r.bem  ~
-          %ud  (bind (get:on-path fan.u.ski p.r.bem) tail)
-          %da
-        %-  head
-        %^    (dip:on-path (unit (each page @uvI)))
-            fan.u.ski
-          ~
-        |=  [res=(unit (each page @uvI)) @ud =@da val=(each page @uvI)]
-        ^-  [new=(unit [@da _val]) stop=? res=(unit _val)]
-        :-  `[da val]
-        ?:((lte da p.r.bem) |/`val &/res)
-      ==
-    ?.  ?=([~ %& *] res)  ~
-    ``p.u.res(q !>(q.p.u.res))
-  ::
-  ?:  ?&  =(%t care)
-          =([%$ %da now] coin)
-          =(our ship)
-      ==
-    =/  yok  (~(get by yokes.state) q.bem)
-    ?.  ?=([~ %live *] yok)  ~
-    :^  ~  ~  %file-list  !>  ^-  (list ^path)
-    %+  skim  ~(tap in ~(key by sky.u.yok))
-    |=  =spur
-    ?&  =(path (scag (lent path) spur))
-        !=(path spur)
-    ==
-  ::
-  ?:  ?&  =(%z care)
-          =(our ship)
-      ==
-    =/  yok  (~(get by yokes.state) q.bem)
-    ?.  ?=([~ %live *] yok)             ~
-    ?~  ski=(~(get by sky.u.yok) path)  ~
-    =/  res=(unit (pair @da (each noun @uvI)))
-      ?+  -.r.bem  ~
-        %ud  (get:on-path fan.u.ski p.r.bem)
-        %da  ?.(=(p.r.bem now) ~ (bind (ram:on-path fan.u.ski) tail))
-      ==
-    ?+  res  ~
-      [~ @ %| *]  ``noun/!>(p.q.u.res)
-      [~ @ %& *]  ``noun/!>(`@uvI`(shax (jam p.q.u.res)))
-    ==
-  ::
   ?:  &(=(care %$) =(path /whey))
     =/  blocked
       =/  queued  (~(run by blocked.state) |=((qeu blocked-move) [%.y +<]))
@@ -2212,6 +2151,67 @@
     ?~  ski=(~(get by sky.u.yok) path)  [~ ~]
     ?~  las=(ram:on-path fan.u.ski)     [~ ~]
     ``case/!>(ud/key.u.las)
+  ::
+  ?.  ?=([%$ *] path)  ::  [%$ *] is for the vane, all else is for the agent
+    ?.  ?&  =(our ship)
+            =([%$ %da now] coin)
+        ==                           ~
+    ?.  (~(has by yokes.state) dap)  [~ ~]
+    ?.  ?=(^ path)                   ~
+    =/  =routes  [~ ship]
+    (mo-peek:mo & dap routes care path)
+  ::
+  =>  .(path t.path)
+  ?:  ?=(%x care)
+    ?.  =(p.bem our)  ~
+    ?~  yok=(~(get by yokes.state) q.bem)  ~
+    ?:  ?=(%nuke -.u.yok)  ~
+    =/  ski  (~(get by sky.u.yok) path)
+    ?~  ski  ~
+    =/  res=(unit (each page @uvI))
+      ?+    -.r.bem  ~
+          %ud  (bind (get:on-path fan.u.ski p.r.bem) tail)
+          %da
+        %-  head
+        %^    (dip:on-path (unit (each page @uvI)))
+            fan.u.ski
+          ~
+        |=  [res=(unit (each page @uvI)) @ud =@da val=(each page @uvI)]
+        ^-  [new=(unit [@da _val]) stop=? res=(unit _val)]
+        :-  `[da val]
+        ?:((lte da p.r.bem) |/`val &/res)
+      ==
+    ?.  ?=([~ %& *] res)  ~
+    ``p.u.res(q !>(q.p.u.res))
+  ::
+  ?:  ?&  =(%t care)
+          =([%$ %da now] coin)
+          =(our ship)
+      ==
+    =/  yok  (~(get by yokes.state) q.bem)
+    ?.  ?=([~ %live *] yok)  ~
+    :^  ~  ~  %file-list  !>  ^-  (list ^path)
+    %+  skim  ~(tap in ~(key by sky.u.yok))
+    |=  =spur
+    ?&  =(path (scag (lent path) spur))
+        !=(path spur)
+    ==
+  ::
+  ?:  ?&  =(%z care)
+          =(our ship)
+      ==
+    =/  yok  (~(get by yokes.state) q.bem)
+    ?.  ?=([~ %live *] yok)             ~
+    ?~  ski=(~(get by sky.u.yok) path)  ~
+    =/  res=(unit (pair @da (each noun @uvI)))
+      ?+  -.r.bem  ~
+        %ud  (get:on-path fan.u.ski p.r.bem)
+        %da  ?.(=(p.r.bem now) ~ (bind (ram:on-path fan.u.ski) tail))
+      ==
+    ?+  res  ~
+      [~ @ %| *]  ``noun/!>(p.q.u.res)
+      [~ @ %& *]  ``noun/!>(`@uvI`(shax (jam p.q.u.res)))
+    ==
   ~
 ::  +stay: save without cache; suspend non-%base agents
 ::

@@ -129,7 +129,7 @@
     =/  =desk
       ::TODO  maybe should recognize if the user specified a desk explicitly.
       ::      currently eats the :app|desk#gen case.
-      =+  gop=(en-beam dir(q q.gol, s /$))
+      =+  gop=(en-beam dir(q q.gol, s /))
       ?.  .^(? %gu gop)
         q.dir
       .^(desk %gd gop)

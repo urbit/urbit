@@ -182,7 +182,7 @@
   =<  q
   %-  need  %-  need
   %-  scry:(gall-gate now eny roof)
-  [~ %n [[our dude da+now] $/[(scot %p ship.sub) [term wire]:sub]]]
+  [~ %n [[our dude da+now] [(scot %p ship.sub) [term wire]:sub]]]
 ::
 ++  load-agent
   |=  [=ship =gall-gate =dude:gall =agent:gall]
