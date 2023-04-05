@@ -366,7 +366,7 @@
 ::  unequal under noun equality but equal via the compare gate
 ::
 ++  on
-  ~/  %on
+  ~%  %on  ..part  ~
   |*  [key=mold val=mold]
   =>  |%
       +$  item  [key=key val=val]
