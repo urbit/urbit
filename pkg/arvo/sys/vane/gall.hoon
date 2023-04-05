@@ -2047,7 +2047,7 @@
   ^-  roon
   |=  [lyc=gang care=term bem=beam]
   ^-  (unit (unit cage))
-  =/  =shop  &/p.bem
+  =*  ship  p.bem
   =*  dap  q.bem
   =/  =coin  $/r.bem
   =*  path  s.bem
@@ -2057,11 +2057,21 @@
       ==
     ~
   ::
-  ?:  ?=(%a care)
+  ?.  ?=([%$ *] path)  ::  [%$ *] is for the vane, all else is for the agent
+    ?.  ?&  =(our ship)
+            =([%$ %da now] coin)
+        ==                           ~
+    ?.  (~(has by yokes.state) dap)  [~ ~]
+    ?.  ?=(^ path)                   ~
+    =/  =routes  [~ ship]
+    (mo-peek:mo & dap routes care path)
+  ::
+  =>  .(path t.path)
+  ?:  ?=(%x care)
     ?.  =(p.bem our)  ~
     ?~  yok=(~(get by yokes.state) q.bem)  ~
     ?:  ?=(%nuke -.u.yok)  ~
-    =/  ski  (~(get by sky.u.yok) s.bem)
+    =/  ski  (~(get by sky.u.yok) path)
     ?~  ski  ~
     =/  res=(unit (each page @uvI))
       ?+    -.r.bem  ~
@@ -2079,9 +2089,6 @@
     ?.  ?=([~ %& *] res)  ~
     ``p.u.res(q !>(q.p.u.res))
   ::
-  ?.  ?=(%.y -.shop)
-    ~
-  =/  =ship  p.shop
   ?:  ?&  =(%t care)
           =([%$ %da now] coin)
           =(our ship)
@@ -2091,16 +2098,16 @@
     :^  ~  ~  %file-list  !>  ^-  (list ^path)
     %+  skim  ~(tap in ~(key by sky.u.yok))
     |=  =spur
-    ?&  =(s.bem (scag (lent s.bem) spur))
-        !=(s.bem spur)
+    ?&  =(path (scag (lent path) spur))
+        !=(path spur)
     ==
   ::
   ?:  ?&  =(%z care)
           =(our ship)
       ==
     =/  yok  (~(get by yokes.state) q.bem)
-    ?.  ?=([~ %live *] yok)              ~
-    ?~  ski=(~(get by sky.u.yok) s.bem)  ~
+    ?.  ?=([~ %live *] yok)             ~
+    ?~  ski=(~(get by sky.u.yok) path)  ~
     =/  res=(unit (pair @da (each noun @uvI)))
       ?+  -.r.bem  ~
         %ud  (get:on-path fan.u.ski p.r.bem)
@@ -2201,21 +2208,11 @@
           =(our ship)
       ==
     =/  yok  (~(get by yokes.state) q.bem)
-    ?.  ?=([~ %live *] yok)              [~ ~]
-    ?~  ski=(~(get by sky.u.yok) s.bem)  [~ ~]
-    ?~  las=(ram:on-path fan.u.ski)      [~ ~]
+    ?.  ?=([~ %live *] yok)             [~ ~]
+    ?~  ski=(~(get by sky.u.yok) path)  [~ ~]
+    ?~  las=(ram:on-path fan.u.ski)     [~ ~]
     ``case/!>(ud/key.u.las)
-  ::
-  ?.  =(our ship)
-    ~
-  ?.  =([%$ %da now] coin)
-    ~
-  ?.  (~(has by yokes.state) dap)
-    [~ ~]
-  ?.  ?=(^ path)
-    ~
-  =/  =routes  [~ ship]
-  (mo-peek:mo & dap routes care path)
+  ~
 ::  +stay: save without cache; suspend non-%base agents
 ::
 ::    TODO: superfluous? see +molt
