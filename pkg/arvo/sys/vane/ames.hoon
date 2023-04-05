@@ -4647,7 +4647,7 @@
       =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
       %-  en-hunk
       ?+  kyr  ~
-        %a  (rof lyc nom)
+        %x  (rof lyc nom)
       ==
     ==
     ::
