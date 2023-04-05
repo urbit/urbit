@@ -3310,13 +3310,19 @@
               ++  num-slots
                 ^-  @ud
                 (sub-safe cwnd live-packets)
-              ::
               ::  +clamp-rto: apply min and max to an .rto value
               ::
               ++  clamp-rto
                 |=  rto=@dr
                 ^+  rto
-                (min ~m2 (max ^~((div ~s1 5)) rto))
+                (min max-backoff (max ^~((div ~s1 5) rto)))
+              ::  +max-backoff: calculate highest re-send interval
+              ::
+              ::    Keeps pinhole to sponsors open by inspecting the duct (hack).
+              ::
+              ++  max-backoff
+                ^-  @dr
+                ?:(?=([[%gall %use %ping *] *] duct) ~s25 ~m2)
               ::  +in-slow-start: %.y iff we're in "slow-start" mode
               ::
               ++  in-slow-start
