@@ -2073,6 +2073,7 @@
   +$  perm-arvo
     $%  $:  %ames
         $?  %debug  ::  %sift %spew
+            %block  ::  %snub
         ==  ==
       ::
         $:  %behn
@@ -2081,16 +2082,17 @@
       ::
         $:  %clay
         $%  [%mount ~]                 ::  %mont %ogre %dirk
-            [%creds ~]                 ::  %cred %crew %perm
+            [%creds ~]                 ::  %cred %crew %crow %perm
             [%label desk=(unit desk)]  ::  %info w/ %| nori
-            [%write burr]              ::  %info %merg %fuse
+            [%write burr]              ::  %info %merg %fuse %park
             [%local spar]              ::  %warp for local data
             [%peers spar]              ::  %warp for remote data
           ::
             [%perms desk=(unit desk)]  ::  %curb
             [%plead desk=(unit desk)]  ::  %pine
-            [%liven desk=(unit desk)]  ::  %rein %zest
+            [%liven desk=(unit desk)]  ::  %rein %zest %wick
             [%pulse ~]                 ::  %tire
+            [%grave ship=(unit ship) desk=(unit desk)]  ::  %tomb
         ==  ==
       ::
         $:  %dill
@@ -2098,10 +2100,11 @@
             %input  ::  %belt %blew
             %print  ::  %crud %talk %text
             %extra  ::  %flog
+            %space  ::  %heft %meld %pack
         ==  ==
       ::
         $:  %eyre
-        $?  %serve  ::  %connect %disconnect
+        $?  %serve  ::  %connect %serve %disconnect
             %certs  ::  %rule
             %perms  ::  %approve-origin %reject-origin
         ==  ==
@@ -2126,7 +2129,7 @@
         ==  ==
       ::
         $:  %khan
-        $?  %tread  ::  %fard
+        $?  %tread  ::  %fard %lard
         ==  ==
     ==
   ::  +rite: namespace permissions check
@@ -2243,6 +2246,14 @@
           =(desk (fall desk.p desk))
       ==
     ::
+        [%clay %grave *]
+      %+  lien  ~(tap in pes)
+      |=  p=perm
+      ?&  ?=([%clay %grave *] p)
+          |(?=(~ ship.p) =(ship.mus ship.p))
+          |(?=(~ desk.p) =(desk.mus desk.p))
+      ==
+
         [%gall %clear *]
       %+  lien  ~(tap in pes)
       |=  p=perm
@@ -2311,6 +2322,7 @@
         %a
       ?+  +>-.note  |
         ?(%sift %spew)  [%ames %debug]
+        %snub           [%ames %block]
       ==
     ::
         %b
@@ -2320,12 +2332,23 @@
     ::
         %c
       ?+  +>-.note  |
-        ?(%mont %ogre %dirk)  [%clay %mount ~]
-        ?(%cred %cred %perm)  [%clay %creds ~]
-        %curb                 [%clay %perms `des.note]
-        %pine                 [%clay %plead `des.note]
-        ?(%merg %fuse)        [%clay %write `des.note /]
-        %tire                 [%clay %pulse ~]
+        ?(%mont %ogre %dirk)        [%clay %mount ~]
+        ?(%cred %crew %crow %perm)  [%clay %creds ~]
+        %curb                       [%clay %perms `des.note]
+        %pine                       [%clay %plead `des.note]
+        ?(%merg %fuse %park)        [%clay %write `des.note /]
+        %tire                       [%clay %pulse ~]
+        ?(%rein %zest)              [%clay %liven `des.note]
+        %wick                       [%clay %liven ~]
+      ::
+          %tomb
+        ?-    -.clue.note
+            ?(%lobe %all %pick %seek)
+          [%clay %grave ~ ~]
+        ::
+            ?(%norm %worn)
+          [%clay %grave `ship.clue.note `desk.clue.note]
+        ==
       ::
           %info
         ?-  -.dit.note
@@ -2360,11 +2383,12 @@
       ::
         ?(%crud %talk %text)  [%dill %print]
         %flog                 [%dill %extra]
+        ?(%heft %meld %pack)  [%dill %space]
       ==
     ::
         %e
       ?+  +>-.note  |
-        ?(%connect %disconnect)            [%eyre %serve]
+        ?(%connect %serve %disconnect)     [%eyre %serve]
         %rule                              [%eyre %certs]
         ?(%approve-origin %reject-origin)  [%eyre %perms]
       ==
@@ -2393,7 +2417,7 @@
     ::
         %k
       ?+  +>-.note  |
-        %fard  [%khan %tread]
+        ?(%fard %lard)  [%khan %tread]
       ==
     ::
       %$    |
