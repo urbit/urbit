@@ -558,30 +558,30 @@
   =/  num-frag=@ud  (lent paz)
   ~&  num-frag=num-frag
   =/   =roar:ames  (sift-roar:ames num-frag (flop paz))
-  %+  welp
-    =/  dat
-      ?>  ?=(^ dat.roar)
-      ;;(@ux q.dat.roar)
-    (expect-eq !>(`@`dat) !>(`@`dojo))
-  =/  event-core
+  =/   event-core
     ~!  nec
     =/   foo  [*@da *@ rof.nec]
-    (per-event:(nec foo) [*@da *@ rof.nec] *duct ames-state.nec)
-  %+  welp
+    (ev:(nec foo) [*@da *@ rof.nec] *duct ames-state.nec)
+  =/  dat
+    ?>  ?=(^ dat.roar)
+    ;;(@ux q.dat.roar)
+  ::
+  ;:  welp
+    (expect-eq !>(`@`dat) !>(`@`dojo))
+  ::
     ^-  tang
     %-  zing
     %+  turn  paz
     |=  [fra=@ud sig=@ siz=@ud byts]
-    %+  expect-eq  !>(%.y)
-    !>
-    %-  veri-fra:keys:fine:event-core
-    [~bud life.ames-state.bud want fra dat sig]
-  ~&  %verifying-sig
-  %+  expect-eq
-    !>(&)
-    !>
-    %-  meri:keys:fine:event-core
-    [~bud life.ames-state.bud want roar]
+    %+  expect-eq
+      !>(%.y)
+      !>((veri-fra:keys:fi:(abed:pe:event-core ~bud) want fra dat sig))
+  ::
+    ~&  %verifying-sig
+    %+  expect-eq
+      !>(%.y)
+      !>((meri:keys:fi:(abed:pe:event-core ~bud) want [sig dat]:roar))
+  ==
 ::
 ++  test-old-ames-wire  ^-  tang
   =^  moves0  bud  (call bud ~[/g/hood] %spew [%odd]~)
