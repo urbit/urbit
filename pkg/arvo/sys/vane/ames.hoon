@@ -3315,7 +3315,7 @@
               ++  clamp-rto
                 |=  rto=@dr
                 ^+  rto
-                (min max-backoff (max ^~((div ~s1 5) rto)))
+                (min max-backoff (max ^~((div ~s1 5)) rto))
               ::  +max-backoff: calculate highest re-send interval
               ::
               ::    Keeps pinhole to sponsors open by inspecting the duct (hack).
