@@ -1894,7 +1894,7 @@
           =/  peer-core  (abed-peer:pe her.u.res u.state)
           ?-  -.u.res
             %pump  abet:(on-wake:peer-core bone.u.res error)
-            %fine  abet:ke-abet:ke-take-wake:(ke-abed:ke:peer-core wire.u.res)
+            %fine  abet:fi-abet:fi-take-wake:(abed:fi:peer-core wire.u.res)
           ==
         ::
         =.  event-core  (emit duct %pass /recork %b %wait `@da`(add now ~d1))
@@ -2277,11 +2277,8 @@
         ?>  ?=([%known *] u.ship-state)
         =+  peer=(abed:pe ship)
         ?.  (~(has by order.scry.peer-state.peer) path)
-          ::  XX only log if odd.veb?
-          ::
-          %-  (slog leaf+"ames: missing scry {<path>} for {<ship>}" ~)
           event-core
-        abet:ke-abet:(ke-unsub:(ke-abed:ke:peer path) duct all)
+        abet:fi-abet:(fi-unsub:(abed:fi:peer path) duct all)
       ::
       +|  %implementation
       ::  +enqueue-alien-todo: helper to enqueue a pending request
@@ -2633,25 +2630,24 @@
           =/  =path  (slag 3 path.peep)
           ?.  (~(has by order.scry) path)
             ~&(dead-response/peep peer-core)
-          =<  ke-abet
-          (ke-rcv:(ke-abed:ke path) peep meow lane)
+          fi-abet:(fi-rcv:(abed:fi path) peep meow lane)
         ::
         ++  on-keen
           |=  [=path =^duct]
           ^+  peer-core
           ?:  (~(has by order.scry) path)
             ~>  %slog.0^leaf/"fine: dupe {(spud path)}"
-            ke-abet:(ke-sub:(ke-abed:ke path) duct)
+            fi-abet:(fi-sub:(abed:fi path) duct)
           =^  keen-id=@ud  seq.scry  [seq.scry +(seq.scry)]
-          =.  order.scry  (~(put by order.scry) path keen-id)
-          =.  keens.scry  (put:orm keens.scry keen-id *keen-state)
-          ke-abet:(ke-start:(ke-abed:ke path) duct)
+          =.  order.scry   (~(put by order.scry) path keen-id)
+          =.  keens.scry   (put:orm keens.scry keen-id *keen-state)
+          fi-abet:(fi-start:(abed:fi path) duct)
         ::
         ++  on-pine
           |=  [=path =^duct]
           ^+  peer-core
           ?~  blk=(de-part:balk her rift.peer-state life.peer-state path)
-            !!  :: XX: ???
+            !!  :: XX: %miss ?
           =/  =wire  [%fine %pine (scot %p her) path]
           (pe-emit duct %pass wire %a %plea her plea=[%$ /pine `*`u.blk])
         ::
@@ -2659,7 +2655,7 @@
           |=  [=path payload=*]
           ^+  peer-core
           ?~  blk=(de-part:balk her rift.peer-state life.peer-state path)
-            !!
+            !!  :: XX: %miss ?
           =+  ;;(case=@ud payload)
           =.  cas.u.blk  ud+case
           (on-keen (slag 3 (en-path:balk u.blk)) duct)
@@ -3757,9 +3753,9 @@
               (call %done ok=%.y)
             --
           --
-        ::  +ke: constructor for |keen remote scry core
+        ::  +fi: constructor for |fine remote scry core
         ::
-        ++  ke
+        ++  fi
           =>  |%
               ::  +gum: glue together a list of $byts into one
               ::
@@ -3821,16 +3817,16 @@
           ::
           +|  %helpers
           ::
-          ++  ke-core  .
-          ++  ke-abed
+          ++  fine  .
+          ++  abed
             |=  p=^path
             ~|  no-keen-for-path/p
             =.  keen-id  (~(got by order.scry) p)
-            ke-core(path p, keen (got:orm keens.scry keen-id))
+            fine(path p, keen (got:orm keens.scry keen-id))
           ::
-          ++  ke-abed-id
+          ++  abed-id  :: XX not used
             |=  id=@ud
-            %-  ke-abed
+            %-  abed
             ~|  no-path-for-id/id
             %-  need
             ^-  (unit ^path)
@@ -3840,7 +3836,7 @@
             ?^  out  out
             ?:(=(id i) `p ~)
           ::
-          ++  ke-abet
+          ++  fi-abet
             ^+  peer-core
             ?:  =,  keen
                 ::  num-fragments is 0 when unknown (i.e. no response yet)
@@ -3849,25 +3845,25 @@
                 ?|  =(~ listeners.keen)
                     &(!=(0 num-fragments) =(num-fragments num-received))
                 ==
-              ke-abet-gone
-            =.  ke-core     ke-set-wake
+              abet-gone
+            =.  fine        fi-set-wake
             =.  keens.scry  (put:orm keens.scry keen-id keen)
             peer-core
           ::
-          ++  ke-abet-gone
-            =?  ke-core  ?=(^ next-wake.keen)
-              (ke-rest u.next-wake.keen)
+          ++  abet-gone
+            =?  fine  ?=(^ next-wake.keen)
+              (fi-rest u.next-wake.keen)
             =.  keens.scry  +:(del:orm keens.scry keen-id)
             =.  order.scry  (~(del by order.scry) path)
             peer-core
           ::
-          ++  ke-full-path
+          ++  fi-full-path
             :^    (scot %p her)
                 (scot %ud rift.peer-state)
               (scot %ud life.peer-state)
             path
           ::
-          ++  ke-show
+          ++  fi-show
             =,  keen
             :*  nex=(lent nex)
                 hav=(lent hav)
@@ -3877,23 +3873,20 @@
                 metrics=metrics
             ==
           ::
-          ++  ke-deq        (deq want)
-          ++  ke-gauge      (ga metrics.keen (wyt:ke-deq wan.keen))
-          ++  ke-wait       |=(tim=@da (ke-pass-timer %b %wait tim))
-          ++  ke-rest       |=(tim=@da (ke-pass-timer %b %rest tim))
-          ++  ke-etch-keen  |=(frag=@ud (etch-keen ke-full-path frag))
-          ++  ke-send
-            |=(=hoot ke-core(event-core (send-blob for=| her `@ux`hoot)))
+          ++  fi-deq        (deq want)
+          ++  fi-gauge      (ga metrics.keen (wyt:fi-deq wan.keen))
+          ++  fi-wait       |=(tim=@da (fi-pass-timer %b %wait tim))
+          ++  fi-rest       |=(tim=@da (fi-pass-timer %b %rest tim))
+          ++  fi-etch-keen  |=(frag=@ud (etch-keen fi-full-path frag))
+          ++  fi-send
+            |=(=hoot fine(event-core (send-blob for=| her `@ux`hoot)))
           ::
-          ++  ke-clean-up
+          ++  fi-clean-up
             |=  [=^duct core=_event-core]
+            ::  at the moment only %spider keeps state about remote scries
+            ::
             ?+  duct  core
-              [[%clay *] *]  core  :: XX TODO?
-              ::
-                [[%gall %use app=@ *] *]
-              ?.  ?=([%gall %use %spider *] -.duct)
-                core    :: XX TODO?
-              ?>  ?=([%gall %use %spider @ ship=@ %thread tid=@ *] -.duct)
+                [[%gall %use %spider @ ship=@ %thread tid=@ *] *]
               =/  =cage   spider-stop+!>([&7.-.duct |])
               =/  poke=*  [%0 %m [p q.q]:cage]
               =/  =plea   [%g /ge/spider poke]
@@ -3902,32 +3895,31 @@
           ::
           +|  %entry-points
           ::
-          ++  ke-start
+          ++  fi-start
             |=  =^duct
-            ~>  %slog.0^leaf/"fine: keen {(spud ke-full-path)}"
-            =.  ke-core  (ke-sub duct)
+            ~>  %slog.0^leaf/"fine: keen {(spud fi-full-path)}"
+            =.  fine  (fi-sub duct)
             ?>  =(num-fragments.keen 0)
             =/  fra=@     1
-            =/  req=hoot  (ke-etch-keen fra)
-            =/  =want     [fra req last=now tries=1 skips=0]
-            =.  wan.keen  (cons:ke-deq *(pha ^want) want)
-            :: =.  metrics.keen  (on-sent:ke-gauge 1)
-            (ke-send req)
+            =/  req=hoot  (fi-etch-keen fra)
+            =/     =want  [fra req last=now tries=1 skips=0]
+            =.  wan.keen  (cons:fi-deq *(pha ^want) want)
+            (fi-send req)
           ::
-          ++  ke-rcv
+          ++  fi-rcv
             |=  [[=full=^path num=@ud] =meow =lane:ames]
-            ^+  ke-core
-            =/  og  ke-core
-            =.  event-core  (ke-update-qos %live last-contact=now)
+            ^+  fine
+            =/  og  fine
+            =.  event-core  (fi-update-qos %live last-contact=now)
             ::  handle empty
             ?:  =(0 num.meow)
               ?>  =(~ dat.meow)
-              (ke-done sig.meow ~)
+              (fi-done sig.meow ~)
             ::  update congestion, or fill details
             ::
-            =?  ke-core  =(0 num-fragments.keen)
+            =?  fine  =(0 num-fragments.keen)
               ?>  =(num 1)
-              (ke-first-rcv meow)
+              (fi-first-rcv meow)
             ::
             ?.  ?=([@ @ @ *] full-path)
               ~|  fine-path-too-short+full-path
@@ -3946,111 +3938,101 @@
               ~|  life.peer-state
               !!
             ::
-            =^  found=?  ke-core  (ke-on-ack num)
+            =^  found=?  fine  (fi-on-ack num)
             ?.  found
-              (ke-fast-retransmit:og num)
+              (fi-fast-retransmit:og num)
             =:  hav.keen           [[num meow] hav.keen]
                 num-received.keen  +(num-received.keen)
               ==
             ?.  =(num-fragments num-received):keen
-              ke-continue
-            (ke-done [sig dat]:ke-sift-full)
+              fi-continue
+            (fi-done [sig dat]:fi-sift-full)
           ::
-          ++  ke-sub
-            |=(=^duct ke-core(listeners.keen (~(put in listeners.keen) duct)))
-          ::  scry is autocancelled in +ke-abet if no more listeners
+          ++  fi-sub
+            |=(=^duct fine(listeners.keen (~(put in listeners.keen) duct)))
+          ::  scry is autocancelled in +abet if no more listeners
           ::
-          ++  ke-unsub
+          ++  fi-unsub
             |=  [=^duct all=?]
             ?.  |(all (~(has in listeners.keen) duct))
-              %.  ke-core
+              %.  fine
               ::  XX TODO use trace, add fine flags? reuse ames?
               (slog leaf/"fine: {<duct>} not a listener for {<path>}" ~)
             =?  event-core  all
               ::  notify all listeners by inspecting their
               ::  ducts and sending appropiate clean up moves
               ::
-              (~(rep in listeners.keen) ke-clean-up)
+              (~(rep in listeners.keen) fi-clean-up)
             ::  TODO: use ev-trace
             %-  (slog leaf/"fine: deleting {<path>}" ~)
-            ke-core(listeners.keen ?:(all ~ (~(del in listeners.keen) duct)))
+            fine(listeners.keen ?:(all ~ (~(del in listeners.keen) duct)))
           ::
           +|  %implementation
           ::
-          ++  ke-on-ack
+          ++  fi-on-ack
             =|  marked=(list want)
             |=  fra=@ud
-            ^-  [? _ke-core]
-            =;  [[found=? cor=_ke-core] wan=(pha want)]
-              ?.  found
-                [found ke-core]
-              [found cor(wan.keen wan)]
-            %^  (dip-left:ke-deq ,[found=? cor=_ke-core])  wan.keen
-              [| ke-core]
-            |=  [[found=? cor=_ke-core] =want]
-            ^-  [(unit _want) stop=? [found=? cor=_ke-core]]
-            =.  ke-core  cor
+            ^-  [? _fine]
+            =;  [[found=? cor=_fine] wan=(pha want)]
+              :-  found
+              ?.(found fine cor(wan.keen wan))
+            %^  (dip-left:fi-deq ,[found=? cor=_fine])  wan.keen
+              [| fine]
+            |=  [[found=? cor=_fine] =want]
+            ^-  [(unit _want) stop=? [found=? cor=_fine]]
+            =.  fine  cor
             ?:  =(fra fra.want)
               =.  metrics.keen
-                (on-ack:ke-gauge +>.want)
-              [~ %.y %.y ke-core]
+                (on-ack:fi-gauge +>.want)
+              [~ %.y %.y fine]
             =.  skips.want  +(skips.want)
             =^  resend=?  metrics.keen
-              (on-skipped-packet:ke-gauge +>.want)
+              (on-skipped-packet:fi-gauge +>.want)
             ?.  resend
-              [`want %.n found ke-core]
+              [`want %.n found fine]
             =.  tries.want  +(tries.want)
             =.  last-sent.want  now
-            =.  ke-core  (ke-send hoot.want)
-            [`want %.n found ke-core]
+            =.  fine  (fi-send hoot.want)
+            [`want %.n found fine]
           ::
-          ++  ke-done
+          ++  fi-done
             |=  [sig=@ data=$@(~ (cask))]
-            ?>  (meri:keys ke-full-path sig data)
-            ~>  %slog.0^leaf/"fine: done {(spud ke-full-path)}"
-            =/  listeners  ~(tap in listeners.keen)
-            =/  dat=(unit (cask))
-            ?~(data ~ `data)
-            |-  ^+  ke-core
-            ?~  listeners
-              ke-core
-            =.  event-core
-              (emit i.listeners %give %tune ke-full-path sig dat)
+            ?>  (meri:keys fi-full-path sig data)
+            ~>  %slog.0^leaf/"fine: done {(spud fi-full-path)}"
+            =/  listeners=(list ^duct)  ~(tap in listeners.keen)
+            =/  dat=(unit (cask))      ?~(data ~ `data)
+            |-  ^+  fine
+            ?~  listeners   fine
+            =.  event-core  (emit i.listeners %give %tune fi-full-path sig dat)
             $(listeners t.listeners)
           ::
-          ++  ke-first-rcv
+          ++  fi-first-rcv
             |=  =meow
-            ^+  ke-core
-            =-  ke-core(keen -)
+            ^+  fine
             ::
-            =/  paz=(list want)
-              %+  turn  (gulf 1 num.meow)
-              |=  fra=@ud
-              ^-  want
-              [fra (ke-etch-keen fra) now 0 0]
-            ::
-            %_  keen
-              num-fragments  num.meow
-              nex  (tail paz)
-            ==
-          ::  +ke-continue: send packets based on normal congestion flow
+            =;  paz=(list want)
+              fine(keen keen(num-fragments num.meow, nex (tail paz)))
+            %+  turn  (gulf 1 num.meow)
+            |=  fra=@ud
+            ^-  want
+            [fra (fi-etch-keen fra) now 0 0]
+          ::  +fi-continue: send packets based on normal congestion flow
           ::
-          ++  ke-continue
+          ++  fi-continue
             =|  inx=@ud
             =|  sent=(list @ud)
-            =/  max  num-slots:ke-gauge
-            |-  ^+  ke-core
+            =/  max  num-slots:fi-gauge
+            |-  ^+  fine
             ?:  |(=(~ nex.keen) =(inx max))
-              ke-core
+              fine
             =^  =want  nex.keen  nex.keen
             =.  last-sent.want   now
             =.      tries.want   +(tries.want)
-            =.        wan.keen   (snoc:ke-deq wan.keen want)
-            :: =.    metrics.keen   (on-sent:ke-gauge 1)
-            =.         ke-core   (ke-send hoot.want)
+            =.        wan.keen   (snoc:fi-deq wan.keen want)
+            =.            fine   (fi-send hoot.want)
             $(inx +(inx))
           ::
-          ++  ke-sift-full
+          ++  fi-sift-full
             =,  keen
             ~|  %frag-mismatch
             ~|  have/num-received
@@ -4060,7 +4042,7 @@
             ?>  =((lent hav) num-received)
             (sift-roar num-fragments hav)
           ::
-          ++  ke-update-qos
+          ++  fi-update-qos
             |=  new=qos
             ^+  event-core
             =^  old  qos.peer-state  [qos.peer-state new]
@@ -4070,49 +4052,49 @@
             ::
             (emit duct %pass /qos %d %flog %text u.text)
           ::
-          ++  ke-fast-retransmit
+          ++  fi-fast-retransmit
             |=  fra=@ud
-            =;  [cor=_ke-core wants=(pha want)]
+            =;  [cor=_fine wants=(pha want)]
               cor(wan.keen wants)
-            %^  (dip-left:ke-deq ,cor=_ke-core)  wan.keen
-              ke-core
-            |=  [cor=_ke-core =want]
-            ^-  [(unit ^want) stop=? cor=_ke-core]
+            %^  (dip-left:fi-deq ,cor=_fine)  wan.keen
+              fine
+            |=  [cor=_fine =want]
+            ^-  [(unit ^want) stop=? cor=_fine]
             ?.  (lte fra.want fra)
               [`want & cor]
-            ?:  (gth (next-expiry:ke-gauge:cor +>.want) now)
+            ?:  (gth (next-expiry:fi-gauge:cor +>.want) now)
               [`want & cor]
             =.  last-sent.want  now
-            =.  cor  (ke-send:cor hoot.want)
+            =.  cor  (fi-send:cor hoot.want)
             [`want | cor]
           ::
-          ++  ke-pass-timer
+          ++  fi-pass-timer
             |=  =note
             =/  =wire  (welp /fine/behn/wake/(scot %p her) path)
-            ke-core(event-core (emit unix-duct.ames-state %pass wire note))
+            fine(event-core (emit unix-duct.ames-state %pass wire note))
           ::
-          ++  ke-set-wake
-            ^+  ke-core
+          ++  fi-set-wake
+            ^+  fine
             =/  next-wake=(unit @da)
-              =/  want=(unit want)  (peek-left:ke-deq wan.keen)
-              ?~  want  ~
-              `(next-expiry:ke-gauge +>:u.want)
+              ?~  want=(peek-left:fi-deq wan.keen)
+                ~
+              `(next-expiry:fi-gauge +>:u.want)
             ?:  =(next-wake next-wake.keen)
-              ke-core
-            =?  ke-core  !=(~ next-wake.keen)
+              fine
+            =?  fine  !=(~ next-wake.keen)
               =/  old  (need next-wake.keen)
               =.  next-wake.keen  ~
-              (ke-rest old)
-            =?  ke-core  ?=(^ next-wake)
+              (fi-rest old)
+            =?  fine  ?=(^ next-wake)
               =.  next-wake.keen  next-wake
-              (ke-wait u.next-wake)
-            ke-core
-          ::  +ke-take-wake: handle request packet timeout
+              (fi-wait u.next-wake)
+            fine
+          ::  +fi-take-wake: handle request packet timeout
           ::
-          ++  ke-take-wake
-            ^+  ke-core
+          ++  fi-take-wake
+            ^+  fine
             =.  next-wake.keen  ~
-            =.  event-core  %-  ke-update-qos
+            =.  event-core  %-  fi-update-qos
               =/  expiry=@da  (add ~s30 last-contact.qos.peer-state)
               =?    -.qos.peer-state
                   (gte now expiry)
@@ -4126,16 +4108,16 @@
                     !=(%czar (clan:title her))
                 ==
               route.peer-state(direct.u %.n)
-            =.  metrics.keen  on-timeout:ke-gauge
+            =.  metrics.keen  on-timeout:fi-gauge
             =^  want=(unit want)  wan.keen
-              (pop-left:ke-deq wan.keen)
+              (pop-left:fi-deq wan.keen)
             ~|  %took-wake-for-empty-want
             ?>  ?=(^ want)
             =:      tries.u.want  +(tries.u.want)
                 last-sent.u.want  now
               ==
-            =.  wan.keen  (cons:ke-deq wan.keen u.want)
-            (ke-send hoot.u.want)
+            =.  wan.keen  (cons:fi-deq wan.keen u.want)
+            (fi-send hoot.u.want)
           --
         ::  +ga: constructor for |pump-gauge congestion control core
         ::
@@ -4457,7 +4439,7 @@
     :_  =,  ames-state
         :*  unix-duct
             life
-            crypto-core::=(nol:nu:crub:crypto sec:ex:crypto-core.ames-state)
+            crypto-core
             bug
             [%deny snub]
             cong
