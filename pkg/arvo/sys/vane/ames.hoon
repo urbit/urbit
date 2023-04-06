@@ -109,6 +109,7 @@
       for=`?`%.n  ::  packet forwarding
       rot=`?`%.n  ::  routing attempts
       kay=`?`%.n  ::  is ok/not responding
+      fin=`?`%.n  ::  remote-scry
   ==
 =/  packet-size  13
 =>
@@ -118,20 +119,21 @@
 ::  +trace: print if .verb is set and we're tracking .ship
 ::
 ++  trace
-  |=  [verb=? =ship ships=(set ship) print=(trap tape)]
+  |=  [mode=?(%ames %fine) verb=? =ship ships=(set ship) print=(trap tape)]
   ^+  same
   ?.  verb
     same
   ?.  =>  [ship=ship ships=ships in=in]
       ~+  |(=(~ ships) (~(has in ships) ship))
     same
-  (slog leaf/"ames: {(scow %p ship)}: {(print)}" ~)
+  (slog leaf/"{(trip mode)}: {(scow %p ship)}: {(print)}" ~)
 ::  +qos-update-text: notice text for if connection state changes
 ::
 ++  qos-update-text
-  |=  [=ship old=qos new=qos k=? ships=(set ship)]
+  |=  [=ship mode=?(%ames %fine) old=qos new=qos k=? ships=(set ship)]
   ^-  (unit tape)
   ::
+  =+  trace=(cury trace mode)
   ?+  [-.old -.new]  ~
     [%unborn %live]  `"; {(scow %p ship)} is your neighbor"
     [%dead %live]    ((trace k ship ships |.("is ok")) ~)
@@ -704,7 +706,7 @@
       =unix=duct
       =life
       crypto-core=acru-12
-      =bug
+      bug=bug-12
       corks=(set wire)
       snub=(set ship)
   ==
@@ -733,7 +735,7 @@
       =unix=duct
       =life
       crypto-core=acru-12
-      =bug
+      bug=bug-12
       corks=(set wire)
       snub=(set ship)
       cong=[msg=@ud mem=@ud]
@@ -754,7 +756,7 @@
       =unix=duct
       =life
       crypto-core=acru-12
-      =bug
+      bug=bug-12
       snub=[form=?(%allow %deny) ships=(set ship)]
       cong=[msg=@ud mem=@ud]
   ==
@@ -781,6 +783,11 @@
       heeds=(set duct)
       closing=(set bone)
       corked=(set bone)
+  ==
+::
++$  bug-12
+  $:  veb=_[`?`%.n `?`%.n `?`%.n `?`%.n `?`%.n `?`%.n `?`%.n `?`%.n]
+      ships=(set ship)
   ==
 ::
 ++  acru-12  $_  ^?
@@ -1290,7 +1297,7 @@
       ++  ev-trace
         |=  [verb=? =ship print=(trap tape)]
         ^+  same
-        (trace verb ship ships.bug.ames-state print)
+        (trace %ames verb ship ships.bug.ames-state print)
       ::  +get-peer-state: lookup .her state or ~
       ::
       ++  get-peer-state
@@ -1416,6 +1423,7 @@
             %for  acc(for %.y)
             %rot  acc(rot %.y)
             %kay  acc(kay %.y)
+            %fin  acc(fin %.y)
           ==
         event-core
       ::  +on-prod: re-send a packet per flow to each of .ships
@@ -2043,8 +2051,8 @@
           ::  print change to quality of service, if any
           ::
           =/  text=(unit tape)
-            %^  qos-update-text  ship  old-qos
-            [qos.peer-state kay.veb ships.bug.ames-state]
+            %^  qos-update-text  ship  %ames
+            [old-qos qos.peer-state kay.veb ships.bug.ames-state]
           ::
           =?  event-core  ?=(^ text)
             (emit duct %pass /qos %d %flog %text u.text)
@@ -2499,14 +2507,15 @@
         ::  +update-qos: update and maybe print connection status
         ::
         ++  update-qos
-          |=  =new=qos
+          |=  [mode=?(%ames %fine) =new=qos]
           ^+  peer-core
           ::
           =^  old-qos  qos.peer-state  [qos.peer-state new-qos]
           ::  if no update worth reporting, we're done
           ::
           =/  text
-            (qos-update-text her old-qos [new-qos kay.veb ships.bug.ames-state])
+            %^  qos-update-text  her  mode
+            [old-qos new-qos kay.veb ships.bug.ames-state]
           ?~  text
             peer-core
           ::  print message
@@ -2524,7 +2533,7 @@
           ^+  peer-core
           ::  update and print connection status
           ::
-          =.  peer-core  (update-qos %live last-contact=now)
+          =.  peer-core  (update-qos %ames %live last-contact=now)
           ::
           =/  =bone  bone.shut-packet
           ::
@@ -2601,7 +2610,7 @@
             (pe-emit duct %pass wire %b %wait (add now.channel ~s30))
           ::  update and print connection state
           ::
-          =.  peer-core   (update-qos qos:(is-peer-dead now peer-state))
+          =.  peer-core   (update-qos %ames qos:(is-peer-dead now peer-state))
           ::  expire direct route if the peer is not responding
           ::
           =.  peer-state  (update-peer-route her peer-state)
@@ -3137,7 +3146,7 @@
             ++  pu-trace
               |=  [verb=? print=(trap tape)]
               ^+  same
-              (trace verb her ships.bug.channel print)
+              (trace %ames verb her ships.bug.channel print)
             ::
             ++  pu-wire  (make-pump-timer-wire her bone)
             ++  pu-emit  |=(=note (pe-emit pump-duct %pass pu-wire note))
@@ -3881,6 +3890,11 @@
                 metrics=metrics
             ==
           ::
+          ++  fi-trace
+            |=  [verb=? print=(trap tape)]
+            ^+  same
+            (trace %fine verb her ships.bug.ames-state print)
+          ::
           ++  fi-deq        (deq want)
           ++  fi-gauge      (ga metrics.keen (wyt:fi-deq wan.keen))
           ++  fi-wait       |=(tim=@da (fi-pass-timer %b %wait tim))
@@ -3905,7 +3919,7 @@
           ::
           ++  fi-start
             |=  =^duct
-            ~>  %slog.0^leaf/"fine: keen {(spud fi-full-path)}"
+            %-  (fi-trace fin.veb |.("keen {(spud fi-full-path)}"))
             =.  fine  (fi-sub duct)
             ?>  =(num-fragments.keen 0)
             =/  fra=@     1
@@ -3918,7 +3932,7 @@
             |=  [[=full=^path num=@ud] =meow =lane:ames]
             ^+  fine
             =/  og  fine
-            =.  peer-core  (update-qos %live last-contact=now)
+            =.  peer-core  (update-qos %fine %live last-contact=now)
             ::  handle empty
             ?:  =(0 num.meow)
               ?>  =(~ dat.meow)
@@ -3964,15 +3978,13 @@
             |=  [=^duct all=?]
             ?.  |(all (~(has in listeners.keen) duct))
               %.  fine
-              ::  XX TODO use trace, add fine flags? reuse ames?
-              (slog leaf/"fine: {<duct>} not a listener for {<path>}" ~)
+              (fi-trace fin.veb |.("{<duct>} not a listener for {<path>}"))
             =?  event-core  all
               ::  notify all listeners by inspecting their
               ::  ducts and sending appropiate clean up moves
               ::
               (~(rep in listeners.keen) fi-clean-up)
-            ::  TODO: use ev-trace
-            %-  (slog leaf/"fine: deleting {<path>}" ~)
+            %-  (fi-trace fin.veb |.("deleting {<path>}"))
             fine(listeners.keen ?:(all ~ (~(del in listeners.keen) duct)))
           ::
           +|  %implementation
@@ -4006,7 +4018,7 @@
           ++  fi-done
             |=  [sig=@ data=$@(~ (cask))]
             ?>  (meri:keys fi-full-path sig data)
-            ~>  %slog.0^leaf/"fine: done {(spud fi-full-path)}"
+            %-  (fi-trace fin.veb |.("done {(spud fi-full-path)}"))
             =/  listeners=(list ^duct)  ~(tap in listeners.keen)
             =/  dat=(unit (cask))      ?~(data ~ `data)
             |-  ^+  fine
@@ -4092,7 +4104,7 @@
           ++  fi-take-wake
             ^+  fine
             =.  next-wake.keen  ~
-            =.  peer-core   (update-qos qos:(is-peer-dead now peer-state))
+            =.  peer-core   (update-qos %fine qos:(is-peer-dead now peer-state))
             ::  has the direct route expired?
             ::
             =.  peer-state    (update-peer-route her peer-state)
@@ -4120,7 +4132,7 @@
           ++  ga-trace
             |=  [verb=? print=(trap tape)]
             ^+  same
-            (trace verb ship ships.bug.channel print)
+            (trace %ames verb ship ships.bug.channel print)
           ::  +next-expiry: when should a newly sent fresh packet time out?
           ::
           ::    Use rtt + 4*sigma, where sigma is the mean deviation of rtt.
@@ -4452,7 +4464,9 @@
         life.old
         rift
         crypto-core=(nol:nu:crub:crypto sec:ex:crypto-core.old)
-        bug.old
+        %=  bug.old
+          veb  [&1 &2 &3 &4 &5 &6 &7 |7 %.n]:veb.bug.old
+        ==
         snub.old
         cong.old
     ==
