@@ -497,6 +497,33 @@
 ::
 ++  orm  ((on @ud keen-state) lte)
 ::
+++  is-peer-dead
+  |=  [now=@da =peer-state]
+  ^+  peer-state
+  =/  expiry=@da  (add ~s30 last-contact.qos.peer-state)
+  =?  -.qos.peer-state  (gte now expiry)
+    %dead
+  peer-state
+::
+++  update-peer-route
+  |=  [peer=ship =peer-state]
+  ^+  peer-state
+  ::   If the peer is not responding, mark the .lane.route as
+  ::   indirect.  The next packets we emit will be sent to the
+  ::   receiver's sponsorship chain in case the receiver's
+  ::   transport address has changed and this lane is no longer
+  ::   valid.
+  ::
+  ::   If .peer is a galaxy, the lane will always remain direct.
+  ::
+  ?.  ?&  ?=(%dead -.qos.peer-state)
+          ?=(^ route.peer-state)
+          direct.u.route.peer-state
+          !=(%czar (clan:title peer))
+      ==
+    peer-state
+  peer-state(direct.u.route %.n)
+::
 +|  %atomics
 ::
 +$  private-key    @uwprivatekey
@@ -2574,29 +2601,10 @@
             (pe-emit duct %pass wire %b %wait (add now.channel ~s30))
           ::  update and print connection state
           ::
-          =.  peer-core  %-  update-qos
-            =/  expiry=@da  (add ~s30 last-contact.qos.peer-state)
-            =?    -.qos.peer-state
-                (gte now.channel expiry)
-              %dead
-            qos.peer-state
-          ::  expire direct route
+          =.  peer-core   (update-qos qos:(is-peer-dead now peer-state))
+          ::  expire direct route if the peer is not responding
           ::
-          ::    If the peer is not responding, mark the .lane.route as
-          ::    indirect.  The next packets we emit will be sent to the
-          ::    receiver's sponsorship chain in case the receiver's
-          ::    transport address has changed and this lane is no longer
-          ::    valid.
-          ::
-          ::    If .her is a galaxy, the lane will always remain direct.
-          ::
-          =?    route.peer-state
-              ?&  ?=(%dead -.qos.peer-state)
-                  ?=(^ route.peer-state)
-                  direct.u.route.peer-state
-                  !=(%czar (clan:title her))
-              ==
-            route.peer-state(direct.u %.n)
+          =.  peer-state  (update-peer-route her peer-state)
           ::  resend comet attestation packet if first message times out
           ::
           ::    The attestation packet doesn't get acked, so if we tried to
@@ -3910,7 +3918,7 @@
             |=  [[=full=^path num=@ud] =meow =lane:ames]
             ^+  fine
             =/  og  fine
-            =.  event-core  (fi-update-qos %live last-contact=now)
+            =.  peer-core  (update-qos %live last-contact=now)
             ::  handle empty
             ?:  =(0 num.meow)
               ?>  =(~ dat.meow)
@@ -4042,16 +4050,6 @@
             ?>  =((lent hav) num-received)
             (sift-roar num-fragments hav)
           ::
-          ++  fi-update-qos
-            |=  new=qos
-            ^+  event-core
-            =^  old  qos.peer-state  [qos.peer-state new]
-            ?~  text=(qos-update-text her old new kay.veb ships.bug.channel)
-              event-core
-            ::  print message
-            ::
-            (emit duct %pass /qos %d %flog %text u.text)
-          ::
           ++  fi-fast-retransmit
             |=  fra=@ud
             =;  [cor=_fine wants=(pha want)]
@@ -4094,20 +4092,10 @@
           ++  fi-take-wake
             ^+  fine
             =.  next-wake.keen  ~
-            =.  event-core  %-  fi-update-qos
-              =/  expiry=@da  (add ~s30 last-contact.qos.peer-state)
-              =?    -.qos.peer-state
-                  (gte now expiry)
-                %dead
-              qos.peer-state
-            ::  expire direct route
-            =?    route.peer-state
-                ?&  ?=(%dead -.qos.peer-state)
-                    ?=(^ route.peer-state)
-                    direct.u.route.peer-state
-                    !=(%czar (clan:title her))
-                ==
-              route.peer-state(direct.u %.n)
+            =.  peer-core   (update-qos qos:(is-peer-dead now peer-state))
+            ::  has the direct route expired?
+            ::
+            =.  peer-state    (update-peer-route her peer-state)
             =.  metrics.keen  on-timeout:fi-gauge
             =^  want=(unit want)  wan.keen
               (pop-left:fi-deq wan.keen)
