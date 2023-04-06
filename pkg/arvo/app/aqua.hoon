@@ -47,7 +47,7 @@
           event-log=(list unix-timed-event)
           next-events=(qeu unix-event)
           processing-events=?
-          namespace=(map path song:ames)
+          namespace=(map path (list purr:ames))
       ==
     --
 ::
@@ -676,16 +676,16 @@
         ^$(ae [%event for /a/aqua/fine-response task], thus this)
       :+  %hear  `lane:ames`[%| `@`from.ae]
       ^-  blob:ames
-      =/  [amp=? =packet:ames]
+      =/  =shot:ames
         ::NOTE  dec is important! so dumb!!
-        (decode-packet:ames `@`(snag (dec num.ae) u.cash))
+        (sift-shot:ames `@`(snag (dec num.ae) u.cash))
       ::TODO  runtime needs to update rcvr field also
       ::NOTE  rcvr life is allowed to be wrong
-      (encode-packet:ames amp packet(sndr from.ae, rcvr for))
-    =/  pacs=(unit song:ames)
+      (etch-shot:ames shot(sndr from.ae, rcvr for))
+    =/  pacs=(unit (list purr:ames))
       %+  biff
         (peek-once:(pe from.ae) %ax %$ [%fine %message path.ae])
-      (soft song:ames)
+      (soft (list purr:ames))
     ?~  pacs  (pe from.ae)
     =.  namespace.u.pier
       (~(put by namespace.u.pier) path.ae u.pacs)
