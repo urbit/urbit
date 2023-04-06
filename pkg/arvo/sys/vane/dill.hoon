@@ -250,8 +250,10 @@
           wrapped-task=(hobo task)
       ==
   ^+  [*(list move) ..^$]
-  ~|  wrapped-task
-  =/  task=task  ((harden task) wrapped-task)
+  =/  task=task
+    ~|  wrapped-task
+    ((harden task) wrapped-task)
+  ~|  -.task
   ::  unwrap session tasks, default to session %$
   ::
   =^  ses=@tas  task
