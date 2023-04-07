@@ -1,16 +1,17 @@
 /+  *test
 |%
+++  le-path        `path`/~hastuc-dibtux/15/22/c/x/3/base/sys/kelvin
 ++  hastuc-dibtux  [~hastuc-dibtux 15 22]
 ++  clay-x         [%c %x %ud 3]
 ++  test-en-path
   %+  expect-eq
-    !>(`path`/cx/~hastuc-dibtux/base/3/sys/hoon/hoon)
+    !>(le-path)
   !>  %-  en-path:balk
-  [hastuc-dibtux clay-x /base/sys/hoon/hoon]
+  [hastuc-dibtux clay-x /base/sys/kelvin]
 ++  test-de-path
   =/  bal=balk
-    (de-path:balk 15 22 /cx/~hastuc-dibtux/base/3/sys/hoon/hoon)
+    (de-path:balk le-path)
   %+  expect-eq  !>(bal)
   !>   ^-   balk
-  [hastuc-dibtux clay-x /base/sys/hoon/hoon]
+  [hastuc-dibtux clay-x /base/sys/kelvin]
 --
