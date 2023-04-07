@@ -556,6 +556,7 @@
     %kiln-uninstall          =;(f (f !<(_+<.f vase)) poke-uninstall)
     %kiln-unmount            =;(f (f !<(_+<.f vase)) poke-unmount)
     %kiln-unsync             =;(f (f !<(_+<.f vase)) poke-unsync)
+    %kiln-wipe               =;(f (f !<(_+<.f vase)) poke-wipe)
   ==
 ::
 ++  poke-autocommit
@@ -834,6 +835,22 @@
     abet:(spam (render "not syncing" [sud her syd ~]:hus) ~)
   =.  zyn  (~(del by zyn) hus)
   abet:(spam (render "cancelling sync" sud.hus her.hus syd.hus kid.u.got) ~)
+::
+++  poke-wipe
+  |=  loc=desk
+  ~>  %slog.(fmt "wiping {<loc>}")
+  ::  |uninstall %desk
+  %+  poke-uninstall loc
+  ::  |nuke %desk, =desk &
+  %+  poke-nuke loc
+  ::  |new-desk %desk
+  %^  new-desk:cloy loc ~ ~
+  ::  |norm our %the-desk / |
+  ::  TODO
+  ::  |pick
+  ::  TODO
+  ::  |norm our %the-desk / &
+  ::  TODO  
 ::  +peer: handle %watch
 ::
 ++  peer
