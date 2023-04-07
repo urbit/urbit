@@ -776,6 +776,7 @@
       ::
       ~>  %slog.[0 leaf+"1-c (compiling compiler, wait a few minutes)"]
       =/  compiler-tool
+        ~>  %bout
         .*([compiler-gate noun/hoon.log] [%9 2 %10 [6 %0 3] %0 2])
       ::
       ::  switch to the second-generation compiler.  we want to be
@@ -784,7 +785,7 @@
       ::  generate last-generation spans for `!>`, etc.
       ::
       ~>  %slog.[0 leaf+"1-d"]
-      =.  compiler-gate  .*(0 +.compiler-tool)
+      =.  compiler-gate  ~>(%bout .*(0 +.compiler-tool))
       ::
       ::  get the span (type) of the kernel core, which is the context
       ::  of the compiler gate.  we just compiled the compiler,
@@ -794,17 +795,20 @@
       ::
       ~>  %slog.[0 leaf+"1-e"]
       =/  kernel-span
+        ~>  %bout
         -:.*([compiler-gate -.compiler-tool '+>'] [%9 2 %10 [6 %0 3] %0 2])
       ::
       ::  compile the arvo source against the kernel core.
       ::
       ~>  %slog.[0 leaf+"1-f"]
       =/  kernel-tool
+        ~>  %bout
         .*([compiler-gate kernel-span arvo.log] [%9 2 %10 [6 %0 3] %0 2])
       ::
       ::  create the arvo kernel, whose subject is the kernel core.
       ::
       ~>  %slog.[0 leaf+"1-g"]
+      ~>  %bout
       [.*(+>.compiler-gate +.kernel-tool) epic.log]
     --
   ::
@@ -1049,6 +1053,7 @@
           |=  [cap=tape sub=vase pax=path txt=@t]
           ^-  vase
           ~>  %slog.[0 leaf/"{cap}: {(scow p+(mug txt))}"]
+          ~>  %bout
           %-  road  |.
           ~_  leaf/"{cap}: build failed"
           (slap sub (rain pax txt))
@@ -1626,6 +1631,7 @@
   ?~  hun
     =/  gat
       ~>  %slog.[0 'arvo: compiling next arvo']
+      ~>  %bout
       %-  road  |.
       (slap !>(..ride) (rain /sys/arvo/hoon van))
     =/  lod
@@ -1643,6 +1649,7 @@
     ::
     =/  raw
       ~>  %slog.[0 'arvo: compiling hoon']
+      ~>  %bout
       (road |.((ride %noun u.hun)))
     ::  activate the new compiler gate, producing +ride
     ::
@@ -1668,6 +1675,7 @@
         [raw cop]
       =/  hot
         ~>  %slog.[0 leaf/"arvo: recompiling hoon %{(scow %ud nex)}"]
+        ~>  %bout
         (road |.((slum cop [%noun u.hun])))
       [hot .*(0 +.hot)]
     ::  extract the hoon core from the outer gate (+ride)
@@ -1683,6 +1691,7 @@
   ::
   =/  rav
     ~>  %slog.[0 'arvo: compiling next arvo']
+    ~>  %bout
     (road |.((slum cop [hyp van])))
   ::  activate arvo and extract the arvo core from the outer gate
   ::

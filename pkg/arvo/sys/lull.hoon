@@ -1796,6 +1796,7 @@
         [%warp wer=ship rif=riff]                       ::  internal file req
         [%werp who=ship wer=ship rif=riff-any]          ::  external file req
         [%wick ~]                                       ::  try upgrade
+        [%zeal lit=(list [=desk =zest])]                ::  batch zest
         [%zest des=desk liv=zest]                       ::  live
         $>(%plea vane-task)                             ::  ames request
     ==                                                  ::

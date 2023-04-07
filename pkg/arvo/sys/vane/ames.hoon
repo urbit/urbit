@@ -4154,7 +4154,14 @@
           ++  clamp-rto
             |=  rto=@dr
             ^+  rto
-            (min ~m2 (max ^~((div ~s1 5)) rto))
+            (min max-backoff (max ^~((div ~s1 5)) rto))
+          ::  +max-backoff: calculate highest re-send interval
+          ::
+          ::    Keeps pinhole to sponsors open by inspecting the duct (hack).
+          ::
+          ++  max-backoff
+            ^-  @dr
+            ?:(?=([[%gall %use %ping *] *] duct) ~s25 ~m2)
           ::  +in-slow-start: %.y iff we're in "slow-start" mode
           ::
           ++  in-slow-start
@@ -4512,6 +4519,7 @@
   ::  /ax/protocol/version           @
   ::  /ax/peers                      (map ship ?(%alien %known))
   ::  /ax/peers/[ship]               ship-state
+  ::  /ax/peers/[ship]/last-contact  (unit @da)
   ::  /ax/peers/[ship]/forward-lane  (list lane)
   ::  /ax/bones/[ship]               [snd=(set bone) rcv=(set bone)]
   ::  /ax/snd-bones/[ship]/[bone]    vase
@@ -4538,6 +4546,13 @@
       ?~  peer
         [~ ~]
       ``noun+!>(u.peer)
+    ::
+        [%last-contact ~]
+      :^  ~  ~  %noun
+      !>  ^-  (unit @da)
+      ?.  ?=([~ %known *] peer)
+        ~
+      `last-contact.qos.u.peer
     ::
         [%forward-lane ~]
       ::
