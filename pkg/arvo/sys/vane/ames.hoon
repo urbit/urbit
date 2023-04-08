@@ -1294,10 +1294,12 @@
       ++  emit  |=(=move event-core(moves [move moves]))
       ++  emil  |=(mos=(list move) event-core(moves (weld (flop mos) moves)))
       ++  channel-state  [life crypto-core bug]:ames-state
+      ++  trace-fine     (cury trace %fine)
+      ++  trace-ames     (cury trace %ames)
       ++  ev-trace
         |=  [verb=? =ship print=(trap tape)]
         ^+  same
-        (trace %ames verb ship ships.bug.ames-state print)
+        (trace-ames verb ship ships.bug.ames-state print)
       ::  +get-peer-state: lookup .her state or ~
       ::
       ++  get-peer-state
@@ -2285,9 +2287,9 @@
       ++  on-pine
         |=  [=ship =path]
         ^+  event-core
-        ?<  =(our ship)
-        ?^  ship-state=(~(get by peers.ames-state) ship)
-          ?>  ?=([%known *] u.ship-state)
+        ?<  =(our ship)  :: XX don't crash?
+        =/  ship-state  (~(get by peers.ames-state) ship)
+        ?:  ?=([~ %known *] ship-state)
           abet:(on-pine:(abed-peer:pe ship +.u.ship-state) path duct)
         %+  enqueue-alien-todo  ship
         |=  todos=alien-agenda
@@ -2297,8 +2299,8 @@
         |=  [=ship =path]
         ^+  event-core
         =+  ~:(spit path)  ::  assert length
-        ?^  ship-state=(~(get by peers.ames-state) ship)
-          ?>  ?=([%known *] u.ship-state)
+        =/  ship-state  (~(get by peers.ames-state) ship)
+        ?:  ?=([~ %known *] ship-state)
           abet:(on-keen:(abed-peer:pe ship +.u.ship-state) path duct)
         %+  enqueue-alien-todo  ship
         |=  todos=alien-agenda
@@ -2309,7 +2311,11 @@
         ^+  event-core
         ?~  ship-state=(~(get by peers.ames-state) ship)
           ~|(%cancel-scry-missing-peer^ship^path !!)
-        ?>  ?=([%known *] u.ship-state)
+        ?.  ?=([~ %known *] ship-state)
+          :: XX delete from alien agenda?
+          %.  event-core
+          %^  trace-fine  fin.veb  ship
+          [ships.bug.ames-state |.("peer still alien, skip cancel-scry")]
         =+  peer=(abed:pe ship)
         ?.  (~(has by order.scry.peer-state.peer) path)
           event-core
@@ -4252,7 +4258,7 @@
             %-  (ga-trace ges.veb |.("timeout update {<show>}"))
             =:  ssthresh  (max 1 (div cwnd 2))
                     cwnd  1
-                    rto  (clamp-rto (mul rto 2))
+                    rto   (clamp-rto (mul rto 2))
               ==
             metrics
           --

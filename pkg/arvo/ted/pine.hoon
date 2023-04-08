@@ -6,11 +6,13 @@
 =/  m  (strand ,vase)
 ^-  form:m
 =+  !<([~ arg=[ship path]] arg)
-;<  dat=(unit (cask))  bind:m
-  (pine:strandio arg)
+;<  =bowl:spider  bind:m  get-bowl:strandio
+?:  =(our ship.arg)
+  ~&  >>>  "fine: can't pine yourself"
+  (pure:m !>(~))
+;<  dat=(unit (cask))  bind:m  (pine:strandio arg)
 ?~  dat
   (pure:m !>(~))
-;<  =bowl:spider  bind:m  get-bowl:strandio
 =+  .^  =dais:clay  %cb
         /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[p.u.dat]
     ==
