@@ -2096,7 +2096,7 @@
         ==  ==
       ::
         $:  %dill
-        $?  %views  ::  %flow %hail %view
+        $?  %views  ::  %hail %view
             %input  ::  %belt %blew
             %print  ::  %crud %talk %text
             %extra  ::  %flog
@@ -2375,7 +2375,7 @@
         %shot  $(+>.note task.note)
         %flee  &
       ::
-          ?(%flow %hail %view)
+          ?(%hail %view)
         [%dill %views]
       ::
           ?(%belt %blew)
