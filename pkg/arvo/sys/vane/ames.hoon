@@ -1777,7 +1777,7 @@
           %.  &
           (ev-trace &(dry odd.veb) ship |.((weld "stale %watch plea " log)))
         ::  the current subscription can be safely corked if there
-        ::  is a flow with a naxplanation ack  on a backward bone
+        ::  is a flow with a naxplanation ack on a backward bone
         ::
         =+  backward-bone=(mix 0b10 bone)
         ?.  =(2 (mod backward-bone 4))
@@ -2483,10 +2483,14 @@
                   =(1 current:(~(got by snd.peer-state) bone))
               ==
             (send-blob | her (attestation-packet [her her-life]:channel))
-          ?:  (~(has in corked.peer-state) bone)
-            ::  if the bone was corked the flow doesn't exist anymore
-            ::  TODO: clean up corked bones in the peer state when it's _safe_?
-            ::        (e.g. if this bone is N blocks behind the next one)
+          ?:  ?|  (~(has in corked.peer-state) bone)
+                  ?&  =(1 (end 0 bone))
+                      =(1 (end 0 (rsh 0 bone)))
+                      (~(has in corked.peer-state) (mix 0b10 bone))
+              ==  ==
+            ::  no-op if the bone (or, if a naxplanation, the reference bone)
+            ::  was corked, because the flow doesn't exist anymore
+            ::  TODO: clean up corked bones?
             ::
             peer-core
           ::  maybe resend some timed out packets
@@ -2631,15 +2635,23 @@
             (~(gut by snd.peer-state) bone *message-pump-state)
           =?  peer-core  ?=(^ next-wake.packet-pump-state.message-pump-state)
             =*  next-wake  u.next-wake.packet-pump-state.message-pump-state
-            =/  =wire  (make-pump-timer-wire her bone)
-            :: resetting timer for boons
+            =/  =wire      (make-pump-timer-wire her bone)
+            :: reset timer for boons
             ::
             (pe-emit [/ames]~ %pass wire %b %rest next-wake)
           =/  nax-bone=^bone  (mix 0b10 bone)
           =?  peer-core  (~(has by snd.peer-state) nax-bone)
-            %.  peer-core
-            %+  pe-trace  odd.veb
-            |.("remove naxplanation flow {<[her bone=nax-bone]>}")
+            %-  %+  pe-trace  odd.veb
+                |.("remove naxplanation flow {<[her bone=nax-bone]>}")
+            =/  nack-pump=^message-pump-state
+              (~(gut by snd.peer-state) nax-bone *^message-pump-state)
+            ?:  ?=(~ next-wake.packet-pump-state.nack-pump)
+              peer-core
+            =*  next-wake  u.next-wake.packet-pump-state.nack-pump
+            =/  =wire      (make-pump-timer-wire her nax-bone)
+            :: reset timer for naxplanations
+            ::
+            (pe-emit [/ames]~ %pass wire %b %rest next-wake)
           =.  peer-state
             =,  peer-state
             %_  peer-state
