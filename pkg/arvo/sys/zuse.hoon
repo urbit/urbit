@@ -4318,9 +4318,11 @@
   ::::                    ++json:html                   ::  (2e2) JSON
     ::                                                  ::::
   ++  json  ^?
+    ~%  %json  ..part  ~
     |%
     ::                                                  ::  ++en:json:html
     ++  en                                              ::  encode JSON to tape
+      ~%  %en  +>+  ~
       |^  |=  jon=^json
           ^-  cord
           (rap 3 (flop (onto jon ~)))
@@ -4383,6 +4385,7 @@
       --  ::en
     ::                                                  ::  ++de:json:html
     ++  de                                              ::  parse cord to JSON
+      ~%  %de  +>+  ~
       |^  |=  txt=cord
           ^-  (unit ^json)
           (rush txt apex)
