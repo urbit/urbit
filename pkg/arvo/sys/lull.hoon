@@ -2100,7 +2100,6 @@
             %input  ::  %belt %blew
             %print  ::  %crud %talk %text
             %extra  ::  %flog
-            %space  ::  %heft %meld %pack
         ==  ==
       ::
         $:  %eyre
@@ -2383,7 +2382,6 @@
       ::
         ?(%crud %talk %text)  [%dill %print]
         %flog                 [%dill %extra]
-        ?(%heft %meld %pack)  [%dill %space]
       ==
     ::
         %e
