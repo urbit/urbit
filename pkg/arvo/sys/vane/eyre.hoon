@@ -677,12 +677,12 @@
         %gen
       =/  bek=beak  [our desk.generator.action da+now]
       =/  sup=spur  path.generator.action
-      =/  ski       (rof ~ %ca bek sup)
+      =/  ski       (rof ~ /eyre %ca bek sup)
       =/  cag=cage  (need (need ski))
       ?>  =(%vase p.cag)
       =/  gat=vase  !<(vase q.cag)
       =/  res=toon
-        %-  mock  :_  (look rof ~)
+        %-  mock  :_  (look rof ~ /eyre)
         :_  [%9 2 %0 1]  |.
         %+  slam
           %+  slam  gat
@@ -824,7 +824,7 @@
     ++  do-scry
       |=  [care=term =desk =path]
       ^-  (unit (unit cage))
-      (rof ~ care [our desk da+now] path)
+      (rof ~ /eyre care [our desk da+now] path)
     ::
     ++  error-response
       |=  [status=@ud =tape]
@@ -838,12 +838,12 @@
     |=  [app=term =inbound-request:eyre]
     ^-  (list move)
     :~  :*  duct  %pass  /watch-response/[eyre-id]
-            %g  %deal  [our our]  app
+            %g  %deal  [our our /eyre]  app
             %watch  /http-response/[eyre-id]
         ==
       ::
         :*  duct  %pass  /run-app-request/[eyre-id]
-            %g  %deal  [our our]  app
+            %g  %deal  [our our /eyre]  app
             %poke  %handle-http-request
             !>(`[@ta inbound-request:eyre]`[eyre-id inbound-request])
         ==
@@ -867,7 +867,7 @@
       :_  ~
       %-  (trace 1 |.("leaving subscription to {<app.action.u.connection>}"))
       :*  duct  %pass  /watch-response/[eyre-id]
-          %g  %deal  [our our]  app.action.u.connection
+          %g  %deal  [our our /eyre]  app.action.u.connection
           %leave  ~
       ==
     ::
@@ -1087,7 +1087,7 @@
     ++  code
       ^-  @ta
       =/  res=(unit (unit cage))
-        (rof ~ %j [our %code da+now] /(scot %p our))
+        (rof ~ /eyre %j [our %code da+now] /(scot %p our))
       (rsh 3 (scot %p ;;(@ q.q:(need (need res)))))
     ::  +session-cookie-string: compose session cookie
     ::
@@ -1448,7 +1448,7 @@
           ^-  move
           :^  duct  %pass  /channel/poke/[channel-id]/(scot %ud request-id.i.requests)
           =,  i.requests
-          :*  %g  %deal  `sock`[our ship]  app
+          :*  %g  %deal  `sock`[our ship /eyre]  app
               `task:agent:gall`[%poke-as mark %json !>(json)]
           ==
         ::
@@ -1464,7 +1464,7 @@
           :^  duct  %pass
             (subscription-wire channel-id request-id ship app)
           %-  (trace 1 |.("subscribing to {<app>} on {<path>}"))
-          :*  %g  %deal  [our ship]  app
+          :*  %g  %deal  [our ship /eyre]  app
               `task:agent:gall`[%watch path]
           ==
         ::
@@ -1501,7 +1501,7 @@
           :^  duc  %pass
             (subscription-wire channel-id subscription-id.i.requests ship app)
           %-  (trace 1 |.("leaving subscription to {<app>}"))
-          :*  %g  %deal  [our ship]  app
+          :*  %g  %deal  [our ship /eyre]  app
               `task:agent:gall`[%leave ~]
           ==
         ::
@@ -1550,7 +1550,7 @@
       ^-  move
       :^  duct  %pass
         (subscription-wire channel-id request-id ship app)
-      [%g %deal [our ship] app `task:agent:gall`[%leave ~]]
+      [%g %deal [our ship /eyre] app `task:agent:gall`[%leave ~]]
     ::  +emit-event: records an event occurred, possibly sending to client
     ::
     ::    When an event occurs, we need to record it, even if we immediately
@@ -1651,7 +1651,7 @@
         %-  (trace 1 |.("leaving subscription to {<app>}"))
         :^  duct  %pass
           (subscription-wire channel-id request-id ship app)
-        [%g %deal [our ship] app %leave ~]
+        [%g %deal [our ship /eyre] app %leave ~]
       ::  update channel state to reflect the %kick
       ::
       =?  u.channel  kicking
@@ -1700,7 +1700,7 @@
       ?~  sub
         ((trace 0 |.("no subscription for request-id {(trip request-id)}")) ~)
       =/  des=(unit (unit cage))
-        (rof ~ %gd [our app.u.sub da+now] ~)
+        (rof ~ /eyre %gd [our app.u.sub da+now] ~)
       ?.  ?=([~ ~ *] des)
         ((trace 0 |.("no desk for app {<app.u.sub>}")) ~)
       `!<(=desk q.u.u.des)
@@ -1717,7 +1717,7 @@
       ?~  des  ~
       =*  have=mark  mark.event
       =/  val=(unit (unit cage))
-        (rof ~ %cb [our u.des da+now] /[have])
+        (rof ~ /eyre %cb [our u.des da+now] /[have])
       ?.  ?=([~ ~ *] val)
         ((trace 0 |.("no mark {(trip have)}")) ~)
       =+  !<(=dais:clay q.u.u.val)
@@ -1744,7 +1744,7 @@
         =*  have=mark  p.cage.sign
         =/  convert=(unit vase)
           =/  cag=(unit (unit cage))
-            (rof ~ %cf [our u.des da+now] /[have]/json)
+            (rof ~ /eyre %cf [our u.des da+now] /[have]/json)
           ?.  ?=([~ ~ *] cag)  ~
           `q.u.u.cag
         ?~  convert
@@ -1866,7 +1866,7 @@
       %-  (trace 1 |.("{<channel-id>} leaving subscription to {<app>}"))
       :^  duc  %pass
         (subscription-wire channel-id request-id ship app)
-      [%g %deal [our ship] app %leave ~]
+      [%g %deal [our ship /eyre] app %leave ~]
     --
   ::  +handle-gall-error: a call to +poke-http-response resulted in a %coup
   ::
@@ -1881,7 +1881,7 @@
       :_  ~
       %-  (trace 1 |.("leaving subscription to {<app.action.connection>}"))
       :*  duct  %pass  /watch-response/[eyre-id]
-          %g  %deal  [our our]  app.action.connection
+          %g  %deal  [our our /eyre]  app.action.connection
           %leave  ~
       ==
     ::
@@ -2028,7 +2028,7 @@
       %-  %+  trace  1
           |.("leaving subscription to {<app.action.u.connection-state>}")
       :*  duct  %pass  /watch-response/[eyre-id]
-          %g  %deal  [our our]  app.action.u.connection-state
+          %g  %deal  [our our /eyre]  app.action.u.connection-state
           %leave  ~
       ==
     --
@@ -2397,7 +2397,7 @@
       :_  http-server-gate
       =/  cmd
         [%acme %poke `cage`[%acme-order !>(mod)]]
-      [duct %pass /acme/order %g %deal [our our] cmd]~
+      [duct %pass /acme/order %g %deal [our our /eyre] cmd]~
     ==
   ::
       %request
@@ -2706,7 +2706,7 @@
 ++  scry
   ~/  %eyre-scry
   ^-  roon
-  |=  [lyc=gang car=term bem=beam]
+  |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
   =*  ren  car
   =*  why=shop  &/p.bem

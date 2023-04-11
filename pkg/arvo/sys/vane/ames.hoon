@@ -1404,7 +1404,7 @@
           =/  tim
             ;;  (list [@da ^duct])
             =<  q.q  %-  need  %-  need
-            (rof ~ %bx [[our %$ da+now] /debug/timers])
+            (rof ~ /ames %bx [[our %$ da+now] /debug/timers])
           (skim tim |=([@da hen=^duct] ?=([[%ames ?(%pump %recork) *] *] hen)))
         ::
         ::  set timers for flows that should have one set but don't
@@ -1975,7 +1975,7 @@
             =|  =point
             =.  life.point     life
             =.  keys.point     (my [life crypto-suite public-key]~)
-            =.  sponsor.point  `(^^sein:title rof our now ship)
+            =.  sponsor.point  `(^^sein:title rof /ames our now ship)
             ::
             (on-publ-full (my [ship point]~))
           ::
@@ -2103,7 +2103,7 @@
           =.  sponsor.peer-state
             ?^  sponsor.point
               u.sponsor.point
-            (^^sein:title rof our now ship)
+            (^^sein:title rof /ames our now ship)
           ::  automatically set galaxy route, since unix handles lookup
           ::
           =?  route.peer-state  ?=(%czar (clan:title ship))
@@ -2131,7 +2131,7 @@
         =/  turfs
           ;;  (list turf)
           =<  q.q  %-  need  %-  need
-          (rof ~ %j `beam`[[our %turf %da now] /])
+          (rof ~ /ames %j `beam`[[our %turf %da now] /])
         ::
         (emit unix-duct.ames-state %give %turf turfs)
       ::  +on-vega: handle kernel reload
@@ -3866,7 +3866,7 @@
       ?:  ?=(%pawn (clan:title ship))  0
       ;;  @ud
       =<  q.q  %-  need  %-  need
-      (rof ~ %j `beam`[[our %rift %da now] /(scot %p ship)])
+      (rof ~ /ames %j `beam`[[our %rift %da now] /(scot %p ship)])
     :-   -.ship-state
     :_  +.peer-state
     =,  -.peer-state
@@ -3940,7 +3940,7 @@
 ::
 ++  scry
   ^-  roon
-  |=  [lyc=gang car=term bem=beam]
+  |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
   =*  ren  car
   =*  why=shop  &/p.bem
