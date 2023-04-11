@@ -52,6 +52,8 @@
 ::    contacts: other ships we're in communication with
 ::    yokes: running agents
 ::    blocked: moves to agents that haven't been started yet
+::    perms: per-desk permissions
+::    wards: permission diff subscribers
 ::    bug: debug printing configuration
 ::
 +$  state
