@@ -2629,29 +2629,23 @@
         ::
         ++  handle-cork
           |=  =bone
-          ^+  peer-core
+          |^  ^+  peer-core
           ?.  (~(has in closing.peer-state) bone)  peer-core
-          =/  =message-pump-state
+          =/  pump=message-pump-state
             (~(gut by snd.peer-state) bone *message-pump-state)
-          =?  peer-core  ?=(^ next-wake.packet-pump-state.message-pump-state)
-            =*  next-wake  u.next-wake.packet-pump-state.message-pump-state
-            =/  =wire      (make-pump-timer-wire her bone)
-            :: reset timer for boons
+          =?  event-core  ?=(^ next-wake.packet-pump-state.pump)
+            ::  reset-timer for boons
             ::
-            (pe-emit [/ames]~ %pass wire %b %rest next-wake)
+            (reset-timer her bone u.next-wake.packet-pump-state.pump)
           =/  nax-bone=^bone  (mix 0b10 bone)
-          =?  peer-core  (~(has by snd.peer-state) nax-bone)
-            %-  %+  pe-trace  odd.veb
+          =/  nax-pump=message-pump-state
+            (~(gut by snd.peer-state) nax-bone *message-pump-state)
+          =?  event-core  ?=(^ next-wake.packet-pump-state.nax-pump)
+            %-  %^  ev-trace  odd.veb  her
                 |.("remove naxplanation flow {<[her bone=nax-bone]>}")
-            =/  nack-pump=^message-pump-state
-              (~(gut by snd.peer-state) nax-bone *^message-pump-state)
-            ?:  ?=(~ next-wake.packet-pump-state.nack-pump)
-              peer-core
-            =*  next-wake  u.next-wake.packet-pump-state.nack-pump
-            =/  =wire      (make-pump-timer-wire her nax-bone)
             :: reset timer for naxplanations
             ::
-            (pe-emit [/ames]~ %pass wire %b %rest next-wake)
+            (reset-timer her nax-bone u.next-wake.packet-pump-state.nax-pump)
           =.  peer-state
             =,  peer-state
             %_  peer-state
@@ -2663,6 +2657,11 @@
               closing  (~(del in closing) bone)
             ==
           peer-core
+          ::
+          ++  reset-timer
+            |=  [=ship =^bone wake=@da]
+            (emit [/ames]~ %pass (make-pump-timer-wire ship bone) %b %rest wake)
+          --
         ::
         +|  %internals
         ::  +mu: constructor for |pump message sender core
