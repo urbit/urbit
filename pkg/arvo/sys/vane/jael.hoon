@@ -1072,7 +1072,7 @@
       :~  pki+&+pki.lex
           etn+&+etn.lex
       ==
-    ``mass+!>(maz)
+    ``noun+!>(maz)
   ?+    syd
       ~
   ::
@@ -1232,7 +1232,7 @@
     =/  moon-sec  (shaf %earl (sham our u.lyf sec u.who))
     =/  cub  (pit:nu:crub:crypto 128 moon-sec)
     =/  =seed  [u.who 1 sec:ex:cub ~]
-    ``[%seed !>(seed)]
+    ``[%noun !>(seed)]
   ::
       %sein
     ?.  ?=([@ ~] tyl)  [~ ~]

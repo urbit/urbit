@@ -1931,7 +1931,7 @@
           [%blocked %.n blocked]
           [%active %.n running]
       ==
-    ``mass+!>(maz)
+    ``noun+!>(maz)
   ::
   ?:  ?&  =(%u care)
           =(~ path)
@@ -1951,7 +1951,7 @@
     =/  yok=(unit yoke)  (~(get by yokes.state) dap)
     ?~  yok
       [~ ~]
-    [~ ~ desk+!>(q.beak.u.yok)]
+    [~ ~ noun+!>(q.beak.u.yok)]
   ::
   ?:  ?&  =(%e care)
           =(~ path)
@@ -1959,7 +1959,7 @@
           =(our ship)
       ==
     :+  ~  ~
-    :-  %apps  !>  ^-  (set [=dude live=?])
+    :-  %noun  !>  ^-  (set [=dude live=?])
     =*  syd=desk  dap
     %+  roll  ~(tap by yokes.state)
     |=  [[=dude =yoke] acc=(set [=dude live=?])]
@@ -1973,7 +1973,7 @@
           =(our ship)
       ==
     :+  ~  ~
-    :-  %nonces  !>  ^-  (map dude @)
+    :-  %noun  !>  ^-  (map dude @)
     (~(run by yokes.state) |=(yoke sub-nonce))
   ::
   ?:  ?&  =(%n care)

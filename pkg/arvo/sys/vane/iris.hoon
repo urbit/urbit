@@ -403,6 +403,6 @@
           by-duct+&+connection-by-duct.state.ax
           axle+&+ax
       ==
-    ``mass+!>(maz)
+    ``noun+!>(maz)
   [~ ~]
 --

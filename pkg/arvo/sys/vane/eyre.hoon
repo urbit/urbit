@@ -2725,7 +2725,7 @@
           channels+&+channel-state.server-state.ax
           axle+&+ax
       ==
-    ``mass+!>(maz)
+    ``noun+!>(maz)
   ?.  ?=(%$ -.lot)
     [~ ~]
   ?.  =(our who)

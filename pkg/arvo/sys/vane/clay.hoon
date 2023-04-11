@@ -3952,7 +3952,7 @@
         %+  aeon-flow  aeon
         %-  wrap:fusion
         (build-file:(aeon-ford aeon) path)
-      :_(..park [~ ~ %vase !>(vase)])
+      :_(..park [~ ~ %noun !>(vase)])
     ::
     ++  read-b
       !.
@@ -3964,7 +3964,7 @@
         %+  aeon-flow  aeon
         %-  wrap:fusion
         (build-dais:(aeon-ford aeon) i.path)
-      :_(..park [~ ~ %dais !>(dais)])
+      :_(..park [~ ~ %noun !>(dais)])
     ::
     ++  read-c
       !.
@@ -3976,7 +3976,7 @@
         %+  aeon-flow  aeon
         %-  wrap:fusion
         (build-tube:(aeon-ford aeon) [i i.t]:path)
-      :_(..park [~ ~ %tube !>(tube)])
+      :_(..park [~ ~ %noun !>(tube)])
     ::
     ++  read-e
       !.
@@ -3988,7 +3988,7 @@
         %+  aeon-flow  aeon
         %-  wrap:fusion
         (build-nave:(aeon-ford aeon) i.path)
-      :_(..park [~ ~ %nave vase])
+      :_(..park [~ ~ %noun vase])
     ::
     ++  read-f
       !.
@@ -4000,7 +4000,7 @@
         %+  aeon-flow  aeon
         %-  wrap:fusion
         (build-cast:(aeon-ford aeon) [i i.t]:path)
-      :_(..park [~ ~ %cast vase])
+      :_(..park [~ ~ %noun vase])
     ::
     ::  TODO move to +read-buc
     ::
@@ -4155,25 +4155,25 @@
         =/  tak=(unit tako)  (~(get by hit.dom) yon)
         ?~  tak
           ~
-        ``tako+[-:!>(*tako) u.tak]
+        ``noun+[-:!>(*tako) u.tak]
       ::
           %yaki
         =/  yak=(unit yaki)  (~(get by hut.ran) (slav %uv i.t.pax))
         ?~  yak
           ~
-        ``yaki+[-:!>(*yaki) u.yak]
+        ``noun+[-:!>(*yaki) u.yak]
       ::
           %blob
         =/  peg=(unit page)  (~(get by lat.ran) (slav %uv i.t.pax))
         ?~  peg
           ~
-        ``blob+[-:!>(*page) u.peg]
+        ``noun+[-:!>(*page) u.peg]
       ::
           %hash
         =/  yak=(unit yaki)  (~(get by hut.ran) (slav %uv i.t.pax))
         ?~  yak
           ~
-        ``uvi+[-:!>(*@uvI) (content-hash u.yak /)]
+        ``noun+[-:!>(*@uvI) (content-hash u.yak /)]
       ::
           %cage
         ::  should save ford cache
@@ -4185,16 +4185,16 @@
         =/  [=cage *]
           %-  wrap:fusion
           (page-to-cage:(aeon-ford yon) u.peg)
-        ``cage+[-:!>(*^cage) cage]
+        ``noun+[-:!>(*^cage) cage]
       ::
-          %open  ``open+!>(prelude:(aeon-ford yon))
+          %open  ``noun+!>(prelude:(aeon-ford yon))
           %late  !!  :: handled in +aver
           %case  !!  :: handled in +aver
           %base-tako
         ::  TODO this ignores the given beak
         ::  maybe move to +aver?
         ?>  ?=(^ t.t.pax)
-        :^  ~  ~  %uvs  !>
+        :^  ~  ~  %noun  !>
         ^-  (list @uv)
         =/  tako-a  (slav %uv i.t.pax)
         =/  tako-b  (slav %uv i.t.t.pax)
@@ -4206,7 +4206,7 @@
       ::
           %base
         ?>  ?=(^ t.t.pax)
-        :^  ~  ~  %uvs  !>
+        :^  ~  ~  %noun  !>
         ^-  (list @uv)
         =/  him  (slav %p i.t.pax)
         =/  other  dom:((de now rof hen ruf) him i.t.t.pax)
@@ -4222,11 +4222,11 @@
     ::
     ++  read-t
       |=  [yon=aeon pax=path]
-      ^-  (unit (unit [%file-list (hypo (list path))]))
+      ^-  (unit (unit [%noun (hypo (list path))]))
       ::  if asked for version 0, produce an empty list of files
       ::
       ?:  =(0 yon)
-        ``[%file-list -:!>(*(list path)) *(list path)]
+        ``[%noun -:!>(*(list path)) *(list path)]
       ::  if asked for a future version, we don't have an answer
       ::
       ?~  tak=(~(get by hit.dom) yon)
@@ -4238,7 +4238,7 @@
       ::
       =/  path-length  (lent pax)
       ::
-      :^  ~  ~  %file-list
+      :^  ~  ~  %noun
       :-  -:!>(*(list path))
       ^-  (list path)
       ::  sort the matching paths alphabetically
@@ -4256,11 +4256,11 @@
     ::
     ++  read-u
       |=  [yon=aeon pax=path]
-      ^-  (unit (unit [%flag (hypo ?)]))
+      ^-  (unit (unit [%noun (hypo ?)]))
       ::  if asked for version 0, that never exists, so always give false
       ::
       ?:  =(0 yon)
-        ``[%flag -:!>(*?) |]
+        ``[%noun -:!>(*?) |]
       ::  if asked for a future version, we don't have an answer
       ::
       ?~  tak=(~(get by hit.dom) yon)
@@ -4270,15 +4270,15 @@
       =/  yak=yaki  (tako-to-yaki u.tak)
       ::  produce the result based on whether or not there's a file at :pax
       ::
-      ``[%flag -:!>(*?) (~(has by q.yak) pax)]
+      ``[%noun -:!>(*?) (~(has by q.yak) pax)]
     ::
     ::  Gets the dome (desk state) at a particular aeon.
     ::
     ++  read-v
       |=  [yon=aeon pax=path]
-      ^-  (unit (unit [%dome (hypo domo)]))
+      ^-  (unit (unit [%noun (hypo domo)]))
       ?:  (lth yon let.dom)
-        :*  ~  ~  %dome  -:!>(*domo)
+        :*  ~  ~  %noun  -:!>(*domo)
             ^-  domo
             :*  let=yon
                 hit=(molt (skim ~(tap by hit.dom) |=([p=@ud *] (lte p yon))))
@@ -4286,7 +4286,7 @@
         ==  ==
       ?:  (gth yon let.dom)
         ~
-      ``[%dome -:!>(*domo) [let hit lab]:dom]
+      ``[%noun -:!>(*domo) [let hit lab]:dom]
     ::
     ::  Gets all cases refering to the same revision as the given case.
     ::
@@ -4295,7 +4295,7 @@
     ++  read-w
       |=  yon=aeon
       ^-  (unit (unit cage))
-      =-  [~ ~ %cass !>(-)]
+      =-  [~ ~ %noun !>(-)]
       ^-  cass
       :-  yon
       ?:  =(0 yon)  `@da`0
@@ -4335,15 +4335,15 @@
     ::
     ++  read-y
       |=  [yon=aeon pax=path]
-      ^-  (unit (unit [%arch (hypo arch)]))
+      ^-  (unit (unit [%noun (hypo arch)]))
       ?:  =(0 yon)
-        ``[%arch -:!>(*arch) *arch]
+        ``[%noun -:!>(*arch) *arch]
       =+  tak=(~(get by hit.dom) yon)
       ?~  tak
         ~
       =+  yak=(tako-to-yaki u.tak)
       =+  len=(lent pax)
-      :^  ~  ~  %arch
+      :^  ~  ~  %noun
       ::  ~&  cy+pax
       :-  -:!>(*arch)
       ^-  arch
@@ -4363,13 +4363,13 @@
     ::
     ++  read-z
       |=  [yon=aeon pax=path]
-      ^-  (unit (unit [%uvi (hypo @uvI)]))
+      ^-  (unit (unit [%noun (hypo @uvI)]))
       ?:  =(0 yon)
-        ``uvi+[-:!>(*@uvI) *@uvI]
+        ``noun+[-:!>(*@uvI) *@uvI]
       =+  tak=(~(get by hit.dom) yon)
       ?~  tak
         ~
-      [~ ~ %uvi [%atom %'uvI' ~] (content-hash (tako-to-yaki u.tak) pax)]
+      [~ ~ %noun [%atom %'uvI' ~] (content-hash (tako-to-yaki u.tak) pax)]
     ::
     ::  Get a value at an aeon.
     ::
@@ -5577,7 +5577,7 @@
   ?.  ?=(%& -.why)  ~
   =*  his  p.why
   ?:  &(=(ren %$) =(tyl /whey))
-    ``mass+!>(whey)
+    ``noun+!>(whey)
   ::  ~&  scry+[ren `path`[(scot %p his) syd ~(rent co lot) tyl]]
   ::  =-  ~&  %scry-done  -
   =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))
@@ -5604,14 +5604,14 @@
     ?~  path
       ~
     ?+    i.path  ~
-        %sweep  ``[%sweep !>(sweep)]
-        %rang   ``[%rang !>(ran.ruf)]
-        %tomb   ``[%flag !>((tomb t.path))]
-        %cult   ``[%cult !>((cult t.path))]
-        %flow   ``[%flow !>(fad.ruf)]
+        %sweep  ``[%noun !>(sweep)]
+        %rang   ``[%noun !>(ran.ruf)]
+        %tomb   ``[%noun !>((tomb t.path))]
+        %cult   ``[%noun !>((cult t.path))]
+        %flow   ``[%noun !>(fad.ruf)]
         %domes  domes
-        %tire   ``[%tire !>(tore:(lu now rof *duct ruf))]
-        %tyre   ``[%tyre !>(tyr.ruf)]
+        %tire   ``[%noun !>(tore:(lu now rof *duct ruf))]
+        %tyre   ``[%noun !>(tyr.ruf)]
     ==
   ::
   ++  domes
@@ -5632,7 +5632,7 @@
       %+  turn  ~(tap by rus.rung)
       |=  [=desk =rede]
       [[ship desk] dom.rede]
-    ``[%domes !>(`cone`domes)]
+    ``[%noun !>(`cone`domes)]
   ::
   ++  cult
     |=  =path

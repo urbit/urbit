@@ -496,7 +496,7 @@
       :~  hey+&+hey.all
           dug+&+dug.all
       ==
-    ``mass+!>(maz)
+    ``noun+!>(maz)
   ::  only respond for the local identity, %$ desk, current timestamp
   ::
   ?.  ?&  =(&+our why)

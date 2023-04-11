@@ -475,7 +475,6 @@
     (warp ship desk ~ %sing %a case spur)
   ?~  riot
     (pure:m ~)
-  ?>  =(%vase p.r.u.riot)
   (pure:m (some !<(vase q.r.u.riot)))
 ::
 ++  build-file-hard
@@ -487,7 +486,6 @@
       bind:m
     (warp ship desk ~ %sing %a case spur)
   ?>  ?=(^ riot)
-  ?>  ?=(%vase p.r.u.riot)
   (pure:m !<(vase q.r.u.riot))
 ::  +build-mark: build a mark definition to a $dais
 ::
@@ -500,7 +498,6 @@
     (warp ship desk ~ %sing %b case /[mak])
   ?~  riot
     (strand-fail %build-mark >arg< ~)
-  ?>  =(%dais p.r.u.riot)
   (pure:m !<(dais:clay q.r.u.riot))
 ::  +build-tube: build a mark conversion gate ($tube)
 ::
@@ -513,7 +510,6 @@
     (warp ship desk ~ %sing %c case /[a.mars]/[b.mars])
   ?~  riot
     (strand-fail %build-tube >arg< ~)
-  ?>  =(%tube p.r.u.riot)
   (pure:m !<(tube:clay q.r.u.riot))
 ::
 ::  +build-nave: build a mark definition to a $nave
@@ -527,7 +523,6 @@
     (warp ship desk ~ %sing %e case /[mak])
   ?~  riot
     (strand-fail %build-nave >arg< ~)
-  ?>  =(%nave p.r.u.riot)
   (pure:m q.r.u.riot)
 ::  +build-cast: build a mark conversion gate (static)
 ::
@@ -540,7 +535,6 @@
     (warp ship desk ~ %sing %f case /[a.mars]/[b.mars])
   ?~  riot
     (strand-fail %build-cast >arg< ~)
-  ?>  =(%cast p.r.u.riot)
   (pure:m q.r.u.riot)
 ::
 ::  Read from Clay

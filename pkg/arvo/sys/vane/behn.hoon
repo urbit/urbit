@@ -250,7 +250,7 @@
     =/  maz=(list mass)
       :~  timers+&+timers.state
       ==
-    ``mass+!>(maz)
+    ``noun+!>(maz)
   ::  only respond for the local identity, %$ desk, current timestamp
   ::
   ?.  ?&  =(&+our why)
