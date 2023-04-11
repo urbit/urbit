@@ -11,9 +11,9 @@
 ::
 ::  Custom types need to skip one 'tape' face due to 'tape' arm in 'enjs:format'
 ::
-+$  json-decode-spec  [name=^tape input=cord expected=json]
++$  json-decode-spec  [name=^tape input=cord expected=^json]
 +$  json-decode-rejection-spec  [input=cord name=^tape]
-+$  json-encode-spec  [name=^tape input=json expected=^tape]
++$  json-encode-spec  [name=^tape input=^json expected=^tape]
 ::
 ++  run-decode-specs
   ::  legend tells of a man who made the Kessel run in less than 12
@@ -24,7 +24,7 @@
   :-  specs
   |=  spec=json-decode-spec
   ^-  tang
-  =+  result=(expect-eq !>(`expected.spec) !>((de-json input.spec)))
+  =+  result=(expect-eq !>(`expected.spec) !>((de:json input.spec)))
   ?~  result  ~
   `tang`[[%leaf "in {name.spec}:"] result]
 ::
@@ -35,7 +35,7 @@
   :-  specs
   |=  spec=json-decode-rejection-spec
   ^-  tang
-  =+  result=(expect-eq !>(~) !>((de-json input.spec)))
+  =+  result=(expect-eq !>(~) !>((de:json input.spec)))
   ?~  result  ~
   `tang`[[%leaf "in {name.spec}:"] result]
 ++  run-encode-specs
@@ -45,7 +45,7 @@
   :-  specs
   |=  spec=json-encode-spec
   ^-  tang
-  =+  result=(expect-eq !>(expected.spec) !>((en-json input.spec)))
+  =+  result=(expect-eq !>(expected.spec) !>((en:json input.spec)))
   ?~  result  ~
   `tang`[[%leaf "in {name.spec}:"] result]
 ::  JSON decoding test suite
@@ -1209,22 +1209,22 @@
     !>  %-  some
         :-  %o
         %-  malt
-        ^-  (list [@t json])
+        ^-  (list [@t ^json])
         :~
           :-  'data'
           :-  %o
           %-  malt
-          ^-  (list [@t json])
+          ^-  (list [@t ^json])
           :~
             :-  'user'
             :-  %o
             %-  malt
-            ^-  (list [@t json])
+            ^-  (list [@t ^json])
             :~
               :-  'result'
               :-  %o
               %-  malt
-              ^-  (list [@t json])
+              ^-  (list [@t ^json])
               :~
                 ['__typename' [%s 'User']]
                 ['id' [%s 'VXNlcjo4MjYyNjE5MTQ=']]
@@ -1235,7 +1235,7 @@
                 :-  'legacy'
                 :-  %o
                 %-  malt
-                ^-  (list [@t json])
+                ^-  (list [@t ^json])
                 :~
                   ['created_at' [%s 'Sun Sep 16 01:32:21 +0000 2012']]
                   ['default_profile' [%b &]]
@@ -1245,12 +1245,12 @@
                   :-  'entities'
                   :-  %o
                   %-  malt
-                  ^-  (list [@t json])
+                  ^-  (list [@t ^json])
                   :~
                     :-  'description'
                     :-  %o
                     %-  malt
-                    ^-  (list [@t json])
+                    ^-  (list [@t ^json])
                     :~
                       [p='urls' q=[%a p=~]]
                     ==
@@ -1258,7 +1258,7 @@
                     :-  'url'
                     :-  %o
                     %-  malt
-                    ^-  (list [@t json])
+                    ^-  (list [@t ^json])
                     :~
                       :-  'urls'
                       :-  %a
@@ -1266,7 +1266,7 @@
                       :~
                         :-  %o
                         %-  malt
-                        ^-  (list [@t json])
+                        ^-  (list [@t ^json])
                         :~
                           ['display_url' [%s 'NewDiscourses.com']]
                           ['expanded_url' [%s 'http://NewDiscourses.com']]
@@ -1293,22 +1293,22 @@
                   :-  'profile_banner_extensions'
                   :-  %o
                   %-  malt
-                  ^-  (list [@t json])
+                  ^-  (list [@t ^json])
                   :~
                     :-  'mediaColor'
                     :-  %o
                     %-  malt
-                    ^-  (list [@t json])
+                    ^-  (list [@t ^json])
                     :~
                       :-  'r'
                       :-  %o
                       %-  malt
-                      ^-  (list [@t json])
+                      ^-  (list [@t ^json])
                       :~
                         :-  'ok'
                         :-  %o
                         %-  malt
-                        ^-  (list [@t json])
+                        ^-  (list [@t ^json])
                         :~
                           :-  'palette'
                           :-  %a
@@ -1316,7 +1316,7 @@
                           :~
                             :-  %o
                             %-  malt
-                            ^-  (list [@t json])
+                            ^-  (list [@t ^json])
                             :~
                               ['percentage' [%n '95.91']]
                               ::
@@ -1332,7 +1332,7 @@
                             ::
                             :-  %o
                             %-  malt
-                            ^-  (list [@t json])
+                            ^-  (list [@t ^json])
                             :~
                               ['percentage' [%n '3.65']]
                               ::
@@ -1348,7 +1348,7 @@
                             ::
                             :-  %o
                             %-  malt
-                            ^-  (list [@t json])
+                            ^-  (list [@t ^json])
                             :~
                               ['percentage' [%n '0.44']]
                               ::
@@ -1372,22 +1372,22 @@
                   :-  'profile_image_extensions'
                   :-  %o
                   %-  malt
-                  ^-  (list [@t json])
+                  ^-  (list [@t ^json])
                   :~
                     :-  'mediaColor'
                     :-  %o
                     %-  malt
-                    ^-  (list [@t json])
+                    ^-  (list [@t ^json])
                     :~
                       :-  'r'
                       :-  %o
                       %-  malt
-                      ^-  (list [@t json])
+                      ^-  (list [@t ^json])
                       :~
                         :-  'ok'
                         :-  %o
                         %-  malt
-                        ^-  (list [@t json])
+                        ^-  (list [@t ^json])
                         :~
                           :-  'palette'
                           :-  %a
@@ -1395,7 +1395,7 @@
                           :~
                             :-  %o
                             %-  malt
-                            ^-  (list [@t json])
+                            ^-  (list [@t ^json])
                             :~
                               ['percentage' [%n '72.12']]
                               ::
@@ -1411,7 +1411,7 @@
                             ::
                             :-  %o
                             %-  malt
-                            ^-  (list [@t json])
+                            ^-  (list [@t ^json])
                             :~
                               ['percentage' [%n '17.13']]
                               ::
@@ -1427,7 +1427,7 @@
                             ::
                             :-  %o
                             %-  malt
-                            ^-  (list [@t json])
+                            ^-  (list [@t ^json])
                             :~
                               ['percentage' [%n '10.57']]
                               ::
@@ -1443,7 +1443,7 @@
                             ::
                             :-  %o
                             %-  malt
-                            ^-  (list [@t json])
+                            ^-  (list [@t ^json])
                             :~
                               ['percentage' [%n '2.03']]
                               ::
@@ -1459,7 +1459,7 @@
                             ::
                             :-  %o
                             %-  malt
-                            ^-  (list [@t json])
+                            ^-  (list [@t ^json])
                             :~
                               ['percentage' [%n '1.58']]
                               ::
@@ -1495,7 +1495,7 @@
             ==
           ==
         ==
-    !>  %-  de-json:html  '{"data":{"user":{"result":{"has_nft_avatar":false,"rest_id":"826261914","affiliates_highlighted_label":{},"__typename":"User","id":"VXNlcjo4MjYyNjE5MTQ=","is_profile_translatable":false,"legacy_extended_profile":{},"legacy":{"protected":false,"pinned_tweet_ids_str":["1238111933905190913"],"entities":{"url":{"urls":[{"indices":[0,23],"display_url":"NewDiscourses.com","url":"https://t.co/RDZVUxIOWN","expanded_url":"http://NewDiscourses.com"}]},"description":{"urls":[]}},"name":"James Lindsay, pro-freedom","default_profile":true,"location":"Knoxville, TN","url":"https://t.co/RDZVUxIOWN","verified":false,"profile_interstitial_type":"","fast_followers_count":0,"description":"Not-NYT Bestselling author. Math PhD. Founder of New Discourses. Apolitical. Against totalitarianism and supremacy of all kinds. For freedom. 🇺🇲🇺🇲🇺🇲","created_at":"Sun Sep 16 01:32:21 +0000 2012","followers_count":284274,"withheld_in_countries":[],"listed_count":1867,"profile_image_url_https":"https://pbs.twimg.com/profile_images/1459175734602350593/cW3fs5lR_normal.jpg","has_custom_timelines":true,"normal_followers_count":284274,"favourites_count":193322,"default_profile_image":false,"media_count":11074,"statuses_count":137296,"profile_banner_extensions":{"mediaColor":{"r":{"ok":{"palette":[{"rgb":{"green":36,"blue":41,"red":33},"percentage":95.91},{"rgb":{"green":115,"blue":118,"red":113},"percentage":3.65},{"rgb":{"green":201,"blue":202,"red":200},"percentage":0.44}]}}}},"profile_banner_url":"https://pbs.twimg.com/profile_banners/826261914/1582653360","screen_name":"ConceptualJames","translator_type":"none","friends_count":338,"profile_image_extensions":{"mediaColor":{"r":{"ok":{"palette":[{"rgb":{"green":22,"blue":16,"red":35},"percentage":72.12},{"rgb":{"green":123,"blue":100,"red":146},"percentage":17.13},{"rgb":{"green":153,"blue":129,"red":193},"percentage":10.57},{"rgb":{"green":149,"blue":125,"red":222},"percentage":2.03},{"rgb":{"green":53,"blue":55,"red":131},"percentage":1.58}]}}}},"is_translator":false}}}}}'
+    !>  %-  de:json  '{"data":{"user":{"result":{"has_nft_avatar":false,"rest_id":"826261914","affiliates_highlighted_label":{},"__typename":"User","id":"VXNlcjo4MjYyNjE5MTQ=","is_profile_translatable":false,"legacy_extended_profile":{},"legacy":{"protected":false,"pinned_tweet_ids_str":["1238111933905190913"],"entities":{"url":{"urls":[{"indices":[0,23],"display_url":"NewDiscourses.com","url":"https://t.co/RDZVUxIOWN","expanded_url":"http://NewDiscourses.com"}]},"description":{"urls":[]}},"name":"James Lindsay, pro-freedom","default_profile":true,"location":"Knoxville, TN","url":"https://t.co/RDZVUxIOWN","verified":false,"profile_interstitial_type":"","fast_followers_count":0,"description":"Not-NYT Bestselling author. Math PhD. Founder of New Discourses. Apolitical. Against totalitarianism and supremacy of all kinds. For freedom. 🇺🇲🇺🇲🇺🇲","created_at":"Sun Sep 16 01:32:21 +0000 2012","followers_count":284274,"withheld_in_countries":[],"listed_count":1867,"profile_image_url_https":"https://pbs.twimg.com/profile_images/1459175734602350593/cW3fs5lR_normal.jpg","has_custom_timelines":true,"normal_followers_count":284274,"favourites_count":193322,"default_profile_image":false,"media_count":11074,"statuses_count":137296,"profile_banner_extensions":{"mediaColor":{"r":{"ok":{"palette":[{"rgb":{"green":36,"blue":41,"red":33},"percentage":95.91},{"rgb":{"green":115,"blue":118,"red":113},"percentage":3.65},{"rgb":{"green":201,"blue":202,"red":200},"percentage":0.44}]}}}},"profile_banner_url":"https://pbs.twimg.com/profile_banners/826261914/1582653360","screen_name":"ConceptualJames","translator_type":"none","friends_count":338,"profile_image_extensions":{"mediaColor":{"r":{"ok":{"palette":[{"rgb":{"green":22,"blue":16,"red":35},"percentage":72.12},{"rgb":{"green":123,"blue":100,"red":146},"percentage":17.13},{"rgb":{"green":153,"blue":129,"red":193},"percentage":10.57},{"rgb":{"green":149,"blue":125,"red":222},"percentage":2.03},{"rgb":{"green":53,"blue":55,"red":131},"percentage":1.58}]}}}},"is_translator":false}}}}}'
 ::  JSON encoding test suite
 ::
 ::  Encode arrays
@@ -1708,25 +1708,25 @@
 ++  test-en-json-complex-structure
   %+  expect-eq
     !>  "\{\"data\":\{\"user\":\{\"result\":\{\"has_nft_avatar\":false,\"rest_id\":\"826261914\",\"affiliates_highlighted_label\":\{},\"__typename\":\"User\",\"id\":\"VXNlcjo4MjYyNjE5MTQ=\",\"is_profile_translatable\":false,\"legacy_extended_profile\":\{},\"legacy\":\{\"protected\":false,\"pinned_tweet_ids_str\":[\"1238111933905190913\"],\"entities\":\{\"url\":\{\"urls\":[\{\"indices\":[0,23],\"display_url\":\"NewDiscourses.com\",\"url\":\"https://t.co/RDZVUxIOWN\",\"expanded_url\":\"http://NewDiscourses.com\"}]},\"description\":\{\"urls\":[]}},\"name\":\"James Lindsay, pro-freedom\",\"default_profile\":true,\"location\":\"Knoxville, TN\",\"url\":\"https://t.co/RDZVUxIOWN\",\"verified\":false,\"profile_interstitial_type\":\"\",\"fast_followers_count\":0,\"description\":\"Not-NYT Bestselling author. Math PhD. Founder of New Discourses. Apolitical. Against totalitarianism and supremacy of all kinds. For freedom. 🇺🇲🇺🇲🇺🇲\",\"created_at\":\"Sun Sep 16 01:32:21 +0000 2012\",\"followers_count\":284274,\"withheld_in_countries\":[],\"listed_count\":1867,\"profile_image_url_https\":\"https://pbs.twimg.com/profile_images/1459175734602350593/cW3fs5lR_normal.jpg\",\"has_custom_timelines\":true,\"normal_followers_count\":284274,\"favourites_count\":193322,\"default_profile_image\":false,\"media_count\":11074,\"statuses_count\":137296,\"profile_banner_extensions\":\{\"mediaColor\":\{\"r\":\{\"ok\":\{\"palette\":[\{\"rgb\":\{\"green\":36,\"blue\":41,\"red\":33},\"percentage\":95.91},\{\"rgb\":\{\"green\":115,\"blue\":118,\"red\":113},\"percentage\":3.65},\{\"rgb\":\{\"green\":201,\"blue\":202,\"red\":200},\"percentage\":0.44}]}}}},\"profile_banner_url\":\"https://pbs.twimg.com/profile_banners/826261914/1582653360\",\"screen_name\":\"ConceptualJames\",\"translator_type\":\"none\",\"friends_count\":338,\"profile_image_extensions\":\{\"mediaColor\":\{\"r\":\{\"ok\":\{\"palette\":[\{\"rgb\":\{\"green\":22,\"blue\":16,\"red\":35},\"percentage\":72.12},\{\"rgb\":\{\"green\":123,\"blue\":100,\"red\":146},\"percentage\":17.13},\{\"rgb\":\{\"green\":153,\"blue\":129,\"red\":193},\"percentage\":10.57},\{\"rgb\":\{\"green\":149,\"blue\":125,\"red\":222},\"percentage\":2.03},\{\"rgb\":\{\"green\":53,\"blue\":55,\"red\":131},\"percentage\":1.58}]}}}},\"is_translator\":false}}}}}"
-    !>  %-  en-json:html
+    !>  %-  en:json
         :-  %o
         %-  malt
-        ^-  (list [@t json])
+        ^-  (list [@t ^json])
         :~
           :-  'data'
           :-  %o
           %-  malt
-          ^-  (list [@t json])
+          ^-  (list [@t ^json])
           :~
             :-  'user'
             :-  %o
             %-  malt
-            ^-  (list [@t json])
+            ^-  (list [@t ^json])
             :~
               :-  'result'
               :-  %o
               %-  malt
-              ^-  (list [@t json])
+              ^-  (list [@t ^json])
               :~
                 ['__typename' [%s 'User']]
                 ['id' [%s 'VXNlcjo4MjYyNjE5MTQ=']]
@@ -1737,7 +1737,7 @@
                 :-  'legacy'
                 :-  %o
                 %-  malt
-                ^-  (list [@t json])
+                ^-  (list [@t ^json])
                 :~
                   ['created_at' [%s 'Sun Sep 16 01:32:21 +0000 2012']]
                   ['default_profile' [%b &]]
@@ -1747,12 +1747,12 @@
                   :-  'entities'
                   :-  %o
                   %-  malt
-                  ^-  (list [@t json])
+                  ^-  (list [@t ^json])
                   :~
                     :-  'description'
                     :-  %o
                     %-  malt
-                    ^-  (list [@t json])
+                    ^-  (list [@t ^json])
                     :~
                       [p='urls' q=[%a p=~]]
                     ==
@@ -1760,7 +1760,7 @@
                     :-  'url'
                     :-  %o
                     %-  malt
-                    ^-  (list [@t json])
+                    ^-  (list [@t ^json])
                     :~
                       :-  'urls'
                       :-  %a
@@ -1768,7 +1768,7 @@
                       :~
                         :-  %o
                         %-  malt
-                        ^-  (list [@t json])
+                        ^-  (list [@t ^json])
                         :~
                           ['display_url' [%s 'NewDiscourses.com']]
                           ['expanded_url' [%s 'http://NewDiscourses.com']]
@@ -1795,22 +1795,22 @@
                   :-  'profile_banner_extensions'
                   :-  %o
                   %-  malt
-                  ^-  (list [@t json])
+                  ^-  (list [@t ^json])
                   :~
                     :-  'mediaColor'
                     :-  %o
                     %-  malt
-                    ^-  (list [@t json])
+                    ^-  (list [@t ^json])
                     :~
                       :-  'r'
                       :-  %o
                       %-  malt
-                      ^-  (list [@t json])
+                      ^-  (list [@t ^json])
                       :~
                         :-  'ok'
                         :-  %o
                         %-  malt
-                        ^-  (list [@t json])
+                        ^-  (list [@t ^json])
                         :~
                           :-  'palette'
                           :-  %a
@@ -1818,7 +1818,7 @@
                           :~
                             :-  %o
                             %-  malt
-                            ^-  (list [@t json])
+                            ^-  (list [@t ^json])
                             :~
                               ['percentage' [%n '95.91']]
                               ::
@@ -1834,7 +1834,7 @@
                             ::
                             :-  %o
                             %-  malt
-                            ^-  (list [@t json])
+                            ^-  (list [@t ^json])
                             :~
                               ['percentage' [%n '3.65']]
                               ::
@@ -1850,7 +1850,7 @@
                             ::
                             :-  %o
                             %-  malt
-                            ^-  (list [@t json])
+                            ^-  (list [@t ^json])
                             :~
                               ['percentage' [%n '0.44']]
                               ::
@@ -1874,22 +1874,22 @@
                   :-  'profile_image_extensions'
                   :-  %o
                   %-  malt
-                  ^-  (list [@t json])
+                  ^-  (list [@t ^json])
                   :~
                     :-  'mediaColor'
                     :-  %o
                     %-  malt
-                    ^-  (list [@t json])
+                    ^-  (list [@t ^json])
                     :~
                       :-  'r'
                       :-  %o
                       %-  malt
-                      ^-  (list [@t json])
+                      ^-  (list [@t ^json])
                       :~
                         :-  'ok'
                         :-  %o
                         %-  malt
-                        ^-  (list [@t json])
+                        ^-  (list [@t ^json])
                         :~
                           :-  'palette'
                           :-  %a
@@ -1897,7 +1897,7 @@
                           :~
                             :-  %o
                             %-  malt
-                            ^-  (list [@t json])
+                            ^-  (list [@t ^json])
                             :~
                               ['percentage' [%n '72.12']]
                               ::
@@ -1913,7 +1913,7 @@
                             ::
                             :-  %o
                             %-  malt
-                            ^-  (list [@t json])
+                            ^-  (list [@t ^json])
                             :~
                               ['percentage' [%n '17.13']]
                               ::
@@ -1929,7 +1929,7 @@
                             ::
                             :-  %o
                             %-  malt
-                            ^-  (list [@t json])
+                            ^-  (list [@t ^json])
                             :~
                               ['percentage' [%n '10.57']]
                               ::
@@ -1945,7 +1945,7 @@
                             ::
                             :-  %o
                             %-  malt
-                            ^-  (list [@t json])
+                            ^-  (list [@t ^json])
                             :~
                               ['percentage' [%n '2.03']]
                               ::
@@ -1961,7 +1961,7 @@
                             ::
                             :-  %o
                             %-  malt
-                            ^-  (list [@t json])
+                            ^-  (list [@t ^json])
                             :~
                               ['percentage' [%n '1.58']]
                               ::
