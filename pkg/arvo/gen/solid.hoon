@@ -29,6 +29,7 @@
       ::
         dub=_|
         prime=_|
+        exc=(list spur)
     ==
 :-  %pill
 ^-  pill:pill
@@ -46,4 +47,4 @@
   |=  =desk
   [desk /(scot %p p.bec)/[desk]/(scot %da now)]
 ::
-(solid:pill sys dez dub now prime)
+(solid:pill sys dez dub now prime exc)

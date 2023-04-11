@@ -3963,6 +3963,7 @@
   ::  /ax/protocol/version           @
   ::  /ax/peers                      (map ship ?(%alien %known))
   ::  /ax/peers/[ship]               ship-state
+  ::  /ax/peers/[ship]/last-contact  (unit @da)
   ::  /ax/peers/[ship]/forward-lane  (list lane)
   ::  /ax/bones/[ship]               [snd=(set bone) rcv=(set bone)]
   ::  /ax/snd-bones/[ship]/[bone]    vase
@@ -3987,6 +3988,13 @@
       ?~  peer
         [~ ~]
       ``noun+!>(u.peer)
+    ::
+        [%last-contact ~]
+      :^  ~  ~  %noun
+      !>  ^-  (unit @da)
+      ?.  ?=([~ %known *] peer)
+        ~
+      `last-contact.qos.u.peer
     ::
         [%forward-lane ~]
       ::

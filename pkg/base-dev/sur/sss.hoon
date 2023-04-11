@@ -24,13 +24,20 @@
     $:  path=paths
         =dude
         =aeon
-        $%  [type=?(%nigh %yore) ~]
+        $%  [type=?(%nigh %yore %tomb) ~]
             $:  type=%scry
                 $%  [what=%rock =rock:lake]
                     [what=%wave =wave:lake]
     ==  ==  ==  ==
   ++  on-rock
     |*  [=(lake) paths=mold]
-    ,[path=paths src=ship from=dude =rock:lake wave=(unit wave:lake)]
+    $:  path=paths
+        src=ship
+        from=dude
+        stale=?
+        fail=?
+        =rock:lake
+        wave=(unit wave:lake)
+    ==
   --
 --
