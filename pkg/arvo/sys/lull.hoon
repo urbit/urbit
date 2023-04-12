@@ -3094,34 +3094,24 @@
   +$  shed  _*form:(strand:rand ,vase)                  ::  compute vase
   --  ::khan
 ::                                                      ::::
-::::                    ++loch                            ::  (1b) timekeeping
+::::                    ++lick                            ::  (1b) timekeeping
   ::                                                    ::::
-++  loch  ^?
+++  lick  ^?
   |%
   +$  gift                                              ::  out result <-$
-    $%  [%read =dev =wut =cmd =cnt]                     ::  Gift to unix read
-        [%rite =dev =wut =cmd dat=@ =cnt]               ::  Gift to unix write    
-        [%seen =dev dat=@ tus=@]                        ::  Gift of read data back to duct
-        [%rote =dev tus=@]                              ::  Gift of wrote status to duct
+    $%  [%book =nam =ver]                               ::  register a IPC vane
     ==
   +$  task                                              ::  in request ->$
     $~  [%vega ~]                                       ::
     $%  $>(%born vane-task)                             ::  new unix process
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
-        [%read =dev =wut =cmd =cnt]                     ::  %read from device dev for cnt bytes
-        [%rite =dev =wut =cmd dat=@ =cnt]               ::  %rite out to device dev
-        [%seen =dev dat=@ tus=@]                        ::  data read from device
-        [%rote =dev tus=@]                              ::  data wrote from device
-        [%devs name=@tas stat=@]                        ::  provide a device with status
+        [%book =nam =ver]
     ==
   ::
-  +$  wut  $?(%con %mem) 
-  +$  dev  @tas
-  +$  cmd  @
-  +$  cnt  @
-  +$  act  $?(%read %writ)
-  --  ::loch
+  +$  nam  @tas
+  +$  ver  @tas
+  --  ::lick
 
 ::
 ++  rand                                                ::  computation
@@ -3325,7 +3315,7 @@
       gift:iris
       gift:jael
       gift:khan
-      gift:loch
+      gift:lick
   ==
 +$  task-arvo                                           ::  in request ->$
   $%  task:ames
@@ -3337,7 +3327,7 @@
       task:iris
       task:jael
       task:khan
-      task:loch
+      task:lick
   ==
 +$  note-arvo                                           ::  out request $->
   $~  [%b %wake ~]
@@ -3350,7 +3340,7 @@
       [%i task:iris]
       [%j task:jael]
       [%k task:khan]
-      [%l task:loch]
+      [%l task:lick]
       [%$ %whiz ~]
       [@tas %meta vase]
   ==
@@ -3373,7 +3363,7 @@
       [%iris gift:iris]
       [%jael gift:jael]
       [%khan gift:khan]
-      [%loch gift:loch]
+      [%lick gift:lick]
   ==
 ::  $unix-task: input from unix
 ::
