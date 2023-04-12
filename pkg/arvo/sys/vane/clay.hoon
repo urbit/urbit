@@ -1384,7 +1384,7 @@
       `[[care.mood case.mood syd] path.mood cage]:[u.res syd=syd]
     ?~  ref
       [%give %writ riot]
-    [%slip %b %drip !>([%writ riot])]
+    [%pass /drip %b %drip !>([%writ riot])]
   ::
   ++  case-to-date
     |=  =case
@@ -3781,7 +3781,7 @@
             (~(run in moods) |=(m=mood [care.m path.m]))
           =/  gift  [%wris cas res]
           ?:  ?=(^ ref)
-            [%slip %b %drip !>(gift)]
+            [%pass /drip %b %drip !>(gift)]  :: XX s/b [%behn %wris ...] in $sign?
           [%give gift]
         ?>  ?=([* ~ ~] res)
         :_  ~
@@ -4970,9 +4970,22 @@
   ::
       %wick
     =^  mos  ruf
-      =/  den  ((de now rof hen ruf) our %base)
-      abet:wick:den                                     ::  [wick]
+      abet:wick:((de now rof hen ruf) our %base)        ::  [wick]
     [mos ..^$]
+  ::
+      %zeal
+    =^  m1  ruf
+      =|  mos=(list move)
+      |-  ^+  [mos ruf]
+      ?~  lit.req
+        [mos ruf]
+      =/  den  ((de now rof hen ruf) our desk.i.lit.req)
+      =^  mos-new  ruf  abet:(set-zest:den zest.i.lit.req)
+      $(mos (weld mos mos-new), lit.req t.lit.req)
+    =^  m2  ruf
+      abet:wick:((de now rof hen ruf) our %base)
+    =^  m3  ruf  abet:goad:(lu now rof hen ruf)
+    [:(weld m1 m2 m3) ..^$]
   ::
       %zest
     =^  m1  ruf
@@ -5740,7 +5753,25 @@
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^+  [*(list move) ..^$]
   ?^  dud
-    ~|(%clay-take-dud (mean tang.u.dud))
+    ?+    tea
+      ~|(%clay-take-dud (mean tang.u.dud))
+    ::
+        [%drip ~]
+      %.  [~ ..^$]
+      %-  slog
+      ^-  tang
+      :*  'clay: drip fail'
+          [%rose [": " "" ""] 'bail' mote.u.dud ~]
+          tang.u.dud
+      ==
+    ==
+  ::
+  ::  pseudo %slip on %drip
+  ::
+  ?:  ?=([%drip ~] tea)
+    ?>  ?=([?(%behn %clay) ?(%writ %wris) *] hin)
+    [[`move`[hen %give +.hin] ~] ..^$]
+  ::
   ?:  ?=([%lu %load *] tea)
     ?>  ?=(%unto +<.hin)
     ?>  ?=(%poke-ack -.p.hin)
@@ -5896,7 +5927,7 @@
       ~(tap in ducts)
     =/  cancel-moves=(list move)
       %+  turn  cancel-ducts
-      |=(=duct [duct %slip %b %drip !>([%writ ~])])
+      |=(=duct [duct %pass /drip %b %drip !>([%writ ~])])
     ::  delete local state of foreign desk
     ::
     =.  hoy.ruf  (~(del by hoy.ruf) who)

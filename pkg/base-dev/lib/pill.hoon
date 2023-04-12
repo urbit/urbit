@@ -32,25 +32,23 @@
       [/sys/hoon hoon/hoon]
       [/sys/arvo hoon/arvo]
   ==
+::  +dirs: filter for userspace directories to include
+::     
+++  dirs
+  |=  [bas=path exc=(list spur)]
+  ^-  (list spur)
+  ?~  exc  ~(tap in dir:.^(arch %cy bas))
+  %+  skim
+    ~(tap in dir:.^(arch %cy bas))
+  |=(=spur =(~ (find ~[spur] exc)))  
 ::  +file-ovum: userspace filesystem load
 ::
 ::    bas: full path to / directory
 ::
 ++  file-ovum
-  =/  directories=(list path)
-    :~  /app    ::  %gall applications
-        /gen    ::  :dojo generators
-        /lib    ::  libraries
-        /mar    ::  mark definitions
-        /sur    ::  structures
-        /sys    ::  system files
-        /ted    ::  :spider strands
-        /web    ::  %eyre web content
-        /desk   ::  desk manifest
-    ==
-  |=  [des=desk bas=path]
+  |=  [des=desk bas=path exc=(list spur)]
   ^-  unix-event
-  %.  directories
+  %.  (dirs bas exc)
   |=  ::  sal: all spurs to load from
       ::
       sal=(list spur)
@@ -99,7 +97,7 @@
 ::
 ::  +file-ovum2: electric boogaloo
 ::
-++  file-ovum2  |=(p=path `unix-event`[//arvo what/(user-files p)])
+++  file-ovum2  |=(z=[path (list spur)] `unix-event`[//arvo what/(user-files z)])
 ::
 ++  prep-ovum
   |=  dez=(list path)
@@ -114,8 +112,8 @@
 ::  +user-files: all userspace hoon files
 ::
 ++  user-files
-  |=  bas=path
-  %.  directories:file-ovum
+  |=  [bas=path exc=(list spur)]
+  %.  (dirs bas exc)
   |=  sal=(list spur)
   ^-  (list (pair path (cask)))
   ::
@@ -154,8 +152,9 @@
 ++  solid
   ::  sys: root path to boot system, `/~me/[desk]/now/sys`
   ::  dez: secondary desks and their root paths
+  ::  exc: list of desk folders to exclude
   ::
-  |=  [sys=path dez=(list [desk path]) dub=? now=@da prime=?]
+  |=  [sys=path dez=(list [desk path]) dub=? now=@da prime=? exc=(list spur)]
   ^-  pill
   =/  bas=path       (scag 3 sys)
   =/  compiler-path  (weld sys /hoon)
@@ -201,7 +200,8 @@
         :-  (boot-ovum:pill compiler-src arvo-src)
         %+  turn
           (snoc (turn dez tail) bas)
-        file-ovum2:pill
+        |=  =path  
+        (file-ovum2 [path exc])
       .*(0 arvo-formula)
     |=  [ovo=ovum ken=*]
     [~ (slum ken [now ovo])]
@@ -230,15 +230,18 @@
   :+  boot-ova  ~
   =.  dez  (snoc dez [%base bas])
   %+  weld
-    (turn dez file-ovum)
+    %+  turn  dez 
+    |=  [dek=desk bas=path] 
+    (file-ovum [dek bas exc])
   ?.  prime  ~
   [(prep-ovum (turn dez tail))]~
 ::
 ++  brass
   ::  sys: root path to boot system, `/~me/[desk]/now/sys`
   ::  dez: secondary desks and their root paths
+  ::  exc: list of desk folders to exclude
   ::
-  |=  [sys=path dez=(list [desk path]) prime=?]
+  |=  [sys=path dez=(list [desk path]) prime=? exc=(list spur)]
   ^-  pill
   =/  bas=path  (scag 3 sys)
   ::  compiler-source: hoon source file producing compiler, `sys/hoon`
@@ -274,12 +277,14 @@
   ::
   :+  %pill  %brass
   :+  boot-ova
-    :~  (boot-ovum:pill compiler-source arvo-source)
-        (file-ovum2:pill bas)
+    :~  (boot-ovum compiler-source arvo-source)
+        (file-ovum2 [bas exc])
     ==
   =.  dez  (snoc dez [%base bas])
   %+  weld
-    (turn dez file-ovum)
+    %+  turn  dez 
+    |=  [dek=desk bas=path] 
+    (file-ovum [dek bas exc])
   ?.  prime  ~
   [(prep-ovum (turn dez tail))]~
 ::
@@ -355,7 +360,7 @@
     ::TODO  will exclude non-:directories files, such as /changelog/txt
     =-  (murn - same)
     ^-  (list (unit ovum))
-    :~  `(file-ovum as (en-beam beak /))
+    :~  `(file-ovum as (en-beam beak /) ~)
       ::
         ?.  pri  ~
         `(prep-ovum (en-beam beak /) ~)
