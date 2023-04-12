@@ -1,9 +1,9 @@
-name: Push to master
+name: Push to next/kelvin/*
 
 on:
   push:
     branches:
-      - 'master'
+      - 'next/kelvin/*'
     paths:
       - '.github/workflows/feature.yml'
       - '.github/workflows/develop.yml'
@@ -26,9 +26,6 @@ jobs:
   call-vere:
     uses: ./.github/workflows/shared.yml
     with:
-      pace: 'live'
-      upload: >-
-        ${{
-        (github.ref_name == 'next/vere' && github.ref_type == 'branch')
-        }}
+      upload: true
+      next: ${{ github.ref | replace('refs/heads/next/kelvin/', '') }}
     secrets: inherit
