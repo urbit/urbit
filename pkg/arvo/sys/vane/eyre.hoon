@@ -2764,11 +2764,11 @@
 ++  load
   =>  |%
       +$  axle-any
-        $%  [%~2020.10.18 =server-state-0]
-            [%~2022.7.26 =server-state-0]
-            [%~2023.2.17 =server-state-1]
-            [%~2023.3.16 server-state-2]
-            [%~2023.4.11 server-state]
+        $%  [date=%~2020.10.18 server-state=server-state-0]
+            [date=%~2022.7.26 server-state=server-state-0]
+            [date=%~2023.2.17 server-state=server-state-1]
+            [date=%~2023.3.16 server-state=server-state-2]
+            [date=%~2023.4.11 =server-state]
         ==
       ::
       +$  server-state-0
@@ -2793,12 +2793,12 @@
             =http-config
             ports=[insecure=@ud secure=(unit @ud)]
             outgoing-duct=duct
-            verb=@
+            verb=@                                                ::  <-  new
         ==
       ::
       +$  server-state-2
         $:  bindings=(list [=binding =duct =action])
-            cache=(map url=@t [aeon=@ud val=(unit cache-entry)])
+            cache=(map url=@t [aeon=@ud val=(unit cache-entry)])  ::  <- new
             =cors-registry
             connections=(map duct outstanding-connection)
             =authentication-state
@@ -2824,81 +2824,51 @@
         ==
       --
   |=  old=axle-any
-  ^+  ..^$
+  ^+  http-server-gate
   ?-    -.old
+  ::
+  ::  adds /~/name
+  ::
       %~2020.10.18
-    =,  server-state-0.old
     %=  $
-        old
-      :*  %~2023.3.16
-          (insert-binding [[~ /~/name] outgoing-duct [%name ~]] bindings)
-          *(map url=@t [aeon=@ud val=(unit cache-entry)])
-          cors-registry
-          connections
-          authentication-state
-          channel-state
-          domains
-          http-config
-          ports
-          outgoing-duct
-          0
-    ==  ==
+        date.old  %~2022.7.26
+    ::
+        bindings.server-state.old
+      %+  insert-binding
+        [[~ /~/name] outgoing-duct.server-state.old [%name ~]]
+      bindings.server-state.old
+    ==
+  ::
+  ::  enables https redirects if certificate configured
+  ::  inits .verb
   ::
       %~2022.7.26
-    =,  server-state-0.old
-    %=  $
-        old
-      :*  %~2023.3.16
-          bindings
-          *(map url=@t [aeon=@ud val=(unit cache-entry)])
-          cors-registry
-          connections
-          authentication-state
-          channel-state
-          domains
-          http-config
-          ports
-          outgoing-duct
-          0
-    ==  ==
+    =.  redirect.http-config.server-state.old
+      ?&  ?=(^ secure.ports.server-state.old)
+          ?=(^ secure.http-config.server-state.old)
+      ==
+    $(old [%~2023.2.17 server-state.old(|8 [|8 verb=0]:server-state.old)])
+  ::
+  ::  inits .cache
   ::
       %~2023.2.17
-    =,  server-state-1.old
-    %=  $
-        old
-      :*  %~2023.3.16
-          bindings
-          *(map url=@t [aeon=@ud val=(unit cache-entry)])
-          cors-registry
-          connections
-          authentication-state
-          channel-state
-          domains
-          http-config
-          ports
-          outgoing-duct
-          verb
-    ==  ==
+    $(old [%~2023.3.16 [bindings ~ +]:server-state.old])
+  ::
+  ::  inits channel mode
   ::
       %~2023.3.16
-    %=  $
-        old
-      :-  %~2023.4.11
-      %=  +.old
+    %=    $
+        date.old  %~2023.4.11
+    ::
+        server-state.old
+      %=  server-state.old
           session.channel-state
-        (~(run by session.channel-state.old) (lead %json))
-      ::
-          redirect.http-config
-        ::  enable https redirects if certificate configured
-        ::
-        ?&  ?=(^ secure.ports.old)
-            ?=(^ secure.http-config.old)
-        ==
+        (~(run by session.channel-state.server-state.old) (lead %json))
       ==
     ==
   ::
       %~2023.4.11
-    ..^$(ax old)
+    http-server-gate(ax old)
   ==
 ::  +stay: produce current state
 ::
