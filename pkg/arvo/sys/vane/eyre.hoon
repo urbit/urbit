@@ -214,7 +214,7 @@
   ^-  ?(%json %jam)
   =+  ^-  [hed=@t jam=@t]
     ?:  ?=(%'GET' met)  ['x-channel-format' 'application/x-urb-jam']
-    ['content-type' 'application/octet-stream']
+    ['content-type' 'application/x-urb-jam']
   =+  typ=(bind (get-header:http hed hes) :(cork trip cass crip))
   ?:(=(`jam typ) %jam %json)
 ::  +parse-channel-request: parses a list of channel-requests
