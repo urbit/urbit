@@ -213,7 +213,7 @@
   |=  [met=method:http hes=header-list:http]
   ^-  ?(%json %jam)
   =+  ^-  [hed=@t jam=@t]
-    ?:  ?=(%'GET' met)  ['x-channel-format' 'jam']
+    ?:  ?=(%'GET' met)  ['x-channel-format' 'application/x-urb-jam']
     ['content-type' 'application/octet-stream']
   =+  typ=(bind (get-header:http hed hes) :(cork trip cass crip))
   ?:(=(`jam typ) %jam %json)
