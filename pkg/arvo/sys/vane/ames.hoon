@@ -4023,14 +4023,14 @@
           ::
           ++  fi-done
             |=  [sig=@ data=$@(~ (cask))]
-            ?>  (meri:keys fi-full-path sig data)
+            =/  =gift
+              ?.  (meri:keys fi-full-path sig data)
+                [%miss fi-full-path]
+              [%tune fi-full-path sig ?~(data ~ `data)]
             %-  (fi-trace fin.veb |.("done {(spud fi-full-path)}"))
-            =/  listeners=(list ^duct)  ~(tap in listeners.keen)
-            =/  dat=(unit (cask))      ?~(data ~ `data)
-            |-  ^+  fine
-            ?~  listeners   fine
-            =.  event-core  (emit i.listeners %give %tune fi-full-path sig dat)
-            $(listeners t.listeners)
+            %-  ~(rep in listeners.keen)
+            |=  [=^duct =_fine]
+            fine(event-core (emit:fine duct %give gift))
           ::
           ++  fi-first-rcv
             |=  =meow
