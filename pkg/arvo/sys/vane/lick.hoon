@@ -20,10 +20,12 @@
     +$  lick-state
       $:  %0
           unix-duct=duct
-          agents=(list agent)
+          agents=(map name.agent agent)
       ==
     ::
-    +$  agent  [name=@tas ver=@tas] 
+    +$  agent  [=name =ver] 
+    +$  name   @tas
+    +$  ver    @tas
     --
 ::
 =>
@@ -81,13 +83,15 @@
   =/  =task  ((harden task) wrapped-task)
   ?+   -.task  [~ lick-gate]
       %born     :: When born you need to register all devices
-    :-  (turn agents.state register)
+    =/  m=(list move)  (turn ~(val by agents.state) register)
+    ~&  >>>  m
+    :-  (turn ~(val by agents.state) register)
       lick-gate(unix-duct hen) 
     ::
       %book     :: A gall agent wants to book a communication line
     =/  =agent  [nam.task ver.task]
     :-  ~[(register agent)]
-      lick-gate(agents (snoc agents agent))
+      lick-gate(agents (~(put by agents) nam.task agent))
       
   ==
 ::  +load: migrate an old state to a new lick version
