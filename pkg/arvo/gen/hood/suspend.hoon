@@ -1,5 +1,3 @@
 :-  %say
-|=  $:  [now=@da eny=@uvJ bec=beak]
-        [[=desk ~] ~]
-    ==
-[%kiln-suspend desk]
+|=  [[now=@da eny=@uvJ bec=beak] desks=(list desk) ~]
+[%kiln-suspend desks]
