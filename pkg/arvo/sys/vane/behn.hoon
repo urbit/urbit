@@ -108,10 +108,9 @@
       [duct card]
     =/  =tang
       (weld u.error `tang`[leaf/"drip failed" ~])
-    ::  XX should be
-    ::  [duct %hurl fail/tang card]
+    ::  XX we don't know the mote due to the %wake pattern
     ::
-    [duct %pass /drip-slog %d %flog %crud %drip-fail tang]
+    [duct %hurl fail/tang card]
   ::
   +|  %tasks
   ::
