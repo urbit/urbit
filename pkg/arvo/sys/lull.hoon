@@ -3099,14 +3099,16 @@
 ++  lick  ^?
   |%
   +$  gift                                              ::  out result <-$
-    $%  [%book =nam =ver]                               ::  register a IPC vane
+    $%  [%sync =nam =ver]                               ::  register a IPC vane
     ==
   +$  task                                              ::  in request ->$
     $~  [%vega ~]                                       ::
     $%  $>(%born vane-task)                             ::  new unix process
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
-        [%book =nam =ver]
+        [%sync =nam =ver]                               ::  register a IPC 
+        [%soak =nam info=*]                             ::  read a noun
+        [%spew =nam info=*]                             ::  write a noun
     ==
   ::
   +$  nam  @tas
