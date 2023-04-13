@@ -70,7 +70,7 @@
 ++  register
   |=  =agent
   ^-  move
-  [unix-duct.state %give [%book name.agent ver.agent]]
+  [unix-duct.state %give [%sync name.agent ver.agent]]
 ::  +call: handle a +task:lick request
 ::
 ++  call 
@@ -88,7 +88,7 @@
     :-  (turn ~(val by agents.state) register)
       lick-gate(unix-duct hen) 
     ::
-      %book     :: A gall agent wants to book a communication line
+      %sync     :: A gall agent wants to book a communication line
     =/  =agent  [nam.task ver.task]
     :-  ~[(register agent)]
       lick-gate(agents (~(put by agents) nam.task agent))
