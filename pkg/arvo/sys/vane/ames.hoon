@@ -2379,9 +2379,13 @@
                 :_  tang.u.dud
                 leaf+"ames: {<her>} fragment crashed {<mote.u.dud>}"
             abet:(call:abed:(sink-core bone) %hear lane shut-packet ?=(~ dud))
-          ::  benign ack on corked bone
+          ::  benign ack on corked bone (also for naxplanation acks)
           ::
-          ?:  (~(has in corked.peer-state) bone)
+          ?:  ?|  (~(has in corked.peer-state) bone)
+                  ?&  =(1 (end 0 bone))
+                      =(1 (end 0 (rsh 0 bone)))
+                      (~(has in corked.peer-state) (mix 0b10 bone))
+              ==  ==
             peer-core
           ::  Just try again on error, printing trace
           ::
