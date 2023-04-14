@@ -1044,14 +1044,14 @@
               ==  ==
               $:  %9
               $%  $:  %larva
-                      events=(qeu queued-event)
+                      events=(qeu queued-event-11)
                       state=ames-state-9
                   ==
                   [%adult state=ames-state-9]
               ==  ==
               $:  %10
               $%  $:  %larva
-                      events=(qeu queued-event)
+                      events=(qeu queued-event-11)
                       state=ames-state-10
                   ==
                   [%adult state=ames-state-10]
@@ -1125,7 +1125,17 @@
       ::
           [%9 %larva *]
         ~>  %slog.0^leaf/"ames: larva: load"
-        =.  queued-events  events.old
+        =.  queued-events
+          ::  "+rep:in on a +qeu looks strange, but works fine."
+          ::
+          %-  ~(rep in events.old)
+          |=  [e=queued-event-11 q=(qeu queued-event)]
+          %-  ~(put to q)  ^-  queued-event
+          ?.  ?=(%call -.e)  e
+          =/  task=task-11  ((harden task-11) wrapped-task.e)
+          %=  e
+            wrapped-task  ?.(?=(%snub -.task) task [%snub %deny ships.task])
+          ==
         larval-gate
       ::
           [%10 %adult *]
@@ -1135,7 +1145,17 @@
       ::
           [%10 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
-        =.  queued-events  events.old
+        =.  queued-events
+          ::  "+rep:in on a +qeu looks strange, but works fine."
+          ::
+          %-  ~(rep in events.old)
+          |=  [e=queued-event-11 q=(qeu queued-event)]
+          %-  ~(put to q)  ^-  queued-event
+          ?.  ?=(%call -.e)  e
+          =/  task=task-11  ((harden task-11) wrapped-task.e)
+          %=  e
+            wrapped-task  ?.(?=(%snub -.task) task [%snub %deny ships.task])
+          ==
         larval-gate
       ::
           [%11 %adult *]
