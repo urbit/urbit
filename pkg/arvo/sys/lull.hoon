@@ -3108,7 +3108,7 @@
         $>(%vega vane-task)                             ::  report upgrade
         [%sync =nam =ver]                               ::  register a IPC 
         [%soak =nam info=*]                             ::  read a noun
-        [%spew =nam info=*]                             ::  write a noun
+        [%spit =nam info=*]                             ::  write a noun
     ==
   ::
   +$  nam  @tas
