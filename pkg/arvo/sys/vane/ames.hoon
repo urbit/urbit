@@ -2332,6 +2332,13 @@
         ::
         ++  pump-core  |=(=bone (mu bone *message-pump-state))
         ++  sink-core  |=(=bone (mi bone *message-sink-state))
+        ++  is-corked
+          |=  =bone
+          ?|  (~(has in corked.peer-state) bone)
+              ?&  =(1 (end 0 bone))
+                  =(1 (end 0 (rsh 0 bone)))
+                  (~(has in corked.peer-state) (mix 0b10 bone))
+          ==  ==
         ::
         +|  %tasks
         ::
@@ -2381,12 +2388,7 @@
             abet:(call:abed:(sink-core bone) %hear lane shut-packet ?=(~ dud))
           ::  benign ack on corked bone (also for naxplanation acks)
           ::
-          ?:  ?|  (~(has in corked.peer-state) bone)
-                  ?&  =(1 (end 0 bone))
-                      =(1 (end 0 (rsh 0 bone)))
-                      (~(has in corked.peer-state) (mix 0b10 bone))
-              ==  ==
-            peer-core
+          ?:  (is-corked bone)  peer-core
           ::  Just try again on error, printing trace
           ::
           ::    Note this implies that vanes should never crash on %done,
@@ -2487,11 +2489,7 @@
                   =(1 current:(~(got by snd.peer-state) bone))
               ==
             (send-blob | her (attestation-packet [her her-life]:channel))
-          ?:  ?|  (~(has in corked.peer-state) bone)
-                  ?&  =(1 (end 0 bone))
-                      =(1 (end 0 (rsh 0 bone)))
-                      (~(has in corked.peer-state) (mix 0b10 bone))
-              ==  ==
+          ?:  (is-corked bone)
             ::  no-op if the bone (or, if a naxplanation, the reference bone)
             ::  was corked, because the flow doesn't exist anymore
             ::  TODO: clean up corked bones?
