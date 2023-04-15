@@ -457,7 +457,7 @@
     ^-  [(list card) _state]
     %+  roll  cards.r
     |=  [=card cards=(list card) s=_state]
-    :_  =?  scries.s  ?=([%pass ^ %arvo %a ?(%pine %keen) @ *] card)
+    :_  =?  scries.s  ?=([%pass ^ %arvo %a %keen @ *] card)
           (~(put by scries.s) tid &6.card +>+>+>.card)
         s
     :_  cards

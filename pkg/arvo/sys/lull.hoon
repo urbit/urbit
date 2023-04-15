@@ -1076,7 +1076,6 @@
   ::    Remote Scry Tasks
   ::
   ::    %keen: data request from arvo
-  ::    %pine: scries for the latest case of a path
   ::    %yawn: cancel request from arvo
   ::    %wham: cancels all scry request from any vane
   ::
@@ -1102,7 +1101,6 @@
         $>(%plea vane-task)
     ::
         [%keen =ship =path]
-        [%pine =ship =path]
         [%yawn =ship =path]
         [%wham =ship =path]
     ::
@@ -1273,7 +1271,6 @@
         packets=(set =blob)
         heeds=(set duct)
         keens=(jug path duct)
-        pines=(jug path duct)
     ==
   ::  $peer-state: state for a peer with known life and keys
   ::

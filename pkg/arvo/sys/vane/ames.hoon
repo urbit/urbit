@@ -838,7 +838,7 @@
 ::    message on a "forward flow" from a peer, originally passed from
 ::    one of the peer's vanes to the peer's Ames.
 ::
-::    Ames passes a %plea to itself to handle internal %cork and %pine moves
+::    Ames passes a %plea to itself to handle internal %cork moves
 ::    Ames passes a %private-keys to Jael to request our private keys.
 ::    Ames passes a %public-keys to Jael to request a peer's public
 ::    keys.
@@ -1331,10 +1331,6 @@
       ++  on-take-done
         |=  [=wire error=(unit error)]
         ^+  event-core
-        ?:  ?=([%fine ?(%pine %unsub) *] wire)
-          ?~  error  event-core
-          %-  (slog leaf/"fine: {<tag.u.error>} {(spud +>.wire)}" ~)
-          (emit duct %give %miss +>.wire)
         ?~  parsed=(parse-bone-wire wire)
           ::  no-op
           ::
@@ -1705,13 +1701,6 @@
       ++  on-take-boon
         |=  [=wire payload=*]
         ^+  event-core
-        ?:  ?=([%fine %pine @ *] wire)
-          ?~  her=(slaw %p i.t.t.wire)
-            ::  XX use ev-trace?
-            =/  =tape  "; fine dropping malformed wire {<wire>}"
-            (emit duct %pass /parse-wire %d %flog %text tape)
-          abet:(on-pine-boon:(abed-got:pe u.her) t.t.t.wire payload)
-        ::
         ?~  parsed=(parse-bone-wire wire)
           ~>  %slog.0^leaf/"ames: dropping malformed wire: {(spud wire)}"
           event-core
@@ -1748,22 +1737,6 @@
         ::
         ?:  =([%a /close ~] plea)  (emit duct %give %done ~)
         ::
-        ?:  ?=([%a [%cone ~] *] plea)
-          ::  sent to ourselves from ha-plea, after sinking a remote /pine plea
-          ::
-          =+  ;;(blk=balk payload.plea)
-          ?>  &(=(our her.blk) =(%c van.blk) ?=(^ spr.blk))
-          =+  nom=(en-roof:balk blk(car %w, cas da/now, spr `path`~[i.spr.blk]))
-          ::
-          ?+    cage=(rof ~ nom)  !!  ::  XX: crashing correct behaviour?
-              [~ ~]  (emit duct %give %done `miss/"{<(en-path:balk blk)>}")
-            ::
-              [~ ~ *]
-            =+  !<(=cass:clay q.u.u.cage)
-            =~  (emit duct %give %boon ud:cass)
-                (emit duct %give %done ~)
-            ==
-          ==
         ::  .plea is from local vane to foreign ship
         ::
         =/  ship-state  (~(get by peers.ames-state) ship)
@@ -2167,21 +2140,18 @@
               (send-blob:core | ship blob)
             ::  apply remote scry requests
             ::
-            =.  event-core  (meet-alien-fine keens.todos %keen)
-            =.  event-core  (meet-alien-fine pines.todos %pine)
+            =.  event-core  (meet-alien-fine keens.todos)
             ::
             event-core(duct original-duct)
             ::
             ++  meet-alien-fine
-              |=  [peens=(jug path ^duct) key=?(%keen %pine)]
+              |=  peens=(jug path ^duct)
               ^+  event-core
               =+  peer-core=(abed:pe ship)
               =<   abet  ^+  peer-core
               %-  ~(rep by peens)
               |=  [[=path ducts=(set ^duct)] cor=_peer-core]
-              %-  ~(rep in ducts)
-              |=  [=^duct c=_cor]
-              %.([path duct] ?-(key %pine on-pine:c, %keen on-keen:c))
+              (~(rep in ducts) |=([=^duct c=_cor] (on-keen:c path duct)))
             --
           --
         ::  on-publ-rift: XX
@@ -2276,17 +2246,6 @@
         ==
       ::
       +|  %fine-entry-points
-      ::
-      ++  on-pine
-        |=  [=ship =path]
-        ^+  event-core
-        ?<  =(our ship)  :: XX don't crash?
-        =/  ship-state  (~(get by peers.ames-state) ship)
-        ?:  ?=([~ %known *] ship-state)
-          abet:(on-pine:(abed-peer:pe ship +.u.ship-state) path duct)
-        %+  enqueue-alien-todo  ship
-        |=  todos=alien-agenda
-        todos(pines (~(put ju pines.todos) path duct))
       ::
       ++  on-keen
         |=  [=ship =path]
@@ -2662,23 +2621,6 @@
             fi-abet:(fi-sub:(abed:fi path) duct)
           =.  keens  (~(put by keens) path *keen-state)
           fi-abet:(fi-start:(abed:fi path) duct)
-        ::
-        ++  on-pine
-          |=  [=path =^duct]
-          ^+  peer-core
-          ?~  blk=(de-part:balk her rift.peer-state life.peer-state path)
-            !!  :: XX: %miss ?
-          =/  =wire  [%fine %pine (scot %p her) path]
-          (pe-emit duct %pass wire %a %plea her plea=[%$ /pine `*`u.blk])
-        ::
-        ++  on-pine-boon
-          |=  [=path payload=*]
-          ^+  peer-core
-          ?~  blk=(de-part:balk her rift.peer-state life.peer-state path)
-            !!  :: XX: %miss ?
-          =+  ;;(case=@ud payload)
-          =.  cas.u.blk  ud+case
-          (on-keen (slag 3 (en-path:balk u.blk)) duct)
         ::
         +|  %implementation
         ::  +dedup-message: replace with any existing copy of this message
@@ -3707,8 +3649,6 @@
                   %g  (pe-emit duct %pass wire %g %plea her plea)
                   %j  (pe-emit duct %pass wire %j %plea her plea)
                 ==
-              ?:  ?=(%pine -.path.plea)
-                (pe-emit duct %pass wire %a %plea our plea(vane %a, path /cone))
               ::  a %cork plea is handled using %$ as the recipient vane to
               ::  account for publishers that still handle ames-to-ames %pleas
               ::
@@ -4308,7 +4248,6 @@
       %cork  (on-cork:event-core ship.task)
       %kroc  (on-kroc:event-core dry.task)
     ::
-      %pine  (on-pine:event-core +.task)
       %keen  (on-keen:event-core +.task)
       %yawn  (on-cancel-scry:event-core | +.task)
       %wham  (on-cancel-scry:event-core & +.task)
@@ -4487,7 +4426,7 @@
     |=  old=ship-state-12
     ^-  ship-state
     ?:  ?=(%alien -.old)
-      old(heeds [heeds.old ~ ~])
+      old(heeds [heeds.old ~])
     old(corked [corked.old ~])
   ::
   --
