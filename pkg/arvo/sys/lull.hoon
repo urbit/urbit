@@ -1075,7 +1075,7 @@
   ::
   ::    Remote Scry Tasks
   ::
-  ::    %keen: data request from arvo
+  ::    %keen: peek: [ship /vane/care/case/spur]
   ::    %yawn: cancel request from arvo
   ::    %wham: cancels all scry request from any vane
   ::
@@ -1126,8 +1126,9 @@
   ::    %send: packet to unix
   ::
   ::    Remote Scry Gifts
-  ::    %tune: found data for arvo
-  ::    %miss: no case for %pine
+  ::
+  ::    %tune: peek result
+  ::    %miss: peek dropped
   ::
   ::    System and Lifecycle Gifts
   ::
@@ -1135,7 +1136,6 @@
   ::
   +$  gift
     $%  [%boon payload=*]
-        [%miss ~]
         [%clog =ship]
         [%done error=(unit error)]
         [%lost ~]
