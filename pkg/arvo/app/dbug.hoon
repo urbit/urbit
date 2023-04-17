@@ -711,7 +711,7 @@
         ::
           'heeds'^(set-array heeds from-duct)
         ::
-          'scries'^(scries scry)
+          'scries'^(scries ~(tap by keens))
       ==
     ::
     ++  snd-with-bone
@@ -819,15 +819,14 @@
       a+(turn duct path)
     ::
     ++  scries
-      |=  scry-state
+      |=  keens=(list [^path keen-state])
       ^-  json
       :-  %a
-      %+  turn  ~(tap by order)
-      |=  [=^path id=@ud]
+      %+  turn  keens
+      |=  [=^path keen=keen-state]
       %-  pairs
-      :~  'keen-id'^(numb id)
-          'scry-path'^(^path path)
-          'keen-state'^(parse-keens (got:orm keens id))
+      :~  'scry-path'^(^path path)
+          'keen-state'^(parse-keens keen)
       ==
     ::
     ++  parse-keens

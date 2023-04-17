@@ -1312,12 +1312,7 @@
         heeds=(set duct)
         closing=(set bone)
         corked=(set bone)
-        scry=scry-state
-    ==
-  +$  scry-state
-    $:  order=(map path @ud)
-        seq=@ud
-        keens=((mop @ud keen-state) lte)
+        keens=(map path keen-state)
     ==
   +$  keen-state
     $:  wan=(pha want)   ::  request packets, sent

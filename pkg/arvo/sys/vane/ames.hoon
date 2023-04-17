@@ -496,9 +496,6 @@
   =/  vec  ~[sndr.shot rcvr.shot sndr-life rcvr-life]
   ;;  shut-packet  %-  cue  %-  need
   (~(de sivc:aes:crypto (shaz symmetric-key) vec) siv len cyf)
-::  ordered map for tracking remote scry requests
-::
-++  orm  ((on @ud keen-state) lte)
 ::
 ++  is-peer-dead
   |=  [now=@da =peer-state]
@@ -2313,7 +2310,7 @@
           %^  trace-fine  fin.veb  ship
           [ships.bug.ames-state |.("peer still alien, skip cancel-scry")]
         =+  peer=(abed:pe ship)
-        ?.  (~(has by order.scry.peer-state.peer) path)
+        ?.  (~(has by keens.peer-state.peer) path)
           event-core
         abet:fi-abet:(fi-unsub:(abed:fi:peer path) duct all)
       ::
@@ -2463,9 +2460,9 @@
       ::
       ++  pe
         |_  [=peer-state =channel]
-        +*  veb   veb.bug.channel
-            her   her.channel
-            scry  scry.peer-state
+        +*  veb    veb.bug.channel
+            her    her.channel
+            keens  keens.peer-state
         ::
         +|  %helpers
         ::
@@ -2650,7 +2647,7 @@
           =/  =path  (slag 3 path.peep)
           =/  fine   (abed:fi path)
           ::
-          ?.  (~(has by order.scry) path)
+          ?.  (~(has by keens) path)
             ~&(dead-response/peep peer-core)
           =<  fi-abet
           ?^  error  (fi-error:fine u.error)
@@ -2659,13 +2656,11 @@
         ++  on-keen
           |=  [=path =^duct]
           ^+  peer-core
-          ?:  (~(has by order.scry) path)
+          ?:  (~(has by keens) path)
             ::  TODO use fi-trace
             ~>  %slog.0^leaf/"fine: dupe {(spud path)}"
             fi-abet:(fi-sub:(abed:fi path) duct)
-          =^  keen-id=@ud  seq.scry  [seq.scry +(seq.scry)]
-          =.  order.scry   (~(put by order.scry) path keen-id)
-          =.  keens.scry   (put:orm keens.scry keen-id *keen-state)
+          =.  keens  (~(put by keens) path *keen-state)
           fi-abet:(fi-start:(abed:fi path) duct)
         ::
         ++  on-pine
@@ -3838,7 +3833,7 @@
                 --
               --
           ::
-          |_  [=path keen-id=@ud keen=keen-state]
+          |_  [=path keen=keen-state]
           ::
           +|  %helpers
           ::
@@ -3846,20 +3841,7 @@
           ++  abed
             |=  p=^path
             ~|  no-keen-for-path/p
-            =.  keen-id  (~(got by order.scry) p)
-            fine(path p, keen (got:orm keens.scry keen-id))
-          ::
-          ++  abed-id  :: XX not used
-            |=  id=@ud
-            %-  abed
-            ~|  no-path-for-id/id
-            %-  need
-            ^-  (unit ^path)
-            %-  ~(rep by order.scry)
-            |=  [[p=^path i=@ud] out=(unit ^path)]
-            ^-  (unit ^path)
-            ?^  out  out
-            ?:(=(id i) `p ~)
+            fine(path p, keen (~(got by keens) p))
           ::
           ++  fi-abet
             ^+  peer-core
@@ -3871,15 +3853,14 @@
                     &(!=(0 num-fragments) =(num-fragments num-received))
                 ==
               abet-gone
-            =.  fine        fi-set-wake
-            =.  keens.scry  (put:orm keens.scry keen-id keen)
+            =.  fine   fi-set-wake
+            =.  keens  (~(put by keens) path keen)
             peer-core
           ::
           ++  abet-gone
             =?  fine  ?=(^ next-wake.keen)
               (fi-rest u.next-wake.keen)
-            =.  keens.scry  +:(del:orm keens.scry keen-id)
-            =.  order.scry  (~(del by order.scry) path)
+            =.  keens  (~(del by keens) path)
             peer-core
           ::
           ++  fi-full-path
@@ -4510,7 +4491,7 @@
     ^-  ship-state
     ?:  ?=(%alien -.old)
       old(heeds [heeds.old ~ ~])
-    old(corked [corked.old *scry-state])
+    old(corked [corked.old ~])
   ::
   --
 ::  +scry: dereference namespace
@@ -4693,15 +4674,14 @@
   ::
       [%fine %ducts pax=^]
     ?~  bulk=(de-path-soft:balk pax.tyl)  ~
-
     ?~  peer=(~(get by peers.ames-state) her.u.bulk)
       [~ ~]
     ?.  ?=([~ %known *] peer)
       [~ ~]  :: TODO handle aliens
     ?~  spr.u.bulk  [~ ~]
     =/  =path  =,(u.bulk [van car (scot cas) spr])
-    ?~  keen-id=(~(get by order.scry.u.peer) path)
+    ?~  keen=(~(get by keens.u.peer) path)
       [~ ~]
-    ``noun+!>(listeners:(got:orm keens.scry.u.peer u.keen-id))
+    ``noun+!>(listeners:u.keen)
   ==
 --
