@@ -2992,7 +2992,6 @@
             ::  we have unsent fragments of the current message; feed them
             ::
             ?.  =(~ unsent-fragments.state)
-
               ::  we have unsent fragments of the current message; feed them
               ::
               =^  unsent  pump  abut:(feed:packet-pump unsent-fragments.state)
@@ -4428,7 +4427,6 @@
     ?:  ?=(%alien -.old)
       old(heeds [heeds.old ~])
     old(corked [corked.old ~])
-  ::
   --
 ::  +scry: dereference namespace
 ::

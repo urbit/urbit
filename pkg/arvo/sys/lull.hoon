@@ -752,7 +752,6 @@
       $(l.b $(b l.b, r.a ~), a r.a)
     $(r.b $(b r.b, l.a ~), a l.a)
   --
-
 ::
 +$  deco  ?(~ %bl %br %un)                              ::  text decoration
 +$  json                                                ::  normal json value
