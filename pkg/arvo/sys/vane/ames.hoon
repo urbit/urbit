@@ -3853,10 +3853,11 @@
                     &(!=(0 num-fragments) =(num-fragments num-received))
                 ==
               =.  fine   fi-set-wake
-              peer-core(keens (~(put by keens) path keen))
+              peer-core(keens.peer-state (~(put by keens) path keen))  :: XX tack.keens
+            ::
             =?  fine  ?=(^ next-wake.keen)
               (fi-rest u.next-wake.keen)
-            peer-core(keens (~(del by keens) path))
+            peer-core(keens.peer-state (~(del by keens) path))  :: XX tack.keens
           ::
           ++  fi-full-path
             :^    (scot %p her)
