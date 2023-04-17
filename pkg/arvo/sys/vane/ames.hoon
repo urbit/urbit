@@ -4535,6 +4535,7 @@
   ::  /ax/snd-bones/[ship]/[bone]    vase
   ::  /ax/snubbed                    (?(%allow %deny) (list ship))
   ::  /ax/fine/hunk/[path/...]       (list @ux) scry response fragments
+  ::  /ax/fine/ducts/[path/]         (list duct)
   ::
   ?.  ?=(%x ren)  ~
   =>  .(tyl `(pole knot)`tyl)
@@ -4672,5 +4673,18 @@
         [~ ~ *]  ``noun+!>((etch:hu-co pax.tyl hunk [p q.q]:u.u.res))
       ==
     --
+  ::
+      [%fine %ducts pax=^]
+    ?~  bulk=(de-path-soft:balk pax.tyl)  ~
+
+    ?~  peer=(~(get by peers.ames-state) her.u.bulk)
+      [~ ~]
+    ?.  ?=([~ %known *] peer)
+      [~ ~]  :: TODO handle aliens
+    ?~  spr.u.bulk  [~ ~]
+    =/  =path  =,(u.bulk [van car (scot cas) spr])
+    ?~  keen-id=(~(get by order.scry.u.peer) path)
+      [~ ~]
+    ``noun+!>(listeners:(got:orm keens.scry.u.peer u.keen-id))
   ==
 --
