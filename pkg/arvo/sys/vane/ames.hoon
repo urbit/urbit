@@ -4028,7 +4028,7 @@
             %-  (fi-trace fin.veb |.("done {(spud fi-full-path)}"))
             %-  ~(rep in listeners.keen)
             |=  [=^duct =_fine]
-            fine(event-core (emit duct %give gift))
+            fine(event-core (emit:fine duct %give gift))
           ::
           ++  fi-first-rcv
             |=  =meow

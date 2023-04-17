@@ -114,12 +114,12 @@
           (etch-shot:ames shot)
       ==
       :~  [~[//fine] [%pass /qos %d %flog %text "; ~bud is your neighbor"]]
-          :-  ~[/keen-duct-1]
+          :-  ~[/keen-duct-2]
           :*  %give  %tune  /~bud/1/1/c/x/1/kids/sys/kelvin
               sig
               `hoon+kelvin
           ==
-          :-  ~[/keen-duct-2]
+          :-  ~[/keen-duct-1]
           :*  %give  %tune  /~bud/1/1/c/x/1/kids/sys/kelvin
               sig
               `hoon+kelvin
