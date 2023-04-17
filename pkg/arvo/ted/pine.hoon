@@ -5,9 +5,9 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([~ arg=[ship path]] arg)
+=+  !<([~ arg=[=ship path]] arg)
 ;<  =bowl:spider  bind:m  get-bowl:strandio
-?:  =(our ship.arg)
+?:  =(our.bowl ship.arg)
   ~&  >>>  "fine: can't pine yourself"
   (pure:m !>(~))
 ;<  dat=(unit (cask))  bind:m  (pine:strandio arg)
