@@ -7,6 +7,15 @@
 ::  basic helpers
 ::
 |%
+++  crypto-core
+  |%  ++  nec  (pit:nu:crub:crypto 512 (shaz 'nec'))
+      ++  bud  (pit:nu:crub:crypto 512 (shaz 'bud'))
+      ++  sign
+        |=  [=ship data=@ux]
+        %.  data
+        ?:(=(ship ~nec) sigh:as:nec sigh:as:bud)
+  --
+::
 ++  make-gall
   |=  =ship
   =/  gall-pupa  (gall-raw ship)
@@ -15,14 +24,15 @@
   adult
 ::
 ++  ames-nec-bud
+  |=  [l=[nec=@ud bud=@ud] r=[nec=@ud bud=@ud]]
   ::  create ~nec
   ::
   =/  nec  (ames-raw ~nec)
   =.  now.nec        ~1111.1.1
   =.  eny.nec        0xdead.beef
-  =.  life.ames-state.nec  2
+  =.  life.ames-state.nec  nec.l
   =.  rof.nec  |=(* ``[%noun !>(*(list turf))])
-  =.  crypto-core.ames-state.nec  (pit:nu:crub:crypto 512 (shaz 'nec'))
+  =.  crypto-core.ames-state.nec  nec:crypto-core
   =/  nec-pub  pub:ex:crypto-core.ames-state.nec
   =/  nec-sec  sec:ex:crypto-core.ames-state.nec
   ::  create ~bud
@@ -30,9 +40,9 @@
   =/  bud  (ames-raw ~bud)
   =.  now.bud        ~1111.1.1
   =.  eny.bud        0xbeef.dead
-  =.  life.ames-state.bud  3
+  =.  life.ames-state.bud  bud.l
   =.  rof.bud  |=(* ``[%noun !>(*(list turf))])
-  =.  crypto-core.ames-state.bud  (pit:nu:crub:crypto 512 (shaz 'bud'))
+  =.  crypto-core.ames-state.bud  bud:crypto-core
   =/  bud-pub  pub:ex:crypto-core.ames-state.bud
   =/  bud-sec  sec:ex:crypto-core.ames-state.bud
   ::
@@ -46,8 +56,8 @@
     =|  =peer-state:ames
     =.  -.peer-state
       :*  symmetric-key=bud-sym
-          life=3
-          rift=0
+          life=bud.l
+          rift=bud.r
           public-key=bud-pub
           sponsor=~bud
       ==
@@ -60,8 +70,8 @@
     =|  =peer-state:ames
     =.  -.peer-state
       :*  symmetric-key=nec-sym
-          life=2
-          rift=0
+          life=nec.l
+          rift=nec.r
           public-key=nec-pub
           sponsor=~nec
       ==
@@ -76,7 +86,7 @@
 --
 ::  forward-declare to avoid repeated metamorphoses
 =/  gall-adult  (make-gall ~zod)
-=/  ames-adult  nec:ames-nec-bud
+=/  ames-adult  nec:(ames-nec-bud [1 1] [0 0])
 ::  main core
 ::
 |%
@@ -84,7 +94,8 @@
 +$  ames-gate  _ames-adult
 ::
 ++  nec-bud
-  =/  a  ames-nec-bud
+  |=  [life=[nec=@ud bud=@ud] rift=[nec=@ud bud=@ud]]
+  =/  a  (ames-nec-bud [nec bud]:life [nec bud]:rift)
   =/  gall-nec  (make-gall ~nec)
   =.  gall-nec  (load-agent ~nec gall-nec %sub test-sub)
   =/  gall-bud  (make-gall ~bud)
@@ -137,6 +148,8 @@
   ^-  [tang ^ames-gate]
   =/  ames-core  (ames-gate now eny roof)
   =^  moves  ames-gate  (call:ames-core duct dud=~ task)
+  ~&  %out
+  ~&  moves+moves
   [(expect-eq !>(expected-moves) !>(moves)) ames-gate]
 ::
 ++  ames-call
@@ -156,6 +169,25 @@
   =^  moves  ames-gate  (take:ames-core wire duct dud=~ sign)
   [(expect-eq !>(expected-moves) !>(moves)) ames-gate]
 ::
+++  ames-scry-hunk
+  |=  $:  =ames-gate
+          [now=@da eny=@ =roof]
+          our=ship
+          [lop=@ud len=@ud pax=path]
+      ==
+  ^-  @ux
+  =/  =beam
+    :-  [our %$ da+now]
+    (welp /fine/hunk/[(scot %ud lop)]/[(scot %ud len)] pax)
+  =+  pat=(spat pax)
+  =+  wid=(met 3 pat)
+  ?>  (lte wid 384)
+  =-  ?>(?=([@ *] -) (can 3 4^lop 2^wid wid^`@`pat (met 3 i.-)^i.- ~))
+  !<  (list @ux)
+  =<  q
+  %-  need  %-  need
+  (scry:(ames-gate now eny roof) ~ %x beam)
+:: ::
 ++  ames-scry-peer
   |=  $:  =ames-gate
           [now=@da eny=@ =roof]

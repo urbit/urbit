@@ -364,6 +364,7 @@
         2^siz.meow
         (met 3 dat.meow)^dat.meow
     ==
+  ::
   +|  %keys
   ::
   ++  sign  sigh:as:acru
@@ -2659,6 +2660,7 @@
           |=  [=path =^duct]
           ^+  peer-core
           ?:  (~(has by order.scry) path)
+            ::  TODO use fi-trace
             ~>  %slog.0^leaf/"fine: dupe {(spud path)}"
             fi-abet:(fi-sub:(abed:fi path) duct)
           =^  keen-id=@ud  seq.scry  [seq.scry +(seq.scry)]
@@ -3955,11 +3957,11 @@
             ?.  =(`her (slaw %p i.full-path))
               ~|  fine-path-bunk-ship+[full-path her]
               !!
-            ?.  =(`life.peer-state (slaw %ud i.t.t.full-path))
-              ~|  fine-path-bunk-life+[full-path life.peer-state]
-              !!
             ?.  =(`rift.peer-state (slaw %ud i.t.full-path))
               ~|  fine-path-bunk-rift+[full-path rift.peer-state]
+              !!
+            ?.  =(`life.peer-state (slaw %ud i.t.t.full-path))
+              ~|  fine-path-bunk-life+[full-path life.peer-state]
               !!
             ?.  (veri-fra:keys [full-path num [dat sig]:meow])
               ~|  fine-purr-fail-signature/num^`@ux`sig.meow
@@ -4024,6 +4026,8 @@
           ++  fi-done
             |=  [sig=@ data=$@(~ (cask))]
             =/  =gift
+              ::  TODO define data in %tune as a (unit (unit cask))
+              ::  and return ~ signaling a block, instead of %miss?
               ?.  (meri:keys fi-full-path sig data)
                 [%miss fi-full-path]
               [%tune fi-full-path sig ?~(data ~ `data)]
