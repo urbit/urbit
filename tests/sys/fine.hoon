@@ -117,12 +117,12 @@
           :-  ~[/keen-duct-1]
           :*  %give  %tune  /~bud/1/1/c/x/1/kids/sys/kelvin
               sig
-              `hoon+!>(kelvin)
+              `hoon+kelvin
           ==
           :-  ~[/keen-duct-2]
           :*  %give  %tune  /~bud/1/1/c/x/1/kids/sys/kelvin
               sig
-              `hoon+!>(kelvin)
+              `hoon+kelvin
           ==
           [~[//unix] %pass fine-behn-wire %b %rest ~1111.1.1..00.00.01]
       ==
