@@ -6,7 +6,6 @@
 |%
 +$  state-0  [%0 passcode=(unit @t)]
 +$  card     card:agent:gall
-++  orm      ((on @ud keen-state:ames) lte)
 --
 ::
 =|  state-0
@@ -589,8 +588,7 @@
     ::    heeds: [['/paths', ...] ...]
     ::    scries:
     ::    ->  { =path
-    ::          keen-id=@ud
-    ::          kee-state: {
+    ::          keen-state: {
     ::            wan: [                  //request packets, sent
     ::              { frag: 1234,
     ::                size: 1234,         // size, in bytes
