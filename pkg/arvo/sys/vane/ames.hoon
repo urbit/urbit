@@ -1536,16 +1536,11 @@
         =/  =shot     (sift-shot b)
         ?:  sam.shot  (on-hear-packet l shot d)
         ?:  req.shot  ~|([%fine %request-events-forbidden] !!)
-        ?^  d
-          ::TODO  handle
-          ~&  [%fine %done-goofed mote.u.d]
-          %-  (slog tang.u.d)
-          event-core
         ::  TODO no longer true
         ::NOTE  we only send requests to ships we know,
         ::      so we should only get responses from ships we know.
         ::      below we assume sndr.shot is a known peer.
-        abet:(on-hear-fine:(abed-got:pe sndr.shot) l shot)
+        abet:(on-hear-fine:(abed-got:pe sndr.shot) l shot d)
       ::  +on-hear-packet: handle mildly processed packet receipt
       ::
       ++  on-hear-packet
@@ -2646,15 +2641,20 @@
           abet:(call:(abed:mu bone) %wake ~)
         ::
         ++  on-hear-fine
-          |=  [=lane =shot]
+          |=  [=lane =shot error=(unit goof)]
           ^+  peer-core
           ?>  =(sndr-tick.shot (mod life.peer-state 16))
-          ::
+          ::  TODO what if the error happened in sift-purr?
+          ::       does vere discard malformed packets?
           =/  [=peep =meow]  (sift-purr `@ux`content.shot)
           =/  =path  (slag 3 path.peep)
+          =/  fine   (abed:fi path)
+          ::
           ?.  (~(has by order.scry) path)
             ~&(dead-response/peep peer-core)
-          fi-abet:(fi-rcv:(abed:fi path) peep meow lane)
+          =<  fi-abet
+          ?^  error  (fi-error:fine u.error)
+          (fi-rcv:fine peep meow lane)
         ::
         ++  on-keen
           |=  [=path =^duct]
@@ -3988,12 +3988,29 @@
               %.  fine
               (fi-trace fin.veb |.("{<duct>} not a listener for {<path>}"))
             =?  event-core  all
-              ::  notify all listeners by inspecting their
+              ::  notify listeners by inspecting their
               ::  ducts and sending appropiate clean up moves
               ::
               (~(rep in listeners.keen) fi-clean-up)
             %-  (fi-trace fin.veb |.("deleting {<path>}"))
             fine(listeners.keen ?:(all ~ (~(del in listeners.keen) duct)))
+          ::
+          ++  fi-error
+            |=  =goof
+            ::  we want to propagate the crash to the listeners and then
+            ::  cancel this request, so it doesn't continue forever resending
+            ::  request packets
+            ::
+            %-  (fi-trace fin.veb |.("error {<mote.goof>} {<fi-full-path>}"))
+            =.  event-core
+              %-  ~(rep in listeners.keen)
+              |=  [=^duct core=_event-core]
+              =.  core  (fi-clean-up duct core)
+              :: TODO return a %tune with data=~ (unit (unit cask)), instead?
+              ::      have a gift for error handling? check with ~master-morzod
+              ::
+              (emit:core duct %give %miss fi-full-path)
+            fine(listeners.keen (~(del in listeners.keen) duct))
           ::
           +|  %implementation
           ::
@@ -4034,7 +4051,7 @@
             %-  (fi-trace fin.veb |.("done {(spud fi-full-path)}"))
             %-  ~(rep in listeners.keen)
             |=  [=^duct =_fine]
-            fine(event-core (emit:fine duct %give gift))
+            fine(event-core (emit duct %give gift))
           ::
           ++  fi-first-rcv
             |=  =meow
