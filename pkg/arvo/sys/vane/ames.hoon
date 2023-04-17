@@ -3845,23 +3845,18 @@
           ::
           ++  fi-abet
             ^+  peer-core
-            ?:  =,  keen
+            ?.  =,  keen
                 ::  num-fragments is 0 when unknown (i.e. no response yet)
                 ::  if no-one is listening, kill request
                 ::
                 ?|  =(~ listeners.keen)
                     &(!=(0 num-fragments) =(num-fragments num-received))
                 ==
-              abet-gone
-            =.  fine   fi-set-wake
-            =.  keens  (~(put by keens) path keen)
-            peer-core
-          ::
-          ++  abet-gone
+              =.  fine   fi-set-wake
+              peer-core(keens (~(put by keens) path keen))
             =?  fine  ?=(^ next-wake.keen)
               (fi-rest u.next-wake.keen)
-            =.  keens  (~(del by keens) path)
-            peer-core
+            peer-core(keens (~(del by keens) path))
           ::
           ++  fi-full-path
             :^    (scot %p her)

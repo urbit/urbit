@@ -3,7 +3,6 @@
 /+  *test, v=test-ames-gall
 /*  kelvin  %hoon  /sys/kelvin
 =>  |%
-    ++  orm  ((on @ud keen-state:ames) lte)
     ++  n-frags
       |=  n=@
       ^-  @ux
@@ -92,9 +91,9 @@
   =/  peer=peer-state:ames
     (ames-scry-peer:v ames.nec [~1111.1.8 0xbeef.dead *roof] [~nec ~bud])
   =/  listeners=(set duct)
-    ?~  keen-id=(~(get by order.scry.peer) scry-path)
+    ?~  keen=(~(get by keens.peer) scry-path)
       ~
-    listeners:(got:orm keens.scry.peer u.keen-id)
+    listeners:u.keen
   ~&  >  'two listeners for the requested path'
   =/  t3=tang
     %+  expect-eq

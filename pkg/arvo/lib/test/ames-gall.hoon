@@ -148,8 +148,6 @@
   ^-  [tang ^ames-gate]
   =/  ames-core  (ames-gate now eny roof)
   =^  moves  ames-gate  (call:ames-core duct dud=~ task)
-  ~&  %out
-  ~&  moves+moves
   [(expect-eq !>(expected-moves) !>(moves)) ames-gate]
 ::
 ++  ames-call
