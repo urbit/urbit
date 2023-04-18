@@ -1,4 +1,3 @@
-/+  *deq
 /+  *test
 =/  big-num
   100
