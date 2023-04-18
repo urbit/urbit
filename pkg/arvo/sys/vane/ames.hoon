@@ -3880,6 +3880,7 @@
             ^+  same
             (trace %fine verb her ships.bug.ames-state print)
           ::
+          ++  fi-emit       |=(move fine(event-core (emit +<)))
           ++  fi-deq        (deq want)
           ++  fi-gauge      (ga metrics.keen (wyt:fi-deq wan.keen))
           ++  fi-wait       |=(tim=@da (fi-pass-timer %b %wait tim))
@@ -3889,15 +3890,15 @@
             |=(=hoot fine(event-core (send-blob for=| her `@ux`hoot)))
           ::
           ++  fi-clean-up
-            |=  [=^duct core=_event-core]
+            |=  [=^duct =_fine]
             ::  at the moment only %spider keeps state about remote scries
             ::
-            ?+  duct  core
+            ?+  duct  fine
                 [[%gall %use %spider @ ship=@ %thread tid=@ *] *]
               =/  =cage   spider-stop+!>([&7.-.duct |])
               =/  poke=*  [%0 %m [p q.q]:cage]
               =/  =plea   [%g /ge/spider poke]
-              (emit:core duct %pass /fine/unsub %g %plea our plea)
+              (fi-emit:fine duct %pass /fine/unsub %g %plea our plea)
             ==
           ::
           +|  %entry-points
@@ -3964,7 +3965,7 @@
             ?.  |(all (~(has in listeners.keen) duct))
               %.  fine
               (fi-trace fin.veb |.("{<duct>} not a listener for {<path>}"))
-            =?  event-core  all
+            =?  fine  all
               ::  notify listeners by inspecting their
               ::  ducts and sending appropiate clean up moves
               ::
@@ -3974,20 +3975,20 @@
           ::
           ++  fi-error
             |=  =goof
+            ^+  fine
             ::  we want to propagate the crash to the listeners and then
             ::  cancel this request, so it doesn't continue forever resending
             ::  request packets
             ::
             %-  (fi-trace fin.veb |.("error {<mote.goof>} {<fi-full-path>}"))
-            =.  event-core
-              %-  ~(rep in listeners.keen)
-              |=  [=^duct core=_event-core]
-              =.  core  (fi-clean-up duct core)
-              :: TODO return a %tune with data=~ (unit (unit cask)), instead?
-              ::      have a gift for error handling? check with ~master-morzod
-              ::
-              (emit:core duct %give %miss fi-full-path)
-            fine(listeners.keen (~(del in listeners.keen) duct))
+            =.  listeners.keen  (~(del in listeners.keen) duct)
+            %-  ~(rep in listeners.keen)
+            |=  [=^duct =_fine]
+            =.  fine  (fi-clean-up duct fine)
+            :: TODO return a %tune with data=~ (unit (unit cask)), instead?
+            ::      have a gift for error handling? check with ~master-morzod
+            ::
+            (fi-emit:fine duct %give %miss fi-full-path)
           ::
           +|  %implementation
           ::
@@ -4028,7 +4029,7 @@
             %-  (fi-trace fin.veb |.("done {(spud fi-full-path)}"))
             %-  ~(rep in listeners.keen)
             |=  [=^duct =_fine]
-            fine(event-core (emit:fine duct %give gift))
+            (fi-emit:fine duct %give gift)
           ::
           ++  fi-first-rcv
             |=  =meow
@@ -4085,7 +4086,7 @@
           ++  fi-pass-timer
             |=  =note
             =/  =wire  (welp /fine/behn/wake/(scot %p her) path)
-            fine(event-core (emit unix-duct.ames-state %pass wire note))
+            (fi-emit unix-duct.ames-state %pass wire note)
           ::
           ++  fi-set-wake
             ^+  fine
