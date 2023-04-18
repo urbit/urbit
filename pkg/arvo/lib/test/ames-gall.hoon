@@ -173,18 +173,30 @@
           our=ship
           [lop=@ud len=@ud pax=path]
       ==
-  ^-  @ux
+  ^-  [sig=@ux meows=(list @ux)]
   =/  =beam
     :-  [our %$ da+now]
     (welp /fine/hunk/[(scot %ud lop)]/[(scot %ud len)] pax)
   =+  pat=(spat pax)
   =+  wid=(met 3 pat)
   ?>  (lte wid 384)
-  =-  ?>(?=([@ *] -) (can 3 4^lop 2^wid wid^`@`pat (met 3 i.-)^i.- ~))
-  !<  (list @ux)
-  =<  q
-  %-  need  %-  need
-  (scry:(ames-gate now eny roof) ~ %x beam)
+  =/  meows
+    !<  (list @ux)
+    =<  q
+    %-  need  %-  need
+    (scry:(ames-gate now eny roof) ~ %x beam)
+  ::
+  =/   paz=(list have:ames)
+    %+  spun  meows
+    |=  [blob=@ux num=_1]
+    ^-  [have:ames _num]
+    :_  +(num)
+    [num (sift-meow:ames blob)]
+  ::
+  :-  sig:(sift-roar:ames-raw (lent paz) (flop paz))
+  %+  turn  meows
+  |=  meow=@ux
+  (can 3 4^lop 2^wid wid^`@`pat (met 3 meow)^meow ~)
 :: ::
 ++  ames-scry-peer
   |=  $:  =ames-gate

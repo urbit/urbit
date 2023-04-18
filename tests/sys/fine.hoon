@@ -47,7 +47,7 @@
   =/  fine-behn-wire=wire  (weld /fine/behn/wake/~bud scry-path)
   =/  =task:ames           [%keen ~bud scry-path]
   ::
-  =/  content=@ux
+  =/  [sig=@ux meows=(list @ux)]
     %:  ames-scry-hunk:v  ames.bud
       [~1111.1.2 0xbeef.dead custom-roof]
       ~bud
@@ -59,7 +59,9 @@
         sndr-tick=0b1
         rcvr-tick=0b1
         origin=~
-        content=content
+        ::  we know that for /sys/kelvin its contents fit
+        ::  in one packet -- TODO multipacket response
+        content=?>(?=([@ *] meows) i.meows)
     ==
   ::
   ~&  >  'poke requester %ames with a %keen task'
@@ -102,14 +104,6 @@
     !>(listeners)
   ::
   :-  t3  |.  :-  %&
-  =/  sig=@
-    ::  0x1c8.d78c.e1f2.ed72.a80a.1f3e.7c36.f488.9322.df15.91f3.ecb5.
-    ::  8e3b.0dcb.eeec.a273.b993.c70b.08f2.abfd.1bb7.2cc8.e3d5.c844.
-    ::  773b.02fc.43e9.e763.5c9e.399a.6c09.9aef
-    :: XX failing locally, (extracted from in +make-meow:etch-hunk:ames)
-    0x8cd.2114.668c.4d74.ee8c.d6c1.36ce.dd73.07ee.f4e9.f543.16a2.02e1.d9ab.
-    2317.17d6.92fa.ec6e.9bed.29ea.8cb4.b621.0e11.8836.424b.fbb6.616c.df37.
-    ac7d.2270.bd6d.64a7
   ~&  >  'hears a remote scry response'
   =^  t4  ames.nec
     %:  ames-check-call:v  ames.nec
