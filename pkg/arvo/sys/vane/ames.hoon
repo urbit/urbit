@@ -2612,7 +2612,7 @@
           ?.  (~(has by keens) path)
             ~&(dead-response/peep peer-core)
           =<  fi-abet
-          ?^  error  (fi-error:fine u.error)
+          ?^  error  (fi-fail:fine u.error)
           (fi-rcv:fine peep meow lane)
         ::
         ++  on-keen
@@ -3729,7 +3729,7 @@
                 ^-  byts
                 :-  (roll biz |=([[wid=@ *] acc=@] (add wid acc)))
                 (can 3 biz)
-              ::
+              ::  TODO: move +etch-peep/+etch-keen to %lull?
               ++  etch-peep
                 |=  [=path num=@ud]
                 ^-  byts
@@ -3831,17 +3831,8 @@
           ++  fi-send
             |=(=hoot fine(event-core (send-blob for=| her `@ux`hoot)))
           ::
-          ++  fi-clean-up
-            |=  [=^duct =_fine]
-            ::  at the moment only %spider keeps state about remote scries
-            ::
-            ?+  duct  fine
-                [[%gall %use %spider @ ship=@ %thread tid=@ *] *]
-              =/  =cage   spider-stop+!>([&7.-.duct |])
-              =/  poke=*  [%0 %m [p q.q]:cage]
-              =/  =plea   [%g /ge/spider poke]
-              (fi-emit:fine duct %pass /fine/unsub %g %plea our plea)
-            ==
+          ++  fi-miss
+            |=([=^duct =_fine] (fi-emit:fine duct %give %miss fi-full-path))
           ::
           +|  %entry-points
           ::
@@ -3906,31 +3897,18 @@
             |=  [=^duct all=?]
             ?.  |(all (~(has in listeners.keen) duct))
               %.  fine
-              (fi-trace fin.veb |.("{<duct>} not a listener for {<path>}"))
-            =?  fine  all
-              ::  notify listeners by inspecting their
-              ::  ducts and sending appropiate clean up moves
-              ::
-              (~(rep in listeners.keen) fi-clean-up)
-            %-  (fi-trace fin.veb |.("deleting {<path>}"))
+              (fi-trace fin.veb |.("unknown listener, skip"))
+            =?  fine  all  (~(rep in listeners.keen) fi-miss)
+            %-  (fi-trace fin.veb |.("deleting {<fi-full-path>}"))
             fine(listeners.keen ?:(all ~ (~(del in listeners.keen) duct)))
           ::
-          ++  fi-error
+          ++  fi-fail
             |=  =goof
             ^+  fine
-            ::  we want to propagate the crash to the listeners and then
-            ::  cancel this request, so it doesn't continue forever resending
-            ::  request packets
+            ::  TODO: propagate the goof to the listeners?
             ::
             %-  (fi-trace fin.veb |.("error {<mote.goof>} {<fi-full-path>}"))
-            =.  listeners.keen  (~(del in listeners.keen) duct)
-            %-  ~(rep in listeners.keen)
-            |=  [=^duct =_fine]
-            =.  fine  (fi-clean-up duct fine)
-            :: TODO return a %tune with data=~ (unit (unit cask)), instead?
-            ::      have a gift for error handling? check with ~master-morzod
-            ::
-            (fi-emit:fine duct %give %miss fi-full-path)
+            (fi-unsub duct all=&)
           ::
           +|  %implementation
           ::
@@ -3965,6 +3943,8 @@
             =/  =gift
               ::  TODO define data in %tune as a (unit (unit cask))
               ::  and return ~ signaling a block, instead of %miss?
+              ::  NOTE a %miss gift now represents that the request was dropped
+              ::
               ?.  (meri:keys fi-full-path sig data)
                 [%miss fi-full-path]
               [%tune fi-full-path sig ?~(data ~ `data)]

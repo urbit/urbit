@@ -421,7 +421,7 @@
   ?:  (~(has of running.state) u.yarn)
       ?.  nice
         (thread-fail u.yarn %cancelled ~)
-      =^  cancel-cards  state  (cancel-scry tid)
+      =^  cancel-cards  state  (cancel-scry tid &)
       =^  done-cards    state  (thread-done u.yarn *vase)
       [(weld cancel-cards done-cards) state]
   ?:  (~(has by starting.state) u.yarn)
@@ -498,12 +498,13 @@
   ==
 ::
 ++  cancel-scry
-  |=  =tid
+  |=  [=tid silent=?]
   ^-  (quip card _state)
   ?~  scry=(~(get by scries.state) tid)
     `state
   :_  state(scries (~(del by scries.state) tid))
-  ::%-  (slog leaf+"cancelling {<tid>}: [{<[ship path]:u.scry>}]" ~)
+  ?:  silent  ~
+  %-  (slog leaf+"cancelling {<tid>}: [{<[ship path]:u.scry>}]" ~)
   [%pass /thread/[tid]/keen %arvo %a %yawn [ship path]:u.scry]~
 ::
 ++  thread-http-fail
@@ -536,7 +537,7 @@
   =/  fail-cards  (thread-say-fail tid term tang)
   =^  cards  state  (thread-clean yarn)
   =^  http-cards  state  (thread-http-fail tid term tang)
-  =^  scry-card   state  (cancel-scry tid)
+  =^  scry-card   state  (cancel-scry tid |)
   :_  state
   :(weld fail-cards cards http-cards scry-card)
 ::
@@ -565,7 +566,7 @@
     ==
   =^  http-cards  state
     (thread-http-response tid vase)
-  =^  scry-card  state  (cancel-scry tid)
+  =^  scry-card  state  (cancel-scry tid &)
   =^  cards  state  (thread-clean yarn)
   [:(weld done-cards cards http-cards scry-card) state]
 ::

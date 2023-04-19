@@ -3,6 +3,15 @@
 /+  *test, v=test-ames-gall
 /*  kelvin  %hoon  /sys/kelvin
 =>  |%
+    ++  crypto-core
+      |%  ++  nec  (pit:nu:crub:crypto 512 (shaz 'nec'))
+          ++  bud  (pit:nu:crub:crypto 512 (shaz 'bud'))
+          ++  sign
+            |=  [=ship data=@ux]
+            %.  data
+            ?:(=(ship ~nec) sigh:as:nec sigh:as:bud)
+      --
+    ::
     ++  n-frags
       |=  n=@
       ^-  @ux
@@ -31,6 +40,32 @@
       ::
           %cx  ``hoon+!>(kelvin)
       ==
+    ::
+    ++  gum
+      ::~/  %gum
+      |=  biz=(list byts)
+      ^-  byts
+      :-  (roll biz |=([[wid=@ *] acc=@] (add wid acc)))
+      (can 3 biz)
+    ::
+    ++  etch-peep
+      |=  [=path num=@ud]
+      ^-  byts
+      ?>  (lth num (bex 32))
+      =+  pat=(spat path)
+      =+  wid=(met 3 pat)
+      %-  gum
+      :~  4^num       ::  fragment number
+          2^wid       ::  path size
+          wid^`@`pat  ::  namespace path
+      ==
+    ::
+    ++  etch-request-content
+      |=  [our=@p =path num=@ud]
+      ^-  @
+      =/  bod  (etch-peep path num)
+      =/  sig  64^(sign:crypto-core our dat.bod)
+      (can 3 sig bod ~)
     --
 ::
 |%
@@ -45,38 +80,25 @@
   ::  (ames-call:v ames.bud ~[/none] [%spew ~[%msg %snd %rcv %odd]] *roof)
   =/  scry-path=path       /c/x/1/kids/sys/kelvin
   =/  fine-behn-wire=wire  (weld /fine/behn/wake/~bud scry-path)
+  =/  future-path=path     /c/x/5/kids/sys/kelvin
+  =/  future-behn=wire     (weld /fine/behn/wake/~bud future-path)
   =/  =task:ames           [%keen ~bud scry-path]
   ::
-  =/  [sig=@ux meows=(list @ux)]
-    %:  ames-scry-hunk:v  ames.bud
-      [~1111.1.2 0xbeef.dead custom-roof]
-      ~bud
-      [1 16.384 /~bud/1/1/c/x/1/kids/sys/kelvin]
-    ==
-  =/  =shot:ames
-    :*  [sndr=~bud rcvr=~nec]
-        req=|  sam=|
+  =/  request=shot:ames
+    :*  [sndr=~nec rcvr=~bud]
+        req=&  sam=|
         sndr-tick=0b1
         rcvr-tick=0b1
         origin=~
-        ::  we know that for /sys/kelvin its contents fit
-        ::  in one packet -- TODO multipacket response
-        content=?>(?=([@ *] meows) i.meows)
+        content=(etch-request-content ~nec /~bud/1/1/c/x/1/kids/sys/kelvin 1)
     ==
-  ::
   ~&  >  'poke requester %ames with a %keen task'
   =^  t1  ames.nec
     %:  ames-check-call:v  ames.nec
       [~1111.1.1 0xdead.beef *roof]
-       [~[/keen-duct-1] task]
+      [~[/keen-duct-1] task]
       :~  :-  ~[//unix]
-          :*  %give  %send  [%& ~bud]
-              0x6e69.766c.656b.2f73.7973.2f73.6469.6b2f.312f.782f.632f.312f.312f.
-              6475.627e.2f00.1f00.0000.0107.7900.3220.8214.2705.fb35.0288.4b05.
-              06f2.e713.a557.9049.745f.2f6d.8871.afd8.ceeb.cebf.1db5.8e23.619e.
-              1dd2.c92e.b7f8.a142.1746.b5f0.d7f1.5155.2d30.9093.7ee4.ce00.0200.
-              0111.e898.b008
-          ==
+          [%give %send [%& ~bud] (etch-shot:ames request)]
           [~[//unix] %pass fine-behn-wire %b %wait ~1111.1.1..00.00.01]
       ==
     ==
@@ -97,20 +119,37 @@
     ?~  keen=(~(get by keens.peer) scry-path)
       ~
     listeners:u.keen
-  ~&  >  'two listeners for the requested path'
+  ~&  >  'checks two listeners for the requested scry path'
   =/  t3=tang
     %+  expect-eq
       !>((sy ~[~[/keen-duct-1] ~[/keen-duct-2]]))
     !>(listeners)
   ::
-  :-  t3  |.  :-  %&
-  ~&  >  'hears a remote scry response'
+  :-  t3  |.  :-  %|
+  ~&  >  'gives a remote scry response to listeners'
+  =/  [sig=@ux meows=(list @ux)]
+    %:  ames-scry-hunk:v  ames.bud
+      [~1111.1.2 0xbeef.dead custom-roof]
+      ~bud
+      [1 16.384 /~bud/1/1/c/x/1/kids/sys/kelvin]
+    ==
+  =/  response=shot:ames
+    :*  [sndr=~bud rcvr=~nec]
+        req=|  sam=|
+        sndr-tick=0b1
+        rcvr-tick=0b1
+        origin=~
+        ::  we know that for /sys/kelvin its contents fit
+        ::  in one packet -- TODO multipacket response
+        content=?>(?=([@ *] meows) i.meows)
+    ==
+  ::
   =^  t4  ames.nec
     %:  ames-check-call:v  ames.nec
       [~1111.1.2 0xbeef.dead *roof]
       :-  ~[//fine]
       :*  %hear  [%& ~bud]
-          (etch-shot:ames shot)
+          (etch-shot:ames response)
       ==
       :~  [~[//fine] [%pass /qos %d %flog %text "; ~bud is your neighbor"]]
           :-  ~[/keen-duct-2]
@@ -127,5 +166,71 @@
       ==
     ==
   ::
-  t4
+  :-  t4  |.  :-  %|
+  =/  request=shot:ames
+    :*  [sndr=~nec rcvr=~bud]
+        req=&  sam=|
+        sndr-tick=0b1
+        rcvr-tick=0b1
+        origin=~
+        content=(etch-request-content ~nec /~bud/1/1/c/x/5/kids/sys/kelvin 1)
+    ==
+  ~&  >  'poke requester %ames with a %keen task for a future case'
+  =^  t5  ames.nec
+    %:  ames-check-call:v  ames.nec
+      [~1111.1.1 0xdead.beef *roof]
+      [~[/keen-duct-3] %keen ~bud future-path]
+      :~  [~[//unix] [%give %send [%& ~bud] (etch-shot:ames request)]]
+          [~[//unix] %pass future-behn %b %wait ~1111.1.1..00.00.01]
+      ==
+    ==
+  ::
+  :-  t5  |.  :-  %|
+  ~&  >  'cancel %keen task, from requester'
+  =^  t6  ames.nec
+    %:  ames-check-call:v  ames.nec
+      [~1111.1.1 0xdead.beef *roof]
+      [~[/keen-duct-3] %yawn ~bud future-path]
+      [~[//unix] %pass future-behn %b %rest ~1111.1.1..00.00.01]~
+    ==
+  ::
+  :-  t6  |.  :-  %|
+  ~&  >  'poke requester %ames with a new %keen task for a future case'
+  =^  t7  ames.nec
+    %:  ames-check-call:v  ames.nec
+      [~1111.1.1 0xdead.beef *roof]
+      [~[/keen-duct-4] %keen ~bud future-path]
+      :~  [~[//unix] [%give %send [%& ~bud] (etch-shot:ames request)]]
+          [~[//unix] %pass future-behn %b %wait ~1111.1.1..00.00.01]
+      ==
+    ==
+  ::
+  :-  t7  |.  :-  %|
+  ~&  >  'poke requester %ames with a second %keen task for a future case'
+  =^  t8  ames.nec
+    %:  ames-check-call:v  ames.nec
+      [~1111.1.1 0xdead.beef *roof]
+      [~[/keen-duct-5] %keen ~bud future-path]
+      ~
+    ==
+  :-  t8  |.  :-  %|
+  ~&  >  'cancel scry for all listeners (%wham)'
+  =^  t9  ames.nec
+    %:  ames-check-call:v  ames.nec
+      [~1111.1.1 0xdead.beef *roof]
+      [~[/wham-duct] %wham ~bud future-path]
+      :~  [~[/keen-duct-4] [%give %miss /~bud/1/1/c/x/5/kids/sys/kelvin]]
+          [~[/keen-duct-5] [%give %miss /~bud/1/1/c/x/5/kids/sys/kelvin]]
+          [~[//unix] %pass future-behn %b %rest ~1111.1.1..00.00.01]
+      ==
+    ==
+  :-  t9  |.  :-  %&
+  =/  peer=peer-state:ames
+    (ames-scry-peer:v ames.nec [~1111.1.8 0xbeef.dead *roof] [~nec ~bud])
+  =/  listeners=(set duct)
+    ?~  keen=(~(get by keens.peer) scry-path)
+      ~
+    listeners:u.keen
+  ~&  >  'checks no more listeners'
+  (expect-eq !>(~) !>(listeners))
 --
