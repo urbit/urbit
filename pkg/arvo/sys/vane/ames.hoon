@@ -1154,6 +1154,7 @@
       ::
           [%5 %larva *]
         ~>  %slog.0^leaf/"ames: larva: load"
+        =.  cached-state  `[%5 state.old]
         =.  queued-events  events.old
         larval-gate
       ::
@@ -1164,6 +1165,7 @@
       ::
           [%6 %larva *]
         ~>  %slog.0^leaf/"ames: larva: load"
+        =.  cached-state  `[%6 state.old]
         =.  queued-events  events.old
         larval-gate
       ::
@@ -1175,6 +1177,7 @@
           [%7 %larva *]
         ~>  %slog.0^leaf/"ames: larva: load"
         =.  queued-events  events.old
+        =.  cached-state  `[%7 state.old]
         larval-gate
       ::
           [%8 %adult *]
@@ -1184,6 +1187,7 @@
       ::
           [%8 %larva *]
         ~>  %slog.0^leaf/"ames: larva: load"
+        =.  cached-state  `[%8 state.old]
         =.  queued-events  events.old
         larval-gate
       ::
@@ -1194,6 +1198,7 @@
       ::
           [%9 %larva *]
         ~>  %slog.0^leaf/"ames: larva: load"
+        =.  cached-state  `[%9 state.old]
         =.  queued-events  events.old
         larval-gate
       ::
@@ -1204,6 +1209,7 @@
       ::
           [%10 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
+        =.  cached-state  `[%10 state.old]
         =.  queued-events  events.old
         larval-gate
       ::
@@ -1214,6 +1220,7 @@
       ::
           [%11 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
+        =.  cached-state  `[%11 state.old]
         =.  queued-events
           ::  "+rep:in on a +qeu looks strange, but works fine."
           ::
@@ -1234,6 +1241,7 @@
       ::
           [%12 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
+        =.  cached-state  `[%12 state.old]
         =.  queued-events  events.old
         larval-gate
       ::
@@ -4392,11 +4400,12 @@
     ^-  ^ames-state
     =+  !<  =rift
         q:(need (need (rof ~ %j `beam`[[our %rift %da now] /(scot %p our)])))
+    =+  pk=sec:ex:crypto-core.old
     :*  peers=(~(run by peers.old) ship-state-12-to-13)
         unix-duct.old
         life.old
         rift
-        crypto-core=(nol:nu:crub:crypto sec:ex:crypto-core.old)
+        ?:(=(*ring pk) *acru:ames (nol:nu:crub:crypto pk))
         %=  bug.old
           veb  [&1 &2 &3 &4 &5 &6 &7 |7 %.n]:veb.bug.old
         ==
