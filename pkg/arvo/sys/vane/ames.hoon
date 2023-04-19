@@ -846,40 +846,43 @@
 +$  note
   $~  [%b %wait *@da]
   $%  $:  %b
-      $%  [%wait date=@da]
-          [%rest date=@da]
-      ==  ==
+          $>(?(%wait %rest) task:behn)
+      ==
       $:  %c
-      $%  $>(%warp task:clay)
-      ==  ==
+          $>(%warp task:clay)
+      ==
       $:  %d
-      $%  [%flog flog:dill]
-      ==  ==
+          $>(%flog task:dill)
+      ==
       $:  %j
-      $%  [%private-keys ~]
-          [%public-keys ships=(set ship)]
-          [%turf ~]
-          [%ruin ships=(set ship)]
-      ==  ==
+          $>  $?  %private-keys
+                  %public-keys
+                  %turf
+                  %ruin
+              ==
+          task:jael
+      ==
       $:  @tas
-      $%  [%plea =ship =plea]
-  ==  ==  ==
+          $>(%plea vane-task)
+  ==  ==
 ::  $sign: response from other vane
 ::
 +$  sign
   $~  [%behn %wake ~]
   $%  $:  %behn
-      $%  $>(%wake gift:behn)
-      ==  ==
+          $>(%wake gift:behn)
+      ==
       $:  %jael
-      $%  [%private-keys =life vein=(map life ring)]
-          [%public-keys =public-keys-result]
-          [%turf turfs=(list turf)]
-      ==  ==
+          $>  $?  %private-keys
+                  %public-keys
+                  %turf
+              ==
+          gift:jael
+      ==
       $:  @tas
-      $%  [%done error=(unit error)]
-          [%boon payload=*]
-  ==  ==  ==
+          $>(?(%boon %done) gift:ames)
+  ==  ==
+::
 ::  $message-pump-task: job for |message-pump
 ::
 ::    %memo: packetize and send application-level message
@@ -4271,7 +4274,7 @@
     ::
       [%behn %wake *]  (on-take-wake:event-core wire error.sign)
     ::
-      [%jael %turf *]          (on-take-turf:event-core turfs.sign)
+      [%jael %turf *]          (on-take-turf:event-core turf.sign)
       [%jael %private-keys *]  (on-priv:event-core [life vein]:sign)
       [%jael %public-keys *]   (on-publ:event-core wire public-keys-result.sign)
     ==
