@@ -3754,7 +3754,7 @@
                 ^-  hoot  ^-  @
                 =/  sic  (mod life.ames-state 16)
                 =/  ric  (mod life.peer-state 16)
-                =/  syn  (lsh [3 64] (etch-peep path num))
+                =/  syn  (lsh [3 64] dat:(etch-peep path num))
                 (etch-shot [our her] req=& sam=| sic ric ~ syn)
               ::
               ++  keys
