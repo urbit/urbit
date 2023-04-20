@@ -1544,7 +1544,12 @@
         ::NOTE  we only send requests to ships we know,
         ::      so we should only get responses from ships we know.
         ::      below we assume sndr.shot is a known peer.
-        abet:(on-hear-fine:(abed-got:pe sndr.shot) l shot d)
+        =+  ?~  d  ~
+            %.  ~
+            %+  slog  leaf+"ames: fine from {<lane>} crashed {<mote.u.d>}"
+            ?.  msg.veb  ~
+            tang.u.d
+        abet:(on-hear-fine:(abed-got:pe sndr.shot) l shot)
       ::  +on-hear-packet: handle mildly processed packet receipt
       ::
       ++  on-hear-packet
@@ -2608,20 +2613,17 @@
           abet:(call:(abed:mu bone) %wake ~)
         ::
         ++  on-hear-fine
-          |=  [=lane =shot error=(unit goof)]
+          |=  [=lane =shot]
           ^+  peer-core
           ?>  =(sndr-tick.shot (mod life.peer-state 16))
           ::  TODO what if the error happened in sift-purr?
           ::       does vere discard malformed packets?
           =/  [=peep =meow]  (sift-purr `@ux`content.shot)
           =/  =path  (slag 3 path.peep)
-          =/  fine   (abed:fi path)
           ::
           ?.  (~(has by keens) path)
             ~&(dead-response/peep peer-core)
-          =<  fi-abet
-          ?^  error  (fi-fail:fine u.error)
-          (fi-rcv:fine peep meow lane)
+          fi-abet:(fi-rcv:(abed:fi path) peep meow lane)
         ::
         ++  on-keen
           |=  [=path =^duct]
@@ -3906,14 +3908,6 @@
             =?  fine  all  (~(rep in listeners.keen) fi-miss)
             %-  (fi-trace fin.veb |.("deleting {<fi-full-path>}"))
             fine(listeners.keen ?:(all ~ (~(del in listeners.keen) duct)))
-          ::
-          ++  fi-fail
-            |=  =goof
-            ^+  fine
-            ::  TODO: propagate the goof to the listeners?
-            ::
-            %-  (fi-trace fin.veb |.("error {<mote.goof>} {<fi-full-path>}"))
-            (fi-unsub duct all=&)
           ::
           +|  %implementation
           ::
