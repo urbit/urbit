@@ -237,7 +237,7 @@
     %+  ~(put by pub)  path
     =/  last=[=aeon =rock:lake]  (fall (pry:rok rok.tide) *[key val]:rok)
     =.  wav.tide  (put:wav wav.tide next wave)
-    =.  mem.tide  (~(del by mem.tide) next)
+    =.  mem.tide  ~
     ?.  =(next (add aeon.last waves.rul.tide))  buoy
     buoy(tid (form tide))
   ::
