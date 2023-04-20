@@ -6,58 +6,24 @@
 |=  our=ship
 =>  |%
     +$  move  [p=duct q=(wite note gift)]
-    +$  note  ~                                        ::  out request $->
+    +$  note  ~                                         ::  out request $->
       ::$%  $:  %g                                        ::    to %gall
-              ::$>(%deal task:gall)                       ::  full transmission
-          ::==                                            ::
+      ::        $>(%deal task:gall)                       ::  full transmission
+      ::    ==                                            ::
       ::==                                            ::
       ::
     +$  sign  ~
-      ::$%  [%lick $>(%red gift)]                        :: read
-      ::    [%lick $>(%read gift)]
-      ::==
     ::
     +$  lick-state
       $:  %0
           unix-duct=duct
-          agents=(map name.agent agent)
+          agents=(map name duct)
       ==
     ::
-    +$  agent  [=name =ver] 
     +$  name   @tas
-    +$  ver    @tas
     --
 ::
-=>
 ~%  %lick  ..part  ~
-|%
-++  per-event
-  =|  moves=(list move)
-  |=  [[now=@da =duct] state=lick-state]
-  ::
-  |%
-  ++  this  .
-  ::  %entry-points
-  ::
-  ::  +crud: handle failure of previous arvo event
-  ::
-  ++  crud  [moves state]
-  ::  +read: give back
-  ::
-  ++  read  [moves state]
-  ::  +trim: in response to memory pressue
-  ::
-  ++  trim  [moves state]
-  ::  +vega: learn of a kernel upgrade
-  ::
-  ++  vega  [moves state]
-  ::  %utilities
-  ::
-  ::+|
-  ::
-  ++  event-core  .
-  --
---
 ::
 =|  lick-state
 =*  state  -
@@ -68,9 +34,9 @@
 ::  +register: Create a move to register an agent with vere
 ::
 ++  register
-  |=  =agent
+  |=  =name
   ^-  move
-  [unix-duct.state %give [%sync name.agent ver.agent]]
+  [unix-duct.state %give [%spin name]]
 ::  +call: handle a +task:lick request
 ::
 ++  call 
@@ -83,16 +49,27 @@
   =/  =task  ((harden task) wrapped-task)
   ?+   -.task  [~ lick-gate]
       %born     :: When born you need to register all devices
-    =/  m=(list move)  (turn ~(val by agents.state) register)
-    ~&  >>>  m
-    :-  (turn ~(val by agents.state) register)
-      lick-gate(unix-duct hen) 
+    ::=/  m=(list move)  (turn ~(key by agents.state) register)
+    ::~&  >>>  m
+    :-  (turn ~(tap in ~(key by agents.state)) register)
+    lick-gate(unix-duct hen) 
     ::
-      %sync     :: A gall agent wants to book a communication line
-    =/  =agent  [nam.task ver.task]
-    :-  ~[(register agent)]
-      lick-gate(agents (~(put by agents) nam.task agent))
-      
+      %spin     :: A gall agent wants to spin a communication line
+    :-  ~[(register name.task)]
+    lick-gate(agents (~(put by agents) name.task hen))
+    ::
+      %shut     :: shut down a communication line
+    :-  ~[[unix-duct.state %give [%shut name.task]]]
+    lick-gate(agents (~(del by agents) name.task))
+    ::
+      %soak     :: push a soak to the ipc's owner
+    =/  ner=duct  (~(get by agents.state) name.task)
+    :_  lick-gate
+    ~[[ner %give [%soak name.task mark.task noun.task]]]
+    ::
+      %spit     :: push a spit to ipc
+    :_  lick-gate
+    ~[[unix-duct.state %give [%spit name.task mark.task noun.task]]]
   ==
 ::  +load: migrate an old state to a new lick version
 ::

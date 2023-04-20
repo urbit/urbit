@@ -3094,27 +3094,29 @@
   +$  shed  _*form:(strand:rand ,vase)                  ::  compute vase
   --  ::khan
 ::                                                      ::::
-::::                    ++lick                            ::  (1b) timekeeping
+::::                    ++lick                            ::  (1j) IPC
   ::                                                    ::::
 ++  lick  ^?
   |%
   +$  gift                                              ::  out result <-$
-    $%  [%sync =nam =ver]                               ::  register a IPC vane
+    $%  [%spin =name]                                   ::  open an IPC port
+        [%shut =name]                                   ::  close an IPC port
+        [%spit =name =mark =noun]                       ::  spit a noun to the IPC port
+        [%soak =name =mark =noun]                       ::  soak a noun from the IPC port
     ==
   +$  task                                              ::  in request ->$
     $~  [%vega ~]                                       ::
     $%  $>(%born vane-task)                             ::  new unix process
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
-        [%sync =nam =ver]                               ::  register a IPC 
-        [%soak =nam info=*]                             ::  read a noun
-        [%spit =nam info=*]                             ::  write a noun
+        [%spin =name]                                   ::  open an IPC port
+        [%shut =name]                                   ::  close an IPC port
+        [%spit =name =mark =noun]                       ::  spit a noun to the IPC port
+        [%soak =name =mark =noun]                       ::  soak a noun from the IPC port
     ==
   ::
-  +$  nam  @tas
-  +$  ver  @tas
+  +$  name  @tas
   --  ::lick
-
 ::
 ++  rand                                                ::  computation
   |%
