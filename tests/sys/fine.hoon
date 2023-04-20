@@ -63,9 +63,7 @@
     ++  etch-request-content
       |=  [our=@p =path num=@ud]
       ^-  @
-      =/  bod  (etch-peep path num)
-      =/  sig  64^(sign:crypto-core our dat.bod)
-      (can 3 sig bod ~)
+      (lsh [3 64] dat:(etch-peep path num))
     --
 ::
 |%
