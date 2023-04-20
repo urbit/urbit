@@ -260,16 +260,16 @@ export class Ames extends Component {
 
     const summary = (<>
       <b>{scry['scry-path']}</b><br/>
+      <h5 style={{marginTop: '1em'}}>listeners:</h5>
       {renderDuct(scry['keen-state'].listeners)}
+      <h5 style={{marginTop: '1em'}}>scry state:</h5>
       <table><tbody>
         <tr class="inter">
-          <td>id</td>
           <td>num-fragments</td>
           <td>num-received</td>
           <td>next-wake</td>
         </tr>
         <tr>
-          <td>{scry['keen-id']}</td>
           <td>{scry['keen-state']['num-fragments']}</td>
           <td>{scry['keen-state']['num-received']}</td>
           <td>{msToDa(scry['keen-state']['next-wake'])}</td>
@@ -282,7 +282,7 @@ export class Ames extends Component {
       {wants}
     </>);
 
-    return {key: scry['keen-id'], jsx: (
+    return {key: scry['scry-path'], jsx: (
       <Summary summary={summary} details={details} />
     )};
 
