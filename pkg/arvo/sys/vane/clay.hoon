@@ -5159,6 +5159,7 @@
       ::  +clear-cache upgrades to +raft
       ::
       +$  raft-14
+        $+  raft-14
         $:  rom=room-13
             hoy=(map ship rung-14)
             ran=rang
@@ -5192,6 +5193,7 @@
         ==
       ::
       +$  raft-13
+        $+  raft-13
         $:  rom=room-13
             hoy=(map ship rung-13)
             ran=rang
@@ -5241,6 +5243,7 @@
         ==
       ::
       +$  raft-12
+        $+  raft-12
         $:  rom=room-11
             hoy=(map ship rung-11)
             ran=rang
@@ -5252,6 +5255,7 @@
             bug=[veb=@ mas=@]
         ==
       +$  raft-11
+        $+  raft-11
         $:  rom=room-11
             hoy=(map ship rung-11)
             ran=rang
@@ -5307,6 +5311,7 @@
             busy=_|
         ==
       +$  raft-10
+        $+  raft-10
         $:  rom=room-10
             hoy=(map ship rung-10)
             ran=rang-10
@@ -5400,6 +5405,7 @@
         ==
       +$  cach-10  (unit (unit (each cage lobe)))
       +$  raft-9
+        $+  raft-9
         $:  rom=room-10
             hoy=(map ship rung-10)
             ran=rang-10
@@ -5409,6 +5415,7 @@
             pud=(unit [=desk =yoki])
         ==
       +$  raft-8
+        $+  raft-8
         $:  rom=room-8
             hoy=(map ship rung-8)
             ran=rang-10
@@ -5450,6 +5457,7 @@
             fiz=melt-10
         ==
       +$  raft-7
+        $+  raft-7
         $:  rom=room-7
             hoy=(map ship rung-7)
             ran=rang-10
@@ -5480,6 +5488,7 @@
             pew=regs
         ==
       +$  raft-6
+        $+  raft-6
         $:  rom=room-6
             hoy=(map ship rung-6)
             ran=rang-10
