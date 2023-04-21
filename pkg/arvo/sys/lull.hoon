@@ -1127,7 +1127,6 @@
   ::    Remote Scry Gifts
   ::
   ::    %tune: peek result
-  ::    %miss: peek dropped
   ::
   ::    System and Lifecycle Gifts
   ::
@@ -1141,7 +1140,6 @@
         [%send =lane =blob]
     ::
         [%tune [=ship =path] roar=(unit roar)]
-        [%miss =ship =path]
     ::
         [%turf turfs=(list turf)]
     ==
