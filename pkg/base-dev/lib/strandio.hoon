@@ -336,13 +336,13 @@
 ::
 ++  keen
   |=  [=ship =path]
-  =/  m  (strand ,(unit (cask)))
+  =/  m  (strand ,(unit roar:ames))
   ^-  form:m
   =/  =card:agent:gall  [%pass /keen %arvo %a %keen ship path]
   ;<  ~  bind:m  (send-raw-card card)
   ;<  [wire sign=sign-arvo]  bind:m  take-sign-arvo
-  ?>  ?=(%tune +<.sign)
-  (pure:m data.sign)
+  ?>  ?=([%ames %tune *] sign)
+  (pure:m roar.sign)
 ::
 ++  sleep
   |=  for=@dr

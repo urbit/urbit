@@ -1140,8 +1140,8 @@
         [%lost ~]
         [%send =lane =blob]
     ::
-        [%tune =path sign=@ux data=(unit (cask))]
-        [%miss =path]
+        [%tune [=ship =path] roar=(unit roar)]
+        [%miss =ship =path]
     ::
         [%turf turfs=(list turf)]
     ==
@@ -1344,9 +1344,8 @@
         peep
     ==
   +$  roar  ::  response message
-    $:  sig=@
-        dat=$@(~ (cask))
-    ==
+    (tale:pki:jael (pair path (unit (cask))))
+  :::
   ::  $qos: quality of service; how is our connection to a peer doing?
   ::
   ::    .last-contact: last time we heard from peer, or if %unborn, when
@@ -3311,6 +3310,11 @@
     +$  mind  [who=ship lyf=life]                       ::  key identifier
     +$  name  (pair @ta @t)                             ::  ascii / unicode
     +$  oath  @                                         ::  signature
+    ++  tale                                            ::  urbit-signed *
+      |$  [typ]                                         ::  payload mold
+      $:  dat=typ                                       ::  data
+          syg=(map ship (pair life oath))               ::  signatures
+      ==                                                ::
     --  ::  pki
   --  ::  jael
 ::                                                      ::::

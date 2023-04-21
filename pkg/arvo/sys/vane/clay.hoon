@@ -6145,15 +6145,24 @@
           =?  den  ?=(%tune +<.hin)
             (cancel-scry-timeout:den index)
           abet:(take-foreign-answer:den index res)
+        ::
         ?:  ?=(%boon +<.hin)  ;;((unit rand) payload.hin)
-        %+  bind  data.hin
+        ::
+        ?~  roar.hin  ~
+        %+  bind  q.dat.u.roar.hin
         |=  =(cask)
         ^-  rand
         ::  retrieve the request from the scry path
         ::
-        =+  (need (de-omen path.hin))
-        =/  =care  ;;(care ?@(vis (rsh 3 vis) car.vis))
-        [[care r.bem q.bem] s.bem cask]
+        =/  pol=(pole knot)  path.hin
+        ?>  ?=([%c car=care cas=@ta des=@tas pat=*] pol)
+        =/  =case  (need (de-case cas.pol))
+        [[car.pol case des.pol] pat.pol cask]
+        ::  XX this just looks wrong
+        ::
+        :: =+  (need (de-omen path.hin))
+        :: =/  =care  ;;(care ?@(vis (rsh 3 vis) car.vis))
+        :: [[care r.bem q.bem] s.bem cask]
       [mos ..^$]
     ::
         %wake
@@ -6191,8 +6200,10 @@
       ::
       =/  fell=(unit fell)
         ?:  ?=(%boon +<.hin)  `;;(fell payload.hin)
-        ?~  data.hin  ~
-        `[%direct (page-to-lobe u.data.hin) u.data.hin]
+        ?~  roar.hin  ~
+        ?~  q.dat.u.roar.hin  ~
+        =*  pag  u.q.dat.u.roar.hin
+        `[%direct (page-to-lobe pag) pag]
       ::
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)

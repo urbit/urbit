@@ -305,12 +305,10 @@
 ::
 ++  sift-roar
   |=  [total=@ud hav=(list have)]
-  ^-  roar
+  ^-  [sig=@ux dat=$@(~ (cask))]
   =/  mes=@
     %+  rep  response-size
-    %+  turn  (flop hav)
-    |=  =have
-    dat.have
+    (roll hav |=([=have dat=(list @ux)] [dat.have dat]))
   =+  sig=(end 9 mes)
   :-  sig
   =+  dat=(rsh 9 mes)
@@ -3838,8 +3836,9 @@
           ++  fi-send
             |=(=hoot fine(event-core (send-blob for=| her `@ux`hoot)))
           ::
-          ++  fi-miss
-            |=([=^duct =_fine] (fi-emit:fine duct %give %miss fi-full-path))
+          ++  fi-give-tune
+            |=  dat=(unit roar)
+            |=([=^duct =_fine] (fi-emit:fine duct %give %tune [her path] dat))
           ::
           +|  %entry-points
           ::
@@ -3902,12 +3901,17 @@
           ::
           ++  fi-unsub
             |=  [=^duct all=?]
-            ?.  |(all (~(has in listeners.keen) duct))
-              %.  fine
-              (fi-trace fin.veb |.("unknown listener, skip"))
-            =?  fine  all  (~(rep in listeners.keen) fi-miss)
-            %-  (fi-trace fin.veb |.("deleting {<fi-full-path>}"))
-            fine(listeners.keen ?:(all ~ (~(del in listeners.keen) duct)))
+            ^+  fine
+            ?:  all
+              %-  (fi-trace fin.veb |.("unsub all {<fi-full-path>}"))
+              (~(rep in listeners.keen) (fi-give-tune ~))
+            ::
+            ?:  (~(has in listeners.keen) duct)
+              %-  (fi-trace fin.veb |.("unsub {<fi-full-path>} on {<duct>}"))
+              fine(listeners.keen (~(del in listeners.keen) duct))
+            ::
+            %.  fine
+            (fi-trace fin.veb |.("unknown {<fi-full-path>} {<duct>}"))
           ::
           +|  %implementation
           ::
@@ -3939,18 +3943,15 @@
           ::
           ++  fi-done
             |=  [sig=@ data=$@(~ (cask))]
-            =/  =gift
-              ::  TODO define data in %tune as a (unit (unit cask))
-              ::  and return ~ signaling a block, instead of %miss?
-              ::  NOTE a %miss gift now represents that the request was dropped
-              ::
-              ?.  (meri:keys fi-full-path sig data)
-                [%miss fi-full-path]
-              [%tune fi-full-path sig ?~(data ~ `data)]
-            %-  (fi-trace fin.veb |.("done {(spud fi-full-path)}"))
-            %-  ~(rep in listeners.keen)
-            |=  [=^duct =_fine]
-            (fi-emit:fine duct %give gift)
+            =/  ful  fi-full-path
+            =/  roar=(unit roar)
+              ?.  (meri:keys ful sig data)
+                ~
+              :+  ~  [ful ?~(data ~ `data)]
+              [[her [life.peer-state sig]] ~ ~]
+            ::
+            %-  (fi-trace fin.veb |.("done {(spud ful)}"))
+            (~(rep in listeners.keen) (fi-give-tune roar))
           ::
           ++  fi-first-rcv
             |=  =meow
