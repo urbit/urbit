@@ -6012,11 +6012,13 @@
 ::  makes them harder to change.
 ::
 ++  stay
+  ^-  raft-any:load
   =/  flu  [~ ~]
   =+  `flue`flu
   =/  flo  ~
   =+  `flow`flo
   :-  ver
+  ^-  raft-14:load
   %=    ruf
       fad  flo
       dos.rom
