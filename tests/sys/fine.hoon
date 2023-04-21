@@ -142,6 +142,9 @@
         content=?>(?=([@ *] meows) i.meows)
     ==
   ::
+  =/  roar=(unit roar:ames)
+    :+  ~  [/~bud/1/1/c/x/1/kids/sys/kelvin `hoon+kelvin]
+    [[~bud [1 sig]] ~ ~]
   =^  t4  ames.nec
     %:  ames-check-call:v  ames.nec
       [~1111.1.2 0xbeef.dead *roof]
@@ -149,17 +152,9 @@
       :*  %hear  [%& ~bud]
           (etch-shot:ames response)
       ==
-      :~  [~[//fine] [%pass /qos %d %flog %text "; ~bud is your neighbor"]]
-          :-  ~[/keen-duct-2]
-          :*  %give  %tune  /~bud/1/1/c/x/1/kids/sys/kelvin
-              sig
-              `hoon+kelvin
-          ==
-          :-  ~[/keen-duct-1]
-          :*  %give  %tune  /~bud/1/1/c/x/1/kids/sys/kelvin
-              sig
-              `hoon+kelvin
-          ==
+      :~  [~[//fine] %pass /qos %d %flog %text "; ~bud is your neighbor"]
+          [~[/keen-duct-2] %give %tune [~bud scry-path] roar]
+          [~[/keen-duct-1] %give %tune [~bud scry-path] roar]
           [~[//unix] %pass fine-behn-wire %b %rest ~1111.1.1..00.00.01]
       ==
     ==
@@ -217,8 +212,8 @@
     %:  ames-check-call:v  ames.nec
       [~1111.1.1 0xdead.beef *roof]
       [~[/wham-duct] %wham ~bud future-path]
-      :~  [~[/keen-duct-4] [%give %miss /~bud/1/1/c/x/5/kids/sys/kelvin]]
-          [~[/keen-duct-5] [%give %miss /~bud/1/1/c/x/5/kids/sys/kelvin]]
+      :~  [~[/keen-duct-4] [%give %tune [~bud /c/x/5/kids/sys/kelvin] ~]]
+          [~[/keen-duct-5] [%give %tune [~bud /c/x/5/kids/sys/kelvin] ~]]
           [~[//unix] %pass future-behn %b %rest ~1111.1.1..00.00.01]
       ==
     ==

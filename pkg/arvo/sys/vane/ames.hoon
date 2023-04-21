@@ -3904,7 +3904,8 @@
             ^+  fine
             ?:  all
               %-  (fi-trace fin.veb |.("unsub all {<fi-full-path>}"))
-              (~(rep in listeners.keen) (fi-give-tune ~))
+              =.  fine  (~(rep in listeners.keen) (fi-give-tune ~))
+              fine(listeners.keen ~)
             ::
             ?:  (~(has in listeners.keen) duct)
               %-  (fi-trace fin.veb |.("unsub {<fi-full-path>} on {<duct>}"))
