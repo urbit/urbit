@@ -505,6 +505,7 @@
   [ducts (print-wove wove)]
 ::
 ++  fusion
+  ~%  %fusion  ..fusion  ~
   |%
   ::  +wrap: external wrapper
   ::
@@ -540,6 +541,7 @@
               flue
           ==
         --
+    ~%  %ford-gate  ..ford  ~
     |=  args
     ::  nub: internal mutable state for this computation
     ::
@@ -547,10 +549,12 @@
     =.  cache.nub  cache
     =.  spill.nub  spill
     =.  sprig.nub  sprig
+    ~%  %ford-core  ..$  ~
     |%
     ::  +read-file: retrieve marked, validated file contents at path
     ::
     ++  read-file
+      ~/  %read-file
       |=  =path
       ^-  [cage state]
       ~|  %error-validating^path
@@ -578,6 +582,7 @@
     ::  +build-nave: build a statically typed mark core
     ::
     ++  build-nave
+      ~/  %build-nave
       |=  mak=mark
       ^-  [vase state]
       ~|  %error-building-mark^mak
@@ -651,6 +656,7 @@
     ::  +build-dais: build a dynamically typed mark definition
     ::
     ++  build-dais
+      ~/  %build-dais
       |=  mak=mark
       ^-  [dais state]
       ~|  %error-building-dais^mak
@@ -701,6 +707,7 @@
     ::  +build-cast: produce gate to convert mark .a to, statically typed
     ::
     ++  build-cast
+      ~/  %build-cast
       |=  [a=mark b=mark]
       ^-  [vase state]
       ~|  error-building-cast+[a b]
@@ -841,6 +848,7 @@
       res
     ::
     ++  build-dependency
+      ~/  %build-dep
       |=  dep=(each [dir=path fil=path] path)
       ^-  [vase state]
       =/  =path
@@ -916,6 +924,7 @@
       [sut nub]
     ::
     ++  parse-pile
+      ~/  %parse-pile
       |=  [pax=path tex=tape]
       ^-  pile
       =/  [=hair res=(unit [=pile =nail])]  ((pile-rule pax) [1 1] tex)
@@ -1279,7 +1288,9 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  de                                                  ::  per desk
+  ~%  %de  ..de  ~
   |=  [now=@da rof=roof hen=duct raft]
+  ~/  %de-in
   |=  [her=ship syd=desk]
   ::  NB: ruf=raft crashes in the compiler
   ::
@@ -1287,6 +1298,7 @@
   =|  [mow=(list move) hun=(unit duct) rede]
   =*  red=rede  ->+
   =<  apex
+  ~%  %de-core  ..$  ~
   |%
   ++  abet                                              ::  resolve
     ^-  [(list move) raft]
@@ -1716,6 +1728,7 @@
   ::  Porcelain commit
   ::
   ++  info
+    ~/  %info
     |=  [deletes=(set path) changes=(map path cage)]
     ^+  ..park
     ?:  =(0 let.dom)
@@ -1742,6 +1755,7 @@
   ::  Unix commit
   ::
   ++  into
+    ~/  %into
     |=  [pax=path all=? mod=(list [pax=path mim=(unit mime)])]
     ^+  ..park
     ::  filter out unchanged, cached %mime values

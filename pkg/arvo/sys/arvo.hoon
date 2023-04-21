@@ -1046,7 +1046,8 @@
   ::  |va: vane engine
   ::
   ++  va
-    =>  |%
+    =>  ~%  %va-ctx  ..va  ~
+        |%
         +$  vane-sample  [now=@da eny=@uvJ rof=rook]
         ::
         ++  smit
@@ -1059,12 +1060,14 @@
           (slap sub (rain pax txt))
         ::
         ++  create
+          ~/  %create
           |=  [our=ship zus=vase lal=term pax=path txt=@t]
           ^-  vase
           =/  cap  "vane: %{(trip lal)}"
           (slym (smit cap zus pax txt) our)
         ::
         ++  settle
+          ~/  %settle
           |=  van=vase
           ^-  (pair vase worm)
           =|  sac=worm
@@ -1076,6 +1079,7 @@
         ::  XX pass identity to preserve behavior?
         ::
         ++  update
+          ~/  %update
           |=  [las=vase nex=vase]
           ^-  vase
           =/  sam=vase  (slap (slym las *vane-sample) [%limb %stay])
@@ -1089,11 +1093,14 @@
     ::  |plow:va: operate in time and space
     ::
     ++  plow
+      ~/  %plow
       |=  [now=@da rok=rook]
+      ~%  %plow-core  +  ~
       |%
       ::  +peek:plow:va: read from a local namespace
       ::
       ++  peek
+        ~/  %peek
         ^-  rook
         |=  [lyc=gang vis=view bem=beam]
         ^-  (unit (unit (cask meta)))
