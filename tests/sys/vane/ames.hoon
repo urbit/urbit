@@ -557,14 +557,14 @@
   ::
   =/  num-frag=@ud  (lent paz)
   ~&  num-frag=num-frag
-  =/   =roar:ames  (sift-roar:ames num-frag (flop paz))
+  =/  ror  (sift-roar:ames num-frag (flop paz))  :: XX rename
   =/   event-core
     ~!  nec
     =/   foo  [*@da *@ rof.nec]
     (ev:(nec foo) [*@da *@ rof.nec] *duct ames-state.nec)
   =/  dat
-    ?>  ?=(^ dat.roar)
-    ;;(@ux q.dat.roar)
+    ?>  ?=(^ dat.ror)
+    ;;(@ux q.dat.ror)
   ::
   ;:  welp
     (expect-eq !>(`@`dat) !>(`@`dojo))
@@ -580,7 +580,7 @@
     ~&  %verifying-sig
     %+  expect-eq
       !>(%.y)
-      !>((meri:keys:fi:(abed:pe:event-core ~bud) want [sig dat]:roar))
+      !>((meri:keys:fi:(abed:pe:event-core ~bud) want [sig dat]:ror))
   ==
 ::
 ++  test-old-ames-wire  ^-  tang
