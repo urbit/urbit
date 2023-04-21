@@ -138,10 +138,12 @@
     |=  [=weft =tape]
     (welp " {<[lal num]:weft>}" tape)
   ?.  verb
-    :~  leaf/"/sys/kelvin:     {kul}"
-        leaf/"%cz hash ends in: {(slag (sub (lent <hash>) 5) <hash>)}"
-        leaf/"app status:       {sat}"
-        leaf/"pending updates:  {<`(list [@tas @ud])`~(tap in wic.dek)>}"
+    =/  base-hash  ?.(=(1 (lent meb)) <meb> <(head meb)>)
+    :~  leaf/"/sys/kelvin:          {kul}"
+        leaf/"base hash ends in:     {(slag (sub (lent base-hash) 5) base-hash)}"
+        leaf/"%cz hash ends in:      {(slag (sub (lent <hash>) 5) <hash>)}"
+        leaf/"app status:            {sat}"
+        leaf/"pending updates:       {<`(list [@tas @ud])`~(tap in wic.dek)>}"
     ==  
   :~  leaf/"/sys/kelvin:     {kul}"
       leaf/"base hash:        {?.(=(1 (lent meb)) <meb> <(head meb)>)}"
@@ -181,7 +183,7 @@
   =/  syd  (scot %tas desk)
   =/  yon  (scot %ud aeon)
   ::
-  =/  dom  .^(dome cv/~[her syd yon])
+  =/  dom  .^(domo cv/~[her syd yon])
   =/  tak  ~|  aeons=~(key by hit.dom)
            (scot %uv (~(got by hit.dom) aeon))
   =/  yak  .^(yaki cs/~[her syd yon %yaki tak])
