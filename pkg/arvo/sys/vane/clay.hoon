@@ -4793,7 +4793,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%13                                       ::  vane version
+    $:  ver=%14                                       ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
