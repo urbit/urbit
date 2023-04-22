@@ -47,7 +47,7 @@
           event-log=(list unix-timed-event)
           next-events=(qeu unix-event)
           processing-events=?
-          namespace=(map path (list purr:ames))
+          namespace=(map path (list yowl:ames))
       ==
     --
 ::
@@ -681,10 +681,10 @@
       ::TODO  runtime needs to update rcvr field also
       ::NOTE  rcvr life is allowed to be wrong
       (etch-shot:ames shot(sndr from.ae, rcvr for))
-    =/  pacs=(unit (list purr:ames))
+    =/  pacs=(unit (list yowl:ames))
       %+  biff
         (peek-once:(pe from.ae) %ax %$ [%fine %message path.ae])
-      (soft (list purr:ames))
+      (soft (list yowl:ames))
     ?~  pacs  (pe from.ae)
     =.  namespace.u.pier
       (~(put by namespace.u.pier) path.ae u.pacs)

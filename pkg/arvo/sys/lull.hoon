@@ -1210,9 +1210,13 @@
   +$  public-key     @uwpublickey
   +$  symmetric-key  @uwsymmetrickey
   ::
-  +$  hoot           @uxhoot                            ::  request packet
-  +$  purr           @uxpurr                            ::  response packet
-  +$  hunk           [lop=@ len=@]                      ::  range specifier
+  ::  $hoot: request packet payload
+  ::  $yowl: serialized response packet payload
+  ::  $hunk: a slice of fragments (namespace produces (list @uxmeow))
+  ::
+  +$  hoot           @uxhoot
+  +$  yowl           @uxyowl
+  +$  hunk           [lop=@ len=@]
   ::
   :: +|  %kinetics
   ::  $dyad: pair of sender and receiver ships
@@ -1327,23 +1331,32 @@
     $:  fra=@ud
         meow
     ==
-  +$  meow  ::  response packet
+  ::
+  +$  meow  ::  response fragment
     $:  sig=@ux  ::  signature
         num=@ud  ::  number of fragments
         siz=@ud  ::  official size of this fragment
         dat=@ux  ::  contents
     ==
-  +$  peep  ::  request data
+  ::
+  +$  peep  ::  fragment request
     $:  =path
         num=@ud
     ==
-  +$  keen  ::  signed request
+  ::
+  +$  wail  ::  signed peep
     $:  signature=@
         peep
     ==
+  ::
   +$  roar  ::  response message
     (tale:pki:jael (pair path (unit (cask))))
-  :::
+  ::
+  +$  purr  ::  response packet payload
+    $:  peep
+        meow
+    ==
+  ::
   ::  $qos: quality of service; how is our connection to a peer doing?
   ::
   ::    .last-contact: last time we heard from peer, or if %unborn, when
@@ -1622,15 +1635,15 @@
     =/  content  (cut 3 [off (sub (met 3 body) off)] body)
     [[sndr rcvr] req sam sndr-tick rcvr-tick origin content]
   ::
-  ++  sift-keen
+  ++  sift-wail
     |=  =hoot
-    ^-  keen
+    ^-  wail
     :-  sig=(end 9 hoot)
     +:(sift-peep (rsh 9 hoot))
   ::
   ++  sift-purr
     |=  =hoot
-    ^-  [=peep =meow]
+    ^-  purr
     =+  [wid peep]=(sift-peep hoot)
     [peep (sift-meow (rsh [3 wid] hoot))]
   ::
@@ -1644,15 +1657,15 @@
     [(add 6 len) [(stab pat) num]]
   ::
   ++  sift-meow
-    |=  =purr
+    |=  =yowl
     =;  =meow
       ~|  %fine-meow-len^meow
       ?>  (gte siz.meow (met 3 dat.meow))
       meow
-    :*  sig=(cut 3 [0 64] purr)
-        num=(cut 3 [64 4] purr)
-        siz=(cut 3 [68 2] purr)
-        dat=(rsh 3^70 purr)
+    :*  sig=(cut 3 [0 64] yowl)
+        num=(cut 3 [64 4] yowl)
+        siz=(cut 3 [68 2] yowl)
+        dat=(rsh 3^70 yowl)
     ==
   ::  +etch-shot: serialize a packet into a bytestream
   ::

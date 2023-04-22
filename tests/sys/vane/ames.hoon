@@ -513,9 +513,9 @@
   =/  =shot:ames  (sift-shot:ames `@ux`req)
   ?<  sam.shot
   ?>  req.shot
-  =/  =keen:ames
-   (sift-keen:ames `@ux`content.shot)
-  ~&  keen
+  =/  =wail:ames
+   (sift-wail:ames `@ux`content.shot)
+  ~&  wail
   (expect-eq !>(1) !>(1))
 ::
 ++  test-fine-hunk
