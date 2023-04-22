@@ -1579,26 +1579,6 @@
     =/  =rave  (rove-to-rave rove.wov)
     =?   rave  ?=([%sing %v *] rave)
       [%many %| [%ud let.dom] case.mood.rave path.mood.rave]
-    ::  if it is a single request, and
-    ::  :ship's remote scry isn't known to be broken,
-    ::  or we learned it was broken more than an hour ago,
-    ::
-    ?:  ?&  ?=([%sing %x *] rave)
-        ?|  !(~(has by sad) her)
-            (gth now (add scry-retry-time (~(got by sad) her)))
-        ==  ==
-      ::  send request as remote scry
-      ::TODO  can be deduplicated with the below?
-      ::
-      =*  inx  nix.u.ref
-      =^  scry  +>+.$
-        =<  ?>(?=(^ ref) .)
-        (send-over-scry %warp-index hen her inx syd mood.rave)
-      %=  +>+.$
-        nix.u.ref  +(nix.u.ref)
-        bom.u.ref  (~(put by bom.u.ref) inx [hen rave ~ ~ ~ `warp-index+scry])
-        fod.u.ref  (~(put by fod.u.ref) hen inx)
-      ==
     ::
     ?.  (foreign-capable rave)
       ~|([%clay-bad-foreign-request-care rave] !!)
@@ -6158,36 +6138,15 @@
       %-  (slog leaf+"clay: lost warp from {<tea>}" ~)
       [~ ..^$]
     ::
-        ?(%boon %tune)
+        %boon
       =/  her=ship   (slav %p i.t.tea)
       =/  =desk      (slav %tas i.t.t.tea)
       =/  index=@ud  (slav %ud i.t.t.t.tea)
       ::
       =^  mos  ruf
-        =;  res=(unit rand)
-          ~&  taking-foreign-answer/=(~ res)
-          =/  den  ((de now rof hen ruf) her desk)
-          =?  den  ?=(%tune +<.hin)
-            (cancel-scry-timeout:den index)
-          abet:(take-foreign-answer:den index res)
-        ::
-        ?:  ?=(%boon +<.hin)  ;;((unit rand) payload.hin)
-        ::
-        ?~  roar.hin  ~
-        %+  bind  q.dat.u.roar.hin
-        |=  =(cask)
-        ^-  rand
-        ::  retrieve the request from the scry path
-        ::
-        =/  pol=(pole knot)  path.hin
-        ?>  ?=([%c car=care cas=@ta des=@tas pat=*] pol)
-        =/  =case  (need (de-case cas.pol))
-        [[car.pol case des.pol] pat.pol cask]
-        ::  XX this just looks wrong
-        ::
-        :: =+  (need (de-omen path.hin))
-        :: =/  =care  ;;(care ?@(vis (rsh 3 vis) car.vis))
-        :: [[care r.bem q.bem] s.bem cask]
+        =+  ;;(res=(unit rand) payload.hin)
+        =/  den  ((de now rof hen ruf) her desk)
+        abet:(take-foreign-answer:den index res)
       [mos ..^$]
     ::
         %wake
