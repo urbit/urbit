@@ -4576,14 +4576,12 @@
     ::
     ?~  blk=(de-path-soft:balk pax.tyl)  ~
     ::
-    ::  XX rift bad init (just on on fake?)
-    ::
-    :: ?.  ?&  =(our her.u.blk)
-    ::         =(rift.ames-state rif.u.blk)
-    ::         =(life.ames-state lyf.u.blk)
-    ::     ==
-    ::   ~&  [%fine-mismatch our=[rift life]:ames-state her=[her rif lyf]:u.blk]
-    ::   ~
+    ?.  ?&  =(our her.u.blk)
+            =(rift.ames-state rif.u.blk)
+            =(life.ames-state lyf.u.blk)
+        ==
+      ~&  [%fine-mismatch our=[rift life]:ames-state her=[her rif lyf]:u.blk]
+      ~
     =+  nom=(en-roof:balk u.blk)
     ~|  nom
     |^
