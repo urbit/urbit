@@ -1894,7 +1894,7 @@
         ::
         ?.  ?=([%recork ~] wire)
           =/  res=(unit ?([%fine her=ship =^wire] [%pump her=ship =bone]))
-            ?+  wire  ~|  %ames-wire-timer^wire  !!
+            ?+  wire  ~
               [%pump ship=@ bone=@ ~]  (parse-pump-wire &2.wire &3.wire)
               [%fine %behn %wake @ *]  (parse-fine-wire &4.wire t.t.t.t.wire)
             ==
