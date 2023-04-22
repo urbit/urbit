@@ -1404,7 +1404,7 @@
       `[[care.mood case.mood syd] path.mood cage]:[u.res syd=syd]
     ?~  ref
       [%give %writ riot]
-    [%slip %b %drip !>([%writ riot])]
+    [%pass /drip %b %drip !>([%writ riot])]
   ::
   ++  case-to-date
     |=  =case
@@ -3921,7 +3921,7 @@
             (~(run in moods) |=(m=mood [care.m path.m]))
           =/  gift  [%wris cas res]
           ?:  ?=(^ ref)
-            [%slip %b %drip !>(gift)]
+            [%pass /drip %b %drip !>(gift)]  :: XX s/b [%behn %wris ...] in $sign?
           [%give gift]
         ?>  ?=([* ~ ~] res)
         :_  ~
@@ -6065,7 +6065,25 @@
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^+  [*(list move) ..^$]
   ?^  dud
-    ~|(%clay-take-dud (mean tang.u.dud))
+    ?+    tea
+      ~|(%clay-take-dud (mean tang.u.dud))
+    ::
+        [%drip ~]
+      %.  [~ ..^$]
+      %-  slog
+      ^-  tang
+      :*  'clay: drip fail'
+          [%rose [": " "" ""] 'bail' mote.u.dud ~]
+          tang.u.dud
+      ==
+    ==
+  ::
+  ::  pseudo %slip on %drip
+  ::
+  ?:  ?=([%drip ~] tea)
+    ?>  ?=([?(%behn %clay) ?(%writ %wris) *] hin)
+    [[`move`[hen %give +.hin] ~] ..^$]
+  ::
   ?:  ?=([%lu %load *] tea)
     ?>  ?=(%unto +<.hin)
     ?>  ?=(%poke-ack -.p.hin)
@@ -6273,7 +6291,7 @@
       ~(tap in ducts)
     =/  cancel-moves=(list move)
       %+  turn  cancel-ducts
-      |=(=duct [duct %slip %b %drip !>([%writ ~])])
+      |=(=duct [duct %pass /drip %b %drip !>([%writ ~])])
     ::  delete local state of foreign desk
     ::
     =.  hoy.ruf  (~(del by hoy.ruf) who)

@@ -1348,13 +1348,13 @@
       ::
       =/  heartbeat-time=@da  (add now ~s20)
       =/  heartbeat  (set-heartbeat-move channel-id heartbeat-time)
-      ::  clear the event queue, record the duct for future output and
+      ::  record the duct for future output and
       ::  record heartbeat-time for possible future cancel
       ::
       =.  session.channel-state.state
         %+  ~(jab by session.channel-state.state)  channel-id
         |=  =channel
-        channel(events ~, state [%| duct], heartbeat (some [heartbeat-time duct]))
+        channel(state [%| duct], heartbeat (some [heartbeat-time duct]))
       ::
       [[heartbeat :(weld http-moves cancel-moves moves)] state]
     ::  +acknowledge-events: removes events before :last-event-id on :channel-id

@@ -31,6 +31,18 @@
   ++  $
     |=  [? ? ? ? ?]
      (report-vats:abed +<)
+  ::
+  ++  kel-path
+    |=  =desk
+    ^-  path
+    /[ego]/[desk]/[wen]/sys/kelvin
+  ::
+  ++  desk-exists
+    |=  =desk
+    ?&  !=(ud.cass 0):.^(=cass %cw /[ego]/[desk]/[wen])
+        .^(? %cu (kel-path desk))
+    ==
+  ::
   ++  abed 
     %=    ..abed
       cone  .^(^cone %cx /[ego]//[wen]/domes)
@@ -47,7 +59,7 @@
     |=  desk=_`desk`%base
     =/  pike  (~(got by pikes) desk)
     =/  zest  -:(~(got by rock) desk)
-    =/  kel-path  /[ego]/[desk]/[wen]/sys/kelvin
+    =/  kel-path  (kel-path desk)
     =/  sink=sink
       ?~  s=(~(get by sor) desk)
         ~
@@ -62,8 +74,6 @@
         desk=desk
         ^=  running  =(%live zest)
         ^=  suspended  =(%dead zest)
-        ^=  exists  !=(ud.cass 0):.^(=cass %cw /[ego]/[desk]/[wen])
-        ^=  bad-desk  ?!(.^(? %cu kel-path))
         ^=  meb   ::  =(list @uv)
           ?~  sink  [hash]~
           (mergebase-hashes our desk now her.u.sink sud.u.sink)
@@ -90,6 +100,7 @@
                 !=(%live zest.pike)
                 !(~(has in wic.pike) kel) 
     ==      ==
+  ::
   ++  report-vats
     |=  $:  verb=?
             show-suspended=?
@@ -97,33 +108,33 @@
             show-blocking=?
             show-nonexistent=?
         ==
+    =/  [real=(list desk) fake=(list desk)]
+      (skid ~(tap in desks) desk-exists)
+    =;  reals=tang
+      ?.  show-nonexistent
+        reals
+      %+  weld  reals
+      `tang`(turn fake |=(=desk leaf+"nonexistent desk: {<desk>}"))
     %+  turn
-      %+  skim
-        %+  turn  ~(tap in desks)
-        |=  =desk  (vat-info desk)
+      %+  skim  (turn real vat-info)
       |=  vat-info
-      :: just unconditionally show "bad" desks, whatever that means
-      ?|  bad-desk
-          &(suspended show-suspended)
+      ?|  &(suspended show-suspended)
           &(running show-running)
           &(blocking show-blocking)
-          &(!exists show-nonexistent)
       ==
     |=  =vat-info
+    ^-  tank
     :+  %rose  [" " " " "::"]
     :-  leaf+"{<desk.vat-info>}"
     %-  flop
     %-  report-vat
     [verb vat-info]
+  ::
   ++  report-vat
     |=  [verb=? vat-info]
     ^-  tang
-    ?:  !exists
-      ~[leaf+"desk does not yet exist: {<desk>}"]
     ?:  =(%kids desk)
       ~[leaf+"%kids %cz hash:     {<hash>}"]
-    ?:  bad-desk
-      ~[leaf+"bad desk: {<desk>}"]
     %-  flop
     ?.  verb
       :~  leaf/"/sys/kelvin:     {kul}"

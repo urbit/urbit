@@ -1104,14 +1104,14 @@
               ==  ==
               $:  %9
               $%  $:  %larva
-                      events=(qeu queued-event)
+                      events=(qeu queued-event-11)
                       state=ames-state-9
                   ==
                   [%adult state=ames-state-9]
               ==  ==
               $:  %10
               $%  $:  %larva
-                      events=(qeu queued-event)
+                      events=(qeu queued-event-11)
                       state=ames-state-10
                   ==
                   [%adult state=ames-state-10]
@@ -1137,7 +1137,7 @@
                   ==
                   [%adult state=_ames-state.adult-gate]
           ==  ==  ==
-      ?-    old
+      |^  ?-  old
           [%4 %adult *]
         $(old [%5 %adult (state-4-to-5:load:adult-core state.old)])
       ::
@@ -1197,7 +1197,7 @@
           [%9 %larva *]
         ~>  %slog.0^leaf/"ames: larva: load"
         =.  cached-state  `[%9 state.old]
-        =.  queued-events  events.old
+        =.  queued-events  (event-11-to-12 events.old)
         larval-gate
       ::
           [%10 %adult *]
@@ -1208,7 +1208,7 @@
           [%10 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%10 state.old]
-        =.  queued-events  events.old
+        =.  queued-events  (event-11-to-12 events.old)
         larval-gate
       ::
           [%11 %adult *]
@@ -1219,17 +1219,7 @@
           [%11 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%11 state.old]
-        =.  queued-events
-          ::  "+rep:in on a +qeu looks strange, but works fine."
-          ::
-          %-  ~(rep in events.old)
-          |=  [e=queued-event-11 q=(qeu queued-event)]
-          %-  ~(put to q)  ^-  queued-event
-          ?.  ?=(%call -.e)  e
-          =/  task=task-11  ((harden task-11) wrapped-task.e)
-          %=  e
-            wrapped-task  ?.(?=(%snub -.task) task [%snub %deny ships.task])
-          ==
+        =.  queued-events  (event-11-to-12 events.old)
         larval-gate
       ::
           [%12 %adult *]
@@ -1252,6 +1242,21 @@
         larval-gate
       ::
       ==
+      ::
+      ++  event-11-to-12
+        |=  events=(qeu queued-event-11)
+        ^-  (qeu queued-event)
+        ::  "+rep:in on a +qeu looks strange, but works fine."
+        ::
+        %-  ~(rep in events)
+        |=  [e=queued-event-11 q=(qeu queued-event)]
+        %-  ~(put to q)  ^-  queued-event
+        ?.  ?=(%call -.e)  e
+        =/  task=task-11  ((harden task-11) wrapped-task.e)
+        %=  e
+          wrapped-task  ?.(?=(%snub -.task) task [%snub %deny ships.task])
+        ==
+      --
     ::  +molt: re-evolve to adult-ames
     ::
     ++  molt
@@ -1864,7 +1869,7 @@
           %.  &
           (ev-trace &(dry odd.veb) ship |.((weld "stale %watch plea " log)))
         ::  the current subscription can be safely corked if there
-        ::  is a flow with a naxplanation ack  on a backward bone
+        ::  is a flow with a naxplanation ack on a backward bone
         ::
         =+  backward-bone=(mix 0b10 bone)
         ?.  =(2 (mod backward-bone 4))
@@ -2469,6 +2474,14 @@
           ~|  %dangling-bone^her^bone
           (~(got by by-bone.ossuary.peer-state) bone)
         ::
+        ++  is-corked
+          |=  =bone
+          ?|  (~(has in corked.peer-state) bone)
+              ?&  =(1 (end 0 bone))
+                  =(1 (end 0 (rsh 0 bone)))
+                  (~(has in corked.peer-state) (mix 0b10 bone))
+          ==  ==
+        ::
         +|  %tasks
         ::
         ++  on-heed
@@ -2518,8 +2531,7 @@
             abet:(call:(abed:mi bone) %hear lane shut-packet ?=(~ dud))
           ::  benign ack on corked bone
           ::
-          ?:  (~(has in corked.peer-state) bone)
-            peer-core
+          ?:  (is-corked bone)  peer-core
           ::  Just try again on error, printing trace
           ::
           ::    Note this implies that vanes should never crash on %done,
@@ -2600,10 +2612,10 @@
                   =(1 current:(~(got by snd.peer-state) bone))
               ==
             (send-blob | her (attestation-packet [her her-life]:channel))
-          ?:  (~(has in corked.peer-state) bone)
-            ::  if the bone was corked the flow doesn't exist anymore
-            ::  TODO: clean up corked bones in the peer state when it's _safe_?
-            ::        (e.g. if this bone is N blocks behind the next one)
+          ?:  (is-corked bone)
+            ::  no-op if the bone (or, if a naxplanation, the reference bone)
+            ::  was corked, because the flow doesn't exist anymore
+            ::  TODO: clean up corked bones?
             ::
             peer-core
           ::  maybe resend some timed out packets
@@ -2765,21 +2777,23 @@
         ::
         ++  handle-cork
           |=  =bone
-          ^+  peer-core
+          |^  ^+  peer-core
           ?.  (~(has in closing.peer-state) bone)  peer-core
-          =/  =message-pump-state
+          =/  pump=message-pump-state
             (~(gut by snd.peer-state) bone *message-pump-state)
-          =?  peer-core  ?=(^ next-wake.packet-pump-state.message-pump-state)
-            =*  next-wake  u.next-wake.packet-pump-state.message-pump-state
-            =/  =wire  (make-pump-timer-wire her bone)
-            :: resetting timer for boons
+          =?  event-core  ?=(^ next-wake.packet-pump-state.pump)
+            ::  reset-timer for boons
             ::
-            (pe-emit [/ames]~ %pass wire %b %rest next-wake)
+            (reset-timer her bone u.next-wake.packet-pump-state.pump)
           =/  nax-bone=^bone  (mix 0b10 bone)
-          =?  peer-core  (~(has by snd.peer-state) nax-bone)
-            %.  peer-core
-            %+  pe-trace  odd.veb
-            |.("remove naxplanation flow {<[her bone=nax-bone]>}")
+          =/  nax-pump=message-pump-state
+            (~(gut by snd.peer-state) nax-bone *message-pump-state)
+          =?  event-core  ?=(^ next-wake.packet-pump-state.nax-pump)
+            %-  %^  ev-trace  odd.veb  her
+                |.("remove naxplanation flow {<[her bone=nax-bone]>}")
+            :: reset timer for naxplanations
+            ::
+            (reset-timer her nax-bone u.next-wake.packet-pump-state.nax-pump)
           =.  peer-state
             =,  peer-state
             %_  peer-state
@@ -2791,6 +2805,11 @@
               closing  (~(del in closing) bone)
             ==
           peer-core
+          ::
+          ++  reset-timer
+            |=  [=ship =^bone wake=@da]
+            (emit [/ames]~ %pass (make-pump-timer-wire ship bone) %b %rest wake)
+          --
         ::
         +|  %internals
         ::  +mu: constructor for |pump message sender core
