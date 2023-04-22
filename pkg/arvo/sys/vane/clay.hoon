@@ -5280,10 +5280,12 @@
             pud=(unit [=desk =yoki])
         ==
       +$  room-11
+        $+  room-11
         $:  hun=duct
             dos=(map desk dojo-11)
         ==
       +$  dojo-11
+        $+  dojo-11
         $:  qyx=cult
             dom=dome-11
             per=regs
@@ -5291,6 +5293,7 @@
             fiz=melt
         ==
       +$  dome-11
+        $+  dome-11
         $:  let=aeon
             hit=(map aeon tako)
             lab=(map @tas aeon)
@@ -5300,9 +5303,11 @@
             fod=flue
         ==
       +$  rung-11
+        $+  rung-11
         $:  rus=(map desk rede-11)
         ==
       +$  rede-11
+        $+  rede-11
         $:  lim=@da
             ref=(unit rind-11)
             qyx=cult
@@ -5312,12 +5317,14 @@
             fiz=melt
         ==
       +$  rind-11
+        $+  rind-11
         $:  nix=@ud
             bom=(map @ud update-state-11)
             fod=(map duct @ud)
             haw=(map mood (unit cage))
         ==
       +$  update-state-11
+        $+  update-state-11
         $:  =duct
             =rave
             need=(list lobe)

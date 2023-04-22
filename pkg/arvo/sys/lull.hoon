@@ -1918,6 +1918,7 @@
         [%arch =path =(map path lobe)]
     ==
   +$  rang                                              ::  repository
+    $+  rang
     $:  hut=(map tako yaki)                             ::  changes
         lat=(map lobe page)                             ::  data
     ==                                                  ::
