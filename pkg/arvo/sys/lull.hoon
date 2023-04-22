@@ -4,7 +4,7 @@
 =>  ..part
 ~%  %lull  ..part  ~
 |%
-++  lull  %325
+++  lull  %324
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
@@ -2354,6 +2354,11 @@
   ::                                                    ::::
 ++  eyre  ^?
   |%
+  +$  cache-entry
+    $:  auth=?
+    $=  body
+    $%  [%payload =simple-payload:http]
+    ==  ==
   +$  gift
     $%  ::  set-config: configures the external http server
         ::
@@ -2373,6 +2378,9 @@
         ::    not allowed.
         ::
         [%bound accepted=? =binding]
+        ::  notification that a cache entry has changed
+        ::
+        [%grow =path]
     ==
   ::
   +$  task
@@ -2428,6 +2436,9 @@
         ::  %spew: set verbosity toggle
         ::
         [%spew veb=@]
+        ::  remember (or update) a cache mapping
+        ::
+        [%set-response url=@t entry=(unit cache-entry)]
     ==
   ::  +origin: request origin as specified in an Origin header
   ::
@@ -2525,7 +2536,8 @@
   ::    events since then.
   ::
   +$  channel
-    $:  ::  channel-state: expiration time or the duct currently listening
+    $:  mode=?(%json %jam)
+        ::  channel-state: expiration time or the duct currently listening
         ::
         ::    For each channel, there is at most one open EventSource
         ::    connection. A 400 is issues on duplicate attempts to connect to the
