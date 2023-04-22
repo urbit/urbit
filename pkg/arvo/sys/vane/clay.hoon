@@ -5300,7 +5300,7 @@
             tom=(map tako norm)
             nor=norm
             mim=(map path mime)
-            fod=flue
+            fod=*
         ==
       +$  rung-11
         $+  rung-11
