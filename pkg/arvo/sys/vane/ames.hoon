@@ -3756,7 +3756,7 @@
                 ^-  byts
                 :-  (roll biz |=([[wid=@ *] acc=@] (add wid acc)))
                 (can 3 biz)
-              ::  TODO: move +etch-peep/+etch-keen to %lull?
+              ::  TODO: move +etch-peep/+etch-wail to %lull?
               ++  etch-peep
                 |=  [=path num=@ud]
                 ^-  byts
@@ -3768,7 +3768,7 @@
                     wid^`@`pat  ::  namespace path
                 ==
               ::
-              ++  etch-keen
+              ++  etch-wail
                 |=  [=path num=@ud]
                 ^-  hoot  ^-  @
                 =/  sic  (mod life.ames-state 16)
@@ -3851,7 +3851,7 @@
           ++  fi-gauge      (ga metrics.keen (wyt:fi-deq wan.keen))
           ++  fi-wait       |=(tim=@da (fi-pass-timer %b %wait tim))
           ++  fi-rest       |=(tim=@da (fi-pass-timer %b %rest tim))
-          ++  fi-etch-keen  |=(frag=@ud (etch-keen fi-full-path frag))
+          ++  fi-etch-wail  |=(frag=@ud (etch-wail fi-full-path frag))
           ++  fi-send
             |=(=hoot fine(event-core (send-blob for=| her `@ux`hoot)))
           ::
@@ -3867,7 +3867,7 @@
             =.  fine  (fi-sub duct)
             ?>  =(num-fragments.keen 0)
             =/  fra=@     1
-            =/  req=hoot  (fi-etch-keen fra)
+            =/  req=hoot  (fi-etch-wail fra)
             =/     =want  [fra req last=now tries=1 skips=0]
             =.  wan.keen  (cons:fi-deq *(pha ^want) want)
             (fi-send req)
@@ -3982,7 +3982,7 @@
             %+  turn  (gulf 1 num.meow)
             |=  fra=@ud
             ^-  want
-            [fra (fi-etch-keen fra) now 0 0]
+            [fra (fi-etch-wail fra) now 0 0]
           ::  +fi-continue: send packets based on normal congestion flow
           ::
           ++  fi-continue
