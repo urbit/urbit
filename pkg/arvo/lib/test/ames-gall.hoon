@@ -24,13 +24,14 @@
   adult
 ::
 ++  ames-nec-bud
-  |=  [l=[nec=@ud bud=@ud] r=[nec=@ud bud=@ud]]
+  |=  [life=[nec=@ud bud=@ud] rift=[nec=@ud bud=@ud]]
   ::  create ~nec
   ::
   =/  nec  (ames-raw ~nec)
-  =.  now.nec        ~1111.1.1
-  =.  eny.nec        0xdead.beef
-  =.  life.ames-state.nec  nec.l
+  =.  now.nec  ~1111.1.1
+  =.  eny.nec  0xdead.beef
+  =.  life.ames-state.nec  nec.life
+  =.  rift.ames-state.nec  nec.rift
   =.  rof.nec  |=(* ``[%noun !>(*(list turf))])
   =.  crypto-core.ames-state.nec  nec:crypto-core
   =/  nec-pub  pub:ex:crypto-core.ames-state.nec
@@ -38,9 +39,10 @@
   ::  create ~bud
   ::
   =/  bud  (ames-raw ~bud)
-  =.  now.bud        ~1111.1.1
-  =.  eny.bud        0xbeef.dead
-  =.  life.ames-state.bud  bud.l
+  =.  now.bud  ~1111.1.1
+  =.  eny.bud  0xbeef.dead
+  =.  life.ames-state.bud  bud.life
+  =.  rift.ames-state.bud  bud.rift
   =.  rof.bud  |=(* ``[%noun !>(*(list turf))])
   =.  crypto-core.ames-state.bud  bud:crypto-core
   =/  bud-pub  pub:ex:crypto-core.ames-state.bud
@@ -56,8 +58,8 @@
     =|  =peer-state:ames
     =.  -.peer-state
       :*  symmetric-key=bud-sym
-          life=bud.l
-          rift=bud.r
+          life=bud.life
+          rift=bud.rift
           public-key=bud-pub
           sponsor=~bud
       ==
@@ -70,8 +72,8 @@
     =|  =peer-state:ames
     =.  -.peer-state
       :*  symmetric-key=nec-sym
-          life=nec.l
-          rift=nec.r
+          life=nec.life
+          rift=nec.rift
           public-key=nec-pub
           sponsor=~nec
       ==

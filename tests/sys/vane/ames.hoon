@@ -16,6 +16,7 @@
 =.  now.nec        ~1111.1.1
 =.  eny.nec        0xdead.beef
 =.  life.ames-state.nec  2
+=.  rift.ames-state.nec  0
 =.  rof.nec  |=(* ``[%noun !>(*(list turf))])
 =.  crypto-core.ames-state.nec  (pit:nu:crub:crypto 512 (shaz 'nec'))
 =/  nec-pub  pub:ex:crypto-core.ames-state.nec
@@ -24,6 +25,7 @@
 =.  now.bud        ~1111.1.1
 =.  eny.bud        0xbeef.dead
 =.  life.ames-state.bud  3
+=.  rift.ames-state.bud  0
 =.  rof.bud  |=(* ``[%noun !>(*(list turf))])
 =.  crypto-core.ames-state.bud  (pit:nu:crub:crypto 512 (shaz 'bud'))
 =/  bud-pub  pub:ex:crypto-core.ames-state.bud
@@ -32,6 +34,7 @@
 =.  now.marbud        ~1111.1.1
 =.  eny.marbud        0xbeef.beef
 =.  life.ames-state.marbud  4
+=.  rift.ames-state.marbud  0
 =.  rof.marbud  |=(* ``[%noun !>(*(list turf))])
 =.  crypto-core.ames-state.marbud  (pit:nu:crub:crypto 512 (shaz 'marbud'))
 =/  marbud-pub  pub:ex:crypto-core.ames-state.marbud
@@ -40,6 +43,7 @@
 =.  now.comet        ~1111.1.1
 =.  eny.comet        0xbeef.cafe
 =.  life.ames-state.comet  1
+=.  rift.ames-state.comet  0
 =.  rof.comet  |=(* ``[%noun !>(*(list turf))])
 =.  crypto-core.ames-state.comet
   %-  nol:nu:crub:crypto
@@ -51,6 +55,7 @@
 =.  now.comet2        ~1111.1.1
 =.  eny.comet2        0xcafe.cafe
 =.  life.ames-state.comet2  1
+=.  rift.ames-state.comet2  0
 =.  rof.comet2  |=(* ``[%noun !>(*(list turf))])
 =.  crypto-core.ames-state.comet2  (pit:nu:crub:crypto 512 0v1eb4)
 =/  comet2-pub  pub:ex:crypto-core.ames-state.comet2
@@ -523,7 +528,7 @@
   %-  zing
   %+  turn  (gulf 1 10)
   |=  siz=@
-  =/  want=path  /~bud/0/1/c/z/(scot %ud siz)/kids/sys
+  =/  want=path  /~bud/0/3/c/z/(scot %ud siz)/kids/sys
   ::
   =/  =beam  [[~bud %$ da+now:bud] (welp /fine/hunk/1/16.384 want)]
   =/  [=mark =vase]  (need (need (scry bud %x beam)))
@@ -538,7 +543,7 @@
   ::%+  turn  (gulf 1 50)
   ::|=  siz=@
   ::=/  want=path  /~bud/0/1/c/z/(scot %ud siz)/kids/sys
-  =/  want=path  /~bud/0/1/c/x/1/kids/app/dojo/hoon
+  =/  want=path  /~bud/0/3/c/x/1/kids/app/dojo/hoon
   =/  dit  (jam %hoon dojo)
   =/  exp  (cat 9 (fil 3 64 0xff) dit)
   =/  siz=@ud  (met 13 exp)
