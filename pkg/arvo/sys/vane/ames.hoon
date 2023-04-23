@@ -3746,35 +3746,33 @@
         ::
         ++  fi
           =>  |%
-              ::  +gum: glue together a list of $byts into one
-              ::
-              ::    TODO: move to hoon.hoon (see +cad in lib/tiny)
-              ::
-              ++  gum
-                ::~/  %gum
-                |=  biz=(list byts)
-                ^-  byts
-                :-  (roll biz |=([[wid=@ *] acc=@] (add wid acc)))
-                (can 3 biz)
               ::  TODO: move +etch-peep/+etch-wail to %lull?
+              ::
               ++  etch-peep
-                |=  [=path num=@ud]
-                ^-  byts
-                ?>  (lth num (bex 32))
+                |=  peep
+                ^-  @
+                ?>  (lth num ^~((bex 32)))
                 =+  (spit path)
-                %-  gum
+                %+  can  3
                 :~  4^num       ::  fragment number
                     2^wid       ::  path size
                     wid^`@`pat  ::  namespace path
                 ==
               ::
               ++  etch-wail
-                |=  [=path num=@ud]
-                ^-  hoot  ^-  @
+                |=  w=wail
+                ^-  @
+                ?-  -.w
+                  %0  (lsh 3 (etch-peep +.w))  :: tag byte
+                ==
+              ::
+              ++  make-shot
+                |=  w=wail
+                ^-  shot
                 =/  sic  (mod life.ames-state 16)
                 =/  ric  (mod life.peer-state 16)
-                =/  syn  (lsh [3 64] dat:(etch-peep path num))
-                (etch-shot [our her] req=& sam=| sic ric ~ syn)
+                [[our her] req=& sam=| sic ric ~ (etch-wail w)]
+              ::
               ::
               ++  keys
                 |%
@@ -3851,7 +3849,10 @@
           ++  fi-gauge      (ga metrics.keen (wyt:fi-deq wan.keen))
           ++  fi-wait       |=(tim=@da (fi-pass-timer %b %wait tim))
           ++  fi-rest       |=(tim=@da (fi-pass-timer %b %rest tim))
-          ++  fi-etch-wail  |=(frag=@ud (etch-wail fi-full-path frag))
+          ::
+          ++  fi-etch-wail
+            |=(frag=@ud `hoot``@`(etch-shot (make-shot %0 fi-full-path frag)))
+          ::
           ++  fi-send
             |=(=hoot fine(event-core (send-blob for=| her `@ux`hoot)))
           ::

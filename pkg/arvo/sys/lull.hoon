@@ -1344,9 +1344,8 @@
         num=@ud
     ==
   ::
-  +$  wail  ::  signed peep
-    $:  signature=@
-        peep
+  +$  wail  ::  tagged request fragment
+    $%  [%0 peep] :: unsigned
     ==
   ::
   +$  roar  ::  response message
@@ -1638,8 +1637,8 @@
   ++  sift-wail
     |=  =hoot
     ^-  wail
-    :-  sig=(end 9 hoot)
-    +:(sift-peep (rsh 9 hoot))
+    ?>  =(0 (end 3 hoot))
+    [%0 +:(sift-peep (rsh 3 hoot))]
   ::
   ++  sift-purr
     |=  =hoot
