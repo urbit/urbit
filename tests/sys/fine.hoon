@@ -41,29 +41,18 @@
           %cx  ``hoon+!>(kelvin)
       ==
     ::
-    ++  gum
-      ::~/  %gum
-      |=  biz=(list byts)
-      ^-  byts
-      :-  (roll biz |=([[wid=@ *] acc=@] (add wid acc)))
-      (can 3 biz)
-    ::
-    ++  etch-peep
-      |=  [=path num=@ud]
-      ^-  byts
-      ?>  (lth num (bex 32))
-      =+  pat=(spat path)
-      =+  wid=(met 3 pat)
-      %-  gum
-      :~  4^num       ::  fragment number
-          2^wid       ::  path size
-          wid^`@`pat  ::  namespace path
-      ==
-    ::
     ++  etch-request-content
       |=  [our=@p =path num=@ud]
       ^-  @
-      (lsh [3 64] dat:(etch-peep path num))
+      ?>  (lth num (bex 32))
+      =+  pat=(spat path)
+      =+  wid=(met 3 pat)
+      %+  can  3
+      :~  1^0         ::  tag byte
+          4^num       ::  fragment number
+          2^wid       ::  path size
+          wid^`@`pat  ::  namespace path
+      ==
     --
 ::
 |%
