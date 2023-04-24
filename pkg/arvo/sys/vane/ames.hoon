@@ -4580,7 +4580,7 @@
         ==
       ~&  [%fine-mismatch our=[rift life]:ames-state her=[her rif lyf]:u.blk]
       ~
-    =+  nom=(en-roof:balk u.blk)
+    =+  nom=(as-omen:balk u.blk)
     ~|  nom
     |^
     =/  van  ?@(vis.nom (end 3 vis.nom) way.vis.nom)

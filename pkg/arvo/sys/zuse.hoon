@@ -5980,9 +5980,9 @@
         spr.bulk
     ==
   ::
-  ++  en-roof
+  ++  as-omen
     |=  =bulk
-    ^-  [vis=view bem=beam]
+    ^-  omen
     =/  [des=desk pax=path]
       ?^  spr.bulk  spr.bulk
       [%$ ~]

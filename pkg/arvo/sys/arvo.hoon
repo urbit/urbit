@@ -20,7 +20,7 @@
 ::  $mark: symbolic content type
 ::  $mien: orientation
 ::  $page: untyped cage
-::  +omen: namespace path and data
+::  $omen: fully-qualified namespace path
 ::  $ship: network identity
 ::  $sink: subscription
 ::
@@ -54,7 +54,7 @@
 +$  mark  @tas
 +$  mien  [our=ship now=@da eny=@uvJ]
 +$  page  (cask)
-++  omen  |$  [a]  (pair path (cask a))
++$  omen  [vis=view bem=beam]
 +$  ship  @p
 +$  sink  (trel bone ship path)
 ::
@@ -111,18 +111,17 @@
   |$  [a]
   $~  =>(~ |~(* ~))
   $-  $:  lyc=gang                                      ::  leakset
-          vis=view                                      ::  perspective
-          bem=beam                                      ::  path
+          omen                                          ::  perspective, path
       ==                                                ::
   %-  unit                                              ::  ~: unknown
   %-  unit                                              ::  ~ ~: invalid
-  (cask a)
+  (cask a)                                              ::
 +$  roon                                                ::  partial namespace
   $~  =>(~ |~(* ~))
   $-  [lyc=gang car=term bem=beam]
   (unit (unit cage))
 +$  root  $-(^ (unit (unit)))
-+$  view  $@(term [way=term car=term])
++$  view  $@(term [way=term car=term])                  ::  perspective
 ::
 ++  wind
   |$  ::  a: forward
@@ -320,7 +319,7 @@
   `[%tas u.lab]
 ::
 ++  en-omen
-  |=  [vis=view bem=beam]
+  |=  omen
   ^-  path
   :_  (en-beam bem)
   ?@  vis  vis
@@ -329,7 +328,7 @@
 ++  de-omen
   ~/  %de-omen
   |=  pax=path
-  ^-  (unit [vis=view bem=beam])
+  ^-  (unit omen)
   ?~  pax  ~
   ?~  bem=(de-beam t.pax)  ~
   ?:  ((sane %tas) i.pax)
@@ -1102,7 +1101,7 @@
       ++  peek
         ~/  %peek
         ^-  rook
-        |=  [lyc=gang vis=view bem=beam]
+        |=  [lyc=gang omen]
         ^-  (unit (unit (cask meta)))
         ::  namespace reads receive no entropy
         ::
@@ -1382,7 +1381,7 @@
     ::
     ++  peek
       ^-  rook
-      |=  [lyc=gang vis=view bem=beam]
+      |=  [lyc=gang omen]
       ^-  (unit (unit (cask meta)))
       ::  vane and care may be concatenated
       ::
@@ -1794,11 +1793,11 @@
           $=  nom
           %+  each  path
           $%  [%once vis=view syd=desk tyl=spur]
-              [%beam vis=view bem=beam]
+              [%beam omen]  :: XX unfortunate naming
           ==
       ==
   ^-  (unit (cask))
-  =/  hap=(unit [pat=? vis=view bem=beam])
+  =/  hap=(unit [pat=? omen])
     ?-  nom
       [%& *]        ?~(mon=(de-omen p.nom) ~ `[| u.mon])
       [%| %beam *]  `[| vis bem]:p.nom
