@@ -817,9 +817,9 @@
         [%kroc dry=?]
         $>(%plea vane-task)
     ::
-        [%keen =ship =path]
-        [%yawn =ship =path]
-        [%wham =ship =path]
+        [%keen spar]
+        [%yawn spar]
+        [%wham spar]
     ::
         $>(%born vane-task)
         $>(%init vane-task)
@@ -857,7 +857,7 @@
         [%lost ~]
         [%send =lane =blob]
     ::
-        [%tune [=ship =path] roar=(unit roar)]
+        [%tune spar roar=(unit roar)]
     ::
         [%turf turfs=(list turf)]
     ==
@@ -917,6 +917,12 @@
   ::    payload: semantic message contents
   ::
   +$  plea  [vane=@tas =path payload=*]
+  ::  $spar:  pair of $ship and $path
+  ::
+  ::    Instead of fully qualifying a scry path, ames infers rift and
+  ::    life based on the ship.
+  ::
+  +$  spar  [=ship =path]
   ::
   :: +|  %atomics
   ::
