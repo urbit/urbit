@@ -1806,12 +1806,6 @@
     ==                                                  ::
   +$  care                                              ::  clay submode
     ?(%a %b %c %d %e %f %p %r %s %t %u %v %w %x %y %z)  ::
-  +$  case                                              ::  ship desk case spur
-    $%  [%da p=@da]                                     ::  date
-        [%tas p=@tas]                                   ::  label
-        [%ud p=@ud]                                     ::  number
-        [%uv p=@uv]                                     ::  hash
-    ==                                                  ::
   +$  cash                                              ::  case or tako
     $%  [%tako p=tako]                                  ::
         case                                            ::

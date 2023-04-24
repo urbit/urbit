@@ -763,7 +763,7 @@
       (mo-apply-sure dap routes deal)
     ::
         %raw-poke
-      =/  =case:clay  da+now
+      =/  =case  da+now
       =/  yok  (~(got by yokes.state) dap)
       =/  =desk  q.beak:?>(?=(%live -.yok) yok)  ::TODO acceptable assertion?
       =/  sky  (rof ~ %cb [our desk case] /[mark.deal])
@@ -785,7 +785,7 @@
       ==
     ::
         %poke-as
-      =/  =case:clay  da+now
+      =/  =case       da+now
       =/  =mars:clay  [p.cage mark]:deal
       =/  mars-path   /[a.mars]/[b.mars]
       =/  yok  (~(got by yokes.state) dap)
@@ -1083,7 +1083,7 @@
         ?:  =(mark p.cage)
           [duct %give %unto %fact cage.gift]~
         =/  =mars:clay  [p.cage mark]
-        =/  =case:clay  da+now
+        =/  =case       da+now
         =/  bek=beak    [our q.beak.yoke case]
         =/  mars-path  /[a.mars]/[b.mars]
         =/  sky  (rof ~ %cc bek mars-path)
@@ -1384,7 +1384,7 @@
       =^  =sign:agent  ap-core
         ?.  ?=(%raw-fact -.unto)
           [unto ap-core]
-        =/  =case:clay  da+now
+        =/  =case  da+now
         ?:  ?=(%spider agent-name)
           :-  [%fact mark.unto !>(noun.unto)]
           ap-core

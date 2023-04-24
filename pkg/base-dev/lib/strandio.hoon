@@ -577,7 +577,7 @@
   (take-writ /warp)
 ::
 ++  read-file
-  |=  [[=ship =desk =case:clay] =spur]
+  |=  [[=ship =desk =case] =spur]
   =*  arg  +<
   =/  m  (strand ,cage)
   ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %x case spur)
@@ -586,13 +586,13 @@
   (pure:m r.u.riot)
 ::
 ++  check-for-file
-  |=  [[=ship =desk =case:clay] =spur]
+  |=  [[=ship =desk =case] =spur]
   =/  m  (strand ,?)
   ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %x case spur)
   (pure:m ?=(^ riot))
 ::
 ++  list-tree
-  |=  [[=ship =desk =case:clay] =spur]
+  |=  [[=ship =desk =case] =spur]
   =*  arg  +<
   =/  m  (strand ,(list path))
   ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %t case spur)
