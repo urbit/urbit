@@ -1,4 +1,3 @@
-!:
 ::  clay (4c), revision control
 ::
 ::  The way to understand Clay is to take it section-by-section:
@@ -195,7 +194,6 @@
 ::  --  `hez` is the unix duct that %ergo's should be sent to.
 ::  --  `cez` is a collection of named permission groups.
 ::  --  `pud` is an update that's waiting on a kernel upgrade
-
 ::
 +$  raft                                                ::  filesystem
   $:  rom=room                                          ::  domestic
@@ -1260,7 +1258,6 @@
 ::  --  all vane state `++raft` (rarely used, except for the object store)
 ::  --  target urbit `her`
 ::  --  target desk `syd`
-
 ::
 ::  For local desks, `our` == `her` is one of the urbits on our pier.  For
 ::  foreign desks, `her` is the urbit the desk is on and `our` is the local
