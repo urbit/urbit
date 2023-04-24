@@ -844,7 +844,7 @@
               :-  'meow'
               %-  pairs
               :~  'num'^(numb num)
-                  'size'^(numb siz)
+                  'size'^(numb (met 3 dat))
           ==  ==
         ::
           'num-fragments'^(numb num-fragments)

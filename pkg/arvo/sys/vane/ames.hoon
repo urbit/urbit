@@ -337,7 +337,6 @@
     |=  =meow
     :*  sig=`@q`(mug sig.meow)
         num=num.meow
-        siz=siz.meow
         dat=`@q`(mug dat.meow)
     ==
   ::
@@ -349,7 +348,6 @@
     =/  wid  (met 3 dat)
     :*  sig=(sign-fra path num dat)           ::  fragment signature
         num=tot                               ::  number of fragments
-        siz=?:(=(num tot) (met 3 dat) 1.024)  ::  fragment byte width
         dat=dat                               ::  response data fragment
     ==
   ::
@@ -359,7 +357,6 @@
     %+  can  3
     :~  64^sig.meow
         4^num.meow
-        2^siz.meow
         (met 3 dat.meow)^dat.meow
     ==
   ::

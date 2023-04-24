@@ -1335,7 +1335,6 @@
   +$  meow  ::  response fragment
     $:  sig=@ux  ::  signature
         num=@ud  ::  number of fragments
-        siz=@ud  ::  official size of this fragment
         dat=@ux  ::  contents
     ==
   ::
@@ -1657,14 +1656,9 @@
   ::
   ++  sift-meow
     |=  =yowl
-    =;  =meow
-      ~|  %fine-meow-len^meow
-      ?>  (gte siz.meow (met 3 dat.meow))
-      meow
     :*  sig=(cut 3 [0 64] yowl)
         num=(cut 3 [64 4] yowl)
-        siz=(cut 3 [68 2] yowl)
-        dat=(rsh 3^70 yowl)
+        dat=(rsh 3^68 yowl)
     ==
   ::  +etch-shot: serialize a packet into a bytestream
   ::
