@@ -335,10 +335,10 @@
   (take-wake `until)
 ::
 ++  keen
-  |=  [=ship =path]
+  |=  =spar:ames
   =/  m  (strand ,(unit roar:ames))
   ^-  form:m
-  =/  =card:agent:gall  [%pass /keen %arvo %a %keen ship path]
+  =/  =card:agent:gall  [%pass /keen %arvo %a %keen spar]
   ;<  ~  bind:m  (send-raw-card card)
   ;<  [wire sign=sign-arvo]  bind:m  take-sign-arvo
   ?>  ?=([%ames %tune *] sign)
