@@ -70,7 +70,7 @@
 ++  axle
   $:  ::  date: date at which http-server's state was updated to this data structure
       ::
-      date=%~2023.4.19
+      date=%~2023.4.11
       ::  server-state: state of inbound requests
       ::
       =server-state
@@ -2753,8 +2753,7 @@
             [date=%~2022.7.26 server-state=server-state-0]
             [date=%~2023.2.17 server-state=server-state-1]
             [date=%~2023.3.16 server-state=server-state-2]
-            [date=%~2023.4.11 server-state=server-state-3]
-            [date=%~2023.4.19 =server-state]
+            [date=%~2023.4.11 =server-state]
         ==
       ::
       +$  server-state-0
@@ -2803,39 +2802,12 @@
         $:  state=(each timer duct)
             next-id=@ud
             last-ack=@da
-            events=(qeu [id=@ud request-id=@ud channel-event=channel-event-3])
+            events=(qeu [id=@ud request-id=@ud channel-event=channel-event-2])
             unacked=(map @ud @ud)
             subscriptions=(map @ud [ship=@p app=term =path duc=duct])
             heartbeat=(unit timer)
         ==
-      +$  server-state-3
-        $:  bindings=(list [=binding =duct =action])
-            cache=(map url=@t [aeon=@ud val=(unit cache-entry)])
-            =cors-registry
-            connections=(map duct outstanding-connection)
-            =authentication-state
-            channel-state=channel-state-3                         :: <- new
-            domains=(set turf)
-            =http-config
-            ports=[insecure=@ud secure=(unit @ud)]
-            outgoing-duct=duct
-            verb=@
-        ==
-      +$  channel-state-3
-        $:  session=(map @t channel-3)
-            duct-to-key=(map duct @t)
-        ==
-      +$  channel-3
-        $:  mode=?(%json %jam)                                    :: <- new
-            state=(each timer duct)
-            next-id=@ud
-            last-ack=@da
-            events=(qeu [id=@ud request-id=@ud channel-event=channel-event-3])
-            unacked=(map @ud @ud)
-            subscriptions=(map @ud [ship=@p app=term =path duc=duct])
-            heartbeat=(unit timer)
-        ==
-      +$  channel-event-3
+      +$  channel-event-2
         $%  $>(%poke-ack sign:agent:gall)
             $>(%watch-ack sign:agent:gall)
             $>(%kick sign:agent:gall)
@@ -2873,20 +2845,9 @@
       %~2023.2.17
     $(old [%~2023.3.16 [bindings ~ +]:server-state.old])
   ::
-  ::  inits channel mode
+  ::  inits channel mode and desks in unacked events
   ::
       %~2023.3.16
-    %=    $
-        date.old  %~2023.4.11
-    ::
-        server-state.old
-      %=  server-state.old
-          session.channel-state
-        (~(run by session.channel-state.server-state.old) (lead %json))
-      ==
-    ==
-  ::
-      %~2023.4.11
   ::
   ::  Prior to this desks were not part of events.channel.
   ::  When serializing we used to rely on the desk stored in
@@ -2894,27 +2855,30 @@
   ::  This migration adds the desk to events.channel, but we can not
   ::  scry in +load to populate the desks in the old events,
   ::  so we just kick all subscriptions on all channels.
-  ::
-    =;  new-channel-sessions
-      %=  $
-        -.old                                   %~2023.4.19
-        session.channel-state.server-state.old  new-channel-sessions
+    %=    $
+        date.old  %~2023.4.11
+    ::
+        server-state.old
+      %=  server-state.old
+          session.channel-state
+        %-  ~(run by session.channel-state.server-state.old)
+        |=  c=channel-2
+        =;  new-events
+          :-  %json
+          c(events new-events, unacked ~, subscriptions ~)
+        =|  events=(qeu [id=@ud request-id=@ud =channel-event])
+        =/  l  ~(tap in ~(key by subscriptions.c))
+        |-
+        ?~  l  events
+        %=  $
+          l          t.l
+          next-id.c  +(next-id.c)
+          events     (~(put to events) [next-id.c i.l %kick ~])
+        ==
       ==
-    %-  ~(run by session.channel-state.server-state.old)
-    |=  c=channel-3
-    =;  new-events
-      c(events new-events, unacked ~, subscriptions ~)
-    =|  events=(qeu [id=@ud request-id=@ud =channel-event])
-    =/  l  ~(tap in ~(key by subscriptions.c))
-    |-
-    ?~  l  events
-    %=  $
-      l          t.l
-      next-id.c  +(next-id.c)
-      events     (~(put to events) [next-id.c i.l %kick ~])
     ==
   ::
-      %~2023.4.19
+      %~2023.4.11
     http-server-gate(ax old)
   ==
 ::  +stay: produce current state
