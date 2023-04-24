@@ -3832,7 +3832,7 @@
             |=(frag=@ud `hoot``@`(etch-shot (make-shot %0 fi-full-path frag)))
           ::
           ++  fi-send
-            |=(=hoot fine(event-core (send-blob for=| her `@ux`hoot)))
+            |=(=blob fine(event-core (send-blob for=| her blob)))
           ::
           ++  fi-give-tune
             |=  dat=(unit roar)
@@ -3849,7 +3849,7 @@
             =/  req=hoot  (fi-etch-wail fra)
             =/     =want  [fra req last=now tries=1 skips=0]
             =.  wan.keen  (cons:fi-deq *(pha ^want) want)
-            (fi-send req)
+            (fi-send `@ux`req)
           ::
           ++  fi-rcv
             |=  [[=full=^path num=@ud] =meow =lane:ames]
@@ -3937,7 +3937,7 @@
               [`want %.n found fine]
             =.  tries.want  +(tries.want)
             =.  last-sent.want  now
-            =.  fine  (fi-send hoot.want)
+            =.  fine  (fi-send `@ux`hoot.want)
             [`want %.n found fine]
           ::
           ++  fi-done
@@ -3975,7 +3975,7 @@
             =.  last-sent.want   now
             =.      tries.want   +(tries.want)
             =.        wan.keen   (snoc:fi-deq wan.keen want)
-            =.            fine   (fi-send hoot.want)
+            =.            fine   (fi-send `@ux`hoot.want)
             $(inx +(inx))
           ::
           ++  fi-sift-full
@@ -4001,7 +4001,7 @@
             ?:  (gth (next-expiry:fi-gauge:cor +>.want) now)
               [`want & cor]
             =.  last-sent.want  now
-            =.  cor  (fi-send:cor hoot.want)
+            =.  cor  (fi-send:cor `@ux`hoot.want)
             [`want | cor]
           ::
           ++  fi-pass-timer
@@ -4043,7 +4043,7 @@
                 last-sent.u.want  now
               ==
             =.  wan.keen  (cons:fi-deq wan.keen u.want)
-            (fi-send hoot.u.want)
+            (fi-send `@ux`hoot.u.want)
           --
         ::  +ga: constructor for |pump-gauge congestion control core
         ::
