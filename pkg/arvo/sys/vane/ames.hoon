@@ -85,15 +85,6 @@
 ::
 ::    Debug output can be adjusted using %sift and %spew $task's.
 ::
-::TODO  fine
-::  - receiving packets:
-::    +on-hear (1st) -> +on-hear-packet -> %fine
-::  - sending packets:
-::    +on-plea
-::      -> +make-peer-core (make a function kind of like +on-memo)
-::        -> call +on-pump-send kind of like how +run-message-pump does
-::           (assuming as event, scry just stateless)
-::
 !:
 =,  ames
 =*  point               point:jael
@@ -315,15 +306,6 @@
   ?~  dat  ~
   ~|  [%fine %response-not-cask]
   ;;((cask) (cue dat))
-::  +welt: like +weld but first argument is reversed
-::    TODO: move to hoon.hoon
-++  welt
-  ~/  %welt
-  |*  [a=(list) b=(list)]
-  =>  .(a ^.(homo a), b ^.(homo b))
-  |-  ^+  b
-  ?~  a  b
-  $(a t.a, b [i.a b])
 ::  +etch-hunk: helper core to serialize a $hunk
 ::
 ++  etch-hunk
@@ -523,7 +505,6 @@
 ::
 +$  private-key    @uwprivatekey
 +$  signature      @uwsignature
-+$  byuts  [wid=@ud dat=@ux]
 ::
 +|  %kinetics
 ::  $channel: combined sender and receiver identifying data
