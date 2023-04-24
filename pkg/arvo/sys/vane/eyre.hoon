@@ -1792,7 +1792,7 @@
       ?~  sub
         ((trace 0 |.("no subscription for request-id {(trip request-id)}")) ~)
       =/  des=(unit (unit cage))
-        (rof ~ %gd [our app.u.sub da+now] ~)
+        (rof ~ %gd [our app.u.sub da+now] /$)
       ?.  ?=([~ ~ *] des)
         ((trace 0 |.("no desk for app {<app.u.sub>}")) ~)
       `!<(=desk q.u.u.des)

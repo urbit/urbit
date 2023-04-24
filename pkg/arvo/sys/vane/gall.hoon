@@ -2057,6 +2057,16 @@
       ==
     ~
   ::
+  ?.  ?=([%$ *] path)  ::  [%$ *] is for the vane, all else is for the agent
+    ?.  ?&  =(our ship)
+            =([%$ %da now] coin)
+        ==                           ~
+    ?.  (~(has by yokes.state) dap)  [~ ~]
+    ?.  ?=(^ path)                   ~
+    =/  =routes  [~ ship]
+    (mo-peek:mo & dap routes care path)
+  ::
+  =>  .(path t.path)
   ?:  &(=(care %$) =(path /whey))
     =/  blocked
       =/  queued  (~(run by blocked.state) |=((qeu blocked-move) [%.y +<]))
@@ -2152,16 +2162,6 @@
     ?~  las=(ram:on-path fan.u.ski)     [~ ~]
     ``case/!>(ud/key.u.las)
   ::
-  ?.  ?=([%$ *] path)  ::  [%$ *] is for the vane, all else is for the agent
-    ?.  ?&  =(our ship)
-            =([%$ %da now] coin)
-        ==                           ~
-    ?.  (~(has by yokes.state) dap)  [~ ~]
-    ?.  ?=(^ path)                   ~
-    =/  =routes  [~ ship]
-    (mo-peek:mo & dap routes care path)
-  ::
-  =>  .(path t.path)
   ?:  ?=(%x care)
     ?.  =(p.bem our)  ~
     ?~  yok=(~(get by yokes.state) q.bem)  ~

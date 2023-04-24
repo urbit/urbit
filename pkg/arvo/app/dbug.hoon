@@ -433,7 +433,7 @@
     ^-  (list dude:gall)
     =-  (turn ~(tap in -) head)
     ;;  (set [dude:gall ?])  ::TODO  for some reason we need this?
-    (scry (set [dude:gall ?]) %ge desk /)
+    (scry (set [dude:gall ?]) %ge desk /$)
   ::
   ++  running
     |=  app=term

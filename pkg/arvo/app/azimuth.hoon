@@ -263,7 +263,7 @@
         ::  ~&  >>  %no-logs-in-azimuth-state
         number.id.sap.state
       =+  [our=(scot %p our.bowl) now=(scot %da now.bowl)]
-      =+  .^(dudes=(set [dude:gall ?]) %ge our %base now /)
+      =+  .^(dudes=(set [dude:gall ?]) %ge our %base now /$)
       =/  running=?  (~(has in dudes) [%eth-watcher &])
       =/  installed=?
         |((~(has in dudes) [%eth-watcher &]) (~(has in dudes) [%eth-watcher |]))
