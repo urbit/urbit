@@ -3266,6 +3266,8 @@
   ++  retry-with-ames
     |=  [kind=@ta inx=@ud]
     ^+  ..retry-with-ames
+    ~|  [%retry-with-ames kind]
+    ?>  ?=(%back-index kind)
     ~|  [%strange-retry-no-request her syd inx]
     ?>  ?=(^ ref)
     =/  sat=update-state  (~(got by bom.u.ref) inx)
@@ -3287,8 +3289,6 @@
     ::  re-send over ames
     ::
     =.  bom.u.ref  (~(put by bom.u.ref) inx sat(busy ~))
-    ?:  =(%warp-index kind)
-      (send-over-ames hen her inx syd `rave.sat)
     abet:work:(foreign-update inx)
   ::
   ::  Called when a foreign ship answers one of our requests.
@@ -6144,18 +6144,6 @@
         =+  ;;(res=(unit rand) payload.hin)
         =/  den  ((de now rof hen ruf) her desk)
         abet:(take-foreign-answer:den index res)
-      [mos ..^$]
-    ::
-        %wake
-      ?^  error.hin
-        [[hen %slip %d %flog %crud %wake u.error.hin]~ ..^$]
-      =/  her=ship   (slav %p i.t.tea)
-      =/  =desk      (slav %tas i.t.t.tea)
-      =/  index=@ud  (slav %ud i.t.t.t.tea)
-      ~&  [%clay %scry-broken her]
-      =^  mos  ruf
-        =/  den  ((de now rof hen ruf) her desk)
-        abet:(retry-with-ames:den %warp-index index)
       [mos ..^$]
     ==
   ::
