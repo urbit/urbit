@@ -928,7 +928,7 @@
   ::
   ::  $hoot: request packet payload
   ::  $yowl: serialized response packet payload
-  ::  $hunk: a slice of fragments (namespace produces (list @uxmeow))
+  ::  $hunk: a slice of $yowl fragments
   ::
   +$  hoot           @uxhoot
   +$  yowl           @uxyowl
