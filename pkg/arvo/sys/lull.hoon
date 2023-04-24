@@ -37,14 +37,6 @@
       depth=_1
   ==
 ::
-++  welt
-  ~/  %welt
-  |*  [a=(list) b=(list)]
-  =>  .(a ^.(homo a), b ^.(homo b))
-  |-  ^+  b
-  ?~  a  b
-  $(a t.a, b [i.a b])
-::
 ::  +afx: polymorphic node type for finger trees
 ::
 ++  afx
