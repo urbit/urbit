@@ -986,7 +986,7 @@
       |=  [secure=? =address =request:http]
       ^-  [(list move) server-state]
       ::
-            ::  if we received a simple get, redirect if logged in otherwise 
+      ::  if we received a simple get, redirect if logged in otherwise 
       ::  show login page
       ::
       ?:  =('GET' method.request)
