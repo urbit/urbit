@@ -614,7 +614,8 @@
       cong=[msg=@ud mem=@ud]
   ==
 ::
-+$  azimuth-state  [=symmetric-key =life =rift =public-key sponsor=ship]
++$  azimuth-state    [=symmetric-key =life =rift =public-key sponsor=ship]
++$  azimuth-state-6  [=symmetric-key =life =public-key sponsor=ship]
 +$  ames-state-4   ames-state-5
 +$  ames-state-5
   $:  peers=(map ship ship-state-5)
@@ -631,7 +632,7 @@
   ==
 ::
 +$  peer-state-5
-  $:  azimuth-state
+  $:  azimuth-state-6
       route=(unit [direct=? =lane])
       =qos
       =ossuary
