@@ -2234,7 +2234,7 @@
       +|  %fine-entry-points
       ::
       ++  on-keen
-        |=  [=ship =path]
+        |=  spar
         ^+  event-core
         =+  ~:(spit path)  ::  assert length
         =/  ship-state  (~(get by peers.ames-state) ship)
@@ -2245,7 +2245,7 @@
         todos(keens (~(put ju keens.todos) path duct))
       ::
       ++  on-cancel-scry
-        |=  [all=? =ship =path]
+        |=  [all=? spar]
         ^+  event-core
         ?~  ship-state=(~(get by peers.ames-state) ship)
           ~|(%cancel-scry-missing-peer^ship^path !!)
