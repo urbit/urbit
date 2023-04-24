@@ -1759,7 +1759,6 @@
         =/  ship-state  (~(get by peers.ames-state) ship)
         ::
         ?.  ?=([~ %known *] ship-state)
-          ~&  %on-plea
           %+  enqueue-alien-todo  ship
           |=  todos=alien-agenda
           todos(messages [[duct plea] messages.todos])
