@@ -986,14 +986,37 @@
       |=  [secure=? =address =request:http]
       ^-  [(list move) server-state]
       ::
-      ::  if we received a simple get, just return the page
+            ::  if we received a simple get, redirect if logged in otherwise 
+      ::  show login page
       ::
       ?:  =('GET' method.request)
         ::  parse the arguments out of request uri
         ::
         =+  request-line=(parse-request-line url.request)
-        %^  return-static-data-on-duct  200  'text/html'
-        (login-page (get-header:http 'redirect' args.request-line) our %.n)
+        =/  redirect  (get-header:http 'redirect' args.request-line)
+        ?.  (request-is-logged-in request)
+          %^  return-static-data-on-duct  200  'text/html'
+          (login-page redirect our %.n)
+        =/  session-id  (session-id-from-request request)
+        ::  session-id should always be populated here since we are logged in
+        ?~  session-id
+          %^  return-static-data-on-duct  200  'text/html'
+          (login-page redirect our %.n)
+        =/  cookie-line=@t
+          (session-cookie-string u.session-id &)
+        =/  actual-redirect  
+          ?~  redirect  '/'
+          ?:(=(u.redirect '') '/' u.redirect)
+        %-  handle-response
+        :*  %start
+            :-  status-code=303
+            ^=  headers
+              :~  ['location' actual-redirect]
+                  ['set-cookie' cookie-line]
+              ==
+            data=~
+            complete=%.y
+        ==
       ::  if we are not a post, return an error
       ::
       ?.  =('POST' method.request)
