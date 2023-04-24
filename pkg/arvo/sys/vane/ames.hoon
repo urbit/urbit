@@ -335,7 +335,7 @@
   ::
   ++  etch-meow
     |=  =meow
-    ^-  @uxmeow
+    ^-  yowl
     %+  can  3
     :~  64^sig.meow
         4^num.meow
@@ -361,7 +361,7 @@
   ::
   ++  etch
     |=  [=path =hunk data=$@(~ (cask))]
-    ^-  (list @uxmeow)
+    ^-  (list yowl)
     =/  mes=@
       =/  sig=@  (full path data)
       ?~  data  sig
@@ -373,7 +373,7 @@
     =/  top  (min las tip)
     =/  num  lop.hunk
     ?>  (lte num top)
-    =|  res=(list @uxmeow)
+    =|  res=(list yowl)
     |-  ^+  res
     ?:  =(num top)
       =-  (flop - res)
