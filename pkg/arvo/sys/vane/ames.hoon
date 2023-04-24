@@ -133,17 +133,6 @@
     [%live %unborn]  `"; {(scow %p ship)} has sunk"
     [%dead %unborn]  `"; {(scow %p ship)} has sunk"
   ==
-::  +lte-packets: yes if a is before b
-::
-++  lte-packets
-  |=  [a=live-packet-key b=live-packet-key]
-  ^-  ?
-  ::
-  ?:  (lth message-num.a message-num.b)
-    %.y
-  ?:  (gth message-num.a message-num.b)
-    %.n
-  (lte fragment-num.a fragment-num.b)
 ::  +split-message: split message into kilobyte-sized fragments
 ::
 ::    We don't literally split it here since that would allocate many

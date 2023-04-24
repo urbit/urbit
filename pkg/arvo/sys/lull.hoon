@@ -1170,9 +1170,21 @@
   ::
   +$  packet-pump-state
     $:  next-wake=(unit @da)
-        live=(tree [live-packet-key live-packet-val])
+        live=((mop live-packet-key live-packet-val) lte-packets)
         metrics=pump-metrics
     ==
+  ::  +lte-packets: yes if a is before b
+  ::
+  ++  lte-packets
+    |=  [a=live-packet-key b=live-packet-key]
+    ^-  ?
+    ::
+    ?:  (lth message-num.a message-num.b)
+      %.y
+    ?:  (gth message-num.a message-num.b)
+      %.n
+    (lte fragment-num.a fragment-num.b)
+  ::
   ::  $pump-metrics: congestion control state for a |packet-pump
   ::
   ::    This is an Ames adaptation of TCP's Reno congestion control
