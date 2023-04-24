@@ -577,7 +577,7 @@
     ^-  tang
     %-  zing
     %+  turn  paz
-    |=  [fra=@ud sig=@ siz=@ud byts]
+    |=  [fra=@ud sig=@ byts]
     %+  expect-eq
       !>(%.y)
       !>((veri-fra:keys:fi:(abed:pe:event-core ~bud) want fra dat sig))
