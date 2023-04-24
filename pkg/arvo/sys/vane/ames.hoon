@@ -4592,13 +4592,13 @@
       ~|  u.u.pem
       =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
       ?.  =([%black ~ ~] rul.r.per)  ~
-      (en-hunk (rof lyc nom))
+      (en-hunk (rof ~ nom))
     ::
         %g
       =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
       %-  en-hunk
       ?+  kyr  ~
-        %x  (rof lyc nom)
+        %x  (rof ~ nom)
       ==
     ==
     ::
