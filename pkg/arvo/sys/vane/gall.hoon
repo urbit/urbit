@@ -2067,29 +2067,6 @@
     (mo-peek:mo & dap routes care path)
   ::
   =>  .(path t.path)
-  ?:  &(=(care %$) =(path /whey))
-    =/  blocked
-      =/  queued  (~(run by blocked.state) |=((qeu blocked-move) [%.y +<]))
-      (sort ~(tap by queued) aor)
-    ::
-    =/  running
-      %+  turn  (sort ~(tap by yokes.state) aor)
-      |=  [dap=term =yoke]
-      ^-  mass
-      =/  met=(list mass)
-        =/  dat  (mo-peek:mo | dap [~ ship] %x /whey/mass)
-        ?:  ?=(?(~ [~ ~]) dat)  ~
-        (fall ((soft (list mass)) q.q.u.u.dat) ~)
-      ?~  met
-        dap^&+yoke
-      dap^|+(welp met dot+&+yoke ~)
-    ::
-    =/  maz=(list mass)
-      :~  [%foreign %.y contacts.state]
-          [%blocked %.n blocked]
-          [%active %.n running]
-      ==
-    ``mass+!>(maz)
   ::
   ?:  ?&  =(%u care)
           =(~ path)
@@ -2164,6 +2141,34 @@
   ::
   ?:  ?=(%x care)
     ?.  =(p.bem our)  ~
+    ::
+    ?:  ?=(%$ q.bem)  :: app %$ reserved
+      ?+    path  ~
+          [%whey ~]
+        =/  blocked
+          =/  queued  (~(run by blocked.state) |=((qeu blocked-move) [%.y +<]))
+          (sort ~(tap by queued) aor)
+        ::
+        =/  running
+          %+  turn  (sort ~(tap by yokes.state) aor)
+          |=  [dap=term =yoke]
+          ^-  mass
+          =/  met=(list mass)
+            =/  dat  (mo-peek:mo | dap [~ ship] %x /whey/mass)
+            ?:  ?=(?(~ [~ ~]) dat)  ~
+            (fall ((soft (list mass)) q.q.u.u.dat) ~)
+          ?~  met
+            dap^&+yoke
+          dap^|+(welp met dot+&+yoke ~)
+        ::
+        =/  maz=(list mass)
+          :~  [%foreign %.y contacts.state]
+              [%blocked %.n blocked]
+              [%active %.n running]
+          ==
+        ``mass+!>(maz)
+      ==
+    ::
     ?~  yok=(~(get by yokes.state) q.bem)  ~
     ?:  ?=(%nuke -.u.yok)  ~
     =/  ski  (~(get by sky.u.yok) path)

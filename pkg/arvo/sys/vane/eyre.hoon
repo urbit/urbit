@@ -2888,15 +2888,7 @@
   ?.  ?=(%& -.why)
     ~
   =*  who  p.why
-  ?:  =(tyl /whey)
-    =/  maz=(list mass)
-      :~  bindings+&+bindings.server-state.ax
-          auth+&+authentication-state.server-state.ax
-          connections+&+connections.server-state.ax
-          channels+&+channel-state.server-state.ax
-          axle+&+ax
-      ==
-    ``mass+!>(maz)
+  ::
   ?.  ?=(%$ -.lot)
     [~ ~]
   ?.  =(our who)
@@ -2904,9 +2896,17 @@
       [~ ~]
     ~&  [%r %scry-foreign-host who]
     ~
-  ?:  &(?=(%x ren) ?=(~ syd))
+  ?:  &(?=(%x ren) ?=(%$ syd))
     =,  server-state.ax
     ?+  tyl  [~ ~]
+      [%$ %whey ~]         =-  ``mass+!>(`(list mass)`-)
+                           :~  bindings+&+bindings.server-state.ax
+                               auth+&+authentication-state.server-state.ax
+                               connections+&+connections.server-state.ax
+                               channels+&+channel-state.server-state.ax
+                               axle+&+ax
+                           ==
+    ::
       [%cors ~]            ``noun+!>(cors-registry)
       [%cors %requests ~]  ``noun+!>(requests.cors-registry)
       [%cors %approved ~]  ``noun+!>(approved.cors-registry)

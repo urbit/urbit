@@ -5861,8 +5861,10 @@
   ::
   ?.  ?=(%& -.why)  ~
   =*  his  p.why
-  ?:  &(=(ren %$) =(tyl /whey))
+  ::
+  ?:  &(?=(%x ren) =(tyl //whey))
     ``mass+!>(whey)
+  ::
   ::  ~&  scry+[ren `path`[(scot %p his) syd ~(rent co lot) tyl]]
   ::  =-  ~&  %scry-done  -
   =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))

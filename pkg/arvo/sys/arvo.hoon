@@ -1369,11 +1369,11 @@
       ::
       %+  turn
         (sort ~(tap by van.mod) |=([[a=@tas *] [b=@tas *]] (aor a b)))
-      =/  bem=beam  [[our %base da+now] /whey]  ::TODO  %base?
+      =/  bem=beam  [[our %$ da+now] //whey]
       |=  [nam=term =vane]
       =;  mas=(list mass)
         nam^|+(welp mas [dot+&+q.vase typ+&+p.vase sac+&+worm ~]:vane)
-      ?~  met=(peek [~ ~] nam bem)  ~
+      ?~  met=(peek [~ ~] [nam %x] bem)  ~
       ?~  u.met  ~
       ~|  mass+nam
       ;;((list mass) q.q.u.u.met)

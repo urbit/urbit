@@ -4412,15 +4412,6 @@
   =*  lot=coin  $/r.bem
   =*  tyl  s.bem
   ::
-  ::TODO  don't special-case whey scry
-  ::
-  ?:  &(=(%$ ren) =(tyl /whey))
-    =/  maz=(list mass)
-      =+  [known alien]=(skid ~(val by peers.ames-state) |=(^ =(%known +<-)))
-      :~  peers-known+&+known
-          peers-alien+&+alien
-      ==
-    ``mass+!>(maz)
   ::  only respond for the local identity, %$ desk, current timestamp
   ::
   ?.  ?&  =(&+our why)
@@ -4430,6 +4421,7 @@
     ?.  for.veb.bug.ames-state  ~
     ~>  %slog.0^leaf/"ames: scry-fail {<why=why lot=lot now=now syd=syd>}"
     ~
+  ::  /ax//whey                      (list mass)
   ::  /ax/protocol/version           @
   ::  /ax/peers                      (map ship ?(%alien %known))
   ::  /ax/peers/[ship]               ship-state
@@ -4444,6 +4436,14 @@
   ?.  ?=(%x ren)  ~
   =>  .(tyl `(pole knot)`tyl)
   ?+    tyl  ~
+      [%$ %whey ~]
+    =/  maz=(list mass)
+      =+  [known alien]=(skid ~(val by peers.ames-state) |=(^ =(%known +<-)))
+      :~  peers-known+&+known
+          peers-alien+&+alien
+      ==
+    ``mass+!>(maz)
+  ::
       [%protocol %version ~]
     ``noun+!>(protocol-version)
   ::
