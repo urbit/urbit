@@ -5,9 +5,9 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([~ arg=[ship path]] arg)
+=+  !<([~ =spar:ames] arg)
 ;<  dat=(unit roar:ames)  bind:m
-  (keen:strandio arg)
+  (keen:strandio spar)
 ?~  dat
   (pure:m !>(~))
 ;<  =bowl:spider  bind:m  get-bowl:strandio
