@@ -532,7 +532,7 @@
   ::
   =/  =beam  [[~bud %$ da+now:bud] (welp /fine/hunk/1/16.384 want)]
   =/  [=mark =vase]  (need (need (scry bud %x beam)))
-  =+  !<(song=(list @uxmeow) vase)
+  =+  !<(song=(list @uxyowl) vase)
   %+  expect-eq
     !>(siz)
     !>((lent song))
@@ -551,7 +551,7 @@
   ::
   =/  =beam  [[~bud %$ da+now:bud] (welp /fine/hunk/1/16.384 want)]
   =/  [=mark =vase]  (need (need (scry bud %x beam)))
-  =+  !<(song=(list @uxmeow) vase)
+  =+  !<(song=(list @uxyowl) vase)
   =/   paz=(list have:ames)
     %+  spun  song
     |=  [blob=@ux num=_1]
