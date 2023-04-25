@@ -26,13 +26,6 @@
           &+[leaf+"OK      {name}"]~
         |+(flop `tang`[leaf+"FAILED  {name}" p.run])
   ==
-::  +filter-tests-by-prefix: TODO document
-::
-++  filter-tests-by-prefix
-  |=  [prefix=path tests=(list test)]
-  ^+  tests
-  =/  prefix-length=@ud  (lent prefix)
-  (skim tests |=([p=path *] =(prefix (scag prefix-length p))))
 ::  +resolve-test-paths: add test names to file paths to form full identifiers
 ::
 ++  resolve-test-paths
@@ -130,15 +123,11 @@
     gather-tests(fiz t.fiz, build-ok |)
   ~>  %slog.0^leaf+"built   {(spud s.beam.i.fiz)}"
   =/  arms=(list test-arm)  (get-test-arms u.cor)
-  ::
-  ::  XX this logic appears to be vestigial
-  ::
+  ::  if test path specified an arm prefix, filter arms to match
   =?  arms  ?=(^ test.i.fiz)
-    |-  ^+  arms
-    ?~  arms  ~|(no-test-arm+i.fiz !!)
-    ?:  =(name.i.arms u.test.i.fiz)
-      [i.arms]~
-    $(arms t.arms)
+    %+  skim  arms
+    |=  test-arm
+    =((end [3 (met 3 u.test.i.fiz)] name) u.test.i.fiz)
   =.  test-arms  (~(put by test-arms) (snip s.beam.i.fiz) arms)
   gather-tests(fiz t.fiz)
 %-  pure:m  !>  ^=  ok
