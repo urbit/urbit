@@ -13,6 +13,7 @@ export class Ames extends Component {
     this.loadPeers = this.loadPeers.bind(this);
     this.loadPeerDetails = this.loadPeerDetails.bind(this);
     this.renderFlow = this.renderFlow.bind(this);
+    this.renderScry = this.renderScry.bind(this);
   }
 
   componentDidMount() {
@@ -33,6 +34,16 @@ export class Ames extends Component {
 
   loadPeerDetails(who) {
     api.getPeer(who);
+  }
+
+  renderPaths(paths) {
+    const items = paths.map(path => {
+      return {
+        key: path,
+        jsx: path
+      }
+    });
+    return <SearchableList placeholder="path" items={items}/>;
   }
 
   renderDucts(ducts) {
@@ -91,7 +102,7 @@ export class Ames extends Component {
             <td>fragment-num</td>
             <td>num-fragments</td>
             <td>last-sent</td>
-            <td>retries</td>
+            <td>tries</td>
             <td>skips</td>
           </tr>
           <tr>
@@ -99,7 +110,7 @@ export class Ames extends Component {
             <td>{live['fragment-num']}</td>
             <td>{live['num-fragments']}</td>
             <td>{msToDa(live['last-sent'])}</td>
-            <td>{live.retries}</td>
+            <td>{live.tries}</td>
             <td>{live.skips}</td>
           </tr>
         </tbody></table>
@@ -199,6 +210,84 @@ export class Ames extends Component {
     return 'weird flow';
   }
 
+  renderScry(scry) {
+
+    const m = scry['keen-state'].metrics;
+    const metrics = (<>
+      <table><tbody>
+        <tr class="inter">
+          <td>rto</td>
+          <td>rtt</td>
+          <td>rttvar</td>
+          <td>ssthresh</td>
+          <td>cwnd</td>
+          <td>counter</td>
+        </tr>
+        <tr>
+          <td>{m.rto}</td>
+          <td>{m.rtt}</td>
+          <td>{m.rttvar}</td>
+          <td>{m.ssthresh}</td>
+          <td>{m.cwnd}</td>
+          <td>{m.counter}</td>
+        </tr>
+      </tbody></table>
+    </>);
+
+    const wantItems = scry['keen-state'].wan.map(wan => {
+      return {key: wan.frag, jsx: (
+        <table><tbody>
+          <tr>
+            <td>fragment</td>
+            <td>size</td>
+            <td>last-sent</td>
+            <td>tries</td>
+            <td>skips</td>
+          </tr>
+          <tr>
+            <td>{wan.frag}</td>
+            <td>{wan.size}</td>
+            <td>{msToDa(wan['last-sent'])}</td>
+            <td>{wan.tries}</td>
+            <td>{wan.skips}</td>
+          </tr>
+        </tbody></table>
+      )};
+    });
+    const wants = (
+      <SearchableList placeholder="fragment" items={wantItems} />
+    );
+
+    const summary = (<>
+      <b>{scry['scry-path']}</b><br/>
+      <h5 style={{marginTop: '1em'}}>listeners:</h5>
+      {renderDuct(scry['keen-state'].listeners)}
+      <h5 style={{marginTop: '1em'}}>scry state:</h5>
+      <table><tbody>
+        <tr class="inter">
+          <td>num-fragments</td>
+          <td>num-received</td>
+          <td>next-wake</td>
+        </tr>
+        <tr>
+          <td>{scry['keen-state']['num-fragments']}</td>
+          <td>{scry['keen-state']['num-received']}</td>
+          <td>{msToDa(scry['keen-state']['next-wake'])}</td>
+        </tr>
+      </tbody></table>
+    </>);
+
+    const details = (<>
+      {metrics}
+      {wants}
+    </>);
+
+    return {key: scry['scry-path'], jsx: (
+      <Summary summary={summary} details={details} />
+    )};
+
+  }
+
   //TODO use classes for styling?
   render() {
     const { props, state } = this;
@@ -213,6 +302,7 @@ export class Ames extends Component {
           Pending messages: {peer.alien.messages}
           Pending packets: {peer.alien.packets}
           Heeds: {this.renderDucts(peer.alien.heeds)}
+          Keens: {this.renderPaths(peer.alien.keens)}
         </>);
       } else if (peer.known) {
         const p = peer.known;
@@ -273,6 +363,12 @@ export class Ames extends Component {
           {this.renderDucts(p.heeds)}
         </>);
 
+        const scryItems = p.scries.map(this.renderScry);
+        const scry = (<>
+          <h4 style={{marginTop: '1em'}}>scries</h4>
+          <SearchableList placeholder="path" items={scryItems} />
+        </>);
+
         return (<>
           <button
             style={{position: 'absolute', top: 0, right: 0}}
@@ -285,6 +381,7 @@ export class Ames extends Component {
           {backward}
           {nax}
           {heeds}
+          {scry}
         </>);
       } else {
         console.log('weird peer', peer);

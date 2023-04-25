@@ -1797,7 +1797,7 @@
       ?~  sub
         ((trace 0 |.("no subscription for request-id {(scow %ud request-id)}")) ~)
       =/  des=(unit (unit cage))
-        (rof ~ %gd [our app.u.sub da+now] ~)
+        (rof ~ %gd [our app.u.sub da+now] /$)
       ?.  ?=([~ ~ *] des)
         ((trace 0 |.("no desk for app {<app.u.sub>}")) ~)
       `!<(=desk q.u.u.des)
@@ -2900,15 +2900,7 @@
   ?.  ?=(%& -.why)
     ~
   =*  who  p.why
-  ?:  =(tyl /whey)
-    =/  maz=(list mass)
-      :~  bindings+&+bindings.server-state.ax
-          auth+&+authentication-state.server-state.ax
-          connections+&+connections.server-state.ax
-          channels+&+channel-state.server-state.ax
-          axle+&+ax
-      ==
-    ``mass+!>(maz)
+  ::
   ?.  ?=(%$ -.lot)
     [~ ~]
   ?.  =(our who)
@@ -2916,9 +2908,17 @@
       [~ ~]
     ~&  [%r %scry-foreign-host who]
     ~
-  ?:  &(?=(%x ren) ?=(~ syd))
+  ?:  &(?=(%x ren) ?=(%$ syd))
     =,  server-state.ax
     ?+  tyl  [~ ~]
+      [%$ %whey ~]         =-  ``mass+!>(`(list mass)`-)
+                           :~  bindings+&+bindings.server-state.ax
+                               auth+&+authentication-state.server-state.ax
+                               connections+&+connections.server-state.ax
+                               channels+&+channel-state.server-state.ax
+                               axle+&+ax
+                           ==
+    ::
       [%cors ~]            ``noun+!>(cors-registry)
       [%cors %requests ~]  ``noun+!>(requests.cors-registry)
       [%cors %approved ~]  ``noun+!>(approved.cors-registry)

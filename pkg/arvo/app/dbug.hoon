@@ -5,7 +5,7 @@
 ::
 |%
 +$  state-0  [%0 passcode=(unit @t)]
-+$  card  card:agent:gall
++$  card     card:agent:gall
 --
 ::
 =|  state-0
@@ -433,7 +433,7 @@
     ^-  (list dude:gall)
     =-  (turn ~(tap in -) head)
     ;;  (set [dude:gall ?])  ::TODO  for some reason we need this?
-    (scry (set [dude:gall ?]) %ge desk /)
+    (scry (set [dude:gall ?]) %ge desk /$)
   ::
   ++  running
     |=  app=term
@@ -524,6 +524,7 @@
       :~  'messages'^(numb (lent messages))
           'packets'^(numb ~(wyt in packets))
           'heeds'^(set-array heeds from-duct)
+          'keens'^(set-array ~(key by keens) path)
       ==
     ::
     ::  json for known peer is structured to closely match the peer-state type.
@@ -585,6 +586,45 @@
     ::      message-num: 123
     ::    }, ...],
     ::    heeds: [['/paths', ...] ...]
+    ::    scries:
+    ::    ->  { =path
+    ::          keen-state: {
+    ::            wan: [                  //request packets, sent
+    ::              { frag: 1234,
+    ::                size: 1234,         // size, in bytes
+    ::                last-sent: 123456,  //  ms timestamp
+    ::                retries: 123,
+    ::                skips: 123
+    ::              }, ...
+    ::            ],
+    ::            nex: [                  //  request packets, unsent
+    ::              { frag: 1234,
+    ::                size: 1234,         // size, in bytes
+    ::                last-sent: 123456,  //  ms timestamp
+    ::                retries: 123,
+    ::                skips: 123
+    ::              }, ...
+    ::            ],
+    ::            hav: [                  //  response packets, backward
+    ::              {fra: 1234,
+    ::               meow: { num: 1234, size: 1234}
+    ::              }, ...
+    ::            ],
+    ::            num-fragments: 1234,
+    ::            num-received: 1234,
+    ::            next-wake: 123456,  // ms timestamp
+    ::            listeners: [['/paths', ...] ...],
+    ::            metrics: {
+    ::              rto: 123,  // seconds
+    ::              rtt: 123,  // seconds
+    ::              rttvar: 123,
+    ::              ssthresh: 123,
+    ::              num-live: 123,
+    ::              cwnd: 123,
+    ::              counter: 123
+    ::            }
+    ::          }
+    ::        }
     ::  }
     ::
     ++  known
@@ -668,6 +708,8 @@
           ==
         ::
           'heeds'^(set-array heeds from-duct)
+        ::
+          'scries'^(scries ~(tap by keens))
       ==
     ::
     ++  snd-with-bone
@@ -705,7 +747,7 @@
                   'fragment-num'^(numb fragment-num)
                   'num-fragments'^(numb num-fragments)
                   'last-sent'^(time last-sent)
-                  'retries'^(numb retries)
+                  'tries'^(numb tries)
                   'skips'^(numb skips)
               ==
             ::
@@ -773,6 +815,65 @@
     ++  from-duct
       |=  =duct
       a+(turn duct path)
+    ::
+    ++  scries
+      |=  keens=(list [^path keen-state])
+      ^-  json
+      :-  %a
+      %+  turn  keens
+      |=  [=^path keen=keen-state]
+      %-  pairs
+      :~  'scry-path'^(^path path)
+          'keen-state'^(parse-keens keen)
+      ==
+    ::
+    ++  parse-keens
+      |=  keen-state
+      |^  ^-  json
+      %-  pairs
+      :~  'wan'^a/(turn (tap:(deq want) wan) wants)
+          'nex'^a/(turn nex wants)
+        ::
+          :-  'hav'
+          :-  %a
+          %+  turn  hav
+          |=  [fra=@ud meow]
+          %-  pairs
+          :~  'fra'^(numb fra)
+            ::
+              :-  'meow'
+              %-  pairs
+              :~  'num'^(numb num)
+                  'size'^(numb (met 3 dat))
+          ==  ==
+        ::
+          'num-fragments'^(numb num-fragments)
+          'num-received'^(numb num-received)
+          'next-wake'^(maybe next-wake time)
+          'listeners'^(set-array listeners from-duct)
+        ::
+          ::  XX  refactor (see metric in snd-with-bone)
+          :-  'metrics'
+          %-  pairs
+          =,  metrics
+          :~  'rto'^(numb (div rto ~s1))  ::TODO  milliseconds?
+              'rtt'^(numb (div rtt ~s1))
+              'rttvar'^(numb (div rttvar ~s1))
+              'ssthresh'^(numb ssthresh)
+              'cwnd'^(numb cwnd)
+              'counter'^(numb counter)
+      ==  ==
+      ::
+      ++  wants
+        |=  [fra=@ud =hoot packet-state]
+        %-  pairs
+        :~  'frag'^(numb fra)
+            'size'^(numb (met 3 hoot))
+            'last-sent'^(time last-sent)
+            'tries'^(numb tries)
+            'skips'^(numb skips)
+        ==
+      --
     --
   --
 ::
