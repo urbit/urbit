@@ -1498,7 +1498,6 @@
     =/  =path
       =,  mood
       [%c care (scot case) desk path]
-    ~&  scrying/path^index
     :-  [time path]
     %-  emil
     :~  [hen %pass wire %a %keen ship path]
