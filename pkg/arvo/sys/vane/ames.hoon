@@ -1515,12 +1515,14 @@
         ::NOTE  we only send requests to ships we know,
         ::      so we should only get responses from ships we know.
         ::      below we assume sndr.shot is a known peer.
+        =*  her  sndr.shot
         =+  ?~  d  ~
             %.  ~
-            %+  slog  leaf+"ames: fine from {<lane>} crashed {<mote.u.d>}"
+            =*  mot  mote.u.d
+            %+  slog  leaf+"ames: fine from {<her>} on {<l>} crashed {<mot>}"
             ?.  msg.veb  ~
             tang.u.d
-        abet:(on-hear-fine:(abed-got:pe sndr.shot) l shot)
+        abet:(on-hear-fine:(abed-got:pe her) l shot)
       ::  +on-hear-packet: handle mildly processed packet receipt
       ::
       ++  on-hear-packet
