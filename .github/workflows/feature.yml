@@ -29,4 +29,5 @@ jobs:
         ${{
         (github.ref_name == 'next/vere' && github.ref_type == 'branch')
         }}
+      next: ${{ github.base_ref }}
     secrets: inherit

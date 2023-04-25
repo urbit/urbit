@@ -1066,13 +1066,15 @@
   ::  XX review for security, stability, cases other than now
   ::
   ?.  =(lot [%$ %da now])  ~
-  ?.  =(%$ ren)  [~ ~]
-  ?:  =(tyl /whey)
+  ::
+  ?:  &(?=(%x ren) =(tyl //whey))
     =/  maz=(list mass)
       :~  pki+&+pki.lex
           etn+&+etn.lex
       ==
     ``mass+!>(maz)
+  ::
+  ?.  =(%$ ren)  [~ ~]
   ?+    syd
       ~
   ::

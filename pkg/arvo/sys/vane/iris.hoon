@@ -395,7 +395,7 @@
   ::
   ?.  ?=(%& -.why)  ~
   =*  his  p.why
-  ?:  &(=(ren %$) =(tyl /whey))
+  ?:  &(?=(%x ren) =(tyl //whey))
     =/  maz=(list mass)
       :~  nex+&+next-id.state.ax
           outbound+&+outbound-duct.state.ax
