@@ -13340,7 +13340,7 @@
       ;~  pose
         %+  ifix
           [;~(plug lus tar muck) muck]
-        (most muck ;~(gunk sym loaf))
+        (most muck ;~(gunk sym loll))
       ::
         (easy ~)
       ==
@@ -13417,7 +13417,13 @@
     ++  hunk  (most mush loan)                          ::  gapped specs
     ++  jump  ;~(pose leap:docs gap)                    ::  gap before docs
     ++  loaf  ?:(tol tall wide)                         ::  hoon
+    ++  loll  ?:  tol                                   ::  hoon without docs
+                tall:(vang bug wer |)
+              wide:(vang bug wer |)
     ++  loan  ?:(tol till wyde)                         ::  spec
+    ++  lien  ?:  tol                                   ::  spec without docs
+                till:(vang bug wer |)
+              wyde:(vang bug wer |)
     ++  lore  (sear |=(=hoon ~(flay ap hoon)) loaf)     ::  skin
     ++  lomp  ;~(plug sym (punt ;~(pfix tis wyde)))     ::  typeable name
     ++  mash  ?:(tol gap ;~(plug com ace))              ::  list separator
@@ -13466,7 +13472,7 @@
     ++  expd  |.(;~(goop loaf loaf loaf loaf))          ::  four hoons
     ++  expe  |.(wisp)                                  ::  core tail
     ++  expf  |.(;~(goop ;~(pfix cen sym) loaf))        ::  %term and hoon
-    ++  expg  |.(;~(goop lomp loaf loaf))               ::  term/spec, two hoons
+    ++  expg  |.(;~(gunk lomp loll loll))               ::  term/spec, two hoons
     ++  exph  |.((butt ;~(gunk rope rick)))             ::  wing, [wing hoon]s
     ++  expi  |.((butt ;~(goop loaf hank)))             ::  one or more hoons
     ++  expj  |.(;~(goop lore loaf))                    ::  skin and hoon
