@@ -118,7 +118,7 @@
   |=  [our=ship dir=beam]
   |%
   ++  default-app         %hood
-  ++  hoon-parser         (vang | (en-beam dir))
+  ++  hoon-parser         (vang | (en-beam dir) &)
   ++  our                 p.dir
   ::
   ++  parse-command-line  ;~(sfix parse-command (star ace) (just '\0a'))
@@ -309,7 +309,7 @@
   ++  parse-rood
     ::  XX should this use +hoon-parser instead to normalize the case?
     ::
-    =>  (vang | (en-beam dir))
+    =>  (vang | (en-beam dir) &)
     ;~  pose
       rood
     ::
@@ -1225,7 +1225,7 @@
           :+  %clhp
             [%rock %tas %cx]
           %+  rash  pax.source.com
-          rood:(vang | /(scot %p our.hid)/base/(scot %da now.hid))
+          rood:(vang | /(scot %p our.hid)/base/(scot %da now.hid) &)
         ::
             %url         [%ur (crip (en-purl:html url.source.com))]
             %api         !!
@@ -1256,7 +1256,7 @@
             %hoon
           :*  %do
               %+  rash  code.source.com
-              tall:(vang | /(scot %p our.hid)/base/(scot %da now.hid))
+              tall:(vang | /(scot %p our.hid)/base/(scot %da now.hid) &)
               $(num +(num), source.com next.source.com)
           ==
         ::

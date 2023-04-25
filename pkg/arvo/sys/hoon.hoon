@@ -11422,9 +11422,14 @@
 ::    5d: parser
 +|  %parser
 ::
-++  vang                                                ::  set ++vast params
-  |=  [bug=? wer=path]                                  ::  bug: debug mode
-  %*(. vast bug bug, wer wer)                           ::  wer: where we are
+::  +vang: set +vast params
+::
+::    bug: debug mode
+::    wer: where we are
+::    doc: doccord parsing
+++  vang
+  |=  [bug=? wer=path doc=?]
+  %*(. vast bug bug, wer wer, doc doc)
 ::
 ++  vast                                                ::  main parsing core
   =+  [bug=`?`| wer=*path doc=`?`&]
