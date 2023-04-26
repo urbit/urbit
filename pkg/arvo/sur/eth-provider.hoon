@@ -4,16 +4,25 @@
 =,  jael
 |%
 +$  url  @ta
-
++$  local
+  $:  =url
+  ==
++$  provider
+  $:  =url
+      kids=?  :: allow stars to receive requests from their planets
+      clients=(set @p)
+  ==
++$  client
+  $:  provider=@p
+  ==
++$  active  ?(%local %provider %client)
 +$  state
   $%  [%local =url]
       [%client provider=@p]
       [%provider =url kids=? clients=(set @p)]
   ==
-+$  topics  (list ?(@ux (list @ux)))
-
 +$  action
-  $%  [%set-local =local]
+  $%  [%set-local =url]
       [%set-provider =provider]
       [%set-client =client]
       [%provide tid=@ta =ethin]
@@ -21,11 +30,6 @@
       [%add-client client=@p]
       [%remove-client client=@p]
   ==
-:: +$  update
-::   $%  [%get-state =mode]
-::   ==
-
-:: for starting a thread
 +$  ethin
   $%  
       [%request-rpc id=(unit @t) req=request:rpc:ethereum]
