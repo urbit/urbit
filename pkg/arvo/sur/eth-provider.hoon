@@ -5,24 +5,10 @@
 |%
 +$  url  @ta
 
-+$  local
-  $:  =url
-  ==
-+$  provider
-  $:  =url
-      kids=?  :: allow stars to receive requests from their planets
-      clients=(set @p)
-  ==
-+$  client
-  $:  provider=@p
-  ==
-+$  active  ?(%local %provider %client)
-
 +$  state
-  $:  =active
-      =local
-      =provider
-      =client
+  $%  [%local =url]
+      [%client provider=@p]
+      [%provider =url kids=? clients=(set @p)]
   ==
 +$  topics  (list ?(@ux (list @ux)))
 
