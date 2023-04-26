@@ -13472,7 +13472,7 @@
     ++  expd  |.(;~(goop loaf loaf loaf loaf))          ::  four hoons
     ++  expe  |.(wisp)                                  ::  core tail
     ++  expf  |.(;~(goop ;~(pfix cen sym) loaf))        ::  %term and hoon
-    ++  expg  |.(;~(gunk lomp loll loll))               ::  term/spec, two hoons
+    ++  expg  |.(;~(gunk lomp loll loaf))               ::  term/spec, two hoons
     ++  exph  |.((butt ;~(gunk rope rick)))             ::  wing, [wing hoon]s
     ++  expi  |.((butt ;~(goop loaf hank)))             ::  one or more hoons
     ++  expj  |.(;~(goop lore loaf))                    ::  skin and hoon
