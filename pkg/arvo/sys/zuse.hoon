@@ -4708,9 +4708,13 @@
   ::  XX: deprecated; use +de:json:html
   ::
   ++  de-json
-    |=  txt=cord
-    ^-  (unit ^json)
-    (de:json txt)
+    =<
+      |=  txt=cord
+      ^-  (unit ^json)
+      (de:json txt)
+    |%
+    ++  apex  apex:de:json
+    --
   ::                                                    ::  ++en-xml:html
   ++  en-xml                                            ::  xml printer
     =<  |=(a=manx `tape`(apex a ~))
