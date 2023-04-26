@@ -583,15 +583,13 @@
     ..abet
   =/  kel  i.wic
   %-  emil
-  =/  cards
+  =/  desks=(list [=desk =zest])
     %+  murn  ~(tap by rock)
     |=  [=desk =zest wic=(set weft)]
     ?:  |(=(%base desk) !?=(%live zest) (~(has in wic) kel))
       ~
-    `u=[%pass /kiln/bump/[desk] %arvo %c %zest desk %held]
-  ?~  cards
-    [%pass /kiln/bump/wick %arvo %c %wick ~]~
-  cards
+    `u=[desk %held]
+  [%pass /kiln/bump/zeal %arvo %c %zeal desks]~
 ::
 ++  poke-cancel
   |=  a=@tas
@@ -764,11 +762,19 @@
 ::
 ++  poke-rm
   |=  a=path
+  =|  c=(list (unit toro))
+  %+  poke-info  "removed: {<a>}"
+  =-  %+  roll  -
+      |=  [a=(unit toro) b=(unit toro)]
+      (clap a b furl)
+  |-  ^-  (list (unit toro))
   =+  b=.^(arch %cy a)
-  ?~  fil.b
-    =+  ~[leaf+"No such file:" leaf+"{<a>}"]
-    abet:(spam -)
-  (poke-info "removed" `(fray a))
+  ?:  ?=([^ ~] b)  (snoc c `(fray a))  
+  =?  c  ?=(^ fil.b)  (snoc c `(fray a))
+  %-  zing
+  %+  turn  ~(tap by dir.b)
+  |=  [kid=@ta ~]
+  ^$(a (weld a /[kid]))
 ::
 ++  poke-schedule
   |=  [where=path tym=@da eve=@t]
@@ -799,10 +805,16 @@
 ::
 ++  poke-uninstall
   |=  loc=desk
-  ?~  got=(~(get by sources) loc)
+  =+  .^(=rock:tire %cx /(scot %p our)//(scot %da now)/tire)
+  ?~  got=(~(get by rock) loc)
+    abet:(spam leaf+"desk does not exist: {<loc>}" ~)
+  ?:  =(+<:got %dead)
     abet:(spam leaf+"desk not installed: {<loc>}" ~)
+  ~>  %slog.(fmt "uninstalling {<loc>}")
   =.  ..on-init  (emit %pass /kiln/uninstall %arvo %c %zest loc %dead)
-  (poke-unsync loc u.got)
+  ?~  sync=(~(get by sources) loc)
+    abet
+  (poke-unsync loc u.sync)
 ::
 ++  poke-unmount
   |=  mon=kiln-unmount
@@ -1087,6 +1099,7 @@
     %+  lard  /init
     =/  m  (strand:rand ,vase)
     ;<  =riot:clay  bind:m  (warp:strandio her sud ~ %sing %y ud+1 /)
+    ?>  ?=(^ riot)
     ~>  %slog.(fmt "activated install into {here}")
     ;<  now=@da     bind:m  get-time:strandio
     ;<  =riot:clay  bind:m  (warp:strandio her sud ~ %sing %w da+now /)
@@ -1101,6 +1114,7 @@
     %+  lard  /next
     =/  m  (strand:rand ,vase)
     ;<  =riot:clay  bind:m  (warp:strandio her sud ~ %sing %w ud+let /)
+    ?>  ?=(^ riot)
     ~>  %slog.(fmt "downloading update for {here}")
     ;<  =riot:clay  bind:m  (warp:strandio her sud ~ %sing %v ud+let /)
     ?>  ?=(^ riot)
@@ -1147,11 +1161,18 @@
       ::
       ~>  %slog.(fmt "finished downloading update for {here}")
       =.  let  +(let)
-      ::  If nothing changed, just advance
+      ::  If nothing changed, just ensure %kids is up-to-date and advance
       ::
       ?.  (get-remote-diff our syd now [her sud (dec let)])
-        ~>  %slog.(fmt "remote is identical to {here}, skipping")
-        next
+        =<  next
+        ?~  kid
+          ~>  %slog.(fmt "remote is identical to {here}, skipping")
+          ..abet
+        ?.  (get-remote-diff our u.kid now [her sud (dec let)])
+          ~>  %slog.(fmt "remote is identical to {here}, skipping")
+          ..abet
+        ~>  %slog.(fmt "remote is identical to {here}, merging into {<u.kid>}")
+        (merg /kids u.kid)
       ::  Else start merging, but also immediately start listening to
       ::  the next revision.  Now, all errors should no-op -- we're
       ::  already waiting for the next revision.
@@ -1161,14 +1182,6 @@
     ::
         %main
       ?>  ?=(%mere +<.sign-arvo)
-      ::  This case is maintained by superstition.  If you remove it,
-      ::  carefully test that if the source ship is breached, we
-      ::  correctly reset let to 0
-      ::
-      ?:  ?=([%| %ali-unavailable *] p.sign-arvo)
-        =+  "kiln: merge into {here} failed, maybe because sunk; restarting"
-        %-  (slog leaf/- p.p.sign-arvo)
-        init
       ?:  ?=(%| -.p.sign-arvo)
         =+  "kiln: merge into {here} failed, waiting for next revision"
         %-  (slog leaf/- p.p.sign-arvo)
@@ -1178,19 +1191,13 @@
       ::
       ?~  kid
         ..abet
-      ~>  %slog.(fmt "kids merge into {<kid>}")
+      ~>  %slog.(fmt "kids merge into {<u.kid>}")
       (merg /kids u.kid)
     ::
         %kids
       ?>  ?=(%mere +<.sign-arvo)
       ?~  kid
         ..abet
-      ::  See %main for this case
-      ::
-      ?:  ?=([%| %ali-unavailable *] p.sign-arvo)
-        =+  "kids merge to {<u.kid>} failed, maybe peer sunk; restarting"
-        ~>  %slog.(fmt -)
-        init
       ::  Just notify; we've already started listening for the next
       ::  version
       ::

@@ -5,7 +5,7 @@
 :-  %ask
 |=  $:  [now=@da eny=@uvJ bek=beak]
         [=desk ~]
-        [from=$~(%base desk) hard=_|]
+        [from=$~(%base desk) hard=_| gall=_|]
     ==
 ::
 =;  make-new-desk
@@ -27,12 +27,23 @@
 %-  ~(gas by *(map path page:clay))
 |^  =-  (turn - mage)
     ^-  (list path)
-    :~  /mar/noun/hoon
+    =/  common-files=(list path)  :~
+        /mar/noun/hoon
         /mar/hoon/hoon
         /mar/txt/hoon
         /mar/kelvin/hoon
         /sys/kelvin
-    ==
+      ==
+    =/  extra-files=(list path)  ?.  gall  [~]
+      :~
+        /mar/bill/hoon
+        /mar/mime/hoon
+        /mar/json/hoon
+        /lib/skeleton/hoon
+        /lib/default-agent/hoon
+        /lib/dbug/hoon
+      ==
+    (weld common-files extra-files)
 ::
 ++  mage
   |=  =path

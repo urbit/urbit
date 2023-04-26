@@ -3,7 +3,7 @@
   ::                                                    ::    ::
 /?  309                                                 ::  arvo kelvin
 /-  *sole, lens                                         ::  console structures
-/+  sole, pprint,                                       ::
+/+  sole, pprint, dprint,                               ::
     auto=language-server-complete,                      ::
     easy-print=language-server-easy-print               ::
 ::                                                      ::  ::
@@ -54,6 +54,7 @@
               r=@t
           ==
           [%poke p=goal]                                ::  poke app
+          [%help p=(list term)]                                ::  doccords
           [%show p=?(%0 %1 %2 %3 %4 %5)]                ::  val/type/hoon/xray
           [%verb p=term]                                ::  store variable
       ==                                                ::
@@ -178,6 +179,18 @@
           (parse-variable (cold %lib lus) ;~(pfix gap (parse-cables %lib)))
           ;~(pfix tis gap (parse-variable sym ;~(pfix gap parse-path)))
           ;~(pfix cen gap (parse-variable sym ;~(pfix gap parse-mark)))
+        ==
+      ==
+    ::
+      ;~  pfix  hax
+        ;~  pose
+          ;~  pfix  ace
+            %+  cook
+              |=  a=(list term)
+              [[%help (flop a)] 0 %ex [%cnts p=~[[%.y p=1]] q=~]]
+            (most fas sym)
+          ==
+          (easy [[%help ~[%$]] 0 %ex [%cnts p=~[[%.y p=1]] q=~]])
         ==
       ==
     ::
@@ -621,6 +634,9 @@
         ++  maar  ?:  =(%noun p.cay)  ~
                   [[%rose [~ "    " ~] >p.cay< ~] ~]
         --
+      ::
+          %help
+        (dy-inspect p.p.mad p.q.cay)
       ==
     ::
     ++  dy-show  |=(cay=cage (dy-print cay ~))
@@ -660,6 +676,20 @@
           :-  i=""
           t=(turn `wain`?~(r.hit ~ (to-wain:format q.u.r.hit)) trip)
       ==
+    ::
+    ++  dy-inspect
+      |=  [topics=(list term) sut=type]
+      %+  dy-rash  %mor
+      =+  to-display=(mule |.((find-item-in-type:dprint (flop topics) sut)))
+      ?:  ?=(%| -.to-display)
+        [%tan [%leaf "Could not find help A"] p.to-display]~
+      ?~  p.to-display
+        [%tan [%leaf "Could not find help B"]~]~
+      =/  item  (mule |.((print-item:dprint u.p.to-display)))
+      ?:  ?=(%| -.item)
+        [%tan [%leaf "Could not find help C"] p.item]~
+      p.item
+    ::
   ++  dy-show-type-noun
     |=  a=type  ^-  tank
     =-  >[-]<
@@ -676,11 +706,16 @@
       [%face ^]  a(q $(a q.a))
       [%cell ^]  a(p $(a p.a), q $(a q.a))
       [%fork *]  a(p (silt (turn ~(tap in p.a) |=(b=type ^$(a b)))))
-      [%hint *]  ?.  ?=(%know -.q.p.a)  $(a q.a)
-                 ?@  p.q.p.a  [(cat 3 '#' mark.p.q.p.a)]~
-                 [(rap 3 '#' auth.p.q.p.a (spat type.p.q.p.a) ~)]~
+      [%hint *]  ?+    q.p.a  $(a q.a)
+                     [%know *]
+                   ?@  p.q.p.a  [(cat 3 '#' mark.p.q.p.a)]~
+                   [(rap 3 '#' auth.p.q.p.a '+' (spat type.p.q.p.a) ~)]~
+                 ::
+                     [%help *]
+                   [summary.crib.p.q.p.a]~
+                 ==
       [%core ^]  `wain`/core
-      [%hold *]  a(p $(a p.a))
+      [%hold *]  $(a (~(play ut p.a) q.a))
     ==
   ::
   ::  XX needs filter

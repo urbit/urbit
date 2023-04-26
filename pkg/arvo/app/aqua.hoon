@@ -485,11 +485,10 @@
     =/  =desk  +.val
     =.  userspace-ova.pil
       ::  take all files from a userspace desk
-      =/  all-dirs=(list path)  ~[/]
       :_  ~
       %-  unix-event:pill-lib
-      %+  %*(. file-ovum:pill-lib directories all-dirs)
-      desk  /(scot %p our.hid)/[desk]/(scot %da now.hid)
+      %-  file-ovum:pill-lib
+      [desk /(scot %p our.hid)/[desk]/(scot %da now.hid) ~]
     =^  ms  state  (poke-pill pil)
     (emit-cards ms)
   ::

@@ -1,21 +1,28 @@
 /-  *sole
 /+  sole
 |%
-+$  state  state-5
++$  state  state-6
 +$  any-state
   $~  *state
-  $%  state-5
+  $%  state-6
+      state-5
       state-4
       state-3
       state-2
   ==
++$  state-6  [%6 pith-6]
 +$  state-5  [%5 pith-5]
 +$  state-4  [%4 pith-4]
 +$  state-3  [%3 pith-3]
 +$  state-2  [%2 pith-2]
 ::
-+$  pith-5
++$  pith-6
   $:  bin=(map @ source)                                ::  terminals
+      nob=(map @tas ?(%hush %soft %loud))
+  ==
+::
++$  pith-5
+  $:  bin=(map @ source)
   ==
 ::
 +$  pith-4
@@ -130,7 +137,9 @@
 ++  klr   klr:format
 +$  state      ^state      ::  proxy
 +$  any-state  ^any-state  ::  proxy
-++  on-init    (poke-link %$ our.hid %dojo)
+++  on-init
+  =+  out=(poke-link %$ our.hid %dojo)
+  out(- [hear-logs -.out])
 ::
 ++  prep
   |=  s=@tas
@@ -191,11 +200,16 @@
   =^  txt  +>  ?@(arg [arg +>] [+.arg (prep -.arg)])
   se-abet:(se-blit-sys [%sav pax txt])                ::
 ::
+++  poke-knob
+  |=  [tag=@tas lev=?(%hush %soft %loud)]
+  se-abet(nob (~(put by nob) tag lev))
+::
 ++  poke
   |=  [=mark =vase]
   ?>  =(our src):hid
   ?+  mark  ~|([%poke-drum-bad-mark mark] !!)
     %dill-poke           =;(f (f !<(_+<.f vase)) poke-dill)
+    %drum-knob           =;(f (f !<(_+<.f vase)) poke-knob)
     %drum-exit           =;(f (f !<(_+<.f vase)) poke-exit)
     %drum-link           =;(f (f !<(_+<.f vase)) poke-link)
     %drum-put            =;(f (f !<(_+<.f vase)) poke-put)
@@ -229,7 +243,9 @@
       [%mod -.b p.b]
     --
   ::
-  ?>  ?=(%5 -.old)
+  =?  moz  ?=(%5 -.old)  [hear-logs moz]
+  =?  old  ?=(%5 -.old)  [%6 bin.old ~]
+  ?>  ?=(%6 -.old)
   =.  sat  old
   =.  dev  (~(gut by bin) ses *source)
   this
@@ -276,6 +292,15 @@
   =^  gyl  this  (open way)
   ~&  [%drum-quit src.hid gyl]
   (se-drop %| gyl)
+::
+++  hear-logs
+  `card:agent:gall`[%pass /drum/dill/logs %arvo %d %logs [~ ~]]
+::
+++  take-arvo
+  |=  [way=wire syn=sign-arvo]
+  ?>  =(/dill/logs way)
+  ?>  ?=(%logs +<.syn)
+  se-abet:(se-told:(prep %$) told.syn)
 ::                                                    ::  ::
 ::::                                                  ::  ::
   ::                                                  ::  ::
@@ -363,6 +388,19 @@
   ~|  [inx=inx wag=wag fug=fug eel=eel]
   `(snag inx `(list gill:gall)`wag)
 ::
+++  se-told                                           ::  render system output
+  |=  =told:dill
+  ^+  +>
+  ?-  -.told
+    %crud  =/  lev  (~(gut by nob) p.told %loud)
+           =?  +>.$  !=(%hush lev)
+             (se-text "crud: %{(trip p.told)} event failed")
+           ?.  =(%loud lev)  +>.$
+           (se-dump q.told)
+    %talk  (se-dump (flop p.told))  ::NOTE  +se-dump flops internally
+    %text  (se-text p.told)
+  ==
+::
 ++  se-belt                                           ::  handle input
   |=  bet=dill-belt:dill
   ^+  +>
@@ -438,7 +476,7 @@
   (se-blit %mor [%hop 0] [%wyp ~] lin [%nel ~] ~)
 ::
 ++  se-dump                                           ::  print tanks
-  |=  tac=(list tank)
+  |=  tac=tang
   ^+  +>
   =/  wol=wall
     (zing (turn (flop tac) |=(a=tank (~(win re a) [0 edg]))))
