@@ -47,13 +47,14 @@
       [%get-block-by-number =number:block]
       [%get-tx-by-hash tx-hash=@ux]
       [%get-logs-by-hash =hash:block contracts=(list address) =topics]
-      $:
-      %get-logs-by-range 
-      contracts=(list address) 
-      =topics 
-      =from=number:block 
-      =to=number:block
+    ::
+      $:  %get-logs-by-range 
+          contracts=(list address) 
+          =topics 
+          =from=number:block 
+          =to=number:block
       ==
+    ::
       [%get-next-nonce =address]
       [%get-balance =address]
   ==

@@ -1,7 +1,7 @@
 ::  aggregator/nonce: get next nonce
 ::
 /-  rpc=json-rpc
-/+  ethereum, eth-provider, strandio
+/+  ethereum, ethio, strandio
 ::
 |=  args=vase
 =+  !<([endpoint=@t pk=@] args)
@@ -11,5 +11,6 @@
 =/  =address:ethereum
   (address-from-prv:key:ethereum pk)
 ;<  expected-nonce=@ud  bind:m
-  (get-next-nonce:eth-provider address)
+  (get-next-nonce:ethio endpoint address)
 (pure:m !>(expected-nonce))
+

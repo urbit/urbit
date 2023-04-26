@@ -1,7 +1,7 @@
 ::  eth-watcher: ethereum event log collector
 ::
 /-  spider, *eth-watcher
-/+  strandio, eth-provider, azimuth
+/+  strandio, ethio, azimuth
 =,  ethereum-types
 =,  jael
 ::
@@ -12,7 +12,7 @@
 =+  !<([~ pup=watchpup] args)
 =/  m  (strand:strandio ,vase)
 ^-  form:m
-;<  =latest=block  bind:m  (get-latest-block:eth-provider %.y)
+;<  =latest=block  bind:m  (get-latest-block:ethio url.pup)
 =+  last=number.id.latest-block
 ;<  pup=watchpup   bind:m  (zoom pup last (min last (fall to.pup last)))
 =|  vows=disavows
@@ -23,7 +23,7 @@
 :: =*  loop  $
 :: ?:  (gth number.pup number.id.latest-block)
 ::   (pure:m !>([vows pup]))
-:: ;<  =block  bind:m                (get-block-by-number:eth-provider number.pup)
+:: ;<  =block  bind:m                (get-block-by-number:ethio url.pup number.pup)
 :: ;<  [=new=disavows pup=watchpup]  bind:m  (take-block pup block)
 :: %=  loop
 ::   pup   pup
@@ -41,7 +41,7 @@
     (rewind pup block)
   =/  contracts  (weld contracts.pup batchers.pup)
   ;<  =new=loglist  bind:m  ::  oldest first
-    (get-logs-by-hash:eth-provider hash.id.block contracts topics.pup)
+    (get-logs-by-hash:ethio url.pup hash.id.block contracts topics.pup)
   %-  pure:m
   :-  ~
   %_  pup
@@ -68,7 +68,7 @@
     (pure:m (flop vows) pup(blocks [block blocks]))
   ::  next-block: the new target block
   ;<  =next=^block  bind:m
-    (get-block-by-number:eth-provider number.id.i.blocks)
+    (get-block-by-number:ethio url.pup number.id.i.blocks)
   =.  pending-logs.pup  (~(del by pending-logs.pup) number.id.i.blocks)
   =.  vows  [id.block vows]
   loop(block next-block, blocks t.blocks)
@@ -116,7 +116,8 @@
       500
     zoom-step
   ;<  =loglist  bind:m  ::  oldest first
-    %:  get-logs-by-range:eth-provider
+    %:  get-logs-by-range:ethio
+      url.pup
       (weld contracts.pup batchers.pup)
       topics.pup
       number.pup
@@ -166,7 +167,7 @@
   ?.  (lien batchers.pup |=(=@ux =(ux address.log)))
     (pure:m log)
   ;<  res=transaction-result:rpc:ethereum  bind:m
-    (get-tx-by-hash:eth-provider transaction-hash.u.mined.log)
+    (get-tx-by-hash:ethio url.pup transaction-hash.u.mined.log)
   (pure:m log(input.u.mined `(data-to-hex input.res)))
 ::
 ++  data-to-hex
