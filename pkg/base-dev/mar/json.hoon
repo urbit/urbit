@@ -17,7 +17,7 @@
   --
 ++  grab
   |%                                                    ::  convert from
-  ++  mime  |=([p=mite q=octs] (fall (de:json:html (@t q.q)) *^json))
+  ++  mime  |=([p=mite q=octs] (fall (de:json (@t q.q)) *^json))
   ++  noun  ^json                                        ::  clam from %noun
   ++  numb  numb:enjs
   ++  time  time:enjs
