@@ -3115,7 +3115,7 @@
         [%soak =name =mark =noun]                       ::  soak a noun from the IPC port
     ==
   ::
-  +$  name  @tas
+  +$  name  path
   --  ::lick
 ::
 ++  rand                                                ::  computation

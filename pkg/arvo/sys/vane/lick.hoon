@@ -20,7 +20,7 @@
           agents=(map name duct)
       ==
     ::
-    +$  name   @tas
+    +$  name   path
     --
 ::
 ~%  %lick  ..part  ~
