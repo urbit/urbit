@@ -437,7 +437,7 @@
   ::
   ++  running
     |=  app=term
-    (scry ? %gu app ~)
+    (scry ? %gu app /$)
   ::
   ++  dbugable
     |=  app=term

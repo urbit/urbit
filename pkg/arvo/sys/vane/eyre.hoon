@@ -887,7 +887,7 @@
       ^-  (unit tube:clay)
       ?:  =(from to)  `(bake same vase)
       =/  des=(unit (unit cage))
-        (do-scry %gd dap ~)
+        (do-scry %gd dap /$)
       ?.  ?=([~ ~ *] des)  ~
       =+  !<(=desk q.u.u.des)
       =/  tub=(unit (unit cage))
