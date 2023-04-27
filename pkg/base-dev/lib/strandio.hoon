@@ -332,11 +332,10 @@
   (take-wake `until)
 ::
 ++  keen
-  |=  =spar:ames
-  =/  m  (strand ,[spar:ames (unit roar:ames)])
+  |=  [=wire =spar:ames]
+  =/  m  (strand ,~)
   ^-  form:m
-  ;<  ~  bind:m  (send-raw-card %pass /keen %arvo %a %keen spar)
-  (take-tune /keen)
+  (send-raw-card %pass wire %arvo %a %keen spar)
 ::
 ++  sleep
   |=  for=@dr

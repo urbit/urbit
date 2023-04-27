@@ -6,7 +6,10 @@
 =/  m  (strand ,vase)
 ^-  form:m
 =+  !<([~ =spar:ames] arg)
-;<  [* roar=(unit roar:ames)]  bind:m  (keen:strandio spar)
+;<  ~  bind:m
+  (keen:strandio /keen spar)
+;<  [* roar=(unit roar:ames)]  bind:m
+  (take-tune:strandio /keen)
 ?~  roar
   (pure:m !>(~))
 ?~  data=q.dat.u.roar
