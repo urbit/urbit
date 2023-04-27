@@ -2616,6 +2616,7 @@
             $=  sky                                     ::  scry bindings
             %+  map  path                               ::
             ((mop @ud (pair @da (each page @uvI))) lte) ::
+            ken=(jug spar:ames wire)                    ::  open keens
         ==                                              ::
         $:  act=@ud                                     ::  change number
             eny=@uvJ                                    ::  entropy
