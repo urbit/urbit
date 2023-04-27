@@ -37,6 +37,13 @@
   |=  =name
   ^-  move
   [unix-duct.state %give [%spin name]]
+::  +disconnect: Create Move to send a disconnect soak to am agent
+::
+++  disconnect
+  |=  =name
+  ^-  move
+  =/  =duct  (~(get by agents) name)
+  [+.duct %give [%soak name %disconnect ~]]
 ::  +call: handle a +task:lick request
 ::
 ++  call 
@@ -48,10 +55,10 @@
   ::
   =/  =task  ((harden task) wrapped-task)
   ?+   -.task  [~ lick-gate]
-      %born     :: When born you need to register all devices
-    ::=/  m=(list move)  (turn ~(key by agents.state) register)
-    ::~&  >>>  m
-    :-  (turn ~(tap in ~(key by agents.state)) register)
+      %born     :: need to register devices with vere and send disconnect soak
+    :-  %+  weld 
+        (turn ~(tap in ~(key by agents.state)) register) 
+        (turn ~(tap in ~(key by agents.state)) disconnect)
     lick-gate(unix-duct hen) 
     ::
       %spin     :: A gall agent wants to spin a communication line
