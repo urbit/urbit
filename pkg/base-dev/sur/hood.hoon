@@ -140,7 +140,7 @@
   ?.  verb
     =/  base-hash  ?.(=(1 (lent meb)) <meb> <(head meb)>)
     :~  leaf/"/sys/kelvin:          {kul}"
-        leaf/"base hash ends in:     {(slag (sub (lent base-hash) base-hash)}"
+        leaf/"base hash ends in:     {(slag (sub (max 5 (lent base-hash)) base-hash)}"
         leaf/"%cz hash ends in:      {(slag (sub (lent <hash>) 5) <hash>)}"
         leaf/"app status:            {sat}"
         leaf/"pending updates:       {<`(list [@tas @ud])`~(tap in wic.dek)>}"
