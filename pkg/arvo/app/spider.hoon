@@ -127,9 +127,8 @@
     =/  yarns=(list yarn)
       %+  welp  running.any
       ~(tap in ~(key by starting.any))
-    ~&  yarns+yarns
     |-  ^-  (quip card _this)
-     ?~  yarns
+    ?~  yarns
       [~[bind-eyre:sc] this]
     =^  cards-1  state
       %.  [(yarn-to-tid i.yarns) nice=%.n]
