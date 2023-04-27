@@ -958,8 +958,18 @@
         moves        moves
       ==
     ::
+    ++  ap-yawn-all
+      ^-  (list card:agent)
+      %-  zing
+      %+  turn  ~(tap by ken.yoke)
+      |=  [=spar:ames wyz=(set wire)]
+      %+  turn  ~(tap in wyz)
+      |=  =wire
+      [%pass wire %arvo %a %yawn spar]
+    ::
     ++  ap-idle
       ?:  ?=(%| -.agent.yoke)  ap-core
+      =>  (ap-ingest ~ |.([ap-yawn-all p.agent.yoke]))
       ap-core(agent.yoke |+on-save:ap-agent-core)
     ::
     ++  ap-nuke
@@ -979,12 +989,7 @@
           |=  [[=wire =dock] ? =path]
           [%pass wire %agent dock %leave ~]
         ::
-          %-  zing
-          %+  turn  ~(tap by ken.yoke)
-          |=  [=spar:ames wyz=(set wire)]
-          %+  turn  ~(tap in wyz)
-          |=  =wire
-          [%pass wire %arvo %a %yawn spar]
+          ap-yawn-all
         ==
       =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
       ap-core
