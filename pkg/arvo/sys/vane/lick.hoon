@@ -65,7 +65,7 @@
       %soak     :: push a soak to the ipc's owner
     =/  ner=duct  (~(get by agents.state) name.task)
     :_  lick-gate
-    ~[[ner %give [%soak name.task mark.task noun.task]]]
+    ~[[+.ner %give [%soak name.task mark.task noun.task]]]
     ::
       %spit     :: push a spit to ipc
     :_  lick-gate
