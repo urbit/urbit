@@ -13421,9 +13421,6 @@
                 tall:(vang bug wer |)
               wide:(vang bug wer |)
     ++  loan  ?:(tol till wyde)                         ::  spec
-    ++  lien  ?:  tol                                   ::  spec without docs
-                till:(vang bug wer |)
-              wyde:(vang bug wer |)
     ++  lore  (sear |=(=hoon ~(flay ap hoon)) loaf)     ::  skin
     ++  lomp  ;~(plug sym (punt ;~(pfix tis wyde)))     ::  typeable name
     ++  mash  ?:(tol gap ;~(plug com ace))              ::  list separator
