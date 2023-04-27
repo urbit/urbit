@@ -100,6 +100,11 @@
 +$  blocked-move  [=duct =routes move=(each deal unto)]
 ::
 ::  $contact-version: $ames-request version negotiation info
+::    
+::    version: %0 or %1
+::    asked: Null if either %1 or %0 AND never asked. If non-null,
+::    .time is the last time we asked and open says whether we're
+::    still waiting for a response.
 ::
 +$  contact-version
   $:  version=ames-request-version
@@ -170,7 +175,7 @@
   $:  %12
       system-duct=duct
       outstanding=(map [wire duct] (qeu remote-request))
-      contacts=(map ship (unit ?(%0 %1)))
+      contacts=(map ship contact-version)
       eggs=(map term egg)
       blocked=(map term (qeu blocked-move))
       =bug
@@ -384,31 +389,35 @@
     ?.  ?=(%leave -.deal)
       mo-core
     (mo-pass wire [%a [%cork ship]])
+  :: +mo-contact-version: ask remote gall for $ames-request version
   ::
+  ::    %1 supports provenance, %0 does not. We default to %0 if
+  ::    unknown and ask at most once a day until they're %1.
   ::
   ++  mo-contact-version
     |=   =ship
     ^-  [ames-request-version _mo-core]
     ?~  maybe-cv=(~(get by contacts.state) ship)
-      mo-core
+      [%0 mo-core]
     =/  cv=contact-version  u.maybe-cv
     ?-    version.cv
         %1  [%1 mo-core]
         %0
       ?.  ?|  ?=(~ asked.cv)
-              ?&  !open.u.asked
-                  ?|  (gth time.u.asked now)
-                      (gte (sub now time.u.ask) ~d1)
+              ?&  !open.u.asked.cv
+                  ?|  (gth time.u.asked.cv now)
+                      (gte (sub now time.u.asked.cv) ~d1)
                   ==
               ==
           ==
         [%0 mo-core]
-      =.  contacts.state  (~(put by contacts.state) ship [%0 ~ now &])
       ::
       =/  =wire       /sys/ver/(scot %p ship)
       =/  =note-arvo  [%a %plea ship %g /ver [%0 %1 ~]]
       ::
-      [%0 (mo-pass wire note-arvo)]
+      =.  contacts.state  (~(put by contacts.state) ship [%0 ~ now &])
+      =.  moves  [[system-duct.state %pass wire note-arvo] moves]
+      [%0 mo-core]
     ==
   ::  +mo-track-ship: subscribe to ames and jael for notices about .ship
   ::
@@ -421,7 +430,7 @@
       mo-core
     ::  first contact; update state and subscribe to notifications
     ::
-    =.  contacts.state  (~(put by contacts.state) [ship ~])
+    =.  contacts.state  (~(put by contacts.state) [ship %0 ~])
     ::  ask ames to track .ship's connectivity
     ::
     =.  moves  [[system-duct.state %pass /sys/lag %a %heed ship] moves]
@@ -553,7 +562,7 @@
         `[%watch-ack u.p.unto]
       (mo-give %done err)
     ==
-  ::
+  ::  +mo-handle-sys-ver: handle an $ames-request version check response
   ::
   ++  mo-handle-sys-ver
     |=  [=wire =sign-arvo]
@@ -561,15 +570,36 @@
     ::
     ?>  ?=([%ver @ ~] wire)
     =/  him  (slav %p i.t.wire)
+    ?~  maybe-cv=(~(get by contacts.state) him)
+      mo-core
+    =/  cv=contact-version  u.maybe-cv
     ?+    sign-arvo  !!
         [%ames %done *]
-      ?~  maybe-cv=(~(get by contacts.state) ship)
+      ?~  error.sign-arvo
         mo-core
-      ?^  error.tang
+      =?  contacts.state  ?=(%0 version.cv)
+        ?~  asked.cv
+          (~(put by contacts.state) him cv(asked [~ now |]))
+        (~(put by contacts.state) him cv(open.u.asked |))
+      mo-core
     ::
         [%ames %boon *]
+      =/  versions=(set @ud)
+        (~(gas in *(set @ud)) ;;((list @ud) payload.sign-arvo))
+      =.  contacts.state
+        ?:  (~(has in versions) %1)
+          (~(put by contacts.state) him [%1 ~])
+        ?~  asked.cv
+          (~(put by contacts.state) him [%0 ~ now |])
+        (~(put by contacts.state) him cv(version %0, open.u.asked |))
+      mo-core
     ::
         [%ames %lost *]
+      =?  contacts.state  ?=(%0 version.cv)
+        ?~  asked.cv
+          (~(put by contacts.state) him cv(asked [~ now |]))
+        (~(put by contacts.state) him cv(open.u.asked |))
+      mo-core
     ==
   ::  +mo-handle-sys-way: handle response to outgoing remote request
   ::
@@ -928,6 +958,18 @@
         %u  [prov %leave ~]:ames-request
       ==
     (mo-pass wire %g %deal [ship our prov] agent-name deal)
+  :: +mo-handle-version-check: handle an $ames-request version check request
+  ::
+  ++  mo-handle-version-check
+    |=  [=ship versions=(set @ud)]
+    ^+  mo-core
+    =.  mo-core  (mo-track-ship ship)
+    =.  contacts.state
+      ?:  (~(has in versions) %1)
+        (~(put by contacts.state) ship [%1 ~])
+      (~(put by contacts.state) ship [%0 ~ now |])
+    =.  mo-core  (mo-give %boon [%1 %0 ~])
+    mo-core
   ::  +mo-spew: handle request to set verbosity toggles on debug output
   ::
   ++  mo-spew
@@ -1846,6 +1888,10 @@
     =/  =path  path.plea.task
     =/  =noun  payload.plea.task
     ::
+    ?:  ?=([%ver ~] path)
+      =+  versions=(~(gas in *(set @ud)) ;;((list @ud) noun))
+      mo-abet:(mo-handle-version-check:mo-core ship versions)
+    ::
     ~|  [ship=ship plea-path=path]
     ?>  ?=([%ge @ ~] path)
     =/  agent-name  i.t.path
@@ -2016,6 +2062,9 @@
     ==
   ::
   ::  added provenance path to attributing.routes
+  ::  added provenance path to $ames-request
+  ::  bumped $ames-request to version %1
+  ::  added version negotiation data to contacts.state
   ::
   ++  spore-11-to-12
     |=  old=spore-11
@@ -2023,9 +2072,9 @@
     %=    old
         -  %12
         contacts
-      %-  ~(gas by *(map ship (unit ?(%0 %1))))
+      %-  ~(gas by *(map ship contact-version))
       %+  turn  ~(tap in contacts.old)
-      |=(=ship [ship *contact-version])
+      |=(=ship [ship %0 ~])
     ::
         blocked
       %-  ~(run by blocked.old)
