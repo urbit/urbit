@@ -16,6 +16,12 @@
 ::
 +$  sync-state  [nun=@ta kid=(unit desk) let=@ud]
 +$  sink        (unit [her=@p sud=desk kid=(unit desk) let=@ud])
+::  +truncate-hash: get last 5 digits of hash and convert to tape
+::
+++  truncate-hash
+  |=  hash=@uv
+  ^-  tape
+  (slag 2 <`@uv`(mod hash 0v1.00000)>)
 ::  +report-prep: get data required for reports
 ::
 ++  report-prep
@@ -138,10 +144,15 @@
     |=  [=weft =tape]
     (welp " {<[lal num]:weft>}" tape)
   ?.  verb
-    =/  base-hash  ?.(=(1 (lent meb)) <meb> <(head meb)>)
+    =/  cut=(list tape)  (turn meb truncate-hash)
+    =/  len  (lent cut)
+    =/  base-hash
+      ?:  =(0 len)  "~"
+      ?:  =(1 len)  (head cut)
+        "~[{`tape`(zing (join " " `(list tape)`cut))}]"
     :~  leaf/"/sys/kelvin:          {kul}"
-        leaf/"base hash ends in:     {(slag (sub (lent base-hash) 5) base-hash)}"
-        leaf/"%cz hash ends in:      {(slag (sub (lent <hash>) 5) <hash>)}"
+        leaf/"base hash ends in:     {base-hash}"
+        leaf/"%cz hash ends in:      {(truncate-hash hash)}"
         leaf/"app status:            {sat}"
         leaf/"pending updates:       {<`(list [@tas @ud])`~(tap in wic.dek)>}"
     ==  
