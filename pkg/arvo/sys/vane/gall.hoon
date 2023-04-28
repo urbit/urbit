@@ -968,9 +968,10 @@
       [%pass wire %arvo %a %yawn spar]
     ::
     ++  ap-idle
+      ^+  ap-core
       ?:  ?=(%| -.agent.yoke)  ap-core
-      =>  (ap-ingest ~ |.([ap-yawn-all p.agent.yoke]))
-      ap-core(agent.yoke |+on-save:ap-agent-core)
+      =>  [ken=ken.yoke (ap-ingest ~ |.([ap-yawn-all *agent]))]
+      ap-core(ken.yoke ken, agent.yoke |+on-save:ap-agent-core)
     ::
     ++  ap-nuke
       ^+  ap-core
@@ -1327,6 +1328,12 @@
         ?:  ?=(%& -.agent.yoke)
           on-save:ap-agent-core
         p.agent.yoke
+      =?  ap-core  &(?=(%| -.agent.yoke) ?=(^ ken.yoke))
+        =-  +:(ap-ingest ~ |.([+< agent]))
+        %-  zing
+        %+  turn  ~(tap by `(jug spar:ames wire)`ken.yoke)
+        |=  [=spar:ames wyz=(set wire)]
+        (turn ~(tap in wyz) |=(=wire [%pass wire %arvo %a %keen spar]))
       =^  error  ap-core
         (ap-install(agent.yoke &+agent) `old-state)
       ?~  error
