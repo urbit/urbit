@@ -40,10 +40,12 @@
 ::
 ++  report-vats
   |=  [our=@p now=@da desks=(list desk) filt=@tas verb=?]
+  ^-  tang
   =/  ego  (scot %p our)
   =/  wen  (scot %da now)
   =/  prep  (report-prep our now)
   ?~  filt
+    %-  zing
     %+  turn  (flop desks)
     |=(syd=@tas (report-vat prep our now syd verb))
   =/  deks
@@ -66,8 +68,11 @@
       |=([syd=desk *] syd)
     ?~  blockers  ~[leaf+"No desks blocking upgrade, run |bump to apply"]
     :-  [%rose [" %" "To unblock upgrade run |suspend %" ""] blockers]
+    %-  zing
     %+  turn  (flop blockers)
     |=(syd=desk (report-vat prep our now syd verb))
+  ::
+  %-  zing
   %+  turn
     ?+    filt  !!
     ::
@@ -100,6 +105,15 @@
           ==
           our=ship  now=@da  syd=desk  verb=?
       ==
+  ^-  tang
+  =-  ::  hack to force wrapped rendering
+      ::
+      ::    edg=6 empirically prevents dedent
+      ::
+      %+  roll
+        (~(win re -) [0 6])
+      |=([a=tape b=(list @t)] [(crip a) b])
+  ::
   ^-  tank
   =/  ego  (scot %p our)
   =/  wen  (scot %da now)

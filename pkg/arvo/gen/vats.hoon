@@ -15,6 +15,7 @@
 |=  [[now=@da * bec=beak] deks=$@(~ (list desk)) filt=@tas verb=_|]
 ?:  &(=(~ deks) =(%$ filt))
   :-  %tang
+  %-  zing
   %+  turn
     %+  sort
       ~(tap in .^((set desk) %cd /(scot %p p.bec)/base/(scot %da now)))
