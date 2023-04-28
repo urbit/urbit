@@ -145,8 +145,10 @@
     (welp " {<[lal num]:weft>}" tape)
   ?.  verb
     =/  cut=(list tape)  (turn meb truncate-hash)
+    =/  len  (lent cut)
     =/  base-hash
-      ?:  =(1 (lent cut))  (head cut)
+      ?:  =(0 len)  "~"
+      ?:  =(1 len)  (head cut)
         "~[{`tape`(zing (join " " `(list tape)`cut))}]"
     :~  leaf/"/sys/kelvin:          {kul}"
         leaf/"base hash ends in:     {base-hash}"
