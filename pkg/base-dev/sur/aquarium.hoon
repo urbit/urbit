@@ -82,5 +82,10 @@
       [%kill ~]
       [%init ~]
       [%request id=@ud request=request:http]
+      [%turf p=(list turf)]
+      ::  XX effects seen after running :aqua [%swap-files ~]
+      [%vega ~]
+      [%set-config =http-config:eyre]
+      [%sessions p=(set @t)]
   ==
 --
