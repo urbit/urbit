@@ -41,53 +41,53 @@
   |=  [our=@p now=@da desks=(list desk) filt=@tas verb=?]
   =/  ego  (scot %p our)
   =/  wen  (scot %da now)
-  =/  prep  (report-prep our now) 
+  =/  prep  (report-prep our now)
   ?~  filt
     %+  turn  (flop desks)
     |=(syd=@tas (report-vat prep our now syd verb))
-  =/  deks  
+  =/  deks
     ?~  desks  ~(tap in -.prep)
-    %+  skip  ~(tap in -.prep)                                      
+    %+  skip  ~(tap in -.prep)
     |=([syd=@tas *] =(~ (find ~[syd] desks)))
-  ?:  =(filt %blocking)  
+  ?:  =(filt %blocking)
     =/  base-wic
       %+  sort  ~(tap by wic:(~(got by -.prep) %base))
-      |=([[* a=@ud] [* b=@ud]] (gth a b))  
-    ?~  base-wic  ~[leaf+"%base already up-to-date"]  
+      |=([[* a=@ud] [* b=@ud]] (gth a b))
+    ?~  base-wic  ~[leaf+"%base already up-to-date"]
     =/  blockers=(list desk)
       %+  turn
         %+  skip  ~(tap in -.prep)
-        |=  [* [zest=@tas wic=(set weft)]]  
-        ?.  =(zest %live)  & 
-        (~(has in wic) i.base-wic)    
-      |=([syd=desk *] syd)  
+        |=  [* [zest=@tas wic=(set weft)]]
+        ?.  =(zest %live)  &
+        (~(has in wic) i.base-wic)
+      |=([syd=desk *] syd)
     ?~  blockers  ~[leaf+"No desks blocking upgrade, run |bump to apply"]
     :-  [%rose [" %" "To unblock upgrade run |suspend %" ""] blockers]
     %+  turn  (flop blockers)
-    |=(syd=desk (report-vat prep our now syd verb)) 
+    |=(syd=desk (report-vat prep our now syd verb))
   %+  turn
-    ?+    filt  !!    
-    ::  
-          %exists      
+    ?+    filt  !!
+    ::
+          %exists
         %+  skip  deks
         |=([syd=desk *] =(ud:.^(cass %cw /[ego]/[syd]/[wen]) 0))
-    ::  
-        %running       
-      %+  skim  deks  
+    ::
+        %running
+      %+  skim  deks
       |=([* [zest=@tas *]] =(zest %live))
-    ::  
-        %suspended       
-      %+  skip  deks  
-      |=  [syd=@tas [zest=@tas *]] 
-      ?|  =(syd %kids) 
+    ::
+        %suspended
+      %+  skip  deks
+      |=  [syd=@tas [zest=@tas *]]
+      ?|  =(syd %kids)
           =(zest %live)
           =(ud:.^(cass %cw /[ego]/[syd]/[wen]) 0)
-      ==    
-    ::  
-        %exists-not      
+      ==
+    ::
+        %exists-not
       %+  skim  deks
       |=([syd=desk *] =(ud:.^(cass %cw /[ego]/[syd]/[wen]) 0))
-    ==                                  
+    ==
   |=([syd=desk *] (report-vat prep our now syd verb))
 ::  +report-vat: report on a single desk installation
 ::
@@ -155,7 +155,7 @@
         leaf/"%cz hash ends in:      {(truncate-hash hash)}"
         leaf/"app status:            {sat}"
         leaf/"pending updates:       {<`(list [@tas @ud])`~(tap in wic.dek)>}"
-    ==  
+    ==
   :~  leaf/"/sys/kelvin:     {kul}"
       leaf/"base hash:        {?.(=(1 (lent meb)) <meb> <(head meb)>)}"
       leaf/"%cz hash:         {<hash>}"
