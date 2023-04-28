@@ -4558,7 +4558,8 @@
     |*  [her=ship syd=desk yon=(unit aeon) res=* =state:ford:fusion]
     =^  moves  ruf
       =/  den  ((de now rof hen ruf) her syd)
-      abet:+:(tako-flow:den ?~(yon let.dom:den u.yon) res cache.state &2.state)
+      =/  tak  (aeon-to-tako:ze:den ?~(yon let.dom:den u.yon))
+      abet:+:(tako-flow:den tak res cache.state &2.state)
     [res (emil moves)]
   ::
   ++  trace
