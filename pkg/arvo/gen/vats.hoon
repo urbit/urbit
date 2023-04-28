@@ -20,6 +20,7 @@
 ?.  &(=(~ deks) =(%$ filt))
   (report-vats p.bec now deks filt verb)
 ::
+%-  zing
 %+  turn
   =/  sed  .^((set desk) %cd /(scot %p p.bec)//(scot %da now))
   (sort ~(tap in sed) |=([a=@ b=@] !(aor a b)))
