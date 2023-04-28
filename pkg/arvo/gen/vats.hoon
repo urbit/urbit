@@ -12,10 +12,15 @@
 ::
 /-  *hood
 :-  %say
-|=  [[now=@da * bec=beak] deks=$@(~ (list desk)) filt=@tas verb=_|]
-?:  &(=(~ deks) =(%$ filt))
-  :-  %tang
-  %+  turn
-    ~(tap in .^((set desk) %cd /(scot %p p.bec)/base/(scot %da now)))
-  |=(syd=desk (report-vat (report-prep p.bec now) p.bec now syd verb))
-[%tang (report-vats p.bec now deks filt verb)]
+|=  $:  [now=@da * bec=beak]
+        deks=$@(~ (list desk))
+        [filt=@tas verb=_|]
+    ==
+:-  %tang  ^-  tang
+?.  &(=(~ deks) =(%$ filt))
+  (report-vats p.bec now deks filt verb)
+::
+%+  turn
+  =/  sed  .^((set desk) %cd /(scot %p p.bec)//(scot %da now))
+  (sort ~(tap in sed) |=([a=@ b=@] !(aor a b)))
+|=(syd=desk (report-vat (report-prep p.bec now) p.bec now syd verb))
