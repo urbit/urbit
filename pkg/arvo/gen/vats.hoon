@@ -22,6 +22,7 @@
 %-  zing
 %+  turn
   %+  sort
-    ~(tap in .^((set desk) %cd /(scot %p p.bec)/base/(scot %da now)))
+    =/  sed  .^((set desk) %cd /(scot %p p.bec)/base/(scot %da now))
+    (sort ~(tap in sed) |=([a=@ b=@] !(aor a b)))
   |=([a=desk b=desk] ?|(=(a %kids) =(b %base)))
 |=(syd=desk (report-vat (report-prep p.bec now) p.bec now syd verb))

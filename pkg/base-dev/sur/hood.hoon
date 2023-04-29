@@ -50,8 +50,9 @@
     |=(syd=@tas (report-vat prep our now syd verb))
   =/  deks
     ?~  desks
-      %+  sort  ~(tap in -.prep)
-      |=([[a=desk *] [b=desk *]] ?|(=(a %kids) =(b %base)))
+      %+  sort
+        (sort ~(tap in -.prep) |=([[a=@ *] b=@ *] !(aor a b)))
+      |=([[a=@ *] [b=@ *]] ?|(=(a %kids) =(b %base)))
     %+  skip  ~(tap in -.prep)
     |=([syd=@tas *] =(~ (find ~[syd] desks)))
   ?:  =(filt %blocking)
