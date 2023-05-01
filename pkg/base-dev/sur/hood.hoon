@@ -1,3 +1,4 @@
+/%  kelvin  %kelvin
 =,  clay
 =*  dude  dude:gall
 |%
@@ -39,16 +40,19 @@
 ::
 ++  report-vats
   |=  [our=@p now=@da desks=(list desk) filt=@tas verb=?]
+  ^-  tang
   =/  ego  (scot %p our)
   =/  wen  (scot %da now)
   =/  prep  (report-prep our now)
   ?~  filt
+    %-  zing
     %+  turn  (flop desks)
     |=(syd=@tas (report-vat prep our now syd verb))
   =/  deks
     ?~  desks
-      %+  sort  ~(tap in -.prep)
-      |=([[a=desk *] [b=desk *]] ?|(=(a %kids) =(b %base)))
+      %+  sort
+        (sort ~(tap in -.prep) |=([[a=@ *] b=@ *] !(aor a b)))
+      |=([[a=@ *] [b=@ *]] ?|(=(a %kids) =(b %base)))
     %+  skip  ~(tap in -.prep)
     |=([syd=@tas *] =(~ (find ~[syd] desks)))
   ?:  =(filt %blocking)
@@ -65,8 +69,11 @@
       |=([syd=desk *] syd)
     ?~  blockers  ~[leaf+"No desks blocking upgrade, run |bump to apply"]
     :-  [%rose [" %" "To unblock upgrade run |suspend %" ""] blockers]
+    %-  zing
     %+  turn  (flop blockers)
     |=(syd=desk (report-vat prep our now syd verb))
+  ::
+  %-  zing
   %+  turn
     ?+    filt  !!
     ::
@@ -99,6 +106,15 @@
           ==
           our=ship  now=@da  syd=desk  verb=?
       ==
+  ^-  tang
+  =-  ::  hack to force wrapped rendering
+      ::
+      ::    edg=6 empirically prevents dedent
+      ::
+      %+  roll
+        (~(win re -) [0 6])
+      |=([a=tape b=(list @t)] [(crip a) b])
+  ::
   ^-  tank
   =/  ego  (scot %p our)
   =/  wen  (scot %da now)
@@ -126,9 +142,6 @@
     ?~  sink  [hash]~
     (mergebase-hashes our syd now her.u.sink sud.u.sink)
   =/  dek  (~(got by tyr) syd)
-  =/  =dome  (~(got by cone) our syd)
-  =/  [on=(list [@tas ?]) of=(list [@tas ?])]
-    (skid ~(tap by ren.dome) |=([* ?] +<+))
   =/  sat
     ?-  zest.dek
       %live  "running"
@@ -158,13 +171,17 @@
         leaf/"app status:            {sat}"
         leaf/"pending updates:       {<`(list [@tas @ud])`~(tap in wic.dek)>}"
     ==
+  ::
+  =/  [on=(list [@tas ?]) of=(list [@tas ?])]
+    =/  =dome  (~(got by cone) our syd)
+    (skid ~(tap by ren.dome) |=([* ?] +<+))
   :~  leaf/"/sys/kelvin:     {kul}"
       leaf/"base hash:        {?.(=(1 (lent meb)) <meb> <(head meb)>)}"
       leaf/"%cz hash:         {<hash>}"
       ::
       leaf/"app status:       {sat}"
-      leaf/"force on:         {?:(=(~ on) "~" <on>)}"
-      leaf/"force off:        {?:(=(~ of) "~" <of>)}"
+      leaf/"force on:         {<(sort (turn on head) aor)>}"
+      leaf/"force off:        {<(sort (turn of head) aor)>}"
       ::
       leaf/"publishing ship:  {?~(sink <~> <(get-publisher our syd now)>)}"
       leaf/"updates:          {?~(sink "local" "remote")}"
