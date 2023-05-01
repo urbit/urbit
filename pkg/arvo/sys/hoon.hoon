@@ -13417,9 +13417,7 @@
     ++  hunk  (most mush loan)                          ::  gapped specs
     ++  jump  ;~(pose leap:docs gap)                    ::  gap before docs
     ++  loaf  ?:(tol tall wide)                         ::  hoon
-    ++  loll  ?:  tol                                   ::  hoon without docs
-                tall:(vang bug wer |)
-              wide:(vang bug wer |)
+    ++  loll  ?:(tol tall(doc |) wide(doc |))           ::  hoon without docs
     ++  loan  ?:(tol till wyde)                         ::  spec
     ++  lore  (sear |=(=hoon ~(flay ap hoon)) loaf)     ::  skin
     ++  lomp  ;~(plug sym (punt ;~(pfix tis wyde)))     ::  typeable name
