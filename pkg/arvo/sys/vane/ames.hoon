@@ -777,6 +777,52 @@
         ++  com  |~(a=pass ^?(..nu))
     --
   --
+::
++$  ames-state-13
+  $:  peers=(map ship ship-state-13)
+      =unix=duct
+      =life
+      =rift
+      crypto-core=acru:ames
+      =bug
+      snub=[form=?(%allow %deny) ships=(set ship)]
+      cong=[msg=@ud mem=@ud]
+  ==
+::
++$  ship-state-13
+  $%  [%alien alien-agenda]
+      [%known peer-state-13]
+  ==
+::
++$  peer-state-13
+  $:  $:  =symmetric-key
+          =life
+          =rift
+          =public-key
+          sponsor=ship
+      ==
+      route=(unit [direct=? =lane])
+      =qos
+      =ossuary
+      snd=(map bone message-pump-state)
+      rcv=(map bone message-sink-state)
+      nax=(set [=bone =message-num])
+      heeds=(set duct)
+      closing=(set bone)
+      corked=(set bone)
+      keens=(map path keen-state-13)
+  ==
+::
++$  keen-state-13
+  $:  wan=(pha want)   ::  request packts, sent
+      nex=(list want)  ::  request packets, unsent
+      hav=(list have)  ::  response packets, backward
+      num-fragments=@ud
+      num-received=@ud
+      next-wake=(unit @da)
+      listeners=(set duct)
+      metrics=pump-metrics
+  ==
 ::  $bug: debug printing configuration
 ::
 ::    veb: verbosity toggles
@@ -909,7 +955,8 @@
             [%10 ames-state-10]
             [%11 ames-state-11]
             [%12 ames-state-12]
-            [%13 ^ames-state]
+            [%13 ames-state-13]
+            [%14 ^ames-state]
         ==
     ::
     |=  [now=@da eny=@ rof=roof]
@@ -1032,7 +1079,7 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%13 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%14 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
           $%  $:  %4
@@ -1101,6 +1148,13 @@
               $:  %13
               $%  $:  %larva
                       events=(qeu queued-event)
+                      state=ames-state-13
+                  ==
+                  [%adult state=ames-state-13]
+              ==  ==
+              $:  %14
+              $%  $:  %larva
+                      events=(qeu queued-event)
                       state=_ames-state.adult-gate
                   ==
                   [%adult state=_ames-state.adult-gate]
@@ -1113,7 +1167,7 @@
         =.  state.old  (state-4-to-5:load:adult-core state.old)
         $(-.old %5)
       ::
-           [%5 %adult *]
+          [%5 %adult *]
         =.  cached-state  `[%5 state.old]
         ~>  %slog.0^leaf/"ames: larva reload"
         larval-gate
@@ -1201,14 +1255,24 @@
         =.  queued-events  events.old
         larval-gate
       ::
-          [%13 %adult *]  (load:adult-core %13 state.old)
+          [%13 %adult *]
+        =.  cached-state  `[%13 state.old]
+        ~>  %slog.0^leaf/"ames: larva reload"
+        larval-gate
       ::
           [%13 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
+        =.  cached-state  `[%13 state.old]
         =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %13 state.old)
         larval-gate
       ::
+          [%14 %adult *]  (load:adult-core %14 state.old)
+      ::
+          [%14 %larva *]
+        ~>  %slog.1^leaf/"ames: larva: load"
+        =.  queued-events  events.old
+        =.  adult-gate     (load:adult-core %14 state.old)
+        larval-gate
       ==
       ::
       ++  event-11-to-12
@@ -1250,7 +1314,9 @@
         12+(state-11-to-12:load:adult-core +.u.cached-state)
       =?  u.cached-state  ?=(%12 -.u.cached-state)
         13+(state-12-to-13:load:adult-core +.u.cached-state)
-      ?>  ?=(%13 -.u.cached-state)
+      =?  u.cached-state  ?=(%13 -.u.cached-state)
+        14+(state-13-to-14:load:adult-core +.u.cached-state)
+      ?>  ?=(%14 -.u.cached-state)
       =.  ames-state.adult-gate  +.u.cached-state
       [moz larval-core(cached-state ~)]
     --
@@ -3813,9 +3879,25 @@
             ^+  same
             (trace %fine verb her ships.bug.ames-state print)
           ::
+          ++  fi-mop
+            =,  ((on @sd want) lth-wan)
+            |%
+            ++  cons
+              |=  [a=_wan.keen =want]
+              ^+  a
+              =-  (put a - want)
+              ?~  prev=(pry a)  --0
+              (dif:si key.u.prev --1)
+            ::
+            ++  snoc
+              |=  [a=_wan.keen =want]
+              ^+  a
+              =-  (put a - want)
+              ?~  prev=(pry a)  --0
+              (sum:si key.u.prev --1)
+            --
           ++  fi-emit       |=(move fine(event-core (emit +<)))
-          ++  fi-deq        (deq want)
-          ++  fi-gauge      (ga metrics.keen (wyt:fi-deq wan.keen))
+          ++  fi-gauge      (ga metrics.keen (wyt:fi-mop wan.keen))
           ++  fi-wait       |=(tim=@da (fi-pass-timer %b %wait tim))
           ++  fi-rest       |=(tim=@da (fi-pass-timer %b %rest tim))
           ::
@@ -3839,7 +3921,7 @@
             =/  fra=@     1
             =/  req=hoot  (fi-etch-wail fra)
             =/     =want  [fra req last=now tries=1 skips=0]
-            =.  wan.keen  (cons:fi-deq *(pha ^want) want)
+            =.  wan.keen  (cons:fi-mop ~ want)
             (fi-send `@ux`req)
           ::
           ++  fi-rcv
@@ -3909,12 +3991,12 @@
             =|  marked=(list want)
             |=  fra=@ud
             ^-  [? _fine]
-            =;  [[found=? cor=_fine] wan=(pha want)]
+            =;  [[found=? cor=_fine] wan=_wan.keen]
               :-  found
               ?.(found fine cor(wan.keen wan))
-            %^  (dip-left:fi-deq ,[found=? cor=_fine])  wan.keen
+            %^  (dip:fi-mop ,[found=? cor=_fine])  wan.keen
               [| fine]
-            |=  [[found=? cor=_fine] =want]
+            |=  [[found=? cor=_fine] @sd =want]
             ^-  [(unit _want) stop=? [found=? cor=_fine]]
             =.  fine  cor
             ?:  =(fra fra.want)
@@ -3965,7 +4047,7 @@
             =^  =want  nex.keen  nex.keen
             =.  last-sent.want   now
             =.      tries.want   +(tries.want)
-            =.        wan.keen   (snoc:fi-deq wan.keen want)
+            =.        wan.keen   (snoc:fi-mop wan.keen want)
             =.            fine   (fi-send `@ux`hoot.want)
             $(inx +(inx))
           ::
@@ -3981,11 +4063,11 @@
           ::
           ++  fi-fast-retransmit
             |=  fra=@ud
-            =;  [cor=_fine wants=(pha want)]
+            =;  [cor=_fine wants=_wan.keen]
               cor(wan.keen wants)
-            %^  (dip-left:fi-deq ,cor=_fine)  wan.keen
+            %^  (dip:fi-mop ,cor=_fine)  wan.keen
               fine
-            |=  [cor=_fine =want]
+            |=  [cor=_fine @sd =want]
             ^-  [(unit ^want) stop=? cor=_fine]
             ?.  (lte fra.want fra)
               [`want & cor]
@@ -4003,9 +4085,9 @@
           ++  fi-set-wake
             ^+  fine
             =/  next-wake=(unit @da)
-              ?~  want=(peek-left:fi-deq wan.keen)
+              ?~  want=(pry:fi-mop wan.keen)
                 ~
-              `(next-expiry:fi-gauge +>:u.want)
+              `(next-expiry:fi-gauge +>:val.u.want)
             ?:  =(next-wake next-wake.keen)
               fine
             =?  fine  !=(~ next-wake.keen)
@@ -4027,13 +4109,13 @@
             =.  peer-state    (update-peer-route her peer-state)
             =.  metrics.keen  on-timeout:fi-gauge
             =^  want=(unit want)  wan.keen
-              (pop-left:fi-deq wan.keen)
+              (fall (mole |.([`val.head rest]:(pop:fi-mop wan.keen))) `wan.keen)
             ~|  %took-wake-for-empty-want
             ?>  ?=(^ want)
             =:      tries.u.want  +(tries.u.want)
                 last-sent.u.want  now
               ==
-            =.  wan.keen  (cons:fi-deq wan.keen u.want)
+            =.  wan.keen  (cons:fi-mop wan.keen u.want)
             (fi-send `@ux`hoot.u.want)
           --
         ::  +ga: constructor for |pump-gauge congestion control core
@@ -4252,15 +4334,15 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%13 %adult ames-state]
+++  stay  [%14 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
   =<  |=  $=  old-state
-          $%  [%13 ^ames-state]
+          $%  [%14 ^ames-state]
           ==
       ^+  ames-gate
-      ?>  ?=(%13 -.old-state)
+      ?>  ?=(%14 -.old-state)
       ames-gate(ames-state +.old-state)
   ::  all state transitions are called from larval ames
   ::
@@ -4379,7 +4461,7 @@
   ::
   ++  state-12-to-13
     |=  old=ames-state-12
-    ^-  ^ames-state
+    ^-  ames-state-13
     =+  !<  =rift
         q:(need (need (rof ~ %j `beam`[[our %rift %da now] /(scot %p our)])))
     =+  pk=sec:ex:crypto-core.old
@@ -4397,10 +4479,29 @@
   ::
   ++  ship-state-12-to-13
     |=  old=ship-state-12
-    ^-  ship-state
+    ^-  ship-state-13
     ?:  ?=(%alien -.old)
       old(heeds [heeds.old ~])
     old(corked [corked.old ~])
+  ::
+  ++  state-13-to-14
+    |=  old=ames-state-13
+    ^-  ^ames-state
+    =-  old(peers -)
+    %-  ~(run by peers.old)
+    |=  old=ship-state-13
+    ?:  ?=(%alien -.old)  old
+    old(keens (~(run by keens.old) keen-state-13-to-14))
+  ::
+  ++  keen-state-13-to-14
+    |=  old=keen-state-13
+    ^-  keen-state
+    =-  old(wan wan)
+    %^  (dip-left:(deq want) ,[@ud wan=((mop @sd want) lth-wan)])  wan.old
+      [0 ~]
+    |=  [[ix=@ud wan=((mop @sd want) lth-wan)] =want]
+    ^-  [(unit ^want) ? @ud _wan]
+    [~ | +(ix) (put:((on @sd ^want) lth-wan) wan (sun:si ix) want)]
   --
 ::  +scry: dereference namespace
 ::

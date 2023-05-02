@@ -5593,6 +5593,10 @@
       $(pops [oldest pops])
     --
   --
+::  +deq: deque
+::
+::    DO NOT USE THIS
+::    It's wrong and only kept around for state migration purposes.
 ::
 ++  deq
   |*  val=mold

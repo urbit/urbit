@@ -49,6 +49,9 @@
 ::
 ::  +pha: finger tree
 ::
+::    DO NOT USE THIS
+::    It's wrong and only kept around for state migration purposes.
+::
 ++  pha
   |$  [val]
   $~  [%nul ~]
@@ -461,6 +464,13 @@
     ?:  (compare key.n.a key.n.b)
       $(l.b $(b l.b, r.a ~), a r.a)
     $(r.b $(b r.b, l.a ~), a l.a)
+  ::  +wyt: measure size
+  ::
+  ++  wyt
+    ~/  %wyt
+    |=  a=(tree item)
+    ^-  @ud
+    ?~(a 0 +((add $(a l.a) $(a r.a))))
   --
 ::
 +$  deco  ?(~ %bl %br %un)                              ::  text decoration
@@ -1029,9 +1039,9 @@
         keens=(map path keen-state)
     ==
   +$  keen-state
-    $:  wan=(pha want)   ::  request packets, sent
-        nex=(list want)  ::  request packets, unsent
-        hav=(list have)  ::  response packets, backward
+    $:  wan=((mop @sd want) lth-wan)  ::  request packts, sent
+        nex=(list want)               ::  request packets, unsent
+        hav=(list have)               ::  response packets, backward
         num-fragments=@ud
         num-received=@ud
         next-wake=(unit @da)
@@ -1182,6 +1192,11 @@
     ?:  (gth message-num.a message-num.b)
       %.n
     (lte fragment-num.a fragment-num.b)
+  ::
+  ++  lth-wan
+    |=  [@sd @sd]
+    ^-  ?
+    =(-1 (cmp:si +<))
   ::
   ::  $pump-metrics: congestion control state for a |packet-pump
   ::
