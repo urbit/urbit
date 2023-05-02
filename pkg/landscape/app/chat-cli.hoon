@@ -683,7 +683,7 @@
       |=  tub=nail
       %.  tub
       %+  stag  (crip q.tub)
-      wide:(vang & [&1:% &2:% (scot %da now.bowl) |3:%] &)
+      wide:(vang & [&1:% &2:% (scot %da now.bowl) |3:%])
     --
   ::  +tab-list: command descriptions
   ::

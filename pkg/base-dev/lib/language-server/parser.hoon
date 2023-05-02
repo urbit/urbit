@@ -44,7 +44,7 @@
     ==
   ::
     %+  stag  %tssg
-    (most gap tall:(vang & pax &))
+    (most gap tall:(vang & pax))
   ==
   ::
   ++  pant

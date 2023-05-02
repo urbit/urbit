@@ -11425,11 +11425,12 @@
 ::  +vang: set +vast params
 ::
 ::    bug: debug mode
-::    wer: where we are
 ::    doc: doccord parsing
+::    wer: where we are
+::
 ++  vang
-  |=  [bug=? wer=path doc=?]
-  %*(. vast bug bug, wer wer, doc doc)
+  |=  [f=$@(? [bug=? doc=?]) wer=path]
+  %*(. vast bug ?@(f f bug.f), doc ?@(f & doc.f), wer wer)
 ::
 ++  vast                                                ::  main parsing core
   =+  [bug=`?`| wer=*path doc=`?`&]
