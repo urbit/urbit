@@ -832,8 +832,7 @@
       |^  ^-  json
       %-  pairs
       :~  :-  %wan
-          :-  %a
-          (turn (tap:((on @sd want) lth-wan) wan) |=([@ a=_+6:wants] (wants a)))
+          a/(turn (tap:((on @ud want) lte) wan) |=([@ a=_+6:wants] (wants a)))
         ::
           'nex'^a/(turn nex wants)
         ::

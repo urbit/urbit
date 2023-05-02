@@ -3879,24 +3879,8 @@
             ^+  same
             (trace %fine verb her ships.bug.ames-state print)
           ::
-          ++  fi-mop
-            =,  ((on @sd want) lth-wan)
-            |%
-            ++  cons
-              |=  [a=_wan.keen =want]
-              ^+  a
-              =-  (put a - want)
-              ?~  prev=(pry a)  --0
-              (dif:si key.u.prev --1)
-            ::
-            ++  snoc
-              |=  [a=_wan.keen =want]
-              ^+  a
-              =-  (put a - want)
-              ?~  prev=(pry a)  --0
-              (sum:si key.u.prev --1)
-            --
           ++  fi-emit       |=(move fine(event-core (emit +<)))
+          ++  fi-mop        ((on @ud want) lte)
           ++  fi-gauge      (ga metrics.keen (wyt:fi-mop wan.keen))
           ++  fi-wait       |=(tim=@da (fi-pass-timer %b %wait tim))
           ++  fi-rest       |=(tim=@da (fi-pass-timer %b %rest tim))
@@ -3921,7 +3905,7 @@
             =/  fra=@     1
             =/  req=hoot  (fi-etch-wail fra)
             =/     =want  [fra req last=now tries=1 skips=0]
-            =.  wan.keen  (cons:fi-mop ~ want)
+            =.  wan.keen  (put:fi-mop ~ [fra .]:want)
             (fi-send `@ux`req)
           ::
           ++  fi-rcv
@@ -3996,7 +3980,7 @@
               ?.(found fine cor(wan.keen wan))
             %^  (dip:fi-mop ,[found=? cor=_fine])  wan.keen
               [| fine]
-            |=  [[found=? cor=_fine] @sd =want]
+            |=  [[found=? cor=_fine] @ud =want]
             ^-  [(unit _want) stop=? [found=? cor=_fine]]
             =.  fine  cor
             ?:  =(fra fra.want)
@@ -4047,7 +4031,7 @@
             =^  =want  nex.keen  nex.keen
             =.  last-sent.want   now
             =.      tries.want   +(tries.want)
-            =.        wan.keen   (snoc:fi-mop wan.keen want)
+            =.        wan.keen   (put:fi-mop wan.keen [fra .]:want)
             =.            fine   (fi-send `@ux`hoot.want)
             $(inx +(inx))
           ::
@@ -4067,7 +4051,7 @@
               cor(wan.keen wants)
             %^  (dip:fi-mop ,cor=_fine)  wan.keen
               fine
-            |=  [cor=_fine @sd =want]
+            |=  [cor=_fine @ud =want]
             ^-  [(unit ^want) stop=? cor=_fine]
             ?.  (lte fra.want fra)
               [`want & cor]
@@ -4115,7 +4099,7 @@
             =:      tries.u.want  +(tries.u.want)
                 last-sent.u.want  now
               ==
-            =.  wan.keen  (cons:fi-mop wan.keen u.want)
+            =.  wan.keen  (put:fi-mop wan.keen [fra .]:u.want)
             (fi-send `@ux`hoot.u.want)
           --
         ::  +ga: constructor for |pump-gauge congestion control core
@@ -4497,11 +4481,12 @@
     |=  old=keen-state-13
     ^-  keen-state
     =-  old(wan wan)
-    %^  (dip-left:(deq want) ,[@ud wan=((mop @sd want) lth-wan)])  wan.old
-      [0 ~]
-    |=  [[ix=@ud wan=((mop @sd want) lth-wan)] =want]
-    ^-  [(unit ^want) ? @ud _wan]
-    [~ | +(ix) (put:((on @sd ^want) lth-wan) wan (sun:si ix) want)]
+    %^    (dip-left:(deq want) ,wan=((mop @ud want) lte))
+        wan.old
+      ~
+    |=  [wan=((mop @ud want) lte) =want]
+    ^-  [(unit ^want) ? _wan]
+    [~ | (put:((on @ud ^want) lte) wan [fra .]:want)]
   --
 ::  +scry: dereference namespace
 ::

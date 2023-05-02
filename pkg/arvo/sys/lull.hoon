@@ -1039,9 +1039,9 @@
         keens=(map path keen-state)
     ==
   +$  keen-state
-    $:  wan=((mop @sd want) lth-wan)  ::  request packts, sent
-        nex=(list want)               ::  request packets, unsent
-        hav=(list have)               ::  response packets, backward
+    $:  wan=((mop @ud want) lte)  ::  request packets, sent
+        nex=(list want)           ::  request packets, unsent
+        hav=(list have)           ::  response packets, backward
         num-fragments=@ud
         num-received=@ud
         next-wake=(unit @da)
@@ -1192,12 +1192,6 @@
     ?:  (gth message-num.a message-num.b)
       %.n
     (lte fragment-num.a fragment-num.b)
-  ::
-  ++  lth-wan
-    |=  [@sd @sd]
-    ^-  ?
-    =(-1 (cmp:si +<))
-  ::
   ::  $pump-metrics: congestion control state for a |packet-pump
   ::
   ::    This is an Ames adaptation of TCP's Reno congestion control
