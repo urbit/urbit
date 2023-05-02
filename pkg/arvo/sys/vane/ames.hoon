@@ -4342,7 +4342,8 @@
             =.  peer-state    (update-peer-route her peer-state)
             =.  metrics.keen  on-timeout:fi-gauge
             =^  want=(unit want)  wan.keen
-              (fall (mole |.([`val.head rest]:(pop:fi-mop wan.keen))) `wan.keen)
+              ?~  res=(pry:fi-mop wan.keen)  `wan.keen
+              (del:fi-mop wan.keen key.u.res)
             ~|  %took-wake-for-empty-want
             ?>  ?=(^ want)
             =:      tries.u.want  +(tries.u.want)
