@@ -36,27 +36,6 @@
       max-size=_2.048
       depth=_1
   ==
-::
-::  +afx: polymorphic node type for finger trees
-::
-++  afx
-  |$  [val]
-  $%  [%1 p=val ~]
-      [%2 p=val q=val ~]
-      [%3 p=val q=val r=val ~]
-      [%4 p=val q=val r=val s=val ~]
-  ==
-::
-::  +pha: finger tree
-::
-++  pha
-  |$  [val]
-  $~  [%nul ~]
-  $%  [%nul ~]
-      [%one p=val]
-      [%big p=(afx val) q=(pha val) r=(afx val)]
-  ==
-::
 ::  +mop: constructs and validates ordered ordered map based on key,
 ::  val, and comparator gate
 ::
@@ -461,6 +440,13 @@
     ?:  (compare key.n.a key.n.b)
       $(l.b $(b l.b, r.a ~), a r.a)
     $(r.b $(b r.b, l.a ~), a l.a)
+  ::  +wyt: measure size
+  ::
+  ++  wyt
+    ~/  %wyt
+    |=  a=(tree item)
+    ^-  @ud
+    ?~(a 0 +((add $(a l.a) $(a r.a))))
   --
 ::
 +$  deco  ?(~ %bl %br %un)                              ::  text decoration
@@ -1029,9 +1015,9 @@
         keens=(map path keen-state)
     ==
   +$  keen-state
-    $:  wan=(pha want)   ::  request packets, sent
-        nex=(list want)  ::  request packets, unsent
-        hav=(list have)  ::  response packets, backward
+    $:  wan=((mop @ud want) lte)  ::  request packets, sent
+        nex=(list want)           ::  request packets, unsent
+        hav=(list have)           ::  response packets, backward
         num-fragments=@ud
         num-received=@ud
         next-wake=(unit @da)
@@ -1182,7 +1168,6 @@
     ?:  (gth message-num.a message-num.b)
       %.n
     (lte fragment-num.a fragment-num.b)
-  ::
   ::  $pump-metrics: congestion control state for a |packet-pump
   ::
   ::    This is an Ames adaptation of TCP's Reno congestion control

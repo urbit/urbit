@@ -777,6 +777,301 @@
         ++  com  |~(a=pass ^?(..nu))
     --
   --
+::
++$  ames-state-13
+  $:  peers=(map ship ship-state-13)
+      =unix=duct
+      =life
+      =rift
+      crypto-core=acru:ames
+      =bug
+      snub=[form=?(%allow %deny) ships=(set ship)]
+      cong=[msg=@ud mem=@ud]
+  ==
+::
++$  ship-state-13
+  $%  [%alien alien-agenda]
+      [%known peer-state-13]
+  ==
+::
++$  peer-state-13
+  $:  $:  =symmetric-key
+          =life
+          =rift
+          =public-key
+          sponsor=ship
+      ==
+      route=(unit [direct=? =lane])
+      =qos
+      =ossuary
+      snd=(map bone message-pump-state)
+      rcv=(map bone message-sink-state)
+      nax=(set [=bone =message-num])
+      heeds=(set duct)
+      closing=(set bone)
+      corked=(set bone)
+      keens=(map path keen-state-13)
+  ==
+::
+++  keen-state-13
+  =<  $:  wan=(pha want)   ::  request packts, sent
+          nex=(list want)  ::  request packets, unsent
+          hav=(list have)  ::  response packets, backward
+          num-fragments=@ud
+          num-received=@ud
+          next-wake=(unit @da)
+          listeners=(set duct)
+          metrics=pump-metrics
+      ==
+  |%
+  ::  +afx: polymorphic node type for finger trees
+  ::
+  ++  afx
+    |$  [val]
+    $%  [%1 p=val ~]
+        [%2 p=val q=val ~]
+        [%3 p=val q=val r=val ~]
+        [%4 p=val q=val r=val s=val ~]
+    ==
+  ::  +pha: finger tree
+  ::
+  ::    DO NOT USE THIS
+  ::    It's wrong and only kept around for state migration purposes.
+  ::
+  ++  pha
+    |$  [val]
+    $~  [%nul ~]
+    $%  [%nul ~]
+        [%one p=val]
+        [%big p=(afx val) q=(pha val) r=(afx val)]
+    ==
+  ::  +deq: deque
+  ::
+  ::    DO NOT USE THIS
+  ::    It's wrong and only kept around for state migration purposes.
+  ::
+  ++  deq
+    |*  val=mold
+    |%
+::    ::
+::    ::  +|  %utilities
+::    ::
+::    ++  make-afx
+::      |=  ls=(list val)
+::      ?+  ls  ~|(bad-finger/(lent ls) !!)
+::        [* ~]        [%1 ls]
+::        [* * ~]      [%2 ls]
+::        [* * * ~]    [%3 ls]
+::        [* * * * ~]  [%4 ls]
+::      ==
+::    ++  afx-to-pha
+::      |=  =(afx val)
+::      ^-  (pha val)
+::      (apl *(pha val) +.afx)
+::    ::
+::    ::  +|  %left-biased-operations
+::    ::
+::    ::  +pop-left: remove leftmost value from tree
+::    ::
+::    ++  pop-left
+::      |=  a=(pha val)
+::      ^-  [val=(unit val) pha=(pha val)]
+::      ?-  -.a
+::        %nul  ~^a
+::      ::
+::        %one  [`p.a nul/~]
+::      ::
+::          %big
+::        [`p.p.a (big-left +.+.p.a q.a r.a)]
+::     ==
+::    ++  apl
+::      |=  [a=(pha val) vals=(list val)]
+::      ^-  (pha val)
+::      =.  vals  (flop vals)
+::      |-
+::      ?~  vals  a
+::      $(a (cons a i.vals), vals t.vals)
+::    ::
+::    ::
+::    ++  dip-left
+::      |*  state=mold
+::      |=  $:  a=(pha val)
+::              =state
+::              f=$-([state val] [(unit val) ? state])
+::          ==
+::      ^+  [state a]
+::      =/  acc  [stop=`?`%.n state=state]
+::      =|  new=(pha val)
+::      |-
+::      ?:  stop.acc
+::        :: cat new and old
+::        [state.acc (weld a new)]
+::      =^  val=(unit val)  a
+::        (pop-left a)
+::      ?~  val
+::        [state.acc new]
+::      =^  res=(unit ^val)  acc
+::        (f state.acc u.val)
+::      ?~  res  $
+::      $(new (snoc new u.res))
+::    ::
+::    ++  big-left
+::      |=  [ls=(list val) a=(pha val) sf=(afx val)]
+::      ^-  (pha val)
+::      ?.  =(~ ls)
+::        [%big (make-afx ls) a sf]
+::      =/  [val=(unit val) inner=_a]
+::        (pop-left a)
+::      ?~  val
+::        (afx-to-pha sf)
+::      [%big [%1 u.val ~] inner sf]
+::    ::
+::    ++  cons
+::      =|  b=(list val)
+::      |=  [a=(pha val) c=val]
+::      ^-  (pha val)
+::      =.  b  [c b]
+::      |-
+::      ?~  b  a
+::      ?-  -.a
+::      ::
+::          %nul
+::        $(a [%one i.b], b t.b)
+::      ::
+::          %one
+::        %=  $
+::           b  t.b
+::           a  [%big [%1 i.b ~] [%nul ~] [%1 p.a ~]]
+::        ==
+::      ::
+::          %big
+::        ?.  ?=(%4 -.p.a)
+::          %=    $
+::              b  t.b
+::          ::
+::              a
+::            ?-  -.p.a
+::              %1  big/[[%2 i.b p.p.a ~] q.a r.a]
+::              %2  big/[[%3 i.b p.p.a q.p.a ~] q.a r.a]
+::              %3  big/[[%4 i.b p.p.a q.p.a r.p.a ~] q.a r.a]
+::             ==
+::          ==
+::        =/  inner
+::          $(a q.a, b ~[s.p.a r.p.a q.p.a])
+::        =.  inner
+::          $(a inner, b t.b)
+::        big/[[%2 i.b p.p.a ~] inner r.a]
+::      ==
+::    ::
+::    ::  +|  %right-biased-operations
+::    ::
+::    ::  +snoc: append to end (right) of tree
+::    ::
+::    ++  snoc
+::      |=  [a=(pha val) b=val]
+::      ^+  a
+::      ?-  -.a
+::        %nul  [%one b]
+::      ::
+::          %one
+::        :-  %big
+::        :*  [%1 p.a ~]
+::            [%nul ~]
+::            [%1 b ~]
+::        ==
+::      ::
+::          %big
+::        ?-  -.r.a
+::        ::
+::            %1
+::          :-  %big
+::          [p.a q.a [%2 p.r.a b ~]]
+::        ::
+::            %2
+::          :-  %big
+::          [p.a q.a [%3 p.r.a q.r.a b ~]]
+::        ::
+::            %3
+::          :-  %big
+::          [p.a q.a [%4 p.r.a q.r.a r.r.a b ~]]
+::        ::
+::            %4
+::          =/  inner
+::            $(a q.a, b p.r.a)
+::          =.  inner
+::            $(a inner, b q.r.a)
+::          =.  inner
+::            $(a inner, b r.r.a)
+::          :-  %big
+::          :*  p.a
+::              inner
+::              [%2 s.r.a b ~]
+::          ==
+::        ==
+::      ==
+::    ::  +apr: append list to end (right) of tree
+::    ::
+::    ++  apr
+::      |=  [a=(pha val) vals=(list val)]
+::      ^-  (pha val)
+::      ?~  vals  a
+::      $(a (snoc a i.vals), vals t.vals)
+::    ::  +|  %manipulation
+::    ::
+::    ::  +weld: concatenate two trees
+::    ::
+::    ::    O(log n)
+::    ++  weld
+::      =|  c=(list val)
+::      |=  [a=(pha val) b=(pha val)]
+::      ^-  (pha val)
+::      ?-  -.b
+::        %nul  (apr a c)
+::        %one  (snoc (apr a c) p.b)
+::      ::
+::          %big
+::        ?-  -.a
+::          %nul  (apl b c)
+::          %one  (cons (apl b c) p.a)
+::        ::
+::            %big
+::          :-  %big
+::          =-  [p.a - r.b]
+::          $(a q.a, b q.b, c :(welp +.r.a c +.p.b))
+::        ==
+::      ==
+    ::  +tap: transform tree to list
+    ::
+    ++  tap
+      =|  res=(list val)
+      |=  a=(pha val)
+      !.
+      |^  ^+  res
+      ?-  -.a
+        %nul  ~
+        %one  ~[p.a]
+      ::
+          %big
+        =/  fst=_res
+          (tap-afx p.a)
+        =/  lst=_res
+          (tap-afx r.a)
+        =/  mid=_res
+          $(a q.a)
+        :(welp fst mid lst)
+      ==
+      ++  tap-afx
+        |=  ax=(afx val)
+        ^+  res
+        ?-  -.ax
+          %1  +.ax
+          %2  +.ax
+          %3  +.ax
+          %4  +.ax
+        ==
+      --
+    --
+  --
 ::  $bug: debug printing configuration
 ::
 ::    veb: verbosity toggles
@@ -909,7 +1204,8 @@
             [%10 ames-state-10]
             [%11 ames-state-11]
             [%12 ames-state-12]
-            [%13 ^ames-state]
+            [%13 ames-state-13]
+            [%14 ^ames-state]
         ==
     ::
     |=  [now=@da eny=@ rof=roof]
@@ -1032,7 +1328,7 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%13 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%14 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
           $%  $:  %4
@@ -1101,6 +1397,13 @@
               $:  %13
               $%  $:  %larva
                       events=(qeu queued-event)
+                      state=ames-state-13
+                  ==
+                  [%adult state=ames-state-13]
+              ==  ==
+              $:  %14
+              $%  $:  %larva
+                      events=(qeu queued-event)
                       state=_ames-state.adult-gate
                   ==
                   [%adult state=_ames-state.adult-gate]
@@ -1113,7 +1416,7 @@
         =.  state.old  (state-4-to-5:load:adult-core state.old)
         $(-.old %5)
       ::
-           [%5 %adult *]
+          [%5 %adult *]
         =.  cached-state  `[%5 state.old]
         ~>  %slog.0^leaf/"ames: larva reload"
         larval-gate
@@ -1201,14 +1504,24 @@
         =.  queued-events  events.old
         larval-gate
       ::
-          [%13 %adult *]  (load:adult-core %13 state.old)
+          [%13 %adult *]
+        =.  cached-state  `[%13 state.old]
+        ~>  %slog.0^leaf/"ames: larva reload"
+        larval-gate
       ::
           [%13 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
+        =.  cached-state  `[%13 state.old]
         =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %13 state.old)
         larval-gate
       ::
+          [%14 %adult *]  (load:adult-core %14 state.old)
+      ::
+          [%14 %larva *]
+        ~>  %slog.1^leaf/"ames: larva: load"
+        =.  queued-events  events.old
+        =.  adult-gate     (load:adult-core %14 state.old)
+        larval-gate
       ==
       ::
       ++  event-11-to-12
@@ -1250,7 +1563,9 @@
         12+(state-11-to-12:load:adult-core +.u.cached-state)
       =?  u.cached-state  ?=(%12 -.u.cached-state)
         13+(state-12-to-13:load:adult-core +.u.cached-state)
-      ?>  ?=(%13 -.u.cached-state)
+      =?  u.cached-state  ?=(%13 -.u.cached-state)
+        14+(state-13-to-14:load:adult-core +.u.cached-state)
+      ?>  ?=(%14 -.u.cached-state)
       =.  ames-state.adult-gate  +.u.cached-state
       [moz larval-core(cached-state ~)]
     --
@@ -3814,8 +4129,8 @@
             (trace %fine verb her ships.bug.ames-state print)
           ::
           ++  fi-emit       |=(move fine(event-core (emit +<)))
-          ++  fi-deq        (deq want)
-          ++  fi-gauge      (ga metrics.keen (wyt:fi-deq wan.keen))
+          ++  fi-mop        ((on @ud want) lte)
+          ++  fi-gauge      (ga metrics.keen (wyt:fi-mop wan.keen))
           ++  fi-wait       |=(tim=@da (fi-pass-timer %b %wait tim))
           ++  fi-rest       |=(tim=@da (fi-pass-timer %b %rest tim))
           ::
@@ -3839,7 +4154,7 @@
             =/  fra=@     1
             =/  req=hoot  (fi-etch-wail fra)
             =/     =want  [fra req last=now tries=1 skips=0]
-            =.  wan.keen  (cons:fi-deq *(pha ^want) want)
+            =.  wan.keen  (put:fi-mop ~ [fra .]:want)
             (fi-send `@ux`req)
           ::
           ++  fi-rcv
@@ -3909,12 +4224,12 @@
             =|  marked=(list want)
             |=  fra=@ud
             ^-  [? _fine]
-            =;  [[found=? cor=_fine] wan=(pha want)]
+            =;  [[found=? cor=_fine] wan=_wan.keen]
               :-  found
               ?.(found fine cor(wan.keen wan))
-            %^  (dip-left:fi-deq ,[found=? cor=_fine])  wan.keen
+            %^  (dip:fi-mop ,[found=? cor=_fine])  wan.keen
               [| fine]
-            |=  [[found=? cor=_fine] =want]
+            |=  [[found=? cor=_fine] @ud =want]
             ^-  [(unit _want) stop=? [found=? cor=_fine]]
             =.  fine  cor
             ?:  =(fra fra.want)
@@ -3965,7 +4280,7 @@
             =^  =want  nex.keen  nex.keen
             =.  last-sent.want   now
             =.      tries.want   +(tries.want)
-            =.        wan.keen   (snoc:fi-deq wan.keen want)
+            =.        wan.keen   (put:fi-mop wan.keen [fra .]:want)
             =.            fine   (fi-send `@ux`hoot.want)
             $(inx +(inx))
           ::
@@ -3981,11 +4296,11 @@
           ::
           ++  fi-fast-retransmit
             |=  fra=@ud
-            =;  [cor=_fine wants=(pha want)]
+            =;  [cor=_fine wants=_wan.keen]
               cor(wan.keen wants)
-            %^  (dip-left:fi-deq ,cor=_fine)  wan.keen
+            %^  (dip:fi-mop ,cor=_fine)  wan.keen
               fine
-            |=  [cor=_fine =want]
+            |=  [cor=_fine @ud =want]
             ^-  [(unit ^want) stop=? cor=_fine]
             ?.  (lte fra.want fra)
               [`want & cor]
@@ -4003,9 +4318,9 @@
           ++  fi-set-wake
             ^+  fine
             =/  next-wake=(unit @da)
-              ?~  want=(peek-left:fi-deq wan.keen)
+              ?~  want=(pry:fi-mop wan.keen)
                 ~
-              `(next-expiry:fi-gauge +>:u.want)
+              `(next-expiry:fi-gauge +>:val.u.want)
             ?:  =(next-wake next-wake.keen)
               fine
             =?  fine  !=(~ next-wake.keen)
@@ -4027,13 +4342,14 @@
             =.  peer-state    (update-peer-route her peer-state)
             =.  metrics.keen  on-timeout:fi-gauge
             =^  want=(unit want)  wan.keen
-              (pop-left:fi-deq wan.keen)
+              ?~  res=(pry:fi-mop wan.keen)  `wan.keen
+              (del:fi-mop wan.keen key.u.res)
             ~|  %took-wake-for-empty-want
             ?>  ?=(^ want)
             =:      tries.u.want  +(tries.u.want)
                 last-sent.u.want  now
               ==
-            =.  wan.keen  (cons:fi-deq wan.keen u.want)
+            =.  wan.keen  (put:fi-mop wan.keen [fra .]:u.want)
             (fi-send `@ux`hoot.u.want)
           --
         ::  +ga: constructor for |pump-gauge congestion control core
@@ -4252,15 +4568,15 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%13 %adult ames-state]
+++  stay  [%14 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
   =<  |=  $=  old-state
-          $%  [%13 ^ames-state]
+          $%  [%14 ^ames-state]
           ==
       ^+  ames-gate
-      ?>  ?=(%13 -.old-state)
+      ?>  ?=(%14 -.old-state)
       ames-gate(ames-state +.old-state)
   ::  all state transitions are called from larval ames
   ::
@@ -4379,7 +4695,7 @@
   ::
   ++  state-12-to-13
     |=  old=ames-state-12
-    ^-  ^ames-state
+    ^-  ames-state-13
     =+  !<  =rift
         q:(need (need (rof ~ %j `beam`[[our %rift %da now] /(scot %p our)])))
     =+  pk=sec:ex:crypto-core.old
@@ -4397,10 +4713,27 @@
   ::
   ++  ship-state-12-to-13
     |=  old=ship-state-12
-    ^-  ship-state
+    ^-  ship-state-13
     ?:  ?=(%alien -.old)
       old(heeds [heeds.old ~])
     old(corked [corked.old ~])
+  ::
+  ++  state-13-to-14
+    |=  old=ames-state-13
+    ^-  ^ames-state
+    =-  old(peers -)
+    %-  ~(run by peers.old)
+    |=  old=ship-state-13
+    ?:  ?=(%alien -.old)  old
+    old(keens (~(run by keens.old) keen-state-13-to-14))
+  ::
+  ++  keen-state-13-to-14
+    |=  old=keen-state-13
+    ^-  keen-state
+    =-  old(wan -)
+    %+  gas:((on @ud want) lte)  ~
+    %+  turn  (tap:(deq:keen-state-13 want) wan.old)
+    |=  =want  [fra .]:want
   --
 ::  +scry: dereference namespace
 ::
