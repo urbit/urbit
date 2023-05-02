@@ -8,6 +8,9 @@
 ++  grab  |%
           ++  noun  *
           --
+++  grow  |%
+          ++  mime  [/application/octet-stream (as-octs:mimes:html (jam non))]
+          --
 ++  grad
   |%
   ++  form  %noun
