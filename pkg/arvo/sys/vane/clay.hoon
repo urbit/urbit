@@ -925,7 +925,9 @@
       ~/  %parse-pile
       |=  [pax=path tex=tape]
       ^-  pile
-      =/  [=hair res=(unit [=pile =nail])]  ((pile-rule pax) [1 1] tex)
+      =/  [=hair res=(unit [=pile =nail])]
+        %-  road  |.
+        ((pile-rule pax) [1 1] tex)
       ?^  res  pile.u.res
       %-  mean  %-  flop
       =/  lyn  p.hair
