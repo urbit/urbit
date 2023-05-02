@@ -36,30 +36,6 @@
       max-size=_2.048
       depth=_1
   ==
-::
-::  +afx: polymorphic node type for finger trees
-::
-++  afx
-  |$  [val]
-  $%  [%1 p=val ~]
-      [%2 p=val q=val ~]
-      [%3 p=val q=val r=val ~]
-      [%4 p=val q=val r=val s=val ~]
-  ==
-::
-::  +pha: finger tree
-::
-::    DO NOT USE THIS
-::    It's wrong and only kept around for state migration purposes.
-::
-++  pha
-  |$  [val]
-  $~  [%nul ~]
-  $%  [%nul ~]
-      [%one p=val]
-      [%big p=(afx val) q=(pha val) r=(afx val)]
-  ==
-::
 ::  +mop: constructs and validates ordered ordered map based on key,
 ::  val, and comparator gate
 ::
