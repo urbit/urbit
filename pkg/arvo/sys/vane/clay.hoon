@@ -1818,7 +1818,11 @@
       =?  ..park  !?=(%base syd)  wick                  ::  [wick]
       %-  (slog leaf+"clay: wait-for-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
       tare                                              ::  [tare] >
-    =.  wic.dom  (~(del by wic.dom) zuse+zuse)
+    =.  wic.dom
+      %-  ~(gas by *(map weft ^yoki))
+      %+  skip  ~(tap by wic.dom)
+      |=  [w=weft ^yoki]
+      (gte num.w zuse)
     ::
     =/  old-yaki
       ?:  =(0 let.dom)
