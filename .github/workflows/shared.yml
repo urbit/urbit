@@ -15,7 +15,7 @@ on:
         default: 'edge'
         required: false
       next:
-        description: 'next kelvin version'
+        description: 'next kelvin version branch name'
         type: string
         default: null
         required: false
@@ -78,8 +78,12 @@ jobs:
         name: run urbit-tests
         run: |
           cp -RL tests pkg/arvo/tests
-          if ${{ inputs.next != null }}; then
-            base="https://bootstrap.urbit.org/vere/next/kelvin/${{ inputs.next }}"
+          if [[ "${{ inputs.next }}" == "next/kelvin/"* ]]; then
+            next=$(echo ${{ inputs.next }} | sed 's/[^0-9]//g')
+            base="https://bootstrap.urbit.org/vere/next/kelvin/${next}"
+          elif [[ "${{ github.head_ref }}" == "next/kelvin"* ]]; then
+            next=$(echo ${{ github.head_ref }} | sed 's/[^0-9]//g')
+            base="https://bootstrap.urbit.org/vere/next/kelvin/${next}"
           else
             base="https://bootstrap.urbit.org/vere/${{ inputs.pace }}"
           fi

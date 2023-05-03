@@ -18,7 +18,7 @@
 ?~  desks  (pure:m !>(ok=&))
 ::  |merge %work our %base
 ::
-;<  [=ship =desk =case:clay]  bind:m  get-beak:strandio
+;<  [=ship =desk =case]  bind:m  get-beak:strandio
 =/  kiln-merge  [i.desks ship %base case %auto]
 ;<  ~  bind:m  (poke-our:strandio %hood %kiln-merge !>(kiln-merge))
 ;<  ~  bind:m  (trace:strandio leaf+"work: merged {<i.desks>}" ~)

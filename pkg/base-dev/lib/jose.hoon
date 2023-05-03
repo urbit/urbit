@@ -33,7 +33,6 @@
   |^  |=([sor=$-(^ ?) val=json] (apex val sor ""))
   ::                                                  ::  ++apex:en-json:html
   ++  apex
-    =,  en-json:html
     |=  [val=json sor=$-(^ ?) rez=tape]
     ^-  tape
     ?~  val  (weld "null" rez)
@@ -46,7 +45,7 @@
       |-
       ?~  t.p.val  ^$(val i.p.val)
       ^$(val i.p.val, rez [',' $(p.val t.p.val)])
-   ::
+    ::
         %b  (weld ?:(p.val "true" "false") rez)
         %n  (weld (trip p.val) rez)
         %s
@@ -60,7 +59,7 @@
       ?:  ?=([@ ~] hed)
         [i.hed $(viz t.viz)]
       (weld hed $(viz t.viz))
-   ::
+    ::
         %o
       :-  '{'
       =.  rez  ['}' rez]
@@ -73,6 +72,15 @@
       ?~  t.viz  ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
       =.  rez  [',' $(viz t.viz)]
       ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
+    ==
+  ::
+  ++  jesc
+    =+  utf=|=(a=@ ['\\' 'u' ((x-co 4):co a)])
+    |=  a=@  ^-  tape
+    ?+  a  ?:(&((gth a 0x1f) !=(a 0x7f)) [a ~] (utf a))
+      %10  "\\n"
+      %34  "\\\""
+      %92  "\\\\"
     ==
   --
 ::  %/lib/jose

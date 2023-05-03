@@ -42,9 +42,9 @@
 ::  $move: Arvo-level move
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
-::  $state-11: overall gall state, versioned
+::  $state-13: overall gall state, versioned
 ::
-+$  state-11  [%11 state]
++$  state-13  [%13 state]
 ::  $state: overall gall state
 ::
 ::    system-duct: TODO document
@@ -81,20 +81,33 @@
 ::    agent: agent core
 ::    beak: compilation source
 ::    marks: mark conversion requests
+::    sky: scry bindings
+::    ken: open keen requests
 ::
 +$  yoke
-  $:  control-duct=duct
-      run-nonce=@t
-      sub-nonce=_1
-      =stats
-      =bitt
-      =boat
-      =boar
-      code=*
-      agent=(each agent vase)
-      =beak
-      marks=(map duct mark)
+  $%  [%nuke sky=(map spur @ud)]
+      $:  %live
+          control-duct=duct
+          run-nonce=@t
+          sub-nonce=_1
+          =stats
+          =bitt
+          =boat
+          =boar
+          code=*
+          agent=(each agent vase)
+          =beak
+          marks=(map duct mark)
+          sky=(map spur path-state)
+          ken=(jug spar:ames wire)
+  ==  ==
+::
++$  path-state
+  $:  bob=(unit @ud)
+      fan=((mop @ud (pair @da (each page @uvI))) lte)
   ==
+::
+++  on-path  ((on @ud (pair @da (each page @uvI))) lte)
 ::  $blocked-move: enqueued move to an agent
 ::
 +$  blocked-move  [=duct =routes move=(each deal unto)]
@@ -149,7 +162,7 @@
 ::  $spore: structures for update, produced by +stay
 ::
 +$  spore
-  $:  %11
+  $:  %13
       system-duct=duct
       outstanding=(map [wire duct] (qeu remote-request))
       contacts=(set ship)
@@ -160,22 +173,26 @@
 ::  $egg: migratory agent state; $yoke with .old-state instead of .agent
 ::
 +$  egg
-  $:  control-duct=duct
-      run-nonce=@t
-      sub-nonce=@
-      =stats
-      =bitt
-      =boat
-      =boar
-      code=~
-      old-state=[%| vase]
-      =beak
-      marks=(map duct mark)
-  ==
+  $%  [%nuke sky=(map spur @ud)]
+      $:  %live
+          control-duct=duct
+          run-nonce=@t
+          sub-nonce=@
+          =stats
+          =bitt
+          =boat
+          =boar
+          code=~
+          old-state=[%| vase]
+          =beak
+          marks=(map duct mark)
+          sky=(map spur path-state)
+          ken=(jug spar:ames wire)
+  ==  ==
 --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
-=|  state=state-11
+=|  state=state-13
 |=  [now=@da eny=@uvJ rof=roof]
 =*  gall-payload  .
 ~%  %gall-top  ..part  ~
@@ -239,6 +256,7 @@
       (drop (bind (~(get by yokes.state) u.dude) (lead u.dude)))
     |-  ^+  mo-core
     ?~  apps  mo-core
+    ?:  ?=(%nuke -.q.i.apps)  $(apps t.apps)
     =/  ap-core  (ap-yoke:ap p.i.apps [~ our] q.i.apps)
     $(apps t.apps, mo-core ap-abet:(ap-doff:ap-core ship))
   ::  +mo-rake: send %cork's for old subscriptions if needed
@@ -251,6 +269,7 @@
       (drop (bind (~(get by yokes.state) u.dude) (lead u.dude)))
     |-  ^+  mo-core
     ?~  apps  mo-core
+    ?:  ?=(%nuke -.q.i.apps)  $(apps t.apps)
     =/  ap-core  (ap-yoke:ap p.i.apps [~ our] q.i.apps)
     $(apps t.apps, mo-core ap-abet:(ap-rake:ap-core all))
   ::  +mo-receive-core: receives an app core built by %ford.
@@ -273,6 +292,7 @@
     =/  yak  (~(get by yokes.state) dap)
     =/  tex=(unit tape)
       ?~  yak  `"installing"
+      ?:  ?=(%nuke -.u.yak)  `"unnuking"  ::TODO good message here?
       ?-    -.agent.u.yak
           %|  `"reviving"
           %&
@@ -283,7 +303,7 @@
     =+  ?~  tex  ~
         ~>  %slog.[0 leaf+"gall: {u.tex} {<dap>}"]  ~
     ::
-    ?^  yak
+    ?:  ?=([~ %live *] yak)
       ?:  &(=(q.beak.u.yak q.bek) =(code.u.yak agent) =(-.agent.u.yak &))
         mo-core
       ::
@@ -296,12 +316,15 @@
     ::
     =.  yokes.state
       %+  ~(put by yokes.state)  dap
-      %*  .  *yoke
-        control-duct  hen
-        beak          bek
-        code          agent
-        agent         &+agent
-        run-nonce     (scot %uw (end 5 (shas %yoke-nonce eny)))
+      %*    .  *$>(%live yoke)
+          control-duct  hen
+          beak          bek
+          code          agent
+          agent         &+agent
+          run-nonce     (scot %uw (end 5 (shas %yoke-nonce eny)))
+          sky
+        ?~  yak  ~
+        (~(run by sky.u.yak) (corl (late ~) (lead ~)))
       ==
     ::
     =/  old  mo-core
@@ -594,7 +617,7 @@
     ::
     =/  dap=term  i.wire
     =/  yoke  (~(get by yokes.state) dap)
-    ?~  yoke
+    ?.  ?=([~ %live *] yoke)
       %-  (slog leaf+"gall: {<dap>} dead, got {<+<.sign-arvo>}" ~)
       mo-core
     ?.  =(run-nonce.u.yoke i.t.wire)
@@ -695,7 +718,14 @@
       mo-core
     ~>  %slog.0^leaf/"gall: nuking {<dap>}"
     =.  mo-core  ap-abet:ap-nuke:(ap-abed:ap dap `our)
-    mo-core(yokes.state (~(del by yokes.state) dap))
+    =-  mo-core(yokes.state -)
+    %+  ~(jab by yokes.state)  dap
+    |=  =yoke
+    ?:  ?=(%nuke -.yoke)  yoke
+    :-  %nuke
+    %-  ~(run by sky.yoke)
+    |=  path-state
+    (fall (clap bob (bind (ram:on-path fan) head) max) 0)
   ::  +mo-load: install agents
   ::
   ++  mo-load
@@ -708,7 +738,8 @@
       $(agents t.agents, mo-core (mo-receive-core i.agents))
     ::
     =/  kil
-      =/  lol  (skim ~(tap by yokes.state) |=([term yoke] -.agent))
+      =/  lol
+        (skim ~(tap by yokes.state) |=([* y=yoke] &(?=(%live -.y) -.agent.y)))
       =/  mol  (~(gas by *(map term yoke)) lol)
       =/  sol  ~(key by mol)
       =/  new  (silt (turn agents head))
@@ -735,8 +766,9 @@
       (mo-apply-sure dap routes deal)
     ::
         %raw-poke
-      =/  =case:clay  da+now
-      =/  =desk  q.beak:(~(got by yokes.state) dap)
+      =/  =case  da+now
+      =/  yok  (~(got by yokes.state) dap)
+      =/  =desk  q.beak:?>(?=(%live -.yok) yok)  ::TODO acceptable assertion?
       =/  sky  (rof ~ %cb [our desk case] /[mark.deal])
       ?-    sky
           ?(~ [~ ~])
@@ -756,10 +788,11 @@
       ==
     ::
         %poke-as
-      =/  =case:clay  da+now
+      =/  =case       da+now
       =/  =mars:clay  [p.cage mark]:deal
       =/  mars-path   /[a.mars]/[b.mars]
-      =/  =desk  q.beak:(~(got by yokes.state) dap)
+      =/  yok  (~(got by yokes.state) dap)
+      =/  =desk  q.beak:?>(?=(%live -.yok) yok)  ::TODO acceptable assertion?
       =/  sky  (rof ~ %cc [our desk case] mars-path)
       ?-    sky
           ?(~ [~ ~])
@@ -796,7 +829,7 @@
     ::
     =/  =routes  [disclosing=~ attributing=ship]
     =/  running  (~(get by yokes.state) agent)
-    =/  is-running  ?~(running %| ?=(%& -.agent.u.running))
+    =/  is-running  &(?=([~ %live *] running) ?=(%& -.agent.u.running))
     =/  is-blocked  (~(has by blocked.state) agent)
     ::  agent is running; deliver move normally
     ::
@@ -867,7 +900,7 @@
             agent-duct=duct
             agent-moves=(list move)
             agent-config=(list (each suss tang))
-            =yoke
+            =$>(%live yoke)
         ==
     ::
     ++  trace
@@ -892,11 +925,13 @@
       ~/  %ap-abed
       |=  [dap=term =routes]
       ^+  ap-core
-      (ap-yoke dap routes (~(got by yokes.state) dap))
+      %^  ap-yoke  dap  routes
+      =<  ?>(?=(%live -) .)
+      (~(got by yokes.state) dap)
     ::  +ap-yoke: initialize agent state, starting from a $yoke
     ::
     ++  ap-yoke
-      |=  [dap=term =routes yak=^yoke]
+      |=  [dap=term =routes yak=$>(%live ^yoke)]
       ^+  ap-core
       =.  stats.yak
         :+  +(change.stats.yak)
@@ -923,9 +958,20 @@
         moves        moves
       ==
     ::
+    ++  ap-yawn-all
+      ^-  (list card:agent)
+      %-  zing
+      %+  turn  ~(tap by ken.yoke)
+      |=  [=spar:ames wyz=(set wire)]
+      %+  turn  ~(tap in wyz)
+      |=  =wire
+      [%pass wire %arvo %a %yawn spar]
+    ::
     ++  ap-idle
+      ^+  ap-core
       ?:  ?=(%| -.agent.yoke)  ap-core
-      ap-core(agent.yoke |+on-save:ap-agent-core)
+      =>  [ken=ken.yoke (ap-ingest ~ |.([ap-yawn-all *agent]))]
+      ap-core(ken.yoke ken, agent.yoke |+on-save:ap-agent-core)
     ::
     ++  ap-nuke
       ^+  ap-core
@@ -935,15 +981,76 @@
         |=  [=duct =ship =path]
         path
       =/  will=(list card:agent)
-        %+  welp
+        ;:  welp
           ?:  =(~ inbound-paths)
             ~
           [%give %kick ~(tap in inbound-paths) ~]~
-        %+  turn  ~(tap by boat.yoke)
-        |=  [[=wire =dock] ? =path]
-        [%pass wire %agent dock %leave ~]
+        ::
+          %+  turn  ~(tap by boat.yoke)
+          |=  [[=wire =dock] ? =path]
+          [%pass wire %agent dock %leave ~]
+        ::
+          ap-yawn-all
+        ==
       =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
       ap-core
+    ::  +ap-grow: bind a path in the agent's scry namespace
+    ::
+    ++  ap-grow
+      |=  [=spur =page]
+      ^+  ap-core
+      =-  ap-core(sky.yoke -)
+      %+  ~(put by sky.yoke)  spur
+      =/  ski  (~(gut by sky.yoke) spur *path-state)
+      =-  ski(fan (put:on-path fan.ski -< -> &/page))
+      ?~  las=(ram:on-path fan.ski)
+        [(fall bob.ski 0) now]
+      :_  (max now +(p.val.u.las))
+      ?~(bob.ski +(key.u.las) +((max key.u.las u.bob.ski)))
+    ::  +ap-tomb: tombstone -- replace bound value with hash
+    ::
+    ++  ap-tomb
+      |=  [=case =spur]
+      ^+  ap-core
+      =-  ap-core(sky.yoke -)
+      =/  yon  ?>(?=(%ud -.case) p.case)
+      =/  old  (~(get by sky.yoke) spur)
+      ?~  old  ::  no-op if nonexistent
+        %.  sky.yoke
+        %+  trace  odd.veb.bug.state
+        [leaf+"gall: {<agent-name>}: tomb {<[case spur]>} no sky"]~
+      =/  val  (get:on-path fan.u.old yon)
+      ?~  val  ::  no-op if nonexistent
+        %.  sky.yoke
+        %+  trace  odd.veb.bug.state
+        [leaf+"gall: {<agent-name>}: tomb {<[case spur]>} no val"]~
+      ?-    -.q.u.val
+          %|  ::  already tombstoned, no-op
+        %.  sky.yoke
+        %+  trace  odd.veb.bug.state
+        [leaf+"gall: {<agent-name>}: tomb {<[case spur]>} no-op"]~
+      ::
+          %&  ::  replace with hash
+        %+  ~(put by sky.yoke)  spur
+        u.old(fan (put:on-path fan.u.old yon u.val(q |/(shax (jam p.q.u.val)))))
+      ==
+    ::  +ap-cull: delete all bindings up to and including .case
+    ::
+    ::    Also store .case as the high water mark for .spur
+    ::    to prevent any deleted cases from being re-bound later.
+    ::
+    ++  ap-cull
+      |=  [=case =spur]
+      ^+  ap-core
+      =-  ap-core(sky.yoke -)
+      =/  yon  ?>(?=(%ud -.case) p.case)
+      =/  old  (~(get by sky.yoke) spur)
+      ?~  old  ::  no-op if nonexistent
+        %.  sky.yoke
+        %+  trace  odd.veb.bug.state
+        [leaf+"gall: {<agent-name>}: cull {<[case spur]>} no-op"]~
+      %+  ~(put by sky.yoke)  spur  ::  delete all older paths
+      [`yon (lot:on-path fan.u.old `+(yon) ~)]
     ::  +ap-from-internal: internal move to move.
     ::
     ::    We convert from cards to duct-indexed moves when resolving
@@ -952,14 +1059,17 @@
     ::    We accept %huck to "fake" being a message to a ship but
     ::    actually send it to a vane.
     ::
-    +$  neet
-      $%  neat
+    +$  carp  $+  carp  (wind neet gift:agent)
+    +$  neet  $+  neet
+      $<  ?(%grow %tomb %cull)
+      $%  note:agent
+          [%agent [=ship name=term] task=[%raw-poke =mark =noun]]
           [%huck [=ship name=term] =note-arvo]
       ==
     ::
     ++  ap-from-internal
       ~/  %ap-from-internal
-      |=  card=(wind neet gift:agent)
+      |=  card=carp
       ^-  (list move)
       ::
       ?-    -.card
@@ -991,7 +1101,7 @@
         ?:  =(mark p.cage)
           [duct %give %unto %fact cage.gift]~
         =/  =mars:clay  [p.cage mark]
-        =/  =case:clay  da+now
+        =/  =case       da+now
         =/  bek=beak    [our q.beak.yoke case]
         =/  mars-path  /[a.mars]/[b.mars]
         =/  sky  (rof ~ %cc bek mars-path)
@@ -1033,9 +1143,9 @@
         ::
         =/  =note-arvo
           ?-  -.neet
-            %arvo   note-arvo.neet
+            %arvo   +.neet
             %huck   note-arvo.neet
-            %agent  [%g %deal [our ship.neet] [name deal]:neet]
+            %agent  [%g %deal [our ship.neet] [name task]:neet]
           ==
         [duct %pass wire note-arvo]~
       ==
@@ -1201,6 +1311,7 @@
           ==                                          ::
           :*  wex=boat.yoke                           ::  outgoing
               sup=bitt.yoke                           ::  incoming
+              sky=(~(run by sky.yoke) tail)           ::  bindings
           ==                                          ::
           :*  act=change.stats.yoke                   ::  tick
               eny=eny.stats.yoke                      ::  nonce
@@ -1217,6 +1328,12 @@
         ?:  ?=(%& -.agent.yoke)
           on-save:ap-agent-core
         p.agent.yoke
+      =?  ap-core  &(?=(%| -.agent.yoke) ?=(^ ken.yoke))
+        =-  +:(ap-ingest ~ |.([+< agent]))
+        %-  zing
+        %+  turn  ~(tap by `(jug spar:ames wire)`ken.yoke)
+        |=  [=spar:ames wyz=(set wire)]
+        (turn ~(tap in wyz) |=(=wire [%pass wire %arvo %a %keen spar]))
       =^  error  ap-core
         (ap-install(agent.yoke &+agent) `old-state)
       ?~  error
@@ -1272,6 +1389,8 @@
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
         (on-arvo:ap-agent-core wire sign-arvo)
+      =?  ken.yoke  ?=([%ames %tune spar=* *] sign-arvo)
+        (~(del ju ken.yoke) spar.sign-arvo wire)
       ?^  maybe-tang
         (ap-error %arvo-response u.maybe-tang)
       ap-core
@@ -1291,7 +1410,7 @@
       =^  =sign:agent  ap-core
         ?.  ?=(%raw-fact -.unto)
           [unto ap-core]
-        =/  =case:clay  da+now
+        =/  =case  da+now
         ?:  ?=(%spider agent-name)
           :-  [%fact mark.unto !>(noun.unto)]
           ap-core
@@ -1600,7 +1719,7 @@
       =/  ack-moves=(list move)
         %-  zing
         %-  turn  :_  ap-from-internal
-        ^-  (list card:agent)
+        ^-  (list carp)
         ?-  ack
           ~      ~
           %poke-ack   [%give %poke-ack maybe-tang]~
@@ -1620,9 +1739,37 @@
         `ap-core
       ::
       =.  agent.yoke  &++.p.result
-      =/  moves       (zing (turn -.p.result ap-from-internal))
+      =^  fex  ap-core  (ap-handle-sky -.p.result)
+      =.  ken.yoke    (ap-handle-ken fex)
+      =/  moves       (zing (turn fex ap-from-internal))
       =.  bitt.yoke   (ap-handle-kicks moves)
       (ap-handle-peers moves)
+    ::  +ap-handle-sky: apply effects to the agent's scry namespace
+    ::
+    ++  ap-handle-sky
+      =|  fex=(list carp)
+      |=  caz=(list card:agent)
+      ^+  [fex ap-core]
+      ?~  caz  [(flop fex) ap-core]
+      ?-  i.caz
+        [%pass * %grow *]  $(caz t.caz, ap-core (ap-grow +.q.i.caz))
+        [%pass * %tomb *]  $(caz t.caz, ap-core (ap-tomb +.q.i.caz))
+        [%pass * %cull *]  $(caz t.caz, ap-core (ap-cull +.q.i.caz))
+        [%pass * ?(%agent %arvo %pyre) *]  $(caz t.caz, fex [i.caz fex])
+        [%give *]  $(caz t.caz, fex [i.caz fex])
+        [%slip *]  !!
+      ==
+    ::  +ap-handle-ken
+    ::
+    ++  ap-handle-ken
+      |=  fex=(list carp)
+      ^+  ken.yoke
+      %+  roll  fex
+      |=  [=carp ken=_ken.yoke]
+      ?+  carp  ken
+        [%pass * %arvo %a %keen spar=*]  (~(put ju ken) [spar.q p]:carp)
+        [%pass * %arvo %a %yawn spar=*]  (~(del ju ken) [spar.q p]:carp)
+      ==
     ::  +ap-handle-kicks: handle cancels of bitt.watches
     ::
     ++  ap-handle-kicks
@@ -1765,10 +1912,59 @@
       =?  old  ?=(%8 -.old)  (spore-8-to-9 old)
       =?  old  ?=(%9 -.old)  (spore-9-to-10 old)
       =?  old  ?=(%10 -.old)  (spore-10-to-11 old)
-      ?>  ?=(%11 -.old)
+      =?  old  ?=(%11 -.old)  (spore-11-to-12 old)
+      =?  old  ?=(%12 -.old)  (spore-12-to-13 old)
+      ?>  ?=(%13 -.old)
       gall-payload(state old)
   ::
-  +$  spore-any  $%(spore spore-7 spore-8 spore-9 spore-10)
+  +$  spore-any  $%(spore spore-7 spore-8 spore-9 spore-10 spore-11 spore-12)
+  +$  spore-12
+    $:  %12
+        system-duct=duct
+        outstanding=(map [wire duct] (qeu remote-request))
+        contacts=(set ship)
+        eggs=(map term egg-12)
+        blocked=(map term (qeu blocked-move))
+        =bug
+    ==
+  +$  egg-12
+    $%  [%nuke sky=(map spur @ud)]
+        $:  %live
+            control-duct=duct
+            run-nonce=@t
+            sub-nonce=@
+            =stats
+            =bitt
+            =boat
+            =boar
+            code=~
+            old-state=[%| vase]
+            =beak
+            marks=(map duct mark)
+            sky=(map spur path-state)
+    ==  ==
+  +$  spore-11
+    $:  %11
+        system-duct=duct
+        outstanding=(map [wire duct] (qeu remote-request))
+        contacts=(set ship)
+        eggs=(map term egg-11)
+        blocked=(map term (qeu blocked-move))
+        =bug
+    ==
+  +$  egg-11
+    $:  control-duct=duct
+        run-nonce=@t
+        sub-nonce=@
+        =stats
+        =bitt
+        =boat
+        =boar
+        code=~
+        old-state=[%| vase]
+        =beak
+        marks=(map duct mark)
+    ==
   +$  spore-10
     $:  %10
         system-duct=duct
@@ -1884,14 +2080,43 @@
   ::
   ++  spore-10-to-11
     |=  old=spore-10
-    ^-  spore
+    ^-  spore-11
     %=    old
         -  %11
         eggs
       %-  ~(urn by eggs.old)
       |=  [a=term e=egg-10]
-      ^-  egg
+      ^-  egg-11
       e(|3 |4.e(|4 `|8.e(old-state [%| p.old-state.e])))
+    ==
+  ::
+  ::  added sky
+  ::
+  ++  spore-11-to-12
+    |=  old=spore-11
+    ^-  spore-12
+    %=    old
+        -  %12
+        eggs
+      %-  ~(urn by eggs.old)
+      |=  [a=term e=egg-11]
+      ^-  egg-12
+      live/e(marks [marks.e sky:*$>(%live egg)])
+    ==
+  ::
+  ::  added ken
+  ::
+  ++  spore-12-to-13
+    |=  old=spore-12
+    ^-  spore
+    %=    old
+        -  %13
+        eggs
+      %-  ~(urn by eggs.old)
+      |=  [a=term e=egg-12]
+      ^-  egg
+      ?:  ?=(%nuke -.e)  e
+      e(sky [sky.e ken:*$>(%live egg)])
     ==
   --
 ::  +scry: standard scry
@@ -1901,37 +2126,26 @@
   ^-  roon
   |=  [lyc=gang care=term bem=beam]
   ^-  (unit (unit cage))
-  =/  =shop  &/p.bem
+  =*  ship  p.bem
   =*  dap  q.bem
   =/  =coin  $/r.bem
   =*  path  s.bem
   ::
-  ?.  ?=(%.y -.shop)
-    ~
-  =/  =ship  p.shop
-  ?:  &(=(care %$) =(path /whey))
-    =/  blocked
-      =/  queued  (~(run by blocked.state) |=((qeu blocked-move) [%.y +<]))
-      (sort ~(tap by queued) aor)
-    ::
-    =/  running
-      %+  turn  (sort ~(tap by yokes.state) aor)
-      |=  [dap=term =yoke]
-      ^-  mass
-      =/  met=(list mass)
-        =/  dat  (mo-peek:mo | dap [~ ship] %x /whey/mass)
-        ?:  ?=(?(~ [~ ~]) dat)  ~
-        (fall ((soft (list mass)) q.q.u.u.dat) ~)
-      ?~  met
-        dap^&+yoke
-      dap^|+(welp met dot+&+yoke ~)
-    ::
-    =/  maz=(list mass)
-      :~  [%foreign %.y contacts.state]
-          [%blocked %.n blocked]
-          [%active %.n running]
+  ?:  ?&  ?=(%da -.r.bem)
+          (gth p.r.bem now)
       ==
-    ``mass+!>(maz)
+    ~
+  ::
+  ?.  ?=([%$ *] path)  ::  [%$ *] is for the vane, all else is for the agent
+    ?.  ?&  =(our ship)
+            =([%$ %da now] coin)
+        ==                           ~
+    ?.  (~(has by yokes.state) dap)  [~ ~]
+    ?.  ?=(^ path)                   ~
+    =/  =routes  [~ ship]
+    (mo-peek:mo & dap routes care path)
+  ::
+  =>  .(path t.path)
   ::
   ?:  ?&  =(%u care)
           =(~ path)
@@ -1941,7 +2155,7 @@
     =;  hav=?
       [~ ~ noun+!>(hav)]
     =/  yok=(unit yoke)  (~(get by yokes.state) dap)
-    ?~(yok | -.agent.u.yok)
+    &(?=([~ %live *] yok) -.agent.u.yok)
   ::
   ?:  ?&  =(%d care)
           =(~ path)
@@ -1949,7 +2163,7 @@
           =(our ship)
       ==
     =/  yok=(unit yoke)  (~(get by yokes.state) dap)
-    ?~  yok
+    ?.  ?=([~ %live *] yok)
       [~ ~]
     [~ ~ desk+!>(q.beak.u.yok)]
   ::
@@ -1963,7 +2177,9 @@
     =*  syd=desk  dap
     %+  roll  ~(tap by yokes.state)
     |=  [[=dude =yoke] acc=(set [=dude live=?])]
-    ?.  =(syd q.beak.yoke)
+    ?.  ?&  ?=(%live -.yoke)
+            =(syd q.beak.yoke)
+        ==
       acc
     (~(put in acc) [dude -.agent.yoke])
   ::
@@ -1974,14 +2190,17 @@
       ==
     :+  ~  ~
     :-  %nonces  !>  ^-  (map dude @)
-    (~(run by yokes.state) |=(yoke sub-nonce))
+    %-  malt  %+  murn  ~(tap by yokes.state)
+    |=  [=dude =yoke]
+    ?:  ?=(%nuke -.yoke)  ~  `[dude sub-nonce.yoke]
   ::
   ?:  ?&  =(%n care)
           ?=([@ @ ^] path)
           =([%$ %da now] coin)
           =(our ship)
       ==
-    ?~  yok=(~(get by yokes.state) dap)
+    =/  yok  (~(get by yokes.state) dap)
+    ?.  ?=([~ %live *] yok)
       [~ ~]
     =/  [=^ship =term =wire]
       [(slav %p i.path) i.t.path t.t.path]
@@ -1989,16 +2208,95 @@
       [~ ~]
     [~ ~ atom+!>(u.nonce)]
   ::
-  ?.  =(our ship)
-    ~
-  ?.  =([%$ %da now] coin)
-    ~
-  ?.  (~(has by yokes.state) dap)
-    [~ ~]
-  ?.  ?=(^ path)
-    ~
-  =/  =routes  [~ ship]
-  (mo-peek:mo & dap routes care path)
+  ?:  ?&  =(%w care)
+          =([%$ %da now] coin)
+          =(our ship)
+      ==
+    =/  yok  (~(get by yokes.state) q.bem)
+    ?.  ?=([~ %live *] yok)             [~ ~]
+    ?~  ski=(~(get by sky.u.yok) path)  [~ ~]
+    ?~  las=(ram:on-path fan.u.ski)     [~ ~]
+    ``case/!>(ud/key.u.las)
+  ::
+  ?:  ?=(%x care)
+    ?.  =(p.bem our)  ~
+    ::
+    ?:  ?=(%$ q.bem)  :: app %$ reserved
+      ?+    path  ~
+          [%whey ~]
+        =/  blocked
+          =/  queued  (~(run by blocked.state) |=((qeu blocked-move) [%.y +<]))
+          (sort ~(tap by queued) aor)
+        ::
+        =/  running
+          %+  turn  (sort ~(tap by yokes.state) aor)
+          |=  [dap=term =yoke]
+          ^-  mass
+          =/  met=(list mass)
+            =/  dat  (mo-peek:mo | dap [~ ship] %x /whey/mass)
+            ?:  ?=(?(~ [~ ~]) dat)  ~
+            (fall ((soft (list mass)) q.q.u.u.dat) ~)
+          ?~  met
+            dap^&+yoke
+          dap^|+(welp met dot+&+yoke ~)
+        ::
+        =/  maz=(list mass)
+          :~  [%foreign %.y contacts.state]
+              [%blocked %.n blocked]
+              [%active %.n running]
+          ==
+        ``mass+!>(maz)
+      ==
+    ::
+    ?~  yok=(~(get by yokes.state) q.bem)  ~
+    ?:  ?=(%nuke -.u.yok)  ~
+    =/  ski  (~(get by sky.u.yok) path)
+    ?~  ski  ~
+    =/  res=(unit (each page @uvI))
+      ?+    -.r.bem  ~
+          %ud  (bind (get:on-path fan.u.ski p.r.bem) tail)
+          %da
+        %-  head
+        %^    (dip:on-path (unit (each page @uvI)))
+            fan.u.ski
+          ~
+        |=  [res=(unit (each page @uvI)) @ud =@da val=(each page @uvI)]
+        ^-  [new=(unit [@da _val]) stop=? res=(unit _val)]
+        :-  `[da val]
+        ?:((lte da p.r.bem) |/`val &/res)
+      ==
+    ?.  ?=([~ %& *] res)  ~
+    ``p.u.res(q !>(q.p.u.res))
+  ::
+  ?:  ?&  =(%t care)
+          =([%$ %da now] coin)
+          =(our ship)
+      ==
+    =/  yok  (~(get by yokes.state) q.bem)
+    ?.  ?=([~ %live *] yok)  ~
+    :^  ~  ~  %file-list  !>  ^-  (list ^path)
+    %+  skim  ~(tap in ~(key by sky.u.yok))
+    |=  =spur
+    ?&  =(path (scag (lent path) spur))
+        !=(path spur)
+    ==
+  ::
+  ?:  ?&  =(%z care)
+          =(our ship)
+      ==
+    =/  yok  (~(get by yokes.state) q.bem)
+    ?.  ?=([~ %live *] yok)             ~
+    ?~  ski=(~(get by sky.u.yok) path)  ~
+    =/  res=(unit (pair @da (each noun @uvI)))
+      ?+  -.r.bem  ~
+        %ud  (get:on-path fan.u.ski p.r.bem)
+        %da  ?.(=(p.r.bem now) ~ (bind (ram:on-path fan.u.ski) tail))
+      ==
+    ?+  res  ~
+      [~ @ %| *]  ``noun/!>(p.q.u.res)
+      [~ @ %& *]  ``noun/!>(`@uvI`(shax (jam p.q.u.res)))
+    ==
+  ~
 ::  +stay: save without cache; suspend non-%base agents
 ::
 ::    TODO: superfluous? see +molt
@@ -2009,6 +2307,7 @@
   %-  ~(run by yokes.state)
   |=  =yoke
   ^-  egg
+  ?:  ?=(%nuke -.yoke)  yoke
   %=    yoke
       code   ~
       agent

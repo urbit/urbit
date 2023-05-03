@@ -227,7 +227,10 @@
     ^-  (quip card:agent:gall pubs)
     ?~  ((soft ^path) path)  ~|  %need-path  !!
     =/  buoy  (~(gut by pub) path *buoy)
-    ?@  tide=tid.buoy  ~|  %dead-path  !!  ::TODO is this good behavior?
+    =?  buoy  ?=(@ tid.buoy)
+      %*(. buoy(tid *tide) rok.tid (put:rok ~ +(tid.buoy) *rock:lake))
+    ?>  ?=(^ tid.buoy)
+    =*  tide  tid.buoy
     =/  next=aeon  +((latest tide))
     :-  %+  murn  ~(tap bi mem.tide)
         |=  [=ship =dude =@da]
@@ -237,9 +240,26 @@
     %+  ~(put by pub)  path
     =/  last=[=aeon =rock:lake]  (fall (pry:rok rok.tide) *[key val]:rok)
     =.  wav.tide  (put:wav wav.tide next wave)
-    =.  mem.tide  (~(del by mem.tide) next)
+    =.  mem.tide  ~
     ?.  =(next (add aeon.last waves.rul.tide))  buoy
     buoy(tid (form tide))
+  ::
+  ++  fork                                   ::  Fork a pub into an empty path.
+    |=  [from=paths to=paths]
+    ^-  pubs
+    :-  %0
+    ?<  (~(has by pub) to)
+    (~(put by pub) to (~(got by pub) from))
+  ::
+  ++  copy                                   ::  Fork a sub into an empty path.
+    |=  [sub=_(mk-subs lake *) from=[ship dude *] to=paths]
+    ^-  pubs
+    :-  %0
+    ?<  (~(has by pub) to)
+    %+  ~(put by pub)  to
+    %*  .  *$<(aeon buoy)
+      rok.tid  (put:rok ~ [aeon rock]:(need (~(got by +:sub) from)))
+    ==
   ::
   ++  perm                                   ::  Change permissions with gate.
     |=  [where=(list paths) diff=$-((unit (set ship)) (unit (set ship)))]
@@ -274,12 +294,6 @@
   ++  kill                                   ::  subs to not expect updates.
     (curr edit |=(=buoy buoy(tid (latest tid.buoy))))
   ::                                         ::  Reopen list of killed paths.
-  ++  live                                   ::  No-ops on live paths.
-    %+  curr  edit
-    |=  =buoy
-    ?^  tid.buoy  buoy
-    %*(. buoy(tid *tide) rok.tid (put:rok ~ +(tid.buoy) *rock:lake))
-  ::
   ++  read                                   ::  See current published states.
     ^-  (map paths [allowed=(unit (set ship)) =rock:lake])
     %-  malt  %+  murn  ~(tap by pub)

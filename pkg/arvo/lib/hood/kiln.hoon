@@ -551,6 +551,7 @@
     %kiln-rm                 =;(f (f !<(_+<.f vase)) poke-rm)
     %kiln-schedule           =;(f (f !<(_+<.f vase)) poke-schedule)
     %kiln-suspend            =;(f (f !<(_+<.f vase)) poke-suspend)
+    %kiln-suspend-many       =;(f (f !<(_+<.f vase)) poke-suspend-many)
     %kiln-sync               =;(f (f !<(_+<.f vase)) poke-sync)
     %kiln-syncs              =;(f (f !<(_+<.f vase)) poke-syncs)
     %kiln-uninstall          =;(f (f !<(_+<.f vase)) poke-uninstall)
@@ -785,7 +786,19 @@
 ::
 ++  poke-suspend
   |=  =desk
-  abet:(emit %pass /kiln/suspend %arvo %c %zest desk %dead)
+  (poke-suspend-many ~[desk])
+::
+++  poke-suspend-many
+  |=  desks=(list desk)
+  =<  abet
+  %-  emil
+  %+  turn
+    %+  skim  desks
+    |=  dek=desk
+    ?:  (~(has in .^((set desk) %cd /(scot %p our)/base/(scot %da now))) dek)
+      &  
+    ~>  %slog.(fmt "desk does not yet exist: {<dek>}")  |   
+  |=(=desk [%pass /kiln/suspend %arvo %c %zest desk %dead])
 ::
 ++  poke-sync
   |=  hos=kiln-sync
