@@ -656,7 +656,8 @@
     =/  connection=outstanding-connection
       [action [authenticated secure address request] ~ 0]
     =.  connections.state
-      :: XX pretty sure this is superfluous - done in +handle-response
+      ::  NB: required by +handle-response. XX optimize
+      ::
       (~(put by connections.state) duct connection)
     ::  redirect to https if insecure, redirects enabled
     ::  and secure port live
