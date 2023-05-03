@@ -1986,7 +1986,10 @@
     |=  =tang
     ^-  [(list move) server-state]
     ::
-    =+  connection=(~(got by connections.state) duct)
+    ?~  connection-state=(~(get by connections.state) duct)
+      %.  `state
+      (trace 0 |.("{<duct>} error on invalid outstanding connection"))
+    =*  connection  u.connection-state
     =/  moves-1=(list move)
       ?.  ?=(%app -.action.connection)
         ~
