@@ -17,15 +17,17 @@
   ==
 +$  active  ?(%local %provider %client)
 +$  state
-  $%  [%local =url]
-      [%client provider=@p]
-      [%provider =url kids=? clients=(set @p)]
+  $:
+  =active
+  =local
+  =provider
+  =client
   ==
 +$  action
   $%  [%set-local =url]
       [%set-provider =provider]
       [%set-client =client]
-      [%provide tid=@ta =ethin]
+      [%provide rid=@ta =ethin]
       [%set-kids kids=?]
       [%add-client client=@p]
       [%remove-client client=@p]

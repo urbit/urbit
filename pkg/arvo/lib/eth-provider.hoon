@@ -127,12 +127,12 @@
     %client
   ::  TODO subscribe to our thread id
   ;<  ~  bind:m  
-    (watch:strandio [%updates tid.bowl ~] [provider.client.state %eth-provider] [%updates tid.bowl ~])
+    (watch:strandio [%responses tid.bowl ~] [provider.client.state %eth-provider] [%responses tid.bowl ~])
   ;<  ~  bind:m
     %+  poke:strandio
       [provider.client.state %eth-provider] 
     [%provider-action !>([%provide tid.bowl eth-input])]
-  ;<  =cage  bind:m  (take-fact:strandio [%updates tid.bowl ~])
+  ;<  =cage  bind:m  (take-fact:strandio [%responses tid.bowl ~])
   (pure:m !<(ethout:eth-provider q.cage))
   ==
 ++  call-ethio

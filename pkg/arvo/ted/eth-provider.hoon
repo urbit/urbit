@@ -21,13 +21,14 @@
   %provider
 (call-ethio eth-input active.state url.provider.state)
   %client
+=/  rid  (crip (weld (trip our.bowl) (trip tid.bowl)))
 ;<  ~  bind:m
-  (watch:strandio /updates [client.state %eth-provider] [%updates tid.bowl ~])
+  (watch:strandio /responses [client.state %eth-provider] [%responses rid ~])
 ;<  ~  bind:m
-  %+  poke:strandio 
-    [provider.client.state %eth-provider] 
-  [%provider-action !>([%provide tid.bowl eth-input])]
-;<  =cage  bind:m  (take-fact:strandio /updates)
+  %+  poke:strandio
+    [provider.client.state %eth-provider]
+  [%provider-action !>([%provide rid eth-input])]
+;<  =cage  bind:m  (take-fact:strandio /responses)
 (pure:m q.cage)
 ==
 ::

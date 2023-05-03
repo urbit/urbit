@@ -25,7 +25,7 @@
 ++  on-init
   ^-  (quip card _this)
   =/  init-state  
-  [%0 %local 'http://localhost:8545' ['http://localhost:8545' %.n ~] ~zod]
+  [%0 %local 'http://eth-mainnet.urbit.org:8545' ['http://eth-mainnet.urbit.org:8545' %.n ~] ~zod]
   :-  ~
   this(state init-state)
 ::
@@ -84,17 +84,17 @@
                   =((sein:title our.bowl now.bowl src.bowl) our.bowl)
               ==
           ==
-      =/  tid  +<.action
+      =/  rid  +<.action
       =/  eth-input  +>.action
       =/  start-args  
-      [~ `tid byk.bowl(r da+now.bowl) %eth-provider !>(eth-input)]
+      [~ `rid byk.bowl(r da+now.bowl) %eth-provider !>(eth-input)]
       =/  ta-now  `@ta`(scot %da now.bowl)
       :_  state
       :~
           :*
           %pass   /thread/[ta-now] 
           %agent  [our.bowl %spider] 
-          %watch  /thread-result/[tid]
+          %watch  /thread-result/[rid]
           ==
           :*
           %pass   /thread/[ta-now] 
@@ -127,7 +127,8 @@
   |=  =path
   ^-  (quip card _this)
   ?+    path  (on-watch:def path)
-      [%updates @ ~]
+      [%responses @ ~]
+    ?>  (~(has in clients.provider.state) src.bowl)
     :_  this  ~
   ==
 ++  on-leave  on-leave:def
@@ -162,7 +163,7 @@
          =/  eth-output  +.res
          :-  
          :~
-         [%give %fact ~[[%updates -.res ~]] %ethout !>(eth-output)]
+         [%give %fact ~[[%responses -.res ~]] %ethout !>(eth-output)]
          ==
          this
        ==
