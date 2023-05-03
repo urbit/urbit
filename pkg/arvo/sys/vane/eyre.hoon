@@ -2058,8 +2058,8 @@
               (session-cookie-string u.session-id &)
             headers.response-header.http-event
           ::
-          =/  connection=outstanding-connection
-            (~(got by connections.state) duct)
+          =*  connection  u.connection-state
+          ::
           ::  if the request was a simple cors request from an approved origin
           ::  append the necessary cors headers to the response
           ::
@@ -2078,7 +2078,7 @@
           =.  connections.state
             %-  (trace 2 |.("{<duct>} start"))
             %+  ~(put by connections.state)  duct
-            %_  connection
+            %=  connection
               response-header  `response-header
               bytes-sent  ?~(data.http-event 0 p.u.data.http-event)
             ==
