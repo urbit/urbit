@@ -2076,15 +2076,17 @@
           ::
           =.  response-header.http-event  response-header
           =.  connections.state
+            ?:  complete.http-event
+              ::  XX  optimize by not requiring +put:by in +request
+              ::
+              (~(del by connections.state) duct)
+            ::
             %-  (trace 2 |.("{<duct>} start"))
             %+  ~(put by connections.state)  duct
             %=  connection
               response-header  `response-header
               bytes-sent  ?~(data.http-event 0 p.u.data.http-event)
             ==
-          ::
-          =?  state  complete.http-event
-            log-complete-request
           ::
           pass-response
         ::
@@ -2094,14 +2096,18 @@
             (trace 0 |.("{<duct>} error continue without start"))
           ::
           =.  connections.state
-            %-  (trace 2 |.("{<duct>} continuing "))
-            %+  ~(jab by connections.state)  duct
-            |=  connection=outstanding-connection
-            =+  size=?~(data.http-event 0 p.u.data.http-event)
-            connection(bytes-sent (add bytes-sent.connection size))
-          ::
-          =?  state  complete.http-event
-            log-complete-request
+            ?:  complete.http-event
+              %-  (trace 2 |.("{<duct>} completed"))
+              (~(del by connections.state) duct)
+            ::
+            %-  (trace 2 |.("{<duct>} continuing"))
+            ?~  data.http-event
+              connections.state
+            ::
+            %+  ~(put by connections.state)  duct
+            =*  size  p.u.data.http-event
+            =*  conn  u.connection-state
+            conn(bytes-sent (add size bytes-sent.conn))
           ::
           pass-response
         ::
@@ -2114,16 +2120,6 @@
     ++  pass-response
       ^-  [(list move) server-state]
       [[duct %give %response http-event]~ state]
-    ::
-    ++  log-complete-request
-      ::  todo: log the complete request
-      ::
-      ::  remove all outstanding state for this connection
-      ::
-      =.  connections.state
-        %.  (~(del by connections.state) duct)
-        (trace 2 |.("{<duct>} completed"))
-      state
     ::
     ++  error-connection
       ::  todo: log application error
