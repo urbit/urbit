@@ -2,8 +2,8 @@
 ++  check  |=  [vax=vase size=@ud]
   =+  ran=~(. og eny)
   =+  sax=(slot 6 vax)
-  ?+  -<.sax  ~&('fail' !!)
-    %atom
+  ?+  -.sax  ~&('fail' !!)
+    [%atom *]
       ^-  ?
       =^  sam  ran  (rads:ran +(size))
       =+  res=(slam vax !>(sam))
