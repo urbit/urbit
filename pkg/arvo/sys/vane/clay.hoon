@@ -3304,7 +3304,6 @@
     |=  [inx=@ud rut=(unit rand)]
     ^+  +>
     ?>  ?=(^ ref)
-    ~&  take-foreign/inx
     =+  ruv=(~(get by bom.u.ref) inx)
     ?~  ruv
       ~&  %bad-answer
