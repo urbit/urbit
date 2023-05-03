@@ -1,11 +1,16 @@
-|=  [vax=vase eny=@uv size=@ud]
+|=  [vax=vase size=@ud]
 =+  ran=~(. og eny)
-=^  sam  ran  (rads:ran +(size))
-=+  res=(slam vax !>(sam))
-?:  =(+:res 0)
-    ~&  "success"
-    %.y
-~&  "failure"
-~&  "sample:"
-~&  sam
-%.n
+=+  sax=(slot 6 vax)
+?+  -<.sax  ~&('fail' !!)
+    %atom
+    ^-  ?
+    =^  sam  ran  (rads:ran +(size))
+    =+  res=(slam vax !>(sam))
+    ?:  =(+:res 0)
+        ~&  "success"
+        %.y
+    ~&  "failure"
+    ~&  "sample:"
+    ~&  sam
+    %.n
+==
