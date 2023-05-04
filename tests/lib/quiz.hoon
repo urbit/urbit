@@ -12,4 +12,7 @@
 ++  test-face
   =+  fate=!>(|=(a=@ ^-(? =(a (dec +(a))))))
   %-  expect  !>((check:quiz fate size))
+++  test-cell
+  =+  fate=!>(|=([a=@ux b=@ud] ^-(? =(%-(add +6) (add a b)))))
+  %-  expect  !>((check:quiz fate size))
 --
