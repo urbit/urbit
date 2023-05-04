@@ -4759,7 +4759,7 @@
   ::  /ax//whey                      (list mass)
   ::  /ax/protocol/version           @
   ::  /ax/peers                      (map ship ?(%alien %known))
-  ::  /ax/peers/[ship]               ship-state
+  ::  /ax/peers/[ship]               (unit ship-state)
   ::  /ax/peers/[ship]/last-contact  (unit @da)
   ::  /ax/peers/[ship]/forward-lane  (list lane)
   ::  /ax/bones/[ship]               [snd=(set bone) rcv=(set bone)]
@@ -4793,9 +4793,7 @@
     =/  peer  (~(get by peers.ames-state) u.who)
     ?+    req.tyl  [~ ~]
         ~
-      ?~  peer
-        [~ ~]
-      ``noun+!>(u.peer)
+      ``noun+!>(peer)
     ::
         [%last-contact ~]
       :^  ~  ~  %noun
