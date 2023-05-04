@@ -7,17 +7,12 @@
 =>  |%
     +$  move  [p=duct q=(wite note gift)]
     +$  note  ~                                         ::  out request $->
-      ::$%  $:  %g                                        ::    to %gall
-      ::        $>(%deal task:gall)                       ::  full transmission
-      ::    ==                                            ::
-      ::==                                            ::
-      ::
     +$  sign  ~
     ::
     +$  lick-state
       $:  %0
           unix-duct=duct
-          agents=(map name duct)
+          owners=(map name duct)
       ==
     ::
     +$  name   path
@@ -42,7 +37,7 @@
 ++  disconnect
   |=  =name
   ^-  move
-  =/  =duct  (~(get by agents) name)
+  =/  =duct  (~(get by owners) name)
   [+.duct %give [%soak name %disconnect ~]]
 ::  +call: handle a +task:lick request
 ::
@@ -57,38 +52,37 @@
   ?+   -.task  [~ lick-gate]
       %born     :: need to register devices with vere and send disconnect soak
     :-  %+  weld 
-        (turn ~(tap in ~(key by agents.state)) register) 
-        (turn ~(tap in ~(key by agents.state)) disconnect)
+          (turn ~(tap in ~(key by owners.state)) register) 
+        (turn ~(tap in ~(key by owners.state)) disconnect)
     lick-gate(unix-duct hen) 
     ::
       %spin     :: A gall agent wants to spin a communication line
     :-  ~[(register name.task)]
-    lick-gate(agents (~(put by agents) name.task hen))
+    lick-gate(owners (~(put by owners) name.task hen))
     ::
       %shut     :: shut down a communication line
-    :-  ~[[unix-duct.state %give [%shut name.task]]]
-    lick-gate(agents (~(del by agents) name.task))
+    :-  [unix-duct.state %give [%shut name.task]]~
+    lick-gate(owners (~(del by owners) name.task))
     ::
       %soak     :: push a soak to the ipc's owner
-    =/  ner=duct  (~(get by agents.state) name.task)
+    =/  ner=duct  (~(get by owners.state) name.task)
     :_  lick-gate
-    ~[[+.ner %give [%soak name.task mark.task noun.task]]]
+    [+.ner %give [%soak name.task mark.task noun.task]]~
     ::
       %spit     :: push a spit to ipc
     :_  lick-gate
-    ~[[unix-duct.state %give [%spit name.task mark.task noun.task]]]
+    [unix-duct.state %give [%spit name.task mark.task noun.task]]~
   ==
 ::  +load: migrate an old state to a new lick version
 ::
 ++  load
   |=  old=lick-state
   ^+  lick-gate
-  ~&  >>  "lick load:"
   lick-gate(state old)
 ::  +scry: view state
 ::
-::  %a  scry out a list of devices
-::  %d  get a device's  dat and tus
+::  %a  scry out a list of all ipc ports
+::  %d  get the owner of an ipc port
 ++  scry
   ^-  roon
   |=  [lyc=gang car=term bem=beam]
@@ -98,14 +92,34 @@
   =*  syd  q.bem
   =*  lot=coin  $/r.bem
   =*  tyl  s.bem
-  ~&  >>  "lick scry:" 
-  ~&  >>  ["lyc" lyc]
-  ~&  >>  ["car" car]
-  ~&  >>  ["bem" bem]
-  ~
+  ::  only respond for the local identity, current timestamp
+  ::
+  ?.  ?&  =(&+our why)
+          =([%$ %da now] lot)
+      ==
+    ~
+  ?+  car  ~
+    %a  (read-a lyc bem)
+    %d  (read-d lyc bem)
+  ==
+  ::  +read-a: scry our list of devices
+  ::
+  ++  read-a
+    |=  [lyc=gang bem=beam]
+    ^-  (unit (unit cage))
+    =/  ports  ~(tap in ~(key by owners))
+    ``[%noun !>(ports)]
+  ::  +read d: get ports owner 
+  ::
+  ++  read-d    
+    |=  [lyc=gang bem=beam]
+    ^-  (unit (unit cage))
+    =*  tyl  s.bem
+    =/  devs  (~(got by owners) tyl)
+    ``[%noun !>(devs)]
+  --    
 ::
 ++  stay  
-  ~&  >>  "lick stay:"
    state 
 ++  take
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
@@ -113,6 +127,5 @@
   ?^  dud
     ~|(%lick-take-dud (mean tang.u.dud))
   ::
-  ~&  >>  "lick take:"
   [~ lick-gate]
 --
