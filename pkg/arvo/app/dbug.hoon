@@ -831,7 +831,9 @@
       |=  keen-state
       |^  ^-  json
       %-  pairs
-      :~  'wan'^a/(turn (tap:(deq want) wan) wants)
+      :~  :-  %wan
+          a/(turn (tap:((on @ud want) lte) wan) |=([@ a=_+6:wants] (wants a)))
+        ::
           'nex'^a/(turn nex wants)
         ::
           :-  'hav'

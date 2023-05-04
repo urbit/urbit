@@ -42,9 +42,9 @@
 ::  $move: Arvo-level move
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
-::  $state-12: overall gall state, versioned
+::  $state-13: overall gall state, versioned
 ::
-+$  state-12  [%12 state]
++$  state-13  [%13 state]
 ::  $state: overall gall state
 ::
 ::    system-duct: TODO document
@@ -82,6 +82,7 @@
 ::    beak: compilation source
 ::    marks: mark conversion requests
 ::    sky: scry bindings
+::    ken: open keen requests
 ::
 +$  yoke
   $%  [%nuke sky=(map spur @ud)]
@@ -98,6 +99,7 @@
           =beak
           marks=(map duct mark)
           sky=(map spur path-state)
+          ken=(jug spar:ames wire)
   ==  ==
 ::
 +$  path-state
@@ -160,7 +162,7 @@
 ::  $spore: structures for update, produced by +stay
 ::
 +$  spore
-  $:  %12
+  $:  %13
       system-duct=duct
       outstanding=(map [wire duct] (qeu remote-request))
       contacts=(set ship)
@@ -185,11 +187,12 @@
           =beak
           marks=(map duct mark)
           sky=(map spur path-state)
+          ken=(jug spar:ames wire)
   ==  ==
 --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
-=|  state=state-12
+=|  state=state-13
 |=  [now=@da eny=@uvJ rof=roof]
 =*  gall-payload  .
 ~%  %gall-top  ..part  ~
@@ -955,9 +958,20 @@
         moves        moves
       ==
     ::
+    ++  ap-yawn-all
+      ^-  (list card:agent)
+      %-  zing
+      %+  turn  ~(tap by ken.yoke)
+      |=  [=spar:ames wyz=(set wire)]
+      %+  turn  ~(tap in wyz)
+      |=  =wire
+      [%pass wire %arvo %a %yawn spar]
+    ::
     ++  ap-idle
+      ^+  ap-core
       ?:  ?=(%| -.agent.yoke)  ap-core
-      ap-core(agent.yoke |+on-save:ap-agent-core)
+      =>  [ken=ken.yoke (ap-ingest ~ |.([ap-yawn-all *agent]))]
+      ap-core(ken.yoke ken, agent.yoke |+on-save:ap-agent-core)
     ::
     ++  ap-nuke
       ^+  ap-core
@@ -967,13 +981,17 @@
         |=  [=duct =ship =path]
         path
       =/  will=(list card:agent)
-        %+  welp
+        ;:  welp
           ?:  =(~ inbound-paths)
             ~
           [%give %kick ~(tap in inbound-paths) ~]~
-        %+  turn  ~(tap by boat.yoke)
-        |=  [[=wire =dock] ? =path]
-        [%pass wire %agent dock %leave ~]
+        ::
+          %+  turn  ~(tap by boat.yoke)
+          |=  [[=wire =dock] ? =path]
+          [%pass wire %agent dock %leave ~]
+        ::
+          ap-yawn-all
+        ==
       =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
       ap-core
     ::  +ap-grow: bind a path in the agent's scry namespace
@@ -1310,6 +1328,12 @@
         ?:  ?=(%& -.agent.yoke)
           on-save:ap-agent-core
         p.agent.yoke
+      =?  ap-core  &(?=(%| -.agent.yoke) ?=(^ ken.yoke))
+        =-  +:(ap-ingest ~ |.([+< agent]))
+        %-  zing
+        %+  turn  ~(tap by `(jug spar:ames wire)`ken.yoke)
+        |=  [=spar:ames wyz=(set wire)]
+        (turn ~(tap in wyz) |=(=wire [%pass wire %arvo %a %keen spar]))
       =^  error  ap-core
         (ap-install(agent.yoke &+agent) `old-state)
       ?~  error
@@ -1365,6 +1389,8 @@
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
         (on-arvo:ap-agent-core wire sign-arvo)
+      =?  ken.yoke  ?=([%ames %tune spar=* *] sign-arvo)
+        (~(del ju ken.yoke) spar.sign-arvo wire)
       ?^  maybe-tang
         (ap-error %arvo-response u.maybe-tang)
       ap-core
@@ -1714,6 +1740,7 @@
       ::
       =.  agent.yoke  &++.p.result
       =^  fex  ap-core  (ap-handle-sky -.p.result)
+      =.  ken.yoke    (ap-handle-ken fex)
       =/  moves       (zing (turn fex ap-from-internal))
       =.  bitt.yoke   (ap-handle-kicks moves)
       (ap-handle-peers moves)
@@ -1731,6 +1758,17 @@
         [%pass * ?(%agent %arvo %pyre) *]  $(caz t.caz, fex [i.caz fex])
         [%give *]  $(caz t.caz, fex [i.caz fex])
         [%slip *]  !!
+      ==
+    ::  +ap-handle-ken
+    ::
+    ++  ap-handle-ken
+      |=  fex=(list carp)
+      ^+  ken.yoke
+      %+  roll  fex
+      |=  [=carp ken=_ken.yoke]
+      ?+  carp  ken
+        [%pass * %arvo %a %keen spar=*]  (~(put ju ken) [spar.q p]:carp)
+        [%pass * %arvo %a %yawn spar=*]  (~(del ju ken) [spar.q p]:carp)
       ==
     ::  +ap-handle-kicks: handle cancels of bitt.watches
     ::
@@ -1875,10 +1913,36 @@
       =?  old  ?=(%9 -.old)  (spore-9-to-10 old)
       =?  old  ?=(%10 -.old)  (spore-10-to-11 old)
       =?  old  ?=(%11 -.old)  (spore-11-to-12 old)
-      ?>  ?=(%12 -.old)
+      =?  old  ?=(%12 -.old)  (spore-12-to-13 old)
+      ?>  ?=(%13 -.old)
       gall-payload(state old)
   ::
-  +$  spore-any  $%(spore spore-7 spore-8 spore-9 spore-10 spore-11)
+  +$  spore-any  $%(spore spore-7 spore-8 spore-9 spore-10 spore-11 spore-12)
+  +$  spore-12
+    $:  %12
+        system-duct=duct
+        outstanding=(map [wire duct] (qeu remote-request))
+        contacts=(set ship)
+        eggs=(map term egg-12)
+        blocked=(map term (qeu blocked-move))
+        =bug
+    ==
+  +$  egg-12
+    $%  [%nuke sky=(map spur @ud)]
+        $:  %live
+            control-duct=duct
+            run-nonce=@t
+            sub-nonce=@
+            =stats
+            =bitt
+            =boat
+            =boar
+            code=~
+            old-state=[%| vase]
+            =beak
+            marks=(map duct mark)
+            sky=(map spur path-state)
+    ==  ==
   +$  spore-11
     $:  %11
         system-duct=duct
@@ -2010,20 +2074,6 @@
     %+  murn  ~(tap to q)
     |=(r=remote-request-9 ?:(?=(%cork r) ~ `r))
   ::
-  ::  added sky
-  ::
-  ++  spore-11-to-12
-    |=  old=spore-11
-    ^-  spore
-    %=    old
-        -  %12
-        eggs
-      %-  ~(urn by eggs.old)
-      |=  [a=term e=egg-11]
-      ^-  egg
-      live/e(marks [marks.e sky:*$>(%live egg)])
-    ==
-  ::
   ::  removed live
   ::  changed old-state from (each vase vase) to [%| vase]
   ::  added code
@@ -2038,6 +2088,35 @@
       |=  [a=term e=egg-10]
       ^-  egg-11
       e(|3 |4.e(|4 `|8.e(old-state [%| p.old-state.e])))
+    ==
+  ::
+  ::  added sky
+  ::
+  ++  spore-11-to-12
+    |=  old=spore-11
+    ^-  spore-12
+    %=    old
+        -  %12
+        eggs
+      %-  ~(urn by eggs.old)
+      |=  [a=term e=egg-11]
+      ^-  egg-12
+      live/e(marks [marks.e sky:*$>(%live egg)])
+    ==
+  ::
+  ::  added ken
+  ::
+  ++  spore-12-to-13
+    |=  old=spore-12
+    ^-  spore
+    %=    old
+        -  %13
+        eggs
+      %-  ~(urn by eggs.old)
+      |=  [a=term e=egg-12]
+      ^-  egg
+      ?:  ?=(%nuke -.e)  e
+      e(sky [sky.e ken:*$>(%live egg)])
     ==
   --
 ::  +scry: standard scry
