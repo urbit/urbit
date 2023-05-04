@@ -2,10 +2,8 @@
 ++  check  |=  [vax=vase size=@ud]
   =+  ran=~(. og eny)
   =+  sax=(slot 6 vax)
-  =/  res  ?+  p.sax  ~&('fail' !!)
-             [%atom p=term q=~]      =+(sam=(gen-atom p.p.sax ran size) [-:sam (slam vax !>(-:sam))])
-             [%atom p=term q=[~ @]]  [sax (slam vax sax)]
-           ==
+  =+  sam=(fill sax size ran)
+  =+  res=(slam vax sam)
   ^-  ?
   ?:  =(+:res %.y)
       ~&  "success"
@@ -14,6 +12,12 @@
   ~&  "sample:"
   ~&  -:res
   %.n
+++  fill  |=  [sax=vase size=@ud ran=_og]
+  ^+  sax
+  ?+  p.sax  ~&('fail' !!)
+    [%atom p=* q=~]  sax(q -:(gen-atom p.p.sax ran size))
+    [%atom *]        sax
+  ==
 ++  gen-atom  |=  [aur=@tas ran=_og size=@ud]
   ^+  [0 ran]
   (rads:ran +(size))
