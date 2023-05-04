@@ -7,7 +7,7 @@
              [%atom p=term q=[~ @]]  [sax (slam vax sax)]
            ==
   ^-  ?
-  ?:  =(+>:res 0)
+  ?:  =(+:res %.y)
       ~&  "success"
       %.y
   ~&  "failure"
