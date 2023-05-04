@@ -57,6 +57,8 @@
     lick-gate(unix-duct hen) 
     ::
       %spin     :: A gall agent wants to spin a communication line
+    ::  XX Right now the last agent to register a port owns it. Should
+    ::  this change? 
     :-  ~[(register name.task)]
     lick-gate(owners (~(put by owners) name.task hen))
     ::
