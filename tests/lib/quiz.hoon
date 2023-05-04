@@ -9,4 +9,7 @@
   :: Check we only generate valid tas when restricted.
   =+  fate=!>(|=(%foo ^-(? =(+6 %foo))))
   %-  expect  !>((check:quiz fate size))
+++  test-face
+  =+  fate=!>(|=(a=@ ^-(? =(a (dec +(a))))))
+  %-  expect  !>((check:quiz fate size))
 --

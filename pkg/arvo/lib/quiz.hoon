@@ -17,6 +17,7 @@
   ?+  p.sax  ~&('fail' !!)
     [%atom p=* q=~]  sax(q -:(gen-atom p.p.sax ran size))
     [%atom *]        sax
+    [%face p=* q=*]  sax(q q:(fill [p=q.p.sax q=q.sax] size ran))
   ==
 ++  gen-atom  |=  [aur=@tas ran=_og size=@ud]
   ^+  [0 ran]
