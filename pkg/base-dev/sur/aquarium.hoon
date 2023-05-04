@@ -41,7 +41,7 @@
       [%pause-events who=ship]
       [%snap-ships lab=term hers=(list ship)]
       [%restore-snap lab=term]
-      [%read [from=ship =path] [for=lane:ames num=@ud]]
+      [%read [from=[=ship life=@ubC] =path] for=[=lane:ames life=@ubC] num=@ud]
       [%event who=ship ue=unix-event]
   ==
 ::
