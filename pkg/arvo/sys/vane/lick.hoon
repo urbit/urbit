@@ -92,6 +92,7 @@
   =*  syd  q.bem
   =*  lot=coin  $/r.bem
   =*  tyl  s.bem
+  |^
   ::  only respond for the local identity, current timestamp
   ::
   ?.  ?&  =(&+our why)
