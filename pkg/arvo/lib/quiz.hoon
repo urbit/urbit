@@ -1,9 +1,8 @@
 |_  [eny=@uv]
-++  size  1.000
 ++  check  |=  [vax=vase]
   =+  rng=~(. og eny)
   =+  sax=(slot 6 vax)
-  =+  sam=(fill sax rng)
+  =+  sam=(~(fill quiz [1.000 ~(. og eny)]) sax)
   =+  res=(slam vax sam)
   ^-  ?
   ?:  =(+:res %.y)
@@ -13,17 +12,19 @@
   ~&  "sample:"
   ~&  -:res
   %.n
-++  fill  |=  [sax=vase rng=_og]
+++  quiz  |_  [size=@ud rng=_og]
+  ++  fill  |=  [sax=vase]
   ^+  sax
   =+  new-rng=+:(rads:rng 1)
   ?+  p.sax  ~&('warning: sample left unfilled' ~&(sax sax))
-    [%atom p=* q=~]  sax(q -:(gen-atom p.p.sax rng))
+    [%atom p=* q=~]  sax(q (gen-atom p.p.sax))
     [%atom *]        sax
    :: TODO: Don't reuse randomness
-    [%cell p=* q=*]  sax(q [q:(fill [p=p.p.sax q=-.q.sax] rng) q:(fill [p=q.p.sax q=+.q.sax] new-rng)])
-    [%face p=* q=*]  sax(q q:(fill [p=q.p.sax q=q.sax] rng))
+    [%cell p=* q=*]  sax(q [q:(fill [p=p.p.sax q=-.q.sax]) q:(fill(rng new-rng) [p=q.p.sax q=+.q.sax])])
+    [%face p=* q=*]  sax(q q:(fill [p=q.p.sax q=q.sax]))
   ==
-++  gen-atom  |=  [aur=@tas rng=_og]
-  ^+  [0 rng]
-  (rads:rng size)
+  ++  gen-atom  |=  [aur=@tas]
+    ^-  @
+    (rad:rng size)
+  --
 --
