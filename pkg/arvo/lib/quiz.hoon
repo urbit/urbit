@@ -1,7 +1,7 @@
-|_  [eny=@uv]
+|_  [eny=@uv runs=@ud]
 ++  check  |=  [vax=vase]
+  =.  runs  ?:(=(0 runs) 100 runs)
   =+  size=1
-  =+  runs=100
   =+  sax=(slot 6 vax)
   =+  run-i=0
   =+  rng=~(. og eny)
