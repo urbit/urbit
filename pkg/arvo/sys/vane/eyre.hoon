@@ -1579,11 +1579,11 @@
       ::
       =+  requests=p.maybe-requests
       ::  gall-moves: put moves here first so we can flop for ordering
-      ::
-      ::    TODO: Have an error state where any invalid duplicate subscriptions
-      ::    or other errors cause the entire thing to fail with a 400 and a tang.
+      ::  errors: if we accumulate any, discard the gall-moves and revert
       ::
       =|  gall-moves=(list move)
+      =|  errors=(map @ud @t)
+      =/  og-state  state
       =/  from=ship
         ?-  -.identity
           %ours  our
@@ -1592,17 +1592,30 @@
       |-
       ::
       ?~  requests
-        ::  this is a PUT request; we must mark it as complete
+        ?:  =(~ errors)
+          ::  everything succeeded, mark the request as completed
+          ::
+          =^  http-moves  state
+            %-  handle-response
+            :*  %start
+                [status-code=204 headers=~]
+                data=~
+                complete=%.y
+            ==
+          ::
+          [:(weld (flop gall-moves) http-moves moves) state]
+        ::  some things went wrong. revert all operations & give 400
         ::
+        %-  (trace 1 |.("{<channel-id>} reverting due to errors"))
+        =.  state  og-state
         =^  http-moves  state
-          %-  handle-response
-          :*  %start
-              [status-code=204 headers=~]
-              data=~
-              complete=%.y
-          ==
-        ::
-        [:(weld (flop gall-moves) http-moves moves) state]
+          %^  return-static-data-on-duct  400  'text/html'
+          %-  as-octs:mimes:html
+          %+  rap  3
+          %+  turn  (sort ~(tap by errors) dor)
+          |=  [id=@ud er=@t]
+          (rap 3 (crip (a-co:co id)) ': ' er '<br/>' ~)
+        [(weld http-moves moves) state]
       ::
       ?-    -.i.requests
           %ack
@@ -1614,6 +1627,11 @@
         ==
       ::
           ?(%poke %poke-json)
+        =,  i.requests
+        ::
+        ?.  |(=(from our) =(ship our))
+          =+  [request-id 'non-local operation']
+          $(errors (~(put by errors) -), requests t.requests)
         ::
         =.  gall-moves
           :_  gall-moves
@@ -1631,9 +1649,13 @@
         $(requests t.requests)
       ::
           %subscribe
-        ::
         =,  i.requests
         ::
+        ?.  |(=(from our) =(ship our))
+          =+  [request-id 'non-local operation']
+          $(errors (~(put by errors) -), requests t.requests)
+        ::
+        ::TODO  could error if the subscription is a duplicate
         =.  gall-moves
           :_  gall-moves
           ^-  move
@@ -1654,6 +1676,10 @@
       ::
           %unsubscribe
         =,  i.requests
+        ::
+        ?.  |(=(from our) =(ship our))
+          =+  [request-id 'non-local operation']
+          $(errors (~(put by errors) -), requests t.requests)
         ::
         =/  usession  (~(get by session.channel-state.state) channel-id)
         ?~  usession
