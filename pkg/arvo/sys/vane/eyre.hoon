@@ -70,7 +70,7 @@
 ++  axle
   $:  ::  date: date at which http-server's state was updated to this data structure
       ::
-      date=%~2023.4.11
+      date=%~2023.5.3
       ::  server-state: state of inbound requests
       ::
       =server-state
@@ -623,14 +623,14 @@
     =/  act  [%app app=%lens]
     ::
     =/  connection=outstanding-connection
-      [act [& secure address request] ~ 0]
+      [act [& secure address request] [*@uv [%ours ~]] ~ 0]
     ::
     =.  connections.state
       %.  (~(put by connections.state) duct connection)
       (trace 2 |.("{<duct>} creating local"))
     ::
     :_  state
-    (subscribe-to-app app.act inbound-request.connection)
+    (subscribe-to-app [%ours ~] app.act inbound-request.connection)
   ::  +request: starts handling an inbound http request
   ::
   ++  request
@@ -650,13 +650,19 @@
     =/  [=action suburl=@t]
       (get-action-for-binding host url.request)
     ::
-    =/  authenticated  (request-is-logged-in:authentication request)
+    =^  [suv=@uv =identity som=(list move)]  state
+      (session-for-request:authentication request)
+    =;  [moz=(list move) sat=server-state]
+      [(weld som moz) sat]
+    ::
+    =/  authenticated  ?=(%ours -.identity)
     ::  record that we started an asynchronous response
     ::
     =/  connection=outstanding-connection
-      [action [authenticated secure address request] ~ 0]
+      [action [authenticated secure address request] [suv identity] ~ 0]
     =.  connections.state
-      ::  NB: required by +handle-response. XX optimize
+      ::  NB: required by +handle-response and +handle-request:authentication.
+      ::  XX optimize
       ::
       (~(put by connections.state) duct connection)
     ::  redirect to https if insecure, redirects enabled
@@ -781,16 +787,16 @@
     ::
         %app
       :_  state
-      (subscribe-to-app app.action inbound-request.connection)
+      (subscribe-to-app identity app.action inbound-request.connection)
     ::
         %authentication
       (handle-request:authentication secure address request)
     ::
         %logout
-      (handle-logout:authentication authenticated request)
+      (handle-logout:authentication suv request)
     ::
         %channel
-      (handle-request:by-channel secure authenticated address request)
+      (handle-request:by-channel [suv identity] address request)
     ::
         %scry
       (handle-scry authenticated address request(url suburl))
@@ -910,18 +916,17 @@
   ::  +subscribe-to-app: subscribe to app and poke it with request data
   ::
   ++  subscribe-to-app
-    |=  [app=term =inbound-request:eyre]
+    |=  [=identity app=term =inbound-request:eyre]
     ^-  (list move)
-    :~  :*  duct  %pass  /watch-response/[eyre-id]
-            %g  %deal  [our our]  app
-            %watch  /http-response/[eyre-id]
-        ==
+    :~  %+  deal-as
+          /watch-response/[eyre-id]
+        [identity our app %watch /http-response/[eyre-id]]
       ::
-        :*  duct  %pass  /run-app-request/[eyre-id]
-            %g  %deal  [our our]  app
-            %poke  %handle-http-request
-            !>(`[@ta inbound-request:eyre]`[eyre-id inbound-request])
-        ==
+        %+  deal-as
+          /run-app-request/[eyre-id]
+        :^  identity  our  app
+        :+  %poke  %handle-http-request
+        !>(`[@ta inbound-request:eyre]`[eyre-id inbound-request])
     ==
   ::  +cancel-request: handles a request being externally aborted
   ::
@@ -940,11 +945,9 @@
         %app
       :_  state
       :_  ~
-      %-  (trace 1 |.("leaving subscription to {<app.action.u.connection>}"))
-      :*  duct  %pass  /watch-response/[eyre-id]
-          %g  %deal  [our our]  app.action.u.connection
-          %leave  ~
-      ==
+      =,  u.connection
+      %-  (trace 1 |.("leaving subscription to {<app.action>}"))
+      (deal-as /watch-response/[eyre-id] identity our app.action %leave ~)
     ::
         ?(%authentication %logout %name)
       [~ state]
@@ -987,7 +990,7 @@
       |=  [secure=? =address =request:http]
       ^-  [(list move) server-state]
       ::
-      ::  if we received a simple get, redirect if logged in otherwise 
+      ::  if we received a simple get: redirect if logged in, otherwise
       ::  show login page
       ::
       ?:  =('GET' method.request)
@@ -1005,7 +1008,7 @@
           (login-page redirect our %.n)
         =/  cookie-line=@t
           (session-cookie-string u.session-id &)
-        =/  actual-redirect  
+        =/  actual-redirect
           ?~  redirect  '/'
           ?:(=(u.redirect '') '/' u.redirect)
         %-  handle-response
@@ -1039,105 +1042,60 @@
       ::
       ?.  =(u.password code)
         (return-static-data-on-duct 400 'text/html' (login-page redirect our %.y))
-      ::  mint a unique session cookie
+      ::  clean up the session they're changing out from
       ::
-      =/  session=@uv
-        |-
-        =/  candidate=@uv  (~(raw og eny) 128)
-        ?.  (~(has by sessions.authentication-state.state) candidate)
-          candidate
-        $(eny (shas %try-again candidate))
-      ::  record cookie and record expiry time
+      =^  moz  state
+        ?~  sid=(session-id-from-request request)  [~ state]
+        (close-session u.sid |)
+      ::  initialize the new session
       ::
-      =/  first-session=?  =(~ sessions.authentication-state.state)
-      =/  expires-at=@da   (add now session-timeout)
-      =.  sessions.authentication-state.state
-        (~(put by sessions.authentication-state.state) session [expires-at ~])
+      =^  fex  state  (start-session %local)
+      ::  associate the new session with the request that caused the login
       ::
-      =/  cookie-line=@t
-        (session-cookie-string session &)
+      ::    if we don't do this here, +handle-response will include the old
+      ::    session's cookie, confusing the client.
+      ::
+      =.  connections.state
+        %+  ~(jab by connections.state)  duct
+        |=  o=outstanding-connection
+        o(session-id session.fex)
       ::
       =;  out=[moves=(list move) server-state]
-        =.  moves.out  [give-session-tokens moves.out]
-        ::  if we didn't have any cookies previously, start the expiry timer
-        ::
-        ?.  first-session  out
-        =-  out(moves [- moves.out])
-        [duct %pass /sessions/expire %b %wait expires-at]
-      ::
+        out(moves [give-session-tokens :(weld moz moves.fex moves.out)])
+      ::NOTE  that we don't provide a 'set-cookie' header here.
+      ::      +handle-response does that for us.
       ?~  redirect
-        %-  handle-response
-        :*  %start
-            :-  status-code=204
-            ^=  headers
-              :~  ['set-cookie' cookie-line]
-              ==
-            data=~
-            complete=%.y
-        ==
-      ::
+        (handle-response %start 204^~ ~ &)
       =/  actual-redirect  ?:(=(u.redirect '') '/' u.redirect)
-      %-  handle-response
-      :*  %start
-          :-  status-code=303
-          ^=  headers
-            :~  ['location' actual-redirect]
-                ['set-cookie' cookie-line]
-            ==
-          data=~
-          complete=%.y
-      ==
+      (handle-response %start 303^['location' actual-redirect]~ ~ &)
     ::  +handle-logout: handles an http request for logging out
     ::
+    ::TODO  allow %ours sessions to kill any session on-demand
     ++  handle-logout
-      |=  [authenticated=? =request:http]
+      |=  [session-id=@uv =request:http]
       ^-  [(list move) server-state]
       ::  whatever we end up doing, we always redirect to the login page
       ::
       =/  response=$>(%start http-event:http)
         :*  %start
-            response-header=[303 ['location' '/~/login']~]
+            ^=  response-header
+            :-  303
+            :~  ['location' '/~/login']
+                ['set-cookie' (session-cookie-string session-id |)]
+            ==
             data=~
             complete=%.y
         ==
+      ::  close the session as requested, then send the response
       ::
-      =/  session-id=(unit @uv)
-        (session-id-from-request request)
-      =?  headers.response-header.response  ?=(^ session-id)
-        :_  headers.response-header.response
-        ['set-cookie' (session-cookie-string u.session-id |)]
-      ?.  &(authenticated ?=(^ session-id))
-        (handle-response response)
-      ::  delete the requesting session, or all sessions if so specified
-      ::
-      =^  channels=(list @t)  sessions.authentication-state.state
-        =*  sessions  sessions.authentication-state.state
-        =/  all=?
-          ?~  body.request  |
-          =-  ?=(^ -)
-          %+  get-header:http  'all'
-          (fall (rush q.u.body.request yquy:de-purl:html) ~)
-        ?.  all
-          :_  (~(del by sessions) u.session-id)
-          %~  tap  in
-          channels:(~(gut by sessions) u.session-id *session)
-        :_  ~
-        %~  tap  in
-        %+  roll  ~(val by sessions)
-        |=  [session all=(set @t)]
-        (~(uni in all) channels)
-      ::  close all affected channels, then send the response
-      ::
-      =|  moves=(list move)
-      |-  ^-  (quip move server-state)
-      ?~  channels
-        =^  moz  state
-          (handle-response response)
-        [[give-session-tokens (weld moves moz)] state]
-      %-  (trace 1 |.("{(trip i.channels)} discarding channel due to logout"))
-      =^  moz  state
-        (discard-channel:by-channel i.channels |)
-      $(moves (weld moves moz), channels t.channels)
+      =/  all=?
+        ?~  body.request  |
+        =-  ?=(^ -)
+        %+  get-header:http  'all'
+        (fall (rush q.u.body.request yquy:de-purl:html) ~)
+      =^  moz1  state  (close-session session-id all)
+      =^  moz2  state  (handle-response response)
+      [[give-session-tokens (weld moz1 moz2)] state]
     ::  +session-id-from-request: attempt to find a session cookie
     ::
     ++  session-id-from-request
@@ -1161,12 +1119,22 @@
       ::  if it's formatted like a valid session cookie, produce it
       ::
       `(unit @)`(rush u.urbauth ;~(pfix (jest '0v') viz:ag))
-    ::  +request-is-logged-in: checks to see if the request is authenticated
-    ::
-    ::    We are considered logged in if this request has an urbauth
-    ::    Cookie which is not expired.
+    ::  +request-is-logged-in: checks to see if the request has non-guest id
     ::
     ++  request-is-logged-in
+      |=  =request:http
+      ^-  ?
+      ?~  session-id=(session-id-from-request request)
+        |
+      ?~  session=(~(get by sessions.authentication-state.state) u.session-id)
+        |
+      &(!?=(%fake -.identity.u.session) (lte now expiry-time.u.session))
+    ::  +request-is-authenticated: checks to see if the request is "us"
+    ::
+    ::    We are considered authenticated if this request has an urbauth
+    ::    Cookie for the local identity that is not expired.
+    ::
+    ++  request-is-authenticated
       |=  =request:http
       ^-  ?
       ::  does the request pass a session cookie?
@@ -1177,9 +1145,96 @@
       ::
       ?~  session=(~(get by sessions.authentication-state.state) `@uv`u.session-id)
         %.n
-      ::  is this session still valid?
+      ::  does this session have our id, and is it still valid?
       ::
-      (lte now expiry-time.u.session)
+      &(?=(%ours -.identity.u.session) (lte now expiry-time.u.session))
+    ::  +start-session: create a new session with %local or %guest identity
+    ::
+    ++  start-session
+      |=  kind=?(%local %guest)
+      ^-  [[session=@uv =identity moves=(list move)] server-state]
+      =;  [key=@uv sid=identity]
+        :-  :+  key  sid
+            ::  if no session existed previously, we must kick off the
+            ::  session expiry timer
+            ::
+            ?~  sessions.authentication-state.state  ~
+            [duct %pass /sessions/expire %b %wait (add now session-timeout)]~
+        =-  state(sessions.authentication-state -)
+        %+  ~(put by sessions.authentication-state.state)  key
+        [sid (add now session-timeout) ~]
+      ::  create a new session with a fake identity
+      ::
+      =/  sik=@uv  new-session-key
+      :-  sik
+      ?:  ?=(%local kind)  [%ours ~]
+      :-  %fake
+      ::  pre-scramble our ship name into its displayed value, and
+      ::  truncate it to be at most moon-length, so that we can overlay
+      ::  it onto the end of a comet name for visual consistency
+      ::
+      =.  our  (end 3^8 (fein:ob our))
+      %^  cat  3  our
+      %+  rsh  [3 (met 3 our)]
+      (~(raw og (shas %fake-name eny)) 128)
+    ::  +session-for-request: get the session details for the request
+    ::
+    ::    creates a guest session if the request does not have a valid session.
+    ::    there is no need to call +give-session-tokens after this, because
+    ::    guest session do not make valid "auth session" tokens.
+    ::
+    ++  session-for-request
+      |=  =request:http
+      ^-  [[session=@uv =identity moves=(list move)] server-state]
+      =*  new  (start-session %guest)
+      ?~  sid=(session-id-from-request request)
+        new
+      ?~  ses=(~(get by sessions.authentication-state.state) u.sid)
+        new
+      ?:  (gth now expiry-time.u.ses)
+        new
+      [[u.sid identity.u.ses ~] state]
+    ::  +close-session: delete a session and its associated channels
+    ::
+    ::    if :all is true, deletes all sessions that share the same identity.
+    ::    if this closes an %ours session, the caller is responsible for
+    ::    also calling +give-session-tokens afterwards.
+    ::
+    ++  close-session
+      |=  [session-id=@uv all=?]
+      ^-  [(list move) server-state]
+      ?~  ses=(~(get by sessions.authentication-state.state) session-id)
+        [~ state]
+      ::  delete the session(s) and find the associated channels
+      ::
+      =^  channels=(list @t)  sessions.authentication-state.state
+        =*  sessions  sessions.authentication-state.state
+        ::  either delete just the specific session and its channels,
+        ::
+        ?.  all
+          :-  ~(tap in channels.u.ses)
+          (~(del by sessions) session-id)
+        ::  or delete all sessions with the identity from :session-id
+        ::
+        :-  %~  tap  in
+            %+  roll  ~(val by sessions)
+            |=  [session all=(set @t)]
+            ?.  =(identity identity.u.ses)  all
+            (~(uni in all) channels)
+        %-  my
+        %+  skip  ~(tap by sessions)
+        |=  [@uv session]
+        =(identity identity.u.ses)
+      ::  close all affected channels, then send the response
+      ::
+      =|  moves=(list move)
+      |-  ^-  (quip move server-state)
+      ?~  channels  [moves state]
+      %-  %+  trace  1
+          |.("{(trip i.channels)} discarding channel due to closed session")
+      =^  moz  state
+        (discard-channel:by-channel i.channels |)
+      $(moves (weld moves moz), channels t.channels)
     ::  +code: returns the same as |code
     ::
     ++  code
@@ -1213,16 +1268,8 @@
     ::  +handle-request: handles an http request for the subscription system
     ::
     ++  handle-request
-      |=  [secure=? authenticated=? =address =request:http]
+      |=  [[session-id=@uv =identity] =address =request:http]
       ^-  [(list move) server-state]
-      ::  if we're not authenticated error, but don't redirect.
-      ::
-      ::    We don't redirect because subscription stuff is never the toplevel
-      ::    page; issuing a redirect won't help.
-      ::
-      ?.  authenticated
-        %^  return-static-data-on-duct  403  'text/html'
-        (error-page 403 authenticated url.request "unauthenticated channel usage")
       ::  parse out the path key the subscription is on
       ::
       =+  request-line=(parse-request-line url.request)
@@ -1230,7 +1277,7 @@
         ::  url is not of the form '/~/channel/'
         ::
         %^  return-static-data-on-duct  400  'text/html'
-        (error-page 400 authenticated url.request "malformed channel url")
+        (error-page 400 & url.request "malformed channel url")
       ::  channel-id: unique channel id parsed out of url
       ::
       =+  channel-id=i.t.t.site.request-line
@@ -1238,13 +1285,13 @@
       ?:  =('PUT' method.request)
         ::  PUT methods starts/modifies a channel, and returns a result immediately
         ::
-        (on-put-request channel-id request)
+        (on-put-request channel-id identity request)
       ::
       ?:  =('GET' method.request)
-        (on-get-request channel-id request)
+        (on-get-request channel-id [session-id identity] request)
       ?:  =('POST' method.request)
         ::  POST methods are used solely for deleting channels
-        (on-put-request channel-id request)
+        (on-put-request channel-id identity request)
       ::
       ((trace 0 |.("session not a put")) `state)
     ::  +on-cancel-request: cancels an ongoing subscription
@@ -1298,7 +1345,7 @@
     ::    state.
     ::
     ++  update-timeout-timer-for
-      |=  [mode=?(%json %jam) channel-id=@t]
+      |=  [mode=?(%json %jam) =identity channel-id=@t]
       ^+  ..update-timeout-timer-for
       ::  when our callback should fire
       ::
@@ -1310,7 +1357,7 @@
         %_    ..update-timeout-timer-for
             session.channel-state.state
           %+  ~(put by session.channel-state.state)  channel-id
-          [mode [%& expiration-time duct] 0 now ~ ~ ~ ~]
+          [mode identity [%& expiration-time duct] 0 now ~ ~ ~ ~]
         ::
             moves
           [(set-timeout-move channel-id expiration-time) moves]
@@ -1362,14 +1409,19 @@
     ::    client in text/event-stream format.
     ::
     ++  on-get-request
-      |=  [channel-id=@t =request:http]
+      |=  [channel-id=@t [session-id=@uv =identity] =request:http]
       ^-  [(list move) server-state]
       ::  if there's no channel-id, we must 404
       ::TODO  but arm description says otherwise?
       ::
       ?~  maybe-channel=(~(get by session.channel-state.state) channel-id)
         %^  return-static-data-on-duct  404  'text/html'
-        (error-page 404 %.y url.request ~)
+        (error-page 404 | url.request ~)
+      ::  find the channel creator's identity, make sure it matches
+      ::
+      ?.  =(identity identity.u.maybe-channel)
+        %^  return-static-data-on-duct  403  'text/html'
+        (error-page 403 | url.request ~)
       ::  find the requested "mode" and make sure it doesn't conflict
       ::
       =/  mode=?(%json %jam)
@@ -1443,11 +1495,8 @@
       ::  associate this channel with the session cookie
       ::
       =.  sessions.authentication-state.state
-        =/  session-id=(unit @uv)
-          (session-id-from-request:authentication request)
-        ?~  session-id  sessions.authentication-state.state
         %+  ~(jab by sessions.authentication-state.state)
-          u.session-id
+          session-id
         |=  =session
         session(channels (~(put in channels.session) channel-id))
       ::  initialize sse heartbeat
@@ -1489,8 +1538,16 @@
     ::    a set of commands in JSON format in the body of the message.
     ::
     ++  on-put-request
-      |=  [channel-id=@t =request:http]
+      |=  [channel-id=@t =identity =request:http]
       ^-  [(list move) server-state]
+      ::  if the channel already exists, and is not of this identity, 403
+      ::
+      ::    the creation case happens in the +update-timeout-timer-for below
+      ::
+      ?:  ?~  c=(~(get by session.channel-state.state) channel-id)  |
+          !=(identity identity.u.c)
+        %^  return-static-data-on-duct  403  'text/html'
+        (error-page 403 | url.request ~)
       ::  error when there's no body
       ::
       ?~  body.request
@@ -1517,7 +1574,7 @@
       ::    :channel-timeout from now. if we have one which has a timer, update
       ::    that timer.
       ::
-      =.  ..on-put-request  (update-timeout-timer-for mode channel-id)
+      =.  ..on-put-request  (update-timeout-timer-for mode identity channel-id)
       ::  for each request, execute the action passed in
       ::
       =+  requests=p.maybe-requests
@@ -1527,6 +1584,11 @@
       ::    or other errors cause the entire thing to fail with a 400 and a tang.
       ::
       =|  gall-moves=(list move)
+      =/  from=ship
+        ?-  -.identity
+          %ours  our
+          %fake  who.identity
+        ==
       |-
       ::
       ?~  requests
@@ -1556,15 +1618,14 @@
         =.  gall-moves
           :_  gall-moves
           ^-  move
-          :^  duct  %pass  /channel/poke/[channel-id]/(scot %ud request-id.i.requests)
-          =,  i.requests
-          :*  %g  %deal  `sock`[our ship]  app
-              ^-  task:agent:gall
-              :+  %poke-as  mark
-              ?-  -.i.requests
-                %poke       [%noun !>(noun)]
-                %poke-json  [%json !>(json)]
-              ==
+          %+  deal-as
+            /channel/poke/[channel-id]/(scot %ud request-id)
+          :^  from  ship  app
+          ^-  task:agent:gall
+          :+  %poke-as  mark
+          ?-  -.i.requests
+            %poke       [%noun !>(noun)]
+            %poke-json  [%json !>(json)]
           ==
         ::
         $(requests t.requests)
@@ -1576,12 +1637,10 @@
         =.  gall-moves
           :_  gall-moves
           ^-  move
-          :^  duct  %pass
-            (subscription-wire channel-id request-id ship app)
           %-  (trace 1 |.("subscribing to {<app>} on {<path>}"))
-          :*  %g  %deal  [our ship]  app
-              `task:agent:gall`[%watch path]
-          ==
+          %+  deal-as
+            (subscription-wire channel-id request-id ship app)
+          [from ship app %watch path]
         ::
         =.  session.channel-state.state
           %+  ~(jab by session.channel-state.state)  channel-id
@@ -1613,12 +1672,10 @@
           :_  gall-moves
           ^-  move
           =,  u.maybe-subscription
-          :^  duc  %pass
-            (subscription-wire channel-id subscription-id.i.requests ship app)
           %-  (trace 1 |.("leaving subscription to {<app>}"))
-          :*  %g  %deal  [our ship]  app
-              `task:agent:gall`[%leave ~]
-          ==
+          %+  deal-as
+            (subscription-wire channel-id subscription-id ship app)
+          [from ship app %leave ~]
         ::
         =.  session.channel-state.state
           %+  ~(jab by session.channel-state.state)  channel-id
@@ -1663,9 +1720,10 @@
       :_  state
       :_  ~
       ^-  move
-      :^  duct  %pass
+      %+  deal-as
         (subscription-wire channel-id request-id ship app)
-      [%g %deal [our ship] app `task:agent:gall`[%leave ~]]
+      =+  id=identity:(~(got by session.channel-state.state) channel-id)
+      [id ship app %leave ~]
     ::  +emit-event: records an event occurred, possibly sending to client
     ::
     ::    When an event occurs, we need to record it, even if we immediately
@@ -1766,9 +1824,9 @@
         ::      - and already checked whether we still have that subscription.
         =+  (~(got by subscriptions.u.channel) request-id)
         %-  (trace 1 |.("leaving subscription to {<app>}"))
-        :^  duct  %pass
+        %+  deal-as
           (subscription-wire channel-id request-id ship app)
-        [%g %deal [our ship] app %leave ~]
+        [identity.u.channel ship app %leave ~]
       ::  update channel state to reflect the %kick
       ::
       =?  u.channel  kicking
@@ -1977,9 +2035,9 @@
       |=  [request-id=@ud ship=@p app=term =path duc=^duct]
       ^-  move
       %-  (trace 1 |.("{<channel-id>} leaving subscription to {<app>}"))
-      :^  duc  %pass
+      %+  deal-as
         (subscription-wire channel-id request-id ship app)
-      [%g %deal [our ship] app %leave ~]
+      [identity.session ship app %leave ~]
     --
   ::  +handle-gall-error: a call to +poke-http-response resulted in a %coup
   ::
@@ -1995,11 +2053,9 @@
       ?.  ?=(%app -.action.connection)
         ~
       :_  ~
-      %-  (trace 1 |.("leaving subscription to {<app.action.connection>}"))
-      :*  duct  %pass  /watch-response/[eyre-id]
-          %g  %deal  [our our]  app.action.connection
-          %leave  ~
-      ==
+      =,  connection
+      %-  (trace 1 |.("leaving subscription to {<app.action>}"))
+      (deal-as /watch-response/[eyre-id] identity our app.action %leave ~)
     ::
     =^  moves-2  state
       %^  return-static-data-on-duct  500  'text/html'
@@ -2032,31 +2088,25 @@
             %start
           ?^  response-header.u.connection-state
             ((trace 0 |.("{<duct>} error multiple start")) error-connection)
-          ::  if request was authenticated, extend the session & cookie's life
+          ::  extend the request's session's + cookie's life
           ::
           =^  response-header  sessions.authentication-state.state
             =,  authentication
-            =*  sessions  sessions.authentication-state.state
-            =*  inbound   inbound-request.u.connection-state
-            =*  no-op     [response-header.http-event sessions]
+            =*  session-id  session-id.u.connection-state
+            =*  sessions    sessions.authentication-state.state
+            =*  inbound     inbound-request.u.connection-state
             ::
-            ?.  authenticated.inbound
-              no-op
-            ?~  session-id=(session-id-from-request request.inbound)
-              ::  cookies are the only auth method, so this is unexpected
-              ::
-              ((trace 0 |.("error authenticated without cookie")) no-op)
-            ?.  (~(has by sessions) u.session-id)
+            ?.  (~(has by sessions) session-id)
               ::  if the session has expired since the request was opened,
               ::  tough luck, we don't create/revive sessions here
               ::
-              no-op
-            :_  %+  ~(jab by sessions)  u.session-id
+              [response-header.http-event sessions]
+            :_  %+  ~(jab by sessions)  session-id
                 |=  =session
                 session(expiry-time (add now session-timeout))
             =-  response-header.http-event(headers -)
             %^  set-header:http  'set-cookie'
-              (session-cookie-string u.session-id &)
+              (session-cookie-string session-id &)
             headers.response-header.http-event
           ::
           =*  connection  u.connection-state
@@ -2137,12 +2187,10 @@
       ?.  ?=(%app -.action.u.connection-state)
         ~
       :_  ~
+      =,  u.connection-state
       %-  %+  trace  1
-          |.("leaving subscription to {<app.action.u.connection-state>}")
-      :*  duct  %pass  /watch-response/[eyre-id]
-          %g  %deal  [our our]  app.action.u.connection-state
-          %leave  ~
-      ==
+          |.("leaving subscription to {<app.action>}")
+      (deal-as /watch-response/[eyre-id] identity our app.action %leave ~)
     --
   ::  +set-response: remember (or update) a cache mapping
   ::
@@ -2252,13 +2300,33 @@
       (cury cat 3)
     ?~  ext.request-line  ''
     (cat 3 '.' u.ext.request-line)
-  ::  +give-session-tokens: send valid session tokens to unix
+  ::  +give-session-tokens: send valid local session tokens to unix
   ::
   ++  give-session-tokens
     ^-  move
     :-  outgoing-duct.state
-    =*  ses  sessions.authentication-state.state
-    [%give %sessions (~(run in ~(key by ses)) (cury scot %uv))]
+    :+  %give  %sessions
+    %-  sy
+    %+  murn  ~(tap by sessions.authentication-state.state)
+    |=  [sid=@uv session]
+    ?.  ?=(%ours -.identity)  ~
+    (some (scot %uv sid))
+  ::  +new-session-key
+  ::
+  ++  new-session-key
+    |-  ^-  @uv
+    =/  candidate=@uv  (~(raw og (shas %session-key eny)) 128)
+    ?.  (~(has by sessions.authentication-state.state) candidate)
+      candidate
+    $(eny (shas %try-again candidate))
+  ::
+  ++  deal-as
+    |=  [=wire identity=$@(@p identity) =ship =dude:gall =task:agent:gall]
+    ^-  move
+    =/  from=@p
+      ?@  identity  identity
+      ?-(-.identity %ours our, %fake who.identity)
+    [duct %pass wire %g %deal [from ship] dude task]
   ::
   ++  trace
     |=  [pri=@ print=(trap tape)]
@@ -2461,22 +2529,23 @@
     ==
   ::
   ?:  ?=(%code-changed -.task)
-    ~>  %slog.[0 leaf+"eyre: code-changed: throwing away cookies and sessions"]
-    =.  authentication-state.server-state.ax  *authentication-state
+    ~>  %slog.[0 leaf+"eyre: code-changed: throwing away local sessions"]
+    =*  event-args  [[eny duct now rof] server-state.ax]
+    =*  auth        authentication:(per-server-event event-args)
+    ::  find all the %ours sessions, we must close them
     ::
-    =/  event-args  [[eny duct now rof] server-state.ax]
-    =*  by-channel  by-channel:(per-server-event event-args)
-    =*  channel-state  channel-state.server-state.ax
-    ::
-    =/  channel-ids=(list @t)  ~(tap in ~(key by session.channel-state))
+    =/  siz=(list @uv)
+      %+  murn  ~(tap by sessions.authentication-state.server-state.ax)
+      |=  [sid=@uv session]
+      ?:(?=(%ours -.identity) (some sid) ~)
     =|  moves=(list (list move))
     |-  ^-  [(list move) _http-server-gate]
-    ?~  channel-ids
+    ?~  siz
       [(zing (flop moves)) http-server-gate]
-    ::  discard channel state, and cancel any active gall subscriptions
+    ::  discard the session, clean up its channels
     ::
-    =^  mov  server-state.ax  (discard-channel:by-channel i.channel-ids |)
-    $(moves [mov moves], channel-ids t.channel-ids)
+    =^  mov  server-state.ax  (close-session:auth i.siz |)
+    $(moves [mov moves], siz t.siz)
   ::
   ::  all other commands operate on a per-server-event
   ::
@@ -2776,14 +2845,15 @@
             [date=%~2022.7.26 server-state=server-state-0]
             [date=%~2023.2.17 server-state=server-state-1]
             [date=%~2023.3.16 server-state=server-state-2]
-            [date=%~2023.4.11 =server-state]
+            [date=%~2023.4.11 server-state-3]
+            [date=%~2023.5.3 server-state]
         ==
       ::
       +$  server-state-0
         $:  bindings=(list [=binding =duct =action])
             =cors-registry
-            connections=(map duct outstanding-connection)
-            =authentication-state
+            connections=(map duct outstanding-connection-3)
+            authentication-state=authentication-state-3
             channel-state=channel-state-2
             domains=(set turf)
             =http-config
@@ -2794,8 +2864,8 @@
       +$  server-state-1
         $:  bindings=(list [=binding =duct =action])
             =cors-registry
-            connections=(map duct outstanding-connection)
-            =authentication-state
+            connections=(map duct outstanding-connection-3)
+            authentication-state=authentication-state-3
             channel-state=channel-state-2
             domains=(set turf)
             =http-config
@@ -2808,8 +2878,8 @@
         $:  bindings=(list [=binding =duct =action])
             cache=(map url=@t [aeon=@ud val=(unit cache-entry)])  ::  <- new
             =cors-registry
-            connections=(map duct outstanding-connection)
-            =authentication-state
+            connections=(map duct outstanding-connection-3)
+            authentication-state=authentication-state-3
             channel-state=channel-state-2
             domains=(set turf)
             =http-config
@@ -2835,6 +2905,45 @@
             $>(%watch-ack sign:agent:gall)
             $>(%kick sign:agent:gall)
             [%fact =mark =noun]
+        ==
+      ::
+      +$  server-state-3
+        $:  bindings=(list [=binding =duct =action])
+            cache=(map url=@t [aeon=@ud val=(unit cache-entry)])
+            =cors-registry
+            connections=(map duct outstanding-connection-3)
+            authentication-state=authentication-state-3
+            channel-state=channel-state-3
+            domains=(set turf)
+            =http-config
+            ports=[insecure=@ud secure=(unit @ud)]
+            outgoing-duct=duct
+            verb=@
+        ==
+      +$  outstanding-connection-3
+        $:  =action
+            =inbound-request
+            response-header=(unit response-header:http)
+            bytes-sent=@ud
+        ==
+      +$  authentication-state-3  sessions=(map @uv session-3)
+      +$  session-3
+        $:  expiry-time=@da
+            channels=(set @t)
+        ==
+      +$  channel-state-3
+        $:  session=(map @t channel-3)
+            duct-to-key=(map duct @t)
+        ==
+      +$  channel-3
+        $:  mode=?(%json %jam)
+            state=(each timer duct)
+            next-id=@ud
+            last-ack=@da
+            events=(qeu [id=@ud request-id=@ud =channel-event])
+            unacked=(map @ud @ud)
+            subscriptions=(map @ud [ship=@p app=term =path duc=duct])
+            heartbeat=(unit timer)
         ==
       --
   |=  old=axle-any
@@ -2901,7 +3010,33 @@
       ==
     ==
   ::
+  ::  guarantees & stores a session for each request, and a @p identity for
+  ::  each session and channel
+  ::
       %~2023.4.11
+    %=  $
+      date.old  %~2023.5.3
+    ::
+        connections.old
+      %-  ~(run by connections.old)
+      |=  outstanding-connection-3
+      ^-  outstanding-connection
+      [action inbound-request [*@uv [%ours ~]] response-header bytes-sent]
+    ::
+        sessions.authentication-state.old
+      %-  ~(run by sessions.authentication-state.old)
+      |=  s=session-3
+      ^-  session
+      [[%ours ~] s]
+    ::
+        session.channel-state.old
+      %-  ~(run by session.channel-state.old)
+      |=  c=channel-3
+      ^-  channel
+      [-.c [%ours ~] +.c]
+    ==
+  ::
+      %~2023.5.3
     http-server-gate(ax old)
   ==
 ::  +stay: produce current state
@@ -2960,7 +3095,7 @@
       ?~  cookies=(slaw %t i.t.t.tyl)  [~ ~]
       :^  ~  ~  %noun
       !>  ^-  ?
-      %-  =<  request-is-logged-in:authentication
+      %-  =<  request-is-authenticated:authentication
           (per-server-event [eny *duct now rof] server-state.ax)
       %*(. *request:http header-list ['cookie' u.cookies]~)
     ::
