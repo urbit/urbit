@@ -99,6 +99,10 @@ export class Eyre extends Component {
         {c.session}
         <table style={{borderBottom: '1px solid black'}}><tbody>
           <tr>
+            <td class="inter">identity</td>
+            <td>{c['identity']}</td>
+          </tr>
+          <tr>
             <td class="inter">connected?</td>
             <td>{c.connected
               ? 'connected'
@@ -152,9 +156,18 @@ export class Eyre extends Component {
     });
 
     const sessionItems = props.authentication.map(s => {
-      return (<div>
-        {`${s.cookie} expires ${msToDa(s.expiry)}, uses ${s.channels} channel(s)`}
-      </div>);
+      return ({key: s.identity, jsx: (<tr>
+        <td>{s.cookie.slice(0,6)}…</td>
+        <td>{s.identity}</td>
+        <td>{msToDa(s.expiry)}</td>
+        <td>{s.channels} channel(s)</td>
+        <td>
+          <form method="post" action="/~/logout?redirect=/~debug/eyre">
+            <input type="hidden" name="sid" value={s.cookie} />
+            <button type="submit" name="all">kick</button>
+          </form>
+        </td>
+      </tr>)});
     });
 
     return (<>
@@ -174,14 +187,17 @@ export class Eyre extends Component {
       </SearchableList>
 
       <h4>Cookies</h4>
-      <button onClick={this.loadAuthenticationState}>refresh</button>
       <form method="post" action="/~/logout">
-        <button type="submit">logout</button>
+        <button type="submit">logout self</button>
       </form>
       <form method="post" action="/~/logout">
-        <button type="submit" name="all">logout all</button>
+        <button type="submit" name="all">logout all selves</button>
       </form>
-      {sessionItems}
+      <table><tbody>
+        <SearchableList placeholder="identity" items={sessionItems}>
+          <button onClick={this.loadAuthenticationState}>refresh</button>
+        </SearchableList>
+      </tbody></table>
     </>);
   }
 }
