@@ -15,7 +15,7 @@
   %.n
 ++  fill  |=  [sax=vase rng=_og]
   ^+  sax
-  ?+  p.sax  ~&('fail' !!)
+  ?+  p.sax  ~&('warning: sample left unfilled' ~&(sax sax))
     [%atom p=* q=~]  sax(q -:(gen-atom p.p.sax rng))
     [%atom *]        sax
     [%cell p=* q=*]  sax(q [q:(fill [p=p.p.sax q=-.q.sax] rng) q:(fill [p=q.p.sax q=+.q.sax] rng)])

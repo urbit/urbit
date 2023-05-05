@@ -14,4 +14,7 @@
 ++  test-cell
   =+  fate=!>(|=([a=@ux b=@ud] ^-(? =(%-(add +6) (add a b)))))
   %-  expect  !>((check:quiz fate))
+++  test-complex :: This works only because we don't implement list generation, so we get the null list.
+  =+  fate=!>(|=([a=@ud l=(list @)] ^-(? ~&(a =(~ l)))))
+  %-  expect  !>((check:quiz fate))
 --
