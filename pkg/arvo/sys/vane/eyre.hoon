@@ -802,30 +802,30 @@
       (handle-scry authenticated address request(url suburl))
     ::
         %name
-      (handle-name authenticated request)
+      (handle-name identity request)
+    ::
+        %host
+      %^  return-static-data-on-duct  200  'text/plain'
+      (as-octs:mimes:html (scot %p our))
     ::
         %four-oh-four
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 authenticated url.request ~)
     ==
-  ::  +handle-name: respond with our @p or 403
+  ::  +handle-name: respond with the requester's @p
   ::
   ++  handle-name
-    |=  [authenticated=? =request:http]
-    |^  ^-  (quip move server-state)
-    ?.  authenticated
-      (error-response 403 ~)
+    |=  [=identity =request:http]
+    ^-  (quip move server-state)
     ?.  =(%'GET' method.request)
-      (error-response 405 "may only GET name")
+      %^  return-static-data-on-duct  405  'text/html'
+      (error-page 405 & url.request "may only GET name")
     %^  return-static-data-on-duct  200  'text/plain'
-    (as-octs:mimes:html (scot %p our))
-    ::
-    ++  error-response
-      |=  [status=@ud =tape]
-      ^-  (quip move server-state)
-      %^  return-static-data-on-duct  status  'text/html'
-      (error-page status authenticated url.request tape)
-    --
+    =;  nom=@p  (as-octs:mimes:html (scot %p nom))
+    ?-  -.identity
+      %ours  our
+      %fake  who.identity
+    ==
   ::  +handle-cache-req: respond with cached value, 404 or 500
   ::
   ++  handle-cache-req
@@ -949,14 +949,14 @@
       %-  (trace 1 |.("leaving subscription to {<app.action>}"))
       (deal-as /watch-response/[eyre-id] identity our app.action %leave ~)
     ::
-        ?(%authentication %logout %name)
+        ?(%authentication %logout)
       [~ state]
     ::
         %channel
       on-cancel-request:by-channel
     ::
-        ?(%scry %four-oh-four)
-      ::  it should be impossible for a scry or 404 page to be asynchronous
+        ?(%scry %four-oh-four %name %host)
+      ::  it should be impossible for these to be asynchronous
       ::
       !!
     ==
@@ -2488,6 +2488,7 @@
           [[~ /~/channel] duct [%channel ~]]
           [[~ /~/scry] duct [%scry ~]]
           [[~ /~/name] duct [%name ~]]
+          [[~ /~/host] duct [%host ~]]
       ==
     [~ http-server-gate]
   ::  %trim: in response to memory pressure
@@ -3077,6 +3078,11 @@
       |=  c=channel-3
       ^-  channel
       [-.c [%ours ~] +.c]
+    ::
+        bindings.old
+      %+  insert-binding
+        [[~ /~/host] outgoing-duct.old [%host ~]]
+      bindings.old
     ==
   ::
       %~2023.5.3
