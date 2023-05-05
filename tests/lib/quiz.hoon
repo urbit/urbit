@@ -1,7 +1,7 @@
 /+  quiz, *test
 
 |%
-++  test-dec
+++  test-ud
   =+  fate=!>(|=(@ud ^-(? =(+6 (dec +(+6))))))
   %-  expect  !>((check:quiz fate))
 ++  test-tas
