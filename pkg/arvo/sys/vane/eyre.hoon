@@ -793,7 +793,7 @@
       (handle-request:authentication secure address request)
     ::
         %logout
-      (handle-logout:authentication suv request)
+      (handle-logout:authentication [suv identity] request)
     ::
         %channel
       (handle-request:by-channel [suv identity] address request)
@@ -1070,30 +1070,47 @@
       (handle-response %start 303^['location' actual-redirect]~ ~ &)
     ::  +handle-logout: handles an http request for logging out
     ::
-    ::TODO  allow %ours sessions to kill any session on-demand
     ++  handle-logout
-      |=  [session-id=@uv =request:http]
+      |=  [[session-id=@uv =identity] =request:http]
       ^-  [(list move) server-state]
-      ::  whatever we end up doing, we always redirect to the login page
+      ::  whatever we end up doing, we always respond with a redirect
       ::
       =/  response=$>(%start http-event:http)
+        =/  redirect=(unit @t)
+          %+  get-header:http  'redirect'
+          args:(parse-request-line url.request)
         :*  %start
-            ^=  response-header
-            :-  303
-            :~  ['location' '/~/login']
-                ['set-cookie' (session-cookie-string session-id |)]
-            ==
+            response-header=[303 ['location' (fall redirect '/~/login')]~]
             data=~
             complete=%.y
         ==
+      ::  read options from the body
+      ::  all: log out all sessions with this identity?
+      ::  sid: which session do we log out? (defaults to requester's)
+      ::
+      =/  arg=header-list:http
+        ?~  body.request  ~
+        (fall (rush q.u.body.request yquy:de-purl:html) ~)
+      =/  all=?
+        ?=(^ (get-header:http 'all' arg))
+      =/  sid=(unit @uv)
+        ?.  ?=(%ours -.identity)  `session-id
+        ?~  sid=(get-header:http 'sid' arg)  `session-id
+        ::  if you provided the parameter, but it doesn't parse, we just
+        ::  no-op. otherwise, a poorly-implemented frontend might result in
+        ::  accidental log-outs, which would be very annoying.
+        ::
+        (slaw %uv u.sid)
+      ?~  sid
+        (handle-response response)
+      ::  if the requester is logging themselves out, make them drop the cookie
+      ::
+      =?  headers.response-header.response  =(u.sid session-id)
+        :_  headers.response-header.response
+        ['set-cookie' (session-cookie-string session-id |)]
       ::  close the session as requested, then send the response
       ::
-      =/  all=?
-        ?~  body.request  |
-        =-  ?=(^ -)
-        %+  get-header:http  'all'
-        (fall (rush q.u.body.request yquy:de-purl:html) ~)
-      =^  moz1  state  (close-session session-id all)
+      =^  moz1  state  (close-session u.sid all)
       =^  moz2  state  (handle-response response)
       [[give-session-tokens (weld moz1 moz2)] state]
     ::  +session-id-from-request: attempt to find a session cookie
