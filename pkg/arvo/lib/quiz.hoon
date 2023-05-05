@@ -26,6 +26,7 @@
     ^+  sax
     =+  new-rng=+:(rads:rng 1)
     ?+  p.sax  ~&(warn-unfill-sam+`type`p.sax sax)
+      %noun            sax(q (gen-noun))
       [%atom p=* q=~]  sax(q (gen-atom p.p.sax))
       [%atom *]        sax
       [%cell p=* q=*]  =+  [rng-1 rng-2]=(split-rng)
@@ -35,6 +36,17 @@
                       ==
       [%face p=* q=*]  sax(q q:(fill [p=q.p.sax q=q.sax]))
     ==
+  ++  gen-noun  |.
+    =+  start-size=size
+    |-  ^-  noun
+    ?:  (lte size 1)
+      (rad:rng start-size)  :: leafs have should be able to make large atoms.
+    =^  ran  rng  (rads:rng 3) :: 1/3 chance for a leaf.
+    ?:  =(0 ran)
+      (rad:rng start-size)
+    =+  [rng-1 rng-2]=(split-rng)
+    :-  $(size (div size 2), rng rng-1)
+        $(size (div size 2), rng rng-2)
   ++  gen-atom  |=  [aur=@tas]
     ^-  @
     (rad:rng size)
