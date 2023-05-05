@@ -1,7 +1,7 @@
 /+  quiz
 :-  %say
-|=  [[now=@da eny=@uvJ bec=beak] [[vax=vase ~] ~]]
+|=  [[now=@da eny=@uvJ bec=beak] [vax=vase ~] [runs=@ud ~]]
 :: Default to using 0 entropy and no special quizzers.
-=+  qui=~(. quiz [eny 100])
+=+  qui=~(. quiz [eny runs])
 =+  che=^-(? (check:qui vax))
 [%noun che]
