@@ -25,8 +25,8 @@
       [%atom p=* q=~]  sax(q (gen-atom p.p.sax))
       [%atom *]        sax
       [%cell p=* q=*]  %=  sax
-                          q  :-  q:(fill [p=p.p.sax q=-.q.sax])
-                                q:(fill(rng new-rng) [p=q.p.sax q=+.q.sax])
+                          q  :-  q:(fill (slot 2 sax))
+                                 q:(fill(rng new-rng) (slot 3 sax))
                       ==
       [%face p=* q=*]  sax(q q:(fill [p=q.p.sax q=q.sax]))
     ==
