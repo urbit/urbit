@@ -9,7 +9,7 @@
           ++  noun  *
           --
 ++  grow  |%
-          ++  mime  [/application/octet-stream (as-octs:mimes:html (jam non))]
+          ++  mime  [/application/x-urb-jam (as-octs:mimes:html (jam non))]
           --
 ++  grad
   |%
