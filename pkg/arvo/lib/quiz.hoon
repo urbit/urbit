@@ -1,6 +1,6 @@
 |_  [eny=@uv]
 ++  check  |=  [vax=vase]
-  =+  size=1.000
+  =+  size=1
   =+  runs=100
   =+  sax=(slot 6 vax)
   =+  run-i=0
@@ -13,7 +13,9 @@
       ~&  success-runs+run-i
       %.y
   ?:  =(+:res %.y)
-    $(run-i +(run-i), rng +:(rads:rng 1))
+    :: Arbitrarily chosen growth pace.
+    =+  new-size=(add +(size) (div (mul size 2) 21))
+    $(run-i +(run-i), rng +:(rads:rng 1), size new-size)
   ~&  fail-with-sam+q.sam
   %.n
 ++  quiz  |_  [size=@ud rng=_og]
