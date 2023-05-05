@@ -180,20 +180,6 @@
   =+  wid=(met 3 pat)
   ?>  (lte wid 384)
   [pat wid]
-::
-::  +bind-duct: find or make new $bone for .duct in .ossuary
-::
-++  bind-duct
-  |=  [=ossuary =duct]
-  ^+  [next-bone.ossuary ossuary]
-  ::
-  ?^  existing=(~(get by by-duct.ossuary) duct)
-    [u.existing ossuary]
-  ::
-  :-  next-bone.ossuary
-  :+  (add 4 next-bone.ossuary)
-    (~(put by by-duct.ossuary) duct next-bone.ossuary)
-  (~(put by by-bone.ossuary) next-bone.ossuary duct)
 ::  +make-bone-wire: encode ship, rift and bone in wire for sending to vane
 ::
 ++  make-bone-wire
@@ -2040,8 +2026,7 @@
           |=  todos=alien-agenda
           todos(messages [[duct plea] messages.todos])
         ::
-        =/  =peer-state  +.u.ship-state
-        =/  peer-core    (abed-peer:pe ship peer-state)
+        =+  peer-core=(abed-peer:pe ship +.u.ship-state)
         |^  ?+  plea  foreign-plea
               [%a [%kill ~] =bone]  kill-plea
               [%a [%cork ~] =bone]  =~(cork-plea (emit duct %give %done ~))
@@ -2049,21 +2034,22 @@
         ::  .plea is from local vane to foreign ship
         ::
         ++  foreign-plea
-          =^  =bone  ossuary.peer-state  (bind-duct ossuary.peer-state duct)
+          =^  =bone  peer-core  (bind-duct:peer-core duct)
           %-  %^  ev-trace  msg.veb  ship
               |.  ^-  tape
               =/  sndr  [our our-life.channel.peer-core]
               =/  rcvr  [ship her-life.channel.peer-core]
               "plea {<sndr rcvr bone=bone vane.plea path.plea>}"
           abet:(on-memo:peer-core bone plea %plea)
-        ::  client ames [%cork as plea]  ->  server ames sinks plea,
-        ::                                   passes a+/close to itself,
-        ::                                   put flow in closing, and give %done
-        ::  sink ack, pass a+/kill task  <-  after +on-take-done, ack %cork pea
-        ::  to itself and delete the flow
+        ::  client ames [%cork as plea]  -> server ames [sinks %cork plea],
+        ::                                  pass a+/close task to self
+        ::                                  put flow in closing, and give %done
+        ::  sink %ack, pass a+/kill task <- after +on-take-done, ack %cork plea
+        ::  to self, and delete the flow    and delete the flow in +handle-cork
         ::
-        ++  cork-plea  abet:(on-close-flow:peer-core ;;(@ +.payload.plea))
-        ++  kill-plea  abet:(on-kill-flow:peer-core ;;(@ +.payload.plea))
+        ::
+        ++  cork-plea  abet:(on-cork-flow:peer-core ;;(@ payload.plea))
+        ++  kill-plea  abet:(on-kill-flow:peer-core ;;(@ payload.plea))
         --
       ::  +on-cork: handle request to kill a flow
       ::
@@ -2076,26 +2062,23 @@
           %+  enqueue-alien-todo  ship
           |=  todos=alien-agenda
           todos(messages [[duct plea] messages.todos])
-        =/  =peer-state  +.u.ship-state
-        =/  =channel     [[our ship] now channel-state -.peer-state]
         ::
-        =/  [=bone ossuary=_ossuary.peer-state]
-          ?^  cork-bone  [u.cork-bone ossuary.peer-state]
-          (bind-duct ossuary.peer-state duct)
-        =.  ossuary.peer-state  ossuary
+        =+  peer-core=(abed-peer:pe ship +.u.ship-state)
+        =^  =bone  peer-core
+          ?^  cork-bone  [u.cork-bone peer-core]
+          (bind-duct:peer-core duct)
         ::
-        ?.  (~(has by by-bone.ossuary.peer-state) bone)
+        ?.  (~(has by by-bone.ossuary.peer-state.peer-core) bone)
           %.  event-core
           %^  ev-trace  odd.veb  ship
           |.("trying to cork {<bone=bone>}, not in the ossuary, ignoring")
         ::
-        =.  closing.peer-state  (~(put in closing.peer-state) bone)
         %-  %^  ev-trace  msg.veb  ship
             |.  ^-  tape
-            =/  sndr  [our our-life.channel]
-            =/  rcvr  [ship her-life.channel]
+            =/  sndr  [our our-life.channel.peer-core]
+            =/  rcvr  [ship her-life.channel.peer-core]
             "cork plea {<sndr rcvr bone=bone vane.plea path.plea>}"
-        abet:(~(on-memo pe [peer-state channel]) bone plea %plea)
+        abet:(on-memo:(on-cork-flow:peer-core bone) bone plea %plea)
       ::  +on-kroc: cork all stale flows from failed subscriptions
       ::
       ++  on-kroc
@@ -2763,6 +2746,21 @@
           ~|  %dangling-bone^her^bone
           (~(got by by-bone.ossuary.peer-state) bone)
         ::
+        ::  +bind-duct: find or make new $bone for .duct in .ossuary
+        ::
+        ++  bind-duct
+          |=  =^duct
+          =*  ossa  ossuary.peer-state
+          ^+  [next-bone.ossa peer-core]
+          ?^  existing=(~(get by by-duct.ossa) duct)
+            [u.existing peer-core]
+          :-  next-bone.ossa
+          =.  ossa
+            :+  (add 4 next-bone.ossa)
+              (~(put by by-duct.ossa) duct next-bone.ossa)
+            (~(put by by-bone.ossa) next-bone.ossa duct)
+          peer-core
+        ::
         ++  is-corked
           |=  =bone
           ?|  (~(has in corked.peer-state) bone)
@@ -2934,13 +2932,13 @@
           =.  keens  (~(put by keens) path *keen-state)
           fi-abet:(fi-start:(abed:fi path) duct)
         ::
-        ::  +on-close-flow: close flow on cork receiver side
+        ::  +on-cork-flow: mark .bone as closing
         ::
-        ++  on-close-flow
+        ++  on-cork-flow
           |=  =bone
           ^+  peer-core
           peer-core(closing.peer-state (~(put in closing.peer-state) bone))
-        ::  +on-kill-flow: kill flow on cork sender side
+        ::  +on-kill-flow: delete flow on cork sender side
         ::
         ++  on-kill-flow
           |=  =bone
@@ -3984,7 +3982,7 @@
               ::  account for publishers that still handle ames-to-ames %pleas
               ::
               ?>  &(?=([%cork *] payload.plea) ?=(%flow -.path.plea))
-              (pe-emit duct %pass wire %a %plea her [%a /close bone])
+              (pe-emit duct %pass wire %a %plea her [%a /cork bone])
             ::
             ::  +ha-boon: handle response message, acking unconditionally
             ::
