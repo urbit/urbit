@@ -925,7 +925,9 @@
       ~/  %parse-pile
       |=  [pax=path tex=tape]
       ^-  pile
-      =/  [=hair res=(unit [=pile =nail])]  ((pile-rule pax) [1 1] tex)
+      =/  [=hair res=(unit [=pile =nail])]
+        %-  road  |.
+        ((pile-rule pax) [1 1] tex)
       ?^  res  pile.u.res
       %-  mean  %-  flop
       =/  lyn  p.hair
@@ -4243,7 +4245,7 @@
     ::  +read-s: produce miscellaneous
     ::
     ++  read-s
-      |=  [tak=tako pax=path]
+      |=  [tak=tako pax=path =case]
       ^-  (unit (unit cage))
       ?:  ?=([%subs ~] pax)
         ?.  =([%da now] case)  ~
@@ -4514,7 +4516,7 @@
           %f  (read-f tak path.mun)
           %p  [(read-p path.mun) ..park]
           %r  (read-r tak path.mun)
-          %s  [(read-s tak path.mun) ..park]
+          %s  [(read-s tak path.mun case.mun) ..park]
           %t  [(read-t tak path.mun) ..park]
           %u  [(read-u tak path.mun) ..park]
           %v  [(read-v tak path.mun) ..park]
@@ -4558,7 +4560,8 @@
     |*  [her=ship syd=desk yon=(unit aeon) res=* =state:ford:fusion]
     =^  moves  ruf
       =/  den  ((de now rof hen ruf) her syd)
-      abet:+:(tako-flow:den ?~(yon let.dom:den u.yon) res cache.state &2.state)
+      =/  tak  (aeon-to-tako:ze:den ?~(yon let.dom:den u.yon))
+      abet:+:(tako-flow:den tak res cache.state &2.state)
     [res (emil moves)]
   ::
   ++  trace

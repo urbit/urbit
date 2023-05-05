@@ -82,8 +82,6 @@
     `[%done q.cage.u.in.tin]
   ==
 ::
-::
-::
 ++  take-sign-arvo
   =/  m  (strand ,[wire sign-arvo])
   ^-  form:m
@@ -184,21 +182,20 @@
       `[%done ~]
     `[%fail %timer-error u.error.sign-arvo.u.in.tin]
   ==
+::
 ++  take-tune
   |=  =wire
-  =/  m  (strand ,~)
+  =/  m  (strand ,[spar:ames (unit roar:ames)])
   ^-  form:m
   |=  tin=strand-input:strand
-  ?+  in.tin  `[%skip ~]
+  ?+    in.tin  `[%skip ~]
       ~  `[%wait ~]
-      [~ %agent * %poke-ack *]
+    ::
+      [~ %sign * %ames %tune ^ *]
     ?.  =(wire wire.u.in.tin)
       `[%skip ~]
-    ?~  p.sign.u.in.tin
-      `[%done ~]
-    `[%fail %poke-fail u.p.sign.u.in.tin]
+    `[%done +>.sign-arvo.u.in.tin]
   ==
-
 ::
 ++  take-poke-ack
   |=  =wire
@@ -335,14 +332,10 @@
   (take-wake `until)
 ::
 ++  keen
-  |=  =spar:ames
-  =/  m  (strand ,(unit roar:ames))
+  |=  [=wire =spar:ames]
+  =/  m  (strand ,~)
   ^-  form:m
-  =/  =card:agent:gall  [%pass /keen %arvo %a %keen spar]
-  ;<  ~  bind:m  (send-raw-card card)
-  ;<  [wire sign=sign-arvo]  bind:m  take-sign-arvo
-  ?>  ?=([%ames %tune *] sign)
-  (pure:m roar.sign)
+  (send-raw-card %pass wire %arvo %a %keen spar)
 ::
 ++  sleep
   |=  for=@dr
