@@ -18,15 +18,20 @@
   ~&  fail-with-sam+q.sam
   %.n
 ++  quiz  |_  [size=@ud rng=_og]
+  ++  split-rng  |.  ^+  [og og]
+    =+  bit-size=256
+    =^  bits-1  rng  (raws:rng bit-size)
+    [~(. og bits-1) ~(. og (raw:rng bit-size))]
   ++  fill  |=  [sax=vase]
     ^+  sax
     =+  new-rng=+:(rads:rng 1)
     ?+  p.sax  ~&(warn-unfill-sam+`type`p.sax sax)
       [%atom p=* q=~]  sax(q (gen-atom p.p.sax))
       [%atom *]        sax
-      [%cell p=* q=*]  %=  sax
-                          q  :-  q:(fill (slot 2 sax))
-                                 q:(fill(rng new-rng) (slot 3 sax))
+      [%cell p=* q=*]  =+  [rng-1 rng-2]=(split-rng)
+                       %=  sax
+                          q  :-  q:(fill(rng rng-2) (slot 2 sax))
+                                 q:(fill(rng rng-1) (slot 3 sax))
                       ==
       [%face p=* q=*]  sax(q q:(fill [p=q.p.sax q=q.sax]))
     ==
