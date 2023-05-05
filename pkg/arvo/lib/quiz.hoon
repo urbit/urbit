@@ -18,6 +18,7 @@
   ?+  p.sax  ~&('warning: sample left unfilled' ~&(sax sax))
     [%atom p=* q=~]  sax(q -:(gen-atom p.p.sax rng))
     [%atom *]        sax
+   :: TODO: Don't reuse randomness
     [%cell p=* q=*]  sax(q [q:(fill [p=p.p.sax q=-.q.sax] rng) q:(fill [p=q.p.sax q=+.q.sax] rng)])
     [%face p=* q=*]  sax(q q:(fill [p=q.p.sax q=q.sax] rng))
   ==
