@@ -5,17 +5,15 @@
   =+  res=(slam vax sam)
   ^-  ?
   ?:  =(+:res %.y)
-      ~&  "success"
+      ~&  %success
       %.y
-  ~&  "failure"
-  ~&  "sample:"
-  ~&  -:res
+  ~&  fail-with-sam+q.sam
   %.n
 ++  quiz  |_  [size=@ud rng=_og]
   ++  fill  |=  [sax=vase]
   ^+  sax
   =+  new-rng=+:(rads:rng 1)
-  ?+  p.sax  ~&('warning: sample left unfilled' ~&(sax sax))
+  ?+  p.sax  ~&(warn-unfill-sam+`type`p.sax sax)
     [%atom p=* q=~]  sax(q (gen-atom p.p.sax))
     [%atom *]        sax
     [%cell p=* q=*]  %=  sax
