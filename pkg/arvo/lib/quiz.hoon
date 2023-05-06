@@ -40,11 +40,14 @@
     =+  start-size=size
     |-  ^-  noun
     ?:  (lte size 1)
-      (rad:rng start-size)  :: leafs have should be able to make large atoms.
-    =^  ran  rng  (rads:rng 3) :: 1/3 chance for a leaf.
-    ?:  =(0 ran)
+      (rad:rng start-size)  :: leafs should be able to make large atoms.
+    =^  ran  rng  (rads:rng 3)
+    ?:  =(0 ran) :: 1/3 chance for a leaf.
       (rad:rng start-size)
-    =+  [rng-1 rng-2]=split-rng
+    ?:  =(1 ran)  :: 1/3 chance for a identical subtrees.
+      =+  subtree=$(size (div size 2))
+      [subtree subtree]
+    =+  [rng-1 rng-2]=split-rng :: 1/3 chance for different subtrees. 
     :-  $(size (div size 2), rng rng-1)
         $(size (div size 2), rng rng-2)
   ++  gen-atom  |=  [aur=@tas]
