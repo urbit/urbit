@@ -1,5 +1,6 @@
 |_  [eny=@uv runs=@ud]
-++  check  |=  [vax=vase]
+++  check
+  |=  vax=vase
   =?  runs  =(0 runs)  100
   =+  size=1
   =+  sax=(slot 6 vax)
@@ -22,7 +23,8 @@
     =+  bit-size=256
     =^  bits-1  rng  (raws:rng bit-size)
     [~(. og bits-1) ~(. og (raw:rng bit-size))]
-  ++  fill  |=  [sax=vase]
+  ++  fill
+    |=  sax=vase
     ^+  sax
     =+  new-rng=+:(rads:rng 1)
     ?+  p.sax  ~&(warn-unfill-sam+`type`p.sax sax)
@@ -36,7 +38,8 @@
                       ==
       [%face p=* q=*]  sax(q q:(fill [p=q.p.sax q=q.sax]))
     ==
-  ++  gen-noun  |.
+  ++  gen-noun
+    |.
     =+  start-size=size
     |-  ^-  noun
     ?:  (lte size 1)
@@ -50,7 +53,8 @@
     =+  [rng-1 rng-2]=split-rng :: 1/3 chance for different subtrees. 
     :-  $(size (div size 2), rng rng-1)
         $(size (div size 2), rng rng-2)
-  ++  gen-atom  |=  [aur=@tas]
+  ++  gen-atom
+    |=  aur=@tas
     ^-  @
     (rad:rng size)
   --
