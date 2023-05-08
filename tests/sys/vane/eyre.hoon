@@ -110,7 +110,7 @@
 ::
 ++  test-builtin-four-oh-four
   ::
-  =^  results1  eyre-gate  perform-init
+  =^  results1  eyre-gate  perform-init-wo-timer
   ::  when there's no configuration and nothing matches, expect 404
   ::
   =^  results2  eyre-gate
@@ -125,7 +125,7 @@
             [%ipv4 .192.168.1.1]
             [%'GET' '/' ~ ~]
         ==
-      ^=  expectec-moves
+      ^=  expected-moves
         ^-  (list move:eyre-gate)
         :~  :*  duct=~[/http-blah]
                 %give
@@ -146,7 +146,7 @@
 ::
 ++  test-basic-app-request
   ::
-  =^  results1  eyre-gate  perform-init
+  =^  results1  eyre-gate  perform-init-wo-timer
   ::  app1 binds successfully
   ::
   =^  results2  eyre-gate
@@ -190,14 +190,15 @@
         %+  weld
           %+  expect-gall-deal
             :+  /watch-response/[eyre-id]
-              [~nul ~nul]
+              [g-name ~nul]
             :*  %app1  %watch
                 /http-response/[eyre-id]
             ==
           card.move-1
+        ::  response includes a guest session
         ::
         %+  expect-gall-deal
-          :+  /run-app-request/[eyre-id]  [~nul ~nul]
+          :+  /run-app-request/[eyre-id]  [g-name ~nul]
               :*  %app1  %poke  %handle-http-request
                   !>([eyre-id %.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
               ==
@@ -220,19 +221,19 @@
            ==
         ^=  expected-move
           :~  :*  duct=~[/http-blah]  %give  %response
-                  [%start [200 ['content-type' 'text/html']~] ~ %.n]
+                  [%start [200 ~['content-type'^'text/html' g-head]] ~ %.n]
       ==  ==  ==
 
   ;:  weld
     results1
     results2
     results3
-  ::  results4
+    results4
   ==
 ::
 ++  test-app-error
   ::
-  =^  results1  eyre-gate  perform-init
+  =^  results1  eyre-gate  perform-init-wo-timer
   ::  app1 binds successfully
   ::
   =^  results2  eyre-gate
@@ -276,7 +277,7 @@
         %+  weld
           %+  expect-gall-deal
             :+  /watch-response/[eyre-id]
-              [~nul ~nul]
+              [g-name ~nul]
             :*  %app1  %watch
                 /http-response/[eyre-id]
             ==
@@ -284,7 +285,7 @@
         ::
         %+  expect-gall-deal
           :+  /run-app-request/[eyre-id]
-            [~nul ~nul]
+            [g-name ~nul]
           :*  %app1  %poke  %handle-http-request
               !>([eyre-id %.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
           ==
@@ -307,7 +308,7 @@
       ^=  expected-move
         :~  :*  duct=~[/http-blah]  %pass
                 /watch-response/[eyre-id]
-                %g  %deal  [~nul ~nul]  %app1  %leave  ~
+                %g  %deal  [g-name ~nul]  %app1  %leave  ~
             ==
           ::
             :*  duct=~[/http-blah]  %give  %response
@@ -328,7 +329,7 @@
 ::
 ++  test-multipart-app-request
   ::
-  =^  results1  eyre-gate  perform-init
+  =^  results1  eyre-gate  perform-init-wo-timer
   ::  app1 binds successfully
   ::
   =^  results2  eyre-gate
@@ -372,14 +373,14 @@
         %+  weld
           %+  expect-gall-deal
             :+  /watch-response/[eyre-id]
-              [~nul ~nul]
+              [g-name ~nul]
             :*  %app1  %watch
                 /http-response/[eyre-id]
             ==
           card.move-1
         ::
         %+  expect-gall-deal
-          :+  /run-app-request/[eyre-id]  [~nul ~nul]
+          :+  /run-app-request/[eyre-id]  [g-name ~nul]
               :*  %app1  %poke  %handle-http-request
                   !>([eyre-id %.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
               ==
@@ -402,7 +403,7 @@
          ==
       ^=  expected-move
         :~  :*  duct=~[/http-blah]  %give  %response
-                [%start [200 ['content-type' 'text/html']~] ~ %.n]
+                [%start [200 ~['content-type'^'text/html' g-head]] ~ %.n]
     ==  ==  ==
   ::  theoretical outside response
   ::
@@ -436,7 +437,7 @@
 ::
 ++  test-login-handler-full-path
   ::
-  =^  results1  eyre-gate  perform-init
+  =^  results1  eyre-gate  perform-init-wo-timer
   =^  results2  eyre-gate  (perform-born eyre-gate)
   ::  app1 binds successfully
   ::
@@ -460,7 +461,7 @@
             %request
             %.n
             [%ipv4 .192.168.1.1]
-            [%'GET' '/~landscape/inner-path' ~ ~]
+            [%'GET' '/~landscape/inner-path' [g-auth]~ ~]
         ==
       ^=  comparator
         |=  moves=(list move:eyre-gate)
@@ -481,16 +482,16 @@
         %+  weld
           %+  expect-gall-deal
             :+  /watch-response/[eyre-id]
-              [~nul ~nul]
+              [g-name ~nul]
             :*  %app1  %watch
                 /http-response/[eyre-id]
             ==
           card.move-1
         ::
         %+  expect-gall-deal
-          :+  /run-app-request/[eyre-id]  [~nul ~nul]
+          :+  /run-app-request/[eyre-id]  [g-name ~nul]
               :*  %app1  %poke  %handle-http-request
-                  !>([eyre-id %.n %.n [%ipv4 .192.168.1.1] [%'GET' '/~landscape/inner-path' ~ ~]])
+                  !>([eyre-id %.n %.n [%ipv4 .192.168.1.1] [%'GET' '/~landscape/inner-path' [g-auth]~ ~]])
               ==
           card.move-2
     ==
@@ -511,7 +512,7 @@
          ==
       ^=  expected-move
         :~  :*  duct=~[/http-blah]  %give  %response
-                [%start [303 ['location' '/~/login?redirect=/~landscape/inner-path']~] ~ %.n]
+                [%start [303 ~['location'^'/~/login?redirect=/~landscape/inner-path' g-head]] ~ %.n]
     ==  ==  ==
   ::  the browser then fetches the login page
   ::
@@ -595,7 +596,7 @@
 ::
 ++  test-generator
   ::
-  =^  results1  eyre-gate  perform-init
+  =^  results1  eyre-gate  perform-init-wo-timer
   ::  gen1 binds successfully
   ::
   =^  results2  eyre-gate
@@ -622,7 +623,7 @@
         ==
       ^=  expected-moves
       :~  :+  ~[/http-blah]  %give
-          [%response %start [404 headers=~] data=~ complete=%.y]
+          [%response %start [404 headers=[g-head]~] data=~ complete=%.y]
       ==
     ==
   ::
@@ -732,47 +733,6 @@
               "mark": "wut-type",
               "json": [2, 1]}]
             '''
-  ==
-::
-++  test-channel-reject-unauthenticated
-  ::
-  =^  results1  eyre-gate  perform-init
-  ::
-  =^  results2  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=~1111.1.2
-      scry=scry-provides-code
-      ^=  call-args
-        :*  duct=~[/http-blah]  ~
-            %request
-            %.n
-            [%ipv4 .192.168.1.1]
-            [%'PUT' '/~/channel/1234567890abcdef' ~ ~]
-        ==
-      ^=  expected-moves
-        ^-  (list move:eyre-gate)
-        :~  :*  duct=~[/http-blah]
-                %give
-                %response
-                %start
-              ::
-                %+  complete-http-start-event
-                  :-  403
-                  ['content-type' 'text/html']~
-                :-  ~
-                %-  error-page:eyre-gate  :*
-                  403
-                  %.n
-                  '/~/channel/1234567890abcdef'
-                  ~
-                ==
-        ==  ==
-    ==
-  ::
-  ;:  weld
-    results1
-    results2
   ==
 ::
 ++  test-channel-open-never-used-expire
@@ -1188,7 +1148,9 @@
         ^-  tang
         ::
         ?.  ?=([^ ^ ^ ^ ~] moves)
-          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+          :~  [%leaf "wrong number of moves: {<(lent moves)>}"]
+              >moves<
+          ==
         ::
         ;:  weld
           %+  expect-gall-deal
@@ -1819,7 +1781,7 @@
 ::
 ++  test-born-sends-pending-cancels
   ::
-  =^  results1  eyre-gate  perform-init
+  =^  results1  eyre-gate  perform-init-wo-timer
   ::  app1 binds successfully
   ::
   =^  results2  eyre-gate
@@ -1864,14 +1826,14 @@
         %+  weld
           %+  expect-gall-deal
             :+  /watch-response/[eyre-id]
-              [~nul ~nul]
+              [g-name ~nul]
             :*  %app1  %watch
                 /http-response/[eyre-id]
             ==
           card.move-1
         ::
         %+  expect-gall-deal
-          :+  /run-app-request/[eyre-id]  [~nul ~nul]
+          :+  /run-app-request/[eyre-id]  [g-name ~nul]
               :*  %app1  %poke  %handle-http-request
                   !>([eyre-id %.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
               ==
@@ -1904,7 +1866,7 @@
           (expect-eq !>(~[/http-blah]) !>(duct))
         ::
         %+  expect-gall-deal
-          :+  /watch-response/[eyre-id]  [~nul ~nul]
+          :+  /watch-response/[eyre-id]  [g-name ~nul]
             [%app1 %leave ~]
           card
     ==
@@ -2065,7 +2027,7 @@
   ::  todo: handle other deals
   ::
   [%leaf "unexpected %deal type"]~
-::  +perfom-init: %init a new eyre-gate
+::  +perform-init: %init a new eyre-gate
 ::
 ++  perform-init
   %-  eyre-call  :*
@@ -2075,6 +2037,18 @@
     call-args=[duct=~[/init] ~ [%init ~]]
     expected-moves=~
   ==
+::  +perform-init-wo-timer: init, then add a guest session
+::
+::    so that we don't have to include the session expiry timer move
+::    in every single request handling test
+::
+++  perform-init-wo-timer
+  =^  result  eyre-gate  perform-init
+  :-  result
+  =-  eyre-gate(sessions.authentication-state.server-state.ax -)
+  %+  ~(put by sessions.authentication-state.server-state.ax.eyre-gate)
+    0vguest
+  [fake+~sampel-sampel-sampel-sampel--sampel-sampel-sampel-sampel ~2222.2.2 ~]
 ::  +perform-born: %born an eyre-gate
 ::
 ++  perform-born
@@ -2088,6 +2062,14 @@
     :~  [duct=~[/unix] %give %set-config *http-config:eyre]
         [duct=~[/unix] %give %sessions ~]
     ==
+  ==
+::
+++  test-perform-authentication
+  =<  -
+  %-  perform-authentication  :*
+    +:(perform-born +:perform-init-wo-timer)
+    now=~1111.1.2
+    scry=scry-provides-code
   ==
 ::  +perform-authentication: goes through the authentication flow
 ::
@@ -2109,7 +2091,7 @@
             %request
             %.n
             [%ipv4 .192.168.1.1]
-            [%'GET' '/~/login?redirect=/~landscape/inner-path' ~ ~]
+            [%'GET' '/~/login?redirect=/~landscape/inner-path' [g-auth]~ ~]
         ==
       ^=  expected-moves
         ^-  (list move:eyre-gate)
@@ -2145,11 +2127,7 @@
         ==
       ^=  expected-moves
         ^-  (list move:eyre-gate)
-        :~  ::NOTE  this ~d7 is tied to the eyre-internal +session-timeout...
-            :-  duct=~[/http-blah]
-            [%pass p=/sessions/expire q=[%b [%wait p=(add start-now ~d7.m1)]]]
-          ::
-            =+  token='0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea'
+        :~  =+  token='0vsb1uq.gsjg3.53i52.eej3q.icesf'
             [duct=~[/unix] %give %sessions [token ~ ~]]
           ::
             :*  duct=~[/http-blah]
@@ -2167,6 +2145,10 @@
   ::
   :_  eyre-gate
   (weld results1 results2)
+::
+++  test-perform-init-start-channel
+  =^  results  eyre-gate  (perform-init-start-channel eyre-gate *roof)
+  results
 ::  performs all initialization and an initial PUT.
 ::
 ++  perform-init-start-channel
@@ -2175,7 +2157,7 @@
       ==
   ^-  [tang _eyre-gate]
   ::
-  =^  results1  eyre-gate  perform-init
+  =^  results1  eyre-gate  perform-init-wo-timer
   =^  results2  eyre-gate  (perform-born eyre-gate)
   ::  ensure there's an authenticated session
   ::
@@ -2285,11 +2267,17 @@
 ::  produce the body of a %start http-event with the correct content-length
 ::
 ++  complete-http-start-event
-  |=  [response-header:http data=(unit octs)]
+  |=  [resp=response-header:http data=(unit octs)]
+  (complete-http-start-event-cookie resp data g-sook)
+::
+++  complete-http-start-event-cookie
+  |=  [response-header:http data=(unit octs) coo=@t]
   =-  [[status-code -] data %.y]
   ?~  data  headers
   %+  weld  headers
-  ['content-length' (crip ((d-co:co 1) p.u.data))]~
+  :~  ['content-length' (crip ((d-co:co 1) p.u.data))]
+      ['set-cookie' coo]
+  ==
 ::  produce the 204 response to a put request
 ::
 ++  put-204-response
@@ -2303,9 +2291,15 @@
   ==
 ::
 ++  cookie-value
-  'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea'
+  'urbauth-~nul=0vsb1uq.gsjg3.53i52.eej3q.icesf'
 ::
 ++  cookie-string
   %^  cat  3  cookie-value
   '; Path=/; Max-Age=604800'
+::
+++  g-name  ~rocfyn-bistyv-tadlux-modsel--bittex-patsun-sitpec-ravnul
+++  g-auth  ['cookie' g-cook]
+++  g-cook  'urbauth-~nul=0v5.gbhev.sbeh0.3rov1.o6ibh.a3t9r'
+++  g-sook  (cat 3 g-cook '; Path=/; Max-Age=604800')
+++  g-head  ['set-cookie' g-sook]
 --
