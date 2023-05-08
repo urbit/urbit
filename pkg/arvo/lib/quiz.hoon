@@ -7,11 +7,11 @@
   =+  run-i=0
   =+  rng=~(. og eny)
   |-  ^-  ?
-  =+  sam=(~(fill quiz [size rng]) sax)
-  =+  res=(slam vax sam)
   ?:  =(run-i runs)
       ~&  success-runs+run-i
       %.y
+  =+  sam=(~(fill quiz [size rng]) sax)
+  =+  res=(slam vax sam)
   ?:  =(+:res %.y)
     :: Arbitrarily chosen growth pace.
     =+  new-size=(add +(size) (div (mul size 2) 21))
