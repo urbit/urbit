@@ -1175,7 +1175,7 @@
             ::  if no session existed previously, we must kick off the
             ::  session expiry timer
             ::
-            ?~  sessions.authentication-state.state  ~
+            ?^  sessions.authentication-state.state  ~
             [duct %pass /sessions/expire %b %wait (add now session-timeout)]~
         =-  state(sessions.authentication-state -)
         %+  ~(put by sessions.authentication-state.state)  key
