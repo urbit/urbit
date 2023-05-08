@@ -300,7 +300,7 @@
   ~/  %handle-http-request
   |=  [eyre-id=@ta =inbound-request:eyre]
   ^-  (quip card _state)
-  ::?>  authenticated.inbound-request
+  ?>  authenticated.inbound-request
   =/  url
     (parse-request-line:server url.request.inbound-request)
   ?>  ?=([%spider @t @t @t @t ~] site.url)
