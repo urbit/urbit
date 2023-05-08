@@ -116,23 +116,30 @@
   ^-  form:m
   ;<  =bowl:spider  bind:m  get-bowl:strandio
   ?>  =(src.bowl our.bowl)
-  ;<    state=state:eth-provider
+  ;<    provider-mode=provider-mode:eth-provider
       bind:m
-    (scry:strandio state:eth-provider /gx/eth-provider/get-state/noun)
-  ?-  active.state
+    (scry:strandio provider-mode:eth-provider /gx/eth-provider/get-provider-mode/noun)
+  =/  active  `active:eth-provider`-.provider-mode
+  ?-  active  
     %local
-  (call-ethio eth-input active.state url.local.state)
+  ?>  ?=(%local -.provider-mode)
+  =/  local  `local:eth-provider`+.provider-mode
+  (call-ethio eth-input active url.local)
     %provider
-  (call-ethio eth-input active.state url.provider.state)
+  ?>  ?=(%provider -.provider-mode)
+  =/  provider  `provider:eth-provider`+.provider-mode
+  (call-ethio eth-input active url.provider)
     %client
-  ::  TODO subscribe to our thread id
+  ?>  ?=(%client -.provider-mode)
+  =/  client  `client:eth-provider`+.provider-mode
+  =/  rid  (crip (weld (trip (scot %p our.bowl)) (trip tid.bowl)))
   ;<  ~  bind:m  
-    (watch:strandio [%responses tid.bowl ~] [provider.client.state %eth-provider] [%responses tid.bowl ~])
+    (watch:strandio [%responses rid ~] [provider.client %eth-provider] [%responses rid ~])
   ;<  ~  bind:m
     %+  poke:strandio
-      [provider.client.state %eth-provider] 
-    [%provider-action !>([%provide tid.bowl eth-input])]
-  ;<  =cage  bind:m  (take-fact:strandio [%responses tid.bowl ~])
+      [provider.client %eth-provider] 
+    [%provider-action !>([%provide rid eth-input])]
+  ;<  =cage  bind:m  (take-fact:strandio [%responses rid ~])
   (pure:m !<(ethout:eth-provider q.cage))
   ==
 ++  call-ethio

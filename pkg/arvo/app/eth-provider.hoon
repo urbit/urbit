@@ -6,10 +6,7 @@
   ==
 +$  state-0  
   $:  %0
-      active=active:eth-provider
-      local=local:eth-provider
-      provider=provider:eth-provider
-      client=client:eth-provider
+      provider-mode=provider-mode:eth-provider
   ==
 +$  card  card:agent:gall
 --
@@ -25,7 +22,7 @@
 ++  on-init
   ^-  (quip card _this)
   =/  init-state  
-  [%0 %local 'http://eth-mainnet.urbit.org:8545' ['http://eth-mainnet.urbit.org:8545' %.n ~] ~zod]
+  [%0 %local 'http://eth-mainnet.urbit.org:8545']
   :-  ~
   this(state init-state)
 ::
@@ -55,32 +52,19 @@
     |=  =action:eth-provider
     ^-  (quip card _state)
     ?-    -.action
-        %set-local
+        %configure
       ?>  =(src.bowl our.bowl)
       :_  %=  state
-          active  %local
-          local  +.action
-          ==
-      ~
-        %set-provider
-      ?>  =(src.bowl our.bowl)
-      :_  %=  state
-          active  %provider
-          provider  +.action
-          ==
-      ~
-        %set-client
-      ?>  =(src.bowl our.bowl)
-      :_  %=  state
-          active  %client
-          client  +.action
+          provider-mode  +.action
           ==
       ~
         %provide
       :: Is in client or (kids active and is a kid)
-      ?>  =(active.state %provider)
-      ?>  ?|  (~(has in clients:provider) src.bowl)
-              ?&  kids:provider
+      :: ?:  =(-.provider-mode.state %provider)
+      ?>  ?=(%provider -.provider-mode.state)
+      =/  provider  `provider:eth-provider`+.provider-mode.state
+      ?>  ?|  (~(has in clients.provider) src.bowl)
+              ?&  kids.provider
                   =((sein:title our.bowl now.bowl src.bowl) our.bowl)
               ==
           ==
@@ -102,24 +86,6 @@
           %poke   %spider-start  !>(start-args)
           ==
       ==
-        %set-kids
-      ?>  =(src.bowl our.bowl)
-      :_  %=  state
-          provider  provider(kids +.action)
-          ==
-      ~
-        %add-client
-      ?>  =(src.bowl our.bowl)
-      :_  %=  state
-          provider  provider(clients (~(put in clients:provider) +.action))
-          ==
-      ~
-        %remove-client
-      ?>  =(src.bowl our.bowl)
-      :_  %=  state
-          provider  provider(clients (~(del in clients:provider) +.action))
-          ==
-      ~
     ==
   --
 ::
@@ -128,7 +94,9 @@
   ^-  (quip card _this)
   ?+    path  (on-watch:def path)
       [%responses @ ~]
-    ?>  (~(has in clients.provider.state) src.bowl)
+    ?>  ?=(%provider -.provider-mode.state)
+    =/  provider  `provider:eth-provider`+.provider-mode.state
+    ?>  (~(has in clients.provider) src.bowl)
     :_  this  ~
   ==
 ++  on-leave  on-leave:def
@@ -136,8 +104,8 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+    path  (on-peek:def path)
-      [%x %get-state ~]  
-    ``noun+!>(+.state)
+      [%x %get-provider-mode ~]  
+    ``noun+!>(provider-mode.state)
   ==
 ++  on-agent
    |=  [=wire =sign:agent:gall]
@@ -147,7 +115,7 @@
      ?+    -.sign  (on-agent:def wire sign)
          %poke-ack
        ?~  p.sign
-         %-  (slog leaf+"Thread started successfully" ~)
+         :: %-  (slog leaf+"Thread started successfully" ~)
          `this
        %-  (slog leaf+"Thread failed to start" u.p.sign)
        `this

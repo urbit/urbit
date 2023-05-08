@@ -4,33 +4,19 @@
 =,  jael
 |%
 +$  url  @ta
-+$  local
-  $:  =url
-  ==
-+$  provider
-  $:  =url
-      kids=?  :: allow stars to receive requests from their planets
-      clients=(set @p)
-  ==
-+$  client
-  $:  provider=@p
-  ==
 +$  active  ?(%local %provider %client)
-+$  state
-  $:
-  =active
-  =local
-  =provider
-  =client
++$  local  =url
++$  provider  [=url kids=? clients=(set @p)]
++$  client  provider=@p
++$  provider-mode
+  $%
+  [%local =local]
+  [%provider =provider]
+  [%client =client]
   ==
 +$  action
-  $%  [%set-local =url]
-      [%set-provider =provider]
-      [%set-client =client]
+  $%  [%configure =provider-mode]
       [%provide rid=@ta =ethin]
-      [%set-kids kids=?]
-      [%add-client client=@p]
-      [%remove-client client=@p]
   ==
 +$  ethin
   $%  
