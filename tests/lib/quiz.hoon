@@ -1,5 +1,4 @@
 /+  quiz, *test
-
 |%
 ++  test-ud
   =+  fate=!>(|=(@ud ^-(? =(+6 (dec +(+6))))))
