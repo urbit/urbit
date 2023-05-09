@@ -6,5 +6,5 @@
 ^-  (list [dude:gall @ud])
 %+  sort
   %~  tap  by
-  .^((map dude:gall @ud) %gf /(scot %p p.bec)//(scot %da now))
+  .^((map dude:gall @ud) %gf /(scot %p p.bec)//(scot %da now)/$)
 |=([[* a=@ud] [* b=@ud]] (lth a b))

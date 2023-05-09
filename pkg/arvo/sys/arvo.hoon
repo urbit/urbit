@@ -3,7 +3,7 @@
 |%
 +|  %global
 ::
-++  arvo  %239
+++  arvo  %238
 ::
 ::  $arch: node identity
 ::  $axal: fundamental node, recursive (trie)
@@ -20,7 +20,7 @@
 ::  $mark: symbolic content type
 ::  $mien: orientation
 ::  $page: untyped cage
-::  +omen: namespace path and data
+::  $omen: fully-qualified namespace path
 ::  $ship: network identity
 ::  $sink: subscription
 ::
@@ -39,10 +39,12 @@
   $%  ::  %da:  date
       ::  %tas: label
       ::  %ud:  sequence
+      ::  %uv:  hash
       ::
       [%da p=@da]
       [%tas p=@tas]
       [%ud p=@ud]
+      [%uv p=@uv]
   ==
 +$  cage  (cask vase)
 ++  cask  |$  [a]  (pair mark a)
@@ -52,7 +54,7 @@
 +$  mark  @tas
 +$  mien  [our=ship now=@da eny=@uvJ]
 +$  page  (cask)
-++  omen  |$  [a]  (pair path (cask a))
++$  omen  [vis=view bem=beam]
 +$  ship  @p
 +$  sink  (trel bone ship path)
 ::
@@ -109,18 +111,17 @@
   |$  [a]
   $~  =>(~ |~(* ~))
   $-  $:  lyc=gang                                      ::  leakset
-          vis=view                                      ::  perspective
-          bem=beam                                      ::  path
+          omen                                          ::  perspective, path
       ==                                                ::
   %-  unit                                              ::  ~: unknown
   %-  unit                                              ::  ~ ~: invalid
-  (cask a)
+  (cask a)                                              ::
 +$  roon                                                ::  partial namespace
   $~  =>(~ |~(* ~))
   $-  [lyc=gang car=term bem=beam]
   (unit (unit cage))
 +$  root  $-(^ (unit (unit)))
-+$  view  $@(term [way=term car=term])
++$  view  $@(term [way=term car=term])                  ::  perspective
 ::
 ++  wind
   |$  ::  a: forward
@@ -206,9 +207,9 @@
   ==
 +$  heir
   $%  $:  %grub
-          $%  [_arvo =grub]
+          $%  [?(%240 %239 %238) =grub]
       ==  ==
-      [_arvo =debt =soul]
+      [?(%240 %239 %238) =debt =soul]
   ==
 +$  plan  (pair germ (list move))
 +$  soul
@@ -313,11 +314,12 @@
   ^-  (unit case)
   ?^  num=(slaw %ud knot)  `[%ud u.num]
   ?^  wen=(slaw %da knot)  `[%da u.wen]
+  ?^  hax=(slaw %uv knot)  `[%uv u.hax]
   ?~  lab=(slaw %tas knot)  ~
   `[%tas u.lab]
 ::
 ++  en-omen
-  |=  [vis=view bem=beam]
+  |=  omen
   ^-  path
   :_  (en-beam bem)
   ?@  vis  vis
@@ -326,7 +328,7 @@
 ++  de-omen
   ~/  %de-omen
   |=  pax=path
-  ^-  (unit [vis=view bem=beam])
+  ^-  (unit omen)
   ?~  pax  ~
   ?~  bem=(de-beam t.pax)  ~
   ?:  ((sane %tas) i.pax)
@@ -1043,7 +1045,8 @@
   ::  |va: vane engine
   ::
   ++  va
-    =>  |%
+    =>  ~%  %va-ctx  ..va  ~
+        |%
         +$  vane-sample  [now=@da eny=@uvJ rof=rook]
         ::
         ++  smit
@@ -1056,12 +1059,14 @@
           (slap sub (rain pax txt))
         ::
         ++  create
+          ~/  %create
           |=  [our=ship zus=vase lal=term pax=path txt=@t]
           ^-  vase
           =/  cap  "vane: %{(trip lal)}"
           (slym (smit cap zus pax txt) our)
         ::
         ++  settle
+          ~/  %settle
           |=  van=vase
           ^-  (pair vase worm)
           =|  sac=worm
@@ -1073,6 +1078,7 @@
         ::  XX pass identity to preserve behavior?
         ::
         ++  update
+          ~/  %update
           |=  [las=vase nex=vase]
           ^-  vase
           =/  sam=vase  (slap (slym las *vane-sample) [%limb %stay])
@@ -1086,13 +1092,16 @@
     ::  |plow:va: operate in time and space
     ::
     ++  plow
+      ~/  %plow
       |=  [now=@da rok=rook]
+      ~%  %plow-core  +  ~
       |%
       ::  +peek:plow:va: read from a local namespace
       ::
       ++  peek
+        ~/  %peek
         ^-  rook
-        |=  [lyc=gang vis=view bem=beam]
+        |=  [lyc=gang omen]
         ^-  (unit (unit (cask meta)))
         ::  namespace reads receive no entropy
         ::
@@ -1360,11 +1369,11 @@
       ::
       %+  turn
         (sort ~(tap by van.mod) |=([[a=@tas *] [b=@tas *]] (aor a b)))
-      =/  bem=beam  [[our %base da+now] /whey]  ::TODO  %base?
+      =/  bem=beam  [[our %$ da+now] //whey]
       |=  [nam=term =vane]
       =;  mas=(list mass)
         nam^|+(welp mas [dot+&+q.vase typ+&+p.vase sac+&+worm ~]:vane)
-      ?~  met=(peek [~ ~] nam bem)  ~
+      ?~  met=(peek [~ ~] [nam %x] bem)  ~
       ?~  u.met  ~
       ~|  mass+nam
       ;;((list mass) q.q.u.u.met)
@@ -1372,7 +1381,7 @@
     ::
     ++  peek
       ^-  rook
-      |=  [lyc=gang vis=view bem=beam]
+      |=  [lyc=gang omen]
       ^-  (unit (unit (cask meta)))
       ::  vane and care may be concatenated
       ::
@@ -1728,7 +1737,6 @@
     %c  %clay
     %d  %dill
     %e  %eyre
-    %f  %ford
     %g  %gall
     %i  %iris
     %j  %jael
@@ -1756,7 +1764,7 @@
   ::
   =.  sol
     ?-  -.hir
-      _arvo  soul.hir
+      ?(%240 %239 %238)  soul.hir
     ==
   ::  clear compiler caches
   ::
@@ -1785,11 +1793,11 @@
           $=  nom
           %+  each  path
           $%  [%once vis=view syd=desk tyl=spur]
-              [%beam vis=view bem=beam]
+              [%beam omen]  :: XX unfortunate naming
           ==
       ==
   ^-  (unit (cask))
-  =/  hap=(unit [pat=? vis=view bem=beam])
+  =/  hap=(unit [pat=? omen])
     ?-  nom
       [%& *]        ?~(mon=(de-omen p.nom) ~ `[| u.mon])
       [%| %beam *]  `[| vis bem]:p.nom
