@@ -5,633 +5,613 @@
 =/  eyre-gate  (eyre-raw ~nul)
 =/  eyre-id  '~.eyre_0v4.elsnk.20412.0h04v.50lom.5lq0o'
 ::
+::  mare: a monad for testing eyre
+::
+|%
+::
+++  form-raw
+  |$  [a]
+  $-(state (output-raw a))
+::
+++  state
+  $:  gate=_eyre-gate
+      now=@da
+  ==
+::
+++  output-raw
+  |$  [a]
+  (each [out=a =state] tang)
+::
+++  mare
+  |*  a=mold
+  |%
+  ++  ouptut  (output-raw a)
+  ++  form  (form-raw a)
+  ++  pure
+    |=  arg=a
+    ^-  form
+    |=  =state
+    [%& arg state]
+  ::
+  ++  bind
+    |*  b=mold
+    |=  [m-b=(form-raw b) fun=$-(b form)]
+    ^-  form
+    |=  =state
+    =/  b-res=(output-raw b)  (m-b state)
+    ?-  -.b-res
+      %&  ((fun out.p.b-res) state.p.b-res)
+      %|  [%| p.b-res]
+    ==
+  --
+::
+::  mario: helpers for mare
+::
+++  move  move:eyre-gate
+::  advance time
+::
+++  wait
+  |=  =@dr
+  =/  m  (mare ,~)
+  ^-  form:m
+  |=  =state
+  [%& ~ state(now (add now.state dr))]
+::
+++  get-now
+  =/  m  (mare ,@da)
+  ^-  form:m
+  |=  =state
+  [%& now.state state]
+::  raise failure
+::
+++  fail
+  |=  =tang
+  |=  =state
+  [%| tang]
+::  fail if tang is non-null
+::
+++  try
+  |=  =tang
+  =/  m  (mare ,~)
+  ^-  form:m
+  ?~  tang
+    (pure:m ~)
+  (fail tang)
+::
+++  call
+  |=  [=duct wrapped-task=(hobo task:eyre-gate)]
+  =/  m  (mare ,(list move))
+  ^-  form:m
+  |=  =state
+  =/  eyre-core
+    %:  gate.state
+        now=now.state
+        eny=`@uvJ`0xdead.beef
+        scry=scry-provides-code
+    ==
+  =^  moves  gate.state
+    (call:eyre-core duct ~ wrapped-task)
+  [%& moves state]
+::
+++  take
+  |=  [=wire =duct =sign:eyre-gate]
+  =/  m  (mare ,(list move))
+  ^-  form:m
+  |=  =state
+  =/  eyre-core
+    %:  gate.state
+        now=now.state
+        eny=`@uvJ`0xdead.beef
+        scry=scry-provides-code
+    ==
+  =^  moves  gate.state
+    (take:eyre-core wire duct ~ sign)
+  [%& moves state]
+::
+++  get
+  |=  [url=@t =header-list:http]
+  =/  m  (mare ,(list move))
+  ^-  form:m
+  %+  call  ~[/http-blah]
+  [%request %.n [%ipv4 .192.168.1.1] [%'GET' url header-list ~]]
+::
+++  post
+  |=  [url=@t =header-list:http body=@t]
+  =/  m  (mare ,(list move))
+  ^-  form:m
+  =/  body  (as-octs:mimes:html body)
+  %+  call  ~[/http-blah]
+  [%request %.n [%ipv4 .192.168.1.1] [%'POST' url header-list `body]]
+::
+++  put
+  |=  [url=@t =header-list:http body=@t]
+  =/  m  (mare ,(list move))
+  ^-  form:m
+  =/  body  (as-octs:mimes:html body)
+  %+  call  ~[/http-blah]
+  [%request %.n [%ipv4 .192.168.1.1] [%'PUT' url header-list `body]]
+::  use different wire
+::
+++  put-2
+  |=  [url=@t =header-list:http body=@t]
+  =/  m  (mare ,(list move))
+  ^-  form:m
+  =/  body  (as-octs:mimes:html body)
+  %+  call  ~[/http-put-request]
+  [%request %.n [%ipv4 .192.168.1.1] [%'PUT' url header-list `body]]
+::
+++  connect
+  |=  [app=@t pax=path]
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  mos=(list move)  bind:m  (call ~[/[app]] [%connect [~ pax] app])
+  (expect-moves mos (ex ~[/[app]] %give %bound %.y [~ pax]) ~)
+::
+++  request
+  |=  [app=@t pax=path]
+  =/  m  (mare ,~)
+  =/  target  (crip (spud pax))
+  ;<  mos=(list move)  bind:m  (get target ~)
+  =/  mov-1
+    %^  ex-gall-deal  /watch-response/[eyre-id]  g-name
+    [app %watch /http-response/[eyre-id]]
+  =/  mov-2
+    =/  response  !>([eyre-id %.n %.n [%ipv4 .192.168.1.1] [%'GET' target ~ ~]])
+    %^  ex-gall-deal  /run-app-request/[eyre-id]  g-name
+    [app %poke %handle-http-request response]
+  (expect-moves mos mov-1 mov-2 ~)
+::
+++  expect-moves
+  |=  [mos=(list move) exes=(list $-(move tang))]
+  =/  m  (mare ,~)
+  ^-  form:m
+  |=  =state
+  =/  =tang
+    |-  ^-  tang
+    ?~  exes
+      ?~  mos
+        ~
+      ['got more moves than expected' ~]
+    ?~  mos
+      ['expected more moves than got' ~]
+    %+  weld
+      (i.exes i.mos)
+    $(exes t.exes, mos t.mos)
+  ?~  tang
+    [%& ~ state]
+  [%| tang]
+::
+++  ex-set-config
+  |=  =http-config:eyre
+  |=  mov=move
+  ^-  tang
+  (expect-eq !>([duct=~[/unix] %give %set-config http-config]) !>(mov))
+::
+++  ex
+  |=  mow=move
+  |=  mov=move
+  (expect-eq !>(mow) !>(mov))
+::
+++  ex-rest
+  |=  [=wire =@da]
+  (ex ~[/http-blah] %pass wire %b %rest da)
+::
+++  ex-wait
+  |=  [=wire =@da]
+  (ex ~[/http-blah] %pass wire %b %wait da)
+::
+++  ex-sessions
+  |=  tokens=(set @t)
+  |=  mov=move
+  ^-  tang
+  (expect-eq !>([duct=~[/unix] %give %sessions tokens]) !>(mov))
+::
+++  ex-response
+  |=  [status=@ud headers=header-list:http body=(unit octs)]
+  |=  mov=move
+  ^-  tang
+  ?.  ?=([[[%http-blah ~] ~] %give %response %start * * %.y] mov)
+    [leaf+"expected %response, got: {<mov>}" ~]
+  =?  headers  ?=(^ body)
+    %+  weld  headers
+    :~  ['content-length' (crip ((d-co:co 1) p.u.body))]
+        ['set-cookie' g-sook]
+    ==
+  ;:  weld
+    (expect-eq !>(status) !>(status-code.response-header.http-event.p.card.mov))
+    (expect-eq !>(body) !>(data.http-event.p.card.mov))
+    (expect-eq !>(headers) !>(headers.response-header.http-event.p.card.mov))
+  ==
+++  ex-start-response
+  |=  [status=@ud headers=header-list:http body=(unit octs)]
+  |=  mov=move
+  ^-  tang
+  ?.  ?=([[[%http-blah ~] ~] %give %response %start * * %.n] mov)
+    [leaf+"expected start %response, got: {<mov>}" ~]
+  =.  headers  (weld headers ~[g-head])
+  ;:  weld
+    (expect-eq !>(status) !>(status-code.response-header.http-event.p.card.mov))
+    (expect-eq !>(body) !>(data.http-event.p.card.mov))
+    (expect-eq !>(headers) !>(headers.response-header.http-event.p.card.mov))
+  ==
+::
+++  ex-continue-response
+  |=  [body=(unit octs) complete=?]
+  |=  mov=move
+  ^-  tang
+  ?.  ?=([[[%http-blah ~] ~] %give %response %continue * *] mov)
+    [leaf+"expected continue %response, got: {<mov>}" ~]
+  ;:  weld
+    (expect-eq !>(body) !>(data.http-event.p.card.mov))
+    (expect-eq !>(complete) !>(complete.http-event.p.card.mov))
+  ==
+::  produce the 204 response to a put request
+::
+++  ex-204
+  (ex-response 204 ['set-cookie' cookie-string]~ ~)
+::
+++  ex-204-2
+  |=  mov=move
+  ?.  ?=([[[%http-put-request ~] ~] %give %response %start * * %.y] mov)
+    [leaf+"expected %response, got: {<mov>}" ~]
+  =/  headers  ['set-cookie' cookie-string]~
+  ;:  weld
+    (expect-eq !>(204) !>(status-code.response-header.http-event.p.card.mov))
+    (expect-eq !>(~) !>(data.http-event.p.card.mov))
+    (expect-eq !>(headers) !>(headers.response-header.http-event.p.card.mov))
+  ==
+::
+++  ex-channel-response
+  |=  body=@t
+  |=  mov=move
+  ^-  tang
+  ?.  ?=([[[%http-blah ~] ~] %give %response %start * * %.n] mov)
+    [leaf+"expected start %response, got: {<mov>}" ~]
+  =/  headers
+    :~  ['content-type' 'text/event-stream']
+        ['cache-control' 'no-cache']
+        ['connection' 'keep-alive']
+        ['set-cookie' cookie-string]
+    ==
+  =/  body  `(as-octs:mimes:html body)
+  ;:  weld
+    (expect-eq !>(200) !>(status-code.response-header.http-event.p.card.mov))
+    (expect-eq !>(body) !>(data.http-event.p.card.mov))
+    (expect-eq !>(headers) !>(headers.response-header.http-event.p.card.mov))
+  ==
+::
+++  ex-gall-deal
+  |=  [=wire our=@p app=term =deal:gall]
+  |=  mov=move
+  ^-  tang
+  %+  weld  (expect-eq !>(~[/http-blah]) !>(duct.mov))
+  (expect-gall-deal [wire [our ~nul] app deal] card.mov)
+::
+++  expect-gall-deal
+  |=  $:  expected=[wire=path id=sock app=term =deal:gall]
+          actual=(wind note:eyre-gate gift:eyre-gate)
+      ==
+  ^-  tang
+  ::
+  ?.  ?=(%pass -.actual)
+    [%leaf "bad move, not a %pass: {<actual>}"]~
+  ::
+  %+  weld
+    (expect-eq !>(wire.expected) !>(p.actual))
+  ::
+  =/  note=note:eyre-gate  q.actual
+  ?.  ?=([%g %deal *] note)
+    [%leaf "bad move, not a %deal: {<actual>}"]~
+  ::
+  %+  weld
+    (expect-eq !>(id.expected) !>(p.note))
+  ::
+  %+  weld
+    (expect-eq !>(app.expected) !>(q.note))
+  ::
+  ?:  ?=([%poke *] deal.expected)
+    ?.  ?=([%poke *] r.note)
+      [%leaf "expected %poke, actual {<r.note>}"]~
+    ::
+    %+  weld
+      (expect-eq !>(p.cage.deal.expected) !>(p.cage.r.note))
+    ::  compare the payload vases
+    ::
+    (expect-eq q.cage.deal.expected q.cage.r.note)
+  ::
+  ?:  ?=([%poke-as *] deal.expected)
+    ?.  ?=([%poke-as *] r.note)
+      [%leaf "expected %poke-as, actual {<r.note>}"]~
+    ::  compare the mark type
+    ::
+    %+  weld
+      (expect-eq !>(mark.deal.expected) !>(mark.r.note))
+    ::  compare the cage mark
+    ::
+    %+  weld
+      (expect-eq !>(p.cage.deal.expected) !>(p.cage.r.note))
+    ::  compare the payload vases
+    ::
+    (expect-eq q.cage.deal.expected q.cage.r.note)
+  ::
+  ?:  ?=([%watch *] deal.expected)
+    ?.  ?=([%watch *] r.note)
+      [%leaf "expected %watch, actual {<r.note>}"]~
+    ::  compare the path
+    ::
+    (expect-eq !>(path.deal.expected) !>(path.r.note))
+  ::
+  ?:  ?=([%watch-as *] deal.expected)
+    ?.  ?=([%watch-as *] r.note)
+      [%leaf "expected %watch-as, actual {<r.note>}"]~
+    ::  compare the result mark
+    ::
+    %+  weld
+      (expect-eq !>(mark.deal.expected) !>(mark.r.note))
+    ::  compare the path
+    ::
+    (expect-eq !>(path.deal.expected) !>(path.r.note))
+  ::
+  ?:  ?=([%leave *] deal.expected)
+    ?.  ?=([%leave *] r.note)
+      [%leaf "expected %leave, actual {<r.note>}"]~
+    ::
+    ~
+  ::  todo: handle other deals
+  ::
+  [%leaf "unexpected %deal type"]~
+::
+++  eval-mare
+  =/  m  (mare ,~)
+  |=  computation=form:m
+  ^-  tang
+  =/  res  (computation eyre-gate ~1111.1.1)
+  ?-  -.res
+    %&  ~
+    %|  p.res
+  ==
+::
+++  scry-provides-code  ^-  roof
+  |=  [gang =view =beam]
+  ^-  (unit (unit cage))
+  ?:  =(%gd view)  ``noun+!>(%base)
+  ?:  &(=(%ca view) =(/gen/handler/hoon s.beam))
+    :+  ~  ~
+    vase+!>(!>(|=(* |=(* [[%404 ~] ~]))))
+  ?:  &(=(%cb view) =(/json s.beam))
+    :^  ~  ~  %dais
+    !>  ^-  dais:clay
+    |_  sam=vase
+    ++  diff  !!
+    ++  form  !!
+    ++  join  !!
+    ++  mash  !!
+    ++  pact  !!
+    ++  vale  |=(=noun !>(;;(json noun)))
+    --
+  ::
+  ?>  =(%j view)
+  ?>  =(~nul p.beam)
+  ?>  =(%code q.beam)
+  ?>  =(%da -.r.beam)
+  ?>  =(/~nul s.beam)
+  ::  This is the default code for a fakeship.
+  ::
+  [~ ~ %noun !>(.~lidlut-tabwed-savheb-loslux)]
+::
+++  cookie-value
+  'urbauth-~nul=0vsb1uq.gsjg3.53i52.eej3q.icesf'
+::
+++  cookie-string
+  %^  cat  3  cookie-value
+  '; Path=/; Max-Age=604800'
+::
+++  cookie  ['cookie' cookie-value]~
+::
+++  g-name  ~rocfyn-bistyv-tadlux-modsel--bittex-patsun-sitpec-ravnul
+++  g-auth  ['cookie' g-cook]
+++  g-cook  'urbauth-~nul=0v5.gbhev.sbeh0.3rov1.o6ibh.a3t9r'
+++  g-sook  (cat 3 g-cook '; Path=/; Max-Age=604800')
+++  g-head  ['set-cookie' g-sook]
+--
+::  Tests
+::
 |%
 ++  test-init
-  -:perform-init
+  (eval-mare perform-init)
 ::
 ++  test-born
-  -:(perform-born eyre-gate)
+  (eval-mare perform-born)
 ::
 ++  test-overwrite-bindings
-  ::
-  =^  results1  eyre-gate  perform-init
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  ~  bind:m  perform-init
+  ;<  ~  bind:m  (wait ~d1)
   ::  app1 binds successfully
   ::
-  =^  results2  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=~1111.1.2
-      scry=scry-provides-code
-      call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
-      expected-moves=[duct=~[/app1] %give %bound %.y [~ /]]~
-    ==
+  ;<  ~  bind:m  (connect %app1 /)
+  ;<  ~  bind:m  (wait ~d1)
   ::  app2 tries to bind to the same path and succeeds
   ::
-  =^  results3  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=~1111.1.3
-      scry=scry-provides-code
-      call-args=[duct=~[/app2] ~ [%connect [~ /] %app2]]
-      expected-moves=[duct=~[/app2] %give %bound %.y [~ /]]~
-    ==
-  ::
-  ;:  weld
-    results1
-    results2
-    results3
-  ==
+  (connect %app2 /)
 ::
 ++  test-remove-binding
-  ::
-  =^  results1  eyre-gate  perform-init
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  ~  bind:m  perform-init
+  ;<  ~  bind:m  (wait ~d1)
   ::  app1 binds successfully
   ::
-  =^  results2  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=~1111.1.2
-      scry=scry-provides-code
-      call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
-      expected-moves=[duct=~[/app1] %give %bound %.y [~ /]]~
-    ==
+  ;<  ~  bind:m  (connect %app1 /)
+  ;<  ~  bind:m  (wait ~d1)
   ::  app1 unbinds
   ::
-  =^  results3  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=~1111.1.3
-      scry=scry-provides-code
-      call-args=[duct=~[/app1] ~ [%disconnect [~ /]]]
-      expected-moves=~
-    ==
+  ;<  mos=(list move)  bind:m  (call ~[/app1] [%disconnect `/])
+  ;<  ~  bind:m  (expect-moves mos ~)
+  ;<  ~  bind:m  (wait ~d1)
   ::  app2 binds successfully
   ::
-  =^  results4  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=~1111.1.4
-      scry=scry-provides-code
-      call-args=[duct=~[/app2] ~ [%connect [~ /] %app2]]
-      expected-moves=[duct=~[/app2] %give %bound %.y [~ /]]~
-    ==
-  ::
-  ;:  weld
-    results1
-    results2
-    results3
-    results4
-  ==
+  (connect %app2 /)
 ::
 ++  test-host-matching
   ;:  weld
-  ::
-    %+  expect-eq
-      !>(%.y)
-      !>((host-matches:eyre-gate ~ `'example.com'))
-  ::
-    %+  expect-eq
-      !>(%.y)
-      !>((host-matches:eyre-gate ~ ~))
-  ::
-    %+  expect-eq
-      !>(%.n)
-      !>((host-matches:eyre-gate `'example.com' ~))
-  ::
-    %+  expect-eq
-      !>(%.y)
-      !>((host-matches:eyre-gate `'example.com' `'example.com'))
-  ::
-    %+  expect-eq
-      !>(%.n)
-      !>((host-matches:eyre-gate `'example.com' `'blah.com'))
+    (expect !>((host-matches:eyre-gate ~ `'example.com')))
+    (expect !>((host-matches:eyre-gate ~ ~)))
+    (expect !>(!(host-matches:eyre-gate `'example.com' ~)))
+    (expect !>((host-matches:eyre-gate `'example.com' `'example.com')))
+    (expect !>(!(host-matches:eyre-gate `'example.com' `'blah.com')))
   ==
 ::  tests that when we have no match, that we fall back to the built-in 404
 ::
 ++  test-builtin-four-oh-four
-  ::
-  =^  results1  eyre-gate  perform-init-wo-timer
-  ::  when there's no configuration and nothing matches, expect 404
-  ::
-  =^  results2  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=~1111.1.1
-      scry=scry-provides-code
-      ^=  call-args
-        :*  duct=~[/http-blah]  ~
-            %request
-            %.n
-            [%ipv4 .192.168.1.1]
-            [%'GET' '/' ~ ~]
-        ==
-      ^=  expected-moves
-        ^-  (list move:eyre-gate)
-        :~  :*  duct=~[/http-blah]
-                %give
-                %response
-                %start
-              ::
-                %+  complete-http-start-event
-                  :-  404
-                  ['content-type' 'text/html']~
-                [~ (error-page:eyre-gate 404 %.n '/' ~)]
-        ==  ==
-    ==
-  ::
-  ;:  weld
-    results1
-    results2
-  ==
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  mos=(list move)  bind:m  (get '/' ~)
+  =/  headers  ['content-type' 'text/html']~
+  =/  body  `(error-page:eyre-gate 404 %.n '/' ~)
+  (expect-moves mos (ex-response 404 headers body) ~)
 ::
 ++  test-basic-app-request
-  ::
-  =^  results1  eyre-gate  perform-init-wo-timer
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  (wait ~d1)
   ::  app1 binds successfully
   ::
-  =^  results2  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=~1111.1.2
-      scry=scry-provides-code
-      call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
-      expected-moves=[duct=~[/app1] %give %bound %.y [~ /]]~
-    ==
+  ;<  ~  bind:m  (connect %app1 /)
+  ;<  ~  bind:m  (wait ~d1)
   ::  outside requests a path that app1 has bound to
   ::
-  =^  results3  eyre-gate
-    %-  eyre-call-with-comparator  :*
-      eyre-gate
-      now=~1111.1.3
-      scry=scry-provides-code
-      ^=  call-args
-        :*  duct=~[/http-blah]  ~
-            %request
-            %.n
-            [%ipv4 .192.168.1.1]
-            [%'GET' '/' ~ ~]
-        ==
-      ^=  comparator
-        |=  moves=(list move:eyre-gate)
-        ^-  tang
-        ::
-        ?.  ?=([* * ~] moves)
-          [%leaf "wrong number of moves: {<(lent moves)>}"]~
-        ::
-        ::
-        =/  move-1=move:eyre-gate  i.moves
-        =/  move-2=move:eyre-gate  i.t.moves
-        ::
-        %+  weld
-          (expect-eq !>(~[/http-blah]) !>(duct.move-1))
-        %+  weld
-          (expect-eq !>(~[/http-blah]) !>(duct.move-2))
-        ::
-        %+  weld
-          %+  expect-gall-deal
-            :+  /watch-response/[eyre-id]
-              [g-name ~nul]
-            :*  %app1  %watch
-                /http-response/[eyre-id]
-            ==
-          card.move-1
-        ::  response includes a guest session
-        ::
-        %+  expect-gall-deal
-          :+  /run-app-request/[eyre-id]  [g-name ~nul]
-              :*  %app1  %poke  %handle-http-request
-                  !>([eyre-id %.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
-              ==
-          card.move-2
-    ==
-    ::  theoretical outside response
-    ::
-    =^  results4  eyre-gate
-      %-  eyre-take  :*
-        eyre-gate
-        now=~1111.1.4
-        scry=scry-provides-code
-        ^=  take-args
-          :*  wire=/watch-response/[eyre-id]  duct=~[/http-blah]
-              ^-  sign:eyre-gate
-              :*  %gall  %unto  %fact
-                  %http-response-header
-                  !>([200 ['content-type' 'text/html']~])
-              ==
-           ==
-        ^=  expected-move
-          :~  :*  duct=~[/http-blah]  %give  %response
-                  [%start [200 ~['content-type'^'text/html' g-head]] ~ %.n]
-      ==  ==  ==
-
-  ;:  weld
-    results1
-    results2
-    results3
-    results4
-  ==
+  ;<  ~  bind:m  (request %app1 /)
+  ;<  ~  bind:m  (wait ~d1)
+  ::  theoretical outside response
+  ::
+  ;<  mos=(list move)  bind:m
+    =/  response  !>([200 ['content-type' 'text/html']~])
+    =/  sign=sign:eyre-gate
+      [%gall %unto %fact %http-response-header response]
+    (take /watch-response/[eyre-id] ~[/http-blah] sign)
+  =/  headers  ['content-type' 'text/html']~
+  (expect-moves mos (ex-start-response 200 headers ~) ~)
 ::
 ++  test-app-error
-  ::
-  =^  results1  eyre-gate  perform-init-wo-timer
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  (wait ~d1)
   ::  app1 binds successfully
   ::
-  =^  results2  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=~1111.1.2
-      scry=scry-provides-code
-      call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
-      expected-moves=[duct=~[/app1] %give %bound %.y [~ /]]~
-    ==
+  ;<  ~  bind:m  (connect %app1 /)
+  ;<  ~  bind:m  (wait ~d1)
   ::  outside requests a path that app1 has bound to
   ::
-  =^  results3  eyre-gate
-    %-  eyre-call-with-comparator  :*
-      eyre-gate
-      now=~1111.1.3
-      scry=scry-provides-code
-      ^=  call-args
-        :*  duct=~[/http-blah]  ~
-            %request
-            %.n
-            [%ipv4 .192.168.1.1]
-            [%'GET' '/' ~ ~]
-        ==
-      ^=  comparator
-        |=  moves=(list move:eyre-gate)
-        ^-  tang
-        ::
-        ?.  ?=([* * ~] moves)
-          [[%leaf "wrong number of moves: {<(lent moves)>}"] >moves< ~]
-        ::
-        ::
-        =/  move-1=move:eyre-gate  i.moves
-        =/  move-2=move:eyre-gate  i.t.moves
-        ::
-        %+  weld
-          (expect-eq !>(~[/http-blah]) !>(duct.move-1))
-        %+  weld
-          (expect-eq !>(~[/http-blah]) !>(duct.move-2))
-        ::
-        %+  weld
-          %+  expect-gall-deal
-            :+  /watch-response/[eyre-id]
-              [g-name ~nul]
-            :*  %app1  %watch
-                /http-response/[eyre-id]
-            ==
-          card.move-1
-        ::
-        %+  expect-gall-deal
-          :+  /run-app-request/[eyre-id]
-            [g-name ~nul]
-          :*  %app1  %poke  %handle-http-request
-              !>([eyre-id %.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
-          ==
-        card.move-2
-    ==
+  ;<  ~  bind:m  (request %app1 /)
+  ;<  ~  bind:m  (wait ~d1)
   ::  the poke fails. we should relay this to the client
   ::
-  =^  results4  eyre-gate
-    %-  eyre-take  :*
-      eyre-gate
-      now=~1111.1.4
-      scry=scry-provides-code
-      ^=  take-args
-        :*  wire=/run-app-request/app1  duct=~[/http-blah]
-            ^-  sign:eyre-gate
-            :*  %gall  %unto  %poke-ack  ~
-                :~  [%leaf "/~zod/...../app1:<[1 1].[1 20]>"]
-            ==  ==
-         ==
-      ^=  expected-move
-        :~  :*  duct=~[/http-blah]  %pass
-                /watch-response/[eyre-id]
-                %g  %deal  [g-name ~nul]  %app1  %leave  ~
-            ==
-          ::
-            :*  duct=~[/http-blah]  %give  %response
-                %start
-              ::
-                %+  complete-http-start-event
-                  :-  500
-                  ['content-type' 'text/html']~
-                [~ (internal-server-error:eyre-gate %.n '/' ~)]
-    ==  ==  ==
-  ::
-  ;:  weld
-    results1
-    results2
-    results3
-    results4
-  ==
+  ;<  mos=(list move)  bind:m
+    =/  sign=sign:eyre-gate
+      [%gall %unto %poke-ack ~ [%leaf "/~zod/...../app1:<[1 1].[1 20]>"]~]
+    (take /run-app-request/[eyre-id] ~[/http-blah] sign)
+  =/  mov-1  (ex-gall-deal /watch-response/[eyre-id] g-name %app1 [%leave ~])
+  =/  response  `(internal-server-error:eyre-gate %.n '/' ~)
+  =/  mov-2  (ex-response 500 ['content-type' 'text/html']~ response)
+  (expect-moves mos mov-1 mov-2 ~)
 ::
 ++  test-multipart-app-request
-  ::
-  =^  results1  eyre-gate  perform-init-wo-timer
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  (wait ~d1)
   ::  app1 binds successfully
   ::
-  =^  results2  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=~1111.1.2
-      scry=scry-provides-code
-      call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
-      expected-moves=[duct=~[/app1] %give %bound %.y [~ /]]~
-    ==
+  ;<  ~  bind:m  (connect %app1 /)
+  ;<  ~  bind:m  (wait ~d1)
   ::  outside requests a path that app1 has bound to
   ::
-  =^  results3  eyre-gate
-    %-  eyre-call-with-comparator  :*
-      eyre-gate
-      now=~1111.1.3
-      scry=scry-provides-code
-      ^=  call-args
-        :*  duct=~[/http-blah]  ~
-            %request
-            %.n
-            [%ipv4 .192.168.1.1]
-            [%'GET' '/' ~ ~]
-        ==
-      ^=  comparator
-        |=  moves=(list move:eyre-gate)
-        ^-  tang
-        ::
-        ?.  ?=([* * ~] moves)
-          [%leaf "wrong number of moves: {<(lent moves)>}"]~
-        ::
-        ::
-        =/  move-1=move:eyre-gate  i.moves
-        =/  move-2=move:eyre-gate  i.t.moves
-        ::
-        %+  weld
-          (expect-eq !>(~[/http-blah]) !>(duct.move-1))
-        %+  weld
-          (expect-eq !>(~[/http-blah]) !>(duct.move-2))
-        ::
-        %+  weld
-          %+  expect-gall-deal
-            :+  /watch-response/[eyre-id]
-              [g-name ~nul]
-            :*  %app1  %watch
-                /http-response/[eyre-id]
-            ==
-          card.move-1
-        ::
-        %+  expect-gall-deal
-          :+  /run-app-request/[eyre-id]  [g-name ~nul]
-              :*  %app1  %poke  %handle-http-request
-                  !>([eyre-id %.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
-              ==
-          card.move-2
-    ==
+  ;<  ~  bind:m  (request %app1 /)
+  ;<  ~  bind:m  (wait ~d1)
   ::  theoretical outside response
   ::
-  =^  results4  eyre-gate
-    %-  eyre-take  :*
-      eyre-gate
-      now=~1111.1.4
-      scry=scry-provides-code
-      ^=  take-args
-        :*  wire=/watch-response/[eyre-id]  duct=~[/http-blah]
-            ^-  sign:eyre-gate
-            :*  %gall  %unto  %fact
-                %http-response-header
-                !>([200 ['content-type' 'text/html']~])
-            ==
-         ==
-      ^=  expected-move
-        :~  :*  duct=~[/http-blah]  %give  %response
-                [%start [200 ~['content-type'^'text/html' g-head]] ~ %.n]
-    ==  ==  ==
-  ::  theoretical outside response
+  ;<  mos=(list move)  bind:m
+    =/  response  !>([200 ['content-type' 'text/html']~])
+    =/  sign=sign:eyre-gate
+      [%gall %unto %fact %http-response-header response]
+    (take /watch-response/[eyre-id] ~[/http-blah] sign)
+  ;<  ~  bind:m
+    =/  headers  ['content-type' 'text/html']~
+    (expect-moves mos (ex-start-response 200 headers ~) ~)
+  ;<  ~  bind:m  (wait ~s1)
+  ::  2nd response
   ::
-  =^  results5  eyre-gate
-    %-  eyre-take  :*
-      eyre-gate
-      now=~1111.1.4
-      scry=scry-provides-code
-      ^=  take-args
-        :*  wire=/watch-response/[eyre-id]  duct=~[/http-blah]
-            ^-  sign:eyre-gate
-            :*  %gall  %unto  %fact
-                %http-response-data
-                !>(`(as-octs:mimes:html 'ya!'))
-            ==
-         ==
-      ^=  expected-move
-        :~  :*  duct=~[/http-blah]  %give  %response
-                [%continue `[3 'ya!'] %.n]
-    ==  ==  ==
-  ::
-  ;:  weld
-    results1
-    results2
-    results3
-    results4
-    results5
-  ==
+  ;<  mos=(list move)  bind:m
+    =/  response  !>(`(as-octs:mimes:html 'ya!'))
+    =/  sign=sign:eyre-gate
+      [%gall %unto %fact %http-response-data response]
+    (take /watch-response/[eyre-id] ~[/http-blah] sign)
+  =/  headers  ['content-type' 'text/html']~
+  (expect-moves mos (ex-continue-response `[3 'ya!'] %.n) ~)
 ::  tests an app redirecting to the login handler, which then receives a post
 ::  and redirects back to app
 ::
 ++  test-login-handler-full-path
-  ::
-  =^  results1  eyre-gate  perform-init-wo-timer
-  =^  results2  eyre-gate  (perform-born eyre-gate)
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
+  ;<  ~  bind:m  (wait ~d1)
   ::  app1 binds successfully
   ::
-  =^  results3  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=~1111.1.2
-      scry=scry-provides-code
-      call-args=[duct=~[/app1] ~ [%connect [~ /'~landscape'] %app1]]
-      expected-moves=[duct=~[/app1] %give %bound %.y [~ /'~landscape']]~
-    ==
+  ;<  ~  bind:m  (connect %app1 /'~landscape')
+  ;<  ~  bind:m  (wait ~d1)
   ::  outside requests a path that app1 has bound to
   ::
-  =^  results4  eyre-gate
-    %-  eyre-call-with-comparator  :*
-      eyre-gate
-      now=~1111.1.3
-      scry=scry-provides-code
-      ^=  call-args
-        :*  duct=~[/http-blah]  ~
-            %request
-            %.n
-            [%ipv4 .192.168.1.1]
-            [%'GET' '/~landscape/inner-path' [g-auth]~ ~]
-        ==
-      ^=  comparator
-        |=  moves=(list move:eyre-gate)
-        ^-  tang
-        ::
-        ?.  ?=([* * ~] moves)
-          [%leaf "wrong number of moves: {<(lent moves)>}"]~
-        ::
-        ::
-        =/  move-1=move:eyre-gate  i.moves
-        =/  move-2=move:eyre-gate  i.t.moves
-        ::
-        %+  weld
-          (expect-eq !>(~[/http-blah]) !>(duct.move-1))
-        %+  weld
-          (expect-eq !>(~[/http-blah]) !>(duct.move-2))
-        ::
-        %+  weld
-          %+  expect-gall-deal
-            :+  /watch-response/[eyre-id]
-              [g-name ~nul]
-            :*  %app1  %watch
-                /http-response/[eyre-id]
-            ==
-          card.move-1
-        ::
-        %+  expect-gall-deal
-          :+  /run-app-request/[eyre-id]  [g-name ~nul]
-              :*  %app1  %poke  %handle-http-request
-                  !>([eyre-id %.n %.n [%ipv4 .192.168.1.1] [%'GET' '/~landscape/inner-path' [g-auth]~ ~]])
-              ==
-          card.move-2
-    ==
+  ;<  ~  bind:m  (request %app1 /'~landscape')
+  ;<  ~  bind:m  (wait ~d1)
   ::  app then gives a redirect to Eyre
   ::
-  =^  results5  eyre-gate
-    %-  eyre-take  :*
-      eyre-gate
-      now=~1111.1.4
-      scry=scry-provides-code
-      ^=  take-args
-        :*  wire=/watch-response/[eyre-id]  duct=~[/http-blah]
-            ^-  sign:eyre-gate
-            :*  %gall  %unto  %fact
-                %http-response-header
-                !>([303 ['location' '/~/login?redirect=/~landscape/inner-path']~])
-            ==
-         ==
-      ^=  expected-move
-        :~  :*  duct=~[/http-blah]  %give  %response
-                [%start [303 ~['location'^'/~/login?redirect=/~landscape/inner-path' g-head]] ~ %.n]
-    ==  ==  ==
+  =/  headers  ['location' '/~/login?redirect=/~landscape/inner-path']~
+  ;<  mos=(list move)  bind:m
+    =/  sign=sign:eyre-gate
+      [%gall %unto %fact %http-response-header !>([303 headers])]
+    (take /watch-response/[eyre-id] ~[/http-blah] sign)
+  ;<  ~  bind:m  (expect-moves mos (ex-start-response 303 headers ~) ~)
+  ;<  ~  bind:m  (wait ~d1)
   ::  the browser then fetches the login page
   ::
-  =^  results6  eyre-gate
-    %-  perform-authentication  :*
-      eyre-gate
-      now=~1111.1.5
-      scry=scry-provides-code
-    ==
+  ;<  ~  bind:m  perform-authentication-2
+  ;<  ~  bind:m  (wait ~h1)
   ::  going back to the original url will acknowledge the authentication cookie
   ::
-  =^  results7  eyre-gate
-    %-  eyre-call-with-comparator  :*
-      eyre-gate
-      now=~1111.1.5..1.0.0
-      scry=scry-provides-code
-      ^=  call-args
-        ^-  [=duct (unit goof) wrapped-task=(hobo task:eyre-gate)]
-        :*  duct=~[/http-blah]  ~
-            %request
-            %.n
-            [%ipv4 .192.168.1.1]
-            %'GET'
-            '/~landscape/inner-path'
-            ['cookie' cookie-value]~
-            ~
-        ==
-      ^=  comparator
-        |=  moves=(list move:eyre-gate)
-        ^-  tang
-        ::
-        ?.  ?=([* * ~] moves)
-          [%leaf "wrong number of moves: {<(lent moves)>}"]~
-        ::
-        ::
-        =/  move-1=move:eyre-gate  i.moves
-        =/  move-2=move:eyre-gate  i.t.moves
-        ::
-        %+  weld
-          (expect-eq !>(~[/http-blah]) !>(duct.move-1))
-        %+  weld
-          (expect-eq !>(~[/http-blah]) !>(duct.move-2))
-        ::
-        %+  weld
-          %+  expect-gall-deal
-            :+  /watch-response/[eyre-id]
-              [~nul ~nul]
-            :*  %app1  %watch
-                /http-response/[eyre-id]
-            ==
-          card.move-1
-        ::
-        ::  expect authenticated=%.y in the handle below
-        ::
-        %+  expect-gall-deal
-          :+  /run-app-request/[eyre-id]  [~nul ~nul]
-              :*  %app1  %poke  %handle-http-request
-                  !>  :*
-                    eyre-id
-                    %.y
-                    %.n
-                    [%ipv4 .192.168.1.1]
-                    :*  %'GET'
-                        '/~landscape/inner-path'
-                        ['cookie' cookie-value]~
-                        ~
-                  ==  ==
-              ==
-          card.move-2
-    ==
-  ::
-  ;:  weld
-    results1
-    results2
-    results3
-    results4
-    results5
-    results6
-    results7
-  ==
+  ;<  mos=(list move)  bind:m
+    (get '/~landscape/inner-path' ['cookie' cookie-value]~)
+  =/  mov-1
+    %^  ex-gall-deal  /watch-response/[eyre-id]  ~nul
+    [%app1 %watch /http-response/[eyre-id]]
+  =/  mov-2
+    =/  request  [%'GET' '/~landscape/inner-path' ['cookie' cookie-value]~ ~]
+    =/  response  !>([eyre-id %.y %.n [%ipv4 .192.168.1.1] request])
+    %^  ex-gall-deal  /run-app-request/[eyre-id]  ~nul
+    [%app1 %poke %handle-http-request response]
+  (expect-moves mos mov-1 mov-2 ~)
 ::
 ++  test-generator
-  ::
-  =^  results1  eyre-gate  perform-init-wo-timer
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  (wait ~d1)
   ::  gen1 binds successfully
   ::
-  =^  results2  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=~1111.1.2
-      scry=scry-provides-code
-      call-args=[duct=~[/gen1] ~ [%serve [~ /] [%base /gen/handler/hoon ~]]]
-      expected-moves=[duct=~[/gen1] %give %bound %.y [~ /]]~
-    ==
+  ;<  mos=(list move)  bind:m
+    (call ~[/gen1] [%serve [~ /] %base /gen/handler/hoon ~])
+  ;<  ~  bind:m  (expect-moves mos (ex ~[/gen1] %give %bound %.y [~ /]) ~)
+  ;<  ~  bind:m  (wait ~d1)
   ::  outside requests a path that app1 has bound to
   ::
-  =^  results3  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=~1111.1.3
-      scry=scry-provides-code
-      ^=  call-args
-        :*  duct=~[/http-blah]  ~
-            %request
-            %.n
-            [%ipv4 .192.168.1.1]
-            [%'GET' '/' ~ ~]
-        ==
-      ^=  expected-moves
-      :~  :+  ~[/http-blah]  %give
-          [%response %start [404 headers=[g-head]~] data=~ complete=%.y]
-      ==
-    ==
-  ::
-  ;:  weld
-    results1
-    results2
-    results3
-  ==
+  ;<  mos=(list move)  bind:m  (get '/' ~)
+  (expect-moves mos (ex-response 404 [g-head]~ ~) ~)
 ::
 ++  test-simplified-url-parser
   ;:  weld
@@ -736,629 +716,247 @@
   ==
 ::
 ++  test-channel-open-never-used-expire
-  =^  results1  eyre-gate  (perform-init-start-channel eyre-gate *roof)
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  ~  bind:m  perform-init-start-channel-2
   ::  the behn timer wakes us up; we cancel our subscription
   ::
-  =^  results2  eyre-gate
-    %-  eyre-take-with-comparator  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~h12)
-      scry=scry-provides-code
-      ^=  take-args
-        :*  wire=/channel/timeout/'0123456789abcdef'  duct=~[/http-blah]
-            ^-  sign:eyre-gate
-            [%behn %wake ~]
-         ==
-      ^=  comparator
-        |=  moves=(list move:eyre-gate)
-        ^-  tang
-        ::
-        ?.  ?=([^ ~] moves)
-          [%leaf "wrong number of moves: {<(lent moves)>}"]~
-        ::
-        %+  expect-gall-deal
-          :*  /channel/subscription/'0123456789abcdef'/1/~nul/two
-              [~nul ~nul]  %two  %leave  ~
-          ==
-          card.i.moves
-    ==
-  ::
-  ;:  weld
-    results1
-    results2
-  ==
+  ;<  ~  bind:m  (wait ~h12)
+  =/  wire  /channel/timeout/'0123456789abcdef'
+  ;<  mos=(list move)  bind:m  (take wire ~[/http-blah] %behn %wake ~)
+  =/  wire  /channel/subscription/'0123456789abcdef'/1/~nul/two
+  (expect-moves mos (ex-gall-deal wire ~nul %two %leave ~) ~)
 ::
 ++  test-channel-results-before-open
-  ::  common initialization
-  ::
-  =^  results1  eyre-gate  (perform-init-start-channel eyre-gate *roof)
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  ~  bind:m  perform-init-start-channel-2
+  ;<  ~  bind:m  (wait ~m1)
   ::  poke gets a success message
   ::
-  =^  results2  eyre-gate
-    %-  eyre-take  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~m1)
-      scry=scry-provides-code
-      ^=  take-args
-        :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
-            ^-  sign:eyre-gate
-            [%gall %unto %poke-ack ~]
-         ==
-      moves=~
-    ==
+  =/  wire  /channel/poke/'0123456789abcdef'/'0'
+  ;<  mos=(list move)  bind:m  (take wire ~[/http-blah] %gall %unto %poke-ack ~)
+  ;<  ~  bind:m  (expect-moves mos ~)
   ::  subscription gets a success message
   ::
-  =^  results3  eyre-gate
-    %-  eyre-take  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~m1)
-      scry=scry-provides-code
-      ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
-            duct=~[/http-put-request]
-            ^-  sign:eyre-gate
-            [%gall %unto %watch-ack ~]
-         ==
-      moves=~
-    ==
+  =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+  ;<  mos=(list move)  bind:m
+    (take wire ~[/http-blah] %gall %unto %watch-ack ~)
+  ;<  ~  bind:m  (expect-moves mos ~)
   ::  subscription gets a result
   ::
-  =^  results4  eyre-gate
-    %-  eyre-take  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~m2)
-      scry=scry-provides-code
-      ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
-            duct=~[/http-put-request]
-            ^-  sign:eyre-gate
-            [%gall %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
-         ==
-      moves=~
-    ==
+  ;<  ~  bind:m  (wait ~m1)
+  ;<  mos=(list move)  bind:m
+    =/  =cage  [%json !>(`json`[%a [%n '1'] [%n '2'] ~])]
+    (take wire ~[/http-blah] %gall %unto %fact cage)
+  ;<  ~  bind:m  (expect-moves mos ~)
   ::  open up the channel
   ::
   ::  send the channel a poke and a subscription request
   ::
-  =^  results5  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~m3)
-      scry=scry-provides-code
-      ^=  call-args
-        :*  duct=~[/http-get-open]  ~
-            %request
-            %.n
-            [%ipv4 .192.168.1.1]
-            %'GET'
-            '/~/channel/0123456789abcdef'
-            ['cookie' cookie-value]~
-            ~
-        ==
-      ^=  expected-moves
-        ^-  (list move:eyre-gate)
-        :~  :*  duct=~[/http-get-open]
-                %pass
-                /channel/heartbeat/'0123456789abcdef'
-                [%b %wait ~1111.1.2..00.03.20]
-                ==
-            :*  duct=~[/http-get-open]
-                %give
-                %response
-                %start
-                :-  200
-                :~  ['content-type' 'text/event-stream']
-                    ['cache-control' 'no-cache']
-                    ['connection' 'keep-alive']
-                    ['set-cookie' cookie-string]
-                ==
-              ::
-                :-  ~
-                %-  as-octs:mimes:html
-                '''
-                id: 0
-                data: {"ok":"ok","id":0,"response":"poke"}
+  ;<  ~  bind:m  (wait ~m1)
+  ;<  mos=(list move)  bind:m
+    (get '/~/channel/0123456789abcdef' cookie)
+  ;<  now=@da  bind:m  get-now
+  =/  mov-1  (ex-wait /channel/heartbeat/'0123456789abcdef' (add now ~s20))
+  =/  mov-2
+    %-  ex-channel-response
+    '''
+    id: 0
+    data: {"ok":"ok","id":0,"response":"poke"}
 
-                id: 1
-                data: {"ok":"ok","id":1,"response":"subscribe"}
+    id: 1
+    data: {"ok":"ok","id":1,"response":"subscribe"}
 
-                id: 2
-                data: {"json":[1,2],"id":1,"response":"diff"}
+    id: 2
+    data: {"json":[1,2],"id":1,"response":"diff"}
 
 
-                '''
-              ::
-                complete=%.n
-            ==
-            ::  opening the channel cancels the timeout timer
-            ::
-            :*  duct=~[/http-put-request]  %pass
-                /channel/timeout/'0123456789abcdef'
-                [%b %rest ~1111.1.2..12.00.00]
-    ==  ==  ==
+    '''
+  ::  opening the channel cancels the timeout timer
+  ::
+  =/  mov-3  (ex-rest /channel/timeout/'0123456789abcdef' ~1111.1.2..12.00.00)
+  ;<  ~  bind:m  (expect-moves mos mov-1 mov-2 mov-3 ~)
   ::  we get a cancel when we notice the client has disconnected
   ::
-  =^  results6  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~m4)
-      scry=scry-provides-code
-      call-args=[duct=~[/http-get-open] ~ %cancel-request ~]
-      ^=  expected-moves
-        ^-  (list move:eyre-gate)
-        ::  closing the channel cancels the sse heartbeat
-        ::  (initialized in results5 above) and restarts the timeout timer
-        ::
-        :~  :*  duct=~[/http-get-open]  %pass
-                /channel/heartbeat/'0123456789abcdef'
-                %b  %rest  :(add ~1111.1.2 ~m3 ~s20)
-            ==
-            :*  duct=~[/http-get-open]  %pass
-                /channel/timeout/'0123456789abcdef'
-                %b  %wait  :(add ~1111.1.2 ~h12 ~m4)
-        ==  ==
-    ==
-  ::
-  ;:  weld
-    results1
-    results2
-    results3
-    results4
-    results5
-    results6
-  ==
-::
+  ;<  ~  bind:m  (wait ~m1)
+  ;<  mos=(list move)  bind:m  (call ~[/http-blah] %cancel-request ~)
+  =/  mov-1
+    (ex-rest /channel/heartbeat/'0123456789abcdef' :(add ~1111.1.2 ~m3 ~s20))
+  =/  mov-2 
+    (ex-wait /channel/timeout/'0123456789abcdef' :(add ~1111.1.2 ~m4 ~h12))
+  (expect-moves mos mov-1 mov-2 ~)
 ::
 ++  test-channel-second-get-updates-timer
-  ::  common initialization
-  ::
-  =^  results1  eyre-gate  (perform-init-start-channel eyre-gate *roof)
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  ~  bind:m  perform-init-start-channel-2
+  ;<  ~  bind:m  (wait ~m1)
   ::  perform another poke to a different app
   ::
   ::    Since we haven't connected with a GET, the old timer should be canceled
   ::    and a new one should be set.
-  ::  send the channel a poke and a subscription request
   ::
-  =^  results2  eyre-gate
-    %-  eyre-call-with-comparator  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~m1)
-      scry=scry-provides-code
-      ^=  call-args
-        :*  duct=~[/http-put-request]  ~
-            %request
-            %.n
-            [%ipv4 .192.168.1.1]
-            %'PUT'
-            '/~/channel/0123456789abcdef'
-            ['cookie' cookie-value]~
-        ::
-            :-  ~
-            %-  as-octs:mimes:html
-            '''
-            [{"action": "poke",
-              "id": 2,
-              "ship": "nul",
-              "app": "eight",
-              "mark": "a",
-              "json": 9}]
-            '''
-        ==
-      ^=  comparator
-        |=  moves=(list move:eyre-gate)
-        ^-  tang
-        ::
-        ?.  ?=([^ ^ ^ ^ ~] moves)
-          [%leaf "wrong number of moves: {<(lent moves)>}"]~
-        ::
-        ;:  weld
-          %+  expect-gall-deal
-            :*  /channel/poke/'0123456789abcdef'/'2'
-                [~nul ~nul]  %eight
-                %poke-as  %a  %json  !>([%n '9'])
-            ==
-            card.i.moves
-        ::
-          %+  expect-eq
-            !>  put-204-response
-            !>  i.t.moves
-        ::
-          %+  expect-eq
-            !>  :*  ~[/http-put-request]  %pass
-                    /channel/timeout/'0123456789abcdef'
-                    %b  %rest  (add ~1111.1.2 ~h12)
-                ==
-            !>  i.t.t.moves
-        ::
-          %+  expect-eq
-            !>  :*  ~[/http-put-request]  %pass
-                    /channel/timeout/'0123456789abcdef'
-                    %b  %wait  :(add ~1111.1.2 ~h12 ~m1)
-                ==
-            !>  i.t.t.t.moves
-    ==  ==
-  ::
-  ;:  weld
-    results1
-    results2
-  ==
+  ;<  mos=(list move)  bind:m
+    %^  put  '/~/channel/0123456789abcdef'  cookie
+    '''
+    [{"action": "poke",
+      "id": 2,
+      "ship": "nul",
+      "app": "eight",
+      "mark": "a",
+      "json": 9}]
+    '''
+  =/  wire  /channel/poke/'0123456789abcdef'/'2'
+  =/  mov-1  (ex-gall-deal wire ~nul %eight %poke-as %a %json !>([%n '9']))
+  =/  mov-2  ex-204
+  =/  mov-3  (ex-rest /channel/timeout/'0123456789abcdef' ~1111.1.2..12.00.00)
+  =/  mov-4  (ex-wait /channel/timeout/'0123456789abcdef' ~1111.1.2..12.01.00)
+  (expect-moves mos mov-1 mov-2 mov-3 mov-4 ~)
 ::
 ++  test-channel-unsubscribe-stops-events
-  ::  common initialization
-  ::
-  =^  results1  eyre-gate  (perform-init-start-channel eyre-gate *roof)
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  ~  bind:m  perform-init-start-channel-2
+  ;<  ~  bind:m  (wait ~m1)
   ::  poke gets a success message
   ::
-  =^  results2  eyre-gate
-    %-  eyre-take  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~m1)
-      scry=scry-provides-code
-      ^=  take-args
-        :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
-            ^-  sign:eyre-gate
-            [%gall %unto %poke-ack ~]
-         ==
-      moves=~
-    ==
+  =/  wire  /channel/poke/'0123456789abcdef'/'0'
+  ;<  mos=(list move)  bind:m  (take wire ~[/http-blah] %gall %unto %poke-ack ~)
+  ;<  ~  bind:m  (expect-moves mos ~)
+  ;<  ~  bind:m  (wait ~m1)
   ::  subscription gets a success message
   ::
-  =^  results3  eyre-gate
-    %-  eyre-take  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~m2)
-      scry=scry-provides-code
-      ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
-            duct=~[/http-put-request]
-            ^-  sign:eyre-gate
-            [%gall %unto %watch-ack ~]
-         ==
-      moves=~
-    ==
+  =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+  ;<  mos=(list move)  bind:m
+    (take wire ~[/http-blah] %gall %unto %watch-ack ~)
+  ;<  ~  bind:m  (expect-moves mos ~)
+  ;<  ~  bind:m  (wait ~m1)
   ::  sending an unsubscribe sends an unsubscribe to gall
   ::
-  =^  results4  eyre-gate
-    %-  eyre-call-with-comparator  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~m3)
-      scry=scry-provides-code
-      ^=  call-args
-        :*  duct=~[/http-put-request]  ~
-            %request
-            %.n
-            [%ipv4 .192.168.1.1]
-            %'PUT'
-            '/~/channel/0123456789abcdef'
-            ['cookie' cookie-value]~
-        ::
-            :-  ~
-            %-  as-octs:mimes:html
-            '''
-            [{"action": "unsubscribe",
-              "id": 2,
-              "subscription": 1}
-            ]
-            '''
-        ==
-      ^=  comparator
-        |=  moves=(list move:eyre-gate)
-        ^-  tang
-        ::
-        ?.  ?=([^ ^ ^ ^ ~] moves)
-          [%leaf "wrong number of moves: {<(lent moves)>}"]~
-        ::
-        ;:  weld
-          ::  we want to cancel the subscription id on which we originally subscribed
-          ::
-          %+  expect-gall-deal
-            :*  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
-                [~nul ~nul]  %two  %leave  ~
-            ==
-            card.i.moves
-        ::
-          %+  expect-eq
-            !>  put-204-response
-            !>  i.t.moves
-        ::
-          %+  expect-eq
-            !>  :*  ~[/http-put-request]  %pass
-                    /channel/timeout/'0123456789abcdef'
-                    %b  %rest  (add ~1111.1.2 ~h12)
-                ==
-            !>  i.t.t.moves
-        ::
-          %+  expect-eq
-            !>  :*  ~[/http-put-request]  %pass
-                    /channel/timeout/'0123456789abcdef'
-                    %b  %wait  :(add ~1111.1.2 ~h12 ~m3)
-                ==
-            !>  i.t.t.t.moves
-    ==  ==
-  ::
-  ;:  weld
-    results1
-    results2
-    results3
-    results4
-  ==
+  ;<  mos=(list move)  bind:m
+    %^  put  '/~/channel/0123456789abcdef'  cookie
+    '''
+    [{"action": "unsubscribe",
+      "id": 2,
+      "subscription": 1}
+    ]
+    '''
+  =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+  =/  mov-1  (ex-gall-deal wire ~nul %two %leave ~)
+  =/  mov-2  ex-204
+  =/  mov-3  (ex-rest /channel/timeout/'0123456789abcdef' ~1111.1.2..12.00.00)
+  =/  mov-4  (ex-wait /channel/timeout/'0123456789abcdef' ~1111.1.2..12.03.00)
+  (expect-moves mos mov-1 mov-2 mov-3 mov-4 ~)
 ::
 ++  test-channel-double-subscription-works
-  ::  common initialization
-  ::
-  =^  results1  eyre-gate  (perform-init-start-channel eyre-gate *roof)
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  ~  bind:m  perform-init-start-channel-2
+  ;<  ~  bind:m  (wait ~m1)
   ::  poke gets a success message
   ::
-  =^  results2  eyre-gate
-    %-  eyre-take  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~m1)
-      scry=scry-provides-code
-      ^=  take-args
-        :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
-            ^-  sign:eyre-gate
-            [%gall %unto %poke-ack ~]
-         ==
-      moves=~
-    ==
+  =/  wire  /channel/poke/'0123456789abcdef'/'0'
+  ;<  mos=(list move)  bind:m  (take wire ~[/http-blah] %gall %unto %poke-ack ~)
+  ;<  ~  bind:m  (expect-moves mos ~)
+  ;<  ~  bind:m  (wait ~m1)
   ::  subscription gets a success message
   ::
-  =^  results3  eyre-gate
-    %-  eyre-take  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~m2)
-      scry=scry-provides-code
-      ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
-            duct=~[/http-put-request]
-            ^-  sign:eyre-gate
-            [%gall %unto %watch-ack ~]
-         ==
-      moves=~
-    ==
+  =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+  ;<  mos=(list move)  bind:m
+    (take wire ~[/http-blah] %gall %unto %watch-ack ~)
+  ;<  ~  bind:m  (expect-moves mos ~)
+  ;<  ~  bind:m  (wait ~m1)
   ::  now make a second subscription from the client on the same path
   ::
-  =^  results3  eyre-gate
-    %-  eyre-call-with-comparator  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~m3)
-      scry=scry-provides-code
-      ^=  call-args
-        :*  duct=~[/http-put-request]  ~
-            %request
-            %.n
-            [%ipv4 .192.168.1.1]
-            %'PUT'
-            '/~/channel/0123456789abcdef'
-            ['cookie' cookie-value]~
-        ::
-            :-  ~
-            %-  as-octs:mimes:html
-            '''
-            [{"action": "subscribe",
-              "id": 2,
-              "ship": "nul",
-              "app": "two",
-              "path": "/one/two/three"}
-            ]
-            '''
-        ==
-      ^=  comparator
-        |=  moves=(list move:eyre-gate)
-        ^-  tang
-        ::
-        ?.  ?=([^ ^ ^ ^ ~] moves)
-          :~  [%leaf "wrong number of moves: {<(lent moves)>}"]
-              >moves<
-          ==
-        ::
-        ;:  weld
-          %+  expect-gall-deal
-            :*  /channel/subscription/'0123456789abcdef'/'2'/~nul/two
-                [~nul ~nul]  %two
-                %watch  /one/two/three
-            ==
-            card.i.moves
-        ::
-          %+  expect-eq
-            !>  put-204-response
-            !>  i.t.moves
-        ::
-          %+  expect-eq
-            !>  :*  ~[/http-put-request]  %pass
-                    /channel/timeout/'0123456789abcdef'
-                    %b  %rest  (add ~1111.1.2 ~h12)
-                ==
-            !>  i.t.t.moves
-        ::
-          %+  expect-eq
-            !>  :*  ~[/http-put-request]  %pass
-                    /channel/timeout/'0123456789abcdef'
-                    %b  %wait  :(add ~1111.1.2 ~h12 ~m3)
-                ==
-            !>  i.t.t.t.moves
-    ==  ==
-  ::  subscription gets a result (on the id 1)
+  ;<  mos=(list move)  bind:m
+    %^  put  '/~/channel/0123456789abcdef'  cookie
+    '''
+    [{"action": "subscribe",
+      "id": 2,
+      "ship": "nul",
+      "app": "two",
+      "path": "/one/two/three"}
+    ]
+    '''
+  =/  wire  /channel/subscription/'0123456789abcdef'/'2'/~nul/two
+  =/  mov-1  (ex-gall-deal wire ~nul %two %watch /one/two/three)
+  =/  mov-2  ex-204
+  =/  mov-3  (ex-rest /channel/timeout/'0123456789abcdef' ~1111.1.2..12.00.00)
+  =/  mov-4  (ex-wait /channel/timeout/'0123456789abcdef' ~1111.1.2..12.03.00)
+  ::  subscription gets 2 results
   ::
-  =^  results4  eyre-gate
-    %-  eyre-take  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~m2)
-      scry=scry-provides-code
-      ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
-            duct=~[/http-put-request]
-            ^-  sign:eyre-gate
-            [%gall %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
-         ==
-      moves=~
-    ==
-  ::  subscription gets a result (on the id 2)
+  ;<  mos=(list move)  bind:m
+    =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+    =/  =cage  [%json !>(`json`[%a [%n '1'] [%n '2'] ~])]
+    (take wire ~[/http-blah] %gall %unto %fact cage)
+  ;<  ~  bind:m  (expect-moves mos ~)
   ::
-  =^  results5  eyre-gate
-    %-  eyre-take  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~m2)
-      scry=scry-provides-code
-      ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'2'/~nul/two
-            duct=~[/http-put-request]
-            ^-  sign:eyre-gate
-            [%gall %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
-         ==
-      moves=~
-    ==
+  ;<  mos=(list move)  bind:m
+    =/  wire  /channel/subscription/'0123456789abcdef'/'2'/~nul/two
+    =/  =cage  [%json !>(`json`[%a [%n '1'] [%n '2'] ~])]
+    (take wire ~[/http-blah] %gall %unto %fact cage)
+  ;<  ~  bind:m  (expect-moves mos ~)
   ::  open up the channel
   ::
-  =^  results6  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~m3)
-      scry=scry-provides-code
-      ^=  call-args
-        :*  duct=~[/http-get-open]  ~
-            %request
-            %.n
-            [%ipv4 .192.168.1.1]
-            %'GET'
-            '/~/channel/0123456789abcdef'
-            ['cookie' cookie-value]~
-            ~
-        ==
-      ^=  expected-moves
-        ^-  (list move:eyre-gate)
-        :~  :*  duct=~[/http-get-open]
-                %pass
-                /channel/heartbeat/'0123456789abcdef'
-                [%b %wait ~1111.1.2..00.03.20]
-                ==
-            :*  duct=~[/http-get-open]
-                %give
-                %response
-                %start
-                :-  200
-                :~  ['content-type' 'text/event-stream']
-                    ['cache-control' 'no-cache']
-                    ['connection' 'keep-alive']
-                    ['set-cookie' cookie-string]
-                ==
-              ::
-                :-  ~
-                %-  as-octs:mimes:html
-                '''
-                id: 0
-                data: {"ok":"ok","id":0,"response":"poke"}
+  ;<  mos=(list move)  bind:m
+    (get '/~/channel/0123456789abcdef' cookie)
+  ;<  now=@da  bind:m  get-now
+  =/  mov-1  (ex-wait /channel/heartbeat/'0123456789abcdef' (add now ~s20))
+  =/  mov-2
+    %-  ex-channel-response
+    '''
+    id: 0
+    data: {"ok":"ok","id":0,"response":"poke"}
 
-                id: 1
-                data: {"ok":"ok","id":1,"response":"subscribe"}
+    id: 1
+    data: {"ok":"ok","id":1,"response":"subscribe"}
 
-                id: 2
-                data: {"json":[1,2],"id":1,"response":"diff"}
+    id: 2
+    data: {"json":[1,2],"id":1,"response":"diff"}
 
-                id: 3
-                data: {"json":[1,2],"id":2,"response":"diff"}
+    id: 3
+    data: {"json":[1,2],"id":2,"response":"diff"}
 
 
-                '''
-              ::
-                complete=%.n
-            ==
-            ::  opening the channel cancels the timeout timer
-            ::
-            :*  duct=~[/http-put-request]  %pass
-                /channel/timeout/'0123456789abcdef'
-                [%b %rest ~1111.1.2..12.03.00]
-    ==  ==  ==
+    '''
+  ::  opening the channel cancels the timeout timer
+  ::
+  =/  mov-3  (ex-rest /channel/timeout/'0123456789abcdef' ~1111.1.2..12.03.00)
+  ;<  ~  bind:m  (expect-moves mos mov-1 mov-2 mov-3 ~)
   ::  we can close the first channel without closing the second
   ::
-  =^  results7  eyre-gate
-    %-  eyre-call-with-comparator  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~m3)
-      scry=scry-provides-code
-      ^=  call-args
-        :*  duct=~[/http-put-request]  ~
-            %request
-            %.n
-            [%ipv4 .192.168.1.1]
-            %'PUT'
-            '/~/channel/0123456789abcdef'
-            ['cookie' cookie-value]~
-        ::
-            :-  ~
-            %-  as-octs:mimes:html
-            '''
-            [{"action": "unsubscribe",
-              "id": 3,
-              "subscription": 1}
-            ]
-            '''
-        ==
-      ^=  comparator
-        |=  moves=(list move:eyre-gate)
-        ^-  tang
-        ::
-        ?.  ?=([^ ^ ~] moves)
-          [%leaf "wrong number of moves: {<(lent moves)>}"]~
-        ::
-        ;:  weld
-          %+  expect-gall-deal
-            :*  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
-                [~nul ~nul]  %two  %leave  ~
-            ==
-            card.i.moves
-        ::
-          %+  expect-eq
-            !>  put-204-response
-            !>  i.t.moves
-    ==  ==
+  ;<  mos=(list move)  bind:m
+    %^  put  '/~/channel/0123456789abcdef'  cookie
+    '''
+    [{"action": "unsubscribe",
+      "id": 3,
+      "subscription": 1}
+    ]
+    '''
+  =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+  =/  mov-1  (ex-gall-deal wire ~nul %two %leave ~)
+  =/  mov-2  ex-204
+  ;<  ~  bind:m  (expect-moves mos mov-1 mov-2 ~)
   ::  gall responds on the second subscription.
   ::
   ::    This just tests that closing one of the two subscriptions doesn't
   ::    unsubscribe to the other.
   ::
-  =^  results8  eyre-gate
-    %-  eyre-take-with-comparator  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~m2)
-      scry=scry-provides-code
-      ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'2'/~nul/two
-            duct=~[/http-put-request]
-            ^-  sign:eyre-gate
-            [%gall %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
-         ==
-      ^=  comparator
-        |=  moves=(list move:eyre-gate)
-        ^-  tang
-        ::
-        ?.  ?=([^ ~] moves)
-          [%leaf "wrong number of moves: {<(lent moves)>}"]~
-        %+  expect-eq
-          !>  :*  ~[/http-get-open]  %give  %response  %continue
-                  :-  ~
-                  %-  as-octs:mimes:html
-                  '''
-                  id: 4
-                  data: {"json":[1,2],"id":2,"response":"diff"}
+  ;<  mos=(list move)  bind:m
+    =/  wire  /channel/subscription/'0123456789abcdef'/'2'/~nul/two
+    =/  =cage  [%json !>(`json`[%a [%n '1'] [%n '2'] ~])]
+    (take wire ~[/http-blah] %gall %unto %fact cage)
+  =/  mov-1
+    %-  ex-continue-response  :_  %.n  :-  ~
+    %-  as-octs:mimes:html
+    '''
+    id: 4
+    data: {"json":[1,2],"id":2,"response":"diff"}
 
 
-                  '''
-                  complete=%.n
-              ==
-          !>  i.moves
-    ==
-  ::
-  ;:  weld
-    results1
-    results2
-    results3
-    results4
-    results5
-    results6
-    results7
-    results8
-  ==
+    '''
+  (expect-moves mos mov-1 ~)
 ::
 ++  test-prune-events
   =/  q=(qeu [id=@ud @ud channel-event:eyre])  ~
@@ -1384,922 +982,294 @@
   (expect-eq !>(e) !>(r))
 ::
 ++  test-channel-sends-unacknowledged-events-on-reconnection
-  ::  common initialization
-  ::
-  =^  results1  eyre-gate  (perform-init-start-channel eyre-gate *roof)
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  ~  bind:m  perform-init-start-channel-2
+  ;<  ~  bind:m  (wait ~m1)
   ::  poke gets a success message
   ::
-  =^  results2  eyre-gate
-    %-  eyre-take  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~m1)
-      scry=scry-provides-code
-      ^=  take-args
-        :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
-            ^-  sign:eyre-gate
-            [%gall %unto %poke-ack ~]
-         ==
-      moves=~
-    ==
+  =/  wire  /channel/poke/'0123456789abcdef'/'0'
+  ;<  mos=(list move)  bind:m  (take wire ~[/http-blah] %gall %unto %poke-ack ~)
+  ;<  ~  bind:m  (expect-moves mos ~)
   ::  subscription gets a success message
   ::
-  =^  results3  eyre-gate
-    %-  eyre-take  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~m2)
-      scry=scry-provides-code
-      ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
-            duct=~[/http-put-request]
-            ^-  sign:eyre-gate
-            [%gall %unto %watch-ack ~]
-         ==
-      moves=~
-    ==
-  ::  opens the http channel
+  =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+  ;<  mos=(list move)  bind:m
+    (take wire ~[/http-blah] %gall %unto %watch-ack ~)
+  ;<  ~  bind:m  (expect-moves mos ~)
+  ::  open the http channel
   ::
-  =^  results4  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~m3)
-      scry=scry-provides-code
-      ^=  call-args
-      ^-  [duct (unit goof) (hobo task:eyre-gate)]
-        :*  duct=~[/http-get-open]  ~
-            %request
-            %.n
-            [%ipv4 .192.168.1.1]
-            %'GET'
-            '/~/channel/0123456789abcdef'
-            ['cookie' cookie-value]~
-            ~
-        ==
-      ^=  expected-moves
-        ^-  (list move:eyre-gate)
-        :~  :*  duct=~[/http-get-open]
-                %pass
-                /channel/heartbeat/'0123456789abcdef'
-                [%b %wait ~1111.1.2..00.03.20]
-                ==
-            :*  duct=~[/http-get-open]
-                %give
-                %response
-                %start
-                :-  200
-                :~  ['content-type' 'text/event-stream']
-                    ['cache-control' 'no-cache']
-                    ['connection' 'keep-alive']
-                    ['set-cookie' cookie-string]
-                ==
-              ::
-                :-  ~
-                %-  as-octs:mimes:html
-                '''
-                id: 0
-                data: {"ok":"ok","id":0,"response":"poke"}
+  ;<  ~  bind:m  (wait ~m2)
+  ;<  mos=(list move)  bind:m
+    (get '/~/channel/0123456789abcdef' cookie)
+  ;<  now=@da  bind:m  get-now
+  =/  heartbeat  (add now ~s20)
+  =/  mov-1  (ex-wait /channel/heartbeat/'0123456789abcdef' heartbeat)
+  =/  mov-2
+    %-  ex-channel-response
+    '''
+    id: 0
+    data: {"ok":"ok","id":0,"response":"poke"}
 
-                id: 1
-                data: {"ok":"ok","id":1,"response":"subscribe"}
+    id: 1
+    data: {"ok":"ok","id":1,"response":"subscribe"}
 
 
-                '''
-              ::
-                complete=%.n
-            ==
-            ::  opening the channel cancels the timeout timer
-            ::
-            :*  duct=~[/http-put-request]  %pass
-                /channel/timeout/'0123456789abcdef'
-                [%b %rest :(add ~1111.1.2 ~h12)]
-    ==  ==  ==
+    '''
+  ::  opening the channel cancels the timeout timer
+  ::
+  =/  mov-3  (ex-rest /channel/timeout/'0123456789abcdef' ~1111.1.2..12.00.00)
+  ;<  ~  bind:m  (expect-moves mos mov-1 mov-2 mov-3 ~)
+  ;<  ~  bind:m  (wait ~m1)
   ::  first subscription result gets sent to the user
   ::
-  =^  results5  eyre-gate
-    %-  eyre-take  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~m4)
-      scry=scry-provides-code
-      ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
-            duct=~[/http-put-request]
-            ^-  sign:eyre-gate
-            [%gall %unto %fact %json !>(`json`[%a [%n '1'] ~])]
-         ==
-      ^=  moves
-        ^-  (list move:eyre-gate)
-        :~  :*  duct=~[/http-get-open]
-                %give
-                %response
-                %continue
-                :-  ~
-                %-  as-octs:mimes:html
-                '''
-                id: 2
-                data: {"json":[1],"id":1,"response":"diff"}
+  ;<  mos=(list move)  bind:m
+    =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+    =/  =cage  [%json !>(`json`[%a [%n '1'] ~])]
+    (take wire ~[/http-blah] %gall %unto %fact cage)
+  =/  mov-1
+    %-  ex-continue-response  :_  %.n  :-  ~
+    %-  as-octs:mimes:html
+    '''
+    id: 2
+    data: {"json":[1],"id":1,"response":"diff"}
 
 
-                '''
-                complete=%.n
-    ==  ==  ==
+    '''
+  ;<  ~  bind:m  (expect-moves mos mov-1 ~)
+  ;<  ~  bind:m  (wait ~m1)
   ::  the client now acknowledges up to event 1
   ::
-  ::  send the channel a poke and a subscription request
-  ::
-  =^  results6  eyre-gate
-    %-  eyre-call-with-comparator  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~m5)
-      scry=scry-provides-code
-      ^=  call-args
-        :*  duct=~[/http-put-request]  ~
-            %request
-            %.n
-            [%ipv4 .192.168.1.1]
-            %'PUT'
-            '/~/channel/0123456789abcdef'
-            ['cookie' cookie-value]~
-        ::
-            :-  ~
-            %-  as-octs:mimes:html
-            '''
-            [{"action": "ack",
-              "event-id": 1}
-            ]
-            '''
-        ==
-      ^=  comparator
-        |=  moves=(list move:eyre-gate)
-        ^-  tang
-        ::
-        ?.  ?=([^ ~] moves)
-          [%leaf "wrong number of moves: {<(lent moves)>}"]~
-        ::
-        %+  expect-eq
-          !>  put-204-response
-          !>  i.moves
-    ==
+  ;<  mos=(list move)  bind:m
+    %^  put-2  '/~/channel/0123456789abcdef'  cookie
+    '''
+    [{"action": "ack",
+      "event-id": 1}
+    ]
+    '''
+  ;<  ~  bind:m  (expect-moves mos ex-204-2 ~)
+  ;<  ~  bind:m  (wait ~m1)
   ::  the client connection is detected to be broken
   ::
-  =^  results7  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~m6)
-      scry=scry-provides-code
-      call-args=[duct=~[/http-get-open] ~ %cancel-request ~]
-      ^=  expected-moves
-        ^-  (list move:eyre-gate)
-        ::  closing the channel cancels the sse heartbeat
-        ::  (initialized in results4 above) and restarts the timeout timer
-        ::
-        :~  :*  duct=~[/http-get-open]  %pass
-                /channel/heartbeat/'0123456789abcdef'
-                %b  %rest  :(add ~1111.1.2 ~m3 ~s20)
-            ==
-            :*  duct=~[/http-get-open]  %pass
-                /channel/timeout/'0123456789abcdef'
-                %b  %wait  :(add ~1111.1.2 ~h12 ~m6)
-        ==  ==
-    ==
+  ;<  mos=(list move)  bind:m  (call ~[/http-blah] %cancel-request ~)
+  =/  mov-1  (ex-rest /channel/heartbeat/'0123456789abcdef' heartbeat)
+  =/  mov-2 
+    (ex-wait /channel/timeout/'0123456789abcdef' :(add ~1111.1.2 ~m6 ~h12))
+  ;<  ~  bind:m  (expect-moves mos mov-1 mov-2 ~)
+  ;<  ~  bind:m  (wait ~m1)
   ::  another subscription result while the user is disconnected
   ::
-  =^  results8  eyre-gate
-    %-  eyre-take  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~m7)
-      scry=scry-provides-code
-      ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
-            duct=~[/http-put-request]
-            ^-  sign:eyre-gate
-            [%gall %unto %fact %json !>(`json`[%a [%n '2'] ~])]
-         ==
-      moves=~
-    ==
+  ;<  mos=(list move)  bind:m
+    =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+    =/  =cage  [%json !>(`json`[%a [%n '2'] ~])]
+    (take wire ~[/http-blah] %gall %unto %fact cage)
+  ;<  ~  bind:m  (expect-moves mos ~)
+  ;<  ~  bind:m  (wait ~m1)
   ::  the client now retries to connect
   ::
   ::    Because the client has acknowledged up to event 1, we should start the connection by
   ::    resending events 2 and 3.
   ::
-  =^  results9  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=(add ~1111.1.2 ~m8)
-      scry=scry-provides-code
-      ^=  call-args
-        :*  duct=~[/http-get-open]  ~
-            %request
-            %.n
-            [%ipv4 .192.168.1.1]
-            %'GET'
-            '/~/channel/0123456789abcdef'
-            ['cookie' cookie-value]~
-            ~
-        ==
-      ^=  expected-moves
-        ^-  (list move:eyre-gate)
-        :~  :*  duct=~[/http-get-open]
-                %pass
-                /channel/heartbeat/'0123456789abcdef'
-                [%b %wait ~1111.1.2..00.08.20]
-                ==
-            :*  duct=~[/http-get-open]
-                %give
-                %response
-                %start
-                :-  200
-                :~  ['content-type' 'text/event-stream']
-                    ['cache-control' 'no-cache']
-                    ['connection' 'keep-alive']
-                    ['set-cookie' cookie-string]
-                ==
-              ::
-                :-  ~
-                %-  as-octs:mimes:html
-                '''
-                id: 2
-                data: {"json":[1],"id":1,"response":"diff"}
+  ;<  mos=(list move)  bind:m
+    (get '/~/channel/0123456789abcdef' cookie)
+  ;<  now=@da  bind:m  get-now
+  =/  heartbeat  (add now ~s20)
+  =/  mov-1  (ex-wait /channel/heartbeat/'0123456789abcdef' heartbeat)
+  =/  mov-2
+    %-  ex-channel-response
+    '''
+    id: 2
+    data: {"json":[1],"id":1,"response":"diff"}
 
-                id: 3
-                data: {"json":[2],"id":1,"response":"diff"}
+    id: 3
+    data: {"json":[2],"id":1,"response":"diff"}
 
 
-                '''
-              ::
-                complete=%.n
-            ==
-            ::  opening the channel cancels the timeout timer
-            ::
-            :*  duct=~[/http-get-open]  %pass
-                /channel/timeout/'0123456789abcdef'
-                ::  add ~m6 because that was the time of the last GET
-                ::
-                [%b %rest :(add ~1111.1.2 ~m6 ~h12)]
-    ==  ==  ==
-  ::
-  ;:  weld
-    results1
-    results2
-    results3
-    results4
-    results5
-    results6
-    results7
-    results8
-    results9
-  ==
+    '''
+  =/  mov-3
+    (ex-rest /channel/timeout/'0123456789abcdef' :(add ~1111.1.2 ~m6 ~h12))
+  (expect-moves mos mov-1 mov-2 mov-3 ~)
 ::
 ++  test-channel-subscription-clogged
-  ::  common initialization
-  ::
-  =^  tested-elsewhere  eyre-gate
-    (perform-init-start-channel eyre-gate *roof)
-  ::
-  =/  now=@da  :(add ~1111.1.2 clog-timeout:eyre-gate ~s1)
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  ~  bind:m  perform-init-start-channel-2
+  ;<  ~  bind:m  (wait (add ~s1 clog-timeout:eyre-gate))
   ::  subscription gets a success message
   ::
-  =^  tested-elsewhere  eyre-gate
-    %:  eyre-take
-      eyre-gate
-      now
-      scry=scry-provides-code
-      ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
-            duct=~[/http-put-request]
-            ^-  sign:eyre-gate
-            [%gall %unto %watch-ack ~]
-         ==
-      moves=~
-    ==
+  =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+  ;<  mos=(list move)  bind:m
+    (take wire ~[/http-blah] %gall %unto %watch-ack ~)
+  ;<  ~  bind:m  (expect-moves mos ~)
   ::  opens the http channel
   ::
-  =^  tested-elsewhere  eyre-gate
-    %:  eyre-call
-      eyre-gate
-      now
-      scry=scry-provides-code
-      ^=  call-args
-      ^-  [duct (unit goof) (hobo task:eyre-gate)]
-        :*  duct=~[/http-get-open]  ~
-            %request
-            %.n
-            [%ipv4 .192.168.1.1]
-            %'GET'
-            '/~/channel/0123456789abcdef'
-            ['cookie' cookie-value]~
-            ~
-        ==
-      ^=  expected-moves
-      ~  ::NOTE  tested elsewhere
-    ==
+  ;<  tested-elsewhere=(list move)  bind:m
+    (get '/~/channel/0123456789abcdef' cookie)
   ::  user gets sent multiple subscription results
   ::
   =/  max=@ud  clog-threshold:eyre-gate
   =/  cur=@ud  0
-  |-  =*  loop-fact  $
+  |-  ^-  form:m
+  =*  loop-fact  $
   ?.  =(cur max)
-    =^  tested-elsewhere  eyre-gate
-      %:  eyre-take
-        eyre-gate
-        now
-        scry=scry-provides-code
-        ^=  take-args
-          :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
-              duct=~[/http-put-request]
-              ^-  sign:eyre-gate
-              [%gall %unto %fact %json !>(`json`[%a [%n '1'] ~])]
-          ==
-        ^=  moves
-        ~  ::NOTE  tested elsewhere
-      ==
+    ;<  tested-elsewhere=(list move)  bind:m
+      =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+      =/  =cage  [%json !>(`json`[%a [%n '1'] ~])]
+      (take wire ~[/http-blah] %gall %unto %fact cage)
     loop-fact(cur +(cur))
   ::  the next subscription result should trigger a clog
   ::
-  =^  results1  eyre-gate
-    %:  eyre-take
-      eyre-gate
-      now
-      scry=scry-provides-code
-      ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
-            duct=~[/http-put-request]
-            ^-  sign:eyre-gate
-            [%gall %unto %fact %json !>(`json`[%a [%n '1'] ~])]
-        ==
-      ^=  moves
-        :~  :*  duct=~[/http-get-open]
-              %give
-              %response
-              %continue
-              :-  ~
-              %-  as-octt:mimes:html
-              """
-              id: {((d-co:co 1) +(clog-threshold:eyre-gate))}
-              data: \{"json":[1],"id":1,"response":"diff"}
+  ;<  mos=(list move)  bind:m
+    =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+    =/  =cage  [%json !>(`json`[%a [%n '1'] ~])]
+    (take wire ~[/http-blah] %gall %unto %fact cage)
+  =/  mov-1
+    %-  ex-continue-response  :_  %.n  :-  ~
+    %-  as-octt:mimes:html
+    """
+    id: {((d-co:co 1) +(clog-threshold:eyre-gate))}
+    data: \{"json":[1],"id":1,"response":"diff"}
 
 
-              """
-              complete=%.n
-            ==
-            :*  duct=~[/http-put-request]  %pass
-              /channel/subscription/'0123456789abcdef'/'1'/~nul/two
-              %g  %deal  [~nul ~nul]  %two  %leave  ~
-            ==
-            :*  duct=~[/http-get-open]
-                %give
-                %response
-                %continue
-                :-  ~
-                %-  as-octt:mimes:html
-                """
-                id: {((d-co:co 1) (add 2 clog-threshold:eyre-gate))}
-                data: \{"id":1,"response":"quit"}
+    """
+  =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+  =/  mov-2  (ex-gall-deal wire ~nul %two %leave ~)
+  =/  mov-3  
+    %-  ex-continue-response  :_  %.n  :-  ~
+    %-  as-octt:mimes:html
+    """
+    id: {((d-co:co 1) (add 2 clog-threshold:eyre-gate))}
+    data: \{"id":1,"response":"quit"}
 
 
-                """
-                complete=%.n
-            ==
-        ==
-    ==
+    """
+  ;<  ~  bind:m  (expect-moves mos mov-1 mov-2 mov-3 ~)
   ::  subsequent subscription updates, which might have gotten sent out during
   ::  the same event in which a clog triggered, should be silently ignored
   ::
-  =^  results2  eyre-gate
-    %:  eyre-take
-      eyre-gate
-      now
-      scry=scry-provides-code
-      ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
-            duct=~[/http-put-request]
-            ^-  sign:eyre-gate
-            [%gall %unto %fact %json !>(`json`[%a [%n '1'] ~])]
-        ==
-      ^=  moves
-        ~
-    ==
-  (weld results1 results2)
+  ;<  mos=(list move)  bind:m
+    =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+    =/  =cage  [%json !>(`json`[%a [%n '1'] ~])]
+    (take wire ~[/http-blah] %gall %unto %fact cage)
+  (expect-moves mos ~)
 ::
 ++  test-born-sends-pending-cancels
-  ::
-  =^  results1  eyre-gate  perform-init-wo-timer
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  (wait ~d1)
   ::  app1 binds successfully
   ::
-  =^  results2  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=~1111.1.2
-      scry=scry-provides-code
-      call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
-      expected-moves=[duct=~[/app1] %give %bound %.y [~ /]]~
-    ==
-  ::  start a request to app1
-  ::
+  ;<  ~  bind:m  (connect %app1 /)
+  ;<  ~  bind:m  (wait ~d1)
   ::  outside requests a path that app1 has bound to
   ::
-  =^  results3  eyre-gate
-    %-  eyre-call-with-comparator  :*
-      eyre-gate
-      now=~1111.1.3
-      scry=scry-provides-code
-      ^=  call-args
-        :*  duct=~[/http-blah]  ~
-            %request
-            %.n
-            [%ipv4 .192.168.1.1]
-            [%'GET' '/' ~ ~]
-        ==
-      ^=  comparator
-        |=  moves=(list move:eyre-gate)
-        ^-  tang
-        ::
-        ?.  ?=([* * ~] moves)
-          [%leaf "wrong number of moves: {<(lent moves)>}"]~
-        ::
-        =/  move-1=move:eyre-gate  i.moves
-        =/  move-2=move:eyre-gate  i.t.moves
-        ::
-        %+  weld
-          (expect-eq !>(~[/http-blah]) !>(duct.move-1))
-        %+  weld
-          (expect-eq !>(~[/http-blah]) !>(duct.move-2))
-        ::
-        %+  weld
-          %+  expect-gall-deal
-            :+  /watch-response/[eyre-id]
-              [g-name ~nul]
-            :*  %app1  %watch
-                /http-response/[eyre-id]
-            ==
-          card.move-1
-        ::
-        %+  expect-gall-deal
-          :+  /run-app-request/[eyre-id]  [g-name ~nul]
-              :*  %app1  %poke  %handle-http-request
-                  !>([eyre-id %.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
-              ==
-          card.move-2
-    ==
+  ;<  ~  bind:m  (request %app1 /)
+  ;<  ~  bind:m  (wait ~d1)
   ::  but app1 doesn't respond before our urbit gets shut down. ensure we send
   ::  cancels on open connections.
   ::
-  =^  results4  eyre-gate
-    %-  eyre-call-with-comparator  :*
-      eyre-gate
-      now=~1111.1.4
-      scry=scry-provides-code
-      call-args=[duct=~[/born] ~ [%born ~]]
-      ^=  expected-moves
-        |=  moves=(list move:eyre-gate)
-        ^-  tang
-        ::
-        ?.  ?=([^ ^ ^ ~] moves)
-          [%leaf "wrong number of moves: {<(lent moves)>}"]~
-        ::
-        ::  we don't care about the first two, which are just
-        ::  configuration moves.
-        ::
-        =/  =move:eyre-gate  i.t.t.moves
-        =/  =duct             duct.move
-        =/  card              card.move
-        ::
-        %+  weld
-          (expect-eq !>(~[/http-blah]) !>(duct))
-        ::
-        %+  expect-gall-deal
-          :+  /watch-response/[eyre-id]  [g-name ~nul]
-            [%app1 %leave ~]
-          card
-    ==
-  ::
-  ;:  weld
-    results1
-    results2
-    results3
-    results4
-  ==
+  ;<  mos=(list move)  bind:m  (call ~[/born] [%born ~])
+  =/  mov-3  (ex-gall-deal /watch-response/[eyre-id] g-name %app1 [%leave ~])
+  (expect-moves mos _*tang _*tang mov-3 ~)
 ::
-++  eyre-call
-  |=  $:  eyre-gate=_eyre-gate
-          now=@da
-          scry=roof
-          call-args=[=duct dud=(unit goof) wrapped-task=(hobo task:eyre-gate)]
-          expected-moves=(list move:eyre-gate)
-      ==
-  ^-  [tang _eyre-gate]
-  ::
-  =/  eyre-core
-    (eyre-gate now=now eny=`@uvJ`0xdead.beef scry=scry)
-  ::
-  =^  moves  eyre-gate
-    (call:eyre-core [duct dud wrapped-task]:call-args)
-  ::
-  =/  output=tang
-    %+  expect-eq
-      !>  expected-moves
-      !>  moves
-  ::
-  [output eyre-gate]
-::
-++  eyre-call-with-comparator
-  |=  $:  eyre-gate=_eyre-gate
-          now=@da
-          scry=roof
-          call-args=[=duct dud=(unit goof) wrapped-task=(hobo task:eyre-gate)]
-          move-comparator=$-((list move:eyre-gate) tang)
-      ==
-  ^-  [tang _eyre-gate]
-  ::
-  =/  eyre-core  (eyre-gate now=now eny=`@uvJ`0xdead.beef scry=scry)
-  ::
-  =^  moves  eyre-gate  (call:eyre-core [duct dud wrapped-task]:call-args)
-  ::
-  =/  output=tang  (move-comparator moves)
-  ::
-  [output eyre-gate]
-::
-++  eyre-take
-  |=  $:  eyre-gate=_eyre-gate
-          now=@da
-          scry=roof
-          take-args=[=wire =duct =sign:eyre-gate]
-          expected-moves=(list move:eyre-gate)
-      ==
-  ^-  [tang _eyre-gate]
-  ::
-  =/  eyre-core  (eyre-gate now=now eny=`@uvJ`0xdead.beef scry=scry)
-  ::
-  =^  moves  eyre-gate  (take:eyre-core [wire duct ~ sign]:take-args)
-  ::
-  =/  output=tang
-    %+  expect-eq
-      !>  expected-moves
-      !>  moves
-  ::
-  [output eyre-gate]
-::
-++  eyre-take-with-comparator
-  |=  $:  eyre-gate=_eyre-gate
-          now=@da
-          scry=roof
-          take-args=[=wire =duct =sign:eyre-gate]
-          move-comparator=$-((list move:eyre-gate) tang)
-      ==
-  ^-  [tang _eyre-gate]
-  ::
-  =/  eyre-core  (eyre-gate now=now eny=`@uvJ`0xdead.beef scry=scry)
-  ::
-  =^  moves  eyre-gate  (take:eyre-core [wire duct ~ sign]:take-args)
-  ::
-  =/  output=tang  (move-comparator moves)
-  ::
-  [output eyre-gate]
-::
-++  expect-gall-deal
-  |=  $:  expected=[wire=path id=sock app=term =deal:gall]
-          actual=(wind note:eyre-gate gift:eyre-gate)
-      ==
-  ^-  tang
-  ::
-  ?.  ?=(%pass -.actual)
-    [%leaf "bad move, not a %pass: {<actual>}"]~
-  ::
-  %+  weld
-    (expect-eq !>(wire.expected) !>(p.actual))
-  ::
-  =/  note=note:eyre-gate  q.actual
-  ?.  ?=([%g %deal *] note)
-    [%leaf "bad move, not a %deal: {<actual>}"]~
-  ::
-  %+  weld
-    (expect-eq !>(id.expected) !>(p.note))
-  ::
-  %+  weld
-    (expect-eq !>(app.expected) !>(q.note))
-  ::
-  ?:  ?=([%poke *] deal.expected)
-    ?.  ?=([%poke *] r.note)
-      [%leaf "expected %poke, actual {<r.note>}"]~
-    ::
-    %+  weld
-      (expect-eq !>(p.cage.deal.expected) !>(p.cage.r.note))
-    ::  compare the payload vases
-    ::
-    (expect-eq q.cage.deal.expected q.cage.r.note)
-  ::
-  ?:  ?=([%poke-as *] deal.expected)
-    ?.  ?=([%poke-as *] r.note)
-      [%leaf "expected %poke-as, actual {<r.note>}"]~
-    ::  compare the mark type
-    ::
-    %+  weld
-      (expect-eq !>(mark.deal.expected) !>(mark.r.note))
-    ::  compare the cage mark
-    ::
-    %+  weld
-      (expect-eq !>(p.cage.deal.expected) !>(p.cage.r.note))
-    ::  compare the payload vases
-    ::
-    (expect-eq q.cage.deal.expected q.cage.r.note)
-  ::
-  ?:  ?=([%watch *] deal.expected)
-    ?.  ?=([%watch *] r.note)
-      [%leaf "expected %watch, actual {<r.note>}"]~
-    ::  compare the path
-    ::
-    (expect-eq !>(path.deal.expected) !>(path.r.note))
-  ::
-  ?:  ?=([%watch-as *] deal.expected)
-    ?.  ?=([%watch-as *] r.note)
-      [%leaf "expected %watch-as, actual {<r.note>}"]~
-    ::  compare the result mark
-    ::
-    %+  weld
-      (expect-eq !>(mark.deal.expected) !>(mark.r.note))
-    ::  compare the path
-    ::
-    (expect-eq !>(path.deal.expected) !>(path.r.note))
-  ::
-  ?:  ?=([%leave *] deal.expected)
-    ?.  ?=([%leave *] r.note)
-      [%leaf "expected %leave, actual {<r.note>}"]~
-    ::
-    ~
-  ::  todo: handle other deals
-  ::
-  [%leaf "unexpected %deal type"]~
 ::  +perform-init: %init a new eyre-gate
 ::
 ++  perform-init
-  %-  eyre-call  :*
-    eyre-gate
-    now=~1111.1.1
-    scry=scry-provides-code
-    call-args=[duct=~[/init] ~ [%init ~]]
-    expected-moves=~
-  ==
+  =/  m  (mare ,~)
+  ;<  mos=(list move)  bind:m  (call ~[/init] [%init ~])
+  (expect-moves mos ~)
 ::  +perform-init-wo-timer: init, then add a guest session
 ::
 ::    so that we don't have to include the session expiry timer move
 ::    in every single request handling test
 ::
 ++  perform-init-wo-timer
-  =^  result  eyre-gate  perform-init
-  :-  result
-  =-  eyre-gate(sessions.authentication-state.server-state.ax -)
-  %+  ~(put by sessions.authentication-state.server-state.ax.eyre-gate)
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  ~  bind:m  perform-init
+  |=  =state
+  :+  %&  ~
+  =-  state(sessions.authentication-state.server-state.ax.gate -)
+  %+  ~(put by sessions.authentication-state.server-state.ax.gate.state)
     0vguest
   [fake+~sampel-sampel-sampel-sampel--sampel-sampel-sampel-sampel ~2222.2.2 ~]
 ::  +perform-born: %born an eyre-gate
 ::
 ++  perform-born
-  |=  =_eyre-gate
-  %-  eyre-call  :*
-    eyre-gate
-    new=~1111.1.1
-    scry=scry-provides-code
-    call-args=[duct=~[/unix] ~ [%born ~]]
-    ^=  expected-moves
-    :~  [duct=~[/unix] %give %set-config *http-config:eyre]
-        [duct=~[/unix] %give %sessions ~]
-    ==
-  ==
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  mos=(list move)  bind:m  (call ~[/unix] [%born ~])
+  (expect-moves mos (ex-set-config *http-config:eyre) (ex-sessions ~) ~)
 ::
 ++  test-perform-authentication
-  =<  -
-  %-  perform-authentication  :*
-    +:(perform-born +:perform-init-wo-timer)
-    now=~1111.1.2
-    scry=scry-provides-code
-  ==
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
+  perform-authentication-2
+
 ::  +perform-authentication: goes through the authentication flow
 ::
-++  perform-authentication
-  |=  $:  eyre-gate=_eyre-gate
-          start-now=@da
-          scry=roof
-      ==
-  ^-  [tang _eyre-gate]
-  ::  the browser then fetches the login page
-  ::
-  =^  results1  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=start-now
-      scry=scry-provides-code
-      ^=  call-args
-        :*  duct=~[/http-blah]  ~
-            %request
-            %.n
-            [%ipv4 .192.168.1.1]
-            [%'GET' '/~/login?redirect=/~landscape/inner-path' [g-auth]~ ~]
-        ==
-      ^=  expected-moves
-        ^-  (list move:eyre-gate)
-        :~  :*  duct=~[/http-blah]
-                %give
-                %response
-                %start
-              ::
-                %+  complete-http-start-event
-                  :-  200
-                  ['content-type' 'text/html']~
-                [~ (login-page:eyre-gate `'/~landscape/inner-path' ~nul %.n)]
-        ==  ==
-    ==
-  ::  a response post redirects back to the application, setting cookie
-  ::
-  =^  results2  eyre-gate
-    %-  eyre-call  :*
-      eyre-gate
-      now=(add start-now ~m1)
-      scry=scry-provides-code
-      ^=  call-args
-        :*  duct=~[/http-blah]  ~
-            %request
-            %.n
-            [%ipv4 .192.168.1.1]
-            %'POST'
-            '/~/login'
-            ~
-            :-  ~
-            %-  as-octs:mimes:html
-            'password=lidlut-tabwed-pillex-ridrup&redirect=/~landscape'
-        ==
-      ^=  expected-moves
-        ^-  (list move:eyre-gate)
-        :~  =+  token='0vsb1uq.gsjg3.53i52.eej3q.icesf'
-            [duct=~[/unix] %give %sessions [token ~ ~]]
-          ::
-            :*  duct=~[/http-blah]
-                %give
-                %response
-                %start
-                :-  303
-                :~  ['location' '/~landscape']
-                    ['set-cookie' cookie-string]
-                ==
-                ~
-                complete=%.y
-        ==  ==
-    ==
-  ::
-  :_  eyre-gate
-  (weld results1 results2)
+++  perform-authentication-2
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  mos=(list move)  bind:m 
+    (get '/~/login?redirect=/~landscape/inner-path' g-auth ~)
+  ;<  ~  bind:m
+    =/  headers  ['content-type' 'text/html']~
+    =/  body  `(login-page:eyre-gate `'/~landscape/inner-path' ~nul %.n)
+    (expect-moves mos (ex-response 200 headers body) ~)
+  ;<  mos=(list move)  bind:m
+    =/  body  'password=lidlut-tabwed-pillex-ridrup&redirect=/~landscape'
+    (post '/~/login' ~ body)
+  ;<  ~  bind:m
+    =/  headers  ~[['location' '/~landscape'] ['set-cookie' cookie-string]]
+    =/  token  '0vsb1uq.gsjg3.53i52.eej3q.icesf'
+    (expect-moves mos (ex-sessions token ~ ~) (ex-response 303 headers ~) ~)
+  (pure:m ~)
 ::
 ++  test-perform-init-start-channel
-  =^  results  eyre-gate  (perform-init-start-channel eyre-gate *roof)
-  results
-::  performs all initialization and an initial PUT.
+  %-  eval-mare
+  perform-init-start-channel-2
 ::
-++  perform-init-start-channel
-  |=  $:  eyre-gate=_eyre-gate
-          scry=roof
-      ==
-  ^-  [tang _eyre-gate]
-  ::
-  =^  results1  eyre-gate  perform-init-wo-timer
-  =^  results2  eyre-gate  (perform-born eyre-gate)
-  ::  ensure there's an authenticated session
-  ::
-  =^  results3  eyre-gate
-    %-  perform-authentication  :*
-      eyre-gate
-      now=~1111.1.2
-      scry=scry-provides-code
-    ==
+++  perform-init-start-channel-2
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
+  ;<  ~  bind:m  (wait ~d1)
+  ;<  ~  bind:m  perform-authentication-2
   ::  send the channel a poke and a subscription request
   ::
-  =^  results4  eyre-gate
-    %-  eyre-call-with-comparator  :*
-      eyre-gate
-      now=~1111.1.2
-      scry=scry-provides-code
-      ^=  call-args
-        :*  duct=~[/http-put-request]  ~
-            %request
-            %.n
-            [%ipv4 .192.168.1.1]
-            %'PUT'
-            '/~/channel/0123456789abcdef'
-            ['cookie' cookie-value]~
-        ::
-            :-  ~
-            %-  as-octs:mimes:html
-            '''
-            [{"action": "poke",
-              "id": 0,
-              "ship": "nul",
-              "app": "one",
-              "mark": "a",
-              "json": 5},
-             {"action": "subscribe",
-              "id": 1,
-              "ship": "nul",
-              "app": "two",
-              "path": "/one/two/three"}
-            ]
-            '''
-        ==
-      ^=  comparator
-        |=  moves=(list move:eyre-gate)
-        ^-  tang
-        ::
-        ?.  ?=([^ ^ ^ ^ ~] moves)
-          [%leaf "wrong number of moves: {<(lent moves)>}"]~
-        ::
-        ;:  weld
-          %+  expect-gall-deal
-            :*  /channel/poke/'0123456789abcdef'/'0'
-                [~nul ~nul]  %one
-                %poke-as  %a  %json  !>([%n '5'])
-            ==
-            card.i.moves
-        ::
-          %+  expect-gall-deal
-            :*  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
-                [~nul ~nul]  %two
-                %watch  /one/two/three
-            ==
-            card.i.t.moves
-        ::
-          %+  expect-eq
-            !>  put-204-response
-            !>  i.t.t.moves
-        ::
-          %+  expect-eq
-            !>  :*  ~[/http-put-request]  %pass
-                    /channel/timeout/'0123456789abcdef'
-                    %b  %wait  (add ~1111.1.2 ~h12)
-                ==
-            !>  i.t.t.t.moves
-    ==  ==
-  ::
-  :_  eyre-gate
-  :(weld results1 results2 results3 results4)
-::
-++  scry-provides-code  ^-  roof
-  |=  [gang =view =beam]
-  ^-  (unit (unit cage))
-  ?:  =(%gd view)  ``noun+!>(%base)
-  ?:  &(=(%ca view) =(/gen/handler/hoon s.beam))
-    :+  ~  ~
-    vase+!>(!>(|=(* |=(* [[%404 ~] ~]))))
-  ?:  &(=(%cb view) =(/json s.beam))
-    :^  ~  ~  %dais
-    !>  ^-  dais:clay
-    |_  sam=vase
-    ++  diff  !!
-    ++  form  !!
-    ++  join  !!
-    ++  mash  !!
-    ++  pact  !!
-    ++  vale  |=(=noun !>(;;(json noun)))
-    --
-  ::
-  ?>  =(%j view)
-  ?>  =(~nul p.beam)
-  ?>  =(%code q.beam)
-  ?>  =(%da -.r.beam)
-  ?>  =(/~nul s.beam)
-  ::  This is the default code for a fakeship.
-  ::
-  [~ ~ %noun !>(.~lidlut-tabwed-savheb-loslux)]
-::  produce the body of a %start http-event with the correct content-length
-::
-++  complete-http-start-event
-  |=  [resp=response-header:http data=(unit octs)]
-  (complete-http-start-event-cookie resp data g-sook)
-::
-++  complete-http-start-event-cookie
-  |=  [response-header:http data=(unit octs) coo=@t]
-  =-  [[status-code -] data %.y]
-  ?~  data  headers
-  %+  weld  headers
-  :~  ['content-length' (crip ((d-co:co 1) p.u.data))]
-      ['set-cookie' coo]
-  ==
-::  produce the 204 response to a put request
-::
-++  put-204-response
-  :*  ~[/http-put-request]
-      %give
-      %response
-      %start
-      [204 ['set-cookie' cookie-string]~]
-      ~
-      %.y
-  ==
-::
-++  cookie-value
-  'urbauth-~nul=0vsb1uq.gsjg3.53i52.eej3q.icesf'
-::
-++  cookie-string
-  %^  cat  3  cookie-value
-  '; Path=/; Max-Age=604800'
-::
-++  g-name  ~rocfyn-bistyv-tadlux-modsel--bittex-patsun-sitpec-ravnul
-++  g-auth  ['cookie' g-cook]
-++  g-cook  'urbauth-~nul=0v5.gbhev.sbeh0.3rov1.o6ibh.a3t9r'
-++  g-sook  (cat 3 g-cook '; Path=/; Max-Age=604800')
-++  g-head  ['set-cookie' g-sook]
+  ;<  mos=(list move)  bind:m
+    %^  put  '/~/channel/0123456789abcdef'  cookie
+    '''
+    [{"action": "poke",
+      "id": 0,
+      "ship": "nul",
+      "app": "one",
+      "mark": "a",
+      "json": 5},
+     {"action": "subscribe",
+      "id": 1,
+      "ship": "nul",
+      "app": "two",
+      "path": "/one/two/three"}
+    ]
+    '''
+  ;<  now=@da  bind:m  get-now
+  =/  mov-1
+    %^  ex-gall-deal  /channel/poke/'0123456789abcdef'/'0'  ~nul
+    [%one %poke-as %a %json !>([%n '5'])]
+  =/  mov-2
+    %^  ex-gall-deal  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+      ~nul
+    [%two %watch /one/two/three]
+  =/  mov-3  (ex-response 204 ['set-cookie' cookie-string]~ ~)
+  =/  mov-4
+    %+  ex  ~[/http-blah]
+    [%pass /channel/timeout/'0123456789abcdef' %b %wait (add now ~h12)]
+  (expect-moves mos mov-1 mov-2 mov-3 mov-4 ~)
 --
