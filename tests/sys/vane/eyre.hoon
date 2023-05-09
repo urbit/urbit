@@ -2103,7 +2103,7 @@
                 %+  complete-http-start-event
                   :-  200
                   ['content-type' 'text/html']~
-                [~ (login-page:eyre-gate `'/~landscape/inner-path' ~nul %.n)]
+                [~ (login-page:eyre-gate `'/~landscape/inner-path' ~nul fake+g-name %.n)]
         ==  ==
     ==
   ::  a response post redirects back to the application, setting cookie
@@ -2127,7 +2127,7 @@
         ==
       ^=  expected-moves
         ^-  (list move:eyre-gate)
-        :~  =+  token='0vsb1uq.gsjg3.53i52.eej3q.icesf'
+        :~  =+  token='0v2.v5g1m.rr6kg.bjj3k.59t1m.qp48h'
             [duct=~[/unix] %give %sessions [token ~ ~]]
           ::
             :*  duct=~[/http-blah]
@@ -2291,7 +2291,7 @@
   ==
 ::
 ++  cookie-value
-  'urbauth-~nul=0vsb1uq.gsjg3.53i52.eej3q.icesf'
+  'urbauth-~nul=0v2.v5g1m.rr6kg.bjj3k.59t1m.qp48h'
 ::
 ++  cookie-string
   %^  cat  3  cookie-value
