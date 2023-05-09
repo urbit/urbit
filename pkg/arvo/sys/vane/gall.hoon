@@ -915,7 +915,6 @@
       ^+  wire
       =/  nonce=@  (~(got by boar.yoke) wire dock)
       ?:  =(0 nonce)  wire
-      ~&  %hello
       [(scot %ud nonce) wire]
     ::
     ++  ap-core  .
