@@ -1204,11 +1204,16 @@
       :-  %fake
       ::  pre-scramble our ship name into its displayed value, and
       ::  truncate it to be at most moon-length, so that we can overlay
-      ::  it onto the end of a comet name for visual consistency
+      ::  it onto the end of a comet name for visual consistency.
+      ::  to prevent escalation, make sure the guest identity isn't ours.
       ::
-      =.  our  (end 3^8 (fein:ob our))
-      %^  cat  3  our
-      %+  rsh  [3 (met 3 our)]
+      |-
+      =;  nom=@p
+        ?.  =(our nom)  nom
+        $(eny (shas %next-name eny))
+      =/  hat  (end 3^8 (fein:ob our))
+      %^  cat  3  hat
+      %+  rsh  [3 (met 3 hat)]
       (~(raw og (shas %fake-name eny)) 128)
     ::  +session-for-request: get the session details for the request
     ::
