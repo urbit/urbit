@@ -497,7 +497,6 @@
   =^  moves5  nec  (call nec ~[//unix] %hear (snag-packet 1 moves3))
   ::  ~nec -> naxplanation -> ~nec
   ::
-  ::  [%pass wire %a %plea her [%a /sink target naxplanation]]
   =/  sink-naxplanation-plea
     [%plea ~bud %a /sink bone=0 message-num=1 error]
   =^  moves6  nec  (call nec ~[//unix] sink-naxplanation-plea)

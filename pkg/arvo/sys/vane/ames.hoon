@@ -1647,6 +1647,7 @@
         ++  send-ack
           |=  =bone
           ^+  peer-core
+          ~&  >>>  bone^"send ack"
           ::  handle cork only deals with bones that are in closing
           ::
           %.  bone
@@ -1656,6 +1657,7 @@
         ++  send-nack
           |=  [=bone =^error]
           ^+  peer-core
+          ~&  >>>  bone^"send nack"
           =.  peer-core  abet:(call:(abed:mi:peer-core bone) %done ok=%.n)
           ::  construct nack-trace message, referencing .failed $message-num
           ::
@@ -2048,14 +2050,17 @@
           abet:(on-memo:peer-core bone plea %plea)
         ::
         ++  send-nack-trace
+          ~&  >>  "send-nack-trace"
           =+  ;;([=nack=bone =message-blob] payload.plea)
           abet:(call:(abed:mu:peer-core nack-bone) %memo message-blob)
         ::
         ++  sink-naxplanation
+          ~&  >>  "sink-naxplanation"
           =+  ;;([=target=bone =naxplanation] payload.plea)
           abet:(call:(abed:mu:peer-core target-bone) %near naxplanation)
         ::
         ++  clear-nack
+          ~&  >>  "clear-nack"
           =+  ;;([=nack=bone =message-num] payload.plea)
           abet:(call:(abed:mi:peer-core nack-bone) %drop message-num)
         ::  client ames [%cork as plea]  -> server ames [sinks %cork plea],
@@ -3106,7 +3111,6 @@
           ~>  %slog.0^leaf/"ames: recork {<her i.boz>}"
           =/  =plea  [%$ /flow [%cork ~]]
           (on-memo i.boz plea %plea)
-        ::
         ::  +handle-cork: handle flow kill after server ames has taken %done
         ::
         ++  handle-cork
@@ -3379,6 +3383,7 @@
           ++  pump-done
             |=  [num=message-num error=(unit error)]
             ^+  peer-core
+            ~&  >  pump-done+bone
             ?:  ?&  =(1 (end 0 bone))
                     =(1 (end 0 (rsh 0 bone)))
                     (~(has in corked.peer-state) (mix 0b10 bone))
@@ -3398,6 +3403,7 @@
             ?:  =(1 (end 0 (rsh 0 bone)))
               ::  nack-trace bone; assume .ok, clear nack from |sink
               ::
+              ~&  >>>  "will clear nack from |sink"
               %+  pe-emit  duct
               [%pass /clear-nack %a %plea her %a /drop (mix 0b10 bone) num]
             ?:  &(closing ?=(%near -.task))
@@ -3969,6 +3975,7 @@
           ++  handle-sink
             |=  [=message-num message=* ok=?]
             ^+  sink
+            ~&  >>  bone^(received bone)
             |^  ?-((received bone) %plea ha-plea, %boon ha-boon, %nack ha-nack)
             ::
             ++  ha-plea
@@ -3983,6 +3990,7 @@
                 =/  =wire  (make-bone-wire her her-rift.channel nack-bone)
                 ::  send nack-trace with blank .error for security
                 ::
+                ~&  >>>  "send nack-trace with blank .error for security"
                 =.  peer-core
                   %+  pe-emit  duct
                   [%pass wire %a %plea her [%a /nack nack-bone message-blob]]
@@ -4056,6 +4064,7 @@
                 ::
                 =/  =wire  (make-bone-wire her her-rift.channel target)
                 =+  ;;(=naxplanation message)
+                ~&  >>>  "will notify |message-pump that this message got naxplained"
                 %+  pe-emit  duct
                 [%pass wire %a %plea her [%a /sink target naxplanation]]
               ::  ack nack-trace message (only applied if we don't later crash)
