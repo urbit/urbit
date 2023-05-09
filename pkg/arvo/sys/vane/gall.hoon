@@ -423,7 +423,8 @@
     ^+  mo-core
     =.  mo-core  (mo-untrack-ship ship)
     =.  mo-core  (mo-filter-queue ship)
-    =/  agents=(list [name=term =yoke])  ~(tap by yokes.state)
+    =/  agents=(list [name=term =yoke])
+      (skim ~(tap by yokes.state) |=([* =yoke] =(%live -.yoke)))
     =.  outstanding.state
       %-  malt
       %+  skip  ~(tap by outstanding.state)
