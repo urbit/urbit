@@ -3106,7 +3106,6 @@
           ~>  %slog.0^leaf/"ames: recork {<her i.boz>}"
           =/  =plea  [%$ /flow [%cork ~]]
           (on-memo i.boz plea %plea)
-        ::
         ::  +handle-cork: handle flow kill after server ames has taken %done
         ::
         ++  handle-cork
