@@ -433,7 +433,7 @@
     |-  ^+  mo-core
     ?~  agents
       mo-core
-    =?  mo-core  ?=(%live -.i.agents)
+    =?  mo-core  ?=(%live -.yoke.i.agents)
       =/  =routes  [disclosing=~ attributing=ship]
       =/  app  (ap-abed:ap name.i.agents routes)
       ap-abet:(ap-breach:app ship)
