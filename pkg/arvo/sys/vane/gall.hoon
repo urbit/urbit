@@ -757,6 +757,7 @@
     |=  [veb=? dap=term =routes care=term =path]
     ^-  (unit (unit cage))
     ::
+    ?.  ?=([~ %live *] (~(get by yokes.state) dap))  [~ ~]
     =/  app  (ap-abed:ap dap routes)
     (ap-peek:app veb care path)
   ::
