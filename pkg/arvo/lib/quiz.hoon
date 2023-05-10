@@ -39,9 +39,8 @@
       [%face p=* q=*]  sax(q q:(fill [p=q.p.sax q=q.sax]))
     ==
   ++  gen-noun
-    |.
     =+  start-size=size
-    |-  ^-  noun
+    |.  ^-  noun
     ?:  (lte size 1)
       (rad:rng start-size)  :: leafs should be able to make large atoms.
     =^  ran  rng  (rads:rng 3)
