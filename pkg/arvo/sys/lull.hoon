@@ -2786,8 +2786,10 @@
   ::
   +$  perm-arvo
     $%  $:  %ames
-        $?  %debug  ::  %sift %spew
-            %block  ::  %snub
+        $%  [%debug ~]                       ::  %sift %spew
+            [%block ~]                       ::  %snub
+            [%order ship=(unit ship) =path]  ::  %keen
+            [%whack ship=(unit ship) =path]  ::  %wham
         ==  ==
       ::
         $:  %behn
@@ -2939,6 +2941,15 @@
           $(path.p t.path.p, path.mus t.path.mus)
       ==
     ::
+        [%ames ?(%order %whack) *]
+      %+  lien  ~(tap in pes)
+      |=  p=perm
+      ?&  ?=([%ames ?(%order %whack) *] p)
+          =(+<.mus +<.p)
+          |(?=(~ ship.p) =(ship.mus ship.p))
+          |(=(/ path.p) =(`0 (find path.p path.mus)))  ::TODO  find-at-head
+      ==
+    ::
         [%clay %write *]
       %+  lien  ~(tap in pes)
       |=  p=perm
@@ -3045,8 +3056,11 @@
     ?-  +<.note
         %a
       ?+  +>-.note  |
-        ?(%sift %spew)  [%ames %debug]
-        %snub           [%ames %block]
+        ?(%sift %spew)  [%ames %debug ~]
+        %snub           [%ames %block ~]
+        %keen           [%ames %order `ship.note path.note]
+        %yawn           &
+        %wham           [%ames %whack `ship.note path.note]
       ==
     ::
         %b
