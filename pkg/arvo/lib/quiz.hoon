@@ -34,7 +34,7 @@
       [%cell p=* q=*]  =+  [rng-1 rng-2]=split-rng
                        %=  sax
                           q  :-  q:(fill(rng rng-2) (slot 2 sax))
-                                 q:(fill(rng rng-1) (slot 3 sax))
+                             q:(fill(rng rng-1) (slot 3 sax))
                       ==
       [%face p=* q=*]  sax(q q:(fill [p=q.p.sax q=q.sax]))
     ==
@@ -51,7 +51,7 @@
       [subtree subtree]
     =+  [rng-1 rng-2]=split-rng :: 1/3 chance for different subtrees. 
     :-  $(size (div size 2), rng rng-1)
-        $(size (div size 2), rng rng-2)
+    $(size (div size 2), rng rng-2)
   ++  gen-atom
     |=  aur=@tas
     ^-  @
