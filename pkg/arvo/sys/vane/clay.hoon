@@ -4694,10 +4694,11 @@
         [~ ..park]
       ::  the commit must be known, and reachable from within this desk
       ::
-      ?.  ?|  =(0v0 tak)
-          ?&  (~(has by hut.ran) tak)
+      ?.  ?&  !=(0v0 tak)
+              (~(has by hut.ran) tak)
               (~(has in (reachable-takos (aeon-to-tako:ze let.dom))) tak)
-          ==  ==
+              |(?=(~ for) (may-read u.for care.mun tak path.mun))
+          ==
         [~ ..park]
       ::  virtualize to catch and produce deterministic failures
       ::
