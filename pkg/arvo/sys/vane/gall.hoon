@@ -973,7 +973,7 @@
     ++  ap-idle
       ^+  ap-core
       ?:  ?=(%| -.agent.yoke)  ap-core
-      =>  [ken=ken.yoke (ap-ingest ~ |.([ap-yawn-all *agent]))]
+      =>  [ken=ken.yoke (ap-ingest ~ |.([ap-yawn-all p.agent.yoke]))]
       ap-core(ken.yoke ken, agent.yoke |+on-save:ap-agent-core)
     ::
     ++  ap-nuke
