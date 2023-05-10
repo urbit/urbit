@@ -557,6 +557,7 @@
     %kiln-rm                 =;(f (f !<(_+<.f vase)) poke-rm)
     %kiln-schedule           =;(f (f !<(_+<.f vase)) poke-schedule)
     %kiln-suspend            =;(f (f !<(_+<.f vase)) poke-suspend)
+    %kiln-suspend-many       =;(f (f !<(_+<.f vase)) poke-suspend-many)
     %kiln-sync               =;(f (f !<(_+<.f vase)) poke-sync)
     %kiln-syncs              =;(f (f !<(_+<.f vase)) poke-syncs)
     %kiln-uninstall          =;(f (f !<(_+<.f vase)) poke-uninstall)
@@ -589,15 +590,13 @@
     ..abet
   =/  kel  i.wic
   %-  emil
-  =/  cards
+  =/  desks=(list [=desk =zest])
     %+  murn  ~(tap by rock)
     |=  [=desk belt:tire]
     ?:  |(=(%base desk) !?=(%live zest) (~(has in wic) kel))
       ~
-    `u=[%pass /kiln/bump/[desk] %arvo %c %zest desk %held]
-  ?~  cards
-    [%pass /kiln/bump/wick %arvo %c %wick ~]~
-  cards
+    `u=[desk %held]
+  [%pass /kiln/bump/zeal %arvo %c %zeal desks]~
 ::
 ++  poke-cancel
   |=  a=@tas
@@ -815,7 +814,19 @@
 ::
 ++  poke-suspend
   |=  =desk
-  abet:(emit %pass /kiln/suspend %arvo %c %zest desk %dead)
+  (poke-suspend-many ~[desk])
+::
+++  poke-suspend-many
+  |=  desks=(list desk)
+  =<  abet
+  %-  emil
+  %+  turn
+    %+  skim  desks
+    |=  dek=desk
+    ?:  (~(has in .^((set desk) %cd /(scot %p our)/base/(scot %da now))) dek)
+      &  
+    ~>  %slog.(fmt "desk does not yet exist: {<dek>}")  |   
+  |=(=desk [%pass /kiln/suspend %arvo %c %zest desk %dead])
 ::
 ++  poke-sync
   |=  hos=kiln-sync

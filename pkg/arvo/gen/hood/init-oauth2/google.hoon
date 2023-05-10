@@ -9,7 +9,6 @@
 ::::
   ::
 =,  generators
-=,  html
 =,  format
 :-  %ask
 |=  $:  [now=@da eny=@uvJ bec=beak]
@@ -23,7 +22,7 @@
     (fun.q.q jon.arg)
 %+  prompt
   [%& %oauth-json "json credentials: "]
-%+  parse  apex:de-json
+%+  parse  apex:de:json:html
 |=  jon=json
 =+  ~|  bad-json+jon
     =-  `[cid=@t cis=@t]`(need (rep jon))

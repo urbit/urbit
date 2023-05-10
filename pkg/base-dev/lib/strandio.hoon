@@ -82,8 +82,6 @@
     `[%done q.cage.u.in.tin]
   ==
 ::
-::
-::
 ++  take-sign-arvo
   =/  m  (strand ,[wire sign-arvo])
   ^-  form:m
@@ -183,6 +181,20 @@
     ?~  error.sign-arvo.u.in.tin
       `[%done ~]
     `[%fail %timer-error u.error.sign-arvo.u.in.tin]
+  ==
+::
+++  take-tune
+  |=  =wire
+  =/  m  (strand ,[spar:ames (unit roar:ames)])
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+    in.tin  `[%skip ~]
+      ~  `[%wait ~]
+    ::
+      [~ %sign * %ames %tune ^ *]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done +>.sign-arvo.u.in.tin]
   ==
 ::
 ++  take-poke-ack
@@ -318,6 +330,12 @@
   ^-  form:m
   ;<  ~  bind:m  (send-wait until)
   (take-wake `until)
+::
+++  keen
+  |=  [=wire =spar:ames]
+  =/  m  (strand ,~)
+  ^-  form:m
+  (send-raw-card %pass wire %arvo %a %keen spar)
 ::
 ++  sleep
   |=  for=@dr
@@ -552,7 +570,7 @@
   (take-writ /warp)
 ::
 ++  read-file
-  |=  [[=ship =desk =case:clay] =spur]
+  |=  [[=ship =desk =case] =spur]
   =*  arg  +<
   =/  m  (strand ,cage)
   ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %x case spur)
@@ -561,13 +579,13 @@
   (pure:m r.u.riot)
 ::
 ++  check-for-file
-  |=  [[=ship =desk =case:clay] =spur]
+  |=  [[=ship =desk =case] =spur]
   =/  m  (strand ,?)
   ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %x case spur)
   (pure:m ?=(^ riot))
 ::
 ++  list-tree
-  |=  [[=ship =desk =case:clay] =spur]
+  |=  [[=ship =desk =case] =spur]
   =*  arg  +<
   =/  m  (strand ,(list path))
   ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %t case spur)

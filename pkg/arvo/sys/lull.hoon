@@ -2,8 +2,9 @@
 ::  %lull: arvo structures
 !:
 =>  ..part
+~%  %lull  ..part  ~
 |%
-++  lull  %325
+++  lull  %324
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
@@ -35,6 +36,418 @@
       max-size=_2.048
       depth=_1
   ==
+::  +mop: constructs and validates ordered ordered map based on key,
+::  val, and comparator gate
+::
+++  mop
+  |*  [key=mold value=mold]
+  |=  ord=$-([key key] ?)
+  |=  a=*
+  =/  b  ;;((tree [key=key val=value]) a)
+  ?>  (apt:((on key value) ord) b)
+  b
+::
+::
+++  ordered-map  on
+::  +on: treap with user-specified horizontal order, ordered-map
+::
+::  WARNING: ordered-map will not work properly if two keys can be
+::  unequal under noun equality but equal via the compare gate
+::
+++  on
+  ~%  %on  ..part  ~
+  |*  [key=mold val=mold]
+  =>  |%
+      +$  item  [key=key val=val]
+      --
+  ::  +compare: item comparator for horizontal order
+  ::
+  ~%  %comp  +>+  ~
+  |=  compare=$-([key key] ?)
+  ~%  %core    +  ~
+  |%
+  ::  +all: apply logical AND boolean test on all values
+  ::
+  ++  all
+    ~/  %all
+    |=  [a=(tree item) b=$-(item ?)]
+    ^-  ?
+    |-
+    ?~  a
+      &
+    ?&((b n.a) $(a l.a) $(a r.a))
+  ::  +any: apply logical OR boolean test on all values
+  ::
+  ++  any
+    ~/  %any
+    |=  [a=(tree item) b=$-(item ?)]
+    |-  ^-  ?
+    ?~  a
+      |
+    ?|((b n.a) $(a l.a) $(a r.a))
+  ::  +apt: verify horizontal and vertical orderings
+  ::
+  ++  apt
+    ~/  %apt
+    |=  a=(tree item)
+    =|  [l=(unit key) r=(unit key)]
+    |-  ^-  ?
+    ::  empty tree is valid
+    ::
+    ?~  a  %.y
+    ::  nonempty trees must maintain several criteria
+    ::
+    ?&  ::  if .n.a is left of .u.l, assert horizontal comparator
+        ::
+        ?~(l %.y (compare key.n.a u.l))
+        ::  if .n.a is right of .u.r, assert horizontal comparator
+        ::
+        ?~(r %.y (compare u.r key.n.a))
+        ::  if .a is not leftmost element, assert vertical order between
+        ::  .l.a and .n.a and recurse to the left with .n.a as right
+        ::  neighbor
+        ::
+        ?~(l.a %.y &((mor key.n.a key.n.l.a) $(a l.a, l `key.n.a)))
+        ::  if .a is not rightmost element, assert vertical order
+        ::  between .r.a and .n.a and recurse to the right with .n.a as
+        ::  left neighbor
+        ::
+        ?~(r.a %.y &((mor key.n.a key.n.r.a) $(a r.a, r `key.n.a)))
+    ==
+  ::  +bap: convert to list, right to left
+  ::
+  ++  bap
+    ~/  %bap
+    |=  a=(tree item)
+    ^-  (list item)
+    =|  b=(list item)
+    |-  ^+  b
+    ?~  a  b
+    $(a r.a, b [n.a $(a l.a)])
+  ::  +del: delete .key from .a if it exists, producing value iff deleted
+  ::
+  ++  del
+    ~/  %del
+    |=  [a=(tree item) =key]
+    ^-  [(unit val) (tree item)]
+    ?~  a  [~ ~]
+    ::  we found .key at the root; delete and rebalance
+    ::
+    ?:  =(key key.n.a)
+      [`val.n.a (nip a)]
+    ::  recurse left or right to find .key
+    ::
+    ?:  (compare key key.n.a)
+      =+  [found lef]=$(a l.a)
+      [found a(l lef)]
+    =+  [found rig]=$(a r.a)
+    [found a(r rig)]
+  ::  +dip: stateful partial inorder traversal
+  ::
+  ::    Mutates .state on each run of .f.  Starts at .start key, or if
+  ::    .start is ~, starts at the head.  Stops when .f produces .stop=%.y.
+  ::    Traverses from left to right keys.
+  ::    Each run of .f can replace an item's value or delete the item.
+  ::
+  ++  dip
+    ~/  %dip
+    |*  state=mold
+    |=  $:  a=(tree item)
+            =state
+            f=$-([state item] [(unit val) ? state])
+        ==
+    ^+  [state a]
+    ::  acc: accumulator
+    ::
+    ::    .stop: set to %.y by .f when done traversing
+    ::    .state: threaded through each run of .f and produced by +abet
+    ::
+    =/  acc  [stop=`?`%.n state=state]
+    =<  abet  =<  main
+    |%
+    ++  this  .
+    ++  abet  [state.acc a]
+    ::  +main: main recursive loop; performs a partial inorder traversal
+    ::
+    ++  main
+      ^+  this
+      ::  stop if empty or we've been told to stop
+      ::
+      ?:  =(~ a)  this
+      ?:  stop.acc  this
+      ::  inorder traversal: left -> node -> right, until .f sets .stop
+      ::
+      =.  this  left
+      ?:  stop.acc  this
+      =^  del  this  node
+      =?  this  !stop.acc  right
+      =?  a  del  (nip a)
+      this
+    ::  +node: run .f on .n.a, updating .a, .state, and .stop
+    ::
+    ++  node
+      ^+  [del=*? this]
+      ::  run .f on node, updating .stop.acc and .state.acc
+      ::
+      ?>  ?=(^ a)
+      =^  res  acc  (f state.acc n.a)
+      ?~  res
+        [del=& this]
+      [del=| this(val.n.a u.res)]
+    ::  +left: recurse on left subtree, copying mutant back into .l.a
+    ::
+    ++  left
+      ^+  this
+      ?~  a  this
+      =/  lef  main(a l.a)
+      lef(a a(l a.lef))
+    ::  +right: recurse on right subtree, copying mutant back into .r.a
+    ::
+    ++  right
+      ^+  this
+      ?~  a  this
+      =/  rig  main(a r.a)
+      rig(a a(r a.rig))
+    --
+  ::  +gas: put a list of items
+  ::
+  ++  gas
+    ~/  %gas
+    |=  [a=(tree item) b=(list item)]
+    ^-  (tree item)
+    ?~  b  a
+    $(b t.b, a (put a i.b))
+  ::  +get: get val at key or return ~
+  ::
+  ++  get
+    ~/  %get
+    |=  [a=(tree item) b=key]
+    ^-  (unit val)
+    ?~  a  ~
+    ?:  =(b key.n.a)
+      `val.n.a
+    ?:  (compare b key.n.a)
+      $(a l.a)
+    $(a r.a)
+  ::  +got: need value at key
+  ::
+  ++  got
+    |=  [a=(tree item) b=key]
+    ^-  val
+    (need (get a b))
+  ::  +has: check for key existence
+  ::
+  ++  has
+    ~/  %has
+    |=  [a=(tree item) b=key]
+    ^-  ?
+    !=(~ (get a b))
+  ::  +lot: take a subset range excluding start and/or end and all elements
+  ::  outside the range
+  ::
+  ++  lot
+    ~/  %lot
+    |=  $:  tre=(tree item)
+            start=(unit key)
+            end=(unit key)
+        ==
+    ^-  (tree item)
+    |^
+    ?:  ?&(?=(~ start) ?=(~ end))
+      tre
+    ?~  start
+      (del-span tre %end end)
+    ?~  end
+      (del-span tre %start start)
+    ?>  (compare u.start u.end)
+    =.  tre  (del-span tre %start start)
+    (del-span tre %end end)
+    ::
+    ++  del-span
+      |=  [a=(tree item) b=?(%start %end) c=(unit key)]
+      ^-  (tree item)
+      ?~  a  a
+      ?~  c  a
+      ?-  b
+          %start
+        ::  found key
+        ?:  =(key.n.a u.c)
+          (nip a(l ~))
+        ::  traverse to find key
+        ?:  (compare key.n.a u.c)
+          ::  found key to the left of start
+          $(a (nip a(l ~)))
+        ::  found key to the right of start
+        a(l $(a l.a))
+      ::
+          %end
+        ::  found key
+        ?:  =(u.c key.n.a)
+          (nip a(r ~))
+        ::  traverse to find key
+        ?:  (compare key.n.a u.c)
+          :: found key to the left of end
+          a(r $(a r.a))
+        :: found key to the right of end
+        $(a (nip a(r ~)))
+      ==
+    --
+  ::  +nip: remove root; for internal use
+  ::
+  ++  nip
+    ~/  %nip
+    |=  a=(tree item)
+    ^-  (tree item)
+    ?>  ?=(^ a)
+    ::  delete .n.a; merge and balance .l.a and .r.a
+    ::
+    |-  ^-  (tree item)
+    ?~  l.a  r.a
+    ?~  r.a  l.a
+    ?:  (mor key.n.l.a key.n.r.a)
+      l.a(r $(l.a r.l.a))
+    r.a(l $(r.a l.r.a))
+  ::
+  ::  +pop: produce .head (leftmost item) and .rest or crash if empty
+  ::
+  ++  pop
+    ~/  %pop
+    |=  a=(tree item)
+    ^-  [head=item rest=(tree item)]
+    ?~  a    !!
+    ?~  l.a  [n.a r.a]
+    =/  l  $(a l.a)
+    :-  head.l
+    ::  load .rest.l back into .a and rebalance
+    ::
+    ?:  |(?=(~ rest.l) (mor key.n.a key.n.rest.l))
+      a(l rest.l)
+    rest.l(r a(r r.rest.l))
+  ::  +pry: produce head (leftmost item) or null
+  ::
+  ++  pry
+    ~/  %pry
+    |=  a=(tree item)
+    ^-  (unit item)
+    ?~  a    ~
+    |-
+    ?~  l.a  `n.a
+    $(a l.a)
+  ::  +put: ordered item insert
+  ::
+  ++  put
+    ~/  %put
+    |=  [a=(tree item) =key =val]
+    ^-  (tree item)
+    ::  base case: replace null with single-item tree
+    ::
+    ?~  a  [n=[key val] l=~ r=~]
+    ::  base case: overwrite existing .key with new .val
+    ::
+    ?:  =(key.n.a key)  a(val.n val)
+    ::  if item goes on left, recurse left then rebalance vertical order
+    ::
+    ?:  (compare key key.n.a)
+      =/  l  $(a l.a)
+      ?>  ?=(^ l)
+      ?:  (mor key.n.a key.n.l)
+        a(l l)
+      l(r a(l r.l))
+    ::  item goes on right; recurse right then rebalance vertical order
+    ::
+    =/  r  $(a r.a)
+    ?>  ?=(^ r)
+    ?:  (mor key.n.a key.n.r)
+      a(r r)
+    r(l a(r l.r))
+  ::  +ram: produce tail (rightmost item) or null
+  ::
+  ++  ram
+    ~/  %ram
+    |=  a=(tree item)
+    ^-  (unit item)
+    ?~  a    ~
+    |-
+    ?~  r.a  `n.a
+    $(a r.a)
+  ::  +run: apply gate to transform all values in place
+  ::
+  ++  run
+    ~/  %run
+    |*  [a=(tree item) b=$-(val *)]
+    |-
+    ?~  a  a
+    [n=[key.n.a (b val.n.a)] l=$(a l.a) r=$(a r.a)]
+  ::  +tab: tabulate a subset excluding start element with a max count
+  ::
+  ++  tab
+    ~/  %tab
+    |=  [a=(tree item) b=(unit key) c=@]
+    ^-  (list item)
+    |^
+    (flop e:(tabulate (del-span a b) b c))
+    ::
+    ++  tabulate
+      |=  [a=(tree item) b=(unit key) c=@]
+      ^-  [d=@ e=(list item)]
+      ?:  ?&(?=(~ b) =(c 0))
+        [0 ~]
+      =|  f=[d=@ e=(list item)]
+      |-  ^+  f
+      ?:  ?|(?=(~ a) =(d.f c))  f
+      =.  f  $(a l.a)
+      ?:  =(d.f c)  f
+      =.  f  [+(d.f) [n.a e.f]]
+      ?:(=(d.f c) f $(a r.a))
+    ::
+    ++  del-span
+      |=  [a=(tree item) b=(unit key)]
+      ^-  (tree item)
+      ?~  a  a
+      ?~  b  a
+      ?:  =(key.n.a u.b)
+        r.a
+      ?:  (compare key.n.a u.b)
+        $(a r.a)
+      a(l $(a l.a))
+    --
+  ::  +tap: convert to list, left to right
+  ::
+  ++  tap
+    ~/  %tap
+    |=  a=(tree item)
+    ^-  (list item)
+    =|  b=(list item)
+    |-  ^+  b
+    ?~  a  b
+    $(a l.a, b [n.a $(a r.a)])
+  ::  +uni: unify two ordered maps
+  ::
+  ::    .b takes precedence over .a if keys overlap.
+  ::
+  ++  uni
+    ~/  %uni
+    |=  [a=(tree item) b=(tree item)]
+    ^-  (tree item)
+    ?~  b  a
+    ?~  a  b
+    ?:  =(key.n.a key.n.b)
+      [n=n.b l=$(a l.a, b l.b) r=$(a r.a, b r.b)]
+    ?:  (mor key.n.a key.n.b)
+      ?:  (compare key.n.b key.n.a)
+        $(l.a $(a l.a, r.b ~), b r.b)
+      $(r.a $(a r.a, l.b ~), b l.b)
+    ?:  (compare key.n.a key.n.b)
+      $(l.b $(b l.b, r.a ~), a r.a)
+    $(r.b $(b r.b, l.a ~), a l.a)
+  ::  +wyt: measure size
+  ::
+  ++  wyt
+    ~/  %wyt
+    |=  a=(tree item)
+    ^-  @ud
+    ?~(a 0 +((add $(a l.a) $(a r.a))))
+  --
 ::
 +$  deco  ?(~ %bl %br %un)                              ::  text decoration
 +$  json                                                ::  normal json value
@@ -355,6 +768,12 @@
   ::    %kroc: request to delete stale message flows
   ::    %plea: request to send message
   ::
+  ::    Remote Scry Tasks
+  ::
+  ::    %keen: peek: [ship /vane/care/case/spur]
+  ::    %yawn: cancel request from arvo
+  ::    %wham: cancels all scry request from any vane
+  ::
   ::    System and Lifecycle Tasks
   ::
   ::    %born: process restart notification
@@ -375,6 +794,10 @@
         [%cork =ship]
         [%kroc dry=?]
         $>(%plea vane-task)
+    ::
+        [%keen spar]
+        [%yawn spar]
+        [%wham spar]
     ::
         $>(%born vane-task)
         $>(%init vane-task)
@@ -397,6 +820,10 @@
   ::    %lost: notify vane that we crashed on %boon
   ::    %send: packet to unix
   ::
+  ::    Remote Scry Gifts
+  ::
+  ::    %tune: peek result
+  ::
   ::    System and Lifecycle Gifts
   ::
   ::    %turf: domain report, relayed from jael
@@ -408,6 +835,8 @@
         [%lost ~]
         [%send =lane =blob]
     ::
+        [%tune spar roar=(unit roar)]
+    ::
         [%turf turfs=(list turf)]
     ==
   ::
@@ -418,7 +847,9 @@
     ++  as  ^?                                          ::  asym ops
       |%  ++  seal  |~([a=pass b=@] *@)                 ::  encrypt to a
           ++  sign  |~(a=@ *@)                          ::  certify as us
+          ++  sigh  |~(a=@ *@)                          ::  certification only
           ++  sure  |~(a=@ *(unit @))                   ::  authenticate from us
+          ++  safe  |~([a=@ b=@] *?)                    ::  authentication only
           ++  tear  |~([a=pass b=@] *(unit @))          ::  accept from a
       --  ::as                                          ::
     ++  de  |~([a=@ b=@] *(unit @))                     ::  symmetric de, soft
@@ -436,12 +867,15 @@
           ++  com  |~(a=pass ^?(..nu))                  ::  from pass
       --  ::nu                                          ::
     --  ::acru                                          ::
+  ::  +protocol-version: current version of the ames wire protocol
+  ::
+  ++  protocol-version  `?(%0 %1 %2 %3 %4 %5 %6 %7)`%0
   ::  $address: opaque atomic transport address to or from unix
   ::
   +$  address  @uxaddress
   ::  $verb: verbosity flag for ames
   ::
-  +$  verb  ?(%snd %rcv %odd %msg %ges %for %rot %kay)
+  +$  verb  ?(%snd %rcv %odd %msg %ges %for %rot %kay %fin)
   ::  $blob: raw atom to or from unix, representing a packet
   ::
   +$  blob  @uxblob
@@ -461,6 +895,12 @@
   ::    payload: semantic message contents
   ::
   +$  plea  [vane=@tas =path payload=*]
+  ::  $spar:  pair of $ship and $path
+  ::
+  ::    Instead of fully qualifying a scry path, ames infers rift and
+  ::    life based on the ship.
+  ::
+  +$  spar  [=ship =path]
   ::
   :: +|  %atomics
   ::
@@ -472,7 +912,39 @@
   +$  public-key     @uwpublickey
   +$  symmetric-key  @uwsymmetrickey
   ::
+  ::  $hoot: request packet payload
+  ::  $yowl: serialized response packet payload
+  ::  $hunk: a slice of $yowl fragments
+  ::
+  +$  hoot           @uxhoot
+  +$  yowl           @uxyowl
+  +$  hunk           [lop=@ len=@]
+  ::
   :: +|  %kinetics
+  ::  $dyad: pair of sender and receiver ships
+  ::
+  +$  dyad  [sndr=ship rcvr=ship]
+  ::  $shot: noun representation of an ames datagram packet
+  ::
+  ::    Roundtrips losslessly through atom encoding and decoding.
+  ::
+  ::    .origin is ~ unless the packet is being forwarded.  If present,
+  ::    it's an atom that encodes a route to another ship, such as an IPv4
+  ::    address.  Routes are opaque to Arvo and only have meaning in the
+  ::    interpreter. This enforces that Ames is transport-agnostic.
+  ::
+  ::    req: is a request
+  ::    sam: is using the ames protocol (not fine or another protocol)
+  ::
+  +$  shot
+    $:  dyad
+        req=?
+        sam=?
+        sndr-tick=@ubC
+        rcvr-tick=@ubC
+        origin=(unit @uxaddress)
+        content=@uxcontent
+    ==
   ::  $ack: positive ack, nack packet, or nack trace
   ::
   +$  ack
@@ -501,6 +973,7 @@
     $:  messages=(list [=duct =plea])
         packets=(set =blob)
         heeds=(set duct)
+        keens=(jug path duct)
     ==
   ::  $peer-state: state for a peer with known life and keys
   ::
@@ -539,7 +1012,51 @@
         heeds=(set duct)
         closing=(set bone)
         corked=(set bone)
+        keens=(map path keen-state)
     ==
+  +$  keen-state
+    $:  wan=((mop @ud want) lte)  ::  request packets, sent
+        nex=(list want)           ::  request packets, unsent
+        hav=(list have)           ::  response packets, backward
+        num-fragments=@ud
+        num-received=@ud
+        next-wake=(unit @da)
+        listeners=(set duct)
+        metrics=pump-metrics
+    ==
+  +$  want
+    $:  fra=@ud
+        =hoot
+        packet-state
+    ==
+  +$  have
+    $:  fra=@ud
+        meow
+    ==
+  ::
+  +$  meow  ::  response fragment
+    $:  sig=@ux  ::  signature
+        num=@ud  ::  number of fragments
+        dat=@ux  ::  contents
+    ==
+  ::
+  +$  peep  ::  fragment request
+    $:  =path
+        num=@ud
+    ==
+  ::
+  +$  wail  ::  tagged request fragment
+    $%  [%0 peep] :: unsigned
+    ==
+  ::
+  +$  roar  ::  response message
+    (tale:pki:jael (pair path (unit (cask))))
+  ::
+  +$  purr  ::  response packet payload
+    $:  peep
+        meow
+    ==
+  ::
   ::  $qos: quality of service; how is our connection to a peer doing?
   ::
   ::    .last-contact: last time we heard from peer, or if %unborn, when
@@ -637,9 +1154,20 @@
   ::
   +$  packet-pump-state
     $:  next-wake=(unit @da)
-        live=(tree [live-packet-key live-packet-val])
+        live=((mop live-packet-key live-packet-val) lte-packets)
         metrics=pump-metrics
     ==
+  ::  +lte-packets: yes if a is before b
+  ::
+  ++  lte-packets
+    |=  [a=live-packet-key b=live-packet-key]
+    ^-  ?
+    ::
+    ?:  (lth message-num.a message-num.b)
+      %.y
+    ?:  (gth message-num.a message-num.b)
+      %.n
+    (lte fragment-num.a fragment-num.b)
   ::  $pump-metrics: congestion control state for a |packet-pump
   ::
   ::    This is an Ames adaptation of TCP's Reno congestion control
@@ -690,7 +1218,7 @@
     ==
   +$  packet-state
     $:  last-sent=@da
-        retries=@ud
+        tries=_1
         skips=@ud
     ==
   ::  $message-sink-state: state of |message-sink to assemble messages
@@ -718,7 +1246,183 @@
         num-received=fragment-num
         fragments=(map fragment-num fragment)
     ==
+  ::  $rank: which kind of ship address, by length
   ::
+  ::    0b0: galaxy or star -- 2  bytes
+  ::    0b1: planet         -- 4  bytes
+  ::    0b10: moon           -- 8  bytes
+  ::    0b11: comet          -- 16 bytes
+  ::
+  +$  rank  ?(%0b0 %0b1 %0b10 %0b11)
+  ::
+  ::  +|  %coding
+  ::  +sift-ship-size: decode a 2-bit ship type specifier into a byte width
+  ::
+  ::    Type 0: galaxy or star -- 2 bytes
+  ::    Type 1: planet         -- 4 bytes
+  ::    Type 2: moon           -- 8 bytes
+  ::    Type 3: comet          -- 16 bytes
+  ::
+  ++  sift-ship-size
+    |=  rank=@ubC
+    ^-  @
+    ::
+    ?+  rank  !!
+      %0b0   2
+      %0b1   4
+      %0b10  8
+      %0b11  16
+    ==
+  ::  +is-valid-rank: does .ship match its stated .size?
+  ::
+  ++  is-valid-rank
+    |=  [=ship size=@ubC]
+    ^-  ?
+    .=  size
+    =/  wid  (met 3 ship)
+    ?:  (lte wid 1)   2
+    ?:  =(2 wid)      2
+    ?:  (lte wid 4)   4
+    ?:  (lte wid 8)   8
+    ?>  (lte wid 16)  16
+  ::  +sift-shot: deserialize packet from bytestream or crash
+  ::
+  ++  sift-shot
+    |=  =blob
+    ^-  shot
+    ~|  %sift-shot-fail
+    ::  first 32 (2^5) bits are header; the rest is body
+    ::
+    =/  header  (end 5 blob)
+    =/  body    (rsh 5 blob)
+    ::  read header; first two bits are reserved
+    ::
+    =/  req  =(& (cut 0 [2 1] header))
+    =/  sam  =(& (cut 0 [3 1] header))
+    ::
+    =/  version  (cut 0 [4 3] header)
+    ?.  =(protocol-version version)
+      ~&  [%ames-protocol-version protocol-version version]
+      ~|  ames-protocol-version+version  !!
+    ::
+    =/  sndr-size  (sift-ship-size (cut 0 [7 2] header))
+    =/  rcvr-size  (sift-ship-size (cut 0 [9 2] header))
+    =/  checksum   (cut 0 [11 20] header)
+    =/  relayed    (cut 0 [31 1] header)
+    ::  origin, if present, is 6 octets long, at the end of the body
+    ::
+    =^  origin=(unit @)  body
+      ?:  =(| relayed)
+        [~ body]
+      =/  len  (sub (met 3 body) 6)
+      [`(end [3 6] body) (rsh [3 6] body)]
+    ::  .checksum does not apply to the origin
+    ::
+    ?.  =(checksum (end [0 20] (mug body)))
+      ~&  >>>  %ames-checksum
+      ~|  %ames-checksum  !!
+    ::  read fixed-length sndr and rcvr life data from body
+    ::
+    ::    These represent the last four bits of the sender and receiver
+    ::    life fields, to be used for quick dropping of honest packets to
+    ::    or from the wrong life.
+    ::
+    =/  sndr-tick  (cut 0 [0 4] body)
+    =/  rcvr-tick  (cut 0 [4 4] body)
+    ::  read variable-length .sndr and .rcvr addresses
+    ::
+    =/  off   1
+    =^  sndr  off  [(cut 3 [off sndr-size] body) (add off sndr-size)]
+    ?.  (is-valid-rank sndr sndr-size)
+      ~&  >>>  [%ames-sender-imposter sndr sndr-size]
+      ~|  ames-sender-impostor+[sndr sndr-size]  !!
+    ::
+    =^  rcvr  off  [(cut 3 [off rcvr-size] body) (add off rcvr-size)]
+    ?.  (is-valid-rank rcvr rcvr-size)
+      ~&  >>>  [%ames-receiver-imposter rcvr rcvr-size]
+      ~|  ames-receiver-impostor+[rcvr rcvr-size]  !!
+    ::  read variable-length .content from the rest of .body
+    ::
+    =/  content  (cut 3 [off (sub (met 3 body) off)] body)
+    [[sndr rcvr] req sam sndr-tick rcvr-tick origin content]
+  ::
+  ++  sift-wail
+    |=  =hoot
+    ^-  wail
+    ?>  =(0 (end 3 hoot))
+    [%0 +:(sift-peep (rsh 3 hoot))]
+  ::
+  ++  sift-purr
+    |=  =hoot
+    ^-  purr
+    =+  [wid peep]=(sift-peep hoot)
+    [peep (sift-meow (rsh [3 wid] hoot))]
+  ::
+  ++  sift-peep
+    |=  =hoot
+    ^-  [wid=@ =peep]
+    =+  num=(cut 3 [0 4] hoot)
+    =+  len=(cut 3 [4 2] hoot)
+    =+  pat=(cut 3 [6 len] hoot)
+    ~|  pat=pat
+    [(add 6 len) [(stab pat) num]]
+  ::
+  ++  sift-meow
+    |=  =yowl
+    :*  sig=(cut 3 [0 64] yowl)
+        num=(cut 3 [64 4] yowl)
+        dat=(rsh 3^68 yowl)
+    ==
+  ::  +etch-shot: serialize a packet into a bytestream
+  ::
+  ++  etch-shot
+    |=  shot
+    ^-  blob
+    ::
+    =/  sndr-meta  (ship-meta sndr)
+    =/  rcvr-meta  (ship-meta rcvr)
+    ::
+    =/  body=@
+      ;:  mix
+        sndr-tick
+        (lsh 2 rcvr-tick)
+        (lsh 3 sndr)
+        (lsh [3 +(size.sndr-meta)] rcvr)
+        (lsh [3 +((add size.sndr-meta size.rcvr-meta))] content)
+      ==
+    =/  checksum  (end [0 20] (mug body))
+    =?  body  ?=(^ origin)  (mix u.origin (lsh [3 6] body))
+    ::
+    =/  header=@
+      %+  can  0
+      :~  [2 reserved=0]
+          [1 req]
+          [1 sam]
+          [3 protocol-version]
+          [2 rank.sndr-meta]
+          [2 rank.rcvr-meta]
+          [20 checksum]
+          [1 relayed=.?(origin)]
+      ==
+    (mix header (lsh 5 body))
+  ::
+  ::  +ship-meta: produce size (in bytes) and address rank for .ship
+  ::
+  ::    0: galaxy or star
+  ::    1: planet
+  ::    2: moon
+  ::    3: comet
+  ::
+  ++  ship-meta
+    |=  =ship
+    ^-  [size=@ =rank]
+    ::
+    =/  size=@  (met 3 ship)
+    ::
+    ?:  (lte size 2)  [2 %0b0]
+    ?:  (lte size 4)  [4 %0b1]
+    ?:  (lte size 8)  [8 %0b10]
+    [16 %0b11]
   --  ::ames
 ::                                                      ::::
 ::::                    ++behn                            ::  (1b) timekeeping
@@ -801,6 +1505,7 @@
         [%warp wer=ship rif=riff]                       ::  internal file req
         [%werp who=ship wer=ship rif=riff-any]          ::  external file req
         [%wick ~]                                       ::  try upgrade
+        [%zeal lit=(list [=desk =zest])]                ::  batch zest
         [%zest des=desk liv=zest]                       ::  live
         $>(%plea vane-task)                             ::  ames request
     ==                                                  ::
@@ -816,14 +1521,7 @@
         file-path=term                                  ::
     ==                                                  ::
   +$  care                                              ::  clay submode
-    $?  %a  %b  %c  %d  %e  %f  %p  %r                  ::
-        %s  %t  %u  %v  %w  %x  %y  %z                  ::
-    ==
-  +$  case                                              ::  ship desk case spur
-    $%  [%da p=@da]                                     ::  date
-        [%tas p=@tas]                                   ::  label
-        [%ud p=@ud]                                     ::  number
-    ==                                                  ::
+    ?(%a %b %c %d %e %f %p %r %s %t %u %v %w %x %y %z)  ::
   +$  cash                                              ::  case or tako
     $%  [%tako p=tako]                                  ::
         case                                            ::
@@ -940,6 +1638,7 @@
         [%arch =path =(map path lobe)]
     ==
   +$  rang                                              ::  repository
+    $+  rang
     $:  hut=(map tako yaki)                             ::  changes
         lat=(map lobe page)                             ::  data
     ==                                                  ::
@@ -1401,6 +2100,11 @@
   ::                                                    ::::
 ++  eyre  ^?
   |%
+  +$  cache-entry
+    $:  auth=?
+    $=  body
+    $%  [%payload =simple-payload:http]
+    ==  ==
   +$  gift
     $%  ::  set-config: configures the external http server
         ::
@@ -1420,6 +2124,9 @@
         ::    not allowed.
         ::
         [%bound accepted=? =binding]
+        ::  notification that a cache entry has changed
+        ::
+        [%grow =path]
     ==
   ::
   +$  task
@@ -1475,6 +2182,9 @@
         ::  %spew: set verbosity toggle
         ::
         [%spew veb=@]
+        ::  remember (or update) a cache mapping
+        ::
+        [%set-response url=@t entry=(unit cache-entry)]
     ==
   ::  +origin: request origin as specified in an Origin header
   ::
@@ -1556,7 +2266,7 @@
     $%  $>(%poke-ack sign:agent:gall)
         $>(%watch-ack sign:agent:gall)
         $>(%kick sign:agent:gall)
-        [%fact =mark =noun]
+        [%fact =desk =mark =noun]
     ==
   ::  channel: connection to the browser
   ::
@@ -1572,7 +2282,8 @@
   ::    events since then.
   ::
   +$  channel
-    $:  ::  channel-state: expiration time or the duct currently listening
+    $:  mode=?(%json %jam)
+        ::  channel-state: expiration time or the duct currently listening
         ::
         ::    For each channel, there is at most one open EventSource
         ::    connection. A 400 is issues on duplicate attempts to connect to the
@@ -1930,20 +2641,24 @@
   +$  boat  (map [=wire =ship =term] [acked=? =path])   ::  outgoing subs
   +$  boar  (map [=wire =ship =term] nonce=@)           ::  and their nonces
   +$  bowl                                              ::  standard app state
-          $:  $:  our=ship                              ::  host
-                  src=ship                              ::  guest
-                  dap=term                              ::  agent
-              ==                                        ::
-              $:  wex=boat                              ::  outgoing subs
-                  sup=bitt                              ::  incoming subs
-              ==                                        ::
-              $:  act=@ud                               ::  change number
-                  eny=@uvJ                              ::  entropy
-                  now=@da                               ::  current time
-                  byk=beak                              ::  load source
-              ==                                        ::
-              $:  pes=pers                              ::  agent allowance
-          ==  ==                                        ::
+    $:  $:  our=ship                                    ::  host
+            src=ship                                    ::  guest
+            dap=term                                    ::  agent
+        ==                                              ::
+        $:  wex=boat                                    ::  outgoing subs
+            sup=bitt                                    ::  incoming subs
+            $=  sky                                     ::  scry bindings
+            %+  map  path                               ::
+            ((mop @ud (pair @da (each page @uvI))) lte) ::
+        ==                                              ::
+        $:  act=@ud                                     ::  change number
+            eny=@uvJ                                    ::  entropy
+            now=@da                                     ::  current time
+            byk=beak                                    ::  load source
+        ==
+        $:  pes=pers                                    ::  agent allowance
+    ==  ==                                              ::
+  ::
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact
   ::TODO: change perms to a jug?
@@ -1958,11 +2673,6 @@
     ==                                                  ::
   +$  suss  (trel dude @tas @da)                        ::  config report
   +$  well  (pair desk term)                            ::
-  +$  neat
-    $%  [%arvo =note-arvo]
-        [%agent [=ship name=term] =deal]
-        [%pyre =tang]
-    ==
   +$  deal
     $%  [%raw-poke =mark =noun]
         task:agent
@@ -1986,6 +2696,10 @@
       $%  [%agent [=ship name=term] =task]
           [%arvo note-arvo]  ::TODO  userspace-note
           [%pyre =tang]
+      ::
+          [%grow =spur =page]
+          [%tomb =case =spur]
+          [%cull =case =spur]
       ==
     +$  task
       $%  [%watch =path]
@@ -2067,7 +2781,7 @@
     $%  [%write jump=? dude=?(~ dude)]                  ::  poke
         [%watch jump=? dude=?(~ dude) =path]            ::  subscribe
         [%reads vane=term spar]                         ::  scry
-        ::TODO  include target ship once remote scry exists?
+        [%press =spur]                                  ::  %grow %tomb %cull
     ==
   ::
   +$  perm-arvo
@@ -2179,6 +2893,13 @@
     ^-  ?
     ?:  (~(has in pes) [%super ~])  &
     ?+  mus  (~(has in pes) mus)
+        [%press *]
+      %+  lien  ~(tap in pes)
+      |=  p=perm
+      ?&  ?=([%press *] p)
+          |(=(/ spur.p) =(`0 (find spur.p spur.mus)))  ::TODO  find-at-head
+      ==
+    ::
         [%reads *]
       %+  lien  ~(tap in pes)
       |=  p=perm
@@ -2316,6 +3037,10 @@
         %poke-as   [%write jump name.note]
         %leave     &
       ==
+    ?:  ?=(%grow -.note)
+      [%press spur.note]
+    ?:  ?=(?(%tomb %cull) -.note)
+      [%press spur.note]
     ::
     ?-  +<.note
         %a
@@ -2749,6 +3474,11 @@
     +$  mind  [who=ship lyf=life]                       ::  key identifier
     +$  name  (pair @ta @t)                             ::  ascii / unicode
     +$  oath  @                                         ::  signature
+    ++  tale                                            ::  urbit-signed *
+      |$  [typ]                                         ::  payload mold
+      $:  dat=typ                                       ::  data
+          syg=(map ship (pair life oath))               ::  signatures
+      ==                                                ::
     --  ::  pki
   --  ::  jael
 ::                                                      ::::
