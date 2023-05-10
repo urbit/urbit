@@ -18,8 +18,10 @@
     $(run-i +(run-i), rng +:(rads:rng 1), size new-size)
   ~&  fail-with-sam+q.sam
   %.n
-++  quiz  |_  [size=@ud rng=_og]
-  ++  split-rng  ^+  [og og]
+++  quiz
+  |_  [size=@ud rng=_og]
+  ++  split-rng
+    ^+  [og og]
     =+  bit-size=256
     =^  bits-1  rng  (raws:rng bit-size)
     [~(. og bits-1) ~(. og (raw:rng bit-size))]
