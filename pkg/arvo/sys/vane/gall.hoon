@@ -782,7 +782,7 @@
         |-  ^+  mo-core
         ?~  dudes  mo-core
         =/  [=dude =desk]  [dude q.beak]:i.dudes
-        ~>  %slog.0^leaf/"gall: starting {<dude>} on {<desk>}"
+        ::  ~>  %slog.0^leaf/"gall: starting {<dude>} on {<desk>}"
         $(dudes t.dudes, mo-core (mo-receive-core i.dudes))
       %+  roll  %+  turn  dudes
                 |=  [=dude =beak =agent]
