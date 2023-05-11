@@ -112,8 +112,7 @@
   ::
   =/  =duct  ~[/perm]
   =/  expected-moves=(list move)
-    =;  =suss:gall  [duct %give %onto [%.y suss]]~
-    [%buster %boot (add ~s1 now.dep-gall)]
+    [duct %pass /sys/say %d %text "gall: booted %buster"]~
   ::
   =^  moves  dep-gall
     (load-one dep-gall duct test-desk ~ `[%buster test-dummy])
@@ -128,9 +127,9 @@
   ::
   =/  =duct  ~[/perm]
   =/  perms
-    (~(gas in *(set perm:gall)) [%ames %debug]~)
+    (~(gas in *(set perm:gall)) [%ames %debug ~]~)
   =/  expected-jug
-    (~(gas ju *(jug desk perm:gall)) [test-desk [%ames %debug]]~)
+    (~(gas ju *(jug desk perm:gall)) [test-desk [%ames %debug ~]]~)
   ::
   =^  moves  dep-gall
     (load-one dep-gall duct test-desk perms ~)
@@ -161,7 +160,7 @@
 ++  test-read-bowl-permissions
   ^-  tang
   =/  =duct  ~[/perm]
-  =/  pes  (~(gas in *(set perm:gall)) [%ames %debug]~)
+  =/  pes  (~(gas in *(set perm:gall)) [%ames %debug ~]~)
   ::
   =/  poke-1=task:agent:gall
     [%poke %noun !>(`poke`[%get-perms ~])]
@@ -197,7 +196,7 @@
   ::
   =/  duct-1=duct  ~[/perm]
   =/  duct-2=duct  ~[/init]
-  =/  pes  (~(gas in *(set perm:gall)) [%ames %debug]~)
+  =/  pes  (~(gas in *(set perm:gall)) [%ames %debug ~]~)
   ::
   =/  task-1=task:gall  [%ward ~]
   =/  task-2=task:gall  [%wink ~]
@@ -273,7 +272,8 @@
   ::
   %-  expect  !>
   ::  avoid having to account for tank printing nonsense
-  ?=([[* %give %unto %poke-ack ~ *] ~] moves)
+  ::TODO PERM  replace the last * with ~ in below when we start enforcing
+  ?=([[* %give %unto %poke-ack ~] *] moves)
 ::
 +|  %gall-utilities
 ::
@@ -329,7 +329,7 @@
       [%clay gift]
     :-  %writ
     %-  some
-    :+  [*care:clay *case:clay desk]
+    :+  [*care:clay *case desk]
       *path
     [%vase !>(!>(agent))]
   ::
