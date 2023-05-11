@@ -400,7 +400,7 @@
   [~ ~ %noun !>(.~lidlut-tabwed-savheb-loslux)]
 ::
 ++  cookie-value
-  'urbauth-~nul=0vsb1uq.gsjg3.53i52.eej3q.icesf'
+  'urbauth-~nul=0v2.v5g1m.rr6kg.bjj3k.59t1m.qp48h'
 ::
 ++  cookie-string
   %^  cat  3  cookie-value
@@ -1219,14 +1219,14 @@
     (get '/~/login?redirect=/~landscape/inner-path' g-auth ~)
   ;<  ~  bind:m
     =/  headers  ['content-type' 'text/html']~
-    =/  body  `(login-page:eyre-gate `'/~landscape/inner-path' ~nul %.n)
+    =/  body  `(login-page:eyre-gate `'/~landscape/inner-path' ~nul fake+g-name %.n)
     (expect-moves mos (ex-response 200 headers body) ~)
   ;<  mos=(list move)  bind:m
     =/  body  'password=lidlut-tabwed-pillex-ridrup&redirect=/~landscape'
     (post '/~/login' ~ body)
   ;<  ~  bind:m
     =/  headers  ~[['location' '/~landscape'] ['set-cookie' cookie-string]]
-    =/  token  '0vsb1uq.gsjg3.53i52.eej3q.icesf'
+    =/  token  '0v2.v5g1m.rr6kg.bjj3k.59t1m.qp48h'
     (expect-moves mos (ex-sessions token ~ ~) (ex-response 303 headers ~) ~)
   (pure:m ~)
 ::

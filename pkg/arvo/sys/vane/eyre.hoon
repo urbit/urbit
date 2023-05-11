@@ -279,7 +279,7 @@
 ::  +login-page: internal page to login to an Urbit
 ::
 ++  login-page
-  |=  [redirect-url=(unit @t) our=@p failed=?]
+  |=  [redirect-url=(unit @t) our=@p =identity failed=?]
   ^-  octs
   =+  redirect-str=?~(redirect-url "" (trip u.redirect-url))
   %-  as-octs:mimes:html
@@ -381,6 +381,9 @@
                color: var(--blue30);
                pointer-events: none;
              }
+             span.guest {
+               color: var(--black20);
+             }
              span.failed {
                display: flex;
                flex-flow: row nowrap;
@@ -438,6 +441,15 @@
           ==
           ;button(type "submit"):"Continue"
       ==
+      ;*  ?.  ?=(%fake -.identity)  ~
+          =+  id=(trim 29 (scow %p who.identity))
+          ;+  ;span.guest.mono
+                ; Current guest identity:
+                ;br;
+                ; {p.id}
+                ;br;
+                ; {q.id}
+              ==
     ==
     ;script:'''
             var failSpan = document.querySelector('.failed');
@@ -790,7 +802,7 @@
       (subscribe-to-app identity app.action inbound-request.connection)
     ::
         %authentication
-      (handle-request:authentication secure address request)
+      (handle-request:authentication secure address [suv identity] request)
     ::
         %logout
       (handle-logout:authentication [suv identity] request)
@@ -987,7 +999,7 @@
     ::  +handle-request: handles an http request for the login page
     ::
     ++  handle-request
-      |=  [secure=? =address =request:http]
+      |=  [secure=? =address [session-id=@uv =identity] =request:http]
       ^-  [(list move) server-state]
       ::
       ::  if we received a simple get: redirect if logged in, otherwise
@@ -1000,12 +1012,12 @@
         =/  redirect  (get-header:http 'redirect' args.request-line)
         ?.  (request-is-logged-in request)
           %^  return-static-data-on-duct  200  'text/html'
-          (login-page redirect our %.n)
+          (login-page redirect our identity %.n)
         =/  session-id  (session-id-from-request request)
         ::  session-id should always be populated here since we are logged in
         ?~  session-id
           %^  return-static-data-on-duct  200  'text/html'
-          (login-page redirect our %.n)
+          (login-page redirect our identity %.n)
         =/  cookie-line=@t
           (session-cookie-string u.session-id &)
         =/  actual-redirect
@@ -1024,29 +1036,33 @@
       ::  if we are not a post, return an error
       ::
       ?.  =('POST' method.request)
-        (return-static-data-on-duct 400 'text/html' (login-page ~ our %.n))
+        %^  return-static-data-on-duct  400  'text/html'
+        (login-page ~ our identity %.n)
       ::  we are a post, and must process the body type as form data
       ::
       ?~  body.request
-        (return-static-data-on-duct 400 'text/html' (login-page ~ our %.n))
+        %^  return-static-data-on-duct  400  'text/html'
+        (login-page ~ our identity %.n)
       ::
       =/  parsed=(unit (list [key=@t value=@t]))
         (rush q.u.body.request yquy:de-purl:html)
       ?~  parsed
-        (return-static-data-on-duct 400 'text/html' (login-page ~ our %.n))
+        %^  return-static-data-on-duct  400  'text/html'
+        (login-page ~ our identity %.n)
       ::
       =/  redirect=(unit @t)  (get-header:http 'redirect' u.parsed)
       ?~  password=(get-header:http 'password' u.parsed)
-        (return-static-data-on-duct 400 'text/html' (login-page redirect our %.n))
+        %^  return-static-data-on-duct  400  'text/html'
+        (login-page redirect our identity %.n)
       ::  check that the password is correct
       ::
       ?.  =(u.password code)
-        (return-static-data-on-duct 400 'text/html' (login-page redirect our %.y))
+        %^  return-static-data-on-duct  400  'text/html'
+        (login-page redirect our identity %.y)
       ::  clean up the session they're changing out from
       ::
       =^  moz  state
-        ?~  sid=(session-id-from-request request)  [~ state]
-        (close-session u.sid |)
+        (close-session session-id |)
       ::  initialize the new session
       ::
       =^  fex  state  (start-session %local)
@@ -1188,11 +1204,16 @@
       :-  %fake
       ::  pre-scramble our ship name into its displayed value, and
       ::  truncate it to be at most moon-length, so that we can overlay
-      ::  it onto the end of a comet name for visual consistency
+      ::  it onto the end of a comet name for visual consistency.
+      ::  to prevent escalation, make sure the guest identity isn't ours.
       ::
-      =.  our  (end 3^8 (fein:ob our))
-      %^  cat  3  our
-      %+  rsh  [3 (met 3 our)]
+      |-
+      =;  nom=@p
+        ?.  =(our nom)  nom
+        $(eny (shas %next-name eny))
+      =/  hat  (end 3^8 (fein:ob our))
+      %^  cat  3  hat
+      %+  rsh  [3 (met 3 hat)]
       (~(raw og (shas %fake-name eny)) 128)
     ::  +session-for-request: get the session details for the request
     ::

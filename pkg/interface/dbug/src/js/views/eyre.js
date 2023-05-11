@@ -156,18 +156,26 @@ export class Eyre extends Component {
     });
 
     const sessionItems = props.authentication.map(s => {
-      return ({key: s.identity, jsx: (<tr>
-        <td>{s.cookie.slice(0,6)}…</td>
-        <td>{s.identity}</td>
-        <td>{msToDa(s.expiry)}</td>
-        <td>{s.channels} channel(s)</td>
-        <td>
+      return ({key: s.identity, jsx: (<div class="flex">
+        <div class="flex-auto" style={{maxWidth: '5em'}}>
+          {s.cookie.slice(0,6)}…
+        </div>
+        <div class="flex-auto" style={{width: '40%'}}>
+          ~{s.identity}
+        </div>
+        <div class="flex-auto">
+          {msToDa(s.expiry)}
+        </div>
+        <div class="flex-auto">
+          {s.channels} channel(s)
+        </div>
+        <div class="flex-auto">
           <form method="post" action="/~/logout?redirect=/~debug/eyre">
             <input type="hidden" name="sid" value={s.cookie} />
             <button type="submit" name="all">kick</button>
           </form>
-        </td>
-      </tr>)});
+        </div>
+      </div>)});
     });
 
     return (<>
@@ -193,11 +201,9 @@ export class Eyre extends Component {
       <form method="post" action="/~/logout">
         <button type="submit" name="all">logout all selves</button>
       </form>
-      <table><tbody>
-        <SearchableList placeholder="identity" items={sessionItems}>
-          <button onClick={this.loadAuthenticationState}>refresh</button>
-        </SearchableList>
-      </tbody></table>
+      <SearchableList placeholder="identity" items={sessionItems}>
+        <button onClick={this.loadAuthenticationState}>refresh</button>
+      </SearchableList>
     </>);
   }
 }
