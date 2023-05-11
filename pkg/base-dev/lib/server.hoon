@@ -114,7 +114,7 @@
     :_  `octs
     [200 [['content-type' 'image/svg+xml'] ?:(cache [max-1-wk ~] ~)]]
   ::
-    ++  ico-response
+  ++  ico-response
     |=  =octs
     ^-  simple-payload:http
     [[200 [['content-type' 'image/x-icon'] max-1-wk ~]] `octs]

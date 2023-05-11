@@ -1,20 +1,22 @@
 /+  *test
 /=  ames  /sys/vane/ames
 /=  jael  /sys/vane/jael
+/*  dojo  %hoon  /app/dojo/hoon
 ::  construct some test fixtures
 ::
-=/  nec     (ames ~nec)
-=/  bud     (ames ~bud)
-=/  marbud  (ames ~marbud)
+=/  nec     ^$:((ames ~nec))
+=/  bud     ^$:((ames ~bud))
+=/  marbud  ^$:((ames ~marbud))
 ::
 =/  our-comet   ~bosrym-podwyl-magnes-dacrys--pander-hablep-masrym-marbud
 =/  our-comet2  ~togdut-rosled-fadlev-siddys--botmun-wictev-sapfus-marbud
-=/  comet   (ames our-comet)
-=/  comet2  (ames our-comet2)
+=/  comet   ^$:((ames our-comet))
+=/  comet2  ^$:((ames our-comet2))
 ::
 =.  now.nec        ~1111.1.1
 =.  eny.nec        0xdead.beef
 =.  life.ames-state.nec  2
+=.  rift.ames-state.nec  0
 =.  rof.nec  |=(* ``[%noun !>(*(list turf))])
 =.  crypto-core.ames-state.nec  (pit:nu:crub:crypto 512 (shaz 'nec'))
 =/  nec-pub  pub:ex:crypto-core.ames-state.nec
@@ -23,6 +25,7 @@
 =.  now.bud        ~1111.1.1
 =.  eny.bud        0xbeef.dead
 =.  life.ames-state.bud  3
+=.  rift.ames-state.bud  0
 =.  rof.bud  |=(* ``[%noun !>(*(list turf))])
 =.  crypto-core.ames-state.bud  (pit:nu:crub:crypto 512 (shaz 'bud'))
 =/  bud-pub  pub:ex:crypto-core.ames-state.bud
@@ -31,6 +34,7 @@
 =.  now.marbud        ~1111.1.1
 =.  eny.marbud        0xbeef.beef
 =.  life.ames-state.marbud  4
+=.  rift.ames-state.marbud  0
 =.  rof.marbud  |=(* ``[%noun !>(*(list turf))])
 =.  crypto-core.ames-state.marbud  (pit:nu:crub:crypto 512 (shaz 'marbud'))
 =/  marbud-pub  pub:ex:crypto-core.ames-state.marbud
@@ -39,6 +43,7 @@
 =.  now.comet        ~1111.1.1
 =.  eny.comet        0xbeef.cafe
 =.  life.ames-state.comet  1
+=.  rift.ames-state.comet  0
 =.  rof.comet  |=(* ``[%noun !>(*(list turf))])
 =.  crypto-core.ames-state.comet
   %-  nol:nu:crub:crypto
@@ -50,6 +55,7 @@
 =.  now.comet2        ~1111.1.1
 =.  eny.comet2        0xcafe.cafe
 =.  life.ames-state.comet2  1
+=.  rift.ames-state.comet2  0
 =.  rof.comet2  |=(* ``[%noun !>(*(list turf))])
 =.  crypto-core.ames-state.comet2  (pit:nu:crub:crypto 512 0v1eb4)
 =/  comet2-pub  pub:ex:crypto-core.ames-state.comet2
@@ -183,6 +189,41 @@
   %+  snag  index
   (skim moves is-move-send)
 ::
+++  n-frags
+  |=  n=@
+  ^-  @ux
+  ::  6 chosen randomly to get some trailing zeros
+  ::
+  %+  rsh  10
+  %+  rep  13
+  %+  turn  (gulf 1 n)
+  |=(x=@ (fil 3 1.024 (dis 0xff x)))
+::
+++  scry
+  |=  [vane=_nec car=term bem=beam]
+  =/  =roof
+    ::  custom scry handler for +test-fine-response.
+    ::  could be refined further...
+    ::
+    |=  [lyc=gang vis=view bem=beam]
+    ^-  (unit (unit cage))
+    ?+  vis  ~
+        %cp
+      =/  black=dict:clay
+        %*(. *dict:clay mod.rul %black)
+      ``noun+!>([black black])
+    ::
+        %cz
+      ?+  -.r.bem  !!
+        %ud  ``noun+!>((n-frags p.r.bem))
+      ==
+    ::
+        %cx
+      ``hoon+!>(dojo)
+    ==
+  =/  vane-core  (vane(rof roof))
+  (scry:vane-core ~ car bem)
+::
 ++  call
   |=  [vane=_nec =duct =task:ames]
   ^-  [moves=(list move:ames) _nec]
@@ -204,36 +245,38 @@
 |%
 ++  test-packet-encoding  ^-  tang
   ::
-  =/  =packet:ames
+  =/  =shot:ames
     :*  [sndr=~nec rcvr=~bud]
+        req=&  sam=&
         sndr-tick=0b10
         rcvr-tick=0b11
         origin=~
         content=0xdead.beef
     ==
   ::
-  =/  encoded  (encode-packet:ames packet)
-  =/  decoded  (decode-packet:ames encoded)
+  =/  encoded  (etch-shot:ames shot)
+  =/  decoded  (sift-shot:ames encoded)
   ::
   %+  expect-eq
-    !>  packet
+    !>  shot
     !>  decoded
 ::
 ++  test-origin-encoding  ^-  tang
   ::
-  =/  =packet:ames
+  =/  =shot:ames
     :*  [sndr=~nec rcvr=~bud]
+        req=&  sam=&
         sndr-tick=0b10
         rcvr-tick=0b11
         origin=`0xbeef.cafe.beef
         content=0xdead.beef
     ==
   ::
-  =/  encoded  (encode-packet:ames packet)
-  =/  decoded  (decode-packet:ames encoded)
+  =/  encoded  (etch-shot:ames shot)
+  =/  decoded  (sift-shot:ames encoded)
   ::
   %+  expect-eq
-    !>  packet
+    !>  shot
     !>  decoded
 ::
 ++  test-shut-packet-encoding  ^-  tang
@@ -242,10 +285,10 @@
     :+  bone=17  message-num=18
     [%& num-fragments=1 fragment-num=1 fragment=`@`0xdead.beef]
   ::
-  =/  =packet:ames
-    (encode-shut-packet:ames shut-packet nec-sym ~marnec ~marbud-marbud 3 17)
+  =/  =shot:ames
+    (etch-shut-packet:ames shut-packet nec-sym ~marnec ~marbud-marbud 3 17)
   ::
-  =/  decoded  (decode-shut-packet:ames packet nec-sym 3 17)
+  =/  decoded  (sift-shut-packet:ames shot nec-sym 3 17)
   ::
   %+  expect-eq
     !>  shut-packet
@@ -277,8 +320,8 @@
         [%& num-fragments=1 fragment-num=0 (jam plea)]
     ==
   ::
-  =/  =packet:ames
-    %:  encode-shut-packet:ames
+  =/  =shot:ames
+    %:  etch-shut-packet:ames
       shut-packet
       nec-sym
       ~bus
@@ -287,7 +330,7 @@
       rcvr-life=3
     ==
   ::
-  =/  =blob:ames   (encode-packet:ames packet)
+  =/  =blob:ames   (etch-shot:ames shot)
   =^  moves1  bud  (call bud ~[//unix] %hear lane-foo blob)
   =^  moves2  bud
     =/  =point:ames
@@ -459,6 +502,91 @@
   %+  expect-eq
     !>  [~[/g/talk] %give %done `error]
     !>  (snag 0 `(list move:ames)`moves5)
+::
+++  test-fine-request
+  ^-  tang
+  =/  want=path  /c/z/1/kids/sys
+  =^  moves1  nec  (call nec ~[/g/talk] %keen ~bud want)
+  =/  req=hoot:ames
+    %+  snag  0
+    %+  murn  ;;((list move:ames) moves1)
+    |=  =move:ames
+    ^-  (unit hoot:ames)
+    ?.  ?=(%give -.card.move)    ~
+    ?.  ?=(%send -.p.card.move)  ~
+    `;;(@uxhoot blob.p.card.move)
+  =/  =shot:ames  (sift-shot:ames `@ux`req)
+  ?<  sam.shot
+  ?>  req.shot
+  =/  =wail:ames
+   (sift-wail:ames `@ux`content.shot)
+  ~&  wail
+  (expect-eq !>(1) !>(1))
+::
+++  test-fine-hunk
+  ^-  tang
+  %-  zing
+  %+  turn  (gulf 1 10)
+  |=  siz=@
+  =/  want=path  /~bud/0/3/c/z/(scot %ud siz)/kids/sys
+  ::
+  =/  =beam  [[~bud %$ da+now:bud] (welp /fine/hunk/1/16.384 want)]
+  =/  [=mark =vase]  (need (need (scry bud %x beam)))
+  =+  !<(song=(list @uxyowl) vase)
+  %+  expect-eq
+    !>(siz)
+    !>((lent song))
+::
+++  test-fine-response
+  ^-  tang
+  ::%-  zing
+  ::%+  turn  (gulf 1 50)
+  ::|=  siz=@
+  ::=/  want=path  /~bud/0/1/c/z/(scot %ud siz)/kids/sys
+  =/  want=path  /~bud/0/3/c/x/1/kids/app/dojo/hoon
+  =/  dit  (jam %hoon dojo)
+  =/  exp  (cat 9 (fil 3 64 0xff) dit)
+  =/  siz=@ud  (met 13 exp)
+  ^-  tang
+  ::
+  =/  =beam  [[~bud %$ da+now:bud] (welp /fine/hunk/1/16.384 want)]
+  =/  [=mark =vase]  (need (need (scry bud %x beam)))
+  =+  !<(song=(list @uxyowl) vase)
+  =/   paz=(list have:ames)
+    %+  spun  song
+    |=  [blob=@ux num=_1]
+    ^-  [have:ames _num]
+    :_  +(num)
+    =/  =meow:ames  (sift-meow:ames blob)
+    [num meow]
+  ::
+  =/  num-frag=@ud  (lent paz)
+  ~&  num-frag=num-frag
+  =/  ror  (sift-roar:ames num-frag (flop paz))  :: XX rename
+  =/   event-core
+    ~!  nec
+    =/   foo  [*@da *@ rof.nec]
+    (ev:(nec foo) [*@da *@ rof.nec] *duct ames-state.nec)
+  =/  dat
+    ?>  ?=(^ dat.ror)
+    ;;(@ux q.dat.ror)
+  ::
+  ;:  welp
+    (expect-eq !>(`@`dat) !>(`@`dojo))
+  ::
+    ^-  tang
+    %-  zing
+    %+  turn  paz
+    |=  [fra=@ud sig=@ byts]
+    %+  expect-eq
+      !>(%.y)
+      !>((veri-fra:keys:fi:(abed:pe:event-core ~bud) want fra dat sig))
+  ::
+    ~&  %verifying-sig
+    %+  expect-eq
+      !>(%.y)
+      !>((meri:keys:fi:(abed:pe:event-core ~bud) want [sig dat]:ror))
+  ==
 ::
 ++  test-old-ames-wire  ^-  tang
   =^  moves0  bud  (call bud ~[/g/hood] %spew [%odd]~)

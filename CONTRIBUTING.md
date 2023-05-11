@@ -167,7 +167,7 @@ should be accompanied by an updated [solid pill](#the-kernel-and-pills).  Pills
 are tracked in the repository via [git LFS][git-lfs].
 
 ```
-$ git lfs init
+$ git lfs install
 $ git lfs pull
 ```
 
@@ -185,7 +185,7 @@ directory as `urbit.pill`.
 You can boot a new ship from your local pill with `-B`:
 
 ```
-$ urbit -F zod -B path/to/urbit.pill my-fake-zod
+$ urbit -F zod -B path/to/urbit.pill -c my-fake-zod
 ```
 
 Release pills, i.e. those corresponding to vere releases, are cached at
