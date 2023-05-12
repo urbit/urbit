@@ -37,7 +37,7 @@
                        %=  sax
                           q  :-  q:(fill(rng rng-2) (slot 2 sax))
                              q:(fill(rng rng-1) (slot 3 sax))
-                      ==
+                       ==
       [%face p=* q=*]  sax(q q:(fill [p=q.p.sax q=q.sax]))
     ==
   ++  gen-noun
