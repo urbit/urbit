@@ -1211,9 +1211,9 @@
       =;  nom=@p
         ?.  =(our nom)  nom
         $(eny (shas %next-name eny))
-      =/  hat  (end 3^8 (fein:ob our))
-      %^  cat  3  hat
-      %+  rsh  [3 (met 3 hat)]
+      %+  end  3^16
+      %^  cat  3
+        (end 3^8 (fein:ob our))
       (~(raw og (shas %fake-name eny)) 128)
     ::  +session-for-request: get the session details for the request
     ::

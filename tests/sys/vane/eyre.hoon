@@ -408,7 +408,7 @@
 ::
 ++  cookie  ['cookie' cookie-value]~
 ::
-++  g-name  ~rocfyn-bistyv-tadlux-modsel--bittex-patsun-sitpec-ravnul
+++  g-name  ~fitbur-togtep-ladnup-ronbus--tanmer-sibsyn-lavryg-ramnul
 ++  g-auth  ['cookie' g-cook]
 ++  g-cook  'urbauth-~nul=0v5.gbhev.sbeh0.3rov1.o6ibh.a3t9r'
 ++  g-sook  (cat 3 g-cook '; Path=/; Max-Age=604800')
