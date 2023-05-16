@@ -1,4 +1,4 @@
-|_  [eny=@uv runs=@ud gen=(unit $-([name=@tas size=@ud rng=_og] (unit *)))]
+|_  [eny=@uv runs=@ud fillr=(unit $-([name=@tas size=@ud rng=_og] (unit *)))]
 ++  check
   |=  vax=vase
   =?  runs  =(0 runs)  100
@@ -47,11 +47,9 @@
       [%hint p=* q=*]  =/  name=(unit @tas)
                          ?.  ?=([%know p=@tas] +.p.p.sax)  ~
                          `+>.p.p.sax
-                       =+  user-fill=|=([a=_(need gen) b=@tas] (a b size new-rng))
-                       =+  user-gen=(clef gen name user-fill)
-                       ?~  user-gen
-                         sax(q (fill [p=q.p.sax q=q.sax]))
-                       sax(q (need user-gen))
+                       =+  filld=|=([a=_(need fillr) b=@tas] (a b size new-rng))
+                       =+  fills=(clef fillr name filld)
+                       sax(q (fall fills (fill [p=q.p.sax q=q.sax])))
     ==
   ++  gen-noun
     =+  start-size=size
