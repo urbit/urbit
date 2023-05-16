@@ -47,7 +47,8 @@
       [%hint p=* q=*]  =/  name=(unit @tas)
                          ?.  ?=([%know p=@tas] +.p.p.sax)  ~
                          `+>.p.p.sax
-                       =+  user-gen=?~(name ~ ?~(gen ~ ((need gen) (need name) size new-rng)))
+                       =+  user-fill=|=([a=_(need gen) b=@tas] (a b size new-rng))
+                       =+  user-gen=(clef gen name user-fill)
                        ?~  user-gen
                          sax(q (fill [p=q.p.sax q=q.sax]))
                        sax(q (need user-gen))
