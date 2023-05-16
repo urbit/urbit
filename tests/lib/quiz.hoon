@@ -18,6 +18,7 @@
   %-  expect  !>((check:quiz fate))
 ++  test-noun
   =+  fate=!>(|=([a=* b=*] ^-(? |(=(a b) ?!(=((sham a) (sham b)))))))
+  %-  expect  !>((check:quiz fate))
 ++  test-fork
   =+  fate=!>(|=(a=? |(a ?!(a))))
   %-  expect  !>((check:quiz fate))
