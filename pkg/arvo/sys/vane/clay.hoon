@@ -714,7 +714,14 @@
       =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) cast+[a b])
         ~|(cycle+cast+[a b]^cycle.nub !!)
+      ?:  =(a b)
+        %+  gain-leak  cast+a^b
+        |=  nob=state
+        %-  (trace 4 |.("identity shortcircuit"))
+        =.  nub  nob
+        :_(nub vase+same.bud)
       ?:  =([%mime %hoon] [a b])
+        %-  (trace 4 |.("%mime -> %hoon shortcircuit"))
         :_(nub [%vase =>(..zuse !>(|=(m=mime q.q.m)))])
       ::  try +grow; is there a +grow core with a .b arm?
       ::
@@ -729,6 +736,7 @@
         ::
         %+  gain-leak  cast+a^b
         |=  nob=state
+        %-  (trace 4 |.("{<a>} -> {<b>}: +{(trip b)}:grow:{(trip a)}"))
         =.  nub  nob
         :_  nub  :-  %vase
         %+  slap  (with-faces cor+old ~)
@@ -743,18 +751,24 @@
       ?:  &(?=(%& -.rab) ?=(^ q.p.rab))
         %+  gain-leak  cast+a^b
         |=  nob=state
+        %-  (trace 4 |.("{<a>} -> {<b>}: +{(trip a)}:grab:{(trip b)}"))
         =.  nub  nob
         :_(nub vase+p.rab)
       ::  try +jump
       ::
       =/  jum  (mule |.((slap old tsgl/[limb/b limb/%jump])))
       ?:  ?=(%& -.jum)
-        (compose-casts a !<(mark p.jum) b)
+        =/  via  !<(mark p.jum)
+        %-  (trace 4 |.("{<a>} -> {<b>}: via {<via>} per +jump:{(trip a)}"))
+        (compose-casts a via b)
       ?:  ?=(%& -.rab)
-        (compose-casts a !<(mark p.rab) b)
+        =/  via  !<(mark p.rab)
+        %-  (trace 4 |.("{<a>} -> {<b>}: via {<via>} per +grab:{(trip b)}"))
+        (compose-casts a via b)
       ?:  ?=(%noun b)
         %+  gain-leak  cast+a^b
         |=  nob=state
+        %-  (trace 4 |.("{<a>} -> {<b>} default"))
         =.  nub  nob
         :_(nub vase+same.bud)
       ~|(no-cast-from+[a b] !!)
@@ -4496,7 +4510,9 @@
       ::
       ?.  ?|  =(0v0 tak)
           ?&  (~(has by hut.ran) tak)
-              (~(has in (reachable-takos (aeon-to-tako:ze let.dom))) tak)
+              ?|  (~(any by hit.dom) |=(=tako =(tak tako)))  ::  fast-path
+                  (~(has in (reachable-takos (aeon-to-tako:ze let.dom))) tak)
+              ==
               |(?=(~ for) (may-read u.for care.mun tak path.mun))
           ==  ==
         [~ ..park]
