@@ -758,11 +758,13 @@
       ::
       =/  jum  (mule |.((slap old tsgl/[limb/b limb/%jump])))
       ?:  ?=(%& -.jum)
-        %-  (trace 4 |.("{<a>} -> {<b>}: +jump:{(trip b)}"))
-        (compose-casts a !<(mark p.jum) b)
+        =/  via  !<(mark p.jum)
+        %-  (trace 4 |.("{<a>} -> {<b>}: via {<via>} per +jump:{(trip a)}"))
+        (compose-casts a via b)
       ?:  ?=(%& -.rab)
-        %-  (trace 4 |.("{<a>} -> {<b>}: +grab:{(trip b)}"))
-        (compose-casts a !<(mark p.rab) b)
+        =/  via  !<(mark p.rab)
+        %-  (trace 4 |.("{<a>} -> {<b>}: via {<via>} per +grab:{(trip b)}"))
+        (compose-casts a via b)
       ?:  ?=(%noun b)
         %+  gain-leak  cast+a^b
         |=  nob=state
