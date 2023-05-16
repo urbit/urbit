@@ -236,12 +236,13 @@
   ?<  =(0 b)
   |-  ^-  ?
   ?:  =(a 1)  %&
-  ?:  =((cap a) (cap b))
-    $(a (mas a), b (mas b))
-  %|
+  ?.  =((cap a) (cap b))  %|
+  $(a (mas a), b (mas b))
+::
 ++  awl
   ~/  %awl
   ::    axis after axis
+  ::
   ::  computes the remainder of axis {b} when navigating to {a}.
   ::  (crashes if not `(pin a b)`)
   |=  [a=@ b=@]
@@ -249,9 +250,8 @@
   ?<  =(0 b)
   |-  ^-  @
   ?:  =(a 1)  b
-  ?:  =((cap a) (cap b))
-    $(a (mas a), b (mas b))
-  !!
+  ?>  =((cap a) (cap b))
+  $(a (mas a), b (mas b))
 ::
 ::  #  %containers
 ::
