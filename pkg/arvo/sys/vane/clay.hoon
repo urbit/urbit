@@ -714,6 +714,12 @@
       =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) cast+[a b])
         ~|(cycle+cast+[a b]^cycle.nub !!)
+      ?:  =(a b)
+        %+  gain-leak  cast+a^b
+        |=  nob=state
+        %-  (trace 4 |.("identity shortcircuit"))
+        =.  nub  nob
+        :_(nub vase+same.bud)
       ?:  =([%mime %hoon] [a b])
         %-  (trace 4 |.("%mime -> %hoon shortcircuit"))
         :_(nub [%vase =>(..zuse !>(|=(m=mime q.q.m)))])
