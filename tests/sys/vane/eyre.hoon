@@ -783,7 +783,7 @@
   ;<  mos=(list move)  bind:m  (call ~[/http-blah] %cancel-request ~)
   =/  mov-1
     (ex-rest /channel/heartbeat/'0123456789abcdef' :(add ~1111.1.2 ~m3 ~s20))
-  =/  mov-2 
+  =/  mov-2
     (ex-wait /channel/timeout/'0123456789abcdef' :(add ~1111.1.2 ~m4 ~h12))
   (expect-moves mos mov-1 mov-2 ~)
 ::
@@ -1053,7 +1053,7 @@
   ::
   ;<  mos=(list move)  bind:m  (call ~[/http-blah] %cancel-request ~)
   =/  mov-1  (ex-rest /channel/heartbeat/'0123456789abcdef' heartbeat)
-  =/  mov-2 
+  =/  mov-2
     (ex-wait /channel/timeout/'0123456789abcdef' :(add ~1111.1.2 ~m6 ~h12))
   ;<  ~  bind:m  (expect-moves mos mov-1 mov-2 ~)
   ;<  ~  bind:m  (wait ~m1)
@@ -1134,7 +1134,7 @@
     """
   =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
   =/  mov-2  (ex-gall-deal wire ~nul %two %leave ~)
-  =/  mov-3  
+  =/  mov-3
     %-  ex-continue-response  :_  %.n  :-  ~
     %-  as-octt:mimes:html
     """
@@ -1215,7 +1215,7 @@
 ++  perform-authentication-2
   =/  m  (mare ,~)
   ^-  form:m
-  ;<  mos=(list move)  bind:m 
+  ;<  mos=(list move)  bind:m
     (get '/~/login?redirect=/~landscape/inner-path' g-auth ~)
   ;<  ~  bind:m
     =/  headers  ['content-type' 'text/html']~
