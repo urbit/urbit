@@ -24,8 +24,8 @@
 ++  test-hint
   =+  fate=!>(|=(a=$+(test-type @ud) =(a 42)))
   =/  my-gen
-    |=  [name=note size=@ud rng=_og]
-    ?>  =(name [%know p=mark=%test-type])
+    |=  [name=@tas size=@ud rng=_og]
+    ?>  =(name %test-type)
     ^-  (unit @ud)
     `42
   %-  expect  !>((~(check quiz `@uv`1 100 `my-gen) fate))

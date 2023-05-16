@@ -1,4 +1,4 @@
-|_  [eny=@uv runs=@ud gen=(unit $-([name=note size=@ud rng=_og] (unit *)))]
+|_  [eny=@uv runs=@ud gen=(unit $-([name=@tas size=@ud rng=_og] (unit *)))]
 ++  check
   |=  vax=vase
   =?  runs  =(0 runs)  100
@@ -44,8 +44,10 @@
                        =+  new-type=(snag ran ts)
                        :: Note: by assigning a specific type, we may create an evil vase.
                        (fill(rng new-rng) sax(p new-type, q q.sax))
-      [%hint p=* q=*]  ?>  ?=([p=* q=*] p.p.sax)
-                       =+  user-gen=?~(gen ~ ((need gen) +.p.p.sax size new-rng))
+      [%hint p=* q=*]  =/  name=(unit @tas)
+                         ?.  ?=([%know p=@tas] +.p.p.sax)  ~
+                         `+>.p.p.sax
+                       =+  user-gen=?~(name ~ ?~(gen ~ ((need gen) (need name) size new-rng)))
                        ?~  user-gen
                          sax(q (fill [p=q.p.sax q=q.sax]))
                        sax(q (need user-gen))
