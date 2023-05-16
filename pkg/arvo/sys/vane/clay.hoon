@@ -715,6 +715,7 @@
       ?:  (~(has in cycle.nub) cast+[a b])
         ~|(cycle+cast+[a b]^cycle.nub !!)
       ?:  =([%mime %hoon] [a b])
+        %-  (trace 4 |.("%mime -> %hoon shortcircuit"))
         :_(nub [%vase =>(..zuse !>(|=(m=mime q.q.m)))])
       ::  try +grow; is there a +grow core with a .b arm?
       ::
@@ -729,6 +730,7 @@
         ::
         %+  gain-leak  cast+a^b
         |=  nob=state
+        %-  (trace 4 |.("{<a>} -> {<b>}: +{(trip b)}:grow:{(trip a)}"))
         =.  nub  nob
         :_  nub  :-  %vase
         %+  slap  (with-faces cor+old ~)
@@ -743,18 +745,22 @@
       ?:  &(?=(%& -.rab) ?=(^ q.p.rab))
         %+  gain-leak  cast+a^b
         |=  nob=state
+        %-  (trace 4 |.("{<a>} -> {<b>}: +{(trip a)}:grab:{(trip b)}"))
         =.  nub  nob
         :_(nub vase+p.rab)
       ::  try +jump
       ::
       =/  jum  (mule |.((slap old tsgl/[limb/b limb/%jump])))
       ?:  ?=(%& -.jum)
+        %-  (trace 4 |.("{<a>} -> {<b>}: +jump:{(trip b)}"))
         (compose-casts a !<(mark p.jum) b)
       ?:  ?=(%& -.rab)
+        %-  (trace 4 |.("{<a>} -> {<b>}: +grab:{(trip b)}"))
         (compose-casts a !<(mark p.rab) b)
       ?:  ?=(%noun b)
         %+  gain-leak  cast+a^b
         |=  nob=state
+        %-  (trace 4 |.("{<a>} -> {<b>} default"))
         =.  nub  nob
         :_(nub vase+same.bud)
       ~|(no-cast-from+[a b] !!)
