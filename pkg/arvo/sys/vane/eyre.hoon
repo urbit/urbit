@@ -656,7 +656,8 @@
     =/  connection=outstanding-connection
       [action [authenticated secure address request] ~ 0]
     =.  connections.state
-      :: XX pretty sure this is superfluous - done in +handle-response
+      ::  NB: required by +handle-response. XX optimize
+      ::
       (~(put by connections.state) duct connection)
     ::  redirect to https if insecure, redirects enabled
     ::  and secure port live
@@ -1986,7 +1987,10 @@
     |=  =tang
     ^-  [(list move) server-state]
     ::
-    =+  connection=(~(got by connections.state) duct)
+    ?~  connection-state=(~(get by connections.state) duct)
+      %.  `state
+      (trace 0 |.("{<duct>} error on invalid outstanding connection"))
+    =*  connection  u.connection-state
     =/  moves-1=(list move)
       ?.  ?=(%app -.action.connection)
         ~
@@ -2055,8 +2059,8 @@
               (session-cookie-string u.session-id &)
             headers.response-header.http-event
           ::
-          =/  connection=outstanding-connection
-            (~(got by connections.state) duct)
+          =*  connection  u.connection-state
+          ::
           ::  if the request was a simple cors request from an approved origin
           ::  append the necessary cors headers to the response
           ::
@@ -2073,15 +2077,17 @@
           ::
           =.  response-header.http-event  response-header
           =.  connections.state
+            ?:  complete.http-event
+              ::  XX  optimize by not requiring +put:by in +request
+              ::
+              (~(del by connections.state) duct)
+            ::
             %-  (trace 2 |.("{<duct>} start"))
             %+  ~(put by connections.state)  duct
-            %_  connection
+            %=  connection
               response-header  `response-header
               bytes-sent  ?~(data.http-event 0 p.u.data.http-event)
             ==
-          ::
-          =?  state  complete.http-event
-            log-complete-request
           ::
           pass-response
         ::
@@ -2091,14 +2097,18 @@
             (trace 0 |.("{<duct>} error continue without start"))
           ::
           =.  connections.state
-            %-  (trace 2 |.("{<duct>} continuing "))
-            %+  ~(jab by connections.state)  duct
-            |=  connection=outstanding-connection
-            =+  size=?~(data.http-event 0 p.u.data.http-event)
-            connection(bytes-sent (add bytes-sent.connection size))
-          ::
-          =?  state  complete.http-event
-            log-complete-request
+            ?:  complete.http-event
+              %-  (trace 2 |.("{<duct>} completed"))
+              (~(del by connections.state) duct)
+            ::
+            %-  (trace 2 |.("{<duct>} continuing"))
+            ?~  data.http-event
+              connections.state
+            ::
+            %+  ~(put by connections.state)  duct
+            =*  size  p.u.data.http-event
+            =*  conn  u.connection-state
+            conn(bytes-sent (add size bytes-sent.conn))
           ::
           pass-response
         ::
@@ -2111,16 +2121,6 @@
     ++  pass-response
       ^-  [(list move) server-state]
       [[duct %give %response http-event]~ state]
-    ::
-    ++  log-complete-request
-      ::  todo: log the complete request
-      ::
-      ::  remove all outstanding state for this connection
-      ::
-      =.  connections.state
-        %.  (~(del by connections.state) duct)
-        (trace 2 |.("{<duct>} completed"))
-      state
     ::
     ++  error-connection
       ::  todo: log application error
@@ -2358,12 +2358,24 @@
   ::
   =/  task=task  ((harden task) wrapped-task)
   ::
-  ::  XX handle error notifications
+  ::  XX handle more error notifications
   ::
   ?^  dud
-    =/  moves=(list move)
-      [[duct %slip %d %flog %crud [-.task tang.u.dud]] ~]
-    [moves http-server-gate]
+    :_  http-server-gate
+    ::  always print the error trace
+    ::
+    :-  [duct %slip %d %flog %crud [-.task tang.u.dud]]
+    ^-  (list move)
+    ::  if a request caused the crash, respond with a 500
+    ::
+    ?.  ?=(?(%request %request-local) -.task)  ~
+    ^~
+    =/  data  (as-octs:mimes:html 'crud!')
+    =/  head
+      :~  ['content-type' 'text/html']
+          ['content-length' (crip (a-co:co p.data))]
+      ==
+    [duct %give %response %start 500^head `data &]~
   ::  %init: tells us what our ship name is
   ::
   ?:  ?=(%init -.task)

@@ -1818,7 +1818,11 @@
       =?  ..park  !?=(%base syd)  wick                  ::  [wick]
       %-  (slog leaf+"clay: wait-for-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
       tare                                              ::  [tare] >
-    =.  wic.dom  (~(del by wic.dom) zuse+zuse)
+    =.  wic.dom
+      %-  ~(gas by *(map weft ^yoki))
+      %+  skip  ~(tap by wic.dom)
+      |=  [w=weft ^yoki]
+      (gte num.w zuse)
     ::
     =/  old-yaki
       ?:  =(0 let.dom)
@@ -3304,7 +3308,6 @@
     |=  [inx=@ud rut=(unit rand)]
     ^+  +>
     ?>  ?=(^ ref)
-    ~&  take-foreign/inx
     =+  ruv=(~(get by bom.u.ref) inx)
     ?~  ruv
       ~&  %bad-answer
@@ -4489,13 +4492,14 @@
     ++  read-at-tako                                    ::    read-at-tako:ze
       |=  [for=(unit ship) tak=tako mun=mood]           ::  seek and read
       ^-  [(unit (unit cage)) _..park]
-      ?.  |(?=(~ for) (may-read u.for care.mun tak path.mun))
-        [~ ..park]
-      ::  the commit must be known, and reachable from within this desk
+      ::  non-zero commits must be known, and reachable from within this desk
       ::
       ?.  ?|  =(0v0 tak)
           ?&  (~(has by hut.ran) tak)
-              (~(has in (reachable-takos (aeon-to-tako:ze let.dom))) tak)
+              ?|  (~(any by hit.dom) |=(=tako =(tak tako)))  ::  fast-path
+                  (~(has in (reachable-takos (aeon-to-tako:ze let.dom))) tak)
+              ==
+              |(?=(~ for) (may-read u.for care.mun tak path.mun))
           ==  ==
         [~ ..park]
       ::  virtualize to catch and produce deterministic failures

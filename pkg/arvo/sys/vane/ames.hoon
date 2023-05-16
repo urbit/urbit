@@ -2200,7 +2200,11 @@
           =/  peer-core  (abed-peer:pe her.u.res u.state)
           ?-  -.u.res
             %pump  abet:(on-wake:peer-core bone.u.res error)
-            %fine  abet:fi-abet:fi-take-wake:(abed:fi:peer-core wire.u.res)
+            ::
+              %fine
+            ?.  (~(has by keens.peer-state.peer-core) wire.u.res)
+              event-core
+            abet:fi-abet:fi-take-wake:(abed:fi:peer-core wire.u.res)
           ==
         ::
         =.  event-core  (emit duct %pass /recork %b %wait `@da`(add now ~d1))
