@@ -4496,7 +4496,9 @@
       ::
       ?.  ?|  =(0v0 tak)
           ?&  (~(has by hut.ran) tak)
-              (~(has in (reachable-takos (aeon-to-tako:ze let.dom))) tak)
+              ?|  (~(any by hit.dom) |=(=tako =(tak tako)))  ::  fast-path
+                  (~(has in (reachable-takos (aeon-to-tako:ze let.dom))) tak)
+              ==
               |(?=(~ for) (may-read u.for care.mun tak path.mun))
           ==  ==
         [~ ..park]
