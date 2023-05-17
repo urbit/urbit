@@ -239,8 +239,8 @@
   ?.  =((cap a) (cap b))  %|
   $(a (mas a), b (mas b))
 ::
-++  awl
-  ~/  %awl
+++  hub
+  ~/  %hub
   ::    axis after axis
   ::
   ::  computes the remainder of axis {b} when navigating to {a}.
