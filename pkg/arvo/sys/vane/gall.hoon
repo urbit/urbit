@@ -769,6 +769,10 @@
       (mo-apply-sure dap routes deal)
     ::
         %raw-poke
+      ::  don't validate %noun pokes, for performance
+      ::
+      ?:  =(%noun mark.deal)
+        (mo-apply-sure dap routes [%poke %noun %noun noun.deal])
       =/  =case  da+now
       =/  yok  (~(got by yokes.state) dap)
       =/  =desk  q.beak:?>(?=(%live -.yok) yok)  ::TODO acceptable assertion?
@@ -973,7 +977,7 @@
     ++  ap-idle
       ^+  ap-core
       ?:  ?=(%| -.agent.yoke)  ap-core
-      =>  [ken=ken.yoke (ap-ingest ~ |.([ap-yawn-all *agent]))]
+      =>  [ken=ken.yoke (ap-ingest ~ |.([ap-yawn-all p.agent.yoke]))]
       ap-core(ken.yoke ken, agent.yoke |+on-save:ap-agent-core)
     ::
     ++  ap-nuke

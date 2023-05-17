@@ -2200,7 +2200,11 @@
           =/  peer-core  (abed-peer:pe her.u.res u.state)
           ?-  -.u.res
             %pump  abet:(on-wake:peer-core bone.u.res error)
-            %fine  abet:fi-abet:fi-take-wake:(abed:fi:peer-core wire.u.res)
+            ::
+              %fine
+            ?.  (~(has by keens.peer-state.peer-core) wire.u.res)
+              event-core
+            abet:fi-abet:fi-take-wake:(abed:fi:peer-core wire.u.res)
           ==
         ::
         =.  event-core  (emit duct %pass /recork %b %wait `@da`(add now ~d1))
@@ -2882,6 +2886,10 @@
           ::  expire direct route if the peer is not responding
           ::
           =.  peer-state  (update-peer-route her peer-state)
+          ::  required so that the following +send-blob's (including
+          ::  inside +call:mu), access up-to-date peer state
+          ::
+          =.  event-core  abet
           ::  resend comet attestation packet if first message times out
           ::
           ::    The attestation packet doesn't get acked, so if we tried to
@@ -4445,7 +4453,7 @@
             ::  if this was a re-send, don't adjust rtt or downstream state
             ::
             ?:  (gth tries.packet-state 1)
-              metrics
+              metrics(rto (clamp-rto (add rtt (mul 4 rttvar))))
             ::  rtt-datum: new rtt measurement based on packet roundtrip
             ::
             =/  rtt-datum=@dr  (sub-safe now last-sent.packet-state)
