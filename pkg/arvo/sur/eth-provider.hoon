@@ -1,4 +1,4 @@
-/-  json-rpc
+/-  rpc=json-rpc
 /+  ethereum
 =,  ethereum-types
 =,  jael
@@ -16,7 +16,7 @@
   ==
 +$  action
   $%  [%configure =provider-mode]
-      [%provide rid=@ta =ethin]
+      [%provide rid=@ta reqs=(list [id=(unit @t) req=request:rpc:ethereum])] :: request-rpc
   ==
 +$  ethin
   $%  
@@ -46,19 +46,20 @@
       [%get-next-nonce =address]
       [%get-balance =address]
   ==
-+$  ethout
-  $%  
-      [%request-rpc res=json]
-      [%request-batch-rpc-strict res=(list [id=@t =json])]
-      [%request-batch-rpc-loose res=(list response:json-rpc)]
-      [%read-contract res=@t]
-      [%batch-read-contract-strict results=(list [id=@t res=@t])]
-      [%get-latest-block =block]
-      [%get-block-by-number =block]
-      [%get-tx-by-hash res=transaction-result:rpc:ethereum]
-      [%get-logs-by-hash res=(list event-log:rpc:ethereum)]
-      [%get-logs-by-range res=(list event-log:rpc:ethereum)]
-      [%get-next-nonce nonce=@ud]
-      [%get-balance balance=@ud]
-  ==
++$  ethout  (list response:rpc)
+:: +$  ethout
+::   $%  
+::       [%request-rpc res=json]
+::       [%request-batch-rpc-strict res=(list [id=@t =json])]
+::       [%request-batch-rpc-loose res=(list response:json-rpc)]
+::       [%read-contract res=@t]
+::       [%batch-read-contract-strict results=(list [id=@t res=@t])]
+::       [%get-latest-block =block]
+::       [%get-block-by-number =block]
+::       [%get-tx-by-hash res=transaction-result:rpc:ethereum]
+::       [%get-logs-by-hash res=(list event-log:rpc:ethereum)]
+::       [%get-logs-by-range res=(list event-log:rpc:ethereum)]
+::       [%get-next-nonce nonce=@ud]
+::       [%get-balance balance=@ud]
+::   ==
 --

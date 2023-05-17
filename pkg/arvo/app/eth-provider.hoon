@@ -1,4 +1,4 @@
-/-  eth-provider
+/-  eth-provider, rpc=json-rpc
 /+  ethereum, default-agent, dbug
 |%
 +$  versioned-state
@@ -127,9 +127,10 @@
          %-  (slog leaf+"Thread failed: {(trip p.err)}" q.err)
          `this
            %thread-done
-         =/  res  !<([@ta ethout:eth-provider] q.cage.sign)
+         =/  res  !<([@ta (list response:rpc)] q.cage.sign)
          =/  eth-output  +.res
          :-  
+         :: ~
          :~
          [%give %fact ~[[%responses -.res ~]] %ethout !>(eth-output)]
          ==

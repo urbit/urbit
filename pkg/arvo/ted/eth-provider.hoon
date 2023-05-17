@@ -1,4 +1,4 @@
-/-  spider, eth-provider, json-rpc
+/-  spider, eth-provider, rpc=json-rpc
 /+  strandio, ethio, ethereum, provider-lib=eth-provider
 =,  strand=strand:spider
 =,  dejs-soft:format
@@ -8,7 +8,7 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=/  eth-input  !<(ethin:eth-provider arg)
+=/  reqs  !<((list [id=(unit @t) req=request:rpc:ethereum]) arg)
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 ?>  =(src.bowl our.bowl)
 ;<    provider-mode=provider-mode:eth-provider
@@ -16,5 +16,5 @@
   (scry:strandio provider-mode:eth-provider /gx/eth-provider/get-provider-mode/noun)
 ?>  ?=(%provider -.provider-mode)
 =/  provider  `provider:eth-provider`+.provider-mode
-;<  ethout=ethout:eth-provider  bind:m  (call-ethio:provider-lib eth-input %provider url.provider)
-(pure:m !>([tid.bowl ethout]))
+;<  results=(list response:rpc)  bind:m  (request-batch-rpc-loose:provider-lib reqs)
+(pure:m !>([tid.bowl results]))
