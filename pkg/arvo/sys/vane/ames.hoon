@@ -1755,41 +1755,56 @@
       ++  on-stir
         |=  arg=@t
         ^+  event-core
-        =/  want=(set [@da ^duct])
-          %-  ~(rep by peers.ames-state)
-          |=  [[who=ship s=ship-state] acc=(set [@da ^duct])]
-          ?.  ?=(%known -.s)  acc
-          %-  ~(rep by snd.+.s)
-          |=  [[b=bone m=message-pump-state] acc=_acc]
-          =*  tim  next-wake.packet-pump-state.m
-          ?~  tim  acc
-          %-  ~(put in acc)
-          [u.tim `^duct`~[ames+(make-pump-timer-wire who b) /ames]]
-        =.  want
-          (~(put in want) (add now ~d1) ~[/ames/recork /ames])
+        |^  ?+  arg  do-stir
+              %rift  do-rift
+            ==
         ::
-        =/  have
-          %-  ~(gas in *(set [@da ^duct]))
-          =/  tim
-            ;;  (list [@da ^duct])
-            =<  q.q  %-  need  %-  need
-            (rof ~ %bx [[our %$ da+now] /debug/timers])
-          (skim tim |=([@da hen=^duct] ?=([[%ames ?(%pump %recork) *] *] hen)))
+        ++  do-rift
+          =/  =rift
+            =-  ~|(%no-rift (,@ q.q:(need (need -))))
+            (rof ~ %j `beam`[[our %rift %da now] /(scot %p our)])
+          ?:  =(rift rift.ames-state)
+            event-core
+          ~&  "ames: fixing rift from {<rift.ames-state>} to {<rift>}"
+          event-core(ames-state ames-state(rift rift))
         ::
-        ::  set timers for flows that should have one set but don't
-        ::
-        =.  event-core
-          %-  ~(rep in (~(dif in want) have))
+        ++  do-stir
+          =/  want=(set [@da ^duct])
+            %-  ~(rep by peers.ames-state)
+            |=  [[who=ship s=ship-state] acc=(set [@da ^duct])]
+            ?.  ?=(%known -.s)  acc
+            %-  ~(rep by snd.+.s)
+            |=  [[b=bone m=message-pump-state] acc=_acc]
+            =*  tim  next-wake.packet-pump-state.m
+            ?~  tim  acc
+            %-  ~(put in acc)
+            [u.tim `^duct`~[ames+(make-pump-timer-wire who b) /ames]]
+          =.  want
+            (~(put in want) (add now ~d1) ~[/ames/recork /ames])
+          ::
+          =/  have
+            %-  ~(gas in *(set [@da ^duct]))
+            =/  tim
+              ;;  (list [@da ^duct])
+              =<  q.q  %-  need  %-  need
+              (rof ~ %bx [[our %$ da+now] /debug/timers])
+            (skim tim |=([@da hen=^duct] ?=([[%ames ?(%pump %recork) *] *] hen)))
+          ::
+          ::  set timers for flows that should have one set but don't
+          ::
+          =.  event-core
+            %-  ~(rep in (~(dif in want) have))
+            |=  [[wen=@da hen=^duct] this=_event-core]
+            ?>  ?=([^ *] hen)
+            (emit:this ~[/ames] %pass t.i.hen %b %wait wen)
+          ::
+          ::  cancel timers for flows that have one set but shouldn't
+          ::
+          %-  ~(rep in (~(dif in have) want))
           |=  [[wen=@da hen=^duct] this=_event-core]
           ?>  ?=([^ *] hen)
-          (emit:this ~[/ames] %pass t.i.hen %b %wait wen)
-        ::
-        ::  cancel timers for flows that have one set but shouldn't
-        ::
-        %-  ~(rep in (~(dif in have) want))
-        |=  [[wen=@da hen=^duct] this=_event-core]
-        ?>  ?=([^ *] hen)
-        (emit:this t.hen %pass t.i.hen %b %rest wen)
+          (emit:this t.hen %pass t.i.hen %b %rest wen)
+        --
       ::  +on-crud: handle event failure; print to dill
       ::
       ++  on-crud
