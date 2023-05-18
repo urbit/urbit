@@ -361,17 +361,58 @@
     ::
       [%eyre %authentication ~]
     %-  some
-    :-  %a
-    %+  turn
-      %+  sort  ~(tap by sessions:auth-state:v-eyre)
-      |=  [[@uv a=session:eyre] [@uv b=session:eyre]]
-      (gth expiry-time.a expiry-time.b)
-    |=  [cookie=@uv session:eyre]
+    =/  auth  auth-state:v-eyre
     %-  pairs
-    :~  'cookie'^s+(scot %uv cookie)
-        'identity'^(render-identity:v-eyre identity)
-        'expiry'^(time expiry-time)
-        'channels'^(numb ~(wyt in channels))
+    :~  :-  'sessions'
+        :-  %a
+        %+  turn
+          %+  sort  ~(tap by sessions.auth)
+          |=  [[@uv a=session:eyre] [@uv b=session:eyre]]
+          (gth expiry-time.a expiry-time.b)
+        |=  [cookie=@uv session:eyre]
+        %-  pairs
+        :~  'cookie'^s+(scot %uv cookie)
+            'identity'^(render-identity:v-eyre identity)
+            'expiry'^(time expiry-time)
+            'channels'^(numb ~(wyt in channels))
+        ==
+      ::
+        :-  'visitors'
+        :-  %a
+        %+  turn
+          %+  sort  ~(tap by visitors.auth)
+          |=  [[@uv a=visitor:eyre] [@uv b=visitor:eyre]]
+          ?@  +.a  &
+          ?@  +.b  |
+          (aor (scot %p ship.a) (scot %p ship.b))
+        |=  [nonce=@uv v=visitor:eyre]
+        %-  pairs
+        :+  'nonce'^s+(scot %uv nonce)
+          'duct'^a+(turn duct.v path)
+        ?@  +.v  ['sesh' s+(scot %uv sesh.v)]~
+        :~  'pend'^b+?=(^ pend.v)
+            'ship'^(ship ship.v)
+            'last'^s+last.v
+            'toke'^?~(toke.v ~ s+(scot %uv u.toke.v))
+        ==
+      ::
+        :-  'visiting'
+        :-  %a
+        %-  zing
+        %+  turn
+          %+  sort  ~(tap by visiting.auth)
+          |=  [[a=@p *] [b=@p *]]
+          (aor (scot %p a) (scot %p b))
+        |=  [who=@p m=(map @uv portkey)]
+        %+  turn  ~(tap by m)
+        |=  [nonce=@uv portkey]
+        %-  pairs
+        :+  'who'^(ship who)
+          'nonce'^s+(scot %uv nonce)
+        ?-  -.live
+          %&  ['made' (time p.live)]~
+          %|  ['goal' s+p.live]~
+        ==
     ==
   ::
     ::  /eyre/channels.json
@@ -1001,6 +1042,7 @@
     ?-  -.identity
       %ours  our.bowl
       %fake  who.identity
+      %real  who.identity
     ==
   ::
   ++  render-action

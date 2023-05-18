@@ -21,7 +21,7 @@ export class Eyre extends Component {
     const { props } = this;
     if (props.bindings.length === 0)      this.loadBindings();
     if (props.connections.length == 0)    this.loadConnections();
-    if (props.authentication.length == 0) this.loadAuthenticationState();
+    if (props.authentication.sessions.length == 0) this.loadAuthenticationState();
     if (props.channels.length == 0)       this.loadChannels();
   }
 
@@ -155,7 +155,8 @@ export class Eyre extends Component {
       )};
     });
 
-    const sessionItems = props.authentication.map(s => {
+    //TODO  also make sure column headings get rendered
+    const sessionItems = props.authentication.sessions.map(s => {
       return ({key: s.identity, jsx: (<div class="flex">
         <div class="flex-auto" style={{maxWidth: '5em'}}>
           {s.cookie.slice(0,6)}…
@@ -178,6 +179,53 @@ export class Eyre extends Component {
       </div>)});
     });
 
+    const visitingItems = props.authentication.visiting.map(v => {
+      return ({key: '~'+v.who+':'+v.nonce, jsx: (<div class="flex">
+        <div class="flex-auto">
+          ~{v.who}
+        </div>
+        <div class="flex-auto">
+          {v.nonce}
+        </div>
+        <div class="flex-auto">
+          { v.goal ? 'pending, will return to '+v.goal :
+            <form method="post" action="/~/logout?redirect=/~debug/eyre">
+              logged in since {msToDa(v.made)}
+              <input type="hidden" name="host" value={'~'+v.who} />
+              <input type="hidden" name="sid" value={v.nonce} />
+              <button type="submit" name="eauth">log out</button>
+            </form>
+          }
+        </div>
+      </div>)});
+    });
+
+    const visitorsItems = props.authentication.visitors.map(v => {
+      return ({key: v.nonce+':~'+v.ship, jsx: (<div class="flex">
+        <div class="flex-auto">
+          {v.nonce}
+        </div>
+        <div class="flex-auto">
+          {v.duct}
+        </div>
+        { v.sesh ? <div class="flex-auto">session: {v.sesh.slice(0,6)}…</div> :
+          <>
+            <div class="flex-auto">
+              {v.pend ? 'request pending' : 'no pending request'}
+            </div>
+            <div class="flex-auto">
+              {v.ship}
+            </div>
+            <div class="flex-auto">
+              redirect: {v.last}
+            </div>
+            <div class="flex-auto">
+              {v.toke ? 'token received' : 'no token yet'}
+            </div>
+          </> }
+      </div>)});
+    });
+
     return (<>
       <h4>Bindings</h4>
       <SearchableList placeholder="binding" items={bindingItems}>
@@ -194,15 +242,23 @@ export class Eyre extends Component {
         <button onClick={this.loadChannels}>refresh</button>
       </SearchableList>
 
-      <h4>Cookies</h4>
+      <h4>Authentication</h4>
       <form method="post" action="/~/logout">
         <button type="submit">logout self</button>
       </form>
       <form method="post" action="/~/logout">
         <button type="submit" name="all">logout all selves</button>
       </form>
+      <br/>
+      <button onClick={this.loadAuthenticationState}>refresh</button>
+      <h3>Sessions</h3>
       <SearchableList placeholder="identity" items={sessionItems}>
-        <button onClick={this.loadAuthenticationState}>refresh</button>
+      </SearchableList>
+      <h3>Outgoing eauth</h3>
+      <SearchableList placeholder="host" items={visitingItems}>
+      </SearchableList>
+      <h3>Incoming eauth</h3>
+      <SearchableList placeholder="visitor" items={visitorsItems}>
       </SearchableList>
     </>);
   }
