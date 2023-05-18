@@ -2060,7 +2060,10 @@
     $%  [%payload =simple-payload:http]
     ==  ==
   +$  gift
-    $%  ::  set-config: configures the external http server
+    $%  ::  ames responses
+        ::
+        $>(?(%boon %done) gift:ames)
+        ::  set-config: configures the external http server
         ::
         ::    TODO: We need to actually return a (map (unit @t) http-config)
         ::    so we can apply configurations on a per-site basis
@@ -2091,6 +2094,9 @@
         ::  new unix process
         ::
         $>(%born vane-task)
+        ::  network request
+        ::
+        $>(%plea vane-task)
         ::  trim state (in response to memory pressure)
         ::
         $>(%trim vane-task)
@@ -2184,6 +2190,15 @@
     $:  ::  sessions: a mapping of session cookies to session information
         ::
         sessions=(map @uv session)
+        ::  visitors: in-progress incoming eauth flows
+        ::
+        visitors=(map @uv visitor)
+        ::  visiting: outgoing eauth sessions, completed or pending
+        ::
+        visiting=(map ship (map @uv portkey))
+        ::  endpoint: hardcoded local eauth endpoint for %syn and %ack
+        ::
+        endpoint=[user=(unit @t) auth=(unit @t)]
     ==
   ::  +session: server side data about a session
   ::
@@ -2205,13 +2220,63 @@
         ::  mint some sort of long lived cookie for mobile apps which only has
         ::  access to a single application path.
     ==
+  ::  +visitor: completed or in-progress incoming eauth flow
+  ::
+  ::    duct: plea duct
+  ::      and
+  ::    sesh: login completed, session exists
+  ::      or
+  ::    pend: pending (initial or final) eauth http request
+  ::    into: the @p attempting to log in
+  ::    last: the url to redirect to after log-in
+  ::    toke: authentication secret received over ames or offered by visitor
+  ::
+  +$  visitor
+    $:  duct=duct
+    $@  sesh=@uv
+    $:  pend=(unit duct)
+        ship=ship
+        last=@t
+        toke=(unit @uv)
+    ==  ==
+  ::  +portkey: completed or in-progress outgoing eauth flow
+  ::
+  ::    duct: boon duct
+  ::    live: login date or eauth return address
+  ::
+  +$  portkey
+    $:  duct=duct
+        live=(each made=@da goal=@t)
+    ==
+  ::  +eauth-plea: host talking to client
+  ::
+  +$  eauth-plea
+    $:  %0
+    $%  ::  %syn: visitor started attempt, needs to return to url
+        ::  %del: host has expired the session
+        ::
+        [%syn nonce=@uv url=@t]
+        [%del nonce=@uv]
+    ==  ==
+  ::  +eauth-boon: client responding to host
+  ::
+  +$  eauth-boon
+    $:  %0
+    $%  ::  %ack: attempt heard, approval to happen through url
+        ::  %fin: attempt approved, visitor will give secret auth token
+        ::  %del: client wants the session ended
+        ::
+        [%ack url=@t]
+        [%fin token=@uv]
+        [%del ~]
+    ==  ==
   ::  $identity: authentication method & @p
   ::
   +$  identity
     $~  [%ours ~]
     $%  [%ours ~]                                       ::  local, root
         [%fake who=@p]                                  ::  guest id
-        :: [%real who=@p]                                  ::  authed cross-ship
+        [%real who=@p]                                  ::  authed cross-ship
     ==
   ::  channel-state: state used in the channel system
   ::
@@ -2329,6 +2394,9 @@
         ::  internal authentication page
         ::
         [%authentication ~]
+        ::  cross-ship authentication handling
+        ::
+        [%eauth ~]
         ::  internal logout page
         ::
         [%logout ~]

@@ -22,7 +22,13 @@
 ::  +note: private request from eyre to another vane
 ::
 +$  note
-  $%  ::  %b: to behn
+  $%  ::  %a: to ames
+      ::
+      $:  %a
+      $%  $>(%plea task:ames)
+          $>(%cork task:ames)
+      ==  ==
+      ::  %b: to behn
       ::
       $:  %b
           ::
@@ -50,7 +56,11 @@
 ::  +sign: private response from another vane to eyre
 ::
 +$  sign
-  $%  $:  %behn
+  $%  $:  %ames
+          $%  $>(%boon gift:ames)
+              $>(%done gift:ames)
+      ==  ==
+      $:  %behn
           $%  [%wake error=(unit tang)]
       ==  ==
       $:  %gall
@@ -70,7 +80,7 @@
 ++  axle
   $:  ::  date: date at which http-server's state was updated to this data structure
       ::
-      date=%~2023.5.3
+      date=%~2023.5.15
       ::  server-state: state of inbound requests
       ::
       =server-state
@@ -277,9 +287,10 @@
   ::
   ~
 ::  +login-page: internal page to login to an Urbit
+::TODO  exclude eauth if no +eauth-url:eauth
 ::
 ++  login-page
-  |=  [redirect-url=(unit @t) our=@p =identity failed=?]
+  |=  [redirect-url=(unit @t) our=@p =identity eauth=? failed=?]
   ^-  octs
   =+  redirect-str=?~(redirect-url "" (trip u.redirect-url))
   %-  as-octs:mimes:html
@@ -335,6 +346,11 @@
                padding: 1rem;
                width: 100%;
              }
+             body.local #eauth { display: none; }
+             body.eauth #local { display: none; }
+             body nav div { display: inline-block; }
+             body.local nav div.local,
+             body.eauth nav div.eauth { background-color: var(--blue100); }
              body > *,
              form > input {
                width: 100%;
@@ -413,33 +429,86 @@
                }
              }
              '''
+      ;script:"our = '{(scow %p our)}';"
+      ;script:'''
+              let name;
+              function setup(isEauth) {
+                name = document.getElementById('name');
+                if (isEauth) goEauth(); else goLocal();
+              }
+              function goLocal() {
+                document.body.className = 'local';
+              }
+              function goEauth() {
+                document.body.className = 'eauth';
+              }
+              function doEauth() {
+                console.log('mb get value from event', event);
+                console.log('compare', name.value, our);
+                if (name.value == our) {
+                  event.preventDefault();
+                  goLocal();
+                }
+              }
+              '''
     ==
     ;body
-      ;p:"Urbit ID"
-      ;input(value "{(scow %p our)}", disabled "true", class "mono");
-      ;p:"Access Key"
-      ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
-        ;input
-          =type  "password"
-          =name  "password"
-          =placeholder  "sampel-ticlyt-migfun-falmel"
-          =class  "mono"
-          =required  "true"
-          =minlength  "27"
-          =maxlength  "27"
-          =pattern  "((?:[a-z]\{6}-)\{3}(?:[a-z]\{6}))"
-          =autofocus  "true";
-        ;input(type "hidden", name "redirect", value redirect-str);
-        ;+  ?.  failed  ;span;
-          ;span.failed
-            ;svg(xmlns "http://www.w3.org/2000/svg", viewBox "0 0 12 12")
-              ;circle(cx "6", cy "6", r "5.5");
-              ;line(x1 "3.27", y1 "3.27", x2 "8.73", y2 "8.73");
-              ;line(x1 "8.73", y1 "3.27", x2 "3.27", y2 "8.73");
+      =class   "{?:(eauth "eauth" "local")}"
+      =onload  "setup({?:(eauth "true" "false")})"
+      ;nav
+        ;div.local(onclick "goLocal()"):"Local"
+        ;div.eauth(onclick "goEauth()"):"EAuth"
+      ==
+      ;div#local
+        ;p:"Urbit ID"
+        ;input(value "{(scow %p our)}", disabled "true", class "mono");
+        ;p:"Access Key"
+        ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
+          ;input
+            =type  "password"
+            =name  "password"
+            =placeholder  "sampel-ticlyt-migfun-falmel"
+            =class  "mono"
+            =required  "true"
+            =minlength  "27"
+            =maxlength  "27"
+            =pattern  "((?:[a-z]\{6}-)\{3}(?:[a-z]\{6}))"
+            =autofocus  "true";
+          ;input(type "hidden", name "redirect", value redirect-str);
+          ;+  ?.  failed  ;span;
+            ;span.failed
+              ;svg(xmlns "http://www.w3.org/2000/svg", viewBox "0 0 12 12")
+                ;circle(cx "6", cy "6", r "5.5");
+                ;line(x1 "3.27", y1 "3.27", x2 "8.73", y2 "8.73");
+                ;line(x1 "8.73", y1 "3.27", x2 "3.27", y2 "8.73");
+              ==
+              Key is incorrect
             ==
-            Key is incorrect
-          ==
           ;button(type "submit"):"Continue"
+        ==
+      ==
+      ;div#eauth
+        ;form(action "/~/login", method "post", onsubmit "return doEauth()")
+          ;p:"Urbit ID"
+          ;input.mono(name "name", id "name", placeholder "{(scow %p our)}");
+          ;p
+            ; You will be redirected to your own web interface, to authorize
+            ; logging in to
+            ;span.mono:"{(scow %p our)}"
+            ; .
+          ==
+          ;input(type "hidden", name "redirect", value redirect-str);
+          ;+  ?.  failed  ;span;
+            ;span.failed
+              ;svg(xmlns "http://www.w3.org/2000/svg", viewBox "0 0 12 12")
+                ;circle(cx "6", cy "6", r "5.5");
+                ;line(x1 "3.27", y1 "3.27", x2 "8.73", y2 "8.73");
+                ;line(x1 "8.73", y1 "3.27", x2 "3.27", y2 "8.73");
+              ==
+              Something went wrong
+            ==
+          ;button(name "eauth", type "submit"):"Continue..."
+        ==
       ==
       ;*  ?.  ?=(%fake -.identity)  ~
           =+  id=(trim 29 (scow %p who.identity))
@@ -662,19 +731,34 @@
     =/  [=action suburl=@t]
       (get-action-for-binding host url.request)
     ::
+    ::TODO  we might want to mint new identities only for requests that end
+    ::      up going into userspace, not the ones that get handled by eyre.
+    ::      perhaps that distinction, where userspace requests are async, but
+    ::      eyre-handled requests are always synchronous, provides a fruitful
+    ::      angle for refactoring...
     =^  [suv=@uv =identity som=(list move)]  state
       (session-for-request:authentication request)
     =;  [moz=(list move) sat=server-state]
       [(weld som moz) sat]
     ::
     =/  authenticated  ?=(%ours -.identity)
+    ::  if we have no eauth endpoint yet, and the request is authenticated,
+    ::  deduce it from the hostname
+    ::
+    =?  auth.endpoint.authentication-state.state
+        ?&  authenticated
+            ?=(^ host)
+            ?=(~ auth.endpoint.authentication-state.state)
+        ==
+      %-  (trace 2 |.("eauth: storing endpoint at {(trip u.host)}"))
+      `(cat 3 ?:(secure 'https://' 'http://') u.host)
     ::  record that we started an asynchronous response
     ::
     =/  connection=outstanding-connection
       [action [authenticated secure address request] [suv identity] ~ 0]
     =.  connections.state
       ::  NB: required by +handle-response and +handle-request:authentication.
-      ::  XX optimize
+      ::  XX optimize, not all requests are asynchronous
       ::
       (~(put by connections.state) duct connection)
     ::  redirect to https if insecure, redirects enabled
@@ -754,6 +838,7 @@
         %+  slam
           %+  slam  gat
           !>([[now=now eny=eny bek=bek] ~ ~])
+        ::TODO  should get passed the requester's identity
         !>([authenticated request])
       ?:  ?=(%2 -.res)
         =+  connection=(~(got by connections.state) duct)
@@ -802,7 +887,10 @@
       (subscribe-to-app identity app.action inbound-request.connection)
     ::
         %authentication
-      (handle-request:authentication secure address [suv identity] request)
+      (handle-request:authentication secure host address [suv identity] request)
+    ::
+        %eauth
+      (on-request:eauth:authentication [suv identity] request)
     ::
         %logout
       (handle-logout:authentication [suv identity] request)
@@ -833,11 +921,9 @@
       %^  return-static-data-on-duct  405  'text/html'
       (error-page 405 & url.request "may only GET name")
     %^  return-static-data-on-duct  200  'text/plain'
-    =;  nom=@p  (as-octs:mimes:html (scot %p nom))
-    ?-  -.identity
-      %ours  our
-      %fake  who.identity
-    ==
+    =/  nom=@p
+      ?+(-.identity who.identity %ours our)
+    (as-octs:mimes:html (scot %p nom))
   ::  +handle-cache-req: respond with cached value, 404 or 500
   ::
   ++  handle-cache-req
@@ -961,7 +1047,8 @@
       %-  (trace 1 |.("leaving subscription to {<app.action>}"))
       (deal-as /watch-response/[eyre-id] identity our app.action %leave ~)
     ::
-        ?(%authentication %logout)
+        ?(%authentication %eauth %logout)
+      ::NOTE  expiry timer will clean up cancelled eauth attempts
       [~ state]
     ::
         %channel
@@ -999,25 +1086,25 @@
     ::  +handle-request: handles an http request for the login page
     ::
     ++  handle-request
-      |=  [secure=? =address [session-id=@uv =identity] =request:http]
+      |=  [secure=? host=(unit @t) =address [session-id=@uv =identity] =request:http]
       ^-  [(list move) server-state]
+      ::  parse the arguments out of request uri
       ::
+      =+  request-line=(parse-request-line url.request)
+      =/  redirect    (get-header:http 'redirect' args.request-line)
+      =/  with-eauth  ?=(^ (get-header:http 'eauth' args.request-line))
       ::  if we received a simple get: redirect if logged in, otherwise
       ::  show login page
       ::
       ?:  =('GET' method.request)
-        ::  parse the arguments out of request uri
-        ::
-        =+  request-line=(parse-request-line url.request)
-        =/  redirect  (get-header:http 'redirect' args.request-line)
         ?.  (request-is-logged-in request)
           %^  return-static-data-on-duct  200  'text/html'
-          (login-page redirect our identity %.n)
+          (login-page redirect our identity with-eauth %.n)
         =/  session-id  (session-id-from-request request)
         ::  session-id should always be populated here since we are logged in
         ?~  session-id
           %^  return-static-data-on-duct  200  'text/html'
-          (login-page redirect our identity %.n)
+          (login-page redirect our identity with-eauth %.n)
         =/  cookie-line=@t
           (session-cookie-string u.session-id &)
         =/  actual-redirect
@@ -1036,29 +1123,37 @@
       ::  if we are not a post, return an error
       ::
       ?.  =('POST' method.request)
-        %^  return-static-data-on-duct  400  'text/html'
-        (login-page ~ our identity %.n)
+        %^  return-static-data-on-duct  405  'text/html'
+        (login-page ~ our identity with-eauth %.n)
       ::  we are a post, and must process the body type as form data
       ::
       ?~  body.request
         %^  return-static-data-on-duct  400  'text/html'
-        (login-page ~ our identity %.n)
+        (login-page ~ our identity with-eauth %.n)
       ::
       =/  parsed=(unit (list [key=@t value=@t]))
         (rush q.u.body.request yquy:de-purl:html)
       ?~  parsed
         %^  return-static-data-on-duct  400  'text/html'
-        (login-page ~ our identity %.n)
+        (login-page ~ our identity with-eauth %.n)
       ::
       =/  redirect=(unit @t)  (get-header:http 'redirect' u.parsed)
+      ?^  (get-header:http 'eauth' u.parsed)
+        ?~  ship=(biff (get-header:http 'name' u.parsed) (cury slaw %p))
+          %^  return-static-data-on-duct  400  'text/html'
+          (login-page redirect our identity & %.n)
+        ::TODO  redirect logic here and elsewhere is ugly
+        =/  redirect  (fall redirect '')
+        (start:server:eauth u.ship ?:(=(redirect '') '/' redirect))
+      ::
       ?~  password=(get-header:http 'password' u.parsed)
         %^  return-static-data-on-duct  400  'text/html'
-        (login-page redirect our identity %.n)
+        (login-page redirect our identity | %.n)
       ::  check that the password is correct
       ::
       ?.  =(u.password code)
         %^  return-static-data-on-duct  400  'text/html'
-        (login-page redirect our identity %.y)
+        (login-page redirect our identity | %.y)
       ::  clean up the session they're changing out from
       ::
       =^  moz  state
@@ -1075,6 +1170,11 @@
         %+  ~(jab by connections.state)  duct
         |=  o=outstanding-connection
         o(session-id session.fex)
+      ::  store the hostname used for this login, later reuse it for eauth
+      ::
+      =?  auth.endpoint.authentication-state.state  ?=(^ host)
+        %-  (trace 2 |.("eauth: storing endpoint at {(trip u.host)}"))
+        `(cat 3 ?:(secure 'https://' 'http://') u.host)
       ::
       =;  out=[moves=(list move) server-state]
         out(moves [give-session-tokens :(weld moz moves.fex moves.out)])
@@ -1103,6 +1203,7 @@
       ::  read options from the body
       ::  all: log out all sessions with this identity?
       ::  sid: which session do we log out? (defaults to requester's)
+      ::  hos: host to log out from, for eauth logins (sid signifies the nonce)
       ::
       =/  arg=header-list:http
         ?~  body.request  ~
@@ -1117,8 +1218,19 @@
         ::  accidental log-outs, which would be very annoying.
         ::
         (slaw %uv u.sid)
+      =/  hos=(unit @p)
+        ?.  ?=(%ours -.identity)  ~
+        (biff (get-header:http 'host' arg) (cury slaw %p))
       ?~  sid
         (handle-response response)
+      ::  if this is an eauth remote logout, just send the %del
+      ::
+      ?:  ?=(^ hos)
+        =/  home  (~(gut by visiting.authentication-state.state) u.hos ~)
+        ?~  por=(~(get by home) u.sid)
+          (handle-response response)
+        =^  moz  state  (handle-response response)
+        [[(send-boon:client:eauth(duct duct.u.por) %0 %del ~) moz] state]
       ::  if the requester is logging themselves out, make them drop the cookie
       ::
       =?  headers.response-header.response  =(u.sid session-id)
@@ -1184,7 +1296,7 @@
     ::  +start-session: create a new session with %local or %guest identity
     ::
     ++  start-session
-      |=  kind=?(%local %guest)
+      |=  kind=?(%local %guest [%eauth who=@p])
       ^-  [[session=@uv =identity moves=(list move)] server-state]
       =;  [key=@uv sid=identity]
         :-  :+  key  sid
@@ -1200,7 +1312,8 @@
       ::
       =/  sik=@uv  new-session-key
       :-  sik
-      ?:  ?=(%local kind)  [%ours ~]
+      ?:  ?=(%local kind)      [%ours ~]
+      ?:  ?=([%eauth @] kind)  [%real who.kind]
       :-  %fake
       ::  pre-scramble our ship name into its displayed value, and
       ::  truncate it to be at most moon-length, so that we can overlay
@@ -1243,36 +1356,50 @@
       ^-  [(list move) server-state]
       ?~  ses=(~(get by sessions.authentication-state.state) session-id)
         [~ state]
-      ::  delete the session(s) and find the associated channels
+      ::  delete the session(s) and find the associated ids & channels
       ::
-      =^  channels=(list @t)  sessions.authentication-state.state
+      =^  [siz=(list @uv) channels=(list @t)]  sessions.authentication-state.state
         =*  sessions  sessions.authentication-state.state
         ::  either delete just the specific session and its channels,
         ::
         ?.  all
-          :-  ~(tap in channels.u.ses)
+          :-  [[session-id]~ ~(tap in channels.u.ses)]
           (~(del by sessions) session-id)
         ::  or delete all sessions with the identity from :session-id
         ::
-        :-  %~  tap  in
-            %+  roll  ~(val by sessions)
-            |=  [session all=(set @t)]
-            ?.  =(identity identity.u.ses)  all
-            (~(uni in all) channels)
-        %-  my
-        %+  skip  ~(tap by sessions)
-        |=  [@uv session]
-        =(identity identity.u.ses)
-      ::  close all affected channels, then send the response
+        %+  roll  ~(tap by sessions)
+        |=  $:  [sid=@uv s=session]
+                [[siz=(list @uv) caz=(list @t)] sez=(map @uv session)]
+            ==
+        ^+  [[siz caz] sez]
+        ?.  =(identity.s identity.u.ses)
+          ::  identity doesn't match, so re-store this session
+          ::
+          [[siz caz] (~(put by sez) sid s)]
+        ::  identity matches, so register this session as closed
+        ::
+        [[[sid siz] (weld caz ~(tap in channels.s))] sez]
+      ::  close all affected channels and send their responses
       ::
-      =|  moves=(list move)
+      =|  moves1=(list move)
       |-  ^-  (quip move server-state)
-      ?~  channels  [moves state]
-      %-  %+  trace  1
-          |.("{(trip i.channels)} discarding channel due to closed session")
-      =^  moz  state
-        (discard-channel:by-channel i.channels |)
-      $(moves (weld moves moz), channels t.channels)
+      ?^  channels
+        %-  %+  trace  1
+            |.("{(trip i.channels)} discarding channel due to closed session")
+        =^  moz  state
+          (discard-channel:by-channel i.channels |)
+        $(moves1 (weld moves1 moz), channels t.channels)
+      ::  lastly, %real sessions require additional cleanup
+      ::
+      ?.  ?=(%real -.identity.u.ses)  [moves1 state]
+      =^  moves2  visitors.authentication-state.state
+        %+  roll  ~(tap by visitors.authentication-state.state)
+        |=  [[nonce=@uv visa=visitor] [moz=(list move) viz=(map @uv visitor)]]
+        ?^  +.visa  [moz (~(put by viz) nonce visa)]
+        :_  viz
+        %+  weld  moz
+        (close-eauth:server:eauth(duct duct.visa) who.identity.u.ses nonce)
+      [(weld `(list move)`moves1 `(list move)`moves2) state]
     ::  +code: returns the same as |code
     ::
     ++  code
@@ -1291,6 +1418,520 @@
       %-  format-ud-as-integer
       ?.  extend  0
       (div (msec:milly session-timeout) 1.000)
+    ::
+    ++  eauth
+      =*  auth  authentication-state.state
+      |%
+      ++  server
+        |%
+        ::  +start: initiate an eauth login attempt for the :ship identity
+        ::
+        ++  start
+          |=  [=ship last=@t]
+          ^-  [(list move) server-state]
+          %-  (trace 2 |.("eauth: starting eauth into {(scow %p ship)}"))
+          =/  nonce=@uv      (~(raw og (shas %eauth-nonce eny)) 64)
+          =/  visit=visitor  [duct `duct ship last ~]
+          =.  visitors.auth  (~(put by visitors.auth) nonce visit)
+          :_  state
+          ::  we delay serving an http response until we receive an %ack boon
+          ::
+          :~  (send-plea ship %0 %syn nonce (need eauth-url))
+              (start-timeout /visitors/(scot %uv nonce))
+          ==
+        ::  +on-boon: receive an eauth network response from a client
+        ::
+        ::    crashes on unexpected circumstances, in response to which we
+        ::    (as the host) should abort the eauth attempt
+        ::
+        ++  on-boon
+          |=  [=ship nonce=@uv boon=eauth-boon]
+          ^-  [(list move) server-state]
+          %-  (trace 2 |.("eauth: {(trip +<.boon)} from {(scow %p ship)}"))
+          ::  guarantee the ship still controls the nonce
+          ::
+          =/  visa=visitor  (~(got by visitors.auth) nonce)
+          ?>  ?|  &(?=(^ +.visa) =(ship ship.visa))
+                  ?&  ?=(@ +.visa)
+                      =(real+ship identity:(~(got by sessions.auth) sesh.visa))
+                  ==
+              ==
+          ?-  +<.boon
+              %ack
+            ::  redirect the visitor to their own confirmation page
+            ::
+            ?>  ?=(^ +.visa)
+            =.  visitors.auth
+              (~(put by visitors.auth) nonce visa(pend ~))
+            %-  handle-response(duct (need pend.visa))
+            =;  url=@t  [%start 303^['location' url]~ ~ &]
+            %+  rap  3
+            :~  url.boon
+                '?server='  (scot %p our)
+                '&nonce='   (scot %uv nonce)
+            ==
+          ::
+              %fin
+            =/  visa=visitor  (~(got by visitors.auth) nonce)
+            ?>  ?=(^ +.visa)
+            ::  if the visitor hasn't presented a token yet, store the real one
+            ::
+            ?~  toke.visa
+              ?>  ?=(~ pend.visa)
+              =.  visitors.auth
+                (~(put by visitors.auth) nonce visa(toke `token.boon))
+              [~ state]
+            ::  if the visitor has already presented a token, respond
+            ::
+            ?>  ?=(^ pend.visa)
+            ?.  =(token.boon u.toke.visa)
+              ::  token doesn't match, error out
+              ::
+              %-  (trace 2 |.("eauth: token mismatch"))
+              %^  return-static-data-on-duct(duct u.pend.visa)  400  'text/html'
+              (eauth-error-page `our `ship `nonce)
+            ::  token matches, we can finalize
+            ::
+            (finalize duct u.pend.visa nonce ship last.visa)
+          ::
+              %del
+            ::  the visitor wants the associated session gone
+            ::
+            =.  visitors.auth  (~(del by visitors.auth) nonce)
+            =?  sessions.auth  ?=(@ +.visa)
+              (~(del by sessions.auth) sesh.visa)
+            [(close-eauth ship nonce) state]
+          ==
+        ::  +on-nack: client crashed during +on-plea, clean up the eauth attempt
+        ::
+        ++  on-nack
+          |=  [=ship nonce=@uv]
+          ^-  [(list move) server-state]
+          =/  visa=(unit visitor)  (~(get by visitors.auth) nonce)
+          ?~  visa  [~ state]
+          ::  if the eauth attempt already completed, we can leave it be
+          ::
+          ?@  +.u.visa  [~ state]
+          ::  if the eauth attempt is still pending, abort it cleanly
+          ::
+          =^  moz  state
+            ?~  pend.u.visa  [~ state]
+            %^  return-static-data-on-duct(duct u.pend.u.visa)  500  'text/html'
+            (eauth-error-page `our `ship `nonce)
+          =.  visitors.auth  (~(del by visitors.auth) nonce)
+          :_  state
+          ::  make sure they know we dropped this attempt, and clean up the flow
+          ::
+          ::NOTE  duct should already be identical, but set it anyway for clarity
+          (weld moz (close-eauth(duct duct.u.visa) ship nonce))
+        ::  +cancel: the client aborted the eauth attempt, so clean it up
+        ::
+        ++  cancel
+          |=  [nonce=@uv last=@t]
+          ^-  [(list move) server-state]
+          ::  if the eauth attempt doesn't exist, or it was already completed,
+          ::  we cannot cancel it
+          ::
+          ?~  visa=(~(get by visitors.auth) nonce)  [~ state]
+          ?@  +.u.visa  [~ state]
+          ::  delete the attempt, cork the flow, and go back to the login page
+          ::
+          %-  (trace 2 |.("eauth: cancelling login"))
+          =.  visitors.auth  (~(del by visitors.auth) nonce)
+          =^  moz  state
+            =/  url=@t  (cat 3 '/~/login?eauth&redirect=' last)
+            (handle-response %start 303^['location' url]~ ~ &)
+          :_  state
+          (weld moz (close-eauth(duct duct.u.visa) ship.u.visa nonce))
+        ::  +expire: host-side cancel an eauth attempt if it's still pending
+        ::
+        ++  expire
+          |=  nonce=@uv
+          ^-  [(list move) server-state]
+          ?~  visa=(~(get by visitors.auth) nonce)
+            [~ state]
+          ?@  +.u.visa  [~ state]
+          =^  moz  state
+            ?~  pend.u.visa  [~ state]
+            %^  return-static-data-on-duct(duct u.pend.u.visa)  503  'text/html'
+            (eauth-error-page `our `ship.u.visa `nonce)
+          =.  visitors.auth  (~(del by visitors.auth) nonce)
+          :_  state
+          (weld moz (close-eauth(duct duct.u.visa) ship.u.visa nonce))
+        ::  +finalize: eauth attempt was approved: mint the client a new session
+        ::
+        ++  finalize
+          |=  [=plea=^duct =http=^duct nonce=@uv =ship last=@t]
+          ^-  [(list move) server-state]
+          %-  (trace 2 |.("eauth: finalizing login for {(scow %p ship)}"))
+          ::  clean up the session they're changing out from,
+          ::  mint the new session,
+          ::  associate it with the nonce,
+          ::  and the finalization request,
+          ::  and send the visitor the cookie + final redirect
+          ::
+          =^  moz1  state
+            (close-session session-id:(~(got by connections.state) duct) |)
+          =^  [sid=@uv * moz2=(list move)]  state
+            (start-session %eauth ship)
+          =.  visitors.auth  (~(put by visitors.auth) nonce [plea-duct sid])
+          =.  connections.state
+            %+  ~(jab by connections.state)  http-duct
+            |=  o=outstanding-connection
+            o(session-id sid)
+          =^  moz3  state
+            =;  hed  (handle-response(duct http-duct) %start 303^hed ~ &)
+            :~  ['location' last]
+                ['set-cookie' (session-cookie-string sid &)]
+            ==
+          [:(weld moz1 moz2 moz3) state]
+        ::
+        ::TODO  +on-request?
+        ::
+        ++  send-plea
+          |=  [=ship plea=eauth-plea]
+          ^-  move
+          =/  nonce=@uv
+            ?-  +<.plea
+              %syn  nonce.plea
+              %del  nonce.plea
+            ==
+          =/  =wire  /eauth/plea/0/(scot %p ship)/(scot %uv nonce)
+          %-  (trace 2 |.("eauth: {(trip +<.plea)} into {(scow %p ship)}"))
+          [duct %pass wire %a %plea ship %e /eauth/0 plea]
+        ::
+        ++  send-cork
+          |=  [=ship nonce=@uv]
+          ^-  move
+          =/  =wire  /eauth/plea/0/(scot %p ship)/(scot %uv nonce)
+          %-  (trace 2 |.("eauth: corking flow into {(scow %p ship)}"))
+          [duct %pass wire %a %cork ship]
+        ::
+        ++  close-eauth
+          |=  [=ship nonce=@uv]
+          ^-  (list move)
+          :~  (send-plea ship %0 %del nonce)
+              (send-cork ship nonce)
+          ==
+        --
+      ::
+      ++  client
+        |%
+        ::  +on-plea: receive an eauth network message from a host
+        ::
+        ::    crashes on unexpected circumstances, in response to which the
+        ::    host should abort the eauth attempt
+        ::
+        ++  on-plea
+          |=  [host=ship plea=eauth-plea]
+          ^-  [(list move) server-state]
+          %-  (trace 2 |.("eauth: {(trip +<.plea)} from {(scow %p host)}"))
+          =;  res=[(list move) server-state]
+            =^  moz  state  res
+            [[[duct %give %done ~] moz] state]
+          ?-  +<.plea
+              %syn
+            ::  store the return url, send an %ack response, and start a timeout
+            ::
+            =/  home=(map @uv portkey)
+              (~(gut by visiting.auth) host ~)
+            ?<  (~(has by home) nonce.plea)
+            =.  visiting.auth
+              %+  ~(put by visiting.auth)  host
+              (~(put by home) nonce.plea [duct |+url.plea])
+            :_  state
+            :~  (send-boon %0 %ack (need eauth-url))
+                (start-timeout /visiting/(scot %p host)/(scot %uv nonce.plea))
+            ==
+          ::
+              %del
+            ::  the host has deleted the corresponding session
+            ::
+            =.  visiting.auth
+              =/  home=(map @uv portkey)
+                (~(gut by visiting.auth) host ~)
+              =.  home  (~(del by home) nonce.plea)
+              ?~  home  (~(del by visiting.auth) host)
+              (~(put by visiting.auth) host home)
+            [~ state]
+          ==
+        ::  +confirm: as the client, approve or abort the eauth attempt
+        ::
+        ++  confirm
+          |=  [host=ship nonce=@uv grant=?]
+          ^-  [(list move) server-state]
+          ::NOTE  should be checked for at callsite
+          =/  home  (~(got by visiting.auth) host)
+          =/  door  (~(got by home) nonce)
+          ?>  ?=(%| -.live.door)
+          ::  update the outgoing sessions map
+          ::
+          =.  visiting.auth
+            ?:  grant
+              %+  ~(put by visiting.auth)  host
+              (~(put by home) nonce door(live &+now))
+            =.  home  (~(del by home) nonce)
+            ?~  home  (~(del by visiting.auth) host)
+            (~(put by visiting.auth) host home)
+          =/  token=@uv  (~(raw og (shas %eauth-token eny)) 128)
+          ::  always serve a redirect, with either the token, or an abort signal
+          ::
+          =^  moz  state
+            =;  url=@t  (handle-response %start 303^['location' url]~ ~ &)
+            %+  rap  3
+            :*  goal.p.live.door
+                '?nonce='  (scot %uv nonce)
+                ?.  grant  ['&abort']~
+                ~['&token=' (scot %uv token)]
+            ==
+          :_  state
+          ::  only send token over ames if eauth was approved
+          ::
+          ?.  grant  moz
+          [[(send-boon(duct duct.door) %0 %fin token)] moz]
+        ::
+        ++  send-boon
+          |=  boon=eauth-boon
+          ^-  move
+          %-  (trace 2 |.("eauth: sending {(trip +<.boon)}"))
+          [duct %give %boon boon]
+        ::
+        ++  confirmation-page
+          |=  [server=ship nonce=@uv]
+          ^-  octs
+          %-  as-octs:mimes:html
+          %-  crip
+          %-  en-xml:html
+          =/  favicon  %+
+            weld  "<svg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'>"
+                  "<circle r='3.09' cx='5' cy='5' /></svg>"
+          ;html
+            ;head
+              ;meta(charset "utf-8");
+              ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
+              ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
+              ;title:"Urbit"
+              ;style:'''
+                     @import url("https://rsms.me/inter/inter.css");
+                     @font-face {
+                         font-family: "Source Code Pro";
+                         src: url("https://storage.googleapis.com/media.urbit.org/fonts/scp-regular.woff");
+                         font-weight: 400;
+                         font-display: swap;
+                     }
+                     :root {
+                       --red05: rgba(255,65,54,0.05);
+                       --red100: rgba(255,65,54,1);
+                       --blue05: rgba(33,157,255,0.05);
+                       --blue30: rgba(33,157,255,0.3);
+                       --blue100: rgba(33,157,255,1);
+                       --black05: rgba(0,0,0,0.05);
+                       --black20: rgba(0,0,0,0.2);
+                       --black60: rgba(0,0,0,0.6);
+                       --white: rgba(255,255,255,1);
+                     }
+                     html {
+                       font-family: Inter, sans-serif;
+                       height: 100%;
+                       margin: 0;
+                       width: 100%;
+                       background: var(--white);
+                       color: var(--black100);
+                       -webkit-font-smoothing: antialiased;
+                       line-height: 1.5;
+                       font-size: 12px;
+                       display: flex;
+                       flex-flow: row nowrap;
+                       justify-content: center;
+                     }
+                     body {
+                       display: flex;
+                       flex-flow: column nowrap;
+                       justify-content: center;
+                       max-width: 300px;
+                       padding: 1rem;
+                       width: 100%;
+                     }
+                     '''
+            ==
+            ;body
+              ;form(action "/~/eauth", method "post")
+                ;input(type "hidden", name "server", value (scow %p server));
+                ;input(type "hidden", name "nonce", value (scow %uv nonce));
+                ;button(type "submit", name "reject"):"reject"
+                ;button(type "submit", name "grant", value "grant"):"approve"
+              ==
+            ==
+          ==
+        --
+      ::  +on-request: http request to the /~/eauth endpoint
+      ::
+      ++  on-request
+        |=  [[session-id=@uv =identity] =request:http]
+        ^-  [(list move) server-state]
+        ::  GET requests either render the confirmation page,
+        ::  or finalize an eauth flow
+        ::
+        ?:  ?=(%'GET' method.request)
+          =/  args=(map @t @t)  (malt args:(parse-request-line url.request))
+          =/  server=(unit @p)  (biff (~(get by args) 'server') (cury slaw %p))
+          =/  nonce=(unit @uv)  (biff (~(get by args) 'nonce') (cury slaw %uv))
+          =/  token=(unit @uv)  (biff (~(get by args) 'token') (cury slaw %uv))
+          =/  abort=?           (~(has by args) 'abort')
+          ::
+          =*  error   %^  return-static-data-on-duct  400  'text/html'
+                      (eauth-error-page server ~ nonce)
+          ?~  nonce   error
+          ::
+          ?^  server
+            ::  request for confirmation page
+            ::
+            ?.  ?=(%ours -.identity)
+              ::  if requester is not logged in as us, send them to login page
+              ::
+              =;  url=@t  (handle-response %start 307^['location' url]~ ~ &)
+              %^  cat  3  '/~/login?cool&redirect='
+              (crip (en-urlt:html (trip url.request)))
+            ?.  (~(has by (~(gut by visiting.auth) u.server ~)) u.nonce)
+              error
+            %^  return-static-data-on-duct  400  'text/html'
+            (confirmation-page:client u.server u.nonce)
+          ::  important to provide an error response for unexpected states
+          ::
+          =/  visa=(unit visitor)  (~(get by visitors.auth) u.nonce)
+          ?~  visa         error
+          ?@  +.u.visa     error
+          ?^  pend.u.visa  error
+          ::  request for eauth finalization
+          ::
+          ?:  abort  (cancel:^server u.nonce last.u.visa)
+          ?~  token  error
+          ::  if this request arrived before the %fin ames msg, delay response
+          ::
+          ?~  toke.u.visa
+            =.  visitors.auth
+              %+  ~(put by visitors.auth)  u.nonce
+              u.visa(pend `duct, toke `u.token)
+            [~ state]
+          ::  if we already received a token over ames, verify the request
+          ::
+          ?.  =(u.token u.toke.u.visa)
+            %-  (trace 2 |.("eauth: token mismatch"))
+            error
+          (finalize:^server duct.u.visa duct u.nonce ship.u.visa last.u.visa)
+        ::
+        ?.  ?=(%'POST' method.request)
+          %^  return-static-data-on-duct  405  'text/html'
+          (eauth-error-page ~ ~ ~)
+        ::  POST requests are always submissions of the confirmation page
+        ::
+        =/  args=(map @t @t)
+          (malt (fall (rush q:(fall body.request *octs) yquy:de-purl:html) ~))
+        =/  server=(unit @p)  (biff (~(get by args) 'server') (cury slaw %p))
+        =/  nonce=(unit @uv)  (biff (~(get by args) 'nonce') (cury slaw %uv))
+        =/  grant=?           =(`'grant' (~(get by args) 'grant'))
+        ::
+        =*  error   %^  return-static-data-on-duct  400  'text/html'
+                    (eauth-error-page server ~ nonce)
+        ?~  server  error
+        ?~  nonce   error
+        =/  home    (~(gut by visiting.auth) u.server ~)
+        ?.  ?=([~ * %| *] (~(get by home) u.nonce))  error
+        (confirm:client u.server u.nonce grant)
+      ::
+      ++  eauth-url
+        ^-  (unit @t)
+        =/  end=(unit @t)  (clap user.endpoint.auth auth.endpoint.auth head)
+        ?~  end  !!
+        `(cat 3 u.end '/~/eauth')
+      ::
+      ++  start-timeout
+        |=  =path
+        ^-  move
+        [duct %pass [%eauth %expire path] %b %wait (add now ~m5)]
+      ::
+      ++  eauth-error-page
+        |=  [server=(unit ship) client=(unit ship) nonce=(unit @uv)]
+        ^-  octs
+        %-  as-octs:mimes:html
+        %-  crip
+        %-  en-xml:html
+        =/  return=(unit @t)
+          ?:  =(`our server)
+            %-  some
+            %^  cat  3  '/~/login?eauth'
+            ?~  nonce  ''
+            ?~  visa=(~(get by visitors.auth) u.nonce)  ''
+            ?@  +.u.visa  ''
+            (cat 3 '&redirect=' last.u.visa)
+          ?.  =(`our client)  ~
+          ?~  server  ~
+          ?~  nonce   ~
+          =/  door  (~(get by (~(gut by visiting.auth) u.server ~)) u.nonce)
+          ?.  ?=([~ * %| *] door)  ~
+          `goal.p.live.u.door
+        =/  favicon  %+
+          weld  "<svg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'>"
+                "<circle r='3.09' cx='5' cy='5' /></svg>"
+        =/  msg=tape
+          ?~  return  "Something went wrong!"
+          "Something went wrong! You will be redirected back..."
+        ;html
+          ;head
+            ;*  ?~  return  ~
+                :_  ~
+                ;meta(http-equiv "Refresh", content "5; url={(trip u.return)}");
+            ;meta(charset "utf-8");
+            ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
+            ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
+            ;title:"Urbit"
+            ;style:'''
+                   @import url("https://rsms.me/inter/inter.css");
+                   @font-face {
+                       font-family: "Source Code Pro";
+                       src: url("https://storage.googleapis.com/media.urbit.org/fonts/scp-regular.woff");
+                       font-weight: 400;
+                       font-display: swap;
+                   }
+                   :root {
+                     --red05: rgba(255,65,54,0.05);
+                     --red100: rgba(255,65,54,1);
+                     --blue05: rgba(33,157,255,0.05);
+                     --blue30: rgba(33,157,255,0.3);
+                     --blue100: rgba(33,157,255,1);
+                     --black05: rgba(0,0,0,0.05);
+                     --black20: rgba(0,0,0,0.2);
+                     --black60: rgba(0,0,0,0.6);
+                     --white: rgba(255,255,255,1);
+                   }
+                   html {
+                     font-family: Inter, sans-serif;
+                     height: 100%;
+                     margin: 0;
+                     width: 100%;
+                     background: var(--white);
+                     color: var(--black100);
+                     -webkit-font-smoothing: antialiased;
+                     line-height: 1.5;
+                     font-size: 12px;
+                     display: flex;
+                     flex-flow: row nowrap;
+                     justify-content: center;
+                   }
+                   body {
+                     display: flex;
+                     flex-flow: column nowrap;
+                     justify-content: center;
+                     max-width: 300px;
+                     padding: 1rem;
+                     width: 100%;
+                   }
+                   '''
+          ==
+          ;body:"{msg}"
+        ==
+      ::
+      --
     --
   ::  +channel: per-event handling of requests to the channel system
   ::
@@ -1623,10 +2264,7 @@
       =|  errors=(map @ud @t)
       =/  og-state  state
       =/  from=ship
-        ?-  -.identity
-          %ours  our
-          %fake  who.identity
-        ==
+        ?+(-.identity who.identity %ours our)
       |-
       ::
       ?~  requests
@@ -2389,7 +3027,7 @@
     ^-  move
     =/  from=@p
       ?@  identity  identity
-      ?-(-.identity %ours our, %fake who.identity)
+      ?+(-.identity who.identity %ours our)
     [duct %pass wire %g %deal [from ship] dude task]
   ::
   ++  trace
@@ -2505,6 +3143,7 @@
       =-  (roll - insert-binding)
       ^-  (list [binding ^duct action])
       :~  [[~ /~/login] duct [%authentication ~]]
+          [[~ /~/eauth] duct [%eauth ~]]
           [[~ /~/logout] duct [%logout ~]]
           [[~ /~/channel] duct [%channel ~]]
           [[~ /~/scry] duct [%scry ~]]
@@ -2663,6 +3302,14 @@
       [duct %pass /acme/order %g %deal [our our] cmd]~
     ==
   ::
+      %plea
+    ~|  path.plea.task
+    ?>  ?=([%eauth %'0' ~] path.plea.task)
+    =+  plea=;;(eauth-plea payload.plea.task)
+    =^  moves  server-state.ax
+      (on-plea:client:eauth:authentication:server ship.task plea)
+    [moves http-server-gate]
+  ::
       %request
     =^  moves  server-state.ax  (request:server +.task)
     [moves http-server-gate]
@@ -2742,6 +3389,7 @@
         %watch-response    watch-response
         %sessions          sessions
         %channel           channel
+        %eauth             eauth
         %acme              acme-ack
         %conversion-cache  `http-server-gate
       ==
@@ -2887,6 +3535,57 @@
     ?:  =(*@da next)  expiry-time
     (min next expiry-time)
   ::
+  ++  eauth
+    =*  auth  authentication-state.server-state.ax
+    =*  args  [[eny duct now rof] server-state.ax]
+    ::TODO  dud handling
+    ^-  [(list move) _http-server-gate]
+    ~|  [wire +<.sign]
+    ?+  t.wire  !!
+        [%plea %'0' @ @ ~]
+      =/  =ship      (slav %p i.t.t.t.wire)
+      =/  nonce=@uv  (slav %uv i.t.t.t.t.wire)
+      ?:  ?=([%ames %done *] sign)
+        ?~  error.sign  [~ http-server-gate]
+        ::TODO  error case will also happen for "evil vane" when attempting to
+        ::      talk to old eyres
+        =^  moz  server-state.ax
+          %.  [ship nonce]
+          on-nack:server:eauth:authentication:(per-server-event args)
+        [moz http-server-gate]
+      ::TODO  %lost handling?
+      ?>  ?=([%ames %boon *] sign)
+      =/  boon       ;;(eauth-boon payload.sign)
+      =^  moz  server-state.ax
+        %.  [ship nonce boon]
+        on-boon:server:eauth:authentication:(per-server-event args)
+      [moz http-server-gate]
+    ::
+        [%expire %visiting @ @ ~]
+      ?>  ?=([%behn %wake *] sign)
+      =/  server=@p  (slav %p i.t.t.t.wire)
+      =/  nonce=@uv  (slav %uv i.t.t.t.t.wire)
+      =.  visiting.auth
+        =/  home=(map @uv portkey)  (~(gut by visiting.auth) server ~)
+        =/  door=(unit portkey)     (~(get by home) nonce)
+        ::  if the attempt was completed, we don't expire it
+        ::
+        ?.  ?=([~ * %| *] door)  visiting.auth
+        ::
+        %-  %+  trace:(per-server-event args)  2
+            |.("eauth: eauth attempt into {(scow %p server)} expired")
+        =.  home  (~(del by home) nonce)
+        ?~  home  (~(del by visiting.auth) server)
+        (~(put by visiting.auth) server home)
+      [~ http-server-gate]
+    ::
+        [%expire %visitors @ ~]
+      =/  nonce=@uv  (slav %uv i.t.t.t.wire)
+      =^  moz  server-state.ax
+        (expire:server:eauth:authentication:(per-server-event args) nonce)
+      [moz http-server-gate]
+    ==
+  ::
   ++  acme-ack
     ?>  ?=([%gall %unto *] sign)
     ::
@@ -2911,7 +3610,8 @@
             [date=%~2023.2.17 server-state=server-state-1]
             [date=%~2023.3.16 server-state=server-state-2]
             [date=%~2023.4.11 server-state-3]
-            [date=%~2023.5.3 server-state]
+            [date=%~2023.5.3 server-state-4]
+            [date=%~2023.5.15 server-state]
         ==
       ::
       +$  server-state-0
@@ -3010,6 +3710,23 @@
             subscriptions=(map @ud [ship=@p app=term =path duc=duct])
             heartbeat=(unit timer)
         ==
+      ::
+      +$  server-state-4
+        $:  bindings=(list [=binding =duct =action])
+            cache=(map url=@t [aeon=@ud val=(unit cache-entry)])
+            =cors-registry
+            connections=(map duct outstanding-connection)
+            authentication-state=authentication-state-4
+            =channel-state
+            domains=(set turf)
+            =http-config
+            ports=[insecure=@ud secure=(unit @ud)]
+            outgoing-duct=duct
+            verb=@
+        ==
+      +$  authentication-state-4
+        $:  sessions=(map @uv session)
+        ==
       --
   |=  old=axle-any
   ^+  http-server-gate
@@ -3107,6 +3824,20 @@
     ==
   ::
       %~2023.5.3
+    %=  $
+      date.old  %~2023.5.15
+    ::
+        authentication-state.old
+      ^-  authentication-state
+      [sessions.authentication-state.old ~ ~ [~ ~]]
+    ::
+        bindings.old
+      %+  insert-binding
+        [[~ /~/eauth] outgoing-duct.old [%eauth ~]]
+      bindings.old
+    ==
+  ::
+      %~2023.5.15
     http-server-gate(ax old)
   ==
 ::  +stay: produce current state

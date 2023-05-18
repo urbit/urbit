@@ -3959,6 +3959,7 @@
               ?.  =(vane.plea %$)
                 ?+  vane.plea  ~|  %ames-evil-vane^our^her^vane.plea  !!
                   %c  (pe-emit duct %pass wire %c %plea her plea)
+                  %e  (pe-emit duct %pass wire %e %plea her plea)
                   %g  (pe-emit duct %pass wire %g %plea her plea)
                   %j  (pe-emit duct %pass wire %j %plea her plea)
                 ==
