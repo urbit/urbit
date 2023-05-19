@@ -287,10 +287,9 @@
   ::
   ~
 ::  +login-page: internal page to login to an Urbit
-::TODO  exclude eauth if no +eauth-url:eauth
 ::
 ++  login-page
-  |=  [redirect-url=(unit @t) our=@p =identity eauth=? failed=?]
+  |=  [redirect-url=(unit @t) our=@p =identity eauth=(unit ?) failed=?]
   ^-  octs
   =+  redirect-str=?~(redirect-url "" (trip u.redirect-url))
   %-  as-octs:mimes:html
@@ -346,11 +345,39 @@
                padding: 1rem;
                width: 100%;
              }
-             body.local #eauth { display: none; }
-             body.eauth #local { display: none; }
-             body nav div { display: inline-block; }
+             body.local #eauth,
+             body.eauth #local {
+               display: none;
+               min-height: 100%;
+             }
+             #eauth input {
+               /*NOTE dumb hack to get approx equal height with #local */
+               margin-bottom: 15px;
+             }
+             body nav div {
+               display: inline-block;
+               padding: 8px 16px;
+               border-radius: 4px;
+               color: var(--blue100);
+               border: 1px solid var(--blue100);
+               cursor: pointer;
+             }
              body.local nav div.local,
-             body.eauth nav div.eauth { background-color: var(--blue100); }
+             body.eauth nav div.eauth {
+               background-color: var(--blue100);
+               color: var(--white);
+               cursor: default;
+             }
+             nav div.local {
+               border-right: none;
+               border-top-right-radius: 0;
+               border-bottom-right-radius: 0;
+             }
+             nav div.eauth {
+               border-left: none;
+               border-top-left-radius: 0;
+               border-bottom-left-radius: 0;
+             }
              body > *,
              form > input {
                width: 100%;
@@ -390,6 +417,7 @@
                background: var(--blue100);
                color: var(--white);
                border: 1px solid var(--blue100);
+               cursor: pointer;
              }
              input:invalid ~ button[type=submit] {
                border-color: currentColor;
@@ -429,18 +457,22 @@
                }
              }
              '''
+      ;style:"{?^(eauth "" "nav \{ display: none; }")}"
       ;script:"our = '{(scow %p our)}';"
       ;script:'''
-              let name;
+              let name, pass;
               function setup(isEauth) {
                 name = document.getElementById('name');
+                pass = document.getElementById('pass');
                 if (isEauth) goEauth(); else goLocal();
               }
               function goLocal() {
                 document.body.className = 'local';
+                pass.focus();
               }
               function goEauth() {
                 document.body.className = 'eauth';
+                name.focus();
               }
               function doEauth() {
                 console.log('mb get value from event', event);
@@ -453,8 +485,8 @@
               '''
     ==
     ;body
-      =class   "{?:(eauth "eauth" "local")}"
-      =onload  "setup({?:(eauth "true" "false")})"
+      =class   "{?:(=(`& eauth) "eauth" "local")}"
+      =onload  "setup({?:(=(`& eauth) "true" "false")})"
       ;nav
         ;div.local(onclick "goLocal()"):"Local"
         ;div.eauth(onclick "goEauth()"):"EAuth"
@@ -467,13 +499,13 @@
           ;input
             =type  "password"
             =name  "password"
+            =id    "pass"
             =placeholder  "sampel-ticlyt-migfun-falmel"
             =class  "mono"
             =required  "true"
             =minlength  "27"
             =maxlength  "27"
-            =pattern  "((?:[a-z]\{6}-)\{3}(?:[a-z]\{6}))"
-            =autofocus  "true";
+            =pattern  "((?:[a-z]\{6}-)\{3}(?:[a-z]\{6}))";
           ;input(type "hidden", name "redirect", value redirect-str);
           ;+  ?.  failed  ;span;
             ;span.failed
@@ -490,7 +522,14 @@
       ;div#eauth
         ;form(action "/~/login", method "post", onsubmit "return doEauth()")
           ;p:"Urbit ID"
-          ;input.mono(name "name", id "name", placeholder "{(scow %p our)}");
+          ;input.mono
+            =name  "name"
+            =id    "name"
+            =placeholder  "{(scow %p our)}"
+            =required   "true"
+            =minlength  "4"
+            =maxlength  "57"
+            =pattern    "~((([a-z]\{6})\{1,2}-\{0,2})+|[a-z]\{3})";
           ;p
             ; You will be redirected to your own web interface, to authorize
             ; logging in to
@@ -498,15 +537,6 @@
             ; .
           ==
           ;input(type "hidden", name "redirect", value redirect-str);
-          ;+  ?.  failed  ;span;
-            ;span.failed
-              ;svg(xmlns "http://www.w3.org/2000/svg", viewBox "0 0 12 12")
-                ;circle(cx "6", cy "6", r "5.5");
-                ;line(x1 "3.27", y1 "3.27", x2 "8.73", y2 "8.73");
-                ;line(x1 "8.73", y1 "3.27", x2 "3.27", y2 "8.73");
-              ==
-              Something went wrong
-            ==
           ;button(name "eauth", type "submit"):"Continue..."
         ==
       ==
@@ -1092,7 +1122,9 @@
       ::
       =+  request-line=(parse-request-line url.request)
       =/  redirect    (get-header:http 'redirect' args.request-line)
-      =/  with-eauth  ?=(^ (get-header:http 'eauth' args.request-line))
+      =/  with-eauth=(unit ?)
+        ?:  =(~ eauth-url:eauth)  ~
+        `?=(^ (get-header:http 'eauth' args.request-line))
       ::  if we received a simple get: redirect if logged in, otherwise
       ::  show login page
       ::
@@ -1141,19 +1173,20 @@
       ?^  (get-header:http 'eauth' u.parsed)
         ?~  ship=(biff (get-header:http 'name' u.parsed) (cury slaw %p))
           %^  return-static-data-on-duct  400  'text/html'
-          (login-page redirect our identity & %.n)
+          (login-page redirect our identity `& %.n)
         ::TODO  redirect logic here and elsewhere is ugly
         =/  redirect  (fall redirect '')
         (start:server:eauth u.ship ?:(=(redirect '') '/' redirect))
       ::
+      =.  with-eauth  (bind with-eauth |=(? |))
       ?~  password=(get-header:http 'password' u.parsed)
         %^  return-static-data-on-duct  400  'text/html'
-        (login-page redirect our identity | %.n)
+        (login-page redirect our identity with-eauth %.n)
       ::  check that the password is correct
       ::
       ?.  =(u.password code)
         %^  return-static-data-on-duct  400  'text/html'
-        (login-page redirect our identity | %.y)
+        (login-page redirect our identity with-eauth %.y)
       ::  clean up the session they're changing out from
       ::
       =^  moz  state
