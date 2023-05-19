@@ -1190,8 +1190,8 @@
   ;<  ~  bind:m  perform-init
   |=  =state
   :+  %&  ~
-  =-  state(sessions.authentication-state.server-state.ax.gate -)
-  %+  ~(put by sessions.authentication-state.server-state.ax.gate.state)
+  =-  state(sessions.auth.server-state.ax.gate -)
+  %+  ~(put by sessions.auth.server-state.ax.gate.state)
     0vguest
   [fake+~sampel-sampel-sampel-sampel--sampel-sampel-sampel-sampel ~2222.2.2 ~]
 ::  +perform-born: %born an eyre-gate

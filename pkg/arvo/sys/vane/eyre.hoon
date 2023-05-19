@@ -107,9 +107,9 @@
       ::  connections: open http connections not fully complete
       ::
       connections=(map duct outstanding-connection)
-      ::  authentication-state: state managed by the +authentication core
+      ::  auth: state managed by the +authentication core
       ::
-      =authentication-state
+      auth=authentication-state
       ::  channel-state: state managed by the +channel core
       ::
       =channel-state
@@ -775,10 +775,10 @@
     ::  if we have no eauth endpoint yet, and the request is authenticated,
     ::  deduce it from the hostname
     ::
-    =?  auth.endpoint.authentication-state.state
+    =?  auth.endpoint.auth.state
         ?&  authenticated
             ?=(^ host)
-            ?=(~ auth.endpoint.authentication-state.state)
+            ?=(~ auth.endpoint.auth.state)
         ==
       %-  (trace 2 |.("eauth: storing endpoint at {(trip u.host)}"))
       `(cat 3 ?:(secure 'https://' 'http://') u.host)
@@ -1205,7 +1205,7 @@
         o(session-id session.fex)
       ::  store the hostname used for this login, later reuse it for eauth
       ::
-      =?  auth.endpoint.authentication-state.state  ?=(^ host)
+      =?  auth.endpoint.auth.state  ?=(^ host)
         %-  (trace 2 |.("eauth: storing endpoint at {(trip u.host)}"))
         `(cat 3 ?:(secure 'https://' 'http://') u.host)
       ::
@@ -1259,7 +1259,7 @@
       ::  if this is an eauth remote logout, just send the %del
       ::
       ?:  ?=(^ hos)
-        =/  home  (~(gut by visiting.authentication-state.state) u.hos ~)
+        =/  home  (~(gut by visiting.auth.state) u.hos ~)
         ?~  por=(~(get by home) u.sid)
           (handle-response response)
         =^  moz  state  (handle-response response)
@@ -1304,7 +1304,7 @@
       ^-  ?
       ?~  session-id=(session-id-from-request request)
         |
-      ?~  session=(~(get by sessions.authentication-state.state) u.session-id)
+      ?~  session=(~(get by sessions.auth.state) u.session-id)
         |
       &(!?=(%fake -.identity.u.session) (lte now expiry-time.u.session))
     ::  +request-is-authenticated: checks to see if the request is "us"
@@ -1321,7 +1321,7 @@
         %.n
       ::  is this a session that we know about?
       ::
-      ?~  session=(~(get by sessions.authentication-state.state) `@uv`u.session-id)
+      ?~  session=(~(get by sessions.auth.state) `@uv`u.session-id)
         %.n
       ::  does this session have our id, and is it still valid?
       ::
@@ -1336,10 +1336,10 @@
             ::  if no session existed previously, we must kick off the
             ::  session expiry timer
             ::
-            ?^  sessions.authentication-state.state  ~
+            ?^  sessions.auth.state  ~
             [duct %pass /sessions/expire %b %wait (add now session-timeout)]~
-        =-  state(sessions.authentication-state -)
-        %+  ~(put by sessions.authentication-state.state)  key
+        =-  state(sessions.auth -)
+        %+  ~(put by sessions.auth.state)  key
         [sid (add now session-timeout) ~]
       ::  create a new session with a fake identity
       ::
@@ -1373,7 +1373,7 @@
       =*  new  (start-session %guest)
       ?~  sid=(session-id-from-request request)
         new
-      ?~  ses=(~(get by sessions.authentication-state.state) u.sid)
+      ?~  ses=(~(get by sessions.auth.state) u.sid)
         new
       ?:  (gth now expiry-time.u.ses)
         new
@@ -1387,12 +1387,12 @@
     ++  close-session
       |=  [session-id=@uv all=?]
       ^-  [(list move) server-state]
-      ?~  ses=(~(get by sessions.authentication-state.state) session-id)
+      ?~  ses=(~(get by sessions.auth.state) session-id)
         [~ state]
       ::  delete the session(s) and find the associated ids & channels
       ::
-      =^  [siz=(list @uv) channels=(list @t)]  sessions.authentication-state.state
-        =*  sessions  sessions.authentication-state.state
+      =^  [siz=(list @uv) channels=(list @t)]  sessions.auth.state
+        =*  sessions  sessions.auth.state
         ::  either delete just the specific session and its channels,
         ::
         ?.  all
@@ -1425,8 +1425,8 @@
       ::  lastly, %real sessions require additional cleanup
       ::
       ?.  ?=(%real -.identity.u.ses)  [moves1 state]
-      =^  moves2  visitors.authentication-state.state
-        %+  roll  ~(tap by visitors.authentication-state.state)
+      =^  moves2  visitors.auth.state
+        %+  roll  ~(tap by visitors.auth.state)
         |=  [[nonce=@uv visa=visitor] [moz=(list move) viz=(map @uv visitor)]]
         ?^  +.visa  [moz (~(put by viz) nonce visa)]
         :_  viz
@@ -1452,8 +1452,9 @@
       ?.  extend  0
       (div (msec:milly session-timeout) 1.000)
     ::
+    ::
     ++  eauth
-      =*  auth  authentication-state.state
+      =*  auth  auth.state
       |%
       ++  server
         |%
@@ -2206,8 +2207,8 @@
         (~(put by duct-to-key.channel-state.state) duct channel-id)
       ::  associate this channel with the session cookie
       ::
-      =.  sessions.authentication-state.state
-        %+  ~(jab by sessions.authentication-state.state)
+      =.  sessions.auth.state
+        %+  ~(jab by sessions.auth.state)
           session-id
         |=  =session
         session(channels (~(put in channels.session) channel-id))
@@ -2825,10 +2826,10 @@
             ((trace 0 |.("{<duct>} error multiple start")) error-connection)
           ::  extend the request's session's + cookie's life
           ::
-          =^  response-header  sessions.authentication-state.state
+          =^  response-header  sessions.auth.state
             =,  authentication
             =*  session-id  session-id.u.connection-state
-            =*  sessions    sessions.authentication-state.state
+            =*  sessions    sessions.auth.state
             =*  inbound     inbound-request.u.connection-state
             ::
             ?.  (~(has by sessions) session-id)
@@ -3042,7 +3043,7 @@
     :-  outgoing-duct.state
     :+  %give  %sessions
     %-  sy
-    %+  murn  ~(tap by sessions.authentication-state.state)
+    %+  murn  ~(tap by sessions.auth.state)
     |=  [sid=@uv session]
     ?.  ?=(%ours -.identity)  ~
     (some (scot %uv sid))
@@ -3051,7 +3052,7 @@
   ++  new-session-key
     |-  ^-  @uv
     =/  candidate=@uv  (~(raw og (shas %session-key eny)) 128)
-    ?.  (~(has by sessions.authentication-state.state) candidate)
+    ?.  (~(has by sessions.auth.state) candidate)
       candidate
     $(eny (shas %try-again candidate))
   ::
@@ -3268,11 +3269,10 @@
   ?:  ?=(%code-changed -.task)
     ~>  %slog.[0 leaf+"eyre: code-changed: throwing away local sessions"]
     =*  event-args  [[eny duct now rof] server-state.ax]
-    =*  auth        authentication:(per-server-event event-args)
     ::  find all the %ours sessions, we must close them
     ::
     =/  siz=(list @uv)
-      %+  murn  ~(tap by sessions.authentication-state.server-state.ax)
+      %+  murn  ~(tap by sessions.auth.server-state.ax)
       |=  [sid=@uv session]
       ?:(?=(%ours -.identity) (some sid) ~)
     =|  moves=(list (list move))
@@ -3281,7 +3281,8 @@
       [(zing (flop moves)) http-server-gate]
     ::  discard the session, clean up its channels
     ::
-    =^  mov  server-state.ax  (close-session:auth i.siz |)
+    =^  mov  server-state.ax
+      (close-session:authentication:(per-server-event event-args) i.siz |)
     $(moves [mov moves], siz t.siz)
   ::
   ::  all other commands operate on a per-server-event
@@ -3548,8 +3549,8 @@
     ::      timer. channels have their own expiry timer, too.
     ::  remove cookies that have expired
     ::
-    =*  sessions  sessions.authentication-state.server-state.ax
-    =.  sessions.authentication-state.server-state.ax
+    =*  sessions  sessions.auth.server-state.ax
+    =.  sessions.auth.server-state.ax
       %-  ~(gas by *(map @uv session))
       %+  skip  ~(tap in sessions)
       |=  [cookie=@uv session]
@@ -3569,7 +3570,7 @@
     (min next expiry-time)
   ::
   ++  eauth
-    =*  auth  authentication-state.server-state.ax
+    =*  auth  auth.server-state.ax
     =*  args  [[eny duct now rof] server-state.ax]
     ::TODO  dud handling
     ^-  [(list move) _http-server-gate]
@@ -3651,7 +3652,7 @@
         $:  bindings=(list [=binding =duct =action])
             =cors-registry
             connections=(map duct outstanding-connection-3)
-            authentication-state=authentication-state-3
+            auth=authentication-state-3
             channel-state=channel-state-2
             domains=(set turf)
             =http-config
@@ -3663,7 +3664,7 @@
         $:  bindings=(list [=binding =duct =action])
             =cors-registry
             connections=(map duct outstanding-connection-3)
-            authentication-state=authentication-state-3
+            auth=authentication-state-3
             channel-state=channel-state-2
             domains=(set turf)
             =http-config
@@ -3677,7 +3678,7 @@
             cache=(map url=@t [aeon=@ud val=(unit cache-entry)])  ::  <- new
             =cors-registry
             connections=(map duct outstanding-connection-3)
-            authentication-state=authentication-state-3
+            auth=authentication-state-3
             channel-state=channel-state-2
             domains=(set turf)
             =http-config
@@ -3710,7 +3711,7 @@
             cache=(map url=@t [aeon=@ud val=(unit cache-entry)])
             =cors-registry
             connections=(map duct outstanding-connection-3)
-            authentication-state=authentication-state-3
+            auth=authentication-state-3
             channel-state=channel-state-3
             domains=(set turf)
             =http-config
@@ -3749,7 +3750,7 @@
             cache=(map url=@t [aeon=@ud val=(unit cache-entry)])
             =cors-registry
             connections=(map duct outstanding-connection)
-            authentication-state=authentication-state-4
+            auth=authentication-state-4
             =channel-state
             domains=(set turf)
             =http-config
@@ -3838,8 +3839,8 @@
       ^-  outstanding-connection
       [action inbound-request [*@uv [%ours ~]] response-header bytes-sent]
     ::
-        sessions.authentication-state.old
-      %-  ~(run by sessions.authentication-state.old)
+        sessions.auth.old
+      %-  ~(run by sessions.auth.old)
       |=  s=session-3
       ^-  session
       [[%ours ~] s]
@@ -3860,9 +3861,9 @@
     %=  $
       date.old  %~2023.5.15
     ::
-        authentication-state.old
+        auth.old
       ^-  authentication-state
-      [sessions.authentication-state.old ~ ~ [~ ~]]
+      [sessions.auth.old ~ ~ [~ ~]]
     ::
         bindings.old
       %+  insert-binding
@@ -3905,7 +3906,7 @@
     ?+  tyl  [~ ~]
       [%$ %whey ~]         =-  ``mass+!>(`(list mass)`-)
                            :~  bindings+&+bindings.server-state.ax
-                               auth+&+authentication-state.server-state.ax
+                               auth+&+auth.server-state.ax
                                connections+&+connections.server-state.ax
                                channels+&+channel-state.server-state.ax
                                axle+&+ax
@@ -3946,7 +3947,7 @@
   ?+  syd  [~ ~]
     %bindings              ``noun+!>(bindings.server-state.ax)
     %connections           ``noun+!>(connections.server-state.ax)
-    %authentication-state  ``noun+!>(authentication-state.server-state.ax)
+    %authentication-state  ``noun+!>(auth.server-state.ax)
     %channel-state         ``noun+!>(channel-state.server-state.ax)
   ::
       %host
