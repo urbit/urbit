@@ -161,6 +161,11 @@
     [app %poke %handle-http-request response]
   (expect-moves mos mov-1 mov-2 ~)
 ::
+++  eauth-plea-wire
+   |=  [v=@ud =ship nonce=@uv]
+   ^-  wire
+   /eauth/plea/(scot %ud v)/(scot %p ship)/(scot %uv nonce)
+::
 ++  expect-moves
   |=  [mos=(list move) exes=(list $-(move tang))]
   =/  m  (mare ,~)
@@ -199,6 +204,20 @@
 ++  ex-wait
   |=  [=wire =@da]
   (ex ~[/http-blah] %pass wire %b %wait da)
+::
+++  ex-eauth-plea
+  |=  [=ship plea=eauth-plea:eyre]
+  =/  nonce=@uv
+    ?-  +<.plea
+      %syn  nonce.plea
+      %del  nonce.plea
+    ==
+  =/  =wire  (eauth-plea-wire -.plea ship nonce)
+  (ex ~[/http-blah] %pass wire %a %plea ship %e /eauth/(scot %ud -.plea) plea)
+::
+++  ex-eauth-boon
+  |=  boon=eauth-boon:eyre
+  (ex ~[/http-blah] %give %boon boon)
 ::
 ++  ex-sessions
   |=  tokens=(set @t)
@@ -1194,6 +1213,20 @@
   %+  ~(put by sessions.auth.server-state.ax.gate.state)
     0vguest
   [fake+~sampel-sampel-sampel-sampel--sampel-sampel-sampel-sampel ~2222.2.2 ~]
+::
+++  setup-for-eauth
+  |=  base=@t
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
+  ;<  ~  bind:m  perform-authentication-2
+  ;<  ~  bind:m
+    ::  make sure there is an eauth endpoint set
+    ::
+    |=  =state
+    &+`state(user.endpoint.auth.server-state.ax.gate `base)
+  (pure:m ~)
 ::  +perform-born: %born an eyre-gate
 ::
 ++  perform-born
@@ -1228,6 +1261,138 @@
     =/  headers  ~[['location' '/~landscape'] ['set-cookie' cookie-string]]
     =/  token  '0v2.v5g1m.rr6kg.bjj3k.59t1m.qp48h'
     (expect-moves mos (ex-sessions token ~ ~) (ex-response 303 headers ~) ~)
+  (pure:m ~)
+::
+++  eauth
+  |%
+  ++  server
+    |%
+    ++  nonce  0vcn5.qlgj3.hpopf
+    ++  wire   (eauth-plea-wire %0 ~sampel nonce)
+    ::
+    ++  start
+      =/  m  (mare ,~)
+      ^-  form:m
+      ::  eauth login attempt starts the flow: send a %syn, set timeout timer
+      ::
+      ;<  mos=(list move)  bind:m
+        =/  body  'eauth&name=~sampel&redirect=/final'
+        (post '/~/login' ~ body)
+      ;<  now=@da  bind:m  get-now
+      ;<  ~  bind:m
+        %+  expect-moves  mos
+        :~  (ex-eauth-plea ~sampel %0 %syn nonce 'http://hoster.com/~/eauth')
+            (ex-wait /eauth/expire/visitors/(scot %uv nonce) (add now ~m5))
+        ==
+      (pure:m ~)
+    ::
+    ++  acked
+      =/  m  (mare ,~)
+      ^-  form:m
+      ::  ~sampel gets back to us with an %ack boon, we redirect the requester
+      ::
+      ;<  mos=(list move)  bind:m  (take wire ~[/http-blah] %ames %done ~)
+      ;<  ~                bind:m  (expect-moves mos ~)
+      ;<  mos=(list move)  bind:m
+        %^  take  wire  ~[/http-blah]
+        [%ames %boon %0 %ack 'http://sampel.com/~/eauth']
+      ;<  ~  bind:m
+        %+  expect-moves  mos
+        =/  loc=@t
+          %^  cat  3
+            'http://sampel.com/~/eauth?server=~nul&nonce='
+          (scot %uv nonce)
+        =/  cook=@t  'urbauth-~nul=0vsb1uq.gsjg3.53i52.eej3q.icesf; Path=/; Max-Age=604800'
+        :~  (ex-response 303 ~['location'^loc 'set-cookie'^cook] ~)
+        ==
+      (pure:m ~)
+    ::
+    ++  grant
+      =/  m  (mare ,~)
+      ^-  form:m
+      ::  requester approves, we get a %fin
+      ::
+      ;<  mos=(list move)  bind:m
+        %^  take  wire  ~[/http-blah]
+        [%ames %boon %0 %fin 0vtoken]
+      ;<  ~  bind:m  (expect-moves mos ~)
+      (pure:m ~)
+    ::
+    ++  final
+      =/  m  (mare ,~)
+      ^-  form:m
+      ::  requester returns for the final request
+      ::
+      ;<  mos=(list move)  bind:m
+        =;  url=@t  (get url [g-auth]~)
+        (cat 3 '/~/eauth?token=0vtoken&nonce=' (scot %uv nonce:server:eauth))
+      ;<  ~  bind:m
+        %+  expect-moves  mos
+        :~  (ex-response 303 ~['location'^'/final' g-head] ~)
+        ==
+      (pure:m ~)
+    --
+  ::
+  ++  client
+    |%
+    ++  start
+      =/  m  (mare ,~)
+      ^-  form:m
+      ::  host initiates eauth flow: we get a %syn, send an %ack, set timeout
+      ::
+      ;<  mos=(list move)  bind:m
+        %+  call  ~[/http-blah]
+        [%plea ~hoster %e /eauth/0 %0 %syn 0vnonce 'http://hoster.com/~/eauth']
+      ;<  now=@da  bind:m  get-now
+      ;<  ~  bind:m
+        %+  expect-moves  mos
+        :~  (ex ~[/http-blah] %give %done ~)
+            (ex-eauth-boon %0 %ack 'http://client.com/~/eauth')
+            (ex-wait /eauth/expire/visiting/~hoster/0vnonce (add now ~m5))
+        ==
+      (pure:m ~)
+    ::
+    ++  grant
+      =/  m  (mare ,~)
+      ^-  form:m
+      ::  visitor uses eauth page to approve the login attempt,
+      ::  we send ~hoster the token and redirect the visitor
+      ::
+      ;<  mos=(list move)  bind:m
+        =/  body  'server=~hoster&nonce=0vnonce&grant=grant'
+        (post '/~/eauth' cookie body)
+      ;<  now=@da  bind:m  get-now
+      ;<  ~  bind:m
+        %+  expect-moves  mos
+        =/  loc=@t
+          'http://hoster.com/~/eauth?nonce=0vnonce&token=0v4.qkgot.d07e3.pi1qd.m1bhj.ti8bo'
+        :~  (ex-eauth-boon %0 %fin 0v4.qkgot.d07e3.pi1qd.m1bhj.ti8bo)
+            (ex-response 303 ~['location'^loc 'set-cookie'^cookie-string] ~)
+        ==
+      (pure:m ~)
+    --
+  --
+::
+::TODO  would be good to test with different ducts so we know they get
+::      stored & re-used correctly
+++  test-incoming-eauth
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  ~  bind:m  (setup-for-eauth 'http://hoster.com')
+  ;<  ~  bind:m  start:server:eauth
+  ;<  ~  bind:m  acked:server:eauth
+  ;<  ~  bind:m  grant:server:eauth
+  ;<  ~  bind:m  final:server:eauth
+  (pure:m ~)
+::
+++  test-outgoing-eauth
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  ~  bind:m  (setup-for-eauth 'http://client.com')
+  ;<  ~  bind:m  start:client:eauth
+  ;<  ~  bind:m  grant:client:eauth
   (pure:m ~)
 ::
 ++  test-perform-init-start-channel
