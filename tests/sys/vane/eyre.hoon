@@ -1219,7 +1219,7 @@
     (get '/~/login?redirect=/~landscape/inner-path' g-auth ~)
   ;<  ~  bind:m
     =/  headers  ['content-type' 'text/html']~
-    =/  body  `(login-page:eyre-gate `'/~landscape/inner-path' ~nul fake+g-name %.n)
+    =/  body  `(login-page:eyre-gate `'/~landscape/inner-path' ~nul fake+g-name ~ %.n)
     (expect-moves mos (ex-response 200 headers body) ~)
   ;<  mos=(list move)  bind:m
     =/  body  'password=lidlut-tabwed-pillex-ridrup&redirect=/~landscape'

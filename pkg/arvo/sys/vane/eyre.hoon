@@ -1875,7 +1875,7 @@
       ++  eauth-url
         ^-  (unit @t)
         =/  end=(unit @t)  (clap user.endpoint.auth auth.endpoint.auth head)
-        ?~  end  !!
+        ?~  end  ~
         `(cat 3 u.end '/~/eauth')
       ::
       ++  start-timeout
