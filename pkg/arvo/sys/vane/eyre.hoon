@@ -1803,6 +1803,12 @@
       ++  on-request
         |=  [[session-id=@uv =identity] =request:http]
         ^-  [(list move) server-state]
+        ::  we may need the requester to log in before proceeding
+        ::
+        =*  login
+          =;  url=@t  (handle-response %start 403^['location' url]~ ~ &)
+          %^  cat  3  '/~/login?redirect='
+          (crip (en-urlt:html (trip url.request)))
         ::  GET requests either render the confirmation page,
         ::  or finalize an eauth flow
         ::
@@ -1820,12 +1826,7 @@
           ?^  server
             ::  request for confirmation page
             ::
-            ?.  ?=(%ours -.identity)
-              ::  if requester is not logged in as us, send them to login page
-              ::
-              =;  url=@t  (handle-response %start 307^['location' url]~ ~ &)
-              %^  cat  3  '/~/login?cool&redirect='
-              (crip (en-urlt:html (trip url.request)))
+            ?.  ?=(%ours -.identity)  login
             ?.  (~(has by (~(gut by visiting.auth) u.server ~)) u.nonce)
               error
             %^  return-static-data-on-duct  400  'text/html'
@@ -1838,6 +1839,9 @@
           ?^  pend.u.visa  error
           ::  request for eauth finalization
           ::
+          ::NOTE  yes, this means that unauthenticated clients can abort
+          ::      any eauth attempt they know the nonce for, but that should
+          ::      be pretty benign
           ?:  abort  (cancel:^server u.nonce last.u.visa)
           ?~  token  error
           ::  if this request arrived before the %fin ames msg, delay response
@@ -1857,6 +1861,7 @@
         ?.  ?=(%'POST' method.request)
           %^  return-static-data-on-duct  405  'text/html'
           (eauth-error-page ~ ~ ~)
+        ?.  =(%ours -.identity)  login
         ::  POST requests are always submissions of the confirmation page
         ::
         =/  args=(map @t @t)
