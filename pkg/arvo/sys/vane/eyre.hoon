@@ -1806,7 +1806,7 @@
         ::  we may need the requester to log in before proceeding
         ::
         =*  login
-          =;  url=@t  (handle-response %start 403^['location' url]~ ~ &)
+          =;  url=@t  (handle-response %start 303^['location' url]~ ~ &)
           %^  cat  3  '/~/login?redirect='
           (crip (en-urlt:html (trip url.request)))
         ::  GET requests either render the confirmation page,
