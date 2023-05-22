@@ -4,7 +4,7 @@
 =>  ..part
 ~%  %lull  ..part  ~
 |%
-++  lull  %324
+++  lull  %323
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
@@ -462,7 +462,7 @@
 +$  rift  @ud                                           ::  ship continuity
 +$  mime  (pair mite octs)                              ::  mimetyped data
 +$  octs  (pair @ud @)                                  ::  octet-stream
-+$  sock  (pair ship ship)                              ::  outgoing [our his]
++$  sock  (trel ship ship path)                         ::  [src dest prov]
 +$  stub  (list (pair stye (list @c)))                  ::  styled unicode
 +$  stye  (pair (set deco) (pair tint tint))            ::  decos/bg/fg
 +$  styl  %+  pair  (unit deco)                         ::  cascading style
@@ -2595,6 +2595,7 @@
     $:  $:  our=ship                                    ::  host
             src=ship                                    ::  guest
             dap=term                                    ::  agent
+            sap=path                                    ::  provenance
         ==                                              ::
         $:  wex=boat                                    ::  outgoing subs
             sup=bitt                                    ::  incoming subs

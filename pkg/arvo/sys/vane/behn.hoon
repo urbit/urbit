@@ -235,7 +235,7 @@
 ::
 ++  scry
   ^-  roon
-  |=  [lyc=gang car=term bem=beam]
+  |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
   =*  ren  car
   =*  why=shop  &/p.bem

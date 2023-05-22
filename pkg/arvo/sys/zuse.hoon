@@ -4,7 +4,7 @@
 =>  ..lull
 ~%  %zuse  ..part  ~
 |%
-++  zuse  %413
+++  zuse  %412
 ::                                                      ::  ::
 ::::                                                    ::  ::  (2) engines
   ::                                                    ::  ::
@@ -5265,10 +5265,10 @@
   ::
   =>  |%
       ++  sein
-        |=  [rof=roof our=ship now=@da who=ship]
+        |=  [rof=roof pov=path our=ship now=@da who=ship]
         ;;  ship
         =<  q.q  %-  need  %-  need
-        (rof ~ %j `beam`[[our %sein %da now] /(scot %p who)])
+        (rof ~ pov %j `beam`[[our %sein %da now] /(scot %p who)])
       --
   ::  middle core: stateless queries for default numeric sponsorship
   ::
