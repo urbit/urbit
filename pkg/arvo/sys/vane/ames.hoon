@@ -3635,6 +3635,11 @@
               =/  acc
                 :*  found=`?`%.n
                     resends=*(list static-fragment)
+                    ::  num-live is still present in pump-metrics but not used
+                    ::  internally by |ga, so we reuse it the +dip traversal to
+                    ::  keep track of the number of packets waiting acks
+                    ::  (also used in the accumulator in +on-done:pu)
+                    ::
                     metrics=metrics.state(num-live ~(wyt by live.state))
                 ==
               ::
