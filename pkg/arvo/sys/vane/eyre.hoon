@@ -286,6 +286,162 @@
   ::  if we reached this, we have an invalid action key. fail parsing.
   ::
   ~
+::  +auth-styling: css for login and eauth pages
+::
+++  auth-styling
+  '''
+  @import url("https://rsms.me/inter/inter.css");
+  @font-face {
+      font-family: "Source Code Pro";
+      src: url("https://storage.googleapis.com/media.urbit.org/fonts/scp-regular.woff");
+      font-weight: 400;
+      font-display: swap;
+  }
+  :root {
+    --red05: rgba(255,65,54,0.05);
+    --red100: rgba(255,65,54,1);
+    --blue05: rgba(33,157,255,0.05);
+    --blue30: rgba(33,157,255,0.3);
+    --blue100: rgba(33,157,255,1);
+    --black05: rgba(0,0,0,0.05);
+    --black20: rgba(0,0,0,0.2);
+    --black60: rgba(0,0,0,0.6);
+    --white: rgba(255,255,255,1);
+  }
+  html {
+    font-family: Inter, sans-serif;
+    height: 100%;
+    margin: 0;
+    width: 100%;
+    background: var(--white);
+    color: var(--black100);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+    font-size: 12px;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+  }
+  body {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    max-width: 300px;
+    padding: 1rem;
+    width: 100%;
+  }
+  body.local #eauth,
+  body.eauth #local {
+    display: none;
+    min-height: 100%;
+  }
+  #eauth input {
+    /*NOTE dumb hack to get approx equal height with #local */
+    margin-bottom: 15px;
+  }
+  body nav div {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 4px;
+    color: var(--blue100);
+    border: 1px solid var(--blue100);
+    cursor: pointer;
+  }
+  body.local nav div.local,
+  body.eauth nav div.eauth {
+    background-color: var(--blue100);
+    color: var(--white);
+    cursor: default;
+  }
+  nav div.local {
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  nav div.eauth {
+    border-left: none;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  body > *,
+  form > input {
+    width: 100%;
+  }
+  form {
+    display: flex;
+    flex-flow: column;
+    align-items: flex-start;
+  }
+  input {
+    background: transparent;
+    border: 1px solid var(--black20);
+    padding: 8px;
+    border-radius: 4px;
+    font-size: inherit;
+    color: var(--black);
+    box-shadow: none;
+  }
+  input:disabled {
+    background: var(--black05);
+    color: var(--black60);
+  }
+  input:focus {
+    outline: none;
+    border-color: var(--blue30);
+  }
+  input:invalid:not(:focus) {
+    background: var(--red05);
+    border-color: var(--red100);
+    outline: none;
+    color: var(--red100);
+  }
+  button[type=submit] {
+    margin-top: 16px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    background: var(--blue100);
+    color: var(--white);
+    border: 1px solid var(--blue100);
+    cursor: pointer;
+  }
+  input:invalid ~ button[type=submit] {
+    border-color: currentColor;
+    background: var(--blue05);
+    color: var(--blue30);
+    pointer-events: none;
+  }
+  span.guest {
+    color: var(--black20);
+  }
+  span.failed {
+    display: flex;
+    flex-flow: row nowrap;
+    height: 16px;
+    align-items: center;
+    margin-top: 6px;
+    color: var(--red100);
+  }
+  span.failed svg {
+    height: 12px;
+  margin-right: 6px;
+  }
+  span.failed circle,
+  span.failed line {
+    fill: transparent;
+    stroke: currentColor
+  }
+  .mono {
+    font-family: 'Source Code Pro', monospace;
+  }
+  @media all and (prefers-color-scheme: dark) {
+    :root {
+      --white: rgb(51, 51, 51);
+      --black100: rgba(255,255,255,1);
+      --black05: rgba(255,255,255,0.05);
+      --black20: rgba(255,255,255,0.2);
+    }
+  }
+  '''
 ::  +login-page: internal page to login to an Urbit
 ::
 ++  login-page
@@ -304,159 +460,7 @@
       ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
       ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
       ;title:"Urbit"
-      ;style:'''
-             @import url("https://rsms.me/inter/inter.css");
-             @font-face {
-                 font-family: "Source Code Pro";
-                 src: url("https://storage.googleapis.com/media.urbit.org/fonts/scp-regular.woff");
-                 font-weight: 400;
-                 font-display: swap;
-             }
-             :root {
-               --red05: rgba(255,65,54,0.05);
-               --red100: rgba(255,65,54,1);
-               --blue05: rgba(33,157,255,0.05);
-               --blue30: rgba(33,157,255,0.3);
-               --blue100: rgba(33,157,255,1);
-               --black05: rgba(0,0,0,0.05);
-               --black20: rgba(0,0,0,0.2);
-               --black60: rgba(0,0,0,0.6);
-               --white: rgba(255,255,255,1);
-             }
-             html {
-               font-family: Inter, sans-serif;
-               height: 100%;
-               margin: 0;
-               width: 100%;
-               background: var(--white);
-               color: var(--black100);
-               -webkit-font-smoothing: antialiased;
-               line-height: 1.5;
-               font-size: 12px;
-               display: flex;
-               flex-flow: row nowrap;
-               justify-content: center;
-             }
-             body {
-               display: flex;
-               flex-flow: column nowrap;
-               justify-content: center;
-               max-width: 300px;
-               padding: 1rem;
-               width: 100%;
-             }
-             body.local #eauth,
-             body.eauth #local {
-               display: none;
-               min-height: 100%;
-             }
-             #eauth input {
-               /*NOTE dumb hack to get approx equal height with #local */
-               margin-bottom: 15px;
-             }
-             body nav div {
-               display: inline-block;
-               padding: 8px 16px;
-               border-radius: 4px;
-               color: var(--blue100);
-               border: 1px solid var(--blue100);
-               cursor: pointer;
-             }
-             body.local nav div.local,
-             body.eauth nav div.eauth {
-               background-color: var(--blue100);
-               color: var(--white);
-               cursor: default;
-             }
-             nav div.local {
-               border-right: none;
-               border-top-right-radius: 0;
-               border-bottom-right-radius: 0;
-             }
-             nav div.eauth {
-               border-left: none;
-               border-top-left-radius: 0;
-               border-bottom-left-radius: 0;
-             }
-             body > *,
-             form > input {
-               width: 100%;
-             }
-             form {
-               display: flex;
-               flex-flow: column;
-               align-items: flex-start;
-             }
-             input {
-               background: transparent;
-               border: 1px solid var(--black20);
-               padding: 8px;
-               border-radius: 4px;
-               font-size: inherit;
-               color: var(--black);
-               box-shadow: none;
-             }
-             input:disabled {
-               background: var(--black05);
-               color: var(--black60);
-             }
-             input:focus {
-               outline: none;
-               border-color: var(--blue30);
-             }
-             input:invalid:not(:focus) {
-               background: var(--red05);
-               border-color: var(--red100);
-               outline: none;
-               color: var(--red100);
-             }
-             button[type=submit] {
-               margin-top: 16px;
-               padding: 8px 16px;
-               border-radius: 4px;
-               background: var(--blue100);
-               color: var(--white);
-               border: 1px solid var(--blue100);
-               cursor: pointer;
-             }
-             input:invalid ~ button[type=submit] {
-               border-color: currentColor;
-               background: var(--blue05);
-               color: var(--blue30);
-               pointer-events: none;
-             }
-             span.guest {
-               color: var(--black20);
-             }
-             span.failed {
-               display: flex;
-               flex-flow: row nowrap;
-               height: 16px;
-               align-items: center;
-               margin-top: 6px;
-               color: var(--red100);
-             }
-             span.failed svg {
-               height: 12px;
-              margin-right: 6px;
-             }
-             span.failed circle,
-             span.failed line {
-               fill: transparent;
-               stroke: currentColor
-             }
-             .mono {
-               font-family: 'Source Code Pro', monospace;
-             }
-             @media all and (prefers-color-scheme: dark) {
-               :root {
-                 --white: rgb(51, 51, 51);
-                 --black100: rgba(255,255,255,1);
-                 --black05: rgba(255,255,255,0.05);
-                 --black20: rgba(255,255,255,0.2);
-               }
-             }
-             '''
+      ;style:"{(trip auth-styling)}"
       ;style:"{?^(eauth "" "nav \{ display: none; }")}"
       ;script:"our = '{(scow %p our)}';"
       ;script:'''
@@ -1745,55 +1749,37 @@
               ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
               ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
               ;title:"Urbit"
+              ;style:"{(trip auth-styling)}"
               ;style:'''
-                     @import url("https://rsms.me/inter/inter.css");
-                     @font-face {
-                         font-family: "Source Code Pro";
-                         src: url("https://storage.googleapis.com/media.urbit.org/fonts/scp-regular.woff");
-                         font-weight: 400;
-                         font-display: swap;
-                     }
-                     :root {
-                       --red05: rgba(255,65,54,0.05);
-                       --red100: rgba(255,65,54,1);
-                       --blue05: rgba(33,157,255,0.05);
-                       --blue30: rgba(33,157,255,0.3);
-                       --blue100: rgba(33,157,255,1);
-                       --black05: rgba(0,0,0,0.05);
-                       --black20: rgba(0,0,0,0.2);
-                       --black60: rgba(0,0,0,0.6);
-                       --white: rgba(255,255,255,1);
-                     }
-                     html {
-                       font-family: Inter, sans-serif;
-                       height: 100%;
-                       margin: 0;
-                       width: 100%;
-                       background: var(--white);
-                       color: var(--black100);
-                       -webkit-font-smoothing: antialiased;
-                       line-height: 1.5;
-                       font-size: 12px;
-                       display: flex;
-                       flex-flow: row nowrap;
-                       justify-content: center;
-                     }
-                     body {
-                       display: flex;
-                       flex-flow: column nowrap;
-                       justify-content: center;
-                       max-width: 300px;
+                     form {
+                       border: 1px solid var(--black20);
+                       border-radius: 4px;
                        padding: 1rem;
-                       width: 100%;
+                       align-items: stretch;
+                       font-size: 14px;
+                     }
+                     .red {
+                       background: var(--black05) !important;
+                       color: var(--black60) !important;
+                       border: 1px solid var(--black60) !important;
+                     }
+                     code {
+                       font-weight: bold;
+                       font-family: "Source Code Pro", monospace;
+                     }
+                     button {
+                       display: inline-block;
                      }
                      '''
             ==
             ;body
               ;form(action "/~/eauth", method "post")
+                ; You are trying to log in to:
+                ;code:"{(scow %p server)}"
                 ;input(type "hidden", name "server", value (scow %p server));
                 ;input(type "hidden", name "nonce", value (scow %uv nonce));
-                ;button(type "submit", name "reject"):"reject"
                 ;button(type "submit", name "grant", value "grant"):"approve"
+                ;button(type "submit", name "reject", class "red"):"reject"
               ==
             ==
           ==
