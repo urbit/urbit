@@ -1819,7 +1819,7 @@
         =/  ship-state  (~(get by peers.ames-state) ship)
         ?:  ?=([~ %known *] ship-state)
           abet:on-heed:(abed-peer:pe ship +.u.ship-state)
-        %+  enqueue-alien-todo  ship
+        %^  enqueue-alien-todo  ship  ship-state
         |=  todos=alien-agenda
         todos(heeds (~(put in heeds.todos) duct))
       ::  +on-jilt: handle request to stop tracking .ship's responsiveness
@@ -1830,7 +1830,7 @@
         =/  ship-state  (~(get by peers.ames-state) ship)
         ?:  ?=([~ %known *] ship-state)
           abet:on-jilt:(abed-peer:pe ship +.u.ship-state)
-        %+  enqueue-alien-todo  ship
+        %^  enqueue-alien-todo  ship  ship-state
         |=  todos=alien-agenda
         todos(heeds (~(del in heeds.todos) duct))
       ::  +on-hear: handle raw packet receipt
@@ -1971,7 +1971,7 @@
         ::  will be resent.
         ::
         ?.  ?=([~ %known *] sndr-state)
-          (enqueue-alien-todo sndr.shot |=(alien-agenda +<))
+          (enqueue-alien-todo sndr.shot sndr-state |=(alien-agenda +<))
         ::  decrypt packet contents using symmetric-key.channel
         ::
         ::    If we know them, we have a $channel with them, which we've
@@ -2062,7 +2062,7 @@
         =/  ship-state  (~(get by peers.ames-state) ship)
         ::
         ?.  ?=([~ %known *] ship-state)
-          %+  enqueue-alien-todo  ship
+          %^  enqueue-alien-todo  ship  ship-state
           |=  todos=alien-agenda
           todos(messages [[duct plea] messages.todos])
         ::
@@ -2084,7 +2084,7 @@
         =/  =plea       [%$ /flow [%cork ~]]
         =/  ship-state  (~(get by peers.ames-state) ship)
         ?.  ?=([~ %known *] ship-state)
-          %+  enqueue-alien-todo  ship
+          %^  enqueue-alien-todo  ship  ship-state
           |=  todos=alien-agenda
           todos(messages [[duct plea] messages.todos])
         =/  =peer-state  +.u.ship-state
@@ -2578,7 +2578,7 @@
         =/  ship-state  (~(get by peers.ames-state) ship)
         ?:  ?=([~ %known *] ship-state)
           abet:(on-keen:(abed-peer:pe ship +.u.ship-state) path duct)
-        %+  enqueue-alien-todo  ship
+        %^  enqueue-alien-todo  ship  ship-state
         |=  todos=alien-agenda
         todos(keens (~(put ju keens.todos) path duct))
       ::
@@ -2604,10 +2604,11 @@
       ::    If talking to a comet, requests attestation packet.
       ::
       ++  enqueue-alien-todo
-        |=  [=ship mutate=$-(alien-agenda alien-agenda)]
+        |=  $:  =ship
+                ship-state=(unit ship-state)
+                mutate=$-(alien-agenda alien-agenda)
+            ==
         ^+  event-core
-        ::
-        =/  ship-state  (~(get by peers.ames-state) ship)
         ::  create a default $alien-agenda on first contact
         ::
         =+  ^-  [already-pending=? todos=alien-agenda]
@@ -2659,7 +2660,7 @@
             ?.  ?=([~ %known *] ship-state)
               ?:  ?=(%pawn (clan:title ship))
                 (try-next-sponsor (^sein:title ship))
-              %+  enqueue-alien-todo  ship
+              %^  enqueue-alien-todo  ship  ship-state
               |=  todos=alien-agenda
               todos(packets (~(put in packets.todos) blob))
             ::
@@ -2708,7 +2709,7 @@
           ::
           ?:  =(ship sponsor)
             event-core
-          ^$(ship sponsor)
+          ^$(ship sponsor, ship-state (~(get by peers.ames-state) sponsor))
         --
       ::  +attestation-packet: generate signed self-attestation for .her
       ::
