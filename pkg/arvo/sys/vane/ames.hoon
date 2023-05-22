@@ -3389,21 +3389,18 @@
               ::
               =.  snd.peer-state  (~(del by snd.peer-state) bone)
               peer-core
-            ::  if odd bone, ack is on "subscription update" message; no-op
-            ::
-            ?:  =(1 (end 0 bone))  peer-core
-            ::  even bone; is this bone a nack-trace bone?
-            ::
-            ?:  =(1 (end 0 (rsh 0 bone)))
+            ?:  =(1 (end 0 bone))
+              ::  ack is on "subscription update" message; no-op
+              ::
+              ?:  =(0 (end 0 (rsh 0 bone)))  peer-core
               ::  nack-trace bone; assume .ok, clear nack from |sink
               ::
               %+  pe-emit  duct
               [%pass /clear-nack %a %plea her %a /drop (mix 0b10 bone) num]
-            ?:  &(closing ?=(%near -.task))
-              ::  if the bone belongs to a closing flow and we got a
-              ::  naxplanation, don't relay  ack to the client vane
-              ::
-              peer-core
+            ::  if the bone belongs to a closing flow and we got a
+            ::  naxplanation, don't relay ack to the client vane
+            ::
+            ?:  &(closing ?=(%near -.task))  peer-core
             ::  not a nack-trace bone; relay ack to client vane
             ::
             (pe-emit (got-duct bone) %give %done error)
