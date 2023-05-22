@@ -1805,7 +1805,7 @@
         =/  ship-state  (~(get by peers.ames-state) ship)
         ?:  ?=([~ %known *] ship-state)
           abet:on-heed:(abed-peer:pe ship +.u.ship-state)
-        %+  enqueue-alien-todo  ship
+        %^  enqueue-alien-todo  ship  ship-state
         |=  todos=alien-agenda
         todos(heeds (~(put in heeds.todos) duct))
       ::  +on-jilt: handle request to stop tracking .ship's responsiveness
@@ -1816,7 +1816,7 @@
         =/  ship-state  (~(get by peers.ames-state) ship)
         ?:  ?=([~ %known *] ship-state)
           abet:on-jilt:(abed-peer:pe ship +.u.ship-state)
-        %+  enqueue-alien-todo  ship
+        %^  enqueue-alien-todo  ship  ship-state
         |=  todos=alien-agenda
         todos(heeds (~(del in heeds.todos) duct))
       ::  +on-hear: handle raw packet receipt
@@ -1889,7 +1889,7 @@
           `p.lane
         ::
         =/  =blob  (etch-shot shot)
-        (send-blob & rcvr.shot blob)
+        (send-blob for=& rcvr.shot blob (~(get by peers.ames-state) rcvr.shot))
       ::  +on-hear-keys: handle receipt of attestion request
       ::
       ++  on-hear-keys
@@ -1899,7 +1899,8 @@
             |.("requested attestation")
         ?.  =(%pawn (clan:title our))
           event-core
-        (send-blob | sndr.shot (attestation-packet sndr.shot 1))
+        =/  =blob  (attestation-packet sndr.shot 1)
+        (send-blob for=| sndr.shot blob (~(get by peers.ames-state) sndr.shot))
       ::  +on-hear-open: handle receipt of plaintext comet self-attestation
       ::
       ++  on-hear-open
@@ -1956,7 +1957,7 @@
         ::  will be resent.
         ::
         ?.  ?=([~ %known *] sndr-state)
-          (enqueue-alien-todo sndr.shot |=(alien-agenda +<))
+          (enqueue-alien-todo sndr.shot sndr-state |=(alien-agenda +<))
         ::  decrypt packet contents using symmetric-key.channel
         ::
         ::    If we know them, we have a $channel with them, which we've
@@ -2037,7 +2038,7 @@
         =/  ship-state  (~(get by peers.ames-state) ship)
         ::
         ?.  ?=([~ %known *] ship-state)
-          %+  enqueue-alien-todo  ship
+          %^  enqueue-alien-todo  ship  ship-state
           |=  todos=alien-agenda
           todos(messages [[duct plea] messages.todos])
         ::
@@ -2092,7 +2093,7 @@
         =/  =plea       [%$ /flow [%cork ~]]
         =/  ship-state  (~(get by peers.ames-state) ship)
         ?.  ?=([~ %known *] ship-state)
-          %+  enqueue-alien-todo  ship
+          %^  enqueue-alien-todo  ship  ship-state
           |=  todos=alien-agenda
           todos(messages [[duct plea] messages.todos])
         ::
@@ -2442,7 +2443,8 @@
             ::  if we're a comet, send self-attestation packet first
             ::
             =?  event-core  =(%pawn (clan:title our))
-              (send-blob | ship (attestation-packet ship life.point))
+              =/  =blob  (attestation-packet ship life.point)
+              (send-blob for=| ship blob (~(get by peers.ames-state) ship))
             ::  save current duct
             ::
             =/  original-duct  duct
@@ -2465,7 +2467,7 @@
             =.  event-core
               %+  roll  ~(tap in packets.todos)
               |=  [=blob core=_event-core]
-              (send-blob:core | ship blob)
+              (send-blob:core for=| ship blob (~(get by peers.ames-state) ship))
             ::  apply remote scry requests
             ::
             =.  event-core  (meet-alien-fine keens.todos)
@@ -2582,7 +2584,7 @@
         =/  ship-state  (~(get by peers.ames-state) ship)
         ?:  ?=([~ %known *] ship-state)
           abet:(on-keen:(abed-peer:pe ship +.u.ship-state) path duct)
-        %+  enqueue-alien-todo  ship
+        %^  enqueue-alien-todo  ship  ship-state
         |=  todos=alien-agenda
         todos(keens (~(put ju keens.todos) path duct))
       ::
@@ -2608,10 +2610,11 @@
       ::    If talking to a comet, requests attestation packet.
       ::
       ++  enqueue-alien-todo
-        |=  [=ship mutate=$-(alien-agenda alien-agenda)]
+        |=  $:  =ship
+                ship-state=(unit ship-state)
+                mutate=$-(alien-agenda alien-agenda)
+            ==
         ^+  event-core
-        ::
-        =/  ship-state  (~(get by peers.ames-state) ship)
         ::  create a default $alien-agenda on first contact
         ::
         =+  ^-  [already-pending=? todos=alien-agenda]
@@ -2639,7 +2642,9 @@
         |=  =ship
         ^+  event-core
         =+  (ev-trace msg.veb ship |.("requesting attestion"))
-        =.  event-core  (send-blob | ship (sendkeys-packet ship))
+        =.  event-core
+          =/  =blob  (sendkeys-packet ship)
+          (send-blob for=| ship blob (~(get by peers.ames-state) ship))
         =/  =wire  /alien/(scot %p ship)
         (emit duct %pass wire %b %wait (add now ~s30))
       ::  +send-blob: fire packet at .ship and maybe sponsors
@@ -2652,19 +2657,16 @@
       ::
       ++  send-blob
         ~/  %send-blob
-        |=  [for=? =ship =blob]
+        |=  [for=? =ship =blob ship-state=(unit ship-state)]
         ::
         =/  final-ship  ship
         %-  (ev-trace rot.veb final-ship |.("send-blob: to {<ship>}"))
         |-
         |^  ^+  event-core
-            ::
-            =/  ship-state  (~(get by peers.ames-state) ship)
-            ::
             ?.  ?=([~ %known *] ship-state)
               ?:  ?=(%pawn (clan:title ship))
                 (try-next-sponsor (^sein:title ship))
-              %+  enqueue-alien-todo  ship
+              %^  enqueue-alien-todo  ship  ship-state
               |=  todos=alien-agenda
               todos(packets (~(put in packets.todos) blob))
             ::
@@ -2713,7 +2715,7 @@
           ::
           ?:  =(ship sponsor)
             event-core
-          ^$(ship sponsor)
+          ^$(ship sponsor, ship-state (~(get by peers.ames-state) sponsor))
         --
       ::  +attestation-packet: generate signed self-attestation for .her
       ::
@@ -2922,10 +2924,6 @@
           ::  expire direct route if the peer is not responding
           ::
           =.  peer-state  (update-peer-route her peer-state)
-          ::  required so that the following +send-blob's (including
-          ::  inside +call:mu), access up-to-date peer state
-          ::
-          =.  event-core  abet
           ::  resend comet attestation packet if first message times out
           ::
           ::    The attestation packet doesn't get acked, so if we tried to
@@ -2939,7 +2937,8 @@
               ?&  ?=(%pawn (clan:title our))
                   =(1 current:(~(got by snd.peer-state) bone))
               ==
-            (send-blob | her (attestation-packet [her her-life]:channel))
+            =/  =blob  (attestation-packet [her her-life]:channel)
+            (send-blob for=| her blob `known/peer-state)
           ?:  (is-corked bone)
             ::  no-op if the bone (or, if a naxplanation, the reference bone)
             ::  was corked, because the flow doesn't exist anymore
@@ -3096,13 +3095,16 @@
           ::    here.
           ::
           =.  event-core
-            %^  send-blob  |  her
-            %-  etch-shot
-            %:  etch-shut-packet
-              shut-packet(bone (mix 1 bone.shut-packet))
-              symmetric-key.channel
-              our               her
-              our-life.channel  her-life.channel
+            %:  send-blob  for=|  her
+              %-  etch-shot
+              %:  etch-shut-packet
+                shut-packet(bone (mix 1 bone.shut-packet))
+                symmetric-key.channel
+                our               her
+                our-life.channel  her-life.channel
+              ==
+            ::
+              ship-state=`known/peer-state
             ==
           peer-core
         ::  +recork-one: re-send the next %cork to the peer
@@ -4194,7 +4196,8 @@
             |=(frag=@ud `hoot``@`(etch-shot (make-shot %0 fi-full-path frag)))
           ::
           ++  fi-send
-            |=(=blob fine(event-core (send-blob for=| her blob)))
+            |=  =blob
+            fine(event-core (send-blob for=| her blob `known/peer-state))
           ::
           ++  fi-give-tune
             |=  dat=(unit roar)
