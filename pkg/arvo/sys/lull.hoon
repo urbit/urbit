@@ -2109,6 +2109,11 @@
         ::  update http configuration
         ::
         [%rule =http-rule]
+        ::  set a base url for eauth, like `'https://sampel.com'
+        ::
+        ::    eyre will append /~/eauth to it internally to redirect into eauth
+        ::
+        [%eauth-host host=(unit @t)]
         ::  starts handling an inbound http request
         ::
         [%request secure=? =address =request:http]

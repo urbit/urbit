@@ -3276,6 +3276,10 @@
       (close-session:authentication:(per-server-event event-args) i.siz |)
     $(moves [mov moves], siz t.siz)
   ::
+  ?:  ?=(%eauth-host -.task)
+    =.  user.endpoint.auth.server-state.ax  host.task
+    [~ http-server-gate]
+  ::
   ::  all other commands operate on a per-server-event
   ::
   =/  event-args  [[eny duct now rof] server-state.ax]
