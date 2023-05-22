@@ -4373,6 +4373,10 @@
                 last-sent.u.want  now
               ==
             =.  wan.keen  (put:fi-mop wan.keen [fra .]:u.want)
+            ::  required so that the following +send-blob in
+            ::  +fi-send access up-to-date peer state
+            ::
+            =.  event-core  abet
             (fi-send `@ux`hoot.u.want)
           --
         ::  +ga: constructor for |pump-gauge congestion control core
