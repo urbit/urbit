@@ -2358,12 +2358,24 @@
   ::
   =/  task=task  ((harden task) wrapped-task)
   ::
-  ::  XX handle error notifications
+  ::  XX handle more error notifications
   ::
   ?^  dud
-    =/  moves=(list move)
-      [[duct %slip %d %flog %crud [-.task tang.u.dud]] ~]
-    [moves http-server-gate]
+    :_  http-server-gate
+    ::  always print the error trace
+    ::
+    :-  [duct %slip %d %flog %crud [-.task tang.u.dud]]
+    ^-  (list move)
+    ::  if a request caused the crash, respond with a 500
+    ::
+    ?.  ?=(?(%request %request-local) -.task)  ~
+    ^~
+    =/  data  (as-octs:mimes:html 'crud!')
+    =/  head
+      :~  ['content-type' 'text/html']
+          ['content-length' (crip (a-co:co p.data))]
+      ==
+    [duct %give %response %start 500^head `data &]~
   ::  %init: tells us what our ship name is
   ::
   ?:  ?=(%init -.task)

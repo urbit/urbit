@@ -433,7 +433,7 @@
     |-  ^+  mo-core
     ?~  agents
       mo-core
-    =.  mo-core
+    =?  mo-core  ?=(%live -.yoke.i.agents)
       =/  =routes  [disclosing=~ attributing=ship]
       =/  app  (ap-abed:ap name.i.agents routes)
       ap-abet:(ap-breach:app ship)
@@ -474,12 +474,12 @@
     ?>  ?=([%lag ~] wire)
     ?>  ?=([%ames %clog *] sign-arvo)
     ::
-    =/  agents=(list term)  ~(tap in ~(key by yokes.state))
+    =/  agents=(list [=dude =yoke])  ~(tap by yokes.state)
     |-  ^+  mo-core
     ?~  agents  mo-core
     ::
-    =.  mo-core
-      =/  app  (ap-abed:ap i.agents `our)
+    =?  mo-core  ?=(%live -.yoke.i.agents)
+      =/  app  (ap-abed:ap dude.i.agents `our)
       ap-abet:(ap-clog:app ship.sign-arvo)
     ::
     $(agents t.agents)
@@ -704,7 +704,8 @@
   ++  mo-idle
     |=  dap=dude
     ^+  mo-core
-    ?.  (~(has by yokes.state) dap)
+    =/  yoke=(unit yoke)  (~(get by yokes.state) dap)
+    ?:  |(?=(~ yoke) ?=(%nuke -.u.yoke))
       ~>  %slog.0^leaf/"gall: ignoring %idle for {<dap>}, not running"
       mo-core
     ap-abet:ap-idle:(ap-abed:ap dap `our)
@@ -713,14 +714,15 @@
   ++  mo-nuke
     |=  dap=dude
     ^+  mo-core
-    ?.  (~(has by yokes.state) dap)
+    =/  yoke=(unit yoke)  (~(get by yokes.state) dap)
+    ?:  |(?=(~ yoke) ?=(%nuke -.u.yoke))
       ~>  %slog.0^leaf/"gall: ignoring %nuke for {<dap>}, not running"
       mo-core
     ~>  %slog.0^leaf/"gall: nuking {<dap>}"
     =.  mo-core  ap-abet:ap-nuke:(ap-abed:ap dap `our)
     =-  mo-core(yokes.state -)
     %+  ~(jab by yokes.state)  dap
-    |=  =yoke
+    |=  =^yoke
     ?:  ?=(%nuke -.yoke)  yoke
     :-  %nuke
     %-  ~(run by sky.yoke)
@@ -755,6 +757,7 @@
     |=  [veb=? dap=term =routes care=term =path]
     ^-  (unit (unit cage))
     ::
+    ?.  ?=([~ %live *] (~(get by yokes.state) dap))  [~ ~]
     =/  app  (ap-abed:ap dap routes)
     (ap-peek:app veb care path)
   ::
@@ -766,6 +769,10 @@
       (mo-apply-sure dap routes deal)
     ::
         %raw-poke
+      ::  don't validate %noun pokes, for performance
+      ::
+      ?:  =(%noun mark.deal)
+        (mo-apply-sure dap routes [%poke %noun %noun noun.deal])
       =/  =case  da+now
       =/  yok  (~(got by yokes.state) dap)
       =/  =desk  q.beak:?>(?=(%live -.yok) yok)  ::TODO acceptable assertion?
@@ -970,7 +977,7 @@
     ++  ap-idle
       ^+  ap-core
       ?:  ?=(%| -.agent.yoke)  ap-core
-      =>  [ken=ken.yoke (ap-ingest ~ |.([ap-yawn-all *agent]))]
+      =>  [ken=ken.yoke (ap-ingest ~ |.([ap-yawn-all p.agent.yoke]))]
       ap-core(ken.yoke ken, agent.yoke |+on-save:ap-agent-core)
     ::
     ++  ap-nuke
