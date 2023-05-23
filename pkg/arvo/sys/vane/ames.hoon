@@ -603,7 +603,7 @@
       route=(unit [direct=? =lane])
       =qos
       =ossuary
-      snd=(map bone message-pump-state)
+      snd=(map bone message-pump-state-14)
       rcv=(map bone message-sink-state)
       nax=(set [=bone =message-num])
       heeds=(set duct)
@@ -632,7 +632,7 @@
       route=(unit [direct=? =lane])
       =qos
       =ossuary
-      snd=(map bone message-pump-state)
+      snd=(map bone message-pump-state-14)
       rcv=(map bone message-sink-state)
       nax=(set [=bone =message-num])
       heeds=(set duct)
@@ -685,7 +685,7 @@
       route=(unit [direct=? =lane])
       =qos
       =ossuary
-      snd=(map bone message-pump-state)
+      snd=(map bone message-pump-state-14)
       rcv=(map bone message-sink-state)
       nax=(set [=bone =message-num])
       heeds=(set duct)
@@ -741,7 +741,7 @@
       route=(unit [direct=? =lane])
       =qos
       =ossuary
-      snd=(map bone message-pump-state)
+      snd=(map bone message-pump-state-14)
       rcv=(map bone message-sink-state)
       nax=(set [=bone =message-num])
       heeds=(set duct)
@@ -804,7 +804,7 @@
       route=(unit [direct=? =lane])
       =qos
       =ossuary
-      snd=(map bone message-pump-state)
+      snd=(map bone message-pump-state-14)
       rcv=(map bone message-sink-state)
       nax=(set [=bone =message-num])
       heeds=(set duct)
@@ -821,7 +821,7 @@
           num-received=@ud
           next-wake=(unit @da)
           listeners=(set duct)
-          metrics=pump-metrics
+          metrics=pump-metrics-14
       ==
   |%
   ::  +afx: polymorphic node type for finger trees
@@ -1072,6 +1072,72 @@
       --
     --
   --
+::
++$  ames-state-14
+  $:  peers=(map ship ship-state-14)
+      =unix=duct
+      =life
+      =rift
+      crypto-core=acru:ames
+      =bug
+      snub=[form=?(%allow %deny) ships=(set ship)]
+      cong=[msg=@ud mem=@ud]
+  ==
+::
++$  ship-state-14
+    $%  [%alien alien-agenda]
+        [%known peer-state-14]
+    ==
+::
++$  peer-state-14
+  $:  azimuth-state
+      route=(unit [direct=? =lane])
+      =qos
+      =ossuary
+      snd=(map bone message-pump-state-14)
+      rcv=(map bone message-sink-state)
+      nax=(set [=bone =message-num])
+      heeds=(set duct)
+      closing=(set bone)
+      corked=(set bone)
+      keens=(map path keen-state-14)
+  ==
+::
++$  keen-state-14
+  $:  wan=((mop @ud want) lte)
+      nex=(list want)
+      hav=(list have)
+      num-fragments=@ud
+      num-received=@ud
+      next-wake=(unit @da)
+      listeners=(set duct)
+      metrics=pump-metrics-14
+  ==
+::
++$  message-pump-state-14
+  $:  current=_`message-num`1
+      next=_`message-num`1
+      unsent-messages=(qeu message-blob)
+      unsent-fragments=(list static-fragment)
+      queued-message-acks=(map message-num ack)
+      packet-pump-state=packet-pump-state-14
+  ==
+::
++$  packet-pump-state-14
+  $:  next-wake=(unit @da)
+      live=((mop live-packet-key live-packet-val) lte-packets)
+      metrics=pump-metrics-14
+  ==
+::
++$  pump-metrics-14
+  $:  rto=_~s1
+      rtt=_~s1
+      rttvar=_~s1
+      ssthresh=_10.000
+      cwnd=_1
+      num-live=@ud
+      counter=@ud
+  ==
 ::  $bug: debug printing configuration
 ::
 ::    veb: verbosity toggles
@@ -1205,7 +1271,8 @@
             [%11 ames-state-11]
             [%12 ames-state-12]
             [%13 ames-state-13]
-            [%14 ^ames-state]
+            [%14 ames-state-14]
+            [%15 ^ames-state]
         ==
     ::
     |=  [now=@da eny=@ rof=roof]
@@ -1328,7 +1395,7 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%14 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%15 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
           $%  $:  %4
@@ -1402,6 +1469,13 @@
                   [%adult state=ames-state-13]
               ==  ==
               $:  %14
+              $%  $:  %larva
+                      events=(qeu queued-event)
+                      state=ames-state-14
+                  ==
+                  [%adult state=ames-state-14]
+              ==  ==
+              $:  %15
               $%  $:  %larva
                       events=(qeu queued-event)
                       state=_ames-state.adult-gate
@@ -1515,12 +1589,23 @@
         =.  queued-events  events.old
         larval-gate
       ::
-          [%14 %adult *]  (load:adult-core %14 state.old)
+          [%14 %adult *]
+        =.  cached-state  `[%14 state.old]
+        ~>  %slog.0^leaf/"ames: larva reload"
+        larval-gate
       ::
           [%14 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
+        =.  cached-state  `[%14 state.old]
         =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %14 state.old)
+        larval-gate
+      ::
+          [%15 %adult *]  (load:adult-core %15 state.old)
+      ::
+          [%15 %larva *]
+        ~>  %slog.1^leaf/"ames: larva: load"
+        =.  queued-events  events.old
+        =.  adult-gate     (load:adult-core %15 state.old)
         larval-gate
       ==
       ::
@@ -1565,7 +1650,9 @@
         13+(state-12-to-13:load:adult-core +.u.cached-state)
       =?  u.cached-state  ?=(%13 -.u.cached-state)
         14+(state-13-to-14:load:adult-core +.u.cached-state)
-      ?>  ?=(%14 -.u.cached-state)
+      =?  u.cached-state  ?=(%14 -.u.cached-state)
+        15+(state-14-to-15:load:adult-core +.u.cached-state)
+      ?>  ?=(%15 -.u.cached-state)
       =.  ames-state.adult-gate  +.u.cached-state
       [moz larval-core(cached-state ~)]
     --
@@ -3635,7 +3722,8 @@
               =/  acc
                 :*  found=`?`%.n
                     resends=*(list static-fragment)
-                    metrics=metrics.state(num-live ~(wyt by live.state))
+                    metrics=metrics.state
+                    num-live=~(wyt by live.state)
                 ==
               ::
               ^+  [acc live=live.state]
@@ -3647,15 +3735,15 @@
                   ==
               ^-  [new-val=(unit live-packet-val) stop=? _acc]
               ::
-              =/  gauge  (ga metrics.acc num-live.metrics.acc)
+              =/  gauge  (ga [metrics num-live]:acc)
               ::  is this the acked packet?
               ::
               ?:  =(key [message-num fragment-num])
                 ::  delete acked packet, update metrics, and stop traversal
                 ::
-                =.             found.acc  %.y
-                =.           metrics.acc  (on-ack:gauge -.val)
-                =.  num-live.metrics.acc  (dec num-live.metrics.acc)
+                =.     found.acc  %.y
+                =.   metrics.acc  (on-ack:gauge -.val)
+                =.  num-live.acc  (dec num-live.acc)
                 [new-val=~ stop=%.y acc]
               ::  is this a duplicate ack?
               ::
@@ -3686,31 +3774,31 @@
                   %.  (fast-resend-after-ack message-num `fragment-num`0)
                   (pu-trace snd.veb |.("done {<num=message-num show:gauge>}"))
               ::
-              ^+  [metrics=metrics.state live=live.state]
-              ::  number of sent packets awaiting ack
+              =/  acc  [metrics=metrics.state num-live=~(wyt by live.state)]
               ::
-              =.  num-live.metrics.state  ~(wyt by live.state)
+              ^+  [acc live=live.state]
               ::
-              %^  (dip:packet-queue pump-metrics)  live.state  acc=metrics.state
-              |=  $:  metrics=pump-metrics
+              %^  (dip:packet-queue _acc)  live.state  acc
+              |=  $:  acc=_acc
                       key=live-packet-key
                       val=live-packet-val
                   ==
-              ^-  [new-val=(unit live-packet-val) stop=? pump-metrics]
+              ^-  [new-val=(unit live-packet-val) stop=? _acc]
               ::
-              =/  gauge  (ga metrics num-live.metrics)
+              =/  gauge  (ga [metrics num-live]:acc)
               ::  if we get an out-of-order ack for a message, skip until it
               ::
               ?:  (lth message-num.key message-num)
-                [new-val=`val stop=%.n metrics]
+                [new-val=`val stop=%.n acc]
               ::  if packet was from acked message, delete it and continue
               ::
               ?:  =(message-num.key message-num)
-                =.  metrics  (on-ack:gauge -.val)
-                [new-val=~ stop=%.n metrics(num-live (dec num-live.metrics))]
+                =.   metrics.acc  (on-ack:gauge -.val)
+                =.  num-live.acc  (dec num-live.acc)
+                [new-val=~ stop=%.n acc]
               ::  we've gone past the acked message; we're done
               ::
-              [new-val=`val stop=%.y metrics]
+              [new-val=`val stop=%.y acc]
             ::  +set-wake: set, unset, or reset timer, emitting moves
             ::
             ++  set-wake
@@ -4599,15 +4687,15 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%14 %adult ames-state]
+++  stay  [%15 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
   =<  |=  $=  old-state
-          $%  [%14 ^ames-state]
+          $%  [%15 ^ames-state]
           ==
       ^+  ames-gate
-      ?>  ?=(%14 -.old-state)
+      ?>  ?=(%15 -.old-state)
       ames-gate(ames-state +.old-state)
   ::  all state transitions are called from larval ames
   ::
@@ -4623,10 +4711,10 @@
         ship-state
       =.  snd.ship-state
         %-  ~(run by snd.ship-state)
-        |=  =message-pump-state
-        =.  num-live.metrics.packet-pump-state.message-pump-state
-          ~(wyt in live.packet-pump-state.message-pump-state)
-        message-pump-state
+        |=  pump=message-pump-state-14
+        =.  num-live.metrics.packet-pump-state.pump
+          ~(wyt in live.packet-pump-state.pump)
+        pump
       ship-state
     ames-state
   ::
@@ -4751,20 +4839,51 @@
   ::
   ++  state-13-to-14
     |=  old=ames-state-13
-    ^-  ^ames-state
+    ^-  ames-state-14
     =-  old(peers -)
     %-  ~(run by peers.old)
     |=  old=ship-state-13
-    ?:  ?=(%alien -.old)  old
+    |^  ?:  ?=(%alien -.old)  old
     old(keens (~(run by keens.old) keen-state-13-to-14))
+    ::
+    ++  keen-state-13-to-14
+      |=  old=keen-state-13
+      ^-  keen-state-14
+      =-  old(wan -)
+      %+  gas:((on @ud want) lte)  ~
+      %+  turn  (tap:(deq:keen-state-13 want) wan.old)
+      |=  =want  [fra .]:want
+    --
   ::
-  ++  keen-state-13-to-14
-    |=  old=keen-state-13
-    ^-  keen-state
-    =-  old(wan -)
-    %+  gas:((on @ud want) lte)  ~
-    %+  turn  (tap:(deq:keen-state-13 want) wan.old)
-    |=  =want  [fra .]:want
+  ++  state-14-to-15
+    |=  old=ames-state-14
+    ^-  ^ames-state
+    =-  old(peers -)
+    %-  ~(run by peers.old)
+    |=  ship-state=ship-state-14
+    ^-  ^ship-state
+    |^  ?.  ?=(%known -.ship-state)
+      ship-state
+    %=  ship-state
+      snd    (~(run by snd.ship-state) message-pump-14-to-15)
+      keens  (~(run by keens.ship-state) keen-state-14-to-15)
+    ==
+    ::
+    ++  message-pump-14-to-15
+      |=  pump=message-pump-state-14
+      ^-  message-pump-state
+      %=    pump
+          metrics.packet-pump-state
+        [rto rtt rttvar ssthresh cwnd counter]:metrics.packet-pump-state.pump
+      ==
+    ::
+    ++  keen-state-14-to-15
+      |=  keen-state=keen-state-14
+      ^-  ^keen-state
+      %=  keen-state
+        metrics  [rto rtt rttvar ssthresh cwnd counter]:metrics.keen-state
+      ==
+    --
   --
 ::  +scry: dereference namespace
 ::
