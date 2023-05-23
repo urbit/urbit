@@ -1648,7 +1648,9 @@
           %-  (trace 2 |.("eauth: cancelling login"))
           =.  visitors.auth  (~(del by visitors.auth) nonce)
           =^  moz  state
-            =/  url=@t  (cat 3 '/~/login?eauth&redirect=' last)
+            =/  url=@t
+              %^  cat  3  '/~/login?eauth&redirect='
+              (crip (en-urlt:html (trip last)))
             (handle-response %start 303^['location' url]~ ~ &)
           :_  state
           (weld moz (close-eauth(duct duct.u.visa) ship.u.visa nonce))
