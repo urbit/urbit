@@ -1596,7 +1596,7 @@
             ?.  =(token.boon u.toke.visa)
               ::  token doesn't match, error out
               ::
-              %-  (trace 2 |.("eauth: token mismatch"))
+              %-  (trace 1 |.("eauth: token mismatch"))
               %^  return-static-data-on-duct(duct u.pend.visa)  400  'text/html'
               (eauth-error-page %server last.visa)
             ::  token matches, we can finalize
@@ -1811,8 +1811,8 @@
             ::
             ?.  ?=([~ * %| *] door)  visiting.auth
             ::
-            %-  %+  trace:(per-server-event args)  2
-                |.("eauth: eauth attempt into {(scow %p server)} expired")
+            %-  %+  trace  1
+                |.("eauth: attempt into {(scow %p server)} expired")
             =.  home  (~(del by home) nonce)
             ?~  home  (~(del by visiting.auth) server)
             (~(put by visiting.auth) server home)
@@ -1934,7 +1934,7 @@
           ::  if we already received a token over ames, verify the request
           ::
           ?.  =(u.token u.toke.u.visa)
-            %-  (trace 2 |.("eauth: token mismatch"))
+            %-  (trace 1 |.("eauth: token mismatch"))
             error
           (finalize:^server duct.u.visa duct u.nonce ship.u.visa last.u.visa)
         ::
@@ -3589,7 +3589,7 @@
       =/  nonce=@uv  (slav %uv i.t.t.t.t.wire)
       ::
       ?:  |(?=(^ dud) ?=([%ames %lost *] sign))
-        %-  %+  trace:(per-server-event args)  2
+        %-  %+  trace:(per-server-event args)  0
             ?~  dud  |.("eauth: lost boon from {(scow %p ship)}")
             |.("eauth: crashed on %{(trip +<.sign)} from {(scow %p ship)}")
         =^  moz  server-state.ax
@@ -3600,7 +3600,7 @@
       ?:  ?=([%ames %done *] sign)
         ?~  error.sign  [~ http-server-gate]
         =^  moz  server-state.ax
-          %-  %+  trace:(per-server-event args)  2
+          %-  %+  trace:(per-server-event args)  1
               |.("eauth: nack from {(scow %p ship)}")
           %.  [ship nonce]
           on-fail:server:eauth:authentication:(per-server-event args)
