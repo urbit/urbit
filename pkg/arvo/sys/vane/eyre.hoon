@@ -1799,6 +1799,23 @@
           ?.  grant  moz
           [[(send-boon(duct duct.door) %0 %fin token)] moz]
         ::
+        ++  expire
+          |=  [server=ship nonce=@uv]
+          ^-  [(list move) server-state]
+          =.  visiting.auth
+            =/  home=(map @uv portkey)  (~(gut by visiting.auth) server ~)
+            =/  door=(unit portkey)     (~(get by home) nonce)
+            ::  if the attempt was completed, we don't expire it
+            ::
+            ?.  ?=([~ * %| *] door)  visiting.auth
+            ::
+            %-  %+  trace:(per-server-event args)  2
+                |.("eauth: eauth attempt into {(scow %p server)} expired")
+            =.  home  (~(del by home) nonce)
+            ?~  home  (~(del by visiting.auth) server)
+            (~(put by visiting.auth) server home)
+          [~ state]
+        ::
         ++  send-boon
           |=  boon=eauth-boon
           ^-  move
@@ -3598,18 +3615,9 @@
       ?>  ?=([%behn %wake *] sign)
       =/  server=@p  (slav %p i.t.t.t.wire)
       =/  nonce=@uv  (slav %uv i.t.t.t.t.wire)
-      =.  visiting.auth
-        =/  home=(map @uv portkey)  (~(gut by visiting.auth) server ~)
-        =/  door=(unit portkey)     (~(get by home) nonce)
-        ::  if the attempt was completed, we don't expire it
-        ::
-        ?.  ?=([~ * %| *] door)  visiting.auth
-        ::
-        %-  %+  trace:(per-server-event args)  2
-            |.("eauth: eauth attempt into {(scow %p server)} expired")
-        =.  home  (~(del by home) nonce)
-        ?~  home  (~(del by visiting.auth) server)
-        (~(put by visiting.auth) server home)
+      =^  moz  server-state.ax
+        %.  [server nonce]
+        expire:client:eauth:authentication:(per-server-event args)
       [~ http-server-gate]
     ::
         [%expire %visitors @ ~]
