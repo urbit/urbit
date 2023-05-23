@@ -58,6 +58,7 @@
 +$  sign
   $%  $:  %ames
           $%  $>(%boon gift:ames)
+              $>(%lost gift:ames)
               $>(%done gift:ames)
       ==  ==
       $:  %behn
@@ -1610,9 +1611,9 @@
               (~(del by sessions.auth) sesh.visa)
             [(close-eauth ship nonce) state]
           ==
-        ::  +on-nack: client crashed during +on-plea, clean up the eauth attempt
+        ::  +on-fail: we crashed or received a nack, clean up the attempt
         ::
-        ++  on-nack
+        ++  on-fail
           |=  [=ship nonce=@uv]
           ^-  [(list move) server-state]
           =/  visa=(unit visitor)  (~(get by visitors.auth) nonce)
@@ -3388,8 +3389,6 @@
   ~/  %eyre-take
   |=  [=wire =duct dud=(unit goof) =sign]
   ^-  [(list move) _http-server-gate]
-  ?^  dud
-    ~|(%eyre-take-dud (mean tang.u.dud))
   =>  %=    .
           sign
         ?:  ?=(%gall -.sign)
@@ -3403,6 +3402,10 @@
   ::
   |^  ^-  [(list move) _http-server-gate]
       ::
+      ?:  ?=(%eauth i.wire)
+        eauth
+      ?^  dud
+        ~|(%eyre-take-dud (mean tang.u.dud))
       ?+    i.wire
           ~|([%bad-take-wire wire] !!)
       ::
@@ -3410,7 +3413,6 @@
         %watch-response    watch-response
         %sessions          sessions
         %channel           channel
-        %eauth             eauth
         %acme              acme-ack
         %conversion-cache  `http-server-gate
       ==
@@ -3566,17 +3568,27 @@
         [%plea %'0' @ @ ~]
       =/  =ship      (slav %p i.t.t.t.wire)
       =/  nonce=@uv  (slav %uv i.t.t.t.t.wire)
-      ?:  ?=([%ames %done *] sign)
-        ?~  error.sign  [~ http-server-gate]
-        ::TODO  error case will also happen for "evil vane" when attempting to
-        ::      talk to old eyres
+      ::
+      ?:  |(?=(^ dud) ?=([%ames %lost *] sign))
+        %-  %+  trace:(per-server-event args)  2
+            ?~  dud  |.("eauth: lost boon from {(scow %p ship)}")
+            |.("eauth: crashed on %{(trip +<.sign)} from {(scow %p ship)}")
         =^  moz  server-state.ax
           %.  [ship nonce]
-          on-nack:server:eauth:authentication:(per-server-event args)
+          on-fail:server:eauth:authentication:(per-server-event args)
         [moz http-server-gate]
-      ::TODO  %lost handling?
+      ::
+      ?:  ?=([%ames %done *] sign)
+        ?~  error.sign  [~ http-server-gate]
+        =^  moz  server-state.ax
+          %-  %+  trace:(per-server-event args)  2
+              |.("eauth: nack from {(scow %p ship)}")
+          %.  [ship nonce]
+          on-fail:server:eauth:authentication:(per-server-event args)
+        [moz http-server-gate]
+      ::
       ?>  ?=([%ames %boon *] sign)
-      =/  boon       ;;(eauth-boon payload.sign)
+      =/  boon  ;;(eauth-boon payload.sign)
       =^  moz  server-state.ax
         %.  [ship nonce boon]
         on-boon:server:eauth:authentication:(per-server-event args)
