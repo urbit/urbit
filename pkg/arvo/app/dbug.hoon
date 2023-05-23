@@ -368,7 +368,8 @@
       (gth expiry-time.a expiry-time.b)
     |=  [cookie=@uv session:eyre]
     %-  pairs
-    :~  'cookie'^s+(end [3 4] (rsh [3 2] (scot %x (shax cookie))))
+    :~  'cookie'^s+(scot %uv cookie)
+        'identity'^(render-identity:v-eyre identity)
         'expiry'^(time expiry-time)
         'channels'^(numb ~(wyt in channels))
     ==
@@ -383,6 +384,7 @@
     |=  [key=@t channel:eyre]
     %-  pairs
     :~  'session'^s+key
+        'identity'^(render-identity:v-eyre identity)
         'connected'^b+!-.state
         'expiry'^?-(-.state %& (time date.p.state), %| ~)
         'next-id'^(numb next-id)
@@ -991,6 +993,15 @@
   ::
   ++  channel-state
     (scry ^channel-state %e %channel-state ~)
+  ::
+  ++  render-identity
+    |=  =identity
+    ^-  json
+    %-  ship:enjs:format
+    ?-  -.identity
+      %ours  our.bowl
+      %fake  who.identity
+    ==
   ::
   ++  render-action
     |=  =action

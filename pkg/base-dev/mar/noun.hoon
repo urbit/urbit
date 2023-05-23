@@ -8,6 +8,9 @@
 ++  grab  |%
           ++  noun  *
           --
+++  grow  |%
+          ++  mime  [/application/x-urb-jam (as-octs:mimes:html (jam non))]
+          --
 ++  grad
   |%
   ++  form  %noun
