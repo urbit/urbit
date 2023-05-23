@@ -564,6 +564,76 @@
             }
             '''
   ==
+::  +eauth-error-page: render an eauth error reporting page
+::
+::    optionally redirects the user back to either the login page if we're
+::    acting as server, or the host if we're the client.
+::
+++  eauth-error-page
+  |=  $=  return
+      $?  ~                  ::  no known return target
+          [%server last=@t]  ::  we are the host, return to login
+          [%client goal=@t]  ::  we are the client, return to host
+      ==
+  ^-  octs
+  %-  as-octs:mimes:html
+  %-  crip
+  %-  en-xml:html
+  =/  return=(unit @t)
+    ?-  return
+      ~            ~
+      [%server *]  %-  some
+                   %^  cat  3  '/~/login?eauth&redirect='
+                   (crip (en-urlt:html (trip last.return)))
+      [%client *]  `goal.return  ::TODO  plus nonce? or abort?
+    ==
+  =/  favicon  %+
+    weld  "<svg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'>"
+          "<circle r='3.09' cx='5' cy='5' /></svg>"
+  =/  msg=tape
+    ?~  return  "Something went wrong!"
+    "Something went wrong! You will be redirected back..."
+  ;html
+    ;head
+      ;*  ?~  return  ~
+          :_  ~
+          ;meta(http-equiv "Refresh", content "5; url={(trip u.return)}");
+      ;meta(charset "utf-8");
+      ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
+      ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
+      ;title:"Urbit"
+      ;style:'''
+             @import url("https://rsms.me/inter/inter.css");
+             :root {
+               --black60: rgba(0,0,0,0.6);
+               --white: rgba(255,255,255,1);
+             }
+             html {
+               font-family: Inter, sans-serif;
+               height: 100%;
+               margin: 0;
+               width: 100%;
+               background: var(--white);
+               color: var(--black60);
+               -webkit-font-smoothing: antialiased;
+               line-height: 1.5;
+               font-size: 12px;
+               display: flex;
+               flex-flow: row nowrap;
+               justify-content: center;
+             }
+             body {
+               display: flex;
+               flex-flow: column nowrap;
+               justify-content: center;
+               max-width: 300px;
+               padding: 1rem;
+               width: 100%;
+             }
+             '''
+    ==
+    ;body:"{msg}"
+  ==
 ::  +render-tang-to-marl: renders a tang and adds <br/> tags between each line
 ::
 ++  render-tang-to-marl
@@ -1527,7 +1597,7 @@
               ::
               %-  (trace 2 |.("eauth: token mismatch"))
               %^  return-static-data-on-duct(duct u.pend.visa)  400  'text/html'
-              (eauth-error-page `our `ship `nonce)
+              (eauth-error-page %server last.visa)
             ::  token matches, we can finalize
             ::
             (finalize duct u.pend.visa nonce ship last.visa)
@@ -1555,7 +1625,7 @@
           =^  moz  state
             ?~  pend.u.visa  [~ state]
             %^  return-static-data-on-duct(duct u.pend.u.visa)  500  'text/html'
-            (eauth-error-page `our `ship `nonce)
+            (eauth-error-page %server last.u.visa)
           =.  visitors.auth  (~(del by visitors.auth) nonce)
           :_  state
           ::  make sure they know we dropped this attempt, and clean up the flow
@@ -1592,7 +1662,7 @@
           =^  moz  state
             ?~  pend.u.visa  [~ state]
             %^  return-static-data-on-duct(duct u.pend.u.visa)  503  'text/html'
-            (eauth-error-page `our `ship.u.visa `nonce)
+            (eauth-error-page %server last.u.visa)
           =.  visitors.auth  (~(del by visitors.auth) nonce)
           :_  state
           (weld moz (close-eauth(duct duct.u.visa) ship.u.visa nonce))
@@ -1795,6 +1865,10 @@
           =;  url=@t  (handle-response %start 303^['location' url]~ ~ &)
           %^  cat  3  '/~/login?redirect='
           (crip (en-urlt:html (trip url.request)))
+        ::  or give them a generic, static error page in unexpected cases
+        ::
+        =*  error  %^  return-static-data-on-duct  400  'text/html'
+                   (eauth-error-page ~)
         ::  GET requests either render the confirmation page,
         ::  or finalize an eauth flow
         ::
@@ -1805,9 +1879,7 @@
           =/  token=(unit @uv)  (biff (~(get by args) 'token') (cury slaw %uv))
           =/  abort=?           (~(has by args) 'abort')
           ::
-          =*  error   %^  return-static-data-on-duct  400  'text/html'
-                      (eauth-error-page server ~ nonce)
-          ?~  nonce   error
+          ?~  nonce  error
           ::
           ?^  server
             ::  request for confirmation page
@@ -1822,6 +1894,8 @@
           =/  visa=(unit visitor)  (~(get by visitors.auth) u.nonce)
           ?~  visa         error
           ?@  +.u.visa     error
+          =*  error  %^  return-static-data-on-duct  400  'text/html'
+                     (eauth-error-page %server last.u.visa)
           ?^  pend.u.visa  error
           ::  request for eauth finalization
           ::
@@ -1846,7 +1920,7 @@
         ::
         ?.  ?=(%'POST' method.request)
           %^  return-static-data-on-duct  405  'text/html'
-          (eauth-error-page ~ ~ ~)
+          (eauth-error-page ~)
         ?.  =(%ours -.identity)  login
         ::  POST requests are always submissions of the confirmation page
         ::
@@ -1857,7 +1931,7 @@
         =/  grant=?           =(`'grant' (~(get by args) 'grant'))
         ::
         =*  error   %^  return-static-data-on-duct  400  'text/html'
-                    (eauth-error-page server ~ nonce)
+                    (eauth-error-page ~)
         ?~  server  error
         ?~  nonce   error
         =/  home    (~(gut by visiting.auth) u.server ~)
@@ -1874,88 +1948,6 @@
         |=  =path
         ^-  move
         [duct %pass [%eauth %expire path] %b %wait (add now ~m5)]
-      ::
-      ++  eauth-error-page
-        |=  [server=(unit ship) client=(unit ship) nonce=(unit @uv)]
-        ^-  octs
-        %-  as-octs:mimes:html
-        %-  crip
-        %-  en-xml:html
-        =/  return=(unit @t)
-          ?:  =(`our server)
-            %-  some
-            %^  cat  3  '/~/login?eauth'
-            ?~  nonce  ''
-            ?~  visa=(~(get by visitors.auth) u.nonce)  ''
-            ?@  +.u.visa  ''
-            (cat 3 '&redirect=' last.u.visa)
-          ?.  =(`our client)  ~
-          ?~  server  ~
-          ?~  nonce   ~
-          =/  door  (~(get by (~(gut by visiting.auth) u.server ~)) u.nonce)
-          ?.  ?=([~ * %| *] door)  ~
-          `goal.p.live.u.door
-        =/  favicon  %+
-          weld  "<svg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'>"
-                "<circle r='3.09' cx='5' cy='5' /></svg>"
-        =/  msg=tape
-          ?~  return  "Something went wrong!"
-          "Something went wrong! You will be redirected back..."
-        ;html
-          ;head
-            ;*  ?~  return  ~
-                :_  ~
-                ;meta(http-equiv "Refresh", content "5; url={(trip u.return)}");
-            ;meta(charset "utf-8");
-            ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
-            ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
-            ;title:"Urbit"
-            ;style:'''
-                   @import url("https://rsms.me/inter/inter.css");
-                   @font-face {
-                       font-family: "Source Code Pro";
-                       src: url("https://storage.googleapis.com/media.urbit.org/fonts/scp-regular.woff");
-                       font-weight: 400;
-                       font-display: swap;
-                   }
-                   :root {
-                     --red05: rgba(255,65,54,0.05);
-                     --red100: rgba(255,65,54,1);
-                     --blue05: rgba(33,157,255,0.05);
-                     --blue30: rgba(33,157,255,0.3);
-                     --blue100: rgba(33,157,255,1);
-                     --black05: rgba(0,0,0,0.05);
-                     --black20: rgba(0,0,0,0.2);
-                     --black60: rgba(0,0,0,0.6);
-                     --white: rgba(255,255,255,1);
-                   }
-                   html {
-                     font-family: Inter, sans-serif;
-                     height: 100%;
-                     margin: 0;
-                     width: 100%;
-                     background: var(--white);
-                     color: var(--black100);
-                     -webkit-font-smoothing: antialiased;
-                     line-height: 1.5;
-                     font-size: 12px;
-                     display: flex;
-                     flex-flow: row nowrap;
-                     justify-content: center;
-                   }
-                   body {
-                     display: flex;
-                     flex-flow: column nowrap;
-                     justify-content: center;
-                     max-width: 300px;
-                     padding: 1rem;
-                     width: 100%;
-                   }
-                   '''
-          ==
-          ;body:"{msg}"
-        ==
-      ::
       --
     --
   ::  +channel: per-event handling of requests to the channel system
