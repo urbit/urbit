@@ -293,8 +293,9 @@
   :-  sig
   =+  dat=(rsh 9 mes)
   ?~  dat  ~
+  =/  non  ~|(%fine-cue (cue dat))
   ~|  [%fine %response-not-cask]
-  ;;((cask) (cue dat))
+  ;;((cask) non)
 ::  +etch-hunk: helper core to serialize a $hunk
 ::
 ++  etch-hunk
@@ -4312,12 +4313,12 @@
           ::
           ++  fi-sift-full
             =,  keen
-            ~|  %frag-mismatch
-            ~|  have/num-received
-            ~|  need/num-fragments
-            ~|  path/path
-            ?>  =(num-fragments num-received)
-            ?>  =((lent hav) num-received)
+            ?.  ?&  =(num-fragments num-received)
+                    =((lent hav) num-received)
+                ==
+              ~|  :-  %frag-mismatch
+                  [have/num-received need/num-fragments path/path]
+              !!
             (sift-roar num-fragments hav)
           ::
           ++  fi-fast-retransmit
