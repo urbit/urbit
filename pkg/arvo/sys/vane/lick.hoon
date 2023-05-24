@@ -26,13 +26,13 @@
 =*  lick-gate  .
 ^?
 |%
-::  +register: Create a move to register an agent with vere
+::  +register: create a move to register an agent with vere
 ::
 ++  register
   |=  =name
   ^-  move
   [unix-duct.state %give [%spin name]]
-::  +disconnect: Create Move to send a disconnect soak to am agent
+::  +disconnect: create a move to send a disconnect soak to an agent
 ::
 ++  disconnect
   |=  =name
