@@ -288,13 +288,16 @@
   ^-  [sig=@ux dat=$@(~ (cask))]
   =/  mes=@
     %+  rep  response-size
-    (roll hav |=([=have dat=(list @ux)] [dat.have dat]))
+    %+  turn
+      (sort hav |=([a=have b=have] (lth fra.a fra.b)))
+    |=(=have dat.have)
   =+  sig=(end 9 mes)
   :-  sig
   =+  dat=(rsh 9 mes)
   ?~  dat  ~
+  =/  non  ~|(%fine-cue (cue dat))
   ~|  [%fine %response-not-cask]
-  ;;((cask) (cue dat))
+  ;;((cask) non)
 ::  +etch-hunk: helper core to serialize a $hunk
 ::
 ++  etch-hunk
@@ -4322,12 +4325,12 @@
           ::
           ++  fi-sift-full
             =,  keen
-            ~|  %frag-mismatch
-            ~|  have/num-received
-            ~|  need/num-fragments
-            ~|  path/path
-            ?>  =(num-fragments num-received)
-            ?>  =((lent hav) num-received)
+            ?.  ?&  =(num-fragments num-received)
+                    =((lent hav) num-received)
+                ==
+              ~|  :-  %frag-mismatch
+                  [have/num-received need/num-fragments path/path]
+              !!
             (sift-roar num-fragments hav)
           ::
           ++  fi-fast-retransmit
