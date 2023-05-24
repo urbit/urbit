@@ -47,6 +47,7 @@
           event-log=(list unix-timed-event)
           next-events=(qeu unix-event)
           processing-events=?
+          namespace=(map path (list yowl:ames))
       ==
     --
 ::
@@ -223,6 +224,16 @@
     $
   ::
   ::  Peek
+  ::
+  ++  peek-once
+    |=  [=view =desk =spur]
+    =/  res  (mox +22.snap)
+    ?>  ?=(%0 -.res)
+    =/  peek  p.res
+    =/  pek  (slum peek [[~ ~] %| %once view desk spur])
+    =+  ;;(res=(unit (cask [path (cask)])) pek)
+    ::NOTE  it's an %omen, so we unpack a little bit deeper
+    (bind res (cork tail (cork tail tail)))
   ::
   ++  peek
     |=  p=*
@@ -485,11 +496,10 @@
     =/  =desk  +.val
     =.  userspace-ova.pil
       ::  take all files from a userspace desk
-      =/  all-dirs=(list path)  ~[/]
       :_  ~
       %-  unix-event:pill-lib
-      %+  %*(. file-ovum:pill-lib directories all-dirs)
-      desk  /(scot %p our.hid)/[desk]/(scot %da now.hid)
+      %-  file-ovum:pill-lib
+      [desk /(scot %p our.hid)/[desk]/(scot %da now.hid) ~]
     =^  ms  state  (poke-pill pil)
     (emit-cards ms)
   ::
@@ -650,6 +660,37 @@
       =.  this  thus
       (publish-effect:(pe who) [/ %restore ~])
     (pe ~bud)  ::  XX why ~bud?  need an example
+  ::
+      %read
+    ?~  pier=(~(get by ships.piers) from.ae)
+      (pe from.ae)
+    =/  cash  (~(get by namespace.u.pier) path.ae)
+    |-
+    ?^  cash
+      ?:  (gth num.ae (lent u.cash))
+        (pe from.ae)
+      ::TODO  depends on /ted/aqua/ames behavior in a weird indirect way
+      =/  for=@p  `@`(tail for.ae)  ::NOTE  moons & comets not supported
+      =;  task=task-arvo
+        ^$(ae [%event for /a/aqua/fine-response task], thus this)
+      :+  %hear  `lane:ames`[%| `@`from.ae]
+      ^-  blob:ames
+      =/  =shot:ames
+        ::NOTE  dec is important! so dumb!!
+        (sift-shot:ames `@`(snag (dec num.ae) u.cash))
+      ::TODO  runtime needs to update rcvr field also
+      ::NOTE  rcvr life is allowed to be wrong
+      (etch-shot:ames shot(sndr from.ae, rcvr for))
+    =/  pacs=(unit (list yowl:ames))
+      %+  biff
+        (peek-once:(pe from.ae) %ax %$ [%fine %message path.ae])
+      (soft (list yowl:ames))
+    ?~  pacs  (pe from.ae)
+    =.  namespace.u.pier
+      (~(put by namespace.u.pier) path.ae u.pacs)
+    =.  ships.piers
+      (~(put by ships.piers) from.ae u.pier)
+    $(cash pacs, thus this)
   ::
       %event
     ~?  &(aqua-debug=| !?=(?(%belt %hear) -.q.ue.ae))

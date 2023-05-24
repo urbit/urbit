@@ -43,13 +43,13 @@
 ++  on-fail   on-fail:def
 ::
 ++  command-parser
-  |=  sole-id=@ta
+  |=  =sole-id:shoe
   ^+  |~(nail *(like [? command]))
   %+  stag  &
   (perk %demo %row %table ~)
 ::
 ++  tab-list
-  |=  sole-id=@ta
+  |=  =sole-id:shoe
   ^-  (list [@t tank])
   :~  ['demo' leaf+"run example command"]
       ['row' leaf+"print a row"]
@@ -57,7 +57,7 @@
   ==
 ::
 ++  on-command
-  |=  [sole-id=@ta =command]
+  |=  [=sole-id:shoe =command]
   ^-  (quip card _this)
   =;  [to=(list _sole-id) fec=shoe-effect:shoe]
     [[%shoe to fec]~ this]
@@ -87,7 +87,7 @@
   ==
 ::
 ++  can-connect
-  |=  sole-id=@ta
+  |=  =sole-id:shoe
   ^-  ?
   ?|  =(~zod src.bowl)
       (team:title [our src]:bowl)

@@ -108,10 +108,9 @@
       [duct card]
     =/  =tang
       (weld u.error `tang`[leaf/"drip failed" ~])
-    ::  XX should be
-    ::  [duct %hurl fail/tang card]
+    ::  XX we don't know the mote due to the %wake pattern
     ::
-    [duct %pass /drip-slog %d %flog %crud %drip-fail tang]
+    [duct %hurl fail/tang card]
   ::
   +|  %tasks
   ::
@@ -244,13 +243,6 @@
   =*  lot=coin  $/r.bem
   =*  tyl  s.bem
   ::
-  ::TODO  don't special-case whey scry
-  ::
-  ?:  &(=(ren %$) =(tyl /whey))
-    =/  maz=(list mass)
-      :~  timers+&+timers.state
-      ==
-    ``mass+!>(maz)
   ::  only respond for the local identity, %$ desk, current timestamp
   ::
   ?.  ?&  =(&+our why)
@@ -258,6 +250,7 @@
           =(%$ syd)
       ==
     ~
+  ::  /bx//whey         (list mass)        memory usage labels
   ::  /bx/debug/timers  (list [@da duct])  all timers and their ducts
   ::  /bx/timers        (list @da)         all timer timestamps
   ::  /bx/timers/next   (unit @da)         the very next timer to fire
@@ -265,6 +258,12 @@
   ::
   ?.  ?=(%x ren)  ~
   ?+  tyl  [~ ~]
+      [%$ %whey ~]
+    =/  maz=(list mass)
+      :~  timers+&+timers.state
+      ==
+    ``mass+!>(maz)
+  ::
       [%debug %timers ~]
     :^  ~  ~  %noun
     !>  ^-  (list [@da duct])

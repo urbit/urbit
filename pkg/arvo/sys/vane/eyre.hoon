@@ -70,7 +70,7 @@
 ++  axle
   $:  ::  date: date at which http-server's state was updated to this data structure
       ::
-      date=%~2020.10.18
+      date=%~2023.4.11
       ::  server-state: state of inbound requests
       ::
       =server-state
@@ -88,6 +88,9 @@
       ::    the :binding into a (map (unit @t) (trie knot =action)).
       ::
       bindings=(list [=binding =duct =action])
+      ::  cache: mapping from url to versioned entry
+      ::
+      cache=(map url=@t [aeon=@ud val=(unit cache-entry)])
       ::  cors-registry: state used and managed by the +cors core
       ::
       =cors-registry
@@ -112,6 +115,9 @@
       ::  outgoing-duct: to unix
       ::
       outgoing-duct=duct
+      ::  verb: verbosity
+      ::
+      verb=@
   ==
 ::  channel-request: an action requested on a channel
 ::
@@ -119,9 +125,12 @@
   $%  ::  %ack: acknowledges that the client has received events up to :id
       ::
       [%ack event-id=@ud]
-      ::  %poke: pokes an application, translating :json to :mark.
+      ::  %poke: pokes an application, validating :noun against :mark
       ::
-      [%poke request-id=@ud ship=@p app=term mark=@tas =json]
+      [%poke request-id=@ud ship=@p app=term mark=@tas =noun]
+      ::  %poke-json: pokes an application, translating :json to :mark
+      ::
+      [%poke-json request-id=@ud ship=@p app=term mark=@tas =json]
       ::  %watch: subscribes to an application path
       ::
       [%subscribe request-id=@ud ship=@p app=term =path]
@@ -198,13 +207,44 @@
   %+  ~(put by unacked)  rid
   ?:  (lte u.sus ack)  0
   (sub u.sus ack)
+::  +find-channel-mode: deduce requested mode from headers
+::
+++  find-channel-mode
+  |=  [met=method:http hes=header-list:http]
+  ^-  ?(%json %jam)
+  =+  ^-  [hed=@t jam=@t]
+    ?:  ?=(%'GET' met)  ['x-channel-format' 'application/x-urb-jam']
+    ['content-type' 'application/x-urb-jam']
+  =+  typ=(bind (get-header:http hed hes) :(cork trip cass crip))
+  ?:(=(`jam typ) %jam %json)
 ::  +parse-channel-request: parses a list of channel-requests
+::
+++  parse-channel-request
+  |=  [mode=?(%json %jam) body=octs]
+  ^-  (each (list channel-request) @t)
+  ?-  mode
+      %json
+    ?~  maybe-json=(de-json:html q.body)
+      |+'put body not json'
+    ?~  maybe-requests=(parse-channel-request-json u.maybe-json)
+      |+'invalid channel json'
+    &+u.maybe-requests
+  ::
+      %jam
+    ?~  maybe-noun=(bind (slaw %uw q.body) cue)
+      |+'invalid request format'
+    ?~  maybe-reqs=((soft (list channel-request)) u.maybe-noun)
+      ~&  [%miss u.maybe-noun]
+      |+'invalid request data'
+    &+u.maybe-reqs
+  ==
+::  +parse-channel-request-json: parses a json list of channel-requests
 ::
 ::    Parses a json array into a list of +channel-request. If any of the items
 ::    in the list fail to parse, the entire thing fails so we can 400 properly
 ::    to the client.
 ::
-++  parse-channel-request
+++  parse-channel-request-json
   |=  request-list=json
   ^-  (unit (list channel-request))
   ::  parse top
@@ -220,7 +260,9 @@
   ?:  =('ack' u.maybe-key)
     ((pe %ack (ot event-id+ni ~)) item)
   ?:  =('poke' u.maybe-key)
-    ((pe %poke (ot id+ni ship+(su fed:ag) app+so mark+(su sym) json+some ~)) item)
+    %.  item
+    %+  pe  %poke-json
+    (ot id+ni ship+(su fed:ag) app+so mark+(su sym) json+some ~)
   ?:  =('subscribe' u.maybe-key)
     %.  item
     %+  pe  %subscribe
@@ -584,7 +626,8 @@
       [act [& secure address request] ~ 0]
     ::
     =.  connections.state
-      (~(put by connections.state) duct connection)
+      %.  (~(put by connections.state) duct connection)
+      (trace 2 |.("{<duct>} creating local"))
     ::
     :_  state
     (subscribe-to-app app.act inbound-request.connection)
@@ -613,6 +656,8 @@
     =/  connection=outstanding-connection
       [action [authenticated secure address request] ~ 0]
     =.  connections.state
+      ::  NB: required by +handle-response. XX optimize
+      ::
       (~(put by connections.state) duct connection)
     ::  redirect to https if insecure, redirects enabled
     ::  and secure port live
@@ -671,6 +716,11 @@
           =-  (fall - '*')
           (get-header:http 'access-control-request-headers' headers)
       ==
+    ::  handle requests to the cache
+    ::
+    =/  entry  (~(get by cache.state) url.request)
+    ?:  &(?=(^ entry) ?=(%'GET' method.request))
+      (handle-cache-req authenticated request val.u.entry)
     ::
     ?-    -.action
         %gen
@@ -745,10 +795,57 @@
         %scry
       (handle-scry authenticated address request(url suburl))
     ::
+        %name
+      (handle-name authenticated request)
+    ::
         %four-oh-four
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 authenticated url.request ~)
     ==
+  ::  +handle-name: respond with our @p or 403
+  ::
+  ++  handle-name
+    |=  [authenticated=? =request:http]
+    |^  ^-  (quip move server-state)
+    ?.  authenticated
+      (error-response 403 ~)
+    ?.  =(%'GET' method.request)
+      (error-response 405 "may only GET name")
+    %^  return-static-data-on-duct  200  'text/plain'
+    (as-octs:mimes:html (scot %p our))
+    ::
+    ++  error-response
+      |=  [status=@ud =tape]
+      ^-  (quip move server-state)
+      %^  return-static-data-on-duct  status  'text/html'
+      (error-page status authenticated url.request tape)
+    --
+  ::  +handle-cache-req: respond with cached value, 404 or 500
+  ::
+  ++  handle-cache-req
+    |=  [authenticated=? =request:http entry=(unit cache-entry)]
+    |^  ^-  (quip move server-state)
+    ?~  entry
+      (error-response 404 "cache entry for that binding was deleted")
+    ?:  &(auth.u.entry !authenticated)
+      (error-response 403 ~)
+    =*  body  body.u.entry
+    ?-    -.body
+        %payload
+      %-  handle-response
+      :*  %start
+          response-header.simple-payload.body
+          data.simple-payload.body
+          complete=%.y
+      ==
+    ==
+    ::
+    ++  error-response
+      |=  [status=@ud =tape]
+      ^-  (quip move server-state)
+      %^  return-static-data-on-duct  status  'text/html'
+      (error-page status authenticated url.request tape)
+    --
   ::  +handle-scry: respond with scry result, 404 or 500
   ::
   ++  handle-scry
@@ -791,7 +888,7 @@
       ^-  (unit tube:clay)
       ?:  =(from to)  `(bake same vase)
       =/  des=(unit (unit cage))
-        (do-scry %gd dap ~)
+        (do-scry %gd dap /$)
       ?.  ?=([~ ~ *] des)  ~
       =+  !<(=desk q.u.u.des)
       =/  tub=(unit (unit cage))
@@ -843,12 +940,13 @@
         %app
       :_  state
       :_  ~
+      %-  (trace 1 |.("leaving subscription to {<app.action.u.connection>}"))
       :*  duct  %pass  /watch-response/[eyre-id]
           %g  %deal  [our our]  app.action.u.connection
           %leave  ~
       ==
     ::
-        ?(%authentication %logout)
+        ?(%authentication %logout %name)
       [~ state]
     ::
         %channel
@@ -889,14 +987,37 @@
       |=  [secure=? =address =request:http]
       ^-  [(list move) server-state]
       ::
-      ::  if we received a simple get, just return the page
+      ::  if we received a simple get, redirect if logged in otherwise 
+      ::  show login page
       ::
       ?:  =('GET' method.request)
         ::  parse the arguments out of request uri
         ::
         =+  request-line=(parse-request-line url.request)
-        %^  return-static-data-on-duct  200  'text/html'
-        (login-page (get-header:http 'redirect' args.request-line) our %.n)
+        =/  redirect  (get-header:http 'redirect' args.request-line)
+        ?.  (request-is-logged-in request)
+          %^  return-static-data-on-duct  200  'text/html'
+          (login-page redirect our %.n)
+        =/  session-id  (session-id-from-request request)
+        ::  session-id should always be populated here since we are logged in
+        ?~  session-id
+          %^  return-static-data-on-duct  200  'text/html'
+          (login-page redirect our %.n)
+        =/  cookie-line=@t
+          (session-cookie-string u.session-id &)
+        =/  actual-redirect  
+          ?~  redirect  '/'
+          ?:(=(u.redirect '') '/' u.redirect)
+        %-  handle-response
+        :*  %start
+            :-  status-code=303
+            ^=  headers
+              :~  ['location' actual-redirect]
+                  ['set-cookie' cookie-line]
+              ==
+            data=~
+            complete=%.y
+        ==
       ::  if we are not a post, return an error
       ::
       ?.  =('POST' method.request)
@@ -937,6 +1058,7 @@
         (session-cookie-string session &)
       ::
       =;  out=[moves=(list move) server-state]
+        =.  moves.out  [give-session-tokens moves.out]
         ::  if we didn't have any cookies previously, start the expiry timer
         ::
         ?.  first-session  out
@@ -1011,7 +1133,8 @@
       ?~  channels
         =^  moz  state
           (handle-response response)
-        [(weld moves moz) state]
+        [[give-session-tokens (weld moves moz)] state]
+      %-  (trace 1 |.("{(trip i.channels)} discarding channel due to logout"))
       =^  moz  state
         (discard-channel:by-channel i.channels |)
       $(moves (weld moves moz), channels t.channels)
@@ -1123,8 +1246,7 @@
         ::  POST methods are used solely for deleting channels
         (on-put-request channel-id request)
       ::
-      ~&  %session-not-a-put
-      [~ state]
+      ((trace 0 |.("session not a put")) `state)
     ::  +on-cancel-request: cancels an ongoing subscription
     ::
     ::    One of our long lived sessions just got closed. We put the associated
@@ -1134,15 +1256,15 @@
       ^-  [(list move) server-state]
       ::  lookup the session id by duct
       ::
-      ?~  maybe-channel-id=(~(get by duct-to-key.channel-state.state) duct)
-        ~>  %slog.[0 leaf+"eyre: no channel to cancel {<duct>}"]
-        [~ state]
+      %-  (trace 1 |.("{<duct>} moving channel to waiting state"))
       ::
-      ~>  %slog.[0 leaf+"eyre: canceling {<duct>}"]
+      ?~  maybe-channel-id=(~(get by duct-to-key.channel-state.state) duct)
+        ((trace 0 |.("{<duct>} no channel to move")) `state)
       ::
       =/  maybe-session
         (~(get by session.channel-state.state) u.maybe-channel-id)
-      ?~  maybe-session  [~ state]
+      ?~  maybe-session
+        ((trace 1 |.("{<maybe-session>} session doesn't exist")) `state)
       ::
       =/  heartbeat-cancel=(list move)
         ?~  heartbeat.u.maybe-session  ~
@@ -1176,7 +1298,7 @@
     ::    state.
     ::
     ++  update-timeout-timer-for
-      |=  channel-id=@t
+      |=  [mode=?(%json %jam) channel-id=@t]
       ^+  ..update-timeout-timer-for
       ::  when our callback should fire
       ::
@@ -1188,7 +1310,7 @@
         %_    ..update-timeout-timer-for
             session.channel-state.state
           %+  ~(put by session.channel-state.state)  channel-id
-          [[%& expiration-time duct] 0 now ~ ~ ~ ~]
+          [mode [%& expiration-time duct] 0 now ~ ~ ~ ~]
         ::
             moves
           [(set-timeout-move channel-id expiration-time) moves]
@@ -1243,10 +1365,19 @@
       |=  [channel-id=@t =request:http]
       ^-  [(list move) server-state]
       ::  if there's no channel-id, we must 404
+      ::TODO  but arm description says otherwise?
       ::
       ?~  maybe-channel=(~(get by session.channel-state.state) channel-id)
         %^  return-static-data-on-duct  404  'text/html'
         (error-page 404 %.y url.request ~)
+      ::  find the requested "mode" and make sure it doesn't conflict
+      ::
+      =/  mode=?(%json %jam)
+        (find-channel-mode %'GET' header-list.request)
+      ?.  =(mode mode.u.maybe-channel)
+        %^  return-static-data-on-duct  406  'text/html'
+        =;  msg=tape  (error-page 406 %.y url.request msg)
+        "channel already established in {(trip mode.u.maybe-channel)} mode"
       ::  when opening an event-stream, we must cancel our timeout timer
       ::  if there's no duct already bound. Else, kill the old request
       ::  and replace it
@@ -1288,11 +1419,10 @@
         ::NOTE  these will only fail if the mark and/or json types changed,
         ::      since conversion failure also gets caught during first receive.
         ::      we can't do anything about this, so consider it unsupported.
-        =/  sign
-          (channel-event-to-sign u.maybe-channel request-id channel-event)
-        ?~  sign  $
-        ?~  jive=(sign-to-json u.maybe-channel request-id u.sign)  $
-        $(events [(event-json-to-wall id +.u.jive) events])
+        =/  said
+          (channel-event-to-tape u.maybe-channel request-id channel-event)
+        ?~  said  $
+        $(events [(event-tape-to-wall id +.u.said) events])
       ::  send the start event to the client
       ::
       =^  http-moves  state
@@ -1324,13 +1454,17 @@
       ::
       =/  heartbeat-time=@da  (add now ~s20)
       =/  heartbeat  (set-heartbeat-move channel-id heartbeat-time)
-      ::  clear the event queue, record the duct for future output and
-      ::  record heartbeat-time for possible future cancel
+      ::  record the mode & duct for future output,
+      ::  and record heartbeat-time for possible future cancel
       ::
       =.  session.channel-state.state
         %+  ~(jab by session.channel-state.state)  channel-id
         |=  =channel
-        channel(events ~, state [%| duct], heartbeat (some [heartbeat-time duct]))
+        %_  channel
+          mode       mode
+          state      [%| duct]
+          heartbeat  (some [heartbeat-time duct])
+        ==
       ::
       [[heartbeat :(weld http-moves cancel-moves moves)] state]
     ::  +acknowledge-events: removes events before :last-event-id on :channel-id
@@ -1362,19 +1496,19 @@
       ?~  body.request
         %^  return-static-data-on-duct  400  'text/html'
         (error-page 400 %.y url.request "no put body")
-      ::  if the incoming body isn't json, this is a bad request, 400.
       ::
-      ?~  maybe-json=(de-json:html q.u.body.request)
-        %^  return-static-data-on-duct  400  'text/html'
-        (error-page 400 %.y url.request "put body not json")
-      ::  parse the json into an array of +channel-request items
+      =/  mode=?(%json %jam)
+        (find-channel-mode %'PUT' header-list.request)
+      ::  if we cannot parse requests from the body, give an error
       ::
-      ?~  maybe-requests=(parse-channel-request u.maybe-json)
+      =/  maybe-requests=(each (list channel-request) @t)
+        (parse-channel-request mode u.body.request)
+      ?:  ?=(%| -.maybe-requests)
         %^  return-static-data-on-duct  400  'text/html'
-        (error-page 400 %.y url.request "invalid channel json")
+        (error-page 400 & url.request (trip p.maybe-requests))
       ::  while weird, the request list could be empty
       ::
-      ?:  =(~ u.maybe-requests)
+      ?:  =(~ p.maybe-requests)
         %^  return-static-data-on-duct  400  'text/html'
         (error-page 400 %.y url.request "empty list of actions")
       ::  check for the existence of the channel-id
@@ -1383,10 +1517,10 @@
       ::    :channel-timeout from now. if we have one which has a timer, update
       ::    that timer.
       ::
-      =.  ..on-put-request  (update-timeout-timer-for channel-id)
+      =.  ..on-put-request  (update-timeout-timer-for mode channel-id)
       ::  for each request, execute the action passed in
       ::
-      =+  requests=u.maybe-requests
+      =+  requests=p.maybe-requests
       ::  gall-moves: put moves here first so we can flop for ordering
       ::
       ::    TODO: Have an error state where any invalid duplicate subscriptions
@@ -1417,7 +1551,7 @@
           requests  t.requests
         ==
       ::
-          %poke
+          ?(%poke %poke-json)
         ::
         =.  gall-moves
           :_  gall-moves
@@ -1425,7 +1559,12 @@
           :^  duct  %pass  /channel/poke/[channel-id]/(scot %ud request-id.i.requests)
           =,  i.requests
           :*  %g  %deal  `sock`[our ship]  app
-              `task:agent:gall`[%poke-as mark %json !>(json)]
+              ^-  task:agent:gall
+              :+  %poke-as  mark
+              ?-  -.i.requests
+                %poke       [%noun !>(noun)]
+                %poke-json  [%json !>(json)]
+              ==
           ==
         ::
         $(requests t.requests)
@@ -1439,6 +1578,7 @@
           ^-  move
           :^  duct  %pass
             (subscription-wire channel-id request-id ship app)
+          %-  (trace 1 |.("subscribing to {<app>} on {<path>}"))
           :*  %g  %deal  [our ship]  app
               `task:agent:gall`[%watch path]
           ==
@@ -1465,8 +1605,9 @@
           ::  the client sent us a weird request referring to a subscription
           ::  which isn't active.
           ::
-          ~&  [%missing-subscription-in-unsubscribe channel-id subscription-id]
-          $(requests t.requests)
+          %.  $(requests t.requests)
+          =*  msg=tape  "{(trip channel-id)} {<subscription-id>}"
+          (trace 0 |.("missing subscription in unsubscribe {msg}"))
         ::
         =.  gall-moves
           :_  gall-moves
@@ -1474,6 +1615,7 @@
           =,  u.maybe-subscription
           :^  duc  %pass
             (subscription-wire channel-id subscription-id.i.requests ship app)
+          %-  (trace 1 |.("leaving subscription to {<app>}"))
           :*  %g  %deal  [our ship]  app
               `task:agent:gall`[%leave ~]
           ==
@@ -1489,6 +1631,7 @@
         $(requests t.requests)
       ::
           %delete
+        %-  (trace 1 |.("{<channel-id>} discarding due to %delete PUT"))
         =^  moves  state
           (discard-channel channel-id |)
         =.  gall-moves
@@ -1515,10 +1658,8 @@
         (emit-event channel-id request-id sign)
       =/  =ship     (slav %p i.extra)
       =*  app=term  i.t.extra
-      =/  =tape
-        %+  weld  "eyre: removing watch for "
-        "non-existent channel {(trip channel-id)} on {(trip app)}"
-      %-  (slog leaf+tape ~)
+      =*  msg=tape  "{(trip channel-id)} {(trip app)}"
+      %-  (trace 0 |.("removing watch for non-existent channel {msg}"))
       :_  state
       :_  ~
       ^-  move
@@ -1558,20 +1699,22 @@
       ::  if conversion succeeds, we *can* send it. if the client is actually
       ::  connected, we *will* send it immediately.
       ::
-      =/  jive=(unit (quip move json))
-        (sign-to-json u.channel request-id sign)
-      =/  json=(unit json)
-        ?~(jive ~ `+.u.jive)
-      =?  moves  ?=(^ jive)
-        (weld moves -.u.jive)
-      =*  sending  &(?=([%| *] state.u.channel) ?=(^ json))
+      =/  maybe-channel-event=(unit channel-event)
+        (sign-to-channel-event sign u.channel request-id)
+      ?~  maybe-channel-event  [~ state]
+      =/  =channel-event  u.maybe-channel-event
+      =/  said=(unit (quip move tape))
+        (channel-event-to-tape u.channel request-id channel-event)
+      =?  moves  ?=(^ said)
+        (weld moves -.u.said)
+      =*  sending  &(?=([%| *] state.u.channel) ?=(^ said))
       ::
       =/  next-id  next-id.u.channel
       ::  if we can send it, store the event as unacked
       ::
-      =?  events.u.channel  ?=(^ json)
+      =?  events.u.channel  ?=(^ said)
         %-  ~(put to events.u.channel)
-        [next-id request-id (sign-to-channel-event sign)]
+        [next-id request-id channel-event]
       ::  if it makes sense to do so, send the event to the client
       ::
       =?  moves  sending
@@ -1585,11 +1728,11 @@
         ::
             ^=  data
             %-  wall-to-octs
-            (event-json-to-wall next-id (need json))
+            (event-tape-to-wall next-id +:(need said))
         ::
             complete=%.n
         ==
-      =?  next-id  ?=(^ json)  +(next-id)
+      =?  next-id  ?=(^ said)  +(next-id)
       ::  update channel's unacked counts, find out if clogged
       ::
       =^  clogged  unacked.u.channel
@@ -1597,7 +1740,7 @@
         ::  and of course don't count events we can't send as unacked.
         ::
         ?:  ?|  !?=(%fact -.sign)
-                ?=(~ json)
+                ?=(~ said)
             ==
           [| unacked.u.channel]
         =/  num=@ud
@@ -1606,11 +1749,15 @@
         ?&  (gte num clog-threshold)
             (lth (add last-ack.u.channel clog-timeout) now)
         ==
-      ~?  clogged  [%e %clogged channel-id request-id]
       ::  if we're clogged, or we ran into an event we can't serialize,
       ::  kill this gall subscription.
       ::
-      =*  kicking    |(clogged ?=(~ json))
+      =*  msg=tape  "on {(trip channel-id)} for {(scow %ud request-id)}"
+      =/  kicking=?
+        ?:  clogged
+          ((trace 0 |.("clogged {msg}")) &)
+        ?.  ?=(~ said)  |
+        ((trace 0 |.("can't serialize event, kicking {msg}")) &)
       =?  moves      kicking
         :_  moves
         ::NOTE  this shouldn't crash because we
@@ -1618,6 +1765,7 @@
         ::      - only clog on %facts, which have a subscription associated,
         ::      - and already checked whether we still have that subscription.
         =+  (~(got by subscriptions.u.channel) request-id)
+        %-  (trace 1 |.("leaving subscription to {<app>}"))
         :^  duct  %pass
           (subscription-wire channel-id request-id ship app)
         [%g %deal [our ship] app %leave ~]
@@ -1628,7 +1776,9 @@
           subscriptions  (~(del by subscriptions.u.channel) request-id)
           unacked        (~(del by unacked.u.channel) request-id)
           events         %-  ~(put to events.u.channel)
-                         [next-id request-id (sign-to-channel-event %kick ~)]
+                         :+  next-id
+                           request-id
+                         (need (sign-to-channel-event [%kick ~] u.channel request-id))
         ==
       ::  if a client is connected, send the kick event to them
       ::
@@ -1640,8 +1790,8 @@
         ::
             ^=  data
             %-  wall-to-octs
-            %+  event-json-to-wall  next-id
-            +:(need (sign-to-json u.channel request-id %kick ~))
+            %+  event-tape-to-wall  next-id
+            +:(need (channel-event-to-tape u.channel request-id %kick ~))
         ::
             complete=%.n
         ==
@@ -1656,10 +1806,12 @@
     ::  +sign-to-channel-event: strip the vase from a sign:agent:gall
     ::
     ++  sign-to-channel-event
-      |=  =sign:agent:gall
-      ^-  channel-event
-      ?.  ?=(%fact -.sign)  sign
-      [%fact [p q.q]:cage.sign]
+      |=  [=sign:agent:gall =channel request-id=@ud]
+      ^-  (unit channel-event)
+      ?.  ?=(%fact -.sign)  `sign
+      ?~  desk=(app-to-desk channel request-id)  ~
+      :-  ~
+      [%fact u.desk [p q.q]:cage.sign]
     ::  +app-to-desk
     ::
     ++  app-to-desk
@@ -1667,60 +1819,51 @@
       ^-  (unit desk)
       =/  sub  (~(get by subscriptions.channel) request-id)
       ?~  sub
-        ((slog leaf+"eyre: no subscription for request-id {<request-id>}" ~) ~)
+        ((trace 0 |.("no subscription for request-id {(scow %ud request-id)}")) ~)
       =/  des=(unit (unit cage))
-        (rof ~ %gd [our app.u.sub da+now] ~)
+        (rof ~ %gd [our app.u.sub da+now] /$)
       ?.  ?=([~ ~ *] des)
-        ((slog leaf+"eyre: no desk for app {(trip app.u.sub)}" ~) ~)
+        ((trace 0 |.("no desk for app {<app.u.sub>}")) ~)
       `!<(=desk q.u.u.des)
-    ::  +channel-event-to-sign: attempt to recover a sign from a channel-event
+    ::  +channel-event-to-tape: render channel-event from request-id in specified mode
     ::
-    ++  channel-event-to-sign
-      ~%  %eyre-channel-event-to-sign  ..part  ~
+    ++  channel-event-to-tape
+      |=  [=channel request-id=@ud =channel-event]
+      ^-  (unit (quip move tape))
+      ?-  mode.channel
+        %json  %+  bind  (channel-event-to-json channel request-id channel-event)
+               |=((quip move json) [+<- (en-json:html +<+)])
+        %jam   =-  `[~ (scow %uw (jam -))]
+               [request-id channel-event]
+      ==
+    ::  +channel-event-to-json: render channel event as json channel event
+    ::
+    ++  channel-event-to-json
+      ~%  %eyre-channel-event-to-json  ..part  ~
       |=  [=channel request-id=@ud event=channel-event]
-      ^-  (unit sign:agent:gall)
-      ?.  ?=(%fact -.event)  `event
-      ::  rebuild vase for fact data
-      ::
-      =/  des=(unit desk)  (app-to-desk channel request-id)
-      ?~  des  ~
-      =*  have=mark  mark.event
-      =/  val=(unit (unit cage))
-        (rof ~ %cb [our u.des da+now] /[have])
-      ?.  ?=([~ ~ *] val)
-        ((slog leaf+"eyre: no mark {(trip have)}" ~) ~)
-      =+  !<(=dais:clay q.u.u.val)
-      =/  res  (mule |.((vale:dais noun.event)))
-      ?:  ?=(%| -.res)
-        ((slog leaf+"eyre: stale fact of mark {(trip have)}" ~) ~)
-      `[%fact have p.res]
-    ::  +sign-to-json: render sign from request-id as json channel event
-    ::
-    ++  sign-to-json
-      ~%  %sign-to-json  ..part  ~
-      |=  [=channel request-id=@ud =sign:agent:gall]
       ^-  (unit (quip move json))
       ::  for facts, we try to convert the result to json
       ::
       =/  [from=(unit [=desk =mark]) jsyn=(unit sign:agent:gall)]
-        ?.  ?=(%fact -.sign)       [~ `sign]
-        ?:  ?=(%json p.cage.sign)  [~ `sign]
+        ?.  ?=(%fact -.event)       [~ `event]
+        ?:  ?=(%json mark.event)
+          ?~  jsin=((soft json) noun.event)
+            %.  [~ ~]
+            (slog leaf+"eyre: dropping fake json for {(scow %ud request-id)}" ~)
+          [~ `[%fact %json !>(u.jsin)]]
         ::  find and use tube from fact mark to json
         ::
-        =/  des=(unit desk)  (app-to-desk channel request-id)
-        ?~  des  [~ ~]
         ::
-        =*  have=mark  p.cage.sign
-        =*  desc=tape  "from {(trip have)} to json"
+        =*  have=mark  mark.event
         =/  convert=(unit vase)
           =/  cag=(unit (unit cage))
-            (rof ~ %cf [our u.des da+now] /[have]/json)
+            (rof ~ %cf [our desk.event da+now] /[have]/json)
           ?.  ?=([~ ~ *] cag)  ~
           `q.u.u.cag
         ?~  convert
-          ((slog leaf+"eyre: no convert {desc}" ~) [~ ~])
-        ~|  "conversion failed {desc}"
-        [`[u.des have] `[%fact %json (slym u.convert q.q.cage.sign)]]
+          ((trace 0 |.("no convert from {(trip have)} to json")) [~ ~])
+        ~|  "conversion failed from {(trip have)} to json"
+        [`[desk.event have] `[%fact %json (slym u.convert noun.event)]]
       ?~  jsyn  ~
       %-  some
       :-  ?~  from  ~
@@ -1763,12 +1906,12 @@
         ==
       ==
     ::
-    ++  event-json-to-wall
-      ~%  %eyre-json-to-wall  ..part  ~
-      |=  [event-id=@ud =json]
+    ++  event-tape-to-wall
+      ~%  %eyre-tape-to-wall  ..part  ~
+      |=  [event-id=@ud =tape]
       ^-  wall
       :~  (weld "id: " (format-ud-as-integer event-id))
-          (weld "data: " (en-json:html json))
+          (weld "data: " tape)
           ""
       ==
     ::
@@ -1833,6 +1976,7 @@
       %+  turn  ~(tap by subscriptions.session)
       |=  [request-id=@ud ship=@p app=term =path duc=^duct]
       ^-  move
+      %-  (trace 1 |.("{<channel-id>} leaving subscription to {<app>}"))
       :^  duc  %pass
         (subscription-wire channel-id request-id ship app)
       [%g %deal [our ship] app %leave ~]
@@ -1843,11 +1987,15 @@
     |=  =tang
     ^-  [(list move) server-state]
     ::
-    =+  connection=(~(got by connections.state) duct)
+    ?~  connection-state=(~(get by connections.state) duct)
+      %.  `state
+      (trace 0 |.("{<duct>} error on invalid outstanding connection"))
+    =*  connection  u.connection-state
     =/  moves-1=(list move)
       ?.  ?=(%app -.action.connection)
         ~
       :_  ~
+      %-  (trace 1 |.("leaving subscription to {<app.action.connection>}"))
       :*  duct  %pass  /watch-response/[eyre-id]
           %g  %deal  [our our]  app.action.connection
           %leave  ~
@@ -1875,8 +2023,7 @@
     ::  verify that this is a valid response on the duct
     ::
     ?~  connection-state=(~(get by connections.state) duct)
-      ~&  [%invalid-outstanding-connection duct]
-      [~ state]
+      ((trace 0 |.("{<duct>} invalid outstanding connection")) `state)
     ::
     |^  ^-  [(list move) server-state]
         ::
@@ -1884,8 +2031,7 @@
         ::
             %start
           ?^  response-header.u.connection-state
-            ~&  [%http-multiple-start duct]
-            error-connection
+            ((trace 0 |.("{<duct>} error multiple start")) error-connection)
           ::  if request was authenticated, extend the session & cookie's life
           ::
           =^  response-header  sessions.authentication-state.state
@@ -1899,8 +2045,7 @@
             ?~  session-id=(session-id-from-request request.inbound)
               ::  cookies are the only auth method, so this is unexpected
               ::
-              ~&  [%e %authenticated-without-cookie]
-              no-op
+              ((trace 0 |.("error authenticated without cookie")) no-op)
             ?.  (~(has by sessions) u.session-id)
               ::  if the session has expired since the request was opened,
               ::  tough luck, we don't create/revive sessions here
@@ -1914,8 +2059,8 @@
               (session-cookie-string u.session-id &)
             headers.response-header.http-event
           ::
-          =/  connection=outstanding-connection
-            (~(got by connections.state) duct)
+          =*  connection  u.connection-state
+          ::
           ::  if the request was a simple cors request from an approved origin
           ::  append the necessary cors headers to the response
           ::
@@ -1932,51 +2077,50 @@
           ::
           =.  response-header.http-event  response-header
           =.  connections.state
+            ?:  complete.http-event
+              ::  XX  optimize by not requiring +put:by in +request
+              ::
+              (~(del by connections.state) duct)
+            ::
+            %-  (trace 2 |.("{<duct>} start"))
             %+  ~(put by connections.state)  duct
-            %_  connection
+            %=  connection
               response-header  `response-header
               bytes-sent  ?~(data.http-event 0 p.u.data.http-event)
             ==
-          ::
-          =?  state  complete.http-event
-            log-complete-request
           ::
           pass-response
         ::
             %continue
           ?~  response-header.u.connection-state
-            ~&  [%http-continue-without-start duct]
-            error-connection
+            %.  error-connection
+            (trace 0 |.("{<duct>} error continue without start"))
           ::
           =.  connections.state
-            %+  ~(jab by connections.state)  duct
-            |=  connection=outstanding-connection
-            =+  size=?~(data.http-event 0 p.u.data.http-event)
-            connection(bytes-sent (add bytes-sent.connection size))
-          ::
-          =?  state  complete.http-event
-            log-complete-request
+            ?:  complete.http-event
+              %-  (trace 2 |.("{<duct>} completed"))
+              (~(del by connections.state) duct)
+            ::
+            %-  (trace 2 |.("{<duct>} continuing"))
+            ?~  data.http-event
+              connections.state
+            ::
+            %+  ~(put by connections.state)  duct
+            =*  size  p.u.data.http-event
+            =*  conn  u.connection-state
+            conn(bytes-sent (add size bytes-sent.conn))
           ::
           pass-response
         ::
             %cancel
           ::  todo: log this differently from an ise.
           ::
-          error-connection
+          ((trace 1 |.("cancel http event")) error-connection)
         ==
     ::
     ++  pass-response
       ^-  [(list move) server-state]
       [[duct %give %response http-event]~ state]
-    ::
-    ++  log-complete-request
-      ::  todo: log the complete request
-      ::
-      ::  remove all outstanding state for this connection
-      ::
-      =.  connections.state
-        (~(del by connections.state) duct)
-      state
     ::
     ++  error-connection
       ::  todo: log application error
@@ -1993,11 +2137,22 @@
       ?.  ?=(%app -.action.u.connection-state)
         ~
       :_  ~
+      %-  %+  trace  1
+          |.("leaving subscription to {<app.action.u.connection-state>}")
       :*  duct  %pass  /watch-response/[eyre-id]
           %g  %deal  [our our]  app.action.u.connection-state
           %leave  ~
       ==
     --
+  ::  +set-response: remember (or update) a cache mapping
+  ::
+  ++  set-response
+    |=  [url=@t entry=(unit cache-entry)]
+    ^-  [(list move) server-state]
+    =/  aeon  ?^(prev=(~(get by cache.state) url) +(aeon.u.prev) 1)
+    =.  cache.state  (~(put by cache.state) url [aeon entry])
+    :_  state
+    [outgoing-duct.state %give %grow /cache/(scot %ud aeon)/(scot %t url)]~
   ::  +add-binding: conditionally add a pairing between binding and action
   ::
   ::    Adds =binding =action if there is no conflicting bindings.
@@ -2075,6 +2230,8 @@
     ::
     =/  request-line  (parse-request-line url)
     =/  parsed-url=(list @t)  site.request-line
+    =?  parsed-url  ?=([%'~' %channel-jam *] parsed-url)
+      parsed-url(i.t %channel)
     ::
     =/  bindings  bindings.state
     |-
@@ -2095,6 +2252,18 @@
       (cury cat 3)
     ?~  ext.request-line  ''
     (cat 3 '.' u.ext.request-line)
+  ::  +give-session-tokens: send valid session tokens to unix
+  ::
+  ++  give-session-tokens
+    ^-  move
+    :-  outgoing-duct.state
+    =*  ses  sessions.authentication-state.state
+    [%give %sessions (~(run in ~(key by ses)) (cury scot %uv))]
+  ::
+  ++  trace
+    |=  [pri=@ print=(trap tape)]
+    ?:  (lth verb.state pri)  same
+    (slog leaf+"eyre: {(print)}" ~)
   --
 ::
 ++  forwarded-params
@@ -2189,12 +2358,24 @@
   ::
   =/  task=task  ((harden task) wrapped-task)
   ::
-  ::  XX handle error notifications
+  ::  XX handle more error notifications
   ::
   ?^  dud
-    =/  moves=(list move)
-      [[duct %slip %d %flog %crud [-.task tang.u.dud]] ~]
-    [moves http-server-gate]
+    :_  http-server-gate
+    ::  always print the error trace
+    ::
+    :-  [duct %slip %d %flog %crud [-.task tang.u.dud]]
+    ^-  (list move)
+    ::  if a request caused the crash, respond with a 500
+    ::
+    ?.  ?=(?(%request %request-local) -.task)  ~
+    ^~
+    =/  data  (as-octs:mimes:html 'crud!')
+    =/  head
+      :~  ['content-type' 'text/html']
+          ['content-length' (crip (a-co:co p.data))]
+      ==
+    [duct %give %response %start 500^head `data &]~
   ::  %init: tells us what our ship name is
   ::
   ?:  ?=(%init -.task)
@@ -2207,6 +2388,7 @@
           [[~ /~/logout] duct [%logout ~]]
           [[~ /~/channel] duct [%channel ~]]
           [[~ /~/scry] duct [%scry ~]]
+          [[~ /~/name] duct [%name ~]]
       ==
     [~ http-server-gate]
   ::  %trim: in response to memory pressure
@@ -2271,14 +2453,23 @@
     ::  save duct for future %give to unix
     ::
     =.  outgoing-duct.server-state.ax  duct
+    ::  send all cache mappings to runtime
+    ::
+    =/  cache-moves=(list move)
+      %+  turn  ~(tap by cache.server-state.ax)
+      |=  [url=@t cache-val=[aeon=@ud val=(unit cache-entry)]]
+      [duct %give %grow /cache/(scot %u aeon.cache-val)/(scot %t url)]
     ::
     :_  http-server-gate
-    ;:  weld
-      ::  hand back default configuration for now
+    :*  ::  hand back default configuration for now
+        ::
+        [duct %give %set-config http-config.server-state.ax]
+        ::  provide a list of valid auth tokens
+        ::
+        =<  give-session-tokens
+        (per-server-event [eny duct now rof] server-state.ax)
       ::
-      [duct %give %set-config http-config.server-state.ax]~
-    ::
-      closed-connections
+        (zing ~[closed-connections cache-moves])
     ==
   ::
   ?:  ?=(%code-changed -.task)
@@ -2393,6 +2584,14 @@
         (~(del in approved) origin.task)
       (~(put in rejected) origin.task)
     [~ http-server-gate]
+  ::
+      %spew
+    =.  verb.server-state.ax  veb.task
+    `http-server-gate
+  ::
+      %set-response
+    =^  moves  server-state.ax  (set-response:server +.task)
+    [moves http-server-gate]
   ==
 ::
 ++  take
@@ -2504,10 +2703,11 @@
       ?>  ?=([%behn %wake *] sign)
       ?^  error.sign
         [[duct %slip %d %flog %crud %wake u.error.sign]~ http-server-gate]
-      =/  discard-channel
-        discard-channel:by-channel:(per-server-event event-args)
+      =*  id  i.t.t.wire
+      %-  %+  trace:(per-server-event event-args)  1
+          |.("{(trip id)} cancelling channel due to timeout")
       =^  moves  server-state.ax
-        (discard-channel i.t.t.wire &)
+        (discard-channel:by-channel:(per-server-event event-args) id &)
       [moves http-server-gate]
     ::
         %heartbeat
@@ -2540,6 +2740,9 @@
     ::
     ?^  error.sign
       [[duct %slip %d %flog %crud %wake u.error.sign]~ http-server-gate]
+    ::NOTE  we are not concerned with expiring channels that are still in
+    ::      use. we require acks for messages, which bump their session's
+    ::      timer. channels have their own expiry timer, too.
     ::  remove cookies that have expired
     ::
     =*  sessions  sessions.authentication-state.server-state.ax
@@ -2552,6 +2755,8 @@
     ::
     ^-  [(list move) _http-server-gate]
     :_  http-server-gate
+    :-  =<  give-session-tokens
+        (per-server-event [eny duct now rof] server-state.ax)
     ?:  =(~ sessions)  ~
     =;  next-expiry=@da
       [duct %pass /sessions/expire %b %wait next-expiry]~
@@ -2577,15 +2782,140 @@
 ::  +load: migrate old state to new state (called on vane reload)
 ::
 ++  load
-  |=  old=axle
-  ^+  ..^$
-  ::  enable https redirects if certificate configured
+  =>  |%
+      +$  axle-any
+        $%  [date=%~2020.10.18 server-state=server-state-0]
+            [date=%~2022.7.26 server-state=server-state-0]
+            [date=%~2023.2.17 server-state=server-state-1]
+            [date=%~2023.3.16 server-state=server-state-2]
+            [date=%~2023.4.11 =server-state]
+        ==
+      ::
+      +$  server-state-0
+        $:  bindings=(list [=binding =duct =action])
+            =cors-registry
+            connections=(map duct outstanding-connection)
+            =authentication-state
+            channel-state=channel-state-2
+            domains=(set turf)
+            =http-config
+            ports=[insecure=@ud secure=(unit @ud)]
+            outgoing-duct=duct
+        ==
+      ::
+      +$  server-state-1
+        $:  bindings=(list [=binding =duct =action])
+            =cors-registry
+            connections=(map duct outstanding-connection)
+            =authentication-state
+            channel-state=channel-state-2
+            domains=(set turf)
+            =http-config
+            ports=[insecure=@ud secure=(unit @ud)]
+            outgoing-duct=duct
+            verb=@                                                ::  <-  new
+        ==
+      ::
+      +$  server-state-2
+        $:  bindings=(list [=binding =duct =action])
+            cache=(map url=@t [aeon=@ud val=(unit cache-entry)])  ::  <- new
+            =cors-registry
+            connections=(map duct outstanding-connection)
+            =authentication-state
+            channel-state=channel-state-2
+            domains=(set turf)
+            =http-config
+            ports=[insecure=@ud secure=(unit @ud)]
+            outgoing-duct=duct
+            verb=@
+        ==
+      +$  channel-state-2
+        $:  session=(map @t channel-2)
+            duct-to-key=(map duct @t)
+        ==
+      +$  channel-2
+        $:  state=(each timer duct)
+            next-id=@ud
+            last-ack=@da
+            events=(qeu [id=@ud request-id=@ud channel-event=channel-event-2])
+            unacked=(map @ud @ud)
+            subscriptions=(map @ud [ship=@p app=term =path duc=duct])
+            heartbeat=(unit timer)
+        ==
+      +$  channel-event-2
+        $%  $>(%poke-ack sign:agent:gall)
+            $>(%watch-ack sign:agent:gall)
+            $>(%kick sign:agent:gall)
+            [%fact =mark =noun]
+        ==
+      --
+  |=  old=axle-any
+  ^+  http-server-gate
+  ?-    -.old
   ::
-  =.  redirect.http-config.server-state.old
-    ?&  ?=(^ secure.ports.server-state.old)
-        ?=(^ secure.http-config.server-state.old)
+  ::  adds /~/name
+  ::
+      %~2020.10.18
+    %=  $
+        date.old  %~2022.7.26
+    ::
+        bindings.server-state.old
+      %+  insert-binding
+        [[~ /~/name] outgoing-duct.server-state.old [%name ~]]
+      bindings.server-state.old
     ==
-  ..^$(ax old)
+  ::
+  ::  enables https redirects if certificate configured
+  ::  inits .verb
+  ::
+      %~2022.7.26
+    =.  redirect.http-config.server-state.old
+      ?&  ?=(^ secure.ports.server-state.old)
+          ?=(^ secure.http-config.server-state.old)
+      ==
+    $(old [%~2023.2.17 server-state.old(|8 [|8 verb=0]:server-state.old)])
+  ::
+  ::  inits .cache
+  ::
+      %~2023.2.17
+    $(old [%~2023.3.16 [bindings ~ +]:server-state.old])
+  ::
+  ::  inits channel mode and desks in unacked events
+  ::
+      %~2023.3.16
+  ::
+  ::  Prior to this desks were not part of events.channel.
+  ::  When serializing we used to rely on the desk stored in
+  ::  subscriptions.channel, but this state is deleted when we clog.
+  ::  This migration adds the desk to events.channel, but we can not
+  ::  scry in +load to populate the desks in the old events,
+  ::  so we just kick all subscriptions on all channels.
+    %=    $
+        date.old  %~2023.4.11
+    ::
+        server-state.old
+      %=  server-state.old
+          session.channel-state
+        %-  ~(run by session.channel-state.server-state.old)
+        |=  c=channel-2
+        =;  new-events
+          :-  %json
+          c(events new-events, unacked ~, subscriptions ~)
+        =|  events=(qeu [id=@ud request-id=@ud =channel-event])
+        =/  l  ~(tap in ~(key by subscriptions.c))
+        |-
+        ?~  l  events
+        %=  $
+          l          t.l
+          next-id.c  +(next-id.c)
+          events     (~(put to events) [next-id.c i.l %kick ~])
+        ==
+      ==
+    ==
+  ::
+      %~2023.4.11
+    http-server-gate(ax old)
+  ==
 ::  +stay: produce current state
 ::
 ++  stay  `axle`ax
@@ -2605,15 +2935,7 @@
   ?.  ?=(%& -.why)
     ~
   =*  who  p.why
-  ?:  =(tyl /whey)
-    =/  maz=(list mass)
-      :~  bindings+&+bindings.server-state.ax
-          auth+&+authentication-state.server-state.ax
-          connections+&+connections.server-state.ax
-          channels+&+channel-state.server-state.ax
-          axle+&+ax
-      ==
-    ``mass+!>(maz)
+  ::
   ?.  ?=(%$ -.lot)
     [~ ~]
   ?.  =(our who)
@@ -2621,9 +2943,17 @@
       [~ ~]
     ~&  [%r %scry-foreign-host who]
     ~
-  ?:  &(?=(%x ren) ?=(~ syd))
+  ?:  &(?=(%x ren) ?=(%$ syd))
     =,  server-state.ax
     ?+  tyl  [~ ~]
+      [%$ %whey ~]         =-  ``mass+!>(`(list mass)`-)
+                           :~  bindings+&+bindings.server-state.ax
+                               auth+&+authentication-state.server-state.ax
+                               connections+&+connections.server-state.ax
+                               channels+&+channel-state.server-state.ax
+                               axle+&+ax
+                           ==
+    ::
       [%cors ~]            ``noun+!>(cors-registry)
       [%cors %requests ~]  ``noun+!>(requests.cors-registry)
       [%cors %approved ~]  ``noun+!>(approved.cors-registry)
@@ -2645,6 +2975,14 @@
       %-  =<  request-is-logged-in:authentication
           (per-server-event [eny *duct now rof] server-state.ax)
       %*(. *request:http header-list ['cookie' u.cookies]~)
+    ::
+        [%cache @ @ ~]
+      ?~  aeon=(slaw %ud i.t.tyl)        [~ ~]
+      ?~  url=(slaw %t i.t.t.tyl)        [~ ~]
+      ?~  entry=(~(get by cache) u.url)  [~ ~]
+      ?.  =(u.aeon aeon.u.entry)         [~ ~]
+      ?~  val=val.u.entry                [~ ~]
+      ``noun+!>(u.val)
     ==
   ?.  ?=(%$ ren)
     [~ ~]
@@ -2668,13 +3006,11 @@
       =*  domains  domains.server-state.ax
       =*  ports  ports.server-state.ax
       =/  =host:eyre  [%& ?^(domains n.domains /localhost)]
-      =/  secure=?  &(?=(^ secure.ports) !?=(hoke:eyre host))
       =/  port=(unit @ud)
-        ?.  secure
+        ?.  ?=(^ secure.ports)
           ?:(=(80 insecure.ports) ~ `insecure.ports)
-        ?>  ?=(^ secure.ports)
         ?:(=(443 u.secure.ports) ~ secure.ports)
-      ``[secure port host]
+      ``[?=(^ secure.ports) port host]
     ==
   ==
 --

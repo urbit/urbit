@@ -100,8 +100,6 @@ let
 
     marsSources = callPackage ./nix/pkgs/marsSources { };
 
-    urbit = callPackage ./nix/pkgs/urbit { inherit enableStatic verePace; };
-
     urcrypt = callPackage ./nix/pkgs/urcrypt { inherit enableStatic; };
 
     docker-image = callPackage ./nix/pkgs/docker-image { };
@@ -112,16 +110,14 @@ let
     # Expose packages with local customisations (like patches) for dev access.
     inherit (pkgsStatic) libsigsegv lmdb;
 
-    urbit-debug = urbit.override { enableDebug = true; };
     urbit-tests = libLocal.testFakeShip {
       inherit arvo;
 
-      urbit = urbit-debug;
       pill = solid.lfs;
     };
 
-    ivory-ropsten = ivory.override { arvo = arvo.ropsten; };
-    brass-ropsten = brass.override { arvo = arvo.ropsten; };
+    ivory-goerli = ivory.override { arvo = arvo.goerli; };
+    brass-goerli = brass.override { arvo = arvo.goerli; };
 
     # Create a .tgz of the primary binaries.
     tarball = let

@@ -1,5 +1,5 @@
 /+  *test, test-pub, test-sub
-/=  ames-raw      /sys/vane/ames
+/=  ames-raw  /sys/vane/ames
 /=  gall-raw  /sys/vane/gall
 ::
 =/  ames-bunt  (ames-raw ~zod)
@@ -7,6 +7,15 @@
 ::  basic helpers
 ::
 |%
+++  crypto-core
+  |%  ++  nec  (pit:nu:crub:crypto 512 (shaz 'nec'))
+      ++  bud  (pit:nu:crub:crypto 512 (shaz 'bud'))
+      ++  sign
+        |=  [=ship data=@ux]
+        %.  data
+        ?:(=(ship ~nec) sigh:as:nec sigh:as:bud)
+  --
+::
 ++  make-gall
   |=  =ship
   =/  gall-pupa  (gall-raw ship)
@@ -15,24 +24,27 @@
   adult
 ::
 ++  ames-nec-bud
+  |=  [life=[nec=@ud bud=@ud] rift=[nec=@ud bud=@ud]]
   ::  create ~nec
   ::
   =/  nec  (ames-raw ~nec)
-  =.  now.nec        ~1111.1.1
-  =.  eny.nec        0xdead.beef
-  =.  life.ames-state.nec  2
+  =.  now.nec  ~1111.1.1
+  =.  eny.nec  0xdead.beef
+  =.  life.ames-state.nec  nec.life
+  =.  rift.ames-state.nec  nec.rift
   =.  rof.nec  |=(* ``[%noun !>(*(list turf))])
-  =.  crypto-core.ames-state.nec  (pit:nu:crub:crypto 512 (shaz 'nec'))
+  =.  crypto-core.ames-state.nec  nec:crypto-core
   =/  nec-pub  pub:ex:crypto-core.ames-state.nec
   =/  nec-sec  sec:ex:crypto-core.ames-state.nec
   ::  create ~bud
   ::
   =/  bud  (ames-raw ~bud)
-  =.  now.bud        ~1111.1.1
-  =.  eny.bud        0xbeef.dead
-  =.  life.ames-state.bud  3
+  =.  now.bud  ~1111.1.1
+  =.  eny.bud  0xbeef.dead
+  =.  life.ames-state.bud  bud.life
+  =.  rift.ames-state.bud  bud.rift
   =.  rof.bud  |=(* ``[%noun !>(*(list turf))])
-  =.  crypto-core.ames-state.bud  (pit:nu:crub:crypto 512 (shaz 'bud'))
+  =.  crypto-core.ames-state.bud  bud:crypto-core
   =/  bud-pub  pub:ex:crypto-core.ames-state.bud
   =/  bud-sec  sec:ex:crypto-core.ames-state.bud
   ::
@@ -46,8 +58,8 @@
     =|  =peer-state:ames
     =.  -.peer-state
       :*  symmetric-key=bud-sym
-          life=3
-          rift=0
+          life=bud.life
+          rift=bud.rift
           public-key=bud-pub
           sponsor=~bud
       ==
@@ -60,8 +72,8 @@
     =|  =peer-state:ames
     =.  -.peer-state
       :*  symmetric-key=nec-sym
-          life=2
-          rift=0
+          life=nec.life
+          rift=nec.rift
           public-key=nec-pub
           sponsor=~nec
       ==
@@ -76,7 +88,7 @@
 --
 ::  forward-declare to avoid repeated metamorphoses
 =/  gall-adult  (make-gall ~zod)
-=/  ames-adult  nec:ames-nec-bud
+=/  ames-adult  nec:(ames-nec-bud [1 1] [0 0])
 ::  main core
 ::
 |%
@@ -84,7 +96,8 @@
 +$  ames-gate  _ames-adult
 ::
 ++  nec-bud
-  =/  a  ames-nec-bud
+  |=  [life=[nec=@ud bud=@ud] rift=[nec=@ud bud=@ud]]
+  =/  a  (ames-nec-bud [nec bud]:life [nec bud]:rift)
   =/  gall-nec  (make-gall ~nec)
   =.  gall-nec  (load-agent ~nec gall-nec %sub test-sub)
   =/  gall-bud  (make-gall ~bud)
@@ -156,6 +169,37 @@
   =^  moves  ames-gate  (take:ames-core wire duct dud=~ sign)
   [(expect-eq !>(expected-moves) !>(moves)) ames-gate]
 ::
+++  ames-scry-hunk
+  |=  $:  =ames-gate
+          [now=@da eny=@ =roof]
+          our=ship
+          [lop=@ud len=@ud pax=path]
+      ==
+  ^-  [sig=@ux meows=(list @ux)]
+  =/  =beam
+    :-  [our %$ da+now]
+    (welp /fine/hunk/[(scot %ud lop)]/[(scot %ud len)] pax)
+  =+  pat=(spat pax)
+  =+  wid=(met 3 pat)
+  ?>  (lte wid 384)
+  =/  meows
+    !<  (list @ux)
+    =<  q
+    %-  need  %-  need
+    (scry:(ames-gate now eny roof) ~ %x beam)
+  ::
+  =/   paz=(list have:ames)
+    %+  spun  meows
+    |=  [blob=@ux num=_1]
+    ^-  [have:ames _num]
+    :_  +(num)
+    [num (sift-meow:ames blob)]
+  ::
+  :-  sig:(sift-roar:ames-raw (lent paz) (flop paz))
+  %+  turn  meows
+  |=  meow=@ux
+  (can 3 4^lop 2^wid wid^`@`pat (met 3 meow)^meow ~)
+:: ::
 ++  ames-scry-peer
   |=  $:  =ames-gate
           [now=@da eny=@ =roof]
@@ -182,12 +226,13 @@
   =<  q
   %-  need  %-  need
   %-  scry:(gall-gate now eny roof)
-  [~ %n [[our dude da+now] [(scot %p ship.sub) [term wire]:sub]]]
+  [~ %n [[our dude da+now] [%$ (scot %p ship.sub) [term wire]:sub]]]
 ::
 ++  load-agent
   |=  [=ship =gall-gate =dude:gall =agent:gall]
   =^  *  gall-gate
-    (gall-call gall-gate ~[/jolt] [%jolt %base dude] *roof)
+    %+  gall-call  gall-gate
+    [~[/load] load/[[dude [ship %base da+~1111.1.1] agent]~] *roof]
   =^  *  gall-gate
     =/  =sign-arvo
       :+  %clay  %writ
@@ -195,7 +240,7 @@
     %:  gall-take
       gall-gate
       /sys/cor/[dude]/(scot %p ship)/base/(scot %da ~1111.1.1)
-      ~[/jolt]
+      ~[/load]
       sign-arvo
       *roof
     ==

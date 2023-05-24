@@ -39,7 +39,7 @@
   |=  a=*  ^-  [cord path]
   [;;(@t a) (welp (slag len pax) /[nam])]
 --
-::
+::TODO: make this work with doccords
 :-  %say
 |=  [[now=time @ our=ship ^] typ=$@(~ [p=term ~]) ~]
 =/  pax=path  /(scot %p our)/base/(scot %da now)/gen  :: XX hardcoded

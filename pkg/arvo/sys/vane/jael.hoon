@@ -105,11 +105,8 @@
           $>(%wake gift:behn)                           ::
       ==                                                ::
       $:  %gall                                         ::
-          $>  $?  %onto                                 ::
-                  %unto                                 ::
-              ==                                        ::
-          gift:gall                                ::
-      ==
+          $>(%unto gift:gall)                           ::
+      ==                                                ::
   ==                                                    ::
 --  ::
 ::                                                      ::::
@@ -339,7 +336,7 @@
       =.  pos.zim.pki
         %+  ~(put by pos.zim.pki)
           our
-        [rift=1 life=1 (my [`@ud`1 [`life`1 pub:ex:cub]] ~) `(^sein:title our)]
+        [rift=0 life=1 (my [`@ud`1 [`life`1 pub:ex:cub]] ~) `(^sein:title our)]
       ::  our private key
       ::
       ::    Private key updates are disallowed for fake ships,
@@ -507,7 +504,7 @@
         %ruin
       ::NOTE  we blast this out to _all_ known ducts, because the common
       ::      use case for this is comets, about who nobody cares.
-      =/  dus  ~(key by yen.zim.pki)
+      =/  dus  (~(uni in nel.zim.pki) ~(key by yen.zim.pki))
       =/  sus  ~(. su hen now pki etn)
       =/  sis  ~(tap in ships.tac)
       |-
@@ -550,10 +547,6 @@
       =/  ships  (~(get ju ship-sources-reverse.etn) source-id)
       %-  curd  =<  abet
       (sources:~(feel su hen now pki etn) ships source)
-    ::
-        [%gall %onto *]
-      ~&  [%jael-onto tea hin]
-      +>.$
     ::
         [%gall %unto *]
       ?-    +>-.hin
@@ -832,7 +825,7 @@
           %+  turn  passes
           |=  [who=ship =pass]
           ^-  [who=ship =point]
-          [who [rift=1 life=1 (my [1 1 pass] ~) `(^sein:title who)]]
+          [who [rift=0 life=1 (my [1 1 pass] ~) `(^sein:title who)]]
         =.  moz  [[hen %give %public-keys %full (my points)] moz]
         ..feel
       --
@@ -1073,13 +1066,15 @@
   ::  XX review for security, stability, cases other than now
   ::
   ?.  =(lot [%$ %da now])  ~
-  ?.  =(%$ ren)  [~ ~]
-  ?:  =(tyl /whey)
+  ::
+  ?:  &(?=(%x ren) =(tyl //whey))
     =/  maz=(list mass)
       :~  pki+&+pki.lex
           etn+&+etn.lex
       ==
     ``mass+!>(maz)
+  ::
+  ?.  =(%$ ren)  [~ ~]
   ?+    syd
       ~
   ::
@@ -1145,10 +1140,10 @@
       [~ ~]
     =/  who  (slaw %p i.tyl)
     ?~  who  [~ ~]
-    ::  fake ships always have rift=1
+    ::  fake ships always have rift=0
     ::
     ?:  fak.own.pki.lex
-      ``[%atom !>(1)]
+      ``[%atom !>(0)]
     =/  pos  (~(get by pos.zim.pki.lex) u.who)
     ?~  pos  ~
     ``[%atom !>(rift.u.pos)]
@@ -1159,10 +1154,10 @@
       [~ ~]
     =/  who  (slaw %p i.tyl)
     ?~  who  [~ ~]
-    ::  fake ships always have rift=1
+    ::  fake ships always have rift=0
     ::
     ?:  fak.own.pki.lex
-      ``[%noun !>((some 1))]
+      ``[%noun !>((some 0))]
     =/  pos  (~(get by pos.zim.pki.lex) u.who)
     ?~  pos  ``[%noun !>(~)]
     ``[%noun !>((some rift.u.pos))]
