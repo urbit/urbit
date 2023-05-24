@@ -13109,6 +13109,12 @@
                   [%make a b ~]
                 (rune hep %cnhp exqd)
             ::
+                :-  '.'
+                %+  cook
+                  |=  [%cndt a=spec b=hoon]
+                  [%make b a ~]
+                (rune dot %cndt exqc)
+            ::
                 :-  ':'
                 %+  cook
                   |=  [%cncl a=hoon b=(list spec)]
