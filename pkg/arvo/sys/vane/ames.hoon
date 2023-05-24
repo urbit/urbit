@@ -288,7 +288,9 @@
   ^-  [sig=@ux dat=$@(~ (cask))]
   =/  mes=@
     %+  rep  response-size
-    (roll hav |=([=have dat=(list @ux)] [dat.have dat]))
+    %+  turn
+      (sort hav |=([a=have b=have] (lth fra.a fra.b)))
+    |=(=have dat.have)
   =+  sig=(end 9 mes)
   :-  sig
   =+  dat=(rsh 9 mes)
