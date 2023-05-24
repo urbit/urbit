@@ -3,40 +3,17 @@
 /+  *test, v=test-ames-gall
 /*  kelvin  %hoon  /sys/kelvin
 =>  |%
-    ++  crypto-core
-      |%  ++  nec  (pit:nu:crub:crypto 512 (shaz 'nec'))
-          ++  bud  (pit:nu:crub:crypto 512 (shaz 'bud'))
-          ++  sign
-            |=  [=ship data=@ux]
-            %.  data
-            ?:(=(ship ~nec) sigh:as:nec sigh:as:bud)
-      --
-    ::
-    ++  n-frags
-      |=  n=@
-      ^-  @ux
-      ::  6 chosen randomly to get some trailing zeros
-      ::
-      %+  rsh  10
-      %+  rep  13
-      %+  turn  (gulf 1 n)
-      |=(x=@ (fil 3 1.024 (dis 0xff x)))
-    ::
-    ++  custom-roof
+    ++  kelvin-roof
       ^-  roof
       ::
       |=  [lyc=gang vis=view bem=beam]
       ^-  (unit (unit cage))
+      ?>  =(s.bem /sys/kelvin)
       ?+  vis  ~
           %cp
         =/  black=dict:clay
           %*(. *dict:clay mod.rul %black)
         ``noun+!>([black black])
-      ::
-          %cz
-        ?+  -.r.bem  !!
-          %ud  ``noun+!>((n-frags p.r.bem))
-        ==
       ::
           %cx  ``hoon+!>(kelvin)
       ==
@@ -77,7 +54,7 @@
         sndr-tick=0b1
         rcvr-tick=0b1
         origin=~
-        content=(etch-request-content ~nec /~bud/1/1/c/x/1/kids/sys/kelvin 1)
+        content=(etch-request-content ~nec (weld /~bud/1/1 scry-path) 1)
     ==
   ~&  >  'poke requester %ames with a %keen task'
   =^  t1  ames.nec
@@ -116,9 +93,9 @@
   ~&  >  'gives a remote scry response to listeners'
   =/  [sig=@ux meows=(list @ux)]
     %:  ames-scry-hunk:v  ames.bud
-      [~1111.1.2 0xbeef.dead custom-roof]
+      [~1111.1.2 0xbeef.dead kelvin-roof]
       ~bud
-      [1 16.384 /~bud/1/1/c/x/1/kids/sys/kelvin]
+      [1 16.384 (weld /~bud/1/1 scry-path)]
     ==
   =/  response=shot:ames
     :*  [sndr=~bud rcvr=~nec]
@@ -132,7 +109,7 @@
     ==
   ::
   =/  roar=(unit roar:ames)
-    :+  ~  [/~bud/1/1/c/x/1/kids/sys/kelvin `hoon+kelvin]
+    :+  ~  [(weld /~bud/1/1 scry-path) `hoon+kelvin]
     [[~bud [1 sig]] ~ ~]
   =^  t4  ames.nec
     %:  ames-check-call:v  ames.nec
@@ -155,7 +132,7 @@
         sndr-tick=0b1
         rcvr-tick=0b1
         origin=~
-        content=(etch-request-content ~nec /~bud/1/1/c/x/5/kids/sys/kelvin 1)
+        content=(etch-request-content ~nec (weld /~bud/1/1 future-path) 1)
     ==
   ~&  >  'poke requester %ames with a %keen task for a future case'
   =^  t5  ames.nec
@@ -201,8 +178,8 @@
     %:  ames-check-call:v  ames.nec
       [~1111.1.1 0xdead.beef *roof]
       [~[/wham-duct] %wham ~bud future-path]
-      :~  [~[/keen-duct-4] [%give %tune [~bud /c/x/5/kids/sys/kelvin] ~]]
-          [~[/keen-duct-5] [%give %tune [~bud /c/x/5/kids/sys/kelvin] ~]]
+      :~  [~[/keen-duct-4] [%give %tune [~bud future-path] ~]]
+          [~[/keen-duct-5] [%give %tune [~bud future-path] ~]]
           [~[//unix] %pass future-behn %b %rest ~1111.1.1..00.00.01]
       ==
     ==
