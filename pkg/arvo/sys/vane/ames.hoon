@@ -3775,19 +3775,50 @@
               %done  (done ok.task)
             ::
                 %hear
-              ?.  ?|  corked
+              |^  ?:  ?|  corked
                       ?&  %*(corked sink bone (mix 0b10 bone))
                           =(%nack (received bone))
                   ==  ==
-               (hear [lane shut-packet ok]:task)
-              ::  if we %hear a task on a corked bone, always ack
+                ack-on-corked-bone
               ::
-              =.  peer-core
-                %+  send-shut-packet  bone
-                [message-num.shut-packet.task %| %| ok=& lag=*@dr]
-              %.  sink
-              %+  pe-trace  odd.veb
-              |.("hear {<(received bone)>} on corked bone={<bone>}")
+              ?>  ?=(%& -.meat.shut-packet.task)
+              =+  [num-fragments fragment-num fragment]=+.meat.shut-packet.task
+              ?.  &(=(num-fragments 1) =(fragment-num 0))
+                (hear [lane shut-packet ok]:task)
+              (check-pending-acks fragment-num num-fragments fragment)
+              ::
+              ++  ack-on-corked-bone
+                ::  if we %hear a fragment on a corked bone, always ack
+                ::
+                =.  peer-core
+                  %+  send-shut-packet  bone
+                  [message-num.shut-packet.task %| %| ok=& lag=*@dr]
+                %.  sink
+                %+  pe-trace  odd.veb
+                |.("hear {<(received bone)>} on corked bone={<bone>}")
+              ::
+              ++  check-pending-acks
+                ::  if this is a %cork %plea and are still waiting to
+                ::  hear %acks for previous naxplanation we sent, no-op
+                ::
+                |=  [num=@ud frags=@ud frag=@uw]
+                ^+  sink
+                =/  message-blob=*
+                  %+  assemble-fragments  frags
+                  (~(gas by *(map fragment-num fragment)) [num frag]~)
+                =/  cork-plea=?
+                  ?=(^ ;;((soft [%$ path %cork ~]) message-blob))
+                =/  pending-ack=?
+                  =/  nax-bone=^bone  (mix 0b10 bone)
+                  =/  live-packets=@ud
+                   ~(wyt by live.packet-pump-state.state:(abed:mu nax-bone))
+                  (gth live-packets 0)
+                ?.  &(cork-plea pending-ack)
+                  (hear [lane shut-packet ok]:task)
+                %.  sink
+                %+  pe-trace  odd.veb
+                |.("pending ack for naxplanation, skip %cork bone={<bone>}")
+              --
             ==
           ::
           +|  %tasks
