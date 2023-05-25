@@ -87,7 +87,7 @@
                        =+  new-type=(snag ran ts)
                        :: Note: by assigning a specific type, we may create an evil vase.
                        (fill(rng new-rng) sax(p new-type, q q.sax))
-      [%hint p=* q=*]  sax(q (fill [p=q.p.sax q=q.sax]))
+      [%hint p=* q=*]  sax(q q:(fill [p=q.p.sax q=q.sax]))
     ==
   ++  gen-noun
     =+  start-size=size
