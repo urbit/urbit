@@ -1,6 +1,6 @@
-|_  [eny=@uv runs=@ud fillr=(unit $-([name=@tas size=@ud rng=_og] (unit *)))]
+|_  [eny=@uv runs=@ud]
 ++  check
-  |=  vax=vase
+  |=  [vax=vase samp=(unit $-([@ud _og] vase))]
   =?  runs  =(0 runs)  100
   =+  size=1
   =+  sax=(slot 6 vax)
@@ -10,7 +10,10 @@
   ?:  =(run-i runs)
       ~&  success-runs+run-i
       %.y
-  =+  sam=(~(fill quiz [size rng]) sax)
+  =/  sam=vase
+    ?~  samp
+      (~(fill quiz [size rng]) sax)
+    (u.samp size rng)
   =+  res=(slam vax sam)
   ?:  =(+:res %.y)
     :: Arbitrarily chosen growth pace.
@@ -44,12 +47,7 @@
                        =+  new-type=(snag ran ts)
                        :: Note: by assigning a specific type, we may create an evil vase.
                        (fill(rng new-rng) sax(p new-type, q q.sax))
-      [%hint p=* q=*]  =/  name=(unit @tas)
-                         ?.  ?=([%know p=@tas] +.p.p.sax)  ~
-                         `+>.p.p.sax
-                       =+  filld=|=([a=_(need fillr) b=@tas] (a b size new-rng))
-                       =+  fills=(clef fillr name filld)
-                       sax(q (fall fills (fill [p=q.p.sax q=q.sax])))
+      [%hint p=* q=*]  sax(q (fill [p=q.p.sax q=q.sax]))
     ==
   ++  gen-noun
     =+  start-size=size
