@@ -62,6 +62,10 @@
                        (sink [q.p.sax q.sax])
                      |=  q=vase
                      sax(q q.q)
+    [%hint p=* q=*]  %+  turn
+                       (sink [q.p.sax q.sax])
+                     |=  q=vase
+                     sax(q q.q)
   ==
 ++  quiz
   |_  [size=@ud rng=_og]
