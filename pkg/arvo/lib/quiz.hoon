@@ -1,6 +1,6 @@
 |_  [eny=@uv runs=@ud]
 ++  check
-  |=  [vax=vase samp=(unit $-([@ud _og] vase))]
+  |=  [vax=vase samp=(unit $-([@ud _og] vase)) alts=(unit $-(vase (list vase)))]
   =?  runs  =(0 runs)  100
   =+  size=1
   =+  sax=(slot 6 vax)
@@ -19,8 +19,30 @@
     :: Arbitrarily chosen growth pace.
     =+  new-size=(add +(size) (div (mul size 2) 21))
     $(run-i +(run-i), rng +:(rads:rng 1), size new-size)
-  ~&  fail-with-sam+q.sam
+  =+  sink=?~(alts sink u.alts)
+  =+  sunk=(sink sam)
+  =/  simp=vase
+    |-
+    ?~  sunk
+      sam
+    =+  res=(slam vax i.sunk)
+    ?:  =(+:res %.y)
+      $(sunk t.sunk)
+    =.  sam  i.sunk
+    $(sunk (sink i.sunk))
+  ~&  fail-with-sam+q.simp
   %.n
+++  sink
+  |=  sax=vase
+  ^-  (list vase)
+  ?+  p.sax  ~
+    %noun            ?^  q.sax
+                       ~[(slot 2 sax) (slot 3 sax)]
+                     ~[sax(q (div q.sax 2)) sax(q (dec q.sax))]
+    [%atom p=* q=~]  ?>  ?=(@ q.sax)
+                     ~[sax(q (div q.sax 2)) sax(q (dec q.sax))]
+    [%atom *]        ~
+  ==
 ++  quiz
   |_  [size=@ud rng=_og]
   ++  split-rng
