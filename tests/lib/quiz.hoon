@@ -30,4 +30,7 @@
     !>  42
   =+  check=~(check quiz `@uv`1 100)
   %-  expect  !>((check fate `my-gen ~))
+++  test-drop
+  =+  fate=!>(|=(@ud ^-($?(? %drop) ?:(=(0 +6) %drop =(+6 +((dec +6)))))))
+  %-  expect  !>((check:quiz fate ~ ~))
 --
