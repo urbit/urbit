@@ -46,6 +46,22 @@
                        ~
                      ~[sax(q (div q.sax 2)) sax(q (dec q.sax))]
     [%atom *]        ~
+    [%cell p=* q=*]  =+  p=(slot 2 sax)
+                     =+  q=(slot 3 sax)
+                     =+  ps=(sink p)
+                     =+  qs=(sink q)
+                     ?~  qs
+                       (turn ps |=(p=vase (slop p q)))
+                     |-
+                     ^-  (list vase)
+                     ?~  ps
+                       (turn qs |=(q=vase (slop p q)))
+                     =+  cs=(turn qs |=(q=vase (slop i.ps q)))
+                     (weld cs $(ps t.ps))
+    [%face p=* q=*]  %+  turn
+                       (sink [q.p.sax q.sax])
+                     |=  q=vase
+                     sax(q q.q)
   ==
 ++  quiz
   |_  [size=@ud rng=_og]
