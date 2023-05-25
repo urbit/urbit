@@ -1,6 +1,6 @@
 |_  [eny=@uv runs=@ud]
 ++  check
-  |=  [vax=vase samp=(unit $-([@ud _og] vase)) alts=(unit $-(vase (list vase)))]
+  |=  [vax=vase give=(unit $-([@ud _og] vase)) alts=(unit $-(vase (list vase)))]
   =?  runs  =(0 runs)  100
   =+  size=1
   =+  sax=(slot 6 vax)
@@ -12,9 +12,9 @@
       ~&  [success-runs+run-i drops+drop]
       %.y
   =/  sam=vase
-    ?~  samp
+    ?~  give
       (~(fill quiz [size rng]) sax)
-    (u.samp size rng)
+    (u.give size rng)
   =+  res=(slam vax sam)
   =?  drop  =(q.res %drop)  +(drop)
   ?:  |(=(q.res %drop) =(q.res %.y))

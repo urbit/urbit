@@ -22,14 +22,17 @@
 ++  test-fork
   =+  fate=!>(|=(a=? |(a ?!(a))))
   %-  expect  !>((check:quiz fate ~ ~))
-++  test-hint
-  =+  fate=!>(|=(a=$+(test-type @ud) =(a 42)))
-  =/  my-gen
+++  test-give
+  =+  fate=!>(|=(a=$+(test-type @ud) (lte a 42)))
+  =/  give
     |=  [size=@ud rng=_og]
     ^-  vase
-    !>  42
+    !>
+    ?:  (lth size 42)
+      (rad:rng size)
+    42
   =+  check=~(check quiz `@uv`1 100)
-  %-  expect  !>((check fate `my-gen ~))
+  %-  expect  !>((check fate `give ~))
 ++  test-drop
   =+  fate=!>(|=(@ud ^-($?(? %drop) ?:(=(0 +6) %drop =(+6 +((dec +6)))))))
   %-  expect  !>((check:quiz fate ~ ~))
