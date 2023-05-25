@@ -37,10 +37,8 @@
       [%atom p=* q=~]  sax(q (gen-atom p.p.sax))
       [%atom *]        sax(q (need q.p.sax))
       [%cell p=* q=*]  =+  [rng-1 rng-2]=split-rng
-                       %=  sax
-                          q  :-  q:(fill(rng rng-2) (slot 2 sax))
-                             q:(fill(rng rng-1) (slot 3 sax))
-                       ==
+                       %+  slop  (fill(rng rng-1) (slot 2 sax))
+                                 (fill(rng rng-2) (slot 3 sax))
       [%face p=* q=*]  sax(q q:(fill [p=q.p.sax q=q.sax]))
       [%fork p=*]      =+  ts=~(tap in p.p.p.sax)
                        =^  ran  new-rng  (rads:new-rng (lent ts))
