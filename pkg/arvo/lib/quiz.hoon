@@ -38,8 +38,12 @@
   ?+  p.sax  ~
     %noun            ?^  q.sax
                        ~[(slot 2 sax) (slot 3 sax)]
+                     ?:  =(q.sax 0)
+                       ~
                      ~[sax(q (div q.sax 2)) sax(q (dec q.sax))]
     [%atom p=* q=~]  ?>  ?=(@ q.sax)
+                     ?:  =(q.sax 0)
+                       ~
                      ~[sax(q (div q.sax 2)) sax(q (dec q.sax))]
     [%atom *]        ~
   ==
