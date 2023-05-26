@@ -503,6 +503,25 @@
     !>  [~[/g/talk] %give %done `error]
     !>  (snag 0 `(list move:ames)`moves5)
 ::
+++  test-boon-lost  ^-  tang
+  ::  ~nec -> %plea -> ~bud
+  ::
+  =^  moves1  nec  (call nec ~[/g/talk] %plea ~bud %g /talk [%get %post])
+  =^  moves2  bud  (call bud ~[//unix] %hear (snag-packet 0 moves1))
+  ::  ~bud -> %done -> ~nec
+  ::
+  =^  moves3  bud  (take bud /bone/~nec/0/1 ~[//unix] %g %done ~)
+  =^  moves4  nec  (call nec ~[//unix] %hear (snag-packet 0 moves3))
+  ::  ~bud -> %boon -> ~nec, but we tell ~nec it crashed during the handling
+  ::
+  =^  moves5  bud  (take bud /bone/~nec/0/1 ~[//unix] %g %boon [%post 'first1'])
+  =^  moves6  nec
+    =/  vane-core  (nec(now `@da`(add ~s1 now.nec)))
+    (call:vane-core ~[//unix] `[%test-error ~] %hear (snag-packet 0 moves5))
+  %+  expect-eq
+    !>  [~[/g/talk] %give %lost ~]
+    !>  (snag 0 `(list move:ames)`moves6)
+::
 ++  test-fine-request
   ^-  tang
   =/  want=path  /c/z/1/kids/sys

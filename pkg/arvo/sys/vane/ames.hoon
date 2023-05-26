@@ -4053,6 +4053,7 @@
                   ::
                   =/  dat  [her bone=bone message-num=message-num]
                   ?:(ok "sink boon {<dat>}" "crashed on sink boon {<dat>}")
+              =.  peer-core  (pe-emit (got-duct bone) %give %boon message)
               =?  moves  !ok
                 ::  we previously crashed on this message; notify client vane
                 ::
@@ -4060,8 +4061,6 @@
                 |=  =move
                 ?.  ?=([* %give %boon *] move)  move
                 [duct.move %give %lost ~]
-              ::
-              =.  peer-core  (pe-emit (got-duct bone) %give %boon message)
               ::  send ack unconditionally
               ::
               (call %done ok=%.y)
