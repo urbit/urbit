@@ -288,13 +288,16 @@
   ^-  [sig=@ux dat=$@(~ (cask))]
   =/  mes=@
     %+  rep  response-size
-    (roll hav |=([=have dat=(list @ux)] [dat.have dat]))
+    %+  turn
+      (sort hav |=([a=have b=have] (lth fra.a fra.b)))
+    |=(=have dat.have)
   =+  sig=(end 9 mes)
   :-  sig
   =+  dat=(rsh 9 mes)
   ?~  dat  ~
+  =/  non  ~|(%fine-cue (cue dat))
   ~|  [%fine %response-not-cask]
-  ;;((cask) (cue dat))
+  ;;((cask) non)
 ::  +etch-hunk: helper core to serialize a $hunk
 ::
 ++  etch-hunk
@@ -3635,7 +3638,12 @@
               =/  acc
                 :*  found=`?`%.n
                     resends=*(list static-fragment)
-                    metrics=metrics.state
+                    ::  num-live is still present in pump-metrics but not used
+                    ::  internally by |ga, so we reuse it the +dip traversal to
+                    ::  keep track of the number of packets waiting acks
+                    ::  (also used in the accumulator in +on-done:pu)
+                    ::
+                    metrics=metrics.state(num-live ~(wyt by live.state))
                 ==
               ::
               ^+  [acc live=live.state]
@@ -3647,14 +3655,15 @@
                   ==
               ^-  [new-val=(unit live-packet-val) stop=? _acc]
               ::
-              =/  gauge  (ga metrics.acc ~(wyt by live.state))
+              =/  gauge  (ga metrics.acc num-live.metrics.acc)
               ::  is this the acked packet?
               ::
               ?:  =(key [message-num fragment-num])
                 ::  delete acked packet, update metrics, and stop traversal
                 ::
-                =.  found.acc    %.y
-                =.  metrics.acc  (on-ack:gauge -.val)
+                =.             found.acc  %.y
+                =.           metrics.acc  (on-ack:gauge -.val)
+                =.  num-live.metrics.acc  (dec num-live.metrics.acc)
                 [new-val=~ stop=%.y acc]
               ::  is this a duplicate ack?
               ::
@@ -3686,6 +3695,9 @@
                   (pu-trace snd.veb |.("done {<num=message-num show:gauge>}"))
               ::
               ^+  [metrics=metrics.state live=live.state]
+              ::  number of sent packets awaiting ack
+              ::
+              =.  num-live.metrics.state  ~(wyt by live.state)
               ::
               %^  (dip:packet-queue pump-metrics)  live.state  acc=metrics.state
               |=  $:  metrics=pump-metrics
@@ -3694,7 +3706,7 @@
                   ==
               ^-  [new-val=(unit live-packet-val) stop=? pump-metrics]
               ::
-              =/  gauge  (ga metrics ~(wyt by live.state))
+              =/  gauge  (ga metrics num-live.metrics)
               ::  if we get an out-of-order ack for a message, skip until it
               ::
               ?:  (lth message-num.key message-num)
@@ -3702,7 +3714,8 @@
               ::  if packet was from acked message, delete it and continue
               ::
               ?:  =(message-num.key message-num)
-                [new-val=~ stop=%.n metrics=(on-ack:gauge -.val)]
+                =.  metrics  (on-ack:gauge -.val)
+                [new-val=~ stop=%.n metrics(num-live (dec num-live.metrics))]
               ::  we've gone past the acked message; we're done
               ::
               [new-val=`val stop=%.y metrics]
@@ -4337,12 +4350,12 @@
           ::
           ++  fi-sift-full
             =,  keen
-            ~|  %frag-mismatch
-            ~|  have/num-received
-            ~|  need/num-fragments
-            ~|  path/path
-            ?>  =(num-fragments num-received)
-            ?>  =((lent hav) num-received)
+            ?.  ?&  =(num-fragments num-received)
+                    =((lent hav) num-received)
+                ==
+              ~|  :-  %frag-mismatch
+                  [have/num-received need/num-fragments path/path]
+              !!
             (sift-roar num-fragments hav)
           ::
           ++  fi-fast-retransmit
