@@ -33,7 +33,7 @@
       $(sunk t.sunk)
     =.  sam  i.sunk
     $(sunk (sink i.sunk))
-  ~&  [fail-with-sam+q.simp drops+drop]
+  ~&  [fail-with-sam+(noah simp) drops+drop]
   %.n
 ++  sink
   |=  sax=vase
