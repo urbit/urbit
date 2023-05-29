@@ -200,8 +200,8 @@
       leaf/"source aeon:      {?~(sink <~> <let.u.sink>)}"
       leaf/"kids desk:        {?~(sink <~> ?~(kid.u.sink <~> <u.kid.u.sink>))}"
       leaf/"pending updates:  {<pen>}"
-      leaf/" awaiting perms:  {<`(list perm:gall)`~(tap in cop.dek)>}"
-      leaf/"missing perms:    {<`(list perm:gall)`~(tap in lac.dek)>}"
+      leaf/" awaiting perms:  {=+(~(wyt in cop.dek) ?:(=(0 -) "~" (a-co:co -)))}"
+      leaf/"missing perms:    {=+(~(wyt in lac.dek) ?:(=(0 -) "~" (a-co:co -)))}"
   ==
 ::  +report-kids: non-vat cz hash report for kids desk
 ::
