@@ -1880,8 +1880,11 @@
       (skip +:(get-seal yoki) (cury have:gall pes.dom))
     ?:  &(=(%live liv.dom) !=(~ mis))
       =.  cop.dom  `[yoki (sy mis)]                     ::  [tare] <
-      %-  %+  slog  leaf+"clay: missing permissions on {(trip syd)}:"
-          (turn mis |=(p=perm:gall >p<))
+      =/  msg=tang
+        :~  leaf+"clay: missing {(a-co:co (lent mis))} permissions on {<syd>}"
+            leaf+"clay: run |okay {<syd>} to review permissions"
+        ==
+      %-  (slog msg)
       tare                                              ::  [tare] >
     ::
     =.  lac.dom  (sy mis)
@@ -4827,8 +4830,11 @@
       (cury have:gall pes.dom.den)
     ?.  =(~ mis)
       %-  mean
-      :-  'clay: insufficient permission to live, lacking:'
-      (turn mis |=(p=perm:gall >p<))
+      :~  leaf+"clay: run |okay {<i.desks>} to review permissions"
+          :-  %leaf
+          "clay: missing {(a-co:co (lent mis))}".
+          " permissions to set {<i.desks>} live"
+      ==
     =^  rest  ..abet  $(desks t.desks)
     [[[i.desks pes.dom.den] rest] ..abet]
   ::  +sats: produce list of [desk bill], update ford cache
