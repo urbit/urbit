@@ -3,9 +3,20 @@
 :-  %say
 |=  $:  [now=@da eny=@uvJ bek=beak]
         [=desk pes=(list perm:gall)]
-        ~
+        [all=_| extra=_| ~]
     ==
 :-  %helm-pass
 ^-  note-arvo
-=+  .^(=loam:clay %cx /(scot %p p.bek)//(scot %da now)/loams/(scot %tas desk))
-[%c %curb desk (~(dif in pes.loam) (sy pes))]
+=+  .^(=dome:clay %cx /(scot %p p.bek)//(scot %da now)/domes/(scot %tas desk))
+:^  %c  %curb  desk
+^-  pers:gall
+?:  all
+  ~
+?:  extra
+  =/  in-seal=pers:gall
+    ?.  .^(? %cu (en-beam [p.bek desk da+now] /desk/seal))
+      *pers:gall
+    %-  ~(gas in *pers:gall)
+    +:.^([%0 (list perm:gall)] %cx (en-beam [p.bek desk da+now] /desk/seal))
+  (~(dif in in-seal) (sy pes))
+(~(dif in pes.dome) (sy pes))
