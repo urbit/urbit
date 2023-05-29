@@ -12,7 +12,11 @@
 %.  pes
 %~  gas  in
 %-  ~(uni in pes.dome)
-?:  |(all &(blocking requested))  (~(uni in pin.dome) lac.dome)
-?:  blocking                      lac.dome
-?:  requested                     pin.dome
+?:  |(all &(blocking requested))
+  %-  ~(uni in (~(uni in pin.dome) lac.dome))
+  ?~(cop.dome *pers:gall mis.u.cop.dome)
+?:  blocking
+  (~(uni in lac.dome) ?~(cop.dome *pers:gall mis.u.cop.dome))
+?:  requested
+  pin.dome
 *pers:gall
