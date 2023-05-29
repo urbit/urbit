@@ -3290,6 +3290,7 @@
       gift:dill
       gift:eyre
       gift:gall
+      gift:hugo
       gift:iris
       gift:jael
       gift:khan
@@ -3301,6 +3302,7 @@
       task:dill
       task:eyre
       task:gall
+      task:hugo
       task:iris
       task:jael
       task:khan
@@ -3313,6 +3315,7 @@
       [%d task:dill]
       [%e task:eyre]
       [%g task:gall]
+      [%h task:hugo]
       [%i task:iris]
       [%j task:jael]
       [%k task:khan]
@@ -3335,6 +3338,7 @@
       [%dill gift:dill]
       [%eyre gift:eyre]
       [%gall gift:gall]
+      [%hugo gift:hugo]
       [%iris gift:iris]
       [%jael gift:jael]
       [%khan gift:khan]
