@@ -525,10 +525,10 @@
       ::  only the new-style subscription.
       ::
       =/  hey  (need hey.all.lax)
-      =/  =sock  [our our /dill]
-      :*  [hey %pass / %g %deal sock %hood %leave ~]
-          [hey %pass [%peer %$ ~] %g %deal sock %hood %leave ~]
-          [hey %pass [%peer %$ ~] %g %deal sock %hood %watch [%dill %$ ~]]
+      =/  =sack  [our our /dill]
+      :*  [hey %pass / %g %deal sack %hood %leave ~]
+          [hey %pass [%peer %$ ~] %g %deal sack %hood %leave ~]
+          [hey %pass [%peer %$ ~] %g %deal sack %hood %watch [%dill %$ ~]]
           moz
       ==
     =.  egg.all.lax  |

@@ -674,8 +674,8 @@
       ~(get to blocked)
     ?:  ?=(%| -.blocker)  $
     =/  =move
-      =/  =sock  [ship.attributing.routes our path.attributing.routes]
-      =/  card   [%slip %g %deal sock dap p.blocker]
+      =/  =sack  [ship.attributing.routes our path.attributing.routes]
+      =/  card   [%slip %g %deal sack dap p.blocker]
       [duct card]
     $(moves [move moves])
   ::  +mo-filter-queue: remove all blocked tasks from ship.
@@ -1607,8 +1607,8 @@
       |=  =duct
       ^-  (list move)
       ::
-      =/  =sock  [our our /gall/[agent-name]]
-      :~  [duct %slip %g %deal sock agent-name %leave ~]
+      =/  =sack  [our our /gall/[agent-name]]
+      :~  [duct %slip %g %deal sack agent-name %leave ~]
           [duct %give %unto %kick ~]
       ==
     ::  +ap-kill-down: 2-sided kill from subscriber side
@@ -1895,11 +1895,11 @@
   =/  mo-core  (mo-abed:mo duct)
   ?-    -.task
       %deal
-    =/  [=sock =term =deal]  [p q r]:task
-    ?.  =(q.sock our)
-      ?>  =(p.sock our)
-      mo-abet:(mo-send-foreign-request:mo-core q.sock term deal)
-    mo-abet:(mo-handle-local:mo-core prov p.sock term deal)
+    =/  [=sack =term =deal]  [p q r]:task
+    ?.  =(q.sack our)
+      ?>  =(p.sack our)
+      mo-abet:(mo-send-foreign-request:mo-core q.sack term deal)
+    mo-abet:(mo-handle-local:mo-core prov p.sack term deal)
   ::
       %init  [~ gall-payload(system-duct.state duct)]
       %plea

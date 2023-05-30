@@ -462,7 +462,8 @@
 +$  rift  @ud                                           ::  ship continuity
 +$  mime  (pair mite octs)                              ::  mimetyped data
 +$  octs  (pair @ud @)                                  ::  octet-stream
-+$  sock  (trel ship ship path)                         ::  [src dest prov]
++$  sock  (pair ship ship)                              ::  outgoing [src dest]
++$  sack  (trel ship ship path)                         ::  $sock /w provenance
 +$  stub  (list (pair stye (list @c)))                  ::  styled unicode
 +$  stye  (pair (set deco) (pair tint tint))            ::  decos/bg/fg
 +$  styl  %+  pair  (unit deco)                         ::  cascading style
@@ -2573,7 +2574,7 @@
     ==                                                  ::
   +$  task                                              ::  incoming request
     $~  [%vega ~]                                       ::
-    $%  [%deal p=sock q=term r=deal]                    ::  full transmission
+    $%  [%deal p=sack q=term r=deal]                    ::  full transmission
         [%sear =ship]                                   ::  clear pending queues
         [%jolt =desk =dude]                             ::  (re)start agent
         [%idle =dude]                                   ::  suspend agent

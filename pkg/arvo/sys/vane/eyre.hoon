@@ -1559,7 +1559,7 @@
           ^-  move
           :^  duct  %pass  wire
           =,  i.requests
-          :*  %g  %deal  `sock`[our ship /eyre]  app
+          :*  %g  %deal  `sack`[our ship /eyre]  app
               ^-  task:agent:gall
               :+  %poke-as  mark
               ?-  -.i.requests

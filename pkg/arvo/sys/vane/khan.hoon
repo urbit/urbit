@@ -43,7 +43,7 @@
 =>  |%                                                  ::  %khan types
     +$  move  [p=duct q=(wite note gift)]               ::
     +$  note                                            ::    out request $->
-      $~  [%g %deal *sock *term *deal:gall]             ::
+      $~  [%g %deal *sack *term *deal:gall]             ::
       $%  $:  %g                                        ::    to %gall
               $>(%deal task:gall)                       ::  full transmission
           ==                                            ::
