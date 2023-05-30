@@ -2141,11 +2141,15 @@
       ::  +on-deep: deferred %ames calls from itself
       ::
       ++  on-deep
-        |=  [=ship =deep]
+        |=  =deep
         ^+  event-core
-        =/  ship-state  (~(get by peers.ames-state) ship)
+        ::  currently $deep tasks are all focused on a
+        ::  particular ship but future ones might not
+        ::
+        ?>  ?=([@ =ship *] deep)
+        =/  ship-state  (~(get by peers.ames-state) ship.deep)
         ?>  ?=([~ %known *] ship-state)
-        =+  peer-core=(abed-peer:pe ship +.u.ship-state)
+        =+  peer-core=(abed-peer:pe ship.deep +.u.ship-state)
         |^  ?-  -.deep
           %nack  abet:(send-nack-trace [nack-bone message-blob]:deep)
           %sink  abet:(sink-naxplanation [target-bone naxplanation]:deep)
@@ -3405,7 +3409,7 @@
               ::  nack-trace bone; assume .ok, clear nack from |sink
               ::
               %+  pe-emit  duct
-              [%pass /clear-nack %a %deep her %drop (mix 0b10 bone) num]
+              [%pass /clear-nack %a %deep %drop her (mix 0b10 bone) num]
             ::  if the bone belongs to a closing flow and we got a
             ::  naxplanation, don't relay ack to the client vane
             ::
@@ -3426,7 +3430,7 @@
                   |.("trying to delete a corked bone={<bone>}")
               peer-core
             =/  =wire  (make-bone-wire her her-rift.channel bone)
-            (pe-emit duct %pass wire %a %deep her %kill bone)
+            (pe-emit duct %pass wire %a %deep %kill her bone)
           ::  +pu: construct |packet-pump core
           ::
           ++  pu
@@ -3990,7 +3994,7 @@
                 ::
                 =.  peer-core
                   %+  pe-emit  duct
-                  [%pass wire %a %deep her %nack nack-bone message-blob]
+                  [%pass wire %a %deep %nack her nack-bone message-blob]
                 ::
                 (done ok=%.n)
               ::
@@ -4007,7 +4011,7 @@
                 ::  account for publishers that still handle ames-to-ames %pleas
                 ::
                 ?>  &(?=([%cork *] payload.plea) ?=(%flow -.path.plea))
-                (pe-emit duct %pass wire %a %deep her %cork bone)
+                (pe-emit duct %pass wire %a %deep %cork her bone)
               sink
             ::
             ::  +ha-boon: handle response message, acking unconditionally
@@ -4061,7 +4065,7 @@
                 ::
                 =/  =wire  (make-bone-wire her her-rift.channel target)
                 %+  pe-emit  duct
-                [%pass wire %a %deep her %sink target ;;(naxplanation message)]
+                [%pass wire %a %deep %sink her target ;;(naxplanation message)]
               ::  ack nack-trace message (only applied if we don't later crash)
               ::
               (done ok=%.y)
@@ -4436,12 +4440,12 @@
           ++  max-backoff
             ^-  @dr
             ?:(?=([[%gall %use %ping *] *] duct) ~s25 ~m2)
-          ::  +in-slow-start: %.y iff we're in "slow-start" mode
+          ::  +in-slow-start: %.y if we're in "slow-start" mode
           ::
           ++  in-slow-start
             ^-  ?
             (lth cwnd ssthresh)
-          ::  +in-recovery: %.y iff we're recovering from a skipped packet
+          ::  +in-recovery: %.y if we're recovering from a skipped packet
           ::
           ::    We finish recovering when .live-packets finally dips back
           ::    down to .cwnd.
@@ -4576,7 +4580,7 @@
       %plea  (on-plea:event-core [ship plea]:task)
       %cork  (on-cork:event-core ship.task)
       %kroc  (on-kroc:event-core dry.task)
-      %deep  (on-deep:event-core [ship deep]:task)
+      %deep  (on-deep:event-core deep.task)
     ::
       %keen  (on-keen:event-core +.task)
       %yawn  (on-cancel-scry:event-core | +.task)

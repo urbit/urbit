@@ -795,7 +795,7 @@
         [%cork =ship]
         [%kroc dry=?]
         $>(%plea vane-task)
-        [%deep =ship =deep]
+        [%deep =deep]
     ::
         [%keen spar]
         [%yawn spar]
@@ -906,11 +906,11 @@
   ::  $deep: deferred %ames call, from self, to keep +abet cores pure
   ::
   +$  deep
-    $%  [%nack =nack=bone =message-blob]
-        [%sink =target=bone naxplanation=[=message-num =error]]
-        [%drop =nack=bone =message-num]
-        [%cork =bone]
-        [%kill =bone]
+    $%  [%nack =ship =nack=bone =message-blob]
+        [%sink =ship =target=bone naxplanation=[=message-num =error]]
+        [%drop =ship =nack=bone =message-num]
+        [%cork =ship =bone]
+        [%kill =ship =bone]
     ==
   :: +|  %atomics
   ::
