@@ -3285,25 +3285,25 @@
     |=  r=rule
     r(who (~(del in who.r) |+nom))
   ::
-  ++  set-pine
+  ++  set-hope
     |=  pis=(set perm:gall)
     ^+  ..park
     =?  pis  =(%base syd)  ~
-    =/  pin  ~(tap in pis)
+    =/  ask  ~(tap in pis)
     ::  exclude permissions that are already allowed
     ::
-    =.  pin
-      (skip pin (cury have:gall pes.dom))
+    =.  ask
+      (skip ask (cury have:gall pes.dom))
     ::  exclude permissions that are required by the seal
     ::
-    =.  pin
+    =.  ask
       =^  res  ..park  (aver ~ %x da+now /desk/seal)
-      ?.  ?=([~ ~ *] res)  pin
+      ?.  ?=([~ ~ *] res)  ask
       ~|  [%reading-seal syd]
       =/  reqs  +:!<(seal q.u.u.res)
-      (skip pin (cury have:gall (sy reqs)))
+      (skip ask (cury have:gall (sy reqs)))
     ::
-    tare(pin.dom (sy pin))
+    tare(ask.dom (sy ask))
   ::
   ++  set-curb                                          ::  [goad] <
     |=  pes=(set perm:gall)
@@ -3319,8 +3319,8 @@
       ~|  [%reading-seal syd]
       =/  =seal  !<(seal q.u.u.res)
       (skip +.seal (cury have:gall pes.dom))
-    =.  pin.dom
-      (sy (skip ~(tap in pin.dom) (cury have:gall pes.dom)))
+    =.  ask.dom
+      (sy (skip ~(tap in ask.dom) (cury have:gall pes.dom)))
     ::  if desk is already live, we cannot take away the permissions
     ::  it needs to be live
     ::
@@ -5006,7 +5006,7 @@
     |=  =dojo
     ^-  belt:tire
     =,  dom.dojo
-    [liv pes pin ~(key by wic) ?~(cop.dom.dojo ~ mis.u.cop) lac]
+    [liv pes ask ~(key by wic) ?~(cop.dom.dojo ~ mis.u.cop) lac]
   ::
   ::  [tare] Must be called any time the zest or commits-in-waiting
   ::  might have changed for a desk.  +goad calls this uncondtionally,
@@ -5244,10 +5244,10 @@
       abet:(perm:den pax.req rit.req)
     [mos ..^$]
   ::
-      %pine
+      %hope
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our des.req)
-      abet:(set-pine:den pes.req)
+      abet:(set-hope:den pes.req)
     [mos ..^$]
   ::
       %curb
@@ -5476,7 +5476,7 @@
           liv=zest
           ren=rein
           pes=pers:gall
-          pin=pers:gall
+          ask=pers:gall
       ==
       ::
       +$  raft-14
@@ -6150,8 +6150,8 @@
     --
   ::  +raft-14-to-15:
   ::
-  ::    add .cop, .lac, .pes and .pin to $dome
-  ::    add $belt:tire to $rock:tire with .pes, .pin, .cop and .lac
+  ::    add .cop, .lac, .pes and .ask to $dome
+  ::    add $belt:tire to $rock:tire with .pes, .ask, .cop and .lac
   ::
   ++  raft-14-to-15
     |=  raf=raft-14
@@ -6180,12 +6180,12 @@
     ++  dome-13-to-15
       |=  dom=dome-13
       ^-  dome-15
-      dom(|8 [cop=~ lac=~ &9.dom |9.dom(ren [ren.dom pes=~ pin=~])])
+      dom(|8 [cop=~ lac=~ &9.dom |9.dom(ren [ren.dom pes=~ ask=~])])
     ::
     ++  belt-13-to-15
       |=  [=zest wic=(set weft)]
       ^-  belt:tire
-      [zest=zest pes=~ pin=~ wic=wic cop=~ lac=~]
+      [zest=zest pes=~ ask=~ wic=wic cop=~ lac=~]
     --
   ::
   ::  +raft-13-to-14: add sad, change busy

@@ -30,7 +30,7 @@
   :*  ?~(cop.dome *pers:gall mis.u.cop.dome)
       lac.dome
       pes.dome
-      pin.dome
+      ask.dome
       in-seal
   ==
 --

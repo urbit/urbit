@@ -1494,7 +1494,7 @@
         [%perm des=desk pax=path rit=rite]              ::  change permissions
         [%pork ~]                                       ::  resume commit
         [%prep lat=(map lobe page)]                     ::  prime clay store
-        [%pine des=desk pes=pers:gall]                  ::  app-desired perms
+        [%hope des=desk pes=pers:gall]                  ::  app-desired perms
         [%curb des=desk pes=pers:gall]                  ::  user-approved perms
         [%rein des=desk ren=rein]                       ::  extra apps
         [%stir arg=*]                                   ::  debug
@@ -1567,7 +1567,7 @@
         liv=zest                                        ::  running agents
         ren=rein                                        ::  force agents on/off
         pes=pers:gall                                   ::  user-approved perms
-        pin=pers:gall                                   ::  requested perms
+        ask=pers:gall                                   ::  requested perms
     ==                                                  ::
   +$  loam                                              ::  non-ref transparent
     $:  tom=(map tako norm)                             ::  tombstone override
@@ -1711,7 +1711,7 @@
     +$  belt                                            ::
       $:  =zest                                         ::  running?
           pes=pers:gall                                 ::  granted perms
-          pin=pers:gall                                 ::  requested perms
+          ask=pers:gall                                 ::  requested perms
           wic=(set weft)                                ::  waiting kelvins
           cop=pers:gall                                 ::  perms blocking next
           lac=pers:gall                                 ::  perms blocking live
@@ -1724,7 +1724,7 @@
           $:  %perm                                     ::  permissions:
               =desk                                     ::  on
               pes=pers:gall                             ::  granted
-              pin=pers:gall                             ::  requested
+              ask=pers:gall                             ::  requested
               cop=pers:gall                             ::  blocking a commit
               lac=pers:gall                             ::  blocking live
           ==                                            ::
@@ -1755,7 +1755,7 @@
         =/  got=belt
           (~(gut by rock) desk.wave *belt)
         %+  ~(put by rock)  desk.wave
-        got(pes pes.wave, pin pin.wave, cop cop.wave, lac lac.wave)
+        got(pes pes.wave, ask ask.wave, cop cop.wave, lac lac.wave)
       ==
     ::
     ++  walk                                            ::  diff
@@ -1771,7 +1771,7 @@
         |=  [=desk belt]
         ^-  (list wave)
         :-  [%zest desk zest]
-        :-  [%perm desk pes pin cop lac]
+        :-  [%perm desk pes ask cop lac]
         %+  turn  ~(tap in wic)
         |=  =weft
         [%wait desk weft]
@@ -1806,9 +1806,9 @@
           ^-  wave
           [%warp desk weft]
         ::
-          ?:  =([pes pin cop lac]:aa [pes pin cop lac]:bb)
+          ?:  =([pes ask cop lac]:aa [pes ask cop lac]:bb)
             ~
-          [%perm desk [pes pin cop lac]:bb]~
+          [%perm desk [pes ask cop lac]:bb]~
         ==
       ==
     --
@@ -2805,7 +2805,7 @@
             [%peers spar]              ::  %warp for remote data
           ::
             [%perms desk=(unit desk)]  ::  %curb
-            [%plead desk=(unit desk)]  ::  %pine
+            [%plead desk=(unit desk)]  ::  %hope
             [%liven desk=(unit desk)]  ::  %rein %zest %wick
             [%pulse ~]                 ::  %tire
             [%grave ship=(unit ship) desk=(unit desk)]  ::  %tomb
@@ -3073,7 +3073,7 @@
         ?(%mont %ogre %dirk)        [%clay %mount ~]
         ?(%cred %crew %crow %perm)  [%clay %creds ~]
         %curb                       [%clay %perms `des.note]
-        %pine                       [%clay %plead `des.note]
+        %hope                       [%clay %plead `des.note]
         ?(%merg %fuse %park)        [%clay %write `des.note /]
         %tire                       [%clay %pulse ~]
         ?(%rein %zest)              [%clay %liven `des.note]
