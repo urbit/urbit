@@ -1993,7 +1993,7 @@
   [output eyre-gate]
 ::
 ++  expect-gall-deal
-  |=  $:  expected=[wire=path id=sock app=term =deal:gall]
+  |=  $:  expected=[wire=path id=sack app=term =deal:gall]
           actual=(wind note:eyre-gate gift:eyre-gate)
       ==
   ^-  tang
