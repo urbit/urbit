@@ -398,7 +398,7 @@
           0xb.130c.ab37.ca24.49cd.aecb.23ba.70f1.6f1c.4d00.124e.c9a5.
           3413.3843.d81c.47c4.7040.6e62.3700.0200.0132.e1ab.9004
       ==
-      :~  :-  ~[//unix]  [%pass /bone/~nec/0/1 %a %plea ~nec [%a /cork 1]]
+      :~  :-  ~[//unix]  [%pass /bone/~nec/0/1 %a %deep %cork ~nec 1]
       ==
     ==
   :-  t27  |.  :-  %|
@@ -408,12 +408,12 @@
     %:  ames-check-call:v  ames.bud
       [~1111.1.8 0xbeef.dead *roof]
       :-  ~[/bone/~nec/0/1 //unix]
-      [%plea ~nec [%a /cork 1]]
+      [%deep %cork ~nec 1]
       :~  :-  ~[/bone/~nec/0/1 //unix]  [%give %done ~]
       ==
     ==
-  ::  publisher ames hears cork done from self, sends ack and /cork to self
-  ~&  >  'publisher ames hears cork done from self, sends ack and /cork to self'
+  ::  publisher ames hears cork done from self, sends ack and $cork to self
+  ~&  >  'publisher ames hears cork done from self, sends ack and $cork to self'
   :-  t28  |.  :-  %|
   =^  t29  ames.bud
     %:  ames-check-take:v  ames.bud
@@ -474,8 +474,8 @@
       [%gall %unto %watch-ack ~]
       ~
     ==
-  ::  subscriber ames hears %cork ack, sends /kill to self
-  ~&  >  'subscriber ames hears %cork ack, sends /kill to self'
+  ::  subscriber ames hears %cork ack, sends $kill to self
+  ~&  >  'subscriber ames hears %cork ack, sends $kill to self'
   :-  t32  |.  :-  %|
   =^  t33  ames.nec
     %:  ames-check-call:v  ames.nec
@@ -486,20 +486,20 @@
           1d87.53fe.d7bb.ad00.0100.0223.c6a8.5804
       ==
       :~  :-  ~[//unix]
-          [%pass /bone/~bud/0/0 %a %plea ~bud [%a /kill 0]]
+          [%pass /bone/~bud/0/0 %a %deep %kill ~bud 0]
         ::
           :-  ~[/ames]
           [%pass /pump/~bud/0 %b %rest ~1111.1.5..00.02.00]
       ==
     ==
-  ::  subscriber ames hears /kill from self, deletes the flow
-  ~&  >  'subscriber ames hears /kill from self, deletes the flow'
+  ::  subscriber ames hears $kill from self, deletes the flow
+  ~&  >  'subscriber ames hears $kill from self, deletes the flow'
   :-  t33  |.  :-  %|
   =^  t34  ames.nec
     %:  ames-check-call:v  ames.nec
       [~1111.1.10 0xdead.beef *roof]
       :-  ~[/bone/~bud/0/0 //unix]
-      [%plea ~bud [%a /kill 0]]
+      [%deep %kill ~bud 0]
       ~
     ==
   :-  t34  |.  :-  %&
