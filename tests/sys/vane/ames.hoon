@@ -498,7 +498,7 @@
   ::  ~nec -> naxplanation -> ~nec
   ::
   =/  sink-naxplanation-plea
-    [%plea ~bud %a /sink bone=0 message-num=1 error]
+    [%deep %sink ~bud bone=0 message-num=1 error]
   =^  moves6  nec  (call nec ~[//unix] sink-naxplanation-plea)
   ::  ~nec -> ack nack-trace -> ~bud
   ::
