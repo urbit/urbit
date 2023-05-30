@@ -1738,6 +1738,7 @@
     %d  %dill
     %e  %eyre
     %g  %gall
+    %h  %hugo
     %i  %iris
     %j  %jael
     %k  %khan

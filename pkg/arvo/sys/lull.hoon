@@ -2712,20 +2712,22 @@
   ::                                                    ::::
 ++  hugo  ^?
   |%
-  +$  gift                                              ::  outgoing result
-    $%  [%todo ~]                                       ::  TODO:
-    ==                                                  ::
-  +$  task                                              ::  incoming request
-    :: $~  [%vega ~]                                    ::
-    $%  [%fill tie=(trie octs)]                         ::  fill entire trie
-        :: $>(%born vane-task)                          ::  reset state (TODO I think?)
-        :: $>(%vega vane-task)                          ::  report upgrade
-    ==                                                  ::
-  +$  text  @                                           ::  no aura for paths
-  +$  poth  (list text)                                 ::  trie key
-  ++  trie                                              ::  file-store struct
-    |$  [item]                                          ::
-    [fil=(unit item) dir=(map text $)]                  ::
+  +$  gift                                             ::  outgoing result
+    $%  [%vary ~]                                      ::  trie notification
+    ==                                                 ::
+  +$  task                                             ::  incoming request
+    $~  [%vega ~]                                      ::
+    $%  [%fill tie=(trie octs)]                        ::  fill entire trie
+        [%vary p=(unit ~)]                             ::  watch system output
+        $>(%born vane-task)
+        $>(%trim vane-task)                            ::  reset state (TODO I think?)
+        $>(%vega vane-task)                            ::  report upgrade
+    ==                                                 ::
+  +$  text  @                                          ::  no aura for paths
+  +$  poth  (list text)                                ::  trie key
+  ++  trie                                             ::  file-store struct
+    |$  [item]                                         ::
+    [fil=(unit item) dir=(map text $)]                 ::
   ::
   --  ::hugo
 ::  %iris http-client interface

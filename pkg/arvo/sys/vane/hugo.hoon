@@ -13,9 +13,8 @@
           ducts=(set duct)   ::  listeners
       ==
     --
-=>  :: ~%  %hugo  ..part  ~
-    |%
-    ++  of                                             ::  trie engine, see +axal
+=>  |%
+    ++  ay                                             ::  trie engine, see +axal (maybe put in lull?)
       =|  fat=(trie)
       |@
       ++  del
@@ -114,8 +113,20 @@
   ^-  [(list move) _hugo-gate]
   =/  =task  ((harden task) wrapped-task)
   =^  moves  state
-    ?-  -.task 
-      %fill  `state(files tie.task) :: TODO listeners
+    ?-    -.task 
+        %fill
+      :_  state(files tie.task)
+      (turn ~(tap in ducts) (late %give %vary ~))
+    ::
+        %vary 
+      =.  ducts
+        ?~  p.task  (~(del in ducts) hen)
+        (~(put in ducts) hen)
+      `state
+    ::
+        %born  `state
+        %trim  `state
+        %vega  `state
     == 
   [moves hugo-gate]
 ::  +load: migrate an old state to a new hugo version
@@ -130,19 +141,31 @@
   ^-  roon
   |=  [lyc=gang car=term bem=beam]
   ^-  (unit (unit cage))
+  |^
   ::
   ::  only respond for the local identity, %$ desk, current timestamp
   ::
   ?.  ?&  =(our p.bem)
-          =([%$ %da now] r.bem)
+          =([%da now] r.bem)
           =(%$ q.bem)
       ==
     ~
-  ::  /bx scries
-  ?.  ?=(%x car)  ~
-  ?+  s.bem  [~ ~]
-    [%test ~]  ``noun+!>(~)
+  ?+  car  [~ ~]  
+    %t  (read-t `poth`s.bem)  :: TODO paths HAVE to be (list knot) - how to get (list @)?
+    %x  (read-x `poth`s.bem)  :: TODO
+    %y  (read-y `poth`s.bem)  :: TODO
   ==
+  ::
+  ++  read-t                                           :: list files
+    |=  =poth
+    ``noun+!>(~(tap ay (~(dip ay files) poth)))
+  ++  read-x                                           :: get octs
+    |=  =poth
+    ``noun+!>((~(get ay files) poth))
+  ++  read-y                                           :: list dir
+    |=  =poth
+    ``noun+!>((~(dip ay files) poth))
+  --
 ::
 ++  stay  state
 ++  take
@@ -150,10 +173,5 @@
   ^-  [(list move) _hugo-gate]
   ?^  dud
     ~|(%hugo-take-dud (mean tang.u.dud))
-  ::
-  :: ?>  ?=([%drip @ ~] wire)
-  :: =/  event-core  (per-event [now duct] state)
-  :: =^  moves  state
-  ::   abet:(take-drip:event-core (slav %ud i.t.wire) error.sign)
   [~ hugo-gate]
 --
