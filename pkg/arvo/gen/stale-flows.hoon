@@ -100,7 +100,7 @@
   ::
   ::  only forward flows
   ::
-  =?  pags  &(=(0 (end 0 bone)) (gth retries 10))
+  =?  pags  &(=(0 (end 0 bone)) (gth tries 10))
     ?~  duct=(~(get by by-bone.ossuary.peer-state) bone)
       pags
     ?.  ?=([* [%gall %use sub=@ @ %out @ @ nonce=@ pub=@ *] *] u.duct)
@@ -108,13 +108,13 @@
     =/  =wire  i.t.u.duct
     (~(add ja pags) (snag 2 wire) (snag 8 wire) ship (slag 9 wire))
   ::
-  ~?  &(=(%2 veb) (gth retries 10))
+  ~?  &(=(%2 veb) (gth tries 10))
     =+  arrow=?:(=(0 (end 0 bone)) "<-" "->")
     =+  closing=(~(has in closing.peer-state) bone)
     %+  weld  "{arrow} ({(cite:title ship)}) bone=#{<bone>} "
-    "closing={<closing>} msg=#{<msg>} frag=#{<frag>} #{<retries>}"
+    "closing={<closing>} msg=#{<msg>} frag=#{<frag>} #{<tries>}"
   :-  pags
-  =?  out  (gth retries 10)
+  =?  out  (gth tries 10)
     ?:  =(0 (end 0 bone))
       [b.out +(f.out)]
     [+(b.out) f.out]

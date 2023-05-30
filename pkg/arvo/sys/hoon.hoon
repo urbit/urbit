@@ -2,11 +2,11 @@
 ::::    /sys/hoon                                       ::
   ::                                                    ::
 =<  ride
-=>  %139  =>
+=>  %138  =>
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
-~%  %k.139  ~  ~                                        ::
+~%  %k.138  ~  ~                                        ::
 |%
 ++  hoon-version  +
 --  =>
@@ -11497,9 +11497,15 @@
 ::    5d: parser
 +|  %parser
 ::
-++  vang                                                ::  set ++vast params
-  |=  [bug=? wer=path]                                  ::  bug: debug mode
-  %*(. vast bug bug, wer wer)                           ::  wer: where we are
+::  +vang: set +vast params
+::
+::    bug: debug mode
+::    doc: doccord parsing
+::    wer: where we are
+::
+++  vang
+  |=  [f=$@(? [bug=? doc=?]) wer=path]
+  %*(. vast bug ?@(f f bug.f), doc ?@(f & doc.f), wer wer)
 ::
 ++  vast                                                ::  main parsing core
   =+  [bug=`?`| wer=*path doc=`?`&]
@@ -13130,6 +13136,12 @@
                   [%make a b ~]
                 (rune hep %cnhp exqd)
             ::
+                :-  '.'
+                %+  cook
+                  |=  [%cndt a=spec b=hoon]
+                  [%make b a ~]
+                (rune dot %cndt exqc)
+            ::
                 :-  ':'
                 %+  cook
                   |=  [%cncl a=hoon b=(list spec)]
@@ -13513,7 +13525,7 @@
       ;~  pose
         %+  ifix
           [;~(plug lus tar muck) muck]
-        (most muck ;~(gunk sym loaf))
+        (most muck ;~(gunk sym loll))
       ::
         (easy ~)
       ==
@@ -13590,6 +13602,7 @@
     ++  hunk  (most mush loan)                          ::  gapped specs
     ++  jump  ;~(pose leap:docs gap)                    ::  gap before docs
     ++  loaf  ?:(tol tall wide)                         ::  hoon
+    ++  loll  ?:(tol tall(doc |) wide(doc |))           ::  hoon without docs
     ++  loan  ?:(tol till wyde)                         ::  spec
     ++  lore  (sear |=(=hoon ~(flay ap hoon)) loaf)     ::  skin
     ++  lomp  ;~(plug sym (punt ;~(pfix tis wyde)))     ::  typeable name
@@ -13639,7 +13652,7 @@
     ++  expd  |.(;~(goop loaf loaf loaf loaf))          ::  four hoons
     ++  expe  |.(wisp)                                  ::  core tail
     ++  expf  |.(;~(goop ;~(pfix cen sym) loaf))        ::  %term and hoon
-    ++  expg  |.(;~(goop lomp loaf loaf))               ::  term/spec, two hoons
+    ++  expg  |.(;~(gunk lomp loll loaf))               ::  term/spec, two hoons
     ++  exph  |.((butt ;~(gunk rope rick)))             ::  wing, [wing hoon]s
     ++  expi  |.((butt ;~(goop loaf hank)))             ::  one or more hoons
     ++  expj  |.(;~(goop lore loaf))                    ::  skin and hoon

@@ -129,7 +129,7 @@
     =/  =desk
       ::TODO  maybe should recognize if the user specified a desk explicitly.
       ::      currently eats the :app|desk#gen case.
-      =+  gop=(en-beam dir(q q.gol, s /))
+      =+  gop=(en-beam dir(q q.gol, s /$))
       ?.  .^(? %gu gop)
         q.dir
       .^(desk %gd gop)
@@ -378,7 +378,7 @@
       ^+  +>+>
       ?>  ?=(~ pux)
       %-  he-card(poy `+>+<(pux `way))
-      =/  [=ship =desk =case:clay]  beak
+      =/  [=ship =desk =case]  beak
       [%pass way %arvo %c %warp ship desk ~ %sing care case path]
     ::
     ++  dy-request
@@ -399,7 +399,7 @@
         ::  really shoud stop the thread as well
         ::
         [%pass u.pux %agent [our.hid %spider] %leave ~]
-      =/  [=ship =desk =case:clay]  he-beak
+      =/  [=ship =desk =case]  he-beak
       [%pass u.pux %arvo %c %warp ship desk ~]
     ::
     ++  dy-errd                                         ::  reject change, abet

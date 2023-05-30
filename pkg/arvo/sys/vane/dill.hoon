@@ -250,8 +250,10 @@
           wrapped-task=(hobo task)
       ==
   ^+  [*(list move) ..^$]
-  ~|  wrapped-task
-  =/  task=task  ((harden task) wrapped-task)
+  =/  task=task
+    ~|  wrapped-task
+    ((harden task) wrapped-task)
+  ~|  -.task
   ::  unwrap session tasks, default to session %$
   ::
   =^  ses=@tas  task
@@ -487,14 +489,7 @@
   ::
   ?.  ?=(%& -.why)  ~
   =*  his  p.why
-  ::TODO  don't special-case whey scry
   ::
-  ?:  &(=(ren %$) =(tyl /whey))
-    =/  maz=(list mass)
-      :~  hey+&+hey.all
-          dug+&+dug.all
-      ==
-    ``mass+!>(maz)
   ::  only respond for the local identity, %$ desk, current timestamp
   ::
   ?.  ?&  =(&+our why)
@@ -502,10 +497,14 @@
           =(%$ syd)
       ==
     ~
+  ::  /%x//whey           (list mass)   memory usage labels
   ::  /dy/sessions        (set @tas)    all existing sessions
   ::  /du/sessions/[ses]  ?             does session ses exist?
   ::
   ?+  [ren tyl]  ~
+    [%x %$ %whey ~]     =-  ``mass+!>(`(list mass)`-)
+                        [hey+&+hey.all dug+&+dug.all ~]
+  ::
     [%y %sessions ~]    ``noun+!>(~(key by dug.all))
     [%u %sessions @ ~]  ``noun+!>((~(has by dug.all) (snag 1 tyl)))
   ==

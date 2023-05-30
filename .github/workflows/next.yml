@@ -1,7 +1,9 @@
-name: Feature pull request
+name: Push to next/kelvin/*
 
 on:
-  pull_request:
+  push:
+    branches:
+      - 'next/kelvin/*'
     paths:
       - '.github/workflows/feature.yml'
       - '.github/workflows/develop.yml'
@@ -24,10 +26,6 @@ jobs:
   call-vere:
     uses: ./.github/workflows/shared.yml
     with:
-      pace: 'edge'
-      upload: >-
-        ${{
-        (github.ref_name == 'next/vere' && github.ref_type == 'branch')
-        }}
-      next: ${{ github.base_ref }}
+      upload: true
+      next: ${{ github.ref_name }}
     secrets: inherit
