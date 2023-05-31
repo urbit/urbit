@@ -63,17 +63,33 @@
   ::
   +$  result   response:rpc
   +$  results  (list response:rpc)
+  ++  take-fact
+  |=  =wire
+  =/  m  (strand:strandio ,cage)
+  ^-  form:m
+  |=  tin=strand-input:strand:strandio
+  ~&  'take-fact strand'
+  ?+  in.tin  `[%skip ~]
+      ~  `[%wait ~]
+      [~ %sign [%wait @ ~] %behn %wake *]
+    `[%fail [%timeout ~]]
+      [~ %agent * %fact *]
+    ?.  =(watch+wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done cage.sign.u.in.tin]
+  ==
   ::
   ++  attempt-request
     =/  m  (strand:strandio ,(unit results))
     ^-  form:m
+    ;<  =bowl:spider  bind:m  get-bowl:strandio
+    ~&  'after take-wake'
     ;<    provider-mode=provider-mode:eth-provider
       bind:m
     (scry:strandio provider-mode:eth-provider /gx/eth-provider/get-provider-mode/noun)
     ?:  =(%client -.provider-mode)
       ?>  ?=(%client -.provider-mode)
       =/  client  `client:eth-provider`+.provider-mode
-      ;<  =bowl:spider  bind:m  get-bowl:strandio
       =/  rid  (crip (weld (weld (trip (scot %p our.bowl)) (trip tid.bowl)) (trip (scot %ux eny.bowl))))
       ;<  ~  bind:m
         (watch:strandio [%responses rid ~] [provider.client %eth-provider] [%responses rid ~])
@@ -81,7 +97,12 @@
         %+  poke:strandio
           [provider.client %eth-provider] 
         [%provider-action !>([%provide rid reqs])]
-      ;<  =cage  bind:m  (take-fact:strandio [%responses rid ~])
+      ;<  ~  bind:m  (send-wait:strandio (add now.bowl ~s10))
+      ;<  =cage  bind:m  (take-fact [%responses rid ~])
+      ;<  ~  bind:m  (take-wake:strandio ~)
+      ~&  'after take-fact'
+      ::  convert `(list [id response:rpc:ethereum])`q.cage to (list
+      ::  response:rpc
       (pure:m [~ !<(ethout:eth-provider q.cage)])
     =/  url  ''
     =?  url  ?=(%local -.provider-mode)  url.local.provider-mode
