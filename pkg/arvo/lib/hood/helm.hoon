@@ -188,7 +188,6 @@
       %helm-hi  !>(?~(mes '' (crip u.mes)))
   ==
 ::
-::
 ++  poke-hi
   |=  mes=@t
   ~|  %poke-hi-fail
