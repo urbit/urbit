@@ -1859,7 +1859,7 @@
                  %agent  p.card(task -.task.p.card)
                  %arvo   [- +<]:+.p.card
                ==
-        %give  [%give +<.gift]  ::NOTE  shouldn't ever be forbidden
+        %give  [%give +<.card]  ::NOTE  shouldn't ever be forbidden
       ==
     ::  +ap-handle-result: handle result.
     ::
