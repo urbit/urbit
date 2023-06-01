@@ -2437,11 +2437,12 @@
           ++  meet-alien
             |=  [=ship =point todos=alien-agenda]
             |^  ^+  event-core
+            =+  ship-state=(~(get by peers.ames-state) ship)
             ::  if we're a comet, send self-attestation packet first
             ::
             =?  event-core  =(%pawn (clan:title our))
               =/  =blob  (attestation-packet ship life.point)
-              (send-blob for=| ship blob (~(get by peers.ames-state) ship))
+              (send-blob for=| ship blob ship-state)
             ::  save current duct
             ::
             =/  original-duct  duct
@@ -2464,7 +2465,7 @@
             =.  event-core
               %+  roll  ~(tap in packets.todos)
               |=  [=blob core=_event-core]
-              (send-blob:core for=| ship blob (~(get by peers.ames-state) ship))
+              (send-blob:core for=| ship blob ship-state)
             ::  apply remote scry requests
             ::
             =.  event-core  (meet-alien-fine keens.todos)
