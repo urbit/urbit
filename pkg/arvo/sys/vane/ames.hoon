@@ -288,13 +288,16 @@
   ^-  [sig=@ux dat=$@(~ (cask))]
   =/  mes=@
     %+  rep  response-size
-    (roll hav |=([=have dat=(list @ux)] [dat.have dat]))
+    %+  turn
+      (sort hav |=([a=have b=have] (lth fra.a fra.b)))
+    |=(=have dat.have)
   =+  sig=(end 9 mes)
   :-  sig
   =+  dat=(rsh 9 mes)
   ?~  dat  ~
+  =/  non  ~|(%fine-cue (cue dat))
   ~|  [%fine %response-not-cask]
-  ;;((cask) (cue dat))
+  ;;((cask) non)
 ::  +etch-hunk: helper core to serialize a $hunk
 ::
 ++  etch-hunk
@@ -3365,20 +3368,17 @@
               ::
               =.  snd.peer-state  (~(del by snd.peer-state) bone)
               peer-core
-            ::  if odd bone, ack is on "subscription update" message; no-op
-            ::
-            ?:  =(1 (end 0 bone))  peer-core
-            ::  even bone; is this bone a nack-trace bone?
-            ::
-            ?:  =(1 (end 0 (rsh 0 bone)))
-              ::  nack-trace bone; assume .ok, clear nack from |message-sink
+            ?:  =(1 (end 0 bone))
+              ::  ack is on "subscription update" message; no-op
+              ::
+              ?:  =(0 (end 0 (rsh 0 bone)))  peer-core
+              ::  nack-trace bone; assume .ok, clear nack from |sink
               ::
               abet:(call:(abed:mi (mix 0b10 bone)) %drop message-num)
-            ?:  &(closing ?=(%near -.task))
-              ::  if the bone belongs to a closing flow and we got a
-              ::  naxplanation, don't relay  ack to the client vane
-              ::
-              peer-core
+            ::  if the bone belongs to a closing flow and we got a
+            ::  naxplanation, don't relay ack to the client vane
+            ::
+            ?:  &(closing ?=(%near -.task))  peer-core
             ::  not a nack-trace bone; relay ack to client vane
             ::
             (pe-emit (got-duct bone) %give %done error)
@@ -3784,20 +3784,45 @@
               %drop  sink(nax.state (~(del in nax.state) message-num.task))
               %done  (done ok.task)
             ::
-                %hear
-              ?.  ?|  corked
+                 %hear
+              |^  ?:  ?|  corked
                       ?&  %*(corked sink bone (mix 0b10 bone))
                           =(%nack (received bone))
                   ==  ==
-               (hear [lane shut-packet ok]:task)
-              ::  if we %hear a task on a corked bone, always ack
+                ack-on-corked-bone
               ::
-              =.  peer-core
-                %+  send-shut-packet  bone
-                [message-num.shut-packet.task %| %| ok=& lag=*@dr]
-              %.  sink
-              %+  pe-trace  odd.veb
-              |.("hear {<(received bone)>} on corked bone={<bone>}")
+              ?>  ?=(%& -.meat.shut-packet.task)
+              =+  [num-fragments fragment-num fragment]=+.meat.shut-packet.task
+              ?:  &(=(num-fragments 1) =(fragment-num 0))
+                (check-pending-acks fragment)
+              (hear [lane shut-packet ok]:task)
+              ::
+              ++  ack-on-corked-bone
+                ::  if we %hear a fragment on a corked bone, always ack
+                ::
+                =.  peer-core
+                  %+  send-shut-packet  bone
+                  [message-num.shut-packet.task %| %| ok=& lag=*@dr]
+                %.  sink
+                %+  pe-trace  odd.veb
+                |.("hear {<(received bone)>} on corked bone={<bone>}")
+              ::
+              ++  check-pending-acks
+                ::  if this is a %cork %plea and we are still waiting to
+                ::  hear %acks for previous naxplanations we sent, no-op
+                ::
+                |=  frag=@uw
+                ^+  sink
+                =/  blob=*  (cue (rep packet-size [frag]~))
+                =+  pump=(abed:mu (mix 0b10 bone))
+                ?.  ?&  ?=(^ ;;((soft [%$ path %cork ~]) blob))
+                        ?=(^ live.packet-pump-state.state.pump)
+                    ==
+                  (hear [lane shut-packet ok]:task)
+                %.  sink
+                %+  pe-trace  odd.veb
+                |.("pending ack for naxplanation, skip %cork bone={<bone>}")
+              --
             ==
           ::
           +|  %tasks
@@ -4028,6 +4053,7 @@
                   ::
                   =/  dat  [her bone=bone message-num=message-num]
                   ?:(ok "sink boon {<dat>}" "crashed on sink boon {<dat>}")
+              =.  peer-core  (pe-emit (got-duct bone) %give %boon message)
               =?  moves  !ok
                 ::  we previously crashed on this message; notify client vane
                 ::
@@ -4035,8 +4061,6 @@
                 |=  =move
                 ?.  ?=([* %give %boon *] move)  move
                 [duct.move %give %lost ~]
-              ::
-              =.  peer-core  (pe-emit (got-duct bone) %give %boon message)
               ::  send ack unconditionally
               ::
               (call %done ok=%.y)
@@ -4322,12 +4346,12 @@
           ::
           ++  fi-sift-full
             =,  keen
-            ~|  %frag-mismatch
-            ~|  have/num-received
-            ~|  need/num-fragments
-            ~|  path/path
-            ?>  =(num-fragments num-received)
-            ?>  =((lent hav) num-received)
+            ?.  ?&  =(num-fragments num-received)
+                    =((lent hav) num-received)
+                ==
+              ~|  :-  %frag-mismatch
+                  [have/num-received need/num-fragments path/path]
+              !!
             (sift-roar num-fragments hav)
           ::
           ++  fi-fast-retransmit
