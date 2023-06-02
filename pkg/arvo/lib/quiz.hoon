@@ -1,6 +1,7 @@
 |_  [eny=@uv runs=@ud]
++$  give  $-([@ud _og] vase)
 ++  check
-  |=  [vax=vase give=(unit $-([@ud _og] vase)) alts=(unit $-(vase (list vase)))]
+  |=  [vax=vase give=(unit give) alts=(unit $-(vase (list vase)))]
   =?  runs  =(0 runs)  100
   =+  size=1
   =+  sax=(slot 6 vax)
@@ -82,8 +83,8 @@
     ^+  sax
     =+  new-rng=+:(rads:rng 1)
     ?+  p.sax  ~&(warn-unfill-sam+`type`p.sax sax)
-      %noun            sax(q (gen-noun))
-      [%atom p=* q=~]  sax(q gen-atom)
+      %noun            (gen-noun)
+      [%atom p=* q=~]  gen-atom
       [%atom *]        sax(q (need q.p.sax))
       [%cell p=* q=*]  =+  [rng-1 rng-2]=split-rng
                        %+  slop  (fill(rng rng-1) (slot 2 sax))
@@ -98,7 +99,9 @@
     ==
   ++  gen-noun
     =+  start-size=size
-    |.  ^-  noun
+    |.
+    !>
+    ^-  noun
     ?:  (lte size 1)
       (rad:rng start-size)  :: leafs should be able to make large atoms.
     =^  ran  rng  (rads:rng 3)
@@ -110,8 +113,6 @@
     =+  [rng-1 rng-2]=split-rng :: 1/3 chance for different subtrees. 
     :-  $(size (div size 2), rng rng-1)
     $(size (div size 2), rng rng-2)
-  ++  gen-atom
-    ^-  @
-    (rad:rng size)
+  ++  gen-atom  !>  (rad:rng size)
   --
 --
