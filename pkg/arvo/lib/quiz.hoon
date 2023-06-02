@@ -83,7 +83,7 @@
     =+  new-rng=+:(rads:rng 1)
     ?+  p.sax  ~&(warn-unfill-sam+`type`p.sax sax)
       %noun            sax(q (gen-noun))
-      [%atom p=* q=~]  sax(q (gen-atom p.p.sax))
+      [%atom p=* q=~]  sax(q gen-atom)
       [%atom *]        sax(q (need q.p.sax))
       [%cell p=* q=*]  =+  [rng-1 rng-2]=split-rng
                        %+  slop  (fill(rng rng-1) (slot 2 sax))
@@ -111,7 +111,6 @@
     :-  $(size (div size 2), rng rng-1)
     $(size (div size 2), rng rng-2)
   ++  gen-atom
-    |=  aur=@tas
     ^-  @
     (rad:rng size)
   --
