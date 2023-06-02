@@ -2683,7 +2683,7 @@
     ==
   ::  TODO: add more flags?
   ::
-  +$  verb  ?(%odd)
+  +$  verb  ?(%odd %pes)
   ::
   ::  +agent: app core
   ::

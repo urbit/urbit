@@ -10,6 +10,7 @@
   ::  TODO: add more flags?
   ::
   :*  odd=`?`%.n  ::  unusual events
+      pes=`?`%.n  ::  permission failures
   ==
 =,  gall
 =>
@@ -936,6 +937,7 @@
       ^+  veb.bug.state
       ?-  verb
         %odd  acc(odd %.y)
+        %pes  acc(pes %.y)
       ==
     mo-core
   ::  +mo-sift: handle request to filter debug output by agent
@@ -1773,12 +1775,12 @@
       |=  [lyc=gang vis=view bem=beam]
       ^-  (unit (unit (cask vase)))
       ?.  (rite our [vis bem] (~(get ju perms.state) q.beak.yoke))
-        =-  %-  (slog leaf+- ~)
-            ::TODO PERM  replace the below with ~ to start enforcing
-            (rof lyc vis bem)
         =/  sef=tape  "%{(trip q.beak.yoke)}/{(trip agent-name)}"
         =/  tar=tape  "{<vis>} {(spud (en-beam bem))}"
-        "insufficient permission: {sef} scrying for {tar}"
+        ::TODO PERM  replace the rof arg below with ~ to start enforcing
+        %.  (rof lyc vis bem)
+        %+  trace  pes.veb.bug.state
+        [leaf+"insufficient permission: {sef} scrying for {tar}" ~]
       (rof lyc vis bem)
     ::  +ap-ingest: call agent arm, check perms, emit result
     ::
@@ -1795,7 +1797,9 @@
         =+  b=(ap-douane -.p.result)
         ?~  b  ~
         =/  sef=tape  "%{(trip q.beak.yoke)}/{(trip agent-name)}"
-        ((slog leaf+"{sef} violated permissions:" u.b) ~)
+        %.  ~
+        %+  trace  pes.veb.bug.state
+        [leaf+"{sef} violated permissions:" u.b]
       ::  handle permission violation, except for %poke and %watch
       ::
       ?:  &(?=(^ forbad) !?=(?(%poke %watch) for))
@@ -2067,7 +2071,11 @@
         contacts=(set ship)
         eggs=(map term egg)
         blocked=(map term (qeu blocked-move))
-        =bug
+        bug=bug-13
+    ==
+  +$  bug-13
+    $:  veb=odd=?
+        dudes=(set dude)
     ==
   +$  egg-13
     $%  [%nuke sky=(map spur @ud)]
@@ -2093,7 +2101,7 @@
         contacts=(set ship)
         eggs=(map term egg-12)
         blocked=(map term (qeu blocked-move))
-        =bug
+        bug=bug-13
     ==
   +$  egg-12
     $%  [%nuke sky=(map spur @ud)]
@@ -2118,7 +2126,7 @@
         contacts=(set ship)
         eggs=(map term egg-11)
         blocked=(map term (qeu blocked-move))
-        =bug
+        bug=bug-13
     ==
   +$  egg-11
     $:  control-duct=duct
@@ -2140,7 +2148,7 @@
         contacts=(set ship)
         eggs=(map term egg-10)
         blocked=(map term (qeu blocked-move))
-        =bug
+        bug=bug-13
     ==
   +$  egg-10
     $:  control-duct=duct
@@ -2162,7 +2170,7 @@
         contacts=(set ship)
         eggs=(map term egg-10)
         blocked=(map term (qeu blocked-move))
-        =bug
+        bug=bug-13
     ==
   ::
   +$  remote-request-9  ?(remote-request %cork)
@@ -2212,7 +2220,7 @@
   ++  spore-8-to-9
     |=  old=spore-8
     ^-  spore-9
-    =-  old(- %9, eggs -, blocked [blocked.old *bug])
+    =-  old(- %9, eggs -, blocked [blocked.old *bug-13])
     %-  ~(run by eggs.old)
     |=  =egg-8
     ^-  egg-10
@@ -2289,7 +2297,11 @@
   ++  spore-13-to-14
     |=  old=spore-13
     ^-  spore
-    old(- %14, |6 [perms=~ wards=~ |6.old])
+    %=  old
+      -    %14
+      |6   [perms=~ wards=~ |6.old]
+      bug  bug.old(veb [odd=odd.veb.bug.old pes=|])
+    ==
   --
 ::  +scry: standard scry
 ::
