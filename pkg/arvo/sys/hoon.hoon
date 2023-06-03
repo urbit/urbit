@@ -1545,7 +1545,7 @@
     |*  [key=_?>(?=(^ a) p.n.a) fun=$-((unit _?>(?=(^ a) q.n.a)) _?>(?=(^ a) q.n.a))]
     ^+  a
     ::
-    ?~  a  [key (fun ~) ~ ~]
+    ?~  a  [[key (fun ~)] ~ ~]
     ::
     ?:  =(key p.n.a)
       a(q.n (fun `q.n.a))
@@ -1559,7 +1559,7 @@
     |*  [key=_?>(?=(^ a) p.n.a) fun=$-(_?>(?=(^ a) q.n.a) _?>(?=(^ a) q.n.a))]
     ^+  a
     ::
-    ?~  a  [key (fun) ~ ~]
+    ?~  a  [[key (fun)] ~ ~]
     ::
     ?:  =(key p.n.a)
       a(q.n (fun q.n.a))
