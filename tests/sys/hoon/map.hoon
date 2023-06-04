@@ -594,12 +594,12 @@
     ::
     %+  expect-eq
       !>  ~
-      !>  (~(rut by m-nul) add)
+      !>  (~(urn by m-nul) add)
     ::  Checks success
     ::
     %+  expect-eq
       !>  (my ~[[1 3] [2 6] [3 9] [4 12] [5 15] [6 18] [7 21]])
-      !>  (~(rut by m-asc) add)
+      !>  (~(urn by m-asc) add)
   ==
 ::
 ::  Test listify pairs

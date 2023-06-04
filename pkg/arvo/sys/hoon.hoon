@@ -1620,12 +1620,6 @@
     ?~  a  a
     [n=[p=p.n.a q=(b q.n.a)] l=$(a l.a) r=$(a r.a)]
   ::
-  ++  rut                                               ::  apply gate to nodes
-    |*  b=gate
-    |-
-    ?~  a  a
-    [n=[p=p.n.a q=(b p.n.a q.n.a)] l=$(a l.a) r=$(a r.a)]
-  ::
   ++  tap                                               ::  listify pairs
     =<  $
     ~/  %tap

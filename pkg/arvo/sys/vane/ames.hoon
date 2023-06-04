@@ -4639,7 +4639,7 @@
     |=  ames-state=ames-state-5
     ^-  ames-state-6
     :_  +.ames-state
-    %-  ~(rut by peers.ames-state)
+    %-  ~(urn by peers.ames-state)
     |=  [=ship ship-state=ship-state-5]
     ^-  ship-state-6
     ?.  ?=(%known -.ship-state)
