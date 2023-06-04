@@ -177,14 +177,14 @@
   ::  in both maps are the same as before, and that both returned
   ::  maps are correct
   ::
-  =/  splits-a=[(map) (map)]  (~(bif by m-des) [99 99])
-  =/  splits-b=[(map) (map)]  (~(bif by m-des) [6 12])
+  =/  splits-a=[(map) (map)]  (~(bif by m-des) 99)
+  =/  splits-b=[(map) (map)]  (~(bif by m-des) 6)
   ;:  weld
     ::  Checks with empty map
     ::
     %+  expect-eq
       !>  [~ ~]
-      !>  (~(bif by m-nul) [1 2])
+      !>  (~(bif by m-nul) 1)
     ::  Checks bifurcating by non-existing element
     ::
     %+  expect-eq
