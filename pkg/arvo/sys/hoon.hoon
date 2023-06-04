@@ -1819,8 +1819,7 @@
   (molt `(list [p=_-<.a q=_->.a])`a)
 ::
 ++  molt                                                ::  map from pair list
-  |*  a=(list (pair))  ::  ^-  =,(i.-.a (map _p _q))
-  (~(gas by `(tree [p=_p.i.-.a q=_q.i.-.a])`~) a)
+  my:nl
 ::
 ++  silt                                                ::  set from list
   |*  a=(list)  ::  ^-  (set _i.-.a)
