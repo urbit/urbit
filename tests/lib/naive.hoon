@@ -762,19 +762,19 @@
     =/  current-event  i.filtered-events
     ?:  =(rank.current-event %galaxy)
       ?+  dominion.current-event  !!
-        %l1     (list-in-jar (ly ~[~rut]) current-event)
-        %spawn  (list-in-jar (ly ~[~tyl]) current-event)
+        %l1     (list-in-jar (limo ~[~rut]) current-event)
+        %spawn  (list-in-jar (limo ~[~tyl]) current-event)
       ==
     ?:  =(rank.current-event %star)
       ?-  dominion.current-event
-        %l1     (list-in-jar (ly ~[~rigrut]) current-event)
-        %spawn  (list-in-jar (ly ~[~holrut]) current-event)
-        %l2     (list-in-jar (ly ~[~losrut]) current-event)
+        %l1     (list-in-jar (limo ~[~rigrut]) current-event)
+        %spawn  (list-in-jar (limo ~[~holrut]) current-event)
+        %l2     (list-in-jar (limo ~[~losrut]) current-event)
       ==
     ?:  =(rank.current-event %planet)
       ?+  dominion.current-event  !!
         %l1     %-  list-in-jar
-                :-  %-  ly
+                :-  %-  limo
                     :*  ~larsyx-mapmeg
                         ~rabsum-ravtyd
                         ~radres-tinnyl
@@ -782,7 +782,7 @@
                     ==
                 current-event
         %l2     %-  list-in-jar
-                :-  %-  ly
+                :-  %-  limo
                     :*  ~dovmul-mogryt
                         ~pidted-dacnum
                         ~pinpun-pilsun
@@ -949,7 +949,7 @@
 ++  common-vote  %vote-key-0
 ++  common-ownr  %ownr-key-0
 ++  common-tran  %tran-key-0
-++  rut-ship-list  %-  ly
+++  rut-ship-list  %-  limo
                    :*  ~rut
                        ~tyl
                        ~holrut
@@ -2739,13 +2739,13 @@
   ::
   =,  l2-event-gen
   =/  test1=tx-list
-    (ly marbud-sproxy marbud-mproxy marbud-tproxy marbud-xfr-breach ~)
+    (limo marbud-sproxy marbud-mproxy marbud-tproxy marbud-xfr-breach ~)
   =/  test2=tx-list
-    (ly marbud-new-keys marbud-transfer-breach ~)
+    (limo marbud-new-keys marbud-transfer-breach ~)
   =/  test3=tx-list
-    (ly marbud-sproxy marbud-mproxy marbud-tproxy marbud-xfr-no-breach ~)
+    (limo marbud-sproxy marbud-mproxy marbud-tproxy marbud-xfr-no-breach ~)
   =/  test4=tx-list
-    (ly marbud-new-keys marbud-transfer-no-breach ~)
+    (limo marbud-new-keys marbud-transfer-no-breach ~)
   ::
   ;:  weld
     %+  expect-eq
