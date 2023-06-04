@@ -1466,6 +1466,8 @@
           (cat 3 '|' gen)
         :((cury cat 3) ':' app '|' gen)
       =+  [our=(scot %p our.hid) now=(scot %da now.hid)]
+      ?.  .^(? %gu /[our]/[app]/[now]/$)
+        ~
       =+  .^(=desk %gd /[our]/[app]/[now]/$)
       =/  pfix=path  /[our]/[desk]/[now]/gen/[app]
       ::
