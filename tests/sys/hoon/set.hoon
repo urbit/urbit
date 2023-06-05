@@ -8,7 +8,7 @@
 ::  Test logical AND
 ::
 ++  test-set-all  ^-  tang
-  =/  s-asc=(set @)   (sy (gulf 1 7))
+  =/  s-asc=(set @)   (silt (gulf 1 7))
   ;:  weld
     ::  Checks with empty set
     ::
@@ -22,7 +22,7 @@
     ::
     %+  expect-eq
       !>  %.n
-      !>  (~(all in (sy ~[1])) |=(e=@ =(e 43)))
+      !>  (~(all in (silt ~[1])) |=(e=@ =(e 43)))
     ::  Checks not all elements pass
     ::
     %+  expect-eq
@@ -38,7 +38,7 @@
 ::  Test logical OR
 ::
 ++  test-set-any  ^-  tang
-  =/  s-asc=(set @)   (sy (gulf 1 7))
+  =/  s-asc=(set @)   (silt (gulf 1 7))
   ;:  weld
     ::  Checks with empty set
     ::
@@ -52,7 +52,7 @@
     ::
     %+  expect-eq
       !>  %.n
-      !>  (~(any in (sy ~[1])) |=(e=@ =(e 43)))
+      !>  (~(any in (silt ~[1])) |=(e=@ =(e 43)))
     ::  Checks >1 element success
     ::
     %+  expect-eq
@@ -137,7 +137,7 @@
 ::  Test splits a in b
 ::
 ++  test-set-bif  ^-  tang
-  =/  s-asc=(set @)   (sy (gulf 1 7))
+  =/  s-asc=(set @)   (silt (gulf 1 7))
   =/  s-nul=(set @)   *(set @)
   =/  splits-a=[(set) (set)]  (~(bif in s-asc) 99)
   =/  splits-b=[(set) (set)]  (~(bif in s-asc) 6)
@@ -183,7 +183,7 @@
 :: Test b without any a
 ::
 ++  test-set-del  ^-  tang
-  =/  s-asc=(set @)   (sy (gulf 1 7))
+  =/  s-asc=(set @)   (silt (gulf 1 7))
   ;:  weld
     ::  Checks with empty set
     ::
@@ -199,20 +199,20 @@
     ::
     %+  expect-eq
       !>  ~
-      !>  (~(del in (sy ~[1])) 1)
+      !>  (~(del in (silt ~[1])) 1)
     ::  Checks deleting one element
     ::
     %+  expect-eq
-      !>  (sy (gulf 1 6))
+      !>  (silt (gulf 1 6))
       !>  (~(del in s-asc) 7)
   ==
 ::
 ::  Test difference
 ::
 ++  test-set-dif  ^-  tang
-  =/  s-des=(set @)   (sy (flop (gulf 1 7)))
-  =/  s-asc=(set @)   (sy (gulf 1 7))
-  =/  s-dos=(set @)   (sy ~[8 9])
+  =/  s-des=(set @)   (silt (flop (gulf 1 7)))
+  =/  s-asc=(set @)   (silt (gulf 1 7))
+  =/  s-dos=(set @)   (silt ~[8 9])
   ;:  weld
     ::  Checks with empty set
     ::
@@ -236,7 +236,7 @@
     ::
     %+  expect-eq
       !>  s-dos
-      !>  (~(dif in (sy ~[1 8 9])) s-asc)
+      !>  (~(dif in (silt ~[1 8 9])) s-asc)
   ==
 ::
 ::  Test axis of a in b
@@ -316,7 +316,7 @@
 ::
 ++  test-set-has  ^-  tang
   =/  s-nul=(set @)  *(set @)
-  =/  s-asc=(set @)  (sy (gulf 1 7))
+  =/  s-asc=(set @)  (silt (gulf 1 7))
   ;:  weld
     ::  Checks with empty set
     ::
@@ -339,10 +339,10 @@
 ::
 ++  test-set-int  ^-  tang
   =/  s-nul=(set @)  *(set @)
-  =/  s-asc=(set @)  (sy (gulf 1 7))
-  =/  s-des=(set @)  (sy (flop (gulf 1 7)))
-  =/  s-dos=(set @)  (sy (gulf 8 9))
-  =/  s-dup  (sy ~[1 1 4 1 3 5 9 4])
+  =/  s-asc=(set @)  (silt (gulf 1 7))
+  =/  s-des=(set @)  (silt (flop (gulf 1 7)))
+  =/  s-dos=(set @)  (silt (gulf 8 9))
+  =/  s-dup  (silt ~[1 1 4 1 3 5 9 4])
   ;:  weld
     ::  Checks with empty set
     ::
@@ -365,7 +365,7 @@
     ::  Checks success (partial intersection)
     ::
     %+  expect-eq
-      !>  (sy ~[9])
+      !>  (silt ~[9])
       !>  (~(int in s-dos) s-dup)
   ==
 ::
@@ -373,12 +373,12 @@
 ::
 ++  test-set-put  ^-  tang
   =/  s-nul=(set @)  *(set @)
-  =/  s-asc=(set @)  (sy (gulf 1 7))
+  =/  s-asc=(set @)  (silt (gulf 1 7))
   ;:  weld
     ::  Checks with empty set
     ::
     %+  expect-eq
-      !>  (sy ~[6])
+      !>  (silt ~[6])
       !>  (~(put in s-nul) 6)
     ::  Checks with existing key
     ::
@@ -388,14 +388,14 @@
     ::  Checks adding new element
     ::
     %+  expect-eq
-      !>  (sy (gulf 1 8))
+      !>  (silt (gulf 1 8))
       !>  (~(put in s-asc) 8)
   ==
 ::  Test replace in product
 ::
 ++  test-set-rep  ^-  tang
   =/  s-nul=(set @)  *(set @)
-  =/  s-asc=(set @)  (sy (gulf 1 7))
+  =/  s-asc=(set @)  (silt (gulf 1 7))
   ;:  weld
     ::  Checks with empty set
     ::
@@ -413,7 +413,7 @@
 ::
 ++  test-set-run  ^-  tang
   =/  s-nul  *(set @)
-  =/  s-asc  (sy (gulf 1 7))
+  =/  s-asc  (silt (gulf 1 7))
   ;:  weld
     ::  Checks with empty map
     ::
@@ -423,15 +423,15 @@
     ::  Checks success
     ::
     %+  expect-eq
-      !>  (sy (gulf 0 6))
+      !>  (silt (gulf 0 6))
       !>  (~(run in s-asc) dec)
   ==
 ::
 ::  Converts a set to list
 ::
 ++  test-set-tap  ^-  tang
-  =/  s-dup  (sy ~[1 1 4 1 3 5 9 4])
-  =/  s-asc  (sy (gulf 1 7))
+  =/  s-dup  (silt ~[1 1 4 1 3 5 9 4])
+  =/  s-asc  (silt (gulf 1 7))
   ;:  weld
     ::  Checks with empty map
     ::
@@ -455,8 +455,8 @@
 ++  test-set-uni  ^-  tang
   =/  asc=(list @)    (gulf 1 7)
   =/  des=(list @)    (flop (gulf 1 7))
-  =/  s-des=(set @)   (sy des)
-  =/  s-asc=(set @)   (sy asc)
+  =/  s-des=(set @)   (silt des)
+  =/  s-asc=(set @)   (silt asc)
   =/  s-nul=(set @)   *(set @)
   ;:  weld
     ::  Checks with empty map (a or b)
@@ -469,8 +469,8 @@
       !>  (~(uni in s-des) s-nul)
     ::  Checks with no intersection
     ::
-    =/  a=(set @)  (sy (scag 4 asc))
-    =/  b=(set @)  (sy (slag 4 asc))
+    =/  a=(set @)  (silt (scag 4 asc))
+    =/  b=(set @)  (silt (slag 4 asc))
     %+  expect-eq
       !>  s-asc
       !>  (~(uni in a) b)
@@ -483,7 +483,7 @@
     ::
     %+  expect-eq
       !>  s-asc
-      !>  (~(uni in s-asc) (sy (gulf 1 3)))
+      !>  (~(uni in s-asc) (silt (gulf 1 3)))
   ==
 ::
 ::  Tests the size of set

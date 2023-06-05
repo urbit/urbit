@@ -1,7 +1,7 @@
 ^?  |%
 ++  remake-set
   |*  s=(tree)
-  (sy ~(tap in s))
+  (silt ~(tap in s))
 ::
 ++  remake-map
   |*  m=(tree)

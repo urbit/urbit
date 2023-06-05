@@ -7,4 +7,4 @@
     ==
 :-  %group-action
 ^-  action
-[%add-members [ship term] (sy p.beak ~)]
+[%add-members [ship term] (silt p.beak ~)]

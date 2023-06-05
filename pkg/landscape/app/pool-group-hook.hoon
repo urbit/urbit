@@ -193,7 +193,7 @@
           [our.bowl %group-store]
           %poke
           %group-action
-          !>([%add (sy new) group-path])
+          !>([%add (silt new) group-path])
       ==
   ==
 ::

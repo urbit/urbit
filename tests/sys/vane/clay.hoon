@@ -22,7 +22,7 @@
     ++  leak-to-deps
       |=  =leak:fusion
       ^-  (set mist:fusion)
-      %-  sy
+      %-  silt
       |-  ^-  (list mist:fusion)
       %-  zing
       %+  turn  ~(tap in deps.leak)

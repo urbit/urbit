@@ -3186,7 +3186,7 @@
     ^-  move
     :-  outgoing-duct.state
     :+  %give  %sessions
-    %-  sy
+    %-  silt
     %+  murn  ~(tap by sessions.auth.state)
     |=  [sid=@uv session]
     ?.  ?=(%ours -.identity)  ~

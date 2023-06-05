@@ -117,11 +117,11 @@
   (feen:ob 4 3 4 12 prf arg)
   ::
   =/  emm=(list @)  ~[0 1 2 3 4 5 6 7 8 9 10 11]
-  =/  semm=(set @)  (sy emm)
+  =/  semm=(set @)  (silt emm)
   ::
   =/  perm=(list @)  (turn emm feis)
   =/  inv=(list @)  (turn perm tail)
-  =/  distincts=(set @)  (sy perm)
+  =/  distincts=(set @)  (silt perm)
   ::
   ;:  weld
     %+  expect-eq

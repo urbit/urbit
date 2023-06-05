@@ -310,7 +310,7 @@
     ^-  (quip card:agent:gall pubs)
     %+  perm  whence
     |=  old=(unit (set ship))
-    ?~  old  ~  `(~(dif in u.old) (sy who))
+    ?~  old  ~  `(~(dif in u.old) (silt who))
   ::                                         ::  Allow ships to paths.
   ++  allow                                  ::  Any public paths will no-op.
     |=  [who=(list ship) where=(list paths)]
@@ -397,7 +397,7 @@
   ++  edit
     |=  [ps=(list paths) edit=$-(buoy buoy)]
     ^-  (quip card:agent:gall pubs)
-    %-  ~(rep in (sy ps))
+    %-  ~(rep in (silt ps))
     |=  [path=paths caz=(list card:agent:gall) %1 =_pub]
     ?~  old=(~(get by pub) path)  [caz 1/pub]
     =/  new=buoy  (edit u.old)

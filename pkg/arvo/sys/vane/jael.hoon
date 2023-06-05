@@ -797,7 +797,7 @@
         ?~  pub  ~
         ?:  =(0 life.u.pub)  ~
         `[who u.pub]
-      =.  ..feed  (public-keys-give (sy hen ~) public-keys-result)
+      =.  ..feed  (public-keys-give (silt hen ~) public-keys-result)
       ..feed
     ::
     ::  Handle subscription to private-keys

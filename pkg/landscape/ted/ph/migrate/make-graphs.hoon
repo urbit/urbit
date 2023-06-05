@@ -53,11 +53,11 @@
       'graph 3'
       'desc 3'
       `%graph-validator-chat
-      [%policy %invite (sy ~zod ~bus ~)]
+      [%policy %invite (silt ~zod ~bus ~)]
       'fake'
   ==
 ::
-;<  ~  bind:m  (poke-app ~zod %group-store %group-update-0 [%add-tag group-rid %admin (sy ~bus ~)])
+;<  ~  bind:m  (poke-app ~zod %group-store %group-update-0 [%add-tag group-rid %admin (silt ~bus ~)])
 ;<  ~  bind:m  (send-hi ~zod ~bus)
 ;<  ~  bind:m  (send-hi ~zod ~web)
 ;<  ~  bind:m  (send-hi ~bus ~zod)

@@ -466,12 +466,12 @@
     ::  Checks when creating a map from a list with duplicates
     ::
     %+  expect-eq
-      !>  (sy ~[1 1 7 4 6 9 4])
+      !>  (silt ~[1 1 7 4 6 9 4])
       !>  ~(key by m-dup)
     ::  Checks correctness
     ::
     %+  expect-eq
-      !>  (sy ~[1 2 3 4 5 6 7])
+      !>  (silt ~[1 2 3 4 5 6 7])
       !>  ~(key by m-des)
   ==
 ::
@@ -723,13 +723,13 @@
       !>  ~(val by m-nul)
     ::  Checks when creating a set from a list with duplicates
     ::
-    =/  a=(list @)  ~(tap in (sy ~[1 1 7 4 6 9 4]))
+    =/  a=(list @)  ~(tap in (silt ~[1 1 7 4 6 9 4]))
     %+  expect-eq
       !>  (sort (turn a double) gth)
       !>  (sort ~(val by m-dup) gth)
     ::  Checks success
     ::
-    =/  b=(list @)  ~(tap in (sy (gulf 1 7)))
+    =/  b=(list @)  ~(tap in (silt (gulf 1 7)))
     %+  expect-eq
       !>  (sort (turn b double) gth)
       !>  (sort ~(val by m-asc) gth)

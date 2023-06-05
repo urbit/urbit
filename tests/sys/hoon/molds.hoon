@@ -3,7 +3,7 @@
 ++  test-set
   ;:  weld
     %+  expect-eq
-      !>  (some (sy 1 2 ~))
+      !>  (some (silt 1 2 ~))
       !>  ((soft (set)) [2 [1 ~ ~] ~])
   ::
     %+  expect-eq
