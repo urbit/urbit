@@ -1850,14 +1850,6 @@
       !!
     ?:  =(0 a)  i.b
     $(b t.b, a (dec a))
-  ::                                                    ::
-  ++  weld                                              ::  concatenate
-    |*  [a=(list) b=(list)]
-    =>  .(a ^+((le a) a), b ^+((le b) b))
-    =+  42
-    |-
-    ?~  a  b
-    [i=i.a t=$(a t.a)]
   --
 ::    2n: functional hacks
 +|  %functional-hacks
