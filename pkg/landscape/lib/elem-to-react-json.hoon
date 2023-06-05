@@ -7,7 +7,7 @@
 |%
 ++  react-attrs                                         ::  uppercase mapping
   ~+  ^-  (map term cord)
-  %-  molt  ^-  (list (pair term cord))
+  %-  malt  ^-  (list (pair term cord))
   :-  [%class 'className']
   =-  (rash - (more next (cook |=(a=tape [(crip (cass a)) (crip a)]) (star alf))))
   '''
@@ -35,7 +35,7 @@
   |=  src=manx  ^-  json
   ?:  ?=(_;/(**) src)
     (tape:enjs v.i.a.g.src)
-  =+  atr=(molt `(list (pair mane tape))`a.g.src)
+  =+  atr=(malt `(list (pair mane tape))`a.g.src)
   ?:  (~(has by atr) [%urb %codemirror])
     $(src (urb-codemirror src))
   %-  pairs:enjs  :~

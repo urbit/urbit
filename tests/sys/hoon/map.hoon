@@ -8,7 +8,7 @@
     ++  map-of-doubles
       |=  l=(list @)
       ^-  (map @ @)
-      %-  molt
+      %-  malt
       ^-  (list (pair @ @))
       %+  turn  l
         |=  k=@
@@ -254,7 +254,7 @@
     ::  Checks different map length
     ::
     %+  expect-eq
-      !>  (molt ~[[7 14] [1 2] [4 8]])
+      !>  (malt ~[[7 14] [1 2] [4 8]])
       !>  (~(dif by m-dup) m-dos)
     ::  Checks no elements in common
     ::
@@ -433,8 +433,8 @@
     ::  Checks replacing value from b
     ::
     %+  expect-eq
-      !>  (molt [6 99]~)
-      !>  (~(int by m-dos) (molt [6 99]~))
+      !>  (malt [6 99]~)
+      !>  (~(int by m-dos) (malt [6 99]~))
   ==
 ::
 ::  Test search for a specific key and modifies
@@ -450,7 +450,7 @@
     ::  [2 4] to [2 3]
     ::
     %+  expect-eq
-      !>  (molt ~[[1 2] [2 3] [3 6] [4 8] [5 10] [6 12] [7 14]])
+      !>  (malt ~[[1 2] [2 3] [3 6] [4 8] [5 10] [6 12] [7 14]])
       !>  (~(jab by m-asc) 2 dec)
   ==
 ::
@@ -482,7 +482,7 @@
     ::  Checks with empty map
     ::
     %+  expect-eq
-      !>  (molt [6 12]~)
+      !>  (malt [6 12]~)
       !>  (~(mar by m-nul) 6 `12)
     ::  Checks with empty value (deletes the key)
     ::
@@ -492,7 +492,7 @@
     ::  Checks success (when key exists)
     ::
     %+  expect-eq
-      !>  (molt ~[[6 12] [9 99]])
+      !>  (malt ~[[6 12] [9 99]])
       !>  (~(mar by m-dos) 9 `99)
     ::  Checks success (when key does not exist)
     ::
@@ -508,17 +508,17 @@
     ::  Checks with empty map
     ::
     %+  expect-eq
-      !>  (molt [6 12]~)
+      !>  (malt [6 12]~)
       !>  (~(put by m-nul) 6 12)
     ::  Checks with existing key
     ::
     %+  expect-eq
-      !>  (molt ~[[6 99] [9 18]])
+      !>  (malt ~[[6 99] [9 18]])
       !>  (~(put by m-dos) 6 99)
     ::  Checks success (new key)
     ::
     %+  expect-eq
-      !>  (molt ~[[42 84] [9 99]])
+      !>  (malt ~[[42 84] [9 99]])
       !>  (~(put by m-uno) 9 99)
   ==
 ::
@@ -556,7 +556,7 @@
       [-.a 0]
     a
   =/  list-of-2s  (reap 7 2)
-  =/  zeroed-map  (molt ~[[1 0] [2 0] [3 0] [4 0] [5 0] [6 0] [7 0]])
+  =/  zeroed-map  (malt ~[[1 0] [2 0] [3 0] [4 0] [5 0] [6 0] [7 0]])
   ;:  weld
     ::  Checks with empty map
     ::
@@ -582,7 +582,7 @@
     ::  Checks success
     ::
     %+  expect-eq
-      !>  (molt ~[[1 1] [2 3] [3 5] [4 7] [5 9] [6 11] [7 13]])
+      !>  (malt ~[[1 1] [2 3] [3 5] [4 7] [5 9] [6 11] [7 13]])
       !>  (~(run by m-asc) dec)
   ==
 ::
@@ -598,7 +598,7 @@
     ::  Checks success
     ::
     %+  expect-eq
-      !>  (molt ~[[1 3] [2 6] [3 9] [4 12] [5 15] [6 18] [7 21]])
+      !>  (malt ~[[1 3] [2 6] [3 9] [4 12] [5 15] [6 18] [7 21]])
       !>  (~(urn by m-asc) add)
   ==
 ::
@@ -656,8 +656,8 @@
       !>  (~(uni by m-asc) m-des)
     ::  Checks union with value replacement from b
     ::
-    =/  c=(map @ @)  (molt [1 12]~)
-    =/  d=(map @ @)  (molt [1 24]~)
+    =/  c=(map @ @)  (malt [1 12]~)
+    =/  d=(map @ @)  (malt [1 24]~)
     %+  expect-eq
       !>  d
       !>  (~(uni by c) d)
@@ -684,14 +684,14 @@
     ::  Checks total union
     ::
     %+  expect-eq
-      !>  (molt ~[[1 4] [2 8] [3 12] [4 16] [5 20] [6 24] [7 28]])
+      !>  (malt ~[[1 4] [2 8] [3 12] [4 16] [5 20] [6 24] [7 28]])
       !>  ((~(uno by m-asc) m-des) union-gate)
     ::  Checks partial union
     ::
-    =/  a=(map @ @)  (molt ~[[1 9] [7 3] [8 5]])
-    =/  b=(map @ @)  (molt ~[[1 2] [7 2]])
+    =/  a=(map @ @)  (malt ~[[1 9] [7 3] [8 5]])
+    =/  b=(map @ @)  (malt ~[[1 2] [7 2]])
     %+  expect-eq
-      !>  (molt ~[[1 11] [7 5] [8 5]])
+      !>  (malt ~[[1 11] [7 5] [8 5]])
       !>  ((~(uno by a) b) union-gate)
   ==
 ::
@@ -707,7 +707,7 @@
     ::  Checks success
     ::
     %+  expect-eq
-      !>  (molt ~[[1 3] [2 6] [3 9] [4 12] [5 15] [6 18] [7 21]])
+      !>  (malt ~[[1 3] [2 6] [3 9] [4 12] [5 15] [6 18] [7 21]])
       !>  (~(urn by m-asc) add)
   ==
 ::

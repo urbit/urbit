@@ -106,7 +106,7 @@
     ++  pass
       |=  k=key:rsa
       ^-  json
-      [%o (molt kty+s+'RSA' n+s+(numb n.pub.k) e+s+(numb e.pub.k) ~)]
+      [%o (malt kty+s+'RSA' n+s+(numb n.pub.k) e+s+(numb e.pub.k) ~)]
     ::  +ring:en:jwk: json encode private key
     ::
     ++  ring
@@ -114,7 +114,7 @@
       ^-  json
       ~|  %rsa-need-ring
       ?>  ?=(^ sek.k)
-      :-  %o  %-  molt  :~
+      :-  %o  %-  malt  :~
         kty+s+'RSA'
         n+s+(numb n.pub.k)
         e+s+(numb e.pub.k)
@@ -183,7 +183,7 @@
         =.  pro  header
         =/  protect=cord  (encode pro)
         =/  payload=cord  (encode lod)
-        :-  %o  %-  molt  :~
+        :-  %o  %-  malt  :~
           protected+s+protect
           payload+s+payload
           signature+s+(sign protect payload)

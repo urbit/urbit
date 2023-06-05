@@ -457,12 +457,12 @@
   |=  [url=purl non=@t bod=json]
   ^-  hiss
   :^  url  %post
-    (molt content-type+['application/jose+json' ~] ~)
+    (malt content-type+['application/jose+json' ~] ~)
   :-  ~
   ^-  octs
   =;  pro=json
     (as-octs:mimes:html (en:json:html (sign:jws key.act pro bod)))
-  :-  %o  %-  molt  :~
+  :-  %o  %-  malt  :~
     nonce+s+non
     url+s+(crip (en-purl:html url))
     ?^  reg.act
@@ -626,7 +626,7 @@
       ?:  =(~ next-order)
         this
       (validate-domain:effect 0)
-    =/  =json  [%o (molt [['termsOfServiceAgreed' b+&] ~])]
+    =/  =json  [%o (malt [['termsOfServiceAgreed' b+&] ~])]
     ::  XX date in wire?
     ::
     =/  wire-params  [try %register /]
@@ -648,12 +648,12 @@
     ?.  ?=(^ reg.act)  ~|(%no-account !!)
     ?.  ?=([~ ^] next-order)  ~|(%no-domains !!)
     =/  =json
-      :-  %o  %-  molt  :~
+      :-  %o  %-  malt  :~
         :-  %identifiers
         :-  %a
         %+  turn
           ~(tap in ~(key by `(map turf *)`dom.u.next-order))
-        |=(a=turf [%o (molt type+s+'dns' value+s+(en-turf:html a) ~)])
+        |=(a=turf [%o (malt type+s+'dns' value+s+(en-turf:html a) ~)])
       ==
     =/  wire-params  [try %new-order /(scot %da now.bow)]
     (stateful-request wire-params new-order.dir json)
@@ -689,7 +689,7 @@
     ::
     ?>  ?=(%wake sas.u.rod)
     =/  =json
-      [%o (molt csr+s+(en-base64url (met 3 csr.u.rod) `@`csr.u.rod) ~)]
+      [%o (malt csr+s+(en-base64url (met 3 csr.u.rod) `@`csr.u.rod) ~)]
     =/  wire-params  [try %finalize-order /(scot %da now.bow)]
     (stateful-request wire-params fin.u.rod json)
   ::  +check-order: check completed order for certificate availability
@@ -715,7 +715,7 @@
     ~|  %certificate-effect-fail
     ?.  ?=(^ reg.act)  ~|(%no-account !!)
     ?.  ?=(^ rod)      ~|(%no-active-order !!)
-    =/  hed  (molt accept+['applicate/x-pem-file' ~] ~)
+    =/  hed  (malt accept+['applicate/x-pem-file' ~] ~)
     =/  =wire
        (acme-wire try %certificate /(scot %da now.bow))
     (emit (request wire url %get hed ~))

@@ -97,7 +97,7 @@
   |.
   =/  ford
     %:  ford:fusion
-      files=(molt [/lib/self/hoon &+hoon+source]~)
+      files=(malt [/lib/self/hoon &+hoon+source]~)
       file-store=~
       0
       *flow:fusion
@@ -112,7 +112,7 @@
 ++  test-mar-mime  ^-  tang
   =/  ford
     %:  ford:fusion
-      files=(molt [/mar/mime/hoon &+hoon+mar-mime]~)
+      files=(malt [/mar/mime/hoon &+hoon+mar-mime]~)
       file-store=~
       0
       *flow:fusion
@@ -134,7 +134,7 @@
   =/  ford
     %:  ford:fusion
       ^=  files
-      %-  molt
+      %-  malt
       :~  [/mar/udon/hoon &+hoon+mar-udon]
           [/lib/cram/hoon &+hoon+lib-cram]
           [/mar/txt/hoon &+hoon+mar-txt]
@@ -163,7 +163,7 @@
 ::
 ++  test-cast-html-mime  ^-  tang
   =/  files
-    %-  molt
+    %-  malt
     :~  [/mar/mime/hoon &+hoon+mar-mime]
         [/mar/html/hoon &+hoon+mar-html]
     ==
@@ -182,7 +182,7 @@
 ::
 ++  test-fascen  ^-  tang
   =/  files
-    %-  molt
+    %-  malt
     :~  [/mar/mime/hoon &+hoon+mar-mime]
         [/lib/foo/hoon &+hoon+'/%  moo  %mime\0a*vale:moo']
     ==
@@ -201,7 +201,7 @@
 ::
 ++  test-fasbuc  ^-  tang
   =/  files
-    %-  molt
+    %-  malt
     :~  [/mar/mime/hoon &+hoon+mar-mime]
         [/mar/html/hoon &+hoon+mar-html]
         [/lib/foo/hoon &+hoon+'/$  foo  %mime  %html\0a*foo']
@@ -222,7 +222,7 @@
 ++  test-gen-hello  ^-  tang
   =/  ford
     %:  ford:fusion
-      files=(molt [/gen/hello/hoon &+hoon+gen-hello]~)
+      files=(malt [/gen/hello/hoon &+hoon+gen-hello]~)
       file-store=~
       0
       *flow:fusion
@@ -244,7 +244,7 @@
   =/  ford
     %:  ford:fusion
       ^=  files
-      %-  molt
+      %-  malt
       :~  [/lib/strand/hoon &+hoon+lib-strand]
           [/lib/strandio/hoon &+hoon+lib-strandio]
           [/sur/spider/hoon &+hoon+sur-spider]

@@ -968,7 +968,7 @@
 ::
 :: initial keys for each point under ~rut
 ::
-++  default-own-keys  %-  molt
+++  default-own-keys  %-  malt
                       :*  [~rut %rut-key-0]
                           [~tyl %tyl-key-0]
                           [~holrut %holrut-key-0]
@@ -985,7 +985,7 @@
                           ~
                       ==
 ::
-++  default-manage-keys  %-  molt
+++  default-manage-keys  %-  malt
                          :*  [~rut %rut-mkey-0]
                              [~tyl %tyl-mkey-0]
                              [~holrut %holrut-mkey-0]
@@ -1001,7 +1001,7 @@
                              [~radres-tinnyl %losrut-rt-mkey-0]
                              ~
                          ==
-++  default-spawn-keys  %-  molt
+++  default-spawn-keys  %-  malt
                         :*  [~rut %rut-skey-0]
                             [~tyl %tyl-skey-0]
                             [~holrut %holrut-skey-0]
@@ -1010,7 +1010,7 @@
                             ~
                         ==
 ::
-++  default-xfer-keys  %-  molt
+++  default-xfer-keys  %-  malt
                        :*  [~rut %rut-tkey-0]
                            [~tyl %tyl-tkey-0]
                            [~rigrut %rigrut-tkey-0]

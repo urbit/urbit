@@ -5,7 +5,7 @@
 ::
 ++  remake-map
   |*  m=(tree)
-  (molt ~(tap by m))
+  (malt ~(tap by m))
 ::
 ++  remake-jug
   |*  j=(tree [* (tree)])

@@ -181,7 +181,7 @@
 ::
 ++  test-queue-get  ^-  tang
   =/  expected=(map term [@ (qeu)])
-    %-  molt
+    %-  malt
     :~  uno+[42 ~]
         dos+[6 (~(gas to *(qeu)) ~[9])]
         tre+[1 (~(gas to *(qeu)) ~[0 1])]
@@ -334,7 +334,7 @@
   ::  which is what we are looking for.
   ::
   =/  expected=(map term @)
-    (molt ~[uno+42 dos+6 tre+1 tri+1 tra+3 asc+1 des+7 uns+1 dup+1])
+    (malt ~[uno+42 dos+6 tre+1 tri+1 tra+3 asc+1 des+7 uns+1 dup+1])
   =/  heads=(list [term (unit)])
     %+  turn  queues
       |=([t=term iq=(qeu)] [t ~(top to iq)])

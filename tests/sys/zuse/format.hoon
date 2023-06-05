@@ -165,11 +165,11 @@
     ::  objects
     ::
     %+  expect-eq
-      !>  [%o (molt ~[['foo' num:ex]])]
+      !>  [%o (malt ~[['foo' num:ex]])]
       !>  (frond 'foo' num:ex)
     =+  props=~[['foo' num:ex] ['bar' tru:ex]]
     %+  expect-eq
-      !>  [%o (molt props)]
+      !>  [%o (malt props)]
       !>  (pairs props)
     ::  sect - stored as integer number of seconds since the unix epoch
     %+  expect-eq
@@ -357,12 +357,12 @@
     ::  om - simple object as map
     ::
     %+  expect-eq
-      !>  (molt ~[['foo' num:ex] ['bar' str:ex]])
+      !>  (malt ~[['foo' num:ex] ['bar' str:ex]])
       !>  ((om same) obj:ex)
     ::  op - object to map, but run a parsing function on the keys
     ::
     %+  expect-eq
-      !>  (molt ~[[12 num:ex] [14 str:ex]])
+      !>  (malt ~[[12 num:ex] [14 str:ex]])
       !>  ((op dem same) (pairs:enjs ~[['12' num:ex] ['14' str:ex]]))
   ==
 ::  decoder transformers
@@ -452,11 +452,11 @@
     ::  zm - collapse a (map @tas (unit *)) -> (unit (map @tas *))
     ::
     %+  expect-eq
-      !>  (some (molt ~[['a' 1] ['b' 2]]))
-      !>  (zm (molt ~[['a' (some 1)] ['b' (some 2)]]))
+      !>  (some (malt ~[['a' 1] ['b' 2]]))
+      !>  (zm (malt ~[['a' (some 1)] ['b' (some 2)]]))
     %+  expect-eq
       !>  ~
-      !>  (zm (molt ~[['a' `(unit @)`(some 1)] ['b' ~]]))
+      !>  (zm (malt ~[['a' `(unit @)`(some 1)] ['b' ~]]))
     %+  expect-eq
       !>  (some ~)
       !>  (zm ~)
@@ -619,12 +619,12 @@
     ::  om - simple object as map
     ::
     %+  expect-eq
-      !>  `(molt ~[['foo' num:ex] ['bar' str:ex]])
+      !>  `(malt ~[['foo' num:ex] ['bar' str:ex]])
       !>  ((om some) obj:ex)
     ::  op - object to map, but run a parsing function on the keys
     ::
     %+  expect-eq
-      !>  `(molt ~[[12 num:ex] [14 str:ex]])
+      !>  `(malt ~[[12 num:ex] [14 str:ex]])
       !>  ((op dem some) (pairs:enjs ~[['12' num:ex] ['14' str:ex]]))
   ==
 ::  decoder transformers
@@ -701,11 +701,11 @@
     ::  zm - collapse a (map @tas (unit *)) -> (unit (map @tas *))
     ::
     %+  expect-eq
-      !>  (some (molt ~[['a' 1] ['b' 2]]))
-      !>  (zm (molt ~[['a' (some 1)] ['b' (some 2)]]))
+      !>  (some (malt ~[['a' 1] ['b' 2]]))
+      !>  (zm (malt ~[['a' (some 1)] ['b' (some 2)]]))
     %+  expect-eq
       !>  ~
-      !>  (zm (molt ~[['a' `(unit @)`(some 1)] ['b' ~]]))
+      !>  (zm (malt ~[['a' `(unit @)`(some 1)] ['b' ~]]))
     %+  expect-eq
       !>  (some ~)
       !>  (zm ~)
