@@ -128,6 +128,7 @@
          `this
            %thread-done
          =/  res  !<([@ta (list response:rpc)] q.cage.sign)
+         :: =/  res  !<([@ta (list response:rpc:ethereum)] q.cage.sign)
          =/  eth-output  +.res
          :-  
          :: ~

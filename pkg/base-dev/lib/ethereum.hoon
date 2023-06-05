@@ -563,12 +563,28 @@
       ::TODO  clean up & actually use
       ++  response
         $%  ::TODO
-            [%eth-new-filter fid=@ud]
-            [%eth-get-filter-logs los=(list event-log)]
-            [%eth-get-logs los=(list event-log)]
-            [%eth-get-logs-by-hash los=(list event-log)]
-            [%eth-got-filter-changes los=(list event-log)]
-            [%eth-transaction-hash haz=@ux]
+            :: [%eth-new-filter fid=@ud]
+            :: [%eth-get-filter-logs los=(list event-log)]
+            :: [%eth-get-logs los=(list event-log)]
+            :: [%eth-get-logs-by-hash los=(list event-log)]
+            :: [%eth-got-filter-changes los=(list event-log)]
+            :: [%eth-transaction-hash haz=@ux]
+            ::
+            [%hex hex=@ux]
+            :: TODO what is the response from eth_call?
+            [%data data=@ux]
+            [%fid fid=@ud]
+            ::  TODO should I use unit or not?
+            [%block block=[id=[hash=@uxblockhash number=@udblocknumber] parent-hash=@uxblockhash]]
+            [%logs los=(list event-log)]
+            [%transaction-result (unit =transaction-result)]
+            :: TODO
+            [%get-filter-changes b=?]
+            :: TODO
+            [%transaction-receipt b=?]
+            [%unit-hex hex=(unit @ux)]
+            :: TODO
+            [%error b=?]
         ==
       ::
       ++  transaction-result
@@ -859,7 +875,61 @@
   ::
   ::  parsing responses
   ::
-  ::TODO  ++  parse-response  |=  json  ^-  response
+  ++  parse-response
+    |=  =json
+    ^-  [id=(unit @t) response:rpc]
+    ~&  json
+    ::  hex
+    =/  id  [~ '233']
+    ?:  &(?=([%o *] json) (~(has by p.json) 'error'))
+      :: TODO handle error
+      [id [%error %.y]]
+    ?.  &(?=([%o *] json) (~(has by p.json) 'result'))
+      :: error message is invalid response from eth node
+      [id [%error %.y]]
+    =/  response-dejs  'TODO'
+    ?:  %.y
+      =/  block-dejs  'TODO'
+      :: %.  p.json
+      :: (ot 
+      =/  block  [[0x1234 123] 0x1234]
+      [id [%block block]]
+      
+    ::
+    :: ?:  &(?=([%o *] json) (~(has by p.json) 'error'))
+    ::   ~&  %error
+    ::   [~ [%error %.y]]
+      :: =/  res=(unit [@t ^json])
+      ::   %.  json
+      ::   =,  dejs-soft:format
+      ::   (ot id+so result+some ~)
+      :: ?~  res  ~
+      :: `[%result u.res]
+    ::~|  parse-one-response=json
+    ::=/  error=(unit [id=@t ^json code=@ta mssg=@t])
+    ::  %.  json
+    ::  =,  dejs-soft:format
+    ::  ::  A 'result' member is present in the error
+    ::  ::  response when using ganache, even though
+    ::  ::  that goes against the JSON-RPC spec
+    ::  ::
+    ::  (ot id+so result+some error+(ot code+no message+so ~) ~)
+    ::?~  error  ~
+    ::=*  err  u.error
+    ::`[%error id.err code.err mssg.err]
+    ~&  %result
+    [[~ '233'] [%error %.y]]
+    :: ?:  &(?=([%o *] json) (~(has by p.json) 'error'))
+    ::   :: [%error 
+    ::   ~
+    :: ?:  =('error' json)
+    :: ?>  =('result' json)
+    :: ~
+    :: ?-  x.json
+    ::   [
+    :: [~ [%block %.y]]
+  ::
+  ++  parse-block  parse-hex-result
   ::
   ++  parse-hex-result
     |=  j=json

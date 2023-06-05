@@ -17,8 +17,6 @@
 ?>  ?=(%provider -.provider-mode)
 =/  provider  `provider:eth-provider`+.provider-mode
 :: (list [id...] would be the type
-;<  results=(list response:rpc)  bind:m  (request-batch-rpc-loose:provider-lib reqs)
-:: =/  parsed-results  
-::  ^-  (list [id=(unit @t) response:rpc:ethereum])
-:: (parse-response:ethereum results)
-(pure:m !>([tid.bowl results]))
+;<  responses=(list response:rpc)  bind:m  (request-batch-rpc-loose:provider-lib reqs)
+:: =/  responses  ~[[%eth-transaction-hash 0x123]]
+(pure:m !>([tid.bowl responses]))
