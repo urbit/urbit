@@ -412,7 +412,7 @@
   =^  moves2  comet
     =/  =point:ames
       :*  rift=1
-          life=2  ::  rcvr-tick mismatch
+          life=2
           keys=[[life=2 [crypto-suite=1 `@`nec-pub]] ~ ~]
           sponsor=`~nec
       ==
