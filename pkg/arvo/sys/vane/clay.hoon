@@ -1727,7 +1727,7 @@
       ?>  ?=(~ deletes)
       =/  data=(map path (each page lobe))
         (~(run by changes) |=(=cage &+[p q.q]:cage))
-      (park | & &+[~ data] *rang)
+      (park | & &+[~ data] *rang ~)
     ::
     =/  parent-tako=tako  (aeon-to-tako:ze let.dom)
     =/  data=(map path (each page lobe))
@@ -1742,7 +1742,7 @@
       (~(run by changes) |=(=cage &+[p q.q]:cage))
     ::
     =/  =yuki  [~[parent-tako] data]
-    (park | & &+yuki *rang)
+    (park | & &+yuki *rang ~)
   ::
   ::  Unix commit
   ::
@@ -1787,7 +1787,7 @@
   ++  park
     =/  check-sane  |
     |^
-    |=  [updated=? goat=? =yoki =rang]
+    |=  [updated=? goat=? =yoki =rang sip=(unit sprig)]
     ^+  ..park
     =:  hut.ran  (~(uni by hut.rang) hut.ran)
         lat.ran  (~(uni by lat.rang) lat.ran)
@@ -1895,9 +1895,14 @@
     =/  old-fod  fod.dom
     =.  fod.dom
       ?:  updated  [~ ~]
+      ?^  sip      [~ ~]  :: if you supplied a cache, throw everything away
       (promote-ford fod.dom invalid)
     =.  fad
       (lose-leaks:fusion veb.bug fad (~(dif in spill.old-fod) spill.fod.dom))
+    ::  TODO ingest the sprig
+    ::    create spill for a complete flue
+    ::    add those leaks to the flow
+    ::    inject it into fod.dom
     =?  changes  updated  (changes-for-upgrade q.old-yaki deletes changes)
     ::
     =/  files
@@ -1975,7 +1980,7 @@
       ::  [goad] < call without goading so that we apply all the commits
       ::  before trying to compile all desks to send to gall.
       ::
-      =^  moves-3  ruf  abet:(park:den | | u.wat *^rang)
+      =^  moves-3  ruf  abet:(park:den | | u.wat *^rang ~)
       =.  moves-2  (weld moves-2 moves-3)
       $(desks t.desks)
     ::  tell gall to try to run agents if %held
@@ -2386,7 +2391,7 @@
     ^+  ..take-fuse
     ?~  merges
       =.  ..take-fuse  (done-fuse clean-state %& ~)
-      (park | & [%| next-yaki(p (flop parents))] rag)
+      (park | & [%| next-yaki(p (flop parents))] rag ~)
     =/  [bec=beak g=germ]  i.merges
     =/  ali-dom=domo  (need (~(got by sto.fiz) bec))
     =/  result  (merge-helper p.bec q.bec g ali-dom `next-yaki)
@@ -2467,7 +2472,7 @@
       ?~  mr
         (done %& ~)
       =.  ..merge  (done %& conflicts.u.mr)
-      (park | & new.u.mr ~ lat.u.mr)
+      (park | & new.u.mr ~ lat.u.mr ~)
     ==
   ::
   +$  merge-result  [conflicts=(set path) new=yoki lat=(map lobe page)]
@@ -3217,7 +3222,7 @@
     =.  wis  (skip wis |=([[* a=@ud] *] (gte a zuse)))
     ?~  wis  ::  Every commit bottoms out here ?
       ..park
-    (park | & yoki.i.wis *rang)
+    (park | & yoki.i.wis *rang ~)
   ::
   ::  Cancel a request.
   ::
@@ -4983,7 +4988,15 @@
       ~|([%park-bad-desk des.req] !!)
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our des.req)
-      abet:(park:den | & [yok ran]:req)
+      abet:(park:den | & [yok ran]:req ~)
+    [mos ..^$]
+  ::
+      %perk
+    ?.  ((sane %tas) des.req)
+      ~|([%park-bad-desk des.req] !!)
+    =^  mos  ruf
+      =/  den  ((de now rof hen ruf) our des.req)
+      abet:(park:den | & [yok ran sip]:req)
     [mos ..^$]
   ::
       %pork
@@ -4991,7 +5004,7 @@
     =.  pud.ruf  ~
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our syd)
-      abet:(park:den & & yoki *rang)
+      abet:(park:den & & yoki *rang ~)
     [mos ..^$]
   ::
       %prep

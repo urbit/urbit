@@ -1491,6 +1491,7 @@
         [%dirk pot=term]                                ::  mark mount dirty
         [%ogre pot=$@(term beam)]                       ::  delete mount point
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
+        [%perk des=desk yok=yoki ran=rang sip=sprig]    ::  fast commit
         [%perm des=desk pax=path rit=rite]              ::  change permissions
         [%pork ~]                                       ::  resume commit
         [%prep lat=(map lobe page)]                     ::  prime clay store
@@ -1833,7 +1834,10 @@
   ::    Sprig is a fast-lookup index over the global ford cache.  The only
   ::    goal is to make cache hits fast.
   ::
-  +$  flue  [spill=(set leak) sprig=(map mist [=leak =soak])]
+  +$  flue  [spill=(set leak) =sprig]
+  ::
+  +$  sprig  (map mist [=leak =soak])
+  ::
   ::
   ::  Ford build without content.
   ::
