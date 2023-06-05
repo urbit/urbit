@@ -1812,32 +1812,32 @@
 +|  %container-from-noun
 ::
 ++  limo                                                ::  list from raw noun
-  le:nl
+  los:nl
 ::
 ++  malt                                                ::  map from raw noun
-  my:nl
+  mop:nl
 ::
 ++  silt                                                ::  set from raw noun
-  si:nl
+  sot:nl
 ::
 ++  nl
   |%
   ::                                                    ::
-  ++  le                                                ::  construct list
+  ++  los                                               ::  construct list
     |*  a=(list)
     ^+  =<  $
       |@  ++  $  ?:(*? ~ [i=(snag 0 a) t=$])
       --
     a
   ::                                                    ::
-  ++  my                                                ::  construct map
+  ++  mop                                               ::  construct map
     |*  a=(list)
-    =>  .(a ^+((le a) a))
+    =>  .(a ^+((los a) a))
     (~(gas by `(map _-<.a _->.a)`~) a)
   ::                                                    ::
-  ++  si                                                ::  construct set
+  ++  sot                                               ::  construct set
     |*  a=(list)
-    =>  .(a ^+((le a) a))
+    =>  .(a ^+((los a) a))
     (~(gas in `(set _i.-.a)`~) a)
   ::                                                    ::
   ++  snag                                              ::  index
