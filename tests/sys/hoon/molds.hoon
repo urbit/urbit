@@ -14,7 +14,7 @@
 ++  test-map
   ;:  weld
     %+  expect-eq
-      !>  (some (my [1 2] [3 4] ~))
+      !>  (some (molt [1 2] [3 4] ~))
       !>  ((soft (map)) [[1 2] ~ [[3 4] ~ ~]])
   ::
     %+  expect-eq

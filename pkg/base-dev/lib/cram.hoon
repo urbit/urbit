@@ -6,8 +6,8 @@
       ?:  =(gen ^gen)  ~|([%cram-dynamic -.gen] !!)
       $(gen gen)
   ::
-    %xray  [~ (single (shut gen))]
-    ^     [(malt (frontmatter p.gen)) (single (shut q.gen))]
+    %xray   [~ (single (shut gen))]
+    ^       [(malt (frontmatter p.gen)) (single (shut q.gen))]
   ==
 ::
 ++  single                                              :: unwrap one-elem marl

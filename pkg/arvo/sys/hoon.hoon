@@ -1829,9 +1829,6 @@
 ::    2m: container from noun
 +|  %container-from-noun
 ::
-++  my                                                  ::  map from raw noun
-  my:nl
-::
 ++  sy                                                  ::  set from raw noun
   si:nl
 ::

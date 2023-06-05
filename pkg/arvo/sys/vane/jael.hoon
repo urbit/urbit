@@ -261,11 +261,11 @@
         =/  cub  (nol:nu:crub:crypto key.seed.tac)
         %+  ~(put by pos.zim.pki)
           our
-        [0 lyf.seed.tac (my [lyf.seed.tac [1 pub:ex:cub]] ~) spon-ship]
+        [0 lyf.seed.tac (molt [lyf.seed.tac [1 pub:ex:cub]] ~) spon-ship]
       ::  our initial private key
       ::
       =.  lyf.own.pki  lyf.seed.tac
-      =.  jaw.own.pki  (my [lyf.seed.tac key.seed.tac] ~)
+      =.  jaw.own.pki  (molt [lyf.seed.tac key.seed.tac] ~)
       ::  XX save sponsor in .own.pki
       ::  XX reconcile with .dns.eth
       ::  set initial domains
@@ -336,14 +336,14 @@
       =.  pos.zim.pki
         %+  ~(put by pos.zim.pki)
           our
-        [rift=0 life=1 (my [`@ud`1 [`life`1 pub:ex:cub]] ~) `(^sein:title our)]
+        [rift=0 life=1 (molt [`@ud`1 [`life`1 pub:ex:cub]] ~) `(^sein:title our)]
       ::  our private key
       ::
       ::    Private key updates are disallowed for fake ships,
       ::    so we do this first.
       ::
       =.  lyf.own.pki  1
-      =.  jaw.own.pki  (my [1 sec:ex:cub] ~)
+      =.  jaw.own.pki  (molt [1 sec:ex:cub] ~)
       ::  set the fake bit
       ::
       =.  fak.own.pki  &
@@ -788,7 +788,7 @@
         :-  %full
         ?:  =(~ whos)
           pos.zim
-        %-  my  ^-  (list (pair ship point))
+        %-  molt  ^-  (list (pair ship point))
         %+  murn
           ~(tap in whos)
         |=  who=ship
@@ -825,8 +825,8 @@
           %+  turn  passes
           |=  [who=ship =pass]
           ^-  [who=ship =point]
-          [who [rift=0 life=1 (my [1 1 pass] ~) `(^sein:title who)]]
-        =.  moz  [[hen %give %public-keys %full (my points)] moz]
+          [who [rift=0 life=1 (molt [1 1 pass] ~) `(^sein:title who)]]
+        =.  moz  [[hen %give %public-keys %full (molt points)] moz]
         ..feel
       --
     --
@@ -870,7 +870,7 @@
         =.  ..feel
           %+  public-keys-give
             (subscribers-on-ship who.i.pointl)
-          [%full (my i.pointl ~)]
+          [%full (molt i.pointl ~)]
         $(pointl t.pointl)
       ::
       ?:  ?=(%breach -.public-keys-result)
@@ -920,7 +920,7 @@
       %+  public-keys-give
         (subscribers-on-ship who)
       ?~  maybe-point
-        [%full (my [who point]~)]
+        [%full (molt [who point]~)]
       [%diff who a-diff]
     ::
     ::  Update private-keys

@@ -2473,14 +2473,14 @@
         =.  event-core
           =/  crypto-suite=@ud  1
           =/  keys
-            (my [sndr-life.open-packet crypto-suite public-key.open-packet]~)
+            (molt [sndr-life.open-packet crypto-suite public-key.open-packet]~)
           =/  =point
             :*  ^=     rift  0
                 ^=     life  sndr-life.open-packet
                 ^=     keys  keys
                 ^=  sponsor  `(^sein:title sndr.shot)
             ==
-          (on-publ / [%full (my [sndr.shot point]~)])
+          (on-publ / [%full (molt [sndr.shot point]~)])
         ::  manually add the lane to the peer state
         ::
         =/  =peer-state  (gut-peer-state sndr.shot)
@@ -3014,10 +3014,10 @@
           ?.  ?=([~ %known *] ship-state)
             =|  =point
             =.  life.point     life
-            =.  keys.point     (my [life crypto-suite public-key]~)
+            =.  keys.point     (molt [life crypto-suite public-key]~)
             =.  sponsor.point  `(^^sein:title rof /ames our now ship)
             ::
-            (on-publ-full (my [ship point]~))
+            (on-publ-full (molt [ship point]~))
           ::
           =/  =peer-state   +.u.ship-state
           =/  =private-key  sec:ex:crypto-core.ames-state
