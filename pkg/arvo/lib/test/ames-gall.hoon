@@ -188,7 +188,7 @@
     %-  need  %-  need
     (scry:(ames-gate now eny roof) ~ %x beam)
   ::
-  =/   paz=(list have:ames)
+  =/  paz=(list have:ames)
     %+  spun  meows
     |=  [blob=@ux num=_1]
     ^-  [have:ames _num]
@@ -196,9 +196,10 @@
     [num (sift-meow:ames blob)]
   ::
   :-  sig:(sift-roar:ames-raw (lent paz) (flop paz))
-  %+  turn  meows
-  |=  meow=@ux
-  (can 3 4^lop 2^wid wid^`@`pat (met 3 meow)^meow ~)
+  %+  spun  meows
+  |=  [meow=@ux num=_1]
+  :_  +(num)
+  (can 3 4^num 2^wid wid^`@`pat (met 3 meow)^meow ~)
 :: ::
 ++  ames-scry-peer
   |=  $:  =ames-gate
