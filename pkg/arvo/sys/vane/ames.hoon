@@ -4886,12 +4886,13 @@
     %-  ~(run by peers.old)
     |=  ship-state=ship-state-14
     ^-  ^ship-state
-    |^  ?.  ?=(%known -.ship-state)
+    ?.  ?=(%known -.ship-state)
       ship-state
-    %=  ship-state
-      snd    (~(run by snd.ship-state) message-pump-14-to-15)
-      keens  (~(run by keens.ship-state) keen-state-14-to-15)
-    ==
+    |^  %=  ship-state
+          snd    (~(run by snd.ship-state) message-pump-14-to-15)
+          keens  (~(run by keens.ship-state) keen-state-14-to-15)
+          rcv    (~(rut by rcv.ship-state) remove-outbound-naxplanations)
+        ==
     ::
     ++  message-pump-14-to-15
       |=  pump=message-pump-state-14
@@ -4906,6 +4907,26 @@
       ^-  ^keen-state
       %=  keen-state
         metrics  [rto rtt rttvar ssthresh cwnd counter]:metrics.keen-state
+      ==
+    ::
+    ++  remove-outbound-naxplanations
+      |=  [=bone sink=message-sink-state]
+      ^+  sink
+      =/  target=^bone  (mix 0b10 bone)
+      ?.  =(%3 (mod target 4))  sink
+      %_    sink
+          nax
+        =/  pump=message-pump-state-14  (~(got by snd.ship-state) target)
+        %-  ~(rep in nax.sink)
+        |=  [=message-num nax=(set message-num)]
+        ::  we keep messages in the queue that have not been acked.
+        ::  if the message-num for the naxplanation we sent is
+        ::  less than the current message, +pump-done:mu had been called,
+        ::  so the message-num can be safely removed
+        ::
+        =?  nax  (gte message-num current.pump)
+          (~(put in nax) message-num)
+        nax
       ==
     --
   --
