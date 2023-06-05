@@ -1811,13 +1811,13 @@
 ::    2l: container from container
 +|  %container-from-container
 ::
-++  limo                                                ::  listify
+++  limo                                                ::  list from raw noun
   le:nl
 ::
-++  malt                                                ::  map from list
+++  malt                                                ::  map from raw noun
   my:nl
 ::
-++  silt                                                ::  set from list
+++  silt                                                ::  set from raw noun
   si:nl
 ::
 ::    2m: container from noun
