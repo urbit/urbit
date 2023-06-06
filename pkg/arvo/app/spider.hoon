@@ -557,7 +557,8 @@
   ?.  ?=(http-error:spider term)
     %-  (slog tang)
     =/  tube  (convert-tube %tang %json desk bowl)
-    %-  json-response:gen:server
+    :-  [500 [['content-type' 'application/json'] ~]]
+    =-  `(as-octt:mimes:html (en-json:html -))
     o/(malt `(list [key=@t json])`[term+s/term tang+!<(json (tube !>(tang))) ~])
   :_  ~  :_  ~
   ?-  term
