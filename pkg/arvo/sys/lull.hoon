@@ -767,6 +767,7 @@
   ::    %cork: request to delete message flow
   ::    %kroc: request to delete stale message flows
   ::    %plea: request to send message
+  ::    %deep: deferred calls to %ames, from itself
   ::
   ::    Remote Scry Tasks
   ::
@@ -794,6 +795,7 @@
         [%cork =ship]
         [%kroc dry=?]
         $>(%plea vane-task)
+        [%deep =deep]
     ::
         [%keen spar]
         [%yawn spar]
@@ -901,7 +903,15 @@
   ::    life based on the ship.
   ::
   +$  spar  [=ship =path]
+  ::  $deep: deferred %ames call, from self, to keep +abet cores pure
   ::
+  +$  deep
+    $%  [%nack =ship =nack=bone =message-blob]
+        [%sink =ship =target=bone naxplanation=[=message-num =error]]
+        [%drop =ship =nack=bone =message-num]
+        [%cork =ship =bone]
+        [%kill =ship =bone]
+    ==
   :: +|  %atomics
   ::
   +$  bone           @udbone

@@ -495,13 +495,25 @@
   ::  ~bud -> nack-trace -> ~nec
   ::
   =^  moves5  nec  (call nec ~[//unix] %hear (snag-packet 1 moves3))
+  ::  ~nec -> naxplanation -> ~nec
+  ::
+  =/  sink-naxplanation-plea
+    [%deep %sink ~bud bone=0 message-num=1 error]
+  =^  moves6  nec  (call nec ~[//unix] sink-naxplanation-plea)
   ::  ~nec -> ack nack-trace -> ~bud
   ::
-  =^  moves6  bud  (call bud ~[//unix] %hear (snag-packet 0 moves5))
+  =^  moves7  bud  (call bud ~[//unix] %hear (snag-packet 0 moves5))
   ::
-  %+  expect-eq
-    !>  [~[/g/talk] %give %done `error]
-    !>  (snag 0 `(list move:ames)`moves5)
+  ;:  welp
+    %+  expect-eq
+      !>  [~[/g/talk] %give %done `error]
+      !>  (snag 0 `(list move:ames)`moves6)
+    ::
+    %+  expect-eq
+      !>  [~[//unix] %pass /bone/~bud/0/0 %a sink-naxplanation-plea]
+      !>  (snag 0 `(list move:ames)`moves5)
+    ::
+  ==
 ::
 ++  test-boon-lost  ^-  tang
   ::  ~nec -> %plea -> ~bud
