@@ -288,10 +288,10 @@
   =/  =shot:ames
     (etch-shut-packet:ames shut-packet nec-sym ~marnec ~marbud-marbud 3 17)
   ::
-  =/  decoded  (sift-shut-packet:ames shot nec-sym 3 17)
+  =/  decoded=(unit shut-packet:ames)  (sift-shut-packet:ames shot nec-sym 3 17)
   ::
   %+  expect-eq
-    !>  shut-packet
+    !>  `shut-packet
     !>  decoded
 ::
 ::  Crypto failures are now non-deterministic
@@ -424,31 +424,33 @@
   ::  established a channel, and can proceed as usual
   ::
   =/  post  [%post 'first1!!']
-  =^  moves3  nec    (call nec ~[//unix] %hear (snag-packet 0 moves2))
-  %+  weld
-    %-  expect-fail  |.
-    (call nec ~[//unix] %hear (snag-packet 1 moves2))
+  =^  moves3  nec  (call nec ~[//unix] %hear (snag-packet 0 moves2))
+  =^  moves4  nec  (call nec ~[//unix] %hear (snag-packet 1 moves2))
   ::
-  =^  moves4  comet  (call comet ~[//unix] %hear (snag-packet 0 moves3))
-  =^  moves5  comet  (take comet /bone/~nec/1/1 ~[//unix] %g %done ~)
-  =^  moves6  nec    (call nec ~[//unix] %hear (snag-packet 0 moves5))
-  =^  moves7  comet  (take comet /bone/~nec/1/1 ~[//unix] %g %boon post)
-  =^  moves8  nec    (call nec ~[//unix] %hear (snag-packet 0 moves7))
+  =^  moves5  comet  (call comet ~[//unix] %hear (snag-packet 0 moves3))
+  =^  moves6  comet  (take comet /bone/~nec/1/1 ~[//unix] %g %done ~)
+  =^  moves7  nec    (call nec ~[//unix] %hear (snag-packet 0 moves6))
+  =^  moves8  comet  (take comet /bone/~nec/1/1 ~[//unix] %g %boon post)
+  =^  moves9  nec    (call nec ~[//unix] %hear (snag-packet 0 moves8))
   ::
   ;:  weld
     %+  expect-eq
       !>  =-  [~[//unix] %pass /qos %d %flog %text -]
               "; ~nec is your neighbor"
-      !>  (snag 0 `(list move:ames)`moves4)
+      !>  (snag 0 `(list move:ames)`moves5)
   ::
     %+  expect-eq
       !>  =-  [~[//unix] %pass /qos %d %flog %text -]
               "; {<our-comet>} is your neighbor"
-      !>  (snag 0 `(list move:ames)`moves6)
+      !>  (snag 0 `(list move:ames)`moves7)
   ::
     %+  expect-eq
       !>  [~[/g/talk] %give %boon post]
-      !>  (snag 0 `(list move:ames)`moves8)
+      !>  (snag 0 `(list move:ames)`moves9)
+  ::
+    %+  expect-eq
+      !>  ~
+      !>  moves4
   ==
 ::
 ++  test-comet-comet-message-flow  ^-  tang

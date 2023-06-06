@@ -439,17 +439,17 @@
 ++  sift-shut-packet
   ~/  %sift-shut-packet
   |=  [=shot =symmetric-key sndr-life=@ rcvr-life=@]
-  ^-  shut-packet
-  ?.  =(sndr-tick.shot (mod sndr-life 16))
-    ~|  ames-sndr-tick+sndr-tick.shot  !!
-  ?.  =(rcvr-tick.shot (mod rcvr-life 16))
-    ~|  ames-rcvr-tick+rcvr-tick.shot  !!
+  ^-  (unit shut-packet)
+  ?.  ?&  =(sndr-tick.shot (mod sndr-life 16))
+          =(rcvr-tick.shot (mod rcvr-life 16))
+      ==
+    ~
   =/  siv  (end 7 content.shot)
   =/  len  (end 4 (rsh 7 content.shot))
   =/  cyf  (rsh [3 18] content.shot)
   ~|  ames-decrypt+[[sndr rcvr origin]:shot len siv]
   =/  vec  ~[sndr.shot rcvr.shot sndr-life rcvr-life]
-  ;;  shut-packet  %-  cue  %-  need
+  %-  some  ;;  shut-packet  %-  cue  %-  need
   (~(de sivc:aes:crypto (shaz symmetric-key) vec) siv len cyf)
 ::
 ++  is-peer-dead
@@ -1972,9 +1972,23 @@
         ::
         =/  =peer-state   +.u.sndr-state
         =/  =channel      [[our sndr.shot] now channel-state -.peer-state]
+        =?  event-core  !=(sndr-tick.shot (mod her-life.channel 16))
+          %.  event-core
+          %^  ev-trace  odd.veb  sndr.shot
+          |.  ^-  tape
+          =/  sndr  [sndr-tick=sndr-tick.shot her-life=her-life.channel]
+          "sndr-tick mismatch {<sndr>}"
+        =?  event-core  !=(rcvr-tick.shot (mod our-life.channel 16))
+          %.  event-core
+          %^  ev-trace  odd.veb  sndr.shot
+          |.  ^-  tape
+          =/  rcvr  [rcvr-tick=rcvr-tick.shot our-life=our-life.channel]
+          "rcvr-tick mismatch {<rcvr>}"
         ~|  %ames-crash-on-packet-from^her.channel
-        =/  =shut-packet
+        =/  shut-packet=(unit shut-packet)
           (sift-shut-packet shot [symmetric-key her-life our-life]:channel)
+        ?~  shut-packet
+          event-core
         ::  non-galaxy: update route with heard lane or forwarded lane
         ::
         =?  route.peer-state  !=(%czar (clan:title her.channel))
@@ -2007,7 +2021,7 @@
         ::  perform peer-specific handling of packet
         ::
         =<  abet
-        (~(on-hear-shut-packet pe peer-state channel) [lane shut-packet dud])
+        (~(on-hear-shut-packet pe peer-state channel) [lane u.shut-packet dud])
       ::  +on-take-boon: receive request to give message to peer
       ::
       ++  on-take-boon
