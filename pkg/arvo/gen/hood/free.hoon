@@ -5,10 +5,10 @@
         [=desk pes=(list perm:gall)]
         [blocking=_| requested=_| all=_| ~]
     ==
-:-  %helm-pass
-^-  note-arvo
+:-  %helm-curb
+^-  [^desk pers:gall]
 =+  .^(=dome:clay %cx /(scot %p p.bek)//(scot %da now)/domes/(scot %tas desk))
-:^  %c  %curb  desk
+:-  desk
 %.  pes
 %~  gas  in
 %-  ~(uni in pes.dome)

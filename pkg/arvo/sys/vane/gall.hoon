@@ -2299,8 +2299,9 @@
     ^-  spore
     %=  old
       -    %14
-      |6   [perms=~ wards=~ |6.old]
-      bug  bug.old(veb [odd=odd.veb.bug.old pes=|])
+      |6   :+  perms=~
+             wards=~
+           bug=bug.old(veb [odd=odd.veb.bug.old pes=|])
     ==
   --
 ::  +scry: standard scry
