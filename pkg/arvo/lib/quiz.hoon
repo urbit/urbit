@@ -73,20 +73,15 @@
   ==
 ++  quiz
   |_  [size=@ud rng=_og]
-  ++  split-rng
-    ^+  [og og]
-    =+  bit-size=256
-    =^  bits-1  rng  (raws:rng bit-size)
-    [~(. og bits-1) ~(. og (raw:rng bit-size))]
   ++  fill
     |=  sax=vase
     ^+  sax
     =+  new-rng=+:(rads:rng 1)
     ?+  p.sax  ~&(warn-unfill-sam+`type`p.sax sax)
-      %noun            (gen-noun)
-      [%atom p=* q=~]  gen-atom
+      %noun            (gen-noun size new-rng)
+      [%atom p=* q=~]  (gen-atom size new-rng)
       [%atom *]        sax(q (need q.p.sax))
-      [%cell p=* q=*]  =+  [rng-1 rng-2]=split-rng
+      [%cell p=* q=*]  =+  [rng-1 rng-2]=(split-rng rng)
                        %+  slop  (fill(rng rng-1) (slot 2 sax))
                                  (fill(rng rng-2) (slot 3 sax))
       [%face p=* q=*]  sax(q q:(fill [p=q.p.sax q=q.sax]))
@@ -97,22 +92,31 @@
                        (fill(rng new-rng) sax(p new-type, q q.sax))
       [%hint p=* q=*]  sax(q q:(fill [p=q.p.sax q=q.sax]))
     ==
-  ++  gen-noun
-    =+  start-size=size
-    |.
-    !>
-    ^-  noun
-    ?:  (lte size 1)
-      (rad:rng start-size)  :: leafs should be able to make large atoms.
-    =^  ran  rng  (rads:rng 3)
-    ?:  =(0 ran) :: 1/3 chance for a leaf.
-      (rad:rng start-size)
-    ?:  =(1 ran)  :: 1/3 chance for a identical subtrees.
-      =+  subtree=$(size (div size 2))
-      [subtree subtree]
-    =+  [rng-1 rng-2]=split-rng :: 1/3 chance for different subtrees. 
-    :-  $(size (div size 2), rng rng-1)
-    $(size (div size 2), rng rng-2)
-  ++  gen-atom  !>  (rad:rng size)
   --
+++  split-rng
+  |=  [rng=_og]
+  ^+  [og og]
+  =+  bit-size=256
+  =^  bits-1  rng  (raws:rng bit-size)
+  [~(. og bits-1) ~(. og (raw:rng bit-size))]
+++  gen-noun
+  |=  [size=@ud rng=_og]
+  =+  start-size=size
+  !>
+  |-
+  ^-  noun
+  ?:  (lte size 1)
+    (rad:rng start-size)  :: leafs should be able to make large atoms.
+  =^  ran  rng  (rads:rng 3)
+  ?:  =(0 ran) :: 1/3 chance for a leaf.
+    (rad:rng start-size)
+  ?:  =(1 ran)  :: 1/3 chance for a identical subtrees.
+    =+  subtree=$(size (div size 2))
+    [subtree subtree]
+  =+  [rng-1 rng-2]=(split-rng rng)  :: 1/3 chance for different subtrees.
+  :-  $(size (div size 2), rng rng-1)
+  $(size (div size 2), rng rng-2)
+++  gen-atom
+  |=  [size=@ud rng=_og]
+  !>  (rad:rng size)
 --

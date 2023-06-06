@@ -10,6 +10,10 @@
   =+  fate=!>(|=(a=* ^-(? =(a (cue (jam a))))))
   =+  check=~(check quiz `@uv`1 2.000)
   %-  expect  !>((check fate ~ ~))
+++  test-gen-noun
+  =+  fate=!>(|=(* ^-(? %.y)))
+  =+  check=~(check quiz `@uv`1 100)
+  %-  expect  !>((check fate `gen-noun.quiz ~))
 ++  test-drop
   :: if you only care about some samples, you can drop the others by returning
   :: %drop rather than %.y or %.n.
