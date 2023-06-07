@@ -138,4 +138,10 @@
   =^  ran  rng  (rads:rng size)
   =+  tail=$(stop (div stop 2), rng rng)
   [i=head t=tail]
+++  gen-cell
+  |*  [a=mold b=mold]
+  |=  [givp=(give a) givq=(give b)]
+  |=  [size=@ud rng=_og]
+  =+  [rng-1 rng-2]=(split-rng rng)
+  [(givp size rng-1) (givq size rng-2)]
 --

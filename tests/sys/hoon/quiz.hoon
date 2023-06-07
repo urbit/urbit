@@ -11,9 +11,10 @@
   =+  check=~(check quiz `@uv`1 2.000)
   %-  expect  !>((check fate ~ ~))
 ++  test-flop
-  =+  fate=!>(|=(a=(list @ud) ^-(? =(a (flop (flop a))))))
+  =+  fate=!>(|=([a=(list @ud) b=(list @ud)] ^-(? =((flop (weld a b)) (weld (flop b) (flop a))))))
   =+  check=~(check quiz `@uv`1 100)
-  =+  gief=((gen-list.check @ud) (gen-atom.check @ud))
+  =+  giel=((gen-list.check @ud) (gen-atom.check @ud))
+  =+  gief=((gen-cell.check (list @ud) (list @ud)) giel giel)
   %-  expect  !>((check fate `gief ~))
 ++  test-gen-noun
   =+  fate=!>(|=(* ^-(? %.y)))
