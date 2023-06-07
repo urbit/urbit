@@ -765,7 +765,7 @@
   ::    %heed: track peer's responsiveness; gives %clog if slow
   ::    %jilt: stop tracking peer's responsiveness
   ::    %cork: request to delete message flow
-  ::    %kroc: request to delete stale message flows
+  ::    %kroc: request to delete specific message flows, from their bones
   ::    %plea: request to send message
   ::
   ::    Remote Scry Tasks
@@ -792,7 +792,7 @@
         [%heed =ship]
         [%jilt =ship]
         [%cork =ship]
-        [%kroc dry=?]
+        [%kroc bones=(list [ship bone])]
         $>(%plea vane-task)
     ::
         [%keen spar]
@@ -1190,6 +1190,7 @@
   ::    rto: retransmission timeout
   ::    rtt: roundtrip time estimate, low-passed using EWMA
   ::    rttvar: mean deviation of .rtt, also low-passed with EWMA
+  ::    num-live: how many packets sent, awaiting ack
   ::    ssthresh: slow-start threshold
   ::    cwnd: congestion window; max unacked packets
   ::
