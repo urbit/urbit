@@ -35,7 +35,6 @@
     =(a (sort a gth))
   =/  give
     |=  [size=@ud rng=_og]
-    !>
     |-
     ^-  (list @ud)
     ?:  =(0 size)
