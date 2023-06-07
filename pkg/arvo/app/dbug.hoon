@@ -368,7 +368,7 @@
       (gth expiry-time.a expiry-time.b)
     |=  [cookie=@uv session:eyre]
     %-  pairs
-    :~  'cookie'^s+(end [3 4] (rsh [3 2] (scot %x (shax cookie))))
+    :~  'cookie'^s+(end [3 4] (crip ((x-co:co 0) (shax cookie))))
         'expiry'^(time expiry-time)
         'channels'^(numb ~(wyt in channels))
     ==
