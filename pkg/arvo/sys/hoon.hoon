@@ -2043,6 +2043,7 @@
 +$  tang  (list tank)                                   ::  bottom-first error
 ::                                                      ::
 +$  iota                                                ::  typed path segment
+  $+  iota
   $~  [%n ~]
   $@  @tas
   $%  [%ub @ub]  [%uc @uc]  [%ud @ud]  [%ui @ui]
@@ -2067,6 +2068,7 @@
 ::           flat-mid, open, close
 ::
 +$  tank
+  $+  tank
   $~  leaf/~
   $@  cord
   $%  [%leaf p=tape]
@@ -6382,6 +6384,7 @@
       ==
   --                                                    ::
 +$  hoon                                                ::  hoon AST
+  $+  hoon                                              ::
   $~  [%zpzp ~]                                         ::
   $^  [p=hoon q=hoon]                                   ::
   $%                                                    ::
@@ -6535,7 +6538,8 @@
               [%know p=stud]                            ::  global standard
               [%made p=term q=(unit (list wing))]       ::  structure
           ==                                            ::
-+$  type  $~  %noun                                     ::
++$  type  $+  type                                      ::
+          $~  %noun                                     ::
           $@  $?  %noun                                 ::  any nouns
                   %void                                 ::  no noun
               ==                                        ::
