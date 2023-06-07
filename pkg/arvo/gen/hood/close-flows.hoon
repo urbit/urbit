@@ -38,7 +38,7 @@
 %+  roll  ~(tap by subs)
 |=  [[=wire flows=(list [bone sub-nonce=@])] bones=_bones]
 ::
-%-  tail
+%-  flop  %-  tail
 %+  roll  flows
 |=  [[=bone nonce=@] resubs=_(lent flows) bones=_bones]
 =/  app=term  ?>(?=([%gall %use sub=@ *] wire) i.t.t.wire)
@@ -76,10 +76,10 @@
     subs
   ?~  duct=(~(get by by-bone.ossuary.peer-state) forward-bone)
     subs
-  ?.  ?=([* [%gall %use @ @ %out @ @ nonce=@ @ *] *] u.duct)
+  ?.  ?=([* [%gall %use sub=@ @ %out @ @ *] *] u.duct)
     subs
   =/  =wire           i.t.u.duct
-  =/  nonce=(unit @)  (slaw %ud &8.wire)
+  =/  nonce=(unit @)  ?~((slag 7 wire) ~ (slaw %ud &8.wire))
   %-  ~(add ja subs)
   ::  0 for old pre-nonce subscriptions
   ::
