@@ -32,7 +32,7 @@
     ?~  sunk
       sam
     =+  res=(slam vax i.sunk)
-    ?:  =(+:res %.y)
+    ?:  |(=(+:res %.y) =(+:res %drop))
       $(sunk t.sunk)
     =.  sam  i.sunk
     $(sunk (sink i.sunk))
