@@ -1899,10 +1899,22 @@
       (promote-ford fod.dom invalid)
     =.  fad
       (lose-leaks:fusion veb.bug fad (~(dif in spill.old-fod) spill.fod.dom))
-    ::  TODO ingest the sprig
-    ::    create spill for a complete flue
-    ::    add those leaks to the flow
-    ::    inject it into fod.dom
+    ::  create spill for a complete flue
+    =/  new-spill=(map leak soak)
+      ?~  sip  ~
+      %-  ~(gas by *(map leak soak))
+      %+  turn  ~(tap by u.sip)
+      |=([* =leak =soak] [leak soak])
+    ::  add those leaks to the flow
+    =.  fad
+      %-  ~(urn by fad)
+      |=  [=leak refs=@ud =soak]
+      ?.  (~(has by new-spill) leak)  [refs soak]
+      [+(refs) (~(got by new-spill) leak)] :: TODO is this correct ref counting?
+    ::  inject it into fod.dom
+    =?  fod.dom  ?=(^ sip)
+      [~(key by new-spill) u.sip]
+    ::
     =?  changes  updated  (changes-for-upgrade q.old-yaki deletes changes)
     ::
     =/  files
@@ -2472,7 +2484,7 @@
       ?~  mr
         (done %& ~)
       =.  ..merge  (done %& conflicts.u.mr)
-      (park | & new.u.mr ~ lat.u.mr ~)
+      (park | & new.u.mr [~ lat.u.mr] ~)
     ==
   ::
   +$  merge-result  [conflicts=(set path) new=yoki lat=(map lobe page)]
@@ -4988,7 +5000,7 @@
       ~|([%park-bad-desk des.req] !!)
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our des.req)
-      abet:(park:den | & [yok ran]:req ~)
+      abet:(park:den | & [yok ran ~]:req)
     [mos ..^$]
   ::
       %perk
@@ -4996,7 +5008,7 @@
       ~|([%park-bad-desk des.req] !!)
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our des.req)
-      abet:(park:den | & [yok ran sip]:req)
+      abet:(park:den | & [yok ran `sip]:req)
     [mos ..^$]
   ::
       %pork
