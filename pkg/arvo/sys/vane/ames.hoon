@@ -180,20 +180,6 @@
   =+  wid=(met 3 pat)
   ?>  (lte wid 384)
   [pat wid]
-::
-::  +bind-duct: find or make new $bone for .duct in .ossuary
-::
-++  bind-duct
-  |=  [=ossuary =duct]
-  ^+  [next-bone.ossuary ossuary]
-  ::
-  ?^  existing=(~(get by by-duct.ossuary) duct)
-    [u.existing ossuary]
-  ::
-  :-  next-bone.ossuary
-  :+  (add 4 next-bone.ossuary)
-    (~(put by by-duct.ossuary) duct next-bone.ossuary)
-  (~(put by by-bone.ossuary) next-bone.ossuary duct)
 ::  +make-bone-wire: encode ship, rift and bone in wire for sending to vane
 ::
 ++  make-bone-wire
@@ -453,17 +439,17 @@
 ++  sift-shut-packet
   ~/  %sift-shut-packet
   |=  [=shot =symmetric-key sndr-life=@ rcvr-life=@]
-  ^-  shut-packet
-  ?.  =(sndr-tick.shot (mod sndr-life 16))
-    ~|  ames-sndr-tick+sndr-tick.shot  !!
-  ?.  =(rcvr-tick.shot (mod rcvr-life 16))
-    ~|  ames-rcvr-tick+rcvr-tick.shot  !!
+  ^-  (unit shut-packet)
+  ?.  ?&  =(sndr-tick.shot (mod sndr-life 16))
+          =(rcvr-tick.shot (mod rcvr-life 16))
+      ==
+    ~
   =/  siv  (end 7 content.shot)
   =/  len  (end 4 (rsh 7 content.shot))
   =/  cyf  (rsh [3 18] content.shot)
   ~|  ames-decrypt+[[sndr rcvr origin]:shot len siv]
   =/  vec  ~[sndr.shot rcvr.shot sndr-life rcvr-life]
-  ;;  shut-packet  %-  cue  %-  need
+  %-  some  ;;  shut-packet  %-  cue  %-  need
   (~(de sivc:aes:crypto (shaz symmetric-key) vec) siv len cyf)
 ::
 ++  is-peer-dead
@@ -1102,14 +1088,17 @@
 ::    message on a "forward flow" from a peer, originally passed from
 ::    one of the peer's vanes to the peer's Ames.
 ::
-::    Ames passes a %plea to itself to handle internal %cork moves
+::    Ames passes a %deep task to itself to handle deferred calls
 ::    Ames passes a %private-keys to Jael to request our private keys.
 ::    Ames passes a %public-keys to Jael to request a peer's public
 ::    keys.
 ::
 +$  note
   $~  [%b %wait *@da]
-  $%  $:  %b
+  $%  $:  %a
+          $>(%deep task:ames)
+      ==
+      $:  %b
           $>(?(%wait %rest) task:behn)
       ==
       $:  %c
@@ -1666,14 +1655,14 @@
           ^+  peer-core
           ::  handle cork only deals with bones that are in closing
           ::
-          (handle-cork:abet:(call:(abed:mi:peer-core bone) %done ok=%.y) bone)
+          %.  bone
+          handle-cork:abet:(call:(abed:mi:peer-core bone) %done ok=%.y)
         ::  failed; send message nack packet
         ::
         ++  send-nack
           |=  [=bone =^error]
           ^+  peer-core
-          =.  peer-core   abet:(call:(abed:mi:peer-core bone) %done ok=%.n)
-          =.  event-core  abet:peer-core  :: XX extraneous?
+          =.  peer-core  abet:(call:(abed:mi:peer-core bone) %done ok=%.n)
           ::  construct nack-trace message, referencing .failed $message-num
           ::
           =/  failed=message-num
@@ -1683,7 +1672,7 @@
           ::  send nack-trace message on associated .nack-bone
           ::
           =/  nack-bone=^bone  (mix 0b10 bone)
-          abet:(call:(abed:mu:(abed-got:pe her) nack-bone) %memo message-blob)
+          abet:(call:(abed:mu:peer-core nack-bone) %memo message-blob)
         --
       ::  +on-sift: handle request to filter debug output by ship
       ::
@@ -1983,9 +1972,23 @@
         ::
         =/  =peer-state   +.u.sndr-state
         =/  =channel      [[our sndr.shot] now channel-state -.peer-state]
+        =?  event-core  !=(sndr-tick.shot (mod her-life.channel 16))
+          %.  event-core
+          %^  ev-trace  odd.veb  sndr.shot
+          |.  ^-  tape
+          =/  sndr  [sndr-tick=sndr-tick.shot her-life=her-life.channel]
+          "sndr-tick mismatch {<sndr>}"
+        =?  event-core  !=(rcvr-tick.shot (mod our-life.channel 16))
+          %.  event-core
+          %^  ev-trace  odd.veb  sndr.shot
+          |.  ^-  tape
+          =/  rcvr  [rcvr-tick=rcvr-tick.shot our-life=our-life.channel]
+          "rcvr-tick mismatch {<rcvr>}"
         ~|  %ames-crash-on-packet-from^her.channel
-        =/  =shut-packet
+        =/  shut-packet=(unit shut-packet)
           (sift-shut-packet shot [symmetric-key her-life our-life]:channel)
+        ?~  shut-packet
+          event-core
         ::  non-galaxy: update route with heard lane or forwarded lane
         ::
         =?  route.peer-state  !=(%czar (clan:title her.channel))
@@ -2018,7 +2021,7 @@
         ::  perform peer-specific handling of packet
         ::
         =<  abet
-        (~(on-hear-shut-packet pe peer-state channel) [lane shut-packet dud])
+        (~(on-hear-shut-packet pe peer-state channel) [lane u.shut-packet dud])
       ::  +on-take-boon: receive request to give message to peer
       ::
       ++  on-take-boon
@@ -2052,16 +2055,6 @@
       ++  on-plea
         |=  [=ship =plea]
         ^+  event-core
-        ::  since flow kill goes like:
-        ::  client vane cork task -> client ames pass cork as plea ->
-        ::  -> server ames sinks plea -> server ames +on-plea (we are here);
-        ::  if it's %cork plea passed to ames from its sink,
-        ::  give %done and process flow closing after +on-take-done call
-        ::
-        ?:  =([%a /close ~] plea)  (emit duct %give %done ~)
-        ::
-        ::  .plea is from local vane to foreign ship
-        ::
         =/  ship-state  (~(get by peers.ames-state) ship)
         ::
         ?.  ?=([~ %known *] ship-state)
@@ -2069,16 +2062,16 @@
           |=  todos=alien-agenda
           todos(messages [[duct plea] messages.todos])
         ::
-        =/  =peer-state  +.u.ship-state
-        =/  =channel     [[our ship] now channel-state -.peer-state]
+        =+  peer-core=(abed-peer:pe ship +.u.ship-state)
+        ::  .plea is from local vane to foreign ship
         ::
-        =^  =bone  ossuary.peer-state  (bind-duct ossuary.peer-state duct)
+        =^  =bone  peer-core  (bind-duct:peer-core duct)
         %-  %^  ev-trace  msg.veb  ship
             |.  ^-  tape
-            =/  sndr  [our our-life.channel]
-            =/  rcvr  [ship her-life.channel]
+            =/  sndr  [our our-life.channel.peer-core]
+            =/  rcvr  [ship her-life.channel.peer-core]
             "plea {<sndr rcvr bone=bone vane.plea path.plea>}"
-        abet:(~(on-memo pe [peer-state channel]) bone plea %plea)
+        abet:(on-memo:peer-core bone plea %plea)
       ::  +on-cork: handle request to kill a flow
       ::
       ++  on-cork
@@ -2090,26 +2083,23 @@
           %^  enqueue-alien-todo  ship  ship-state
           |=  todos=alien-agenda
           todos(messages [[duct plea] messages.todos])
-        =/  =peer-state  +.u.ship-state
-        =/  =channel     [[our ship] now channel-state -.peer-state]
         ::
-        =/  [=bone ossuary=_ossuary.peer-state]
-          ?^  cork-bone  [u.cork-bone ossuary.peer-state]
-          (bind-duct ossuary.peer-state duct)
-        =.  ossuary.peer-state  ossuary
+        =+  peer-core=(abed-peer:pe ship +.u.ship-state)
+        =^  =bone  peer-core
+          ?^  cork-bone  [u.cork-bone peer-core]
+          (bind-duct:peer-core duct)
         ::
-        ?.  (~(has by by-bone.ossuary.peer-state) bone)
+        ?.  (~(has by by-bone.ossuary.peer-state.peer-core) bone)
           %.  event-core
           %^  ev-trace  odd.veb  ship
           |.("trying to cork {<bone=bone>}, not in the ossuary, ignoring")
         ::
-        =.  closing.peer-state  (~(put in closing.peer-state) bone)
         %-  %^  ev-trace  msg.veb  ship
             |.  ^-  tape
-            =/  sndr  [our our-life.channel]
-            =/  rcvr  [ship her-life.channel]
+            =/  sndr  [our our-life.channel.peer-core]
+            =/  rcvr  [ship her-life.channel.peer-core]
             "cork plea {<sndr rcvr bone=bone vane.plea path.plea>}"
-        abet:(~(on-memo pe [peer-state channel]) bone plea %plea)
+        abet:(on-memo:(on-cork-flow:peer-core bone) bone plea %plea)
       ::  +on-kroc: cork all stale flows from failed subscriptions
       ::
       ++  on-kroc
@@ -2181,6 +2171,49 @@
           |
         %.  &
         (ev-trace &(dry odd.veb) ship |.((weld "failed %watch plea " log)))
+      ::  +on-deep: deferred %ames calls from itself
+      ::
+      ++  on-deep
+        |=  =deep
+        ^+  event-core
+        ::  currently $deep tasks are all focused on a
+        ::  particular ship but future ones might not
+        ::
+        ?>  ?=([@ =ship *] deep)
+        =/  ship-state  (~(get by peers.ames-state) ship.deep)
+        ?>  ?=([~ %known *] ship-state)
+        =+  peer-core=(abed-peer:pe ship.deep +.u.ship-state)
+        |^  ?-  -.deep
+          %nack  abet:(send-nack-trace [nack-bone message-blob]:deep)
+          %sink  abet:(sink-naxplanation [target-bone naxplanation]:deep)
+          %drop  abet:(clear-nack [nack-bone message-num]:deep)
+          %cork  =~((cork-bone bone.deep) (emit duct %give %done ~))
+          %kill  (kill-bone bone.deep)
+        ==
+        ::
+        ++  send-nack-trace
+          |=  [=nack=bone =message-blob]
+          abet:(call:(abed:mu:peer-core nack-bone) %memo message-blob)
+        ::
+        ++  sink-naxplanation
+          |=  [=target=bone =naxplanation]
+          abet:(call:(abed:mu:peer-core target-bone) %near naxplanation)
+        ::
+        ++  clear-nack
+          |=  [=nack=bone =message-num]
+          abet:(call:(abed:mi:peer-core nack-bone) %drop message-num)
+        ::  client ames [%cork as plea] ->  server ames [sinks %cork plea],
+        ::                                  pass %deep %cork task to self
+        ::                                  put flow in closing (+cork-bone),
+        ::                                  and give %done
+        ::  sink %ack, pass %deep %kill <-  after +on-take-done, ack %cork plea
+        ::  task to self, and delete the    and delete the flow in +handle-cork
+        ::  flow (+kill-bone)
+        ::
+        ::
+        ++  cork-bone  |=(=bone abet:(on-cork-flow:peer-core bone))
+        ++  kill-bone  |=(=bone abet:(on-kill-flow:peer-core bone))
+        --
       ::  +on-take-wake: receive wakeup or error notification from behn
       ::
       ++  on-take-wake
@@ -2782,6 +2815,21 @@
           ~|  %dangling-bone^her^bone
           (~(got by by-bone.ossuary.peer-state) bone)
         ::
+        ::  +bind-duct: find or make new $bone for .duct in .ossuary
+        ::
+        ++  bind-duct
+          |=  =^duct
+          =*  ossa  ossuary.peer-state
+          ^+  [next-bone.ossa peer-core]
+          ?^  existing=(~(get by by-duct.ossa) duct)
+            [u.existing peer-core]
+          :-  next-bone.ossa
+          =.  ossa
+            :+  (add 4 next-bone.ossa)
+              (~(put by by-duct.ossa) duct next-bone.ossa)
+            (~(put by by-bone.ossa) next-bone.ossa duct)
+          peer-core
+        ::
         ++  is-corked
           |=  =bone
           ?|  (~(has in corked.peer-state) bone)
@@ -2953,6 +3001,35 @@
             fi-abet:(fi-sub:(abed:fi path) duct)
           =.  keens  (~(put by keens) path *keen-state)
           fi-abet:(fi-start:(abed:fi path) duct)
+        ::  +on-cork-flow: mark .bone as closing
+        ::
+        ++  on-cork-flow
+          |=  =bone
+          ^+  peer-core
+          peer-core(closing.peer-state (~(put in closing.peer-state) bone))
+        ::  +on-kill-flow: delete flow on cork sender side
+        ::
+        ++  on-kill-flow
+          |=  =bone
+          ^+  peer-core
+          ?:  (~(has in corked.peer-state) bone)
+            ~>  %slog.0^leaf/"ames: ignoring kill on corked bone {<bone>}"
+            peer-core
+          =.  peer-state
+            =,  peer-state
+            %_  peer-state
+              ::  if the publisher was behind, preemptively remove any nacks
+              ::
+              rcv              (~(del by (~(del by rcv) bone)) (mix 0b10 bone))
+              snd              (~(del by snd) bone)
+              corked           (~(put in corked) bone)
+              closing          (~(del in closing) bone)
+              by-duct.ossuary  (~(del by by-duct.ossuary) (got-duct bone))
+              by-bone.ossuary  (~(del by by-bone.ossuary) bone)
+            ==
+          ::  since we got one cork ack, try the next one
+          ::
+          recork-one
         ::
         +|  %implementation
         ::  +dedup-message: replace with any existing copy of this message
@@ -3084,7 +3161,6 @@
           ~>  %slog.0^leaf/"ames: recork {<her i.boz>}"
           =/  =plea  [%$ /flow [%cork ~]]
           (on-memo i.boz plea %plea)
-        ::
         ::  +handle-cork: handle flow kill after server ames has taken %done
         ::
         ++  handle-cork
@@ -3364,7 +3440,7 @@
               %-  %+  pe-trace  msg.veb
                   =/  dat  [her bone=bone message-num=message-num -.task]
                   |.("remove naxplanation flow {<dat>}")
-              ::  XX we avoid re-adding the bone in abet:mu; test that it works
+              ::  we avoid re-adding the bone in abet:mu
               ::
               =.  snd.peer-state  (~(del by snd.peer-state) bone)
               peer-core
@@ -3374,7 +3450,8 @@
               ?:  =(0 (end 0 (rsh 0 bone)))  peer-core
               ::  nack-trace bone; assume .ok, clear nack from |sink
               ::
-              abet:(call:(abed:mi (mix 0b10 bone)) %drop message-num)
+              %+  pe-emit  duct
+              [%pass /clear-nack %a %deep %drop her (mix 0b10 bone) message-num]
             ::  if the bone belongs to a closing flow and we got a
             ::  naxplanation, don't relay ack to the client vane
             ::
@@ -3382,8 +3459,7 @@
             ::  not a nack-trace bone; relay ack to client vane
             ::
             (pe-emit (got-duct bone) %give %done error)
-          ::  XX impure +abet pattern
-          ::  +pump-cork: kill flow on cork sender side
+          ::  +pump-cork: handle %cork on the publisher
           ::
           ++  pump-cork
             |=  =message-num
@@ -3395,24 +3471,8 @@
               %-  %+  pe-trace  odd.veb
                   |.("trying to delete a corked bone={<bone>}")
               peer-core
-            =/  nack-bone=^bone  (mix 0b10 bone)
-            =?  rcv.peer-state   (~(has by rcv.peer-state) nack-bone)
-              ::  if the publisher was behind we remove nacks on that bone
-              ::
-              (~(del by rcv.peer-state) nack-bone)
-            =.  peer-state
-              =,  peer-state
-              %_  peer-state
-                snd              (~(del by snd) bone)
-                rcv              (~(del by rcv) bone)
-                corked           (~(put in corked) bone)
-                closing          (~(del in closing) bone)
-                by-duct.ossuary  (~(del by by-duct.ossuary) (got-duct bone))
-                by-bone.ossuary  (~(del by by-bone.ossuary) bone)
-              ==
-            ::  since we got one cork ack, try the next one
-            ::
-            recork-one
+            =/  =wire  (make-bone-wire her her-rift.channel bone)
+            (pe-emit duct %pass wire %a %deep %kill her bone)
           ::  +pu: construct |packet-pump core
           ::
           ++  pu
@@ -4003,33 +4063,33 @@
               %-  %+  pe-trace  msg.veb
                   =/  dat  [her bone=bone message-num=message-num]
                   |.("sink plea {<dat>}")
-              =;  pe=_peer-core
-                =.  peer-core  pe
-                =?  sink  !ok  (call %done ok=%.n)
-                sink
               ?.  ok
-                ::  send nack-trace with blank .error for security
-                ::
                 =/  nack-bone=^bone  (mix 0b10 bone)
                 =/  =message-blob    (jam [message-num *error])
-                abet:(call:(abed:mu nack-bone) %memo message-blob)
-              =+  ;;  =plea  message
+                =/  =wire  (make-bone-wire her her-rift.channel nack-bone)
+                ::  send nack-trace with blank .error for security
+                ::
+                =.  peer-core
+                  %+  pe-emit  duct
+                  [%pass wire %a %deep %nack her nack-bone message-blob]
+                ::
+                (done ok=%.n)
+              ::
               =/  =wire  (make-bone-wire her her-rift.channel bone)
-              ::
-              ?.  =(vane.plea %$)
-                ?+  vane.plea  ~|  %ames-evil-vane^our^her^vane.plea  !!
-                  %c  (pe-emit duct %pass wire %c %plea her plea)
-                  %g  (pe-emit duct %pass wire %g %plea her plea)
-                  %j  (pe-emit duct %pass wire %j %plea her plea)
-                ==
-              ::  a %cork plea is handled using %$ as the recipient vane to
-              ::  account for publishers that still handle ames-to-ames %pleas
-              ::
-              ?>  &(?=([%cork *] payload.plea) ?=(%flow -.path.plea))
-              ::  XX FIXME impure +abet pattern...
-              ::
-              =.  closing.peer-state  (~(put in closing.peer-state) bone)
-              (pe-emit duct %pass wire %a %plea her [%a /close ~])
+              =.  peer-core
+                =+  ;;  =plea  message
+                ?.  =(vane.plea %$)
+                  ?+  vane.plea  ~|  %ames-evil-vane^our^her^vane.plea  !!
+                    %c  (pe-emit duct %pass wire %c %plea her plea)
+                    %g  (pe-emit duct %pass wire %g %plea her plea)
+                    %j  (pe-emit duct %pass wire %j %plea her plea)
+                  ==
+                ::  a %cork plea is handled using %$ as the recipient vane to
+                ::  account for publishers that still handle ames-to-ames %pleas
+                ::
+                ?>  &(?=([%cork *] payload.plea) ?=(%flow -.path.plea))
+                (pe-emit duct %pass wire %a %deep %cork her bone)
+              sink
             ::
             ::  +ha-boon: handle response message, acking unconditionally
             ::
@@ -4063,7 +4123,7 @@
                 [duct.move %give %lost ~]
               ::  send ack unconditionally
               ::
-              (call %done ok=%.y)
+              (done ok=%.y)
             ::
             ++  ha-nack
               ^+  sink
@@ -4077,12 +4137,14 @@
               ::
               =/  target=^bone  (mix 0b10 bone)
               =.  peer-core
-                ::  notify |message-pump that this message got naxplained
+                ::  will notify |message-pump that this message got naxplained
                 ::
-                abet:(call:(abed:mu target) %near ;;(naxplanation message))
+                =/  =wire  (make-bone-wire her her-rift.channel target)
+                %+  pe-emit  duct
+                [%pass wire %a %deep %sink her target ;;(naxplanation message)]
               ::  ack nack-trace message (only applied if we don't later crash)
               ::
-              (call %done ok=%.y)
+              (done ok=%.y)
             --
           --
         ::  +fi: constructor for |fine remote scry core
@@ -4455,12 +4517,12 @@
           ++  max-backoff
             ^-  @dr
             ?:(?=([[%gall %use %ping *] *] duct) ~s25 ~m2)
-          ::  +in-slow-start: %.y iff we're in "slow-start" mode
+          ::  +in-slow-start: %.y if we're in "slow-start" mode
           ::
           ++  in-slow-start
             ^-  ?
             (lth cwnd ssthresh)
-          ::  +in-recovery: %.y iff we're recovering from a skipped packet
+          ::  +in-recovery: %.y if we're recovering from a skipped packet
           ::
           ::    We finish recovering when .live-packets finally dips back
           ::    down to .cwnd.
@@ -4595,6 +4657,7 @@
       %plea  (on-plea:event-core [ship plea]:task)
       %cork  (on-cork:event-core ship.task)
       %kroc  (on-kroc:event-core dry.task)
+      %deep  (on-deep:event-core deep.task)
     ::
       %keen  (on-keen:event-core +.task)
       %yawn  (on-cancel-scry:event-core | +.task)

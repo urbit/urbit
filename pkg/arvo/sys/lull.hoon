@@ -768,6 +768,7 @@
   ::    %cork: request to delete message flow
   ::    %kroc: request to delete stale message flows
   ::    %plea: request to send message
+  ::    %deep: deferred calls to %ames, from itself
   ::
   ::    Remote Scry Tasks
   ::
@@ -795,6 +796,7 @@
         [%cork =ship]
         [%kroc dry=?]
         $>(%plea vane-task)
+        [%deep =deep]
     ::
         [%keen spar]
         [%yawn spar]
@@ -902,7 +904,15 @@
   ::    life based on the ship.
   ::
   +$  spar  [=ship =path]
+  ::  $deep: deferred %ames call, from self, to keep +abet cores pure
   ::
+  +$  deep
+    $%  [%nack =ship =nack=bone =message-blob]
+        [%sink =ship =target=bone naxplanation=[=message-num =error]]
+        [%drop =ship =nack=bone =message-num]
+        [%cork =ship =bone]
+        [%kill =ship =bone]
+    ==
   :: +|  %atomics
   ::
   +$  bone           @udbone
@@ -2164,6 +2174,14 @@
         ::  inbound-request: the original request which caused this connection
         ::
         =inbound-request
+        ::  session-id: the session associated with this connection
+        ::  identity:   the identity associated with this connection
+        ::
+        ::NOTE  technically the identity is associated with the session (id),
+        ::      but we may still need to know the identity that was used
+        ::      after the session proper expires.
+        ::
+        [session-id=@uv =identity]
         ::  response-header: set when we get our first %start
         ::
         response-header=(unit response-header:http)
@@ -2181,7 +2199,10 @@
   ::  +session: server side data about a session
   ::
   +$  session
-    $:  ::  expiry-time: when this session expires
+    $:  ::  identity: authentication level & id of this session
+        ::
+        =identity
+        ::  expiry-time: when this session expires
         ::
         ::    We check this server side, too, so we aren't relying on the browser
         ::    to properly handle cookie expiration as a security mechanism.
@@ -2194,6 +2215,14 @@
         ::  TODO: We should add a system for individual capabilities; we should
         ::  mint some sort of long lived cookie for mobile apps which only has
         ::  access to a single application path.
+    ==
+  ::  $identity: authentication method & @p
+  ::
+  +$  identity
+    $~  [%ours ~]
+    $%  [%ours ~]                                       ::  local, root
+        [%fake who=@p]                                  ::  guest id
+        :: [%real who=@p]                                  ::  authed cross-ship
     ==
   ::  channel-state: state used in the channel system
   ::
@@ -2238,6 +2267,7 @@
   ::
   +$  channel
     $:  mode=?(%json %jam)
+        =identity
         ::  channel-state: expiration time or the duct currently listening
         ::
         ::    For each channel, there is at most one open EventSource
@@ -2322,6 +2352,9 @@
         ::  respond with the @p the requester is authenticated as
         ::
         [%name ~]
+        ::  respond with the @p of the ship serving the response
+        ::
+        [%host ~]
         ::  respond with the default file not found page
         ::
         [%four-oh-four ~]
