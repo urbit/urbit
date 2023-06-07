@@ -10,6 +10,11 @@
   =+  fate=!>(|=(a=* ^-(? =(a (cue (jam a))))))
   =+  check=~(check quiz `@uv`1 2.000)
   %-  expect  !>((check fate ~ ~))
+++  test-flop
+  =+  fate=!>(|=(a=(list @ud) ^-(? =(a (flop (flop a))))))
+  =+  check=~(check quiz `@uv`1 100)
+  =+  gief=((gen-list.check @ud) (gen-atom.check @ud))
+  %-  expect  !>((check fate `gief ~))
 ++  test-gen-noun
   =+  fate=!>(|=(* ^-(? %.y)))
   =+  check=~(check quiz `@uv`1 100)
@@ -49,8 +54,8 @@
     |=  a=(list @ud)
     =(a (sort a gth))
   =/  give
+    ^-  (give.quiz (list @ud))
     |=  [size=@ud rng=_og]
-    !>
     |-
     ^-  (list @ud)
     ?:  (gth size 1.000.000) 

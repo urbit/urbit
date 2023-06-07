@@ -1,7 +1,9 @@
 |_  [eny=@uv runs=@ud]
-+$  give  $-([@ud _og] vase)
+++  give
+  |$  [sam]
+  $-([@ud _og] sam)
 ++  check
-  |=  [vax=vase give=(unit give) alts=(unit $-(vase (list vase)))]
+  |*  [vax=vase give=(unit (give)) alts=(unit $-(vase (list vase)))]
   =?  runs  =(0 runs)  100
   =+  size=1
   =+  sax=(slot 6 vax)
@@ -15,14 +17,14 @@
   =/  sam=vase
     ?~  give
       (~(fill quiz [size rng]) sax)
-    (u.give size rng)
-  =+  res=(slam vax sam)
-  =?  drop  =(q.res %drop)  +(drop)
-  ?:  |(=(q.res %drop) =(q.res %.y))
+    [p=p.sax q=(u.give size rng)]
+  =+  res=(slum q.vax q.sam)
+  =?  drop  =(res %drop)  +(drop)
+  ?:  |(=(res %drop) =(res %.y))
     :: Arbitrarily chosen growth pace.
     =+  new-size=(add +(size) (div (mul size 2) 21))
     $(run-i +(run-i), rng +:(rads:rng 1), size new-size)
-  ?>  =(q.res %.n)
+  ?>  =(res %.n)
   =+  sink=?~(alts sink u.alts)
   =+  sunk=(sink sam)
   =/  simp=vase
@@ -78,8 +80,8 @@
     ^+  sax
     =+  new-rng=+:(rads:rng 1)
     ?+  p.sax  ~&(warn-unfill-sam+`type`p.sax sax)
-      %noun            (gen-noun size new-rng)
-      [%atom p=* q=~]  (gen-atom size new-rng)
+      %noun            !>  (gen-noun size new-rng)
+      [%atom p=* q=~]  !>  ((gen-atom @) size new-rng)
       [%atom *]        sax(q (need q.p.sax))
       [%cell p=* q=*]  =+  [rng-1 rng-2]=(split-rng rng)
                        %+  slop  (fill(rng rng-1) (slot 2 sax))
@@ -102,7 +104,7 @@
 ++  gen-noun
   |=  [size=@ud rng=_og]
   =+  start-size=size
-  !>
+  ^-  *
   |-
   ^-  noun
   ?:  (lte size 1)
@@ -117,6 +119,23 @@
   :-  $(size (div size 2), rng rng-1)
   $(size (div size 2), rng rng-2)
 ++  gen-atom
+  |*  [a=mold]
   |=  [size=@ud rng=_og]
-  !>  (rad:rng size)
+  ^-  a
+  (rad:rng size)
+++  gen-list
+  |*  a=mold
+  |=  give=(give a)
+  |=  [size=@ud rng=_og]
+  =+  stop=size
+  |-
+  ^-  (list a)
+  =^  ran  rng  (rads:rng stop)
+  ?:  =(ran 0)
+    ~
+  =^  ran  rng  (rads:rng size)
+  =+  head=(give size rng)
+  =^  ran  rng  (rads:rng size)
+  =+  tail=$(stop (div stop 2), rng rng)
+  [i=head t=tail]
 --

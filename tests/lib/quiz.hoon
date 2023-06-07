@@ -27,8 +27,7 @@
   =+  fate=!>(|=(a=$+(test-type @ud) (lte a 42)))
   =/  give
     |=  [size=@ud rng=_og]
-    ^-  vase
-    !>
+    ^-  @ud
     ?:  (lth size 42)
       (rad:rng size)
     42
