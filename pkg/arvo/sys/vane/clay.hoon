@@ -1895,7 +1895,7 @@
     =/  old-fod  fod.dom
     =.  fod.dom
       ?:  updated  [~ ~]
-      ?^  sip      [~ ~]  :: if you supplied a cache, throw everything away
+      ?^  sip   ~&  >  "cell"   [~ ~]  :: if you supplied a cache, throw everything away
       (promote-ford fod.dom invalid)
     =.  fad
       (lose-leaks:fusion veb.bug fad (~(dif in spill.old-fod) spill.fod.dom))
@@ -1907,10 +1907,13 @@
       |=([* =leak =soak] [leak soak])
     ::  add those leaks to the flow
     =.  fad
-      %-  ~(urn by fad)
-      |=  [=leak refs=@ud =soak]
-      ?.  (~(has by new-spill) leak)  [refs soak]
-      [+(refs) (~(got by new-spill) leak)] :: TODO is this correct ref counting?
+      ^-  (map leak [@ud soak])
+      %-  ~(gas by fad)
+      %+  turn  ~(tap by new-spill)
+      |=  [=leak =soak]
+      ?:  (~(has by fad) leak)
+        [leak +(refs:(~(got by fad) leak)) soak]
+      [leak 1 soak]
     ::  inject it into fod.dom
     =?  fod.dom  ?=(^ sip)
       [~(key by new-spill) u.sip]
