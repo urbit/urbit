@@ -744,12 +744,12 @@
         %gen
       =/  bek=beak  [our desk.generator.action da+now]
       =/  sup=spur  path.generator.action
-      =/  ski       (rof ~ %ca bek sup)
+      =/  ski       (rof ~ /eyre %ca bek sup)
       =/  cag=cage  (need (need ski))
       ?>  =(%vase p.cag)
       =/  gat=vase  !<(vase q.cag)
       =/  res=toon
-        %-  mock  :_  (look rof ~)
+        %-  mock  :_  (look rof ~ /eyre)
         :_  [%9 2 %0 1]  |.
         %+  slam
           %+  slam  gat
@@ -917,7 +917,7 @@
     ++  do-scry
       |=  [care=term =desk =path]
       ^-  (unit (unit cage))
-      (rof ~ care [our desk da+now] path)
+      (rof ~ /eyre care [our desk da+now] path)
     ::
     ++  error-response
       |=  [status=@ud =tape]
@@ -1278,7 +1278,7 @@
     ++  code
       ^-  @ta
       =/  res=(unit (unit cage))
-        (rof ~ %j [our %code da+now] /(scot %p our))
+        (rof ~ /eyre %j [our %code da+now] /(scot %p our))
       (rsh 3 (scot %p ;;(@ q.q:(need (need res)))))
     ::  +session-cookie-string: compose session cookie
     ::
@@ -1672,6 +1672,7 @@
           $(errors (~(put by errors) -), requests t.requests)
         ::
         =.  gall-moves
+          =/  =wire  /channel/poke/[channel-id]/(scot %ud request-id.i.requests)
           :_  gall-moves
           ^-  move
           %+  deal-as
@@ -1943,7 +1944,7 @@
       ?~  sub
         ((trace 0 |.("no subscription for request-id {(scow %ud request-id)}")) ~)
       =/  des=(unit (unit cage))
-        (rof ~ %gd [our app.u.sub da+now] /$)
+        (rof ~ /eyre %gd [our app.u.sub da+now] /$)
       ?.  ?=([~ ~ *] des)
         ((trace 0 |.("no desk for app {<app.u.sub>}")) ~)
       `!<(=desk q.u.u.des)
@@ -1979,7 +1980,7 @@
         =*  have=mark  mark.event
         =/  convert=(unit vase)
           =/  cag=(unit (unit cage))
-            (rof ~ %cf [our desk.event da+now] /[have]/json)
+            (rof ~ /eyre %cf [our desk.event da+now] /[have]/json)
           ?.  ?=([~ ~ *] cag)  ~
           `q.u.u.cag
         ?~  convert
@@ -2390,7 +2391,7 @@
     =/  from=@p
       ?@  identity  identity
       ?-(-.identity %ours our, %fake who.identity)
-    [duct %pass wire %g %deal [from ship] dude task]
+    [duct %pass wire %g %deal [from ship /eyre] dude task]
   ::
   ++  trace
     |=  [pri=@ print=(trap tape)]
@@ -2672,7 +2673,7 @@
       :_  http-server-gate
       =/  cmd
         [%acme %poke `cage`[%acme-order !>(mod)]]
-      [duct %pass /acme/order %g %deal [our our] cmd]~
+      [duct %pass /acme/order %g %deal [our our /eyre] cmd]~
     ==
   ::
       %request
@@ -3129,7 +3130,7 @@
 ++  scry
   ~/  %eyre-scry
   ^-  roon
-  |=  [lyc=gang car=term bem=beam]
+  |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
   =*  ren  car
   =*  why=shop  &/p.bem
