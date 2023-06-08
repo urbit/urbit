@@ -9,7 +9,7 @@
     ::
     +$  hugo-state
       $:  %0
-          files=(trie octs)  ::  files
+          files=(trie text octs)  ::  files
           ducts=(set duct)   ::  listeners
       ==
     --
@@ -18,16 +18,16 @@
       =|  fat=(trie)
       |@
       ++  del
-        |=  pax=path
+        |=  pax=poth
         ^+  fat
         ?~  pax  [~ dir.fat]
         =/  kid  (~(get by dir.fat) i.pax)
         ?~  kid  fat
         fat(dir (~(put by dir.fat) i.pax $(fat u.kid, pax t.pax)))
-      ::  Descend to the trie at this path
+      ::  Descend to the trie at this poth
       ::
       ++  dip
-        |=  pax=path
+        |=  pax=poth
         ^+  fat
         ?~  pax  fat
         =/  kid  (~(get by dir.fat) i.pax)
@@ -35,18 +35,18 @@
         $(fat u.kid, pax t.pax)
       ::
       ++  gas
-        |=  lit=(list (pair path _?>(?=(^ fil.fat) u.fil.fat)))
+        |=  lit=(list (pair poth _?>(?=(^ fil.fat) u.fil.fat)))
         ^+  fat
         ?~  lit  fat
         $(fat (put p.i.lit q.i.lit), lit t.lit)
       ::
       ++  get
-        |=  pax=path
+        |=  pax=poth
         fil:(dip pax)
-      ::  Fetch file at longest existing prefix of the path
+      ::  Fetch file at longest existing prefix of the poth
       ::
       ++  fit
-        |=  pax=path
+        |=  pax=poth
         ^+  [pax fil.fat]
         ?~  pax  [~ fil.fat]
         =/  kid  (~(get by dir.fat) i.pax)
@@ -57,12 +57,12 @@
         low
       ::
       ++  has
-        |=  pax=path
+        |=  pax=poth
         !=(~ (get pax))
       ::  Delete subtree
       ::
       ++  lop
-        |=  pax=path
+        |=  pax=poth
         ^+  fat
         ?~  pax  fat
         |-
@@ -72,16 +72,16 @@
         fat(dir (~(put by dir.fat) i.pax $(fat u.kid, pax t.pax)))
       ::
       ++  put
-        |*  [pax=path dat=*]
-        =>  .(dat `_?>(?=(^ fil.fat) u.fil.fat)`dat, pax `path`pax)
+        |*  [pax=poth dat=*]
+        =>  .(dat `_?>(?=(^ fil.fat) u.fil.fat)`dat, pax `poth`pax)
         |-  ^+  fat
         ?~  pax  fat(fil `dat)
         =/  kid  (~(gut by dir.fat) i.pax ^+(fat [~ ~]))
         fat(dir (~(put by dir.fat) i.pax $(fat kid, pax t.pax)))
       ::
       ++  tap
-        =|  pax=path
-        =|  out=(list (pair path _?>(?=(^ fil.fat) u.fil.fat)))
+        =|  pax=poth
+        =|  out=(list (pair poth _?>(?=(^ fil.fat) u.fil.fat)))
         |-  ^+   out
         =?  out  ?=(^ fil.fat)  :_(out [pax u.fil.fat])
         =/  dir  ~(tap by dir.fat)
@@ -94,7 +94,7 @@
       ::  Serialize to map
       ::
       ++  tar
-        (~(gas by *(map path _?>(?=(^ fil.fat) u.fil.fat))) tap)
+        (~(gas by *(map poth _?>(?=(^ fil.fat) u.fil.fat))) tap)
       --
     --
 =|  hugo-state

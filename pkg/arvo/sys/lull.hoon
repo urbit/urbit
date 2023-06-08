@@ -2717,7 +2717,7 @@
     ==                                                 ::
   +$  task                                             ::  incoming request
     $~  [%vega ~]                                      ::
-    $%  [%fill tie=(trie octs)]                        ::  fill entire trie
+    $%  [%fill tie=(trie text octs)]                   ::  fill entire trie :: TODO need diff logic
         [%vary p=(unit ~)]                             ::  watch system output
         $>(%born vane-task)
         $>(%trim vane-task)                            ::  reset state (TODO I think?)
@@ -2726,8 +2726,8 @@
   +$  text  @                                          ::  no aura for paths
   +$  poth  (list text)                                ::  trie key
   ++  trie                                             ::  file-store struct
-    |$  [item]                                         ::
-    [fil=(unit item) dir=(map text $)]                 ::
+    |$  [key val]                                      ::
+    [fil=(unit val) dir=(map key $)]                   ::
   ::
   --  ::hugo
 ::  %iris http-client interface
