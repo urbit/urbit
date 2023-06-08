@@ -285,10 +285,10 @@
   |=  mov=move
   ^-  tang
   %+  weld  (expect-eq !>(~[/http-blah]) !>(duct.mov))
-  (expect-gall-deal [wire [our ~nul] app deal] card.mov)
+  (expect-gall-deal [wire [our ~nul /eyre] app deal] card.mov)
 ::
 ++  expect-gall-deal
-  |=  $:  expected=[wire=path id=sock app=term =deal:gall]
+  |=  $:  expected=[wire=path id=sack app=term =deal:gall]
           actual=(wind note:eyre-gate gift:eyre-gate)
       ==
   ^-  tang
@@ -372,7 +372,7 @@
   ==
 ::
 ++  scry-provides-code  ^-  roof
-  |=  [gang =view =beam]
+  |=  [gang pov=path =view =beam]
   ^-  (unit (unit cage))
   ?:  =(%gd view)  ``noun+!>(%base)
   ?:  &(=(%ca view) =(/gen/handler/hoon s.beam))
