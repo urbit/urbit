@@ -1466,9 +1466,10 @@
           (cat 3 '|' gen)
         :((cury cat 3) ':' app '|' gen)
       =+  [our=(scot %p our.hid) now=(scot %da now.hid)]
-      ?.  .^(? %gu /[our]/[app]/[now]/$)
-        ~
-      =+  .^(=desk %gd /[our]/[app]/[now]/$)
+      =/  =desk
+        ?.  .^(? %gu /[our]/[app]/[now]/$)
+          q:he-beam
+        .^(desk %gd /[our]/[app]/[now]/$)
       =/  pfix=path  /[our]/[desk]/[now]/gen/[app]
       ::
       %^  tab-generators:auto  pfix  `app
