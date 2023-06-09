@@ -80,9 +80,10 @@
     ^+  sax
     =+  new-rng=+:(rads:rng 1)
     ?+  p.sax  ~&(warn-unfill-sam+`type`p.sax sax)
-      %noun            !>  (gen-noun size new-rng)
-      [%atom p=* q=~]  !>  ((gen-atom @) size new-rng)
+      %noun            !>  (noun:givers size new-rng)
+      [%atom p=* q=~]  !>  ((atom:givers @) size new-rng)
       [%atom *]        sax(q (need q.p.sax))
+      :: TODO use cell:givers
       [%cell p=* q=*]  =+  [rng-1 rng-2]=(split-rng rng)
                        %+  slop  (fill(rng rng-1) (slot 2 sax))
                                  (fill(rng rng-2) (slot 3 sax))
@@ -101,41 +102,63 @@
   =+  bit-size=256
   =^  bits-1  rng  (raws:rng bit-size)
   [~(. og bits-1) ~(. og (raw:rng bit-size))]
-++  gen-const
-  |*  a=mold
-  |=  x=a
-  |=  [=@ud =_og]
-  ^-  a
-  x
-++  gen-noun
-  |=  [size=@ud rng=_og]
-  =+  start-size=size
-  ^-  *
-  |-
-  ^-  noun
-  ?:  (lte size 1)
-    (rad:rng start-size)  :: leafs should be able to make large atoms.
-  =^  ran  rng  (rads:rng 3)
-  ?:  =(0 ran) :: 1/3 chance for a leaf.
-    (rad:rng start-size)
-  ?:  =(1 ran)  :: 1/3 chance for a identical subtrees.
-    =+  subtree=$(size (div size 2))
-    [subtree subtree]
-  =+  [rng-1 rng-2]=(split-rng rng)  :: 1/3 chance for different subtrees.
-  :-  $(size (div size 2), rng rng-1)
-  $(size (div size 2), rng rng-2)
-++  gen-atom
-  |*  [a=mold]
-  |=  [size=@ud rng=_og]
-  ^-  a
-  (rad:rng size)
-++  gen-list
+++  givers
+  |%
+  :: value givers
+  ++  atom
+    |*  [a=mold]
+    |=  [size=@ud rng=_og]
+    ^-  a
+    (rad:rng size)
+  ++  noun
+    |=  [size=@ud rng=_og]
+    =+  start-size=size
+    ^-  *
+    |-
+    ^-  ^noun
+    ?:  (lte size 1)
+      (rad:rng start-size)  :: leafs should be able to make large atoms.
+    =^  ran  rng  (rads:rng 3)
+    ?:  =(0 ran) :: 1/3 chance for a leaf.
+      (rad:rng start-size)
+    ?:  =(1 ran)  :: 1/3 chance for a identical subtrees.
+      =+  subtree=$(size (div size 2))
+      [subtree subtree]
+    =+  [rng-1 rng-2]=(split-rng rng)  :: 1/3 chance for different subtrees.
+    :-  $(size (div size 2), rng rng-1)
+    $(size (div size 2), rng rng-2)
+  :: combinators
+  ++  const
+    |*  a=mold
+    |=  x=a
+    |=  [=@ud =_og]
+    ^-  a
+    x
+  ++  cell
+    |*  [a=mold b=mold]
+    |=  [givp=(give a) givq=(give b)]
+    |=  [size=@ud rng=_og]
+    =+  [rng-1 rng-2]=(split-rng rng)
+    [(givp size rng-1) (givq size rng-2)]
+  ++  freq
+    |*  a=mold
+    |=  b=(^list (pair @ (give a)))
+    =+  tot=(roll (turn b head) add)
+    |=  [size=@ud rng=_og]
+    =^  ran  rng  (rads:rng tot)
+    |-
+    ?~  b  !!  :: impossible
+    =/  [f=@ p=(give a)]  i.b
+    ?:  (lth ran f)
+      (p size rng)
+    $(b t.b, ran (sub ran f))
+++  list
   |*  a=mold
   |=  give=(give a)
   |=  [size=@ud rng=_og]
   =+  stop=size
   |-
-  ^-  (list a)
+  ^-  (^list a)
   =^  ran  rng  (rads:rng stop)
   ?:  =(ran 0)
     ~
@@ -144,22 +167,5 @@
   =^  ran  rng  (rads:rng size)
   =+  tail=$(stop (div stop 2), rng rng)
   [i=head t=tail]
-++  gen-cell
-  |*  [a=mold b=mold]
-  |=  [givp=(give a) givq=(give b)]
-  |=  [size=@ud rng=_og]
-  =+  [rng-1 rng-2]=(split-rng rng)
-  [(givp size rng-1) (givq size rng-2)]
-++  gen-freq
-  |*  a=mold
-  |=  b=(list (pair @ (give a)))
-  =+  tot=(roll (turn b head) add)
-  |=  [size=@ud rng=_og]
-  =^  ran  rng  (rads:rng tot)
-  |-
-  ?~  b  !!  :: impossible
-  =/  [f=@ p=(give a)]  i.b
-  ?:  (lth ran f)
-    (p size rng)
-  $(b t.b, ran (sub ran f))
+  --
 --
