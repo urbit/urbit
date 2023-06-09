@@ -4,43 +4,20 @@
   :: a fate is a gate that takes any sample and returns a loobean.
   :: returning %.n means the test failed, and %.y means it passed.
   =+  fate=!>(|=([a=@ b=@] =(0 (sub (sub (add a b) b) a))))
+  :: you can seed the gate with any entropy and number of runs you like.
   =+  check=~(check quiz `@uv`1 30.000)
+  :: the `check` arm will return %.y if all runs passed, and %.n if any failed.
+  :: it takes two optional parameters as units, which we leave alone for now.
+  %-  expect  !>((check fate ~ ~))
+++  test-gen-noun
+  :: if a noun is a cell, then the subtrees are equal iff the hashes of the subtrees are equal.
+  =+  fate=!>(|=(* ^-($?(? %drop) ?.(.?(+6) %drop =(=(+12 +13) =((sham +12) (sham +13)))))))
+  =+  check=~(check quiz `@uv`1 100)
   %-  expect  !>((check fate ~ ~))
 ++  test-jam-cue
   =+  fate=!>(|=(a=* ^-(? =(a (cue (jam a))))))
   =+  check=~(check quiz `@uv`1 2.000)
   %-  expect  !>((check fate ~ ~))
-++  test-flop
-  =+  fate=!>(|=([a=(list @ud) b=(list @ud)] ^-(? =((flop (weld a b)) (weld (flop b) (flop a))))))
-  =+  check=~(check quiz `@uv`1 100)
-  =+  giel=((gen-list.check @ud) (gen-atom.check @ud))
-  =+  gief=((gen-cell.check (list @ud) (list @ud)) giel giel)
-  %-  expect  !>((check fate `gief ~))
-++  test-gen-noun
-  :: if a noun is a cell, then the subtrees are equal iff the hashes of the subtrees are equal.
-  =+  fate=!>(|=(* ^-($?(? %drop) ?.(.?(+6) %drop =(=(+12 +13) =((sham +12) (sham +13)))))))
-  =+  check=~(check quiz `@uv`1 100)
-  %-  expect  !>((check fate `gen-noun.quiz ~))
-++  test-gen-const
-  :: here, part of the sample always stays the same.
-  =+  fate=!>(|=([@ @tas] =(+13 %constant)))
-  =+  check=~(check quiz `@uv`1 100)
-  =+  gief=((gen-cell.quiz * @tas) gen-noun.quiz ((gen-const.quiz @tas) %constant))
-  %-  expect  !>((check fate `gief ~))
-++  test-gen-freq
-  :: gen-freq lets you specify a list of generators and have each chosen with a different frequency.
-  :: in this case, we will mostly generate atoms, and sometimes a noun where the subtrees are equal.
-  :: we should observe a %drop rate of ~67 percent.
-  =+  fate=!>(|=(* ?.(.?(+6) %drop =(+12 +13))))
-  =+  check=~(check quiz `@uv`1 100)
-  =/  dup=(give.quiz *)
-    |=  [size=@ud rng=_og]
-    ^-  *
-    =+  a=(gen-noun.quiz size rng)
-    [a a]
-  =/  l=(list (pair @ (give.quiz *)))  ~[[3 (gen-atom.quiz @)] [1 dup]]
-  =+  gief=((gen-freq.quiz *) l)
-  %-  expect  !>((check fate `gief ~))
 ++  test-drop
   :: if you only care about some samples, you can drop the others by returning
   :: %drop rather than %.y or %.n.
@@ -95,4 +72,34 @@
     ~[!>((scag 2 ssam)) !>((slag 1 ssam))]
   =+  check=~(check quiz `@uv`1 3.000)
   %+  expect-eq  !>(|)  !>((check fate `give `alts))
+++  test-flop
+  :: here we use some combinators to create new givers.
+  =+  fate=!>(|=([a=(list @ud) b=(list @ud)] ^-(? =((flop (weld a b)) (weld (flop b) (flop a))))))
+  =+  check=~(check quiz `@uv`1 100)
+  :: we can generate a list of any type.
+  :: specify the type of the elements of the list by passing the mold to gen-list.
+  :: then pass it a giver of that type.
+  =+  giel=((gen-list.check @ud) (gen-atom.check @ud))
+  =+  gief=((gen-cell.check (list @ud) (list @ud)) giel giel)
+  %-  expect  !>((check fate `gief ~))
+++  test-gen-const
+  :: here, part of the sample always stays the same, because we use the gen-const giver.
+  =+  fate=!>(|=([@ @tas] =(+13 %constant)))
+  =+  check=~(check quiz `@uv`1 100)
+  =+  gief=((gen-cell.quiz * @tas) gen-noun.quiz ((gen-const.quiz @tas) %constant))
+  %-  expect  !>((check fate `gief ~))
+++  test-gen-freq
+  :: gen-freq lets you specify a list of generators and have each chosen with a different frequency.
+  :: in this case, we will mostly generate atoms, and sometimes a noun where the subtrees are equal.
+  :: we should observe a %drop rate of ~67 percent.
+  =+  fate=!>(|=(* ?.(.?(+6) %drop =(+12 +13))))
+  =+  check=~(check quiz `@uv`1 100)
+  =/  dup=(give.quiz *)
+    |=  [size=@ud rng=_og]
+    ^-  *
+    =+  a=(gen-noun.quiz size rng)
+    [a a]
+  =/  l=(list (pair @ (give.quiz *)))  ~[[3 (gen-atom.quiz @)] [1 dup]]
+  =+  gief=((gen-freq.quiz *) l)
+  %-  expect  !>((check fate `gief ~))
 --
