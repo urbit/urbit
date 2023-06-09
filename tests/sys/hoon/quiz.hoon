@@ -17,7 +17,8 @@
   =+  gief=((gen-cell.check (list @ud) (list @ud)) giel giel)
   %-  expect  !>((check fate `gief ~))
 ++  test-gen-noun
-  =+  fate=!>(|=(* ^-(? %.y)))
+  :: if a noun is a cell, then the subtrees are equal iff the hashes of the subtrees are equal.
+  =+  fate=!>(|=(* ^-($?(? %drop) ?.(.?(+6) %drop =(=(+12 +13) =((sham +12) (sham +13)))))))
   =+  check=~(check quiz `@uv`1 100)
   %-  expect  !>((check fate `gen-noun.quiz ~))
 ++  test-gen-const
