@@ -107,13 +107,13 @@
   :: value givers
   ++  atom
     |*  [a=mold]
+    ^-  (give a)
     |=  [size=@ud rng=_og]
-    ^-  a
     (rad:rng size)
   ++  noun
+    ^-  (give *)
     |=  [size=@ud rng=_og]
     =+  start-size=size
-    ^-  *
     |-
     ^-  ^noun
     ?:  (lte size 1)
@@ -131,18 +131,20 @@
   ++  const
     |*  a=mold
     |=  x=a
+    ^-  (give a)
     |=  [=@ud =_og]
-    ^-  a
     x
   ++  cell
     |*  [a=mold b=mold]
     |=  [givp=(give a) givq=(give b)]
+    ^-  (give $:(a b))
     |=  [size=@ud rng=_og]
     =+  [rng-1 rng-2]=(split-rng rng)
     [(givp size rng-1) (givq size rng-2)]
   ++  freq
     |*  a=mold
     |=  b=(^list (pair @ (give a)))
+    ^-  (give a)
     =+  tot=(roll (turn b head) add)
     |=  [size=@ud rng=_og]
     =^  ran  rng  (rads:rng tot)
@@ -155,6 +157,7 @@
 ++  list
   |*  a=mold
   |=  give=(give a)
+  ^-  (^give (^list a))
   |=  [size=@ud rng=_og]
   =+  stop=size
   |-
