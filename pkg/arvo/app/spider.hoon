@@ -558,7 +558,7 @@
     %-  (slog tang)
     =/  tube  (convert-tube %tang %json desk bowl)
     :-  [500 [['content-type' 'application/json'] ~]]
-    =-  `(as-octt:mimes:html (en-json:html -))
+    =-  `(as-octs:mimes:html (en:json:html -))
     o/(malt `(list [key=@t json])`[term+s/term tang+!<(json (tube !>(tang))) ~])
   :_  ~  :_  ~
   ?-  term
