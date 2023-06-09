@@ -101,6 +101,12 @@
   =+  bit-size=256
   =^  bits-1  rng  (raws:rng bit-size)
   [~(. og bits-1) ~(. og (raw:rng bit-size))]
+++  gen-const
+  |*  a=mold
+  |=  x=a
+  |=  [=@ud =_og]
+  ^-  a
+  x
 ++  gen-noun
   |=  [size=@ud rng=_og]
   =+  start-size=size

@@ -20,6 +20,12 @@
   =+  fate=!>(|=(* ^-(? %.y)))
   =+  check=~(check quiz `@uv`1 100)
   %-  expect  !>((check fate `gen-noun.quiz ~))
+++  test-gen-const
+  :: here, part of the sample always stays the same.
+  =+  fate=!>(|=([@ @tas] =(+13 %constant)))
+  =+  check=~(check quiz `@uv`1 100)
+  =+  gief=((gen-cell.quiz * @tas) gen-noun.quiz ((gen-const.quiz @tas) %constant))
+  %-  expect  !>((check fate `gief ~))
 ++  test-drop
   :: if you only care about some samples, you can drop the others by returning
   :: %drop rather than %.y or %.n.
