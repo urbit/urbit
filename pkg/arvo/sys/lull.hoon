@@ -2203,7 +2203,10 @@
         visiting=(map ship (map @uv portkey))
         ::  endpoint: hardcoded local eauth endpoint for %syn and %ack
         ::
-        endpoint=[user=(unit @t) auth=(unit @t)]
+        ::    user-configured or auth-o-detected, with last-updated timestamp.
+        ::    both shaped like 'prot://host'
+        ::
+        endpoint=[user=(unit @t) auth=(unit @t) =time]
     ==
   ::  +session: server side data about a session
   ::
@@ -2227,53 +2230,56 @@
     ==
   ::  +visitor: completed or in-progress incoming eauth flow
   ::
-  ::    duct: plea duct
+  ::    duct: boon duct
   ::      and
   ::    sesh: login completed, session exists
   ::      or
-  ::    pend: pending (initial or final) eauth http request
-  ::    into: the @p attempting to log in
+  ::    pend: awaiting %tune for %keen sent at time, for initial eauth http req
+  ::    ship: the @p attempting to log in
+  ::    base: local protocol+hostname the attempt started on, if any
   ::    last: the url to redirect to after log-in
   ::    toke: authentication secret received over ames or offered by visitor
   ::
   +$  visitor
-    $:  duct=duct
+    $:  duct=(unit duct)
     $@  sesh=@uv
-    $:  pend=(unit duct)
+    $:  pend=(unit [http=duct keen=time])
         ship=ship
+        base=(unit @t)
         last=@t
         toke=(unit @uv)
     ==  ==
   ::  +portkey: completed or in-progress outgoing eauth flow
   ::
-  ::    duct: boon duct
-  ::    live: login date or eauth return address
+  ::    made: live since
+  ::      or
+  ::    duct: confirm request awaiting redirect
+  ::    toke: secret to include in redirect, unless aborting
   ::
   +$  portkey
-    $:  duct=duct
-        live=(each made=@da goal=@t)
+    $@  made=@da          ::  live since
+    $:  pend=(unit duct)  ::  or await redir
+        toke=(unit @uv)   ::  with secret
     ==
-  ::  +eauth-plea: host talking to client
+  ::  +eauth-plea: client talking to host
   ::
   +$  eauth-plea
     $:  %0
-    $%  ::  %syn: visitor started attempt, needs to return to url
-        ::  %del: host has expired the session
+    $%  ::  %open: client decided on an attempt, wants to return to url
+        ::  %shut: client wants the attempt or session closed
         ::
-        [%syn nonce=@uv url=@t]
-        [%del nonce=@uv]
+        [%open nonce=@uv token=(unit @uv)]
+        [%shut nonce=@uv]
     ==  ==
-  ::  +eauth-boon: client responding to host
+  ::  +eauth-boon: host responding to client
   ::
   +$  eauth-boon
     $:  %0
-    $%  ::  %ack: attempt heard, approval to happen through url
-        ::  %fin: attempt approved, visitor will give secret auth token
-        ::  %del: client wants the session ended
+    $%  ::  %okay: attempt heard, client to finish auth through url
+        ::  %shut: host has expired the session
         ::
-        [%ack url=@t]
-        [%fin token=@uv]
-        [%del ~]
+        [%okay nonce=@uv url=@t]
+        [%shut nonce=@uv]
     ==  ==
   ::  $identity: authentication method & @p
   ::

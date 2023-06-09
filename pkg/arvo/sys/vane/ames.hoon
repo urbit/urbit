@@ -4900,6 +4900,13 @@
       ?.  =([%black ~ ~] rul.r.per)  ~
       (en-hunk (rof ~ nom))
     ::
+        %e
+      =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
+      %-  en-hunk
+      ?+  kyr  ~
+        %x  (rof ~ nom)
+      ==
+    ::
         %g
       =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
       %-  en-hunk

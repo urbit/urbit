@@ -26,7 +26,8 @@
       ::
       $:  %a
       $%  $>(%plea task:ames)
-          $>(%cork task:ames)
+          $>(%keen task:ames)
+          $>(%yawn task:ames)
       ==  ==
       ::  %b: to behn
       ::
@@ -60,6 +61,7 @@
           $%  $>(%boon gift:ames)
               $>(%lost gift:ames)
               $>(%done gift:ames)
+              $>(%tune gift:ames)
       ==  ==
       $:  %behn
           $%  [%wake error=(unit tang)]
@@ -850,13 +852,15 @@
     ::  if we have no eauth endpoint yet, and the request is authenticated,
     ::  deduce it from the hostname
     ::
-    =?  auth.endpoint.auth.state
+    =?  endpoint.auth.state
         ?&  authenticated
             ?=(^ host)
             ?=(~ auth.endpoint.auth.state)
         ==
       %-  (trace 2 |.("eauth: storing endpoint at {(trip u.host)}"))
-      `(cat 3 ?:(secure 'https://' 'http://') u.host)
+      :+  user.endpoint.auth.state
+        `(cat 3 ?:(secure 'https://' 'http://') u.host)
+      now
     ::  record that we started an asynchronous response
     ::
     =/  connection=outstanding-connection
@@ -1251,7 +1255,10 @@
           (login-page redirect our identity `& %.n)
         ::TODO  redirect logic here and elsewhere is ugly
         =/  redirect  (fall redirect '')
-        (start:server:eauth u.ship ?:(=(redirect '') '/' redirect))
+        =/  base=(unit @t)
+          ?~  host  ~
+          `(cat 3 ?:(secure 'https://' 'http://') u.host)
+        (start:server:eauth u.ship base ?:(=(redirect '') '/' redirect))
       ::
       =.  with-eauth  (bind with-eauth |=(? |))
       ?~  password=(get-header:http 'password' u.parsed)
@@ -1280,9 +1287,11 @@
         o(session-id session.fex)
       ::  store the hostname used for this login, later reuse it for eauth
       ::
-      =?  auth.endpoint.auth.state  ?=(^ host)
+      =?  endpoint.auth.state  ?=(^ host)
         %-  (trace 2 |.("eauth: storing endpoint at {(trip u.host)}"))
-        `(cat 3 ?:(secure 'https://' 'http://') u.host)
+        :+  user.endpoint.auth.state
+          `(cat 3 ?:(secure 'https://' 'http://') u.host)
+        now
       ::
       =;  out=[moves=(list move) server-state]
         out(moves [give-session-tokens :(weld moz moves.fex moves.out)])
@@ -1331,14 +1340,12 @@
         (biff (get-header:http 'host' arg) (cury slaw %p))
       ?~  sid
         (handle-response response)
-      ::  if this is an eauth remote logout, just send the %del
+      ::  if this is an eauth remote logout, just send the %shut
       ::
       ?:  ?=(^ hos)
-        =/  home  (~(gut by visiting.auth.state) u.hos ~)
-        ?~  por=(~(get by home) u.sid)
-          (handle-response response)
         =^  moz  state  (handle-response response)
-        [[(send-boon:client:eauth(duct duct.u.por) %0 %del ~) moz] state]
+        :_  state
+        [(send-plea:client:eauth u.hos %0 %shut u.sid) moz]
       ::  if the requester is logging themselves out, make them drop the cookie
       ::
       =?  headers.response-header.response  =(u.sid session-id)
@@ -1506,7 +1513,8 @@
         ?^  +.visa  [moz (~(put by viz) nonce visa)]
         :_  viz
         %+  weld  moz
-        (close-eauth:server:eauth(duct duct.visa) who.identity.u.ses nonce)
+        ?~  duct.visa  ~
+        [(send-boon:server:eauth(duct u.duct.visa) %0 %shut nonce)]~
       [(weld `(list move)`moves1 `(list move)`moves2) state]
     ::  +code: returns the same as |code
     ::
@@ -1536,103 +1544,80 @@
         ::  +start: initiate an eauth login attempt for the :ship identity
         ::
         ++  start
-          |=  [=ship last=@t]
+          |=  [=ship base=(unit @t) last=@t]
           ^-  [(list move) server-state]
           %-  (trace 2 |.("eauth: starting eauth into {(scow %p ship)}"))
           =/  nonce=@uv      (~(raw og (shas %eauth-nonce eny)) 64)
-          =/  visit=visitor  [duct `duct ship last ~]
+          =/  visit=visitor  [~ `[duct now] ship base last ~]
           =.  visitors.auth  (~(put by visitors.auth) nonce visit)
           :_  state
-          ::  we delay serving an http response until we receive an %ack boon
+          ::  we delay serving an http response until we receive a scry %tune
           ::
-          :~  (send-plea ship %0 %syn nonce (need eauth-url))
+          :~  (send-keen %keen ship nonce now)
               (start-timeout /visitors/(scot %uv nonce))
           ==
-        ::  +on-boon: receive an eauth network response from a client
+        ::  +on-tune: receive a client-url remote scry result
         ::
-        ::    crashes on unexpected circumstances, in response to which we
-        ::    (as the host) should abort the eauth attempt
-        ::
-        ++  on-boon
-          |=  [=ship nonce=@uv boon=eauth-boon]
+        ++  on-tune
+          |=  [ship=@p nonce=@uv url=@t]
           ^-  [(list move) server-state]
-          %-  (trace 2 |.("eauth: {(trip +<.boon)} from {(scow %p ship)}"))
+          %-  (trace 2 |.("eauth: %tune from {(scow %p ship)}"))
           ::  guarantee the ship still controls the nonce
           ::
           =/  visa=visitor  (~(got by visitors.auth) nonce)
-          ?>  ?|  &(?=(^ +.visa) =(ship ship.visa))
-                  ?&  ?=(@ +.visa)
-                      =(real+ship identity:(~(got by sessions.auth) sesh.visa))
-                  ==
-              ==
-          ?-  +<.boon
-              %ack
-            ::  redirect the visitor to their own confirmation page
-            ::
-            ?>  ?=(^ +.visa)
-            =.  visitors.auth
-              (~(put by visitors.auth) nonce visa(pend ~))
-            %-  handle-response(duct (need pend.visa))
-            =;  url=@t  [%start 303^['location' url]~ ~ &]
-            %+  rap  3
-            :~  url.boon
-                '?server='  (scot %p our)
-                '&nonce='   (scot %uv nonce)
-            ==
+          ?>  &(?=(^ +.visa) =(ship ship.visa))
+          ::  redirect the visitor to their own confirmation page
           ::
-              %fin
-            =/  visa=visitor  (~(got by visitors.auth) nonce)
+          =.  visitors.auth  (~(put by visitors.auth) nonce visa(pend ~))
+          %-  handle-response(duct http:(need pend.visa))
+          =;  url=@t  [%start 303^['location' url]~ ~ &]
+          %+  rap  3
+          :~  url
+              '?server='  (scot %p our)
+              '&nonce='   (scot %uv nonce)
+          ==
+        ::  +on-plea: receive an eauth network message from a client
+        ::
+        ++  on-plea
+          |=  [=ship plea=eauth-plea]
+          ^-  [(list move) server-state]
+          %-  (trace 2 |.("eauth: {(trip +<.plea)} from {(scow %p ship)}"))
+          =;  res=[(list move) server-state]
+            =^  moz  state  res
+            [[[duct %give %done ~] moz] state]
+          ?-  +<.plea
+              %open
+            ::  this attempt may or may not have been started in +start yet
+            ::
+            =/  visa=visitor
+              %+  ~(gut by visitors.auth)  nonce.plea
+              [~ ~ ship ~ '/' ~]
             ?>  ?=(^ +.visa)
-            ::  if the visitor hasn't presented a token yet, store the real one
+            ?>  =(ship ship.visa)
+            ::NOTE  that token might still be empty, in which case the http
+            ::      client will probably signal an abort when they return
             ::
-            ?~  toke.visa
-              ?>  ?=(~ pend.visa)
-              =.  visitors.auth
-                (~(put by visitors.auth) nonce visa(toke `token.boon))
-              [~ state]
-            ::  if the visitor has already presented a token, respond
+            =.  duct.visa      `duct
+            =.  toke.visa      token.plea
+            =.  visitors.auth  (~(put by visitors.auth) nonce.plea visa)
+            ::  if the eauth attempt was started on our side, we may know the
+            ::  specific base url the user used; make sure they go back there
             ::
-            ?>  ?=(^ pend.visa)
-            ?.  =(token.boon u.toke.visa)
-              ::  token doesn't match, error out
-              ::
-              %-  (trace 1 |.("eauth: token mismatch"))
-              %^  return-static-data-on-duct(duct u.pend.visa)  400  'text/html'
-              (eauth-error-page %server last.visa)
-            ::  token matches, we can finalize
-            ::
-            (finalize duct u.pend.visa nonce ship last.visa)
+            =/  url=@t
+              %-  need
+              ?~  base.visa  eauth-url
+              eauth-url(user.endpoint.auth base.visa)
+            [[(send-boon %0 %okay nonce.plea url)]~ state]
           ::
-              %del
+              %shut
             ::  the visitor wants the associated session gone
             ::
-            =.  visitors.auth  (~(del by visitors.auth) nonce)
-            =?  sessions.auth  ?=(@ +.visa)
-              (~(del by sessions.auth) sesh.visa)
-            [(close-eauth ship nonce) state]
+            ?~  visa=(~(get by visitors.auth) nonce.plea)  [~ state]
+            =.  visitors.auth  (~(del by visitors.auth) nonce.plea)
+            =?  sessions.auth  ?=(@ +.u.visa)
+              (~(del by sessions.auth) sesh.u.visa)
+            [[(send-boon %0 %shut nonce.plea)]~ state]
           ==
-        ::  +on-fail: we crashed or received a nack, clean up the attempt
-        ::
-        ++  on-fail
-          |=  [=ship nonce=@uv]
-          ^-  [(list move) server-state]
-          =/  visa=(unit visitor)  (~(get by visitors.auth) nonce)
-          ?~  visa  [~ state]
-          ::  if the eauth attempt already completed, we can leave it be
-          ::
-          ?@  +.u.visa  [~ state]
-          ::  if the eauth attempt is still pending, abort it cleanly
-          ::
-          =^  moz  state
-            ?~  pend.u.visa  [~ state]
-            %^  return-static-data-on-duct(duct u.pend.u.visa)  500  'text/html'
-            (eauth-error-page %server last.u.visa)
-          =.  visitors.auth  (~(del by visitors.auth) nonce)
-          :_  state
-          ::  make sure they know we dropped this attempt, and clean up the flow
-          ::
-          ::NOTE  duct should already be identical, but set it anyway for clarity
-          (weld moz (close-eauth(duct duct.u.visa) ship nonce))
         ::  +cancel: the client aborted the eauth attempt, so clean it up
         ::
         ++  cancel
@@ -1643,7 +1628,7 @@
           ::
           ?~  visa=(~(get by visitors.auth) nonce)  [~ state]
           ?@  +.u.visa  [~ state]
-          ::  delete the attempt, cork the flow, and go back to the login page
+          ::  delete the attempt, and go back to the login page
           ::
           %-  (trace 2 |.("eauth: cancelling login"))
           =.  visitors.auth  (~(del by visitors.auth) nonce)
@@ -1653,7 +1638,9 @@
               (crip (en-urlt:html (trip last)))
             (handle-response %start 303^['location' url]~ ~ &)
           :_  state
-          (weld moz (close-eauth(duct duct.u.visa) ship.u.visa nonce))
+          %+  weld  moz
+          ?~  duct.u.visa  ~
+          [(send-boon(duct u.duct.u.visa) %0 %shut nonce)]~
         ::  +expire: host-side cancel an eauth attempt if it's still pending
         ::
         ++  expire
@@ -1662,17 +1649,24 @@
           ?~  visa=(~(get by visitors.auth) nonce)
             [~ state]
           ?@  +.u.visa  [~ state]
+          %-  (trace 2 |.("eauth: expiring"))
           =^  moz  state
             ?~  pend.u.visa  [~ state]
-            %^  return-static-data-on-duct(duct u.pend.u.visa)  503  'text/html'
-            (eauth-error-page %server last.u.visa)
+            %-  return-static-data-on-duct(duct http.u.pend.u.visa)
+            [503 'text/html' (eauth-error-page %server last.u.visa)]
+          =?  moz  ?=(^ pend.u.visa)
+            [(send-keen %yawn ship.u.visa nonce keen.u.pend.u.visa) moz]
           =.  visitors.auth  (~(del by visitors.auth) nonce)
           :_  state
-          (weld moz (close-eauth(duct duct.u.visa) ship.u.visa nonce))
+          %+  weld  moz
+          ?~  duct.u.visa  ~
+          [(send-boon(duct u.duct.u.visa) %0 %shut nonce)]~
         ::  +finalize: eauth attempt was approved: mint the client a new session
         ::
+        ::    gives the http response on the current duct
+        ::
         ++  finalize
-          |=  [=plea=^duct =http=^duct nonce=@uv =ship last=@t]
+          |=  [=plea=^duct nonce=@uv =ship last=@t]
           ^-  [(list move) server-state]
           %-  (trace 2 |.("eauth: finalizing login for {(scow %p ship)}"))
           ::  clean up the session they're changing out from,
@@ -1685,144 +1679,168 @@
             (close-session session-id:(~(got by connections.state) duct) |)
           =^  [sid=@uv * moz2=(list move)]  state
             (start-session %eauth ship)
-          =.  visitors.auth  (~(put by visitors.auth) nonce [plea-duct sid])
+          =.  visitors.auth
+            %+  ~(jab by visitors.auth)  nonce
+            |=(v=visitor v(+ sid))
           =.  connections.state
-            %+  ~(jab by connections.state)  http-duct
+            %+  ~(jab by connections.state)  duct
             |=  o=outstanding-connection
             o(session-id sid)
           =^  moz3  state
-            =;  hed  (handle-response(duct http-duct) %start 303^hed ~ &)
+            =;  hed  (handle-response %start 303^hed ~ &)
             :~  ['location' last]
                 ['set-cookie' (session-cookie-string sid &)]
             ==
           [:(weld moz1 moz2 moz3) state]
+        ::  +on-fail: we crashed or received an empty %tune, clean up
+        ::
+        ++  on-fail
+          |=  [=ship nonce=@uv]
+          ^-  [(list move) server-state]
+          ::  if the eauth attempt doesn't exist, or it was already completed,
+          ::  we can no-op here
+          ::
+          ?~  visa=(~(get by visitors.auth) nonce)  [~ state]
+          ?@  +.u.visa  [~ state]
+          ::  delete the attempt, and go back to the login page
+          ::
+          %-  (trace 2 |.("eauth: failed login"))
+          =.  visitors.auth  (~(del by visitors.auth) nonce)
+          =^  moz  state
+            ?~  pend.u.visa  [~ state]
+            %-  return-static-data-on-duct(duct http.u.pend.u.visa)
+            [503 'text/html' (eauth-error-page %server last.u.visa)]
+          :_  state
+          %+  weld  moz
+          ?~  duct.u.visa  ~
+          [(send-boon(duct u.duct.u.visa) %0 %shut nonce)]~
         ::
         ::TODO  +on-request?
         ::
-        ++  send-plea
-          |=  [=ship plea=eauth-plea]
+        ++  send-keen
+          |=  [kind=?(%keen %yawn) =ship nonce=@uv =time]
           ^-  move
-          =/  nonce=@uv
-            ?-  +<.plea
-              %syn  nonce.plea
-              %del  nonce.plea
-            ==
-          =/  =wire  /eauth/plea/0/(scot %p ship)/(scot %uv nonce)
-          %-  (trace 2 |.("eauth: {(trip +<.plea)} into {(scow %p ship)}"))
-          [duct %pass wire %a %plea ship %e /eauth/0 plea]
-        ::
-        ++  send-cork
-          |=  [=ship nonce=@uv]
-          ^-  move
-          =/  =wire  /eauth/plea/0/(scot %p ship)/(scot %uv nonce)
-          %-  (trace 2 |.("eauth: corking flow into {(scow %p ship)}"))
-          [duct %pass wire %a %cork ship]
-        ::
-        ++  close-eauth
-          |=  [=ship nonce=@uv]
-          ^-  (list move)
-          :~  (send-plea ship %0 %del nonce)
-              (send-cork ship nonce)
-          ==
-        --
-      ::
-      ++  client
-        |%
-        ::  +on-plea: receive an eauth network message from a host
-        ::
-        ::    crashes on unexpected circumstances, in response to which the
-        ::    host should abort the eauth attempt
-        ::
-        ++  on-plea
-          |=  [host=ship plea=eauth-plea]
-          ^-  [(list move) server-state]
-          %-  (trace 2 |.("eauth: {(trip +<.plea)} from {(scow %p host)}"))
-          =;  res=[(list move) server-state]
-            =^  moz  state  res
-            [[[duct %give %done ~] moz] state]
-          ?-  +<.plea
-              %syn
-            ::  store the return url, send an %ack response, and start a timeout
-            ::
-            =/  home=(map @uv portkey)
-              (~(gut by visiting.auth) host ~)
-            ?<  (~(has by home) nonce.plea)
-            =.  visiting.auth
-              %+  ~(put by visiting.auth)  host
-              (~(put by home) nonce.plea [duct |+url.plea])
-            :_  state
-            :~  (send-boon %0 %ack (need eauth-url))
-                (start-timeout /visiting/(scot %p host)/(scot %uv nonce.plea))
-            ==
+          %-  (trace 2 |.("eauth: %{(trip kind)} into {(scow %p ship)}"))
+          ::  we round down the time to make it more likely to hit cache,
+          ::  at the expense of not working if the endpoint changed within
+          ::  the last hour.
           ::
-              %del
-            ::  the host has deleted the corresponding session
-            ::
-            =.  visiting.auth
-              =/  home=(map @uv portkey)
-                (~(gut by visiting.auth) host ~)
-              =.  home  (~(del by home) nonce.plea)
-              ?~  home  (~(del by visiting.auth) host)
-              (~(put by visiting.auth) host home)
-            [~ state]
-          ==
-        ::  +confirm: as the client, approve or abort the eauth attempt
-        ::
-        ++  confirm
-          |=  [host=ship nonce=@uv grant=?]
-          ^-  [(list move) server-state]
-          ::NOTE  should be checked for at callsite
-          =/  home  (~(got by visiting.auth) host)
-          =/  door  (~(got by home) nonce)
-          ?>  ?=(%| -.live.door)
-          ::  update the outgoing sessions map
-          ::
-          =.  visiting.auth
-            ?:  grant
-              %+  ~(put by visiting.auth)  host
-              (~(put by home) nonce door(live &+now))
-            =.  home  (~(del by home) nonce)
-            ?~  home  (~(del by visiting.auth) host)
-            (~(put by visiting.auth) host home)
-          =/  token=@uv  (~(raw og (shas %eauth-token eny)) 128)
-          ::  always serve a redirect, with either the token, or an abort signal
-          ::
-          =^  moz  state
-            =;  url=@t  (handle-response %start 303^['location' url]~ ~ &)
-            %+  rap  3
-            :*  goal.p.live.door
-                '?nonce='  (scot %uv nonce)
-                ?.  grant  ['&abort']~
-                ~['&token=' (scot %uv token)]
-            ==
-          :_  state
-          ::  only send token over ames if eauth was approved
-          ::
-          ?.  grant  moz
-          [[(send-boon(duct duct.door) %0 %fin token)] moz]
-        ::
-        ++  expire
-          |=  [server=ship nonce=@uv]
-          ^-  [(list move) server-state]
-          =.  visiting.auth
-            =/  home=(map @uv portkey)  (~(gut by visiting.auth) server ~)
-            =/  door=(unit portkey)     (~(get by home) nonce)
-            ::  if the attempt was completed, we don't expire it
-            ::
-            ?.  ?=([~ * %| *] door)  visiting.auth
-            ::
-            %-  %+  trace  1
-                |.("eauth: attempt into {(scow %p server)} expired")
-            =.  home  (~(del by home) nonce)
-            ?~  home  (~(del by visiting.auth) server)
-            (~(put by visiting.auth) server home)
-          [~ state]
+          =/  =wire       /eauth/keen/(scot %p ship)/(scot %uv nonce)
+          =.   time       (sub time (mod time ~h1))
+          =/  =spar:ames  [ship /e/x/(scot %da time)//eauth/url]
+          [duct %pass wire %a ?-(kind %keen keen+spar, %yawn yawn+spar)]
         ::
         ++  send-boon
           |=  boon=eauth-boon
           ^-  move
           %-  (trace 2 |.("eauth: sending {(trip +<.boon)}"))
           [duct %give %boon boon]
+        --
+      ::
+      ++  client
+        |%
+        ::  +start: as the client, approve or abort an eauth attempt
+        ::
+        ::    assumes the duct is of an incoming eauth start/approve request
+        ::
+        ++  start
+          |=  [host=ship nonce=@uv grant=?]
+          ^-  [(list move) server-state]
+          =/  token=@uv  (~(raw og (shas %eauth-token eny)) 128)
+          ::  we always send an %open, because we need to redirect the user
+          ::  back to the host. and we always set a timeout, because we may
+          ::  not get a response quickly enough.
+          ::
+          :-  :~  (send-plea host %0 %open nonce ?:(grant `token ~))
+                  (start-timeout /visiting/(scot %p host)/(scot %uv nonce))
+              ==
+          ::  make sure we aren't attempting with this nonce already,
+          ::  then remember the secret so we can include it in the redirect
+          ::
+          =/  home  (~(gut by visiting.auth) host ~)
+          ?<  (~(has by home) nonce)
+          =.  visiting.auth
+            %+  ~(put by visiting.auth)  host
+            (~(put by home) nonce [`duct ?:(grant `token ~)])
+          state
+        ::  +on-boon: receive an eauth network response from a host
+        ::
+        ::    crashes on unexpected circumstances, in response to which we
+        ::    should abort the eauth attempt
+        ::
+        ++  on-boon
+          |=  [host=ship boon=eauth-boon]
+          ^-  [(list move) server-state]
+          %-  (trace 2 |.("eauth: %{(trip +<.boon)} from {(scow %p host)}"))
+          ?-  +<.boon
+              %okay
+            =/  home  (~(got by visiting.auth) host)
+            =/  port  (~(got by home) nonce.boon)
+            ?>  ?=(^ port)
+            ?>  ?=(^ pend.port)
+            ::  update the outgoing sessions map, deleting if we aborted
+            ::
+            =.  visiting.auth
+              ?^  toke.port
+                %+  ~(put by visiting.auth)  host
+                ::NOTE  optimistic
+                (~(put by home) nonce.boon now)
+              =.  home  (~(del by home) nonce.boon)
+              ?~  home  (~(del by visiting.auth) host)
+              (~(put by visiting.auth) host home)
+            ::  always serve a redirect, with either the token, or abort signal
+            ::
+            =;  url=@t
+              %-  handle-response(duct u.pend.port)
+              [%start 303^['location' url]~ ~ &]
+            %+  rap  3
+            :*  url.boon
+                '?nonce='  (scot %uv nonce.boon)
+                ?~  toke.port  ['&abort']~
+                ~['&token=' (scot %uv u.toke.port)]
+            ==
+          ::
+              %shut
+            ::  the host has deleted the corresponding session
+            ::
+            =.  visiting.auth
+              =/  home=(map @uv portkey)
+                (~(gut by visiting.auth) host ~)
+              =.  home  (~(del by home) nonce.boon)
+              ?~  home  (~(del by visiting.auth) host)
+              (~(put by visiting.auth) host home)
+            [~ state]
+          ==
+        ::
+        ++  expire
+          |=  [host=ship nonce=@uv]
+          ^-  [(list move) server-state]
+          =/  home=(map @uv portkey)  (~(gut by visiting.auth) host ~)
+          =/  port=(unit portkey)     (~(get by home) nonce)
+          ::  if the attempt was completed, we don't expire it
+          ::
+          ?~  port    [~ state]
+          ?@  u.port  [~ state]
+          ::  delete pending attempts, serve response if needed
+          ::
+          %-  %+  trace  1
+              |.("eauth: attempt into {(scow %p host)} expired")
+          =.  visiting.auth
+            =.  home  (~(del by home) nonce)
+            ?~  home  (~(del by visiting.auth) host)
+            (~(put by visiting.auth) host home)
+          ::
+          ?~  pend.u.port  [~ state]
+          %^  return-static-data-on-duct(duct u.pend.u.port)  503  'text/html'
+          (eauth-error-page ~)
+        ::
+        ++  send-plea
+          |=  [=ship plea=eauth-plea]
+          ^-  move
+          ::NOTE  no nonce in the wire, to avoid proliferating flows
+          =/  =wire  /eauth/plea/(scot %p ship)
+          %-  (trace 2 |.("eauth: {(trip +<.plea)} into {(scow %p ship)}"))
+          [[/eyre/eauth/synthetic]~ %pass wire %a %plea ship %e /eauth/0 plea]
         ::
         ++  confirmation-page
           |=  [server=ship nonce=@uv]
@@ -1905,10 +1923,22 @@
             ::  request for confirmation page
             ::
             ?.  ?=(%ours -.identity)  login
-            ?.  (~(has by (~(gut by visiting.auth) u.server ~)) u.nonce)
-              error
-            %^  return-static-data-on-duct  400  'text/html'
-            (confirmation-page:client u.server u.nonce)
+            =/  home  (~(gut by visiting.auth) u.server ~)
+            =/  door  (~(get by home) u.nonce)
+            ?~  door
+              ::  nonce not yet used, render the confirmation page as normal
+              ::
+              %^  return-static-data-on-duct  200  'text/html'
+              (confirmation-page:client u.server u.nonce)
+            ::  if we're still awaiting a redirect target, we choose to serve
+            ::  this latest request instead
+            ::
+            ?@  u.door         error
+            ?~  pend.u.door    error
+            =.  home           (~(put by home) u.nonce u.door(pend `duct))
+            =.  visiting.auth  (~(put by visiting.auth) u.server home)
+            %-  return-static-data-on-duct(duct u.pend.u.door)
+            [202 'text/plain' (as-octs:mimes:html 'continued elsewhere...')]
           ::  important to provide an error response for unexpected states
           ::
           =/  visa=(unit visitor)  (~(get by visitors.auth) u.nonce)
@@ -1916,27 +1946,23 @@
           ?@  +.u.visa     error
           =*  error  %^  return-static-data-on-duct  400  'text/html'
                      (eauth-error-page %server last.u.visa)
-          ?^  pend.u.visa  error
-          ::  request for eauth finalization
+          ::  request for finalization, must either abort or provide a token
           ::
           ::NOTE  yes, this means that unauthenticated clients can abort
           ::      any eauth attempt they know the nonce for, but that should
           ::      be pretty benign
           ?:  abort  (cancel:^server u.nonce last.u.visa)
           ?~  token  error
-          ::  if this request arrived before the %fin ames msg, delay response
+          ::  if this request provides a token, but the client didn't, complain
           ::
-          ?~  toke.u.visa
-            =.  visitors.auth
-              %+  ~(put by visitors.auth)  u.nonce
-              u.visa(pend `duct, toke `u.token)
-            [~ state]
-          ::  if we already received a token over ames, verify the request
+          ?~  toke.u.visa  error
+          ::  verify the request
           ::
           ?.  =(u.token u.toke.u.visa)
             %-  (trace 1 |.("eauth: token mismatch"))
             error
-          (finalize:^server duct.u.visa duct u.nonce ship.u.visa last.u.visa)
+          ?~  duct.u.visa  error
+          (finalize:^server u.duct.u.visa u.nonce ship.u.visa last.u.visa)
         ::
         ?.  ?=(%'POST' method.request)
           %^  return-static-data-on-duct  405  'text/html'
@@ -1955,8 +1981,8 @@
         ?~  server  error
         ?~  nonce   error
         =/  home    (~(gut by visiting.auth) u.server ~)
-        ?.  ?=([~ * %| *] (~(get by home) u.nonce))  error
-        (confirm:client u.server u.nonce grant)
+        ?:  (~(has by home) u.nonce)  error
+        (start:client u.server u.nonce grant)
       ::
       ++  eauth-url
         ^-  (unit @t)
@@ -3290,6 +3316,7 @@
   ::
   ?:  ?=(%eauth-host -.task)
     =.  user.endpoint.auth.server-state.ax  host.task
+    =.  time.endpoint.auth.server-state.ax  now
     [~ http-server-gate]
   ::
   ::  all other commands operate on a per-server-event
@@ -3348,7 +3375,7 @@
     ?>  ?=([%eauth %'0' ~] path.plea.task)
     =+  plea=;;(eauth-plea payload.plea.task)
     =^  moves  server-state.ax
-      (on-plea:client:eauth:authentication:server ship.task plea)
+      (on-plea:server:eauth:authentication:server ship.task plea)
     [moves http-server-gate]
   ::
       %request
@@ -3580,37 +3607,71 @@
   ++  eauth
     =*  auth  auth.server-state.ax
     =*  args  [[eny duct now rof] server-state.ax]
-    ::TODO  dud handling
     ^-  [(list move) _http-server-gate]
     ~|  [wire +<.sign]
     ?+  t.wire  !!
-        [%plea %'0' @ @ ~]
-      =/  =ship      (slav %p i.t.t.t.wire)
-      =/  nonce=@uv  (slav %uv i.t.t.t.t.wire)
+        [%plea @ ~]
+      =/  =ship  (slav %p i.t.t.wire)
       ::
       ?:  |(?=(^ dud) ?=([%ames %lost *] sign))
         %-  %+  trace:(per-server-event args)  0
             ?~  dud  |.("eauth: lost boon from {(scow %p ship)}")
             |.("eauth: crashed on %{(trip +<.sign)} from {(scow %p ship)}")
-        =^  moz  server-state.ax
-          %.  [ship nonce]
-          on-fail:server:eauth:authentication:(per-server-event args)
-        [moz http-server-gate]
+        ::NOTE  when failing on pending attempts, we just wait for the timer
+        ::      to clean up. when failing on live sessions, well, we should
+        ::      just be careful not to crash when receiving %shut boons.
+        ::      (we do not want to have the nonce in the wire, so this is the
+        ::      best handling we can do. the alternative is tracking)
+        [~ http-server-gate]
       ::
       ?:  ?=([%ames %done *] sign)
-        ?~  error.sign  [~ http-server-gate]
-        =^  moz  server-state.ax
-          %-  %+  trace:(per-server-event args)  1
-              |.("eauth: nack from {(scow %p ship)}")
-          %.  [ship nonce]
-          on-fail:server:eauth:authentication:(per-server-event args)
-        [moz http-server-gate]
+        ?~  error.sign
+          %-  %+  trace:(per-server-event args)  2
+            |.("eauth: ack from {(scow %p ship)}")
+          [~ http-server-gate]
+        ::NOTE  we would *really* like to be calling on-fail:client here, but
+        ::      we can't, because we don't know the nonce. we *can* say:
+        ::      - if %open was nacked, we will just time out the attempt.
+        ::        - but! we could be showing the user an error sooner...
+        ::      - if %shut was nacked, we optimistically deleted it locally,
+        ::        and the remote session will eventually expire, assuming it
+        ::        goes unused.
+        ::        - but! this may not be the case if we were %shutting because
+        ::          our device/session/cookie was compromised...
+        ::          - but! good hosts shouldn't crash on %shuts at all...
+        %-  %+  trace:(per-server-event args)  1
+            |.("eauth: nack from {(scow %p ship)}")
+        [~ http-server-gate]
       ::
       ?>  ?=([%ames %boon *] sign)
       =/  boon  ;;(eauth-boon payload.sign)
       =^  moz  server-state.ax
-        %.  [ship nonce boon]
-        on-boon:server:eauth:authentication:(per-server-event args)
+        %.  [ship boon]
+        on-boon:client:eauth:authentication:(per-server-event args)
+      [moz http-server-gate]
+    ::
+        [%keen @ @ ~]
+      =/  client=@p  (slav %p i.t.t.wire)
+      =/  nonce=@uv  (slav %uv i.t.t.t.wire)
+      ::
+      ?^  dud
+        =^  moz  server-state.ax
+          %.  [client nonce]
+          on-fail:server:eauth:authentication:(per-server-event args)
+        [moz http-server-gate]
+      ::
+      ?>  ?=([%ames %tune *] sign)
+      ?>  =(client ship.sign)
+      =/  url=(unit @t)
+        ?~  roar.sign  ~
+        ?~  q.dat.u.roar.sign  ~
+        ;;((unit @t) q.u.q.dat.u.roar.sign)
+      =^  moz  server-state.ax
+        ?~  url
+          %.  [client nonce]
+          on-fail:server:eauth:authentication:(per-server-event args)
+        %.  [client nonce u.url]
+        on-tune:server:eauth:authentication:(per-server-event args)
       [moz http-server-gate]
     ::
         [%expire %visiting @ @ ~]
@@ -3872,7 +3933,7 @@
     ::
         auth.old
       ^-  authentication-state
-      [sessions.auth.old ~ ~ [~ ~]]
+      [sessions.auth.old ~ ~ [~ ~ now]]
     ::
         bindings.old
       %+  insert-binding
@@ -3934,6 +3995,21 @@
         %approved  ``noun+!>((~(has in approved.cors-registry) u.origin))
         %rejected  ``noun+!>((~(has in rejected.cors-registry) u.origin))
       ==
+    ::
+        [%eauth %url ~]
+      =*  endpoint  endpoint.auth.server-state.ax
+      ?.  ?=(%da -.p.lot)  [~ ~]
+      ::  we cannot answer for something prior to the last set time,
+      ::  or something beyond the present moment.
+      ::
+      ?:  ?|  (lth q.p.lot time.endpoint)
+              (gth q.p.lot now)
+          ==
+        ~
+      :^  ~  ~  %noun
+      !>  ^-  (unit @t)
+      =<  eauth-url:eauth:authentication
+      (per-server-event [eny *duct now rof] server-state.ax)
     ::
         [%authenticated %cookie @ ~]
       ?~  cookies=(slaw %t i.t.t.tyl)  [~ ~]
