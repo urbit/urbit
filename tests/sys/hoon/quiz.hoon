@@ -97,4 +97,9 @@
   =/  l=(list (pair @ (give.quiz *)))  ~[[3 (atom:giv @)] [1 dup]]
   =+  gief=((freq:giv *) l)
   %-  expect  !>((check fate `gief ~))
+++  test-giver-pick
+  :: the pick giver is similar to the freq giver, but assigns equal probability to each giver.
+  =+  fate=!>(|=(a=@ ?:(=(a 2) %drop =(a 3))))
+  =+  gief=((pick:giv @) ~[((const:giv @) 2) ((const:giv @) 3)])
+  %-  expect  !>((check fate `gief ~))
 --

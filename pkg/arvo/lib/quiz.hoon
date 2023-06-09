@@ -154,6 +154,12 @@
     ?:  (lth ran f)
       (p size rng)
     $(b t.b, ran (sub ran f))
+  ++  pick
+    |*  a=mold
+    |=  b=(^list (give a))
+    ^-  (give a)
+    =+  c=(turn b |=(b=(give a) [1 b]))
+    ((freq a) c)
 ++  list
   |*  a=mold
   |=  give=(give a)
