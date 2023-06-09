@@ -27,6 +27,20 @@
   =+  check=~(check quiz `@uv`1 100)
   =+  gief=((gen-cell.quiz * @tas) gen-noun.quiz ((gen-const.quiz @tas) %constant))
   %-  expect  !>((check fate `gief ~))
+++  test-gen-freq
+  :: gen-freq lets you specify a list of generators and have each chosen with a different frequency.
+  :: in this case, we will mostly generate atoms, and sometimes a noun where the subtrees are equal.
+  :: we should observe a %drop rate of ~67 percent.
+  =+  fate=!>(|=(* ?.(.?(+6) %drop =(+12 +13))))
+  =+  check=~(check quiz `@uv`1 100)
+  =/  dup=(give.quiz *)
+    |=  [size=@ud rng=_og]
+    ^-  *
+    =+  a=(gen-noun.quiz size rng)
+    [a a]
+  =/  l=(list (pair @ (give.quiz *)))  ~[[3 (gen-atom.quiz @)] [1 dup]]
+  =+  gief=((gen-freq.quiz *) l)
+  %-  expect  !>((check fate `gief ~))
 ++  test-drop
   :: if you only care about some samples, you can drop the others by returning
   :: %drop rather than %.y or %.n.

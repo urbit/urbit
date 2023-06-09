@@ -150,4 +150,16 @@
   |=  [size=@ud rng=_og]
   =+  [rng-1 rng-2]=(split-rng rng)
   [(givp size rng-1) (givq size rng-2)]
+++  gen-freq
+  |*  a=mold
+  |=  b=(list (pair @ (give a)))
+  =+  tot=(roll (turn b head) add)
+  |=  [size=@ud rng=_og]
+  =^  ran  rng  (rads:rng tot)
+  |-
+  ?~  b  !!  :: impossible
+  =/  [f=@ p=(give a)]  i.b
+  ?:  (lth ran f)
+    (p size rng)
+  $(b t.b, ran (sub ran f))
 --
