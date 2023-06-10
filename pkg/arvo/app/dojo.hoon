@@ -1435,9 +1435,14 @@
     ::
     ++  complete-naked-poke
       |=  app=term
-      =/  pax=path
-        /(scot %p our.hid)/[q:he-beam]/(scot %da now.hid)/app
+      =+  [our=(scot %p our.hid) now=(scot %da now.hid)]
+      =+  .^(desks=(set desk) %cd /[our]//[now])
+      =.  desks  (~(del in desks) %kids)
       %+  complete  (cat 3 ':' app)
+      %-  zing
+      %+  turn  ~(tap in desks)
+      |=  =desk
+      =/  pax=path  /[our]/[desk]/[now]/app
       %+  murn  ~(tap by dir:.^(arch %cy pax))
       |=  [=term ~]
       ^-  (unit [^term tank])
