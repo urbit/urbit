@@ -1442,15 +1442,19 @@
       %-  zing
       %+  turn  ~(tap in desks)
       |=  =desk
+      %+  murn
+        %~  tap  in
+        .^((set [dude:gall ?]) %ge /[our]/[desk]/[now]/$)
+      |=  [=dude:gall live=?]
+      ^-  (unit [term tank])
+      ?.  live
+        ~
+      ?.  =(app (end [3 (met 3 app)] dude))
+        ~
       =/  pax=path  /[our]/[desk]/[now]/app
-      %+  murn  ~(tap by dir:.^(arch %cy pax))
-      |=  [=term ~]
-      ^-  (unit [^term tank])
-      ?.  =(app (end [3 (met 3 app)] term))
+      ?~  =<(fil .^(arch %cy (weld pax ~[dude %hoon])))
         ~
-      ?~  =<(fil .^(arch %cy (weld pax ~[term %hoon])))
-        ~
-      `[(cat 3 ':' term) *tank]
+      `[(cat 3 ':' dude) *tank]
     ::
     ++  complete-variable
       |=  variable=term
