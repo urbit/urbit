@@ -1451,9 +1451,6 @@
         ~
       ?.  =(app (end [3 (met 3 app)] dude))
         ~
-      =/  pax=path  /[our]/[desk]/[now]/app
-      ?~  =<(fil .^(arch %cy (weld pax ~[dude %hoon])))
-        ~
       `[(cat 3 ':' dude) *tank]
     ::
     ++  complete-variable
