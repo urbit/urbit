@@ -1532,7 +1532,9 @@
       ::  Else, print results
       ::
       %+  he-diff  %tab
-      options
+      %+  sort  options
+      |=  [[a=term *] [b=term *]]
+      (aor a b)
     --
   ::
   ++  he-type                                           ::  apply input
