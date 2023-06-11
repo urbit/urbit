@@ -3512,14 +3512,17 @@
     $~  [%vega ~]                                       ::
     $%  $>(%born vane-task)                             ::  new unix process
         [%done ~]                                       ::  socket closed
-        ::  TODO  mark ignored                          ::
-        ::                                              ::
-        [%fard p=(fyrd cage)]                           ::  in-arvo thread
-        [%fyrd p=(fyrd cast)]                           ::  external thread
-        [%lard =bear =shed]                             ::  inline thread
+        [%home =path task=runner]                       ::  provenance wrapper
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
-    ==                                                  ::
+        runner                                          ::  thread starter
+    ==
+  +$  runner                                            ::  thread starter
+        ::  TODO  mark ignored                          ::
+    $%  [%fard p=(fyrd cage)]                           ::  in-arvo thread
+        [%fyrd p=(fyrd cast)]                           ::  external thread
+        [%lard =bear =shed]                             ::  inline thread
+    ==
   ::                                                    ::
   ++  avow  |$  [a]  (each a goof)                      ::  $fyrd result
   +$  bear  $@(desk beak)                               ::  partial $beak
@@ -3543,6 +3546,7 @@
   +$  bowl
     $:  our=ship
         src=ship
+        sap=path
         tid=tid
         mom=(unit tid)
         wex=boat:gall
@@ -3550,6 +3554,7 @@
         eny=@uvJ
         now=@da
         byk=beak
+        pes=pers:gall
     ==
   ::
   ::  cards:  cards to send immediately.  These will go out even if a

@@ -10,12 +10,19 @@
 +$  yarn         (list tid)
 +$  thread-form  _*eval-form:eval:(strand ,vase)
 +$  trying       ?(%build %none)
++$  perm-basis
+  $%  [%desk =desk] 
+      [%root ~]
+      [%none ~]
+  ==
 +$  state
   $:  starting=(map yarn [=trying =vase])
       running=(axal thread-form)
       tid=(map tid yarn)
       serving=(map tid [(unit @ta) =mark =desk])
       scrying=(jug tid [=wire =ship =path])
+      perms=(map tid perm-basis)
+      desk-perms=(map desk pers:gall)
   ==
 ::
 +$  clean-slate-any
@@ -26,10 +33,22 @@
       clean-slate-3
       clean-slate-4
       clean-slate-5
+      clean-slate-6
       clean-slate
   ==
 ::
 +$  clean-slate
+  $:  %7
+      starting=(map yarn [=trying =vase])
+      running=(list yarn)
+      tid=(map tid yarn)
+      serving=(map tid [(unit @ta) =mark =desk])
+      scrying=(jug tid [wire ship path])
+      perms=(map tid perm-basis)
+      desk-perms=(map desk pers:gall)
+  ==
+::
++$  clean-slate-6
   $:  %6
       starting=(map yarn [=trying =vase])
       running=(list yarn)
@@ -106,8 +125,8 @@
   ::
   ++  on-init
     ^-  (quip card _this)
-    :_  this
-    ~[bind-eyre:sc]
+    :-  ~[bind-eyre:sc subscribe-perms:sc]
+    this(desk-perms.state get-desk-perms:sc)
   ++  on-save   clean-state:sc
   ++  on-load
     |^
@@ -121,15 +140,22 @@
     =.  any  (old-to-4 any)
     =.  any  (old-to-5 any)
     =.  any  (old-to-6 any)
-    ?>  ?=(%6 -.any)
+    =.  any  (old-to-7 any)
+    ?>  ?=(%7 -.any)
     ::
+    =.  desk-perms.state
+      =/  our  (scot %p our.bowl)
+      =/  now  (scot %da now.bowl)
+      =+  .^(=rock:tire:clay %cx /[our]//[now]/tire)
+      (~(run by rock) |=(=belt:tire:clay pes.belt))
     =.  tid.state  tid.any
     =/  yarns=(list yarn)
       %+  welp  running.any
       ~(tap in ~(key by starting.any))
     |-  ^-  (quip card _this)
     ?~  yarns
-      [~[bind-eyre:sc] this]
+      :-  ~[bind-eyre:sc subscribe-perms:sc]
+      this(desk-perms.state get-desk-perms:sc)
     =^  cards-1  state
       %.  [(yarn-to-tid i.yarns) nice=%.n]
       ::  the |sc core needs to now about the previous
@@ -148,8 +174,8 @@
     ++  old-to-2
       |=  old=clean-slate-any
       ^-  (quip card clean-slate-any)
-      ?>  ?=(?(%1 %2 %3 %4 %5 %6) -.old)
-      ?:  ?=(?(%2 %3 %4 %5 %6) -.old)
+      ?>  ?=(?(%1 %2 %3 %4 %5 %6 %7) -.old)
+      ?:  ?=(?(%2 %3 %4 %5 %6 %7) -.old)
         `old
       :-  ~[bind-eyre:sc]
       :*  %2
@@ -162,8 +188,8 @@
     ++  old-to-3
       |=  old=clean-slate-any
       ^-  clean-slate-any
-      ?>  ?=(?(%2 %3 %4 %5 %6) -.old)
-      ?:  ?=(?(%3 %4 %5 %6) -.old)
+      ?>  ?=(?(%2 %3 %4 %5 %6 %7) -.old)
+      ?:  ?=(?(%3 %4 %5 %6 %7) -.old)
         old
       :*  %3
         starting.old
@@ -175,8 +201,8 @@
     ++  old-to-4
       |=  old=clean-slate-any
       ^-  clean-slate-any
-      ?>  ?=(?(%3 %4 %5 %6) -.old)
-      ?:  ?=(?(%4 %5 %6) -.old)
+      ?>  ?=(?(%3 %4 %5 %6 %7) -.old)
+      ?:  ?=(?(%4 %5 %6 %7) -.old)
         old
       :*  %4
         starting.old
@@ -188,15 +214,15 @@
     ++  old-to-5
       |=  old=clean-slate-any
       ^-  clean-slate-any
-      ?>  ?=(?(%4 %5 %6) -.old)
-      ?:  ?=(?(%5 %6) -.old)  old
+      ?>  ?=(?(%4 %5 %6 %7) -.old)
+      ?:  ?=(?(%5 %6 %7) -.old)  old
       [%5 +.old(serving [serving.old ~])]
     ::
     ++  old-to-6
       |=  old=clean-slate-any
-      ^-  clean-slate
-      ?>  ?=(?(%5 %6) -.old)
-      ?:  ?=(%6 -.old)  old
+      ^-  clean-slate-any
+      ?>  ?=(?(%5 %6 %7) -.old)
+      ?:  ?=(?(%6 %7) -.old)  old
       :-  %6
       %=    +.old
           scrying
@@ -208,6 +234,12 @@
         ::
         [/keen ship path]~
       ==
+    ++  old-to-7
+      |=  old=clean-slate-any
+      ^-  clean-slate
+      ?>  ?=(?(%6 %7) -.old)
+      ?:  ?=(%7 -.old)  old
+      old(- %7, |5 [|5.old perms=~ desk-perms=~])
     --
   ::
   ++  on-poke
@@ -273,6 +305,7 @@
       ?+  wire  (on-arvo:def wire sign-arvo)
         [%thread @ *]  (handle-sign:sc i.t.wire t.t.wire sign-arvo)
         [%build @ ~]   (handle-build:sc i.t.wire sign-arvo)
+        [%perm ~]      (handle-perm:sc sign-arvo)
         [%bind ~]      `state
       ==
     [cards this]
@@ -291,6 +324,10 @@
 ++  bind-eyre
   ^-  card
   [%pass /bind %arvo %e %connect [~ /spider] %spider]
+::
+++  subscribe-perms
+  ^-  card
+  [%pass /perm %arvo %g %ward ~]
 ::
 ++  new-thread-id
   |=  file=term
@@ -334,6 +371,15 @@
   |=  =tid
   ^-  (quip card ^state)
   `state
+::
+++  handle-perm
+  |=  =sign-arvo
+  ?.  ?=([%gall %perm *] sign-arvo)
+    `state
+  =/  pes  (~(gut by desk-perms.state) desk.sign-arvo *pers:gall)
+  =.  pes  (~(dif in pes) lock.sign-arvo)
+  =.  pes  (~(uni in pes) free.sign-arvo)
+  `state(desk-perms (~(put by desk-perms.state) desk.sign-arvo pes))
 ::
 ++  handle-sign
   ~/  %handle-sign
@@ -389,6 +435,10 @@
     ~|  [%already-starting yarn]
     !!
   ::
+  =/  =perm-basis  determine-perm-basis
+  =.  perms.state  (~(put by perms.state) new-tid perm-basis)
+  =/  =pers:gall  (get-perms perm-basis)
+  ::
   =?  serving.state  !(~(has by serving.state) new-tid)
     (~(put by serving.state) new-tid [~ %noun q.beak])
   ::
@@ -429,10 +479,20 @@
   ~/  %slam-thread
   |=  [=yarn =thread]
   ^-  (quip card ^state)
+  =/  =tid  (yarn-to-tid yarn)
+  =/  =perm-basis  (~(got by perms.state) tid)
+  =/  =pers:gall  (get-perms perm-basis)
   =/  =vase  vase:(~(got by starting.state) yarn)
-  =/  res  (mule |.((thread vase)))
+  =/  =toon
+    (mock [|.((thread vase)) %9 2 %0 1] (scry-intercept tid pers))
+  =/  res=(each shed:khan tang)
+    ?-  -.toon
+      %0  [%& !<(shed:khan [-:!>(*shed:khan) p.toon])]
+      %1  [%| (smyt ;;(path p.toon)) ~]
+      %2  [%| p.toon]
+    ==
   ?:  ?=(%| -.res)
-    (thread-fail-not-running (yarn-to-tid yarn) %false-start p.res)
+    (thread-fail-not-running tid %false-start p.res)
   =.  starting.state  (~(del by starting.state) yarn)
   (begin-shed yarn p.res)
 ::
@@ -468,6 +528,9 @@
   |=  [=yarn input=(unit input:strand)]
   ^-  (quip card ^state)
   =/  m  (strand ,vase)
+  =/  =tid  (yarn-to-tid yarn)
+  =/  =perm-basis  (~(gut by perms.state) tid [%none ~])
+  =/  =pers:gall  (get-perms perm-basis)
   ?.  (~(has of running.state) yarn)
     %-  (slog leaf+"spider got input for non-existent {<yarn>}" ~)
     `state
@@ -476,15 +539,27 @@
   =|  cards=(list card)
   |-  ^-  (quip card ^state)
   =^  r=[cards=(list card) =eval-result:eval:m]  eval-form
-    =/  out
-      %-  mule  |.
-      (take:eval:m eval-form (convert-bowl yarn bowl) input)
-    ?-  -.out
-      %&  p.out
-      %|  [[~ [%fail %crash p.out]] eval-form]
+    =/  =toon
+      %+  mock
+        :_  [%9 2 %0 1]
+        |.  (take:eval:m eval-form (convert-bowl yarn pers bowl) input)
+      (scry-intercept tid pers)
+    ?-    -.toon
+        %2  [[~ [%fail %crash p.toon]] eval-form]
+        %1  [[~ [%fail %crash (smyt ;;(path p.toon)) ~]] eval-form]
+        %0
+      !<  [(quip card eval-result:eval:m) eval-form:eval:m]
+      :-  -:!>([*(quip card eval-result:eval:m) *eval-form:eval:m])
+      p.toon
     ==
   =.  running.state  (~(put of running.state) yarn eval-form)
-  =/  =tid  (yarn-to-tid yarn)
+  =/  forbad=(unit tang)  (warn-bad-cards tid cards.r)
+  ::TODO PERM    replace slog with below to start enforcing
+  ::  ?^  forbade
+  ::    (thread-fail yarn %not-permitted 'insufficient permission:' u.forbad)
+  =+  ?.  ?=(^ forbad)  ~
+      %-  (slog 'insufficient permission:' u.forbad)  ~
+  ::
   =^  new-cards  state
     ^-  [(list card) _state]
     %+  roll  cards.r
@@ -516,7 +591,10 @@
   |=  [=tid =term =tang]
   ^-  (quip card ^state)
   =/  =yarn  (~(got by tid.state) tid)
-  :_  state(starting (~(del by starting.state) yarn))
+  :_  %=  state
+        starting  (~(del by starting.state) yarn)
+        perms     (~(del by perms.state) tid)
+      ==
   =/  moz  (thread-say-fail tid term tang)
   ?.  ?=([~ %build *] (~(get by starting.state) yarn))
     moz
@@ -573,7 +651,7 @@
   =^  cards       state  (thread-clean yarn)
   =^  http-cards  state  (thread-http-fail tid term tang)
   =^  scry-card   state  (cancel-scry tid silent=%.n)
-  :_  state
+  :_  state(perms (~(del by perms.state) tid))
   :(weld fail-cards cards http-cards scry-card)
 ::
 ++  thread-http-response
@@ -603,7 +681,8 @@
     (thread-http-response tid vase)
   =^  scry-card  state  (cancel-scry tid silent)
   =^  cards      state  (thread-clean yarn)
-  [:(weld done-cards cards http-cards scry-card) state]
+  :_  state(perms (~(del by perms.state) tid))
+  :(weld done-cards cards http-cards scry-card)
 ::
 ++  thread-clean
   |=  =yarn
@@ -623,6 +702,7 @@
     =:  running.state  (~(lop of running.state) yarn)
         tid.state      (~(del by tid.state) tid)
         serving.state  (~(del by serving.state) (yarn-to-tid yarn))
+        perms.state    (~(del by perms.state) tid)
       ==
     :_  state
     %+  murn  ~(tap by wex.bowl)
@@ -636,10 +716,11 @@
   [(welp cards-children cards-our) state]
 ::
 ++  convert-bowl
-  |=  [=yarn =bowl:gall]
+  |=  [=yarn =pers:gall =bowl:gall]
   ^-  bowl:spider
   :*  our.bowl
-    src.bowl
+      src.bowl
+      (clean-provenance sap.bowl)
       (yarn-to-tid yarn)
       (yarn-to-parent yarn)
       wex.bowl
@@ -647,6 +728,14 @@
       eny.bowl
       now.bowl
       (yarn-to-byk yarn bowl)
+      pers
+  ==
+::
+++  clean-provenance
+  |=  =path
+  ?+  path  path
+    [%khan *]            /khan
+    [%gall %spider @ ~]  /gall/spider
   ==
 ::
 ++  yarn-to-tid
@@ -675,7 +764,7 @@
 ::
 ++  clean-state
   !>  ^-  clean-slate
-  6+state(running (turn ~(tap of running.state) head))
+  7+state(running (turn ~(tap of running.state) head))
 ::
 ++  convert-tube
   |=  [from=mark to=mark =desk =bowl:gall]
@@ -683,5 +772,111 @@
     tube:clay
     %cc
     /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/[from]/[to]
+  ==
+::
+++  dude-to-desk
+  |=  =dude:gall
+  ^-  (unit desk)
+  =/  our    (scot %p our.bowl)
+  =/  now    (scot %da now.bowl)
+  =/  desks  ~(tap in .^((set desk) %cd /[our]//[now]))
+  |-
+  ?~  desks  ~
+  =/  dudes=(set desk)
+    (~(run in .^((set [@tas ?]) %ge /[our]/[i.desks]/[now]/$)) head)
+  ?:  (~(has in dudes) dude)
+    `i.desks
+  $(desks t.desks)
+::
+++  get-desk-perms
+  ^-  (map desk pers:gall)
+  =/  our  (scot %p our.bowl)
+  =/  now  (scot %da now.bowl)
+  =+  .^(=rock:tire:clay %cx /[our]//[now]/tire)
+  (~(run by rock) |=(=belt:tire:clay pes.belt))
+::
+++  determine-perm-basis
+  ^-  perm-basis
+  ?+    sap.bowl  [%none ~]
+      [%eyre *]  [%root ~]
+      [%khan ~]  [%root ~]
+      [%gall @ ~]
+    =/  =dude:gall  i.t.sap.bowl
+    ?:  =(%spider dude)           [%none ~]
+    ?~  desk=(dude-to-desk dude)  [%none ~]
+    ?:  =(%base u.desk)           [%root ~]
+    [%desk u.desk]
+  ::
+      [%khan %gall @ ~]
+    =/  =dude:gall  i.t.t.sap.bowl
+    ?:  =(%spider dude)           [%none ~]
+    ?~  desk=(dude-to-desk dude)  [%none ~]
+    ?:  =(%base u.desk)           [%root ~]
+    [%desk u.desk]
+  ::
+      [%gall %spider @ ~]
+    (~(gut by perms.state) i.t.t.sap.bowl [%none ~])
+  ::
+      [%khan %gall %spider @ ~]
+    (~(gut by perms.state) i.t.t.t.sap.bowl [%none ~])
+  ==
+::
+++  get-perms
+  |=  =perm-basis
+  ^-  pers:gall
+  ?-    perm-basis
+      [%none ~]   *pers:gall
+      [%root ~]  (~(put in *pers:gall) [%super ~])
+      [%desk @]
+    ?:  =(%base desk.perm-basis)
+      (~(put in *pers:gall) [%super ~])
+    (~(gut by desk-perms.state) desk.perm-basis *pers:gall)
+  ==
+::
+++  scry-intercept
+  |=  [=tid =pers:gall]
+  |=  [ref=* raw=*]
+  ^-  (unit (unit))
+  ?~  pax=((soft path) raw)  ~
+  ?~  mon=(de-omen u.pax)    ~
+  ?:  =(%base desk)          ``.^(* u.pax)
+  ?.  (rite:gall our.bowl u.mon pers)
+    =-  %-  (slog leaf+- ~)
+        ::TODO PERM  replace the below with ~ to start enforcing
+        ``.^(* u.pax)
+    =/  sef=tape  "thread {(trip tid)}"
+    =/  tar=tape  "{<vis.u.mon>} {(spud (en-beam bem.u.mon))}"
+    "insufficient permission: {sef} scrying for {tar}"
+  ``.^(* u.pax)
+::
+++  warn-bad-cards
+  |=  [=tid caz=(list card)]
+  ^-  (unit tang)
+  =/  bad=(list [=card perm=(unit perm:gall)])
+    =/  =perm-basis  (~(gut by perms.state) tid [%none ~])
+    =/  =pers:gall  (get-perms perm-basis)
+    %+  murn  `(list card)`(zing (turn caz rive:gall))
+    |=  =card
+    ^-  (unit [^card (unit perm:gall)])
+    =/  mus  (must:gall our.bowl card)
+    ?@  mus  ?:(mus ~ `card^~)
+    ?:  (have:gall pers mus)  ~
+    `[card `mus]
+  ?:  =(~ bad)  ~
+  :-  ~
+  |-  ^-  tang
+  ?~  bad  ~
+  :_  $(bad t.bad)
+  =-  ?~  perm.i.bad  >[never=-]<
+      >[need=u.perm.i.bad for=-]<
+  =/  =card  card.i.bad
+  |-
+  ?-  -.card
+    %pass  [%pass p.card $(card [%slip q.card])]
+    %slip  ?+  -.p.card  -.p.card
+             %agent  p.card(task -.task.p.card)
+             %arvo   [- +<]:+.p.card
+           ==
+    %give  [%give +<.card]  ::NOTE  shouldn't ever be forbidden
   ==
 --
