@@ -2713,12 +2713,17 @@
 ++  hugo  ^?
   |%
   +$  gift                                             ::  outgoing result
-    $%  [%vary ~]                                      ::  trie notification
+    $%  [%grab ~]                                      ::  get unix files
+        [%seen ~]                                      ::  look notification
     ==                                                 ::
   +$  task                                             ::  incoming request
     $~  [%vega ~]                                      ::
-    $%  [%fill tie=(trie text octs)]                   ::  fill entire trie :: TODO need diff logic
-        [%vary p=(unit ~)]                             ::  watch system output
+    $%  $:  %fill                                      ::  file changes
+            del=(list poth)                            ::  deletes
+            var=(list [poth octs])                     ::  changes
+        == 
+        [%grab ~]                                      ::  grab get directory
+        [%look ~]                                      ::  watch for changes
         $>(%born vane-task)
         $>(%trim vane-task)                            ::  reset state (TODO I think?)
         $>(%vega vane-task)                            ::  report upgrade

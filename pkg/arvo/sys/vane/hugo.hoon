@@ -11,6 +11,7 @@
       $:  %0
           files=(trie text octs)  ::  files
           ducts=(set duct)   ::  listeners
+          unix-duct=duct
       ==
     --
 =>  |%
@@ -115,16 +116,24 @@
   =^  moves  state
     ?-    -.task 
         %fill
-      :_  state(files tie.task)
-      (turn ~(tap in ducts) (late %give %vary ~))
+      %-  (slog '%hugo: %fill' ~) 
+      =.  files
+        |-
+        ?~  del.task  (~(gas ay files) var.task)
+        $(del.task t.del.task, files (~(del ay files) i.del.task))
+      :_  state
+      (turn ~(tap in ducts) (late %give %seen ~))
     ::
-        %vary 
-      =.  ducts
-        ?~  p.task  (~(del in ducts) hen)
-        (~(put in ducts) hen)
+        %grab  [[unix-duct %give %grab ~]~ state]
+    ::
+        %look
+      =.  ducts  (~(put in ducts) hen)
       `state
     ::
-        %born  `state
+        %born
+      %-  (slog '%hugo: %born' ~)
+      `state(unix-duct hen)
+    ::
         %trim  `state
         %vega  `state
     == 
