@@ -561,7 +561,11 @@
         ==
       ::
       ::TODO  clean up & actually use
-      :: ++  dirty-response
+      ++  dirty-response
+        $%
+            response
+            [%error b=?]
+        ==
       ++  response
         $%  ::TODO
             :: [%eth-new-filter fid=@ud]
