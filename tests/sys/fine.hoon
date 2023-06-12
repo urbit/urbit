@@ -20,7 +20,7 @@
     ::
     ++  bex-roof
       ^-  roof
-      |=  [lyc=gang vis=view bem=beam]
+      |=  [lyc=gang pov=path vis=view bem=beam]
       ^-  (unit (unit cage))
       ?>  =(s.bem //some/data/atom)
       ?+  vis  ~
