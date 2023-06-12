@@ -558,7 +558,12 @@
   ::  ?^  forbade
   ::    (thread-fail yarn %not-permitted 'insufficient permission:' u.forbad)
   =+  ?.  ?=(^ forbad)  ~
-      %-  (slog 'insufficient permission:' u.forbad)  ~
+      =/  =tang
+        :*  leaf+"permissions violation by thread {(trip tid)}"
+            'insufficient permission:'
+            u.forbad
+        ==
+      ((slog tang) ~)
   ::
   =^  new-cards  state
     ^-  [(list card) _state]
