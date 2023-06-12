@@ -561,6 +561,7 @@
         ==
       ::
       ::TODO  clean up & actually use
+      :: ++  dirty-response
       ++  response
         $%  ::TODO
             :: [%eth-new-filter fid=@ud]
@@ -876,9 +877,10 @@
   ::  parsing responses
   ::
   ++  parse-response
-    |=  =json
+    :: |=  [type-of-request =json
+    |=  [type=@tas =json]
     ^-  [id=(unit @t) response:rpc]
-    ~&  json
+    ~&  [%json [type json]]
     ::  hex
     =/  id  [~ '233']
     ?:  &(?=([%o *] json) (~(has by p.json) 'error'))
@@ -930,7 +932,20 @@
     :: [~ [%block %.y]]
   ::
   ++  parse-block  parse-hex-result
-  ::
+  ::++  parse-block
+  ::  |=  =json
+  ::  ^-  (unit block)
+  ::  =<  ?~(. ~ `[[&1 &2] |2]:u)
+  ::  ^-  (unit [@ @ @])
+  ::  ~|  json
+  ::  %.  json
+  ::  =,  dejs-soft:format
+  ::  %-  ot
+  ::  :~  hash+parse-hex
+  ::      number+parse-hex
+  ::      'parentHash'^parse-hex
+  ::  ==
+  ::::
   ++  parse-hex-result
     |=  j=json
     ^-  @

@@ -6,16 +6,17 @@
 =,  jael
 ::
 |%
++$  id-response  [id=(unit @t) res=response:rpc:ethereum]
 ::  +request-rpc: send rpc request, with retry
 ::
 ++  request-rpc
   |=  [id=(unit @t) req=request:rpc:ethereum]
-  =/  m  (strand:strandio ,json)
+  =/  m  (strand:strandio ,[id=(unit @t) res=response:rpc:ethereum])
   ^-  form:m
-  ;<  res=(list [id=@t =json])  bind:m
+  ;<  res=(list [id=(unit @t) res=response:rpc:ethereum])  bind:m
     (request-batch-rpc-strict [id req]~)
   ?:  ?=([* ~] res)
-    (pure:m json.i.res)
+    (pure:m i.res)
   %+  strand-fail:strandio
     %unexpected-multiple-results
   [>(lent res)< ~]
@@ -26,29 +27,19 @@
 ::
 ++  request-batch-rpc-strict
   |=  [reqs=(list [id=(unit @t) req=request:rpc:ethereum])]
-  |^  %+  (retry:strandio results)
+  |^  %+  (retry:strandio (list id-response))
         `10
       attempt-request
   ::
-  +$  results  (list [id=@t =json])
-  ::
   ++  attempt-request
-    =/  m  (strand:strandio ,(unit results))
+    =/  m  (strand:strandio ,(unit (list id-response)))
     ^-  form:m
-    ;<  responses=(list response:rpc)  bind:m
+    ;<  responses=(list id-response)  bind:m
       (request-batch-rpc-loose reqs)
-    =-  ?~  err
-          (pure:m `res)
-        (pure:m ~)
-    %+  roll  responses
-    |=  $:  rpc=response:rpc
-            [res=results err=(list [id=@t code=@t message=@t])]
-        ==
-    ?:  ?=(%error -.rpc)
-      [res [+.rpc err]]
-    ?.  ?=(%result -.rpc)
-      [res [['' 'ethio-rpc-fail' (crip <rpc>)] err]]
-    [[+.rpc res] err]
+    =/  err  (skim responses |=(r=id-response =(+<.r %error)))
+    ?~  err
+      (pure:m `responses)
+    (pure:m ~)
   --
 ::  +request-batch-rpc-loose: send rpc requests, with retry
 ::
@@ -57,12 +48,11 @@
 ::
 ++  request-batch-rpc-loose
   |=  [reqs=(list [id=(unit @t) req=request:rpc:ethereum])]
-  |^  %+  (retry:strandio results)
+  |^  %+  (retry:strandio (list id-response))
         `10
       attempt-request
   ::
   +$  result   response:rpc
-  +$  results  (list response:rpc)
   ++  take-fact
   |=  =wire
   =/  m  (strand:strandio ,cage)
@@ -80,7 +70,7 @@
   ==
   ::
   ++  attempt-request
-    =/  m  (strand:strandio ,(unit results))
+    =/  m  (strand:strandio ,(unit (list id-response)))
     ^-  form:m
     ;<  =bowl:spider  bind:m  get-bowl:strandio
     ~&  'after take-wake'
@@ -103,7 +93,8 @@
       ~&  'after take-fact'
       ::  convert `(list [id response:rpc:ethereum])`q.cage to (list
       ::  response:rpc
-      (pure:m [~ !<(ethout:eth-provider q.cage)])
+      :: (pure:m [~ !<(ethout:eth-provider q.cage)])
+      (pure:m [~ ~[[[~ '123'] [%error %.y]]]])
     =/  url  ''
     =?  url  ?=(%local -.provider-mode)  url.local.provider-mode
     =?  url  ?=(%provider -.provider-mode)  url.provider.provider-mode
@@ -123,11 +114,11 @@
       take-maybe-response:strandio
     ?~  rep
       (pure:m ~)
-    (parse-responses u.rep)
+    (parse-responses [reqs u.rep])
   ::
   ++  parse-responses
-    |=  =client-response:iris
-    =/  m  (strand:strandio ,(unit results))
+    |=  [requests=(list [id=(unit @t) req=request:rpc:ethereum]) =client-response:iris]
+    =/  m  (strand:strandio ,(unit (list id-response)))
     ^-  form:m
     ?>  ?=(%finished -.client-response)
     ?~  full-file.client-response
@@ -136,45 +127,21 @@
     =/  jon=(unit json)  (de-json:html body)
     ?~  jon
       (pure:m ~)
-    =/  array=(unit (list response:rpc))
-      ((ar:dejs-soft:format parse-one-response) u.jon)
-    =/  testarray=(list [id=(unit @t) response:rpc:ethereum])
-      ((ar:dejs:format parse-response:rpc:ethereum) u.jon)
-    ~&  [%testarray testarray]
-    ?~  array
+    =/  json-array  ((ar:dejs:format |=(=json json)) u.jon)
+    =/  typed-json-array  
+      %+  turn 
+        (gulf 0 (sub (lent json-array) 1))
+      |=  n=@ud
+      =/  req  (snag n requests)
+      [+<.req (snag n json-array)]
+      :: [%type (snag 0 json-array)]
+    =/  parsed-array=(list [id=(unit @t) response:rpc:ethereum])
+      (turn typed-json-array parse-response:rpc:ethereum)
+    :: ~&  [%parsed-array parsed-array]
+    ?~  parsed-array
       (strand-fail:strandio %rpc-result-incomplete-batch >u.jon< ~)
-    (pure:m array)
+    (pure:m [~ parsed-array])
   ::
-  ++  test-parse-one-response
-    |=  =json  
-    ^-  [id=(unit @t) response:rpc:ethereum]
-    :: ?:  &(?=([%o *] json) (~(has by p.json) 'error'))
-    ::   ~
-    :: ~&  [%parse-response (parse-response:rpc:ethereum json)]
-    :: (parse-response:rpc:ethereum json)
-    [[~ '123'] [%error %.y]]
-  ++  parse-one-response
-    |=  =json
-    ^-  (unit response:rpc)
-    ?.  &(?=([%o *] json) (~(has by p.json) 'error'))
-      =/  res=(unit [@t ^json])
-        %.  json
-        =,  dejs-soft:format
-        (ot id+so result+some ~)
-      ?~  res  ~
-      `[%result u.res]
-    ~|  parse-one-response=json
-    =/  error=(unit [id=@t ^json code=@ta mssg=@t])
-      %.  json
-      =,  dejs-soft:format
-      ::  A 'result' member is present in the error
-      ::  response when using ganache, even though
-      ::  that goes against the JSON-RPC spec
-      ::
-      (ot id+so result+some error+(ot code+no message+so ~) ~)
-    ?~  error  ~
-    =*  err  u.error
-    `[%error id.err code.err mssg.err]
   --
 ::
 ::  +read-contract: calls a read function on a contract, produces result hex
@@ -244,28 +211,18 @@
   %+  (retry:strandio ,block)  `10
   =/  m  (strand:strandio ,(unit block))
   ^-  form:m
-  ;<  =json  bind:m
+  ;<  res=[id=(unit @t) response:rpc:ethereum]  bind:m
     %-  request-rpc  
     :-  `'block by number'
     [%eth-get-block-by-number number |]
-  (pure:m [~ [id=[hash=0xd4e5.6740.f876.aef8.c010.b86a.40d5.f567.45a1.18d0.906a.34e6.9aec.8c0d.b1cb.8fa3 number=0] parent-hash=0x0]])
+  ~&  [%res +<.res]
+  ?:  =(%block +<.res)
+    (pure:m [~ [id=[hash=0xd4e5.6740.f876.aef8.c010.b86a.40d5.f567.45a1.18d0.906a.34e6.9aec.8c0d.b1cb.8fa3 number=0] parent-hash=0x0]])
+  (strand-fail:strandio %unexpected-response-type ~)
   :: (pure:m (parse-block json))
   ::
-  ++  parse-block
-    |=  =json
-    ^-  (unit block)
-    =<  ?~(. ~ `[[&1 &2] |2]:u)
-    ^-  (unit [@ @ @])
-    ~|  json
-    %.  json
-    =,  dejs-soft:format
-    %-  ot
-    :~  hash+parse-hex
-        number+parse-hex
-        'parentHash'^parse-hex
-    ==
   ::
-  ++  parse-hex  |=(=json `(unit @)`(some (parse-hex-result:rpc:ethereum json)))
+  :: ++  parse-hex  |=(=json `(unit @)`(some (parse-hex-result:rpc:ethereum json)))
   --
 ::
 ::++  get-tx-by-hash
