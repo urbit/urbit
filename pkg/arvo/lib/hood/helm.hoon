@@ -188,7 +188,6 @@
       %helm-hi  !>(?~(mes '' (crip u.mes)))
   ==
 ::
-::
 ++  poke-hi
   |=  mes=@t
   ~|  %poke-hi-fail
@@ -272,6 +271,16 @@
   =<  abet
   (emit %pass /helm/doff %arvo %g %doff dude ship)
 ::
+++  poke-curb
+  |=  [=desk =pers:gall]
+  =<  abet
+  (emit %pass /helm/curb %arvo %c %curb desk pers)
+::
+++  poke-hope
+  |=  [=desk =pers:gall]
+  =<  abet
+  (emit %pass /helm/hope %arvo %c %hope desk pers)
+::
 ++  poke
   |=  [=mark =vase]
   ?>  ?|  ?=(%helm-hi mark)
@@ -292,10 +301,12 @@
     %helm-code             =;(f (f !<(_+<.f vase)) poke-code)
     %helm-cors-approve     =;(f (f !<(_+<.f vase)) poke-cors-approve)
     %helm-cors-reject      =;(f (f !<(_+<.f vase)) poke-cors-reject)
+    %helm-curb             =;(f (f !<(_+<.f vase)) poke-curb)
     %helm-doff             =;(f (f !<(_+<.f vase)) poke-doff)
     %helm-gall-sift        =;(f (f !<(_+<.f vase)) poke-gall-sift)
     %helm-gall-verb        =;(f (f !<(_+<.f vase)) poke-gall-verb)
     %helm-hi               =;(f (f !<(_+<.f vase)) poke-hi)
+    %helm-hope             =;(f (f !<(_+<.f vase)) poke-hope)
     %helm-pans             =;(f (f !<(_+<.f vase)) poke-pans)
     %helm-mass             =;(f (f !<(_+<.f vase)) poke-mass)
     %helm-meld             =;(f (f !<(_+<.f vase)) poke-meld)
