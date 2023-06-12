@@ -1052,7 +1052,7 @@
         ++  smit
           |=  [cap=tape sub=vase pax=path txt=@t]
           ^-  vase
-          ~>  %slog.[0 leaf/"{cap}: {(scow p+(mug txt))}"]
+          ~>  %slog.[0 leaf/"{cap}: {(scow ux+(mug txt))}"]
           ~>  %bout
           %-  road  |.
           ~_  leaf/"{cap}: build failed"
