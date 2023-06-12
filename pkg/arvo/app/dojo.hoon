@@ -1429,9 +1429,14 @@
     =/  naked-gen=(unit term)
       %+  rust  txt
       (full (ifix [lus (just `@`10)] ;~(pose sym (easy %$))))
-    ?~  naked-gen
+    ?^  naked-gen
+      (complete-naked-gen u.naked-gen)
+    =/  naked-ted=(unit term)
+      %+  rust  txt
+      (full (ifix [hep (just `@`10)] ;~(pose sym (easy %$))))
+    ?~  naked-ted
       res
-    (complete-naked-gen u.naked-gen)
+    (complete-naked-ted u.naked-ted)
     ::
     ++  complete-naked-poke
       |=  app=term
@@ -1502,6 +1507,20 @@
       ?~  =<(fil .^(arch %cy (weld pax ~[term %hoon])))
         ~
       (some term)
+    ::
+    ++  complete-naked-ted
+      |=  ted=term
+      =/  pax=path
+        /(scot %p our.hid)/[q:he-beam]/(scot %da now.hid)/ted
+      %+  complete  (cat 3 '-' ted)
+      %+  murn  ~(tap by dir:.^(arch %cy pax))
+      |=  [=term ~]
+      ^-  (unit [^term tank])
+      ?.  =(ted (end [3 (met 3 ted)] term))
+        ~
+      ?~  =<(fil .^(arch %cy (weld pax ~[term %hoon])))
+        ~
+      `[(cat 3 '-' term) *tank]
     ::
     ++  complete
       |=  [completing=term options=(list [term tank])]
