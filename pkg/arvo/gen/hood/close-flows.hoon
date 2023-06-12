@@ -39,7 +39,7 @@
 |=  [[=wire flows=(list [bone sub-nonce=@])] bones=_bones]
 ::
 %-  flop  %-  tail
-%+  roll  flows
+%+  roll  (sort flows |=([[@ n=@] [@ m=@]] (lte n m)))
 |=  [[=bone nonce=@] resubs=_(lent flows) bones=_bones]
 =/  app=term  ?>(?=([%gall %use sub=@ *] wire) i.t.t.wire)
 =/  =path     (slag 7 wire)
