@@ -731,13 +731,6 @@
       pers
   ==
 ::
-++  clean-provenance
-  |=  =path
-  ?+  path  path
-    [%khan *]            /khan
-    [%gall %spider @ ~]  /gall/spider
-  ==
-::
 ++  yarn-to-tid
   |=  =yarn
   ^-  tid
@@ -788,6 +781,25 @@
     `i.desks
   $(desks t.desks)
 ::
+++  clean-provenance
+  |=  =path
+  ?+  path  path
+    [%khan *]            /khan
+    [%gall %spider @ ~]  /gall/spider
+  ==
+::
+++  get-perms
+  |=  =perm-basis
+  ^-  pers:gall
+  ?-    perm-basis
+      [%none ~]   *pers:gall
+      [%root ~]  (~(put in *pers:gall) [%super ~])
+      [%desk @]
+    ?:  =(%base desk.perm-basis)
+      (~(put in *pers:gall) [%super ~])
+    (~(gut by perms.state) desk.perm-basis *pers:gall)
+  ==
+::
 ++  get-desk-perms
   ^-  (map desk pers:gall)
   =/  our  (scot %p our.bowl)
@@ -798,8 +810,8 @@
 ++  determine-perm-basis
   ^-  perm-basis
   ?+    sap.bowl  [%none ~]
-      [%eyre *]  [%root ~]
-      [%khan ~]  [%root ~]
+      [%eyre *]                   [%root ~]
+      [%khan ~]                   [%root ~]
       [%gall @ ~]
     =/  =dude:gall  i.t.sap.bowl
     ?:  =(%spider dude)           [%none ~]
@@ -819,18 +831,6 @@
   ::
       [%khan %gall %spider @ ~]
     (~(gut by authority.state) i.t.t.t.sap.bowl [%none ~])
-  ==
-::
-++  get-perms
-  |=  =perm-basis
-  ^-  pers:gall
-  ?-    perm-basis
-      [%none ~]   *pers:gall
-      [%root ~]  (~(put in *pers:gall) [%super ~])
-      [%desk @]
-    ?:  =(%base desk.perm-basis)
-      (~(put in *pers:gall) [%super ~])
-    (~(gut by perms.state) desk.perm-basis *pers:gall)
   ==
 ::
 ++  scry-intercept
