@@ -1915,7 +1915,7 @@
 ::
 ++  curr                                                ::  curry right
   |*  [a=$-(^ *) c=*]
-  |*  b=_+<+.a
+  |*  b=_+<-.a
   (a b c)
 ::
 ++  fore  |*(a=$-(* *) |*(b=$-(* *) (pair a b)))        ::  pair before
