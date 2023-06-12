@@ -1688,15 +1688,18 @@
     =+  d=(get b)
     (~(put by a) b [c d])
   ::
-  ++  tap                                               ::  listify jar
-    ~/  %tap
-    =>  .(a ~(tap by a))
-    ^-  (list _?>(?=(^ a) [p.i.a ?>(?=(^ q.i.a) i.q.i.a)]))
-    |-
-    ?~  a  ~
-    |-
-    ?~  q.i.a  ^$(a t.a)
-    [i=[p.i.a i.q.i.a] t=$(q.i.a t.q.i.a)]
+  ++  zip                                               ::  listify jar
+    =<  $
+    ~/  %zip
+    =+  b=`(list _?>(?=([[* ^] *] a) [p=p q=i.q]:n.a))`~
+    |.  ^+  b
+    ?~  a   b
+    %=  $
+      a  r.a
+      b  |-  ^+  b
+         ?~  q.n.a  ^$(a l.a)
+         [[p i.q]:n.a $(q.n.a t.q.n.a)]
+    ==
   --
 ++  ju                                                  ::  jug engine
   =|  a=(tree (pair * (tree)))  ::  (jug)
