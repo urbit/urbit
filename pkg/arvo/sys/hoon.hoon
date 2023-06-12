@@ -1905,17 +1905,17 @@
 ++  corl                                                ::  compose backwards
   |*  [a=$-(* *) b=$-(* *)]
   =<  +:|.((a (b)))      ::  type check
-  |*  c=_+<.b
+  |*  c=_,.+<.b
   (a (b c))
 ::
 ++  cury                                                ::  curry left
   |*  [a=$-(^ *) b=*]
-  |*  c=_+<+.a
+  |*  c=_,.+<+.a
   (a b c)
 ::
 ++  curr                                                ::  curry right
   |*  [a=$-(^ *) c=*]
-  |*  b=_+<-.a
+  |*  b=_,.+<-.a
   (a b c)
 ::
 ++  fore  |*(a=$-(* *) |*(b=$-(* *) (pair a b)))        ::  pair before
