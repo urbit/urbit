@@ -844,15 +844,16 @@
   ^-  (unit (unit))
   ?~  pax=((soft path) raw)  ~
   ?~  mon=(de-omen u.pax)    ~
-  ?:  =(%base desk)          ``.^(* u.pax)
+  ?:  =(%base desk)
+    ``.*(~ [%12 [%1 ref] [%1 raw]])
   ?.  (rite:gall our.bowl u.mon pers)
     =-  %-  (slog leaf+- ~)
         ::TODO PERM  replace the below with ~ to start enforcing
-        ``.^(* u.pax)
+        ``.*(~ [%12 [%1 ref] [%1 raw]])
     =/  sef=tape  "thread {(trip tid)}"
     =/  tar=tape  "{<vis.u.mon>} {(spud (en-beam bem.u.mon))}"
     "insufficient permission: {sef} scrying for {tar}"
-  ``.^(* u.pax)
+  ``.*(~ [%12 [%1 ref] [%1 raw]])
 ::
 ++  warn-bad-cards
   |=  [=tid caz=(list card)]
