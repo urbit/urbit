@@ -5805,43 +5805,59 @@
     |=  tub=nail
     ^-  (like [[? @] @ @ [@ @ @ (list @ux)]])
     =<
-    =/  vex  %.  tub
-        ;~  plug
+    ::
+    =/  vex
+    %.  tub
+    ;~  plug
         :: year
+        ::
         (sear veal ;~(plug dim:ag ;~(pose (cold | hep) (easy &))))
         :: .month
+        ::
         ;~(pfix dot (sear |=(m=@ ?:((lte m 12) (some m) ~)) two))
-        ==
+    ==
+    ::
     ?~  q.vex
       vex
     =+  yer=->:p.u.q.vex
     =+  mot=+:p.u.q.vex
     ::  day bound
+    ::
     =/  mob=@
     ?:  (yelq -:p.u.q.vex)
       (snag (dec mot) moy:yo)
     (snag (dec mot) moh:yo)
     :: .day
-    =+  dex=((sear |=(d=@ ?:((lte d mob) (some d) ~)) ;~(pfix dot two)) q.u.q.vex)
+    ::
+    =/  dex
+      %.  q.u.q.vex
+      (sear |=(d=@ ?:((lte d mob) (some d) ~)) ;~(pfix dot two))
+    ::
     ?~  q.dex
       dex
-    =/  tex  %.  q.u.q.dex
+    :: ..h.m.s..f
+    ::
+    =/  tex
+      %.  q.u.q.dex
     ;~  pose
-      ;~  pfix
-        ;~(plug dot dot)
-        ;~  plug
-          (sear |=(h=@ ?:((lte h 23) (some h) ~)) duo)
-          ;~(pfix dot (sear |=(m=@ ?:((lte m 59) (some m) ~)) duo))
-          ;~(pfix dot (sear |=(s=@ ?:((lte s 59) (some s) ~)) duo))
-          ;~(pose ;~(pfix ;~(plug dot dot) (most dot qix:ab)) (easy ~))
+        ;~  pfix
+            ;~(plug dot dot)
+            ;~  plug
+                (sear |=(h=@ ?:((lte h 23) (some h) ~)) duo)
+                ;~(pfix dot (sear |=(m=@ ?:((lte m 59) (some m) ~)) duo))
+                ;~(pfix dot (sear |=(s=@ ?:((lte s 59) (some s) ~)) duo))
+                ;~(pose ;~(pfix ;~(plug dot dot) (most dot qix:ab)) (easy ~))
+            ==
         ==
-      ==
-      (easy [0 0 0 ~])
+        (easy [0 0 0 ~])
     ==
+    ::
     ?~  q.tex
       tex
+    :: [year month day time]
+    ::
     [p.tex [~ [[-:p.u.q.vex +:p.u.q.vex p.u.q.dex p.u.q.tex] q.u.q.tex]]]
-
+    ::
     |%
     ++  yelq  |=([ad=? yer=@ud] ?:(ad (yelp yer) (yelp (dec yer))))
     ++  two  (bass 10 ;~(plug sed:ab (stun [0 1] sid:ab)))
