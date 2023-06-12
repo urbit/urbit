@@ -1435,17 +1435,23 @@
     ::
     ++  complete-naked-poke
       |=  app=term
-      =/  pax=path
-        /(scot %p our.hid)/[q:he-beam]/(scot %da now.hid)/app
+      =+  [our=(scot %p our.hid) now=(scot %da now.hid)]
+      =+  .^(desks=(set desk) %cd /[our]//[now])
+      =.  desks  (~(del in desks) %kids)
       %+  complete  (cat 3 ':' app)
-      %+  murn  ~(tap by dir:.^(arch %cy pax))
-      |=  [=term ~]
-      ^-  (unit [^term tank])
-      ?.  =(app (end [3 (met 3 app)] term))
+      %-  zing
+      %+  turn  ~(tap in desks)
+      |=  =desk
+      %+  murn
+        %~  tap  in
+        .^((set [dude:gall ?]) %ge /[our]/[desk]/[now]/$)
+      |=  [=dude:gall live=?]
+      ^-  (unit [term tank])
+      ?.  live
         ~
-      ?~  =<(fil .^(arch %cy (weld pax ~[term %hoon])))
+      ?.  =(app (end [3 (met 3 app)] dude))
         ~
-      `[(cat 3 ':' term) *tank]
+      `[(cat 3 ':' dude) *tank]
     ::
     ++  complete-variable
       |=  variable=term
