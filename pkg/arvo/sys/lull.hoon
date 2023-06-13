@@ -1458,6 +1458,7 @@
         [%cruz cez=(map @ta crew)]                      ::  permission groups
         [%dirk p=@tas]                                  ::  mark mount dirty
         [%ergo p=@tas q=mode]                           ::  version update
+        [%grew p=path]                                  ::  sticky scry
         [%hill p=(list @tas)]                           ::  mount points
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
         [%mere p=(each (set path) (pair term tang))]    ::  merge result
@@ -1474,6 +1475,7 @@
         [%crew ~]                                       ::  permission groups
         [%crow nom=@ta]                                 ::  group usage
         [%drop des=desk]                                ::  cancel pending merge
+        [%grew p=path]                                  ::  sticky scry
         [%info des=desk dit=nori]                       ::  internal edit
         $>(%init vane-task)                             ::  report install
         [%into des=desk all=? fis=mode]                 ::  external edit

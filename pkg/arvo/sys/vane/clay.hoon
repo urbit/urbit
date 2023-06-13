@@ -1788,6 +1788,7 @@
     =/  check-sane  |
     |^
     |=  [updated=? goat=? =yoki =rang]
+    ~&  >  "committing: {<syd>}"
     ^+  ..park
     =:  hut.ran  (~(uni by hut.rang) hut.ran)
         lat.ran  (~(uni by lat.rang) lat.ran)
@@ -1991,7 +1992,11 @@
         %live  ?:(goat goad ..park)
       ==
     ::  notify unix and subscribers
+    ::  make %grew card for sticky scry
     ::
+    ~&  >>  hen
+    =.  ..park
+      (emit hen %give %grew /(scot %p our)/[syd]/(scot %da now))
     =?  ..park  mem  (ergo 0 mum.res)                   ::  [ergo] >
     wake:tare                                           ::  [wake] > [tare] >
     ::
@@ -4878,6 +4883,15 @@
       %drop
     ~&  %clay-idle
     [~ ..^$]
+  ::
+      %grew
+    ~&  >>>  "lolz"
+    =/  unwrapped-duct-path
+      (need hez.ruf)
+    ~&  >>  unwrapped-duct-path
+    ~&  [%give req]
+    :_  ..^$
+    `(list move)`[unwrapped-duct-path %give req]~
   ::
       %info
     ?:  ?=(%| -.dit.req)

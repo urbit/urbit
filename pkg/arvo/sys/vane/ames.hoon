@@ -2592,6 +2592,9 @@
         |=  spar
         ^+  event-core
         =+  ~:(spit path)  ::  assert length
+        ?:  =(ship our)
+          ~&  >>  "we scried ourself"
+          !!
         =/  ship-state  (~(get by peers.ames-state) ship)
         ?:  ?=([~ %known *] ship-state)
           abet:(on-keen:(abed-peer:pe ship +.u.ship-state) path duct)

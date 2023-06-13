@@ -1006,6 +1006,7 @@
     ++  ap-grow
       |=  [=spur =page]
       ^+  ap-core
+      ~&  >>>  "ap-grow: we are growing"
       =-  ap-core(sky.yoke -)
       %+  ~(put by sky.yoke)  spur
       =/  ski  (~(gut by sky.yoke) spur *path-state)
@@ -1070,6 +1071,7 @@
     +$  neet  $+  neet
       $<  ?(%grow %tomb %cull)
       $%  note:agent
+          [%grew =path]
           [%agent [=ship name=term] task=[%raw-poke =mark =noun]]
           [%huck [=ship name=term] =note-arvo]
       ==
@@ -1134,6 +1136,10 @@
         =/  =duct  system-duct.state
         =/  =wire  p.card
         =/  =neet  q.card
+        ?:  ?=(%grew -.neet)
+          ~&  >>>  "loach"
+          ~&  >>  neet
+          [duct %pass /asdf %c neet]^~
         ?:  ?=(%pyre -.neet)
           %:  mean
             leaf/"gall: %pyre from {<agent-name>}, killing event"
@@ -1758,8 +1764,13 @@
       |=  caz=(list card:agent)
       ^+  [fex ap-core]
       ?~  caz  [(flop fex) ap-core]
-      ?-  i.caz
-        [%pass * %grow *]  $(caz t.caz, ap-core (ap-grow +.q.i.caz))
+      ?-    i.caz
+          [%pass * %grow * *]
+        ~&  >  i.caz
+        =+  :^  %pass  /grew  %grew
+            (weld /g/x/revision/app-name ;;(path -:|3:i.caz))
+        $(caz t.caz, fex [- fex], ap-core (ap-grow +.q.i.caz))
+      ::
         [%pass * %tomb *]  $(caz t.caz, ap-core (ap-tomb +.q.i.caz))
         [%pass * %cull *]  $(caz t.caz, ap-core (ap-cull +.q.i.caz))
         [%pass * ?(%agent %arvo %pyre) *]  $(caz t.caz, fex [i.caz fex])
