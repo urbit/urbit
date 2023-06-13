@@ -1510,17 +1510,35 @@
     ::
     ++  complete-naked-ted
       |=  ted=term
-      =/  pax=path
+      |^
+      =/  pfix=path
         /(scot %p our.hid)/[q:he-beam]/(scot %da now.hid)/ted
+      =+  .^(paths=(list path) %ct pfix)
       %+  complete  (cat 3 '-' ted)
-      %+  murn  ~(tap by dir:.^(arch %cy pax))
-      |=  [=term ~]
-      ^-  (unit [^term tank])
-      ?.  =(ted (end [3 (met 3 ted)] term))
+      %+  murn  paths
+      |=  =path
+      ^-  (unit [term tank])
+      ?~  path
         ~
-      ?~  =<(fil .^(arch %cy (weld pax ~[term %hoon])))
+      ?~  t.path
         ~
-      `[(cat 3 '-' term) *tank]
+      ?.  =(%hoon (rear t.path))
+        ~
+      =/  =cord
+        %-  crip
+        (path-heps (snip `^path`t.path))
+      ?.  =(ted (end [3 (met 3 ted)] cord))
+        ~
+      `[(cat 3 '-' cord) *tank]
+      ::
+      ++  path-heps
+        |=  a=path  ^-  tape
+        ?~  a  ""
+        |-  ^-  tape
+        %+  welp  (trip i.a)
+        ?~  t.a  ""
+        ['-' $(a t.a)]
+      --
     ::
     ++  complete
       |=  [completing=term options=(list [term tank])]
