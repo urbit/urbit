@@ -1895,7 +1895,7 @@
     =/  old-fod  fod.dom
     =.  fod.dom
       ?:  updated  [~ ~]
-      ?^  sip   ~&  >  "cell"   [~ ~]  :: if you supplied a cache, throw everything away
+      ?^  sip      [~ ~]  :: if you supplied a cache, throw everything away
       (promote-ford fod.dom invalid)
     =.  fad
       (lose-leaks:fusion veb.bug fad (~(dif in spill.old-fod) spill.fod.dom))
@@ -1907,13 +1907,27 @@
       |=([* =leak =soak] [leak soak])
     ::  add those leaks to the flow
     =.  fad
-      ^-  (map leak [@ud soak])
-      %-  ~(gas by fad)
-      %+  turn  ~(tap by new-spill)
-      |=  [=leak =soak]
+      ^+  fad
+      =/  spills=(list [=leak =soak])  ~(tap by new-spill)
+      |-
+      ?~  spills  fad
+      =,  i.spills
       ?:  (~(has by fad) leak)
-        [leak +(refs:(~(got by fad) leak)) soak]
-      [leak 1 soak]
+        =.  fad  (~(put by fad) leak +(refs:(~(got by fad) leak)) soak)
+        $(spills t.spills)
+      ::  If we're creating a cache entry, add refs to our dependencies
+      ::
+      =/  deps=(list ^leak)  ~(tap in deps.leak)
+      |-
+      ?~  deps
+        =.  fad  (~(put by fad) leak 1 soak)
+        ^$(spills t.spills)
+      =.  fad
+        %+  ~(put by fad)  i.deps
+        ?~  got=(~(get by fad) i.deps)
+          [1 (~(got by new-spill) i.deps)]
+        [+(refs) soak]:u.got
+      $(deps t.deps)
     ::  inject it into fod.dom
     =?  fod.dom  ?=(^ sip)
       [~(key by new-spill) u.sip]
