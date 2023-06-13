@@ -3818,6 +3818,10 @@
     ::  %next is just %mult with one path, so we pretend %next = %mult here.
     ::
         ?(%next %mult)
+      ?.  ?=(~ for)
+      ::  reject if foreign (doesn't work over the network)
+      ::
+        [[~ ~] ..park]
       ::  because %mult requests need to wait on multiple files for each
       ::  revision that needs to be checked for changes, we keep two
       ::  cache maps.  {old} is the revision at {(dec aeon)}, {new} is
@@ -3999,6 +4003,8 @@
     ::
         %many
       :_  ..park
+      ?.  |(?=(~ for) (allowed-by:ze u.for path.moat.rov per.red))
+        [~ ~]
       =/  from-aeon  (case-to-aeon from.moat.rov)
       ?~  from-aeon
         ::  haven't entered the relevant range, so do nothing
@@ -5094,6 +5100,11 @@
           ==
         ==
       [~ ..^$]
+    ::
+        [%fine ~]
+      ~&  "clay: resetting fine state.  old:"
+      ~&  sad.ruf
+      `..^$(sad.ruf ~)
     ==
   ::
       %tire
