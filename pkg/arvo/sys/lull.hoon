@@ -1518,7 +1518,10 @@
         file-path=term                                  ::
     ==                                                  ::
   +$  care                                              ::  clay submode
-    ?(%a %b %c %d %e %f %p %r %s %t %u %v %w %x %y %z)  ::
+    $?  %a  %b  %c  %d  %e  %f                          ::
+        %p  %q  %r  %s  %t  %u                          ::
+        %v  %w  %x  %y  %z                              ::
+    ==                                                  ::
   +$  cash                                              ::  case or tako
     $%  [%tako p=tako]                                  ::
         case                                            ::
