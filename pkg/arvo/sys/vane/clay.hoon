@@ -5055,6 +5055,11 @@
           ==
         ==
       [~ ..^$]
+    ::
+        [%fine ~]
+      ~&  "clay: resetting fine state.  old:"
+      ~&  sad.ruf
+      `..^$(sad.ruf ~)
     ==
   ::
       %tire
