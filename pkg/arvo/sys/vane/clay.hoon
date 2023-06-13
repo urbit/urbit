@@ -4838,7 +4838,10 @@
       ==
   ^-  [(list move) _..^$]
   ::
-  =/  req=task  ((harden task) wrapped-task)
+  =/  req=task
+    ?:  ?=([%soft %perk *] wrapped-task)
+      !<(task [-:!>(*task) +.wrapped-task])
+    ((harden task) wrapped-task)
   ::
   ::  TODO handle error notifications
   ::
