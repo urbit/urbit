@@ -2,6 +2,10 @@
 ++  give
   |$  [sam]
   $-([@ud _og] sam)
+++  fin
+  |=  [runs=@ drop=@]
+  ~&  [success-runs+runs drops+drop]
+  %.y
 ++  check
   |*  [vax=vase give=(unit (give)) alts=(unit $-(vase (list vase)))]
   =?  runs  =(0 runs)  100
@@ -10,20 +14,29 @@
   =+  run-i=0
   =+  rng=~(. og eny)
   =+  drop=0
+  =+  tried=*(set noun)
+  =+  tries=0
   |-  ^-  ?
   ?:  =(run-i runs)
-      ~&  [success-runs+run-i drops+drop]
-      %.y
+    (fin runs drop)
+  =+  [fill-rng next-rng]=(split-rng rng)
   =/  sam=vase
     ?~  give
-      (~(fill quiz [size rng]) sax)
-    [p=p.sax q=(u.give size rng)]
+      (~(fill quiz [size fill-rng]) sax)
+    [p=p.sax q=(u.give size fill-rng)]
+  =+  new-size=(add +(size) (div (mul size 2) 21))
+  ?:  (~(has in tried) q.sam)
+    =.  tries  +(tries)
+    ?.  =(tries 1.000)
+      $(rng next-rng, size new-size)
+    ~&  %tired
+    (fin run-i drop)
+  =.  tried  (~(put in tried) sam)
   =+  res=(slum q.vax q.sam)
   =?  drop  =(res %drop)  +(drop)
   ?:  |(=(res %drop) =(res %.y))
     :: Arbitrarily chosen growth pace.
-    =+  new-size=(add +(size) (div (mul size 2) 21))
-    $(run-i +(run-i), rng +:(rads:rng 1), size new-size)
+    $(run-i +(run-i), rng next-rng, size new-size)
   ?>  =(res %.n)
   =+  sink=?~(alts sink u.alts)
   =+  sunk=(sink sam)

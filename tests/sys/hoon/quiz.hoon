@@ -25,6 +25,14 @@
   :: the test runner will report how many generated samples were dropped.
     =+  fate=!>(|=([a=@ b=@] ^-($?(%drop ?) ?:((lth b a) %drop =(b (add (sub b a) a))))))
   %-  expect  !>((check fate ~ ~))
+++  test-tired
+  :: by virtue of random sample generation, the same sample may get generated
+  :: multiple times.  in these instances, the test is not re-run.  instead, every
+  :: such collission gets counted, and after a set number (10.000 currently) have
+  :: occured, the test bails due to being %tired and reports the number of actual
+  :: unique successful runs. so in this fate, there
+  =+  fate=!>(|=([a=? b=?] |(=(a b) ?!(=(a b)))))
+  %-  expect  !>((check fate ~ ~))
 ++  test-giving
   :: here we supply the quiz libary with a 'giver', a gate that generates input.
   :: in our case, it's sorted lists of natural numbers, descending.
