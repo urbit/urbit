@@ -4297,37 +4297,29 @@
           ++  fi-on-ack
             =|  marked=(list want)
             |=  fra=@ud
-            |-  ^-  [found=? cor=_fine]
-            ?:  =(~ wan.keen)
-              [| fine]
-            ::
-            =/  old-wan  ?>(?=(^ wan.keen) wan.keen)
-            =^  found-left  fine  $(wan.keen ?>(?=(^ wan.keen) l.wan.keen))
-            =.  wan.keen  old-wan(l wan.keen)
-            ?:  found-left
-              [& fine]
-            ::
-            =^  found-node=?  fine
-              ?>  ?=(^ wan.keen)
-              ?:  =(fra fra.val.n.wan.keen)
-                =.  metrics.keen  (on-ack:fi-gauge +>.val.n.wan.keen)
-                [& fine(wan.keen +:(del:fi-mop wan.keen fra))]
-              =.  skips.val.n.wan.keen  +(skips.val.n.wan.keen)
+            ^-  [found=? cor=_fine]
+            =.  fine
+              =/  first  (pry:fi-mop wan.keen)
+              ?~  first
+                fine
+              ?:  =(fra fra.val.u.first)
+                fine
               =^  resend=?  metrics.keen
-                (on-skipped-packet:fi-gauge +>.val.n.wan.keen)
+                (on-skipped-packet:fi-gauge +>.val.u.first)
               ?:  !resend
-                [| fine]
-              =.  tries.val.n.wan.keen  +(tries.val.n.wan.keen)
-              =.  last-sent.val.n.wan.keen  now
-              =.  fine  =>((fi-send `@ux`hoot.val.n.wan.keen) ?>(?=(^ wan.keen) .))
-              [| fine]
-            ?:  found-node
-              [& fine]
+                fine
+              =.  tries.val.u.first  +(tries.val.u.first)
+              =.  last-sent.val.u.first  now
+              =.  wan.keen  (put:fi-mop wan.keen u.first)
+              =.  fine  (fi-send `@ux`hoot.val.u.first)
+              fine
             ::
-            =/  old-wan  ?>(?=(^ wan.keen) wan.keen)
-            =^  found-rite  fine  $(wan.keen ?>(?=(^ wan.keen) r.wan.keen))
-            =.  wan.keen  old-wan(r wan.keen)
-            [found-rite fine]
+            =/  found  (get:fi-mop wan.keen fra)
+            ?~  found
+              [| fine]
+            =.  metrics.keen  (on-ack:fi-gauge +>.u.found)
+            =.  wan.keen  +:(del:fi-mop wan.keen fra)
+            [& fine]
           ::
           ++  fi-done
             |=  [sig=@ data=$@(~ (cask))]
