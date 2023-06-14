@@ -4297,28 +4297,37 @@
           ++  fi-on-ack
             =|  marked=(list want)
             |=  fra=@ud
-            ^-  [? _fine]
-            =;  [[found=? cor=_fine] wan=_wan.keen]
-              :-  found
-              ?.(found fine cor(wan.keen wan))
-            %^  (dip:fi-mop ,[found=? cor=_fine])  wan.keen
+            |-  ^-  [found=? cor=_fine]
+            ?:  =(~ wan.keen)
               [| fine]
-            |=  [[found=? cor=_fine] @ud =want]
-            ^-  [(unit _want) stop=? [found=? cor=_fine]]
-            =.  fine  cor
-            ?:  =(fra fra.want)
-              =.  metrics.keen
-                (on-ack:fi-gauge +>.want)
-              [~ %.y %.y fine]
-            =.  skips.want  +(skips.want)
-            =^  resend=?  metrics.keen
-              (on-skipped-packet:fi-gauge +>.want)
-            ?.  resend
-              [`want %.n found fine]
-            =.  tries.want  +(tries.want)
-            =.  last-sent.want  now
-            =.  fine  (fi-send `@ux`hoot.want)
-            [`want %.n found fine]
+            ::
+            =/  old-wan  ?>(?=(^ wan.keen) wan.keen)
+            =^  found-left  fine  $(wan.keen ?>(?=(^ wan.keen) l.wan.keen))
+            =.  wan.keen  old-wan(l wan.keen)
+            ?:  found-left
+              [& fine]
+            ::
+            =^  found-node=?  fine
+              ?>  ?=(^ wan.keen)
+              ?:  =(fra fra.val.n.wan.keen)
+                =.  metrics.keen  (on-ack:fi-gauge +>.val.n.wan.keen)
+                [& fine(wan.keen +:(del:fi-mop wan.keen fra))]
+              =.  skips.val.n.wan.keen  +(skips.val.n.wan.keen)
+              =^  resend=?  metrics.keen
+                (on-skipped-packet:fi-gauge +>.val.n.wan.keen)
+              ?:  !resend
+                [| fine]
+              =.  tries.val.n.wan.keen  +(tries.val.n.wan.keen)
+              =.  last-sent.val.n.wan.keen  now
+              =.  fine  =>((fi-send `@ux`hoot.val.n.wan.keen) ?>(?=(^ wan.keen) .))
+              [| fine]
+            ?:  found-node
+              [& fine]
+            ::
+            =/  old-wan  ?>(?=(^ wan.keen) wan.keen)
+            =^  found-rite  fine  $(wan.keen ?>(?=(^ wan.keen) r.wan.keen))
+            =.  wan.keen  old-wan(r wan.keen)
+            [found-rite fine]
           ::
           ++  fi-done
             |=  [sig=@ data=$@(~ (cask))]
