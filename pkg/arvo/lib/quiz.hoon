@@ -84,16 +84,16 @@
       [%atom p=* q=~]  !>  ((atom:givers @) size new-rng)
       [%atom *]        sax(q (need q.p.sax))
       :: TODO use cell:givers
-      [%cell p=* q=*]  =+  [rng-1 rng-2]=(split-rng rng)
+      [%cell *]        =+  [rng-1 rng-2]=(split-rng rng)
                        %+  slop  (fill(rng rng-1) (slot 2 sax))
                                  (fill(rng rng-2) (slot 3 sax))
-      [%face p=* q=*]  sax(q q:(fill [p=q.p.sax q=q.sax]))
-      [%fork p=*]      =+  ts=~(tap in p.p.p.sax)
+      [%face *]        sax(q q:(fill [p=q.p.sax q=q.sax]))
+      [%fork *]        =+  ts=~(tap in p.p.sax)
                        =^  ran  new-rng  (rads:new-rng (lent ts))
                        =+  new-type=(snag ran ts)
                        :: Note: by assigning a specific type, we may create an evil vase.
                        (fill(rng new-rng) sax(p new-type, q q.sax))
-      [%hint p=* q=*]  sax(q q:(fill [p=q.p.sax q=q.sax]))
+      [%hint *]        sax(q q:(fill [p=q.p.sax q=q.sax]))
     ==
   --
 ++  split-rng
