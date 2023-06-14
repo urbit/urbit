@@ -1005,16 +1005,21 @@
     ::
     ++  ap-grow
       |=  [=spur =page]
-      ^+  ap-core
-      ~&  >>>  "ap-grow: we are growing"
+      ^-  [carp _ap-core]
+      =/  =path-state  (~(gut by sky.yoke) spur *path-state)
+      =/  revision=@ud
+        ?~  fan.path-state                    0
+        ?~  las=(ram:on-path fan.path-state)  0
+        +(key.u.las)
+      :-  :^  %pass  /grew  %grew
+          (weld /g/x/(scot %ud revision)/[agent-name]/$ spur)
       =-  ap-core(sky.yoke -)
       %+  ~(put by sky.yoke)  spur
-      =/  ski  (~(gut by sky.yoke) spur *path-state)
-      =-  ski(fan (put:on-path fan.ski -< -> &/page))
-      ?~  las=(ram:on-path fan.ski)
-        [(fall bob.ski 0) now]
+      =-  path-state(fan (put:on-path fan.path-state -< -> &/page))
+      ?~  las=(ram:on-path fan.path-state)
+        [(fall bob.path-state 0) now]
       :_  (max now +(p.val.u.las))
-      ?~(bob.ski +(key.u.las) +((max key.u.las u.bob.ski)))
+      ?~(bob.path-state revision +((max key.u.las u.bob.path-state)))
     ::  +ap-tomb: tombstone -- replace bound value with hash
     ::
     ++  ap-tomb
@@ -1137,8 +1142,6 @@
         =/  =wire  p.card
         =/  =neet  q.card
         ?:  ?=(%grew -.neet)
-          ~&  >>>  "loach"
-          ~&  >>  neet
           [duct %pass /asdf %c neet]^~
         ?:  ?=(%pyre -.neet)
           %:  mean
@@ -1766,10 +1769,9 @@
       ?~  caz  [(flop fex) ap-core]
       ?-    i.caz
           [%pass * %grow * *]
-        ~&  >  i.caz
-        =+  :^  %pass  /grew  %grew
-            (weld /g/x/revision/app-name ;;(path -:|3:i.caz))
-        $(caz t.caz, fex [- fex], ap-core (ap-grow +.q.i.caz))
+        =^  grew-notif  ap-core
+          (ap-grow +.q.i.caz)
+        $(caz t.caz, fex [grew-notif fex])
       ::
         [%pass * %tomb *]  $(caz t.caz, ap-core (ap-tomb +.q.i.caz))
         [%pass * %cull *]  $(caz t.caz, ap-core (ap-cull +.q.i.caz))
