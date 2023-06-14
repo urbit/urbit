@@ -94,6 +94,8 @@
                        :: Note: by assigning a specific type, we may create an evil vase.
                        (fill(rng new-rng) sax(p new-type, q q.sax))
       [%hint *]        sax(q q:(fill [p=q.p.sax q=q.sax]))
+      [%hold *]        =+  nex=(~(mint ut p.p.sax) %noun q.p.sax)
+                       (fill nex)
     ==
   --
 ++  split-rng

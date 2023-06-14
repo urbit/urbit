@@ -14,8 +14,11 @@
 ++  test-cell
   =+  fate=!>(|=([a=@ux b=@ud] ^-(? =(%-(add +6) (add a b)))))
   %-  expect  !>((check fate ~ ~))
-++  test-complex :: This works only because we don't implement list generation, so we get the null list.
-  =+  fate=!>(|=([a=@ud l=(list @)] ^-(? =(~ l))))
+++  test-list
+  =+  fate=!>(|=(l=(list @ux) ^-(? =(l (flop (flop l))))))
+  %-  expect  !>((check fate ~ ~))
+++  test-set
+  =+  fate=!>(|=(s=(set @t) ^-(? =(~(wyt in s) (lent ~(tap in s))))))
   %-  expect  !>((check fate ~ ~))
 ++  test-noun
   =+  fate=!>(|=([a=* b=*] ^-(? |(=(a b) ?!(=((sham a) (sham b)))))))
