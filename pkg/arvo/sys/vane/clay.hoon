@@ -3569,7 +3569,15 @@
             ==  ==
           ::  make the request over remote scry
           ::
-          =/  =mood  [%q uv+tako path]:i.need.sat
+          ::  TODO: switch %x -> %q as soon as practical to improve
+          ::  performance and stop tombstoning some past files.  we
+          ::  can't do it immediately because if you request %q from
+          ::  someone who doesn't understand it, they'll return null and
+          ::  we'll interpret that as a tombstoned file.  once most
+          ::  sponsors and app distributors have updated, we can change
+          ::  this to %q.
+          ::
+          =/  =mood  [%x uv+tako path]:i.need.sat
           =<  [`[%back-index -] +]
           (send-over-scry %back-index hen her inx syd mood)
         ::  otherwise, request over ames
