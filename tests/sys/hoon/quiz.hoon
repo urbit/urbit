@@ -1,7 +1,11 @@
 /+  quiz, *test
 |%
 ++  giv  givers.quiz
-++  check  ~(check quiz `@uv`1 2.000)  :: declare standard parameters for check.
+:: declare standard parameters for check.
+:: every instance of quiz is seeded with some entropy.
+:: that means test runs will not be flaky and will run exactly the same
+:: each time.
+++  check  ~(check quiz `@uv`1 2.000)
 ++  test-add-sub
   :: a fate is a gate that takes any sample and returns a loobean.
   :: returning %.n means the test failed, and %.y means it passed.
@@ -30,7 +34,9 @@
   :: multiple times.  in these instances, the test is not re-run.  instead, every
   :: such collission gets counted, and after a set number (10.000 currently) have
   :: occured, the test bails due to being %tired and reports the number of actual
-  :: unique successful runs. so in this fate, there
+  :: unique successful runs. so in this fate, there are only 4 possible samples,
+  :: all will be found, and even though we choose to do the default number of runs,
+  :: the check will get %tired and only do 4 in total.
   =+  fate=!>(|=([a=? b=?] |(=(a b) ?!(=(a b)))))
   %-  expect  !>((check fate ~ ~))
 ++  test-giving
@@ -78,15 +84,33 @@
       ~
     ~[!>((scag 2 ssam)) !>((slag 1 ssam))]
   %+  expect-eq  !>(|)  !>((check fate `give `alts))
-++  test-flop
+++  test-flop-1 
+  :: quiz can even generate automatically more complex types, such as lists.
+  :: however, since the approach works for almost all types it is also not very
+  :: specialized on any particular type.
+  :: for example, we can state confidently that no list of length 50 or more will be generated.
+  :: this is because the algorithm has a 50/50 chance to terminate each time
+  :: after picking a new element, so the odds of a length 50 list is 1/2^50.
+  =+  fate=!>(|=([a=(list @ud) b=(list @ud)] ^-(? &((gth 50 (lent a)) =((flop (weld a b)) (weld (flop b) (flop a)))))))
+  %-  expect  !>((check fate ~ ~))
+++  test-flop-2
+  :: in the following we use quiz's built-in "giver" for lists.
+  :: it is far more intelligent in list creation than the default behavior.
+  :: for example, it will create lists of random lengths with a much better
+  :: distribtuion, gradually growing the likely length of the list every run.
   :: here we use some combinators to create new givers.
-  =+  fate=!>(|=([a=(list @ud) b=(list @ud)] ^-(? =((flop (weld a b)) (weld (flop b) (flop a))))))
+  =+  fate=!>(|=([a=(list @ud) b=(list @ud)] ^-(? &((gth 100 (lent a)) =((flop (weld a b)) (weld (flop b) (flop a)))))))
   :: we can generate a list of any type.
   :: specify the type of the elements of the list by passing the mold to the list giver.
   :: then pass it a giver of that type.
   =+  giel=((list:giv @ud) (atom:giv @ud))
   =+  gief=((cell:giv (list @ud) (list @ud)) giel giel)
-  %-  expect  !>((check fate `gief ~))
+  %+  weld
+  :: this will generate even some very long lists with high probability.
+  %+  expect-eq  !>(|)  !>((check fate `gief ~))
+  :: if we fix the test to remove the bug where we only accepted short lists, the fate is heeded.
+  =+  fate=!>(|=([a=(list @ud) b=(list @ud)] ^-(? =((flop (weld a b)) (weld (flop b) (flop a))))))
+  %-  expect  !>((check fate ~ ~))
 ++  test-giver-const
   :: here, part of the sample always stays the same, because we use the constant giver.
   =+  fate=!>(|=([@ @tas] =(+13 %constant)))
