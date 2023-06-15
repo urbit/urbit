@@ -1326,10 +1326,6 @@
           [%txt "> "]
           [%nex ~]
       ==
-    (he-slip txt)
-  ::
-  ++  he-self
-    |=  txt=tape
     =+  doy=(he-duke txt)
     ?-    -.doy
         %|  (he-errd ~ p.doy)
@@ -1587,7 +1583,7 @@
       he-pine:(~(dy-type dy u.poy) act)
     ?-  -.dat.act
       %det  (he-stir +.dat.act)
-      %ret  (he-done (tufa buf.say))
+      %ret  (he-slip (tufa buf.say))
       %clr  he-pine(buf "")
       %tab  (he-tab +.dat.act)
     ==
@@ -1713,7 +1709,7 @@
       =/  =session  (~(got by hoc) id.old)
       =/  he-old  ~(. he hid id.old moz.old session)
       =<  he-abet
-      (he-self:he-old txt.old)
+      (he-done:he-old txt.old)
     ::
         %sole-action
       =/  act  !<(sole-action vase)
