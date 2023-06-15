@@ -1576,12 +1576,9 @@
       he-pine:(~(dy-type dy u.poy) act)
     ?-  -.dat.act
       %det  (he-stir +.dat.act)
+      %ret  (he-card %pass /self %agent [our.hid %dojo] %poke %self !>(id))
       %clr  he-pine(buf "")
       %tab  (he-tab +.dat.act)
-    ::
-        %ret  
-      %-  he-card 
-      [%pass /self %agent [our.hid %dojo] %poke %self !>([id (tufa buf.say)])]
     ==
   ::
   ++  he-lame                                           ::  handle error
@@ -1701,10 +1698,9 @@
     ^-  (quip card:agent:gall house)
     ?+  mark  ~|([%dojo-poke-bad-mark mark] !!)
         %self
-      =+  !<(old=[=id txt=tape] vase)
-      =/  =session  (~(got by hoc) id.old)
-      =/  he-old  ~(. he hid id.old ~ session)
-      he-abet:(he-done:he-old txt.old)
+      =+  !<(=id vase)
+      =/  =session  (~(got by hoc) id)
+      he-abet:(~(he-done he hid id ~ session) (tufa buf.say.session))
     ::
         %sole-action
       =/  act  !<(sole-action vase)
