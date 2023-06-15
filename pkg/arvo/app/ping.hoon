@@ -118,6 +118,11 @@
         =.  state  new-state
         loop(old-ships t.old-ships)
       ::
+      ::  NB: !! This includes our own ship, and for moons, this is what
+      ::  has caused Jael to fetch our own rift from our parent.  This
+      ::  role may be taken by Ames's subscription to %public-keys, but
+      ::  this must be tested before changing the behavior here.
+      ::
       =/  new-ships  (saxo:title our now our)
       |-  ^-  (quip card _state)
       =*  loop  $
