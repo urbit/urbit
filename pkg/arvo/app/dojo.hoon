@@ -1060,6 +1060,13 @@
   ++  he-abet                                           ::  resolve
     [(flop moz) %_(state hoc (~(put by hoc) id +<+>+))]
   ::
+  ++  he-slip                                           ::  to self
+    |=  txt=tape
+    ^+  +>
+    =/  =cage  [%self !>([txt id moz])]
+    =.  moz  ~
+    (he-card %pass /self %agent [our.hid %dojo] %poke cage)
+  ::
   ++  he-card                                           ::  emit gift
     |=  =card:agent:gall
     ^+  +>
@@ -1319,6 +1326,10 @@
           [%txt "> "]
           [%nex ~]
       ==
+    (he-slip txt)
+  ::
+  ++  he-self
+    |=  txt=tape
     =+  doy=(he-duke txt)
     ?-    -.doy
         %|  (he-errd ~ p.doy)
@@ -1697,6 +1708,12 @@
   =^  moves  state
     ^-  (quip card:agent:gall house)
     ?+  mark  ~|([%dojo-poke-bad-mark mark] !!)
+        %self
+      =+  !<(old=[txt=tape =id moz=(list card:agent:gall)] vase)
+      =/  =session  (~(got by hoc) id.old)
+      =/  he-old  ~(. he hid id.old moz.old session)
+      =<  he-abet
+      (he-self:he-old txt.old)
     ::
         %sole-action
       =/  act  !<(sole-action vase)
@@ -1765,6 +1782,8 @@
   |=  [=wire =sign:agent:gall]
   ^-  (quip card:agent:gall _..on-init)
   ?>  ?=([@ @ @ *] wire)
+  ?:  =(%self i.t.t.wire)
+    `..on-init
   =/  =id  [(slav %p i.wire) i.t.wire]
   =/  =session  (~(got by hoc) id)
   =/  he-full  ~(. he hid id ~ session)
