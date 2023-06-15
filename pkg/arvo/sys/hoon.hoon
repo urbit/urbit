@@ -1376,6 +1376,12 @@
   ~/  %by
   =|  a=(tree (pair))  ::  (map)
   |@
+  ++  add                                               ::  crash if key exists or add key-value pair
+    |*  [b=* c=*]
+    ^+  a
+    ?:  (has b)
+      !!
+    (put b c)
   ++  all                                               ::  logical AND
     ~/  %all
     |*  b=$-(* ?)
@@ -1645,6 +1651,12 @@
       $(l.b $(b l.b, r.a ~), a r.a)
     $(r.b $(b r.b, l.a ~), a l.a)
   ::
+  ++  upd                                               ::  update key-value pair, crash if key doesn't exist
+    |*  [b=* c=*]
+    ^+  a
+    ?.  (has b)
+      !!
+    (put b c)
   ++  urn                                               ::  apply gate to nodes
     ~/  %urn
     |*  b=$-([* *] *)
