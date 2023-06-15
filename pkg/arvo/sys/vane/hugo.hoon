@@ -124,7 +124,12 @@
       :_  state
       (turn ~(tap in ducts) (late %give %seen ~))
     ::
-        %grab  [[unix-duct %give %grab ~]~ state]
+        %grab
+      :_  state
+      =-  [unix-duct %give %grab -]~
+      %+  turn  ~(tap ay files)
+      |=  [=poth =octs]
+      [poth (octs-to-lobe octs)] :: TODO probably need to cache this
     ::
         %look
       =.  ducts  (~(put in ducts) hen)

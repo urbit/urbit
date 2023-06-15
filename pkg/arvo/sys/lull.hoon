@@ -2713,7 +2713,7 @@
 ++  hugo  ^?
   |%
   +$  gift                                             ::  outgoing result
-    $%  [%grab ~]                                      ::  get unix files
+    $%  [%grab p=(list [poth lobe])]                 ::  get unix files
         [%seen ~]                                      ::  look notification
     ==                                                 ::
   +$  task                                             ::  incoming request
@@ -2733,6 +2733,9 @@
   ++  trie                                             ::  file-store struct
     |$  [key val]                                      ::
     [fil=(unit val) dir=(map key $)]                   ::
+  ::
+  +$  lobe  @uvI                                       ::  file hash
+  ++  octs-to-lobe  |=(octs (shax (jam +<)))           ::  hash octs
   ::
   --  ::hugo
 ::  %iris http-client interface
