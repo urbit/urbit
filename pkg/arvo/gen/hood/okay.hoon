@@ -125,7 +125,7 @@
   ++  pp-abed
     |=  =pers:gall
     %=  pp-core
-      passport     ((perm-tree:perms live apps) pers)
+      passport     ((perm-tree:perms live apps *pers:gall) pers)
       pers         pers
       out          [~ %& ~ %helm-pass %d %hail ~]
     ==

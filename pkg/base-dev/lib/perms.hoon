@@ -53,8 +53,17 @@
   |=  [[dud=dude ?] =_out]
   (~(put by out) dud des)
 ::
+++  scry-approved
+  |=  [our=@p now=@da =desk]
+  ^-  pers:gall
+  =+  .^(=cone:clay %cx /(scot %p our)//(scot %da now)/domes)
+  pes:(~(gut by cone) [our desk] *dome:clay)
+::
 ++  perm-tree
-  |=  [live=(map dude desk) apps=(map desk @t)]
+  |=  $:  live=(map dude desk)
+          apps=(map desk @t)
+          last=pers:gall
+      ==
   |^  |=  =pers
       (perm-tree pers)
   ::
@@ -70,7 +79,10 @@
         [(perm-kind perm) (perm-cord perm) (perm-warn perm) (perm-tags perm)]
       (~(put ju pers) deal perm)
     |=  [=deal =pers:gall]
-    [deal pers %nil]  ::TODO  figure out which we have
+    :+  deal  pers
+    ?~  (~(int in pers) last)  %nil
+    ?~  (~(dif in pers) last)  %all
+    %any
   ::
   ++  perm-tree
     |=  =pers
@@ -92,13 +104,15 @@
               kinds=(jug [buck @t] perm-node)
           ==
       ^+  [nodes kinds]
-      =/  todo-haves=?(%all %any %nil)
-        %nil ::!!  ::TODO
+      =/  haves=?(%all %any %nil)
+        ?~  (~(int in pers) last)  %nil
+        ?~  (~(dif in pers) last)  %all
+        %any
       ?:  =(kind desc)
         :_  kinds
-        [[buck %node desc warn todo-haves pers] nodes]
+        [[buck %node desc warn haves pers] nodes]
       :-  nodes
-      (~(put ju kinds) [buck kind] [desc warn todo-haves pers])
+      (~(put ju kinds) [buck kind] [desc warn haves pers])
     ::  sort groupings by bucket
     ::
     =/  m=(jar buck perm-once)

@@ -5,7 +5,7 @@
         [=desk pes=(list perm:gall)]
         [all=_| extra=_| ~]
     ==
-:-  %helm-hope
+:-  %helm-curb
 ^-  [^desk pers:gall]
 =+  .^(=dome:clay %cx /(scot %p p.bek)//(scot %da now)/domes/(scot %tas desk))
 :-  desk
