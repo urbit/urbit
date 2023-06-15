@@ -288,8 +288,7 @@
   ^-  [sig=@ux dat=$@(~ (cask))]
   =/  mes=@
     %+  rep  response-size
-    %+  turn
-      (sort hav |=([a=have b=have] (lth fra.a fra.b)))
+    %+  turn  (flop hav)
     |=(=have dat.have)
   =+  sig=(end 9 mes)
   :-  sig
@@ -4266,9 +4265,16 @@
             =^  found=?  fine  (fi-on-ack num)
             ?.  found
               (fi-fast-retransmit:og num)
-            =:  hav.keen           [[num meow] hav.keen]
-                num-received.keen  +(num-received.keen)
-              ==
+            =.  num-received.keen  +(num-received.keen)
+            =.  hav.keen
+              ::  insert in reverse order
+              ::
+              |-  ^-  (list have)
+              ?~  hav.keen
+                [num meow]~
+              ?:  (lth num fra.i.hav.keen)
+                [i.hav.keen $(hav.keen t.hav.keen)]
+              [[num meow] hav.keen]
             ?.  =(num-fragments num-received):keen
               fi-continue
             (fi-done [sig dat]:fi-sift-full)
