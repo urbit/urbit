@@ -1882,6 +1882,7 @@
             ==
             ;body
               ;form(action "/~/eauth", method "post")
+                ; Hello, {(scow %p our)}.
                 ; You are trying to log in to:
                 ;code:"{(scow %p server)}"
                 ;input(type "hidden", name "server", value (scow %p server));
