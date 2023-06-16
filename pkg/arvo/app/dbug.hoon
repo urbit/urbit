@@ -388,7 +388,7 @@
         |=  [nonce=@uv v=visitor:eyre]
         %-  pairs
         :+  'nonce'^s+(scot %uv nonce)
-          'duct'^a+(turn duct.v path)
+          'duct'^?~(duct.v ~ a+(turn u.duct.v path))
         ?@  +.v  ['sesh' s+(scot %uv sesh.v)]~
         :~  'pend'^b+?=(^ pend.v)
             'ship'^(ship ship.v)
@@ -405,13 +405,13 @@
           (aor (scot %p a) (scot %p b))
         |=  [who=@p m=(map @uv portkey)]
         %+  turn  ~(tap by m)
-        |=  [nonce=@uv portkey]
+        |=  [nonce=@uv p=portkey]
         %-  pairs
         :+  'who'^(ship who)
           'nonce'^s+(scot %uv nonce)
-        ?-  -.live
-          %&  ['made' (time p.live)]~
-          %|  ['goal' s+p.live]~
+        ?@  p  ['made' (time made.p)]~
+        :~  ['pend' b+?=(^ pend.p)]
+            ['toke' ?~(toke.p ~ s+(scot %uv u.toke.p))]
         ==
     ==
   ::
