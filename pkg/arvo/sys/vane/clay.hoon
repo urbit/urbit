@@ -3569,15 +3569,7 @@
             ==  ==
           ::  make the request over remote scry
           ::
-          ::  TODO: switch %x -> %q as soon as practical to improve
-          ::  performance and stop tombstoning some past files.  we
-          ::  can't do it immediately because if you request %q from
-          ::  someone who doesn't understand it, they'll return null and
-          ::  we'll interpret that as a tombstoned file.  once most
-          ::  sponsors and app distributors have updated, we can change
-          ::  this to %q.
-          ::
-          =/  =mood  [%x uv+tako path]:i.need.sat
+          =/  =mood  [%q uv+tako path]:i.need.sat
           =<  [`[%back-index -] +]
           (send-over-scry %back-index hen her inx syd mood)
         ::  otherwise, request over ames
@@ -6225,22 +6217,23 @@
       =/  =desk      (slav %tas i.t.t.tea)
       =/  index=@ud  (slav %ud i.t.t.t.tea)
       ::
-      =/  =fell
-        ?:  ?=(%boon +<.hin)  ;;(fell payload.hin)
-        :-  %1
-        ^-  (unit page)
-        ::  if we can't get the answer, we assume it's been tombstoned
-        ::  and move on
-        ::
+      =/  fell=(unit fell)
+        ?:  ?=(%boon +<.hin)  `;;(fell payload.hin)
         ?~  roar.hin  ~
         ?~  q.dat.u.roar.hin  ~
-        `u.q.dat.u.roar.hin
+        `[%1 `u.q.dat.u.roar.hin]
       ::
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
+        ?~  fell
+          ::  We shouldn't get back null on any of the fine requests we
+          ::  make unless they're out of date
+          ::
+          %-  (slog leaf+"clay: got null from {<her>}, falling back to ames" ~)
+          abet:(retry-with-ames:den %back-index index)
         =?  den  ?=(%tune +<.hin)
           (cancel-scry-timeout:den index)
-        abet:abet:(take-backfill:(foreign-update:den index) fell)
+        abet:abet:(take-backfill:(foreign-update:den index) u.fell)
       [mos ..^$]
     ::
          %wake
