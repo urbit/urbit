@@ -117,7 +117,7 @@
   ::
   ++  read-u
     ^-  (unit (unit cage))
-    ``[%noun !>((~(has by owners) s.bem)]
+    ``[%noun !>((~(has by owners) s.bem))]
   :: 
   --    
 ::
