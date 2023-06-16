@@ -4,7 +4,7 @@
 =>  ..part
 ~%  %lull  ..part  ~
 |%
-++  lull  %324
+++  lull  %323
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
@@ -462,7 +462,8 @@
 +$  rift  @ud                                           ::  ship continuity
 +$  mime  (pair mite octs)                              ::  mimetyped data
 +$  octs  (pair @ud @)                                  ::  octet-stream
-+$  sock  (pair ship ship)                              ::  outgoing [our his]
++$  sock  (pair ship ship)                              ::  outgoing [src dest]
++$  sack  (trel ship ship path)                         ::  $sock /w provenance
 +$  stub  (list (pair stye (list @c)))                  ::  styled unicode
 +$  stye  (pair (set deco) (pair tint tint))            ::  decos/bg/fg
 +$  styl  %+  pair  (unit deco)                         ::  cascading style
@@ -767,6 +768,7 @@
   ::    %cork: request to delete message flow
   ::    %kroc: request to delete stale message flows
   ::    %plea: request to send message
+  ::    %deep: deferred calls to %ames, from itself
   ::
   ::    Remote Scry Tasks
   ::
@@ -794,6 +796,7 @@
         [%cork =ship]
         [%kroc dry=?]
         $>(%plea vane-task)
+        [%deep =deep]
     ::
         [%keen spar]
         [%yawn spar]
@@ -901,7 +904,15 @@
   ::    life based on the ship.
   ::
   +$  spar  [=ship =path]
+  ::  $deep: deferred %ames call, from self, to keep +abet cores pure
   ::
+  +$  deep
+    $%  [%nack =ship =nack=bone =message-blob]
+        [%sink =ship =target=bone naxplanation=[=message-num =error]]
+        [%drop =ship =nack=bone =message-num]
+        [%cork =ship =bone]
+        [%kill =ship =bone]
+    ==
   :: +|  %atomics
   ::
   +$  bone           @udbone
@@ -1190,7 +1201,6 @@
   ::    rto: retransmission timeout
   ::    rtt: roundtrip time estimate, low-passed using EWMA
   ::    rttvar: mean deviation of .rtt, also low-passed with EWMA
-  ::    num-live: how many packets sent, awaiting ack
   ::    ssthresh: slow-start threshold
   ::    cwnd: congestion window; max unacked packets
   ::
@@ -1200,7 +1210,6 @@
         rttvar=_~s1
         ssthresh=_10.000
         cwnd=_1
-        num-live=@ud
         counter=@ud
     ==
   +$  live-packet
@@ -2675,7 +2684,7 @@
     ==                                                  ::
   +$  task                                              ::  incoming request
     $~  [%vega ~]                                       ::
-    $%  [%deal p=sock q=term r=deal]                    ::  full transmission
+    $%  [%deal p=sack q=term r=deal]                    ::  full transmission
         [%sear =ship]                                   ::  clear pending queues
         [%jolt =desk =dude]                             ::  (re)start agent
         [%idle =dude]                                   ::  suspend agent
@@ -2697,6 +2706,7 @@
     $:  $:  our=ship                                    ::  host
             src=ship                                    ::  guest
             dap=term                                    ::  agent
+            sap=path                                    ::  provenance
         ==                                              ::
         $:  wex=boat                                    ::  outgoing subs
             sup=bitt                                    ::  incoming subs
