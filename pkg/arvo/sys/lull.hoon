@@ -2713,7 +2713,7 @@
 ++  hugo  ^?
   |%
   +$  gift                                             ::  outgoing result
-    $%  [%grab p=(list [poth lobe])]                 ::  get unix files
+    $%  [%grab p=(list [poth lobe])]                   ::  get unix files
         [%seen ~]                                      ::  look notification
     ==                                                 ::
   +$  task                                             ::  incoming request
@@ -2721,7 +2721,7 @@
     $%  $:  %fill                                      ::  file changes
             del=(list poth)                            ::  deletes
             var=(list [poth octs])                     ::  changes
-        == 
+        ==
         [%grab ~]                                      ::  grab get directory
         [%look ~]                                      ::  watch for changes
         $>(%born vane-task)
@@ -2735,10 +2735,11 @@
     [fil=(unit val) dir=(map key $)]                   ::
   ::
   +$  lobe  @uvI                                       ::  file hash
-  ++  octs-to-lobe  |=(octs (shax (jam +<)))           ::  hash octs
+  ++  octs-to-lobe  |=(octs (mug +<))                  ::  hash octs
   ::
   --  ::hugo
-::  %iris http-client interface
+  ::
+::::  %iris http-client interface
 ::
 ++  iris  ^?
   |%
