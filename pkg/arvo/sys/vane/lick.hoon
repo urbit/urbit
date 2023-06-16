@@ -57,8 +57,6 @@
     lick-gate(unix-duct hen) 
     ::
       %spin     :: A gall agent wants to spin a communication line
-    ::  XX Right now the last agent to register a port owns it. Should
-    ::  this change? 
     :-  ~[(register name.task)]
     lick-gate(owners (~(put by owners) name.task hen))
     ::
@@ -89,37 +87,38 @@
   ^-  roon
   |=  [lyc=gang car=term bem=beam]
   ^-  (unit (unit cage))
-  =*  ren  car
-  =*  why=shop  &/p.bem
-  =*  syd  q.bem
-  =*  lot=coin  $/r.bem
-  =*  tyl  s.bem
   |^
   ::  only respond for the local identity, current timestamp
   ::
-  ?.  ?&  =(&+our why)
-          =([%$ %da now] lot)
+  ?.  ?&  =(our p.bem)
+          =(%$ q.bem) 
+          =([%da now] r.bem)
       ==
     ~
   ?+  car  ~
-    %a  (read-a lyc bem)
-    %d  (read-d lyc bem)
+    %a  read-a 
+    %d  read-d
+    %u  read-u
   ==
-  ::  +read-a: scry our list of devices
+  ::  +read-a: scry our list of ports
   ::
   ++  read-a
-    |=  [lyc=gang bem=beam]
     ^-  (unit (unit cage))
-    =/  ports  ~(tap in ~(key by owners))
+    =/  ports=(list name)  ~(tap in ~(key by owners))
     ``[%noun !>(ports)]
   ::  +read d: get ports owner 
   ::
   ++  read-d    
-    |=  [lyc=gang bem=beam]
     ^-  (unit (unit cage))
-    =*  tyl  s.bem
-    =/  devs  (~(got by owners) tyl)
+    =/  devs=(unit duct)  (~(get by owners) s.bem)
+    ?~  devs  [~ ~]
     ``[%noun !>(devs)]
+  ::  +read u: does a port exist
+  ::
+  ++  read-u
+    ^-  (unit (unit cage))
+    ``[%noun !>((~(has by owners) s.bem)]
+  :: 
   --    
 ::
 ++  stay  
