@@ -5804,14 +5804,24 @@
     ~+
     |=  tub=nail
     ^-  (like [[? @] @ @ [@ @ @ (list @ux)]])
-    =<
+    =>
+      |%
+      ++  yelq  |=([ad=? yer=@ud] ?:(ad (yelp yer) (yelp (dec yer))))
+      ++  two  (bass 10 ;~(plug sed:ab (stun [0 1] sid:ab)))
+      ++  duo  (bass 10 ;~(plug sid:ab (stun [0 1] sid:ab)))
+      ++  vey
+        |=  [a=@ b=?]
+        ?:  |(=(0 a) &(=(| b) (gth a +(jes:yo))))
+          ~
+        (some [b a])
+      --
     ::
     =/  vex
     %.  tub
     ;~  plug
         :: year
         ::
-        (sear veal ;~(plug dim:ag ;~(pose (cold | hep) (easy &))))
+        (sear vey ;~(plug dim:ag ;~(pose (cold | hep) (easy &))))
         :: .month
         ::
         ;~(pfix dot (sear |=(m=@ ?:((lte m 12) (some m) ~)) two))
@@ -5824,9 +5834,9 @@
     ::  day bound
     ::
     =/  mob=@
-    ?:  (yelq -:p.u.q.vex)
-      (snag (dec mot) moy:yo)
-    (snag (dec mot) moh:yo)
+      ?:  (yelq -:p.u.q.vex)
+        (snag (dec mot) moy:yo)
+      (snag (dec mot) moh:yo)
     :: .day
     ::
     =/  dex
@@ -5839,35 +5849,23 @@
     ::
     =/  tex
       %.  q.u.q.dex
-    ;~  pose
-        ;~  pfix
-            ;~(plug dot dot)
-            ;~  plug
-                (sear |=(h=@ ?:((lte h 23) (some h) ~)) duo)
-                ;~(pfix dot (sear |=(m=@ ?:((lte m 59) (some m) ~)) duo))
-                ;~(pfix dot (sear |=(s=@ ?:((lte s 59) (some s) ~)) duo))
-                ;~(pose ;~(pfix ;~(plug dot dot) (most dot qix:ab)) (easy ~))
-            ==
-        ==
-        (easy [0 0 0 ~])
-    ==
+      ;~  pose
+          ;~  pfix
+              ;~(plug dot dot)
+              ;~  plug
+                  (sear |=(h=@ ?:((lte h 23) (some h) ~)) duo)
+                  ;~(pfix dot (sear |=(m=@ ?:((lte m 59) (some m) ~)) duo))
+                  ;~(pfix dot (sear |=(s=@ ?:((lte s 59) (some s) ~)) duo))
+                  ;~(pose ;~(pfix ;~(plug dot dot) (most dot qix:ab)) (easy ~))
+          ==  ==
+          (easy [0 0 0 ~])
+      ==
     ::
     ?~  q.tex
       tex
     :: [year month day time]
     ::
     [p.tex [~ [[-:p.u.q.vex +:p.u.q.vex p.u.q.dex p.u.q.tex] q.u.q.tex]]]
-    ::
-    |%
-    ++  yelq  |=([ad=? yer=@ud] ?:(ad (yelp yer) (yelp (dec yer))))
-    ++  two  (bass 10 ;~(plug sed:ab (stun [0 1] sid:ab)))
-    ++  duo  (bass 10 ;~(plug sid:ab (stun [0 1] sid:ab)))
-    ++  veal
-      |=  [a=@ b=?]
-      ?:  |(=(0 a) &(=(| b) (gth a +(jes:yo))))
-        ~
-      (some [b a])
-    --
   ::
   ++  zust
     ~+
