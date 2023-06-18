@@ -1172,6 +1172,16 @@
     ::
         %kick  +>.$
     ==
+  ::
+  ++  he-self
+    |=  [way=wire cit=sign:agent:gall]
+    ^+  +>
+    ?.  ?=(%poke-ack -.cit)
+      ~&  [%strange-self cit]
+      +>
+    ?~  p.cit
+      +>
+    (he-diff %tan leaf+"dojo: failed to process input" ~)
   ::  +he-http-response: result from http-client
   ::
   ++  he-http-response
@@ -1769,8 +1779,6 @@
   |=  [=wire =sign:agent:gall]
   ^-  (quip card:agent:gall _..on-init)
   ?>  ?=([@ @ @ *] wire)
-  ?:  =(%self i.t.t.wire)
-    `..on-init
   =/  =id  [(slav %p i.wire) i.t.wire]
   =/  =session  (~(got by hoc) id)
   =/  he-full  ~(. he hid id ~ session)
@@ -1780,6 +1788,7 @@
     ?+  i.t.t.wire  ~|([%dojo-bad-on-agent wire -.sign] !!)
       %poke  (he-unto:he-full t.wire sign)
       %wool  (he-wool:he-full t.wire sign)
+      %self  (he-self:he-full t.wire sign)
     ==
   [moves ..on-init]
 ::
