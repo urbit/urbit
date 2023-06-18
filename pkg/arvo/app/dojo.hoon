@@ -1174,12 +1174,12 @@
     ==
   ::
   ++  he-self
-    |=  [way=wire cit=sign:agent:gall]
+    |=  [way=wire =sign:agent:gall]
     ^+  +>
-    ?.  ?=(%poke-ack -.cit)
-      ~&  [%strange-self cit]
+    ?.  ?=(%poke-ack -.sign)
+      ~&  [%strange-self sign]
       +>
-    ?~  p.cit
+    ?~  p.sign
       +>
     (he-diff %tan leaf+"dojo: failed to process input" ~)
   ::  +he-http-response: result from http-client
