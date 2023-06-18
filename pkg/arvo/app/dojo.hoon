@@ -1586,7 +1586,7 @@
       he-pine:(~(dy-type dy u.poy) act)
     ?-  -.dat.act
       %det  (he-stir +.dat.act)
-      %ret  (he-card %pass /self %agent [our.hid %dojo] %poke %self !>(id))
+      %ret  (he-card %pass /self %agent [our.hid %dojo] %poke %done !>(id))
       %clr  he-pine(buf "")
       %tab  (he-tab +.dat.act)
     ==
@@ -1707,10 +1707,6 @@
   =^  moves  state
     ^-  (quip card:agent:gall house)
     ?+  mark  ~|([%dojo-poke-bad-mark mark] !!)
-        %self
-      =+  !<(=id vase)
-      =/  =session  (~(got by hoc) id)
-      he-abet:(~(he-done he hid id ~ session) (tufa buf.say.session))
     ::
         %sole-action
       =/  act  !<(sole-action vase)
@@ -1720,6 +1716,11 @@
       =+  !<([ses=@ta =command:lens] vase)
       =/  =id  [our.hid ses]
       he-abet:(~(he-lens he hid id ~ (~(got by hoc) id)) command)
+    ::
+        %done
+      =+  !<(=id vase)
+      =/  ses=session  (~(got by hoc) id)
+      he-abet:(~(he-done he hid id ~ ses) (tufa buf.say.ses))
     ::
         %allow-remote-login
       =/  who  !<(@p vase)
