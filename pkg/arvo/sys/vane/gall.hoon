@@ -1262,10 +1262,14 @@
         ?.  ?=(%x care)  [%$ tyl]
         =.  tyl  (flop tyl)
         [(head tyl) (flop (tail tyl))]
+      ::  %r scries are %x without mark conversion
+      ::
+      =/  show-care
+        ?:  ?=(%r care)  %x  care
       ::  call the app's +on-peek, producing [~ ~] if it crashes
       ::
       =/  peek-result=(each (unit (unit cage)) tang)
-        (ap-mule-peek |.((on-peek:ap-agent-core [care tyl])))
+        (ap-mule-peek |.((on-peek:ap-agent-core [show-care tyl])))
       ?:  ?=(%| -.peek-result)
         ?.  veb  [~ ~]
         ((slog leaf+"peek bad result" p.peek-result) [~ ~])
@@ -1274,7 +1278,7 @@
       ::
       ?.  ?&  ?=(%x care)
               ?=([~ ~ *] p.peek-result)
-              !=(mark p.u.u.p.peek-result)
+              !=(want p.u.u.p.peek-result)
           ==
         p.peek-result
       ::  for %x scries, attempt to convert to the requested mark if needed

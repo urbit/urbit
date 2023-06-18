@@ -862,36 +862,46 @@
       (error-response 400 "scry path must start with app name")
     ::  attempt the scry that was asked for
     ::
-    =/  res=(unit (unit cage))
-      (do-scry %gx i.site.req (snoc t.site.req (fall ext.req %mime)))
+    =/  res=(unit (unit cage))  (do-scry %gr site.req)
     ?~  res    (error-response 500 "failed scry")
     ?~  u.res  (error-response 404 "no scry result")
-    =*  mark   p.u.u.res
-    =*  vase   q.u.u.res
-    ?:  =(%mime mark)
-      =/  =mime  !<(mime vase)
-      %^  return-static-data-on-duct  200
-        (rsh 3 (spat p.mime))  q.mime
-    ::  attempt to find conversion gate to mime
+    =*  mark-1   p.u.u.res
+    =/  mark-2  (fall ext.req %mime)
+    =*  vase     q.u.u.res
+    ::  attempt to find conversion gates
     ::
-    =/  tub=(unit [tub=tube:clay mov=move])
-      (find-tube i.site.req mark %mime)
-    ?~  tub  (error-response 500 "no tube from {(trip mark)} to mime")
-    ::  attempt conversion, then send results
+    =/  tub-1=(unit [tub=tube:clay mov=(list move)])
+      (find-tube i.site.req mark-1 mark-2)
+    ?~  tub-1
+      (error-response 500 "no tube from {(trip mark-1)} to {(trip mark-2)}")
+    =/  tub-2=(unit [tub=tube:clay mov=(list move)])
+      (find-tube i.site.req mark-2 %mime)
+    ?~  tub-2
+      (error-response 500 "no tube from {(trip mark-2)} to mime")
+    ::  attempt conversion to mime
     ::
+    =/  vys=(each ^vase tang)
+      (mule |.((tub.u.tub-1 vase)))
+    ?:  ?=(%| -.vys)
+      %+  error-response  500
+      "failed tube from {(trip mark-1)} to {(trip mark-2)}"
     =/  mym=(each mime tang)
-      (mule |.(!<(mime (tub.u.tub vase))))
+      (mule |.(!<(mime (tub.u.tub-2 p.vys))))
+    ::  send results
+    ::
     =^  cards  state
       ?-  -.mym
-        %|  (error-response 500 "failed tube from {(trip mark)} to mime")
+        %|  (error-response 500 "failed tube from {(trip mark-2)} to mime")
         %&  %+  return-static-data-on-duct  200
             [(rsh 3 (spat p.p.mym)) q.p.mym]
       ==
-    [[mov.u.tub cards] state]
+    [:(weld mov.u.tub-1 mov.u.tub-2 cards) state]
     ::
     ++  find-tube
       |=  [dap=term from=mark to=mark]
-      ^-  (unit [tube:clay move])
+      ^-  (unit [tube:clay (list move)])
+      ?:  |(=(%mime from) =(from to))
+        [~ |=(=vase vase) ~]
       =/  des=(unit (unit cage))
         (do-scry %gd dap /$)
       ?.  ?=([~ ~ *] des)  ~
@@ -901,8 +911,9 @@
       ?.  ?=([~ ~ %tube *] tub)  ~
       :-  ~
       :-  !<(tube:clay q.u.u.tub)
-      :^  duct  %pass  /conversion-cache/[from]
-      [%c %warp our desk `[%sing %c da+now /[from]/[to]]]
+      :~  :^  duct  %pass  /conversion-cache/[from]
+          [%c %warp our desk `[%sing %c da+now /[from]/[to]]]
+      ==
     ::
     ++  do-scry
       |=  [care=term =desk =path]
