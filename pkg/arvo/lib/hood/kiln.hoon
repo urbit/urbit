@@ -505,7 +505,7 @@
     =+  .^(=rock:tire %cx /(scot %p our)//(scot %da now)/tire)
     :^  ~  ~  %kiln-pikes
     !>  ^-  pikes
-    %-  ~(rut by rock)
+    %-  ~(urn by rock)
     |=  [=desk =zest wic=(set weft)]
     ^-  pike
     =+  .^(hash=@uv %cz /(scot %p our)/[desk]/(scot %da now))
