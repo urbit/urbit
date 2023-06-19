@@ -46,7 +46,7 @@
       [%get-next-nonce =address]
       [%get-balance =address]
   ==
-+$  ethout  (list response:rpc)
++$  ethout  (list [id=(unit @t) dirty-response:rpc:ethereum])
 :: +$  ethout
 ::   $%  
 ::       [%request-rpc res=json]

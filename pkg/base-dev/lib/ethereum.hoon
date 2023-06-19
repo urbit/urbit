@@ -532,18 +532,18 @@
       ::  supported requests.
       ++  request
         $%  [%eth-block-number ~]
-            [%eth-call cal=call deb=block]
+            [%eth-call cal=call deb=block-input]
             $:  %eth-new-filter
-                fro=(unit block)
-                tob=(unit block)
+                fro=(unit block-input)
+                tob=(unit block-input)
                 adr=(list address)
                 top=(list ?(@ux (list @ux)))
             ==
             [%eth-get-block-by-number bon=@ud txs=?]
             [%eth-get-filter-logs fid=@ud]
             $:  %eth-get-logs
-                fro=(unit block)
-                tob=(unit block)
+                fro=(unit block-input)
+                tob=(unit block-input)
                 adr=(list address)
                 top=(list ?(@ux (list @ux)))
             ==
@@ -554,42 +554,28 @@
             ==
             [%eth-get-filter-changes fid=@ud]
             [%eth-get-transaction-by-hash txh=@ux]
-            [%eth-get-transaction-count adr=address =block]
-            [%eth-get-balance adr=address =block]
+            [%eth-get-transaction-count adr=address =block-input]
+            [%eth-get-balance adr=address =block-input]
             [%eth-get-transaction-receipt txh=@ux]
             [%eth-send-raw-transaction dat=@ux]
         ==
       ::
-      ::TODO  clean up & actually use
       ++  dirty-response
         $%
             response
-            [%error b=?]
+            [%error code=@ta message=@t]
         ==
       ++  response
-        $%  ::TODO
-            :: [%eth-new-filter fid=@ud]
-            :: [%eth-get-filter-logs los=(list event-log)]
-            :: [%eth-get-logs los=(list event-log)]
-            :: [%eth-get-logs-by-hash los=(list event-log)]
-            :: [%eth-got-filter-changes los=(list event-log)]
-            :: [%eth-transaction-hash haz=@ux]
-            ::
-            [%hex hex=@ux]
-            :: TODO what is the response from eth_call?
-            [%data data=@ux]
-            [%fid fid=@ud]
-            ::  TODO should I use unit or not?
-            [%block block=[id=[hash=@uxblockhash number=@udblocknumber] parent-hash=@uxblockhash]]
+        $%  
+            [%atom atom=@]
+            [%data data=@t]
+            [%block block=block]
             [%logs los=(list event-log)]
-            [%transaction-result (unit =transaction-result)]
+            [%transaction-result =transaction-result]
             :: TODO
             [%get-filter-changes b=?]
             :: TODO
             [%transaction-receipt b=?]
-            [%unit-hex hex=(unit @ux)]
-            :: TODO
-            [%error b=?]
         ==
       ::
       ++  transaction-result
@@ -645,10 +631,18 @@
         ==
       ::
       ::  block to operate on.
-      ++  block
+      ++  block-input
         $%  [%number n=@ud]
             [%label l=?(%earliest %latest %pending)]
         ==
+      ++  block
+        =<  block
+        |%
+        +$  hash    @uxblockhash
+        +$  number  @udblocknumber
+        +$  id      [=hash =number]
+        +$  block   [=id =parent=hash]
+        --
       --
   ::
   ::  logic
@@ -809,13 +803,13 @@
         %eth-get-transaction-count
       :-  'eth_getTransactionCount'
       :~  (tape (address-to-hex adr.req))
-          (block-to-json block.req)
+          (block-to-json block-input.req)
       ==
     ::
         %eth-get-balance
       :-  'eth_getBalance'
       :~  (tape (address-to-hex adr.req))
-          (block-to-json block.req)
+          (block-to-json block-input.req)
       ==
     ::
         %eth-get-transaction-by-hash
@@ -854,7 +848,7 @@
     ==
   ::
   ++  block-to-json
-    |=  dob=block
+    |=  dob=block-input
     ^-  json
     ?-  -.dob
       %number   s+(crip '0' 'x' ((x-co:co 1) n.dob))
@@ -881,75 +875,72 @@
   ::  parsing responses
   ::
   ++  parse-response
-    :: |=  [type-of-request =json
     |=  [type=@tas =json]
-    ^-  [id=(unit @t) response:rpc]
+    ^-  [id=(unit @t) dirty-response:rpc]
     ~&  [%json [type json]]
-    ::  hex
-    =/  id  [~ '233']
+    =/  id  ((ot ~[id+so]):dejs-soft:format json)
     ?:  &(?=([%o *] json) (~(has by p.json) 'error'))
-      :: TODO handle error
-      [id [%error %.y]]
+      ~&  ['error1']
+      [id [%error 'code' 'message']]
     ?.  &(?=([%o *] json) (~(has by p.json) 'result'))
-      :: error message is invalid response from eth node
-      [id [%error %.y]]
-    =/  response-dejs  'TODO'
-    ?:  %.y
-      =/  block-dejs  'TODO'
-      :: %.  p.json
-      :: (ot 
-      =/  block  [[0x1234 123] 0x1234]
-      [id [%block block]]
-      
-    ::
-    :: ?:  &(?=([%o *] json) (~(has by p.json) 'error'))
-    ::   ~&  %error
-    ::   [~ [%error %.y]]
-      :: =/  res=(unit [@t ^json])
-      ::   %.  json
-      ::   =,  dejs-soft:format
-      ::   (ot id+so result+some ~)
-      :: ?~  res  ~
-      :: `[%result u.res]
-    ::~|  parse-one-response=json
-    ::=/  error=(unit [id=@t ^json code=@ta mssg=@t])
-    ::  %.  json
-    ::  =,  dejs-soft:format
-    ::  ::  A 'result' member is present in the error
-    ::  ::  response when using ganache, even though
-    ::  ::  that goes against the JSON-RPC spec
-    ::  ::
-    ::  (ot id+so result+some error+(ot code+no message+so ~) ~)
-    ::?~  error  ~
-    ::=*  err  u.error
-    ::`[%error id.err code.err mssg.err]
-    ~&  %result
-    [[~ '233'] [%error %.y]]
-    :: ?:  &(?=([%o *] json) (~(has by p.json) 'error'))
-    ::   :: [%error 
-    ::   ~
-    :: ?:  =('error' json)
-    :: ?>  =('result' json)
-    :: ~
-    :: ?-  x.json
-    ::   [
-    :: [~ [%block %.y]]
+      !!
+    =/  result  ((ot:dejs:format ~[[%result parse-result]]) json)
+    ?+  type  !!
+      %eth-block-number
+    [id [%atom (parse-eth-block-number result)]]
+      %eth-call
+    [id [%data (so:dejs:format result)]]
+      %eth-new-filter
+    [id [%atom (parse-eth-new-filter-res result)]]
+      %eth-get-block-by-number
+    =/  block  (parse-block result)
+    ?~  block
+      !!
+    [id [%block u.block]]
+      %eth-get-filter-logs
+    :: TODO parser
+    :: not used by eth-provider
+    [id [%error 'code' 'message']]
+      %eth-get-logs
+    [id [%logs (parse-event-logs result)]]
+      %eth-get-logs-by-hash
+    [id [%logs (parse-event-logs result)]]
+      %eth-get-filter-changes
+    :: TODO parser
+    :: not used by eth-provider
+    [id [%error 'code' 'message']]
+      %eth-get-transaction-by-hash 
+    :: TODO maybe type should be (unit transaction-result?)
+    [id [%transaction-result (parse-transaction-result result)]]
+      %eth-get-transaction-count 
+    [id [%atom (parse-eth-get-transaction-count result)]]
+      %eth-get-balance
+    [id [%atom (parse-eth-get-balance result)]]
+      %eth-get-transaction-receipt
+    :: TODO parser (returns large tx receipt object)
+    :: not used by eth-provider
+    [id [%error 'code' 'message']]
+      %eth-send-raw-transaction
+    [id [%atom (parse-hex-result result)]]
+    ==
   ::
-  ++  parse-block  parse-hex-result
-  ::++  parse-block
-  ::  |=  =json
-  ::  ^-  (unit block)
-  ::  =<  ?~(. ~ `[[&1 &2] |2]:u)
-  ::  ^-  (unit [@ @ @])
-  ::  ~|  json
-  ::  %.  json
-  ::  =,  dejs-soft:format
-  ::  %-  ot
-  ::  :~  hash+parse-hex
-  ::      number+parse-hex
-  ::      'parentHash'^parse-hex
-  ::  ==
+  :: ++  parse-block  parse-hex-result
+  ++  parse-block
+    |=  =json
+    ^-  (unit block)
+    =<  ?~(. ~ `[[&1 &2] |2]:u)
+    ^-  (unit [@ @ @])
+    ~|  json
+    %.  json
+    =,  dejs-soft:format
+    %-  ot
+    :~  hash+parse-hex
+        number+parse-hex
+        'parentHash'^parse-hex
+    ==
   ::::
+  ++  parse-result  |=(jon=json jon)
+  ++  parse-hex  |=(=json `(unit @)`(some (parse-hex-result json)))
   ++  parse-hex-result
     |=  j=json
     ^-  @
