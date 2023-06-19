@@ -1274,7 +1274,7 @@
       ::
       ?.  ?&  ?=(%x care)
               ?=([~ ~ *] p.peek-result)
-              !=(mark p.u.u.p.peek-result)
+              !=(want p.u.u.p.peek-result)
           ==
         p.peek-result
       ::  for %x scries, attempt to convert to the requested mark if needed
