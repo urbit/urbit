@@ -1715,6 +1715,19 @@
     |*  [b=* c=*]
     =+  d=(get b)
     (~(put by a) b [c d])
+  ::
+  ++  zip                                               ::  listify jar
+    =<  $
+    ~/  %zip
+    =+  b=`(list _?>(?=([[* ^] *] a) [p=p q=i.q]:n.a))`~
+    |.  ^+  b
+    ?~  a   b
+    %=  $
+      a  r.a
+      b  |-  ^+  b
+         ?~  q.n.a  ^$(a l.a)
+         [[p i.q]:n.a $(q.n.a t.q.n.a)]
+    ==
   --
 ++  ju                                                  ::  jug engine
   =|  a=(tree (pair * (tree)))  ::  (jug)
