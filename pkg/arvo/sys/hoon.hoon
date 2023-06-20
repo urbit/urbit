@@ -1422,23 +1422,19 @@
   ::
   ++  bif                                               ::  splits a by b
     ~/  %bif
-    |*  [b=* c=*]
-    ^+  [l=a r=a]
-    =<  +
-    |-  ^+  a
+    |*  b=*
+    |-  ^+  [l=a r=a]
     ?~  a
-      [[b c] ~ ~]
+      [~ ~]
     ?:  =(b p.n.a)
-      ?:  =(c q.n.a)
-        a
-      a(n [b c])
+      +.a
     ?:  (gor b p.n.a)
       =+  d=$(a l.a)
       ?>  ?=(^ d)
-      d(r a(l r.d))
+      [l.d a(l r.d)]
     =+  d=$(a r.a)
     ?>  ?=(^ d)
-    d(l a(r l.d))
+    [a(r l.d) r.d]
   ::
   ++  del                                               ::  delete at key b
     ~/  %del
@@ -1463,7 +1459,7 @@
     |-  ^+  a
     ?~  b
       a
-    =+  c=(bif p.n.b q.n.b)
+    =+  c=(bif p.n.b)
     ?>  ?=(^ c)
     =+  d=$(a l.c, b l.b)
     =+  e=$(a r.c, b r.b)
