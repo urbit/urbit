@@ -945,10 +945,9 @@
         %-  road  |.
         ((pile-rule pax) [1 1] tex)
       ?^  res  pile.u.res
-      %-  mean  %-  flop
+      %-  mean
       =/  lyn  p.hair
       =/  col  q.hair
-      %-  flop
       ^-  (list tank)
       :~  leaf+"syntax error at [{<lyn>} {<col>}] in {<pax>}"
         ::
