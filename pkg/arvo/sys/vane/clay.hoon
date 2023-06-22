@@ -948,6 +948,7 @@
       %-  mean  %-  flop
       =/  lyn  p.hair
       =/  col  q.hair
+      %-  flop
       ^-  (list tank)
       :~  leaf+"syntax error at [{<lyn>} {<col>}] in {<pax>}"
         ::
