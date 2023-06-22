@@ -85,7 +85,7 @@
 ::  %d  get the owner of an ipc port
 ++  scry
   ^-  roon
-  |=  [lyc=gang car=term bem=beam]
+  |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
   |^
   ::  only respond for the local identity, current timestamp
