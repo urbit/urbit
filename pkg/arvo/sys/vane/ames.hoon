@@ -2291,9 +2291,7 @@
         ::
         =~  (emit duct %pass /turf %j %turf ~)
             (emit duct %pass /private-keys %j %private-keys ~)
-            ?:  ?=(%earl (clan:title our))
-              (emit duct %pass /public-keys %j %public-keys [n=our ~ ~])
-            event-core
+            (emit duct %pass /public-keys %j %public-keys [n=our ~ ~])
         ==
       ::  +on-priv: set our private key to jael's response
       ::
@@ -4867,7 +4865,7 @@
   ++  state-14-to-15
     |=  old=ames-state-14
     ^-  ^ames-state
-    =?  rift.old  ?=(%earl (clan:title our))
+    =.  rift.old
       !<  =rift
       q:(need (need (rof ~ %j `beam`[[our %rift %da now] /(scot %p our)])))
     old
