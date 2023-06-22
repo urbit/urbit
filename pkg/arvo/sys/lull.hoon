@@ -3103,6 +3103,30 @@
   ::                                                    ::
   +$  shed  _*form:(strand:rand ,vase)                  ::  compute vase
   --  ::khan
+::                                                      ::::
+::::                    ++lick                            ::  (1j) IPC
+  ::                                                    ::::
+++  lick  ^?
+  |%
+  +$  gift                                              ::  out result <-$
+    $%  [%spin =name]                                   ::  open an IPC port
+        [%shut =name]                                   ::  close an IPC port
+        [%spit =name =mark =noun]                       ::  spit a noun to the IPC port
+        [%soak =name =mark =noun]                       ::  soak a noun from the IPC port
+    ==
+  +$  task                                              ::  in request ->$
+    $~  [%vega ~]                                       ::
+    $%  $>(%born vane-task)                             ::  new unix process
+        $>(%trim vane-task)                             ::  trim state
+        $>(%vega vane-task)                             ::  report upgrade
+        [%spin =name]                                   ::  open an IPC port
+        [%shut =name]                                   ::  close an IPC port
+        [%spit =name =mark =noun]                       ::  spit a noun to the IPC port
+        [%soak =name =mark =noun]                       ::  soak a noun from the IPC port
+    ==
+  ::
+  +$  name  path
+  --  ::lick
 ::
 ++  rand                                                ::  computation
   |%
@@ -3305,6 +3329,7 @@
       gift:iris
       gift:jael
       gift:khan
+      gift:lick
   ==
 +$  task-arvo                                           ::  in request ->$
   $%  task:ames
@@ -3316,6 +3341,7 @@
       task:iris
       task:jael
       task:khan
+      task:lick
   ==
 +$  note-arvo                                           ::  out request $->
   $~  [%b %wake ~]
@@ -3328,6 +3354,7 @@
       [%i task:iris]
       [%j task:jael]
       [%k task:khan]
+      [%l task:lick]
       [%$ %whiz ~]
       [@tas %meta vase]
   ==
@@ -3350,6 +3377,7 @@
       [%iris gift:iris]
       [%jael gift:jael]
       [%khan gift:khan]
+      [%lick gift:lick]
   ==
 ::  $unix-task: input from unix
 ::
