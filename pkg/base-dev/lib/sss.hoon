@@ -108,7 +108,6 @@
   ++  apply                                  ::  Handle response from publisher.
     |=  res=(response:poke lake paths)
     ^-  (quip card:agent:gall subs)
-    %-  fall  :_  `0/sub  %-  mole  |.
     =*  current  [src.bowl dude.res path.res]
     =/  old=flow  (fall (~(got by sub) current) *flow)
     ?:  ?=(%tomb what.res)
