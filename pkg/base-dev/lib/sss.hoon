@@ -117,7 +117,7 @@
     ::
     =/  [wave=(unit wave:lake) =flow]
       ?-  what.res
-        %rock  ?>  (gte aeon.res aeon.old)
+        %rock  ?>  |(stale.old (gte aeon.res aeon.old))
                [~ [aeon.res | | rock.res]]
         %wave  ?>  =(aeon.res +(aeon.old))
                [`wave.res [aeon.res | | (wash:lake rock.old wave.res)]]
