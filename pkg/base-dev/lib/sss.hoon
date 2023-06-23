@@ -273,7 +273,7 @@
   ::
   ++  perm                                   ::  Change permissions with gate.
     |=  [where=(list paths) diff=$-((unit (set ship)) (unit (set ship)))]
-    ^-  pubs
+    ^-  (quip card:agent:gall pubs)
     %+  edit  where
     |=  =buoy
     =/  new=_alo.buoy  (diff alo.buoy)
@@ -289,14 +289,14 @@
   ::                                         ::  Block ships from paths.
   ++  block                                  ::  No-ops on public paths.
     |=  [who=(list ship) whence=(list paths)]
-    ^-  pubs
+    ^-  (quip card:agent:gall pubs)
     %+  perm  whence
     |=  old=(unit (set ship))
     ?~  old  ~  `(~(dif in u.old) (sy who))
   ::                                         ::  Allow ships to paths.
   ++  allow                                  ::  Any public paths will no-op.
     |=  [who=(list ship) where=(list paths)]
-    ^-  pubs
+    ^-  (quip card:agent:gall pubs)
     %+  perm  where
     |=  old=(unit (set ship))
     ?~  old  ~  `(~(gas in u.old) who)
@@ -379,12 +379,27 @@
   ::
   ++  edit
     |=  [ps=(list paths) edit=$-(buoy buoy)]
-    ^-  pubs
-    :-  %1
+    ^-  (quip card:agent:gall pubs)
     %-  ~(rep in (sy ps))
-    |=  [path=paths =_pub]
-    %-  fall  :_  pub  %-  mole  |.
-    (~(jab by pub) path edit)
+    |=  [path=paths caz=(list card:agent:gall) %1 =_pub]
+    ?~  old=(~(get by pub) path)  [caz 1/pub]
+    =/  new=buoy  (edit u.old)
+    :_  1/(~(put by pub) path new)
+    %-  weld  :_  caz
+    ^-  (list card:agent:gall)
+    ?@  tid.u.old  ~
+    ?@  tid.new
+      %-  zing
+      %+  turn  ~(tap by mem.tid.u.old)
+      |=  [=ship =(set dude)]
+      (turn ~(tap in set) |=(=dude (send tomb/~ ship dude path)))
+    ?~  alo.new  ~
+    =/  new-alo=(jug ship dude)
+      (malt (turn ~(tap in u.alo.new) (late *(set @))))
+    %-  zing
+    %+  turn  ~(tap by (~(dif by mem.tid.u.old) new-alo))
+    |=  [=ship =(set dude)]
+    (turn ~(tap in set) |=(=dude (send tomb/~ ship dude path)))
   ::
   ++  form
     |=  =tide
