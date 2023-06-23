@@ -28,14 +28,15 @@
 :: =/  request-batch-rpc-strict  ~[+.request-rpc]
 =/  request-batch-rpc-loose  ~[+.request-rpc]
 =/  read-contract  [[~ 'unitid'] address ['func' ~[[%address address]]]]
-:: =/  batch-read-contract-strict  ~[+.read-contract]
+=/  batch-read-contract-strict  ~[+.read-contract]
 =/  get-latest-block  %.n
 =/  get-block-by-number  0
 =/  get-tx-by-hash  0x123  :: bad hash
 =/  get-logs-by-hash  [0x123 [address ~] ~]
-=/  get-logs-by-range  [~[logs-address] topics 10 12]
+=/  get-logs-by-range  [~[logs-address] topics 10 100]
 =/  get-next-nonce  address
 =/  get-balance  address
+=/  proto-read-data  [[~ 'proto-read-req'] 0x123 ['func' ~[[%bool %.y]]]]
 
 =/  request-batch-rpc-loose  
   :~
@@ -43,28 +44,44 @@
     [%eth-get-block-by-number 0 |]
     :-  `'block by nber'
     [%eth-get-block-by-number 100.000.000.000.000 |]
-    :-  `'nonce'
-    [%eth-get-transaction-count address [%label %latest]]
-    :-  `'nonfdjce'
-    [%eth-get-transaction-count address [%label %latest]]
+    :: :-  `'nonce'
+    :: [%eth-get-transaction-count address [%label %latest]]
+    :: :-  `'nonfdjce'
+    :: [%eth-get-transaction-count address [%label %latest]]
+    :: :*  `'logs by hash'
+    ::     %eth-get-logs-by-hash
+    ::     0x123
+    ::     ~[0x123]
+    ::     topics
+    :: ==
+    :*  `'logs by hash2'
+        %eth-get-logs-by-hash
+        0x123
+        ~[0x123]
+        topics
+    ==
+    :: :-  `'transaction receipt'
+    :: :: [%eth-get-transaction-receipt 0x123]
+    :: [%eth-get-transaction-receipt 0xe11a.9017.5036.ba61.01e6.999d.1330.5fe0.75d9.f910.fa9f.8946.2a80.939f.58a6.728b]
   ==
 
-:: ;<  res=*  bind:m  (request-rpc:eth-provider request-rpc)
-:: ;<  res=(list [id=@t =json])  bind:m  (request-batch-rpc-strict:eth-provider request-batch-rpc-strict)
-;<  res=(list [(unit @t) res=dirty-response:rpc:ethereum])  bind:m  (request-batch-rpc-loose:eth-provider request-batch-rpc-loose)
-:: ;<  res=*  bind:m  (request-batch-rpc-loose:eth-provider request-batch-rpc-loose)
-:: ;<  res=@t  bind:m  (read-contract:eth-provider read-contract)
-:: ;<  res=(list [@t res=@t])  bind:m  (batch-read-contract-strict:eth-provider batch-read-contract-strict)
-:: ;<  res=transaction-result:rpc:ethereum  bind:m  (get-tx-by-hash:eth-provider get-tx-by-hash)
-:: ;<  res=(list event-log:rpc:ethereum)  bind:m  (get-logs-by-hash:eth-provider get-logs-by-hash)
+
+:: Maybe TESTED?
 :: ;<  res=(list event-log:rpc:ethereum)  bind:m  (get-logs-by-range:eth-provider get-logs-by-range)
-:: ;<  res=block  bind:m  (get-latest-block:eth-provider get-latest-block)
-:: ;<  res=@ud  bind:m  (get-next-nonce:eth-provider get-next-nonce)
+:: ;<  res=(list event-log:rpc:ethereum)  bind:m  (get-logs-by-hash:eth-provider get-logs-by-hash)
+:: ;<  res=id-response:ethdata  bind:m  (request-rpc:eth-provider request-rpc)
 
-:: ;<  res=@ud  bind:m  (get-balance:eth-provider get-balance)
-
+::  error handling done
 ::  TESTED
+:: ;<  res=(list [@t res=@t])  bind:m  (batch-read-contract-strict:eth-provider ~[proto-read-data])
 :: ;<  res=block  bind:m  (get-block-by-number:eth-provider get-block-by-number)
+:: ;<  res=@ud  bind:m  (get-balance:eth-provider get-balance)
+:: ;<  res=@ud  bind:m  (get-next-nonce:eth-provider get-next-nonce)
+:: ;<  res=block  bind:m  (get-latest-block:eth-provider get-latest-block)
+:: ;<  res=(list id-response:ethdata)  bind:m  (request-batch-rpc-strict:eth-provider request-batch-rpc-loose)
+;<  res=ethout:ethdata  bind:m  (request-batch-rpc-loose:eth-provider request-batch-rpc-loose)
+:: ;<  res=(unit transaction-result:rpc:ethereum)  bind:m  (get-tx-by-hash:eth-provider get-tx-by-hash)
+:: ;<  res=@t  bind:m  (read-contract:eth-provider proto-read-data)
 
 
 :: =/  res2  !>(res)

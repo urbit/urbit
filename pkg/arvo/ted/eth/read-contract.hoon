@@ -9,7 +9,8 @@
 |=  args=vase
 =/  m  (strand:strandio ,vase)
 ^-  form:m
+=/  args2  !<([@t proto-read-request:rpc:ethereum] args)
 ;<  res=@t  bind:m
   %-  read-contract:eth-provider
-  !<(proto-read-request:rpc:ethereum args)
+  +.args2
 (pure:m !>(res))

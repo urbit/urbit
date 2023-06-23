@@ -567,15 +567,14 @@
         ==
       ++  response
         $%  
+            :: TODO change types
             [%atom atom=@]
             [%data data=@t]
+            :: TODO unit block
             [%block block=block]
             [%logs los=(list event-log)]
-            [%transaction-result =transaction-result]
-            :: TODO
-            [%get-filter-changes b=?]
-            :: TODO
-            [%transaction-receipt b=?]
+            [%transaction-result transaction-result=(unit transaction-result)]
+            [%transaction-receipt transaction-receipt=(unit transaction-receipt)]
         ==
       ::
       ++  transaction-result
@@ -585,6 +584,10 @@
             from=@ux
             to=(unit @ux)
             input=@t
+        ==
+      ::
+      ++  transaction-receipt
+        $:  hash=@ux
         ==
       ::
       ++  event-log
@@ -880,8 +883,11 @@
     ~&  [%json [type json]]
     =/  id  ((ot ~[id+so]):dejs-soft:format json)
     ?:  &(?=([%o *] json) (~(has by p.json) 'error'))
-      ~&  ['error1']
-      [id [%error 'code' 'message']]
+      =/  error=[code=@t message=@t]
+        %.  json
+        =,  dejs:format
+        (ot ~[error+(ot ~[code+no message+so])])
+      [id [%error code.error message.error]]
     ?.  &(?=([%o *] json) (~(has by p.json) 'result'))
       !!
     =/  result  ((ot:dejs:format ~[[%result parse-result]]) json)
@@ -889,6 +895,7 @@
       %eth-block-number
     [id [%atom (parse-eth-block-number result)]]
       %eth-call
+      :: TODO maybe incorrect? need to transform result?
     [id [%data (so:dejs:format result)]]
       %eth-new-filter
     [id [%atom (parse-eth-new-filter-res result)]]
@@ -898,33 +905,37 @@
       !!
     [id [%block u.block]]
       %eth-get-filter-logs
-    :: TODO parser
-    :: not used by eth-provider
-    [id [%error 'code' 'message']]
+    [id [%logs (parse-event-logs result)]]
       %eth-get-logs
     [id [%logs (parse-event-logs result)]]
       %eth-get-logs-by-hash
     [id [%logs (parse-event-logs result)]]
       %eth-get-filter-changes
-    :: TODO parser
-    :: not used by eth-provider
-    [id [%error 'code' 'message']]
+    [id [%logs (parse-event-logs result)]]
       %eth-get-transaction-by-hash 
-    :: TODO maybe type should be (unit transaction-result?)
-    [id [%transaction-result (parse-transaction-result result)]]
+    ?~  result
+      [id [%transaction-result ~]]
+    [id [%transaction-result [~ (parse-transaction-result result)]]]
       %eth-get-transaction-count 
     [id [%atom (parse-eth-get-transaction-count result)]]
       %eth-get-balance
     [id [%atom (parse-eth-get-balance result)]]
       %eth-get-transaction-receipt
-    :: TODO parser (returns large tx receipt object)
-    :: not used by eth-provider
-    [id [%error 'code' 'message']]
+    [id [%transaction-receipt (parse-transaction-receipt result)]]
       %eth-send-raw-transaction
     [id [%atom (parse-hex-result result)]]
     ==
   ::
-  :: ++  parse-block  parse-hex-result
+  ++  parse-transaction-receipt
+    |=  =json
+    ^-  (unit transaction-receipt)
+    %.  json
+    =,  dejs-soft:format
+    %-  ot
+    :~  'transactionHash'^parse-hex
+        :: transaction+parse-hex
+        :: 'parentHash'^parse-hex
+    ==
   ++  parse-block
     |=  =json
     ^-  (unit block)

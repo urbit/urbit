@@ -13,7 +13,7 @@
 |^  ^-  form:m
     =*  loop  $
     ?:  =(~ blocks)  (pure:m !>(out))  ::TODO  TMI
-    ;<  res=(list [@t json])  bind:m
+    ;<  res=(list [id=(unit @t) res=response:rpc:ethereum])  bind:m
       (request-blocks (scag 100 blocks))
     %_  loop
       out     (weld out (parse-results res))

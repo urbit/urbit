@@ -46,20 +46,8 @@
       [%get-next-nonce =address]
       [%get-balance =address]
   ==
-+$  ethout  (list [id=(unit @t) dirty-response:rpc:ethereum])
-:: +$  ethout
-::   $%  
-::       [%request-rpc res=json]
-::       [%request-batch-rpc-strict res=(list [id=@t =json])]
-::       [%request-batch-rpc-loose res=(list response:json-rpc)]
-::       [%read-contract res=@t]
-::       [%batch-read-contract-strict results=(list [id=@t res=@t])]
-::       [%get-latest-block =block]
-::       [%get-block-by-number =block]
-::       [%get-tx-by-hash res=transaction-result:rpc:ethereum]
-::       [%get-logs-by-hash res=(list event-log:rpc:ethereum)]
-::       [%get-logs-by-range res=(list event-log:rpc:ethereum)]
-::       [%get-next-nonce nonce=@ud]
-::       [%get-balance balance=@ud]
-::   ==
++$  id-response  [id=(unit @t) res=response:rpc:ethereum]
++$  id-dirty-response  [id=(unit @t) res=dirty-response:rpc:ethereum]
+::  TODO each type (each )
++$  ethout  [error=(unit [code=@t message=@t]) (list id-dirty-response)]
 --

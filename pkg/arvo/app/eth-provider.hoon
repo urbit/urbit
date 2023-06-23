@@ -127,7 +127,7 @@
          %-  (slog leaf+"Thread failed: {(trip p.err)}" q.err)
          `this
            %thread-done
-         =/  res  !<([@ta (list [id=(unit @t) dirty-response:rpc:ethereum])] q.cage.sign)
+         =/  res  !<([@ta ethout:eth-provider] q.cage.sign)
          =/  eth-output  +.res
          :-  
          :: ~

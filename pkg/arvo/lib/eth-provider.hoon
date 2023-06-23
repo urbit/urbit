@@ -6,8 +6,6 @@
 =,  jael
 ::
 |%
-+$  id-response  [id=(unit @t) res=response:rpc:ethereum]
-+$  id-dirty-response  [id=(unit @t) res=dirty-response:rpc:ethereum]
 ::  +request-rpc: send rpc request, with retry
 ::
 ++  request-rpc
@@ -28,28 +26,28 @@
 ::
 ++  request-batch-rpc-strict
   |=  [reqs=(list [id=(unit @t) req=request:rpc:ethereum])]
-  |^  %+  (retry:strandio (list id-response))
+  |^  %+  (retry:strandio (list id-response:eth-provider))
         `10
       attempt-request
   ::
   ++  attempt-request
-    =/  m  (strand:strandio ,(unit (list id-response)))
+    =/  m  (strand:strandio ,(unit (list id-response:eth-provider)))
     ^-  form:m
-    ;<  responses=(list id-dirty-response)  bind:m
+    ;<  responses=ethout:eth-provider  bind:m
       (request-batch-rpc-loose reqs)
-    =/  err  (skim responses |=(r=id-dirty-response =(+<.r %error)))
-    ~&  [%err err]
-    ?~  err
-      =/  clean-responses  
-        %+  turn  
-          responses  
-        |=  r=id-dirty-response 
-          ?.  ?=([%error *] +.r)  
-            `id-response`r
-          !!
-      ~&  [%clean-responses clean-responses]
-      (pure:m `clean-responses)
-    (pure:m ~)
+    ?~  -.responses
+      =/  err  (skim +.responses |=(r=id-dirty-response:eth-provider =(+<.r %error)))
+      ?~  err
+        =/  clean-responses  
+          %+  turn  
+            +.responses  
+          |=  r=id-dirty-response:eth-provider 
+            ?.  ?=([%error *] +.r)  
+              `id-response:eth-provider`r
+            !!
+        (pure:m `clean-responses)
+      (strand-fail:strandio %json-rpc-error >+.responses< ~)
+    (strand-fail:strandio %json-rpc-batch-error >-.responses< ~)
   --
 ::  +request-batch-rpc-loose: send rpc requests, with retry
 ::
@@ -58,7 +56,7 @@
 ::
 ++  request-batch-rpc-loose
   |=  [reqs=(list [id=(unit @t) req=request:rpc:ethereum])]
-  |^  %+  (retry:strandio (list id-dirty-response))
+  |^  %+  (retry:strandio ethout:eth-provider)
         `10
       attempt-request
   ::
@@ -68,7 +66,6 @@
   =/  m  (strand:strandio ,cage)
   ^-  form:m
   |=  tin=strand-input:strand:strandio
-  ~&  'take-fact strand'
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
       [~ %sign [%wait @ ~] %behn %wake *]
@@ -80,10 +77,10 @@
   ==
   ::
   ++  attempt-request
-    =/  m  (strand:strandio ,(unit (list id-dirty-response)))
+    =/  m  (strand:strandio ,(unit ethout:eth-provider))
     ^-  form:m
+    ~&  [%retry-happened]
     ;<  =bowl:spider  bind:m  get-bowl:strandio
-    ~&  'after take-wake'
     ;<    provider-mode=provider-mode:eth-provider
       bind:m
     (scry:strandio provider-mode:eth-provider /gx/eth-provider/get-provider-mode/noun)
@@ -91,18 +88,21 @@
       ?>  ?=(%client -.provider-mode)
       =/  client  `client:eth-provider`+.provider-mode
       =/  rid  (crip (weld (weld (trip (scot %p our.bowl)) (trip tid.bowl)) (trip (scot %ux eny.bowl))))
+      ~&  [%retry-happened5]
       ;<  ~  bind:m
         (watch:strandio [%responses rid ~] [provider.client %eth-provider] [%responses rid ~])
-      ;<  ~  bind:m
-        %+  poke:strandio
-          [provider.client %eth-provider] 
-        [%provider-action !>([%provide rid reqs])]
+      :: TODO use sand-raw-card
+      ~&  [%retry-happened4]
+      =/  =card:agent:gall  
+        :*  %pass   /poke 
+            %agent  [provider.client %eth-provider] 
+            %poke   [%provider-action !>([%provide rid reqs])]
+        ==
+      ;<  ~  bind:m  (send-raw-card:strandio card)
+      ~&  [%retry-happened2]
       ;<  ~  bind:m  (send-wait:strandio (add now.bowl ~s10))
+      ~&  [%retry-happened3]
       ;<  =cage  bind:m  (take-fact [%responses rid ~])
-      :: ;<  ~  bind:m  (take-wake:strandio ~)
-      ~&  'after take-fact'
-      ::  convert `(list [id response:rpc:ethereum])`q.cage to (list
-      ::  response:rpc
       (pure:m [~ !<(ethout:eth-provider q.cage)])
     =/  url  ''
     =?  url  ?=(%local -.provider-mode)  url.local.provider-mode
@@ -127,7 +127,7 @@
   ::
   ++  parse-responses
     |=  [requests=(list [id=(unit @t) req=request:rpc:ethereum]) =client-response:iris]
-    =/  m  (strand:strandio ,(unit (list id-dirty-response)))
+    =/  m  (strand:strandio ,(unit ethout:eth-provider))
     ^-  form:m
     ?>  ?=(%finished -.client-response)
     ?~  full-file.client-response
@@ -136,42 +136,38 @@
     =/  jon=(unit json)  (de-json:html body)
     ?~  jon
       (pure:m ~)
-    ~&  [%jon jon]
-    ::  TODO handle json if the whole batch fails 
-    ::  (when we get one error json rpc instead 
-    ::  of a batch of json-rpc responses)
+    ?:  &(?=([%o *] u.jon) |((~(has by p.u.jon) 'error') %.n))
+      =/  error=[id=@t code=@t message=@t]
+        %.  u.jon
+        =,  dejs:format
+        (ot id+so error+(ot code+no message+so ~) ~)
+      (pure:m [~ [[~ [code.error message.error]] ~]])
     =/  json-array  ((ar:dejs:format |=(=json json)) u.jon)
-    =/  typed-json-array  
+    =/  typed-json-array
       %+  turn 
         (gulf 0 (sub (lent json-array) 1))
       |=  n=@ud
       =/  req  (snag n requests)
       [+<.req (snag n json-array)]
       :: [%type (snag 0 json-array)]
-    =/  parsed-array=(list id-dirty-response)
+    =/  parsed-array=(list id-dirty-response:eth-provider)
       (turn typed-json-array parse-response:rpc:ethereum)
-    :: ~&  [%parsed-array parsed-array]
     ?~  parsed-array
       (strand-fail:strandio %rpc-result-incomplete-batch >u.jon< ~)
-    (pure:m [~ parsed-array])
+    (pure:m [~ [~ parsed-array]])
   ::
   --
 ::
 ::  +read-contract: calls a read function on a contract, produces result hex
-
 ++  read-contract
-  |=  [req=proto-read-request:rpc:ethereum]
+  |=  req=proto-read-request:rpc:ethereum
   =/  m  (strand:strandio ,@t)
-  ;<  res=(list id-response)  bind:m
+  ;<  res=(list [id=@t res=@t])  bind:m
     (batch-read-contract-strict [req]~)
-  ?:  ?=([[* [%data @t]] ~] res)
-  :: ?:  ?=([* ~] res)
-    ~&  [%read-contract res]
-    :: TODO
-    (pure:m '123')
-    :: (pure:m +>.res.i.res)
+  ?:  ?=([* ~] res)
+    (pure:m res.i.res)
   %+  strand-fail:strandio
-    %unexpected-results
+    %unexpected-multiple-results
   [>(lent res)< ~]
 ::  +batch-read-contract-strict: calls read functions on contracts
 ::
@@ -180,15 +176,18 @@
 
 ++  batch-read-contract-strict
   |=  [reqs=(list proto-read-request:rpc:ethereum)]
-  |^  =/  m  (strand:strandio ,(list id-response))
+  |^  =/  m  (strand:strandio ,(list [id=@t res=@t]))
       ^-  form:m
-      ;<  result=(list id-dirty-response)  bind:m
+      ;<  result=(list id-response:eth-provider)  bind:m
         %-  request-batch-rpc-strict  
         (turn reqs proto-to-rpc)
-      =+  ^-  [results=(list id-response) failures=(list id-dirty-response)]
+      =+  ^-  [=results =failures]
         (roll result response-to-result)
       ?~  failures  (pure:m results)
       (strand-fail:strandio %batch-read-failed-for >failures< ~)
+  ::
+  +$  results   (list [id=@t res=@t])
+  +$  failures  (list id-response:eth-provider)
   ::
   ++  proto-to-rpc
     |=  proto-read-request:rpc:ethereum
@@ -200,19 +199,18 @@
     [%label %latest]
   ::
   ++  response-to-result
-    |=  [idr=id-dirty-response results=(list id-response) failures=(list id-dirty-response)]
+    |=  [idr=id-response:eth-provider =results =failures]
     ^+  [results failures]
-    ?.  ?=([%error *] +.idr)  
-      [[`id-response`idr results] failures]
-    [results [`id-dirty-response`idr failures]]
+    ?:  &(?=([* @t] -.idr) ?=([* %data @t] idr))
+      [[[->.idr +>.idr] results] failures]
+    [results [`id-response:eth-provider`idr failures]]
   --
-::
 ::
 ++  get-latest-block
   |=  b=?
   =/  m  (strand:strandio ,block)
   ^-  form:m
-  ;<  result=id-response  bind:m
+  ;<  result=id-response:eth-provider  bind:m
     (request-rpc `'block number' %eth-block-number ~)
   ?:  ?=([%atom @ux] +.result)
     (get-block-by-number `@udblocknumber`+>.result)
@@ -238,15 +236,15 @@
 ::
 ++  get-tx-by-hash
   |=  [tx-hash=@ux]
-  =/  m  (strand:strandio transaction-result:rpc:ethereum)
+  =/  m  (strand:strandio (unit transaction-result:rpc:ethereum))
   ^-  form:m
-  ;<  result=id-response  bind:m
+  ;<  result=id-response:eth-provider  bind:m
     %-  request-rpc  
     :*  `'tx by hash'
         %eth-get-transaction-by-hash
         tx-hash
     ==
-  ?:  ?=([%transaction-result transaction-result:rpc:ethereum] +.result)
+  ?:  ?=([%transaction-result (unit transaction-result:rpc:ethereum)] +.result)
     (pure:m +>.result)
   (strand-fail:strandio %unexpected-response-type ~)
 ::::
@@ -254,7 +252,7 @@
   |=  [=hash:block contracts=(list address) =topics]
   =/  m  (strand:strandio (list event-log:rpc:ethereum))
   ^-  form:m
-  ;<  result=id-response  bind:m
+  ;<  result=id-response:eth-provider  bind:m
     %-  request-rpc  
     :*  `'logs by hash'
         %eth-get-logs-by-hash
@@ -275,7 +273,7 @@
       ==
   =/  m  (strand:strandio (list event-log:rpc:ethereum))
   ^-  form:m
-  ;<  result=id-response  bind:m
+  ;<  result=id-response:eth-provider  bind:m
     %-  request-rpc  
     :*  `'logs by range'
         %eth-get-logs
@@ -292,7 +290,7 @@
   |=  [=address]
   =/  m  (strand:strandio ,@ud)
   ^-  form:m
-  ;<  result=id-response  bind:m
+  ;<  result=id-response:eth-provider  bind:m
     %+  request-rpc  `'nonce'
     [%eth-get-transaction-count address [%label %latest]]
   ?:  ?=([%atom @ud] +.result)
@@ -303,7 +301,7 @@
   |=  [=address]
   =/  m  (strand:strandio ,@ud)
   ^-  form:m
-  ;<  result=id-response  bind:m
+  ;<  result=id-response:eth-provider  bind:m
     %+  request-rpc  `'balance'
     [%eth-get-balance address [%label %latest]]
   ?:  ?=([%atom @ud] +.result)
