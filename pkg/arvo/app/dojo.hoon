@@ -846,7 +846,6 @@
       ::  kev: key-value named arguments
       ::  kuv: default keyword arguments
       ::  sam: fully populated sample
-      ::  rog: default gat sample
       ::
       |.  ^-  vase
       =/  gat=vase  (slot 3 q.cay)
@@ -883,10 +882,12 @@
       ::
       =/  sam=vase  :(slop ven poz kev)
       ?.  (~(nest ut p.som) | p.sam)
+        =/  ned=vase  (slot 3 som)
+        =/  hav=vase  (slot 3 sam)
         ~>  %slog.1^leaf+"dojo: nest-need"
-        ~>  %slog.0^(skol p.som)
+        ~>  %slog.0^(skol p.ned)
         ~>  %slog.1^leaf+"dojo: nest-have"
-        ~>  %slog.0^(skol p.sam)
+        ~>  %slog.0^(skol p.hav)
         !!
       (slam gat sam)
     ::
