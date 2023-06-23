@@ -884,6 +884,16 @@
       ?.  (~(nest ut p.som) | p.sam)
         =/  ned=vase  (slot 3 som)
         =/  hav=vase  (slot 3 sam)
+        ?:  (~(nest ut p.ned) | p.hav)
+          ::  event arguments
+          ::
+          ~>  %slog.1^leaf+"dojo: invalid generator event sample"
+          ~>  %slog.1^leaf+"dojo: nest-need"
+          ~>  %slog.0^(skol p.ven)
+          !!
+        ::  positional arguments and key-value named arguments
+        ::
+        ~>  %slog.1^leaf+"dojo: invalid generator arguments"
         ~>  %slog.1^leaf+"dojo: nest-need"
         ~>  %slog.0^(skol p.ned)
         ~>  %slog.1^leaf+"dojo: nest-have"
