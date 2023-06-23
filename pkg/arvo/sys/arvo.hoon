@@ -1555,9 +1555,9 @@
         ^-  roon
         |=  [lyc=gang pov=path car=term bem=beam]
         ^-  (unit (unit cage))
-        ?.  ?|  =(our p.bem)
+        ?.  ?&  =(our p.bem)
                 ?=(%$ q.bem)
-                =([%da now] p.r.bem)
+                =([%da now] r.bem)
             ==
           ~
         ?+  s.bem  ~
