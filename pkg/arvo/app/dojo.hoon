@@ -871,7 +871,9 @@
           [[%drum-session !>(ses.id)] soz]  ::TODO  does the who matter?
         ?:  =(~ soz)
           (fall kuv !>(~))
-        ~|  keyword-arg-failure+~(key by q.cig)
+        ~_  'dojo: keyword-arg-failure'
+        ~_  'dojo: keywords allowed'
+        ~_  (skol p:(slot 7 som))
         %+  slap
           (with-faces kuv+(need kuv) rep+(with-faces soz) ~)
         :+  %cncb  [%kuv]~
@@ -882,27 +884,30 @@
       ::
       =/  sam=vase  :(slop ven poz kev)
       ?.  (~(nest ut p.som) | p.sam)
-        =/  gav=vase  (slot 12 gat)
-        ?.  (~(nest ut p.ven) | p.gav)
-          ::  event arguments
+        %-  mean
+        =/  sov=vase  (slot 2 som)
+        ?.  (~(nest ut p.sov) | p.ven)
+          ::  bad event arguments
           ::
-          ~>  %slog.1^leaf+"dojo: invalid generator event sample"
-          ~>  %slog.1^leaf+"dojo: nest-need"
-          ~>  %slog.0^(skol p.ven)
-          ~>  %slog.1^leaf+"dojo: nest-have"
-          ~>  %slog.0^(skol p.gav)
-          !!
-        ::  positional arguments and key-value named arguments
+          ^-  (list tank)
+          :~  'dojo: bad generator gate'
+              'dojo: nest-need'
+              (skol p.ven)
+              'dojo: nest-have'
+              (skol p.sov)
+          ==
+        ::  bad positional arguments
         ::
-        =/  ned=vase  (slot 3 som)
-        =/  hav=vase  (slot 3 sam)
-        ?<  (~(nest ut p.ned) | p.hav)
-        ~>  %slog.1^leaf+"dojo: invalid generator arguments"
-        ~>  %slog.1^leaf+"dojo: nest-need"
-        ~>  %slog.0^(skol p.ned)
-        ~>  %slog.1^leaf+"dojo: nest-have"
-        ~>  %slog.0^(skol p.hav)
-        !!
+        =/  nev=vase  (slot 6 som)
+        =/  hev=vase  (slot 6 sam)
+        ?<  (~(nest ut p.nev) | p.hev)
+        ^-  (list tank)
+        :~  'dojo: bad generator positional arguments'
+            'dojo: nest-need'
+            (skol p.nev)
+            'dojo: nest-have'
+            (skol p.hev)
+        ==
       (slam gat sam)
     ::
     ++  dy-made-dial                                    ::  dialog product
