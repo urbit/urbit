@@ -871,7 +871,7 @@
           [[%drum-session !>(ses.id)] soz]  ::TODO  does the who matter?
         ?:  =(~ soz)
           (fall kuv !>(~))
-        ~_  'dojo: keyword-arg-failure'
+        ~_  'dojo: bad-keyword-arg'
         ~_  'dojo: keywords allowed'
         ~_  (skol p:(slot 7 som))
         %+  slap
@@ -890,7 +890,7 @@
           ::  bad event arguments
           ::
           ^-  (list tank)
-          :~  'dojo: bad generator gate'
+          :~  'dojo: bad-generator-gate'
               'dojo: nest-need'
               (skol p.ven)
               'dojo: nest-have'
@@ -898,15 +898,15 @@
           ==
         ::  bad positional arguments
         ::
-        =/  nev=vase  (slot 6 som)
-        =/  hev=vase  (slot 6 sam)
-        ?<  (~(nest ut p.nev) | p.hev)
+        =/  ned=vase  (slot 6 som)
+        =/  hav=vase  (slot 6 sam)
+        ?<  (~(nest ut p.ned) | p.hav)
         ^-  (list tank)
-        :~  'dojo: bad generator positional arguments'
+        :~  'dojo: bad-positional-arg'
             'dojo: nest-need'
-            (skol p.nev)
+            (skol p.ned)
             'dojo: nest-have'
-            (skol p.hev)
+            (skol p.hav)
         ==
       (slam gat sam)
     ::
