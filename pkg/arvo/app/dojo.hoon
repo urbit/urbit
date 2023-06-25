@@ -869,7 +869,7 @@
                 !(~(has by q.cig) %drum-session)
             ==
           [[%drum-session !>(ses.id)] soz]  ::TODO  does the who matter?
-        ?:  =(~ soz)
+        ?~  soz
           (fall kuv !>(~))
         ~_  'dojo: bad-keyword-arg'
         ~_  'dojo: keywords allowed'
@@ -883,32 +883,32 @@
         [[var]~ [%wing var %rep ~]]
       ::
       =/  sam=vase  :(slop ven poz kev)
-      ?.  (~(nest ut p.som) | p.sam)
-        %-  mean
-        =/  sov=vase  (slot 2 som)
-        ?.  (~(nest ut p.sov) | p.ven)
-          ::  bad event arguments
-          ::
-          ^-  (list tank)
-          :~  'dojo: bad-generator-gate'
-              'dojo: nest-need'
-              (skol p.ven)
-              'dojo: nest-have'
-              (skol p.sov)
-          ==
-        ::  bad positional arguments
+      ?:  (~(nest ut p.som) | p.sam)
+        (slam gat sam)
+      %-  mean
+      =/  sov=vase  (slot 2 som)
+      ?.  (~(nest ut p.sov) | p.ven)
+        ::  bad event arguments
         ::
-        =/  ned=vase  (slot 6 som)
-        =/  hav=vase  (slot 6 sam)
-        ?<  (~(nest ut p.ned) | p.hav)
         ^-  (list tank)
-        :~  'dojo: bad-positional-arg'
+        :~  'dojo: bad-generator-gate'
             'dojo: nest-need'
-            (skol p.ned)
+            (skol p.ven)
             'dojo: nest-have'
-            (skol p.hav)
+            (skol p.sov)
         ==
-      (slam gat sam)
+      ::  bad positional arguments
+      ::
+      =/  ned=vase  (slot 6 som)
+      =/  hav=vase  (slot 6 sam)
+      ?<  (~(nest ut p.ned) | p.hav)
+      ^-  (list tank)
+      :~  'dojo: bad-positional-arg'
+          'dojo: nest-need'
+          (skol p.ned)
+          'dojo: nest-have'
+          (skol p.hav)
+      ==
     ::
     ++  dy-made-dial                                    ::  dialog product
       |=  cag=cage
