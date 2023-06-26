@@ -175,21 +175,21 @@
     ^-  (give a)
     =+  c=(turn b |=(b=(give a) [1 b]))
     ((freq a) c)
-++  list
-  |*  a=mold
-  |=  give=(give a)
-  ^-  (^give (^list a))
-  |=  [size=@ud rng=_og]
-  =+  stop=size
-  |-
-  ^-  (^list a)
-  =^  ran  rng  (rads:rng stop)
-  ?:  =(ran 0)
-    ~
-  =^  ran  rng  (rads:rng size)
-  =+  head=(give size rng)
-  =^  ran  rng  (rads:rng size)
-  =+  tail=$(stop (div stop 2), rng rng)
-  [i=head t=tail]
+  ++  list
+    |*  a=mold
+    |=  give=(give a)
+    ^-  (^give (^list a))
+    |=  [size=@ud rng=_og]
+    =+  stop=size
+    |-
+    ^-  (^list a)
+    =^  ran  rng  (rads:rng stop)
+    ?:  =(ran 0)
+      ~
+    =^  ran  rng  (rads:rng size)
+    =+  head=(give size rng)
+    =^  ran  rng  (rads:rng size)
+    =+  tail=$(stop (div stop 2), rng rng)
+    [i=head t=tail]
   --
 --
