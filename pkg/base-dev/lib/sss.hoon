@@ -115,15 +115,17 @@
       :_  0/(~(put by sub) current `flow)  :_  ~
       (on-rock-poke current flow ~)
     ::
-    =/  [wave=(unit wave:lake) =flow]
+    =/  [wave=(unit wave:lake) new=(unit flow)]
       ?-  what.res
-        %rock  ?>  |(stale.old (gte aeon.res aeon.old))
+        %rock  ?:  (lte aeon.res aeon.old)  [~ ~]
                [~ [aeon.res | | rock.res]]
-        %wave  ?>  =(aeon.res +(aeon.old))
+        %wave  ?:  (lte aeon.res aeon.old)  [~ ~]
+               ?>  =(aeon.res +(aeon.old))
                [`wave.res [aeon.res | | (wash:lake rock.old wave.res)]]
       ==
-    :_  0/(~(put by sub) current `flow)  :_  ~
-    (on-rock-poke current flow wave)
+    ?~  new  `0/sub
+    :_  0/(~(put by sub) current new)  :_  ~
+    (on-rock-poke current u.new wave)
   ::
   ::  Non-public facing arms below
   ::
