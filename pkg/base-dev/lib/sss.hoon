@@ -95,7 +95,7 @@
         [~ ~ *]
       =.  stale.u.u.flow  &
       :_  0/(~(put by sub) current u.flow)
-      ~[(on-rock-poke current u.u.flow ~)]
+      ~[(on-rock-poke fake=& current u.u.flow ~)]
     ::
         [~ ~]
       :_  0/(~(del by sub) current)  :_  ~
@@ -113,19 +113,27 @@
     ?:  ?=(%tomb what.res)
       =/  =flow  old(stale &)
       :_  0/(~(put by sub) current `flow)  :_  ~
-      (on-rock-poke current flow ~)
+      (on-rock-poke fake=& current flow ~)
     ::
     =/  [wave=(unit wave:lake) new=(unit flow)]
       ?-  what.res
         %rock  ?:  (lte aeon.res aeon.old)  [~ ~]
-               [~ [aeon.res | | rock.res]]
+               [~ `[aeon.res | | rock.res]]
         %wave  ?:  (lte aeon.res aeon.old)  [~ ~]
                ?>  =(aeon.res +(aeon.old))
-               [`wave.res [aeon.res | | (wash:lake rock.old wave.res)]]
+               [`wave.res `[aeon.res | | (wash:lake rock.old wave.res)]]
       ==
     ?~  new  `0/sub
     :_  0/(~(put by sub) current new)  :_  ~
-    (on-rock-poke current u.new wave)
+    (on-rock-poke fake=& current u.new wave)
+  ::
+  ++  handle-fake-on-rock
+    |=  =(on-rock:poke lake paths)
+    ^-  (list card:agent:gall)
+    ?~  flow=(~(get by sub) [src from path]:on-rock)  ~
+    ?~  u.flow  ~
+    ?.  =([stale fail rock]:u.u.flow [stale fail rock]:on-rock)  ~
+    ~[(on-rock-poke fake=| [src from path]:on-rock u.u.flow wave.on-rock)]
   ::
   ::  Non-public facing arms below
   ::
@@ -137,12 +145,13 @@
         %poke   sss-to-pub/[result-type `result`[where dap.bowl]]
     ==
   ++  on-rock-poke
-    |=  [[=ship =dude path=paths] flow wave=(unit wave:lake)]
+    |=  [fake=? [=ship =dude path=paths] flow wave=(unit wave:lake)]
     ^-  card:agent:gall
-    :*  %pass   (zoom on-rock/(scot %ud aeon)^(scot %p ship)^dude^path)
+    :*  %pass   %+  zoom  ?:(fake %fake %on-rock)
+                (scot %ud aeon)^(scot %p ship)^dude^path
         %agent  [our dap]:bowl
-        %poke   %sss-on-rock  on-rock-type  ^-  from
-        [path ship dude stale fail rock wave]
+        %poke   ?:(fake %sss-fake-on-rock %sss-on-rock)
+        on-rock-type  `from`[path ship dude stale fail rock wave]
     ==
   --
 ++  du                                       ::  Manage publications.
