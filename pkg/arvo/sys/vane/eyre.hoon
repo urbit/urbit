@@ -22,60 +22,20 @@
 ::  +note: private request from eyre to another vane
 ::
 +$  note
-  $%  ::  %a: to ames
-      ::
-      $:  %a
-      $%  $>(%plea task:ames)
-          $>(%keen task:ames)
-          $>(%yawn task:ames)
-      ==  ==
-      ::  %b: to behn
-      ::
-      $:  %b
-          ::
-          ::
-          $%  [%rest p=@da]
-              [%wait p=@da]
-      ==  ==
-      $:  %c
-          $>(%warp task:clay)
-      ==
-      ::  %d: to dill
-      ::
-      $:  %d
-          ::
-          ::
-      $%  [%flog =flog:dill]
-      ==  ==
-      ::  %g: to gall
-      ::
-      $:  %g
-          ::
-          ::
-          $>(%deal task:gall)
-  ==  ==
+  $%  [%a $>(?(%plea %keen %yawn) task:ames)]
+      [%b $>(?(%rest %wait) task:behn)]
+      [%c $>(%warp task:clay)]
+      [%d $>(%flog task:dill)]
+      [%g $>(%deal task:gall)]
+  ==
 ::  +sign: private response from another vane to eyre
 ::
 +$  sign
-  $%  $:  %ames
-          $%  $>(%boon gift:ames)
-              $>(%lost gift:ames)
-              $>(%done gift:ames)
-              $>(%tune gift:ames)
-      ==  ==
-      $:  %behn
-          $%  [%wake error=(unit tang)]
-      ==  ==
-      $:  %gall
-          gift:gall
-          ::  $>(%unto gift:gall)
-          ::
-      ==
-      $:  %clay
-          gift:clay
-          ::  $>(%writ gift:clay)
-          ::
-  ==  ==
+  $%  [%ames $>(?(%done %boon %lost %tune) gift:ames)]
+      [%behn $>(%wake gift:behn)]
+      [%gall gift:gall]
+      [%clay gift:clay]
+  ==
 --
 ::  more structures
 ::
