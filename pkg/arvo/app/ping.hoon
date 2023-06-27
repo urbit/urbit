@@ -9,7 +9,7 @@
 ::  Note this issue manifests itself even for bootstrapping a planet to
 ::  talk to its own star.
 ::
-/+  default-agent, verb
+/+  default-agent, verb, dbug
 =*  point  point:kale
 ::
 |%
@@ -20,6 +20,8 @@
       [%waiting until=@da]
   ==
 --
+::
+%-  agent:dbug
 ::
 =|  state=[%0 ships=(map ship [=rift =ship-state])]
 =>  |%
