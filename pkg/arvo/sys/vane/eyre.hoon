@@ -3766,7 +3766,6 @@
             [date=%~2023.2.17 server-state=server-state-1]
             [date=%~2023.3.16 server-state=server-state-2]
             [date=%~2023.4.11 server-state-3]
-            [date=%~2023.5.3 server-state-4]
             [date=%~2023.5.15 server-state]
         ==
       ::
@@ -3866,23 +3865,6 @@
             subscriptions=(map @ud [ship=@p app=term =path duc=duct])
             heartbeat=(unit timer)
         ==
-      ::
-      +$  server-state-4
-        $:  bindings=(list [=binding =duct =action])
-            cache=(map url=@t [aeon=@ud val=(unit cache-entry)])
-            =cors-registry
-            connections=(map duct outstanding-connection)
-            auth=authentication-state-4
-            =channel-state
-            domains=(set turf)
-            =http-config
-            ports=[insecure=@ud secure=(unit @ud)]
-            outgoing-duct=duct
-            verb=@
-        ==
-      +$  authentication-state-4
-        $:  sessions=(map @uv session)
-        ==
       --
   |=  old=axle-any
   ^+  http-server-gate
@@ -3953,7 +3935,7 @@
   ::
       %~2023.4.11
     %=  $
-      date.old  %~2023.5.3
+      date.old  %~2023.5.15
     ::
         connections.old
       %-  ~(run by connections.old)
@@ -3961,7 +3943,8 @@
       ^-  outstanding-connection
       [action inbound-request [*@uv [%ours ~]] response-header bytes-sent]
     ::
-        sessions.auth.old
+        auth.old
+      :_  [~ ~ [~ ~ now]]
       %-  ~(run by sessions.auth.old)
       |=  s=session-3
       ^-  session
@@ -3974,22 +3957,8 @@
       [-.c [%ours ~] +.c]
     ::
         bindings.old
-      %+  insert-binding
-        [[~ /~/host] outgoing-duct.old [%host ~]]
-      bindings.old
-    ==
-  ::
-      %~2023.5.3
-    %=  $
-      date.old  %~2023.5.15
-    ::
-        auth.old
-      ^-  authentication-state
-      [sessions.auth.old ~ ~ [~ ~ now]]
-    ::
-        bindings.old
-      %+  insert-binding
-        [[~ /~/eauth] outgoing-duct.old [%eauth ~]]
+      %+  insert-binding  [[~ /~/host] outgoing-duct.old [%host ~]]
+      %+  insert-binding  [[~ /~/eauth] outgoing-duct.old [%eauth ~]]
       bindings.old
     ==
   ::
