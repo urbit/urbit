@@ -1551,7 +1551,11 @@
           |=  [=ship base=(unit @t) last=@t]
           ^-  [(list move) server-state]
           %-  (trace 2 |.("eauth: starting eauth into {(scow %p ship)}"))
-          =/  nonce=@uv      (~(raw og (shas %eauth-nonce eny)) 64)
+          =/  nonce=@uv
+            |-
+            =+  n=(~(raw og (shas %eauth-nonce eny)) 64)
+            ?.  (~(has by visitors.auth) n)  n
+            $(eny (shas %try-again n))
           =/  visit=visitor  [~ `[duct now] ship base last ~]
           =.  visitors.auth  (~(put by visitors.auth) nonce visit)
           :_  state
