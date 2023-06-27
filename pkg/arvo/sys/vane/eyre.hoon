@@ -1340,12 +1340,16 @@
         (biff (get-header:http 'host' arg) (cury slaw %p))
       ?~  sid
         (handle-response response)
-      ::  if this is an eauth remote logout, just send the %shut
+      ::  if this is an eauth remote logout, send the %shut
       ::
+      =*  auth  auth.state
       ?:  ?=(^ hos)
         =^  moz  state  (handle-response response)
-        :_  state
-        [(send-plea:client:eauth u.hos %0 %shut u.sid) moz]
+        :-  [(send-plea:client:eauth u.hos %0 %shut u.sid) moz]
+        =/  book  (~(gut by visiting.auth) u.hos *logbook)
+        =.  qeu.book  (~(put to qeu.book) u.sid)
+        =.  visiting.auth  (~(put by visiting.auth) u.hos book)
+        state
       ::  if the requester is logging themselves out, make them drop the cookie
       ::
       =?  headers.response-header.response  =(u.sid session-id)
@@ -1757,12 +1761,48 @@
           ::  make sure we aren't attempting with this nonce already,
           ::  then remember the secret so we can include it in the redirect
           ::
-          =/  home  (~(gut by visiting.auth) host ~)
-          ?<  (~(has by home) nonce)
+          =/  book  (~(gut by visiting.auth) host *logbook)
+          ?<  (~(has by map.book) nonce)
           =.  visiting.auth
             %+  ~(put by visiting.auth)  host
-            (~(put by home) nonce [`duct ?:(grant `token ~)])
+            :-  (~(put to qeu.book) nonce)
+            (~(put by map.book) nonce [`duct ?:(grant `token ~)])
           state
+        ::  +on-done: receive n/ack for plea we sent
+        ::
+        ++  on-done
+          |=  [host=ship good=?]
+          ^-  [(list move) server-state]
+          %-  %-  trace
+              ?:  good
+                [2 |.("eauth: ack from {(scow %p host)}")]
+              [1 |.("eauth: nack from {(scow %p host)}")]
+          =/  book  (~(gut by visiting.auth) host *logbook)
+          ?~  ~(top to qeu.book)
+            %.  [~ state]
+            (trace 0 |.("eauth: done on empty queue from {(scow %p host)}"))
+          =^  nonce=@uv  qeu.book  ~(get to qeu.book)
+          ?:  good
+            =.  visiting.auth
+              ?:  =([~ ~] book)
+                (~(del by visiting.auth) host)
+              (~(put by visiting.auth) host book)
+            [~ state]
+          =/  port  (~(get by map.book) nonce)
+          ?~  port  [~ state]
+          ::  delete the attempt/session, serve response if needed
+          ::
+          =.  visiting.auth
+            =.  map.book
+              (~(del by map.book) nonce)
+            ?:  =([~ ~] book)
+              (~(del by visiting.auth) host)
+            (~(put by visiting.auth) host book)
+          ::
+          ?@  u.port       [~ state]
+          ?~  pend.u.port  [~ state]
+          %^  return-static-data-on-duct(duct u.pend.u.port)  503  'text/html'
+          (eauth-error-page ~)
         ::  +on-boon: receive an eauth network response from a host
         ::
         ::    crashes on unexpected circumstances, in response to which we
@@ -1774,8 +1814,8 @@
           %-  (trace 2 |.("eauth: %{(trip +<.boon)} from {(scow %p host)}"))
           ?-  +<.boon
               %okay
-            =/  home  (~(got by visiting.auth) host)
-            =/  port  (~(got by home) nonce.boon)
+            =/  book  (~(got by visiting.auth) host)
+            =/  port  (~(got by map.book) nonce.boon)
             ?>  ?=(^ port)
             ?>  ?=(^ pend.port)
             ::  update the outgoing sessions map, deleting if we aborted
@@ -1783,11 +1823,14 @@
             =.  visiting.auth
               ?^  toke.port
                 %+  ~(put by visiting.auth)  host
+                :-  qeu.book
                 ::NOTE  optimistic
-                (~(put by home) nonce.boon now)
-              =.  home  (~(del by home) nonce.boon)
-              ?~  home  (~(del by visiting.auth) host)
-              (~(put by visiting.auth) host home)
+                (~(put by map.book) nonce.boon now)
+              =.  map.book
+                (~(del by map.book) nonce.boon)
+              ?:  =([~ ~] book)
+                (~(del by visiting.auth) host)
+              (~(put by visiting.auth) host book)
             ::  always serve a redirect, with either the token, or abort signal
             ::
             =;  url=@t
@@ -1804,19 +1847,21 @@
             ::  the host has deleted the corresponding session
             ::
             =.  visiting.auth
-              =/  home=(map @uv portkey)
-                (~(gut by visiting.auth) host ~)
-              =.  home  (~(del by home) nonce.boon)
-              ?~  home  (~(del by visiting.auth) host)
-              (~(put by visiting.auth) host home)
+              =/  book
+                (~(gut by visiting.auth) host *logbook)
+              =.  map.book
+                (~(del by map.book) nonce.boon)
+              ?:  =([~ ~] book)
+                (~(del by visiting.auth) host)
+              (~(put by visiting.auth) host book)
             [~ state]
           ==
         ::
         ++  expire
           |=  [host=ship nonce=@uv]
           ^-  [(list move) server-state]
-          =/  home=(map @uv portkey)  (~(gut by visiting.auth) host ~)
-          =/  port=(unit portkey)     (~(get by home) nonce)
+          =/  book  (~(gut by visiting.auth) host *logbook)
+          =/  port  (~(get by map.book) nonce)
           ::  if the attempt was completed, we don't expire it
           ::
           ?~  port    [~ state]
@@ -1826,9 +1871,11 @@
           %-  %+  trace  1
               |.("eauth: attempt into {(scow %p host)} expired")
           =.  visiting.auth
-            =.  home  (~(del by home) nonce)
-            ?~  home  (~(del by visiting.auth) host)
-            (~(put by visiting.auth) host home)
+            =.  map.book
+              (~(del by map.book) nonce)
+            ?:  =([~ ~] book)
+              (~(del by visiting.auth) host)
+            (~(put by visiting.auth) host book)
           ::
           ?~  pend.u.port  [~ state]
           %^  return-static-data-on-duct(duct u.pend.u.port)  503  'text/html'
@@ -1924,8 +1971,8 @@
             ::  request for confirmation page
             ::
             ?.  ?=(%ours -.identity)  login
-            =/  home  (~(gut by visiting.auth) u.server ~)
-            =/  door  (~(get by home) u.nonce)
+            =/  book  (~(gut by visiting.auth) u.server *logbook)
+            =/  door  (~(get by map.book) u.nonce)
             ?~  door
               ::  nonce not yet used, render the confirmation page as normal
               ::
@@ -1936,8 +1983,8 @@
             ::
             ?@  u.door         error
             ?~  pend.u.door    error
-            =.  home           (~(put by home) u.nonce u.door(pend `duct))
-            =.  visiting.auth  (~(put by visiting.auth) u.server home)
+            =.  map.book       (~(put by map.book) u.nonce u.door(pend `duct))
+            =.  visiting.auth  (~(put by visiting.auth) u.server book)
             %-  return-static-data-on-duct(duct u.pend.u.door)
             [202 'text/plain' (as-octs:mimes:html 'continued elsewhere...')]
           ::  important to provide an error response for unexpected states
@@ -1981,8 +2028,8 @@
                     (eauth-error-page ~)
         ?~  server  error
         ?~  nonce   error
-        =/  home    (~(gut by visiting.auth) u.server ~)
-        ?:  (~(has by home) u.nonce)  error
+        =/  book    (~(gut by visiting.auth) u.server *logbook)
+        ?:  (~(has by map.book) u.nonce)  error
         (start:client u.server u.nonce grant)
       ::
       ++  eauth-url
@@ -3639,23 +3686,10 @@
         [~ http-server-gate]
       ::
       ?:  ?=([%ames %done *] sign)
-        ?~  error.sign
-          %-  %+  trace:(per-server-event args)  2
-            |.("eauth: ack from {(scow %p ship)}")
-          [~ http-server-gate]
-        ::NOTE  we would *really* like to be calling on-fail:client here, but
-        ::      we can't, because we don't know the nonce. we *can* say:
-        ::      - if %open was nacked, we will just time out the attempt.
-        ::        - but! we could be showing the user an error sooner...
-        ::      - if %shut was nacked, we optimistically deleted it locally,
-        ::        and the remote session will eventually expire, assuming it
-        ::        goes unused.
-        ::        - but! this may not be the case if we were %shutting because
-        ::          our device/session/cookie was compromised...
-        ::          - but! good hosts shouldn't crash on %shuts at all...
-        %-  %+  trace:(per-server-event args)  1
-            |.("eauth: nack from {(scow %p ship)}")
-        [~ http-server-gate]
+        =^  moz  server-state.ax
+          %.  [ship ?=(~ error.sign)]
+          on-done:client:eauth:authentication:(per-server-event args)
+        [moz http-server-gate]
       ::
       ?>  ?=([%ames %boon *] sign)
       =/  boon  ;;(eauth-boon payload.sign)

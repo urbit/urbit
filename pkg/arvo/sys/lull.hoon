@@ -2207,9 +2207,9 @@
         ::  visitors: in-progress incoming eauth flows
         ::
         visitors=(map @uv visitor)
-        ::  visiting: outgoing eauth sessions, completed or pending
+        ::  visiting: outgoing eauth state per ship
         ::
-        visiting=(map ship (map @uv portkey))
+        visiting=(map ship logbook)
         ::  endpoint: hardcoded local eauth endpoint for %syn and %ack
         ::
         ::    user-configured or auth-o-detected, with last-updated timestamp.
@@ -2258,6 +2258,12 @@
         last=@t
         toke=(unit @uv)
     ==  ==
+  ::  +logbook: record of outgoing eauth comms & state
+  ::
+  ::    qeu: a queue of nonces for to-be-n/acked pleas
+  ::    map: per nonce, completed or pending eauth session
+  ::
+  +$  logbook  [=(qeu @uv) =(map @uv portkey)]
   ::  +portkey: completed or in-progress outgoing eauth flow
   ::
   ::    made: live since
