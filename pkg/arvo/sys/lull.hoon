@@ -2160,7 +2160,6 @@
     |%
     +$  hash    @uxblockhash
     +$  number  @udblocknumber
-    +$  timestamp  @da
     +$  id      [=hash =number]
     +$  block   [=id =parent=hash]
     --

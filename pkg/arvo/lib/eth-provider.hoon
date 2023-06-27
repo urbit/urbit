@@ -60,7 +60,15 @@
         `10
       attempt-request
   ::
-  +$  result   response:rpc
+  ++  watch
+    |=  [=wire =dock =path]
+    =/  m  (strand:strandio ,~)
+    ^-  form:m
+    =/  =card:agent:gall  [%pass watch+wire %agent dock %watch path]
+    ;<  ~  bind:m  (send-raw-card:strandio card)
+    (pure:m ~)
+    :: (take-watch-ack:strandio wire)
+  ::
   ++  take-fact
   |=  =wire
   =/  m  (strand:strandio ,cage)
@@ -90,7 +98,7 @@
       =/  rid  (crip (weld (weld (trip (scot %p our.bowl)) (trip tid.bowl)) (trip (scot %ux eny.bowl))))
       ~&  [%retry-happened5]
       ;<  ~  bind:m
-        (watch:strandio [%responses rid ~] [provider.client %eth-provider] [%responses rid ~])
+        (watch [%responses rid ~] [provider.client %eth-provider] [%responses rid ~])
       :: TODO use sand-raw-card
       ~&  [%retry-happened4]
       =/  =card:agent:gall  
@@ -201,7 +209,7 @@
   ++  response-to-result
     |=  [idr=id-response:eth-provider =results =failures]
     ^+  [results failures]
-    ?:  &(?=([* @t] -.idr) ?=([* %data @t] idr))
+    ?:  &(?=([* @t] -.idr) ?=([* %call @t] idr))
       [[[->.idr +>.idr] results] failures]
     [results [`id-response:eth-provider`idr failures]]
   --
@@ -212,7 +220,7 @@
   ^-  form:m
   ;<  result=id-response:eth-provider  bind:m
     (request-rpc `'block number' %eth-block-number ~)
-  ?:  ?=([%atom @ux] +.result)
+  ?:  ?=([%block-number @ux] +.result)
     (get-block-by-number `@udblocknumber`+>.result)
   (strand-fail:strandio %unexpected-response-type ~)
 
@@ -229,8 +237,8 @@
     %-  request-rpc  
     :-  `'block by number'
     [%eth-get-block-by-number number |]
-  ?:  ?=([%block block] +.res)
-    (pure:m [~ +>.res])
+  ?:  ?=([%block (unit block)] +.res)
+    (pure:m +>.res)
   (strand-fail:strandio %unexpected-response-type ~)
   --
 ::
@@ -293,7 +301,7 @@
   ;<  result=id-response:eth-provider  bind:m
     %+  request-rpc  `'nonce'
     [%eth-get-transaction-count address [%label %latest]]
-  ?:  ?=([%atom @ud] +.result)
+  ?:  ?=([%transaction-count @ud] +.result)
     (pure:m `@ud`+>.result)
   (strand-fail:strandio %unexpected-response-type ~)
 ::::
@@ -304,7 +312,7 @@
   ;<  result=id-response:eth-provider  bind:m
     %+  request-rpc  `'balance'
     [%eth-get-balance address [%label %latest]]
-  ?:  ?=([%atom @ud] +.result)
+  ?:  ?=([%balance @ud] +.result)
     (pure:m `@ud`+>.result)
   (strand-fail:strandio %unexpected-response-type ~)
 --

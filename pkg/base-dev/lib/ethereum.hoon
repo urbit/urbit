@@ -567,14 +567,16 @@
         ==
       ++  response
         $%  
-            :: TODO change types
-            [%atom atom=@]
-            [%data data=@t]
-            :: TODO unit block
-            [%block block=block]
+            [%block-number num=@ud]
+            [%call data=@t]
+            [%new-filter fid=@ud]
+            [%block block=(unit block)]
             [%logs los=(list event-log)]
             [%transaction-result transaction-result=(unit transaction-result)]
             [%transaction-receipt transaction-receipt=(unit transaction-receipt)]
+            [%transaction-count count=@ud]
+            [%balance balance=@ud]
+            [%raw-transaction-hash hash=@ux]
         ==
       ::
       ++  transaction-result
@@ -585,9 +587,23 @@
             to=(unit @ux)
             input=@t
         ==
-      ::
+      :: TODO pull in all attributes
       ++  transaction-receipt
-        $:  hash=@ux
+        $:  cumulative-gas-used=@ud
+            effective-gas-price=@ud
+            :: logs TODO parse-logs?
+            to=@ux
+            from=@ux
+            type=@ux
+            gas-used=@ud
+            :: TODO contractAddress is messy because it is a unit
+            :: contract-address=(unit @ux)
+            transaction-hash=@ux
+            block-number=@ux
+            :: TODO is this correct
+            logs-bloom=@ux
+            transaction-index=@ux
+            status=@ux
         ==
       ::
       ++  event-log
@@ -638,6 +654,7 @@
         $%  [%number n=@ud]
             [%label l=?(%earliest %latest %pending)]
         ==
+      :: TODO pull in all attributes
       ++  block
         =<  block
         |%
@@ -893,17 +910,13 @@
     =/  result  ((ot:dejs:format ~[[%result parse-result]]) json)
     ?+  type  !!
       %eth-block-number
-    [id [%atom (parse-eth-block-number result)]]
+    [id [%block-number (parse-eth-block-number result)]]
       %eth-call
-      :: TODO maybe incorrect? need to transform result?
-    [id [%data (so:dejs:format result)]]
+    [id [%call (so:dejs:format result)]]
       %eth-new-filter
-    [id [%atom (parse-eth-new-filter-res result)]]
+    [id [%new-filter (parse-eth-new-filter-res result)]]
       %eth-get-block-by-number
-    =/  block  (parse-block result)
-    ?~  block
-      !!
-    [id [%block u.block]]
+    [id [%block (parse-block result)]]
       %eth-get-filter-logs
     [id [%logs (parse-event-logs result)]]
       %eth-get-logs
@@ -917,13 +930,13 @@
       [id [%transaction-result ~]]
     [id [%transaction-result [~ (parse-transaction-result result)]]]
       %eth-get-transaction-count 
-    [id [%atom (parse-eth-get-transaction-count result)]]
+    [id [%transaction-count (parse-eth-get-transaction-count result)]]
       %eth-get-balance
-    [id [%atom (parse-eth-get-balance result)]]
+    [id [%balance (parse-eth-get-balance result)]]
       %eth-get-transaction-receipt
     [id [%transaction-receipt (parse-transaction-receipt result)]]
       %eth-send-raw-transaction
-    [id [%atom (parse-hex-result result)]]
+    [id [%raw-transaction-hash (parse-hex-result result)]]
     ==
   ::
   ++  parse-transaction-receipt
@@ -932,9 +945,17 @@
     %.  json
     =,  dejs-soft:format
     %-  ot
-    :~  'transactionHash'^parse-hex
-        :: transaction+parse-hex
-        :: 'parentHash'^parse-hex
+    :~  'cumulativeGasUsed'^parse-hex
+        'effectiveGasPrice'^parse-hex
+        'to'^parse-hex
+        'from'^parse-hex
+        'type'^parse-hex
+        'gasUsed'^parse-hex
+        'transactionHash'^parse-hex
+        'blockNumber'^parse-hex
+        'logsBloom'^parse-hex
+        'transactionIndex'^parse-hex
+        'status'^parse-hex
     ==
   ++  parse-block
     |=  =json
