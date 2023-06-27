@@ -69,19 +69,19 @@
     %=  $
       sap  t.sap
       dex  t.dex
-      cof  (mul cof i.sap)
-      ret  (^add ret (mul i.dex cof))
+      cof  (^mul cof i.sap)
+      ret  (^add ret (^mul i.dex cof))
     ==
   ::
   ++  get-item-index
     |=  [shape=(list @) num=@]
     ^-  @
-    =/  len  (roll shape mul)  :: TODO will shadow
+    =/  len  (roll shape ^mul)  :: TODO will shadow
     =-  (roll - ^add)
     ^-  (list @)
     %+  turn  shape
     |=  wid=@
-    (mod (div len wid) num)
+    (^mod (^div len wid) num)
   ::
   ++  ravel
     |=  a=ray
@@ -90,7 +90,7 @@
   ::
   ++  fill
     |=  [=meta x=@]  ^-  ray
-    =/  len  (roll shape.meta mul)
+    =/  len  (roll shape.meta ^mul)
     :-  meta
     (con +:(zeros meta) (fil bloq.meta len x))
   ::
@@ -107,7 +107,7 @@
     |=  =meta  ^-  ray
     ~_  leaf+"lagoon-fail"
     :-  meta
-        (lsh [bloq.meta (roll shape.meta mul)] 1)
+        (lsh [bloq.meta (roll shape.meta ^mul)] 1)
   ::    Ones
   ++  ones
     |=  =meta  ^-  ray
@@ -167,46 +167,100 @@
     |-  ^+  res
     ?@  ali  res
     ?@  bob  res
-    =/  sum  ((fun-scalar bloq.meta:a aura.meta:a %sub) i.ali i.bob)
-    $(ali t.ali, bob t.bob, res [sum res])
+    =/  dif  ((fun-scalar bloq.meta:a aura.meta:a %sub) i.ali i.bob)
+    $(ali t.ali, bob t.bob, res [dif res])
+  ::
+  ++  mul
+    |=  [a=ray b=ray]
+    ^-  ray
+    ?>  =(meta.a meta.b)
+    %-  spac
+    :-  meta.a
+    =/  ali  (ravel a)
+    =/  bob  (ravel b)
+    %+  rep  bloq.meta.a
+    =|  res=(list @)
+    %-  flop
+    |-  ^+  res
+    ?@  ali  res
+    ?@  bob  res
+    =/  pro  ((fun-scalar bloq.meta:a aura.meta:a %mul) i.ali i.bob)
+    $(ali t.ali, bob t.bob, res [pro res])
+  ::
+  ++  div
+    |=  [a=ray b=ray]
+    ^-  ray
+    ?>  =(meta.a meta.b)
+    %-  spac
+    :-  meta.a
+    =/  ali  (ravel a)
+    =/  bob  (ravel b)
+    %+  rep  bloq.meta.a
+    =|  res=(list @)
+    %-  flop
+    |-  ^+  res
+    ?@  ali  res
+    ?@  bob  res
+    =/  fra  ((fun-scalar bloq.meta:a aura.meta:a %div) i.ali i.bob)
+    $(ali t.ali, bob t.bob, res [fra res])
+  ::
+  ++  mod
+    |=  [a=ray b=ray]
+    ^-  ray
+    ?>  =(meta.a meta.b)
+    %-  spac
+    :-  meta.a
+    =/  ali  (ravel a)
+    =/  bob  (ravel b)
+    %+  rep  bloq.meta.a
+    =|  res=(list @)
+    %-  flop
+    |-  ^+  res
+    ?@  ali  res
+    ?@  bob  res
+    =/  rem  ((fun-scalar bloq.meta:a aura.meta:a %mod) i.ali i.bob)
+    $(ali t.ali, bob t.bob, res [rem res])
+   ::
+  +$  ops  ?(%add %sub %mul %div %mod)
   ::
   ++  fun-scalar
-    |=  [=bloq aura=@tas fun=?(%add %sub %mul %div)]
+    |=  [=bloq aura=@tas fun=ops]
     ^-  $-([@ @] @)
     ?+    aura  ~|(aura !!)
         ?(%u %ub %ux %ud %uv %uw)  
-        ?+  fun  !!
+        ?-  fun
           %add  ~(sum fe bloq)
           %sub  ~(dif fe bloq)
-          ::%mul  ~(
-          ::%div  ~(
+          %mul  |=([b=@ c=@] (~(sit fe bloq) (^mul b c)))
+          %div  |=([b=@ c=@] (~(sit fe bloq) (^div b c)))
+          %mod  |=([b=@ c=@] (~(sit fe bloq) (^mod b c)))
         ==
         ::?(%s %sb %sx %sd %sv %sw)  sum:si
         %r
       ?+  bloq  !!
         %7
-        ?-  fun
+        ?+  fun  !!
           %add  ~(add rq r)
           %sub  ~(sub rq r)
           %mul  ~(mul rq r)
           %div  ~(div rq r)
         ==
         %6
-        ?-  fun
+        ?+  fun  !!
           %add  ~(add rd r)
           %sub  ~(sub rd r)
           %mul  ~(mul rd r)
           %div  ~(div rd r)
         ==
         %5
-        ?-  fun
+        ?+  fun  !!
           %add  ~(add rs r)
           %sub  ~(sub rs r)
           %mul  ~(mul rs r)
           %div  ~(div rs r)
         ==
         %4
-        ?-  fun
+        ?+  fun  !!
           %add  ~(add rh r)
           %sub  ~(sub rh r)
           %mul  ~(mul rh r)
