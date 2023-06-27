@@ -403,7 +403,7 @@
           %+  sort  ~(tap by visiting.auth)
           |=  [[a=@p *] [b=@p *]]
           (aor (scot %p a) (scot %p b))
-        |=  [who=@p m=(map @uv portkey)]
+        |=  [who=@p q=(qeu @uv) m=(map @uv portkey)]
         %+  turn  ~(tap by m)
         |=  [nonce=@uv p=portkey]
         %-  pairs
