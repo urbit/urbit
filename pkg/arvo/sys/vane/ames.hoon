@@ -4164,6 +4164,7 @@
                 ?.  =(vane.plea %$)
                   ?+  vane.plea  ~|  %ames-evil-vane^our^her^vane.plea  !!
                     %c  (pe-emit duct %pass wire %c %plea her plea)
+                    %e  (pe-emit duct %pass wire %e %plea her plea)
                     %g  (pe-emit duct %pass wire %g %plea her plea)
                     %j  (pe-emit duct %pass wire %j %plea her plea)
                   ==
@@ -5136,6 +5137,13 @@
       =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
       ?.  =([%black ~ ~] rul.r.per)  ~
       (en-hunk (rof ~ /ames nom))
+    ::
+        %e
+      =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
+      %-  en-hunk
+      ?+  kyr  ~
+        %x  (rof ~ /ames nom)
+      ==
     ::
         %g
       =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)

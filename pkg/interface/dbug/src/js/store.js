@@ -12,7 +12,11 @@ class Store {
       commits: [],
       bindings: [],
       connections: [],
-      authentication: [],
+      authentication: {
+        sessions: [],
+        visitors: [],
+        visiting: [],
+      },
       channels: [],
       sidebarShown: true
     };
