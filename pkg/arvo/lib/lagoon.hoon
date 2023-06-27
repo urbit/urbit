@@ -1,5 +1,6 @@
 ::                                                    ::
 ::::                    ++la                          ::  (2v) vector/matrix ops
+|%
 ++  la
   ^|
   !:
@@ -74,17 +75,18 @@
   ::
   ++  get-item-index
     |=  [shape=(list @) num=@]
-    ^-  (list @)
+    ^-  @
     =/  len  (roll shape mul)  :: TODO will shadow
-    ~
+    =-  (roll - ^add)
+    ^-  (list @)
+    %+  turn  shape
+    |=  wid=@
+    (mod (div len wid) num)
   ::
   ++  ravel
     |=  a=ray
     ^-  (list @)
-    =/  len  (lent shape.meta.a)
-    %+  turn  (gulf 0 (dec len))
-    |=  i=@
-    (get-item a (get-item-index shape.meta.a i))
+    +:(flop (rip bloq.meta.a data.a))
   ::
   ++  fill
     |=  [=meta x=@]  ^-  ray
@@ -124,6 +126,14 @@
       ==
     (fill meta one)
   ::
+  ++  iota
+    |=  [=meta n=@ud]
+    ^-  ray
+    =.  shape.meta  ~[n]
+    %-  spac
+    :-  meta 
+    (rap bloq.meta (gulf 1 n))
+  ::
   ::  Operators
   ::
   ++  add
@@ -140,23 +150,71 @@
     |-  ^+  res
     ?@  ali  res
     ?@  bob  res
-    =/  sum  ((add-scalar [bloq.meta aura.meta]:a) i.ali i.bob)
+    =/  sum  ((fun-scalar bloq.meta:a aura.meta:a %add) i.ali i.bob)
     $(ali t.ali, bob t.bob, res [sum res])
   ::
-  ++  add-scalar
-    |=  [=bloq aura=@tas]
+  ++  sub
+    |=  [a=ray b=ray]
+    ^-  ray
+    ?>  =(meta.a meta.b)
+    %-  spac
+    :-  meta.a
+    =/  ali  (ravel a)
+    =/  bob  (ravel b)
+    %+  rep  bloq.meta.a
+    =|  res=(list @)
+    %-  flop
+    |-  ^+  res
+    ?@  ali  res
+    ?@  bob  res
+    =/  sum  ((fun-scalar bloq.meta:a aura.meta:a %sub) i.ali i.bob)
+    $(ali t.ali, bob t.bob, res [sum res])
+  ::
+  ++  fun-scalar
+    |=  [=bloq aura=@tas fun=?(%add %sub %mul %div)]
     ^-  $-([@ @] @)
     ?+    aura  ~|(aura !!)
-        ?(%u %ub %ux %ud %uv %uw)  ~(sum fe bloq)
+        ?(%u %ub %ux %ud %uv %uw)  
+        ?+  fun  !!
+          %add  ~(sum fe bloq)
+          %sub  ~(dif fe bloq)
+          ::%mul  ~(
+          ::%div  ~(
+        ==
         ::?(%s %sb %sx %sd %sv %sw)  sum:si
         %r
       ?+  bloq  !!
-        %7  ~(add rq %n)
-        %6  ~(add rd %n)
-        %5  ~(add rs %n)
-        %4  ~(add rh %n)
+        %7
+        ?-  fun
+          %add  ~(add rq r)
+          %sub  ~(sub rq r)
+          %mul  ~(mul rq r)
+          %div  ~(div rq r)
+        ==
+        %6
+        ?-  fun
+          %add  ~(add rd r)
+          %sub  ~(sub rd r)
+          %mul  ~(mul rd r)
+          %div  ~(div rd r)
+        ==
+        %5
+        ?-  fun
+          %add  ~(add rs r)
+          %sub  ~(sub rs r)
+          %mul  ~(mul rs r)
+          %div  ~(div rs r)
+        ==
+        %4
+        ?-  fun
+          %add  ~(add rh r)
+          %sub  ~(sub rh r)
+          %mul  ~(mul rh r)
+          %div  ~(div rh r)
+        ==
       ==
     ::
         ::  TODO signed integers -- add new 2's complement aura?
     ==
   --
+--
