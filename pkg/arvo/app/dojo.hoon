@@ -871,9 +871,9 @@
           [[%drum-session !>(ses.id)] soz]  ::TODO  does the who matter?
         ?~  soz
           (fall kuv !>(~))
-        ~_  'dojo: bad-keyword-arg'
+        ~_  'dojo: bad keyword (supplied sample incorrect)'
         ~_  'dojo: keywords allowed'
-        ~_  (skol p:(slot 7 som))
+        ~_  (skol p:(fall kuv !>(~)))
         %+  slap
           (with-faces kuv+(need kuv) rep+(with-faces soz) ~)
         :+  %cncb  [%kuv]~
@@ -886,24 +886,33 @@
       ?:  (~(nest ut p.som) | p.sam)
         (slam gat sam)
       %-  mean
-      =/  sov=vase  (slot 2 som)
-      ?.  (~(nest ut p.sov) | p.ven)
+      =/  hed=vase  (slot 2 som)
+      ?.  (~(nest ut p.hed) | p.ven)
         ::  bad event arguments
         ::
         ^-  (list tank)
-        :~  'dojo: bad-generator-gate'
+        :~  'dojo: invalid generator event sample (generator incorrect)'
             'dojo: nest-need'
             (skol p.ven)
             'dojo: nest-have'
-            (skol p.sov)
+            (skol p.hed)
+        ==
+      =/  tyl=vase  (slot 3 som)
+      =/  hav=vase  (slot 6 sam)
+      ?:  (~(nest ut p.tyl) | p.hav)
+        ::  bad gate - missing kev
+        ::
+        ^-  (list tank)
+        :~  'dojo: missing generator key-value sample (generator incorrect)'
+            'dojo: nest-need'
+            (skol p.kev)
         ==
       ::  bad positional arguments
       ::
       =/  ned=vase  (slot 6 som)
-      =/  hav=vase  (slot 6 sam)
       ?<  (~(nest ut p.ned) | p.hav)
       ^-  (list tank)
-      :~  'dojo: bad-positional-arg'
+      :~  'dojo: invalid generator arguments (supplied sample incorrect)'
           'dojo: nest-need'
           (skol p.ned)
           'dojo: nest-have'
