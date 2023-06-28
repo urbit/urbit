@@ -2690,7 +2690,7 @@
         =*  duct  unix-duct.ames-state
         %-  emil
         :~  [duct %give %turf turfs]
-            [duct %pass /ping %g %deal [our our] %ping %poke %noun !>(%kick)]
+            [duct %pass /ping %g %deal [our our /ames] %ping %poke %noun !>(%kick)]
         ==
       ::  +on-vega: handle kernel reload
       ::
