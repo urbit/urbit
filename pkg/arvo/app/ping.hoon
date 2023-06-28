@@ -353,7 +353,7 @@
   |=  [=wire =sign-arvo]
   ^-  [(list card) _this]
   =^  cards  state
-    ?+    wire  ((slog 'ping: strange wire' >wire< ~) `state)
+    ?+    wire  `state
         [%jael %delay ~]
       ?>  ?=(%wake +<.sign-arvo)
       ?^  error.sign-arvo
