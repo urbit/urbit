@@ -78,7 +78,6 @@
       ++  kick
         |=  [our=@p now=@da]
         ^-  (quip card _state)
-
         ::  ?:  =(%czar (clan:title our))
         ::    `state
         ::
@@ -315,18 +314,20 @@
 ::
 ++  on-poke
   |=  [=mark =vase]
-  ?:  =(q.vase %kick)  :: NB: ames calls this on %born
-    =^  cards  state  (kick:ships our.bowl now.bowl)
-    [cards this]
-  ?:  =(q.vase %nat)
-    =.  plan.state  [%nat ~]
-    =^  cards  state  (kick:ships our.bowl now.bowl)
-    [cards this]
-  ?:  =(q.vase %no-nat)
-    =.  plan.state  [%pub ~]
-    =^  cards  state  (kick:ships our.bowl now.bowl)
-    [cards this]
-  `this
+  ?.  =(our src):bowl    :: don't crash, this is where pings are handled
+    `this
+  ::
+  =^  cards  state
+    ?:  =(q.vase %kick)  :: NB: ames calls this on %born
+      (kick:ships our.bowl now.bowl)
+    ?:  =(q.vase %nat)
+      =.  plan.state  [%nat ~]
+      (kick:ships our.bowl now.bowl)
+    ?:  =(q.vase %no-nat)
+      =.  plan.state  [%pub ~]
+      (kick:ships our.bowl now.bowl)
+    `state
+  [cards this]
 ::
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
