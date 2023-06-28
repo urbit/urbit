@@ -1171,6 +1171,9 @@
       $:  %d
           $>(%flog task:dill)
       ==
+      $:  %g
+          $>(%deal task:gall)
+      ==
       $:  %j
           $>  $?  %private-keys
                   %public-keys
@@ -1188,6 +1191,9 @@
   $~  [%behn %wake ~]
   $%  $:  %behn
           $>(%wake gift:behn)
+      ==
+      $:  %gall
+          $>(%unto gift:gall)
       ==
       $:  %jael
           $>  $?  %private-keys
@@ -2681,7 +2687,11 @@
           =<  q.q  %-  need  %-  need
           (rof ~ /ames %j `beam`[[our %turf %da now] /])
         ::
-        (emit unix-duct.ames-state %give %turf turfs)
+        =*  duct  unix-duct.ames-state
+        %-  emil
+        :~  [duct %give %turf turfs]
+            [duct %pass /ping %g %deal [our our] %ping %poke %noun !>(%kick)]
+        ==
       ::  +on-vega: handle kernel reload
       ::
       ++  on-vega  event-core
@@ -4781,6 +4791,9 @@
   =/  event-core  (ev [now eny rof] duct ames-state)
   ::
   =^  moves  ames-state
+    ?:  ?=([%gall %unto *] sign)
+      `ames-state
+    ::
     =<  abet
     ?-  sign
       [@ %done *]   (on-take-done:event-core wire error.sign)
