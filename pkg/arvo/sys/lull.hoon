@@ -1374,7 +1374,9 @@
     =+  len=(cut 3 [4 2] hoot)
     =+  pat=(cut 3 [6 len] hoot)
     ~|  pat=pat
-    [(add 6 len) [(stab pat) num]]
+    :-  (add 6 len)
+    :_  num
+    (rash pat ;~(pfix fas (most fas (cook crip (star ;~(less fas prn))))))
   ::
   ++  sift-meow
     |=  =yowl
@@ -1527,7 +1529,10 @@
         file-path=term                                  ::
     ==                                                  ::
   +$  care                                              ::  clay submode
-    ?(%a %b %c %d %e %f %p %r %s %t %u %v %w %x %y %z)  ::
+    $?  %a  %b  %c  %d  %e  %f                          ::
+        %p  %q  %r  %s  %t  %u                          ::
+        %v  %w  %x  %y  %z                              ::
+    ==                                                  ::
   +$  cash                                              ::  case or tako
     $%  [%tako p=tako]                                  ::
         case                                            ::

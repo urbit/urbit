@@ -1041,25 +1041,30 @@
     ?~  u.res  (error-response 404 "no scry result")
     =*  mark   p.u.u.res
     =*  vase   q.u.u.res
+    ?:  =(%mime mark)
+      =/  =mime  !<(mime vase)
+      %^  return-static-data-on-duct  200
+        (rsh 3 (spat p.mime))  q.mime
     ::  attempt to find conversion gate to mime
     ::
-    =/  tub=(unit tube:clay)
+    =/  tub=(unit [tub=tube:clay mov=move])
       (find-tube i.site.req mark %mime)
     ?~  tub  (error-response 500 "no tube from {(trip mark)} to mime")
     ::  attempt conversion, then send results
     ::
     =/  mym=(each mime tang)
-      (mule |.(!<(mime (u.tub vase))))
-    ?-  -.mym
-      %|  (error-response 500 "failed tube from {(trip mark)} to mime")
-      %&  %+  return-static-data-on-duct  200
-          [(rsh 3 (spat p.p.mym)) q.p.mym]
-    ==
+      (mule |.(!<(mime (tub.u.tub vase))))
+    =^  cards  state
+      ?-  -.mym
+        %|  (error-response 500 "failed tube from {(trip mark)} to mime")
+        %&  %+  return-static-data-on-duct  200
+            [(rsh 3 (spat p.p.mym)) q.p.mym]
+      ==
+    [[mov.u.tub cards] state]
     ::
     ++  find-tube
       |=  [dap=term from=mark to=mark]
-      ^-  (unit tube:clay)
-      ?:  =(from to)  `(bake same vase)
+      ^-  (unit [tube:clay move])
       =/  des=(unit (unit cage))
         (do-scry %gd dap /$)
       ?.  ?=([~ ~ *] des)  ~
@@ -1067,7 +1072,10 @@
       =/  tub=(unit (unit cage))
         (do-scry %cc desk /[from]/[to])
       ?.  ?=([~ ~ %tube *] tub)  ~
-      `!<(tube:clay q.u.u.tub)
+      :-  ~
+      :-  !<(tube:clay q.u.u.tub)
+      :^  duct  %pass  /conversion-cache/[from]
+      [%c %warp our desk `[%sing %c da+now /[from]/[to]]]
     ::
     ++  do-scry
       |=  [care=term =desk =path]

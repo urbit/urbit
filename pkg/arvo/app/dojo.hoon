@@ -1172,6 +1172,16 @@
     ::
         %kick  +>.$
     ==
+  ::
+  ++  he-self
+    |=  [way=wire =sign:agent:gall]
+    ^+  +>
+    ?.  ?=(%poke-ack -.sign)
+      ~&  [%strange-self sign]
+      +>
+    ?~  p.sign
+      +>
+    (he-diff %tan leaf+"dojo: failed to process input" ~)
   ::  +he-http-response: result from http-client
   ::
   ++  he-http-response
@@ -1429,23 +1439,34 @@
     =/  naked-gen=(unit term)
       %+  rust  txt
       (full (ifix [lus (just `@`10)] ;~(pose sym (easy %$))))
-    ?~  naked-gen
+    ?^  naked-gen
+      (complete-naked-gen u.naked-gen)
+    =/  naked-ted=(unit term)
+      %+  rust  txt
+      (full (ifix [hep (just `@`10)] ;~(pose sym (easy %$))))
+    ?~  naked-ted
       res
-    (complete-naked-gen u.naked-gen)
+    (complete-naked-ted u.naked-ted)
     ::
     ++  complete-naked-poke
       |=  app=term
-      =/  pax=path
-        /(scot %p our.hid)/[q:he-beam]/(scot %da now.hid)/app
+      =+  [our=(scot %p our.hid) now=(scot %da now.hid)]
+      =+  .^(desks=(set desk) %cd /[our]//[now])
+      =.  desks  (~(del in desks) %kids)
       %+  complete  (cat 3 ':' app)
-      %+  murn  ~(tap by dir:.^(arch %cy pax))
-      |=  [=term ~]
-      ^-  (unit [^term tank])
-      ?.  =(app (end [3 (met 3 app)] term))
+      %-  zing
+      %+  turn  ~(tap in desks)
+      |=  =desk
+      %+  murn
+        %~  tap  in
+        .^((set [dude:gall ?]) %ge /[our]/[desk]/[now]/$)
+      |=  [=dude:gall live=?]
+      ^-  (unit [term tank])
+      ?.  live
         ~
-      ?~  =<(fil .^(arch %cy (weld pax ~[term %hoon])))
+      ?.  =(app (end [3 (met 3 app)] dude))
         ~
-      `[(cat 3 ':' term) *tank]
+      `[(cat 3 ':' dude) *tank]
     ::
     ++  complete-variable
       |=  variable=term
@@ -1459,14 +1480,17 @@
     ::
     ++  complete-gen-poke-to-app
       |=  [app=term gen=term]
-      =.  app
-        ?:(?=(%$ app) %hood app)
+      =?  app  =(%$ app)
+        %hood
       %+  complete
         ?:  =(%hood app)
           (cat 3 '|' gen)
         :((cury cat 3) ':' app '|' gen)
-      =/  pfix=path
-        /(scot %p our.hid)/[q:he-beam]/(scot %da now.hid)/gen/[app]
+      =+  [our=(scot %p our.hid) now=(scot %da now.hid)]
+      ?.  .^(? %gu /[our]/[app]/[now]/$)
+        ~
+      =+  .^(=desk %gd /[our]/[app]/[now]/$)
+      =/  pfix=path  /[our]/[desk]/[now]/gen/[app]
       ::
       %^  tab-generators:auto  pfix  `app
       %+  murn
@@ -1492,6 +1516,27 @@
       ?~  =<(fil .^(arch %cy (weld pax ~[term %hoon])))
         ~
       (some term)
+    ::
+    ++  complete-naked-ted
+      |=  ted=term
+      =/  pfix=path
+        /(scot %p our.hid)/[q:he-beam]/(scot %da now.hid)/ted
+      =+  .^(paths=(list path) %ct pfix)
+      %+  complete  (cat 3 '-' ted)
+      %+  murn  paths
+      |=  pax=path
+      ^-  (unit [term tank])
+      ?~  pax
+        ~
+      ?~  t.pax
+        ~
+      ?.  =(%hoon (rear t.pax))
+        ~
+      =/  =cord
+        (reel (join '-' (snip `path`t.pax)) (cury cat 3))
+      ?.  =(ted (end [3 (met 3 ted)] cord))
+        ~
+      `[(cat 3 '-' cord) *tank]
     ::
     ++  complete
       |=  [completing=term options=(list [term tank])]
@@ -1528,7 +1573,9 @@
       ::  Else, print results
       ::
       %+  he-diff  %tab
-      options
+      %+  sort  options
+      |=  [[a=term *] [b=term *]]
+      (aor a b)
     --
   ::
   ++  he-type                                           ::  apply input
@@ -1538,7 +1585,7 @@
       he-pine:(~(dy-type dy u.poy) act)
     ?-  -.dat.act
       %det  (he-stir +.dat.act)
-      %ret  (he-done (tufa buf.say))
+      %ret  (he-card %pass /self %agent [our.hid %dojo] %poke %done !>(id))
       %clr  he-pine(buf "")
       %tab  (he-tab +.dat.act)
     ==
@@ -1669,6 +1716,11 @@
       =/  =id  [our.hid ses]
       he-abet:(~(he-lens he hid id ~ (~(got by hoc) id)) command)
     ::
+        %done
+      =+  !<(=id vase)
+      =/  ses=session  (~(got by hoc) id)
+      he-abet:(~(he-done he hid id ~ ses) (tufa buf.say.ses))
+    ::
         %allow-remote-login
       =/  who  !<(@p vase)
       `state(acl (~(put in acl) who))
@@ -1736,6 +1788,7 @@
     ?+  i.t.t.wire  ~|([%dojo-bad-on-agent wire -.sign] !!)
       %poke  (he-unto:he-full t.wire sign)
       %wool  (he-wool:he-full t.wire sign)
+      %self  (he-self:he-full t.wire sign)
     ==
   [moves ..on-init]
 ::
