@@ -344,12 +344,12 @@
     ?+    wire  `state
         [%nat *]
       ?.  ?=(%nat -.plan.state)  `state
-      ?>  ?=(%poke-ack -.sign)
+      ?.  ?=(%poke-ack -.sign)   `state
       (take-ping:nat now.bowl wire p.sign)
     ::
         [%pub *]
       ?.  ?=(%pub -.plan.state)  `state
-      ?>  ?=(%poke-ack -.sign)
+      ?.  ?=(%poke-ack -.sign)   `state
       (take-pings:pub wire p.sign)
     ==
   [cards this]
