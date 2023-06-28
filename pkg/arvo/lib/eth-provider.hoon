@@ -67,7 +67,6 @@
     =/  =card:agent:gall  [%pass watch+wire %agent dock %watch path]
     ;<  ~  bind:m  (send-raw-card:strandio card)
     (pure:m ~)
-    :: (take-watch-ack:strandio wire)
   ::
   ++  take-fact
   |=  =wire
@@ -84,10 +83,26 @@
     `[%done cage.sign.u.in.tin]
   ==
   ::
+  ++  take-watch-ack
+    |=  =wire
+    =/  m  (strand:strandio ,~)
+    ^-  form:m
+    |=  tin=strand-input:strand:strandio
+    ?+  in.tin  `[%skip ~]
+        ~  `[%wait ~]
+        [~ %sign [%wait @ ~] %behn %wake *]
+      `[%fail [%timeout ~]]
+        [~ %agent * %watch-ack *]
+      ?.  =(watch+wire wire.u.in.tin)
+        `[%skip ~]
+      ?~  p.sign.u.in.tin
+        `[%done ~]
+      `[%fail %watch-ack-fail u.p.sign.u.in.tin]
+    ==
+  ::
   ++  attempt-request
     =/  m  (strand:strandio ,(unit ethout:eth-provider))
     ^-  form:m
-    ~&  [%retry-happened]
     ;<  =bowl:spider  bind:m  get-bowl:strandio
     ;<    provider-mode=provider-mode:eth-provider
       bind:m
@@ -96,20 +111,17 @@
       ?>  ?=(%client -.provider-mode)
       =/  client  `client:eth-provider`+.provider-mode
       =/  rid  (crip (weld (weld (trip (scot %p our.bowl)) (trip tid.bowl)) (trip (scot %ux eny.bowl))))
-      ~&  [%retry-happened5]
+      ;<  ~  bind:m  (send-wait:strandio (add now.bowl ~s10))
       ;<  ~  bind:m
         (watch [%responses rid ~] [provider.client %eth-provider] [%responses rid ~])
-      :: TODO use sand-raw-card
-      ~&  [%retry-happened4]
+      ;<  ~  bind:m
+        (take-watch-ack [%responses rid ~])
       =/  =card:agent:gall  
         :*  %pass   /poke 
             %agent  [provider.client %eth-provider] 
             %poke   [%provider-action !>([%provide rid reqs])]
         ==
       ;<  ~  bind:m  (send-raw-card:strandio card)
-      ~&  [%retry-happened2]
-      ;<  ~  bind:m  (send-wait:strandio (add now.bowl ~s10))
-      ~&  [%retry-happened3]
       ;<  =cage  bind:m  (take-fact [%responses rid ~])
       (pure:m [~ !<(ethout:eth-provider q.cage)])
     =/  url  ''

@@ -24,7 +24,7 @@
 ::
 ++  request-receipts
   |=  [url=@t tx-hashes=(list @ux)]
-  %-  request-batch-rpc-strict:ethio
+  %+  request-batch-rpc-strict:ethio  url
   %+  turn  tx-hashes
   |=  txh=@ux
   ^-  [(unit @t) request:rpc:ethereum]
