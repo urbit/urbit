@@ -159,16 +159,10 @@
     |=  [=weft =tape]
     (welp " {<[lal num]:weft>}" tape)
   ?.  verb
-    =/  cut=(list tape)  (turn meb truncate-hash)
-    =/  len  (lent cut)
-    =/  base-hash
-      ?:  =(0 len)  "~"
-      ?:  =(1 len)  (head cut)
-        "~[{`tape`(zing (join " " `(list tape)`cut))}]"
     :~  leaf/"/sys/kelvin:          {kul}"
-        leaf/"base hash ends in:     {base-hash}"
         leaf/"%cz hash ends in:      {(truncate-hash hash)}"
         leaf/"app status:            {sat}"
+        leaf/"source ship:           {?~(sink <~> <her.u.sink>)}"
         leaf/"pending updates:       {<`(list [@tas @ud])`~(tap in wic.dek)>}"
     ==
   ::
