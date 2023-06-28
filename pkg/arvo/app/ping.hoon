@@ -209,7 +209,7 @@
         ?:  =(our ship)
           ~
         =/  wire  /pub/(scot %uw nonce.state)/ping/(scot %p ship)
-        `u=[%pass wire %agent [our %ping] %poke %noun !>(~)]
+        `u=[%pass wire %agent [ship %ping] %poke %noun !>(~)]
       ::
       ++  take-pings
         |=  [=wire error=(unit tang)]
@@ -257,14 +257,12 @@
       ++  set-timer
         |=  now=@da
         ^-  (quip card _state)
-        ~&  >  %setting
         =/  =wire  /pub/(scot %uw nonce.state)/wait
         [[%pass wire %arvo %b %wait (add ip-timeout now)]~ state]
       ::
       ++  take-wait
         |=  [our=@p now=@da =wire]
         ^-  (quip card _state)
-        ~&  >  %waiting
         ?.  ?=([%pub @ %wait ~] wire)  `state
         ?.  (once i.t.wire)  `state
         ;<  new-state=_state  rind  check-ip
