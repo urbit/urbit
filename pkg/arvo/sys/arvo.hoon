@@ -1053,7 +1053,7 @@
         ++  smit
           |=  [cap=tape sub=vase pax=path txt=@t]
           ^-  vase
-          ~>  %slog.[0 leaf/"{cap}: {(scow p+(mug txt))}"]
+          ~>  %slog.[0 leaf/"{cap}: {(scow uv+(mug txt))}"]
           ~>  %bout
           %-  road  |.
           ~_  leaf/"{cap}: build failed"
@@ -1881,7 +1881,7 @@
           ++  smit
             |=  [cap=tape sub=(trap vase) pax=path txt=@t]
             ^-  (trap vase)
-            ~>  %slog.[0 leaf/"{cap}: {(scow p+(mug txt))}"]
+            ~>  %slog.[0 leaf/"{cap}: {(scow uv+(mug txt))}"]
             %-  road  |.
             ~_  leaf/"{cap}: build failed"
             (swat sub (rain pax txt))
