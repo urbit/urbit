@@ -216,7 +216,7 @@
 ::
 ++  get-latest-block
   |=  b=?
-  =/  m  (strand:strandio ,block)
+  =/  m  (strand:strandio ,block:rpc:ethereum)
   ^-  form:m
   ;<  result=id-response:eth-provider  bind:m
     (request-rpc `'block number' %eth-block-number ~)
@@ -225,19 +225,19 @@
   (strand-fail:strandio %unexpected-response-type ~)
 
 ++  get-block-by-number
-  |=  [=number:block]
-  =/  m  (strand:strandio ,block)
+  |=  [=number:block:rpc:ethereum]
+  =/  m  (strand:strandio ,block:rpc:ethereum)
   ^-  form:m
   ;<  =bowl:spider  bind:m  get-bowl:strandio
   |^
-  %+  (retry:strandio ,block)  `10
-  =/  m  (strand:strandio ,(unit block))
+  %+  (retry:strandio ,block:rpc:ethereum)  `10
+  =/  m  (strand:strandio ,(unit block:rpc:ethereum))
   ^-  form:m
   ;<  res=[id=(unit @t) response:rpc:ethereum]  bind:m
     %-  request-rpc  
     :-  `'block by number'
     [%eth-get-block-by-number number |]
-  ?:  ?=([%block (unit block)] +.res)
+  ?:  ?=([%block (unit block:rpc:ethereum)] +.res)
     (pure:m +>.res)
   (strand-fail:strandio %unexpected-response-type ~)
   --
@@ -257,7 +257,7 @@
   (strand-fail:strandio %unexpected-response-type ~)
 ::::
 ++  get-logs-by-hash
-  |=  [=hash:block contracts=(list address) =topics]
+  |=  [=hash:block:rpc:ethereum contracts=(list address) =topics]
   =/  m  (strand:strandio (list event-log:rpc:ethereum))
   ^-  form:m
   ;<  result=id-response:eth-provider  bind:m
@@ -276,8 +276,8 @@
   |=  $:  
           contracts=(list address)
           =topics
-          =from=number:block
-          =to=number:block
+          =from=number:block:rpc:ethereum
+          =to=number:block:rpc:ethereum
       ==
   =/  m  (strand:strandio (list event-log:rpc:ethereum))
   ^-  form:m

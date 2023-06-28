@@ -60,9 +60,9 @@
     ::     ~[0x123]
     ::     topics
     :: ==
-    :: :-  `'transaction receipt'
+    :-  `'transaction receipt'
     :: [%eth-get-transaction-receipt 0x123]
-    :: [%eth-get-transaction-receipt 0xe11a.9017.5036.ba61.01e6.999d.1330.5fe0.75d9.f910.fa9f.8946.2a80.939f.58a6.728b]
+    [%eth-get-transaction-receipt 0xe11a.9017.5036.ba61.01e6.999d.1330.5fe0.75d9.f910.fa9f.8946.2a80.939f.58a6.728b]
   ==
 
 
@@ -74,10 +74,10 @@
 ::  error handling done
 ::  TESTED
 :: ;<  res=(list [@t res=@t])  bind:m  (batch-read-contract-strict:eth-provider ~[proto-read-data])
-;<  res=block  bind:m  (get-block-by-number:eth-provider get-block-by-number)
+;<  res=block:rpc:ethereum  bind:m  (get-block-by-number:eth-provider get-block-by-number)
 :: ;<  res=@ud  bind:m  (get-balance:eth-provider get-balance)
 :: ;<  res=@ud  bind:m  (get-next-nonce:eth-provider get-next-nonce)
-:: ;<  res=block  bind:m  (get-latest-block:eth-provider get-latest-block)
+:: ;<  res=block:rpc:ethereum  bind:m  (get-latest-block:eth-provider get-latest-block)
 :: ;<  res=(list id-response:ethdata)  bind:m  (request-batch-rpc-strict:eth-provider request-batch-rpc-loose)
 :: ;<  res=ethout:ethdata  bind:m  (request-batch-rpc-loose:eth-provider request-batch-rpc-loose)
 :: ;<  res=(unit transaction-result:rpc:ethereum)  bind:m  (get-tx-by-hash:eth-provider get-tx-by-hash)

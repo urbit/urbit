@@ -30,15 +30,17 @@
   [%eth-get-block-by-number block |]
 ::
 ++  parse-results
-  |=  res=(list [@t json])
+  |=  res=(list [id=(unit @t) res=response:rpc:ethereum])
   ^+  out
   %+  turn  res
-  |=  [id=@t =json]
+  |=  [id=(unit @t) resp=response:rpc:ethereum]
   ^-  [@ud @da]
-  :-  (slav %ud id)
-  %-  from-unix:chrono:userlib
-  %-  parse-hex-result:rpc:ethereum
-  ~|  json
-  ?>  ?=(%o -.json)
-  (~(got by p.json) 'timestamp')
+  ?~  id  !!
+  ?>  ?=([%block (unit block:rpc:ethereum)] resp)
+  ?~  +.resp  !!
+  =/  block  +>.resp
+  ~&  [%resp timestamp.u.block]
+  ?~  +.resp  !!
+  :-  (slav %ud +.id)
+  timestamp.u.block
 --

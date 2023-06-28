@@ -3,7 +3,7 @@
 ::    produces hex string result, for use with +decode-results:rpc:ethereum
 ::
 /-  rpc=json-rpc
-/+  eth-provider, strandio
+/+  ethio, strandio
 ::
 =>
   |%
@@ -23,7 +23,7 @@
 ::  send a step-size batch of transactions
 ::
 ;<  responses=(list response:rpc)  bind:m
-  %-  request-batch-rpc-loose:eth-provider
+  %+  request-batch-rpc-loose:ethio  url
   %+  turn  (scag step-size txs)
   |=  tx=@ux
   :-  `(scot %ux (end [3 10] tx))
@@ -71,7 +71,7 @@
 ::  get receipts
 ::
 ;<  responses=(list response:rpc)  bind:m
-  %-  request-batch-rpc-loose:eth-provider
+  %+  request-batch-rpc-loose:ethio  url
   %+  turn  ~(tap in p.pending)
   |=  txh=@ux
   :-  `(crip '0' 'x' ((x-co:co 64) txh))

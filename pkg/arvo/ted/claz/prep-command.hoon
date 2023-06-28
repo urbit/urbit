@@ -23,6 +23,7 @@
     ~&  [%gonna-get-nonce url as.command]
     ;<  nonce=@ud  bind:m
       (get-next-nonce:eth-provider as.command)
+    ~&  [%got-nonce nonce]
     (pure:m !>([%nonce nonce]))
 ::
 ++  check-invites

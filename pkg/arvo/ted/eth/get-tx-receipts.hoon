@@ -4,7 +4,7 @@
 ::    hashes. returns a (list [@t json]), where @t is the transaction hash in
 ::    hex written as a cord, and json is the receipt
 ::
-/+  ethereum, eth-provider, *strandio
+/+  ethereum, ethio, *strandio
 =,  jael
 ::
 |=  args=vase
@@ -24,7 +24,7 @@
 ::
 ++  request-receipts
   |=  [url=@t tx-hashes=(list @ux)]
-  %-  request-batch-rpc-strict:eth-provider
+  %-  request-batch-rpc-strict:ethio
   %+  turn  tx-hashes
   |=  txh=@ux
   ^-  [(unit @t) request:rpc:ethereum]

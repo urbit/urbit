@@ -654,14 +654,34 @@
         $%  [%number n=@ud]
             [%label l=?(%earliest %latest %pending)]
         ==
-      :: TODO pull in all attributes
       ++  block
         =<  block
         |%
-        +$  hash    @uxblockhash
-        +$  number  @udblocknumber
+        +$  hash       @uxblockhash
+        +$  number     @udblocknumber
+        +$  timestamp  @da
         +$  id      [=hash =number]
-        +$  block   [=id =parent=hash]
+        +$  block   
+          $:  =id 
+              =parent=hash
+              :: TODO uncles missing
+              :: TODO parse timestamp correctly
+              =timestamp
+              transaction-root=@ux
+              gas-limit=@ux
+              receipts-root=@ux
+              total-difficulty=@ux
+              nonce=@ux
+              gas-used=@ux
+              state-root=@ux
+              extra-data=@ux
+              miner=@ux
+              sha3-uncles=@ux
+              size=@ux
+              difficulty=@ux
+              logs-bloom=@ux
+              mix-hash=@ux
+          ==
         --
       --
   ::
@@ -961,7 +981,6 @@
     |=  =json
     ^-  (unit block)
     =<  ?~(. ~ `[[&1 &2] |2]:u)
-    ^-  (unit [@ @ @])
     ~|  json
     %.  json
     =,  dejs-soft:format
@@ -969,10 +988,35 @@
     :~  hash+parse-hex
         number+parse-hex
         'parentHash'^parse-hex
+        :: TODO change parser
+        'timestamp'^parse-hex-result-timestamp
+        :: TODO uncles (unit)
+        'transactionsRoot'^parse-hex
+        'gasLimit'^parse-hex
+        'receiptsRoot'^parse-hex
+        'totalDifficulty'^parse-hex
+        'nonce'^parse-hex
+        :: TODO transactions (unit)
+        'gasUsed'^parse-hex
+        'stateRoot'^parse-hex
+        'extraData'^parse-hex
+        'miner'^parse-hex
+        'sha3Uncles'^parse-hex
+        'size'^parse-hex
+        'difficulty'^parse-hex
+        'logsBloom'^parse-hex
+        'mixHash'^parse-hex
     ==
   ::::
   ++  parse-result  |=(jon=json jon)
   ++  parse-hex  |=(=json `(unit @)`(some (parse-hex-result json)))
+  ++  parse-hex-result-timestamp
+    |=  j=json
+    ^-  (unit @)
+    ?>  ?=(%s -.j)
+    %-  some
+    %-  from-unix:chrono:userlib
+    (hex-to-num p.j)
   ++  parse-hex-result
     |=  j=json
     ^-  @
