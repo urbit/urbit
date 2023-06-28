@@ -1374,7 +1374,9 @@
     =+  len=(cut 3 [4 2] hoot)
     =+  pat=(cut 3 [6 len] hoot)
     ~|  pat=pat
-    [(add 6 len) [(stab pat) num]]
+    :-  (add 6 len)
+    :_  num
+    (rash pat ;~(pfix fas (most fas (cook crip (star ;~(less fas prn))))))
   ::
   ++  sift-meow
     |=  =yowl
@@ -1527,7 +1529,10 @@
         file-path=term                                  ::
     ==                                                  ::
   +$  care                                              ::  clay submode
-    ?(%a %b %c %d %e %f %p %r %s %t %u %v %w %x %y %z)  ::
+    $?  %a  %b  %c  %d  %e  %f                          ::
+        %p  %q  %r  %s  %t  %u                          ::
+        %v  %w  %x  %y  %z                              ::
+    ==                                                  ::
   +$  cash                                              ::  case or tako
     $%  [%tako p=tako]                                  ::
         case                                            ::
@@ -2069,7 +2074,10 @@
     $%  [%payload =simple-payload:http]
     ==  ==
   +$  gift
-    $%  ::  set-config: configures the external http server
+    $%  ::  ames responses
+        ::
+        $>(?(%boon %done) gift:ames)
+        ::  set-config: configures the external http server
         ::
         ::    TODO: We need to actually return a (map (unit @t) http-config)
         ::    so we can apply configurations on a per-site basis
@@ -2100,6 +2108,9 @@
         ::  new unix process
         ::
         $>(%born vane-task)
+        ::  network request
+        ::
+        $>(%plea vane-task)
         ::  trim state (in response to memory pressure)
         ::
         $>(%trim vane-task)
@@ -2112,6 +2123,11 @@
         ::  update http configuration
         ::
         [%rule =http-rule]
+        ::  set a base url for eauth, like `'https://sampel.com'
+        ::
+        ::    eyre will append /~/eauth to it internally to redirect into eauth
+        ::
+        [%eauth-host host=(unit @t)]
         ::  starts handling an inbound http request
         ::
         [%request secure=? =address =request:http]
@@ -2193,6 +2209,18 @@
     $:  ::  sessions: a mapping of session cookies to session information
         ::
         sessions=(map @uv session)
+        ::  visitors: in-progress incoming eauth flows
+        ::
+        visitors=(map @uv visitor)
+        ::  visiting: outgoing eauth state per ship
+        ::
+        visiting=(map ship logbook)
+        ::  endpoint: hardcoded local eauth endpoint for %syn and %ack
+        ::
+        ::    user-configured or auth-o-detected, with last-updated timestamp.
+        ::    both shaped like 'prot://host'
+        ::
+        endpoint=[user=(unit @t) auth=(unit @t) =time]
     ==
   ::  +session: server side data about a session
   ::
@@ -2214,13 +2242,72 @@
         ::  mint some sort of long lived cookie for mobile apps which only has
         ::  access to a single application path.
     ==
+  ::  +visitor: completed or in-progress incoming eauth flow
+  ::
+  ::    duct: boon duct
+  ::      and
+  ::    sesh: login completed, session exists
+  ::      or
+  ::    pend: awaiting %tune for %keen sent at time, for initial eauth http req
+  ::    ship: the @p attempting to log in
+  ::    base: local protocol+hostname the attempt started on, if any
+  ::    last: the url to redirect to after log-in
+  ::    toke: authentication secret received over ames or offered by visitor
+  ::
+  +$  visitor
+    $:  duct=(unit duct)
+    $@  sesh=@uv
+    $:  pend=(unit [http=duct keen=time])
+        ship=ship
+        base=(unit @t)
+        last=@t
+        toke=(unit @uv)
+    ==  ==
+  ::  +logbook: record of outgoing eauth comms & state
+  ::
+  ::    qeu: a queue of nonces for to-be-n/acked pleas
+  ::    map: per nonce, completed or pending eauth session
+  ::
+  +$  logbook  [=(qeu @uv) =(map @uv portkey)]
+  ::  +portkey: completed or in-progress outgoing eauth flow
+  ::
+  ::    made: live since
+  ::      or
+  ::    duct: confirm request awaiting redirect
+  ::    toke: secret to include in redirect, unless aborting
+  ::
+  +$  portkey
+    $@  made=@da          ::  live since
+    $:  pend=(unit duct)  ::  or await redir
+        toke=(unit @uv)   ::  with secret
+    ==
+  ::  +eauth-plea: client talking to host
+  ::
+  +$  eauth-plea
+    $:  %0
+    $%  ::  %open: client decided on an attempt, wants to return to url
+        ::  %shut: client wants the attempt or session closed
+        ::
+        [%open nonce=@uv token=(unit @uv)]
+        [%shut nonce=@uv]
+    ==  ==
+  ::  +eauth-boon: host responding to client
+  ::
+  +$  eauth-boon
+    $:  %0
+    $%  ::  %okay: attempt heard, client to finish auth through url
+        ::  %shut: host has expired the session
+        ::
+        [%okay nonce=@uv url=@t]
+        [%shut nonce=@uv]
+    ==  ==
   ::  $identity: authentication method & @p
   ::
   +$  identity
     $~  [%ours ~]
     $%  [%ours ~]                                       ::  local, root
         [%fake who=@p]                                  ::  guest id
-        :: [%real who=@p]                                  ::  authed cross-ship
+        [%real who=@p]                                  ::  authed cross-ship
     ==
   ::  channel-state: state used in the channel system
   ::
@@ -2338,6 +2425,9 @@
         ::  internal authentication page
         ::
         [%authentication ~]
+        ::  cross-ship authentication handling
+        ::
+        [%eauth ~]
         ::  internal logout page
         ::
         [%logout ~]
@@ -3103,6 +3193,30 @@
   ::                                                    ::
   +$  shed  _*form:(strand:rand ,vase)                  ::  compute vase
   --  ::khan
+::                                                      ::::
+::::                    ++lick                            ::  (1j) IPC
+  ::                                                    ::::
+++  lick  ^?
+  |%
+  +$  gift                                              ::  out result <-$
+    $%  [%spin =name]                                   ::  open an IPC port
+        [%shut =name]                                   ::  close an IPC port
+        [%spit =name =mark =noun]                       ::  spit a noun to the IPC port
+        [%soak =name =mark =noun]                       ::  soak a noun from the IPC port
+    ==
+  +$  task                                              ::  in request ->$
+    $~  [%vega ~]                                       ::
+    $%  $>(%born vane-task)                             ::  new unix process
+        $>(%trim vane-task)                             ::  trim state
+        $>(%vega vane-task)                             ::  report upgrade
+        [%spin =name]                                   ::  open an IPC port
+        [%shut =name]                                   ::  close an IPC port
+        [%spit =name =mark =noun]                       ::  spit a noun to the IPC port
+        [%soak =name =mark =noun]                       ::  soak a noun from the IPC port
+    ==
+  ::
+  +$  name  path
+  --  ::lick
 ::
 ++  rand                                                ::  computation
   |%
@@ -3305,6 +3419,7 @@
       gift:iris
       gift:jael
       gift:khan
+      gift:lick
   ==
 +$  task-arvo                                           ::  in request ->$
   $%  task:ames
@@ -3316,6 +3431,7 @@
       task:iris
       task:jael
       task:khan
+      task:lick
   ==
 +$  note-arvo                                           ::  out request $->
   $~  [%b %wake ~]
@@ -3328,6 +3444,7 @@
       [%i task:iris]
       [%j task:jael]
       [%k task:khan]
+      [%l task:lick]
       [%$ %whiz ~]
       [@tas %meta vase]
   ==
@@ -3350,6 +3467,7 @@
       [%iris gift:iris]
       [%jael gift:jael]
       [%khan gift:khan]
+      [%lick gift:lick]
   ==
 ::  $unix-task: input from unix
 ::

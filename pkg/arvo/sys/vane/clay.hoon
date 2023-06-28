@@ -160,6 +160,8 @@
       [%1 =desk =lobe]
   ==
 ::
+::  All except %1 are deprecated
+::
 +$  fell
   $%  [%direct p=lobe q=page]
       [%delta p=lobe q=[p=mark q=lobe] r=page]
@@ -943,7 +945,7 @@
         %-  road  |.
         ((pile-rule pax) [1 1] tex)
       ?^  res  pile.u.res
-      %-  mean  %-  flop
+      %-  mean
       =/  lyn  p.hair
       =/  col  q.hair
       ^-  (list tank)
@@ -1544,7 +1546,7 @@
     ::
     ++  good-care
       |=  =care
-      (~(has in ^~((silt `(list ^care)`~[%u %w %x %y %z]))) care)
+      (~(has in ^~((silt `(list ^care)`~[%q %u %w %x %y %z]))) care)
     --
   ::
   ::  Build and send agents to gall
@@ -3362,6 +3364,7 @@
           %s  ~|  %please-dont-get-your-takos-over-a-network  !!
           %t  ~|  %requesting-foreign-directory-is-vaporware  !!
           %v  ~|  %weird-shouldnt-get-v-request-from-network  !!
+          %q  `[p %noun q]:r.rand
           %u  `(validate-u r.rand)
           %w  `(validate-w r.rand)
           %x  (validate-x [p.p q.p q r]:rand)
@@ -3566,7 +3569,7 @@
             ==  ==
           ::  make the request over remote scry
           ::
-          =/  =mood  [%x uv+tako path]:i.need.sat
+          =/  =mood  [%q uv+tako path]:i.need.sat
           =<  [`[%back-index -] +]
           (send-over-scry %back-index hen her inx syd mood)
         ::  otherwise, request over ames
@@ -4255,6 +4258,27 @@
         ^-  (list (pair path lobe))
         [[~ ?~(us *lobe u.us)] descendants]
       |=([[path lobe] @uvI] (shax (jam +<)))
+    ::  +read-q: typeless %x
+    ::
+    ::  useful if the marks can't be built (eg for old marks built
+    ::  against an incompatible standard library).  also useful if you
+    ::  don't need the type (eg for remote scry) because it's faster.
+    ::
+    ++  read-q
+      |=  [tak=tako pax=path]
+      ^-  (unit (unit cage))
+      ?:  =(0v0 tak)
+        [~ ~]
+      =+  yak=(tako-to-yaki tak)
+      =+  lob=(~(get by q.yak) pax)
+      ?~  lob
+        [~ ~]
+      =/  peg=(unit page)  (~(get by lat.ran) u.lob)
+      ::  if tombstoned, nothing to return
+      ::
+      ?~  peg
+        ~
+      ``[p.u.peg %noun q.u.peg]
     ::  +read-r: %x wrapped in a vase
     ::
     ++  read-r
@@ -4449,23 +4473,15 @@
     ++  read-x
       |=  [tak=tako pax=path]
       ^-  [(unit (unit cage)) _..park]
-      ?:  =(0v0 tak)
-        [[~ ~] ..park]
-      =+  yak=(tako-to-yaki tak)
-      =+  lob=(~(get by q.yak) pax)
-      ?~  lob
-        [[~ ~] ..park]
-      =/  peg=(unit page)  (~(get by lat.ran) u.lob)
-      ::  if tombstoned, nothing to return
-      ::
-      ?~  peg
-        [~ ..park]
+      =/  q  (read-q tak pax)
+      ?~  q    `..park
+      ?~  u.q  `..park
       ::  should convert any lobe to cage
       ::
       =^  =cage  ..park
         %+  tako-flow  tak
         %-  wrap:fusion
-        (page-to-cage:(tako-ford tak) u.peg)
+        (page-to-cage:(tako-ford tak) p.u.u.q q.q.u.u.q)
       [``cage ..park]
     ::
     ::  Gets an arch (directory listing) at a node.
@@ -4539,6 +4555,7 @@
           %e  (read-e tak path.mun)
           %f  (read-f tak path.mun)
           %p  [(read-p path.mun) ..park]
+          %q  [(read-q tak path.mun) ..park]
           %r  (read-r tak path.mun)
           %s  [(read-s tak path.mun case.mun) ..park]
           %t  [(read-t tak path.mun) ..park]
@@ -6204,12 +6221,15 @@
         ?:  ?=(%boon +<.hin)  `;;(fell payload.hin)
         ?~  roar.hin  ~
         ?~  q.dat.u.roar.hin  ~
-        =*  pag  u.q.dat.u.roar.hin
-        `[%direct (page-to-lobe pag) pag]
+        `[%1 `u.q.dat.u.roar.hin]
       ::
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
         ?~  fell
+          ::  We shouldn't get back null on any of the fine requests we
+          ::  make unless they're out of date
+          ::
+          %-  (slog leaf+"clay: got null from {<her>}, falling back to ames" ~)
           abet:(retry-with-ames:den %back-index index)
         =?  den  ?=(%tune +<.hin)
           (cancel-scry-timeout:den index)
