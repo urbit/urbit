@@ -43,7 +43,7 @@
       $=  plan
       $~  [%nat ~]
       $%  [%nat ~]
-          [%pub ip=(unit @if)]
+          [%pub ip=(unit @t)]
       ==
   ==
 --
@@ -244,18 +244,14 @@
           `state
         ::
         =*  body  q.data.u.full-file.resp
-        =/  ip  (slaw %if (cat 3 '.' (end [3 (dec (met 3 body))] body)))
-        ?~  ip
-          %-  %:  slog
-                'ping: ip check body not an ip:'
-                >q.data.u.full-file.resp<
-                ~
-              ==
+        ?~  body
+          %-  (slog 'ping: ip check body empty' ~)
           `state
         ::
-        ?:  =(ip.plan.state ip)  `state
+        =/  ip  (end [3 (dec (met 3 body))] body)
+        ?:  =(ip.plan.state `ip)  `state
         ::
-        =.  ip.plan.state  ip
+        =.  ip.plan.state  `ip
         (send-pings our)
       ::
       ++  set-timer
