@@ -277,7 +277,7 @@
         (set-timer now)
       --
     --
-%+  verb  &
+%+  verb  |
 ^-  agent:gall
 |_  =bowl:gall
 +*  this  .
