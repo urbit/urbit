@@ -1153,7 +1153,13 @@
         =/  =note-arvo
           =/  prov=path  /gall/[agent-name]
           ?-  -.neet
-            %arvo   +.neet
+            %arvo   ?.  ?=([%l *] +.neet)
+                      +.neet
+                    ?+  +.neet
+                      ~|(%nope !!)
+                      [%l ?(%spin %shut) *]  +.neet(name [agent-name name.+.neet])
+                      [%l %spit *]           +.neet(name [agent-name name.+.neet])
+                    ==
             %huck   note-arvo.neet
             %agent  [%g %deal [our ship.neet prov] [name task]:neet]
           ==
@@ -1277,7 +1283,7 @@
       ::
       ?.  ?&  ?=(%x care)
               ?=([~ ~ *] p.peek-result)
-              !=(mark p.u.u.p.peek-result)
+              !=(want p.u.u.p.peek-result)
           ==
         p.peek-result
       ::  for %x scries, attempt to convert to the requested mark if needed
@@ -1397,6 +1403,15 @@
       ~/  %ap-generic-take
       |=  [=wire =sign-arvo]
       ^+  ap-core
+      =?  sign-arvo  ?=([%lick *] sign-arvo)
+        ?+  sign-arvo
+          ~|(%nope !!)
+        ::
+            [%lick %soak *]
+          =-  sign-arvo(name -)
+          ?>  &(?=(^ name.sign-arvo) =(agent-name i.name.sign-arvo))
+          t.name.sign-arvo
+        ==
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
         (on-arvo:ap-agent-core wire sign-arvo)

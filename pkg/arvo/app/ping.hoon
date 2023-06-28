@@ -9,7 +9,7 @@
 ::  Note this issue manifests itself even for bootstrapping a planet to
 ::  talk to its own star.
 ::
-/+  default-agent, verb
+/+  default-agent, verb, dbug
 =*  point  point:kale
 ::
 |%
@@ -20,6 +20,8 @@
       [%waiting until=@da]
   ==
 --
+::
+%-  agent:dbug
 ::
 =|  state=[%0 ships=(map ship [=rift =ship-state])]
 =>  |%
@@ -117,6 +119,11 @@
           (stop-ping-ship our now i.old-ships)
         =.  state  new-state
         loop(old-ships t.old-ships)
+      ::
+      ::  NB: !! This includes our own ship, and for moons, this is what
+      ::  has caused Jael to fetch our own rift from our parent.  This
+      ::  role may be taken by Ames's subscription to %public-keys, but
+      ::  this must be tested before changing the behavior here.
       ::
       =/  new-ships  (saxo:title our now our)
       |-  ^-  (quip card _state)
