@@ -790,6 +790,7 @@
   ::    %vega: kernel reload notification
   ::
   +$  task
+    $+  ames-task
     $%  [%hear =lane =blob]
         [%heed =ship]
         [%jilt =ship]
@@ -971,6 +972,7 @@
   ::    %known: we know their life and public keys, so we have a channel
   ::
   +$  ship-state
+    $+  ship-state
     $%  [%alien alien-agenda]
         [%known peer-state]
     ==
@@ -981,6 +983,7 @@
   ::    heeds: local tracking requests; passed through into $peer-state
   ::
   +$  alien-agenda
+    $+  alien-agenda
     $:  messages=(list [=duct =plea])
         packets=(set =blob)
         heeds=(set duct)
@@ -1008,6 +1011,7 @@
   ::    corked:  bones closed on both sender and receiver
   ::
   +$  peer-state
+    $+  peer-state
     $:  $:  =symmetric-key
             =life
             =rift
@@ -1026,6 +1030,7 @@
         keens=(map path keen-state)
     ==
   +$  keen-state
+    $+  keen-state
     $:  wan=((mop @ud want) lte)  ::  request packets, sent
         nex=(list want)           ::  request packets, unsent
         hav=(list have)           ::  response packets, backward
@@ -1144,6 +1149,7 @@
   ::    packet-pump-state: state of corresponding |packet-pump
   ::
   +$  message-pump-state
+    $+  message-pump-state
     $:  current=_`message-num`1
         next=_`message-num`1
         unsent-messages=(qeu message-blob)
@@ -1164,6 +1170,7 @@
   ::    metrics: congestion control information
   ::
   +$  packet-pump-state
+    $+  packet-pump-state
     $:  next-wake=(unit @da)
         live=((mop live-packet-key live-packet-val) lte-packets)
         metrics=pump-metrics
@@ -1238,6 +1245,7 @@
   ::    live-messages: partially received messages
   ::
   +$  message-sink-state
+    $+  message-sink-state
     $:  last-acked=message-num
         last-heard=message-num
         pending-vane-ack=(qeu [=message-num message=*])
