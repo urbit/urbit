@@ -9,27 +9,48 @@
   |=  [runs=@ drop=@]
   ~&  [success-runs+runs drops+drop]
   %.y
+++  run
+  |=  [vax=vase sam=vase]
+  =/  tres=toon  (mong [q.vax q.sam] |=(^ ~))
+  ?-  tres
+    [%0 *]  p.tres            :: executed successfully
+    [%1 *]  ~&  %why-scry  |  :: fate tried scrying
+    :: fate crashed. print trace and report failure.
+    ::
+    [%2 *]  ~&  err+(turn p.tres |=(tank ~(ram re +6)))  |
+  ==
 ++  check                            :: main test runner
   |*  [vax=vase norn=(unit (norn)) alts=(unit $-(vase (list vase)))]
-  =?  runs  =(0 runs)  100
-  =+  size=1
-  =+  sax=(slot 6 vax)
-  =+  run-i=0
+  =?  runs  =(0 runs)  100   :: default to 100 runs
+  =+  run-i=0                :: counter of which run we are on
+  =+  size=1                 :: this will only grow
+  =+  sax=(slot 6 vax)       :: vase of the sample of the fate
   =+  rng=~(. og eny)
-  =+  drop=0
-  =+  tried=*(set noun)
-  =+  tries=0
+  =+  drop=0                 :: counter of how many times we dropped
+  =+  tried=*(set noun)      :: all samples we have tried
+  =+  tries=0                :: how many times we have had sample collisions
+  ::
+  :: main loop
+  ::
   |-  ^-  ?
   ?:  =(run-i runs)
     (fin runs drop)
   =+  [fill-rng next-rng]=(split-rng rng)
   =/  sam=vase
     ?~  norn
+      :: in case no norn is given, we will use the default (fill).
+      :: fill is not a norn, because it acts on a vase and changes its value.
+      ::
       (~(fill quiz [size fill-rng]) sax)
+    :: in case a norn is given, use that.
+    ::
     [p=p.sax q=(u.norn size fill-rng)]
   :: arbitrarily chosen growth pace.
   ::
   =+  new-size=(add +(size) (div (mul size 2) 21))
+  :: if we have tried this sample before, count the collision, keep going.
+  :: unless there are too many collisions, then we give up (%tired)
+  ::
   ?:  (~(has in tried) q.sam)
     =.  tries  +(tries)
     ?.  =(tries 1.000)
@@ -37,7 +58,8 @@
     ~&  %tired
     (fin run-i drop)
   =.  tried  (~(put in tried) sam)
-  :: run virtualized to catch crashes
+  :: slam the fate with the random sample.
+  :: virtualized slam to catch and report crashes.
   ::
   =/  tres=toon
     (mong [q.vax q.sam] |=(^ ~))
