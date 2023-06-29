@@ -10,7 +10,7 @@
 :: dropped. if the test runner runs out of entropy, it will report how many
 :: samples were actually run.
 :: %quiz can generate most types of samples automatically. in many instances,
-:: it's preferable however for the user to supply a 'giver' gate that generates
+:: it's preferable however for the user to supply a 'norn' gate that generates
 :: samples. this is because the user may have some knowledge about the domain
 :: that can be used to generate more interesting samples. for example, if you
 :: are testing a sorting algorithm, you may want to generate sorted lists.
@@ -19,8 +19,8 @@
 :: called 'alts', because it returns a list of alternative samples, that should
 :: be in some sense smaller than the original sample.
 |%
-:: give an easier name to this core.
-++  giv  givers.quiz
+:: assign an easier name to this core.
+++  nor  norns.quiz
 :: declare standard parameters for check.
 :: every instance of quiz is seeded with some entropy.
 :: that means test runs will not be flaky and will run exactly the same
@@ -60,7 +60,7 @@
   =+  fate=!>(|=([a=? b=?] |(=(a b) ?!(=(a b)))))
   %-  expect  !>((check fate ~ ~))
 ++  test-giving
-  :: here we supply the quiz libary with a 'giver', a gate that generates input.
+  :: here we supply the quiz libary with a 'norn', a gate that generates input.
   :: in our case, it's sorted lists of natural numbers, descending.
   =/  fate
     !>
@@ -85,7 +85,7 @@
     |=  a=(list @ud)
     =(a (sort a gth))
   =/  give
-    ^-  (give.quiz (list @ud))
+    ^-  (norn.quiz (list @ud))
     |=  [size=@ud rng=_og]
     |-
     ^-  (list @ud)
@@ -114,44 +114,44 @@
   =+  fate=!>(|=([a=(list @ud) b=(list @ud)] ^-(? &((gth 50 (lent a)) =((flop (weld a b)) (weld (flop b) (flop a)))))))
   %-  expect  !>((check fate ~ ~))
 ++  test-flop-2
-  :: in the following we use quiz's built-in "giver" for lists.
+  :: in the following we use quiz's built-in 'norn' for lists.
   :: it is far more intelligent in list creation than the default behavior.
   :: for example, it will create lists of random lengths with a much better
   :: distribtuion, gradually growing the likely length of the list every run.
-  :: here we use some combinators to create new givers.
+  :: here we use some combinators to create new norns.
   =+  fate=!>(|=([a=(list @ud) b=(list @ud)] ^-(? &((gth 100 (lent a)) =((flop (weld a b)) (weld (flop b) (flop a)))))))
   :: we can generate a list of any type.
-  :: specify the type of the elements of the list by passing the mold to the list giver.
-  :: then pass it a giver of that type.
-  =+  giel=((list:giv @ud) (atom:giv @ud))
-  =+  gief=((cell:giv (list @ud) (list @ud)) giel giel)
+  :: specify the type of the elements of the list by passing the mold to the list norn.
+  :: then pass it a norn of that type.
+  =+  giel=((list:nor @ud) (atom:nor @ud))
+  =+  gief=((cell:nor (list @ud) (list @ud)) giel giel)
   %+  weld
   :: this will generate even some very long lists with high probability.
   %+  expect-eq  !>(|)  !>((check fate `gief ~))
   :: if we fix the test to remove the bug where we only accepted short lists, the fate is heeded.
   =+  fate=!>(|=([a=(list @ud) b=(list @ud)] ^-(? =((flop (weld a b)) (weld (flop b) (flop a))))))
   %-  expect  !>((check fate ~ ~))
-++  test-giver-const
-  :: here, part of the sample always stays the same, because we use the constant giver.
+++  test-norn-const
+  :: here, part of the sample always stays the same, because we use the constant norn.
   =+  fate=!>(|=([@ @tas] =(+13 %constant)))
-  =+  gief=((cell:giv * @tas) noun:giv ((const:giv @tas) %constant))
+  =+  gief=((cell:nor * @tas) noun:nor ((const:nor @tas) %constant))
   %-  expect  !>((check fate `gief ~))
-++  test-giver-freq
-  :: the freq giver lets you specify a list of generators and have each chosen with a different frequency.
+++  test-norn-freq
+  :: the freq norn lets you specify a list of generators and have each chosen with a different frequency.
   :: in this case, we will mostly generate atoms, and sometimes a noun where the subtrees are equal.
   :: we should observe a %drop rate of ~67 percent.
   =+  fate=!>(|=(* ?.(.?(+6) %drop =(+12 +13))))
-  =/  dup=(give.quiz *)
+  =/  dup=(norn.quiz *)
     |=  [size=@ud rng=_og]
     ^-  *
-    =+  a=(noun:giv size rng)
+    =+  a=(noun:nor size rng)
     [a a]
-  =/  l=(list (pair @ (give.quiz *)))  ~[[3 (atom:giv @)] [1 dup]]
-  =+  gief=((freq:giv *) l)
+  =/  l=(list (pair @ (norn.quiz *)))  ~[[3 (atom:nor @)] [1 dup]]
+  =+  gief=((freq:nor *) l)
   %-  expect  !>((check fate `gief ~))
-++  test-giver-pick
-  :: the pick giver is similar to the freq giver, but assigns equal probability to each giver.
+++  test-norn-pick
+  :: the pick norn is similar to the freq norn, but assigns equal probability to each norn.
   =+  fate=!>(|=(a=@ ?:(=(a 2) %drop =(a 3))))
-  =+  gief=((pick:giv @) ~[((const:giv @) 2) ((const:giv @) 3)])
+  =+  gief=((pick:nor @) ~[((const:nor @) 2) ((const:nor @) 3)])
   %-  expect  !>((check fate `gief ~))
 --

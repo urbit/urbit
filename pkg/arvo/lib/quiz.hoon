@@ -1,5 +1,5 @@
 |_  [eny=@uv runs=@ud]
-++  give
+++  norn
   |$  [sam]
   $-([@ud _og] sam)
 ++  fin
@@ -7,7 +7,7 @@
   ~&  [success-runs+runs drops+drop]
   %.y
 ++  check
-  |*  [vax=vase give=(unit (give)) alts=(unit $-(vase (list vase)))]
+  |*  [vax=vase norn=(unit (norn)) alts=(unit $-(vase (list vase)))]
   =?  runs  =(0 runs)  100
   =+  size=1
   =+  sax=(slot 6 vax)
@@ -21,9 +21,9 @@
     (fin runs drop)
   =+  [fill-rng next-rng]=(split-rng rng)
   =/  sam=vase
-    ?~  give
+    ?~  norn
       (~(fill quiz [size fill-rng]) sax)
-    [p=p.sax q=(u.give size fill-rng)]
+    [p=p.sax q=(u.norn size fill-rng)]
   :: Arbitrarily chosen growth pace.
   =+  new-size=(add +(size) (div (mul size 2) 21))
   ?:  (~(has in tried) q.sam)
@@ -57,7 +57,7 @@
       $(sunk t.sunk)
     =.  sam  i.sunk
     $(sunk (sink i.sunk))
-  ~&  [fail-with-sam+(noah simp) drops+drop]
+  ~&  [defy-with-sam+(noah simp) drops+drop]
   %.n
 ++  sink
   |=  sax=vase
@@ -101,10 +101,10 @@
     ^+  sax
     =+  new-rng=+:(rads:rng 1)
     ?+  p.sax  ~&(warn-unfill-sam+`type`p.sax sax)
-      %noun            !>  (noun:givers size new-rng)
-      [%atom p=* q=~]  !>  ((atom:givers @) size new-rng)
+      %noun            !>  (noun:norns size new-rng)
+      [%atom p=* q=~]  !>  ((atom:norns @) size new-rng)
       [%atom *]        sax(q (need q.p.sax))
-      :: TODO use cell:givers
+      :: TODO use cell:norns
       [%cell *]        =+  [rng-1 rng-2]=(split-rng rng)
                        %+  slop  (fill(rng rng-1) (slot 2 sax))
                                  (fill(rng rng-2) (slot 3 sax))
@@ -125,17 +125,17 @@
   =+  bit-size=256
   =^  bits-1  rng  (raws:rng bit-size)
   [~(. og bits-1) ~(. og (raw:rng bit-size))]
-++  givers
+++  norns
   |%
-  :: value givers
+  :: value norns
   ++  atom
     :: TODO: differentiate by aura. some values won't be valid depending on aura.
     |*  [a=mold]
-    ^-  (give a)
+    ^-  (norn a)
     |=  [size=@ud rng=_og]
     (rad:rng size)
   ++  noun
-    ^-  (give *)
+    ^-  (norn *)
     |=  [size=@ud rng=_og]
     =+  start-size=size
     |-
@@ -155,39 +155,39 @@
   ++  const
     |*  a=mold
     |=  x=a
-    ^-  (give a)
+    ^-  (norn a)
     |=  [=@ud =_og]
     x
   ++  cell
     |*  [a=mold b=mold]
-    |=  [givp=(give a) givq=(give b)]
-    ^-  (give $:(a b))
+    |=  [givp=(norn a) givq=(norn b)]
+    ^-  (norn $:(a b))
     |=  [size=@ud rng=_og]
     =+  [rng-1 rng-2]=(split-rng rng)
     [(givp size rng-1) (givq size rng-2)]
   ++  freq
     |*  a=mold
-    |=  b=(^list (pair @ (give a)))
-    ^-  (give a)
+    |=  b=(^list (pair @ (norn a)))
+    ^-  (norn a)
     =+  tot=(roll (turn b head) add)
     |=  [size=@ud rng=_og]
     =^  ran  rng  (rads:rng tot)
     |-
-    ?~  b  !!  :: impossible
-    =/  [f=@ p=(give a)]  i.b
+    ?~  b  ~|  %impossible-bug-in-quiz-please-report  !!
+    =/  [f=@ p=(norn a)]  i.b
     ?:  (lth ran f)
       (p size rng)
     $(b t.b, ran (sub ran f))
   ++  pick
     |*  a=mold
-    |=  b=(^list (give a))
-    ^-  (give a)
-    =+  c=(turn b |=(b=(give a) [1 b]))
+    |=  b=(^list (norn a))
+    ^-  (norn a)
+    =+  c=(turn b |=(b=(norn a) [1 b]))
     ((freq a) c)
   ++  list
     |*  a=mold
-    |=  give=(give a)
-    ^-  (^give (^list a))
+    |=  norn=(norn a)
+    ^-  (^norn (^list a))
     |=  [size=@ud rng=_og]
     =+  stop=size
     |-
@@ -196,7 +196,7 @@
     ?:  =(ran 0)
       ~
     =^  ran  rng  (rads:rng size)
-    =+  head=(give size rng)
+    =+  head=(norn size rng)
     =^  ran  rng  (rads:rng size)
     =+  tail=$(stop (div stop 2), rng rng)
     [i=head t=tail]
