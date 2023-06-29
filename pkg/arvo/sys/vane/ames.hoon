@@ -5005,10 +5005,12 @@
         |=  [=bone sink=message-sink-state]
         ^+  sink
         =/  target=^bone  (mix 0b10 bone)
-        ?.  =(%3 (mod target 4))  sink
+        ?.  =(%3 (mod target 4))
+          sink
+        ?~  pump=(~(get by snd.ship-state) target)
+          sink
         %_    sink
             nax
-          =/  pump=message-pump-state-14  (~(got by snd.ship-state) target)
           %-  ~(rep in nax.sink)
           |=  [=message-num nax=(set message-num)]
           ::  we keep messages in the queue that have not been acked.
@@ -5016,7 +5018,7 @@
           ::  less than the current message, +pump-done:mu had been called,
           ::  so the message-num can be safely removed
           ::
-          =?  nax  (gte message-num current.pump)
+          =?  nax  (gte message-num current.u.pump)
             (~(put in nax) message-num)
           nax
         ==
