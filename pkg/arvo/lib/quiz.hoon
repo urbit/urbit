@@ -24,6 +24,7 @@
     ?~  give
       (~(fill quiz [size fill-rng]) sax)
     [p=p.sax q=(u.give size fill-rng)]
+  :: Arbitrarily chosen growth pace.
   =+  new-size=(add +(size) (div (mul size 2) 21))
   ?:  (~(has in tried) q.sam)
     =.  tries  +(tries)
@@ -43,7 +44,6 @@
     ==
   =?  drop  =(res %drop)  +(drop)
   ?:  |(=(res %drop) =(res %.y))
-    :: Arbitrarily chosen growth pace.
     $(run-i +(run-i), rng next-rng, size new-size)
   ?>  =(res %.n)
   =+  sink=?~(alts sink u.alts)
