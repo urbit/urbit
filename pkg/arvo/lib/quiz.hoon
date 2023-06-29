@@ -32,7 +32,15 @@
     ~&  %tired
     (fin run-i drop)
   =.  tried  (~(put in tried) sam)
-  =+  res=(slum q.vax q.sam)
+  :: run virtualized to catch crashes
+  =/  tres=toon
+    (mong [q.vax q.sam] |=(^ ~))
+  =+  ^=  res
+    ?-  tres
+      [%0 *]  p.tres
+      [%1 *]  ~&  %why-scry  |
+      [%2 *]  ~&  err+(turn p.tres |=(tank ~(ram re +6)))  |
+    ==
   =?  drop  =(res %drop)  +(drop)
   ?:  |(=(res %drop) =(res %.y))
     :: Arbitrarily chosen growth pace.

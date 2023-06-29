@@ -39,4 +39,7 @@
 ++  test-drop
   =+  fate=!>(|=(@ud ^-($?(? %drop) ?:(=(0 +6) %drop =(+6 +((dec +6)))))))
   %-  expect  !>((check fate ~ ~))
+++  test-crash
+  =+  fate=!>(|=(@ud ^-($?(? %drop) !!)))
+  %+  expect-eq  !>(|)  !>((check fate ~ ~))
 --
