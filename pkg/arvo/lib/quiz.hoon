@@ -61,14 +61,7 @@
   :: slam the fate with the random sample.
   :: virtualized slam to catch and report crashes.
   ::
-  =/  tres=toon
-    (mong [q.vax q.sam] |=(^ ~))
-  =+  ^=  res
-    ?-  tres
-      [%0 *]  p.tres
-      [%1 *]  ~&  %why-scry  |
-      [%2 *]  ~&  err+(turn p.tres |=(tank ~(ram re +6)))  |
-    ==
+  =+  res=(run vax sam)
   =?  drop  =(res %drop)  +(drop)
   ?:  |(=(res %drop) =(res %.y))
     $(run-i +(run-i), rng next-rng, size new-size)
@@ -79,8 +72,8 @@
     |-
     ?~  sunk
       sam
-    =+  res=(slam vax i.sunk)
-    ?:  |(=(+:res %.y) =(+:res %drop))
+    =+  res=(run vax i.sunk)
+    ?:  |(=(res %.y) =(res %drop))
       $(sunk t.sunk)
     =.  sam  i.sunk
     $(sunk (sink i.sunk))
@@ -129,7 +122,8 @@
     =+  new-rng=+:(rads:rng 1)
     ?+  p.sax  ~&(warn-unfill-sam+`type`p.sax sax)
       %noun            !>  (noun:norns size new-rng)
-      [%atom p=* q=~]  !>  ((atom:norns @) size new-rng)
+      [%atom p=* q=~]  =+  new=((atom:norns @) size new-rng)
+                       sax(q new)
       [%atom *]        sax(q (need q.p.sax))
       :: TODO: use cell:norns
       ::
