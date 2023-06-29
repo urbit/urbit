@@ -1,4 +1,5 @@
 /+  quiz, *test
+:: unit tests for the %quiz library.
 |%
 ++  check  ~(check quiz `@uv`1 99)
 ++  test-ud

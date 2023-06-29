@@ -1,5 +1,25 @@
 /+  quiz, *test
+:: this file contains example tests for how to use the quiz library.
+:: the quiz library is a library for property-based testing.
+:: it is inspired by the haskell library quickcheck.
+:: the idea is that you write a gate that takes a sample and returns a loobean.
+:: the gate is then run with a number of random samples, and the results are
+:: checked for consistency. if the gate returns %.y for all samples, the test
+:: passes. if it returns %.n for any sample, the test fails. if it returns
+:: %drop for any sample, the test runner will report how many samples were
+:: dropped. if the test runner runs out of entropy, it will report how many
+:: samples were actually run.
+:: %quiz can generate most types of samples automatically. in many instances,
+:: it's preferable however for the user to supply a 'giver' gate that generates
+:: samples. this is because the user may have some knowledge about the domain
+:: that can be used to generate more interesting samples. for example, if you
+:: are testing a sorting algorithm, you may want to generate sorted lists.
+:: %quiz can also shrink samples automatically. but here, too, the user may
+:: supply a gate that shrinks samples in a more intelligent way. this gate is
+:: called 'alts', because it returns a list of alternative samples, that should
+:: be in some sense smaller than the original sample.
 |%
+:: give an easier name to this core.
 ++  giv  givers.quiz
 :: declare standard parameters for check.
 :: every instance of quiz is seeded with some entropy.
