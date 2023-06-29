@@ -165,7 +165,3 @@
     "[bone={<target>} nonce={<nonce>} agent={<app>} close={<closing>}] {<path>}"
   (~(put ^in n) [ship target])
 --
-
-
-
-

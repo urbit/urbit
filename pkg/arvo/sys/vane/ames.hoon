@@ -2221,6 +2221,49 @@
         %+  roll  bones
         |=  [[=ship =bone] co=_event-core]
         (%*(on-cork co cork-bone `bone) ship)
+      ::  +on-deep: deferred %ames calls from itself
+      ::
+      ++  on-deep
+        |=  =deep
+        ^+  event-core
+        ::  currently $deep tasks are all focused on a
+        ::  particular ship but future ones might not
+        ::
+        ?>  ?=([@ =ship *] deep)
+        =/  ship-state  (~(get by peers.ames-state) ship.deep)
+        ?>  ?=([~ %known *] ship-state)
+        =+  peer-core=(abed-peer:pe ship.deep +.u.ship-state)
+        |^  ?-  -.deep
+          %nack  abet:(send-nack-trace [nack-bone message-blob]:deep)
+          %sink  abet:(sink-naxplanation [target-bone naxplanation]:deep)
+          %drop  abet:(clear-nack [nack-bone message-num]:deep)
+          %cork  =~((cork-bone bone.deep) (emit duct %give %done ~))
+          %kill  (kill-bone bone.deep)
+        ==
+        ::
+        ++  send-nack-trace
+          |=  [=nack=bone =message-blob]
+          abet:(call:(abed:mu:peer-core nack-bone) %memo message-blob)
+        ::
+        ++  sink-naxplanation
+          |=  [=target=bone =naxplanation]
+          abet:(call:(abed:mu:peer-core target-bone) %near naxplanation)
+        ::
+        ++  clear-nack
+          |=  [=nack=bone =message-num]
+          abet:(call:(abed:mi:peer-core nack-bone) %drop message-num)
+        ::  client ames [%cork as plea] ->  server ames [sinks %cork plea],
+        ::                                  pass %deep %cork task to self
+        ::                                  put flow in closing (+cork-bone),
+        ::                                  and give %done
+        ::  sink %ack, pass %deep %kill <-  after +on-take-done, ack %cork plea
+        ::  task to self, and delete the    and delete the flow in +handle-cork
+        ::  flow (+kill-bone)
+        ::
+        ::
+        ++  cork-bone  |=(=bone abet:(on-cork-flow:peer-core bone))
+        ++  kill-bone  |=(=bone abet:(on-kill-flow:peer-core bone))
+        --
       ::  +on-take-wake: receive wakeup or error notification from behn
       ::
       ++  on-take-wake
