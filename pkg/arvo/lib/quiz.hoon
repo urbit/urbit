@@ -1,12 +1,15 @@
+:: specify starting input entropy and the number of different samples
+:: the check should try.
+::
 |_  [eny=@uv runs=@ud]
-++  norn
+++  norn                             :: gate for creating inputs
   |$  [sam]
   $-([@ud _og] sam)
-++  fin
+++  fin                              ::  successful ending
   |=  [runs=@ drop=@]
   ~&  [success-runs+runs drops+drop]
   %.y
-++  check
+++  check                            :: main test runner
   |*  [vax=vase norn=(unit (norn)) alts=(unit $-(vase (list vase)))]
   =?  runs  =(0 runs)  100
   =+  size=1
@@ -24,7 +27,8 @@
     ?~  norn
       (~(fill quiz [size fill-rng]) sax)
     [p=p.sax q=(u.norn size fill-rng)]
-  :: Arbitrarily chosen growth pace.
+  :: arbitrarily chosen growth pace.
+  ::
   =+  new-size=(add +(size) (div (mul size 2) 21))
   ?:  (~(has in tried) q.sam)
     =.  tries  +(tries)
@@ -34,6 +38,7 @@
     (fin run-i drop)
   =.  tried  (~(put in tried) sam)
   :: run virtualized to catch crashes
+  ::
   =/  tres=toon
     (mong [q.vax q.sam] |=(^ ~))
   =+  ^=  res
@@ -104,7 +109,8 @@
       %noun            !>  (noun:norns size new-rng)
       [%atom p=* q=~]  !>  ((atom:norns @) size new-rng)
       [%atom *]        sax(q (need q.p.sax))
-      :: TODO use cell:norns
+      :: TODO: use cell:norns
+      ::
       [%cell *]        =+  [rng-1 rng-2]=(split-rng rng)
                        %+  slop  (fill(rng rng-1) (slot 2 sax))
                                  (fill(rng rng-2) (slot 3 sax))
@@ -112,7 +118,9 @@
       [%fork *]        =+  ts=~(tap in p.p.sax)
                        =^  ran  new-rng  (rads:new-rng (lent ts))
                        =+  new-type=(snag ran ts)
-                       :: Note: by assigning a specific type, we may create an evil vase.
+                       :: note: by assigning a specific type, we may create an
+                       :: evil vase.
+                       ::
                        (fill(rng new-rng) sax(p new-type, q q.sax))
       [%hint *]        sax(q q:(fill [p=q.p.sax q=q.sax]))
       [%hold *]        =+  nex=(~(mint ut p.p.sax) %noun q.p.sax)
@@ -127,9 +135,12 @@
   [~(. og bits-1) ~(. og (raw:rng bit-size))]
 ++  norns
   |%
+  ::
   :: value norns
+  ::
   ++  atom
     :: TODO: differentiate by aura. some values won't be valid depending on aura.
+    ::
     |*  [a=mold]
     ^-  (norn a)
     |=  [size=@ud rng=_og]
@@ -141,17 +152,21 @@
     |-
     ^-  ^noun
     ?:  (lte size 1)
-      (rad:rng start-size)  :: leafs should be able to make large atoms.
-    =^  ran  rng  (rads:rng 3)
-    ?:  =(0 ran) :: 1/3 chance for a leaf.
+      :: leafs should be able to make large atoms.
+      ::
       (rad:rng start-size)
-    ?:  =(1 ran)  :: 1/3 chance for a identical subtrees.
+    =^  ran  rng  (rads:rng 3)
+    ?:  =(0 ran)                        :: 1/3 chance for a leaf.
+      (rad:rng start-size)
+    ?:  =(1 ran)                        :: 1/3 chance for a identical subtrees.
       =+  subtree=$(size (div size 2))
       [subtree subtree]
-    =+  [rng-1 rng-2]=(split-rng rng)  :: 1/3 chance for different subtrees.
+    =+  [rng-1 rng-2]=(split-rng rng)   :: 1/3 chance for different subtrees.
     :-  $(size (div size 2), rng rng-1)
     $(size (div size 2), rng rng-2)
+  ::
   :: combinators
+  ::
   ++  const
     |*  a=mold
     |=  x=a
