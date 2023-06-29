@@ -62,14 +62,22 @@
   :: virtualized slam to catch and report crashes.
   ::
   =+  res=(run vax sam)
-  =?  drop  =(res %drop)  +(drop)
-  ?:  |(=(res %drop) =(res %.y))
+  =?  drop  =(res %drop)  +(drop)    :: count number of %drop results.
+  ?:  |(=(res %drop) =(res %.y))     :: %drop and %.y means we try again.
     $(run-i +(run-i), rng next-rng, size new-size)
   ?>  =(res %.n)
-  =+  sink=?~(alts sink u.alts)
+  :: fate either crashed or returned %.n.
+  :: attempt shrinking.
+  ::
+  =+  sink=?~(alts sink u.alts)  :: user-supplied alts or default
   =+  sunk=(sink sam)
   =/  simp=vase
     |-
+    :: in the loop we
+    :: 1. try each alternative result.
+    :: 2. if it doesn't fail, keep going.
+    :: 3. if it fails, take it as the new smallest fail case and recurse.
+    ::
     ?~  sunk
       sam
     =+  res=(run vax i.sunk)
@@ -77,23 +85,40 @@
       $(sunk t.sunk)
     =.  sam  i.sunk
     $(sunk (sink i.sunk))
+  :: report the smallest sample we found.
+  ::
   ~&  [defy-with-sam+(noah simp) drops+drop]
   %.n
 ++  sink
+  :: automatically try to shrink the sample.
+  ::
   |=  sax=vase
   ^-  (list vase)
   ?+  p.sax  ~
     %noun            ?^  q.sax
+                     :: if the noun is a cell, try both subtrees separately.
+                     ::
                        ~[(slot 2 sax) (slot 3 sax)]
                      ?:  =(q.sax 0)
                        ~
+                     :: if the noun is an atom (not 0), try dividing it by 2
+                     :: and decrementing it.
+                     ::
                      ~[sax(q (div q.sax 2)) sax(q (dec q.sax))]
     [%atom p=* q=~]  ?>  ?=(@ q.sax)
                      ?:  =(q.sax 0)
                        ~
+                     :: if the noun is an atom (not 0), try dividing it by 2
+                     :: and decrementing it.
+                     ::
                      ~[sax(q (div q.sax 2)) sax(q (dec q.sax))]
-    [%atom *]        ~
-    [%cell p=* q=*]  =+  p=(slot 2 sax)
+    [%atom *]        :: if it is a singleton type atom, no shrinking can be done
+                     ::
+                     ~
+    [%cell p=* q=*]  :: if it is a cell, take all the alts of each element
+                     :: try all combinations.
+                     ::
+                     =+  p=(slot 2 sax)
                      =+  q=(slot 3 sax)
                      =+  ps=(sink p)
                      =+  qs=(sink q)
@@ -105,16 +130,22 @@
                        (turn qs |=(q=vase (slop p q)))
                      =+  cs=(turn qs |=(q=vase (slop i.ps q)))
                      (weld cs $(ps t.ps))
-    [%face p=* q=*]  %+  turn
+    [%face p=* q=*]  :: strip the face, shrink, put the results back.
+                     %+  turn
                        (sink [q.p.sax q.sax])
                      |=  q=vase
                      sax(q q.q)
-    [%hint p=* q=*]  %+  turn
+    [%hint p=* q=*]  :: strip the face, shrink, put the results back.
+                     %+  turn
                        (sink [q.p.sax q.sax])
                      |=  q=vase
                      sax(q q.q)
   ==
 ++  quiz
+  :: this core is for construction random samples when no norn was given.
+  :: it decunstructs the type in the vase and uses simple heuristics to come up
+  :: with a sample.
+  ::
   |_  [size=@ud rng=_og]
   ++  fill
     |=  sax=vase
@@ -125,8 +156,6 @@
       [%atom p=* q=~]  =+  new=((atom:norns @) size new-rng)
                        sax(q new)
       [%atom *]        sax(q (need q.p.sax))
-      :: TODO: use cell:norns
-      ::
       [%cell *]        =+  [rng-1 rng-2]=(split-rng rng)
                        %+  slop  (fill(rng rng-1) (slot 2 sax))
                                  (fill(rng rng-2) (slot 3 sax))
@@ -144,6 +173,10 @@
     ==
   --
 ++  split-rng
+  :: take an og core, return two new ones.
+  :: each has 128 bits entropy (assuming the original og is truly)
+  :: pseudorandom.
+  ::
   |=  [rng=_og]
   ^+  [og og]
   =+  bit-size=256
@@ -155,6 +188,7 @@
   :: value norns
   ::
   ++  atom
+    :: create a random, sized atom.
     :: TODO: differentiate by aura. some values won't be valid depending on aura.
     ::
     |*  [a=mold]
@@ -162,6 +196,8 @@
     |=  [size=@ud rng=_og]
     (rad:rng size)
   ++  noun
+    :: create a random, sized noun.
+    ::
     ^-  (norn *)
     |=  [size=@ud rng=_og]
     =+  start-size=size
@@ -180,16 +216,20 @@
     =+  [rng-1 rng-2]=(split-rng rng)   :: 1/3 chance for different subtrees.
     :-  $(size (div size 2), rng rng-1)
     $(size (div size 2), rng rng-2)
-  ::
-  :: combinators
-  ::
   ++  const
+    :: always return the same constant.
+    ::
     |*  a=mold
     |=  x=a
     ^-  (norn a)
     |=  [=@ud =_og]
     x
+  ::
+  :: combinators
+  ::
   ++  cell
+    :: create a cell norn from two norns, one for each element.
+    ::
     |*  [a=mold b=mold]
     |=  [givp=(norn a) givq=(norn b)]
     ^-  (norn $:(a b))
@@ -197,6 +237,13 @@
     =+  [rng-1 rng-2]=(split-rng rng)
     [(givp size rng-1) (givq size rng-2)]
   ++  freq
+    :: supply a list of pairs of atoms and norns.
+    :: take the atom to represent frequency.
+    :: pick each norn according to its frequency.
+    :: for example, given ~[[1 norn-a] [2 norn-b] [1 norn-c]]
+    :: there is a 50% chance of picking norn-b, and 25% each chance
+    :: to pick norn-a or norn-c.
+    ::
     |*  a=mold
     |=  b=(^list (pair @ (norn a)))
     ^-  (norn a)
@@ -210,12 +257,18 @@
       (p size rng)
     $(b t.b, ran (sub ran f))
   ++  pick
+    :: like the freq norn, but each norn has equal chance of being picked.
+    ::
     |*  a=mold
     |=  b=(^list (norn a))
     ^-  (norn a)
     =+  c=(turn b |=(b=(norn a) [1 b]))
     ((freq a) c)
   ++  list
+    :: creates a norn for a list by taking a norn as input.
+    :: the input norn is used to create each element of the list.
+    :: the list norn combinator tries many different list sizes.
+    ::
     |*  a=mold
     |=  norn=(norn a)
     ^-  (^norn (^list a))
