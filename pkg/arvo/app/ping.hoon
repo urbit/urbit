@@ -148,7 +148,7 @@
         =/  ships  ~(tap in ships.state)
         |-  ^-  (quip card _state)
         ?~  ships  `state
-        ?:  =(our i.ships)  `state
+        ?:  =(our i.ships)  $(ships t.ships)
         ;<  new-state=_state  rind  (send-ping i.ships)
         =.  state  new-state
         $(ships t.ships)
