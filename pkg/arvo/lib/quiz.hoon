@@ -121,6 +121,7 @@
   |%
   :: value givers
   ++  atom
+    :: TODO: differentiate by aura. some values won't be valid depending on aura.
     |*  [a=mold]
     ^-  (give a)
     |=  [size=@ud rng=_og]
