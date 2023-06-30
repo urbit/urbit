@@ -196,7 +196,6 @@
               |=  =(map dude @da)
               ^-  (set dude)
               ~(key by map)
-            ::
             ==
           ==
         ==
@@ -333,7 +332,6 @@
   ++  apply                                  ::  Handle request from subscriber.
     |=  req=(request:poke paths)
     ^-  (quip card:agent:gall pubs)
-    ::
     =/  =buoy  (~(gut by pub) path.req *buoy)
     ?<  &(?=(^ alo.buoy) !(~(has in u.alo.buoy) src.bowl))
     ?@  tid.buoy
