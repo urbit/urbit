@@ -224,7 +224,7 @@
   ^-  (each (list channel-request) @t)
   ?-  mode
       %json
-    ?~  maybe-json=(de-json:html q.body)
+    ?~  maybe-json=(de:json:html q.body)
       |+'put body not json'
     ?~  maybe-requests=(parse-channel-request-json u.maybe-json)
       |+'invalid channel json'
@@ -1840,7 +1840,7 @@
       ^-  (unit (quip move tape))
       ?-  mode.channel
         %json  %+  bind  (channel-event-to-json channel request-id channel-event)
-               |=((quip move json) [+<- (en-json:html +<+)])
+               |=((quip move json) [+<- (trip (en:json:html +<+))])
         %jam   =-  `[~ (scow %uw (jam -))]
                [request-id channel-event]
       ==
