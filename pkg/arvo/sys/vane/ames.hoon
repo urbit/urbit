@@ -2758,10 +2758,6 @@
               ?:  for
                 event-core
               (try-next-sponsor sponsor.peer-state)
-            ::  if forwarding, route must not be stale
-            ::
-            ?:  &(for (lth last-contact.qos.peer-state (sub now ~h1)))
-              (try-next-sponsor sponsor.peer-state)
             ::
             ?~  route=route.peer-state
               %-  (ev-trace rot.veb final-ship |.("no route to:  {<ship>}"))
@@ -4977,8 +4973,6 @@
           ~
         [%& gal]~
       =;  zar=(trap (list lane))
-        ?:  (lth last-contact.qos.u.peer (sub now ~h1))
-          $:zar
         ?~  route.u.peer  $:zar
         =*  rot  u.route.u.peer
         ?:(direct.rot [lane.rot ~] [lane.rot $:zar])
