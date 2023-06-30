@@ -558,6 +558,7 @@
 ::    cong:        parameters for marking a flow as clogged
 ::
 +$  ames-state
+  $+  ames-state
   $:  peers=(map ship ship-state)
       =unix=duct
       =life
@@ -1175,6 +1176,7 @@
 ::  $queued-event: event to be handled after initial boot completes
 ::
 +$  queued-event
+  $+  queued-event
   $%  [%call =duct wrapped-task=(hobo task)]
       [%take =wire =duct =sign]
   ==
