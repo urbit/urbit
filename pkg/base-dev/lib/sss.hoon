@@ -189,12 +189,14 @@
             ?@  tid.buoy-0  tid.buoy-0
             ^-  tide
             %=    tid.buoy-0
+                rocks.rul  +(rocks.rul.tid.buoy-0)
                 mem
               ^-  (jug ship dude)
               %-  ~(run by mem.tid.buoy-0)
               |=  =(map dude @da)
               ^-  (set dude)
               ~(key by map)
+            ::
             ==
           ==
         ==
@@ -237,7 +239,7 @@
     %+  ~(jab by pub)  path
     |=  =buoy
     ?@  tid.buoy  buoy
-    %*  .  buoy(tid (form tid.buoy(rul [0 1])))
+    %*  .  buoy(tid (form tid.buoy(rul [1 1])))
       rul.tid  rul.tid.buoy
       wav.tid  ~
     ==
@@ -418,8 +420,10 @@
     =/  max-rock=[=aeon =rock:lake]  (fall (pry:rok rok.tide) *[key val]:rok)
     =/  max-wave  (fall (bind (ram:wav wav.tide) head) 0)
     =.  rok.tide
+      =-  ?.  =(rocks.rul.tide 0)  -
+          (put:rok - (fall (ram:rok rok.tide) *[key val]:rok))
       %+  gas:rok  +<-:gas:rok
-      %-  tab:rok  :_  [~ +(rocks.rul.tide)]
+      %-  tab:rok  :_  [~ ?:(=(rocks.rul.tide 0) 1 rocks.rul.tide)]
       ?:  ?|  =(waves.rul.tide 0)
               (lth max-wave (add aeon.max-rock waves.rul.tide))
           ==
