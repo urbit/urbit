@@ -5043,7 +5043,7 @@
   ::
   ++  state-15-to-16
     |=  old=ames-state-15
-    |^  ^-  ^ames-state
+    ^-  ^ames-state
     %=    old
         peers
       %-  ~(run by peers.old)
@@ -5051,27 +5051,51 @@
       ^-  ^ship-state
       ?.  ?=(%known -.ship-state)
         ship-state
+      |^
       %=  ship-state
         snd    (~(run by snd.ship-state) message-pump-15-to-16)
         keens  (~(run by keens.ship-state) keen-state-15-to-16)
+        rcv    (~(rut by rcv.ship-state) remove-outbound-naxplanations)
       ==
+      ::
+      ++  message-pump-15-to-16
+        |=  pump=message-pump-state-15
+        ^-  message-pump-state
+        %=    pump
+            metrics.packet-pump-state
+          [rto rtt rttvar ssthresh cwnd counter]:metrics.packet-pump-state.pump
+        ==
+      ::
+      ++  keen-state-15-to-16
+        |=  keen-state=keen-state-15
+        ^-  ^keen-state
+        %=  keen-state
+          metrics  [rto rtt rttvar ssthresh cwnd counter]:metrics.keen-state
+        ==
+      ::
+      ++  remove-outbound-naxplanations
+        |=  [=bone sink=message-sink-state]
+        ^+  sink
+        =/  target=^bone  (mix 0b10 bone)
+        ?.  =(%3 (mod target 4))
+          sink
+        ?~  pump=(~(get by snd.ship-state) target)
+          sink
+        %_    sink
+            nax
+          %-  ~(rep in nax.sink)
+          |=  [=message-num nax=(set message-num)]
+          ::  we keep messages in the queue that have not been acked.
+          ::  if the message-num for the naxplanation we sent is
+          ::  less than the current message, +pump-done:mu had been called,
+          ::  so the message-num can be safely removed
+          ::
+          =?  nax  (gte message-num current.u.pump)
+            (~(put in nax) message-num)
+          nax
+        ==
+      --
     ==
-    ::
-    ++  message-pump-15-to-16
-      |=  pump=message-pump-state-15
-      ^-  message-pump-state
-      %=    pump
-          metrics.packet-pump-state
-        [rto rtt rttvar ssthresh cwnd counter]:metrics.packet-pump-state.pump
-      ==
-    ::
-    ++  keen-state-15-to-16
-      |=  keen-state=keen-state-15
-      ^-  ^keen-state
-      %=  keen-state
-        metrics  [rto rtt rttvar ssthresh cwnd counter]:metrics.keen-state
-      ==
-    --
   --
 ::  +scry: dereference namespace
 ::
