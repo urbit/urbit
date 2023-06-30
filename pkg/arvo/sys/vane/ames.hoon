@@ -572,6 +572,7 @@
 +$  azimuth-state-6  [=symmetric-key =life =public-key sponsor=ship]
 +$  ames-state-4   ames-state-5
 +$  ames-state-5
+  $+  ames-state-5
   $:  peers=(map ship ship-state-5)
       =unix=duct
       =life
@@ -581,16 +582,18 @@
 ::
 +$  ship-state-4  ship-state-5
 +$  ship-state-5
+  $+  ship-state-5
   $%  [%alien alien-agenda-12]
       [%known peer-state-5]
   ==
 ::
 +$  peer-state-5
+  $+  peer-state-5
   $:  azimuth-state-6
       route=(unit [direct=? =lane])
       =qos
       =ossuary
-      snd=(map bone message-pump-state-14)
+      snd=(map bone message-pump-state-15)
       rcv=(map bone message-sink-state)
       nax=(set [=bone =message-num])
       heeds=(set duct)
@@ -602,6 +605,7 @@
   ==
 ::
 +$  ames-state-6
+  $+  ames-state-6
   $:  peers=(map ship ship-state-6)
       =unix=duct
       =life
@@ -610,22 +614,25 @@
   ==
 ::
 +$  ship-state-6
-    $%  [%alien alien-agenda-12]
-        [%known peer-state-6]
-    ==
+  $+  peer-state-6
+  $%  [%alien alien-agenda-12]
+      [%known peer-state-6]
+  ==
 ::
 +$  peer-state-6
+  $+  peer-state-6
   $:  azimuth-state
       route=(unit [direct=? =lane])
       =qos
       =ossuary
-      snd=(map bone message-pump-state-14)
+      snd=(map bone message-pump-state-15)
       rcv=(map bone message-sink-state)
       nax=(set [=bone =message-num])
       heeds=(set duct)
   ==
 ::
 +$  ames-state-7
+  $+  ames-state-7
   $:  peers=(map ship ship-state-7)
       =unix=duct
       =life
@@ -634,6 +641,7 @@
   ==
 ::
 +$  ames-state-8
+  $+  ames-state-8
   $:  peers=(map ship ship-state-7)
       =unix=duct
       =life
@@ -643,6 +651,7 @@
   ==
 ::
 +$  ames-state-9
+  $+  ames-state-9
   $:  peers=(map ship ship-state-7)
       =unix=duct
       =life
@@ -653,6 +662,7 @@
   ==
 ::
 +$  ames-state-10
+  $+  ames-state-10
   $:  peers=(map ship ship-state-7)
       =unix=duct
       =life
@@ -663,16 +673,18 @@
   ==
 ::
 +$  ship-state-7
-    $%  [%alien alien-agenda-12]
-        [%known peer-state-7]
-    ==
+  $+  ship-state-7
+  $%  [%alien alien-agenda-12]
+      [%known peer-state-7]
+  ==
 ::
 +$  peer-state-7
+  $+  peer-state-7
   $:  azimuth-state
       route=(unit [direct=? =lane])
       =qos
       =ossuary
-      snd=(map bone message-pump-state-14)
+      snd=(map bone message-pump-state-15)
       rcv=(map bone message-sink-state)
       nax=(set [=bone =message-num])
       heeds=(set duct)
@@ -682,6 +694,7 @@
   ==
 ::
 +$  ames-state-11
+  $+  ames-state-11
   $:  peers=(map ship ship-state-7)
       =unix=duct
       =life
@@ -693,16 +706,19 @@
   ==
 ::
 +$  queued-event-11
+  $+  queued-event-11
   $%  [%call =duct wrapped-task=(hobo task-11)]
       [%take =wire =duct =sign]
   ==
 ::
 +$  task-11
+  $+  task-11
   $%  [%snub ships=(list ship)]
       $<(%snub task)
   ==
 ::
 +$  ames-state-12
+  $+  ames-state-12
   $:  peers=(map ship ship-state-12)
       =unix=duct
       =life
@@ -713,22 +729,25 @@
   ==
 ::
 +$  ship-state-12
+  $+  ship-state-12
   $%  [%alien alien-agenda-12]
       [%known peer-state-12]
   ==
 ::
 +$  alien-agenda-12
+  $+  alien-agenda-12
   $:  messages=(list [=duct =plea])
       packets=(set =blob)
       heeds=(set duct)
   ==
 ::
 +$  peer-state-12
+  $+  peer-state-12
   $:  azimuth-state
       route=(unit [direct=? =lane])
       =qos
       =ossuary
-      snd=(map bone message-pump-state-14)
+      snd=(map bone message-pump-state-15)
       rcv=(map bone message-sink-state)
       nax=(set [=bone =message-num])
       heeds=(set duct)
@@ -766,6 +785,7 @@
   --
 ::
 +$  ames-state-13
+  $+  ames-state-13
   $:  peers=(map ship ship-state-13)
       =unix=duct
       =life
@@ -777,11 +797,13 @@
   ==
 ::
 +$  ship-state-13
+  $+  ship-state-13
   $%  [%alien alien-agenda]
       [%known peer-state-13]
   ==
 ::
 +$  peer-state-13
+  $+  peer-state-13
   $:  $:  =symmetric-key
           =life
           =rift
@@ -791,7 +813,7 @@
       route=(unit [direct=? =lane])
       =qos
       =ossuary
-      snd=(map bone message-pump-state-14)
+      snd=(map bone message-pump-state-15)
       rcv=(map bone message-sink-state)
       nax=(set [=bone =message-num])
       heeds=(set duct)
@@ -801,14 +823,15 @@
   ==
 ::
 ++  keen-state-13
-  =<  $:  wan=(pha want)   ::  request packts, sent
+  =<  $+  keen-state-13
+      $:  wan=(pha want)   ::  request packts, sent
           nex=(list want)  ::  request packets, unsent
           hav=(list have)  ::  response packets, backward
           num-fragments=@ud
           num-received=@ud
           next-wake=(unit @da)
           listeners=(set duct)
-          metrics=pump-metrics-14
+          metrics=pump-metrics-15
       ==
   |%
   ::  +afx: polymorphic node type for finger trees
@@ -1060,8 +1083,10 @@
     --
   --
 ::
-+$  ames-state-14
-  $:  peers=(map ship ship-state-14)
++$  ames-state-14  ames-state-15
++$  ames-state-15
+  $+  ames-state-15
+  $:  peers=(map ship ship-state-15)
       =unix=duct
       =life
       =rift
@@ -1071,26 +1096,30 @@
       cong=[msg=@ud mem=@ud]
   ==
 ::
-+$  ship-state-14
-    $%  [%alien alien-agenda]
-        [%known peer-state-14]
-    ==
++$  ship-state-15
+  $+  ship-state-15
+  $%  [%alien alien-agenda]
+      [%known peer-state-15]
+  ==
 ::
-+$  peer-state-14
++$  peer-state-15
+  $+  peer-state-15
   $:  azimuth-state
       route=(unit [direct=? =lane])
       =qos
       =ossuary
-      snd=(map bone message-pump-state-14)
+      snd=(map bone message-pump-state-15)
       rcv=(map bone message-sink-state)
       nax=(set [=bone =message-num])
       heeds=(set duct)
       closing=(set bone)
       corked=(set bone)
-      keens=(map path keen-state-14)
+      keens=(map path keen-state-15)
   ==
 ::
-+$  keen-state-14
++$  keen-state-14  keen-state-15
++$  keen-state-15
+  $+  keen-state-15
   $:  wan=((mop @ud want) lte)
       nex=(list want)
       hav=(list have)
@@ -1098,25 +1127,28 @@
       num-received=@ud
       next-wake=(unit @da)
       listeners=(set duct)
-      metrics=pump-metrics-14
+      metrics=pump-metrics-15
   ==
 ::
-+$  message-pump-state-14
++$  message-pump-state-15
+  $+  message-pump-state-15
   $:  current=_`message-num`1
       next=_`message-num`1
       unsent-messages=(qeu message-blob)
       unsent-fragments=(list static-fragment)
       queued-message-acks=(map message-num ack)
-      packet-pump-state=packet-pump-state-14
+      packet-pump-state=packet-pump-state-15
   ==
 ::
-+$  packet-pump-state-14
++$  packet-pump-state-15
+  $+  packet-pump-state-15
   $:  next-wake=(unit @da)
       live=((mop live-packet-key live-packet-val) lte-packets)
-      metrics=pump-metrics-14
+      metrics=pump-metrics-15
   ==
 ::
-+$  pump-metrics-14
++$  pump-metrics-15
+  $+  pump-metrics-15
   $:  rto=_~s1
       rtt=_~s1
       rttvar=_~s1
@@ -1171,6 +1203,9 @@
       $:  %d
           $>(%flog task:dill)
       ==
+      $:  %g
+          $>(%deal task:gall)
+      ==
       $:  %j
           $>  $?  %private-keys
                   %public-keys
@@ -1188,6 +1223,9 @@
   $~  [%behn %wake ~]
   $%  $:  %behn
           $>(%wake gift:behn)
+      ==
+      $:  %gall
+          $>(%unto gift:gall)
       ==
       $:  %jael
           $>  $?  %private-keys
@@ -1262,7 +1300,8 @@
             [%12 ames-state-12]
             [%13 ames-state-13]
             [%14 ames-state-14]
-            [%15 ^ames-state]
+            [%15 ames-state-15]
+            [%16 ^ames-state]
         ==
     ::
     |=  [now=@da eny=@ rof=roof]
@@ -1385,7 +1424,7 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%15 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%16 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
           $%  $:  %4
@@ -1466,6 +1505,13 @@
                   [%adult state=ames-state-14]
               ==  ==
               $:  %15
+              $%  $:  %larva
+                      events=(qeu queued-event)
+                      state=ames-state-15
+                  ==
+                  [%adult state=ames-state-15]
+              ==  ==
+              $:  %16
               $%  $:  %larva
                       events=(qeu queued-event)
                       state=_ames-state.adult-gate
@@ -1590,12 +1636,23 @@
         =.  queued-events  events.old
         larval-gate
       ::
-          [%15 %adult *]  (load:adult-core %15 state.old)
+          [%15 %adult *]
+        =.  cached-state  `[%15 state.old]
+        ~>  %slog.0^leaf/"ames: larva reload"
+        larval-gate
       ::
           [%15 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
+        =.  cached-state  `[%15 state.old]
         =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %15 state.old)
+        larval-gate
+      ::
+          [%16 %adult *]  (load:adult-core %16 state.old)
+      ::
+          [%16 %larva *]
+        ~>  %slog.1^leaf/"ames: larva: load"
+        =.  queued-events  events.old
+        =.  adult-gate     (load:adult-core %16 state.old)
         larval-gate
       ==
       ::
@@ -1642,7 +1699,9 @@
         14+(state-13-to-14:load:adult-core +.u.cached-state)
       =?  u.cached-state  ?=(%14 -.u.cached-state)
         15+(state-14-to-15:load:adult-core +.u.cached-state)
-      ?>  ?=(%15 -.u.cached-state)
+      =?  u.cached-state  ?=(%15 -.u.cached-state)
+        16+(state-15-to-16:load:adult-core +.u.cached-state)
+      ?>  ?=(%16 -.u.cached-state)
       =.  ames-state.adult-gate  +.u.cached-state
       [moz larval-core(cached-state ~)]
     --
@@ -2681,7 +2740,11 @@
           =<  q.q  %-  need  %-  need
           (rof ~ /ames %j `beam`[[our %turf %da now] /])
         ::
-        (emit unix-duct.ames-state %give %turf turfs)
+        =*  duct  unix-duct.ames-state
+        %-  emil
+        :~  [duct %give %turf turfs]
+            [duct %pass /ping %g %deal [our our /ames] %ping %poke %noun !>(%kick)]
+        ==
       ::  +on-vega: handle kernel reload
       ::
       ++  on-vega  event-core
@@ -4781,6 +4844,9 @@
   =/  event-core  (ev [now eny rof] duct ames-state)
   ::
   =^  moves  ames-state
+    ?:  ?=([%gall %unto *] sign)
+      `ames-state
+    ::
     =<  abet
     ?-  sign
       [@ %done *]   (on-take-done:event-core wire error.sign)
@@ -4796,15 +4862,15 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%15 %adult ames-state]
+++  stay  [%16 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
   =<  |=  $=  old-state
-          $%  [%15 ^ames-state]
+          $%  [%16 ^ames-state]
           ==
       ^+  ames-gate
-      ?>  ?=(%15 -.old-state)
+      ?>  ?=(%16 -.old-state)
       ames-gate(ames-state +.old-state)
   ::  all state transitions are called from larval ames
   ::
@@ -4820,7 +4886,7 @@
         ship-state
       =.  snd.ship-state
         %-  ~(run by snd.ship-state)
-        |=  pump=message-pump-state-14
+        |=  pump=message-pump-state-15
         =.  num-live.metrics.packet-pump-state.pump
           ~(wyt in live.packet-pump-state.pump)
         pump
@@ -4967,35 +5033,39 @@
   ::
   ++  state-14-to-15
     |=  old=ames-state-14
+    ^-  ames-state-15
+    =.  rift.old
+      !<  =rift
+      q:(need (need (rof ~ /ames %j `beam`[[our %rift %da now] /(scot %p our)])))
+    old
+  ::
+  ++  state-15-to-16
+    |=  old=ames-state-15
     ^-  ^ames-state
     %=    old
-        rift
-      !<  =rift  =<  q
-      (need (need (rof ~ /ames %j `beam`[[our %rift %da now] /(scot %p our)])))
-    ::
         peers
       %-  ~(run by peers.old)
-      |=  ship-state=ship-state-14
+      |=  ship-state=ship-state-15
       ^-  ^ship-state
       ?.  ?=(%known -.ship-state)
         ship-state
       |^
       %=  ship-state
-        snd    (~(run by snd.ship-state) message-pump-14-to-15)
-        keens  (~(run by keens.ship-state) keen-state-14-to-15)
+        snd    (~(run by snd.ship-state) message-pump-15-to-16)
+        keens  (~(run by keens.ship-state) keen-state-15-to-16)
         rcv    (~(rut by rcv.ship-state) remove-outbound-naxplanations)
       ==
       ::
-      ++  message-pump-14-to-15
-        |=  pump=message-pump-state-14
+      ++  message-pump-15-to-16
+        |=  pump=message-pump-state-15
         ^-  message-pump-state
         %=    pump
             metrics.packet-pump-state
           [rto rtt rttvar ssthresh cwnd counter]:metrics.packet-pump-state.pump
         ==
       ::
-      ++  keen-state-14-to-15
-        |=  keen-state=keen-state-14
+      ++  keen-state-15-to-16
+        |=  keen-state=keen-state-15
         ^-  ^keen-state
         %=  keen-state
           metrics  [rto rtt rttvar ssthresh cwnd counter]:metrics.keen-state
