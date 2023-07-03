@@ -160,7 +160,8 @@
     |%
     +$  into    (request:poke paths)
     +$  result  (response:poke lake paths)
-    +$  rule    [rocks=_1 waves=_5]          ::  Retention policy
+    +$  rule    $~  [`5 5]
+                [horizon=(unit @ud) frequency=@ud] ::  Retention policy
     +$  tide
       $:  rok=((mop aeon rock:lake) gte)
           wav=((mop aeon wave:lake) lte)
@@ -189,7 +190,10 @@
             ?@  tid.buoy-0  tid.buoy-0
             ^-  tide
             %=    tid.buoy-0
-                rocks.rul  +(rocks.rul.tid.buoy-0)
+                rocks.rul
+              ?:  =(waves.rul.tid.buoy-0 0)  ~
+              `(mul [+(rocks) waves]:rul.tid.buoy-0)
+            ::
                 mem
               ^-  (jug ship dude)
               %-  ~(run by mem.tid.buoy-0)
@@ -211,7 +215,7 @@
         +$  tide-0
           $:  rok=((mop aeon rock:lake) gte)
               wav=((mop aeon wave:lake) lte)
-              rul=rule
+              rul=[rocks=@ud waves=@ud]
               mem=(mip ship dude @da)
           ==
         --
@@ -226,6 +230,8 @@
     |=  [path=paths =^rule]
     ^-  pubs
     :-  %1
+    %-  fall  :_  (~(put by pub) path %*(. *$<(aeon buoy) rul.tid rule))
+    %-  mole  |.
     %+  ~(jab by pub)  path
     |=  =buoy
     ?@  tid.buoy  buoy
@@ -238,7 +244,7 @@
     %+  ~(jab by pub)  path
     |=  =buoy
     ?@  tid.buoy  buoy
-    %*  .  buoy(tid (form tid.buoy(rul [1 1])))
+    %*  .  buoy(tid (form tid.buoy(rul [`0 1])))
       rul.tid  rul.tid.buoy
       wav.tid  ~
     ==
@@ -263,7 +269,7 @@
     =/  last=[=aeon =rock:lake]  (fall (pry:rok rok.tide) *[key val]:rok)
     =.  wav.tide  (put:wav wav.tide next wave)
     =.  mem.tide  ~
-    ?.  =(next (add aeon.last waves.rul.tide))  buoy
+    ?.  =(next (add aeon.last frequency.rul.tide))  buoy
     buoy(tid (form tide))
   ::
   ++  fork                                   ::  Fork a pub into an empty path.
@@ -417,21 +423,22 @@
     ^+  tide
     =/  max-rock=[=aeon =rock:lake]  (fall (pry:rok rok.tide) *[key val]:rok)
     =/  max-wave  (fall (bind (ram:wav wav.tide) head) 0)
-    =.  rok.tide
-      =-  ?.  =(rocks.rul.tide 0)  -
-          (put:rok - (fall (ram:rok rok.tide) *[key val]:rok))
-      %+  gas:rok  +<-:gas:rok
-      %-  tab:rok  :_  [~ ?:(=(rocks.rul.tide 0) 1 rocks.rul.tide)]
-      ?:  ?|  =(waves.rul.tide 0)
-              (lth max-wave (add aeon.max-rock waves.rul.tide))
-          ==
-        rok.tide
+    =?    rok.tide                        ::  Create new rock.
+        ?&  !=(frequency.rul.tide 0)
+            (gte max-wave (add aeon.max-rock frequency.rul.tide))
+        ==
       %+  put:rok  rok.tide
       %+  roll  (tab:wav wav.tide `aeon.max-rock max-wave)
       |:  [*[now=aeon =wave:lake] `[prev=aeon =rock:lake]`max-rock]
       ~|  %aeon-awry
       ?>  =(now +(prev))
       [now (wash:lake rock wave)]
+    =.  rok.tide
+      ?~  horizon.rul.tide                ::  Only keep genesis and latest.
+        (gas:rok ~ (murn ~[(ram:rok rok.tide) (pry:rok rok.tide)] same))
+      %^  lot:rok  rok.tide               ::  Delete beyond horizon.
+        ~
+      (mole |.((sub max-wave (max [u.horizon frequency]:rul.tide))))
     ~|  %rock-zero
     tide(wav (lot:wav wav.tide (bind (ram:rok rok.tide) |=([r=@ *] (dec r))) ~))
   --
