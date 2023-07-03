@@ -115,7 +115,7 @@
 ::  |parser-at: parsers for dojo expressions using :dir as working directory
 ::
 ++  parser-at
-  |=  [our=ship dir=beam]
+  |=  [our=ship now=@da dir=beam]
   |%
   ++  default-app         %hood
   ++  hoon-parser         (vang | (en-beam dir))
@@ -129,7 +129,7 @@
     =/  =desk
       ::TODO  maybe should recognize if the user specified a desk explicitly.
       ::      currently eats the :app|desk#gen case.
-      =+  gop=(en-beam dir(q q.gol, s /$))
+      =+  gop=/(scot %p our)/[q.gol]/(scot %da now)/$
       ?.  .^(? %gu gop)
         q.dir
       .^(desk %gd gop)
@@ -365,7 +365,7 @@
     dir(r [%da now.hid])
   ::
   ++  he-beak    `beak`[p q r]:he-beam
-  ++  he-parser  (parser-at our.hid he-beam)
+  ++  he-parser  (parser-at our.hid now.hid he-beam)
   ::
   ++  dy                                                ::  project work
     |_  dojo-project                                    ::
