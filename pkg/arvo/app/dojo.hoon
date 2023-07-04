@@ -871,7 +871,7 @@
           [[%drum-session !>(ses.id)] soz]  ::TODO  does the who matter?
         ?~  soz
           (fall kuv !>(~))
-        ~_  'dojo: bad keyword (supplied sample incorrect)'
+        ~_  'dojo: bad-keyword (supplied sample incorrect)'
         ~_  'dojo: keywords allowed'
         ~_  (skol p:(fall kuv !>(~)))
         %+  slap
@@ -885,38 +885,54 @@
       =/  sam=vase  :(slop ven poz kev)
       ?:  (~(nest ut p.som) | p.sam)
         (slam gat sam)
+      ::  something is wrong
+      ::
       %-  mean
+      ^-  (list tank)
+      =/  cez=type  [%cell %noun [%cell %noun %noun]]
+      ?.  (~(nest ut cez) | p.som)
+        ::  [ven poz kev] can't nest in som
+        ::
+        :~  'dojo: bad gate lost-argument (generator incorrect)'
+            'dojo: nest-need'
+            (skol p.som)
+            'dojo: nest-have'
+            (skol p.sam)
+        ==
+      ::
       =/  hed=vase  (slot 2 som)
       ?.  (~(nest ut p.hed) | p.ven)
-        ::  bad event arguments
+        ::  ven can't nest in head
         ::
-        ^-  (list tank)
-        :~  'dojo: invalid generator event sample (generator incorrect)'
+        :~  'dojo: bad gate event-sample (generator incorrect)'
             'dojo: nest-need'
-            (skol p.ven)
-            'dojo: nest-have'
             (skol p.hed)
+            'dojo: nest-have'
+            (skol p.ven)
         ==
-      =/  tyl=vase  (slot 3 som)
-      =/  hav=vase  (slot 6 sam)
-      ?:  (~(nest ut p.tyl) | p.hav)
-        ::  bad gate - missing kev
-        ::
-        ^-  (list tank)
-        :~  'dojo: missing generator key-value sample (generator incorrect)'
-            'dojo: nest-need'
-            (skol p.kev)
-        ==
-      ::  bad positional arguments
       ::
-      =/  ned=vase  (slot 6 som)
-      ?<  (~(nest ut p.ned) | p.hav)
-      ^-  (list tank)
-      :~  'dojo: invalid generator arguments (supplied sample incorrect)'
+      =/  zop=vase  (slot 6 som)
+      =/  lon=vase  !>(*(lest))
+      ?:  ?&  !(~(nest ut p.zop) | -:!>(~))
+              !(~(nest ut p.lon) | p.zop)
+              !(~(nest ut p.zop) | -:!>((slop zop !>(~))))
+          ==
+        ::  argument required, but nothing can nest
+        ::
+        :~  'dojo: bad gate impossible-nest (generator incorrect)'
+            'dojo: nest-need'
+            (skol p.zop)
+            'dojo: nest-have'
+            (skol p.poz)
+        ==
+      ::  poz doesn't nest in zop
+      ::
+      ?<  (~(nest ut p.zop) | p.poz)
+      :~  'dojo: bad-argument (supplied sample incorrect)'
           'dojo: nest-need'
-          (skol p.ned)
+          (skol p.zop)
           'dojo: nest-have'
-          (skol p.hav)
+          (skol p.poz)
       ==
     ::
     ++  dy-made-dial                                    ::  dialog product
