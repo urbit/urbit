@@ -77,21 +77,4 @@ jobs:
       - if: ${{ matrix.os == 'ubuntu-latest' }}
         name: run urbit-tests
         run: |
-          cp -RL tests pkg/arvo/tests
-          if [[ "${{ inputs.next }}" == "next/kelvin/"* ]]; then
-            next=$(echo ${{ inputs.next }} | sed 's/[^0-9]//g')
-            base="https://bootstrap.urbit.org/vere/next/kelvin/${next}"
-          elif [[ "${{ github.head_ref }}" == "next/kelvin"* ]]; then
-            next=$(echo ${{ github.head_ref }} | sed 's/[^0-9]//g')
-            base="https://bootstrap.urbit.org/vere/next/kelvin/${next}"
-          else
-            base="https://bootstrap.urbit.org/vere/${{ inputs.pace }}"
-          fi
-          vere=$(curl ${base}/last)
-          url="$(echo ${base}/v${vere}/vere-v${vere}-linux-x86_64)"
-          echo $vere
-          echo $url
-          # put in .jam so it doesn't crash when it gets -A'd in
-          curl -Lo pkg/arvo/vere.jam "$url"
-          chmod +x pkg/arvo/vere.jam
-          nix-build -A urbit-tests
+          nix flake check
