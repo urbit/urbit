@@ -945,7 +945,7 @@
         %-  road  |.
         ((pile-rule pax) [1 1] tex)
       ?^  res  pile.u.res
-      %-  mean  %-  flop
+      %-  mean
       =/  lyn  p.hair
       =/  col  q.hair
       ^-  (list tank)
