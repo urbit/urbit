@@ -53,7 +53,7 @@
   ++  get-bloq-offset  ::  get bloq offset of n-dimensional index
     |=  [=meta dex=(list @)]
     ^-  @
-    +((get-item-number shape.meta dex))
+    (get-item-number shape.meta dex)
   ::
   ++  get-item-number  ::  convert n-dimensional index to scalar index
     |=  [shape=(list @) dex=(list @)]
@@ -135,6 +135,41 @@
     (rap bloq.meta (gulf 1 n))
   ::
   ::  Operators
+  ::
+  ++  max
+    |=  a=ray
+    ^-  @ux
+    (reel (ravel a) |:([a=1 b=(min a)] (^max a b)))
+  ::
+  ++  argmax :: Only returns first match
+    |=  a=ray
+    ^-  @ud
+    +:(find ~[(max a)] (ravel a))
+  ::
+  ++  min
+    |=  a=ray
+    ^-  @ux
+    (reel (ravel a) |:([a=1 b=(cumsum a)] (^min a b)))
+  ::
+  ++  argmin :: Only returns first match
+    |=  a=ray
+    ^-  @ud
+    +:(find ~[(min a)] (ravel a))
+  ::
+  ++  cumsum
+    |=  a=ray  
+    ^-  @ux
+    (reel (ravel a) |=([b=@ c=@] ((fun-scalar bloq.meta.a aura.meta.a %add) b c)))
+  ::
+  ++  prod
+    |=  a=ray
+    ^-  @ux
+    =/  fun  (fun-scalar bloq.meta.a aura.meta.a %mul)
+    =/  ali  +:(ravel a)
+    =/  p  -:(ravel a)
+    |-  ^+  p
+    ?~  ali  p
+    $(ali +.ali, p (fun p -.ali))
   ::
   ++  add
     |=  [a=ray b=ray]
