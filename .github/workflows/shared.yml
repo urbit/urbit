@@ -55,7 +55,9 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          lfs: true
 
       # We only want the extra nix config on linux, where it is necessary
       # for the docker build. We don't want in on Mac, where it isn't but
