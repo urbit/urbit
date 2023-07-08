@@ -893,22 +893,22 @@
       ?.  (~(nest ut cez) | p.som)
         ::  [ven poz kev] can't nest in som
         ::
-        :~  'dojo: bad gate lost-argument (generator incorrect)'
-            'dojo: nest-need'
+        :~  'dojo: nest-need'
             (skol p.som)
             'dojo: nest-have'
             (skol p.sam)
+            'dojo: bad gate lost-argument (generator incorrect)'
         ==
       ::
       =/  hed=vase  (slot 2 som)
       ?.  (~(nest ut p.hed) | p.ven)
         ::  ven can't nest in head
         ::
-        :~  'dojo: bad gate event-sample (generator incorrect)'
-            'dojo: nest-need'
+        :~  'dojo: nest-need'
             (skol p.hed)
             'dojo: nest-have'
             (skol p.ven)
+            'dojo: bad gate event-sample (generator incorrect)'
         ==
       ::
       =/  zop=vase  (slot 6 som)
@@ -919,20 +919,20 @@
           ==
         ::  argument required, but nothing can nest
         ::
-        :~  'dojo: bad gate impossible-nest (generator incorrect)'
-            'dojo: nest-need'
+        :~  'dojo: nest-need'
             (skol p.zop)
             'dojo: nest-have'
             (skol p.poz)
+            'dojo: bad gate impossible-nest (generator incorrect)'
         ==
       ::  poz doesn't nest in zop
       ::
       ?<  (~(nest ut p.zop) | p.poz)
-      :~  'dojo: bad-argument (supplied sample incorrect)'
-          'dojo: nest-need'
+      :~  'dojo: nest-need'
           (skol p.zop)
           'dojo: nest-have'
           (skol p.poz)
+          'dojo: bad-argument (supplied sample incorrect)'
       ==
     ::
     ++  dy-made-dial                                    ::  dialog product
