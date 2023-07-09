@@ -19,14 +19,14 @@
         aura=@tas       ::  name of data type
     ==
   ::
-  +$  baum  ::          $baum:  ndarray with metadata
+  +$  baum  ::          $baum:  ndray with metadata
     $:  =meta  
-        data=ndarray
+        data=ndray
     ==
   ::
-  +$  ndarray  ::        $ndarray:  n-dimensional array as a nested list
+  +$  ndray  ::        $ndray:  n-dimensional array as a nested list
       $@  @        ::  single item
-      (list ndarray)  ::  nonempty list of children, in row-major order
+      (lest ndray)  ::  nonempty list of children, in row-major order
   ::
   ::  Utilities
   ::
@@ -47,15 +47,21 @@
   ++  get-item  ::  extract item at index .dex
     |=  [=ray dex=(list @)]
     ^-  @ux
-    (cut bloq.meta.ray [(get-bloq-offset -.ray dex) 1] data.ray)
+    =/  len  (^sub (roll shape.meta.ray ^mul) 1)
+    %^    cut
+        bloq.meta.ray 
+      [(^sub len (get-bloq-offset -.ray dex)) 1] 
+    data.ray
   ::
-::
   ++  set-item  ::  set item at index .dex to .val
     |=  [=ray dex=(list @) val=@]
     ^+  ray
     =/  len  (^sub (roll shape.meta.ray ^mul) 1)
     :-  -.ray
-    (sew bloq.meta.ray [(^sub len (get-bloq-offset -.ray dex)) 1 val] data.ray)
+    %^    sew 
+        bloq.meta.ray
+      [(^sub len (get-bloq-offset -.ray dex)) 1 val] 
+    data.ray
   ::
   ++  get-bloq-offset  ::  get bloq offset of n-dimensional index
     |=  [=meta dex=(list @)]
@@ -81,18 +87,18 @@
     ==
   ::
   ::
-  ++  get-dim  :: convert scalar index to n-dimensional index (re-write using spin)
+  ++  get-dim  :: convert scalar index to n-dimensional index
     |=  [shape=(list @) ind=@]
-    =/  shap  (flop shape)
+    =/  sap  (flop shape)
     =/  i=@  0
     =|  dex=(list @)
     ^-  (list @)
     |-
-    ?:  (gte i (lent shap))
+    ?:  (gte i (lent sap))
       (flop dex)
     %=    $
-      dex  `(list @)`(snoc dex (^mod ind (snag i shap)))
-      ind  (^div ind (snag i shap))
+      dex  `(list @)`(snoc dex (^mod ind (snag i sap)))
+      ind  (^div ind (snag i sap))
       i    (^add i 1)
     ==
   ::
@@ -130,10 +136,10 @@
     data.a 
   ==
   ::
-  ++  get-item-baum      ::  rewrite using spin
+  ++  get-item-baum
   |=  [=baum dex=(list @)]
   ^-  @
-  =/  a=ndarray  data.baum
+  =/  a=ndray  data.baum
   =/  i  0
   |-
   ?@  a
@@ -141,8 +147,7 @@
   %=    $
       i  +(i)
       a
-    ?>  !=(~ a)
-    (snag (snag i dex) `(list ndarray)`a)
+    (snag (snag i dex) `(list ndray)`a)
   ==
   ::
   ++  fill
