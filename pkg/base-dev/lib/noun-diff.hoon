@@ -13,13 +13,13 @@
   -.closed-patch
 ++  apply  
   |=  [patch=_id noun=*]
-  ?-  -.patch
-    %diff
-      =/  var-map  (del del.patch noun)
-      (ins ins.patch var-map)
-    %cell
-      ?>  ?=(^ noun)
-      [$(patch lhs.patch, noun -.noun) $(patch rhs.patch, noun +.noun)]
+  ?-    -.patch
+      %diff
+    =/  var-map  (del del.patch noun)
+    (ins ins.patch var-map)
+      %cell
+    ?>  ?=(^ noun)
+    [$(patch lhs.patch, noun -.noun) $(patch rhs.patch, noun +.noun)]
   ==
 ++  id
   ^-  patch
@@ -65,8 +65,7 @@
   ^-  (set @)
   ?-  -.diff
     %hole  (silt ~[+.diff])
-    %cell
-      (~(uni in $(diff lhs.diff)) $(diff rhs.diff))
+    %cell  (~(uni in $(diff lhs.diff)) $(diff rhs.diff))
     %ignore  empty-set
   ==
 ++  find-final-ins-holes
@@ -75,8 +74,7 @@
   ^-  (set @)
   ?-  -.diff
     %hole  (silt ~[+.diff])
-    %cell
-      (~(uni in $(diff lhs.diff)) $(diff rhs.diff))
+    %cell  (~(uni in $(diff lhs.diff)) $(diff rhs.diff))
     %atom  empty-set
   ==
 ++  find-ins-holes
@@ -85,8 +83,7 @@
   ^-  (set @)
   ?-  -.diff
     %hole  (silt ~[+<.diff])
-    %cell
-      (~(uni in $(diff lhs.diff)) $(diff rhs.diff))
+    %cell  (~(uni in $(diff lhs.diff)) $(diff rhs.diff))
     %atom  empty-set
   ==
 ++  filter-del-holes
@@ -102,53 +99,56 @@
 ++  filter-ins-holes
   |=  [allowed-holes=(set @) diff=ins-diff]
   ^-  final-ins-diff
-  ?-  -.diff
-    %hole
-      ?:  (~(has in allowed-holes) +<.diff)  [%hole +<.diff]
-      (insify-noun original:diff)
-    %cell  [%cell $(diff +<.diff) $(diff +>.diff)]
-    %atom  diff
+  ?-    -.diff
+      %hole
+    ?:  (~(has in allowed-holes) +<.diff)  [%hole +<.diff]
+    (insify-noun original:diff)
+      %cell
+    [%cell $(diff +<.diff) $(diff +>.diff)]
+      %atom
+    diff
   ==
 ++  gcp
   |=  diff=diff
   ^-  patch
-  ?-  -.ins.diff
-    %atom  
-      [%diff diff]
-    %cell
-      ?:  ?=(%cell -.del.diff)
-      [%cell $(diff [+<.del.diff +<.ins.diff]) $(diff [+>.del.diff +>.ins.diff])]
-      [%diff diff]
-    %hole  
-      [%diff diff]
+  ?-    -.ins.diff
+      %atom  
+    [%diff diff]
+      %cell
+    ?:  ?=(%cell -.del.diff)
+    [%cell $(diff [+<.del.diff +<.ins.diff]) $(diff [+>.del.diff +>.ins.diff])]
+    [%diff diff]
+      %hole  
+    [%diff diff]
   ==
 ++  closure
   |=  =patch
   ^-  [^patch ?]
-  ?-  -.patch
-    %diff
-      =/  del-holes  (find-del-holes del:patch)
-      =/  ins-holes  (find-final-ins-holes ins:patch)
-      =/  difference  (~(dif in ins-holes) del-holes)
-      [patch =(difference empty-set)]
-    %cell
-      =/  lhs  $(patch lhs:patch)
-      =/  rhs  $(patch rhs:patch)
-      ?:  ?&(+.lhs +.rhs)  [[%cell -.lhs -.rhs] &]
-      $(patch (pull-diff [%cell -.lhs -.rhs]))
+  ?-    -.patch
+      %diff
+    =/  del-holes  (find-del-holes del:patch)
+    =/  ins-holes  (find-final-ins-holes ins:patch)
+    =/  difference  (~(dif in ins-holes) del-holes)
+    [patch =(difference empty-set)]
+      %cell
+    =/  lhs  $(patch lhs:patch)
+    =/  rhs  $(patch rhs:patch)
+    ?:  ?&(+.lhs +.rhs)  [[%cell -.lhs -.rhs] &]
+    $(patch (pull-diff [%cell -.lhs -.rhs]))
   ==
 ++  pull-diff
   |=  =patch
   ^-  [%diff del=del-diff ins=final-ins-diff]
-  ?-  -.patch
-    %diff  patch
-    %cell
-      =/  pulled-lhs  $(patch lhs:patch)
-      =/  pulled-rhs  $(patch rhs:patch)
-      :+
-        %diff 
-        [%cell del:pulled-lhs del:pulled-rhs]
-        [%cell ins:pulled-lhs ins:pulled-rhs]
+  ?-    -.patch
+      %diff
+    patch
+      %cell
+    =/  pulled-lhs  $(patch lhs:patch)
+    =/  pulled-rhs  $(patch rhs:patch)
+    :+
+      %diff 
+      [%cell del:pulled-lhs del:pulled-rhs]
+      [%cell ins:pulled-lhs ins:pulled-rhs]
   ==
 ++  is-subtree  
   |=  [tree=* subtree=*]
