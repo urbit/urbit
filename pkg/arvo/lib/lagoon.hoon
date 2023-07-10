@@ -19,9 +19,14 @@
         aura=@tas       ::  name of data type
     ==
   ::
-  +$  baum  ::   $baum:  n-dimensional array as a nested list
-    $@  @        ::  single item
-    (lest baum)  ::  nonempty list of children, in row-major order
+  +$  baum  ::          $baum:  ndray with metadata
+    $:  =meta  
+        data=ndray
+    ==
+  ::
+  +$  ndray  ::        $ndray:  n-dimensional array as a nested list
+      $@  @        ::  single item
+      (lest ndray)  ::  nonempty list of children, in row-major order
   ::
   ::  Utilities
   ::
@@ -42,13 +47,21 @@
   ++  get-item  ::  extract item at index .dex
     |=  [=ray dex=(list @)]
     ^-  @ux
-    (cut bloq.meta.ray [(get-bloq-offset -.ray dex) 1] data.ray)
+    =/  len  (^sub (roll shape.meta.ray ^mul) 1)
+    %^    cut
+        bloq.meta.ray 
+      [(^sub len (get-bloq-offset -.ray dex)) 1] 
+    data.ray
   ::
   ++  set-item  ::  set item at index .dex to .val
     |=  [=ray dex=(list @) val=@]
     ^+  ray
+    =/  len  (^sub (roll shape.meta.ray ^mul) 1)
     :-  -.ray
-    (sew bloq.meta.ray [(get-bloq-offset -.ray dex) 1 val] data.ray)
+    %^    sew 
+        bloq.meta.ray
+      [(^sub len (get-bloq-offset -.ray dex)) 1 val] 
+    data.ray
   ::
   ++  get-bloq-offset  ::  get bloq offset of n-dimensional index
     |=  [=meta dex=(list @)]
@@ -73,6 +86,22 @@
       ret  (^add ret (^mul i.dex cof))
     ==
   ::
+  ::
+  ++  get-dim  :: convert scalar index to n-dimensional index
+    |=  [shape=(list @) ind=@]
+    =/  sap  (flop shape)
+    =/  i=@  0
+    =|  dex=(list @)
+    ^-  (list @)
+    |-
+    ?:  (gte i (lent sap))
+      (flop dex)
+    %=    $
+      dex  `(list @)`(snoc dex (^mod ind (snag i sap)))
+      ind  (^div ind (snag i sap))
+      i    (^add i 1)
+    ==
+  ::
   ++  get-item-index
     |=  [shape=(list @) num=@]
     ^-  @
@@ -88,8 +117,42 @@
     ^-  (list @)
     +:(flop (rip bloq.meta.a data.a))
   ::
+  ++  en-ray    :: baum to ray
+  |=  =baum
+  ^-  ray
+  =/  a=ray  [meta.baum `@ux`1]
+  =/  i  0
+  =/  n  (roll shape.meta.a ^mul)
+  |-
+  ?:  =(i n)
+    a
+  %=    $
+      i  +(i)
+      data.a
+    %+  ^add 
+      (get-item-baum baum (get-dim shape.meta.a i))
+    %+  lsh 
+      bloq.meta.a 
+    data.a 
+  ==
+  ::
+  ++  get-item-baum
+  |=  [=baum dex=(list @)]
+  ^-  @
+  =/  a=ndray  data.baum
+  =/  i  0
+  |-
+  ?@  a
+    a
+  %=    $
+      i  +(i)
+      a
+    (snag (snag i dex) `(list ndray)`a)
+  ==
+  ::
   ++  fill
-    |=  [=meta x=@]  ^-  ray
+    |=  [=meta x=@]  
+    ^-  ray
     =/  len  (roll shape.meta ^mul)
     :-  meta
     (con +:(zeros meta) (fil bloq.meta len x))
@@ -102,12 +165,24 @@
   ::
   ::  Builders
   ::
-  ::    Zeroes
-  ++  zeros
+  ::
+  ++  eye      ::  produces identity matrix of shape nxn.
+    |=  [=bloq =aura n=@]
+    ^-  ray
+    ~_  leaf+"lagoon-fail"
+    =<  +
+    %^    spin
+        (gulf 0 (^sub n 1))
+      ^-  ray  (zeros [~[n n] bloq aura])
+    |=  [i=@ r=ray]
+    [i (set-item r ~[i i] 1)]
+ :: 
+ ::    Zeroes
+ ++  zeros
     |=  =meta  ^-  ray
     ~_  leaf+"lagoon-fail"
     :-  meta
-        (lsh [bloq.meta (roll shape.meta ^mul)] 1)
+    (lsh [bloq.meta (roll shape.meta ^mul)] 1)
   ::    Ones
   ++  ones
     |=  =meta  ^-  ray
@@ -171,6 +246,49 @@
     ?~  ali  p
     $(ali +.ali, p (fun p -.ali))
   ::
+  ++  matmul-2d
+  |=  [a=ray b=ray]
+  =/  ar  (ravel a)
+  =/  br  (ravel b)
+  =/  i  0
+  =/  j  0
+  =/  k  0
+  =/  shape=(list @)  ~[(snag 0 shape.meta.a) (snag 1 shape.meta.b)]
+  =/  prod=ray  (zeros [shape bloq.meta.a aura.meta.a])
+  ::  
+  ::  multiplication conditions
+  ?>
+  ?&  =(2 (lent shape.meta.b))
+      =(2 (lent shape.meta.a))
+      =((snag 1 shape.meta.a) (snag 0 shape.meta.b))
+  ==
+  |-
+    ?:   =(i (snag 0 shape.meta.prod))
+      prod
+    %=    $
+      i  +(i)
+      prod
+    |-
+      ?:  =(j (snag 1 shape.meta.prod))
+        prod
+      =/  cume  0
+      %=    $
+          j  +(j)
+          prod
+        |-  
+        ?:   =(k (snag 1 shape.meta.a))
+          (set-item prod `(list @)`~[i j] cume)
+        %=    $
+            k  +(k)
+            cume
+          %+  (fun-scalar bloq.meta:a aura.meta:a %add)
+            cume 
+          %+  (fun-scalar bloq.meta:a aura.meta:a %mul)
+            (snag (get-bloq-offset meta.a `(list @)`~[i k]) ar)
+          (snag (get-bloq-offset meta.b `(list @)`~[k j]) br)
+        ==
+      ==
+    ==
   ++  add
     |=  [a=ray b=ray]
     ^-  ray
