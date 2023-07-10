@@ -255,49 +255,71 @@
     ?~  ali  p
     $(ali +.ali, p (fun p -.ali))
   ::
-  ++  matmul-2d
-  |=  [a=ray b=ray]
-  =/  ar  (ravel a)
-  =/  br  (ravel b)
-  =/  i  0
-  =/  j  0
-  =/  k  0
-  =/  shape=(list @)  ~[(snag 0 shape.meta.a) (snag 1 shape.meta.b)]
-  =/  prod=ray  (zeros [shape bloq.meta.a aura.meta.a])
-  ::  
-  ::  multiplication conditions
-  ?>
-  ?&  =(2 (lent shape.meta.b))
-      =(2 (lent shape.meta.a))
-      =((snag 1 shape.meta.a) (snag 0 shape.meta.b))
-  ==
-  |-
-    ?:   =(i (snag 0 shape.meta.prod))
-      prod
-    %=    $
-      i  +(i)
-      prod
+  ++  transpose
+    |=  a=ray  ^-  ray
+    ?>  =(2 (lent shape.meta.a))
+    =/  i  0
+    =/  j  0
+    =/  shape=(list @)  ~[(snag 1 shape.meta.a) (snag 0 shape.meta.a)]
+    =/  prod=ray  (zeros [shape bloq.meta.a aura.meta.a])
     |-
-      ?:  =(j (snag 1 shape.meta.prod))
+      ?:  =(i (snag 0 shape.meta.a))
         prod
-      =/  cume  0
-      %=    $
-          j  +(j)
+      %=  $
+        i  +(i)
+        prod
+      |-
+        ?:  =(j (snag 1 shape.meta.a))
           prod
-        |-  
-        ?:   =(k (snag 1 shape.meta.a))
-          (set-item prod `(list @)`~[i j] cume)
+        %=  $
+          j  +(j)
+          prod  (set-item prod ~[j i] (get-item a ~[i j]))
+        ==
+    ==
+  ::
+  ++  matmul-2d
+    |=  [a=ray b=ray]
+    =/  ar  (ravel a)
+    =/  br  (ravel b)
+    =/  i  0
+    =/  j  0
+    =/  k  0
+    =/  shape=(list @)  ~[(snag 0 shape.meta.a) (snag 1 shape.meta.b)]
+    =/  prod=ray  (zeros [shape bloq.meta.a aura.meta.a])
+    ::  
+    ::  multiplication conditions
+    ?>
+    ?&  =(2 (lent shape.meta.b))
+        =(2 (lent shape.meta.a))
+        =((snag 1 shape.meta.a) (snag 0 shape.meta.b))
+    ==
+    |-
+      ?:   =(i (snag 0 shape.meta.prod))
+        prod
+      %=    $
+        i  +(i)
+        prod
+      |-
+        ?:  =(j (snag 1 shape.meta.prod))
+          prod
+        =/  cume  0
         %=    $
-            k  +(k)
-            cume
-          %+  (fun-scalar bloq.meta:a aura.meta:a %add)
-            cume 
-          %+  (fun-scalar bloq.meta:a aura.meta:a %mul)
-            (snag (get-bloq-offset meta.a `(list @)`~[i k]) ar)
-          (snag (get-bloq-offset meta.b `(list @)`~[k j]) br)
+            j  +(j)
+            prod
+          |-  
+          ?:   =(k (snag 1 shape.meta.a))
+            (set-item prod `(list @)`~[i j] cume)
+          %=    $
+              k  +(k)
+              cume
+            %+  (fun-scalar bloq.meta:a aura.meta:a %add)
+              cume 
+            %+  (fun-scalar bloq.meta:a aura.meta:a %mul)
+              (snag (get-bloq-offset meta.a `(list @)`~[i k]) ar)
+            (snag (get-bloq-offset meta.b `(list @)`~[k j]) br)
+          ==
         ==
       ==
-    ==
   ::
   ++  add
     |=  [a=ray b=ray]
