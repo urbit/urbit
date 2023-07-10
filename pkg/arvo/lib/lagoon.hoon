@@ -205,6 +205,7 @@
     |=  [=meta n=@ud]
     ^-  ray
     =.  shape.meta  ~[n]
+    =.  aura.meta  %ud
     %-  spac
     :-  meta 
     (rap bloq.meta (gulf 1 n))
@@ -214,7 +215,11 @@
   ++  max
     |=  a=ray
     ^-  @ux
-    (reel (ravel a) |:([a=1 b=(min a)] (^max a b)))
+    =/  fun
+      |:  [b=1 c=-:(ravel a)] 
+      ?:  =(((fun-scalar bloq.meta.a aura.meta.a %gth) b c) 0)
+        b  c 
+    (reel (ravel a) fun)
   ::
   ++  argmax :: Only returns first match
     |=  a=ray
@@ -224,7 +229,11 @@
   ++  min
     |=  a=ray
     ^-  @ux
-    (reel (ravel a) |:([a=1 b=(cumsum a)] (^min a b)))
+    =/  fun
+      |:  [b=1 c=-:(ravel a)] 
+      ?:  =(((fun-scalar bloq.meta.a aura.meta.a %lth) b c) 0)
+        b  c 
+    (reel (ravel a) fun)
   ::
   ++  argmin :: Only returns first match
     |=  a=ray
@@ -242,7 +251,7 @@
     =/  fun  (fun-scalar bloq.meta.a aura.meta.a %mul)
     =/  ali  +:(ravel a)
     =/  p  -:(ravel a)
-    |-  ^+  p
+    |-  ^-  @ux
     ?~  ali  p
     $(ali +.ali, p (fun p -.ali))
   ::
@@ -289,6 +298,7 @@
         ==
       ==
     ==
+  ::
   ++  add
     |=  [a=ray b=ray]
     ^-  ray
@@ -374,7 +384,7 @@
     =/  rem  ((fun-scalar bloq.meta:a aura.meta:a %mod) i.ali i.bob)
     $(ali t.ali, bob t.bob, res [rem res])
    ::
-  +$  ops  ?(%add %sub %mul %div %mod)
+  +$  ops  ?(%add %sub %mul %div %mod %gth %lth)
   ::
   ++  fun-scalar
     |=  [=bloq aura=@tas fun=ops]
@@ -387,6 +397,8 @@
           %mul  |=([b=@ c=@] (~(sit fe bloq) (^mul b c)))
           %div  |=([b=@ c=@] (~(sit fe bloq) (^div b c)))
           %mod  |=([b=@ c=@] (~(sit fe bloq) (^mod b c)))
+          %gth  |=([b=@ c=@] (gth b c))
+          %lth  |=([b=@ c=@] (gth b c))
         ==
         ::?(%s %sb %sx %sd %sv %sw)  sum:si
         %r
@@ -397,6 +409,8 @@
           %sub  ~(sub rq r)
           %mul  ~(mul rq r)
           %div  ~(div rq r)
+          %gth  ~(gth rq r)
+          %lth  ~(lth rq r)
         ==
         %6
         ?+  fun  !!
@@ -404,6 +418,8 @@
           %sub  ~(sub rd r)
           %mul  ~(mul rd r)
           %div  ~(div rd r)
+          %gth  ~(gth rd r)
+          %lth  ~(lth rd r)
         ==
         %5
         ?+  fun  !!
@@ -411,6 +427,8 @@
           %sub  ~(sub rs r)
           %mul  ~(mul rs r)
           %div  ~(div rs r)
+          %gth  ~(gth rs r)
+          %lth  ~(lth rs r)
         ==
         %4
         ?+  fun  !!
@@ -418,6 +436,8 @@
           %sub  ~(sub rh r)
           %mul  ~(mul rh r)
           %div  ~(div rh r)
+          %gth  ~(gth rh r)
+          %lth  ~(lth rh r)
         ==
       ==
     ::
