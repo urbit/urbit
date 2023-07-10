@@ -17,6 +17,7 @@
       %diff
     =/  var-map  (del del.patch noun)
     (ins ins.patch var-map)
+  ::
       %cell
     ?>  ?=(^ noun)
     [$(patch lhs.patch, noun -.noun) $(patch rhs.patch, noun +.noun)]
@@ -91,35 +92,29 @@
   ^-  del-diff
   ?:  ?=(%ignore -.diff)  diff
   ?-  -.diff
-    %hole
-      ?:  (~(has in allowed-holes) +.diff)  diff
-      [%ignore ~]
+    %hole  ?:((~(has in allowed-holes) +.diff) diff [%ignore ~])
     %cell  [%cell $(diff +<.diff) $(diff +>.diff)]
   ==
 ++  filter-ins-holes
   |=  [allowed-holes=(set @) diff=ins-diff]
   ^-  final-ins-diff
   ?-    -.diff
+      %cell  [%cell $(diff +<.diff) $(diff +>.diff)]
+      %atom  diff
       %hole
     ?:  (~(has in allowed-holes) +<.diff)  [%hole +<.diff]
     (insify-noun original:diff)
-      %cell
-    [%cell $(diff +<.diff) $(diff +>.diff)]
-      %atom
-    diff
   ==
 ++  gcp
   |=  diff=diff
   ^-  patch
   ?-    -.ins.diff
-      %atom  
-    [%diff diff]
+      %atom  [%diff diff]
+      %hole  [%diff diff]
       %cell
-    ?:  ?=(%cell -.del.diff)
+    ?.  ?=(%cell -.del.diff)
+      [%diff diff]
     [%cell $(diff [+<.del.diff +<.ins.diff]) $(diff [+>.del.diff +>.ins.diff])]
-    [%diff diff]
-      %hole  
-    [%diff diff]
   ==
 ++  closure
   |=  =patch
@@ -130,6 +125,7 @@
     =/  ins-holes  (find-final-ins-holes ins:patch)
     =/  difference  (~(dif in ins-holes) del-holes)
     [patch =(difference empty-set)]
+  ::
       %cell
     =/  lhs  $(patch lhs:patch)
     =/  rhs  $(patch rhs:patch)
@@ -140,15 +136,13 @@
   |=  =patch
   ^-  [%diff del=del-diff ins=final-ins-diff]
   ?-    -.patch
-      %diff
-    patch
+      %diff  patch
       %cell
     =/  pulled-lhs  $(patch lhs:patch)
     =/  pulled-rhs  $(patch rhs:patch)
-    :+
-      %diff 
+    :+  %diff 
       [%cell del:pulled-lhs del:pulled-rhs]
-      [%cell ins:pulled-lhs ins:pulled-rhs]
+    [%cell ins:pulled-lhs ins:pulled-rhs]
   ==
 ++  is-subtree  
   |=  [tree=* subtree=*]
@@ -166,7 +160,7 @@
   ?:  ?&  (is-subtree a subtree)
           (is-subtree b subtree)
       ==
-  `(mug subtree)
+    `(mug subtree)
   ~
 ++  extract-del
   |=  [oracle=$-(* (unit @)) subtree=*]
@@ -199,21 +193,21 @@
   ++  go  
     |=  [diff=del-diff noun=* var-map=(map @ *)]
     ^-  (map @ *)
-    ?-      -.diff
-          %ignore
-        var-map
-      ::
-          %hole
-        =/  subtree  (~(get by var-map) +.diff)
-        ?~  subtree  (~(put by var-map) +.diff noun)
-        ?>  =(+.subtree noun)
-        var-map
-      ::
-          %cell
-        ?>  ?=(^ noun)
-        =/  lhs-var-map  $(diff +<.diff, noun -.noun)
-        =/  rhs-var-map  $(diff +>.diff, noun +.noun, var-map lhs-var-map)
-        rhs-var-map
+    ?-    -.diff
+        %ignore
+      var-map
+    ::
+        %hole
+      =/  subtree  (~(get by var-map) +.diff)
+      ?~  subtree  (~(put by var-map) +.diff noun)
+      ?>  =(+.subtree noun)
+      var-map
+    ::
+        %cell
+      ?>  ?=(^ noun)
+      =/  lhs-var-map  $(diff +<.diff, noun -.noun)
+      =/  rhs-var-map  $(diff +>.diff, noun +.noun, var-map lhs-var-map)
+      rhs-var-map
     ==
   --
 --
