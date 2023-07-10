@@ -176,7 +176,6 @@
       ^-  ray  (zeros [~[n n] bloq aura])
     |=  [i=@ r=ray]
     [i (set-item r ~[i i] 1)]
- :: 
  ::    Zeroes
  ++  zeros
     |=  =meta  ^-  ray
@@ -254,6 +253,14 @@
     |-  ^-  @ux
     ?~  ali  p
     $(ali +.ali, p (fun p -.ali))
+  ::
+  ++  reshape
+    |=  [a=ray shape=(list @)]  ^-  ray
+    =/  in-cnt  (reel shape.meta.a ^mul)
+    =/  out-cnt  (reel shape ^mul)
+    ?>  =(in-cnt out-cnt)
+    =.  shape.meta.a  shape
+    a
   ::
   ++  transpose
     |=  a=ray  ^-  ray
