@@ -328,6 +328,36 @@
         ==
       ==
   ::
+  ++  add-scalar
+    |=  [a=ray n=@]
+    ^-  ray
+    =/  b=ray  (fill meta.a n)
+    (add a b)
+  ::
+  ++  sub-scalar
+    |=  [a=ray n=@]
+    ^-  ray
+    =/  b=ray  (fill meta.a n)
+    (sub a b)
+  ::
+  ++  mul-scalar
+    |=  [a=ray n=@]
+    ^-  ray
+    =/  b=ray  (fill meta.a n)
+    (mul a b)
+  ::
+  ++  div-scalar
+    |=  [a=ray n=@]
+    ^-  ray
+    =/  b=ray  (fill meta.a n)
+    (div a b)
+  ::
+  ++  mod-scalar
+    |=  [a=ray n=@]
+    ^-  ray
+    =/  b=ray  (fill meta.a n)
+    (mod a b)
+  ::
   ++  add
     |=  [a=ray b=ray]
     ^-  ray
