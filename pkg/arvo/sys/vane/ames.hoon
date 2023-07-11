@@ -1678,8 +1678,7 @@
         =*  her  her.u.parsed
         =/  =bone
           ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
-        =/  peer-core  (abed-got:pe her)
-        abet:(on-flub:peer-core bone)
+        abet:(on-flub:(abed-got:pe her) bone)
       ::  +on-take-done: handle notice from vane that it processed a message
       ::
       ++  on-take-done
@@ -3872,17 +3871,16 @@
           ++  call
             |=  task=message-sink-task
             ^+  sink
-            ?-  -.task
-              %drop  sink(nax.state (~(del in nax.state) message-num.task))
-              %done  (done ok.task)
-            ::
-                 %flub
+            ?-    -.task
+                %drop  sink(nax.state (~(del in nax.state) message-num.task))
+                %done  (done ok.task)
+                %flub
               %=  sink
                 last-heard.state        (dec last-heard.state)
                 pending-vane-ack.state  ~(nap to pending-vane-ack.state)
               ==
             ::
-                 %hear
+                %hear
               |^  ?:  ?|  corked
                       ?&  %*(corked sink bone (mix 0b10 bone))
                           =(%nack (received bone))
