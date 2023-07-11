@@ -10,7 +10,7 @@
 ::  Auxiliary tools
 ++  is-equal
   |=  [a=ray:la b=ray:la]  ^-  tang
-  ?:  ?&  =(aura.meta.a aura.meta.b)
+  ?:  ?&  =(kind.meta.a kind.meta.b)
           =(bloq.meta.a bloq.meta.b)
           =(shape.meta.a shape.meta.b)
           =(data.a data.b)
@@ -23,11 +23,11 @@
 ::  Builders
 ::
 ++  test-eye  ^-  tang
-  =/  small-test  [[2 2 ~] 3 %ud]
-  =/  large-test  [[5 5 ~] 3 %ud]
-  =/  eye-small   (eye:la 3 %ud 2)
+  =/  small-test  [[2 2 ~] 3 %unsigned]
+  =/  large-test  [[5 5 ~] 3 %unsigned]
+  =/  eye-small   (eye:la 3 %unsigned 2)
   =/  eye-small-data  0x1.0100.0001
-  =/  eye-large   (eye:la 3 %ud 5)
+  =/  eye-large   (eye:la 3 %unsigned 5)
   =/  eye-large-data  0x101.0000.0000.0001.0000.0000.0001.0000.0000.0001.0000.0000.0001
   ;:  weld
     %+  is-equal
@@ -39,8 +39,8 @@
   ==
 ::
 ++  test-zeros  ^-  tang
-  =/  small-test  [[2 2 ~] 3 %ud]
-  =/  large-test  [[2 2 2 2 ~] 3 %ud]
+  =/  small-test  [[2 2 ~] 3 %unsigned]
+  =/  large-test  [[2 2 2 2 ~] 3 %unsigned]
   =/  zeros-small   (zeros:la small-test)
   =/  zero-small-data  0x1.0000.0000
   =/  zeros-large   (zeros:la large-test)
@@ -55,8 +55,8 @@
   ==
 ::
 ++  test-ones  ^-  tang
-  =/  small-test  [[2 2 ~] 3 %ud]
-  =/  large-test  [[2 2 2 2 ~] 3 %ud]
+  =/  small-test  [[2 2 ~] 3 %unsigned]
+  =/  large-test  [[2 2 2 2 ~] 3 %unsigned]
   =/  ones-small   (ones:la small-test)
   =/  one-small-data  0x1.0101.0101
   =/  ones-large   (ones:la large-test)
@@ -71,8 +71,8 @@
   ==
 ::
 ++  test-iota  ^-  tang
-  =/  small-test  [[10 ~] 3 %ud]
-  =/  large-test  [[40 ~] 3 %ud]
+  =/  small-test  [[10 ~] 3 %unsigned]
+  =/  large-test  [[40 ~] 3 %unsigned]
   =/  iota-small   (iota:la small-test 10)
   =/  iota-small-data  0x1.0a09.0807.0605.0403.0201
   =/  iota-large   (iota:la large-test 40)
@@ -89,7 +89,7 @@
 ::  Operators
 ::
 ++  test-cumsum  ^-  tang
-  =/  small-test    [[2 2 2 2 ~] 3 %ud]
+  =/  small-test    [[2 2 2 2 ~] 3 %unsigned]
   =/  iota-test     (iota:la small-test 10)
   =/  iota-res=@ux  `@ux`55
   =/  ones-test     (ones:la small-test)
@@ -104,7 +104,7 @@
   ==
 ::
 ++  test-prod  ^-  tang
-  =/  small-test    [[2 2 2 2 ~] 5 %r]
+  =/  small-test    [[2 2 2 2 ~] 5 %float]
   =/  iota-test     (iota:la small-test 10)
   =/  iota-res=@ux  `@ux`3.628.800
   =/  ones-test     (set-item:la (ones:la small-test) ~[1 1 1 1] 2)

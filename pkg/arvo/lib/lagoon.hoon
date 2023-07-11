@@ -16,7 +16,14 @@
   +$  meta  ::          $meta:  metadata for a $ray
     $:  shape=(list @)  ::  list of dimension lengths
         =bloq           ::  logarithm of bitwidth
-        aura=@tas       ::  name of data type
+        =kind           ::  name of data type
+    ==
+  ::
+  +$  kind
+    $?  %float
+        %unsigned
+        %signed
+        %complex
     ==
   ::
   +$  baum  ::          $baum:  ndray with metadata
@@ -42,7 +49,7 @@
     %+  turn  (ravel a)
     |=  i=@
     ^-  tank
-    (sell [%atom aura.meta.a ~] i)
+    (sell [%atom kind.meta.a ~] i)
   ::
   ++  get-item  ::  extract item at index .dex
     |=  [=ray dex=(list @)]
@@ -167,13 +174,13 @@
   ::
   ::
   ++  eye      ::  produces identity matrix of shape nxn.
-    |=  [=bloq =aura n=@]
+    |=  [=bloq =kind n=@]
     ^-  ray
     ~_  leaf+"lagoon-fail"
     =<  +
     %^    spin
         (gulf 0 (^sub n 1))
-      ^-  ray  (zeros [~[n n] bloq aura])
+      ^-  ray  (zeros [~[n n] bloq kind])
     |=  [i=@ r=ray]
     [i (set-item r ~[i i] 1)]
  ::    Zeroes
@@ -187,10 +194,10 @@
     |=  =meta  ^-  ray
     ~_  leaf+"lagoon-fail"
     =/  one
-      ?+    aura.meta  ~|(aura.meta !!)
-          ?(%u %ub %ux %ud %uv %uw)  `@`1
-          ?(%s %sb %sx %sd %sv %sw)  `@`--1
-          %r
+      ?+    kind.meta  ~|(kind.meta !!)
+          %unsigned  `@`1
+          %signed    `@`1
+          %float
         ?+  bloq.meta  !!
           %7  .~~~1
           %6  .~1
@@ -204,7 +211,7 @@
     |=  [=meta n=@ud]
     ^-  ray
     =.  shape.meta  ~[n]
-    =.  aura.meta  %ud
+    =.  kind.meta  %unsigned
     %-  spac
     :-  meta 
     (rap bloq.meta (gulf 1 n))
@@ -216,7 +223,7 @@
     ^-  @ux
     =/  fun
       |:  [b=1 c=-:(ravel a)] 
-      ?:  =(((fun-scalar bloq.meta.a aura.meta.a %gth) b c) 0)
+      ?:  =(((fun-scalar bloq.meta.a kind.meta.a %gth) b c) 0)
         b  c 
     (reel (ravel a) fun)
   ::
@@ -230,7 +237,7 @@
     ^-  @ux
     =/  fun
       |:  [b=1 c=-:(ravel a)] 
-      ?:  =(((fun-scalar bloq.meta.a aura.meta.a %lth) b c) 0)
+      ?:  =(((fun-scalar bloq.meta.a kind.meta.a %lth) b c) 0)
         b  c 
     (reel (ravel a) fun)
   ::
@@ -242,12 +249,12 @@
   ++  cumsum
     |=  a=ray  
     ^-  @ux
-    (reel (ravel a) |=([b=@ c=@] ((fun-scalar bloq.meta.a aura.meta.a %add) b c)))
+    (reel (ravel a) |=([b=@ c=@] ((fun-scalar bloq.meta.a kind.meta.a %add) b c)))
   ::
   ++  prod
     |=  a=ray
     ^-  @ux
-    =/  fun  (fun-scalar bloq.meta.a aura.meta.a %mul)
+    =/  fun  (fun-scalar bloq.meta.a kind.meta.a %mul)
     =/  ali  +:(ravel a)
     =/  p  -:(ravel a)
     |-  ^-  @ux
@@ -268,7 +275,7 @@
     =/  i  0
     =/  j  0
     =/  shape=(list @)  ~[(snag 1 shape.meta.a) (snag 0 shape.meta.a)]
-    =/  prod=ray  (zeros [shape bloq.meta.a aura.meta.a])
+    =/  prod=ray  (zeros [shape bloq.meta.a kind.meta.a])
     |-
       ?:  =(i (snag 0 shape.meta.a))
         prod
@@ -292,7 +299,7 @@
     =/  j  0
     =/  k  0
     =/  shape=(list @)  ~[(snag 0 shape.meta.a) (snag 1 shape.meta.b)]
-    =/  prod=ray  (zeros [shape bloq.meta.a aura.meta.a])
+    =/  prod=ray  (zeros [shape bloq.meta.a kind.meta.a])
     ::  
     ::  multiplication conditions
     ?>
@@ -319,9 +326,9 @@
           %=    $
               k  +(k)
               cume
-            %+  (fun-scalar bloq.meta:a aura.meta:a %add)
+            %+  (fun-scalar bloq.meta:a kind.meta:a %add)
               cume 
-            %+  (fun-scalar bloq.meta:a aura.meta:a %mul)
+            %+  (fun-scalar bloq.meta:a kind.meta:a %mul)
               (snag (get-bloq-offset meta.a `(list @)`~[i k]) ar)
             (snag (get-bloq-offset meta.b `(list @)`~[k j]) br)
           ==
@@ -372,7 +379,7 @@
     |-  ^+  res
     ?@  ali  res
     ?@  bob  res
-    =/  sum  ((fun-scalar bloq.meta:a aura.meta:a %add) i.ali i.bob)
+    =/  sum  ((fun-scalar bloq.meta:a kind.meta:a %add) i.ali i.bob)
     $(ali t.ali, bob t.bob, res [sum res])
   ::
   ++  sub
@@ -389,7 +396,7 @@
     |-  ^+  res
     ?@  ali  res
     ?@  bob  res
-    =/  dif  ((fun-scalar bloq.meta:a aura.meta:a %sub) i.ali i.bob)
+    =/  dif  ((fun-scalar bloq.meta:a kind.meta:a %sub) i.ali i.bob)
     $(ali t.ali, bob t.bob, res [dif res])
   ::
   ++  mul
@@ -406,7 +413,7 @@
     |-  ^+  res
     ?@  ali  res
     ?@  bob  res
-    =/  pro  ((fun-scalar bloq.meta:a aura.meta:a %mul) i.ali i.bob)
+    =/  pro  ((fun-scalar bloq.meta:a kind.meta:a %mul) i.ali i.bob)
     $(ali t.ali, bob t.bob, res [pro res])
   ::
   ++  div
@@ -423,7 +430,7 @@
     |-  ^+  res
     ?@  ali  res
     ?@  bob  res
-    =/  fra  ((fun-scalar bloq.meta:a aura.meta:a %div) i.ali i.bob)
+    =/  fra  ((fun-scalar bloq.meta:a kind.meta:a %div) i.ali i.bob)
     $(ali t.ali, bob t.bob, res [fra res])
   ::
   ++  mod
@@ -440,16 +447,16 @@
     |-  ^+  res
     ?@  ali  res
     ?@  bob  res
-    =/  rem  ((fun-scalar bloq.meta:a aura.meta:a %mod) i.ali i.bob)
+    =/  rem  ((fun-scalar bloq.meta:a kind.meta:a %mod) i.ali i.bob)
     $(ali t.ali, bob t.bob, res [rem res])
    ::
   +$  ops  ?(%add %sub %mul %div %mod %gth %lth)
   ::
   ++  fun-scalar
-    |=  [=bloq aura=@tas fun=ops]
+    |=  [=bloq =kind fun=ops]
     ^-  $-([@ @] @)
-    ?+    aura  ~|(aura !!)
-        ?(%u %ub %ux %ud %uv %uw)  
+    ?+    kind  ~|(kind !!)
+        %unsigned  
         ?-  fun
           %add  ~(sum fe bloq)
           %sub  ~(dif fe bloq)
@@ -460,7 +467,7 @@
           %lth  |=([b=@ c=@] (gth b c))
         ==
         ::?(%s %sb %sx %sd %sv %sw)  sum:si
-        %r
+        %float
       ?+  bloq  !!
         %7
         ?+  fun  !!
@@ -500,7 +507,7 @@
         ==
       ==
     ::
-        ::  TODO signed integers -- add new 2's complement aura?
+        ::  TODO signed integers -- add new 2's complement kind?
     ==
   --
 --
