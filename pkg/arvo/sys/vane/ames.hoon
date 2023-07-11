@@ -1149,7 +1149,7 @@
           $>(%wake gift:behn)
       ==
       $:  %gall
-          $>(%unto gift:gall)
+          $>(?(%flub %unto) gift:gall)
       ==
       $:  %jael
           $>  $?  %private-keys
@@ -1662,6 +1662,35 @@
         +.u.ship-state
       ::
       +|  %tasks
+      ::  +on-take-flub: vane not ready to process message, pretend it
+      ::                 was never delivered
+      ::
+      ++  on-take-flub
+        |=  =wire
+        ^+  event-core
+        ?~  parsed=(parse-bone-wire wire)
+          ::  no-op
+          ::
+          ~>  %slog.0^leaf/"ames: dropping malformed wire: {(spud wire)}"
+          event-core
+        ?>  ?=([@ her=ship *] u.parsed)
+        =*  her  her.u.parsed
+        =/  =bone
+          ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
+        =.  peers.ames-state
+          %+  ~(jab by peers.ames-state)  her
+          |=  =ship-state
+          ?>  ?=(%known -.ship-state)
+          %=  ship-state
+            rcv
+            %+  ~(jab by rcv.ship-state)  bone
+            |=  =message-sink-state
+            %=  message-sink-state
+              last-heard  (dec last-heard.message-sink-state)
+              pending-vane-ack  ~(nap to pending-vane-ack.message-sink-state)
+            ==
+          ==
+        event-core
       ::  +on-take-done: handle notice from vane that it processed a message
       ::
       ++  on-take-done
@@ -4699,6 +4728,8 @@
       [@ %boon *]   (on-take-boon:event-core wire payload.sign)
     ::
       [%behn %wake *]  (on-take-wake:event-core wire error.sign)
+    ::
+      [%gall %flub ~]  (on-take-flub:event-core wire)
     ::
       [%jael %turf *]          (on-take-turf:event-core turf.sign)
       [%jael %private-keys *]  (on-priv:event-core [life vein]:sign)
