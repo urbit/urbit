@@ -335,6 +335,20 @@
         ==
       ==
   ::
+  ++  abs
+    |=  a=ray
+    ^-  ray
+    %-  spac
+    :-  meta.a
+    =/  ali  (ravel a)
+    %+  rep  bloq.meta.a
+    =|  res=(list @)
+    %-  flop
+    |-  ^+  res
+    ?@  ali  res
+    =/  abs  ((trans-scalar bloq.meta:a kind.meta:a %abs) i.ali)
+    $(ali t.ali, res [abs res])
+::
   ++  add-scalar
     |=  [a=ray n=@]
     ^-  ray
@@ -450,23 +464,28 @@
     =/  rem  ((fun-scalar bloq.meta:a kind.meta:a %mod) i.ali i.bob)
     $(ali t.ali, bob t.bob, res [rem res])
    ::
-  +$  ops  ?(%add %sub %mul %div %mod %gth %lth)
+  +$  ops  ?(%add %sub %mul %div %mod %gth %lth %abs)
   ::
   ++  fun-scalar
     |=  [=bloq =kind fun=ops]
     ^-  $-([@ @] @)
     ?+    kind  ~|(kind !!)
         %unsigned  
-        ?-  fun
-          %add  ~(sum fe bloq)
-          %sub  ~(dif fe bloq)
-          %mul  |=([b=@ c=@] (~(sit fe bloq) (^mul b c)))
-          %div  |=([b=@ c=@] (~(sit fe bloq) (^div b c)))
-          %mod  |=([b=@ c=@] (~(sit fe bloq) (^mod b c)))
-          %gth  |=([b=@ c=@] (gth b c))
-          %lth  |=([b=@ c=@] (gth b c))
-        ==
-        ::?(%s %sb %sx %sd %sv %sw)  sum:si
+      ?+  fun  !!
+        %add  ~(sum fe bloq)
+        %sub  ~(dif fe bloq)
+        %mul  |=([b=@ c=@] (~(sit fe bloq) (^mul b c)))
+        %div  |=([b=@ c=@] (~(sit fe bloq) (^div b c)))
+        %mod  |=([b=@ c=@] (~(sit fe bloq) (^mod b c)))
+        %gth  |=([b=@ c=@] (gth b c))
+        %lth  |=([b=@ c=@] (gth b c))
+      ==
+      ::
+        %signed  
+      ?+  fun  !!
+        %add  ~(sum fe bloq)
+      ==
+      ::
         %float
       ?+  bloq  !!
         %7
@@ -509,5 +528,39 @@
     ::
         ::  TODO signed integers -- add new 2's complement kind?
     ==
-  --
+  ::
+  ++  trans-scalar
+    |=  [=bloq =kind fun=ops]
+    ^-  $-(@ @)
+    ?+    kind  ~|(kind !!)
+        %unsigned  
+      ?+  fun  !!
+        %abs  |=(b=@ b)
+      ==
+      ::
+        %signed  !!
+      ::
+        %float
+      ?+  bloq  !!
+        %7
+        ?+  fun  !!
+          %abs  |=(b=@ ?:((gth:rq b .~~~0) b (mul:rq b .~~~-1)))
+        ==
+        %6
+        ?+  fun  !!
+          %abs  |=(b=@ ?:((gth:rd b .~0) b (mul:rd b .~-1)))
+        ==
+        %5
+        ?+  fun  !!
+          %abs  |=(b=@ ?:((gth:rs b .0) b (mul:rs b .-1)))
+        ==
+        %4
+        ?+  fun  !!
+          %abs  |=(b=@ ?:((gth:rh b .~~0) b (mul:rh b .~~-1)))
+        ==
+      ==
+    ::
+        ::  TODO signed integers -- add new 2's complement kind?
+    ==
+--
 --
