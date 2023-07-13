@@ -795,7 +795,7 @@
   %+  turn
     %+  skim  desks
     |=  dek=desk
-    ?:  (~(has in .^((set desk) %cd /(scot %p our)/base/(scot %da now))) dek)
+    ?:  (~(has in .^((set desk) %cd /(scot %p our)//(scot %da now))) dek)
       &  
     ~>  %slog.(fmt "desk does not yet exist: {<dek>}")  |   
   |=(=desk [%pass /kiln/suspend %arvo %c %zest desk %dead])
