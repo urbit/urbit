@@ -821,10 +821,9 @@
   =+  .^(=rock:tire %cx /(scot %p our)//(scot %da now)/tire)
   ?~  got=(~(get by rock) loc)
     abet:(spam leaf+"desk does not exist: {<loc>}" ~)
-  ?:  =(+<:got %dead)
-    abet:(spam leaf+"desk not installed: {<loc>}" ~)
   ~>  %slog.(fmt "uninstalling {<loc>}")
-  =.  ..on-init  (emit %pass /kiln/uninstall %arvo %c %zest loc %dead)
+  =?  ..on-init  !=(+<:got %dead)  
+    (emit %pass /kiln/uninstall %arvo %c %zest loc %dead)
   ?~  sync=(~(get by sources) loc)
     abet
   (poke-unsync loc u.sync)
