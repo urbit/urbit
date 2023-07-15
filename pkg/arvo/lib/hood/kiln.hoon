@@ -1127,6 +1127,12 @@
     =/  m  (strand:rand ,vase)
     ;<  =riot:clay  bind:m  (warp:strandio her sud ~ %sing %w ud+let /)
     ?>  ?=(^ riot)
+    ::  The syncs may have changed, so get the latest
+    ::
+    ;<  zyx=(map kiln-sync sync-state)  bind:m
+      (scry:strandio (map kiln-sync sync-state) /gx/hood/kiln/syncs/noun)
+    ?.  (~(has by zyx) syd her sud)
+      (pure:m !>(%done))
     ~>  %slog.(fmt "downloading update for {here}")
     ;<  =riot:clay  bind:m  (warp:strandio her sud ~ %sing %v ud+let /)
     ?>  ?=(^ riot)
