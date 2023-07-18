@@ -1149,7 +1149,7 @@
           $>(%wake gift:behn)
       ==
       $:  %gall
-          $>(%unto gift:gall)
+          $>(?(%flub %unto) gift:gall)
       ==
       $:  %jael
           $>  $?  %private-keys
@@ -1201,6 +1201,7 @@
 ::
 +$  message-sink-task
   $%  [%done ok=?]
+      [%flub ~]
       [%drop =message-num]
       [%hear =lane =shut-packet ok=?]
   ==
@@ -1662,6 +1663,31 @@
         +.u.ship-state
       ::
       +|  %tasks
+      ::  +on-take-flub: vane not ready to process message, pretend it
+      ::                 was never delivered
+      ::
+      ++  on-take-flub
+        |=  =wire
+        ^+  event-core
+        ?~  parsed=(parse-bone-wire wire)
+          ::  no-op
+          ::
+          ~>  %slog.0^leaf/"ames: dropping malformed wire: {(spud wire)}"
+          event-core
+        ?>  ?=([@ her=ship *] u.parsed)
+        =*  her  her.u.parsed
+        =/  peer-core  (abed-got:pe her)
+        ?:  ?&  ?=([%new *] u.parsed)
+                (lth rift.u.parsed rift.peer-state.peer-core)
+            ==
+          ::  ignore events from an old rift
+          ::
+          %-  %^  ev-trace  odd.veb  her
+              |.("dropping old rift wire: {(spud wire)}")
+          event-core
+        =/  =bone
+          ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
+        abet:(on-flub:peer-core bone)
       ::  +on-take-done: handle notice from vane that it processed a message
       ::
       ++  on-take-done
@@ -2921,6 +2947,11 @@
               :-  >[bone=bone message-num=message-num meat=meat]:shut-packet<
               tang.u.dud
           abet:(call:(abed:mu bone) %hear [message-num +.meat]:shut-packet)
+        ::
+        ++  on-flub
+          |=  =bone
+          ^+  peer-core
+          abet:(call:(abed:mi:peer-core bone) %flub ~)
         ::  +on-memo: handle request to send message
         ::
         ++  on-memo
@@ -3849,11 +3880,16 @@
           ++  call
             |=  task=message-sink-task
             ^+  sink
-            ?-  -.task
-              %drop  sink(nax.state (~(del in nax.state) message-num.task))
-              %done  (done ok.task)
+            ?-    -.task
+                %drop  sink(nax.state (~(del in nax.state) message-num.task))
+                %done  (done ok.task)
+                %flub
+              %=  sink
+                last-heard.state        (dec last-heard.state)
+                pending-vane-ack.state  ~(nap to pending-vane-ack.state)
+              ==
             ::
-                 %hear
+                %hear
               |^  ?:  ?|  corked
                       ?&  %*(corked sink bone (mix 0b10 bone))
                           =(%nack (received bone))
@@ -4699,6 +4735,8 @@
       [@ %boon *]   (on-take-boon:event-core wire payload.sign)
     ::
       [%behn %wake *]  (on-take-wake:event-core wire error.sign)
+    ::
+      [%gall %flub ~]  (on-take-flub:event-core wire)
     ::
       [%jael %turf *]          (on-take-turf:event-core turf.sign)
       [%jael %private-keys *]  (on-priv:event-core [life vein]:sign)
