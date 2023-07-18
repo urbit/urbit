@@ -1676,9 +1676,18 @@
           event-core
         ?>  ?=([@ her=ship *] u.parsed)
         =*  her  her.u.parsed
+        =/  peer-core  (abed-got:pe her)
+        ?:  ?&  ?=([%new *] u.parsed)
+                (lth rift.u.parsed rift.peer-state.peer-core)
+            ==
+          ::  ignore events from an old rift
+          ::
+          %-  %^  ev-trace  odd.veb  her
+              |.("dropping old rift wire: {(spud wire)}")
+          event-core
         =/  =bone
           ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
-        abet:(on-flub:(abed-got:pe her) bone)
+        abet:(on-flub:peer-core bone)
       ::  +on-take-done: handle notice from vane that it processed a message
       ::
       ++  on-take-done
