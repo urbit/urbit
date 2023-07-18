@@ -28,13 +28,12 @@
   ?:  =('once' (parse-current-pace cur))
     "live"
   (trip (parse-current-pace cur))
-~&  "https://bootstrap.urbit.org/vere/{pace}/last"
 ;<  latest=cord  bind:m
   (fetch-cord:strandio "https://bootstrap.urbit.org/vere/{pace}/last")
 =/  =vere-update
   ?:  (is-equal-version latest cur)
     [cur ~]
   =|  next=vere
-  [cur `next(rev /vere/(scot %ta latest))]
+  [cur `next(rev /vere/(crip pace)/(scot %ta latest))]
 %-  pure:m
 !>(vere-update)
