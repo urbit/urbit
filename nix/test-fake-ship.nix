@@ -35,7 +35,7 @@ let
         ${poke}
         =/  m  (strand ,vase)
         ;<  [=ship =desk =case]  bind:m  get-beak
-        ;<  ok=?  bind:m  (poke [ship %dojo] %lens-command !>([%$ [%dojo '${dojoCommand}'] [%output-file 'result/noun']]))
+        ;<  ok=?  bind:m  (poke [ship %dojo] %lens-command !>([%$ [%dojo '${dojoCommand}'] [%stdout ~]]))
         (pure:m !>(ok))
       '';
     };
@@ -93,24 +93,20 @@ in pkgs.stdenvNoCC.mkDerivation {
     ${click} -k -p -i ${pokeApp "%generators" "noun" "test"} ./pier
     ${click} -k -p -i ${pokeApp "%marks" "noun" "test"} ./pier
 
-    # The rest of the commands fail for unknown reasons.
+    ${click} -k -p -i ${appThread "mass" "hood"} ./pier
+    sleep 2
 
-    # ${click} -k -p -i ${appThread "mass" "hood"} ./pier
-    # sleep 2
+    ${click} -k -p -i ${pokeApp "~" "helm-pack" "hood"} ./pier
 
-    # ${click} -k -p -i ${pokeApp "~" "helm-pack" "hood"} ./pier
+    ${click} -k -p -i ${appThread "trim" "hood"} ./pier
 
-    # ${click} -k -p -i ${appThread "trim" "hood"} ./pier
+    ${click} -k -p -i ${appThread "mass" "hood"} ./pier
 
-    # ${click} -k -p -i ${appThread "mass" "hood"} ./pier
+    ${click} -k -p -i ${appThread "meld" "hood"} ./pier
 
-    # ${click} -k -p -i ${appThread "meld" "hood"} ./pier
+    ${click} -k -p -i ${appThread "mass" "hood"} ./pier
 
-    # sleep 60
-
-    # ${click} -k -p -i ${appThread "mass" "hood"} ./pier
-
-    # ${click} -k -p -i ${appThread "exit" "hood"} ./pier
+    ${click} -k -p -i ${appThread "exit" "hood"} ./pier
 
     set +x
   '';
