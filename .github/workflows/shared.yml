@@ -79,4 +79,4 @@ jobs:
       - if: ${{ matrix.os == 'ubuntu-latest' }}
         name: run urbit-tests
         run: |
-          nix flake check
+          nix flake check --keep-build-log -L
