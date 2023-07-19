@@ -18,7 +18,7 @@
         pkgs = import nixpkgs { inherit system; };
         bootFakeShip = { pill, arvo }:
           pkgs.runCommand "fake-pier" { } ''
-            ${pkgs.urbit}/bin/urbit --pier $out -F zod -B ${pill} -l -x -t -A ${arvo}
+            ${./urbit} --pier $out -F zod -B ${pill} -l -x -t -A ${arvo}
           '';
         fakePier = bootFakeShip {
           pill = ./bin/solid.pill;
@@ -48,7 +48,7 @@
           pkgs.runCommand ("${pill}.pill") { buildInputs = [ pkgs.netcat ]; } ''
             cp -r ${fakePier} pier
             chmod +w -R pier
-            ${pkgs.urbit}/bin/urbit -d pier
+            ${./urbit} -d pier
             ${usableTools}/pkg/click/click -k -p -i ${buildPillThread pill} pier
 
             # Sleep to let urbit spin down properly
