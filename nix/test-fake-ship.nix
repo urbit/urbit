@@ -79,7 +79,7 @@ in pkgs.stdenvNoCC.mkDerivation {
     set -x
     set -e
 
-    ${pkgs.urbit}/bin/urbit -d ./pier 1>&2 2> $out
+    ${../urbit} -d ./pier 1>&2 2> $out
 
     tail -F $out >&2 &
  
