@@ -863,6 +863,14 @@
     =.  mo-core  (mo-track-ship ship)
     =?  mo-core  ?=(%u -.ames-request)  (mo-give %done ~)
     ::
+    =/  yok=(unit yoke)  (~(get by yokes.state) agent-name)
+    ?~  yok
+      (mo-give %flub ~)
+    ?:  ?=(%nuke -.u.yok)
+      (mo-give %flub ~)
+    ?:  ?=(%.n -.agent.u.yok)
+      (mo-give %flub ~)
+    ::
     =/  =wire  /sys/req/(scot %p ship)/[agent-name]
     ::
     =/  =deal
@@ -1274,7 +1282,7 @@
       ::
       ?.  ?&  ?=(%x care)
               ?=([~ ~ *] p.peek-result)
-              !=(mark p.u.u.p.peek-result)
+              !=(want p.u.u.p.peek-result)
           ==
         p.peek-result
       ::  for %x scries, attempt to convert to the requested mark if needed
