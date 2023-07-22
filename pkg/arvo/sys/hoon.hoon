@@ -1844,7 +1844,7 @@
   ++  mop                                               ::  construct map
     |*  a=(list)
     =>  .(a ^+((los a) a))
-    (~(gas by `(map _-<.a _->.a)`~) a)
+    (~(gas by `(map _,.-<.a _,.->.a)`~) a)
   ::                                                    ::
   ++  sot                                               ::  construct set
     |*  a=(list)
