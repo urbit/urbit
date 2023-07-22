@@ -1,13 +1,74 @@
-{ stdenvNoCC, curl, python3, pier, urbit }:
+{ click, pier, pkgs }:
 
-stdenvNoCC.mkDerivation {
+let
+  poke = ''
+    =>
+    |%
+    ++  take-poke-ack
+      |=  =wire
+      =/  m  (strand ,?)
+      ^-  form:m
+      |=  tin=strand-input:strand
+      ?+  in.tin  `[%skip ~]
+          ~  `[%wait ~]
+          [~ %agent * %poke-ack *]
+        ?.  =(wire wire.u.in.tin)
+          `[%skip ~]
+        ?~  p.sign.u.in.tin
+          `[%done %.y]
+        `[%done %.n]
+      ==
+    ++  poke
+      |=  [=dock =cage]
+      =/  m  (strand ,?)
+      ^-  form:m
+      =/  =card:agent:gall  [%pass /poke %agent dock %poke cage]
+      ;<  ~  bind:m  (send-raw-card card)
+      (take-poke-ack /poke)
+    -- 
+    
+  '';
+  testThread = dojoCommand:
+    pkgs.writeTextFile {
+      name = "${dojoCommand}.hoon";
+      text = ''
+        ${poke}
+        =/  m  (strand ,vase)
+        ;<  [=ship =desk =case]  bind:m  get-beak
+        ;<  ok=?  bind:m  (poke [ship %dojo] %lens-command !>([%$ [%dojo '${dojoCommand}'] [%stdout ~]]))
+        (pure:m !>(ok))
+      '';
+    };
+  appThread = generator: app:
+    pkgs.writeTextFile {
+      name = ":${app}|${generator}.hoon";
+      text = ''
+        ${poke}
+        =/  m  (strand ,vase)
+        ;<  [=ship =desk =case]  bind:m  get-beak
+        ;<  ok=?  bind:m  (poke [ship %dojo] %lens-command !>([%$ [%dojo '+${app}/${generator}'] [%app %${app}]]))
+        (pure:m !>(ok))
+      '';
+    };
+  pokeApp = hoon: mark: app:
+    pkgs.writeTextFile {
+      name = ":${app} &${mark} ${hoon}.hoon";
+      text = ''
+        ${poke}
+        =/  m  (strand ,vase)
+        ;<  [=ship =desk =case]  bind:m  get-beak
+        ;<  ok=?  bind:m  (poke [ship %${app}] %${mark} !>(${hoon}))
+        (pure:m !>(ok))
+      '';
+    };
+in pkgs.stdenvNoCC.mkDerivation {
   name = "test-urbit";
 
   src = pier;
 
   phases = [ "unpackPhase" "buildPhase" "checkPhase" ];
 
-  buildInputs = [ curl python3 ];
+  nativeBuildInputs = [ pkgs.netcat ];
 
   unpackPhase = ''
     cp -R $src ./pier
@@ -16,166 +77,44 @@ stdenvNoCC.mkDerivation {
 
   buildPhase = ''
     set -x
+    set -e
 
-    ${urbit}/bin/urbit -d ./pier 2> urbit-output
+    ${../urbit} -d ./pier 1>&2 2> $out
 
-    # Sledge Hammer!
-    # See: https://github.com/travis-ci/travis-ci/issues/4704#issuecomment-348435959
-    python3 -c $'import os\n[os.set_blocking(i, True) for i in range(3)]\n'
+    tail -F $out >&2 &
+ 
+    ${click} -k -p -i ${appThread "mass" "hood"} ./pier
 
-    port=$(cat ./pier/.http.ports | grep loopback | tr -s ' ' '\n' | head -n 1)
+    sleep 2
 
-    lensd() {
-      # -f elided, this can hit server-side timeouts
-      curl -s                                                              \
-        --data "{\"source\":{\"dojo\":\"$1\"},\"sink\":{\"stdout\":null}}" \
-        "http://localhost:$port" | xargs printf %s | sed 's/\\n/\n/g'
-    }
+    ${click} -k -p -i ${testThread "-test %/tests ~"} ./pier
 
-    lensa() {
-      # -f elided, this can hit server-side timeouts
-      curl -s                                                              \
-        --data "{\"source\":{\"dojo\":\"$2\"},\"sink\":{\"app\":\"$1\"}}"  \
-        "http://localhost:$port" | xargs printf %s | sed 's/\\n/\n/g'
-    }
+    ${click} -k -p -i ${pokeApp "%agents" "noun" "test"} ./pier
+    ${click} -k -p -i ${pokeApp "%generators" "noun" "test"} ./pier
+    ${click} -k -p -i ${pokeApp "%marks" "noun" "test"} ./pier
 
-    tail -F urbit-output >&2 &
+    ${click} -k -p -i ${appThread "mass" "hood"} ./pier
+    sleep 2
 
-    tailproc=$!
+    ${click} -k -p -i ${pokeApp "~" "helm-pack" "hood"} ./pier
 
-    cleanup () {
-      kill $(cat ./pier/.vere.lock) || true
-      kill "$tailproc" 2>/dev/null || true
+    ${click} -k -p -i ${appThread "trim" "hood"} ./pier
 
-      set +x
-    }
+    ${click} -k -p -i ${appThread "mass" "hood"} ./pier
 
-    trap cleanup EXIT
+    ${click} -k -p -i ${appThread "meld" "hood"} ./pier
 
-    #  measure initial memory usage
-    #
-    lensd '~&  ~  ~&  %init-mass-start  ~'
-    lensa hood '+hood/mass'
-    lensd '~&  ~  ~&  %init-mass-end  ~'
+    ${click} -k -p -i ${appThread "mass" "hood"} ./pier
 
-    #  run the unit tests
-    #
-    lensd '~&  ~  ~&  %test-unit-start  ~'
-    lensd '-test %/tests ~'
-    lensd '~&  ~  ~&  %test-unit-end  ~'
-
-    #  use the :test app to build all agents, generators, and marks
-    #
-    lensa hood '+hood/start %test'
-
-    lensd '~&  ~  ~&  %test-agents-start  ~'
-    lensa test '%agents'
-    lensd '~&  ~  ~&  %test-agents-end  ~'
-
-    lensd '~&  ~  ~&  %test-generators-start  ~'
-    lensa test '%generators'
-    lensd '~&  ~  ~&  %test-generators-end  ~'
-
-    lensd '~&  ~  ~&  %test-marks-start  ~'
-    lensa test '%marks'
-    lensd '~&  ~  ~&  %test-marks-end  ~'
-
-    #  measure memory usage post tests
-    #
-    lensd '~&  ~  ~&  %test-mass-start  ~'
-    lensa hood '+hood/mass'
-    lensd '~&  ~  ~&  %test-mass-end  ~'
-
-    #  defragment the loom
-    #
-    lensd '~&  ~  ~&  %pack-start  ~'
-    lensa hood '+hood/pack'
-    lensd '~&  ~  ~&  %pack-end  ~'
-
-    #  reclaim space within arvo
-    #
-    lensd '~&  ~  ~&  %trim-start  ~'
-    lensa hood '+hood/trim'
-    lensd '~&  ~  ~&  %trim-end  ~'
-
-    #  measure memory usage pre |meld
-    #
-    lensd '~&  ~  ~&  %trim-mass-start  ~'
-    lensa hood '+hood/mass'
-    lensd '~&  ~  ~&  %trim-mass-end  ~'
-
-    #  globally deduplicate
-    #
-    lensd '~&  ~  ~&  %meld-start  ~'
-    lensa hood '+hood/meld'
-    lensd '~&  ~  ~&  %meld-end  ~'
-
-    #  measure memory usage post |meld
-    #
-    lensd '~&  ~  ~&  %meld-mass-start  ~'
-    lensa hood '+hood/mass'
-    lensd '~&  ~  ~&  %meld-mass-end  ~'
-
-    lensa hood '+hood/exit'
-
-    cleanup
-
-    # Collect output
-    cp urbit-output test-output-unit
-    cp urbit-output test-output-agents
-    cp urbit-output test-output-generators
-    cp urbit-output test-output-marks
-
-    sed -i '0,/test-unit-start/d'        test-output-unit
-    sed -i '/test-unit-end/,$d'          test-output-unit
-
-    sed -i '0,/test-agents-start/d'      test-output-agents
-    sed -i '/test-agents-end/,$d'        test-output-agents
-
-    sed -i '0,/test-generators-start/d'  test-output-generators
-    sed -i '/test-generators-end/,$d'    test-output-generators
-
-    sed -i '0,/test-marks-start/d'       test-output-marks
-    sed -i '/test-marks-end/,$d'         test-output-marks
-
-    mkdir -p $out
-
-    cp test-output-* $out/
+    ${click} -k -p -i ${appThread "exit" "hood"} ./pier
 
     set +x
   '';
 
   checkPhase = ''
-    hdr () {
-      echo =====$(sed 's/./=/g' <<< "$1")=====
-      echo ==== $1 ====
-      echo =====$(sed 's/./=/g' <<< "$1")=====
-    }
-
-    for f in $(find "$out/" -type f); do
-      hdr "$(basename $f)"
-      cat "$f"
-    done
-
-    fail=0
-
-    for f in $(find "$out/" -type f); do
-      if egrep "((FAILED|CRASHED)|warn:) " $f >/dev/null; then
-        if [[ $fail -eq 0 ]]; then
-          hdr "Test Failures"
-        fi
-
-        echo "ERROR Test failure in $(basename $f)"
-
-        ((fail++))
-      fi
-    done
-
-    if [[ $fail -eq 0 ]]; then
-      hdr "Success"
+    if egrep "((FAILED|CRASHED|Failed)|warn:)" $out >/dev/null; then
+      exit 1
     fi
-
-    exit "$fail"
   '';
 
   doCheck = true;

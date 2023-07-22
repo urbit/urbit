@@ -16,13 +16,23 @@
           patchShebangs $out
         '';
         pkgs = import nixpkgs { inherit system; };
-        bootFakeShip = { pill }:
+        bootFakeShip = { pill, arvo }:
           pkgs.runCommand "fake-pier" { } ''
-            ${pkgs.urbit}/bin/urbit --pier $out -F zod -B ${pill} -l -x -t -A ${
-              ./pkg
-            }/arvo
+            ${./urbit} --pier $out -F zod -B ${pill} -l -x -t -A ${arvo}
           '';
-        fakePier = bootFakeShip { pill = ./bin/solid.pill; };
+        fakePier = bootFakeShip {
+          pill = ./bin/solid.pill;
+          arvo = "${./pkg}/arvo";
+        };
+        testPier = bootFakeShip {
+          pill = ./bin/solid.pill;
+          arvo = pkgs.runCommand "test-arvo" {} ''
+            cp -r ${./pkg} $out
+            chmod +w -R $out
+            cp -r ${./tests} $out/arvo/tests
+            cp -r ${./test-desk.bill} $out/arvo/desk.bill
+          '' + "/arvo";
+        };
         buildPillThread = pill:
           pkgs.writeTextFile {
             name = "";
@@ -38,7 +48,7 @@
           pkgs.runCommand ("${pill}.pill") { buildInputs = [ pkgs.netcat ]; } ''
             cp -r ${fakePier} pier
             chmod +w -R pier
-            ${pkgs.urbit}/bin/urbit -d pier
+            ${./urbit} -d pier
             ${usableTools}/pkg/click/click -k -p -i ${buildPillThread pill} pier
 
             # Sleep to let urbit spin down properly
@@ -50,12 +60,13 @@
       in {
         checks = {
           testFakeShip = import ./nix/test-fake-ship.nix {
-            inherit (pkgs) stdenvNoCC curl python3 urbit;
-            pier = fakePier;
+            inherit pkgs;
+            pier = testPier;
+            click = usableTools + "/pkg/click/click";
           };
         };
         packages = {
-          inherit fakePier;
+          inherit fakePier testPier;
           brass = buildPill "brass";
           ivory = buildPill "ivory";
           solid = buildPill "solid";
