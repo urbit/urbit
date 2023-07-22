@@ -4184,18 +4184,21 @@
 ++  edit                                                :: cord replace
   |=  [src=@t get=@t set=@t all=?]
   ^-  @t
-  ?:  =(get set)  src
-  =+  cut=(lent (trip get))
+  =/  metg  (met 3 get)
+  =/  mets  (met 3 set)
+  ?~  metg  !!
+  =/  len   (met 3 src)
+  =/  pos  0
   |-
-  =+  i=(find (trip get) (trip src))
-  ?~  i  src
+  ?:  =(pos len)
+    src
+  ?.  =((cut 3 [pos metg] src) get)
+    $(pos +(pos))
+  =.  src
+    (rap 3 ~[(cut 3 [0 pos] src) set (rsh [3 (add pos metg)] src)])
   ?.  all
-    (crip (into (oust [+.i cut] (trip src)) +.i set))
-  ?~  (find (trip get) (trip set))
-    $(src (crip (into (oust [+.i cut] (trip src)) +.i set)))
-  ~&  >>  'infinite loop: set must not contain get'
-  src
-::
+    src
+  $(pos (add pos mets), len (add mets (sub len metg)))
 ++  mesc                                                ::  ctrl code escape
   |=  vib=tape
   ^-  tape
@@ -4260,21 +4263,6 @@
       ==  ==  ==
       $(inx (add inx tef))
   ==
-::
-++  swap                                                ::  tape replace
-  |=  [src=tape get=tape set=tape all=?]
-  ^-  tape
-  ?:  =(get set)  src
-  =+  cut=(lent get)
-  |-
-  =+  i=(find get src)
-  ?~  i  src
-  ?.  all
-    (into (oust [+.i cut] src) +.i (crip set))
-  ?~  (find get set)
-    $(src (into (oust [+.i cut] src) +.i (crip set)))
-  ~&  >>  'infinite loop: set must not contain get'
-  src
 ::
 ++  ruth                                                ::  biblical sanity
   |=  [a=@ta b=*]
