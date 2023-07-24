@@ -221,8 +221,8 @@
   ++  response-to-result
     |=  [idr=id-response:eth-provider =results =failures]
     ^+  [results failures]
-    ?:  &(?=([* @t] -.idr) ?=([* %call @t] idr))
-      [[[->.idr +>.idr] results] failures]
+    ?:  &(?=(^ id.idr) ?=(%call -.res.idr))
+      [[[u.id.idr data.res.idr] results] failures]
     [results [`id-response:eth-provider`idr failures]]
   --
 ::
