@@ -567,16 +567,19 @@
         ==
       ++  response
         $%  
-            [%block-number num=@ud]
-            [%call data=@t]
-            [%new-filter fid=@ud]
-            [%block block=(unit block)]
-            [%logs los=(list event-log)]
-            [%transaction-result transaction-result=(unit transaction-result)]
-            [%transaction-receipt transaction-receipt=(unit transaction-receipt)]
-            [%transaction-count count=@ud]
-            [%balance balance=@ud]
-            [%raw-transaction-hash hash=@ux]
+            [%eth-block-number num=@ud]
+            [%eth-call data=@t]
+            [%eth-new-filter fid=@ud]
+            [%eth-get-block-by-number block=(unit block)]
+            [%eth-get-filter-logs los=(list event-log)]
+            [%eth-get-logs los=(list event-log)]
+            [%eth-get-logs-by-hash los=(list event-log)]
+            [%eth-get-filter-changes los=(list event-log)]
+            [%eth-get-transaction-by-hash transaction-result=(unit transaction-result)]
+            [%eth-get-transaction-count count=@ud]
+            [%eth-get-balance balance=@ud]
+            [%eth-get-transaction-receipt transaction-receipt=(unit transaction-receipt)]
+            [%eth-send-raw-transaction hash=@ux]
         ==
       ::
       ++  transaction-result
@@ -930,33 +933,33 @@
     =/  result  ((ot:dejs:format ~[[%result parse-result]]) json)
     ?+  type  !!
       %eth-block-number
-    [id [%block-number (parse-eth-block-number result)]]
+    [id [%eth-block-number (parse-eth-block-number result)]]
       %eth-call
-    [id [%call (so:dejs:format result)]]
+    [id [%eth-call (so:dejs:format result)]]
       %eth-new-filter
-    [id [%new-filter (parse-eth-new-filter-res result)]]
+    [id [%eth-new-filter (parse-eth-new-filter-res result)]]
       %eth-get-block-by-number
-    [id [%block (parse-block result)]]
+    [id [%eth-get-block-by-number (parse-block result)]]
       %eth-get-filter-logs
-    [id [%logs (parse-event-logs result)]]
+    [id [%eth-get-filter-logs (parse-event-logs result)]]
       %eth-get-logs
-    [id [%logs (parse-event-logs result)]]
+    [id [%eth-get-logs (parse-event-logs result)]]
       %eth-get-logs-by-hash
-    [id [%logs (parse-event-logs result)]]
+    [id [%eth-get-logs-by-hash (parse-event-logs result)]]
       %eth-get-filter-changes
-    [id [%logs (parse-event-logs result)]]
-      %eth-get-transaction-by-hash 
+    [id [%eth-get-filter-changes (parse-event-logs result)]]
+      %eth-get-transaction-by-hash
     ?~  result
-      [id [%transaction-result ~]]
-    [id [%transaction-result [~ (parse-transaction-result result)]]]
+      [id [%eth-get-transaction-by-hash ~]]
+    [id [%eth-get-transaction-by-hash [~ (parse-transaction-result result)]]]
       %eth-get-transaction-count 
-    [id [%transaction-count (parse-eth-get-transaction-count result)]]
+    [id [%eth-get-transaction-count (parse-eth-get-transaction-count result)]]
       %eth-get-balance
-    [id [%balance (parse-eth-get-balance result)]]
+    [id [%eth-get-balance (parse-eth-get-balance result)]]
       %eth-get-transaction-receipt
-    [id [%transaction-receipt (parse-transaction-receipt result)]]
+    [id [%eth-get-transaction-receipt (parse-transaction-receipt result)]]
       %eth-send-raw-transaction
-    [id [%raw-transaction-hash (parse-hex-result result)]]
+    [id [%eth-send-raw-transaction (parse-hex-result result)]]
     ==
   ::
   ++  parse-transaction-receipt
