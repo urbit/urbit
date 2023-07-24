@@ -1756,7 +1756,10 @@
         14+(state-13-to-14:load:adult-core +.u.cached-state)
       =?  u.cached-state  ?=(%14 -.u.cached-state)
         15+(state-14-to-15:load:adult-core +.u.cached-state)
-      =?  u.cached-state  ?=(%15 -.u.cached-state)
+      =^  moz  u.cached-state
+        ?.  ?=(%15 -.u.cached-state)  [~ u.cached-state]
+        ~>  %slog.0^leaf/"ames: init dead flow consolidation timer"
+        :-  [[/ames]~ %pass /dead-flow %b %wait `@da`(add now ~m2)]~
         16+(state-15-to-16:load:adult-core +.u.cached-state)
       ?>  ?=(%16 -.u.cached-state)
       =.  ames-state.adult-gate  +.u.cached-state
@@ -2395,6 +2398,20 @@
           ?:  ?=([~ %known *] ship-state)
             event-core
           (request-attestation u.ship)
+        ::
+        ?:  ?=([%dead-flow ~] wire)
+          =;  cor=event-core
+            (emit:cor duct %pass /dead-flow %b %wait `@da`(add now ~m2))
+          %-  ~(rep by peers.ames-state)
+            |=  [[=ship =ship-state] core=_event-core]
+            ^+  event-core
+            =/  peer-state=(unit peer-state)  (get-peer-state:core ship)
+            ?~  peer-state  core
+            %-  ~(rep by snd.u.peer-state)
+            |=  [[=bone =message-pump-state] cor=_core]
+              ?.  =(~m2 rto.metrics.packet-pump-state.message-pump-state)
+                cor
+              abet:(on-wake:(abed-peer:pe:cor ship u.peer-state) bone error)
         ::
         ?.  ?=([%recork ~] wire)
           =/  res=(unit ?([%fine her=ship =^wire] [%pump her=ship =bone]))
@@ -3976,9 +3993,11 @@
               ::
               =?  peer-core  !=(~ next-wake.state)
                 (pu-emit %b %rest (need next-wake.state))
-              ::  set new timer if non-null
+              ::  set new timer if non-null and not at max-backoff
               ::
               =?  peer-core  ?=(^ new-wake)
+                ?:  =(~m2 rto.metrics.state)
+                  peer-core
                 (pu-emit %b %wait u.new-wake)
               ::
               =?  next-wake.state  !=(~ next-wake.state)   ~  ::  unset
