@@ -14,5 +14,5 @@
 ;<  =riot:clay  bind:m
   (warp:strandio ship desk ~ %sing care case target-path)
 ?~  riot
-  (pure:m !>("nothing"))
+  (pure:m !>('nothing'))
 (pure:m q.r.u.riot)

@@ -2699,6 +2699,7 @@
   +$  gift                                              ::  outgoing result
     $%  [%boon payload=*]                               ::  ames response
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
+        [%flub ~]                                       ::  not ready to handle plea
         [%unto p=unto]                                  ::
     ==                                                  ::
   +$  task                                              ::  incoming request
