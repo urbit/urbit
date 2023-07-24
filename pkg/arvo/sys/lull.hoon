@@ -767,7 +767,7 @@
   ::    %heed: track peer's responsiveness; gives %clog if slow
   ::    %jilt: stop tracking peer's responsiveness
   ::    %cork: request to delete message flow
-  ::    %kroc: request to delete stale message flows
+  ::    %kroc: request to delete specific message flows, from their bones
   ::    %plea: request to send message
   ::    %deep: deferred calls to %ames, from itself
   ::
@@ -791,11 +791,12 @@
   ::    %vega: kernel reload notification
   ::
   +$  task
+    $+  ames-task
     $%  [%hear =lane =blob]
         [%heed =ship]
         [%jilt =ship]
         [%cork =ship]
-        [%kroc dry=?]
+        [%kroc bones=(list [ship bone])]
         $>(%plea vane-task)
         [%deep =deep]
     ::

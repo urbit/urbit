@@ -601,6 +601,7 @@
   ==
 ::
 +$  bug-9
+  $+  bug-9
   $:  veb=_[`?`%.n `?`%.n `?`%.n `?`%.n `?`%.n `?`%.n `?`%.n]
       ships=(set ship)
   ==
@@ -615,7 +616,7 @@
   ==
 ::
 +$  ship-state-6
-  $+  peer-state-6
+  $+  ship-state-6
   $%  [%alien alien-agenda-12]
       [%known peer-state-6]
   ==
@@ -1158,6 +1159,31 @@
       num-live=@ud
       counter=@ud
   ==
+::
++$  queued-event-11-and-15
+  $+  queued-event-11-and-15
+  $%  [%call =duct wrapped-task=(hobo task-11-and-15)]
+      [%take =wire =duct =sign]
+  ==
+::
++$  task-11-and-15
+  $+  task-11-and-15
+  $%  [%kroc dry=?]
+      [%snub ships=(list ship)]
+      $<(?(%snub %kroc) task)
+  ==
+::
++$  queued-event-15
+  $+  queued-event-15
+  $%  [%call =duct wrapped-task=(hobo task-15)]
+      [%take =wire =duct =sign]
+  ==
+::
++$  task-15
+  $+  task-15
+  $%  [%kroc dry=?]
+      $<(%kroc task)
+  ==
 ::  $bug: debug printing configuration
 ::
 ::    veb: verbosity toggles
@@ -1474,42 +1500,42 @@
               ==  ==
               $:  %10
               $%  $:  %larva
-                      events=(qeu queued-event-11)
+                      events=(qeu queued-event-11-and-15)
                       state=ames-state-10
                   ==
                   [%adult state=ames-state-10]
               ==  ==
               $:  %11
               $%  $:  %larva
-                      events=(qeu queued-event-11)
+                      events=(qeu queued-event-11-and-15)
                       state=ames-state-11
                   ==
                   [%adult state=ames-state-11]
               ==  ==
               $:  %12
               $%  $:  %larva
-                      events=(qeu queued-event)
+                      events=(qeu queued-event-15)
                       state=ames-state-12
                   ==
                   [%adult state=ames-state-12]
               ==  ==
               $:  %13
               $%  $:  %larva
-                      events=(qeu queued-event)
+                      events=(qeu queued-event-15)
                       state=ames-state-13
                   ==
                   [%adult state=ames-state-13]
               ==  ==
               $:  %14
               $%  $:  %larva
-                      events=(qeu queued-event)
+                      events=(qeu queued-event-15)
                       state=ames-state-14
                   ==
                   [%adult state=ames-state-14]
               ==  ==
               $:  %15
               $%  $:  %larva
-                      events=(qeu queued-event)
+                      events=(qeu queued-event-15)
                       state=ames-state-15
                   ==
                   [%adult state=ames-state-15]
@@ -1592,7 +1618,7 @@
           [%10 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%10 state.old]
-        =.  queued-events  (event-11-to-12 events.old)
+        =.  queued-events  (event-11-to-16 events.old)
         larval-gate
       ::
           [%11 %adult *]
@@ -1603,7 +1629,7 @@
           [%11 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%11 state.old]
-        =.  queued-events  (event-11-to-12 events.old)
+        =.  queued-events  (event-11-to-16 events.old)
         larval-gate
       ::
           [%12 %adult *]
@@ -1614,7 +1640,7 @@
           [%12 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%12 state.old]
-        =.  queued-events  events.old
+        =.  queued-events  (event-15-to-16 events.old)
         larval-gate
       ::
           [%13 %adult *]
@@ -1625,7 +1651,7 @@
           [%13 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%13 state.old]
-        =.  queued-events  events.old
+        =.  queued-events  (event-15-to-16 events.old)
         larval-gate
       ::
           [%14 %adult *]
@@ -1636,7 +1662,7 @@
           [%14 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%14 state.old]
-        =.  queued-events  events.old
+        =.  queued-events  (event-15-to-16 events.old)
         larval-gate
       ::
           [%15 %adult *]
@@ -1647,7 +1673,7 @@
           [%15 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%15 state.old]
-        =.  queued-events  events.old
+        =.  queued-events  (event-15-to-16 events.old)
         larval-gate
       ::
           [%16 %adult *]  (load:adult-core %16 state.old)
@@ -1671,6 +1697,34 @@
         =/  task=task-11  ((harden task-11) wrapped-task.e)
         %=  e
           wrapped-task  ?.(?=(%snub -.task) task [%snub %deny ships.task])
+        ==
+      ::
+      ++  event-11-to-16
+        |=  events=(qeu queued-event-11-and-15)
+        ^-  (qeu queued-event)
+        %-  ~(rep in events)
+        |=  [e=queued-event-11-and-15 q=(qeu queued-event)]
+        %-  ~(put to q)  ^-  queued-event
+        ?.  ?=(%call -.e)  e
+        =/  task=task-11-and-15  ((harden task-11-and-15) wrapped-task.e)
+        %=    e
+            wrapped-task
+          ?+  -.task  task
+            %snub  [%snub %deny ships.task]
+            %kroc  [%kroc ~]
+          ==
+        ==
+      ::
+      ++  event-15-to-16
+        |=  events=(qeu queued-event-15)
+        ^-  (qeu queued-event)
+        %-  ~(rep in events)
+        |=  [e=queued-event-15 q=(qeu queued-event)]
+        %-  ~(put to q)  ^-  queued-event
+        ?.  ?=(%call -.e)  e
+        =/  task=task-15  ((harden task-15) wrapped-task.e)
+        %=  e
+          wrapped-task  ?.(?=(%kroc -.task) task [%kroc ~])
         ==
       --
     ::  +molt: re-evolve to adult-ames
@@ -2275,74 +2329,11 @@
       ::  +on-kroc: cork all stale flows from failed subscriptions
       ::
       ++  on-kroc
-        |=  dry=?
+        |=  bones=(list [ship bone])
         ^+  event-core
-        ::  no-op
-        ::
-        ?:  &  %.(event-core (slog leaf/"ames: %kroc task not ready" ~))
-        ::
-        =;  [corks=@ core=_event-core]
-          ?.  dry  core
-          %.(core (slog leaf/"ames: #{<corks>} flows can be corked" ~))
-        ::
-        %+  roll  ~(tap by peers.ames-state)
-        |=  [[=ship =ship-state] corks=@ core=_event-core]
-        ?.  ?=(%known -.ship-state)
-          corks^core
-        =/  =peer-state:ames  ?>(?=(%known -.ship-state) +.ship-state)
-        =/  subs=(jar path [bone sub-nonce=@])
-          %+  roll  ~(tap by snd.peer-state)
-          |=  $:  [=forward=bone message-pump-state:ames]
-                  subs=(jar path [bone sub-nonce=@])
-              ==
-          ?:  (~(has in closing.peer-state) forward-bone)
-            %.  subs
-            %^  ev-trace  &(dry odd.veb)  ship
-            |.
-            %+  weld  "stale flow bone={<forward-bone>} in closing, "
-            "#{<~(wyt in live:packet-pump-state)>} packets retrying"
-          ?~  duct=(~(get by by-bone.ossuary.peer-state) forward-bone)
-            subs
-          ?.  ?=([* [%gall %use sub=@ @ %out @ @ nonce=@ pub=@ *] *] u.duct)
-            subs
-          =/  =wire           i.t.u.duct
-          =/  nonce=(unit @)  (rush (snag 7 wire) dem)
-          %-  ~(add ja subs)
-          ::  0 for old pre-nonce subscriptions
-          ::
-          :_  [forward-bone ?~(nonce 0 u.nonce)]
-          ?~  nonce  wire
-          ::  don't include the sub-nonce in the key
-          ::
-          (weld (scag 7 wire) (slag 8 wire))
-        %+  roll  ~(tap by subs)
-        |=  [[=wire flows=(list [bone sub-nonce=@])] corks=_corks core=_core]
-        ::
-        %-  tail
-        %+  roll  (sort flows |=([[@ n=@] [@ m=@]] (lte n m)))
-        |=  [[=bone nonce=@] resubs=_(lent flows) corks=_corks core=_core]
-        =/  app=term  ?>(?=([%gall %use sub=@ *] wire) i.t.t.wire)
-        =/  =path     (slag 7 wire)
-        =/  log=tape  "[bone={<bone>} agent={<app>} nonce={<nonce>}] {<path>}"
-        =;  corkable=?
-          =?  corks  corkable  +(corks)
-          =?  core   &(corkable !dry)  (%*(on-cork core cork-bone `bone) ship)
-          (dec resubs)^corks^core
-        ::  checks if this is a stale re-subscription
-        ::
-        ?.  =(resubs 1)
-          %.  &
-          (ev-trace &(dry odd.veb) ship |.((weld "stale %watch plea " log)))
-        ::  the current subscription can be safely corked if there
-        ::  is a flow with a naxplanation ack on a backward bone
-        ::
-        =+  backward-bone=(mix 0b10 bone)
-        ?.  =(2 (mod backward-bone 4))
-          |
-        ?~  (~(get by rcv.peer-state) backward-bone)
-          |
-        %.  &
-        (ev-trace &(dry odd.veb) ship |.((weld "failed %watch plea " log)))
+        %+  roll  bones
+        |=  [[=ship =bone] co=_event-core]
+        (%*(on-cork co cork-bone `bone) ship)
       ::  +on-deep: deferred %ames calls from itself
       ::
       ++  on-deep
@@ -4862,7 +4853,7 @@
       %vega  on-vega:event-core
       %plea  (on-plea:event-core [ship plea]:task)
       %cork  (on-cork:event-core ship.task)
-      %kroc  (on-kroc:event-core dry.task)
+      %kroc  (on-kroc:event-core bones.task)
       %deep  (on-deep:event-core deep.task)
     ::
       %keen  (on-keen:event-core +.task)
