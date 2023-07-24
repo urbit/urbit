@@ -55,7 +55,9 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          lfs: true
 
       # We only want the extra nix config on linux, where it is necessary
       # for the docker build. We don't want in on Mac, where it isn't but
@@ -77,7 +79,6 @@ jobs:
       - if: ${{ matrix.os == 'ubuntu-latest' }}
         name: run urbit-tests
         run: |
-          cp -RL tests pkg/arvo/tests
           if [[ "${{ inputs.next }}" == "next/kelvin/"* ]]; then
             next=$(echo ${{ inputs.next }} | sed 's/[^0-9]//g')
             base="https://bootstrap.urbit.org/vere/next/kelvin/${next}"
@@ -91,7 +92,8 @@ jobs:
           url="$(echo ${base}/v${vere}/vere-v${vere}-linux-x86_64)"
           echo $vere
           echo $url
-          # put in .jam so it doesn't crash when it gets -A'd in
-          curl -Lo pkg/arvo/vere.jam "$url"
-          chmod +x pkg/arvo/vere.jam
-          nix-build -A urbit-tests
+          curl -Lo urbit "$url"
+          chmod +x urbit
+          git add urbit
+
+          nix flake check --keep-build-log -L

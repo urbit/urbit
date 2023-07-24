@@ -3319,6 +3319,7 @@
     ~%  %leer  ..part  ~
     |=  txt=cord
     ^-  wain
+    ?~  txt  ~
     =/  len=@  (met 3 txt)
     =/  cut  =+(cut -(a 3, c 1, d txt))
     =/  sub  sub
