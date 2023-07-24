@@ -4696,22 +4696,6 @@
         4
       --  ::de
     --  ::json
-  ::  +en-json:html: encode json to tape
-  ::
-  ::  XX: deprecated; use +en:json:html
-  ::
-  ++  en-json
-    |=  jon=^json
-    ^-  tape
-    (trip (en:json jon))
-  ::  +de-json:html: parse cord to (unit json)
-  ::
-  ::  XX: deprecated; use +de:json:html
-  ::
-  ++  de-json
-    |=  txt=cord
-    ^-  (unit ^json)
-    (de:json txt)
   ::                                                    ::  ++en-xml:html
   ++  en-xml                                            ::  xml printer
     =<  |=(a=manx `tape`(apex a ~))
