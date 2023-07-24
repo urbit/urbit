@@ -9,4 +9,4 @@
 =/  [who=ship message=@t]
   ?@(arg [who.arg ''] [who.arg (crip mez.arg)])
 ;<  ~  bind:m  (poke:strandio [who %hood] %helm-hi !>(message))
-(pure:m !>("hi {<who>} successful"))
+(pure:m !>((crip "hi {<who>} successful")))

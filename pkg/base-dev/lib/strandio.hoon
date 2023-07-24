@@ -581,8 +581,9 @@
 ++  check-for-file
   |=  [[=ship =desk =case] =spur]
   =/  m  (strand ,?)
-  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %x case spur)
-  (pure:m ?=(^ riot))
+  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %u case spur)
+  ?>  ?=(^ riot)
+  (pure:m !<(? q.r.u.riot))
 ::
 ++  list-tree
   |=  [[=ship =desk =case] =spur]
