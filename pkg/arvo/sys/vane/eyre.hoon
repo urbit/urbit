@@ -261,15 +261,12 @@
       font-display: swap;
   }
   :root {
-    --red05: rgba(255,65,54,0.05);
-    --red100: rgba(255,65,54,1);
-    --blue05: rgba(33,157,255,0.05);
-    --blue30: rgba(33,157,255,0.3);
-    --blue100: rgba(33,157,255,1);
-    --black05: rgba(0,0,0,0.05);
-    --black20: rgba(0,0,0,0.2);
-    --black60: rgba(0,0,0,0.6);
-    --white: rgba(255,255,255,1);
+    --red-soft: #FFEFEC;
+    --red: #FF6240;
+    --gray-100: #E5E5E5;
+    --gray-400: #999999;
+    --gray-800: #333333;
+    --white: #FFFFFF;
   }
   html {
     font-family: Inter, sans-serif;
@@ -277,10 +274,11 @@
     margin: 0;
     width: 100%;
     background: var(--white);
-    color: var(--black100);
+    color: var(--gray-800);
     -webkit-font-smoothing: antialiased;
     line-height: 1.5;
-    font-size: 12px;
+    font-size: 16px;
+    font-weight: 600;
     display: flex;
     flex-flow: row nowrap;
     justify-content: center;
@@ -302,17 +300,23 @@
     /*NOTE dumb hack to get approx equal height with #local */
     margin-bottom: 15px;
   }
+  body nav {
+    background: var(--gray-100);
+    border-radius: 2rem;
+    display: flex;
+    justify-content: space-around;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
   body nav div {
-    display: inline-block;
-    padding: 8px 16px;
-    border-radius: 4px;
-    color: var(--blue100);
-    border: 1px solid var(--blue100);
+    width: 50%;
+    padding: 0.5rem 1rem;
+    text-align: center;
     cursor: pointer;
   }
   body.local nav div.local,
   body.eauth nav div.eauth {
-    background-color: var(--blue100);
+    background: var(--gray-800);
     color: var(--white);
     cursor: default;
   }
@@ -336,72 +340,82 @@
     align-items: flex-start;
   }
   input {
-    background: transparent;
-    border: 1px solid var(--black20);
-    padding: 8px;
-    border-radius: 4px;
+    background: var(--gray-100);
+    border: 2px solid transparent;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
     font-size: inherit;
-    color: var(--black);
+    color: var(--gray-800);
     box-shadow: none;
+    width: 100%;
   }
   input:disabled {
-    background: var(--black05);
-    color: var(--black60);
+    background: var(--gray-100);
+    color: var(--gray-400);
   }
   input:focus {
     outline: none;
-    border-color: var(--blue30);
+    background: var(--white);
+    border-color: var(--gray-400);
   }
   input:invalid:not(:focus) {
-    background: var(--red05);
-    border-color: var(--red100);
+    background: var(--red-soft);
+    border-color: var(--red);
     outline: none;
-    color: var(--red100);
+    color: var(--red);
   }
   button[type=submit] {
-    margin-top: 16px;
-    padding: 8px 16px;
-    border-radius: 4px;
-    background: var(--blue100);
+    margin-top: 1rem;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    background: var(--gray-800);
     color: var(--white);
-    border: 1px solid var(--blue100);
-    cursor: pointer;
+    border: none;
+    font-weight: 600;
   }
   input:invalid ~ button[type=submit] {
     border-color: currentColor;
-    background: var(--blue05);
-    color: var(--blue30);
+    background: var(--gray-100);
+    color: var(--gray-400);
     pointer-events: none;
   }
   span.guest {
-    color: var(--black20);
+    color: var(--gray-400);
   }
   span.failed {
     display: flex;
     flex-flow: row nowrap;
-    height: 16px;
+    height: 1rem;
     align-items: center;
-    margin-top: 6px;
-    color: var(--red100);
+    margin-top: 0.875rem;
+    color: var(--red);
   }
   span.failed svg {
-    height: 12px;
-  margin-right: 6px;
+    height: 1rem;
+    margin-right: 0.25rem;
   }
-  span.failed circle,
-  span.failed line {
+  span.failed path {
     fill: transparent;
-    stroke: currentColor
+    stroke-width: 2px;
+    stroke-linecap: round;
+    stroke: currentColor;
   }
   .mono {
     font-family: 'Source Code Pro', monospace;
   }
   @media all and (prefers-color-scheme: dark) {
-    :root {
-      --white: rgb(51, 51, 51);
-      --black100: rgba(255,255,255,1);
-      --black05: rgba(255,255,255,0.05);
-      --black20: rgba(255,255,255,0.2);
+  :root {
+    --white: #000000;
+    --gray-800: #E5E5E5;
+    --gray-400: #808080;
+    --gray-100: #333333;
+    --red-soft: #7F1D1D;
+  }
+  }
+  @media screen and (min-width: 30em) {
+    html {
+      font-size: 14px;
     }
   }
   '''
@@ -476,10 +490,8 @@
           ;input(type "hidden", name "redirect", value redirect-str);
           ;+  ?.  failed  ;span;
             ;span.failed
-              ;svg(xmlns "http://www.w3.org/2000/svg", viewBox "0 0 12 12")
-                ;circle(cx "6", cy "6", r "5.5");
-                ;line(x1 "3.27", y1 "3.27", x2 "8.73", y2 "8.73");
-                ;line(x1 "8.73", y1 "3.27", x2 "3.27", y2 "8.73");
+              ;svg(xmlns "http://www.w3.org/2000/svg", viewBox "0 0 16 16")
+                ;path(d "m8 8 4-4M8 8 4 4m4 4-4 4m4-4 4 4");
               ==
               Key is incorrect
             ==
@@ -498,13 +510,13 @@
             =maxlength  "57"
             =pattern    "~((([a-z]\{6})\{1,2}-\{0,2})+|[a-z]\{3})";
           ;p
-            ; You will be redirected to your own web interface, to authorize
+            ; You will be redirected to your own web interface to authorize
             ; logging in to
             ;span.mono:"{(scow %p our)}"
             ; .
           ==
           ;input(type "hidden", name "redirect", value redirect-str);
-          ;button(name "eauth", type "submit"):"Continue..."
+          ;button(name "eauth", type "submit"):"Continue"
         ==
       ==
       ;*  ?.  ?=(%fake -.identity)  ~
