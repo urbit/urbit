@@ -18,18 +18,47 @@
 ::
 +$  resource
   $%
-    [%application-javascript p=tape]
-    [%audio-wav p=@]
-    [%html h=cord]
-    [%image-jpeg p=@]
-    [%image-png p=@]
-    [%json j=json]
-    [%login-redirect l=cord]
-    [%manx m=manx]
-    [%plain p=tape]
-    [%redirect o=cord]
+    [%application-javascript p=tape]            :: js
+    [%application-json p=@]                     :: json
+    [%application-pdf p=@]                      :: pdf
+    [%application-rtf p=@]                      :: rtf
+    [%application-xml p=@]                      :: xml
+    [%audio-aac p=@]                            :: aac
+    [%audio-flac p=@]                           :: flac
+    [%audio-mid p=@]                            :: mid, midi
+    [%audio-mpeg p=@]                           :: mp3
+    [%audio-ogg p=@]                            :: oga
+    [%audio-wav p=@]                            :: wav
+    [%audio-webm p=@]                           :: weba
+    [%font-otf p=@]                             :: otf
+    [%font-ttf p=@]                             :: ttf
+    [%font-woff2 p=@]                           :: woff2
+    [%html h=cord]                              :: htm, html
+    [%image-bmp p=@]                            :: bmp
+    [%image-gif p=@]                            :: gif
+    [%image-ico p=@]                            :: ico
+    [%image-jpeg p=@]                           :: jpg, jpeg
+    [%image-png p=@]                            :: png
+    [%image-svg p=@]                            :: svg
+    [%image-tiff p=@]                           :: tiff
+    [%image-webp p=@]                           :: webp
+    [%json j=json]                              :: json (type not mark)
+    [%manx m=manx]                              :: manx (type not mark)
+    [%plain p=tape]                             :: txt
+    [%text-css p=@]                             :: css
+    [%text-csv p=@]                             :: csv
+    [%text-javascript p=@]                      :: js
+    [%text-plain p=@]                           :: txt
+    [%text-xml p=@]                             :: xml
+    [%video-avi p=@]                            :: avi
+    [%video-mp4 p=@]                            :: mp4
+    [%video-mpeg p=@]                           :: mpeg
+    [%video-ogg p=@]                            :: ogv
+    [%video-webm p=@]                           :: webm
     ::
+    [%login-redirect l=cord]                    ::
     [%none ~]
+    [%redirect o=cord]
     [%stock ~]
   ==
 ::
@@ -46,36 +75,128 @@
       %application-javascript
     :_  `(as-octt:mimes:html p.resource)
     :-  http-status
-    (weld headers ['content-type'^'text/javascript']~)
+    (weld headers ['content-type'^'application/javascript']~)
+    ::
+      %application-json
+    :_  `(as-octt:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'application/json']~)
+    ::
+      %application-pdf
+    :_  `(as-octt:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'application/pdf']~)
+    ::
+      %application-rtf
+    :_  `(as-octt:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'application/rtf']~)
+    ::
+      %application-xml
+    :_  `(as-octt:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'application/xml']~)
+    ::
+      %audio-aac
+    :_  `(as-octs:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'audio/aac']~)
+    ::
+      %audio-flac
+    :_  `(as-octs:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'audio/flac']~)
+    ::
+      %audio-mid
+    :_  `(as-octs:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'audio/midi']~)
+    ::
+      %audio-mpeg
+    :_  `(as-octs:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'audio/mpeg']~)
+    ::
+      %audio-ogg
+    :_  `(as-octs:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'audio/ogg']~)
     ::
       %audio-wav
     :_  `(as-octs:mimes:html p.resource)
     :-  http-status
     (weld headers ['content-type'^'audio/wav']~)
     ::
-      %json
-    :-  :-  http-status
-        %+  weld  headers
-        ['content-type'^'application/json']~
-    `(as-octt:mimes:html (en-json:html j.resource))
+      %audio-weba
+    :_  `(as-octs:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'audio/webm']~)
+    ::
+      %font-otf
+    :_  `(as-octs:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'font/otf']~)
+    ::
+      %font-ttf
+    :_  `(as-octs:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'font/ttf']~)
+    ::
+      %font-woff2
+    :_  `(as-octs:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'fonts/woff2']~)
     ::
       %html
     :-  :-  http-status
       (weld headers ['content-type'^'text/html']~)
     `(as-octs:mimes:html h.resource)
     ::
+      %image-bmp
+    :_  `(as-octs:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'image/bmp']~)
+    ::
+      %image-gif
+    :_  `(as-octs:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'image/gif']~)
+    ::
+      %image-ico
+    :_  `(as-octs:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'image/vnd.microsoft.icon']~)
+    ::
+      %image-jpeg
+    :_  `(as-octs:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'image/jpeg']~)
+    ::
       %image-png
     :_  `(as-octs:mimes:html p.resource)
     :-  http-status
     (weld headers ['content-type'^'image/png']~)
     ::
-      %login-redirect
-    =+  %^  cat  3
-      '/~/login?redirect='
-    l.resource
-    :_  ~
+      %image-svg
+    :_  `(as-octs:mimes:html p.resource)
     :-  http-status
-    (weld headers [['location' -]]~)    
+    (weld headers ['content-type'^'image/svg+xml']~)
+    ::
+      %image-tiff
+    :_  `(as-octs:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'image/tiff']~)
+    ::
+      %image-webp
+    :_  `(as-octs:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'image/webp']~)
+    ::
+      %json
+    :-  :-  http-status
+        %+  weld  headers
+        ['content-type'^'application/json']~
+    `(as-octt:mimes:html (en-json:html j.resource))
     ::
       %manx
     :-  :-  http-status
@@ -85,21 +206,74 @@
       %plain
     :_  `(as-octt:mimes:html p.resource)
     :-  http-status
-    (weld headers ['content-type'^'text/html']~)
+    (weld headers ['content-type'^'text/plain']~)
+    ::
+      %text-css
+    :_  `(as-octs:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'text/css']~)
+    ::
+      %text-csv
+    :_  `(as-octs:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'text/csv']~)
+    ::
+      %text-javascript
+    :_  `(as-octs:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'text/javascript']~)
+    ::
+      %text-plain
+    :_  `(as-octs:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'text/plain']~)
+    ::
+      %text-xml                                           :: overrides text/
+    :_  `(as-octs:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'application/xml']~)
+    ::
+      %video-avi
+    :_  `(as-octs:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'video/x-msvideo']~)
+    ::
+      %video-mp4
+    :_  `(as-octs:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'video/mp4']~)
+    ::
+      %video-mpeg
+    :_  `(as-octs:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'video/mpeg']~)
+    ::
+      %video-ogg
+    :_  `(as-octs:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'video/ogg']~)
+    ::
+      %video-webm
+    :_  `(as-octs:mimes:html p.resource)
+    :-  http-status
+    (weld headers ['content-type'^'video/webm']~)
+    ::
+    ::
+      %login-redirect
+    =+  %^  cat  3
+      '/~/login?redirect='
+    l.resource
+    :_  ~
+    :-  http-status
+    (weld headers [['location' -]]~)    
+    ::
+      %none
+    [[http-status headers] ~]
     ::
       %redirect
     :_  ~
     :-  http-status
     (weld headers ['location'^o.resource]~)
-    ::
-      %text-plain
-    :_  `(as-octt:mimes:html p.resource)
-    :-  http-status
-    (weld headers ['content-type'^'text/plain']~)
-    ::
-    ::
-      %none
-    [[http-status headers] ~]
     ::
       %stock
     (stock-error headers http-status)
