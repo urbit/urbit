@@ -1,8 +1,8 @@
   ::  /lib/etch.hoon
-::::  ~littel-wolfur, simplified ~lagrev-nocfep
-::    Version ~2023.7.25
+::::  ~littel-wolfur, simplified by ~litlep-nibbyt
+::    Version ~2023.6.18
 ::
-/+  *mip, *pprint
+/+  *mip
 |%
 ::
 ++  show-json
@@ -16,7 +16,8 @@
       %void  !!
       %noun  (en-noun arg)
     ::
-      [%atom *]  (en-dime p.typ ;;(@ arg))
+      [%atom *]
+    (en-dime p.typ ;;(@ arg))
     ::
       [%cell *]
     =/  hed=json  $(typ p.typ, arg -.arg)
@@ -152,6 +153,7 @@
       %$  $(aura %ui)
   ::
       %da  [%s (scot %da dat)]
+      ::  [%n (time:enjs:format dat)]
   ::
       %dr  [%s (scot %dr dat)]
   ::
@@ -177,5 +179,4 @@
      %ui  [%n `@t`(rsh [3 2] (scot %ui dat))]
      %ud  [%n (scot %ud dat)]
   ==
-::
---
+  --
