@@ -556,6 +556,7 @@
 ::    bug:         debug printing configuration
 ::    snub:        blocklist for incoming packets
 ::    cong:        parameters for marking a flow as clogged
+::    dead:        dead flow consolidation timer, if set
 ::
 +$  ames-state
   $+  ames-state
@@ -567,6 +568,7 @@
       =bug
       snub=[form=?(%allow %deny) ships=(set ship)]
       cong=[msg=@ud mem=@ud]
+      dead=(unit [=duct =wire date=@da])
   ==
 ::
 +$  azimuth-state    [=symmetric-key =life =rift =public-key sponsor=ship]
@@ -2401,6 +2403,7 @@
         ::
         ?:  ?=([%dead-flow ~] wire)
           =;  cor=event-core
+            =.  dead.ames-state.cor  `[~[/ames] /dead-flow `@da`(add now ~m2)]
             (emit:cor duct %pass /dead-flow %b %wait `@da`(add now ~m2))
           %-  ~(rep by peers.ames-state)
             |=  [[=ship =ship-state] core=_event-core]
@@ -2777,7 +2780,17 @@
           (rof ~ /ames %j `beam`[[our %turf %da now] /])
         ::
         =*  duct  unix-duct.ames-state
+        ::
+        =/  dead-moves=(list move)
+          ?:  ?=(^ dead.ames-state)  ~
+          [~[/ames] %pass /dead-flow %b %wait `@da`(add now ~m2)]~
+        =?  dead.ames-state  ?=(~ dead.ames-state)
+          `[~[/ames] /dead-flow `@da`(add now ~m2)]
+        ::
         %-  emil
+        %+  weld
+          dead-moves
+        ^-  (list move)
         :~  [duct %give %turf turfs]
             [duct %pass /ping %g %deal [our our /ames] %ping %poke %noun !>(%kick)]
         ==
@@ -5093,6 +5106,8 @@
     |=  old=ames-state-15
     ^-  ^ames-state
     %=    old
+      cong  [cong.old `[~[/ames] /dead-flow `@da`(add now ~m2)]]
+      ::
         peers
       %-  ~(run by peers.old)
       |=  ship-state=ship-state-15
