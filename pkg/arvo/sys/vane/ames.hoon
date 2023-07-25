@@ -2303,6 +2303,21 @@
             =/  rcvr  [ship her-life.channel.peer-core]
             "plea {<sndr rcvr bone=bone vane.plea path.plea>}"
         abet:(on-memo:peer-core bone plea %plea)
+      ::  +on-tame: handle request to delete a route
+      ::
+      ++  on-tame
+        |=  =ship
+        ^+  event-core
+        ?:  =(%czar (clan:title ship))
+          %-  %+  slog
+            leaf+"ames: bad idea to %tame galaxy {(scow %p ship)}, ignoring"
+          ~
+          event-core
+        =/  peer-state=(unit peer-state)  (get-peer-state ship)
+        ?~  peer-state
+          %-  (slog leaf+"ames: no peer-state for {(scow %p ship)}, ignoring" ~)
+          event-core
+        abet:on-tame:(abed-peer:pe ship u.peer-state)
       ::  +on-cork: handle request to kill a flow
       ::
       ++  on-cork
@@ -3218,6 +3233,10 @@
             fi-abet:(fi-sub:(abed:fi path) duct)
           =.  keens  (~(put by keens) path *keen-state)
           fi-abet:(fi-start:(abed:fi path) duct)
+        ::
+        ++  on-tame
+          ^+  peer-core
+          peer-core(route.peer-state ~)
         ::  +on-cork-flow: mark .bone as closing
         ::
         ++  on-cork-flow
@@ -4889,6 +4908,7 @@
       %vega  on-vega:event-core
       %plea  (on-plea:event-core [ship plea]:task)
       %cork  (on-cork:event-core ship.task)
+      %tame  (on-tame:event-core ship.task)
       %kroc  (on-kroc:event-core bones.task)
       %deep  (on-deep:event-core deep.task)
     ::

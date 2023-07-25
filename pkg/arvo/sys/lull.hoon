@@ -767,6 +767,7 @@
   ::    %heed: track peer's responsiveness; gives %clog if slow
   ::    %jilt: stop tracking peer's responsiveness
   ::    %cork: request to delete message flow
+  ::    %tame: request to delete route for ship
   ::    %kroc: request to delete specific message flows, from their bones
   ::    %plea: request to send message
   ::    %deep: deferred calls to %ames, from itself
@@ -796,6 +797,7 @@
         [%heed =ship]
         [%jilt =ship]
         [%cork =ship]
+        [%tame =ship]
         [%kroc bones=(list [ship bone])]
         $>(%plea vane-task)
         [%deep =deep]
