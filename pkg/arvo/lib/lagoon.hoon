@@ -1,3 +1,4 @@
+/+  sa=saloon
 ::                                                    ::
 ::::                    ++la                          ::  (2v) vector/matrix ops
 |%
@@ -54,10 +55,9 @@
   ++  get-item  ::  extract item at index .dex
     |=  [=ray dex=(list @)]
     ^-  @ux
-    =/  len  (^sub (roll shape.meta.ray ^mul) 1)
     %^    cut
         bloq.meta.ray 
-      [(^sub len (get-bloq-offset -.ray dex)) 1] 
+      [(get-bloq-offset -.ray dex) 1] 
     data.ray
   ::
   ++  set-item  ::  set item at index .dex to .val
@@ -67,7 +67,7 @@
     :-  -.ray
     %^    sew 
         bloq.meta.ray
-      [(^sub len (get-bloq-offset -.ray dex)) 1 val] 
+      [(get-bloq-offset -.ray dex) 1 val] 
     data.ray
   ::
   ++  get-bloq-offset  ::  get bloq offset of n-dimensional index
@@ -122,16 +122,17 @@
   ++  ravel
     |=  a=ray
     ^-  (list @)
-    +:(flop (rip bloq.meta.a data.a))
+    (snip (rip bloq.meta.a data.a))
   ::
   ++  en-ray    :: baum to ray
   |=  =baum
   ^-  ray
-  =/  a=ray  [meta.baum `@ux`1]
+  =/  a=ray  [meta.baum `@ux`0]
   =/  i  0
   =/  n  (roll shape.meta.a ^mul)
   |-
   ?:  =(i n)
+    =.  data.a  (^add (lsh [bloq.meta.a n] 1) (swp bloq.meta.a data.a))
     a
   %=    $
       i  +(i)
@@ -179,7 +180,7 @@
     ~_  leaf+"lagoon-fail"
     =<  +
     %^    spin
-        (gulf 0 (^sub n 1))
+        (gulf 0 (dec n))
       ^-  ray  (zeros [~[n n] bloq kind])
     |=  [i=@ r=ray]
     [i (set-item r ~[i i] 1)]
@@ -334,20 +335,11 @@
           ==
         ==
       ==
-  ::
+::
   ++  abs
     |=  a=ray
     ^-  ray
-    %-  spac
-    :-  meta.a
-    =/  ali  (ravel a)
-    %+  rep  bloq.meta.a
-    =|  res=(list @)
-    %-  flop
-    |-  ^+  res
-    ?@  ali  res
-    =/  abs  ((trans-scalar bloq.meta:a kind.meta:a %abs) i.ali)
-    $(ali t.ali, res [abs res])
+    (el-wise-op a (trans-scalar bloq.meta:a kind.meta:a %abs))
 ::
   ++  add-scalar
     |=  [a=ray n=@]
@@ -382,87 +374,27 @@
   ++  add
     |=  [a=ray b=ray]
     ^-  ray
-    ?>  =(meta.a meta.b)
-    %-  spac
-    :-  meta.a
-    =/  ali  (ravel a)
-    =/  bob  (ravel b)
-    %+  rep  bloq.meta.a
-    =|  res=(list @)
-    %-  flop
-    |-  ^+  res
-    ?@  ali  res
-    ?@  bob  res
-    =/  sum  ((fun-scalar bloq.meta:a kind.meta:a %add) i.ali i.bob)
-    $(ali t.ali, bob t.bob, res [sum res])
+    (bin-op a b (fun-scalar bloq.meta:a kind.meta:a %add))
   ::
   ++  sub
     |=  [a=ray b=ray]
     ^-  ray
-    ?>  =(meta.a meta.b)
-    %-  spac
-    :-  meta.a
-    =/  ali  (ravel a)
-    =/  bob  (ravel b)
-    %+  rep  bloq.meta.a
-    =|  res=(list @)
-    %-  flop
-    |-  ^+  res
-    ?@  ali  res
-    ?@  bob  res
-    =/  dif  ((fun-scalar bloq.meta:a kind.meta:a %sub) i.ali i.bob)
-    $(ali t.ali, bob t.bob, res [dif res])
+    (bin-op a b (fun-scalar bloq.meta:a kind.meta:a %sub))
   ::
   ++  mul
     |=  [a=ray b=ray]
     ^-  ray
-    ?>  =(meta.a meta.b)
-    %-  spac
-    :-  meta.a
-    =/  ali  (ravel a)
-    =/  bob  (ravel b)
-    %+  rep  bloq.meta.a
-    =|  res=(list @)
-    %-  flop
-    |-  ^+  res
-    ?@  ali  res
-    ?@  bob  res
-    =/  pro  ((fun-scalar bloq.meta:a kind.meta:a %mul) i.ali i.bob)
-    $(ali t.ali, bob t.bob, res [pro res])
+    (bin-op a b (fun-scalar bloq.meta:a kind.meta:a %mul))
   ::
   ++  div
     |=  [a=ray b=ray]
     ^-  ray
-    ?>  =(meta.a meta.b)
-    %-  spac
-    :-  meta.a
-    =/  ali  (ravel a)
-    =/  bob  (ravel b)
-    %+  rep  bloq.meta.a
-    =|  res=(list @)
-    %-  flop
-    |-  ^+  res
-    ?@  ali  res
-    ?@  bob  res
-    =/  fra  ((fun-scalar bloq.meta:a kind.meta:a %div) i.ali i.bob)
-    $(ali t.ali, bob t.bob, res [fra res])
+    (bin-op a b (fun-scalar bloq.meta:a kind.meta:a %div))
   ::
   ++  mod
     |=  [a=ray b=ray]
     ^-  ray
-    ?>  =(meta.a meta.b)
-    %-  spac
-    :-  meta.a
-    =/  ali  (ravel a)
-    =/  bob  (ravel b)
-    %+  rep  bloq.meta.a
-    =|  res=(list @)
-    %-  flop
-    |-  ^+  res
-    ?@  ali  res
-    ?@  bob  res
-    =/  rem  ((fun-scalar bloq.meta:a kind.meta:a %mod) i.ali i.bob)
-    $(ali t.ali, bob t.bob, res [rem res])
+    (bin-op a b (fun-scalar bloq.meta:a kind.meta:a %mod))
    ::
   +$  ops  ?(%add %sub %mul %div %mod %gth %lth %abs)
   ::
@@ -562,5 +494,32 @@
     ::
         ::  TODO signed integers -- add new 2's complement kind?
     ==
+  ::
+  ++  el-wise-op
+    |=  [a=ray fun=$-(@ @)]
+    ^-  ray
+    %-  spac
+    :-  meta.a
+    =/  ali  (ravel a)
+    %+  rep  bloq.meta.a
+    %+  turn
+      ali
+    |=(e=@ (fun e))
+ :: 
+  ++  bin-op
+    |=  [a=ray b=ray op=$-([@ @] @)]
+    ^-  ray
+    ?>  =(meta.a meta.b)
+    %-  spac
+    :-  meta.a
+    =/  ali  (ravel a)
+    =/  bob  (ravel b)
+    %+  rep  bloq.meta.a
+    %+  turn
+      (gulf 0 (dec (lent ali)))
+    |=  i=@
+    (op (snag i ali) (snag i bob))
+    ::
+        ::  TODO signed integers -- add new 2's complement kind?
 --
 --

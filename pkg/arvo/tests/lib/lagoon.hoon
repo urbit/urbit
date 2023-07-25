@@ -117,4 +117,32 @@
       !>((prod:la ones-test))
       !>(ones-res)
   ==
+::
+++  test-matmul-2d  ^-  tang
+  =/  =meta:la  [~[3 3] 5 %unsigned]
+  =/  eye-test  (eye:la 5 %unsigned 3)
+  =/  iota-test  (reshape:la (iota:la meta 9) ~[3 3])
+  =/  iota-res  (en-ray:la `baum:la`[meta ~[~[30 36 42] ~[66 81 96] ~[102 126 150]]])
+  =/  col-vec  (ones:la [~[3 1] 5 %unsigned])
+  =/  col-res  (en-ray:la [[~[3 1] 5 %unsigned] ~[~[6] ~[15] ~[24]]]) 
+  ;:  weld
+    %+  expect-eq
+      !>((matmul-2d:la iota-test iota-test))
+      !>(iota-res)
+    %+  expect-eq
+      !>((matmul-2d:la iota-test eye-test))
+      !>(iota-test)
+    %+  expect-eq
+      !>((matmul-2d:la iota-test col-vec))
+      !>(col-res)
+  ==
+::
+++  test-add  ^-  tang
+  =/  iota-test  (iota:la [~[4] 5 %unsigned] 4)
+  =/  iota-res  (en-ray:la [~[4] 5 %unsigned] ~[2 4 6 8]) 
+  ;:  weld
+  %+  expect-eq
+    !>((add:la iota-test iota-test))
+    !>(iota-res)
+  ==
 --
