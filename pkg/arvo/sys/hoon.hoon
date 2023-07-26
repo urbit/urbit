@@ -679,6 +679,13 @@
   ?:  =(~ t.a)  ~
   [i.a $(a t.a)]
 ::
+++  snog                                                ::  glue together a copies of list
+    |*  [a=@ b=(list *)]
+    =/  c  *_b
+    |-  ^+  b
+    ?~  a  ~
+    (weld b $(a (dec a)))
+::
 ++  sort  !.                                            ::  quicksort
   ~/  %sort
   |*  [a=(list) b=$-([* *] ?)]
