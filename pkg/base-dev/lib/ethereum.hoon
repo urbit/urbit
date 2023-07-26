@@ -592,21 +592,25 @@
         ==
       :: TODO pull in all attributes
       ++  transaction-receipt
-        $:  cumulative-gas-used=@ud
+        $:  transaction-hash=@ux
+            transaction-index=@ud
+            blockhash=@ux
+            block-number=@ud
+            from=address
+            to=address
+            cumulative-gas-used=@ud
             effective-gas-price=@ud
-            :: logs TODO parse-logs?
-            to=@ux
-            from=@ux
-            type=@ux
             gas-used=@ud
+            contract-address=(unit @ux)
+            :: logs=(list event-log)
+            logs-bloom=@ux
+            type=?(%transfer %call)
+            status=?
+            :: root?
+
             :: TODO contractAddress is messy because it is a unit
             :: contract-address=(unit @ux)
-            transaction-hash=@ux
-            block-number=@ux
             :: TODO is this correct
-            logs-bloom=@ux
-            transaction-index=@ux
-            status=@ux
         ==
       ::
       ++  event-log
@@ -968,17 +972,21 @@
     %.  json
     =,  dejs-soft:format
     %-  ot
-    :~  'cumulativeGasUsed'^parse-hex
-        'effectiveGasPrice'^parse-hex
-        'to'^parse-hex
-        'from'^parse-hex
-        'type'^parse-hex
-        'gasUsed'^parse-hex
-        'transactionHash'^parse-hex
-        'blockNumber'^parse-hex
-        'logsBloom'^parse-hex
+    :~  'transactionHash'^parse-hex
         'transactionIndex'^parse-hex
-        'status'^parse-hex
+        'blockHash'^parse-hex
+        'blockNumber'^parse-hex
+        'from'^parse-hex
+        'to'^parse-hex
+        'cumulativeGasUsed'^parse-hex
+        'effectiveGasPrice'^parse-hex
+        'gasUsed'^parse-hex
+        'contractAddress'^parse-hex-unit
+        :: logs+parse-event-logs-unit
+        'logsBloom'^parse-hex
+        'type'^parse-type
+        :: root
+        'status'^parse-status
     ==
   ++  parse-block
     |=  =json
@@ -1013,6 +1021,25 @@
   ::::
   ++  parse-result  |=(jon=json jon)
   ++  parse-hex  |=(=json `(unit @)`(some (parse-hex-result json)))
+  ++  parse-hex-unit  |=(=json `(unit (unit @))`(some (parse-hex-result-unit json)))
+  ++  parse-type
+    |=  j=json
+    ^-  (unit ?(%transfer %call))
+    ?>  ?=(%s -.j)
+    =/  typenum  (hex-to-num p.j)
+    ~&  [%typenum typenum]
+    ?:  =(0 typenum)  (some %transfer)
+    ?:  =(2 typenum)  (some %call)
+    ~
+  ++  parse-status
+    |=  j=json
+    ^-  (unit ?)
+    ?>  ?=(%s -.j)
+    =/  typenum  (hex-to-num p.j)
+    ~&  [%typenum typenum]
+    ?:  =(1 typenum)  (some %.y)
+    ?:  =(0 typenum)  (some %.n)
+    ~
   ++  parse-hex-result-timestamp
     |=  j=json
     ^-  (unit @)
@@ -1025,6 +1052,14 @@
     ^-  @
     ?>  ?=(%s -.j)
     (hex-to-num p.j)
+  ++  parse-hex-result-unit
+    |=  j=json
+    ^-  (unit @)
+    ?:  ?=(~ j)
+      ~
+    :: ~
+    ?>  ?=(%s -.j)
+    (some (hex-to-num p.j))
   ::
   ++  parse-eth-new-filter-res  parse-hex-result
   ::
@@ -1038,6 +1073,9 @@
   ::
   ++  parse-event-logs
     (ar:dejs:format parse-event-log)
+  ::
+  ++  parse-event-logs-unit
+    (some (ar:dejs:format parse-event-log))
   ::
   ++  parse-event-log
     =,  dejs:format
