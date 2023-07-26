@@ -2406,15 +2406,15 @@
             =.  dead.ames-state.cor  `[~[/ames] /dead-flow `@da`(add now ~m2)]
             (emit:cor duct %pass /dead-flow %b %wait `@da`(add now ~m2))
           %-  ~(rep by peers.ames-state)
-            |=  [[=ship =ship-state] core=_event-core]
-            ^+  event-core
-            =/  peer-state=(unit peer-state)  (get-peer-state:core ship)
-            ?~  peer-state  core
-            %-  ~(rep by snd.u.peer-state)
-            |=  [[=bone =message-pump-state] cor=_core]
-              ?.  =(~m2 rto.metrics.packet-pump-state.message-pump-state)
-                cor
-              abet:(on-wake:(abed-peer:pe:cor ship u.peer-state) bone error)
+          |=  [[=ship =ship-state] core=_event-core]
+          ^+  event-core
+          =/  peer-state=(unit peer-state)  (get-peer-state:core ship)
+          ?~  peer-state  core
+          %-  ~(rep by snd.u.peer-state)
+          |=  [[=bone =message-pump-state] cor=_core]
+          ?.  =(~m2 rto.metrics.packet-pump-state.message-pump-state)
+            cor
+          abet:(on-wake:(abed-peer:pe:cor ship u.peer-state) bone error)
         ::
         ?.  ?=([%recork ~] wire)
           =/  res=(unit ?([%fine her=ship =^wire] [%pump her=ship =bone]))
