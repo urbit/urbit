@@ -440,6 +440,21 @@
     ^-  ray
     (bin-op a b (fun-scalar bloq.meta:a kind.meta:a %lth))
   ::
+  ++  is-close
+    |=  [a=ray b=ray =term tol=@]
+    =/  tol  (scalarize a.meta term tol)
+    (lth (abs (sub a b)) (fill meta.a tol))
+  ::
+  ++  any
+    |=  [a=ray]
+    ^-  ?(%.y %.n)
+    (^lth (get-item (cumsum a) ~[0]) (roll shape.meta.a ^mul))
+  ::
+  ++  all
+    |=  [a=ray]
+    ^-  ?(%.y %.n)
+    =((get-item (cumsum a) ~[0]) 0)
+  ::
   +$  ops  ?(%add %sub %mul %div %mod %gth %lth %abs)
   ::
   ++  fun-scalar
