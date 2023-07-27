@@ -1,4 +1,3 @@
-/+  sa=saloon
 ::                                                    ::
 ::::                    ++la                          ::  (2v) vector/matrix ops
 |%
@@ -171,6 +170,13 @@
     :-  meta.ray
     (con data:(zeros meta.ray) data.ray)
   ::
+  ++  scalar-to-ray
+    |=  [=meta data=@]
+    ^-  ray
+    =.  shape.meta  ~[1]
+    %-  spac
+    [meta data]
+  ::
   ::  Builders
   ::
   ::
@@ -221,12 +227,11 @@
   ::
   ++  max
     |=  a=ray
-    ^-  @ux
     =/  fun
       |:  [b=1 c=-:(ravel a)] 
       ?:  =(((fun-scalar bloq.meta.a kind.meta.a %gth) b c) 0)
         b  c 
-    (reel (ravel a) fun)
+    (scalar-to-ray meta.a (reel (ravel a) fun))
   ::
   ++  argmax :: Only returns first match
     |=  a=ray
@@ -235,12 +240,11 @@
   ::
   ++  min
     |=  a=ray
-    ^-  @ux
     =/  fun
       |:  [b=1 c=-:(ravel a)] 
       ?:  =(((fun-scalar bloq.meta.a kind.meta.a %lth) b c) 0)
         b  c 
-    (reel (ravel a) fun)
+    (scalar-to-ray meta.a (reel (ravel a) fun))
   ::
   ++  argmin :: Only returns first match
     |=  a=ray
@@ -248,18 +252,19 @@
     +:(find ~[(min a)] (ravel a))
   ::
   ++  cumsum
-    |=  a=ray  
-    ^-  @ux
+    |=  a=ray
+    ^-  ray
+    %+  scalar-to-ray
+      meta.a
     (reel (ravel a) |=([b=@ c=@] ((fun-scalar bloq.meta.a kind.meta.a %add) b c)))
   ::
   ++  prod
     |=  a=ray
-    ^-  @ux
     =/  fun  (fun-scalar bloq.meta.a kind.meta.a %mul)
     =/  ali  +:(ravel a)
     =/  p  -:(ravel a)
-    |-  ^-  @ux
-    ?~  ali  p
+    |-
+    ?~  ali  (scalar-to-ray meta.a p)
     $(ali +.ali, p (fun p -.ali))
   ::
   ++  reshape
@@ -291,6 +296,12 @@
           prod  (set-item prod ~[j i] (get-item a ~[i j]))
         ==
     ==
+  ::
+  ++  dot
+    |=  [a=ray b=ray]
+    ^-  ray
+    ?>  =(shape.meta.a shape.meta.b)
+    (cumsum (mul a b))
   ::
   ++  matmul-2d
     |=  [a=ray b=ray]
