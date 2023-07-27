@@ -4006,7 +4006,11 @@
               ::
               =?  peer-core  !=(~ next-wake.state)
                 (pu-emit %b %rest (need next-wake.state))
-              ::  set new timer if non-null and not at max-backoff
+              ::  set new timer if non-null and not at at max-backoff
+              ::
+              ::  we are using the ~m2 literal instead of max-backoff:gauge
+              ::  because /app/ping has a special cased maximum backoff of ~s25
+              ::  and we don't want to consolidate that
               ::
               =?  peer-core  ?=(^ new-wake)
                 ?:  =(~m2 rto.metrics.state)
