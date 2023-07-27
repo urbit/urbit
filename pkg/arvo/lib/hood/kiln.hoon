@@ -285,7 +285,6 @@
 +$  kiln-fuse-list  (unit desk)
 --
 |=  [bowl:gall state]
-?>  =(src our)
 =|  moz=(list card:agent:gall)
 |%
 ++  kiln  .
@@ -528,6 +527,7 @@
 ::
 ++  poke
   |=  [=mark =vase]
+  ?>  |(=(src our) =(%kiln-change-source mark))
   ?+  mark  ~|([%poke-kiln-bad-mark mark] !!)
     %kiln-autocommit         =;(f (f !<(_+<.f vase)) poke-autocommit)
     %kiln-bump               =;(f (f !<(_+<.f vase)) poke-bump)
@@ -543,6 +543,8 @@
     %kiln-label              =;(f (f !<(_+<.f vase)) poke-label)
     %kiln-merge              =;(f (f !<(_+<.f vase)) poke-merge)
     %kiln-mount              =;(f (f !<(_+<.f vase)) poke-mount)
+    %kiln-change-source      =;(f (f !<(_+<.f vase)) poke-change-source)
+    %kiln-change-publisher   =;(f (f !<(_+<.f vase)) poke-change-publisher)
     %kiln-nuke               =;(f (f !<(_+<.f vase)) poke-nuke)
     %kiln-pause              =;(f (f !<(_+<.f vase)) poke-pause)
     %kiln-permission         =;(f (f !<(_+<.f vase)) poke-permission)
@@ -731,6 +733,52 @@
     abet:(spam leaf+- ~)
   abet:(emit %pass /mount %arvo %c [%mont pot u.bem])
 ::
+++  poke-change-publisher
+  |=  [syd=desk her=ship sud=desk]
+  ?:  =([our syd] [her sud])
+    abet
+  =/  let=@ud  ud:.^(cass:clay %cw /(scot %p our)/[syd]/(scot %da now))
+  =/  subs=(set [@p rave:clay])
+    .^((set [@p rave:clay]) %cx /(scot %p our)//(scot %da now)/cult/[syd])
+  =/  ships=(set @p)
+    %+  roll  ~(tap in subs)
+    |=  [[=ship =rave:clay] ships=(set @p)]
+    ?:  =(our ship)                    ships
+    ?.  ?=([%sing %w [%ud @] ~] rave)  ships
+    ?.  =(+(let) p.case.mood.rave)     ships
+    (~(put in ships) ship)
+  =<  abet
+  %-  emil
+  %+  turn  ~(tap in ships)
+  |=  =ship
+  :*  %pass  /kiln/change-publisher  %agent  [ship %hood]
+      %poke  %kiln-change-source  !>([[our syd] [her sud]])
+  ==
+::
+++  poke-change-source
+  |=  [old=dock new=dock]
+  ?>  |(=(src p.old) =(src our))
+  ?:  =(old new)  abet
+  =/  old-sources=(list kiln-sync)
+    (skim ~(tap by sources) |=(kiln-sync =(old [her sud])))
+  =/  new-sources=(list kiln-sync)
+    (turn old-sources |=(kiln-sync [syd new]))
+  =.  zyn
+    |-
+    ?~  old-sources  zyn
+    $(old-sources t.old-sources, zyn (~(del by zyn) i.old-sources))
+  =<  abet
+  |-  ^+  ..abet
+  ?~  new-sources  ..abet
+  %=  $
+    new-sources  t.new-sources
+    ..abet       =/  sun  (sync i.new-sources)
+                 =<  abet:init
+                 ?:  =(%base syd.i.new-sources)
+                   (apex:sun `%kids)
+                 sun
+  ==
+::
 ++  poke-nuke
   |=  [=term desk=?]
   =<  abet
@@ -865,6 +913,8 @@
           ~?  ?=(^ p.sign)  [%kiln-poke-nack u.p.sign]
           abet
         ~|([%kiln-bad-take-agent wire -.sign] !!)
+  ::
+      [%change-publisher ~]  abet
   ::
       [%fancy *]
     ?>  ?=(%poke-ack -.sign)
