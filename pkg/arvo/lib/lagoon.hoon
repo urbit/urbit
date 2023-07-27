@@ -84,7 +84,7 @@
     |-  ^+  ret
     ?~  sap  ret
     ?~  dex  !!
-    ?>  (lth i.dex i.sap)
+    ?>  (^lth i.dex i.sap)
     %=  $
       sap  t.sap
       dex  t.dex
@@ -222,6 +222,29 @@
     %-  spac
     :-  meta 
     (rap bloq.meta (gulf 1 n))
+  ::
+  ++  scalarize
+    |=  [=meta =term data=@]
+    ^-  ray
+    ?>  =(%float kind.meta)
+    =.  shape.meta  ~[1]
+    ::  convert data to fl
+    =/  mid=fn
+      ?+    term  !!
+        %rq  (sea:ma:rq data)
+        %rd  (sea:ma:rd data)
+        %rs  (sea:ma:rs data)
+        %rh  (sea:ma:rh data)
+      ==
+    ::  convert fl to @r
+    =/  fin
+      ?+    bloq.meta  !!
+        %7  (bit:ma:rq mid)
+        %6  (bit:ma:rd mid)
+        %5  (bit:ma:rs mid)
+        %4  (bit:ma:rh mid)
+      ==
+    (spac [meta `@ux`fin])
   ::
   ::  Operators
   ::
@@ -406,7 +429,17 @@
     |=  [a=ray b=ray]
     ^-  ray
     (bin-op a b (fun-scalar bloq.meta:a kind.meta:a %mod))
-   ::
+  ::
+  ++  gth
+    |=  [a=ray b=ray]
+    ^-  ray
+    (bin-op a b (fun-scalar bloq.meta:a kind.meta:a %gth))
+  ::
+  ++  lth
+    |=  [a=ray b=ray]
+    ^-  ray
+    (bin-op a b (fun-scalar bloq.meta:a kind.meta:a %lth))
+  ::
   +$  ops  ?(%add %sub %mul %div %mod %gth %lth %abs)
   ::
   ++  fun-scalar
@@ -420,8 +453,8 @@
         %mul  |=([b=@ c=@] (~(sit fe bloq) (^mul b c)))
         %div  |=([b=@ c=@] (~(sit fe bloq) (^div b c)))
         %mod  |=([b=@ c=@] (~(sit fe bloq) (^mod b c)))
-        %gth  |=([b=@ c=@] (gth b c))
-        %lth  |=([b=@ c=@] (gth b c))
+        %gth  |=([b=@ c=@] (^gth b c))
+        %lth  |=([b=@ c=@] (^lth b c))
       ==
       ::
         %signed  
