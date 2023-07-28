@@ -2908,6 +2908,11 @@
             ::
             ?:  &(for (lth last-contact.qos.peer-state (sub now ~h1)))
               (try-next-sponsor sponsor.peer-state)
+            :: if forwarding and we are a galaxy, do not forward to another
+            :: galaxy to avoid loops
+            ::
+            ?:  &(for ?=(%czar (clan:title our)) ?=(%czar (clan:title ship)))
+              event-core
             ::
             ?~  route=route.peer-state
               %-  (ev-trace rot.veb final-ship |.("no route to:  {<ship>}"))
@@ -5210,6 +5215,8 @@
       :^  ~  ~  %noun
       !>  ^-  (list lane)
       ?:  =(our u.who)
+        ~
+      ?:  &(?=(%czar (clan:title our)) ?=(%czar (clan:title u.who)))
         ~
       ?.  ?=([~ %known *] peer)
         =/  sax  (rof ~ /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
