@@ -470,7 +470,7 @@
   =/  m  (strand ,json)
   ^-  form:m
   ;<  =cord  bind:m  (fetch-cord url)
-  =/  json=(unit json)  (de-json:html cord)
+  =/  json=(unit json)  (de:json:html cord)
   ?~  json
     (strand-fail %json-parse-error ~)
   (pure:m u.json)
