@@ -4475,7 +4475,7 @@
       ^-  [(unit (unit cage)) _..park]
       =/  q  (read-q tak pax)
       ?~  q    `..park
-      ?~  u.q  `..park
+      ?~  u.q  [[~ ~] ..park]
       ::  should convert any lobe to cage
       ::
       =^  =cage  ..park
