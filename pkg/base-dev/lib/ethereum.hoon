@@ -602,7 +602,7 @@
             effective-gas-price=@ud
             gas-used=@ud
             contract-address=(unit @ux)
-            :: logs=(list event-log)
+            logs=(list event-log)
             logs-bloom=@ux
             type=?(%transfer %call)
             status=?
@@ -982,7 +982,7 @@
         'effectiveGasPrice'^parse-hex
         'gasUsed'^parse-hex
         'contractAddress'^parse-hex-unit
-        :: logs+parse-event-logs-unit
+        logs+parse-event-logs-unit
         'logsBloom'^parse-hex
         'type'^parse-type
         :: root
@@ -1021,7 +1021,9 @@
   ::::
   ++  parse-result  |=(jon=json jon)
   ++  parse-hex  |=(=json `(unit @)`(some (parse-hex-result json)))
-  ++  parse-hex-unit  |=(=json `(unit (unit @))`(some (parse-hex-result-unit json)))
+  ++  parse-hex-unit  
+    |=  =json  
+    `(unit (unit @))`(some (parse-hex-result-unit json))
   ++  parse-type
     |=  j=json
     ^-  (unit ?(%transfer %call))
@@ -1074,8 +1076,9 @@
   ++  parse-event-logs
     (ar:dejs:format parse-event-log)
   ::
-  ++  parse-event-logs-unit
-    (some (ar:dejs:format parse-event-log))
+  ++  parse-event-logs-unit 
+    |=  =json
+    `(unit (list event-log))`(some ((ar:dejs:format parse-event-log) json))
   ::
   ++  parse-event-log
     =,  dejs:format
