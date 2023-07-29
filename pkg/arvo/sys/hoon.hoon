@@ -5809,7 +5809,7 @@
       ++  yelq  |=([ad=? yer=@ud] ?:(ad (yelp yer) (yelp (dec yer))))
       ++  two  (bass 10 ;~(plug sed:ab (stun [0 1] sid:ab)))
       ++  duo  (bass 10 ;~(plug sid:ab (stun [0 1] sid:ab)))
-      ++  vey
+      ++  very
         |=  [a=@ b=?]
         ?:  |(=(0 a) &(=(| b) (gth a +(jes:yo))))
           ~
@@ -5821,7 +5821,7 @@
     ;~  plug
         :: year
         ::
-        (sear vey ;~(plug dim:ag ;~(pose (cold | hep) (easy &))))
+        (sear very ;~(plug dim:ag ;~(pose (cold | hep) (easy &))))
         :: .month
         ::
         ;~(pfix dot (sear |=(m=@ ?:((lte m 12) (some m) ~)) two))
