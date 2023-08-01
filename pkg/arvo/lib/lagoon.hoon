@@ -45,11 +45,49 @@
   ++  to-tank  ::  TODO nest dimensions
     |=  a=ray
     ^-  tank
+    ::  1D vector case
+    ?:  =(1 (lent shape.meta.a))
+      :+  %rose  [" " "[" "]"]
+      %+  turn  (ravel a)
+      |=  i=@
+      ^-  tank
+      (sell [%atom kind.meta.a ~] i)
+    ::  2D matrix case
+    ?:  =(2 (lent shape.meta.a))
+      =/  =baum  (de-ray a)
+      =/  =term  (get-term meta.a)
+      :+  %rose  [" " "[" "]"]
+      %+  turn  data.baum
+      |=  b=(list @)
+      ^-  tank
+      :+  %rose  [" " "[" "]"]
+      %+  turn  b
+      |=(c=@ [%leaf (trip (scot term c))])
+    ::  general tensor case
     :+  %rose  [" " "[" "]"]
     %+  turn  (ravel a)
     |=  i=@
     ^-  tank
     (sell [%atom kind.meta.a ~] i)
+  ::  Produce dime-style term version of appropriate aura.
+  ::
+  ++  get-term
+    |=  =meta
+    ?+    kind.meta  ~|(kind.meta !!)
+        %unsigned
+      %ud
+      ::
+        %signed
+      %sd
+      ::
+        %float
+      ?+    bloq.meta  ~|(bloq.meta !!)
+        %7  %rq
+        %6  %rd
+        %5  %rs
+        %4  %rh
+      ==
+    ==
   ::
   ++  get-item  ::  extract item at index .dex
     |=  [=ray dex=(list @)]
@@ -111,7 +149,7 @@
   ++  get-item-index
     |=  [shape=(list @) num=@]
     ^-  @
-    =/  len  (roll shape ^mul)  :: TODO will shadow
+    =/  len  (roll shape ^mul)
     =-  (roll - ^add)
     ^-  (list @)
     %+  turn  shape
@@ -143,6 +181,13 @@
     data.a 
   ==
   ::
+  ++  de-ray    :: ray to baum
+  |=  =ray
+  ^-  baum
+  :-  meta.ray
+  ^-  (list @ux)
+  (snip (rip bloq.meta.ray data.ray))
+  ::
   ++  get-item-baum
   |=  [=baum dex=(list @)]
   ^-  @
@@ -169,6 +214,12 @@
     ^-  ^ray
     :-  meta.ray
     (con data:(zeros meta.ray) data.ray)
+  ::
+  ++  unspac
+    |=  =ray
+    ^-  ^ray
+    :-  meta.ray
+    (cut bloq.meta.ray [0 (roll shape.meta.ray ^mul)] data.ray)
   ::
   ++  scalar-to-ray
     |=  [=meta data=@]
@@ -213,6 +264,8 @@
         ==
       ==
     (fill meta one)
+  ::  Produce a 1-dimensional index array.
+  ::  Only produces %unsigned.
   ::
   ++  iota
     |=  [=meta n=@ud]
@@ -220,14 +273,125 @@
     =.  shape.meta  ~[n]
     =.  kind.meta  %unsigned
     %-  spac
-    :-  meta 
+    :-  meta
     (rap bloq.meta (gulf 1 n))
+  ::  Produce a 1-dimensional range along one dimension
+  ::  as [a b) with interval d.
+  ::  Only produces %float.
   ::
-  ++  scalarize
+  ++  range
+    |=  [=meta [a=@ b=@] d=@]
+    ^-  ray
+    =.  kind.meta  %float
+    %-  spac
+    %-  en-ray
+    ::
+    ?+    bloq.meta  !!
+        %7
+      =/  ba  (sub:rq b a)
+      =/  bad  `(list @)`~[a]
+      |-  ^-  baum
+      ?:  (?:((lth:rq ba .~~~0) lth:rq gth:rq) (add:rq (snag 0 bad) d) b)
+        =.  shape.meta  ~[(lent bad)]
+        [meta (flop bad)]
+      $(bad [(add:rq (snag 0 bad) d) bad])
+      ::
+        %6
+      =/  ba  (sub:rd b a)
+      =/  bad  `(list @)`~[a]
+      |-  ^-  baum
+      ?:  (?:((lth:rd ba .~0) lth:rd gth:rd) (add:rd (snag 0 bad) d) b)
+        =.  shape.meta  ~[(lent bad)]
+        [meta (flop bad)]
+      $(bad [(add:rd (snag 0 bad) d) bad])
+      ::
+        %5
+      =/  ba  (sub:rs b a)
+      =/  bad  `(list @)`~[a]
+      |-  ^-  baum
+      ?:  (?:((lth:rs ba .0) lth:rs gth:rs) (add:rs (snag 0 bad) d) b)
+        =.  shape.meta  ~[(lent bad)]
+        [meta (flop bad)]
+      $(bad [(add:rs (snag 0 bad) d) bad])
+      ::
+        %4
+      =/  ba  (sub:rh b a)
+      =/  bad  `(list @)`~[a]
+      |-  ^-  baum
+      ?:  (?:((lth:rh ba .~~0) lth:rh gth:rh) (add:rh (snag 0 bad) d) b)
+        =.  shape.meta  ~[(lent bad)]
+        [meta (flop bad)]
+      $(bad [(add:rh (snag 0 bad) d) bad])
+    ==
+  ::  Produce a 1-dimensional range along one dimension
+  ::  as [a b] with number of steps n.
+  ::  Only produces %float.
+  ::
+  ++  linspace
+    |=  [=meta [a=@ b=@] n=@ud]
+    ^-  ray
+    =.  shape.meta  ~[n]
+    =.  kind.meta  %float
+    %-  spac
+    %-  en-ray
+    :-  meta
+    ::
+    ?+    bloq.meta  !!
+        %7
+      =/  ba  (sub:rq b a)
+      =/  d  (div:rq ba (sun:rq (dec n)))
+      =/  bad  `(list @)`~[a]
+      =|  i=@ud
+      |-  ^-  ndray
+      ::  we compare to +(+(i)) b/c a is already in there and b is now added
+      ?:  =(n +(+(i)))  (flop [b bad])
+      $(i +(i), bad [(add:rq (snag 0 bad) d) bad])
+      ::
+        %6
+      =/  ba  (sub:rd b a)
+      =/  d  (div:rd ba (sun:rd (dec n)))
+      =/  bad  `(list @)`~[a]
+      =|  i=@ud
+      |-  ^-  ndray
+      ?:  =(n +(+(i)))  (flop [b bad])
+      $(i +(i), bad [(add:rd (snag 0 bad) d) bad])
+      ::
+        %5
+      =/  ba  (sub:rs b a)
+      =/  d  (div:rs ba (sun:rs (dec n)))
+      =/  bad  `(list @)`~[a]
+      =|  i=@ud
+      |-  ^-  ndray
+      ?:  =(n +(+(i)))  (flop [b bad])
+      $(i +(i), bad [(add:rs (snag 0 bad) d) bad])
+      ::
+        %4
+      =/  ba  (sub:rh b a)
+      =/  d  (div:rh ba (sun:rh (dec n)))
+      =/  bad  `(list @)`~[a]
+      =|  i=@ud
+      |-  ^-  ndray
+      ?:  =(n +(+(i)))  (flop [b bad])
+      $(i +(i), bad [(add:rh (snag 0 bad) d) bad])
+    ==
+  ::  Coerce 1D array along specified dimension with given overall
+  ::  dimensionality.
+  ::
+  ++  urge
+    |=  [=ray [i=@ud n=@ud]]
+    ^-  ^ray
+    ?>  =(1 (lent shape.meta.ray))
+    =.  shape.meta.ray  `(list @)`(zing (reap n ~[1]))
+    =.  shape.meta.ray  (snap shape.meta.ray i n)
+    |-
+    ray
+  ::  Produce an n-dimensional array containing a single value.
+  ::
+  ++  scale
     |=  [=meta =term data=@]
     ^-  ray
     ?>  =(%float kind.meta)
-    =.  shape.meta  ~[1]
+    =.  shape.meta  `(list @)`(zing (reap (lent shape.meta) ~[1]))
     ::  convert data to fl
     =/  mid=fn
       ?+    term  !!
@@ -361,9 +525,9 @@
           %=    $
               k  +(k)
               cume
-            %+  (fun-scalar bloq.meta:a kind.meta:a %add)
+            %+  (fun-scalar bloq.meta.a kind.meta.a %add)
               cume 
-            %+  (fun-scalar bloq.meta:a kind.meta:a %mul)
+            %+  (fun-scalar bloq.meta.a kind.meta.a %mul)
               (snag (get-bloq-offset meta.a `(list @)`~[i k]) ar)
             (snag (get-bloq-offset meta.b `(list @)`~[k j]) br)
           ==
@@ -373,7 +537,7 @@
   ++  abs
     |=  a=ray
     ^-  ray
-    (el-wise-op a (trans-scalar bloq.meta:a kind.meta:a %abs))
+    (el-wise-op a (trans-scalar bloq.meta.a kind.meta.a %abs))
 ::
   ++  add-scalar
     |=  [a=ray n=@]
@@ -408,42 +572,42 @@
   ++  add
     |=  [a=ray b=ray]
     ^-  ray
-    (bin-op a b (fun-scalar bloq.meta:a kind.meta:a %add))
+    (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %add))
   ::
   ++  sub
     |=  [a=ray b=ray]
     ^-  ray
-    (bin-op a b (fun-scalar bloq.meta:a kind.meta:a %sub))
+    (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %sub))
   ::
   ++  mul
     |=  [a=ray b=ray]
     ^-  ray
-    (bin-op a b (fun-scalar bloq.meta:a kind.meta:a %mul))
+    (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %mul))
   ::
   ++  div
     |=  [a=ray b=ray]
     ^-  ray
-    (bin-op a b (fun-scalar bloq.meta:a kind.meta:a %div))
+    (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %div))
   ::
   ++  mod
     |=  [a=ray b=ray]
     ^-  ray
-    (bin-op a b (fun-scalar bloq.meta:a kind.meta:a %mod))
+    (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %mod))
   ::
   ++  gth
     |=  [a=ray b=ray]
     ^-  ray
-    (bin-op a b (fun-scalar bloq.meta:a kind.meta:a %gth))
+    (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %gth))
   ::
   ++  lth
     |=  [a=ray b=ray]
     ^-  ray
-    (bin-op a b (fun-scalar bloq.meta:a kind.meta:a %lth))
+    (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %lth))
   ::
   ++  is-close
     |=  [a=ray b=ray =term tol=@]
-    =/  tol  (scalarize a.meta term tol)
-    (lth (abs (sub a b)) (fill meta.a tol))
+    =/  tol  (scale meta.a term tol)
+    (lth (abs (sub a b)) (fill meta.a data.tol))
   ::
   ++  any
     |=  [a=ray]
