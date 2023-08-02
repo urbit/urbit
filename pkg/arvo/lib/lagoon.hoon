@@ -32,8 +32,8 @@
     ==
   ::
   +$  ndray  ::        $ndray:  n-dimensional array as a nested list
-      $@  @        ::  single item
-      (lest ndray)  ::  nonempty list of children, in row-major order
+      $@  @         ::  single item
+      (list ndray)  ::  nonempty list of children, in row-major order
   ::
   ::  Utilities
   ::
@@ -45,6 +45,8 @@
   ++  to-tank  ::  TODO nest dimensions
     |=  a=ray
     ^-  tank
+    ~&  >>  meta.a
+    ~&  >>  (lent shape.meta.a)
     ::  1D vector case
     ?:  =(1 (lent shape.meta.a))
       :+  %rose  [" " "[" "]"]
@@ -56,13 +58,17 @@
     ?:  =(2 (lent shape.meta.a))
       =/  =baum  (de-ray a)
       =/  =term  (get-term meta.a)
+      ~&  >  term
+      ?@  data.baum  leaf+(scow term data.baum)
+      ~&  data.baum
+      =/  data  ;;((list (list @)) data.baum)
       :+  %rose  [" " "[" "]"]
-      %+  turn  data.baum
+      %+  turn  data
       |=  b=(list @)
       ^-  tank
       :+  %rose  [" " "[" "]"]
       %+  turn  b
-      |=(c=@ [%leaf (trip (scot term c))])
+      |=(c=@ [%leaf (scow term c)])
     ::  general tensor case
     :+  %rose  [" " "[" "]"]
     %+  turn  (ravel a)
@@ -162,48 +168,68 @@
     (snip (rip bloq.meta.a data.a))
   ::
   ++  en-ray    :: baum to ray
-  |=  =baum
-  ^-  ray
-  =/  a=ray  [meta.baum `@ux`0]
-  =/  i  0
-  =/  n  (roll shape.meta.a ^mul)
-  |-
-  ?:  =(i n)
-    =.  data.a  (^add (lsh [bloq.meta.a n] 1) (swp bloq.meta.a data.a))
-    a
-  %=    $
+    |=  =baum
+    ^-  ray
+    =/  a=ray  [meta.baum `@ux`0]
+    =/  i  0
+    =/  n  (roll shape.meta.a ^mul)
+    |-
+    ?:  =(i n)
+      =.  data.a  (^add (lsh [bloq.meta.a n] 1) (swp bloq.meta.a data.a))
+      a
+    %=  $
       i  +(i)
       data.a
-    %+  ^add 
-      (get-item-baum baum (get-dim shape.meta.a i))
-    %+  lsh 
-      bloq.meta.a 
-    data.a 
-  ==
+        %+  ^add
+          ;;(@ (get-item-baum baum (get-dim shape.meta.a i)))
+        %+  lsh 
+          bloq.meta.a 
+        data.a
+    ==
   ::
   ++  de-ray    :: ray to baum
-  |=  =ray
-  ^-  baum
-  :-  meta.ray
-  ^-  (list @ux)
-  (snip (rip bloq.meta.ray data.ray))
+    |=  =ray
+    ^-  baum
+    :-  meta.ray
+    ^-  ndray
+    ::
+    =,  meta.ray
+    ?:  =(1 (lent shape))
+      (snip (rip bloq data.ray))
+    ::
+    ?:  =(2 (lent shape))
+      =/  dims  (flop shape)
+      =/  data  data:(unspac ray)
+      =|  fin=ndray
+      =|  els=ndray
+      |-
+      ~&  >  els
+      ~&  >>  fin
+      ~&  >>>  data
+      ?~  data  (weld ;;((list ndray) fin) ;;((list ndray) els)) ::(flop fin)
+      %=  $
+        els   `ndray`(rip bloq (cut bloq [0 (snag 0 dims)] data))
+        fin   (weld ;;((list ndray) fin) ;;((list ndray) els))
+        data  (rsh [bloq (snag 0 dims)] data)
+      ==
+    ::  cut off end
+    !!
   ::
   ++  get-item-baum
-  |=  [=baum dex=(list @)]
-  ^-  @
-  =/  a=ndray  data.baum
-  =/  i  0
-  |-
-  ?@  a
-    a
-  %=    $
-      i  +(i)
-      a
-    (snag (snag i dex) `(list ndray)`a)
-  ==
+    |=  [=baum dex=(list @)]
+    ^-  @
+    =/  a=ndray  data.baum
+    |-
+    ?~  a  !!
+    ?@  (snag -.dex ;;((list ndray) a))
+      ;;(@ (snag -.dex ((list ndray) a)))
+    %=  $
+      dex  +.dex
+      a    (snag -.dex ;;((list ndray) a))
+    ==
   ::
   ++  fill
-    |=  [=meta x=@]  
+    |=  [=meta x=@]
     ^-  ray
     =/  len  (roll shape.meta ^mul)
     :-  meta
