@@ -137,7 +137,7 @@
           =(chain-id 1)
       ==
     fallback
-  ?~  jon=(de-json:html q.data.u.full-file.u.rep)
+  ?~  jon=(de:json:html q.data.u.full-file.u.rep)
     fallback
   =;  res=(unit @ud)
     ?~  res  fallback

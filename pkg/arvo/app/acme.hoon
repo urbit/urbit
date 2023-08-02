@@ -460,7 +460,7 @@
   :-  ~
   ^-  octs
   =;  pro=json
-    (as-octt:mimes:html (en-json:html (sign:jws key.act pro bod)))
+    (as-octs:mimes:html (en:json:html (sign:jws key.act pro bod)))
   :-  %o  %-  my  :~
     nonce+s+non
     url+s+(crip (en-purl:html url))
@@ -487,7 +487,7 @@
   ::
   ?.  =(400 p.rep)  |
   ?~  r.rep  |
-  =/  jon=(unit json)  (de-json:html q.u.r.rep)
+  =/  jon=(unit json)  (de:json:html q.u.r.rep)
   ?~  jon  |
   =('urn:ietf:params:acme:error:badNonce' type:(error:grab u.jon))
 ::  +rate-limited: handle Acme service rate-limits
@@ -496,7 +496,7 @@
   |=  [try=@ud act=@tas spur=wire bod=(unit octs)]
   ^+  this
   =/  jon=(unit json)
-    ?~(bod ~ (de-json:html q.u.bod))
+    ?~(bod ~ (de:json:html q.u.bod))
   ?~  jon
     ::  no details, back way off
     ::  XX specifically based on wire
@@ -839,7 +839,7 @@
       ?:  (lth try 10)
         (retry:effect try %directory / (min ~m30 (backoff try)))
       (emil (notify (failure-message directory-base) [(sell !>(rep)) ~]))
-    =.  dir  (directory:grab (need (de-json:html q:(need r.rep))))
+    =.  dir  (directory:grab (need (de:json:html q:(need r.rep))))
     ?~(reg.act register:effect this)
   ::  +nonce: accept new nonce and trigger next effect
   ::
@@ -883,7 +883,7 @@
       ?~  r.rep
         (scot %da now.bow)
       =/  bod=acct:body
-        (acct:grab (need (de-json:html q.u.r.rep)))
+        (acct:grab (need (de:json:html q.u.r.rep)))
       ?>  ?=(%valid sas.bod)
       wen.bod
     =.  reg.act  `[wen loc]
@@ -913,7 +913,7 @@
     ::  XX check status
     ::
     =/  bod=order:body
-      (order:grab (need (de-json:html q:(need r.rep))))
+      (order:grab (need (de:json:html q:(need r.rep))))
     =/  dom=(set turf)  ~(key by dom.u.next-order)
     ::  XX maybe generate key here?
     ::
@@ -956,7 +956,7 @@
       ::
       (emil (notify (failure-message ego.u.rod) [(sell !>(rep)) ~]))
     =/  bod=order:body
-      (order:grab (need (de-json:html q:(need r.rep))))
+      (order:grab (need (de:json:html q:(need r.rep))))
     ?+  sas.bod
       ~&  [%check-order-status-unknown sas.bod]
       this
@@ -1063,7 +1063,7 @@
       ::
       (emil (notify (failure-message i.pending.aut.u.rod) [(sell !>(rep)) ~]))
     =/  bod=auth:body
-      (auth:grab (need (de-json:html q:(need r.rep))))
+      (auth:grab (need (de:json:html q:(need r.rep))))
     =/  cal=trial
        ::  XX parse token to verify url-safe base64?
        ::
@@ -1147,7 +1147,7 @@
       ::  XX get challenge, confirm urn:ietf:params:acme:error:connection
       ::
       ::  =/  err=error:body
-      ::    (error:grab (need (de-json:html q:(need r.rep))))
+      ::    (error:grab (need (de:json:html q:(need r.rep))))
       ::  ?:  =('urn:ietf:params:acme:error:malformed' status.err)
       ::
       =<  cancel-order:effect
@@ -1155,7 +1155,7 @@
        'unable to finalize domain validation challenge'
       (emil (notify msg [(sell !>(rep)) ~]))
     =/  bod=challenge:body
-      (challenge:grab (need (de-json:html q:(need r.rep))))
+      (challenge:grab (need (de:json:html q:(need r.rep))))
     ::  XX check for other possible values in 200 response
     ::  note: may have already been validated
     ::

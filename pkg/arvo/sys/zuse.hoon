@@ -4331,7 +4331,7 @@
     ~%  %json  ..part  ~
     |%
     ::                                                  ::  ++en:json:html
-    ++  en                                              ::  encode JSON to tape
+    ++  en                                              ::  encode JSON to cord
       ~%  %en  +>+  ~
       |^  |=  jon=^json
           ^-  cord
@@ -4399,11 +4399,11 @@
       |^  |=  txt=cord
           ^-  (unit ^json)
           (rush txt apex)
-      ::                                                ::  ++abox:de-json:html
+      ::                                                ::  ++abox:de:json:html
       ++  abox                                          ::  array
         %+  stag  %a
         (ifix [sel (wish ser)] (more (wish com) apex))
-      ::                                                ::  ++apex:de-json:html
+      ::                                                ::  ++apex:de:json:html
       ++  apex                                          ::  any value
         %+  knee  *^json  |.  ~+
         %+  ifix  [spac spac]
@@ -4415,13 +4415,13 @@
           abox
           obox
         ==
-      ::                                                ::  ++bool:de-json:html
+      ::                                                ::  ++bool:de:json:html
       ++  bool                                          ::  boolean
         ;~  pose
           (cold & (jest 'true'))
           (cold | (jest 'false'))
         ==
-      ::                                                ::  ++esca:de-json:html
+      ::                                                ::  ++esca:de:json:html
       ++  esca                                          ::  escaped character
         ;~  pfix  bas
           =*  loo
@@ -4435,23 +4435,23 @@
             (sear ~(get by wow) low)
           ;~(pose doq fas bas loo unic)
         ==
-      ::                                                ::  ++expo:de-json:html
+      ::                                                ::  ++expo:de:json:html
       ++  expo                                          ::  exponent
         ;~  (comp weld)
           (piec (mask "eE"))
           (mayb (piec (mask "+-")))
           (plus nud)
         ==
-      ::                                                ::  ++frac:de-json:html
+      ::                                                ::  ++frac:de:json:html
       ++  frac                                          ::  fraction
         ;~(plug dot (plus nud))
-      ::                                                ::  ++jcha:de-json:html
+      ::                                                ::  ++jcha:de:json:html
       ++  jcha                                          ::  string character
         ;~(pose ;~(less doq bas (shim 32 255)) esca)
-      ::                                                ::  ++mayb:de-json:html
+      ::                                                ::  ++mayb:de:json:html
       ++  mayb                                          ::  optional
         |*(bus=rule ;~(pose bus (easy ~)))
-      ::                                                ::  ++numb:de-json:html
+      ::                                                ::  ++numb:de:json:html
       ++  numb                                          ::  number
         ;~  (comp weld)
           (mayb (piec hep))
@@ -4462,31 +4462,31 @@
           (mayb frac)
           (mayb expo)
         ==
-      ::                                                ::  ++obje:de-json:html
+      ::                                                ::  ++obje:de:json:html
       ++  obje                                          ::  object list
         %+  ifix  [(wish kel) (wish ker)]
         (more (wish com) pear)
-      ::                                                ::  ++obox:de-json:html
+      ::                                                ::  ++obox:de:json:html
       ++  obox                                          ::  object
         (stag %o (cook malt obje))
-      ::                                                ::  ++pear:de-json:html
+      ::                                                ::  ++pear:de:json:html
       ++  pear                                          ::  key-value
         ;~(plug ;~(sfix (wish stri) (wish col)) apex)
-      ::                                                ::  ++piec:de-json:html
+      ::                                                ::  ++piec:de:json:html
       ++  piec                                          ::  listify
         |*  bus=rule
         (cook |=(a=@ [a ~]) bus)
-      ::                                                ::  ++stri:de-json:html
+      ::                                                ::  ++stri:de:json:html
       ++  stri                                          ::  string
         %+  sear
           |=  a=cord
           ?.  (sune a)  ~
           (some a)
         (cook crip (ifix [doq doq] (star jcha)))
-      ::                                                ::  ++spac:de-json:html
+      ::                                                ::  ++spac:de:json:html
       ++  spac                                          ::  whitespace
         (star (mask [`@`9 `@`10 `@`13 ' ' ~]))
-      ::                                                ::  ++unic:de-json:html
+      ::                                                ::  ++unic:de:json:html
       ++  unic                                          ::  escaped UTF16
         =*  lob  0x0
         =*  hsb  0xd800
@@ -4529,7 +4529,7 @@
             ==
           ==
         --
-      ::                                                ::  ++utfe:de-json:html
+      ::                                                ::  ++utfe:de:json:html
       ++  utfe                                          ::  UTF-8 sequence
         ;~  less  doq  bas
           =*  qua
@@ -4590,18 +4590,18 @@
             ==
           ;~(pose qua tre dos)
         ==
-      ::                                                ::  ++wish:de-json:html
+      ::                                                ::  ++wish:de:json:html
       ++  wish                                          ::  with whitespace
         |*(sef=rule ;~(pfix spac sef))
       ::  XX: These gates should be moved to hoon.hoon
-      ::                                                ::  ++sune:de-json:html
+      ::                                                ::  ++sune:de:json:html
       ++  sune                                          ::  cord UTF-8 sanity
         |=  b=@t
         ^-  ?
         ?:  =(0 b)  &
         ?.  (sung b)  |
         $(b (rsh [3 (teff b)] b))
-      ::                                                ::  ++sung:de-json:html
+      ::                                                ::  ++sung:de:json:html
       ++  sung                                          ::  char UTF-8 sanity
         |^  |=  b=@t
             ^-  ?
@@ -4682,7 +4682,7 @@
           &((gte a bot) (lte a top))
         --
       ::  XX: This +teff should overwrite the existing +teff
-      ::                                                ::  ++teff:de-json:html
+      ::                                                ::  ++teff:de:json:html
       ++  teff                                          ::  UTF-8 length
         |=  a=@t
         ^-  @
