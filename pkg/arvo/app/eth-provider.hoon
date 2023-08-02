@@ -1,5 +1,5 @@
 /-  eth-provider, rpc=json-rpc
-/+  ethereum, default-agent, dbug
+/+  ethereum, default-agent, dbug, verb
 |%
 +$  versioned-state
   $%  state-0
@@ -10,6 +10,7 @@
   ==
 +$  card  card:agent:gall
 --
+%+  verb  %.n
 %-  agent:dbug
 =|  state-0
 =*  state  -

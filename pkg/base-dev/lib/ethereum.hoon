@@ -924,7 +924,6 @@
   ++  parse-response
     |=  [type=@tas =json]
     ^-  [id=(unit @t) dirty-response:rpc]
-    ~&  [%json [type json]]
     =/  id  ((ot ~[id+so]):dejs-soft:format json)
     ?:  &(?=([%o *] json) (~(has by p.json) 'error'))
       =/  error=[code=@t message=@t]
@@ -1029,7 +1028,6 @@
     ^-  (unit ?(%transfer %call))
     ?>  ?=(%s -.j)
     =/  typenum  (hex-to-num p.j)
-    ~&  [%typenum typenum]
     ?:  =(0 typenum)  (some %transfer)
     ?:  =(2 typenum)  (some %call)
     ~
@@ -1038,7 +1036,6 @@
     ^-  (unit ?)
     ?>  ?=(%s -.j)
     =/  typenum  (hex-to-num p.j)
-    ~&  [%typenum typenum]
     ?:  =(1 typenum)  (some %.y)
     ?:  =(0 typenum)  (some %.n)
     ~
