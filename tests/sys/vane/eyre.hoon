@@ -643,17 +643,30 @@
       !>  (rush '192.168.1.1' simplified-url-parser:eyre-gate)
   ==
 ::
-++  test-parse-channel-request
+++  test-parse-channel-request-jam
   ;:  weld
     %+  expect-eq
-      !>  `[%ack 5]~
-      !>  %-  parse-channel-request:eyre-gate
-          (need (de-json:html '[{"action": "ack", "event-id": 5}]'))
+      !>  &+[%ack 5]~
+      !>  %+  parse-channel-request:eyre-gate  %jam
+          (as-octs:mimes:html (scot %uw (jam [%ack 5]~)))
   ::
     %+  expect-eq
-      !>  `[%poke 0 ~nec %app1 %app-type [%n '5']]~
-      !>  %-  parse-channel-request:eyre-gate
-          %-  need  %-  de-json:html
+      !>  |+'invalid request data'
+      !>  %+  parse-channel-request:eyre-gate  %jam
+          (as-octs:mimes:html (scot %uw (jam [%not %a %chanreq %list])))
+  ==
+::
+++  test-parse-channel-request-json
+  ;:  weld
+    %+  expect-eq
+      !>  &+[%ack 5]~
+      !>  %+  parse-channel-request:eyre-gate  %json
+          (as-octs:mimes:html '[{"action": "ack", "event-id": 5}]')
+  ::
+    %+  expect-eq
+      !>  &+[%poke-json 0 ~nec %app1 %app-type [%n '5']]~
+      !>  %+  parse-channel-request:eyre-gate  %json
+          %-  as-octs:mimes:html
           '''
           [{"action": "poke",
             "id": 0,
@@ -664,9 +677,9 @@
           '''
   ::
     %+  expect-eq
-      !>  `[%subscribe 1 ~sampyl-sipnym %hall /this/path]~
-      !>  %-  parse-channel-request:eyre-gate
-          %-  need  %-  de-json:html
+      !>  &+[%subscribe 1 ~sampyl-sipnym %hall /this/path]~
+      !>  %+  parse-channel-request:eyre-gate  %json
+          %-  as-octs:mimes:html
           '''
           [{"action": "subscribe",
             "id": 1,
@@ -676,9 +689,9 @@
           '''
   ::
     %+  expect-eq
-      !>  `[%unsubscribe 2 1]~
-      !>  %-  parse-channel-request:eyre-gate
-          %-  need  %-  de-json:html
+      !>  &+[%unsubscribe 2 1]~
+      !>  %+  parse-channel-request:eyre-gate  %json
+          %-  as-octs:mimes:html
           '''
           [{"action": "unsubscribe",
             "id": 2,
@@ -686,30 +699,30 @@
           '''
   ::
       %+  expect-eq
-        !>  ~
-        !>  %-  parse-channel-request:eyre-gate
-            %-  need  %-  de-json:html
+        !>  |+'invalid channel json'
+        !>  %+  parse-channel-request:eyre-gate  %json
+            %-  as-octs:mimes:html
             '[{"noaction": "noaction"}]'
   ::
       %+  expect-eq
-        !>  ~
-        !>  %-  parse-channel-request:eyre-gate
-            %-  need  %-  de-json:html
+        !>  |+'invalid channel json'
+        !>  %+  parse-channel-request:eyre-gate  %json
+            %-  as-octs:mimes:html
             '[{"action": "bad-action"}]'
   ::
       %+  expect-eq
-        !>  ~
-        !>  %-  parse-channel-request:eyre-gate
-            %-  need  %-  de-json:html
+        !>  |+'invalid channel json'
+        !>  %+  parse-channel-request:eyre-gate  %json
+            %-  as-octs:mimes:html
             '[{"action": "ack", "event-id": 5}, {"action": "bad-action"}]'
   ::
       %+  expect-eq
-        !>  :-  ~
+        !>  :-  %&
             :~  [%ack 9]
-                [%poke 3 ~bud %wut %wut-type [%a [%n '2'] [%n '1'] ~]]
+                [%poke-json 3 ~bud %wut %wut-type [%a [%n '2'] [%n '1'] ~]]
             ==
-        !>  %-  parse-channel-request:eyre-gate
-            %-  need  %-  de-json:html
+        !>  %+  parse-channel-request:eyre-gate  %json
+            %-  as-octs:mimes:html
             '''
             [{"action": "ack", "event-id": 9},
              {"action": "poke",

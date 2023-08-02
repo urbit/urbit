@@ -714,7 +714,7 @@
     :^  url  %post
       %-  ~(gas in *math)
       ~['Content-Type'^['application/json']~]
-    (some (as-octt (en-json:html jon)))
+    (some (as-octs (en:json:html jon)))
   ::  +light-json-request: like json-request, but for %l
   ::
   ::    TODO: Exorcising +purl from our system is a much longer term effort;
@@ -727,7 +727,7 @@
     :*  %'POST'
         (crip (en-purl:html url))
         ~[['content-type' 'application/json']]
-        (some (as-octt (en-json:html jon)))
+        (some (as-octs (en:json:html jon)))
     ==
   ::
   ++  batch-read-request

@@ -15,6 +15,7 @@
       running=(axal thread-form)
       tid=(map tid yarn)
       serving=(map tid [(unit @ta) =mark =desk])
+      scrying=(jug tid [=wire =ship =path])
   ==
 ::
 +$  clean-slate-any
@@ -23,10 +24,30 @@
       clean-slate-1
       clean-slate-2
       clean-slate-3
+      clean-slate-4
+      clean-slate-5
       clean-slate
   ==
 ::
 +$  clean-slate
+  $:  %6
+      starting=(map yarn [=trying =vase])
+      running=(list yarn)
+      tid=(map tid yarn)
+      serving=(map tid [(unit @ta) =mark =desk])
+      scrying=(jug tid [wire ship path])
+  ==
+::
++$  clean-slate-5
+  $:  %5
+      starting=(map yarn [=trying =vase])
+      running=(list yarn)
+      tid=(map tid yarn)
+      serving=(map tid [(unit @ta) =mark =desk])
+      scrying=(map tid [ship path])
+  ==
+::
++$  clean-slate-4
   $:  %4
       starting=(map yarn [=trying =vase])
       running=(list yarn)
@@ -98,7 +119,9 @@
       (old-to-2 any)
     =.  any  (old-to-3 any)
     =.  any  (old-to-4 any)
-    ?>  ?=(%4 -.any)
+    =.  any  (old-to-5 any)
+    =.  any  (old-to-6 any)
+    ?>  ?=(%6 -.any)
     ::
     =.  tid.state  tid.any
     =/  yarns=(list yarn)
@@ -108,7 +131,11 @@
     ?~  yarns
       [~[bind-eyre:sc] this]
     =^  cards-1  state
-      (handle-stop-thread:sc (yarn-to-tid i.yarns) |)
+      %.  [(yarn-to-tid i.yarns) nice=%.n]
+      ::  the |sc core needs to now about the previous
+      ::  scrying state in order to send $yawns to %ames
+      ::
+      %*(handle-stop-thread sc scrying.state scrying.any)
     =^  cards-2  this
       $(yarns t.yarns)
     [:(weld upgrade-cards cards-1 cards-2) this]
@@ -121,8 +148,8 @@
     ++  old-to-2
       |=  old=clean-slate-any
       ^-  (quip card clean-slate-any)
-      ?>  ?=(?(%1 %2 %3 %4) -.old)
-      ?:  ?=(?(%2 %3 %4) -.old)
+      ?>  ?=(?(%1 %2 %3 %4 %5 %6) -.old)
+      ?:  ?=(?(%2 %3 %4 %5 %6) -.old)
         `old
       :-  ~[bind-eyre:sc]
       :*  %2
@@ -135,8 +162,8 @@
     ++  old-to-3
       |=  old=clean-slate-any
       ^-  clean-slate-any
-      ?>  ?=(?(%2 %3 %4) -.old)
-      ?:  ?=(?(%3 %4) -.old)
+      ?>  ?=(?(%2 %3 %4 %5 %6) -.old)
+      ?:  ?=(?(%3 %4 %5 %6) -.old)
         old
       :*  %3
         starting.old
@@ -144,17 +171,42 @@
         tid.old
         (~(run by serving.old) |=([id=@ta =mark] [id mark q.byk.bowl]))
       ==
+    ::
     ++  old-to-4
       |=  old=clean-slate-any
-      ^-  clean-slate
-      ?>  ?=(?(%3 %4) -.old)
-      ?:  ?=(%4 -.old)
+      ^-  clean-slate-any
+      ?>  ?=(?(%3 %4 %5 %6) -.old)
+      ?:  ?=(?(%4 %5 %6) -.old)
         old
       :*  %4
         starting.old
         running.old
         tid.old
         (~(run by serving.old) |=([id=@ta =mark =desk] [`id mark q.byk.bowl]))
+      ==
+    ::
+    ++  old-to-5
+      |=  old=clean-slate-any
+      ^-  clean-slate-any
+      ?>  ?=(?(%4 %5 %6) -.old)
+      ?:  ?=(?(%5 %6) -.old)  old
+      [%5 +.old(serving [serving.old ~])]
+    ::
+    ++  old-to-6
+      |=  old=clean-slate-any
+      ^-  clean-slate
+      ?>  ?=(?(%5 %6) -.old)
+      ?:  ?=(%6 -.old)  old
+      :-  %6
+      %=    +.old
+          scrying
+        %-  ~(run by scrying.old)
+        |=  [=ship =path]
+        %-  ~(gas in *(set [wire ^ship ^path]))
+        ::  XX +keen:strandio used /keen as the default wire
+        ::  this assumes that any old thread used that as well
+        ::
+        [/keen ship path]~
       ==
     --
   ::
@@ -248,7 +300,7 @@
   ~/  %handle-http-request
   |=  [eyre-id=@ta =inbound-request:eyre]
   ^-  (quip card _state)
-  ::?>  authenticated.inbound-request
+  ?>  authenticated.inbound-request
   =/  url
     (parse-request-line:server url.request.inbound-request)
   ?>  ?=([%spider @t @t @t @t ~] site.url)
@@ -263,7 +315,7 @@
   ::
   =/  tube  (convert-tube %json input-mark desk bowl)
   ?>  ?=(^ body.request.inbound-request)
-  =/  body=json  (need (de-json:html q.u.body.request.inbound-request))
+  =/  body=json  (need (de:json:html q.u.body.request.inbound-request))
   =/  input=vase  (slop !>(~) (tube !>(body)))
   =/  boc  bec
   =/  =start-args:spider  [~ `tid boc(q desk, r da+now.bowl) thread input]
@@ -400,14 +452,15 @@
     ~&  %stopping-nonexistent-thread
     [~ state]
   ?:  (~(has of running.state) u.yarn)
-    ?:  nice
-      (thread-done u.yarn *vase)
-    (thread-fail u.yarn %cancelled ~)
+      ?.  nice
+        (thread-fail u.yarn %cancelled ~)
+      =^  done-cards  state  (thread-done u.yarn *vase silent=%.n)
+      [done-cards state]
   ?:  (~(has by starting.state) u.yarn)
     (thread-fail-not-running tid %stopped-before-started ~)
   ~&  [%thread-not-started u.yarn]
   ?:  nice
-    (thread-done u.yarn *vase)
+    (thread-done u.yarn *vase silent=%.y)
   (thread-fail u.yarn %cancelled ~)
 ::
 ++  take-input
@@ -432,9 +485,14 @@
     ==
   =.  running.state  (~(put of running.state) yarn eval-form)
   =/  =tid  (yarn-to-tid yarn)
-  =.  cards.r
-    %+  turn  cards.r
-    |=  =card
+  =^  new-cards  state
+    ^-  [(list card) _state]
+    %+  roll  cards.r
+    |=  [=card cards=(list card) s=_state]
+    :_  =?  scrying.s  ?=([%pass ^ %arvo %a %keen @ *] card)
+          (~(put ju scrying.s) tid [&2 &6 |6]:card)
+        s
+    :_  cards
     ^-  ^card
     ?+  card  card
         [%pass * *]  [%pass [%thread tid p.card] q.card]
@@ -445,12 +503,12 @@
       ^-  ^path
       [%thread tid path]
     ==
-  =.  cards  (weld cards cards.r)
+  =.  cards  (weld cards (flop new-cards))
   =^  final-cards=(list card)  state
     ?-  -.eval-result.r
       %next  `state
       %fail  (thread-fail yarn err.eval-result.r)
-      %done  (thread-done yarn value.eval-result.r)
+      %done  (thread-done yarn value.eval-result.r silent=%.y)
     ==
   [(weld cards final-cards) state]
 ::
@@ -470,6 +528,20 @@
   :~  [%give %fact ~[/thread-result/[tid]] %thread-fail !>([term tang])]
       [%give %kick ~[/thread-result/[tid]] ~]
   ==
+::
+++  cancel-scry
+  |=  [=tid silent=?]
+  ^-  (quip card _state)
+  ?~  scrying=(~(get ju scrying.state) tid)
+    `state
+  :_  state(scrying (~(del by scrying.state) tid))
+  ?:  silent  ~
+  %-  ~(rep in `(set [wire ship path])`scrying)
+  |=  [[=wire =ship =path] cards=(list card)]
+  %-  (slog leaf+"cancelling {<tid>}: [{<[wire ship path]>}]" ~)
+  :_  cards
+  [%pass (welp /thread/[tid] wire) %arvo %a %yawn ship path]
+::
 ++  thread-http-fail
   |=  [=tid =term =tang]
   ^-  (quip card ^state)
@@ -482,9 +554,13 @@
     ~
   %+  give-simple-payload:app:server  u.eyre-id
   ^-  simple-payload:http
-  :_  ~  :_  ~
   ?.  ?=(http-error:spider term)
-    ((slog tang) 500)
+    %-  (slog tang)
+    =/  tube  (convert-tube %tang %json desk bowl)
+    :-  [500 [['content-type' 'application/json'] ~]]
+    =-  `(as-octs:mimes:html (en:json:html -))
+    o/(malt `(list [key=@t json])`[term+s/term tang+!<(json (tube !>(tang))) ~])
+  :_  ~  :_  ~
   ?-  term
     %bad-request  400
     %forbidden    403
@@ -498,9 +574,11 @@
   ::%-  (slog leaf+"strand {<yarn>} failed" leaf+<term> tang)
   =/  =tid  (yarn-to-tid yarn)
   =/  fail-cards  (thread-say-fail tid term tang)
-  =^  cards  state  (thread-clean yarn)
   =^  http-cards  state  (thread-http-fail tid term tang)
-  [:(weld fail-cards cards http-cards) state]
+  =^  scry-card   state  (cancel-scry tid silent=%.n)
+  =^  cards       state  (thread-clean yarn)
+  :_  state
+  :(weld fail-cards cards http-cards scry-card)
 ::
 ++  thread-http-response
   |=  [=tid =vase]
@@ -517,7 +595,7 @@
   (json-response:gen:server !<(json (tube vase)))
 ::
 ++  thread-done
-  |=  [=yarn =vase]
+  |=  [=yarn =vase silent=?]
   ^-  (quip card ^state)
   ::  %-  (slog leaf+"strand {<yarn>} finished" (sell vase) ~)
   =/  =tid  (yarn-to-tid yarn)
@@ -527,8 +605,9 @@
     ==
   =^  http-cards  state
     (thread-http-response tid vase)
-  =^  cards  state  (thread-clean yarn)
-  [:(weld done-cards cards http-cards) state]
+  =^  scry-card  state  (cancel-scry tid silent)
+  =^  cards      state  (thread-clean yarn)
+  [:(weld done-cards cards http-cards scry-card) state]
 ::
 ++  thread-clean
   |=  =yarn
@@ -546,7 +625,6 @@
     =/  =^yarn  i.children
     =/  =tid  (yarn-to-tid yarn)
     =:  running.state  (~(lop of running.state) yarn)
-
         tid.state      (~(del by tid.state) tid)
         serving.state  (~(del by serving.state) (yarn-to-tid yarn))
       ==
@@ -601,7 +679,7 @@
 ::
 ++  clean-state
   !>  ^-  clean-slate
-  4+state(running (turn ~(tap of running.state) head))
+  6+state(running (turn ~(tap of running.state) head))
 ::
 ++  convert-tube
   |=  [from=mark to=mark =desk =bowl:gall]

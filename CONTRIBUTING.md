@@ -31,15 +31,6 @@ them.  "It would be cool if.." probably does not, in itself, constitute a good
 feature request; instead, try to be specific about what you're requesting, and
 what your desired feature would accomplish.
 
-### Feature Branch Names
-
-Every branch that you intend to put up for review must adhere to the form
-`i/<N>/<...>`, where `<N>` is the number of the issue that the branch
-corresponds to and `<...>` is an optional short description of the branch to aid
-in readability. If `<...>` is omitted, the `/` should be omitted as well, which
-makes `i/<N>` a well-formed branch name. These feature branches should be based
-off of `develop`.
-
 ### Commits
 
 Commits should generally be relevant, atomic, and have descriptions formatted in
@@ -167,7 +158,7 @@ should be accompanied by an updated [solid pill](#the-kernel-and-pills).  Pills
 are tracked in the repository via [git LFS][git-lfs].
 
 ```
-$ git lfs init
+$ git lfs install
 $ git lfs pull
 ```
 
@@ -185,7 +176,7 @@ directory as `urbit.pill`.
 You can boot a new ship from your local pill with `-B`:
 
 ```
-$ urbit -F zod -B path/to/urbit.pill my-fake-zod
+$ urbit -F zod -B path/to/urbit.pill -c my-fake-zod
 ```
 
 Release pills, i.e. those corresponding to vere releases, are cached at

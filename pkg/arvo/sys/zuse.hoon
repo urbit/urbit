@@ -4,7 +4,7 @@
 =>  ..lull
 ~%  %zuse  ..part  ~
 |%
-++  zuse  %414
+++  zuse  %413
 ::                                                      ::  ::
 ::::                                                    ::  ::  (2) engines
   ::                                                    ::  ::
@@ -1450,15 +1450,25 @@
       ++  sign                                          ::
         |=  msg=@
         ^-  @ux
+        (jam [(sigh msg) msg])
+      ::                                                ::  ++sigh:as:crub:
+      ++  sigh                                          ::
+        |=  msg=@
+        ^-  @ux
         ?~  sek  ~|  %pubkey-only  !!
-        (jam [(sign:ed msg sgn.u.sek) msg])
+        (sign:ed msg sgn.u.sek)
       ::                                                ::  ++sure:as:crub:
       ++  sure                                          ::
         |=  txt=@
         ^-  (unit @ux)
         =+  ;;([sig=@ msg=@] (cue txt))
-        ?.  (veri:ed sig msg sgn.pub)  ~
+        ?.  (safe sig msg)  ~
         (some msg)
+      ::                                                ::  ++safe:as:crub:
+      ++  safe
+        |=  [sig=@ msg=@]
+        ^-  ?
+        (veri:ed sig msg sgn.pub)
       ::                                                ::  ++seal:as:crub:
       ++  seal                                          ::
         |=  [bpk=pass msg=@]
@@ -4314,157 +4324,393 @@
         (cook |=(a=@ (sub a 49)) (shim '1' '9'))
       ==
     --  ::mimes
-  ::                                                    ::  ++en-json:html
-  ++  en-json                                           ::  print json
-    |^  |=(val=json (apex val ""))
-    ::                                                  ::  ++apex:en-json:html
-    ++  apex
-      |=  [val=json rez=tape]
-      ^-  tape
-      ?~  val  (weld "null" rez)
-      ?-    -.val
-          %a
-        :-  '['
-        =.  rez  [']' rez]
-        !.
-        ?~  p.val  rez
-        |-
-        ?~  t.p.val  ^$(val i.p.val)
-        ^$(val i.p.val, rez [',' $(p.val t.p.val)])
-     ::
-          %b  (weld ?:(p.val "true" "false") rez)
-          %n  (weld (trip p.val) rez)
-          %s
-        :-  '"'
-        =.  rez  ['"' rez]
-        =+  viz=(trip p.val)
-        !.
-        |-  ^-  tape
-        ?~  viz  rez
-        =+  hed=(jesc i.viz)
-        ?:  ?=([@ ~] hed)
-          [i.hed $(viz t.viz)]
-        (weld hed $(viz t.viz))
-     ::
-          %o
-        :-  '{'
-        =.  rez  ['}' rez]
-        =+  viz=~(tap by p.val)
-        ?~  viz  rez
-        !.
-        |-  ^+  rez
-        ?~  t.viz  ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
-        =.  rez  [',' $(viz t.viz)]
-        ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
-      ==
-    ::                                                  ::  ++jesc:en-json:html
-    ++  jesc                                            ::  escaped
-      =+  utf=|=(a=@ ['\\' 'u' ((x-co 4):co a)])
-      |=  a=@  ^-  tape
-      ?+  a  ?:((gth a 0x1f) [a ~] (utf a))
-        %10  "\\n"
-        %34  "\\\""
-        %92  "\\\\"
-      ==
-    --  ::en-json
-  ::                                                    ::  ++de-json:html
-  ++  de-json                                           ::  parse JSON
-    =<  |=(a=cord `(unit json)`(rush a apex))
+  ::                                                    ::
+  ::::                    ++json:html                   ::  (2e2) JSON
+    ::                                                  ::::
+  ++  json  ^?
+    ~%  %json  ..part  ~
     |%
-    ::                                                  ::  ++abox:de-json:html
-    ++  abox                                            ::  array
-      %+  stag  %a
-      (ifix [sel (wish ser)] (more (wish com) apex))
-    ::                                                  ::  ++apex:de-json:html
-    ++  apex                                            ::  any value
-      %+  knee  *json  |.  ~+
-      %+  ifix  [spac spac]
-      ;~  pose
-        (cold ~ (jest 'null'))
-        (stag %b bool)
-        (stag %s stri)
-        (cook |=(s=tape [%n p=(rap 3 s)]) numb)
-        abox
-        obox
-      ==
-    ::                                                  ::  ++bool:de-json:html
-    ++  bool                                            ::  boolean
-      ;~  pose
-        (cold & (jest 'true'))
-        (cold | (jest 'false'))
-      ==
-    ::                                                  ::  ++digs:de-json:html
-    ++  digs                                            ::  digits
-      (star (shim '0' '9'))
-    ::                                                  ::  ++esca:de-json:html
-    ++  esca                                            ::  escaped character
-      ;~  pfix  bas
-        =*  loo
-          =*  lip
-            ^-  (list (pair @t @))
-            [b+8 t+9 n+10 f+12 r+13 ~]
-          =*  wow  `(map @t @)`(malt lip)
-          (sear ~(get by wow) low)
-        =*  tuf  ;~(pfix (just 'u') (cook tuft qix:ab))
-        ;~(pose doq fas soq bas loo tuf)
-      ==
-    ::                                                  ::  ++expo:de-json:html
-    ++  expo                                            ::  exponent
-      ;~  (comp twel)
-        (piec (mask "eE"))
-        (mayb (piec (mask "+-")))
-        digs
-      ==
-    ::                                                  ::  ++frac:de-json:html
-    ++  frac                                            ::  fraction
-      ;~(plug dot digs)
-    ::                                                  ::  ++jcha:de-json:html
-    ++  jcha                                            ::  string character
-      ;~(pose ;~(less doq bas prn) esca)
-    ::                                                  ::  ++mayb:de-json:html
-    ++  mayb                                            ::  optional
-      |*(bus=rule ;~(pose bus (easy ~)))
-    ::                                                  ::  ++numb:de-json:html
-    ++  numb                                            ::  number
-      ;~  (comp twel)
-        (mayb (piec hep))
-        ;~  pose
-          (piec (just '0'))
-          ;~(plug (shim '1' '9') digs)
+    ::                                                  ::  ++en:json:html
+    ++  en                                              ::  encode JSON to cord
+      ~%  %en  +>+  ~
+      |^  |=  jon=^json
+          ^-  cord
+          (rap 3 (flop (onto jon ~)))
+      ::                                                ::  ++onto:en:json:html
+      ++  onto
+        |=  [val=^json out=(list @t)]
+        ^+  out
+        ?~  val  ['null' out]
+        ?-    -.val
+            %a
+          ?~  p.val  ['[]' out]
+          =.  out    ['[' out]
+          !.
+          |-  ^+  out
+          =.  out  ^$(val i.p.val)
+          ?~(t.p.val [']' out] $(p.val t.p.val, out [',' out]))
+        ::
+            %b
+          [?:(p.val 'true' 'false') out]
+        ::
+            %n
+          [p.val out]
+        ::
+            %s
+          [(scap p.val) out]
+        ::
+            %o
+          =/  viz  ~(tap by p.val)
+          ?~  viz  ['{}' out]
+          =.  out  ['{' out]
+          !.
+          |-  ^+  out
+          =.  out  ^$(val q.i.viz, out [':' [(scap p.i.viz) out]])
+          ?~(t.viz ['}' out] $(viz t.viz, out [',' out]))
         ==
-        (mayb frac)
-        (mayb expo)
-      ==
-    ::                                                  ::  ++obje:de-json:html
-    ++  obje                                            ::  object list
-      %+  ifix  [(wish kel) (wish ker)]
-      (more (wish com) pear)
-    ::                                                  ::  ++obox:de-json:html
-    ++  obox                                            ::  object
-      (stag %o (cook malt obje))
-    ::                                                  ::  ++pear:de-json:html
-    ++  pear                                            ::  key-value
-      ;~(plug ;~(sfix (wish stri) (wish col)) apex)
-    ::                                                  ::  ++piec:de-json:html
-    ++  piec                                            ::  listify
-      |*  bus=rule
-      (cook |=(a=@ [a ~]) bus)
-    ::                                                  ::  ++stri:de-json:html
-    ++  stri                                            ::  string
-      (cook crip (ifix [doq doq] (star jcha)))
-    ::                                                  ::  ++tops:de-json:html
-    ++  tops                                            ::  strict value
-      ;~(pose abox obox)
-    ::                                                  ::  ++spac:de-json:html
-    ++  spac                                            ::  whitespace
-      (star (mask [`@`9 `@`10 `@`13 ' ' ~]))
-    ::                                                  ::  ++twel:de-json:html
-    ++  twel                                            ::  tape weld
-      |=([a=tape b=tape] (weld a b))
-    ::                                                  ::  ++wish:de-json:html
-    ++  wish                                            ::  with whitespace
-      |*(sef=rule ;~(pfix spac sef))
-    --  ::de-json
+      ::                                                ::  ++scap:en:json:html
+      ++  scap
+        |=  val=@t
+        ^-  @t
+        =/  out=(list @t)  ['"' ~]
+        =/  len  (met 3 val)
+        =|  [i=@ud pos=@ud]
+        |-  ^-  @t
+        ?:  =(len i)
+          (rap 3 (flop ['"' (rsh [3 pos] val) out]))
+        =/  car  (cut 3 [i 1] val)
+        ?:  ?&  (gth car 0x1f)
+                !=(car 0x22)
+                !=(car 0x5C)
+                !=(car 0x7F)
+            ==
+          $(i +(i))
+        =/  cap
+          ?+  car  (crip '\\' 'u' ((x-co 4):co car))
+            %10    '\\n'
+            %'"'   '\\"'
+            %'\\'  '\\\\'
+          ==
+        $(i +(i), pos +(i), out [cap (cut 3 [pos (sub i pos)] val) out])
+      --  ::en
+    ::                                                  ::  ++de:json:html
+    ++  de                                              ::  parse cord to JSON
+      ~%  %de  +>+  ~
+      |^  |=  txt=cord
+          ^-  (unit ^json)
+          (rush txt apex)
+      ::                                                ::  ++abox:de:json:html
+      ++  abox                                          ::  array
+        %+  stag  %a
+        (ifix [sel (wish ser)] (more (wish com) apex))
+      ::                                                ::  ++apex:de:json:html
+      ++  apex                                          ::  any value
+        %+  knee  *^json  |.  ~+
+        %+  ifix  [spac spac]
+        ;~  pose
+          (cold ~ (jest 'null'))
+          (stag %b bool)
+          (stag %s stri)
+          (cook |=(s=tape [%n p=(rap 3 s)]) numb)
+          abox
+          obox
+        ==
+      ::                                                ::  ++bool:de:json:html
+      ++  bool                                          ::  boolean
+        ;~  pose
+          (cold & (jest 'true'))
+          (cold | (jest 'false'))
+        ==
+      ::                                                ::  ++esca:de:json:html
+      ++  esca                                          ::  escaped character
+        ;~  pfix  bas
+          =*  loo
+            =*  lip
+              ^-  (list (pair @t @))
+              [b+8 t+9 n+10 f+12 r+13 ~]
+            =*  wow
+              ^~
+              ^-  (map @t @)
+              (malt lip)
+            (sear ~(get by wow) low)
+          ;~(pose doq fas bas loo unic)
+        ==
+      ::                                                ::  ++expo:de:json:html
+      ++  expo                                          ::  exponent
+        ;~  (comp weld)
+          (piec (mask "eE"))
+          (mayb (piec (mask "+-")))
+          (plus nud)
+        ==
+      ::                                                ::  ++frac:de:json:html
+      ++  frac                                          ::  fraction
+        ;~(plug dot (plus nud))
+      ::                                                ::  ++jcha:de:json:html
+      ++  jcha                                          ::  string character
+        ;~(pose ;~(less doq bas (shim 32 255)) esca)
+      ::                                                ::  ++mayb:de:json:html
+      ++  mayb                                          ::  optional
+        |*(bus=rule ;~(pose bus (easy ~)))
+      ::                                                ::  ++numb:de:json:html
+      ++  numb                                          ::  number
+        ;~  (comp weld)
+          (mayb (piec hep))
+          ;~  pose
+            (piec (just '0'))
+            ;~(plug (shim '1' '9') (star nud))
+          ==
+          (mayb frac)
+          (mayb expo)
+        ==
+      ::                                                ::  ++obje:de:json:html
+      ++  obje                                          ::  object list
+        %+  ifix  [(wish kel) (wish ker)]
+        (more (wish com) pear)
+      ::                                                ::  ++obox:de:json:html
+      ++  obox                                          ::  object
+        (stag %o (cook malt obje))
+      ::                                                ::  ++pear:de:json:html
+      ++  pear                                          ::  key-value
+        ;~(plug ;~(sfix (wish stri) (wish col)) apex)
+      ::                                                ::  ++piec:de:json:html
+      ++  piec                                          ::  listify
+        |*  bus=rule
+        (cook |=(a=@ [a ~]) bus)
+      ::                                                ::  ++stri:de:json:html
+      ++  stri                                          ::  string
+        %+  sear
+          |=  a=cord
+          ?.  (sune a)  ~
+          (some a)
+        (cook crip (ifix [doq doq] (star jcha)))
+      ::                                                ::  ++spac:de:json:html
+      ++  spac                                          ::  whitespace
+        (star (mask [`@`9 `@`10 `@`13 ' ' ~]))
+      ::                                                ::  ++unic:de:json:html
+      ++  unic                                          ::  escaped UTF16
+        =*  lob  0x0
+        =*  hsb  0xd800
+        =*  lsb  0xdc00
+        =*  hib  0xe000
+        =*  hil  0x1.0000
+        |^
+          %+  cook
+            |=  a=@
+            ^-  @t
+            (tuft a)
+          ;~  pfix  (just 'u')
+            ;~(pose solo pair)
+          ==
+        ++  quad                                        ::  parse num from 4 hex
+          (bass 16 (stun [4 4] hit))
+        ++  meat                                        ::  gen gate for sear:
+          |=  [bot=@ux top=@ux flp=?]                   ::  accept num in range,
+          |=  sur=@ux                                   ::  optionally reduce
+          ^-  (unit @)
+          ?.  &((gte sur bot) (lth sur top))
+            ~
+          %-  some
+          ?.  flp  sur
+          (sub sur bot)
+        ++  solo                                        ::  single valid UTF16
+          ;~  pose
+            (sear (meat lob hsb |) quad)
+            (sear (meat hib hil |) quad)
+          ==
+        ++  pair                                        ::  UTF16 surrogate pair
+          %+  cook
+            |=  [hig=@ low=@]
+              ^-  @t
+              :(add hil low (lsh [1 5] hig))
+          ;~  plug
+            (sear (meat hsb lsb &) quad)
+            ;~  pfix  (jest '\\u')
+              (sear (meat lsb hib &) quad)
+            ==
+          ==
+        --
+      ::                                                ::  ++utfe:de:json:html
+      ++  utfe                                          ::  UTF-8 sequence
+        ;~  less  doq  bas
+          =*  qua
+            %+  cook
+            |=  [a=@ b=@ c=@ d=@]
+              (rap 3 a b c d ~)
+            ;~  pose
+              ;~  plug
+                (shim 241 243)
+                (shim 128 191)
+                (shim 128 191)
+                (shim 128 191)
+              ==
+              ;~  plug
+                (just '\F0')
+                (shim 144 191)
+                (shim 128 191)
+                (shim 128 191)
+              ==
+              ;~  plug
+                (just '\F4')
+                (shim 128 143)
+                (shim 128 191)
+                (shim 128 191)
+              ==
+            ==
+          =*  tre
+            %+  cook
+            |=  [a=@ b=@ c=@]
+              (rap 3 a b c ~)
+            ;~  pose
+              ;~  plug
+                ;~  pose
+                  (shim 225 236)
+                  (shim 238 239)
+                ==
+                (shim 128 191)
+                (shim 128 191)
+              ==
+              ;~  plug
+                (just '\E0')
+                (shim 160 191)
+                (shim 128 191)
+              ==
+              ;~  plug
+                (just '\ED')
+                (shim 128 159)
+                (shim 128 191)
+              ==
+            ==
+          =*  dos
+            %+  cook
+            |=  [a=@ b=@]
+              (cat 3 a b)
+            ;~  plug
+              (shim 194 223)
+              (shim 128 191)
+            ==
+          ;~(pose qua tre dos)
+        ==
+      ::                                                ::  ++wish:de:json:html
+      ++  wish                                          ::  with whitespace
+        |*(sef=rule ;~(pfix spac sef))
+      ::  XX: These gates should be moved to hoon.hoon
+      ::                                                ::  ++sune:de:json:html
+      ++  sune                                          ::  cord UTF-8 sanity
+        |=  b=@t
+        ^-  ?
+        ?:  =(0 b)  &
+        ?.  (sung b)  |
+        $(b (rsh [3 (teff b)] b))
+      ::                                                ::  ++sung:de:json:html
+      ++  sung                                          ::  char UTF-8 sanity
+        |^  |=  b=@t
+            ^-  ?
+            =+  len=(teff b)
+            ?:  =(4 len)  (quad b)
+            ?:  =(3 len)  (tres b)
+            ?:  =(2 len)  (dos b)
+            (lte (end 3 b) 127)
+        ::
+        ++  dos
+          |=  b=@t
+          ^-  ?
+          =+  :-  one=(cut 3 [0 1] b)
+                  two=(cut 3 [1 1] b)
+          ?&  (rang one 194 223)
+              (cont two)
+          ==
+        ::
+        ++  tres
+          |=  b=@t
+          ^-  ?
+          =+  :+  one=(cut 3 [0 1] b)
+                  two=(cut 3 [1 1] b)
+                  tre=(cut 3 [2 1] b)
+          ?&
+            ?|
+              ?&  |((rang one 225 236) (rang one 238 239))
+                  (cont two)
+              ==
+              ::
+              ?&  =(224 one)
+                  (rang two 160 191)
+              ==
+              ::
+              ?&  =(237 one)
+                  (rang two 128 159)
+              ==
+            ==
+            ::
+            (cont tre)
+          ==
+        ::
+        ++  quad
+          |=  b=@t
+          ^-  ?
+          =+  :^  one=(cut 3 [0 1] b)
+                  two=(cut 3 [1 1] b)
+                  tre=(cut 3 [2 1] b)
+                  for=(cut 3 [3 1] b)
+          ?&
+            ?|
+              ?&  (rang one 241 243)
+                  (cont two)
+              ==
+              ::
+              ?&  =(240 one)
+                  (rang two 144 191)
+              ==
+              ::
+              ?&  =(244 one)
+                  (rang two 128 143)
+              ==
+            ==
+            ::
+            (cont tre)
+            (cont for)
+          ==
+        ::
+        ++  cont
+          |=  a=@
+          ^-  ?
+          (rang a 128 191)
+        ::
+        ++  rang
+          |=  [a=@ bot=@ top=@]
+          ^-  ?
+          ?>  (lte bot top)
+          &((gte a bot) (lte a top))
+        --
+      ::  XX: This +teff should overwrite the existing +teff
+      ::                                                ::  ++teff:de:json:html
+      ++  teff                                          ::  UTF-8 length
+        |=  a=@t
+        ^-  @
+        =+  b=(end 3 a)
+        ?:  =(0 b)
+          ?>  =(`@`0 a)  0
+        ?:  (lte b 127)  1
+        ?:  (lte b 223)  2
+        ?:  (lte b 239)  3
+        4
+      --  ::de
+    --  ::json
+  ::  +en-json:html: encode json to tape
+  ::
+  ::  XX: deprecated; use +en:json:html
+  ::
+  ++  en-json
+    |=  jon=^json
+    ^-  tape
+    (trip (en:json jon))
+  ::  +de-json:html: parse cord to (unit json)
+  ::
+  ::  XX: deprecated; use +de:json:html
+  ::
+  ++  de-json
+    |=  txt=cord
+    ^-  (unit ^json)
+    (de:json txt)
   ::                                                    ::  ++en-xml:html
   ++  en-xml                                            ::  xml printer
     =<  |=(a=manx `tape`(apex a ~))
@@ -5347,412 +5593,6 @@
       $(pops [oldest pops])
     --
   --
-::
-::  +mop: constructs and validates ordered ordered map based on key,
-::  val, and comparator gate
-::
-++  mop
-  |*  [key=mold value=mold]
-  |=  ord=$-([key key] ?)
-  |=  a=*
-  =/  b  ;;((tree [key=key val=value]) a)
-  ?>  (apt:((on key value) ord) b)
-  b
-::
-::
-++  ordered-map  on
-::  +on: treap with user-specified horizontal order, ordered-map
-::
-::  WARNING: ordered-map will not work properly if two keys can be
-::  unequal under noun equality but equal via the compare gate
-::
-++  on
-  ~/  %on
-  |*  [key=mold val=mold]
-  =>  |%
-      +$  item  [key=key val=val]
-      --
-  ::  +compare: item comparator for horizontal order
-  ::
-  ~%  %comp  +>+  ~
-  |=  compare=$-([key key] ?)
-  ~%  %core    +  ~
-  |%
-  ::  +all: apply logical AND boolean test on all values
-  ::
-  ++  all
-    ~/  %all
-    |=  [a=(tree item) b=$-(item ?)]
-    ^-  ?
-    |-
-    ?~  a
-      &
-    ?&((b n.a) $(a l.a) $(a r.a))
-  ::  +any: apply logical OR boolean test on all values
-  ::
-  ++  any
-    ~/  %any
-    |=  [a=(tree item) b=$-(item ?)]
-    |-  ^-  ?
-    ?~  a
-      |
-    ?|((b n.a) $(a l.a) $(a r.a))
-  ::  +apt: verify horizontal and vertical orderings
-  ::
-  ++  apt
-    ~/  %apt
-    |=  a=(tree item)
-    =|  [l=(unit key) r=(unit key)]
-    |-  ^-  ?
-    ::  empty tree is valid
-    ::
-    ?~  a  %.y
-    ::  nonempty trees must maintain several criteria
-    ::
-    ?&  ::  if .n.a is left of .u.l, assert horizontal comparator
-        ::
-        ?~(l %.y (compare key.n.a u.l))
-        ::  if .n.a is right of .u.r, assert horizontal comparator
-        ::
-        ?~(r %.y (compare u.r key.n.a))
-        ::  if .a is not leftmost element, assert vertical order between
-        ::  .l.a and .n.a and recurse to the left with .n.a as right
-        ::  neighbor
-        ::
-        ?~(l.a %.y &((mor key.n.a key.n.l.a) $(a l.a, l `key.n.a)))
-        ::  if .a is not rightmost element, assert vertical order
-        ::  between .r.a and .n.a and recurse to the right with .n.a as
-        ::  left neighbor
-        ::
-        ?~(r.a %.y &((mor key.n.a key.n.r.a) $(a r.a, r `key.n.a)))
-    ==
-  ::  +bap: convert to list, right to left
-  ::
-  ++  bap
-    ~/  %bap
-    |=  a=(tree item)
-    ^-  (list item)
-    =|  b=(list item)
-    |-  ^+  b
-    ?~  a  b
-    $(a r.a, b [n.a $(a l.a)])
-  ::  +del: delete .key from .a if it exists, producing value iff deleted
-  ::
-  ++  del
-    ~/  %del
-    |=  [a=(tree item) =key]
-    ^-  [(unit val) (tree item)]
-    ?~  a  [~ ~]
-    ::  we found .key at the root; delete and rebalance
-    ::
-    ?:  =(key key.n.a)
-      [`val.n.a (nip a)]
-    ::  recurse left or right to find .key
-    ::
-    ?:  (compare key key.n.a)
-      =+  [found lef]=$(a l.a)
-      [found a(l lef)]
-    =+  [found rig]=$(a r.a)
-    [found a(r rig)]
-  ::  +dip: stateful partial inorder traversal
-  ::
-  ::    Mutates .state on each run of .f.  Starts at .start key, or if
-  ::    .start is ~, starts at the head.  Stops when .f produces .stop=%.y.
-  ::    Traverses from left to right keys.
-  ::    Each run of .f can replace an item's value or delete the item.
-  ::
-  ++  dip
-    ~/  %dip
-    |*  state=mold
-    |=  $:  a=(tree item)
-            =state
-            f=$-([state item] [(unit val) ? state])
-        ==
-    ^+  [state a]
-    ::  acc: accumulator
-    ::
-    ::    .stop: set to %.y by .f when done traversing
-    ::    .state: threaded through each run of .f and produced by +abet
-    ::
-    =/  acc  [stop=`?`%.n state=state]
-    =<  abet  =<  main
-    |%
-    ++  this  .
-    ++  abet  [state.acc a]
-    ::  +main: main recursive loop; performs a partial inorder traversal
-    ::
-    ++  main
-      ^+  this
-      ::  stop if empty or we've been told to stop
-      ::
-      ?:  =(~ a)  this
-      ?:  stop.acc  this
-      ::  inorder traversal: left -> node -> right, until .f sets .stop
-      ::
-      =.  this  left
-      ?:  stop.acc  this
-      =^  del  this  node
-      =?  this  !stop.acc  right
-      =?  a  del  (nip a)
-      this
-    ::  +node: run .f on .n.a, updating .a, .state, and .stop
-    ::
-    ++  node
-      ^+  [del=*? this]
-      ::  run .f on node, updating .stop.acc and .state.acc
-      ::
-      ?>  ?=(^ a)
-      =^  res  acc  (f state.acc n.a)
-      ?~  res
-        [del=& this]
-      [del=| this(val.n.a u.res)]
-    ::  +left: recurse on left subtree, copying mutant back into .l.a
-    ::
-    ++  left
-      ^+  this
-      ?~  a  this
-      =/  lef  main(a l.a)
-      lef(a a(l a.lef))
-    ::  +right: recurse on right subtree, copying mutant back into .r.a
-    ::
-    ++  right
-      ^+  this
-      ?~  a  this
-      =/  rig  main(a r.a)
-      rig(a a(r a.rig))
-    --
-  ::  +gas: put a list of items
-  ::
-  ++  gas
-    ~/  %gas
-    |=  [a=(tree item) b=(list item)]
-    ^-  (tree item)
-    ?~  b  a
-    $(b t.b, a (put a i.b))
-  ::  +get: get val at key or return ~
-  ::
-  ++  get
-    ~/  %get
-    |=  [a=(tree item) b=key]
-    ^-  (unit val)
-    ?~  a  ~
-    ?:  =(b key.n.a)
-      `val.n.a
-    ?:  (compare b key.n.a)
-      $(a l.a)
-    $(a r.a)
-  ::  +got: need value at key
-  ::
-  ++  got
-    |=  [a=(tree item) b=key]
-    ^-  val
-    (need (get a b))
-  ::  +has: check for key existence
-  ::
-  ++  has
-    ~/  %has
-    |=  [a=(tree item) b=key]
-    ^-  ?
-    !=(~ (get a b))
-  ::  +lot: take a subset range excluding start and/or end and all elements
-  ::  outside the range
-  ::
-  ++  lot
-    ~/  %lot
-    |=  $:  tre=(tree item)
-            start=(unit key)
-            end=(unit key)
-        ==
-    ^-  (tree item)
-    |^
-    ?:  ?&(?=(~ start) ?=(~ end))
-      tre
-    ?~  start
-      (del-span tre %end end)
-    ?~  end
-      (del-span tre %start start)
-    ?>  (compare u.start u.end)
-    =.  tre  (del-span tre %start start)
-    (del-span tre %end end)
-    ::
-    ++  del-span
-      |=  [a=(tree item) b=?(%start %end) c=(unit key)]
-      ^-  (tree item)
-      ?~  a  a
-      ?~  c  a
-      ?-  b
-          %start
-        ::  found key
-        ?:  =(key.n.a u.c)
-          (nip a(l ~))
-        ::  traverse to find key
-        ?:  (compare key.n.a u.c)
-          ::  found key to the left of start
-          $(a (nip a(l ~)))
-        ::  found key to the right of start
-        a(l $(a l.a))
-      ::
-          %end
-        ::  found key
-        ?:  =(u.c key.n.a)
-          (nip a(r ~))
-        ::  traverse to find key
-        ?:  (compare key.n.a u.c)
-          :: found key to the left of end
-          a(r $(a r.a))
-        :: found key to the right of end
-        $(a (nip a(r ~)))
-      ==
-    --
-  ::  +nip: remove root; for internal use
-  ::
-  ++  nip
-    ~/  %nip
-    |=  a=(tree item)
-    ^-  (tree item)
-    ?>  ?=(^ a)
-    ::  delete .n.a; merge and balance .l.a and .r.a
-    ::
-    |-  ^-  (tree item)
-    ?~  l.a  r.a
-    ?~  r.a  l.a
-    ?:  (mor key.n.l.a key.n.r.a)
-      l.a(r $(l.a r.l.a))
-    r.a(l $(r.a l.r.a))
-  ::
-  ::  +pop: produce .head (leftmost item) and .rest or crash if empty
-  ::
-  ++  pop
-    ~/  %pop
-    |=  a=(tree item)
-    ^-  [head=item rest=(tree item)]
-    ?~  a    !!
-    ?~  l.a  [n.a r.a]
-    =/  l  $(a l.a)
-    :-  head.l
-    ::  load .rest.l back into .a and rebalance
-    ::
-    ?:  |(?=(~ rest.l) (mor key.n.a key.n.rest.l))
-      a(l rest.l)
-    rest.l(r a(r r.rest.l))
-  ::  +pry: produce head (leftmost item) or null
-  ::
-  ++  pry
-    ~/  %pry
-    |=  a=(tree item)
-    ^-  (unit item)
-    ?~  a    ~
-    |-
-    ?~  l.a  `n.a
-    $(a l.a)
-  ::  +put: ordered item insert
-  ::
-  ++  put
-    ~/  %put
-    |=  [a=(tree item) =key =val]
-    ^-  (tree item)
-    ::  base case: replace null with single-item tree
-    ::
-    ?~  a  [n=[key val] l=~ r=~]
-    ::  base case: overwrite existing .key with new .val
-    ::
-    ?:  =(key.n.a key)  a(val.n val)
-    ::  if item goes on left, recurse left then rebalance vertical order
-    ::
-    ?:  (compare key key.n.a)
-      =/  l  $(a l.a)
-      ?>  ?=(^ l)
-      ?:  (mor key.n.a key.n.l)
-        a(l l)
-      l(r a(l r.l))
-    ::  item goes on right; recurse right then rebalance vertical order
-    ::
-    =/  r  $(a r.a)
-    ?>  ?=(^ r)
-    ?:  (mor key.n.a key.n.r)
-      a(r r)
-    r(l a(r l.r))
-  ::  +ram: produce tail (rightmost item) or null
-  ::
-  ++  ram
-    ~/  %ram
-    |=  a=(tree item)
-    ^-  (unit item)
-    ?~  a    ~
-    |-
-    ?~  r.a  `n.a
-    $(a r.a)
-  ::  +run: apply gate to transform all values in place
-  ::
-  ++  run
-    ~/  %run
-    |*  [a=(tree item) b=$-(val *)]
-    |-
-    ?~  a  a
-    [n=[key.n.a (b val.n.a)] l=$(a l.a) r=$(a r.a)]
-  ::  +tab: tabulate a subset excluding start element with a max count
-  ::
-  ++  tab
-    ~/  %tab
-    |=  [a=(tree item) b=(unit key) c=@]
-    ^-  (list item)
-    |^
-    (flop e:(tabulate (del-span a b) b c))
-    ::
-    ++  tabulate
-      |=  [a=(tree item) b=(unit key) c=@]
-      ^-  [d=@ e=(list item)]
-      ?:  ?&(?=(~ b) =(c 0))
-        [0 ~]
-      =|  f=[d=@ e=(list item)]
-      |-  ^+  f
-      ?:  ?|(?=(~ a) =(d.f c))  f
-      =.  f  $(a l.a)
-      ?:  =(d.f c)  f
-      =.  f  [+(d.f) [n.a e.f]]
-      ?:(=(d.f c) f $(a r.a))
-    ::
-    ++  del-span
-      |=  [a=(tree item) b=(unit key)]
-      ^-  (tree item)
-      ?~  a  a
-      ?~  b  a
-      ?:  =(key.n.a u.b)
-        r.a
-      ?:  (compare key.n.a u.b)
-        $(a r.a)
-      a(l $(a l.a))
-    --
-  ::  +tap: convert to list, left to right
-  ::
-  ++  tap
-    ~/  %tap
-    |=  a=(tree item)
-    ^-  (list item)
-    =|  b=(list item)
-    |-  ^+  b
-    ?~  a  b
-    $(a l.a, b [n.a $(a r.a)])
-  ::  +uni: unify two ordered maps
-  ::
-  ::    .b takes precedence over .a if keys overlap.
-  ::
-  ++  uni
-    ~/  %uni
-    |=  [a=(tree item) b=(tree item)]
-    ^-  (tree item)
-    ?~  b  a
-    ?~  a  b
-    ?:  =(key.n.a key.n.b)
-      [n=n.b l=$(a l.a, b l.b) r=$(a r.a, b r.b)]
-    ?:  (mor key.n.a key.n.b)
-      ?:  (compare key.n.b key.n.a)
-        $(l.a $(a l.a, r.b ~), b r.b)
-      $(r.a $(a r.a, l.b ~), b l.b)
-    ?:  (compare key.n.a key.n.b)
-      $(l.b $(b l.b, r.a ~), a r.a)
-    $(r.b $(b r.b, l.a ~), a l.a)
-  --
 ::                                                      ::
 ::::                      ++userlib                     ::  (2u) non-vane utils
   ::                                                    ::::
@@ -6084,4 +5924,70 @@
   ?.  ?=(%soft -.wrapped)
     wrapped
   ;;(task +.wrapped)
+::
+::
+++  balk
+  =<  bulk
+  !:
+  |%
+  +$  bulk
+    $:  [her=ship rif=rift lyf=life]
+        [van=@ta car=@ta cas=case]
+        spr=spur
+    ==
+  ::
+  ++  de-part
+    |=  [=ship =rift =life =(pole knot)]
+    ^-  (unit bulk)
+    ?.  ?=([van=@ car=@ cas=@ spr=*] pole)  ~
+    ?~  cas=(de-case cas.pole)   ~
+    :-  ~
+    :*  [ship rift life]
+        [van.pole car.pole u.cas]
+        spr.pole
+    ==
+  ::
+  ++  de-path-soft
+    |=  =(pole knot)
+    ^-  (unit bulk)
+    ::  [ship rift life vane care case path]
+    ?.  ?=([her=@ rif=@ lyf=@ van=@ car=@ cas=@ spr=*] pole)
+      ~
+    ?~  her=(slaw %p her.pole)   ~
+    ?~  rif=(slaw %ud rif.pole)  ~
+    ?~  lyf=(slaw %ud lyf.pole)  ~
+    ?~  cas=(de-case cas.pole)   ~
+    :-  ~
+    :*  [u.her u.rif u.lyf]
+        [van.pole car.pole u.cas]
+        spr.pole
+    ==
+  ::
+  ++  de-path
+    |=  =path
+    ^-  bulk
+    (need (de-path-soft +<))
+  ::
+  ++  en-path
+    |=  =bulk
+    ^-  path
+    :*  (scot %p her.bulk)
+        (scot %ud rif.bulk)
+        (scot %ud lyf.bulk)
+        van.bulk
+        car.bulk
+        (scot cas.bulk)
+        spr.bulk
+    ==
+  ::
+  ++  as-omen
+    |=  =bulk
+    ^-  omen
+    =/  [des=desk pax=path]
+      ?^  spr.bulk  spr.bulk
+      [%$ ~]
+    =/  bem=beam  =,(bulk [[her des cas] pax])
+    =+  vis=(cat 3 van.bulk car.bulk)
+    [vis bem]
+  --
 --

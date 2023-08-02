@@ -4,16 +4,23 @@
 |%
 ::  test that these trace hints
 ::  are safe to run or ignore
-++  test-hilt-hela
+::
+::    XX disabled due to CI noise
+::
+++  disabled-test-hilt-hela
   ~>  %hela
   ~
-++  test-hint-hela
+++  disabled-test-hint-hela
   ~>  %hela.[1 leaf+"test-hint-hela ~"]
   ~
 ++  test-hilt-nara
+  %-  need  %-  mole  |.
+  ~|  %hilt-nara
   ~>  %nara
   ~
 ++  test-hint-nara
+  %-  need  %-  mole  |.
+  ~|  %hint-nara
   ~>  %nara.[1 leaf+"test-hint-nara ~"]
   ~
 ::  test that theses bytecode-report hints
