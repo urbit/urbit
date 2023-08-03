@@ -272,6 +272,19 @@
     ?:  ?=(%nuke -.q.i.apps)  $(apps t.apps)
     =/  ap-core  (ap-yoke:ap p.i.apps [~ our] q.i.apps)
     $(apps t.apps, mo-core ap-abet:(ap-rake:ap-core all))
+  ::  +mo-rage: close subscriptions associated with corked ames flows
+  ::
+  ++  mo-rage
+    |=  [dude=(unit dude) dry=?]
+    ^+  mo-core
+    =/  apps=(list (pair term yoke))
+      ?~  dude  ~(tap by yokes.state)
+      (drop (bind (~(get by yokes.state) u.dude) (lead u.dude)))
+    |-  ^+  mo-core
+    ?~  apps  mo-core
+    ?:  ?=(%nuke -.q.i.apps)  $(apps t.apps)
+    =/  ap-core  (ap-yoke:ap p.i.apps [~ our] q.i.apps)
+    $(apps t.apps, mo-core ap-abet:(ap-rage:ap-core dry))
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
@@ -1681,6 +1694,56 @@
         =/  sat  !<(ship-state:ames q.u.u.sky)
         ?>(?=(%known -.sat) (some +.sat))
       --
+    ::  +ap-rage: detect subscriptions associated with corked ames flows
+    ::
+    ++  ap-rage
+      |=  dry=?
+      ~>  %bout.[0 'gall: ap-rage']
+      =/  subs=(list [=duct =ship =path])
+        ~(tap by bitt.yoke)
+      |^  ^+  ap-core
+          ?~  subs  ap-core
+          =,  i.subs
+          ?.  ?=([* [%ames %bone @ @ *] *] duct.i.subs)
+            $(subs t.subs)
+          ?.  (is-bone-corked ship (parse-bone-wire t.i.t.duct))
+            $(subs t.subs)
+          ~&  [%ap-rage in=agent-name at=i.subs]
+          ?:  dry
+            $(subs t.subs)
+          ::  if not in dry-run mode, we locally delete the subscription,
+          ::  telling the agent a %leave. we should not need to send a %kick
+          ::  to the remote subscriber, since the flow is already corked, and
+          ::  so should have been kicked on there end. primary goal here (rn)
+          ::  is to make us stop giving facts on corked flows.
+          ::
+          ~&  [%ap-rage %issuing-leave]
+          =.  ap-core  ap-load-delete(agent-duct duct)
+          $(subs t.subs)
+      ::
+      ++  is-bone-corked
+        |=  [=ship =bone]
+        ^-  ?
+        =/  =ship-state:ames
+          !<  ship-state:ames
+          ~|  ship
+          ::TODO  if scry overhead is big/slow, mb cache with ~+,
+          ::      or just top-level scry for all peers once
+          q:(need (need (rof ~ %ax [our %$ da+now] /peers/(scot %p ship))))
+        ?:  ?=(%alien -.ship-state)  |
+        =*  peer-state  +.ship-state
+        ~!  peer-state
+        ::TODO  no need to look at closing.peer-state, right?
+        (~(has in corked.peer-state) bone)
+      ::
+      ++  parse-bone-wire  ::NOTE  partially from ames.hoon
+        |=  =wire
+        ^-  bone
+        ?+  wire  !!
+          [%bone @ @ ~]    `@ud`(slav %ud i.t.t.wire)
+          [%bone @ @ @ ~]  `@ud`(slav %ud i.t.t.t.wire)
+        ==
+      --
     ::  +ap-mule: run virtualized with intercepted scry, preserving type
     ::
     ::    Compare +mute and +mule.  Those pass through scry, which
@@ -1906,6 +1969,7 @@
       %nuke  mo-abet:(mo-nuke:mo-core dude.task)
       %doff  mo-abet:(mo-doff:mo-core +.task)
       %rake  mo-abet:(mo-rake:mo-core +.task)
+      %rage  mo-abet:(mo-rage:mo-core +.task)
       %spew  mo-abet:(mo-spew:mo-core veb.task)
       %sift  mo-abet:(mo-sift:mo-core dudes.task)
       %trim  [~ gall-payload]

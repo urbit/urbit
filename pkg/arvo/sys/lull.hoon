@@ -2586,6 +2586,7 @@
         [%nuke =dude]                                   ::  delete agent
         [%doff dude=(unit dude) ship=(unit ship)]       ::  kill subscriptions
         [%rake dude=(unit dude) all=?]                  ::  reclaim old subs
+        [%rage dude=(unit dude) dry=?]                  ::  fix borked cork subs
         $>(%init vane-task)                             ::  set owner
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
