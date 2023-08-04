@@ -168,21 +168,19 @@
   ++  en-ray    :: baum to ray
     |=  =baum
     ^-  ray
-    =/  a=ray  [meta.baum `@ux`0]
+    =/  a=ray  (zeros meta.baum)
     =/  i  0
     =/  n  (roll shape.meta.a ^mul)
     |-
-    ?:  =(i n)
-      =.  data.a  (^add (lsh [bloq.meta.a n] 1) (swp bloq.meta.a data.a))
-      a
+    ?:  =(i n)  a
     %=  $
       i  +(i)
       data.a
-        %+  ^add
-          ;;(@ (get-item-baum baum (get-dim shape.meta.a i)))
-        %+  lsh 
-          bloq.meta.a 
-        data.a
+        %+  con
+          data.a
+        %+  lsh
+          [bloq.meta.a (dec (^sub n i))]
+        ;;(@ (get-item-baum baum (get-dim shape.meta.a i)))
     ==
   ::
   ++  de-ray    :: ray to baum
@@ -201,12 +199,11 @@
       =|  fin=(list ndray)
       =|  els=ndray
       |-
-      ?~  data  (welp ;;((list ndray) fin) ~[;;((list ndray) els)])
+      ?~  data  (welp ~[;;((list ndray) els)] ;;((list ndray) fin))
       %=  $
-        els   (rip bloq (cut bloq [0 (snag 0 dims)] data))
-        fin   ?~  fin
-                ~[;;((list ndray) (rip bloq (cut bloq [0 (snag 0 dims)] data)))]
-              (welp ;;((list ndray) fin) ~[;;((list ndray) els)])
+        els   (flop (rip bloq (cut bloq [0 (snag 0 dims)] data)))
+        fin   ?~  els  fin
+              (welp ~[;;((list ndray) els)] ;;((list ndray) fin))
         data  (rsh [bloq (snag 0 dims)] data)
       ==
     ::  cut off end
@@ -506,6 +503,23 @@
           prod  (set-item prod ~[j i] (get-item a ~[i j]))
         ==
     ==
+  ::
+  ++  diag
+    |=  a=ray
+    ^-  ray
+    =,  meta.a
+    ?>  =(2 (lent shape))
+    ?>  =(-.shape +<.shape)
+    %-  en-ray
+    :-  [~[-.shape 1] bloq kind]
+    %+  turn
+      (gulf 0 (dec -.shape))
+    |=(i=@ (get-item a ~[i i]))
+  ::
+  ++  trace
+    |=  a=ray
+    ^-  ray
+    (cumsum (diag a))
   ::
   ++  dot
     |=  [a=ray b=ray]
