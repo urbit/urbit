@@ -24,6 +24,8 @@
         %unsigned
         %signed
         %complex
+        %posit
+        %fixed
     ==
   ::
   +$  baum  ::          $baum:  ndray with metadata
@@ -45,8 +47,6 @@
   ++  to-tank  ::  TODO nest dimensions
     |=  a=ray
     ^-  tank
-    ~&  >>  meta.a
-    ~&  >>  (lent shape.meta.a)
     ::  1D vector case
     ?:  =(1 (lent shape.meta.a))
       :+  %rose  [" " "[" "]"]
@@ -58,9 +58,7 @@
     ?:  =(2 (lent shape.meta.a))
       =/  =baum  (de-ray a)
       =/  =term  (get-term meta.a)
-      ~&  >  term
       ?@  data.baum  leaf+(scow term data.baum)
-      ~&  data.baum
       =/  data  ;;((list (list @)) data.baum)
       :+  %rose  [" " "[" "]"]
       %+  turn  data
@@ -144,7 +142,7 @@
     =|  dex=(list @)
     ^-  (list @)
     |-
-    ?:  (gte i (lent sap))
+    ?:  (^gte i (lent sap))
       (flop dex)
     %=    $
       dex  `(list @)`(snoc dex (^mod ind (snag i sap)))
@@ -200,16 +198,15 @@
     ?:  =(2 (lent shape))
       =/  dims  (flop shape)
       =/  data  data:(unspac ray)
-      =|  fin=ndray
+      =|  fin=(list ndray)
       =|  els=ndray
       |-
-      ~&  >  els
-      ~&  >>  fin
-      ~&  >>>  data
-      ?~  data  (weld ;;((list ndray) fin) ;;((list ndray) els)) ::(flop fin)
+      ?~  data  (welp ;;((list ndray) fin) ~[;;((list ndray) els)])
       %=  $
-        els   `ndray`(rip bloq (cut bloq [0 (snag 0 dims)] data))
-        fin   (weld ;;((list ndray) fin) ;;((list ndray) els))
+        els   (rip bloq (cut bloq [0 (snag 0 dims)] data))
+        fin   ?~  fin
+                ~[;;((list ndray) (rip bloq (cut bloq [0 (snag 0 dims)] data)))]
+              (welp ;;((list ndray) fin) ~[;;((list ndray) els)])
         data  (rsh [bloq (snag 0 dims)] data)
       ==
     ::  cut off end
@@ -516,7 +513,7 @@
     ?>  =(shape.meta.a shape.meta.b)
     (cumsum (mul a b))
   ::
-  ++  matmul-2d
+  ++  mmul
     |=  [a=ray b=ray]
     =/  ar  (ravel a)
     =/  br  (ravel b)
@@ -620,20 +617,67 @@
     ^-  ray
     (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %mod))
   ::
+  ++  pow-n
+    |=  [a=ray n=@ud]
+    ^-  ray
+    ?~  =(0 n)  (ones meta.a)
+    =/  b=ray   a
+    |-  ^-  ray
+    ?~  =(1 n)  b
+    $(b (mul a b), n (dec n))
+  ::
+  ++  pow
+    |=  [a=ray b=ray]
+    ^-  ray
+    (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %pow))
+  ::
+  ++  exp
+    |=  [a=ray b=ray]
+    ^-  ray
+    (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %exp))
+  ::
+  ++  log
+    |=  [a=ray b=ray]
+    ^-  ray
+    (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %log))
+  ::
   ++  gth
     |=  [a=ray b=ray]
     ^-  ray
     (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %gth))
+  ::
+  ++  gte
+    |=  [a=ray b=ray]
+    ^-  ray
+    (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %gte))
   ::
   ++  lth
     |=  [a=ray b=ray]
     ^-  ray
     (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %lth))
   ::
+  ++  lte
+    |=  [a=ray b=ray]
+    ^-  ray
+    (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %lte))
+  ::
+  ++  mpow-n
+    |=  [a=ray n=@ud]
+    ^-  ray
+    ?~  =(0 n)  (ones meta.a)
+    =/  b=ray   a
+    |-  ^-  ray
+    ?~  =(1 n)  b
+    $(b (mmul a b), n (dec n))
+  ::  proximity check [abs rel]
+  ::
   ++  is-close
-    |=  [a=ray b=ray =term tol=@]
-    =/  tol  (scale meta.a term tol)
-    (lth (abs (sub a b)) (fill meta.a data.tol))
+    |=  [a=ray b=ray =term tol=[@ @]]
+    ^-  ray
+    ?>  =(shape.meta.a shape.meta.b)
+    =/  atol  (fill meta.a data:(scale meta.a term -.tol))
+    =/  rtol  (fill meta.a data:(scale meta.a term +.tol))
+    (lte (abs (sub a b)) (add atol (mul rtol (abs b))))
   ::
   ++  any
     |=  [a=ray]
@@ -645,7 +689,20 @@
     ^-  ?(%.y %.n)
     =((get-item (cumsum a) ~[0]) 0)
   ::
-  +$  ops  ?(%add %sub %mul %div %mod %gth %lth %abs)
+  +$  ops   $?  %add
+                %sub
+                %mul
+                %div
+                %mod
+                %pow
+                %exp
+                %log
+                %gth
+                %gte
+                %lth
+                %lte
+                %abs
+            ==
   ::
   ++  fun-scalar
     |=  [=bloq =kind fun=ops]
@@ -658,8 +715,13 @@
         %mul  |=([b=@ c=@] (~(sit fe bloq) (^mul b c)))
         %div  |=([b=@ c=@] (~(sit fe bloq) (^div b c)))
         %mod  |=([b=@ c=@] (~(sit fe bloq) (^mod b c)))
+        %pow  |=([b=@ c=@] (~(sit fe bloq) (^pow b c)))
+        ::%exp  |=([b=@ c=@] (~(sit fe bloq) (^pow b c)))
+        ::%log  |=([b=@ c=@] (~(sit fe bloq) (^pow b c)))
         %gth  |=([b=@ c=@] (^gth b c))
+        %gte  |=([b=@ c=@] (^gte b c))
         %lth  |=([b=@ c=@] (^lth b c))
+        %lte  |=([b=@ c=@] (^lte b c))
       ==
       ::
         %signed  
@@ -676,7 +738,9 @@
           %mul  ~(mul rq r)
           %div  ~(div rq r)
           %gth  ~(gth rq r)
+          %gte  ~(gte rq r)
           %lth  ~(lth rq r)
+          %lte  ~(lte rq r)
         ==
         %6
         ?+  fun  !!
@@ -685,7 +749,9 @@
           %mul  ~(mul rd r)
           %div  ~(div rd r)
           %gth  ~(gth rd r)
+          %gte  ~(gte rd r)
           %lth  ~(lth rd r)
+          %lte  ~(lte rd r)
         ==
         %5
         ?+  fun  !!
@@ -694,7 +760,9 @@
           %mul  ~(mul rs r)
           %div  ~(div rs r)
           %gth  ~(gth rs r)
+          %gte  ~(gte rs r)
           %lth  ~(lth rs r)
+          %lte  ~(lte rs r)
         ==
         %4
         ?+  fun  !!
@@ -703,7 +771,9 @@
           %mul  ~(mul rh r)
           %div  ~(div rh r)
           %gth  ~(gth rh r)
+          %gte  ~(gte rh r)
           %lth  ~(lth rh r)
+          %lte  ~(lte rh r)
         ==
       ==
     ::
