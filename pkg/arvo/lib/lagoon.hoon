@@ -186,6 +186,7 @@
   ++  de-ray    :: ray to baum
     |=  =ray
     ^-  baum
+    |^
     :-  meta.ray
     ^-  ndray
     ::
@@ -195,19 +196,25 @@
     ::
     ?:  =(2 (lent shape))
       =/  dims  (flop shape)
-      =/  data  data:(unspac ray)
       =|  fin=(list ndray)
       =|  els=ndray
       |-
-      ?~  data  (welp ~[;;((list ndray) els)] ;;((list ndray) fin))
+      ?:  =(0x1 data.ray)  (welp ~[;;((list ndray) els)] ;;((list ndray) fin))
       %=  $
-        els   (flop (rip bloq (cut bloq [0 (snag 0 dims)] data)))
+        els   (flop (rip bloq (cut bloq [0 (snag 0 dims)] data.ray)))
         fin   ?~  els  fin
               (welp ~[;;((list ndray) els)] ;;((list ndray) fin))
-        data  (rsh [bloq (snag 0 dims)] data)
+        data.ray  (rsh [bloq (snag 0 dims)] data.ray)
       ==
     ::  cut off end
     !!
+    ++  rip
+      |=  [a=bite b=@]
+      ^-  (list @)
+      =/  cnt  ?@(a 1 +.a)
+      ?~  (^rip a b)  (reap cnt 0)
+      (^rip a b)
+    --
   ::
   ++  get-item-baum
     |=  [=baum dex=(list @)]
@@ -513,7 +520,7 @@
     %-  en-ray
     :-  [~[-.shape 1] bloq kind]
     %+  turn
-      (gulf 0 (dec -.shape))
+      (flop (gulf 0 (dec -.shape)))
     |=(i=@ (get-item a ~[i i]))
   ::
   ++  trace
