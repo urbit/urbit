@@ -5,7 +5,8 @@
 =,  format
 =*  dude  dude:gall
 |%
-+$  state     state-10
++$  state     state-11
++$  state-11  [%11 pith-11]
 +$  state-10  [%10 pith-10]
 +$  state-9   [%9 pith-9]
 +$  state-8   [%8 pith-9]
@@ -19,7 +20,8 @@
 +$  state-0   [%0 pith-0]
 +$  any-state
   $~  *state
-  $%  state-10
+  $%  state-11
+      state-10
       state-9
       state-8
       state-7
@@ -31,6 +33,24 @@
       state-1
       state-0
   ==
+::
++$  pith-11
+  $:  rem=(map desk per-desk)
+      nyz=@ud
+      zyn=(map kiln-sync sync-state)
+      ::  requests from publishers to switch sync source
+      hop=(map dock dock)
+      commit-timer=[way=wire nex=@da tim=@dr mon=term]
+      ::  map desk to the currently ongoing fuse request
+      ::  and the latest version numbers for beaks to
+      fus=(map desk per-fuse)
+      ::  used for fuses - every time we get a fuse we
+      ::  bump this. used when calculating hashes to
+      ::  ensure they're unique even when the same
+      ::  request is made multiple times.
+      hxs=(map desk @ud)
+  ==
+::
 ::
 +$  pith-10
   $:  rem=(map desk per-desk)
@@ -482,7 +502,10 @@
       $(ks t.ks)
     ==
   ::
-  ?>  ?=(%10 -.old)
+  =?  old  ?=(%10 -.old)
+    old(- %11, |4 [hop=~ |4.old])
+  ::
+  ?>  ?=(%11 -.old)
   =.  state  old
   abet:(emil cards-9)
 ::
@@ -498,6 +521,7 @@
     =/  ver  (mergebase-hashes our %base now (~(got by sources) %base))
     ``noun+!>(?~(ver 0v0 i.ver))
   ::
+      [%x %kiln %jumps ~]  ``kiln-jump+!>([%all hop])
       [%x %kiln %syncs ~]  ``noun+!>(zyn)
       [%x %kiln %sources ~]  ``noun+!>(sources)
       [%x %kiln %pikes ~]
@@ -527,7 +551,7 @@
 ::
 ++  poke
   |=  [=mark =vase]
-  ?>  |(=(src our) =(%kiln-change-source mark))
+  ?>  |(=(src our) =(%kiln-jump-ask mark))
   ?+  mark  ~|([%poke-kiln-bad-mark mark] !!)
     %kiln-autocommit         =;(f (f !<(_+<.f vase)) poke-autocommit)
     %kiln-bump               =;(f (f !<(_+<.f vase)) poke-bump)
@@ -543,8 +567,9 @@
     %kiln-label              =;(f (f !<(_+<.f vase)) poke-label)
     %kiln-merge              =;(f (f !<(_+<.f vase)) poke-merge)
     %kiln-mount              =;(f (f !<(_+<.f vase)) poke-mount)
-    %kiln-change-source      =;(f (f !<(_+<.f vase)) poke-change-source)
-    %kiln-change-publisher   =;(f (f !<(_+<.f vase)) poke-change-publisher)
+    %kiln-jump-ask           =;(f (f !<(_+<.f vase)) poke-jump-ask)
+    %kiln-jump-opt           =;(f (f !<(_+<.f vase)) poke-jump-opt)
+    %kiln-jump-propose       =;(f (f !<(_+<.f vase)) poke-jump-propose)
     %kiln-nuke               =;(f (f !<(_+<.f vase)) poke-nuke)
     %kiln-pause              =;(f (f !<(_+<.f vase)) poke-pause)
     %kiln-permission         =;(f (f !<(_+<.f vase)) poke-permission)
@@ -733,7 +758,7 @@
     abet:(spam leaf+- ~)
   abet:(emit %pass /mount %arvo %c [%mont pot u.bem])
 ::
-++  poke-change-publisher
+++  poke-jump-propose
   |=  [syd=desk her=ship sud=desk]
   ?:  =([our syd] [her sud])
     abet
@@ -751,14 +776,40 @@
   %-  emil
   %+  turn  ~(tap in ships)
   |=  =ship
-  :*  %pass  /kiln/change-publisher  %agent  [ship %hood]
-      %poke  %kiln-change-source  !>([[our syd] [her sud]])
+  :*  %pass  /kiln/jump-propose  %agent  [ship %hood]
+      %poke  %kiln-jump-ask  !>([[our syd] [her sud]])
   ==
 ::
-++  poke-change-source
+++  poke-jump-ask
   |=  [old=dock new=dock]
   ?>  |(=(src p.old) =(src our))
-  ?:  =(old new)  abet
+  ?:  =(old new)
+    ?~  had=(~(get by hop) old)
+      abet
+    =.  hop  (~(del by hop) old)
+    abet:(emit %give %fact ~[/jumps] %kiln-jump !>([%nay old u.had]))
+  ?~  (skim ~(tap by sources) |=(kiln-sync =(old [her sud])))
+    ~>  %slog.(fmt "no syncs from {<p.old>}/{(trip q.old)}")
+    abet
+  =.  hop  (~(put by hop) old new)
+  abet:(emit %give %fact ~[/jumps] %kiln-jump !>([%add old new]))
+::
+++  poke-jump-opt
+  |=  [old=dock new=dock yea=?]
+  ?~  got=(~(get by hop) old)
+    ~>  %slog.(fmt "no jump request for {<p.old>}/{(trip q.old)}")
+    abet
+  ?.  =(new u.got)
+    =/  txt-old  "{<p.old>}/{(trip q.old)}"
+    =/  txt-new  "{<p.new>}/{(trip q.new)}"
+    ~>  %slog.(fmt "no jump request from {txt-old} to {txt-new}")
+    abet
+  ?.  yea
+    =/  txt-old  "{<p.old>}/{(trip q.old)}"
+    =/  txt-new  "{<p.new>}/{(trip q.new)}"
+    ~>  %slog.(fmt "denied jump from {txt-old} to {txt-new}")
+    =.  hop  (~(del by hop) old)
+    abet:(emit %give %fact ~[/jumps] %kiln-jump !>([%nay old new]))
   =/  old-sources=(list kiln-sync)
     (skim ~(tap by sources) |=(kiln-sync =(old [her sud])))
   =/  new-sources=(list kiln-sync)
@@ -767,6 +818,8 @@
     |-
     ?~  old-sources  zyn
     $(old-sources t.old-sources, zyn (~(del by zyn) i.old-sources))
+  =.  hop  (~(del by hop) old)
+  =.  ..abet  (emit %give %fact ~[/jumps] %kiln-jump !>([%yea old new]))
   =<  abet
   |-  ^+  ..abet
   ?~  new-sources  ..abet
@@ -900,10 +953,12 @@
 ++  peer
   |=  =path
   ?>  (team:title our src)
-  ?:  =(0 1)  abet  ::  avoid mint-vain
   ?+    path  ~|(kiln-path/path !!)
       [%vats ~]
     (mean leaf+"kiln: old subscription to /kiln/vats failed" ~)
+  ::
+      [%jumps ~]
+    abet:(emit %give %fact ~ %kiln-jump !>([%all hop]))
   ==
 ::
 ++  take-agent

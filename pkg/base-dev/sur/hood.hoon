@@ -10,7 +10,14 @@
   ==
 ::
 +$  pikes  (map desk pike)
-::
+::  $jump: changes to update source change requests
+::      
++$  jump
+  $%  [%all all=(map dock dock)]        :: pending requests
+      [%add old=dock new=dock]          :: new request
+      [%yea old=dock new=dock]          :: approved
+      [%nay old=dock new=dock]          :: denied
+  ==
 ::  $rung: reference to upstream commit
 ::
 +$  rung  [=aeon =weft]
