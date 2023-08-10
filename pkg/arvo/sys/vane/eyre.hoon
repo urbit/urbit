@@ -2433,7 +2433,7 @@
           ^-  move
           %-  (trace 1 |.("subscribing to {<app>} on {<path>}"))
           %+  deal-as
-            (subscription-wire channel-id request-id ship app)
+            (subscription-wire channel-id request-id from ship app)
           [from ship app %watch path]
         ::
         =.  session.channel-state.state
@@ -2472,7 +2472,7 @@
           =,  u.maybe-subscription
           %-  (trace 1 |.("leaving subscription to {<app>}"))
           %+  deal-as
-            (subscription-wire channel-id subscription-id ship app)
+            (subscription-wire channel-id subscription-id from ship app)
           [from ship app %leave ~]
         ::
         =.  session.channel-state.state
@@ -2508,7 +2508,7 @@
       ::
       ?.  ?&  !(~(has by session.channel-state.state) channel-id)
               ?=(?(%fact %watch-ack) -.sign)
-              ?=([@ @ ~] extra)
+              ?=([@ @ *] extra)
           ==
         (emit-event channel-id request-id sign)
       =/  =ship     (slav %p i.extra)
@@ -2518,10 +2518,14 @@
       :_  state
       :_  ~
       ^-  move
+      =/  as=^ship
+        ?+  t.t.extra  ~|([%strange-wire extra] !!)
+          ~      our  ::  old-style wire
+          [@ ~]  (slav %p i.t.t.extra)
+        ==
       %+  deal-as
-        (subscription-wire channel-id request-id ship app)
-      =+  id=identity:(~(got by session.channel-state.state) channel-id)
-      [id ship app %leave ~]
+        (subscription-wire channel-id request-id as ship app)
+      [as ship app %leave ~]
     ::  +emit-event: records an event occurred, possibly sending to client
     ::
     ::    When an event occurs, we need to record it, even if we immediately
@@ -2623,7 +2627,7 @@
         =+  (~(got by subscriptions.u.channel) request-id)
         %-  (trace 1 |.("leaving subscription to {<app>}"))
         %+  deal-as
-          (subscription-wire channel-id request-id ship app)
+          (subscription-wire channel-id request-id identity.u.channel ship app)
         [identity.u.channel ship app %leave ~]
       ::  update channel state to reflect the %kick
       ::
@@ -2834,7 +2838,7 @@
       ^-  move
       %-  (trace 1 |.("{<channel-id>} leaving subscription to {<app>}"))
       %+  deal-as
-        (subscription-wire channel-id request-id ship app)
+        (subscription-wire channel-id request-id identity.session ship app)
       [identity.session ship app %leave ~]
     --
   ::  +handle-gall-error: a call to +poke-http-response resulted in a %coup
@@ -3200,9 +3204,17 @@
   /channel/subscription/[channel-id]/(scot %ud request-id)
 ::
 ++  subscription-wire
-  |=  [channel-id=@t request-id=@ud =ship app=term]
+  |=  [channel-id=@t request-id=@ud as=$@(@p identity) =ship app=term]
   ^-  wire
-  (weld (channel-wire channel-id request-id) /(scot %p ship)/[app])
+  =/  from=@p
+    ?@  as  as
+    ?+(-.as who.as %ours our)
+  %+  weld  (channel-wire channel-id request-id)
+  ::NOTE  including the originating identity is important for the band-aid
+  ::      solution currently present in +on-gall-response, where we may
+  ::      need to issue a %leave after we've forgotten the identity with
+  ::      which the subscription was opened.
+  /(scot %p ship)/[app]/(scot %p from)
 --
 ::  end the =~
 ::
