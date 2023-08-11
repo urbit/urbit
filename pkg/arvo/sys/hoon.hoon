@@ -9238,21 +9238,21 @@
     ::
     ++  mint
       |=  gol=type
+      =-  ?>(?|(!vet (nest(sut gol) & p.-)) -)
       ^-  (pair type nock)
       =+  lug=(find %read hyp)
       ?:  ?=(%| -.lug)  ~>(%mean.'hoon' ?>(?=(~ rig) p.lug))
-      =-  ?>(?|(!vet (nest(sut gol) & p.-)) -)
       (ergo p.lug rig)
     ::
     ++  mull
       |=  [gol=type dox=type]
-      ^-  [type type]
+      =-  ?>(?|(!vet (nest(sut gol) & p.-)) -)
+      ^-  (pair type type)
       =+  lug=[p=(find %read hyp) q=(find(sut dox) %read hyp)]
       ?:  ?=(%| -.p.lug)
         ?>   &(?=(%| -.q.lug) ?=(~ rig))
         [p.p.p.lug p.p.q.lug]
       ?>  ?=(%& -.q.lug)
-      =-  ?>(?|(!vet (nest(sut gol) & p.-)) -)
       (endo [p.p.lug p.q.lug] dox rig)
     --
   ::
