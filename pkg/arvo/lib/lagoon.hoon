@@ -96,9 +96,10 @@
   ++  get-item  ::  extract item at index .dex
     |=  [=ray dex=(list @)]
     ^-  @ux
+    =/  len  (^sub (roll shape.meta.ray ^mul) 1)
     %^    cut
-        bloq.meta.ray 
-      [(get-bloq-offset -.ray dex) 1] 
+        bloq.meta.ray
+      [(^sub len (get-bloq-offset -.ray dex)) 1]
     data.ray
   ::
   ++  set-item  ::  set item at index .dex to .val
@@ -106,10 +107,41 @@
     ^+  ray
     =/  len  (^sub (roll shape.meta.ray ^mul) 1)
     :-  -.ray
-    %^    sew 
+    %^    sew
         bloq.meta.ray
-      [(get-bloq-offset -.ray dex) 1 val] 
+      [(^sub len (get-bloq-offset -.ray dex)) 1 val]
     data.ray
+  ::
+  ++  get-row
+    |=  [a=ray dex=(list @)]
+    ^-  ray
+    ?>  =(+((lent dex)) (lent shape.meta.a))
+    =/  res
+      %-  zeros
+      :+  ~[1 (snag 0 (flop shape.meta.a))]
+          bloq.meta.a
+          kind.meta.a
+    =/  idx  0
+    |-  ^-  ray
+    ?:  =((snag 0 (flop shape.meta.res)) idx)  res
+    =/  val  (get-item a (weld dex ~[idx]))
+    $(idx +(idx), res (set-item res ~[0 idx] val))
+  ::
+  ++  set-row
+    |=  [a=ray dex=(list @) row=ray]
+    ^-  ray
+    ?>  =(+((lent dex)) (lent shape.meta.a))
+    ?>  =((lent shape.meta.row) 2)
+    ?>  =(1 (snag 0 shape.meta.row))
+    ?>  =((snag 1 shape.meta.row) (snag 0 (flop shape.meta.a)))
+    =/  idx  0
+    |-  ^-  ray
+    ?:  =((snag 1 shape.meta.row) idx)  a
+    %=  $
+      idx  +(idx)
+      a    (set-item a (weld dex ~[idx]) (get-item row ~[0 idx]))
+    ==
+
   ::
   ++  get-bloq-offset  ::  get bloq offset of n-dimensional index
     |=  [=meta dex=(list @)]
@@ -482,12 +514,74 @@
     $(ali +.ali, p (fun p -.ali))
   ::
   ++  reshape
-    |=  [a=ray shape=(list @)]  ^-  ray
+    |=  [a=ray shape=(list @)]
+    ^-  ray
     =/  in-cnt  (reel shape.meta.a ^mul)
     =/  out-cnt  (reel shape ^mul)
     ?>  =(in-cnt out-cnt)
     =.  shape.meta.a  shape
     a
+  ::  stack along dimension (0 row, 1 col, 2 lay, etc.)
+  ++  stack
+    |=  [a=ray b=ray dim=@ud]
+    ^-  ray
+    ::  check same dims overall
+    ?>  =((lent shape.meta.a) (lent shape.meta.b))
+    ::  check same dims other than target dim
+    ?>  =/  idx  0
+      |-  ^-  ?
+      ?:  =(idx (lent shape.meta.a))  %.y
+      ?:  =(dim idx)  $(idx +(idx))
+      ?.  =((snag idx shape.meta.a) (snag idx shape.meta.b))
+        %.n
+      $(idx +(idx))
+    ::  TODO revisit
+    ?>  (^lte dim (lent shape.meta.a))
+    =|  c=ray
+    ?:  =(0 dim)
+      =.  meta.c  meta.a
+      =.  shape.meta.c
+        :-  (^add (snag dim shape.meta.a) (snag dim shape.meta.b))
+            +.shape.meta.a
+      =.  data.c  (con (lsh [bloq.meta.a (roll shape.meta.a ^mul)] data.a) data:(unspac b))
+      c
+    ?:  =(1 dim)
+      =.  meta.c  meta.a
+      =.  shape.meta.c
+        (snap shape.meta.c dim (^add (snag dim shape.meta.a) (snag dim shape.meta.b)))
+      =/  c  (zeros meta.c)
+      =/  idx  0
+      |-  ^-  ray
+      ?:  =((snag 0 (flop shape.meta.a)) idx)  c
+      =/  off  (weld (snip (snip shape.meta.a)) ~[idx])
+      =/  row-a  (get-row a off)
+      =/  row-b  (get-row b off)
+      =/  data-c  (con (lsh [bloq.meta.a (snag 1 shape.meta.row-a)] data.row-a) data:(unspac row-b))
+      =/  meta-c=meta  meta.row-a
+      =.  shape.meta-c  (snap shape.meta-c dim (^add (snag dim shape.meta.row-a) (snag dim shape.meta.row-b)))
+      =/  row-c=ray  (spac [meta-c data-c])
+      ~&  >  idx
+      ~&  >  off
+      ~&  >  row-a
+      ~&  >  row-b
+      ~&  >  (unspac row-b)
+      ~&  >>  row-c
+      ~&  >>>  c
+      %=  $
+        idx  +(idx)
+        c    (set-row c off row-c)
+      ==
+    !!
+  ::
+  ++  hstack
+    |=  [a=ray b=ray]
+    ^-  ray
+    (stack a b 1)
+  ::
+  ++  vstack
+    |=  [a=ray b=ray]
+    ^-  ray
+    (stack a b 0)
   ::
   ++  transpose
     |=  a=ray  ^-  ray
