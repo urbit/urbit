@@ -141,7 +141,16 @@
       idx  +(idx)
       a    (set-item a (weld dex ~[idx]) (get-item row ~[0 idx]))
     ==
-
+  :: only works for 2D
+  ++  get-col
+    |=  [a=ray dex=(list @)]
+    ^-  ray
+    (get-row (transpose a) dex)
+  ::
+  ++  set-col
+    |=  [a=ray dex=(list @) col=ray]
+    ^-  ray
+    (transpose (set-row (transpose a) dex col))
   ::
   ++  get-bloq-offset  ::  get bloq offset of n-dimensional index
     |=  [=meta dex=(list @)]
@@ -283,7 +292,7 @@
   ++  scalar-to-ray
     |=  [=meta data=@]
     ^-  ray
-    =.  shape.meta  ~[1]
+    =.  shape.meta  (reap (lent shape.meta) 1)
     %-  spac
     [meta data]
   ::
@@ -623,8 +632,6 @@
   ::
   ++  mmul
     |=  [a=ray b=ray]
-    =/  ar  (ravel a)
-    =/  br  (ravel b)
     =/  i  0
     =/  j  0
     =/  k  0
@@ -657,10 +664,10 @@
               k  +(k)
               cume
             %+  (fun-scalar bloq.meta.a kind.meta.a %add)
-              cume 
+              cume
             %+  (fun-scalar bloq.meta.a kind.meta.a %mul)
-              (snag (get-bloq-offset meta.a `(list @)`~[i k]) ar)
-            (snag (get-bloq-offset meta.b `(list @)`~[k j]) br)
+              (get-item a ~[i k])
+            (get-item b ~[k j])
           ==
         ==
       ==
