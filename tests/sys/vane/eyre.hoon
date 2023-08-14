@@ -724,7 +724,7 @@
   ;<  ~  bind:m  (wait ~h12)
   =/  wire  /channel/timeout/'0123456789abcdef'
   ;<  mos=(list move)  bind:m  (take wire ~[/http-blah] %behn %wake ~)
-  =/  wire  /channel/subscription/'0123456789abcdef'/1/~nul/two
+  =/  wire  /channel/subscription/'0123456789abcdef'/1/~nul/two/~nul
   (expect-moves mos (ex-gall-deal wire ~nul %two %leave ~) ~)
 ::
 ++  test-channel-results-before-open
@@ -739,7 +739,7 @@
   ;<  ~  bind:m  (expect-moves mos ~)
   ::  subscription gets a success message
   ::
-  =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+  =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two/~nul
   ;<  mos=(list move)  bind:m
     (take wire ~[/http-blah] %gall %unto %watch-ack ~)
   ;<  ~  bind:m  (expect-moves mos ~)
@@ -827,7 +827,7 @@
   ;<  ~  bind:m  (wait ~m1)
   ::  subscription gets a success message
   ::
-  =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+  =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two/~nul
   ;<  mos=(list move)  bind:m
     (take wire ~[/http-blah] %gall %unto %watch-ack ~)
   ;<  ~  bind:m  (expect-moves mos ~)
@@ -842,7 +842,7 @@
       "subscription": 1}
     ]
     '''
-  =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+  =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two/~nul
   =/  mov-1  (ex-gall-deal wire ~nul %two %leave ~)
   =/  mov-2  ex-204
   =/  mov-3  (ex-rest /channel/timeout/'0123456789abcdef' ~1111.1.2..12.00.00)
@@ -862,7 +862,7 @@
   ;<  ~  bind:m  (wait ~m1)
   ::  subscription gets a success message
   ::
-  =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+  =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two/~nul
   ;<  mos=(list move)  bind:m
     (take wire ~[/http-blah] %gall %unto %watch-ack ~)
   ;<  ~  bind:m  (expect-moves mos ~)
@@ -879,7 +879,7 @@
       "path": "/one/two/three"}
     ]
     '''
-  =/  wire  /channel/subscription/'0123456789abcdef'/'2'/~nul/two
+  =/  wire  /channel/subscription/'0123456789abcdef'/'2'/~nul/two/~nul
   =/  mov-1  (ex-gall-deal wire ~nul %two %watch /one/two/three)
   =/  mov-2  ex-204
   =/  mov-3  (ex-rest /channel/timeout/'0123456789abcdef' ~1111.1.2..12.00.00)
@@ -887,13 +887,13 @@
   ::  subscription gets 2 results
   ::
   ;<  mos=(list move)  bind:m
-    =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+    =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two/~nul
     =/  =cage  [%json !>(`json`[%a [%n '1'] [%n '2'] ~])]
     (take wire ~[/http-blah] %gall %unto %fact cage)
   ;<  ~  bind:m  (expect-moves mos ~)
   ::
   ;<  mos=(list move)  bind:m
-    =/  wire  /channel/subscription/'0123456789abcdef'/'2'/~nul/two
+    =/  wire  /channel/subscription/'0123456789abcdef'/'2'/~nul/two/~nul
     =/  =cage  [%json !>(`json`[%a [%n '1'] [%n '2'] ~])]
     (take wire ~[/http-blah] %gall %unto %fact cage)
   ;<  ~  bind:m  (expect-moves mos ~)
@@ -934,7 +934,7 @@
       "subscription": 1}
     ]
     '''
-  =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+  =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two/~nul
   =/  mov-1  (ex-gall-deal wire ~nul %two %leave ~)
   =/  mov-2  ex-204
   ;<  ~  bind:m  (expect-moves mos mov-1 mov-2 ~)
@@ -944,7 +944,7 @@
   ::    unsubscribe to the other.
   ::
   ;<  mos=(list move)  bind:m
-    =/  wire  /channel/subscription/'0123456789abcdef'/'2'/~nul/two
+    =/  wire  /channel/subscription/'0123456789abcdef'/'2'/~nul/two/~nul
     =/  =cage  [%json !>(`json`[%a [%n '1'] [%n '2'] ~])]
     (take wire ~[/http-blah] %gall %unto %fact cage)
   =/  mov-1
@@ -993,7 +993,7 @@
   ;<  ~  bind:m  (expect-moves mos ~)
   ::  subscription gets a success message
   ::
-  =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+  =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two/~nul
   ;<  mos=(list move)  bind:m
     (take wire ~[/http-blah] %gall %unto %watch-ack ~)
   ;<  ~  bind:m  (expect-moves mos ~)
@@ -1024,7 +1024,7 @@
   ::  first subscription result gets sent to the user
   ::
   ;<  mos=(list move)  bind:m
-    =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+    =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two/~nul
     =/  =cage  [%json !>(`json`[%a [%n '1'] ~])]
     (take wire ~[/http-blah] %gall %unto %fact cage)
   =/  mov-1
@@ -1060,7 +1060,7 @@
   ::  another subscription result while the user is disconnected
   ::
   ;<  mos=(list move)  bind:m
-    =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+    =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two/~nul
     =/  =cage  [%json !>(`json`[%a [%n '2'] ~])]
     (take wire ~[/http-blah] %gall %unto %fact cage)
   ;<  ~  bind:m  (expect-moves mos ~)
@@ -1097,7 +1097,7 @@
   ;<  ~  bind:m  (wait (add ~s1 clog-timeout:eyre-gate))
   ::  subscription gets a success message
   ::
-  =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+  =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two/~nul
   ;<  mos=(list move)  bind:m
     (take wire ~[/http-blah] %gall %unto %watch-ack ~)
   ;<  ~  bind:m  (expect-moves mos ~)
@@ -1113,14 +1113,14 @@
   =*  loop-fact  $
   ?.  =(cur max)
     ;<  tested-elsewhere=(list move)  bind:m
-      =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+      =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two/~nul
       =/  =cage  [%json !>(`json`[%a [%n '1'] ~])]
       (take wire ~[/http-blah] %gall %unto %fact cage)
     loop-fact(cur +(cur))
   ::  the next subscription result should trigger a clog
   ::
   ;<  mos=(list move)  bind:m
-    =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+    =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two/~nul
     =/  =cage  [%json !>(`json`[%a [%n '1'] ~])]
     (take wire ~[/http-blah] %gall %unto %fact cage)
   =/  mov-1
@@ -1132,7 +1132,7 @@
 
 
     """
-  =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+  =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two/~nul
   =/  mov-2  (ex-gall-deal wire ~nul %two %leave ~)
   =/  mov-3
     %-  ex-continue-response  :_  %.n  :-  ~
@@ -1148,7 +1148,7 @@
   ::  the same event in which a clog triggered, should be silently ignored
   ::
   ;<  mos=(list move)  bind:m
-    =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+    =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two/~nul
     =/  =cage  [%json !>(`json`[%a [%n '1'] ~])]
     (take wire ~[/http-blah] %gall %unto %fact cage)
   (expect-moves mos ~)
@@ -1543,7 +1543,7 @@
     %^  ex-gall-deal  /channel/poke/'0123456789abcdef'/'0'  ~nul
     [%one %poke-as %a %json !>([%n '5'])]
   =/  mov-2
-    %^  ex-gall-deal  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+    %^  ex-gall-deal  /channel/subscription/'0123456789abcdef'/'1'/~nul/two/~nul
       ~nul
     [%two %watch /one/two/three]
   =/  mov-3  (ex-response 204 ['set-cookie' cookie-string]~ ~)
