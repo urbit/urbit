@@ -560,13 +560,6 @@
       =/  meta-c=meta  meta.row-a
       =.  shape.meta-c  (snap shape.meta-c dim (^add (snag dim shape.meta.row-a) (snag dim shape.meta.row-b)))
       =/  row-c=ray  (spac [meta-c data-c])
-      ~&  >  idx
-      ~&  >  off
-      ~&  >  row-a
-      ~&  >  row-b
-      ~&  >  (unspac row-b)
-      ~&  >>  row-c
-      ~&  >>>  c
       %=  $
         idx  +(idx)
         c    (set-row c off row-c)
