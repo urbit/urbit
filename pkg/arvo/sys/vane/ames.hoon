@@ -2427,7 +2427,9 @@
           ?~  peer-state  core
           %-  ~(rep by snd.u.peer-state)
           |=  [[=bone =message-pump-state] cor=_core]
-          ?.  =(~m2 rto.metrics.packet-pump-state.message-pump-state)
+          ?.  ?&  =(~m2 rto.metrics.packet-pump-state.message-pump-state)
+                  ?=(^ next-wake.packet-pump-state.message-pump-state)
+              ==
             cor
           abet:(on-wake:(abed-peer:pe:cor ship u.peer-state) bone error)
         ::
