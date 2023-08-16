@@ -1543,7 +1543,7 @@
       ++  on-bad-nonce
         |=  stored-nonce=@
         %.  ap-core
-        %-  slog  :~
+        %+  trace  odd.veb.bug.state  :~
           =/  nonces  [expected=stored-nonce got=nonce]
           =/  ok  |(?=(?(%fact %kick) -.sign) =(~ p.sign))
           leaf+"{<agent-name>}: stale {<-.sign>} {<nonces>} ok={<ok>}"
