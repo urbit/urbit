@@ -3706,79 +3706,47 @@
             ::    metrics, possibly re-sending skipped packets. Otherwise, no-op
             ::
             ++  on-hear
-              |=  [=message-num =fragment-num]
+              |=  key=[=message-num =fragment-num]
               ^+  pack
-              ::
-              =-  ::  if no sent packet matches the ack,
-                  ::  don't apply mutations or effects
-                  ::
-                  ?.  found.-
-                    %-  (pu-trace snd.veb |.("miss {<show:gauge>}"))
-                    pack
-                  ::
-                  =.  metrics.state  metrics.-
-                  =.  live.state     live.-
-                  %-  ?.  ?|  =(0 fragment-num)
-                              =(0 (mod counter.metrics.state 20))
-                          ==
-                        same
-                      %+  pu-trace  snd.veb
-                      |.("send: {<fragment=fragment-num show:gauge>}")
-                  ::  .resends is backward, so fold backward and emit
-                  ::
-                  =.  peer-core
-                    %+  reel  resends.-
-                    |=  [packet=static-fragment core=_peer-core]
-                    (send-shut-packet bone [message-num %& +]:packet)
-                  (fast-resend-after-ack message-num fragment-num)
-              ::
-              =/  acc
-                :*  found=`?`%.n
-                    resends=*(list static-fragment)
-                    ::  num-live is still present in pump-metrics but not used
-                    ::  internally by |ga, so we reuse it the +dip traversal to
-                    ::  keep track of the number of packets waiting acks
-                    ::  (also used in the accumulator in +on-done:pu)
-                    ::
-                    metrics=metrics.state(num-live ~(wyt by live.state))
-                ==
-              ::
-              ^+  [acc live=live.state]
-              ::
-              %^  (dip:packet-queue _acc)  live.state  acc
-              |=  $:  acc=_acc
-                      key=live-packet-key
-                      val=live-packet-val
-                  ==
-              ^-  [new-val=(unit live-packet-val) stop=? _acc]
-              ::
-              =/  gauge  (ga metrics.acc num-live.metrics.acc)
-              ::  is this the acked packet?
-              ::
-              ?:  =(key [message-num fragment-num])
-                ::  delete acked packet, update metrics, and stop traversal
+              =/  gauge  (ga metrics.state ~(wyt by live.state))
+              =/  found  (get:packet-queue live.state key)
+              =.  pack
+                ?~  first=(pry:packet-queue live.state)
+                  pack
+                =*  packet  val.u.first
+                ?:  =(key.u.first key)
+                  pack
+                ::  is this a duplicate ack?
                 ::
-                =.             found.acc  %.y
-                =.           metrics.acc  (on-ack:gauge -.val)
-                =.  num-live.metrics.acc  (dec num-live.metrics.acc)
-                [new-val=~ stop=%.y acc]
-              ::  is this a duplicate ack?
-              ::
-              ?.  (lte-packets key [message-num fragment-num])
-                ::  stop, nothing more to do
+                ?.  (lte-packets key.u.first key)
+                  pack
+                ::  ack is not for the first packet in the queue
                 ::
-                [new-val=`val stop=%.y acc]
-              ::  ack was on later packet; mark skipped, tell gauge, & continue
+                =^  resend=?  metrics.state
+                  (on-skipped-packet:gauge -.packet)
+                ?.  resend
+                  pack
+                =.  tries.packet      +(tries.packet)
+                =.  last-sent.packet  now
+                =.  live.state        (put:packet-queue live.state u.first)
+                %-  ?.  ?&  ?=(^ found)
+                            ?|  =(0 fragment-num)
+                            =(0 (mod counter.metrics.state 20))
+                        ==  ==
+                      same
+                    %+  pu-trace  snd.veb
+                    |.("send: {<fragment=fragment-num.key show:gauge>}")
+                =.  peer-core
+                  =/  =static-fragment  (to-static-fragment [key val]:u.first)
+                  (send-shut-packet bone [message-num %& +]:static-fragment)
+                pack
               ::
-              =.  skips.val  +(skips.val)
-              =^  resend  metrics.acc  (on-skipped-packet:gauge -.val)
-              ?.  resend
-                [new-val=`val stop=%.n acc]
-              ::
-              =.  last-sent.val  now.channel
-              =.  tries.val      +(tries.val)
-              =.  resends.acc    [(to-static-fragment key val) resends.acc]
-              [new-val=`val stop=%.n acc]
+              ?~  found
+                %.  pack
+                (pu-trace snd.veb |.("miss {<show:gauge>}"))
+              =.  metrics.state  (on-ack:gauge -.u.found)
+              =.     live.state  +:(del:packet-queue live.state key)
+              (fast-resend-after-ack key)
             ::  +on-done: apply ack to all packets from .message-num
             ::
             ++  on-done
