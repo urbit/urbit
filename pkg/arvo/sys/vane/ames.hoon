@@ -579,7 +579,7 @@
       crypto-core=acru:ames
       =bug
       snub=[form=?(%allow %deny) ships=(set ship)]
-      cong=[msg=@ud mem=@ud]
+      cong=[msg=_5 mem=_100.000]
   ==
 ::
 +$  azimuth-state    [=symmetric-key =life =rift =public-key sponsor=ship]
@@ -1084,6 +1084,7 @@
       snub=[form=?(%allow %deny) ships=(set ship)]
       cong=[msg=@ud mem=@ud]
   ==
++$  ames-state-15  ames-state-14
 ::  $bug: debug printing configuration
 ::
 ::    veb: verbosity toggles
@@ -1224,7 +1225,8 @@
             [%12 ames-state-12]
             [%13 ames-state-13]
             [%14 ames-state-14]
-            [%15 ^ames-state]
+            [%15 ames-state-15]
+            [%16 ^ames-state]
         ==
     ::
     |=  [now=@da eny=@ rof=roof]
@@ -1347,7 +1349,7 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%15 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%16 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
           $%  $:  %4
@@ -1428,6 +1430,13 @@
                   [%adult state=ames-state-14]
               ==  ==
               $:  %15
+              $%  $:  %larva
+                      events=(qeu queued-event)
+                      state=ames-state-15
+                  ==
+                  [%adult state=ames-state-15]
+              ==  ==
+              $:  %16
               $%  $:  %larva
                       events=(qeu queued-event)
                       state=_ames-state.adult-gate
@@ -1552,12 +1561,23 @@
         =.  queued-events  events.old
         larval-gate
       ::
-          [%15 %adult *]  (load:adult-core %15 state.old)
+          [%15 %adult *]
+        =.  cached-state  `[%15 state.old]
+        ~>  %slog.0^leaf/"ames: larva reload"
+        larval-gate
       ::
           [%15 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
+        =.  cached-state  `[%15 state.old]
         =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %15 state.old)
+        larval-gate
+      ::
+          [%16 %adult *]  (load:adult-core %16 state.old)
+      ::
+          [%16 %larva *]
+        ~>  %slog.1^leaf/"ames: larva: load"
+        =.  queued-events  events.old
+        =.  adult-gate     (load:adult-core %16 state.old)
         larval-gate
       ==
       ::
@@ -1604,7 +1624,9 @@
         14+(state-13-to-14:load:adult-core +.u.cached-state)
       =?  u.cached-state  ?=(%14 -.u.cached-state)
         15+(state-14-to-15:load:adult-core +.u.cached-state)
-      ?>  ?=(%15 -.u.cached-state)
+      =?  u.cached-state  ?=(%15 -.u.cached-state)
+        16+(state-15-to-16:load:adult-core +.u.cached-state)
+      ?>  ?=(%16 -.u.cached-state)
       =.  ames-state.adult-gate  +.u.cached-state
       [moz larval-core(cached-state ~)]
     --
@@ -4708,15 +4730,15 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%15 %adult ames-state]
+++  stay  [%16 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
   =<  |=  $=  old-state
-          $%  [%15 ^ames-state]
+          $%  [%16 ^ames-state]
           ==
       ^+  ames-gate
-      ?>  ?=(%15 -.old-state)
+      ?>  ?=(%16 -.old-state)
       ames-gate(ames-state +.old-state)
   ::  all state transitions are called from larval ames
   ::
@@ -4877,11 +4899,16 @@
   ::
   ++  state-14-to-15
     |=  old=ames-state-14
-    ^-  ^ames-state
+    ^-  ames-state-15
     =.  rift.old
       !<  =rift
       q:(need (need (rof ~ %j `beam`[[our %rift %da now] /(scot %p our)])))
     old
+  ::
+  ++  state-15-to-16
+    |=  old=ames-state-15
+    ^-  ^ames-state
+    old(cong ?.(=(cong.old [0 0]) cong.old [5 100.000]))
   --
 ::  +scry: dereference namespace
 ::
