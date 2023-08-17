@@ -4946,7 +4946,7 @@
   ++  state-15-to-16
     |=  old=ames-state-15
     ^-  ^ames-state
-    old(cong [5 100.000])
+    old(cong ?.(=(cong.old [0 0]) cong.old [5 100.000]))
   --
 ::  +scry: dereference namespace
 ::
