@@ -577,8 +577,8 @@
         ::
         ?~  err
           (mo-pass sys+wire %a %cork ship)
-        ::  if first time hearing a %nack for a %leave, after upgrade,
-        ::  set up timer
+        ::  if first time hearing a %nack for a %leave, after upgrade
+        ::  or if all outstanding %leaves have been handled, set up timer
         ::
         =?  mo-core  ?=(~ leaves.state)
           (mo-emit [/gall]~ %pass /nacked-leaves %b %wait `@da`(add now ~m2))
@@ -2380,9 +2380,10 @@
     [[duct %give gift]~ gall-payload]
   ::
   ?:  ?=([%nacked-leaves ~] wire)
-    =;  core=_(mo-abed:mo ~)
-      =<  mo-abet
-      (mo-emit:core [/gall]~ %pass /nacked-leaves %b %wait `@da`(add now ~m2))
+    ::  next time a %leave gets nacked, the state and timer will be reset again.
+    ::
+    =.  leaves.state  ~
+    =<  mo-abet
     %-  ~(rep by outstanding.state)
     |=  [[[=^wire =^duct] stand=(qeu remote-request)] core=_(mo-abed:mo ~)]
     ?:  =(~ stand)  core
