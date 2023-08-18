@@ -568,9 +568,13 @@
       =bug
       snub=[form=?(%allow %deny) ships=(set ship)]
       cong=[msg=_5 mem=_100.000]
-      dead=(unit [=duct =wire date=@da])
-  ==
+    ::
+      $=  dead
+      $:  flow=[%flow (unit dead-timer)]
+          cork=[%cork (unit dead-timer)]
+  ==  ==
 ::
++$  dead-timer       [=duct =wire date=@da]
 +$  azimuth-state    [=symmetric-key =life =rift =public-key sponsor=ship]
 +$  azimuth-state-6  [=symmetric-key =life =public-key sponsor=ship]
 +$  ames-state-4   ames-state-5
@@ -1781,9 +1785,20 @@
         16+(state-15-to-16:load:adult-core +.u.cached-state)
       =^  moz  u.cached-state
         ?.  ?=(%16 -.u.cached-state)  [~ u.cached-state]
+        :_  17+(state-16-to-17:load:adult-core +.u.cached-state)
         ~>  %slog.0^leaf/"ames: init dead flow consolidation timer"
-        :-  [[/ames]~ %pass /dead-flow %b %wait `@da`(add now ~m2)]~
-        17+(state-16-to-17:load:adult-core +.u.cached-state)
+        :-  [[/ames]~ %pass /dead-flow %b %wait `@da`(add now ~m2)]
+        ?^  moz  moz  ::  if we have just added the timer in state-7-to-8, skip
+        =;  recork-timer=(list [@da duct])
+          ?^  recork-timer  ~
+          ~>  %slog.0^leaf/"ames: init daily recork timer"
+          [[/ames]~ %pass /recork %b %wait `@da`(add now ~d1)]~
+        %+  skim
+          ;;  (list [@da duct])
+          =<  q.q  %-  need  %-  need
+          (rof ~ /ames %bx [[our %$ da+now] /debug/timers])
+        |=([@da =duct] ?=([[%ames %recork *] *] duct))
+      ::
       ?>  ?=(%17 -.u.cached-state)
       =.  ames-state.adult-gate  +.u.cached-state
       [moz larval-core(cached-state ~)]
@@ -2817,11 +2832,13 @@
         ::
         =*  duct  unix-duct.ames-state
         ::
-        =/  dead-moves=(list move)
-          ?:  ?=(^ dead.ames-state)  ~
-          [~[/ames] %pass /dead-flow %b %wait `@da`(add now ~m2)]~
-        =?  dead.ames-state  ?=(~ dead.ames-state)
-          `[~[/ames] /dead-flow `@da`(add now ~m2)]
+        =^  dead-moves  dead.ames-state
+          ?.  ?=([~ ~] [+.flow +.cork]:dead.ames-state)
+            `dead.ames-state
+            :-  :-  [~[/ames] %pass /dead-flow %b %wait `@da`(add now ~m2)]
+                [~[/ames] %pass /recork %b %wait `@da`(add now ~d1)]~
+            :-  flow/`[~[/ames] /dead-flow `@da`(add now ~m2)]
+            cork/`[~[/ames] /recork `@da`(add now ~d1)]
         ::
         %-  emil
         %+  weld
@@ -4979,7 +4996,7 @@
   ::  all state transitions are called from larval ames
   ::
   |%
-  ::
+  ++  our-beam  `beam`[[our %rift %da now] /(scot %p our)]
   ++  state-4-to-5
     |=  ames-state=ames-state-4
     ^-  ames-state-5
@@ -5094,9 +5111,7 @@
   ++  state-12-to-13
     |=  old=ames-state-12
     ^-  ames-state-13
-    =+  !<  =rift
-        =/  =beam  [[our %rift %da now] /(scot %p our)]
-        q:(need (need (rof ~ /ames %j beam)))
+    =+  !<(=rift q:(need (need (rof ~ /ames %j our-beam))))
     =+  pk=sec:ex:crypto-core.old
     :*  peers=(~(run by peers.old) ship-state-12-to-13)
         unix-duct.old
@@ -5138,10 +5153,7 @@
   ++  state-14-to-15
     |=  old=ames-state-14
     ^-  ames-state-15
-    =.  rift.old
-      !<  =rift
-      q:(need (need (rof ~ /ames %j `beam`[[our %rift %da now] /(scot %p our)])))
-    old
+    old(rift !<(=rift q:(need (need (rof ~ /ames %j our-beam)))))
   ::
   ++  state-15-to-16
     |=  old=ames-state-15
@@ -5154,7 +5166,10 @@
     |=  old=ames-state-16
     ^-  ^ames-state
     %=    old
-      cong  [cong.old `[~[/ames] /dead-flow `@da`(add now ~m2)]]
+        cong
+      :+  cong.old
+        flow/`[~[/ames] /dead-flow `@da`(add now ~m2)]
+      cork/`[~[/ames] /recork `@da`(add now ~d1)]
       ::
         peers
       %-  ~(run by peers.old)
