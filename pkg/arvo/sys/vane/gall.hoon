@@ -2380,14 +2380,14 @@
     [[duct %give gift]~ gall-payload]
   ::
   ?:  ?=([%nacked-leaves ~] wire)
-    ::  next time a %leave gets nacked, the state and timer will be reset again.
-    ::
-    =.  leaves.state  ~
-    =<  mo-abet
+    =;  core=_mo-core:mo
+      ::  next time a %leave gets nacked, the state and timer will be set again.
+      ::
+      mo-abet:core(leaves.state ~)
     %-  ~(rep by outstanding.state)
-    |=  [[[=^wire =^duct] stand=(qeu remote-request)] core=_(mo-abed:mo ~)]
+    |=  [[[=^wire =^duct] stand=(qeu remote-request)] core=_mo-core:mo]
     ?:  =(~ stand)  core
-    =^  rr  stand  ~(get to stand)
+    =^  rr  stand   ~(get to stand)
     ::  sanity check in the outstanding queue:
     ::  if there's a %leave, that should be the only request
     ::
