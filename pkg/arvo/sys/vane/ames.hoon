@@ -2454,7 +2454,8 @@
         ::
         ?:  ?=([%dead-flow ~] wire)
           =;  cor=event-core
-            =.  dead.ames-state.cor  `[~[/ames] /dead-flow `@da`(add now ~m2)]
+            =.  flow.dead.ames-state.cor
+              flow/`[~[/ames] /dead-flow `@da`(add now ~m2)]
             (emit:cor duct %pass /dead-flow %b %wait `@da`(add now ~m2))
           %-  ~(rep by peers.ames-state)
           |=  [[=ship =ship-state] core=_event-core]
@@ -2494,6 +2495,8 @@
           ==
         ::
         =.  event-core  (emit duct %pass /recork %b %wait `@da`(add now ~d1))
+        =.  cork.dead.ames-state
+          cork/`[~[/ames] /recork `@da`(add now ~d1)]
         ::
         ?^  error
           %-  (slog 'ames: recork timer failed' u.error)
