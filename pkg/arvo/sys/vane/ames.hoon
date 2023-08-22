@@ -172,7 +172,7 @@
   (cue (rep packet-size (flop sorted)))
 ::  +jim: caching +jam
 ::
-++  jim  |=(n=* ~+((jam n)))
+++  jim  |=(n=* ~>(%memo./ames/jam (jam n)))
 ++  spit
   |=  =path
   ^-  [pat=@t wid=@ud]
@@ -3185,7 +3185,7 @@
             ~>  %slog.0^leaf/"ames: ignoring message on corked bone {<bone>}"
             peer-core
           ::
-          =/  =message-blob  (dedup-message (jim payload))
+          =/  =message-blob  (jim payload)
           =.  peer-core      abet:(call:(abed:mu bone) %memo message-blob)
           ::
           ?:  ?&  =(%boon valence)
@@ -3307,38 +3307,6 @@
           recork-one
         ::
         +|  %implementation
-        ::  +dedup-message: replace with any existing copy of this message
-        ::
-        ++  dedup-message
-          |=  =message-blob
-          ^+  message-blob
-          ?:  (lte (met 13 message-blob) 1)
-            message-blob
-          =/  peers-l=(list [=ship =ship-state])  ~(tap by peers.ames-state)
-          |-  ^+  message-blob
-          =*  peer-loop  $
-          ?~  peers-l
-            message-blob
-          ?.  ?=(%known -.ship-state.i.peers-l)
-            peer-loop(peers-l t.peers-l)
-          =/  snd-l=(list [=bone =message-pump-state])
-            ~(tap by snd.ship-state.i.peers-l)
-          |-  ^+  message-blob
-          =*  bone-loop  $
-          ?~  snd-l      peer-loop(peers-l t.peers-l)
-          =*  unsent-fragments  unsent-fragments.message-pump-state.i.snd-l
-          =/  blob-l=(list ^message-blob)
-            ~(tap to unsent-messages.message-pump-state.i.snd-l)
-          |-  ^+  message-blob
-          =*  blob-loop  $
-          ?^  blob-l
-            ?:  =(i.blob-l message-blob)
-              i.blob-l
-            blob-loop(blob-l t.blob-l)
-          ?~  unsent-fragments  bone-loop(snd-l t.snd-l)
-          ?:  =(message-blob fragment.i.unsent-fragments)
-            `@`fragment.i.unsent-fragments
-          bone-loop(snd-l t.snd-l)
         ::  +check-clog: notify clients if peer has stopped responding
         ::
         ++  check-clog
