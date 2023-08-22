@@ -2518,13 +2518,18 @@
       :_  state
       :_  ~
       ^-  move
-      =/  as=^ship
+      =/  [as=@p old=?]
         ?+  t.t.extra  ~|([%strange-wire extra] !!)
-          ~      our  ::  old-style wire
-          [@ ~]  (slav %p i.t.t.extra)
+          ~      [our &]
+          [@ ~]  [(slav %p i.t.t.extra) |]
         ==
+      =/  =wire  (subscription-wire channel-id request-id as ship app)
       %+  deal-as
-        (subscription-wire channel-id request-id as ship app)
+        ::NOTE  we previously used a wire format that had the local identity
+        ::      implicit, instead of explicit at the end of the wire. if we
+        ::      detect we used the old wire here, we must re-use that format
+        ::      (without id in the wire) for sending the %leave.
+        ?:(old (snip wire) wire)
       [as ship app %leave ~]
     ::  +emit-event: records an event occurred, possibly sending to client
     ::
