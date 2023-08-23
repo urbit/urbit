@@ -3,7 +3,7 @@
 |%
 +|  %global
 ::
-++  arvo  %237
+++  arvo  %236
 ::
 ::  $arch: node identity
 ::  $axal: fundamental node, recursive (trie)
@@ -175,18 +175,8 @@
 ::  $wisp: arvo task, larval stage
 ::  $wynn: kelvin stack
 ::
-+$  debt
-  $:  ::  run: list of worklists
-      ::  out: pending output
-      ::  kel: kernel files
-      ::  fil: pending files
-      ::
-      run=(list plan)
-      out=(list ovum)
-      kel=(list (pair path (cask)))
-      fil=(list (pair path (cask)))
-  ==
-+$  germ  [vane=term bars=(list [@tD duct])]
++$  debt  debt:k236:versions
++$  germ  germ:k236:versions
 +$  grub
   $:  ::  who: identity once we know it
       ::  eny: entropy once we learn it
@@ -207,12 +197,13 @@
       van=(map term (trap vase))
   ==
 +$  heir
-  $%  $:  %grub
-          $%  [?(%240 %239 %238 %237) =grub]
-      ==  ==
-      [?(%240 %239 %238 %237) =debt =soul]
-  ==
-+$  plan  (pair germ (list move))
+   $%  $:  %grub
+           $%  [?(%240 %239 %238 %237) =grub]
+       ==  ==
+       [?(%240 %239 %238 %237) =debt:k237:versions =soul]
+       [%236 =debt:k236:versions =soul]
+   ==
++$  plan  plan:k236:versions
 +$  soul
   $:  ::  identity, time, entropy
       ::  fad: configuration
@@ -246,6 +237,50 @@
   ==
 +$  vane  [=vase =worm]
 +$  vere  [[non=@ta rev=path] kel=wynn]
+::
+++  versions
+  |%
+  ++  k237
+    |%
+    +$  plan  (pair germ (list move))
+    +$  germ  [vane=term bars=(list duct)]
+    +$  debt
+      $:  run=(list plan)
+          out=(list ovum)
+          kel=(list (pair path (cask)))
+          fil=(list (pair path (cask)))
+      ==
+    --
+  ++  k236
+    |%
+    +$  plan  (pair germ (list move))
+    +$  germ  [vane=term bars=(list [@tD duct])]
+    +$  debt
+      $:  ::  run: list of worklists
+          ::  out: pending output
+          ::  kel: kernel files
+          ::  fil: pending files
+          ::
+          run=(list plan)
+          out=(list ovum)
+          kel=(list (pair path (cask)))
+          fil=(list (pair path (cask)))
+      ==
+    ++  debt-from-k237
+      |=  d=debt:k237
+      ^-  debt
+      d(run (turn run.d plan-from-k237))
+    ++  plan-from-k237
+      |=  p=plan:k237
+      ^-  plan
+      p(p (germ-from-k237 p.p))
+    ++  germ-from-k237
+      |=  g=germ:k237
+      ^-  germ
+      g(bars (turn bars.g (lead '~')))
+    --
+  --
+::
 +$  vile
   $:  typ=type    ::  -:!>(*type)
       duc=type    ::  -:!>(*duct)
@@ -1783,6 +1818,7 @@
   =.  sol
     ?-  -.hir
       ?(%240 %239 %238 %237)  soul.hir
+      %236  soul.hir
     ==
   ::  clear compiler caches
   ::
@@ -1797,8 +1833,13 @@
       ==
   ::  restore working state and resume
   ::
+  =/  det
+    ?-  -.hir
+      ?(%240 %239 %238 %237)  (debt-from-k237:k236:versions debt.hir)
+      %236  debt.hir
+    ==
   =/  zef=(each (pair (list ovum) soul) (trap ^))
-    loop:(~(jump le:part [pit vil] sol) debt.hir)
+    loop:(~(jump le:part [pit vil] sol) det)
   ?-  -.zef
     %&  [p.p.zef ..load(sol q.p.zef)]
     %|  $:p.zef
