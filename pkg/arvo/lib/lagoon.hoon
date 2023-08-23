@@ -88,43 +88,58 @@
     |=  [dims=(list (unit @)) a=ray]
     ^-  ray
     =/  baum  (de-ray a)
-    =/  meta  meta.a
-    ::  Cut out dims we take all of.
-    =.  shape.meta
-      |^
-      ^-  (list @)
-      %+  murn
-        (zip dims `(list @)`shape.meta.a)
-      |=([p=(unit @) q=@] ?~(p `q ~))
-      ++  zip
-        !:  |*  [p=(list) q=(list)]
-        ^-  (list (pair _(snag 0 p) _(snag 0 q)))
-        =|  res=(list (pair _(snag 0 p) _(snag 0 q)))
-        =/  idx  0
-        =/  num  (^min (lent p) (lent q))
-        |-
-        ?:  =(num idx)  (flop res)
-        %=  $
-          res  [[(snag 0 p) (snag 0 q)] res]
-          p    (slag 1 p)
-          q    (slag 1 q)
-          idx  +(idx)
-        ==
-      --
     %+  en-ray
-      meta
-    =/  shape-meta  (slag 1 shape.meta)
-    =/  meta-r  [shape-meta kind.meta bloq.meta prec.meta]
+      :*  ::  Cut out dims we take all of.
+          |^
+          ^-  (list @)
+          %+  murn
+            (zip dims `(list @)`shape.meta.a)
+          |=([p=(unit @) q=@] ?~(p `q ~))
+          ++  zip
+            !:  |*  [p=(list) q=(list)]
+            ^-  (list (pair _(snag 0 p) _(snag 0 q)))
+            =|  res=(list (pair _(snag 0 p) _(snag 0 q)))
+            =/  idx  0
+            =/  num  (^min (lent p) (lent q))
+            |-
+            ?:  =(num idx)  (flop res)
+            %=  $
+              res  [[(snag 0 p) (snag 0 q)] res]
+              p    (slag 1 p)
+              q    (slag 1 q)
+              idx  +(idx)
+            ==
+          --
+        bloq.meta.a
+        kind.meta.a
+        prec.meta.a
+      ==
+    ^-  ndray
+    =/  meta-r  [(slag 1 shape.meta.a) bloq.meta.a kind.meta.a prec.meta.a]
+    ?:  =(1 (lent dims))
+      ::  is the head null or an index?
+      ?~  (snag 0 `(list (unit @))`dims)
+        ::  if null, return whole dimension
+        ;;(ndray (snag 0 ;;((list) data.baum)))
+      ;;(ndray (snag (need (snag 0 dims)) ;;((list) data.baum)))
     ::  is the head null or an index?
-    ?~  (snag 0 dims)
+    ?~  (snag 0 `(list (unit @))`dims)
       ::  if null, return whole dimension
-      %+  slice
-        (slag 1 dims)
-      (en-ray `^baum`[meta-r `ndray`(slag 1 ;;((list) data.baum))])
-    ::  if index, grab one slice
-    %+  slice
-      (slag 1 dims)
-    (en-ray `^baum`[meta-r (snag (need (snag 0 dims)) data.baum)])
+      %=  $
+        dims  `(list (unit @))`(slag 1 dims)
+        a     `ray`(en-ray `^baum`[meta-r ;;(ndray (slag 1 ;;((list) data.baum)))])
+      ==
+    %=  $
+      dims  `(list (unit @))`(slag 1 dims)
+      a     `ray`(en-ray `^baum`[meta-r ;;(ndray (zing ~[(snag (need (snag 0 dims)) ;;((list) data.baum))] (slag +((need (snag 0 dims))) ;;((list) data.baum))))])
+    ==
+    ::   %+  slice
+    ::     (slag 1 dims)
+    ::   (en-ray `^baum`[meta-r ;;(ndray (slag 1 ;;((list) data.baum)))])
+    :: ::  if index, grab one slice
+    :: %+  slice
+    ::   (slag 1 dims)
+    :: (en-ray `^baum`[meta-r ;;(ndray (snag (need (snag 0 dims)) ;;((list) data.baum)))])
 
     :: ?:  =(1 (lent dims))
 
@@ -136,7 +151,7 @@
     ::   :: otherwise, we grab the particular element
     ::   ;;(ndray (snag (need off) ;;((list @) data.baum)))
     :: =/  shape-meta  (slag 1 shape.meta)
-    :: =/  meta-r  [shape-meta kind.meta bloq.meta prec.meta]
+    :: =/  meta-r  [shape-meta bloq.meta kind.meta prec.meta]
     :: ?~  (snag 0 dims)
     ::   (slice (slag 1 dims) (en-ray [meta-r data.baum]))
     :: (slice (slag 1 dims) (en-ray (snag (need (snag 0 dims)) ;;((list @) data.baum))))
