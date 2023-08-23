@@ -79,7 +79,7 @@
     %+  turn  (gulf 0 (snag 0 shape))
     |=  idx=@
     ^-  tank
-    (to-tank (slice (zing ~[~[idx] (reap (lent +.shape) ~)]) a))
+    (to-tank (slice (zing ~[~[`idx] (reap (lent +.shape) ~)]) a))
     ::(sell [%atom kind.meta.a ~] i)
   ::  Retrieve submatrix as slice at dims;
   ::  follows dimensionality of dims
@@ -96,7 +96,7 @@
             (zip dims `(list @)`shape.meta.a)
           |=([p=(unit @) q=@] ?~(p `q ~))
           ++  zip
-            !:  |*  [p=(list) q=(list)]
+            |*  [p=(list) q=(list)]
             ^-  (list (pair _(snag 0 p) _(snag 0 q)))
             =|  res=(list (pair _(snag 0 p) _(snag 0 q)))
             =/  idx  0
@@ -125,10 +125,12 @@
     ::  is the head null or an index?
     ?~  (snag 0 `(list (unit @))`dims)
       ::  if null, return whole dimension
+      =<  -<
       %=  $
         dims  `(list (unit @))`(slag 1 dims)
         a     `ray`(en-ray `^baum`[meta-r ;;(ndray (slag 1 ;;((list) data.baum)))])
       ==
+    =<  -<
     %=  $
       dims  `(list (unit @))`(slag 1 dims)
       a     `ray`(en-ray `^baum`[meta-r ;;(ndray (zing ~[(snag (need (snag 0 dims)) ;;((list) data.baum))] (slag +((need (snag 0 dims))) ;;((list) data.baum))))])
