@@ -1294,7 +1294,7 @@
           :^  %pass  [vane.gem vane]
             ?:  ?=(?(%deal %deal-gall) +>-.task)
               :-  :-  +>-.task
-                  ;;([[ship ship] term term] [+>+< +>+>- +>+>+<]:task)
+                  ;;([[ship ship path] term term] [+>+< +>+>- +>+>+<]:task)
               wire
             [(symp +>-.task) wire]
           duct
