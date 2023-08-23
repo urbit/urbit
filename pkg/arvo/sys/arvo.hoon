@@ -352,7 +352,9 @@
   ?~  dat=(rof lyc pov u.mon)  ~
   ?~  u.dat  [~ ~]
   =*  vax  q.u.u.dat
-  ?.  ?&  ?=(^ ref)
+  ?.  =>  [ref=ref vax=p=p.vax hoon-version=hoon-version wa=wa worm=worm]
+      ~>  %memo./arvo/look                  ::  with memoization
+      ?&  ?=(^ ref)
           =(hoon-version -.ref)
           -:(~(nets wa *worm) +.ref p.vax)
       ==
