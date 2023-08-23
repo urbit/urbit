@@ -8,42 +8,42 @@
   ::
   ::  Metadata
   ::
-  +$  ray  ::     $ray:  n-dimensional array
-    $:  =meta     ::  descriptor
-        data=@ux  ::  data, row-major order
+  +$  ray               ::  $ray:  n-dimensional array
+    $:  =meta           ::  descriptor
+        data=@ux        ::  data, row-major order
     ==
   ::
-  +$  meta  ::          $meta:  metadata for a $ray
+  +$  meta              ::  $meta:  metadata for a $ray
     $:  shape=(list @)  ::  list of dimension lengths
         =bloq           ::  logarithm of bitwidth
         =kind           ::  name of data type
+        prec=(unit @)   ::  fixed-precision scale
     ==
   ::
-  +$  kind
-    $?  %float
-        %unsigned
-        %signed
-        %complex
-        %posit
-        %fixed
+  +$  kind              ::  $kind:  type of array scalars
+    $?  %float          ::  IEEE 754 float
+        %unsigned       ::  unsigned integer
+        %signed         ::  2s-complement integer
+        %complex        ::  BLAS-compatible packed floats
+        %posit          ::  unum/posit
+        %fixed          ::  fixed-precision
     ==
   ::
-  +$  baum  ::          $baum:  ndray with metadata
-    $:  =meta  
-        data=ndray
+  +$  baum              ::  $baum:  ndray with metadata
+    $:  =meta           ::
+        data=ndray      ::
     ==
   ::
-  +$  ndray  ::        $ndray:  n-dimensional array as a nested list
-      $@  @         ::  single item
-      (list ndray)  ::  nonempty list of children, in row-major order
+  +$  ndray             ::  $ndray:  n-dim array as nested list
+      $@  @             ::  single item
+      (list ndray)      ::  nonempty list of children, in row-major order
   ::
   ::  Utilities
   ::
-  ++  print
-    |=  a=ray
-    ~>  %slog.1^(to-tank a)
-    ~
-  ++  slog  |=(a=ray (^slog (to-tank a) ~))
+  ++  print  |=(a=ray ~>(%slog.1^(to-tank a) ~))
+  ::
+  ++  slog   |=(a=ray (^slog (to-tank a) ~))
+  ::
   ++  to-tank  ::  TODO nest dimensions
     |=  a=ray
     ^-  tank
@@ -72,7 +72,74 @@
     %+  turn  (ravel a)
     |=  i=@
     ^-  tank
-    (sell [%atom kind.meta.a ~] i)
+    ::  recurse on +to-tank until a 2D case is reached
+    :+  %rose  [" " "[" "]\0a"]
+    ^-  (list tank)
+    =,  meta.a
+    %+  turn  (gulf 0 (snag 0 shape))
+    |=  idx=@
+    ^-  tank
+    (to-tank (slice (zing ~[~[idx] (reap (lent +.shape) ~)]) a))
+    ::(sell [%atom kind.meta.a ~] i)
+  ::  Retrieve submatrix as slice at dims;
+  ::  follows dimensionality of dims
+  ::
+  ++  slice
+    |=  [dims=(list (unit @)) a=ray]
+    ^-  ray
+    =/  baum  (de-ray a)
+    =/  meta  meta.a
+    ::  Cut out dims we take all of.
+    =.  shape.meta
+      |^
+      ^-  (list @)
+      %+  murn
+        (zip dims `(list @)`shape.meta.a)
+      |=([p=(unit @) q=@] ?~(p `q ~))
+      ++  zip
+        !:  |*  [p=(list) q=(list)]
+        ^-  (list (pair _(snag 0 p) _(snag 0 q)))
+        =|  res=(list (pair _(snag 0 p) _(snag 0 q)))
+        =/  idx  0
+        =/  num  (^min (lent p) (lent q))
+        |-
+        ?:  =(num idx)  (flop res)
+        %=  $
+          res  [[(snag 0 p) (snag 0 q)] res]
+          p    (slag 1 p)
+          q    (slag 1 q)
+          idx  +(idx)
+        ==
+      --
+    %+  en-ray
+      meta
+    =/  shape-meta  (slag 1 shape.meta)
+    =/  meta-r  [shape-meta kind.meta bloq.meta prec.meta]
+    ::  is the head null or an index?
+    ?~  (snag 0 dims)
+      ::  if null, return whole dimension
+      %+  slice
+        (slag 1 dims)
+      (en-ray `^baum`[meta-r `ndray`(slag 1 ;;((list) data.baum))])
+    ::  if index, grab one slice
+    %+  slice
+      (slag 1 dims)
+    (en-ray `^baum`[meta-r (snag (need (snag 0 dims)) data.baum)])
+
+    :: ?:  =(1 (lent dims))
+
+    :: ::  if we're at the last dimension, then return it
+    :: ?:  =(1 (lent dims))
+    ::   :: if null, we want all along this dim
+    ::   =/  off  (snag 0 dims)
+    ::   ?~  off  baum
+    ::   :: otherwise, we grab the particular element
+    ::   ;;(ndray (snag (need off) ;;((list @) data.baum)))
+    :: =/  shape-meta  (slag 1 shape.meta)
+    :: =/  meta-r  [shape-meta kind.meta bloq.meta prec.meta]
+    :: ?~  (snag 0 dims)
+    ::   (slice (slag 1 dims) (en-ray [meta-r data.baum]))
+    :: (slice (slag 1 dims) (en-ray (snag (need (snag 0 dims)) ;;((list @) data.baum))))
   ::  Produce dime-style term version of appropriate aura.
   ::
   ++  get-term
@@ -99,28 +166,31 @@
     =/  len  (^sub (roll shape.meta.ray ^mul) 1)
     %^    cut
         bloq.meta.ray
-      [(^sub len (get-bloq-offset -.ray dex)) 1]
+      [(^sub len (get-bloq-offset meta.ray dex)) 1]
     data.ray
   ::
   ++  set-item  ::  set item at index .dex to .val
     |=  [=ray dex=(list @) val=@]
     ^+  ray
     =/  len  (^sub (roll shape.meta.ray ^mul) 1)
-    :-  -.ray
+    :-  meta.ray
     %^    sew
         bloq.meta.ray
-      [(^sub len (get-bloq-offset -.ray dex)) 1 val]
+      [(^sub len (get-bloq-offset meta.ray dex)) 1 val]
     data.ray
   ::
   ++  get-row
     |=  [a=ray dex=(list @)]
     ^-  ray
-    ?>  =(+((lent dex)) (lent shape.meta.a))
+    =,  meta.a
+    ?>  =(+((lent dex)) (lent shape))
     =/  res
       %-  zeros
-      :+  ~[1 (snag 0 (flop shape.meta.a))]
-          bloq.meta.a
-          kind.meta.a
+      :*  ~[1 (snag 0 (flop shape))]
+          bloq
+          kind
+          prec
+      ==
     =/  idx  0
     |-  ^-  ray
     ?:  =((snag 0 (flop shape.meta.res)) idx)  res
@@ -174,20 +244,34 @@
       cof  (^mul cof i.sap)
       ret  (^add ret (^mul i.dex cof))
     ==
+  ::  Return the stride in each dimension:  row, col, layer, &c.
+  ::  The stride is reported in units of bloq.
   ::
+  ++  strides
+    |=  =meta
+    ^-  (list @)
+    =/  idx  0
+    =|  res=(list @)
+    |-  ^-  (list @)
+    ?~  shape.meta  (flop res)
+    =/  stride  (roll (scag idx `(list @)`shape.meta) ^mul)
+    %=  $
+      idx         +(idx)
+      shape.meta  t.shape.meta
+      res         [(^mul (^pow 2 bloq.meta) stride) res]
+    ==
   ::
   ++  get-dim  :: convert scalar index to n-dimensional index
     |=  [shape=(list @) ind=@]
-    =/  sap  (flop shape)
+    =/  shape  (flop shape)
     =/  i=@  0
-    =|  dex=(list @)
-    ^-  (list @)
-    |-
-    ?:  (^gte i (lent sap))
-      (flop dex)
+    =|  res=(list @)
+    ?>  (^lth ind (roll shape ^mul))
+    |-  ^-  (list @)
+    ?:  (^gte i (lent shape))  (flop res)
     %=    $
-      dex  `(list @)`(snoc dex (^mod ind (snag i sap)))
-      ind  (^div ind (snag i sap))
+      res  `(list @)`(snoc res (^mod ind (snag i shape)))
+      ind  (^div ind (snag i shape))
       i    (^add i 1)
     ==
   ::
@@ -204,7 +288,7 @@
   ++  ravel
     |=  a=ray
     ^-  (list @)
-    (snip (rip bloq.meta.a data.a))
+    (flop (snip (rip bloq.meta.a data.a)))
   ::
   ++  en-ray    :: baum to ray
     |=  =baum
@@ -300,13 +384,15 @@
   ::
   ::
   ++  eye      ::  produces identity matrix of shape nxn.
-    |=  [=bloq =kind n=@]
+    |=  =meta
     ^-  ray
     ~_  leaf+"lagoon-fail"
+    =,  meta
+    =/  n  (snag 0 shape)
     =<  +
     %^    spin
         (gulf 0 (dec n))
-      ^-  ray  (zeros [~[n n] bloq kind])
+      ^-  ray  (zeros [~[n n] bloq kind prec])
     |=  [i=@ r=ray]
     [i (set-item r ~[i i] 1)]
  ::    Zeroes
@@ -544,7 +630,7 @@
       ?.  =((snag idx shape.meta.a) (snag idx shape.meta.b))
         %.n
       $(idx +(idx))
-    ::  TODO revisit
+    ::  TODO revisit this assumption/requirement
     ?>  (^lte dim (lent shape.meta.a))
     =|  c=ray
     ?:  =(0 dim)
@@ -585,27 +671,30 @@
     ^-  ray
     (stack a b 0)
   ::
+  ::
   ++  transpose
     |=  a=ray  ^-  ray
-    ?>  =(2 (lent shape.meta.a))
+    =,  meta.a
+    ?>  =(2 (lent shape))
     =/  i  0
     =/  j  0
-    =/  shape=(list @)  ~[(snag 1 shape.meta.a) (snag 0 shape.meta.a)]
-    =/  prod=ray  (zeros [shape bloq.meta.a kind.meta.a])
+    =/  shape=(list @)  ~[(snag 1 shape) (snag 0 shape)]
+    =/  prod=ray  (zeros [shape bloq kind prec])
     |-
-      ?:  =(i (snag 0 shape.meta.a))
+      ?:  =(i (snag 0 shape))
         prod
       %=  $
         i  +(i)
         prod
       |-
-        ?:  =(j (snag 1 shape.meta.a))
+        ?:  =(j (snag 1 shape))
           prod
         %=  $
           j  +(j)
           prod  (set-item prod ~[j i] (get-item a ~[i j]))
         ==
     ==
+  ::  Returns diagonal of an array.
   ::
   ++  diag
     |=  a=ray
@@ -614,7 +703,7 @@
     ?>  =(2 (lent shape))
     ?>  =(-.shape +<.shape)
     %-  en-ray
-    :-  [~[-.shape 1] bloq kind]
+    :-  `meta`[~[-.shape 1] bloq kind prec]
     %+  turn
       (flop (gulf 0 (dec -.shape)))
     |=(i=@ (get-item a ~[i i]))
@@ -636,7 +725,7 @@
     =/  j  0
     =/  k  0
     =/  shape=(list @)  ~[(snag 0 shape.meta.a) (snag 1 shape.meta.b)]
-    =/  prod=ray  (zeros [shape bloq.meta.a kind.meta.a])
+    =/  prod=ray  =,(meta.a (zeros [shape bloq kind prec]))
     ::  
     ::  multiplication conditions
     ?>
