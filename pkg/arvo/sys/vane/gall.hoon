@@ -2280,7 +2280,7 @@
         :-  `[da val]
         ?:((lte da p.r.bem) |/`val &/res)
       ==
-    ?.  ?=([~ %& *] res)  ~
+    ?.  ?=([~ %& *] res)  [~ ~]
     ``p.u.res(q !>(q.p.u.res))
   ::
   ?:  ?&  =(%t care)
