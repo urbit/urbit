@@ -246,8 +246,9 @@
   (emit %pass /helm %arvo %a %stir '')
 ::
 ++  poke-ames-kroc
-  |=  dry=?  =<  abet
-  (emit %pass /helm %arvo %a %kroc dry)
+  |=  [dry=? bones=(list [ship bone])]  =<  abet
+  ?:  dry  this
+  (emit %pass /helm %arvo %a %kroc bones)
 ::
 ++  poke-ames-cong
   |=  cong=[msg=@ud mem=@ud]  =<  abet
