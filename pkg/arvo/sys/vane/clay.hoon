@@ -4475,7 +4475,7 @@
       ^-  [(unit (unit cage)) _..park]
       =/  q  (read-q tak pax)
       ?~  q    `..park
-      ?~  u.q  `..park
+      ?~  u.q  [[~ ~] ..park]
       ::  should convert any lobe to cage
       ::
       =^  =cage  ..park
@@ -5897,7 +5897,7 @@
 ++  scry                                              ::  inspect
   ~/  %clay-scry
   ^-  roon
-  |=  [lyc=gang car=term bem=beam]
+  |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
   =*  scry-loop  $
   |^

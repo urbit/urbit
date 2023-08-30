@@ -4,18 +4,15 @@
 |%
 +$  vere-update  [cur=vere next=(unit vere)]
 ::
-:: parse out the commit suffix for people on pre-release vere
-:: these revisions look like /vere/~.2.7-de2d39b
-:: we will have better pre-release (pace) handling later
+++  parse-current-pace
+  |=  current=vere
+  ^-  @t
+  (snag 1 rev.current)
+::
 ++  parse-current-version
   |=  current=vere
   ^-  @t
-  =/  v
-    %+  rush
-      (slav %ta (rear rev.current))
-    ;~((glue hep) (star ;~(pose nud dot)) (star aln))
-  ?~  v  (slav %ta (rear rev.current))
-  (crip -.u.v)
+  (rear rev.current)
 ::
 ++  is-equal-version
   |=  [latest=@t current=vere]
@@ -25,14 +22,18 @@
 ^-  thread:spider
 |=  arg=vase
 =/  m  (strand ,vase)
-;<  latest=cord  bind:m
-  (fetch-cord:strandio "https://bootstrap.urbit.org/vere/live/last")
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 =/  cur=vere  .^(vere %$ /(scot %p our.bowl)//(scot %da now.bowl)/zen/ver)
+=/  pace=tape
+  ?:  =('once' (parse-current-pace cur))
+    "live"
+  (trip (parse-current-pace cur))
+;<  latest=cord  bind:m
+  (fetch-cord:strandio "https://bootstrap.urbit.org/vere/{pace}/last")
 =/  =vere-update
   ?:  (is-equal-version latest cur)
     [cur ~]
   =|  next=vere
-  [cur `next(rev /vere/(scot %ta latest))]
+  [cur `next(rev /vere/(crip pace)/(scot %ta latest))]
 %-  pure:m
 !>(vere-update)
