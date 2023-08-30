@@ -49,6 +49,10 @@
 +$  cage  (cask vase)
 ++  cask  |$  [a]  (pair mark a)
 +$  desk  @tas
+++  deq
+  |$  [item]
+  [hed=(list item) tal=(list item)]
+::
 +$  dock  (pair @p term)
 +$  gang  (unit (set ship))
 +$  mark  @tas
@@ -261,7 +265,7 @@
           ::  kel: kernel files
           ::  fil: pending files
           ::
-          run=(list plan)
+          run=(deq plan)
           out=(list ovum)
           kel=(list (pair path (cask)))
           fil=(list (pair path (cask)))
@@ -269,7 +273,7 @@
     ++  debt-from-k237
       |=  d=debt:k237
       ^-  debt
-      d(run (turn run.d plan-from-k237))
+      d(run [(turn run.d plan-from-k237) ~])
     ++  plan-from-k237
       |=  p=plan:k237
       ^-  plan
@@ -1252,7 +1256,7 @@
             ::  but: reboot signal
             ::
             ::
-            run=(list plan)
+            run=(deq plan)
             out=(list ovum)
             neb=_15
             gem=germ
@@ -1303,20 +1307,22 @@
     ::
     ++  emit
       |=  pan=plan
-      this(run (weld run pan ~))
+      this(tal.run [pan tal.run])
     ::  +loop: until done
     ::
     ++  loop
       ^+  abet
-      ?:  ?|  ?=(~ run)
-              ?=(^ but)
-          ==
+      ?:  ?=(^ but)
         abet
-      ?:  =(~ q.i.run)    :: XX TMI
-        loop(run t.run, neb 15)
+      =?  run  ?=(~ hed.run)
+        [(flop tal.run) ~]
+      ?:  ?=(~ hed.run)
+        abet
+      ?:  =(~ q.i.hed.run)
+        loop(hed.run t.hed.run, neb 15)
       =.  dud  ~
-      =.  gem  p.i.run
-      =^  mov=move  q.i.run  q.i.run
+      =.  gem  p.i.hed.run
+      =^  mov=move  q.i.hed.run  q.i.hed.run
       loop:(step mov)
     ::  +step: advance the loop one step by routing a move
     ::
