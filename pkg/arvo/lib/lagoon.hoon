@@ -89,6 +89,7 @@
     ^-  ray
     =/  baum  (de-ray a)
     %+  en-ray
+      ^-  meta
       :*  ::  Cut out dims we take all of.
           |^
           ^-  (list @)
@@ -110,53 +111,64 @@
               idx  +(idx)
             ==
           --
-        bloq.meta.a
-        kind.meta.a
-        prec.meta.a
+        +.meta.a
       ==
     ^-  ndray
-    =/  meta-r  [(slag 1 shape.meta.a) bloq.meta.a kind.meta.a prec.meta.a]
-    ?:  =(1 (lent dims))
-      ::  is the head null or an index?
-      ?~  (snag 0 `(list (unit @))`dims)
-        ::  if null, return whole dimension
-        ;;(ndray (snag 0 ;;((list) data.baum)))
-      ;;(ndray (snag (need (snag 0 dims)) ;;((list) data.baum)))
-    ::  is the head null or an index?
-    ?~  (snag 0 `(list (unit @))`dims)
-      ::  if null, return whole dimension
-      =<  -<
-      %=  $
-        dims  `(list (unit @))`(slag 1 dims)
-        a     `ray`(en-ray `^baum`[meta-r ;;(ndray (slag 1 ;;((list) data.baum)))])
-      ==
-    =<  -<
+    |^
+    ;;  ndray
+    =/  coords  (coordinate dims shape.meta.a)
+    %-  reshape  :_  shape.meta-r
+    ::  pre-ravel since we'll reshape above
+    =/  res  (zeros [~[(turn shape.meta-r ^mul)] +.meta.r])
+    =/  idx  0
+    =/  num  (snag 0 shape.meta.res)
+    |-
+    ?:  =(num idx)  res
     %=  $
-      dims  `(list (unit @))`(slag 1 dims)
-      a     `ray`(en-ray `^baum`[meta-r ;;(ndray (zing ~[(snag (need (snag 0 dims)) ;;((list) data.baum))] (slag +((need (snag 0 dims))) ;;((list) data.baum))))])
+      idx  +(idx)
+      res  (set-item res idx (get-item (snag idx coords)))
     ==
-    ::   %+  slice
-    ::     (slag 1 dims)
-    ::   (en-ray `^baum`[meta-r ;;(ndray (slag 1 ;;((list) data.baum)))])
-    :: ::  if index, grab one slice
-    :: %+  slice
-    ::   (slag 1 dims)
-    :: (en-ray `^baum`[meta-r ;;(ndray (snag (need (snag 0 dims)) ;;((list) data.baum)))])
+    ::  produce list of coordinates ~[~[0 0 1] ~[0 0 2]]...
+    ++  coordinate
+      |=  [dims=(list (unit @)) shape=(list @)]
+      ^-  (list (list @))
+      =/  iota=(list (list @))
+        %+  turn  (zip dims shape)
+        |=([p=(unit @) q=@] ?~(p (gulf 0 (dec q)) ~[(need p)]))
+      =|  res=(list (list @))
+      |-
+      ?~  iota  res
+      %=  $
+        res    ;;((list (list @)) (product res i.iota))
+        iota   t.iota
+      ==
+    ::
+    ++  product
+      |=  [p=(list *) q=(list *)]
+      ^-  (list (list *))
+      ?~  p  ~[q]
+      %-  zing
+      %+  turn  p
+      |=  pp=*
+      %+  turn  q
+      |=  qq=*  (weld ?@(pp ~[pp] ;;((list) pp)) ?@(qq ~[qq] ;;((list) qq)))
+    ::
+    ++  zip
+      |*  [p=(list) q=(list)]
+      ^-  (list (pair _(snag 0 p) _(snag 0 q)))
+      =|  res=(list (pair _(snag 0 p) _(snag 0 q)))
+      =/  idx  0
+      =/  num  (^min (lent p) (lent q))
+      |-
+      ?:  =(num idx)  (flop res)
+      %=  $
+        res  [[(snag 0 p) (snag 0 q)] res]
+        p    (slag 1 p)
+        q    (slag 1 q)
+        idx  +(idx)
+      ==
+    --
 
-    :: ?:  =(1 (lent dims))
-
-    :: ::  if we're at the last dimension, then return it
-    :: ?:  =(1 (lent dims))
-    ::   :: if null, we want all along this dim
-    ::   =/  off  (snag 0 dims)
-    ::   ?~  off  baum
-    ::   :: otherwise, we grab the particular element
-    ::   ;;(ndray (snag (need off) ;;((list @) data.baum)))
-    :: =/  shape-meta  (slag 1 shape.meta)
-    :: =/  meta-r  [shape-meta bloq.meta kind.meta prec.meta]
-    :: ?~  (snag 0 dims)
-    ::   (slice (slag 1 dims) (en-ray [meta-r data.baum]))
-    :: (slice (slag 1 dims) (en-ray (snag (need (snag 0 dims)) ;;((list @) data.baum))))
   ::  Produce dime-style term version of appropriate aura.
   ::
   ++  get-term
@@ -333,23 +345,31 @@
     ^-  ndray
     ::
     =,  meta.ray
+    ::  1D case
     ?:  =(1 (lent shape))
       (snip (rip bloq data.ray))
-    ::
+    ::  2D case
     ?:  =(2 (lent shape))
       =/  dims  (flop shape)
-      =|  fin=(list ndray)
+      =|  res=(list ndray)
       =|  els=ndray
       |-
-      ?:  =(0x1 data.ray)  (welp ~[;;((list ndray) els)] ;;((list ndray) fin))
+      ?:  =(0x1 data.ray)  (welp ~[;;((list ndray) els)] ;;((list ndray) res))
       %=  $
         els   (flop (rip bloq (cut bloq [0 (snag 0 dims)] data.ray)))
-        fin   ?~  els  fin
-              (welp ~[;;((list ndray) els)] ;;((list ndray) fin))
+        res   ?~  els  res
+              (welp ~[;;((list ndray) els)] ;;((list ndray) res))
         data.ray  (rsh [bloq (snag 0 dims)] data.ray)
       ==
-    ::  cut off end
-    !!
+    ::  nD case
+    =/  span  (roll `(list @)`+.shape ^mul)
+    %-  flop
+    %+  turn  (gulf 0 (dec (snag 0 shape)))
+    |=  idx=@
+    =/  data=@  (cut bloq [(^mul idx span) span] data.ray)
+    =/  =meta  [+.shape bloq kind prec]
+    +:(de-ray (spac [meta data]))
+    ::
     ++  rip
       |=  [a=bite b=@]
       ^-  (list @)
