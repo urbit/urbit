@@ -18,5 +18,4 @@
   --
 ++  grab  |%                                            ::  convert from
           ++  noun  (map knot cord)                     ::  clam from %noun
-          :: ++  elem  ,~
 --        --

@@ -6,11 +6,15 @@
 =,  mimes:html
 |_  mud=@t
 ++  grow                                                ::  convert to
-  |%  ++  mime  [/text/css (as-octs mud)]               ::  convert to %mime
-      ++  elem  ;style                                  ::  convert to %hymn
-                  ;-  (trip mud)
-                ==
-      ++  hymn  ;html:(head:"{elem}" body)
+  |%  
+  ++  mime  [/text/css (as-octs mud)]               ::  convert to %mime
+  ++  hymn                                          ::  convert to %hymn
+    |^  html
+    ++  style  ;style                                  
+                 ;-  (trip mud)
+               ==
+    ++  html   ;html:(head:"{style}" body)
+    --
   --
 ++  grab
   |%                                                    ::  convert from
