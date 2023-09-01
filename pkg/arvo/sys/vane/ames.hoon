@@ -2845,11 +2845,17 @@
             :-  flow/`[~[/ames] /dead-flow `@da`(add now ~m2)]
             cork/`[~[/ames] /recork `@da`(add now ~d1)]
         ::
+        =/  sponsors
+          ;;  (list ship)
+          =<  q.q  %-  need  %-  need
+          (rof ~ /ames %j /(scot %p our)/saxo/(scot %da now)/(scot %p our))
+        ::
         %-  emil
         %+  weld
           dead-moves
         ^-  (list move)
         :~  [duct %give %turf turfs]
+            [duct %give %saxo sponsors]
             [duct %pass /ping %g %deal [our our /ames] %ping %poke %noun !>(%kick)]
         ==
       ::  +on-vega: handle kernel reload

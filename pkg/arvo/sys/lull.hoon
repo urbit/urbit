@@ -834,6 +834,7 @@
   ::    System and Lifecycle Gifts
   ::
   ::    %turf: domain report, relayed from jael
+  ::    %saxo: our sponsor list report
   ::
   +$  gift
     $%  [%boon payload=*]
@@ -845,6 +846,7 @@
         [%tune spar roar=(unit roar)]
     ::
         [%turf turfs=(list turf)]
+        [%saxo sponsors=(list ship)]
     ==
   ::
   ::::                                                  ::  (1a2)
