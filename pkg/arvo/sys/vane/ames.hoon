@@ -1856,6 +1856,11 @@
           *peer-state
         +.u.ship-state
       ::
+      ++  get-sponsors
+        ;;  (list ship)
+        =<  q.q  %-  need  %-  need
+        (rof ~ /ames %j `beam`[[our %saxo %da now] /(scot %p our)])
+      ::
       +|  %tasks
       ::  +on-take-flub: vane not ready to process message, pretend it
       ::                 was never delivered
@@ -2677,7 +2682,7 @@
           ^+  event-core
           ::
           ?:  =(our ship)
-            event-core
+            (emit unix-duct.ames-state %give %saxo get-sponsors)
           ::
           ?~  sponsor
             %-  (slog leaf+"ames: {(scow %p ship)} lost sponsor, ignoring" ~)
@@ -2704,6 +2709,7 @@
               ::
               ?:  =(our ship)
                 =.  rift.ames-state  rift.point
+                =.  event-core  (emit unix-duct.ames-state %give %saxo get-sponsors)
                 $(points t.points)
               ::
               ?.  (~(has by keys.point) life.point)
@@ -2845,17 +2851,12 @@
             :-  flow/`[~[/ames] /dead-flow `@da`(add now ~m2)]
             cork/`[~[/ames] /recork `@da`(add now ~d1)]
         ::
-        =/  sponsors
-          ;;  (list ship)
-          =<  q.q  %-  need  %-  need
-          (rof ~ /ames %j /(scot %p our)/saxo/(scot %da now)/(scot %p our))
-        ::
         %-  emil
         %+  weld
           dead-moves
         ^-  (list move)
         :~  [duct %give %turf turfs]
-            [duct %give %saxo sponsors]
+            [duct %give %saxo get-sponsors]
             [duct %pass /ping %g %deal [our our /ames] %ping %poke %noun !>(%kick)]
         ==
       ::  +on-vega: handle kernel reload
