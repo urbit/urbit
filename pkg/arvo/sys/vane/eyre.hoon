@@ -3229,7 +3229,7 @@
 =|  ax=axle
 ::  a vane is activated with current date, entropy, and a namespace function
 ::
-|=  [now=@da eny=@uvJ rof=roof]
+|=  [now=@da eny=@uvJ tick=@ rof=roof]
 ::  allow jets to be registered within this core
 ::
 ~%  %http-server  ..part  ~

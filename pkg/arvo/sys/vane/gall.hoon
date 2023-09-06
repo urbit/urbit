@@ -193,7 +193,7 @@
 ::  adult gall vane interface, for type compatibility with pupa
 ::
 =|  state=state-14
-|=  [now=@da eny=@uvJ rof=roof]
+|=  [now=@da eny=@uvJ tick=@ rof=roof]
 =*  gall-payload  .
 ~%  %gall-top  ..part  ~
 |%
