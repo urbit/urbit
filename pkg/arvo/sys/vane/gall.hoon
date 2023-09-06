@@ -2290,6 +2290,24 @@
       [~ ~]
     [~ ~ atom+!>(u.nonce)]
   ::
+  ?:  ?&  =(%v care)
+          =([%$ %da now] coin)
+          =(our ship)
+      ==
+    =/  yok  (~(get by yokes.state) dap)
+    ?.  ?=([~ %live *] yok)
+      [~ ~]
+    =/  =egg
+      %=    u.yok
+          code   ~
+          agent
+        :-  %|
+        ?:  ?=(%| -.agent.u.yok)
+          p.agent.u.yok
+        on-save:p.agent.u.yok
+      ==
+    ``noun+!>([-:*spore egg])
+  ::
   ?:  ?&  =(%w care)
           =([%$ %da now] coin)
           =(our ship)
