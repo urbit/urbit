@@ -1185,7 +1185,7 @@
         |=  [hen=duct eny=@uvJ dud=(unit goof)]
         =*  duc  [duc.vil hen]
         =*  err  [dud.vil dud]
-        =/  sam=vane-sample  [now eny *@ rok]  ::  TODO
+        =/  sam=vane-sample  [now eny (shas %tick eny) rok]  ::  TODO
         =^  rig  sac
           ~>  %mean.'spin: activation failed'
           (~(slym wa sac) vax sam)

@@ -205,6 +205,7 @@
 =|  behn-state
 =*  state  -
 |=  [now=@da eny=@uvJ tick=@ rof=roof]
+~&  >>  [%behn-tick tick]
 =*  behn-gate  .
 ^?
 |%
