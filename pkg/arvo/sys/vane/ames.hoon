@@ -1340,7 +1340,7 @@
             [%17 ^ames-state]
         ==
     ::
-    |=  [now=@da eny=@ rof=roof]
+    |=  [now=@da eny=@ tick=@ rof=roof]
     =*  larval-gate  .
     =*  adult-core   (adult-gate +<)
     =<  |%
@@ -1811,7 +1811,7 @@
     ++  ev
       =|  moves=(list move)
       ~%  %event-gate  ..ev  ~
-      |=  [[now=@da eny=@ rof=roof] =duct =ames-state]
+      |=  [[now=@da eny=@ tick=@ rof=roof] =duct =ames-state]
       =*  veb  veb.bug.ames-state
       =|  cork-bone=(unit bone)  ::  modified by +on-kroc
       ~%  %event-core  ..$  ~
@@ -4908,7 +4908,7 @@
 ::  adult ames, after metamorphosis from larva
 ::
 =|  =ames-state
-|=  [now=@da eny=@ rof=roof]
+|=  [now=@da eny=@ tick=@ rof=roof]
 =*  ames-gate  .
 =*  veb  veb.bug.ames-state
 |%
@@ -4919,7 +4919,7 @@
   ^-  [(list move) _ames-gate]
   ::
   =/  =task       ((harden task) wrapped-task)
-  =/  event-core  (ev [now eny rof] duct ames-state)
+  =/  event-core  (ev [now eny tick rof] duct ames-state)
   ::
   =^  moves  ames-state
     =<  abet
@@ -4965,7 +4965,7 @@
   ?^  dud
     ~|(%ames-take-dud (mean tang.u.dud))
   ::
-  =/  event-core  (ev [now eny rof] duct ames-state)
+  =/  event-core  (ev [now eny tick rof] duct ames-state)
   ::
   =^  moves  ames-state
     ?:  ?=([%gall %unto *] sign)

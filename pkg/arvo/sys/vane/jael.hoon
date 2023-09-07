@@ -992,6 +992,7 @@
         ::
         now=@da
         eny=@uvJ
+        tick=@
         rof=roof
     ==
 ^?
