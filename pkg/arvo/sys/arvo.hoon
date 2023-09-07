@@ -259,7 +259,7 @@
   ++  k236
     |%
     +$  plan  (pair germ (list move))
-    +$  germ  [vane=term bars=(list [@tD duct])]
+    +$  germ  [vane=term bars=(list [@tD duct]) tick=@ux say=rook]
     +$  debt
       $:  ::  run: deq of worklists
           ::  out: pending output
@@ -282,7 +282,11 @@
     ++  germ-from-k237
       |=  g=germ:k237
       ^-  germ
-      g(bars (turn bars.g (lead '~')))
+      =|  gnew=germ
+      %=  gnew
+        vane  vane.g
+        bars  (turn bars.g (lead '~'))
+      ==
     --
   --
 ::
@@ -1303,7 +1307,7 @@
       ::
       =+  [wir car]=[/arvo vega/~]
       =.  ..this  (xeno:pith $/wir car)
-      (emit $/~ (spam:pith wir !>(car)))
+      (emit `plan`[[%$ ~ *@ *rook] (spam:pith wir !>(car))])  ::  TODO
     ::  +emit: enqueue a worklist with source
     ::
     ++  emit
@@ -1470,7 +1474,7 @@
         ;;(waif q.p.task)
       ::
       =.  way  (grow way)
-      %+  push  [way [bar duct] bars.gem]
+      %+  push  `germ`[way [[bar duct] bars.gem] *@ *rook]  ::  TODO
       ~|  bar-stack=`(list ^duct)`[duct (turn bars.gem tail)]
       %.  task
       call:(spin:(plow way) duct eny dud)
@@ -1488,7 +1492,7 @@
       ::  the caller was a vane
       ::
       =.  way  (grow way)
-      %+  push  [way [bar duct] bars.gem]
+      %+  push  `germ`[way [[bar duct] bars.gem] *@ *rook]  ::  TODO
       ::
       ::  cons source onto .gift to make a $sign
       ::
@@ -1599,7 +1603,7 @@
         ::
           %trim  =?  van.mod  =(0 p.waif)
                    (~(run by van.mod) |=(=vane vane(worm *worm)))
-                 (emit $/~ (spam /arvo !>(waif)))
+                 (emit `plan`[[%$ ~ *@ *rook] (spam /arvo !>(waif))])  ::  TODO
         ::
           %verb  ..pith(lac.fad ?~(p.waif !lac.fad u.p.waif))
           %what  ~(kel what p.waif)
@@ -1633,7 +1637,7 @@
           ~>(%mean.'pith: bad wire' !!)
         ::
         ?.  ?=(?(%crud %wack %wyrd) p.card.ovum)
-          (emit $/~ [*duct (gest ovum)] ~)
+          (emit `plan`[[%$ ~ *@ *rook] [*duct (gest ovum)] ~])  ::  TODO
         ::
         =/  buz  ~>  %mean.'pith: bad wasp'
                  ;;(wasp card.ovum)
@@ -1647,7 +1651,7 @@
                                   ?=(%wyrd (crip p.i.tang.goof.buz))
                               ==
                    ~&(%lagging &)
-                 (emit $/~ [*duct hurl/[goof.buz (gest ovum.buz)]] ~)
+                 (emit `plan`[[%$ ~ *@ *rook] [*duct hurl/[goof.buz (gest ovum.buz)]] ~])  ::  TODO
         ::
         ::  XX review
         ::
