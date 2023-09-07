@@ -194,6 +194,7 @@
 ::
 =|  state=state-14
 |=  [now=@da eny=@uvJ tick=@ rof=roof]
+~&  >>  [%gall-tick tick]
 =*  gall-payload  .
 ~%  %gall-top  ..part  ~
 |%
@@ -1341,6 +1342,7 @@
           :*  act=change.stats.yoke                   ::  tick
               eny=eny.stats.yoke                      ::  nonce
               now=time.stats.yoke                     ::  time
+              tick=tick                               ::  arvo tick
               byk=beak.yoke                           ::  source
       ==  ==
     ::  +ap-reinstall: reinstall.

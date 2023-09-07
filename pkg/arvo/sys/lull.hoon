@@ -4,7 +4,7 @@
 =>  ..part
 ~%  %lull  ..part  ~
 |%
-++  lull  %323
+++  lull  %322
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
@@ -2740,6 +2740,7 @@
         $:  act=@ud                                     ::  change number
             eny=@uvJ                                    ::  entropy
             now=@da                                     ::  current time
+            tick=@                                      ::  arvo tick
             byk=beak                                    ::  load source
     ==  ==                                              ::                                                  ::
   +$  dude  term                                        ::  server identity

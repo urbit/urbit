@@ -1149,7 +1149,7 @@
     ::
     ++  plow
       ~/  %plow
-      |=  [now=@da rok=rook]
+      |=  [now=@da eny=@uvJ rok=rook]
       ~%  %plow-core  +  ~
       |%
       ::  +peek:plow:va: read from a local namespace
@@ -1161,7 +1161,7 @@
         ^-  (unit (unit (cask meta)))
         ::  namespace reads receive no entropy
         ::
-        =/  sam=vane-sample  [now *@uvJ *@ rok]  ::  TODO
+        =/  sam=vane-sample  [now *@uvJ (shas %tick eny) rok]  ::  TODO
         =^  rig  sac
           ~>  %mean.'peek: activation failed'
           (~(slym wa sac) vax sam)
@@ -1461,7 +1461,7 @@
       ?~  van=(~(get by van.mod) way)
         ~
       %.  [lyc pov car bem]
-      peek:spin:(~(plow va [vil u.van]) now peek)
+      peek:spin:(~(plow va [vil u.van]) now eny peek)
     ::  +call: advance to target
     ::
     ++  call
@@ -1517,7 +1517,7 @@
       =/  =vane
         ~|  [%missing-vane way]
         (~(got by van.mod) way)
-      (~(plow va [vil vane]) now peek)
+      (~(plow va [vil vane]) now eny peek)
     ::
     ::  |pith: operate on arvo internals
     ::
@@ -1628,6 +1628,7 @@
           [%zen %lag ~]  ``noun/!>(lag.zen)
           [%zen %ver ~]  ``noun/!>(ver.zen)
           [%mod %fat *]  ``noun/!>((~(dip of fat.mod) t.t.s.bem))
+          [%tick ~]      ``noun/!>((shas %tick eny))
         ==
       ::
       ++  poke
