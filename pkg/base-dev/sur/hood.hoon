@@ -21,8 +21,30 @@
 ::  $rung: reference to upstream commit
 ::
 +$  rung  [=aeon =weft]
+::  #sync-record: source and destination of a kiln sync
 ::
-+$  sync-state  [nun=@ta kid=(unit desk) let=@ud]
++$  sync-record                         ::
+  $:  syd=desk                          :: local desk
+      her=ship                          :: foreign ship
+      sud=desk                          :: foreign desk
+  ==
+::
++$  sync-state                          ::
+  $:  nun=@ta                           :: nonce
+      kid=(unit desk)                   :: has kids desk too?
+      let=@ud                           :: next revision
+      nit=(unit ?)                      :: automerge or default
+      hav=(unit @ud)                    :: update available
+      yea=?                             :: update approved
+  ==
+::
++$  sync-update
+  $%  [%new for=sync-record rev=@ud]
+      [%done for=sync-record rev=@ud]
+      [%drop for=sync-record rev=@ud]
+      [%pending pending=(set [for=sync-record rev=@ud])]
+  ==
+::
 +$  sink        (unit [her=@p sud=desk kid=(unit desk) let=@ud])
 ::  +truncate-hash: get last 5 digits of hash and convert to tape
 ::
@@ -108,7 +130,7 @@
 ::  +report-vat: report on a single desk installation
 ::
 ++  report-vat
-  |=  $:  $:  tyr=rock:tire  =cone  sor=(map desk [ship desk])
+  |=  $:  $:  tyr=rock:tire  =cone  sor=(map desk (pair ship desk))
               zyn=(map [desk ship desk] sync-state)
           ==
           our=ship  now=@da  syd=desk  verb=?
@@ -144,7 +166,7 @@
       ~
     ?~  z=(~(get by zyn) syd u.s)
       ~
-    `[-.u.s +.u.s +.u.z]
+    `[p.u.s q.u.s [kid let]:u.z]
   =/  meb=(list @uv)
     ?~  sink  [hash]~
     (mergebase-hashes our syd now her.u.sink sud.u.sink)
