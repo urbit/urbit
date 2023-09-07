@@ -1450,7 +1450,6 @@
         %tas  (~(get by lab.dom) p.lok)
         %ud   ?:((gth p.lok let.dom) ~ [~ p.lok])
         %uv   `(tako-to-aeon:ze p.lok)
-        %ux   !!  ::  TODO
         %da
       ?:  (gth p.lok lim)  ~
       |-  ^-  (unit aeon)
@@ -4831,7 +4830,7 @@
     $:  ver=%14                                       ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
-|=  [now=@da eny=@uvJ tick=@ rof=roof]                ::  current invocation
+|=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
 ~%  %clay-top  ..part  ~
 |%                                                    ::
 ++  call                                              ::  handle request

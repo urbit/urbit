@@ -45,7 +45,6 @@
       [%tas p=@tas]
       [%ud p=@ud]
       [%uv p=@uv]
-      [%ux p=@ux]
   ==
 +$  cage  (cask vase)
 ++  cask  |$  [a]  (pair mark a)
@@ -261,7 +260,7 @@
     +$  plan  (pair germ (list move))
     +$  germ  [vane=term bars=(list [@tD duct])]
     +$  debt
-      $:  ::  run: deq of worklists
+      $:  ::  run: list of worklists
           ::  out: pending output
           ::  kel: kernel files
           ::  fil: pending files
@@ -1099,7 +1098,7 @@
   ++  va
     =>  ~%  %va-ctx  ..va  ~
         |%
-        +$  vane-sample  [now=@da eny=@uvJ tick=@ rof=rook]
+        +$  vane-sample  [now=@da eny=@uvJ rof=rook]
         ::
         ++  smit
           |=  [cap=tape sub=vase pax=path txt=@t]
@@ -1157,7 +1156,7 @@
         ^-  (unit (unit (cask meta)))
         ::  namespace reads receive no entropy
         ::
-        =/  sam=vane-sample  [now *@uvJ *@ rok]  ::  TODO
+        =/  sam=vane-sample  [now *@uvJ rok]
         =^  rig  sac
           ~>  %mean.'peek: activation failed'
           (~(slym wa sac) vax sam)
@@ -1181,7 +1180,7 @@
         |=  [hen=duct eny=@uvJ dud=(unit goof)]
         =*  duc  [duc.vil hen]
         =*  err  [dud.vil dud]
-        =/  sam=vane-sample  [now eny *@ rok]  ::  TODO
+        =/  sam=vane-sample  [now eny rok]
         =^  rig  sac
           ~>  %mean.'spin: activation failed'
           (~(slym wa sac) vax sam)
@@ -1250,7 +1249,7 @@
   ::
   ++  le
     ~%  %le  ..le  ~
-    =|  $:  ::  run: deq of worklists
+    =|  $:  ::  run: list of worklists
             ::  out: pending output
             ::  gem: worklist metadata
             ::  dud: propagate error
@@ -1315,9 +1314,9 @@
       ^+  abet
       ?:  ?=(^ but)
         abet
-      =?  run  =(~ hed.run)
+      =?  run  ?=(~ hed.run)
         [(flop tal.run) ~]
-      ?~  hed.run
+      ?:  ?=(~ hed.run)
         abet
       ?:  =(~ q.i.hed.run)
         loop(hed.run t.hed.run, neb 15)

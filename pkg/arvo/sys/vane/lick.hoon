@@ -22,7 +22,7 @@
 ::
 =|  lick-state
 =*  state  -
-|=  [now=@da eny=@uvJ tick=@ rof=roof]
+|=  [now=@da eny=@uvJ rof=roof]
 =*  lick-gate  .
 ^?
 |%
