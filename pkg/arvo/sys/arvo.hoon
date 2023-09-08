@@ -1149,7 +1149,7 @@
     ::
     ++  plow
       ~/  %plow
-      |=  [now=@da eny=@uvJ rok=rook]
+      |=  [now=@da tick=@ux rok=rook]
       ~%  %plow-core  +  ~
       |%
       ::  +peek:plow:va: read from a local namespace
@@ -1161,7 +1161,7 @@
         ^-  (unit (unit (cask meta)))
         ::  namespace reads receive no entropy
         ::
-        =/  sam=vane-sample  [now *@uvJ (shas %tick eny) rok]  ::  TODO
+        =/  sam=vane-sample  [now *@uvJ tick rok]  ::  TODO
         =^  rig  sac
           ~>  %mean.'peek: activation failed'
           (~(slym wa sac) vax sam)
@@ -1185,7 +1185,7 @@
         |=  [hen=duct eny=@uvJ dud=(unit goof)]
         =*  duc  [duc.vil hen]
         =*  err  [dud.vil dud]
-        =/  sam=vane-sample  [now eny (shas %tick eny) rok]  ::  TODO
+        =/  sam=vane-sample  [now eny tick rok]  ::  TODO
         =^  rig  sac
           ~>  %mean.'spin: activation failed'
           (~(slym wa sac) vax sam)
@@ -1307,7 +1307,7 @@
       ::
       =+  [wir car]=[/arvo vega/~]
       =.  ..this  (xeno:pith $/wir car)
-      (emit `plan`[[%$ ~ *@ *rook] (spam:pith wir !>(car))])  ::  TODO
+      (emit `plan`[[%$ ~ (shas %tick eny) *rook] (spam:pith wir !>(car))])  ::  TODO
     ::  +emit: enqueue a worklist with source
     ::
     ++  emit
@@ -1461,7 +1461,7 @@
       ?~  van=(~(get by van.mod) way)
         ~
       %.  [lyc pov car bem]
-      peek:spin:(~(plow va [vil u.van]) now eny peek)
+      peek:spin:(~(plow va [vil u.van]) now tick.gem peek)
     ::  +call: advance to target
     ::
     ++  call
@@ -1474,7 +1474,7 @@
         ;;(waif q.p.task)
       ::
       =.  way  (grow way)
-      %+  push  `germ`[way [[bar duct] bars.gem] *@ *rook]  ::  TODO
+      %+  push  `germ`[way [[bar duct] bars.gem] tick.gem *rook]  ::  TODO
       ~|  bar-stack=`(list ^duct)`[duct (turn bars.gem tail)]
       %.  task
       call:(spin:(plow way) duct eny dud)
@@ -1492,7 +1492,7 @@
       ::  the caller was a vane
       ::
       =.  way  (grow way)
-      %+  push  `germ`[way [[bar duct] bars.gem] *@ *rook]  ::  TODO
+      %+  push  `germ`[way [[bar duct] bars.gem] tick.gem *rook]  ::  TODO
       ::
       ::  cons source onto .gift to make a $sign
       ::
@@ -1508,7 +1508,7 @@
       =^  moz  sac
         (~(refine-moves me sac vil) zom)
       =.  van.mod  (~(put by van.mod) vane.gum [vax sac])
-      (emit `plan`[`germ`gum `(list move)`moz])
+      (emit `plan`[`germ`gum(tick +(tick.gum)) `(list move)`moz])
     ::  +plow: operate on a vane, in time and space
     ::
     ++  plow
@@ -1517,7 +1517,7 @@
       =/  =vane
         ~|  [%missing-vane way]
         (~(got by van.mod) way)
-      (~(plow va [vil vane]) now eny peek)
+      (~(plow va [vil vane]) now tick.gem peek)
     ::
     ::  |pith: operate on arvo internals
     ::
@@ -1603,7 +1603,7 @@
         ::
           %trim  =?  van.mod  =(0 p.waif)
                    (~(run by van.mod) |=(=vane vane(worm *worm)))
-                 (emit `plan`[[%$ ~ *@ *rook] (spam /arvo !>(waif))])  ::  TODO
+                 (emit `plan`[[%$ ~ (shas %tick eny) *rook] (spam /arvo !>(waif))])  ::  TODO
         ::
           %verb  ..pith(lac.fad ?~(p.waif !lac.fad u.p.waif))
           %what  ~(kel what p.waif)
@@ -1638,7 +1638,7 @@
           ~>(%mean.'pith: bad wire' !!)
         ::
         ?.  ?=(?(%crud %wack %wyrd) p.card.ovum)
-          (emit `plan`[[%$ ~ *@ *rook] [*duct (gest ovum)] ~])  ::  TODO
+          (emit `plan`[[%$ ~ (shas %tick eny) *rook] [*duct (gest ovum)] ~])  ::  TODO
         ::
         =/  buz  ~>  %mean.'pith: bad wasp'
                  ;;(wasp card.ovum)
@@ -1652,7 +1652,7 @@
                                   ?=(%wyrd (crip p.i.tang.goof.buz))
                               ==
                    ~&(%lagging &)
-                 (emit `plan`[[%$ ~ *@ *rook] [*duct hurl/[goof.buz (gest ovum.buz)]] ~])  ::  TODO
+                 (emit `plan`[[%$ ~ (shas %tick eny) *rook] [*duct hurl/[goof.buz (gest ovum.buz)]] ~])  ::  TODO
         ::
         ::  XX review
         ::
