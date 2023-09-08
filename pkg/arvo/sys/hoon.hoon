@@ -6420,6 +6420,7 @@
   ::                                            ::::::  tuples
     [%clcb p=hoon q=hoon]                               ::  :_ [q p]
     [%clkt p=hoon q=hoon r=hoon s=hoon]                 ::  :^ [p q r s]
+    [%clhx p=hoon q=hoon r=hoon s=hoon t=hoon]          ::  :# [p q r s t]
     [%clhp p=hoon q=hoon]                               ::  :- [p q]
     [%clls p=hoon q=hoon r=hoon]                        ::  :+ [p q r]
     [%clsg p=(list hoon)]                               ::  :~ [p ~]
@@ -8427,6 +8428,7 @@
                    (~(put by *(map term hoon)) %$ q.gen)
         [%brwt *]  [%ktwt %brdt p.gen]
     ::
+        [%clhx *]  [p.gen q.gen r.gen s.gen t.gen]
         [%clkt *]  [p.gen q.gen r.gen s.gen]
         [%clls *]  [p.gen q.gen r.gen]
         [%clcb *]  [q.gen p.gen]
@@ -13246,6 +13248,7 @@
                   ['-' (rune hep %clhp expb)]
                   ['~' (rune sig %clsg exps)]
                   ['*' (rune tar %cltr exps)]
+                  ['#' (rune hax %clhx exp5)]
               ==
             ==
           :-  '.'
@@ -13616,6 +13619,7 @@
     ++  expb  |.(;~(goop loaf loaf))                    ::  two hoons
     ++  expc  |.(;~(goop loaf loaf loaf))               ::  three hoons
     ++  expd  |.(;~(goop loaf loaf loaf loaf))          ::  four hoons
+    ++  exp5  |.(;~(goop loaf loaf loaf loaf loaf))     ::  five hoons
     ++  expe  |.(wisp)                                  ::  core tail
     ++  expf  |.(;~(goop ;~(pfix cen sym) loaf))        ::  %term and hoon
     ++  expg  |.(;~(gunk lomp loll loaf))               ::  term/spec, two hoons
