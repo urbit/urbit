@@ -1508,7 +1508,7 @@
       =^  moz  sac
         (~(refine-moves me sac vil) zom)
       =.  van.mod  (~(put by van.mod) vane.gum [vax sac])
-      (emit `plan`[`germ`gum(tick +(tick.gum)) `(list move)`moz])
+      (emit `plan`[`germ`gum(tick +(tick.gum), say peek) `(list move)`moz])
     ::  +plow: operate on a vane, in time and space
     ::
     ++  plow
