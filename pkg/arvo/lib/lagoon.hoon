@@ -1,3 +1,4 @@
+/+  *twoc
 ::                                                    ::
 ::::                    ++la                          ::  (2v) vector/matrix ops
 |%
@@ -947,7 +948,10 @@
       ::
         %signed  
       ?+  fun  !!
-        %add  ~(sum fe bloq)
+        %add  ~(add twoc bloq)
+        %mul  ~(mul twoc bloq)
+        %gth  ~(gth twoc bloq)
+        %lth  ~(lth twoc bloq)
       ==
       ::
         %float
@@ -998,7 +1002,6 @@
         ==
       ==
     ::
-        ::  TODO signed integers -- add new 2's complement kind?
     ==
   ::
   ++  trans-scalar
