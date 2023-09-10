@@ -39,6 +39,8 @@
       $@  @             ::  single item
       (list ndray)      ::  nonempty list of children, in row-major order
   ::
+  +$  slice  (unit [(unit @) (unit @)])
+  ::
   ::  Utilities
   ::
   ++  print  |=(a=ray ~>(%slog.1^(to-tank (ravel a) shape.meta.a kind.meta.a) ~))
@@ -83,19 +85,18 @@
     ==
   ::
   ++  squeeze  |*(a=* `(list _a)`~[a])
-  ++  slice  ::  grab a submatrix using numpy slice notation
-    |=  [sli=(list (unit [(unit @) (unit @)])) a=ray]
-    ::  
-    ::  assume shape = ~[3 3 3]
-    ::  sli:  ~[[`1 `2] [`1 ~]] -> `[[`1 `2] [`2 ~] ~]
-    ::  output shape: ~[1 2 3]
+  ++  submatrix
     ::
-    ::  sli:  ~[[`1 `2] [`1 ~] ~ [`0 `2]]
-    ::  output shape: ~[1 2 3 2]
+    ::  +submatrix: grab a submatrix using numpy slice notation, except indices are inclusive.
+    ::  If you aren't slicing the last few dimensions, you can omit them.
+    ::
+    |=  [sli=(list slice) a=ray]
+    ::
+    ::  example: sli=~[`[`1 `3] `[`1 ~] ~] is equivalent to a[1:4,1:]
     ::
     ^-  ray
     ::
-    ::  translate slice into indices to grab
+    ::  pad slice with sigs if necessary
     =?  sli  (^lth (lent sli) (lent shape.meta.a))
       (weld sli (reap (^sub (lent shape.meta.a) (lent sli)) *(unit [(unit @) (unit @)])))
     ::
@@ -109,14 +110,12 @@
     ?~  s
       (turn (gulf 0 (dec dim)) squeeze)
     =/  s2=[(unit @) (unit @)]  (need s)
-    =/  j=?(@ ~)  (fall -.s2 ~)
-    =/  k=?(@ ~)  (fall +.s2 ~)
-    =/  c=^  [j k]
+    =/  c=^  [(fall -.s2 ~) (fall +.s2 ~)]
     ^-  (list (list @))
     ?+    c  !!
-        [@ ~]  (turn (gulf j (dec dim)) squeeze)
-        [@ @]  (turn (gulf j k) squeeze)
-        [~ @]  (turn (gulf 0 k) squeeze)
+        [j=@ k=~]  (turn (gulf j.c (dec dim)) squeeze)
+        [j=@ k=@]  (turn (gulf j.c k.c) squeeze)
+        [j=~ k=@]  (turn (gulf 0 k.c) squeeze)
         [~ ~]  (turn (gulf 0 (dec dim)) squeeze)
     ==
     ::
@@ -134,7 +133,8 @@
       (gather out-indices)
     |=  dex=(list @)
     (get-item a dex)
-    ::::  construct new ray
+    ::
+    ::  construct new ray
     %-  spac
     =,  meta.a
     :-  [out-shape bloq kind prec]
@@ -147,10 +147,7 @@
     %-  zing
     %+  turn  a
     |=  ai=_-.a
-    %+  turn
-      b
-    |=  bi=_-.b
-    (welp ai bi)
+    (turn b |=(bi=_-.b (welp ai bi)))
   ::
   ++  gather
     |=  [a=(list (list (list @)))]
@@ -1046,8 +1043,6 @@
       (gulf 0 (dec (lent ali)))
     |=  i=@
     (op (snag i ali) (snag i bob))
-    ::
-        ::  TODO signed integers -- add new 2's complement kind?
 --
 --
  
