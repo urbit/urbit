@@ -82,6 +82,86 @@
       ==
     ==
   ::
+  ++  squeeze  |*(a=* `(list _a)`~[a])
+  ++  slice  ::  grab a submatrix using numpy slice notation
+    |=  [sli=(list (unit [(unit @) (unit @)])) a=ray]
+    ::  
+    ::  assume shape = ~[3 3 3]
+    ::  sli:  ~[[`1 `2] [`1 ~]] -> `[[`1 `2] [`2 ~] ~]
+    ::  output shape: ~[1 2 3]
+    ::
+    ::  sli:  ~[[`1 `2] [`1 ~] ~ [`0 `2]]
+    ::  output shape: ~[1 2 3 2]
+    ::
+    ^-  ray
+    ::
+    ::  translate slice into indices to grab
+    =?  sli  (^lth (lent sli) (lent shape.meta.a))
+      (weld sli (reap (^sub (lent shape.meta.a) (lent sli)) *(unit [(unit @) (unit @)])))
+    ::
+    ::  calculate indices to grab using cartesian product
+    =/  out-indices=(list (list (list @)))
+    %+  turn
+      (gulf 0 (dec (lent shape.meta.a)))
+    |=  i=@
+    =/  s  (snag i sli)
+    =/  dim  (snag i shape.meta.a)
+    ?~  s
+      (turn (gulf 0 (dec dim)) squeeze)
+    =/  s2=[(unit @) (unit @)]  (need s)
+    =/  j=?(@ ~)  (fall -.s2 ~)
+    =/  k=?(@ ~)  (fall +.s2 ~)
+    =/  c=^  [j k]
+    ^-  (list (list @))
+    ?+    c  !!
+        [@ ~]  (turn (gulf j (dec dim)) squeeze)
+        [@ @]  (turn (gulf j k) squeeze)
+        [~ @]  (turn (gulf 0 k) squeeze)
+        [~ ~]  (turn (gulf 0 (dec dim)) squeeze)
+    ==
+    ::
+    ::  calculate the shape of the result
+    =/  out-shape=(list @)
+    %+  turn  
+      out-indices
+    |=(inds=(list (list @)) (lent inds))
+    :: 
+    ::  grab submatrix entries from cartesian product
+    =/  new-dat=@ux
+    %+  rep  bloq.meta.a
+    %-  flop
+    %+  turn
+      (gather out-indices)
+    |=  dex=(list @)
+    (get-item a dex)
+    ::::  construct new ray
+    %-  spac
+    =,  meta.a
+    :-  [out-shape bloq kind prec]
+    new-dat
+  ::
+  ++  product  ::  cartesian product
+    |*  [a=(list) b=(list)]
+    ?~  a
+      b
+    %-  zing
+    %+  turn  a
+    |=  ai=_-.a
+    %+  turn
+      b
+    |=  bi=_-.b
+    (welp ai bi)
+  ::
+  ++  gather
+    |=  [a=(list (list (list @)))]
+    ^-  (list (list @))
+    =/  i  0
+    =|  c=(list (list @)) 
+    |-
+    ?:  =(i (lent a))
+      c
+    $(i +(i), c `(list (list @))`(product c (snag i a)))
+  ::
   ++  get-item  ::  extract item at index .dex
     |=  [=ray dex=(list @)]
     ^-  @ux
@@ -970,3 +1050,4 @@
         ::  TODO signed integers -- add new 2's complement kind?
 --
 --
+ 
