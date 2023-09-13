@@ -2122,7 +2122,7 @@
           duct-to-key.channel-state
         (~(del by duct-to-key.channel-state.state) duct)
       ==
-    ::  +set-timeout-timer-for: sets a timeout timer on a channel
+    ::  +update-timeout-timer-for: sets a timeout timer on a channel
     ::
     ::    This creates a channel if it doesn't exist, cancels existing timers
     ::    if they're already set (we cannot have duplicate timers), and (if
@@ -2196,53 +2196,76 @@
     ++  on-get-request
       |=  [channel-id=@t [session-id=@uv =identity] =request:http]
       ^-  [(list move) server-state]
-      ::  if there's no channel-id, we must 404
-      ::TODO  but arm description says otherwise?
-      ::
-      ?~  maybe-channel=(~(get by session.channel-state.state) channel-id)
-        %^  return-static-data-on-duct  404  'text/html'
-        (error-page 404 | url.request ~)
-      ::  find the channel creator's identity, make sure it matches
-      ::
-      ?.  =(identity identity.u.maybe-channel)
-        %^  return-static-data-on-duct  403  'text/html'
-        (error-page 403 | url.request ~)
-      ::  find the requested "mode" and make sure it doesn't conflict
-      ::
       =/  mode=?(%json %jam)
         (find-channel-mode %'GET' header-list.request)
-      ?.  =(mode mode.u.maybe-channel)
-        %^  return-static-data-on-duct  406  'text/html'
-        =;  msg=tape  (error-page 406 %.y url.request msg)
-        "channel already established in {(trip mode.u.maybe-channel)} mode"
-      ::  when opening an event-stream, we must cancel our timeout timer
-      ::  if there's no duct already bound. Else, kill the old request
-      ::  and replace it
-      ::
-      =^  cancel-moves  state
-        ?.  ?=([%| *] state.u.maybe-channel)
-          :_  state
-          (cancel-timeout-move channel-id p.state.u.maybe-channel)^~
-        =/  cancel-heartbeat
-          ?~  heartbeat.u.maybe-channel  ~
-          :_  ~
-          %+  cancel-heartbeat-move  channel-id
-          [date duct]:u.heartbeat.u.maybe-channel
-        =-  [(weld cancel-heartbeat -<) ->]
-        (handle-response(duct p.state.u.maybe-channel) [%cancel ~])
-      ::  the request may include a 'Last-Event-Id' header
-      ::
-      =/  maybe-last-event-id=(unit @ud)
-        ?~  maybe-raw-header=(get-header:http 'last-event-id' header-list.request)
-          ~
-        (rush u.maybe-raw-header dum:ag)
-      ::  flush events older than the passed in 'Last-Event-ID'
-      ::
-      =?  state  ?=(^ maybe-last-event-id)
-        (acknowledge-events channel-id u.maybe-last-event-id)
-      ::  combine the remaining queued events to send to the client
-      ::
-      =/  event-replay=wall
+      =^  [exit=? =wall moves=(list move)]  state
+        ::  the request may include a 'Last-Event-Id' header
+        ::
+        =/  maybe-last-event-id=(unit @ud)
+          ?~  maybe-raw-header=(get-header:http 'last-event-id' header-list.request)
+            ~
+          (rush u.maybe-raw-header dum:ag)
+        ::  if the channel doesn't exist yet, simply instantiate it here
+        ::
+        ?~  maybe-channel=(~(get by session.channel-state.state) channel-id)
+          =-  [[| ~ ~] state(session.channel-state -)]
+          %+  ~(put by session.channel-state.state)  channel-id
+          ::NOTE  some other fields initialized at the end of this arm
+          %*  .  *channel
+            identity  identity
+            next-id   (fall maybe-last-event-id 0)
+            last-ack  now
+          ==
+        ::  if the channel does exist, we put some demands on the get request,
+        ::  and may need to do some cleanup for prior requests.
+        ::
+        ::  find the channel creator's identity, make sure it matches
+        ::
+        ?.  =(identity identity.u.maybe-channel)
+          =^  mos  state
+            %^  return-static-data-on-duct  403  'text/html'
+            (error-page 403 | url.request ~)
+          [[& ~ mos] state]
+        ::  make sure the request "mode" doesn't conflict with a prior request
+        ::
+        ::TODO  or could we change that on the spot, given that only a single
+        ::      request will ever be listening to this channel?
+        ?.  =(mode mode.u.maybe-channel)
+          =^  mos  state
+            %^  return-static-data-on-duct  406  'text/html'
+            =;  msg=tape  (error-page 406 %.y url.request msg)
+            "channel already established in {(trip mode.u.maybe-channel)} mode"
+          [[& ~ mos] state]
+        ::  when opening an event-stream, we must cancel our timeout timer
+        ::  if there's no duct already bound. else, kill the old request,
+        ::  we will replace its duct at the end of this arm
+        ::
+        =^  cancel-moves  state
+          ?:  ?=([%& *] state.u.maybe-channel)
+            :_  state
+            (cancel-timeout-move channel-id p.state.u.maybe-channel)^~
+          =.  duct-to-key.channel-state.state
+            (~(del by duct-to-key.channel-state.state) p.state.u.maybe-channel)
+          =/  cancel-heartbeat
+            ?~  heartbeat.u.maybe-channel  ~
+            :_  ~
+            %+  cancel-heartbeat-move  channel-id
+            [date duct]:u.heartbeat.u.maybe-channel
+          =-  [(weld cancel-heartbeat -<) ->]
+          (handle-response(duct p.state.u.maybe-channel) [%cancel ~])
+        ::  flush events older than the passed in 'Last-Event-ID'
+        ::
+        =?  state  ?=(^ maybe-last-event-id)
+          (acknowledge-events channel-id u.maybe-last-event-id)
+        ::TODO  that did not remove them from the u.maybe-channel queue though!
+        ::      we may want to account for maybe-last-event-id, for efficiency.
+        ::      (the client _should_ ignore events it heard previously if we do
+        ::      end up re-sending them, but _requiring_ that feels kinda risky)
+        ::
+        ::  combine the remaining queued events to send to the client
+        ::
+        =;  event-replay=wall
+          [[| - cancel-moves] state]
         %-  zing
         %-  flop
         =/  queue  events.u.maybe-channel
@@ -2260,6 +2283,7 @@
           (channel-event-to-tape u.maybe-channel request-id channel-event)
         ?~  said  $
         $(events [(event-tape-to-wall id +.u.said) events])
+      ?:  exit  [moves state]
       ::  send the start event to the client
       ::
       =^  http-moves  state
@@ -2270,7 +2294,7 @@
                 ['cache-control' 'no-cache']
                 ['connection' 'keep-alive']
             ==
-            (wall-to-octs event-replay)
+            (wall-to-octs wall)
             complete=%.n
         ==
       ::  associate this duct with this session key
@@ -2300,7 +2324,7 @@
           heartbeat  (some [heartbeat-time duct])
         ==
       ::
-      [[heartbeat :(weld http-moves cancel-moves moves)] state]
+      [[heartbeat :(weld http-moves moves)] state]
     ::  +acknowledge-events: removes events before :last-event-id on :channel-id
     ::
     ++  acknowledge-events

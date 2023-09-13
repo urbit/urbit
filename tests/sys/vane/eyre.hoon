@@ -262,7 +262,7 @@
   ==
 ::
 ++  ex-channel-response
-  |=  body=@t
+  |=  body=(unit @t)
   |=  mov=move
   ^-  tang
   ?.  ?=([[[%http-blah ~] ~] %give %response %start * * %.n] mov)
@@ -273,7 +273,7 @@
         ['connection' 'keep-alive']
         ['set-cookie' cookie-string]
     ==
-  =/  body  `(as-octs:mimes:html body)
+  =/  body  (bind body as-octs:mimes:html)
   ;:  weld
     (expect-eq !>(200) !>(status-code.response-header.http-event.p.card.mov))
     (expect-eq !>(body) !>(data.http-event.p.card.mov))
@@ -743,6 +743,20 @@
   =/  wire  /channel/subscription/'0123456789abcdef'/1/~nul/two/~nul
   (expect-moves mos (ex-gall-deal wire ~nul %two %leave ~) ~)
 ::
+++  test-channel-open-with-get
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
+  ;<  ~  bind:m  (wait ~d1)
+  ;<  ~  bind:m  perform-authentication-2
+  ;<  mos=(list move)  bind:m
+    (get '/~/channel/0123456789abcdef' cookie)
+  ;<  now=@da  bind:m  get-now
+  =/  mov-1  (ex-wait /channel/heartbeat/'0123456789abcdef' (add now ~s20))
+  =/  mov-2  (ex-channel-response ~)
+  (expect-moves mos mov-1 mov-2 ~)
+::
 ++  test-channel-results-before-open
   %-  eval-mare
   =/  m  (mare ,~)
@@ -776,7 +790,7 @@
   ;<  now=@da  bind:m  get-now
   =/  mov-1  (ex-wait /channel/heartbeat/'0123456789abcdef' (add now ~s20))
   =/  mov-2
-    %-  ex-channel-response
+    %+  ex-channel-response  ~
     '''
     id: 0
     data: {"ok":"ok","id":0,"response":"poke"}
@@ -920,7 +934,7 @@
   ;<  now=@da  bind:m  get-now
   =/  mov-1  (ex-wait /channel/heartbeat/'0123456789abcdef' (add now ~s20))
   =/  mov-2
-    %-  ex-channel-response
+    %+  ex-channel-response  ~
     '''
     id: 0
     data: {"ok":"ok","id":0,"response":"poke"}
@@ -1022,7 +1036,7 @@
   =/  heartbeat  (add now ~s20)
   =/  mov-1  (ex-wait /channel/heartbeat/'0123456789abcdef' heartbeat)
   =/  mov-2
-    %-  ex-channel-response
+    %+  ex-channel-response  ~
     '''
     id: 0
     data: {"ok":"ok","id":0,"response":"poke"}
@@ -1092,7 +1106,7 @@
   =/  heartbeat  (add now ~s20)
   =/  mov-1  (ex-wait /channel/heartbeat/'0123456789abcdef' heartbeat)
   =/  mov-2
-    %-  ex-channel-response
+    %+  ex-channel-response  ~
     '''
     id: 2
     data: {"json":[1],"id":1,"response":"diff"}
