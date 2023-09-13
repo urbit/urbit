@@ -757,6 +757,18 @@
   =/  mov-2  (ex-channel-response ~)
   (expect-moves mos mov-1 mov-2 ~)
 ::
+++  test-channel-put-zero-requests
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  ~  bind:m  perform-init-start-channel-2
+  ;<  ~  bind:m  (wait ~m1)
+  ;<  mos=(list move)  bind:m
+    (put '/~/channel/0123456789abcdef' cookie '[]')
+  =/  mov-1  ex-204
+  =/  mov-2  (ex-rest /channel/timeout/'0123456789abcdef' ~1111.1.2..12.00.00)
+  =/  mov-3  (ex-wait /channel/timeout/'0123456789abcdef' ~1111.1.2..12.01.00)
+  (expect-moves mos mov-1 mov-2 mov-3 ~)
+::
 ++  test-channel-results-before-open
   %-  eval-mare
   =/  m  (mare ,~)

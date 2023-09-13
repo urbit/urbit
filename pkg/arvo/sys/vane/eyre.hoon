@@ -2372,11 +2372,6 @@
       ?:  ?=(%| -.maybe-requests)
         %^  return-static-data-on-duct  400  'text/html'
         (error-page 400 & url.request (trip p.maybe-requests))
-      ::  while weird, the request list could be empty
-      ::
-      ?:  =(~ p.maybe-requests)
-        %^  return-static-data-on-duct  400  'text/html'
-        (error-page 400 %.y url.request "empty list of actions")
       ::  check for the existence of the channel-id
       ::
       ::    if we have no session, create a new one set to expire in
