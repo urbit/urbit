@@ -60,7 +60,7 @@
       (sell [%atom kind ~] i)
     ::  general tensor case
     =/  width  (^div (lent dat) -.shape)
-    :+  %rose  [" " "[" "]"]
+    :+  %rose  [" " "[" "]\0a"]
     ^-  (list tank)
     %+  turn  (gulf 0 (dec -.shape))
     |=  i=@
@@ -386,6 +386,8 @@
     |=  =meta
     ^-  ray
     ~_  leaf+"lagoon-fail"
+    ?>  =(2 (lent shape.meta))
+    ?>  =((snag 0 shape.meta) (snag 1 shape.meta))
     =,  meta
     =/  n  (snag 0 shape)
     =<  +
@@ -394,12 +396,12 @@
       ^-  ray  (zeros [~[n n] bloq kind prec])
     |=  [i=@ r=ray]
     [i (set-item r ~[i i] 1)]
- ::    Zeroes
- ++  zeros
-    |=  =meta  ^-  ray
-    ~_  leaf+"lagoon-fail"
-    :-  meta
-    (lsh [bloq.meta (roll shape.meta ^mul)] 1)
+  ::    Zeroes
+  ++  zeros
+      |=  =meta  ^-  ray
+      ~_  leaf+"lagoon-fail"
+      :-  meta
+      (lsh [bloq.meta (roll shape.meta ^mul)] 1)
   ::    Ones
   ++  ones
     |=  =meta  ^-  ray
@@ -419,15 +421,19 @@
     (fill meta one)
   ::  Produce a 1-dimensional index array.
   ::  Only produces %unsigned.
+  ::  Note that this runs from 0 to n-1.  The point of ++iota is to be an index,
+  ::  so it needs to pattern-match the context rather than slavishly follow APL.
   ::
   ++  iota
-    |=  [=meta n=@ud]
+    |=  =meta
     ^-  ray
-    =.  shape.meta  ~[n]
+    ?>  =((lent shape.meta) 1)
+    =/  n  (snag 0 shape.meta)
     =.  kind.meta  %unsigned
     %-  spac
     :-  meta
-    (rap bloq.meta (gulf 1 n))
+    %+  lsh  [bloq.meta 1]  :: account for zero which strips out of ++rap
+    (rap bloq.meta (gulf 0 (dec n)))
   ::  Produce a 1-dimensional range along one dimension
   ::  as [a b) with interval d.
   ::  Only produces %float.
@@ -594,18 +600,14 @@
   ++  cumsum
     |=  a=ray
     ^-  ray
-    %+  scalar-to-ray
-      meta.a
+    %+  scalar-to-ray  meta.a
     (reel (ravel a) |=([b=@ c=@] ((fun-scalar bloq.meta.a kind.meta.a %add) b c)))
   ::
   ++  prod
     |=  a=ray
-    =/  fun  (fun-scalar bloq.meta.a kind.meta.a %mul)
-    =/  ali  +:(ravel a)
-    =/  p  -:(ravel a)
-    |-
-    ?~  ali  (scalar-to-ray meta.a p)
-    $(ali +.ali, p (fun p -.ali))
+    ^-  ray
+    %+  scalar-to-ray  meta.a
+    (reel (ravel a) |=([b=_1 c=_1] ((fun-scalar bloq.meta.a kind.meta.a %mul) b c)))
   ::
   ++  reshape
     |=  [a=ray shape=(list @)]
@@ -915,8 +917,8 @@
       ?+  fun  !!
         %add  ~(sum fe bloq)
         %sub  ~(dif fe bloq)
-        %mul  |=([b=@ c=@] (~(sit fe bloq) (^mul b c)))
-        %div  |=([b=@ c=@] (~(sit fe bloq) (^div b c)))
+        %mul  |=([b=_1 c=_1] (~(sit fe bloq) (^mul b c)))
+        %div  |=([b=_1 c=_1] (~(sit fe bloq) (^div b c)))
         %mod  |=([b=@ c=@] (~(sit fe bloq) (^mod b c)))
         %pow  |=([b=@ c=@] (~(sit fe bloq) (^pow b c)))
         ::%exp  |=([b=@ c=@] (~(sit fe bloq) (^pow b c)))

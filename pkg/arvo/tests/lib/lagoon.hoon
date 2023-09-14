@@ -67,17 +67,14 @@
   =/  meta-2x2-3=meta:la  [[2 2 ~] 3 %unsigned ~]
   =/  meta-nxn-3=meta:la  [[20 20 ~] 3 %unsigned ~]
   =/  meta-9x9-6=meta:la  [[9 9 ~] 6 %unsigned ~]
-  ::=/  meta-3x2-3=meta:la  [[3 2 ~] 3 %unsigned ~]
   =/  assay-1x1-3=ray:la  (eye:la meta-1x1-3)
   =/  assay-2x2-3=ray:la  (eye:la meta-2x2-3)
   =/  assay-nxn-3=ray:la  (eye:la meta-nxn-3)
   =/  assay-9x9-6=ray:la  (eye:la meta-9x9-6)
-  ::=/  assay-3x2-3=ray:la  (eye:la meta-3x2-3)
   =/  canon-1x1-3=ray:la  [meta=meta-1x1-3 data=0x101]
   =/  canon-2x2-3=ray:la  [meta=meta-2x2-3 data=0x1.0100.0001]
   =/  canon-nxn-3=ray:la  [meta=meta-nxn-3 data=0x1.0100.0000.0000.0000.0000.0000.0000.0000.0000.0000.0001.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0100.0000.0000.0000.0000.0000.0000.0000.0000.0000.0001.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0100.0000.0000.0000.0000.0000.0000.0000.0000.0000.0001.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0100.0000.0000.0000.0000.0000.0000.0000.0000.0000.0001.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0100.0000.0000.0000.0000.0000.0000.0000.0000.0000.0001.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0100.0000.0000.0000.0000.0000.0000.0000.0000.0000.0001.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0100.0000.0000.0000.0000.0000.0000.0000.0000.0000.0001.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0100.0000.0000.0000.0000.0000.0000.0000.0000.0000.0001.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0100.0000.0000.0000.0000.0000.0000.0000.0000.0000.0001.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0100.0000.0000.0000.0000.0000.0000.0000.0000.0000.0001]
   =/  canon-9x9-6=ray:la  [meta=meta-9x9-6 data=0x1.0000.0000.0000.0001.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0001.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0001.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0001.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0001.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0001.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0001.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0001.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0001]
-  ::=/  canon-3x2-3=ray:la  unknown
   ;:  weld
     %+  is-equal
       canon-1x1-3
@@ -167,61 +164,162 @@
 ::
 ::  Operators
 ::
-++  test-cumsum  ^-  tang
-  =/  small-test    [[2 2 2 2 ~] 3 %unsigned ~]
-  =/  iota-test     (iota:la small-test)
-  =/  iota-res=@ux  `@ux`55
-  =/  ones-test     (ones:la small-test)
-  =/  ones-res=@ux  `@ux`16
+++  test-unsigned-add  ^-  tang
+  =/  value-4-5=ray:la  (iota:la [~[4] 5 %unsigned ~])
+  =/  value-4x4-4-1s=ray:la  (ones:la [~[4 4] 4 %unsigned ~])
+  =/  value-4x4-4-0s=ray:la  (zeros:la [~[4 4] 4 %unsigned ~])
+  =/  value-4x4-5-0s=ray:la  (zeros:la [~[4 4] 5 %unsigned ~])
+  =/  value-4x4-3-d=ray:la  [meta=[~[4 4] 3 %unsigned ~] data=0x1.0201.0101.0102.0101.0101.0201.0101.0102]
   ;:  weld
-    %+  expect-eq
-      !>((cumsum:la iota-test))
-      !>(iota-res)
-    %+  expect-eq
-      !>((cumsum:la ones-test))
-      !>(ones-res)
+  %+  is-equal
+    (en-ray:la [~[4] 5 %unsigned ~] ~[0 2 4 6])
+    (add:la value-4-5 value-4-5)
+  %+  is-equal
+    (en-ray:la [~[4 4] 4 %unsigned ~] ~[~[1 1 1 1] ~[1 1 1 1] ~[1 1 1 1] ~[1 1 1 1]])
+    (add:la value-4x4-4-1s value-4x4-4-0s)
+  %+  is-equal
+    (en-ray:la [~[4 4] 4 %unsigned ~] ~[~[2 2 2 2] ~[2 2 2 2] ~[2 2 2 2] ~[2 2 2 2]])
+    (add:la value-4x4-4-1s value-4x4-4-1s)
+  %-  expect-fail
+    |.((add:la value-4x4-4-1s value-4x4-5-0s))
+  %+  is-equal
+    value-4x4-4-0s
+    (add:la value-4x4-4-0s value-4x4-4-0s)
+  %+  is-equal
+    value-4x4-3-d
+    (add:la (ones:la [~[4 4] 3 %unsigned ~]) (eye:la [~[4 4] 3 %unsigned ~]))
   ==
 ::
-++  test-prod  ^-  tang
-  =/  small-test    [[2 2 2 2 ~] 5 %float ~]
-  =/  iota-test     (iota:la small-test)
-  =/  iota-res=@ux  `@ux`3.628.800
-  =/  ones-test     (set-item:la (ones:la small-test) ~[1 1 1 1] 2)
-  =/  ones-res=@ux  `@ux`2
+++  test-unsigned-sub  ^-  tang
+  =/  value-4-5=ray:la  (iota:la [~[4] 5 %unsigned ~])
+  =/  value-4x4-4-1s=ray:la  (ones:la [~[4 4] 4 %unsigned ~])
+  =/  value-4x4-4-0s=ray:la  (zeros:la [~[4 4] 4 %unsigned ~])
+  =/  value-4x4-5-0s=ray:la  (zeros:la [~[4 4] 5 %unsigned ~])
+  =/  value-4x4-3-d=ray:la  [meta=[~[4 4] 3 %unsigned ~] data=0x1.0001.0101.0100.0101.0101.0001.0101.0100]
   ;:  weld
-    %+  expect-eq
-      !>((prod:la iota-test))
-      !>(iota-res)
-    %+  expect-eq
-      !>((prod:la ones-test))
-      !>(ones-res)
+  %+  is-equal
+    (en-ray:la [~[4] 5 %unsigned ~] ~[0 0 0 0])
+    (sub:la value-4-5 value-4-5)
+  ::  test underflow
+  %+  is-equal
+    (en-ray:la [~[4 4] 4 %unsigned ~] ~[~[0xffff 0xffff 0xffff 0xffff] ~[0xffff 0xffff 0xffff 0xffff] ~[0xffff 0xffff 0xffff 0xffff] ~[0xffff 0xffff 0xffff 0xffff]])
+    (sub:la value-4x4-4-0s value-4x4-4-1s)
+  %-  expect-fail
+    |.((sub:la value-4x4-4-1s value-4x4-5-0s))
+  %+  is-equal
+    value-4x4-4-0s
+    (sub:la value-4x4-4-0s value-4x4-4-0s)
+  %+  is-equal
+    value-4x4-3-d
+    (sub:la (ones:la [~[4 4] 3 %unsigned ~]) (eye:la [~[4 4] 3 %unsigned ~]))
   ==
 ::
-++  test-matmul-2d  ^-  tang
-  =/  =meta:la  [~[3 3] 5 %unsigned ~]
-  =/  eye-test  (eye:la meta)
-  =/  iota-test  (reshape:la (iota:la meta) ~[3 3])
-  =/  iota-res  (en-ray:la `baum:la`[meta ~[~[30 36 42] ~[66 81 96] ~[102 126 150]]])
-  =/  col-vec  (ones:la [~[3 1] 5 %unsigned ~])
-  =/  col-res  (en-ray:la [[~[3 1] 5 %unsigned ~] ~[~[6] ~[15] ~[24]]]) 
+::  Elementwise multiplication
+++  test-unsigned-mul  ^-  tang
+  =/  value-4-5-1s=ray:la  (ones:la [~[4] 5 %unsigned ~])
+  =/  value-4-5=ray:la  (iota:la [~[4] 5 %unsigned ~])
+  =/  value-4x4-4-1s=ray:la  (ones:la [~[4 4] 4 %unsigned ~])
+  =/  value-4x4-4-0s=ray:la  (zeros:la [~[4 4] 4 %unsigned ~])
+  =/  value-4x4-4-i=ray:la  (eye:la [~[4 4] 4 %unsigned ~])
   ;:  weld
-    %+  expect-eq
-      !>((mmul:la iota-test iota-test))
-      !>(iota-res)
-    %+  expect-eq
-      !>((mmul:la iota-test eye-test))
-      !>(iota-test)
-    %+  expect-eq
-      !>((mmul:la iota-test col-vec))
-      !>(col-res)
+  %+  is-equal
+    (en-ray:la [~[4] 5 %unsigned ~] ~[0 1 4 9])
+    (mul:la value-4-5 value-4-5)
+  %+  is-equal
+    (en-ray:la [~[4] 5 %unsigned ~] ~[0 1 2 3])
+    (mul:la value-4-5-1s value-4-5)
+  %-  expect-fail
+    |.((sub:la value-4x4-4-1s value-4-5-1s))
+  %+  is-equal
+    value-4x4-4-i
+    (mul:la value-4x4-4-1s value-4x4-4-i)
   ==
 ::
-++  test-add  ^-  tang
-  =/  iota-test  (iota:la [~[4] 5 %unsigned ~])
-  =/  iota-res  (en-ray:la [~[4] 5 %unsigned ~] ~[2 4 6 8]) 
+::  Elementwise division
+++  test-unsigned-div  ^-  tang
+  =/  value-4-5-0s=ray:la  (zeros:la [~[4] 5 %unsigned ~])
+  =/  value-4-5-1s=ray:la  (ones:la [~[4] 5 %unsigned ~])
+  =/  value-4-5=ray:la  (en-ray:la [~[4] 5 %unsigned ~] ~[1 2 3 4])
+  =/  value-4x4-4-1s=ray:la  (ones:la [~[4 4] 4 %unsigned ~])
+  =/  value-4x4-4-0s=ray:la  (zeros:la [~[4 4] 4 %unsigned ~])
+  =/  value-4x4-4-i=ray:la  (eye:la [~[4 4] 4 %unsigned ~])
   ;:  weld
-  %+  expect-eq
-    !>((add:la iota-test iota-test))
-    !>(iota-res)
+  %+  is-equal
+    (en-ray:la [~[4] 5 %unsigned ~] ~[0 0 0 0])
+    (div:la value-4-5-0s value-4-5-1s)
+  %-  expect-fail
+    |.((div:la value-4-5-1s value-4-5-0s))
+  %+  is-equal
+    (en-ray:la [~[4] 5 %unsigned ~] ~[1 1 1 1])
+    (div:la value-4-5 value-4-5)
+  %+  is-equal
+    value-4x4-4-i
+    (div:la value-4x4-4-i value-4x4-4-1s)
   ==
+::
+++  test-unsigned-cumsum  ^-  tang
+  =/  meta-2x2x2x2-6=meta:la  [[2 2 2 2 ~] 6 %unsigned ~]
+  =/  meta-5-6=meta:la  [[5 ~] 6 %unsigned ~]
+  =/  meta-4x4-4-1s=meta:la  [[4 4 ~] 4 %unsigned ~]
+  =/  meta-4x4-6-2s=meta:la  [[4 4 ~] 6 %unsigned ~]
+  =/  assay-5-6=ray:la  (iota:la meta-5-6)
+  =/  assay-2x2x2x2-6=ray:la  (en-ray:la meta-2x2x2x2-6 ~[~[~[~[1 2] ~[3 4]] ~[~[5 6] ~[7 8]]] ~[~[~[9 10] ~[11 12]] ~[~[13 14] ~[15 16]]]])
+  =/  assay-4x4-4-1s=ray:la  (en-ray:la meta-4x4-4-1s (reap 4 (reap 4 1)))
+  =/  assay-4x4-6-2s=ray:la  (en-ray:la meta-4x4-6-2s (reap 4 (reap 4 2)))
+  ;:  weld
+    %+  expect-eq
+      !>(`@ux`136)
+      !>((get-item:la (cumsum:la assay-2x2x2x2-6) ~[0 0 0 0]))
+    %+  expect-eq
+      !>(`@ux`10)
+      !>((get-item:la (cumsum:la assay-5-6) ~[0]))
+    %+  expect-eq
+      !>(`@ux`16)
+      !>((get-item:la (cumsum:la assay-4x4-4-1s) ~[0 0]))
+    %+  expect-eq
+      !>(`@ux`32)
+      !>((get-item:la (cumsum:la assay-4x4-6-2s) ~[0 0]))
+  ==
+::
+++  test-unsigned-prod  ^-  tang
+  =/  meta-2x2x2x2-6=meta:la  [[2 2 2 2 ~] 6 %unsigned ~]
+  =/  meta-5-6=meta:la  [[5 ~] 6 %unsigned ~]
+  =/  meta-4x4-4-1s=meta:la  [[4 4 ~] 4 %unsigned ~]
+  =/  meta-4x4-6-2s=meta:la  [[4 4 ~] 6 %unsigned ~]
+  =/  assay-5-6=ray:la  (iota:la meta-5-6)
+  =/  assay-2x2x2x2-6=ray:la  (en-ray:la meta-2x2x2x2-6 ~[~[~[~[1 2] ~[3 4]] ~[~[5 6] ~[7 8]]] ~[~[~[9 10] ~[11 12]] ~[~[13 14] ~[15 16]]]])
+  =/  assay-4x4-4-1s=ray:la  (en-ray:la meta-4x4-4-1s (reap 4 (reap 4 1)))
+  =/  assay-4x4-6-2s=ray:la  (en-ray:la meta-4x4-6-2s (reap 4 (reap 4 2)))
+  ;:  weld
+    %+  expect-eq
+      !>(0x1307.7775.8000)
+      !>((get-item:la (prod:la assay-2x2x2x2-6) ~[0 0 0 0]))
+    %+  expect-eq
+      !>(`@ux`0)
+      !>((get-item:la (prod:la assay-5-6) ~[0]))
+    %+  expect-eq
+      !>(`@ux`1)
+      !>((get-item:la (prod:la assay-4x4-4-1s) ~[0 0]))
+    %+  expect-eq
+      !>(`@ux`65.536)
+      !>((get-item:la (prod:la assay-4x4-6-2s) ~[0 0]))
+  ==
+::
+++  test-unsigned-mmul  ^-  tang
+  =/  meta-3x3-5=meta:la  [~[3 3] 5 %unsigned ~]
+  =/  assay-3x3-5-i=ray:la  (eye:la meta-3x3-5)
+  =/  assay-3x3-5=ray:la  (reshape:la (iota:la [~[9] 5 %unsigned ~]) ~[3 3])
+  =/  canon-3x3-5=ray:la  (en-ray:la `baum:la`[meta-3x3-5 ~[~[30 36 42] ~[66 81 96] ~[102 126 150]]])
+  ;:  weld
+    %+  expect-eq
+      !>(canon-3x3-5)
+      !>((mmul:la assay-3x3-5 assay-3x3-5))
+    %+  expect-eq
+      !>(canon-3x3-5)
+      !>((mmul:la assay-3x3-5 assay-3x3-5-i))
+    %+  expect-eq
+      !>((en-ray:la [[~[3 1] 5 %unsigned ~] ~[~[6] ~[15] ~[24]]]))
+      !>((mmul:la assay-3x3-5 (ones:la [~[3 1] 5 %unsigned ~])))
+  ==
+::
 --
