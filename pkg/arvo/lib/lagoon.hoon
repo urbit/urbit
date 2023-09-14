@@ -1,3 +1,4 @@
+/+  *twoc
 ::                                                    ::
 ::::                    ++la                          ::  (2v) vector/matrix ops
 |%
@@ -38,126 +39,32 @@
       $@  @             ::  single item
       (list ndray)      ::  nonempty list of children, in row-major order
   ::
+  +$  slice  (unit [(unit @) (unit @)])
+  ::
   ::  Utilities
   ::
-  ++  print  |=(a=ray ~>(%slog.1^(to-tank a) ~))
+  ++  print  |=(a=ray ~>(%slog.1^(to-tank (ravel a) shape.meta.a kind.meta.a) ~))
   ::
-  ++  slog   |=(a=ray (^slog (to-tank a) ~))
+  ++  slog   |=(a=ray (^slog (to-tank (ravel a) shape.meta.a kind.meta.a) ~))
   ::
-  ++  to-tank  ::  TODO nest dimensions
-    |=  a=ray
+  ::
+  ++  to-tank
+    |=  [dat=(list @) shape=(list @) =kind]
     ^-  tank
     ::  1D vector case
-    ?:  =(1 (lent shape.meta.a))
+    ?:  =(1 (lent shape))
       :+  %rose  [" " "[" "]"]
-      %+  turn  (ravel a)
+      %+  turn  dat
       |=  i=@
       ^-  tank
-      (sell [%atom kind.meta.a ~] i)
-    ::  2D matrix case
-    ?:  =(2 (lent shape.meta.a))
-      =/  =baum  (de-ray a)
-      =/  =term  (get-term meta.a)
-      ?@  data.baum  leaf+(scow term data.baum)
-      =/  data  ;;((list (list @)) data.baum)
-      :+  %rose  [" " "[" "]"]
-      %+  turn  data
-      |=  b=(list @)
-      ^-  tank
-      :+  %rose  [" " "[" "]"]
-      %+  turn  b
-      |=(c=@ [%leaf (scow term c)])
+      (sell [%atom kind ~] i)
     ::  general tensor case
+    =/  width  (^div (lent dat) -.shape)
     :+  %rose  [" " "[" "]"]
-    %+  turn  (ravel a)
-    |=  i=@
-    ^-  tank
-    ::  recurse on +to-tank until a 2D case is reached
-    :+  %rose  [" " "[" "]\0a"]
     ^-  (list tank)
-    =,  meta.a
-    %+  turn  (gulf 0 (snag 0 shape))
-    |=  idx=@
-    ^-  tank
-    (to-tank (slice (zing ~[~[`idx] (reap (lent +.shape) ~)]) a))
-    ::(sell [%atom kind.meta.a ~] i)
-  ::  Retrieve submatrix as slice at dims;
-  ::  follows dimensionality of dims
-  ::
-  ++  slice
-    |=  [dims=(list (unit @)) a=ray]
-    ^-  ray
-    =/  baum  (de-ray a)
-    %+  en-ray
-      :*  ::  Cut out dims we take all of.
-          |^
-          ^-  (list @)
-          %+  murn
-            (zip dims `(list @)`shape.meta.a)
-          |=([p=(unit @) q=@] ?~(p `q ~))
-          ++  zip
-            |*  [p=(list) q=(list)]
-            ^-  (list (pair _(snag 0 p) _(snag 0 q)))
-            =|  res=(list (pair _(snag 0 p) _(snag 0 q)))
-            =/  idx  0
-            =/  num  (^min (lent p) (lent q))
-            |-
-            ?:  =(num idx)  (flop res)
-            %=  $
-              res  [[(snag 0 p) (snag 0 q)] res]
-              p    (slag 1 p)
-              q    (slag 1 q)
-              idx  +(idx)
-            ==
-          --
-        bloq.meta.a
-        kind.meta.a
-        prec.meta.a
-      ==
-    ^-  ndray
-    =/  meta-r  [(slag 1 shape.meta.a) bloq.meta.a kind.meta.a prec.meta.a]
-    ?:  =(1 (lent dims))
-      ::  is the head null or an index?
-      ?~  (snag 0 `(list (unit @))`dims)
-        ::  if null, return whole dimension
-        ;;(ndray (snag 0 ;;((list) data.baum)))
-      ;;(ndray (snag (need (snag 0 dims)) ;;((list) data.baum)))
-    ::  is the head null or an index?
-    ?~  (snag 0 `(list (unit @))`dims)
-      ::  if null, return whole dimension
-      =<  -<
-      %=  $
-        dims  `(list (unit @))`(slag 1 dims)
-        a     `ray`(en-ray `^baum`[meta-r ;;(ndray (slag 1 ;;((list) data.baum)))])
-      ==
-    =<  -<
-    %=  $
-      dims  `(list (unit @))`(slag 1 dims)
-      a     `ray`(en-ray `^baum`[meta-r ;;(ndray (zing ~[(snag (need (snag 0 dims)) ;;((list) data.baum))] (slag +((need (snag 0 dims))) ;;((list) data.baum))))])
-    ==
-    ::   %+  slice
-    ::     (slag 1 dims)
-    ::   (en-ray `^baum`[meta-r ;;(ndray (slag 1 ;;((list) data.baum)))])
-    :: ::  if index, grab one slice
-    :: %+  slice
-    ::   (slag 1 dims)
-    :: (en-ray `^baum`[meta-r ;;(ndray (snag (need (snag 0 dims)) ;;((list) data.baum)))])
-
-    :: ?:  =(1 (lent dims))
-
-    :: ::  if we're at the last dimension, then return it
-    :: ?:  =(1 (lent dims))
-    ::   :: if null, we want all along this dim
-    ::   =/  off  (snag 0 dims)
-    ::   ?~  off  baum
-    ::   :: otherwise, we grab the particular element
-    ::   ;;(ndray (snag (need off) ;;((list @) data.baum)))
-    :: =/  shape-meta  (slag 1 shape.meta)
-    :: =/  meta-r  [shape-meta bloq.meta kind.meta prec.meta]
-    :: ?~  (snag 0 dims)
-    ::   (slice (slag 1 dims) (en-ray [meta-r data.baum]))
-    :: (slice (slag 1 dims) (en-ray (snag (need (snag 0 dims)) ;;((list @) data.baum))))
-  ::  Produce dime-style term version of appropriate aura.
+    %+  turn  (gulf 0 (dec -.shape))
+    |=  i=@
+    (to-tank (swag [(^mul width i) width] dat) +.shape kind)
   ::
   ++  get-term
     |=  =meta
@@ -176,6 +83,81 @@
         %4  %rh
       ==
     ==
+  ::
+  ++  squeeze  |*(a=* `(list _a)`~[a])
+  ++  submatrix
+    ::
+    ::  +submatrix: grab a submatrix using numpy slice notation, except indices are inclusive.
+    ::  If you aren't slicing the last few dimensions, you can omit them.
+    ::
+    |=  [sli=(list slice) a=ray]
+    ::
+    ::  example: sli=~[`[`1 `3] `[`1 ~] ~] is equivalent to a[1:4,1:]
+    ::
+    ^-  ray
+    ::
+    ::  pad slice with sigs if necessary
+    =?  sli  (^lth (lent sli) (lent shape.meta.a))
+      (weld sli (reap (^sub (lent shape.meta.a) (lent sli)) *(unit [(unit @) (unit @)])))
+    ::
+    ::  calculate indices to grab using cartesian product
+    =/  out-indices=(list (list (list @)))
+    %+  turn
+      (gulf 0 (dec (lent shape.meta.a)))
+    |=  i=@
+    =/  s  (snag i sli)
+    =/  dim  (snag i shape.meta.a)
+    ?~  s
+      (turn (gulf 0 (dec dim)) squeeze)
+    =/  s2=[(unit @) (unit @)]  (need s)
+    =/  c=^  [(fall -.s2 ~) (fall +.s2 ~)]
+    ^-  (list (list @))
+    ?+    c  !!
+        [j=@ k=~]  (turn (gulf j.c (dec dim)) squeeze)
+        [j=@ k=@]  (turn (gulf j.c k.c) squeeze)
+        [j=~ k=@]  (turn (gulf 0 k.c) squeeze)
+        [~ ~]  (turn (gulf 0 (dec dim)) squeeze)
+    ==
+    ::
+    ::  calculate the shape of the result
+    =/  out-shape=(list @)
+    %+  turn  
+      out-indices
+    |=(inds=(list (list @)) (lent inds))
+    :: 
+    ::  grab submatrix entries from cartesian product
+    =/  new-dat=@ux
+    %+  rep  bloq.meta.a
+    %-  flop
+    %+  turn
+      (gather out-indices)
+    |=  dex=(list @)
+    (get-item a dex)
+    ::
+    ::  construct new ray
+    %-  spac
+    =,  meta.a
+    :-  [out-shape bloq kind prec]
+    new-dat
+  ::
+  ++  product  ::  cartesian product
+    |*  [a=(list) b=(list)]
+    ?~  a
+      b
+    %-  zing
+    %+  turn  a
+    |=  ai=_-.a
+    (turn b |=(bi=_-.b (welp ai bi)))
+  ::
+  ++  gather
+    |=  [a=(list (list (list @)))]
+    ^-  (list (list @))
+    =/  i  0
+    =|  c=(list (list @)) 
+    |-
+    ?:  =(i (lent a))
+      c
+    $(i +(i), c `(list (list @))`(product c (snag i a)))
   ::
   ++  get-item  ::  extract item at index .dex
     |=  [=ray dex=(list @)]
@@ -947,7 +929,10 @@
       ::
         %signed  
       ?+  fun  !!
-        %add  ~(sum fe bloq)
+        %add  ~(add twoc bloq)
+        %mul  ~(mul twoc bloq)
+        %gth  ~(gth twoc bloq)
+        %lth  ~(lth twoc bloq)
       ==
       ::
         %float
@@ -998,7 +983,6 @@
         ==
       ==
     ::
-        ::  TODO signed integers -- add new 2's complement kind?
     ==
   ::
   ++  trans-scalar
@@ -1059,7 +1043,6 @@
       (gulf 0 (dec (lent ali)))
     |=  i=@
     (op (snag i ali) (snag i bob))
-    ::
-        ::  TODO signed integers -- add new 2's complement kind?
 --
 --
+ 
