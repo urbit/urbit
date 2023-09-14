@@ -556,7 +556,7 @@
 ::    bug:         debug printing configuration
 ::    snub:        blocklist for incoming packets
 ::    cong:        parameters for marking a flow as clogged
-::    dead:        dead flow consolidation timer, if set
+::    dead:        dead flow consolidation timer and recork timer, if set
 ::
 +$  ames-state
   $+  ames-state
@@ -1786,8 +1786,6 @@
       =^  moz  u.cached-state
         ?.  ?=(%16 -.u.cached-state)  [~ u.cached-state]
         :_  17+(state-16-to-17:load:adult-core +.u.cached-state)
-        ~>  %slog.0^leaf/"ames: init dead flow consolidation timer"
-        :-  [[/ames]~ %pass /dead-flow %b %wait `@da`(add now ~m2)]
         ?^  moz  moz  ::  if we have just added the timer in state-7-to-8, skip
         =;  recork-timer=(list [@da duct])
           ?^  recork-timer  ~
@@ -2009,14 +2007,25 @@
         event-core
       ::  +on-stir: recover from timer desync, setting new timers as needed
       ::
-      ::    .arg is unused, meant to ease future debug commands
+      ::    .arg can be %rift or %dead
       ::
       ++  on-stir
         |=  arg=@t
         ^+  event-core
         |^  ?+  arg  do-stir
               %rift  do-rift
+              %dead  do-dead
             ==
+        ::
+        ++  do-dead
+          =/  ded=(unit dead-timer)  +.flow.dead.ames-state
+          ?~  ded
+            %-  (slog leaf+"ames: switching to dead flow consolidation" ~)
+            (wake-dead-flows %.y ~)
+          %-  (slog leaf+"ames: turning off dead flow consolidation" ~)
+          =.  event-core
+            (emit:event-core duct.u.ded %pass wire.u.ded %b %rest date.u.ded)
+          (wake-dead-flows %.n ~)
         ::
         ++  do-rift
           =/  =rift
@@ -2433,6 +2442,32 @@
         ++  cork-bone  |=(=bone abet:(on-cork-flow:peer-core bone))
         ++  kill-bone  |=(=bone abet:(on-kill-flow:peer-core bone))
         --
+      :: +wake-dead-flow: call on-wake on all dead flows, optionally setting new
+      ::                  dead flow timer
+      ::
+      ++  wake-dead-flows
+        |=  [set-new-timer=? error=(unit tang)]
+        ^+  event-core
+        =.  flow.dead.ames-state.event-core
+          ?.  set-new-timer
+            flow/~
+          flow/`[~[/ames] /dead-flow `@da`(add now ~m2)]
+        =.  event-core
+          ?.  set-new-timer
+            event-core
+          (emit:event-core ~[/ames] %pass /dead-flow %b %wait `@da`(add now ~m2))
+        %-  ~(rep by peers.ames-state)
+        |=  [[=ship =ship-state] core=_event-core]
+        ^+  event-core
+        =/  peer-state=(unit peer-state)  (get-peer-state:core ship)
+        ?~  peer-state  core
+        %-  ~(rep by snd.u.peer-state)
+        |=  [[=bone =message-pump-state] cor=_core]
+        ?.  ?&  =(~m2 rto.metrics.packet-pump-state.message-pump-state)
+                ?=(^ next-wake.packet-pump-state.message-pump-state)
+            ==
+          cor
+        abet:(on-wake:(abed-peer:pe:cor ship u.peer-state) bone error)
       ::  +on-take-wake: receive wakeup or error notification from behn
       ::
       ++  on-take-wake
@@ -2453,22 +2488,7 @@
           (request-attestation u.ship)
         ::
         ?:  ?=([%dead-flow ~] wire)
-          =;  cor=event-core
-            =.  flow.dead.ames-state.cor
-              flow/`[~[/ames] /dead-flow `@da`(add now ~m2)]
-            (emit:cor duct %pass /dead-flow %b %wait `@da`(add now ~m2))
-          %-  ~(rep by peers.ames-state)
-          |=  [[=ship =ship-state] core=_event-core]
-          ^+  event-core
-          =/  peer-state=(unit peer-state)  (get-peer-state:core ship)
-          ?~  peer-state  core
-          %-  ~(rep by snd.u.peer-state)
-          |=  [[=bone =message-pump-state] cor=_core]
-          ?.  ?&  =(~m2 rto.metrics.packet-pump-state.message-pump-state)
-                  ?=(^ next-wake.packet-pump-state.message-pump-state)
-              ==
-            cor
-          abet:(on-wake:(abed-peer:pe:cor ship u.peer-state) bone error)
+          (wake-dead-flows %.y error)
         ::
         ?.  ?=([%recork ~] wire)
           =/  res=(unit ?([%fine her=ship =^wire] [%pump her=ship =bone]))
@@ -2837,17 +2857,15 @@
         ::
         =*  duct  unix-duct.ames-state
         ::
-        =^  dead-moves  dead.ames-state
-          ?.  ?=([~ ~] [+.flow +.cork]:dead.ames-state)
-            `dead.ames-state
-            :-  :-  [~[/ames] %pass /dead-flow %b %wait `@da`(add now ~m2)]
-                [~[/ames] %pass /recork %b %wait `@da`(add now ~d1)]~
-            :-  flow/`[~[/ames] /dead-flow `@da`(add now ~m2)]
-            cork/`[~[/ames] /recork `@da`(add now ~d1)]
+        =^  cork-moves  cork.dead.ames-state
+          ?.  ?=(~ +.cork.dead.ames-state)
+            `cork.dead.ames-state
+          :-  [~[/ames] %pass /recork %b %wait `@da`(add now ~d1)]~
+          cork/`[~[/ames] /recork `@da`(add now ~d1)]
         ::
         %-  emil
         %+  weld
-          dead-moves
+          cork-moves
         ^-  (list move)
         :~  [duct %give %turf turfs]
             [duct %pass /ping %g %deal [our our /ames] %ping %poke %noun !>(%kick)]
@@ -4071,7 +4089,7 @@
               ::  and we don't want to consolidate that
               ::
               =?  peer-core  ?=(^ new-wake)
-                ?:  =(~m2 rto.metrics.state)
+                ?:  ?&(?=(^ +.flow.dead.ames-state) =(~m2 rto.metrics.state))
                   peer-core
                 (pu-emit %b %wait u.new-wake)
               ::
@@ -5173,7 +5191,7 @@
     %=    old
         cong
       :+  cong.old
-        flow/`[~[/ames] /dead-flow `@da`(add now ~m2)]
+        flow/~
       cork/`[~[/ames] /recork `@da`(add now ~d1)]
       ::
         peers
