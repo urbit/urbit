@@ -2763,6 +2763,7 @@
   ::  TODO: add more flags?
   ::
   +$  verb  ?(%odd)
+  +$  coop  spur
   ::
   ::  +agent: app core
   ::
@@ -2779,6 +2780,10 @@
           [%grow =spur =page]
           [%tomb =case =spur]
           [%cull =case =spur]
+      ::
+          [%tend =coop =path =page]
+          [%germ =coop =crew:clay]
+          [%snip =coop]
       ==
     +$  task
       $%  [%watch =path]

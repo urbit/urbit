@@ -42,9 +42,9 @@
 ::  $move: Arvo-level move
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
-::  $state-13: overall gall state, versioned
+::  $state-15: overall gall state, versioned
 ::
-+$  state-14  [%14 state]
++$  state-15  [%15 state]
 ::  $state: overall gall state
 ::
 ::    system-duct: TODO document
@@ -68,6 +68,9 @@
   $:  disclosing=(unit (set ship))
       attributing=[=ship =path]
   ==
++$  lock  [rev=@ud key=@uvJ] :: TODO: key width?
++$  hutch
+  [=lock =crew:clay chicks=(map path page)]
 ::  $yoke: agent runner state
 ::
 ::    control-duct: TODO document
@@ -100,6 +103,7 @@
           marks=(map duct mark)
           sky=(map spur path-state)
           ken=(jug spar:ames wire)
+          cop=(map coop hutch)
   ==  ==
 ::
 +$  path-state
@@ -162,7 +166,7 @@
 ::  $spore: structures for update, produced by +stay
 ::
 +$  spore
-  $:  %14
+  $:  %15
       system-duct=duct
       outstanding=(map [wire duct] (qeu remote-request))
       contacts=(set ship)
@@ -188,11 +192,12 @@
           marks=(map duct mark)
           sky=(map spur path-state)
           ken=(jug spar:ames wire)
+          cop=(map coop hutch)
   ==  ==
 --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
-=|  state=state-14
+=|  state=state-15
 |=  [now=@da eny=@uvJ rof=roof]
 =*  gall-payload  .
 ~%  %gall-top  ..part  ~
@@ -1011,11 +1016,46 @@
         ==
       =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
       ap-core
+    ++  ap-match-coop
+      |=  =path
+      ?:  (~(has by cop.yoke) path)
+        &
+      ?:  =(~ path)
+        |
+      =.  path  (flop path)
+      ?>  ?=(^ path)
+      $(path (flop t.path))
+    ::
+    ::  +ap-tend: bind path in namespace, encrypted
+    ++  ap-tend
+      |=  [=coop =path =page]
+      ?.  (~(has by cop.yoke) coop)
+        ~|  no-such-coop/coop  !!  :: XX: error handling
+      =/  =hutch  (~(got by cop.yoke) coop)
+      =.  chicks.hutch  (~(put by chicks.hutch) path page)
+      =.  cop.yoke  (~(put by cop.yoke) coop hutch)
+      ap-core
+    ++  ap-germ
+      |=  [=coop =crew:clay]
+      =/  key=@uvJ  (shax eny) :: TODO: review key generation
+      =/  =hutch  
+        ?~  hut=(~(get by cop.yoke) coop)
+          [[1 (shax eny)] crew ~]
+        =.  lock.u.hut  [.+(rev.lock.u.hut) (shax eny)]
+        =.  crew.u.hut  crew
+        u.hut
+      =.  cop.yoke  (~(put by cop.yoke) coop hutch)
+      ap-core
+    ::
+    ++  ap-snip
+      |=  =coop
+      ap-core(cop.yoke (~(del by cop.yoke) coop)) :: TODO: assert existence?
     ::  +ap-grow: bind a path in the agent's scry namespace
     ::
     ++  ap-grow
       |=  [=spur =page]
       ^+  ap-core
+      ?<  (ap-match-coop spur) :: enforce binding public seperately
       =-  ap-core(sky.yoke -)
       %+  ~(put by sky.yoke)  spur
       =/  ski  (~(gut by sky.yoke) spur *path-state)
@@ -1078,7 +1118,7 @@
     ::
     +$  carp  $+  carp  (wind neet gift:agent)
     +$  neet  $+  neet
-      $<  ?(%grow %tomb %cull)
+      $<  ?(%grow %tomb %cull %tend %germ %snip)
       $%  note:agent
           [%agent [=ship name=term] task=[%raw-poke =mark =noun]]
           [%huck [=ship name=term] =note-arvo]
@@ -1790,6 +1830,9 @@
         [%pass * %grow *]  $(caz t.caz, ap-core (ap-grow +.q.i.caz))
         [%pass * %tomb *]  $(caz t.caz, ap-core (ap-tomb +.q.i.caz))
         [%pass * %cull *]  $(caz t.caz, ap-core (ap-cull +.q.i.caz))
+        [%pass * %tend *]  $(caz t.caz, ap-core (ap-tend +.q.i.caz))
+        [%pass * %germ *]  $(caz t.caz, ap-core (ap-germ +.q.i.caz))
+        [%pass * %snip *]  $(caz t.caz, ap-core (ap-snip +.q.i.caz))
         [%pass * ?(%agent %arvo %pyre) *]  $(caz t.caz, fex [i.caz fex])
         [%give *]  $(caz t.caz, fex [i.caz fex])
         [%slip *]  !!
@@ -1962,17 +2005,45 @@
       =?  old  ?=(%11 -.old)  (spore-11-to-12 old)
       =?  old  ?=(%12 -.old)  (spore-12-to-13 old)
       =?  old  ?=(%13 -.old)  (spore-13-to-14 old)
-      ?>  ?=(%14 -.old)
+      =?  old  ?=(%14 -.old)  (spore-14-to-15 old)
+      ?>  ?=(%15 -.old)
       gall-payload(state old)
   ::
   +$  spore-any
-    $%(spore spore-7 spore-8 spore-9 spore-10 spore-11 spore-12 spore-13)
+    $%(spore spore-7 spore-8 spore-9 spore-10 spore-11 spore-12 spore-13 spore-14)
+  +$  spore-14
+    $:  %14
+        system-duct=duct
+        outstanding=(map [wire duct] (qeu remote-request))
+        contacts=(set ship)
+        eggs=(map term egg-13)
+        blocked=(map term (qeu blocked-move))
+        =bug
+    ==
+  +$  egg-13
+    $%  [%nuke sky=(map spur @ud)]
+    $:  %live
+        control-duct=duct
+        run-nonce=@t
+        sub-nonce=@
+        =stats
+        =bitt
+        =boat
+        =boar
+        code=~
+        old-state=[%| vase]
+        =beak
+        marks=(map duct mark)
+        sky=(map spur path-state)
+        ken=(jug spar:ames wire)
+    ==  ==
+  ::
   +$  spore-13
     $:  %13
         system-duct=duct
         outstanding=(map [wire duct] (qeu remote-request))
         contacts=(set ship)
-        eggs=(map term egg)
+        eggs=(map term egg-13)
         blocked=(map term (qeu blocked-move-13))
         =bug
     ==
@@ -2177,15 +2248,29 @@
         eggs
       %-  ~(urn by eggs.old)
       |=  [a=term e=egg-12]
-      ^-  egg
+      ^-  egg-13
       ?:  ?=(%nuke -.e)  e
       e(sky [sky.e ken:*$>(%live egg)])
     ==
   ::  added provenance path to routes
+  ++  spore-14-to-15
+    |=  old=spore-14
+    ^-  spore
+    %=    old
+        -  %15
+    ::
+        eggs
+      %-  ~(run by eggs.old)
+      |=  egg=egg-13
+      ?:  ?=(%nuke -.egg)
+        egg
+      egg(ken [ken.egg ~])
+    ==
+
   ::
   ++  spore-13-to-14
     |=  old=spore-13
-    ^-  spore
+    ^-  spore-14
     %=    old
         -  %14
         blocked
