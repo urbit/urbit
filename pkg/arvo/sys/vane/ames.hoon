@@ -2019,13 +2019,31 @@
         ::
         ++  do-dead
           =/  ded=(unit dead-timer)  +.flow.dead.ames-state
-          ?~  ded
-            %-  (slog leaf+"ames: switching to dead flow consolidation" ~)
-            (wake-dead-flows %.y ~)
-          %-  (slog leaf+"ames: turning off dead flow consolidation" ~)
-          =.  event-core
-            (emit:event-core duct.u.ded %pass wire.u.ded %b %rest date.u.ded)
-          (wake-dead-flows %.n ~)
+          ?^  ded
+            %-  (slog leaf+"ames: turning off dead flow consolidation" ~)
+            =.  event-core
+              (emit:event-core duct.u.ded %pass wire.u.ded %b %rest date.u.ded)
+            (wake-dead-flows:event-core %.n ~)
+          ::
+          %-  (slog leaf+"ames: switching to dead flow consolidation" ~)
+          =;  cor=event-core
+            (wake-dead-flows:cor %.y ~)
+          %-  ~(rep by peers.ames-state:event-core)
+          |=  [[=ship =ship-state] core=_event-core]
+          ^+  event-core
+          =/  peer-state=(unit peer-state)  (get-peer-state:core ship)
+          ?~  peer-state  core
+          %-  ~(rep by snd.u.peer-state)
+          |=  [[=bone =message-pump-state] cor=_core]
+          ^+  event-core
+          =/  next-wake  next-wake.packet-pump-state.message-pump-state
+          ?.  ?&  =(~m2 rto.metrics.packet-pump-state.message-pump-state)
+                  ?=(^ next-wake)
+              ==
+            cor
+          =/  peer-core  (abed-peer:pe:cor ship u.peer-state)
+          =/  message-pump  (abed:mu:peer-core bone)
+          abet:(pu-emit:packet-pump:message-pump %b %rest u.next-wake)
         ::
         ++  do-rift
           =/  =rift
@@ -2456,18 +2474,21 @@
           ?.  set-new-timer
             event-core
           (emit:event-core ~[/ames] %pass /dead-flow %b %wait `@da`(add now ~m2))
-        %-  ~(rep by peers.ames-state)
+        %-  ~(rep by peers.ames-state:event-core)
         |=  [[=ship =ship-state] core=_event-core]
         ^+  event-core
         =/  peer-state=(unit peer-state)  (get-peer-state:core ship)
         ?~  peer-state  core
+        =/  peer-core  (abed-peer:pe:core ship u.peer-state)
+        =<   abet
+        ^+  peer-core
         %-  ~(rep by snd.u.peer-state)
-        |=  [[=bone =message-pump-state] cor=_core]
+        |=  [[=bone =message-pump-state] cor=_peer-core]
         ?.  ?&  =(~m2 rto.metrics.packet-pump-state.message-pump-state)
                 ?=(^ next-wake.packet-pump-state.message-pump-state)
             ==
           cor
-        abet:(on-wake:(abed-peer:pe:cor ship u.peer-state) bone error)
+        (on-wake:cor bone error)
       ::  +on-take-wake: receive wakeup or error notification from behn
       ::
       ++  on-take-wake
