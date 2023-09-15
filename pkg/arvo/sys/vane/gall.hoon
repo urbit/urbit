@@ -194,7 +194,6 @@
 ::
 =|  state=state-14
 |=  [now=@da eny=@uvJ tick=@ rof=roof]
-~&  >>  [%gall-tick tick]
 =*  gall-payload  .
 ~%  %gall-top  ..part  ~
 |%

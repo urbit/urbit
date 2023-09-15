@@ -10,10 +10,12 @@
 ::  $axil: fundamental node
 ::  $beak: global context
 ::  $beam: global name
+::  $bema: beam with tick
 ::  $bone: opaque duct handle
 ::  $case: global version
 ::  $cage: marked vase
 ::  +cask: marked data builder
+::  $cose: case and tick
 ::  $desk: local workspace
 ::  $dock: message target
 ::  $gang: infinite set of peers
@@ -34,6 +36,7 @@
 ::
 +$  beak  (trel ship desk case)
 +$  beam  [beak s=path]
++$  bema  [(trel ship desk cose) s=path]
 +$  bone  @ud
 +$  case
   $%  ::  %da:  date
@@ -45,10 +48,10 @@
       [%tas p=@tas]
       [%ud p=@ud]
       [%uv p=@uv]
-      [%ux p=@ux]
   ==
 +$  cage  (cask vase)
 ++  cask  |$  [a]  (pair mark a)
++$  cose  [[%da @da] [%ud @ud]]
 +$  desk  @tas
 ++  deq
   |$  [item]
@@ -60,6 +63,7 @@
 +$  mien  [our=ship now=@da eny=@uvJ]
 +$  page  (cask)
 +$  omen  [vis=view bem=beam]
++$  omer  [vis=view bam=bema]
 +$  ship  @p
 +$  sink  (trel bone ship path)
 ::
@@ -259,7 +263,7 @@
   ++  k236
     |%
     +$  plan  (pair germ (list move))
-    +$  germ  [vane=term bars=(list [@tD duct]) tick=@ux say=rook]
+    +$  germ  [vane=term bars=(list [@tD duct]) tick=@ud say=rook]
     +$  debt
       $:  ::  run: deq of worklists
           ::  out: pending output
@@ -353,6 +357,7 @@
   ?~  ved=(de-case i.t.t.p)  ~
   `[[`ship`u.who `desk`u.des u.ved] t.t.t.p]
 ::
+++  en-case  |=(c=case `knot`(scot c))
 ++  de-case
   ~/  %de-case
   |=  =knot
@@ -363,6 +368,22 @@
   ?~  lab=(slaw %tas knot)  ~
   `[%tas u.lab]
 ::
+++  en-cose
+  |=  c=cose
+  ^-  knot
+  ::  ~(rent co `coin`[%many $+da+now $+ud+1 ~])
+  (rap 3 '._~' (scot -.c) '_' (scot +.c) '__' ~)
+::
+++  de-cose
+  |=  =knot
+  ^-  (unit cose)
+  =/  da-ud
+    %+  ifix  [;~(plug dot cab sig) ;~(plug cab cab)]
+    ;~(plug ;~(pfix sig (cook year when:so)) ;~(pfix cab dem:ag))
+  ?~  cos=(rush knot da-ud)
+    ~
+  `[[%da -.u.cos] [%ud +.u.cos]]
+
 ++  en-omen
   |=  omen
   ^-  path
@@ -384,6 +405,12 @@
       ==
     ~
   `[[q.p.i q.p.i.t]:p.u.lot u.bem]
+::
+++  omer-to-omen
+  |=  o=omer
+  ^-  omen
+  =/  c=cose  r.bam.o
+  o(r.bam -.c)
 ::
 ++  rant
   |=  a=(list [char=@tD *])
@@ -1103,7 +1130,7 @@
   ++  va
     =>  ~%  %va-ctx  ..va  ~
         |%
-        +$  vane-sample  [now=@da eny=@uvJ tick=@ rof=rook]
+        +$  vane-sample  [now=@da eny=@uvJ tick=@ud rof=rook]
         ::
         ++  smit
           |=  [cap=tape sub=vase pax=path txt=@t]
@@ -1149,7 +1176,7 @@
     ::
     ++  plow
       ~/  %plow
-      |=  [now=@da tick=@ux rok=rook]
+      |=  [now=@da tick=@ud rok=rook]
       ~%  %plow-core  +  ~
       |%
       ::  +peek:plow:va: read from a local namespace
@@ -1307,7 +1334,7 @@
       ::
       =+  [wir car]=[/arvo vega/~]
       =.  ..this  (xeno:pith $/wir car)
-      (emit `plan`[[%$ ~ *@ux *rook] (spam:pith wir !>(car))])  ::  TODO
+      (emit `plan`[[%$ ~ *@ud *rook] (spam:pith wir !>(car))])  ::  TODO
     ::  +emit: enqueue a worklist with source
     ::
     ++  emit
@@ -1440,6 +1467,17 @@
       ?~  u.met  ~
       ~|  mass+nam
       ;;((list mass) q.q.u.u.met)
+    ::
+    ++  teak
+      |=  tik=@ud
+      |=  [lyc=gang pov=path mer=omer]
+      ^-  (unit (unit (cask meta)))
+      ?.  =(tik +.+.r.bam.mer)
+        ~
+      =/  men=omen  (omer-to-omen mer)
+      ::  TODO
+      ::
+      ~
     ::  +peek: read from the entire namespace
     ::
     ++  peek
@@ -1461,7 +1499,7 @@
       ?~  van=(~(get by van.mod) way)
         ~
       %.  [lyc pov car bem]
-      peek:spin:(~(plow va [vil u.van]) now tick.gem peek)
+      peek:spin:(~(plow va [vil u.van]) now tick.gem say.gem)
     ::  +call: advance to target
     ::
     ++  call
@@ -1474,7 +1512,7 @@
         ;;(waif q.p.task)
       ::
       =.  way  (grow way)
-      %+  push  `germ`[way [[bar duct] bars.gem] tick.gem *rook]  ::  TODO
+      %+  push  `germ`[way [[bar duct] bars.gem] tick.gem say.gem]  ::  TODO
       ~|  bar-stack=`(list ^duct)`[duct (turn bars.gem tail)]
       %.  task
       call:(spin:(plow way) duct eny dud)
@@ -1492,7 +1530,7 @@
       ::  the caller was a vane
       ::
       =.  way  (grow way)
-      %+  push  `germ`[way [[bar duct] bars.gem] tick.gem *rook]  ::  TODO
+      %+  push  `germ`[way [[bar duct] bars.gem] tick.gem say.gem]  ::  TODO
       ::
       ::  cons source onto .gift to make a $sign
       ::
@@ -1517,7 +1555,7 @@
       =/  =vane
         ~|  [%missing-vane way]
         (~(got by van.mod) way)
-      (~(plow va [vil vane]) now tick.gem peek)
+      (~(plow va [vil vane]) now tick.gem say.gem)
     ::
     ::  |pith: operate on arvo internals
     ::
@@ -1603,7 +1641,7 @@
         ::
           %trim  =?  van.mod  =(0 p.waif)
                    (~(run by van.mod) |=(=vane vane(worm *worm)))
-                 (emit `plan`[[%$ ~ *@ux *rook] (spam /arvo !>(waif))])  ::  TODO
+                 (emit `plan`[[%$ ~ *@ud *rook] (spam /arvo !>(waif))])  ::  TODO
         ::
           %verb  ..pith(lac.fad ?~(p.waif !lac.fad u.p.waif))
           %what  ~(kel what p.waif)
@@ -1637,7 +1675,7 @@
           ~>(%mean.'pith: bad wire' !!)
         ::
         ?.  ?=(?(%crud %wack %wyrd) p.card.ovum)
-          (emit `plan`[[%$ ~ *@ux *rook] [*duct (gest ovum)] ~])  ::  TODO
+          (emit `plan`[[%$ ~ *@ud *rook] [*duct (gest ovum)] ~])  ::  TODO
         ::
         =/  buz  ~>  %mean.'pith: bad wasp'
                  ;;(wasp card.ovum)
@@ -1651,7 +1689,7 @@
                                   ?=(%wyrd (crip p.i.tang.goof.buz))
                               ==
                    ~&(%lagging &)
-                 (emit `plan`[[%$ ~ *@ux *rook] [*duct hurl/[goof.buz (gest ovum.buz)]] ~])  ::  TODO
+                 (emit `plan`[[%$ ~ *@ud *rook] [*duct hurl/[goof.buz (gest ovum.buz)]] ~])  ::  TODO
         ::
         ::  XX review
         ::
