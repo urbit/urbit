@@ -10,21 +10,12 @@
   ++  json
     =,  enjs:format
     |^  ^-  ^json
+    %+  frond  -.jum
     ?-    -.jum
-        %add
-      %+  frond  'add'
-      (pairs ['old' (en-dock old.jum)] ['new' (en-dock new.jum)] ~)
-    ::
-        %yea
-      %+  frond  'yea'
-      (pairs ['old' (en-dock old.jum)] ['new' (en-dock new.jum)] ~)
-    ::
-        %nay
-      %+  frond  'nay'
-      (pairs ['old' (en-dock old.jum)] ['new' (en-dock new.jum)] ~)
-    ::
+        %add  (pairs ['old' (en-dock old.jum)] ['new' (en-dock new.jum)] ~)
+        %yea  (pairs ['old' (en-dock old.jum)] ['new' (en-dock new.jum)] ~)
+        %nay  (pairs ['old' (en-dock old.jum)] ['new' (en-dock new.jum)] ~)
         %all
-      %+  frond  'all'
       :-  %a
       %+  turn  ~(tap by all.jum)
       |=  [old=dock new=dock]
