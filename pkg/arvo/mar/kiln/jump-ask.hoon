@@ -10,7 +10,7 @@
   --
 ++  grab
   |%
-  ++  noun  ,[dock dock]
+  +$  noun  [dock dock]
   --
 ++  grad  %noun
 --
