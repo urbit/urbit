@@ -2782,7 +2782,7 @@
           [%cull =case =spur]
       ::
           [%tend =coop =path =page]
-          [%germ =coop =crew:clay]
+          [%germ =coop]
           [%snip =coop]
       ==
     +$  task
