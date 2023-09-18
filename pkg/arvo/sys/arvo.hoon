@@ -1188,7 +1188,7 @@
         ^-  (unit (unit (cask meta)))
         ::  namespace reads receive no entropy
         ::
-        =/  sam=vane-sample  [now *@uvJ tick rok]  ::  TODO
+        =/  sam=vane-sample  [now *@uvJ tick rok]
         =^  rig  sac
           ~>  %mean.'peek: activation failed'
           (~(slym wa sac) vax sam)
@@ -1212,7 +1212,7 @@
         |=  [hen=duct eny=@uvJ dud=(unit goof)]
         =*  duc  [duc.vil hen]
         =*  err  [dud.vil dud]
-        =/  sam=vane-sample  [now eny tick rok]  ::  TODO
+        =/  sam=vane-sample  [now eny tick rok]
         =^  rig  sac
           ~>  %mean.'spin: activation failed'
           (~(slym wa sac) vax sam)
@@ -1334,7 +1334,7 @@
       ::
       =+  [wir car]=[/arvo vega/~]
       =.  ..this  (xeno:pith $/wir car)
-      (emit `plan`[[%$ ~ *@ud *rook] (spam:pith wir !>(car))])  ::  TODO
+      (emit `plan`[[%$ ~ *@ud peek] (spam:pith wir !>(car))])
     ::  +emit: enqueue a worklist with source
     ::
     ++  emit
@@ -1512,7 +1512,7 @@
         ;;(waif q.p.task)
       ::
       =.  way  (grow way)
-      %+  push  `germ`[way [[bar duct] bars.gem] tick.gem say.gem]  ::  TODO
+      %+  push  `germ`[way [[bar duct] bars.gem] tick.gem say.gem]
       ~|  bar-stack=`(list ^duct)`[duct (turn bars.gem tail)]
       %.  task
       call:(spin:(plow way) duct eny dud)
@@ -1530,7 +1530,7 @@
       ::  the caller was a vane
       ::
       =.  way  (grow way)
-      %+  push  `germ`[way [[bar duct] bars.gem] tick.gem say.gem]  ::  TODO
+      %+  push  `germ`[way [[bar duct] bars.gem] tick.gem say.gem]
       ::
       ::  cons source onto .gift to make a $sign
       ::
@@ -1641,7 +1641,7 @@
         ::
           %trim  =?  van.mod  =(0 p.waif)
                    (~(run by van.mod) |=(=vane vane(worm *worm)))
-                 (emit `plan`[[%$ ~ *@ud *rook] (spam /arvo !>(waif))])  ::  TODO
+                 (emit `plan`[[%$ ~ *@ud `rook`^peek] (spam /arvo !>(waif))])
         ::
           %verb  ..pith(lac.fad ?~(p.waif !lac.fad u.p.waif))
           %what  ~(kel what p.waif)
@@ -1675,7 +1675,7 @@
           ~>(%mean.'pith: bad wire' !!)
         ::
         ?.  ?=(?(%crud %wack %wyrd) p.card.ovum)
-          (emit `plan`[[%$ ~ *@ud *rook] [*duct (gest ovum)] ~])  ::  TODO
+          (emit `plan`[[%$ ~ *@ud `rook`^peek] [*duct (gest ovum)] ~])
         ::
         =/  buz  ~>  %mean.'pith: bad wasp'
                  ;;(wasp card.ovum)
@@ -1689,7 +1689,7 @@
                                   ?=(%wyrd (crip p.i.tang.goof.buz))
                               ==
                    ~&(%lagging &)
-                 (emit `plan`[[%$ ~ *@ud *rook] [*duct hurl/[goof.buz (gest ovum.buz)]] ~])  ::  TODO
+                 (emit `plan`[[%$ ~ *@ud `rook`^peek] [*duct hurl/[goof.buz (gest ovum.buz)]] ~])
         ::
         ::  XX review
         ::
