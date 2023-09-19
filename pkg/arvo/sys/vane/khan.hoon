@@ -70,9 +70,9 @@
   ?@(bear [our bear %da now] bear)
 ::
 ++  get-dais
-  |=  [=beak =mark rof=roof]
+  |=  [=beak =mark tick=@ud rof=roof]
   ^-  dais:clay
-  ?~  ret=(rof ~ /khan %cb beak /[mark])
+  ?~  ret=(rof tick ~ /khan %cb beak /[mark])
     ~|(mark-unknown+mark !!)
   ?~  u.ret
     ~|(mark-invalid+mark !!)
@@ -80,9 +80,9 @@
   !<(dais:clay q.u.u.ret)
 ::
 ++  get-tube
-  |=  [=beak =mark =out=mark rof=roof]
+  |=  [=beak =mark =out=mark tick=@ud rof=roof]
   ^-  tube:clay
-  ?~  ret=(rof ~ /khan %cc beak /[mark]/[out-mark])
+  ?~  ret=(rof tick ~ /khan %cc beak /[mark]/[out-mark])
     ~|(tube-unknown+[mark out-mark] !!)
   ?~  u.ret
     ~|(tube-invalid+[mark out-mark] !!)
@@ -140,7 +140,7 @@
     =*  fyd         p.task
     =/  =beak       (get-beak bear.fyd now)
     =/  =wire       (make-wire beak p.args.fyd)
-    =/  =dais:clay  (get-dais beak p.q.args.fyd rof)
+    =/  =dais:clay  (get-dais beak p.q.args.fyd tick rof)
     =/  =vase
       (slap (vale.dais q.q.args.fyd) !,(*hoon [~ u=.]))
     =-  [[hen %pass wire -]~ khan-gate]
@@ -213,7 +213,7 @@
     ?.  ?=(%& -.row)
       [hen %give %avow row]~
     =/  [=beak =mark]   (read-wire tea)
-    =/  =tube:clay      (get-tube beak p.p.row mark rof)
+    =/  =tube:clay      (get-tube beak p.p.row mark tick rof)
     =/  =vase           (tube q.p.row)
     [hen %give %avow %& mark q.vase]~
   ==

@@ -4831,6 +4831,7 @@
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ tick=@ rof=roof]                ::  current invocation
+~&  >  [%clay-tick tick]
 ~%  %clay-top  ..part  ~
 |%                                                    ::
 ++  call                                              ::  handle request
