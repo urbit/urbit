@@ -68,9 +68,11 @@
   $:  disclosing=(unit (set ship))
       attributing=[=ship =path]
   ==
-+$  lock  [rev=@ud key=@uvJ] :: TODO: key width?
++$  lock  [rev=@ud key=@ud]
 +$  hutch
-  [=lock =crew:clay chicks=(map path page)]
+  [=lock chicks=(map path page)]
++$  nest
+  [=coop =lock chicks=(set path)]
 ::  $yoke: agent runner state
 ::
 ::    control-duct: TODO document
@@ -131,6 +133,7 @@
   $%  [%d =mark noun=*]
       [%x ~]
   ==
+::
 ::  $ames-request: network request (%plea)
 ::
 ::    %m: poke
@@ -139,13 +142,19 @@
 ::    %u: leave
 ::
 +$  ames-request-all
-  $%  [%0 ames-request]
+  $%  [%0 ames-request-0]
+      [%1 ames-request]
   ==
-+$  ames-request
++$  ames-request-0
   $%  [%m =mark noun=*]
       [%l =mark =path]
       [%s =path]
       [%u ~]
+  ==
+::
++$  ames-request
+  $%  ames-request-0
+      [%c =path]
   ==
 ::  $remote-request: kinds of agent actions that can cross the network
 ::
@@ -357,7 +366,7 @@
     =.  mo-core  (mo-track-ship ship)
     ?<  ?=(?(%raw-poke %poke-as) -.deal)
     =/  =ames-request-all
-      :-  %0
+      :-  %1
       ?-  -.deal
         %poke      [%m p.cage.deal q.q.cage.deal]
         %leave     [%u ~]
@@ -877,7 +886,11 @@
       (mo-give %flub ~)
     ?:  ?=(%.n -.agent.u.yok)
       (mo-give %flub ~)
-    ::
+    ?:  ?=(%c -.ames-request)
+      =/  ap-core  (ap-abed:ap agent-name [~ ship /])
+      =<  ap-abet
+      (ap-coop-request:ap-core ship +.ames-request)
+  ::
     =/  =wire  /sys/req/(scot %p ship)/[agent-name]
     ::
     =/  =deal
@@ -888,6 +901,7 @@
         %u  [%leave ~]
       ==
     (mo-pass wire %g %deal [ship our /] agent-name deal)
+    
   ::  +mo-spew: handle request to set verbosity toggles on debug output
   ::
   ++  mo-spew
@@ -980,6 +994,27 @@
         moves        moves
       ==
     ::
+    ++  ap-coop-request
+      |=  [=ship =path]
+      ?~  cop=(ap-match-coop path)
+        :: TODO: behaviour on missing
+        ap-core
+      =/  cag=(unit (unit cage))
+        (ap-peek %| %c (snoc u.cop (scot %p ship)))
+      =/  has-perms=?
+        ?.  ?=([~ ~ ^] cag)
+          |
+        ;;(? q.u.u.cag)
+      =/  =hutch  (~(got by cop.yoke) u.cop)
+      ?:  has-perms
+        =/  =nest
+          =,(hutch [u.cop lock ~(key by chicks)])
+        =/  =ames-response
+          [%d %gall-nest nest]
+        (ap-move [agent-duct %give %boon ames-response]~)
+      ap-core
+      
+    ::
     ++  ap-yawn-all
       ^-  (list card:agent)
       %-  zing
@@ -1018,10 +1053,11 @@
       ap-core
     ++  ap-match-coop
       |=  =path
+      ^-  (unit coop)
       ?:  (~(has by cop.yoke) path)
-        &
+        `path
       ?:  =(~ path)
-        |
+        ~
       =.  path  (flop path)
       ?>  ?=(^ path)
       $(path (flop t.path))
@@ -1036,13 +1072,12 @@
       =.  cop.yoke  (~(put by cop.yoke) coop hutch)
       ap-core
     ++  ap-germ
-      |=  [=coop =crew:clay]
+      |=  =coop
       =/  key=@uvJ  (shax eny) :: TODO: review key generation
       =/  =hutch  
         ?~  hut=(~(get by cop.yoke) coop)
-          [[1 (shax eny)] crew ~]
-        =.  lock.u.hut  [.+(rev.lock.u.hut) (shax eny)]
-        =.  crew.u.hut  crew
+          *hutch :: TODO: fix
+        =.  lock.u.hut  *lock
         u.hut
       =.  cop.yoke  (~(put by cop.yoke) coop hutch)
       ap-core
@@ -1055,7 +1090,7 @@
     ++  ap-grow
       |=  [=spur =page]
       ^+  ap-core
-      ?<  (ap-match-coop spur) :: enforce binding public seperately
+      ?>  =(~ (ap-match-coop spur)) :: enforce binding public seperately
       =-  ap-core(sky.yoke -)
       %+  ~(put by sky.yoke)  spur
       =/  ski  (~(gut by sky.yoke) spur *path-state)
