@@ -147,7 +147,12 @@
   =>  |%
       +$  name  [p=ship q=path r=bloq s=num=@ud]
       +$  data  [tot=@ud aut=@ux dat=@]
-      +$  pact  $%  [%page p=name q=data r=nex=@ux]  ::  nex=(unit (each [@if @udE] (list [@if @udE])))
+      +$  lane  $@  @ux
+                $%  [%if p=@ifF q=@udE]
+                    [%is p=@isH q=@udE]
+                ==
+      +$  next  (list lane)
+      +$  pact  $%  [%page p=name q=data r=next]
                     [%peek p=name]
                     [%poke p=name q=name r=data]
                 ==
@@ -159,17 +164,18 @@
     ^-  plot
     =/  bod=plot
       ?-  -.pak
-        %page  :: XX nex
-               ::
-               [(en:^name p.pak) (en:^data q.pak)]
-      ::
+        %page  [(en:^name p.pak) (en:^data q.pak) (en:^next r.pak)]
         %peek  (en:^name p.pak)
         %poke  [(en:^name p.pak) (en:^name q.pak) (en:^data r.pak)]
       ==
     =/  hed=plot
-      ::  XX nex: ?.(?=(%page -.pak) 0 r.pak)
-      ::
-      (en:head 0 -.pak 0 (mug (fax b)))
+      =/  nex=@B
+        ?.  ?=(%page -.pak)  0b0
+        ?~  r.pak            0b0
+        ?^  t.r.pak          0b11
+        ?:(?=([%if *] i.r.pak) 0b1 0b10)
+      =/  hop  0 :: XX
+      (en:head nex -.pak 0 (mug (fax bod)))
     [hed bod]
   ::
   ++  de
@@ -181,8 +187,8 @@
     ?-  typ.hed
       %page  =^  nam  b  ((de:^name b) dat)
              =^  dat  b  ((de:^data b) dat)
-             ::  XX nex
-             [[typ.hed nam dat *@ux] b]
+             =^  nex  b  ((de:^next b nex.hed) ^dat)
+             [[typ.hed nam dat nex] b]
     ::
       %peek  =^  nam  b  ((de:^name b) dat)
             [[typ.hed nam] b]
@@ -213,6 +219,68 @@
     ?>  =(1 ver)
     =/  typ  ?+(tip !! %0b1 %page, %0b10 %peek, %0b11 %poke)
     [[nex typ hop gum] b]
+  --
+::
+++  next
+  |%
+  ++  en
+    |=  nex=next:pact
+    ^-  plot
+    :-  bloq=3
+    ?~  nex  ~
+    ?:  ?=([[%if *] ~] nex)
+      [[4 p] [2 q] ~]:i.nex
+    |-  ^-  (list plat)
+    =;  one=(list plat)
+      ?~(t.nex one (weld one $(nex t.nex)))
+    ?-  i.nex
+      @        =/  l  (met 3 i.nex)
+               ?>  (lth l 255)
+               [[1 +(l)] [1 2] [l i.nex] ~]
+      [%if *]  [[1 7] [1 0] [4 p] [2 q] ~]:i.nex
+      [%is *]  =/  l  (met 3 p.i.nex)
+               ?>  (lth l 253)
+               [[1 (add 3 l)] [1 1] [l p.i.nex] [2 q.i.nex] ~]
+    ==
+  ::
+  ++  de
+    |=  [a=bite b=@B]
+    =/  c=[bloq step]  [3 ?@(a 0 (rig [bloq.a 3] step.a))]
+    |=  dat=@
+    ^-  [next:pact bloq step]
+    =<  ?+  b  !!
+          %0b0   [~ c]
+        ::
+          %0b1   =^  if=[@ @]  c  ((hew c dat) 4 2)
+                 [[if+if ~] c]
+        ::
+          %0b10  =^  la  c  (need one)
+                 [[la ~] c]
+        ::
+          %0b11  =|  nex=next:pact
+                 |-  ^-  [next:pact bloq step]
+                 =/  a  one
+                 ?~  a  [(flop nex) c]
+                 $(nex [-.u.a nex], c +.u.a)
+        ==
+    |%
+    ++  one
+      ^-  (unit [lane:pact bloq step])
+      =^  raw  c  ((hew c dat) 1 1)
+      ?:  =(0 -.raw)  ~
+      ?+  +.raw  !!
+        %0  ?>  =(7 -.raw)
+            =^  if=[@ @]  c  ((hew c dat) 4 2)
+            `[if+if c]
+      ::
+        %1  ?>  (gte -.raw 3)
+            =^  is=[@ @]  c  ((hew c dat) (sub -.raw 3) 2)
+            `[is+is c]
+      ::
+        %2  =^  la  c  ((hew c dat) (dec -.raw))
+            `[la c]
+      ==
+    --
   --
 ::
 ::  +name: encoded-path
