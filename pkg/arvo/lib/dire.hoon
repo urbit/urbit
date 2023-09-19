@@ -1,13 +1,14 @@
 !:
 |%
 +$  plat
-  $@  @                                       ::  measure
+  $@  @                                       ::  measure atom
   $^  $%  [[%c ~] (pair (pair step step) @)]  ::  cut slice
           [[%m ~] (pair (pair step step) @)]  ::  measure slice
           [[%s ~] p=plot]                     ::  subslice
       ==                                      ::
-  (pair step @)                               ::  fixed
-+$  plot  [a=bloq b=(list plat)]              ::  serialization spec
+  (pair step @)                               ::  prefix
++$  plot  $^  [l=plot r=plot]                 ::  concatenate
+          [a=bloq b=(list plat)]              ::  serialize
 --
 ::
 |%
@@ -31,20 +32,28 @@
 ::
 ++  fax
   :: ~/  %fax
-  |=  plot
+  |=  p=plot
   ^-  (pair step @)
-  ?~  b  [0 0]
-  =;  c=(pair step @)
-    =/  d  $(b t.b)
-    [(add p.c p.d) (add q.c (lsh [a p.c] q.d))]
+  =<  +
+  |-  ^-  (trel bloq step @)
+  ?^  -.p
+    =/  l  $(p l.p)
+    =/  r  $(p r.p)
+    =/  s  (rig [p.l p.r] q.l)
+    [p.r (add q.r s) (add r.l (lsh [p.r s] r.r))]
   ::
-  ?@  i.b    (pet a i.b)
-  ?@  -.i.b  [p.i.b (end [a p.i.b] q.i.b)]
-  ?-  -.i.b
-    [%c ~]   [q.p.i.b (cut a [p q]:i.b)]
-    [%m ~]   (pet a (cut a [p q]:i.b))
-    [%s ~]   =/  e  $(a a.p.i.b, b b.p.i.b)
-             [(rig [a.p.i.b a] p.e) q.e]
+  ?~  b.p  [a.p 0 0]
+  =;  c=(pair step @)
+    =/  d  ^$(b.p t.b.p)
+    [a.p (add p.c p.d) (add q.c (lsh [a.p p.c] q.d))]
+  ::
+  ?@  i.b.p  (pet a.p i.b.p)
+  ?-  -.i.b.p
+    @       [p.i.b.p (end [a.p p.i.b.p] q.i.b.p)]
+    [%c ~]  [q.p.i.b.p (cut a.p [p q]:i.b.p)]
+    [%m ~]  (pet a.p (cut a.p [p q]:i.b.p))
+    [%s ~]  =/  e  $(p p.i.b.p)
+            [(rig [p.e a.p] q.e) r.e]
   ==
 ::
 ::  +nac: reverse +can
@@ -148,28 +157,20 @@
   ++  en
     |=  pak=pact
     ^-  plot
-    =/  b=plot
+    =/  bod=plot
       ?-  -.pak
-        %page  =/  n  (en:^name p.pak)
-               =/  d  (en:^data q.pak)
-               :: XX nex
+        %page  :: XX nex
                ::
-               ?>  =(a.n a.d)
-               [a.n (weld b.n b.d)]
+               [(en:^name p.pak) (en:^data q.pak)]
       ::
         %peek  (en:^name p.pak)
-      ::
-        %poke  =/  n  (en:^name p.pak)
-               =/  m  (en:^name q.pak)
-               =/  d  (en:^data r.pak)
-               ?>  &(=(a.n a.m) =(a.n a.d))
-               [a.n (zing b.n b.m b.d ~)]
+        %poke  [(en:^name p.pak) (en:^name q.pak) (en:^data r.pak)]
       ==
-    ::
-    :+  bloq=3
+    =/  hed=plot
       ::  XX nex: ?.(?=(%page -.pak) 0 r.pak)
-      [s+~ (en:head 0 -.pak 0 (mug (fax b)))]
-    b.b
+      ::
+      (en:head 0 -.pak 0 (mug (fax b)))
+    [hed bod]
   ::
   ++  de
     |=  a=bite
