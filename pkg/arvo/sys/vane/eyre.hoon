@@ -789,8 +789,7 @@
       %.  (~(put by connections.state) duct connection)
       (trace 2 |.("{<duct>} creating local"))
     ::
-    :_  state
-    (subscribe-to-app [%ours ~] app.act inbound-request.connection)
+    (request-to-app [%ours ~] app.act inbound-request.connection)
   ::  +request: starts handling an inbound http request
   ::
   ++  request
@@ -964,8 +963,7 @@
       ==
     ::
         %app
-      :_  state
-      (subscribe-to-app identity app.action inbound-request.connection)
+      (request-to-app identity app.action inbound-request.connection)
     ::
         %authentication
       (handle-request:authentication secure host address [suv identity] request)
@@ -1100,11 +1098,24 @@
       %^  return-static-data-on-duct  status  'text/html'
       (error-page status authenticated url.request tape)
     --
-  ::  +subscribe-to-app: subscribe to app and poke it with request data
+  ::  +request-to-app: subscribe to app and poke it with request data
   ::
-  ++  subscribe-to-app
+  ++  request-to-app
     |=  [=identity app=term =inbound-request:eyre]
-    ^-  (list move)
+    ^-  (quip move server-state)
+    ::  if the agent isn't running, we synchronously serve a 503
+    ::
+    ?.  !<(? q:(need (need (rof ~ /eyre %gu [our app da+now] /$))))
+      %^  return-static-data-on-duct  503  'text/html'
+      %:  error-page
+        503
+        ?=(%ours -.identity)
+        url.request.inbound-request
+        "%{(trip app)} not running"
+      ==
+    ::  otherwise, subscribe to the agent and poke it with the request
+    ::
+    :_  state
     :~  %+  deal-as
           /watch-response/[eyre-id]
         [identity our app %watch /http-response/[eyre-id]]

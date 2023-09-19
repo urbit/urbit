@@ -375,6 +375,7 @@
   |=  [gang pov=path =view =beam]
   ^-  (unit (unit cage))
   ?:  =(%gd view)  ``noun+!>(%base)
+  ?:  =(%gu view)  ``noun+!>(=(%app1 q.beam))
   ?:  &(=(%ca view) =(/gen/handler/hoon s.beam))
     :+  ~  ~
     vase+!>(!>(|=(* |=(* [[%404 ~] ~]))))
@@ -553,6 +554,21 @@
     (take /watch-response/[eyre-id] ~[/http-blah] sign)
   =/  headers  ['content-type' 'text/html']~
   (expect-moves mos (ex-continue-response `[3 'ya!'] %.n) ~)
+::
+++  test-dead-app-request
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  (wait ~d1)
+  ::  dead-app binds successfully
+  ::
+  ;<  ~  bind:m  (connect %dead-app /)
+  ;<  ~  bind:m  (wait ~d1)
+  ::  outside requests a path that dead-app has bound to
+  ::
+  ;<  mos=(list move)  bind:m  (get '/' ~)
+  =/  body  `(error-page:eyre-gate 503 %.n '/' "%dead-app not running")
+  (expect-moves mos (ex-response 503 ['content-type' 'text/html']~ body) ~)
 ::  tests an app redirecting to the login handler, which then receives a post
 ::  and redirects back to app
 ::
