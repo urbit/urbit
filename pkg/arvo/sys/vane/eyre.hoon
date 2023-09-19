@@ -1,7 +1,7 @@
 !:
 ::  lighter than eyre
 ::
-|=  our=ships
+|=  our=ship
 =,  eyre
 ::  internal data structures
 ::
