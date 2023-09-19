@@ -764,6 +764,7 @@
   ::    Messaging Tasks
   ::
   ::    %hear: packet from unix
+  ::    %dear: lane from unix
   ::    %heed: track peer's responsiveness; gives %clog if slow
   ::    %jilt: stop tracking peer's responsiveness
   ::    %cork: request to delete message flow
@@ -794,6 +795,7 @@
   +$  task
     $+  ames-task
     $%  [%hear =lane =blob]
+        [%dear =ship =lane]
         [%heed =ship]
         [%jilt =ship]
         [%cork =ship]
