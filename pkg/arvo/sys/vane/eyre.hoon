@@ -1,7 +1,7 @@
 !:
 ::  lighter than eyre
 ::
-|=  our=ship
+|=  our=ships
 =,  eyre
 ::  internal data structures
 ::
@@ -3313,8 +3313,8 @@
   ?~  u  [%| "invalid scry path"]
   ::  perform scry
   ::
-  ?~  res=(rof ~ u.u)  [%| "failed scry"]
-  ?~  u.res            [%| "no scry result"]
+  ?~  res=(rof ~ /eyre u.u)  [%| "failed scry"]
+  ?~  u.res                  [%| "no scry result"]
   =*  mark   p.u.u.res
   =*  vase   q.u.u.res
   ::  convert to mime via ext
@@ -3342,7 +3342,7 @@
         %c
       [%& q.beam]
         %g
-      =/  res  (rof ~ %gd [our q.beam da+now] /$)
+      =/  res  (rof ~ /eyre %gd [our q.beam da+now] /$)
       ?.  ?=([~ ~ *] res)
         [%| "no desk for app {<q.beam>}"]
       [%& !<(=desk q.u.u.res)]
@@ -3352,7 +3352,7 @@
     |=  [=vase from=mark to=mark =desk]
     ^-  (each ^vase tape)
     ?:  =(from to)  [%& vase]
-    =/  tub  (rof ~ %cc [our desk da+now] /[from]/[to])
+    =/  tub  (rof ~ /eyre %cc [our desk da+now] /[from]/[to])
     ?.  ?=([~ ~ %tube *] tub)
       [%| "no tube from {(trip from)} to {(trip to)}"]
     =/  tube  !<(tube:clay q.u.u.tub)
