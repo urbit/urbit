@@ -801,6 +801,7 @@
         [%kroc bones=(list [ship bone])]
         $>(%plea vane-task)
         [%deep =deep]
+        [%lock ~]
     ::
         [%keen spar]
         [%yawn spar]

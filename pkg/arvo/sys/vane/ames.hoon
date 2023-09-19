@@ -107,8 +107,15 @@
 ~%  %ames  ..part  ~
 |%
 +|  %helpers
-::  +trace: print if .verb is set and we're tracking .ship
 ::
+++  chain
+  =<  mop
+  |%
+  ++  on  ((^on ,@ ,@) lte)
+  +$  mop  ((^mop ,@ ,@) lte)
+  --
+::
+::  +trace: print if .verb is set and we're tracking .ship
 ++  trace
   |=  [mode=?(%ames %fine) verb=? =ship ships=(set ship) print=(trap tape)]
   ^+  same
@@ -560,6 +567,25 @@
 ::
 +$  ames-state
   $+  ames-state
+  $:  peers=(map ship ship-state)
+      =unix=duct
+      =life
+      =rift
+      crypto-core=acru:ames
+      =bug
+      snub=[form=?(%allow %deny) ships=(set ship)]
+      cong=[msg=_5 mem=_100.000]
+    ::
+      $=  dead
+      $:  flow=[%flow (unit dead-timer)]
+          cork=[%cork (unit dead-timer)]
+      ==
+    ::
+      =chain
+    ==
+::
++$  ames-state-17
+  $+  ames-state-17
   $:  peers=(map ship ship-state)
       =unix=duct
       =life
@@ -1337,7 +1363,8 @@
             [%14 ames-state-14]
             [%15 ames-state-15]
             [%16 ames-state-16]
-            [%17 ^ames-state]
+            [%17 ames-state-17]
+            [%18 ^ames-state]
         ==
     ::
     |=  [now=@da eny=@ rof=roof]
@@ -1460,7 +1487,7 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%17 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%18 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
           $%  $:  %4
@@ -1557,10 +1584,18 @@
               $:  %17
               $%  $:  %larva
                       events=(qeu queued-event)
+                      state=ames-state-17
+                  ==
+                  [%adult state=ames-state-17]
+              ==  ==
+              $:  %18
+              $%  $:  %larva
+                      events=(qeu queued-event)
                       state=_ames-state.adult-gate
                   ==
                   [%adult state=_ames-state.adult-gate]
           ==  ==  ==
+
       |^  ?-  old
           [%4 %adult *]
         $(old [%5 %adult (state-4-to-5:load:adult-core state.old)])
@@ -1701,12 +1736,24 @@
         =.  queued-events  (event-16-to-17 events.old)
         larval-gate
       ::
-          [%17 %adult *]  (load:adult-core %17 state.old)
+          [%17 %adult *]
+        =.  cached-state  `[%17 state.old]
+        ~>  %slog.0^leaf/"ames: larva reload"
+        larval-gate
       ::
           [%17 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
+        =.  cached-state  `[%17 state.old]
         =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %17 state.old)
+        larval-gate
+
+      ::
+          [%18 %adult *]  (load:adult-core %18 state.old)
+      ::
+          [%18 %larva *]
+        ~>  %slog.1^leaf/"ames: larva: load"
+        =.  queued-events  events.old
+        =.  adult-gate     (load:adult-core %18 state.old)
         larval-gate
       ==
       ::
@@ -1783,9 +1830,11 @@
         15+(state-14-to-15:load:adult-core +.u.cached-state)
       =?  u.cached-state  ?=(%15 -.u.cached-state)
         16+(state-15-to-16:load:adult-core +.u.cached-state)
+      =?  u.cached-state  ?=(%16 -.u.cached-state)
+        17+(state-16-to-17:load:adult-core +.u.cached-state)
       =^  moz  u.cached-state
-        ?.  ?=(%16 -.u.cached-state)  [~ u.cached-state]
-        :_  17+(state-16-to-17:load:adult-core +.u.cached-state)
+        ?.  ?=(%17 -.u.cached-state)  [~ u.cached-state]
+        :_  18+(state-17-to-18:load:adult-core +.u.cached-state)
         ~>  %slog.0^leaf/"ames: init dead flow consolidation timer"
         :-  [[/ames]~ %pass /dead-flow %b %wait `@da`(add now ~m2)]
         ?^  moz  moz  ::  if we have just added the timer in state-7-to-8, skip
@@ -1799,7 +1848,11 @@
           (rof ~ /ames %bx [[our %$ da+now] /debug/timers])
         |=([@da =duct] ?=([[%ames %recork *] *] duct))
       ::
-      ?>  ?=(%17 -.u.cached-state)
+      ?>  ?=(%18 -.u.cached-state)
+      =?  chain.u.cached-state  =(~ chain.u.cached-state)
+        ~&  init-first-keypair/(shaz eny)
+        (put:on:chain chain.u.cached-state 1 (shaz eny))
+      ::  TODO: review keygen
       =.  ames-state.adult-gate  +.u.cached-state
       [moz larval-core(cached-state ~)]
     --
@@ -2855,6 +2908,15 @@
       ::  +on-vega: handle kernel reload
       ::
       ++  on-vega  event-core
+      ::  +on-lock: handle key reservation
+      ++  on-lock
+        ^+  event-core
+        =/  key  (shaz eny)
+        ~&  chain/chain.ames-state
+        =/  idx  .+(-:(need (ram:on:chain chain.ames-state)))
+        =.  chain.ames-state
+          (put:on:chain chain.ames-state idx key)
+        event-core
       ::  +on-trim: handle request to free memory
       ::
       ::  %ruin comets not seen for six months
@@ -4919,6 +4981,9 @@
   ^-  [(list move) _ames-gate]
   ::
   =/  =task       ((harden task) wrapped-task)
+  =?  chain.ames-state  =(~ chain.ames-state)
+    ~&  init-first-keypair/(shaz eny)
+    (put:on:chain chain.ames-state 1 (shaz eny))
   =/  event-core  (ev [now eny rof] duct ames-state)
   ::
   =^  moves  ames-state
@@ -4950,6 +5015,7 @@
       %tame  (on-tame:event-core ship.task)
       %kroc  (on-kroc:event-core bones.task)
       %deep  (on-deep:event-core deep.task)
+      %lock  on-lock:event-core
     ::
       %keen  (on-keen:event-core +.task)
       %yawn  (on-cancel-scry:event-core | +.task)
@@ -4988,15 +5054,15 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%17 %adult ames-state]
+++  stay  [%18 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
   =<  |=  $=  old-state
-          $%  [%17 ^ames-state]
+          $%  [%18 ^ames-state]
           ==
       ^+  ames-gate
-      ?>  ?=(%17 -.old-state)
+      ?>  ?=(%18 -.old-state)
       ames-gate(ames-state +.old-state)
   ::  all state transitions are called from larval ames
   ::
@@ -5169,7 +5235,7 @@
   ::
   ++  state-16-to-17
     |=  old=ames-state-16
-    ^-  ^ames-state
+    ^-  ames-state-17
     %=    old
         cong
       :+  cong.old
@@ -5227,6 +5293,12 @@
         ==
       --
     ==
+  ++  state-17-to-18
+    |=  old=ames-state-17
+    ^-  ^ames-state
+    %=  old
+      dead  [dead.old ~]
+    ==
   --
 ::  +scry: dereference namespace
 ::
@@ -5251,6 +5323,8 @@
     ~
   ::  /ax//whey                      (list mass)
   ::  /ax/protocol/version           @
+  ::  /ax/chain/[idx]                [idx=@ud key=@uvJ]
+  ::  /ax/chain/latest               [idx=@ud key=@uvJ]
   ::  /ax/peers                      (map ship ?(%alien %known))
   ::  /ax/peers/[ship]               ship-state
   ::  /ax/peers/[ship]/last-contact  (unit @da)
@@ -5274,6 +5348,16 @@
   ::
       [%protocol %version ~]
     ``noun+!>(protocol-version)
+  ::
+      [%chain %latest ~]
+    ``noun+!>(`[idx=@ key=@]`(need (ram:on:chain chain.ames-state)))
+  ::
+      [%chain idx=@ ~]
+    ?~  idx=(slaw %ud idx.tyl)
+      [~ ~]
+    ?~  key=(get:on:chain chain.ames-state u.idx)
+      [~ ~]
+    ``noun+!>(`[idx=@ key=@]`[u.idx u.key])
   ::
       [%peers ~]
     :^  ~  ~  %noun
