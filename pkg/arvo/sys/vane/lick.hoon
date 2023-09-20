@@ -11,7 +11,7 @@
     ::
     +$  lick-state
       $:  %0
-          unix-duct=duct
+          unix-duct=_`duct`[//lick ~]
           owners=(map name duct)
       ==
     ::

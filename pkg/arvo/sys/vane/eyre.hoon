@@ -789,8 +789,7 @@
       %.  (~(put by connections.state) duct connection)
       (trace 2 |.("{<duct>} creating local"))
     ::
-    :_  state
-    (subscribe-to-app [%ours ~] app.act inbound-request.connection)
+    (request-to-app [%ours ~] app.act inbound-request.connection)
   ::  +request: starts handling an inbound http request
   ::
   ++  request
@@ -899,6 +898,15 @@
           =-  (fall - '*')
           (get-header:http 'access-control-request-headers' headers)
       ==
+    ::  handle HTTP scries
+    ::
+    ::  TODO: ideally this would look more like:
+    ::
+    ::  ?^  p=(parse-http-scry url.request)
+    ::    (handle-http-scry authenticated p request)
+    ::
+    ?:  =('/_~_/' (end [3 5] url.request))
+      (handle-http-scry authenticated request)
     ::  handle requests to the cache
     ::
     =/  entry  (~(get by cache.state) url.request)
@@ -964,8 +972,7 @@
       ==
     ::
         %app
-      :_  state
-      (subscribe-to-app identity app.action inbound-request.connection)
+      (request-to-app identity app.action inbound-request.connection)
     ::
         %authentication
       (handle-request:authentication secure host address [suv identity] request)
@@ -1005,6 +1012,44 @@
     =/  nom=@p
       ?+(-.identity who.identity %ours our)
     (as-octs:mimes:html (scot %p nom))
+  ::  +handle-http-scry: respond with scry result
+  ::
+  ++  handle-http-scry
+    |=  [authenticated=? =request:http]
+    |^  ^-  (quip move server-state)
+    ?.  authenticated  (error-response 403 ~)
+    ?.  =(%'GET' method.request)
+      (error-response 405 "may only GET scries")
+    =/  req  (parse-request-line url.request)
+    =/  fqp  (fully-qualified site.req)
+    =/  mym  (scry-mime now rof ext.req site.req)
+    ?:  ?=(%| -.mym)  (error-response 500 p.mym)
+    =*  mime  p.mym
+    %-  handle-response
+    :*  %start
+        :-  status-code=200
+        ^=  headers
+          :~  ['content-type' (rsh 3 (spat p.mime))]
+              ['content-length' (crip (format-ud-as-integer p.q.mime))]
+              ['cache-control' ?:(fqp 'max-age=31536000' 'no-cache')]
+          ==
+        data=[~ q.mime]
+        complete=%.y
+    ==
+    ::
+    ++  fully-qualified
+      |=  a=path
+      ^-  ?
+      ?.  ?=([%'_~_' @ @ @ *] a)  %.n
+      =/  vez  (vang | (en-beam [our %base da+now] ~))
+      ?=  [~ [^ ^ ^ *]]  (rush (spat t.t.a) ;~(pfix fas gash:vez))
+    ::
+    ++  error-response
+      |=  [status=@ud =tape]
+      ^-  (quip move server-state)
+      %^  return-static-data-on-duct  status  'text/html'
+      (error-page status authenticated url.request tape)
+    --
   ::  +handle-cache-req: respond with cached value, 404 or 500
   ::
   ++  handle-cache-req
@@ -1100,11 +1145,24 @@
       %^  return-static-data-on-duct  status  'text/html'
       (error-page status authenticated url.request tape)
     --
-  ::  +subscribe-to-app: subscribe to app and poke it with request data
+  ::  +request-to-app: subscribe to app and poke it with request data
   ::
-  ++  subscribe-to-app
+  ++  request-to-app
     |=  [=identity app=term =inbound-request:eyre]
-    ^-  (list move)
+    ^-  (quip move server-state)
+    ::  if the agent isn't running, we synchronously serve a 503
+    ::
+    ?.  !<(? q:(need (need (rof ~ /eyre %gu [our app da+now] /$))))
+      %^  return-static-data-on-duct  503  'text/html'
+      %:  error-page
+        503
+        ?=(%ours -.identity)
+        url.request.inbound-request
+        "%{(trip app)} not running"
+      ==
+    ::  otherwise, subscribe to the agent and poke it with the request
+    ::
+    :_  state
     :~  %+  deal-as
           /watch-response/[eyre-id]
         [identity our app %watch /http-response/[eyre-id]]
@@ -2111,7 +2169,7 @@
           duct-to-key.channel-state
         (~(del by duct-to-key.channel-state.state) duct)
       ==
-    ::  +set-timeout-timer-for: sets a timeout timer on a channel
+    ::  +update-timeout-timer-for: sets a timeout timer on a channel
     ::
     ::    This creates a channel if it doesn't exist, cancels existing timers
     ::    if they're already set (we cannot have duplicate timers), and (if
@@ -2185,53 +2243,76 @@
     ++  on-get-request
       |=  [channel-id=@t [session-id=@uv =identity] =request:http]
       ^-  [(list move) server-state]
-      ::  if there's no channel-id, we must 404
-      ::TODO  but arm description says otherwise?
-      ::
-      ?~  maybe-channel=(~(get by session.channel-state.state) channel-id)
-        %^  return-static-data-on-duct  404  'text/html'
-        (error-page 404 | url.request ~)
-      ::  find the channel creator's identity, make sure it matches
-      ::
-      ?.  =(identity identity.u.maybe-channel)
-        %^  return-static-data-on-duct  403  'text/html'
-        (error-page 403 | url.request ~)
-      ::  find the requested "mode" and make sure it doesn't conflict
-      ::
       =/  mode=?(%json %jam)
         (find-channel-mode %'GET' header-list.request)
-      ?.  =(mode mode.u.maybe-channel)
-        %^  return-static-data-on-duct  406  'text/html'
-        =;  msg=tape  (error-page 406 %.y url.request msg)
-        "channel already established in {(trip mode.u.maybe-channel)} mode"
-      ::  when opening an event-stream, we must cancel our timeout timer
-      ::  if there's no duct already bound. Else, kill the old request
-      ::  and replace it
-      ::
-      =^  cancel-moves  state
-        ?.  ?=([%| *] state.u.maybe-channel)
-          :_  state
-          (cancel-timeout-move channel-id p.state.u.maybe-channel)^~
-        =/  cancel-heartbeat
-          ?~  heartbeat.u.maybe-channel  ~
-          :_  ~
-          %+  cancel-heartbeat-move  channel-id
-          [date duct]:u.heartbeat.u.maybe-channel
-        =-  [(weld cancel-heartbeat -<) ->]
-        (handle-response(duct p.state.u.maybe-channel) [%cancel ~])
-      ::  the request may include a 'Last-Event-Id' header
-      ::
-      =/  maybe-last-event-id=(unit @ud)
-        ?~  maybe-raw-header=(get-header:http 'last-event-id' header-list.request)
-          ~
-        (rush u.maybe-raw-header dum:ag)
-      ::  flush events older than the passed in 'Last-Event-ID'
-      ::
-      =?  state  ?=(^ maybe-last-event-id)
-        (acknowledge-events channel-id u.maybe-last-event-id)
-      ::  combine the remaining queued events to send to the client
-      ::
-      =/  event-replay=wall
+      =^  [exit=? =wall moves=(list move)]  state
+        ::  the request may include a 'Last-Event-Id' header
+        ::
+        =/  maybe-last-event-id=(unit @ud)
+          ?~  maybe-raw-header=(get-header:http 'last-event-id' header-list.request)
+            ~
+          (rush u.maybe-raw-header dum:ag)
+        ::  if the channel doesn't exist yet, simply instantiate it here
+        ::
+        ?~  maybe-channel=(~(get by session.channel-state.state) channel-id)
+          =-  [[| ~ ~] state(session.channel-state -)]
+          %+  ~(put by session.channel-state.state)  channel-id
+          ::NOTE  some other fields initialized at the end of this arm
+          %*  .  *channel
+            identity  identity
+            next-id   (fall maybe-last-event-id 0)
+            last-ack  now
+          ==
+        ::  if the channel does exist, we put some demands on the get request,
+        ::  and may need to do some cleanup for prior requests.
+        ::
+        ::  find the channel creator's identity, make sure it matches
+        ::
+        ?.  =(identity identity.u.maybe-channel)
+          =^  mos  state
+            %^  return-static-data-on-duct  403  'text/html'
+            (error-page 403 | url.request ~)
+          [[& ~ mos] state]
+        ::  make sure the request "mode" doesn't conflict with a prior request
+        ::
+        ::TODO  or could we change that on the spot, given that only a single
+        ::      request will ever be listening to this channel?
+        ?.  =(mode mode.u.maybe-channel)
+          =^  mos  state
+            %^  return-static-data-on-duct  406  'text/html'
+            =;  msg=tape  (error-page 406 %.y url.request msg)
+            "channel already established in {(trip mode.u.maybe-channel)} mode"
+          [[& ~ mos] state]
+        ::  when opening an event-stream, we must cancel our timeout timer
+        ::  if there's no duct already bound. else, kill the old request,
+        ::  we will replace its duct at the end of this arm
+        ::
+        =^  cancel-moves  state
+          ?:  ?=([%& *] state.u.maybe-channel)
+            :_  state
+            (cancel-timeout-move channel-id p.state.u.maybe-channel)^~
+          =.  duct-to-key.channel-state.state
+            (~(del by duct-to-key.channel-state.state) p.state.u.maybe-channel)
+          =/  cancel-heartbeat
+            ?~  heartbeat.u.maybe-channel  ~
+            :_  ~
+            %+  cancel-heartbeat-move  channel-id
+            [date duct]:u.heartbeat.u.maybe-channel
+          =-  [(weld cancel-heartbeat -<) ->]
+          (handle-response(duct p.state.u.maybe-channel) [%cancel ~])
+        ::  flush events older than the passed in 'Last-Event-ID'
+        ::
+        =?  state  ?=(^ maybe-last-event-id)
+          (acknowledge-events channel-id u.maybe-last-event-id)
+        ::TODO  that did not remove them from the u.maybe-channel queue though!
+        ::      we may want to account for maybe-last-event-id, for efficiency.
+        ::      (the client _should_ ignore events it heard previously if we do
+        ::      end up re-sending them, but _requiring_ that feels kinda risky)
+        ::
+        ::  combine the remaining queued events to send to the client
+        ::
+        =;  event-replay=wall
+          [[| - cancel-moves] state]
         %-  zing
         %-  flop
         =/  queue  events.u.maybe-channel
@@ -2249,6 +2330,7 @@
           (channel-event-to-tape u.maybe-channel request-id channel-event)
         ?~  said  $
         $(events [(event-tape-to-wall id +.u.said) events])
+      ?:  exit  [moves state]
       ::  send the start event to the client
       ::
       =^  http-moves  state
@@ -2259,7 +2341,7 @@
                 ['cache-control' 'no-cache']
                 ['connection' 'keep-alive']
             ==
-            (wall-to-octs event-replay)
+            (wall-to-octs wall)
             complete=%.n
         ==
       ::  associate this duct with this session key
@@ -2289,7 +2371,7 @@
           heartbeat  (some [heartbeat-time duct])
         ==
       ::
-      [[heartbeat :(weld http-moves cancel-moves moves)] state]
+      [[heartbeat :(weld http-moves moves)] state]
     ::  +acknowledge-events: removes events before :last-event-id on :channel-id
     ::
     ++  acknowledge-events
@@ -2337,11 +2419,6 @@
       ?:  ?=(%| -.maybe-requests)
         %^  return-static-data-on-duct  400  'text/html'
         (error-page 400 & url.request (trip p.maybe-requests))
-      ::  while weird, the request list could be empty
-      ::
-      ?:  =(~ p.maybe-requests)
-        %^  return-static-data-on-duct  400  'text/html'
-        (error-page 400 %.y url.request "empty list of actions")
       ::  check for the existence of the channel-id
       ::
       ::    if we have no session, create a new one set to expire in
@@ -3020,6 +3097,7 @@
       ::
       ?:  ?|  ?=([%'~' *] path.binding)    ::  eyre
               ?=([%'~_~' *] path.binding)  ::  runtime
+              ?=([%'_~_' *] path.binding)  ::  scries
           ==
         [| bindings.state]
       [& (insert-binding [binding duct action] bindings.state)]
@@ -3220,6 +3298,69 @@
   ::      need to issue a %leave after we've forgotten the identity with
   ::      which the subscription was opened.
   /(scot %p ship)/[app]/(scot %p from)
+::
+++  scry-mime
+  |=  [now=@da rof=roof ext=(unit @ta) pax=path]
+  |^  ^-  (each mime tape)
+  ::  parse
+  ::
+  =/  u=(unit [view=term bem=beam])
+    ?.  ?=([@ @ @ @ *] pax)    ~
+    ?~  view=(slaw %tas i.t.pax)    ~
+    ?~  path=(expand-path t.t.pax)  ~
+    ?~  beam=(de-beam u.path)       ~
+    `[u.view u.beam]
+  ?~  u  [%| "invalid scry path"]
+  ::  perform scry
+  ::
+  ?~  res=(rof ~ /eyre u.u)  [%| "failed scry"]
+  ?~  u.res                  [%| "no scry result"]
+  =*  mark   p.u.u.res
+  =*  vase   q.u.u.res
+  ::  convert to mime via ext
+  ::
+  =/  dysk  (conversion-desk u.u)
+  ?:  ?=(%| -.dysk)  [%| p.dysk]
+  =/  ext  (fall ext %mime)
+  =/  mym  (convert vase mark ext p.dysk)
+  ?:  ?=(%| -.mym)  [%| p.mym]
+  =/  mym  (convert p.mym ext %mime p.dysk)
+  ?:  ?=(%| -.mym)  [%| p.mym]
+  [%& !<(mime p.mym)]
+  ::
+  ++  expand-path
+    |=  a=path
+    ^-  (unit path)
+    =/  vez  (vang | (en-beam [our %base da+now] ~))
+    (rush (spat a) (sear plex:vez (stag %clsg ;~(pfix fas poor:vez))))
+  ::
+  ++  conversion-desk
+    |=  [view=term =beam]
+    ^-  (each desk tape)
+    ?:  =(%$ q.beam)  [%& %base]
+    ?+  (end 3 view)  [%& %base]
+        %c
+      [%& q.beam]
+        %g
+      =/  res  (rof ~ /eyre %gd [our q.beam da+now] /$)
+      ?.  ?=([~ ~ *] res)
+        [%| "no desk for app {<q.beam>}"]
+      [%& !<(=desk q.u.u.res)]
+    ==
+  ::
+  ++  convert
+    |=  [=vase from=mark to=mark =desk]
+    ^-  (each ^vase tape)
+    ?:  =(from to)  [%& vase]
+    =/  tub  (rof ~ /eyre %cc [our desk da+now] /[from]/[to])
+    ?.  ?=([~ ~ %tube *] tub)
+      [%| "no tube from {(trip from)} to {(trip to)}"]
+    =/  tube  !<(tube:clay q.u.u.tub)
+    =/  res  (mule |.((tube vase)))
+    ?:  ?=(%| -.res)
+      [%| "failed tube from {(trip from)} to {(trip to)}"]
+    [%& +.res]
+  --
 --
 ::  end the =~
 ::
@@ -4044,6 +4185,11 @@
       ?.  =(u.aeon aeon.u.entry)         [~ ~]
       ?~  val=val.u.entry                [~ ~]
       ``noun+!>(u.val)
+    ::
+        [%'_~_' *]
+      =/  mym  (scry-mime now rof (deft:de-purl:html tyl))
+      ?:  ?=(%| -.mym)  [~ ~]
+      ``noun+!>(p.mym)
     ==
   ?.  ?=(%$ ren)
     [~ ~]
