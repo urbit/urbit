@@ -12,6 +12,10 @@
 --
 ::
 |%
+::  atom ops
+::
++|  %atomics
+::
 ::  +pet: prefix +met
 ::
 ++  pet  |=([a=bloq b=@] `(pair step @)`[(met a b) b])
@@ -111,6 +115,10 @@
     +(n)
   ?:(=(0 m) n $(m (dec m)))
 ::
+::  binary tree ops
+::
++|  %arboric
+::
 ++  bao
   |=  n=@ud
   =|  i=@ud
@@ -139,6 +147,10 @@
     $(d d.i.s, a axe.i.s, s t.s)
   :-  [a d]
   $(d -.d, a (peg a 2), s [[(peg a 3) +.d] s])
+::
+::  packet de/serialization
+::
++|  %packets
 ::
 ::    > :(add 4 340 1.128)
 ::    1.472
