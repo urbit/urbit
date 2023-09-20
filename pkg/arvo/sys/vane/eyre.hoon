@@ -1358,14 +1358,15 @@
       ^-  (unit @uv)
       ::  are there cookies passed with this request?
       ::
-      ::    TODO: In HTTP2, the client is allowed to put multiple 'Cookie'
-      ::    headers.
+      =/  cookie-header=@t
+        %+  roll  header-list.request
+        |=  [[key=@t value=@t] c=@t]
+        ?.  =(key 'cookie')
+          c
+        (cat 3 (cat 3 c ?~(c 0 '; ')) value)
+      ::  is the cookie line valid?
       ::
-      ?~  cookie-header=(get-header:http 'cookie' header-list.request)
-        ~
-      ::  is the cookie line is valid?
-      ::
-      ?~  cookies=(rush u.cookie-header cock:de-purl:html)
+      ?~  cookies=(rush cookie-header cock:de-purl:html)
         ~
       ::  is there an urbauth cookie?
       ::
