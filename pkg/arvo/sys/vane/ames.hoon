@@ -342,14 +342,18 @@
   ::
   +|  %serialization
   ::
-  ++  etch
+  ++  etch-data
+    |=  [=path data=$@(~ (cask))]
+    =/  sig=@  (full path data)
+    ?~  data  sig
+    (mix sig (lsh 9 (jam data)))
+  ++  etch-open
     |=  [=path =hunk data=$@(~ (cask))]
+    (etch path hunk (etch-data path data))
+  ::
+  ++  etch
+    |=  [=path =hunk mes=@]
     ^-  (list yowl)
-    =/  mes=@
-      =/  sig=@  (full path data)
-      ?~  data  sig
-      (mix sig (lsh 9 (jam data)))
-      ::(cat 9 sig (jam data))
     ::
     =/  las  (met 13 mes)
     =/  tip  (dec (add [lop len]:hunk))
@@ -5483,11 +5487,40 @@
     ::
         %g
       =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
+      ?:  =(%$ q.bem.nom)  :: encrypted case
+        ?.  ?=(%ud -.r.bem.nom) :: XX: check?
+          [~ ~]
+        ?.  ?=([@ ~] s.bem.nom)
+          [~ ~]
+        =/  key
+          (~(got by chain.ames-state) p.r.bem.nom)
+        =/  aes  ~(. cbcc:aes:crypto [key 0])
+        ?~  new=(de-path-soft:balk (stab `@t`(de:aes (slav %uv i.s.bem.nom))))
+          [~ ~]
+        ::  XX: assert %gx case??
+        ::  TODO: enforce permissions w/ scry
+        (en-hunk-shut (en-path:balk u.new) key (rof ~ /ames (as-omen:balk u.new)))
       %-  en-hunk
       ?+  kyr  ~
         %x  (rof ~ /ames nom)
       ==
     ==
+    ++  en-hunk-shut
+      |=  [=path key=@ res=(unit (unit cage))]
+      ^-  (unit (unit cage))
+      =/  etch-core  (etch-hunk our [life crypto-core]:ames-state)
+      =/  dat
+        %-  ~(en cbcc:aes:crypto [key 0])
+        %+  etch-data:etch-core  path
+        ?-  res
+          ~  ~
+          [~ ~]  ~
+          [~ ~ ^]  [p q.q]:u.u.res
+        ==
+      =/  =hunk  [(slav %ud lop.tyl) (slav %ud len.tyl)]
+      =-  ``noun+!>(-)
+      %-  etch:etch-core
+      [path hunk dat]
     ::
     ++  en-hunk
       |=  res=(unit (unit cage))
@@ -5497,8 +5530,8 @@
       ::
       =/  hu-co  (etch-hunk our [life crypto-core]:ames-state)
       ?-  res
-        [~ ~]    ``noun+!>((etch:hu-co pax.tyl hunk ~))
-        [~ ~ *]  ``noun+!>((etch:hu-co pax.tyl hunk [p q.q]:u.u.res))
+        [~ ~]    ``noun+!>((etch-open:hu-co pax.tyl hunk ~))
+        [~ ~ *]  ``noun+!>((etch-open:hu-co pax.tyl hunk [p q.q]:u.u.res))
       ==
     --
   ::
