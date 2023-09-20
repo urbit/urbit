@@ -175,29 +175,32 @@
         ?^  t.r.pak          0b11
         ?:(?=([%if *] i.r.pak) 0b1 0b10)
       =/  hop  0 :: XX
-      (en:head nex -.pak 0 (mug (fax bod)))
+      (en:head nex -.pak 0 (mug q:(fax bod)))
     [hed bod]
   ::
   ++  de
     |=  a=bite
-    =/  b=[bloq step]  [0 ?@(a 0 (rig [bloq.a 0] step.a))]
     |=  dat=@
     ^-  [pact bloq step]
-    =^  hed  b  ((de:head b) dat)
-    ?-  typ.hed
-      %page  =^  nam  b  ((de:^name b) dat)
-             =^  dat  b  ((de:^data b) dat)
-             =^  nex  b  ((de:^next b nex.hed) ^dat)
-             [[typ.hed nam dat nex] b]
-    ::
-      %peek  =^  nam  b  ((de:^name b) dat)
-            [[typ.hed nam] b]
-    ::
-      %poke  =^  nam  b  ((de:^name b) dat)
-             =^  dam  b  ((de:^name b) dat)
-             =^  dat  b  ((de:^data b) dat)
-             [[typ.hed nam dam dat] b]
-    ==
+    =+  ^=  [hed b]  ((de:head a) dat)
+    =+  ^=  [pac c]
+      ?-  typ.hed
+        %page  =^  nam  b  ((de:^name b) dat)
+               =^  dat  b  ((de:^data b) dat)
+               =^  nex  b  ((de:^next b nex.hed) ^dat)
+               [[typ.hed nam dat nex] b]
+      ::
+        %peek  =^  nam  b  ((de:^name b) dat)
+              [[typ.hed nam] b]
+      ::
+        %poke  =^  nam  b  ((de:^name b) dat)
+               =^  dam  b  ((de:^name b) dat)
+               =^  dat  b  ((de:^data b) dat)
+               [[typ.hed nam dam dat] b]
+      ==
+    =/  gum
+      (end [0 20] (mug (cut -.c [(rig [-.b -.c] +.b) +.c] dat)))
+    ?>(=(gum.hed gum) [pac c])
   --
 ::
 ++  head
