@@ -119,8 +119,7 @@
 ++  room                                                ::  either namespace
   |$  [a]
   $~  =>(~ |~(* ~))
-  $-  $:  tic=@ud                                       ::  tick
-          lyc=gang                                      ::  leakset
+  $-  $:  lyc=gang                                      ::  leakset
           pov=path                                      ::  provenance
           omen                                          ::  perspective, path
       ==                                                ::
@@ -426,13 +425,13 @@
 ::
 ++  look
   ~/  %look
-  |=  [rof=roof tic=@ud lyc=gang pov=path]
+  |=  [rof=roof lyc=gang pov=path]
   ^-  root
   ~/  %in
   |=  [ref=* raw=*]
   ?~  pax=((soft path) raw)  ~
   ?~  mon=(de-omen u.pax)  ~
-  ?~  dat=(rof tic lyc pov u.mon)  ~
+  ?~  dat=(rof lyc pov u.mon)  ~
   ?~  u.dat  [~ ~]
   =*  vax  q.u.u.dat
   ?.  ?&  ?=(^ ref)
@@ -1185,7 +1184,7 @@
       ++  peek
         ~/  %peek
         ^-  rook
-        |=  [tic=@ud lyc=gang pov=path omen]
+        |=  [lyc=gang pov=path omen]
         ^-  (unit (unit (cask meta)))
         ::  namespace reads receive no entropy
         ::
@@ -1464,7 +1463,7 @@
       |=  [nam=term =vane]
       =;  mas=(list mass)
         nam^|+(welp mas [dot+&+q.vase typ+&+p.vase sac+&+worm ~]:vane)
-      ?~  met=(peek tick.gem [~ ~] / [nam %x] bem)  ~
+      ?~  met=(peek [~ ~] / [nam %x] bem)  ~
       ?~  u.met  ~
       ~|  mass+nam
       ;;((list mass) q.q.u.u.met)
@@ -1483,7 +1482,7 @@
     ::
     ++  peek
       ^-  rook
-      |=  [tic=@ud lyc=gang pov=path omen]
+      |=  [lyc=gang pov=path omen]
       ^-  (unit (unit (cask meta)))
       ::  vane and care may be concatenated
       ::
@@ -1493,14 +1492,13 @@
           [vis %$]
         [(end 3 vis) (rsh 3 vis)]
       ::
-      ~&  >>>  [%peek-le tic=tic gem=tick.gem]
       ?:  ?=(%$ way)
         (peek:pith lyc pov car bem)
       ::
       =.  way  (grow way)
       ?~  van=(~(get by van.mod) way)
         ~
-      %.  [tick.gem lyc pov car bem]
+      %.  [lyc pov car bem]
       peek:spin:(~(plow va [vil u.van]) now tick.gem say.gem)
     ::  +call: advance to target
     ::
@@ -1899,8 +1897,7 @@
 ::  +peek: external inspect
 ::
 ++  peek                                                ::  +22
-  |=  $:  tic=@ud
-          lyc=gang
+  |=  $:  lyc=gang
           $=  nom
           %+  each  path
           $%  [%once vis=view syd=desk tyl=spur]
@@ -1916,7 +1913,7 @@
     ==
   ::
   ?~  hap  ~
-  =/  pro  (~(peek le:part [pit vil] sol) tic lyc / [vis bem]:u.hap)
+  =/  pro  (~(peek le:part [pit vil] sol) lyc / [vis bem]:u.hap)
   ?:  |(?=(~ pro) ?=(~ u.pro))  ~
   =/  dat=(cask)  [p q.q]:u.u.pro
   ?.  pat.u.hap  `dat

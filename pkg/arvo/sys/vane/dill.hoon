@@ -146,7 +146,7 @@
       ++  sponsor
         ^-  ship
         =/  dat=(unit (unit cage))
-          (rof tick `[our ~ ~] /dill j/[[our sein/da/now] /(scot %p our)])
+          (rof `[our ~ ~] /dill j/[[our sein/da/now] /(scot %p our)])
         ;;(ship q.q:(need (need dat)))
       ::
       ++  init                                          ::  initialize
