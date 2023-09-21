@@ -1205,8 +1205,9 @@
 +$  task-11-and-16
   $+  task-11-and-16
   $%  [%kroc dry=?]
+      [%keen spar]
       [%snub ships=(list ship)]
-      $<(?(%snub %kroc) task)
+      $<(?(%snub %kroc %keen) task)
   ==
 ::
 +$  queued-event-16
@@ -1218,7 +1219,20 @@
 +$  task-16
   $+  task-16
   $%  [%kroc dry=?]
-      $<(%kroc task)
+      [%keen spar]
+      $<(?(%kroc %keen) task)
+  ==
+::
++$  queued-event-17
+  $+  queued-event-17
+  $%  [%call =duct wrapped-task=(hobo task-17)]
+      [%take =wire =duct =sign]
+  ==
+::
++$  task-17
+  $+  task-17
+  $%  [%keen spar]
+      $<(%keen task)
   ==
 ::  $bug: debug printing configuration
 ::
@@ -1587,7 +1601,7 @@
               ==  ==
               $:  %17
               $%  $:  %larva
-                      events=(qeu queued-event)
+                      events=(qeu queued-event-17)
                       state=ames-state-17
                   ==
                   [%adult state=ames-state-17]
@@ -1671,7 +1685,7 @@
           [%10 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%10 state.old]
-        =.  queued-events  (event-11-to-17 events.old)
+        =.  queued-events  (event-11-to-18 events.old)
         larval-gate
       ::
           [%11 %adult *]
@@ -1682,7 +1696,7 @@
           [%11 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%11 state.old]
-        =.  queued-events  (event-11-to-17 events.old)
+        =.  queued-events  (event-11-to-18 events.old)
         larval-gate
       ::
           [%12 %adult *]
@@ -1693,7 +1707,7 @@
           [%12 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%12 state.old]
-        =.  queued-events  (event-16-to-17 events.old)
+        =.  queued-events  (event-16-to-18 events.old)
         larval-gate
       ::
           [%13 %adult *]
@@ -1704,7 +1718,7 @@
           [%13 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%13 state.old]
-        =.  queued-events  (event-16-to-17 events.old)
+        =.  queued-events  (event-16-to-18 events.old)
         larval-gate
       ::
           [%14 %adult *]
@@ -1715,7 +1729,7 @@
           [%14 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%14 state.old]
-        =.  queued-events  (event-16-to-17 events.old)
+        =.  queued-events  (event-16-to-18 events.old)
         larval-gate
       ::
           [%15 %adult *]
@@ -1726,7 +1740,7 @@
           [%15 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%15 state.old]
-        =.  queued-events  (event-16-to-17 events.old)
+        =.  queued-events  (event-16-to-18 events.old)
         larval-gate
       ::
           [%16 %adult *]
@@ -1737,7 +1751,7 @@
           [%16 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%16 state.old]
-        =.  queued-events  (event-16-to-17 events.old)
+        =.  queued-events  (event-16-to-18 events.old)
         larval-gate
       ::
           [%17 %adult *]
@@ -1748,7 +1762,7 @@
           [%17 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%17 state.old]
-        =.  queued-events  events.old
+        =.  queued-events  (event-17-to-18 events.old)
         larval-gate
 
       ::
@@ -1775,7 +1789,7 @@
           wrapped-task  ?.(?=(%snub -.task) task [%snub %deny ships.task])
         ==
       ::
-      ++  event-11-to-17
+      ++  event-11-to-18
         |=  events=(qeu queued-event-11-and-16)
         ^-  (qeu queued-event)
         %-  ~(rep in events)
@@ -1788,10 +1802,11 @@
           ?+  -.task  task
             %snub  [%snub %deny ships.task]
             %kroc  [%kroc ~]
+            %keen  [%keen | +.task]
           ==
         ==
       ::
-      ++  event-16-to-17
+      ++  event-16-to-18
         |=  events=(qeu queued-event-16)
         ^-  (qeu queued-event)
         %-  ~(rep in events)
@@ -1799,8 +1814,25 @@
         %-  ~(put to q)  ^-  queued-event
         ?.  ?=(%call -.e)  e
         =/  task=task-16  ((harden task-16) wrapped-task.e)
-        %=  e
-          wrapped-task  ?.(?=(%kroc -.task) task [%kroc ~])
+        %=    e
+            wrapped-task
+          ^-  ^task
+          ?+  -.task  task
+            %kroc  [%kroc ~]
+            %keen  [%keen | +.task]
+          ==
+        ==
+      ::
+      ++  event-17-to-18
+        |=  events=(qeu queued-event-17)
+        ^-  (qeu queued-event)
+        %-  ~(rep in events)
+        |=  [e=queued-event-17 q=(qeu queued-event)]
+        %-  ~(put to q)  ^-  queued-event
+        ?.  ?=(%call -.e)  e
+        =/  task=task-17  ((harden task-17) wrapped-task.e)
+        %=    e
+            wrapped-task  ?.(?=(%keen -.task) task [%keen | +.task])
         ==
       --
     ::  +molt: re-evolve to adult-ames
@@ -2912,15 +2944,17 @@
       ::  +on-vega: handle kernel reload
       ::
       ++  on-vega  event-core
-      ::  +on-lock: handle key reservation
-      ++  on-lock
+      ::  +on-plug: handle key reservation
+      ++  on-plug
         ^+  event-core
-        =/  key  (shaz eny)
-        ~&  chain/chain.ames-state
-        =/  idx  .+(-:(need (ram:on:chain chain.ames-state)))
+        =/  key=@  (shaz eny) :: TODO: check key width
+        =/  num=@ud  
+          ?~  latest=(ram:on:chain chain.ames-state)
+            0
+          key.u.latest
         =.  chain.ames-state
-          (put:on:chain chain.ames-state idx key)
-        event-core
+          (put:on:chain chain.ames-state num key)
+        (emit duct %give %stub num key)
       ::  +on-trim: handle request to free memory
       ::
       ::  %ruin comets not seen for six months
@@ -2944,7 +2978,7 @@
       +|  %fine-entry-points
       ::
       ++  on-keen
-        |=  spar
+        |=  [secret=? spar]
         ^+  event-core
         =+  ~:(spit path)  ::  assert length
         =/  ship-state  (~(get by peers.ames-state) ship)
@@ -5019,7 +5053,7 @@
       %tame  (on-tame:event-core ship.task)
       %kroc  (on-kroc:event-core bones.task)
       %deep  (on-deep:event-core deep.task)
-      %lock  on-lock:event-core
+      %plug  on-plug:event-core
     ::
       %keen  (on-keen:event-core +.task)
       %yawn  (on-cancel-scry:event-core | +.task)

@@ -106,6 +106,7 @@
           sky=(map spur path-state)
           ken=(jug spar:ames wire)
           cop=(map coop hutch)
+          hat=(jug coop [path page])
   ==  ==
 ::
 +$  path-state
@@ -202,6 +203,7 @@
           sky=(map spur path-state)
           ken=(jug spar:ames wire)
           cop=(map coop hutch)
+          hat=(jug coop [path page])
   ==  ==
 --
 ::  adult gall vane interface, for type compatibility with pupa
@@ -613,6 +615,23 @@
       =.  mo-core  (mo-give %unto %kick ~)
       mo-core
     ==
+  ++  mo-handle-key
+    ~/  %mo-handle-stub
+    |=  [=(pole knot) num=@ud key=@]
+    ?.  ?=([agent=@ nonce=@ rest=*] pole)
+      ~&  [%mo-handle-key-bad-wire wire]
+      !!
+    =*  dap   agent.pole
+    =/  yoke  (~(get by yokes.state) dap)
+    ?.  ?=([~ %live *] yoke)
+      %-  (slog leaf+"gall: {<dap>} dead, got %stub" ~)
+      mo-core
+    ?.  =(run-nonce.u.yoke nonce.pole)
+      %-  (slog leaf+"gall: got old stub for {<dap>}" ~)
+      mo-core
+    =/  =routes  [disclosing=~ attributing=[our /]]
+    =/  ap-core  (ap-abed:ap dap routes)
+    ap-abet:(ap-stub:ap-core rest.pole num key)
   ::  +mo-handle-use: handle a typed +sign incoming on /use.
   ::
   ::    (Note that /use implies the +sign should be routed to an agent.)
@@ -1066,7 +1085,10 @@
     ++  ap-tend
       |=  [=coop =path =page]
       ?.  (~(has by cop.yoke) coop)
-        ~|  no-such-coop/coop  !!  :: XX: error handling
+        ?.  (~(has by hat.yoke) coop)
+          ~|  no-such-coop/coop  !!  :: XX: error handling
+        =.  hat.yoke  (~(put ju hat.yoke) coop path page)
+        ap-core
       =/  =hutch  (~(got by cop.yoke) coop)
       =.  chicks.hutch  (~(put by chicks.hutch) path page)
       =.  cop.yoke  (~(put by cop.yoke) coop hutch)
@@ -1074,13 +1096,23 @@
     ++  ap-germ
       |=  =coop
       =/  key=@uvJ  (shax eny) :: TODO: review key generation
-      =/  =hutch  
-        ?~  hut=(~(get by cop.yoke) coop)
-          *hutch :: TODO: fix
-        =.  lock.u.hut  *lock
-        u.hut
+      =/  hut  (~(get by cop.yoke) coop)
+      =?  hat.yoke  ?=(~ hut)
+        (~(put by hat.yoke) coop ~)
+      =/  =wire  (welp /key/[agent-name]/[run-nonce.yoke] coop)
+      (ap-move [hen %pass wire %a %plug ~]~)
+    ::
+    ++  ap-stub
+      |=  [=coop num=@ud key=@]
+      ^+  ap-core
+      =/  =hutch
+        (~(gut by cop.yoke) coop *hutch)
+      =.  lock.hutch  [.+(rev.lock.hutch) num]
       =.  cop.yoke  (~(put by cop.yoke) coop hutch)
-      ap-core
+      =/  hat  ~(tap in (~(get ju hat.yoke) coop))
+      |-  ^+  ap-core
+      ?~  hat  ap-core
+      $(hat t.hat, ap-core (ap-tend coop i.hat))
     ::
     ++  ap-snip
       |=  =coop
@@ -1433,7 +1465,7 @@
         %-  zing
         %+  turn  ~(tap by `(jug spar:ames wire)`ken.yoke)
         |=  [=spar:ames wyz=(set wire)]
-        (turn ~(tap in wyz) |=(=wire [%pass wire %arvo %a %keen spar]))
+        (turn ~(tap in wyz) |=(=wire [%pass wire %arvo %a %keen | spar]))
       =^  error  ap-core
         (ap-install(agent.yoke &+agent) `old-state)
       ?~  error
@@ -1880,7 +1912,7 @@
       %+  roll  fex
       |=  [=carp ken=_ken.yoke]
       ?+  carp  ken
-        [%pass * %arvo %a %keen spar=*]  (~(put ju ken) [spar.q p]:carp)
+        [%pass * %arvo %a %keen @ spar=*]  (~(put ju ken) [spar.q p]:carp)
         [%pass * %arvo %a %yawn spar=*]  (~(del ju ken) [spar.q p]:carp)
       ==
     ::  +ap-handle-kicks: handle cancels of bitt.watches
@@ -2299,9 +2331,8 @@
       |=  egg=egg-13
       ?:  ?=(%nuke -.egg)
         egg
-      egg(ken [ken.egg ~])
+      egg(ken [ken.egg ~ ~])
     ==
-
   ::
   ++  spore-13-to-14
     |=  old=spore-13
@@ -2531,6 +2562,10 @@
   ?:  =(/clear-huck wire)
     =/  =gift  ?>(?=([%behn %heck %gall *] syn) +>+.syn)
     [[duct %give gift]~ gall-payload]
+  ?:  ?=([%key *] wire)
+    ~|  [%gall-take-key-failed wire]
+    ?>  ?=([%ames %stub *] syn)
+    mo-abet:(mo-handle-key:(mo-abed:mo duct) t.wire [num key]:syn)
   ::
   ~|  [%gall-take-failed wire]
   ?>  ?=([?(%sys %use) *] wire)

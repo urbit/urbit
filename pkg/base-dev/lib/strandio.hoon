@@ -335,7 +335,7 @@
   |=  [=wire =spar:ames]
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass wire %arvo %a %keen spar)
+  (send-raw-card %pass wire %arvo %a %keen | spar)
 ::
 ++  sleep
   |=  for=@dr

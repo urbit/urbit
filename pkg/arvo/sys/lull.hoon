@@ -801,11 +801,11 @@
         [%kroc bones=(list [ship bone])]
         $>(%plea vane-task)
         [%deep =deep]
-        [%lock ~]
     ::
-        [%keen spar]
+        [%keen secret=? spar]
         [%yawn spar]
         [%wham spar]
+        [%plug ~]
     ::
         $>(%born vane-task)
         $>(%init vane-task)
@@ -843,6 +843,7 @@
         [%lost ~]
         [%send =lane =blob]
     ::
+        [%stub num=@ud key=@]
         [%tune spar roar=(unit roar)]
     ::
         [%turf turfs=(list turf)]
