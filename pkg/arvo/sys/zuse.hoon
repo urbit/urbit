@@ -2357,6 +2357,148 @@
   ++  blake
     ~%  %blake  ..part  ~
     |%
+    ++  blake3
+      =<
+        =+  [cv=iv flags=0b0]
+        ^?  |%
+        ::
+        +$  output  ^output  :: re-export
+        ::
+        ++  keyed  |=(key=byts .(cv dat.key, flags f-keyedhash))
+        ::
+        ++  hash
+          |=  [msg=byts out=@ud]
+          ^-  @ux
+          %+  xof  out
+          %-  root-output
+          (turn (split-byts 13 msg) chunk-output)
+        ::
+        ++  xof
+          |=  [out=@ud o=output]
+          ^-  @
+          %^  rev  3  out
+          %+  rep  9
+          %+  turn  (gulf 0 (div out 64))
+          |=(i=@ (compress o(counter i)))
+        ::
+        ++  root-output
+          |=  outputs=(list output)
+          ^-  output
+          %+  set-flag  f-root
+          |-
+          =/  mid  (div (bex (xeb (dec (lent outputs)))) 2)
+          =+  [l=(scag mid outputs) r=(slag mid outputs)]
+          ?>  ?=(^ outputs)
+          ?~  t.outputs  i.outputs
+          (parent-output $(outputs l) $(outputs r))
+        ::
+        ++  parent-output
+          |=  [l=output r=output]
+          ^-  output
+          %+  set-flag  f-parent
+          [cv (rep 8 ~[(compress l) (compress r)]) 0 64 flags]
+        ::
+        ++  chunk-output
+          |=  [counter=@ chunk=byts]
+          ^-  output
+          %+  set-flag  f-chunkend
+          %+  roll  (split-byts 9 chunk)
+          |=  [[i=@ byts] prev=output]
+          ?:  =(0 i)  [cv dat counter wid (con flags f-chunkstart)]
+          [(rep 8 ~[(compress prev)]) dat counter wid flags]
+        --
+      |%
+      ::
+      +$  output
+        $:  cv=@ux
+            block=@ux
+            counter=@ud
+            blocklen=@ud
+            flags=@ub
+        ==
+      ::
+      ++  compress
+        |=  output
+        ^-  @
+        |^
+          =/  state  (can32 [8 cv] [4 iv] [2 counter] [1 blocklen] [1 flags] ~)
+          =.  state  (round state block)  =.  block  (permute block)
+          =.  state  (round state block)  =.  block  (permute block)
+          =.  state  (round state block)  =.  block  (permute block)
+          =.  state  (round state block)  =.  block  (permute block)
+          =.  state  (round state block)  =.  block  (permute block)
+          =.  state  (round state block)  =.  block  (permute block)
+          =.  state  (round state block)  (mix state (rep 8 ~[(rsh 8 state) cv]))
+        ::
+        ++  round
+          |=  [state=@ block=@]
+          ^+  state
+          |^
+            =.  state  (g 0x0 0x4 0x8 0xc 0x0 0x1)
+            =.  state  (g 0x1 0x5 0x9 0xd 0x2 0x3)
+            =.  state  (g 0x2 0x6 0xa 0xe 0x4 0x5)
+            =.  state  (g 0x3 0x7 0xb 0xf 0x6 0x7)
+            =.  state  (g 0x0 0x5 0xa 0xf 0x8 0x9)
+            =.  state  (g 0x1 0x6 0xb 0xc 0xa 0xb)
+            =.  state  (g 0x2 0x7 0x8 0xd 0xc 0xd)
+            =.  state  (g 0x3 0x4 0x9 0xe 0xe 0xf)
+            state
+          ::
+          ++  g
+            |=  [a=@ b=@ c=@ d=@ mx=@ my=@]
+            ^+  state
+            =.  state  (set a :(sum32 (get a) (get b) (getb mx)))
+            =.  state  (set d (rox (get d) (get a) 16))
+            =.  state  (set c :(sum32 (get c) (get d)))
+            =.  state  (set b (rox (get b) (get c) 12))
+            =.  state  (set a :(sum32 (get a) (get b) (getb my)))
+            =.  state  (set d (rox (get d) (get a) 8))
+            =.  state  (set c :(sum32 (get c) (get d)))
+            =.  state  (set b (rox (get b) (get c) 7))
+            state
+          ::
+          ++  getb  (curr get32 block)
+          ++  get  (curr get32 state)
+          ++  set  |=([i=@ w=@] (set32 i w state))
+          ++  rox  |=([a=@ b=@ n=@] (ror32 n (mix a b)))
+          --
+        ::
+        ++  permute
+          |=  block=@
+          ^+  block
+          (rep 5 (turn perm (curr get32 block)))
+        --
+      ::  constants and helpers
+      ::
+      ++  iv  0x5be0.cd19.1f83.d9ab.9b05.688c.510e.527f.
+                a54f.f53a.3c6e.f372.bb67.ae85.6a09.e667
+      ++  perm  (rip 2 0x8fe9.5cb1.d407.a362)
+      ++  f-chunkstart    (bex 0)
+      ++  f-chunkend      (bex 1)
+      ++  f-parent        (bex 2)
+      ++  f-root          (bex 3)
+      ++  f-keyedhash     (bex 4)
+      ++  f-derivekeyctx  (bex 5)
+      ++  f-derivekeymat  (bex 6)
+      ++  set-flag  |=([f=@ o=output] o(flags (con flags.o f)))
+      ++  fe32   ~(. fe 5)
+      ++  ror32  (cury ror:fe32 0)
+      ++  sum32  sum:fe32
+      ++  can32  (cury can 5)
+      ++  get32  |=([i=@ a=@] (cut 5 [i 1] a))
+      ++  set32  |=([i=@ w=@ a=@] (sew 5 [i 1 w] a))
+      ++  split-byts
+        |=  [a=bloq msg=byts]
+        ^-  (list [i=@ byts])
+        =/  per  (bex (sub a 3))
+        =|  chunk-byts=(list [i=@ byts])
+        =|  i=@
+        |-
+        ?:  (lte wid.msg per)  [[i msg] chunk-byts]
+        :-  [i per^(end a dat.msg)]
+        $(i +(i), msg (sub wid.msg per)^(rsh a dat.msg))
+      --
+    ::
     ::TODO  generalize for both blake2 variants
     ++  blake2b
       ~/  %blake2b
