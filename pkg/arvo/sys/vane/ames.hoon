@@ -1226,7 +1226,7 @@
 +$  note
   $~  [%b %wait *@da]
   $%  $:  %a
-          $>(%deep task:ames)
+          $>(?(%deep %keen) task:ames)
       ==
       $:  %b
           $>(?(%wait %rest) task:behn)
@@ -1255,7 +1255,10 @@
 ::
 +$  sign
   $~  [%behn %wake ~]
-  $%  $:  %behn
+  $%  $:  %ames
+          $>(%tune gift:ames)
+      ==
+      $:  %behn
           $>(%wake gift:behn)
       ==
       $:  %gall
@@ -2402,6 +2405,29 @@
           %-  (slog leaf+"ames: no peer-state for {(scow %p ship)}, ignoring" ~)
           event-core
         abet:on-tame:(abed-peer:pe ship u.peer-state)
+      ::
+      ::
+      ++  on-tune
+        |=  [=wire s=[=ship path=(pole knot)] roar=(unit roar)]
+        ^+  event-core
+        ?>  ?=([%chum *] wire)
+        :: XX save or decrypt path?
+        ::
+        =/  per  (~(get by peers.ames-state) ship.s)
+        ?>  ?=([~ %known *] per)
+        ?>  ?=([%a %x %~.1 %$ %chum her=@ lyf=@ cyf=@ ~] path.s)
+        =/  pax
+          =-  (,path (cue -))
+          (dy:crub:crypto symmetric-key.u.per (slav %uv cyf.path.s))
+        =/  dat=(unit page)
+          ?:  ?|  ?=(~ roar)
+                  ?=(~ q.dat.u.roar)
+              ==
+            ~  :: XX wrong
+          ?>  ?=([%atom @] u.q.dat.u.roar)
+          =-  ?~(- ~ `(,page (cue -)))
+          (dy:crub:crypto symmetric-key.u.per q.u.q.dat.u.roar)
+        (emit duct [%give %near [ship.s pax] dat])
       ::  +on-cork: handle request to kill a flow
       ::
       ++  on-cork
@@ -2947,6 +2973,22 @@
         %^  enqueue-alien-todo  ship  ship-state
         |=  todos=alien-agenda
         todos(keens (~(put ju keens.todos) path duct))
+      ::
+      ++  on-chum
+        |=  spar
+        ^+  event-core
+        =+  ~:(spit path)  ::  assert length
+        =/  ship-state  (~(get by peers.ames-state) ship)
+        ?:  ?=([~ %known *] ship-state)
+          =/  cyf  (scot %uv (en:crub:crypto symmetric-key.u.ship-state (jam path)))
+          =/  lav  /a/x/1//chum/(scot %p our)/(scot %ud life.ames-state)/[cyf]
+          (emit duct [%pass /chum %a %keen ship lav])
+        ::  XX add state for queued chum
+        ::
+        ::  %^  enqueue-alien-todo  ship  ship-state
+        ::  |=  todos=alien-agenda
+        ::  todos(keens (~(put ju keens.todos) path duct))
+        !!
       ::
       ++  on-cancel-scry
         |=  [all=? spar]
@@ -5018,6 +5060,7 @@
       %deep  (on-deep:event-core deep.task)
     ::
       %keen  (on-keen:event-core +.task)
+      %chum  (on-chum:event-core +.task)
       %yawn  (on-cancel-scry:event-core | +.task)
       %wham  (on-cancel-scry:event-core & +.task)
     ==
@@ -5041,6 +5084,8 @@
     ?-  sign
       [@ %done *]   (on-take-done:event-core wire error.sign)
       [@ %boon *]   (on-take-boon:event-core wire payload.sign)
+    ::
+      [%ames %tune *]  (on-tune:event-core wire [[ship path] roar]:sign)
     ::
       [%behn %wake *]  (on-take-wake:event-core wire error.sign)
     ::
@@ -5306,6 +5351,37 @@
   =*  lot=coin  $/r.bem
   =*  tyl  s.bem
   ::
+  ?:  ?&  =(&+our why)
+          =([%$ %ud 1] lot)
+          =(%$ syd)
+          =(%x ren)
+      ==
+    =>  .(tyl `(pole knot)`tyl)
+    ?+    tyl  ~
+        [%chum her=@ lyf=@ cyf=@ ~]
+      ?~  who=(slaw %p her.tyl)
+        [~ ~]
+      =/  per  (~(get by peers.ames-state) u.who)
+      ?.  ?=([~ %known *] per)
+        [~ ~]
+      ?~  lyf=(slaw %ud lyf.tyl)
+        [~ ~]
+      ?.  =(life.u.per u.lyf)
+        [~ ~]
+      ?~  cyf=(slaw %uv cyf.tyl)
+        [~ ~]
+      =/  pax
+        =-  (,path (cue -))
+        (dy:crub:crypto symmetric-key.u.per u.cyf)
+      ?~  blk=(de-part:balk our 0 0 pax)
+        [~ ~]
+      ?~  res=(rof `[u.who ~ ~] /ames (as-omen:balk u.blk))
+        ~
+      =-  ``atom+!>(`@ux`-)
+      %+  en:crub:crypto  symmetric-key.u.per
+      ?~(u.res ~ (jam [p q.q]:u.u.res))
+    ==
+  ::
   ::  only respond for the local identity, %$ desk, current timestamp
   ::
   ?.  ?&  =(&+our why)
@@ -5446,7 +5522,14 @@
     ~|  nom
     |^
     =/  van  ?@(vis.nom (end 3 vis.nom) way.vis.nom)
+    =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
     ?+    van  ~
+        %a
+      %-  en-hunk
+      ?+  kyr  ~
+        %x  (rof ~ /ames nom)
+      ==
+    ::
         %c
       =+  pem=(rof lyc /ames nom(vis %cp))
       ?.  ?=(^ pem)    ~
@@ -5457,14 +5540,12 @@
       (en-hunk (rof ~ /ames nom))
     ::
         %e
-      =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
       %-  en-hunk
       ?+  kyr  ~
         %x  (rof ~ /ames nom)
       ==
     ::
         %g
-      =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
       %-  en-hunk
       ?+  kyr  ~
         %x  (rof ~ /ames nom)

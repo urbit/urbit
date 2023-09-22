@@ -805,6 +805,7 @@
         [%deep =deep]
     ::
         [%keen spar]
+        [%chum spar]
         [%yawn spar]
         [%wham spar]
     ::
@@ -845,6 +846,7 @@
         [%send =lane =blob]
     ::
         [%tune spar roar=(unit roar)]
+        [%near spar dat=(unit page)]
     ::
         [%turf turfs=(list turf)]
     ==
