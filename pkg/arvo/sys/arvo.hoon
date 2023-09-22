@@ -121,7 +121,7 @@
   $~  =>(~ |~(* ~))
   $-  $:  lyc=gang                                      ::  leakset
           pov=path                                      ::  provenance
-          omen                                          ::  perspective, path
+          (each omen omer)                              ::  perspective, path
       ==                                                ::
   %-  unit                                              ::  ~: unknown
   %-  unit                                              ::  ~ ~: invalid
@@ -357,6 +357,16 @@
   ?~  ved=(de-case i.t.t.p)  ~
   `[[`ship`u.who `desk`u.des u.ved] t.t.t.p]
 ::
+++  de-bema
+  ~/  %de-bema
+  |=  p=path
+  ^-  (unit bema)
+  ?.  ?=([@ @ @ *] p)  ~
+  ?~  who=(slaw %p i.p)  ~
+  ?~  des=?~(i.t.p (some %$) (slaw %tas i.t.p))  ~  :: XX +sym ;~(pose low (easy %$))
+  ?~  ved=(de-cose i.t.t.p)  ~
+  `[[`ship`u.who `desk`u.des u.ved] t.t.t.p]
+::
 ++  en-case  |=(c=case `knot`(scot c))
 ++  de-case
   ~/  %de-case
@@ -406,11 +416,33 @@
     ~
   `[[q.p.i q.p.i.t]:p.u.lot u.bem]
 ::
+++  de-omer
+  ~/  %de-omer
+  |=  pax=path
+  ^-  (unit omer)
+  ?~  pax  ~
+  ?~  bam=(de-bema t.pax)  ~
+  ?:  ((sane %tas) i.pax)
+    `[i.pax u.bam]
+  =/  lot=(unit coin)  (rush i.pax ;~(pfix dot perd:so))
+  ?.  ?&  ?=(^ lot)
+          ?=([%many [%$ %tas @] [%$ %tas @] ~] u.lot)
+      ==
+    ~
+  `[[q.p.i q.p.i.t]:p.u.lot u.bam]
+::
 ++  omer-to-omen
   |=  o=omer
   ^-  omen
   =/  c=cose  r.bam.o
   o(r.bam -.c)
+::
+++  omen-cose
+  |=  o=(each omen omer)
+  ^-  (pair omen (unit cose))
+  ?:  ?=(%& -.o)
+    [p.o ~]
+  [(omer-to-omen p.o) `r.bam.p.o]
 ::
 ++  rant
   |=  a=(list [char=@tD *])
@@ -430,8 +462,18 @@
   ~/  %in
   |=  [ref=* raw=*]
   ?~  pax=((soft path) raw)  ~
+  ?^  mer=(de-omer u.pax)
+    ?~  dat=(rof lyc pov |+u.mer)  ~
+    ?~  u.dat  [~ ~]
+    =*  vax  q.u.u.dat
+    ?.  ?&  ?=(^ ref)
+            =(hoon-version -.ref)
+            -:(~(nets wa *worm) +.ref p.vax)
+        ==
+      ~>(%slog.[0 leaf+"arvo: scry-lost"] ~)
+    [~ ~ q.vax]
   ?~  mon=(de-omen u.pax)  ~
-  ?~  dat=(rof lyc pov u.mon)  ~
+  ?~  dat=(rof lyc pov &+u.mon)  ~
   ?~  u.dat  [~ ~]
   =*  vax  q.u.u.dat
   ?.  ?&  ?=(^ ref)
@@ -1184,8 +1226,9 @@
       ++  peek
         ~/  %peek
         ^-  rook
-        |=  [lyc=gang pov=path omen]
+        |=  [lyc=gang pov=path o=(each omen omer)]
         ^-  (unit (unit (cask meta)))
+        ?>  ?=(%& -.o)
         ::  namespace reads receive no entropy
         ::
         =/  sam=vane-sample  [now *@uvJ tick rok]
@@ -1196,7 +1239,7 @@
           ~>  %mean.'peek: pull failed'
           (~(slap wa sac) rig [%limb %scry])
         ::
-        =/  mas=[gang path view beam]  [lyc pov vis bem]
+        =/  mas=[gang path view beam]  [lyc pov vis.p.o bem.p.o]
         ::
         =^  pro  sac
           ~>  %mean.'peek: call failed'
@@ -1463,43 +1506,47 @@
       |=  [nam=term =vane]
       =;  mas=(list mass)
         nam^|+(welp mas [dot+&+q.vase typ+&+p.vase sac+&+worm ~]:vane)
-      ?~  met=(peek [~ ~] / [nam %x] bem)  ~
+      ?~  met=(peek [~ ~] / &+[[nam %x] bem])  ~
       ?~  u.met  ~
       ~|  mass+nam
       ;;((list mass) q.q.u.u.met)
-    ::
-    ++  teak
-      |=  tik=@ud
-      |=  [lyc=gang pov=path mer=omer]
-      ^-  (unit (unit (cask meta)))
-      ?.  =(tik +.+.r.bam.mer)
-        ~
-      =/  men=omen  (omer-to-omen mer)
-      ::  TODO
-      ::
-      ~
     ::  +peek: read from the entire namespace
     ::
     ++  peek
       ^-  rook
-      |=  [lyc=gang pov=path omen]
-      ^-  (unit (unit (cask meta)))
-      ::  vane and care may be concatenated
+      |=  [lyc=gang pov=path o=(each omen omer)]
+      |^  ^-  (unit (unit (cask meta)))
+      ::  TODO
       ::
-      =/  [way=term car=term]
-        ?^  vis  vis
-        ?.  =(2 (met 3 vis))
-          [vis %$]
-        [(end 3 vis) (rsh 3 vis)]
+      =/  o=(pair omen (unit cose))  (omen-cose o)
+      ~&  >>>  [%cose q.o %tick tick.gem]
       ::
-      ?:  ?=(%$ way)
-        (peek:pith lyc pov car bem)
-      ::
-      =.  way  (grow way)
-      ?~  van=(~(get by van.mod) way)
+      ?:  ?&  ?=(^ q.o)
+              !=(+.+.u.q.o tick.gem)
+          ==
         ~
-      %.  [lyc pov car bem]
-      peek:spin:(~(plow va [vil u.van]) now tick.gem say.gem)
+      (do-peek lyc pov p.o)
+      ::
+      ++  do-peek
+        |=  [lyc=gang pov=path omen]
+        ^-  (unit (unit (cask meta)))
+        ::  vane and care may be concatenated
+        ::
+        =/  [way=term car=term]
+          ?^  vis  vis
+          ?.  =(2 (met 3 vis))
+            [vis %$]
+          [(end 3 vis) (rsh 3 vis)]
+        ::
+        ?:  ?=(%$ way)
+          (peek:pith lyc pov car bem)
+        ::
+        =.  way  (grow way)
+        ?~  van=(~(get by van.mod) way)
+          ~
+        %.  [lyc pov &+[car bem]]
+        peek:spin:(~(plow va [vil u.van]) now tick.gem say.gem)
+      --
     ::  +call: advance to target
     ::
     ++  call
@@ -1913,7 +1960,7 @@
     ==
   ::
   ?~  hap  ~
-  =/  pro  (~(peek le:part [pit vil] sol) lyc / [vis bem]:u.hap)
+  =/  pro  (~(peek le:part [pit vil] sol) lyc / &+[vis bem]:u.hap)
   ?:  |(?=(~ pro) ?=(~ u.pro))  ~
   =/  dat=(cask)  [p q.q]:u.u.pro
   ?.  pat.u.hap  `dat

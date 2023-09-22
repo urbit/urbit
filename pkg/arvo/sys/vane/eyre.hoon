@@ -909,7 +909,7 @@
         %gen
       =/  bek=beak  [our desk.generator.action da+now]
       =/  sup=spur  path.generator.action
-      =/  ski       (rof ~ /eyre %ca bek sup)
+      =/  ski       (rof ~ /eyre &+[%ca bek sup])
       =/  cag=cage  (need (need ski))
       ?>  =(%vase p.cag)
       =/  gat=vase  !<(vase q.cag)
@@ -1092,7 +1092,7 @@
     ++  do-scry
       |=  [care=term =desk =path]
       ^-  (unit (unit cage))
-      (rof ~ /eyre care [our desk da+now] path)
+      (rof ~ /eyre &+[care [our desk da+now] path])
     ::
     ++  error-response
       |=  [status=@ud =tape]
@@ -1505,7 +1505,7 @@
     ++  code
       ^-  @ta
       =/  res=(unit (unit cage))
-        (rof ~ /eyre %j [our %code da+now] /(scot %p our))
+        (rof ~ /eyre &+[%j [our %code da+now] /(scot %p our)])
       (rsh 3 (scot %p ;;(@ q.q:(need (need res)))))
     ::  +session-cookie-string: compose session cookie
     ::
@@ -2686,7 +2686,7 @@
       ?~  sub
         ((trace 0 |.("no subscription for request-id {(scow %ud request-id)}")) ~)
       =/  des=(unit (unit cage))
-        (rof ~ /eyre %gd [our app.u.sub da+now] /$)
+        (rof ~ /eyre &+[%gd [our app.u.sub da+now] /$])
       ?.  ?=([~ ~ *] des)
         ((trace 0 |.("no desk for app {<app.u.sub>}")) ~)
       `!<(=desk q.u.u.des)
@@ -2722,7 +2722,7 @@
         =*  have=mark  mark.event
         =/  convert=(unit vase)
           =/  cag=(unit (unit cage))
-            (rof ~ /eyre %cf [our desk.event da+now] /[have]/json)
+            (rof ~ /eyre &+[%cf [our desk.event da+now] /[have]/json])
           ?.  ?=([~ ~ *] cag)  ~
           `q.u.u.cag
         ?~  convert
