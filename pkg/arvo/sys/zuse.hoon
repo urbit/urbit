@@ -484,6 +484,7 @@
       ++  en                                            ::  encrypt
         ~/  %en
         |=  blk=@H  ^-  @uxH
+        ~>  %sham.%en
         =+  (ahem 4 4 10)
         =:
           key  (~(net fe 7) key)
@@ -495,6 +496,7 @@
       ++  de                                            ::  decrypt
         ~/  %de
         |=  blk=@H  ^-  @uxH
+        ~>  %sham.%de
         =+  (ahem 4 4 10)
         =:
           key  (~(net fe 7) key)
@@ -511,6 +513,7 @@
       ++  en                                            ::  encrypt
         ~/  %en
         |=  blk=@H  ^-  @uxH
+        ~>  %sham.%en
         =+  (ahem 6 4 12)
         =:
           key  (rsh 6 (~(net fe 8) key))
@@ -522,6 +525,7 @@
       ++  de                                            ::  decrypt
         ~/  %de
         |=  blk=@H  ^-  @uxH
+        ~>  %sham.%de
         =+  (ahem 6 4 12)
         =:
           key  (rsh 6 (~(net fe 8) key))
@@ -538,6 +542,7 @@
       ++  en                                            ::  encrypt
         ~/  %en
         |=  blk=@H  ^-  @uxH
+        ~>  %sham.%en
         =+  (ahem 8 4 14)
         =:
           key  (~(net fe 8) key)
@@ -549,6 +554,7 @@
       ++  de                                            ::  decrypt
         ~/  %de
         |=  blk=@H  ^-  @uxH
+        ~>  %sham.%de
         =+  (ahem 8 4 14)
         =:
           key  (~(net fe 8) key)
@@ -565,6 +571,7 @@
       ++  en                                            ::  encrypt
         ~/  %en
         |=  txt=@  ^-  @ux
+        ~>  %sham.%en
         =+  pts=?:(=(txt 0) `(list @)`~[0] (flop (rip 7 txt)))
         =|  cts=(list @)
         %+  rep  7
@@ -582,6 +589,7 @@
       ++  de                                            ::  decrypt
         ~/  %de
         |=  txt=@  ^-  @ux
+        ~>  %sham.%de
         =+  cts=?:(=(txt 0) `(list @)`~[0] (flop (rip 7 txt)))
         =|  pts=(list @)
         %+  rep  7
@@ -604,6 +612,7 @@
       ++  en                                            ::  encrypt
         ~/  %en
         |=  txt=@  ^-  @ux
+        ~>  %sham.%en
         =+  pts=?:(=(txt 0) `(list @)`~[0] (flop (rip 7 txt)))
         =|  cts=(list @)
         %+  rep  7
@@ -621,6 +630,7 @@
       ++  de                                            ::  decrypt
         ~/  %de
         |=  txt=@  ^-  @ux
+        ~>  %sham.%de
         =+  cts=?:(=(txt 0) `(list @)`~[0] (flop (rip 7 txt)))
         =|  pts=(list @)
         %+  rep  7
@@ -643,6 +653,7 @@
       ++  en                                            ::  encrypt
         ~/  %en
         |=  txt=@  ^-  @ux
+        ~>  %sham.%en
         =+  pts=?:(=(txt 0) `(list @)`~[0] (flop (rip 7 txt)))
         =|  cts=(list @)
         %+  rep  7
@@ -660,6 +671,7 @@
       ++  de                                            ::  decrypt
         ~/  %de
         |=  txt=@  ^-  @ux
+        ~>  %sham.%de
         =+  cts=?:(=(txt 0) `(list @)`~[0] (flop (rip 7 txt)))
         =|  pts=(list @)
         %+  rep  7
@@ -690,6 +702,7 @@
       ++  en                                            ::  encrypt
         ~/  %en
         |=  txt=@
+        ~>  %sham.%en
         ^-  @ux
         =/  encrypt  ~(en ecba key)
         =/  blocks  (add (div len 16) ?:(=((^mod len 16) 0) 0 1))
@@ -717,6 +730,7 @@
       ++  en
         ~/  %en
         |=  txt=@
+        ~>  %sham.%en
         ^-  @ux
         =/  encrypt  ~(en ecbb key)
         =/  blocks  (add (div len 16) ?:(=((^mod len 16) 0) 0 1))
@@ -744,6 +758,7 @@
       ++  en                                            ::  encrypt
         ~/  %en
         |=  txt=@
+        ~>  %sham.%en
         ^-  @ux
         =/  encrypt  ~(en ecbc key)
         =/  blocks  (add (div len 16) ?:(=((^mod len 16) 0) 0 1))
@@ -817,6 +832,7 @@
     ++  maca                                            ::  AES-128 CMAC
       ~/  %maca
       |=  [key=@H oct=(unit @) txt=@]
+      ~>  %sham.%maca
       ^-  @ux
       =+  [sub=(suba key) len=?~(oct (met 3 txt) u.oct)]
       =+  ^=  pdt
@@ -837,6 +853,7 @@
     ++  macb                                            ::  AES-192 CMAC
       ~/  %macb
       |=  [key=@I oct=(unit @) txt=@]
+      ~>  %sham.%macb
       ^-  @ux
       =+  [sub=(subb key) len=?~(oct (met 3 txt) u.oct)]
       =+  ^=  pdt
@@ -857,6 +874,7 @@
     ++  macc                                            :: AES-256 CMAC
       ~/  %macc
       |=  [key=@I oct=(unit @) txt=@]
+      ~>  %sham.%macc
       ^-  @ux
       =+  [sub=(subc key) len=?~(oct (met 3 txt) u.oct)]
       =+  ^=  pdt
@@ -932,6 +950,7 @@
       ++  en                                            ::  encrypt
         ~/  %en
         |=  txt=@
+        ~>  %sham.%en
         ^-  (trel @uxH @ud @ux)
         =+  [k1=(rsh 7 key) k2=(end 7 key)]
         =+  iv=(s2va k1 (weld vec (limo ~[txt])))
@@ -945,6 +964,7 @@
       ++  de                                            ::  decrypt
         ~/  %de
         |=  [iv=@H len=@ txt=@]
+        ~>  %sham.%de
         ^-  (unit @ux)
         =+  [k1=(rsh 7 key) k2=(end 7 key)]
         =*  hib  (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)
@@ -962,6 +982,7 @@
       ++  en                                            ::  encrypt
         ~/  %en
         |=  txt=@
+        ~>  %sham.%en
         ^-  (trel @uxH @ud @ux)
         =+  [k1=(rsh [6 3] key) k2=(end [6 3] key)]
         =+  iv=(s2vb k1 (weld vec (limo ~[txt])))
@@ -974,6 +995,7 @@
       ++  de                                            ::  decrypt
         ~/  %de
         |=  [iv=@H len=@ txt=@]
+        ~>  %sham.%de
         ^-  (unit @ux)
         =+  [k1=(rsh [6 3] key) k2=(end [6 3] key)]
         =*  hib  (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)
@@ -991,6 +1013,7 @@
       ++  en                                            ::  encrypt
         ~/  %en
         |=  txt=@
+        ~>  %sham.%en
         ^-  (trel @uxH @ud @ux)
         =+  [k1=(rsh 8 key) k2=(end 8 key)]
         =+  iv=(s2vc k1 (weld vec (limo ~[txt])))
@@ -1004,6 +1027,7 @@
       ++  de                                            ::  decrypt
         ~/  %de
         |=  [iv=@H len=@ txt=@]
+        ~>  %sham.%de
         ^-  (unit @ux)
         =+  [k1=(rsh 8 key) k2=(end 8 key)]
         =*  hib  (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)
@@ -1105,6 +1129,7 @@
     ++  point-add
       ~/  %point-add
       |=  [a-point=@udpoint b-point=@udpoint]
+      ~>  %sham.%point-add
       ^-  @udpoint
       ::
       =/  a-point-decoded=[@ @]  (need (deco a-point))
@@ -1116,6 +1141,7 @@
     ++  scalarmult
       ~/  %scalarmult
       |=  [a=@udscalar a-point=@udpoint]
+      ~>  %sham.%scalarmult
       ^-  @udpoint
       ::
       =/  a-point-decoded=[@ @]  (need (deco a-point))
@@ -1126,6 +1152,7 @@
     ++  scalarmult-base
       ~/  %scalarmult-base
       |=  scalar=@udscalar
+      ~>  %sham.%scalarmult-base
       ^-  @udpoint
       %-  etch
       (scam bb scalar)
@@ -1133,6 +1160,7 @@
     ++  add-scalarmult-scalarmult-base
       ~/  %add-scalarmult-scalarmult-base
       |=  [a=@udscalar a-point=@udpoint b=@udscalar]
+      ~>  %sham.%add-scalarmult-scalarmult-base
       ^-  @udpoint
       ::
       =/  a-point-decoded=[@ @]  (need (deco a-point))
@@ -1145,6 +1173,7 @@
     ++  add-double-scalarmult
       ~/  %add-double-scalarmult
       |=  [a=@udscalar a-point=@udpoint b=@udscalar b-point=@udpoint]
+      ~>  %sham.%add-double-scalarmult
       ^-  @udpoint
       ::
       =/  a-point-decoded=[@ @]  (need (deco a-point))
@@ -1158,6 +1187,7 @@
     ++  puck                                            ::  public key
       ~/  %puck
       |=  sk=@I  ^-  @
+      ~>  %sham.%puck
       ?:  (gth (met 3 sk) 32)  !!
       =+  h=(shal (rsh [0 3] b) sk)
       =+  ^=  a
@@ -1175,6 +1205,7 @@
     ++  shar                                            ::  curve25519 secret
       ~/  %shar
       |=  [pub=@ sek=@]
+      ~>  %sham.%shar
       ^-  @ux
       =+  exp=(shal (rsh [0 3] b) (suck sek))
       =.  exp  (dis exp (can 0 ~[[3 0] [251 (fil 0 251 1)]]))
@@ -1186,6 +1217,7 @@
     ++  sign                                            ::  certify
       ~/  %sign
       |=  [m=@ se=@]  ^-  @
+      ~>  %sham.%sign
       =+  sk=(suck se)
       =+  pk=(cut 0 [b b] sk)
       =+  h=(shal (rsh [0 3] b) sk)
@@ -1216,6 +1248,7 @@
     ++  veri                                            ::  validate
       ~/  %veri
       |=  [s=@ m=@ pk=@]  ^-  ?
+      ~>  %sham.%veri
       ?:  (gth (div b 4) (met 3 s))  |
       ?:  (gth (div b 8) (met 3 pk))  |
       =+  cb=(rsh [0 3] b)
@@ -1368,11 +1401,13 @@
     ++  pbk                                             :: PBKDF2-HMAC-SHA256
       ~/  %pbk
       |=  [p=@ s=@ c=@ d=@]
+      ~>  %sham.%pbk
       (pbl p (met 3 p) s (met 3 s) c d)
     ::                                                  ::  ++pbl:scr:crypto
     ++  pbl                                             ::  w+length
       ~/  %pbl
       |=  [p=@ pl=@ s=@ sl=@ c=@ d=@]
+      ~>  %sham.%pbl
       =>  .(p (end [3 pl] p), s (end [3 sl] s))
       =+  h=32
       ::
@@ -1401,11 +1436,13 @@
     ++  hsh                                             ::  scrypt
       ~/  %hsh
       |=  [p=@ s=@ n=@ r=@ z=@ d=@]
+      ~>  %sham.%hsh
       (hsl p (met 3 p) s (met 3 s) n r z d)
     ::                                                  ::  ++hsl:scr:crypto
     ++  hsl                                             ::  w+length
       ~/  %hsl
       |=  [p=@ pl=@ s=@ sl=@ n=@ r=@ z=@ d=@]
+      ~>  %sham.%hsl
       =|  v=(list (list @))
       =>  .(p (end [3 pl] p), s (end [3 sl] s))
       =+  u=(mul (mul 128 r) z)
@@ -2191,6 +2228,7 @@
       ++  make-k
         ~/  %make
         |=  [hash=@uvI private-key=@]
+        ~>  %sham.%make
         ::  checks sizes
         (make-k:curve hash private-key)
       ++  priv-to-pub
@@ -2201,6 +2239,7 @@
       ++  ecdsa-raw-sign
         ~/  %sign
         |=  [hash=@uvI private-key=@]
+        ~>  %sham.%sign
         ^-  [v=@ r=@ s=@]
         =/  c  curve
         ::  raw-sign checks sizes
@@ -2219,6 +2258,7 @@
       ++  ecdsa-raw-recover
         ~/  %reco
         |=  [hash=@ sig=[v=@ r=@ s=@]]
+        ~>  %sham.%reco
         ^-  point
         ?>  (lte v.sig 3)
         =/  c   curve
@@ -2276,6 +2316,7 @@
         ++  sign                                        ::  schnorr signature
           ~/  %sosi
           |=  [sk=@I m=@I a=@I]
+          ~>  %sham.%sosi
           ^-  @J
           ?>  (gte 32 (met 3 m))
           ?>  (gte 32 (met 3 a))
@@ -2319,6 +2360,7 @@
         ++  verify                                      ::  schnorr verify
           ~/  %sove
           |=  [pk=@I m=@I sig=@J]
+          ~>  %sham.%sove
           ^-  ?
           ?>  (gte 32 (met 3 pk))
           ?>  (gte 32 (met 3 m))
@@ -4155,11 +4197,13 @@
       ++  en
         ~/  %en
         |=  a=octs  ^-  cord
+        ~>  %sham.%en
         (crip ((x-co:co (mul p.a 2)) (end [3 p.a] q.a)))
       ::
       ++  de
         ~/  %de
         |=  a=cord  ^-  (unit octs)
+        ~>  %sham.%de
         (rush a rule)
       ::
       ++  rule

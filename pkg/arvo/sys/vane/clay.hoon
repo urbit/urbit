@@ -556,6 +556,7 @@
     ++  read-file
       ~/  %read-file
       |=  =path
+      ~>  %sham.%read-file
       ^-  [cage state]
       ~|  %error-validating^path
       %-  soak-cage
@@ -584,6 +585,7 @@
     ++  build-nave
       ~/  %build-nave
       |=  mak=mark
+      ~>  %sham.%build-nave
       ^-  [vase state]
       ~|  %error-building-mark^mak
       %-  soak-vase
@@ -658,6 +660,7 @@
     ++  build-dais
       ~/  %build-dais
       |=  mak=mark
+      ~>  %sham.%build-dais
       ^-  [dais state]
       ~|  %error-building-dais^mak
       %-  soak-dais
@@ -709,6 +712,7 @@
     ++  build-cast
       ~/  %build-cast
       |=  [a=mark b=mark]
+      ~>  %sham.%build-cast
       ^-  [vase state]
       ~|  error-building-cast+[a b]
       %-  soak-vase
@@ -864,6 +868,7 @@
     ++  build-dependency
       ~/  %build-dep
       |=  dep=(each [dir=path fil=path] path)
+      ~>  %sham.%build-dep
       ^-  [vase state]
       =/  =path
         ?:(?=(%| -.dep) p.dep fil.p.dep)
@@ -940,6 +945,7 @@
     ++  parse-pile
       ~/  %parse-pile
       |=  [pax=path tex=tape]
+      ~>  %sham.%parse-pile
       ^-  pile
       =/  [=hair res=(unit [=pile =nail])]
         %-  road  |.
@@ -1307,6 +1313,7 @@
   |=  [now=@da rof=roof hen=duct raft]
   ~/  %de-in
   |=  [her=ship syd=desk]
+  ~>  %sham.%de-in
   ::  NB: ruf=raft crashes in the compiler
   ::
   =*  ruf  |3.+6.^$
@@ -1724,6 +1731,7 @@
   ++  info
     ~/  %info
     |=  [deletes=(set path) changes=(map path cage)]
+    ~>  %sham.%info
     ^+  ..park
     ?:  =(0 let.dom)
       ?>  ?=(~ deletes)
@@ -1751,6 +1759,7 @@
   ++  into
     ~/  %into
     |=  [pax=path all=? mod=(list [pax=path mim=(unit mime)])]
+    ~>  %sham.%into
     ^+  ..park
     ::  filter out unchanged, cached %mime values
     ::
@@ -4839,6 +4848,7 @@
           dud=(unit goof)
           wrapped-task=(hobo task)
       ==
+  ~>  %sham.%clay-call
   ^-  [(list move) _..^$]
   ::
   =/  req=task  ((harden task) wrapped-task)
@@ -5898,6 +5908,7 @@
   ~/  %clay-scry
   ^-  roon
   |=  [lyc=gang pov=path car=term bem=beam]
+  ~>  %sham.%clay-scry
   ^-  (unit (unit cage))
   =*  scry-loop  $
   |^
@@ -6097,6 +6108,7 @@
 ++  take                                              ::  accept response
   ~/  %clay-take
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
+  ~>  %sham.%clay-take
   ^+  [*(list move) ..^$]
   ?^  dud
     ?+    tea

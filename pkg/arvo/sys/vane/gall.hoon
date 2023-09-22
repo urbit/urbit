@@ -287,6 +287,7 @@
   ++  mo-receive-core
     ~/  %mo-receive-core
     |=  [prov=path dap=term bek=beak =agent]
+    ~>  %sham.%mo-receive-core
     ^+  mo-core
     ::
     =/  yak  (~(get by yokes.state) dap)
@@ -347,6 +348,7 @@
   ++  mo-send-foreign-request
     ~/  %mo-send-foreign-request
     |=  [=ship foreign-agent=term =deal]
+    ~>  %sham.%mo-send-foreign-request
     ^+  mo-core
     ::
     =.  mo-core  (mo-track-ship ship)
@@ -445,6 +447,7 @@
   ++  mo-handle-sys
     ~/  %mo-handle-sys
     |=  [=wire =sign-arvo]
+    ~>  %sham.%mo-handle-sys
     ^+  mo-core
     ::
     ?+  -.wire  !!
@@ -609,6 +612,7 @@
   ++  mo-handle-use
     ~/  %mo-handle-use
     |=  [=wire =sign-arvo]
+    ~>  %sham.%mo-handle-use
     ^+  mo-core
     ::
     ?.  ?=([@ @ @ *] wire)
@@ -757,6 +761,7 @@
   ++  mo-peek
     ~/  %mo-peek
     |=  [veb=? dap=term =routes care=term =path]
+    ~>  %sham.%mo-peek
     ^-  (unit (unit cage))
     ::
     ?.  ?=([~ %live *] (~(get by yokes.state) dap))  [~ ~]
@@ -941,6 +946,7 @@
     ++  ap-abed
       ~/  %ap-abed
       |=  [dap=term =routes]
+      ~>  %sham.%ap-abed
       ^+  ap-core
       %^  ap-yoke  dap  routes
       =<  ?>(?=(%live -) .)
@@ -1087,6 +1093,7 @@
     ++  ap-from-internal
       ~/  %ap-from-internal
       |=  card=carp
+      ~>  %sham.%ap-from-internal
       ^-  (list move)
       ::
       ?-    -.card
@@ -1272,6 +1279,7 @@
     ++  ap-peek
       ~/  %ap-peek
       |=  [veb=? care=term tyl=path]
+      ~>  %sham.%ap-peek
       ^-  (unit (unit cage))
       ::  take trailing mark off path for %x scrys
       ::
@@ -1348,6 +1356,7 @@
     ++  ap-reinstall
       ~/  %ap-reinstall
       |=  =agent
+      ~>  %sham.%ap-reinstall
       ^+  ap-core
       =/  old-state=vase
         ?:  ?=(%& -.agent.yoke)
@@ -1376,6 +1385,7 @@
     ++  ap-subscribe
       ~/  %ap-subscribe
       |=  pax=path
+      ~>  %sham.%ap-subscribe
       ^+  ap-core
       =/  incoming   [ship.attributing.agent-routes pax]
       =.  bitt.yoke  (~(put by bitt.yoke) agent-duct incoming)
@@ -1390,6 +1400,7 @@
     ++  ap-poke
       ~/  %ap-poke
       |=  =cage
+      ~>  %sham.%ap-poke
       ^+  ap-core
       =^  maybe-tang  ap-core
         %+  ap-ingest  %poke-ack  |.
@@ -1410,6 +1421,7 @@
     ++  ap-generic-take
       ~/  %ap-generic-take
       |=  [=wire =sign-arvo]
+      ~>  %sham.%ap-generic-take
       ^+  ap-core
       =?  sign-arvo  ?=([%lick *] sign-arvo)
         ?+  sign-arvo
@@ -1581,6 +1593,7 @@
     ++  ap-upgrade-state
       ~/  %ap-upgrade-state
       |=  maybe-vase=(unit vase)
+      ~>  %sham.%ap-upgrade-state
       ^-  [(unit tang) _ap-core]
       ::
       =^  maybe-tang  ap-core
@@ -1769,6 +1782,7 @@
     ++  ap-handle-result
       ~/  %ap-handle-result
       |=  result=(each step:agent tang)
+      ~>  %sham.%ap-handle-result
       ^-  [(list move) _ap-core]
       ?:  ?=(%| -.result)
         `ap-core
@@ -1810,6 +1824,7 @@
     ++  ap-handle-kicks
       ~/  %ap-handle-kicks
       |=  moves=(list move)
+      ~>  %sham.%ap-handle-kicks
       ^-  bitt
       =/  quits=(list duct)
         %+  murn  moves
@@ -1827,6 +1842,7 @@
     ++  ap-handle-peers
       ~/  %ap-handle-peers
       |=  moves=(list move)
+      ~>  %sham.%ap-handle-peers
       ^-  [(list move) _ap-core]
       =|  new-moves=(list move)
       |-  ^-  [(list move) _ap-core]
@@ -2207,6 +2223,7 @@
   ~/  %gall-scry
   ^-  roon
   |=  [lyc=gang pov=path care=term bem=beam]
+  ~>  %sham.%gall-scry
   ^-  (unit (unit cage))
   =*  ship  p.bem
   =*  dap  q.bem
@@ -2403,6 +2420,7 @@
 ++  take
   ~/  %gall-take
   |=  [=wire =duct dud=(unit goof) syn=sign-arvo]
+  ~>  %sham.%gall-take
   ^-  [(list move) _gall-payload]
   ?^  dud
     ~&(%gall-take-dud ((slog tang.u.dud) [~ gall-payload]))

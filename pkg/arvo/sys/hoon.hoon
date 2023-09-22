@@ -24,6 +24,11 @@
   ::  a: augend
   ::  b: addend
   |=  [a=@ b=@]
+  ::    unsigned addition
+  ::
+  ::  a: augend
+  ::  b: addend
+  ~>  %sham.%add
   ::  sum
   ^-  @
   ?:  =(0 a)  b
@@ -33,6 +38,8 @@
   ~/  %dec
   ::    unsigned decrement by one.
   |=  a=@
+  ::    unsigned decrement by one.
+  ~>  %sham.%dec
   ~_  leaf+"decrement-underflow"
   ?<  =(0 a)
   =+  b=0
@@ -78,6 +85,13 @@
   ::  a: left hand operand (todo: name)
   ::  b: right hand operand
   |=  [a=@ b=@]
+  ::    unsigned greater than or equals
+  ::
+  ::  returns whether {a >= b}.
+  ::
+  ::  a: left hand operand (todo: name)
+  ::  b: right hand operand
+  ~>  %sham.%gte
   ::  greater than or equal to?
   ^-  ?
   !(lth a b)
@@ -91,6 +105,13 @@
   ::  a: left hand operand (todo: name)
   ::  b: right hand operand
   |=  [a=@ b=@]
+  ::    unsigned greater than
+  ::
+  ::  returns whether {a > b}
+  ::
+  ::  a: left hand operand (todo: name)
+  ::  b: right hand operand
+  ~>  %sham.%gth
   ::  greater than?
   ^-  ?
   !(lte a b)
@@ -104,6 +125,13 @@
   ::  a: left hand operand (todo: name)
   ::  b: right hand operand
   |=  [a=@ b=@]
+  ::    unsigned less than or equals
+  ::
+  ::  returns whether {a >= b}.
+  ::
+  ::  a: left hand operand (todo: name)
+  ::  b: right hand operand
+  ~>  %sham.%lte
   ::  less than or equal to?
   |(=(a b) (lth a b))
 ::
@@ -114,6 +142,11 @@
   ::  a: left hand operand (todo: name)
   ::  b: right hand operand
   |=  [a=@ b=@]
+  ::    unsigned less than
+  ::
+  ::  a: left hand operand (todo: name)
+  ::  b: right hand operand
+  ~>  %sham.%lth
   ::  less than?
   ^-  ?
   ?&  !=(a b)
@@ -127,6 +160,8 @@
   ~/  %max
   ::    unsigned maximum
   |=  [a=@ b=@]
+  ::    unsigned maximum
+  ~>  %sham.%max
   ::  the maximum
   ^-  @
   ?:  (gth a b)  a
@@ -136,6 +171,8 @@
   ~/  %min
   ::    unsigned minimum
   |=  [a=@ b=@]
+  ::    unsigned minimum
+  ~>  %sham.%min
   ::  the minimum
   ^-  @
   ?:  (lth a b)  a
@@ -173,6 +210,11 @@
   ::  a: minuend
   ::  b: subtrahend
   |=  [a=@ b=@]
+  ::    unsigned subtraction
+  ::
+  ::  a: minuend
+  ::  b: subtrahend
+  ~>  %sham.%sub
   ~_  leaf+"subtract-underflow"
   ::  difference
   ^-  @
@@ -188,6 +230,11 @@
   ::  tests whether an `a` is in the head or tail of a noun. produces %2 if it
   ::  is within the head, or %3 if it is within the tail.
   |=  a=@
+  ::    tree head
+  ::
+  ::  tests whether an `a` is in the head or tail of a noun. produces %2 if it
+  ::  is within the head, or %3 if it is within the tail.
+  ~>  %sham.%cap
   ^-  ?(%2 %3)
   ?-  a
     %2        %2
@@ -203,6 +250,11 @@
   ::  computes the axis of `a` within either the head or tail of a noun
   ::  (depends whether `a` lies within the the head or tail).
   |=  a=@
+  ::    axis within head/tail
+  ::
+  ::  computes the axis of `a` within either the head or tail of a noun
+  ::  (depends whether `a` lies within the the head or tail).
+  ~>  %sham.%mas
   ^-  @
   ?-  a
     ?(%2 %3)  1
@@ -216,6 +268,10 @@
   ::
   ::  computes the axis of {b} within axis {a}.
   |=  [a=@ b=@]
+  ::    axis within axis
+  ::
+  ::  computes the axis of {b} within axis {a}.
+  ~>  %sham.%peg
   ?<  =(0 a)
   ::  a composed axis
   ^-  @
@@ -475,6 +531,7 @@
 ++  fand                                                ::  all indices
   ~/  %fand
   |=  [nedl=(list) hstk=(list)]
+  ~>  %sham.%fand
   =|  i=@ud
   =|  fnd=(list @ud)
   |-  ^+  fnd
@@ -491,6 +548,7 @@
 ++  find                                                ::  first index
   ~/  %find
   |=  [nedl=(list) hstk=(list)]
+  ~>  %sham.%find
   =|  i=@ud
   |-   ^-  (unit @ud)
   =+  [n=nedl h=hstk]
@@ -547,6 +605,7 @@
 ++  lent                                                ::  length
   ~/  %lent
   |=  a=(list)
+  ~>  %sham.%lent
   ^-  @
   =+  b=0
   |-
@@ -770,6 +829,7 @@
 ++  bex                                                 ::  binary exponent
   ~/  %bex
   |=  a=bloq
+  ~>  %sham.%bex
   ^-  @
   ?:  =(0 a)  1
   (mul 2 $(a (dec a)))
@@ -777,6 +837,7 @@
 ++  can                                                 ::  assemble
   ~/  %can
   |=  [a=bloq b=(list [p=step q=@])]
+  ~>  %sham.%can
   ^-  @
   ?~  b  0
   (add (end [a p.i.b] q.i.b) (lsh [a p.i.b] $(b t.b)))
@@ -784,22 +845,26 @@
 ++  cat                                                 ::  concatenate
   ~/  %cat
   |=  [a=bloq b=@ c=@]
+  ~>  %sham.%cat
   (add (lsh [a (met a b)] c) b)
 ::
 ++  cut                                                 ::  slice
   ~/  %cut
   |=  [a=bloq [b=step c=step] d=@]
+  ~>  %sham.%cut
   (end [a c] (rsh [a b] d))
 ::
 ++  end                                                 ::  tail
   ~/  %end
   |=  [a=bite b=@]
+  ~>  %sham.%end
   =/  [=bloq =step]  ?^(a a [a *step])
   (mod b (bex (mul (bex bloq) step)))
 ::
 ++  fil                                                 ::  fill bloqstream
   ~/  %fil
   |=  [a=bloq b=step c=@]
+  ~>  %sham.%fil
   =|  n=@ud
   =.  c  (end a c)
   =/  d  c
@@ -811,12 +876,14 @@
 ++  lsh                                                 ::  left-shift
   ~/  %lsh
   |=  [a=bite b=@]
+  ~>  %sham.%lsh
   =/  [=bloq =step]  ?^(a a [a *step])
   (mul b (bex (mul (bex bloq) step)))
 ::
 ++  met                                                 ::  measure
   ~/  %met
   |=  [a=bloq b=@]
+  ~>  %sham.%met
   ^-  @
   =+  c=0
   |-
@@ -826,6 +893,7 @@
 ++  rap                                                 ::  assemble variable
   ~/  %rap
   |=  [a=bloq b=(list @)]
+  ~>  %sham.%rap
   ^-  @
   ?~  b  0
   (cat a i.b $(b t.b))
@@ -833,6 +901,7 @@
 ++  rep                                                 ::  assemble fixed
   ~/  %rep
   |=  [a=bite b=(list @)]
+  ~>  %sham.%rep
   =/  [=bloq =step]  ?^(a a [a *step])
   =|  i=@ud
   |-  ^-  @
@@ -848,6 +917,7 @@
   ::  dat: data to flip
   ~/  %rev
   |=  [boz=bloq len=@ud dat=@]
+  ~>  %sham.%rev
   ^-  @
   =.  dat  (end [boz len] dat)
   %+  lsh
@@ -857,6 +927,7 @@
 ++  rip                                                 ::  disassemble
   ~/  %rip
   |=  [a=bite b=@]
+  ~>  %sham.%rip
   ^-  (list @)
   ?:  =(0 b)  ~
   [(end a b) $(b (rsh a b))]
@@ -864,12 +935,14 @@
 ++  rsh                                                 ::  right-shift
   ~/  %rsh
   |=  [a=bite b=@]
+  ~>  %sham.%rsh
   =/  [=bloq =step]  ?^(a a [a *step])
   (div b (bex (mul (bex bloq) step)))
 ::
 ++  run                                                 ::  +turn into atom
   ~/  %run
   |=  [a=bite b=@ c=$-(@ @)]
+  ~>  %sham.%run
   (rep a (turn (rip a b) c))
 ::
 ++  rut                                                 ::  +turn into list
@@ -880,6 +953,7 @@
 ++  sew                                                 ::  stitch into
   ~/  %sew
   |=  [a=bloq [b=step c=step d=@] e=@]
+  ~>  %sham.%sew
   ^-  @
   %+  add
     (can a b^e c^d ~)
@@ -889,11 +963,13 @@
 ++  swp                                                 ::  naive rev bloq order
   ~/  %swp
   |=  [a=bloq b=@]
+  ~>  %sham.%swp
   (rep a (flop (rip a b)))
 ::
 ++  xeb                                                 ::  binary logarithm
   ~/  %xeb
   |=  a=@
+  ~>  %sham.%xeb
   ^-  @
   (met 0 a)
 ::
@@ -931,6 +1007,7 @@
 ++  con                                                 ::  binary or
   ~/  %con
   |=  [a=@ b=@]
+  ~>  %sham.%con
   =+  [c=0 d=0]
   |-  ^-  @
   ?:  ?&(=(0 a) =(0 b))  d
@@ -948,6 +1025,7 @@
 ++  dis                                                 ::  binary and
   ~/  %dis
   |=  [a=@ b=@]
+  ~>  %sham.%dis
   =|  [c=@ d=@]
   |-  ^-  @
   ?:  ?|(=(0 a) =(0 b))  d
@@ -965,6 +1043,7 @@
 ++  mix                                                 ::  binary xor
   ~/  %mix
   |=  [a=@ b=@]
+  ~>  %sham.%mix
   ^-  @
   =+  [c=0 d=0]
   |-
@@ -1043,6 +1122,7 @@
 ++  mug                                                 ::  mug with murmur3
   ~/  %mug
   |=  a=*
+  ~>  %sham.%mug
   |^  ?@  a  (mum 0xcafe.babe 0x7fff a)
       =/  b  (cat 5 $(a -.a) $(a +.a))
       (mum 0xdead.beef 0xfffe b)
@@ -1068,6 +1148,7 @@
 ++  aor
   ~/  %aor
   |=  [a=* b=*]
+  ~>  %sham.%aor
   ^-  ?
   ?:  =(a b)  &
   ?.  ?=(@ a)
@@ -1088,6 +1169,7 @@
 ++  dor
   ~/  %dor
   |=  [a=* b=*]
+  ~>  %sham.%dor
   ^-  ?
   ?:  =(a b)  &
   ?.  ?=(@ a)
@@ -1104,6 +1186,7 @@
 ++  gor
   ~/  %gor
   |=  [a=* b=*]
+  ~>  %sham.%gor
   ^-  ?
   =+  [c=(mug a) d=(mug b)]
   ?:  =(c d)
@@ -1116,6 +1199,7 @@
 ++  mor
   ~/  %mor
   |=  [a=* b=*]
+  ~>  %sham.%mor
   ^-  ?
   =+  [c=(mug (mug a)) d=(mug (mug b))]
   ?:  =(c d)
@@ -1128,6 +1212,7 @@
 ++  pow                                                 ::  unsigned exponent
   ~/  %pow
   |=  [a=@ b=@]
+  ~>  %sham.%pow
   ?:  =(b 0)  1
   |-  ?:  =(b 1)  a
   =+  c=$(b (div b 2))
@@ -1137,6 +1222,7 @@
 ++  sqt                                                 ::  unsigned sqrt/rem
   ~/  %sqt
   |=  a=@  ^-  [p=@ q=@]
+  ~>  %sham.%sqt
   ?~  a  [0 0]
   =+  [q=(div (dec (xeb a)) 2) r=0]
   =-  [-.b (sub a +.b)]
@@ -1249,6 +1335,7 @@
   ++  gas                                               ::  concatenate
     ~/  %gas
     |=  b=(list _?>(?=(^ a) n.a))
+    ~>  %sham.%gas
     |-  ^+  a
     ?~  b
       a
@@ -1929,6 +2016,7 @@
 ++  cue                                                 ::  unpack
   ~/  %cue
   |=  a=@
+  ~>  %sham.%cue
   ^-  *
   =+  b=0
   =+  m=`(map @ *)`~
@@ -1949,6 +2037,7 @@
 ++  jam                                                 ::  pack
   ~/  %jam
   |=  a=*
+  ~>  %sham.%jam
   ^-  @
   =+  b=0
   =+  m=`(map * @)`~
@@ -1973,6 +2062,7 @@
 ++  mat                                                 ::  length-encode
   ~/  %mat
   |=  a=@
+  ~>  %sham.%mat
   ^-  [p=@ q=@]
   ?:  =(0 a)
     [1 1]
@@ -1984,6 +2074,7 @@
 ++  rub                                                 ::  length-decode
   ~/  %rub
   |=  [a=@ b=@]
+  ~>  %sham.%rub
   ^-  [p=@ q=@]
   =+  ^=  c
       =+  [c=0 m=(met 0 b)]
@@ -2344,6 +2435,7 @@
     ++  lug
       ~/  %lug
       |=  [t=$?(%fl %ce %sm %lg %ne %na %nt) a=[e=@s a=@u] s=?]  ^-  fn
+      ~>  %sham.%lug
       ?<  =(a.a 0)
       =-
         ?.  =(den %f)  -                                ::  flush denormals
@@ -3252,16 +3344,19 @@
 ++  shas                                                ::  salted hash
   ~/  %shas
   |=  [sal=@ ruz=@]
+  ~>  %sham.%shas
   (shax (mix sal (shax ruz)))
 ::
 ++  shax                                                ::  sha-256
   ~/  %shax
   |=  ruz=@  ^-  @
+  ~>  %sham.%shax
   (shay [(met 3 ruz) ruz])
 ::
 ++  shay                                                ::  sha-256 with length
   ~/  %shay
   |=  [len=@u ruz=@]  ^-  @
+  ~>  %sham.%shay
   =>  .(ruz (cut 3 [0 len] ruz))
   =+  [few==>(fe .(a 5)) wac=|=([a=@ b=@] (cut 5 [a 1] b))]
   =+  [sum=sum.few ror=ror.few net=net.few inv=inv.few]
@@ -3356,6 +3451,7 @@
 ++  shal                                                ::  sha-512 with length
   ~/  %shal
   |=  [len=@ ruz=@]  ^-  @
+  ~>  %sham.%shal
   =>  .(ruz (cut 3 [0 len] ruz))
   =+  [few==>(fe .(a 6)) wac=|=([a=@ b=@] (cut 6 [a 1] b))]
   =+  [sum=sum.few ror=ror.few net=net.few inv=inv.few]
@@ -3549,6 +3645,7 @@
   ++  raw                                               ::  random bits
     ~/  %raw
     |=  b=@  ^-  @
+    ~>  %sham.%raw
     %+  can
       0
     =+  c=(shas %og-a (mix b a))
@@ -3780,6 +3877,7 @@
   ++  fein
     ~/  %fein
     |=  pyn=@  ^-  @
+    ~>  %sham.%fein
     ?:  &((gte pyn 0x1.0000) (lte pyn 0xffff.ffff))
       (add 0x1.0000 (feis (sub pyn 0x1.0000)))
     ?:  &((gte pyn 0x1.0000.0000) (lte pyn 0xffff.ffff.ffff.ffff))
@@ -3796,6 +3894,7 @@
   ++  fynd
     ~/  %fynd
     |=  cry=@  ^-  @
+    ~>  %sham.%fynd
     ?:  &((gte cry 0x1.0000) (lte cry 0xffff.ffff))
       (add 0x1.0000 (tail (sub cry 0x1.0000)))
     ?:  &((gte cry 0x1.0000.0000) (lte cry 0xffff.ffff.ffff.ffff))
@@ -4266,6 +4365,7 @@
 ++  trip                                                ::  cord to tape
   ~/  %trip
   |=  a=@  ^-  tape
+  ~>  %sham.%trip
   ?:  =(0 (met 3 a))
     ~
   [^-(@ta (end 3 a)) $(a (rsh 3 a))]
@@ -4798,6 +4898,7 @@
   |*  [cus=* sef=rule]
   ~/  %fun
   |=  tub=nail
+  ~>  %sham.%fun
   =+  vex=(sef tub)
   ?~  q.vex
     vex
@@ -4808,6 +4909,7 @@
   |*  [poq=gate sef=rule]
   ~/  %fun
   |=  tub=nail
+  ~>  %sham.%fun
   =+  vex=(sef tub)
   ?~  q.vex
     vex
@@ -4818,6 +4920,7 @@
   |*  huf=*
   ~/  %fun
   |=  tub=nail
+  ~>  %sham.%fun
   ^-  (like _huf)
   [p=p.tub q=[~ u=[p=huf q=tub]]]
 ::
@@ -4841,6 +4944,7 @@
   |*  [hez=_|=([a=pint b=*] [a b]) sef=rule]
   ~/  %fun
   |=  tub=nail
+  ~>  %sham.%fun
   =+  vex=(sef tub)
   ?~  q.vex
     vex
@@ -4888,6 +4992,7 @@
   |=  daf=char
   ~/  %fun
   |=  tub=nail
+  ~>  %sham.%fun
   ^-  (like char)
   ?~  q.tub
     (fail tub)
@@ -4904,8 +5009,10 @@
 ++  mask                                                ::  match char in set
   ~/  %mask
   |=  bud=(list char)
+  ~>  %sham.%mask
   ~/  %fun
   |=  tub=nail
+  ~>  %sham.%fun
   ^-  (like char)
   ?~  q.tub
     (fail tub)
@@ -4959,8 +5066,10 @@
 ++  shim                                                ::  match char in range
   ~/  %shim
   |=  [les=@ mos=@]
+  ~>  %sham.%shim
   ~/  %fun
   |=  tub=nail
+  ~>  %sham.%fun
   ^-  (like char)
   ?~  q.tub
     (fail tub)
@@ -4973,6 +5082,7 @@
   |*  [gob=* sef=rule]
   ~/  %fun
   |=  tub=nail
+  ~>  %sham.%fun
   =+  vex=(sef tub)
   ?~  q.vex
     vex
@@ -5043,6 +5153,7 @@
   |*  [rud=* raq=_=>(~ |*([a=* b=*] [a b])) fel=rule]
   ~/  %fun
   |=  tub=nail
+  ~>  %sham.%fun
   ^-  (like _rud)
   ::
   ::  lef: successful interim parse results (per .fel)
@@ -5844,15 +5955,16 @@
 +|  %formatting-functions
 ++  scot
   ~/  %scot
-  |=(mol=dime ~(rent co %$ mol))
+  |=(mol=dime ~>(%sham.%scot ~(rent co %$ mol)))
 ++  scow
   ~/  %scow
-  |=(mol=dime ~(rend co %$ mol))
+  |=(mol=dime ~>(%sham.scow ~(rend co %$ mol)))
 ++  slat  |=(mod=@tas |=(txt=@ta (slaw mod txt)))
 ++  slav  |=([mod=@tas txt=@ta] (need (slaw mod txt)))
 ++  slaw
   ~/  %slaw
   |=  [mod=@tas txt=@ta]
+  ~>  %sham.%slaw
   ^-  (unit @)
   ?+    mod
       ::  slow fallback case to the full slay
@@ -5959,6 +6071,7 @@
   |=  $:  [subject=* formula=*]
           scry=$-(^ (unit (unit)))
       ==
+  ~>  %sham.%mink
   =|  trace=(list [@ta *])
   |^  ^-  tone
       ?+  formula  [%2 trace]
@@ -6239,6 +6352,7 @@
 ++  slum
   ~/  %slum
   |=  sub=[gat=* sam=*]
+  ~>  %sham.%slum
   .*(sub [%9 2 %10 [6 %0 3] %0 2])
 ::  +soft: virtual clam
 ::
@@ -7148,12 +7262,14 @@
 ++  cell                                                ::  make %cell type
   ~/  %cell
   |=  [hed=type tal=type]
+  ~>  %sham.%cell
   ^-  type
   ?:(=(%void hed) %void ?:(=(%void tal) %void [%cell hed tal]))
 ::
 ++  core                                                ::  make %core type
   ~/  %core
   |=  [pac=type con=coil]
+  ~>  %sham.%core
   ^-  type
   ?:(=(%void pac) %void [%core pac con])
 ::
@@ -7167,6 +7283,7 @@
 ++  face                                                ::  make %face type
   ~/  %face
   |=  [giz=$@(term tune) der=type]
+  ~>  %sham.%face
   ^-  type
   ?:  =(%void der)
     %void
@@ -7175,6 +7292,7 @@
 ++  fork                                                ::  make %fork type
   ~/  %fork
   |=  yed=(list type)
+  ~>  %sham.%fork
   =|  lez=(set type)
   |-  ^-  type
   ?~  yed
@@ -7199,6 +7317,7 @@
 ++  comb                                                ::  combine two formulas
   ~/  %comb
   |=  [mal=nock buz=nock]
+  ~>  %sham.%comb
   ^-  nock
   ?:  ?&(?=([%0 *] mal) !=(0 p.mal))
     ?:  ?&(?=([%0 *] buz) !=(0 p.buz))
@@ -7215,6 +7334,7 @@
 ++  cond                                                ::  ?:  compile
   ~/  %cond
   |=  [pex=nock yom=nock woq=nock]
+  ~>  %sham.%cond
   ^-  nock
   ?-  pex
     [%1 %0]  yom
@@ -7225,6 +7345,7 @@
 ++  cons                                                ::  make formula cell
   ~/  %cons
   |=  [vur=nock sed=nock]
+  ~>  %sham.%cons
   ^-  nock
   ::  this optimization can remove crashes which are essential
   ::
@@ -7239,6 +7360,7 @@
 ++  fitz                                                ::  odor compatibility
   ~/  %fitz
   |=  [yaz=term wix=term]
+  ~>  %sham.%fitz
   =+  ^=  fiz
       |=  mot=@ta  ^-  [p=@ q=@ta]
       =+  len=(met 3 mot)
@@ -7264,6 +7386,7 @@
 ++  flan                                                ::  loobean  &
   ~/  %flan
   |=  [bos=nock nif=nock]
+  ~>  %sham.%flan
   ^-  nock
   ?:  =(bos nif)  bos
   ?:  =([%0 0] bos)  nif
@@ -7282,12 +7405,14 @@
 ++  flip                                                ::  loobean negation
   ~/  %flip
   |=  dyr=nock
+  ~>  %sham.%flip
   ?:  =([%0 0] dyr)  dyr
   [%6 dyr [%1 1] [%1 0]]
 ::
 ++  flor                                                ::  loobean  |
   ~/  %flor
   |=  [bos=nock nif=nock]
+  ~>  %sham.%flor
   ^-  nock
   ?:  =(bos nif)  bos
   ?:  =([%0 0] bos)  nif
@@ -7306,6 +7431,7 @@
 ++  hike
   ~/  %hike
   |=  [a=axis pac=(list (pair axis nock))]
+  ~>  %sham.%hike
   |^  =/  rel=(map axis nock)  (roll pac insert)
       =/  ord=(list axis)      (sort ~(tap in ~(key by rel)) gth)
       |-  ^-  nock
@@ -7385,6 +7511,7 @@
 ++  look
   ~/  %look
   |=  [cog=term dab=(map term hoon)]
+  ~>  %sham.%look
   =+  axe=1
   |-  ^-  (unit [p=axis q=hoon])
   ?-  dab
@@ -7418,6 +7545,7 @@
 ++  loot
   ~/  %loot
   |=  [cog=term dom=(map term tome)]
+  ~>  %sham.%loot
   =+  axe=1
   |-  ^-  (unit [p=axis q=hoon])
   ?-  dom
@@ -9054,18 +9182,21 @@
   ++  busk
     ~/  %busk
     |=  gen=hoon
+    ~>  %sham.%busk
     ^-  type
     [%face [~ [gen ~]] sut]
   ::
   ++  buss
     ~/  %buss
     |=  [cog=term gen=hoon]
+    ~>  %sham.%buss
     ^-  type
     [%face [[[cog ~ gen] ~ ~] ~] sut]
   ::
   ++  crop
     ~/  %crop
     |=  ref=type
+    ~>  %sham.%crop
     =+  bix=*(set [type type])
     =<  dext
     |%
@@ -9259,18 +9390,21 @@
   ++  epla
     ~/  %epla
     |=  [hyp=wing rig=(list (pair wing hoon))]
+    ~>  %sham.%epla
     ^-  type
     ~(play et hyp rig)
   ::
   ++  emin
     ~/  %emin
     |=  [gol=type hyp=wing rig=(list (pair wing hoon))]
+    ~>  %sham.%emin
     ^-  (pair type nock)
     (~(mint et hyp rig) gol)
   ::
   ++  emul
     ~/  %emul
     |=  [gol=type dox=type hyp=wing rig=(list (pair wing hoon))]
+    ~>  %sham.%emul
     ^-  (pair type type)
     (~(mull et hyp rig) gol dox)
   ::
@@ -9300,6 +9434,7 @@
   ++  fond
     ~/  %fond
     |=  [way=vial hyp=wing]
+    ~>  %sham.%fond
     =>  |%
         ++  pony                                        ::  raw match
                   $@  ~                                 ::  void
@@ -9461,6 +9596,7 @@
   ++  find
     ~/  %find
     |=  [way=vial hyp=wing]
+    ~>  %sham.%find
     ^-  port
     ~_  (show [%c %find] %l hyp)
     =-  ?@  -  !!
@@ -9475,6 +9611,7 @@
   ++  fund
     ~/  %fund
     |=  [way=vial gen=hoon]
+    ~>  %sham.%fund
     ^-  port
     =+  hup=~(reek ap gen)
     ?~  hup
@@ -9484,6 +9621,7 @@
   ++  fine
     ~/  %fine
     |=  tor=port
+    ~>  %sham.%fine
     ^-  (pair type nock)
     ?-  -.tor
       %|  p.tor
@@ -9525,6 +9663,7 @@
   ++  fish
     ~/  %fish
     |=  axe=axis
+    ~>  %sham.%fish
     =+  vot=*(set type)
     |-  ^-  nock
     ?-  sut
@@ -9554,6 +9693,7 @@
   ++  fuse
     ~/  %fuse
     |=  ref=type
+    ~>  %sham.%fuse
     =+  bix=*(set [type type])
     |-  ^-  type
     ?:  ?|(=(sut ref) =(%noun ref))
@@ -9594,6 +9734,7 @@
   ++  gain
     ~/  %gain
     |=  gen=hoon  ^-  type
+    ~>  %sham.%gain
     (chip & gen)
   ::
   ++  hemp
@@ -9682,11 +9823,13 @@
   ++  lose
     ~/  %lose
     |=  gen=hoon  ^-  type
+    ~>  %sham.%lose
     (chip | gen)
   ::
   ++  chip
     ~/  %chip
     |=  [how=? gen=hoon]  ^-  type
+    ~>  %sham.%chip
     ?:  ?=([%wtts *] gen)
       (cool how q.gen (play ~(example ax p.gen)))
     ?:  ?=([%wthx *] gen)
@@ -9899,6 +10042,7 @@
   ++  mint
     ~/  %mint
     |=  [gol=type gen=hoon]
+    ~>  %sham.%mint
     ^-  [p=type q=nock]
     ::~&  %pure-mint
     |^  ^-  [p=type q=nock]
@@ -10080,6 +10224,7 @@
   ++  mull
     ~/  %mull
     |=  [gol=type dox=type gen=hoon]
+    ~>  %sham.%mull
     |^  ^-  [p=type q=type]
     ?:  =(%void sut)
       ~>(%mean.'mull-none' !!)
@@ -10290,6 +10435,7 @@
   ++  nest
     ~/  %nest
     |=  [tel=? ref=type]
+    ~>  %sham.%nest
     =|  $:  seg=(set type)                              ::  degenerate sut
             reg=(set type)                              ::  degenerate ref
             gil=(set [p=type q=type])                   ::  assume nest
@@ -10405,6 +10551,7 @@
   ++  peek
     ~/  %peek
     |=  [way=?(%read %rite %both %free) axe=axis]
+    ~>  %sham.%peek
     ^-  type
     ?:  =(1 axe)
       sut
@@ -10521,6 +10668,7 @@
             ::
             ref=type
         ==
+    ~>  %sham.%redo
     ::  :type: subject refurbished to reference namespace
     ::
     ^-  type
@@ -10746,6 +10894,7 @@
   ++  rest
     ~/  %rest
     |=  leg=(list [p=type q=hoon])
+    ~>  %sham.%rest
     ^-  type
     ?:  (lien leg |=([p=type q=hoon] (~(has in fan) [p q])))
       ~>(%mean.'rest-loop' !!)
@@ -10841,6 +10990,7 @@
   ++  toss
     ~/  %toss
     |=  [hyp=wing mur=type men=(list [p=type q=foot])]
+    ~>  %sham.%toss
     ^-  [p=axis q=(list [p=type q=foot])]
     =-  [(need p.wib) q.wib]
     ^=  wib
@@ -10854,6 +11004,7 @@
   ++  wrap
     ~/  %wrap
     |=  yoz=?(%lead %iron %zinc)
+    ~>  %sham.%wrap
     ~_  leaf+"wrap"
     ^-  type
     ?+  sut  sut
@@ -11330,6 +11481,7 @@
 ++  sell
   ~/  %sell
   |=  vax=vase
+  ~>  %sham.%sell
   ^-  tank
   ~|  %sell
   (~(deal us p.vax) q.vax)
@@ -13862,6 +14014,7 @@
 ++  vest
   ~/  %vest
   |=  tub=nail
+  ~>  %sham.%vest
   ^-  (like hoon)
   %.  tub
   %-  full

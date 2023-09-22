@@ -143,6 +143,7 @@
 ++  split-message
   ~/  %split-message
   |=  [=message-num =message-blob]
+  :: ~>  %sham.%split-message
   ^-  (list static-fragment)
   ::
   =/  num-fragments=fragment-num  (met packet-size message-blob)
@@ -159,6 +160,7 @@
 ++  assemble-fragments
   ~/  %assemble-fragments
   |=  [num-fragments=fragment-num fragments=(map fragment-num fragment)]
+  :: ~>  %sham.%assemble-fragments
   ^-  *
   ::
   =|  sorted=(list fragment)
@@ -242,6 +244,7 @@
 ++  derive-symmetric-key
   ~/  %derive-symmetric-key
   |=  [=public-key =private-key]
+  :: ~>  %sham.%derive-symmetric-key
   ^-  symmetric-key
   ::
   ?>  =('b' (end 3 public-key))
@@ -256,6 +259,7 @@
 ++  encode-keys-packet
   ~/  %encode-keys-packet
   |=  [sndr=ship rcvr=ship sndr-life=life]
+  :: ~>  %sham.%encode-keys-packet
   ^-  shot
   :*  [sndr rcvr]
       &
@@ -361,6 +365,7 @@
 ++  etch-open-packet
   ~/  %etch-open-packet
   |=  [pac=open-packet =acru:ames]
+  :: ~>  %sham.%etch-open-packet
   ^-  shot
   :*  [sndr rcvr]:pac
       req=&  sam=&
@@ -374,6 +379,7 @@
 ++  sift-open-packet
   ~/  %sift-open-packet
   |=  [=shot our=ship our-life=@]
+  :: ~>  %sham.%sift-open-packet
   ^-  open-packet
   ::  deserialize and type-check packet contents
   ::
@@ -409,6 +415,7 @@
           sndr-life=@
           rcvr-life=@
       ==
+  :: ~>  %sham.%etch-shut-packet
   ^-  shot
   ::
   =?    meat.shut-packet
@@ -437,6 +444,7 @@
 ++  sift-shut-packet
   ~/  %sift-shut-packet
   |=  [=shot =symmetric-key sndr-life=@ rcvr-life=@]
+  :: ~>  %sham.%sift-shut-packet
   ^-  (unit shut-packet)
   ?.  ?&  =(sndr-tick.shot (mod sndr-life 16))
           =(rcvr-tick.shot (mod rcvr-life 16))
@@ -2165,6 +2173,7 @@
       ++  on-hear-packet
         ~/  %on-hear-packet
         |=  [=lane =shot dud=(unit goof)]
+        :: ~>  %sham.%on-hear-packet
         ^+  event-core
         %-  (ev-trace rcv.veb sndr.shot |.("received packet"))
         ::
@@ -2196,6 +2205,7 @@
       ++  on-hear-forward
         ~/  %on-hear-forward
         |=  [=lane =shot dud=(unit goof)]
+        :: ~>  %sham.%on-hear-forward
         ^+  event-core
         %-  %^  ev-trace  for.veb  sndr.shot
             |.("forward: {<sndr.shot>} -> {<rcvr.shot>}")
@@ -2216,6 +2226,7 @@
       ++  on-hear-keys
         ~/  %on-hear-keys
         |=  [=lane =shot dud=(unit goof)]
+        :: ~>  %sham.%on-hear-keys
         =+  %^  ev-trace  msg.veb  sndr.shot
             |.("requested attestation")
         ?.  =(%pawn (clan:title our))
@@ -2227,6 +2238,7 @@
       ++  on-hear-open
         ~/  %on-hear-open
         |=  [=lane =shot dud=(unit goof)]
+        :: ~>  %sham.%on-hear-open
         ^+  event-core
         =+  %^  ev-trace  msg.veb  sndr.shot
             |.("got attestation")
@@ -2270,6 +2282,7 @@
       ++  on-hear-shut
         ~/  %on-hear-shut
         |=  [=lane =shot dud=(unit goof)]
+        :: ~>  %sham.%on-hear-shut
         ^+  event-core
         =/  sndr-state  (~(get by peers.ames-state) sndr.shot)
         ::  If we don't know them, ask Jael for their keys. If they're a
@@ -3018,6 +3031,7 @@
       ++  send-blob
         ~/  %send-blob
         |=  [for=? =ship =blob ship-state=(unit ship-state)]
+        :: ~>  %sham.%send-blob
         ::
         =/  final-ship  ship
         %-  (ev-trace rot.veb final-ship |.("send-blob: to {<ship>}"))

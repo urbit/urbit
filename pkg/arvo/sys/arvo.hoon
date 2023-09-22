@@ -302,6 +302,7 @@
 ++  de-beam
   ~/  %de-beam
   |=  p=path
+  ~>  %sham.%de-beam
   ^-  (unit beam)
   ?.  ?=([@ @ @ *] p)  ~
   ?~  who=(slaw %p i.p)  ~
@@ -312,6 +313,7 @@
 ++  de-case
   ~/  %de-case
   |=  =knot
+  ~>  %sham.%de-case
   ^-  (unit case)
   ?^  num=(slaw %ud knot)  `[%ud u.num]
   ?^  wen=(slaw %da knot)  `[%da u.wen]
@@ -329,6 +331,7 @@
 ++  de-omen
   ~/  %de-omen
   |=  pax=path
+  ~>  %sham.%de-omen
   ^-  (unit omen)
   ?~  pax  ~
   ?~  bem=(de-beam t.pax)  ~
@@ -344,9 +347,11 @@
 ++  look
   ~/  %look
   |=  [rof=roof lyc=gang pov=path]
+  ~>  %sham.%look
   ^-  root
   ~/  %in
   |=  [ref=* raw=*]
+  ~>  %sham.%in
   ?~  pax=((soft path) raw)  ~
   ?~  mon=(de-omen u.pax)  ~
   ?~  dat=(rof lyc pov u.mon)  ~
@@ -1062,6 +1067,7 @@
         ++  create
           ~/  %create
           |=  [our=ship zus=vase lal=term pax=path txt=@t]
+          ~>  %sham.%create
           ^-  vase
           =/  cap  "vane: %{(trip lal)}"
           (slym (smit cap zus pax txt) our)
@@ -1069,6 +1075,7 @@
         ++  settle
           ~/  %settle
           |=  van=vase
+          ~>  %sham.%settle
           ^-  (pair vase worm)
           =|  sac=worm
           =^  rig=vase  sac  (~(slym wa sac) van *vane-sample)
@@ -1081,6 +1088,7 @@
         ++  update
           ~/  %update
           |=  [las=vase nex=vase]
+          ~>  %sham.%update
           ^-  vase
           =/  sam=vase  (slap (slym las *vane-sample) [%limb %stay])
           =/  gat=vase  (slap (slym nex *vane-sample) [%limb %load])
@@ -1095,6 +1103,7 @@
     ++  plow
       ~/  %plow
       |=  [now=@da rok=rook]
+      ~>  %sham.%plow
       ~%  %plow-core  +  ~
       |%
       ::  +peek:plow:va: read from a local namespace
@@ -1103,6 +1112,7 @@
         ~/  %peek
         ^-  rook
         |=  [lyc=gang pov=path omen]
+        ~>  %sham.%peek
         ^-  (unit (unit (cask meta)))
         ::  namespace reads receive no entropy
         ::

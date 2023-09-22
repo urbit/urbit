@@ -3268,6 +3268,7 @@
 ++  call
   ~/  %eyre-call
   |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
+  ~>  %sham.%eyre-call
   ^-  [(list move) _http-server-gate]
   ::
   =/  task=task  ((harden task) wrapped-task)
@@ -3527,6 +3528,7 @@
 ++  take
   ~/  %eyre-take
   |=  [=wire =duct dud=(unit goof) =sign]
+  ~>  %sham.%eyre-take
   ^-  [(list move) _http-server-gate]
   =>  %=    .
           sign
@@ -4002,6 +4004,7 @@
   ~/  %eyre-scry
   ^-  roon
   |=  [lyc=gang pov=path car=term bem=beam]
+  ~>  %sham.%eyre-scry
   ^-  (unit (unit cage))
   =*  ren  car
   =*  why=shop  &/p.bem

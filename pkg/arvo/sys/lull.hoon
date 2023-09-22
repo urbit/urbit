@@ -71,6 +71,7 @@
   ++  all
     ~/  %all
     |=  [a=(tree item) b=$-(item ?)]
+    ~>  %sham.%all
     ^-  ?
     |-
     ?~  a
@@ -81,6 +82,7 @@
   ++  any
     ~/  %any
     |=  [a=(tree item) b=$-(item ?)]
+    ~>  %sham.%any
     |-  ^-  ?
     ?~  a
       |
@@ -91,6 +93,7 @@
     ~/  %apt
     |=  a=(tree item)
     =|  [l=(unit key) r=(unit key)]
+    ~>  %sham.%apt
     |-  ^-  ?
     ::  empty tree is valid
     ::
@@ -119,6 +122,7 @@
   ++  bap
     ~/  %bap
     |=  a=(tree item)
+    ~>  %sham.%bap
     ^-  (list item)
     =|  b=(list item)
     |-  ^+  b
@@ -129,6 +133,7 @@
   ++  del
     ~/  %del
     |=  [a=(tree item) =key]
+    ~>  %sham.%del
     ^-  [(unit val) (tree item)]
     ?~  a  [~ ~]
     ::  we found .key at the root; delete and rebalance
@@ -214,6 +219,7 @@
   ++  gas
     ~/  %gas
     |=  [a=(tree item) b=(list item)]
+    ~>  %sham.%gas
     ^-  (tree item)
     ?~  b  a
     $(b t.b, a (put a i.b))
@@ -222,6 +228,7 @@
   ++  get
     ~/  %get
     |=  [a=(tree item) b=key]
+    ~>  %sham.%get
     ^-  (unit val)
     ?~  a  ~
     ?:  =(b key.n.a)
@@ -240,6 +247,7 @@
   ++  has
     ~/  %has
     |=  [a=(tree item) b=key]
+    ~>  %sham.%has
     ^-  ?
     !=(~ (get a b))
   ::  +lot: take a subset range excluding start and/or end and all elements
@@ -251,6 +259,7 @@
             start=(unit key)
             end=(unit key)
         ==
+    ~>  %sham.%lot
     ^-  (tree item)
     |^
     ?:  ?&(?=(~ start) ?=(~ end))
@@ -297,6 +306,7 @@
   ++  nip
     ~/  %nip
     |=  a=(tree item)
+    ~>  %sham.%nip
     ^-  (tree item)
     ?>  ?=(^ a)
     ::  delete .n.a; merge and balance .l.a and .r.a
@@ -313,6 +323,7 @@
   ++  pop
     ~/  %pop
     |=  a=(tree item)
+    ~>  %sham.%pop
     ^-  [head=item rest=(tree item)]
     ?~  a    !!
     ?~  l.a  [n.a r.a]
@@ -328,6 +339,7 @@
   ++  pry
     ~/  %pry
     |=  a=(tree item)
+    ~>  %sham.%pry
     ^-  (unit item)
     ?~  a    ~
     |-
@@ -338,6 +350,7 @@
   ++  put
     ~/  %put
     |=  [a=(tree item) =key =val]
+    ~>  %sham.%put
     ^-  (tree item)
     ::  base case: replace null with single-item tree
     ::
@@ -365,6 +378,7 @@
   ++  ram
     ~/  %ram
     |=  a=(tree item)
+    ~>  %sham.%ram
     ^-  (unit item)
     ?~  a    ~
     |-
@@ -383,6 +397,7 @@
   ++  tab
     ~/  %tab
     |=  [a=(tree item) b=(unit key) c=@]
+    ~>  %sham.%tab
     ^-  (list item)
     |^
     (flop e:(tabulate (del-span a b) b c))
@@ -416,6 +431,7 @@
   ++  tap
     ~/  %tap
     |=  a=(tree item)
+    ~>  %sham.%tap
     ^-  (list item)
     =|  b=(list item)
     |-  ^+  b
@@ -428,6 +444,7 @@
   ++  uni
     ~/  %uni
     |=  [a=(tree item) b=(tree item)]
+    ~>  %sham.%uni
     ^-  (tree item)
     ?~  b  a
     ?~  a  b
@@ -445,6 +462,7 @@
   ++  wyt
     ~/  %wyt
     |=  a=(tree item)
+    ~>  %sham.%wyt
     ^-  @ud
     ?~(a 0 +((add $(a l.a) $(a r.a))))
   --
