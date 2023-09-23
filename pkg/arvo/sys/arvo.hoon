@@ -381,7 +381,6 @@
 ++  en-cose
   |=  c=cose
   ^-  knot
-  ::  ~(rent co `coin`[%many $+da+now $+ud+1 ~])
   (rap 3 '._~' (scot -.c) '_' (scot +.c) '__' ~)
 ::
 ++  de-cose
@@ -436,13 +435,6 @@
   ^-  omen
   =/  c=cose  r.bam.o
   o(r.bam -.c)
-::
-++  omen-cose
-  |=  o=(each omen omer)
-  ^-  (pair omen (unit cose))
-  ?:  ?=(%& -.o)
-    [p.o ~]
-  [(omer-to-omen p.o) `r.bam.p.o]
 ::
 ++  rant
   |=  a=(list [char=@tD *])
@@ -1516,9 +1508,12 @@
       ^-  rook
       |=  [lyc=gang pov=path o=(each omen omer)]
       |^  ^-  (unit (unit (cask meta)))
+      =/  o=(pair omen (unit cose))
+        ?:  ?=(%& -.o)
+          [p.o ~]
+        [(omer-to-omen p.o) `r.bam.p.o]
       ::  TODO
       ::
-      =/  o=(pair omen (unit cose))  (omen-cose o)
       ~&  >>>  [%cose q.o %tick tick.gem]
       ::
       ?:  ?&  ?=(^ q.o)
