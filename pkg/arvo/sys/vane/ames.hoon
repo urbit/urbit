@@ -2412,6 +2412,7 @@
         ^+  event-core
         ?>  ?=([%chum *] wire)
         :: XX save or decrypt path?
+        :: XX crash in decryption/cue indicates misbehaving peer
         ::
         =/  per  (~(get by peers.ames-state) ship.s)
         ?>  ?=([~ %known *] per)
@@ -2419,13 +2420,13 @@
         =/  pax
           =-  (,path (cue -))
           (dy:crub:crypto symmetric-key.u.per (slav %uv cyf.path.s))
-        =/  dat=(unit page)
+        =/  dat=(unit (unit page))
           ?:  ?|  ?=(~ roar)
                   ?=(~ q.dat.u.roar)
               ==
-            ~  :: XX wrong
+            ~  :: XX weird
           ?>  ?=([%atom @] u.q.dat.u.roar)
-          =-  ?~(- ~ `(,page (cue -)))
+          =-  `?~(- ~ `(,page (cue -)))
           (dy:crub:crypto symmetric-key.u.per q.u.q.dat.u.roar)
         (emit duct [%give %near [ship.s pax] dat])
       ::  +on-cork: handle request to kill a flow
@@ -2977,18 +2978,19 @@
       ++  on-chum
         |=  spar
         ^+  event-core
-        =+  ~:(spit path)  ::  assert length
         =/  ship-state  (~(get by peers.ames-state) ship)
-        ?:  ?=([~ %known *] ship-state)
-          =/  cyf  (scot %uv (en:crub:crypto symmetric-key.u.ship-state (jam path)))
-          =/  lav  /a/x/1//chum/(scot %p our)/(scot %ud life.ames-state)/[cyf]
-          (emit duct [%pass /chum %a %keen ship lav])
-        ::  XX add state for queued chum
-        ::
-        ::  %^  enqueue-alien-todo  ship  ship-state
-        ::  |=  todos=alien-agenda
-        ::  todos(keens (~(put ju keens.todos) path duct))
-        !!
+        ?.  ?=([~ %known *] ship-state)
+          ::  XX add state for queued chum
+          ::
+          ::  %^  enqueue-alien-todo  ship  ship-state
+          ::  |=  todos=alien-agenda
+          ::  todos(keens (~(put ju keens.todos) path duct))
+          !!
+        =/  cyf
+          (scot %uv (en:crub:crypto symmetric-key.u.ship-state (jam path)))
+        =/  lav
+          /a/x/1//chum/(scot %p our)/(scot %ud life.ames-state)/[cyf]
+        (emit duct [%pass /chum %a %keen ship lav])
       ::
       ++  on-cancel-scry
         |=  [all=? spar]
@@ -5359,23 +5361,21 @@
     =>  .(tyl `(pole knot)`tyl)
     ?+    tyl  ~
         [%chum her=@ lyf=@ cyf=@ ~]
-      ?~  who=(slaw %p her.tyl)
+      =/  who  (slaw %p her.tyl)
+      =/  lyf  (slaw %ud lyf.tyl)
+      =/  cyf  (slaw %uv cyf.tyl)
+      ?:  |(?=(~ who) ?=(~ lyf) ?=(~ cyf))
         [~ ~]
       =/  per  (~(get by peers.ames-state) u.who)
-      ?.  ?=([~ %known *] per)
+      ?.  &(?=([~ %known *] per) =(life.u.per u.lyf))
+        ~
+      =/  bal=(unit balk)
+        ?~  tex=(de:crub:crypto symmetric-key.u.per u.cyf)  ~
+        ?~  pax=(mole |.((,path (cue u.tex))))              ~
+        (de-part:balk our 0 0 u.pax)
+      ?~  bal
         [~ ~]
-      ?~  lyf=(slaw %ud lyf.tyl)
-        [~ ~]
-      ?.  =(life.u.per u.lyf)
-        [~ ~]
-      ?~  cyf=(slaw %uv cyf.tyl)
-        [~ ~]
-      =/  pax
-        =-  (,path (cue -))
-        (dy:crub:crypto symmetric-key.u.per u.cyf)
-      ?~  blk=(de-part:balk our 0 0 pax)
-        [~ ~]
-      ?~  res=(rof `[u.who ~ ~] /ames (as-omen:balk u.blk))
+      ?~  res=(rof `[u.who ~ ~] /ames (as-omen:balk u.bal))
         ~
       =-  ``atom+!>(`@ux`-)
       %+  en:crub:crypto  symmetric-key.u.per

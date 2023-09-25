@@ -804,8 +804,8 @@
         $>(%plea vane-task)
         [%deep =deep]
     ::
-        [%keen spar]
         [%chum spar]
+        [%keen spar]
         [%yawn spar]
         [%wham spar]
     ::
@@ -845,8 +845,8 @@
         [%lost ~]
         [%send =lane =blob]
     ::
+        [%near spar dat=(unit (unit page))]
         [%tune spar roar=(unit roar)]
-        [%near spar dat=(unit page)]
     ::
         [%turf turfs=(list turf)]
     ==
