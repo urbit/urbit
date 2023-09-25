@@ -1518,7 +1518,7 @@
       [%c care (scot case) desk path]
     :-  [time path]
     %-  emil
-    :~  [hen %pass wire %a %keen ship path]
+    :~  [hen %pass wire %a %keen ~ ship path]
         [hen %pass wire %b %wait time]
     ==
   ::

@@ -802,10 +802,10 @@
         $>(%plea vane-task)
         [%deep =deep]
     ::
-        [%keen secret=? spar]
+        [%keen sec=(unit [idx=@ key=@]) spar]
         [%yawn spar]
         [%wham spar]
-        [%plug ~]
+        [%plug vane=term =path]
     ::
         $>(%born vane-task)
         $>(%init vane-task)
@@ -932,10 +932,12 @@
   ::  $hoot: request packet payload
   ::  $yowl: serialized response packet payload
   ::  $hunk: a slice of $yowl fragments
+  ::  $lock: keys for remote scry
   ::
   +$  hoot           @uxhoot
   +$  yowl           @uxyowl
   +$  hunk           [lop=@ len=@]
+  +$  lock           [idx=@ key=@]
   ::
   :: +|  %kinetics
   ::  $dyad: pair of sender and receiver ships
@@ -2786,6 +2788,8 @@
           [%tend =coop =path =page]
           [%germ =coop]
           [%snip =coop]
+      ::
+          [%keen secret=? spar:ames]
       ==
     +$  task
       $%  [%watch =path]

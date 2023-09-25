@@ -111,8 +111,8 @@
 ++  chain
   =<  mop
   |%
-  ++  on  ((^on ,@ ,@) lte)
-  +$  mop  ((^mop ,@ ,@) lte)
+  ++  on  ((^on ,@ ,[key=@ =path]) lte)
+  +$  mop  ((^mop ,@ ,[key=@ =path]) lte)
   --
 ::
 ::  +trace: print if .verb is set and we're tracking .ship
@@ -586,6 +586,7 @@
       ==
     ::
       =chain
+      atlas=(map path @ud)
     ==
 ::
 +$  ames-state-17
@@ -1802,7 +1803,7 @@
           ?+  -.task  task
             %snub  [%snub %deny ships.task]
             %kroc  [%kroc ~]
-            %keen  [%keen | +.task]
+            %keen  [%keen ~ +.task]
           ==
         ==
       ::
@@ -1819,7 +1820,7 @@
           ^-  ^task
           ?+  -.task  task
             %kroc  [%kroc ~]
-            %keen  [%keen | +.task]
+            %keen  [%keen ~ +.task]
           ==
         ==
       ::
@@ -1832,7 +1833,7 @@
         ?.  ?=(%call -.e)  e
         =/  task=task-17  ((harden task-17) wrapped-task.e)
         %=    e
-            wrapped-task  ?.(?=(%keen -.task) task [%keen | +.task])
+            wrapped-task  ?.(?=(%keen -.task) task [%keen ~ +.task])
         ==
       --
     ::  +molt: re-evolve to adult-ames
@@ -1885,9 +1886,6 @@
         |=([@da =duct] ?=([[%ames %recork *] *] duct))
       ::
       ?>  ?=(%18 -.u.cached-state)
-      =?  chain.u.cached-state  =(~ chain.u.cached-state)
-        ~&  init-first-keypair/(shaz eny)
-        (put:on:chain chain.u.cached-state 1 (shaz eny))
       ::  TODO: review keygen
       =.  ames-state.adult-gate  +.u.cached-state
       [moz larval-core(cached-state ~)]
@@ -2946,14 +2944,17 @@
       ++  on-vega  event-core
       ::  +on-plug: handle key reservation
       ++  on-plug
+        |=  [vane=term =path]
         ^+  event-core
+        ~&  plug/[vane path]
         =/  key=@  (shaz eny) :: TODO: check key width
         =/  num=@ud  
-          ?~  latest=(ram:on:chain chain.ames-state)
+          ?~  latest=(pry:on:chain chain.ames-state)
             0
-          key.u.latest
+          .+(key.u.latest)
         =.  chain.ames-state
-          (put:on:chain chain.ames-state num key)
+          (put:on:chain chain.ames-state num [key path])
+        =.  atlas.ames-state  (~(put by atlas.ames-state) [vane path] num)
         (emit duct %give %stub num key)
       ::  +on-trim: handle request to free memory
       ::
@@ -2978,8 +2979,13 @@
       +|  %fine-entry-points
       ::
       ++  on-keen
-        |=  [secret=? spar]
+        |=  [sec=(unit [idx=@ key=@]) spar]
         ^+  event-core
+        ~&  path/path
+        =?  path  ?=(^ sec)
+          =-  ~&(new-path/- -)
+          =/  enc  (scot %uv (~(en cbcc:aes:crypto [key.u.sec 0]) (spat path)))
+          /a/e/(scot %ud idx.u.sec)/[enc]
         =+  ~:(spit path)  ::  assert length
         =/  ship-state  (~(get by peers.ames-state) ship)
         ?:  ?=([~ %known *] ship-state)
@@ -5019,9 +5025,6 @@
   ^-  [(list move) _ames-gate]
   ::
   =/  =task       ((harden task) wrapped-task)
-  =?  chain.ames-state  =(~ chain.ames-state)
-    ~&  init-first-keypair/(shaz eny)
-    (put:on:chain chain.ames-state 1 (shaz eny))
   =/  event-core  (ev [now eny rof] duct ames-state)
   ::
   =^  moves  ames-state
@@ -5053,7 +5056,7 @@
       %tame  (on-tame:event-core ship.task)
       %kroc  (on-kroc:event-core bones.task)
       %deep  (on-deep:event-core deep.task)
-      %plug  on-plug:event-core
+      %plug  (on-plug:event-core [vane path]:task)
     ::
       %keen  (on-keen:event-core +.task)
       %yawn  (on-cancel-scry:event-core | +.task)
@@ -5335,7 +5338,7 @@
     |=  old=ames-state-17
     ^-  ^ames-state
     %=  old
-      dead  [dead.old ~]
+      dead  [dead.old ~ ~]
     ==
   --
 ::  +scry: dereference namespace
@@ -5388,14 +5391,14 @@
     ``noun+!>(protocol-version)
   ::
       [%chain %latest ~]
-    ``noun+!>(`[idx=@ key=@]`(need (ram:on:chain chain.ames-state)))
+    ``noun+!>(`[idx=@ key=@ =path]`(need (ram:on:chain chain.ames-state)))
   ::
       [%chain idx=@ ~]
     ?~  idx=(slaw %ud idx.tyl)
       [~ ~]
     ?~  key=(get:on:chain chain.ames-state u.idx)
       [~ ~]
-    ``noun+!>(`[idx=@ key=@]`[u.idx u.key])
+    ``noun+!>(`[idx=@ key=@]`[u.idx key.u.key])
   ::
       [%peers ~]
     :^  ~  ~  %noun
@@ -5491,6 +5494,14 @@
     ::  so we need to give it the right shape
     ::
     ?~  blk=(de-path-soft:balk pax.tyl)  ~
+    ~&  blk/blk
+    =-  ~&  :-  %result
+            ?-  -
+              ~  ~
+              [~ ~]  [~ ~]
+              [~ ~ ^]  (scag 500 (text q.u.u.-))
+          ==
+        -
     ::
     ?.  ?&  =(our her.u.blk)
             =(rift.ames-state rif.u.blk)
@@ -5519,26 +5530,82 @@
         %x  (rof ~ /ames nom)
       ==
     ::
+         %a
+      =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
+      ~&  kyr/kyr
+      ?.  =(kyr %e)
+        ~
+      ~&  nom
+      ?.  ?=(%ud -.r.bem.nom)
+        [~ ~]
+      =/  key
+        (got:on:chain chain.ames-state p.r.bem.nom)
+      ~&  key/key
+      ?~  new=(shutter key.key)
+        [~ ~]
+      ~&  new/(as-omen:balk u.new)
+      =/  res  (rof ~ /ames (as-omen:balk u.new))
+      ~&  res/res
+      %-  en-hunk
+      (handle-shut spr.u.new p.r.bem.nom res)
+    ::
         %g
       =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
-      ?:  =(%$ q.bem.nom)  :: encrypted case
-        ?.  ?=(%ud -.r.bem.nom) :: XX: check?
-          [~ ~]
-        ?.  ?=([@ ~] s.bem.nom)
-          [~ ~]
-        =/  key
-          (~(got by chain.ames-state) p.r.bem.nom)
-        =/  aes  ~(. cbcc:aes:crypto [key 0])
-        ?~  new=(de-path-soft:balk (stab `@t`(de:aes (slav %uv i.s.bem.nom))))
-          [~ ~]
-        ::  XX: assert %gx case??
-        ::  TODO: enforce permissions w/ scry
-        (en-hunk-shut (en-path:balk u.new) key (rof ~ /ames (as-omen:balk u.new)))
       %-  en-hunk
       ?+  kyr  ~
         %x  (rof ~ /ames nom)
       ==
     ==
+    ++  aes  |=(key=@ ~(. cbcc:aes:crypto [key 0]))
+    ++  shutter
+      |=  key=@
+      ^-  (unit balk)  
+      ?~  raw=(slaw %uv q.bem.nom)
+        ~
+      =/  txt  `@t`(de:(aes key) `@t`u.raw)
+      ~&  txt/txt
+      ?~  pat=`(unit path)`(rush txt stap)
+        ~
+      (de-path-soft:balk (welp /(scot %p our)/(scot %ud 0)/(scot %ud 1) u.pat))
+    ++  close
+      |=  [key-idx=@ value=(unit (unit cage))]
+      ^-  (unit (unit cage))
+      ?.  ?=([~ ~ *] value)
+        ~&  %bailing-close
+        value
+      ~&  close/[key-idx chain.ames-state]
+      ?~  key=(get:on:chain chain.ames-state key-idx)
+        ~
+      ``noun+!>((en:(aes key.u.key) (jam [p q.q]:u.u.value)))
+    ::
+    ++  check-key
+      |=  [=path key-idx=@]
+      ^-  ?
+      ~&  check-key/path
+      =.  path
+        =>  .(path `(pole knot)`path)
+        ?.  ?=([van=@ car=@ cas=@ app=@ sig=@ rest=*] path)
+          path
+        rest.path
+      ?~  link=(get:on:chain chain.ames-state key-idx)
+        |
+      =/  gol  path.u.link
+      |-  ^-  ?
+      ~&  comparing/[path gol]
+      ?~  gol   &
+      ?~  path  |
+      ?.  =(i.path i.gol)
+        |
+      $(path t.path, gol t.gol)
+    ::
+    ++  handle-shut
+      |=  [=path key-idx=@ value=(unit (unit cage))]
+      ^-  (unit (unit cage))
+::      ?.  (check-key path key-idx)
+::        ~&  key-validation-failed/[path key-idx ~(key by chain.ames-state)]
+::        ~
+      (close key-idx value)
+    ::
     ++  en-hunk-shut
       |=  [=path key=@ res=(unit (unit cage))]
       ^-  (unit (unit cage))

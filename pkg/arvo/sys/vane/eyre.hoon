@@ -1716,7 +1716,7 @@
           =/  =wire       /eauth/keen/(scot %p ship)/(scot %uv nonce)
           =.   time       (sub time (mod time ~h1))
           =/  =spar:ames  [ship /e/x/(scot %da time)//eauth/url]
-          [duct %pass wire %a ?-(kind %keen keen+spar, %yawn yawn+spar)]
+          [duct %pass wire %a ?-(kind %keen keen+[~ spar], %yawn yawn+spar)]
         ::
         ++  send-boon
           |=  boon=eauth-boon
