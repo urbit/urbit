@@ -2946,7 +2946,6 @@
       ++  on-plug
         |=  [vane=term =path]
         ^+  event-core
-        ~&  plug/[vane path]
         =/  key=@  (shaz eny) :: TODO: check key width
         =/  num=@ud  
           ?~  latest=(pry:on:chain chain.ames-state)
@@ -2981,9 +2980,7 @@
       ++  on-keen
         |=  [sec=(unit [idx=@ key=@]) spar]
         ^+  event-core
-        ~&  path/path
         =?  path  ?=(^ sec)
-          =-  ~&(new-path/- -)
           =/  enc  (scot %uv (~(en cbcc:aes:crypto [key.u.sec 0]) (spat path)))
           /a/e/(scot %ud idx.u.sec)/[enc]
         =+  ~:(spit path)  ::  assert length
@@ -5494,14 +5491,6 @@
     ::  so we need to give it the right shape
     ::
     ?~  blk=(de-path-soft:balk pax.tyl)  ~
-    ~&  blk/blk
-    =-  ~&  :-  %result
-            ?-  -
-              ~  ~
-              [~ ~]  [~ ~]
-              [~ ~ ^]  (scag 500 (text q.u.u.-))
-          ==
-        -
     ::
     ?.  ?&  =(our her.u.blk)
             =(rift.ames-state rif.u.blk)
@@ -5532,20 +5521,15 @@
     ::
          %a
       =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
-      ~&  kyr/kyr
       ?.  =(kyr %e)
         ~
-      ~&  nom
       ?.  ?=(%ud -.r.bem.nom)
         [~ ~]
       =/  key
         (got:on:chain chain.ames-state p.r.bem.nom)
-      ~&  key/key
       ?~  new=(shutter key.key)
         [~ ~]
-      ~&  new/(as-omen:balk u.new)
       =/  res  (rof ~ /ames (as-omen:balk u.new))
-      ~&  res/res
       %-  en-hunk
       (handle-shut spr.u.new p.r.bem.nom res)
     ::
@@ -5563,7 +5547,6 @@
       ?~  raw=(slaw %uv q.bem.nom)
         ~
       =/  txt  `@t`(de:(aes key) `@t`u.raw)
-      ~&  txt/txt
       ?~  pat=`(unit path)`(rush txt stap)
         ~
       (de-path-soft:balk (welp /(scot %p our)/(scot %ud 0)/(scot %ud 1) u.pat))
@@ -5573,7 +5556,6 @@
       ?.  ?=([~ ~ *] value)
         ~&  %bailing-close
         value
-      ~&  close/[key-idx chain.ames-state]
       ?~  key=(get:on:chain chain.ames-state key-idx)
         ~
       ``noun+!>((en:(aes key.u.key) (jam [p q.q]:u.u.value)))
@@ -5581,7 +5563,6 @@
     ++  check-key
       |=  [=path key-idx=@]
       ^-  ?
-      ~&  check-key/path
       =.  path
         =>  .(path `(pole knot)`path)
         ?.  ?=([van=@ car=@ cas=@ app=@ sig=@ rest=*] path)
@@ -5591,7 +5572,6 @@
         |
       =/  gol  path.u.link
       |-  ^-  ?
-      ~&  comparing/[path gol]
       ?~  gol   &
       ?~  path  |
       ?.  =(i.path i.gol)
@@ -5601,9 +5581,9 @@
     ++  handle-shut
       |=  [=path key-idx=@ value=(unit (unit cage))]
       ^-  (unit (unit cage))
-::      ?.  (check-key path key-idx)
-::        ~&  key-validation-failed/[path key-idx ~(key by chain.ames-state)]
-::        ~
+      ?.  (check-key path key-idx)
+        ~&  key-validation-failed/[path key-idx ~(key by chain.ames-state)]
+        ~
       (close key-idx value)
     ::
     ++  en-hunk-shut

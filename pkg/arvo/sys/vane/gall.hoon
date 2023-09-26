@@ -275,6 +275,7 @@
       |=  [seg=@ta f=^farm]
       ^-  (list [path plot])
       tap-plot(wer (snoc wer seg), farm f)
+    ::
     ++  run-plot
       |*  fun=gate
       %-  ~(gas by *(map path _(fun)))
@@ -781,7 +782,6 @@
   ++  mo-handle-key
     ~/  %mo-handle-stub
     |=  [=(pole knot) syn=sign-arvo]
-    ~&  mo-handle-key/pole
     ?.  ?=([agent=@ nonce=@ rest=*] pole)
       ~&  [%mo-handle-key-bad-wire wire]
       !!
@@ -1063,7 +1063,6 @@
   ++  mo-handle-key-request
     |=  [=ship agent-name=term =path]
     ^+  mo-core
-    ~&  key-req/[ship agent-name path]
     =/  yok=(unit yoke)  (~(get by yokes.state) agent-name)
     ?.  ?=([~ %live *] yok)
       (mo-give %done ~)
@@ -1200,7 +1199,6 @@
       ?.  ?=([%g %x cas=@ app=@ rest=*] pole)
         ~&  malformed-path/pole
         ap-core
-      ~&  pole/pole
       =.  pen.yoke  (~(put by pen.yoke) [ship pole] wire)
       =/  =plea:ames  [%g /gk/[app.pole] rest.pole]
       =/  out=^wire       (welp /key/[agent-name]/[run-nonce.yoke]/bod/(scot %p ship) pole)
@@ -1216,24 +1214,20 @@
       =/  =ship  (slav %p i.wire)
       ?+    syn  ~|(weird-sign-ap-take-brood/-.syn !!)
           [%ames %boon *]
-        ~&  boon/wire
         =+  bod=((soft ,brood) payload.syn)
         ?~  bod  :: TODO: what happens
           ~&  weird-take-brood/payload.syn  !!
         =/  key  key.lock.u.bod
         =/  out=^wire  (~(got by pen.yoke) [ship t.wire])
-        ~&  sending-keen/[out t.wire]
         (ap-pass out %arvo %a %keen `[idx key]:lock.u.bod ship t.wire)
       ::
           [%ames %done *]
-        ~&  acked-brood/[t.wire syn]
         ap-core
       ==
     ::
     ++  ap-serve-brood
       |=  [=ship =(pole knot)]
       ^-  [(unit brood) _mo-core]
-      ~&  serve-pole/pole
       ?.  ?=([%$ rest=*] pole)
         `ap-abet
       ?~  cop=(ap-match-coop rest.pole)
@@ -2267,7 +2261,6 @@
     =/  =path  path.plea.task
     =/  =noun  payload.plea.task
     ::
-    ~&  plea/[ship=ship plea-path=path]
     ?:  ?=([%gk @ ~] path)
       =/  agent-name  i.t.path
       =<  mo-abet
@@ -2683,7 +2676,6 @@
     ``case/!>(ud/key.u.las)
   ::
   ?:  ?=(%x care)
-    ~&  bem/bem
     ?.  =(p.bem our)  ~
     ::
     ?:  ?=(%$ q.bem)  :: app %$ reserved
@@ -2715,7 +2707,6 @@
     ::
     ?~  yok=(~(get by yokes.state) q.bem)  ~
     ?:  ?=(%nuke -.u.yok)  ~
-    ~&  path/path
     ?~  ski=(~(get of:farm sky.u.yok) path)
       ~
     =/  res=(unit (each page @uvI))
