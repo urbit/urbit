@@ -160,6 +160,8 @@
       [%1 =desk =lobe]
   ==
 ::
+::  All except %1 are deprecated
+::
 +$  fell
   $%  [%direct p=lobe q=page]
       [%delta p=lobe q=[p=mark q=lobe] r=page]
@@ -714,7 +716,14 @@
       =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) cast+[a b])
         ~|(cycle+cast+[a b]^cycle.nub !!)
+      ?:  =(a b)
+        %+  gain-leak  cast+a^b
+        |=  nob=state
+        %-  (trace 4 |.("identity shortcircuit"))
+        =.  nub  nob
+        :_(nub vase+same.bud)
       ?:  =([%mime %hoon] [a b])
+        %-  (trace 4 |.("%mime -> %hoon shortcircuit"))
         :_(nub [%vase =>(..zuse !>(|=(m=mime q.q.m)))])
       ::  try +grow; is there a +grow core with a .b arm?
       ::
@@ -729,6 +738,7 @@
         ::
         %+  gain-leak  cast+a^b
         |=  nob=state
+        %-  (trace 4 |.("{<a>} -> {<b>}: +{(trip b)}:grow:{(trip a)}"))
         =.  nub  nob
         :_  nub  :-  %vase
         %+  slap  (with-faces cor+old ~)
@@ -743,18 +753,24 @@
       ?:  &(?=(%& -.rab) ?=(^ q.p.rab))
         %+  gain-leak  cast+a^b
         |=  nob=state
+        %-  (trace 4 |.("{<a>} -> {<b>}: +{(trip a)}:grab:{(trip b)}"))
         =.  nub  nob
         :_(nub vase+p.rab)
       ::  try +jump
       ::
       =/  jum  (mule |.((slap old tsgl/[limb/b limb/%jump])))
       ?:  ?=(%& -.jum)
-        (compose-casts a !<(mark p.jum) b)
+        =/  via  !<(mark p.jum)
+        %-  (trace 4 |.("{<a>} -> {<b>}: via {<via>} per +jump:{(trip a)}"))
+        (compose-casts a via b)
       ?:  ?=(%& -.rab)
-        (compose-casts a !<(mark p.rab) b)
+        =/  via  !<(mark p.rab)
+        %-  (trace 4 |.("{<a>} -> {<b>}: via {<via>} per +grab:{(trip b)}"))
+        (compose-casts a via b)
       ?:  ?=(%noun b)
         %+  gain-leak  cast+a^b
         |=  nob=state
+        %-  (trace 4 |.("{<a>} -> {<b>} default"))
         =.  nub  nob
         :_(nub vase+same.bud)
       ~|(no-cast-from+[a b] !!)
@@ -929,7 +945,7 @@
         %-  road  |.
         ((pile-rule pax) [1 1] tex)
       ?^  res  pile.u.res
-      %-  mean  %-  flop
+      %-  mean
       =/  lyn  p.hair
       =/  col  q.hair
       ^-  (list tank)
@@ -1530,7 +1546,7 @@
     ::
     ++  good-care
       |=  =care
-      (~(has in ^~((silt `(list ^care)`~[%u %w %x %y %z]))) care)
+      (~(has in ^~((silt `(list ^care)`~[%q %u %w %x %y %z]))) care)
     --
   ::
   ::  Build and send agents to gall
@@ -3348,6 +3364,7 @@
           %s  ~|  %please-dont-get-your-takos-over-a-network  !!
           %t  ~|  %requesting-foreign-directory-is-vaporware  !!
           %v  ~|  %weird-shouldnt-get-v-request-from-network  !!
+          %q  `[p %noun q]:r.rand
           %u  `(validate-u r.rand)
           %w  `(validate-w r.rand)
           %x  (validate-x [p.p q.p q r]:rand)
@@ -3552,7 +3569,7 @@
             ==  ==
           ::  make the request over remote scry
           ::
-          =/  =mood  [%x uv+tako path]:i.need.sat
+          =/  =mood  [%q uv+tako path]:i.need.sat
           =<  [`[%back-index -] +]
           (send-over-scry %back-index hen her inx syd mood)
         ::  otherwise, request over ames
@@ -3770,6 +3787,10 @@
     ::  %next is just %mult with one path, so we pretend %next = %mult here.
     ::
         ?(%next %mult)
+      ?.  ?=(~ for)
+      ::  reject if foreign (doesn't work over the network)
+      ::
+        [[~ ~] ..park]
       ::  because %mult requests need to wait on multiple files for each
       ::  revision that needs to be checked for changes, we keep two
       ::  cache maps.  {old} is the revision at {(dec aeon)}, {new} is
@@ -3951,6 +3972,8 @@
     ::
         %many
       :_  ..park
+      ?.  |(?=(~ for) (allowed-by:ze u.for path.moat.rov per.red))
+        [~ ~]
       =/  from-aeon  (case-to-aeon from.moat.rov)
       ?~  from-aeon
         ::  haven't entered the relevant range, so do nothing
@@ -4235,6 +4258,27 @@
         ^-  (list (pair path lobe))
         [[~ ?~(us *lobe u.us)] descendants]
       |=([[path lobe] @uvI] (shax (jam +<)))
+    ::  +read-q: typeless %x
+    ::
+    ::  useful if the marks can't be built (eg for old marks built
+    ::  against an incompatible standard library).  also useful if you
+    ::  don't need the type (eg for remote scry) because it's faster.
+    ::
+    ++  read-q
+      |=  [tak=tako pax=path]
+      ^-  (unit (unit cage))
+      ?:  =(0v0 tak)
+        [~ ~]
+      =+  yak=(tako-to-yaki tak)
+      =+  lob=(~(get by q.yak) pax)
+      ?~  lob
+        [~ ~]
+      =/  peg=(unit page)  (~(get by lat.ran) u.lob)
+      ::  if tombstoned, nothing to return
+      ::
+      ?~  peg
+        ~
+      ``[p.u.peg %noun q.u.peg]
     ::  +read-r: %x wrapped in a vase
     ::
     ++  read-r
@@ -4429,23 +4473,15 @@
     ++  read-x
       |=  [tak=tako pax=path]
       ^-  [(unit (unit cage)) _..park]
-      ?:  =(0v0 tak)
-        [[~ ~] ..park]
-      =+  yak=(tako-to-yaki tak)
-      =+  lob=(~(get by q.yak) pax)
-      ?~  lob
-        [[~ ~] ..park]
-      =/  peg=(unit page)  (~(get by lat.ran) u.lob)
-      ::  if tombstoned, nothing to return
-      ::
-      ?~  peg
-        [~ ..park]
+      =/  q  (read-q tak pax)
+      ?~  q    `..park
+      ?~  u.q  [[~ ~] ..park]
       ::  should convert any lobe to cage
       ::
       =^  =cage  ..park
         %+  tako-flow  tak
         %-  wrap:fusion
-        (page-to-cage:(tako-ford tak) u.peg)
+        (page-to-cage:(tako-ford tak) p.u.u.q q.q.u.u.q)
       [``cage ..park]
     ::
     ::  Gets an arch (directory listing) at a node.
@@ -4496,7 +4532,9 @@
       ::
       ?.  ?|  =(0v0 tak)
           ?&  (~(has by hut.ran) tak)
-              (~(has in (reachable-takos (aeon-to-tako:ze let.dom))) tak)
+              ?|  (~(any by hit.dom) |=(=tako =(tak tako)))  ::  fast-path
+                  (~(has in (reachable-takos (aeon-to-tako:ze let.dom))) tak)
+              ==
               |(?=(~ for) (may-read u.for care.mun tak path.mun))
           ==  ==
         [~ ..park]
@@ -4517,6 +4555,7 @@
           %e  (read-e tak path.mun)
           %f  (read-f tak path.mun)
           %p  [(read-p path.mun) ..park]
+          %q  [(read-q tak path.mun) ..park]
           %r  (read-r tak path.mun)
           %s  [(read-s tak path.mun case.mun) ..park]
           %t  [(read-t tak path.mun) ..park]
@@ -5033,6 +5072,11 @@
           ==
         ==
       [~ ..^$]
+    ::
+        [%fine ~]
+      ~&  "clay: resetting fine state.  old:"
+      ~&  sad.ruf
+      `..^$(sad.ruf ~)
     ==
   ::
       %tire
@@ -5853,7 +5897,7 @@
 ++  scry                                              ::  inspect
   ~/  %clay-scry
   ^-  roon
-  |=  [lyc=gang car=term bem=beam]
+  |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
   =*  scry-loop  $
   |^
@@ -6177,12 +6221,15 @@
         ?:  ?=(%boon +<.hin)  `;;(fell payload.hin)
         ?~  roar.hin  ~
         ?~  q.dat.u.roar.hin  ~
-        =*  pag  u.q.dat.u.roar.hin
-        `[%direct (page-to-lobe pag) pag]
+        `[%1 `u.q.dat.u.roar.hin]
       ::
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
         ?~  fell
+          ::  We shouldn't get back null on any of the fine requests we
+          ::  make unless they're out of date
+          ::
+          %-  (slog leaf+"clay: got null from {<her>}, falling back to ames" ~)
           abet:(retry-with-ames:den %back-index index)
         =?  den  ?=(%tune +<.hin)
           (cancel-scry-timeout:den index)
