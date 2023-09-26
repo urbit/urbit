@@ -1982,7 +1982,6 @@
         |=([@da =duct] ?=([[%ames %recork *] *] duct))
       ::
       ?>  ?=(%18 -.u.cached-state)
-      ::  TODO: review keygen
       =.  ames-state.adult-gate  +.u.cached-state
       [moz larval-core(cached-state ~)]
     --
@@ -3152,11 +3151,10 @@
         =/  key=@  (shaz eny) :: TODO: check key width
         =/  num=@ud  
           ?~  latest=(pry:on:chain chain.ames-state)
-            0
+            1
           .+(key.u.latest)
         =.  chain.ames-state
           (put:on:chain chain.ames-state num [key path])
-        =.  atlas.ames-state  (~(put by atlas.ames-state) [vane path] num)
         (emit duct %give %stub num key)
       ::  +on-trim: handle request to free memory
       ::
@@ -3194,6 +3192,9 @@
           =/  lav  /a/x/(scot %ud idx.u.sec)//fine/shut/[enc]
           =/  wir  /fine/shut/(scot %ud idx.u.sec)
           (emit duct %pass wir %a %keen ~ ship lav)
+        :: XX: key exchange over ames forces all encrypted scries to be
+        :: to a known peer
+        ?>  ?=(~ sec) 
         %^  enqueue-alien-todo  ship  ship-state
         |=  todos=alien-agenda
         todos(keens (~(put ju keens.todos) path duct))

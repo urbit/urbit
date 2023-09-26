@@ -43,5 +43,4 @@
       !>  -.res
   ::
   [output +.res]
-++  test-
 --
