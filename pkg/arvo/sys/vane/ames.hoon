@@ -111,8 +111,8 @@
 ++  chain
   =<  mop
   |%
-  ++  on  ((^on ,@ ,[key=@ =path]) lte)
-  +$  mop  ((^mop ,@ ,[key=@ =path]) lte)
+  ++  on   ((^on ,@ ,[key=@ =path]) lte)
+  +$  mop  ^chain
   --
 ::
 ::  +trace: print if .verb is set and we're tracking .ship
@@ -651,7 +651,7 @@
 ::
 +$  ames-state-17
   $+  ames-state-17
-  $:  peers=(map ship ship-state)
+  $:  peers=(map ship ship-state-17)
       =unix=duct
       =life
       =rift
@@ -897,7 +897,7 @@
 ::
 +$  ship-state-13
   $+  ship-state-13
-  $%  [%alien alien-agenda]
+  $%  [%alien alien-agenda-17]
       [%known peer-state-13]
   ==
 ::
@@ -1195,9 +1195,42 @@
       snub=[form=?(%allow %deny) ships=(set ship)]
       cong=[msg=@ud mem=@ud]
   ==
++$  ship-state-17
+  $%  [%alien alien-agenda-17]
+      [%known peer-state-17]
+  ==
+::
++$  peer-state-17
+  $+  peer-state
+  $:  $:  =symmetric-key
+          =life
+          =rift
+          =public-key
+          sponsor=ship
+      ==
+      route=(unit [direct=? =lane])
+      =qos
+      =ossuary
+      snd=(map bone message-pump-state)
+      rcv=(map bone message-sink-state)
+      nax=(set [=bone =message-num])
+      heeds=(set duct)
+      closing=(set bone)
+      corked=(set bone)
+      keens=(map path keen-state)
+  ==
+  ::
+  +$  alien-agenda-17
+    $+  alien-agenda
+    $:  messages=(list [=duct =plea])
+        packets=(set =blob)
+        heeds=(set duct)
+        keens=(jug path duct)
+    ==
+::
 +$  ship-state-16
   $+  ship-state-16
-  $%  [%alien alien-agenda]
+  $%  [%alien alien-agenda-17]
       [%known peer-state-16]
   ==
 ::
@@ -2559,16 +2592,37 @@
       ++  on-tune
         |=  [=wire s=[=ship path=(pole knot)] roar=(unit roar)]
         ^+  event-core
-        ?>  ?=([%chum *] wire)
         :: XX save or decrypt path?
         :: XX crash in decryption/cue indicates misbehaving peer
         ::
         =/  per  (~(get by peers.ames-state) ship.s)
         ?>  ?=([~ %known *] per)
-        ?>  ?=([%a %x %~.1 %$ %chum her=@ lyf=@ cyf=@ ~] path.s)
+        ?>  ?=([%a %x @ %$ rest=*] path.s)
+        ?.  ?=([%chum her=@ lyf=@ cyf=@ ~] rest.path.s)
+          =>  .(wire `(pole knot)`wire)
+          ~|  bad-wire/wire
+          ?>  ?=([%fine %shut idx=@ ~] wire)
+          ~|  bad-path/rest.path.s
+          ?>  ?=([%fine %shut cyf=@ ~] rest.path.s)
+          =/  [key=@ ,path]  (~(got by chain.u.per) (slav %ud idx.wire))
+          =/  de    de:(aes:fine-close key)
+          =/  pax=path   
+            %+  welp
+              /(scot %p ship.s)/(scot %ud rift.u.per)/(scot %ud life.u.per)
+            (stab `@t`(de (slav %uv cyf.rest.path.s)))
+          =;  dat=(unit (unit page))
+            (emit duct [%give %near [ship.s pax] dat])
+          ?:  ?|  ?=(~ roar)
+                  ?=(~ q.dat.u.roar)
+              ==
+            ~  :: XX weird
+          ?>  ?=([%atom @] u.q.dat.u.roar)
+          =-  `?~(- ~ `(,page (cue -)))
+          (de:(aes:fine-close key) q.u.q.dat.u.roar)
+        ?>  ?=([%chum *] wire)
         =/  pax
           =-  (,path (cue -))
-          (dy:crub:crypto symmetric-key.u.per (slav %uv cyf.path.s))
+          (dy:crub:crypto symmetric-key.u.per (slav %uv cyf.rest.path.s))
         =/  dat=(unit (unit page))
           ?:  ?|  ?=(~ roar)
                   ?=(~ q.dat.u.roar)
@@ -3132,11 +3186,14 @@
         =+  ~:(spit path)  ::  assert length
         =/  ship-state  (~(get by peers.ames-state) ship)
         ?:  ?=([~ %known *] ship-state)
-        =?  path  ?=(^ sec)
+          ?~  sec
+            abet:(on-keen:(abed-peer:pe ship +.u.ship-state) path duct)
+          =.  chain.u.ship-state  (put:on:chain chain.u.ship-state [idx key /]:u.sec)
+          =.  peers.ames-state  (~(put by peers.ames-state) ship u.ship-state)
           =/  enc  (scot %uv (~(en cbcc:aes:crypto [key.u.sec 0]) (spat path)))
-          /a/x/(scot %ud idx.u.sec)//fine/shut/[enc]
-
-          abet:(on-keen:(abed-peer:pe ship +.u.ship-state) path duct)
+          =/  lav  /a/x/(scot %ud idx.u.sec)//fine/shut/[enc]
+          =/  wir  /fine/shut/(scot %ud idx.u.sec)
+          (emit duct %pass wir %a %keen ~ ship lav)
         %^  enqueue-alien-todo  ship  ship-state
         |=  todos=alien-agenda
         todos(keens (~(put ju keens.todos) path duct))
@@ -3146,12 +3203,9 @@
         ^+  event-core
         =/  ship-state  (~(get by peers.ames-state) ship)
         ?.  ?=([~ %known *] ship-state)
-          ::  XX add state for queued chum
-          ::
-          ::  %^  enqueue-alien-todo  ship  ship-state
-          ::  |=  todos=alien-agenda
-          ::  todos(keens (~(put ju keens.todos) path duct))
-          !!
+          %^  enqueue-alien-todo  ship  ship-state
+          |=  todos=alien-agenda
+          todos(chums (~(put ju chums.todos) path duct))
         =/  cyf
           (scot %uv (en:crub:crypto symmetric-key.u.ship-state (jam path)))
         =/  lav
@@ -5459,7 +5513,7 @@
         peers
       %-  ~(run by peers.old)
       |=  ship-state=ship-state-16
-      ^-  ^ship-state
+      ^-  ship-state-17
       ?.  ?=(%known -.ship-state)
         ship-state
       |^
@@ -5510,8 +5564,20 @@
   ++  state-17-to-18
     |=  old=ames-state-17
     ^-  ^ames-state
-    %=  old
-      dead  [dead.old ~ ~]
+    %=    old
+        dead  [dead.old ~ ~]
+    ::
+        peers
+      %-  ~(run by peers.old)
+      |=  ship-state=ship-state-17
+      ^-  ^ship-state
+      ?.  ?=(%known -.ship-state)
+        %=  ship-state
+          keens  [keens.ship-state ~]
+        ==
+      %=  ship-state
+        keens  [keens.ship-state ~]
+      ==
     ==
   --
 ::  +scry: dereference namespace

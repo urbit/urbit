@@ -999,7 +999,9 @@
         packets=(set =blob)
         heeds=(set duct)
         keens=(jug path duct)
+        chums=(jug path duct)
     ==
+  +$  chain  ((mop ,@ ,[key=@ =path]) lte)
   ::  $peer-state: state for a peer with known life and keys
   ::
   ::    route: transport-layer destination for packets to peer
@@ -1039,6 +1041,7 @@
         closing=(set bone)
         corked=(set bone)
         keens=(map path keen-state)
+        =chain
     ==
   +$  keen-state
     $+  keen-state
