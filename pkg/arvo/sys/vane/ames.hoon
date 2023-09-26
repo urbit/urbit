@@ -461,6 +461,66 @@
   %-  some  ;;  shut-packet  %-  cue  %-  need
   (~(de sivc:aes:crypto (shaz symmetric-key) vec) siv len cyf)
 ::
+++  is-our-bulk
+  |=  [our=ship =ames-state =balk]
+  ^-  ?
+  =-  ~?  =(| -) 
+        [%fine-mismatch our=[rift life]:ames-state her=[her rif lyf]:balk]
+      -
+  ?&  =(our her.balk)
+      =(rift.ames-state rif.balk)
+      =(life.ames-state lyf.balk)
+  ==
+::
+++  fine-close
+  =<  close
+  |%
+  ++  aes  |=(key=@ ~(. cbcc:aes:crypto [key 0]))
+  ++  close
+    |=  [=ames-state =path key-idx=@ value=(unit (unit cage))]
+    ?.  (check-key ames-state path key-idx)
+      ~&  key-validation-failed/[path key-idx ~(key by chain.ames-state)]
+      ~
+    ?~  value  
+      ~&  %bailing-close
+      ~
+    ?~  u.value
+      ``atom+!>(~)
+    ?~  key=(get:on:chain chain.ames-state key-idx)
+      ~
+    ``atom+!>((en:(aes key.u.key) (jam [p q.q]:u.u.value)))
+  ::
+  ++  shutter
+    |=  [our=ship =ames-state enc=@t key=@]
+    ^-  (unit balk)  
+    ?~  raw=(slaw %uv enc)
+      ~
+    =/  txt  `@t`(de:(aes key) `@t`u.raw)
+    ?~  pat=`(unit path)`(rush txt stap)
+      ~
+    =/  here
+      /(scot %p our)/(scot %ud rift.ames-state)/(scot %ud life.ames-state)
+    (de-path-soft:balk (welp here u.pat))
+  ::
+  ++  check-key
+    |=  [=ames-state =path key-idx=@]
+    ^-  ?
+    =.  path
+      =>  .(path `(pole knot)`path)
+      ?.  ?=([van=@ car=@ cas=@ app=@ sig=@ rest=*] path)
+        path
+      rest.path
+    ?~  link=(get:on:chain chain.ames-state key-idx)
+      |
+    =/  gol  path.u.link
+    |-  ^-  ?
+    ?~  gol   &
+    ?~  path  |
+    ?.  =(i.path i.gol)
+      |
+    $(path t.path, gol t.gol)
+  --
+::
 ++  is-peer-dead
   |=  [now=@da =peer-state]
   ^+  peer-state
@@ -3069,12 +3129,13 @@
       ++  on-keen
         |=  [sec=(unit [idx=@ key=@]) spar]
         ^+  event-core
-        =?  path  ?=(^ sec)
-          =/  enc  (scot %uv (~(en cbcc:aes:crypto [key.u.sec 0]) (spat path)))
-          /a/e/(scot %ud idx.u.sec)/[enc]
         =+  ~:(spit path)  ::  assert length
         =/  ship-state  (~(get by peers.ames-state) ship)
         ?:  ?=([~ %known *] ship-state)
+        =?  path  ?=(^ sec)
+          =/  enc  (scot %uv (~(en cbcc:aes:crypto [key.u.sec 0]) (spat path)))
+          /a/x/(scot %ud idx.u.sec)//fine/shut/[enc]
+
           abet:(on-keen:(abed-peer:pe ship +.u.ship-state) path duct)
         %^  enqueue-alien-todo  ship  ship-state
         |=  todos=alien-agenda
@@ -5466,12 +5527,20 @@
   =*  tyl  s.bem
   ::
   ?:  ?&  =(&+our why)
-          =([%$ %ud 1] lot)
+          ?=([%ud *] r.bem)
           =(%$ syd)
           =(%x ren)
       ==
     =>  .(tyl `(pole knot)`tyl)
     ?+    tyl  ~
+    ::
+        [%fine %shut enc=@ ~]
+      =/  key  (got:on:chain chain.ames-state p.r.bem)
+      ?~  new=(shutter:fine-close our ames-state enc.tyl key.key)
+        ~
+      =/  res  (rof ~ /ames (as-omen:balk u.new))
+      (fine-close ames-state spr.u.new p.r.bem res)
+
         [%chum her=@ lyf=@ cyf=@ ~]
       =/  who  (slaw %p her.tyl)
       =/  lyf  (slaw %ud lyf.tyl)
@@ -5516,6 +5585,7 @@
   ::  /ax/snubbed                    (?(%allow %deny) (list ship))
   ::  /ax/fine/hunk/[path/...]       (list @ux) scry response fragments
   ::  /ax/fine/ducts/[path/]         (list duct)
+  ::  /ax/fine/shut/[path/]          @ux encrypted response
   ::
   ?.  ?=(%x ren)  ~
   =>  .(tyl `(pole knot)`tyl)
@@ -5636,11 +5706,7 @@
     ::
     ?~  blk=(de-path-soft:balk pax.tyl)  ~
     ::
-    ?.  ?&  =(our her.u.blk)
-            =(rift.ames-state rif.u.blk)
-            =(life.ames-state lyf.u.blk)
-        ==
-      ~&  [%fine-mismatch our=[rift life]:ames-state her=[her rif lyf]:u.blk]
+    ?.  (is-our-bulk our ames-state u.blk)
       ~
     =+  nom=(as-omen:balk u.blk)
     ~|  nom
@@ -5649,9 +5715,8 @@
     =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
     ?+    van  ~
         %a
-      %-  en-hunk
       ?+  kyr  ~
-        %x  (rof ~ /ames nom)
+        %x  (en-hunk (rof ~ /ames nom))
       ==
     ::
         %c
@@ -5669,88 +5734,12 @@
         %x  (rof ~ /ames nom)
       ==
     ::
-         %a
-      =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
-      ?.  =(kyr %e)
-        ~
-      ?.  ?=(%ud -.r.bem.nom)
-        [~ ~]
-      =/  key
-        (got:on:chain chain.ames-state p.r.bem.nom)
-      ?~  new=(shutter key.key)
-        [~ ~]
-      =/  res  (rof ~ /ames (as-omen:balk u.new))
-      %-  en-hunk
-      (handle-shut spr.u.new p.r.bem.nom res)
-    ::
         %g
       %-  en-hunk
       ?+  kyr  ~
         %x  (rof ~ /ames nom)
       ==
     ==
-    ++  aes  |=(key=@ ~(. cbcc:aes:crypto [key 0]))
-    ++  shutter
-      |=  key=@
-      ^-  (unit balk)  
-      ?~  raw=(slaw %uv q.bem.nom)
-        ~
-      =/  txt  `@t`(de:(aes key) `@t`u.raw)
-      ?~  pat=`(unit path)`(rush txt stap)
-        ~
-      (de-path-soft:balk (welp /(scot %p our)/(scot %ud 0)/(scot %ud 1) u.pat))
-    ++  close
-      |=  [key-idx=@ value=(unit (unit cage))]
-      ^-  (unit (unit cage))
-      ?.  ?=([~ ~ *] value)
-        ~&  %bailing-close
-        value
-      ?~  key=(get:on:chain chain.ames-state key-idx)
-        ~
-      ``noun+!>((en:(aes key.u.key) (jam [p q.q]:u.u.value)))
-    ::
-    ++  check-key
-      |=  [=path key-idx=@]
-      ^-  ?
-      =.  path
-        =>  .(path `(pole knot)`path)
-        ?.  ?=([van=@ car=@ cas=@ app=@ sig=@ rest=*] path)
-          path
-        rest.path
-      ?~  link=(get:on:chain chain.ames-state key-idx)
-        |
-      =/  gol  path.u.link
-      |-  ^-  ?
-      ?~  gol   &
-      ?~  path  |
-      ?.  =(i.path i.gol)
-        |
-      $(path t.path, gol t.gol)
-    ::
-    ++  handle-shut
-      |=  [=path key-idx=@ value=(unit (unit cage))]
-      ^-  (unit (unit cage))
-      ?.  (check-key path key-idx)
-        ~&  key-validation-failed/[path key-idx ~(key by chain.ames-state)]
-        ~
-      (close key-idx value)
-    ::
-    ++  en-hunk-shut
-      |=  [=path key=@ res=(unit (unit cage))]
-      ^-  (unit (unit cage))
-      =/  etch-core  (etch-hunk our [life crypto-core]:ames-state)
-      =/  dat
-        %-  ~(en cbcc:aes:crypto [key 0])
-        %+  etch-data:etch-core  path
-        ?-  res
-          ~  ~
-          [~ ~]  ~
-          [~ ~ ^]  [p q.q]:u.u.res
-        ==
-      =/  =hunk  [(slav %ud lop.tyl) (slav %ud len.tyl)]
-      =-  ``noun+!>(-)
-      %-  etch:etch-core
-      [path hunk dat]
     ::
     ++  en-hunk
       |=  res=(unit (unit cage))
