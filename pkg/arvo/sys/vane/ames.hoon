@@ -567,7 +567,7 @@
 ::    bug:         debug printing configuration
 ::    snub:        blocklist for incoming packets
 ::    cong:        parameters for marking a flow as clogged
-::    dead:        dead flow consolidation timer, if set
+::    dead:        dead flow consolidation timer and recork timer, if set
 ::
 +$  ames-state
   $+  ames-state
@@ -1271,7 +1271,7 @@
 +$  note
   $~  [%b %wait *@da]
   $%  $:  %a
-          $>(%deep task:ames)
+          $>(?(%deep %keen) task:ames)
       ==
       $:  %b
           $>(?(%wait %rest) task:behn)
@@ -1300,7 +1300,10 @@
 ::
 +$  sign
   $~  [%behn %wake ~]
-  $%  $:  %behn
+  $%  $:  %ames
+          $>(%tune gift:ames)
+      ==
+      $:  %behn
           $>(%wake gift:behn)
       ==
       $:  %gall
@@ -2096,14 +2099,43 @@
         event-core
       ::  +on-stir: recover from timer desync, setting new timers as needed
       ::
-      ::    .arg is unused, meant to ease future debug commands
+      ::    .arg can be %rift or %dead
       ::
       ++  on-stir
         |=  arg=@t
         ^+  event-core
         |^  ?+  arg  do-stir
               %rift  do-rift
+              %dead  do-dead
             ==
+        ::
+        ++  do-dead
+          =/  ded=(unit dead-timer)  +.flow.dead.ames-state
+          ?^  ded
+            %-  (slog leaf+"ames: turning off dead flow consolidation" ~)
+            =.  event-core
+              (emit:event-core duct.u.ded %pass wire.u.ded %b %rest date.u.ded)
+            (wake-dead-flows:event-core %.n ~)
+          ::
+          %-  (slog leaf+"ames: switching to dead flow consolidation" ~)
+          =;  cor=event-core
+            (wake-dead-flows:cor %.y ~)
+          %-  ~(rep by peers.ames-state:event-core)
+          |=  [[=ship =ship-state] core=_event-core]
+          ^+  event-core
+          =/  peer-state=(unit peer-state)  (get-peer-state:core ship)
+          ?~  peer-state  core
+          %-  ~(rep by snd.u.peer-state)
+          |=  [[=bone =message-pump-state] cor=_core]
+          ^+  event-core
+          =/  next-wake  next-wake.packet-pump-state.message-pump-state
+          ?.  ?&  =(~m2 rto.metrics.packet-pump-state.message-pump-state)
+                  ?=(^ next-wake)
+              ==
+            cor
+          =/  peer-core  (abed-peer:pe:cor ship u.peer-state)
+          =/  message-pump  (abed:mu:peer-core bone)
+          abet:(pu-emit:packet-pump:message-pump %b %rest u.next-wake)
         ::
         ++  do-rift
           =/  =rift
@@ -2179,6 +2211,27 @@
         %^  enqueue-alien-todo  ship  ship-state
         |=  todos=alien-agenda
         todos(heeds (~(del in heeds.todos) duct))
+      :: +on-dear: handle lane from unix
+      ::
+      ++  on-dear
+        |=  [=ship =lane]
+        ^+  event-core
+        ?:  ?=(%.y -.lane)
+          event-core
+        =/  ip=@if  (end [0 32] p.lane)
+        =/  pt=@ud  (cut 0 [32 16] p.lane)
+        ?:  =(%czar (clan:title ship))
+          %-  %^  ev-trace  odd.veb  ship
+            |.("ignoring %dear lane {(scow %if ip)}:{(scow %ud pt)} for galaxy")
+          event-core
+        =/  peer-state=(unit peer-state)  (get-peer-state ship)
+        ?~  peer-state
+          %-  %^  ev-trace  odd.veb  ship
+            |.("no peer-state for ship, ignoring %dear")
+          event-core
+        %-  %^  ev-trace  rcv.veb  ship
+          |.("incoming %dear lane {(scow %if ip)}:{(scow %ud pt)}")
+        abet:(on-dear:(abed-peer:pe ship u.peer-state) lane)
       ::  +on-hear: handle raw packet receipt
       ::
       ++  on-hear
@@ -2441,6 +2494,30 @@
           %-  (slog leaf+"ames: no peer-state for {(scow %p ship)}, ignoring" ~)
           event-core
         abet:on-tame:(abed-peer:pe ship u.peer-state)
+      ::
+      ::
+      ++  on-tune
+        |=  [=wire s=[=ship path=(pole knot)] roar=(unit roar)]
+        ^+  event-core
+        ?>  ?=([%chum *] wire)
+        :: XX save or decrypt path?
+        :: XX crash in decryption/cue indicates misbehaving peer
+        ::
+        =/  per  (~(get by peers.ames-state) ship.s)
+        ?>  ?=([~ %known *] per)
+        ?>  ?=([%a %x %~.1 %$ %chum her=@ lyf=@ cyf=@ ~] path.s)
+        =/  pax
+          =-  (,path (cue -))
+          (dy:crub:crypto symmetric-key.u.per (slav %uv cyf.path.s))
+        =/  dat=(unit (unit page))
+          ?:  ?|  ?=(~ roar)
+                  ?=(~ q.dat.u.roar)
+              ==
+            ~  :: XX weird
+          ?>  ?=([%atom @] u.q.dat.u.roar)
+          =-  `?~(- ~ `(,page (cue -)))
+          (dy:crub:crypto symmetric-key.u.per q.u.q.dat.u.roar)
+        (emit duct [%give %near [ship.s pax] dat])
       ::  +on-cork: handle request to kill a flow
       ::
       ++  on-cork
@@ -2520,6 +2597,35 @@
         ++  cork-bone  |=(=bone abet:(on-cork-flow:peer-core bone))
         ++  kill-bone  |=(=bone abet:(on-kill-flow:peer-core bone))
         --
+      :: +wake-dead-flow: call on-wake on all dead flows, optionally setting new
+      ::                  dead flow timer
+      ::
+      ++  wake-dead-flows
+        |=  [set-new-timer=? error=(unit tang)]
+        ^+  event-core
+        =.  flow.dead.ames-state.event-core
+          ?.  set-new-timer
+            flow/~
+          flow/`[~[/ames] /dead-flow `@da`(add now ~m2)]
+        =.  event-core
+          ?.  set-new-timer
+            event-core
+          (emit:event-core ~[/ames] %pass /dead-flow %b %wait `@da`(add now ~m2))
+        %-  ~(rep by peers.ames-state:event-core)
+        |=  [[=ship =ship-state] core=_event-core]
+        ^+  event-core
+        =/  peer-state=(unit peer-state)  (get-peer-state:core ship)
+        ?~  peer-state  core
+        =/  peer-core  (abed-peer:pe:core ship u.peer-state)
+        =<   abet
+        ^+  peer-core
+        %-  ~(rep by snd.u.peer-state)
+        |=  [[=bone =message-pump-state] cor=_peer-core]
+        ?.  ?&  =(~m2 rto.metrics.packet-pump-state.message-pump-state)
+                ?=(^ next-wake.packet-pump-state.message-pump-state)
+            ==
+          cor
+        (on-wake:cor bone error)
       ::  +on-take-wake: receive wakeup or error notification from behn
       ::
       ++  on-take-wake
@@ -2540,22 +2646,7 @@
           (request-attestation u.ship)
         ::
         ?:  ?=([%dead-flow ~] wire)
-          =;  cor=event-core
-            =.  flow.dead.ames-state.cor
-              flow/`[~[/ames] /dead-flow `@da`(add now ~m2)]
-            (emit:cor duct %pass /dead-flow %b %wait `@da`(add now ~m2))
-          %-  ~(rep by peers.ames-state)
-          |=  [[=ship =ship-state] core=_event-core]
-          ^+  event-core
-          =/  peer-state=(unit peer-state)  (get-peer-state:core ship)
-          ?~  peer-state  core
-          %-  ~(rep by snd.u.peer-state)
-          |=  [[=bone =message-pump-state] cor=_core]
-          ?.  ?&  =(~m2 rto.metrics.packet-pump-state.message-pump-state)
-                  ?=(^ next-wake.packet-pump-state.message-pump-state)
-              ==
-            cor
-          abet:(on-wake:(abed-peer:pe:cor ship u.peer-state) bone error)
+          (wake-dead-flows %.y error)
         ::
         ?.  ?=([%recork ~] wire)
           =/  res=(unit ?([%fine her=ship =^wire] [%pump her=ship =bone]))
@@ -2924,17 +3015,15 @@
         ::
         =*  duct  unix-duct.ames-state
         ::
-        =^  dead-moves  dead.ames-state
-          ?.  ?=([~ ~] [+.flow +.cork]:dead.ames-state)
-            `dead.ames-state
-            :-  :-  [~[/ames] %pass /dead-flow %b %wait `@da`(add now ~m2)]
-                [~[/ames] %pass /recork %b %wait `@da`(add now ~d1)]~
-            :-  flow/`[~[/ames] /dead-flow `@da`(add now ~m2)]
-            cork/`[~[/ames] /recork `@da`(add now ~d1)]
+        =^  cork-moves  cork.dead.ames-state
+          ?.  ?=(~ +.cork.dead.ames-state)
+            `cork.dead.ames-state
+          :-  [~[/ames] %pass /recork %b %wait `@da`(add now ~d1)]~
+          cork/`[~[/ames] /recork `@da`(add now ~d1)]
         ::
         %-  emil
         %+  weld
-          dead-moves
+          cork-moves
         ^-  (list move)
         :~  [duct %give %turf turfs]
             [duct %pass /ping %g %deal [our our /ames] %ping %poke %noun !>(%kick)]
@@ -2990,6 +3079,23 @@
         %^  enqueue-alien-todo  ship  ship-state
         |=  todos=alien-agenda
         todos(keens (~(put ju keens.todos) path duct))
+      ::
+      ++  on-chum
+        |=  spar
+        ^+  event-core
+        =/  ship-state  (~(get by peers.ames-state) ship)
+        ?.  ?=([~ %known *] ship-state)
+          ::  XX add state for queued chum
+          ::
+          ::  %^  enqueue-alien-todo  ship  ship-state
+          ::  |=  todos=alien-agenda
+          ::  todos(keens (~(put ju keens.todos) path duct))
+          !!
+        =/  cyf
+          (scot %uv (en:crub:crypto symmetric-key.u.ship-state (jam path)))
+        =/  lav
+          /a/x/1//chum/(scot %p our)/(scot %ud life.ames-state)/[cyf]
+        (emit duct [%pass /chum %a %keen ~ ship lav])
       ::
       ++  on-cancel-scry
         |=  [all=? spar]
@@ -3375,6 +3481,11 @@
             fi-abet:(fi-sub:(abed:fi path) duct)
           =.  keens  (~(put by keens) path *keen-state)
           fi-abet:(fi-start:(abed:fi path) duct)
+        ::
+        ++  on-dear
+          |=  =lane
+          ^+  peer-core
+          peer-core(route.peer-state `[%.y lane])
         ::
         ++  on-tame
           ^+  peer-core
@@ -4174,7 +4285,7 @@
               ::  and we don't want to consolidate that
               ::
               =?  peer-core  ?=(^ new-wake)
-                ?:  =(~m2 rto.metrics.state)
+                ?:  ?&(?=(^ +.flow.dead.ames-state) =(~m2 rto.metrics.state))
                   peer-core
                 (pu-emit %b %wait u.new-wake)
               ::
@@ -5037,6 +5148,7 @@
     ?-  -.task
       %born  on-born:event-core
       %hear  (on-hear:event-core [lane blob ~]:task)
+      %dear  (on-dear:event-core +.task)
       %heed  (on-heed:event-core ship.task)
       %init  on-init:event-core
       %jilt  (on-jilt:event-core ship.task)
@@ -5056,6 +5168,7 @@
       %plug  (on-plug:event-core [vane path]:task)
     ::
       %keen  (on-keen:event-core +.task)
+      %chum  (on-chum:event-core +.task)
       %yawn  (on-cancel-scry:event-core | +.task)
       %wham  (on-cancel-scry:event-core & +.task)
     ==
@@ -5079,6 +5192,8 @@
     ?-  sign
       [@ %done *]   (on-take-done:event-core wire error.sign)
       [@ %boon *]   (on-take-boon:event-core wire payload.sign)
+    ::
+      [%ames %tune *]  (on-tune:event-core wire [[ship path] roar]:sign)
     ::
       [%behn %wake *]  (on-take-wake:event-core wire error.sign)
     ::
@@ -5277,7 +5392,7 @@
     %=    old
         cong
       :+  cong.old
-        flow/`[~[/ames] /dead-flow `@da`(add now ~m2)]
+        flow/~
       cork/`[~[/ames] /recork `@da`(add now ~d1)]
       ::
         peers
@@ -5349,6 +5464,35 @@
   =*  syd  q.bem
   =*  lot=coin  $/r.bem
   =*  tyl  s.bem
+  ::
+  ?:  ?&  =(&+our why)
+          =([%$ %ud 1] lot)
+          =(%$ syd)
+          =(%x ren)
+      ==
+    =>  .(tyl `(pole knot)`tyl)
+    ?+    tyl  ~
+        [%chum her=@ lyf=@ cyf=@ ~]
+      =/  who  (slaw %p her.tyl)
+      =/  lyf  (slaw %ud lyf.tyl)
+      =/  cyf  (slaw %uv cyf.tyl)
+      ?:  |(?=(~ who) ?=(~ lyf) ?=(~ cyf))
+        [~ ~]
+      =/  per  (~(get by peers.ames-state) u.who)
+      ?.  &(?=([~ %known *] per) =(life.u.per u.lyf))
+        ~
+      =/  bal=(unit balk)
+        ?~  tex=(de:crub:crypto symmetric-key.u.per u.cyf)  ~
+        ?~  pax=(mole |.((,path (cue u.tex))))              ~
+        (de-part:balk our 0 0 u.pax)
+      ?~  bal
+        [~ ~]
+      ?~  res=(rof `[u.who ~ ~] /ames (as-omen:balk u.bal))
+        ~
+      =-  ``atom+!>(`@ux`-)
+      %+  en:crub:crypto  symmetric-key.u.per
+      ?~(u.res ~ (jam [p q.q]:u.u.res))
+    ==
   ::
   ::  only respond for the local identity, %$ desk, current timestamp
   ::
@@ -5502,7 +5646,14 @@
     ~|  nom
     |^
     =/  van  ?@(vis.nom (end 3 vis.nom) way.vis.nom)
+    =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
     ?+    van  ~
+        %a
+      %-  en-hunk
+      ?+  kyr  ~
+        %x  (rof ~ /ames nom)
+      ==
+    ::
         %c
       =+  pem=(rof lyc /ames nom(vis %cp))
       ?.  ?=(^ pem)    ~
@@ -5513,7 +5664,6 @@
       (en-hunk (rof ~ /ames nom))
     ::
         %e
-      =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
       %-  en-hunk
       ?+  kyr  ~
         %x  (rof ~ /ames nom)
@@ -5534,7 +5684,6 @@
       (handle-shut spr.u.new p.r.bem.nom res)
     ::
         %g
-      =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
       %-  en-hunk
       ?+  kyr  ~
         %x  (rof ~ /ames nom)

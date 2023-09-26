@@ -764,6 +764,7 @@
   ::    Messaging Tasks
   ::
   ::    %hear: packet from unix
+  ::    %dear: lane from unix
   ::    %heed: track peer's responsiveness; gives %clog if slow
   ::    %jilt: stop tracking peer's responsiveness
   ::    %cork: request to delete message flow
@@ -787,13 +788,14 @@
   ::    %snub: set packet blocklist to .ships
   ::    %spew: set verbosity toggles
   ::    %cong: adjust congestion control parameters
-  ::    %stir: recover from timer desync
+  ::    %stir: recover from timer desync and assorted debug commands
   ::    %trim: release memory
   ::    %vega: kernel reload notification
   ::
   +$  task
     $+  ames-task
     $%  [%hear =lane =blob]
+        [%dear =ship =lane]
         [%heed =ship]
         [%jilt =ship]
         [%cork =ship]
@@ -803,6 +805,7 @@
         [%deep =deep]
     ::
         [%keen sec=(unit [idx=@ key=@]) spar]
+        [%chum spar]
         [%yawn spar]
         [%wham spar]
         [%plug vane=term =path]
@@ -844,6 +847,7 @@
         [%send =lane =blob]
     ::
         [%stub num=@ud key=@]
+        [%near spar dat=(unit (unit page))]
         [%tune spar roar=(unit roar)]
     ::
         [%turf turfs=(list turf)]
