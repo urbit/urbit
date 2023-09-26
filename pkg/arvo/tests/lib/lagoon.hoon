@@ -164,8 +164,9 @@
 ::
 ::  Operators
 ::
+::  Elementwise addition
 ++  test-unsigned-add  ^-  tang
-  =/  value-4-5=ray:la  (iota:la [~[4] 5 %unsigned ~])
+  =/  value-4-5=ray:la       (en-ray:la [~[4] 5 %unsigned ~] ~[0 1 2 3])
   =/  value-4x4-4-1s=ray:la  (ones:la [~[4 4] 4 %unsigned ~])
   =/  value-4x4-4-0s=ray:la  (zeros:la [~[4 4] 4 %unsigned ~])
   =/  value-4x4-5-0s=ray:la  (zeros:la [~[4 4] 5 %unsigned ~])
@@ -190,8 +191,9 @@
     (add:la (ones:la [~[4 4] 3 %unsigned ~]) (eye:la [~[4 4] 3 %unsigned ~]))
   ==
 ::
+::  Elementwise subtraction
 ++  test-unsigned-sub  ^-  tang
-  =/  value-4-5=ray:la  (iota:la [~[4] 5 %unsigned ~])
+  =/  value-4-5=ray:la       (en-ray:la [~[4] 5 %unsigned ~] ~[0 1 2 3])
   =/  value-4x4-4-1s=ray:la  (ones:la [~[4 4] 4 %unsigned ~])
   =/  value-4x4-4-0s=ray:la  (zeros:la [~[4 4] 4 %unsigned ~])
   =/  value-4x4-5-0s=ray:la  (zeros:la [~[4 4] 5 %unsigned ~])
@@ -216,8 +218,8 @@
 ::
 ::  Elementwise multiplication
 ++  test-unsigned-mul  ^-  tang
-  =/  value-4-5-1s=ray:la  (ones:la [~[4] 5 %unsigned ~])
-  =/  value-4-5=ray:la  (iota:la [~[4] 5 %unsigned ~])
+  =/  value-4-5-1s=ray:la    (ones:la [~[4] 5 %unsigned ~])
+  =/  value-4-5=ray:la       (en-ray:la [~[4] 5 %unsigned ~] ~[0 1 2 3])
   =/  value-4x4-4-1s=ray:la  (ones:la [~[4 4] 4 %unsigned ~])
   =/  value-4x4-4-0s=ray:la  (zeros:la [~[4 4] 4 %unsigned ~])
   =/  value-4x4-4-i=ray:la  (eye:la [~[4 4] 4 %unsigned ~])
@@ -237,12 +239,12 @@
 ::
 ::  Elementwise division
 ++  test-unsigned-div  ^-  tang
-  =/  value-4-5-0s=ray:la  (zeros:la [~[4] 5 %unsigned ~])
-  =/  value-4-5-1s=ray:la  (ones:la [~[4] 5 %unsigned ~])
-  =/  value-4-5=ray:la  (en-ray:la [~[4] 5 %unsigned ~] ~[1 2 3 4])
+  =/  value-4-5-0s=ray:la    (zeros:la [~[4] 5 %unsigned ~])
+  =/  value-4-5-1s=ray:la    (ones:la [~[4] 5 %unsigned ~])
+  =/  value-4-5=ray:la       (en-ray:la [~[4] 5 %unsigned ~] ~[1 2 3 4])
   =/  value-4x4-4-1s=ray:la  (ones:la [~[4 4] 4 %unsigned ~])
   =/  value-4x4-4-0s=ray:la  (zeros:la [~[4 4] 4 %unsigned ~])
-  =/  value-4x4-4-i=ray:la  (eye:la [~[4 4] 4 %unsigned ~])
+  =/  value-4x4-4-i=ray:la   (eye:la [~[4 4] 4 %unsigned ~])
   ;:  weld
   %+  is-equal
     (en-ray:la [~[4] 5 %unsigned ~] ~[0 0 0 0])
@@ -305,21 +307,122 @@
       !>((get-item:la (prod:la assay-4x4-6-2s) ~[0 0]))
   ==
 ::
+++  test-unsigned-pow-n  ^-  tang
+  =/  meta-3x3-5=meta:la  [~[3 3] 5 %unsigned ~]
+  =/  assay-3x3-5-i=ray:la  (eye:la meta-3x3-5)
+  =/  assay-3x3-5=ray:la  (en-ray:la `baum:la`[meta-3x3-5 ~[~[1 2 3] ~[4 5 6] ~[7 8 9]]])
+  =/  canon-3x3-5-2=ray:la  (en-ray:la `baum:la`[meta-3x3-5 ~[~[1 4 9] ~[16 25 36] ~[49 64 81]]])
+  =/  canon-3x3-5-3=ray:la  (en-ray:la `baum:la`[meta-3x3-5 ~[~[1 8 27] ~[64 125 216] ~[343 512 729]]])
+  ;:  weld
+    %+  expect-eq
+      !>(canon-3x3-5-2)
+      !>((pow-n:la assay-3x3-5 2))
+    %+  expect-eq
+      !>(canon-3x3-5-3)
+      !>((pow-n:la assay-3x3-5 3))
+  ==
+::
+::
 ++  test-unsigned-mmul  ^-  tang
   =/  meta-3x3-5=meta:la  [~[3 3] 5 %unsigned ~]
   =/  assay-3x3-5-i=ray:la  (eye:la meta-3x3-5)
-  =/  assay-3x3-5=ray:la  (reshape:la (iota:la [~[9] 5 %unsigned ~]) ~[3 3])
+  =/  assay-3x3-5=ray:la  (en-ray:la `baum:la`[meta-3x3-5 ~[~[1 2 3] ~[4 5 6] ~[7 8 9]]])
   =/  canon-3x3-5=ray:la  (en-ray:la `baum:la`[meta-3x3-5 ~[~[30 36 42] ~[66 81 96] ~[102 126 150]]])
   ;:  weld
     %+  expect-eq
       !>(canon-3x3-5)
       !>((mmul:la assay-3x3-5 assay-3x3-5))
     %+  expect-eq
-      !>(canon-3x3-5)
+      !>(assay-3x3-5)
       !>((mmul:la assay-3x3-5 assay-3x3-5-i))
     %+  expect-eq
       !>((en-ray:la [[~[3 1] 5 %unsigned ~] ~[~[6] ~[15] ~[24]]]))
       !>((mmul:la assay-3x3-5 (ones:la [~[3 1] 5 %unsigned ~])))
+  ==
+::
+::  Scalar Addition
+++  test-unsigned-add-scalar  ^-  tang
+  =/  meta-3x3-5=meta:la  [~[3 3] 5 %unsigned ~]
+  =/  meta-3x1-5=meta:la  [~[3 1] 5 %unsigned ~]
+  =/  assay-3x3-5=ray:la  (en-ray:la `baum:la`[meta-3x3-5 ~[~[1 2 3] ~[4 5 6] ~[7 8 9]]])
+  =/  assay-3x1-5=ray:la  (en-ray:la `baum:la`[meta-3x1-5 ~[1 2 3]])
+  =/  canon-3x3-5=ray:la  (en-ray:la `baum:la`[meta-3x3-5 ~[~[11 12 13] ~[14 15 16] ~[17 18 19]]])
+  =/  canon-3x1-5=ray:la  (en-ray:la `baum:la`[meta-3x1-5 ~[11 12 13]])
+  ;:  weld
+    %+  expect-eq
+      !>(canon-3x3-5)
+      !>((add-scalar:la assay-3x3-5 10))
+    %+  expect-eq
+      !>(canon-3x1-5)
+      !>((add-scalar:la assay-3x1-5 10))
+  ==
+::
+::  Scalar Multiplication
+++  test-unsigned-mul-scalar  ^-  tang
+  =/  meta-3x3-5=meta:la  [~[3 3] 5 %unsigned ~]
+  =/  meta-3x1-5=meta:la  [~[3 1] 5 %unsigned ~]
+  =/  assay-3x3-5=ray:la  (en-ray:la `baum:la`[meta-3x3-5 ~[~[1 2 3] ~[4 5 6] ~[7 8 9]]])
+  =/  assay-3x1-5=ray:la  (en-ray:la `baum:la`[meta-3x1-5 ~[1 2 3]])
+  =/  canon-3x3-5=ray:la  (en-ray:la `baum:la`[meta-3x3-5 ~[~[2 4 6] ~[8 10 12] ~[14 16 18]]])
+  =/  canon-3x1-5=ray:la  (en-ray:la `baum:la`[meta-3x1-5 ~[10 20 30]])
+  ;:  weld
+    %+  expect-eq
+      !>(canon-3x3-5)
+      !>((mul-scalar:la assay-3x3-5 2))
+    %+  expect-eq
+      !>(canon-3x1-5)
+      !>((mul-scalar:la assay-3x1-5 10))
+  ==
+::
+::  Scalar Subtraction
+++  test-unsigned-sub-scalar  ^-  tang
+  =/  meta-3x3-5=meta:la  [~[3 3] 5 %unsigned ~]
+  =/  meta-3x1-5=meta:la  [~[3 1] 5 %unsigned ~]
+  =/  assay-3x3-5=ray:la  (en-ray:la `baum:la`[meta-3x3-5 ~[~[1 2 3] ~[4 5 6] ~[7 8 9]]])
+  =/  assay-3x1-5=ray:la  (en-ray:la `baum:la`[meta-3x1-5 ~[100 200 300]])
+  =/  canon-3x3-5=ray:la  (en-ray:la `baum:la`[meta-3x3-5 ~[~[0 1 2] ~[3 4 5] ~[6 7 8]]])
+  =/  canon-3x1-5=ray:la  (en-ray:la `baum:la`[meta-3x1-5 ~[98 198 298]])
+  ;:  weld
+    %+  expect-eq
+      !>(canon-3x3-5)
+      !>((sub-scalar:la assay-3x3-5 1))
+    %+  expect-eq
+      !>(canon-3x1-5)
+      !>((sub-scalar:la assay-3x1-5 2))
+  ==
+::
+::  Scalar Division
+++  test-unsigned-div-scalar  ^-  tang
+  =/  meta-3x3-5=meta:la  [~[3 3] 5 %unsigned ~]
+  =/  meta-3x1-5=meta:la  [~[3 1] 5 %unsigned ~]
+  =/  assay-3x3-5=ray:la  (en-ray:la `baum:la`[meta-3x3-5 ~[~[10 20 30] ~[40 50 60] ~[70 80 90]]])
+  =/  assay-3x1-5=ray:la  (en-ray:la `baum:la`[meta-3x1-5 ~[11 21 31]])
+  =/  canon-3x3-5=ray:la  (en-ray:la `baum:la`[meta-3x3-5 ~[~[2 4 6] ~[8 10 12] ~[14 16 18]]])
+  =/  canon-3x1-5=ray:la  (en-ray:la `baum:la`[meta-3x1-5 ~[1 2 3]])
+  ;:  weld
+    %+  expect-eq
+      !>(canon-3x3-5)
+      !>((div-scalar:la assay-3x3-5 5))
+    %+  expect-eq
+      !>(canon-3x1-5)
+      !>((div-scalar:la assay-3x1-5 10))
+  ==
+::
+::  Scalar Modulus
+++  test-unsigned-mod-scalar  ^-  tang
+  =/  meta-3x3-5=meta:la  [~[3 3] 5 %unsigned ~]
+  =/  meta-3x1-5=meta:la  [~[3 1] 5 %unsigned ~]
+  =/  assay-3x3-5=ray:la  (en-ray:la `baum:la`[meta-3x3-5 ~[~[11 22 33] ~[44 55 66] ~[77 88 99]]])
+  =/  assay-3x1-5=ray:la  (en-ray:la `baum:la`[meta-3x1-5 ~[6 11 16]])
+  =/  canon-3x3-5=ray:la  (en-ray:la `baum:la`[meta-3x3-5 ~[~[1 2 3] ~[4 5 6] ~[7 8 9]]])
+  =/  canon-3x1-5=ray:la  (en-ray:la `baum:la`[meta-3x1-5 ~[1 1 1]])
+  ;:  weld
+    %+  expect-eq
+      !>(canon-3x3-5)
+      !>((mod-scalar:la assay-3x3-5 10))
+    %+  expect-eq
+      !>(canon-3x1-5)
+      !>((mod-scalar:la assay-3x1-5 5))
   ==
 ::
 --

@@ -726,7 +726,7 @@
     =/  j  0
     =/  k  0
     =/  shape=(list @)  ~[(snag 0 shape.meta.a) (snag 1 shape.meta.b)]
-    =/  prod=ray  =,(meta.a (zeros [shape bloq kind prec]))
+    =/  prod=ray  =,(meta.a (zeros [^shape bloq kind prec]))
     ::  
     ::  multiplication conditions
     ?>
@@ -1040,6 +1040,7 @@
     :-  meta.a
     =/  ali  (ravel a)
     =/  bob  (ravel b)
+    %^  rev  bloq.meta.a  (lent ali)
     %+  rep  bloq.meta.a
     %+  turn
       (gulf 0 (dec (lent ali)))
