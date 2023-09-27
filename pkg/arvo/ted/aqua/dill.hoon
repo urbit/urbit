@@ -17,6 +17,7 @@
     %+  roll  blits
     |=  [b=blit:dill line=tape]
     ?-    -.b
+        %mor  line  :: XX: fix?
         %put  (tape p.b)
         %klr  (tape (zing (turn p.b tail)))
         %nel  ~&  "{<who>}: {line}"  ""
