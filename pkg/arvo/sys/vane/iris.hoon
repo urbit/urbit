@@ -102,7 +102,7 @@
 ::  +per-client-event: per-event client core
 ::
 ++  per-client-event
-  |=  [[eny=@ =duct now=@da rof=roof] =state]
+  |=  [[eny=@ =duct now=@da tick=@ud rof=roof] =state]
   |%
   ::  +request: makes an external web request
   ::
@@ -323,7 +323,7 @@
   ?:  ?=(%vega -.task)
     [~ light-gate]
   ::
-  =/  event-args  [[eny duct now rof] state.ax]
+  =/  event-args  [[eny duct now tick rof] state.ax]
   =/  client  (per-client-event event-args)
   ?-    -.task
   ::

@@ -36,7 +36,8 @@
 ::
 +$  beak  (trel ship desk case)
 +$  beam  [beak s=path]
-+$  bema  [(trel ship desk cose) s=path]
++$  beck  (trel ship desk cose)
++$  bema  [beck s=path]
 +$  bone  @ud
 +$  case
   $%  ::  %da:  date
