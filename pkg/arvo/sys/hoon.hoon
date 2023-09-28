@@ -9693,7 +9693,9 @@
     ?:  ?=([%wtts *] gen)
       (cool how q.gen (play ~(example ax p.gen)))
     ?:  ?=([%wtcb *] gen)
-      (cool how q.gen (play p.gen))
+      =/  p  (play p.gen)
+      ?.  |(how const(sut p))  sut
+      (cool how q.gen p)
     ?:  ?=([%wthx *] gen)
       =+  (play %wing q.gen)
       ~>  %slog.[0 [%leaf "chipping"]]
@@ -10292,6 +10294,28 @@
       ==           ==
     --
   ++  mite  |=(ref=type |((nest | ref) (nest(sut ref) & sut)))
+  ++  const
+    ^-  ?
+    =<  !=(~ .)
+    =|  seg=(set type)
+    |-  ^-  (unit *)
+    ?-  sut
+        %void      ~
+        %noun      ~
+        [%atom *]  q.sut
+        [%cell *]  (both $(sut p.sut) $(sut q.sut))
+        [%core *]  ~
+        [%face *]  $(sut q.sut)
+        [%fork *]  ?~  fok=~(tap in p.sut)  ~
+                   ?~  i=%_($ sut i.fok)  ~
+                   ?.((lien t.fok |=(type =(i ^$(sut +<)))) ~ i)
+        [%hint *]  $(sut q.sut)
+        [%hold *]  ?:  (~(has in seg) sut)  ~
+                   %=  $
+                     sut  repo
+                     fan  (~(put in fan) +.sut)
+      ==           ==
+  ::
   ++  nest
     ~/  %nest
     |=  [tel=? ref=type]
