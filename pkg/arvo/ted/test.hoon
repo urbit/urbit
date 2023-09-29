@@ -10,9 +10,22 @@
 +$  test       [=path func=test-func]
 +$  test-arm   [name=term func=test-func]
 +$  test-func  (trap tang)
++$  args       quiet=_&
 --
 =>
-|%
+|_  =args
+++  build-file
+  |=  =beam
+  =/  m  (strand ,(unit vase))
+  ^-  form:m
+  ;<  res=(unit vase)  bind:m 
+    (build-file:strandio beam)
+  %.  (pure:m res)
+  ?:  =(res ~)
+    ~>(%slog.0^leaf+"FAILED  {(spud s.beam)} (build)" same)
+  ?:  quiet.args
+     same
+  ~>(%slog.0^leaf+"built   {(spud s.beam)}" same)
 ::  +run-test: execute an individual test
 ::
 ++  run-test
@@ -23,7 +36,7 @@
   ?-  -.run
     %|  |+(welp p.run leaf+"CRASHED {name}" ~)
     %&  ?:  =(~ p.run)
-          &+[leaf+"OK      {name}"]~
+          &+?:(quiet.args ~ [leaf+"OK      {name}"]~)
         |+(flop `tang`[leaf+"FAILED  {name}" p.run])
   ==
 ::  +resolve-test-paths: add test names to file paths to form full identifiers
@@ -55,7 +68,7 @@
   =/  fire-arm=nock
     ~|  [%failed-to-compile-test-arm name]
     q:(~(mint ut typ) p:!>(*tang) [%limb name])
-  [name |.(;;(tang ~>(%bout.[1 name] .*(cor fire-arm))))]
+  [name |.(;;(tang ?:(quiet.args .*(cor fire-arm) ~>(%bout.[1 name] .*(cor fire-arm)))))]
 ::  +has-test-prefix: does the arm define a test we should run?
 ::
 ++  has-test-prefix
@@ -117,11 +130,9 @@
 |-  ^-  form:m
 =*  gather-tests  $
 ?^  fiz
-  ;<  cor=(unit vase)  bind:m  (build-file:strandio beam.i.fiz)
+  ;<  cor=(unit vase)  bind:m  (build-file beam.i.fiz)
   ?~  cor
-    ~>  %slog.0^leaf+"FAILED  {(spud s.beam.i.fiz)} (build)"
     gather-tests(fiz t.fiz, build-ok |)
-  ~>  %slog.0^leaf+"built   {(spud s.beam.i.fiz)}"
   =/  arms=(list test-arm)  (get-test-arms u.cor)
   ::  if test path specified an arm prefix, filter arms to match
   =?  arms  ?=(^ test.i.fiz)
