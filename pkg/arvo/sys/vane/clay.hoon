@@ -4315,8 +4315,12 @@
         :-  -:!>(*(map lobe page))
         ^-  (map lobe page)
         %-  %~  rep  in
-            %-  reachable-takos
-            (~(got by hit.dom) let.dom)
+            |-  ^-  (set tako)
+            =/  ts=(set tako)
+              %-  reachable-takos
+              (~(got by hit.dom) let.dom)
+            ?:  (lte let.dom 1)  ts
+            (~(uni in ts) $(let.dom (dec let.dom)))
         |=  [t=tako o=(map lobe page)]
         %-  ~(gas by o)
         %+  turn
