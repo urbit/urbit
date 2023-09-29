@@ -2359,15 +2359,16 @@
     |%
     ++  blake3
       =<
+        =<  hash  :: cuter API
         =+  [cv=iv flags=0b0]
         ^?  |%
         ::
         +$  output  ^output  :: re-export
         ::
-        ++  keyed  |=(key=byts .(cv dat.key, flags f-keyedhash))
+        ++  keyed  |=(key=byts hash(cv dat.key, flags f-keyedhash))
         ::
         ++  hash
-          |=  [msg=byts out=@ud]
+          |=  [out=@ud msg=byts]
           ^-  @ux
           %+  xof  out
           %-  root-output

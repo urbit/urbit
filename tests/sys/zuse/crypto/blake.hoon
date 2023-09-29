@@ -103,10 +103,10 @@
   ;:  weld
     %+  expect-eq
       !>  `@ux`res
-      !>  `@ux`(hash:blake3 msg out)
+      !>  `@ux`(blake3 out msg)
     %+  expect-eq
       !>  `@ux`keyres
-      !>  `@ux`(hash:keyed msg out)
+      !>  `@ux`(keyed out msg)
   ==
 ::
 ++  blake3-test-msg
