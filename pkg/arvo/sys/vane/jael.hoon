@@ -199,7 +199,7 @@
         /[app]/poke
         %g
         %deal
-        [our our]
+        [our our /jael]
         app
         %poke
         %azimuth-poke
@@ -635,7 +635,7 @@
         [app path]
         %g
         %deal
-        [our our]
+        [our our /jael]
         app
         %watch
         path
@@ -1055,7 +1055,7 @@
 ::                                                      ::  ++scry
 ++  scry                                                ::  inspect
   ^-  roon
-  |=  [lyc=gang car=term bem=beam]
+  |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
   =*  ren  car
   =*  why=shop  &/p.bem

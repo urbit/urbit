@@ -114,7 +114,7 @@
   ++  get-single-req
     |=  req=@t
     =/  batch
-      ((ar:dejs:format same) (need (de-json:html req)))
+      ((ar:dejs:format same) (need (de:json:html req)))
     ?>  ?=([* ~] batch)
     i.batch
   ::
@@ -167,8 +167,7 @@
     |=  [req=@t result=json]
     ^-  card:agent:gall
     =/  resp
-      %-  crip
-      %-  en-json:html
+      %-  en:json:html
       :-  %a  :_  ~
       %-  pairs
       :~  id+s+(get-id req)

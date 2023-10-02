@@ -361,16 +361,58 @@
     ::
       [%eyre %authentication ~]
     %-  some
-    :-  %a
-    %+  turn
-      %+  sort  ~(tap by sessions:auth-state:v-eyre)
-      |=  [[@uv a=session:eyre] [@uv b=session:eyre]]
-      (gth expiry-time.a expiry-time.b)
-    |=  [cookie=@uv session:eyre]
+    =/  auth  auth-state:v-eyre
     %-  pairs
-    :~  'cookie'^s+(end [3 4] (rsh [3 2] (scot %x (shax cookie))))
-        'expiry'^(time expiry-time)
-        'channels'^(numb ~(wyt in channels))
+    :~  :-  'sessions'
+        :-  %a
+        %+  turn
+          %+  sort  ~(tap by sessions.auth)
+          |=  [[@uv a=session:eyre] [@uv b=session:eyre]]
+          (gth expiry-time.a expiry-time.b)
+        |=  [cookie=@uv session:eyre]
+        %-  pairs
+        :~  'cookie'^s+(scot %uv cookie)
+            'identity'^(render-identity:v-eyre identity)
+            'expiry'^(time expiry-time)
+            'channels'^(numb ~(wyt in channels))
+        ==
+      ::
+        :-  'visitors'
+        :-  %a
+        %+  turn
+          %+  sort  ~(tap by visitors.auth)
+          |=  [[@uv a=visitor:eyre] [@uv b=visitor:eyre]]
+          ?@  +.a  &
+          ?@  +.b  |
+          (aor (scot %p ship.a) (scot %p ship.b))
+        |=  [nonce=@uv v=visitor:eyre]
+        %-  pairs
+        :+  'nonce'^s+(scot %uv nonce)
+          'duct'^?~(duct.v ~ a+(turn u.duct.v path))
+        ?@  +.v  ['sesh' s+(scot %uv sesh.v)]~
+        :~  'pend'^b+?=(^ pend.v)
+            'ship'^(ship ship.v)
+            'last'^s+last.v
+            'toke'^?~(toke.v ~ s+(scot %uv u.toke.v))
+        ==
+      ::
+        :-  'visiting'
+        :-  %a
+        %-  zing
+        %+  turn
+          %+  sort  ~(tap by visiting.auth)
+          |=  [[a=@p *] [b=@p *]]
+          (aor (scot %p a) (scot %p b))
+        |=  [who=@p q=(qeu @uv) m=(map @uv portkey)]
+        %+  turn  ~(tap by m)
+        |=  [nonce=@uv p=portkey]
+        %-  pairs
+        :+  'who'^(ship who)
+          'nonce'^s+(scot %uv nonce)
+        ?@  p  ['made' (time made.p)]~
+        :~  ['pend' b+?=(^ pend.p)]
+            ['toke' ?~(toke.p ~ s+(scot %uv u.toke.p))]
+        ==
     ==
   ::
     ::  /eyre/channels.json
@@ -383,6 +425,7 @@
     |=  [key=@t channel:eyre]
     %-  pairs
     :~  'session'^s+key
+        'identity'^(render-identity:v-eyre identity)
         'connected'^b+!-.state
         'expiry'^?-(-.state %& (time date.p.state), %| ~)
         'next-id'^(numb next-id)
@@ -991,6 +1034,16 @@
   ::
   ++  channel-state
     (scry ^channel-state %e %channel-state ~)
+  ::
+  ++  render-identity
+    |=  =identity
+    ^-  json
+    %-  ship:enjs:format
+    ?-  -.identity
+      %ours  our.bowl
+      %fake  who.identity
+      %real  who.identity
+    ==
   ::
   ++  render-action
     |=  =action

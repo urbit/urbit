@@ -269,7 +269,7 @@
   |=  reg=cord
   ^-  (list [=ship rights])
   ~|  %registration-json-insane
-  =+  jon=(need (de-json:html reg))
+  =+  jon=(need (de:json:html reg))
   ~|  %registration-json-invalid
   ?>  ?=(%o -.jon)
   =.  p.jon  (~(del by p.jon) 'idCode')
