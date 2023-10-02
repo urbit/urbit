@@ -2119,6 +2119,27 @@
         %^  enqueue-alien-todo  ship  ship-state
         |=  todos=alien-agenda
         todos(heeds (~(del in heeds.todos) duct))
+      :: +on-dear: handle lane from unix
+      ::
+      ++  on-dear
+        |=  [=ship =lane]
+        ^+  event-core
+        ?:  ?=(%.y -.lane)
+          event-core
+        =/  ip=@if  (end [0 32] p.lane)
+        =/  pt=@ud  (cut 0 [32 16] p.lane)
+        ?:  =(%czar (clan:title ship))
+          %-  %^  ev-trace  odd.veb  ship
+            |.("ignoring %dear lane {(scow %if ip)}:{(scow %ud pt)} for galaxy")
+          event-core
+        =/  peer-state=(unit peer-state)  (get-peer-state ship)
+        ?~  peer-state
+          %-  %^  ev-trace  odd.veb  ship
+            |.("no peer-state for ship, ignoring %dear")
+          event-core
+        %-  %^  ev-trace  rcv.veb  ship
+          |.("incoming %dear lane {(scow %if ip)}:{(scow %ud pt)}")
+        abet:(on-dear:(abed-peer:pe ship u.peer-state) lane)
       ::  +on-hear: handle raw packet receipt
       ::
       ++  on-hear
@@ -3311,6 +3332,11 @@
             fi-abet:(fi-sub:(abed:fi path) duct)
           =.  keens  (~(put by keens) path *keen-state)
           fi-abet:(fi-start:(abed:fi path) duct)
+        ::
+        ++  on-dear
+          |=  =lane
+          ^+  peer-core
+          peer-core(route.peer-state `[%.y lane])
         ::
         ++  on-tame
           ^+  peer-core
@@ -4973,6 +4999,7 @@
     ?-  -.task
       %born  on-born:event-core
       %hear  (on-hear:event-core [lane blob ~]:task)
+      %dear  (on-dear:event-core +.task)
       %heed  (on-heed:event-core ship.task)
       %init  on-init:event-core
       %jilt  (on-jilt:event-core ship.task)
