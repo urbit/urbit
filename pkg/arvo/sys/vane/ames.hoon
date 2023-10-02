@@ -1190,6 +1190,7 @@
   $%  [%kroc dry=?]
       $<(%kroc task)
   ==
+
 ::  $bug: debug printing configuration
 ::
 ::    veb: verbosity toggles
@@ -1555,6 +1556,13 @@
                   [%adult state=ames-state-16]
               ==  ==
               $:  %17
+              $%  $:  %larva
+                      events=(qeu queued-event)
+                      state=ames-state-15
+                  ==
+                  [%adult state=ames-state-15]
+              ==  ==
+              $:  %16
               $%  $:  %larva
                       events=(qeu queued-event)
                       state=_ames-state.adult-gate
