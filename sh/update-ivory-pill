@@ -4,4 +4,4 @@ set -xeuo pipefail
 
 cd "${0%/*}/.."
 
-cp "$(nix-build -A ivory.build --no-out-link)" bin/ivory.pill
+cp "$(nix build .#ivory --no-link --print-out-paths)" bin/brass.pill

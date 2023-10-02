@@ -315,7 +315,7 @@
   ::
   =/  tube  (convert-tube %json input-mark desk bowl)
   ?>  ?=(^ body.request.inbound-request)
-  =/  body=json  (need (de-json:html q.u.body.request.inbound-request))
+  =/  body=json  (need (de:json:html q.u.body.request.inbound-request))
   =/  input=vase  (slop !>(~) (tube !>(body)))
   =/  boc  bec
   =/  =start-args:spider  [~ `tid boc(q desk, r da+now.bowl) thread input]
