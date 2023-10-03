@@ -42,9 +42,9 @@
 ::  $move: Arvo-level move
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
-::  $state-13: overall gall state, versioned
+::  $state-15: overall gall state, versioned
 ::
-+$  state-14  [%14 state]
++$  state-15  [%15 state]
 ::  $state: overall gall state
 ::
 ::    system-duct: TODO document
@@ -164,7 +164,7 @@
 ::  $spore: structures for update, produced by +stay
 ::
 +$  spore
-  $:  %14
+  $:  %15
       system-duct=duct
       outstanding=(map [wire duct] (qeu remote-request))
       contacts=(set ship)
@@ -195,7 +195,7 @@
 --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
-=|  state=state-14
+=|  state=state-15
 |=  [now=@da eny=@uvJ rof=roof]
 =*  gall-payload  .
 ~%  %gall-top  ..part  ~
@@ -1986,11 +1986,30 @@
       =?  old  ?=(%11 -.old)  (spore-11-to-12 old)
       =?  old  ?=(%12 -.old)  (spore-12-to-13 old)
       =?  old  ?=(%13 -.old)  (spore-13-to-14 old)
-      ?>  ?=(%14 -.old)
+      =?  old  ?=(%14 -.old)  (spore-14-to-15 old)
+      ?>  ?=(%15 -.old)
       gall-payload(state old)
   ::
   +$  spore-any
-    $%(spore spore-7 spore-8 spore-9 spore-10 spore-11 spore-12 spore-13)
+    $%  spore
+        spore-7
+        spore-8
+        spore-9
+        spore-10
+        spore-11
+        spore-12
+        spore-13
+        spore-14
+    ==
+  +$  spore-14
+    $:  %14
+        system-duct=duct
+        outstanding=(map [wire duct] (qeu remote-request))
+        contacts=(set ship)
+        eggs=(map term egg)
+        blocked=(map term (qeu blocked-move))
+        =bug
+    ==
   +$  spore-13
     $:  %13
         system-duct=duct
@@ -2205,11 +2224,11 @@
       ?:  ?=(%nuke -.e)  e
       e(sky [sky.e ken:*$>(%live egg)])
     ==
-  ::  added provenance path to routes and nacked-leaves timer
+  ::  added provenance path to routes
   ::
   ++  spore-13-to-14
     |=  old=spore-13
-    ^-  spore
+    ^-  spore-14
     %=    old
         -  %14
       ::
@@ -2224,9 +2243,13 @@
       %=  blocked
         attributing.routes  [ship=attributing.routes.blocked path=/]
       ==
-      ::
-        bug  [bug.old ~]
     ==
+  ::  added nacked-leaves timer
+  ::
+  ++  spore-14-to-15
+    |=  old=spore-14
+    ^-  spore
+    old(- %15, bug [bug.old ~])
   --
 ::  +scry: standard scry
 ::
