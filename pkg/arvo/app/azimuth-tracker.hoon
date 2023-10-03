@@ -121,6 +121,7 @@
 ::
 ++  on-poke
   |=  [=mark =vase]
+  ?>  (our.bowl src.bowl)
   ?.  ?=(%azimuth-tracker-poke mark)
     (on-poke:def mark vase)
   =+  !<(poke=poke-data vase)
