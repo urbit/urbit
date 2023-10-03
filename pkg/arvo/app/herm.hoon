@@ -81,6 +81,7 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card:agent:gall _this)
+  ?>  (team:title [our src]:bowl)
   :_  this
   :_  ~
   ?+  mark  ~|([%unexpected-mark mark] !!)
