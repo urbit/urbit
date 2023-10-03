@@ -366,6 +366,8 @@
   }
   button[type=submit] {
     margin-top: 1rem;
+  }
+  button[type=submit], a.button {
     font-size: 1rem;
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
@@ -373,6 +375,7 @@
     color: var(--white);
     border: none;
     font-weight: 600;
+    text-decoration: none;
   }
   input:invalid ~ button[type=submit] {
     border-color: currentColor;
@@ -380,7 +383,7 @@
     color: var(--gray-400);
     pointer-events: none;
   }
-  span.guest {
+  span.guest, span.guest a {
     color: var(--gray-400);
   }
   span.failed {
@@ -475,8 +478,13 @@
       ;div#local
         ;p:"Urbit ID"
         ;input(value "{(scow %p our)}", disabled "true", class "mono");
-        ;p:"Access Key"
+        ;+  ?:  =(%ours -.identity)
+              ;div
+                ;p:"Already authenticated"
+                ;a.button/"{(trip (fall redirect-url '/'))}":"Continue"
+              ==
         ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
+          ;p:"Access Key"
           ;input
             =type  "password"
             =name  "password"
@@ -519,10 +527,13 @@
           ;button(name "eauth", type "submit"):"Continue"
         ==
       ==
-      ;*  ?.  ?=(%fake -.identity)  ~
+      ;*  ?:  ?=(%ours -.identity)  ~
           =+  id=(trim 29 (scow %p who.identity))
+          =+  as="proceed as{?:(?=(%fake -.identity) " guest" "")}"
           ;+  ;span.guest.mono
-                ; Current guest identity:
+                ; Or
+                ;a/"{(trip (fall redirect-url '/'))}":"{as}"
+                ; :
                 ;br;
                 ; {p.id}
                 ;br;
@@ -1195,33 +1206,14 @@
       =/  with-eauth=(unit ?)
         ?:  =(~ eauth-url:eauth)  ~
         `?=(^ (get-header:http 'eauth' args.request-line))
-      ::  if we received a simple get: redirect if logged in, otherwise
-      ::  show login page
+      ::  if we received a simple get: show the login page
+      ::
+      ::NOTE  we never auto-redirect, to avoid redirect loops with apps that
+      ::      send unprivileged users to the login screen
       ::
       ?:  =('GET' method.request)
-        ?.  (request-is-logged-in request)
-          %^  return-static-data-on-duct  200  'text/html'
-          (login-page redirect our identity with-eauth %.n)
-        =/  session-id  (session-id-from-request request)
-        ::  session-id should always be populated here since we are logged in
-        ?~  session-id
-          %^  return-static-data-on-duct  200  'text/html'
-          (login-page redirect our identity with-eauth %.n)
-        =/  cookie-line=@t
-          (session-cookie-string u.session-id &)
-        =/  actual-redirect
-          ?~  redirect  '/'
-          ?:(=(u.redirect '') '/' u.redirect)
-        %-  handle-response
-        :*  %start
-            :-  status-code=303
-            ^=  headers
-              :~  ['location' actual-redirect]
-                  ['set-cookie' cookie-line]
-              ==
-            data=~
-            complete=%.y
-        ==
+        %^  return-static-data-on-duct  200  'text/html'
+        (login-page redirect our identity with-eauth %.n)
       ::  if we are not a post, return an error
       ::
       ?.  =('POST' method.request)
