@@ -237,8 +237,8 @@
       !>  `@ux`(shas %foo 506)
   ::
     %+  expect-eq
-      !>  0xa2e1.2341.2435.35cc.025b.68e6.24ef.f948.13e4.a80b.99ab.b42e.893f.
-            032c.8ab2.5606
+      !>  0xe0d6.a881.1621.f8fc.deb5.8794.e059.6937.8b74.03d3.d6c7.d140.ced4.
+            3ec2.d935.bbc4
       !>  `@ux`(shas %foo 507)
   ::
     %+  expect-eq
@@ -247,8 +247,8 @@
       !>  `@ux`(shas %foo 652)
   ::
     %+  expect-eq
-      !>  0x90db.3e6b.73db.f5f4.fae2.2801.7ace.c347.ae7b.eae0.9f5c.95d3.fd90.
-            eec5.8ae1.115e
+      !>  0xd7ed.4f04.146d.db1a.604b.6b8e.61a2.83a5.d4dc.7efc.c9e1.5bc6.45ba.
+            7363.b297.0691
       !>  `@ux`(shas %foo 653)
   ==
 ::
