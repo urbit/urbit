@@ -5252,7 +5252,7 @@
       %=  ship-state
         snd    (~(run by snd.ship-state) message-pump-16-to-17)
         keens  (~(run by keens.ship-state) keen-state-16-to-17)
-        rcv    (~(rut by rcv.ship-state) remove-outbound-naxplanations)
+        rcv    (~(urn by rcv.ship-state) remove-outbound-naxplanations)
       ==
       ::
       ++  message-pump-16-to-17
