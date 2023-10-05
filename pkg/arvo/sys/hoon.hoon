@@ -7176,7 +7176,7 @@
 +|  %compiler-utilities
 ::
 ++  bool                                                ::  make loobean
-  ^~  ^-  type
+  ^-  type
   (fork [%atom %f `%.y] [%atom %f `%.n] ~)
 ::
 ++  cell                                                ::  make %cell type
