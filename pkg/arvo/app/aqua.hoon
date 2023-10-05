@@ -615,7 +615,7 @@
           ::
             ?:  fake.ae  ~
             =+  [%raw-poke %noun %refresh-rate ~s30]
-            [/g/aqua/reduce-refresh-rate %deal [. .]:who.ae %azimuth -]~
+            [/g/aqua/reduce-refresh-rate %deal [. . /]:who.ae %azimuth -]~
         ==
       ==
     =.  this

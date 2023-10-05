@@ -10,12 +10,41 @@
   ==
 ::
 +$  pikes  (map desk pike)
-::
+::  $jump: changes to update source change requests
+::      
++$  jump
+  $%  [%all all=(map dock dock)]        :: pending requests
+      [%add old=dock new=dock]          :: new request
+      [%yea old=dock new=dock]          :: approved
+      [%nay old=dock new=dock]          :: denied
+  ==
 ::  $rung: reference to upstream commit
 ::
 +$  rung  [=aeon =weft]
+::  #sync-record: source and destination of a kiln sync
 ::
-+$  sync-state  [nun=@ta kid=(unit desk) let=@ud]
++$  sync-record                         ::
+  $:  syd=desk                          :: local desk
+      her=ship                          :: foreign ship
+      sud=desk                          :: foreign desk
+  ==
+::
++$  sync-state                          ::
+  $:  nun=@ta                           :: nonce
+      kid=(unit desk)                   :: has kids desk too?
+      let=@ud                           :: next revision
+      nit=(unit ?)                      :: automerge or default
+      hav=(unit @ud)                    :: update available
+      yea=?                             :: update approved
+  ==
+::
++$  sync-update
+  $%  [%new for=sync-record rev=@ud]
+      [%done for=sync-record rev=@ud]
+      [%drop for=sync-record rev=@ud]
+      [%pending pending=(set [for=sync-record rev=@ud])]
+  ==
+::
 +$  sink        (unit [her=@p sud=desk kid=(unit desk) let=@ud])
 ::  +truncate-hash: get last 5 digits of hash and convert to tape
 ::
@@ -101,7 +130,7 @@
 ::  +report-vat: report on a single desk installation
 ::
 ++  report-vat
-  |=  $:  $:  tyr=rock:tire  =cone  sor=(map desk [ship desk])
+  |=  $:  $:  tyr=rock:tire  =cone  sor=(map desk (pair ship desk))
               zyn=(map [desk ship desk] sync-state)
           ==
           our=ship  now=@da  syd=desk  verb=?
@@ -137,7 +166,7 @@
       ~
     ?~  z=(~(get by zyn) syd u.s)
       ~
-    `[-.u.s +.u.s +.u.z]
+    `[p.u.s q.u.s [kid let]:u.z]
   =/  meb=(list @uv)
     ?~  sink  [hash]~
     (mergebase-hashes our syd now her.u.sink sud.u.sink)
@@ -159,16 +188,10 @@
     |=  [=weft =tape]
     (welp " {<[lal num]:weft>}" tape)
   ?.  verb
-    =/  cut=(list tape)  (turn meb truncate-hash)
-    =/  len  (lent cut)
-    =/  base-hash
-      ?:  =(0 len)  "~"
-      ?:  =(1 len)  (head cut)
-        "~[{`tape`(zing (join " " `(list tape)`cut))}]"
     :~  leaf/"/sys/kelvin:          {kul}"
-        leaf/"base hash ends in:     {base-hash}"
         leaf/"%cz hash ends in:      {(truncate-hash hash)}"
         leaf/"app status:            {sat}"
+        leaf/"source ship:           {?~(sink <~> <her.u.sink>)}"
         leaf/"pending updates:       {<`(list [@tas @ud])`~(tap in wic.dek)>}"
     ==
   ::

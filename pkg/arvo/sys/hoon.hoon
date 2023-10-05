@@ -4270,12 +4270,11 @@
   ?&  ?|  =(1 tef)
           =+  i=1
           |-  ^-  ?
-          ?|
-              =(i tef)
+          ?|  =(i tef)
               ?&  (gte (cut 3 [(add i inx) 1] b) 128)
                   $(i +(i))
       ==  ==  ==
-      $(inx +(inx))
+      $(inx (add inx tef))
   ==
 ::
 ++  ruth                                                ::  biblical sanity
