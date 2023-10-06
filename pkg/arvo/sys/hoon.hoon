@@ -3283,7 +3283,8 @@
 ++  shas                                                ::  salted hash
   ~/  %shas
   |=  [sal=@ ruz=@]
-  (shax (mix sal (shax ruz)))
+  =/  len  (max 32 (met 3 sal))
+  (shay len (mix sal (shax ruz)))
 ::
 ++  shax                                                ::  sha-256
   ~/  %shax
