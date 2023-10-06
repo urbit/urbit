@@ -226,34 +226,6 @@
     *   (add (mod b 2) (mul $(b (div b 2)) 2))
   ==
 ::
-++  pin
-  ~/  %pin
-  ::    sub axis test
-  ::
-  ::  checks whether {b} addresses a subtree of the tree addressed by {a}.
-  |=  [a=@ b=@]
-  ?<  =(0 a)
-  ?<  =(0 b)
-  |-  ^-  ?
-  ?:  =(a 1)  &
-  ?:  =(b 1)  |
-  ?.  =((cap a) (cap b))  |
-  $(a (mas a), b (mas b))
-::
-++  hub
-  ~/  %hub
-  ::    axis after axis
-  ::
-  ::  computes the remainder of axis {b} when navigating to {a}.
-  ::  (crashes if not `(pin a b)`)
-  |=  [a=@ b=@]
-  ?<  =(0 a)
-  ?<  =(0 b)
-  |-  ^-  @
-  ?:  =(a 1)  b
-  ?>  =((cap a) (cap b))
-  $(a (mas a), b (mas b))
-::
 ::  #  %containers
 ::
 ::    the most basic of data types
