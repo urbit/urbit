@@ -838,7 +838,7 @@
     =.  hop  (~(del by hop) old)
     abet:(emit %give %fact ~[/jumps] %kiln-jump !>([%nay old u.had]))
   ?~  (skim ~(tap by sources) |=(sync-record =(old [her sud])))
-    ~>  %slog.(fmt "no syncs from {<p.old>}/{(trip q.old)}")
+    ~>  %slog.(fmt "no syncs from {(scow %p p.old)}/{(trip q.old)}")
     abet
   =.  hop  (~(put by hop) old new)
   abet:(emit %give %fact ~[/jumps] %kiln-jump !>([%add old new]))
@@ -846,16 +846,16 @@
 ++  poke-jump-opt
   |=  [old=dock new=dock yea=?]
   ?~  got=(~(get by hop) old)
-    ~>  %slog.(fmt "no jump request for {<p.old>}/{(trip q.old)}")
+    ~>  %slog.(fmt "no jump request for {(scow %p p.old)}/{(trip q.old)}")
     abet
   ?.  =(new u.got)
-    =/  txt-old  "{<p.old>}/{(trip q.old)}"
-    =/  txt-new  "{<p.new>}/{(trip q.new)}"
+    =/  txt-old  "{(scow %p p.old)}/{(trip q.old)}"
+    =/  txt-new  "{(scow %p p.new)}/{(trip q.new)}"
     ~>  %slog.(fmt "no jump request from {txt-old} to {txt-new}")
     abet
   ?.  yea
-    =/  txt-old  "{<p.old>}/{(trip q.old)}"
-    =/  txt-new  "{<p.new>}/{(trip q.new)}"
+    =/  txt-old  "{(scow %p p.old)}/{(trip q.old)}"
+    =/  txt-new  "{(scow %p p.new)}/{(trip q.new)}"
     ~>  %slog.(fmt "denied jump from {txt-old} to {txt-new}")
     =.  hop  (~(del by hop) old)
     abet:(emit %give %fact ~[/jumps] %kiln-jump !>([%nay old new]))
