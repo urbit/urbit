@@ -153,8 +153,12 @@ export class Ames extends Component {
                      snd['packet-pump-state'].live.length > 0 )
       ? 'active, '
       : '';
+    const color = snd['closing'] ? 'lightyellow': snd['corked'] ? 'lightred' : 'transparent';
+
     return {key: 'snd ' + active + snd.bone + ', ' + renderDuct(snd.duct), jsx: (
-      <Summary summary={summary} details={details} />
+      <div style={{backgroundColor: color}}>
+        <Summary summary={summary} details={details} />
+       </div>
     )};
   }
 
@@ -198,8 +202,12 @@ export class Ames extends Component {
       {nax}<br/>
       {liveMessages}
     </>);
+    const color =  rcv['closing'] ? 'ligthyellow': rcv['corked'] ? 'lightred' : 'transparent';
+
     return {key: 'rcv ' + rcv.bone + ', ' + renderDuct(rcv.duct), jsx: (
-      <Summary summary={summary} details={details} />
+      <div style={{backgroundColor: color}}>
+        <Summary summary={summary} details={details} />
+      </div>
     )};
   }
 
@@ -328,6 +336,13 @@ export class Ames extends Component {
               <td>
                 {p.qos.kind},
                 last contact {msToDa(p.qos['last-contact'])}
+              </td>
+            </tr>
+            <tr>
+              <td class="inter">Bones </td>
+              <td>
+                closing: {p.closing.length},
+                corked: {p.corked.length}
               </td>
             </tr>
           </tbody></table>

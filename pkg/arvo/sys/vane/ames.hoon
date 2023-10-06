@@ -5326,6 +5326,9 @@
   ::  /ax/snubbed                    (?(%allow %deny) (list ship))
   ::  /ax/fine/hunk/[path/...]       (list @ux) scry response fragments
   ::  /ax/fine/ducts/[path/]         (list duct)
+  ::  /ax/rift                        @
+  ::  /ax/corked/[ship]              (set bone)
+  ::  /ax/closing/[ship]             (set bone)
   ::
   ?.  ?=(%x ren)  ~
   =>  .(tyl `(pole knot)`tyl)
@@ -5498,5 +5501,19 @@
   ::
       [%rift ~]
     ``noun+!>(rift.ames-state)
+  ::
+      [%corked her=@ ~]
+    =/  who  (slaw %p her.tyl)
+    ?~  who  [~ ~]
+    =/  per  (~(get by peers.ames-state) u.who)
+    ?.  ?=([~ %known *] per)  [~ ~]
+    ``noun+!>(corked.u.per)
+  ::
+      [%closing her=@ ~]
+    =/  who  (slaw %p her.tyl)
+    ?~  who  [~ ~]
+    =/  per  (~(get by peers.ames-state) u.who)
+    ?.  ?=([~ %known *] per)  [~ ~]
+    ``noun+!>(closing.u.per)
   ==
 --
