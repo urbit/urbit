@@ -2368,6 +2368,7 @@
         ++  keyed  |=(key=byts hash(cv dat.key, flags f-keyedhash))
         ::
         ++  hash
+          ~%  %hash  ..blake3  ~
           |=  [out=@ud msg=byts]
           ^-  @ux
           %+  xof  out
