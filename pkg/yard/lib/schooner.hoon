@@ -196,7 +196,7 @@
     :-  :-  http-status
         %+  weld  headers
         ['content-type'^'application/json']~
-    `(as-octs:mimes:html (en-json:html j.resource))
+    `(as-octs:mimes:html (en:json:html j.resource))
     ::
       %manx
     :-  :-  http-status
