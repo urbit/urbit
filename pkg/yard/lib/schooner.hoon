@@ -73,27 +73,27 @@
   ?-  -.resource
     ::
       %application-javascript
-    :_  `(as-octt:mimes:html p.resource)
+    :_  `(as-octs:mimes:html p.resource)
     :-  http-status
     (weld headers ['content-type'^'application/javascript']~)
     ::
       %application-json
-    :_  `(as-octt:mimes:html p.resource)
+    :_  `(as-octs:mimes:html p.resource)
     :-  http-status
     (weld headers ['content-type'^'application/json']~)
     ::
       %application-pdf
-    :_  `(as-octt:mimes:html p.resource)
+    :_  `(as-octs:mimes:html p.resource)
     :-  http-status
     (weld headers ['content-type'^'application/pdf']~)
     ::
       %application-rtf
-    :_  `(as-octt:mimes:html p.resource)
+    :_  `(as-octs:mimes:html p.resource)
     :-  http-status
     (weld headers ['content-type'^'application/rtf']~)
     ::
       %application-xml
-    :_  `(as-octt:mimes:html p.resource)
+    :_  `(as-octs:mimes:html p.resource)
     :-  http-status
     (weld headers ['content-type'^'application/xml']~)
     ::
@@ -196,15 +196,15 @@
     :-  :-  http-status
         %+  weld  headers
         ['content-type'^'application/json']~
-    `(as-octt:mimes:html (en-json:html j.resource))
+    `(as-octs:mimes:html (en-json:html j.resource))
     ::
       %manx
     :-  :-  http-status
       (weld headers ['content-type'^'text/html']~)
-    `(as-octt:mimes:html (en-xml:html m.resource))
+    `(as-octs:mimes:html (en-xml:html m.resource))
     ::
       %plain
-    :_  `(as-octt:mimes:html p.resource)
+    :_  `(as-octs:mimes:html p.resource)
     :-  http-status
     (weld headers ['content-type'^'text/plain']~)
     ::
@@ -288,7 +288,7 @@
   %+  give-simple-payload:app:server
     eyre-id
   ^-  simple-payload:http
-  :_  `(as-octt:mimes:html p.resource)
+  :_  `(as-octs:mimes:html p.resource)
   :-  http-status
   =/  a  (trip -.resource)
   =/  b  (find "-" a)
@@ -302,7 +302,7 @@
   (weld headers ['content-type'^'text/html']~)
   :-  ~
   =+  (title-content code)
-  %-  as-octt:mimes:html
+  %-  as-octs:mimes:html
     %-  en-xml:html
   ;html
     ;head
