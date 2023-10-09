@@ -2,11 +2,11 @@
 ::::    /sys/hoon                                       ::
   ::                                                    ::
 =<  ride
-=>  %139  =>
+=>  %138  =>
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
-~%  %k.139  ~  ~                                        ::
+~%  %k.138  ~  ~                                        ::
 |%
 ++  hoon-version  +
 --  =>
@@ -1394,23 +1394,19 @@
   ::
   ++  bif                                               ::  splits a by b
     ~/  %bif
-    |*  [b=* c=*]
-    ^+  [l=a r=a]
-    =<  +
-    |-  ^+  a
+    |*  b=*
+    |-  ^+  [l=a r=a]
     ?~  a
-      [[b c] ~ ~]
+      [~ ~]
     ?:  =(b p.n.a)
-      ?:  =(c q.n.a)
-        a
-      a(n [b c])
+      +.a
     ?:  (gor b p.n.a)
       =+  d=$(a l.a)
       ?>  ?=(^ d)
-      d(r a(l r.d))
+      [l.d a(l r.d)]
     =+  d=$(a r.a)
     ?>  ?=(^ d)
-    d(l a(r l.d))
+    [a(r l.d) r.d]
   ::
   ++  del                                               ::  delete at key b
     ~/  %del
@@ -1435,7 +1431,7 @@
     |-  ^+  a
     ?~  b
       a
-    =+  c=(bif p.n.b q.n.b)
+    =+  c=(bif p.n.b)
     ?>  ?=(^ c)
     =+  d=$(a l.c, b l.b)
     =+  e=$(a r.c, b r.b)
@@ -1592,12 +1588,6 @@
     ?~  a  a
     [n=[p=p.n.a q=(b q.n.a)] l=$(a l.a) r=$(a r.a)]
   ::
-  ++  rut                                               ::  apply gate to nodes
-    |*  b=gate
-    |-
-    ?~  a  a
-    [n=[p=p.n.a q=(b p.n.a q.n.a)] l=$(a l.a) r=$(a r.a)]
-  ::
   ++  tap                                               ::  listify pairs
     =<  $
     ~/  %tap
@@ -1687,6 +1677,19 @@
     |*  [b=* c=*]
     =+  d=(get b)
     (~(put by a) b [c d])
+  ::
+  ++  zip                                               ::  listify jar
+    =<  $
+    ~/  %zip
+    =+  b=`(list _?>(?=([[* ^] *] a) [p=p q=i.q]:n.a))`~
+    |.  ^+  b
+    ?~  a   b
+    %=  $
+      a  r.a
+      b  |-  ^+  b
+         ?~  q.n.a  ^$(a l.a)
+         [[p i.q]:n.a $(q.n.a t.q.n.a)]
+    ==
   --
 ++  ju                                                  ::  jug engine
   =|  a=(tree (pair * (tree)))  ::  (jug)
@@ -1877,17 +1880,17 @@
 ++  corl                                                ::  compose backwards
   |*  [a=$-(* *) b=$-(* *)]
   =<  +:|.((a (b)))      ::  type check
-  |*  c=_+<.b
+  |*  c=_,.+<.b
   (a (b c))
 ::
 ++  cury                                                ::  curry left
   |*  [a=$-(^ *) b=*]
-  |*  c=_+<+.a
+  |*  c=_,.+<+.a
   (a b c)
 ::
 ++  curr                                                ::  curry right
   |*  [a=$-(^ *) c=*]
-  |*  b=_+<+.a
+  |*  b=_,.+<-.a
   (a b c)
 ::
 ++  fore  |*(a=$-(* *) |*(b=$-(* *) (pair a b)))        ::  pair before
@@ -3252,7 +3255,8 @@
 ++  shas                                                ::  salted hash
   ~/  %shas
   |=  [sal=@ ruz=@]
-  (shax (mix sal (shax ruz)))
+  =/  len  (max 32 (met 3 sal))
+  (shay len (mix sal (shax ruz)))
 ::
 ++  shax                                                ::  sha-256
   ~/  %shax
@@ -7144,7 +7148,10 @@
 ::    5a: compiler utilities
 +|  %compiler-utilities
 ::
-++  bool  `type`(fork [%atom %f `0] [%atom %f `1] ~)    ::  make loobean
+++  bool                                                ::  make loobean
+  ^-  type
+  (fork [%atom %f `%.y] [%atom %f `%.n] ~)
+::
 ++  cell                                                ::  make %cell type
   ~/  %cell
   |=  [hed=type tal=type]
@@ -8303,9 +8310,6 @@
         [%limb @]
       `p.gen
     ::
-      ::  [%rock *]
-      ::  [%spec %leaf q.gen q.gen]
-    ::
         [%note [%help *] *]
       (bind $(gen q.gen) |=(=skin [%help p.p.gen skin]))
     ::
@@ -8779,7 +8783,7 @@
     ++  fish
       |=  =axis
       ^-  nock
-      ?@  skin  [%1 &]
+      ?@  skin  $(skin spec+[[%like [skin]~ ~] [%base %noun]])
       ?-    -.skin
       ::
           %base
@@ -8809,8 +8813,8 @@
             [%1 &]
           [%3 %0 axis]
         %+  flan
-          $(ref (peek(sut ref) %free 2), skin skin.skin)
-        $(ref (peek(sut ref) %free 3), skin ^skin.skin)
+          $(ref (peek(sut ref) %free 2), axis (peg axis 2), skin skin.skin)
+        $(ref (peek(sut ref) %free 3), axis (peg axis 3), skin ^skin.skin)
       ::
           %leaf
         ?:  (~(nest ut [%atom %$ `atom.skin]) | ref)
@@ -8820,16 +8824,21 @@
           %dbug  $(skin skin.skin)
           %help  $(skin skin.skin)
           %name  $(skin skin.skin)
-          %over  $(skin skin.skin)
-          %spec  $(skin skin.skin)
-          %wash  [%1 1]
+          %over  ::NOTE  might need to guard with +feel, crashing is too strict
+                 =+  ~|  %oops-guess-you-needed-feel-after-all
+                     fid=(fend %read wing.skin)
+                 $(sut p.fid, axis (peg axis q.fid), skin skin.skin)
+          %spec  =/  hit  (~(play ut sut) ~(example ax spec.skin))
+                 ?>  (~(nest ut hit) & ref)
+                 $(skin skin.skin)
+          %wash  [%1 &]
       ==
     ::
     ::  +gain: make a $type by restricting .ref to .skin
     ::
     ++  gain
       |-  ^-  type
-      ?@  skin  [%face skin ref]
+      ?@  skin  $(skin spec+[[%like [skin]~ ~] [%base %noun]])
       ?-    -.skin
       ::
           %base
@@ -8852,7 +8861,7 @@
                        q.ref
             [%cell *]  %void
             [%core *]  %void
-            [%face *]  (face p.ref $(ref q.ref))
+            [%face *]  $(ref q.ref)
             [%fork *]  (fork (turn ~(tap in p.ref) |=(=type ^$(ref type))))
             [%hint *]  (hint p.ref $(ref q.ref))
             [%hold *]  ?:  (~(has in gil) ref)  %void
@@ -8865,7 +8874,9 @@
         |-  ^-  type
         ?-    ref
             %void      %void
-            %noun      [%cell %noun %noun]
+            %noun      =+  ^$(skin skin.skin)
+                       ?:  =(%void -)  %void
+                       (cell - ^$(skin ^skin.skin))
             [%atom *]  %void
             [%cell *]  =+  ^$(skin skin.skin, ref p.ref)
                        ?:  =(%void -)  %void
@@ -8875,7 +8886,7 @@
                        ?.  =(%noun ^skin.skin)
                          (cell - ^$(skin ^skin.skin, ref %noun))
                        [%core - q.ref]
-            [%face *]  (face p.ref $(ref q.ref))
+            [%face *]  $(ref q.ref)
             [%fork *]  (fork (turn ~(tap in p.ref) |=(=type ^$(ref type))))
             [%hint *]  (hint p.ref $(ref q.ref))
             [%hold *]  ?:  (~(has in gil) ref)  %void
@@ -8897,7 +8908,7 @@
                      `atom.skin
           [%cell *]  %void
           [%core *]  %void
-          [%face *]  (face p.ref $(ref q.ref))
+          [%face *]  $(ref q.ref)
           [%fork *]  (fork (turn ~(tap in p.ref) |=(=type ^$(ref type))))
           [%hint *]  (hint p.ref $(ref q.ref))
           [%hold *]  ?:  (~(has in gil) ref)  %void
@@ -8908,10 +8919,9 @@
           %help  (hint [sut %help help.skin] $(skin skin.skin))
           %name  (face term.skin $(skin skin.skin))
           %over  $(skin skin.skin, sut (~(play ut sut) %wing wing.skin))
-          %spec  =/  yon  $(skin skin.skin)
-                 =/  hit  (~(play ut sut) ~(example ax spec.skin))
-                 ?>  (~(nest ut hit) & yon)
-                 hit
+          %spec  =/  hit  (~(play ut sut) ~(example ax spec.skin))
+                 ?>  (~(nest ut hit) & $(skin skin.skin))
+                 (~(fuse ut ref) hit)
           %wash  =-  $(ref (~(play ut ref) -))
                  :-  %wing
                  |-  ^-  wing
@@ -8923,13 +8933,13 @@
     ::
     ++  lose
       |-  ^-  type
-      ?@  skin  [%face skin ref]
+      ?@  skin  $(skin spec+[[%like [skin]~ ~] [%base %noun]])
       ?-    -.skin
       ::
           %base
         ?-    base.skin
             %cell      $(skin [%cell [%base %noun] [%base %noun]])
-            %flag      $(skin [%base %atom %f])
+            %flag      $(ref $(skin [%leaf %f &]), skin [%leaf %f |])
             %null      $(skin [%leaf %n ~])
             %void      ref
             %noun      %void
@@ -8955,17 +8965,19 @@
         |-  ^-  type
         ?-    ref
             %void      %void
-            %noun      [%atom %$ ~]
+            %noun      ?.  =([%cell [%base %noun] [%base %noun]] skin)
+                         ref
+                       [%atom %$ ~]
             [%atom *]  ref
-            [%cell *]  =+  ^$(skin skin.skin, ref p.ref)
-                       ?:  =(%void -)  %void
-                       (cell - ^$(skin ^skin.skin, ref q.ref))
+            [%cell *]  =/  lef  ^$(skin skin.skin, ref p.ref)
+                       =/  rig  ^$(skin ^skin.skin, ref q.ref)
+                       (fork (cell lef rig) (cell lef q.ref) (cell p.ref rig) ~)
             [%core *]  =+  ^$(skin skin.skin, ref p.ref)
                        ?:  =(%void -)  %void
                        ?.  =(%noun ^skin.skin)
                          (cell - ^$(skin ^skin.skin, ref %noun))
                        [%core - q.ref]
-            [%face *]  (face p.ref $(ref q.ref))
+            [%face *]  $(ref q.ref)
             [%fork *]  (fork (turn ~(tap in p.ref) |=(=type ^$(ref type))))
             [%hint *]  (hint p.ref $(ref q.ref))
             [%hold *]  ?:  (~(has in gil) ref)  %void
@@ -8993,8 +9005,11 @@
           %dbug  $(skin skin.skin)
           %help  $(skin skin.skin)
           %name  $(skin skin.skin)
-          %over  $(skin skin.skin)
-          %spec  $(skin skin.skin)
+          %over  ::TODO  if we guard in +fish (+feel), we have to guard again here
+                 $(skin skin.skin, sut (~(play ut sut) %wing wing.skin))
+          %spec  =/  hit  (~(play ut sut) ~(example ax spec.skin))
+                 ?>  (~(nest ut hit) & $(skin skin.skin))
+                 (~(crop ut ref) hit)
           %wash  ref
       ==
     --
@@ -9472,6 +9487,14 @@
         ==    ==
     (fond way hyp)
   ::
+  ++  fend
+    |=  [way=vial hyp=wing]
+    ^-  (pair type axis)
+    =+  fid=(find way hyp)
+    ~>  %mean.'fend-fragment'
+    ?>  &(?=(%& -.fid) ?=(%& -.q.p.fid))
+    [p.q.p.fid (tend p.p.fid)]
+  ::
   ++  fund
     ~/  %fund
     |=  [way=vial gen=hoon]
@@ -9690,14 +9713,13 @@
     ?:  ?=([%wtts *] gen)
       (cool how q.gen (play ~(example ax p.gen)))
     ?:  ?=([%wthx *] gen)
-      =+  (play %wing q.gen)
-      ~>  %slog.[0 [%leaf "chipping"]]
-      ?:  how
-        =-  ~>  %slog.[0 (dunk(sut +<) 'chip: gain: ref')]
-            ~>  %slog.[0 (dunk(sut -) 'chip: gain: gain')]
-            -
-        ~(gain ar - p.gen)
-      ~(lose ar - p.gen)
+      =+  fid=(find %both q.gen)
+      ?-  -.fid
+        %|  sut
+        %&  =<  q
+            %+  take  p.p.fid
+            |=(a=type ?:(how ~(gain ar a p.gen) ~(lose ar a p.gen)))
+      ==
     ?:  ?&(how ?=([%wtpm *] gen))
       |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
     ?:  ?&(!how ?=([%wtbr *] gen))
@@ -9983,10 +10005,8 @@
     ::
         [%wthx *]
       :-  (nice bool)
-      =+  fid=(find %read [[%& 1] q.gen])
-      ~>  %mean.'mint-fragment'
-      ?>  &(?=(%& -.fid) ?=(%& -.q.p.fid))
-      (~(fish ar `type`p.q.p.fid `skin`p.gen) (tend p.p.fid))
+      =+  fid=(fend %read [[%& 1] q.gen])
+      (~(fish ar `type`p.fid `skin`p.gen) q.fid)
     ::
         [%fits *]
       :-  (nice bool)
@@ -10173,12 +10193,8 @@
     ::
         [%wthx *]
       ~>  %mean.'mull-bonk-x'
-      =+  :-  =+  (find %read [[%& 1] q.gen])
-              ?>  &(?=(%& -.-) ?=(%& -.q.p.-))
-              new=[type=p.q.p.- axis=(tend p.p.-)]
-          =+  (find(sut dox) %read [%& 1] q.gen)
-          ?>  &(?=(%& -.-) ?=(%& -.q.p.-))
-          old=[type=p.q.p.- axis=(tend p.p.-)]
+      =+  :-  new=[type=p axis=q]:(fend %read [[%& 1] q.gen])
+          old=[type=p axis=q]:(fend(sut dox) %read [[%& 1] q.gen])
       ?>  =(axis.old axis.new)
       ?>  (nest(sut type.old) & type.new)
       (beth bool)
@@ -13107,6 +13123,12 @@
                   |=  [%cnhp a=hoon b=spec]
                   [%make a b ~]
                 (rune hep %cnhp exqd)
+            ::
+                :-  '.'
+                %+  cook
+                  |=  [%cndt a=spec b=hoon]
+                  [%make b a ~]
+                (rune dot %cndt exqc)
             ::
                 :-  ':'
                 %+  cook

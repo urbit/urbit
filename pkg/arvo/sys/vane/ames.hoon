@@ -5089,7 +5089,7 @@
     |=  ames-state=ames-state-5
     ^-  ames-state-6
     :_  +.ames-state
-    %-  ~(rut by peers.ames-state)
+    %-  ~(urn by peers.ames-state)
     |=  [=ship ship-state=ship-state-5]
     ^-  ship-state-6
     ?.  ?=(%known -.ship-state)
@@ -5252,7 +5252,7 @@
       %=  ship-state
         snd    (~(run by snd.ship-state) message-pump-16-to-17)
         keens  (~(run by keens.ship-state) keen-state-16-to-17)
-        rcv    (~(rut by rcv.ship-state) remove-outbound-naxplanations)
+        rcv    (~(urn by rcv.ship-state) remove-outbound-naxplanations)
       ==
       ::
       ++  message-pump-16-to-17
