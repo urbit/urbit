@@ -1536,6 +1536,29 @@
     ::
     a(r $(a r.a))
   ::
+  ++  jub
+    ~/  %jub
+    |*  [b=* fun=$-((unit _?>(?=(^ a) q.n.a)) (unit _?>(?=(^ a) q.n.a)))]
+    =>  .(b ^+(?>(?=(^ a) p.n.a) b))
+    |-  ^-  (tree _?>(?=(^ a) n.a))
+    ?~  a
+      ?~(c=(fun ~) ~ [[b u.c] ~ ~])
+    ?:  =(b p.n.a)
+      ?~  c=(fun `q.n.a)  (del(a ^+($ a)) b)
+      ?:  =(q.n.a u.c)  a
+      a(n [b u.c])
+    ?:  (gor b p.n.a)
+      =+  d=$(a l.a)
+      ?~  d  (put(a r.a) n.a)
+      ?:  (mor p.n.a p.n.d)
+        a(l d)
+      d(r a(l r.d))
+    =+  d=$(a r.a)
+    ?~  d  (put(a l.a) n.a)
+    ?:  (mor p.n.a p.n.d)
+      a(r d)
+    d(l a(r l.d))
+  ::
   ++  mar                                               ::  add with validation
     |*  [b=* c=(unit *)]
     ?~  c
