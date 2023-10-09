@@ -1023,7 +1023,7 @@
       (error-response 405 "may only GET scries")
     =/  req  (parse-request-line url.request)
     =/  fqp  (fully-qualified site.req)
-    =/  mym  (scry-mime now rof ext.req site.req)
+    =/  mym  (scry-mime now tick rof ext.req site.req)
     ?:  ?=(%| -.mym)  (error-response 500 p.mym)
     =*  mime  p.mym
     %-  handle-response
@@ -1153,7 +1153,7 @@
     ^-  (quip move server-state)
     ::  if the agent isn't running, we synchronously serve a 503
     ::
-    ?.  !<(? q:(need (need (rof ~ /eyre %gu [our app da+now] /$))))
+    ?.  !<(? q:(need (need (rof ~ /eyre |+[%gu [our app da+now ud+tick] /$]))))
       %^  return-static-data-on-duct  503  'text/html'
       %:  error-page
         503
@@ -3302,7 +3302,7 @@
   /(scot %p ship)/[app]/(scot %p from)
 ::
 ++  scry-mime
-  |=  [now=@da rof=roof ext=(unit @ta) pax=path]
+  |=  [now=@da tick=@ud rof=roof ext=(unit @ta) pax=path]
   |^  ^-  (each mime tape)
   ::  parse
   ::
@@ -3315,7 +3315,7 @@
   ?~  u  [%| "invalid scry path"]
   ::  perform scry
   ::
-  ?~  res=(rof ~ /eyre u.u)  [%| "failed scry"]
+  ?~  res=(rof ~ /eyre &+u.u)  [%| "failed scry"]
   ?~  u.res                  [%| "no scry result"]
   =*  mark   p.u.u.res
   =*  vase   q.u.u.res
@@ -3344,7 +3344,7 @@
         %c
       [%& q.beam]
         %g
-      =/  res  (rof ~ /eyre %gd [our q.beam da+now] /$)
+      =/  res  (rof ~ /eyre |+[%gd [our q.beam da+now ud+tick] /$])
       ?.  ?=([~ ~ *] res)
         [%| "no desk for app {<q.beam>}"]
       [%& !<(=desk q.u.u.res)]
@@ -3354,7 +3354,7 @@
     |=  [=vase from=mark to=mark =desk]
     ^-  (each ^vase tape)
     ?:  =(from to)  [%& vase]
-    =/  tub  (rof ~ /eyre %cc [our desk da+now] /[from]/[to])
+    =/  tub  (rof ~ /eyre |+[%cc [our desk da+now ud+tick] /[from]/[to]])
     ?.  ?=([~ ~ %tube *] tub)
       [%| "no tube from {(trip from)} to {(trip to)}"]
     =/  tube  !<(tube:clay q.u.u.tub)
@@ -4189,7 +4189,7 @@
       ``noun+!>(u.val)
     ::
         [%'_~_' *]
-      =/  mym  (scry-mime now rof (deft:de-purl:html tyl))
+      =/  mym  (scry-mime now tick rof (deft:de-purl:html tyl))
       ?:  ?=(%| -.mym)  [~ ~]
       ``noun+!>(p.mym)
     ==
