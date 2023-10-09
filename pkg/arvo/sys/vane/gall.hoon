@@ -104,26 +104,10 @@
           ken=(jug spar:ames wire)
   ==  ==
 ::
-+$  path-state
-  $:  bob=(unit @ud)
-      fan=((mop @ud (pair @da (each page @uvI))) lte)
-  ==
-::
 ++  on-path  ((on @ud (pair @da (each page @uvI))) lte)
 ::  $blocked-move: enqueued move to an agent
 ::
 +$  blocked-move  [=duct =routes move=(each deal unto)]
-::  $stats: statistics
-::
-::    change: how many moves this agent has processed
-::    eny: entropy
-::    time: date of current event processing
-::
-+$  stats  [change=@ud eny=@uvJ time=@da]
-::  $ames-response: network response message (%boon)
-::
-::    %d: fact
-::    %x: quit
 ::
 +$  ames-response
   $%  [%d =mark noun=*]
@@ -173,25 +157,6 @@
       =bug
       leaves=(unit [=duct =wire date=@da])
   ==
-::  $egg: migratory agent state; $yoke with .old-state instead of .agent
-::
-+$  egg
-  $%  [%nuke sky=(map spur @ud)]
-      $:  %live
-          control-duct=duct
-          run-nonce=@t
-          sub-nonce=@
-          =stats
-          =bitt
-          =boat
-          =boar
-          code=~
-          old-state=[%| vase]
-          =beak
-          marks=(map duct mark)
-          sky=(map spur path-state)
-          ken=(jug spar:ames wire)
-  ==  ==
 --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
@@ -2339,6 +2304,24 @@
     ?~  nonce=(~(get by boar.u.yok) [wire ship term])
       [~ ~]
     [~ ~ atom+!>(u.nonce)]
+  ::
+  ?:  ?&  =(%v care)
+          =([%$ %da now] coin)
+          =(our ship)
+      ==
+    =/  yok  (~(get by yokes.state) dap)
+    ?.  ?=([~ %live *] yok)
+      [~ ~]
+    =/  =egg
+      %=    u.yok
+          code   ~
+          agent
+        :-  %|
+        ?:  ?=(%| -.agent.u.yok)
+          p.agent.u.yok
+        on-save:p.agent.u.yok
+      ==
+    ``noun+!>([-:*spore egg])
   ::
   ?:  ?&  =(%w care)
           =([%$ %da now] coin)
