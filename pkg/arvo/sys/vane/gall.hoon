@@ -2363,6 +2363,17 @@
         !=(path spur)
     ==
   ::
+  ?:  ?&  =(%y care)
+          =(~ path)
+          =([%$ %da now] coin)
+          =(our ship)
+      ==
+    :+  ~  ~
+    :-  %yokes  !>  ^+  yokes.state
+    %-  ~(rep by yokes.state)
+    |=  [[=dude =yoke] acc=_yokes.state]
+    ?:(?=(%live -.yoke) acc (~(del by acc) dude))
+  ::
   ?:  ?&  =(%z care)
           =(our ship)
       ==

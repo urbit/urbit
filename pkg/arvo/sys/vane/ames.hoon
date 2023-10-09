@@ -3236,13 +3236,14 @@
         ++  on-memo
           |=  [=bone payload=* valence=?(%plea %boon)]
           ^+  peer-core
+          =+  log="ames: ({<her>}) ignoring {<valence>} on "
           ?:  ?&  (~(has in closing.peer-state) bone)
                   !=(payload [%$ /flow %cork ~])
               ==
-            ~>  %slog.0^leaf/"ames: ignoring message on closing bone {<bone>}"
+            ~>  %slog.0^leaf/(weld log "closing bone {<bone>}")
             peer-core
           ?:  (~(has in corked.peer-state) bone)
-            ~>  %slog.0^leaf/"ames: ignoring message on corked bone {<bone>}"
+            ~>  %slog.0^leaf/(weld log "corked bone {<bone>}")
             peer-core
           ::
           =/  =message-blob  (dedup-message (jim payload))
