@@ -102,26 +102,10 @@
           ken=(jug spar:ames wire)
   ==  ==
 ::
-+$  path-state
-  $:  bob=(unit @ud)
-      fan=((mop @ud (pair @da (each page @uvI))) lte)
-  ==
-::
 ++  on-path  ((on @ud (pair @da (each page @uvI))) lte)
 ::  $blocked-move: enqueued move to an agent
 ::
 +$  blocked-move  [=duct =routes move=(each deal unto)]
-::  $stats: statistics
-::
-::    change: how many moves this agent has processed
-::    eny: entropy
-::    time: date of current event processing
-::
-+$  stats  [change=@ud eny=@uvJ time=@da]
-::  $ames-response: network response message (%boon)
-::
-::    %d: fact
-::    %x: quit
 ::
 +$  ames-response
   $%  [%d =mark noun=*]
@@ -170,25 +154,6 @@
       blocked=(map term (qeu blocked-move))
       =bug
   ==
-::  $egg: migratory agent state; $yoke with .old-state instead of .agent
-::
-+$  egg
-  $%  [%nuke sky=(map spur @ud)]
-      $:  %live
-          control-duct=duct
-          run-nonce=@t
-          sub-nonce=@
-          =stats
-          =bitt
-          =boat
-          =boar
-          code=~
-          old-state=[%| vase]
-          =beak
-          marks=(map duct mark)
-          sky=(map spur path-state)
-          ken=(jug spar:ames wire)
-  ==  ==
 --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
