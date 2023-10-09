@@ -1553,7 +1553,7 @@
         ;;(waif q.p.task)
       ::
       =.  way  (grow way)
-      %+  push  `germ`[way [[bar duct] bars.gem] tick.gem say.gem]
+      %+  push  `germ`[way [[bar duct] bars.gem] *@ud *rook]
       ~|  bar-stack=`(list ^duct)`[duct (turn bars.gem tail)]
       %.  task
       call:(spin:(plow way) duct eny dud)
@@ -1571,7 +1571,7 @@
       ::  the caller was a vane
       ::
       =.  way  (grow way)
-      %+  push  `germ`[way [[bar duct] bars.gem] tick.gem say.gem]
+      %+  push  `germ`[way [[bar duct] bars.gem] *@ud *rook]
       ::
       ::  cons source onto .gift to make a $sign
       ::
@@ -1587,10 +1587,7 @@
       =^  moz  sac
         (~(refine-moves me sac vil) zom)
       =.  van.mod  (~(put by van.mod) vane.gum [vax sac])
-      ::  TODO cleanup
-      ::
-      =/  pek  peek:.(tick.gem +(tick.gem))
-      (emit `plan`[`germ`gum(tick +(tick.gum), say pek) `(list move)`moz])
+      (emit [gum(tick +(tick.gem), say peek(tick.gem +(tick.gem))) moz])
     ::  +plow: operate on a vane, in time and space
     ::
     ++  plow
