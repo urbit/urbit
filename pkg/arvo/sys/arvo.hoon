@@ -1390,6 +1390,8 @@
         loop(hed.run t.hed.run, neb 15)
       =.  dud  ~
       =.  gem  p.i.hed.run
+      =?  say.gem  =(0 tick.gem)
+        peek
       =^  mov=move  q.i.hed.run  q.i.hed.run
       loop:(step mov)
     ::  +step: advance the loop one step by routing a move
@@ -1513,10 +1515,6 @@
         ?:  ?=(%& -.o)
           [p.o ~]
         [(omer-to-omen p.o) `r.bam.p.o]
-      ::  TODO
-      ::
-      ~&  >>>  [%cose q.o %tick tick.gem]
-      ::
       ?:  ?&  ?=(^ q.o)
               !=(+.+.u.q.o tick.gem)
           ==
@@ -1589,7 +1587,10 @@
       =^  moz  sac
         (~(refine-moves me sac vil) zom)
       =.  van.mod  (~(put by van.mod) vane.gum [vax sac])
-      (emit `plan`[`germ`gum(tick +(tick.gum), say peek) `(list move)`moz])
+      ::  TODO cleanup
+      ::
+      =/  pek  peek:.(tick.gem +(tick.gem))
+      (emit `plan`[`germ`gum(tick +(tick.gum), say pek) `(list move)`moz])
     ::  +plow: operate on a vane, in time and space
     ::
     ++  plow
