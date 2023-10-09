@@ -4315,8 +4315,12 @@
         :-  -:!>(*(map lobe page))
         ^-  (map lobe page)
         %-  %~  rep  in
-            %-  reachable-takos
-            (~(got by hit.dom) let.dom)
+            |-  ^-  (set tako)
+            =/  ts=(set tako)
+              %-  reachable-takos
+              (~(got by hit.dom) let.dom)
+            ?:  (lte let.dom 1)  ts
+            (~(uni in ts) $(let.dom (dec let.dom)))
         |=  [t=tako o=(map lobe page)]
         %-  ~(gas by o)
         %+  turn
@@ -4533,7 +4537,12 @@
       ?.  ?|  =(0v0 tak)
           ?&  (~(has by hut.ran) tak)
               ?|  (~(any by hit.dom) |=(=tako =(tak tako)))  ::  fast-path
-                  (~(has in (reachable-takos (aeon-to-tako:ze let.dom))) tak)
+                  |-  ^-  ?
+                  ?:  (lte let.dom 1)
+                    %.n
+                  ?|  (~(has in (reachable-takos (aeon-to-tako:ze let.dom))) tak)
+                      $(let.dom (dec let.dom))
+                  ==
               ==
               |(?=(~ for) (may-read u.for care.mun tak path.mun))
           ==  ==

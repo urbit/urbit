@@ -306,6 +306,7 @@
               0xb.130c.ab37.ca24.49cd.aecb.23ba.70f1.6f1c.4d00.124e.c9a5.
               3413.3843.d81c.47c4.7040.6e62.3700.0200.0132.e1ab.9000
           ==
+          :-  ~[/ames]  [%pass /pump/~bud/0 %b %wait ~1111.1.5..00.02.00]
       ==
     ==
   ::  publisher ames hears %kick ack
