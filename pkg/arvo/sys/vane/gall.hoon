@@ -276,6 +276,21 @@
     ?:  ?=(%nuke -.q.i.apps)  $(apps t.apps)
     =/  ap-core  (ap-yoke:ap p.i.apps [~ our prov] q.i.apps)
     $(apps t.apps, mo-core ap-abet:(ap-rake:ap-core all))
+  ::  +mo-lave: delete all incoming stale subscriptions
+  ::
+  ++  mo-lave
+    |=  [prov=path subs=(list [v=?(%g %a) =ship =dude =duct])]
+    ^+  mo-core
+    |-  ^+  mo-core
+    ?~  subs  mo-core
+    ?~  yoke=(~(get by yokes.state) dude.i.subs)
+      mo-core
+    =?  mo-core  ?=(%live -.u.yoke)
+      =/  =routes  [disclosing=~ attributing=[ship.i.subs prov]]
+      =<  ap-abet
+      %.  [v duct]:i.subs
+      ap-lave:(ap-abed:ap dude.i.subs routes)
+    $(subs t.subs)
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
@@ -1733,6 +1748,22 @@
         =/  sat  !<(ship-state:ames q.u.u.sky)
         ?>(?=(%known -.sat) (some +.sat))
       --
+    ::  +ap-lave: delete stale incoming subscriptions in %gall
+    ::
+    ++  ap-lave
+      |=  [v=?(%a %g) =duct]
+      ^+  ap-core
+      =/  in=(list [=^duct =^ship =path])  ~(tap by bitt.yoke)
+      |-  ^+  ap-core
+      ?~  in  ap-core
+      =?  ap-core  =(duct duct.i.in)
+        =/  core
+          ?-  v
+            %g  ap-load-delete(agent-duct duct.i.in)
+            %a  ap-kill-up(agent-duct duct.i.in)
+          ==
+        core(agent-duct agent-duct)
+      $(in t.in)
     ::  +ap-mule: run virtualized with intercepted scry, preserving type
     ::
     ::    Compare +mute and +mule.  Those pass through scry, which
@@ -1970,6 +2001,7 @@
       %nuke  mo-abet:(mo-nuke:mo-core prov dude.task)
       %doff  mo-abet:(mo-doff:mo-core prov +.task)
       %rake  mo-abet:(mo-rake:mo-core prov +.task)
+      %lave  mo-abet:(mo-lave:mo-core prov +.task)
       %spew  mo-abet:(mo-spew:mo-core veb.task)
       %sift  mo-abet:(mo-sift:mo-core dudes.task)
       %trim  [~ gall-payload]

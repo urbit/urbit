@@ -242,10 +242,9 @@
   (emit %pass /helm %arvo %g %spew veb)
 ::
 ++  poke-gall-lave
-  |=  [dry=? hen=(list duct)]  =<  abet
-  ::?:  dry
-     this
-  ::(emit %pass /helm %arvo %g %lave hen)
+  |=  [dry=? subs=(list [?(%g %a) ship term duct])]  =<  abet
+  ?:  dry  this
+  (emit %pass /helm %arvo %g %lave subs)
 ::
 ++  poke-ames-wake
   |=  ~  =<  abet

@@ -3552,6 +3552,7 @@
           ++  abed
             |=  b=^bone
             pump(bone b, state (~(gut by snd.peer-state) b *message-pump-state))
+          ::
           ++  abet
             ::  if the bone was corked, it's been removed from the state,
             ::  so we avoid adding it again.
@@ -5503,18 +5504,34 @@
       [%rift ~]
     ``noun+!>(rift.ames-state)
   ::
-      [%corked her=@ ~]
+      [%corked her=@ req=*]
     =/  who  (slaw %p her.tyl)
     ?~  who  [~ ~]
     =/  per  (~(get by peers.ames-state) u.who)
     ?.  ?=([~ %known *] per)  [~ ~]
-    ``noun+!>(corked.u.per)
+    ?+  req.tyl  [~ ~]
+        ~
+      ``noun+!>(corked.u.per)
+    ::
+        [bone=@ ~]
+      ?~  bone=(slaw %ud bone.req.tyl)
+        [~ ~]
+      ``atom+!>((~(has in corked.u.per) u.bone))
+    ==
   ::
-      [%closing her=@ ~]
+      [%closing her=@ req=*]
     =/  who  (slaw %p her.tyl)
     ?~  who  [~ ~]
     =/  per  (~(get by peers.ames-state) u.who)
     ?.  ?=([~ %known *] per)  [~ ~]
-    ``noun+!>(closing.u.per)
+    ?+  req.tyl  [~ ~]
+        ~
+      ``noun+!>(closing.u.per)
+    ::
+        [bone=@ ~]
+      ?~  bone=(slaw %ud bone.req.tyl)
+        [~ ~]
+      ``atom+!>((~(has in closing.u.per) u.bone))
+    ==
   ==
 --

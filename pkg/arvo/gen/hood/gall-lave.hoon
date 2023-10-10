@@ -3,49 +3,80 @@
 ::    It runs in dry mode by default, printing the number of stale subscriptions
 ::    To actually delete the subscriptions, run with |gall-lave, =dry |
 ::
+::    |gall-lave, =veb %1  :: for each subscription path, print bone info
+::    |gall-lave, =veb %2  :: number of stale subscriptions per agent
+::    |gall-lave, =veb %3  :: flows already handled by %ames
+::    |gall-lave, =veb %31 :: ... already in closing
+::    |gall-lave, =veb %32 :: ... already corked
+::
 /=  gall-raw  /sys/vane/gall
 ::
 =>  |%
-    +$  subs  (jar [@ta path] [duct bone])
+    +$  flow  [=bone closing=? corked=? =ship agent=term =duct]
+    +$  subs  (jar [@ta path] flow)
+    +$  veb   ?(%1 %2 %3 %31 %32 %4 %x)
     --
 ::
 :-  %say
-|=  [[now=@da eny=@uvJ bec=beak] arg=~ peer=(unit @p) dry=? veb=?(%1 %2 %3 %x)]
+|=  [[now=@da eny=@uvJ bec=beak] arg=~ peer=(unit @p) dry=? =veb]
 ::
 =/  our-gall  (gall-raw p.bec)
 =/  gall-yokes
   .^((map dude:gall yoke:our-gall) %gy /(scot %p p.bec)//(scot %da now)/$)
-=;  ducts=(list [duct bone])
+=;  flows=(list flow)
   :-  %helm-gall-lave
-  ~?  dry  "#{<(lent ducts)>} stale incoming subscriptions"
-  ~?  ?=(%1 veb)  ducts
-  dry^~
+  ~?  dry  "#{<(lent flows)>} stale incoming subscriptions"
+  ~?  =(veb %3)
+    =;  ames-corks=@
+      "#{<(sub (lent flows) ames-corks)>} only in gall"
+    %+  roll  flows
+    |=  [flow acc=@]
+    ?.(|(closing corked) acc +(acc))
+  ~?  =(veb %31)
+    =;  ames-corks=@
+      "#{<ames-corks>} in closing"
+    (roll flows |=([flow acc=@] ?.(closing acc +(acc))))
+  ~?  =(veb %32)
+    =;  ames-corks=@
+      "#{<ames-corks>} flows already corked"
+    (roll flows |=([flow acc=@] ?.(corked acc +(acc))))
+  :-  dry
+  ::  a %g tag signals that the subscription exists only in %gall
+  ::  tagging it with %a signals that the flow also exists in %ames
+  ::
+  (turn flows |=(flow :_(ship^agent^duct ?:(|(closing corked) %a %g))))
 ::
 %+  roll  ~(tap by gall-yokes)
-|=  [[=dude:gall =yoke:our-gall] ducts=(list [duct bone])]
+|=  [[=dude:gall =yoke:our-gall] ducts=(list flow)]
 |^
 %-  ~(rep by incoming)
-|=  [[[app=@ta =path] ducts=(list [duct bone])] d=_ducts]
+|=  [[[app=@ta =path] ducts=(list flow)] d=_ducts]
 ?.  (gth (lent ducts) 1)  d
 %+  weld  d
 =-  ~?  ?=(%2 veb)  "{<(lent -)>} stale subscriptions {<[app=app path]>}"
-    ~?  ?=(%3 veb)  "{<(turn - |=([duct =bone] app=app^path^bone))>}"
+    ~?  ?=(%1 veb)  (turn - |=(flow "{<ship^app^bone^c=closing^k=corked>}"))
     -
 ::  latest bone (i.e. subscription) is in the head
 ::
 %-  tail
-(sort ducts |=([a=[duct bone] b=[duct bone]] (gth +.a +.b)))
+(sort ducts |=([a=flow b=flow] (gth -.a -.b)))
 ::
 ++  incoming
   ?>  ?=(%live -.yoke)
   %+  roll  ~(tap by bitt.yoke)
-  |=  [[=duct =ship =path] subs=(jar [@ta path] [duct bone])]
+  |=  [[=duct =ship =path] =subs]
   ?:  &(?=(^ peer) !=(u.peer ship))
     subs
   ?.  ?=([[%gall %sys %req @ @ *] [%ames %bone @ @ @ *] *] duct)
     subs
-  =*  app   &5:i.duct
-  =*  rift  &4:i.t.duct
-  =*  bone  &5:i.t.duct
-  (~(add ja subs) [`@ta`app path] [duct (slav %ud bone)])
+  =*  app    &5:i.duct
+  =*  rift   &4:i.t.duct
+  =/  =bone  (slav %ud &5:i.t.duct)
+  =/  scry
+    |=  =term
+    /(scot %p p.bec)//(scot %da now)/[term]/(scot %p ship)/(scot %ud bone)
+  =+  .^(closing=? %ax (scry %closing))
+  =+  .^(corked=? %ax (scry %corked))
+  %+  ~(add ja subs)  [`@ta`app path]
+  [bone closing corked ship app=&5:i.duct duct]
 --
