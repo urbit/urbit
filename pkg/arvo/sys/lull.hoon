@@ -2728,6 +2728,33 @@
   +$  bitt  (map duct (pair ship path))                 ::  incoming subs
   +$  boat  (map [=wire =ship =term] [acked=? =path])   ::  outgoing subs
   +$  boar  (map [=wire =ship =term] nonce=@)           ::  and their nonces
+  ::
+  +$  path-state
+    $:  bob=(unit @ud)
+        fan=((mop @ud (pair @da (each page @uvI))) lte)
+    ==
+  +$  stats                                             ::  statistics
+    $:  change=@ud                                      ::  processed move count
+        eny=@uvJ                                        ::  entropy
+        time=@da                                        ::  current event time
+    ==
+  +$  egg                                               ::  migratory agent state
+    $%  [%nuke sky=(map spur @ud)]                      ::  see /sys/gall $yoke
+        $:  %live
+            control-duct=duct
+            run-nonce=@t
+            sub-nonce=@
+            =stats
+            =bitt
+            =boat
+            =boar
+            code=~
+            old-state=[%| vase]
+            =beak
+            marks=(map duct mark)
+            sky=(map spur path-state)
+            ken=(jug spar:ames wire)
+    ==  ==
   +$  bowl                                              ::  standard app state
     $:  $:  our=ship                                    ::  host
             src=ship                                    ::  guest
