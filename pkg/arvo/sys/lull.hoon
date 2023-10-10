@@ -2754,6 +2754,7 @@
             sky=(map spur path-state)
             ken=(jug spar:ames wire)
     ==  ==
+  +$  egg-any  $%([%15 egg])
   +$  bowl                                              ::  standard app state
     $:  $:  our=ship                                    ::  host
             src=ship                                    ::  guest
