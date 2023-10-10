@@ -1327,6 +1327,7 @@
             run=(deq plan)
             out=(list ovum)
             neb=_15
+            tic=_0
             gem=germ
             dud=(unit goof)
             $=  but  %-  unit
@@ -1587,7 +1588,8 @@
       =^  moz  sac
         (~(refine-moves me sac vil) zom)
       =.  van.mod  (~(put by van.mod) vane.gum [vax sac])
-      (emit [gum(tick +(tick.gem), say peek(tick.gem +(tick.gem))) moz])
+      =.  tic  +(tic)
+      (emit [gum(tick tic, say peek(tick.gem tic)) moz])
     ::  +plow: operate on a vane, in time and space
     ::
     ++  plow
