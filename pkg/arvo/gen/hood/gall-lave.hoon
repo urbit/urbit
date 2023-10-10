@@ -5,9 +5,9 @@
 ::
 ::    |gall-lave, =veb %1  :: for each subscription path, print bone info
 ::    |gall-lave, =veb %2  :: number of stale subscriptions per agent
-::    |gall-lave, =veb %3  :: flows already handled by %ames
-::    |gall-lave, =veb %31 :: ... already in closing
-::    |gall-lave, =veb %32 :: ... already corked
+::    |gall-lave, =veb %3  :: subscription only present in %gall
+::    |gall-lave, =veb %31 :: ... since N are already in closing in %ames
+::    |gall-lave, =veb %32 :: ... since N are already corked in %ames
 ::
 /=  gall-raw  /sys/vane/gall
 ::
@@ -28,7 +28,7 @@
   ~?  dry  "#{<(lent flows)>} stale incoming subscriptions"
   ~?  =(veb %3)
     =;  ames-corks=@
-      "#{<(sub (lent flows) ames-corks)>} only in gall"
+      "#{<ames-corks>} only in %gall (closing or corked in %ames)"
     %+  roll  flows
     |=  [flow acc=@]
     ?.(|(closing corked) acc +(acc))
