@@ -2023,11 +2023,11 @@
             %-  (slog leaf+"ames: turning off dead flow consolidation" ~)
             =.  event-core
               (emit:event-core duct.u.ded %pass wire.u.ded %b %rest date.u.ded)
-            (wake-dead-flows:event-core %.n ~)
+            (wake-dead-flows:event-core ~)
           ::
           %-  (slog leaf+"ames: switching to dead flow consolidation" ~)
           =;  cor=event-core
-            (wake-dead-flows:cor %.y ~)
+            set-dead-flow-timer:(wake-dead-flows:cor ~)
           %-  ~(rep by peers.ames-state:event-core)
           |=  [[=ship =ship-state] core=_event-core]
           ^+  event-core
@@ -2481,27 +2481,26 @@
         ++  cork-bone  |=(=bone abet:(on-cork-flow:peer-core bone))
         ++  kill-bone  |=(=bone abet:(on-kill-flow:peer-core bone))
         --
-      :: +wake-dead-flow: call on-wake on all dead flows, optionally setting new
-      ::                  dead flow timer
+      :: +set-dead-flow-timer: set dead flow timer and corresponding ames state
       ::
-      ++  wake-dead-flows
-        |=  [set-new-timer=? error=(unit tang)]
+      ++  set-dead-flow-timer
         ^+  event-core
         =.  flow.dead.ames-state.event-core
-          ?.  set-new-timer
-            flow/~
           flow/`[~[/ames] /dead-flow `@da`(add now ~m2)]
-        =.  event-core
-          ?.  set-new-timer
-            event-core
-          (emit:event-core ~[/ames] %pass /dead-flow %b %wait `@da`(add now ~m2))
+        (emit:event-core ~[/ames] %pass /dead-flow %b %wait `@da`(add now ~m2))
+      :: +wake-dead-flows: call on-wake on all dead flows, discarding any
+      ::                   ames-state changes
+      ::
+      ++  wake-dead-flows
+        |=  [error=(unit tang)]
+        ^+  event-core
         %-  ~(rep by peers.ames-state:event-core)
         |=  [[=ship =ship-state] core=_event-core]
         ^+  event-core
         =/  peer-state=(unit peer-state)  (get-peer-state:core ship)
         ?~  peer-state  core
         =/  peer-core  (abed-peer:pe:core ship u.peer-state)
-        =<   abet
+        =<  abort
         ^+  peer-core
         %-  ~(rep by snd.u.peer-state)
         |=  [[=bone =message-pump-state] cor=_peer-core]
@@ -2530,7 +2529,7 @@
           (request-attestation u.ship)
         ::
         ?:  ?=([%dead-flow ~] wire)
-          (wake-dead-flows %.y error)
+          set-dead-flow-timer:(wake-dead-flows error)
         ::
         ?.  ?=([%recork ~] wire)
           =/  res=(unit ?([%fine her=ship =^wire] [%pump her=ship =bone]))
@@ -3122,6 +3121,7 @@
                channel  [[our ship] now channel-state -.peer]
           ==
         ::
+        ++  abort  event-core  :: keeps moves, discards state changes
         ++  abet
           ^+  event-core
           =.  peers.ames-state

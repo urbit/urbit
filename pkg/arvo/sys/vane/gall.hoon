@@ -147,6 +147,8 @@
 ::
 ::  $spore: structures for update, produced by +stay
 ::
+::  remember to duplicate version tag changes here to $egg-any:gall in lull
+::
 +$  spore
   $:  %15
       system-duct=duct
