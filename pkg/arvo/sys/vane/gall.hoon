@@ -42,9 +42,9 @@
 ::  $move: Arvo-level move
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
-::  $state-13: overall gall state, versioned
+::  $state-15: overall gall state, versioned
 ::
-+$  state-14  [%14 state]
++$  state-15  [%15 state]
 ::  $state: overall gall state
 ::
 ::    system-duct: TODO document
@@ -53,6 +53,7 @@
 ::    yokes: running agents
 ::    blocked: moves to agents that haven't been started yet
 ::    bug: debug printing configuration
+::    leaves: retry nacked %leaves timer, if set
 ::
 +$  state
   $:  system-duct=duct
@@ -61,6 +62,7 @@
       yokes=(map term yoke)
       blocked=(map term (qeu blocked-move))
       =bug
+      leaves=(unit [=duct =wire date=@da])
   ==
 ::  $routes: new cuff; TODO: document
 ::
@@ -102,26 +104,10 @@
           ken=(jug spar:ames wire)
   ==  ==
 ::
-+$  path-state
-  $:  bob=(unit @ud)
-      fan=((mop @ud (pair @da (each page @uvI))) lte)
-  ==
-::
 ++  on-path  ((on @ud (pair @da (each page @uvI))) lte)
 ::  $blocked-move: enqueued move to an agent
 ::
 +$  blocked-move  [=duct =routes move=(each deal unto)]
-::  $stats: statistics
-::
-::    change: how many moves this agent has processed
-::    eny: entropy
-::    time: date of current event processing
-::
-+$  stats  [change=@ud eny=@uvJ time=@da]
-::  $ames-response: network response message (%boon)
-::
-::    %d: fact
-::    %x: quit
 ::
 +$  ames-response
   $%  [%d =mark noun=*]
@@ -161,38 +147,22 @@
 ::
 ::  $spore: structures for update, produced by +stay
 ::
+::  remember to duplicate version tag changes here to $egg-any:gall in lull
+::
 +$  spore
-  $:  %14
+  $:  %15
       system-duct=duct
       outstanding=(map [wire duct] (qeu remote-request))
       contacts=(set ship)
       eggs=(map term egg)
       blocked=(map term (qeu blocked-move))
       =bug
+      leaves=(unit [=duct =wire date=@da])
   ==
-::  $egg: migratory agent state; $yoke with .old-state instead of .agent
-::
-+$  egg
-  $%  [%nuke sky=(map spur @ud)]
-      $:  %live
-          control-duct=duct
-          run-nonce=@t
-          sub-nonce=@
-          =stats
-          =bitt
-          =boat
-          =boar
-          code=~
-          old-state=[%| vase]
-          =beak
-          marks=(map duct mark)
-          sky=(map spur path-state)
-          ken=(jug spar:ames wire)
-  ==  ==
 --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
-=|  state=state-14
+=|  state=state-15
 |=  [now=@da eny=@uvJ tick=@ rof=roof]
 =*  gall-payload  .
 ~%  %gall-top  ..part  ~
@@ -220,7 +190,8 @@
   ++  mo-core  .
   ++  mo-abed  |=(hun=duct mo-core(hen hun))
   ++  mo-abet  [(flop moves) gall-payload]
-  ++  mo-give  |=(g=gift mo-core(moves [[hen give+g] moves]))
+  ++  mo-emit  |=(=move mo-core(moves [move moves]))
+  ++  mo-give  |=(=gift (mo-emit hen give+gift))
   ++  mo-talk
     |=  rup=(each suss tang)
     ^-  [wire note-arvo]
@@ -230,8 +201,8 @@
       %&  [%text "gall: {(t q)}ed %{(t p)}":[t=trip p.rup]]
       %|  [%talk leaf+"gall: failed" (flop p.rup)]
     ==
-  ++  mo-pass  |=(p=[wire note-arvo] mo-core(moves [[hen pass+p] moves]))
-  ++  mo-slip  |=(p=note-arvo mo-core(moves [[hen slip+p] moves]))
+  ++  mo-pass  |=(p=[wire note-arvo] (mo-emit hen pass+p))
+  ++  mo-slip  |=(p=note-arvo (mo-emit hen slip+p))
   ++  mo-past
     |=  =(list [wire note-arvo])
     ?~  list
@@ -370,12 +341,8 @@
     =.  outstanding.state
       =/  stand
         (~(gut by outstanding.state) [wire hen] *(qeu remote-request))
-      %+  ~(put by outstanding.state)  [wire hen]
-      (~(gas to stand) ?.(?=(%leave -.deal) ~[-.deal] ~[%leave]))
-    =.  mo-core  (mo-pass wire note-arvo)
-    ?.  ?=(%leave -.deal)
-      mo-core
-    (mo-pass wire [%a [%cork ship]])
+      (~(put by outstanding.state) [wire hen] (~(put to stand) -.deal))
+    (mo-pass wire note-arvo)
   ::  +mo-track-ship: subscribe to ames and jael for notices about .ship
   ::
   ++  mo-track-ship
@@ -529,6 +496,10 @@
     ::
     ?+    sign-arvo  !!
         [%ames %done *]
+      =/  err=(unit tang)
+        ?~  error=error.sign-arvo
+          ~
+        `[[%leaf (trip tag.u.error)] tang.u.error]
       =^  remote-request  outstanding.state
         ?~  t.t.t.wire
           =/  full-wire  sys+wire
@@ -545,29 +516,42 @@
           =^  rr  stand  ~(get to stand)
           :-  rr
           ?:  =(~ stand)
+            ::  outstanding leaves are only deleted when acked
+            ::
+            ?:  &(?=(^ err) ?=(%leave rr))
+              outstanding.state
             (~(del by outstanding.state) [full-wire hen])
           (~(put by outstanding.state) [full-wire hen] stand)
         ::  non-null case of wire is old, remove on next breach after
         ::  2019/12
         ::
         [;;(remote-request i.t.t.t.wire) outstanding.state]
-      ::
-      =/  err=(unit tang)
-        ?~  error=error.sign-arvo
-          ~
-        `[[%leaf (trip tag.u.error)] tang.u.error]
-      ::  send a %cork if we get a nack upon initial subscription
+      ::  send a %cork if we get a %nack upon initial subscription
       ::
       =?  mo-core
           &(?=(^ err) |(?=(%watch-as remote-request) ?=(%watch remote-request)))
-        (mo-pass [%sys wire] %a %cork ship)
+        (mo-pass sys+wire %a %cork ship)
       ::
       ?-  remote-request
         %watch-as  (mo-give %unto %watch-ack err)
         %watch     (mo-give %unto %watch-ack err)
         %poke      (mo-give %unto %poke-ack err)
-        %leave     mo-core
         %missing   ~>(%slog.[3 'gall: missing'] mo-core)
+        ::
+          %leave
+        ::  if we get an %ack for a %leave, send %cork. otherwise,
+        ::  the /nacked-leaves timer will re-send the %leave eventually.
+        ::
+        ?~  err
+          (mo-pass sys+wire %a %cork ship)
+        ::  if first time hearing a %nack for a %leave, after upgrade
+        ::  or if all outstanding %leaves have been handled, set up timer
+        ::
+        =?  mo-core  ?=(~ leaves.state)
+          (mo-emit [/gall]~ %pass /nacked-leaves %b %wait `@da`(add now ~m2))
+        =?  leaves.state  ?=(~ leaves.state)
+          `[[/gall]~ /nacked-leaves `@da`(add now ~m2)]
+        mo-core
       ==
     ::
         [%ames %boon *]
@@ -905,6 +889,13 @@
     ^+  mo-core
     =.  dudes.bug.state  (sy dudes)
     mo-core
+  ::
+  ++  mo-handle-nacked-leaves
+    |=  =wire
+    ^+  mo-core
+    ?>  ?=([%sys %way @ @ ~] wire)
+    (mo-pass wire %a %plea (slav %p &3.wire) %g /ge/[&4.wire] %0 %u ~)
+  ::
   ::  +ap: agent engine
   ::
   ::    An inner, agent-level core.  The sample refers to the agent we're
@@ -1548,7 +1539,7 @@
       ++  on-bad-nonce
         |=  stored-nonce=@
         %.  ap-core
-        %-  slog  :~
+        %+  trace  odd.veb.bug.state  :~
           =/  nonces  [expected=stored-nonce got=nonce]
           =/  ok  |(?=(?(%fact %kick) -.sign) =(~ p.sign))
           leaf+"{<agent-name>}: stale {<-.sign>} {<nonces>} ok={<ok>}"
@@ -1958,18 +1949,37 @@
 ::
 ++  load
   |^  |=  old=spore-any
-      =?  old  ?=(%7 -.old)  (spore-7-to-8 old)
-      =?  old  ?=(%8 -.old)  (spore-8-to-9 old)
-      =?  old  ?=(%9 -.old)  (spore-9-to-10 old)
+      =?  old  ?=(%7 -.old)   (spore-7-to-8 old)
+      =?  old  ?=(%8 -.old)   (spore-8-to-9 old)
+      =?  old  ?=(%9 -.old)   (spore-9-to-10 old)
       =?  old  ?=(%10 -.old)  (spore-10-to-11 old)
       =?  old  ?=(%11 -.old)  (spore-11-to-12 old)
       =?  old  ?=(%12 -.old)  (spore-12-to-13 old)
       =?  old  ?=(%13 -.old)  (spore-13-to-14 old)
-      ?>  ?=(%14 -.old)
+      =?  old  ?=(%14 -.old)  (spore-14-to-15 old)
+      ?>  ?=(%15 -.old)
       gall-payload(state old)
   ::
   +$  spore-any
-    $%(spore spore-7 spore-8 spore-9 spore-10 spore-11 spore-12 spore-13)
+    $%  spore
+        spore-7
+        spore-8
+        spore-9
+        spore-10
+        spore-11
+        spore-12
+        spore-13
+        spore-14
+    ==
+  +$  spore-14
+    $:  %14
+        system-duct=duct
+        outstanding=(map [wire duct] (qeu remote-request))
+        contacts=(set ship)
+        eggs=(map term egg)
+        blocked=(map term (qeu blocked-move))
+        =bug
+    ==
   +$  spore-13
     $:  %13
         system-duct=duct
@@ -2188,9 +2198,10 @@
   ::
   ++  spore-13-to-14
     |=  old=spore-13
-    ^-  spore
+    ^-  spore-14
     %=    old
         -  %14
+      ::
         blocked
       ^-  (map term (qeu blocked-move))
       %-  ~(run by blocked.old)
@@ -2203,6 +2214,12 @@
         attributing.routes  [ship=attributing.routes.blocked path=/]
       ==
     ==
+  ::  added nacked-leaves timer
+  ::
+  ++  spore-14-to-15
+    |=  old=spore-14
+    ^-  spore
+    old(- %15, bug [bug.old ~])
   --
 ::  +scry: standard scry
 ::
@@ -2292,6 +2309,24 @@
     ?~  nonce=(~(get by boar.u.yok) [wire ship term])
       [~ ~]
     [~ ~ atom+!>(u.nonce)]
+  ::
+  ?:  ?&  =(%v care)
+          =([%$ %da now] coin)
+          =(our ship)
+      ==
+    =/  yok  (~(get by yokes.state) dap)
+    ?.  ?=([~ %live *] yok)
+      [~ ~]
+    =/  =egg
+      %=    u.yok
+          code   ~
+          agent
+        :-  %|
+        ?:  ?=(%| -.agent.u.yok)
+          p.agent.u.yok
+        on-save:p.agent.u.yok
+      ==
+    ``noun+!>([-:*spore egg])
   ::
   ?:  ?&  =(%w care)
           =([%$ %da now] coin)
@@ -2414,6 +2449,24 @@
   ?:  =(/clear-huck wire)
     =/  =gift  ?>(?=([%behn %heck %gall *] syn) +>+.syn)
     [[duct %give gift]~ gall-payload]
+  ::
+  ?:  ?=([%nacked-leaves ~] wire)
+    =;  core=_mo-core:mo
+      ::  next time a %leave gets nacked, the state and timer will be set again.
+      ::
+      mo-abet:core(leaves.state ~)
+    %-  ~(rep by outstanding.state)
+    |=  [[[=^wire =^duct] stand=(qeu remote-request)] core=_mo-core:mo]
+    ?:  =(~ stand)  core
+    =^  rr  stand   ~(get to stand)
+    ::  sanity check in the outstanding queue:
+    ::  if there's a %leave, that should be the only request
+    ::
+    ~?  >>>  &(?=(%leave rr) =(^ stand))
+      "outstanding queue not empty [{<wire>} {<duct>} {<stand>}]"
+    =?  core  &(?=(%leave rr) =(~ stand))
+      (mo-handle-nacked-leaves:(mo-abed:core duct) wire)
+    core
   ::
   ~|  [%gall-take-failed wire]
   ?>  ?=([?(%sys %use) *] wire)

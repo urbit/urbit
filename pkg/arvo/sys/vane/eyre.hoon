@@ -366,6 +366,8 @@
   }
   button[type=submit] {
     margin-top: 1rem;
+  }
+  button[type=submit], a.button {
     font-size: 1rem;
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
@@ -373,6 +375,7 @@
     color: var(--white);
     border: none;
     font-weight: 600;
+    text-decoration: none;
   }
   input:invalid ~ button[type=submit] {
     border-color: currentColor;
@@ -380,7 +383,7 @@
     color: var(--gray-400);
     pointer-events: none;
   }
-  span.guest {
+  span.guest, span.guest a {
     color: var(--gray-400);
   }
   span.failed {
@@ -475,8 +478,13 @@
       ;div#local
         ;p:"Urbit ID"
         ;input(value "{(scow %p our)}", disabled "true", class "mono");
-        ;p:"Access Key"
+        ;+  ?:  =(%ours -.identity)
+              ;div
+                ;p:"Already authenticated"
+                ;a.button/"{(trip (fall redirect-url '/'))}":"Continue"
+              ==
         ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
+          ;p:"Access Key"
           ;input
             =type  "password"
             =name  "password"
@@ -519,10 +527,13 @@
           ;button(name "eauth", type "submit"):"Continue"
         ==
       ==
-      ;*  ?.  ?=(%fake -.identity)  ~
+      ;*  ?:  ?=(%ours -.identity)  ~
           =+  id=(trim 29 (scow %p who.identity))
+          =+  as="proceed as{?:(?=(%fake -.identity) " guest" "")}"
           ;+  ;span.guest.mono
-                ; Current guest identity:
+                ; Or
+                ;a/"{(trip (fall redirect-url '/'))}":"{as}"
+                ; :
                 ;br;
                 ; {p.id}
                 ;br;
@@ -1243,33 +1254,14 @@
       =/  with-eauth=(unit ?)
         ?:  =(~ eauth-url:eauth)  ~
         `?=(^ (get-header:http 'eauth' args.request-line))
-      ::  if we received a simple get: redirect if logged in, otherwise
-      ::  show login page
+      ::  if we received a simple get: show the login page
+      ::
+      ::NOTE  we never auto-redirect, to avoid redirect loops with apps that
+      ::      send unprivileged users to the login screen
       ::
       ?:  =('GET' method.request)
-        ?.  (request-is-logged-in request)
-          %^  return-static-data-on-duct  200  'text/html'
-          (login-page redirect our identity with-eauth %.n)
-        =/  session-id  (session-id-from-request request)
-        ::  session-id should always be populated here since we are logged in
-        ?~  session-id
-          %^  return-static-data-on-duct  200  'text/html'
-          (login-page redirect our identity with-eauth %.n)
-        =/  cookie-line=@t
-          (session-cookie-string u.session-id &)
-        =/  actual-redirect
-          ?~  redirect  '/'
-          ?:(=(u.redirect '') '/' u.redirect)
-        %-  handle-response
-        :*  %start
-            :-  status-code=303
-            ^=  headers
-              :~  ['location' actual-redirect]
-                  ['set-cookie' cookie-line]
-              ==
-            data=~
-            complete=%.y
-        ==
+        %^  return-static-data-on-duct  200  'text/html'
+        (login-page redirect our identity with-eauth %.n)
       ::  if we are not a post, return an error
       ::
       ?.  =('POST' method.request)
@@ -2239,12 +2231,20 @@
       [%b %rest expiration-time]
     ::  +on-get-request: handles a GET request
     ::
-    ::    GET requests open a channel for the server to send events to the
-    ::    client in text/event-stream format.
+    ::    GET requests connect to a channel for the server to send events to
+    ::    the client in text/event-stream format.
     ::
     ++  on-get-request
       |=  [channel-id=@t [session-id=@uv =identity] =request:http]
       ^-  [(list move) server-state]
+      ::  if the channel doesn't exist, we cannot serve it.
+      ::  this 404 also lets clients know if their channel was reaped since
+      ::  they last connected to it.
+      ::
+      ?.  (~(has by session.channel-state.state) channel-id)
+        %^  return-static-data-on-duct  404  'text/html'
+        (error-page 404 | url.request ~)
+      ::
       =/  mode=?(%json %jam)
         (find-channel-mode %'GET' header-list.request)
       =^  [exit=? =wall moves=(list move)]  state
@@ -2254,23 +2254,14 @@
           ?~  maybe-raw-header=(get-header:http 'last-event-id' header-list.request)
             ~
           (rush u.maybe-raw-header dum:ag)
-        ::  if the channel doesn't exist yet, simply instantiate it here
-        ::
-        ?~  maybe-channel=(~(get by session.channel-state.state) channel-id)
-          =-  [[| ~ ~] state(session.channel-state -)]
-          %+  ~(put by session.channel-state.state)  channel-id
-          ::NOTE  some other fields initialized at the end of this arm
-          %*  .  *channel
-            identity  identity
-            next-id   (fall maybe-last-event-id 0)
-            last-ack  now
-          ==
-        ::  if the channel does exist, we put some demands on the get request,
-        ::  and may need to do some cleanup for prior requests.
+        =/  channel
+          (~(got by session.channel-state.state) channel-id)
+        ::  we put some demands on the get request, and may need to do some
+        ::  cleanup for prior requests.
         ::
         ::  find the channel creator's identity, make sure it matches
         ::
-        ?.  =(identity identity.u.maybe-channel)
+        ?.  =(identity identity.channel)
           =^  mos  state
             %^  return-static-data-on-duct  403  'text/html'
             (error-page 403 | url.request ~)
@@ -2279,34 +2270,34 @@
         ::
         ::TODO  or could we change that on the spot, given that only a single
         ::      request will ever be listening to this channel?
-        ?.  =(mode mode.u.maybe-channel)
+        ?.  =(mode mode.channel)
           =^  mos  state
             %^  return-static-data-on-duct  406  'text/html'
             =;  msg=tape  (error-page 406 %.y url.request msg)
-            "channel already established in {(trip mode.u.maybe-channel)} mode"
+            "channel already established in {(trip mode.channel)} mode"
           [[& ~ mos] state]
         ::  when opening an event-stream, we must cancel our timeout timer
         ::  if there's no duct already bound. else, kill the old request,
         ::  we will replace its duct at the end of this arm
         ::
         =^  cancel-moves  state
-          ?:  ?=([%& *] state.u.maybe-channel)
+          ?:  ?=([%& *] state.channel)
             :_  state
-            (cancel-timeout-move channel-id p.state.u.maybe-channel)^~
+            (cancel-timeout-move channel-id p.state.channel)^~
           =.  duct-to-key.channel-state.state
-            (~(del by duct-to-key.channel-state.state) p.state.u.maybe-channel)
+            (~(del by duct-to-key.channel-state.state) p.state.channel)
           =/  cancel-heartbeat
-            ?~  heartbeat.u.maybe-channel  ~
+            ?~  heartbeat.channel  ~
             :_  ~
             %+  cancel-heartbeat-move  channel-id
-            [date duct]:u.heartbeat.u.maybe-channel
+            [date duct]:u.heartbeat.channel
           =-  [(weld cancel-heartbeat -<) ->]
-          (handle-response(duct p.state.u.maybe-channel) [%cancel ~])
+          (handle-response(duct p.state.channel) [%cancel ~])
         ::  flush events older than the passed in 'Last-Event-ID'
         ::
         =?  state  ?=(^ maybe-last-event-id)
           (acknowledge-events channel-id u.maybe-last-event-id)
-        ::TODO  that did not remove them from the u.maybe-channel queue though!
+        ::TODO  that did not remove them from the channel queue though!
         ::      we may want to account for maybe-last-event-id, for efficiency.
         ::      (the client _should_ ignore events it heard previously if we do
         ::      end up re-sending them, but _requiring_ that feels kinda risky)
@@ -2317,7 +2308,7 @@
           [[| - cancel-moves] state]
         %-  zing
         %-  flop
-        =/  queue  events.u.maybe-channel
+        =/  queue  events.channel
         =|  events=(list wall)
         |-
         ^+  events
@@ -2329,7 +2320,7 @@
         ::      since conversion failure also gets caught during first receive.
         ::      we can't do anything about this, so consider it unsupported.
         =/  said
-          (channel-event-to-tape u.maybe-channel request-id channel-event)
+          (channel-event-to-tape channel request-id channel-event)
         ?~  said  $
         $(events [(event-tape-to-wall id +.u.said) events])
       ?:  exit  [moves state]
@@ -2394,6 +2385,8 @@
     ::
     ::    PUT requests send commands from the client to the server. We receive
     ::    a set of commands in JSON format in the body of the message.
+    ::    channels don't exist until a PUT request is sent. it's valid for
+    ::    this request to contain an empty list of commands.
     ::
     ++  on-put-request
       |=  [channel-id=@t =identity =request:http]
