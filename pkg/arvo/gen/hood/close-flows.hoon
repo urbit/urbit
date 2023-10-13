@@ -53,18 +53,16 @@
 ::
 %+  roll  ~(tap by resubscriptions)
 |=  [[=wire flows=(list [bone sub-nonce=@ last-nonce=(unit @ud)])] bones=_bones]
+::
 %-  flop  %-  tail
 %+  roll  (sort flows |=([[@ n=@ *] [@ m=@ *]] (lte n m)))
-|=  $:  [=bone nonce=@ app-nonce=(unit @ud)]
-        resubs=_(lent flows)
-        bones=_bones
-    ==
+|=  [[=bone nonce=@ app-nonce=(unit @ud)] resubs=_(lent flows) bones=_bones]
+::
 =/  app=term  ?>(?=([%gall %use sub=@ *] wire) i.t.t.wire)
 =/  =path     (slag 7 wire)
 =/  log=tape
   "[bone={<bone>} agent={<app>} nonces={<[wire=nonce app=app-nonce]>}] {<path>}"
 =;  corkable=?
-   [ship (weld "subscription missing from boar.yoke " log)]
   =?  bones  corkable  [[ship bone] bones]
   (dec resubs)^bones
 ::  checks if this is a stale re-subscription
@@ -107,22 +105,13 @@
   =*  agent           &7.wire
   =/  path            ?~(nonce |7.wire |8.wire)
   =+  key=[path `@p`(slav %p ship) agent]
-  =/  is-a-subscription=?
-    ?~  yoke=(~(get by gall-yokes) agent)
-      |
-    ?:  ?=(%nuke -.u.yoke)
-      |
-    (~(has by boat.u.yoke) key)
-  ?.  is-a-subscription
+  ?~  yoke=(~(get by gall-yokes) agent)
+    ~
+  ?.  &(?=(%live -.u.yoke) (~(has by boat.u.yoke) key))
     ::  %pokes don't have an entry in boat.yoke, so we skip them
     ::
-    ~
-  =/  agent-nonce=(unit @ud)
-    ?~  yoke=(~(get by gall-yokes) agent)
-      ~
-    ?:  ?=(%nuke -.u.yoke)
-      ~
-    (~(get by boar.u.yoke) key)
+    subs
+  =/  agent-nonce=(unit @ud)  (~(get by boar.u.yoke) key)
   ::
   ?:  (~(has in closing.peer-state) forward-bone)
     ~?  ?=(%1 veb)
