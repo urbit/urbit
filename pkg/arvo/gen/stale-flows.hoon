@@ -5,14 +5,17 @@
 ::    |stale-flows, =veb %21 :: ... per app (only forward)
 ::    |stale-flows, =veb %3  :: stale resubscriptions
 ::    |stale-flows, =veb %4  :: print live naxplanation flows
+::    |stale-flows, =veb %5  :: nacked pokes
+::
+/=  gall-raw  /sys/vane/gall
 ::
 =>  |%
     +$  subs  (jar path [ship bone @ close=?])
     +$  pags  (jar app=term [dst=term =ship =path])  ::  per-agent
-    +$  naks  (set [ship bone])
+    +$  naks  (set [ship bone flow=(unit ?(%poke %watch))])
     ::  verbosity
     ::
-    +$  veb  ?(%0 %1 %2 %21 %3 %4 ~)
+    +$  veb  ?(%0 %1 %2 %21 %3 %4 %5 ~)
     ::
     ++  resubs
       |=  [=subs =veb]
@@ -27,6 +30,14 @@
         "#{<(dec (lent v))>} stale resubs on {<k>}"
       ?.  (gth (lent v) 1)  num
       (add (dec (lent v)) num)
+    ::
+    ++  nacked-flow
+      |=  [=naks flow=?(%poke %watch)]
+      ^-  @
+      %-  ~(rep by naks)
+      |=  [[@ @ flow=(unit ?(%poke %watch))] pokes=@]
+      ?~  flow  pokes
+      ?.(=(^flow u.flow) pokes +(pokes))
     --
 ::
 :-  %say
@@ -36,6 +47,10 @@
 ::
 =/  peers-map
   .^((map ship ?(%alien %known)) %ax /(scot %p p.bec)//(scot %da now)/peers)
+::
+=/  our-gall  (gall-raw p.bec)
+=/  gall-yokes
+  .^((map dude:gall yoke:our-gall) %gy /(scot %p p.bec)//(scot %da now)/$)
 ::
 =/  peers=(list ship)
   %+  murn  ~(tap by peers-map)
@@ -50,12 +65,13 @@
 =;  [[=subs =pags close=@ incoming=@ outgoing=@ nax=@] =naks]
   :-  %tang  %-  flop
   %+  weld
-    :~  leaf+"#{<~(wyt in naks)>} flows from %nacking %watches"
-        leaf+"#{<incoming>} live backward flows"
+    :~  leaf+"#{<incoming>} live backward flows"
         leaf+"#{<outgoing>} live forward flows"
         leaf+"#{<nax>} live naxplanations"
         leaf+"#{<close>} flows in closing"
         leaf+"#{<(resubs subs veb)>} stale resubscriptions"
+        leaf+"#{<(nacked-flow naks %watch)>} nacked %watch(s)"
+        leaf+"#{<(nacked-flow naks %poke)>} nacked %poke(s)"
     ==
   ?.  =(%21 veb)  ~
   :-  leaf+"----------------------------------"
@@ -151,17 +167,31 @@
   ::
   ?~  duct=(~(get by by-bone.ossuary.peer-state) target)
     n
-  ?.  ?=([* [%gall %use sub=@ @ %out @ @ nonce=@ pub=@ *] *] u.duct)
+  ?.  ?=([* [%gall %use sub=@ @ %out @ @ *] *] u.duct)
     n
-  =/  =wire      i.t.u.duct
-  =+  closing=(~(has ^in closing.peer-state) bone)
-  ?>  ?=([%gall %use sub=@ @ %out @ @ nonce=@ pub=@ *] wire)
-  =/  app=term   i.t.t.wire
-  =/  nonce=@
-    =-  ?~(- 0 u.-)
-    (slaw %ud &8.wire)
-  =/  =path  |8.wire
-  ~?  =(%1 veb)
-    "[bone={<target>} nonce={<nonce>} agent={<app>} close={<closing>}] {<path>}"
-  (~(put ^in n) [ship target])
+  =/  =wire    i.t.u.duct
+  =/  nonce=@  ?~((slag 7 wire) 0 ?~(n=(slaw %ud &8.wire) 0 u.n))
+  =*  agent    &7.wire
+  =/  path     ?~((slag 7 wire) |7.wire |8.wire)
+  =+  key=[path ship agent]
+  =/  flow=(unit ?(%poke %watch))
+    ?~  yoke=(~(get by gall-yokes) agent)
+      ~
+    ?:  ?=(%nuke -.u.yoke)  ~
+    ?:  (~(has by boat.u.yoke) key)
+      `%watch
+    ?.  =(nonce 0)
+      `%watch
+    ::  XX  if %gall and %ames got desynced, this could still be a pre-nonce
+    ::  %watch flow that was nacked, removed from %gall, but not from %ames
+    ::  because of the %cork/%leave desync
+    ::
+    `%poke
+  =/  log=tape
+    =+  closing=(~(has ^in closing.peer-state) bone)
+    =+  apps="[{<&3.wire>} -> {<agent>}]"
+    "[bone={<target>} nonce={<nonce>} apps={apps} close={<closing>}] {<path>}"
+  ~?  =(%1 veb)  log
+  ~?  &(=(%5 veb) ?=([~ %poke] flow))  log
+  (~(put ^in n) [ship target flow])
 --
