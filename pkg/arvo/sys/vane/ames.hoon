@@ -2285,10 +2285,7 @@
         ::
         =.  event-core  
           %-  emit
-          :*  unix-duct.ames-state 
-              %give
-              %nail
-              sndr.shot
+          :*  unix-duct.ames-state  %give  %nail  sndr.shot
               (get-forward-lanes our peer-state peers.ames-state)
           ==
         ::
@@ -2365,18 +2362,13 @@
         ::
         =?  event-core  !=(old-route route.peer-state)
           %-  emit
-          :*  unix-duct.ames-state 
-              %give
-              %nail
-              sndr.shot
+          :*  unix-duct.ames-state  %give  %nail  sndr.shot
               (get-forward-lanes our peer-state peers.ames-state)
           ==
         ::  perform peer-specific handling of packet
         ::
         =<  abet
         (~(on-hear-shut-packet pe peer-state channel) [lane u.shut-packet dud])
-      ::
-      ::
       ::  +on-take-boon: receive request to give message to peer
       ::
       ++  on-take-boon
@@ -2736,10 +2728,7 @@
           ::
           =.  event-core
             %-  emit
-            :*  unix-duct.ames-state 
-                %give
-                %nail
-                ship
+            :*  unix-duct.ames-state  %give  %nail  ship
                 (get-forward-lanes our peer-state peers.ames-state)
             ==
           ::
@@ -2801,10 +2790,7 @@
           =.  peers.ames-state  (~(put by peers.ames-state) ship %known u.state)
           =.  event-core
             %-  emit
-            :*  unix-duct.ames-state 
-                %give
-                %nail
-                ship
+            :*  unix-duct.ames-state  %give  %nail  ship
                 (get-forward-lanes our u.state peers.ames-state)
             ==
           ::
@@ -2935,10 +2921,7 @@
           ::
           =?  event-core  ?=(%czar (clan:title ship))
             %-  emit
-            :*  unix-duct.ames-state 
-                %give
-                %nail
-                ship
+            :*  unix-duct.ames-state  %give  %nail  ship
                 (get-forward-lanes our peer-state peers.ames-state)
             ==
           event-core
@@ -3354,10 +3337,7 @@
           =.  peer-state  (update-peer-route her peer-state)
           =?  peer-core  !=(old-route route.peer-state)
             %-  pe-emit
-            :*  unix-duct.ames-state 
-                %give
-                %nail
-                her
+            :*  unix-duct.ames-state  %give  %nail  her
                 (get-forward-lanes our peer-state peers.ames-state)
             ==
           ::  resend comet attestation packet if first message times out
@@ -4898,10 +4878,7 @@
             =.  peer-state  (update-peer-route her peer-state)
             =?  peer-core  !=(old-route route.peer-state)
               %-  pe-emit
-              :*  unix-duct.ames-state 
-                  %give
-                  %nail
-                  her
+              :*  unix-duct.ames-state  %give  %nail  her
                   (get-forward-lanes our peer-state peers.ames-state)
               ==
             =.  metrics.keen  on-timeout:fi-gauge
