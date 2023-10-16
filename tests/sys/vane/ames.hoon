@@ -442,7 +442,7 @@
     %+  expect-eq
       !>  =-  [~[//unix] %pass /qos %d %flog %text -]
               "; {<our-comet>} is your neighbor"
-      !>  (snag 0 `(list move:ames)`moves7)
+      !>  (snag 1 `(list move:ames)`moves7)
   ::
     %+  expect-eq
       !>  [~[/g/talk] %give %boon post]
@@ -473,11 +473,11 @@
   ;:  weld
     %+  expect-eq
       !>  [~[//unix] %pass /qos %d %flog %text "; {<our-comet>} is your neighbor"]
-      !>  (snag 0 `(list move:ames)`moves4)
+      !>  (snag 1 `(list move:ames)`moves4)
   ::
     %+  expect-eq
       !>  [~[//unix] %pass /qos %d %flog %text "; {<our-comet2>} is your neighbor"]
-      !>  (snag 0 `(list move:ames)`moves7)
+      !>  (snag 1 `(list move:ames)`moves7)
   ::
     %+  expect-eq
       !>  [~[/g/talk] %give %boon [%post 'first1!!']]
