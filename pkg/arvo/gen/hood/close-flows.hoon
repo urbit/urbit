@@ -68,19 +68,32 @@
 ::  checks if this is a stale re-subscription
 ::
 ?.  =(resubs 1)
-  ::  asserting that the nonce in the flow should be less than the latest one
-  ::  and this is a resubscription (i.e. the wire has a nonce)
+  ::  if there are more than one subscription per wire, we assert that this is
+  ::  indeed a (post-nonce) resubscription -- we have retrieved a sub-nonce
+  ::  from the agent -- and the nonce in the flow is less than the latest one
   ::
   ?>  &(?=([~ @] app-nonce) (lth nonce u.app-nonce))
   ~?  ?=(%2 veb)  [ship (weld "stale %watch plea " log)]
   &
+::  if there's only one subscription (or this is the latest one, since we sort
+::  flows by nonce) we consider it stale if the nonce in the wire is less than
+::  the latest subscription the agent knows about, since that should have been
+::  removed from %gall, and we don't need to coordindate between %ames and %gall
+::
 ?:  ?&  ?=([~ @] app-nonce)
         (lth nonce u.app-nonce)
     ==
   ~?  ?=(%3 veb)  [ship (weld "latest subscription flow is not live " log)]
   &
-::  the current subscription can be safely corked if there
-::  is a flow with a naxplanation ack on a backward bone
+::  if we couldn't retrieve the nonce for the latest flow, we could be dealing
+::  with a %poke (that doesn't touch boat/boar.yoke) or with an %ames/%gall
+::  desync where %gall deleted the subscription but %ames didn't. since we can't
+::  know for sure (we would need to know inspect the agent responsible) we mark
+::  it as non-corkable
+::
+?~  app-nonce  |
+::  if there's a nonce this is the current subscription and can be safely corked
+::  if there is a flow with a naxplanation ack on a backward bone
 ::
 =+  backward-bone=(mix 0b10 bone)
 ?.  =(%2 (mod backward-bone 4))
@@ -120,7 +133,7 @@
       "#{<~(wyt in live:packet-pump-state)>} packets retrying -- {<key>}"
     subs
   %-  ~(add ja subs)
-  ::  0 for old pre-nonce subscriptions
+  ::  0 for old pre-nonce subscriptions (see watches-8-to-9:load in %gall)
   ::
   :_  [forward-bone ?~(nonce 0 u.nonce) agent-nonce]
   ?~  nonce  wire
