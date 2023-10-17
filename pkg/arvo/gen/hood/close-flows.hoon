@@ -14,7 +14,7 @@
 /=  gall-raw  /sys/vane/gall
 ::
 =>  |%
-    +$  key  [subscriber=term =path =ship app=term]
+    +$  key  [agent=term =path =ship app=term]
     +$  val  [bone sub-nonce=@ud last-nonce=(unit @ud) live=?]
     --
 :-  %say
@@ -79,7 +79,10 @@
   ::  in the flow is less than the latest one.
   ::
   ?^  app-nonce
-    ~?  ?=(%2 veb)  [ship (weld "stale (re)subscription " log)]
+    ~?  ?=(%2 veb)
+      :-  ship
+      %+  weld  "stale (re)subscription {?.((lth nonce u.app-nonce) "skip" ~)} "
+      log
     (lth nonce u.app-nonce)
   ~?  ?=(%21 veb)
     [ship (weld "stale (re)subscription, missing sub-nonce " log)]
@@ -106,7 +109,7 @@
   ~?  ?=(%3 veb)
     :-  ship
     %+  weld
-      "latest subscription flow is stale {?.((gth nonce 0) "skip" "")} "
+      "latest subscription flow is stale {?.((gth nonce 0) "skip" ~)} "
     log
   (gth nonce 0)
 ::  if there's a sub-nonce this is the current subscription and can be safely
@@ -127,15 +130,15 @@
       ==
   ?~  duct=(~(get by by-bone.ossuary.peer-state) forward-bone)
     subs
-  ?.  ?=([* [%gall %use sub=@ @ %out ship=@ app=@ *] *] u.duct)
+  ?.  ?=([* [%gall %use agent=@ @ %out ship=@ app=@ *] *] u.duct)
     subs
   =/  =wire  i.t.u.duct
   ::  0 for old pre-nonce subscriptions that don't have a nonce in the wire
   ::  (see watches-8-to-9:load in %gall)
   ::
-  =/  nonce=@     ?~((slag 7 wire) 0 ?~(n=(slaw %ud &8.wire) 0 u.n))
-  =*  subscriber  &3.wire
-  =*  app         &7.wire
+  =/  nonce=@  ?~((slag 7 wire) 0 ?~(n=(slaw %ud &8.wire) 0 u.n))
+  =*  agent    &3.wire
+  =*  app      &7.wire
   ::  skip the sub-nonce in the subscription path
   ::
   =/  path  ?~(=(0 nonce) |7.wire |8.wire)
@@ -146,16 +149,16 @@
       %+  weld  "bone={<forward-bone>} in closing, "
       "#{<~(wyt in live:packet-pump-state)>} packets retrying -- {<key>}"
     subs
-  ?~  yoke=(~(get by gall-yokes) app)
+  ?~  yoke=(~(get by gall-yokes) agent)
     subs
   ?:  ?=(%nuke -.u.yoke)
     subs
   ?:  &(=(0 nonce) !(~(has by boat.u.yoke) key))
     ::  %pokes don't have an entry in boat.yoke, so we skip them
-    ::  XX this could also by an %ames/%gall desync -- see comment in L 98
+    ::  XX this could also by an %ames/%gall desync -- see comment in L 106
     ::
     subs
   =/  agent-nonce=(unit @ud)  (~(get by boar.u.yoke) key)
-  %+  ~(add ja subs)  subscriber^key
+  %+  ~(add ja subs)  agent^key
   [forward-bone nonce agent-nonce ?=(^ live.packet-pump-state)]
 --

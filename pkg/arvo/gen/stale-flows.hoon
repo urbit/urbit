@@ -41,19 +41,15 @@
       :_  (add c in-close)
       ?:  =((lent v) 1)
         ?>  ?=(^ v)
-      ~?  &(=(%31 veb) live.i.v !(active-nonce [flow nonce]:i.v))
-        "stale resubscription on {<key>} still live, skip"
-        ?:  |(live.i.v (active-nonce [flow nonce]:i.v))
-          s
-        +(s)
+        ~?  &(=(%31 veb) live.i.v !(active-nonce [flow nonce]:i.v))
+          "stale resubscription on {<key>} still live, skip"
+        ?:(|(live.i.v (active-nonce [flow nonce]:i.v)) s +(s))
       %+  add   s
       %+  roll  v
       |=  [val n=@]
       ~?  &(=(%31 veb) live !(active-nonce flow nonce))
         "stale resubscription on {<key>} still live, skip"
-      ?:  |(live (active-nonce flow nonce))
-        n
-      +(n)
+      ?:(|(live (active-nonce flow nonce)) n +(n))
     ::
     ++  nacked-flow
       |=  [=naks action=?(%poke %watch)]
