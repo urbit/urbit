@@ -7,6 +7,7 @@
 ::      |close-flows, =veb %1  ::  flows already in closing
 ::      |close-flows, =veb %2  ::  stale (re) subscriptions
 ::      |close-flows, =veb %21 ::  ... that don't have a sub-nonce.yoke
+::      |close-flows, =veb %22 ::  ... that have packets in-flight
 ::      |close-flows, =veb %3  ::  stale current subscription
 ::      |close-flows, =veb %4  ::  latest subscription was %nacked
 ::
@@ -14,14 +15,14 @@
 ::
 =>  |%
     +$  key  [subscriber=term =path =ship app=term]
-    +$  val  [bone sub-nonce=@ud last-nonce=(unit @ud)]
+    +$  val  [bone sub-nonce=@ud last-nonce=(unit @ud) live=?]
     --
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
         arg=~
         peer=(unit @p)
         dry=?
-        veb=?(%1 %2 %21 %3 %4 ~)
+        veb=?(%1 %2 %21 %22 %3 %4 ~)
     ==
 ::
 =/  our-gall  (gall-raw p.bec)
@@ -61,13 +62,15 @@
 ::
 %-  flop  %-  tail
 %+  roll  (sort flows |=([[@ n=@ *] [@ m=@ *]] (lte n m)))
-|=  [[=bone nonce=@ app-nonce=(unit @ud)] resubs=_(lent flows) bones=_bones]
+|=  [[=bone nonce=@ app-nonce=(unit @ud) live=?] resubs=_(lent flows) b=_bones]
 ::
 =/  log=tape
   "[bone={<bone>} agent={<app>} nonces={<[wire=nonce app=app-nonce]>}] {<path>}"
 =;  corkable=?
-  =?  bones  corkable  [[ship bone] bones]
-  (dec resubs)^bones
+  ~?  &(?=(%22 veb) corkable live)
+    [ship (weld "stale (re)subscription, still live (skip) " log)]
+  =?  b  &(corkable !live)  [[ship bone] b]
+  (dec resubs)^b
 ::  checks if this is a stale re-subscription
 ::
 ?.  =(resubs 1)
@@ -153,5 +156,6 @@
     ::
     subs
   =/  agent-nonce=(unit @ud)  (~(get by boar.u.yoke) key)
-  (~(add ja subs) subscriber^key [forward-bone nonce agent-nonce])
+  %+  ~(add ja subs)  subscriber^key
+  [forward-bone nonce agent-nonce ?=(^ live.packet-pump-state)]
 --

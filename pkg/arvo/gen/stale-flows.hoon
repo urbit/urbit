@@ -4,6 +4,7 @@
 ::    |stale-flows, =veb %2  :: stale flows that keep (re)trying to connect
 ::    |stale-flows, =veb %21 :: ... per app (only forward)
 ::    |stale-flows, =veb %3  :: stale resubscriptions
+::    |stale-flows, =veb %31 :: ... still sending live packets
 ::    |stale-flows, =veb %4  :: print live naxplanation flows
 ::    |stale-flows, =veb %5  :: nacked pokes
 ::
@@ -11,19 +12,19 @@
 ::
 =>  |%
     +$  key   [subscriber=term =path =ship app=term]
-    +$  val   [=ship =bone nonce=@ =flow close=?]
+    +$  val   [=ship =bone nonce=@ =flow close=? live=?]
     +$  subs  (jar key val)
     +$  pags  (jar app=term [dst=term =ship =path])  ::  per-agent
     +$  naks  (set [ship bone =flow close=?])
     +$  flow  (unit ?(%poke [%watch nonce=@ud]))
     ::  verbosity
     ::
-    +$  veb  ?(%0 %1 %2 %21 %3 %4 %5 ~)
+    +$  veb  ?(%0 %1 %2 %21 %3 %31 %4 %5 ~)
     ::
     ++  active-nonce
       |=  [=flow nonce=@ud]
        ?&  ?=([~ %watch nonce=@ud] flow)
-           !=(nonce.u.flow nonce)
+           =(nonce.u.flow nonce)
        ==
     ::
     ++  resubs
@@ -32,7 +33,7 @@
       %+  roll  ~(tap by subs)
       |=  [[=key v=(list val)] s=@ c=@]
       =/  in-close=@
-        (roll v |=([[@ @ @ * c=?] n=@] ?:(c +(n) n)))
+        (roll v |=([[@ @ @ * c=? @] n=@] ?:(c +(n) n)))
       ~?  &(=(%3 veb) (gth (lent v) 1))
         %+  weld  ?:  =(in-close 0)  ""
           "[#{<in-close>} %close] "
@@ -40,10 +41,19 @@
       :_  (add c in-close)
       ?:  =((lent v) 1)
         ?>  ?=(^ v)
-        ?.((active-nonce [flow nonce]:i.v) s +(s))
+      ~?  &(=(%31 veb) live.i.v !(active-nonce [flow nonce]:i.v))
+        "stale resubscription on {<key>} still live, skip"
+        ?:  |(live.i.v (active-nonce [flow nonce]:i.v))
+          s
+        +(s)
       %+  add   s
       %+  roll  v
-      |=([val n=@] ?.((active-nonce flow nonce) n +(n)))
+      |=  [val n=@]
+      ~?  &(=(%31 veb) live !(active-nonce flow nonce))
+        "stale resubscription on {<key>} still live, skip"
+      ?:  |(live (active-nonce flow nonce))
+        n
+      +(n)
     ::
     ++  nacked-flow
       |=  [=naks action=?(%poke %watch)]
@@ -152,7 +162,7 @@
         ::  XX  we can't know for sure (we would need to know inspect the agent)
         ::
         subs
-      (~(add ja subs) subscriber^key [ship bone nonce flow closing])
+      (~(add ja subs) subscriber^key [ship bone nonce flow closing ?=(^ live)])
   ?~  live  [pags close incoming outgoing nax]
   ::  only forward flows
   ::
