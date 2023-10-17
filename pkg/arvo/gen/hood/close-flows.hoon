@@ -6,17 +6,22 @@
 ::    verbosity:
 ::      |close-flows, =veb %1  ::  flows already in closing
 ::      |close-flows, =veb %2  ::  stale (re) subscriptions
+::      |close-flows, =veb %21 ::  ... that don't have a sub-nonce.yoke
 ::      |close-flows, =veb %3  ::  stale current subscription
 ::      |close-flows, =veb %4  ::  latest subscription was %nacked
 ::
 /=  gall-raw  /sys/vane/gall
 ::
+=>  |%
+    +$  key  [subscriber=term =path =ship app=term]
+    +$  val  [bone sub-nonce=@ud last-nonce=(unit @ud)]
+    --
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
         arg=~
         peer=(unit @p)
         dry=?
-        veb=?(%1 %2 %3 %4)
+        veb=?(%1 %2 %21 %3 %4 ~)
     ==
 ::
 =/  our-gall  (gall-raw p.bec)
@@ -52,14 +57,12 @@
 |^
 ::
 %+  roll  ~(tap by resubscriptions)
-|=  [[=wire flows=(list [bone sub-nonce=@ last-nonce=(unit @ud)])] bones=_bones]
+|=  [[key flows=(list val)] bones=_bones]
 ::
 %-  flop  %-  tail
 %+  roll  (sort flows |=([[@ n=@ *] [@ m=@ *]] (lte n m)))
 |=  [[=bone nonce=@ app-nonce=(unit @ud)] resubs=_(lent flows) bones=_bones]
 ::
-=/  app=term  ?>(?=([%gall %use sub=@ *] wire) i.t.t.wire)
-=/  =path     (slag 7 wire)
 =/  log=tape
   "[bone={<bone>} agent={<app>} nonces={<[wire=nonce app=app-nonce]>}] {<path>}"
 =;  corkable=?
@@ -68,12 +71,18 @@
 ::  checks if this is a stale re-subscription
 ::
 ?.  =(resubs 1)
-  ::  if there are more than one subscription per wire, we assert that this is
-  ::  indeed a (post-nonce) resubscription -- we have retrieved a sub-nonce
-  ::  from the agent -- and the nonce in the flow is less than the latest one
+  ::  if there are more than one subscription per path, and we have a sub-nonce,
+  ::  we check that this is indeed a (post-nonce) resubscription and the nonce
+  ::  in the flow is less than the latest one.
   ::
-  ?>  &(?=([~ @] app-nonce) (lth nonce u.app-nonce))
-  ~?  ?=(%2 veb)  [ship (weld "stale %watch plea " log)]
+  ?^  app-nonce
+    ~?  ?=(%2 veb)  [ship (weld "stale (re)subscription " log)]
+    (lth nonce u.app-nonce)
+  ~?  ?=(%21 veb)
+    [ship (weld "stale (re)subscription, missing sub-nonce " log)]
+  ::  since we skip pokes (flows that don't have a nonce in the wire and don't
+  ::  have an entry in boat.yoke), and in this case, this would be a
+  ::  resubscription, we can consider it safe to be corked
   &
 ::  if there's only one subscription (or this is the latest one, since we sort
 ::  flows by nonce) we consider it stale if the nonce in the wire is less than
@@ -83,17 +92,22 @@
 ?:  ?&  ?=([~ @] app-nonce)
         (lth nonce u.app-nonce)
     ==
-  ~?  ?=(%3 veb)  [ship (weld "latest subscription flow is not live " log)]
+  ~?  ?=(%3 veb)  [ship (weld "latest subscription flow is stale " log)]
   &
-::  if we couldn't retrieve the nonce for the latest flow, we could be dealing
-::  with a %poke (that doesn't touch boat/boar.yoke) or with an %ames/%gall
-::  desync where %gall deleted the subscription but %ames didn't. since we can't
-::  know for sure (we would need to know inspect the agent responsible) we mark
-::  it as non-corkable
+::  not retrieving the nonce for the latest flow, could mean a %poke -- which we
+::  skip; see L 152 -- or an %ames/%gall desync where %gall deleted the
+::  subscription but %ames didn't. if the latter, there should be a (greater
+::  than 0) nonce in the wire, XX  unless this is a desynced pre-nonce %watch...
 ::
-?~  app-nonce  |
-::  if there's a nonce this is the current subscription and can be safely corked
-::  if there is a flow with a naxplanation ack on a backward bone
+?~  app-nonce
+  ~?  ?=(%3 veb)
+    :-  ship
+    %+  weld
+      "latest subscription flow is stale {?.((gth nonce 0) "skip" "")} "
+    log
+  (gth nonce 0)
+::  if there's a sub-nonce this is the current subscription and can be safely
+::  corked if there is a flow with a naxplanation ack on a backward bone
 ::
 =+  backward-bone=(mix 0b10 bone)
 ?.  =(%2 (mod backward-bone 4))
@@ -106,38 +120,38 @@
 ++  resubscriptions
   %+  roll  ~(tap by snd.peer-state)
   |=  $:  [=forward=bone message-pump-state:ames]
-          subs=(jar path [bone sub-nonce=@ud last-nonce=(unit @ud)])
+          subs=(jar key val)
       ==
   ?~  duct=(~(get by by-bone.ossuary.peer-state) forward-bone)
     subs
   ?.  ?=([* [%gall %use sub=@ @ %out ship=@ app=@ *] *] u.duct)
     subs
-  =/  =wire           i.t.u.duct
-  =/  nonce=(unit @)  ?~((slag 7 wire) ~ (slaw %ud &8.wire))
-  =*  ship            &6.wire
-  =*  agent           &7.wire
-  =/  path            ?~(nonce |7.wire |8.wire)
-  =+  key=[path `@p`(slav %p ship) agent]
-  ?~  yoke=(~(get by gall-yokes) agent)
-    ~
-  ?.  &(?=(%live -.u.yoke) (~(has by boat.u.yoke) key))
-    ::  %pokes don't have an entry in boat.yoke, so we skip them
-    ::
-    subs
-  =/  agent-nonce=(unit @ud)  (~(get by boar.u.yoke) key)
+  =/  =wire  i.t.u.duct
+  ::  0 for old pre-nonce subscriptions that don't have a nonce in the wire
+  ::  (see watches-8-to-9:load in %gall)
   ::
+  =/  nonce=@     ?~((slag 7 wire) 0 ?~(n=(slaw %ud &8.wire) 0 u.n))
+  =*  subscriber  &3.wire
+  =*  app         &7.wire
+  ::  skip the sub-nonce in the subscription path
+  ::
+  =/  path  ?~(=(0 nonce) |7.wire |8.wire)
+  =+  key=[path ship app]
   ?:  (~(has in closing.peer-state) forward-bone)
     ~?  ?=(%1 veb)
       :-  ship
       %+  weld  "bone={<forward-bone>} in closing, "
       "#{<~(wyt in live:packet-pump-state)>} packets retrying -- {<key>}"
     subs
-  %-  ~(add ja subs)
-  ::  0 for old pre-nonce subscriptions (see watches-8-to-9:load in %gall)
-  ::
-  :_  [forward-bone ?~(nonce 0 u.nonce) agent-nonce]
-  ?~  nonce  wire
-  ::  don't include the sub-nonce in the key
-  ::
-  (weld (scag 7 wire) (slag 8 wire))
+  ?~  yoke=(~(get by gall-yokes) app)
+    subs
+  ?:  ?=(%nuke -.u.yoke)
+    subs
+  ?:  &(=(0 nonce) !(~(has by boat.u.yoke) key))
+    ::  %pokes don't have an entry in boat.yoke, so we skip them
+    ::  XX this could also by an %ames/%gall desync -- see comment in L 98
+    ::
+    subs
+  =/  agent-nonce=(unit @ud)  (~(get by boar.u.yoke) key)
+  (~(add ja subs) subscriber^key [forward-bone nonce agent-nonce])
 --

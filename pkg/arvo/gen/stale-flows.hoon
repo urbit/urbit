@@ -10,34 +10,53 @@
 /=  gall-raw  /sys/vane/gall
 ::
 =>  |%
-    +$  subs  (jar path [ship bone @ close=?])
+    +$  key   [subscriber=term =path =ship app=term]
+    +$  val   [=ship =bone nonce=@ =flow close=?]
+    +$  subs  (jar key val)
     +$  pags  (jar app=term [dst=term =ship =path])  ::  per-agent
-    +$  naks  (set [ship bone flow=(unit ?(%poke %watch))])
+    +$  naks  (set [ship bone =flow close=?])
+    +$  flow  (unit ?(%poke [%watch nonce=@ud]))
     ::  verbosity
     ::
     +$  veb  ?(%0 %1 %2 %21 %3 %4 %5 ~)
     ::
+    ++  active-nonce
+      |=  [=flow nonce=@ud]
+       ?&  ?=([~ %watch nonce=@ud] flow)
+           !=(nonce.u.flow nonce)
+       ==
+    ::
     ++  resubs
       |=  [=subs =veb]
-      ^-  @
+      ^-  [stale=@ closing=@]
       %+  roll  ~(tap by subs)
-      |=  [[k=path v=(list [ship bone @ close=?])] num=@]
+      |=  [[=key v=(list val)] s=@ c=@]
       =/  in-close=@
-        (roll v |=([[@ @ @ c=?] n=@] ?:(c +(n) n)))
+        (roll v |=([[@ @ @ * c=?] n=@] ?:(c +(n) n)))
       ~?  &(=(%3 veb) (gth (lent v) 1))
         %+  weld  ?:  =(in-close 0)  ""
           "[#{<in-close>} %close] "
-        "#{<(dec (lent v))>} stale resubs on {<k>}"
-      ?.  (gth (lent v) 1)  num
-      (add (dec (lent v)) num)
+        "#{<(dec (lent v))>} stale resubs on {<key>}"
+      :_  (add c in-close)
+      ?:  =((lent v) 1)
+        ?>  ?=(^ v)
+        ?.((active-nonce [flow nonce]:i.v) s +(s))
+      %+  add   s
+      %+  roll  v
+      |=([val n=@] ?.((active-nonce flow nonce) n +(n)))
     ::
     ++  nacked-flow
-      |=  [=naks flow=?(%poke %watch)]
-      ^-  @
+      |=  [=naks action=?(%poke %watch)]
+      ^-  [out=@ closing=@]
       %-  ~(rep by naks)
-      |=  [[@ @ flow=(unit ?(%poke %watch))] pokes=@]
-      ?~  flow  pokes
-      ?.(=(^flow u.flow) pokes +(pokes))
+      |=  [[@ @ =flow close=?] out=@ closing=@]
+      =?  closing  &(close ?=(%watch action))  +(closing)
+      :_  closing
+      =?  out  ?|  &(=(%poke action) ?=([~ %poke] flow))
+                   &(=(%watch action) ?=([~ %watch *] flow))
+               ==
+        +(out)
+      out
     --
 ::
 :-  %say
@@ -108,19 +127,32 @@
   =,  packet-pump-state
   =+  closing=(~(has ^in closing.peer-state) bone)
   :-  ?~  duct=(~(get by by-bone.ossuary.peer-state) bone)  subs
-      ?.  ?=([* [%gall %use sub=@ @ %out @ @ *] *] u.duct)
+      ?.  ?=([* [%gall %use sub=@ @ %out ship=@ app=@ *] *] u.duct)
         subs
       =/  =wire  i.t.u.duct
-      =/  nonce=(unit @ud)
-        ?~  (slag 7 wire)  ~
-        (slaw %ud &8.wire)
-      %-  ~(add ja subs)
-      :_  [ship bone ?~(nonce 0 u.nonce) closing] :: 0 = pre-nonce subscriptions
-      ?~  nonce
-        wire
-      ::  don't include the sub-nonce in the key
+      ::  nonce = 0 => pre-nonce subscription
       ::
-      (weld (scag 7 wire) (slag 8 wire))
+      =/  nonce=@     ?~((slag 7 wire) 0 ?~(n=(slaw %ud &8.wire) 0 u.n))
+      =*  subscriber  &3.wire
+      =*  agent       &7.wire
+      ::  skip the sub-nonce in the subscription path
+      ::
+      =/  path  ?:(=(0 nonce) |7.wire |8.wire)
+      =+  key=[path ship agent]
+      =/  =flow  (flow-type key nonce)
+      ?~  yoke=(~(get by gall-yokes) agent)
+        subs
+      ?:  ?=(%nuke -.u.yoke)
+        subs
+      ?:  &(=(0 nonce) !(~(has by boat.u.yoke) key))
+        ::  %pokes don't have an entry in boat.yoke, so we skip them
+        ::
+        ::  this could also be an %ames/%gall desync where %gall deleted the
+        ::  (pre-nonce) subscription but %ames didn't
+        ::  XX  we can't know for sure (we would need to know inspect the agent)
+        ::
+        subs
+      (~(add ja subs) subscriber^key [ship bone nonce flow closing])
   ?~  live  [pags close incoming outgoing nax]
   ::  only forward flows
   ::
@@ -152,10 +184,25 @@
     %3  [incoming outgoing +(nax)]
   ==
 ::
+++  flow-type
+  |=  [key=[path @p agent=term] nonce=@ud]
+  ?~  yoke=(~(get by gall-yokes) agent.key)
+    ~
+  ?:  ?=(%nuke -.u.yoke)  ~
+  ?:  (~(has by boat.u.yoke) key)
+    [~ %watch (~(got by boar.u.yoke) key)]
+  ?.  =(nonce 0)
+    [~ %watch 0]
+  ::  XX  if %gall and %ames got desynced, this could still be a pre-nonce
+  ::  %watch flow that was nacked, removed from %gall, but not from %ames
+  ::  because of the %cork/%leave desync
+  ::
+  `%poke
+::
 ++  nacks
   %+  roll  ~(tap by rcv.peer-state)
   |=  [[=bone *] n=_naks]
-  ?.  &(=(0 (end 0 bone)) =(1 (end 0 (rsh 0 bone))))
+  ?.  =(%2 (mod bone 4))
     ::  not a naxplanation ack bone
     ::
     n
@@ -172,26 +219,13 @@
   =/  =wire    i.t.u.duct
   =/  nonce=@  ?~((slag 7 wire) 0 ?~(n=(slaw %ud &8.wire) 0 u.n))
   =*  agent    &7.wire
-  =/  path     ?~((slag 7 wire) |7.wire |8.wire)
-  =+  key=[path ship agent]
-  =/  flow=(unit ?(%poke %watch))
-    ?~  yoke=(~(get by gall-yokes) agent)
-      ~
-    ?:  ?=(%nuke -.u.yoke)  ~
-    ?:  (~(has by boat.u.yoke) key)
-      `%watch
-    ?.  =(nonce 0)
-      `%watch
-    ::  XX  if %gall and %ames got desynced, this could still be a pre-nonce
-    ::  %watch flow that was nacked, removed from %gall, but not from %ames
-    ::  because of the %cork/%leave desync
-    ::
-    `%poke
+  =/  path     ?~(=(0 nonce) |7.wire |8.wire)
+  =/  =flow    (flow-type [path ship agent] nonce)
+  =+  closing=(~(has ^in closing.peer-state) target)
   =/  log=tape
-    =+  closing=(~(has ^in closing.peer-state) bone)
-    =+  apps="[{<&3.wire>} -> {<agent>}]"
-    "[bone={<target>} nonce={<nonce>} apps={apps} close={<closing>}] {<path>}"
+    =+  apps="[sub={<&3.wire>} -> pub={<agent>}]"
+    "[bone={<target>} nonce={<nonce>} {apps} close={<closing>} {<flow=flow>}] {<path>}"
   ~?  =(%1 veb)  log
   ~?  &(=(%5 veb) ?=([~ %poke] flow))  log
-  (~(put ^in n) [ship target flow])
+  (~(put ^in n) [ship target flow closing])
 --
