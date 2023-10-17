@@ -7,7 +7,7 @@
 ::  $test-arm: test with name (derived from its arm name in a test core)
 ::  $test-func: single test, as gate; sample is entropy, produces failures
 ::
-+$  test       [=path func=test-func]
++$  test       [=beam func=test-func]
 +$  test-arm   [name=term func=test-func]
 +$  test-func  (trap tang)
 +$  args       quiet=_&
@@ -16,46 +16,43 @@
 |_  =args
 ++  build-file
   |=  =beam
-  =/  m  (strand ,(unit vase))
+  =/  m  (strand ,[(unit vase) tang])
   ^-  form:m
   ;<  res=(unit vase)  bind:m 
     (build-file:strandio beam)
-  %.  (pure:m res)
-  ?:  =(res ~)
-    ~>(%slog.0^leaf+"FAILED  {(spud s.beam)} (build)" same)
-  ?:  quiet.args
-     same
-  ~>(%slog.0^leaf+"built   {(spud s.beam)}" same)
-::  +run-test: execute an individual test
+  %+  pure:m  res
+  ?.  =(res ~)
+    ~
+  ~[leaf+"FAILED"]
+  ::  +run-test: execute an individual test
 ::
 ++  run-test
-  |=  [pax=path test=test-func]
+  |=  [bem=beam test=test-func]
   ^-  [ok=? =tang]
-  =+  name=(spud pax)
   =+  run=(mule test)
   ?-  -.run
-    %|  |+(welp p.run leaf+"CRASHED {name}" ~)
+    %|  |+p.run
     %&  ?:  =(~ p.run)
-          &+?:(quiet.args ~ [leaf+"OK      {name}"]~)
-        |+(flop `tang`[leaf+"FAILED  {name}" p.run])
+          &+~
+        |+(flop `tang`[leaf+"FAILED" p.run])
   ==
 ::  +resolve-test-paths: add test names to file paths to form full identifiers
 ::
 ++  resolve-test-paths
-  |=  paths-to-tests=(map path (list test-arm))
+  |=  paths-to-tests=(map beam (list test-arm))
   ^-  (list test)
-  %-  sort  :_  |=([a=test b=test] !(aor path.a path.b))
+  %-  sort  :_  |=([a=test b=test] !(aor s.beam.a s.beam.b))
   ^-  (list test)
   %-  zing
   %+  turn  ~(tap by paths-to-tests)
-  |=  [=path test-arms=(list test-arm)]
+  |=  [=beam test-arms=(list test-arm)]
   ^-  (list test)
   ::  for each test, add the test's name to :path
   ::
   %+  turn  test-arms
   |=  =test-arm
   ^-  test
-  [(weld path /[name.test-arm]) func.test-arm]
+  [beam(s (weld s.beam /[name.test-arm])) func.test-arm]
 ::  +get-test-arms: convert test arms to functions and produce them
 ::
 ++  get-test-arms
@@ -105,6 +102,15 @@
   ?.  hov
     ~|(no-tests-at-path+i.bez !!)
   loop(bez t.bez, fiz (~(put in fiz) [[-.i.bez (snoc xup %hoon)] `tex]))
+++  print-failures
+  |=  ls=(list [=beam =tang])
+  ^+  same
+  ?~  ls
+    same
+  =/  =tank
+    [%rose ["\0a" "/={(trip q.beam.i.ls)}={(spud s.beam.i.ls)}:\0a" ""] tang.i.ls]
+  ~>  %slog.[3 tank]
+  $(ls t.ls)
 --
 ^-  thread:spider
 |=  arg=vase
@@ -125,26 +131,33 @@
   (turn paz |=(p=path ~|([%test-not-beam p] (need (de-beam p)))))
 ;<  fiz=(set [=beam test=(unit term)])  bind:m  (find-test-files bez)
 =>  .(fiz (sort ~(tap in fiz) aor))
-=|  test-arms=(map path (list test-arm))
-=|  build-ok=?
+=|  test-arms=(map beam (list test-arm))
+=|  build-failed=(list [beam tang])
 |-  ^-  form:m
 =*  gather-tests  $
 ?^  fiz
-  ;<  cor=(unit vase)  bind:m  (build-file beam.i.fiz)
+  ;<  [cor=(unit vase) =tang]  bind:m  (build-file beam.i.fiz)
   ?~  cor
-    gather-tests(fiz t.fiz, build-ok |)
+    gather-tests(fiz t.fiz, build-failed [[beam.i.fiz tang] build-failed])
   =/  arms=(list test-arm)  (get-test-arms u.cor)
   ::  if test path specified an arm prefix, filter arms to match
   =?  arms  ?=(^ test.i.fiz)
     %+  skim  arms
     |=  test-arm
     =((end [3 (met 3 u.test.i.fiz)] name) u.test.i.fiz)
-  =.  test-arms  (~(put by test-arms) (snip s.beam.i.fiz) arms)
+  =.  test-arms  (~(put by test-arms) beam.i.fiz(s (snip s.beam.i.fiz)) arms)
   gather-tests(fiz t.fiz)
-%-  pure:m  !>  ^=  ok
+=;  res=_build-failed
+  %-  (print-failures res)
+  %-  pure:m  !>  ^=  failed
+  %+  turn  res
+  |=  [=beam *]
+  beam
 %+  roll  (resolve-test-paths test-arms)
-|=  [[=path =test-func] ok=_build-ok]
-^+  ok
-=/  res  (run-test path test-func)
-%-  (slog (flop tang.res))
-&(ok ok.res)
+|=  [[=beam =test-func] failed=_build-failed]
+^+  failed
+=/  res  (run-test beam test-func)
+?:  -.res
+  failed
+:_  failed
+[beam +.res]

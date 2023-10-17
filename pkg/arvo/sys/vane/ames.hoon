@@ -479,7 +479,7 @@
   ++  close
     |=  [=ames-state =path key-idx=@ value=(unit (unit cage))]
     ?.  (check-key ames-state path key-idx)
-      ~&  key-validation-failed/[path key-idx ~(key by chain.ames-state)]
+      ~&  key-validation-failed/[path key-idx chain.ames-state]
       ~
     ?~  value  
       ~&  %bailing-close
@@ -505,11 +505,6 @@
   ++  check-key
     |=  [=ames-state =path key-idx=@]
     ^-  ?
-    =.  path
-      =>  .(path `(pole knot)`path)
-      ?.  ?=([van=@ car=@ cas=@ app=@ sig=@ rest=*] path)
-        path
-      rest.path
     ?~  link=(get:on:chain chain.ames-state key-idx)
       |
     =/  gol  path.u.link

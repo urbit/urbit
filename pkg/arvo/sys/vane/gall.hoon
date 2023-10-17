@@ -81,11 +81,8 @@
   $:  disclosing=(unit (set ship))
       attributing=[=ship =path]
   ==
-+$  lock  [rev=@ud idx=@ud key=@]
-+$  hutch
-  [=lock chicks=(map path page)]
-+$  brood
-  [=coop =lock chicks=(set path)]
++$  hutch  [rev=@ud idx=@ud key=@]
++$  brood  [=coop =hutch]
 ::  $yoke: agent runner state
 ::
 ::    control-duct: TODO document
@@ -118,7 +115,8 @@
           marks=(map duct mark)
           sky=farm
           ken=(jug spar:ames wire)
-          pen=(map spar:ames wire)
+          pen=(jug spar:ames wire)
+          gem=(jug coop [path page])
   ==  ==
 ::
 +$  plot
@@ -137,6 +135,18 @@
   ::
   ++  of
     |_  =farm
+    ++  key-coops
+      =|  pos=path
+      %-  ~(gas in *(set coop))
+      |-  ^-  (list coop)
+      ?:  ?=(%coop -.farm)
+        ~[pos]
+      %-  zing
+      %+  turn  ~(tap by q.farm)
+      |=  [seg=@ta f=^farm]
+      ^-  (list coop)
+      ^$(pos (snoc pos seg), farm f)
+    ::
     ++  migrate
       |=  from=(map spur plot)
       =/  from  ~(tap by from)
@@ -367,7 +377,8 @@
           marks=(map duct mark)
           sky=farm
           ken=(jug spar:ames wire)
-          pen=(map spar:ames wire)
+          pen=(jug spar:ames wire)
+          gem=(jug coop [path page])
   ==  ==
 --
 ::  adult gall vane interface, for type compatibility with pupa
@@ -788,7 +799,7 @@
     =*  dap   agent.pole
     =/  yoke  (~(get by yokes.state) agent.pole)
     ?.  ?=([~ %live *] yoke)
-      %-  (slog leaf+"gall: {<dap>} dead, got %stub" ~)
+      %-  (slog leaf+"gall: {<`@t`dap>} dead, got %stub" ~)
       mo-core
     ?.  =(run-nonce.u.yoke nonce.pole)
       %-  (slog leaf+"gall: got old stub for {<dap>}" ~)
@@ -1067,7 +1078,7 @@
     ?.  ?=([~ %live *] yok)
       (mo-give %done ~)
     =/  ap-core  (ap-abed:ap agent-name [~ our /gall])
-    =^  bod=(unit brood)  mo-core
+    =^  bod=(unit (unit brood))  mo-core
       (ap-serve-brood:ap-core ship path)
     ?~  bod
       (mo-give %done ~)
@@ -1199,11 +1210,9 @@
       ?.  ?=([%g %x cas=@ app=@ rest=*] pole)
         ~&  malformed-path/pole
         ap-core
-      =.  pen.yoke  (~(put by pen.yoke) [ship pole] wire)
+      =.  pen.yoke  (~(put ju pen.yoke) [ship pole] wire)
       =/  =plea:ames  [%g /gk/[app.pole] rest.pole]
-      =/  out=^wire       (welp /key/[agent-name]/[run-nonce.yoke]/bod/(scot %p ship) pole)
-      ::  =/  =wire  (welp /key/pug/[agent-name]/[run-nonce.yoke] coop)
-      ::  TODO: add to state?
+      =/  out=^wire   (welp /key/[agent-name]/[run-nonce.yoke]/bod/(scot %p ship) pole)
       (ap-move [hen %pass out %a %plea ship plea]~)
     ::
     ++  ap-take-brood
@@ -1214,12 +1223,17 @@
       =/  =ship  (slav %p i.wire)
       ?+    syn  ~|(weird-sign-ap-take-brood/-.syn !!)
           [%ames %boon *]
-        =+  bod=((soft ,brood) payload.syn)
+        =+  bod=((soft ,(unit brood)) payload.syn)
         ?~  bod  :: TODO: what happens
           ~&  weird-take-brood/payload.syn  !!
-        =/  key  key.lock.u.bod
-        =/  out=^wire  (~(got by pen.yoke) [ship t.wire])
-        (ap-pass out %arvo %a %keen `[idx key]:lock.u.bod ship t.wire)
+        =/  wis=(list ^wire)  ~(tap in (~(get ju pen.yoke) [ship t.wire]))
+        |-  
+        ?~  wis  ap-core
+        ?~  u.bod
+          =.  ap-core  (ap-generic-take i.wis %ames %near [ship t.wire] ~)
+          $(wis t.wis)
+        =.  ap-core  (ap-pass i.wis %arvo %a %keen `[idx key]:hutch.u.u.bod ship t.wire)
+        $(wis t.wis)
       ::
           [%ames %done *]
         ap-core
@@ -1227,11 +1241,12 @@
     ::
     ++  ap-serve-brood
       |=  [=ship =(pole knot)]
-      ^-  [(unit brood) _mo-core]
+      ^-  [(unit (unit brood)) _mo-core]
       ?.  ?=([%$ rest=*] pole)
         `ap-abet
       ?~  cop=(ap-match-coop rest.pole)
-        `ap-abet
+        ~&  no-match-coop/rest.pole
+        [~^~ ap-abet]
       =/  cag=(unit (unit cage))
         (ap-peek %| %c (snoc u.cop (scot %p ship)))
       =/  has-perms=?
@@ -1242,10 +1257,10 @@
         u.res
       =/  =hutch  (need (~(get-hutch of:farm sky.yoke) u.cop))
       ?.  has-perms
-        `ap-abet
-      =/  =brood
-        =,(hutch [u.cop lock ~(key by chicks)])
-      [`brood ap-abet]
+        ~&  no-perms/[ship pole]
+        [~^~ ap-abet]
+      =/  =brood  [u.cop hutch]
+      [``brood ap-abet]
     ::
     ++  ap-yawn-all
       ^-  (list card:agent)
@@ -1300,20 +1315,21 @@
     ::  +ap-tend: bind path in namespace, encrypted
     ++  ap-tend
       |=  [=coop =path =page]
-
       ?~  cop=(~(get-hutch of:farm sky.yoke) coop)
-        :: ?.  (~(has by hat.yoke) coop)
+        ?.  (~(has by gem.yoke) coop)
+          ~|  ~(key-coops of:farm sky.yoke)
           ~|  no-such-coop/coop  !!  :: XX: error handling
-        ::=.  hat.yoke  (~(put ju hat.yoke) coop path page)
-        :: ap-core  TODO: revivie
+        =.  gem.yoke  (~(put ju gem.yoke) coop path page)
+        ap-core
       =.  sky.yoke  (need (~(grow of:farm sky.yoke) (welp coop path) now page))
       ap-core
     ::
     ++  ap-germ
       |=  =coop
-      ::=/  hut  (~(get by cop.yoke) coop)
-      :: =?  hat.yoke  ?=(~ hut) TODO: revive
-      ::  (~(put by hat.yoke) coop ~)
+      =/  pen  (~(get by gem.yoke) coop)
+      =/  exists  !=(~ (~(get of:farm sky.yoke) coop))
+      =?  gem.yoke  &(!exists ?=(~ pen))
+        (~(put by gem.yoke) coop ~)
       =/  =wire  (welp /key/[agent-name]/[run-nonce.yoke]/pug coop)
       (ap-move [hen %pass wire %a %plug %g [agent-name %$ coop]]~)
     ::
@@ -1324,16 +1340,15 @@
         ?^  h=(~(get-hutch of:farm sky.yoke) coop)
           u.h
         *hutch
-      =.  lock.hutch  [.+(rev.lock.hutch) num key]
+      =.  hutch  [.+(rev.hutch) num key]
       =.  sky.yoke  
         ?^  new-sky=(~(put-hutch of:farm sky.yoke) coop hutch)
           u.new-sky
         sky.yoke
-      ap-core
-      :: =/  hat  ~(tap in (~(get ju hat.yoke) coop))
-      ::  |-  ^+  ap-core
-      :: ?~  hat  ap-core
-      :: $(hat t.hat, ap-core (ap-tend coop i.hat))
+      =/  gem  ~(tap in (~(get ju gem.yoke) coop))
+      |-  ^+  ap-core
+      ?~  gem  ap-core
+      $(gem t.gem, ap-core (ap-tend coop i.gem))
     ::
     ++  ap-snip
       |=  =coop
@@ -2555,7 +2570,7 @@
       |=  egg=egg-13
       ?:  ?=(%nuke -.egg)
         egg
-      egg(sky (migrate:of:farm sky.egg), ken [ken.egg ~])
+      egg(sky (migrate:of:farm sky.egg), ken [ken.egg ~ ~])
     ==
   ::
   ++  spore-13-to-14
