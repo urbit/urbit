@@ -475,7 +475,7 @@
 ++  fine-close
   =<  close
   |%
-  ++  aes  |=(key=@ ~(. cbcc:aes:crypto [key 0]))
+  ++  aes  |=(key=@ ~(. sivc:aes:crypto [key ~]))
   ++  close
     |=  [=ames-state =path key-idx=@ value=(unit (unit cage))]
     ?.  (check-key ames-state path key-idx)
@@ -488,15 +488,19 @@
       ``atom+!>(~)
     ?~  key=(get:on:chain chain.ames-state key-idx)
       ~
-    ``atom+!>((en:(aes key.u.key) (jam [p q.q]:u.u.value)))
+    ``atom+!>((jam (en:(aes -.u.key) (jam [p q.q]:u.u.value))))
   ::
   ++  shutter
-    |=  [our=ship =ames-state enc=@t key=@]
+    |=  [our=ship =ames-state seg=@t key=@]
     ^-  (unit balk)  
-    ?~  raw=(slaw %uv enc)
+    ~|  seg/seg
+    ?~  raw=(slaw %uv seg)
       ~
-    =/  txt  `@t`(de:(aes key) `@t`u.raw)
-    ?~  pat=`(unit path)`(rush txt stap)
+    =+  ;;([iv=@ len=@ enc=@] (cue u.raw))
+    ?~  txt=(de:(aes key) iv len enc)
+      ~
+    ~|  txt/txt
+    ?~  pat=`(unit path)`(rush `@t`u.txt stap)
       ~
     =/  here
       /(scot %p our)/(scot %ud rift.ames-state)/(scot %ud life.ames-state)
@@ -2599,11 +2603,12 @@
           ~|  bad-path/rest.path.s
           ?>  ?=([%fine %shut cyf=@ ~] rest.path.s)
           =/  [key=@ ,path]  (~(got by chain.u.per) (slav %ud idx.wire))
-          =/  de    de:(aes:fine-close key)
+          =+  ;;([iv=@ len=@ enc=@] (cue (slav %uv cyf.rest.path.s)))
+          =/  raw  `@t`(need (de:(aes:fine-close key) iv len enc))
           =/  pax=path   
             %+  welp
               /(scot %p ship.s)/(scot %ud rift.u.per)/(scot %ud life.u.per)
-            (stab `@t`(de (slav %uv cyf.rest.path.s)))
+            (stab raw)
           =;  dat=(unit (unit page))
             (emit duct [%give %near [ship.s pax] dat])
           ?:  ?|  ?=(~ roar)
@@ -2611,8 +2616,9 @@
               ==
             ~  :: XX weird
           ?>  ?=([%atom @] u.q.dat.u.roar)
-          =-  `?~(- ~ `(,page (cue -)))
-          (de:(aes:fine-close key) q.u.q.dat.u.roar)
+          =-  `?~(- ~ `(,page (cue u.-)))
+          %-  de:(aes:fine-close key)
+          ;;([iv=@ len=@ cyf=@] (cue q.u.q.dat.u.roar))
         ?>  ?=([%chum *] wire)
         =/  pax
           =-  (,path (cue -))
@@ -3183,7 +3189,9 @@
             abet:(on-keen:(abed-peer:pe ship +.u.ship-state) path duct)
           =.  chain.u.ship-state  (put:on:chain chain.u.ship-state [idx key /]:u.sec)
           =.  peers.ames-state  (~(put by peers.ames-state) ship u.ship-state)
-          =/  enc  (scot %uv (~(en cbcc:aes:crypto [key.u.sec 0]) (spat path)))
+          =/  enc
+            %+  scot  %uv
+            (jam (en:(aes:fine-close key.u.sec) (spat path)))
           =/  lav  /a/x/(scot %ud idx.u.sec)//fine/shut/[enc]
           =/  wir  /fine/shut/(scot %ud idx.u.sec)
           (emit duct %pass wir %a %keen ~ ship lav)
