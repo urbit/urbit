@@ -51,12 +51,10 @@
 ::
 ::  $move: Arvo-level move
 ::
-+$  move
-  $+  move
-  [=duct move=(wind note-arvo gift-arvo)]
-::  $state-15: overall gall state, versioned
++$  move  [=duct move=(wind note-arvo gift-arvo)]
+::  $state-16: overall gall state, versioned
 ::
-+$  state-15  [%15 state]
++$  state-16  [%16 state]
 ::  $state: overall gall state
 ::
 ::    system-duct: TODO document
@@ -65,6 +63,7 @@
 ::    yokes: running agents
 ::    blocked: moves to agents that haven't been started yet
 ::    bug: debug printing configuration
+::    leaves: retry nacked %leaves timer, if set
 ::
 +$  state
   $+  state
@@ -74,6 +73,7 @@
       yokes=(map term yoke)
       blocked=(map term (qeu blocked-move))
       =bug
+      leaves=(unit [=duct =wire date=@da])
   ==
 ::  $routes: new cuff; TODO: document
 ::
@@ -81,7 +81,6 @@
   $:  disclosing=(unit (set ship))
       attributing=[=ship =path]
   ==
-+$  hutch  [rev=@ud idx=@ud key=@]
 +$  brood  [=coop =hutch]
 ::  $yoke: agent runner state
 ::
@@ -124,192 +123,171 @@
       fan=((mop @ud (pair @da (each page @uvI))) lte)
   ==
 ::
-++  farm
-  =<  farm
-  |%
-  +$  farm
-    $~  [%plot ~ ~]
-    $%  [%coop p=hutch q=(map path plot)]
-        [%plot p=(unit plot) q=(map @ta farm)]
-    ==
+++  of-farm
+  |_  =farm
+  ++  key-coops
+    =|  pos=path
+    %-  ~(gas in *(set coop))
+    |-  ^-  (list coop)
+    ?:  ?=(%coop -.farm)
+      ~[pos]
+    %-  zing
+    %+  turn  ~(tap by q.farm)
+    |=  [seg=@ta f=^farm]
+    ^-  (list coop)
+    ^$(pos (snoc pos seg), farm f)
   ::
-  ++  of
-    |_  =farm
-    ++  key-coops
-      =|  pos=path
-      %-  ~(gas in *(set coop))
-      |-  ^-  (list coop)
+  ++  migrate
+    |=  from=(map spur plot)
+    =/  from  ~(tap by from)
+    |-  ^+  farm
+    ?~  from  farm
+    =.  farm  (need (put i.from))
+    $(from t.from)
+  ::
+  ++  match-coop
+    =|  wer=path
+    |=  =path
+    ^-  (unit coop)
+    ?:  ?=(%coop -.farm)
+      `(flop wer)
+    ?~  path
+      ~
+    ?~  nex=(~(get by q.farm) i.path)
+      ~
+    $(wer [i.path wer], path t.path, farm u.nex)
+  ++  put
+    |=  [=path =plot]
+    ^-  (unit _farm)
+    ?:  ?=(%coop -.farm)
+      `farm(q (~(put by q.farm) path plot))
+    ?~  path
+      `farm(p `plot)
+    ?~  nex=(~(get by q.farm) i.path)
+      ~
+    =/  res
+      $(path t.path, farm u.nex)
+    ?~  res  ~
+    `farm(q (~(put by q.farm) i.path u.res))
+  ::
+  ++  grow
+    |=  [=spur now=@da =page]
+    =/  ski  (gut spur)
+    %+  put  spur
+    =-  ski(fan (put:on-path fan.ski -< -> &/page))
+    ?~  las=(ram:on-path fan.ski)
+      [(fall bob.ski 0) now]
+    :_  (max now +(p.val.u.las))
+    ?~(bob.ski +(key.u.las) +((max key.u.las u.bob.ski)))
+  ::
+  ++  germ
+    |=  [=coop =hutch]
+    ^-  (unit _farm)
+    ?~  coop
+      ?.  |(=(%coop -.farm) =([%page ~ ~] farm))
+        ~
+      `[%coop hutch ~]
+    ?:  ?=(%coop -.farm)
+      ~
+    ?~  nex=(~(get by q.farm) i.coop)
+      ~
+    $(coop t.coop, farm u.nex)
+  ::
+  ++  tend
+    |=  [=coop =path =plot]
+    ^-  (unit _farm)
+    ?~  coop
+      ?.  ?=(%coop -.farm)
+        ~
+      `farm(q (~(put by q.farm) path plot))
+    ?.  ?=(%plot -.farm)
+      ~
+    ?~  nex=(~(get by q.farm) i.coop)
+      ~
+    $(coop t.coop, farm u.nex)
+  ::
+  ++  del
+    |=  =path
+    ^+  farm
+    ?:  ?=(%coop -.farm)
+      farm(q (~(del by q.farm) path))
+    ?~  path
+      farm(p ~)
+    ?~  nex=(~(get by q.farm) i.path)
+      farm
+    $(path t.path, farm u.nex)
+  ::
+  ++  gut
+    |=  =path
+    ^-  plot
+    (fall (get path) *plot)
+  ::
+  ++  put-hutch
+    |=  [=path =hutch]
+    ^-  (unit _farm)
+    ?~  path
       ?:  ?=(%coop -.farm)
-        ~[pos]
-      %-  zing
+        `farm(p hutch)
+      ?.  =([%plot ~ ~] farm)
+        ~
+      `[%coop hutch ~]
+    ?:  ?=(%coop -.farm)
+      ~
+    =/  nex  (~(gut by q.farm) i.path *^farm)
+    =/  res  $(path t.path, farm nex)
+    ?~  res  ~
+    `farm(q (~(put by q.farm) i.path u.res))
+  ::
+  ++  get-hutch
+    |=  =path
+    ^-  (unit hutch)
+    ?~  path
+      ?.  ?=(%coop -.farm)
+        ~
+      `p.farm
+    ?:  ?=(%coop -.farm)
+      ~
+    ?~  nex=(~(get by q.farm) i.path)
+      ~
+    $(path t.path, farm u.nex)
+  ::
+  ++  get
+    |=  =path
+    ^-  (unit plot)
+    ?:  ?=(%coop -.farm)
+      (~(get by q.farm) path)
+    ?~  path
+      p.farm
+    ?~  nex=(~(get by q.farm) i.path)
+      ~
+    $(path t.path, farm u.nex)
+  ++  tap-plot
+    =|  wer=path
+    |-  ^-  (list [path plot])
+    =*  tap-plot  $
+    ?:  ?=(%coop -.farm)
       %+  turn  ~(tap by q.farm)
-      |=  [seg=@ta f=^farm]
-      ^-  (list coop)
-      ^$(pos (snoc pos seg), farm f)
-    ::
-    ++  migrate
-      |=  from=(map spur plot)
-      =/  from  ~(tap by from)
-      |-  ^+  farm
-      ?~  from  farm
-      =.  farm  (need (put i.from))
-      $(from t.from)
-    ::
-    ++  match-coop
-      =|  wer=path
-      |=  =path
-      ^-  (unit coop)
-      ?:  ?=(%coop -.farm)
-        `(flop wer)
-      ?~  path
-        ~
-      ?~  nex=(~(get by q.farm) i.path)
-        ~
-      $(wer [i.path wer], path t.path, farm u.nex)
-    ++  put
-      |=  [=path =plot]
-      ^-  (unit _farm)
-      ?:  ?=(%coop -.farm)
-        `farm(q (~(put by q.farm) path plot))
-      ?~  path
-        `farm(p `plot)
-      ?~  nex=(~(get by q.farm) i.path)
-        ~
-      =/  res
-        $(path t.path, farm u.nex)
-      ?~  res  ~
-      `farm(q (~(put by q.farm) i.path u.res))
-    ::
-    ++  grow
-      |=  [=spur now=@da =page]
-      =/  ski  (gut spur)
-      %+  put  spur
-      =-  ski(fan (put:on-path fan.ski -< -> &/page))
-      ?~  las=(ram:on-path fan.ski)
-        [(fall bob.ski 0) now]
-      :_  (max now +(p.val.u.las))
-      ?~(bob.ski +(key.u.las) +((max key.u.las u.bob.ski)))
-    ::
-    ++  germ
-      |=  [=coop =hutch]
-      ^-  (unit _farm)
-      ?~  coop
-        ?.  |(=(%coop -.farm) =([%page ~ ~] farm))
-          ~
-        `[%coop hutch ~]
-      ?:  ?=(%coop -.farm)
-        ~
-      ?~  nex=(~(get by q.farm) i.coop)
-        ~
-      $(coop t.coop, farm u.nex)
-    ::
-    ++  tend
-      |=  [=coop =path =plot]
-      ^-  (unit _farm)
-      ?~  coop
-        ?.  ?=(%coop -.farm)
-          ~
-        `farm(q (~(put by q.farm) path plot))
-      ?.  ?=(%plot -.farm)
-        ~
-      ?~  nex=(~(get by q.farm) i.coop)
-        ~
-      $(coop t.coop, farm u.nex)
-    ::
-    ++  del
-      |=  =path
-      ^+  farm
-      ?:  ?=(%coop -.farm)
-        farm(q (~(del by q.farm) path))
-      ?~  path
-        farm(p ~)
-      ?~  nex=(~(get by q.farm) i.path)
-        farm
-      $(path t.path, farm u.nex)
-    ::
-    ++  gut
-      |=  =path
-      ^-  plot
-      (fall (get path) *plot)
-    ::
-    ++  put-hutch
-      |=  [=path =hutch]
-      ^-  (unit _farm)
-      ?~  path
-        ?:  ?=(%coop -.farm)
-          `farm(p hutch)
-        ?.  =([%plot ~ ~] farm)
-          ~
-        `[%coop hutch ~]
-      ?:  ?=(%coop -.farm)
-        ~
-      =/  nex  (~(gut by q.farm) i.path *^farm)
-      =/  res  $(path t.path, farm nex)
-      ?~  res  ~
-      `farm(q (~(put by q.farm) i.path u.res))
-    ::
-    ++  get-hutch
-      |=  =path
-      ^-  (unit hutch)
-      ?~  path
-        ?.  ?=(%coop -.farm)
-          ~
-        `p.farm
-      ?:  ?=(%coop -.farm)
-        ~
-      ?~  nex=(~(get by q.farm) i.path)
-        ~
-      $(path t.path, farm u.nex)
-    ::
-    ++  get
-      |=  =path
-      ^-  (unit plot)
-      ?:  ?=(%coop -.farm)
-        (~(get by q.farm) path)
-      ?~  path
-        p.farm
-      ?~  nex=(~(get by q.farm) i.path)
-        ~
-      $(path t.path, farm u.nex)
-    ++  tap-plot
-      =|  wer=path
-      |-  ^-  (list [path plot])
-      =*  tap-plot  $
-      ?:  ?=(%coop -.farm)
-        %+  turn  ~(tap by q.farm)
-        |=  [=path =plot] 
-        [(welp wer path) plot]
-      %+  welp  ?~(p.farm ~ [wer u.p.farm]~)
-      %-  zing
-      %+  turn  ~(tap by q.farm)
-      |=  [seg=@ta f=^farm]
-      ^-  (list [path plot])
-      tap-plot(wer (snoc wer seg), farm f)
-    ::
-    ++  run-plot
-      |*  fun=gate
-      %-  ~(gas by *(map path _(fun)))
-      %+  turn  tap-plot
-      |=  [=path =plot]
-      [path (fun plot)]
-    --
+      |=  [=path =plot] 
+      [(welp wer path) plot]
+    %+  welp  ?~(p.farm ~ [wer u.p.farm]~)
+    %-  zing
+    %+  turn  ~(tap by q.farm)
+    |=  [seg=@ta f=^farm]
+    ^-  (list [path plot])
+    tap-plot(wer (snoc wer seg), farm f)
+  ::
+  ++  run-plot
+    |*  fun=gate
+    %-  ~(gas by *(map path _(fun)))
+    %+  turn  tap-plot
+    |=  [=path =plot]
+    [path (fun plot)]
   --
 ::
 ++  on-path  ((on @ud (pair @da (each page @uvI))) lte)
 ::  $blocked-move: enqueued move to an agent
 ::
 +$  blocked-move  [=duct =routes move=(each deal unto)]
-::  $stats: statistics
-::
-::    change: how many moves this agent has processed
-::    eny: entropy
-::    time: date of current event processing
-::
-+$  stats  [change=@ud eny=@uvJ time=@da]
-::  $ames-response: network response message (%boon)
-::
-::    %d: fact
-::    %x: quit
 ::
 +$  ames-response
   $%  [%d =mark noun=*]
@@ -350,40 +328,22 @@
 ::
 ::  $spore: structures for update, produced by +stay
 ::
+::  remember to duplicate version tag changes here to $egg-any:gall in lull
+::
 +$  spore
-  $:  %15
+  $:  %16
       system-duct=duct
       outstanding=(map [wire duct] (qeu remote-request))
       contacts=(set ship)
       eggs=(map term egg)
       blocked=(map term (qeu blocked-move))
       =bug
+      leaves=(unit [=duct =wire date=@da])
   ==
-::  $egg: migratory agent state; $yoke with .old-state instead of .agent
-::
-+$  egg
-  $%  [%nuke sky=(map spur @ud)]
-      $:  %live
-          control-duct=duct
-          run-nonce=@t
-          sub-nonce=@
-          =stats
-          =bitt
-          =boat
-          =boar
-          code=~
-          old-state=[%| vase]
-          =beak
-          marks=(map duct mark)
-          sky=farm
-          ken=(jug spar:ames wire)
-          pen=(jug spar:ames wire)
-          gem=(jug coop [path page])
-  ==  ==
 --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
-=|  state=state-15
+=|  state=state-16
 |=  [now=@da eny=@uvJ rof=roof]
 =*  gall-payload  .
 ~%  %gall-top  ..part  ~
@@ -411,7 +371,8 @@
   ++  mo-core  .
   ++  mo-abed  |=(hun=duct mo-core(hen hun))
   ++  mo-abet  [(flop moves) gall-payload]
-  ++  mo-give  |=(g=gift mo-core(moves [[hen give+g] moves]))
+  ++  mo-emit  |=(=move mo-core(moves [move moves]))
+  ++  mo-give  |=(=gift (mo-emit hen give+gift))
   ++  mo-talk
     |=  rup=(each suss tang)
     ^-  [wire note-arvo]
@@ -421,8 +382,8 @@
       %&  [%text "gall: {(t q)}ed %{(t p)}":[t=trip p.rup]]
       %|  [%talk leaf+"gall: failed" (flop p.rup)]
     ==
-  ++  mo-pass  |=(p=[wire note-arvo] mo-core(moves [[hen pass+p] moves]))
-  ++  mo-slip  |=(p=note-arvo mo-core(moves [[hen slip+p] moves]))
+  ++  mo-pass  |=(p=[wire note-arvo] (mo-emit hen pass+p))
+  ++  mo-slip  |=(p=note-arvo (mo-emit hen slip+p))
   ++  mo-past
     |=  =(list [wire note-arvo])
     ?~  list
@@ -561,12 +522,8 @@
     =.  outstanding.state
       =/  stand
         (~(gut by outstanding.state) [wire hen] *(qeu remote-request))
-      %+  ~(put by outstanding.state)  [wire hen]
-      (~(gas to stand) ?.(?=(%leave -.deal) ~[-.deal] ~[%leave]))
-    =.  mo-core  (mo-pass wire note-arvo)
-    ?.  ?=(%leave -.deal)
-      mo-core
-    (mo-pass wire [%a [%cork ship]])
+      (~(put by outstanding.state) [wire hen] (~(put to stand) -.deal))
+    (mo-pass wire note-arvo)
   ::  +mo-track-ship: subscribe to ames and jael for notices about .ship
   ::
   ++  mo-track-ship
@@ -720,6 +677,10 @@
     ::
     ?+    sign-arvo  !!
         [%ames %done *]
+      =/  err=(unit tang)
+        ?~  error=error.sign-arvo
+          ~
+        `[[%leaf (trip tag.u.error)] tang.u.error]
       =^  remote-request  outstanding.state
         ?~  t.t.t.wire
           =/  full-wire  sys+wire
@@ -736,29 +697,42 @@
           =^  rr  stand  ~(get to stand)
           :-  rr
           ?:  =(~ stand)
+            ::  outstanding leaves are only deleted when acked
+            ::
+            ?:  &(?=(^ err) ?=(%leave rr))
+              outstanding.state
             (~(del by outstanding.state) [full-wire hen])
           (~(put by outstanding.state) [full-wire hen] stand)
         ::  non-null case of wire is old, remove on next breach after
         ::  2019/12
         ::
         [;;(remote-request i.t.t.t.wire) outstanding.state]
-      ::
-      =/  err=(unit tang)
-        ?~  error=error.sign-arvo
-          ~
-        `[[%leaf (trip tag.u.error)] tang.u.error]
-      ::  send a %cork if we get a nack upon initial subscription
+      ::  send a %cork if we get a %nack upon initial subscription
       ::
       =?  mo-core
           &(?=(^ err) |(?=(%watch-as remote-request) ?=(%watch remote-request)))
-        (mo-pass [%sys wire] %a %cork ship)
+        (mo-pass sys+wire %a %cork ship)
       ::
       ?-  remote-request
         %watch-as  (mo-give %unto %watch-ack err)
         %watch     (mo-give %unto %watch-ack err)
         %poke      (mo-give %unto %poke-ack err)
-        %leave     mo-core
         %missing   ~>(%slog.[3 'gall: missing'] mo-core)
+        ::
+          %leave
+        ::  if we get an %ack for a %leave, send %cork. otherwise,
+        ::  the /nacked-leaves timer will re-send the %leave eventually.
+        ::
+        ?~  err
+          (mo-pass sys+wire %a %cork ship)
+        ::  if first time hearing a %nack for a %leave, after upgrade
+        ::  or if all outstanding %leaves have been handled, set up timer
+        ::
+        =?  mo-core  ?=(~ leaves.state)
+          (mo-emit [/gall]~ %pass /nacked-leaves %b %wait `@da`(add now ~m2))
+        =?  leaves.state  ?=(~ leaves.state)
+          `[[/gall]~ /nacked-leaves `@da`(add now ~m2)]
+        mo-core
       ==
     ::
         [%ames %boon *]
@@ -942,7 +916,7 @@
     |=  =^yoke
     ?:  ?=(%nuke -.yoke)  yoke
     :-  %nuke
-    %-  ~(run-plot of:farm sky.yoke)
+    %-  ~(run-plot of-farm sky.yoke)
     |=  plot
     (fall (clap bob (bind (ram:on-path fan) head) max) 0)
   ::  +mo-load: install agents
@@ -1135,6 +1109,13 @@
     ^+  mo-core
     =.  dudes.bug.state  (sy dudes)
     mo-core
+  ::
+  ++  mo-handle-nacked-leaves
+    |=  =wire
+    ^+  mo-core
+    ?>  ?=([%sys %way @ @ ~] wire)
+    (mo-pass wire %a %plea (slav %p &3.wire) %g /ge/[&4.wire] %0 %u ~)
+  ::
   ::  +ap: agent engine
   ::
   ::    An inner, agent-level core.  The sample refers to the agent we're
@@ -1255,7 +1236,7 @@
         ?~  res=((soft ,?) q.q.u.u.cag)
           |
         u.res
-      =/  =hutch  (need (~(get-hutch of:farm sky.yoke) u.cop))
+      =/  =hutch  (need (~(get-hutch of-farm sky.yoke) u.cop))
       ?.  has-perms
         ~&  no-perms/[ship pole]
         [~^~ ap-abet]
@@ -1301,7 +1282,7 @@
     ++  ap-match-coop
       |=  =path
       ^-  (unit coop)
-      (~(match-coop of:farm sky.yoke) path)
+      (~(match-coop of-farm sky.yoke) path)
     ::
     ++  ap-keen
       |=  [=wire secret=? =spar:ames]
@@ -1315,19 +1296,19 @@
     ::  +ap-tend: bind path in namespace, encrypted
     ++  ap-tend
       |=  [=coop =path =page]
-      ?~  cop=(~(get-hutch of:farm sky.yoke) coop)
+      ?~  cop=(~(get-hutch of-farm sky.yoke) coop)
         ?.  (~(has by gem.yoke) coop)
-          ~|  ~(key-coops of:farm sky.yoke)
+          ~|  ~(key-coops of-farm sky.yoke)
           ~|  no-such-coop/coop  !!  :: XX: error handling
         =.  gem.yoke  (~(put ju gem.yoke) coop path page)
         ap-core
-      =.  sky.yoke  (need (~(grow of:farm sky.yoke) (welp coop path) now page))
+      =.  sky.yoke  (need (~(grow of-farm sky.yoke) (welp coop path) now page))
       ap-core
     ::
     ++  ap-germ
       |=  =coop
       =/  pen  (~(get by gem.yoke) coop)
-      =/  exists  !=(~ (~(get of:farm sky.yoke) coop))
+      =/  exists  !=(~ (~(get of-farm sky.yoke) coop))
       =?  gem.yoke  &(!exists ?=(~ pen))
         (~(put by gem.yoke) coop ~)
       =/  =wire  (welp /key/[agent-name]/[run-nonce.yoke]/pug coop)
@@ -1337,12 +1318,12 @@
       |=  [=coop num=@ud key=@]
       ^+  ap-core
       =/  =hutch
-        ?^  h=(~(get-hutch of:farm sky.yoke) coop)
+        ?^  h=(~(get-hutch of-farm sky.yoke) coop)
           u.h
         *hutch
       =.  hutch  [.+(rev.hutch) num key]
       =.  sky.yoke  
-        ?^  new-sky=(~(put-hutch of:farm sky.yoke) coop hutch)
+        ?^  new-sky=(~(put-hutch of-farm sky.yoke) coop hutch)
           u.new-sky
         sky.yoke
       =/  gem  ~(tap in (~(get ju gem.yoke) coop))
@@ -1361,7 +1342,7 @@
       ^+  ap-core
       ?>  =(~ (ap-match-coop spur)) :: enforce binding public seperately
       =-  ap-core(sky.yoke -)
-      (need (~(grow of:farm sky.yoke) spur now page))
+      (need (~(grow of-farm sky.yoke) spur now page))
     ::  +ap-tomb: tombstone -- replace bound value with hash
     ::
     ++  ap-tomb
@@ -1369,7 +1350,7 @@
       ^+  ap-core
       =-  ap-core(sky.yoke -)
       =/  yon  ?>(?=(%ud -.case) p.case)
-      =/  old  (~(get of:farm sky.yoke) spur)
+      =/  old  (~(get of-farm sky.yoke) spur)
       ?~  old  ::  no-op if nonexistent
         %.  sky.yoke
         %+  trace  odd.veb.bug.state
@@ -1387,7 +1368,7 @@
       ::
           %&  ::  replace with hash
         %-  need
-        %+  ~(put of:farm sky.yoke)  spur
+        %+  ~(put of-farm sky.yoke)  spur
         u.old(fan (put:on-path fan.u.old yon u.val(q |/(shax (jam p.q.u.val)))))
       ==
     ::  +ap-cull: delete all bindings up to and including .case
@@ -1400,13 +1381,13 @@
       ^+  ap-core
       =-  ap-core(sky.yoke -)
       =/  yon  ?>(?=(%ud -.case) p.case)
-      =/  old  (~(get of:farm sky.yoke) spur)
+      =/  old  (~(get of-farm sky.yoke) spur)
       ?~  old  ::  no-op if nonexistent
         %.  sky.yoke
         %+  trace  odd.veb.bug.state
         [leaf+"gall: {<agent-name>}: cull {<[case spur]>} no-op"]~
       %-  need
-      %+  ~(put of:farm sky.yoke)  spur  ::  delete all older paths
+      %+  ~(put of-farm sky.yoke)  spur  ::  delete all older paths
       [`yon (lot:on-path fan.u.old `+(yon) ~)]
     ::  +ap-from-internal: internal move to move.
     ::
@@ -1677,7 +1658,7 @@
           :*  wex=boat.yoke                           ::  outgoing
               sup=bitt.yoke                           ::  incoming
               ^=  sky                                 ::  bindings
-              %-  ~(run-plot of:farm sky.yoke)
+              %-  ~(run-plot of-farm sky.yoke)
               (bake tail ,plot)
           ==                                          ::
           :*  act=change.stats.yoke                   ::  tick
@@ -1888,7 +1869,7 @@
       ++  on-bad-nonce
         |=  stored-nonce=@
         %.  ap-core
-        %-  slog  :~
+        %+  trace  odd.veb.bug.state  :~
           =/  nonces  [expected=stored-nonce got=nonce]
           =/  ok  |(?=(?(%fact %kick) -.sign) =(~ p.sign))
           leaf+"{<agent-name>}: stale {<-.sign>} {<nonces>} ok={<ok>}"
@@ -2304,52 +2285,56 @@
 ::
 ++  load
   |^  |=  old=spore-any
-      =?  old  ?=(%7 -.old)  (spore-7-to-8 old)
-      =?  old  ?=(%8 -.old)  (spore-8-to-9 old)
-      =?  old  ?=(%9 -.old)  (spore-9-to-10 old)
+      =?  old  ?=(%7 -.old)   (spore-7-to-8 old)
+      =?  old  ?=(%8 -.old)   (spore-8-to-9 old)
+      =?  old  ?=(%9 -.old)   (spore-9-to-10 old)
       =?  old  ?=(%10 -.old)  (spore-10-to-11 old)
       =?  old  ?=(%11 -.old)  (spore-11-to-12 old)
       =?  old  ?=(%12 -.old)  (spore-12-to-13 old)
       =?  old  ?=(%13 -.old)  (spore-13-to-14 old)
       =?  old  ?=(%14 -.old)  (spore-14-to-15 old)
-      ?>  ?=(%15 -.old)
+      =?  old  ?=(%15 -.old)  (spore-15-to-16 old)
+      ?>  ?=(%16 -.old)
       gall-payload(state old)
   ::
   +$  spore-any
-    $%(spore spore-7 spore-8 spore-9 spore-10 spore-11 spore-12 spore-13 spore-14)
+    $%  spore
+        spore-7
+        spore-8
+        spore-9
+        spore-10
+        spore-11
+        spore-12
+        spore-13
+        spore-14
+        spore-15
+    ==
+  +$  spore-15
+    $:  %15
+        system-duct=duct
+        outstanding=(map [wire duct] (qeu remote-request))
+        contacts=(set ship)
+        eggs=(map term egg-15)
+        blocked=(map term (qeu blocked-move))
+        =bug
+        leaves=(unit [=duct =wire date=@da])
+    ==
   +$  spore-14
     $:  %14
         system-duct=duct
         outstanding=(map [wire duct] (qeu remote-request))
         contacts=(set ship)
-        eggs=(map term egg-13)
+        eggs=(map term egg-15)
         blocked=(map term (qeu blocked-move))
         =bug
     ==
-  +$  egg-13
-    $%  [%nuke sky=(map spur @ud)]
-    $:  %live
-        control-duct=duct
-        run-nonce=@t
-        sub-nonce=@
-        =stats
-        =bitt
-        =boat
-        =boar
-        code=~
-        old-state=[%| vase]
-        =beak
-        marks=(map duct mark)
-        sky=(map spur plot)
-        ken=(jug spar:ames wire)
-    ==  ==
   ::
   +$  spore-13
     $:  %13
         system-duct=duct
         outstanding=(map [wire duct] (qeu remote-request))
         contacts=(set ship)
-        eggs=(map term egg-13)
+        eggs=(map term egg-15)
         blocked=(map term (qeu blocked-move-13))
         =bug
     ==
@@ -2554,23 +2539,23 @@
         eggs
       %-  ~(urn by eggs.old)
       |=  [a=term e=egg-12]
-      ^-  egg-13
+      ^-  egg-15
       ?:  ?=(%nuke -.e)  e
       !!  :: e(sky [sky.e ken:*$>(%live egg-13)])
     ==
   ::  added provenance path to routes
-  ++  spore-14-to-15
-    |=  old=spore-14
+  ++  spore-15-to-16
+    |=  old=spore-15
     ^-  spore
     %=    old
-        -  %15
+        -  %16
     ::
         eggs
       %-  ~(run by eggs.old)
-      |=  egg=egg-13
+      |=  egg=egg-15
       ?:  ?=(%nuke -.egg)
         egg
-      egg(sky (migrate:of:farm sky.egg), ken [ken.egg ~ ~])
+      egg(sky (migrate:of-farm sky.egg), ken [ken.egg ~ ~])
     ==
   ::
   ++  spore-13-to-14
@@ -2578,6 +2563,7 @@
     ^-  spore-14
     %=    old
         -  %14
+      ::
         blocked
       ^-  (map term (qeu blocked-move))
       %-  ~(run by blocked.old)
@@ -2590,6 +2576,12 @@
         attributing.routes  [ship=attributing.routes.blocked path=/]
       ==
     ==
+  ::  added nacked-leaves timer
+  ::
+  ++  spore-14-to-15
+    |=  old=spore-14
+    ^-  spore-15
+    old(- %15, bug [bug.old ~])
   --
 ::  +scry: standard scry
 ::
@@ -2680,13 +2672,31 @@
       [~ ~]
     [~ ~ atom+!>(u.nonce)]
   ::
+  ?:  ?&  =(%v care)
+          =([%$ %da now] coin)
+          =(our ship)
+      ==
+    =/  yok  (~(get by yokes.state) dap)
+    ?.  ?=([~ %live *] yok)
+      [~ ~]
+    =/  =egg
+      %=    u.yok
+          code   ~
+          agent
+        :-  %|
+        ?:  ?=(%| -.agent.u.yok)
+          p.agent.u.yok
+        on-save:p.agent.u.yok
+      ==
+    ``noun+!>([-:*spore egg])
+  ::
   ?:  ?&  =(%w care)
           =([%$ %da now] coin)
           =(our ship)
       ==
     =/  yok  (~(get by yokes.state) q.bem)
     ?.  ?=([~ %live *] yok)             [~ ~]
-    ?~  ski=(~(get of:farm sky.u.yok) path)  [~ ~]
+    ?~  ski=(~(get of-farm sky.u.yok) path)  [~ ~]
     ?~  las=(ram:on-path fan.u.ski)     [~ ~]
     ``case/!>(ud/key.u.las)
   ::
@@ -2722,7 +2732,7 @@
     ::
     ?~  yok=(~(get by yokes.state) q.bem)  ~
     ?:  ?=(%nuke -.u.yok)  ~
-    ?~  ski=(~(get of:farm sky.u.yok) path)
+    ?~  ski=(~(get of-farm sky.u.yok) path)
       ~
     =/  res=(unit (each page @uvI))
       ?+    -.r.bem  ~
@@ -2747,7 +2757,7 @@
     =/  yok  (~(get by yokes.state) q.bem)
     ?.  ?=([~ %live *] yok)  ~
     :^  ~  ~  %file-list  !>  ^-  (list ^path)
-    %+  skim  (turn ~(tap-plot of:farm sky.u.yok) head)
+    %+  skim  (turn ~(tap-plot of-farm sky.u.yok) head)
     |=  =spur
     ?&  =(path (scag (lent path) spur))
         !=(path spur)
@@ -2758,7 +2768,7 @@
       ==
     =/  yok  (~(get by yokes.state) q.bem)
     ?.  ?=([~ %live *] yok)             ~
-    ?~  ski=(~(get of:farm sky.u.yok) path)  ~
+    ?~  ski=(~(get of-farm sky.u.yok) path)  ~
     =/  res=(unit (pair @da (each noun @uvI)))
       ?+  -.r.bem  ~
         %ud  (get:on-path fan.u.ski p.r.bem)
@@ -2805,6 +2815,24 @@
   ?:  ?=([%key *] wire)
     ~|  [%gall-take-key-failed wire]
     mo-abet:(mo-handle-key:mo-core t.wire syn)
+  ::
+  ?:  ?=([%nacked-leaves ~] wire)
+    =;  core=_mo-core:mo
+      ::  next time a %leave gets nacked, the state and timer will be set again.
+      ::
+      mo-abet:core(leaves.state ~)
+    %-  ~(rep by outstanding.state)
+    |=  [[[=^wire =^duct] stand=(qeu remote-request)] core=_mo-core:mo]
+    ?:  =(~ stand)  core
+    =^  rr  stand   ~(get to stand)
+    ::  sanity check in the outstanding queue:
+    ::  if there's a %leave, that should be the only request
+    ::
+    ~?  >>>  &(?=(%leave rr) =(^ stand))
+      "outstanding queue not empty [{<wire>} {<duct>} {<stand>}]"
+    =?  core  &(?=(%leave rr) =(~ stand))
+      (mo-handle-nacked-leaves:(mo-abed:core duct) wire)
+    core
   ::
   ~|  [%gall-take-failed wire]
   ?>  ?=([?(%sys %use) *] wire)

@@ -830,6 +830,7 @@
   ::    %done: notify vane that peer (n)acked our message
   ::    %lost: notify vane that we crashed on %boon
   ::    %send: packet to unix
+  ::    %nail: lanes to unix
   ::
   ::    Remote Scry Gifts
   ::
@@ -845,6 +846,7 @@
         [%done error=(unit error)]
         [%lost ~]
         [%send =lane =blob]
+        [%nail =ship lanes=(list lane)]
     ::
         [%stub num=@ud key=@]
         [%near spar dat=(unit (unit page))]
@@ -2736,6 +2738,63 @@
   +$  bitt  (map duct (pair ship path))                 ::  incoming subs
   +$  boat  (map [=wire =ship =term] [acked=? =path])   ::  outgoing subs
   +$  boar  (map [=wire =ship =term] nonce=@)           ::  and their nonces
+  ::
+  +$  plot
+    $:  bob=(unit @ud)
+        fan=((mop @ud (pair @da (each page @uvI))) lte)
+    ==
+  +$  stats                                             ::  statistics
+    $:  change=@ud                                      ::  processed move count
+        eny=@uvJ                                        ::  entropy
+        time=@da                                        ::  current event time
+    ==
+  +$  hutch  [rev=@ud idx=@ud key=@]
+  ::
+  +$  farm
+    $~  [%plot ~ ~]
+    $%  [%coop p=hutch q=(map path plot)]
+        [%plot p=(unit plot) q=(map @ta farm)]
+    ==
+  ::
+
+  +$  egg                                               ::  migratory agent state
+    $%  [%nuke sky=(map spur @ud)]                      ::  see /sys/gall $yoke
+        $:  %live
+            control-duct=duct
+            run-nonce=@t
+            sub-nonce=@
+            =stats
+            =bitt
+            =boat
+            =boar
+            code=~
+            old-state=[%| vase]
+            =beak
+            marks=(map duct mark)
+            sky=farm
+            ken=(jug spar:ames wire)
+            pen=(jug spar:ames wire)
+            gem=(jug coop [path page])
+    ==  ==
+  +$  egg-any  $%([%15 egg-15] [%16 egg])
+  +$  egg-15
+    $%  [%nuke sky=(map spur @ud)]
+    $:  %live
+        control-duct=duct
+        run-nonce=@t
+        sub-nonce=@
+        =stats
+        =bitt
+        =boat
+        =boar
+        code=~
+        old-state=[%| vase]
+        =beak
+        marks=(map duct mark)
+        sky=(map spur plot)
+        ken=(jug spar:ames wire)
+    ==  ==
+  ::
   +$  bowl                                              ::  standard app state
     $:  $:  our=ship                                    ::  host
             src=ship                                    ::  guest

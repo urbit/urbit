@@ -749,13 +749,12 @@
   ;<  ~  bind:m  perform-init-wo-timer
   ;<  ~  bind:m  perform-born
   ;<  ~  bind:m  (wait ~d1)
-  ;<  ~  bind:m  perform-authentication-2
   ;<  mos=(list move)  bind:m
     (get '/~/channel/0123456789abcdef' cookie)
   ;<  now=@da  bind:m  get-now
-  =/  mov-1  (ex-wait /channel/heartbeat/'0123456789abcdef' (add now ~s20))
-  =/  mov-2  (ex-channel-response ~)
-  (expect-moves mos mov-1 mov-2 ~)
+  =/  headers  ['content-type' 'text/html']~
+  =/  body  `(error-page:eyre-gate 404 %.n '/~/channel/0123456789abcdef' ~)
+  (expect-moves mos (ex-response 404 headers body) ~)
 ::
 ++  test-channel-put-zero-requests
   %-  eval-mare
