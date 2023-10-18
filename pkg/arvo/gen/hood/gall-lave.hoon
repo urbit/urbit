@@ -76,6 +76,5 @@
     /(scot %p p.bec)//(scot %da now)/[term]/(scot %p ship)/(scot %ud bone)
   =+  .^(closing=? %ax (scry %closing))
   =+  .^(corked=? %ax (scry %corked))
-  %+  ~(add ja subs)  [ship `@ta`app path]
-  [bone closing corked ship app=&5:i.duct duct]
+  (~(add ja subs) [ship `@ta`app path] [bone closing corked ship app duct])
 --
