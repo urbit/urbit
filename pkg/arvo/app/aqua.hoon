@@ -482,7 +482,8 @@
           %e  %eyre
           %g  %gall
           %j  %jael
-          %g  %gall
+          %k  %khan
+          %l  %lick
         ==
       =/  pax
         /(scot %p our.hid)/work/(scot %da now.hid)/sys/vane/[vane]

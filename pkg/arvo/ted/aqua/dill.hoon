@@ -22,6 +22,7 @@
         %nel  ~&  "{<who>}: {line}"  ""
         %hop  line
         %bel  line
+        %mor  (handle-blit who way %blit blits)
         %clr  ""
         %sag  ~&  [%save-jamfile-to p.b]  line
         %sav  ~&  [%save-file-to p.b]  line
