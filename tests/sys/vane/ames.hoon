@@ -613,12 +613,12 @@
     |=  [fra=@ud sig=@ byts]
     %+  expect-eq
       !>(%.y)
-      !>((veri-fra:keys:fi:(abed:pe:event-core ~bud) want fra dat sig))
+      !>((veri-fra:keys:fi:(got:pe-abed:pe:event-core ~bud) want fra dat sig))
   ::
     ~&  %verifying-sig
     %+  expect-eq
       !>(%.y)
-      !>((meri:keys:fi:(abed:pe:event-core ~bud) want [sig dat]:ror))
+      !>((meri:keys:fi:(got:pe-abed:pe:event-core ~bud) want [sig dat]:ror))
   ==
 ::
 ++  test-old-ames-wire  ^-  tang
