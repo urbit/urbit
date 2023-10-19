@@ -251,12 +251,10 @@
     |-  ^+  mo-core
     ?~  subs  mo-core
     ?~  yoke=(~(get by yokes.state) dude.i.subs)
-      mo-core
+      $(subs t.subs)
     =?  mo-core  ?=(%live -.u.yoke)
-      =/  =routes  [disclosing=~ attributing=[ship.i.subs prov]]
-      =<  ap-abet
-      %.  [v duct]:i.subs
-      ap-lave:(ap-abed:ap dude.i.subs routes)
+      =/  ap-core  (ap-yoke:ap dude.i.subs [~ ship.i.subs prov] u.yoke)
+      ap-abet:(ap-lave:ap-core [v duct]:i.subs)
     $(subs t.subs)
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
@@ -1720,17 +1718,11 @@
     ++  ap-lave
       |=  [v=?(%a %g) =duct]
       ^+  ap-core
-      =/  in=(list [=^duct =^ship =path])  ~(tap by bitt.yoke)
-      |-  ^+  ap-core
-      ?~  in  ap-core
-      =?  ap-core  =(duct duct.i.in)
-        =/  core
-          ?-  v
-            %g  ap-load-delete(agent-duct duct.i.in)
-            %a  ap-kill-up(agent-duct duct.i.in)
-          ==
+      =;  core=_ap-core
         core(agent-duct agent-duct)
-      $(in t.in)
+      ?:  ?=(%a v)
+        ap-kill-up(agent-duct duct)
+      ap-load-delete(agent-duct duct)
     ::  +ap-mule: run virtualized with intercepted scry, preserving type
     ::
     ::    Compare +mute and +mule.  Those pass through scry, which
