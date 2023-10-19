@@ -12,7 +12,7 @@
 ++  parse-current-version
   |=  current=vere
   ^-  @t
-  (rear rev.current)
+  (slav %ta (rear rev.current))
 ::
 ++  is-equal-version
   |=  [latest=@t current=vere]
