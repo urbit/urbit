@@ -3314,8 +3314,7 @@
           |=  [=path =^duct]
           ^+  pe-core
           ?:  (~(has by keens) path)
-            ::  TODO use fi-trace
-            ~>  %slog.0^leaf/"fine: dupe {(spud path)}"
+            %-  (fi-trace:fi odd.veb |.("dupe {(spud path)}"))
             fi-abet:(fi-sub:(fi-abed:fi path) duct)
           =.  keens  (~(put by keens) path *keen-state)
           fi-abet:(fi-start:(fi-abed:fi path) duct)
