@@ -5,14 +5,12 @@
 ::
 ::    |gall-lave, =veb %1  :: for each subscription path, print bone info
 ::    |gall-lave, =veb %2  :: number of stale subscriptions per app
-::    |gall-lave, =veb %3  :: subscription only present in %gall
-::    |gall-lave, =veb %31 :: ... since N are already in closing in %ames
-::    |gall-lave, =veb %32 :: ... since N are already corked in %ames
+::    |gall-lave, =veb %3  :: subscription only in %gall (corked in %ames)
 ::
 /=  gall-raw  /sys/vane/gall
 ::
 =>  |%
-    +$  flow  [=bone closing=? corked=? =ship app=term =duct]
+    +$  flow  [=bone corked=? =ship app=term =duct]
     +$  subs  (jar key=[subscriber=@p app=@ta =path] flow)
     +$  veb   ?(%1 %2 %3 %31 %32 %4 %x)
     --
@@ -28,23 +26,15 @@
   ~?  dry  "#{<(lent flows)>} stale incoming subscriptions"
   ~?  =(veb %3)
     =;  ames-corks=@
-      "#{<ames-corks>} only in %gall (closing or corked in %ames)"
+      "#{<ames-corks>} only in %gall (corked in %ames)"
     %+  roll  flows
     |=  [flow acc=@]
-    ?.(|(closing corked) acc +(acc))
-  ~?  =(veb %31)
-    =;  ames-corks=@
-      "#{<ames-corks>} in closing"
-    (roll flows |=([flow acc=@] ?.(closing acc +(acc))))
-  ~?  =(veb %32)
-    =;  ames-corks=@
-      "#{<ames-corks>} flows already corked"
-    (roll flows |=([flow acc=@] ?.(corked acc +(acc))))
+    ?.(corked acc +(acc))
   :-  dry
   ::  a %g tag signals that the subscription exists only in %gall
   ::  tagging it with %a signals that the flow also exists in %ames
   ::
-  (turn flows |=(flow :_(ship^app^duct ?:(|(closing corked) %a %g))))
+  (turn flows |=(flow :_(ship^app^duct ?:(corked %g %a))))
 ::
 %+  roll  ~(tap by gall-yokes)
 |=  [[=dude:gall =yoke:our-gall] ducts=(list flow)]
@@ -54,7 +44,7 @@
 ?.  (gth (lent ducts) 1)  d
 %+  weld  d
 =-  ~?  ?=(%2 veb)  "{<(lent -)>} stale subscriptions on {<ship^app=app^path>}"
-    ~?  ?=(%1 veb)  (turn - |=(flow "{<`flow`bone^closing^corked^ship^app^~>}"))
+    ~?  ?=(%1 veb)  (turn - |=(flow "{<`flow`bone^corked^ship^app^~>}"))
     -
 ::  latest bone (i.e. subscription) is in the head
 ::
@@ -74,7 +64,6 @@
   =/  scry
     |=  =term
     /(scot %p p.bec)//(scot %da now)/[term]/(scot %p ship)/(scot %ud bone)
-  =+  .^(closing=? %ax (scry %closing))
   =+  .^(corked=? %ax (scry %corked))
-  (~(add ja subs) [ship `@ta`app path] [bone closing corked ship app duct])
+  (~(add ja subs) [ship `@ta`app path] [bone corked ship app duct])
 --
