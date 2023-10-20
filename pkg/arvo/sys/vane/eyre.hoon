@@ -928,8 +928,7 @@
         %gen
       =/  bek=beak  [our desk.generator.action da+now]
       =/  sup=spur  path.generator.action
-      =/  ski
-        (rof ~ /eyre |+[%ca [our desk.generator.action [da+now ud+tick]] sup])
+      =/  ski  (rof ~ /eyre %ca [our desk.generator.action da+now ud+tick] sup)
       =/  cag=cage  (need (need ski))
       ?>  =(%vase p.cag)
       =/  gat=vase  !<(vase q.cag)
@@ -1149,7 +1148,7 @@
     ++  do-scry
       |=  [care=term =desk =path]
       ^-  (unit (unit cage))
-      (rof ~ /eyre |+[care [our desk [da+now ud+tick]] path])
+      (rof ~ /eyre care [our desk da+now ud+tick] path)
     ::
     ++  error-response
       |=  [status=@ud =tape]
@@ -1164,7 +1163,7 @@
     ^-  (quip move server-state)
     ::  if the agent isn't running, we synchronously serve a 503
     ::
-    ?.  !<(? q:(need (need (rof ~ /eyre |+[%gu [our app da+now ud+tick] /$]))))
+    ?.  !<(? q:(need (need (rof ~ /eyre %gu [our app da+now ud+tick] /$))))
       %^  return-static-data-on-duct  503  'text/html'
       %:  error-page
         503
@@ -1557,7 +1556,7 @@
     ++  code
       ^-  @ta
       =/  res=(unit (unit cage))
-        (rof ~ /eyre |+[%j [our %code [da+now ud+tick]] /(scot %p our)])
+        (rof ~ /eyre %j [our %code da+now ud+tick] /(scot %p our))
       (rsh 3 (scot %p ;;(@ q.q:(need (need res)))))
     ::  +session-cookie-string: compose session cookie
     ::
@@ -2758,7 +2757,7 @@
       ?~  sub
         ((trace 0 |.("no subscription for request-id {(scow %ud request-id)}")) ~)
       =/  des=(unit (unit cage))
-        (rof ~ /eyre |+[%gd [our app.u.sub [da+now ud+tick]] /$])
+        (rof ~ /eyre %gd [our app.u.sub [da+now ud+tick]] /$)
       ?.  ?=([~ ~ *] des)
         ((trace 0 |.("no desk for app {<app.u.sub>}")) ~)
       `!<(=desk q.u.u.des)
@@ -2794,7 +2793,7 @@
         =*  have=mark  mark.event
         =/  convert=(unit vase)
           =/  cag=(unit (unit cage))
-            (rof ~ /eyre |+[%cf [our desk.event [da+now ud+tick]] /[have]/json])
+            (rof ~ /eyre %cf [our desk.event da+now ud+tick] /[have]/json)
           ?.  ?=([~ ~ *] cag)  ~
           `q.u.u.cag
         ?~  convert
@@ -3299,16 +3298,20 @@
   |^  ^-  (each mime tape)
   ::  parse
   ::
-  =/  u=(unit [view=term bem=beam])
+  =/  u=(unit [view=term bam=bema])
     ?.  ?=([@ @ @ @ *] pax)    ~
     ?~  view=(slaw %tas i.t.pax)    ~
     ?~  path=(expand-path t.t.pax)  ~
     ?~  beam=(de-beam u.path)       ~
-    `[u.view u.beam]
+    =/  =bema
+      ?.  =(r.u.beam da+now)
+        u.beam
+      u.beam(r [da+now ud+tick])
+    `[u.view bema]
   ?~  u  [%| "invalid scry path"]
   ::  perform scry
   ::
-  ?~  res=(rof ~ /eyre &+u.u)  [%| "failed scry"]
+  ?~  res=(rof ~ /eyre u.u)  [%| "failed scry"]
   ?~  u.res                  [%| "no scry result"]
   =*  mark   p.u.u.res
   =*  vase   q.u.u.res
@@ -3330,16 +3333,16 @@
     (rush (spat a) (sear plex:vez (stag %clsg ;~(pfix fas poor:vez))))
   ::
   ++  conversion-desk
-    |=  [view=term =beam]
+    |=  [view=term =bema]
     ^-  (each desk tape)
-    ?:  =(%$ q.beam)  [%& %base]
+    ?:  =(%$ q.bema)  [%& %base]
     ?+  (end 3 view)  [%& %base]
         %c
-      [%& q.beam]
+      [%& q.bema]
         %g
-      =/  res  (rof ~ /eyre |+[%gd [our q.beam da+now ud+tick] /$])
+      =/  res  (rof ~ /eyre %gd [our q.bema da+now ud+tick] /$)
       ?.  ?=([~ ~ *] res)
-        [%| "no desk for app {<q.beam>}"]
+        [%| "no desk for app {<q.bema>}"]
       [%& !<(=desk q.u.u.res)]
     ==
   ::
@@ -3347,7 +3350,7 @@
     |=  [=vase from=mark to=mark =desk]
     ^-  (each ^vase tape)
     ?:  =(from to)  [%& vase]
-    =/  tub  (rof ~ /eyre |+[%cc [our desk da+now ud+tick] /[from]/[to]])
+    =/  tub  (rof ~ /eyre %cc [our desk da+now ud+tick] /[from]/[to])
     ?.  ?=([~ ~ %tube *] tub)
       [%| "no tube from {(trip from)} to {(trip to)}"]
     =/  tube  !<(tube:clay q.u.u.tub)

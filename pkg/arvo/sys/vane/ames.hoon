@@ -1813,7 +1813,7 @@
         %+  skim
           ;;  (list [@da duct])
           =<  q.q  %-  need  %-  need
-          (rof ~ /ames |+[%bx [[our %$ [da+now ud+tick]] /debug/timers]])
+          (rof ~ /ames %bx [our %$ da+now ud+tick] /debug/timers)
         |=([@da =duct] ?=([[%ames %recork *] *] duct))
       ::
       ?>  ?=(%17 -.u.cached-state)
@@ -2067,7 +2067,7 @@
         ++  do-rift
           =/  =rift
             =-  ~|(%no-rift (,@ q.q:(need (need -))))
-            (rof ~ /ames |+[%j [[our %rift [da+now ud+tick]] /(scot %p our)]])
+            (rof ~ /ames %j [our %rift da+now ud+tick] /(scot %p our))
           ?:  =(rift rift.ames-state)
             event-core
           ~&  "ames: fixing rift from {<rift.ames-state>} to {<rift>}"
@@ -2092,7 +2092,7 @@
             =/  tim
               ;;  (list [@da ^duct])
               =<  q.q  %-  need  %-  need
-              (rof ~ /ames |+[%bx [[our %$ [da+now ud+tick]] /debug/timers]])
+              (rof ~ /ames %bx [our %$ da+now ud+tick] /debug/timers)
             (skim tim |=([@da hen=^duct] ?=([[%ames ?(%pump %recork) *] *] hen)))
           ::
           ::  set timers for flows that should have one set but don't
@@ -2943,7 +2943,7 @@
         =/  turfs
           ;;  (list turf)
           =<  q.q  %-  need  %-  need
-          (rof ~ /ames |+[%j `bema`[[our %turf [da+now ud+tick]] /]])
+          (rof ~ /ames %j [our %turf da+now ud+tick] /)
         ::
         =*  duct  unix-duct.ames-state
         ::
@@ -5130,7 +5130,7 @@
   ::  all state transitions are called from larval ames
   ::
   |%
-  ++  our-bema  `bema`[[our %rift [da+now ud+tick]] /(scot %p our)]
+  ++  our-bema  `bema`[[our %rift da+now ud+tick] /(scot %p our)]
   ++  state-4-to-5
     |=  ames-state=ames-state-4
     ^-  ames-state-5
@@ -5164,7 +5164,7 @@
       ?:  ?=(%pawn (clan:title ship))  0
       ;;  @ud
       =<  q.q  %-  need  %-  need
-      (rof ~ /ames |+[%j `bema`[[our %rift [da+now ud+tick]] /(scot %p ship)]])
+      (rof ~ /ames %j [our %rift da+now ud+tick] /(scot %p ship))
     :-   -.ship-state
     :_  +.peer-state
     =,  -.peer-state
@@ -5245,7 +5245,7 @@
   ++  state-12-to-13
     |=  old=ames-state-12
     ^-  ames-state-13
-    =+  !<(=rift q:(need (need (rof ~ /ames |+[%j our-bema]))))
+    =+  !<(=rift q:(need (need (rof ~ /ames %j our-bema))))
     =+  pk=sec:ex:crypto-core.old
     :*  peers=(~(run by peers.old) ship-state-12-to-13)
         unix-duct.old
@@ -5287,7 +5287,7 @@
   ++  state-14-to-15
     |=  old=ames-state-14
     ^-  ames-state-15
-    old(rift !<(=rift q:(need (need (rof ~ /ames |+[%j our-bema])))))
+    old(rift !<(=rift q:(need (need (rof ~ /ames %j our-bema)))))
   ::
   ++  state-15-to-16
     |=  old=ames-state-15
@@ -5447,8 +5447,7 @@
         ~
       ?:  ?=([~ %known *] peer)
         (get-forward-lanes our +.u.peer peers.ames-state)
-      =/  sax
-        (rof ~ /ames |+[%j [[our %saxo [da+now ud+tick]] /(scot %p u.who)]])
+      =/  sax  (rof ~ /ames %j [our %saxo da+now ud+tick] /(scot %p u.who))
       ?.  ?=([~ ~ *] sax)
         ~
       =/  gal  (rear ;;((list ship) q.q.u.u.sax))
@@ -5502,26 +5501,26 @@
     =/  van  ?@(vis.nom (end 3 vis.nom) way.vis.nom)
     ?+    van  ~
         %c
-      =+  pem=(rof lyc /ames &+nom(vis %cp))
+      =+  pem=(rof lyc /ames nom(vis %cp))
       ?.  ?=(^ pem)    ~
       ?.  ?=(^ u.pem)  ~
       ~|  u.u.pem
       =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
       ?.  =([%black ~ ~] rul.r.per)  ~
-      (en-hunk (rof ~ /ames &+nom))
+      (en-hunk (rof ~ /ames nom))
     ::
         %e
       =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
       %-  en-hunk
       ?+  kyr  ~
-        %x  (rof ~ /ames &+nom)
+        %x  (rof ~ /ames nom)
       ==
     ::
         %g
       =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
       %-  en-hunk
       ?+  kyr  ~
-        %x  (rof ~ /ames &+nom)
+        %x  (rof ~ /ames nom)
       ==
     ==
     ::

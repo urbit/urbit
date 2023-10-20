@@ -72,15 +72,11 @@
 ++  get-dais
   |=  [=beak =mark now=@da tick=@ud rof=roof]
   ^-  dais:clay
-  =/  buck=(unit beck)
+  =/  =beck
     ?.  =(r.beak da+now)
-      ~
-    `beak(r [da+now ud+tick])
-  =/  ret
-    ?~  buck
-      (rof ~ /khan &+[%cb beak /[mark]])
-    (rof ~ /khan |+[%cb u.buck /[mark]])
-  ?~  ret
+      beak
+    beak(r [da+now ud+tick])
+  ?~  ret=(rof ~ /khan %cb beck /[mark])
     ~|(mark-unknown+mark !!)
   ?~  u.ret
     ~|(mark-invalid+mark !!)
@@ -90,15 +86,11 @@
 ++  get-tube
   |=  [=beak =mark =out=mark now=@da tick=@ud rof=roof]
   ^-  tube:clay
-  =/  buck=(unit beck)
+  =/  =beck
     ?.  =(r.beak da+now)
-      ~
-    `beak(r [da+now ud+tick])
-  =/  ret
-    ?~  buck
-      (rof ~ /khan &+[%cc beak /[mark]/[out-mark]])
-    (rof ~ /khan |+[%cc u.buck /[mark]/[out-mark]])
-  ?~  ret
+      beak
+    beak(r [da+now ud+tick])
+  ?~  ret=(rof ~ /khan %cc beck /[mark]/[out-mark])
     ~|(tube-unknown+[mark out-mark] !!)
   ?~  u.ret
     ~|(tube-invalid+[mark out-mark] !!)
