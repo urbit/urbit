@@ -828,6 +828,7 @@
   ::    %done: notify vane that peer (n)acked our message
   ::    %lost: notify vane that we crashed on %boon
   ::    %send: packet to unix
+  ::    %nail: lanes to unix
   ::
   ::    Remote Scry Gifts
   ::
@@ -844,6 +845,7 @@
         [%done error=(unit error)]
         [%lost ~]
         [%send =lane =blob]
+        [%nail =ship lanes=(list lane)]
     ::
         [%tune spar roar=(unit roar)]
     ::

@@ -909,6 +909,15 @@
           =-  (fall - '*')
           (get-header:http 'access-control-request-headers' headers)
       ==
+    ::  handle HTTP scries
+    ::
+    ::  TODO: ideally this would look more like:
+    ::
+    ::  ?^  p=(parse-http-scry url.request)
+    ::    (handle-http-scry authenticated p request)
+    ::
+    ?:  =('/_~_/' (end [3 5] url.request))
+      (handle-http-scry authenticated request)
     ::  handle requests to the cache
     ::
     =/  entry  (~(get by cache.state) url.request)
@@ -1014,6 +1023,44 @@
     =/  nom=@p
       ?+(-.identity who.identity %ours our)
     (as-octs:mimes:html (scot %p nom))
+  ::  +handle-http-scry: respond with scry result
+  ::
+  ++  handle-http-scry
+    |=  [authenticated=? =request:http]
+    |^  ^-  (quip move server-state)
+    ?.  authenticated  (error-response 403 ~)
+    ?.  =(%'GET' method.request)
+      (error-response 405 "may only GET scries")
+    =/  req  (parse-request-line url.request)
+    =/  fqp  (fully-qualified site.req)
+    =/  mym  (scry-mime now rof ext.req site.req)
+    ?:  ?=(%| -.mym)  (error-response 500 p.mym)
+    =*  mime  p.mym
+    %-  handle-response
+    :*  %start
+        :-  status-code=200
+        ^=  headers
+          :~  ['content-type' (rsh 3 (spat p.mime))]
+              ['content-length' (crip (format-ud-as-integer p.q.mime))]
+              ['cache-control' ?:(fqp 'max-age=31536000' 'no-cache')]
+          ==
+        data=[~ q.mime]
+        complete=%.y
+    ==
+    ::
+    ++  fully-qualified
+      |=  a=path
+      ^-  ?
+      ?.  ?=([%'_~_' @ @ @ *] a)  %.n
+      =/  vez  (vang | (en-beam [our %base da+now] ~))
+      ?=  [~ [^ ^ ^ *]]  (rush (spat t.t.a) ;~(pfix fas gash:vez))
+    ::
+    ++  error-response
+      |=  [status=@ud =tape]
+      ^-  (quip move server-state)
+      %^  return-static-data-on-duct  status  'text/html'
+      (error-page status authenticated url.request tape)
+    --
   ::  +handle-cache-req: respond with cached value, 404 or 500
   ::
   ++  handle-cache-req
@@ -3044,6 +3091,7 @@
       ::
       ?:  ?|  ?=([%'~' *] path.binding)    ::  eyre
               ?=([%'~_~' *] path.binding)  ::  runtime
+              ?=([%'_~_' *] path.binding)  ::  scries
           ==
         [| bindings.state]
       [& (insert-binding [binding duct action] bindings.state)]
@@ -3244,6 +3292,69 @@
   ::      need to issue a %leave after we've forgotten the identity with
   ::      which the subscription was opened.
   /(scot %p ship)/[app]/(scot %p from)
+::
+++  scry-mime
+  |=  [now=@da rof=roof ext=(unit @ta) pax=path]
+  |^  ^-  (each mime tape)
+  ::  parse
+  ::
+  =/  u=(unit [view=term bem=beam])
+    ?.  ?=([@ @ @ @ *] pax)    ~
+    ?~  view=(slaw %tas i.t.pax)    ~
+    ?~  path=(expand-path t.t.pax)  ~
+    ?~  beam=(de-beam u.path)       ~
+    `[u.view u.beam]
+  ?~  u  [%| "invalid scry path"]
+  ::  perform scry
+  ::
+  ?~  res=(rof ~ /eyre u.u)  [%| "failed scry"]
+  ?~  u.res                  [%| "no scry result"]
+  =*  mark   p.u.u.res
+  =*  vase   q.u.u.res
+  ::  convert to mime via ext
+  ::
+  =/  dysk  (conversion-desk u.u)
+  ?:  ?=(%| -.dysk)  [%| p.dysk]
+  =/  ext  (fall ext %mime)
+  =/  mym  (convert vase mark ext p.dysk)
+  ?:  ?=(%| -.mym)  [%| p.mym]
+  =/  mym  (convert p.mym ext %mime p.dysk)
+  ?:  ?=(%| -.mym)  [%| p.mym]
+  [%& !<(mime p.mym)]
+  ::
+  ++  expand-path
+    |=  a=path
+    ^-  (unit path)
+    =/  vez  (vang | (en-beam [our %base da+now] ~))
+    (rush (spat a) (sear plex:vez (stag %clsg ;~(pfix fas poor:vez))))
+  ::
+  ++  conversion-desk
+    |=  [view=term =beam]
+    ^-  (each desk tape)
+    ?:  =(%$ q.beam)  [%& %base]
+    ?+  (end 3 view)  [%& %base]
+        %c
+      [%& q.beam]
+        %g
+      =/  res  (rof ~ /eyre %gd [our q.beam da+now] /$)
+      ?.  ?=([~ ~ *] res)
+        [%| "no desk for app {<q.beam>}"]
+      [%& !<(=desk q.u.u.res)]
+    ==
+  ::
+  ++  convert
+    |=  [=vase from=mark to=mark =desk]
+    ^-  (each ^vase tape)
+    ?:  =(from to)  [%& vase]
+    =/  tub  (rof ~ /eyre %cc [our desk da+now] /[from]/[to])
+    ?.  ?=([~ ~ %tube *] tub)
+      [%| "no tube from {(trip from)} to {(trip to)}"]
+    =/  tube  !<(tube:clay q.u.u.tub)
+    =/  res  (mule |.((tube vase)))
+    ?:  ?=(%| -.res)
+      [%| "failed tube from {(trip from)} to {(trip to)}"]
+    [%& +.res]
+  --
 --
 ::  end the =~
 ::
@@ -4068,6 +4179,11 @@
       ?.  =(u.aeon aeon.u.entry)         [~ ~]
       ?~  val=val.u.entry                [~ ~]
       ``noun+!>(u.val)
+    ::
+        [%'_~_' *]
+      =/  mym  (scry-mime now rof (deft:de-purl:html tyl))
+      ?:  ?=(%| -.mym)  [~ ~]
+      ``noun+!>(p.mym)
     ==
   ?.  ?=(%$ ren)
     [~ ~]
