@@ -2471,7 +2471,7 @@
           %-  %^  ev-trace  odd.veb  her
               |.("parsing old wire: {(spud wire)}")
           peer-core
-        abet:(on-memo:peer-core bone [%boon payload] %boon)
+        abet:(on-memo:peer-core bone [%boon payload])
       ::  +on-plea: handle request to send message
       ::
       ++  on-plea
@@ -2493,7 +2493,7 @@
             =/  sndr  [our our-life.channel.peer-core]
             =/  rcvr  [ship her-life.channel.peer-core]
             "plea {<sndr rcvr bone=bone vane.plea path.plea>}"
-        abet:(on-memo:peer-core bone [%plea plea] %plea)
+        abet:(on-memo:peer-core bone [%plea plea])
       ::  +on-tame: handle request to delete a route
       ::
       ++  on-tame
@@ -2536,7 +2536,7 @@
             =/  sndr  [our our-life.channel.peer-core]
             =/  rcvr  [ship her-life.channel.peer-core]
             "cork plea {<sndr rcvr bone=bone vane.plea path.plea>}"
-        abet:(on-memo:(on-cork-flow:peer-core bone) bone [%plea plea] %plea)
+        abet:(on-memo:(on-cork-flow:peer-core bone) bone [%plea plea])
       ::  +on-kroc: cork all stale flows from failed subscriptions
       ::
       ++  on-kroc
@@ -3341,10 +3341,10 @@
         ::  +on-memo: handle request to send message
         ::
         ++  on-memo
-          |=  [=bone payload=* valence=?(%plea %boon)]
+          |=  [=bone =message]
           ^+  peer-core
           ?:  ?&  (~(has in closing.peer-state) bone)
-                  !=(payload [%$ /flow %cork ~])
+                  !=(message [%plea %$ /flow %cork ~])
               ==
             ~>  %slog.0^leaf/"ames: ignoring message on closing bone {<bone>}"
             peer-core
@@ -3352,10 +3352,9 @@
             ~>  %slog.0^leaf/"ames: ignoring message on corked bone {<bone>}"
             peer-core
           ::
-          =/  =message   ;;(message payload)
           =.  peer-core  abet:(call:(abed:mu bone) %memo message)
           ::
-          ?:  ?&  =(%boon valence)
+          ?:  ?&  ?=(%boon -.message)
                   (gte now (add ~s30 last-contact.qos.peer-state))
               ==
             check-clog
@@ -3576,7 +3575,7 @@
           ~>  %slog.0^leaf/"ames: recork {<her i.boz>}"
           =/  =plea     [%$ /flow [%cork ~]]
           =/  =message  [%plea plea]
-          (on-memo i.boz message %plea)
+          (on-memo i.boz message)
         ::  +handle-cork: handle flow kill after server ames has taken %done
         ::
         ++  handle-cork
