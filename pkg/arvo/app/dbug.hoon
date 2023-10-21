@@ -774,6 +774,7 @@
         ::
           :-  'unsent-messages'  ::  as byte sizes
           (set-array unsent-messages (cork (cury met 3) numb))
+          (set-array unsent-messages (cork jam (cork (cury met 3) numb)))
         ::
           'unsent-fragments'^(numb (lent unsent-fragments))  ::  as lent
         ::
