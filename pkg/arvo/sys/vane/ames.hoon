@@ -1854,7 +1854,7 @@
           =/  hed
             ?:  =(1 (end 0 nack-bone.task))          %plea
             ?:  =(0 (end 0 (rsh 0 nack-bone.task)))  %boon
-            %nack
+            %naxplanation
           [%deep %nack ship.task nack-bone.task ;;(message [hed msg])]
         ==
       --
@@ -5393,7 +5393,7 @@
      =/  hed
        ?:  =(1 (end 0 bone))          %plea
        ?:  =(0 (end 0 (rsh 0 bone)))  %boon
-       %nack
+       %naxplanation
     ;;(message [hed (cue b)])
     ==  ==  ==
   --
