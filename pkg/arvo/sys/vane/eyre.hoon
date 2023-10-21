@@ -366,6 +366,8 @@
   }
   button[type=submit] {
     margin-top: 1rem;
+  }
+  button[type=submit], a.button {
     font-size: 1rem;
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
@@ -373,6 +375,7 @@
     color: var(--white);
     border: none;
     font-weight: 600;
+    text-decoration: none;
   }
   input:invalid ~ button[type=submit] {
     border-color: currentColor;
@@ -380,7 +383,7 @@
     color: var(--gray-400);
     pointer-events: none;
   }
-  span.guest {
+  span.guest, span.guest a {
     color: var(--gray-400);
   }
   span.failed {
@@ -475,8 +478,13 @@
       ;div#local
         ;p:"Urbit ID"
         ;input(value "{(scow %p our)}", disabled "true", class "mono");
-        ;p:"Access Key"
+        ;+  ?:  =(%ours -.identity)
+              ;div
+                ;p:"Already authenticated"
+                ;a.button/"{(trip (fall redirect-url '/'))}":"Continue"
+              ==
         ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
+          ;p:"Access Key"
           ;input
             =type  "password"
             =name  "password"
@@ -519,10 +527,13 @@
           ;button(name "eauth", type "submit"):"Continue"
         ==
       ==
-      ;*  ?.  ?=(%fake -.identity)  ~
+      ;*  ?:  ?=(%ours -.identity)  ~
           =+  id=(trim 29 (scow %p who.identity))
+          =+  as="proceed as{?:(?=(%fake -.identity) " guest" "")}"
           ;+  ;span.guest.mono
-                ; Current guest identity:
+                ; Or
+                ;a/"{(trip (fall redirect-url '/'))}":"{as}"
+                ; :
                 ;br;
                 ; {p.id}
                 ;br;
@@ -789,8 +800,7 @@
       %.  (~(put by connections.state) duct connection)
       (trace 2 |.("{<duct>} creating local"))
     ::
-    :_  state
-    (subscribe-to-app [%ours ~] app.act inbound-request.connection)
+    (request-to-app [%ours ~] app.act inbound-request.connection)
   ::  +request: starts handling an inbound http request
   ::
   ++  request
@@ -964,8 +974,7 @@
       ==
     ::
         %app
-      :_  state
-      (subscribe-to-app identity app.action inbound-request.connection)
+      (request-to-app identity app.action inbound-request.connection)
     ::
         %authentication
       (handle-request:authentication secure host address [suv identity] request)
@@ -1100,11 +1109,24 @@
       %^  return-static-data-on-duct  status  'text/html'
       (error-page status authenticated url.request tape)
     --
-  ::  +subscribe-to-app: subscribe to app and poke it with request data
+  ::  +request-to-app: subscribe to app and poke it with request data
   ::
-  ++  subscribe-to-app
+  ++  request-to-app
     |=  [=identity app=term =inbound-request:eyre]
-    ^-  (list move)
+    ^-  (quip move server-state)
+    ::  if the agent isn't running, we synchronously serve a 503
+    ::
+    ?.  !<(? q:(need (need (rof ~ /eyre %gu [our app da+now] /$))))
+      %^  return-static-data-on-duct  503  'text/html'
+      %:  error-page
+        503
+        ?=(%ours -.identity)
+        url.request.inbound-request
+        "%{(trip app)} not running"
+      ==
+    ::  otherwise, subscribe to the agent and poke it with the request
+    ::
+    :_  state
     :~  %+  deal-as
           /watch-response/[eyre-id]
         [identity our app %watch /http-response/[eyre-id]]
@@ -1184,33 +1206,14 @@
       =/  with-eauth=(unit ?)
         ?:  =(~ eauth-url:eauth)  ~
         `?=(^ (get-header:http 'eauth' args.request-line))
-      ::  if we received a simple get: redirect if logged in, otherwise
-      ::  show login page
+      ::  if we received a simple get: show the login page
+      ::
+      ::NOTE  we never auto-redirect, to avoid redirect loops with apps that
+      ::      send unprivileged users to the login screen
       ::
       ?:  =('GET' method.request)
-        ?.  (request-is-logged-in request)
-          %^  return-static-data-on-duct  200  'text/html'
-          (login-page redirect our identity with-eauth %.n)
-        =/  session-id  (session-id-from-request request)
-        ::  session-id should always be populated here since we are logged in
-        ?~  session-id
-          %^  return-static-data-on-duct  200  'text/html'
-          (login-page redirect our identity with-eauth %.n)
-        =/  cookie-line=@t
-          (session-cookie-string u.session-id &)
-        =/  actual-redirect
-          ?~  redirect  '/'
-          ?:(=(u.redirect '') '/' u.redirect)
-        %-  handle-response
-        :*  %start
-            :-  status-code=303
-            ^=  headers
-              :~  ['location' actual-redirect]
-                  ['set-cookie' cookie-line]
-              ==
-            data=~
-            complete=%.y
-        ==
+        %^  return-static-data-on-duct  200  'text/html'
+        (login-page redirect our identity with-eauth %.n)
       ::  if we are not a post, return an error
       ::
       ?.  =('POST' method.request)
@@ -1347,14 +1350,15 @@
       ^-  (unit @uv)
       ::  are there cookies passed with this request?
       ::
-      ::    TODO: In HTTP2, the client is allowed to put multiple 'Cookie'
-      ::    headers.
+      =/  cookie-header=@t
+        %+  roll  header-list.request
+        |=  [[key=@t value=@t] c=@t]
+        ?.  =(key 'cookie')
+          c
+        (cat 3 (cat 3 c ?~(c 0 '; ')) value)
+      ::  is the cookie line valid?
       ::
-      ?~  cookie-header=(get-header:http 'cookie' header-list.request)
-        ~
-      ::  is the cookie line is valid?
-      ::
-      ?~  cookies=(rush u.cookie-header cock:de-purl:html)
+      ?~  cookies=(rush cookie-header cock:de-purl:html)
         ~
       ::  is there an urbauth cookie?
       ::
@@ -2111,7 +2115,7 @@
           duct-to-key.channel-state
         (~(del by duct-to-key.channel-state.state) duct)
       ==
-    ::  +set-timeout-timer-for: sets a timeout timer on a channel
+    ::  +update-timeout-timer-for: sets a timeout timer on a channel
     ::
     ::    This creates a channel if it doesn't exist, cancels existing timers
     ::    if they're already set (we cannot have duplicate timers), and (if
@@ -2179,62 +2183,84 @@
       [%b %rest expiration-time]
     ::  +on-get-request: handles a GET request
     ::
-    ::    GET requests open a channel for the server to send events to the
-    ::    client in text/event-stream format.
+    ::    GET requests connect to a channel for the server to send events to
+    ::    the client in text/event-stream format.
     ::
     ++  on-get-request
       |=  [channel-id=@t [session-id=@uv =identity] =request:http]
       ^-  [(list move) server-state]
-      ::  if there's no channel-id, we must 404
-      ::TODO  but arm description says otherwise?
+      ::  if the channel doesn't exist, we cannot serve it.
+      ::  this 404 also lets clients know if their channel was reaped since
+      ::  they last connected to it.
       ::
-      ?~  maybe-channel=(~(get by session.channel-state.state) channel-id)
+      ?.  (~(has by session.channel-state.state) channel-id)
         %^  return-static-data-on-duct  404  'text/html'
         (error-page 404 | url.request ~)
-      ::  find the channel creator's identity, make sure it matches
-      ::
-      ?.  =(identity identity.u.maybe-channel)
-        %^  return-static-data-on-duct  403  'text/html'
-        (error-page 403 | url.request ~)
-      ::  find the requested "mode" and make sure it doesn't conflict
       ::
       =/  mode=?(%json %jam)
         (find-channel-mode %'GET' header-list.request)
-      ?.  =(mode mode.u.maybe-channel)
-        %^  return-static-data-on-duct  406  'text/html'
-        =;  msg=tape  (error-page 406 %.y url.request msg)
-        "channel already established in {(trip mode.u.maybe-channel)} mode"
-      ::  when opening an event-stream, we must cancel our timeout timer
-      ::  if there's no duct already bound. Else, kill the old request
-      ::  and replace it
-      ::
-      =^  cancel-moves  state
-        ?.  ?=([%| *] state.u.maybe-channel)
-          :_  state
-          (cancel-timeout-move channel-id p.state.u.maybe-channel)^~
-        =/  cancel-heartbeat
-          ?~  heartbeat.u.maybe-channel  ~
-          :_  ~
-          %+  cancel-heartbeat-move  channel-id
-          [date duct]:u.heartbeat.u.maybe-channel
-        =-  [(weld cancel-heartbeat -<) ->]
-        (handle-response(duct p.state.u.maybe-channel) [%cancel ~])
-      ::  the request may include a 'Last-Event-Id' header
-      ::
-      =/  maybe-last-event-id=(unit @ud)
-        ?~  maybe-raw-header=(get-header:http 'last-event-id' header-list.request)
-          ~
-        (rush u.maybe-raw-header dum:ag)
-      ::  flush events older than the passed in 'Last-Event-ID'
-      ::
-      =?  state  ?=(^ maybe-last-event-id)
-        (acknowledge-events channel-id u.maybe-last-event-id)
-      ::  combine the remaining queued events to send to the client
-      ::
-      =/  event-replay=wall
+      =^  [exit=? =wall moves=(list move)]  state
+        ::  the request may include a 'Last-Event-Id' header
+        ::
+        =/  maybe-last-event-id=(unit @ud)
+          ?~  maybe-raw-header=(get-header:http 'last-event-id' header-list.request)
+            ~
+          (rush u.maybe-raw-header dum:ag)
+        =/  channel
+          (~(got by session.channel-state.state) channel-id)
+        ::  we put some demands on the get request, and may need to do some
+        ::  cleanup for prior requests.
+        ::
+        ::  find the channel creator's identity, make sure it matches
+        ::
+        ?.  =(identity identity.channel)
+          =^  mos  state
+            %^  return-static-data-on-duct  403  'text/html'
+            (error-page 403 | url.request ~)
+          [[& ~ mos] state]
+        ::  make sure the request "mode" doesn't conflict with a prior request
+        ::
+        ::TODO  or could we change that on the spot, given that only a single
+        ::      request will ever be listening to this channel?
+        ?.  =(mode mode.channel)
+          =^  mos  state
+            %^  return-static-data-on-duct  406  'text/html'
+            =;  msg=tape  (error-page 406 %.y url.request msg)
+            "channel already established in {(trip mode.channel)} mode"
+          [[& ~ mos] state]
+        ::  when opening an event-stream, we must cancel our timeout timer
+        ::  if there's no duct already bound. else, kill the old request,
+        ::  we will replace its duct at the end of this arm
+        ::
+        =^  cancel-moves  state
+          ?:  ?=([%& *] state.channel)
+            :_  state
+            (cancel-timeout-move channel-id p.state.channel)^~
+          =.  duct-to-key.channel-state.state
+            (~(del by duct-to-key.channel-state.state) p.state.channel)
+          =/  cancel-heartbeat
+            ?~  heartbeat.channel  ~
+            :_  ~
+            %+  cancel-heartbeat-move  channel-id
+            [date duct]:u.heartbeat.channel
+          =-  [(weld cancel-heartbeat -<) ->]
+          (handle-response(duct p.state.channel) [%cancel ~])
+        ::  flush events older than the passed in 'Last-Event-ID'
+        ::
+        =?  state  ?=(^ maybe-last-event-id)
+          (acknowledge-events channel-id u.maybe-last-event-id)
+        ::TODO  that did not remove them from the channel queue though!
+        ::      we may want to account for maybe-last-event-id, for efficiency.
+        ::      (the client _should_ ignore events it heard previously if we do
+        ::      end up re-sending them, but _requiring_ that feels kinda risky)
+        ::
+        ::  combine the remaining queued events to send to the client
+        ::
+        =;  event-replay=wall
+          [[| - cancel-moves] state]
         %-  zing
         %-  flop
-        =/  queue  events.u.maybe-channel
+        =/  queue  events.channel
         =|  events=(list wall)
         |-
         ^+  events
@@ -2246,9 +2272,10 @@
         ::      since conversion failure also gets caught during first receive.
         ::      we can't do anything about this, so consider it unsupported.
         =/  said
-          (channel-event-to-tape u.maybe-channel request-id channel-event)
+          (channel-event-to-tape channel request-id channel-event)
         ?~  said  $
         $(events [(event-tape-to-wall id +.u.said) events])
+      ?:  exit  [moves state]
       ::  send the start event to the client
       ::
       =^  http-moves  state
@@ -2259,7 +2286,7 @@
                 ['cache-control' 'no-cache']
                 ['connection' 'keep-alive']
             ==
-            (wall-to-octs event-replay)
+            (wall-to-octs wall)
             complete=%.n
         ==
       ::  associate this duct with this session key
@@ -2289,7 +2316,7 @@
           heartbeat  (some [heartbeat-time duct])
         ==
       ::
-      [[heartbeat :(weld http-moves cancel-moves moves)] state]
+      [[heartbeat :(weld http-moves moves)] state]
     ::  +acknowledge-events: removes events before :last-event-id on :channel-id
     ::
     ++  acknowledge-events
@@ -2310,6 +2337,8 @@
     ::
     ::    PUT requests send commands from the client to the server. We receive
     ::    a set of commands in JSON format in the body of the message.
+    ::    channels don't exist until a PUT request is sent. it's valid for
+    ::    this request to contain an empty list of commands.
     ::
     ++  on-put-request
       |=  [channel-id=@t =identity =request:http]
@@ -2337,11 +2366,6 @@
       ?:  ?=(%| -.maybe-requests)
         %^  return-static-data-on-duct  400  'text/html'
         (error-page 400 & url.request (trip p.maybe-requests))
-      ::  while weird, the request list could be empty
-      ::
-      ?:  =(~ p.maybe-requests)
-        %^  return-static-data-on-duct  400  'text/html'
-        (error-page 400 %.y url.request "empty list of actions")
       ::  check for the existence of the channel-id
       ::
       ::    if we have no session, create a new one set to expire in
@@ -2518,13 +2542,18 @@
       :_  state
       :_  ~
       ^-  move
-      =/  as=^ship
+      =/  [as=@p old=?]
         ?+  t.t.extra  ~|([%strange-wire extra] !!)
-          ~      our  ::  old-style wire
-          [@ ~]  (slav %p i.t.t.extra)
+          ~      [our &]
+          [@ ~]  [(slav %p i.t.t.extra) |]
         ==
+      =/  =wire  (subscription-wire channel-id request-id as ship app)
       %+  deal-as
-        (subscription-wire channel-id request-id as ship app)
+        ::NOTE  we previously used a wire format that had the local identity
+        ::      implicit, instead of explicit at the end of the wire. if we
+        ::      detect we used the old wire here, we must re-use that format
+        ::      (without id in the wire) for sending the %leave.
+        ?:(old (snip wire) wire)
       [as ship app %leave ~]
     ::  +emit-event: records an event occurred, possibly sending to client
     ::
