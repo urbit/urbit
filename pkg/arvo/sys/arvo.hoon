@@ -1365,7 +1365,8 @@
       ::
       =+  [wir car]=[/arvo vega/~]
       =.  ..this  (xeno:pith $/wir car)
-      (emit `plan`[[%$ ~ *@ud peek] (spam:pith wir !>(car))])
+      =.  tic  +(tic)
+      (emit `plan`[[%$ ~ tic peek(tick.gem tic)] (spam:pith wir !>(car))])
     ::  +emit: enqueue a worklist with source
     ::
     ++  emit
@@ -1685,7 +1686,8 @@
         ::
           %trim  =?  van.mod  =(0 p.waif)
                    (~(run by van.mod) |=(=vane vane(worm *worm)))
-                 (emit `plan`[[%$ ~ *@ud `rook`^peek] (spam /arvo !>(waif))])
+                 =.  tic  +(tic)
+                 (emit [[%$ ~ tic ^peek(tick.gem tic)] (spam /arvo !>(waif))])
         ::
           %verb  ..pith(lac.fad ?~(p.waif !lac.fad u.p.waif))
           %what  ~(kel what p.waif)
@@ -1719,7 +1721,8 @@
           ~>(%mean.'pith: bad wire' !!)
         ::
         ?.  ?=(?(%crud %wack %wyrd) p.card.ovum)
-          (emit `plan`[[%$ ~ *@ud `rook`^peek] [*duct (gest ovum)] ~])
+          =.  tic  +(tic)
+          (emit `plan`[[%$ ~ tic ^peek(tick.gem tic)] [*duct (gest ovum)] ~])
         ::
         =/  buz  ~>  %mean.'pith: bad wasp'
                  ;;(wasp card.ovum)
@@ -1733,7 +1736,9 @@
                                   ?=(%wyrd (crip p.i.tang.goof.buz))
                               ==
                    ~&(%lagging &)
-                 (emit `plan`[[%$ ~ *@ud `rook`^peek] [*duct hurl/[goof.buz (gest ovum.buz)]] ~])
+                 =/  moz  [*duct %hurl [goof.buz (gest ovum.buz)]]~
+                 =.  tic  +(tic)
+                 (emit `plan`[[%$ ~ tic ^peek(tick.gem tic)] moz])
         ::
         ::  XX review
         ::
