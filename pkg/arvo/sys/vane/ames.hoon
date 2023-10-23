@@ -496,6 +496,11 @@
     peer-state
   peer-state(direct.u.route %.n)
 ::
+++  poke-ping-app
+  |=  [=duct our=ship poke=?(%stop %kick)]
+  ^-  move
+  [duct %pass /ping %g %deal [our our /ames] %ping %poke noun+!>(poke)]
+::
 +|  %atomics
 ::
 +$  private-key    @uwprivatekey
@@ -2288,7 +2293,7 @@
         =.  peers.ames-state
           (~(put by peers.ames-state) sndr.shot %known peer-state)
         ::
-        =.  event-core  
+        =.  event-core
           %-  emit
           :*  unix-duct.ames-state  %give  %nail  sndr.shot
               (get-forward-lanes our peer-state peers.ames-state)
@@ -2518,13 +2523,19 @@
         ++  cork-bone  |=(=bone abet:(on-cork-flow:peer-core bone))
         ++  kill-bone  |=(=bone abet:(on-kill-flow:peer-core bone))
         --
+      ::  +on-stun: stop %ping app when hearing a succesful STUN response
+      ::
+      ++  on-stun
+        |=  fail=?
+        ^+  event-core
+        (emit (poke-ping-app unix-duct.ames-state our ?:(fail %kick %stop)))
       :: +set-dead-flow-timer: set dead flow timer and corresponding ames state
       ::
       ++  set-dead-flow-timer
         ^+  event-core
         =.  flow.dead.ames-state.event-core
           flow/`[~[/ames] /dead-flow `@da`(add now ~m2)]
-        (emit:event-core ~[/ames] %pass /dead-flow %b %wait `@da`(add now ~m2))
+        (emit ~[/ames] %pass /dead-flow %b %wait `@da`(add now ~m2))
       :: +wake-dead-flows: call on-wake on all dead flows, discarding any
       ::                   ames-state changes
       ::
@@ -2965,7 +2976,10 @@
         ^-  (list move)
         :~  [duct %give %turf turfs]
             [duct %give %saxo get-sponsors]
-            [duct %pass /ping %g %deal [our our /ames] %ping %poke %noun !>(%kick)]
+            ::  always start pinging on every restart; any STUN response
+            ::  (coming from unix as a %stun task) will turn off the %ping app
+            ::
+            (poke-ping-app duct our %kick)
         ==
       ::  +on-vega: handle kernel reload
       ::
@@ -5086,6 +5100,7 @@
       %tame  (on-tame:event-core ship.task)
       %kroc  (on-kroc:event-core bones.task)
       %deep  (on-deep:event-core deep.task)
+      %stun  (on-stun:event-core fail.task)
     ::
       %keen  (on-keen:event-core +.task)
       %yawn  (on-cancel-scry:event-core | +.task)

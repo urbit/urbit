@@ -772,6 +772,7 @@
   ::    %kroc: request to delete specific message flows, from their bones
   ::    %plea: request to send message
   ::    %deep: deferred calls to %ames, from itself
+  ::    %stun: STUN response (or failure), from unix
   ::
   ::    Remote Scry Tasks
   ::
@@ -803,6 +804,7 @@
         [%kroc bones=(list [ship bone])]
         $>(%plea vane-task)
         [%deep =deep]
+        [%stun fail=?]
     ::
         [%keen spar]
         [%yawn spar]
