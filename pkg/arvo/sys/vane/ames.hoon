@@ -583,7 +583,7 @@
 ::    dead:        dead flow consolidation timer and recork timer, if set
 ::
 +$  ames-state
-  $+  ames-state
+  $+  ames-state-17
   $:  peers=(map ship ship-state)
       =unix=duct
       =life
@@ -1255,7 +1255,7 @@
 +$  task-17
   $+  task-17
   $%  $<(%deep task)
-      $:  %deep 
+      $:  %deep
         $%  [%nack =ship =nack=bone =message-blob]
             [%sink =ship =target=bone naxplanation=[=message-num =error]]
             [%drop =ship =nack=bone =message-num]
@@ -1429,7 +1429,7 @@
             [%14 ames-state-14]
             [%15 ames-state-15]
             [%16 ames-state-16]
-            [%17 ames-state-17]
+            [%17 ^ames-state]
             [%18 ^ames-state]
         ==
     ::
@@ -1660,6 +1660,13 @@
                       state=_ames-state.adult-gate
                   ==
                   [%adult state=_ames-state.adult-gate]
+              ==  ==
+              $:  %18
+              $%  $:  %larva
+                      events=(qeu queued-event)
+                      state=_ames-state.adult-gate
+                  ==
+                  [%adult state=_ames-state.adult-gate]
           ==  ==  ==
       |^  ?-  old
           [%4 %adult *]
@@ -1809,9 +1816,8 @@
           [%17 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%17 state.old]
-        =.  queued-events  (event-17-to-18 events.old)
+        =.  queued-events  events.old
         larval-gate
-
       ::
           [%18 %adult *]  (load:adult-core %18 state.old)
       ::
@@ -1927,8 +1933,13 @@
           (rof ~ /ames %bx [[our %$ da+now] /debug/timers])
         |=([@da =duct] ?=([[%ames %recork *] *] duct))
       ::
-      =?  u.cached-state  ?=(%17 -.u.cached-state)
-        18+(state-17-to-18:load:adult-core +.u.cached-state)
+      =^  moz  u.cached-state
+        ?.  ?=(%17 -.u.cached-state)  [~ u.cached-state]
+        :_  [%18 +.u.cached-state]
+        ~>  %slog.0^leaf/"ames: fetching our public keys"
+        ^-  (list move)
+        [[[/ames]~ %pass /public-keys %j %public-keys [n=our ~ ~]] moz]
+      ::
       ?>  ?=(%18 -.u.cached-state)
       =.  ames-state.adult-gate  +.u.cached-state
       [moz larval-core(cached-state ~)]
@@ -2938,13 +2949,12 @@
               ::
               =+  ^-  [=ship =point]  i.points
               ::
-              ?:  =(our ship)
-                =.  rift.ames-state  rift.point
-                ::  XX not needed?
-                :: =.  event-core
-                ::   (emit unix-duct.ames-state %give %saxo get-sponsors)
-                $(points t.points)
+              =?  rift.ames-state  =(our ship)
+                rift.point
               ::
+              ::  XX not needed?
+              :: =?  event-core  =(our ship)
+              ::   (emit unix-duct.ames-state %give %saxo get-sponsors)
               ?.  (~(has by keys.point) life.point)
                 $(points t.points)
               ::
@@ -3009,9 +3019,8 @@
         ++  on-publ-rift
           |=  [=ship =rift]
           ^+  event-core
-          ?:  =(our ship)
-            =.  rift.ames-state  rift
-            event-core
+          =?  rift.ames-state  =(our ship)
+            rift
           ?~  ship-state=(~(get by peers.ames-state) ship)
             ::  print error here? %rift was probably called before %keys
             ::
