@@ -1850,7 +1850,7 @@
         %=  e
           wrapped-task
           ?.  ?=([%deep %nack *] task)  task
-          =/  msg  (cue message-blob.task)
+          =/  msg  =>([cue=cue arg=message-blob.task] ~+((cue arg)))
           =/  hed
             ?:  =(1 (end 0 nack-bone.task))          %plea
             ?:  =(0 (end 0 (rsh 0 nack-bone.task)))  %boon
@@ -5394,7 +5394,8 @@
        ?:  =(1 (end 0 bone))          %plea
        ?:  =(0 (end 0 (rsh 0 bone)))  %boon
        %naxplanation
-    ;;(message [hed (cue b)])
+     =/  msg  =>([cue=cue arg=b] ~+((cue arg)))
+    ;;(message [hed msg])
     ==  ==  ==
   --
 ::  +scry: dereference namespace
