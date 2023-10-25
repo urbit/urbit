@@ -36,21 +36,22 @@
       [%http until=@da]
       [%waiting until=@da]
   ==
-+$  state-1
-  $:  %1
++$  state-2
+  $:  %2
       ships=(set ship)
       nonce=@ud
       $=  plan
       $~  [%nat ~]
       $%  [%nat ~]
           [%pub ip=(unit @t)]
+          [%off ~]
       ==
   ==
 --
 ::
 %-  agent:dbug
 ::
-=|  state=state-1
+=|  state=state-2
 =>  |%
     ::  Bind for the the writer monad on (quip effect state)
     ::
@@ -127,6 +128,9 @@
           ships.state  ships
         ==
       ::
+      ?:  ?=(%off -.plan.state)
+        ~&  >>  "stopping %ping app"
+        `state
       ?:  ?=(%nat -.plan.state)
         (kick:nat our)
       (kick:pub our now)
@@ -291,18 +295,34 @@
   |^
   =/  old  !<(state-any old-vase)
   =?  old  ?=(%0 -.old)  (state-0-to-1 old)
-  ?>  ?=(%1 -.old)
+  =?  old  ?=(%1 -.old)  (state-1-to-2 old)
+  ?>  ?=(%2 -.old)
   =.  state  old
   =^  cards  state  (kick:ships our.bowl now.bowl)
   [cards this]
   ::
-  +$  state-any  $%(state-0 state-1)
-  +$  state-0  [%0 ships=(map ship [=rift =ship-state])]
+  +$  state-any  $%(state-0 state-1 state-2)
+  +$  state-0    [%0 ships=(map ship [=rift =ship-state])]
+  +$  state-1
+    $:  %1
+        ships=(set ship)
+        nonce=@ud
+        $=  plan
+        $~  [%nat ~]
+        $%  [%nat ~]
+            [%pub ip=(unit @t)]
+            [%off ~]
+    ==  ==
   ::
   ++  state-0-to-1
     |=  old=state-0
     ^-  state-1
     [%1 ~ 0 %nat ~]
+  ::
+  ++  state-1-to-2
+    |=  old=state-1
+    ^-  state-2
+    old(- %2)
   --
 ::  +on-poke: positively acknowledge pokes
 ::
@@ -311,8 +331,12 @@
   ?.  =(our src):bowl    :: don't crash, this is where pings are handled
     `this
   ::
+  ~&  mark^vase
   =^  cards  state
     ?:  =(q.vase %kick)  :: NB: ames calls this on %born
+      (kick:ships our.bowl now.bowl)
+    ?:  =(q.vase %stop)  :: NB: ames calls this on %stun
+      =.  plan.state  [%off ~]
       (kick:ships our.bowl now.bowl)
     ?:  =(q.vase %nat)
       =.  plan.state  [%nat ~]
