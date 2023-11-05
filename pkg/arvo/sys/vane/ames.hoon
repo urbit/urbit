@@ -497,7 +497,7 @@
   peer-state(direct.u.route %.n)
 ::
 ++  poke-ping-app
-  |=  [=duct our=ship poke=?(%stop %kick)]
+  |=  [=duct our=ship poke=?(%stop %once [%kick fail=?])]
   ^-  move
   [duct %pass /ping %g %deal [our our /ames] %ping %poke noun+!>(poke)]
 ::
@@ -2523,12 +2523,15 @@
         ++  cork-bone  |=(=bone abet:(on-cork-flow:peer-core bone))
         ++  kill-bone  |=(=bone abet:(on-kill-flow:peer-core bone))
         --
-      ::  +on-stun: stop %ping app when hearing a succesful STUN response
+      ::  +on-stun: poke %ping app when hearing a STUN response
       ::
       ++  on-stun
-        |=  fail=?
+        |=  =stun
         ^+  event-core
-        (emit (poke-ping-app unix-duct.ames-state our ?:(fail %kick %stop)))
+        %-  emit
+        %^  poke-ping-app  unix-duct.ames-state  our
+        ?.  ?=(%fail -.stun)  -.stun
+        [%kick fail=%.y]
       :: +set-dead-flow-timer: set dead flow timer and corresponding ames state
       ::
       ++  set-dead-flow-timer
@@ -2979,7 +2982,7 @@
             ::  always start pinging on every restart; any STUN response
             ::  (coming from unix as a %stun task) will turn off the %ping app
             ::
-            (poke-ping-app duct our %kick)
+            (poke-ping-app duct our %kick fail=%.n)
         ==
       ::  +on-vega: handle kernel reload
       ::
@@ -5100,7 +5103,7 @@
       %tame  (on-tame:event-core ship.task)
       %kroc  (on-kroc:event-core bones.task)
       %deep  (on-deep:event-core deep.task)
-      %stun  (on-stun:event-core fail.task)
+      %stun  (on-stun:event-core stun.task)
     ::
       %keen  (on-keen:event-core +.task)
       %yawn  (on-cancel-scry:event-core | +.task)

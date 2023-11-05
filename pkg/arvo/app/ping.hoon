@@ -45,6 +45,7 @@
       $%  [%nat ~]
           [%pub ip=(unit @t)]
           [%off ~]
+          [%one ~]
       ==
   ==
 --
@@ -89,8 +90,8 @@
         ::  behavior here.
         ::
         =/  new-ships  (~(gas in *(set ship)) (saxo:title our now our))
-        =/  removed  (~(dif in ships.state) new-ships)
-        =/  added    (~(dif in new-ships) ships.state)
+        =/    removed  (~(dif in ships.state) new-ships)
+        =/      added  (~(dif in new-ships) ships.state)
         ;<  new-state=_state  rind
           ?~  removed  `state
           [[%pass /jael %arvo %j %nuke removed]~ state]
@@ -128,15 +129,15 @@
           ships.state  ships
         ==
       ::
-      ?:  ?=(%off -.plan.state)
-        ~&  >>  "stopping %ping app"
-        `state
-      ?:  ?=(%nat -.plan.state)
-        (kick:nat our)
-      (kick:pub our now)
+      ?-  -.plan.state
+        %off  ~&  >>  "stopping %ping app"  `state
+        %nat  (kick:nat our)
+        %one  (kick:one our)
+        %pub  (kick:pub our now)
+      ==
     ::
     ::  Subsystem for pinging our sponsors when we might be behind a NAT
-    ::
+    ::    XX  no longer true if using STUN-enabled vere 2.XX
     ::    Ping each ship every 25 seconds to keep the pinhole open.
     ::    This is expensive, but if you don't do it and you are behind a
     ::    NAT, you will stop receiving packets from other ships except
@@ -274,6 +275,26 @@
         ::
         (set-timer now)
       --
+    ::  Subsystem for formally acknowledge a change in our IP:PORT
+    ::
+    ::    If our sponsor sends a STUN response, with an IP different than what
+    ::    we had previously cached, we formally acknowledge this change by
+    ::    sending one %poke to every ship in the sponsorship chain.
+    ::
+    ++  one
+      ?>  ?=(%one -.plan.state)
+      |%
+      ++  kick
+        |=  our=@p
+        ^-  (quip card _state)
+        :_  state
+        %-  ~(rep in ships.state)
+        |=  [=ship cards=(list card)]
+        ?:  =(our ship)  cards
+        =/  wire  /one/(scot %uw nonce.state)/ping/(scot %p ship)
+        :_  cards  ^-  card
+        [%pass wire %agent [ship %ping] %poke %noun !>(~)]
+      --
     --
 %+  verb  |
 ^-  agent:gall
@@ -333,11 +354,33 @@
   ::
   ~&  mark^vase
   =^  cards  state
-    ?:  =(q.vase %kick)  :: NB: ames calls this on %born
+    ?:  ?=([%kick ?] q.vase)
+      :: NB: ames calls this on %born (with fail=%.n) and after not hearing STUN
+      ::  responses for more than ~s5 (with fail=%.y)
+      ::
+      ::  if %ping was turned off (due to a succesfull STUN) but we failed
+      ::  to get a STUN response in time switch to %nat and start a ~s25 timer
+      ::
+      ::  if the %kick has fail=%.n (e.g. for every %born), the plan will remain
+      ::  unchanged, but we will innitiate a new round of %poke pings with
+      ::  increasing nonce.
+      ::
+      ::  if we get repeated [%stun fail=&], but we are already in either %nat
+      ::  or %pub, do nothing, since there are already timers in place to %ping
+      ::  repeatedly.
+      ::
+      =/  stun-failed=?  &(?=(%off -.plan) =(+.q.vase %.y))
+      =?  plan.state  stun-failed
+        [%nat ~]
+      ?.  &(stun-failed =(+.q.vase %.n))  `state
       (kick:ships our.bowl now.bowl)
-    ?:  =(q.vase %stop)  :: NB: ames calls this on %stun
+    ?:  =(q.vase %stop)  :: NB: ames calls this on [%stun fail=%.n]
       =.  plan.state  [%off ~]
       (kick:ships our.bowl now.bowl)
+    ::  XX FIXME won't compile
+    :: ?:  &(=(q.vase %once) ?=(%off -.plan))  :: NB: ames calls this on %once
+    ::   =.  plan.state  [%one ~]
+    ::   (kick:ships our.bowl now.bowl)
     ?:  =(q.vase %nat)
       =.  plan.state  [%nat ~]
       (kick:ships our.bowl now.bowl)
@@ -369,6 +412,12 @@
       ?.  ?=(%pub -.plan.state)  `state
       ?.  ?=(%poke-ack -.sign)   `state
       (take-pings:pub wire p.sign)
+    ::
+        [%one *]
+      ?.  ?=(%one -.plan.state)  `state
+      ?:  ?=(%poke-ack -.sign)   `state
+      ~&  >>>  '%once %ping failed'
+      `state
     ==
   [cards this]
 ::  +on-arvo: handle timer firing

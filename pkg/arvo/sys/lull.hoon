@@ -804,7 +804,7 @@
         [%kroc bones=(list [ship bone])]
         $>(%plea vane-task)
         [%deep =deep]
-        [%stun fail=?]
+        [%stun =stun]
     ::
         [%keen spar]
         [%yawn spar]
@@ -924,6 +924,13 @@
         [%drop =ship =nack=bone =message-num]
         [%cork =ship =bone]
         [%kill =ship =bone]
+    ==
+  ::  $stun: STUN notifications, from unix
+  ::
+  +$  stun
+    $%  [%stop ~]  :: succesful STUN response, stop %ping app
+        [%fail ~]  :: failure to STUN, re-enable %ping app
+        [%once ~]  :: new ip discovered, notify ping %app
     ==
   :: +|  %atomics
   ::
