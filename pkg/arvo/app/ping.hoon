@@ -358,7 +358,7 @@
       :: NB: ames calls this on %born (with fail=%.n) and after not hearing STUN
       ::  responses for more than ~s5 (with fail=%.y)
       ::
-      ::  if %ping was turned off (due to a succesfull STUN) but we failed
+      ::  if %ping was turned off (due to a successfull STUN) but we failed
       ::  to get a STUN response in time switch to %nat and start a ~s25 timer
       ::
       ::  if the %kick has fail=%.n (e.g. for every %born), the plan will remain
@@ -369,7 +369,7 @@
       ::  or %pub, do nothing, since there are already timers in place to %ping
       ::  repeatedly.
       ::
-      =/  stun-failed=?  &(?=(%off -.plan) =(+.q.vase %.y))
+      =/  stun-failed=?  &(?=([%off ~] plan.state) =(+.q.vase %.y))
       =?  plan.state  stun-failed
         [%nat ~]
       ?.  &(stun-failed =(+.q.vase %.n))  `state
@@ -377,10 +377,9 @@
     ?:  =(q.vase %stop)  :: NB: ames calls this on [%stun fail=%.n]
       =.  plan.state  [%off ~]
       (kick:ships our.bowl now.bowl)
-    ::  XX FIXME won't compile
-    :: ?:  &(=(q.vase %once) ?=(%off -.plan))  :: NB: ames calls this on %once
-    ::   =.  plan.state  [%one ~]
-    ::   (kick:ships our.bowl now.bowl)
+    ?:  &(=(q.vase %once) =(%off -.plan.state))  :: NB: ames calls this on %once
+      =.  plan.state  [%one ~]
+      (kick:ships our.bowl now.bowl)
     ?:  =(q.vase %nat)
       =.  plan.state  [%nat ~]
       (kick:ships our.bowl now.bowl)
