@@ -217,6 +217,7 @@
   ::  computes the axis of {b} within axis {a}.
   |=  [a=@ b=@]
   ?<  =(0 a)
+  ?<  =(0 b)
   ::  a composed axis
   ^-  @
   ?-  b
