@@ -2752,9 +2752,9 @@
             ==
           ::  if one of our sponsors breached, give the updated list to vere
           ::
-          =/  sponsors  (~(gas in *(set ship)) get-sponsors)
+          =/  sponsors  (~(gas in *(set ^ship)) get-sponsors)
           =?  event-core  (~(has in sponsors) ship)
-            (emit [unix. %give %saxo ~(tap in sponsors)])
+            (emit unix-duct.ames-state %give %saxo ~(tap in sponsors))
           ::
           event-core
         ::  +on-publ-rekey: handle new key for peer
