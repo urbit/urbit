@@ -75,6 +75,7 @@
     ::  and sponsorship changes
     ::
     ++  ships
+      =|  force=_|
       |%
       ++  rind  (^rind card state)
       ++  kick
@@ -104,7 +105,7 @@
         ::
         ::  Kick even if ships weren't added or removed
         ::
-        (kick-pings our now new-ships)
+        (kick-pings our now new-ships force)
       ::
       ::  Kick whenever we get a response.  We really care about
       ::  breaches and sponsorship changes.
@@ -117,18 +118,19 @@
         ^-  (quip card _state)
         [[%pass /jael/delay %arvo %b %wait now]~ state]
       ::
-      ++  take-delay  kick
+      ++  take-delay  %*(kick ships force %.y)
       --
     ::
     ::  Starts pinging a new set of `ships`.
     ::
     ++  kick-pings
-      |=  [our=@p now=@da ships=(set ship)]
+      |=  [our=@p now=@da ships=(set ship) force=?]
       ^-  (quip card _state)
       =:  nonce.state  +(nonce.state)
           ships.state  ships
         ==
       ::
+      ?:  force  (kick:nat our)
       ?-  -.plan.state
         %off  `state
         %nat  (kick:nat our)
