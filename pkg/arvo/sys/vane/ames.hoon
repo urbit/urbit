@@ -2750,6 +2750,11 @@
             :*  unix-duct.ames-state  %give  %nail  ship
                 (get-forward-lanes our peer-state peers.ames-state)
             ==
+          ::  if one of our sponsors breached, give the updated list to vere
+          ::
+          =/  sponsors  (~(gas in *(set ship)) get-sponsors)
+          =?  event-core  (~(has in sponsors) ship)
+            (emit [unix. %give %saxo ~(tap in sponsors)])
           ::
           event-core
         ::  +on-publ-rekey: handle new key for peer
@@ -2828,7 +2833,9 @@
               ::
               ?:  =(our ship)
                 =.  rift.ames-state  rift.point
-                =.  event-core  (emit unix-duct.ames-state %give %saxo get-sponsors)
+                ::  XX not needed?
+                :: =.  event-core
+                ::   (emit unix-duct.ames-state %give %saxo get-sponsors)
                 $(points t.points)
               ::
               ?.  (~(has by keys.point) life.point)
@@ -2979,9 +2986,6 @@
         ^-  (list move)
         :~  [duct %give %turf turfs]
             [duct %give %saxo get-sponsors]
-            ::  always start pinging on every restart; any STUN response
-            ::  (coming from unix as a %stun task) will turn off the %ping app
-            ::
             (poke-ping-app duct our %kick fail=%.n)
         ==
       ::  +on-vega: handle kernel reload
