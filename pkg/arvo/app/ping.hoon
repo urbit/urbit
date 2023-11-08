@@ -275,7 +275,7 @@
         ::
         (set-timer now)
       --
-    ::  Subsystem for formally acknowledge a change in our IP:PORT
+    ::  Subsystem for formally acknowledging a change in our IP:PORT
     ::
     ::    If our sponsor sends a STUN response, with an IP different than what
     ::    we had previously cached, we formally acknowledge this change by
@@ -370,9 +370,15 @@
       ::  repeatedly.
       ::
       =/  stun-failed=?  &(?=([%off ~] plan.state) =(+.q.vase %.y))
-      =?  plan.state  stun-failed
+      ?:  &(?=([%off ~] plan.state) =(+.q.vase %.n))
+        ::  ignore restarts if we were already STUNning, if ip:port changed
+        ::  %once will trigger one formal %ping
+        ::
+        `state
+      =?  plan.state  |(restart stun-failed)
         [%nat ~]
-      ?.  &(stun-failed =(+.q.vase %.n))  `state
+      ?:  &(!stun-failed =(+.q.vase %.y))
+        `state
       (kick:ships our.bowl now.bowl)
     ?:  =(q.vase %stop)  :: NB: ames calls this on [%stun fail=%.n]
       =.  plan.state  [%off ~]
@@ -415,7 +421,7 @@
         [%one *]
       ?.  ?=(%one -.plan.state)  `state
       ?:  ?=(%poke-ack -.sign)   `state
-      ~&  >>>  '%once %ping failed'
+      :: XX handle error?
       `state
     ==
   [cards this]
