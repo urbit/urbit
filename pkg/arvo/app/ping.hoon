@@ -130,7 +130,7 @@
         ==
       ::
       ?-  -.plan.state
-        %off  ~&  >>  "stopping %ping app"  `state
+        %off  `state
         %nat  (kick:nat our)
         %one  (kick:one our)
         %pub  (kick:pub our now)
@@ -332,7 +332,6 @@
         $~  [%nat ~]
         $%  [%nat ~]
             [%pub ip=(unit @t)]
-            [%off ~]
     ==  ==
   ::
   ++  state-0-to-1
@@ -375,7 +374,7 @@
         ::  %once will trigger one formal %ping
         ::
         `state
-      =?  plan.state  |(restart stun-failed)
+      =?  plan.state  stun-failed
         [%nat ~]
       ?:  &(!stun-failed =(+.q.vase %.y))
         `state
