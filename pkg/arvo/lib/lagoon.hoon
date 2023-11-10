@@ -395,7 +395,22 @@
         (gulf 0 (dec n))
       ^-  ray  (zeros [~[n n] bloq kind prec])
     |=  [i=@ r=ray]
-    [i (set-item r ~[i i] 1)]
+    :: [i (set-item r ~[i i] 1)]
+    :-  i
+    %^  set-item
+        r
+      ~[i i]
+    ?+    kind.meta  ~|(kind.meta !!)
+        %uint  `@`1
+        %int2    `@`1
+        %real
+      ?+  bloq.meta  !!
+        %7  .~~~1
+        %6  .~1
+        %5  .1
+        %4  .~~1
+      ==
+    ==
   ::    Zeroes
   ++  zeros
       |=  =meta  ^-  ray
@@ -433,7 +448,7 @@
     %-  spac
     :-  meta
     %+  lsh  [bloq.meta 1]  :: account for zero which strips out of ++rap
-    (rap bloq.meta (gulf 0 (dec n)))
+    (rap bloq.meta (flop (gulf 0 (dec n))))
   ::  Produce a 1-dimensional range along one dimension
   ::  as [a b) with interval d.
   ::  Only produces %real.
