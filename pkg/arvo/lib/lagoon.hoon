@@ -22,12 +22,12 @@
     ==
   ::
   +$  kind              ::  $kind:  type of array scalars
-    $?  %float          ::  IEEE 754 float
-        %unsigned       ::  unsigned integer
-        %signed         ::  2s-complement integer
-        %complex        ::  BLAS-compatible packed floats
-        %posit          ::  unum/posit
-        %fixed          ::  fixed-precision
+    $?  %real           ::  IEEE 754 float %real
+        %uint           ::  unsigned integer %usgn %uint
+        %int2           ::  2s-complement integer %sint
+        %cplx           ::  BLAS-compatible packed floats %cplx
+        %unum           ::  unum/posit %unum
+        %fixp           ::  fixed-precision %fixp
     ==
   ::
   +$  baum              ::  $baum:  ndray with metadata
@@ -69,13 +69,13 @@
   ++  get-term
     |=  =meta
     ?+    kind.meta  ~|(kind.meta !!)
-        %unsigned
+        %uint
       %ud
       ::
-        %signed
+        %int2
       %sd
       ::
-        %float
+        %real
       ?+    bloq.meta  ~|(bloq.meta !!)
         %7  %rq
         %6  %rd
@@ -408,9 +408,9 @@
     ~_  leaf+"lagoon-fail"
     =/  one
       ?+    kind.meta  ~|(kind.meta !!)
-          %unsigned  `@`1
-          %signed    `@`1
-          %float
+          %uint  `@`1
+          %int2    `@`1
+          %real
         ?+  bloq.meta  !!
           %7  .~~~1
           %6  .~1
@@ -420,7 +420,7 @@
       ==
     (fill meta one)
   ::  Produce a 1-dimensional index array.
-  ::  Only produces %unsigned.
+  ::  Only produces %uint.
   ::  Note that this runs from 0 to n-1.  The point of ++iota is to be an index,
   ::  so it needs to pattern-match the context rather than slavishly follow APL.
   ::
@@ -429,19 +429,19 @@
     ^-  ray
     ?>  =((lent shape.meta) 1)
     =/  n  (snag 0 shape.meta)
-    =.  kind.meta  %unsigned
+    =.  kind.meta  %uint
     %-  spac
     :-  meta
     %+  lsh  [bloq.meta 1]  :: account for zero which strips out of ++rap
     (rap bloq.meta (gulf 0 (dec n)))
   ::  Produce a 1-dimensional range along one dimension
   ::  as [a b) with interval d.
-  ::  Only produces %float.
+  ::  Only produces %real.
   ::
   ++  range
     |=  [=meta [a=@ b=@] d=@]
     ^-  ray
-    =.  kind.meta  %float
+    =.  kind.meta  %real
     %-  spac
     %-  en-ray
     ::
@@ -484,13 +484,13 @@
     ==
   ::  Produce a 1-dimensional range along one dimension
   ::  as [a b] with number of steps n.
-  ::  Only produces %float.
+  ::  Only produces %real.
   ::
   ++  linspace
     |=  [=meta [a=@ b=@] n=@ud]
     ^-  ray
     =.  shape.meta  ~[n]
-    =.  kind.meta  %float
+    =.  kind.meta  %real
     %-  spac
     %-  en-ray
     :-  meta
@@ -549,7 +549,7 @@
   ++  scale
     |=  [=meta =term data=@]
     ^-  ray
-    ?>  =(%float kind.meta)
+    ?>  =(%real kind.meta)
     =.  shape.meta  `(list @)`(zing (reap (lent shape.meta) ~[1]))
     ::  convert data to fl
     =/  mid=fn
@@ -913,7 +913,7 @@
     |=  [=bloq =kind fun=ops]
     ^-  $-([@ @] @)
     ?+    kind  ~|(kind !!)
-        %unsigned  
+        %uint  
       ?+  fun  !!
         %add  ~(sum fe bloq)
         %sub  ~(dif fe bloq)
@@ -929,7 +929,7 @@
         %lte  |=([b=@ c=@] (^lte b c))
       ==
       ::
-        %signed  
+        %int2  
       ?+  fun  !!
         %add  ~(add twoc bloq)
         %mul  ~(mul twoc bloq)
@@ -937,7 +937,7 @@
         %lth  ~(lth twoc bloq)
       ==
       ::
-        %float
+        %real
       ?+  bloq  !!
         %7
         ?+  fun  !!
@@ -991,14 +991,14 @@
     |=  [=bloq =kind fun=ops]
     ^-  $-(@ @)
     ?+    kind  ~|(kind !!)
-        %unsigned  
+        %uint  
       ?+  fun  !!
         %abs  |=(b=@ b)
       ==
       ::
-        %signed  !!
+        %int2  !!
       ::
-        %float
+        %real
       ?+  bloq  !!
         %7
         ?+  fun  !!
