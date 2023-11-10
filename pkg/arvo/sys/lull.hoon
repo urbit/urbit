@@ -906,6 +906,12 @@
   ::    payload: semantic message contents
   ::
   +$  plea  [vane=@tas =path payload=*]
+  ::
+  +$  message
+    $%  [%plea plea]
+        [%boon payload=*]
+        [%naxplanation =message-num =error]
+    ==
   ::  $spar:  pair of $ship and $path
   ::
   ::    Instead of fully qualifying a scry path, ames infers rift and
@@ -915,7 +921,7 @@
   ::  $deep: deferred %ames call, from self, to keep +abet cores pure
   ::
   +$  deep
-    $%  [%nack =ship =nack=bone =message-blob]
+    $%  [%nack =ship =nack=bone =message]
         [%sink =ship =target=bone naxplanation=[=message-num =error]]
         [%drop =ship =nack=bone =message-num]
         [%cork =ship =bone]
@@ -1159,7 +1165,7 @@
     $+  message-pump-state
     $:  current=_`message-num`1
         next=_`message-num`1
-        unsent-messages=(qeu message-blob)
+        unsent-messages=(qeu message)
         unsent-fragments=(list static-fragment)
         queued-message-acks=(map message-num ack)
         =packet-pump-state
