@@ -327,6 +327,7 @@
 ::
 ++  on-poke
   |=  [=mark =vase]
+  ?>  (team:title [our src]:bowl)
   ?:  ?=(%noun mark)
     ~&  state
     `this

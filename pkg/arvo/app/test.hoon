@@ -25,6 +25,7 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  [(list card) _this]
+  ?>  (team:title [our src]:bowl)
   |^
   =+  !<(=test vase)
   ?-  test

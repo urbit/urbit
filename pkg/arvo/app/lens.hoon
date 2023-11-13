@@ -50,6 +50,7 @@
   ^-  (quip card:agent:gall _this)
   ::
   ?:  &(?=(%noun mark) ?=(%cancel q.vase))
+    ?>  (team:title [our src]:bowl)
     ~&  %lens-cancel
     [~ this(job.state ~)]
   ::

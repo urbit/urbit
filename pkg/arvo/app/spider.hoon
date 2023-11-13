@@ -214,6 +214,7 @@
     ~/  %on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
+    ?>  (team:title [our src]:bowl)
     ?:  ?=(%spider-kill mark)
       (on-load on-save)
     =^  cards  state
