@@ -31,6 +31,7 @@
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
+    ?>  (team:title [our src]:bowl)
     ?.  ?=(%noun mark)  [~ this]
     ?^  in-progress
       ~&  %still-running-please-try-again-later
