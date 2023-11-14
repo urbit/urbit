@@ -80,10 +80,11 @@
   =/  deks
     ?~  desks
       %+  sort
-        (sort ~(tap in -.prep) |=([[a=@ *] b=@ *] !(aor a b)))
+        (sort ~(tap by -.prep) |=([[a=@ *] b=@ *] !(aor a b)))
       |=([[a=@ *] [b=@ *]] ?|(=(a %kids) =(b %base)))
-    %+  skip  ~(tap in -.prep)
+    %+  skip  ~(tap by -.prep)
     |=([syd=@tas *] =(~ (find ~[syd] desks)))
+  =.  deks  (skim deks |=([=desk *] ((sane %tas) desk)))
   ?:  =(filt %blocking)
     =/  base-wic
       %+  sort  ~(tap by wic:(~(got by -.prep) %base))
@@ -147,6 +148,8 @@
   ^-  tank
   =/  ego  (scot %p our)
   =/  wen  (scot %da now)
+  ?.  ((sane %tas) syd)
+    leaf+"insane desk: {<syd>}"
   =+  .^(=cass %cw /[ego]/[syd]/[wen])
   ?:  =(ud.cass 0)
     leaf+"desk does not yet exist: {<syd>}"

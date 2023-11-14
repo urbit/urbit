@@ -459,8 +459,6 @@
                 name.focus();
               }
               function doEauth() {
-                console.log('mb get value from event', event);
-                console.log('compare', name.value, our);
                 if (name.value == our) {
                   event.preventDefault();
                   goLocal();
@@ -471,10 +469,6 @@
     ;body
       =class   "{?:(=(`& eauth) "eauth" "local")}"
       =onload  "setup({?:(=(`& eauth) "true" "false")})"
-      ;nav
-        ;div.local(onclick "goLocal()"):"Local"
-        ;div.eauth(onclick "goEauth()"):"EAuth"
-      ==
       ;div#local
         ;p:"Urbit ID"
         ;input(value "{(scow %p our)}", disabled "true", class "mono");
@@ -528,16 +522,11 @@
         ==
       ==
       ;*  ?:  ?=(%ours -.identity)  ~
-          =+  id=(trim 29 (scow %p who.identity))
           =+  as="proceed as{?:(?=(%fake -.identity) " guest" "")}"
           ;+  ;span.guest.mono
-                ; Or
+                ; Or try to
                 ;a/"{(trip (fall redirect-url '/'))}":"{as}"
-                ; :
-                ;br;
-                ; {p.id}
-                ;br;
-                ; {q.id}
+                ; .
               ==
     ==
     ;script:'''
