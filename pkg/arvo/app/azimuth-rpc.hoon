@@ -52,7 +52,7 @@
       (handle-http-request id req)
     ::
         %azimuth-action
-      ?>  (team:title our.bowl src.bowl)
+      ?>  (team:title [our src]:bowl)
       =+  !<([%disconnect bind=binding:eyre] vase)
       ~&  >>>  "disconnecting at {<bind>}"
       :_  this
