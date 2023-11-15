@@ -80,6 +80,7 @@
   ::
   ++  on-poke
     |=  [=mark =vase]
+    ?>  (team:title [our src]:bowl)
     ^-  step:agent:gall
     =^  cards  state
       ?+  mark  ~|([%aqua-bad-mark mark] !!)
@@ -615,7 +616,7 @@
           ::
             ?:  fake.ae  ~
             =+  [%raw-poke %noun %refresh-rate ~s30]
-            [/g/aqua/reduce-refresh-rate %deal [. .]:who.ae %azimuth -]~
+            [/g/aqua/reduce-refresh-rate %deal [. . /]:who.ae %azimuth -]~
         ==
       ==
     =.  this

@@ -4,7 +4,7 @@
 =>  ..lull
 ~%  %zuse  ..part  ~
 |%
-++  zuse  %413
+++  zuse  %412
 ::                                                      ::  ::
 ::::                                                    ::  ::  (2) engines
   ::                                                    ::  ::
@@ -3319,6 +3319,7 @@
     ~%  %leer  ..part  ~
     |=  txt=cord
     ^-  wain
+    ?~  txt  ~
     =/  len=@  (met 3 txt)
     =/  cut  =+(cut -(a 3, c 1, d txt))
     =/  sub  sub
@@ -4297,8 +4298,11 @@
             ~&(%base-64-padding-err-two ~)
           =/  len  (sub (mul 3 (div (add lat dif) 4)) dif)
           :+  ~  len
-          %+  swp  3
-          (rep [0 6] (flop (weld dat (reap dif 0))))
+          =/  res  (rsh [1 dif] (rep [0 6] (flop dat)))
+          =/  amt  (met 3 res)
+          ::  left shift trailing zeroes in after byte swap
+          =/  trl  ?:  (lth len amt)  0  (sub len amt)
+          (lsh [3 trl] (swp 3 res))
         --
       --
     ::
@@ -4695,22 +4699,6 @@
         4
       --  ::de
     --  ::json
-  ::  +en-json:html: encode json to tape
-  ::
-  ::  XX: deprecated; use +en:json:html
-  ::
-  ++  en-json
-    |=  jon=^json
-    ^-  tape
-    (trip (en:json jon))
-  ::  +de-json:html: parse cord to (unit json)
-  ::
-  ::  XX: deprecated; use +de:json:html
-  ::
-  ++  de-json
-    |=  txt=cord
-    ^-  (unit ^json)
-    (de:json txt)
   ::                                                    ::  ++en-xml:html
   ++  en-xml                                            ::  xml printer
     =<  |=(a=manx `tape`(apex a ~))
@@ -5265,10 +5253,10 @@
   ::
   =>  |%
       ++  sein
-        |=  [rof=roof our=ship now=@da who=ship]
+        |=  [rof=roof pov=path our=ship now=@da who=ship]
         ;;  ship
         =<  q.q  %-  need  %-  need
-        (rof ~ %j `beam`[[our %sein %da now] /(scot %p who)])
+        (rof ~ pov %j `beam`[[our %sein %da now] /(scot %p who)])
       --
   ::  middle core: stateless queries for default numeric sponsorship
   ::
