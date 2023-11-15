@@ -4,7 +4,7 @@
 =>  ..part
 ~%  %lull  ..part  ~
 |%
-++  lull  %324
+++  lull  %323
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
@@ -462,7 +462,8 @@
 +$  rift  @ud                                           ::  ship continuity
 +$  mime  (pair mite octs)                              ::  mimetyped data
 +$  octs  (pair @ud @)                                  ::  octet-stream
-+$  sock  (pair ship ship)                              ::  outgoing [our his]
++$  sock  (pair ship ship)                              ::  outgoing [src dest]
++$  sack  (trel ship ship path)                         ::  $sock /w provenance
 +$  stub  (list (pair stye (list @c)))                  ::  styled unicode
 +$  stye  (pair (set deco) (pair tint tint))            ::  decos/bg/fg
 +$  styl  %+  pair  (unit deco)                         ::  cascading style
@@ -584,6 +585,7 @@
         %'GET'
         %'HEAD'
         %'OPTIONS'
+        %'PATCH'
         %'POST'
         %'PUT'
         %'TRACE'
@@ -762,11 +764,14 @@
   ::    Messaging Tasks
   ::
   ::    %hear: packet from unix
+  ::    %dear: lane from unix
   ::    %heed: track peer's responsiveness; gives %clog if slow
   ::    %jilt: stop tracking peer's responsiveness
   ::    %cork: request to delete message flow
-  ::    %kroc: request to delete stale message flows
+  ::    %tame: request to delete route for ship
+  ::    %kroc: request to delete specific message flows, from their bones
   ::    %plea: request to send message
+  ::    %deep: deferred calls to %ames, from itself
   ::
   ::    Remote Scry Tasks
   ::
@@ -783,17 +788,21 @@
   ::    %snub: set packet blocklist to .ships
   ::    %spew: set verbosity toggles
   ::    %cong: adjust congestion control parameters
-  ::    %stir: recover from timer desync
+  ::    %stir: recover from timer desync and assorted debug commands
   ::    %trim: release memory
   ::    %vega: kernel reload notification
   ::
   +$  task
+    $+  ames-task
     $%  [%hear =lane =blob]
+        [%dear =ship =lane]
         [%heed =ship]
         [%jilt =ship]
         [%cork =ship]
-        [%kroc dry=?]
+        [%tame =ship]
+        [%kroc bones=(list [ship bone])]
         $>(%plea vane-task)
+        [%deep =deep]
     ::
         [%keen spar]
         [%yawn spar]
@@ -819,6 +828,7 @@
   ::    %done: notify vane that peer (n)acked our message
   ::    %lost: notify vane that we crashed on %boon
   ::    %send: packet to unix
+  ::    %nail: lanes to unix
   ::
   ::    Remote Scry Gifts
   ::
@@ -834,6 +844,7 @@
         [%done error=(unit error)]
         [%lost ~]
         [%send =lane =blob]
+        [%nail =ship lanes=(list lane)]
     ::
         [%tune spar roar=(unit roar)]
     ::
@@ -895,13 +906,27 @@
   ::    payload: semantic message contents
   ::
   +$  plea  [vane=@tas =path payload=*]
+  ::
+  +$  message
+    $%  [%plea plea]
+        [%boon payload=*]
+        [%naxplanation =message-num =error]
+    ==
   ::  $spar:  pair of $ship and $path
   ::
   ::    Instead of fully qualifying a scry path, ames infers rift and
   ::    life based on the ship.
   ::
   +$  spar  [=ship =path]
+  ::  $deep: deferred %ames call, from self, to keep +abet cores pure
   ::
+  +$  deep
+    $%  [%nack =ship =nack=bone =message]
+        [%sink =ship =target=bone naxplanation=[=message-num =error]]
+        [%drop =ship =nack=bone =message-num]
+        [%cork =ship =bone]
+        [%kill =ship =bone]
+    ==
   :: +|  %atomics
   ::
   +$  bone           @udbone
@@ -960,6 +985,7 @@
   ::    %known: we know their life and public keys, so we have a channel
   ::
   +$  ship-state
+    $+  ship-state
     $%  [%alien alien-agenda]
         [%known peer-state]
     ==
@@ -970,6 +996,7 @@
   ::    heeds: local tracking requests; passed through into $peer-state
   ::
   +$  alien-agenda
+    $+  alien-agenda
     $:  messages=(list [=duct =plea])
         packets=(set =blob)
         heeds=(set duct)
@@ -997,6 +1024,7 @@
   ::    corked:  bones closed on both sender and receiver
   ::
   +$  peer-state
+    $+  peer-state
     $:  $:  =symmetric-key
             =life
             =rift
@@ -1015,6 +1043,7 @@
         keens=(map path keen-state)
     ==
   +$  keen-state
+    $+  keen-state
     $:  wan=((mop @ud want) lte)  ::  request packets, sent
         nex=(list want)           ::  request packets, unsent
         hav=(list have)           ::  response packets, backward
@@ -1133,9 +1162,10 @@
   ::    packet-pump-state: state of corresponding |packet-pump
   ::
   +$  message-pump-state
+    $+  message-pump-state
     $:  current=_`message-num`1
         next=_`message-num`1
-        unsent-messages=(qeu message-blob)
+        unsent-messages=(qeu message)
         unsent-fragments=(list static-fragment)
         queued-message-acks=(map message-num ack)
         =packet-pump-state
@@ -1153,6 +1183,7 @@
   ::    metrics: congestion control information
   ::
   +$  packet-pump-state
+    $+  packet-pump-state
     $:  next-wake=(unit @da)
         live=((mop live-packet-key live-packet-val) lte-packets)
         metrics=pump-metrics
@@ -1190,7 +1221,6 @@
   ::    rto: retransmission timeout
   ::    rtt: roundtrip time estimate, low-passed using EWMA
   ::    rttvar: mean deviation of .rtt, also low-passed with EWMA
-  ::    num-live: how many packets sent, awaiting ack
   ::    ssthresh: slow-start threshold
   ::    cwnd: congestion window; max unacked packets
   ::
@@ -1200,7 +1230,6 @@
         rttvar=_~s1
         ssthresh=_10.000
         cwnd=_1
-        num-live=@ud
         counter=@ud
     ==
   +$  live-packet
@@ -1229,6 +1258,7 @@
   ::    live-messages: partially received messages
   ::
   +$  message-sink-state
+    $+  message-sink-state
     $:  last-acked=message-num
         last-heard=message-num
         pending-vane-ack=(qeu [=message-num message=*])
@@ -1365,7 +1395,9 @@
     =+  len=(cut 3 [4 2] hoot)
     =+  pat=(cut 3 [6 len] hoot)
     ~|  pat=pat
-    [(add 6 len) [(stab pat) num]]
+    :-  (add 6 len)
+    :_  num
+    (rash pat ;~(pfix fas (most fas (cook crip (star ;~(less fas prn))))))
   ::
   ++  sift-meow
     |=  =yowl
@@ -1518,7 +1550,10 @@
         file-path=term                                  ::
     ==                                                  ::
   +$  care                                              ::  clay submode
-    ?(%a %b %c %d %e %f %p %r %s %t %u %v %w %x %y %z)  ::
+    $?  %a  %b  %c  %d  %e  %f                          ::
+        %p  %q  %r  %s  %t  %u                          ::
+        %v  %w  %x  %y  %z                              ::
+    ==                                                  ::
   +$  cash                                              ::  case or tako
     $%  [%tako p=tako]                                  ::
         case                                            ::
@@ -2060,7 +2095,10 @@
     $%  [%payload =simple-payload:http]
     ==  ==
   +$  gift
-    $%  ::  set-config: configures the external http server
+    $%  ::  ames responses
+        ::
+        $>(?(%boon %done) gift:ames)
+        ::  set-config: configures the external http server
         ::
         ::    TODO: We need to actually return a (map (unit @t) http-config)
         ::    so we can apply configurations on a per-site basis
@@ -2091,6 +2129,9 @@
         ::  new unix process
         ::
         $>(%born vane-task)
+        ::  network request
+        ::
+        $>(%plea vane-task)
         ::  trim state (in response to memory pressure)
         ::
         $>(%trim vane-task)
@@ -2103,6 +2144,11 @@
         ::  update http configuration
         ::
         [%rule =http-rule]
+        ::  set a base url for eauth, like `'https://sampel.com'
+        ::
+        ::    eyre will append /~/eauth to it internally to redirect into eauth
+        ::
+        [%eauth-host host=(unit @t)]
         ::  starts handling an inbound http request
         ::
         [%request secure=? =address =request:http]
@@ -2163,6 +2209,14 @@
         ::  inbound-request: the original request which caused this connection
         ::
         =inbound-request
+        ::  session-id: the session associated with this connection
+        ::  identity:   the identity associated with this connection
+        ::
+        ::NOTE  technically the identity is associated with the session (id),
+        ::      but we may still need to know the identity that was used
+        ::      after the session proper expires.
+        ::
+        [session-id=@uv =identity]
         ::  response-header: set when we get our first %start
         ::
         response-header=(unit response-header:http)
@@ -2176,11 +2230,26 @@
     $:  ::  sessions: a mapping of session cookies to session information
         ::
         sessions=(map @uv session)
+        ::  visitors: in-progress incoming eauth flows
+        ::
+        visitors=(map @uv visitor)
+        ::  visiting: outgoing eauth state per ship
+        ::
+        visiting=(map ship logbook)
+        ::  endpoint: hardcoded local eauth endpoint for %syn and %ack
+        ::
+        ::    user-configured or auth-o-detected, with last-updated timestamp.
+        ::    both shaped like 'prot://host'
+        ::
+        endpoint=[user=(unit @t) auth=(unit @t) =time]
     ==
   ::  +session: server side data about a session
   ::
   +$  session
-    $:  ::  expiry-time: when this session expires
+    $:  ::  identity: authentication level & id of this session
+        ::
+        =identity
+        ::  expiry-time: when this session expires
         ::
         ::    We check this server side, too, so we aren't relying on the browser
         ::    to properly handle cookie expiration as a security mechanism.
@@ -2193,6 +2262,73 @@
         ::  TODO: We should add a system for individual capabilities; we should
         ::  mint some sort of long lived cookie for mobile apps which only has
         ::  access to a single application path.
+    ==
+  ::  +visitor: completed or in-progress incoming eauth flow
+  ::
+  ::    duct: boon duct
+  ::      and
+  ::    sesh: login completed, session exists
+  ::      or
+  ::    pend: awaiting %tune for %keen sent at time, for initial eauth http req
+  ::    ship: the @p attempting to log in
+  ::    base: local protocol+hostname the attempt started on, if any
+  ::    last: the url to redirect to after log-in
+  ::    toke: authentication secret received over ames or offered by visitor
+  ::
+  +$  visitor
+    $:  duct=(unit duct)
+    $@  sesh=@uv
+    $:  pend=(unit [http=duct keen=time])
+        ship=ship
+        base=(unit @t)
+        last=@t
+        toke=(unit @uv)
+    ==  ==
+  ::  +logbook: record of outgoing eauth comms & state
+  ::
+  ::    qeu: a queue of nonces for to-be-n/acked pleas
+  ::    map: per nonce, completed or pending eauth session
+  ::
+  +$  logbook  [=(qeu @uv) =(map @uv portkey)]
+  ::  +portkey: completed or in-progress outgoing eauth flow
+  ::
+  ::    made: live since
+  ::      or
+  ::    duct: confirm request awaiting redirect
+  ::    toke: secret to include in redirect, unless aborting
+  ::
+  +$  portkey
+    $@  made=@da          ::  live since
+    $:  pend=(unit duct)  ::  or await redir
+        toke=(unit @uv)   ::  with secret
+    ==
+  ::  +eauth-plea: client talking to host
+  ::
+  +$  eauth-plea
+    $:  %0
+    $%  ::  %open: client decided on an attempt, wants to return to url
+        ::  %shut: client wants the attempt or session closed
+        ::
+        [%open nonce=@uv token=(unit @uv)]
+        [%shut nonce=@uv]
+    ==  ==
+  ::  +eauth-boon: host responding to client
+  ::
+  +$  eauth-boon
+    $:  %0
+    $%  ::  %okay: attempt heard, client to finish auth through url
+        ::  %shut: host has expired the session
+        ::
+        [%okay nonce=@uv url=@t]
+        [%shut nonce=@uv]
+    ==  ==
+  ::  $identity: authentication method & @p
+  ::
+  +$  identity
+    $~  [%ours ~]
+    $%  [%ours ~]                                       ::  local, root
+        [%fake who=@p]                                  ::  guest id
+        [%real who=@p]                                  ::  authed cross-ship
     ==
   ::  channel-state: state used in the channel system
   ::
@@ -2237,6 +2373,7 @@
   ::
   +$  channel
     $:  mode=?(%json %jam)
+        =identity
         ::  channel-state: expiration time or the duct currently listening
         ::
         ::    For each channel, there is at most one open EventSource
@@ -2309,6 +2446,9 @@
         ::  internal authentication page
         ::
         [%authentication ~]
+        ::  cross-ship authentication handling
+        ::
+        [%eauth ~]
         ::  internal logout page
         ::
         [%logout ~]
@@ -2321,6 +2461,9 @@
         ::  respond with the @p the requester is authenticated as
         ::
         [%name ~]
+        ::  respond with the @p of the ship serving the response
+        ::
+        [%host ~]
         ::  respond with the default file not found page
         ::
         [%four-oh-four ~]
@@ -2569,11 +2712,12 @@
   +$  gift                                              ::  outgoing result
     $%  [%boon payload=*]                               ::  ames response
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
+        [%flub ~]                                       ::  not ready to handle plea
         [%unto p=unto]                                  ::
     ==                                                  ::
   +$  task                                              ::  incoming request
     $~  [%vega ~]                                       ::
-    $%  [%deal p=sock q=term r=deal]                    ::  full transmission
+    $%  [%deal p=sack q=term r=deal]                    ::  full transmission
         [%sear =ship]                                   ::  clear pending queues
         [%jolt =desk =dude]                             ::  (re)start agent
         [%idle =dude]                                   ::  suspend agent
@@ -2591,10 +2735,39 @@
   +$  bitt  (map duct (pair ship path))                 ::  incoming subs
   +$  boat  (map [=wire =ship =term] [acked=? =path])   ::  outgoing subs
   +$  boar  (map [=wire =ship =term] nonce=@)           ::  and their nonces
+  ::
+  +$  path-state
+    $:  bob=(unit @ud)
+        fan=((mop @ud (pair @da (each page @uvI))) lte)
+    ==
+  +$  stats                                             ::  statistics
+    $:  change=@ud                                      ::  processed move count
+        eny=@uvJ                                        ::  entropy
+        time=@da                                        ::  current event time
+    ==
+  +$  egg                                               ::  migratory agent state
+    $%  [%nuke sky=(map spur @ud)]                      ::  see /sys/gall $yoke
+        $:  %live
+            control-duct=duct
+            run-nonce=@t
+            sub-nonce=@
+            =stats
+            =bitt
+            =boat
+            =boar
+            code=~
+            old-state=[%| vase]
+            =beak
+            marks=(map duct mark)
+            sky=(map spur path-state)
+            ken=(jug spar:ames wire)
+    ==  ==
+  +$  egg-any  $%([%15 egg])
   +$  bowl                                              ::  standard app state
     $:  $:  our=ship                                    ::  host
             src=ship                                    ::  guest
             dap=term                                    ::  agent
+            sap=path                                    ::  provenance
         ==                                              ::
         $:  wex=boat                                    ::  outgoing subs
             sup=bitt                                    ::  incoming subs
@@ -3070,6 +3243,30 @@
   ::                                                    ::
   +$  shed  _*form:(strand:rand ,vase)                  ::  compute vase
   --  ::khan
+::                                                      ::::
+::::                    ++lick                            ::  (1j) IPC
+  ::                                                    ::::
+++  lick  ^?
+  |%
+  +$  gift                                              ::  out result <-$
+    $%  [%spin =name]                                   ::  open an IPC port
+        [%shut =name]                                   ::  close an IPC port
+        [%spit =name =mark =noun]                       ::  spit a noun to the IPC port
+        [%soak =name =mark =noun]                       ::  soak a noun from the IPC port
+    ==
+  +$  task                                              ::  in request ->$
+    $~  [%vega ~]                                       ::
+    $%  $>(%born vane-task)                             ::  new unix process
+        $>(%trim vane-task)                             ::  trim state
+        $>(%vega vane-task)                             ::  report upgrade
+        [%spin =name]                                   ::  open an IPC port
+        [%shut =name]                                   ::  close an IPC port
+        [%spit =name =mark =noun]                       ::  spit a noun to the IPC port
+        [%soak =name =mark =noun]                       ::  soak a noun from the IPC port
+    ==
+  ::
+  +$  name  path
+  --  ::lick
 ::
 ++  rand                                                ::  computation
   |%
@@ -3272,6 +3469,7 @@
       gift:iris
       gift:jael
       gift:khan
+      gift:lick
   ==
 +$  task-arvo                                           ::  in request ->$
   $%  task:ames
@@ -3283,6 +3481,7 @@
       task:iris
       task:jael
       task:khan
+      task:lick
   ==
 +$  note-arvo                                           ::  out request $->
   $~  [%b %wake ~]
@@ -3295,6 +3494,7 @@
       [%i task:iris]
       [%j task:jael]
       [%k task:khan]
+      [%l task:lick]
       [%$ %whiz ~]
       [@tas %meta vase]
   ==
@@ -3317,6 +3517,7 @@
       [%iris gift:iris]
       [%jael gift:jael]
       [%khan gift:khan]
+      [%lick gift:lick]
   ==
 ::  $unix-task: input from unix
 ::

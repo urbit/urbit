@@ -214,6 +214,7 @@
     ~/  %on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
+    ?>  (team:title [our src]:bowl)
     ?:  ?=(%spider-kill mark)
       (on-load on-save)
     =^  cards  state
@@ -315,7 +316,7 @@
   ::
   =/  tube  (convert-tube %json input-mark desk bowl)
   ?>  ?=(^ body.request.inbound-request)
-  =/  body=json  (need (de-json:html q.u.body.request.inbound-request))
+  =/  body=json  (need (de:json:html q.u.body.request.inbound-request))
   =/  input=vase  (slop !>(~) (tube !>(body)))
   =/  boc  bec
   =/  =start-args:spider  [~ `tid boc(q desk, r da+now.bowl) thread input]
@@ -554,9 +555,13 @@
     ~
   %+  give-simple-payload:app:server  u.eyre-id
   ^-  simple-payload:http
-  :_  ~  :_  ~
   ?.  ?=(http-error:spider term)
-    ((slog tang) 500)
+    %-  (slog tang)
+    =/  tube  (convert-tube %tang %json desk bowl)
+    :-  [500 [['content-type' 'application/json'] ~]]
+    =-  `(as-octs:mimes:html (en:json:html -))
+    o/(malt `(list [key=@t json])`[term+s/term tang+!<(json (tube !>(tang))) ~])
+  :_  ~  :_  ~
   ?-  term
     %bad-request  400
     %forbidden    403
@@ -570,9 +575,9 @@
   ::%-  (slog leaf+"strand {<yarn>} failed" leaf+<term> tang)
   =/  =tid  (yarn-to-tid yarn)
   =/  fail-cards  (thread-say-fail tid term tang)
-  =^  cards       state  (thread-clean yarn)
   =^  http-cards  state  (thread-http-fail tid term tang)
   =^  scry-card   state  (cancel-scry tid silent=%.n)
+  =^  cards       state  (thread-clean yarn)
   :_  state
   :(weld fail-cards cards http-cards scry-card)
 ::
