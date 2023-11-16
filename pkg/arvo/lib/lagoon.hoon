@@ -446,6 +446,14 @@
     =/  n  (snag 0 shape.meta)
     =.  kind.meta  %uint
     (en-ray meta (gulf 0 (dec n)))
+  ::  Produce a magic square in nD.
+  ++  magic
+    |=  =meta
+    ^-  ray
+    =/  n  (roll shape.meta ^mul)
+    %+  reshape
+      (en-ray [~[n] bloq.meta %uint ~] (gulf 0 (dec n)))
+    shape.meta
   ::  Produce a 1-dimensional range along one dimension
   ::  as [a b) with interval d.
   ::  Only produces %real.
