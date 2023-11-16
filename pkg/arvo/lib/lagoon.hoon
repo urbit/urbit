@@ -182,6 +182,8 @@
     |=  [a=ray dex=(list @)]
     ^-  ray
     =,  meta.a
+    ?:  =(1 (lent shape))
+      (spac [~[1] bloq kind prec] (get-item a dex))
     ?>  =(+((lent dex)) (lent shape))
     =/  res
       %-  zeros
@@ -199,6 +201,7 @@
   ++  set-row
     |=  [a=ray dex=(list @) row=ray]
     ^-  ray
+    ?:  &(=(1 (lent dex)) =(1 (lent shape.meta.row)))  (set-item a dex (get-item row ~[0]))
     ?>  =(+((lent dex)) (lent shape.meta.a))
     ?>  =((lent shape.meta.row) 2)
     ?>  =(1 (snag 0 shape.meta.row))
