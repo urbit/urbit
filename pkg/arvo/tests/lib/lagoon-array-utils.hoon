@@ -124,6 +124,74 @@
       |.((set-item:la input-magic-2x2x2-5u ~[3 2 1] 0xf))
   ==
 
+++  test-get-row-1d  ^-  tang
+  =/  input-iota-1x8-3u  (iota:la [shape=~[8] bloq=3 kind=%uint prec=~])
+  ;:  weld
+    %+  expect-eq
+      !>((en-ray:la [shape=~[1] bloq=3 kind=%uint prec=~] ~[0x0]))
+      !>((get-row:la input-iota-1x8-3u ~[0]))
+    %+  expect-eq
+      !>((en-ray:la [shape=~[1] bloq=3 kind=%uint prec=~] ~[0x7]))
+      !>((get-row:la input-iota-1x8-3u ~[7]))
+    %-  expect-fail
+      |.((get-row:la input-iota-1x8-3u ~[8]))
+  ==
+
+++  test-get-row-2d  ^-  tang
+  =/  input-magic-3x3-4u  (magic:la [shape=~[3 3] bloq=4 kind=%uint prec=~])
+  ;:  weld
+    %+  expect-eq
+      !>((en-ray:la [shape=~[1 3] bloq=4 kind=%uint prec=~] ~[~[0x0 0x1 0x2]]))
+      !>((get-row:la input-magic-3x3-4u ~[0]))
+    %+  expect-eq
+      !>((en-ray:la [shape=~[1 3] bloq=4 kind=%uint prec=~] ~[~[0x6 0x7 0x8]]))
+      !>((get-row:la input-magic-3x3-4u ~[2]))
+    %-  expect-fail
+      |.((get-row:la input-magic-3x3-4u ~[3]))
+  ==
+
+++  test-get-row-3d  ^-  tang
+  =/  input-magic-3x3-4u  (magic:la [shape=~[3 3 3] bloq=4 kind=%uint prec=~])
+  ;:  weld
+    %+  expect-eq
+      !>((en-ray:la [shape=~[1 3] bloq=4 kind=%uint prec=~] ~[~[0x0 0x1 0x2]]))
+      !>((get-row:la input-magic-3x3-4u ~[0 0]))
+    %-  expect-fail
+      |.((get-row:la input-magic-3x3-4u ~[3 3]))
+  ==
+
+++  test-set-row-1d  ^-  tang
+  =/  input-iota-1x8-3u  (iota:la [shape=~[8] bloq=3 kind=%uint prec=~])
+  ;:  weld
+    %+  expect-eq
+      !>((en-ray:la [shape=~[8] bloq=3 kind=%uint prec=~] ~[0xf 0x1 0x2 0x3 0x4 0x5 0x6 0x7]))
+      !>((set-row:la input-iota-1x8-3u ~[0] (en-ray:la [~[1] 3 %uint ~] ~[0xf])))
+    %+  expect-eq
+      !>((en-ray:la [shape=~[8] bloq=3 kind=%uint prec=~] ~[0x0 0x1 0x2 0x3 0x4 0x5 0x6 0xf]))
+      !>((set-row:la input-iota-1x8-3u ~[7] (en-ray:la [~[1] 3 %uint ~] ~[0xf])))
+    %-  expect-fail
+      |.((set-row:la input-iota-1x8-3u ~[8] (en-ray:la [~[1] 3 %uint ~] ~[0xf])))
+  ==
+
+++  test-set-row-2d  ^-  tang
+  =/  input-magic-3x3-4u  (magic:la [shape=~[3 3] bloq=4 kind=%uint prec=~])
+  ;:  weld
+    %+  expect-eq
+      !>((en-ray:la [shape=~[3 3] bloq=4 kind=%uint prec=~] ~[~[0x0 0x1 0x2] ~[0x0 0x1 0x2] ~[0x6 0x7 0x8]]))
+      !>((set-row:la input-magic-3x3-4u ~[1] (en-ray:la [~[1 3] 4 %uint ~] ~[~[0x0 0x1 0x2]])))
+    %-  expect-fail
+      |.((set-row:la input-magic-3x3-4u ~[3] (en-ray:la [~[1 3] 4 %uint ~] ~[~[0x0 0x1 0x2]])))
+  ==
+
+++  test-set-row-3d  ^-  tang
+  =/  input-magic-3x3x3-4u  (magic:la [shape=~[3 3 3] bloq=5 kind=%uint prec=~])
+  ;:  weld
+    %+  expect-eq
+      !>((en-ray:la [shape=~[3 3 3] bloq=5 kind=%uint prec=~] ~[~[~[0x0 0x1 0x2] ~[0x0 0x1 0x2] ~[0x6 0x7 0x8]] ~[~[0x9 0xa 0xb] ~[0xc 0xd 0xe] ~[0xf 0x10 0x11]] ~[~[0x12 0x13 0x14] ~[0x15 0x16 0x17] ~[0x18 0x19 0x1a]]]))
+      !>((set-row:la input-magic-3x3x3-4u ~[0 1] (en-ray:la [~[1 3] 4 %uint ~] ~[~[0x0 0x1 0x2]])))
+    %-  expect-fail
+      |.((set-row:la input-magic-3x3x3-4u ~[3 3] (en-ray:la [~[1 3] 4 %uint ~] ~[~[0x0 0x1 0x2]])))
+  ==
 
 --
 :: to-tank
@@ -135,7 +203,7 @@
 
 :: get-item √
 :: set-item √
-:: get-row
+:: get-row √
 :: set-row
 :: get-col
 :: set-col
