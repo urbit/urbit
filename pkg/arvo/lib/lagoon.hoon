@@ -448,7 +448,7 @@
     %-  spac
     :-  meta
     %+  lsh  [bloq.meta 1]  :: account for zero which strips out of ++rap
-    (rap bloq.meta (flop (gulf 0 (dec n))))
+    (rap bloq.meta (gulf 0 (dec n)))
   ::  Produce a 1-dimensional range along one dimension
   ::  as [a b) with interval d.
   ::  Only produces %real.
