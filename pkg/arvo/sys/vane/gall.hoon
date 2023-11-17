@@ -1021,7 +1021,7 @@
       =/  ski  (~(gut by sky.yoke) spur *path-state)
       =-  ski(fan (put:on-path fan.ski -< -> &/page))
       ?~  las=(ram:on-path fan.ski)
-        [(fall bob.ski 0) now]
+        [?~(bob.ski 0 +(u.bob.ski)) now]
       :_  (max now +(p.val.u.las))
       ?~(bob.ski +(key.u.las) +((max key.u.las u.bob.ski)))
     ::  +ap-tomb: tombstone -- replace bound value with hash
@@ -1066,8 +1066,21 @@
         %.  sky.yoke
         %+  trace  odd.veb.bug.state
         [leaf+"gall: {<agent-name>}: cull {<[case spur]>} no-op"]~
+      ?~  las=(ram:on-path fan.u.old)
+        %.  sky.yoke
+        %+  trace  &
+        [leaf+"gall: {<agent-name>}: cull {<[case spur]>} no paths"]~
+      =/  fis  (need (pry:on-path fan.u.old))
+      ?.  &((gth yon key.fis) (lte yon key.u.las))
+        %.  sky.yoke
+        %+  trace  &
+        :_  ~
+        :-  %leaf
+        %+  weld
+          "gall: {<agent-name>}: cull {<[case spur]>} out of range,"
+        "min: {<key.fis>}, max: {<key.u.las>}"
       %+  ~(put by sky.yoke)  spur  ::  delete all older paths
-      [`yon (lot:on-path fan.u.old `+(yon) ~)]
+      [`yon (lot:on-path fan.u.old `yon ~)]
     ::  +ap-from-internal: internal move to move.
     ::
     ::    We convert from cards to duct-indexed moves when resolving
