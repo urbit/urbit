@@ -1077,7 +1077,7 @@
         :_  ~
         :-  %leaf
         %+  weld
-          "gall: {<agent-name>}: cull {<[case spur]>} out of range,"
+          "gall: {<agent-name>}: cull {<[case spur]>} out of range, "
         "min: {<key.fis>}, max: {<key.u.las>}"
       %+  ~(put by sky.yoke)  spur  ::  delete all older paths
       [`yon (lot:on-path fan.u.old `yon ~)]
