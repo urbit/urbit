@@ -2369,17 +2369,11 @@
           ~%  %hash  ..blake3  ~
           |=  [out=@ud msg=byts]
           ^-  @ux
-          %+  xof  out
-          %-  root-output
-          (turn (split-byts 13 msg) chunk-output)
-        ::
-        ++  xof
-          |=  [out=@ud o=output]
-          ^-  @ux
+          =/  root  (root-output (turn (split-byts 13 msg) chunk-output))
           %+  end  [3 out]
           %+  rep  9
           %+  turn  (gulf 0 (div out 64))
-          |=(i=@ (compress o(counter i)))
+          |=(i=@ (compress root(counter i)))
         ::
         ++  root-output
           |=  outputs=(list output)
