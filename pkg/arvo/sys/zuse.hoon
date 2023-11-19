@@ -2363,8 +2363,6 @@
         =+  [cv=iv flags=0b0]
         ^?  |%
         ::
-        +$  output  ^output  :: re-export
-        ::
         ++  keyed  |=(key=byts hash(cv dat.key, flags f-keyedhash))
         ::
         ++  hash
@@ -2377,8 +2375,8 @@
         ::
         ++  xof
           |=  [out=@ud o=output]
-          ^-  @
-          %^  rev  3  out
+          ^-  @ux
+          %+  end  [3 out]
           %+  rep  9
           %+  turn  (gulf 0 (div out 64))
           |=(i=@ (compress o(counter i)))
@@ -2392,13 +2390,14 @@
           =+  [l=(scag mid outputs) r=(slag mid outputs)]
           ?>  ?=(^ outputs)
           ?~  t.outputs  i.outputs
-          (parent-output $(outputs l) $(outputs r))
+          %-  parent-output
+          [(compress $(outputs l)) (compress $(outputs r))]
         ::
         ++  parent-output
-          |=  [l=output r=output]
+          |=  [l=@ux r=@ux]
           ^-  output
           %+  set-flag  f-parent
-          [cv (rep 8 ~[(compress l) (compress r)]) 0 64 flags]
+          [cv (rep 8 ~[l r]) 0 64 flags]
         ::
         ++  chunk-output
           |=  [counter=@ chunk=byts]
