@@ -2925,9 +2925,9 @@
                 |=  =session
                 session(expiry-time (add now session-timeout))
             =-  response-header.http-event(headers -)
-            %^  set-header:http  'set-cookie'
-              (session-cookie-string session-id &)
-            headers.response-header.http-event
+            %+  snoc
+              headers.response-header.http-event
+            ['set-cookie' (session-cookie-string session-id &)]
           ::
           =*  connection  u.connection-state
           ::
