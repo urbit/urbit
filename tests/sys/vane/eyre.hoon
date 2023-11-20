@@ -87,6 +87,7 @@
     %:  gate.state
         now=now.state
         eny=`@uvJ`0xdead.beef
+        tick=0
         scry=scry-provides-code
     ==
   =^  moves  gate.state
@@ -102,6 +103,7 @@
     %:  gate.state
         now=now.state
         eny=`@uvJ`0xdead.beef
+        tick=0
         scry=scry-provides-code
     ==
   =^  moves  gate.state
@@ -372,14 +374,15 @@
   ==
 ::
 ++  scry-provides-code  ^-  roof
-  |=  [gang pov=path =view =beam]
+  |=  [gang pov=path =view =bema]
   ^-  (unit (unit cage))
+  =+  (omer-to-omen view bema)
   ?:  =(%gd view)  ``noun+!>(%base)
-  ?:  =(%gu view)  ``noun+!>(=(%app1 q.beam))
-  ?:  &(=(%ca view) =(/gen/handler/hoon s.beam))
+  ?:  =(%gu view)  ``noun+!>(=(%app1 q.bem))
+  ?:  &(=(%ca view) =(/gen/handler/hoon s.bem))
     :+  ~  ~
     vase+!>(!>(|=(* |=(* [[%404 ~] ~]))))
-  ?:  &(=(%cb view) =(/json s.beam))
+  ?:  &(=(%cb view) =(/json s.bema))
     :^  ~  ~  %dais
     !>  ^-  dais:clay
     |_  sam=vase
@@ -392,10 +395,10 @@
     --
   ::
   ?>  =(%j view)
-  ?>  =(~nul p.beam)
-  ?>  =(%code q.beam)
-  ?>  =(%da -.r.beam)
-  ?>  =(/~nul s.beam)
+  ?>  =(~nul p.bem)
+  ?>  =(%code q.bem)
+  ?>  =(%da -.r.bem)
+  ?>  =(/~nul s.bem)
   ::  This is the default code for a fakeship.
   ::
   [~ ~ %noun !>(.~lidlut-tabwed-savheb-loslux)]

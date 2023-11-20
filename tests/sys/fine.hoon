@@ -6,9 +6,9 @@
     ++  kelvin-roof
       ^-  roof
       ::
-      |=  [lyc=gang pov=path vis=view bem=beam]
+      |=  [lyc=gang pov=path vis=view bam=bema]
       ^-  (unit (unit cage))
-      ?>  =(s.bem /sys/kelvin)
+      ?>  =(s.bam /sys/kelvin)
       ?+  vis  ~
           %cp
         =/  black=dict:clay
@@ -20,9 +20,9 @@
     ::
     ++  bex-roof
       ^-  roof
-      |=  [lyc=gang pov=path vis=view bem=beam]
+      |=  [lyc=gang pov=path vis=view bam=bema]
       ^-  (unit (unit cage))
-      ?>  =(s.bem //some/data/atom)
+      ?>  =(s.bam //some/data/atom)
       ?+  vis  ~
         %gx  ``atom+!>((bex (bex 14)))
       ==
@@ -68,7 +68,7 @@
   ~&  >  'poke requester %ames with a %keen task'
   =^  t1  ames.nec
     %:  ames-check-call:v  ames.nec
-      [~1111.1.1 0xdead.beef *roof]
+      [~1111.1.1 0xdead.beef tick=0 *roof]
       [~[/keen-duct-1] task]
       :~  :-  ~[//unix]
           [%give %send [%& ~bud] (etch-shot:ames request)]
@@ -80,14 +80,14 @@
   :-  t1  |.  :-  %|
   =^  t2  ames.nec
     %:  ames-check-call:v  ames.nec
-      [~1111.1.1 0xdead.beef *roof]
+      [~1111.1.1 0xdead.beef tick=0 *roof]
       [~[/keen-duct-2] task]
       ~
     ==
   ::
   :-  t2  |.  :-  %|
   =/  peer=peer-state:ames
-    (ames-scry-peer:v ames.nec [~1111.1.8 0xbeef.dead *roof] [~nec ~bud])
+    (ames-scry-peer:v ames.nec [~1111.1.8 0xbeef.dead tick=0 *roof] [~nec ~bud])
   =/  listeners=(set duct)
     ?~  keen=(~(get by keens.peer) scry-path)
       ~
@@ -102,7 +102,7 @@
   ~&  >  'gives a remote scry response to listeners'
   =/  [sig=@ux meows=(list @ux)]
     %:  ames-scry-hunk:v  ames.bud
-      [~1111.1.2 0xbeef.dead kelvin-roof]
+      [~1111.1.2 0xbeef.dead tick=0 kelvin-roof]
       ~bud
       [1 16.384 (weld /~bud/1/1 scry-path)]
     ==
@@ -122,7 +122,7 @@
     [[~bud [1 sig]] ~ ~]
   =^  t4  ames.nec
     %:  ames-check-call:v  ames.nec
-      [~1111.1.2 0xbeef.dead *roof]
+      [~1111.1.2 0xbeef.dead tick=0 *roof]
       :-  ~[//fine]
       :*  %hear  [%& ~bud]
           (etch-shot:ames response)
@@ -146,7 +146,7 @@
   ~&  >  'poke requester %ames with a %keen task for a future case'
   =^  t5  ames.nec
     %:  ames-check-call:v  ames.nec
-      [~1111.1.1 0xdead.beef *roof]
+      [~1111.1.1 0xdead.beef tick=0 *roof]
       [~[/keen-duct-3] %keen ~bud future-path]
       :~  [~[//unix] [%give %send [%& ~bud] (etch-shot:ames request)]]
           [~[//unix] %pass future-behn %b %wait ~1111.1.1..00.00.01]
@@ -157,7 +157,7 @@
   ~&  >  'cancel %keen task, from requester'
   =^  t6  ames.nec
     %:  ames-check-call:v  ames.nec
-      [~1111.1.1 0xdead.beef *roof]
+      [~1111.1.1 0xdead.beef tick=0 *roof]
       [~[/keen-duct-3] %yawn ~bud future-path]
       [~[//unix] %pass future-behn %b %rest ~1111.1.1..00.00.01]~
     ==
@@ -166,7 +166,7 @@
   ~&  >  'poke requester %ames with a new %keen task for a future case'
   =^  t7  ames.nec
     %:  ames-check-call:v  ames.nec
-      [~1111.1.1 0xdead.beef *roof]
+      [~1111.1.1 0xdead.beef tick=0 *roof]
       [~[/keen-duct-4] %keen ~bud future-path]
       :~  [~[//unix] [%give %send [%& ~bud] (etch-shot:ames request)]]
           [~[//unix] %pass future-behn %b %wait ~1111.1.1..00.00.01]
@@ -177,7 +177,7 @@
   ~&  >  'poke requester %ames with a second %keen task for a future case'
   =^  t8  ames.nec
     %:  ames-check-call:v  ames.nec
-      [~1111.1.1 0xdead.beef *roof]
+      [~1111.1.1 0xdead.beef tick=0 *roof]
       [~[/keen-duct-5] %keen ~bud future-path]
       ~
     ==
@@ -185,7 +185,7 @@
   ~&  >  'cancel scry for all listeners (%wham)'
   =^  t9  ames.nec
     %:  ames-check-call:v  ames.nec
-      [~1111.1.1 0xdead.beef *roof]
+      [~1111.1.1 0xdead.beef tick=0 *roof]
       [~[/wham-duct] %wham ~bud future-path]
       :~  [~[/keen-duct-4] [%give %tune [~bud future-path] ~]]
           [~[/keen-duct-5] [%give %tune [~bud future-path] ~]]
@@ -194,7 +194,7 @@
     ==
   :-  t9  |.  :-  %&
   =/  peer=peer-state:ames
-    (ames-scry-peer:v ames.nec [~1111.1.8 0xbeef.dead *roof] [~nec ~bud])
+    (ames-scry-peer:v ames.nec [~1111.1.8 0xbeef.dead tick=0 *roof] [~nec ~bud])
   =/  listeners=(set duct)
     ?~  keen=(~(get by keens.peer) scry-path)
       ~
@@ -232,7 +232,7 @@
   ~&  >  'poke requester %ames with a %keen task'
   =^  t1  ames.nec
     %:  ames-check-call:v  ames.nec
-      [~1111.1.1 0xdead.beef *roof]
+      [~1111.1.1 0xdead.beef tick=0 *roof]
       [~[/keen-duct-1] task]
       :~  [~[//unix] [%give %send [%& ~bud] (etch-shot:ames req1)]]
           [~[//unix] %pass fine-behn-wire %b %wait ~1111.1.1..00.00.01]
@@ -241,7 +241,7 @@
   ::
   =/  [sig=@ux meows=(list @ux)]
     %:  ames-scry-hunk:v  ames.bud
-      [~1111.1.1 0xbeef.dead bex-roof]
+      [~1111.1.1 0xbeef.dead tick=0 bex-roof]
       ~bud
       [1 16.384 (weld /~bud/1/1 scry-path)]
     ==
@@ -268,7 +268,7 @@
   ~&  >  'hear first response fragment'
   =^  t2  ames.nec
     %:  ames-check-call:v  ames.nec
-      [~1111.1.2 0xbeef.dead *roof]
+      [~1111.1.2 0xbeef.dead tick=0 *roof]
       :-  ~[//fine]
       :*  %hear  [%& ~bud]
           (etch-shot:ames resp1)
@@ -285,7 +285,7 @@
   ~&  >  'hear third response fragment'
   =^  t3  ames.nec
     %:  ames-check-call:v  ames.nec
-      [~1111.1.2 0xbeef.dead *roof]
+      [~1111.1.2 0xbeef.dead tick=0 *roof]
       :-  ~[//fine]
       :*  %hear  [%& ~bud]
           (etch-shot:ames resp3)
@@ -297,7 +297,7 @@
   ~&  >  'hear second response fragment'
   =^  t4  ames.nec
     %:  ames-check-call:v  ames.nec
-      [~1111.1.3 0xbeef.dead *roof]
+      [~1111.1.3 0xbeef.dead tick=0 *roof]
       :-  ~[//fine]
       :*  %hear  [%& ~bud]
           (etch-shot:ames resp2)

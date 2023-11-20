@@ -31,7 +31,7 @@
           call-args=[=duct wrapped-task=(hobo task:gall)]
           expected-moves=(list move:gall-gate)
       ==
-  =/  gall-core  (gall-gate now=now eny=`@`0xdead.beef scry=scry)
+  =/  gall-core  (gall-gate now=now eny=`@`0xdead.beef tick=0 scry=scry)
   ::
   =/  res
     =/  =type  -:!>(*task:gall)
