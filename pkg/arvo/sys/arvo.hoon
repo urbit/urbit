@@ -1360,6 +1360,10 @@
       =:  run  run.debt
           out  out.debt
         ==
+      =.  tic
+        %-  roll  :_  max
+        %+  turn  (weld hed.run tal.run)
+        |=(pan=plan tick.p.pan)
       ::  apply remaining update
       ::
       =.  ..this  (~(lod what:pith fil.debt) kel.debt)
@@ -1367,8 +1371,15 @@
       ::
       =+  [wir car]=[/arvo vega/~]
       =.  ..this  (xeno:pith $/wir car)
+      (prep `plan`[[%$ ~ *@ud *rook] (spam:pith wir !>(car))])
+    ::  +prep: prepare a plan for +emit
+    ::
+    ++  prep
+      |=  pan=plan
+      ?~  q.pan
+        this
       =.  tic  +(tic)
-      (emit `plan`[[%$ ~ tic peek(tick.gem tic)] (spam:pith wir !>(car))])
+      (emit pan(tick.p tic, say.p peek(tick.gem tic)))
     ::  +emit: enqueue a worklist with source
     ::
     ++  emit
@@ -1521,7 +1532,6 @@
       ::
           [[%da @da] %ud @ud]
         ?.  =([da+now ud+tick.gem] r.bam)
-          ::  ~&  >>>  [%rejected %bad-tick]
           ~
         (do-peek lyc pov (omer-to-omen vis bam))
       ==
@@ -1544,7 +1554,7 @@
         ?~  van=(~(get by van.mod) way)
           ~
         %.  [lyc pov car bem]
-        peek:spin:(~(plow va [vil u.van]) now tick.gem say.gem)
+        peek:spin:(~(plow va [vil u.van]) now tick.gem peek)
       --
     ::  +call: advance to target
     ::
@@ -1592,8 +1602,7 @@
       =^  moz  sac
         (~(refine-moves me sac vil) zom)
       =.  van.mod  (~(put by van.mod) vane.gum [vax sac])
-      =.  tic  +(tic)
-      (emit [gum(tick tic, say peek(tick.gem tic)) moz])
+      (prep `plan`[gum moz])
     ::  +plow: operate on a vane, in time and space
     ::
     ++  plow
@@ -1688,8 +1697,7 @@
         ::
           %trim  =?  van.mod  =(0 p.waif)
                    (~(run by van.mod) |=(=vane vane(worm *worm)))
-                 =.  tic  +(tic)
-                 (emit [[%$ ~ tic ^peek(tick.gem tic)] (spam /arvo !>(waif))])
+                 (prep `plan`[[%$ ~ *@ud *rook] (spam /arvo !>(waif))])
         ::
           %verb  ..pith(lac.fad ?~(p.waif !lac.fad u.p.waif))
           %what  ~(kel what p.waif)
@@ -1723,8 +1731,7 @@
           ~>(%mean.'pith: bad wire' !!)
         ::
         ?.  ?=(?(%crud %wack %wyrd) p.card.ovum)
-          =.  tic  +(tic)
-          (emit `plan`[[%$ ~ tic ^peek(tick.gem tic)] [*duct (gest ovum)] ~])
+          (prep `plan`[[%$ ~ *@ud *rook] [*duct (gest ovum)] ~])
         ::
         =/  buz  ~>  %mean.'pith: bad wasp'
                  ;;(wasp card.ovum)
@@ -1739,8 +1746,7 @@
                               ==
                    ~&(%lagging &)
                  =/  moz  [*duct %hurl [goof.buz (gest ovum.buz)]]~
-                 =.  tic  +(tic)
-                 (emit `plan`[[%$ ~ tic ^peek(tick.gem tic)] moz])
+                 (prep `plan`[[%$ ~ *@ud *rook] moz])
         ::
         ::  XX review
         ::
