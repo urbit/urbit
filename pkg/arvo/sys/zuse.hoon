@@ -2391,7 +2391,7 @@
           |=  [l=@ux r=@ux]
           ^-  output
           %+  set-flag  f-parent
-          [cv (rep 8 ~[l r]) 0 64 flags]
+          [cv 0 (rep 8 ~[l r]) 64 flags]
         ::
         ++  chunk-output
           |=  [counter=@ chunk=byts]
@@ -2399,15 +2399,15 @@
           %+  set-flag  f-chunkend
           %+  roll  (split-byts 9 chunk)
           |=  [[i=@ byts] prev=output]
-          ?:  =(0 i)  [cv dat counter wid (con flags f-chunkstart)]
-          [(rep 8 ~[(compress prev)]) dat counter wid flags]
+          ?:  =(0 i)  [cv counter dat wid (con flags f-chunkstart)]
+          [(output-cv prev) counter dat wid flags]
         --
       |%
       ::
       +$  output
         $:  cv=@ux
-            block=@ux
             counter=@ud
+            block=@ux
             blocklen=@ud
             flags=@ub
         ==
@@ -2482,6 +2482,7 @@
       ++  can32  (cury can 5)
       ++  get32  |=([i=@ a=@] (cut 5 [i 1] a))
       ++  set32  |=([i=@ w=@ a=@] (sew 5 [i 1 w] a))
+      ++  output-cv  |=(o=output `@ux`(rep 8 ~[(compress o)]))
       ++  split-byts
         |=  [a=bloq msg=byts]
         ^-  (list [i=@ byts])
