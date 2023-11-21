@@ -559,7 +559,7 @@
 ::    dead:        dead flow consolidation timer and recork timer, if set
 ::
 +$  ames-state
-  $+  ames-state
+  $+  ames-state-17
   $:  peers=(map ship ship-state)
       =unix=duct
       =life
@@ -1338,6 +1338,7 @@
             [%15 ames-state-15]
             [%16 ames-state-16]
             [%17 ^ames-state]
+            [%18 ^ames-state]
         ==
     ::
     |=  [now=@da eny=@ rof=roof]
@@ -1560,6 +1561,13 @@
                       state=_ames-state.adult-gate
                   ==
                   [%adult state=_ames-state.adult-gate]
+              ==  ==
+              $:  %18
+              $%  $:  %larva
+                      events=(qeu queued-event)
+                      state=_ames-state.adult-gate
+                  ==
+                  [%adult state=_ames-state.adult-gate]
           ==  ==  ==
       |^  ?-  old
           [%4 %adult *]
@@ -1701,12 +1709,23 @@
         =.  queued-events  (event-16-to-17 events.old)
         larval-gate
       ::
-          [%17 %adult *]  (load:adult-core %17 state.old)
+          [%17 %adult *]
+        =.  cached-state  `[%17 state.old]
+        ~>  %slog.0^leaf/"ames: larva reload"
+        larval-gate
       ::
           [%17 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
+        =.  cached-state  `[%17 state.old]
         =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %17 state.old)
+        larval-gate
+      ::
+          [%18 %adult *]  (load:adult-core %18 state.old)
+      ::
+          [%18 %larva *]
+        ~>  %slog.1^leaf/"ames: larva: load"
+        =.  queued-events  events.old
+        =.  adult-gate     (load:adult-core %18 state.old)
         larval-gate
       ==
       ::
@@ -1797,7 +1816,14 @@
           (rof ~ /ames %bx [[our %$ da+now] /debug/timers])
         |=([@da =duct] ?=([[%ames %recork *] *] duct))
       ::
-      ?>  ?=(%17 -.u.cached-state)
+      =^  moz  u.cached-state
+        ?.  ?=(%17 -.u.cached-state)  [~ u.cached-state]
+        :_  [%18 +.u.cached-state]
+        ~>  %slog.0^leaf/"ames: fetching our public keys"
+        ^-  (list move)
+        [[[/ames]~ %pass /public-keys %j %public-keys [n=our ~ ~]] moz]
+      ::
+      ?>  ?=(%18 -.u.cached-state)
       =.  ames-state.adult-gate  +.u.cached-state
       [moz larval-core(cached-state ~)]
     --
@@ -2729,9 +2755,6 @@
         ++  on-publ-sponsor
           |=  [=ship sponsor=(unit ship)]
           ^+  ev-core
-          ::
-          ?:  =(our ship)  ev-core
-          ::
           ?~  sponsor
             %-  (slog leaf+"ames: {(scow %p ship)} lost sponsor, ignoring" ~)
             ev-core
@@ -2755,9 +2778,8 @@
               ::
               =+  ^-  [=ship =point]  i.points
               ::
-              ?:  =(our ship)
-                =.  rift.ames-state  rift.point
-                $(points t.points)
+              =?  rift.ames-state  =(our ship)
+                rift.point
               ::
               ?.  (~(has by keys.point) life.point)
                 $(points t.points)
@@ -2823,9 +2845,8 @@
         ++  on-publ-rift
           |=  [=ship =rift]
           ^+  ev-core
-          ?:  =(our ship)
-            =.  rift.ames-state  rift
-            ev-core
+          =?  rift.ames-state  =(our ship)
+            rift
           ?~  ship-state=(~(get by peers.ames-state) ship)
             ::  print error here? %rift was probably called before %keys
             ::
@@ -5039,15 +5060,15 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%17 %adult ames-state]
+++  stay  [%18 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
   =<  |=  $=  old-state
-          $%  [%17 ^ames-state]
+          $%  [%18 ^ames-state]
           ==
       ^+  ames-gate
-      ?>  ?=(%17 -.old-state)
+      ?>  ?=(%18 -.old-state)
       ames-gate(ames-state +.old-state)
   ::  all state transitions are called from larval ames
   ::

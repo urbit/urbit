@@ -346,6 +346,7 @@
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
+    ?>  (team:title [our src]:bowl)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
         %acme-order  (poke-acme-order:ac !<((set turf) vase))
