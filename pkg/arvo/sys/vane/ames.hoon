@@ -3951,7 +3951,7 @@
                   =?  pe-core  ?=(^ static-fragment)
                     %-  %+  pu-trace  snd.veb
                         =/  nums  [message-num fragment-num]:u.static-fragment
-                        |.("dead {<nums show:pu-gauge>}")
+                        |.("dead {<nums ga-show:pu-gauge>}")
                     %+  pe-send-shut-packet  bone
                     [message-num %& +]:u.static-fragment
                   pu-core
@@ -4021,7 +4021,7 @@
                   ::  don't apply mutations or effects
                   ::
                   ?.  found.-
-                    %-  (pu-trace snd.veb |.("miss {<show:pu-gauge>}"))
+                    %-  (pu-trace snd.veb |.("miss {<ga-show:pu-gauge>}"))
                     pu-core
                   ::
                   =.  metrics.state  metrics.-
@@ -4031,7 +4031,7 @@
                           ==
                         same
                       %+  pu-trace  snd.veb
-                      |.("send: {<fragment=fragment-num show:pu-gauge>}")
+                      |.("send: {<fragment=fragment-num ga-show:pu-gauge>}")
                   ::  .resends is backward, so fold backward and emit
                   ::
                   =.  pe-core
@@ -4093,7 +4093,7 @@
                   =.  live.state     live.-
                   ::
                   %-  %+  pu-trace  snd.veb  |.
-                      "done {<message-num=message-num show:pu-gauge>}"
+                      "done {<message-num=message-num ga-show:pu-gauge>}"
                   (pu-fast-resend-after-ack message-num `fragment-num`0)
               ::
               =/  acc  [metrics=metrics.state num-live=~(wyt by live.state)]
