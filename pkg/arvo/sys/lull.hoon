@@ -933,10 +933,12 @@
     ==
   ::  $stun: STUN notifications, from unix
   ::
+  ::    .lane is the latest cached lane in vere, from the point of view of .ship
+  ::
   +$  stun
-    $%  [%stop ~]  :: succesful STUN response, stop %ping app
-        [%fail ~]  :: failure to STUN, re-enable %ping app
-        [%once ~]  :: new ip discovered, notify ping %app
+    $%  [%stop =ship =lane]  :: succesful STUN response, stop %ping app
+        [%fail =ship =lane]  :: failure to STUN, re-enable %ping app
+        [%once =ship =lane]  :: new lane discovered, notify ping %app
     ==
   :: +|  %atomics
   ::
