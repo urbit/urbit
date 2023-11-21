@@ -2127,7 +2127,7 @@
           %-  %^  ev-trace  odd.veb  ship
             |.("ignoring %dear lane {(scow %if ip)}:{(scow %ud pt)} for galaxy")
           ev-core
-                              ?~  peer-state=(ev-get-peer-state ship)
+          ?~  peer-state=(ev-get-peer-state ship)
           %-  %^  ev-trace  odd.veb  ship
             |.("no peer-state for ship, ignoring %dear")
           ev-core
@@ -3307,7 +3307,8 @@
           =/  =path  (slag 3 path.peep)
           ::
           ?.  (~(has by keens) path)
-            ~&(dead-response/peep pe-core)
+            %-  (fi-trace:fi odd.veb |.("dead-response {<peep>}"))
+            pe-core
           fi-abet:(fi-rcv:(fi-abed:fi path) peep meow lane)
         ::
         ++  pe-keen
