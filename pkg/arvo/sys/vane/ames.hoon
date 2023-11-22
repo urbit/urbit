@@ -3104,8 +3104,7 @@
         |=  her=ship
         ^-  blob
         ?>  ?=(%pawn (clan:title her))
-        %-  etch-shot
-        (encode-keys-packet our her life.ames-state)
+        (etch-shot (encode-keys-packet our her life.ames-state))
       ::
       +|  %internals
       ::  +pe: create nested |pe-core for per-peer processing
@@ -3631,9 +3630,7 @@
                         =(message-num:task message-num.key.u.top)
                     ==
                   =+  [ack msg]=[p.ack-meat message-num]:task
-                  =.  mu-core
-                    %-  mu-done
-                    [[msg ?:(ok.ack [%ok ~] [%nack ~])] cork]
+                  =.  mu-core  (mu-done [msg ?:(ok.ack [%ok ~] [%nack ~])] cork)
                   ?.  &(!ok.ack cork)  mu-core
                   %-  %+  pe-trace  odd.veb
                       |.("got nack for %cork {<bone=bone message-num=msg>}")
@@ -4291,15 +4288,15 @@
                 ::  if not from a closing bone, drop last packet,
                 ::  since we don't know whether to ack or nack
                 ::
-                %.  mi-core
-                %+  pe-trace  rcv.veb
-                |.  ^-  tape
-                =/  data
-                  :*  her  seq=seq  bone=bone.shut-packet
-                      fragment-num  num-fragments
-                      la=last-acked.state  lh=last-heard.state
-                  ==
-                "hear last in-progress {<data>}"
+                %-  %+  pe-trace  rcv.veb
+                    |.  ^-  tape
+                    =/  data
+                      :*  her  seq=seq  bone=bone.shut-packet
+                          fragment-num  num-fragments
+                          la=last-acked.state  lh=last-heard.state
+                      ==
+                    "hear last in-progress {<data>}"
+                mi-core
               ::  ack all other packets
               ::
               =.  pe-core  (pe-send-shut-packet bone seq %| %& fragment-num)
@@ -4330,11 +4327,11 @@
             ::
             ?:  already-heard-fragment
               ?:  is-last-fragment
-                %.  mi-core
-                %+  pe-trace  rcv.veb  |.
-                =/  data
-                  [her seq=seq lh=last-heard.state la=last-acked.state]
-                "hear last dupe {<data>}"
+                %-  %+  pe-trace  rcv.veb  |.
+                    =/  data
+                      [her seq=seq lh=last-heard.state la=last-acked.state]
+                    "hear last dupe {<data>}"
+                mi-core
               =.  pe-core  (pe-send-shut-packet bone seq %| %& fragment-num)
               %-  %+  pe-trace  rcv.veb
                   |.("send dupe ack {<her^seq=seq^fragment-num=fragment-num>}")
