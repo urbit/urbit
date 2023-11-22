@@ -539,10 +539,10 @@
         ::  2019/12
         ::
         [;;(remote-request i.t.t.t.wire) outstanding.state]
-      ::  send a %cork if we get a %nack upon initial subscription
+      ::  send a %cork if we get a %nack for a %poke, %watch or %watch-as
       ::
       =?  mo-core
-          &(?=(^ err) |(?=(%watch-as remote-request) ?=(%watch remote-request)))
+          &(?=(^ err) ?+(remote-request %.y %leave %.n, %missing %.n))
         (mo-pass sys+wire %a %cork ship)
       ::
       ?-  remote-request
@@ -555,8 +555,7 @@
         ::  if we get an %ack for a %leave, send %cork. otherwise,
         ::  the /nacked-leaves timer will re-send the %leave eventually.
         ::
-        ?~  err
-          (mo-pass sys+wire %a %cork ship)
+        ?~  err  (mo-pass sys+wire %a %cork ship)
         ::  if first time hearing a %nack for a %leave, after upgrade
         ::  or if all outstanding %leaves have been handled, set up timer
         ::
