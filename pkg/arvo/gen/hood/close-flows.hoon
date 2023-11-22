@@ -57,7 +57,7 @@
 =/  =peer-state:ames  ?>(?=(%known -.ship-state) +.ship-state)
 |^
 ::
-%+  roll  ~(tap by resubscriptions)
+%+  roll  ~(tap by forward-flows)
 |=  [[key flows=(list val)] bones=_bones]
 ::
 %-  flop  %-  tail
@@ -93,37 +93,44 @@
 ::  if there's only one subscription (or this is the latest one, since we sort
 ::  flows by nonce) we consider it stale if the nonce in the wire is less than
 ::  the latest subscription the agent knows about, since that should have been
-::  removed from %gall, and we don't need to coordindate between %ames and %gall
+::  removed from %gall, and we don't need to coordinate between %ames and %gall
 ::
 ?:  ?&  ?=([~ @] app-nonce)
         (lth nonce u.app-nonce)
     ==
   ~?  ?=(%3 veb)  [ship (weld "latest subscription flow is stale " log)]
   &
+::  XX not true anymore, we are corking %pokes that have received a %nack
+::
 ::  not retrieving the nonce for the latest flow, could mean a %poke -- which we
 ::  skip; see L 152 -- or an %ames/%gall desync where %gall deleted the
 ::  subscription but %ames didn't. if the latter, there should be a (greater
 ::  than 0) nonce in the wire, XX  unless this is a desynced pre-nonce %watch...
 ::
-?~  app-nonce
-  ~?  ?=(%3 veb)
-    :-  ship
-    %+  weld
-      "latest subscription flow is stale {?.((gth nonce 0) "skip" ~)} "
-    log
-  (gth nonce 0)
-::  if there's a sub-nonce this is the current subscription and can be safely
-::  corked if there is a flow with a naxplanation ack on a backward bone
+~?  &(?=(%3 veb) ?=(~ app-nonce))
+  :-  ship
+  %+  weld
+    "latest subscription flow is stale {?.((gth nonce 0) "skip" ~)} "
+  log
+?:  &(?=(~ app-nonce) (gth nonce 0))  &
+::  if we can't retrive the nonce for the latest flow, and there's no sub-nonce
+::  in the wire, this is a %poke.
+::
+::  if we can retrive the nonce for the latest flow, and there's a sub-nonce
+::  this is the current subscription.
+::
+::  Both can be safely corked if there is a flow with a naxplanation ack on a
+::  backward bone (i.e. the %watch or the %poke got %nacked)
 ::
 =+  backward-bone=(mix 0b10 bone)
 ?.  =(%2 (mod backward-bone 4))
   |
 ?~  (~(get by rcv.peer-state) backward-bone)
   |
-~?  ?=(%4 veb)  [ship (weld "%watch plea was %nacked " log)]
+~?  ?=(%4 veb)  [ship (weld "forward flow was %nacked " log)]
 &
 ::
-++  resubscriptions
+++  forward-flows
   %+  roll  ~(tap by snd.peer-state)
   |=  $:  [=forward=bone message-pump-state:ames]
           subs=(jar key val)
@@ -153,11 +160,14 @@
     subs
   ?:  ?=(%nuke -.u.yoke)
     subs
-  ?:  &(=(0 nonce) !(~(has by boat.u.yoke) key))
-    ::  %pokes don't have an entry in boat.yoke, so we skip them
-    ::  XX this could also by an %ames/%gall desync -- see comment in L 106
-    ::
-    subs
+  ::  XX we don't skip %pokes, so we need to make sure that we only cork %pokes
+  ::  that have received a %nack
+  ::
+  :: ?:  &(=(0 nonce) !(~(has by boat.u.yoke) key))
+  ::   ::  %pokes don't have an entry in boat.yoke, so we skip them
+  ::   ::  XX this could also by an %ames/%gall desync -- see comment in L 106
+  ::   ::
+  ::   subs
   =/  agent-nonce=(unit @ud)  (~(get by boar.u.yoke) key)
   %+  ~(add ja subs)  agent^key
   [forward-bone nonce agent-nonce ?=(^ live.packet-pump-state)]
