@@ -5,6 +5,7 @@
 ::    |stale-flows, =veb %21 :: ... per app (only forward)
 ::    |stale-flows, =veb %3  :: stale resubscriptions
 ::    |stale-flows, =veb %31 :: ... still sending live packets
+::    |stale-flows, =veb %32 :: ... with additional log per subscription
 ::    |stale-flows, =veb %4  :: print live naxplanation flows
 ::    |stale-flows, =veb %5  :: nacked pokes
 ::
@@ -39,17 +40,14 @@
           "[#{<in-close>} %close] "
         "#{<(dec (lent v))>} stale resubs on {<key>}"
       :_  (add c in-close)
-      ?:  =((lent v) 1)
-        ?>  ?=(^ v)
-        ~?  &(=(%31 veb) live.i.v !(active-nonce [flow nonce]:i.v))
-          "stale resubscription on {<key>} still live, skip"
-        ?:(|(live.i.v (active-nonce [flow nonce]:i.v)) s +(s))
       %+  add   s
       %+  roll  v
       |=  [val n=@]
       ~?  &(=(%31 veb) live !(active-nonce flow nonce))
         "stale resubscription on {<key>} still live, skip"
-      ?:(|(live (active-nonce flow nonce)) n +(n))
+      ?:  |(live (active-nonce flow nonce))  n
+      ~&  >>  key^wire-nonce=nonce^flow=flow
+      +(n)
     ::
     ++  nacked-flow
       |=  [=naks action=?(%poke %watch)]
@@ -192,6 +190,7 @@
 ::
 ++  flow-type
   |=  [key=[path @p agent=term] nonce=@ud]
+  ^-  flow
   ?~  yoke=(~(get by gall-yokes) agent.key)
     ~
   ?:  ?=(%nuke -.u.yoke)  ~
