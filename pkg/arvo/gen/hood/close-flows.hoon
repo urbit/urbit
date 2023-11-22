@@ -9,7 +9,8 @@
 ::      |close-flows, =veb %21 ::  ... that don't have a sub-nonce.yoke
 ::      |close-flows, =veb %22 ::  ... that have packets in-flight
 ::      |close-flows, =veb %3  ::  stale current subscription
-::      |close-flows, =veb %4  ::  latest subscription was %nacked
+::      |close-flows, =veb %4  ::  current %watch was %nacked
+::      |close-flows, =veb %41  :: current %poke was %nacked
 ::
 /=  gall-raw  /sys/vane/gall
 ::
@@ -22,7 +23,7 @@
         arg=~
         peer=(unit @p)
         dry=?
-        veb=?(%1 %2 %21 %22 %3 %4 ~)
+        veb=?(%1 %2 %21 %22 %3 %4 %41 ~)
     ==
 ::
 =/  our-gall  (gall-raw p.bec)
@@ -127,7 +128,9 @@
   |
 ?~  (~(get by rcv.peer-state) backward-bone)
   |
-~?  ?=(%4 veb)  [ship (weld "forward flow was %nacked " log)]
+~?  &(?=(%4 veb) ?=(^ app-nonce))  [ship (weld "%watch was %nacked " log)]
+~?  &(?=(%41 veb) &(=(nonce 0) ?=(~ app-nonce)))
+  [ship (weld "%poke was %nacked " log)]
 &
 ::
 ++  forward-flows
