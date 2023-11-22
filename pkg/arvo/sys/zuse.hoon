@@ -2361,12 +2361,13 @@
       =<
         =<  hash  :: cuter API
         =+  [cv=iv flags=0b0]
-        ^?  |%
+        ^?  ~%  %blake3  ..output  ~
+        |%
         ::
         ++  keyed  |=(key=octs hash(cv q.key, flags f-keyedhash))
         ::
         ++  hash
-          ~%  %hash  ..blake3  ~
+          ~%  %hash  ..hash  ~
           |=  [out=@ud msg=octs]
           ^-  @ux
           =/  root  (root-output (turn (split-octs 13 msg) chunk-output))
@@ -2394,7 +2395,7 @@
           [cv 0 (rep 8 ~[l r]) 64 flags]
         ::
         ++  chunk-output
-          ~%  %chunk-output  ..blake3  ~
+          ~%  %chunk-output  ..chunk-output  ~
           |=  [counter=@ chunk=octs]
           ^-  output
           %+  set-flag  f-chunkend
@@ -2403,6 +2404,7 @@
           ?:  =(0 i)  [cv counter q.block p.block (con flags f-chunkstart)]
           [(output-cv prev) counter q.block p.block flags]
         --
+      ~%  %blake3-impl  ..blake3  ~
       |%
       ::
       +$  output
@@ -2414,7 +2416,7 @@
         ==
       ::
       ++  compress
-        ~%  %compress  ..blake3  ~
+        ~%  %compress  ..compress  ~
         |=  output
         ^-  @
         |^
@@ -2488,6 +2490,7 @@
       ++  split-octs
         |=  [a=bloq msg=octs]
         ^-  (list [i=@ octs])
+        ?>  ?=(@ q.msg)  :: simplfy jet logic
         =/  per  (bex (sub a 3))
         =|  chunk-octs=(list [i=@ octs])
         =|  i=@
