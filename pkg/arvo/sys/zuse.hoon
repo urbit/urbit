@@ -2363,13 +2363,13 @@
         =+  [cv=iv flags=0b0]
         ^?  |%
         ::
-        ++  keyed  |=(key=byts hash(cv dat.key, flags f-keyedhash))
+        ++  keyed  |=(key=octs hash(cv q.key, flags f-keyedhash))
         ::
         ++  hash
           ~%  %hash  ..blake3  ~
-          |=  [out=@ud msg=byts]
+          |=  [out=@ud msg=octs]
           ^-  @ux
-          =/  root  (root-output (turn (split-byts 13 msg) chunk-output))
+          =/  root  (root-output (turn (split-octs 13 msg) chunk-output))
           %+  end  [3 out]
           %+  rep  9
           %+  turn  (gulf 0 (div out 64))
@@ -2394,13 +2394,14 @@
           [cv 0 (rep 8 ~[l r]) 64 flags]
         ::
         ++  chunk-output
-          |=  [counter=@ chunk=byts]
+          ~%  %chunk-output  ..blake3  ~
+          |=  [counter=@ chunk=octs]
           ^-  output
           %+  set-flag  f-chunkend
-          %+  roll  (split-byts 9 chunk)
-          |=  [[i=@ byts] prev=output]
-          ?:  =(0 i)  [cv counter dat wid (con flags f-chunkstart)]
-          [(output-cv prev) counter dat wid flags]
+          %+  roll  (split-octs 9 chunk)
+          |=  [[i=@ block=octs] prev=output]
+          ?:  =(0 i)  [cv counter q.block p.block (con flags f-chunkstart)]
+          [(output-cv prev) counter q.block p.block flags]
         --
       |%
       ::
@@ -2413,6 +2414,7 @@
         ==
       ::
       ++  compress
+        ~%  %compress  ..blake3  ~
         |=  output
         ^-  @
         |^
@@ -2468,13 +2470,13 @@
       ++  iv  0x5be0.cd19.1f83.d9ab.9b05.688c.510e.527f.
                 a54f.f53a.3c6e.f372.bb67.ae85.6a09.e667
       ++  perm  (rip 2 0x8fe9.5cb1.d407.a362)
-      ++  f-chunkstart    (bex 0)
-      ++  f-chunkend      (bex 1)
-      ++  f-parent        (bex 2)
-      ++  f-root          (bex 3)
-      ++  f-keyedhash     (bex 4)
-      ++  f-derivekeyctx  (bex 5)
-      ++  f-derivekeymat  (bex 6)
+      ++  f-chunkstart    ^~  (bex 0)
+      ++  f-chunkend      ^~  (bex 1)
+      ++  f-parent        ^~  (bex 2)
+      ++  f-root          ^~  (bex 3)
+      ++  f-keyedhash     ^~  (bex 4)
+      ++  f-derivekeyctx  ^~  (bex 5)
+      ++  f-derivekeymat  ^~  (bex 6)
       ++  set-flag  |=([f=@ o=output] o(flags (con flags.o f)))
       ++  fe32   ~(. fe 5)
       ++  ror32  (cury ror:fe32 0)
@@ -2483,16 +2485,16 @@
       ++  get32  |=([i=@ a=@] (cut 5 [i 1] a))
       ++  set32  |=([i=@ w=@ a=@] (sew 5 [i 1 w] a))
       ++  output-cv  |=(o=output `@ux`(rep 8 ~[(compress o)]))
-      ++  split-byts
-        |=  [a=bloq msg=byts]
-        ^-  (list [i=@ byts])
+      ++  split-octs
+        |=  [a=bloq msg=octs]
+        ^-  (list [i=@ octs])
         =/  per  (bex (sub a 3))
-        =|  chunk-byts=(list [i=@ byts])
+        =|  chunk-octs=(list [i=@ octs])
         =|  i=@
         |-
-        ?:  (lte wid.msg per)  [[i msg] chunk-byts]
-        :-  [i per^(end a dat.msg)]
-        $(i +(i), msg (sub wid.msg per)^(rsh a dat.msg))
+        ?:  (lte p.msg per)  [[i msg] chunk-octs]
+        :-  [i per^(end a q.msg)]
+        $(i +(i), msg (sub p.msg per)^(rsh a q.msg))
       --
     ::
     ::TODO  generalize for both blake2 variants
