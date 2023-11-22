@@ -46,7 +46,7 @@
       ~?  &(=(%31 veb) live !(active-nonce flow nonce))
         "stale resubscription on {<key>} still live, skip"
       ?:  |(live (active-nonce flow nonce))  n
-      ~&  >>  key^wire-nonce=nonce^flow=flow
+      ~?  >>  =(%32 veb)  key^wire-nonce=nonce^flow=flow
       +(n)
     ::
     ++  nacked-flow
