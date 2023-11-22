@@ -1,6 +1,6 @@
 ::  +stale-flows: prints number of ames flows that can be closed
 ::
-::    |stale-flows, =veb %1  :: flows from nacking initial subscriptions
+::    |stale-flows, =veb %1  :: all flows that got %nacked
 ::    |stale-flows, =veb %2  :: stale flows that keep (re)trying to connect
 ::    |stale-flows, =veb %21 :: ... per app (only forward)
 ::    |stale-flows, =veb %3  :: stale resubscriptions
@@ -224,14 +224,15 @@
     n
   =/  =wire    i.t.u.duct
   =/  nonce=@  ?~((slag 7 wire) 0 ?~(n=(slaw %ud &8.wire) 0 u.n))
-  =*  agent    &7.wire
+  =*  agent    &3.wire
   =/  path     ?~(=(0 nonce) |7.wire |8.wire)
   =/  =flow    (flow-type [path ship agent] nonce)
   =+  closing=(~(has ^in closing.peer-state) target)
   =/  log=tape
     =+  apps="[sub={<&3.wire>} -> pub={<agent>}]"
-    "[bone={<target>} nonce={<nonce>} {apps} close={<closing>} {<flow=flow>}] {<path>}"
-  ~?  =(%1 veb)  log
+    %+  weld  "[bone={<target>} nonce={<nonce>} {apps}"
+    " close={<closing>} {<flow=flow>}] {<path>}"
+  ~?  =(%1 veb)  flow^log
   ~?  &(=(%5 veb) ?=([~ %poke] flow))  log
   (~(put ^in n) [ship target flow closing])
 --
