@@ -4,6 +4,7 @@
 ::    To actually close the flows, run with |close-flows, =dry |
 ::
 ::    verbosity:
+::
 ::      |close-flows, =veb %1  ::  flows already in closing
 ::      |close-flows, =veb %2  ::  stale (re) subscriptions
 ::      |close-flows, =veb %21 ::  ... that don't have a sub-nonce.yoke
@@ -91,7 +92,7 @@
       (got-nacked bone)
     (lth nonce u.app-nonce)
   ~?  ?=(%21 veb)
-    [ship (weld "stale (re)subscription, missing sub-nonce " log)]s
+    [ship (weld "stale (re)subscription, missing sub-nonce " log)]
   ?:  (gth nonce 0)
     ::  if there's a nonce in the wire, even though we couldn't retrieve the
     ::  latest nonce, this is a resubscription
