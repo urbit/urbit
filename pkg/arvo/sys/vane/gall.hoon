@@ -1791,16 +1791,12 @@
       ^+  [fex ap-core]
       ?~  caz  [(flop fex) ap-core]
       ?-  i.caz
+        [%pass * %grow *]  $(caz t.caz, ap-core (ap-grow +.q.i.caz))
+        [%pass * %tomb *]  $(caz t.caz, ap-core (ap-tomb +.q.i.caz))
+        [%pass * %cull *]  $(caz t.caz, ap-core (ap-cull +.q.i.caz))
         [%pass * ?(%agent %arvo %pyre) *]  $(caz t.caz, fex [i.caz fex])
         [%give *]  $(caz t.caz, fex [i.caz fex])
         [%slip *]  !!
-        ::
-          [%pass * %grow *]
-        $(caz t.caz, ap-core (ap-grow ['1' +<.q.i.caz] +>.q.i.caz))
-          [%pass * %tomb *]
-        $(caz t.caz, ap-core (ap-tomb +<.q.i.caz ['1' +>.q.i.caz]))
-          [%pass * %cull *]
-        $(caz t.caz, ap-core (ap-cull +<.q.i.caz ['1' +>.q.i.caz]))
       ==
     ::  +ap-handle-ken
     ::
@@ -2250,7 +2246,7 @@
         %-  molt
         %+  turn  ~(tap by sky.e)
         |=  [=spur p=path-state]
-        :-  ['1' spur]
+        :-  spur
         :-  ~
         =/  m  ~(val by fan.p)
         %+  gas:on-path  *_fan.p
@@ -2370,14 +2366,17 @@
   ?:  ?&  =(%w care)
           =([%$ %da now] coin)
           =(our ship)
+          ?=([%'1' *] path)
       ==
+    =>  .(path t.path)
     =/  yok  (~(get by yokes.state) q.bem)
     ?.  ?=([~ %live *] yok)             [~ ~]
     ?~  ski=(~(get by sky.u.yok) path)  [~ ~]
     ?~  las=(ram:on-path fan.u.ski)     [~ ~]
     ``case/!>(ud/key.u.las)
   ::
-  ?:  ?=(%x care)
+  ?:  &(?=(%x care) ?=([%'1' *] path))
+    =>  .(path t.path)
     ?.  =(p.bem our)  ~
     ::
     ?:  ?=(%$ q.bem)  :: app %$ reserved
@@ -2430,7 +2429,9 @@
   ?:  ?&  =(%t care)
           =([%$ %da now] coin)
           =(our ship)
+          ?=([%'1' *] path)
       ==
+    =>  .(path t.path)
     =/  yok  (~(get by yokes.state) q.bem)
     ?.  ?=([~ %live *] yok)  ~
     :^  ~  ~  %file-list  !>  ^-  (list ^path)
@@ -2442,7 +2443,9 @@
   ::
   ?:  ?&  =(%z care)
           =(our ship)
+          ?=([%'1' *] path)
       ==
+    =>  .(path t.path)
     =/  yok  (~(get by yokes.state) q.bem)
     ?.  ?=([~ %live *] yok)             ~
     ?~  ski=(~(get by sky.u.yok) path)  ~
