@@ -75,22 +75,43 @@
 ::  checks if this is a stale re-subscription
 ::
 ?.  =(resubs 1)
-  ::  if there are more than one subscription per path, and we have a sub-nonce,
+  ::  if there are more than one flow per path, and we have an app-nonce,
   ::  we check that this is indeed a (post-nonce) resubscription and the nonce
   ::  in the flow is less than the latest one.
   ::
   ?^  app-nonce
-    ~?  ?=(%2 veb)
+    ~?  &(?=(%2 veb) !=(nonce 0))
       :-  ship
       %+  weld  "stale (re)subscription {?.((lth nonce u.app-nonce) "skip" ~)} "
       log
+    ?:  =(nonce 0)
+      ::  If the nonce in the wire is 0, this could be a %poke or a pre-nonce
+      ::  %watch, so we only %cork it if it got %nacked
+      ::
+      (got-nacked bone)
     (lth nonce u.app-nonce)
   ~?  ?=(%21 veb)
-    [ship (weld "stale (re)subscription, missing sub-nonce " log)]
-  ::  since we skip pokes (flows that don't have a nonce in the wire and don't
-  ::  have an entry in boat.yoke), and in this case, this would be a
-  ::  resubscription, we can consider it safe to be corked
-  &
+    [ship (weld "stale (re)subscription, missing sub-nonce " log)]s
+  ?:  (gth nonce 0)
+    ::  if there's a nonce in the wire, even though we couldn't retrieve the
+    ::  latest nonce, this is a resubscription
+    ::
+    %.y
+  ::  If the flow doesn't have an app-nonce, it could be a %poke, or a %watch
+  ::  that got orphaned, and removed from %gall due to a desync between %ames
+  ::  and %gall.
+  ::
+  ::  In the case of a %poke, the reason why it could be mixed with %watches
+  ::  would be if the wire the app associated with the %poke is the same as the
+  ::  wire for the %watch (i.e. programmer's error; wires should be unique in an
+  ::  app, but %gall doesn't enforce that), so from our point of view we can't
+  ::  know if this is a %poke, or a pre-nonce subscription that got desynced.
+  ::
+  ::  The safes way is s to check if we got a %nack, which will make sure to not
+  ::  %cork an active %poke, at the cost of not closing the the first pre-nonce
+  ::  (re)subscription.
+  ::
+  (got-nacked bone)
 ::  if there's only one subscription (or this is the latest one, since we sort
 ::  flows by nonce) we consider it stale if the nonce in the wire is less than
 ::  the latest subscription the agent knows about, since that should have been
@@ -114,8 +135,8 @@
     "latest subscription flow is stale {?.((gth nonce 0) "skip" ~)} "
   log
 ?:  &(?=(~ app-nonce) (gth nonce 0))  &
-::  if we can't retrive the nonce for the latest flow, and there's no sub-nonce
-::  in the wire, this is a %poke.
+::  if we can't retrieve the nonce for the latest flow, and there's no sub-nonce
+::  in the wire, this could be a %poke or a de-synced pre-nonce %watch.
 ::
 ::  if we can retrive the nonce for the latest flow, and there's a sub-nonce
 ::  this is the current subscription.
@@ -123,15 +144,19 @@
 ::  Both can be safely corked if there is a flow with a naxplanation ack on a
 ::  backward bone (i.e. the %watch or the %poke got %nacked)
 ::
-=+  backward-bone=(mix 0b10 bone)
-?.  =(%2 (mod backward-bone 4))
-  |
-?~  (~(get by rcv.peer-state) backward-bone)
-  |
+?.  (got-nacked bone)  |
 ~?  &(?=(%4 veb) ?=(^ app-nonce))  [ship (weld "%watch was %nacked " log)]
 ~?  &(?=(%41 veb) &(=(nonce 0) ?=(~ app-nonce)))
-  [ship (weld "%poke was %nacked " log)]
+  [ship (weld "flow (%poke or pre-nonce %watch) was %nacked " log)]
 &
+::
+++  got-nacked
+  |=  =bone
+  ^-  ?
+  =+  backward-bone=(mix 0b10 bone)
+  ?&  =(%2 (mod backward-bone 4))
+      ?=(^ (~(get by rcv.peer-state) backward-bone))
+  ==
 ::
 ++  forward-flows
   %+  roll  ~(tap by snd.peer-state)
