@@ -11344,7 +11344,7 @@
 ++  slam                                                ::  slam a gate
   |=  [gat=vase sam=vase]  ^-  vase
   =/  [typ=type gen=hoon]
-    :-  [%cell p:$:gat p:$:sam]
+    :-  [%cell p.gat p.sam]
     [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
   =+  gun=(~(mint ut typ) %noun gen)
   [p.gun (slum q.gat q.sam)]
