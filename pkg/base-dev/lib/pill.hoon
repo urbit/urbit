@@ -340,17 +340,6 @@
       %+  ifix  [fas (just `@`10)]
       (star ;~(less (just `@`10) next))
     ==
-  ::  +swel: +swat but with +slop
-  ::
-  ++  swel
-    |=  [tap=(trap vase) gen=hoon]
-    ^-  (trap vase)
-    =/  gun  (~(mint ut p:$:tap) %noun gen)
-    =>  [tap=tap gun=gun]
-    |.  ~+
-    =/  pro  q:$:tap
-    [[%cell p.gun p:$:tap] [.*(pro q.gun) pro]]
-  --
 ::
 ++  events
   |%
