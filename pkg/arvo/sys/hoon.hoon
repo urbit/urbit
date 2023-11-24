@@ -11457,6 +11457,25 @@
     %-  ~(play ut p.vax)
     [%wtgr [%wtts [%leaf %tas -.q.vax] [%& 2]~] [%$ 1]]
   (~(fuse ut p.vax) [%cell %noun %noun])
+::  +shot: deferred +slam
+::
+++  shot
+  |=  [gat=(trap vase) sam=(trap vase)]
+  ^-  (trap vase)
+  =+  :-  ^=  typ  ^-  type
+          [%cell p:$:gat p:$:sam]
+      ^=  gen  ^-  hoon
+      [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
+  =+  gun=(~(mint ut typ) %noun gen)
+  |.  ~+
+  [p.gun (slum q:$:gat q:$:sam)]
+::  +slew: deferred +slop
+::
+++  slew
+  |=  [hed=(trap vase) tal=(trap vase)]
+  ^-  (trap vase)
+  |.  ~+
+  [[%cell p:$:hed p:$:tal] [q:$:hed q:$:tal]]
 ::  +swat: deferred +slap
 ::
 ++  swat
@@ -11465,6 +11484,16 @@
   =/  gun  (~(mint ut p:$:tap) %noun gen)
   |.  ~+
   [p.gun .*(q:$:tap q.gun)]
+::  +swel: +swat but with +slop
+::
+++  swel
+  |=  [tap=(trap vase) gen=hoon]
+  ^-  (trap vase)
+  =/  gun  (~(mint ut p:$:tap) %noun gen)
+  =>  [tap=tap gun=gun]
+  |.  ~+
+  =/  pro  q:$:tap
+  [[%cell p.gun p:$:tap] [.*(pro q.gun) pro]]
 ::
 ::    5d: parser
 +|  %parser
