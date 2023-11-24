@@ -11343,10 +11343,9 @@
 ::
 ++  slam                                                ::  slam a gate
   |=  [gat=vase sam=vase]  ^-  vase
-  =+  :-  ^=  typ  ^-  type
-          [%cell p.gat p.sam]
-      ^=  gen  ^-  hoon
-      [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
+  =/  [typ=type gen=hoon]
+    :-  [%cell p:$:gat p:$:sam]
+    [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
   =+  gun=(~(mint ut typ) %noun gen)
   [p.gun (slum q.gat q.sam)]
 ::
@@ -11462,10 +11461,9 @@
 ++  shot
   |=  [gat=(trap vase) sam=(trap vase)]
   ^-  (trap vase)
-  =+  :-  ^=  typ  ^-  type
-          [%cell p:$:gat p:$:sam]
-      ^=  gen  ^-  hoon
-      [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
+  =/  [typ=type gen=hoon]
+    :-  [%cell p:$:gat p:$:sam]
+    [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
   =+  gun=(~(mint ut typ) %noun gen)
   |.  ~+
   [p.gun (slum q:$:gat q:$:sam)]
