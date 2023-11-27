@@ -3571,6 +3571,7 @@
           ++  abed
             |=  b=^bone
             pump(bone b, state (~(gut by snd.peer-state) b *message-pump-state))
+          ::
           ++  abet
             ::  if the bone was corked, it's been removed from the state,
             ::  so we avoid adding it again.
@@ -4318,6 +4319,8 @@
                         num-fragments=num-fragments  closing=closing
                     ==
                   "send ack-1 {<data>}"
+              ::  XX notify %clay about %rate?
+              ::
               sink
             ::  last-heard<seq<10+last-heard; this is a packet in a live message
             ::
@@ -4365,6 +4368,8 @@
                   =/  data
                     [seq=seq fragment-num=fragment-num fragments=num-fragments]
                   "send ack-2 {<data>}"
+              ::  XX notify %clay about %rate?
+              ::
               (send-shut-packet bone seq %| %& fragment-num)
             ::  enqueue all completed messages starting at +(last-heard.state)
             ::
@@ -4634,6 +4639,10 @@
             |=  dat=(unit roar)
             |=([=^duct =_fine] (fi-emit:fine duct %give %tune [her path] dat))
           ::
+          ++  fi-give-rate
+            |=  [frag=@ud num=@ud]
+            |=([=^duct =_fine] (fi-emit:fine duct %give %rate [her path] frag^num))
+          ::
           +|  %entry-points
           ::
           ++  fi-start
@@ -4776,10 +4785,13 @@
             ?:  |(=(~ nex.keen) =(inx max))
               fine
             =^  =want  nex.keen  nex.keen
-            =.  last-sent.want   now
-            =.      tries.want   +(tries.want)
-            =.        wan.keen   (put:fi-mop wan.keen [fra .]:want)
-            =.            fine   (fi-send `@ux`hoot.want)
+            =.   last-sent.want  now
+            =.       tries.want  +(tries.want)
+            =.         wan.keen  (put:fi-mop wan.keen [fra .]:want)
+            =.             fine  (fi-send `@ux`hoot.want)
+            =.  fine
+              %-  ~(rep in listeners.keen)
+              (fi-give-rate fra.want num-fragments.keen)
             $(inx +(inx))
           ::
           ++  fi-sift-full

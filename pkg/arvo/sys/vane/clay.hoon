@@ -363,6 +363,7 @@
                   %done                                 ::  (n)ack
                   %lost                                 ::  lost boon
                   %tune                                 ::  scry response
+                  %rate                                 ::  scry progress
               ==                                        ::
           gift:ames                                     ::
       ==                                                ::
@@ -6221,19 +6222,23 @@
       %-  (slog leaf+"clay: lost backfill from {<tea>}" ~)
       [~ ..^$]
     ::
-        ?(%boon %tune)
+        ?(%boon %tune %rate)
       =/  her=ship   (slav %p i.t.tea)
       =/  =desk      (slav %tas i.t.t.tea)
       =/  index=@ud  (slav %ud i.t.t.t.tea)
       ::
       =/  fell=(unit fell)
         ?:  ?=(%boon +<.hin)  `;;(fell payload.hin)
+        ?.  ?=(%tune +<.hin)  ~
         ?~  roar.hin  ~
         ?~  q.dat.u.roar.hin  ~
         `[%1 `u.q.dat.u.roar.hin]
       ::
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
+        ?:  ?=(%rate +<.hin)
+          ~&  >  rate/[fragment num-fragments]:hin
+          `ruf
         ?~  fell
           ::  We shouldn't get back null on any of the fine requests we
           ::  make unless they're out of date
@@ -6347,6 +6352,7 @@
       ::
       %boon  !!
       %tune  !!
+      %rate  !!
       %lost  !!
       %unto  !!
       %wris  ~&  %strange-wris  !!
