@@ -1941,14 +1941,14 @@
     --
   ::
   ++  get-fit
-    |=  [bek=beak pre=@tas pax=@tas]
+    |=  [bec=beck pre=@tas pax=@tas]
     ^-  (unit path)
     =/  paz  (segments pax)
     |-  ^-  (unit path)
     ?~  paz
       ~
     =/  puz=path  (snoc `path`[pre i.paz] %hoon)
-    =+  .^(=arch cy+[(scot %p p.bek) q.bek (scot r.bek) puz])
+    =+  .^(=arch %cy (en-bema bec puz))
     ?^  fil.arch
       `puz
     $(paz t.paz)
@@ -3404,9 +3404,8 @@
       ++  validate-mark
         |=  [in=* =mark =bowl]
         ^-  cage
-        =+  .^  =dais:clay  %cb
-                /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[mark]
-            ==
+        =/  =beck  [our q.byk da+now ud+tick]:bowl
+        =+  .^(=dais:clay %cb (en-bema beck /[mark]))
         =/  res  (mule |.((vale.dais in)))
         ?:  ?=(%| -.res)
           ~|  %spider-mark-fail
