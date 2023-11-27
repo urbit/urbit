@@ -274,7 +274,7 @@
           ~
         ::  reinstall %base desk
         ::
-        =+  spo=(sein:title [our now our]:bowl)
+        =+  spo=(sein:title [our now tick our]:bowl)
         ~&  >>  re-installing-base-from+spo
         =/  fresh=[desk ship desk]  [%base spo %kids]
         [%pass /fresh %agent [our.bowl %hood] %poke kiln-install+!>(fresh)]~

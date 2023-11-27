@@ -343,7 +343,7 @@
   =.  desks  (~(del in desks) %base)
   =.  desks  (~(del in desks) %kids)
   ::
-  =/  sop=ship  (sein:title our now our)
+  =/  sop=ship  (sein:title our now tick our)
   ::  set up base desk
   ::
   =?  ..on-init  ?=(?(%earl %duke %king) (clan:title our))

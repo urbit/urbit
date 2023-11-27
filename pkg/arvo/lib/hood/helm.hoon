@@ -123,7 +123,7 @@
   ?>  ?=([@ ~] way)
   =/  =ship  (slav %p i.way)
   ?>  =(%earl (clan:title ship))
-  ?>  =(our.bowl (sein:title our.bowl now.bowl ship))
+  ?>  =(our.bowl (sein:title our.bowl now.bowl tick.bowl ship))
   =/  =rift
     +(.^(rift j+/(scot %p our.bowl)/rift/(scot %da now.bowl)/(scot %p ship)))
   abet:(emit %pass / %arvo %j %moon ship *id:block:jael %rift rift %.n)

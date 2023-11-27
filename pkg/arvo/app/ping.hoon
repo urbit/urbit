@@ -76,7 +76,7 @@
       |%
       ++  rind  (^rind card state)
       ++  kick
-        |=  [our=@p now=@da]
+        |=  [our=@p now=@da tick=@ud]
         ^-  (quip card _state)
         ::  ?:  =(%czar (clan:title our))
         ::    `state
@@ -87,7 +87,7 @@
         ::  %public-keys, but this must be tested before changing the
         ::  behavior here.
         ::
-        =/  new-ships  (~(gas in *(set ship)) (saxo:title our now our))
+        =/  new-ships  (~(gas in *(set ship)) (saxo:title our now tick our))
         =/  removed  (~(dif in ships.state) new-ships)
         =/  added    (~(dif in new-ships) ships.state)
         ;<  new-state=_state  rind
@@ -282,7 +282,7 @@
 ++  on-init
   ^-  [(list card) _this]
   =.  plan.state  [%nat ~]
-  =^  cards  state  (kick:ships our.bowl now.bowl)
+  =^  cards  state  (kick:ships [our now tick]:bowl)
   [cards this]
 ::
 ++  on-save   !>(state)
@@ -293,7 +293,7 @@
   =?  old  ?=(%0 -.old)  (state-0-to-1 old)
   ?>  ?=(%1 -.old)
   =.  state  old
-  =^  cards  state  (kick:ships our.bowl now.bowl)
+  =^  cards  state  (kick:ships [our now tick]:bowl)
   [cards this]
   ::
   +$  state-any  $%(state-0 state-1)
@@ -313,13 +313,13 @@
   ::
   =^  cards  state
     ?:  =(q.vase %kick)  :: NB: ames calls this on %born
-      (kick:ships our.bowl now.bowl)
+      (kick:ships [our now tick]:bowl)
     ?:  =(q.vase %nat)
       =.  plan.state  [%nat ~]
-      (kick:ships our.bowl now.bowl)
+      (kick:ships [our now tick]:bowl)
     ?:  =(q.vase %no-nat)
       =.  plan.state  [%pub ~]
-      (kick:ships our.bowl now.bowl)
+      (kick:ships [our now tick]:bowl)
     `state
   [cards this]
 ::
@@ -359,7 +359,7 @@
       ?^  error.sign-arvo
         %-  (slog 'ping: strange jael wake fail!' u.error.sign-arvo)
         `state
-      (take-delay:ships our.bowl now.bowl)
+      (take-delay:ships [our now tick]:bowl)
     ::
         [%jael ~]
       ?>  ?=(%public-keys +<.sign-arvo)
