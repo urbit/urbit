@@ -644,13 +644,14 @@
   |=  [=yarn =bowl:gall]
   ^-  bowl:spider
   :*  our.bowl
-    src.bowl
+      src.bowl
       (yarn-to-tid yarn)
       (yarn-to-parent yarn)
       wex.bowl
       sup.bowl
       eny.bowl
       now.bowl
+      tick.bowl
       (yarn-to-byk yarn bowl)
   ==
 ::

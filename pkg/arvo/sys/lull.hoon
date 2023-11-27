@@ -2778,7 +2778,7 @@
         $:  act=@ud                                     ::  change number
             eny=@uvJ                                    ::  entropy
             now=@da                                     ::  current time
-            tick=@                                      ::  arvo tick
+            tick=@ud                                    ::  arvo tick
             byk=beak                                    ::  load source
     ==  ==                                              ::                                                  ::
   +$  dude  term                                        ::  server identity
@@ -3289,6 +3289,7 @@
         sup=bitt:gall
         eny=@uvJ
         now=@da
+        tick=@ud
         byk=beak
     ==
   ::
