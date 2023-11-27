@@ -348,6 +348,9 @@
 ++  en-beam
   |=(b=beam =*(s scot `path`[(s %p p.b) q.b (s r.b) s.b]))
 ::
+++  en-bema
+  |=(b=bema `path`[(scot %p p.b) q.b (en-cose r.b) s.b])
+::
 ++  de-beam
   ~/  %de-beam
   |=  p=path
@@ -1363,7 +1366,7 @@
       =.  tic
         %-  roll  :_  max
         %+  turn  (weld hed.run tal.run)
-        |=(pan=plan tick.p.pan)
+        |=(=plan tick.p.plan)
       ::  apply remaining update
       ::
       =.  ..this  (~(lod what:pith fil.debt) kel.debt)
@@ -1376,8 +1379,6 @@
     ::
     ++  prep
       |=  pan=plan
-      ?~  q.pan
-        this
       =.  tic  +(tic)
       (emit pan(tick.p tic, say.p peek(tick.gem tic)))
     ::  +emit: enqueue a worklist with source
@@ -1525,13 +1526,14 @@
         ?:  =(now +.r.bam)
           ::  TODO
           ::
-          ::  ~&  >>  [%todo %now-without-tick]
+          ~&  >>>  [%no-tick lyc pov vis bam]
           ::  ~
           (do-peek lyc pov vis bam)
         (do-peek lyc pov vis bam)
       ::
           [[%da @da] %ud @ud]
         ?.  =([da+now ud+tick.gem] r.bam)
+          ~&  >>>  [%rejected %bad-tick]
           ~
         (do-peek lyc pov (omer-to-omen vis bam))
       ==
