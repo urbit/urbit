@@ -338,6 +338,7 @@
                   %pork                                 ::
                   %warp                                 ::
                   %werp                                 ::
+                  %zeal                                 ::
               ==                                        ::
           task                                          ::
       ==                                                ::
@@ -1836,6 +1837,7 @@
                 %+  levy  ~(tap by tore:(lu now rof hen ruf))
                 |=  [=desk =zest wic=(set weft)]
                 ?|  =(%base desk)
+                    !ese:(~(got by dos.rom.ruf) desk)
                     !?=(%live zest)
                     !=(~ (~(int in wic) kel))
                 ==
@@ -2279,8 +2281,11 @@
       ^+  ..park
       ?>  =(~ pud)
       =.  pud  `[syd yoki]
-      |^  %.  [hen %slip %c %pork ~]
-          emit:(pass-what files)
+      |^
+      =.  ..park
+        %-  emit  suspend-non-essentials
+      %.  [hen %slip %c %pork ~]
+      emit:(pass-what files)
       ::
       ++  files
         ^-  (list (pair path (cask)))
@@ -2302,6 +2307,24 @@
         |=  fil=(list (pair path (cask)))
         ^+  ..park
         (emit hen %pass /what %$ what/fil)
+      ::
+      ++  suspend-non-essentials
+        =/  lit=(list [desk zest])
+          %+  turn
+            ~(tap by dos.rom.ruf)
+          |=  [=desk =dojo]
+          [desk ?:(ese.dojo %live %held)]
+        =/  sus=(list [desk zest])
+          %+  skim
+            lit
+          |=  [=desk =zest]  ?=(%held zest)
+        :*  hen
+            %pass
+            /kiln/bump/zeal
+            %c
+            %zeal
+            sus
+        ==
       --
     --
   ::
