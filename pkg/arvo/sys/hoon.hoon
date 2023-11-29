@@ -7224,11 +7224,10 @@
   ~/  %cond
   |=  [pex=nock yom=nock woq=nock]
   ^-  nock
-  ?-  pex
-    [%1 %0]  yom
-    [%1 %1]  woq
-    *        [%6 pex yom woq]
-  ==
+  ?:  =([%1 &] pex)  yom
+  ?:  =([%1 |] pex)  woq
+  ?:  =([%0 0] pex)  pex
+  [%6 pex yom woq]
 ::
 ++  cons                                                ::  make formula cell
   ~/  %cons
@@ -7273,43 +7272,44 @@
   ~/  %flan
   |=  [bos=nock nif=nock]
   ^-  nock
-  ?:  =(bos nif)  bos
-  ?:  =([%0 0] bos)  nif
-  ?:  =([%0 0] nif)  bos
-  ?-    bos
-      [%1 %1]   bos
-      [%1 %0]   nif
-      *
-    ?-    nif
-        [%1 %1]   nif
-        [%1 %0]   bos
-        *       [%6 bos nif [%1 1]]
-    ==
-  ==
+  ?:  ?|  =(bos nif)
+          =([%1 |] bos)
+          =([%1 &] nif)
+          =([%0 0] bos)
+      ==
+    bos
+  ?:  ?|  =([%1 &] bos)
+          =([%1 |] nif)
+          =([%0 0] nif)
+      ==
+    nif
+  [%6 bos nif [%1 |]]
 ::
 ++  flip                                                ::  loobean negation
   ~/  %flip
   |=  dyr=nock
+  ^-  nock
+  ?:  =([%1 &] dyr)  [%1 |]
+  ?:  =([%1 |] dyr)  [%1 &]
   ?:  =([%0 0] dyr)  dyr
-  [%6 dyr [%1 1] [%1 0]]
+  [%6 dyr [%1 |] %1 &]
 ::
 ++  flor                                                ::  loobean  |
   ~/  %flor
   |=  [bos=nock nif=nock]
   ^-  nock
-  ?:  =(bos nif)  bos
-  ?:  =([%0 0] bos)  nif
-  ?:  =([%0 0] nif)  bos
-  ?-  bos
-      [%1 %1]   nif
-      [%1 %0]   bos
-      *
-    ?-  nif
-        [%1 %1]   bos
-        [%1 %0]   nif
-        *         [%6 bos [%1 0] nif]
-    ==
-  ==
+  ?:  ?|  =(bos nif)
+          =([%1 &] bos)
+          =([%1 |] nif)
+          =([%0 0] bos)
+      ==
+    bos
+  ?:  ?|  =([%1 |] bos)
+          =([%1 &] nif)
+          =([%0 0] nif)
+      ==
+    nif
+  [%6 bos [%1 &] nif]
 ::
 ++  hike
   ~/  %hike
