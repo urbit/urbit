@@ -1521,6 +1521,7 @@
         [%crew ~]                                       ::  permission groups
         [%crow nom=@ta]                                 ::  group usage
         [%drop des=desk]                                ::  cancel pending merge
+        [%esse des=desk ese=?]                          ::  edit essential desk
         [%info des=desk dit=nori]                       ::  internal edit
         $>(%init vane-task)                             ::  report install
         [%into des=desk all=? fis=mode]                 ::  external edit
