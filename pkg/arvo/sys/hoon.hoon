@@ -9994,15 +9994,22 @@
     ::
         [%wtcl *]
       =+  nor=$(gen p.gen, gol bool)
-      =+  fex=(gain p.gen)
-      =+  wux=(lose p.gen)
-      =+  ^=  duy
-          ?:  =(%void fex)
-            ?:(=(%void wux) [%0 0] [%1 1])
-          ?:(=(%void wux) [%1 0] q.nor)
+      =+  [fex=(gain p.gen) wux=(lose p.gen)]
+      ::
+      ::  if either branch is impossible, eliminate it
+      ::  (placing the conditional in a dynamic hint to preserve crashes)
+      ::
+      =+  ^=  [ned duy]
+        ?-  -
+          [%void %void]  |+[%0 0]
+          [%void *]      &+[%1 |]
+          [* %void]      &+[%1 &]
+          *              |+q.nor
+        ==
       =+  hiq=$(sut fex, gen q.gen)
       =+  ran=$(sut wux, gen r.gen)
-      [(fork p.hiq p.ran ~) (cond duy q.hiq q.ran)]
+      =+  fol=(cond duy q.hiq q.ran)
+      [(fork p.hiq p.ran ~) ?.(ned fol [%11 [%toss q.nor] fol])]
     ::
         [%wthx *]
       :-  (nice bool)
