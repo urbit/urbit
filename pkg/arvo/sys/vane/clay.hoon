@@ -4911,6 +4911,19 @@
     ~&  %clay-idle
     [~ ..^$]
   ::
+      %esse
+    ?:  ?=(%base des.req)
+      %-  (slog 'clay: base is always essential' ~)
+      [~ ..^$]
+    =.  dos.rom.ruf
+      %+  ~(jab by dos.rom.ruf)
+        des.req
+      |=  =dojo
+      dojo(ese ese.req)
+    =^  mos  ruf
+      abet:wick:((de now rof hen ruf) our %base)
+    [mos ..^$]
+  ::
       %info
     ?:  ?=(%| -.dit.req)
       =/  bel=@tas         p.dit.req
