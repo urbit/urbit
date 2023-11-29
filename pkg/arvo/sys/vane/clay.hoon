@@ -1,3 +1,4 @@
+!:
 ::  clay (4c), revision control
 ::
 ::  The way to understand Clay is to take it section-by-section:
@@ -6008,6 +6009,7 @@
         %rang   ``[%rang !>(ran.ruf)]
         %tomb   ``[%flag !>((tomb t.path))]
         %cult   ``[%cult !>((cult t.path))]
+        %esse   (esse t.path)
         %flow   ``[%flow !>(fad.ruf)]
         %domes  domes
         %tire   ``[%tire !>(tore:(lu now rof *duct ruf))]
@@ -6049,6 +6051,15 @@
       %mult  [%mult mool.rove]
       %many  [%many [track moat]:rove]
     ==
+  ::
+  ++  esse
+    |=  =path
+    ^-  (unit (unit cage))
+    ?~  path
+      [~ ~]
+    =/  =desk
+      i.path
+    ``[%esse !>(ese:(~(got by dos.rom.ruf) desk))]
   ::
   ::  True if file is accessible
   ::
