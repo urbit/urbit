@@ -2336,7 +2336,7 @@
           p.agent.u.yok
         on-save:p.agent.u.yok
       ==
-    ``noun+!>(`egg-any`[-:*spore egg])
+    ``noun+!>(`egg-any`[-:*spore-16 egg])
   ::
   ?:  ?&  =(%w care)
           =([%$ %da now] coin)
