@@ -11468,9 +11468,9 @@
   =>  [typ=p.gun +<.$]
   |.  ~+
   [typ .*([q:$:gat q:$:sam] [%9 2 %10 [6 %0 3] %0 2])]
-::  +slew: deferred +slop
+::  +sock: deferred +slop
 ::
-++  slew
+++  sock
   |=  [hed=(trap vase) tal=(trap vase)]
   ^-  (trap vase)
   =>  +<
@@ -11486,9 +11486,9 @@
   =>  [tap=tap gun=gun]
   |.  ~+
   [p.gun .*(q:$:tap q.gun)]
-::  +sock: +swat but with +slop
+::  +swel: +swat but with +slop
 ::
-++  sock
+++  swel
   |=  [tap=(trap vase) gen=hoon]
   ^-  (trap vase)
   =/  gun  (~(mint ut p:$:tap) %noun gen)
