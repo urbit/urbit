@@ -11475,7 +11475,7 @@
   ^-  (trap vase)
   =>  +<
   |.  ~+
-  =/  [bed bal]  [$:hed $:tal]
+  =+  [bed bal]=[$:hed $:tal]
   [[%cell p:bed p:bal] [q:bed q:bal]]
 ::  +swat: deferred +slap
 ::
