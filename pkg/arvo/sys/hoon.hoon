@@ -11465,26 +11465,30 @@
     :-  [%cell p:$:gat p:$:sam]
     [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
   =+  gun=(~(mint ut typ) %noun gen)
+  =>  [typ=p.gun +<.$]
   |.  ~+
-  [p.gun (slum q:$:gat q:$:sam)]
+  [typ .*([q:$:gat q:$:sam] [%9 2 %10 [6 %0 3] %0 2])]
 ::  +slew: deferred +slop
 ::
 ++  slew
   |=  [hed=(trap vase) tal=(trap vase)]
   ^-  (trap vase)
+  =>  +<
   |.  ~+
-  [[%cell p:$:hed p:$:tal] [q:$:hed q:$:tal]]
+  =/  [bed bal]  [$:hed $:tal]
+  [[%cell p:bed p:bal] [q:bed q:bal]]
 ::  +swat: deferred +slap
 ::
 ++  swat
   |=  [tap=(trap vase) gen=hoon]
   ^-  (trap vase)
   =/  gun  (~(mint ut p:$:tap) %noun gen)
+  =>  [tap=tap gun=gun]
   |.  ~+
   [p.gun .*(q:$:tap q.gun)]
-::  +swel: +swat but with +slop
+::  +sock: +swat but with +slop
 ::
-++  swel
+++  sock
   |=  [tap=(trap vase) gen=hoon]
   ^-  (trap vase)
   =/  gun  (~(mint ut p:$:tap) %noun gen)
