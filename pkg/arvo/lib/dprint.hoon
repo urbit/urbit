@@ -255,7 +255,8 @@
     ^-  (unit item)
     ?>  ?=([%face *] sut)
     ::  TODO: handle tune case
-    ?>  ?=(term p.sut)
+    ?.  ?=(term p.sut)
+      return-item:this(sut q.sut)
     =*  compiled-against  return-item:this(sut q.sut)
     `[%face (trip p.sut) *what compiled-against]
   ::
@@ -318,7 +319,14 @@
         [%face *]  return-face
         [%fork *]  return-fork
         [%hint *]  return-hint
-        [%hold *]  return-item:this(sut (~(play ut p.sut) q.sut))
+        [%hold *]
+      ?:  (~(has in gil) sut)
+        ~
+      =<  return-item
+      %=  this
+        gil  (~(put in gil) sut)
+        sut  (~(play ut p.sut) q.sut)
+      ==  
     ==
   ::
   ++  return-hint-core
