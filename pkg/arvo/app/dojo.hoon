@@ -807,7 +807,7 @@
     ::
     ++  dy-run-generator
       !.
-      |=  [cay=cage cig=dojo-config]
+      |=  [cay=cage cig=dojo-config =desk]
       ^+  +>+>
       ?.  (~(nest ut [%cell [%atom %$ ~] %noun]) | p.q.cay)
         ::  naked generator; takes one argument
@@ -850,7 +850,7 @@
       |.  ^-  vase
       =/  gat=vase  (slot 3 q.cay)
       =/  som=vase  (slot 6 gat)
-      =/  ven=vase  !>([now=now.hid eny=eny.hid bec=he-beak])
+      =/  ven=vase  !>([now=now.hid eny=eny.hid bec=he-beak(q.dir desk)])
       =/  poz=vase  (dy-sore p.cig)
       =/  kev=vase
         =/  kuv=(unit vase)  (slew 7 som)
@@ -990,7 +990,7 @@
           %te  (dy-wool-poke p.bil q.bil)
           %ex  (dy-mere p.bil)
           %dv  (dy-sing hand+q.bil %a p.bil (snoc q.bil %hoon))
-          %ge  (dy-run-generator (dy-cage p.p.p.bil) q.p.bil)
+          %ge  (dy-run-generator (dy-cage p.p.p.bil) q.p.bil desk.q.p.p.bil)
           %sa
         =/  has-mark  .?((get-fit:clay he-beak %mar p.bil))
         ?.  has-mark
