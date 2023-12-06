@@ -5346,6 +5346,7 @@
   ::  /ax/snubbed                    (?(%allow %deny) (list ship))
   ::  /ax/fine/hunk/[path/...]       (list @ux) scry response fragments
   ::  /ax/fine/ducts/[path/]         (list duct)
+  ::  /ax/fine/rate/[path/]          [num-received=@ud num-fragments=@ud]
   ::  /ax/rift                        @
   ::  /ax/corked/[ship]              (set bone)
   ::  /ax/closing/[ship]             (set bone)
@@ -5518,6 +5519,18 @@
     ?~  keen=(~(get by keens.u.peer) path)
       [~ ~]
     ``noun+!>(listeners:u.keen)
+  ::
+      [%fine %rate her=@ pax=^]
+    ?~  who=(slaw %p her.tyl)  [~ ~]
+    ?~  peer=(~(get by peers.ames-state) u.who)
+      [~ ~]
+    ?.  ?=([~ %known *] peer)
+      [~ ~]  :: TODO handle aliens
+    :^  ~  ~  %noun
+    !>  ^-  (unit [@ud @ud])
+    ?~  keen=(~(get by keens.u.peer) pax.tyl)
+      ~
+    `[num-received num-fragments]:u.keen
   ::
       [%rift ~]
     ``noun+!>(rift.ames-state)
