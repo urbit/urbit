@@ -491,53 +491,19 @@
       =(life.ames-state lyf.balk)
   ==
 ::
-++  fine-close
-  =<  close
-  |%
-  ++  aes  |=(key=@ ~(. sivc:aes:crypto [key ~]))
-  ++  close
-    |=  [=ames-state =path key-idx=@ value=(unit (unit cage))]
-    ?.  (check-key ames-state path key-idx)
-      ~&  key-validation-failed/[path key-idx chain.ames-state]
-      ~
-    ?~  value  
-      ~&  %bailing-close
-      ~
-    ?~  u.value
-      ``atom+!>(~)
-    ?~  key=(get:on:chain chain.ames-state key-idx)
-      ~
-    ``atom+!>((jam (en:(aes -.u.key) (jam [p q.q]:u.u.value))))
-  ::
-  ++  shutter
-    |=  [our=ship =ames-state seg=@t key=@]
-    ^-  (unit balk)  
-    ~|  seg/seg
-    ?~  raw=(slaw %uv seg)
-      ~
-    =+  ;;([iv=@ len=@ enc=@] (cue u.raw))
-    ?~  txt=(de:(aes key) iv len enc)
-      ~
-    ~|  txt/txt
-    ?~  pat=`(unit path)`(rush `@t`u.txt stap)
-      ~
-    =/  here
-      /(scot %p our)/(scot %ud rift.ames-state)/(scot %ud life.ames-state)
-    (de-path-soft:balk (welp here u.pat))
-  ::
-  ++  check-key
-    |=  [=ames-state =path key-idx=@]
-    ^-  ?
-    ?~  link=(get:on:chain chain.ames-state key-idx)
-      |
-    =/  gol  path.u.link
-    |-  ^-  ?
-    ?~  gol   &
-    ?~  path  |
-    ?.  =(i.path i.gol)
-      |
-    $(path t.path, gol t.gol)
-  --
+++  check-fine-key
+  |=  [=ames-state =balk key-idx=@]
+  ^-  ?
+  ?~  link=(get:on:chain chain.ames-state key-idx)
+    |
+  =/  gol  path.u.link
+  =/  =path  [van.balk car.balk spr.balk]
+  |-  ^-  ?
+  ?~  gol   &
+  ?~  path  |
+  ?.  =(i.path i.gol)
+    |
+  $(path t.path, gol t.gol)
 ::
 ++  is-peer-dead
   |=  [now=@da =peer-state]
@@ -2633,13 +2599,11 @@
           ~|  bad-wire/wire
           ?>  ?=([%fine %shut idx=@ ~] wire)
           ~|  bad-path/rest.path.s
-          ?>  ?=([%fine %shut cyf=@ ~] rest.path.s)
+          ?>  ?=([%fine %shut kef=@ cyf=@ ~] rest.path.s)
           =/  [key=@ ,path]  (~(got by chain.u.per) (slav %ud idx.wire))
-          =+  ;;([iv=@ len=@ enc=@] (cue (slav %uv cyf.rest.path.s)))
-          =/  raw  `@t`(need (de:(aes:fine-close key) iv len enc))
+          =/  raw=@t
+            (dy:crub:crypto key (slav %uv cyf.rest.path.s))
           =/  pax=path   
-            %+  welp
-              /(scot %p ship.s)/(scot %ud rift.u.per)/(scot %ud life.u.per)
             (stab raw)
           =;  dat=(unit (unit page))
             (emit duct [%give %near [ship.s pax] dat])
@@ -2648,12 +2612,11 @@
               ==
             ~  :: XX weird
           ?>  ?=([%atom @] u.q.dat.u.roar)
-          =-  `?~(- ~ `(,page (cue u.-)))
-          %-  de:(aes:fine-close key)
-          ;;([iv=@ len=@ cyf=@] (cue q.u.q.dat.u.roar))
+          =-  ``;;(page (cue -))
+          (dy:crub:crypto key q.u.q.dat.u.roar)
         ?>  ?=([%chum *] wire)
         =/  pax
-          =-  (,path (cue -))
+          %-  stab
           (dy:crub:crypto symmetric-key.u.per (slav %uv cyf.rest.path.s))
         =/  dat=(unit (unit page))
           ?:  ?|  ?=(~ roar)
@@ -3239,8 +3202,12 @@
           =.  peers.ames-state  (~(put by peers.ames-state) ship u.ship-state)
           =/  enc
             %+  scot  %uv
-            (jam (en:(aes:fine-close key.u.sec) (spat path)))
-          =/  lav  /a/x/(scot %ud idx.u.sec)//fine/shut/[enc]
+            %+  en:crub:crypto  key.u.sec
+            %-  spat 
+            %-  welp
+            :_  path
+            /(scot %p ship)/(scot %ud rift.u.ship-state)/(scot %ud life.u.ship-state)
+          =/  lav  /a/x/1//fine/shut/(scot %ud idx.u.sec)/[enc]
           =/  wir  /fine/shut/(scot %ud idx.u.sec)
           (emit duct %pass wir %a %keen ~ ship lav)
         :: XX: key exchange over ames forces all encrypted scries to be
@@ -3259,7 +3226,7 @@
           |=  todos=alien-agenda
           todos(chums (~(put ju chums.todos) path duct))
         =/  cyf
-          (scot %uv (en:crub:crypto symmetric-key.u.ship-state (jam path)))
+          (scot %uv (en:crub:crypto symmetric-key.u.ship-state (spat path)))
         =/  lav
           /a/x/1//chum/(scot %p our)/(scot %ud life.ames-state)/[cyf]
         (emit duct [%pass /chum %a %keen ~ ship lav])
@@ -5660,20 +5627,36 @@
   =*  tyl  s.bem
   ::
   ?:  ?&  =(&+our why)
-          ?=([%ud *] r.bem)
+          =([%ud 1] r.bem)
           =(%$ syd)
           =(%x ren)
       ==
     =>  .(tyl `(pole knot)`tyl)
     ?+    tyl  ~
     ::
-        [%fine %shut enc=@ ~]
-      =/  key  (got:on:chain chain.ames-state p.r.bem)
-      ?~  new=(shutter:fine-close our ames-state enc.tyl key.key)
+        [%fine %shut kef=@ enc=@ ~]
+      =/  key-idx  (slav %ud kef.tyl)
+      =/  key  (got:on:chain chain.ames-state (slav %ud kef.tyl))
+      =/  pat=(unit path)  
+        (rush `@t`(dy:crub:crypto key.key (slav %uv enc.tyl)) stap)
+      ?~  pat
+        [~ ~]
+      ?~  blk=(de-path-soft:balk u.pat)
+        [~ ~]
+      =/  res  (rof ~ /ames (as-omen:balk u.blk))
+      ?.  (check-fine-key ames-state u.blk key-idx)
+        ~&  key-validation-failed/[u.pat key-idx chain.ames-state]
+        [~ ~]
+      ?~  res  
+        ~&  %bailing-close
+        [~ ~]
+      ?~  u.res
+        ``atom+!>(~)
+      ?~  key=(get:on:chain chain.ames-state key-idx)
         ~
-      =/  res  (rof ~ /ames (as-omen:balk u.new))
-      (fine-close ames-state spr.u.new p.r.bem res)
-
+      =-  ``atom+!>(-)
+      `@uv`(en:crub:crypto -.u.key (jam [p q.q]:u.u.res))
+    ::
         [%chum her=@ lyf=@ cyf=@ ~]
       =/  who  (slaw %p her.tyl)
       =/  lyf  (slaw %ud lyf.tyl)
