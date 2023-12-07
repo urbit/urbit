@@ -63,7 +63,7 @@
       bindings=(list [=binding =duct =action])
       ::  cache: mapping from url to versioned entry
       ::
-      cache=(map url=@t [aeon=@ud val=(unit cache-entry)])
+      =cache
       ::  cors-registry: state used and managed by the +cors core
       ::
       =cors-registry
@@ -4129,6 +4129,8 @@
                                channels+&+channel-state.server-state.ax
                                axle+&+ax
                            ==
+    ::
+      [%cache ~]           ``noun+!>(cache)
     ::
       [%cors ~]            ``noun+!>(cors-registry)
       [%cors %requests ~]  ``noun+!>(requests.cors-registry)

@@ -2089,11 +2089,6 @@
   ::                                                    ::::
 ++  eyre  ^?
   |%
-  +$  cache-entry
-    $:  auth=?
-    $=  body
-    $%  [%payload =simple-payload:http]
-    ==  ==
   +$  gift
     $%  ::  ames responses
         ::
@@ -2186,6 +2181,16 @@
         ::
         [%set-response url=@t entry=(unit cache-entry)]
     ==
+  ::  +cache: mapping from url to versioned entry
+  ::
+  +$  cache  (map url=@t [aeon=@ud val=(unit cache-entry)])
+  ::  +cache-entry: a single entry in the Eyre cache
+  ::
+  +$  cache-entry
+      $:  auth=?
+      $=  body
+      $%  [%payload =simple-payload:http]
+      ==  ==
   ::  +origin: request origin as specified in an Origin header
   ::
   +$  origin  @torigin
