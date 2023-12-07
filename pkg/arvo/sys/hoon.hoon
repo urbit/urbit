@@ -217,6 +217,7 @@
   ::  computes the axis of {b} within axis {a}.
   |=  [a=@ b=@]
   ?<  =(0 a)
+  ?<  =(0 b)
   ::  a composed axis
   ^-  @
   ?-  b
@@ -7260,10 +7261,10 @@
           =(0 p.wux)
           &(!=(0 p.wux) (lte p.wux p.yoz))
       ==
-      |-  ?|  =(%$ p.yoz)
-              =(%$ p.wux)
-              ?&  =((end 3 p.yoz) (end 3 p.wux))
-                  $(p.yoz (rsh 3 p.yoz), p.wux (rsh 3 p.wux))
+      |-  ?|  =(%$ q.yoz)
+              =(%$ q.wux)
+              ?&  =((end 3 q.yoz) (end 3 q.wux))
+                  $(q.yoz (rsh 3 q.yoz), q.wux (rsh 3 q.wux))
               ==
           ==
   ==

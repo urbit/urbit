@@ -4298,8 +4298,11 @@
             ~&(%base-64-padding-err-two ~)
           =/  len  (sub (mul 3 (div (add lat dif) 4)) dif)
           :+  ~  len
-          %+  swp  3
-          (rep [0 6] (flop (weld dat (reap dif 0))))
+          =/  res  (rsh [1 dif] (rep [0 6] (flop dat)))
+          =/  amt  (met 3 res)
+          ::  left shift trailing zeroes in after byte swap
+          =/  trl  ?:  (lth len amt)  0  (sub len amt)
+          (lsh [3 trl] (swp 3 res))
         --
       --
     ::
@@ -4777,7 +4780,7 @@
       =+  spa=;~(pose comt whit)
       %+  knee  *manx  |.  ~+
       %+  ifix
-        [;~(plug (punt decl) (star spa)) (star spa)]
+        [;~(plug (more spa decl) (star spa)) (star spa)]
       ;~  pose
         %+  sear  |=([a=marx b=marl c=mane] ?.(=(c n.a) ~ (some [a b])))
           ;~(plug head many tail)

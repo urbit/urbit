@@ -80,6 +80,7 @@
   ::
   ++  on-poke
     |=  [=mark =vase]
+    ?>  (team:title [our src]:bowl)
     ^-  step:agent:gall
     =^  cards  state
       ?+  mark  ~|([%aqua-bad-mark mark] !!)

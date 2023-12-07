@@ -341,8 +341,7 @@
 ::  remember to duplicate version tag changes here to $egg-any:gall in lull
 ::
 +$  spore
-  $:  %16
-      system-duct=duct
+  $:  system-duct=duct
       outstanding=(map [wire duct] (qeu remote-request))
       contacts=(set ship)
       eggs=(map term egg)
@@ -350,6 +349,7 @@
       =bug
       leaves=(unit [=duct =wire date=@da])
   ==
++$  spore-16  [%16 spore]
 --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
@@ -1236,7 +1236,12 @@
     ++  ap-serve-brood
       |=  [=ship =(pole knot)]
       ^-  [(unit (unit brood)) _mo-core]
-      ?.  ?=([%$ rest=*] pole)
+      ~&  pole/pole
+      ?.  ?=([%$ ver=@ rest=*] pole)
+        ~&  bad-pole/pole
+        `ap-abet
+      ?.  =(1 (slav %ud ver.pole))
+        ~&  bad-version/pole
         `ap-abet
       ?~  cop=(ap-match-coop rest.pole)
         ~&  no-match-coop/rest.pole
@@ -1325,7 +1330,7 @@
       =?  gem.yoke  &(!exists ?=(~ pen))
         (~(put by gem.yoke) coop ~)
       =/  =wire  (welp /key/[agent-name]/[run-nonce.yoke]/pug coop)
-      (ap-move [hen %pass wire %a %plug %g [%g %x agent-name %$ coop]]~)
+      (ap-move [hen %pass wire %a %plug [%g %x agent-name %$ '1' coop]]~)
     ::
     ++  ap-stub
       |=  [=coop num=@ud key=@]
@@ -1399,9 +1404,26 @@
         %.  sky.yoke
         %+  trace  odd.veb.bug.state
         [leaf+"gall: {<agent-name>}: cull {<[case spur]>} no-op"]~
-      %-  need
+      ?~  las=(ram:on-path fan.u.old)
+        %.  sky.yoke
+        %+  trace  &
+        [leaf+"gall: {<agent-name>}: cull {<[case spur]>} no paths"]~
+      =/  fis  (need (pry:on-path fan.u.old))
+      ?.  &((gte yon key.fis) (lte yon key.u.las))
+        %.  sky.yoke
+        %+  trace  &
+        :_  ~
+        :-  %leaf
+        %+  weld
+          "gall: {<agent-name>}: cull {<[case spur]>} out of range, "
+        "min: {<key.fis>}, max: {<key.u.las>}"
+      =;  nex=(unit farm)
+        ?^  nex  u.nex
+        %.  sky.yoke
+        %+  trace  &
+        [leaf+"gall: {<agent-name>}: cull {<[case spur]>} invalid path structure"]~
       %+  ~(put of-farm sky.yoke)  spur  ::  delete all older paths
-      [`yon (lot:on-path fan.u.old `+(yon) ~)]
+      [`yon (lot:on-path fan.u.old `yon ~)]
     ::  +ap-from-internal: internal move to move.
     ::
     ::    We convert from cards to duct-indexed moves when resolving
@@ -2299,33 +2321,33 @@
 ::
 ++  load
   |^  |=  old=spore-any
-      =?  old  ?=(%7 -.old)   (spore-7-to-8 old)
-      =?  old  ?=(%8 -.old)   (spore-8-to-9 old)
-      =?  old  ?=(%9 -.old)   (spore-9-to-10 old)
-      =?  old  ?=(%10 -.old)  (spore-10-to-11 old)
-      =?  old  ?=(%11 -.old)  (spore-11-to-12 old)
-      =?  old  ?=(%12 -.old)  (spore-12-to-13 old)
-      =?  old  ?=(%13 -.old)  (spore-13-to-14 old)
-      =?  old  ?=(%14 -.old)  (spore-14-to-15 old)
-      =?  old  ?=(%15 -.old)  (spore-15-to-16 old)
+      =?  old  ?=(%7 -.old)   (spore-7-to-8 +.old)
+      =?  old  ?=(%8 -.old)   (spore-8-to-9 +.old)
+      =?  old  ?=(%9 -.old)   (spore-9-to-10 +.old)
+      =?  old  ?=(%10 -.old)  (spore-10-to-11 +.old)
+      =?  old  ?=(%11 -.old)  (spore-11-to-12 +.old)
+      =?  old  ?=(%12 -.old)  (spore-12-to-13 +.old)
+      =?  old  ?=(%13 -.old)  (spore-13-to-14 +.old)
+      =?  old  ?=(%14 -.old)  (spore-14-to-15 +.old)
+      =?  old  ?=(%15 -.old)  (spore-15-to-16 +.old)
       ?>  ?=(%16 -.old)
       gall-payload(state old)
   ::
   +$  spore-any
-    $%  spore
-        spore-7
-        spore-8
-        spore-9
-        spore-10
-        spore-11
-        spore-12
-        spore-13
-        spore-14
-        spore-15
+    $%  [%16 spore]
+        [%7 spore-7]
+        [%8 spore-8]
+        [%9 spore-9]
+        [%10 spore-10]
+        [%11 spore-11]
+        [%12 spore-12]
+        [%13 spore-13]
+        [%14 spore-14]
+        [%15 spore-15]
     ==
-  +$  spore-15
-    $:  %15
-        system-duct=duct
+  +$  spore-15  
+    $+  spore-15
+    $:  system-duct=duct
         outstanding=(map [wire duct] (qeu remote-request))
         contacts=(set ship)
         eggs=(map term egg-15)
@@ -2334,8 +2356,7 @@
         leaves=(unit [=duct =wire date=@da])
     ==
   +$  spore-14
-    $:  %14
-        system-duct=duct
+    $:  system-duct=duct
         outstanding=(map [wire duct] (qeu remote-request))
         contacts=(set ship)
         eggs=(map term egg-15)
@@ -2344,8 +2365,7 @@
     ==
   ::
   +$  spore-13
-    $:  %13
-        system-duct=duct
+    $:  system-duct=duct
         outstanding=(map [wire duct] (qeu remote-request))
         contacts=(set ship)
         eggs=(map term egg-15)
@@ -2358,8 +2378,7 @@
         attributing=ship
     ==
   +$  spore-12
-    $:  %12
-        system-duct=duct
+    $:  system-duct=duct
         outstanding=(map [wire duct] (qeu remote-request))
         contacts=(set ship)
         eggs=(map term egg-12)
@@ -2383,8 +2402,7 @@
             sky=(map spur farm)
     ==  ==
   +$  spore-11
-    $:  %11
-        system-duct=duct
+    $:  system-duct=duct
         outstanding=(map [wire duct] (qeu remote-request))
         contacts=(set ship)
         eggs=(map term egg-11)
@@ -2405,8 +2423,7 @@
         marks=(map duct mark)
     ==
   +$  spore-10
-    $:  %10
-        system-duct=duct
+    $:  system-duct=duct
         outstanding=(map [wire duct] (qeu remote-request))
         contacts=(set ship)
         eggs=(map term egg-10)
@@ -2427,8 +2444,7 @@
         marks=(map duct mark)
     ==
   +$  spore-9
-    $:  %9
-        system-duct=duct
+    $:  system-duct=duct
         outstanding=(map [wire duct] (qeu remote-request-9))
         contacts=(set ship)
         eggs=(map term egg-10)
@@ -2439,8 +2455,7 @@
   +$  remote-request-9  ?(remote-request %cork)
   ::
   +$  spore-8
-    $:  %8
-        system-duct=duct
+    $:  system-duct=duct
         outstanding=(map [wire duct] (qeu remote-request-9))
         contacts=(set ship)
         eggs=(map term egg-8)
@@ -2459,8 +2474,7 @@
   +$  watches-8  [inbound=bitt outbound=boat-8]
   +$  boat-8  (map [wire ship term] [acked=? =path])
   +$  spore-7
-    $:  %7
-        wipe-eyre-subs=_|  ::NOTE  band-aid for #3196
+    $:  wipe-eyre-subs=_|  ::NOTE  band-aid for #3196
         system-duct=duct
         outstanding=(map [wire duct] (qeu remote-request-9))
         contacts=(set ship)
@@ -2470,20 +2484,22 @@
   ::
   ++  spore-7-to-8
     |=  old=spore-7
-    ^-  spore-8
+    ^-  spore-any
     :-  %8
+    ^-  spore-8
     =.  eggs.old
       %-  ~(urn by eggs.old)
       |=  [a=term e=egg-8]
       ::  kiln will kick off appropriate app revival
       ::
       e(old-state [%| p.old-state.e])
-    +>.old
+    +.old
   ::
   ++  spore-8-to-9
     |=  old=spore-8
+    :-  %9
     ^-  spore-9
-    =-  old(- %9, eggs -, blocked [blocked.old *bug])
+    =-  old(eggs -, blocked [blocked.old *bug])
     %-  ~(run by eggs.old)
     |=  =egg-8
     ^-  egg-10
@@ -2506,7 +2522,9 @@
   ::
   ++  spore-9-to-10
     |=  old=spore-9
-    =-  old(- %10, outstanding -)
+    :-  %10
+    ^-  spore-10
+    =-  old(outstanding -)
     %-  ~(run by outstanding.old)
     |=  q=(qeu remote-request-9)
     %-  ~(gas to *(qeu remote-request))
@@ -2519,9 +2537,9 @@
   ::
   ++  spore-10-to-11
     |=  old=spore-10
+    :-  %11
     ^-  spore-11
     %=    old
-        -  %11
         eggs
       %-  ~(urn by eggs.old)
       |=  [a=term e=egg-10]
@@ -2533,9 +2551,9 @@
   ::
   ++  spore-11-to-12
     |=  old=spore-11
+    :-  %12
     ^-  spore-12
     %=    old
-        -  %12
         eggs
       %-  ~(urn by eggs.old)
       |=  [a=term e=egg-11]
@@ -2547,9 +2565,9 @@
   ::
   ++  spore-12-to-13
     |=  old=spore-12
+    :-  %13
     ^-  spore-13
     %=    old
-        -  %13
         eggs
       %-  ~(urn by eggs.old)
       |=  [a=term e=egg-12]
@@ -2557,27 +2575,12 @@
       ?:  ?=(%nuke -.e)  e
       !!  :: e(sky [sky.e ken:*$>(%live egg-13)])
     ==
-  ::  added provenance path to routes
-  ++  spore-15-to-16
-    |=  old=spore-15
-    ^-  spore
-    %=    old
-        -  %16
-    ::
-        eggs
-      %-  ~(run by eggs.old)
-      |=  egg=egg-15
-      ?:  ?=(%nuke -.egg)
-        egg
-      egg(sky (migrate:of-farm sky.egg), ken [ken.egg ~ ~])
-    ==
   ::
   ++  spore-13-to-14
     |=  old=spore-13
+    :-  %14
     ^-  spore-14
     %=    old
-        -  %14
-      ::
         blocked
       ^-  (map term (qeu blocked-move))
       %-  ~(run by blocked.old)
@@ -2594,8 +2597,45 @@
   ::
   ++  spore-14-to-15
     |=  old=spore-14
+    :-  %15
     ^-  spore-15
-    old(- %15, bug [bug.old ~])
+    old(bug [bug.old ~])
+  ::  convert to versioned sky
+  ::
+  ++  spore-15-to-16
+    |=  old=spore-15
+    ^-  spore-16
+    :-  %16
+    %=    old
+        eggs
+      %-  ~(urn by eggs.old)
+      |=  [=term e=egg-15]
+      ^-  egg
+      ?:  ?=(%nuke -.e)  e(sky *(map spur @ud))
+      %=    e
+          ken  [ken.e ~ ~]
+      ::
+          sky
+        =|  =farm
+        =/  ski  ~(tap by sky.e)
+        |-  ^+  farm
+        ?~  ski
+          farm
+        =/  [=spur p=plot]  i.ski
+        =;  new
+          ?~  nex=(~(put of-farm farm) spur new)
+            ~&  %weird
+            !!  :: shouldn't continue else loss of ref integrity
+            :: $(ski t.ski)
+          $(farm u.nex, ski t.ski)
+        :-  ~
+        =/  m  ~(val by fan.p)
+        %+  gas:on-path  *_fan.p
+        %+  turn  (gulf 1 ~(wyt by fan.p))
+        |=  a=@ud
+        [a (snag (dec a) m)]
+      ==
+    ==
   --
 ::  +scry: standard scry
 ::
@@ -2702,19 +2742,22 @@
           p.agent.u.yok
         on-save:p.agent.u.yok
       ==
-    ``noun+!>([-:*spore egg])
+    ``noun+!>(`egg-any`[-:*spore-16 egg])
   ::
   ?:  ?&  =(%w care)
           =([%$ %da now] coin)
           =(our ship)
+          ?=([%'1' *] path)
       ==
+    =>  .(path t.path)
     =/  yok  (~(get by yokes.state) q.bem)
     ?.  ?=([~ %live *] yok)             [~ ~]
     ?~  ski=(~(get of-farm sky.u.yok) path)  [~ ~]
     ?~  las=(ram:on-path fan.u.ski)     [~ ~]
     ``case/!>(ud/key.u.las)
   ::
-  ?:  ?=(%x care)
+  ?:  &(?=(%x care) ?=([%'1' *] path))
+    =>  .(path t.path)
     ?.  =(p.bem our)  ~
     ::
     ?:  ?=(%$ q.bem)  :: app %$ reserved
@@ -2767,7 +2810,9 @@
   ?:  ?&  =(%t care)
           =([%$ %da now] coin)
           =(our ship)
+          ?=([%'1' *] path)
       ==
+    =>  .(path t.path)
     =/  yok  (~(get by yokes.state) q.bem)
     ?.  ?=([~ %live *] yok)  ~
     :^  ~  ~  %file-list  !>  ^-  (list ^path)
@@ -2779,7 +2824,9 @@
   ::
   ?:  ?&  =(%z care)
           =(our ship)
+          ?=([%'1' *] path)
       ==
+    =>  .(path t.path)
     =/  yok  (~(get by yokes.state) q.bem)
     ?.  ?=([~ %live *] yok)             ~
     ?~  ski=(~(get of-farm sky.u.yok) path)  ~
@@ -2798,7 +2845,7 @@
 ::    TODO: superfluous? see +molt
 ::
 ++  stay
-  ^-  spore
+  ^-  spore-16
   =;  eggs=(map term egg)  state(yokes eggs)
   %-  ~(run by yokes.state)
   |=  =yoke

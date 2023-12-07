@@ -459,8 +459,6 @@
                 name.focus();
               }
               function doEauth() {
-                console.log('mb get value from event', event);
-                console.log('compare', name.value, our);
                 if (name.value == our) {
                   event.preventDefault();
                   goLocal();
@@ -471,10 +469,6 @@
     ;body
       =class   "{?:(=(`& eauth) "eauth" "local")}"
       =onload  "setup({?:(=(`& eauth) "true" "false")})"
-      ;nav
-        ;div.local(onclick "goLocal()"):"Local"
-        ;div.eauth(onclick "goEauth()"):"EAuth"
-      ==
       ;div#local
         ;p:"Urbit ID"
         ;input(value "{(scow %p our)}", disabled "true", class "mono");
@@ -528,16 +522,11 @@
         ==
       ==
       ;*  ?:  ?=(%ours -.identity)  ~
-          =+  id=(trim 29 (scow %p who.identity))
           =+  as="proceed as{?:(?=(%fake -.identity) " guest" "")}"
           ;+  ;span.guest.mono
-                ; Or
+                ; Or try to
                 ;a/"{(trip (fall redirect-url '/'))}":"{as}"
-                ; :
-                ;br;
-                ; {p.id}
-                ;br;
-                ; {q.id}
+                ; .
               ==
     ==
     ;script:'''
@@ -2973,6 +2962,7 @@
             =*  session-id  session-id.u.connection-state
             =*  sessions    sessions.auth.state
             =*  inbound     inbound-request.u.connection-state
+            =*  headers     headers.response-header.http-event
             ::
             ?.  (~(has by sessions) session-id)
               ::  if the session has expired since the request was opened,
@@ -2983,9 +2973,14 @@
                 |=  =session
                 session(expiry-time (add now session-timeout))
             =-  response-header.http-event(headers -)
-            %^  set-header:http  'set-cookie'
-              (session-cookie-string session-id &)
-            headers.response-header.http-event
+            =/  cookie=(pair @t @t)
+              ['set-cookie' (session-cookie-string session-id &)]
+            |-
+            ?~  headers
+              [cookie ~]
+            ?:  &(=(key.i.headers p.cookie) =(value.i.headers q.cookie))
+              headers
+            [i.headers $(headers t.headers)]
           ::
           =*  connection  u.connection-state
           ::

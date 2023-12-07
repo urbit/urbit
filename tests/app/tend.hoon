@@ -38,7 +38,7 @@
   :_  this
   ?:  ?=(%keen -.action)
     =/  =path
-      %+  welp  /g/x/(scot %ud case.action)/[dap.bowl]
+      %+  welp  /g/x/(scot %ud case.action)/[dap.bowl]//1
      path.action
     [%pass /keen %keen & ship.action path]~
   [%pass /foo action]~

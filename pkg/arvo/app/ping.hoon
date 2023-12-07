@@ -36,21 +36,23 @@
       [%http until=@da]
       [%waiting until=@da]
   ==
-+$  state-1
-  $:  %1
++$  state-2
+  $:  %2
       ships=(set ship)
       nonce=@ud
       $=  plan
       $~  [%nat ~]
       $%  [%nat ~]
           [%pub ip=(unit @t)]
+          [%off ~]
+          [%one ~]
       ==
   ==
 --
 ::
 %-  agent:dbug
 ::
-=|  state=state-1
+=|  state=state-2
 =>  |%
     ::  Bind for the the writer monad on (quip effect state)
     ::
@@ -73,6 +75,7 @@
     ::  and sponsorship changes
     ::
     ++  ships
+      =|  force=_|
       |%
       ++  rind  (^rind card state)
       ++  kick
@@ -88,8 +91,8 @@
         ::  behavior here.
         ::
         =/  new-ships  (~(gas in *(set ship)) (saxo:title our now our))
-        =/  removed  (~(dif in ships.state) new-ships)
-        =/  added    (~(dif in new-ships) ships.state)
+        =/    removed  (~(dif in ships.state) new-ships)
+        =/      added  (~(dif in new-ships) ships.state)
         ;<  new-state=_state  rind
           ?~  removed  `state
           [[%pass /jael %arvo %j %nuke removed]~ state]
@@ -102,7 +105,7 @@
         ::
         ::  Kick even if ships weren't added or removed
         ::
-        (kick-pings our now new-ships)
+        (kick-pings our now new-ships force)
       ::
       ::  Kick whenever we get a response.  We really care about
       ::  breaches and sponsorship changes.
@@ -115,24 +118,28 @@
         ^-  (quip card _state)
         [[%pass /jael/delay %arvo %b %wait now]~ state]
       ::
-      ++  take-delay  kick
+      ++  take-delay  %*(kick ships force %.y)
       --
     ::
     ::  Starts pinging a new set of `ships`.
     ::
     ++  kick-pings
-      |=  [our=@p now=@da ships=(set ship)]
+      |=  [our=@p now=@da ships=(set ship) force=?]
       ^-  (quip card _state)
       =:  nonce.state  +(nonce.state)
           ships.state  ships
         ==
       ::
-      ?:  ?=(%nat -.plan.state)
-        (kick:nat our)
-      (kick:pub our now)
+      ?:  force  (kick:nat our)
+      ?-  -.plan.state
+        %off  `state
+        %nat  (kick:nat our)
+        %one  (kick:one our)
+        %pub  (kick:pub our now)
+      ==
     ::
     ::  Subsystem for pinging our sponsors when we might be behind a NAT
-    ::
+    ::    XX  no longer true if using STUN-enabled vere 2.XX
     ::    Ping each ship every 25 seconds to keep the pinhole open.
     ::    This is expensive, but if you don't do it and you are behind a
     ::    NAT, you will stop receiving packets from other ships except
@@ -270,6 +277,26 @@
         ::
         (set-timer now)
       --
+    ::  Subsystem for formally acknowledging a change in our IP:PORT
+    ::
+    ::    If our sponsor sends a STUN response, with an IP different than what
+    ::    we had previously cached, we formally acknowledge this change by
+    ::    sending one %poke to every ship in the sponsorship chain.
+    ::
+    ++  one
+      ?>  ?=(%one -.plan.state)
+      |%
+      ++  kick
+        |=  our=@p
+        ^-  (quip card _state)
+        :_  state
+        %-  ~(rep in ships.state)
+        |=  [=ship cards=(list card)]
+        ?:  =(our ship)  cards
+        =/  wire  /one/(scot %uw nonce.state)/ping/(scot %p ship)
+        :_  cards  ^-  card
+        [%pass wire %agent [ship %ping] %poke %noun !>(~)]
+      --
     --
 %+  verb  |
 ^-  agent:gall
@@ -291,18 +318,33 @@
   |^
   =/  old  !<(state-any old-vase)
   =?  old  ?=(%0 -.old)  (state-0-to-1 old)
-  ?>  ?=(%1 -.old)
+  =?  old  ?=(%1 -.old)  (state-1-to-2 old)
+  ?>  ?=(%2 -.old)
   =.  state  old
   =^  cards  state  (kick:ships our.bowl now.bowl)
   [cards this]
   ::
-  +$  state-any  $%(state-0 state-1)
-  +$  state-0  [%0 ships=(map ship [=rift =ship-state])]
+  +$  state-any  $%(state-0 state-1 state-2)
+  +$  state-0    [%0 ships=(map ship [=rift =ship-state])]
+  +$  state-1
+    $:  %1
+        ships=(set ship)
+        nonce=@ud
+        $=  plan
+        $~  [%nat ~]
+        $%  [%nat ~]
+            [%pub ip=(unit @t)]
+    ==  ==
   ::
   ++  state-0-to-1
     |=  old=state-0
     ^-  state-1
     [%1 ~ 0 %nat ~]
+  ::
+  ++  state-1-to-2
+    |=  old=state-1
+    ^-  state-2
+    old(- %2)
   --
 ::  +on-poke: positively acknowledge pokes
 ::
@@ -311,8 +353,39 @@
   ?.  =(our src):bowl    :: don't crash, this is where pings are handled
     `this
   ::
+  ~&  mark^vase
   =^  cards  state
-    ?:  =(q.vase %kick)  :: NB: ames calls this on %born
+    ?:  ?=([%kick ?] q.vase)
+      :: NB: ames calls this on %born (with fail=%.n) and after not hearing STUN
+      ::  responses for more than ~s5 (with fail=%.y)
+      ::
+      ::  if %ping was turned off (due to a successfull STUN) but we failed
+      ::  to get a STUN response in time switch to %nat and start a ~s25 timer
+      ::
+      ::  if the %kick has fail=%.n (e.g. for every %born), the plan will remain
+      ::  unchanged, but we will innitiate a new round of %poke pings with
+      ::  increasing nonce.
+      ::
+      ::  if we get repeated [%stun fail=&], but we are already in either %nat
+      ::  or %pub, do nothing, since there are already timers in place to %ping
+      ::  repeatedly.
+      ::
+      =/  stun-failed=?  &(?=([%off ~] plan.state) =(+.q.vase %.y))
+      ?:  &(?=([%off ~] plan.state) =(+.q.vase %.n))
+        ::  ignore restarts if we were already STUNning, if ip:port changed
+        ::  %once will trigger one formal %ping
+        ::
+        `state
+      =?  plan.state  stun-failed
+        [%nat ~]
+      ?:  &(!stun-failed =(+.q.vase %.y))
+        `state
+      (kick:ships our.bowl now.bowl)
+    ?:  =(q.vase %stop)  :: NB: ames calls this on [%stun fail=%.n]
+      =.  plan.state  [%off ~]
+      (kick:ships our.bowl now.bowl)
+    ?:  &(=(q.vase %once) =(%off -.plan.state))  :: NB: ames calls this on %once
+      =.  plan.state  [%one ~]
       (kick:ships our.bowl now.bowl)
     ?:  =(q.vase %nat)
       =.  plan.state  [%nat ~]
@@ -345,6 +418,12 @@
       ?.  ?=(%pub -.plan.state)  `state
       ?.  ?=(%poke-ack -.sign)   `state
       (take-pings:pub wire p.sign)
+    ::
+        [%one *]
+      ?.  ?=(%one -.plan.state)  `state
+      ?:  ?=(%poke-ack -.sign)   `state
+      :: XX handle error?
+      `state
     ==
   [cards this]
 ::  +on-arvo: handle timer firing

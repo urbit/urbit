@@ -772,6 +772,7 @@
   ::    %kroc: request to delete specific message flows, from their bones
   ::    %plea: request to send message
   ::    %deep: deferred calls to %ames, from itself
+  ::    %stun: STUN response (or failure), from unix
   ::
   ::    Remote Scry Tasks
   ::
@@ -803,12 +804,13 @@
         [%kroc bones=(list [ship bone])]
         $>(%plea vane-task)
         [%deep =deep]
+        [%stun =stun]
     ::
         [%keen sec=(unit [idx=@ key=@]) spar]
         [%chum spar]
         [%yawn spar]
         [%wham spar]
-        [%plug vane=term =path]
+        [%plug =path]
     ::
         $>(%born vane-task)
         $>(%init vane-task)
@@ -839,6 +841,7 @@
   ::    System and Lifecycle Gifts
   ::
   ::    %turf: domain report, relayed from jael
+  ::    %saxo: our sponsor list report
   ::
   +$  gift
     $%  [%boon payload=*]
@@ -853,6 +856,7 @@
         [%tune spar roar=(unit roar)]
     ::
         [%turf turfs=(list turf)]
+        [%saxo sponsors=(list ship)]
     ==
   ::
   ::::                                                  ::  (1a2)
@@ -910,6 +914,12 @@
   ::    payload: semantic message contents
   ::
   +$  plea  [vane=@tas =path payload=*]
+  ::
+  +$  message
+    $%  [%plea plea]
+        [%boon payload=*]
+        [%naxplanation =message-num =error]
+    ==
   ::  $spar:  pair of $ship and $path
   ::
   ::    Instead of fully qualifying a scry path, ames infers rift and
@@ -919,11 +929,20 @@
   ::  $deep: deferred %ames call, from self, to keep +abet cores pure
   ::
   +$  deep
-    $%  [%nack =ship =nack=bone =message-blob]
+    $%  [%nack =ship =nack=bone =message]
         [%sink =ship =target=bone naxplanation=[=message-num =error]]
         [%drop =ship =nack=bone =message-num]
         [%cork =ship =bone]
         [%kill =ship =bone]
+    ==
+  ::  $stun: STUN notifications, from unix
+  ::
+  ::    .lane is the latest cached lane in vere, from the point of view of .ship
+  ::
+  +$  stun
+    $%  [%stop =ship =lane]  :: succesful STUN response, stop %ping app
+        [%fail =ship =lane]  :: failure to STUN, re-enable %ping app
+        [%once =ship =lane]  :: new lane discovered, notify ping %app
     ==
   :: +|  %atomics
   ::
@@ -1168,7 +1187,7 @@
     $+  message-pump-state
     $:  current=_`message-num`1
         next=_`message-num`1
-        unsent-messages=(qeu message-blob)
+        unsent-messages=(qeu message)
         unsent-fragments=(list static-fragment)
         queued-message-acks=(map message-num ack)
         =packet-pump-state
