@@ -299,8 +299,9 @@
   ?>  ?=(^ path)
   ?>  ?=(^ t.path)
   ;<  =bowl:spider  bind:m  get-bowl
+  =/  cose=knot  (en-cose da+now.bowl ud+tick.bowl)
   %-  pure:m
-  .^(mold i.path (scot %p our.bowl) i.t.path (scot %da now.bowl) t.t.path)
+  .^(mold i.path (scot %p our.bowl) i.t.path cose t.t.path)
 ::
 ++  leave
   |=  [=wire =dock]

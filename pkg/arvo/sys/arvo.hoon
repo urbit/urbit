@@ -438,11 +438,29 @@
     ~
   `[[q.p.i q.p.i.t]:p.u.lot u.bam]
 ::
+++  bema-to-beam
+  |=  b=bema
+  ^-  beam
+  ?@  -.r.b
+    b
+  b(r -.r.b)
+::
 ++  omer-to-omen
   |=  o=omer
   ^-  omen
   =/  =case  (cose-to-case r.bam.o)
   o(r.bam case)
+::  +en-peck: (re)write the tick in a path
+::
+++  en-peck
+  |=  [pax=path now=@da tick=@ud]
+  ^-  path
+  ?~  bam=(de-bema pax)
+    pax
+  =/  =case  (cose-to-case r.u.bam)
+  ?.  =(da+now case)
+    pax
+  (en-bema u.bam(r [da+now ud+tick]))
 ::
 ++  rant
   |=  a=(list [char=@tD *])
@@ -1526,14 +1544,14 @@
         ?:  =(now +.r.bam)
           ::  TODO
           ::
-          ~&  >>>  [%no-tick lyc pov vis bam]
+          ~&  >>>  [%no-tick tick.gem lyc pov vis bam]
           ::  ~
           (do-peek lyc pov vis bam)
         (do-peek lyc pov vis bam)
       ::
           [[%da @da] %ud @ud]
         ?.  =([da+now ud+tick.gem] r.bam)
-          ~&  >>>  [%rejected %bad-tick]
+          ~&  >>>  [%rejected %bad-tick gem=tick.gem got=r.bam]
           ~
         (do-peek lyc pov (omer-to-omen vis bam))
       ==
