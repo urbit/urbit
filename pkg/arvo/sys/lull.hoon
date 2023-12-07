@@ -772,6 +772,7 @@
   ::    %kroc: request to delete specific message flows, from their bones
   ::    %plea: request to send message
   ::    %deep: deferred calls to %ames, from itself
+  ::    %stun: STUN response (or failure), from unix
   ::
   ::    Remote Scry Tasks
   ::
@@ -803,6 +804,7 @@
         [%kroc bones=(list [ship bone])]
         $>(%plea vane-task)
         [%deep =deep]
+        [%stun =stun]
     ::
         [%keen spar]
         [%yawn spar]
@@ -837,6 +839,7 @@
   ::    System and Lifecycle Gifts
   ::
   ::    %turf: domain report, relayed from jael
+  ::    %saxo: our sponsor list report
   ::
   +$  gift
     $%  [%boon payload=*]
@@ -849,6 +852,7 @@
         [%tune spar roar=(unit roar)]
     ::
         [%turf turfs=(list turf)]
+        [%saxo sponsors=(list ship)]
     ==
   ::
   ::::                                                  ::  (1a2)
@@ -926,6 +930,15 @@
         [%drop =ship =nack=bone =message-num]
         [%cork =ship =bone]
         [%kill =ship =bone]
+    ==
+  ::  $stun: STUN notifications, from unix
+  ::
+  ::    .lane is the latest cached lane in vere, from the point of view of .ship
+  ::
+  +$  stun
+    $%  [%stop =ship =lane]  :: succesful STUN response, stop %ping app
+        [%fail =ship =lane]  :: failure to STUN, re-enable %ping app
+        [%once =ship =lane]  :: new lane discovered, notify ping %app
     ==
   :: +|  %atomics
   ::
