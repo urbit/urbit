@@ -289,6 +289,16 @@
 ::
 +$  blocked-move  [=duct =routes move=(each deal unto)]
 ::
+::  $fine-request: key exchange request for $coop
+::
++$  fine-request
+  [%0 =path]
+::
+::  $fine-response: key exchange response for $coop
+::
++$  fine-response
+  [%0 bod=(unit brood)]
+::
 +$  ames-response
   $%  [%d =mark noun=*]
       [%x ~]
@@ -1056,7 +1066,8 @@
       (ap-serve-brood:ap-core ship path)
     ?~  bod
       (mo-give %done ~)
-    =.  mo-core  (mo-give %boon u.bod)
+    =/  =fine-response  [%0 u.bod]
+    =.  mo-core  (mo-give %boon fine-response)
     (mo-give %done ~)
   ::  +mo-handle-ames-request: handle %ames request message.
   ::
@@ -1192,7 +1203,8 @@
         ~&  malformed-path/pole
         ap-core
       =.  pen.yoke  (~(put ju pen.yoke) [ship pole] wire)
-      =/  =plea:ames  [%g /gk/[app.pole] rest.pole]
+      =/  =fine-request  [%0 rest.pole]
+      =/  =plea:ames  [%g /gk/[app.pole] fine-request]
       =/  out=^wire   (welp /key/[agent-name]/[run-nonce.yoke]/bod/(scot %p ship) pole)
       (ap-move [hen %pass out %a %plea ship plea]~)
     ::
@@ -1204,16 +1216,17 @@
       =/  =ship  (slav %p i.wire)
       ?+    syn  ~|(weird-sign-ap-take-brood/-.syn !!)
           [%ames %boon *]
-        =+  bod=((soft ,(unit brood)) payload.syn)
-        ?~  bod  :: TODO: what happens
+        =+  bud=((soft fine-response) payload.syn)
+        ?~  bud  :: TODO: what happens
           ~&  weird-take-brood/payload.syn  !!
+        =/  bod  bod.u.bud
         =/  wis=(list ^wire)  ~(tap in (~(get ju pen.yoke) [ship t.wire]))
         |-  
         ?~  wis  ap-core
-        ?~  u.bod
+        ?~  bod
           =.  ap-core  (ap-generic-take i.wis %ames %near [ship t.wire] ~)
           $(wis t.wis)
-        =.  ap-core  (ap-pass i.wis %arvo %a %keen `[idx key]:hutch.u.u.bod ship t.wire)
+        =.  ap-core  (ap-pass i.wis %arvo %a %keen `[idx key]:hutch.u.bod ship t.wire)
         $(wis t.wis)
       ::
           [%ames %done *]
@@ -1312,7 +1325,7 @@
       =?  gem.yoke  &(!exists ?=(~ pen))
         (~(put by gem.yoke) coop ~)
       =/  =wire  (welp /key/[agent-name]/[run-nonce.yoke]/pug coop)
-      (ap-move [hen %pass wire %a %plug %g [agent-name %$ coop]]~)
+      (ap-move [hen %pass wire %a %plug %g [%g %x agent-name %$ coop]]~)
     ::
     ++  ap-stub
       |=  [=coop num=@ud key=@]
@@ -2259,8 +2272,9 @@
     ::
     ?:  ?=([%gk @ ~] path)
       =/  agent-name  i.t.path
+      =+  ;;(=fine-request noun)
       =<  mo-abet
-      (mo-handle-key-request:mo-core ship agent-name ;;(^path noun))
+      (mo-handle-key-request:mo-core ship agent-name path.fine-request)
     ?>  ?=([%ge @ ~] path)
     =/  agent-name  i.t.path
     ::
