@@ -8555,7 +8555,7 @@
         |-  ^-  hoon
         ?-  yex
           [* ~]  [%tsgr [%$ 3] i.yex]
-          [* ^]   [%cncl [%$ 2] [%tsgr [%$ 3] i.yex] $(yex t.yex) ~]
+          [* ^]  [%cncl [%$ 2] [%tsgr [%$ 3] i.yex] $(yex t.yex) ~]
           ~      !!
         ==
       ==
@@ -8571,7 +8571,7 @@
         |-  ^-  hoon
         ?-  yex
           [* ~]  [%tsgr [%$ 3] i.yex]
-          [* ^]   [%cncl [%$ 2] [%tsgr [%$ 3] i.yex] $(yex t.yex) ~]
+          [* ^]  [%cncl [%$ 2] $(yex t.yex) [%tsgr [%$ 3] i.yex] ~]
           ~      !!
         ==
       ==
