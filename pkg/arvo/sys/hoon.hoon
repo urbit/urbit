@@ -12969,11 +12969,8 @@
           ==
         ==
       :-  '.'
-        ;~  pfix  col
-          ;~  pose
-            (stag %mcdt (ifix [pal par] (most ace wide)))
-            ;~(pfix fas (stag %mcfs wide))
-          ==
+        ;~  pfix  dot
+          (stag %mcdt (ifix [pal par] (most ace wide)))
         ==
       :-  '='
         ;~  pfix  tis
