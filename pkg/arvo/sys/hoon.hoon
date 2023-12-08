@@ -13315,7 +13315,7 @@
               %-  stew
               ^.  stet  ^.  limo
               :~  [':' (rune col %mccl expi)]
-                  ['.' (rune col %mcdt expi)]
+                  ['.' (rune dot %mcdt expi)]
                   ['/' (rune fas %mcfs expa)]
                   ['<' (rune gal %mcgl expz)]
                   ['~' (rune sig %mcsg expi)]
