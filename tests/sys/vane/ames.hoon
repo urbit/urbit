@@ -700,7 +700,7 @@
 ::
 ++  test-plug  ^-  tang
   =^  moves  nec
-    (call nec ~[/g/talk] %plug %g /foo)
+    (call nec ~[/g/talk] %plug /foo)
   =/  expected-key
       3.782.450.905.364.316.746.465.724.430.826.633.339.627.682.402.565.789.971.442.035.627.125.517.743.962.901.817.756.764.395.497.041.697.150.935.487.420.935.470.530.023.121.462.879.251.503.082.973.208.842.762
   %-  zing
@@ -714,7 +714,7 @@
   :_  ~
   %+  expect-eq  !>(moves2)
   !>  ^-  (list move:ames)
-  :~  [~[/g/talk] [%pass /fine/shut/1 [%a [%keen sec=~ ship=~nec path=/a/x/1//fine/shut/0v27.7rg3m.vv773.kfo10.gemn6.dnutr.qqaq7.m0rgf.2ogtk.23t01]]]]
+  :~  [~[/g/talk] [%pass /fine/shut/1 [%a [%keen sec=~ ship=~nec path=/a/x/1//fine/shut/1/0v2f.7puc8.obvvn.b9ocp.4mhbm.q6v22.8d012.o68bo.mt35s.snb4m.hnnul.e6o8g.ebr01]]]]
   ==
 ::
 --
