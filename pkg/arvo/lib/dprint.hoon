@@ -77,6 +77,7 @@
 ::  +hunt: door used for refining the type while searching for doccords
 ::
 ++  hunt
+  =|  gil=(set type)
   |_  [topics=(lest term) sut=type]
   +*  this  .
   ::
