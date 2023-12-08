@@ -353,7 +353,6 @@
   ?.  =(our src):bowl    :: don't crash, this is where pings are handled
     `this
   ::
-  ~&  mark^vase
   =^  cards  state
     ?:  ?=([%kick ?] q.vase)
       :: NB: ames calls this on %born (with fail=%.n) and after not hearing STUN
