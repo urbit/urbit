@@ -5706,7 +5706,7 @@
         [~ ~]
       ?~  blk=(de-path-soft:balk u.pat)
         [~ ~]
-      =/  res  (rof ~ /ames (as-omen:balk u.blk))
+      =/  res  (rof [~ ~] /ames (as-omen:balk u.blk))
       ?.  (check-fine-key ames-state u.blk key-idx)
         ~&  key-validation-failed/[u.pat key-idx chain.ames-state]
         [~ ~]
@@ -5885,7 +5885,7 @@
     ?+    van  ~
         %a
       ?+  kyr  ~
-        %x  (en-hunk (rof ~ /ames nom))
+        %x  (en-hunk (rof lyc /ames nom))
       ==
     ::
         %c
