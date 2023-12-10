@@ -375,6 +375,7 @@
           $>  $?  %mere                                 ::
                   %writ                                 ::
                   %wris                                 ::
+                  %rate                                 ::
               ==                                        ::
           gift                                          ::
       ==                                                ::
@@ -6237,8 +6238,10 @@
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
         ?:  ?=(%rate +<.hin)
-          ~&  >  rate/[fragment num-fragments]:hin
-          `ruf
+          :_  ruf
+          ?~  ref.den  ~
+          =/  sat=update-state  (~(got by bom.u.ref.den) index)
+          [duct.sat %give %rate [spar fragment num-fragments]:hin]~
         ?~  fell
           ::  We shouldn't get back null on any of the fine requests we
           ::  make unless they're out of date

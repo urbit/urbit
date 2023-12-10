@@ -770,7 +770,7 @@
       (clap a b furl)
   |-  ^-  (list (unit toro))
   =+  b=.^(arch %cy a)
-  ?:  ?=([^ ~] b)  (snoc c `(fray a))  
+  ?:  ?=([^ ~] b)  (snoc c `(fray a))
   =?  c  ?=(^ fil.b)  (snoc c `(fray a))
   %-  zing
   %+  turn  ~(tap by dir.b)
@@ -796,8 +796,8 @@
     %+  skim  desks
     |=  dek=desk
     ?:  (~(has in .^((set desk) %cd /(scot %p our)//(scot %da now))) dek)
-      &  
-    ~>  %slog.(fmt "desk does not yet exist: {<dek>}")  |   
+      &
+    ~>  %slog.(fmt "desk does not yet exist: {<dek>}")  |
   |=(=desk [%pass /kiln/suspend %arvo %c %zest desk %dead])
 ::
 ++  poke-sync
@@ -822,7 +822,7 @@
   ?~  got=(~(get by rock) loc)
     abet:(spam leaf+"desk does not exist: {<loc>}" ~)
   ~>  %slog.(fmt "uninstalling {<loc>}")
-  =?  ..on-init  !=(+<:got %dead)  
+  =?  ..on-init  !=(+<:got %dead)
     (emit %pass /kiln/uninstall %arvo %c %zest loc %dead)
   ?~  sync=(~(get by sources) loc)
     abet
@@ -1134,7 +1134,7 @@
     ?.  (~(has by zyx) syd her sud)
       (pure:m !>(%done))
     ~>  %slog.(fmt "downloading update for {here}")
-    ;<  =riot:clay  bind:m  (warp:strandio her sud ~ %sing %v ud+let /)
+    ;<  =riot:clay  bind:m  (rate:strandio her sud ~ %sing %v ud+let /)
     ?>  ?=(^ riot)
     (pure:m !>(%done))
   ::

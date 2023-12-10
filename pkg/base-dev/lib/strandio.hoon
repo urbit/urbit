@@ -569,6 +569,49 @@
   ;<  ~  bind:m  (send-raw-card %pass /warp %arvo %c %warp ship riff)
   (take-writ /warp)
 ::
+++  take-rate
+  |=  =wire
+  =/  m  (strand ,vase)
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+  in.tin  `[%skip ~]
+      ~  `[%wait ~]
+    ::
+      [~ %sign * %clay %rate *]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    :+  ~  %done
+    !>(rate/[path.spar fragment num-fragments]:+>.sign-arvo.u.in.tin)
+    ::
+      [~ %sign * ?(%behn %clay) %writ *]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done !>(writ/+>.sign-arvo.u.in.tin)]
+  ==
+::
+++  rate
+  |=  [=ship =riff:clay]
+  =/  m  (strand ,riot:clay)
+  =|  =riot:clay
+  =/  rate=[frag=@ud num=@ud]  [frag=0 num=1]
+  ;<  ~  bind:m  (send-raw-card %pass /rate %arvo %c %warp ship riff)
+  |-  ^-  form:m
+  ?:  ?=(^ riot)
+    (pure:m riot)
+  ;<  =vase  bind:m  (take-rate /rate)
+  ?:  ?=(%rate -.q.vase)
+    =+  !<([%rate rat=[loc=path =_rate]] vase)
+    =/  progress  =,  rat
+      (mul:rs (div:rs (sun:rs frag.rate) (sun:rs num.rate)) (sun:rs 100))
+    =>  .(loc.rat `(pole knot)`loc.rat)
+    ?>  ?=([van=@t car=@t cas=@t file-path=*] loc.rat)
+    ~&  >>  [progress `path`file-path.loc.rat]
+    $(rate rate.rat)
+  ?>  ?=(%writ -.q.vase)
+  ~&  >  .100
+  =+  !<([%writ maybe=riot:clay] vase)
+  $(riot maybe)
+::
 ++  read-file
   |=  [[=ship =desk =case] =spur]
   =*  arg  +<

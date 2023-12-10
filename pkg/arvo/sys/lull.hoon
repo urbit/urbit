@@ -845,7 +845,7 @@
         [%send =lane =blob]
     ::
         [%tune spar roar=(unit roar)]
-        [%rate spar fragment=@ud num-fragments=@ud]
+        [%rate =spar fragment=@ud num-fragments=@ud]
     ::
         [%turf turfs=(list turf)]
     ==
@@ -1486,7 +1486,7 @@
         [%hill p=(list @tas)]                           ::  mount points
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
         [%mere p=(each (set path) (pair term tang))]    ::  merge result
-        :: [%rate ]
+        $>(%rate gift:ames)                             ::  XX  $keen progress
         [%ogre p=@tas]                                  ::  delete mount point
         [%rule red=dict wit=dict]                       ::  node r+w permissions
         [%tire p=(each rock:tire wave:tire)]            ::  app state
