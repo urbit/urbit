@@ -99,7 +99,7 @@
 ::    ken: open keen requests
 ::
 +$  yoke
-  $%  [%nuke sky=(map spur @ud)]
+  $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)]
       $:  %live
           control-duct=duct
           run-nonce=@t
@@ -282,6 +282,29 @@
     %+  turn  tap-plot
     |=  [=path =plot]
     [path (fun plot)]
+  ::
+  ++  gas-hutch
+    |=  =(list [=coop =hutch])
+    ^-  (unit _farm)
+    ?~  list
+      `farm
+    =/  nex
+      (put-hutch i.list)
+    ?~  nex  ~
+    $(farm u.nex, list t.list)
+  ::
+  ++  tap-hutch
+    =|  wer=path
+    %-  ~(gas in *(set [=coop =hutch]))
+    |-  ^-  (list [=coop =hutch])
+    =*  loop  $
+    ?:  ?=(%coop -.farm)
+      [wer p.farm]~
+    %-  zing
+    %+  turn  ~(tap by q.farm)
+    |=  [seg=@ta f=^farm]
+    ^-  (list [=coop =hutch])
+    loop(wer (snoc wer seg), farm f)
   --
 ::
 ++  on-path  ((on @ud (pair @da (each page @uvI))) lte)
@@ -484,10 +507,17 @@
           code          agent
           agent         &+agent
           run-nonce     (scot %uw (end 5 (shas %yoke-nonce eny)))
-          sky           *farm
-        :: ?~  yak  ~
-        :: ~ :: TODO: revive (~(run by sky.u.yak) (corl (late ~) (lead ~)))
-      ==
+      ::
+          sky           
+        ?~  yak  *farm
+        =|  =farm
+        =.  farm  (need (~(gas-hutch of-farm farm) ~(tap by cop.u.yak)))
+        =/  sky=(list [=spur bob=@ud])  ~(tap by sky.u.yak)
+        |-
+        ?~  sky  farm
+        =.  farm  (need (~(put of-farm farm) spur.i.sky [`bob.i.sky ~]))
+        $(sky t.sky)
+      == 
     ::
     =/  old  mo-core
     =/  wag
@@ -925,10 +955,11 @@
     %+  ~(jab by yokes.state)  dap
     |=  =^yoke
     ?:  ?=(%nuke -.yoke)  yoke
-    :-  %nuke
-    %-  ~(run-plot of-farm sky.yoke)
-    |=  plot
-    (fall (clap bob (bind (ram:on-path fan) head) max) 0)
+    :+  %nuke
+      %-  ~(run-plot of-farm sky.yoke)
+      |=  plot
+      (fall (clap bob (bind (ram:on-path fan) head) max) 0)
+    ~(tap-hutch of-farm sky.yoke)
   ::  +mo-load: install agents
   ::
   ++  mo-load
@@ -2611,7 +2642,7 @@
       %-  ~(urn by eggs.old)
       |=  [=term e=egg-15]
       ^-  egg
-      ?:  ?=(%nuke -.e)  e(sky *(map spur @ud))
+      ?:  ?=(%nuke -.e)  [%nuke ~ ~]
       %=    e
           ken  [ken.e ~ ~]
       ::

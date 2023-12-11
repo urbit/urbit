@@ -2770,6 +2770,7 @@
   +$  hutch  [rev=@ud idx=@ud key=@]
   ::
   +$  farm
+    $+  farm
     $~  [%plot ~ ~]
     $%  [%coop p=hutch q=(map path plot)]
         [%plot p=(unit plot) q=(map @ta farm)]
@@ -2777,7 +2778,7 @@
   ::
 
   +$  egg                                               ::  migratory agent state
-    $%  [%nuke sky=(map spur @ud)]                      ::  see /sys/gall $yoke
+    $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)] ::  see /sys/gall $yoke
         $:  %live
             control-duct=duct
             run-nonce=@t
