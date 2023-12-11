@@ -3274,12 +3274,7 @@
           =.  chain.u.ship-state  (put:on:chain chain.u.ship-state [idx key /]:u.sec)
           =.  peers.ames-state  (~(put by peers.ames-state) ship u.ship-state)
           =/  enc
-            %+  scot  %uv
-            %+  en:crub:crypto  key.u.sec
-            %-  spat 
-            %-  welp
-            :_  path
-            /(scot %p ship)/(scot %ud rift.u.ship-state)/(scot %ud life.u.ship-state)
+            (scot %uv (en:crub:crypto key.u.sec (spat path)))
           =/  lav  /a/x/1//fine/shut/(scot %ud idx.u.sec)/[enc]
           =/  wir  /fine/shut/(scot %ud idx.u.sec)
           (emit duct %pass wir %a %keen ~ ship lav)
@@ -5704,12 +5699,12 @@
         (rush `@t`(dy:crub:crypto key.key (slav %uv enc.tyl)) stap)
       ?~  pat
         [~ ~]
-      ?~  blk=(de-path-soft:balk u.pat)
+      ?~  blk=(de-part:balk our rift.ames-state life.ames-state u.pat)
         [~ ~]
-      =/  res  (rof [~ ~] /ames (as-omen:balk u.blk))
       ?.  (check-fine-key ames-state u.blk key-idx)
         ~&  key-validation-failed/[u.pat key-idx chain.ames-state]
         [~ ~]
+      =/  res  (rof [~ ~] /ames (as-omen:balk u.blk))
       ?~  res  
         ~&  %bailing-close
         [~ ~]
@@ -5784,9 +5779,13 @@
     ``noun+!>(protocol-version)
   ::
       [%chain %latest ~]
+    ?:  ?=(?(~ [~ ~]) lyc)
+      [~ ~]
     ``noun+!>(`[idx=@ key=@ =path]`(need (ram:on:chain chain.ames-state)))
   ::
       [%chain idx=@ ~]
+    ?:  ?=(?(~ [~ ~]) lyc)
+      [~ ~]
     ?~  idx=(slaw %ud idx.tyl)
       [~ ~]
     ?~  key=(get:on:chain chain.ames-state u.idx)
