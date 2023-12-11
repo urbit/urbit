@@ -1,5 +1,5 @@
-/-  spider
-/+  libstrand=strand
+/-  spider, sole
+/+  libstrand=strand, sole
 =,  strand=strand:libstrand
 =,  strand-fail=strand-fail:libstrand
 |%
@@ -589,8 +589,25 @@
     `[%done !>(writ/+>.sign-arvo.u.in.tin)]
   ==
 ::
+++  send-sole-effect
+  |=  [=sole-id:sole =sole-effect:sole]
+  %-  send-raw-card
+  [%give %fact [(id-to-path:sole sole-id)]~ sole-effect/!>(sole-effect)]
+::
 ++  rate
-  |=  [=ship =riff:clay]
+  =>  |%
+      ::  XX move to %hood (or console-enable agent)
+      ++  dial
+        |=  [[i=@ud d=@ud] file=path]
+        =/  bars=@ud  (div i 5)
+        :~  [``~ " file: "]  [[`%un ~ ~] "{<file>}"]  [``~ " "]
+            [``~ (weld `tape`(turn (gulf 0 (div i 10)) |=(* '-')) ">")]
+            [``~ " ["]
+            [[```%y] "{?:((lth i 10) "0" ~)}{<i>}.{?:((lth d 10) "0" ~)}{<d>}%"]
+            [``~ "]"]
+        ==
+      --
+  |=  [=ship sole-id=(unit sole-id:sole) =riff:clay]
   =/  m  (strand ,riot:clay)
   =|  =riot:clay
   =/  rate=[frag=@ud num=@ud]  [frag=0 num=1]
@@ -601,14 +618,26 @@
   ;<  =vase  bind:m  (take-rate /rate)
   ?:  ?=(%rate -.q.vase)
     =+  !<([%rate rat=[loc=path =_rate]] vase)
-    =/  progress  =,  rat
+    =/  progress=@rs  =,  rat
       (mul:rs (div:rs (sun:rs frag.rate) (sun:rs num.rate)) (sun:rs 100))
+    =+  int=(need (toi:rs progress))
+    =/  dec=@ud  =,  rs
+      (abs:si (need (toi (mul .100 (sub progress (san int))))))
     =>  .(loc.rat `(pole knot)`loc.rat)
     ?>  ?=([van=@t car=@t cas=@t file-path=*] loc.rat)
-    ~&  >>  [progress `path`file-path.loc.rat]
+    ;<  ~  bind:m
+      ?~  sole-id  (flog-text "sole-id missing") :: XX (pure:m ~)
+      %+  poke-our  %hood
+      rate/!>(pro+[& %$ (dial [(abs:si int) dec] `path`file-path.loc.rat)])
     $(rate rate.rat)
   ?>  ?=(%writ -.q.vase)
-  ~&  >  .100
+  ::  XX print completion of all files -- move to %hood
+  :: ;<  ~  bind:m
+  ::   ?~  sole-id  (flog-text "")
+  ::   =/  =sole-effect:sole
+  ::     klr+~[[[`%un ~ `%g] "file: {<file-path>} [100%]"]]
+  ::   (poke-our %hood rate/!>(sole-effect))
+  ;<  ~  bind:m  (poke-our %hood rate/!>(pro+[& %$ "> "]))
   =+  !<([%writ maybe=riot:clay] vase)
   $(riot maybe)
 ::

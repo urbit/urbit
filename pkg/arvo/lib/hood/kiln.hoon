@@ -1,11 +1,12 @@
 /-  *hood
-/+  strandio
+/+  strandio, sole
 =,  clay
 =,  space:userlib
 =,  format
 =*  dude  dude:gall
 |%
-+$  state     state-10
++$  state     state-11
++$  state-11  [%11 pith-11]
 +$  state-10  [%10 pith-10]
 +$  state-9   [%9 pith-9]
 +$  state-8   [%8 pith-9]
@@ -19,7 +20,8 @@
 +$  state-0   [%0 pith-0]
 +$  any-state
   $~  *state
-  $%  state-10
+  $%  state-11
+      state-10
       state-9
       state-8
       state-7
@@ -32,6 +34,7 @@
       state-0
   ==
 ::
++$  pith-11  [sole-id=(unit sole-id:sole) pith-10]
 +$  pith-10
   $:  rem=(map desk per-desk)
       nyz=@ud
@@ -483,7 +486,9 @@
       $(ks t.ks)
     ==
   ::
-  ?>  ?=(%10 -.old)
+  =?  old  ?=(%10 -.old)
+    [%11 sole-id=~ +.old]
+  ?>  ?=(%11 -.old)
   =.  state  old
   abet:(emil cards-9)
 ::
@@ -846,6 +851,11 @@
     abet:(spam (render "not syncing" [sud her syd ~]:hus) ~)
   =.  zyn  (~(del by zyn) hus)
   abet:(spam (render "cancelling sync" sud.hus her.hus syd.hus kid.u.got) ~)
+::
+++  put-sole
+  |=  =sole-id:sole
+  ^+  abet
+  abet(sole-id `sole-id)
 ::  +peer: handle %watch
 ::
 ++  peer
@@ -1134,7 +1144,7 @@
     ?.  (~(has by zyx) syd her sud)
       (pure:m !>(%done))
     ~>  %slog.(fmt "downloading update for {here}")
-    ;<  =riot:clay  bind:m  (rate:strandio her sud ~ %sing %v ud+let /)
+    ;<  =riot:clay  bind:m  (rate:strandio her sole-id sud ~ %sing %v ud+let /)
     ?>  ?=(^ riot)
     (pure:m !>(%done))
   ::
