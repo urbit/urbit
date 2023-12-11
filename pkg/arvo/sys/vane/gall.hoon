@@ -1231,8 +1231,9 @@
       |=  [=wire =ship =(pole knot)]
       ^+  ap-core
       ?.  ?=([%g %x cas=@ app=@ rest=*] pole)
-        ~&  malformed-path/pole
-        ap-core
+        %.  ap-core
+        %+  trace  odd.veb.bug.state
+        [leaf+"gall: {<agent-name>}: brood request {<pole>} invalid, dropping"]~
       =.  pen.yoke  (~(put ju pen.yoke) [ship pole] wire)
       =/  =fine-request  [%0 rest.pole]
       =/  =plea:ames  [%g /gk/[app.pole] fine-request]
@@ -1245,13 +1246,15 @@
       ~|  ap-take-brood/wire
       ?>  ?=([@ *] wire)  :: TODO: strip crash semantics
       =/  =ship  (slav %p i.wire)
+      =/  wis=(list ^wire)  ~(tap in (~(get ju pen.yoke) [ship t.wire]))
       ?+    syn  ~|(weird-sign-ap-take-brood/-.syn !!)
           [%ames %boon *]
         =+  bud=((soft fine-response) payload.syn)
         ?~  bud  :: TODO: what happens
-          ~&  weird-take-brood/payload.syn  !!
+           %.  ap-core
+           %+  trace  odd.veb.bug.state
+           [leaf/"gall: {<agent-name>} malformed brood res {<ship>} {<t.wire>}"]~
         =/  bod  bod.u.bud
-        =/  wis=(list ^wire)  ~(tap in (~(get ju pen.yoke) [ship t.wire]))
         |-  
         ?~  wis  ap-core
         ?~  bod
@@ -1261,22 +1264,33 @@
         $(wis t.wis)
       ::
           [%ames %done *]
-        ap-core
+        |-
+        ?~  wis
+          =.  pen.yoke  (~(del by pen.yoke) [ship t.wire])
+          ap-core
+        =.  ap-core
+          %.  (ap-generic-take i.wis %ames %near [ship t.wire] ~)
+          %+  trace  odd.veb.bug.state
+          [leaf/"gall: {<agent-name>} bad brood res {<ship>} {<t.wire>}"]~
+        $(wis t.wis)
       ==
     ::
     ++  ap-serve-brood
       |=  [=ship =(pole knot)]
       ^-  [(unit (unit brood)) _mo-core]
-      ~&  pole/pole
       ?.  ?=([%$ ver=@ rest=*] pole)
-        ~&  bad-pole/pole
-        `ap-abet
-      ?.  =(1 (slav %ud ver.pole))
-        ~&  bad-version/pole
-        `ap-abet
+        %.  `ap-abet
+        %+  trace  odd.veb.bug.state
+        [leaf/"gall: {<agent-name>} bad brood req {<ship>} {<pole>}"]~
+      =/  ver  (slav %ud ver.pole)
+      ?.  =(1 ver)
+        %.  `ap-abet
+        %+  trace  odd.veb.bug.state
+        [leaf/"gall: {<agent-name>} bad brood ver {<ver>} {<ship>} {<rest.pole>}"]~
       ?~  cop=(ap-match-coop rest.pole)
-        ~&  no-match-coop/rest.pole
-        [~^~ ap-abet]
+        %.  [~^~ ap-abet]
+        %+  trace  odd.veb.bug.state
+        [leaf/"gall: {<agent-name>} no coop match {<ship>} {<rest.pole>}"]~
       =/  cag=(unit (unit cage))
         (ap-peek %| %c (snoc u.cop (scot %p ship)))
       =/  has-perms=?
@@ -1287,8 +1301,9 @@
         u.res
       =/  =hutch  (need (~(get-hutch of-farm sky.yoke) u.cop))
       ?.  has-perms
-        ~&  no-perms/[ship pole]
-        [~^~ ap-abet]
+        %.  [~^~ ap-abet]
+        %+  trace  odd.veb.bug.state
+        [leaf/"gall: {<agent-name>} no perms for {<coop>} {<ship>} {<rest.pole>}"]~
       =/  =brood  [u.cop hutch]
       [``brood ap-abet]
     ::
@@ -1347,8 +1362,9 @@
       |=  [=coop =path =page]
       ?~  cop=(~(get-hutch of-farm sky.yoke) coop)
         ?.  (~(has by gem.yoke) coop)
-          ~|  ~(key-coops of-farm sky.yoke)
-          ~|  no-such-coop/coop  !!  :: XX: error handling
+          %.  ap-core
+          %+  trace  &
+          [leaf+"gall: {<agent-name>} no such coop {<coop>}, dropping %grow at {<path>}"]~
         =.  gem.yoke  (~(put ju gem.yoke) coop path page)
         ap-core
       =.  sky.yoke  (need (~(grow of-farm sky.yoke) (welp coop path) now page))
@@ -1389,7 +1405,11 @@
     ++  ap-grow
       |=  [=spur =page]
       ^+  ap-core
-      ?>  =(~ (ap-match-coop spur)) :: enforce binding public seperately
+      :: check here, and no-op, so that +need below does not crash
+      ?:  =(~ (ap-match-coop spur))
+        %.  ap-core
+        %+  trace  &
+        [leaf+"gall: {<agent-name>}: grow {<spur>} has coop, dropping"]~
       =-  ap-core(sky.yoke -)
       (need (~(grow of-farm sky.yoke) spur now page))
     ::  +ap-tomb: tombstone -- replace bound value with hash
