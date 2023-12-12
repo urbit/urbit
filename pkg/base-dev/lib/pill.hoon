@@ -323,7 +323,7 @@
       %+  mist  /lib/[nam]/hoon
       .^(@t cx+(welp lib /[nam]/hoon))
     ?.  imp  (swat sub hun)
-    (swel sub [%ktts nam hun])
+    (bash sub [%ktts nam hun])
   ::  +mist: +rain but skipping past ford runes
   ::
   ++  mist

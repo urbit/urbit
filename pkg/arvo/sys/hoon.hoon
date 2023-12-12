@@ -11456,9 +11456,8 @@
     %-  ~(play ut p.vax)
     [%wtgr [%wtts [%leaf %tas -.q.vax] [%& 2]~] [%$ 1]]
   (~(fuse ut p.vax) [%cell %noun %noun])
-::  +shot: deferred +slam
 ::
-++  shot
+++  bang                                                ::  deferred +slam
   |=  [gat=(trap vase) sam=(trap vase)]
   ^-  (trap vase)
   =/  [typ=type gen=hoon]
@@ -11468,27 +11467,24 @@
   =>  [typ=p.gun +<.$]
   |.  ~+
   [typ .*([q:$:gat q:$:sam] [%9 2 %10 [6 %0 3] %0 2])]
-::  +sock: deferred +slop
 ::
-++  sock
+++  bump                                                ::  deferred +slop
   |=  [hed=(trap vase) tal=(trap vase)]
   ^-  (trap vase)
   =>  +<
   |.  ~+
   =+  [bed bal]=[$:hed $:tal]
   [[%cell p:bed p:bal] [q:bed q:bal]]
-::  +swat: deferred +slap
 ::
-++  swat
+++  beat                                                ::  deferred +slap
   |=  [tap=(trap vase) gen=hoon]
   ^-  (trap vase)
   =/  gun  (~(mint ut p:$:tap) %noun gen)
   =>  [tap=tap gun=gun]
   |.  ~+
   [p.gun .*(q:$:tap q.gun)]
-::  +swel: +swat but with +slop
 ::
-++  swel
+++  bash                                                ::  +beat but with +slop
   |=  [tap=(trap vase) gen=hoon]
   ^-  (trap vase)
   =/  gun  (~(mint ut p:$:tap) %noun gen)
