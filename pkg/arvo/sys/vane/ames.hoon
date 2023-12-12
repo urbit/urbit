@@ -4671,7 +4671,7 @@
             ::  update congestion, or fill details
             ::
             =?  fine  =(0 num-fragments.keen)
-              ?>  =(num 1)
+              ?>  =(num 1)  :: XX no-op instead?
               (fi-first-rcv meow)
             ::
             ?.  ?=([@ @ @ *] full-path)
@@ -4792,17 +4792,19 @@
             =.       tries.want  +(tries.want)
             =.         wan.keen  (put:fi-mop wan.keen [fra .]:want)
             =.             fine  (fi-send `@ux`hoot.want)
-            :: =?  fine  =(0 (mod fra.want 100))  :: XX rate every 100 frags
+            =,  keen
+            =?  fine  =(0 (mod num-received 100)) ::  rate every 100 frags
+            ::  XX come up with a better rate
             ::
-            =/  modo  (div num-fragments.keen 10)  :: rate for 10% of total
-            =?  fine  ?|  =(0 (mod fra.want modo))
-                          :: rate every 100 frags if close to finish
-                          ::
-                          ?&  =(0 (mod fra.want 100))
-                              (gth fra.want (sub num-fragments.keen modo))
-                      ==  ==
-              %-  ~(rep in listeners.keen)
-              (fi-give-rate fra.want num-fragments.keen)
+            :: =/  modo  (div num-fragments 10)  :: rate for 10% of total
+            :: =?  fine  ?|  =(0 (mod num-received modo))
+            ::               :: rate every 100 frags if close to finish
+            ::               ::
+            ::               ?&  =(0 (mod num-received 100))
+            ::                   (gth num-received (sub num-fragments modo))
+            ::           ==  ==
+              %-  ~(rep in listeners)
+              (fi-give-rate num-received num-fragments)
             $(inx +(inx))
           ::
           ++  fi-sift-full
