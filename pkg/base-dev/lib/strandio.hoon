@@ -595,18 +595,6 @@
   [%give %fact [(id-to-path:sole sole-id)]~ sole-effect/!>(sole-effect)]
 ::
 ++  rate
-  =>  |%
-      ::  XX move to %hood (or console-enable agent)
-      ++  dial
-        |=  [[i=@ud d=@ud] file=path]
-        =/  bars=@ud  (div i 5)
-        :~  [``~ " file: "]  [[`%un ~ ~] "{<file>}"]  [``~ " "]
-            [``~ (weld `tape`(turn (gulf 0 (div i 10)) |=(* '-')) ">")]
-            [``~ " ["]
-            [[```%y] "{?:((lth i 10) "0" ~)}{<i>}.{?:((lth d 10) "0" ~)}{<d>}%"]
-            [``~ "]"]
-        ==
-      --
   |=  [=ship sole-id=(unit sole-id:sole) =riff:clay]
   =/  m  (strand ,riot:clay)
   =|  =riot:clay
@@ -627,8 +615,7 @@
     ?>  ?=([van=@t car=@t cas=@t file-path=*] loc.rat)
     ;<  ~  bind:m
       ?~  sole-id  (flog-text "sole-id missing") :: XX (pure:m ~)
-      %+  poke-our  %hood
-      rate/!>(pro+[& %$ (dial [(abs:si int) dec] `path`file-path.loc.rat)])
+      (poke-our %hood rate/!>([[(abs:si int) dec] `path`file-path.loc.rat]))
     $(rate rate.rat)
   ?>  ?=(%writ -.q.vase)
   ::  XX print completion of all files -- move to %hood
@@ -637,7 +624,7 @@
   ::   =/  =sole-effect:sole
   ::     klr+~[[[`%un ~ `%g] "file: {<file-path>} [100%]"]]
   ::   (poke-our %hood rate/!>(sole-effect))
-  ;<  ~  bind:m  (poke-our %hood rate/!>(pro+[& %$ "> "]))
+  ;<  ~  bind:m  (poke-our %hood rate/!>([0^0 /]))
   =+  !<([%writ maybe=riot:clay] vase)
   $(riot maybe)
 ::

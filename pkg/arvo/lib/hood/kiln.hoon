@@ -562,6 +562,7 @@
     %kiln-uninstall          =;(f (f !<(_+<.f vase)) poke-uninstall)
     %kiln-unmount            =;(f (f !<(_+<.f vase)) poke-unmount)
     %kiln-unsync             =;(f (f !<(_+<.f vase)) poke-unsync)
+    %kiln-rate               =;(f (f !<(_+<.f vase)) poke-rate)
   ==
 ::
 ++  poke-autocommit
@@ -852,6 +853,26 @@
   =.  zyn  (~(del by zyn) hus)
   abet:(spam (render "cancelling sync" sud.hus her.hus syd.hus kid.u.got) ~)
 ::
+++  poke-rate
+  |=  [rate=[@ud @ud] file=path]
+  |^  =<  abet
+  %-  emil
+  ?~  sole-id  ~
+  =/  =sole-effect:sole  pro+[& %$ (dial rate file)]
+  [%give %fact [(id-to-path:sole u.sole-id)]~ sole-effect/!>(sole-effect)]~
+  ::
+  ++  dial
+    |=  [[i=@ud d=@ud] file=path]
+    ?:  =(i d)  "> "
+    =/  bars=@ud  (div i 5)
+    :~  [``~ " file: "]  [[`%un ~ ~] "{<file>}"]  [``~ " "]
+        [``~ (weld `tape`(turn (gulf 0 (div i 10)) |=(* '-')) ">")]
+        [``~ " ["]
+        [[```%y] "{?:((lth i 10) "0" ~)}{<i>}.{?:((lth d 10) "0" ~)}{<d>}%"]
+        [``~ "]"]
+    ==
+  --
+::
 ++  put-sole
   |=  =sole-id:sole
   ^+  abet
@@ -955,7 +976,6 @@
   :~  [%pass /commit %arvo %c [%dirk mon.commit-timer]]
       [%pass way.commit-timer %arvo %b [%wait nex.commit-timer]]
   ==
-::
 ::
 ++  spam
   |=  mes=(list tank)

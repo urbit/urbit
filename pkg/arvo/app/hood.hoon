@@ -109,13 +109,7 @@
     %dill-poke       poke-drum
     %hood-sync       poke-kiln(mark %kiln-sync)
     %write-sec-atom  poke-helm(mark %helm-write-sec-atom)
-    %rate
-      ::  XX
-      =+  !<(=sole-effect:shoe vase)
-      :_  this
-      =+  id=sole-id:kiln-core
-      ?~  id  ~
-      [%give %fact [(id-to-path:sole u.id)]~ sole-effect/!>(sole-effect)]~
+    %rate            poke-kiln(mark %kiln-rate)
   ==
   ++  poke-drum  =^(c drum.state (poke:drum-core mark vase) [c this])
   ++  poke-helm  =^(c helm.state (poke:helm-core mark vase) [c this])
