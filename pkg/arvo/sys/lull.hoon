@@ -2564,6 +2564,7 @@
         %get                                            ::  GET
         %head                                           ::  HEAD
         %opts                                           ::  OPTIONS
+        %patch                                          ::  PATCH
         %post                                           ::  POST
         %put                                            ::  PUT
         %trac                                           ::  TRACE
