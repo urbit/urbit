@@ -4789,7 +4789,15 @@
             =.       tries.want  +(tries.want)
             =.         wan.keen  (put:fi-mop wan.keen [fra .]:want)
             =.             fine  (fi-send `@ux`hoot.want)
-            =?  fine  =(0 (mod fra.want 100))
+            :: =?  fine  =(0 (mod fra.want 100))  :: XX rate every 100 frags
+            ::
+            =/  modo  (div num-fragments.keen 10)  :: rate for 10% of total
+            =?  fine  ?|  =(0 (mod fra.want modo))
+                          :: rate every 100 frags if close to finish
+                          ::
+                          ?&  =(0 (mod fra.want 100))
+                              (gth fra.want (sub num-fragments.keen modo))
+                      ==  ==
               %-  ~(rep in listeners.keen)
               (fi-give-rate fra.want num-fragments.keen)
             $(inx +(inx))
