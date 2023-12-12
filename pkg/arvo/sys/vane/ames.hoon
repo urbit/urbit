@@ -1838,6 +1838,8 @@
       |=  [[now=@da eny=@ rof=roof] =duct =ames-state]
       =*  veb  veb.bug.ames-state
       =|  cork-bone=(unit bone)  ::  modified by +on-kroc
+      =|  vane=?(%fine %ames)
+      ::
       ~%  %event-core  ..$  ~
       |%
       +|  %helpers
@@ -1847,12 +1849,10 @@
       ++  emit  |=(=move event-core(moves [move moves]))
       ++  emil  |=(mos=(list move) event-core(moves (weld (flop mos) moves)))
       ++  channel-state  [life crypto-core bug]:ames-state
-      ++  trace-fine     (cury trace %fine)
-      ++  trace-ames     (cury trace %ames)
       ++  ev-trace
         |=  [verb=? =ship print=(trap tape)]
         ^+  same
-        (trace-ames verb ship ships.bug.ames-state print)
+        (trace vane verb ship ships.bug.ames-state print)
       ::  +get-peer-state: lookup .her state or ~
       ::
       ++  get-peer-state
@@ -2975,8 +2975,8 @@
         ?.  ?=([~ %known *] ship-state)
           :: XX delete from alien agenda?
           %.  event-core
-          %^  trace-fine  fin.veb  ship
-          [ships.bug.ames-state |.("peer still alien, skip cancel-scry")]
+          %^  trace  %fine  fin.veb
+          [ship ships.bug.ames-state |.("peer still alien, skip cancel-scry")]
         =+  peer=(abed:pe ship)
         ?.  (~(has by keens.peer-state.peer) path)
           event-core
@@ -4622,18 +4622,21 @@
             ^+  same
             (trace %fine verb her ships.bug.ames-state print)
           ::
-          ++  fi-emit       |=(move fine(event-core (emit +<)))
-          ++  fi-mop        ((on @ud want) lte)
-          ++  fi-gauge      (ga metrics.keen (wyt:fi-mop wan.keen))
-          ++  fi-wait       |=(tim=@da (fi-pass-timer %b %wait tim))
-          ++  fi-rest       |=(tim=@da (fi-pass-timer %b %rest tim))
+          ++  fi-emit   |=(move fine(event-core (emit +<)))
+          ++  fi-mop    ((on @ud want) lte)
+          ++  fi-gauge  (ga metrics.keen (wyt:fi-mop wan.keen))
+          ++  fi-wait   |=(tim=@da (fi-pass-timer %b %wait tim))
+          ++  fi-rest   |=(tim=@da (fi-pass-timer %b %rest tim))
           ::
           ++  fi-etch-wail
             |=(frag=@ud `hoot``@`(etch-shot (make-shot %0 fi-full-path frag)))
           ::
           ++  fi-send
             |=  =blob
-            fine(event-core (send-blob for=| her blob `known/peer-state))
+            =.  event-core
+              %-  %*(send-blob event-core vane %fine)
+              [for=| her blob `known/peer-state]
+            fine
           ::
           ++  fi-give-tune
             |=  dat=(unit roar)
@@ -4737,7 +4740,7 @@
               ?:  =(fra fra.val.u.first)
                 fine
               =^  resend=?  metrics.keen
-                (on-skipped-packet:fi-gauge +>.val.u.first)
+                (%*(on-skipped-packet fi-gauge vane %fine) +>.val.u.first)
               ?:  !resend
                 fine
               =.  tries.val.u.first  +(tries.val.u.first)
@@ -4749,7 +4752,7 @@
             =/  found  (get:fi-mop wan.keen fra)
             ?~  found
               [| fine]
-            =.  metrics.keen  (on-ack:fi-gauge +>.u.found)
+            =.  metrics.keen  (%*(on-ack fi-gauge vane %fine) +>.u.found)
             =.  wan.keen  +:(del:fi-mop wan.keen fra)
             [& fine]
           ::
@@ -4858,7 +4861,7 @@
             ::  has the direct route expired?
             ::
             =.  peer-state    (update-peer-route her peer-state)
-            =.  metrics.keen  on-timeout:fi-gauge
+            =.  metrics.keen  %*(on-timeout fi-gauge vane %fine)
             =^  want=(unit want)  wan.keen
               ?~  res=(pry:fi-mop wan.keen)  `wan.keen
               (del:fi-mop wan.keen key.u.res)
@@ -4883,7 +4886,7 @@
           ++  ga-trace
             |=  [verb=? print=(trap tape)]
             ^+  same
-            (trace %ames verb ship ships.bug.channel print)
+            (trace vane verb ship ships.bug.channel print)
           ::  +next-expiry: when should a newly sent fresh packet time out?
           ::
           ::    Use rtt + 4*sigma, where sigma is the mean deviation of rtt.
