@@ -314,7 +314,7 @@
   ++  build-sys
     |=  [sub=(trap vase) nam=term]  ^-  (trap vase)
     ~>  %slog.[0 leaf+"ivory: building /sys/{(trip nam)}"]
-    (swat sub (rain /sys/[nam]/hoon .^(@t cx+(welp sys /[nam]/hoon))))
+    (beat sub (rain /sys/[nam]/hoon .^(@t cx+(welp sys /[nam]/hoon))))
   ::
   ++  build-lib
     |=  [sub=(trap vase) imp=? nam=term]  ^-  (trap vase)
@@ -322,7 +322,7 @@
     =/  hun=hoon
       %+  mist  /lib/[nam]/hoon
       .^(@t cx+(welp lib /[nam]/hoon))
-    ?.  imp  (swat sub hun)
+    ?.  imp  (beat sub hun)
     (bash sub [%ktts nam hun])
   ::  +mist: +rain but skipping past ford runes
   ::
