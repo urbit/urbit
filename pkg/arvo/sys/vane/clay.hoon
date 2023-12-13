@@ -3314,6 +3314,25 @@
     =.  bom.u.ref  (~(put by bom.u.ref) inx sat(busy ~))
     abet:work:(foreign-update inx)
   ::
+  ++  give-rate
+  |=  [kind=@ta inx=@ud =spar:ames frag=@ud num=@ud]
+  ^+  ..give-rate
+  ~|  [%give-rate kind]
+  ?>  ?=(%back-index kind)
+  ~|  [%strange-give-rate-no-request her syd inx]
+  ?>  ?=(^ ref)
+  =/  sat=update-state  (~(got by bom.u.ref) inx)
+  ?>  ?=([~ ^] busy.sat)
+  =/  =wire  (request-wire kind her syd inx)
+  =/  old=time   time.u.busy.sat
+  =/  =time      (add now scry-timeout-time)
+  =.  bom.u.ref  (~(put by bom.u.ref) inx sat(time.u.busy time))
+  %-  emil
+  :~  [hen %pass wire %b %rest old]
+      [duct.sat %give %rate spar frag num]
+      [hen %pass wire %b %wait time]
+  ==
+  ::
   ::  Called when a foreign ship answers one of our requests.
   ::
   ::  If it's a `%many` request, process in +take-foreign-update
@@ -6238,10 +6257,7 @@
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
         ?:  ?=(%rate +<.hin)
-          :_  ruf
-          ?~  ref.den  ~
-          =/  sat=update-state  (~(got by bom.u.ref.den) index)
-          [duct.sat %give %rate [spar fragment num-fragments]:hin]~
+          abet:(give-rate:den -.tea index [spar fragment num-fragments]:hin)
         ?~  fell
           ::  We shouldn't get back null on any of the fine requests we
           ::  make unless they're out of date
