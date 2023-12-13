@@ -490,11 +490,12 @@
   ?.  ?=(%& -.why)  ~
   =*  his  p.why
   ::
-  ::  only respond for the local identity, %$ desk, current timestamp
+  ::  only respond for the local identity, %$ desk, current timestamp, root gang
   ::
   ?.  ?&  =(&+our why)
           =([%$ %da now] lot)
           =(%$ syd)
+          =(~ lyc)
       ==
     ~
   ::  /%x//whey           (list mass)   memory usage labels
