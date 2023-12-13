@@ -1205,6 +1205,8 @@
       ?:  ?=(%| -.p.sign-arvo)
         ::  ~>  %slog.(fmt "download failed into {here}; retrying sync")
         ::  %-  (slog p.p.sign-arvo)
+        ::  XX notify clay to remove the thread from the listeners?
+        ::
         init
       ::
       ~>  %slog.(fmt "finished downloading update for {here}")
