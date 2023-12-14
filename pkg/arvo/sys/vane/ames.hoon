@@ -5771,7 +5771,45 @@
   ::
   ?.  ?=(%x ren)  ~
   =>  .(tyl `(pole knot)`tyl)
-  ?:  =([~ ~] lyc)
+  ::  public endpoints
+  ?:  ?=([%fine %hunk lop=@t len=@t pax=^] tyl)
+    ::TODO  separate endpoint for the full message (instead of packet list)
+    ::  .pax is expected to be a scry path of the shape /vc/desk/rev/etc,
+    ::  so we need to give it the right shape
+    ::
+    ?~  blk=(de-path-soft:balk pax.tyl)  ~
+    ::
+    ?.  (is-our-bulk our ames-state u.blk)
+      ~
+    =+  nom=(as-omen:balk u.blk)
+    ~|  nom
+    |^
+    =/  van  ?@(vis.nom (end 3 vis.nom) way.vis.nom)
+    =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
+    ?.  =(%c van)
+      (en-hunk (rof ~ /ames nom))
+    =+  pem=(rof [~ ~] /ames nom(vis %cp))
+    ?.  ?=(^ pem)    ~
+    ?.  ?=(^ u.pem)  ~
+    ~|  u.u.pem
+    =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
+    ?.  =([%black ~ ~] rul.r.per)  ~
+    (en-hunk (rof [~ ~] /ames nom))
+    ::
+    ++  en-hunk
+      |=  res=(unit (unit cage))
+      ^+  res
+      ?~  res  ~
+      =/  =hunk  [(slav %ud lop.tyl) (slav %ud len.tyl)]
+      ::
+      =/  hu-co  (etch-hunk our [life crypto-core]:ames-state)
+      ?-  res
+        [~ ~]    ``noun+!>((etch-open:hu-co pax.tyl hunk ~))
+        [~ ~ *]  ``noun+!>((etch-open:hu-co pax.tyl hunk [p q.q]:u.u.res))
+      ==
+    --
+  ::  private endpoints
+  ?.  =([~ ~] lyc)  ~
     ?+    tyl  ~
         [%$ %whey ~]
       =/  maz=(list mass)
@@ -5898,45 +5936,6 @@
         [%protocol %version ~]
       ``noun+!>(protocol-version)
     ::
-    ==
-
-    ?+    tyl  ~
-      [%fine %hunk lop=@t len=@t pax=^]
-    ::TODO  separate endpoint for the full message (instead of packet list)
-    ::  .pax is expected to be a scry path of the shape /vc/desk/rev/etc,
-    ::  so we need to give it the right shape
-    ::
-    ?~  blk=(de-path-soft:balk pax.tyl)  ~
-    ::
-    ?.  (is-our-bulk our ames-state u.blk)
-      ~
-    =+  nom=(as-omen:balk u.blk)
-    ~|  nom
-    |^
-    =/  van  ?@(vis.nom (end 3 vis.nom) way.vis.nom)
-    =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
-    ?.  =(%c van)
-      (en-hunk (rof ~ /ames nom))
-    =+  pem=(rof [~ ~] /ames nom(vis %cp))
-    ?.  ?=(^ pem)    ~
-    ?.  ?=(^ u.pem)  ~
-    ~|  u.u.pem
-    =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
-    ?.  =([%black ~ ~] rul.r.per)  ~
-    (en-hunk (rof [~ ~] /ames nom))
-    ::
-    ++  en-hunk
-      |=  res=(unit (unit cage))
-      ^+  res
-      ?~  res  ~
-      =/  =hunk  [(slav %ud lop.tyl) (slav %ud len.tyl)]
-      ::
-      =/  hu-co  (etch-hunk our [life crypto-core]:ames-state)
-      ?-  res
-        [~ ~]    ``noun+!>((etch-open:hu-co pax.tyl hunk ~))
-        [~ ~ *]  ``noun+!>((etch-open:hu-co pax.tyl hunk [p q.q]:u.u.res))
-      ==
-    --
     ==
   ::
 
