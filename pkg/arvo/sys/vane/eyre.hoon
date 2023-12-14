@@ -4119,8 +4119,35 @@
       ~
     ~&  [%r %scry-foreign-host who]
     ~
+  ::
+  ?:  ?=([%eauth %url ~] tyl)
+    ?.  &(?=(%x ren) ?=(%$ syd))  ~
+    =*  endpoint  endpoint.auth.server-state.ax
+    ?.  ?=(%da -.p.lot)  [~ ~]
+    ::  we cannot answer for something prior to the last set time,
+    ::  or something beyond the present moment.
+    ::
+    ?:  ?|  (lth q.p.lot time.endpoint)
+            (gth q.p.lot now)
+        ==
+      ~
+    :^  ~  ~  %noun
+    !>  ^-  (unit @t)
+    =<  eauth-url:eauth:authentication
+    (per-server-event [eny *duct now rof] server-state.ax)
+ ::
+  ?:  ?=([%cache @ @ ~] tyl)
+    ?.  &(?=(%x ren) ?=(%$ syd))  ~
+    =,  server-state.ax
+    ?~  aeon=(slaw %ud i.t.tyl)        [~ ~]
+    ?~  url=(slaw %t i.t.t.tyl)        [~ ~]
+    ?~  entry=(~(get by cache) u.url)  ~
+    ?.  =(u.aeon aeon.u.entry)         ~
+    ?~  val=val.u.entry                ~
+    ?:  &(auth.u.val !=([~ ~] lyc))    ~ 
+    ``noun+!>(u.val)
   :: private endpoints
-  ?:  ?=([~ ~] lyc)
+  ?.  ?=([~ ~] lyc)  ~
     ?:  &(?=(%x ren) ?=(%$ syd))
       =,  server-state.ax
       ?+  tyl  ~
@@ -4187,33 +4214,4 @@
         ``[?=(^ secure.ports) port host]
       ==
     ==
-  :: public endpoints
-  ?+  tyl  ~
-      [%eauth %url ~]
-    =*  endpoint  endpoint.auth.server-state.ax
-    ?.  ?=(%da -.p.lot)  [~ ~]
-    ::  we cannot answer for something prior to the last set time,
-    ::  or something beyond the present moment.
-    ::
-    ?:  ?|  (lth q.p.lot time.endpoint)
-            (gth q.p.lot now)
-        ==
-      ~
-    :^  ~  ~  %noun
-    !>  ^-  (unit @t)
-    =<  eauth-url:eauth:authentication
-    (per-server-event [eny *duct now rof] server-state.ax)
- ::
-      [%cache @ @ ~]
-    =,  server-state.ax
-    ?~  aeon=(slaw %ud i.t.tyl)        [~ ~]
-    ?~  url=(slaw %t i.t.t.tyl)        [~ ~]
-    ?~  entry=(~(get by cache) u.url)  [~ ~]
-    ?.  =(u.aeon aeon.u.entry)         [~ ~]
-    ?~  val=val.u.entry                [~ ~]
-    ?:  &(auth.u.val !=([~ ~] lyc))    ~ 
-    ``noun+!>(u.val)
-    ::
-  ==
-
 --
