@@ -146,7 +146,7 @@
       ++  sponsor
         ^-  ship
         =/  dat=(unit (unit cage))
-          (rof `[our ~ ~] /dill j/[[our sein/da/now] /(scot %p our)])
+          (rof [~ ~] /dill j/[[our sein/da/now] /(scot %p our)])
         ;;(ship q.q:(need (need dat)))
       ::
       ++  init                                          ::  initialize
@@ -495,7 +495,7 @@
   ?.  ?&  =(&+our why)
           =([%$ %da now] lot)
           =(%$ syd)
-          =(~ lyc)
+          =([~ ~] lyc)
       ==
     ~
   ::  /%x//whey           (list mass)   memory usage labels
