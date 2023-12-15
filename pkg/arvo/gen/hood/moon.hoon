@@ -8,13 +8,12 @@
 ::::
   ::
 :-  %say
-|=  $:  [now=@da eny=@uvJ bec=beak]
+|=  $:  [now=@da tick=@ud eny=@uvJ our=@p ^]
         arg=?(~ [mon=@p ~])
         public-key=pass
     ==
 :-  %helm-moon
 ^-  (unit [=ship =udiff:point:jael])
-=*  our  p.bec
 =/  ran  (clan:title our)
 ?:  ?=([?(%earl %pawn)] ran)
   %-  %-  slog  :_  ~
@@ -24,7 +23,7 @@
   ?^  arg
     mon.arg
   (add our (lsh 5 (end 5 (shaz eny))))
-=/  seg=ship  (sein:title our now mon)
+=/  seg=ship  (sein:title our now tick mon)
 ?.  =(our seg)
   %-  %-  slog  :_  ~
       :-  %leaf

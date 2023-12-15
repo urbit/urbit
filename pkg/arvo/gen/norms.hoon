@@ -2,9 +2,9 @@
 ::
 =,  clay
 :-  %say
-|=  [[now=@da eny=@uvJ bec=beak] ~ ~]
+|=  [[now=@da tick=@ud @ our=@p ^] ~ ~]
 :-  %tang
-=+  .^(=cone %cx /(scot %p p.bec)//(scot %da now)/domes)
+=+  .^(=cone %cx (en-bema [our %$ [da+now ud+tick]] /domes))
 %-  flop  ^-  tang
 %-  zing
 %+  turn  ~(tap by cone)

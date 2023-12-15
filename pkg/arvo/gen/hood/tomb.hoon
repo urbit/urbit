@@ -5,14 +5,15 @@
 ::
 =,  clay
 :-  %say
-|=  [[now=@da eny=@uvJ bec=beak] [target=path ~] dry=_|]
+|=  [[now=@da tick=@ud @ our=@p ^] [target=path ~] dry=_|]
+=.  target  (en-pick now tick target)
 :-  %helm-pans
 =+  .^(=arch %cy target)
 ?~  fil.arch
   [%d %flog %text "tomb: not a file"]~  ::  should recurse
 =/  =lobe  u.fil.arch
-=+  .^(=rang %cx /(scot %p p.bec)//(scot %da now)/rang)
-=+  .^(=cone %cx /(scot %p p.bec)//(scot %da now)/domes)
+=+  .^(=rang %cx (en-bema [our %$ [da+now ud+tick]] /rang))
+=+  .^(=cone %cx (en-bema [our %$ [da+now ud+tick]] /domes))
 =/  domes=(list [[=ship =desk] dome])  ~(tap by cone)
 =/  norms
   |^

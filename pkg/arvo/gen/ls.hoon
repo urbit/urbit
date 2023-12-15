@@ -10,9 +10,9 @@
 ~&  %
 :-  %say
 |=  $:  [now=@da tick=@ud ^]
-        [arg=path ~]
+        [pax=path ~]
         vane=?(%g %c)
     ==
-=/  pax  (en-peck arg now tick)
+=.  pax  (en-pick now tick pax)
 =+  lon=.^(arch (cat 3 vane %y) pax)
 tang+[?~(dir.lon leaf+"~" (show-dir vane pax dir.lon))]~

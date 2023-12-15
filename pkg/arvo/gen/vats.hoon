@@ -12,17 +12,17 @@
 ::
 /-  *hood
 :-  %say
-|=  $:  [now=@da * bec=beak]
+|=  $:  [now=@da tick=@ud @ our=@p ^]
         deks=(list desk)
         [filt=@tas verb=_|]
     ==
 :-  %tang  ^-  tang
 ?.  &(=(~ deks) =(%$ filt))
-  (report-vats p.bec now deks filt verb)
+  (report-vats our now tick deks filt verb)
 %-  zing
 %+  turn
   %+  sort
-    =/  sed  .^((set desk) %cd /(scot %p p.bec)//(scot %da now))
+    =/  sed  .^((set desk) %cd (en-bema [our %$ [da+now ud+tick]] /))
     (sort ~(tap in sed) |=([a=@ b=@] !(aor a b)))
   |=([a=desk b=desk] ?|(=(a %kids) =(b %base)))
-|=(syd=desk (report-vat (report-prep p.bec now) p.bec now syd verb))
+|=(syd=desk (report-vat (report-prep our now tick) our now tick syd verb))

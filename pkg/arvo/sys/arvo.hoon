@@ -450,10 +450,10 @@
   ^-  omen
   =/  =case  (cose-to-case r.bam.o)
   o(r.bam case)
-::  +en-peck: (re)write the tick in a path
+::  +en-pick: (re)write the tick in a path
 ::
-++  en-peck
-  |=  [pax=path now=@da tick=@ud]
+++  en-pick
+  |=  [now=@da tick=@ud pax=path]
   ^-  path
   ?~  bam=(de-bema pax)
     pax
@@ -461,6 +461,14 @@
   ?.  =(da+now case)
     pax
   (en-bema u.bam(r [da+now ud+tick]))
+::  +de-pick: remove the tick in a path
+::
+++  de-pick
+  |=  pax=path
+  ^-  path
+  ?~  bam=(de-bema pax)
+    pax
+  (en-beam u.bam(r (cose-to-case r.u.bam)))
 ::
 ++  rant
   |=  a=(list [char=@tD *])

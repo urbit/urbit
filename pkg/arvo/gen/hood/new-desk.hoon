@@ -3,14 +3,15 @@
 /+  *generators
 ::
 :-  %ask
-|=  $:  [now=@da eny=@uvJ bek=beak]
+|=  $:  [now=@da tick=@ud @ our=@p ^]
         [=desk ~]
         [from=$~(%base desk) hard=_| gall=_|]
     ==
 ::
 =;  make-new-desk
+  =+  .^(desks=(set ^desk) %cd (en-bema [our %$ [da+now ud+tick]] /))
   ?.  ?&  !hard
-          (~(has in .^((set ^desk) %cd (en-beam bek(q %$) /))) desk)
+          (~(has in desks) desk)
       ==
     (make-new-desk)
   %+  print    (rap 3 'the desk %' desk ' already exists. overwrite it?' ~)
@@ -51,11 +52,5 @@
   ^-  page:clay
   :-  (rear path)
   ~|  [%missing-source-file from path]
-  .^  *
-    %cx
-    (scot %p p.bek)
-    from
-    (scot %da now)
-    path
-  ==
+  .^(* %cx (en-bema [our from [da+now ud+tick]] path))
 --

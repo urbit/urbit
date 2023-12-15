@@ -7,8 +7,5 @@
 ::::
   ::
 :-  %say
-|=  $:  [now=@da eny=@uvJ bec=beak]
-        [arg=[syd=@tas her=@p sud=@tas ~] ~]
-    ==
-:-  %kiln-unsync
-[syd her sud]:arg
+|=  [^ [syd=@tas her=@p sud=@tas ~] ~]
+[%kiln-unsync [syd her sud]]

@@ -7,8 +7,5 @@
 ::::
   ::
 :-  %say
-|=  $:  [now=@da eny=@uvJ bec=beak]
-        [recur=@dr ~]
-        ~
-    ==
+|=  [^ [recur=@dr ~] ~]
 [%helm-automass recur]

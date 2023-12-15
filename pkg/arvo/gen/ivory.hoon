@@ -8,13 +8,13 @@
 ::::
   !:
 :-  %say
-|=  $:  [now=@da eny=@uvJ bec=beak]
+|=  $:  [now=@da tick=@ud @ bec=beak]
         arg=$@(~ [top=path ~])
         ~
     ==
 :-  %noun
 ^-  pill:pill
 =/  sys=path
-  ?^  arg  top.arg
-  /(scot %p p.bec)/[q.bec]/(scot %da now)/sys
+  ?^  arg  (en-pick now tick top.arg)
+  (en-bema [p.bec q.bec [da+now ud+tick]] /sys)
 (ivory:pill sys)

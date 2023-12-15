@@ -6,19 +6,18 @@
 /-  *sole
 /+  *generators
 :-  %ask
-|=  $:  [now=@da eny=@uvJ bec=beak]
+|=  $:  [now=@da tick=@ud @ our=@p ^]
         [arg=?(~ [%reset ~]) ~]
     ==
-=*  our  p.bec
 ^-  (sole-result [%helm-code ?(~ %reset)])
 ?~  arg
   =/  code=tape
     %+  slag  1
     %+  scow  %p
-    .^(@p %j /(scot %p our)/code/(scot %da now)/(scot %p our))
+    .^(@p %j (en-bema [our %code [da+now ud+tick]] /(scot %p our)))
   =/  step=tape
     %+  scow  %ud
-    .^(@ud %j /(scot %p our)/step/(scot %da now)/(scot %p our))
+    .^(@ud %j (en-bema [our %step [da+now ud+tick]] /(scot %p our)))
   ::
   %+  print  'use |code %reset to invalidate this and generate a new code'
   %+  print  leaf+(weld "current step=" step)

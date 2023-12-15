@@ -359,7 +359,7 @@
     %-  emit
     :^  %pass  /kiln/permission  %arvo
     [%c %perm i.dez / %r `[%black ~]]
-  =/  src  (get-publisher our i.dez now)
+  =/  src  (get-publisher our i.dez now tick)
   =?  ..on-init  &(?=(^ src) !=(our u.src))
     abet:init:(sync i.dez u.src i.dez)
   $(dez t.dez)
@@ -445,7 +445,7 @@
     :-  d
     :_  rein.a
     ?~  rail.a  ~
-    `[(get-publisher our d now) u.rail.a]
+    `[(get-publisher our d now tick) u.rail.a]
   ::
   =?  old  ?=(%8 -.old)
     [%9 +.old]
@@ -519,7 +519,7 @@
     ``loob+!>(.^(? //(scot %p our)//(scot %da now)/zen/lag))
   ::
       [%x %kiln %base-hash ~]
-    =/  ver  (mergebase-hashes our %base now (~(got by sources) %base))
+    =/  ver  (mergebase-hashes our %base now tick (~(got by sources) %base))
     ``noun+!>(?~(ver 0v0 i.ver))
   ::
       [%x %kiln %jumps ~]      ``kiln-jump+!>([%all hop])
@@ -629,7 +629,7 @@
 ++  poke-bump
   |=  ~
   =<  abet
-  =+  .^(=rock:tire %cx /(scot %p our)//(scot %da now)/tire)
+  =+  .^(=rock:tire %cx /(scot %p our)//(en-cose da+now ud+tick)/tire)
   =/  wic
     %+  sort  ~(tap by wic:(~(got by rock) %base))
     |=  [[* a=@ud] [* b=@ud]]
@@ -760,7 +760,7 @@
 ::
 ++  poke-install
   |=  [loc=desk her=ship rem=desk]
-  =+  .^(=rock:tire %cx /(scot %p our)//(scot %da now)/tire)
+  =+  .^(=rock:tire %cx /(scot %p our)//(en-cose da+now ud+tick)/tire)
   =/  =zest
     ?~  got=(~(get by rock) loc)
       %dead
@@ -891,7 +891,7 @@
   ?.  desk
     (emit %pass /nuke %arvo %g [%nuke term])
   %-  emil
-  %+  turn  (get-apps-have our term now)
+  %+  turn  (get-apps-have our term now tick)
   |=([=dude ?] [%pass /nuke %arvo %g [%nuke dude]])
 ::
 ++  poke-pause
@@ -917,6 +917,7 @@
 ::
 ++  poke-rm
   |=  a=path
+  =.  a  (en-pick now tick a)
   =|  c=(list (unit toro))
   %+  poke-info  "removed: {<a>}"
   =-  %+  roll  -
@@ -944,12 +945,14 @@
 ::
 ++  poke-suspend-many
   |=  desks=(list desk)
+  =/  all-desks
+    .^((set desk) %cd (en-bema [our %$ [da+now ud+tick]] /))
   =<  abet
   %-  emil
   %+  turn
     %+  skim  desks
     |=  dek=desk
-    ?:  (~(has in .^((set desk) %cd /(scot %p our)//(scot %da now))) dek)
+    ?:  (~(has in all-desks) dek)
       &  
     ~>  %slog.(fmt "desk does not yet exist: {<dek>}")  |   
   |=(=desk [%pass /kiln/suspend %arvo %c %zest desk %dead])
@@ -989,7 +992,7 @@
 ::
 ++  poke-uninstall
   |=  loc=desk
-  =+  .^(=rock:tire %cx /(scot %p our)//(scot %da now)/tire)
+  =+  .^(=rock:tire %cx (en-bema [our %$ [da+now ud+tick]] /tire))
   ?~  got=(~(get by rock) loc)
     abet:(spam leaf+"desk does not exist: {<loc>}" ~)
   ~>  %slog.(fmt "uninstalling {<loc>}")
@@ -1386,12 +1389,12 @@
       =.  let  +(let)
       ::  If nothing changed, just ensure %kids is up-to-date and advance
       ::
-      ?.  (get-remote-diff our syd now [her sud (dec let)])
+      ?.  (get-remote-diff our syd now tick [her sud (dec let)])
         =<  next:drop
         ?~  kid
           ~>  %slog.(fmt "remote is identical to {here}, skipping")
           ..abet
-        ?.  (get-remote-diff our u.kid now [her sud (dec let)])
+        ?.  (get-remote-diff our u.kid now tick [her sud (dec let)])
           ~>  %slog.(fmt "remote is identical to {here}, skipping")
           ..abet
         ~>  %slog.(fmt "remote is identical to {here}, merging into {<u.kid>}")
@@ -1482,7 +1485,7 @@
     ^+  +>
     ?.  ?=(%auto gim)
       perform(auto |, gem gim, her her, cas cas, sud sud)
-    ?:  =(0 ud:.^(cass:clay %cw /(scot %p our)/[syd]/(scot %da now)))
+    ?:  =(0 ud:.^(cass:clay %cw /(scot %p our)/[syd]/(en-cose da+now ud+tick)))
       =>  $(gim %init)
       .(auto &)
     =>  $(gim %fine)
