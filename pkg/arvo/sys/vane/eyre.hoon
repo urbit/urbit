@@ -4148,70 +4148,70 @@
     ``noun+!>(u.val)
   :: private endpoints
   ?.  ?=([~ ~] lyc)  ~
-    ?:  &(?=(%x ren) ?=(%$ syd))
-      =,  server-state.ax
-      ?+  tyl  ~
-        [%$ %whey ~]         =-  ``mass+!>(`(list mass)`-)
-                             :~  bindings+&+bindings.server-state.ax
-                                 auth+&+auth.server-state.ax
-                                 connections+&+connections.server-state.ax
-                                 channels+&+channel-state.server-state.ax
-                                 axle+&+ax
-                             ==
-      ::
-        [%cors ~]            ``noun+!>(cors-registry)
-        [%cors %requests ~]  ``noun+!>(requests.cors-registry)
-        [%cors %approved ~]  ``noun+!>(approved.cors-registry)
-        [%cors %rejected ~]  ``noun+!>(rejected.cors-registry)
-      ::
-          [%cors ?(%approved %rejected) @ ~]
-        =*  kind  i.t.tyl
-        =*  orig  i.t.t.tyl
-        ?~  origin=(slaw %t orig)  [~ ~]
-        ?-  kind
-          %approved  ``noun+!>((~(has in approved.cors-registry) u.origin))
-          %rejected  ``noun+!>((~(has in rejected.cors-registry) u.origin))
-        ==
-      ::
-          [%authenticated %cookie @ ~]
-        ?~  cookies=(slaw %t i.t.t.tyl)  [~ ~]
-        :^  ~  ~  %noun
-        !>  ^-  ?
-        %-  =<  request-is-authenticated:authentication
-            (per-server-event [eny *duct now rof] server-state.ax)
-        %*(. *request:http header-list ['cookie' u.cookies]~)
-      ::
-          [%'_~_' *]
-        =/  mym  (scry-mime now rof (deft:de-purl:html tyl))
-        ?:  ?=(%| -.mym)  [~ ~]
-        ``noun+!>(p.mym)
+  ?:  &(?=(%x ren) ?=(%$ syd))
+    =,  server-state.ax
+    ?+  tyl  ~
+      [%$ %whey ~]         =-  ``mass+!>(`(list mass)`-)
+                           :~  bindings+&+bindings.server-state.ax
+                               auth+&+auth.server-state.ax
+                               connections+&+connections.server-state.ax
+                               channels+&+channel-state.server-state.ax
+                               axle+&+ax
+                           ==
+    ::
+      [%cors ~]            ``noun+!>(cors-registry)
+      [%cors %requests ~]  ``noun+!>(requests.cors-registry)
+      [%cors %approved ~]  ``noun+!>(approved.cors-registry)
+      [%cors %rejected ~]  ``noun+!>(rejected.cors-registry)
+    ::
+        [%cors ?(%approved %rejected) @ ~]
+      =*  kind  i.t.tyl
+      =*  orig  i.t.t.tyl
+      ?~  origin=(slaw %t orig)  [~ ~]
+      ?-  kind
+        %approved  ``noun+!>((~(has in approved.cors-registry) u.origin))
+        %rejected  ``noun+!>((~(has in rejected.cors-registry) u.origin))
       ==
-    ?.  ?=(%$ ren)  ~
-    ?+  syd  ~
-      %bindings              ``noun+!>(bindings.server-state.ax)
-      %connections           ``noun+!>(connections.server-state.ax)
-      %authentication-state  ``noun+!>(auth.server-state.ax)
-      %channel-state         ``noun+!>(channel-state.server-state.ax)
-      ::
-        %host
-      %-  (lift (lift |=(a=hart:eyre [%hart !>(a)])))
-      ^-  (unit (unit hart:eyre))
-      =.  p.lot  ?.(=([%da now] p.lot) p.lot [%tas %real])
-      ?+  p.lot
-        [~ ~]
-      ::
-          [%tas %fake]
-        ``[& [~ 8.443] %& /localhost]
-      ::
-          [%tas %real]
-        =*  domains  domains.server-state.ax
-        =*  ports  ports.server-state.ax
-        =/  =host:eyre  [%& ?^(domains n.domains /localhost)]
-        =/  port=(unit @ud)
-          ?.  ?=(^ secure.ports)
-            ?:(=(80 insecure.ports) ~ `insecure.ports)
-          ?:(=(443 u.secure.ports) ~ secure.ports)
-        ``[?=(^ secure.ports) port host]
-      ==
+    ::
+        [%authenticated %cookie @ ~]
+      ?~  cookies=(slaw %t i.t.t.tyl)  [~ ~]
+      :^  ~  ~  %noun
+      !>  ^-  ?
+      %-  =<  request-is-authenticated:authentication
+          (per-server-event [eny *duct now rof] server-state.ax)
+      %*(. *request:http header-list ['cookie' u.cookies]~)
+    ::
+        [%'_~_' *]
+      =/  mym  (scry-mime now rof (deft:de-purl:html tyl))
+      ?:  ?=(%| -.mym)  [~ ~]
+      ``noun+!>(p.mym)
     ==
+  ?.  ?=(%$ ren)  ~
+  ?+  syd  ~
+    %bindings              ``noun+!>(bindings.server-state.ax)
+    %connections           ``noun+!>(connections.server-state.ax)
+    %authentication-state  ``noun+!>(auth.server-state.ax)
+    %channel-state         ``noun+!>(channel-state.server-state.ax)
+    ::
+      %host
+    %-  (lift (lift |=(a=hart:eyre [%hart !>(a)])))
+    ^-  (unit (unit hart:eyre))
+    =.  p.lot  ?.(=([%da now] p.lot) p.lot [%tas %real])
+    ?+  p.lot
+      [~ ~]
+    ::
+        [%tas %fake]
+      ``[& [~ 8.443] %& /localhost]
+    ::
+        [%tas %real]
+      =*  domains  domains.server-state.ax
+      =*  ports  ports.server-state.ax
+      =/  =host:eyre  [%& ?^(domains n.domains /localhost)]
+      =/  port=(unit @ud)
+        ?.  ?=(^ secure.ports)
+          ?:(=(80 insecure.ports) ~ `insecure.ports)
+        ?:(=(443 u.secure.ports) ~ secure.ports)
+      ``[?=(^ secure.ports) port host]
+    ==
+  ==
 --
