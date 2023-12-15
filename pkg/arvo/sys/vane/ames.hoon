@@ -496,6 +496,11 @@
     peer-state
   peer-state(direct.u.route %.n)
 ::
+++  poke-ping-app
+  |=  [=duct our=ship poke=?(%stop %once [%kick fail=?])]
+  ^-  move
+  [duct %pass /ping %g %deal [our our /ames] %ping %poke noun+!>(poke)]
+::
 +|  %atomics
 ::
 +$  private-key    @uwprivatekey
@@ -1653,9 +1658,9 @@
               $:  %18
               $%  $:  %larva
                       events=(qeu queued-event-17)
-                      state=ames-state-17
+                      state=ames-state-18
                   ==
-                  [%adult state=ames-state-17]
+                  [%adult state=ames-state-18]
               ==  ==
               $:  %19
               $%  $:  %larva
@@ -2005,6 +2010,11 @@
         ?.  ?=([~ %known *] ship-state)
           *peer-state
         +.u.ship-state
+      ::
+      ++  get-sponsors
+        ;;  (list ship)
+        =<  q.q  %-  need  %-  need
+        (rof ~ /ames %j `beam`[[our %saxo %da now] /(scot %p our)])
       ::
       +|  %tasks
       ::  +on-take-flub: vane not ready to process message, pretend it
@@ -2415,7 +2425,7 @@
         =.  peers.ames-state
           (~(put by peers.ames-state) sndr.shot %known peer-state)
         ::
-        =.  event-core  
+        =.  event-core
           %-  emit
           :*  unix-duct.ames-state  %give  %nail  sndr.shot
               (get-forward-lanes our peer-state peers.ames-state)
@@ -2645,13 +2655,22 @@
         ++  cork-bone  |=(=bone abet:(on-cork-flow:peer-core bone))
         ++  kill-bone  |=(=bone abet:(on-kill-flow:peer-core bone))
         --
+      ::  +on-stun: poke %ping app when hearing a STUN response
+      ::
+      ++  on-stun
+        |=  =stun
+        ^+  event-core
+        %-  emit
+        %^  poke-ping-app  unix-duct.ames-state  our
+        ?.  ?=(%fail -.stun)  -.stun
+        [%kick fail=%.y]
       :: +set-dead-flow-timer: set dead flow timer and corresponding ames state
       ::
       ++  set-dead-flow-timer
         ^+  event-core
         =.  flow.dead.ames-state.event-core
           flow/`[~[/ames] /dead-flow `@da`(add now ~m2)]
-        (emit:event-core ~[/ames] %pass /dead-flow %b %wait `@da`(add now ~m2))
+        (emit ~[/ames] %pass /dead-flow %b %wait `@da`(add now ~m2))
       :: +wake-dead-flows: call on-wake on all dead flows, discarding any
       ::                   ames-state changes
       ::
@@ -2863,6 +2882,11 @@
             :*  unix-duct.ames-state  %give  %nail  ship
                 (get-forward-lanes our peer-state peers.ames-state)
             ==
+          ::  if one of our sponsors breached, give the updated list to vere
+          ::
+          =/  sponsors  (~(gas in *(set ^ship)) get-sponsors)
+          =?  event-core  (~(has in sponsors) ship)
+            (emit unix-duct.ames-state %give %saxo ~(tap in sponsors))
           ::
           event-core
         ::  +on-publ-rekey: handle new key for peer
@@ -2906,6 +2930,10 @@
         ++  on-publ-sponsor
           |=  [=ship sponsor=(unit ship)]
           ^+  event-core
+          ::
+          ?:  =(our ship)
+            (emit unix-duct.ames-state %give %saxo get-sponsors)
+          ::
           ?~  sponsor
             %-  (slog leaf+"ames: {(scow %p ship)} lost sponsor, ignoring" ~)
             event-core
@@ -2938,6 +2966,9 @@
               =?  rift.ames-state  =(our ship)
                 rift.point
               ::
+              ::  XX not needed?
+              :: =?  event-core  =(our ship)
+              ::   (emit unix-duct.ames-state %give %saxo get-sponsors)
               ?.  (~(has by keys.point) life.point)
                 $(points t.points)
               ::
@@ -3084,7 +3115,8 @@
           cork-moves
         ^-  (list move)
         :~  [duct %give %turf turfs]
-            [duct %pass /ping %g %deal [our our /ames] %ping %poke %noun !>(%kick)]
+            [duct %give %saxo get-sponsors]
+            (poke-ping-app duct our %kick fail=%.n)
         ==
       ::  +on-vega: handle kernel reload
       ::
@@ -5173,6 +5205,7 @@
       %tame  (on-tame:event-core ship.task)
       %kroc  (on-kroc:event-core bones.task)
       %deep  (on-deep:event-core deep.task)
+      %stun  (on-stun:event-core stun.task)
     ::
       %keen  (on-keen:event-core +.task)
       %yawn  (on-cancel-scry:event-core | +.task)

@@ -4780,7 +4780,7 @@
       =+  spa=;~(pose comt whit)
       %+  knee  *manx  |.  ~+
       %+  ifix
-        [;~(plug (punt decl) (star spa)) (star spa)]
+        [;~(plug (more spa decl) (star spa)) (star spa)]
       ;~  pose
         %+  sear  |=([a=marx b=marl c=mane] ?.(=(c n.a) ~ (some [a b])))
           ;~(plug head many tail)
