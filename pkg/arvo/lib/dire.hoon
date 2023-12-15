@@ -105,7 +105,7 @@
   =|  i=@ud
   |-(?:(=(1 (cut 0 [i 1] a)) i $(i +(i))))
 ::
-++  popcount
+++  ham  :: popcount
   |=  a=@
   ?:  =(0 a)  0
   =|  n=@ud
@@ -157,8 +157,8 @@
 ::
 ++  pact
   =>  |%
-      +$  name  [p=ship q=path r=bloq s=num=@ud]
-      +$  data  [tot=@ud aut=@ux dat=@]
+      +$  name  [p=ship q=path r=bloq s=num=@udF]
+      +$  data  [tot=@udF aut=@ux dat=@]
       +$  lane  $@  @ux
                 $%  [%if p=@ifF q=@udE]
                     [%is p=@isH q=@udE]
@@ -187,7 +187,7 @@
         ?^  t.r.pak          0b11
         ?:(?=([%if *] i.r.pak) 0b1 0b10)
       =/  hop  0 :: XX
-      (en:head nex -.pak 0 (mug q:(fax bod)))
+      (en:head nex -.pak hop (mug q:(fax bod)))
     [hed bod]
   ::
   ++  de
@@ -318,7 +318,7 @@
     =/  typ  (dec (met 3 p.tap))
     =/  loq  ?:(=(13 boq) 0 1)
     =/  fag  =-([p=(met 3 -) q=-] (end 5 num))
-    =/  byt  (can 0 [2 0] [2 ran] [1 typ] [1 loq] [2 p.fag] ~)
+    =/  byt  (can 0 [2 0] [2 ran] [1 typ] [1 loq] [2 (dec p.fag)] ~)
     (can 3 [1 byt] [(bex +(ran)) her] [+(typ) p.tap] tap [loq (end 3 boq)] fag ~)
   ::
   ++  en
@@ -331,7 +331,7 @@
     =/  loq  ?:(=(13 boq) 0 1)
     =/  fag  =-([p=(met 3 -) q=-] (end 5 num))
     :+  bloq=3
-      [s+~ 0 [2 0] [2 ran] [1 typ] [1 loq] [2 p.fag] ~]
+      [s+~ 0 [2 0] [2 ran] [1 typ] [1 loq] [2 (dec p.fag)] ~]
     [[(bex +(ran)) her] [+(typ) p.tap] tap [loq (end 3 boq)] fag ~]
   ::
   ++  len
@@ -342,7 +342,7 @@
     =/  len  +((bex +(ran)))
     =/  nex  +(typ)
     =/  tap  (cut 3 [len nex] pat)
-    :(add len nex tap loq fag)
+    :(add len nex tap loq +(fag))
   ::
   ++  de
     |=  a=bite
@@ -368,16 +368,16 @@
       ==
     =/  boq  ?~(loq 13 (cut 3 [len nex] pat))
     =:  len  (add len nex)
-        nex  fag
+        nex  +(fag)
       ==
     [[her tap boq (cut 3 [len nex] pat)] 3 (add len nex)]
   --
 ::
 ::  +data: response data
 ::
-::  range:  { meta[1], tot[2^0-3], lut[0-1], aut[0-255], len[0-32], dat[0-2^2^32] }
-::  max:    { meta[1], tot[8],     lut[1],   aut[255],   len[32],   dat[2^2^32]   }
-::  actual: { meta[1], tot[4],     lut[1],   aut[96],    len[2],    dat[0-1024]   }
+::  range:  { meta[1], tot[1-4], lut[0-1], aut[0-255], len[0-32], dat[0-2^252-1] }
+::  max:    { meta[1], tot[4],   lut[1],   aut[255],   len[32],   dat[2^252-1]   }
+::  actual: { meta[1], tot[4],   lut[1],   aut[96],    len[2],    dat[0-2^10-1]  }
 ::
 ::    > :(add 1 4 1 96 2 1.024)
 ::    1.128
@@ -385,48 +385,48 @@
 ++  data
   |%
   ++  manual
-    |=  [tot=@ud aut=@ux dat=@]
-    =/  mot  (dec (met 0 (met 3 (end 6 tot))))
+    |=  [tot=@udF aut=@ux dat=@]
+    =/  mot  (met 3 (end 5 tot))
     =/  mut  ?:(=(0 aut) 0 1)
     =/  lut  (end 3 (met 3 aut))
     =/  len  (met 3 dat)
     =/  men  (met 3 len)
     =/  byt
-      (can 0 [2 mot] [1 mut] [5 men] ~)
-    (can 3 [1 byt] [(bex mot) tot] [mut lut] [lut aut] [men len] [len dat] ~)
+      (can 0 [2 (dec mot)] [1 mut] [5 men] ~)
+    (can 3 [1 byt] [mot tot] [mut lut] [lut aut] [men len] [len dat] ~)
   ::
   ++  en
-    |=  [tot=@ud aut=@ux dat=@]
+    |=  [tot=@udF aut=@ux dat=@]
     ^-  plot
-    =/  mot  (dec (met 0 (met 3 (end 6 tot))))
+    =/  mot  (met 3 (end 5 tot))
     =/  mut  ?:(=(0 aut) 0 1)
     =/  lut  (end 3 (met 3 aut))
     =/  len  (met 3 dat)
     =/  men  (met 3 len)
     :+  bloq=3
-      [s+~ 0 [2 mot] [1 mut] [5 men] ~]
-    [[(bex mot) tot] [mut lut] [lut aut] [men len] [len dat] ~]
+      [s+~ 0 [2 (dec mot)] [1 mut] [5 men] ~]
+    [[mot tot] [mut lut] [lut aut] [men len] [len dat] ~]
   ::
   ++  len
     |=  dat=@
     ^-  @ud
-    =+  [mot mut men]=-:((hew 0 dat) [2 1 5])
-    =/  tob  +((bex mot))
-    =+  [len nex]=[tob mut]
+    =+  [bot mut men]=-:((hew 0 dat) [2 1 5])
+    =/  mot  +(bot)
+    =+  [len nex]=[mot mut]
     =/  lut  (cut 3 [len nex] dat)
     =:  len  :(add len nex lut)
         nex  men
       ==
     =/  lat  (cut 3 [len nex] dat)
-    :(add tob mut lut men lat)
+    :(add mot mut lut men lat)
   ::
   ++  de
     |=  a=bite
     =/  b=[bloq step]  [0 ?@(a 0 (rig [bloq.a 0] step.a))]
     |=  dat=@
-    ^-  [[tot=@ud aut=@ux dat=@] bloq step]
-    =+  ^=  [[mot mut men] b]  ((hew b dat) [2 1 5])
-    =+  ^=  [len nex]          [(rig [bloq.b 3] step.b) (bex mot)]
+    ^-  [[tot=@udF aut=@ux dat=@] bloq step]
+    =+  ^=  [[bot mut men] b]  ((hew b dat) [2 1 5])
+    =+  ^=  [len nex]          [(rig [bloq.b 3] step.b) +(bot)]
     =/  tot  (cut 3 [len nex] dat)
     =:  len  (add len nex)
         nex  mut
