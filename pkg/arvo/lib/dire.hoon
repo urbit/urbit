@@ -152,7 +152,7 @@
 ::
 +|  %packets
 ::
-::    > :(add 4 340 1.128)
+::    > :(add 8 336 1.128)
 ::    1.472
 ::
 ++  pact
@@ -221,17 +221,20 @@
     |=  [nex=@B typ=?(%page %peek %poke) hop=@ gum=@F]
     ^-  plot
     =/  tip  ?-(typ %page 0b1, %peek 0b10, %poke 0b11)
+    =.  hop  (max 7 hop)
+    =*  tok  [32 ~tasfyn-partyv]
     :-  bloq=0
-    [[2 0] [2 nex] [3 ver=1] [2 tip] [3 (max 7 hop)] [20 gum] ~]
+    [[2 0] [2 nex] [3 ver=1] [2 tip] [3 hop] [20 gum] tok ~]
   ::
   ++  de
     |=  a=bite
     =/  b=[bloq step]  [0 ?@(a 0 (rig [bloq.a 0] step.a))]
     |=  dat=@
     ^-  [[nex=@B typ=?(%page %peek %poke) hop=@ gum=@F] bloq step]
-    =+  [[res nex ver tip hop gum] b]=((hew b dat) [2 2 3 2 3 20])
+    =+  [[res nex ver tip hop gum tok] b]=((hew b dat) [2 2 3 2 3 20 32])
     ?>  =(0 res)
     ?>  =(1 ver)
+    ?>  =(~tasfyn-partyv tok)
     =/  typ  ?+(tip !! %0b1 %page, %0b10 %peek, %0b11 %poke)
     [[nex typ hop gum] b]
   --
@@ -307,6 +310,7 @@
 ::
 ::    > :(add 1 16 2 317 4)
 ::    340
+::    XX s/b 336
 ::
 ++  name
   |%
