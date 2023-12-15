@@ -714,7 +714,7 @@
   :_  ~
   %+  expect-eq  !>(moves2)
   !>  ^-  (list move:ames)
-  :~  [~[/g/talk] [%pass /fine/shut/1 [%a [%keen sec=~ ship=~nec path=/a/x/1//fine/shut/1/0v2f.7puc8.obvvn.b9ocp.4mhbm.q6v22.8d012.o68bo.mt35s.snb4m.hnnul.e6o8g.ebr01]]]]
+  :~  [~[/g/talk] [%pass /fine/shut/1 [%a [%keen sec=~ ship=~nec path=/a/x/1//fine/shut/1/0v1.vvaek.7boon.0tp04.21q1h.be1i0.494an.qimof.e2fku.ern01]]]]
   ==
 ::
 --
