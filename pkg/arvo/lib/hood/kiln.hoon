@@ -755,7 +755,10 @@
 ::
 ++  poke-rein
   |=  [=desk =rein]
-  abet:(emit %pass /kiln/rein %arvo %c %rein desk rein)
+  ?:  .^(? %cu /(scot %p our)/[desk]/(scot %da now)/desk/bill)
+    abet:(emit %pass /kiln/rein %arvo %c %rein desk rein)
+  =<  abet  %-  spam
+  ~[leaf+"kiln: rein not updated due to missing desk.bill on {<desk>}"]
 ::
 ++  poke-revive
   |=  =desk
