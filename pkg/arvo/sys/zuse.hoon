@@ -2361,13 +2361,13 @@
       =<
         =<  hash  :: cuter API
         =+  [cv=iv flags=0b0]
-        ^?  ~%  %blake3  ..output  ~
+        ^?  ~/  %blake3
         |%
         ::
         ++  keyed  |=(key=octs hash(cv q.key, flags f-keyedhash))
         ::
         ++  hash
-          ~%  %hash  ..hash  ~
+          ~/  %hash
           |=  [out=@ud msg=octs]
           ^-  @ux
           =/  root  (root-output (turn (split-octs 13 msg) chunk-output))
@@ -2395,7 +2395,7 @@
           [cv 0 (rep 8 ~[l r]) 64 flags]
         ::
         ++  chunk-output
-          ~%  %chunk-output  ..chunk-output  ~
+          ~/  %chunk-output
           |=  [counter=@ chunk=octs]
           ^-  output
           %+  set-flag  f-chunkend
@@ -2416,7 +2416,7 @@
         ==
       ::
       ++  compress
-        ~%  %compress  ..compress  ~
+        ~/  %compress
         |=  output
         ^-  @
         |^
