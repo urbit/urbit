@@ -867,7 +867,8 @@
       |.  ^-  vase
       =/  gat=vase  (slot 3 q.cay)
       =/  som=vase  (slot 6 gat)
-      =/  ven=vase  !>([now=now.hid tick=tick.hid eny=eny.hid bec=he-beak(q.dir desk])
+      =/  ven=vase
+        !>([now=now.hid tick=tick.hid eny=eny.hid bec=he-beak(q.dir desk)])
       =/  poz=vase  (dy-sore p.cig)
       =/  kev=vase
         =/  kuv=(unit vase)  (slew 7 som)
