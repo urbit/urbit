@@ -1006,9 +1006,10 @@
       %.y
     ?~  (~(get-hutch of-farm farm) path)
       %.y
+    ?:  ?=(~ lyc)
+      %.n
     ?~  coop=(~(match-coop of-farm farm) path)
       %.n
-    ?<  ?=(~ lyc)
     (mo-authorized-coop u.lyc farm dap path u.coop)
   ::  +mo-peek:  call to +ap-peek (which is not accessible outside of +mo).
   ::
