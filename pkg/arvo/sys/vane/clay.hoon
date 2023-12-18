@@ -5934,6 +5934,7 @@
   ::
   =/  for=(unit ship)  ?~(lyc ~ ?~(u.lyc ~ `n.u.lyc))
   ?:  &(=(our his) ?=(?(%d %x) ren) =(%$ syd) =([%da now] u.luk))
+    ?.  =([~ ~] lyc)  ~
     ?-  ren
       %d  (read-buc-d tyl)
       %x  (read-buc-x tyl)

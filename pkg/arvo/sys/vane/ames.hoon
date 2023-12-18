@@ -2006,7 +2006,7 @@
         %+  skim
           ;;  (list [@da duct])
           =<  q.q  %-  need  %-  need
-          (rof ~ /ames %bx [[our %$ da+now] /debug/timers])
+          (rof [~ ~] /ames %bx [[our %$ da+now] /debug/timers])
         |=([@da =duct] ?=([[%ames %recork *] *] duct))
       ::
       =^  moz  u.cached-state
@@ -2078,7 +2078,7 @@
       ++  get-sponsors
         ;;  (list ship)
         =<  q.q  %-  need  %-  need
-        (rof ~ /ames %j `beam`[[our %saxo %da now] /(scot %p our)])
+        (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p our)])
       ::
       +|  %tasks
       ::  +on-take-flub: vane not ready to process message, pretend it
@@ -2273,7 +2273,7 @@
         ++  do-rift
           =/  =rift
             =-  ~|(%no-rift (,@ q.q:(need (need -))))
-            (rof ~ /ames %j `beam`[[our %rift %da now] /(scot %p our)])
+            (rof [~ ~] /ames %j `beam`[[our %rift %da now] /(scot %p our)])
           ?:  =(rift rift.ames-state)
             event-core
           ~&  "ames: fixing rift from {<rift.ames-state>} to {<rift>}"
@@ -2298,7 +2298,7 @@
             =/  tim
               ;;  (list [@da ^duct])
               =<  q.q  %-  need  %-  need
-              (rof ~ /ames %bx [[our %$ da+now] /debug/timers])
+              (rof [~ ~] /ames %bx [[our %$ da+now] /debug/timers])
             (skim tim |=([@da hen=^duct] ?=([[%ames ?(%pump %recork) *] *] hen)))
           ::
           ::  set timers for flows that should have one set but don't
@@ -3208,7 +3208,7 @@
         =/  turfs
           ;;  (list turf)
           =<  q.q  %-  need  %-  need
-          (rof ~ /ames %j `beam`[[our %turf %da now] /])
+          (rof [~ ~] /ames %j `beam`[[our %turf %da now] /])
         ::
         =*  duct  unix-duct.ames-state
         ::
@@ -3288,9 +3288,6 @@
       ++  on-chum
         |=  spar
         ^+  event-core
-        ?:  =(0 0)
-          ~>  %slog.0^leaf/"ames: %chum is disabled, do not use"
-          event-core
         =/  ship-state  (~(get by peers.ames-state) ship)
         ?.  ?=([~ %known *] ship-state)
           %^  enqueue-alien-todo  ship  ship-state
@@ -5443,7 +5440,7 @@
       ?:  ?=(%pawn (clan:title ship))  0
       ;;  @ud
       =<  q.q  %-  need  %-  need
-      (rof ~ /ames %j `beam`[[our %rift %da now] /(scot %p ship)])
+      (rof [~ ~] /ames %j `beam`[[our %rift %da now] /(scot %p ship)])
     :-   -.ship-state
     :_  +.peer-state
     =,  -.peer-state
@@ -5524,7 +5521,7 @@
   ++  state-12-to-13
     |=  old=ames-state-12
     ^-  ames-state-13
-    =+  !<(=rift q:(need (need (rof ~ /ames %j our-beam))))
+    =+  !<(=rift q:(need (need (rof [~ ~] /ames %j our-beam))))
     =+  pk=sec:ex:crypto-core.old
     :*  peers=(~(run by peers.old) ship-state-12-to-13)
         unix-duct.old
@@ -5566,7 +5563,7 @@
   ++  state-14-to-15
     |=  old=ames-state-14
     ^-  ames-state-15
-    old(rift !<(=rift q:(need (need (rof ~ /ames %j our-beam)))))
+    old(rift !<(=rift q:(need (need (rof [~ ~] /ames %j our-beam)))))
   ::
   ++  state-15-to-16
     |=  old=ames-state-15
@@ -5719,8 +5716,6 @@
       `@uv`(en:crub:crypto -.u.key (jam [p q.q]:u.u.res))
     ::
         [%chum her=@ lyf=@ cyf=@ ~]
-      ?:  =(1 1) :: stubbed until gang used properly
-        ~
       =/  who  (slaw %p her.tyl)
       =/  lyf  (slaw %ud lyf.tyl)
       =/  cyf  (slaw %uv cyf.tyl)
@@ -5731,7 +5726,7 @@
         ~
       =/  bal=(unit balk)
         ?~  tex=(de:crub:crypto symmetric-key.u.per u.cyf)  ~
-        ?~  pax=(mole |.((,path (cue u.tex))))              ~
+        ?~  pax=(rush u.tex stap)                           ~
         (de-part:balk our 0 0 u.pax)
       ?~  bal
         [~ ~]
@@ -5771,108 +5766,8 @@
   ::
   ?.  ?=(%x ren)  ~
   =>  .(tyl `(pole knot)`tyl)
-  ?+    tyl  ~
-      [%$ %whey ~]
-    =/  maz=(list mass)
-      =+  [known alien]=(skid ~(val by peers.ames-state) |=(^ =(%known +<-)))
-      :~  peers-known+&+known
-          peers-alien+&+alien
-      ==
-    ``mass+!>(maz)
-  ::
-      [%protocol %version ~]
-    ``noun+!>(protocol-version)
-  ::
-      [%chain %latest ~]
-    ?:  ?=(?(~ [~ ~]) lyc)
-      [~ ~]
-    ``noun+!>(`[idx=@ key=@ =path]`(need (ram:on:chain chain.ames-state)))
-  ::
-      [%chain idx=@ ~]
-    ?:  ?=(?(~ [~ ~]) lyc)
-      [~ ~]
-    ?~  idx=(slaw %ud idx.tyl)
-      [~ ~]
-    ?~  key=(get:on:chain chain.ames-state u.idx)
-      [~ ~]
-    ``noun+!>(`[idx=@ key=@]`[u.idx key.u.key])
-  ::
-      [%peers ~]
-    :^  ~  ~  %noun
-    !>  ^-  (map ship ?(%alien %known))
-    (~(run by peers.ames-state) head)
-  ::
-      [%peers her=@ req=*]
-    =/  who  (slaw %p her.tyl)
-    ?~  who  [~ ~]
-    =/  peer  (~(get by peers.ames-state) u.who)
-    ?+    req.tyl  [~ ~]
-        ~
-      ?~  peer
-        [~ ~]
-      ``noun+!>(u.peer)
-    ::
-        [%last-contact ~]
-      :^  ~  ~  %noun
-      !>  ^-  (unit @da)
-      ?.  ?=([~ %known *] peer)
-        ~
-      `last-contact.qos.u.peer
-    ::
-        [%forward-lane ~]
-      ::
-      ::  this duplicates the routing hack from +send-blob:event-core
-      ::  so long as neither the peer nor the peer's sponsoring galaxy is us,
-      ::  and the peer has been reached recently:
-      ::
-      ::    - no route to the peer, or peer has not been contacted recently:
-      ::      send to the peer's sponsoring galaxy
-      ::    - direct route to the peer: use that
-      ::    - indirect route to the peer: send to both that route and the
-      ::      the peer's sponsoring galaxy
-      ::
-      :^  ~  ~  %noun
-      !>  ^-  (list lane)
-      ?:  =(our u.who)
-        ~
-      ?:  ?=([~ %known *] peer)
-        (get-forward-lanes our +.u.peer peers.ames-state)
-      =/  sax  (rof ~ /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
-      ?.  ?=([~ ~ *] sax)
-        ~
-      =/  gal  (rear ;;((list ship) q.q.u.u.sax))
-      ?:  =(our gal)
-        ~
-      [%& gal]~
-    ==
-  ::
-      [%bones her=@ ~]
-    =/  who  (slaw %p her.tyl)
-    ?~  who  [~ ~]
-    =/  per  (~(get by peers.ames-state) u.who)
-    ?.  ?=([~ %known *] per)  [~ ~]
-    =/  res
-      =,  u.per
-      [snd=~(key by snd) rcv=~(key by rcv)]
-    ``noun+!>(res)
-  ::
-      [%snd-bones her=@ bon=@ ~]
-    =/  who  (slaw %p her.tyl)
-    ?~  who  [~ ~]
-    =/  ost  (slaw %ud bon.tyl)
-    ?~  ost  [~ ~]
-    =/  per  (~(get by peers.ames-state) u.who)
-    ?.  ?=([~ %known *] per)  [~ ~]
-    =/  mps  (~(get by snd.u.per) u.ost)
-    ?~  mps  [~ ~]
-    =/  res
-      u.mps
-    ``noun+!>(!>(res))
-  ::
-      [%snubbed ~]
-    ``noun+!>([form.snub.ames-state ~(tap in ships.snub.ames-state)])
-  ::
-      [%fine %hunk lop=@t len=@t pax=^]
+  ::  public endpoints
+  ?:  ?=([%fine %hunk lop=@t len=@t pax=^] tyl)
     ::TODO  separate endpoint for the full message (instead of packet list)
     ::  .pax is expected to be a scry path of the shape /vc/desk/rev/etc,
     ::  so we need to give it the right shape
@@ -5886,33 +5781,15 @@
     |^
     =/  van  ?@(vis.nom (end 3 vis.nom) way.vis.nom)
     =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
-    ?+    van  ~
-        %a
-      ?+  kyr  ~
-        %x  (en-hunk (rof lyc /ames nom))
-      ==
-    ::
-        %c
-      =+  pem=(rof lyc /ames nom(vis %cp))
-      ?.  ?=(^ pem)    ~
-      ?.  ?=(^ u.pem)  ~
-      ~|  u.u.pem
-      =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
-      ?.  =([%black ~ ~] rul.r.per)  ~
+    ?.  =(%c van)
       (en-hunk (rof ~ /ames nom))
-    ::
-        %e
-      %-  en-hunk
-      ?+  kyr  ~
-        %x  (rof ~ /ames nom)
-      ==
-    ::
-        %g
-      %-  en-hunk
-      ?+  kyr  ~
-        %x  (rof ~ /ames nom)
-      ==
-    ==
+    =+  pem=(rof [~ ~] /ames nom(vis %cp))
+    ?.  ?=(^ pem)    ~
+    ?.  ?=(^ u.pem)  ~
+    ~|  u.u.pem
+    =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
+    ?.  =([%black ~ ~] rul.r.per)  ~
+    (en-hunk (rof [~ ~] /ames nom))
     ::
     ++  en-hunk
       |=  res=(unit (unit cage))
@@ -5926,34 +5803,135 @@
         [~ ~ *]  ``noun+!>((etch-open:hu-co pax.tyl hunk [p q.q]:u.u.res))
       ==
     --
+  ::  private endpoints
+  ?.  =([~ ~] lyc)  ~
+    ?+    tyl  ~
+        [%$ %whey ~]
+      =/  maz=(list mass)
+        =+  [known alien]=(skid ~(val by peers.ames-state) |=(^ =(%known +<-)))
+        :~  peers-known+&+known
+            peers-alien+&+alien
+        ==
+      ``mass+!>(maz)
+     ::
+        [%chain %latest ~]
+      ``noun+!>(`[idx=@ key=@ =path]`(need (ram:on:chain chain.ames-state)))
+     ::
+        [%chain idx=@ ~]
+      ?~  idx=(slaw %ud idx.tyl)
+        [~ ~]
+      ?~  key=(get:on:chain chain.ames-state u.idx)
+        [~ ~]
+      ``noun+!>(`[idx=@ key=@]`[u.idx key.u.key])
+     ::
+        [%peers ~]
+      :^  ~  ~  %noun
+      !>  ^-  (map ship ?(%alien %known))
+      (~(run by peers.ames-state) head)
+    ::
+        [%peers her=@ req=*]
+      =/  who  (slaw %p her.tyl)
+      ?~  who  [~ ~]
+      =/  peer  (~(get by peers.ames-state) u.who)
+      ?+    req.tyl  [~ ~]
+          ~
+        ?~  peer
+          [~ ~]
+        ``noun+!>(u.peer)
+      ::
+          [%last-contact ~]
+        :^  ~  ~  %noun
+        !>  ^-  (unit @da)
+        ?.  ?=([~ %known *] peer)
+          ~
+        `last-contact.qos.u.peer
+      ::
+          [%forward-lane ~]
+        ::
+        ::  this duplicates the routing hack from +send-blob:event-core
+        ::  so long as neither the peer nor the peer's sponsoring galaxy is us,
+        ::  and the peer has been reached recently:
+        ::
+        ::    - no route to the peer, or peer has not been contacted recently:
+        ::      send to the peer's sponsoring galaxy
+        ::    - direct route to the peer: use that
+        ::    - indirect route to the peer: send to both that route and the
+        ::      the peer's sponsoring galaxy
+        ::
+        :^  ~  ~  %noun
+        !>  ^-  (list lane)
+        ?:  =(our u.who)
+          ~
+        ?:  ?=([~ %known *] peer)
+          (get-forward-lanes our +.u.peer peers.ames-state)
+        =/  sax  (rof ~ /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
+        ?.  ?=([~ ~ *] sax)
+          ~
+        =/  gal  (rear ;;((list ship) q.q.u.u.sax))
+        ?:  =(our gal)
+          ~
+        [%& gal]~
+      ==
+    ::
+        [%bones her=@ ~]
+      =/  who  (slaw %p her.tyl)
+      ?~  who  [~ ~]
+      =/  per  (~(get by peers.ames-state) u.who)
+      ?.  ?=([~ %known *] per)  [~ ~]
+      =/  res
+        =,  u.per
+        [snd=~(key by snd) rcv=~(key by rcv)]
+      ``noun+!>(res)
+    ::
+        [%snd-bones her=@ bon=@ ~]
+      =/  who  (slaw %p her.tyl)
+      ?~  who  [~ ~]
+      =/  ost  (slaw %ud bon.tyl)
+      ?~  ost  [~ ~]
+      =/  per  (~(get by peers.ames-state) u.who)
+      ?.  ?=([~ %known *] per)  [~ ~]
+      =/  mps  (~(get by snd.u.per) u.ost)
+      ?~  mps  [~ ~]
+      =/  res
+        u.mps
+      ``noun+!>(!>(res))
+    ::
+        [%snubbed ~]
+      ``noun+!>([form.snub.ames-state ~(tap in ships.snub.ames-state)])
+    ::
+        [%fine %ducts pax=^]
+      ?~  bulk=(de-path-soft:balk pax.tyl)  ~
+      ?~  peer=(~(get by peers.ames-state) her.u.bulk)
+        [~ ~]
+      ?.  ?=([~ %known *] peer)
+        [~ ~]  :: TODO handle aliens
+      ?~  spr.u.bulk  [~ ~]
+      =/  =path  =,(u.bulk [van car (scot cas) spr])
+      ?~  keen=(~(get by keens.u.peer) path)
+        [~ ~]
+      ``noun+!>(listeners:u.keen)
+    ::
+        [%rift ~]
+      ``noun+!>(rift.ames-state)
+    ::
+        [%corked her=@ ~]
+      =/  who  (slaw %p her.tyl)
+      ?~  who  [~ ~]
+      =/  per  (~(get by peers.ames-state) u.who)
+      ?.  ?=([~ %known *] per)  [~ ~]
+      ``noun+!>(corked.u.per)
+    ::
+        [%closing her=@ ~]
+      =/  who  (slaw %p her.tyl)
+      ?~  who  [~ ~]
+      =/  per  (~(get by peers.ames-state) u.who)
+      ?.  ?=([~ %known *] per)  [~ ~]
+      ``noun+!>(closing.u.per)
+    ::
+        [%protocol %version ~]
+      ``noun+!>(protocol-version)
+    ::
+    ==
   ::
-      [%fine %ducts pax=^]
-    ?~  bulk=(de-path-soft:balk pax.tyl)  ~
-    ?~  peer=(~(get by peers.ames-state) her.u.bulk)
-      [~ ~]
-    ?.  ?=([~ %known *] peer)
-      [~ ~]  :: TODO handle aliens
-    ?~  spr.u.bulk  [~ ~]
-    =/  =path  =,(u.bulk [van car (scot cas) spr])
-    ?~  keen=(~(get by keens.u.peer) path)
-      [~ ~]
-    ``noun+!>(listeners:u.keen)
-  ::
-      [%rift ~]
-    ``noun+!>(rift.ames-state)
-  ::
-      [%corked her=@ ~]
-    =/  who  (slaw %p her.tyl)
-    ?~  who  [~ ~]
-    =/  per  (~(get by peers.ames-state) u.who)
-    ?.  ?=([~ %known *] per)  [~ ~]
-    ``noun+!>(corked.u.per)
-  ::
-      [%closing her=@ ~]
-    =/  who  (slaw %p her.tyl)
-    ?~  who  [~ ~]
-    =/  per  (~(get by peers.ames-state) u.who)
-    ?.  ?=([~ %known *] per)  [~ ~]
-    ``noun+!>(closing.u.per)
-  ==
+
 --

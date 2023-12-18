@@ -36,16 +36,6 @@
   $:  veb=_veb-all-off
       dudes=(set dude)
   ==
-++  match-coop
-  |=  [paths=(set path) =path]
-  ^-  (unit coop)
-  ?:  (~(has in paths) path)
-    `path
-  ?:  =(~ path)
-    ~
-  =.  path  (flop path)
-  ?>  ?=(^ path)
-  $(path (flop t.path))
 ::
 +|  %main
 ::
@@ -126,9 +116,12 @@
 ++  of-farm
   |_  =farm
   ++  key-coops
-    =|  pos=path
-    %-  ~(gas in *(set coop))
-    |-  ^-  (list coop)
+    |=  pos=path
+    ^-  (list coop)
+    =/  frm  (get-farm pos)
+    ?~  frm  ~
+    =.  farm  u.frm
+    |- 
     ?:  ?=(%coop -.farm)
       ~[pos]
     %-  zing
@@ -156,6 +149,7 @@
     ?~  nex=(~(get by q.farm) i.path)
       ~
     $(wer [i.path wer], path t.path, farm u.nex)
+  ::
   ++  put
     |=  [=path =plot]
     ^-  (unit _farm)
@@ -163,10 +157,9 @@
       `farm(q (~(put by q.farm) path plot))
     ?~  path
       `farm(p `plot)
-    ?~  nex=(~(get by q.farm) i.path)
-      ~
+    =/  nex  (~(get by q.farm) i.path)
     =/  res
-      $(path t.path, farm u.nex)
+      $(path t.path, farm ?~(nex *^farm u.nex))
     ?~  res  ~
     `farm(q (~(put by q.farm) i.path u.res))
   ::
@@ -176,7 +169,7 @@
     %+  put  spur
     =-  ski(fan (put:on-path fan.ski -< -> &/page))
     ?~  las=(ram:on-path fan.ski)
-      [(fall bob.ski 0) now]
+      [(fall bob.ski 1) now]
     :_  (max now +(p.val.u.las))
     ?~(bob.ski +(key.u.las) +((max key.u.las u.bob.ski)))
   ::
@@ -247,6 +240,18 @@
       `p.farm
     ?:  ?=(%coop -.farm)
       ~
+    ?~  nex=(~(get by q.farm) i.path)
+      ~
+    $(path t.path, farm u.nex)
+  ::
+  ++  get-farm
+    |=  =path
+    ^-  (unit ^farm)
+    ?:  ?=(%coop -.farm)
+      ?~  (~(get by q.farm) path)
+        ~
+      `farm
+    ?~  path  ~
     ?~  nex=(~(get by q.farm) i.path)
       ~
     $(path t.path, farm u.nex)
@@ -982,6 +987,30 @@
     ?~  kil  mo-core
     ~>  %slog.0^leaf/"gall: stopping {<i.kil>}"
     $(kil t.kil, mo-core (mo-idle prov i.kil))
+  ::
+  ++  mo-authorized-coop
+    |=  [lyc=(set ship) =farm dap=term =path =coop]
+    %-  ~(all in lyc)
+    |=  =ship
+    =/  cag  (mo-peek | dap [~ ship path] %c (snoc coop (scot %p ship)))
+    ?.  ?=([~ ~ ^] cag)
+      %.n
+    ?~  res=((soft ,?) q.q.u.u.cag)
+      %.n
+    u.res
+  ::
+  ++  mo-authorized
+    |=  [lyc=gang =farm dap=term =path]
+    ^-  ?
+    ?:  =([~ ~] lyc)
+      %.y
+    ?~  (~(get-hutch of-farm farm) path)
+      %.y
+    ?:  ?=(~ lyc)
+      %.n
+    ?~  coop=(~(match-coop of-farm farm) path)
+      %.n
+    (mo-authorized-coop u.lyc farm dap path u.coop)
   ::  +mo-peek:  call to +ap-peek (which is not accessible outside of +mo).
   ::
   ++  mo-peek
@@ -1008,7 +1037,7 @@
       =/  =case  da+now
       =/  yok  (~(got by yokes.state) dap)
       =/  =desk  q.beak:?>(?=(%live -.yok) yok)  ::TODO acceptable assertion?
-      =/  sky  (rof ~ /gall %cb [our desk case] /[mark.deal])
+      =/  sky  (rof [~ ~] /gall %cb [our desk case] /[mark.deal])
       ?-    sky
           ?(~ [~ ~])
         =/  ror  "gall: raw-poke fail :{(trip dap)} {<mark.deal>}"
@@ -1032,7 +1061,7 @@
       =/  mars-path   /[a.mars]/[b.mars]
       =/  yok  (~(got by yokes.state) dap)
       =/  =desk  q.beak:?>(?=(%live -.yok) yok)  ::TODO acceptable assertion?
-      =/  sky  (rof ~ /gall %cc [our desk case] mars-path)
+      =/  sky  (rof [~ ~] /gall %cc [our desk case] mars-path)
       ?-    sky
           ?(~ [~ ~])
         =/  ror  "gall: poke cast fail :{(trip dap)} {<mars>}"
@@ -1525,7 +1554,7 @@
         =/  =case       da+now
         =/  bek=beak    [our q.beak.yoke case]
         =/  mars-path  /[a.mars]/[b.mars]
-        =/  sky  (rof ~ /gall %cc bek mars-path)
+        =/  sky  (rof [~ ~] /gall %cc bek mars-path)
         ?-    sky
             ?(~ [~ ~])
           %-  (slog leaf+"watch-as fact conversion find-fail" >sky< ~)
@@ -1705,7 +1734,7 @@
       =/  tub=(unit tube:clay)
         ?:  =(have want)  `(bake same ^vase)
         =/  tuc=(unit (unit cage))
-          (rof ~ /gall %cc [our q.beak.yoke da+now] /[have]/[want])
+          (rof [~ ~] /gall %cc [our q.beak.yoke da+now] /[have]/[want])
         ?.  ?=([~ ~ *] tuc)  ~
         `!<(tube:clay q.u.u.tuc)
       ?~  tub
@@ -1854,7 +1883,7 @@
         ?:  ?=(%spider agent-name)
           :-  [%fact mark.unto !>(noun.unto)]
           ap-core
-        =/  sky  (rof ~ /gall %cb [our q.beak.yoke case] /[mark.unto])
+        =/  sky  (rof [~ ~] /gall %cb [our q.beak.yoke case] /[mark.unto])
         ?.  ?=([~ ~ *] sky)
           (mean leaf+"gall: ames mark fail {<mark.unto>}" ~)
         ::
@@ -2126,7 +2155,7 @@
     ++  ap-mule
       |=  run=_^?(|.(*step:agent))
       ^-  (each step:agent tang)
-      =/  res  (mock [run %9 2 %0 1] (look rof ~ /gall/[agent-name]))
+      =/  res  (mock [run %9 2 %0 1] (look rof [~ ~] /gall/[agent-name]))
       ?-  -.res
         %0  [%& !<(step:agent [-:!>(*step:agent) p.res])]
         %1  [%| (smyt ;;(path p.res)) ~]
@@ -2137,7 +2166,7 @@
     ++  ap-mule-peek
       |=  run=_^?(|.(*(unit (unit cage))))
       ^-  (each (unit (unit cage)) tang)
-      =/  res  (mock [run %9 2 %0 1] (look rof ~ /gall/[agent-name]))
+      =/  res  (mock [run %9 2 %0 1] (look rof [~ ~] /gall/[agent-name]))
       ?-  -.res
         %0  [%& !<((unit (unit cage)) [-:!>(*(unit (unit cage))) p.res])]
         %1  [%| (smyt ;;(path p.res)) ~]
@@ -2705,6 +2734,7 @@
   ?.  ?=([%$ *] path)  ::  [%$ *] is for the vane, all else is for the agent
     ?.  ?&  =(our ship)
             =([%$ %da now] coin)
+            =([~ ~] lyc)
         ==                           ~
     ?.  (~(has by yokes.state) dap)  [~ ~]
     ?.  ?=(^ path)                   ~
@@ -2717,6 +2747,7 @@
           =(~ path)
           =([%$ %da now] coin)
           =(our ship)
+          =([~ ~] lyc)
       ==
     =;  hav=?
       [~ ~ noun+!>(hav)]
@@ -2727,6 +2758,7 @@
           =(~ path)
           =([%$ %da now] coin)
           =(our ship)
+          =([~ ~] lyc)
       ==
     =/  yok=(unit yoke)  (~(get by yokes.state) dap)
     ?.  ?=([~ %live *] yok)
@@ -2737,6 +2769,7 @@
           =(~ path)
           =([%$ %da now] coin)
           =(our ship)
+          =([~ ~] lyc)
       ==
     :+  ~  ~
     :-  %apps  !>  ^-  (set [=dude live=?])
@@ -2753,6 +2786,7 @@
           =(~ path)
           =([%$ %da now] coin)
           =(our ship)
+          =([~ ~] lyc)
       ==
     :+  ~  ~
     :-  %nonces  !>  ^-  (map dude @)
@@ -2764,6 +2798,7 @@
           ?=([@ @ ^] path)
           =([%$ %da now] coin)
           =(our ship)
+          =([~ ~] lyc)
       ==
     =/  yok  (~(get by yokes.state) dap)
     ?.  ?=([~ %live *] yok)
@@ -2777,6 +2812,7 @@
   ?:  ?&  =(%v care)
           =([%$ %da now] coin)
           =(our ship)
+          =([~ ~] lyc)
       ==
     =/  yok  (~(get by yokes.state) dap)
     ?.  ?=([~ %live *] yok)
@@ -2802,6 +2838,8 @@
     ?.  ?=([~ %live *] yok)             [~ ~]
     ?~  ski=(~(get of-farm sky.u.yok) path)  [~ ~]
     ?~  las=(ram:on-path fan.u.ski)     [~ ~]
+    ?.  (mo-authorized:mo lyc sky.u.yok q.bem path)
+      ~
     ``case/!>(ud/key.u.las)
   ::
   ?:  &(?=(%x care) ?=([%'1' *] path))
@@ -2811,6 +2849,7 @@
     ?:  ?=(%$ q.bem)  :: app %$ reserved
       ?+    path  ~
           [%whey ~]
+        ?.  ?=([~ ~] lyc)  ~
         =/  blocked
           =/  queued  (~(run by blocked.state) |=((qeu blocked-move) [%.y +<]))
           (sort ~(tap by queued) aor)
@@ -2839,6 +2878,8 @@
     ?:  ?=(%nuke -.u.yok)  ~
     ?~  ski=(~(get of-farm sky.u.yok) path)
       ~
+    ?.  (mo-authorized:mo lyc sky.u.yok q.bem path)
+      ~
     =/  res=(unit (each page @uvI))
       ?+    -.r.bem  ~
           %ud  (bind (get:on-path fan.u.ski p.r.bem) tail)
@@ -2863,6 +2904,16 @@
     =>  .(path t.path)
     =/  yok  (~(get by yokes.state) q.bem)
     ?.  ?=([~ %live *] yok)  ~
+    =/  keys=(list coop)  (~(key-coops of-farm sky.u.yok) path)
+    =/  authorized=?
+      ?:  =([~ ~] lyc)  %.y
+      |-
+      ?~  keys  %.y
+      ?<  ?=(~ lyc)
+      ?.  (mo-authorized-coop:mo u.lyc sky.u.yok q.bem path i.keys)
+        %.n
+      $(keys t.keys)
+    ?.  authorized  ~
     :^  ~  ~  %file-list  !>  ^-  (list ^path)
     %+  skim  (turn ~(tap-plot of-farm sky.u.yok) head)
     |=  =spur
@@ -2878,6 +2929,8 @@
     =/  yok  (~(get by yokes.state) q.bem)
     ?.  ?=([~ %live *] yok)             ~
     ?~  ski=(~(get of-farm sky.u.yok) path)  ~
+    ?.  (mo-authorized:mo lyc sky.u.yok q.bem path)
+      ~
     =/  res=(unit (pair @da (each noun @uvI)))
       ?+  -.r.bem  ~
         %ud  (get:on-path fan.u.ski p.r.bem)
