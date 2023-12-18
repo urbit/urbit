@@ -5726,7 +5726,7 @@
         ~
       =/  bal=(unit balk)
         ?~  tex=(de:crub:crypto symmetric-key.u.per u.cyf)  ~
-        ?~  pax=(mole |.((,path (cue u.tex))))              ~
+        ?~  pax=(rush u.tex stap)                           ~
         (de-part:balk our 0 0 u.pax)
       ?~  bal
         [~ ~]
