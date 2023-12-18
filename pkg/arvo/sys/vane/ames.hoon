@@ -3288,9 +3288,6 @@
       ++  on-chum
         |=  spar
         ^+  event-core
-        ?:  =(0 0)
-          ~>  %slog.0^leaf/"ames: %chum is disabled, do not use"
-          event-core
         =/  ship-state  (~(get by peers.ames-state) ship)
         ?.  ?=([~ %known *] ship-state)
           %^  enqueue-alien-todo  ship  ship-state
@@ -5719,8 +5716,6 @@
       `@uv`(en:crub:crypto -.u.key (jam [p q.q]:u.u.res))
     ::
         [%chum her=@ lyf=@ cyf=@ ~]
-      ?:  =(1 1) :: stubbed until gang used properly
-        ~
       =/  who  (slaw %p her.tyl)
       =/  lyf  (slaw %ud lyf.tyl)
       =/  cyf  (slaw %uv cyf.tyl)
