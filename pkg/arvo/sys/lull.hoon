@@ -788,7 +788,7 @@
   ::    %snub: set packet blocklist to .ships
   ::    %spew: set verbosity toggles
   ::    %cong: adjust congestion control parameters
-  ::    %stir: recover from timer desync and assorted debug commands
+  ::    %stir: recover frofm timer desync and assorted debug commands
   ::    %trim: release memory
   ::    %vega: kernel reload notification
   ::
@@ -807,6 +807,7 @@
         [%keen spar]
         [%yawn spar]
         [%wham spar]
+        [%whit spar]
     ::
         $>(%born vane-task)
         $>(%init vane-task)
@@ -846,6 +847,7 @@
     ::
         [%tune spar roar=(unit roar)]
         [%rate =spar fragment=@ud num-fragments=@ud]
+        [%size =spar fragment-size=@ud fragments=@ud]
     ::
         [%turf turfs=(list turf)]
     ==
@@ -919,6 +921,7 @@
         [%drop =ship =nack=bone =message-num]
         [%cork =ship =bone]
         [%kill =ship =bone]
+        [%diet =ship =path]
     ==
   :: +|  %atomics
   ::
@@ -987,6 +990,7 @@
   ::    messages: pleas local vanes have asked us to send
   ::    packets: packets we've tried to send
   ::    heeds: local tracking requests; passed through into $peer-state
+  ::    keens: remote scry request vanes have asked us to send
   ::
   +$  alien-agenda
     $+  alien-agenda
@@ -994,6 +998,7 @@
         packets=(set =blob)
         heeds=(set duct)
         keens=(jug path duct)
+        sizes=(set path)   ::  XX add ?(%keen %whit) tag to .duct instead?
     ==
   ::  $peer-state: state for a peer with known life and keys
   ::
@@ -1034,6 +1039,7 @@
         closing=(set bone)
         corked=(set bone)
         keens=(map path keen-state)
+        sizes=(set path)  ::  XX ?(%keen %whit) tag to .keen-state instead?
     ==
   +$  keen-state
     $+  keen-state
@@ -1487,6 +1493,8 @@
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
         [%mere p=(each (set path) (pair term tang))]    ::  merge result
         $>(%rate gift:ames)                             ::  XX  $keen progress
+        $>(%size gift:ames)                             ::  XX  $keen size
+        [%need =path]                                   ::  XX live requests
         [%ogre p=@tas]                                  ::  delete mount point
         [%rule red=dict wit=dict]                       ::  node r+w permissions
         [%tire p=(each rock:tire wave:tire)]            ::  app state

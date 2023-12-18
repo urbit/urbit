@@ -1,3 +1,4 @@
+!:
 ::  clay (4c), revision control
 ::
 ::  The way to understand Clay is to take it section-by-section:
@@ -364,6 +365,7 @@
                   %lost                                 ::  lost boon
                   %tune                                 ::  scry response
                   %rate                                 ::  scry progress
+                  %size                                 ::  scry total fragments
               ==                                        ::
           gift:ames                                     ::
       ==                                                ::
@@ -376,6 +378,7 @@
                   %writ                                 ::
                   %wris                                 ::
                   %rate                                 ::
+                  %need
               ==                                        ::
           gift                                          ::
       ==                                                ::
@@ -3315,23 +3318,34 @@
     abet:work:(foreign-update inx)
   ::
   ++  give-rate
-  |=  [kind=@ta inx=@ud =spar:ames frag=@ud num=@ud]
-  ^+  ..give-rate
-  ~|  [%give-rate kind]
-  ?>  ?=(%back-index kind)
-  ~|  [%strange-give-rate-no-request her syd inx]
-  ?>  ?=(^ ref)
-  =/  sat=update-state  (~(got by bom.u.ref) inx)
-  ?>  ?=([~ ^] busy.sat)
-  =/  =wire  (request-wire kind her syd inx)
-  =/  old=time   time.u.busy.sat
-  =/  =time      (add now scry-timeout-time)
-  =.  bom.u.ref  (~(put by bom.u.ref) inx sat(time.u.busy time))
-  %-  emil
-  :~  [hen %pass wire %b %rest old]
-      [duct.sat %give %rate spar frag num]
-      [hen %pass wire %b %wait time]
-  ==
+    |=  [kind=@ta inx=@ud =spar:ames fragment-size=@ud fragments=@ud]
+    ^+  ..give-rate
+    ~|  [%give-rate kind]
+    ?>  ?=(%back-index kind)
+    ~|  [%strange-give-rate-no-request her syd inx]
+    ?>  ?=(^ ref)
+    =/  sat=update-state  (~(got by bom.u.ref) inx)
+    ?>  ?=([~ ^] busy.sat)
+    =/  =wire      (request-wire kind her syd inx)
+    =/  old=time   time.u.busy.sat
+    =/  =time      (add now scry-timeout-time)
+    =.  bom.u.ref  (~(put by bom.u.ref) inx sat(time.u.busy time))
+    %-  emil
+    :~  [hen %pass wire %b %rest old]
+        [duct.sat %give %rate spar fragment-size fragments]
+        [hen %pass wire %b %wait time]
+    ==
+  ::
+  ++  give-size
+    |=  [kind=@ta inx=@ud =spar:ames fragment-size=@ud fragments=@ud]
+    ^+  ..give-rate
+    ~|  [%give-rate kind]
+    ?>  ?=(%back-index kind)
+    ~|  [%strange-give-rate-no-request her syd inx]
+    ?>  ?=(^ ref)
+    =/  sat=update-state  (~(got by bom.u.ref) inx)
+    ?>  ?=([~ ^] busy.sat)
+    (emit duct.sat %give %rate spar fragment-size fragments)
   ::
   ::  Called when a foreign ship answers one of our requests.
   ::
@@ -3548,6 +3562,14 @@
       ^+  ..abet
       ?.  =(~ busy.sat)  ::NOTE  tmi
         ..abet
+      =.  ..foreign-update
+        %+  roll  need.sat
+        |=  [i=$@(lobe [=tako =path =lobe]) c=_..foreign-update]
+        ?@  i  c
+        =?  c  ?=(^ path.i)
+          =.  path.i  [%c %q (scot %uv tako.i) syd path.i]
+          =>((emit:c duct.sat %give %need path.i) ?>(?=(^ ref) .))
+        c
       |-  ^+  ..abet
       ?~  need.sat
         ::  NB: if you change to release nakos as we get enough lobes
@@ -3587,6 +3609,7 @@
         ?:  ?&  ?=(^ i.need.sat)
             ?|  !(~(has by sad) her)
                 (gth now (add scry-retry-time (~(got by sad) her)))
+                &
             ==  ==
           ::  make the request over remote scry
           ::
@@ -3598,7 +3621,7 @@
         :-  ~
         =/  =wire  (request-wire %back-index her syd inx)
         =/  =path  [%backfill syd (scot %ud inx) ~]
-        ::  TODO: upgrade to %1 when most ships have upgaded
+        ::  TODO: upgrade to %1 when most ships have upgraded
         =/  =fill  [%0 syd lobe]
         (emit hen %pass wire %a %plea her %c path fill)
       ..abet(busy.sat ?~(scry `%ames scry))
@@ -4399,6 +4422,18 @@
         %+  turn    ~(tap in (find-merge-points yaki-a yaki-b))
         |=  =yaki
         r.yaki
+      :: ::
+      ::     %need
+      ::   ?>  ?=(^ t.t.pax)
+      ::   =/  him  (slav %p i.t.pax)
+      ::   =/  ref  ref:((de now rof hen ruf) him i.t.t.pax)
+      ::   :^  ~  ~  %need  !>
+      ::   ^-  (list path)
+      ::   ?~  ref  ~
+      ::   ?:  =(0 nix.u.ref)  ~
+      ::   ?~  sat=(~(get by bom.u.ref) (dec nix.u.ref))
+      ::     ~
+      ::   (murn need.u.sat |*(i=$@(@ [@ path=@ @]) ?@(i ~ `path.i)))
       ::
           %base
         ?>  ?=(^ t.t.pax)
@@ -6242,7 +6277,7 @@
       %-  (slog leaf+"clay: lost backfill from {<tea>}" ~)
       [~ ..^$]
     ::
-        ?(%boon %tune %rate)
+        ?(%boon %tune %rate %size)
       =/  her=ship   (slav %p i.t.tea)
       =/  =desk      (slav %tas i.t.t.tea)
       =/  index=@ud  (slav %ud i.t.t.t.tea)
@@ -6258,6 +6293,8 @@
         =/  den  ((de now rof hen ruf) her desk)
         ?:  ?=(%rate +<.hin)
           abet:(give-rate:den -.tea index [spar fragment num-fragments]:hin)
+        ?:  ?=(%size +<.hin)
+          abet:(give-size:den -.tea index [spar fragment-size fragments]:hin)
         ?~  fell
           ::  We shouldn't get back null on any of the fine requests we
           ::  make unless they're out of date
@@ -6372,6 +6409,8 @@
       %boon  !!
       %tune  !!
       %rate  !!
+      %need  !!
+      %size  !!
       %lost  !!
       %unto  !!
       %wris  ~&  %strange-wris  !!

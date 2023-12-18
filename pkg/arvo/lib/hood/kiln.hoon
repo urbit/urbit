@@ -854,23 +854,25 @@
   abet:(spam (render "cancelling sync" sud.hus her.hus syd.hus kid.u.got) ~)
 ::
 ++  poke-rate
-  |=  [rate=[@ud @ud] file=path]
+  |=  [[i=@ud t=@ud] file=path [have=@ud need=@ud] [size=@ud total=@ud]]
   |^  =<  abet
   %-  emil
   ?~  sole-id  ~
-  =/  =sole-effect:sole  pro+[& %$ (dial rate file)]
+  =/  =sole-effect:sole  pro+[& %$ dial]
   [%give %fact [(id-to-path:sole u.sole-id)]~ sole-effect/!>(sole-effect)]~
   ::
   ++  dial
-    |=  [[i=@ud d=@ud] file=path]
-    ?:  =(i d)  "> "
-    =/  bars=@ud  (div i 5)
+    ?:  =(i t)  "> "
+    =/  bars=@ud  (div i 20)
     :~  [``~ " file: "]  [[`%un ~ ~] "{<file>}"]  [``~ " "]
         [``~ (weld `tape`(turn (gulf 0 (div i 10)) |=(* '-')) ">")]
         [``~ " ["]
-        [[```%y] "{?:((lth i 10) "0" ~)}{<i>}.{?:((lth d 10) "0" ~)}{<d>}%"]
-        [``~ "]"]
+        [[```color] "{?:((lth i 10) "0" ~)}{<i>}.{?:((lth t 10) "0" ~)}{<t>}%"]
+        [``~ "] [ "]
+        [``~ "{<have>}/{<need>} done"]
+        [``~ " ]"]
     ==
+  ++  color  ?:(=(i 100) %g %y)
   --
 ::
 ++  put-sole

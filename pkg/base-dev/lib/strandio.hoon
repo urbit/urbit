@@ -197,6 +197,19 @@
     `[%done +>.sign-arvo.u.in.tin]
   ==
 ::
+++  take-size
+  |=  =wire
+  =/  m  (strand ,[spar:ames fragment-size=@ud num-fragments=@ud])
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+    in.tin  `[%skip ~]
+      ~  `[%wait ~]
+    ::
+      [~ %sign * %ames %size ^ *]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done +>.sign-arvo.u.in.tin]
+  ==
 ++  take-poke-ack
   |=  =wire
   =/  m  (strand ,~)
@@ -336,6 +349,18 @@
   =/  m  (strand ,~)
   ^-  form:m
   (send-raw-card %pass wire %arvo %a %keen spar)
+::
+++  yawn
+  |=  [=wire =spar:ames]
+  =/  m  (strand ,~)
+  ^-  form:m
+  (send-raw-card %pass wire %arvo %a %yawn spar)
+::
+++  whit
+  |=  [=wire =spar:ames]
+  =/  m  (strand ,~)
+  ^-  form:m
+  (send-raw-card %pass wire %arvo %a %whit spar)
 ::
 ++  sleep
   |=  for=@dr
@@ -571,22 +596,30 @@
 ::
 ++  take-rate
   |=  =wire
-  =/  m  (strand ,vase)
+  =/  m  (strand ,cage)
   ^-  form:m
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
     ::
+      [~ %sign * %clay %need *]
+    ?.  =(wire wire.u.in.tin)  `[%skip ~]
+    `[%done need/!>(+>.sign-arvo.u.in.tin)]
+    ::
+    ::   [~ %sign * %ames %size ^ *]  :: XX this should be handle by take-size
+    :: ?.  =(wire wire.u.in.tin)      ::    but somehow we got block waiting
+    ::                                ::    for the other gifts
+    ::   `[%skip ~]
+    :: `[%done size/!>(+>.sign-arvo.u.in.tin)]
+    ::
       [~ %sign * %clay %rate *]
-    ?.  =(wire wire.u.in.tin)
-      `[%skip ~]
-    :+  ~  %done
-    !>(rate/[path.spar fragment num-fragments]:+>.sign-arvo.u.in.tin)
+    ?.  =(wire wire.u.in.tin)  `[%skip ~]
+    `[%done rate/!>([path.spar fragment num-fragments]:+>.sign-arvo.u.in.tin)]
     ::
       [~ %sign * ?(%behn %clay) %writ *]
     ?.  =(wire wire.u.in.tin)
       `[%skip ~]
-    `[%done !>(writ/+>.sign-arvo.u.in.tin)]
+    `[%done writ/!>(+>.sign-arvo.u.in.tin)]
   ==
 ::
 ++  send-sole-effect
@@ -595,37 +628,72 @@
   [%give %fact [(id-to-path:sole sole-id)]~ sole-effect/!>(sole-effect)]
 ::
 ++  rate
+  =>  |%  +$  rate  [frag=_0 num=_1]
+          +$  size  [fragment=@ud total=@ud]
+      --
   |=  [=ship sole-id=(unit sole-id:sole) =riff:clay]
   =/  m  (strand ,riot:clay)
+  =|  needs=(set path)
+  =|  haves=(set path)
+  =|  total-frags=@ud
+  =|  fragment-size=@ud
+  =|  received=@ud
   =|  =riot:clay
-  =/  rate=[frag=@ud num=@ud]  [frag=0 num=1]
+  =|   =rate
   ;<  ~  bind:m  (send-raw-card %pass /rate %arvo %c %warp ship riff)
+  ::
   |-  ^-  form:m
   ?:  ?=(^ riot)
     (pure:m riot)
-  ;<  =vase  bind:m  (take-rate /rate)
-  ?:  ?=(%rate -.q.vase)
-    =+  !<([%rate rat=[loc=path =_rate]] vase)
+  ;<  =cage  bind:m  (take-rate /rate)
+  ?:  ?=(%need p.cage)
+    =+  !<(=path q.cage)
+    :: ;<  ~  bind:m  (whit /whit ship path)
+    :: ;<  [* =size]   bind:m  (take-size /whit)  ::  XX doesn't work, we get
+                                                  ::  the size, but get blocked
+    :: ~&  >>  size
+    :: =.  fragment-size  fragment.size
+    :: $(needs (~(put in needs) path), total-frags (add total-frags total.size))
+    $(needs (~(put in needs) path))
+  ::  XX handling the size gift as a cagem with all the others
+  :: ?:  ?=(%size p.cage)
+  ::   =+  !<([* =size] q.cage)
+  ::   ~&  >>  size
+  ::   $(total-frags (add total-frags total.size))
+  ?:  ?=(%rate p.cage)
+    =+  !<([loc=path rat=^rate] q.cage)
     =/  progress=@rs  =,  rat
-      (mul:rs (div:rs (sun:rs frag.rate) (sun:rs num.rate)) (sun:rs 100))
+      (mul:rs (div:rs (sun:rs frag) (sun:rs num)) (sun:rs 100))
     =+  int=(need (toi:rs progress))
     =/  dec=@ud  =,  rs
       (abs:si (need (toi (mul .100 (sub progress (san int))))))
-    =>  .(loc.rat `(pole knot)`loc.rat)
-    ?>  ?=([van=@t car=@t cas=@t file-path=*] loc.rat)
+    =>  .(loc `(pole knot)`loc)
+    ?>  ?=([van=@t car=@t cas=@t file-path=*] loc)
+    =?  haves  =(frag num):rat
+      (~(put in haves) `path`file-path.loc)
+    =.  received  (add received (abs:si int))
     ;<  ~  bind:m
       ?~  sole-id  (flog-text "sole-id missing") :: XX (pure:m ~)
-      (poke-our %hood rate/!>([[(abs:si int) dec] `path`file-path.loc.rat]))
-    $(rate rate.rat)
-  ?>  ?=(%writ -.q.vase)
+      %^  poke-our  %hood  %rate  !>
+      :*  [(abs:si int) dec]        ::  XX rate per path
+          ::[received total-frags]  ::  XX global rate
+          `path`file-path.loc
+          [~(wyt in haves) ~(wyt in needs)]
+          ::  XX poke only one time with the total? adds extra state to %kiln...
+          ::
+          [size=fragment-size total=total-frags]
+      ==
+    $(rate rat)
+  ?>  ?=(%writ p.cage)
   ::  XX print completion of all files -- move to %hood
   :: ;<  ~  bind:m
   ::   ?~  sole-id  (flog-text "")
   ::   =/  =sole-effect:sole
   ::     klr+~[[[`%un ~ `%g] "file: {<file-path>} [100%]"]]
   ::   (poke-our %hood rate/!>(sole-effect))
-  ;<  ~  bind:m  (poke-our %hood rate/!>([0^0 /]))
-  =+  !<([%writ maybe=riot:clay] vase)
+  ;<  ~  bind:m
+    (poke-our %hood rate/!>([0^0 / [~(wyt in haves) ~(wyt in needs)] 0^0]))
+  =+  !<(maybe=riot:clay q.cage)
   $(riot maybe)
 ::
 ++  read-file
@@ -653,6 +721,14 @@
     (strand-fail %list-tree >arg< ~)
   (pure:m !<((list path) q.r.u.riot))
 ::
+++  list-desk
+  |=  [[=ship =desk =case] =spur]
+  =*  arg  +<
+  =/  m  (strand arch)
+  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %y case spur)
+  ?~  riot
+    (strand-fail %list-desk >arg< ~)
+  (pure:m !<(arch q.r.u.riot))
 ::  Take Clay read result
 ::
 ++  take-writ
