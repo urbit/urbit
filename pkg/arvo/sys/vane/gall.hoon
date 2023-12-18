@@ -169,7 +169,7 @@
     %+  put  spur
     =-  ski(fan (put:on-path fan.ski -< -> &/page))
     ?~  las=(ram:on-path fan.ski)
-      [(fall bob.ski 0) now]
+      [(fall bob.ski 1) now]
     :_  (max now +(p.val.u.las))
     ?~(bob.ski +(key.u.las) +((max key.u.las u.bob.ski)))
   ::
