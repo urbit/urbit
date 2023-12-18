@@ -157,10 +157,9 @@
       `farm(q (~(put by q.farm) path plot))
     ?~  path
       `farm(p `plot)
-    ?~  nex=(~(get by q.farm) i.path)
-      ~
+    =/  nex  (~(get by q.farm) i.path)
     =/  res
-      $(path t.path, farm u.nex)
+      $(path t.path, farm ?~(nex *^farm u.nex))
     ?~  res  ~
     `farm(q (~(put by q.farm) i.path u.res))
   ::
