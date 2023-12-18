@@ -36,16 +36,6 @@
   $:  veb=_veb-all-off
       dudes=(set dude)
   ==
-++  match-coop
-  |=  [paths=(set path) =path]
-  ^-  (unit coop)
-  ?:  (~(has in paths) path)
-    `path
-  ?:  =(~ path)
-    ~
-  =.  path  (flop path)
-  ?>  ?=(^ path)
-  $(path (flop t.path))
 ::
 +|  %main
 ::
