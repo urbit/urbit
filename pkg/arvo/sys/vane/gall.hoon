@@ -1132,11 +1132,11 @@
     ?.  ?=([~ %live *] yok)
       (mo-give %done ~)
     =/  ap-core  (ap-abed:ap agent-name [~ our /gall])
-    =^  bod=(unit (unit brood))  mo-core
+    =^  bod=(each (unit brood) tang)  mo-core
       (ap-serve-brood:ap-core ship path)
-    ?~  bod
-      (mo-give %done ~)
-    =/  =fine-response  [%0 u.bod]
+    ?:  ?=(%| -.bod)
+      (mo-give %done `keys/p.bod)
+    =/  =fine-response  [%0 p.bod]
     =.  mo-core  (mo-give %boon fine-response)
     (mo-give %done ~)
   ::  +mo-handle-ames-request: handle %ames request message.
@@ -1288,21 +1288,20 @@
       =/  wis=(list ^wire)  ~(tap in (~(get ju pen.yoke) [ship t.wire]))
       ?+    syn  ~|(weird-sign-ap-take-brood/-.syn !!)
           [%ames %boon *]
-        =+  bud=((soft fine-response) payload.syn)
-        ?~  bud  :: TODO: what happens
-           %.  ap-core
-           %+  trace  odd.veb.bug.state
-           [leaf/"gall: {<agent-name>} malformed brood res {<ship>} {<t.wire>}"]~
-        =/  bod  bod.u.bud
+        =/  bud  (fall ((soft fine-response) payload.syn) *fine-response)
         |-  
-        ?~  wis  ap-core
-        ?~  bod
+        ?~  wis  
+          =.  pen.yoke  (~(del by pen.yoke) [ship t.wire])
+          ap-core
+        ?~  bod.bud
           =.  ap-core  (ap-generic-take i.wis %ames %near [ship t.wire] ~)
           $(wis t.wis)
-        =.  ap-core  (ap-pass i.wis %arvo %a %keen `[idx key]:hutch.u.bod ship t.wire)
+        =.  ap-core  (ap-pass i.wis %arvo %a %keen `[idx key]:hutch.u.bod.bud ship t.wire)
         $(wis t.wis)
       ::
           [%ames %done *]
+        ?~  error.syn
+          ap-core
         |-
         ?~  wis
           =.  pen.yoke  (~(del by pen.yoke) [ship t.wire])
@@ -1316,18 +1315,16 @@
     ::
     ++  ap-serve-brood
       |=  [=ship =(pole knot)]
-      ^-  [(unit (unit brood)) _mo-core]
+      ^-  [(each (unit brood) tang) _mo-core]
       ?.  ?=([%$ ver=@ rest=*] pole)
-        %.  `ap-abet
-        %+  trace  odd.veb.bug.state
-        [leaf/"gall: {<agent-name>} bad brood req {<ship>} {<pole>}"]~
+        :_  ap-abet
+        |+[leaf/"gall: {<agent-name>} bad brood req {<ship>} {<pole>}"]~
       =/  ver  (slav %ud ver.pole)
       ?.  =(1 ver)
-        %.  `ap-abet
-        %+  trace  odd.veb.bug.state
-        [leaf/"gall: {<agent-name>} bad brood ver {<ver>} {<ship>} {<rest.pole>}"]~
+        :_  ap-abet
+        |+[leaf/"gall: {<agent-name>} bad brood ver {<ver>} {<ship>} {<rest.pole>}"]~
       ?~  cop=(ap-match-coop rest.pole)
-        %.  [~^~ ap-abet]
+        %.  [&+~ ap-abet]
         %+  trace  odd.veb.bug.state
         [leaf/"gall: {<agent-name>} no coop match {<ship>} {<rest.pole>}"]~
       =/  cag=(unit (unit cage))
@@ -1340,11 +1337,11 @@
         u.res
       =/  =hutch  (need (~(get-hutch of-farm sky.yoke) u.cop))
       ?.  has-perms
-        %.  [~^~ ap-abet]
+        %.  [[%.y ~] ap-abet]
         %+  trace  odd.veb.bug.state
         [leaf/"gall: {<agent-name>} no perms for {<coop>} {<ship>} {<rest.pole>}"]~
       =/  =brood  [u.cop hutch]
-      [``brood ap-abet]
+      [[%.y `brood] ap-abet]
     ::
     ++  ap-yawn-all
       ^-  (list card:agent)
