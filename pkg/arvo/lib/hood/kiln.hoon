@@ -862,10 +862,10 @@
   [%give %fact [(id-to-path:sole u.sole-id)]~ sole-effect/!>(sole-effect)]~
   ::
   ++  dial
-    ?:  =(i t)  "> "
-    =/  bars=@ud  (div i 20)
+    ?:  =([0 0] [i t])  "> "
+    =/  bars=@ud  (div i 2)
     :~  [``~ " file: "]  [[`%un ~ ~] "{<file>}"]  [``~ " "]
-        [``~ (weld `tape`(turn (gulf 0 (div i 10)) |=(* '-')) ">")]
+        [``~ (weld `tape`(turn (gulf 0 bars) |=(* '-')) ">")]
         [``~ " ["]
         [[```color] "{?:((lth i 10) "0" ~)}{<i>}.{?:((lth t 10) "0" ~)}{<t>}%"]
         [``~ "] [ "]

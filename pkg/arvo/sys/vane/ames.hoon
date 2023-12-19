@@ -4795,14 +4795,18 @@
               ?:  (lth num fra.i.hav.keen)
                 [i.hav.keen $(hav.keen t.hav.keen)]
               [[num meow] hav.keen]
-            ?:  &((~(has in sizes) path) =(1 num-received.keen))
+            ?:  =(num-fragments num-received):keen
+              (fi-done [sig dat]:fi-sift-full)
+            =?  fine  &((~(has in sizes) path) =(1 num-received.keen))
               fi-size
-            ?.  =(num-fragments num-received):keen
-              fi-continue
-            (fi-done [sig dat]:fi-sift-full)
+            :: XX if there's only one %whit listener, it'll
+            :: still receive %rate gifts after unsubscribing
+            fi-continue
           ::
           ++  fi-sub
-            |=(=^duct fine(listeners.keen (~(put in listeners.keen) duct)))
+            :: XX if dupe and %whit, give size right away
+            |=  =^duct
+            fine(listeners.keen (~(put in listeners.keen) duct))
           ::  scry is autocancelled in +abet if no more listeners
           ::
           ++  fi-unsub

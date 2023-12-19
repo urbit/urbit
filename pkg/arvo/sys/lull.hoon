@@ -1494,7 +1494,6 @@
         [%mere p=(each (set path) (pair term tang))]    ::  merge result
         $>(%rate gift:ames)                             ::  XX  $keen progress
         $>(%size gift:ames)                             ::  XX  $keen size
-        [%need =path]                                   ::  XX live requests
         [%ogre p=@tas]                                  ::  delete mount point
         [%rule red=dict wit=dict]                       ::  node r+w permissions
         [%tire p=(each rock:tire wave:tire)]            ::  app state

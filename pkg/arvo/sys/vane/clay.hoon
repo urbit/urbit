@@ -319,7 +319,7 @@
           $>(%what waif)                                ::
       ==                                                ::
       $:  %a                                            ::  to %ames
-          $>(?(%plea %keen %yawn) task:ames)            ::
+          $>(?(%plea %keen %yawn %whit) task:ames)      ::
       ==                                                ::
       $:  %b                                            ::  to %behn
           $>  $?  %drip                                 ::
@@ -378,7 +378,6 @@
                   %writ                                 ::
                   %wris                                 ::
                   %rate                                 ::
-                  %need
               ==                                        ::
           gift                                          ::
       ==                                                ::
@@ -3340,12 +3339,15 @@
     |=  [kind=@ta inx=@ud =spar:ames fragment-size=@ud fragments=@ud]
     ^+  ..give-rate
     ~|  [%give-rate kind]
-    ?>  ?=(%back-index kind)
+    ?>  ?=(%keen-whit kind)
     ~|  [%strange-give-rate-no-request her syd inx]
     ?>  ?=(^ ref)
     =/  sat=update-state  (~(got by bom.u.ref) inx)
-    ?>  ?=([~ ^] busy.sat)
-    (emit duct.sat %give %rate spar fragment-size fragments)
+    =/  bus  ?>(?=([~ ^] busy.sat) u.busy.sat)
+    %-  emil
+    :~  [duct.sat %give %size spar fragment-size fragments]
+        [hen %pass (request-wire %keen-whit her syd inx) %a %yawn her path.bus]
+    ==
   ::
   ::  Called when a foreign ship answers one of our requests.
   ::
@@ -3568,7 +3570,9 @@
         ?@  i  c
         =?  c  ?=(^ path.i)
           =.  path.i  [%c %q (scot %uv tako.i) syd path.i]
-          =>((emit:c duct.sat %give %need path.i) ?>(?=(^ ref) .))
+          =/  =wire  (request-wire %keen-whit her syd inx)
+          ::  XX we are requesting %whits multiple times...
+          =>((emit:c hen %pass wire %a %whit her path.i) ?>(?=(^ ref) .))
         c
       |-  ^+  ..abet
       ?~  need.sat
@@ -6262,8 +6266,26 @@
       [mos ..^$]
     ==
   ::
+  ?:  ?=([%keen-whit @ @ @ *] tea)
+    ?+    +<.hin  ~|  %clay-keen-whit-strange^+<.hin  !!
+        ?(%tune %size %rate)
+      =/  her=ship   (slav %p i.t.tea)
+      =/  =desk      (slav %tas i.t.t.tea)
+      =/  index=@ud  (slav %ud i.t.t.t.tea)
+      =^  mos  ruf
+        =/  den  ((de now rof hen ruf) her desk)
+        ?:  ?=(?(%rate %tune) +<.hin)
+          ::  no-op, if %tune after %yawn, restart downloads happen in %backfill
+          ::
+          `ruf
+        ?>  ?=(%size +<.hin)
+        abet:(give-size:den -.tea index [spar fragment-size fragments]:hin)
+      [mos ..^$]
+    ==
+  ::
   ?:  ?=([%back-index @ @ @ *] tea)
-    ?+    +<.hin  ~|  %clay-backfill-index-strange  !!
+    ?+    +<.hin  ~|  %clay-backfill-index-strange^+<.hin  !!
+        %size   `..^$  :: XX remove
         %done
       ?~  error.hin
         [~ ..^$]
@@ -6277,7 +6299,7 @@
       %-  (slog leaf+"clay: lost backfill from {<tea>}" ~)
       [~ ..^$]
     ::
-        ?(%boon %tune %rate %size)
+        ?(%boon %tune %rate)
       =/  her=ship   (slav %p i.t.tea)
       =/  =desk      (slav %tas i.t.t.tea)
       =/  index=@ud  (slav %ud i.t.t.t.tea)
@@ -6293,8 +6315,6 @@
         =/  den  ((de now rof hen ruf) her desk)
         ?:  ?=(%rate +<.hin)
           abet:(give-rate:den -.tea index [spar fragment num-fragments]:hin)
-        ?:  ?=(%size +<.hin)
-          abet:(give-size:den -.tea index [spar fragment-size fragments]:hin)
         ?~  fell
           ::  We shouldn't get back null on any of the fine requests we
           ::  make unless they're out of date
@@ -6409,7 +6429,6 @@
       %boon  !!
       %tune  !!
       %rate  !!
-      %need  !!
       %size  !!
       %lost  !!
       %unto  !!

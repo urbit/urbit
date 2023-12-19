@@ -602,15 +602,10 @@
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
     ::
-      [~ %sign * %clay %need *]
-    ?.  =(wire wire.u.in.tin)  `[%skip ~]
-    `[%done need/!>(+>.sign-arvo.u.in.tin)]
-    ::
-    ::   [~ %sign * %ames %size ^ *]  :: XX this should be handle by take-size
-    :: ?.  =(wire wire.u.in.tin)      ::    but somehow we got block waiting
-    ::                                ::    for the other gifts
-    ::   `[%skip ~]
-    :: `[%done size/!>(+>.sign-arvo.u.in.tin)]
+      [~ %sign * %clay %size ^ *]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done size/!>(+>.sign-arvo.u.in.tin)]
     ::
       [~ %sign * %clay %rate *]
     ?.  =(wire wire.u.in.tin)  `[%skip ~]
@@ -630,55 +625,55 @@
 ++  rate
   =>  |%  +$  rate  [frag=_0 num=_1]
           +$  size  [fragment=@ud total=@ud]
+          ++  calculate-progress
+            |=  [a=@ud b=@ud]
+            ^-  [int=@ud dec=@ud]
+            =/  progress=@rs
+              (mul:rs (div:rs (sun:rs a) (sun:rs b)) (sun:rs 100))
+            =+  int=(need (toi:rs progress))
+            =/  dec=@ud  =,  rs
+              (abs:si (need (toi (mul .100 (sub progress (san int))))))
+            [(abs:si int) dec]
       --
   |=  [=ship sole-id=(unit sole-id:sole) =riff:clay]
   =/  m  (strand ,riot:clay)
-  =|  needs=(set path)
-  =|  haves=(set path)
+  =|  needs=(map path total=@ud)
+  =|  haves=(map path received=@ud)
   =|  total-frags=@ud
   =|  fragment-size=@ud
   =|  received=@ud
   =|  =riot:clay
   =|   =rate
+  =|  last-path=path
   ;<  ~  bind:m  (send-raw-card %pass /rate %arvo %c %warp ship riff)
   ::
   |-  ^-  form:m
   ?:  ?=(^ riot)
     (pure:m riot)
   ;<  =cage  bind:m  (take-rate /rate)
-  ?:  ?=(%need p.cage)
-    =+  !<(=path q.cage)
-    :: ;<  ~  bind:m  (whit /whit ship path)
-    :: ;<  [* =size]   bind:m  (take-size /whit)  ::  XX doesn't work, we get
-                                                  ::  the size, but get blocked
-    :: ~&  >>  size
-    :: =.  fragment-size  fragment.size
-    :: $(needs (~(put in needs) path), total-frags (add total-frags total.size))
-    $(needs (~(put in needs) path))
-  ::  XX handling the size gift as a cagem with all the others
-  :: ?:  ?=(%size p.cage)
-  ::   =+  !<([* =size] q.cage)
-  ::   ~&  >>  size
-  ::   $(total-frags (add total-frags total.size))
+  ?:  ?=(%size p.cage)
+    =+  !<([[* =path] =size] q.cage)
+    =.  fragment-size  fragment.size
+    =?  total-frags  !(~(has by needs) path)
+      ::  XX we get the size multiple times...
+      (add total-frags total.size)
+    $(needs (~(put by needs) [path total.size]))
   ?:  ?=(%rate p.cage)
     =+  !<([loc=path rat=^rate] q.cage)
-    =/  progress=@rs  =,  rat
-      (mul:rs (div:rs (sun:rs frag) (sun:rs num)) (sun:rs 100))
-    =+  int=(need (toi:rs progress))
-    =/  dec=@ud  =,  rs
-      (abs:si (need (toi (mul .100 (sub progress (san int))))))
     =>  .(loc `(pole knot)`loc)
     ?>  ?=([van=@t car=@t cas=@t file-path=*] loc)
     =?  haves  =(frag num):rat
-      (~(put in haves) `path`file-path.loc)
-    =.  received  (add received (abs:si int))
+      (~(put by haves) [`path`file-path.loc frag.rat])
+    =/  received=@ud
+      %+  add  ?:(=(frag num):rat 0 frag.rat)
+      (~(rep by haves) |=([[* t=@ud] a=@ud] (add t a)))
     ;<  ~  bind:m
       ?~  sole-id  (flog-text "sole-id missing") :: XX (pure:m ~)
       %^  poke-our  %hood  %rate  !>
-      :*  [(abs:si int) dec]        ::  XX rate per path
-          ::[received total-frags]  ::  XX global rate
+      :*  ::[(abs:si int) dec]                       ::  XX rate per path
+          (calculate-progress received total-frags)  ::  XX global rate
           `path`file-path.loc
-          [~(wyt in haves) ~(wyt in needs)]
+          [~(wyt by haves) ~(wyt by needs)]
           ::  XX poke only one time with the total? adds extra state to %kiln...
           ::
           [size=fragment-size total=total-frags]
