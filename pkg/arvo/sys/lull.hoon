@@ -806,9 +806,11 @@
         [%deep =deep]
         [%stun =stun]
     ::
-        [%keen spar]
+        [%keen sec=(unit [idx=@ key=@]) spar]
+        [%chum spar]
         [%yawn spar]
         [%wham spar]
+        [%plug =path]
     ::
         $>(%born vane-task)
         $>(%init vane-task)
@@ -849,6 +851,8 @@
         [%send =lane =blob]
         [%nail =ship lanes=(list lane)]
     ::
+        [%stub num=@ud key=@]
+        [%near spar dat=(unit (unit page))]
         [%tune spar roar=(unit roar)]
     ::
         [%turf turfs=(list turf)]
@@ -953,10 +957,12 @@
   ::  $hoot: request packet payload
   ::  $yowl: serialized response packet payload
   ::  $hunk: a slice of $yowl fragments
+  ::  $lock: keys for remote scry
   ::
   +$  hoot           @uxhoot
   +$  yowl           @uxyowl
   +$  hunk           [lop=@ len=@]
+  +$  lock           [idx=@ key=@]
   ::
   :: +|  %kinetics
   ::  $dyad: pair of sender and receiver ships
@@ -1014,7 +1020,9 @@
         packets=(set =blob)
         heeds=(set duct)
         keens=(jug path duct)
+        chums=(jug path duct)
     ==
+  +$  chain  ((mop ,@ ,[key=@ =path]) lte)
   ::  $peer-state: state for a peer with known life and keys
   ::
   ::    route: transport-layer destination for packets to peer
@@ -1054,6 +1062,7 @@
         closing=(set bone)
         corked=(set bone)
         keens=(map path keen-state)
+        =chain
     ==
   +$  keen-state
     $+  keen-state
@@ -2749,7 +2758,7 @@
   +$  boat  (map [=wire =ship =term] [acked=? =path])   ::  outgoing subs
   +$  boar  (map [=wire =ship =term] nonce=@)           ::  and their nonces
   ::
-  +$  path-state
+  +$  plot
     $:  bob=(unit @ud)
         fan=((mop @ud (pair @da (each page @uvI))) lte)
     ==
@@ -2758,8 +2767,18 @@
         eny=@uvJ                                        ::  entropy
         time=@da                                        ::  current event time
     ==
+  +$  hutch  [rev=@ud idx=@ud key=@]
+  ::
+  +$  farm
+    $+  farm
+    $~  [%plot ~ ~]
+    $%  [%coop p=hutch q=(map path plot)]
+        [%plot p=(unit plot) q=(map @ta farm)]
+    ==
+  ::
+
   +$  egg                                               ::  migratory agent state
-    $%  [%nuke sky=(map spur @ud)]                      ::  see /sys/gall $yoke
+    $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)] ::  see /sys/gall $yoke
         $:  %live
             control-duct=duct
             run-nonce=@t
@@ -2772,10 +2791,30 @@
             old-state=[%| vase]
             =beak
             marks=(map duct mark)
-            sky=(map spur path-state)
+            sky=farm
             ken=(jug spar:ames wire)
+            pen=(jug spar:ames wire)
+            gem=(jug coop [path page])
     ==  ==
-  +$  egg-any  $%([%15 egg] [%16 egg])
+  +$  egg-any  $%([%15 egg-15] [%16 egg])
+  +$  egg-15
+    $%  [%nuke sky=(map spur @ud)]
+    $:  %live
+        control-duct=duct
+        run-nonce=@t
+        sub-nonce=@
+        =stats
+        =bitt
+        =boat
+        =boar
+        code=~
+        old-state=[%| vase]
+        =beak
+        marks=(map duct mark)
+        sky=(map spur plot)
+        ken=(jug spar:ames wire)
+    ==  ==
+  ::
   +$  bowl                                              ::  standard app state
     $:  $:  our=ship                                    ::  host
             src=ship                                    ::  guest
@@ -2814,6 +2853,7 @@
   ::  TODO: add more flags?
   ::
   +$  verb  ?(%odd)
+  +$  coop  spur
   ::
   ::  +agent: app core
   ::
@@ -2830,6 +2870,12 @@
           [%grow =spur =page]
           [%tomb =case =spur]
           [%cull =case =spur]
+      ::
+          [%tend =coop =path =page]
+          [%germ =coop]
+          [%snip =coop]
+      ::
+          [%keen secret=? spar:ames]
       ==
     +$  task
       $%  [%watch =path]

@@ -72,7 +72,7 @@
 ++  get-dais
   |=  [=beak =mark rof=roof]
   ^-  dais:clay
-  ?~  ret=(rof ~ /khan %cb beak /[mark])
+  ?~  ret=(rof [~ ~] /khan %cb beak /[mark])
     ~|(mark-unknown+mark !!)
   ?~  u.ret
     ~|(mark-invalid+mark !!)
@@ -82,7 +82,7 @@
 ++  get-tube
   |=  [=beak =mark =out=mark rof=roof]
   ^-  tube:clay
-  ?~  ret=(rof ~ /khan %cc beak /[mark]/[out-mark])
+  ?~  ret=(rof [~ ~] /khan %cc beak /[mark]/[out-mark])
     ~|(tube-unknown+[mark out-mark] !!)
   ?~  u.ret
     ~|(tube-invalid+[mark out-mark] !!)
