@@ -637,11 +637,12 @@
         [(abs:si int) dec]
       ::
       ++  calculate-unit  :: XX some other smarter way to get the right unit
-        |=  [bytes=@ud seconds=@ud]
+        |=  [bytes=@ud ms=@ud]
         ^-  tape
         =/  band
-          ?:  =(0 seconds)  (sun:rs bytes)  :: XX ms?
-          (div:rs (sun:rs bytes) (sun:rs seconds))
+          %+  mul:rs  .1e3
+          ?:  =(0 ms)  (sun:rs bytes)
+          (div:rs (sun:rs bytes) (sun:rs ms))
         =+  int=(need (toi:rs band))
         ?:  &((lth int 1.000) (gte int 100))
           "{<(abs:si int)>} Kb/s."
@@ -686,7 +687,7 @@
       %+  div
         (mul (div (bex fragment-size) (bex 3)) (sub frag.rat frag.rate))
       (bex 10)
-    ~&  >  "bandwidth: {<(calculate-unit byte (div time ~s1))>}"    :: XX ms?
+    ~&  >  "bandwidth: {(calculate-unit byte (div time (div ~s1 1.000)))}"
     =>  .(loc `(pole knot)`loc)
     ?>  ?=([van=@t car=@t cas=@t file-path=*] loc)
     =?  haves  =(frag num):rat
