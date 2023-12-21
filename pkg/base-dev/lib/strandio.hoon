@@ -623,17 +623,34 @@
   [%give %fact [(id-to-path:sole sole-id)]~ sole-effect/!>(sole-effect)]
 ::
 ++  rate
-  =>  |%  +$  rate  [frag=_0 num=_1]
-          +$  size  [fragment=@ud total=@ud]
-          ++  calculate-progress
-            |=  [a=@ud b=@ud]
-            ^-  [int=@ud dec=@ud]
-            =/  progress=@rs
-              (mul:rs (div:rs (sun:rs a) (sun:rs b)) (sun:rs 100))
-            =+  int=(need (toi:rs progress))
-            =/  dec=@ud  =,  rs
-              (abs:si (need (toi (mul .100 (sub progress (san int))))))
-            [(abs:si int) dec]
+  =>  |%
+      +$  rate  [frag=_0 num=_1]
+      +$  size  [fragment=@ud total=@ud]
+      ++  calculate-progress
+        |=  [a=@ud b=@ud]
+        ^-  [int=@ud dec=@ud]
+        =/  progress=@rs
+          (mul:rs (div:rs (sun:rs a) (sun:rs b)) (sun:rs 100))
+        =+  int=(need (toi:rs progress))
+        =/  dec=@ud  =,  rs
+          (abs:si (need (toi (mul .100 (sub progress (san int))))))
+        [(abs:si int) dec]
+      ::
+      ++  calculate-unit  :: XX some other smarter way to get the right unit
+        |=  [bytes=@ud seconds=@ud]
+        ^-  tape
+        =/  band
+          ?:  =(0 seconds)  (sun:rs bytes)  :: XX ms?
+          (div:rs (sun:rs bytes) (sun:rs seconds))
+        =+  int=(need (toi:rs band))
+        ?:  &((lth int 1.000) (gte int 100))
+          "{<(abs:si int)>} Kb/s."
+        ?.  (gth int 1.000)
+          "{<(abs:si int)>} b/s."
+        =+  short=(div:rs band (sun:rs 1.000))
+        =+  int=(need (toi:rs short))
+        =+  dec=(abs:si (need (toi:rs (mul:rs .100 (sub:rs short (san:rs int))))))
+        "{<(abs:si int)>}.{<dec>} Mb/s."
       --
   |=  [=ship sole-id=(unit sole-id:sole) =riff:clay]
   =/  m  (strand ,riot:clay)
@@ -650,6 +667,7 @@
   |-  ^-  form:m
   ?:  ?=(^ riot)
     (pure:m riot)
+  ;<  now-1=@da  bind:m  get-time
   ;<  =cage  bind:m  (take-rate /rate)
   ?:  ?=(%size p.cage)
     =+  !<([[* =path] =size] q.cage)
@@ -659,7 +677,16 @@
       (add total-frags total.size)
     $(needs (~(put by needs) [path total.size]))
   ?:  ?=(%rate p.cage)
+    ;<  now-2=@da  bind:m  get-time
+    =/  time=@dr  (sub now-2 now-1)
+    ::
     =+  !<([loc=path rat=^rate] q.cage)
+    ::
+    =/  byte=@ud
+      %+  div
+        (mul (div (bex fragment-size) (bex 3)) (sub frag.rat frag.rate))
+      (bex 10)
+    ~&  >  "bandwidth: {<(calculate-unit byte (div time ~s1))>}"    :: XX ms?
     =>  .(loc `(pole knot)`loc)
     ?>  ?=([van=@t car=@t cas=@t file-path=*] loc)
     =?  haves  =(frag num):rat
