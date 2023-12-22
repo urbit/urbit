@@ -1,5 +1,5 @@
-/-  spider, sole
-/+  libstrand=strand, sole
+/-  spider
+/+  libstrand=strand
 =,  strand=strand:libstrand
 =,  strand-fail=strand-fail:libstrand
 |%
@@ -617,11 +617,6 @@
     `[%done writ/!>(+>.sign-arvo.u.in.tin)]
   ==
 ::
-++  send-sole-effect
-  |=  [=sole-id:sole =sole-effect:sole]
-  %-  send-raw-card
-  [%give %fact [(id-to-path:sole sole-id)]~ sole-effect/!>(sole-effect)]
-::
 ++  rate
   =>  |%
       +$  rate  [frag=_0 num=_1]
@@ -636,7 +631,7 @@
           (abs:si (need (toi (mul .100 (sub progress (san int))))))
         [(abs:si int) dec]
       --
-  |=  [=ship sole-id=(unit sole-id:sole) =riff:clay]
+  |=  [=ship sole-id=(unit [who=@p ses=@ta]) =riff:clay]
   =/  m  (strand ,riot:clay)
   =|  needs=(map path total=@ud)
   =|  haves=(map path received=@ud)
