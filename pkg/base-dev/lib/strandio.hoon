@@ -635,23 +635,6 @@
         =/  dec=@ud  =,  rs
           (abs:si (need (toi (mul .100 (sub progress (san int))))))
         [(abs:si int) dec]
-      ::
-      ++  calculate-unit  :: XX some other smarter way to get the right unit
-        |=  [bytes=@ud ms=@ud]
-        ^-  tape
-        =/  band
-          %+  mul:rs  .1e3
-          ?:  =(0 ms)  (sun:rs bytes)
-          (div:rs (sun:rs bytes) (sun:rs ms))
-        =+  int=(need (toi:rs band))
-        ?:  &((lth int 1.000) (gte int 100))
-          "{<(abs:si int)>} Kb/s."
-        ?.  (gth int 1.000)
-          "{<(abs:si int)>} b/s."
-        =+  short=(div:rs band (sun:rs 1.000))
-        =+  int=(need (toi:rs short))
-        =+  dec=(abs:si (need (toi:rs (mul:rs .100 (sub:rs short (san:rs int))))))
-        "{<(abs:si int)>}.{<dec>} Mb/s."
       --
   |=  [=ship sole-id=(unit sole-id:sole) =riff:clay]
   =/  m  (strand ,riot:clay)
@@ -687,7 +670,6 @@
       %+  div
         (mul (div (bex fragment-size) (bex 3)) (sub frag.rat frag.rate))
       (bex 10)
-    ~&  >  "bandwidth: {(calculate-unit byte (div time (div ~s1 1.000)))}"
     =>  .(loc `(pole knot)`loc)
     ?>  ?=([van=@t car=@t cas=@t file-path=*] loc)
     =?  haves  =(frag num):rat
@@ -705,6 +687,7 @@
           ::  XX poke only one time with the total? adds extra state to %kiln...
           ::
           [size=fragment-size total=total-frags]
+          [byte (div time (div ~s1 1.000))]
       ==
     $(rate rat)
   ?>  ?=(%writ p.cage)
@@ -715,7 +698,7 @@
   ::     klr+~[[[`%un ~ `%g] "file: {<file-path>} [100%]"]]
   ::   (poke-our %hood rate/!>(sole-effect))
   ;<  ~  bind:m
-    (poke-our %hood rate/!>([0^0 / [~(wyt in haves) ~(wyt in needs)] 0^0]))
+    (poke-our %hood rate/!>([0^0 / [~(wyt in haves) ~(wyt in needs)] 0^0 0^0]))
   =+  !<(maybe=riot:clay q.cage)
   $(riot maybe)
 ::

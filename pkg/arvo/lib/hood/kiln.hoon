@@ -854,25 +854,43 @@
   abet:(spam (render "cancelling sync" sud.hus her.hus syd.hus kid.u.got) ~)
 ::
 ++  poke-rate
-  |=  [[i=@ud t=@ud] file=path [have=@ud need=@ud] [size=@ud total=@ud]]
+  |=  [[i=@ud t=@ud] file=path [have=@ud wait=@ud] [size=@ud total=@ud] [bytes=@ud ms=@ud]]
   |^  =<  abet
   %-  emil
   ?~  sole-id  ~
   =/  =sole-effect:sole  pro+[& %$ dial]
   [%give %fact [(id-to-path:sole u.sole-id)]~ sole-effect/!>(sole-effect)]~
   ::
+  ++  color  ?:(=(i 100) %g %y)
   ++  dial
     ?:  =([0 0] [i t])  "> "
     =/  bars=@ud  (div i 2)
     :~  [``~ " file: "]  [[`%un ~ ~] "{<file>}"]  [``~ " "]
-        [``~ (weld `tape`(turn (gulf 0 bars) |=(* '-')) ">")]
+        [``~ (weld `tape`(turn (gulf 0 10) |=(* '-')) ">")]
         [``~ " ["]
-        [[```color] "{?:((lth i 10) "0" ~)}{<i>}.{?:((lth t 10) "0" ~)}{<t>}%"]
+        [```color "{?:((lth i 10) "0" ~)}{<i>}.{?:((lth t 10) "0" ~)}{<t>}%"]
         [``~ "] [ "]
-        [``~ "{<have>}/{<need>} done"]
-        [``~ " ]"]
+        [``~ "{<have>}/{<wait>} done"]
+        [``~ "] ("]
+        [```%r bandwith]  :: XX color to show increase/decreaase in bandwith
+        [``~ ")"]
     ==
-  ++  color  ?:(=(i 100) %g %y)
+  ::
+  ++  bandwith  :: XX some other smarter way to get the right unit
+    ^-  tape
+    =/  band
+      %+  mul:rs  .1e3
+      ?:  =(0 ms)  (sun:rs bytes)
+      (div:rs (sun:rs bytes) (sun:rs ms))
+    =+  int=(need (toi:rs band))
+    ?:  &((lth int 1.000) (gte int 100))
+      "{<(abs:si int)>} Kb/s."
+    ?.  (gth int 1.000)
+      "{<(abs:si int)>} b/s."
+    =+  short=(div:rs band (sun:rs 1.000))
+    =+  int=(need (toi:rs short))
+    =+  dec=(abs:si (need (toi:rs (mul:rs .100 (sub:rs short (san:rs int))))))
+    "{<(abs:si int)>}.{<dec>} Mb/s."
   --
 ::
 ++  put-sole
