@@ -467,6 +467,7 @@
   |*  [a=(list) b=*]
   (weld a ^+(a [b]~))
 ::
+++  append  snoc
 ::  +lure: List pURE
 ++  lure
   |*  a=*
@@ -513,11 +514,15 @@
   ?~  a  b
   $(a t.a, b [i.a b])
 ::
+++  reverse  flop
+::
 ++  gulf                                                ::  range inclusive
   |=  [a=@ b=@]
   ?>  (lte a b)
   |-  ^-  (list @)
   ?:(=(a +(b)) ~ [a $(a +(a))])
+::
+++  range  gulf
 ::
 ++  homo                                                ::  homogenize
   |*  a=(list)
@@ -553,6 +558,8 @@
   ?~  a  b
   $(a t.a, b +(b))
 ::
+++  length  lent
+::
 ++  levy
   ~/  %levy                                             ::  all of
   |*  [a=(list) b=$-(* ?)]
@@ -560,6 +567,8 @@
   ?~  a  &
   ?.  (b i.a)  |
   $(a t.a)
+::
+++  any  levy
 ::
 ++  lien                                                ::  some of
   ~/  %lien
@@ -569,12 +578,16 @@
   ?:  (b i.a)  &
   $(a t.a)
 ::
+++  some  lien
+::
 ++  limo                                                ::  listify
   |*  a=*
   ^+  =<  $
     |@  ++  $  ?~(a ~ ?:(*? [i=-.a t=$] $(a +.a)))
     --
   a
+::
+++  to-list  limo
 ::
 ++  murn                                                ::  maybe transform
   ~/  %murn
@@ -591,12 +604,16 @@
   |*  [[a=@ b=@] c=(list)]
   (weld (scag +<-< c) (slag (add +<-< +<->) c))
 ::
+++  remove  oust
+::
 ++  reap                                                ::  replicate
   ~/  %reap
   |*  [a=@ b=*]
   |-  ^-  (list _b)
   ?~  a  ~
   [b $(a (dec a))]
+::
+++  repeat  reap
 ::
 ++  rear                                                ::  last item of list
   ~/  %rear
@@ -614,6 +631,8 @@
     +<+.b
   (b i.a $(a t.a))
 ::
+++  foldr  reel
+::
 ++  roll                                                ::  left fold
   ~/  %roll
   |*  [a=(list) b=_=>(~ |=([* *] +<+))]
@@ -622,12 +641,16 @@
     +<+.b
   $(a t.a, b b(+<+ (b i.a +<+.b)))
 ::
+++  foldl  roll
+::
 ++  scag                                                ::  prefix
   ~/  %scag
   |*  [a=@ b=(list)]
   |-  ^+  b
   ?:  |(?=(~ b) =(0 a))  ~
   [i.b $(b t.b, a (dec a))]
+::
+++  take  scag
 ::
 ++  skid                                                ::  separate
   ~/  %skid
@@ -637,6 +660,8 @@
   =+  c=$(a t.a)
   ?:((b i.a) [[i.a p.c] q.c] [p.c [i.a q.c]])
 ::
+++  separate  skid
+::
 ++  skim                                                ::  only
   ~/  %skim
   |*  [a=(list) b=$-(* ?)]
@@ -644,6 +669,8 @@
   ^+  a
   ?~  a  ~
   ?:((b i.a) [i.a $(a t.a)] $(a t.a))
+::
+++  filter  skim
 ::
 ++  skip                                                ::  except
   ~/  %skip
@@ -653,6 +680,8 @@
   ?~  a  ~
   ?:((b i.a) $(a t.a) [i.a $(a t.a)])
 ::
+++  remove  skip
+::
 ++  slag                                                ::  suffix
   ~/  %slag
   |*  [a=@ b=(list)]
@@ -660,6 +689,8 @@
   ?:  =(0 a)  b
   ?~  b  ~
   $(b t.b, a (dec a))
+::
+++  drop  slag
 ::
 ++  snag                                                ::  index
   ~/  %snag
@@ -670,6 +701,8 @@
     !!
   ?:  =(0 a)  i.b
   $(b t.b, a (dec a))
+::
+++  nth  snag
 ::
 ++  snip                                                ::  drop tail off list
   ~/  %snip
@@ -719,6 +752,8 @@
 ++  swag                                                ::  slice
   |*  [[a=@ b=@] c=(list)]
   (scag +<-> (slag +<-< c))
+::
+++  slice  swag
 ::  +turn: transform each value of list :a using the function :b
 ::
 ++  turn
@@ -730,6 +765,8 @@
   ?~  a  ~
   [i=(b i.a) t=$(a t.a)]
 ::
+++  transform  turn                                     :: "map" would be ideal, but I don't believe is an option
+::
 ++  weld                                                ::  concatenate
   ~/  %weld
   |*  [a=(list) b=(list)]
@@ -738,11 +775,15 @@
   ?~  a  b
   [i.a $(a t.a)]
 ::
+++  concat  weld
+::
 ++  snap                                               ::  replace item
   ~/  %snap
   |*  [a=(list) b=@ c=*]
   ^+  a
   (weld (scag b a) [c (slag +(b) a)])
+::
+++  replace  snap
 ::
 ++  into                                               ::  insert item
   ~/  %into
@@ -763,6 +804,8 @@
   ?~  +<
     +<
   (welp +<- $(+< +<+))
+::
+++  concat-list  zing
 ::
 ::    2c: bit arithmetic
 +|  %bit-arithmetic
@@ -4174,10 +4217,14 @@
   ^-  tape
   (turn vib |=(a=@ ?.(&((gte a 'A') (lte a 'Z')) a (add 32 a))))
 ::
+++  lowercase  cass
+::
 ++  cuss                                                ::  uppercase
   |=  vib=tape
   ^-  tape
   (turn vib |=(a=@ ?.(&((gte a 'a') (lte a 'z')) a (sub a 32))))
+::
+++  uppercase  cuss
 ::
 ++  crip  |=(a=tape `@t`(rap 3 a))                      ::  tape to cord
 ::
@@ -4198,6 +4245,8 @@
   ?:  =(0 a)
     c
   [b $(a (dec a))]
+::
+++  prepend-n  runt
 ::
 ++  sand                                                ::  atom sanity
   |=  a=@ta
