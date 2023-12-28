@@ -690,7 +690,7 @@
   ?~  b  ~
   $(b t.b, a (dec a))
 ::
-++  drop  slag
+++  drop-from  slag
 ::
 ++  snag                                                ::  index
   ~/  %snag
