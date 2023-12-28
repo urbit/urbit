@@ -568,7 +568,7 @@
   ?.  (b i.a)  |
   $(a t.a)
 ::
-++  any  levy
+++  every  levy
 ::
 ++  lien                                                ::  some of
   ~/  %lien
@@ -578,7 +578,7 @@
   ?:  (b i.a)  &
   $(a t.a)
 ::
-++  some  lien
+++  any  lien
 ::
 ++  limo                                                ::  listify
   |*  a=*
