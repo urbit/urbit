@@ -1588,6 +1588,8 @@
     ?~  a  a
     [n=[p=p.n.a q=(b q.n.a)] l=$(a l.a) r=$(a r.a)]
   ::
+  ++  rut  urn                                          :: ~2023.12.30: deprecated; use urn instead
+  ::
   ++  tap                                               ::  listify pairs
     =<  $
     ~/  %tap
