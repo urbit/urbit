@@ -137,10 +137,10 @@
     =/  =desk
       ::TODO  maybe should recognize if the user specified a desk explicitly.
       ::      currently eats the :app|desk#gen case.
-      =+  gop=/(scot %p our)/[q.gol]/(en-cose da+now ud+tick)/$
-      ?.  .^(? %gu gop)
+      =/  pax=path  (en-bema [our q.gol [da+now ud+tick]] /$)
+      ?.  .^(? %gu pax)
         q.dir
-      .^(desk %gd gop)
+      .^(desk %gd pax)
     [[%poke gol] [0 [%ge mod(q.p [desk q.gol path.q.p.mod])]]]
   ::
   ++  parse-variable
@@ -1562,30 +1562,29 @@
       |=  [=term ~]
       ?.  =(gen (end [3 (met 3 gen)] term))
         ~
-      ?~  =<(fil .^(arch %cy (weld pfix ~[term %hoon])))
+      ?~  =<(fil .^(arch %cy (weld pfix /[term]/hoon)))
         ~
       (some term)
     ::
     ++  complete-naked-gen
       |=  gen=term
       %+  complete  (cat 3 '+' gen)
-      =/  pax=path
-        /(scot %p our.hid)/[q:he-beam]/(en-cose da+now.hid ud+tick.hid)/gen
+      =+  [our=(scot %p our.hid) cos=(en-cose da+now.hid ud+tick.hid)]
+      =/  pax=path  /[our]/[q:he-beam]/[cos]/gen
       %^  tab-generators:auto  pax  ~
       %+  murn
         ~(tap by dir:.^(arch %cy pax))
       |=  [=term ~]
       ?.  =(gen (end [3 (met 3 gen)] term))
         ~
-      ?~  =<(fil .^(arch %cy (weld pax ~[term %hoon])))
+      ?~  =<(fil .^(arch %cy (weld pax /[term]/hoon)))
         ~
       (some term)
     ::
     ++  complete-naked-ted
       |=  ted=term
-      =/  pfix=path
-        /(scot %p our.hid)/[q:he-beam]/(en-cose da+now.hid ud+tick.hid)/ted
-      =+  .^(paths=(list path) %ct pfix)
+      =+  [our=(scot %p our.hid) cos=(en-cose da+now.hid ud+tick.hid)]
+      =+  .^(paths=(list path) %ct /[our]/[q:he-beam]/[cos]/ted)
       %+  complete  (cat 3 '-' ted)
       %+  murn  paths
       |=  pax=path

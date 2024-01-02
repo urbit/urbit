@@ -16,10 +16,11 @@
   ==
 ::
 ++  export-app
-  |=  [app=@tas our=@p now=@da]
-  .^(* %gx /(scot %p our)/[app]/(scot %da now)/export/noun)
+  |=  [app=@tas our=@p now=@da tick=@ud]
+  =+  [our=(scot %p our) cos=(en-cose da+now ud+tick)]
+  .^(* %gx /[our]/[app]/[cos]/export/noun)
 ++  export-all
-  |=  [our=@p now=@da]
+  |=  [our=@p now=@da tick=@ud]
   ^-  (list [@tas *])
   %+  turn
     ^-  (list @tas)
@@ -29,7 +30,7 @@
         %graph-store
     ==
   |=  app=@tas
-  [app (export-app app our now)]
+  [app (export-app app our now tick)]
 --
 ::
 =|  =state
@@ -103,7 +104,7 @@
       %export-all
     =/  output  (crip "{<our.bowl>}-export/atom")
     =/  jon
-      =/  =atom  (jam (export-all our.bowl now.bowl))
+      =/  =atom  (jam (export-all [our now tick]:bowl))
       =/  =octs  [(met 3 atom) atom]
       =/  enc    (en:base64:mimes:html octs)
       (pairs:enjs:format file+s+output data+s+enc ~)
@@ -137,7 +138,7 @@
   ^-  (unit (unit cage))
   ?+  path  (on-peek:def path)
     [%x %export-all ~]
-    ``noun+!>((jam (export-all our.bowl now.bowl)))
+    ``noun+!>((jam (export-all [our now tick]:bowl)))
   ==
 ++  on-agent
   |=  [=wire =sign:agent:gall]

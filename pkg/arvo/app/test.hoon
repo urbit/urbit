@@ -29,8 +29,8 @@
   |^
   =+  !<(=test vase)
   ?-  test
-    %marks   test-marks
-    %agents  test-agents
+    %marks       test-marks
+    %agents      test-agents
     %generators  test-generators
   ==
   ::
@@ -39,7 +39,7 @@
     ^+  [fex this]
     ?>  =(~ mar.state)
     =.  mar-ok.state  %.y
-    =+  .^(paz=(list path) ct+(en-beam now-beak /mar))
+    =+  .^(paz=(list path) %ct (en-bema now-beck /mar))
     |-  ^+  [fex this]
     ?~  paz  [(flop fex) this]
     =/  xap=path  (flop i.paz)
@@ -63,12 +63,12 @@
     ^+  [fex this]
     ?>  =(~ app.state)
     =.  app-ok.state  %.y
-    =+  .^(app-arch=arch cy+(en-beam now-beak /app))
+    =+  .^(app-arch=arch %cy (en-bema now-beck /app))
     =/  daz  (sort ~(tap in ~(key by dir.app-arch)) |=((pair) !(aor p q)))
     |-  ^+  [fex this]
     ?~  daz  [fex this]
     =/  dap-pax=path  /app/[i.daz]/hoon
-    =/  dap-arch  .^(arch cy+(en-beam now-beak dap-pax))
+    =/  dap-arch  .^(arch %cy (en-bema now-beck dap-pax))
     ?~  fil.dap-arch
       $(daz t.daz)
     =/  sing=card
@@ -85,7 +85,7 @@
     ^+  [fex this]
     ?>  =(~ gen.state)
     =.  gen-ok.state  %.y
-    =+  .^(paz=(list path) ct+(en-beam now-beak /gen))
+    =+  .^(paz=(list path) %ct (en-bema now-beck /gen))
     |-  ^+  [fex this]
     ?~  paz  [(flop fex) this]
     =/  xap=path  (flop i.paz)
@@ -100,7 +100,7 @@
       gen.state  (~(put in gen.state) i.paz)
     ==
   ::
-  ++  now-beak  %_(byk.bowl r [%da now.bowl])
+  ++  now-beck  `beck`byk.bowl(r [da+now.bowl ud+tick.bowl])
   --
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def

@@ -98,11 +98,11 @@
     :-  %json
     !>  ^-  json
     =-  a+(turn ~(tap in -) (lead %s))
-    .^((set @tas) %dy /(scot %p our.bowl)//(scot %da now.bowl)/sessions)
+    =+  [our=(scot %p our.bowl) cos=(en-cose da+now.bowl ud+tick.bowl)]
+    .^((set @tas) %dy /[our]//[cos]/sessions)
   ==
 ::
 ++  on-leave  on-leave:def
-::
 ++  on-agent  on-agent:def
 ++  on-fail   on-fail:def
 --

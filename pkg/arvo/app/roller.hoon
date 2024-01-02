@@ -839,32 +839,10 @@
 ++  canonical
   |^  nas^own^spo
   ::
-  ++  nas
-    .^  ^state:naive
-      %gx
-      (scot %p our.bowl)
-      %azimuth
-      (scot %da now.bowl)
-      /nas/noun
-    ==
-  ::
-  ++  own
-    .^  owners
-      %gx
-      (scot %p our.bowl)
-      %azimuth
-      (scot %da now.bowl)
-      /own/noun
-    ==
-  ::
-  ++  spo
-    .^  sponsors
-      %gx
-      (scot %p our.bowl)
-      %azimuth
-      (scot %da now.bowl)
-      /spo/noun
-    ==
+  ++  bek  [our.bowl %azimuth [da+now.bowl ud+tick.bowl]]
+  ++  nas  .^(^state:naive %gx (en-bema bek /nas/noun))
+  ++  own  .^(owners %gx (en-bema bek /own/noun))
+  ++  spo  .^(sponsors %gx (en-bema bek /spo/noun))
   --
 ::  +predicted-state
 ::

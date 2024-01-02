@@ -95,7 +95,7 @@
   ::
   ++  on-init
     :_  this
-    ?:  .^(? %j /(scot %p our.bowl)/fake/(scot %da now.bowl))
+    ?:  .^(? %j (en-bema [our.bowl %fake [da+now.bowl ud+tick.bowl]] /))
       ~
     ~[(init-timer now.bowl)]
   ++  on-save   !>(state)
@@ -263,8 +263,8 @@
           number:(last-block-id:dice logs.state)
         ::  ~&  >>  %no-logs-in-azimuth-state
         number.id.sap.state
-      =+  [our=(scot %p our.bowl) now=(scot %da now.bowl)]
-      =+  .^(dudes=(set [dude:gall ?]) %ge our %base now /$)
+      =+  [our=(scot %p our.bowl) cos=(en-cose da+now.bowl ud+tick.bowl)]
+      =+  .^(dudes=(set [dude:gall ?]) %ge our %base cos /$)
       =/  running=?  (~(has in dudes) [%eth-watcher &])
       =/  installed=?
         |((~(has in dudes) [%eth-watcher &]) (~(has in dudes) [%eth-watcher |]))

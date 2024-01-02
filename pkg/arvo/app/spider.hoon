@@ -689,9 +689,7 @@
 ::
 ++  convert-tube
   |=  [from=mark to=mark =desk =bowl:gall]
-  .^
-    tube:clay
-    %cc
-    /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/[from]/[to]
+  .^  tube:clay
+      %cc  (en-bema [our.bowl desk [da+now.bowl ud+tick.bowl]] /[from]/[to])
   ==
 --
