@@ -214,7 +214,7 @@
   =<  q
   %-  need  %-  need
   %-  scry:(ames-gate now eny tick roof)
-  [~ / %x [[our %$ da+now] /peers/(scot %p her)]]
+  [[~ ~] / %x [[our %$ da+now] /peers/(scot %p her)]]
 ::
 ++  gall-scry-nonce
   |=  $:  =gall-gate
@@ -228,7 +228,7 @@
   =<  q
   %-  need  %-  need
   %-  scry:(gall-gate now eny tick roof)
-  [~ / %n [[our dude da+now] [%$ (scot %p ship.sub) [term wire]:sub]]]
+  [[~ ~] / %n [[our dude da+now] [%$ (scot %p ship.sub) [term wire]:sub]]]
 ::
 ++  load-agent
   |=  [=ship =gall-gate =dude:gall =agent:gall]

@@ -88,11 +88,12 @@
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
   |^
-  ::  only respond for the local identity, current timestamp
+  ::  only respond for the local identity, current timestamp, root gang
   ::
   ?.  ?&  =(our p.bem)
           =(%$ q.bem) 
           =([%da now] r.bem)
+          =([~ ~] lyc)
       ==
     ~
   ?+  car  ~

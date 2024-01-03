@@ -1053,7 +1053,7 @@
   ::
   ::  XX review for security, stability, cases other than now
   ::
-  ?.  =(lot [%$ %da now])  ~
+  ?.  &(=(lot [%$ %da now]) =([~ ~] lyc))  ~
   ::
   ?:  &(?=(%x ren) =(tyl //whey))
     =/  maz=(list mass)

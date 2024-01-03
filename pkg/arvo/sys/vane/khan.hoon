@@ -76,7 +76,7 @@
     ?.  =(r.beak da+now)
       beak
     beak(r [da+now ud+tick])
-  ?~  ret=(rof ~ /khan %cb beck /[mark])
+  ?~  ret=(rof [~ ~] /khan %cb beck /[mark])
     ~|(mark-unknown+mark !!)
   ?~  u.ret
     ~|(mark-invalid+mark !!)
@@ -90,7 +90,7 @@
     ?.  =(r.beak da+now)
       beak
     beak(r [da+now ud+tick])
-  ?~  ret=(rof ~ /khan %cc beck /[mark]/[out-mark])
+  ?~  ret=(rof [~ ~] /khan %cc beck /[mark]/[out-mark])
     ~|(tube-unknown+[mark out-mark] !!)
   ?~  u.ret
     ~|(tube-invalid+[mark out-mark] !!)
