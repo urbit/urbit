@@ -88,7 +88,7 @@
 ++  ames-secret
   ^-  @t
   =;  pax  (crip +:<.^(@p %j pax)>)
-  /(scot %p our.bowl)/code/(scot %da now.bowl)/(scot %p our.bowl)
+  (en-bema [our.bowl %code da+now.bowl ud+tick.bowl] /(scot %p our.bowl))
 ::
 ++  poke-sec-atom
   |=  [hot=host:eyre dat=@]
@@ -96,8 +96,9 @@
   =.  p.hot  (scag 2 p.hot)      :: ignore subdomain
   =.  dat  (scot %uw (en:crub:crypto ames-secret dat))
   =-  abet:(emit %pass /write %arvo %c %info -)
+  =/  =beck  byk.bowl(r [da+now.bowl ud+tick.bowl])
+  =+  .^(=tube:clay %cc (en-bema beck /mime/atom))
   =/  byk=path  (en-beam byk.bowl(r da+now.bowl) ~)
-  =+  .^(=tube:clay cc+(welp byk /mime/atom))
   =/  =cage  atom+(tube !>([/ (as-octs:mimes:html dat)]))
   (foal:space:userlib :(welp byk sec+p.hot /atom) cage)
 ::
@@ -125,7 +126,8 @@
   ?>  =(%earl (clan:title ship))
   ?>  =(our.bowl (sein:title our.bowl now.bowl tick.bowl ship))
   =/  =rift
-    +(.^(rift j+/(scot %p our.bowl)/rift/(scot %da now.bowl)/(scot %p ship)))
+    =/  =beck  [our.bowl %rift [da+now.bowl ud+tick.bowl]]
+    +(.^(rift %j (en-bema beck /(scot %p ship))))
   abet:(emit %pass / %arvo %j %moon ship *id:block:jael %rift rift %.n)
 ::
 ++  poke-code
