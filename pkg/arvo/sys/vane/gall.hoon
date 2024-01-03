@@ -1553,7 +1553,8 @@
         =/  =mars:clay  [p.cage mark]
         =/  =case       da+now
         =/  mars-path  /[a.mars]/[b.mars]
-        =/  sky  (rof [~ ~] /gall %cc [our q.beak.yoke da+now ud+tick] mars-path)
+        =/  sky
+          (rof [~ ~] /gall %cc [our q.beak.yoke da+now ud+tick] mars-path)
         ?-    sky
             ?(~ [~ ~])
           %-  (slog leaf+"watch-as fact conversion find-fail" >sky< ~)

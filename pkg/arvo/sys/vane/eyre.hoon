@@ -917,7 +917,8 @@
         %gen
       =/  bek=beak  [our desk.generator.action da+now]
       =/  sup=spur  path.generator.action
-      =/  ski  (rof [~ ~] /eyre %ca [our desk.generator.action da+now ud+tick] sup)
+      =/  ski
+        (rof [~ ~] /eyre %ca [our desk.generator.action da+now ud+tick] sup)
       =/  cag=cage  (need (need ski))
       ?>  =(%vase p.cag)
       =/  gat=vase  !<(vase q.cag)
@@ -4138,7 +4139,7 @@
     :^  ~  ~  %noun
     !>  ^-  (unit @t)
     =<  eauth-url:eauth:authentication
-    (per-server-event [eny *duct now rof] server-state.ax)
+    (per-server-event [eny *duct now tick rof] server-state.ax)
  ::
   ?:  ?=([%cache @ @ ~] tyl)
     ?.  &(?=(%x ren) ?=(%$ syd))  ~
