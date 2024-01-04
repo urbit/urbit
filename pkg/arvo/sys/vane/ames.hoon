@@ -2078,7 +2078,7 @@
       ++  get-sponsors
         ;;  (list ship)
         =<  q.q  %-  need  %-  need
-        (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p our)])
+        (rof [~ ~] /ames %j `bema`[[our %saxo da+now ud+tick] /(scot %p our)])
       ::
       +|  %tasks
       ::  +on-take-flub: vane not ready to process message, pretend it
