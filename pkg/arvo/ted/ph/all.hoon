@@ -20,7 +20,9 @@
     ==
   ::
       [%all ~]
-    =+  .^(=arch %cy /(scot %p our.bowl)/base/(scot %da now.bowl)/ted/ph)
+    ::  ;<  =arch  bind:m  (scry arch /cy/base/ted/ph)
+    =/  =beck  [our.bowl %base da+now.bowl ud+tick.bowl]
+    =+  .^(=arch %cy (en-bema beck /ted/ph))
     %+  turn  (sort (turn ~(tap by dir.arch) head) aor)
     |=  =term
     (cat 3 'ph-' term)

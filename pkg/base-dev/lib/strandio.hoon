@@ -38,6 +38,12 @@
   |=  tin=strand-input:strand
   `[%done now.bowl.tin]
 ::
+++  get-tick
+  =/  m  (strand ,@ud)
+  ^-  form:m
+  |=  tin=strand-input:strand
+  `[%done tick.bowl.tin]
+::
 ++  get-our
   =/  m  (strand ,ship)
   ^-  form:m

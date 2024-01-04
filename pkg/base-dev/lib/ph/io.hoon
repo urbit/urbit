@@ -119,7 +119,8 @@
   =/  aqua-pax
     :-  %i
     /(scot %p her)/j/(scot %p her)/rift/(scot %da now.bowl)/(scot %p who)/noun
-  =/  old-rut  ;;((unit @) (scry-aqua:util noun our.bowl now.bowl aqua-pax))
+  =/  old-rut
+    ;;((unit @) (scry-aqua:util noun our.bowl now.bowl tick.bowl aqua-pax))
   =/  new-rut
     ?~  old-rut
       1
@@ -132,7 +133,7 @@
   =/  aqua-pax
     :-  %i
     /(scot %p her)/j/(scot %p her)/rift/(scot %da now.bowl)/(scot %p who)/noun
-  =/  rut  (scry-aqua:util noun our.bowl now.bowl aqua-pax)
+  =/  rut  (scry-aqua:util noun our.bowl now.bowl tick.bowl aqua-pax)
   ?:  =([~ new-rut] rut)
     (pure:m ~)
   loop
@@ -240,9 +241,10 @@
   =/  m  (strand ,@t)
   ^-  form:m
   ~&  >  "touching file on {<her>}/{<desk>}"
-  ;<  ~        bind:m  (mount her desk)
-  ;<  our=@p   bind:m  get-our
-  ;<  now=@da  bind:m  get-time
+  ;<  ~         bind:m  (mount her desk)
+  ;<  our=@p    bind:m  get-our
+  ;<  now=@da   bind:m  get-time
+  ;<  tick=@ud  bind:m  get-tick
   =/  aqua-pax
     ;:  weld
         /i/(scot %p her)/cx/(scot %p her)/[desk]/(scot %da now)
@@ -252,7 +254,7 @@
   =/  warped
     %^  cat  3  '=>  .  '
     %^  cat  3  extra
-    (need (scry-aqua:util (unit @) our now aqua-pax))
+    (need (scry-aqua:util (unit @) our now tick aqua-pax))
   ;<  ~  bind:m  (send-events (insert-files:util her desk [pax warped] ~))
   (pure:m warped)
 ::
@@ -284,6 +286,7 @@
   ;<  [her=^ship =unix-effect]  bind:m  take-unix-effect
   ;<  our=@p                    bind:m  get-our
   ;<  now=@da                   bind:m  get-time
+  ;<  tick=@ud                  bind:m  get-tick
   ::  %ergo is no longer sufficient because .^ is pinned to beginning of
   ::  the event.  So we hope somebody sets a timer for something.
   ::
@@ -295,7 +298,7 @@
         pax
         /noun
     ==
-  ?:  =(warped (need (scry-aqua:util (unit @) our now aqua-pax)))
+  ?:  =(warped (need (scry-aqua:util (unit @) our now tick aqua-pax)))
     (pure:m ~)
   loop
 ::
