@@ -1,11 +1,11 @@
 /+  *twoc
 ::                                                    ::
 ::::                    ++la                          ::  (2v) vector/matrix ops
+~%  %lagoon  ..part  ~
 |%
 ++  la
   ^|
-  !:
-  |_  r=$?(%n %u %d %z)   :: round nearest, round up, round down, round to zero
+  |%
   ::
   ::  Metadata
   ::
@@ -14,11 +14,18 @@
         data=@ux        ::  data, row-major order
     ==
   ::
+  +$  rounding-mode  ?(%n %u %d %z)
+  +$  info
+    $%  [%fixp @]       ::  fixed-precision scale
+        $:  %real       ::  IEEE 754 rounding mode
+            r=rounding-mode
+        ==
+    ==
   +$  meta              ::  $meta:  metadata for a $ray
     $:  shape=(list @)  ::  list of dimension lengths
         =bloq           ::  logarithm of bitwidth
         =kind           ::  name of data type
-        prec=(unit @)   ::  fixed-precision scale
+        info=(unit info)
     ==
   ::
   +$  kind              ::  $kind:  type of array scalars
@@ -137,7 +144,7 @@
     ::  construct new ray
     %-  spac
     =,  meta.a
-    :-  [out-shape bloq kind prec]
+    :-  [out-shape bloq kind info]
     new-dat
   ::
   ++  product  ::  cartesian product
@@ -183,14 +190,14 @@
     ^-  ray
     =,  meta.a
     ?:  =(1 (lent shape))
-      (spac [~[1] bloq kind prec] (get-item a dex))
+      (spac [~[1] bloq kind info] (get-item a dex))
     ?>  =(+((lent dex)) (lent shape))
     =/  res
       %-  zeros
       :*  ~[1 (snag 0 (flop shape))]
           bloq
           kind
-          prec
+          info
       ==
     =/  idx  0
     |-  ^-  ray
@@ -396,7 +403,7 @@
     =<  +
     %^    spin
         (gulf 0 (dec n))
-      ^-  ray  (zeros [~[n n] bloq kind prec])
+      ^-  ray  (zeros [~[n n] bloq kind info])
     |=  [i=@ r=ray]
     :: [i (set-item r ~[i i] 1)]
     :-  i
@@ -598,7 +605,7 @@
     |=  a=ray
     =/  fun
       |:  [b=1 c=-:(ravel a)] 
-      ?:  =(((fun-scalar bloq.meta.a kind.meta.a %gth) b c) 0)
+      ?:  =(((fun-scalar meta.a %gth) b c) 0)
         b  c 
     (scalar-to-ray meta.a (reel (ravel a) fun))
   ::
@@ -611,7 +618,7 @@
     |=  a=ray
     =/  fun
       |:  [b=1 c=-:(ravel a)] 
-      ?:  =(((fun-scalar bloq.meta.a kind.meta.a %lth) b c) 0)
+      ?:  =(((fun-scalar meta.a %lth) b c) 0)
         b  c 
     (scalar-to-ray meta.a (reel (ravel a) fun))
   ::
@@ -624,13 +631,13 @@
     |=  a=ray
     ^-  ray
     %+  scalar-to-ray  meta.a
-    (reel (ravel a) |=([b=@ c=@] ((fun-scalar bloq.meta.a kind.meta.a %add) b c)))
+    (reel (ravel a) |=([b=@ c=@] ((fun-scalar meta.a %add) b c)))
   ::
   ++  prod
     |=  a=ray
     ^-  ray
     %+  scalar-to-ray  meta.a
-    (reel (ravel a) |=([b=_1 c=_1] ((fun-scalar bloq.meta.a kind.meta.a %mul) b c)))
+    (reel (ravel a) |=([b=_1 c=_1] ((fun-scalar meta.a %mul) b c)))
   ::
   ++  reshape
     |=  [a=ray shape=(list @)]
@@ -703,7 +710,7 @@
     =/  i  0
     =/  j  0
     =/  shape=(list @)  ~[(snag 1 shape) (snag 0 shape)]
-    =/  prod=ray  (zeros [shape bloq kind prec])
+    =/  prod=ray  (zeros [shape bloq kind info])
     |-
       ?:  =(i (snag 0 shape))
         prod
@@ -727,7 +734,7 @@
     ?>  =(2 (lent shape))
     ?>  =(-.shape +<.shape)
     %-  en-ray
-    :-  `meta`[~[-.shape 1] bloq kind prec]
+    :-  `meta`[~[-.shape 1] bloq kind info]
     %+  turn
       (flop (gulf 0 (dec -.shape)))
     |=(i=@ (get-item a ~[i i]))
@@ -749,7 +756,7 @@
     =/  j  0
     =/  k  0
     =/  shape=(list @)  ~[(snag 0 shape.meta.a) (snag 1 shape.meta.b)]
-    =/  prod=ray  =,(meta.a (zeros [^shape bloq kind prec]))
+    =/  prod=ray  =,(meta.a (zeros [^shape bloq kind info]))
     ::  
     ::  multiplication conditions
     ?>
@@ -776,9 +783,9 @@
           %=    $
               k  +(k)
               cume
-            %+  (fun-scalar bloq.meta.a kind.meta.a %add)
+            %+  (fun-scalar meta.a %add)
               cume
-            %+  (fun-scalar bloq.meta.a kind.meta.a %mul)
+            %+  (fun-scalar meta.a %mul)
               (get-item a ~[i k])
             (get-item b ~[k j])
           ==
@@ -821,29 +828,30 @@
     (mod a b)
   ::
   ++  add
+    ~/  %add
     |=  [a=ray b=ray]
     ^-  ray
-    (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %add))
+    (bin-op a b (fun-scalar meta.a %add))
   ::
   ++  sub
     |=  [a=ray b=ray]
     ^-  ray
-    (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %sub))
+    (bin-op a b (fun-scalar meta.a %sub))
   ::
   ++  mul
     |=  [a=ray b=ray]
     ^-  ray
-    (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %mul))
+    (bin-op a b (fun-scalar meta.a %mul))
   ::
   ++  div
     |=  [a=ray b=ray]
     ^-  ray
-    (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %div))
+    (bin-op a b (fun-scalar meta.a %div))
   ::
   ++  mod
     |=  [a=ray b=ray]
     ^-  ray
-    (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %mod))
+    (bin-op a b (fun-scalar meta.a %mod))
   ::
   ++  pow-n
     |=  [a=ray n=@ud]
@@ -857,37 +865,37 @@
   ++  pow
     |=  [a=ray b=ray]
     ^-  ray
-    (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %pow))
+    (bin-op a b (fun-scalar meta.a %pow))
   ::
   ++  exp
     |=  [a=ray b=ray]
     ^-  ray
-    (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %exp))
+    (bin-op a b (fun-scalar meta.a %exp))
   ::
   ++  log
     |=  [a=ray b=ray]
     ^-  ray
-    (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %log))
+    (bin-op a b (fun-scalar meta.a %log))
   ::
   ++  gth
     |=  [a=ray b=ray]
     ^-  ray
-    (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %gth))
+    (bin-op a b (fun-scalar meta.a %gth))
   ::
   ++  gte
     |=  [a=ray b=ray]
     ^-  ray
-    (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %gte))
+    (bin-op a b (fun-scalar meta.a %gte))
   ::
   ++  lth
     |=  [a=ray b=ray]
     ^-  ray
-    (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %lth))
+    (bin-op a b (fun-scalar meta.a %lth))
   ::
   ++  lte
     |=  [a=ray b=ray]
     ^-  ray
-    (bin-op a b (fun-scalar bloq.meta.a kind.meta.a %lte))
+    (bin-op a b (fun-scalar meta.a %lte))
   ::
   ++  mpow-n
     |=  [a=ray n=@ud]
@@ -933,9 +941,10 @@
             ==
   ::
   ++  fun-scalar
-    |=  [=bloq =kind fun=ops]
+    |=  [=meta fun=ops]
     ^-  $-([@ @] @)
-    ?+    kind  ~|(kind !!)
+    =,  meta
+    ?+    `^kind`kind  ~|(kind !!)
         %uint  
       ?+  fun  !!
         %add  ~(sum fe bloq)
@@ -961,54 +970,54 @@
       ==
       ::
         %real
-      ?+  bloq  !!
-        %7
+      ?+    `^bloq`bloq  !!
+          %7
         ?+  fun  !!
-          %add  ~(add rq r)
-          %sub  ~(sub rq r)
-          %mul  ~(mul rq r)
-          %div  ~(div rq r)
-          %gth  ~(gth rq r)
-          %gte  ~(gte rq r)
-          %lth  ~(lth rq r)
-          %lte  ~(lte rq r)
+          %add  ?~(info !! ?>(=(%real -:(need info)) ~(add rq ;;(rounding-mode +:(need info)))))
+          %sub  ?~(info !! ?>(=(%real -:(need info)) ~(sub rq ;;(rounding-mode +:(need info)))))
+          %mul  ?~(info !! ?>(=(%real -:(need info)) ~(mul rq ;;(rounding-mode +:(need info)))))
+          %div  ?~(info !! ?>(=(%real -:(need info)) ~(div rq ;;(rounding-mode +:(need info)))))
+          %gth  ?~(info !! ?>(=(%real -:(need info)) ~(gth rq ;;(rounding-mode +:(need info)))))
+          %gte  ?~(info !! ?>(=(%real -:(need info)) ~(gte rq ;;(rounding-mode +:(need info)))))
+          %lth  ?~(info !! ?>(=(%real -:(need info)) ~(lth rq ;;(rounding-mode +:(need info)))))
+          %lte  ?~(info !! ?>(=(%real -:(need info)) ~(lte rq ;;(rounding-mode +:(need info)))))
         ==
-        %6
+          %6
         ?+  fun  !!
-          %add  ~(add rd r)
-          %sub  ~(sub rd r)
-          %mul  ~(mul rd r)
-          %div  ~(div rd r)
-          %gth  ~(gth rd r)
-          %gte  ~(gte rd r)
-          %lth  ~(lth rd r)
-          %lte  ~(lte rd r)
+          %add  ?~(info !! ?>(=(%real -:(need info)) ~(add rd ;;(rounding-mode +:(need info)))))
+          %sub  ?~(info !! ?>(=(%real -:(need info)) ~(sub rd ;;(rounding-mode +:(need info)))))
+          %mul  ?~(info !! ?>(=(%real -:(need info)) ~(mul rd ;;(rounding-mode +:(need info)))))
+          %div  ?~(info !! ?>(=(%real -:(need info)) ~(div rd ;;(rounding-mode +:(need info)))))
+          %gth  ?~(info !! ?>(=(%real -:(need info)) ~(gth rd ;;(rounding-mode +:(need info)))))
+          %gte  ?~(info !! ?>(=(%real -:(need info)) ~(gte rd ;;(rounding-mode +:(need info)))))
+          %lth  ?~(info !! ?>(=(%real -:(need info)) ~(lth rd ;;(rounding-mode +:(need info)))))
+          %lte  ?~(info !! ?>(=(%real -:(need info)) ~(lte rd ;;(rounding-mode +:(need info)))))
         ==
-        %5
+          %5
         ?+  fun  !!
-          %add  ~(add rs r)
-          %sub  ~(sub rs r)
-          %mul  ~(mul rs r)
-          %div  ~(div rs r)
-          %gth  ~(gth rs r)
-          %gte  ~(gte rs r)
-          %lth  ~(lth rs r)
-          %lte  ~(lte rs r)
+          %add  ?~(info !! ?>(=(%real -:(need info)) ~(add rs ;;(rounding-mode +:(need info)))))
+          %sub  ?~(info !! ?>(=(%real -:(need info)) ~(sub rs ;;(rounding-mode +:(need info)))))
+          %mul  ?~(info !! ?>(=(%real -:(need info)) ~(mul rs ;;(rounding-mode +:(need info)))))
+          %div  ?~(info !! ?>(=(%real -:(need info)) ~(div rs ;;(rounding-mode +:(need info)))))
+          %gth  ?~(info !! ?>(=(%real -:(need info)) ~(gth rs ;;(rounding-mode +:(need info)))))
+          %gte  ?~(info !! ?>(=(%real -:(need info)) ~(gte rs ;;(rounding-mode +:(need info)))))
+          %lth  ?~(info !! ?>(=(%real -:(need info)) ~(lth rs ;;(rounding-mode +:(need info)))))
+          %lte  ?~(info !! ?>(=(%real -:(need info)) ~(lte rs ;;(rounding-mode +:(need info)))))
         ==
-        %4
+          %4
         ?+  fun  !!
-          %add  ~(add rh r)
-          %sub  ~(sub rh r)
-          %mul  ~(mul rh r)
-          %div  ~(div rh r)
-          %gth  ~(gth rh r)
-          %gte  ~(gte rh r)
-          %lth  ~(lth rh r)
-          %lte  ~(lte rh r)
+          %add  ?~(info !! ?>(=(%real -:(need info)) ~(add rh ;;(rounding-mode +:(need info)))))
+          %sub  ?~(info !! ?>(=(%real -:(need info)) ~(sub rh ;;(rounding-mode +:(need info)))))
+          %mul  ?~(info !! ?>(=(%real -:(need info)) ~(mul rh ;;(rounding-mode +:(need info)))))
+          %div  ?~(info !! ?>(=(%real -:(need info)) ~(div rh ;;(rounding-mode +:(need info)))))
+          %gth  ?~(info !! ?>(=(%real -:(need info)) ~(gth rh ;;(rounding-mode +:(need info)))))
+          %gte  ?~(info !! ?>(=(%real -:(need info)) ~(gte rh ;;(rounding-mode +:(need info)))))
+          %lth  ?~(info !! ?>(=(%real -:(need info)) ~(lth rh ;;(rounding-mode +:(need info)))))
+          %lte  ?~(info !! ?>(=(%real -:(need info)) ~(lte rh ;;(rounding-mode +:(need info)))))
         ==
-      ==
+      ==  :: bloq real
     ::
-    ==
+    ==  :: kind
   ::
   ++  trans-scalar
     |=  [=bloq =kind fun=ops]
@@ -1022,20 +1031,20 @@
         %int2  !!
       ::
         %real
-      ?+  bloq  !!
-        %7
+      ?+    bloq  !!
+          %7
         ?+  fun  !!
           %abs  |=(b=@ ?:((gth:rq b .~~~0) b (mul:rq b .~~~-1)))
         ==
-        %6
+          %6
         ?+  fun  !!
           %abs  |=(b=@ ?:((gth:rd b .~0) b (mul:rd b .~-1)))
         ==
-        %5
+          %5
         ?+  fun  !!
           %abs  |=(b=@ ?:((gth:rs b .0) b (mul:rs b .-1)))
         ==
-        %4
+          %4
         ?+  fun  !!
           %abs  |=(b=@ ?:((gth:rh b .~~0) b (mul:rh b .~~-1)))
         ==
