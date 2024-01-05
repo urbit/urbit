@@ -221,7 +221,7 @@
     |=  [nex=@B typ=?(%page %peek %poke) hop=@ gum=@F]
     ^-  plot
     =/  tip  ?-(typ %page 0b1, %peek 0b10, %poke 0b11)
-    =.  hop  (max 7 hop)
+    =.  hop  (min 7 hop)
     =*  tok  [32 ~tasfyn-partyv]
     :-  bloq=0
     [[2 0] [2 nex] [3 ver=1] [2 tip] [3 hop] [20 gum] tok ~]
