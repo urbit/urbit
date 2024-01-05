@@ -16,10 +16,6 @@
 ::
 +|  %atomics
 ::
-::  +pet: prefix +met
-::
-++  pet  |=([a=bloq b=@] `(pair step @)`[(met a b) b])
-::
 ::  +rig: convert between bloqs
 ::
 ++  rig
@@ -51,11 +47,12 @@
     =/  d  ^$(b.p t.b.p)
     [a.p (add p.c p.d) (add q.c (lsh [a.p p.c] q.d))]
   ::
-  ?@  i.b.p  (pet a.p i.b.p)
+  ?@  i.b.p
+    [(met a.p i.b.p) i.b.p]
   ?-  -.i.b.p
     @       [p.i.b.p (end [a.p p.i.b.p] q.i.b.p)]
     [%c ~]  [q.p.i.b.p (cut a.p [p q]:i.b.p)]
-    [%m ~]  (pet a.p (cut a.p [p q]:i.b.p))
+    [%m ~]  =+((cut a.p [p q]:i.b.p) [(met a.p -) -])
     [%s ~]  =/  e  $(p p.i.b.p)
             [(rig [p.e a.p] q.e) r.e]
   ==
