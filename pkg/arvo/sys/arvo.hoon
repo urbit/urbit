@@ -1553,8 +1553,8 @@
           ::  TODO
           ::
           ~&  >>>  [%no-tick tick.gem lyc pov vis bam]
-          ::  ~
-          (do-peek lyc pov vis bam)
+          ~
+          ::  (do-peek lyc pov vis bam)
         (do-peek lyc pov vis bam)
       ::
           [[%da @da] %ud @ud]
@@ -1990,19 +1990,19 @@
           ==
       ==
   ^-  (unit (cask))
-  =/  hap=(unit [pat=? omen])
+  =/  hap=(unit [pat=? omer])
     ?-  nom
       [%& *]        ?~(mon=(de-omen p.nom) ~ `[| u.mon])
       [%| %beam *]  `[| vis bem]:p.nom
-      [%| %once *]  `[& vis.p.nom [our syd.p.nom da/now] tyl.p.nom]
+      [%| %once *]  `[& vis.p.nom [our syd.p.nom da+now ud+0] tyl.p.nom]
     ==
   ::
   ?~  hap  ~
-  =/  pro  (~(peek le:part [pit vil] sol) lyc / [vis bem]:u.hap)
+  =/  pro  (~(peek le:part [pit vil] sol) lyc / [vis bam]:u.hap)
   ?:  |(?=(~ pro) ?=(~ u.pro))  ~
   =/  dat=(cask)  [p q.q]:u.u.pro
   ?.  pat.u.hap  `dat
-  `[%omen (en-omen [vis bem]:u.hap) dat]
+  `[%omen (en-omen vis.u.hap (bema-to-beam bam.u.hap)) dat]
 ::
 ::  +poke: external apply
 ::
