@@ -311,17 +311,6 @@
 ::
 ++  name
   |%
-  ++  manual
-    |=  [her=@pH pat=path boq=@D num=@udF]
-    =/  ran  ?~(her 0 (dec (met 0 (met 4 (end 7 her)))))
-    =/  tap  =-([p=(met 3 -) q=-] `@t`(rap 3 (join '/' pat)))
-    ?>  (lth p.tap ^~((bex 16)))
-    =/  typ  (dec (met 3 p.tap))
-    =/  loq  ?:(=(13 boq) 0 1)
-    =/  fag  =-([p=(met 3 -) q=-] (end 5 num))
-    =/  byt  (can 0 [2 0] [2 ran] [1 typ] [1 loq] [2 (dec p.fag)] ~)
-    (can 3 [1 byt] [(bex +(ran)) her] [+(typ) p.tap] tap [loq (end 3 boq)] fag ~)
-  ::
   ++  en
     |=  [her=@pH pat=path boq=@D num=@udF]
     ^-  plot
@@ -334,16 +323,6 @@
     :+  bloq=3
       [s+~ 0 [2 0] [2 ran] [1 typ] [1 loq] [2 (dec p.fag)] ~]
     [[(bex +(ran)) her] [+(typ) p.tap] tap [loq (end 3 boq)] fag ~]
-  ::
-  ++  len
-    |=  pat=@
-    ^-  @ud
-    =+  [res ran typ loq fag]=-:((hew 0 pat) [2 2 1 1 2])
-    ?>  =(0 res)
-    =/  len  +((bex +(ran)))
-    =/  nex  +(typ)
-    =/  tap  (cut 3 [len nex] pat)
-    :(add len nex tap loq +(fag))
   ::
   ++  de
     |=  a=bite
@@ -385,17 +364,6 @@
 ::
 ++  data
   |%
-  ++  manual
-    |=  [tot=@udF aut=@ux dat=@]
-    =/  mot  (met 3 (end 5 tot))
-    =/  mut  ?:(=(0 aut) 0 1)
-    =/  lut  (end 3 (met 3 aut))
-    =/  len  (met 3 dat)
-    =/  men  (met 3 len)
-    =/  byt
-      (can 0 [2 (dec mot)] [1 mut] [5 men] ~)
-    (can 3 [1 byt] [mot tot] [mut lut] [lut aut] [men len] [len dat] ~)
-  ::
   ++  en
     |=  [tot=@udF aut=@ux dat=@]
     ^-  plot
@@ -407,19 +375,6 @@
     :+  bloq=3
       [s+~ 0 [2 (dec mot)] [1 mut] [5 men] ~]
     [[mot tot] [mut lut] [lut aut] [men len] [len dat] ~]
-  ::
-  ++  len
-    |=  dat=@
-    ^-  @ud
-    =+  [bot mut men]=-:((hew 0 dat) [2 1 5])
-    =/  mot  +(bot)
-    =+  [len nex]=[mot mut]
-    =/  lut  (cut 3 [len nex] dat)
-    =:  len  :(add len nex lut)
-        nex  men
-      ==
-    =/  lat  (cut 3 [len nex] dat)
-    :(add mot mut lut men lat)
   ::
   ++  de
     |=  a=bite
