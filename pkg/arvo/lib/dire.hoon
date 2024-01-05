@@ -154,7 +154,7 @@
 ::
 ++  pact
   =>  |%
-      +$  name  [p=ship q=path r=bloq s=num=@udF]
+      +$  name  [p=ship q=rift r=path s=bloq t=num=@udF]
       +$  data  [tot=@udF aut=@ux dat=@]
       +$  lane  $@  @ux
                 $%  [%if p=@ifF q=@udE]
@@ -300,39 +300,42 @@
 ::
 ::  +name: encoded-path
 ::
-::  range:  { meta[1], her[2^1-4], typ[2^0-1], pat[2^0-16], boq[0-1], fag[1-4] }
-::  max:    { meta[1], her[16],    typ[2],     pat[65.536], boq[1],   fag[4]   }
-::          { meta-byte, address,  path-length, path,       bloq-size, fragment-number }
-::  actual: { meta[1], her[16],    typ[2],     pat[317],    boq[1],   fag[4]   }
+::  range:  { meta[1], her[2^1-4], rif[1-4], typ[2^0-1], pat[2^0-16], boq[0-1], fag[1-4] }
+::  max:    { meta[1], her[16],    rif[4],   typ[2],     pat[65.536], boq[1],   fag[4]   }
+::          { meta-byte, address,  rift,    path-length, path,       bloq-size, fragment-number }
+::  actual: { meta[1], her[16],    rif[4],   typ[2],     pat[309],    boq[1],   fag[4]   }
 ::
-::    > :(add 1 16 2 317 4)
-::    340
-::    XX s/b 336
+::    > :(add 1 16 4 2 309 4)
+::    336
 ::
 ++  name
   |%
   ++  en
-    |=  [her=@pH pat=path boq=@D num=@udF]
+    |=  [her=@pH rif=@udF pat=path boq=@D num=@udF]
     ^-  plot
     =/  ran  ?~(her 0 (dec (met 0 (met 4 (end 7 her)))))
+    =/  ryf  ?~(rif 0 (dec (met 3 rif)))  :: XX is rift always non-zero?
     =/  tap  =-([p=(met 3 -) q=-] `@t`(rap 3 (join '/' pat)))
     ?>  (lth p.tap ^~((bex 16)))
     =/  typ  (dec (met 3 p.tap))
     =/  loq  ?:(=(13 boq) 0 1)
     =/  fag  =-([p=(met 3 -) q=-] (end 5 num))
     :+  bloq=3
-      [s+~ 0 [2 0] [2 ran] [1 typ] [1 loq] [2 (dec p.fag)] ~]
-    [[(bex +(ran)) her] [+(typ) p.tap] tap [loq (end 3 boq)] fag ~]
+      [s+~ 0 [2 ran] [2 ryf] [1 typ] [1 loq] [2 (dec p.fag)] ~]
+    [[(bex +(ran)) her] [+(ryf) rif] [+(typ) p.tap] tap [loq (end 3 boq)] fag ~]
   ::
   ++  de
     |=  a=bite
     =/  b=[bloq step]  [0 ?@(a 0 (rig [bloq.a 0] step.a))]
     |=  pat=@
-    ^-  [[her=@p pat=path boq=bloq num=@udF] bloq step]
-    =+  [[res ran typ loq fag] b]=((hew b pat) [2 2 1 1 2])
-    ?>  =(0 res)
+    ^-  [[her=@p rif=@udF pat=path boq=bloq num=@udF] bloq step]
+    =+  [[ran ryf typ loq fag] b]=((hew b pat) [2 2 1 1 2])
     =+  [len nex]=[(rig [bloq.b 3] step.b) (bex +(ran))]
     =/  her  (cut 3 [len nex] pat)
+    =:  len  (add len nex)
+        nex  +(ryf)
+      ==
+    =/  rif  (cut 3 [len nex] pat)
     =:  len  (add len nex)
         nex  +(typ)
       ==
@@ -350,7 +353,7 @@
     =:  len  (add len nex)
         nex  +(fag)
       ==
-    [[her tap boq (cut 3 [len nex] pat)] 3 (add len nex)]
+    [[her rif tap boq (cut 3 [len nex] pat)] 3 (add len nex)]
   --
 ::
 ::  +data: response data
