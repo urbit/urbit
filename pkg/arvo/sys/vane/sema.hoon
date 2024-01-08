@@ -5291,14 +5291,12 @@
           ++  po-cork  !!
           ++  po-plea
             |=  =plea
-            =/  pact  **
             ~&  >>  %po-plea
             :: =*  sender-state=-.poke-state
-            =/  =pact
-              :^  %poke
-                name=[her q=*path r=packet-size s=num=*@udF ]
-               name=[ship q=*path r=packet-size s=num=*@udF]
-              once=[tot=@udF tag=?(sig hmac) aut=?(root proof) dat=@]
+            =/  =pact  [%poke *name *name *once]
+                ::name=[her q=*path r=packet-size s=num=*@udF]
+               ::name=[our q=*path r=packet-size s=num=*@udF]
+              ::once=[tot=@udF tag=?(sig hmac) aut=?(root proof) dat=@]
 
           ::  =?  po-core  ?=(^ unsent-messages.state)
             ::  /~nec//~zod/ack/bone=0/message=0/fragment=0
