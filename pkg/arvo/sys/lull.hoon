@@ -3075,6 +3075,39 @@
   ::                                                    ::
   +$  shed  _*form:(strand:rand ,vase)                  ::  compute vase
   --  ::khan
+::                                                      ::::
+++  xmas  ^?
+  |%
+  ++  mess
+    =<  mess 
+    |%
+    +$  auth  @uxauth
+    +$  mess
+      $%  [%page page]
+      ==
+    +$  page  [=path tot=@ud auth=@ux dat=@]
+    --
+  +$  peek  path
+  +$  poke  [=path =leaf]
+  +$  oath  @uxoath
+  +$  leaf  [=oath =path =page]
+  +$  task
+    $~  [%vega ~]
+    $%  [%leaf =leaf]
+        $>(%born vane-task)
+        $>(%trim vane-task)
+        $>(%vega vane-task)
+        [%plea =ship =plea:ames]
+        [%keen spar:ames]
+        [%mess =mess]
+    ==
+  +$  gift
+    $%  [%peek =ship lanes=(list lane:ames) =path]     :: peek (IO)
+        [%poke =ship lanes=(list lane:ames) =poke]     :: poke (IO)
+        [%leaf =leaf]
+        [%pact lanes=(list lane:ames) pact=@ux]
+    ==
+  --  ::  xmas
 ::
 ++  rand                                                ::  computation
   |%
@@ -3300,6 +3333,7 @@
       [%i task:iris]
       [%j task:jael]
       [%k task:khan]
+      [%x task:xmas]
       [%$ %whiz ~]
       [@tas %meta vase]
   ==
@@ -3322,6 +3356,7 @@
       [%iris gift:iris]
       [%jael gift:jael]
       [%khan gift:khan]
+      [%xmas gift:xmas]
   ==
 ::  $unix-task: input from unix
 ::
@@ -3377,5 +3412,7 @@
       ::  %behn: wakeup
       ::
       $>(%wake task:behn)
+      ::  %leaf: datum
+      $>(%leaf task:xmas)
   ==
 --  ::
