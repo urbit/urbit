@@ -355,7 +355,7 @@
     ?>  (lth p.tap ^~((bex 16)))
     =/  typ  (dec (met 3 p.tap))
     =/  loq  ?:(=(13 boq) 0 1)
-    =/  fag  =-([p=(met 3 -) q=-] (end 5 num))
+    =/  fag  ?~(num [p=1 q=0] =-([p=(met 3 -) q=-] (end 5 num)))
     :+  bloq=3
       [s+~ 0 [2 0] [2 ran] [1 typ] [1 loq] [2 (dec p.fag)] ~]
     [[(bex +(ran)) her] [+(typ) p.tap] tap [loq (end 3 boq)] fag ~]
