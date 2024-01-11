@@ -545,7 +545,13 @@
         [%page %foo %bar ~]
       =/  fake  (rip 13 (rap 3 (reap 2 0xbeef.beef)))
       ~&  len/(lent fake)
-      ``noun+!>([(lent fake) fake])
+      =-  ``noun+!>([(lent fake) -])
+      ^-  (list @)
+      %+  spun  fake
+      |=  [fak=@ i=@ud]
+      :: +$  data  [tot=@udF aut=@ux dat=@]
+      :_  +(i)
+      +:(fax (en:pact %page [[our /foo/bar 13 i] [(lent fake) 0x0 fak] ~]))
     ==
   --
 |_  [hen=duct moves=(list move)]
