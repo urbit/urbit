@@ -5029,6 +5029,36 @@
     $(hel l.hel)
   $(hel r.hel)
 ::
+++  chili                                               ::  switch by whole word (better stew)
+  |*  leh=(list [p=@t q=rule])                          ::  whole word
+  =+  ^=  hel                                           ::  build parser map
+      =+  hel=`(tree _?>(?=(^ leh) i.leh))`~
+      |-  ^+  hel
+      ?~  leh
+        ~
+      =+  yal=$(leh t.leh)
+      |-  ^+  hel
+      ?~  yal
+        [i.leh ~ ~]
+      =+  nuc=$(yal r.yal)
+      ?>  ?=(^ nuc)
+      ?:  (mor p.n.yal p.n.nuc)
+        [n.yal l.yal nuc]
+      [n.nuc [n.yal l.yal l.nuc] r.nuc]
+  |=  tub=nail
+  ?~  q.tub
+    (fail tub)
+  |-
+  ?~  hel
+    (fail tub)
+  ?:  ?@  p.n.hel
+        =(p.n.hel i.q.tub)
+      ?&((gte i.q.tub -.p.n.hel) (lte i.q.tub +.p.n.hel))
+    (q.n.hel tub)
+  :: ?:  (wor i.q.tub p.n.hel)
+  ::   $(hel l.hel)
+  $(hel r.hel)
+::
 ++  slug                                                ::
   |*  raq=_=>(~ |*([a=* b=*] [a b]))
   |*  [bus=rule fel=rule]
@@ -13361,6 +13391,19 @@
             ==
       ==
     ::
+    ++  keyword  :: [p='#' q=[~[[p='word' q=parser] [p='gate' q=parser]]]]
+      %-  stew
+      ^.  stet  ^.  limo
+      :~  :-  '#'
+            ;~  pfix  hax
+              %-  chili
+              ^.  stet  ^.  limo
+              :~  ['gate' (rune tis %brts exqc)] :: TODO
+                  ['if' (rune col %wtcl expc)]
+              ==
+            ==
+      ==
+    ::
     ++  boog  !:
       %+  knee  [p=*whit q=*term r=*help s=*hoon]
       |.(~+((scye ;~(pose bola boba))))
@@ -13831,7 +13874,7 @@
   ::
   ++  tall                                              ::  full tall form
     %+  knee  *hoon
-    |.(~+((wart (clad ;~(pose expression:(norm &) long lute apex:(sail &))))))
+    |.(~+((wart (clad ;~(pose expression:(norm &) keyword:(norm &) long lute apex:(sail &))))))
   ++  till                                              ::  mold tall form
     %+  knee  *spec
     |.(~+((wert (coat ;~(pose structure:(norm &) scad)))))
