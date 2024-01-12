@@ -5029,36 +5029,6 @@
     $(hel l.hel)
   $(hel r.hel)
 ::
-++  chili                                               ::  switch by whole word (better stew)
-  |*  leh=(list [p=@t q=rule])                          ::  whole word
-  =+  ^=  hel                                           ::  build parser map
-      =+  hel=`(tree _?>(?=(^ leh) i.leh))`~
-      |-  ^+  hel
-      ?~  leh
-        ~
-      =+  yal=$(leh t.leh)
-      |-  ^+  hel
-      ?~  yal
-        [i.leh ~ ~]
-      =+  nuc=$(yal r.yal)
-      ?>  ?=(^ nuc)
-      ?:  (mor p.n.yal p.n.nuc)
-        [n.yal l.yal nuc]
-      [n.nuc [n.yal l.yal l.nuc] r.nuc]
-  |=  tub=nail
-  ?~  q.tub
-    (fail tub)
-  |-
-  ?~  hel
-    (fail tub)
-  ?:  ?@  p.n.hel
-        =(p.n.hel i.q.tub)
-      ?&((gte i.q.tub -.p.n.hel) (lte i.q.tub +.p.n.hel))
-    (q.n.hel tub)
-  :: ?:  (wor i.q.tub p.n.hel)
-  ::   $(hel l.hel)
-  $(hel r.hel)
-::
 ++  slug                                                ::
   |*  raq=_=>(~ |*([a=* b=*] [a b]))
   |*  [bus=rule fel=rule]
@@ -13391,15 +13361,33 @@
             ==
       ==
     ::
-    ++  keyword  :: [p='#' q=[~[[p='word' q=parser] [p='gate' q=parser]]]]
-      %-  stew
-      ^.  stet  ^.  limo
-      :~  :-  '#'
+    ++  keyword
+      %-  stew  ^.  stet  ^.  limo
+      :~  :-  '#'  ::  #if -> ?:
             ;~  pfix  hax
-              %-  chili
-              ^.  stet  ^.  limo
-              :~  ['gate' (rune tis %brts exqc)] :: TODO
-                  ['if' (rune col %wtcl expc)]
+              %-  stew  ^.  stet  ^.  limo
+              :~  :-  'i'
+                    ;~  pfix  (just 'i')
+                      %-  stew  ^.  stet  ^.  limo
+                      :~  ['f' (rune (just 'f') %wtcl expc)]
+                      ==
+                    ==
+                  :-  'g'
+                    ;~  pfix  (just 'g')
+                      %-  stew  ^.  stet  ^.  limo
+                      :~  :-  'a'
+                              ;~  pfix  (just 'a')
+                                %-  stew  ^.  stet  ^.  limo
+                                :~  :-  't'
+                                        ;~  pfix  (just 't')
+                                          %-  stew  ^.  stet  ^.  limo
+                                          :~  ['e' (rune (just 'e') %brts exqc)]
+                                          ==
+                                        ==
+                                ==
+                              ==
+                      ==
+                    ==
               ==
             ==
       ==
