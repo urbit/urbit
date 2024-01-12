@@ -405,3 +405,222 @@
     [[tot aut (cut 3 [len nex] dat)] 3 (add len nex)]
   --
 --
+::
+::  skeleton vane
+::
+=>
+|%
++$  move  (wite note gift)
+::
++$  task  $%  [%hear p=lane:pact q=@]
+              [%mess p=(unit lane:pact) q=mess]
+              [%make-peek p=spar:ames]
+              [%make-poke p=spar:ames q=path]
+          ==
++$  gift  $%  [%send-request ~]
+              [%send-response ~]
+              [%response $>(%page mess)]
+          ==
+::
++$  note  $%  [%b %wait @da]
+          ==
++$  sign  $%  [%b %wake ~]
+          ==
+::
++$  axle  [%0 p=(map ship peer-state)]
++$  peer-state
+  $:  pit=(map path message-state)
+  ==
++$  message-state
+  $:  for=(set duct)
+      ps=(unit packet-state)
+      :: XX put poke payload or path to it here
+  ==
++$  packet-state
+  $:  nex=(each %auth @ud)
+  ==
+::
++$  mess  $%  [%page p=spar:ames q=page]        :: XX need auth data on %page and %poke
+              [%peek p=spar:ames]
+              [%poke p=spar:ames q=spar:ames r=page]
+          ==
+::
+++  parse-packet  |=(a=@ -:($:de:pact a))
+++  is-first-fragment  |
+++  auth-packet-needed  |
+++  complete  |
+++  is-auth-packet  |
+--
+::
+|=  our=ship
+=|  ax=axle
+|=  [now=@da eny=@uvJ rof=roof]
+|%
+::
+++  ev
+  |_  hen=duct
+  ++  ev-hear
+    |=  [=lane:pact blob=@]
+    ^-  [(list move) axle]
+    =/  pac  (parse-packet blob)
+    ~!  pac
+    ?-  -.pac
+        %page
+      ::
+      ::  XX initialize message core
+      ::
+      :: pa-abet:pa-hear:(pa hen p.p.pact)
+      :: (each (list move) mess)
+      ::
+
+      ::  check for pending request (peek|poke)
+      ::
+      ?~  rs=(~(get by p.ax) p.p.pac)
+        [~ ax]
+      ?~  ms=(~(get by pit.u.rs) r.p.pac)
+        [~ ax]
+      ::
+      ?:  is-first-fragment
+        ?^  ps.u.ms
+          [~ ax]
+        ::  XX authenticate at message level
+        ::  XX initialize hash-tree
+        ::
+        ?:  auth-packet-needed
+          ::  XX request-auth-packet
+          !!
+        ?:  complete
+          ::  XX produce as message
+          !!
+        ::
+        ::  XX request next fragment
+        !!
+      ::
+      ?~  ps.u.ms
+        [~ ax]
+      ?:  is-auth-packet
+        ?.  ?=(%auth nex.u.ps.u.ms)
+          [~ ax]
+        ::  XX initialize hash-tree
+        ::  XX request next fragment
+        !!
+      ::
+      ?.  &(=(13 s.p.pac) ?=(%| -.nex.u.ps.u.ms) =(p.nex.u.ps.u.ms t.p.pac))
+        [~ ax]
+      ::  XX get hash pair from packet, validate and add to tree
+      ::  XX validate fragment
+      ::  XX persist fragment
+      ::
+      ?:  complete
+        ::  XX produce as message
+        !!
+      ::  XX request next fragment
+      !!
+    ::
+        %peek
+      ?.  =(our p.p.pac)
+        [~ ax]
+      =/  res=(unit (unit cage))
+        !!  :: scry for path
+      ?.  ?=([~ ~ ^] res)
+        [~ ax]
+      ::  XX [%give %send-response q.q.u.u.res]
+      [~ ax]
+    ::
+        %poke
+      ::  XX dispatch/hairpin &c
+      ::
+      ::  - pre-check that we want to process this poke (recognize ack path, ship not blacklisted, &c)
+      ::  - initialize our own outbound request for the poke payload
+      ::  - start processing the part of the poke payload we already have
+      ::    - validation should crash event or ensure that no state is changed
+      !!
+    ==
+  ::
+  ++  ev-mess
+    |=  [(unit lane:pact) =mess]
+    ^-  [(list move) axle]
+    ?-  -.mess
+        %page
+      ?~  rs=(~(get by p.ax) ship.p.mess)
+        [~ ax]
+      ?~  ms=(~(get by pit.u.rs) path.p.mess)
+        [~ ax]
+      ::
+      ::  XX validate response
+      ::  XX give to all ducts in [for.u.ms]
+      ::
+      ::  [%give %response mess]
+      ::
+      [~ ax(p (~(put by p.ax) ship.p.mess (~(del by pit.u.rs) path.p.mess)))]
+    ::
+        %peek
+      ?.  =(our ship.p.mess)
+        [~ ax]
+      =/  res=(unit (unit cage))
+        !!  :: scry for path
+      ?.  ?=([~ ~ ^] res)
+        [~ ax]
+      ::  XX [%give %response %page p.mess [p q.q]:u.u.res]
+      [~ ax]
+    ::
+        %poke
+      ::  XX dispatch/hairpin &c
+      ::
+      ::  - check that we recognize ack-path
+      ::  - validate inner payload message
+      ::  - route message to inner module (ie, flow)
+      ::
+      !!
+    ==
+  ::
+  ++  ev-make-peek
+    |=  p=spar:ames
+    =/  rs  (~(gut by p.ax) ship.p *peer-state)
+    ?^  ms=(~(get by pit.rs) path.p)
+      [~ ax(p (~(put by p.ax) ship.p (~(put by pit.rs) path.p u.ms(for (~(put in for.u.ms) hen)))))]
+    =|  new=message-state
+    =.  for.new  (~(put in for.new) hen)
+    =.  p.ax  (~(put by p.ax) ship.p rs(pit (~(put by pit.rs) path.p new)))
+    ::  XX construct and emit initial request packet
+    ::
+    [~ ax]
+  ++  ev-make-poke
+    |=  [p=spar:ames q=path]
+    !!
+  --
+::
+++  call
+  |=  [hen=duct dud=(unit goof) wrapped-task=(hobo task)]
+  ^-  [(list move) _..^$]
+  ::
+  =/  task=task  *task  :: ((harden task) wrapped-task)
+  ?<  ?=(^ dud)
+  =^  mov  ax
+    ?-  -.task
+      %hear       (~(ev-hear ev hen) p.task q.task)
+      %mess       (~(ev-mess ev hen) p.task q.task)
+      %make-peek  (~(ev-make-peek ev hen) p.task)
+      %make-poke  (~(ev-make-poke ev hen) p.task q.task)
+    ==
+  [mov ..^$]
+::
+++  take
+  |=  [=wire =duct dud=(unit goof) =sign]
+  ^-  [(list move) _..^$]
+  ?<  ?=(^ dud)
+  !!
+::
+++  load
+  |=  old=axle
+  ^+  ..^$
+  ..^$(ax old)
+::
+++  stay  `axle`ax
+::
+++  scry
+  ^-  roon
+  |=  [lyc=gang pov=path car=term bem=beam]
+  ^-  (unit (unit cage))
+  ~
+--
