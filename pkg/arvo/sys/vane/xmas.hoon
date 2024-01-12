@@ -604,7 +604,7 @@
   ^+  main
   ?>  (lte ship 255)
   =/  =lane:ames  [%.y ship]
-  =/  p=pact:pact  [%peek [ship path 13 1]]
+  =/  p=pact:pact  [%peek [ship path 13 0]]
   :: +$  name  [p=ship q=path r=bloq s=num=@udF]
   =/  =gift  [%pact ~[lane] (fax (en:pact p))]
   (emit-unix %give gift)
