@@ -3105,7 +3105,7 @@
     $%  [%peek =ship lanes=(list lane:ames) =path]     :: peek (IO)
         [%poke =ship lanes=(list lane:ames) =poke]     :: poke (IO)
         [%leaf =leaf]
-        [%pact lanes=(list lane:ames) pact=@ux]
+        [%pact lanes=(list lane:ames) pact=(pair @ @ux)]
     ==
   --  ::  xmas
 ::

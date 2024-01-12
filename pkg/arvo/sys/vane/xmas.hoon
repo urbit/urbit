@@ -606,7 +606,7 @@
   =/  =lane:ames  [%.y ship]
   =/  p=pact:pact  [%peek [ship path 13 1]]
   :: +$  name  [p=ship q=path r=bloq s=num=@udF]
-  =/  =gift  [%pact ~[lane] +:(fax (en:pact p))]
+  =/  =gift  [%pact ~[lane] (fax (en:pact p))]
   (emit-unix %give gift)
 ::
 ++  on-mess
