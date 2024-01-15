@@ -4257,9 +4257,9 @@
   ::  ?.  ((sane a) b)  !!
   b
 ::
-++  trim                                                ::  tape split
-  |=  [a=@ b=tape]
-  ^-  [p=tape q=tape]
+++  trim                                                ::  list split
+  |*  [a=@ b=(list)]
+  ^+  [p=b q=b]
   ?~  b
     [~ ~]
   ?:  =(0 a)
