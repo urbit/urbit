@@ -3601,7 +3601,8 @@
           =.  peer-core
             ?:  =(protocol %0)
               abet:(call:(abed:mu bone) %memo message)
-            po-abet:(call:(po-abed:po bone) message)
+            ?>  ?=(?(%plea %boon) -.message)
+            po-abet:(call:(po-abed:fo bone) message)
           ::
           ?:  ?&  ?=(%boon -.message)
                   (gte now (add ~s30 last-contact.qos.peer-state))
@@ -5169,10 +5170,11 @@
             (fi-send `@ux`hoot.u.want)
           ::
           --
-        ++  po
+        ::
+        ++  fo  ::  ++flow (fo) ||  ++bone (bo)
           =>  |%
               :: XX to lull.hoon,
-              ::  - part of peer-state => (map bone poke-request-state)
+              ::  - part of peer-state => (map bone poke-state)
               ::  - reshape message-pump/sink states into poke-states
               ::     using the bone to know the directtion of the flow ?
               ::     (bone numbers as see from the point of view of "our")
@@ -5192,6 +5194,15 @@
               ::
               ::
               ::
+              +$  new-peer-state  ::  (map her=ship peer-state)
+                $:
+                    pokes=(map bone poke-state)  ::  sender+receiver
+                    ::
+                      pokes=(map bone poke-sender-state)
+                      coups=(map bone poke-receiver-state)
+                    ::
+                ==
+              ::
               +$  peeks  (map path bone)  :: XX not needed
                                           :: poke datums for our requests
                                           :: removed when the ack is received
@@ -5201,11 +5212,12 @@
                                           :: when ack for current is heard, current-10 is removed
                                           ::  XX how to distinguinsh between first time?
                                           :: path contains the message/fragment number
+              ::
               +$  poke-sender-state  :: per-bone, XX distinguish between req/resp bone?
                 $:  current=_`message-num`1
                     next=_`message-num`1
                     unsent-messages=(qeu message-blob)
-                    queued-message-acks=(map message-num ack)
+                    $+(queued-message-acks queued-message-acks=(map message-num ack))
                 ==
               +$  poke-receiver-state
                 $:  last-acked=message-num
@@ -5214,7 +5226,7 @@
                     nax=(set message-num)
                 ==
               ::
-              +$  poke-state
+              +$  poke-state  ::  XX
                 $:  poke-sender-state
                     poke-receiver-state
                 ==
@@ -5243,10 +5255,14 @@
               +$  name  [p=ship q=path r=bloq s=num=@udF]
               +$  root  @uxI
               +$  once  [tot=@udF tag=?(sig hmac) aut=?(root proof) dat=@]
-              +$  pact  $%  ::[%page p=name q=(each once more) r=next]
-                            ::[%peek p=name]
-                            [%poke p=name q=name r=once]
-                        ==
+              +$  more  [aut=$@(~ [@uxI @uxI]) dat=@]
+              +$  data  [tot=@udF aut=@ux dat=@]
+              +$  next  (list lane)
+              +$  pact
+                $%  [%page p=name q=data r=next]  :: [%page p=name q=(each once more) r=next]
+                    [%peek p=name]
+                    [%poke p=name q=name r=data]  :: [%poke p=name q=name r=once]
+                ==
               --
           ::
           |_  [=bone state=poke-state]
@@ -5260,14 +5276,26 @@
           :: +|  %entry-points
           ::
           ++  call
+            =>  |%  +$  message
+                      $%  [%plea plea]
+                          [%boon payload=*]
+                          ::  XX remove from lull  [%naxplanation =message-num =error]
+                          [%cork ~]
+                          [%sink ~]
+                      ==
+                --
             |=  poke=message
             ^+  po-core
             ::
-            ?+  -.poke  !!
-              %plea  (po-plea +.poke)
-              :: %sink  po-sink
-              %boon  (po-boon +.poke)
-              :: %cork  po-cork
+            ?-  -.poke
+              ::  requests
+              ::
+              %plea  (po-plea +.poke)  ::  send %plea request
+              %boon  (po-boon +.poke)  ::  send %boon request
+              %cork  po-cork
+              ::  XX responses: (n)acks -- could they go as ++takes, probably not
+              ::
+              %sink  !!  ::  unix responses
             ==
           ::
           ++  take
@@ -5283,20 +5311,37 @@
           :: ++  po-sink
           ::   |=  [%poke p=name q=name r=once]
           ::   ::  receiver of a %poke request
-
           ::
           ++  po-boon
             |=  payload=*
             po-core
+          ::
           ++  po-cork  !!
+          ::  +poke-plea: XX
+          ::
           ++  po-plea
             |=  =plea
+            ::
+            ::  /ax/[$ship]//1/pact/[rift]/[$bloq]/[$frag]/data/[..$path]
+            ::  /ax/[$ship]//1/mess/[rift]/[..$path]
+            ::  /ax/[$ship]//1/chum/[ship-life]/[who]/[who-life]/[encrypted-path]
+            ::
+            ::  $path = /[$her]/ack/[$our]/flow/[$flow/bone]/[$mess]/[$frag]
+            ::          /[$our]/poke/[$her]/flow/[$flow/bone]/[$mess]/[$frag]
+            ::  (e.g.)  /~nec/ack/~zod/flow/0/1/1
+            ::          /~zod/poke/~nec/flow/0/1/1
+            ::
             ~&  >>  %po-plea
-            :: =*  sender-state=-.poke-state
-            =/  =pact  [%poke *name *name *once]
-                ::name=[her q=*path r=packet-size s=num=*@udF]
-               ::name=[our q=*path r=packet-size s=num=*@udF]
-              ::once=[tot=@udF tag=?(sig hmac) aut=?(root proof) dat=@]
+            =/  sender-state=poke-sender-state  -.state
+            =/  ack-path=path
+              /[(scot %p her)]/ack/[(scot %p our)]/flow/[(scot %ud bone)]/[(scot %ud next.sender-state)]/0
+            =/  payload-path=path
+              /[(scot %p her)]/poke/[(scot %p our)]/flow/[(scot %ud bone)]/[(scot %ud next.sender-state)]/0
+            =/  =pact
+              :^  %poke
+                name=[her ack-path packet-size s=num=0]
+               name=[our payload-path packet-size s=num=0]
+              data=[tot=*@udF aut=*@ux dat=*@]
 
           ::  =?  po-core  ?=(^ unsent-messages.state)
             ::  /~nec//~zod/ack/bone=0/message=0/fragment=0
@@ -5329,7 +5374,6 @@
           ++  fi  !!  :: |fine core, sends %peeks and assembles responses
           ++  pu
             ::
-            :: ::
             :: =>  |%
             ::     $+  packet-state  [~ ~]
             ::     --
@@ -5480,8 +5524,7 @@
                     rto   (clamp-rto (mul rto 2))
               ==
             metrics
-        ::
-        --
+          --
         --
       --
     --
