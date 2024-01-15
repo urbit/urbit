@@ -793,9 +793,19 @@
   ::    %trim: release memory
   ::    %vega: kernel reload notification
   ::
+  +$  name  [p=ship q=path r=bloq s=num=@udF]
+  +$  data  [tot=@udF aut=@ux dat=@]
+  +$  next  (list lane)
+  +$  pact
+    $%  [%page p=name q=data r=next]  :: [%page p=name q=(each once more) r=next]
+        [%peek p=name]
+        [%poke p=name q=name r=data]  :: [%poke p=name q=name r=once]
+    ==
   +$  task
     $+  ames-task
     $%  [%hear =lane =blob]
+        ::[%sink =lane request=(each blob pact)]
+        [%sink =lane =pact]  ::  XX request based on namespace?
         [%dear =ship =lane]
         [%heed =ship]
         [%jilt =ship]

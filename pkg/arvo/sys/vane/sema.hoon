@@ -5554,7 +5554,7 @@
         %hear  (on-hear:event-core lane.task blob.task dud)
       ==
     ::
-    ?-  -.task
+    ?+  -.task  !!   ::  %mesa %sink
       %born  on-born:event-core
       %hear  (on-hear:event-core [lane blob ~]:task)
       %dear  (on-dear:event-core +.task)

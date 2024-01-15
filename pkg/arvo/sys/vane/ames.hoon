@@ -483,7 +483,7 @@
 ++  is-our-bulk
   |=  [our=ship =ames-state =balk]
   ^-  ?
-  =-  ~?  =(| -) 
+  =-  ~?  =(| -)
         [%fine-mismatch our=[rift life]:ames-state her=[her rif lyf]:balk]
       -
   ?&  =(our her.balk)
@@ -1949,7 +1949,7 @@
         =/  task=task-17  ((harden task-17) wrapped-task.e)
         %=  e
           wrapped-task
-          ?:  ?=(%keen -.task) 
+          ?:  ?=(%keen -.task)
             [%keen ~ +.task]
           ?.  ?=([%deep %nack *] task)  task
           =/  msg  =>([cue=cue arg=message-blob.task] ~+((cue arg)))
@@ -2660,7 +2660,7 @@
           =/  [key=@ ,path]  (~(got by chain.u.per) (slav %ud idx.wire))
           =/  raw=@t
             (dy:crub:crypto key (slav %uv cyf.rest.path.s))
-          =/  pax=path   
+          =/  pax=path
             (stab raw)
           =;  dat=(unit (unit page))
             (emit duct [%give %near [ship.s pax] dat])
@@ -3234,7 +3234,7 @@
         |=  =path
         ^+  event-core
         =/  key=@  (shaz eny) :: TODO: check key width
-        =/  num=@ud  
+        =/  num=@ud
           ?~  latest=(pry:on:chain chain.ames-state)
             1
           .+(key.u.latest)
@@ -3280,7 +3280,7 @@
           (emit duct %pass wir %a %keen ~ ship lav)
         :: XX: key exchange over ames forces all encrypted scries to be
         :: to a known peer
-        ?>  ?=(~ sec) 
+        ?>  ?=(~ sec)
         %^  enqueue-alien-todo  ship  ship-state
         |=  todos=alien-agenda
         todos(keens (~(put ju keens.todos) path duct))
@@ -5330,7 +5330,7 @@
         %hear  (on-hear:event-core lane.task blob.task dud)
       ==
     ::
-    ?-  -.task
+    ?+  -.task  !!  ::  mesa %sink
       %born  on-born:event-core
       %hear  (on-hear:event-core [lane blob ~]:task)
       %dear  (on-dear:event-core +.task)
@@ -5643,7 +5643,7 @@
       %-  ~(run by peers.old)
       |=  s=ship-state-17
       ^-  ship-state
-      ?:  ?=(%alien -.s)  
+      ?:  ?=(%alien -.s)
         %=  s
           keens  [keens.s ~]
         ==
@@ -5695,7 +5695,7 @@
         [%fine %shut kef=@ enc=@ ~]
       =/  key-idx  (slav %ud kef.tyl)
       =/  key  (got:on:chain chain.ames-state (slav %ud kef.tyl))
-      =/  pat=(unit path)  
+      =/  pat=(unit path)
         (rush `@t`(dy:crub:crypto key.key (slav %uv enc.tyl)) stap)
       ?~  pat
         [~ ~]
@@ -5705,7 +5705,7 @@
         ~&  key-validation-failed/[u.pat key-idx chain.ames-state]
         [~ ~]
       =/  res  (rof [~ ~] /ames (as-omen:balk u.blk))
-      ?~  res  
+      ?~  res
         ~&  %bailing-close
         [~ ~]
       ?~  u.res

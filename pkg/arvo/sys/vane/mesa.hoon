@@ -258,13 +258,13 @@
         ~&  [%poke bone %plea plea]
         pe-abet:(pe-call:peer-core %mess %poke bone %plea plea)  ::  XX namespace
       ::
-      ++  on-hear
+      ++  on-sink
         ::XX  lane:mesa         (each blob mess)
-        |=  [=lane:ames request=(each blob pact)]  ::  XX lane:mesa XX goof?
+        |=  [=lane:ames =pact]  ::  XX lane:mesa XX goof?
         ^+  ev-core
         ::  XX fake blob decoding  =+  ;;  =pact  (cue blob)
-        ?>  ?=(%| -.request)
-        =/  =pact  +.request
+        :: ?.  ?=(%| -.request)  ev-core
+        :: =/  =pact  +.request
         ?-  -.pact
           %peek  !!
           %page  !!  ::  data (from %peek, or %poke/%boon payload) or ack
@@ -548,7 +548,7 @@
             =+  [her=~nec spac=%mess bone=1 rift=1]
             :: add rift to avoid dangling bones
             ::
-            =/  =wire  /[spac]/[(scot %p her)]/[(scot %ud bone)]/[(scot %ud rift)]
+            =/  =wire  /[spac]/flow/[(scot %p her)]/[(scot %ud bone)]/[(scot %ud rift)]
             =.  ev-core
               ?:  =(vane.plea %$)
                 ev-core  ::  XX handle pre-cork ships
@@ -655,10 +655,12 @@
 |=  [now=@da eny=@uvJ rof=roof]
 =*  mesa-gate  .
 |%
+::  XX FIXME
+::
 +$  new-task
-  $%  [%hear =lane:ames =pact]  :: XX only %mess namespace support
+  $%  [%sink =lane:ames =pact]  :: XX only %mess namespace support
                                 :: XX use =mess instead
-      $<(%hear task)
+      $<(%sink task)
   ==
 ::
 ++  call
@@ -679,7 +681,7 @@
       ::  XX rename
       ::  XX choose what namespace this belongs to
       %plea  (on-poke:ev-core [ship plea]:task)
-      %hear  (on-hear:ev-core [lane |+pact]:task)  :: XX only %mess namespace support
+      %sink  (on-sink:ev-core [lane pact]:task)  :: XX only %mess namespace support
     ==
     ::
   [moves mesa-gate]
