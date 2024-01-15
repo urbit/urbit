@@ -338,7 +338,7 @@
         ::
         ::  +pe-bind-duct: find or make new $bone for .duct in .ossuary
         ::
-        ++  pe-bind-duct  ::  XX  4 bones needed per flow?
+        ++  pe-bind-duct
           |=  =^duct
           =*  ossa  ossuary.peer-state
           ^+  [next-bone.ossa pe-core]
@@ -346,7 +346,7 @@
             [u.existing pe-core]
           :-  next-bone.ossa
           =.  ossa
-            :+  (add 4 next-bone.ossa)
+            :+  (add 4 next-bone.ossa)  ::  XX  4 bones needed per flow?
               (~(put by by-duct.ossa) duct next-bone.ossa)
             (~(put by by-bone.ossa) next-bone.ossa duct)
           pe-core
@@ -554,7 +554,7 @@
              :~  [unix-duct.mesa-state give/(fo-en-gift spac %| pact)]  :: XX
                  :^  duct
                     %pass
-                  /[spac]/[(scot %p her)]/[(scot %ud bone)]  :: XX add rift to avoid dangling bones
+                  /[spac]/[(scot %p her)]/[(scot %ud bone)]/[(scot %ud rift)]
                  [%b %wait `@da`(add now ~s30)]
              ==
            %_  fo-core
