@@ -6422,6 +6422,9 @@
     [%clkt p=hoon q=hoon r=hoon s=hoon]                 ::  :^ [p q r s]
     [%clhp p=hoon q=hoon]                               ::  :- [p q]
     [%clls p=hoon q=hoon r=hoon]                        ::  :+ [p q r]
+    :: custom
+    [%clgr p=hoon q=hoon r=hoon]
+    ::
     [%clsg p=(list hoon)]                               ::  :~ [p ~]
     [%cltr p=(list hoon)]                               ::  :* p as a tuple
   ::                                            ::::::  invocations
@@ -8429,6 +8432,9 @@
     ::
         [%clkt *]  [p.gen q.gen r.gen s.gen]
         [%clls *]  [p.gen q.gen r.gen]
+        ::  custom
+        [%clgr *]  [p.gen r.gen q.gen]
+        ::
         [%clcb *]  [q.gen p.gen]
         [%clhp *]  [p.gen q.gen]
         [%clsg *]
@@ -13243,6 +13249,9 @@
               :~  ['_' (rune cab %clcb expb)]
                   ['^' (rune ket %clkt expd)]
                   ['+' (rune lus %clls expc)]
+                  ::  custom
+                  ['>' (rune lus %clgr expc)]
+                  ::
                   ['-' (rune hep %clhp expb)]
                   ['~' (rune sig %clsg exps)]
                   ['*' (rune tar %cltr exps)]
