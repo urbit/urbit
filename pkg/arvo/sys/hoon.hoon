@@ -13363,7 +13363,7 @@
     ::
     ++  keyword
       %-  stew  ^.  stet  ^.  limo
-      :~  :-  '#'  ::  #if -> ?:
+      :~  :-  '#'
             ;~  pfix  hax
               %-  stew  ^.  stet  ^.  limo
               :~  :-  'i'
