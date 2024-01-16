@@ -146,9 +146,7 @@
       ==
   ^-  [tang ^mesa-gate]
   =/  mesa-core  (mesa-gate now eny roof)
-  =^  moves  mesa-gate
-    %^  call:mesa-core  duct  dud=~
-    task
+  =^  moves  mesa-gate  (call:mesa-core duct dud=~ task)
   [(expect-eq !>(expected-moves) !>(moves)) mesa-gate]
 ::
 ++  mesa-call

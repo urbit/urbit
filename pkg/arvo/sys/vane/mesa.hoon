@@ -223,7 +223,7 @@
         ?=([sndr=@ vane=%$ rcvr=@ %flow bone=@ message=@] path)
       ::
       ++  ev-get-bone
-        |=  =pact
+        |=  [=spac =pact]
         |^  ^-  bone
         ?:  ?=(%poke -.pact)
           =/  =name  q.pact
@@ -234,9 +234,14 @@
         ::(parse-path `(pole knot)`q.name)
         ::
         ++  parse-path
-          |=  path=(pole knot)  ::  /~zod//~nec/flow/bone=0/message=0
+          |=  path=(pole knot)
           ^-  bone
-          ?>(?=([sndr=@ vane=%$ rcvr=@ %flow bone=@ message=@] path) (rash bone.path dem))
+          ::  XX change based on spac
+          ?>  ?=([%ax her=@ vane=%$ ver=@ spac=@ rift=@ inner-path=*] path)
+          ?>  =(ver.path '1')
+          ?>  =(spac spac.path)
+          ?>  ?=([reqr=@ ?(%ack %poke) rcvr=@ %flow bone=@ *] inner-path.path)
+          (rash bone.inner-path.path dem)
         --
       ::
       +|  %tasks
@@ -255,16 +260,15 @@
         =^  =bone  peer-core  (pe-bind-duct:peer-core duct)
         ::  XX handle corked/closing bones
         ::
-        ~&  [%poke bone %plea plea]
         pe-abet:(pe-call:peer-core %mess %poke bone %plea plea)  ::  XX namespace
       ::
       ++  on-sink
         ::XX  lane:mesa         (each blob mess)
-        |=  [=lane:ames =pact]  ::  XX lane:mesa XX goof?
+        |=  [=lane:ames request==(each blob pact)]  ::  XX lane:mesa XX goof?
         ^+  ev-core
         ::  XX fake blob decoding  =+  ;;  =pact  (cue blob)
-        :: ?.  ?=(%| -.request)  ev-core
-        :: =/  =pact  +.request
+        ?.  ?=(%| -.request)  ev-core
+        =/  =pact  +.request
         ?-  -.pact
           %peek  !!
           %page  !!  ::  data (from %peek, or %poke/%boon payload) or ack
@@ -283,7 +287,7 @@
             !!
           ::
           =+  peer-core=(pe-abed-peer:pe (need sndr) +.u.ship-state)
-          =/  =bone  (ev-get-bone pact)
+          =/  =bone  (ev-get-bone %mess pact)
           pe-abet:(pe-call:peer-core %mess %sink bone %poke +.pact) ::  pact -> mess
         ==
       ::
@@ -475,7 +479,6 @@
             ^+  path
             =/  [her=@ta rift=@ta]
               [(scot %p her) (scot %ud rift.peer-state)]
-            ~&  her^rift
             ?-  spac
               %chum  !!
               %shut  !!
@@ -545,10 +548,10 @@
             ::
             =+  ;;  =plea  %-  cue  dat.payload  ::  XX fake data decoding
             ::  XX  pass plea/boon to gall
-            =+  [her=~nec spac=%mess bone=1 rift=1]
+            :: =+  [her=~nec spac=%mess bone=1 rift=1]
             :: add rift to avoid dangling bones
             ::
-            =/  =wire  /[spac]/flow/[(scot %p her)]/[(scot %ud bone)]/[(scot %ud rift)]
+            =/  =wire  /[spac]/flow/[(scot %p her)]/[(scot %ud bone)]/[(scot %ud rift.peer-state)]
             =.  ev-core
               ?:  =(vane.plea %$)
                 ev-core  ::  XX handle pre-cork ships
@@ -586,20 +589,19 @@
             :: =+  her:encs
             =/  ack-path=path
               %+  fo-en-spac  spac
-              :~  (scot %p her)  %ack  (scot %p our)  %flow
-                  (scot %ud bone)  (scot %ud next)  '0'
+              :~  reqr=(scot %p her)  %ack  rcvr=(scot %p our)  %flow
+                  (scot %ud bone)  (scot %ud next)  (scot %ud bone)
               ==
             =/  payload-path=path
               %+  fo-en-spac  spac
-              :~  (scot %p our)  %poke  (scot %p her)  %flow
-                  (scot %ud bone)  (scot %ud next)  '0'
+              :~  reqr=(scot %p our)  %poke  rcvr=(scot %p her)  %flow
+                  (scot %ud bone)  (scot %ud next)  (scot %ud bone)
               ==
             =/  =pact
               :^  %poke
                 name=[her ack-path packet-size s=num=0]
                 name=[our payload-path packet-size s=num=0]
-              data=[tot=1 aut=*@ux dat=(fo-en-plea plea)]
-           ~&  >  pact/pact
+              data=[tot=1 aut=0x0 dat=(fo-en-plea plea)]
            =?  ev-core  ?=(~ unsent-messages)
              %-  ev-emil
              :~  [unix-duct.mesa-state give/(fo-en-gift spac %| pact)]  :: XX
@@ -657,17 +659,17 @@
 |%
 ::  XX FIXME
 ::
-+$  new-task
-  $%  [%sink =lane:ames =pact]  :: XX only %mess namespace support
-                                :: XX use =mess instead
-      $<(%sink task)
-  ==
+:: +$  new-task
+::   $%  [%sink =lane:ames =pact]  :: XX only %mess namespace support
+::                                 :: XX use =mess instead
+::       $<(%sink task)
+::   ==
 ::
 ++  call
   ::
-  |=  [=duct dud=(unit goof) wrapped-task=(hobo new-task)]
+  |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _mesa-gate]
-  =/  task=new-task    ((harden new-task) wrapped-task)
+  =/  =task    ((harden task) wrapped-task)
   =/  ev-core  (ev [now eny rof] duct mesa-state)
   ::
   =^  moves  mesa-state
@@ -681,7 +683,7 @@
       ::  XX rename
       ::  XX choose what namespace this belongs to
       %plea  (on-poke:ev-core [ship plea]:task)
-      %sink  (on-sink:ev-core [lane pact]:task)  :: XX only %mess namespace support
+      %sink  (on-sink:ev-core [lane request]:task)  :: XX only %mess namespace support
     ==
     ::
   [moves mesa-gate]

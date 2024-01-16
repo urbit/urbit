@@ -795,7 +795,12 @@
   ::
   +$  name  [p=ship q=path r=bloq s=num=@udF]
   +$  data  [tot=@udF aut=@ux dat=@]
-  +$  next  (list lane)
+  +$  mesa-lane
+    $@  @ux
+    $%  [%if p=@ifF q=@udE]
+        [%is p=@isH q=@udE]
+    ==
+  +$  next  (list mesa-lane)
   +$  pact
     $%  [%page p=name q=data r=next]  :: [%page p=name q=(each once more) r=next]
         [%peek p=name]
@@ -804,8 +809,7 @@
   +$  task
     $+  ames-task
     $%  [%hear =lane =blob]
-        ::[%sink =lane request=(each blob pact)]
-        [%sink =lane =pact]  ::  XX request based on namespace?
+        [%sink =lane request=(each blob pact)]  ::  XX request based on namespace?
         [%dear =ship =lane]
         [%heed =ship]
         [%jilt =ship]
