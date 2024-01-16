@@ -246,6 +246,7 @@
       ::
       +|  %tasks
       ::
+      ++  on-born  |=(=^duct ev-core(mesa-state mesa-state(unix-duct duct)))
       ++  on-poke
         |=  [=ship =plea]
         ^+  ev-core
@@ -680,6 +681,7 @@
       !!
     ::
     ?+  -.task  !!
+      %born  (on-born:ev-core duct)
       ::  XX rename
       ::  XX choose what namespace this belongs to
       %plea  (on-poke:ev-core [ship plea]:task)

@@ -79,6 +79,10 @@
       ==
     =.  route.peer-state  `[direct=%.y `lane:ames`[%& ~nec]]
     [%known peer-state]
+  ::  metamorphose
+  ::
+  =>  .(nec +:(call:(nec) ~[//unix] ~ %born ~))
+  =>  .(bud +:(call:(bud) ~[//unix] ~ %born ~))
   ::
   [nec=nec bud=bud]
 --
