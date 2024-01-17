@@ -14,6 +14,7 @@
         [%add-bucket so:dejs]
         [%remove-bucket so:dejs]
         [%set-current-bucket so:dejs]
+        [%set-public-url-base so:dejs]
     ==
   --
 ::
@@ -24,12 +25,13 @@
   %+  frond:enjs  %s3-update
   %-  pairs:enjs
   :~  ?-  -.upd
-          %set-current-bucket  [%'setCurrentBucket' s+bucket.upd]
-          %add-bucket          [%'addBucket' s+bucket.upd]
-          %set-region          [%'setRegion' s+region.upd]
-          %remove-bucket       [%'removeBucket' s+bucket.upd]
-          %set-endpoint        [%'setEndpoint' s+endpoint.upd]
-          %set-access-key-id   [%'setAccessKeyId' s+access-key-id.upd]
+          %set-current-bucket   [%'setCurrentBucket' s+bucket.upd]
+          %add-bucket           [%'addBucket' s+bucket.upd]
+          %set-region           [%'setRegion' s+region.upd]
+          %remove-bucket        [%'removeBucket' s+bucket.upd]
+          %set-endpoint         [%'setEndpoint' s+endpoint.upd]
+          %set-public-url-base  [%'setPublicUrlBase' s+public-url-base.upd]
+          %set-access-key-id    [%'setAccessKeyId' s+access-key-id.upd]
           %set-secret-access-key
         [%'setSecretAccessKey' s+secret-access-key.upd]
       ::
@@ -47,6 +49,7 @@
         :~  [%buckets a+(turn ~(tap in buckets.configuration.upd) |=(a=@t s+a))]
             [%'currentBucket' s+current-bucket.configuration.upd]
             [%'region' s+region.configuration.upd]
+            [%'publicUrlBase' s+public-url-base.configuration.upd]
         ==
       ==
   ==

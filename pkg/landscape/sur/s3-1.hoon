@@ -1,11 +1,4 @@
-/-  zer=s3-0
-/-  son=s3-1
 |%
-++  past
-  |%
-  ++  zero  zer
-  ++  one   son
-  --
 +$  credentials
   $:  endpoint=@t
       access-key-id=@t
@@ -16,7 +9,6 @@
   $:  buckets=(set @t)
       current-bucket=@t
       region=@t
-      public-url-base=@t
   ==
 ::
 +$  action
@@ -27,7 +19,6 @@
       [%remove-bucket bucket=@t]
       [%set-current-bucket bucket=@t]
       [%set-region region=@t]
-      [%set-public-url-base public-url-base=@t]
   ==
 ::
 +$  update
