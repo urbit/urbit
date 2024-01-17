@@ -130,14 +130,6 @@
     ^-  (list coop)
     ^$(pos (snoc pos seg), farm f)
   ::
-  ++  migrate
-    |=  from=(map spur plot)
-    =/  from  ~(tap by from)
-    |-  ^+  farm
-    ?~  from  farm
-    =.  farm  (need (put i.from))
-    $(from t.from)
-  ::
   ++  match-coop
     =|  wer=path
     |=  =path
