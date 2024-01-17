@@ -1066,7 +1066,7 @@
             =public-key
             sponsor=ship
         ==
-        route=(unit [direct=? =lane])
+        route=(unit [direct=? =lane])  ::  XX (list)
         =qos
         =ossuary
         snd=(map bone message-pump-state)

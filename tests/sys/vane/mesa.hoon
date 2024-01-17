@@ -21,7 +21,7 @@
     ::
       [~[/poke] %plea ~bud poke-plea]
     ::
-      :~  [~ [%give %pres lanes=~ message]]
+      :~  [~[//unix] [%give %pres lanes=~ message]]
           [~[/poke] [%pass /mess/~bud/0/0 %b %wait ~1111.1.1..00.00.30]]
       ==
     ==
