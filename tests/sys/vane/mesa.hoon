@@ -22,7 +22,7 @@
       [~[/poke] %plea ~bud poke-plea]
     ::
       :~  [~[//unix] [%give %pres lanes=~ pact]]
-          [~[/poke] [%pass /mess/~bud/0/0 %b %wait ~1111.1.1..00.00.30]]
+          [~[/poke] [%pass /~bud/0/0 %b %wait ~1111.1.1..00.00.30]]
       ==
     ==
   ::
@@ -41,7 +41,7 @@
     ::
       :~  ::  :-  ~[//unix]  [%pass /qos %d %flog %text "; ~nec is your neighbor"]
           :-  ~[//unix]
-          [%pass /mess/flow/~nec/0/0 %g %plea ~nec poke-plea]
+          [%pass /flow/~nec/0/0 %g %plea ~nec poke-plea]
       ==
     ==
   :-  moves-2  |.  :-  %&
