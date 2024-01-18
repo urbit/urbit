@@ -579,6 +579,7 @@
       $%  [%poke =bone message=mesa-message]
           [%sink =bone =mess]  ::  message=mess
       ==
+    +$  peer-task  ,*
     ::
     +$  sig    @uxJ    :: (ed25519)
     +$  hmac   @uxI   :: (keyed blake3)
@@ -661,6 +662,8 @@
 =*  mesa-gate  .
 =>  ::  inner event-handling cores
     ::
+    ::  XX flopping is only done in the ev-req/ev-res cores
+    ::  XX move to top layer
     |%
     ::
     +|  %helpers
@@ -704,7 +707,7 @@
     ++  ev-req  ::  send %peek/%poke requests
       =|  moves=(list move)
       ~%  %event-gate  ..ev-req  ~
-      |_  =duct  ::  XX hen=duct
+      |_  hen=duct  ::  XX hen=duct
       :: ~%  %ev-core  ..$  ~
       +|  %helpers
       ::
@@ -715,7 +718,7 @@
       ::
       +|  %tasks
       ::
-      ++  on-born  ev-core(ax ax(unix-duct duct))  ::  XX move to ev-sys
+      ++  on-born  ev-core(ax ax(unix-duct hen))  ::  XX move to ev-sys
       ++  on-poke
         |=  [=ship =plea]
         ^+  ev-core
@@ -726,16 +729,23 @@
           !!
         ::
         =*  peer-state  +.u.ship-state
-        =+  peer-core=(pe-abed-her:pe duct ship peer-state)
+        =+  pe-core=(pe-abed-her:pe hen ship peer-state)
         ::
-        =^  =bone  peer-core  (pe-bind-duct:peer-core duct)
+        =^  =bone  pe-core
+          ?^  bone=(pe-get-bone:pe-core hen)
+            [u.bone pe-core]
+          ::  defer pe-abet:pe-core since we pass peer-state to the fo-core
+          ::
+          [pe-nex-bone:pe-core (pe-new-duct:pe-core hen)]
+        ::
+        =|  =poke-state:fo  ::  XX from peer-state
         ::  XX handle corked/closing bones
         ::
-        =^  moves  peer-state
-          pe-abet:(pe-call:peer-core %mess %poke bone %plea plea)  ::  XX namespace
-        =.  peers.ax
-          ::  XX already done in pe-abet
-          (~(put by peers.ax) ship known/peer-state)
+        =^  moves  ax
+          =<  fo-abet  ::
+          (fo-call:(fo-abed:fo hen bone pe-chan:pe-core) %mess %plea plea)
+        :: =.  peers.ax
+        ::   (~(put by peers.ax) ship known/peer-state)
         (ev-emil moves)
       ::
       ++  on-peek
@@ -747,17 +757,17 @@
         ::   ::  XX handle
         ::   !!
         :: :: ::
-        =+  peer-core=(pe-abed:pe duct ship.p)
+        =+  peer-core=(pe-abed:pe hen ship.p)
         =*  peer-state  peer-state.peer-core
         :: ::
         ?^  ms=(~(get by pit.peer-state) path.p)
           =.  peers.ax
             =/  pit
-              (~(put by pit.peer-state) path.p u.ms(for (~(put in for.u.ms) duct)))
+              (~(put by pit.peer-state) path.p u.ms(for (~(put in for.u.ms) hen)))
             (~(put by peers.ax) ship.p known/peer-state(pit pit))
           ev-core
         =|  new=message-state
-        =.  for.new  (~(put in for.new) duct)
+        =.  for.new  (~(put in for.new) hen)
         =.  peers.ax
           %+  ~(put by peers.ax)  ship.p
           known/peer-state(pit (~(put by pit.peer-state) path.p new))
@@ -931,18 +941,26 @@
             !!
           ::
           =*  peer-state  +.u.ship-state
-          =+  peer-core=(pe-abed-her:pe duct (need sndr) peer-state)
+          =/  pe-ca=peer-channel
+            =<  channel^peer-state
+            (pe-abed-her:pe duct (need sndr) peer-state)
           =/  =bone  (ev-get-bone mess)
-          =^  moves  peer-state
-            pe-abet:(pe-call:peer-core %mess %sink bone %poke +.mess)
-          =.  peers.ax
-            ::  XX already done in pe-abet
-            (~(put by peers.ax) (need sndr) known/peer-state)
+          :: =|  =poke-state:fo  ::  XX from peer-state
+          =^  moves  ax
+            ::pe-abet:(pe-call:peer-core %mess %sink bone %poke +.mess)
+            =<  fo-abet
+            (fo-call:(fo-abed:fo duct bone pe-ca) %mess %sink %poke +.mess)
           (res-emil moves)
         ==
       --
     ::
-    ++  ev-sys  !!  ::  system/internal: %heed, %kroc, %prod...
+    ++  ev-sys  ::  system/internal: %born, %heed, %kroc, %prod...
+      =|  moves=(list move)
+      |_  hen=duct
+      ++  sys-core  .
+      ++  sys-abet  [moves ax]
+      ++  sys-born  sys-core(ax ax(unix-duct hen))
+      --
     ::
     +|  %internals
     ::  +pe: per-peer processing
@@ -953,12 +971,11 @@
       +*  veb    veb.bug.channel
           her    her.channel
           keens  keens.peer-state
-          pe-ca  [channel peer-state]
       ::
       +|  %helpers
       ++  pe-core      .
       ++  pe-emit      |=(=move pe-core(moves [move moves]))
-      ++  pe-emil      |=(mos=(list move) pe-core(moves (weld (flop mos) moves)))
+      ++  pe-emil      |=(mos=(list move) pe-core(moves (weld mos moves)))
       ++  pe-abed      |=([d=^duct s=@p] (pe-abed-her d s (pe-gut-her-state s)))
       ++  pe-abed-got  |=([d=^duct s=@p] (pe-abed-her d s (pe-got-her-state s)))
       ++  pe-abed-her
@@ -966,15 +983,17 @@
         %_  pe-core
                 duct   duct
           peer-state   peer
-              channel  [[our ship] now pe-channel -.peer]
+              channel  [[our ship] now [life crypto-core bug]:ax -.peer]
         ==
       ::
-      ++  pe-channel  [life crypto-core bug]:ax
       :: ++  pe-abort    pe-core  :: keeps moves, discards state changes
       ++  pe-abet
-        ^+  [moves peer-state]
+        ^+  [moves ax]
         =.  peers.ax  (~(put by peers.ax) her known/peer-state) ::  XX outside?
-        [moves peer-state]
+        ~&  >>  next-bone/pe-nex-bone
+        [moves ax]
+      ::
+      ++  pe-chan  [channel peer-state]
       ::  +get-her-state: lookup .her state or ~
       ::
       ++  pe-get-her-state
@@ -1015,15 +1034,17 @@
         ^-  ^duct
         ~|(%dangling-bone^her^b (~(got by by-bone.ossuary.peer-state) b))
       ::
-      ::  +pe-bind-duct: find or make new $bone for .duct in .ossuary
-      ::
-      ++  pe-bind-duct
+      ++  pe-nex-bone  next-bone.ossuary.peer-state
+      ++  pe-get-bone
         |=  =^duct
+        ^-  (unit bone)
+        (~(get by by-duct.ossuary.peer-state) duct)
+      ::  +pe-new-duct:  make new $bone for .duct in .ossuary
+      ::
+      ++  pe-new-duct
+        |=  =^duct
+        ^+  pe-core
         =*  ossa  ossuary.peer-state
-        ^+  [next-bone.ossa pe-core]
-        ?^  existing=(~(get by by-duct.ossa) duct)
-          [u.existing pe-core]
-        :-  next-bone.ossa
         =.  ossa
           :+  (add 4 next-bone.ossa)  ::  XX  4 bones needed per flow?
             (~(put by by-duct.ossa) duct next-bone.ossa)
@@ -1033,15 +1054,11 @@
       +|  %tasks
       ::
       ++  pe-call
-        |=  [=spac task=message-task]  ::  XX any namespace task?
+        |=  [=spac task=peer-task]  ::  XX any namespace task?
         ^+  pe-core
         =|  poke-state=*       ::  XX from state
-        =^  moves  poke-state  ::  XX ... save in state
-          =<  fo-abet
-          ?-  -.task
-            %poke  (fo-call:(fo-abed:fo duct bone.task pe-ca) spac message.task)
-            %sink  (fo-call:(fo-abed:fo duct bone.task pe-ca) spac sink/mess.task)
-          ==
+        =^  moves  peer-state  ::  XX ... save in state
+          [~ peer-state]
         (pe-emil moves)
       ::
       :: +|  %internals
@@ -1127,11 +1144,17 @@
           |=  [=^duct =^bone peer-channel]
           fo-core(duct duct, bone bone, channel channel, peer-state peer-state)
         ::
-        ++  fo-abet  moves^state  ::  ~(put by ...)  :: XX (flop moves) done outside
+        ++  fo-abet  ::moves^state  ::  ~(put by ...)  :: XX (flop moves) done outside
+          ^+  [moves ax]
+          ::  XX fake state update
+          ::  =.  pokes.peer-state  (~(put by pokes.peer-state) bone poke-state)
+          =.  peers.ax  (~(put by peers.ax) her known/peer-state)
+          [moves ax]
         ++  fo-emit  |=(=move fo-core(moves [move moves]))
-        ++  fo-emil  |=(mos=(list move) fo-core(moves (weld (flop mos) moves)))
+        ++  fo-emil  |=(mos=(list move) fo-core(moves (weld mos moves)))
         ::
         +|  %gifts
+        ::
         ++  fo-en-plea  |=(=plea ^-(blob (jam plea)))  ::  XX real encoding
         ::  +fo-en-gift: encode gift to send based on namespacce
         ::
@@ -1333,7 +1356,7 @@
       !!
     ::
     ?+  -.task  !!
-      %born  ev-abet:~(on-born ev-req hen)  ::  XX ev-sys
+      %born  sys-abet:~(sys-born ev-sys hen)  ::  XX ev-sys
       :: XX make-poke
     ::
       %plea  ev-abet:(~(on-poke ev-req hen) [ship plea]:task)
@@ -1432,5 +1455,26 @@
         [~ ~ *]  ``[%message !>([0x0 0])] :: hmac response
       ==
     ==
-  ~
+  ::
+  ::  only respond for the local identity, %$ desk, current timestamp
+  ::
+  ?.  ?&  =(&+our why)
+          =([%$ %da now] lot)
+          =(%$ syd)
+      ==
+    ~
+  ::
+  ::  /ax/peers/[ship]               ship-state
+  ?.  ?=(%x ren)  ~
+  =>  .(tyl `(pole knot)`tyl)
+  ::  private endpoints
+  ?.  =([~ ~] lyc)  ~
+  ?+    tyl  ~
+        [%peers her=@ ~]
+      =/  who  (slaw %p her.tyl)
+      ?~  who  [~ ~]
+      ?~  peer=(~(get by peers.ax) u.who)
+        [~ ~]
+      ``noun+!>(u.peer)
+  ==
 --

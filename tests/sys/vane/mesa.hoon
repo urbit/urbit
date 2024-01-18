@@ -26,7 +26,7 @@
       ==
     ==
   ::
-  :-  moves-1  |.  :-  %&
+  :-  moves-1  |.  :-  %|
   ~?  >  dbug  '~bud hears %poke-plea from ~nec'
   =/  message
     :^    %poke
@@ -44,5 +44,13 @@
           [%pass /mess/flow/~nec/0/0 %g %plea ~nec poke-plea]
       ==
     ==
-  moves-2
+  :-  moves-2  |.  :-  %&
+  %+  expect-eq
+  !>  4
+  !>  =<  next-bone.ossuary
+      %:  mesa-scry-peer:v
+        ames.nec
+        [~1111.1.10 0xdead.beef *roof]
+        [~nec ~bud]
+      ==
 --
