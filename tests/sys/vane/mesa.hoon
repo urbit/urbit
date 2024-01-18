@@ -11,8 +11,8 @@
   =/  poke-plea  [%g /ge/pok [%0 %m noun/0]]
   =/  pact
     :^    %poke
-        [~bud /ax/~bud//1/mess/0/~bud/ack/~nec/flow/0/1/0 13 s=num=0]
-      [~nec /ax/~bud//1/mess/0/~nec/poke/~bud/flow/0/1/0 13 s=num=0]
+        [~bud 0 /ax/~bud//1/mess/0/~bud/ack/~nec/flow/0/1/0 13 s=num=0]
+      [~nec 0 /ax/~bud//1/mess/0/~nec/poke/~bud/flow/0/1/0 13 s=num=0]
     [tot=1 aut=0x0 dat=(jam poke-plea)]
   ::
   =^  moves-1  ames.nec

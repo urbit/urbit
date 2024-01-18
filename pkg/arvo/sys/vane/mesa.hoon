@@ -588,7 +588,7 @@
     +$  once  [tot=@udF tag=?(sig hmac) aut=?(root proof) dat=@]
     +$  more  [aut=$@(~ [@uxI @uxI]) dat=@]
     +$  spac  ?(%pact %publ %mess %chum %shut)
-    +$  name  [p=ship q=path r=bloq s=num=@udF]
+    +$  name  [p=ship q=rift r=path s=bloq t=num=@udF]
     +$  data  [tot=@udF aut=@ux dat=@]
     +$  next  (list lane)
     +$  pact
@@ -789,14 +789,56 @@
       :: +|  %entry-points
       ::
       ++  pa  :: XX use +abet
-        |=  [=lane:^pact blob=@]
-        ::^-  [(list move) axle]
-        ^+  res-core
-        =/  pac  (parse-packet blob)
-        ~!  peers.ax
-        ?-  -.pac
-            %page
+        |%
+        ::
+        +|  %entry-points
+        ::
+        ++  call
+          |=  [(unit lane) blob=@]
+          ^+  res-core
+          =/  =pact  (parse-packet blob)
+          ?-  -.pact
+              %page  (pa-page +.pact)
+              %peek  (pa-peek +.pact)
+              %poke  (pa-poke +.pact)
+          ==
+        ::
+        +|  %internals
+        ::
+        ++  pa-poke
+          |=  [=ack=name =poke=name =data]
+          ::  XX dispatch/hairpin &c
           ::
+          ::  - pre-check that we want to process this poke (recognize ack path, ship not blacklisted, &c)
+          ::  - initialize our own outbound request for the poke payload
+          ::  - start processing the part of the poke payload we already have
+          ::    - validation should crash event or ensure that no state is changed
+          ::  XX  parse path to get: requester, rift, bone, message
+          ::
+          :: ?.  =(1 tot.payload)
+          ::  !!  ::  XX  need to retrieve other fragments
+          ::  XX  wait for done from vane
+          ::  XX  then, place ack in namespace,
+          ::  XX  emit $page as an effect to vere to cache it
+          ::  XX  wait for cork to clean the flow
+          !!
+        ::
+        ++  pa-peek
+          |=  =name
+          ?.  =(our p.name)
+            :: [~ ax]
+            res-core
+          =/  res=(unit (unit cage))
+            !!  :: scry for path
+          ?.  ?=([~ ~ ^] res)
+            :: [~ ax]
+            res-core
+          ::  XX [%give %send-response q.q.u.u.res]
+          :: [~ ax]
+          res-core
+        ::
+        ++  pa-page
+          |=  [=name =data =next]
           ::  XX initialize message core
           ::
           :: pa-abet:pa-hear:(pa hen p.p.pact)
@@ -804,12 +846,12 @@
           ::
           ::  check for pending request (peek|poke)
           ::
-          =*  ship  p.p.pac
+          =*  ship  p.name
           ?~  rs=(~(get by peers.ax) ship)
             :: [~ ax]
             res-core
           ?>  ?=([~ %known *] rs)  ::  XX alien agenda
-          ?~  ms=(~(get by pit.u.rs) r.p.pac)
+          ?~  ms=(~(get by pit.u.rs) r.name)
             :: [~ ax]
             res-core
           ::
@@ -841,7 +883,7 @@
             ::  XX request next fragment
             !!
           ::
-          ?.  &(=(13 s.p.pac) ?=(%| -.nex.u.ps.u.ms) =(p.nex.u.ps.u.ms t.p.pac))
+          ?.  &(=(13 s.name) ?=(%| -.nex.u.ps.u.ms) =(p.nex.u.ps.u.ms t.name))
             :: [~ ax]
             res-core
           ::  XX get hash pair from packet, validate and add to tree
@@ -853,37 +895,7 @@
             !!
           ::  XX request next fragment
           !!
-        ::
-            %peek
-          ?.  =(our p.p.pac)
-            :: [~ ax]
-            res-core
-          =/  res=(unit (unit cage))
-            !!  :: scry for path
-          ?.  ?=([~ ~ ^] res)
-            :: [~ ax]
-            res-core
-          ::  XX [%give %send-response q.q.u.u.res]
-          :: [~ ax]
-          res-core
-        ::
-            %poke
-          ::  XX dispatch/hairpin &c
-          ::
-          ::  - pre-check that we want to process this poke (recognize ack path, ship not blacklisted, &c)
-          ::  - initialize our own outbound request for the poke payload
-          ::  - start processing the part of the poke payload we already have
-          ::    - validation should crash event or ensure that no state is changed
-          ::  XX  parse path to get: requester, rift, bone, message
-          ::
-          :: ?.  =(1 tot.payload)
-          ::  !!  ::  XX  need to retrieve other fragments
-          ::  XX  wait for done from vane
-          ::  XX  then, place ack in namespace,
-          ::  XX  emit $page as an effect to vere to cache it
-          ::  XX  wait for cork to clean the flow
-          !!
-        ==
+       --
       ::
       ++  ma  :: XX use +abet
         |%
@@ -1305,8 +1317,8 @@
           ==
         =/  =pact
           :^  %poke
-            name=[her ack-path packet-size s=num=0]
-            name=[our payload-path packet-size s=num=0]
+            name=[her rift.peer-state ack-path packet-size s=num=0]
+            name=[our rift.peer-state payload-path packet-size s=num=0]
           data=[tot=1 aut=0x0 dat=(fo-en-plea plea)]
         =?  fo-core  ?=(~ unsent-messages)
           %-  fo-emil
@@ -1386,8 +1398,8 @@
       ::  %sink-pact
       %sink  =+  res-core=~(. ev-res hen)
              =<  res-abet
-             ?+  -.request.task  !!
-               ::%&  (call:pa:res-core (need lane.task) +.request.task)
+             ?-  -.request.task
+               %&  (call:pa:res-core lane.task +.request.task)
                %|  (call:ma:res-core [lane +.request]:task)
     ==       ==
     ::
