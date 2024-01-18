@@ -146,7 +146,7 @@
     |=  [=path =plot]
     ^-  (unit _farm)
     ?:  ?=(%coop -.farm)
-      `farm(q (~(put by q.farm) path plot))
+      ~
     ?~  path
       `farm(p `plot)
     =/  nex  (~(get by q.farm) i.path)
