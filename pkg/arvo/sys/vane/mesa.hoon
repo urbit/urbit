@@ -1391,16 +1391,15 @@
     ::
       %plea  req-abet:(~(req-poke ev-req hen) [ship plea]:task)
     ::
-      :: %keen  (~(ev-make-peek ev-req hen) p.task)
+      %keen  req-abet:(~(req-peek ev-req hen) +>.task)  ::  XX sec
     ::
       :: XX ev-res
       ::  %sink-mess
       ::  %sink-pact
-      %sink  =+  res-core=~(. ev-res hen)
-             =<  res-abet
+      %sink  =<  res-abet
              ?-  -.request.task
-               %&  (call:pa:res-core lane.task +.request.task)
-               %|  (call:ma:res-core [lane +.request]:task)
+               %&  (call:pa:~(. ev-res hen) lane.task +.request.task)
+               %|  (call:ma:~(. ev-res hen) [lane +.request]:task)
     ==       ==
     ::
   [moves mesa-gate]
