@@ -473,7 +473,7 @@
     ++  complete  |
     ++  is-auth-packet  |
     --
-::  state types
+::  vane types  ::  XX move to lull.hoon
 ::
 =>  |%
     +|  %types
@@ -641,7 +641,7 @@
           pit=(map path message-state)
       ==
     +$  axle
-      $:  p=peers=(map ship ship-state)
+      $:  peers=(map ship ship-state)
           =unix=duct
           =life
           =rift
@@ -665,7 +665,7 @@
     ::
     +|  %helpers
     ::
-    ++  ev-get-parties
+    ++  ev-get-them
       |=  =mess
       ^-  [sndr=(unit ship) rcvr=ship]  :: XX dyad?
       ?-  -.mess
@@ -692,39 +692,34 @@
       ++  parse-path
         |=  path=(pole knot)
         ^-  bone
-        ::  XX change based on spac
         ?>  ?=([%ax her=@ vane=%$ ver=@ spac=@ rift=@ inner-path=*] path)
         ?>  =(ver.path '1')
-        ?>  =(spac spac.path)
+        :: ?>  =(spac spac.path)
         ?>  ?=([reqr=@ ?(%ack %poke) rcvr=@ %flow bone=@ *] inner-path.path)
         (rash bone.inner-path.path dem)
       --
     ::
     +|  %entry-points
     ::
-    ++  ev-req  ::  make %peek/%poke requests
+    ++  ev-req  ::  send %peek/%poke requests
       =|  moves=(list move)
-      :: =*  peers  `(map ship ship-state)`p.ax  :: XX FIXME
       ~%  %event-gate  ..ev-req  ~
-      ::|=  [[now=@da eny=@ rof=roof] =duct =axle]
       |_  =duct  ::  XX hen=duct
-      +*  peers  peers.p.ax
       :: ~%  %ev-core  ..$  ~
-      :: |%
       +|  %helpers
       ::
       ++  ev-core  .
-      ++  ev-abet  [(flop moves) ax]
+      ++  ev-abet  (flop moves)^ax
       ++  ev-emit  |=(=move ev-core(moves [move moves]))
       ++  ev-emil  |=(mos=(list move) ev-core(moves (weld (flop mos) moves)))
       ::
       +|  %tasks
       ::
-      ++  on-born  |=(=^duct ev-core(ax ax(unix-duct duct)))
+      ++  on-born  ev-core(ax ax(unix-duct duct))  ::  XX move to ev-sys
       ++  on-poke
         |=  [=ship =plea]
         ^+  ev-core
-        =/  ship-state  (~(get by peers) ship)
+        =/  ship-state  (~(get by peers.ax) ship)
         ::
         ?.  ?=([~ %known *] ship-state)
           ::  XX handle
@@ -738,9 +733,9 @@
         ::
         =^  moves  peer-state
           pe-abet:(pe-call:peer-core %mess %poke bone %plea plea)  ::  XX namespace
-        =.  peers
+        =.  peers.ax
           ::  XX already done in pe-abet
-          (~(put by peers) ship known/peer-state)
+          (~(put by peers.ax) ship known/peer-state)
         (ev-emil moves)
       ::
       ++  on-peek
@@ -756,15 +751,15 @@
         =*  peer-state  peer-state.peer-core
         :: ::
         ?^  ms=(~(get by pit.peer-state) path.p)
-          =.  peers
+          =.  peers.ax
             =/  pit
               (~(put by pit.peer-state) path.p u.ms(for (~(put in for.u.ms) duct)))
-            (~(put by peers) ship.p known/peer-state(pit pit))
+            (~(put by peers.ax) ship.p known/peer-state(pit pit))
           ev-core
         =|  new=message-state
         =.  for.new  (~(put in for.new) duct)
-        =.  peers
-          %+  ~(put by peers)  ship.p
+        =.  peers.ax
+          %+  ~(put by peers.ax)  ship.p
           known/peer-state(pit (~(put by pit.peer-state) path.p new))
         ::  XX construct and emit initial request packet
         ::
@@ -773,22 +768,20 @@
       ::
       --
     ::
-    ++  ev-res
+    ++  ev-res  ::  hear %pact/%mess requests, send response
       =|  moves=(list move)
-      :: =*  peers  `(map ship ship-state)`p.ax  :: XX FIXME
       |_  =duct  ::  XX hen=duct
-      +*  peers  peers.p.ax
       ::
       ++  res-core  .
       ++  res-abet  [(flop moves) ax]
       ++  res-emit  |=(=move res-core(moves [move moves]))
       ++  res-emil  |=(mos=(list move) res-core(moves (weld (flop mos) moves)))
-      ++  pact  :: XX use +abet
+      ++  res-pact  :: XX use +abet
         |=  [=lane:^pact blob=@]
         ::^-  [(list move) axle]
         ^+  res-core
         =/  pac  (parse-packet blob)
-        ~!  p.ax
+        ~!  peers.ax
         ?-  -.pac
             %page
           ::
@@ -800,8 +793,7 @@
           ::  check for pending request (peek|poke)
           ::
           =*  ship  p.p.pac
-          =/  peers=(map ^ship ship-state)  p.ax
-          ?~  rs=(~(get by peers) ship)
+          ?~  rs=(~(get by peers.ax) ship)
             :: [~ ax]
             res-core
           ?>  ?=([~ %known *] rs)  ::  XX alien agenda
@@ -881,14 +873,13 @@
           !!
         ==
       ::
-      ++  mess  :: XX use +abet
+      ++  res-mess  :: XX use +abet
         |=  [(unit lane:^pact) =^mess]
         ^+  res-core
         ?-  -.mess
             %page
           =*  ship  ship.p.mess
-          =/  peers=(map ^ship ship-state)  p.ax  ::  XX FIXME
-          ?~  rs=(~(get by peers) ship.p.mess)
+          ?~  rs=(~(get by peers.ax) ship.p.mess)
             :: [~ ax]
             res-core
           ?>  ?=([~ %known *] rs)  ::  XX alien agenda
@@ -903,7 +894,7 @@
           ::
           ::  XX abet
           =.  pit.u.rs  (~(del by pit.u.rs) path.p.mess)
-          =.  p.ax      (~(put by peers) ship.p.mess u.rs)
+          =.  peers.ax  (~(put by peers.ax) ship.p.mess u.rs)
           ::[~ ax(p (~(put by peers) ship.p.mess u.rs))]
           res-core
         ::
@@ -931,10 +922,10 @@
           ::  XX  fake decoding
           :: /~nec/ack/~zod/flow/0/1/1
           :: /~zod/poke/~nec/flow/0/1/1
-          =/  [sndr=(unit @p) rcvr=@p]  (ev-get-parties mess)  ::  (pe-get-parties mess)
+          =/  [sndr=(unit @p) rcvr=@p]  (ev-get-them mess)
           ?.  =(rcvr our)
             res-core  ::  XX no-op?
-          =/  ship-state  (~(get by peers) (need sndr))
+          =/  ship-state  (~(get by peers.ax) (need sndr))
           ?.  ?=([~ %known *] ship-state)
             ::  XX handle
             !!
@@ -944,18 +935,17 @@
           =/  =bone  (ev-get-bone mess)
           =^  moves  peer-state
             pe-abet:(pe-call:peer-core %mess %sink bone %poke +.mess)
-          =.  peers
+          =.  peers.ax
             ::  XX already done in pe-abet
-            (~(put by peers) (need sndr) known/peer-state)
+            (~(put by peers.ax) (need sndr) known/peer-state)
           (res-emil moves)
         ==
-
       --
     ::
     ++  ev-sys  !!  ::  system/internal: %heed, %kroc, %prod...
     ::
     +|  %internals
-    ::  +pe: per-peer processing  ::  XX move one layer up, to be shared by all coresw
+    ::  +pe: per-peer processing
     ::
     ++  pe
       =|  moves=(list move)
@@ -963,7 +953,6 @@
       +*  veb    veb.bug.channel
           her    her.channel
           keens  keens.peer-state
-          peers  peers.p.ax
           pe-ca  [channel peer-state]
       ::
       +|  %helpers
@@ -984,7 +973,7 @@
       :: ++  pe-abort    pe-core  :: keeps moves, discards state changes
       ++  pe-abet
         ^+  [moves peer-state]
-        =.  peers  (~(put by peers) her known/peer-state) ::  XX outside?
+        =.  peers.ax  (~(put by peers.ax) her known/peer-state) ::  XX outside?
         [moves peer-state]
       ::  +get-her-state: lookup .her state or ~
       ::
@@ -995,7 +984,7 @@
         =-  ?.  ?=([~ %known *] -)
               ~
             `+.u
-        (~(get by peers) her)
+        (~(get by peers.ax) her)
       ::  +got-her-state: lookup .her state or crash
       ::
       ++  pe-got-her-state
@@ -1004,13 +993,13 @@
         ::
         ~|  %freaky-alien^her
         =-  ?>(?=(%known -<) ->)
-        (~(got by peers) her)
+        (~(got by peers.ax) her)
       ::  +gut-her-state: lookup .her state or default
       ::
       ++  pe-gut-her-state
         |=  her=ship
         ^+  peer-state
-        =/  ship-state  (~(get by peers) her)
+        =/  ship-state  (~(get by peers.ax) her)
         ?.  ?=([~ %known *] ship-state)
           *^peer-state
         +.u.ship-state
@@ -1130,11 +1119,15 @@
         +*  veb    veb.bug.channel
             her    her.channel
             keens  keens.peer-state
+            pe-ca  [channel peer-state]
         ::
         +|  %helpers
         ++  fo-core  .
-        ++  fo-abed  |=([=^duct =^bone =peer-channel] fo-core(state *poke-state))
-        ++  fo-abet  (flop moves)^state  ::  ~(put by ...)
+        ++  fo-abed
+          |=  [=^duct =^bone peer-channel]
+          fo-core(duct duct, bone bone, channel channel, peer-state peer-state)
+        ::
+        ++  fo-abet  moves^state  ::  ~(put by ...)  :: XX (flop moves) done outside
         ++  fo-emit  |=(=move fo-core(moves [move moves]))
         ++  fo-emil  |=(mos=(list move) fo-core(moves (weld (flop mos) moves)))
         ::
@@ -1224,7 +1217,8 @@
           ::
           ::  XX parse `path`q.q.poke and check the bone to know if plea or boon
           ::
-          =+  ;;(=plea page)
+          ?>  ?=(%noun -.page)  :: XX ??
+          =+  ;;(=plea +.page)
           ::  XX  pass plea/boon to gall
           :: =+  [her=~nec spac=%mess bone=1 rift=1]
           :: add rift to avoid dangling bones
@@ -1349,8 +1343,11 @@
       :: XX ev-res
       ::  %sink-mess
       ::  %sink-pact
-      %sink  !!  ::ev-abet:(~(on-sink ev-req hen) [lane request]:task)
-    ==
+      %sink  =<  res-abet
+             ?-  -.request.task
+               %&  (~(res-pact ev-res hen) (need lane.task) +.request.task)
+               %|  (~(res-mess ev-res hen) [lane +.request]:task)
+    ==       ==
     ::
   [moves mesa-gate]
 ::

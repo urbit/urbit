@@ -806,10 +806,15 @@
         [%peek p=name]
         [%poke p=name q=name r=data]  :: [%poke p=name q=name r=once]
     ==
+  +$  mess
+    $%  [%page p=spar q=page]        :: XX need auth data on %page and %poke
+        [%peek p=spar]
+        [%poke p=spar q=spar r=page]
+    ==
   +$  task
     $+  ames-task
     $%  [%hear =lane =blob]
-        [%sink =lane request=(each blob pact)]  ::  XX request based on namespace?
+        [%sink lane=(unit mesa-lane) request=(each blob mess)]  ::  XX request based on namespace?
         [%dear =ship =lane]
         [%heed =ship]
         [%jilt =ship]

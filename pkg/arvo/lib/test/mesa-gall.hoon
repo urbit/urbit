@@ -30,32 +30,32 @@
   =/  nec  (mesa-raw ~nec)
   =.  now.nec  ~1111.1.1
   =.  eny.nec  0v3f.arfnf
-  =.  life.mesa-state.nec  nec.life
-  =.  rift.mesa-state.nec  nec.rift
+  =.  life.ax.nec  nec.life
+  =.  rift.ax.nec  nec.rift
   =.  rof.nec  |=(* ``[%noun !>(*(list turf))])
-  =.  crypto-core.mesa-state.nec  nec:crypto-core
-  =/  nec-pub  pub:ex:crypto-core.mesa-state.nec
-  =/  nec-sec  sec:ex:crypto-core.mesa-state.nec
+  =.  crypto-core.ax.nec  nec:crypto-core
+  =/  nec-pub  pub:ex:crypto-core.ax.nec
+  =/  nec-sec  sec:ex:crypto-core.ax.nec
   ::  create ~bud
   ::
   =/  bud  (mesa-raw ~bud)
   =.  now.bud  ~1111.1.1
   =.  eny.bud  0v3f.arfnf
-  =.  life.mesa-state.bud  bud.life
-  =.  rift.mesa-state.bud  bud.rift
+  =.  life.ax.bud  bud.life
+  =.  rift.ax.bud  bud.rift
   =.  rof.bud  |=(* ``[%noun !>(*(list turf))])
-  =.  crypto-core.mesa-state.bud  bud:crypto-core
-  =/  bud-pub  pub:ex:crypto-core.mesa-state.bud
-  =/  bud-sec  sec:ex:crypto-core.mesa-state.bud
+  =.  crypto-core.ax.bud  bud:crypto-core
+  =/  bud-pub  pub:ex:crypto-core.ax.bud
+  =/  bud-sec  sec:ex:crypto-core.ax.bud
   ::
   =/  nec-sym  (derive-symmetric-key:mesa-raw bud-pub nec-sec)
   =/  bud-sym  (derive-symmetric-key:mesa-raw nec-pub bud-sec)
   ?>  =(nec-sym bud-sym)
   ::  tell ~nec about ~bud
   ::
-  =.  peers.mesa-state.nec
-    %+  ~(put by peers.mesa-state.nec)  ~bud
-    =|  =peer-state:ames
+  =.  peers.ax.nec
+    %+  ~(put by peers.ax.nec)  ~bud
+    =|  =peer-state:mesa-raw
     =.  -.peer-state
       :*  symmetric-key=bud-sym
           life=bud.life
@@ -63,13 +63,14 @@
           public-key=bud-pub
           sponsor=~bud
       ==
-    =.  route.peer-state  `[direct=%.y `lane:ames`[%& ~bud]]
+    ::=.  route.peer-state  `[direct=%.y `lane:ames`[%& ~bud]]
+    =.  route.peer-state  `[direct=%.y *@ux]
     [%known peer-state]
   ::  tell ~bud about ~nec
   ::
-  =.  peers.mesa-state.bud
-    %+  ~(put by peers.mesa-state.bud)  ~nec
-    =|  =peer-state:ames
+  =.  peers.ax.bud
+    %+  ~(put by peers.ax.bud)  ~nec
+    =|  =peer-state:mesa-raw
     =.  -.peer-state
       :*  symmetric-key=nec-sym
           life=nec.life
@@ -77,7 +78,8 @@
           public-key=nec-pub
           sponsor=~nec
       ==
-    =.  route.peer-state  `[direct=%.y `lane:ames`[%& ~nec]]
+    ::=.  route.peer-state  `[direct=%.y `lane:ames`[%& ~nec]]
+    =.  route.peer-state  `[direct=%.y *@ux]
     [%known peer-state]
   ::  metamorphose
   ::
@@ -208,9 +210,9 @@
           our=ship
           her=ship
       ==
-  ^-  peer-state:ames
+  ^-  peer-state:mesa-raw
   =-  ?>(?=(%known -<) ->)
-  !<  ship-state:ames
+  !<  ship-state:mesa-raw
   =<  q
   %-  need  %-  need
   %-  scry:(mesa-gate now eny roof)
