@@ -412,43 +412,59 @@
 |%
 +$  move  (wite note gift)
 ::
-+$  task  $%  [%hear p=lane:pact q=@]
-              [%mess p=(unit lane:pact) q=mess]
-              [%make-peek p=spar:ames]
-              [%make-poke p=spar:ames q=path]
-          ==
-+$  gift  $%  [%send-request ~]
-              [%send-response ~]
-              [%response $>(%page mess)]
-          ==
-::
-+$  note  $%  [%b %wait @da]
-          ==
-+$  sign  $%  [%b %wake ~]
-          ==
-::
-+$  axle  [%0 p=(map ship peer-state)]
-+$  peer-state
-  $:  pit=(map path message-state)
++$  task
+  $%  [%hear p=lane:pact q=@]            :: receive a packet
+      [%mess p=(unit lane:pact) q=mess]  :: receive a message
+      [%make-peek p=spar:ames]           :: initiate %peek request
+      [%make-poke p=spar:ames q=path]    :: initiate %poke request
+      :: XX combined with $<(%page mess) ?
+      :: XX make encrypted request a la %chum / %keen+^
   ==
-+$  message-state
++$  gift
+  $%  [%send p=(list lane:pact) q=@]     :: send a request/response packet
+      [%response $>(%page mess)]         :: produce a response message
+      :: XX encrypted response a la %near
+  ==
+::
++$  note
+  $%  [%b %wait @da]
+  ==
++$  sign
+  $%  [%b %wake ~]
+  ==
+::
++$  axle
+  $:  %0
+      p=(map ship peer-state)
+      :: XX tmp=(map @ux page)  :: temporary hash-addressed bindings
+  ==
++$  peer-state
+  $:  pit=(map path request-state)
+  ==
++$  request-state
   $:  for=(set duct)
+      pay=(unit path)
       ps=(unit packet-state)
-      :: XX put poke payload or path to it here
   ==
 +$  packet-state
   $:  nex=(each %auth @ud)
+      tot=@ud
+      :: XX lockstep state
   ==
 ::
-+$  mess  $%  [%page p=spar:ames q=page]        :: XX need auth data on %page and %poke
-              [%peek p=spar:ames]
-              [%poke p=spar:ames q=spar:ames r=page]
-          ==
+:: XX need auth data on %page and %poke
+::    but maybe only when injected externally
+::
++$  mess-auth
+  [?(%sig %hmac) dat=@ux]
+::
++$  mess
+  $%  [%page p=spar:ames q=page]
+      [%peek p=spar:ames]
+      [%poke p=spar:ames q=spar:ames r=page]
+  ==
 ::
 ++  parse-packet  |=(a=@ -:($:de:pact a))
-++  is-first-fragment  |
-++  auth-packet-needed  |
-++  complete  |
 ++  is-auth-packet  |
 --
 ::
@@ -475,46 +491,50 @@
 
       ::  check for pending request (peek|poke)
       ::
-      ?~  rs=(~(get by p.ax) p.p.pac)
+      ?~  per=(~(get by p.ax) p.p.pac)
         [~ ax]
-      ?~  ms=(~(get by pit.u.rs) r.p.pac)
+      ?~  res=(~(get by pit.u.per) r.p.pac)
         [~ ax]
       ::
-      ?:  is-first-fragment
-        ?^  ps.u.ms
+      ?:  =(0 t.p.pac)        :: is-first-fragment
+        ?^  ps.u.res
           [~ ax]
-        ::  XX authenticate at message level
-        ::  XX initialize hash-tree
         ::
-        ?:  auth-packet-needed
+        ?:  =(1 tot.q.pac)    :: complete
+          ::  XX produce as message w/ auth tag
+          !!
+        ::
+        ?:  (gth tot.q.pac 4) :: auth-packet-needed
+          ::  XX authenticate at message level with given root hash
           ::  XX request-auth-packet
-          !!
-        ?:  complete
-          ::  XX produce as message
+          ::     by setting %auth in ps.request-state, regenerating next packet
           !!
         ::
+        ::  XX initialize hash-tree by hashing fragment, prepending to proof, and validating
+        ::  XX authenticate at message level with computed root hash
         ::  XX request next fragment
         !!
       ::
-      ?~  ps.u.ms
+      ?~  ps.u.res
         [~ ax]
       ?:  is-auth-packet
-        ?.  ?=(%auth nex.u.ps.u.ms)
+        ?.  ?=(%auth nex.u.ps.u.res)
           [~ ax]
-        ::  XX initialize hash-tree
+        ::  XX validate proof, initialize hash-tree
         ::  XX request next fragment
         !!
       ::
-      ?.  &(=(13 s.p.pac) ?=(%| -.nex.u.ps.u.ms) =(p.nex.u.ps.u.ms t.p.pac))
+      ?.  &(=(13 s.p.pac) ?=(%| -.nex.u.ps.u.res) =(p.nex.u.ps.u.res t.p.pac))
         [~ ax]
       ::  XX get hash pair from packet, validate and add to tree
       ::  XX validate fragment
       ::  XX persist fragment
       ::
-      ?:  complete
-        ::  XX produce as message
+      ?:  =(t.p.pac tot.u.ps.u.res)  :: complete
+        ::  XX produce as already-validated message
         !!
       ::  XX request next fragment
+      ::     by incrementing fragment number in ps.request-state, regenerating next packet
       !!
     ::
         %peek
@@ -542,17 +562,17 @@
     ^-  [(list move) axle]
     ?-  -.mess
         %page
-      ?~  rs=(~(get by p.ax) ship.p.mess)
+      ?~  per=(~(get by p.ax) ship.p.mess)
         [~ ax]
-      ?~  ms=(~(get by pit.u.rs) path.p.mess)
+      ?~  res=(~(get by pit.u.per) path.p.mess)
         [~ ax]
       ::
       ::  XX validate response
-      ::  XX give to all ducts in [for.u.ms]
+      ::  XX give to all ducts in [for.u.res]
       ::
       ::  [%give %response mess]
       ::
-      [~ ax(p (~(put by p.ax) ship.p.mess (~(del by pit.u.rs) path.p.mess)))]
+      [~ ax(p (~(put by p.ax) ship.p.mess (~(del by pit.u.per) path.p.mess)))]
     ::
         %peek
       ?.  =(our ship.p.mess)
@@ -574,27 +594,54 @@
       !!
     ==
   ::
-  ++  ev-make-peek
-    |=  p=spar:ames
-    =/  rs  (~(gut by p.ax) ship.p *peer-state)
-    ?^  ms=(~(get by pit.rs) path.p)
-      [~ ax(p (~(put by p.ax) ship.p (~(put by pit.rs) path.p u.ms(for (~(put in for.u.ms) hen)))))]
-    =|  new=message-state
+  ++  ev-make-mess
+    |=  [p=spar:ames q=(unit path)]
+    =/  per  (~(gut by p.ax) ship.p *peer-state)  :: XX alien-agenda
+    ?^  res=(~(get by pit.per) path.p)
+      [~ ax(p (~(put by p.ax) ship.p (~(put by pit.per) path.p u.res(for (~(put in for.u.res) hen)))))]
+    ::
+    ::  XX resolve path to validate
+    ::
+    =/  res  *(unit (unit cage)) :: (rof ~ /ames/foo [[our ...] u.q])
+    ?.  ?=([~ ~ %message *] res)
+      !! :: XX wat do?
+    ::
+    =|  new=request-state
     =.  for.new  (~(put in for.new) hen)
-    =.  p.ax  (~(put by p.ax) ship.p rs(pit (~(put by pit.rs) path.p new)))
+    =.  pay.new  q
+    =.  p.ax  (~(put by p.ax) ship.p per(pit (~(put by pit.per) path.p new)))
+    ::
     ::  XX construct and emit initial request packet
     ::
+    =/  =pact:pact
+      =/  nam
+        [ship.p *rift path.p 13 0] :: XX rift from peer-state
+      ?~  q
+        [%peek nam]
+      ::  XX if path will be too long, put in [tmp] and use that path
+      ::  =/  has  (shax u.u.res)
+      ::  =.  tmp.ax  (~(put by tmp.ax) has [%some-envelope original-path u.u.res])
+      ::  //ax/[$ship]//1/temp/[hash]
+      =/  man
+        [our *rift u.q 13 0]      :: XX our rift
+      [%poke nam man *data:pact]  :: XX first-fragment or auth from payload
+    ::
     [~ ax]
+  ::
+  ++  ev-make-peek
+    |=  p=spar:ames
+    (ev-make-mess p ~)
+  ::
   ++  ev-make-poke
     |=  [p=spar:ames q=path]
-    !!
+    (ev-make-mess p `q)
   --
 ::
 ++  call
   |=  [hen=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _..^$]
   ::
-  =/  task=task  *task  :: ((harden task) wrapped-task)
+  =/  task=task  ((harden task) wrapped-task)
   ?<  ?=(^ dud)
   =^  mov  ax
     ?-  -.task
