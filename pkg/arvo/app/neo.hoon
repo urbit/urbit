@@ -64,7 +64,6 @@
   ?~  nex=(~(get by yard.into) i.pith)
     ?>  ?=(~ t.pith)
     into(yard (~(put by yard.into) i.pith hall))
-    
     :: ~|(no-ancestors/pith !!)
   into(yard (~(put by yard.into) i.pith $(pith t.pith, into u.nex)))
 

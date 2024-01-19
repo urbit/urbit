@@ -11,7 +11,7 @@
 +$  yard
   $+  yard
   $~  ~
-  (map iota qhall)
+  (map iota hall)
 +$  sign  ~
 +$  card  ~
 +$  span  (pair path form)
@@ -40,10 +40,12 @@
   ++  take
     |~  =sign
     *(list card)
+  ++  born
+    *(list card)
   ++  init
     |~  old=(unit *)
     **
-  ++  deep
+  ++  echo
     |=  [=pith val=*]
     *(list card)
   --

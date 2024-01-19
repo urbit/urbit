@@ -27,7 +27,7 @@
     %del    sta(who (~(del in who.sta) ship.action))
   ==
 ++  init
-  |=  old=(unit *)
+  |=  old=*old
   *state-0
 ++  take
   |=  =sign:neo
