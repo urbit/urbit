@@ -52,6 +52,16 @@
   ^+  run
   =.  apex  (put-hall apex to exit/from)
   run
+++  get-val-at-path
+  |=  =pith
+  ^-  (unit *)
+  ?~  val=(get-hall apex pith)
+    ~
+  `state.icon.u.val
+::
+++  has-hall
+  |=  [in=hall:neo =pith:neo]
+  =(~ (get-hall in pith))
 ::
 ++  put-hall
   |=  [into=hall:neo =pith =hall:neo]
@@ -66,17 +76,42 @@
     into(yard (~(put by yard.into) i.pith hall))
     :: ~|(no-ancestors/pith !!)
   into(yard (~(put by yard.into) i.pith $(pith t.pith, into u.nex)))
-
+++  get-hall
+  |=  [from=hall:neo =pith]
+  ^-  (unit room:neo)
+  ?.  ?=(%room -.from)
+    ~
+  ?~  pith  `+.from
+  ?~  nex=(~(get by yard.from) i.pith)
+    ~
+  ?.  ?=(%room -.u.nex)
+    ~
+  ?~  t.pith
+    `+.u.nex
+  $(from u.nex, pith t.pith)
+::
 ++  make
-  |=  [=pith src=path init=(unit *) conf=*]
-  =+  .^(=form=vase %ca src) :: TODO: case watching for upgrades, given path can't contain case
-  =+  !<(=form:neo form-vase)
-  =/  =span:neo  [src form]
+  |=  [=pith src=path init=(unit *) =conf:neo]
+  =+  .^(=firm=vase %ca src) :: TODO: case watching for upgrades, given path can't contain case
+  =+  !<(=firm:neo firm-vase)
+  =/  =form:neo  form:firm
+  =/  =span:neo  [src firm]
   =|  =yard:neo
   =/  =icon:neo  [(init:form init) ~ ~]
-  =/  =room:neo  [span yard icon]
+  =/  =deps:neo  deps:firm
+  ?>  =(~ (check-conf conf deps:firm))
+  =/  =room:neo  [span conf yard icon]
   =.  apex  (put-hall apex pith room/room)
   run
+++  check-conf
+  |=  [conf=(map term pith) =deps:neo]
+  ^-  (set term)
+  %+  roll  ~(tap by deps)
+  |=  [[=term required=? =port:neo] out=(set term)]
+  ?.  &(required !(~(has by conf) term))
+    out
+  (~(put in out) term)
+  
 ::
 ++  site
   |_  [=pith =room:neo cards=(list card:neo)]
@@ -86,25 +121,37 @@
     :: TODO: process cards
     run
   ++  si-abed
-    =/  h=hall:neo  apex
     |=  p=^pith
     =.  pith  p
-    |-  
-    ?>  ?=(^ p)
-    ?>  ?=(%room -.h)
-    ?~  nex=(~(get by yard.h) i.p)
-      ~|(no-room-at-inn/p !!)
-    ?>  ?=(%room -.u.nex)
-    ?~  t.p
-      si-core(room +.u.nex)
-    $(h u.nex, p t.p)
+    =/  r=room:neo  (need (get-hall apex pith))
+    si-core(pith p, room r)
   ++  si-init
     |=  foo=*
     ^+  si-core
     =.  state.icon.room  (init:si-form ~)
     si-core
-  ++  si-bowl    *bowl:neo
-  ++  si-form    ~(. q.span.room [si-bowl icon.room])
+  ++  si-resolve-kids  ~
+  ++  si-resolve-deps
+    %-  ~(gas by *(map term [^pith *]))
+    ^-  (list [term ^pith *])
+    %+  murn  ~(tap by deps:si-firm)
+    |=  [=term required=? =port:neo]
+    ^-  (unit [^term ^pith *])
+    =/  dep=(unit ^pith)  (~(get by conf.room) term)
+    ?~  dep
+      ~|  %invariant-missing-required-conf
+      ?<  required
+      ~
+    =/  val  (get-val-at-path u.dep)
+    ?~  val
+      ~|  %invariant-no-value-at-path
+      !!
+    `[term u.dep u.val]
+    ::  TODO type this w/ port??
+  ++  si-bowl    
+    [pith si-resolve-deps si-resolve-kids]
+  ++  si-form    ~(. form:si-firm [si-bowl icon.room])
+  ++  si-firm    q.span.room
   ++  si-poke
     |=  val=*
     ^+  si-core

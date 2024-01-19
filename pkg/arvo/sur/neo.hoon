@@ -1,7 +1,14 @@
 |%
+++  petty-port
+  |*  a=mold
+  ^-  port
+  [a a]
++$  dita  (each iota aura)
++$  pish  (list dita)
++$  conf  (map term pith)
 +$  note
   %+  pair  pith
-  $%  [%make src=path init=(unit *) conf=(map ~ ~)] :: todo: configuration values, init cannot be ^ if installing over
+  $%  [%make src=path init=(unit *) =conf] :: todo: configuration values, init cannot be ^ if installing over
       [%poke val=*]
       [%tomb =case]
       [%link from=pith]
@@ -14,7 +21,7 @@
   (map iota hall)
 +$  sign  ~
 +$  card  ~
-+$  span  (pair path form)
++$  span  (pair path firm)
 +$  icon
   [state=* history=(list *) migration=(list *)]
 +$  hall
@@ -22,12 +29,32 @@
       [%room room]
   ==
 +$  room
-  $~  [*span ~ *icon]
+  $~  [*span ~ ~ *icon]
   $:  =span
+      =conf
       =yard
       =icon
   ==
-+$  bowl  ~
++$  bowl
+  $:  were=pith
+      deps=(map term (pair pith *))
+      kids=(map pith *)
+  ==
++$  fief
+  [required=? =port]
++$  port :: TODO: how to specify behaviour
+  [state=mold action=mold]
++$  deps  (map term fief)
+::
++$  firm
+  $_  ^&
+  |%
+  ++  state  *mold
+  ++  poke   *mold
+  ++  form   *^form
+  :: ++  kids   *(map pith spec) kids not needed
+  ++  deps   *(map term fief)
+  --
 +$  form
   $_  ^|
   |_  [=bowl =icon]
@@ -46,7 +73,7 @@
     |~  old=(unit *)
     **
   ++  echo
-    |=  [=pith val=*]
+    |~  [=pith val=*]
     *(list card)
   --
 --
