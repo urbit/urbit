@@ -1,4 +1,5 @@
 |%
++$  pith  $+(pith ^pith)
 ++  petty-port
   |*  a=mold
   ^-  port
@@ -45,6 +46,7 @@
 +$  port :: TODO: how to specify behaviour
   [state=mold action=mold]
 +$  deps  (map term fief)
++$  kids  (map pish port)
 ::
 +$  firm
   $_  ^&
@@ -52,7 +54,7 @@
   ++  state  *mold
   ++  poke   *mold
   ++  form   *^form
-  :: ++  kids   *(map pith spec) kids not needed
+  ++  kids   *(map pish port)
   ++  deps   *(map term fief)
   --
 +$  form

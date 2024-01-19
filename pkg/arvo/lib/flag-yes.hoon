@@ -1,8 +1,10 @@
 /-  neo
+^-  firm:neo
 |%
 +$  poke   ?
 +$  state  ?
 ++  deps   *deps:neo
+++  kids   *kids:neo
 ++  form
   ^-  form:neo
   |_  [=bowl:neo raw-sta=* *]

@@ -15,29 +15,36 @@
 ::  possibly optimisticaly update, then forward note to foreign ship
 ::
 ::  %make
+^-  firm:neo
 |%
-+$  state-0  [%0 from=ship now=time message=@t]
-+$  card     card:neo
-+$  action   ~
---
-^-  form:neo
-|_  [=bowl:neo sta=* *]
-+*  state  ;;(state-0 sta)
-++  call
-  |=  [old-state=* act=*]
-  ::  =+  ;;(=action act)
-  ::  ~&  call/act
-  *(list card)
-++  reduce
-  |=  act=*
-  ^-  *
-  state
-++  init
-  |=  old=(unit *)
-  ?>  ?=(^ old)
-  =+  ;;(sta=state-0 u.old)
-  sta
-++  take
-  |=  =sign:neo
-  *(list card:neo)
---
++$  state  [from=ship now=time message=@t]
++$  poke   ~
+++  kids   *kids:neo
+++  deps   *deps:neo
+++  form
+  ^-  form:neo
+  |_  [=bowl:neo sta=* *]
+  +*  state  ;;(state-0 sta)
+  ++  call
+    |=  [old-state=* act=*]
+    ::  =+  ;;(=action act)
+    ::  ~&  call/act
+    *(list card)
+  ++  reduce
+    |=  act=*
+    ^-  *
+    state
+  ++  init
+    |=  old=(unit *)
+    ?>  ?=(^ old)
+    =+  ;;(sta=state-0 u.old)
+    sta
+  ++  echo
+    |=  [=pith val=*]
+    *(list card:neo)
+  ++  born
+    *(list card:neo)
+  ++  take
+    |=  =sign:neo
+    *(list card:neo)
+  --

@@ -1,6 +1,7 @@
 /-  neo
 /+  default-agent, dbug
 |%
++$  pith  $+(pith ^pith)
 +$  card  card:agent:gall
 +$  state-0
   [%0 apex=hall:neo foreign=(map ship room:neo)]
@@ -55,13 +56,13 @@
 ++  get-val-at-path
   |=  =pith
   ^-  (unit *)
-  ?~  val=(get-hall apex pith)
+  ?~  val=(get-hall pith)
     ~
   `state.icon.u.val
 ::
 ++  has-hall
-  |=  [in=hall:neo =pith:neo]
-  =(~ (get-hall in pith))
+  |=  =pith:neo
+  =(~ (get-hall pith))
 ::
 ++  put-hall
   |=  [into=hall:neo =pith =hall:neo]
@@ -70,17 +71,18 @@
   ?~  pith
     hall
   ?.  ?=(%room -.into)
-    !!
+    ~|(%cannot-put-thru-symlink !!)
   ?~  nex=(~(get by yard.into) i.pith)
     ?>  ?=(~ t.pith)
     into(yard (~(put by yard.into) i.pith hall))
     :: ~|(no-ancestors/pith !!)
   into(yard (~(put by yard.into) i.pith $(pith t.pith, into u.nex)))
 ++  get-hall
-  |=  [from=hall:neo =pith]
+  =/  from  apex
+  |=  =pith
   ^-  (unit room:neo)
   ?.  ?=(%room -.from)
-    ~
+    $(from apex, pith +.from)
   ?~  pith  `+.from
   ?~  nex=(~(get by yard.from) i.pith)
     ~
@@ -123,7 +125,9 @@
   ++  si-abed
     |=  p=^pith
     =.  pith  p
-    =/  r=room:neo  (need (get-hall apex pith))
+    =/  r=room:neo
+      ~|  missing-room/pith
+      (need (get-hall pith))
     si-core(pith p, room r)
   ++  si-init
     |=  foo=*

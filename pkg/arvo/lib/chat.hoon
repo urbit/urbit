@@ -1,4 +1,5 @@
 /-  neo
+/+  message
 =*  card  card:neo
 ^-  firm:neo
 |%
@@ -19,6 +20,17 @@
       [%del =ship]
       [%dbug ~]
   ==
+++  kids
+  =<  apex
+  |%
+  ++  apex
+    %-  ~(gas by *kids:neo)
+    :~  messages
+    ==
+  ++  messages
+    :-  ~[&/%messages |/%da]
+    [state:message poke:message]
+
 ++  deps
   =<  apex
   |%
