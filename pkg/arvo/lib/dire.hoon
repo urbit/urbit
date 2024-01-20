@@ -456,7 +456,9 @@
 ::    but maybe only when injected externally
 ::
 +$  mess-auth
-  [?(%sig %hmac) dat=@ux]
+  [typ=?(%sig %hmac) dat=@ux]
+  :: [%page p=spar:ames q=auth r=page]
++$  gage  $@(~ page)
 ::
 +$  mess
   $%  [%page p=spar:ames q=page]
@@ -466,6 +468,21 @@
 ::
 ++  parse-packet  |=(a=@ -:($:de:pact a))
 ++  is-auth-packet  |
+++  inner-path-to-beam
+  |=  [=ship =path]
+  ^-  (unit [vew=view bem=beam])
+  !!
+++  parse-path  |=(@ *(unit path))
+++  blake3  |=(* *@)
+++  get-key-for  |=([=ship =life] *@)
+++  get-group-key-for  |=(@ud *(unit @))
+++  crypt
+  |%
+  ++  sign  |=(* *@)
+  ++  hmac  |=(* *@)
+  ++  encrypt  |=(@ @)
+  ++  decrypt  |=(@ *(unit @))
+  --
 --
 ::
 |=  our=ship
@@ -669,5 +686,179 @@
   ^-  roon
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
+  ?:  ?&  =(our p.bem)
+          =(%$ q.bem)
+          =([%ud 1] r.bem)
+          =(%x car)
+      ==
+    =/  tyl=(pole knot)  s.bem
+    ?+    tyl  ~
+    ::
+    ::  message-level entrypoints
+    ::
+        [%mess ryf=@ pat=*]
+      =/  ryf  (slaw %ud ryf.tyl)
+      ?~  ryf  [~ ~]
+      ?.  =(*rift u.ryf)      :: XX our rift, XX unauthenticated
+        ~
+      =/  bem  [[our %$ ud+1] pat.tyl]
+      =/  res  (rof ~ /ames/mess %ax bem)
+      ?.  ?&  ?=([~ ~ %message *] res)
+        :: ...validate that it's really a message
+        :: =>  [%message tag=?(sig hmac) ser=@]
+          ==
+        ~
+      res
+    ::
+    ::  XX need a single namespace entrypoint to validate
+    ::     generically any authentication tag for a message
+    ::
+    ::    /ax/[$ship]//1/validate-message/[auth-string]/[blake3-hash]/[path]
+    ::
+    ::
+        [%publ lyf=@ pat=*]
+      =/  lyf  (slaw %ud lyf.tyl)
+      ?~  lyf  [~ ~]
+      ?.  =(u.lyf *life) :: XX our life
+        ~
+      ?~  inn=(inner-path-to-beam our pat.tyl)
+        [~ ~]
+      ?~  res=(rof ~ /ames/publ vew.u.inn bem.u.inn)
+        ~
+      =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
+      =/  ful  (en-beam bem)
+      =/  ryf  *rift :: XX our rift
+      =/  ser  (jam gag)
+      =/  rot  (blake3 ser)
+      ``[%message !>([%sign (sign:crypt ryf ful rot) ser])]
+    ::
+        [%chum lyf=@ her=@ hyf=@ cyf=@ ~]
+      =/  lyf  (slaw %ud lyf.tyl)
+      =/  her  (slaw %p her.tyl)
+      =/  hyf  (slaw %ud hyf.tyl)
+      =/  cyf  (slaw %uv cyf.tyl)
+      ?:  |(?=(~ lyf) ?=(~ her) ?=(~ hyf) ?=(~ cyf))
+        [~ ~]
+      ?.  =(u.lyf *life) :: XX our life
+        ~
+      ?~  key=(get-key-for u.her u.hyf)  :: eddh with our key
+        ~
+      ?~  tap=(decrypt:crypt u.cyf)  ~
+      ?~  pat=(parse-path u.tap)  ~
+      ?~  inn=(inner-path-to-beam our u.pat)  ~
+      ?~  res=(rof `[u.her ~ ~] /ames/chum vew.u.inn bem.u.inn)
+        ~
+      =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
+      =/  ful  (en-beam bem)
+      =/  ryf  *rift :: XX our rift
+      =/  ser  (jam gag)
+      =/  rot  (blake3 ser)
+      ``[%message !>([%hmac (hmac:crypt ryf ful rot) ser])]
+    ::
+        [%shut kid=@ cyf=@ ~]
+      =/  kid  (slaw %ud kid.tyl)
+      =/  cyf  (slaw %uv cyf.tyl)
+      ?:  |(?=(~ kid) ?=(~ cyf))
+        [~ ~]
+      ?~  key=(get-group-key-for u.kid) :: symmetric key lookup
+        ~
+      ?~  tap=(decrypt:crypt u.cyf)  ~
+      ?~  pat=(parse-path u.tap)  ~
+      ::  XX check path prefix
+      ?~  inn=(inner-path-to-beam our u.pat)
+        ~
+      ?~  res=(rof [~ ~] /ames/shut vew.u.inn bem.u.inn)
+        ~
+      =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
+      =/  ful  (en-beam bem)
+      =/  ryf  *rift :: XX our rift
+      =/  ser  (jam gag)
+      =/  rot  (blake3 ser)
+      ``[%message !>([%sign (sign:crypt ryf ful rot) ser])]
+    ::
+    ::  packet-level entrypoints
+    ::
+        [%pact ryf=@ boq=@ fag=@ %data pat=*]
+      =/  ryf  (slaw %ud ryf.tyl)
+      =/  boq  (slaw %ud boq.tyl)
+      =/  fag  (slaw %ud fag.tyl)
+      ?:  |(?=(~ ryf) ?=(~ boq) ?=(~ fag))
+        [~ ~]
+      ?.  =(13 boq)  ~ :: non-standard fragments for later
+      ?.  =(*rift u.ryf)      :: XX our rift
+        ~
+      =/  bem  [[our %$ ud+1] pat.tyl]
+      =/  res  (rof ~ /ames/mess %ax bem)
+      ?.  ?&  ?=([~ ~ %message *] res)
+        :: ...validate that it's really a message
+        :: =>  [tag=?(sig hmac) ser=@]
+          ==
+        ~
+      =*  ser  (,@ q.u.u.res) :: XX types
+      =/  aut  *@ :: sig|hmac
+      =/  wid  (met u.boq ser)
+      ?<  =(0 wid)  :: XX is this true?
+      ?.  (gth wid u.fag)
+        [~ ~]
+      =/  =pact:pact
+        =/  nam
+          [our u.ryf pat.tyl u.boq u.fag]
+        =/  dat
+          ?:  =(1 wid)
+            [wid aut ser]
+          =/  seq=@
+            ?:  =(0 u.fag)
+              ?:  (lte wid 4)
+                ::  XX 1 or two hashes forming merkle-proof w/out leftmost leaf
+                ::  XX (tail proof:(build:lss ...))
+                !!
+              ::  XX root hash only
+              ::  XX root:(build:lss ...))
+              !!
+            ::  XX normal lock-step traversal
+            ::  XX (snag u.fag pairs:(build:lss ...))
+            !!
+          :: XX [aut seq]
+          [wid aut (cut u.boq [u.fag 1] ser)]
+        ::
+        [%page nam dat ~] :: XX dat
+      ::  XX produce typed packet or serialized?
+      ::
+      ``[%packet !>(pact)]
+    ::
+        [%pact ryf=@ boq=@ fag=@ %auth pat=*]
+      =/  ryf  (slaw %ud ryf.tyl)
+      =/  boq  (slaw %ud boq.tyl)
+      =/  fag  (slaw %ud fag.tyl)
+      ?:  |(?=(~ ryf) ?=(~ boq) ?=(~ fag))
+        [~ ~]
+      ?.  =(13 boq)  ~ :: non-standard fragments for later
+      ?.  =(*rift u.ryf)      :: XX our rift
+        ~
+      =/  bem  [[our %$ ud+1] pat.tyl]
+      =/  res  (rof ~ /ames/mess %ax bem)
+      ?.  ?&  ?=([~ ~ %message *] res)
+        :: ...validate that it's really a message
+        :: =>  [tag=?(sig hmac) ser=@]
+          ==
+        ~
+      =*  ser  (,@ q.u.u.res) :: XX types
+      =/  aut  *@
+      =/  wid  (met u.boq ser)
+      ?<  =(0 wid)
+      ?.  (gth wid u.fag)
+        [~ ~]
+      ?.  =(0 fag)  ~  :: non-standard proofs for later
+      =/  =pact:pact
+        =/  nam
+          [our u.ryf pat.tyl u.boq u.fag]
+        =/  merk  *(list @ux) :: proof:(build:lss ...)
+        =/  dat
+          [wid aut (rep 8 merk)]  :: XX types
+        [%page nam dat ~]
+      ::  XX produce typed packet or serialized?
+      ::
+      ``[%packet !>(pact)]
+    ==
   ~
 --
