@@ -108,11 +108,6 @@
           gem=(jug coop [path page])
   ==  ==
 ::
-+$  plot
-  $:  bob=(unit @ud)
-      fan=((mop @ud (pair @da (each page @uvI))) lte)
-  ==
-::
 ++  of-farm
   |_  =farm
   ++  key-coops
