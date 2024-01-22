@@ -13635,7 +13635,7 @@
                                     :~  :-  'u'
                                         ;~  pfix  (just 'u')
                                           %-  stew  ^.  stet  ^.  limo
-                                          :~  ['r' (rune (just 'r') %cnts exph`)]
+                                          :~  ['r' (rune (just 'r') %cnts exph)]
                                           ==
                                         ==
                                     ==
