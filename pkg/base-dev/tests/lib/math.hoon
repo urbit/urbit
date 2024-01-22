@@ -294,6 +294,51 @@
     !>  .inf
     !>  (exp:rs:math .inf)
   ==
+++  test-rs-sin
+  ;:  weld
+  %+  expect-eq
+    !>  .0.84147096
+    !>  (sin:rs:math .1)
+  %+  expect-eq
+    !>  .0.9092974
+    !>  (sin:rs:math .2)
+  %+  expect-eq
+    !>  .3.1609193e-7
+    !>  (sin:rs:math pi:rs:math)
+  %+  expect-eq
+    !>  .0.90929735
+    !>  (~(sin rs:math [%z .1e-8]) .2)
+  ==
+++  test-rs-cos
+  ;:  weld
+  %+  expect-eq
+    !>  .0.5403022
+    !>  (cos:rs:math .1)
+  %+  expect-eq
+    !>  .-0.41614664
+    !>  (cos:rs:math .2)
+  %+  expect-eq
+    !>  .-0.9999998
+    !>  (cos:rs:math pi:rs:math)
+  %+  expect-eq
+    !>  .-0.41614679
+    !>  (~(cos rs:math [%z .1e-8]) .2)
+  ==
+++  test-rs-tan
+  ;:  weld
+  %+  expect-eq
+    !>  .1.5574079
+    !>  (tan:rs:math .1)
+  %+  expect-eq
+    !>  .-2.1850407
+    !>  (tan:rs:math .2)
+  %+  expect-eq
+    !>  .-3.1609196e-7
+    !>  (tan:rs:math pi:rs:math)
+  %+  expect-eq
+    !>  .-2.1850398
+    !>  (~(tan rs:math [%z .1e-8]) .2)
+  ==
 ++  test-rs-pow-n
   ;:  weld
   %+  expect-eq

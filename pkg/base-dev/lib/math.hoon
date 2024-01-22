@@ -362,6 +362,20 @@
   ::      .0.5
   ::  Source
   ++  div  div:^rs
+  ::  +mod:  [@rs @rs] -> @rs
+  ::
+  ::  Returns the modulus of two floating-point atoms.
+  ::    Examples
+  ::      > (mod .1 .2)
+  ::      .1
+  ::      > (mod .100 .8)
+  ::      .4
+  ::  Source
+  ++  mod
+    |=  [a=@rs b=@rs]  ^-  @rs
+    ?:  (lth a .0)
+      (sub b (mod (neg a) b))
+    (sub a (mul b (san (need (toi (div a b))))))  ::  a - b * floor(a / b)
   ::    +fma:  [@rs @rs @rs] -> @rs
   ::
   ::  Returns the fused multiply-add of three floating-point atoms.
@@ -416,7 +430,7 @@
   ::  Source
   ++  factorial
     |=  x=@rs  ^-  @rs
-    ?>  (gth x .0)
+    ?>  (gte x .0)
     =/  t=@rs  .1
     ?:  (isclose x .0)
       t
@@ -457,7 +471,7 @@
     ?:  =(x 0x7f80.0000)  `@rs`0x7f80.0000  :: exp(+inf) -> inf
     ?:  =(x 0xff80.0000)  .0.0              :: exp(-inf) -> 0
     ::    check NaN
-    ?.  (^gth (dis 0x7fc0.0000 x) 0)  `@rs`0x7fc0.0000  :: exp(NaN) -> NaN
+    ?.  (^gte (dis 0x7fc0.0000 x) 0)  `@rs`0x7fc0.0000  :: exp(NaN) -> NaN
     ::    check overflow to infinity
     =/  o-threshold  `@rs`0x42b0.c0a8  ::  88.72283905206835, value above which exp(x) overflows
     ?:  (gth x o-threshold)  (mul huge huge)
@@ -472,6 +486,84 @@
     ?:  (lth (abs (sub po p)) rtol)
       p
     $(i (add i .1), p (add p (div (pow-n x i) (factorial i))), po p)
+  ::    +sin:  @rs -> @rs
+  ::
+  ::  Returns the sine of a floating-point atom.
+  ::    Examples
+  ::    > (sin .1)
+  ::    .0.84147096
+  ::    > (sin .2)
+  ::    .0.9092974
+  ::    > (sin pi)
+  ::    .3.1609193e-7
+  ::  Source
+  ++  sin
+    |=  x=@rs  ^-  @rs
+    ::  filter out non-finite arguments
+    ::    check infinities
+    ?:  =(x 0x7f80.0000)  `@rs`0x7fc0.0000  :: sin(+inf) -> NaN
+    ?:  =(x 0xff80.0000)  `@rs`0x7fc0.0000  :: sin(-inf) -> NaN
+    ::    check NaN
+    ?.  (^gte (dis 0x7fc0.0000 x) 0)  `@rs`0x7fc0.0000  :: sin(NaN) -> NaN
+    ::  map into domain
+    =.  x  (mod x tau)
+    ::  otherwise, use Taylor series
+    =/  p   x
+    =/  po  .-2
+    =/  i   1
+    =/  term  x
+    |-  ^-  @rs
+    ?.  (gth (abs term) rtol)
+      p
+    =/  i2  (add (sun i) (sun i))
+    =.  term  (mul (neg term) (div (mul x x) (mul i2 (add i2 .1))))
+    $(i +(i), p (add p term), po p)
+  ::    +cos:  @rs -> @rs
+  ::
+  ::  Returns the cosine of a floating-point atom.
+  ::    Examples
+  ::      > (cos .1)
+  ::      .0.5403022
+  ::     > (cos .2)
+  ::      .-0.41614664
+  ::     > (cos pi)
+  ::      .-0.9999998
+  ::  Source
+  ++  cos
+    |=  x=@rs  ^-  @rs
+    ::  filter out non-finite arguments
+    ::    check infinities
+    ?:  =(x 0x7f80.0000)  `@rs`0x7fc0.0000  :: sin(+inf) -> NaN
+    ?:  =(x 0xff80.0000)  `@rs`0x7fc0.0000  :: sin(-inf) -> NaN
+    ::    check NaN
+    ?.  (^gte (dis 0x7fc0.0000 x) 0)  `@rs`0x7fc0.0000  :: sin(NaN) -> NaN
+    ::  map into domain
+    =.  x  (mod x tau)
+    ::  otherwise, use Taylor series
+    =/  p   .1
+    =/  po  .-2
+    =/  i   1
+    =/  term  .1
+    |-  ^-  @rs
+    ?.  (gth (abs term) rtol)
+      p
+    =/  i2  (add (sun i) (sun i))
+    =.  term  (mul (neg term) (div (mul x x) (mul i2 (sub i2 .1))))
+    $(i +(i), p (add p term), po p)
+  ::    +tan:  @rs -> @rs
+  ::
+  ::  Returns the tangent of a floating-point atom.
+  ::    Examples
+  ::      > (tan .1)
+  ::      .1.5574079
+  ::      > (tan .2)
+  ::      .-2.1850407
+  ::      > (tan pi)
+  ::      .-7.0094916e-7
+  ::  Source
+  ++  tan
+    |=  x=@rs  ^-  @rs
+    (div (sin x) (cos x))
   ::    +pow-n:  [@rs @rs] -> @rs
   ::
   ::  Returns the power of a floating-point atom to an integer exponent.
@@ -486,6 +578,7 @@
   ++  pow-n
     |=  [x=@rs n=@rs]  ^-  @rs
     ?:  =(n .0)  .1
+    ?>  &((gth n .0) (isint n))
     =/  p  x
     |-  ^-  @rs
     ?:  (lth n .2)
@@ -515,7 +608,7 @@
     ?:  =(z 0x7f80.0000)  `@rs`0x7f80.0000  :: log(+inf) -> inf
     ?:  =(z 0xff80.0000)  `@rs`0x7fc0.0000  :: log(-inf) -> NaN
     ::    check NaN
-    ?.  (^gth (dis 0x7fc0.0000 z) 0)  `@rs`0x7fc0.0000  :: exp(NaN) -> NaN
+    ?.  (^gte (dis 0x7fc0.0000 z) 0)  `@rs`0x7fc0.0000  :: exp(NaN) -> NaN
     ::  otherwise, use Taylor series
     =/  p   .0
     =/  po  .-1
@@ -1026,7 +1119,7 @@
   ::  Source
   ++  factorial
     |=  x=@rd  ^-  @rd
-    ?>  (gth x .~0)
+    ?>  (gte x .~0)
     =/  t=@rd  .~1
     ?:  (isclose x .~0)
       t
@@ -1067,7 +1160,7 @@
     ?:  =(x 0x7ff0.0000.0000.0000)  `@rd`0x7ff0.0000.0000.0000  :: exp(+inf) -> inf
     ?:  =(x 0xfff0.0000.0000.0000)  .~0.0                       :: exp(-inf) -> 0
     ::    check NaN
-    ?.  (^gth (dis 0x7ff8.0000.0000.0000 x) 0)  `@rd`0x7ff8.0000.0000.0000  :: exp(NaN) -> NaN
+    ?.  (^gte (dis 0x7ff8.0000.0000.0000 x) 0)  `@rd`0x7ff8.0000.0000.0000  :: exp(NaN) -> NaN
     ::    check overflow to infinity
     =/  o-threshold  `@rd`0x4086.2e42.fefa.39ef  ::  709.782712893384, value above which exp(x) overflows
     ?:  (gth x o-threshold)  (mul huge huge)
@@ -1082,6 +1175,84 @@
     ?:  (lth (abs (sub po p)) rtol)
       p
     $(i (add i .~1), p (add p (div (pow-n x i) (factorial i))), po p)
+  ::    +sin:  @rd -> @rd
+  ::
+  ::  Returns the sine of a floating-point atom.
+  ::    Examples
+  ::    > (sin .~1)
+  ::    .~0.8414709848078934
+  ::    > (sin .~2)
+  ::    .~0.9092974268256406
+  ::    > (sin pi)
+  ::    .~-1.698287706085482e-13
+  ::  Source
+  ++  sin
+    |=  x=@rd  ^-  @rd
+    ::  filter out non-finite arguments
+    ::    check infinities
+    ?:  =(x 0x7ff0.0000.0000.0000)  `@rd`0x7ff8.0000.0000.0000  :: sin(+inf) -> NaN
+    ?:  =(x 0xfff0.0000.0000.0000)  `@rd`0x7ff8.0000.0000.0000  :: sin(-inf) -> NaN
+    ::    check NaN
+    ?.  (^gte (dis 0x7ff8.0000.0000.0000 x) 0)  `@rd`0x7ff8.0000.0000.0000  :: sin(NaN) -> NaN
+    ::  map into domain
+    =.  x  (mod x tau)
+    ::  otherwise, use Taylor series
+    =/  p   x
+    =/  po  .~-2
+    =/  i   1
+    =/  term  x
+    |-  ^-  @rd
+    ?.  (gth (abs term) rtol)
+      p
+    =/  i2  (add (sun i) (sun i))
+    =.  term  (mul (neg term) (div (mul x x) (mul i2 (add i2 .~1))))
+    $(i +(i), p (add p term), po p)
+  ::    +cos:  @rd -> @rd
+  ::
+  ::  Returns the cosine of a floating-point atom.
+  ::    Examples
+  ::      > (cos .~1)
+  ::      .~0.5403023058680917
+  ::     > (cos .~2)
+  ::      .~-0.41614683654756957
+  ::     > (cos pi)
+  ::      .~-1.0000000000013558
+  ::  Source
+  ++  cos
+    |=  x=@rd  ^-  @rd
+    ::  filter out non-finite arguments
+    ::    check infinities
+    ?:  =(x 0x7ff0.0000.0000.0000)  `@rd`0x7ff8.0000.0000.0000  :: cos(+inf) -> NaN
+    ?:  =(x 0xfff0.0000.0000.0000)  `@rd`0x7ff8.0000.0000.0000  :: cos(-inf) -> NaN
+    ::    check NaN
+    ?.  (^gte (dis 0x7ff8.0000.0000.0000 x) 0)  `@rd`0x7ff8.0000.0000.0000  :: exp(NaN) -> NaN
+    ::  map into domain
+    =.  x  (mod x tau)
+    ::  otherwise, use Taylor series
+    =/  p   .~1
+    =/  po  .~-2
+    =/  i   1
+    =/  term  .~1
+    |-  ^-  @rd
+    ?.  (gth (abs term) rtol)
+      p
+    =/  i2  (add (sun i) (sun i))
+    =.  term  (mul (neg term) (div (mul x x) (mul i2 (sub i2 .~1))))
+    $(i +(i), p (add p term), po p)
+  ::    +tan:  @rd -> @rd
+  ::
+  ::  Returns the tangent of a floating-point atom.
+  ::    Examples
+  ::      > (tan .~1)
+  ::      .~1.5574077246550349
+  ::      > (tan .~2)
+  ::      .~-2.185039863259177
+  ::      > (tan pi)
+  ::      .~-2.6535896228476087e-6
+  ::  Source
+  ++  tan
+    |=  x=@rd  ^-  @rd
+    (div (sin x) (cos x))
   ::    +pow-n:  [@rd @rd] -> @rd
   ::
   ::  Returns the power of a floating-point atom to an integer exponent.
@@ -1096,6 +1267,7 @@
   ++  pow-n
     |=  [x=@rd n=@rd]  ^-  @rd
     ?:  =(n .~0)  .~1
+    ?>  &((gth n .~0) (isint n))
     =/  p  x
     |-  ^-  @rd
     ?:  (lth n .~2)
@@ -1121,7 +1293,7 @@
     ?:  =(z 0x7ff0.0000.0000.0000)  `@rd`0x7ff0.0000.0000.0000  :: exp(+inf) -> inf
     ?:  =(z 0xfff0.0000.0000.0000)  .~0.0                       :: exp(-inf) -> 0
     ::    check NaN
-    ?.  (^gth (dis 0x7ff8.0000.0000.0000 z) 0)  `@rd`0x7ff8.0000.0000.0000  :: exp(NaN) -> NaN
+    ?.  (^gte (dis 0x7ff8.0000.0000.0000 z) 0)  `@rd`0x7ff8.0000.0000.0000  :: exp(NaN) -> NaN
     ::  otherwise, use Taylor series
     =/  p   .~0
     =/  po  .~-1
@@ -1629,7 +1801,7 @@
   ::  Source
   ++  factorial
     |=  x=@rh  ^-  @rh
-    ?>  (gth x .~~0)
+    ?>  (gte x .~~0)
     =/  t=@rh  .~~1
     ?:  (isclose x .~~0)
       t
@@ -1670,7 +1842,7 @@
     ?:  =(x 0x7c00)  `@rh`0x7c00  :: exp(+inf) -> inf
     ?:  =(x 0xfc00)  .~~0.0       :: exp(-inf) -> 0
     ::    check NaN
-    ?.  (^gth (dis 0x7e00 x) 0)  `@rh`0x7e00  :: exp(NaN) -> NaN
+    ?.  (^gte (dis 0x7e00 x) 0)  `@rh`0x7e00  :: exp(NaN) -> NaN
     ::    check overflow to infinity
     =/  o-threshold  `@rh`0x498c  ::  11.091265424003277, value above which exp(x) overflows
     ?:  (gth x o-threshold)  (mul huge huge)
@@ -1685,6 +1857,84 @@
     ?:  (lth (abs (sub po p)) rtol)
       p
     $(i (add i .~~1), p (add p (div (pow-n x i) (factorial i))), po p)
+  ::    +sin:  @rh -> @rh
+  ::
+  ::  Returns the sine of a floating-point atom.
+  ::    Examples
+  ::    > (sin .~~1)
+  ::    .~~0.8413
+  ::    > (sin .~~2)
+  ::    .~~0.9087
+  ::    > (sin pi)
+  ::    .~~3.437e-3
+  ::  Source
+  ++  sin
+    |=  x=@rh  ^-  @rh
+    ::  filter out non-finite arguments
+    ::    check infinities
+    ?:  =(x 0x7c00)  `@rh`0x7e00  :: sin(+inf) -> NaN
+    ?:  =(x 0xfc00)  `@rh`0x7e00  :: sin(-inf) -> NaN
+    ::    check NaN
+    ?.  (^gte (dis 0x7e00 x) 0)  `@rh`0x7e00  :: sin(NaN) -> NaN
+    ::  map into domain
+    =.  x  (mod x tau)
+    ::  otherwise, use Taylor series
+    =/  p   x
+    =/  po  .~~-2
+    =/  i   1
+    =/  term  x
+    |-  ^-  @rh
+    ?.  (gth (abs term) rtol)
+      p
+    =/  i2  (add (sun i) (sun i))
+    =.  term  (mul (neg term) (div (mul x x) (mul i2 (add i2 .~~1))))
+    $(i +(i), p (add p term), po p)
+  ::    +cos:  @rh -> @rh
+  ::
+  ::  Returns the cosine of a floating-point atom.
+  ::    Examples
+  ::      > (cos .~~1)
+  ::      .~~0.54
+  ::     > (cos .~~2)
+  ::      .~~-0.4158
+  ::     > (cos pi)
+  ::      .~~-1.001
+  ::  Source
+  ++  cos
+    |=  x=@rh  ^-  @rh
+    ::  filter out non-finite arguments
+    ::    check infinities
+    ?:  =(x 0x7c00)  `@rh`0x7e00  :: cos(+inf) -> NaN
+    ?:  =(x 0xfc00)  `@rh`0x7e00  :: cos(-inf) -> NaN
+    ::    check NaN
+    ?.  (^gte (dis 0x7e00 x) 0)  `@rh`0x7e00  :: cos(NaN) -> NaN
+    ::  map into domain
+    =.  x  (mod x tau)
+    ::  otherwise, use Taylor series
+    =/  p   .~~1
+    =/  po  .~~-2
+    =/  i   1
+    =/  term  .~~1
+    |-  ^-  @rh
+    ?.  (gth (abs term) rtol)
+      p
+    =/  i2  (add (sun i) (sun i))
+    =.  term  (mul (neg term) (div (mul x x) (mul i2 (sub i2 .~~1))))
+    $(i +(i), p (add p term), po p)
+  ::    +tan:  @rh -> @rh
+  ::
+  ::  Returns the tangent of a floating-point atom.
+  ::    Examples
+  ::      > (tan .~~1)
+  ::      .~~1.558
+  ::      > (tan .~~2)
+  ::      .~~-2.186
+  ::      > (tan pi)
+  ::      .~~-3.433e-3
+  ::  Source
+  ++  tan
+    |=  x=@rh  ^-  @rh
+    (div (sin x) (cos x))
   ::    +pow-n:  [@rh @rh] -> @rh
   ::
   ::  Returns the power of a floating-point atom to an integer exponent.
@@ -1699,6 +1949,7 @@
   ++  pow-n
     |=  [x=@rh n=@rh]  ^-  @rh
     ?:  =(n .~~0)  .~~1
+    ?>  &((gth n .~~0) (isint n))
     =/  p  x
     |-  ^-  @rh
     ?:  (lth n .~~2)
@@ -1721,7 +1972,7 @@
     ?:  =(z 0x7c00)  `@rh`0x7c00  :: exp(+inf) -> inf
     ?:  =(z 0xfc00)  .~~0.0       :: exp(-inf) -> 0
     ::    check NaN
-    ?.  (^gth (dis 0x7e00 z) 0)  `@rh`0x7e00  :: exp(NaN) -> NaN
+    ?.  (^gte (dis 0x7e00 z) 0)  `@rh`0x7e00  :: exp(NaN) -> NaN
     ::  otherwise, use Taylor series
     =/  p   .~~0
     =/  po  .~~-1
@@ -2229,7 +2480,7 @@
   ::  Source
   ++  factorial
     |=  x=@rq  ^-  @rq
-    ?>  (gth x .~~~0)
+    ?>  (gte x .~~~0)
     =/  t=@rq  .~~~1
     ?:  (isclose x .~~~0)
       t
@@ -2270,7 +2521,7 @@
     ?:  =(x 0x7fff.0000.0000.0000.0000.0000.0000.0000)  `@rq`0x7fff.0000.0000.0000.0000.0000.0000.0000  :: exp(+inf) -> inf
     ?:  =(x 0xffff.0000.0000.0000.0000.0000.0000.0000)  .~~~0.0      :: exp(-inf) -> 0
     ::    check NaN
-    ?.  (^gth (dis 0x7fff.8000.0000.0000.0000.0000.0000.0000 x) 0)  `@rq`0x7fff.8000.0000.0000.0000.0000.0000.0000  :: exp(NaN) -> NaN
+    ?.  (^gte (dis 0x7fff.8000.0000.0000.0000.0000.0000.0000 x) 0)  `@rq`0x7fff.8000.0000.0000.0000.0000.0000.0000  :: exp(NaN) -> NaN
     ::    check overflow to infinity
     =/  o-threshold  `@rq`0x400c.62e4.2fef.a39e.f357.93c7.6730.0601  ::  1.135652340629414394949193107797e4, value above which exp(x) overflows
     ?:  (gth x o-threshold)  (mul huge huge)
@@ -2285,6 +2536,84 @@
     ?:  (lth (abs (sub po p)) rtol)
       p
     $(i (add i .~~~1), p (add p (div (pow-n x i) (factorial i))), po p)
+  ::    +sin:  @rq -> @rq
+  ::
+  ::  Returns the sine of a floating-point atom.
+  ::    Examples
+  ::    > (sin .~~~1)
+  ::    .~~~0.8414709848078965066525022572525196
+  ::    > (sin .~~~2)
+  ::    .~~~0.9092974268256816953960201260866781
+  ::    > (sin pi)
+  ::    .~~~2.4143733100361875441251426417684949e-23
+  ::  Source
+  ++  sin
+    |=  x=@rq  ^-  @rq
+    ::  filter out non-finite arguments
+    ::    check infinities
+    ?:  =(x 0x7fff.0000.0000.0000.0000.0000.0000.0000)  `@rq`0x7fff.8000.0000.0000.0000.0000.0000.0000  :: sin(+inf) -> NaN
+    ?:  =(x 0xffff.0000.0000.0000.0000.0000.0000.0000)  `@rq`0x7fff.8000.0000.0000.0000.0000.0000.0000  :: sin(-inf) -> NaN
+    ::    check NaN
+    ?.  (^gte (dis 0x7fff.8000.0000.0000.0000.0000.0000.0000 x) 0)  `@rq`0x7fff.8000.0000.0000.0000.0000.0000.0000  :: sin(NaN) -> NaN
+    ::  map into domain
+    =.  x  (mod x tau)
+    ::  otherwise, use Taylor series
+    =/  p   x
+    =/  po  .~~~-2
+    =/  i   1
+    =/  term  x
+    |-  ^-  @rq
+    ?.  (gth (abs term) rtol)
+      p
+    =/  i2  (add (sun i) (sun i))
+    =.  term  (mul (neg term) (div (mul x x) (mul i2 (add i2 .~~~1))))
+    $(i +(i), p (add p term), po p)
+  ::    +cos:  @rq -> @rq
+  ::
+  ::  Returns the cosine of a floating-point atom.
+  ::    Examples
+  ::      > (cos .~~~1)
+  ::      .~~~0.5403023058681397174009349981817251
+  ::     > (cos .~~~2)
+  ::      .~~~-0.41614683654714238699756419777191616
+  ::     > (cos pi)
+  ::      .~~~-1.0000000000000000000000021077555518
+  ::  Source
+  ++  cos
+    |=  x=@rq  ^-  @rq
+    ::  filter out non-finite arguments
+    ::    check infinities
+    ?:  =(x 0x7fff.0000.0000.0000.0000.0000.0000.0000)  `@rq`0x7fff.8000.0000.0000.0000.0000.0000.0000  :: cos(+inf) -> NaN
+    ?:  =(x 0xffff.0000.0000.0000.0000.0000.0000.0000)  `@rq`0x7fff.8000.0000.0000.0000.0000.0000.0000  :: cos(-inf) -> NaN
+    ::    check NaN
+    ?.  (^gte (dis 0x7fff.8000.0000.0000.0000.0000.0000.0000 x) 0)  `@rq`0x7fff.8000.0000.0000.0000.0000.0000.0000  :: cos(NaN) -> NaN
+    ::  map into domain
+    =.  x  (mod x tau)
+    ::  otherwise, use Taylor series
+    =/  p   .~~~1
+    =/  po  .~~~-2
+    =/  i   1
+    =/  term  .~~~1
+    |-  ^-  @rq
+    ?.  (gth (abs term) rtol)
+      p
+    =/  i2  (add (sun i) (sun i))
+    =.  term  (mul (neg term) (div (mul x x) (mul i2 (sub i2 .~~~1))))
+    $(i +(i), p (add p term), po p)
+  ::    +tan:  @rq -> @rq
+  ::
+  ::  Returns the tangent of a floating-point atom.
+  ::    Examples
+  ::      > (tan .~~~1)
+  ::      .~~~1.5574077246549022305069793269617903
+  ::      > (tan .~~~2)
+  ::      .~~~-2.1850398632615189916433278966958165
+  ::      > (tan pi)
+  ::      .~~~-2.1850398632615189916433278966958165
+  ::  Source
+  ++  tan
+    |=  x=@rq  ^-  @rq
+    (div (sin x) (cos x))
   ::    +pow-n:  [@rq @rq] -> @rq
   ::
   ::  Returns the power of a floating-point atom to a signed integer exponent.
@@ -2297,6 +2626,7 @@
   ++  pow-n
     |=  [x=@rq n=@rq]  ^-  @rq
     ?:  =(n .~~~0)  .~~~1
+    ?>  &((gth n .~~~0) (isint n))
     =/  p  x
     |-  ^-  @rq
     ?:  (lth n .~~~2)
@@ -2322,7 +2652,7 @@
     ?:  =(z 0x7fff.0000.0000.0000.0000.0000.0000.0000)  `@rq`0x7fff.0000.0000.0000.0000.0000.0000.0000  :: exp(+inf) -> inf
     ?:  =(z 0xffff.0000.0000.0000.0000.0000.0000.0000)  .~~~0.0      :: exp(-inf) -> 0
     ::    check NaN
-    ?.  (^gth (dis 0x7fff.8000.0000.0000.0000.0000.0000.0000 z) 0)  `@rq`0x7fff.8000.0000.0000.0000.0000.0000.0000  :: exp(NaN) -> NaN
+    ?.  (^gte (dis 0x7fff.8000.0000.0000.0000.0000.0000.0000 z) 0)  `@rq`0x7fff.8000.0000.0000.0000.0000.0000.0000  :: exp(NaN) -> NaN
     ::  otherwise, use Taylor series
     =/  p   .~~~0
     =/  po  .~~~-1
