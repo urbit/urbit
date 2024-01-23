@@ -13364,384 +13364,368 @@
     ++  keyword
       %-  stew  ^.  stet  ^.  limo
       :~  :-  '#'
-            ;~  pfix  hax
-              %-  stew  ^.  stet  ^.  limo
-              :~  :-  'a'
-                      ;~  pfix  (just 'a')
-                        %-  stew  ^.  stet  ^.  limo
-                        :~  :-  'i'
-                            ;~  pfix  (just 'i')
-                              %-  stew  ^.  stet  ^.  limo
-                              :~  :-  'n'
-                                  ;~  pfix  (just 'n')
-                                    %-  stew  ^.  stet  ^.  limo
-                                    :~  ['t' (rune (just 't') %wtgl expb)]
+              ;~  pfix  hax
+                %-  stew  ^.  stet  ^.  limo
+                :~  :-  'a'
+                        ;~  pfix  (just 'a')
+                          %-  stew  ^.  stet  ^.  limo
+                          :~  :-  'i'
+                              ;~  pfix  (just 'i')
+                                %-  stew  ^.  stet  ^.  limo
+                                :~  :-  'n'
+                                    ;~  pfix  (just 'n')
+                                      %-  stew  ^.  stet  ^.  limo
+                                      :~  ['t' (rune (just 't') %wtgl expb)]
+                                      ==
                                     ==
-                                  ==
+                                ==
                               ==
-                            ==
-                            :-  's'
-                            ;~  pfix  (just 's')
-                              %-  stew  ^.  stet  ^.  limo
-                              :~  :-  's'
-                                  ;~  pfix  (just 's')
-                                    %-  stew  ^.  stet  ^.  limo
-                                    :~  :-  'e'
-                                        ;~  pfix  (just 'e')
-                                          %-  stew  ^.  stet  ^.  limo
-                                          :~  :-  'r'
-                                              ;~  pfix  (just 'r')
-                                                %-  stew  ^.  stet  ^.  limo
-                                                :~  ['t' (rune (just 't') %wtgr expb)]
+                              :-  's'
+                              ;~  pfix  (just 's')
+                                %-  stew  ^.  stet  ^.  limo
+                                :~  :-  's'
+                                    ;~  pfix  (just 's')
+                                      %-  stew  ^.  stet  ^.  limo
+                                      :~  :-  'e'
+                                          ;~  pfix  (just 'e')
+                                            %-  stew  ^.  stet  ^.  limo
+                                            :~  :-  'r'
+                                                ;~  pfix  (just 'r')
+                                                  %-  stew  ^.  stet  ^.  limo
+                                                  :~  ['t' (rune (just 't') %wtgr expb)]
+                                                  ==
                                                 ==
-                                              ==
+                                            ==
                                           ==
-                                        ==
+                                      ==
                                     ==
-                                  ==
+                                ==
                               ==
-                            ==
+                          ==
                         ==
-                      ==
-                  :-  'b'
-                      ;~  pfix  (just 'b')
-                        %-  stew  ^.  stet  ^.  limo
-                        :~  :-  'i'
-                            ;~  pfix  (just 'i')
-                              %-  stew  ^.  stet  ^.  limo
-                              :~  :-  'n'
-                                  ;~  pfix  (just 'n')
-                                    %-  stew  ^.  stet  ^.  limo
-                                    :~  ['d' (rune (just 'd') %mcgl expz)]
+                    :-  'b'
+                        ;~  pfix  (just 'b')
+                          %-  stew  ^.  stet  ^.  limo
+                          :~  :-  'i'
+                              ;~  pfix  (just 'i')
+                                %-  stew  ^.  stet  ^.  limo
+                                :~  :-  'n'
+                                    ;~  pfix  (just 'n')
+                                      %-  stew  ^.  stet  ^.  limo
+                                      :~  ['d' (rune (just 'd') %mcgl expz)]
+                                      ==
                                     ==
-                                  ==
+                                ==
                               ==
-                            ==
+                          ==
                         ==
-                      ==
-                  :-  'c'
-                      ;~  pfix  (just 'c')
-                        %-  stew  ^.  stet  ^.  limo
-                        :~  :-  'a'
-                            ;~  pfix  (just 'a')
-                              %-  stew  ^.  stet  ^.  limo
-                              :~  :-  's'
-                                  ;~  pfix  (just 's')
-                                    %-  stew  ^.  stet  ^.  limo
-                                    :~  ['t' (rune (just 't') %kthp exqc)]
+                    :-  'c'
+                        ;~  pfix  (just 'c')
+                          %-  stew  ^.  stet  ^.  limo
+                          :~  :-  'a'
+                              ;~  pfix  (just 'a')
+                                %-  stew  ^.  stet  ^.  limo
+                                :~  :-  's'
+                                    ;~  pfix  (just 's')
+                                      %-  stew  ^.  stet  ^.  limo
+                                      :~  ['t' (rune (just 't') %kthp exqc)]
+                                      ==
                                     ==
-                                  ==
+                                ==
                               ==
-                            ==
-                            :-  'e'
-                            ;~  pfix  (just 'e')
-                              %-  stew  ^.  stet  ^.  limo
-                              :~  :-  'l'
-                                  ;~  pfix  (just 'l')
-                                    %-  stew  ^.  stet  ^.  limo
-                                    :~  ['l' (rune (just 'l') %clhp expb)]
+                              :-  'e'
+                              ;~  pfix  (just 'e')
+                                %-  stew  ^.  stet  ^.  limo
+                                :~  :-  'l'
+                                    ;~  pfix  (just 'l')
+                                      %-  stew  ^.  stet  ^.  limo
+                                      :~  ['l' (rune (just 'l') %clhp expb)]
+                                      ==
                                     ==
-                                  ==
+                                ==
                               ==
-                            ==
-                            :-  'r'
-                            ;~  pfix  (just 'r')
-                              %-  stew  ^.  stet  ^.  limo
-                              :~  :-  'a'
-                                  ;~  pfix  (just 'a')
-                                    %-  stew  ^.  stet  ^.  limo
-                                    :~  :-  's'
-                                        ;~  pfix  (just 's')
-                                          %-  stew  ^.  stet  ^.  limo
-                                          :~  ['h' (rune (just 'h') %zpzp (cold ~ ;~(plug zap zap)))]
-                                          ==
-                                        ==
-                                    ==
-                                  ==
-                              ==
-                            ==
+                          ==
                         ==
-                      ==
-                  :-  'd'
-                      ;~  pfix  (just 'd')
-                        %-  stew  ^.  stet  ^.  limo
-                        :~  :-  'e'
-                            ;~  pfix  (just 'e')
-                              %-  stew  ^.  stet  ^.  limo
-                              :~  :-  'f'
-                                  ;~  pfix  (just 'f')
-                                    %-  stew  ^.  stet  ^.  limo
-                                    :~  :-  'a'
-                                        ;~  pfix  (just 'a')
-                                          %-  stew  ^.  stet  ^.  limo
-                                          :~  :-  'u'
-                                              ;~  pfix  (just 'u')
-                                                %-  stew  ^.  stet  ^.  limo
-                                                :~  :-  'l'
-                                                    ;~  pfix  (just 'l')
-                                                      %-  stew  ^.  stet  ^.  limo
-                                                      :~  ['t' (rune (just 't') %wtls ;~(pfix lus (toad txls)))]
-                                                      ==
-                                                    ==
+                    :-  'd'
+                        ;~  pfix  (just 'd')
+                          %-  stew  ^.  stet  ^.  limo
+                          :~  :-  'e'
+                              ;~  pfix  (just 'e')
+                                %-  stew  ^.  stet  ^.  limo
+                                :~  :-  'f'
+                                    ;~  pfix  (just 'f')
+                                      %-  stew  ^.  stet  ^.  limo
+                                      :~  :: :-  'a'
+                                          :: ;~  pfix  (just 'a')
+                                          ::   %-  stew  ^.  stet  ^.  limo
+                                          ::   :~  :-  'u'
+                                          ::       ;~  pfix  (just 'u')
+                                          ::         %-  stew  ^.  stet  ^.  limo
+                                          ::         :~  :-  'l'
+                                          ::             ;~  pfix  (just 'l')
+                                          ::               %-  stew  ^.  stet  ^.  limo
+                                          ::               :~  ['t' (rune (just 't') %wtls txls)]
+                                          ::               ==
+                                          ::             ==
+                                          ::         ==
+                                          ::       ==
+                                          ::   ==
+                                          :: ==
+                                          :-  'i'
+                                          ;~  pfix  (just 'i')
+                                            %-  stew  ^.  stet  ^.  limo
+                                            :~  :-  'n'
+                                                ;~  pfix  (just 'n')
+                                                  %-  stew  ^.  stet  ^.  limo
+                                                  :~  ['e' (rune (just 'e') %tsfs expo)]
+                                                  ==
                                                 ==
-                                              ==
+                                            ==
                                           ==
-                                        ==
-                                        :-  'i'
-                                        ;~  pfix  (just 'i')
-                                          %-  stew  ^.  stet  ^.  limo
-                                          :~  :-  'n'
-                                              ;~  pfix  (just 'n')
-                                                %-  stew  ^.  stet  ^.  limo
-                                                :~  ['e' (rune (just 'e') %tsfs expo)]
+                                      ==
+                                    ==
+                                ==
+                              ==
+                              :-  'o'
+                              ;~  pfix  (just 'o')
+                                %-  stew  ^.  stet  ^.  limo
+                                :~  :-  'o'
+                                    ;~  pfix  (just 'o')
+                                      %-  stew  ^.  stet  ^.  limo
+                                      :~  ['r' (rune (just 'r') %brcb exqr)]
+                                      ==
+                                    ==
+                                ==
+                              ==
+                          ==
+                        ==
+                    :-  'g'
+                        ;~  pfix  (just 'g')
+                          %-  stew  ^.  stet  ^.  limo
+                          :~  :-  'a'
+                              ;~  pfix  (just 'a')
+                                %-  stew  ^.  stet  ^.  limo
+                                :~  :-  't'
+                                    ;~  pfix  (just 't')
+                                      %-  stew  ^.  stet  ^.  limo
+                                      :~  ['e' (rune (just 'e') %brts exqc)]
+                                      ==
+                                    ==
+                                ==
+                              ==
+                          ==
+                        ==
+                    :-  'i'
+                        ;~  pfix  (just 'i')
+                          %-  stew  ^.  stet  ^.  limo
+                          :~  ['f' (rune (just 'f') %wtcl expc)]
+                          ==
+                        ==
+                    :-  'l'
+                        ;~  pfix  (just 'l')
+                          %-  stew  ^.  stet  ^.  limo
+                          :~  :-  'e'
+                              ;~  pfix  (just 'e')
+                                %-  stew  ^.  stet  ^.  limo
+                                :~  :-  's'
+                                    ;~  pfix  (just 's')
+                                      %-  stew  ^.  stet  ^.  limo
+                                      :~  ['t' (rune (just 't') %wtdt expc)]
+                                      ==
+                                    ==
+                                ==
+                              ==
+                              :-  'i'
+                              ;~  pfix  (just 'i')
+                                %-  stew  ^.  stet  ^.  limo
+                                :~  :-  'k'
+                                    ;~  pfix  (just 'k')
+                                      %-  stew  ^.  stet  ^.  limo
+                                      :~  ['e' (rune (just 'e') %ktls expb)]
+                                      ==
+                                    ==
+                                ==
+                              ==
+                              :-  'o'
+                              ;~  pfix  (just 'o')
+                                %-  stew  ^.  stet  ^.  limo
+                                :~  :-  'o'
+                                    ;~  pfix  (just 'o')
+                                      %-  stew  ^.  stet  ^.  limo
+                                      :~  ['p' (rune (just 'p') %brhp expa)]
+                                      ==
+                                    ==
+                                ==
+                              ==
+                          ==
+                        ==
+                    :-  'm'
+                        ;~  pfix  (just 'm')
+                          %-  stew  ^.  stet  ^.  limo
+                          :~  :-  'o'
+                              ;~  pfix  (just 'o')
+                                %-  stew  ^.  stet  ^.  limo
+                                :~  :-  'l'
+                                    ;~  pfix  (just 'l')
+                                      %-  stew  ^.  stet  ^.  limo
+                                      :~  ['d' (rune (just 'd') %mcmc exqc)]
+                                      ==
+                                    ==
+                                ==
+                              ==
+                          ==
+                        ==
+                    :-  'p'
+                        ;~  pfix  (just 'p')
+                          %-  stew  ^.  stet  ^.  limo
+                          :~  :-  'i'
+                              ;~  pfix  (just 'i')
+                                %-  stew  ^.  stet  ^.  limo
+                                :~  :-  'p'
+                                    ;~  pfix  (just 'p')
+                                      %-  stew  ^.  stet  ^.  limo
+                                      :~  ['e' (rune (just 'e') %mcsg expi)]
+                                      ==
+                                    ==
+                                ==
+                              ==
+                              :-  'r'
+                              ;~  pfix  (just 'r')
+                                %-  stew  ^.  stet  ^.  limo
+                                :~  :-  'i'
+                                    ;~  pfix  (just 'i')
+                                      %-  stew  ^.  stet  ^.  limo
+                                      :~  :-  'n'
+                                          ;~  pfix  (just 'n')
+                                            %-  stew  ^.  stet  ^.  limo
+                                            :~  ['t' (rune (just 't') %sgpm hinf)]
+                                            ==
+                                          ==
+                                      ==
+                                    ==
+                                ==
+                              ==
+                          ==
+                        ==
+                    :-  'r'
+                        ;~  pfix  (just 'r')
+                          %-  stew  ^.  stet  ^.  limo
+                          :~  :-  'e'
+                              ;~  pfix  (just 'e')
+                                %-  stew  ^.  stet  ^.  limo
+                                :~  :-  'c'
+                                    ;~  pfix  (just 'c')
+                                      %-  stew  ^.  stet  ^.  limo
+                                      :~  :-  'u'
+                                          ;~  pfix  (just 'u')
+                                            %-  stew  ^.  stet  ^.  limo
+                                            :~  ['r' (rune (just 'r') %cnts exph)]
+                                            ==
+                                          ==
+                                      ==
+                                    ==
+                                ==
+                              ==
+                          ==
+                        ==
+                    :-  's'
+                        ;~  pfix  (just 's')
+                          %-  stew  ^.  stet  ^.  limo
+                          :~  :-  'c'
+                              ;~  pfix  (just 'c')
+                                %-  stew  ^.  stet  ^.  limo
+                                :~  :-  'r'
+                                    ;~  pfix  (just 'r')
+                                      %-  stew  ^.  stet  ^.  limo
+                                      :~  ['y' (rune (just 'y') %dtkt exqn)]
+                                      ==
+                                    ==
+                                ==
+                              ==
+                              :: :-  'w'
+                              :: ;~  pfix  (just 'w')
+                              ::   %-  stew  ^.  stet  ^.  limo
+                              ::   :~  :-  'i'
+                              ::       ;~  pfix  (just 'i')
+                              ::         %-  stew  ^.  stet  ^.  limo
+                              ::         :~  :-  't'
+                              ::             ;~  pfix  (just 't')
+                              ::               %-  stew  ^.  stet  ^.  limo
+                              ::               :~  :-  'c'
+                              ::                   ;~  pfix  (just 'c')
+                              ::                     %-  stew  ^.  stet  ^.  limo
+                              ::                     :~  ['h' (rune (just 'h') %wthp txhp)]
+                              ::                     ==
+                              ::                   ==
+                              ::               ==
+                              ::             ==
+                              ::         ==
+                              ::       ==
+                              ::   ==
+                              :: ==
+                          ==
+                        ==
+                    :-  't'
+                        ;~  pfix  (just 't')
+                          %-  stew  ^.  stet  ^.  limo
+                          :~  :-  'u'
+                              ;~  pfix  (just 'u')
+                                %-  stew  ^.  stet  ^.  limo
+                                :~  :-  'p'
+                                    ;~  pfix  (just 'p')
+                                      %-  stew  ^.  stet  ^.  limo
+                                      :~  :-  'l'
+                                          ;~  pfix  (just 'l')
+                                            %-  stew  ^.  stet  ^.  limo
+                                            :~  ['e' (rune (just 'e') %cltr exps)]
+                                            ==
+                                          ==
+                                      ==
+                                    ==
+                                ==
+                              ==
+                              :-  'y'
+                              ;~  pfix  (just 'y')
+                                %-  stew  ^.  stet  ^.  limo
+                                :~  :-  'p'
+                                    ;~  pfix  (just 'p')
+                                      %-  stew  ^.  stet  ^.  limo
+                                      :~  :-  'e'
+                                          ;~  pfix  (just 'e')
+                                            %-  stew  ^.  stet  ^.  limo
+                                            :~  :-  'o'
+                                                ;~  pfix  (just 'o')
+                                                  %-  stew  ^.  stet  ^.  limo
+                                                  :~  ['f' (rune (just 'f') %zpgr expa)]
+                                                  ==
                                                 ==
-                                              ==
+                                            ==
                                           ==
-                                        ==
+                                      ==
                                     ==
-                                  ==
+                                ==
                               ==
-                            ==
-                            :-  'o'
-                            ;~  pfix  (just 'o')
-                              %-  stew  ^.  stet  ^.  limo
-                              :~  :-  'o'
-                                  ;~  pfix  (just 'o')
-                                    %-  stew  ^.  stet  ^.  limo
-                                    :~  ['r' (rune (just 'r') %brcb exqr)]
-                                    ==
-                                  ==
-                              ==
-                            ==
+                          ==
                         ==
-                      ==
-                  :-  'g'
-                      ;~  pfix  (just 'g')
-                        %-  stew  ^.  stet  ^.  limo
-                        :~  :-  'a'
-                            ;~  pfix  (just 'a')
-                              %-  stew  ^.  stet  ^.  limo
-                              :~  :-  't'
-                                  ;~  pfix  (just 't')
-                                    %-  stew  ^.  stet  ^.  limo
-                                    :~  ['e' (rune (just 'e') %brts exqc)]
+                    :-  'w'
+                        ;~  pfix  (just 'w')
+                          %-  stew  ^.  stet  ^.  limo
+                          :~  :-  'r'
+                              ;~  pfix  (just 'r')
+                                %-  stew  ^.  stet  ^.  limo
+                                :~  :-  'a'
+                                    ;~  pfix  (just 'a')
+                                      %-  stew  ^.  stet  ^.  limo
+                                      :~  ['p' (rune (just 'p') %tsgl expb)]
+                                      ==
                                     ==
-                                  ==
+                                ==
                               ==
-                            ==
+                          ==
                         ==
-                      ==
-                  :-  'i'
-                      ;~  pfix  (just 'i')
-                        %-  stew  ^.  stet  ^.  limo
-                        :~  ['f' (rune (just 'f') %wtcl expc)]
-                        ==
-                      ==
-                  :-  'l'
-                      ;~  pfix  (just 'l')
-                        %-  stew  ^.  stet  ^.  limo
-                        :~  :-  'e'
-                            ;~  pfix  (just 'e')
-                              %-  stew  ^.  stet  ^.  limo
-                              :~  :-  's'
-                                  ;~  pfix  (just 's')
-                                    %-  stew  ^.  stet  ^.  limo
-                                    :~  ['t' (rune (just 't') %wtdt expc)]
-                                    ==
-                                  ==
-                              ==
-                            ==
-                            :-  'i'
-                            ;~  pfix  (just 'i')
-                              %-  stew  ^.  stet  ^.  limo
-                              :~  :-  'k'
-                                  ;~  pfix  (just 'k')
-                                    %-  stew  ^.  stet  ^.  limo
-                                    :~  ['e' (rune (just 'e') %ktls expb)]
-                                    ==
-                                  ==
-                              ==
-                            ==
-                            :-  'o'
-                            ;~  pfix  (just 'o')
-                              %-  stew  ^.  stet  ^.  limo
-                              :~  :-  'o'
-                                  ;~  pfix  (just 'o')
-                                    %-  stew  ^.  stet  ^.  limo
-                                    :~  ['p' (rune (just 'p') %brhp expa)]
-                                    ==
-                                  ==
-                              ==
-                            ==
-                        ==
-                      ==
-                  :-  'm'
-                      ;~  pfix  (just 'm')
-                        %-  stew  ^.  stet  ^.  limo
-                        :~  :-  'o'
-                            ;~  pfix  (just 'o')
-                              %-  stew  ^.  stet  ^.  limo
-                              :~  :-  'l'
-                                  ;~  pfix  (just 'l')
-                                    %-  stew  ^.  stet  ^.  limo
-                                    :~  ['d' (rune (just 'd') %mcmc exqc)]
-                                    ==
-                                  ==
-                              ==
-                            ==
-                        ==
-                      ==
-                  :-  'p'
-                      ;~  pfix  (just 'p')
-                        %-  stew  ^.  stet  ^.  limo
-                        :~  :-  'i'
-                            ;~  pfix  (just 'i')
-                              %-  stew  ^.  stet  ^.  limo
-                              :~  :-  'p'
-                                  ;~  pfix  (just 'p')
-                                    %-  stew  ^.  stet  ^.  limo
-                                    :~  ['e' (rune (just 'e') %mcsg expi)]
-                                    ==
-                                  ==
-                              ==
-                            ==
-                            :-  'r'
-                            ;~  pfix  (just 'r')
-                              %-  stew  ^.  stet  ^.  limo
-                              :~  :-  'i'
-                                  ;~  pfix  (just 'i')
-                                    %-  stew  ^.  stet  ^.  limo
-                                    :~  :-  'n'
-                                        ;~  pfix  (just 'n')
-                                          %-  stew  ^.  stet  ^.  limo
-                                          :~  ['t' (rune (just 't') %sgpm hinf)]
-                                          ==
-                                        ==
-                                    ==
-                                  ==
-                              ==
-                            ==
-                        ==
-                      ==
-                  :-  'r'
-                      ;~  pfix  (just 'r')
-                        %-  stew  ^.  stet  ^.  limo
-                        :~  :-  'e'
-                            ;~  pfix  (just 'e')
-                              %-  stew  ^.  stet  ^.  limo
-                              :~  :-  'c'
-                                  ;~  pfix  (just 'c')
-                                    %-  stew  ^.  stet  ^.  limo
-                                    :~  :-  'u'
-                                        ;~  pfix  (just 'u')
-                                          %-  stew  ^.  stet  ^.  limo
-                                          :~  ['r' (rune (just 'r') %cnts exph)]
-                                          ==
-                                        ==
-                                    ==
-                                  ==
-                              ==
-                            ==
-                        ==
-                      ==
-                  :-  's'
-                      ;~  pfix  (just 's')
-                        %-  stew  ^.  stet  ^.  limo
-                        :~  :-  'c'
-                            ;~  pfix  (just 'c')
-                              %-  stew  ^.  stet  ^.  limo
-                              :~  :-  'r'
-                                  ;~  pfix  (just 'r')
-                                    %-  stew  ^.  stet  ^.  limo
-                                    :~  ['y' (rune (just 'y') %dtkt exqn)]
-                                    ==
-                                  ==
-                              ==
-                            ==
-                            :-  'w'
-                            ;~  pfix  (just 'w')
-                              %-  stew  ^.  stet  ^.  limo
-                              :~  :-  'i'
-                                  ;~  pfix  (just 'i')
-                                    %-  stew  ^.  stet  ^.  limo
-                                    :~  :-  't'
-                                        ;~  pfix  (just 't')
-                                          %-  stew  ^.  stet  ^.  limo
-                                          :~  :-  'c'
-                                              ;~  pfix  (just 'c')
-                                                %-  stew  ^.  stet  ^.  limo
-                                                :~  ['h' (rune (just 'h') wthp ;~(pfix hep (toad txhp)))]
-                                                ==
-                                              ==
-                                          ==
-                                        ==
-                                    ==
-                                  ==
-                              ==
-                            ==
-                        ==
-                      ==
-                  :-  't'
-                      ;~  pfix  (just 't')
-                        %-  stew  ^.  stet  ^.  limo
-                        :~  :-  'u'
-                            ;~  pfix  (just 'u')
-                              %-  stew  ^.  stet  ^.  limo
-                              :~  :-  'p'
-                                  ;~  pfix  (just 'p')
-                                    %-  stew  ^.  stet  ^.  limo
-                                    :~  :-  'l'
-                                        ;~  pfix  (just 'l')
-                                          %-  stew  ^.  stet  ^.  limo
-                                          :~  ['e' (rune (just 'e') %cltr exps)]
-                                          ==
-                                        ==
-                                    ==
-                                  ==
-                              ==
-                            ==
-                            :-  'y'
-                            ;~  pfix  (just 'y')
-                              %-  stew  ^.  stet  ^.  limo
-                              :~  :-  'p'
-                                  ;~  pfix  (just 'p')
-                                    %-  stew  ^.  stet  ^.  limo
-                                    :~  :-  'e'
-                                        ;~  pfix  (just 'e')
-                                          %-  stew  ^.  stet  ^.  limo
-                                          :~  :-  'o'
-                                              ;~  pfix  (just 'o')
-                                                %-  stew  ^.  stet  ^.  limo
-                                                :~  ['f' (rune (just 'f') %zpgr expa)]
-                                                ==
-                                              ==
-                                          ==
-                                        ==
-                                    ==
-                                  ==
-                              ==
-                            ==
-                        ==
-                      ==
-                  :-  'w'
-                      ;~  pfix  (just 'w')
-                        %-  stew  ^.  stet  ^.  limo
-                        :~  :-  'r'
-                            ;~  pfix  (just 'r')
-                              %-  stew  ^.  stet  ^.  limo
-                              :~  :-  'a'
-                                  ;~  pfix  (just 'a')
-                                    %-  stew  ^.  stet  ^.  limo
-                                    :~  ['p' (rune (just 'p') %tsgl expb)]
-                                    ==
-                                  ==
-                              ==
-                            ==
-                        ==
-                      ==
+                    ==
                   ==
-            ==
-      ==
+              ==
     ::
     ++  boog  !:
       %+  knee  [p=*whit q=*term r=*help s=*hoon]
