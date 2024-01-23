@@ -500,12 +500,6 @@
     ?-  -.pac
         %page
       ::
-      ::  XX initialize message core
-      ::
-      :: pa-abet:pa-hear:(pa hen p.p.pact)
-      :: (each (list move) mess)
-      ::
-
       ::  check for pending request (peek|poke)
       ::
       ?~  per=(~(get by p.ax) p.p.pac)
@@ -527,8 +521,11 @@
           ::     by setting %auth in ps.request-state, regenerating next packet
           !!
         ::
-        ::  XX initialize hash-tree by hashing fragment, prepending to proof, and validating
-        ::  XX authenticate at message level with computed root hash
+        ::  XX LSS: use inline merkle proof
+        ::
+        ::    - initialize hash-tree by hashing fragment, prepending to proof, and validating
+        ::    - authenticate at message level with computed root hash
+        ::
         ::  XX request next fragment
         !!
       ::
@@ -537,14 +534,17 @@
       ?:  is-auth-packet
         ?.  ?=(%auth nex.u.ps.u.res)
           [~ ax]
-        ::  XX validate proof, initialize hash-tree
+        ::
+        ::  XX LSS: validate merkle proof, initialize hash-tree
         ::  XX request next fragment
         !!
       ::
       ?.  &(=(13 s.p.pac) ?=(%| -.nex.u.ps.u.res) =(p.nex.u.ps.u.res t.p.pac))
         [~ ax]
-      ::  XX get hash pair from packet, validate and add to tree
-      ::  XX validate fragment
+      ::
+      ::  XX LSS: get hash pair from packet, validate and add to tree
+      ::  XX LSS: validate fragment
+      ::
       ::  XX persist fragment
       ::
       ?:  =(t.p.pac tot.u.ps.u.res)  :: complete
@@ -615,6 +615,7 @@
     |=  [p=spar:ames q=(unit path)]
     =/  per  (~(gut by p.ax) ship.p *peer-state)  :: XX alien-agenda
     ?^  res=(~(get by pit.per) path.p)
+      :: XX check that payload is the same
       [~ ax(p (~(put by p.ax) ship.p (~(put by pit.per) path.p u.res(for (~(put in for.u.res) hen)))))]
     ::
     ::  XX resolve path to validate
@@ -806,17 +807,27 @@
         =/  dat
           ?:  =(1 wid)
             [wid aut ser]
+          ::
+          ::  XX LSS: all %page (response) packets generated here
+          ::
           =/  seq=@
             ?:  =(0 u.fag)
               ?:  (lte wid 4)
-                ::  XX 1 or two hashes forming merkle-proof w/out leftmost leaf
-                ::  XX (tail proof:(build:lss ...))
+                ::  XX LSS: inline merkle proof to avoid extra roundtrip
+                ::
+                ::    1 or two hashes forming merkle-proof w/out leftmost leaf
+                ::    (tail proof:(build:lss ...))
+                ::
                 !!
-              ::  XX root hash only
-              ::  XX root:(build:lss ...))
+              ::  XX LSS: root hash only
+              ::
+              ::    root:(build:lss ...))
+              ::
               !!
-            ::  XX normal lock-step traversal
-            ::  XX (snag u.fag pairs:(build:lss ...))
+            ::  XX LSS: perform normal lock-step traversal
+            ::
+            ::    (snag u.fag pairs:(build:lss ...))
+            ::
             !!
           :: XX [aut seq]
           [wid aut (cut u.boq [u.fag 1] ser)]
@@ -832,7 +843,7 @@
       =/  fag  (slaw %ud fag.tyl)
       ?:  |(?=(~ ryf) ?=(~ boq) ?=(~ fag))
         [~ ~]
-      ?.  =(13 boq)  ~ :: non-standard fragments for later
+      ?.  =(13 boq)  ~ :: XX LSS: non-standard fragments for later
       ?.  =(*rift u.ryf)      :: XX our rift
         ~
       =/  bem  [[our %$ ud+1] pat.tyl]
@@ -852,7 +863,11 @@
       =/  =pact:pact
         =/  nam
           [our u.ryf pat.tyl u.boq u.fag]
-        =/  merk  *(list @ux) :: proof:(build:lss ...)
+        :: XX LSS: retrieve merkle proof for fragment
+        ::
+        ::    proof:(build:lss ...)
+        ::
+        =/  merk  *(list @ux)
         =/  dat
           [wid aut (rep 8 merk)]  :: XX types
         [%page nam dat ~]
