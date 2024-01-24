@@ -4552,7 +4552,7 @@
       |^  =/  res  (mule |.(read))
           ?:  ?=(%& -.res)  p.res
           %.  [[~ ~] ..park]
-          (slog leaf+"clay: read-at-tako fail {<[desk=syd mun]>}" p.res)
+          (%*(. slog1 pri 3) leaf+"clay: read-at-tako fail {<[desk=syd mun]>}" p.res)
       ::
       ++  read
         ^-  [(unit (unit cage)) _..park]
