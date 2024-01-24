@@ -4,7 +4,6 @@
 ::  Pure Hoon implementations are naive formally correct algorithms,
 ::  awaiting efficient jetting with GNU Scientific Library.
 ::
-/+  twoc
 |%
 ++  rs
   ^|
