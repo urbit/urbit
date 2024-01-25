@@ -885,7 +885,6 @@
       ?~  ryf  [~ ~]
       ?.  =(*rift u.ryf)      :: XX our rift, XX unauthenticated
         ~
-      =/  bem  [[our %$ ud+1] pat.tyl]
       =/  res  $(lyc ~, pov /ames/mess, s.bem pat.tyl)
       ?.  ?&  ?=([~ ~ %message *] res)
         :: ...validate that it's really a message
@@ -971,14 +970,14 @@
       ?.  =(13 boq)  ~ :: non-standard fragments for later
       ?.  =(*rift u.ryf)      :: XX our rift
         ~
-      =/  bem  [[our %$ ud+1] pat.tyl]
-      =/  res  (rof ~ /ames/mess %ax bem)
+      =/  res  $(lyc ~, pov /ames/pact/data, s.bem pat.tyl)
       ?.  ?&  ?=([~ ~ %message *] res)
         :: ...validate that it's really a message
         :: =>  [tag=?(sig hmac) ser=@]
           ==
         ~
-      =*  ser  (,@ q.u.u.res) :: XX types
+      =/  msg  ;;([typ=?(%sign %hmac) aut=@ ser=@] q.q.u.u.res)
+      =*  ser  ser.msg
       =/  wid  (met u.boq ser)
       ?<  =(0 wid)  :: XX is this true?
       ?.  (gth wid u.fag)
@@ -1015,8 +1014,7 @@
       ?.  =(13 boq)  ~ :: XX LSS: non-standard fragments for later
       ?.  =(*rift u.ryf)      :: XX our rift
         ~
-      =/  bem  [[our %$ ud+1] pat.tyl]
-      =/  res  (rof ~ /ames/mess %ax bem)
+      =/  res  $(lyc ~, pov /ames/pact/auth, s.bem pat.tyl)
       ?.  ?&  ?=([~ ~ %message *] res)
         :: ...validate that it's really a message
         :: =>  [tag=?(sig hmac) ser=@]
