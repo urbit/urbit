@@ -49,8 +49,8 @@
     ::
     ++  czar
       ^-  octs
-      %-  as-octt:mimes:html
-      %-  en-json:html
+      %-  as-octs:mimes:html
+      %-  en:json:html
       :-  %a
       %+  turn  (gulf 0 255)
       |=  gal=@
@@ -63,8 +63,8 @@
     ++  point
       |=  who=ship
       ^-  octs
-      %-  as-octt:mimes:html
-      %-  en-json:html
+      %-  as-octs:mimes:html
+      %-  en:json:html
       %+  request-to-json
         ~.
       :-  'getPoint'
@@ -73,8 +73,8 @@
     ::
     ++  turf
       ^-  octs
-      %-  as-octt:mimes:html
-      %-  en-json:html
+      %-  as-octs:mimes:html
+      %-  en:json:html
       %+  request-to-json
         'turf'
       ['getDns' ~]
@@ -106,7 +106,7 @@
     ++  czar
       |=  rep=octs
       ^-  (unit (map ship [=rift =life =pass]))
-      =/  jon=(unit json)  (de-json:html q.rep)
+      =/  jon=(unit json)  (de:json:html q.rep)
       ?~  jon
         ~&([%czar-take-dawn %invalid-json] ~)
       =/  res=(unit (list [@t @ud @ud @]))
@@ -142,7 +142,7 @@
       |=  [who=ship rep=octs]
       ^-  (unit point:azimuth)
       ~!  *point:azimuth
-      =/  jon=(unit json)  (de-json:html q.rep)
+      =/  jon=(unit json)  (de:json:html q.rep)
       ?~  jon
         ~&([%point-take-dawn %invalid-json] ~)
       =-  ?~  res
@@ -202,7 +202,7 @@
     ++  turf
       |=  rep=octs
       ^-  (unit (list ^turf))
-      =/  jon=(unit json)  (de-json:html q.rep)
+      =/  jon=(unit json)  (de:json:html q.rep)
       ?~  jon
         ~&([%turf-take-dawn %invalid-json] ~)
       =/  res=(unit (list @t))
