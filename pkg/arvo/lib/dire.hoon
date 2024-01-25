@@ -406,6 +406,157 @@
   --
 --
 ::
+::  lockstep streaming
+::
+=>
+^=  lss
+=,  blake:crypto
+|%
+++  root-hash
+  |=  o=output:blake3
+  ^-  @ux
+  (output-cv:blake3 (set-flag:blake3 f-root:blake3 o))
+::
+++  leaf-hash
+  |=  leaf=@
+  ^-  @ux
+  (output-cv:blake3 (chunk-output:blake3 1.024^leaf))
+::
+::  +build: compute proof data for a message
+::
+++  build
+  |=  msg=byts
+  ^-  [root=@ux proof=(list @ux) pairs=(list [l=@ux r=@ux])]
+  =/  chunks  (split-byts:blake3 13 msg)
+  =+
+    |-  ^-  [o=output:blake3 pairs=(list [l=@ux r=@ux])]
+    =/  mid  (div (bex (xeb (dec (lent chunks)))) 2)
+    =+  [l=(scag mid chunks) r=(slag mid chunks)]
+    ?>  ?=(^ chunks)
+    ?~  t.chunks  [(chunk-output:blake3 i.chunks) ~]
+    =+  [left=$(chunks l) right=$(chunks r)]
+    =/  pair  [(output-cv:blake3 o.left) (output-cv:blake3 o.right)]
+    [(parent-output:blake3 pair) [pair (weld pairs.left pairs.right)]]
+  =/  root  (root-hash o)
+  ?:  =(~ pairs)  [root ~ ~]
+  =/  height  (xeb (dec (lent chunks)))
+  =/  proof  (turn (scag height pairs) tail)
+  =.  proof  (flop (snoc proof l:(snag (dec height) pairs)))
+  =.  pairs  (slag height pairs)
+  [root proof pairs]
+::
+::  +verifier: stateful core for sequentially verifying messages
+::
+++  verifier
+  =<
+    |%
+    ::
+    ++  init
+      |=  [leaves=@ux root=@ux proof=(list @ux)]
+      ^-  (unit state)
+      ?~  proof
+        ::  need at least two leaves to have a proof
+        ::
+        ?.  (lte leaves 1)  ~
+        `[leaves 0 [0 1] ~ ~]
+      ::  recover root from proof
+      ::
+      ?.  ?=([@ @ *] proof)  ~
+      =*  l0  i.proof
+      =*  l1  i.t.proof
+      =/  rut
+        %-  root-hash
+        %+  roll  t.t.proof
+        |:  [p=0x0 n=(parent-output:blake3 l0 l1)]
+        (parent-output:blake3 (output-cv:blake3 n) p)
+      ?.  =(rut root)  ~
+      ::  initialize leaf queue and parent stack with proof hashes;
+      ::  after the first two leaves, the next subtree is [2 4]
+      ::
+      =/  state  [leaves 0 [0 1] ~ t.t.proof]
+      `(push-leaves state [l0 l1])
+    ::
+    ++  verify-msg
+      |=  [=state [leaf=byts pair=(unit [l=@ux r=@ux])]]
+      ^-  (unit _state)
+      ?~  ustate=(verify-leaf state leaf)  ~
+      ?~  pair  `u.ustate
+      ?~  ustate=(verify-pair u.ustate u.pair)  ~
+      ::  all good; if the pair held leaf hashes, add them
+      ::  to the queue and advance past them; if it held parent
+      ::  hashes, add them to the parent stack
+      ::
+      =.  state  (advance u.ustate)
+      ?:  (at-leaf state)
+        `(push-leaves state u.pair)
+      `(push-parents state u.pair)
+    --
+  |%
+  +$  state
+      $:
+          leaves=@
+          leaf=@                 :: current leaf index
+          cur=[l=@ r=@]          :: current pair subtree
+          leaf-queue=(list @ux)
+          parent-stack=(list @ux)
+      ==
+  ::
+  ++  at-leaf  |=(state =(r.cur +(l.cur)))
+  ::
+  ++  advance
+    |=  =state
+    %=  state
+      cur  =,  cur.state
+           ::  if at a leaf, ascend the next subtree;
+           ::  otherwise, descend into the left child
+           ::
+           ?:  (at-leaf state)
+             [+(l) (min leaves.state (add r (bex (ctz r))))]
+           [l (add l (bex (dec (xeb (dec (sub r l))))))]
+    ==
+  ::
+  ++  push-leaves
+    |=  [=state [l=@ux r=@ux]]
+    ^+  state
+    ::  NOTE: using a list as a queue isn't ideal, performance-wise,
+    ::  but this list never grows larger than log(n) so in practice
+    ::  it's fine
+    ::
+    %-  advance  %-  advance
+    state(leaf-queue (weld leaf-queue.state ~[l r]))
+  ::
+  ++  push-parents
+    |=  [=state [l=@ux r=@ux]]
+    ^+  state
+    state(parent-stack (weld ~[l r] parent-stack.state))
+  ::
+  ++  verify-leaf
+    |=  [=state leaf=byts]
+    ^-  (unit _state)
+    =/  cv  (output-cv:blake3 (chunk-output:blake3 leaf.state leaf))
+    ::  if leaf queue is empty, draw from parent stack; this is
+    ::  necessary for any tree with an odd number of leaves, since
+    ::  such a tree will contain a pair where the left child is a
+    ::  parent and the right child is a leaf
+    ::
+    ?^  leaf-queue.state
+      ?.  =(i.leaf-queue.state cv)  ~
+      `state(leaf +(leaf.state), leaf-queue t.leaf-queue.state)
+    ?^  parent-stack.state
+      ?.  =(i.parent-stack.state cv)  ~
+      `state(leaf +(leaf.state), parent-stack t.parent-stack.state)
+    ~
+  ::
+  ++  verify-pair
+    |=  [=state pair=[l=@ux r=@ux]]
+    ^-  (unit _state)
+    =/  cv  (output-cv:blake3 (parent-output:blake3 pair))
+    ?~  parent-stack.state          ~
+    ?.  =(i.parent-stack.state cv)  ~
+    `state(parent-stack t.parent-stack.state)
+  --
+--
+::
 ::  skeleton vane
 ::
 =>
@@ -449,7 +600,7 @@
 +$  packet-state
   $:  nex=(each %auth @ud)
       tot=@ud
-      :: XX lockstep state
+      los=state:lss
   ==
 ::
 :: XX need auth data on %page and %poke
@@ -520,11 +671,13 @@
           ::  XX request-auth-packet
           ::     by setting %auth in ps.request-state, regenerating next packet
           !!
-        ::
-        ::  XX LSS: use inline merkle proof
-        ::
-        ::    - initialize hash-tree by hashing fragment, prepending to proof, and validating
-        ::    - authenticate at message level with computed root hash
+        ::  proof is inlined
+        ::  XX cut+validate sig/hmac
+        =/  proof=(list @ux)  (rip 8 aut.q.pac)
+        =.  proof  [(leaf-hash:lss data.pac) proof]
+        ?~  state=(init:verifier:lss tot.q.pac root proof)
+          [~ ax]
+        =.  los.ps.u.res  u.state
         ::
         ::  XX request next fragment
         !!
@@ -534,16 +687,29 @@
       ?:  is-auth-packet
         ?.  ?=(%auth nex.u.ps.u.res)
           [~ ax]
+        ::  XX cut+validate sig/hmac
+        =/  root=@ux  aut.q.pac
+        =/  proof=(list @ux)  (rip 8 dat.q.pac)
+        ?~  state=(init:verifier:lss tot.q.pac root proof)
+          [~ ax]
+        =.  los.ps.u.res  u.state
         ::
-        ::  XX LSS: validate merkle proof, initialize hash-tree
         ::  XX request next fragment
+        ::
         !!
       ::
       ?.  &(=(13 s.p.pac) ?=(%| -.nex.u.ps.u.res) =(p.nex.u.ps.u.res t.p.pac))
         [~ ax]
       ::
-      ::  XX LSS: get hash pair from packet, validate and add to tree
-      ::  XX LSS: validate fragment
+      =/  pair=(unit [l=@ux r=@ux])
+        =/  p  (rip 8 aut.q.pac)
+        ?.  |(?=(~ p) ?=(~ t.p))
+          ~
+        `[i.p i.t.p]
+      =/  msg  (met 3 dat.q.pac)^dat.q.pac
+      ?~  state=(verify-msg:verifier:lss los.ps.u.res msg pair)
+        [~ ax]
+      =.  los.ps.u.res  u.state
       ::
       ::  XX persist fragment
       ::
@@ -796,40 +962,27 @@
           ==
         ~
       =*  ser  (,@ q.u.u.res) :: XX types
-      =/  aut  *@ :: sig|hmac
       =/  wid  (met u.boq ser)
       ?<  =(0 wid)  :: XX is this true?
       ?.  (gth wid u.fag)
         [~ ~]
+      =/  lss-proof  (build:lss (met 3 ser)^ser)  :: XX cache this
       =/  =pact:pact
         =/  nam
           [our u.ryf pat.tyl u.boq u.fag]
         =/  dat
-          ?:  =(1 wid)
-            [wid aut ser]
-          ::
-          ::  XX LSS: all %page (response) packets generated here
-          ::
-          =/  seq=@
+          =/  aut
             ?:  =(0 u.fag)
+              ::  initial fragment; sign/hmac the root
+              =/  root  root.lss-proof  :: XX sig|hmac this
               ?:  (lte wid 4)
-                ::  XX LSS: inline merkle proof to avoid extra roundtrip
-                ::
-                ::    1 or two hashes forming merkle-proof w/out leftmost leaf
-                ::    (tail proof:(build:lss ...))
-                ::
-                !!
-              ::  XX LSS: root hash only
-              ::
-              ::    root:(build:lss ...))
-              ::
-              !!
-            ::  XX LSS: perform normal lock-step traversal
-            ::
-            ::    (snag u.fag pairs:(build:lss ...))
-            ::
-            !!
-          :: XX [aut seq]
+                :: small enough that we can inline the proof
+                (cat 3 root (rep 3 (tail proof.lss-proof)))
+              root
+            ::  subsequent fragment; provide a pair of sibling hashes
+            ?:  (gte u.fag (lent pairs.lss-proof))
+              ~
+            (snag u.fag pairs.lss-proof)
           [wid aut (cut u.boq [u.fag 1] ser)]
         ::
         [%page nam dat ~] :: XX dat
@@ -863,13 +1016,8 @@
       =/  =pact:pact
         =/  nam
           [our u.ryf pat.tyl u.boq u.fag]
-        :: XX LSS: retrieve merkle proof for fragment
-        ::
-        ::    proof:(build:lss ...)
-        ::
-        =/  merk  *(list @ux)
-        =/  dat
-          [wid aut (rep 8 merk)]  :: XX types
+        =/  lss-proof  (build:lss (met 3 ser)^ser) ::  XX cache this
+        =/  dat  [wid aut (rep 8 proof.lss-proof)]  :: XX types
         [%page nam dat ~]
       ::  XX produce typed packet or serialized?
       ::
