@@ -967,7 +967,7 @@
       =/  fag  (slaw %ud fag.tyl)
       ?:  |(?=(~ ryf) ?=(~ boq) ?=(~ fag))
         [~ ~]
-      ?.  =(13 boq)  ~ :: non-standard fragments for later
+      ?.  ?=(%13 u.boq)  ~ :: non-standard fragments for later
       ?.  =(*rift u.ryf)      :: XX our rift
         ~
       =/  res  $(lyc ~, pov /ames/pact/data, s.bem pat.tyl)
@@ -976,10 +976,10 @@
         :: =>  [tag=?(sig hmac) ser=@]
           ==
         ~
-      =/  msg  ;;([typ=?(%sign %hmac) aut=@ ser=@] q.q.u.u.res)
+      =/  msg  ;;([typ=?(%sign %hmac) aut=@ ser=@] q.q.u.u.res)  :: XX types
       =*  ser  ser.msg
       =/  wid  (met u.boq ser)
-      ?<  =(0 wid)  :: XX is this true?
+      ?<  ?=(%0 wid)  :: XX is this true?
       ?.  (gth wid u.fag)
         [~ ~]
       =/  lss-proof  (build:lss (met 3 ser)^ser)  :: XX cache this
@@ -988,10 +988,13 @@
           [our u.ryf pat.tyl u.boq u.fag]
         =/  dat
           =/  aut=@
-            ?:  =(0 u.fag)
+            ?:  ?=(%0 u.fag)
               ::  initial fragment; sign/hmac the root
+              ?:  =(1 wid)
+                0
               ?:  (lte wid 4)
                 :: small enough that we can inline the proof
+                ~|  lss-proof
                 (rep 3 (tail proof.lss-proof))
               root.lss-proof  :: XX sig|hmac this
             ::  subsequent fragment; provide a pair of sibling hashes
@@ -1011,8 +1014,8 @@
       =/  fag  (slaw %ud fag.tyl)
       ?:  |(?=(~ ryf) ?=(~ boq) ?=(~ fag))
         [~ ~]
-      ?.  =(13 boq)  ~ :: XX LSS: non-standard fragments for later
-      ?.  =(*rift u.ryf)      :: XX our rift
+      ?.  ?=(%13 u.boq)  ~ :: XX LSS: non-standard fragments for later
+      ?.  =(*rift u.ryf)   :: XX our rift
         ~
       =/  res  $(lyc ~, pov /ames/pact/auth, s.bem pat.tyl)
       ?.  ?&  ?=([~ ~ %message *] res)
@@ -1020,13 +1023,14 @@
         :: =>  [tag=?(sig hmac) ser=@]
           ==
         ~
-      =*  ser  (,@ q.u.u.res) :: XX types
+      =/  msg  ;;([typ=?(%sign %hmac) aut=@ ser=@] q.q.u.u.res)  :: XX types
+      =*  ser  ser.msg
       =/  aut  *@
       =/  wid  (met u.boq ser)
-      ?<  =(0 wid)
+      ?<  ?=(%0 wid)
       ?.  (gth wid u.fag)
         [~ ~]
-      ?.  =(0 fag)  ~  :: non-standard proofs for later
+      ?.  ?=(%0 u.fag)  ~  :: non-standard proofs for later
       =/  =pact:pact
         =/  nam
           [our u.ryf pat.tyl u.boq u.fag]
