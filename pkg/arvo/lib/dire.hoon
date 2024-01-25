@@ -988,15 +988,11 @@
           [our u.ryf pat.tyl u.boq u.fag]
         =/  dat
           =/  aut=@
-            ?:  ?=(%0 u.fag)
-              ::  initial fragment; sign/hmac the root
+            ?:  &(=(0 u.fag) (lte wid 4))
+              ::  initial fragment for a small message
               ?:  =(1 wid)
-                0
-              ?:  (lte wid 4)
-                :: small enough that we can inline the proof
-                ~|  lss-proof
-                (rep 3 (tail proof.lss-proof))
-              root.lss-proof  :: XX sig|hmac this
+                0  :: XX sig|hmac
+              (rep 3 (tail proof.lss-proof))
             ::  subsequent fragment; provide a pair of sibling hashes
             ?:  (gte u.fag (lent pairs.lss-proof))
               0
