@@ -635,7 +635,7 @@
 ++  inner-path-to-beam
   |=  [=ship =path]
   ^-  (unit [vew=view bem=beam])
-  !!
+  `[*view *beam]  :: XX
 ++  parse-path  |=(@ *(unit path))
 ++  blake3  |=(* *@)
 ++  get-key-for  |=([=ship =life] *@)
@@ -886,7 +886,7 @@
       ?.  =(*rift u.ryf)      :: XX our rift, XX unauthenticated
         ~
       =/  bem  [[our %$ ud+1] pat.tyl]
-      =/  res  (rof ~ /ames/mess %ax bem)
+      =/  res  $(lyc ~, pov /ames/mess, s.bem pat.tyl)
       ?.  ?&  ?=([~ ~ %message *] res)
         :: ...validate that it's really a message
         :: =>  [%message tag=?(sig hmac) ser=@]
