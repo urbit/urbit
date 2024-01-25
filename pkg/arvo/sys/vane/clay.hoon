@@ -749,24 +749,19 @@
       ::  try direct +grab
       ::
       =^  new=vase  nub  (build-fit %mar b)
+      =/  rib  (mule |.((slap new !,(*hoon grab))))
+      =/  arm=?
+        ?:  ?=(%| -.rib)  %.n
+        =/  lab  (mule |.((slob a p.p.rib)))
+        ?:  ?=(%| -.lab)  %.n
+        p.lab
       =/  rab  (mule |.((slap new tsgl/[limb/a limb/%grab])))
-      ?:  &(?=(%& -.rab) ?=(^ q.p.rab))
+      ?:  &(arm ?=(%& -.rab) ?=(^ q.p.rab))
         %+  gain-leak  cast+a^b
         |=  nob=state
         %-  (trace 4 |.("{<a>} -> {<b>}: +{(trip a)}:grab:{(trip b)}"))
         =.  nub  nob
         :_(nub vase+p.rab)
-      ::  try +jump
-      ::
-      =/  jum  (mule |.((slap old tsgl/[limb/b limb/%jump])))
-      ?:  ?=(%& -.jum)
-        =/  via  !<(mark p.jum)
-        %-  (trace 4 |.("{<a>} -> {<b>}: via {<via>} per +jump:{(trip a)}"))
-        (compose-casts a via b)
-      ?:  ?=(%& -.rab)
-        =/  via  !<(mark p.rab)
-        %-  (trace 4 |.("{<a>} -> {<b>}: via {<via>} per +grab:{(trip b)}"))
-        (compose-casts a via b)
       ?:  ?=(%noun b)
         %+  gain-leak  cast+a^b
         |=  nob=state
@@ -774,19 +769,6 @@
         =.  nub  nob
         :_(nub vase+same.bud)
       ~|(no-cast-from+[a b] !!)
-    ::
-    ++  compose-casts
-      |=  [x=mark y=mark z=mark]
-      ^-  [soak state]
-      =^  uno=vase  nub  (build-cast x y)
-      =^  dos=vase  nub  (build-cast y z)
-      %+  gain-leak  cast+x^z
-      |=  nob=state
-      =.  nub  nob
-      :_  nub  :-  %vase
-      %+  slap
-        (with-faces uno+uno dos+dos ~)
-      !,(*hoon |=(_+<.uno (dos (uno +<))))
     ::  +build-tube: produce a $tube mark conversion gate from .a to .b
     ::
     ++  build-tube
