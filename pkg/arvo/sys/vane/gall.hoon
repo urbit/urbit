@@ -108,11 +108,6 @@
           gem=(jug coop [path page])
   ==  ==
 ::
-+$  plot
-  $:  bob=(unit @ud)
-      fan=((mop @ud (pair @da (each page @uvI))) lte)
-  ==
-::
 ++  of-farm
   |_  =farm
   ++  key-coops
@@ -130,14 +125,6 @@
     ^-  (list coop)
     ^$(pos (snoc pos seg), farm f)
   ::
-  ++  migrate
-    |=  from=(map spur plot)
-    =/  from  ~(tap by from)
-    |-  ^+  farm
-    ?~  from  farm
-    =.  farm  (need (put i.from))
-    $(from t.from)
-  ::
   ++  match-coop
     =|  wer=path
     |=  =path
@@ -152,14 +139,39 @@
   ::
   ++  put
     |=  [=path =plot]
+    ^-  _farm
+    ?:  ?=(%coop -.farm)
+      farm(q (~(put by q.farm) path plot))
+    ?~  path
+      farm(p `plot)
+    =/  nex  (~(get by q.farm) i.path)
+    =/  res  $(path t.path, farm ?~(nex *^farm u.nex))
+    farm(q (~(put by q.farm) i.path res))
+  ::
+  ++  put-grow
+    |=  [=path =plot]
     ^-  (unit _farm)
     ?:  ?=(%coop -.farm)
-      `farm(q (~(put by q.farm) path plot))
+      ~
     ?~  path
       `farm(p `plot)
     =/  nex  (~(get by q.farm) i.path)
     =/  res
       $(path t.path, farm ?~(nex *^farm u.nex))
+    ?~  res  ~
+    `farm(q (~(put by q.farm) i.path u.res))
+  ::
+  ++  put-tend
+    |=  [=path =plot]
+    ^-  (unit _farm)
+    ?:  ?=(%coop -.farm)
+      `farm(q (~(put by q.farm) path plot))
+    ?~  path
+      `farm(p `plot)
+    ?~  nex=(~(get by q.farm) i.path)
+      ~
+    =/  res
+      $(path t.path, farm u.nex)
     ?~  res  ~
     `farm(q (~(put by q.farm) i.path u.res))
   ::
@@ -169,7 +181,7 @@
     %+  put  spur
     =-  ski(fan (put:on-path fan.ski -< -> &/page))
     ?~  las=(ram:on-path fan.ski)
-      [(fall bob.ski 1) now]
+      [?~(bob.ski 1 +(u.bob.ski)) now]
     :_  (max now +(p.val.u.las))
     ?~(bob.ski +(key.u.las) +((max key.u.las u.bob.ski)))
   ::
@@ -266,6 +278,7 @@
     ?~  nex=(~(get by q.farm) i.path)
       ~
     $(path t.path, farm u.nex)
+  ::
   ++  tap-plot
     =|  wer=path
     |-  ^-  (list [path plot])
@@ -520,7 +533,7 @@
         =/  sky=(list [=spur bob=@ud])  ~(tap by sky.u.yak)
         |-
         ?~  sky  farm
-        =.  farm  (need (~(put of-farm farm) spur.i.sky [`bob.i.sky ~]))
+        =.  farm  (need (~(put-grow of-farm farm) spur.i.sky [`bob.i.sky ~]))
         $(sky t.sky)
       == 
     ::
@@ -1390,10 +1403,10 @@
         ?.  (~(has by gem.yoke) coop)
           %.  ap-core
           %+  trace  &
-          [leaf+"gall: {<agent-name>} no such coop {<coop>}, dropping %grow at {<path>}"]~
+          [leaf+"gall: {<agent-name>} no such coop {<coop>}, dropping %tend at {<path>}"]~
         =.  gem.yoke  (~(put ju gem.yoke) coop path page)
         ap-core
-      =.  sky.yoke  (need (~(grow of-farm sky.yoke) (welp coop path) now page))
+      =.  sky.yoke  (~(grow of-farm sky.yoke) (welp coop path) now page)
       ap-core
     ::
     ++  ap-germ
@@ -1432,12 +1445,12 @@
       |=  [=spur =page]
       ^+  ap-core
       :: check here, and no-op, so that +need below does not crash
-      ?:  =(~ (ap-match-coop spur))
+      ?:  ?=(^ (ap-match-coop spur))
         %.  ap-core
         %+  trace  &
         [leaf+"gall: {<agent-name>}: grow {<spur>} has coop, dropping"]~
       =-  ap-core(sky.yoke -)
-      (need (~(grow of-farm sky.yoke) spur now page))
+      (~(grow of-farm sky.yoke) spur now page)
     ::  +ap-tomb: tombstone -- replace bound value with hash
     ::
     ++  ap-tomb
@@ -1462,7 +1475,6 @@
         [leaf+"gall: {<agent-name>}: tomb {<[case spur]>} no-op"]~
       ::
           %&  ::  replace with hash
-        %-  need
         %+  ~(put of-farm sky.yoke)  spur
         u.old(fan (put:on-path fan.u.old yon u.val(q |/(shax (jam p.q.u.val)))))
       ==
@@ -1494,11 +1506,6 @@
         %+  weld
           "gall: {<agent-name>}: cull {<[case spur]>} out of range, "
         "min: {<key.fis>}, max: {<key.u.las>}"
-      =;  nex=(unit farm)
-        ?^  nex  u.nex
-        %.  sky.yoke
-        %+  trace  &
-        [leaf+"gall: {<agent-name>}: cull {<[case spur]>} invalid path structure"]~
       %+  ~(put of-farm sky.yoke)  spur  ::  delete all older paths
       [`yon (lot:on-path fan.u.old `yon ~)]
     ::  +ap-from-internal: internal move to move.
@@ -2700,7 +2707,7 @@
           farm
         =/  [=spur p=plot]  i.ski
         =;  new
-          ?~  nex=(~(put of-farm farm) spur new)
+          ?~  nex=(~(put-grow of-farm farm) spur new)
             ~&  %weird
             !!  :: shouldn't continue else loss of ref integrity
             :: $(ski t.ski)
