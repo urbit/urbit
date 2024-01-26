@@ -992,7 +992,7 @@
               ::  initial fragment for a small message
               ?:  =(1 wid)
                 0  :: XX sig|hmac
-              (rep 3 (tail proof.lss-proof))
+              (rep 8 (tail proof.lss-proof))
             ::  subsequent fragment; provide a pair of sibling hashes
             ?:  (gte u.fag (lent pairs.lss-proof))
               0
