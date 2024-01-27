@@ -814,7 +814,7 @@
   +$  task
     $+  ames-task
     $%  [%hear =lane =blob]
-        [%sink lane=(unit mesa-lane) request=(each blob mess)]  ::  XX request based on namespace?
+        [%sink lane=(unit mesa-lane) request=(each blob mess)]  ::  xX only mess
         [%dear =ship =lane]
         [%heed =ship]
         [%jilt =ship]
