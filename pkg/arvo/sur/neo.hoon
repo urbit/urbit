@@ -1,5 +1,6 @@
 |%
 +$  pith  $+(pith ^pith)
++$  pate  [[%p p=ship] q=pith]
 ++  petty-port
   |*  a=mold
   ^-  port
@@ -7,6 +8,10 @@
 +$  dita  (each iota aura)
 +$  pish  (list dita)
 +$  conf  (map term pith)
++$  card
+  $%  [%arvo note-arvo]
+      [%neo note]
+  ==
 +$  note
   %+  pair  pith
   $%  [%make src=path init=(unit *) =conf] :: todo: configuration values, init cannot be ^ if installing over
@@ -20,8 +25,13 @@
   $+  yard
   $~  ~
   (map iota hall)
-+$  sign  ~
-+$  card  ~
++$  sign
+  $+  sign
+  $%  [%arvo p=sign-arvo]
+      [%neo ~]
+  ==
+
++$  move  (pair pith card)
 +$  span  (pair path firm)
 +$  icon
   [state=* history=(list *) migration=(list *)]
@@ -37,7 +47,9 @@
       =icon
   ==
 +$  bowl
-  $:  were=pith
+  $:  our=@p
+      were=pith
+      now=@da
       deps=(map term (pair pith *))
       kids=(map pith *)
   ==

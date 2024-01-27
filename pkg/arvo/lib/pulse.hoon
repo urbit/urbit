@@ -17,8 +17,12 @@
 ::  %make
 :: ^-  firm:neo
 |%
-+$  state  [from=ship now=time message=@t]
-+$  poke   ~
++$  state  [count=@ud last=@da freq=@dr]
++$  poke
+  $%  [%freq freq=@dr]
+      [%last last=@da]
+  ==
+  
 ++  kids   *kids:neo
 ++  deps   *deps:neo
 ++  form
@@ -26,14 +30,24 @@
   |_  [=bowl:neo untyp-sta=* *]
   +*  sta  ;;(state untyp-sta)
   ++  call
-    |=  [old-state=* act=*]
-    ::  =+  ;;(=action act)
-    ::  ~&  call/act
-    *(list card:neo)
+    |=  [ole=* act=*]
+    ^-  (list card:neo)
+    =/  old-state  ;;(state ole)
+    =/  sta  sta
+    ?:  =(freq.old-state freq.sta)
+      ~
+    :~  [%arvo %b %rest (add [last freq]:old-state)]
+        [%arvo %b %wait (add now.bowl freq.sta)]
+    ==
   ++  reduce
     |=  act=*
     ^-  *
-    state
+    =+  ;;(=poke act)
+    =/  sta  sta
+    ?-  -.poke
+      %freq  sta(freq freq.poke)
+      %last  sta(last last.poke)
+    ==
   ++  init
     |=  old=(unit *)
     ?>  ?=(^ old)
@@ -43,9 +57,19 @@
     |=  [=pith val=*]
     *(list card:neo)
   ++  born
-    *(list card:neo)
+    =/  sta  sta
+    [%arvo %b %wait (add now.bowl freq.sta)]^~
+  ::
   ++  take
     |=  =sign:neo
-    *(list card:neo)
+    ^-  (list card:neo)
+    ~&  now/now.bowl
+    ?.  ?=([%arvo %behn %wake *] sign)
+      ~
+    :~  [%neo were.bowl %poke %last now.bowl]
+        [%arvo %b %wait (add now.bowl freq.sta)]
+    ==
+    
+    
   --
 --

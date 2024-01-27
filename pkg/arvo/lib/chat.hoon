@@ -1,6 +1,13 @@
 /-  neo
 /+  message
 =*  card  card:neo
+=> 
+|%
+++  msg-loc
+  |=  =bowl:neo
+  ^-  path
+  /(scot %p our.bowl)/base/(scot %da now.bowl)/lib/message/hoon
+--
 ^-  firm:neo
 |%
 ::  $state: state for chat container
@@ -18,6 +25,7 @@
   $%  [%title title=@t]   :: update
       [%add =ship]
       [%del =ship]
+      [%msg msg=state:message]
       [%dbug ~]
   ==
 ++  kids
@@ -30,6 +38,7 @@
   ++  messages
     :-  ~[&/%messages |/%da]
     [state:message poke:message]
+  --
 
 ++  deps
   =<  apex
@@ -48,11 +57,12 @@
   ++  call
     |=  [old-state=* act=*]
     =+  ;;(=poke act)
-    ~&  call/act
-    ?:  ?=(%dbug -.act)
+    ?:  ?=(%dbug -.poke)
       ~&  dbug/bowl
       *(list card)
-    *(list card)
+    ?.  ?=(%msg -.poke)
+      *(list card)
+    [%neo (welp were.bowl ~[da/now.bowl]) %make (msg-loc bowl) `msg.poke ~]^~
   ++  reduce
     |=  pok=*
     ^-  *
@@ -64,7 +74,7 @@
       %title  sta(title +.poke)
       %add    sta(who (~(put in who.sta) ship.poke))
       %del    sta(who (~(del in who.sta) ship.poke))
-      %dbug   sta
+      ?(%dbug %msg)   sta
     ==
   ++  init
     |=  old=(unit *)
