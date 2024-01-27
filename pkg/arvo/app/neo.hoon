@@ -249,7 +249,7 @@
       `[term u.dep u.val]
       ::  TODO type this w/ port??
     ++  si-bowl    
-      [our.bowl pith now.bowl si-resolve-deps si-resolve-kids]
+      [src.bowl our.bowl pith now.bowl si-resolve-deps si-resolve-kids]
     ++  si-form    ~(. form:si-firm [si-bowl icon.room])
     ++  si-firm    q.span.room
     ++  si-born   (si-emil born:si-form)

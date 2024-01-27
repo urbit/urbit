@@ -70,6 +70,7 @@
     =/  sta  sta
     ?.  ;;(? +:(~(gut by deps.bowl) %open [*pith &]))
       ~&(dropping-poke/poke sta)
+    ?>  (~(has in who.sta) src.bowl)
     ?-  -.poke
       %title  sta(title +.poke)
       %add    sta(who (~(put in who.sta) ship.poke))

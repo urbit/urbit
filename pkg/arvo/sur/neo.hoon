@@ -47,7 +47,8 @@
       =icon
   ==
 +$  bowl
-  $:  our=@p
+  $:  src=@p
+      our=@p
       were=pith
       now=@da
       deps=(map term (pair pith *))
