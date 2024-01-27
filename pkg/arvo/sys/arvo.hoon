@@ -1741,6 +1741,7 @@
     %i  %iris
     %j  %jael
     %k  %khan
+    %x  %xmas
   ==
 --  =>
 ::
