@@ -1,3 +1,20 @@
+::  $neo: New Shrub
+::
+::    Urbit is a namespace, from a path -> data
+::    /~hastuc-dibtux/chats/unit-731 :: this a chat 
+::    /~hastuc-dibtux/chats/unit-731/msg/~2024.1.27..10.30 :: this is a
+::    message inside the chat
+::
+::    neo is a recipe for defining the kinds of data that live at these
+::    paths. For instance, you would maybe like to define a chat
+::    datatype, that could be bound into your namespace, so that your
+::    friends could send you memes.
+::
+::
+::
+::
+::
+::  
 |%
 +$  pith  $+(pith ^pith)
 +$  pate  [[%p p=ship] q=pith]
@@ -60,14 +77,42 @@
   [state=mold action=mold]
 +$  deps  (map term fief)
 +$  kids  (map pish port)
+::  $firm: type of the value in the urbit namespace
 ::
 +$  firm
+ 
   $_  ^&
   |%
+  ::  $state: the state of this value in the urbit namespace
+  ::
+  ::    For instance, a message would be
+  ::    ```hoon
+  ::    [author=ship time-sent=time message=txt]
+  ::    ```
+  ::
+  ::    ```
   ++  state  *mold
+  ::  $poke: a poke is a request to change a value in teh urbit
+  ::  namespace.
+  ::
+  ::    For instance a blocked list that is a set of users would be
+  ::      [%add who=user]
+  ::      [%del who=user]
+  ::
+  ::
   ++  poke   *mold
   ++  form   *^form
+  ::
+  ::  +kids: Some nodes in the namespace define what children are
+  ::  allowed to be under them. For instance, it should not  be allowed
+  ::  to create /~hastuc-dibtux/chats/unit-731/blog-post-1. This is
+  ::  nonsensical because blog posts don't go in chats.
   ++  kids   *(map pish port)
+  ::
+  ::  +deps: Some nodes in the namespace might like to hear about other
+  ::  things that happen in the namespace. For instance, a substack-type
+  ::  software would like to know where the wallet software is located
+  ::  in the name
   ++  deps   *(map term fief)
   --
 +$  form
@@ -76,6 +121,10 @@
   ++  call
     |~  [prev=* val=*]
     *(list card)
+  ::  +reduce: apply %poke, producing state
+  ::
+  ::    ('liam'' ~) [%add who='ruby'] -> ('liam' 'ruby')
+  ::    ('liam' 'ruby' ~) [%del who='ruby'] -> ('liam')
   ++  reduce
     |~  val=*
     **
