@@ -2758,9 +2758,10 @@
   +$  boat  (map [=wire =ship =term] [acked=? =path])   ::  outgoing subs
   +$  boar  (map [=wire =ship =term] nonce=@)           ::  and their nonces
   ::
+  +$  fans  ((mop @ud (pair @da (each page @uvI))) lte)
   +$  plot
     $:  bob=(unit @ud)
-        fan=((mop @ud (pair @da (each page @uvI))) lte)
+        fan=fans
     ==
   +$  stats                                             ::  statistics
     $:  change=@ud                                      ::  processed move count
@@ -2776,7 +2777,6 @@
         [%plot p=(unit plot) q=(map @ta farm)]
     ==
   ::
-
   +$  egg                                               ::  migratory agent state
     $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)] ::  see /sys/gall $yoke
         $:  %live
@@ -2823,9 +2823,7 @@
         ==                                              ::
         $:  wex=boat                                    ::  outgoing subs
             sup=bitt                                    ::  incoming subs
-            $=  sky                                     ::  scry bindings
-            %+  map  path                               ::
-            ((mop @ud (pair @da (each page @uvI))) lte) ::
+            sky=(map path fans)                         ::  scry bindings
         ==                                              ::
         $:  act=@ud                                     ::  change number
             eny=@uvJ                                    ::  entropy
