@@ -214,6 +214,7 @@
     ~/  %on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
+    ?>  (team:title [our src]:bowl)
     ?:  ?=(%spider-kill mark)
       (on-load on-save)
     =^  cards  state
@@ -315,7 +316,7 @@
   ::
   =/  tube  (convert-tube %json input-mark desk bowl)
   ?>  ?=(^ body.request.inbound-request)
-  =/  body=json  (need (de-json:html q.u.body.request.inbound-request))
+  =/  body=json  (need (de:json:html q.u.body.request.inbound-request))
   =/  input=vase  (slop !>(~) (tube !>(body)))
   =/  boc  bec
   =/  =start-args:spider  [~ `tid boc(q desk, r da+now.bowl) thread input]
@@ -490,7 +491,8 @@
     %+  roll  cards.r
     |=  [=card cards=(list card) s=_state]
     :_  =?  scrying.s  ?=([%pass ^ %arvo %a %keen @ *] card)
-          (~(put ju scrying.s) tid [&2 &6 |6]:card)
+          ::  wire ship path
+          scrying.s ::  (~(put ju scrying.s) tid [&2 +>+>+>]:card)
         s
     :_  cards
     ^-  ^card

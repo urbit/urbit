@@ -235,7 +235,7 @@
 ::
 ++  scry
   ^-  roon
-  |=  [lyc=gang car=term bem=beam]
+  |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
   =*  ren  car
   =*  why=shop  &/p.bem
@@ -243,11 +243,12 @@
   =*  lot=coin  $/r.bem
   =*  tyl  s.bem
   ::
-  ::  only respond for the local identity, %$ desk, current timestamp
+  ::  only respond for the local identity, %$ desk, current timestamp, root gang
   ::
   ?.  ?&  =(&+our why)
           =([%$ %da now] lot)
           =(%$ syd)
+          =([~ ~] lyc)
       ==
     ~
   ::  /bx//whey         (list mass)        memory usage labels

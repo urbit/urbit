@@ -115,7 +115,7 @@
 ::  |parser-at: parsers for dojo expressions using :dir as working directory
 ::
 ++  parser-at
-  |=  [our=ship dir=beam]
+  |=  [our=ship now=@da dir=beam]
   |%
   ++  default-app         %hood
   ++  hoon-parser         (vang | (en-beam dir))
@@ -129,7 +129,7 @@
     =/  =desk
       ::TODO  maybe should recognize if the user specified a desk explicitly.
       ::      currently eats the :app|desk#gen case.
-      =+  gop=(en-beam dir(q q.gol, s /$))
+      =+  gop=/(scot %p our)/[q.gol]/(scot %da now)/$
       ?.  .^(? %gu gop)
         q.dir
       .^(desk %gd gop)
@@ -365,7 +365,7 @@
     dir(r [%da now.hid])
   ::
   ++  he-beak    `beak`[p q r]:he-beam
-  ++  he-parser  (parser-at our.hid he-beam)
+  ++  he-parser  (parser-at our.hid now.hid he-beam)
   ::
   ++  dy                                                ::  project work
     |_  dojo-project                                    ::
@@ -807,7 +807,7 @@
     ::
     ++  dy-run-generator
       !.
-      |=  [cay=cage cig=dojo-config]
+      |=  [cay=cage cig=dojo-config =desk]
       ^+  +>+>
       ?.  (~(nest ut [%cell [%atom %$ ~] %noun]) | p.q.cay)
         ::  naked generator; takes one argument
@@ -846,12 +846,11 @@
       ::  kev: key-value named arguments
       ::  kuv: default keyword arguments
       ::  sam: fully populated sample
-      ::  rog: default gat sample
       ::
       |.  ^-  vase
       =/  gat=vase  (slot 3 q.cay)
       =/  som=vase  (slot 6 gat)
-      =/  ven=vase  !>([now=now.hid eny=eny.hid bec=he-beak])
+      =/  ven=vase  !>([now=now.hid eny=eny.hid bec=he-beak(q.dir desk)])
       =/  poz=vase  (dy-sore p.cig)
       =/  kev=vase
         =/  kuv=(unit vase)  (slew 7 som)
@@ -870,9 +869,11 @@
                 !(~(has by q.cig) %drum-session)
             ==
           [[%drum-session !>(ses.id)] soz]  ::TODO  does the who matter?
-        ?:  =(~ soz)
+        ?~  soz
           (fall kuv !>(~))
-        ~|  keyword-arg-failure+~(key by q.cig)
+        ~_  'dojo: bad-keyword (supplied sample incorrect)'
+        ~_  'dojo: keywords allowed'
+        ~_  (skol p:(fall kuv !>(~)))
         %+  slap
           (with-faces kuv+(need kuv) rep+(with-faces soz) ~)
         :+  %cncb  [%kuv]~
@@ -882,13 +883,57 @@
         [[var]~ [%wing var %rep ~]]
       ::
       =/  sam=vase  :(slop ven poz kev)
-      ?.  (~(nest ut p.som) | p.sam)
-        ~>  %slog.1^leaf+"dojo: nest-need"
-        ~>  %slog.0^(skol p.som)
-        ~>  %slog.1^leaf+"dojo: nest-have"
-        ~>  %slog.0^(skol p.sam)
-        !!
-      (slam gat sam)
+      ?:  (~(nest ut p.som) | p.sam)
+        (slam gat sam)
+      ::  something is wrong
+      ::
+      %-  mean
+      ^-  (list tank)
+      =/  cez=type  [%cell %noun [%cell %noun %noun]]
+      ?.  (~(nest ut cez) | p.som)
+        ::  [ven poz kev] can't nest in som
+        ::
+        :~  'dojo: nest-need'
+            (skol p.som)
+            'dojo: nest-have'
+            (skol p.sam)
+            'dojo: bad gate lost-argument (generator incorrect)'
+        ==
+      ::
+      =/  hed=vase  (slot 2 som)
+      ?.  (~(nest ut p.hed) | p.ven)
+        ::  ven can't nest in head
+        ::
+        :~  'dojo: nest-need'
+            (skol p.hed)
+            'dojo: nest-have'
+            (skol p.ven)
+            'dojo: bad gate event-sample (generator incorrect)'
+        ==
+      ::
+      =/  zop=vase  (slot 6 som)
+      =/  lon=vase  !>(*(lest))
+      ?:  ?&  !(~(nest ut p.zop) | -:!>(~))
+              !(~(nest ut p.lon) | p.zop)
+              !(~(nest ut p.zop) | -:!>((slop zop !>(~))))
+          ==
+        ::  argument required, but nothing can nest
+        ::
+        :~  'dojo: nest-need'
+            (skol p.zop)
+            'dojo: nest-have'
+            (skol p.poz)
+            'dojo: bad gate impossible-nest (generator incorrect)'
+        ==
+      ::  poz doesn't nest in zop
+      ::
+      ?<  (~(nest ut p.zop) | p.poz)
+      :~  'dojo: nest-need'
+          (skol p.zop)
+          'dojo: nest-have'
+          (skol p.poz)
+          'dojo: bad-argument (supplied sample incorrect)'
+      ==
     ::
     ++  dy-made-dial                                    ::  dialog product
       |=  cag=cage
@@ -945,7 +990,7 @@
           %te  (dy-wool-poke p.bil q.bil)
           %ex  (dy-mere p.bil)
           %dv  (dy-sing hand+q.bil %a p.bil (snoc q.bil %hoon))
-          %ge  (dy-run-generator (dy-cage p.p.p.bil) q.p.bil)
+          %ge  (dy-run-generator (dy-cage p.p.p.bil) q.p.bil desk.q.p.p.bil)
           %sa
         =/  has-mark  .?((get-fit:clay he-beak %mar p.bil))
         ?.  has-mark
@@ -1703,6 +1748,7 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card:agent:gall _..on-init)
+  ?>  (team:title [our src]:hid)
   =^  moves  state
     ^-  (quip card:agent:gall house)
     ?+  mark  ~|([%dojo-poke-bad-mark mark] !!)

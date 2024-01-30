@@ -69,9 +69,6 @@
 =|  ax=axle
 |=  [now=@da eny=@uvJ rof=roof]
 |%
-++  rof
-  |=  [lyc=gang pov=path omen]
-  (^rof lyc vis bem)
 ::
 ++  ev
   |_  hen=duct
@@ -282,7 +279,7 @@
 ::
 ++  scry
   ^-  roon
-  |=  [lyc=gang car=term bem=beam]
+  |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
   ?:  ?&  =(our p.bem)
           =(%$ q.bem)

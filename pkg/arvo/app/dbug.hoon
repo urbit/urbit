@@ -361,16 +361,58 @@
     ::
       [%eyre %authentication ~]
     %-  some
-    :-  %a
-    %+  turn
-      %+  sort  ~(tap by sessions:auth-state:v-eyre)
-      |=  [[@uv a=session:eyre] [@uv b=session:eyre]]
-      (gth expiry-time.a expiry-time.b)
-    |=  [cookie=@uv session:eyre]
+    =/  auth  auth-state:v-eyre
     %-  pairs
-    :~  'cookie'^s+(end [3 4] (rsh [3 2] (scot %x (shax cookie))))
-        'expiry'^(time expiry-time)
-        'channels'^(numb ~(wyt in channels))
+    :~  :-  'sessions'
+        :-  %a
+        %+  turn
+          %+  sort  ~(tap by sessions.auth)
+          |=  [[@uv a=session:eyre] [@uv b=session:eyre]]
+          (gth expiry-time.a expiry-time.b)
+        |=  [cookie=@uv session:eyre]
+        %-  pairs
+        :~  'cookie'^s+(scot %uv cookie)
+            'identity'^(render-identity:v-eyre identity)
+            'expiry'^(time expiry-time)
+            'channels'^(numb ~(wyt in channels))
+        ==
+      ::
+        :-  'visitors'
+        :-  %a
+        %+  turn
+          %+  sort  ~(tap by visitors.auth)
+          |=  [[@uv a=visitor:eyre] [@uv b=visitor:eyre]]
+          ?@  +.a  &
+          ?@  +.b  |
+          (aor (scot %p ship.a) (scot %p ship.b))
+        |=  [nonce=@uv v=visitor:eyre]
+        %-  pairs
+        :+  'nonce'^s+(scot %uv nonce)
+          'duct'^?~(duct.v ~ a+(turn u.duct.v path))
+        ?@  +.v  ['sesh' s+(scot %uv sesh.v)]~
+        :~  'pend'^b+?=(^ pend.v)
+            'ship'^(ship ship.v)
+            'last'^s+last.v
+            'toke'^?~(toke.v ~ s+(scot %uv u.toke.v))
+        ==
+      ::
+        :-  'visiting'
+        :-  %a
+        %-  zing
+        %+  turn
+          %+  sort  ~(tap by visiting.auth)
+          |=  [[a=@p *] [b=@p *]]
+          (aor (scot %p a) (scot %p b))
+        |=  [who=@p q=(qeu @uv) m=(map @uv portkey)]
+        %+  turn  ~(tap by m)
+        |=  [nonce=@uv p=portkey]
+        %-  pairs
+        :+  'who'^(ship who)
+          'nonce'^s+(scot %uv nonce)
+        ?@  p  ['made' (time made.p)]~
+        :~  ['pend' b+?=(^ pend.p)]
+            ['toke' ?~(toke.p ~ s+(scot %uv u.toke.p))]
+        ==
     ==
   ::
     ::  /eyre/channels.json
@@ -383,6 +425,7 @@
     |=  [key=@t channel:eyre]
     %-  pairs
     :~  'session'^s+key
+        'identity'^(render-identity:v-eyre identity)
         'connected'^b+!-.state
         'expiry'^?-(-.state %& (time date.p.state), %| ~)
         'next-id'^(numb next-id)
@@ -585,6 +628,8 @@
     ::      duct: ['/paths', ...],
     ::      message-num: 123
     ::    }, ...],
+    ::    closing: [bone, ..., bone],
+    ::    corked: [bone, ..., bone],
     ::    heeds: [['/paths', ...] ...]
     ::    scries:
     ::    ->  { =path
@@ -663,8 +708,8 @@
           |^  =/  mix=(list flow)
                 =-  (sort - dor)
                 %+  welp
-                  (turn ~(tap by snd) (tack %snd))
-                (turn ~(tap by rcv) (tack %rcv))
+                  (turn ~(tap by snd) (tack %snd closing corked))
+                (turn ~(tap by rcv) (tack %rcv closing corked))
               =/  [forward=(list flow) backward=(list flow)]
                 %+  skid  mix
                 |=  [=bone *]
@@ -676,6 +721,8 @@
           ::
           +$  flow
             $:  =bone
+                closing=?
+                corked=?
               ::
                 $=  state
                 $%  [%snd message-pump-state]
@@ -684,17 +731,17 @@
             ==
           ::
           ++  tack
-            |*  =term
+            |*  [=term closing=(set bone) corked=(set bone)]
             |*  [=bone =noun]
-            [bone [term noun]]
+            [bone (~(has in closing) bone) (~(has in corked) bone) [term noun]]
           ::
           ++  build
             |=  flow
             ^-  json
             %+  frond  -.state
             ?-  -.state
-              %snd  (snd-with-bone ossuary bone +.state)
-              %rcv  (rcv-with-bone ossuary bone +.state)
+              %snd  (snd-with-bone ossuary bone closing corked +.state)
+              %rcv  (rcv-with-bone ossuary bone closing corked +.state)
             ==
           --
         ::
@@ -707,20 +754,26 @@
               (bone-to-pairs bone ossuary)
           ==
         ::
+          'closing'^(set-array closing numb)
+        ::
+          'corked'^(set-array corked numb)
+        ::
           'heeds'^(set-array heeds from-duct)
         ::
           'scries'^(scries ~(tap by keens))
       ==
     ::
     ++  snd-with-bone
-      |=  [=ossuary =bone message-pump-state]
+      |=  [=ossuary =bone closing=? corked=? message-pump-state]
       ^-  json
       %-  pairs
-      :*  'current'^(numb current)
+      :*  'closing'^b+closing
+          'corked'^b+corked
+          'current'^(numb current)
           'next'^(numb next)
         ::
           :-  'unsent-messages'  ::  as byte sizes
-          (set-array unsent-messages (cork (cury met 3) numb))
+          (set-array unsent-messages (cork jam (cork (cury met 3) numb)))
         ::
           'unsent-fragments'^(numb (lent unsent-fragments))  ::  as lent
         ::
@@ -768,10 +821,12 @@
       ==
     ::
     ++  rcv-with-bone
-      |=  [=ossuary =bone message-sink-state]
+      |=  [=ossuary =bone closing=? corked=? message-sink-state]
       ^-  json
       %-  pairs
-      :*  'last-acked'^(numb last-acked)
+      :*  'closing'^b+closing
+          'corked'^b+corked
+          'last-acked'^(numb last-acked)
           'last-heard'^(numb last-heard)
         ::
           :-  'pending-vane-ack'
@@ -991,6 +1046,16 @@
   ::
   ++  channel-state
     (scry ^channel-state %e %channel-state ~)
+  ::
+  ++  render-identity
+    |=  =identity
+    ^-  json
+    %-  ship:enjs:format
+    ?-  -.identity
+      %ours  our.bowl
+      %fake  who.identity
+      %real  who.identity
+    ==
   ::
   ++  render-action
     |=  =action

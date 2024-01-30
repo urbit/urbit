@@ -197,6 +197,20 @@
     `[%done +>.sign-arvo.u.in.tin]
   ==
 ::
+++  take-near
+  |=  =wire
+  =/  m  (strand ,[spar:ames (unit (unit page))])
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+    in.tin  `[%skip ~]
+      ~  `[%wait ~]
+    ::
+      [~ %sign * %ames %near ^ *]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done +>.sign-arvo.u.in.tin]
+  ==
+::
 ++  take-poke-ack
   |=  =wire
   =/  m  (strand ,~)
@@ -335,7 +349,13 @@
   |=  [=wire =spar:ames]
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass wire %arvo %a %keen spar)
+  (send-raw-card %pass wire %arvo %a %keen ~ spar)
+::
+++  keen-shut
+  |=  [=wire =spar:ames]
+  =/  m  (strand ,~)
+  ^-  form:m
+  (send-raw-card %pass wire %keen & spar)
 ::
 ++  sleep
   |=  for=@dr
@@ -470,7 +490,7 @@
   =/  m  (strand ,json)
   ^-  form:m
   ;<  =cord  bind:m  (fetch-cord url)
-  =/  json=(unit json)  (de-json:html cord)
+  =/  json=(unit json)  (de:json:html cord)
   ?~  json
     (strand-fail %json-parse-error ~)
   (pure:m u.json)
@@ -581,8 +601,9 @@
 ++  check-for-file
   |=  [[=ship =desk =case] =spur]
   =/  m  (strand ,?)
-  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %x case spur)
-  (pure:m ?=(^ riot))
+  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %u case spur)
+  ?>  ?=(^ riot)
+  (pure:m !<(? q.r.u.riot))
 ::
 ++  list-tree
   |=  [[=ship =desk =case] =spur]

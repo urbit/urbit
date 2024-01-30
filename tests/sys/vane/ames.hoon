@@ -205,7 +205,7 @@
     ::  custom scry handler for +test-fine-response.
     ::  could be refined further...
     ::
-    |=  [lyc=gang vis=view bem=beam]
+    |=  [lyc=gang pov=path vis=view bem=beam]
     ^-  (unit (unit cage))
     ?+  vis  ~
         %cp
@@ -222,7 +222,7 @@
       ``hoon+!>(dojo)
     ==
   =/  vane-core  (vane(rof roof))
-  (scry:vane-core ~ car bem)
+  (scry:vane-core ~ / car bem)
 ::
 ++  call
   |=  [vane=_nec =duct =task:ames]
@@ -442,7 +442,7 @@
     %+  expect-eq
       !>  =-  [~[//unix] %pass /qos %d %flog %text -]
               "; {<our-comet>} is your neighbor"
-      !>  (snag 0 `(list move:ames)`moves7)
+      !>  (snag 1 `(list move:ames)`moves7)
   ::
     %+  expect-eq
       !>  [~[/g/talk] %give %boon post]
@@ -473,11 +473,11 @@
   ;:  weld
     %+  expect-eq
       !>  [~[//unix] %pass /qos %d %flog %text "; {<our-comet>} is your neighbor"]
-      !>  (snag 0 `(list move:ames)`moves4)
+      !>  (snag 1 `(list move:ames)`moves4)
   ::
     %+  expect-eq
       !>  [~[//unix] %pass /qos %d %flog %text "; {<our-comet2>} is your neighbor"]
-      !>  (snag 0 `(list move:ames)`moves7)
+      !>  (snag 1 `(list move:ames)`moves7)
   ::
     %+  expect-eq
       !>  [~[/g/talk] %give %boon [%post 'first1!!']]
@@ -497,13 +497,25 @@
   ::  ~bud -> nack-trace -> ~nec
   ::
   =^  moves5  nec  (call nec ~[//unix] %hear (snag-packet 1 moves3))
+  ::  ~nec -> naxplanation -> ~nec
+  ::
+  =/  sink-naxplanation-plea
+    [%deep %sink ~bud bone=0 message-num=1 error]
+  =^  moves6  nec  (call nec ~[//unix] sink-naxplanation-plea)
   ::  ~nec -> ack nack-trace -> ~bud
   ::
-  =^  moves6  bud  (call bud ~[//unix] %hear (snag-packet 0 moves5))
+  =^  moves7  bud  (call bud ~[//unix] %hear (snag-packet 0 moves5))
   ::
-  %+  expect-eq
-    !>  [~[/g/talk] %give %done `error]
-    !>  (snag 0 `(list move:ames)`moves5)
+  ;:  welp
+    %+  expect-eq
+      !>  [~[/g/talk] %give %done `error]
+      !>  (snag 0 `(list move:ames)`moves6)
+    ::
+    %+  expect-eq
+      !>  [~[//unix] %pass /bone/~bud/0/0 %a sink-naxplanation-plea]
+      !>  (snag 0 `(list move:ames)`moves5)
+    ::
+  ==
 ::
 ++  test-boon-lost  ^-  tang
   ::  ~nec -> %plea -> ~bud
@@ -527,7 +539,7 @@
 ++  test-fine-request
   ^-  tang
   =/  want=path  /c/z/1/kids/sys
-  =^  moves1  nec  (call nec ~[/g/talk] %keen ~bud want)
+  =^  moves1  nec  (call nec ~[/g/talk] %keen ~ ~bud want)
   =/  req=hoot:ames
     %+  snag  0
     %+  murn  ;;((list move:ames) moves1)
@@ -685,4 +697,24 @@
       !>  [~[/g/talk] %give %boon [%post '¡hola!']]
       !>  (snag 0 `(list move:ames)`moves7)
   ==
+::
+++  test-plug  ^-  tang
+  =^  moves  nec
+    (call nec ~[/g/talk] %plug /foo)
+  =/  expected-key
+      3.782.450.905.364.316.746.465.724.430.826.633.339.627.682.402.565.789.971.442.035.627.125.517.743.962.901.817.756.764.395.497.041.697.150.935.487.420.935.470.530.023.121.462.879.251.503.082.973.208.842.762
+  %-  zing
+  :- 
+    %+  expect-eq  !>(moves)
+    !>  ^-  (list move:ames)
+    :~  [~[/g/talk] %give %stub 1 expected-key]
+    ==
+  =^  moves2  bud
+    (call bud ~[/g/talk] %keen `[1 expected-key] ~nec /foo/bar)
+  :_  ~
+  %+  expect-eq  !>(moves2)
+  !>  ^-  (list move:ames)
+  :~  [~[/g/talk] [%pass /fine/shut/1 [%a [%keen sec=~ ship=~nec path=/a/x/1//fine/shut/1/0v1.vvaek.7boon.0tp04.21q1h.be1i0.494an.qimof.e2fku.ern01]]]]
+  ==
+::
 --

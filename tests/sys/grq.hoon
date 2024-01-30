@@ -2,6 +2,7 @@
 ::
 /+  *test, v=test-ames-gall
 |%
+++  dbug  `?`|
 ++  test-watch
   %-  run-chain
   |.  :-  %|
@@ -12,8 +13,8 @@
   ::=^  *  ames.bud
   ::  (ames-call:v ames.bud ~[/none] [%spew ~[%msg %snd %rcv %odd]] *roof)
   ::  poke %sub to tell it to subscribe
-  ~&  >  'poke %sub to tell it to subscribe'
-  =/  =task:gall  [%deal [~nec ~nec] %sub %poke watch+!>(~bud)]
+  ~?  >  dbug  'poke %sub to tell it to subscribe'
+  =/  =task:gall  [%deal [~nec ~nec /] %sub %poke watch+!>(~bud)]
   =^  t1  gall.nec
     %:  gall-check-call:v  gall.nec
       [~1111.1.1 0xdead.beef *roof]
@@ -21,17 +22,17 @@
       :~  :-  ~[/foo]  [%give %unto %poke-ack ~]
           :-  ~[/init]
           :*  %pass  /use/sub/0w1.d6Isf/out/~bud/pub/1/sub-foo/~bud
-              [%g %deal [~nec ~bud] %pub %watch /foo]
+              [%g %deal [~nec ~bud /gall/sub] %pub %watch /foo]
       ==  ==
     ==
   :-  t1  |.  :-  %|
   ::  handle gall passing the %watch to itself, which passes to ames
-  ~&  >  'handle gall passing the %watch to itself, which passes to ames'
+  ~?  >  dbug  'handle gall passing the %watch to itself, which passes to ames'
   =^  t2  gall.nec
     %:  gall-check-call:v  gall.nec
       [~1111.1.1 0xdead.beef *roof]
       :-  ~[/use/sub/0w1.d6Isf/out/~bud/pub/1/sub-foo/~bud /init]
-      [%deal [~nec ~bud] %pub %watch /foo]
+      [%deal [~nec ~bud /] %pub %watch /foo]
       :~  :-  ~[/init]  [%pass /sys/lag %a %heed ~bud]
           :-  ~[/init]  [%pass /sys/era %j %public-keys (sy ~bud ~)]
           :-  ~[/use/sub/0w1.d6Isf/out/~bud/pub/1/sub-foo/~bud /init]
@@ -40,7 +41,7 @@
     ==
   :-  t2  |.  :-  %|
   ::  subscriber ames handles %plea from gall, gives a packet to vere
-  ~&  >  'subscriber ames handles %plea from gall, gives a packet to vere'
+  ~?  >  dbug  'subscriber ames handles %plea from gall, gives a packet to vere'
   =^  t3  ames.nec
     %:  ames-check-call:v  ames.nec
       [~1111.1.1 0xdead.beef *roof]
@@ -60,7 +61,7 @@
     ==
   :-  t3  |.  :-  %|
   ::  publisher ames hears %watch, passes to gall
-  ~&  >  'publisher ames hears %watch, passes to gall'
+  ~?  >  dbug  'publisher ames hears %watch, passes to gall'
   =^  t4  ames.bud
     %:  ames-check-call:v  ames.bud
       [~1111.1.2 0xbeef.dead *roof]
@@ -77,7 +78,7 @@
     ==
   :-  t4  |.  :-  %|
   ::  publisher gall hears %watch from ames, passes to itself
-  ~&  >  'publisher gall hears %watch from ames, passes to itself'
+  ~?  >  dbug  'publisher gall hears %watch from ames, passes to itself'
   =^  t5  gall.bud
     %:  gall-check-call:v  gall.bud
       [~1111.1.2 0xbeef.dead *roof]
@@ -86,24 +87,24 @@
       :~  :-  ~[/init]  [%pass /sys/lag %a %heed ~nec]
           :-  ~[/init]  [%pass /sys/era %j %public-keys (sy ~nec ~)]
           :-  ~[/bone/~nec/0/1 //unix]
-          [%pass /sys/req/~nec/pub %g %deal [~nec ~bud] %pub %watch /foo]
+          [%pass /sys/req/~nec/pub %g %deal [~nec ~bud /] %pub %watch /foo]
       ==
     ==
   :-  t5  |.  :-  %|
   ::  publisher gall runs %pub with %watch, gives ack to itself
-  ~&  >  'publisher gall runs %pub with %watch, gives ack to itself'
+  ~?  >  dbug  'publisher gall runs %pub with %watch, gives ack to itself'
   =^  t6  gall.bud
     %:  gall-check-call:v  gall.bud
       [~1111.1.2 0xbeef.dead *roof]
       :-  ~[/sys/req/~nec/pub /bone/~nec/0/1 //unix]
-      [%deal [~nec ~bud] %pub %watch /foo]
+      [%deal [~nec ~bud /] %pub %watch /foo]
       :~  :-  ~[/sys/req/~nec/pub /bone/~nec/0/1 //unix]
           [%give %unto %watch-ack ~]
       ==
     ==
   :-  t6  |.  :-  %|
   ::  gall gives ack to ames
-  ~&  >  'gall gives ack to ames'
+  ~?  >  dbug  'gall gives ack to ames'
   =^  t7  gall.bud
     %:  gall-check-take:v  gall.bud
       [~1111.1.2 0xbeef.dead *roof]
@@ -114,7 +115,7 @@
     ==
   :-  t7  |.  :-  %|
   ::  publisher ames hears ack from gall, sends over the network
-  ~&  >  'publisher ames hears ack from gall, sends over the network'
+  ~?  >  dbug  'publisher ames hears ack from gall, sends over the network'
   =^  t8  ames.bud
     %:  ames-check-take:v  ames.bud
       [~1111.1.2 0xbeef.dead *roof]
@@ -128,7 +129,7 @@
     ==
   :-  t8  |.  :-  %|
   ::  subscriber ames hears watch-ack packet, gives to gall
-  ~&  >  'subscriber ames hears watch-ack packet, gives to gall'
+  ~?  >  dbug  'subscriber ames hears watch-ack packet, gives to gall'
   =^  t9  ames.nec
     %:  ames-check-call:v  ames.nec
       [~1111.1.3 0xdead.beef *roof]
@@ -148,7 +149,7 @@
     ==
   :-  t9  |.  :-  %|
   ::  gall gives %done to itself
-  ~&  >  'gall gives %done to itself'
+  ~?  >  dbug  'gall gives %done to itself'
   =^  t10  gall.nec
     %:  gall-check-take:v  gall.nec
       [~1111.1.3 0xdead.beef *roof]
@@ -161,7 +162,7 @@
     ==
   :-  t10  |.  :-  %|
   ::  gall gives watch-ack to itself
-  ~&  >  'gall gives watch-ack to itself'
+  ~?  >  dbug  'gall gives watch-ack to itself'
   =^  t11  gall.nec
     %:  gall-check-take:v  gall.nec
       [~1111.1.3 0xdead.beef *roof]
@@ -172,7 +173,7 @@
     ==
   :-  t11  |.  :-  %|
   ::  start the clog and kick process; give clog to publisher gall
-  ~&  >  'start the clog and kick process; give clog to publisher gall'
+  ~?  >  dbug  'start the clog and kick process; give clog to publisher gall'
   =^  t12  gall.bud
     %:  gall-check-take:v  gall.bud
       [~1111.1.4 0xbeef.dead *roof]
@@ -184,7 +185,7 @@
     ==
   :-  t12  |.  :-  %|
   ::  gall gives %kick %boon to ames
-  ~&  >  'gall gives %kick %boon to ames'
+  ~?  >  dbug  'gall gives %kick %boon to ames'
   =^  t13  gall.bud
     %:  gall-check-take:v  gall.bud
       [~1111.1.4 0xbeef.dead *roof]
@@ -195,7 +196,7 @@
     ==
   :-  t13  |.  :-  %|
   ::  ames gives kick over the network
-  ~&  >  'ames gives kick over the network'
+  ~?  >  dbug  'ames gives kick over the network'
   =^  t14  ames.bud
     %:  ames-check-take:v  ames.bud
       [~1111.1.4 0xbeef.dead *roof]
@@ -211,7 +212,7 @@
     ==
   :-  t14  |.  :-  %|
   ::  subscriber ames receives kick, gives to gall and gives ack to unix
-  ~&  >  'subscriber ames receives kick, gives to gall and gives ack to unix'
+  ~?  >  dbug  'subscriber ames receives kick, gives to gall and gives ack to unix'
   =^  t15  ames.nec
     %:  ames-check-call:v  ames.nec
       [~1111.1.5 0xdead.beef *roof]
@@ -233,7 +234,7 @@
     ==
   :-  t15  |.  :-  %|
   ::  subscriber gall receives kick %boon from ames, gives to self
-  ~&  >  'subscriber gall receives kick %boon from ames, gives to self'
+  ~?  >  dbug  'subscriber gall receives kick %boon from ames, gives to self'
   =^  t16  gall.nec
     %:  gall-check-take:v  gall.nec
       [~1111.1.5 0xdead.beef *roof]
@@ -247,7 +248,7 @@
       ==
     ==
   ::  subscriber gall receives %kick from itself
-  ~&  >  'subscriber gall receives %kick from itself'
+  ~?  >  dbug  'subscriber gall receives %kick from itself'
   =^  t17  gall.nec
     %:  gall-check-take:v  gall.nec
       [~1111.1.5 0xdead.beef *roof]
@@ -256,24 +257,24 @@
       [%gall %unto %kick ~]
       :~  :-  ~[/init]
           :*  %pass  /use/sub/0w1.d6Isf/out/~bud/pub/2/sub-foo/~bud
-              [%g %deal [~nec ~bud] %pub %watch /foo]
+              [%g %deal [~nec ~bud /gall/sub] %pub %watch /foo]
       ==  ==
     ==
   :-  t17  |.  :-  %|
   ::  gall receives %deal %watch from itself, passes to ames
-  ~&  >  'gall receives %deal %watch from itself, passes to ames'
+  ~?  >  dbug  'gall receives %deal %watch from itself, passes to ames'
   =^  t18  gall.nec
     %:  gall-check-call:v  gall.nec
       [~1111.1.5 0xdead.beef *roof]
       :-  ~[/use/sub/0w1.d6Isf/out/~bud/pub/2/sub-foo/~bud /init]
-      [%deal [~nec ~bud] %pub %watch /foo]
+      [%deal [~nec ~bud /] %pub %watch /foo]
       :~  :-  ~[/use/sub/0w1.d6Isf/out/~bud/pub/2/sub-foo/~bud /init]
           [%pass /sys/way/~bud/pub %a %plea ~bud %g /ge/pub [%0 %s /foo]]
       ==
     ==
   :-  t18  |.  :-  %|
   ::  subscriber ames sends new %watch
-  ~&  >  'subscriber ames sends new %watch'
+  ~?  >  dbug  'subscriber ames sends new %watch'
   =^  t19  ames.nec
     %:  ames-check-call:v  ames.nec
       [~1111.1.5 0xdead.beef *roof]
@@ -292,7 +293,7 @@
     ==
   :-  t19  |.  :-  %|
   ::  subscriber ames sends %cork
-  ~&  >  'subscriber ames sends %cork'
+  ~?  >  dbug  'subscriber ames sends %cork'
   =^  t20  ames.nec
     %:  ames-check-call:v  ames.nec
       [~1111.1.5 0xdead.beef *roof]
@@ -310,7 +311,7 @@
       ==
     ==
   ::  publisher ames hears %kick ack
-  ~&  >  'publisher ames hears %kick ack'
+  ~?  >  dbug  'publisher ames hears %kick ack'
   :-  t20  |.  :-  %|
   =^  t21  ames.bud
     %:  ames-check-call:v  ames.bud
@@ -324,7 +325,7 @@
       ==
     ==
   ::  publisher ames hears new %watch
-  ~&  >  'publisher ames hears new %watch'
+  ~?  >  dbug  'publisher ames hears new %watch'
   :-  t21  |.  :-  %|
   =^  t22  ames.bud
     %:  ames-check-call:v  ames.bud
@@ -339,7 +340,7 @@
       ==
     ==
   ::  publisher gall hears new %watch, passes to self
-  ~&  >  'publisher gall hears new %watch, passes to self'
+  ~?  >  dbug  'publisher gall hears new %watch, passes to self'
   :-  t22  |.  :-  %|
   =^  t23  gall.bud
     %:  gall-check-call:v  gall.bud
@@ -347,23 +348,23 @@
       :-  ~[/bone/~nec/0/5 //unix]
       [%plea ~nec %g /ge/pub [%0 %s /foo]]
       :~  :-  ~[/bone/~nec/0/5 //unix]
-          [%pass /sys/req/~nec/pub %g %deal [~nec ~bud] %pub %watch /foo]
+          [%pass /sys/req/~nec/pub %g %deal [~nec ~bud /] %pub %watch /foo]
       ==
     ==
   ::  publisher gall runs :pub's +on-watch, gives ack to self
-  ~&  >  'publisher gall runs :pub\'s +on-watch, gives ack to self'
+  ~?  >  dbug  'publisher gall runs :pub\'s +on-watch, gives ack to self'
   :-  t23  |.  :-  %|
   =^  t24  gall.bud
     %:  gall-check-call:v  gall.bud
       [~1111.1.7 0xbeef.dead *roof]
       :-  ~[/sys/req/~nec/pub /bone/~nec/0/5 //unix]
-      [%deal [~nec ~bud] %pub %watch /foo]
+      [%deal [~nec ~bud /] %pub %watch /foo]
       :~  :-  ~[/sys/req/~nec/pub /bone/~nec/0/5 //unix]
           [%give %unto %watch-ack ~]
       ==
     ==
   ::  publisher gall hears %watch-ack, gives to ames
-  ~&  >  'publisher gall hears %watch-ack, gives to ames'
+  ~?  >  dbug  'publisher gall hears %watch-ack, gives to ames'
   :-  t24  |.  :-  %|
   =^  t25  gall.bud
     %:  gall-check-take:v  gall.bud
@@ -374,7 +375,7 @@
       ==
     ==
   ::  publisher ames hears done from gall, sends over the network
-  ~&  >  'publisher ames hears done from gall, sends over the network'
+  ~?  >  dbug  'publisher ames hears done from gall, sends over the network'
   :-  t25  |.  :-  %|
   =^  t26  ames.bud
     %:  ames-check-take:v  ames.bud
@@ -388,7 +389,7 @@
       ==  ==
     ==
   ::  publisher ames hears %cork, passes to itself
-  ~&  >  'publisher ames hears %cork, passes to itself'
+  ~?  >  dbug  'publisher ames hears %cork, passes to itself'
   :-  t26  |.  :-  %|
   =^  t27  ames.bud
     %:  ames-check-call:v  ames.bud
@@ -398,22 +399,22 @@
           0xb.130c.ab37.ca24.49cd.aecb.23ba.70f1.6f1c.4d00.124e.c9a5.
           3413.3843.d81c.47c4.7040.6e62.3700.0200.0132.e1ab.9004
       ==
-      :~  :-  ~[//unix]  [%pass /bone/~nec/0/1 %a %plea ~nec [%a /close ~]]
+      :~  :-  ~[//unix]  [%pass /bone/~nec/0/1 %a %deep %cork ~nec 1]
       ==
     ==
   :-  t27  |.  :-  %|
   ::  publisher ames hear cork plea from self, give %done to self
-  ~&  >  'publisher ames hear cork plea from self, give %done to self'
+  ~?  >  dbug  'publisher ames hear cork plea from self, give %done to self'
   =^  t28  ames.bud
     %:  ames-check-call:v  ames.bud
       [~1111.1.8 0xbeef.dead *roof]
       :-  ~[/bone/~nec/0/1 //unix]
-      [%plea ~nec [%a /close ~]]
+      [%deep %cork ~nec 1]
       :~  :-  ~[/bone/~nec/0/1 //unix]  [%give %done ~]
       ==
     ==
-  ::  publisher ames hears cork done from self, sends ack packet
-  ~&  >  'publisher ames hears cork done from self, sends ack packet'
+  ::  publisher ames hears cork done from self, sends ack and $cork to self
+  ~?  >  dbug  'publisher ames hears cork done from self, sends ack and $cork to self'
   :-  t28  |.  :-  %|
   =^  t29  ames.bud
     %:  ames-check-take:v  ames.bud
@@ -428,7 +429,7 @@
       ==  ==
     ==
   ::  subscriber ames hears %watch-ack, gives to gall
-  ~&  >  'subscriber ames hears %watch-ack, gives to gall'
+  ~?  >  dbug  'subscriber ames hears %watch-ack, gives to gall'
   :-  t29  |.  :-  %|
   =^  t30  ames.nec
     %:  ames-check-call:v  ames.nec
@@ -447,7 +448,7 @@
       ==
     ==
   ::  subscriber gall hears new %watch-ack from ames, gives to self
-  ~&  >  'subscriber gall hears new %watch-ack from ames, gives to self'
+  ~?  >  dbug  'subscriber gall hears new %watch-ack from ames, gives to self'
   :-  t30  |.  :-  %|
   =^  t31  gall.nec
     %:  gall-check-take:v  gall.nec
@@ -464,7 +465,7 @@
       ==
     ==
   ::  subscriber gall hears new %watch-ack from self, tells :sub
-  ~&  >  'subscriber gall hears new %watch-ack from self, tells :sub'
+  ~?  >  dbug  'subscriber gall hears new %watch-ack from self, tells :sub'
   :-  t31  |.  :-  %|
   =^  t32  gall.nec
     %:  gall-check-take:v  gall.nec
@@ -474,8 +475,8 @@
       [%gall %unto %watch-ack ~]
       ~
     ==
-  ::  subscriber ames hears %cork ack
-  ~&  >  'subscriber ames hears %cork ack'
+  ::  subscriber ames hears %cork ack, sends $kill to self
+  ~?  >  dbug  'subscriber ames hears %cork ack, sends $kill to self'
   :-  t32  |.  :-  %|
   =^  t33  ames.nec
     %:  ames-check-call:v  ames.nec
@@ -485,9 +486,24 @@
           0x5f.f966.8e00.0449.bdec.9006.c7e5.1237.
           1d87.53fe.d7bb.ad00.0100.0223.c6a8.5804
       ==
-      [~[/ames] [%pass /pump/~bud/0 %b %rest ~1111.1.5..00.02.00]]~
+      :~  :-  ~[//unix]
+          [%pass /bone/~bud/0/0 %a %deep %kill ~bud 0]
+        ::
+          :-  ~[/ames]
+          [%pass /pump/~bud/0 %b %rest ~1111.1.5..00.02.00]
+      ==
     ==
-  :-  t33  |.  :-  %&
+  ::  subscriber ames hears $kill from self, deletes the flow
+  ~?  >  dbug  'subscriber ames hears $kill from self, deletes the flow'
+  :-  t33  |.  :-  %|
+  =^  t34  ames.nec
+    %:  ames-check-call:v  ames.nec
+      [~1111.1.10 0xdead.beef *roof]
+      :-  ~[/bone/~bud/0/0 //unix]
+      [%deep %kill ~bud 0]
+      ~
+    ==
+  :-  t34  |.  :-  %&
   ;:  weld
     %+  expect-eq
       !>  (sy 0 ~)

@@ -4,7 +4,7 @@
 =>  ..lull
 ~%  %zuse  ..part  ~
 |%
-++  zuse  %413
+++  zuse  %411
 ::                                                      ::  ::
 ::::                                                    ::  ::  (2) engines
   ::                                                    ::  ::
@@ -2357,6 +2357,149 @@
   ++  blake
     ~%  %blake  ..part  ~
     |%
+    ++  blake3
+      =<
+        =<  hash  :: cuter API
+        =+  [cv=iv flags=0b0]
+        ^?  ~/  %blake3
+        |%
+        ::
+        ++  keyed  |=(key=octs hash(cv q.key, flags f-keyedhash))
+        ::
+        ++  hash
+          ~/  %hash
+          |=  [out=@ud msg=octs]
+          ^-  @ux
+          =/  root  (root-output (turn (split-octs 13 msg) chunk-output))
+          %+  end  [3 out]
+          %+  rep  9
+          %+  turn  (gulf 0 (div out 64))
+          |=(i=@ (compress root(counter i)))
+        ::
+        ++  root-output
+          |=  outputs=(list output)
+          ^-  output
+          %+  set-flag  f-root
+          |-
+          =/  mid  (div (bex (xeb (dec (lent outputs)))) 2)
+          =+  [l=(scag mid outputs) r=(slag mid outputs)]
+          ?>  ?=(^ outputs)
+          ?~  t.outputs  i.outputs
+          %-  parent-output
+          [(compress $(outputs l)) (compress $(outputs r))]
+        ::
+        ++  parent-output
+          |=  [l=@ux r=@ux]
+          ^-  output
+          %+  set-flag  f-parent
+          [cv 0 (rep 8 ~[l r]) 64 flags]
+        ::
+        ++  chunk-output
+          ~/  %chunk-output
+          |=  [counter=@ chunk=octs]
+          ^-  output
+          %+  set-flag  f-chunkend
+          %+  roll  (split-octs 9 chunk)
+          |=  [[i=@ block=octs] prev=output]
+          ?:  =(0 i)  [cv counter q.block p.block (con flags f-chunkstart)]
+          [(output-cv prev) counter q.block p.block flags]
+        --
+      ~%  %blake3-impl  ..blake3  ~
+      |%
+      ::
+      +$  output
+        $:  cv=@ux
+            counter=@ud
+            block=@ux
+            blocklen=@ud
+            flags=@ub
+        ==
+      ::
+      ++  compress
+        ~/  %compress
+        |=  output
+        ^-  @
+        |^
+          =/  state  (can32 [8 cv] [4 iv] [2 counter] [1 blocklen] [1 flags] ~)
+          =.  state  (round state block)  =.  block  (permute block)
+          =.  state  (round state block)  =.  block  (permute block)
+          =.  state  (round state block)  =.  block  (permute block)
+          =.  state  (round state block)  =.  block  (permute block)
+          =.  state  (round state block)  =.  block  (permute block)
+          =.  state  (round state block)  =.  block  (permute block)
+          =.  state  (round state block)  (mix state (rep 8 ~[(rsh 8 state) cv]))
+        ::
+        ++  round
+          |=  [state=@ block=@]
+          ^+  state
+          |^
+            =.  state  (g 0x0 0x4 0x8 0xc 0x0 0x1)
+            =.  state  (g 0x1 0x5 0x9 0xd 0x2 0x3)
+            =.  state  (g 0x2 0x6 0xa 0xe 0x4 0x5)
+            =.  state  (g 0x3 0x7 0xb 0xf 0x6 0x7)
+            =.  state  (g 0x0 0x5 0xa 0xf 0x8 0x9)
+            =.  state  (g 0x1 0x6 0xb 0xc 0xa 0xb)
+            =.  state  (g 0x2 0x7 0x8 0xd 0xc 0xd)
+            =.  state  (g 0x3 0x4 0x9 0xe 0xe 0xf)
+            state
+          ::
+          ++  g
+            |=  [a=@ b=@ c=@ d=@ mx=@ my=@]
+            ^+  state
+            =.  state  (set a :(sum32 (get a) (get b) (getb mx)))
+            =.  state  (set d (rox (get d) (get a) 16))
+            =.  state  (set c :(sum32 (get c) (get d)))
+            =.  state  (set b (rox (get b) (get c) 12))
+            =.  state  (set a :(sum32 (get a) (get b) (getb my)))
+            =.  state  (set d (rox (get d) (get a) 8))
+            =.  state  (set c :(sum32 (get c) (get d)))
+            =.  state  (set b (rox (get b) (get c) 7))
+            state
+          ::
+          ++  getb  (curr get32 block)
+          ++  get  (curr get32 state)
+          ++  set  |=([i=@ w=@] (set32 i w state))
+          ++  rox  |=([a=@ b=@ n=@] (ror32 n (mix a b)))
+          --
+        ::
+        ++  permute
+          |=  block=@
+          ^+  block
+          (rep 5 (turn perm (curr get32 block)))
+        --
+      ::  constants and helpers
+      ::
+      ++  iv  0x5be0.cd19.1f83.d9ab.9b05.688c.510e.527f.
+                a54f.f53a.3c6e.f372.bb67.ae85.6a09.e667
+      ++  perm  (rip 2 0x8fe9.5cb1.d407.a362)
+      ++  f-chunkstart    ^~  (bex 0)
+      ++  f-chunkend      ^~  (bex 1)
+      ++  f-parent        ^~  (bex 2)
+      ++  f-root          ^~  (bex 3)
+      ++  f-keyedhash     ^~  (bex 4)
+      ++  f-derivekeyctx  ^~  (bex 5)
+      ++  f-derivekeymat  ^~  (bex 6)
+      ++  set-flag  |=([f=@ o=output] o(flags (con flags.o f)))
+      ++  fe32   ~(. fe 5)
+      ++  ror32  (cury ror:fe32 0)
+      ++  sum32  sum:fe32
+      ++  can32  (cury can 5)
+      ++  get32  |=([i=@ a=@] (cut 5 [i 1] a))
+      ++  set32  |=([i=@ w=@ a=@] (sew 5 [i 1 w] a))
+      ++  output-cv  |=(o=output `@ux`(rep 8 ~[(compress o)]))
+      ++  split-octs
+        |=  [a=bloq msg=octs]
+        ^-  (list [i=@ octs])
+        ?>  ?=(@ q.msg)  :: simplfy jet logic
+        =/  per  (bex (sub a 3))
+        =|  chunk-octs=(list [i=@ octs])
+        =|  i=@
+        |-
+        ?:  (lte p.msg per)  [[i msg] chunk-octs]
+        :-  [i per^(end a q.msg)]
+        $(i +(i), msg (sub p.msg per)^(rsh a q.msg))
+      --
+    ::
     ::TODO  generalize for both blake2 variants
     ++  blake2b
       ~/  %blake2b
@@ -3319,6 +3462,7 @@
     ~%  %leer  ..part  ~
     |=  txt=cord
     ^-  wain
+    ?~  txt  ~
     =/  len=@  (met 3 txt)
     =/  cut  =+(cut -(a 3, c 1, d txt))
     =/  sub  sub
@@ -4297,8 +4441,11 @@
             ~&(%base-64-padding-err-two ~)
           =/  len  (sub (mul 3 (div (add lat dif) 4)) dif)
           :+  ~  len
-          %+  swp  3
-          (rep [0 6] (flop (weld dat (reap dif 0))))
+          =/  res  (rsh [1 dif] (rep [0 6] (flop dat)))
+          =/  amt  (met 3 res)
+          ::  left shift trailing zeroes in after byte swap
+          =/  trl  ?:  (lth len amt)  0  (sub len amt)
+          (lsh [3 trl] (swp 3 res))
         --
       --
     ::
@@ -4331,7 +4478,7 @@
     ~%  %json  ..part  ~
     |%
     ::                                                  ::  ++en:json:html
-    ++  en                                              ::  encode JSON to tape
+    ++  en                                              ::  encode JSON to cord
       ~%  %en  +>+  ~
       |^  |=  jon=^json
           ^-  cord
@@ -4399,11 +4546,11 @@
       |^  |=  txt=cord
           ^-  (unit ^json)
           (rush txt apex)
-      ::                                                ::  ++abox:de-json:html
+      ::                                                ::  ++abox:de:json:html
       ++  abox                                          ::  array
         %+  stag  %a
         (ifix [sel (wish ser)] (more (wish com) apex))
-      ::                                                ::  ++apex:de-json:html
+      ::                                                ::  ++apex:de:json:html
       ++  apex                                          ::  any value
         %+  knee  *^json  |.  ~+
         %+  ifix  [spac spac]
@@ -4415,13 +4562,13 @@
           abox
           obox
         ==
-      ::                                                ::  ++bool:de-json:html
+      ::                                                ::  ++bool:de:json:html
       ++  bool                                          ::  boolean
         ;~  pose
           (cold & (jest 'true'))
           (cold | (jest 'false'))
         ==
-      ::                                                ::  ++esca:de-json:html
+      ::                                                ::  ++esca:de:json:html
       ++  esca                                          ::  escaped character
         ;~  pfix  bas
           =*  loo
@@ -4435,23 +4582,23 @@
             (sear ~(get by wow) low)
           ;~(pose doq fas bas loo unic)
         ==
-      ::                                                ::  ++expo:de-json:html
+      ::                                                ::  ++expo:de:json:html
       ++  expo                                          ::  exponent
         ;~  (comp weld)
           (piec (mask "eE"))
           (mayb (piec (mask "+-")))
           (plus nud)
         ==
-      ::                                                ::  ++frac:de-json:html
+      ::                                                ::  ++frac:de:json:html
       ++  frac                                          ::  fraction
         ;~(plug dot (plus nud))
-      ::                                                ::  ++jcha:de-json:html
+      ::                                                ::  ++jcha:de:json:html
       ++  jcha                                          ::  string character
         ;~(pose ;~(less doq bas (shim 32 255)) esca)
-      ::                                                ::  ++mayb:de-json:html
+      ::                                                ::  ++mayb:de:json:html
       ++  mayb                                          ::  optional
         |*(bus=rule ;~(pose bus (easy ~)))
-      ::                                                ::  ++numb:de-json:html
+      ::                                                ::  ++numb:de:json:html
       ++  numb                                          ::  number
         ;~  (comp weld)
           (mayb (piec hep))
@@ -4462,31 +4609,31 @@
           (mayb frac)
           (mayb expo)
         ==
-      ::                                                ::  ++obje:de-json:html
+      ::                                                ::  ++obje:de:json:html
       ++  obje                                          ::  object list
         %+  ifix  [(wish kel) (wish ker)]
         (more (wish com) pear)
-      ::                                                ::  ++obox:de-json:html
+      ::                                                ::  ++obox:de:json:html
       ++  obox                                          ::  object
         (stag %o (cook malt obje))
-      ::                                                ::  ++pear:de-json:html
+      ::                                                ::  ++pear:de:json:html
       ++  pear                                          ::  key-value
         ;~(plug ;~(sfix (wish stri) (wish col)) apex)
-      ::                                                ::  ++piec:de-json:html
+      ::                                                ::  ++piec:de:json:html
       ++  piec                                          ::  listify
         |*  bus=rule
         (cook |=(a=@ [a ~]) bus)
-      ::                                                ::  ++stri:de-json:html
+      ::                                                ::  ++stri:de:json:html
       ++  stri                                          ::  string
         %+  sear
           |=  a=cord
           ?.  (sune a)  ~
           (some a)
         (cook crip (ifix [doq doq] (star jcha)))
-      ::                                                ::  ++spac:de-json:html
+      ::                                                ::  ++spac:de:json:html
       ++  spac                                          ::  whitespace
         (star (mask [`@`9 `@`10 `@`13 ' ' ~]))
-      ::                                                ::  ++unic:de-json:html
+      ::                                                ::  ++unic:de:json:html
       ++  unic                                          ::  escaped UTF16
         =*  lob  0x0
         =*  hsb  0xd800
@@ -4529,7 +4676,7 @@
             ==
           ==
         --
-      ::                                                ::  ++utfe:de-json:html
+      ::                                                ::  ++utfe:de:json:html
       ++  utfe                                          ::  UTF-8 sequence
         ;~  less  doq  bas
           =*  qua
@@ -4590,18 +4737,18 @@
             ==
           ;~(pose qua tre dos)
         ==
-      ::                                                ::  ++wish:de-json:html
+      ::                                                ::  ++wish:de:json:html
       ++  wish                                          ::  with whitespace
         |*(sef=rule ;~(pfix spac sef))
       ::  XX: These gates should be moved to hoon.hoon
-      ::                                                ::  ++sune:de-json:html
+      ::                                                ::  ++sune:de:json:html
       ++  sune                                          ::  cord UTF-8 sanity
         |=  b=@t
         ^-  ?
         ?:  =(0 b)  &
         ?.  (sung b)  |
         $(b (rsh [3 (teff b)] b))
-      ::                                                ::  ++sung:de-json:html
+      ::                                                ::  ++sung:de:json:html
       ++  sung                                          ::  char UTF-8 sanity
         |^  |=  b=@t
             ^-  ?
@@ -4682,7 +4829,7 @@
           &((gte a bot) (lte a top))
         --
       ::  XX: This +teff should overwrite the existing +teff
-      ::                                                ::  ++teff:de-json:html
+      ::                                                ::  ++teff:de:json:html
       ++  teff                                          ::  UTF-8 length
         |=  a=@t
         ^-  @
@@ -4695,22 +4842,6 @@
         4
       --  ::de
     --  ::json
-  ::  +en-json:html: encode json to tape
-  ::
-  ::  XX: deprecated; use +en:json:html
-  ::
-  ++  en-json
-    |=  jon=^json
-    ^-  tape
-    (trip (en:json jon))
-  ::  +de-json:html: parse cord to (unit json)
-  ::
-  ::  XX: deprecated; use +de:json:html
-  ::
-  ++  de-json
-    |=  txt=cord
-    ^-  (unit ^json)
-    (de:json txt)
   ::                                                    ::  ++en-xml:html
   ++  en-xml                                            ::  xml printer
     =<  |=(a=manx `tape`(apex a ~))
@@ -4792,7 +4923,7 @@
       =+  spa=;~(pose comt whit)
       %+  knee  *manx  |.  ~+
       %+  ifix
-        [;~(plug (punt decl) (star spa)) (star spa)]
+        [;~(plug (more spa decl) (star spa)) (star spa)]
       ;~  pose
         %+  sear  |=([a=marx b=marl c=mane] ?.(=(c n.a) ~ (some [a b])))
           ;~(plug head many tail)
@@ -5265,10 +5396,10 @@
   ::
   =>  |%
       ++  sein
-        |=  [rof=roof our=ship now=@da who=ship]
+        |=  [rof=roof pov=path our=ship now=@da who=ship]
         ;;  ship
         =<  q.q  %-  need  %-  need
-        (rof ~ %j `beam`[[our %sein %da now] /(scot %p who)])
+        (rof [~ ~] pov %j `beam`[[our %sein %da now] /(scot %p who)])
       --
   ::  middle core: stateless queries for default numeric sponsorship
   ::
