@@ -341,6 +341,8 @@
   |=  [=tid =wire =sign-arvo]
   =/  yarn  (~(get by tid.state) tid)
   ?~  yarn
+    ::  XX too verbose some times, remove?
+    ::
     %-  (slog leaf+"spider got sign for non-existent {<tid>}" ~)
     `state
   (take-input u.yarn ~ %sign wire sign-arvo)

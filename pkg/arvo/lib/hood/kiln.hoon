@@ -1,11 +1,12 @@
 /-  *hood
-/+  strandio
+/+  strandio, sole
 =,  clay
 =,  space:userlib
 =,  format
 =*  dude  dude:gall
 |%
-+$  state     state-10
++$  state     state-11
++$  state-11  [%11 pith-11]
 +$  state-10  [%10 pith-10]
 +$  state-9   [%9 pith-9]
 +$  state-8   [%8 pith-9]
@@ -19,7 +20,8 @@
 +$  state-0   [%0 pith-0]
 +$  any-state
   $~  *state
-  $%  state-10
+  $%  state-11
+      state-10
       state-9
       state-8
       state-7
@@ -32,6 +34,7 @@
       state-0
   ==
 ::
++$  pith-11  [sole-id=(unit sole-id:sole) pith-10]
 +$  pith-10
   $:  rem=(map desk per-desk)
       nyz=@ud
@@ -483,7 +486,9 @@
       $(ks t.ks)
     ==
   ::
-  ?>  ?=(%10 -.old)
+  =?  old  ?=(%10 -.old)
+    [%11 sole-id=~ +.old]
+  ?>  ?=(%11 -.old)
   =.  state  old
   abet:(emil cards-9)
 ::
@@ -557,6 +562,7 @@
     %kiln-uninstall          =;(f (f !<(_+<.f vase)) poke-uninstall)
     %kiln-unmount            =;(f (f !<(_+<.f vase)) poke-unmount)
     %kiln-unsync             =;(f (f !<(_+<.f vase)) poke-unsync)
+    %kiln-rate               =;(f (f !<(_+<.f vase)) poke-rate)
   ==
 ::
 ++  poke-autocommit
@@ -770,7 +776,7 @@
       (clap a b furl)
   |-  ^-  (list (unit toro))
   =+  b=.^(arch %cy a)
-  ?:  ?=([^ ~] b)  (snoc c `(fray a))  
+  ?:  ?=([^ ~] b)  (snoc c `(fray a))
   =?  c  ?=(^ fil.b)  (snoc c `(fray a))
   %-  zing
   %+  turn  ~(tap by dir.b)
@@ -796,8 +802,8 @@
     %+  skim  desks
     |=  dek=desk
     ?:  (~(has in .^((set desk) %cd /(scot %p our)//(scot %da now))) dek)
-      &  
-    ~>  %slog.(fmt "desk does not yet exist: {<dek>}")  |   
+      &
+    ~>  %slog.(fmt "desk does not yet exist: {<dek>}")  |
   |=(=desk [%pass /kiln/suspend %arvo %c %zest desk %dead])
 ::
 ++  poke-sync
@@ -822,7 +828,7 @@
   ?~  got=(~(get by rock) loc)
     abet:(spam leaf+"desk does not exist: {<loc>}" ~)
   ~>  %slog.(fmt "uninstalling {<loc>}")
-  =?  ..on-init  !=(+<:got %dead)  
+  =?  ..on-init  !=(+<:got %dead)
     (emit %pass /kiln/uninstall %arvo %c %zest loc %dead)
   ?~  sync=(~(get by sources) loc)
     abet
@@ -846,6 +852,51 @@
     abet:(spam (render "not syncing" [sud her syd ~]:hus) ~)
   =.  zyn  (~(del by zyn) hus)
   abet:(spam (render "cancelling sync" sud.hus her.hus syd.hus kid.u.got) ~)
+::
+++  poke-rate
+  |=  [[i=@ud t=@ud] file=path [have=@ud wait=@ud] [size=@ud total=@ud] [bytes=@ud ms=@ud]]
+  |^  =<  abet
+  %-  emil
+  ?~  sole-id  ~
+  =/  =sole-effect:sole  pro+[& %$ dial]
+  [%give %fact [(id-to-path:sole u.sole-id)]~ sole-effect/!>(sole-effect)]~
+  ::
+  ++  color  ?:(=(i 100) %g %y)
+  ++  dial
+    ?:  =([0 0] [i t])  "> "
+    =/  bars=@ud  (div i 2)
+    :~  [``~ " file: "]  [[`%un ~ ~] "{<file>}"]  [``~ " "]
+        [``~ (weld `tape`(turn (gulf 0 bars) |=(* '-')) ">")]
+        [``~ " ["]
+        [```color "{?:((lth i 10) "0" ~)}{<i>}.{?:((lth t 10) "0" ~)}{<t>}%"]
+        [``~ "] [ "]
+        [``~ "{<have>}/{<wait>} done"]
+        [``~ "] ("]
+        [```%r bandwith]  :: XX color to show increase/decreaase in bandwith
+        [``~ ")"]
+    ==
+  ::
+  ++  bandwith  :: XX some other smarter way to get the right unit
+    ^-  tape
+    =/  band
+      %+  mul:rs  .1e3
+      ?:  =(0 ms)  (sun:rs bytes)
+      (div:rs (sun:rs bytes) (sun:rs ms))
+    =+  int=(need (toi:rs band))
+    ?:  &((lth int 1.000) (gte int 100))
+      "{<(abs:si int)>} Kb/s."
+    ?.  (gth int 1.000)
+      "{<(abs:si int)>} b/s."
+    =+  short=(div:rs band (sun:rs 1.000))
+    =+  int=(need (toi:rs short))
+    =+  dec=(abs:si (need (toi:rs (mul:rs .100 (sub:rs short (san:rs int))))))
+    "{<(abs:si int)>}.{<dec>} Mb/s."
+  --
+::
+++  put-sole
+  |=  =sole-id:sole
+  ^+  abet
+  abet(sole-id `sole-id)
 ::  +peer: handle %watch
 ::
 ++  peer
@@ -945,7 +996,6 @@
   :~  [%pass /commit %arvo %c [%dirk mon.commit-timer]]
       [%pass way.commit-timer %arvo %b [%wait nex.commit-timer]]
   ==
-::
 ::
 ++  spam
   |=  mes=(list tank)
@@ -1134,7 +1184,7 @@
     ?.  (~(has by zyx) syd her sud)
       (pure:m !>(%done))
     ~>  %slog.(fmt "downloading update for {here}")
-    ;<  =riot:clay  bind:m  (warp:strandio her sud ~ %sing %v ud+let /)
+    ;<  =riot:clay  bind:m  (rate:strandio her sole-id sud ~ %sing %v ud+let /)
     ?>  ?=(^ riot)
     (pure:m !>(%done))
   ::
@@ -1175,6 +1225,8 @@
       ?:  ?=(%| -.p.sign-arvo)
         ::  ~>  %slog.(fmt "download failed into {here}; retrying sync")
         ::  %-  (slog p.p.sign-arvo)
+        ::  XX notify clay to remove the thread from the listeners?
+        ::
         init
       ::
       ~>  %slog.(fmt "finished downloading update for {here}")
