@@ -243,6 +243,19 @@
     ?:  ?=(%nuke -.q.i.apps)  $(apps t.apps)
     =/  ap-core  (ap-yoke:ap p.i.apps [~ our prov] q.i.apps)
     $(apps t.apps, mo-core ap-abet:(ap-rake:ap-core all))
+  ::  +mo-lave: delete all incoming stale subscriptions
+  ::
+  ++  mo-lave
+    |=  [prov=path subs=(list [v=?(%g %a) =ship =dude =duct])]
+    ^+  mo-core
+    |-  ^+  mo-core
+    ?~  subs  mo-core
+    ?~  yoke=(~(get by yokes.state) dude.i.subs)
+      $(subs t.subs)
+    =?  mo-core  ?=(%live -.u.yoke)
+      =/  ap-core  (ap-yoke:ap dude.i.subs [~ ship.i.subs prov] u.yoke)
+      ap-abet:(ap-lave:ap-core [v duct]:i.subs)
+    $(subs t.subs)
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
@@ -526,10 +539,10 @@
         ::  2019/12
         ::
         [;;(remote-request i.t.t.t.wire) outstanding.state]
-      ::  send a %cork if we get a %nack upon initial subscription
+      ::  send a %cork if we get a %nack for a %poke, %watch or %watch-as
       ::
       =?  mo-core
-          &(?=(^ err) |(?=(%watch-as remote-request) ?=(%watch remote-request)))
+          &(?=(^ err) ?+(remote-request %.y %leave %.n, %missing %.n))
         (mo-pass sys+wire %a %cork ship)
       ::
       ?-  remote-request
@@ -542,8 +555,7 @@
         ::  if we get an %ack for a %leave, send %cork. otherwise,
         ::  the /nacked-leaves timer will re-send the %leave eventually.
         ::
-        ?~  err
-          (mo-pass sys+wire %a %cork ship)
+        ?~  err  (mo-pass sys+wire %a %cork ship)
         ::  if first time hearing a %nack for a %leave, after upgrade
         ::  or if all outstanding %leaves have been handled, set up timer
         ::
@@ -1713,6 +1725,16 @@
         =/  sat  !<(ship-state:ames q.u.u.sky)
         ?>(?=(%known -.sat) (some +.sat))
       --
+    ::  +ap-lave: delete stale incoming subscriptions in %gall
+    ::
+    ++  ap-lave
+      |=  [v=?(%a %g) =duct]
+      ^+  ap-core
+      =;  core=_ap-core
+        core(agent-duct agent-duct)
+      ?:  ?=(%a v)
+        ap-kill-up(agent-duct duct)
+      ap-load-delete(agent-duct duct)
     ::  +ap-mule: run virtualized with intercepted scry, preserving type
     ::
     ::    Compare +mute and +mule.  Those pass through scry, which
@@ -1950,6 +1972,7 @@
       %nuke  mo-abet:(mo-nuke:mo-core prov dude.task)
       %doff  mo-abet:(mo-doff:mo-core prov +.task)
       %rake  mo-abet:(mo-rake:mo-core prov +.task)
+      %lave  mo-abet:(mo-lave:mo-core prov +.task)
       %spew  mo-abet:(mo-spew:mo-core veb.task)
       %sift  mo-abet:(mo-sift:mo-core dudes.task)
       %trim  [~ gall-payload]
@@ -2410,6 +2433,17 @@
     ?&  =(path (scag (lent path) spur))
         !=(path spur)
     ==
+  ::
+  ?:  ?&  =(%y care)
+          =(~ path)
+          =([%$ %da now] coin)
+          =(our ship)
+      ==
+    :+  ~  ~
+    :-  %yokes  !>  ^+  yokes.state
+    %-  ~(rep by yokes.state)
+    |=  [[=dude =yoke] acc=_yokes.state]
+    ?:(?=(%live -.yoke) acc (~(del by acc) dude))
   ::
   ?:  ?&  =(%z care)
           =(our ship)
