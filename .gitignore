@@ -61,11 +61,6 @@ pkg/*/*.a
 *.dll
 *.dylib
 
-# Landscape Dev
-urbitrc
-*-min.js
-pkg/interface/link-webext/web-ext-artifacts
-
 # Certificates
 *.pem
 *.key
