@@ -13367,6 +13367,7 @@
             ;~  pfix  hax
             ;~  pose
               ;~(pfix (jest %aint) (stag %wtgl (toad expb)))
+              ;~(pfix (jest %assert-not) (stag %wtgl (toad expb)))
               ;~(pfix (jest %assert) (stag %wtgr (toad expb)))
               ;~(pfix (jest %bind) (stag %mcgl (toad expz)))
               ;~(pfix (jest %cast) (stag %kthp (toad exqc)))
