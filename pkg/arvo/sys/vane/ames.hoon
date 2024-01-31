@@ -1954,9 +1954,11 @@
           ?.  ?=([%deep %nack *] task)  task
           =/  msg  =>([cue=cue arg=message-blob.task] ~+((cue arg)))
           =/  hed
-            ?:  =(1 (end 0 nack-bone.task))          %plea
-            ?:  =(0 (end 0 (rsh 0 nack-bone.task)))  %boon
-            %naxplanation
+            ?:  =(1 (end 0 nack-bone.task))          
+              ?:  =(0 (end 0 (rsh 0 nack-bone.task)))
+                %boon
+              %naxplanation
+            %plea
           [%deep %nack ship.task nack-bone.task ;;(message [hed msg])]
         ==
       --
@@ -5665,9 +5667,11 @@
           |=  b=message-blob
           ^-  message
            =/  hed
-             ?:  =(1 (end 0 bone))          %plea
-             ?:  =(0 (end 0 (rsh 0 bone)))  %boon
-             %naxplanation
+             ?:  =(1 (end 0 bone))          
+               ?:  =(0 (end 0 (rsh 0 bone)))
+                 %boon
+               %naxplanation
+             %plea
            =/  msg  =>([cue=cue arg=b] ~+((cue arg)))
           ;;(message [hed msg])
       ==  ==  ==
