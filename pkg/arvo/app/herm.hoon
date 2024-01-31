@@ -5,7 +5,6 @@
 ::  keep relevant mark conversions in cache for performance
 ::
 /$  blit-to-json  %blit  %json
-/$  json-to-blit  %json  %blit
 /$  json-to-task  %json  %herm-task
 ::
 =,  jael

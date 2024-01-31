@@ -27,14 +27,15 @@
   ::  +run-test: execute an individual test
 ::
 ++  run-test
-  |=  [bem=beam test=test-func]
-  ^-  [ok=? =tang]
+  |=  [pax=path test=test-func]
+  ^-  [ok=? output=tang result=tang]
+  =+  name=(spud pax)
   =+  run=(mule test)
   ?-  -.run
-    %|  |+p.run
+    %|  |+[p.run [leaf+"CRASHED {name}" ~]]
     %&  ?:  =(~ p.run)
-          &+~
-        |+(flop `tang`[leaf+"FAILED" p.run])
+          &+[p.run [leaf+"OK      {name}" ~]]
+        |+[p.run [leaf+"FAILED  {name}" ~]]
   ==
 ::  +resolve-test-paths: add test names to file paths to form full identifiers
 ::
@@ -138,7 +139,9 @@
 ?^  fiz
   ;<  [cor=(unit vase) =tang]  bind:m  (build-file beam.i.fiz)
   ?~  cor
-    gather-tests(fiz t.fiz, build-failed [[beam.i.fiz tang] build-failed])
+    ~>  %slog.3^leaf+"FAILED  {(spud s.beam.i.fiz)} (build)"
+    gather-tests(fiz t.fiz, build-ok |)
+  ~>  %slog.0^leaf+"built   {(spud s.beam.i.fiz)}"
   =/  arms=(list test-arm)  (get-test-arms u.cor)
   ::  if test path specified an arm prefix, filter arms to match
   =?  arms  ?=(^ test.i.fiz)
@@ -154,10 +157,9 @@
   |=  [=beam *]
   beam
 %+  roll  (resolve-test-paths test-arms)
-|=  [[=beam =test-func] failed=_build-failed]
-^+  failed
-=/  res  (run-test beam test-func)
-?:  -.res
-  failed
-:_  failed
-[beam +.res]
+|=  [[=path =test-func] ok=_build-ok]
+^+  ok
+=/  res  (run-test path test-func)
+%-  (%*(. slog pri ?:(ok.res 0 3)) output.res)
+%-  (%*(. slog pri ?:(ok.res 0 3)) result.res)
+&(ok ok.res)
