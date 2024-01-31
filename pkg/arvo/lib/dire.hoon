@@ -145,6 +145,19 @@
   :-  [a d]
   $(d -.d, a (peg a 2), s [[(peg a 3) +.d] s])
 ::
++|  %messages
+::
+++  mess
+  =>  |%
+      +$  auth  (each @uxJ @uxI) :: &+sig, |+hmac
+      +$  gage  $@(~ page)
+      +$  sage  (trel spar:ames auth gage)
+      --
+  $%  [%page sage]
+      [%peek p=spar:ames]
+      [%poke p=spar:ames q=sage]
+  ==
+::
 ::  packet de/serialization
 ::
 +|  %packets
@@ -155,6 +168,21 @@
 ++  pact
   =>  |%
       +$  name  [p=ship q=rift r=path s=bloq t=num=@udF]
+      +$  auth
+        ::
+        ::  %0 for fragment 0 or auth packet
+        ::    ~      for 1-fragment message and auth packets
+        ::    [~ %&] for >4-fragment messages
+        ::    [~ %&] for 2-fragment messages
+        ::    [~ %|] for 3-4-fragment
+        ::
+        ::  %1 for fragments 1 - N/2
+        ::  ~  for fragments (N/2)+1 - N
+        ::
+        $@  ~
+        $%  [%0 p=auth:mess q=(unit $@(@uxI (pair @uxI @uxI)))]
+            [%1 p=(pair @uxI @uxI)]
+        ==
       +$  data  [tot=@udF aut=@ux dat=@]
       +$  lane  $@  @ux
                 $%  [%if p=@ifF q=@udE]
@@ -367,6 +395,65 @@
 ::
 ++  data
   |%
+  ++  ennn
+    |=  [tot=@udF aut=auth:pact dat=@]
+    ^-  plot
+    =/  lot  (met 3 (end 5 tot))
+    ::
+    =/  [[aul=@ubB aum=plat] aur=@ubB aup=plat]
+      ?~  aut           [[0b0 0] 0b0 0]
+      ?:  ?=(%| -.aut)  [[0b1 [32 p]] 0b0 32 q]:p.aut
+      :-  =>  p.aut
+          ?:(?=(%& -) [0b10 64 p] [0b11 32 p])
+      =/  [aur=@ubB has=(list plat)]
+        ?~    q.aut  [0b0 ~]
+        ?@  u.q.aut  [0b1 [1 u.q.aut] ~]
+        [0b10 [[1 p] 1 q ~]:u.q.aut]
+      [aur s+~ 8 has]
+    ::
+    =/  len  (met 3 dat)
+    =/  men
+      ?:((lth len 3) [len 0] [0b11 (met 3 len)])
+    :+  bloq=3
+      [s+~ 0 [2 (dec lot)] [2 aul] [2 aur] [2 -.men] ~]
+    [[lot tot] aum aup [+.men len] [len dat] ~]
+  ::
+  ++  deee
+    |=  a=bite
+    =/  b=[bloq step]  [0 ?@(a 0 (rig [bloq.a 0] step.a))]
+    |=  dat=@
+    ^-  [[tot=@udF aut=auth:pact dat=@] bloq step]
+    =+  ^=  [[bot [aul aur] men] b]  ((hew b dat) [2 [2 2] 2])
+    =+  ^=  [len nex]                [(rig [bloq.b 3] step.b) +(bot)]
+    =/  tot  (cut 3 [len nex] dat)
+    =.  len  (add len nex)
+    =^  mes=(unit auth:mess)  nex
+      ?+  aul  !!
+        %0b0   ?>(=(0b0 aur) [~ nex])
+        %0b1   ?>(=(0b10 aur) [~ nex])
+        %0b10  [`&+(cut 3 [len 64] dat) 64]
+        %0b11  [`|+(cut 3 [len 32] dat) 32]
+      ==
+    =.  len  (add len nex)
+    =^  pac=(unit $@(@uxI (pair @uxI @uxI)))  nex
+      ?+  aur  !!
+        %0b0   [~ 0]
+        %0b1   [`(cut 3 [len 32] dat) 32]
+        %0b10  [`[(cut 3 [len 32] dat) (cut 3 [(add len 32) 32] dat)] 64]
+      ==
+    =/  aut=auth:pact
+      ?~  mes
+        ?:  =(0b0 aul)  ~
+        ?>  &(=(0b1 aul) ?=([~ @ @] pac))
+        [%1 u.pac]
+      [%0 u.mes pac]
+    =.  len  (add len nex)
+    =^  lat  len
+      ?.  =(3 men)  [men len]
+      [(cut 3 [len 1] dat) +(len)]
+    =.  nex  lat
+    [[tot aut (cut 3 [len nex] dat)] 3 (add len nex)]
+  ::
   ++  en
     |=  [tot=@udF aut=@ux dat=@]
     ^-  plot
@@ -404,6 +491,7 @@
       ==
     [[tot aut (cut 3 [len nex] dat)] 3 (add len nex)]
   --
+::
 ++  lss
   =,  blake:crypto
   |%
@@ -614,20 +702,6 @@
   $:  nex=(each %auth @ud)
       tot=@ud
       los=state:verifier:lss
-  ==
-::
-:: XX need auth data on %page and %poke
-::    but maybe only when injected externally
-::
-+$  mess-auth
-  [typ=?(%sig %hmac) dat=@ux]
-  :: [%page p=spar:ames q=auth r=page]
-+$  gage  $@(~ page)
-::
-+$  mess
-  $%  [%page p=spar:ames q=page]
-      [%peek p=spar:ames]
-      [%poke p=spar:ames q=spar:ames r=page]
   ==
 ::
 ++  parse-packet  |=(a=@ -:($:de:pact a))
