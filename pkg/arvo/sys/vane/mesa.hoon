@@ -743,7 +743,32 @@
     ::
     ::  XX we need to track data for both sending %pokes and receiving them
     ::  (sequence numbers in the receiver enforce exactly-one message delivery),
+                                                                :: ^
+    ::      ~zod (sends-plea to ~nec)                           to-vane
+    ::    ----------                                               |
+    ::   [%plea task]   ^  [%make-poke task] (1 packet)    +fo-core (%sink)
+    ::        |         |         |                                |
+    ::    +ev-req       | [%peek for-ack]  [%send %poke]        +pe-core
+    ::        |         |         |                                |
+    ::    +pe-core      |         |                            +ma:ev-res
+    ::        |         |         |                                |
+:: +call:fo-core(%done) |         |                           [%mess %poke]
+    ::        |_________|         |________________________________| unix
+    ::                                                      ------------
+    ::                                                          ~nec (gets %poke plea)
     ::
+::          ~nec
+::        ----------                      |--------------
+::       [%done err=~]             give %response       |
+::            |                           |             |           to-vane
+::        +ev-res                      +ma-page         |              |
+::            |                           |             | +take-ack:fo-core(%response)
+::        +pe-core                    +ma:ev-res        |              |
+::            |                           |             |       +take:ma:ev-res
+:: +take:fo-core(%done)                   |             |              |
+::            |                       [%mess %page]     |     /[wire-of-ack]/%int
+::         emit ack (unix)                | unix        |              |
+::                                       ~zod           |_______[%response =page]
     ::  ++fo core focuses on (map bone=@ud flow-state)
     ::
     |%
@@ -843,6 +868,7 @@
           =<  fo-abut
           (fo-call:(fo-abed:fo hen bone pe-chan:pe-core) plea/plea)
         ::
+        ::  XX this can be done internally in fo-call:fo-core
         %+  roll  gifts
         |=  [gift=[seq=@ud =spar =path] co=_(req-emil moves-flow)]  :: XX =gift
         ::  XX %ames call itself with a %make-poke tasks
