@@ -183,15 +183,15 @@
         $%  [%0 p=auth:mess q=(unit $@(@uxI (pair @uxI @uxI)))]
             [%1 p=(pair @uxI @uxI)]
         ==
-      +$  data  [tot=@udF aut=@ux dat=@]
+      +$  data  [tot=@udF aut=auth:pact dat=@]
       +$  lane  $@  @ux
                 $%  [%if p=@ifF q=@udE]
                     [%is p=@isH q=@udE]
                 ==
       +$  next  (list lane)
       +$  pact  $%  [%page p=name q=data r=next]
-                    [%peek p=name]
                     [%poke p=name q=name r=data]
+                    [%peek p=name]
                 ==
       --
   ::
@@ -395,7 +395,7 @@
 ::
 ++  data
   |%
-  ++  ennn
+  ++  en
     |=  [tot=@udF aut=auth:pact dat=@]
     ^-  plot
     =/  lot  (met 3 (end 5 tot))
@@ -418,7 +418,7 @@
       [s+~ 0 [2 (dec lot)] [2 aul] [2 aur] [2 -.men] ~]
     [[lot tot] aum aup [+.men len] [len dat] ~]
   ::
-  ++  deee
+  ++  de
     |=  a=bite
     =/  b=[bloq step]  [0 ?@(a 0 (rig [bloq.a 0] step.a))]
     |=  dat=@
@@ -452,43 +452,6 @@
       ?.  =(3 men)  [men len]
       [(cut 3 [len 1] dat) +(len)]
     =.  nex  lat
-    [[tot aut (cut 3 [len nex] dat)] 3 (add len nex)]
-  ::
-  ++  en
-    |=  [tot=@udF aut=@ux dat=@]
-    ^-  plot
-    =/  mot  (met 3 (end 5 tot))
-    =/  mut  ?:(=(0 aut) 0 1)
-    =/  lut  (end 3 (met 3 aut))
-    =/  len  (met 3 dat)
-    =/  men  (met 3 len)
-    :+  bloq=3
-      [s+~ 0 [2 (dec mot)] [1 mut] [5 men] ~]
-    [[mot tot] [mut lut] [lut aut] [men len] [len dat] ~]
-  ::
-  ++  de
-    |=  a=bite
-    =/  b=[bloq step]  [0 ?@(a 0 (rig [bloq.a 0] step.a))]
-    |=  dat=@
-    ^-  [[tot=@udF aut=@ux dat=@] bloq step]
-    =+  ^=  [[bot mut men] b]  ((hew b dat) [2 1 5])
-    =+  ^=  [len nex]          [(rig [bloq.b 3] step.b) +(bot)]
-    =/  tot  (cut 3 [len nex] dat)
-    =:  len  (add len nex)
-        nex  mut
-      ==
-    =/  lut  (cut 3 [len nex] dat)
-    =:  len  (add len nex)
-        nex  lut
-      ==
-    =/  aut  (cut 3 [len nex] dat)
-    =:  len  (add len nex)
-        nex  men
-      ==
-    =/  lat  (cut 3 [len nex] dat)
-    =:  len  (add len nex)
-        nex  lat
-      ==
     [[tot aut (cut 3 [len nex] dat)] 3 (add len nex)]
   --
 ::
@@ -759,7 +722,10 @@
           !!
         ::  proof is inlined
         ::  XX cut+validate sig/hmac
-        =/  proof=(list @ux)  (rip 8 aut.q.pac)
+        =/  proof=(list @ux)
+          =>  aut.q.pac
+          ?>  ?=([%0 *] .)
+          ?~(q ~ ?@(u.q [u.q ~] [p q ~]:u.q))
         =.  proof  [(leaf-hash:lss t.p.pac dat.q.pac) proof]
         =|  root=@ux :: XX compute from proof + leaf
         ?~  state=(init:verifier:lss tot.q.pac root proof)
@@ -775,7 +741,7 @@
         ?.  ?=([%& %auth] nex.u.ps.u.res)
           [~ ax]
         ::  XX cut+validate sig/hmac
-        =/  root=@ux  aut.q.pac
+        =|  root=@ux   :: XX compute from proof
         =/  proof=(list @ux)  (rip 8 dat.q.pac)
         ?~  state=(init:verifier:lss tot.q.pac root proof)
           [~ ax]
@@ -789,10 +755,8 @@
         [~ ax]
       ::
       =/  pair=(unit [l=@ux r=@ux])
-        =/  p  (rip 8 aut.q.pac)
-        ?.  ?=([* * *] p)
-          ~
-        `[i.p i.t.p]
+        ?~  aut.q.pac  ~
+        `?>(?=([%1 *] .) p):aut.q.pac
       =/  msg  (met 3 dat.q.pac)^dat.q.pac
       ?~  state=(verify-msg:verifier:lss los.u.ps.u.res msg pair)
         [~ ax]
@@ -1058,22 +1022,28 @@
         [~ ~]
       =/  lss-proof  (build:lss (met 3 ser)^ser)  :: XX cache this
       =/  =pact:pact
-        =/  nam
-          [our u.ryf pat.tyl u.boq u.fag]
-        =/  dat
-          =/  aut=@
-            ?:  &(=(0 u.fag) (lte wid 4))
-              ::  initial fragment for a small message
-              ?:  =(1 wid)
-                0  :: XX sig|hmac
-              (rep 8 (tail proof.lss-proof))
-            ::  subsequent fragment; provide a pair of sibling hashes
-            ?:  (gte u.fag (lent pairs.lss-proof))
-              0
-            (cat 8 (snag u.fag pairs.lss-proof))
-          [wid aut (cut u.boq [u.fag 1] ser)]
+        =/  nam  [our u.ryf pat.tyl u.boq u.fag]
+        =/  aut=auth:pact
+          =/  mes=auth:mess  ?:(?=(%sign typ.msg) &+aut.msg |+aut.msg)
+          ?:  =(0 u.fag)
+            :+  %0  mes
+            ?:  =(1 wid)  ~  ::  single fragment
+            ?:  (gth wid 4)  `root.lss-proof
+            =/  tal  (tail proof.lss-proof)
+            ?:  ?=(?(%1 %2) wid)
+              ?>  ?=([* ~] tal)
+              `i.tal
+            ?>  ?=([* * ~] tal)
+            `[i i.t]:tal
+          ::
+          ::  subsequent fragment; provide a pair of sibling hashes
+          ::
+          ?:  (gte u.fag (lent pairs.lss-proof))  ~
+          [%1 (snag u.fag pairs.lss-proof)]
         ::
-        [%page nam dat ~] :: XX dat
+        =/  dat  [wid aut (cut u.boq [u.fag 1] ser)]
+        [%page nam dat ~]
+      ::
       ::  XX produce typed packet or serialized?
       ::
       ``[%packet !>(pact)]
@@ -1095,7 +1065,11 @@
         ~
       =/  msg  ;;([typ=?(%sign %hmac) aut=@ ser=@] q.q.u.u.res)  :: XX types
       =*  ser  ser.msg
-      =/  aut  *@
+      =/  aut
+        ::  NB: root excluded as it can be recalculated by the client
+        ::
+        =/  mes=auth:mess  ?:(?=(%sign typ.msg) &+aut.msg |+aut.msg)
+        [%0 mes ~]
       =/  wid  (met u.boq ser)
       ?<  ?=(%0 wid)
       ?.  (gth wid u.fag)
