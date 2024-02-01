@@ -809,6 +809,63 @@
         (rash bone.inner-path.path dem)
       --
     ::
+    ::  XX add parsing for flow-source = ?(%int %ext %out)
+    ++  ev-validate-wire
+      |=  [hen=duct =wire]
+      ^-  (unit [=bone seq=@ud channel peer-state])
+      |^  ?~  parsed=(parse-bone-wire wire)
+        ::  no-op
+        ::
+        ~>  %slog.0^leaf/"mesa: dropping malformed wire: {(spud wire)}"
+        ~
+      ?>  ?=([@ her=ship *] u.parsed)
+      =*  her  her.u.parsed
+      =+  pe-core=(pe-abed-got:pe hen her)
+      ?:  ?&  ?=([%new *] u.parsed)
+              (lth rift.u.parsed rift.peer-state.pe-core)
+          ==
+        ::  ignore events from an old rift
+        ::
+        ~
+      =/  [=bone seq=@ud]
+          ?>  ?=([%new *] u.parsed)
+          [bone seq]:u.parsed
+      ::   ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
+      ~?  ?=([%old *] u.parsed)
+        ::  XX log if this is an old wire
+        *
+      ::  XX add bone to pe-chan?
+      `[bone seq pe-chan:pe-core]
+      ::  +parse-bone-wire: decode ship, bone and rift from wire from local vane
+      ::  XX %old handling still needed?
+      ::
+      ++  parse-bone-wire
+        |=  =^wire
+        ^-  %-  unit
+            $%  [%old her=ship =bone]
+                [%new her=ship =rift =bone seq=@ud]
+            ==
+        ?.  ?|  ?=([%flow @ @ @ ~] wire) ::?|  ?=([%bone @ @ @ ~] wire)
+                ?=([%flow @ @ ~] wire)   ::    ?=([%bone @ @ ~] wire)
+            ==                           ::
+          ::  ignore malformed wires
+          ::
+          ~
+        ?+    wire  ~
+            [%flow @ @ ~]
+          ~
+          ::`[%old `@p`(slav %p i.t.wire) `@ud`(slav %ud i.t.t.wire)]
+        ::
+            [%flow @ @ @ @ ~]
+          %-  some
+          :*      %new
+                her=`@p`(slav %p i.t.wire)
+              rift=`@ud`(slav %ud i.t.t.wire)
+            bone=`@ud`(slav %ud i.t.t.t.wire)
+          seq=`@ud`(slav %ud i.t.t.t.t.wire)
+        ==  ==
+      --
+    ::
     +|  %entry-points
     ::
     ++  ev-req  ::  send %peek/%poke requests
@@ -837,12 +894,53 @@
         ==
       ::
       ::  should ack and payloads responses be handled here instead of by ev-res?
-      ++  take  !!
+      ++  take
+        =>  |%  +$  res-task  $:  =wire
+                                  $%  $>(%boon gift:ames)
+                              ==  ==
+            --
+        |=  task=res-task
+        ^+  req-core
+        ?~  u-bone-her=(ev-validate-wire hen wire.task)
+          req-core
+        =/  [=bone seq=@ud pe-chan=[=channel =peer-state]]  u.u-bone-her
+        ::(req-poke [ship $% / payload]:task)
+        (req-boon-poke her.channel.pe-chan bone pe-chan payload.task)
       ::
       +|  %internals
       ::
+      ++  req-boon-poke  :: XX refactor with req-poke
+        |=  [=ship =bone pe-chan=[=channel =peer-state] load=*]
+        ::  XX handle corked/closing bones
+       ::
+        ::  XX add seq to the gift, for tracking it in the wire
+        ::
+        =^  [gifts=(list [seq=@ud spar path]) moves-flow=_moves]  ax
+          =<  fo-abut
+          (fo-call:(fo-abed:fo hen bone pe-chan) boon/load)
+        ::
+        ::  XX this can be done internally in fo-call:fo-core
+        %+  roll  gifts
+        |=  [gift=[seq=@ud =spar =path] co=_(req-emil moves-flow)]  :: XX =gift
+        ::  XX %ames call itself with a %make-poke tasks
+        ::  on a wire used to infer the listener (the %poke %plea request; this)
+        ::  when getting the %response $page with the %ack (tagged with %int)
+        ::  and similarly for %boon payloads (tagged with %ext)
+        ::
+         =/  =wire
+          :~  %flow               :: flow request triggered "internally"
+              rcvr=[(scot %p ship)]
+              rift=[(scot %ud rift.peer-state.pe-chan)]
+              bone=[(scot %ud bone)]
+              seq=[(scot %ud seq.gift)]
+              %int      ::  ?(for-acks=%int for-payloads=%ext to-vanes=%out)
+                        ::  XX skip, but use a %deep task instead?
+           ==
+        (req-emit:co hen %pass wire %a make-poke/[spar path]:gift)
+      ::
       ++  req-poke
-        |=  [=ship =plea]
+        |=  [=ship vane=@tas =wire payload=*]
+            ::[load=$%($>(%boon gift:ames) $>(%plea task:ames)) wire=(unit wire)]
         ^+  req-core
         =/  ship-state  (~(get by peers.ax) ship)
         ::
@@ -866,7 +964,7 @@
         ::
         =^  [gifts=(list [seq=@ud spar path]) moves-flow=_moves]  ax
           =<  fo-abut
-          (fo-call:(fo-abed:fo hen bone pe-chan:pe-core) plea/plea)
+          (fo-call:(fo-abed:fo hen bone pe-chan:pe-core) plea/[vane wire payload])
         ::
         ::  XX this can be done internally in fo-call:fo-core
         %+  roll  gifts
@@ -876,7 +974,7 @@
         ::  when getting the %response $page with the %ack (tagged with %int)
         ::  and similarly for %boon payloads (tagged with %ext)
         ::
-         =/  =wire
+         =/  =^wire
           :~  %flow               :: flow request triggered "internally"
               rcvr=[(scot %p ship)]
               rift=[(scot %ud rift.peer-state)]
@@ -1215,11 +1313,8 @@
           |=  [=wire load=$>(%page mess)]
           ^+  res-core
           ::  XX same as ma-poke-done; move to helper arm ?
-          =^  u-bone-her  res-core
-            ::  XX  use core structure to "get" things from the path?
-            ::
-            (res-validate-wire wire)
-          ?~  u-bone-her  res-core
+          ?~  u-bone-her=(ev-validate-wire hen wire)
+            res-core
           ::  XX use $pith for this?
           =/  [=bone seq=@ud pe-chan=[channel peer-state]]  u.u-bone-her
           =/  flow=?(%int %ext %out)  %int  ::  XX support %ext payloads?
@@ -1249,8 +1344,8 @@
         ++  ma-poke-done
           |=  [=wire error=(unit error)]
           ^+  res-core
-          =^  u-bone-her  res-core  (res-validate-wire wire)
-          ?~  u-bone-her  res-core
+          ?~  u-bone-her=(ev-validate-wire hen wire)
+            res-core
           ::  XX use $pith for this
           =/  [=bone seq=@ud pe-chan=[channel peer-state]]  u.u-bone-her
           =/  flow=?(%int %ext %out)  %out
@@ -1264,63 +1359,7 @@
             (fo-take:(fo-abed:fo hen bone pe-chan) %out done/error)
           (res-emil moves)
         ::
-        +|  %internals
-        ::
-        ++  res-validate-wire
-          |=  =wire
-          ^-  [(unit [=bone seq=@ud channel peer-state]) _res-core]
-          |^  ?~  parsed=(parse-bone-wire wire)
-            ::  no-op
-            ::
-            ~>  %slog.0^leaf/"mesa: dropping malformed wire: {(spud wire)}"
-            `res-core
-          ?>  ?=([@ her=ship *] u.parsed)
-          =*  her  her.u.parsed
-          =+  pe-core=(pe-abed-got:pe hen her)
-          ?:  ?&  ?=([%new *] u.parsed)
-                  (lth rift.u.parsed rift.peer-state.pe-core)
-              ==
-            ::  ignore events from an old rift
-            ::
-            `res-core
-          =/  [=bone seq=@ud]
-              ?>  ?=([%new *] u.parsed)
-              [bone seq]:u.parsed
-          ::   ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
-          =?  res-core  ?=([%old *] u.parsed)
-            ::  XX log if this is an old wire
-            res-core
-          ::  XX add bone to pe-chan?
-          [`[bone seq pe-chan:pe-core] res-core]
-        ::  +parse-bone-wire: decode ship, bone and rift from wire from local vane
-        ::  XX %old handling still needed?
-        ::
-        ++  parse-bone-wire
-          |=  =^wire
-          ^-  %-  unit
-              $%  [%old her=ship =bone]
-                  [%new her=ship =rift =bone seq=@ud]
-              ==
-          ?.  ?|  ?=([%flow @ @ @ ~] wire) ::?|  ?=([%bone @ @ @ ~] wire)
-                  ?=([%flow @ @ ~] wire)   ::    ?=([%bone @ @ ~] wire)
-              ==                           ::
-            ::  ignore malformed wires
-            ::
-            ~
-          ?+    wire  ~
-              [%flow @ @ ~]
-            ~
-            ::`[%old `@p`(slav %p i.t.wire) `@ud`(slav %ud i.t.t.wire)]
-          ::
-              [%flow @ @ @ @ ~]
-            %-  some
-            :*      %new
-                  her=`@p`(slav %p i.t.wire)
-                rift=`@ud`(slav %ud i.t.t.wire)
-              bone=`@ud`(slav %ud i.t.t.t.wire)
-            seq=`@ud`(slav %ud i.t.t.t.t.wire)
-          ==  ==
-        --
+        :: +|  %internals
         ::
         --
       ::
@@ -1567,7 +1606,7 @@
               fo-core
             =/  [[seq=@ud request=mesa-message] load=_loads.state]
               (pop:fo-mop loads.state)
-            ?>  ?=(%plea -.request)  :: XX handle %boon and %cork
+            :: ?>  ?=(%plea -.request)  :: XX handle %boon and %cork
             ~!  request
             =:  send-window.state  (dec send-window.state)
                 next-load.state    +(next-load.state)
@@ -1604,8 +1643,29 @@
         |=  [seq=@ud mess=mesa-message]
         ?+  -.mess  !!
           %plea  (fo-sink-plea seq +.mess)
-          ::  %boon  (fo-sink-boon seq +.mess)
+          %boon  (fo-sink-boon seq +.mess)
+          ::  %cork  (fo-sink-cork seq +.mess)
         ==
+      ::
+      ++  fo-sink-boon
+        |=  [seq=@ud message=*] :: XX =error
+        ^+  fo-core
+        =/  =duct
+          :: XX +pe-got-duct
+          ~|(%dangling-bone^her^bone (~(got by by-bone.ossuary.peer-state) bone))
+        =.  fo-core  (fo-emit duct %give %boon message)
+        ::  XX handle a previous crash
+        :: =?  nax.state  ?=(^ error)
+        ::   =?  nax.state  (gth seq 10)
+        ::     ::  only keep the last 10 nacks
+        ::     ::
+        ::     (~(del in nax.state) (sub seq 10))
+        ::   (~(put in nax.state) seq)
+        ::  ack unconditionally
+        ::
+         =.  last-acked.state  +(last-acked.state)
+        ::  XX emit ack to unix
+        fo-core
       ::
       ++  fo-sink-plea
         |=  [seq=@ud =plea]
@@ -1770,7 +1830,7 @@
     ::
       %plea  req-abet:(~(req-poke ev-req hen) [ship plea]:task)
       %keen  req-abet:(~(req-peek ev-req hen) +>.task)  ::  XX sec
-    ::  XX internal %ames request to %peek for paths
+    ::  from internal %ames request
     ::
       %make-peek  (~(ev-make-peek ev hen) p.task)
       %make-poke  (~(ev-make-poke ev hen) p.task q.task)
@@ -1810,9 +1870,9 @@
     ::
       [@ %done *]  res-abet:(take:ma:~(. ev-res hen) wire %done error.sign)
     ::
-    ::  XX  vane gifts
+    ::  vane gifts
     ::
-      :: [@ %boon *]  res-abet:(take:ma:~(. ev-req hen) wire %boon payload.sign)
+      [@ %boon *]  req-abet:(take:~(. ev-req hen) wire %boon payload.sign)
     ::
     ::  network responses: acks/poke payloads
     ::
