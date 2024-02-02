@@ -1738,6 +1738,7 @@
     %c  %clay
     %d  %dill
     %e  %eyre
+    %f  %faye
     %g  %gall
     %i  %iris
     %j  %jael

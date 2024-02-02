@@ -2697,6 +2697,43 @@
   +$  user  knot                                        ::  username
   --  ::eyre
 ::                                                      ::::
+::::                    ++faye                            ::  (1f) state machine
+  ::                                                    ::::
+++  faye  ^?
+  |%
+  +$  gift                                              ::  out result <-$
+    $%  [%meta p=vase]
+    ==
+  +$  task                                              ::  in request ->$
+    $~  [%vega ~]                                       ::
+    $%  [%write =path =cage]                            ::  cancel alarm
+        [%togl =path]                                   ::  toggle scamp
+        [%load =path =scamp]                            ::  load scamp
+        [%nuke =path]                                   ::  delete scamp
+        $>(%vega vane-task)                             ::  report upgrade
+    ==
+  ++  scamp
+    =<  form
+    |%
+    +$  bowl
+      $:  our=ship     ::  identity of ship
+          eny=@uvJ     ::  entropy
+          now=@da      ::  timestamp
+      ==
+    ++  form
+      $_  ^|
+      |_  bowl
+      ++  on-write
+        |~  [mark noun]
+        *[(list move) _^|(..on-write)]
+      ::
+      ++  on-read
+        |~  path
+        *(unit (unit cage))
+      --
+    --
+  --  ::faye
+::                                                      ::::
 ::::                    ++gall                            ::  (1g) extensions
   ::                                                    ::::
 ++  gall  ^?
@@ -3457,6 +3494,7 @@
       gift:clay
       gift:dill
       gift:eyre
+      gift:faye
       gift:gall
       gift:iris
       gift:jael
@@ -3469,6 +3507,7 @@
       task:behn
       task:dill
       task:eyre
+      task:faye
       task:gall
       task:iris
       task:jael
@@ -3482,6 +3521,7 @@
       [%c task:clay]
       [%d task:dill]
       [%e task:eyre]
+      [%f task:faye]
       [%g task:gall]
       [%i task:iris]
       [%j task:jael]
@@ -3505,6 +3545,7 @@
       [%clay gift:clay]
       [%dill gift:dill]
       [%eyre gift:eyre]
+      [%faye gift:faye]
       [%gall gift:gall]
       [%iris gift:iris]
       [%jael gift:jael]
