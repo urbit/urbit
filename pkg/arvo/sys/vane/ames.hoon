@@ -483,7 +483,7 @@
 ++  is-our-bulk
   |=  [our=ship =ames-state =balk]
   ^-  ?
-  =-  ~?  =(| -) 
+  =-  ~?  =(| -)
         [%fine-mismatch our=[rift life]:ames-state her=[her rif lyf]:balk]
       -
   ?&  =(our her.balk)
@@ -1204,7 +1204,7 @@
       =packet-pump-state
   ==
 +$  ames-state-14  ames-state-16
-+$  ames-state-15  ames-state-16
++$  ames-state-15  ames-state-16-bosdev
 +$  ames-state-16
   $+  ames-state-16
   $:  peers=(map ship ship-state-16)
@@ -1217,13 +1217,26 @@
       cong=[msg=@ud mem=@ud]
   ==
   ::
-  +$  alien-agenda-17
-    $+  alien-agenda
-    $:  messages=(list [=duct =plea])
-        packets=(set =blob)
-        heeds=(set duct)
-        keens=(jug path duct)
-    ==
++$  alien-agenda-17
+  $+  alien-agenda
+  $:  messages=(list [=duct =plea])
+      packets=(set =blob)
+      heeds=(set duct)
+      keens=(jug path duct)
+  ==
+::
++$  ames-state-16-bosdev
+  $+  ames-state-16-bosdev
+  $:  peers=(map ship ship-state-17)
+      =unix=duct
+      =life
+      =rift
+      crypto-core=acru:ames
+      =bug
+      snub=[form=?(%allow %deny) ships=(set ship)]
+      cong=[msg=@ud mem=@ud]
+      dead=(unit [=duct =wire date=@da])
+  ==
 ::
 +$  ship-state-16
   $+  ship-state-16
@@ -1322,15 +1335,15 @@
 ::
 +$  queued-event-16
   $+  queued-event-16
-  $%  [%call =duct wrapped-task=(hobo task-16)]
+  $%  [%call =duct wrapped-task=(hobo task-17)]
       [%take =wire =duct =sign]
   ==
 ::
-+$  task-16
-  $+  task-16
-  $%  [%kroc dry=?]
-      $<(%kroc task-17)
-  ==
++$  task-16  task-17
+::   $+  task-16
+::   $%  [%kroc dry=?]
+::       $<(%kroc task-17)
+::   ==
 ::  $bug: debug printing configuration
 ::
 ::    veb: verbosity toggles
@@ -1480,7 +1493,7 @@
             [%13 ames-state-13]
             [%14 ames-state-14]
             [%15 ames-state-15]
-            [%16 ames-state-16]
+            [%16 ames-state-16-bosdev]
             [%17 ames-state-17]
             [%18 ames-state-17]
             [%19 ^ames-state]
@@ -1696,9 +1709,9 @@
               $:  %16
               $%  $:  %larva
                       events=(qeu queued-event-16)
-                      state=ames-state-16
+                      state=ames-state-16-bosdev
                   ==
-                  [%adult state=ames-state-16]
+                  [%adult state=ames-state-16-bosdev]
               ==  ==
               $:  %17
               $%  $:  %larva
@@ -1949,12 +1962,12 @@
         =/  task=task-17  ((harden task-17) wrapped-task.e)
         %=  e
           wrapped-task
-          ?:  ?=(%keen -.task) 
+          ?:  ?=(%keen -.task)
             [%keen ~ +.task]
           ?.  ?=([%deep %nack *] task)  task
           =/  msg  =>([cue=cue arg=message-blob.task] ~+((cue arg)))
           =/  hed
-            ?:  =(1 (end 0 nack-bone.task))          
+            ?:  =(1 (end 0 nack-bone.task))
               ?:  =(0 (end 0 (rsh 0 nack-bone.task)))
                 %boon
               %naxplanation
@@ -2662,7 +2675,7 @@
           =/  [key=@ ,path]  (~(got by chain.u.per) (slav %ud idx.wire))
           =/  raw=@t
             (dy:crub:crypto key (slav %uv cyf.rest.path.s))
-          =/  pax=path   
+          =/  pax=path
             (stab raw)
           =;  dat=(unit (unit page))
             (emit duct [%give %near [ship.s pax] dat])
@@ -3236,7 +3249,7 @@
         |=  =path
         ^+  event-core
         =/  key=@  (shaz eny) :: TODO: check key width
-        =/  num=@ud  
+        =/  num=@ud
           ?~  latest=(pry:on:chain chain.ames-state)
             1
           .+(key.u.latest)
@@ -3282,7 +3295,7 @@
           (emit duct %pass wir %a %keen ~ ship lav)
         :: XX: key exchange over ames forces all encrypted scries to be
         :: to a known peer
-        ?>  ?=(~ sec) 
+        ?>  ?=(~ sec)
         %^  enqueue-alien-todo  ship  ship-state
         |=  todos=alien-agenda
         todos(keens (~(put ju keens.todos) path duct))
@@ -5565,74 +5578,24 @@
   ++  state-14-to-15
     |=  old=ames-state-14
     ^-  ames-state-15
-    old(rift !<(=rift q:(need (need (rof [~ ~] /ames %j our-beam)))))
+    :: old(rift !<(=rift q:(need (need (rof [~ ~] /ames %j our-beam)))))
+    *ames-state-16-bosdev
   ::
   ++  state-15-to-16
     |=  old=ames-state-15
-    ^-  ames-state-16
+    ^-  ames-state-16-bosdev
     ::  re-initialize default congestion control values, if bunted
     ::
-    old(cong ?.(=(cong.old [0 0]) cong.old [5 100.000]))
+    *ames-state-16-bosdev
+    :: old(cong [?.(=(cong.old [0 0]) cong.old [5 100.000]) ~])
   ::
   ++  state-16-to-17
-    |=  old=ames-state-16
+    |=  old=ames-state-16-bosdev
     ^-  ames-state-17
     %=    old
-        cong
-      :+  cong.old
-        flow/~
+        dead
+      :-  [%flow dead.old]
       cork/`[~[/ames] /recork `@da`(add now ~d1)]
-      ::
-        peers
-      %-  ~(run by peers.old)
-      |=  ship-state=ship-state-16
-      ^-  ship-state-17
-      ?.  ?=(%known -.ship-state)
-        ship-state
-      |^
-      %=  ship-state
-        snd    (~(run by snd.ship-state) message-pump-16-to-17)
-        keens  (~(run by keens.ship-state) keen-state-16-to-17)
-        rcv    (~(urn by rcv.ship-state) remove-outbound-naxplanations)
-      ==
-      ::
-      ++  message-pump-16-to-17
-        |=  pump=message-pump-state-16
-        ^-  message-pump-state-17
-        %=    pump
-            metrics.packet-pump-state
-          [rto rtt rttvar ssthresh cwnd counter]:metrics.packet-pump-state.pump
-        ==
-      ::
-      ++  keen-state-16-to-17
-        |=  keen-state=keen-state-16
-        ^-  ^keen-state
-        %=  keen-state
-          metrics  [rto rtt rttvar ssthresh cwnd counter]:metrics.keen-state
-        ==
-      ::
-      ++  remove-outbound-naxplanations
-        |=  [=bone sink=message-sink-state]
-        ^+  sink
-        =/  target=^bone  (mix 0b10 bone)
-        ?.  =(%3 (mod target 4))
-          sink
-        ?~  pump=(~(get by snd.ship-state) target)
-          sink
-        %_    sink
-            nax
-          %-  ~(rep in nax.sink)
-          |=  [=message-num nax=(set message-num)]
-          ::  we keep messages in the queue that have not been acked.
-          ::  if the message-num for the naxplanation we sent is
-          ::  less than the current message, +pump-done:mu had been called,
-          ::  so the message-num can be safely removed
-          ::
-          =?  nax  (gte message-num current.u.pump)
-            (~(put in nax) message-num)
-          nax
-        ==
-      --
     ==
   ++  state-18-to-19
     |=  old=ames-state-18
@@ -5645,7 +5608,7 @@
       %-  ~(run by peers.old)
       |=  s=ship-state-17
       ^-  ship-state
-      ?:  ?=(%alien -.s)  
+      ?:  ?=(%alien -.s)
         %=  s
           keens  [keens.s ~]
         ==
@@ -5667,7 +5630,7 @@
           |=  b=message-blob
           ^-  message
            =/  hed
-             ?:  =(1 (end 0 bone))          
+             ?:  =(1 (end 0 bone))
                ?:  =(0 (end 0 (rsh 0 bone)))
                  %boon
                %naxplanation
@@ -5699,7 +5662,7 @@
         [%fine %shut kef=@ enc=@ ~]
       =/  key-idx  (slav %ud kef.tyl)
       =/  key  (got:on:chain chain.ames-state (slav %ud kef.tyl))
-      =/  pat=(unit path)  
+      =/  pat=(unit path)
         (rush `@t`(dy:crub:crypto key.key (slav %uv enc.tyl)) stap)
       ?~  pat
         [~ ~]
@@ -5709,7 +5672,7 @@
         ~&  key-validation-failed/[u.pat key-idx chain.ames-state]
         [~ ~]
       =/  res  (rof [~ ~] /ames (as-omen:balk u.blk))
-      ?~  res  
+      ?~  res
         ~&  %bailing-close
         [~ ~]
       ?~  u.res
