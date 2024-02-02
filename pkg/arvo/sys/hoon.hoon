@@ -1795,6 +1795,12 @@
       [b ~ ~]
     bal(l.a $(a l.a))
   ::
+  ++  run                                               ::  apply gate to values
+    |*  b=gate
+    |-
+    ?~  a  a
+    [n=(b n.a) l=$(a l.a) r=$(a r.a)]
+  ::
   ++  tap                                               ::  adds list to end
     =+  b=`(list _?>(?=(^ a) n.a))`~
     |-  ^+  b
