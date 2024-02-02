@@ -2715,7 +2715,11 @@
         :-  ~
         =/  m  ~(val by fan.p)
         %+  gas:on-path  *_fan.p
-        %+  turn  (gulf 1 ~(wyt by fan.p))
+        %+  turn  
+          ^-  (list @)                                                           
+          =/  wit  ~(wyt by fan.p)                                               
+          ?:  =(0 wit)  ~                                                        
+          (gulf 1 wit)
         |=  a=@ud
         [a (snag (dec a) m)]
       ==
