@@ -1954,9 +1954,11 @@
           ?.  ?=([%deep %nack *] task)  task
           =/  msg  =>([cue=cue arg=message-blob.task] ~+((cue arg)))
           =/  hed
-            ?:  =(1 (end 0 nack-bone.task))          %plea
-            ?:  =(0 (end 0 (rsh 0 nack-bone.task)))  %boon
-            %naxplanation
+            ?:  =(1 (end 0 nack-bone.task))          
+              ?:  =(0 (end 0 (rsh 0 nack-bone.task)))
+                %boon
+              %naxplanation
+            %plea
           [%deep %nack ship.task nack-bone.task ;;(message [hed msg])]
         ==
       --
@@ -5652,25 +5654,26 @@
           keens  [keens.s ~]
       ::
           snd.+
-        %-  malt
-        %+  turn
-          ~(tap by snd.+.s)
+        %-  ~(urn by snd.+.s)
         |=  [=bone m=message-pump-state-17]
-        :-  bone
+        =/  hed
+          ?:  =(1 (end 0 bone))
+            ?:  =(0 (end 0 (rsh 0 bone)))
+              %boon
+            %naxplanation
+          %plea
         %=    m
             unsent-messages
-          %-  ~(gas to *(qeu message))
-          %+  turn
-            ~(tap to unsent-messages.m)
+          =*  um  unsent-messages.m
+          =>  [..message hed=hed um=um ..cue]
+          ~+  %-  ~(run to um)
           |=  b=message-blob
           ^-  message
-           =/  hed
-             ?:  =(1 (end 0 bone))          %plea
-             ?:  =(0 (end 0 (rsh 0 bone)))  %boon
-             %naxplanation
-           =/  msg  =>([cue=cue arg=b] ~+((cue arg)))
-          ;;(message [hed msg])
-      ==  ==  ==
+          =>  [..message hed=hed ..cue arg=b]
+          ~+  ;;(message [hed (cue arg)])
+        ==
+      ==
+    ==
   --
 ::  +scry: dereference namespace
 ::
