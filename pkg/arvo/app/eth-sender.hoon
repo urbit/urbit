@@ -153,7 +153,7 @@
     %cx
     (scot %p our.bowl)
     %base
-    (scot %da now.bowl)
+    (en-cose da+now.bowl ud+tick.bowl)
     path
   ==
 ::
@@ -164,7 +164,7 @@
   =-  [%pass [%write path] %arvo %c %info -]
   :-  i.t.path
   =-  &+[t.t.t.path -]~
-  =/  y  .^(arch %cy path)
+  =/  y  .^(arch %cy (en-pick now.bowl tick.bowl path))
   ?~  fil.y
     ins+txt+!>(tox)
   mut+txt+!>(tox)
@@ -176,7 +176,7 @@
   =-  [%pass [%write path] %arvo %c %info -]
   :-  i.t.path
   =-  &+[t.t.t.path -]~
-  =/  y  .^(arch %cy path)
+  =/  y  .^(arch %cy (en-pick now.bowl tick.bowl path))
   ?~  fil.y
     ins+eth-txs+!>(tox)
   mut+eth-txs+!>(tox)
@@ -185,7 +185,7 @@
 ++  read-transactions
   |=  =path
   ^-  tape
-  =+  tox=.^((list cord) %cx path)
+  =+  tox=.^((list cord) %cx (en-pick now.bowl tick.bowl path))
   =+  [first last]=(read-nonces tox)
   %+  weld
     "Found nonces {(scow %ud first)} through {(scow %ud last)}"
@@ -238,7 +238,7 @@
   =/  pkf  (get-file t.t.t.key)
   ?>  ?=(^ pkf)
   =/  pk  (rash i.pkf ;~(pfix (jest '0x') hex))
-  =/  txs  .^((list transaction) %cx in)
+  =/  txs  .^((list transaction) %cx (en-pick now.bowl tick.bowl in))
   =/  enumerated
     =/  n  1
     |-  ^-  (list [@ud transaction])
@@ -258,7 +258,7 @@
     :~  geth+'http://eth-mainnet.urbit.org:8545'
     ==
   ~&  'loading txs...'
-  =/  tox=(list cord)  .^((list cord) %cx path)
+  =/  tox=(list cord)  .^((list cord) %cx (en-pick now.bowl tick.bowl path))
   =?  tox  ?=(^ range)
     (txs-in-range tox u.range)
   =/  txs=(list @ux)

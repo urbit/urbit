@@ -1,7 +1,7 @@
 /+  *server
 ::  @p request handler
 ::
-|=  [[now=@da eny=@ bek=beak] ~ ~]
+|=  [[@ @ @ our=@p ^] ~ ~]
 |=  [authorized=? =request:http]
 ^-  simple-payload:http
 =/  url=(unit pork:eyre)
@@ -19,7 +19,7 @@
 ?^  t.q.u.url
   [[%404 ~] ~]
 =/  response=json
-  (frond:enjs:format %who (ship:enjs:format p.bek))
+  (frond:enjs:format %who (ship:enjs:format our))
 :-
   :-  %200
   :~  ['content-type' 'application/json']

@@ -7,8 +7,5 @@
 ::::
   !:
 :-  %say
-|=  $:  [now=@da eny=@uvJ bec=beak]
-        [=ship ~]
-        ~
-    ==
+|=  [^ [=ship ~] ~]
 [%kiln-gall-sear ship]

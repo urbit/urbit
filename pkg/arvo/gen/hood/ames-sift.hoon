@@ -6,5 +6,4 @@
   ::
 :-  %say
 |=  [^ ships=(list ship) ~]
-:-  %helm-ames-sift
-ships
+[%helm-ames-sift ships]

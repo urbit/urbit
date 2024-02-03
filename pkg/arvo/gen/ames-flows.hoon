@@ -1,7 +1,7 @@
 ::  print [len] %ames flows, sorted by number-per-ship
 ::
 :-  %say
-|=  [[now=@da eny=@uvJ bec=beak] arg=$@(~ [len=@ ~]) ~]
+|=  [[now=@da tick=@ud @ our=@p ^] arg=$@(~ [len=@ ~]) ~]
 :-  %noun
 ::
 =;  flows
@@ -11,12 +11,12 @@
 ::
 =/  peers-map
   .^  (map ship ?(%alien %known))
-      %ax  /(scot %p p.bec)//(scot %da now)/peers
+      %ax  (en-bema [our %$ [da+now ud+tick]] /peers)
   ==
 =/  peers=(list ship)
   %+  murn  ~(tap by peers-map)
   |=  [=ship val=?(%alien %known)]
-  ?:  =(ship p.bec)
+  ?:  =(ship our)
     ~  ::  this is weird, but we saw it
   ?-  val
     %alien  ~
@@ -27,7 +27,7 @@
 %+  turn  peers
 |=  =ship
 =+  .^  =ship-state:ames
-        %ax  /(scot %p p.bec)//(scot %da now)/peers/(scot %p ship)
+        %ax  (en-bema [our %$ [da+now ud+tick]] /peers/(scot %p ship))
     ==
 =/  =peer-state:ames  ?>(?=(%known -.ship-state) +.ship-state)
 =/  corked  ~(wyt in corked.peer-state)

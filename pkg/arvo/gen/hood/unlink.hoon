@@ -7,12 +7,12 @@
 ::::
   ::
 :-  %say
-|=  $:  [now=@da eny=@uvJ byk=beak]
+|=  $:  [@ @ @ our=@p ^]
         arg=$?([dap=term ~] [who=ship dap=term ~])
         drum-session=@ta
     ==
 :-  %drum-unlink
 :-  drum-session
 ?~  +.arg
-  [p.byk dap.arg]
+  [our dap.arg]
 [who.arg dap.arg]

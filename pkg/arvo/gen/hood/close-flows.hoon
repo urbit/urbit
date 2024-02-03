@@ -4,15 +4,17 @@
 ::    To actually close the flows, run with |close-flows, =dry |
 ::
 :-  %say
-|=  [[now=@da eny=@uvJ bec=beak] arg=~ peer=(unit @p) dry=? veb=?]
+|=  [[now=@da tick=@ud @ our=@p ^] arg=~ peer=(unit @p) dry=? veb=?]
 ::
 =/  peers-map
-  .^((map ship ?(%alien %known)) %ax /(scot %p p.bec)//(scot %da now)/peers)
+  .^  (map ship ?(%alien %known))
+      %ax  (en-bema [our %$ [da+now ud+tick]] /peers)
+  ==
 ::
 =/  peers=(list ship)
   %+  murn  ~(tap by peers-map)
   |=  [=ship val=?(%alien %known)]
-  ?:  =(ship p.bec)
+  ?:  =(ship our)
     ~  ::  this is weird, but we saw it
   ?-  val
     %alien  ~
@@ -30,7 +32,7 @@
   bones
 ::
 =+  .^  =ship-state:ames
-        %ax  /(scot %p p.bec)//(scot %da now)/peers/(scot %p ship)
+        %ax  (en-bema [our %$ [da+now ud+tick]] /peers/(scot %p ship))
     ==
 =/  =peer-state:ames  ?>(?=(%known -.ship-state) +.ship-state)
 |^

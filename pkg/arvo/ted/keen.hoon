@@ -16,9 +16,8 @@
   (pure:m !>(~))
 ::
 ;<  =bowl:spider  bind:m  get-bowl:strandio
-=+  .^  =dais:clay  %cb
-        /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[p.u.data]
-    ==
+;<  =dais:clay  bind:m
+  (scry:strandio dais:clay /cb/[q.byk.bowl]/[p.u.data])
 =/  res  (mule |.((vale.dais q.u.data)))
 ?.  ?=(%| -.res)
   (pure:m p.res)

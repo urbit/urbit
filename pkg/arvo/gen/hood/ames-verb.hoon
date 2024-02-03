@@ -9,5 +9,4 @@
   ::
 :-  %say
 |=  [^ veb=(list verb:ames) ~]
-:-  %helm-ames-verb
-veb
+[%helm-ames-verb veb]

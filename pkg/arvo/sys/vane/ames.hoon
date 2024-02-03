@@ -1486,7 +1486,7 @@
             [%19 ^ames-state]
         ==
     ::
-    |=  [now=@da eny=@ rof=roof]
+    |=  [now=@da eny=@ tick=@ rof=roof]
     =*  larval-gate  .
     =*  adult-core   (adult-gate +<)
     =<  |%
@@ -2008,7 +2008,7 @@
         %+  skim
           ;;  (list [@da duct])
           =<  q.q  %-  need  %-  need
-          (rof [~ ~] /ames %bx [[our %$ da+now] /debug/timers])
+          (rof [~ ~] /ames %bx [our %$ da+now ud+tick] /debug/timers)
         |=([@da =duct] ?=([[%ames %recork *] *] duct))
       ::
       =^  moz  u.cached-state
@@ -2032,7 +2032,7 @@
     ++  ev
       =|  moves=(list move)
       ~%  %event-gate  ..ev  ~
-      |=  [[now=@da eny=@ rof=roof] =duct =ames-state]
+      |=  [[now=@da eny=@ tick=@ rof=roof] =duct =ames-state]
       =*  veb  veb.bug.ames-state
       =|  cork-bone=(unit bone)  ::  modified by +on-kroc
       ~%  %event-core  ..$  ~
@@ -2080,7 +2080,7 @@
       ++  get-sponsors
         ;;  (list ship)
         =<  q.q  %-  need  %-  need
-        (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p our)])
+        (rof [~ ~] /ames %j `bema`[[our %saxo da+now ud+tick] /(scot %p our)])
       ::
       +|  %tasks
       ::  +on-take-flub: vane not ready to process message, pretend it
@@ -2275,7 +2275,7 @@
         ++  do-rift
           =/  =rift
             =-  ~|(%no-rift (,@ q.q:(need (need -))))
-            (rof [~ ~] /ames %j `beam`[[our %rift %da now] /(scot %p our)])
+            (rof [~ ~] /ames %j [our %rift da+now ud+tick] /(scot %p our))
           ?:  =(rift rift.ames-state)
             event-core
           ~&  "ames: fixing rift from {<rift.ames-state>} to {<rift>}"
@@ -2300,7 +2300,7 @@
             =/  tim
               ;;  (list [@da ^duct])
               =<  q.q  %-  need  %-  need
-              (rof [~ ~] /ames %bx [[our %$ da+now] /debug/timers])
+              (rof [~ ~] /ames %bx [our %$ da+now ud+tick] /debug/timers)
             (skim tim |=([@da hen=^duct] ?=([[%ames ?(%pump %recork) *] *] hen)))
           ::
           ::  set timers for flows that should have one set but don't
@@ -3018,7 +3018,7 @@
             =|  =point
             =.  life.point     life
             =.  keys.point     (my [life crypto-suite public-key]~)
-            =.  sponsor.point  `(^^sein:title rof /ames our now ship)
+            =.  sponsor.point  `(^^sein:title rof /ames our now tick ship)
             ::
             (on-publ-full (my [ship point]~))
           ::
@@ -3177,7 +3177,7 @@
           =.  sponsor.peer-state
             ?^  sponsor.point
               u.sponsor.point
-            (^^sein:title rof /ames our now ship)
+            (^^sein:title rof /ames our now tick ship)
           ::  automatically set galaxy route, since unix handles lookup
           ::
           =?  route.peer-state  ?=(%czar (clan:title ship))
@@ -3210,7 +3210,7 @@
         =/  turfs
           ;;  (list turf)
           =<  q.q  %-  need  %-  need
-          (rof [~ ~] /ames %j `beam`[[our %turf %da now] /])
+          (rof [~ ~] /ames %j [our %turf da+now ud+tick] /)
         ::
         =*  duct  unix-duct.ames-state
         ::
@@ -5309,7 +5309,7 @@
 ::  adult ames, after metamorphosis from larva
 ::
 =|  =ames-state
-|=  [now=@da eny=@ rof=roof]
+|=  [now=@da eny=@ tick=@ rof=roof]
 =*  ames-gate  .
 =*  veb  veb.bug.ames-state
 |%
@@ -5320,7 +5320,7 @@
   ^-  [(list move) _ames-gate]
   ::
   =/  =task       ((harden task) wrapped-task)
-  =/  event-core  (ev [now eny rof] duct ames-state)
+  =/  event-core  (ev [now eny tick rof] duct ames-state)
   ::
   =^  moves  ames-state
     =<  abet
@@ -5370,7 +5370,7 @@
   ?^  dud
     ~|(%ames-take-dud (mean tang.u.dud))
   ::
-  =/  event-core  (ev [now eny rof] duct ames-state)
+  =/  event-core  (ev [now eny tick rof] duct ames-state)
   ::
   =^  moves  ames-state
     ?:  ?=([%gall %unto *] sign)
@@ -5408,7 +5408,7 @@
   ::  all state transitions are called from larval ames
   ::
   |%
-  ++  our-beam  `beam`[[our %rift %da now] /(scot %p our)]
+  ++  our-bema  `bema`[[our %rift da+now ud+tick] /(scot %p our)]
   ++  state-4-to-5
     |=  ames-state=ames-state-4
     ^-  ames-state-5
@@ -5442,7 +5442,7 @@
       ?:  ?=(%pawn (clan:title ship))  0
       ;;  @ud
       =<  q.q  %-  need  %-  need
-      (rof [~ ~] /ames %j `beam`[[our %rift %da now] /(scot %p ship)])
+      (rof [~ ~] /ames %j [our %rift da+now ud+tick] /(scot %p ship))
     :-   -.ship-state
     :_  +.peer-state
     =,  -.peer-state
@@ -5523,7 +5523,7 @@
   ++  state-12-to-13
     |=  old=ames-state-12
     ^-  ames-state-13
-    =+  !<(=rift q:(need (need (rof [~ ~] /ames %j our-beam))))
+    =+  !<(=rift q:(need (need (rof [~ ~] /ames %j our-bema))))
     =+  pk=sec:ex:crypto-core.old
     :*  peers=(~(run by peers.old) ship-state-12-to-13)
         unix-duct.old
@@ -5565,7 +5565,7 @@
   ++  state-14-to-15
     |=  old=ames-state-14
     ^-  ames-state-15
-    old(rift !<(=rift q:(need (need (rof [~ ~] /ames %j our-beam)))))
+    old(rift !<(=rift q:(need (need (rof [~ ~] /ames %j our-bema)))))
   ::
   ++  state-15-to-16
     |=  old=ames-state-15
@@ -5936,5 +5936,4 @@
     ::
     ==
   ::
-
 --

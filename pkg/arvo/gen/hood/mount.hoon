@@ -12,13 +12,13 @@
       $@  desk
       (lest knot)
     --
-|=  $:  [now=@da eny=@uvJ bec=beak]
+|=  $:  [@ @ @ bec=beak]
         [=bath pot=$@(~ [v=@tas ~])]
         ~
     ==
 =/  bem=beam
   ?@  bath  [bec(q bath) /]
-  (need (de-beam `path`bath))
+  (bema-to-beam (need (de-bema `path`bath)))
 ::
 =/  =desk
   ?^  pot  v.pot

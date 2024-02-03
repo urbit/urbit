@@ -22,8 +22,7 @@
 ^-  thread:spider
 |=  arg=vase
 =/  m  (strand ,vase)
-;<  =bowl:spider  bind:m  get-bowl:strandio
-=/  cur=vere  .^(vere %$ /(scot %p our.bowl)//(scot %da now.bowl)/zen/ver)
+;<  cur=vere  bind:m  (scry:strandio vere /$//zen/ver)
 =/  pace=tape
   ?:  =('once' (parse-current-pace cur))
     "live"

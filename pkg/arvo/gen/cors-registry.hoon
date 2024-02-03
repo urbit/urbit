@@ -1,6 +1,6 @@
 ::  eyre: give cors configuration
 ::
 :-  %say
-|=  [[now=@da eny=@uvJ =beak] ~ ~]
+|=  [[now=@da tick=@ud @ our=@p ^] ~ ~]
 :-  %noun
-.^(cors-registry:eyre %ex /(scot %p p.beak)//(scot %da now)/cors)
+.^(cors-registry:eyre %ex (en-bema [our %$ [da+now ud+tick]] /cors))

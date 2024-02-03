@@ -79,7 +79,7 @@
       |%
       ++  rind  (^rind card state)
       ++  kick
-        |=  [our=@p now=@da]
+        |=  [our=@p now=@da tick=@ud]
         ^-  (quip card _state)
         ::  ?:  =(%czar (clan:title our))
         ::    `state
@@ -90,7 +90,7 @@
         ::  %public-keys, but this must be tested before changing the
         ::  behavior here.
         ::
-        =/  new-ships  (~(gas in *(set ship)) (saxo:title our now our))
+        =/  new-ships  (~(gas in *(set ship)) (saxo:title our now tick our))
         =/    removed  (~(dif in ships.state) new-ships)
         =/      added  (~(dif in new-ships) ships.state)
         ;<  new-state=_state  rind
@@ -309,7 +309,7 @@
 ++  on-init
   ^-  [(list card) _this]
   =.  plan.state  [%nat ~]
-  =^  cards  state  (kick:ships our.bowl now.bowl)
+  =^  cards  state  (kick:ships [our now tick]:bowl)
   [cards this]
 ::
 ++  on-save   !>(state)
@@ -321,7 +321,7 @@
   =?  old  ?=(%1 -.old)  (state-1-to-2 old)
   ?>  ?=(%2 -.old)
   =.  state  old
-  =^  cards  state  (kick:ships our.bowl now.bowl)
+  =^  cards  state  (kick:ships [our now tick]:bowl)
   [cards this]
   ::
   +$  state-any  $%(state-0 state-1 state-2)
@@ -379,19 +379,19 @@
         [%nat ~]
       ?:  &(!stun-failed =(+.q.vase %.y))
         `state
-      (kick:ships our.bowl now.bowl)
+      (kick:ships [our now tick]:bowl)
     ?:  =(q.vase %stop)  :: NB: ames calls this on [%stun fail=%.n]
       =.  plan.state  [%off ~]
-      (kick:ships our.bowl now.bowl)
+      (kick:ships [our now tick]:bowl)
     ?:  &(=(q.vase %once) =(%off -.plan.state))  :: NB: ames calls this on %once
       =.  plan.state  [%one ~]
-      (kick:ships our.bowl now.bowl)
+      (kick:ships [our now tick]:bowl)
     ?:  =(q.vase %nat)
       =.  plan.state  [%nat ~]
-      (kick:ships our.bowl now.bowl)
+      (kick:ships [our now tick]:bowl)
     ?:  =(q.vase %no-nat)
       =.  plan.state  [%pub ~]
-      (kick:ships our.bowl now.bowl)
+      (kick:ships [our now tick]:bowl)
     `state
   [cards this]
 ::
@@ -437,7 +437,7 @@
       ?^  error.sign-arvo
         %-  (slog 'ping: strange jael wake fail!' u.error.sign-arvo)
         `state
-      (take-delay:ships our.bowl now.bowl)
+      (take-delay:ships [our now tick]:bowl)
     ::
         [%jael ~]
       ?>  ?=(%public-keys +<.sign-arvo)

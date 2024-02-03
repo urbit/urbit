@@ -7,10 +7,11 @@
 /+  keygen, *ethereum
 ::
 :-  %say
-|=  $:  [now=@da eny=@uvJ =beak]
+|=  $:  [now=@da tick=@ud eny=@uvJ ^]
         [star=ship min-child=@ud max-child=@ud out=path ~]
         ~
     ==
+=.  out  (en-pick now tick out)
 ?:  (gth min-child max-child)
   ~|  [%weird-range min=min-child max=max-child]
   !!

@@ -5,7 +5,9 @@
 /?    310
 :-  %say
 =,  space:userlib
-|=  [^ [input=path output=path ~] ~]
+|=  [[now=@da tick=@ud *] [input=path output=path ~] ~]
+=.  input   (en-pick now tick input)
+=.  output  (en-pick now tick output)
 :-  %kiln-info
 ?.  =(-:(flop input) -:(flop output))
   ["Can't move to a different mark" ~]

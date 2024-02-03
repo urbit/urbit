@@ -1,6 +1,6 @@
-::  Create a private key-file for a random (or specified) moon
+::  breach (factory reset) a moon
 ::
-::::  /hoon/moon/hood/gen
+::::  /hoon/moon-breach/hood/gen
   ::
 /-  *sole
 /+  *generators
@@ -8,19 +8,18 @@
 ::::
   ::
 :-  %say
-|=  $:  [now=@da eny=@uvJ bec=beak]
+|=  $:  [now=@da tick=@ud @ our=@p ^]
         [mon=@p ~]
         =rift
     ==
 :-  %helm-moon
 ^-  (unit [=ship =udiff:point:jael])
-=*  our  p.bec
 =/  ran  (clan:title our)
 ?:  ?=([?(%earl %pawn)] ran)
   %-  %-  slog  :_  ~
       leaf+"can't manage a moon from a {?:(?=(%earl ran) "moon" "comet")}"
   ~
-=/  seg=ship  (sein:title our now mon)
+=/  seg=ship  (sein:title our now tick mon)
 ?.  =(our seg)
   %-  %-  slog  :_  ~
       :-  %leaf
@@ -29,5 +28,5 @@
 =/  =^rift
   ?.  =(*^rift rift)
     rift
-  +(.^(^rift j+/(scot %p our)/rift/(scot %da now)/(scot %p mon)))
+  +(.^(^rift %j (en-bema [our %rift [da+now ud+tick]] /(scot %p mon))))
 `[mon *id:block:jael %rift rift %.n]

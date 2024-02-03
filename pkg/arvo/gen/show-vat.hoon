@@ -1,13 +1,13 @@
 :-  %say
-|=  $:  [now=@da eny=@uvJ bec=beak]
+|=  $:  [now=@da tick=@ud @ our=@p ^]
         [=desk ~]
         ~
     ==
 :-  %tang
 %-  flop  ^-  tang
-=/  pax=path  /(scot %p p.bec)/[desk]/(scot %da now)
+=/  =beck  [our desk [da+now ud+tick]]
 =/  welt=(list [@tas @ud])
-  =+  .^(=waft:clay cx+(weld pax /sys/kelvin))
+  =+  .^(=waft:clay %cx (en-bema beck /sys/kelvin))
   %+  sort  ~(tap in (waft-to-wefts:clay waft))
   |=  [a=weft b=weft]
   ?:  =(lal.a lal.b)
@@ -16,5 +16,5 @@
 :~  '/sys/kelvin:'
     (sell !>(welt))
     '/desk/bill:'
-    (sell !>(.^((list dude:gall) cx+(weld pax /desk/bill))))
+    (sell !>(.^((list dude:gall) %cx (en-bema beck /desk/bill))))
 ==

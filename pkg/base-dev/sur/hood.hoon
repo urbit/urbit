@@ -55,9 +55,9 @@
 ::  +report-prep: get data required for reports
 ::
 ++  report-prep
-  |=  [our=@p now=@da]
+  |=  [our=@p now=@da tick=@ud]
   =/  ego  (scot %p our)
-  =/  wen  (scot %da now)
+  =/  wen  (en-cose da+now ud+tick)
   :*  .^(rock:tire %cx /[ego]//[wen]/tire)
       .^(=cone %cx /[ego]//[wen]/domes)
       .^((map desk [ship desk]) %gx /[ego]/hood/[wen]/kiln/sources/noun)
@@ -68,15 +68,15 @@
 ::  +report-vats: report on all desk installations
 ::
 ++  report-vats
-  |=  [our=@p now=@da desks=(list desk) filt=@tas verb=?]
+  |=  [our=@p now=@da tick=@ud desks=(list desk) filt=@tas verb=?]
   ^-  tang
   =/  ego  (scot %p our)
-  =/  wen  (scot %da now)
-  =/  prep  (report-prep our now)
+  =/  wen  (en-cose da+now ud+tick)
+  =/  prep  (report-prep our now tick)
   ?~  filt
     %-  zing
     %+  turn  (flop desks)
-    |=(syd=@tas (report-vat prep our now syd verb))
+    |=(syd=@tas (report-vat prep our now tick syd verb))
   =/  deks
     ?~  desks
       %+  sort
@@ -101,7 +101,7 @@
     :-  [%rose [" %" "To unblock upgrade run |suspend %" ""] blockers]
     %-  zing
     %+  turn  (flop blockers)
-    |=(syd=desk (report-vat prep our now syd verb))
+    |=(syd=desk (report-vat prep our now tick syd verb))
   ::
   %-  zing
   %+  turn
@@ -127,14 +127,14 @@
       %+  skim  deks
       |=([syd=desk *] =(ud:.^(cass %cw /[ego]/[syd]/[wen]) 0))
     ==
-  |=([syd=desk *] (report-vat prep our now syd verb))
+  |=([syd=desk *] (report-vat prep our now tick syd verb))
 ::  +report-vat: report on a single desk installation
 ::
 ++  report-vat
   |=  $:  $:  tyr=rock:tire  =cone  sor=(map desk (pair ship desk))
               zyn=(map [desk ship desk] sync-state)
           ==
-          our=ship  now=@da  syd=desk  verb=?
+          our=ship  now=@da  tick=@ud  syd=desk  verb=?
       ==
   ^-  tang
   =-  ::  hack to force wrapped rendering
@@ -147,7 +147,7 @@
   ::
   ^-  tank
   =/  ego  (scot %p our)
-  =/  wen  (scot %da now)
+  =/  wen  (en-cose da+now ud+tick)
   ?.  ((sane %tas) syd)
     leaf+"insane desk: {<syd>}"
   =+  .^(=cass %cw /[ego]/[syd]/[wen])
@@ -172,7 +172,7 @@
     `[p.u.s q.u.s [kid let]:u.z]
   =/  meb=(list @uv)
     ?~  sink  [hash]~
-    (mergebase-hashes our syd now her.u.sink sud.u.sink)
+    (mergebase-hashes our syd now tick her.u.sink sud.u.sink)
   =/  dek  (~(got by tyr) syd)
   =/  sat
     ?-  zest.dek
@@ -209,7 +209,7 @@
       leaf/"force on:         {<(sort (turn on head) aor)>}"
       leaf/"force off:        {<(sort (turn of head) aor)>}"
       ::
-      leaf/"publishing ship:  {?~(sink <~> <(get-publisher our syd now)>)}"
+      leaf/"publishing ship:  {?~(sink <~> <(get-publisher our syd now tick)>)}"
       leaf/"updates:          {?~(sink "local" "remote")}"
       leaf/"source ship:      {?~(sink <~> <her.u.sink>)}"
       leaf/"source desk:      {?~(sink <~> <sud.u.sink>)}"
@@ -220,11 +220,11 @@
 ::  +report-kids: non-vat cz hash report for kids desk
 ::
 ++  report-kids
-  |=  [our=ship now=@da]
+  |=  [our=ship now=@da tick=@ud]
   ^-  tank
   =/  syd  %kids
   =/  ego  (scot %p our)
-  =/  wen  (scot %da now)
+  =/  wen  (en-cose da+now ud+tick)
   ?.  (~(has in .^((set desk) %cd /[ego]//[wen])) syd)
     leaf/"no %kids desk"
   =+  .^(hash=@uv %cz /[ego]/[syd]/[wen])
@@ -251,43 +251,43 @@
 ::  +read-bill: read contents of /desk/bill manifest
 ::
 ++  read-bill
-  |=  [our=ship =desk now=@da]
-  =/  pax  (en-beam [our desk da+now] /desk/bill)
-  ?.  .^(? cu/pax)
+  |=  [our=ship =desk now=@da tick=@ud]
+  =/  pax  (en-bema [our desk [da+now ud+tick]] /desk/bill)
+  ?.  .^(? %cu pax)
     *(list dude)
-  .^((list dude) cx/pax)
+  .^((list dude) %cx pax)
 ::
 ++  get-remote-diff
-  |=  [our=ship here=desk now=@da her=ship there=desk when=aeon]
-  =+  .^(our-hash=@uv cz/[(scot %p our) here (scot %da now) ~])
-  =+  .^(her-hash=@uv cz/[(scot %p her) there (scot %ud when) ~])
+  |=  [our=ship here=desk now=@da tick=@ud her=ship there=desk when=aeon]
+  =+  .^(our-hash=@uv %cz (en-bema [our here [da+now ud+tick]] /~))
+  =+  .^(her-hash=@uv %cz (en-bema [her there ud+when] /~))
   !=(our-hash her-hash)
 ::
 ++  get-publisher
-  |=  [our=ship =desk now=@da]
+  |=  [our=ship =desk now=@da tick=@ud]
   ^-  (unit ship)
-  =/  pax  /(scot %p our)/[desk]/(scot %da now)/desk/ship
+  =/  pax  (en-bema [our desk [da+now ud+tick]] /desk/ship)
   ?.  .^(? %cu pax)  ~
   `.^(ship %cx pax)
 ::
 ++  get-apps-live
-  |=  [our=ship =desk now=@da]
+  |=  [our=ship =desk now=@da tick=@ud]
   ^-  (list dude)
-  %+  murn  (get-apps-have our desk now)
+  %+  murn  (get-apps-have our desk now tick)
   |=([=dude live=?] ?.(live ~ `dude))
 ::  +get-apps-have: find which apps Gall is running on a desk
 ::
 ++  get-apps-have
-  |=  [our=ship =desk now=@da]
+  |=  [our=ship =desk now=@da tick=@ud]
   ^-  (list [=dude live=?])
   %~  tap  in
-  .^((set [=dude live=?]) ge+/(scot %p our)/[desk]/(scot %da now)/$)
+  .^((set [=dude live=?]) %ge (en-bema [our desk [da+now ud+tick]] /$))
 ::
 ++  mergebase-hashes
-  |=  [our=@p syd=desk now=@da her=ship sud=desk]
+  |=  [our=@p syd=desk now=@da tick=@ud her=ship sud=desk]
   =/  her  (scot %p her)
   =/  ego  (scot %p our)
-  =/  wen  (scot %da now)
+  =/  wen  (en-cose da+now ud+tick)
   %+  turn  .^((list tako) %cs ~[ego syd wen %base her sud])
   |=(=tako .^(@uv %cs ~[ego syd wen %hash (scot %uv tako)]))
 ::

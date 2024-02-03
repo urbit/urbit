@@ -1,6 +1,6 @@
 /+  *ph-util
 :-  %say
-|=  $:  [now=@da eny=@uv bec=beak]
+|=  $:  [now=@da tick=@ud @ our=@p ^]
         [who=@p ~]
         ~
     ==
@@ -23,7 +23,7 @@
     ==
   ~|  agent
   %-  need
-  (scry-aqua (unit *) p.bec now aqua-pax)
+  (scry-aqua (unit *) our now tick aqua-pax)
 ::
 ++  export-all
   |=  who=ship

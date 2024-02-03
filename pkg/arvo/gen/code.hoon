@@ -3,14 +3,10 @@
 ::::  /hoon/code/gen
   ::
 :-  %say
-|=  $:  [now=@da eny=@uvJ bec=beak]
-        ~
-        ~
-    ==
+|=  [[now=@da tick=@ud @ our=ship ^] ~ ~]
 :-  %tang
 :_  ~
 :-  %leaf
-=*  our  p.bec
 %+  slag  1
 %+  scow  %p
-.^(@p %j /(scot %p our)/code/(scot %da now)/(scot %p our))
+.^(@p %j (en-bema [our %code [da+now ud+tick]] /(scot %p our)))

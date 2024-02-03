@@ -1,14 +1,10 @@
 /-  h=hood
 :-  %say
-|=  [[now=@da eny=@uvJ bec=beak] ~ ~]
+|=  [[now=@da tick=@ud @ our=@p ^] ~ ~]
 :-  %tang
 ^-  tang
 =+  .^  upd=sync-update:h
-      %gx
-      (scot %p p.bec)
-      %hood
-      (scot %da now)
-      /kiln/pending/noun
+        %gx  (en-bema [our %hood [da+now ud+tick]] /kiln/pending/noun)
     ==
 ?>  ?=(%pending -.upd)
 %+  turn  ~(tap in pending.upd)

@@ -2,7 +2,7 @@
 ::
 /+  *generators
 :-  %ask
-|=  $:  [now=@da eny=@uvJ bec=beak]
+|=  $:  ^
         [=term ~]
         [desk=_| hard=_|]
     ==

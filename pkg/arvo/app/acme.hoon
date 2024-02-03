@@ -587,7 +587,8 @@
     ::  XX should confirm that :turf points to us
     ::  confirms that domain exists (and an urbit is on the standard port)
     ::
-    =/  sec=?  p:.^(hart:eyre %e /(scot %p our.bow)/host/(scot %da now.bow))
+    =/  sec=?
+      p:.^(hart:eyre %e (en-bema [our.bow %host [da+now.bow ud+tick.bow]] /))
     =/  =purl
         :-  [sec=sec por=~ host=[%& turf.next]]
         [[ext=~ path=/'~debug'] query=~]
@@ -756,7 +757,8 @@
     ?>  ?=(%wake sas.u.rod)
     =*  aut  u.active.aut.u.rod
     =/  pat=path  /'.well-known'/acme-challenge/[tok.cal.aut]
-    =/  sec=?  p:.^(hart:eyre %e /(scot %p our.bow)/host/(scot %da now.bow))
+    =/  sec=?
+      p:.^(hart:eyre %e (en-bema [our.bow %host [da+now.bow ud+tick.bow]] /))
     =/  url=purl  [[sec=sec por=~ hos=[%& dom.aut]] [ext=~ pat] hed=~]
     ::  =/  url=purl  [[sec=| por=`8.081 hos=[%& /localhost]] [ext=~ pat] hed=~]
     ::  XX idx in wire?
@@ -1305,9 +1307,9 @@
     ::TODO  refactor this out of %acme, see also arvo#1151
     ::
       %install-from-clay
-    =/  bas=path  /(scot %p our.bow)/base/(scot %da now.bow)/acme
-    =/  key=wain  .^(wain %cx (weld bas /privkey/pem))
-    =/  cer=wain  .^(wain %cx (weld bas /cert/pem))
+    =/  =beck  [our.bow %base [da+now.bow ud+tick.bow]]
+    =/  key=wain  .^(wain %cx (en-bema beck /acme/privkey/pem))
+    =/  cer=wain  .^(wain %cx (en-bema beck /acme/cert/pem))
     (emit %pass /install %arvo %e %rule %cert `[key cer])
   ::
       %init

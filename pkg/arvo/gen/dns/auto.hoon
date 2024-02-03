@@ -5,9 +5,8 @@
 /-  *sole
 /+  *generators
 :-  %ask
-|=  [[now=@da eny=@uvJ bec=beak] ~ ~]
+|=  [[now=@da tick=@ud @ our=@p ^] ~ ~]
 ^-  (sole-result [%dns-auto ~])
-=*  our  p.bec
 =/  rac  (clan:title our)
 ::
 ?:  ?=(?(%earl %pawn) rac)

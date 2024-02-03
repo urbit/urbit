@@ -251,15 +251,15 @@
     (~(put by builds) uri q.r.u.p.gift)
   =.  ford-diagnostics
     (~(del by ford-diagnostics) uri)
-  =/  bek  byk.bow(r da+now.bow)
-  =/  desks=(list desk)  ~(tap in .^((set desk) %cd (en-beam bek /)))
+  =+  [our=(scot %p our.bow) cos=(en-cose da+now.bow ud+tick.bow)]
+  =/  desks=(list desk)  ~(tap in .^((set desk) %cd /[our]//[cos]))
   =|  dek=desk
   |-
   ?~  desks  [[~ state] %base]
   =.  dek  ?:  =(%kids i.desks)  %base  i.desks
-  =/  exists=?  .^(? %cu (en-beam bek(q dek) loc))
+  =/  exists=?  .^(? %cu (weld /[our]/[dek]/[cos] loc))
   ?.  exists  $(desks t.desks)
-  =+  .^(=open:clay %cs /(scot %p our.bow)/[dek]/(scot %da now.bow)/open/foo)
+  =+  .^(=open:clay %cs /[our]/[dek]/[cos]/open/foo)
   =/  =type  -:(open loc)
 
   =.  preludes
@@ -293,12 +293,13 @@
   =/  =path
     (uri-to-path:build uri.item)
   =/  bek  byk.bow
-  =/  desks=(list desk)  ~(tap in .^((set desk) %cd (en-beam bek /)))
+  =+  [our=(scot %p our.bow) cos=(en-cose da+now.bow ud+tick.bow)]
+  =/  desks=(list desk)  ~(tap in .^((set desk) %cd /[our]//[cos]))
   =|  dek=desk
   |-
   ?~  desks  [~ state]
   =.  dek  ?:  =(%kids i.desks)  %base  i.desks
-  =/  exists=?  .^(? %cu (en-beam bek(q dek) path)) 
+  =/  exists=?  .^(? %cu (weld /[our]/[dek]/[cos] path))
   ?.  exists  $(desks t.desks)
   ?:  ?=(%sys -.path)
     `state

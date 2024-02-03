@@ -7,7 +7,7 @@
 ::::
   ::
 :-  %say
-|=  $:  [now=@da eny=@uvJ bec=beak]
+|=  $:  ^
         [arg=[syd=desk lab=@tas ~] aeon=aeon:clay ~]
     ==
 :: handle optional aeon

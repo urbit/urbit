@@ -1,9 +1,8 @@
 ::  Find list of currently running Behn timers
 :-  %say
-|=  [[now=@da eny=@uvJ bec=beak] ~ ~]
+|=  [[now=@da tick=@ud @ our=@p ^] ~ ~]
 =;  timers
   [%tang >timers< ~]
 .^  (list [date=@da =duct])
-  %bx
-  (en-beam [p.bec %$ r.bec] /debug/timers)
+    %bx  (en-bema [our %$ [da+now ud+tick]] /debug/timers)
 ==

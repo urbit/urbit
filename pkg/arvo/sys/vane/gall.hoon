@@ -395,7 +395,7 @@
 ::  adult gall vane interface, for type compatibility with pupa
 ::
 =|  state=state-16
-|=  [now=@da eny=@uvJ rof=roof]
+|=  [now=@da eny=@uvJ tick=@ rof=roof]
 =*  gall-payload  .
 ~%  %gall-top  ..part  ~
 |%
@@ -1050,7 +1050,7 @@
       =/  =case  da+now
       =/  yok  (~(got by yokes.state) dap)
       =/  =desk  q.beak:?>(?=(%live -.yok) yok)  ::TODO acceptable assertion?
-      =/  sky  (rof [~ ~] /gall %cb [our desk case] /[mark.deal])
+      =/  sky  (rof [~ ~] /gall %cb [our desk da+now ud+tick] /[mark.deal])
       ?-    sky
           ?(~ [~ ~])
         =/  ror  "gall: raw-poke fail :{(trip dap)} {<mark.deal>}"
@@ -1074,7 +1074,7 @@
       =/  mars-path   /[a.mars]/[b.mars]
       =/  yok  (~(got by yokes.state) dap)
       =/  =desk  q.beak:?>(?=(%live -.yok) yok)  ::TODO acceptable assertion?
-      =/  sky  (rof [~ ~] /gall %cc [our desk case] mars-path)
+      =/  sky  (rof [~ ~] /gall %cc [our desk da+now ud+tick] mars-path)
       ?-    sky
           ?(~ [~ ~])
         =/  ror  "gall: poke cast fail :{(trip dap)} {<mars>}"
@@ -1559,9 +1559,9 @@
           [duct %give %unto %fact cage.gift]~
         =/  =mars:clay  [p.cage mark]
         =/  =case       da+now
-        =/  bek=beak    [our q.beak.yoke case]
         =/  mars-path  /[a.mars]/[b.mars]
-        =/  sky  (rof [~ ~] /gall %cc bek mars-path)
+        =/  sky
+          (rof [~ ~] /gall %cc [our q.beak.yoke da+now ud+tick] mars-path)
         ?-    sky
             ?(~ [~ ~])
           %-  (slog leaf+"watch-as fact conversion find-fail" >sky< ~)
@@ -1741,7 +1741,7 @@
       =/  tub=(unit tube:clay)
         ?:  =(have want)  `(bake same ^vase)
         =/  tuc=(unit (unit cage))
-          (rof [~ ~] /gall %cc [our q.beak.yoke da+now] /[have]/[want])
+          (rof [~ ~] /gall %cc [our q.beak.yoke da+now ud+tick] /[have]/[want])
         ?.  ?=([~ ~ *] tuc)  ~
         `!<(tube:clay q.u.u.tuc)
       ?~  tub
@@ -1783,6 +1783,7 @@
           :*  act=change.stats.yoke                   ::  tick
               eny=eny.stats.yoke                      ::  nonce
               now=time.stats.yoke                     ::  time
+              tick=tick                               ::  arvo tick
               byk=beak.yoke                           ::  source
       ==  ==
     ::  +ap-reinstall: reinstall.
@@ -1890,7 +1891,8 @@
         ?:  ?=(%spider agent-name)
           :-  [%fact mark.unto !>(noun.unto)]
           ap-core
-        =/  sky  (rof [~ ~] /gall %cb [our q.beak.yoke case] /[mark.unto])
+        =/  sky
+          (rof [~ ~] /gall %cb [our q.beak.yoke da+now ud+tick] /[mark.unto])
         ?.  ?=([~ ~ *] sky)
           (mean leaf+"gall: ames mark fail {<mark.unto>}" ~)
         ::
@@ -2145,7 +2147,8 @@
       ++  scry-peer-state
         |=  her=ship
         ~+  ^-  (unit peer-state:ames)
-        =/  sky  (rof [~ ~] /gall %ax [our %$ da+now] /peers/(scot %p her))
+        =/  sky
+          (rof [~ ~] /gall %ax [our %$ da+now ud+tick] /peers/(scot %p her))
         ?:  |(?=(~ sky) ?=(~ u.sky))
           ~
         =/  sat  !<(ship-state:ames q.u.u.sky)

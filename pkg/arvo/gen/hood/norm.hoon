@@ -1,9 +1,9 @@
 ::  Add rule to tombstone policy
 ::
 :-  %say
-|=  [[now=@da eny=@uvJ bec=beak] [=ship =desk =path keep=? ~] ~]
+|=  [[now=@da tick=@ud @ our=@p ^] [=ship =desk =path keep=? ~] ~]
 :-  %helm-pass
-=+  .^(=cone:clay %cx /(scot %p p.bec)//(scot %da now)/domes)
+=+  .^(=cone:clay %cx (en-bema [our %$ [da+now ud+tick]] /domes))
 =/  =norm:clay
   ?~  got=(~(get by cone) ship desk)
     *norm:clay

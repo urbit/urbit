@@ -1,5 +1,5 @@
 :-  %say
-|=  $:  [now=@da eny=@uvJ bec=beak]
+|=  $:  ^
         ~
         [dude=_`dude:gall`%$ ship=_`@p`(bex 128)]
     ==

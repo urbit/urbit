@@ -398,9 +398,13 @@
       %&  (begin-shed yarn p.source)
       %|
     =.  starting.state  (~(put by starting.state) yarn [%build vase.p.source])
+    =/  =beck
+      ?.  =(da+now.bowl r.beak)
+        beak
+      beak(r [da+now.bowl ud+tick.bowl])
     =/  pax=path
       ~|  no-file-for-thread+file.p.source
-      (need (get-fit:clay beak %ted file.p.source))
+      (need (get-fit:clay beck %ted file.p.source))
     :_  state
     :_  ~
     :+  %pass  /build/[new-tid]
@@ -645,13 +649,14 @@
   |=  [=yarn =bowl:gall]
   ^-  bowl:spider
   :*  our.bowl
-    src.bowl
+      src.bowl
       (yarn-to-tid yarn)
       (yarn-to-parent yarn)
       wex.bowl
       sup.bowl
       eny.bowl
       now.bowl
+      tick.bowl
       (yarn-to-byk yarn bowl)
   ==
 ::
@@ -685,9 +690,7 @@
 ::
 ++  convert-tube
   |=  [from=mark to=mark =desk =bowl:gall]
-  .^
-    tube:clay
-    %cc
-    /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/[from]/[to]
+  .^  tube:clay
+      %cc  (en-bema [our.bowl desk [da+now.bowl ud+tick.bowl]] /[from]/[to])
   ==
 --

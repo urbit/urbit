@@ -14,7 +14,7 @@
 ::::
   ::
 :-  %say
-|=  $:  [now=@da eny=@uvJ bek=beak]
+|=  $:  [now=@da tick=@ud @ bek=beak]
         [arg=[?(~ sorc [syd=$@(desk beaky) sorc])] cas=case gem=?(germ %auto)]
     ==
 =*  our  p.bek
@@ -23,11 +23,11 @@
     ?-  arg
       ~  ((slog (turn `wain`help-text |=(=@t leaf+(trip t)))) ~)
       [@ @ ~]
-        =+(arg [sud ?.(=(our her) her (sein:title p.bek now her)) sud (opt-case da+now) gem])
+        =+(arg [sud ?.(=(our her) her (sein:title p.bek now tick her)) sud (opt-case da+now) gem])
     ::
       [^ ~]
         =+  (pars bek.arg)
-        [dez ?.(=(our who) who (sein:title p.bek now who)) dez (opt-case caz) gem]
+        [dez ?.(=(our who) who (sein:title p.bek now tick who)) dez (opt-case caz) gem]
     ::
       [* @ @ ~]
         :-  (pars-src syd.arg)
@@ -38,7 +38,10 @@
         =+((pars bek.arg) [who dez (opt-case caz) gem])
     ==
 ++  opt-case  |=(a=case ?:(=(*case cas) a cas))  :: override
-++  pars  |=(a=beaky `[[who=ship dez=desk caz=case] *]`(need (de-beam a)))
+++  pars
+  |=  a=beaky
+  ^-  [[who=ship dez=desk caz=case] *]
+  (bema-to-beam (need (de-bema a)))
 ++  pars-src
   |=  syd=$@(desk beaky)
   ?@  syd  syd

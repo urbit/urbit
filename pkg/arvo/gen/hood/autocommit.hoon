@@ -7,9 +7,5 @@
 ::::
   ::
 :-  %say
-|=  $:  [now=@da eny=@uvJ bec=beak]
-        [mon=term ~]
-        ~
-    ==
-:-  %kiln-commit
-[mon &]
+|=  [^ [mon=term ~] ~]
+[%kiln-commit [mon &]]

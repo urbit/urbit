@@ -1,6 +1,6 @@
 /+  *generators
 :-  %ask
-|=  $:  [now=@da eny=@uvJ bec=beak]
+|=  $:  ^
         [syd=desk her=ship sud=desk ~]
         hard=_|
     ==

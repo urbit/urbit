@@ -482,11 +482,13 @@
           %d  %dill
           %e  %eyre
           %g  %gall
+          %i  %iris
           %j  %jael
-          %g  %gall
+          %k  %khan
+          %l  %lick
         ==
-      =/  pax
-        /(scot %p our.hid)/work/(scot %da now.hid)/sys/vane/[vane]
+      =+  [our=(scot %p our.hid) cos=(en-cose da+now.hid ud+tick.hid)]
+      =/  pax  /[our]/work/[cos]/sys/vane/[vane]
       =/  txt  .^(@ %cx (weld pax /hoon))
       [/vane/[vane] [%veer v pax txt]]
     =>  .(this ^+(this this))

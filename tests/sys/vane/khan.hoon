@@ -393,7 +393,7 @@
       ==    ==
   ^-  [(list move:khan-gate) _khan-gate]
   =/  khan-core
-    (khan-gate now eny=`@uvJ`0xdead.beef scry=scry)
+    (khan-gate now eny=`@uvJ`0xdead.beef tick=0 scry=scry)
   (call:khan-core [duct dud wrapped-task]:call-args)
 ++  khan-call-all
   |=  $:  khan-gate=_khan-gate
@@ -427,7 +427,7 @@
       ==    ==
   ^-  [(list move:khan-gate) _khan-gate]
   =/  khan-core
-    (khan-gate now eny=`@uvJ`0xdead.beef scry=scry)
+    (khan-gate now eny=`@uvJ`0xdead.beef tick=0 scry=scry)
   (take:khan-core [wire duct dud sign]:take-args)
 ++  khan-take-all
   |=  $:  khan-gate=_khan-gate
@@ -462,13 +462,13 @@
   |=  =vase
   !>(!<(noun vase))
 ++  scry-provides-mark  ^-  roof
-  |=  [gang pov=path =view =beam]
+  |=  [gang pov=path =view =bema]
   ^-  (unit (unit cage))
-  ?:  &(=(%cb view) =(/noun s.beam))
+  ?:  &(=(%cb view) =(/noun s.bema))
     :^  ~  ~  %dais
     !>  ^-  dais:clay
     dais-noun
-  ?:  &(=(%cc view) =(/noun/noun s.beam))
+  ?:  &(=(%cc view) =(/noun/noun s.bema))
     :^  ~  ~  %tube
     !>  ^-  tube:clay
     tube-noun-noun

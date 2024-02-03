@@ -22,7 +22,6 @@
   +*  this  .
       do    ~(. +> bowl)
       def   ~(. (default-agent this %|) bowl)
-      bec   byk.bowl(r da+now.bowl)
   ::
   ++  on-init   on-init:def
   ++  on-save   !>(state)
@@ -167,7 +166,7 @@
   =-  [%pass [%write path] %arvo %c %info -]
   :-  `desk`i.t.path
   =-  &+[t.t.t.path -]~
-  =/  y  .^(arch %cy path)
+  =/  y  .^(arch %cy (en-pick now.bowl tick.bowl path))
   ?~  fil.y
     ins+eth-txs+!>(tox)
   mut+eth-txs+!>(tox)

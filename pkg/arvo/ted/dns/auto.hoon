@@ -10,9 +10,8 @@
 ?.  ?=(%czar (clan:title our))
   ~|  %not-galaxy  !!
 ::
-;<  now=@da  bind:m  get-time:strandio
-=/  ames-domains=(list turf)
-  .^((list turf) %j /(scot %p our)/turf/(scot %da now))
+;<  ames-domains=(list turf)  bind:m
+  (scry:strandio (list turf) /j/turf)
 ::
 |-  ^-  form:m
 =*  loop  $

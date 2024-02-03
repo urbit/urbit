@@ -110,6 +110,7 @@
   --
 ::
 |_  =bowl:gall
++*  io  ~(. agentio bowl)
 ++  process-rpc-request
   |=  req=batch-request:rpc
   ^-  [(list cage) simple-payload:http]
@@ -185,103 +186,63 @@
   |%
   ++  point
     |=  =ship
-    .^  (unit point:naive)
-        %gx
-        (~(scry agentio bowl) %roller /point/(scot %p ship)/noun)
-    ==
+    .^((unit point:naive) %gx (scry:io %roller /point/(scot %p ship)/noun))
   ::
   ++  ships
     |=  =address:naive
-    .^  (list ship)
-        %gx
-        (~(scry agentio bowl) %roller /ships/(scot %ux address)/noun)
-    ==
+    .^((list ship) %gx (scry:io %roller /ships/(scot %ux address)/noun))
   ::
   ++  spawned
     |=  =ship
-    .^  (list @p)
-        %gx
-        (~(scry agentio bowl) %roller /spawned/(scot %p ship)/noun)
-    ==
+    .^((list @p) %gx (scry:io %roller /spawned/(scot %p ship)/noun))
   ::
   ++  unspawned
     |=  =ship
-    .^  (list @p)
-        %gx
-        (~(scry agentio bowl) %roller /unspawned/(scot %p ship)/noun)
-    ==
+    .^((list @p) %gx (scry:io %roller /unspawned/(scot %p ship)/noun))
   ::
   ++  owned
     |=  =address:naive
-    .^  (list ship)
-        %gx
-        (~(scry agentio bowl) %roller /owned/(scot %ux address)/noun)
-    ==
+    .^((list ship) %gx (scry:io %roller /owned/(scot %ux address)/noun))
   ::
   ++  sponsored
     |=  parent=ship
     .^  [residents=(list ship) requests=(list ship)]
-        %gx
-        (~(scry agentio bowl) %roller /sponsored/(scot %p parent)/noun)
+        %gx  (scry:io %roller /sponsored/(scot %p parent)/noun)
     ==
   ::
   ++  transfers
     |=  =address:naive
-    .^  (list ship)
-        %gx
-        (~(scry agentio bowl) %roller /transfers/(scot %ux address)/noun)
-    ==
+    .^((list ship) %gx (scry:io %roller /transfers/(scot %ux address)/noun))
   ::
   ++  manager
     |=  =address:naive
-    .^  (list ship)
-        %gx
-        (~(scry agentio bowl) %roller /manager/(scot %ux address)/noun)
-    ==
+    .^((list ship) %gx (scry:io %roller /manager/(scot %ux address)/noun))
   ::
   ++  voting
     |=  =address:naive
-    .^  (list ship)
-        %gx
-        (~(scry agentio bowl) %roller /voting/(scot %ux address)/noun)
-    ==
+    .^((list ship) %gx (scry:io %roller /voting/(scot %ux address)/noun))
   ::
   ++  spawning
     |=  =address:naive
-    .^  (list ship)
-        %gx
-        (~(scry agentio bowl) %roller /spawning/(scot %ux address)/noun)
-    ==
+    .^((list ship) %gx (scry:io %roller /spawning/(scot %ux address)/noun))
   ::
   ++  pending
     |%
     ++  all
-      .^  (list pend-tx)
-          %gx
-          (~(scry agentio bowl) %roller /pending/noun)
-      ==
+      .^((list pend-tx) %gx (scry:io %roller /pending/noun))
     ::
     ++  ship
       |=  =^ship
-      .^  (list pend-tx)
-          %gx
-          (~(scry agentio bowl) %roller /pending/(scot %p ship)/noun)
-      ==
+      .^((list pend-tx) %gx (scry:io %roller /pending/(scot %p ship)/noun))
     ::
     ++  addr
       |=  =address:naive
-      .^  (list pend-tx)
-          %gx
-          %+  ~(scry agentio bowl)  %roller
-          /pending/[(scot %ux address)]/noun
-      ==
+      .^((list pend-tx) %gx (scry:io %roller /pending/(scot %ux address)/noun))
     ::
     ++  hash
       |=  keccak=@ux
       .^  (unit pend-tx)
-          %gx
-          %+  ~(scry agentio bowl)  %roller
-          /pending-tx/[(scot %ux keccak)]/noun
+          %gx  (scry:io %roller /pending-tx/(scot %ux keccak)/noun)
       ==
     --
   ::
@@ -289,95 +250,50 @@
     |%
     ++  addr
       |=  =address:naive
-      .^  (list hist-tx)
-          %gx
-          (~(scry agentio bowl) %roller /history/(scot %ux address)/noun)
-      ==
+      .^((list hist-tx) %gx (scry:io %roller /history/(scot %ux address)/noun))
     --
   ::
   ++  tx-status
     |=  keccak=@ux
-    .^  ^tx-status
-        %gx
-        (~(scry agentio bowl) %roller /tx/(scot %ux keccak)/status/noun)
-    ==
+    .^(^tx-status %gx (scry:io %roller /tx/(scot %ux keccak)/status/noun))
   ::
   ++  next-batch
-    .^  time
-        %gx
-        (~(scry agentio bowl) %roller /next-batch/atom)
-    ==
+    .^(time %gx (scry:io %roller /next-batch/atom))
   ::
   ++  next-slice
-    .^  time
-        %gx
-        (~(scry agentio bowl) %roller /next-slice/atom)
-    ==
+    .^(time %gx (scry:io %roller /next-slice/atom))
   ::
   ++  nonce
     |=  [=ship =proxy:naive]
-    .^  (unit @)
-        %gx
-        %+  ~(scry agentio bowl)
-          %roller
-        /nonce/(scot %p ship)/[proxy]/noun
-    ==
+    .^((unit @) %gx (scry:io %roller /nonce/(scot %p ship)/[proxy]/noun))
   ::
   ++  config
     ^-  [azimuth-config roller-config]
     :-  refresh
-    .^  roller-config
-        %gx
-        %+  ~(scry agentio bowl)
-          %roller
-        /config/noun
-    ==
+    .^(roller-config %gx (scry:io %roller /config/noun))
   ::
   ++  chain
-    .^  @
-        %gx
-        %+  ~(scry agentio bowl)
-          %roller
-        /chain-id/noun
-    ==
+    .^(@ %gx (scry:io %roller /chain-id/noun))
   ::
   ++  predicted
-    .^  ^state:naive
-        %gx
-        (~(scry agentio bowl) %roller /predicted/noun)
-    ==
+    .^(^state:naive %gx (scry:io %roller /predicted/noun))
   ::
   ++  refresh
-    .^  @dr
-        %gx
-        (~(scry agentio bowl) %azimuth /refresh/noun)
-    ==
+    .^(@dr %gx (scry:io %azimuth /refresh/noun))
   ::
   ++  over-quota
     |=  =ship
-    .^  ?
-        %gx
-        (~(scry agentio bowl) %roller /over-quota/(scot %p ship)/atom)
-    ==
+    .^(? %gx (scry:io %roller /over-quota/(scot %p ship)/atom))
   ::
   ++  ship-quota
     |=  =ship
-    .^  @ud
-        %gx
-        (~(scry agentio bowl) %roller /ship-quota/(scot %p ship)/atom)
-    ==
+    .^(@ud %gx (scry:io %roller /ship-quota/(scot %p ship)/atom))
   ::
   ++  allowance
     |=  =ship
-    .^  (unit @ud)
-        %gx
-        (~(scry agentio bowl) %roller /allowance/(scot %p ship)/noun)
-    ==
+    .^((unit @ud) %gx (scry:io %roller /allowance/(scot %p ship)/noun))
   ::
   ++  ready
-    .^  ?
-        %gx
-        (~(scry agentio bowl) %roller /ready/atom)
-    ==
+    .^(? %gx (scry:io %roller /ready/atom))
   --
 --

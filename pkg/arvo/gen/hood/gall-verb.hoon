@@ -7,5 +7,4 @@
 ::
 :-  %say
 |=  [^ veb=(list verb:gall) ~]
-:-  %helm-gall-verb
-veb
+[%helm-gall-verb veb]

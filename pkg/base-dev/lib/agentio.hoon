@@ -6,9 +6,7 @@
 |_  =bowl:gall
 ++  scry
   |=  [desk=@tas =path]
-  %+  weld
-    /(scot %p our.bowl)/[desk]/(scot %da now.bowl)
-  path
+  (en-bema [our.bowl desk [da+now.bowl ud+tick.bowl]] path)
 ::
 ++  pass
   |_  =wire

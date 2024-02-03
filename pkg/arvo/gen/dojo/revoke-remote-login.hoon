@@ -4,7 +4,5 @@
 /?    310
 ::
 :-  %say
-|=  $:  [now=@da eny=@uvJ bec=beak]
-        [[=ship ~] ~]
-    ==
+|=  [^ [=ship ~] ~]
 [%revoke-remote-login ship]

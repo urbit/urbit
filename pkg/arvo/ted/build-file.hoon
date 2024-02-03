@@ -6,9 +6,10 @@
 =/  m  (strand ,vase)
 ^-  form:m
 =+  !<([~ pax=path] arg)
-?~  bem=(de-beam pax)
-  (strand-fail:strand %path-not-beam >pax< ~)
-;<  vax=(unit vase)  bind:m  (build-file:strandio u.bem)
+?~  bam=(de-bema pax)
+  (strand-fail:strand %path-not-bema >pax< ~)
+=/  bem=beam  (bema-to-beam u.bam)
+;<  vax=(unit vase)  bind:m  (build-file:strandio bem)
 ?^  vax
   (pure:m u.vax)
-(strand-fail:strand %build-file >u.bem< ~)
+(strand-fail:strand %build-file >bem< ~)
