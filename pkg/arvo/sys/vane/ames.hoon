@@ -1990,13 +1990,9 @@
         15+(state-14-to-15:load:adult-core +.u.cached-state)
       =?  u.cached-state  ?=(%15 -.u.cached-state)
         16+(state-15-to-16:load:adult-core +.u.cached-state)
-      =?  u.cached-state  ?=(%16 -.u.cached-state)
-        17+(state-16-to-17:load:adult-core +.u.cached-state)
       =^  moz  u.cached-state
-        ?.  ?=(%17 -.u.cached-state)  [~ u.cached-state]
-        :_  [%18 +.u.cached-state]
-        ~>  %slog.0^leaf/"ames: init dead flow consolidation timer"
-        :-  [[/ames]~ %pass /dead-flow %b %wait `@da`(add now ~m2)]
+        ?.  ?=(%16 -.u.cached-state)  [~ u.cached-state]
+        :_  17+(state-16-to-17:load:adult-core +.u.cached-state)
         ?^  moz  moz  ::  if we have just added the timer in state-7-to-8, skip
         =;  recork-timer=(list [@da duct])
           ?^  recork-timer  ~
@@ -2005,7 +2001,7 @@
         %+  skim
           ;;  (list [@da duct])
           =<  q.q  %-  need  %-  need
-          (rof [~ ~] /ames %bx [[our %$ da+now] /debug/timers])
+          (rof ~ /ames %bx [[our %$ da+now] /debug/timers])
         |=([@da =duct] ?=([[%ames %recork *] *] duct))
       ::
       =^  moz  u.cached-state
