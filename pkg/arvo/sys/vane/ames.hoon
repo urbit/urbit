@@ -483,7 +483,7 @@
 ++  is-our-bulk
   |=  [our=ship =ames-state =balk]
   ^-  ?
-  =-  ~?  =(| -) 
+  =-  ~?  =(| -)
         [%fine-mismatch our=[rift life]:ames-state her=[her rif lyf]:balk]
       -
   ?&  =(our her.balk)
@@ -776,15 +776,15 @@
       cong=[msg=@ud mem=@ud]
   ==
 ::
-+$  queued-event-11
-  $+  queued-event-11
-  $%  [%call =duct wrapped-task=(hobo task-11)]
++$  queued-event-9
+  $+  queued-event-9
+  $%  [%call =duct wrapped-task=(hobo task-9)]
       [%take =wire =duct =sign]
   ==
 ::
-+$  task-11
-  $+  task-11
-  $%  [%snub ships=(list ship)]
++$  task-9
+  $+  task-9
+  $%  [%snub ships=(list ship)] :: introduced in ames-state %9, modified in %14
       $<(%snub task)
   ==
 ::
@@ -1170,11 +1170,13 @@
       $:  flow=[%flow (unit dead-timer)]
           cork=[%cork (unit dead-timer)]
   ==  ==
+::
 +$  ship-state-17
   $+  ship-state-17
   $%  [%alien alien-agenda-17]
       [%known peer-state-17]
   ==
+::
 +$  peer-state-17
   $+  peer-state-17
   $:  $:  =symmetric-key
@@ -1194,6 +1196,7 @@
       corked=(set bone)
       keens=(map path keen-state)
   ==
+::
 +$  message-pump-state-17
   $+  message-pump-state-17
   $:  current=_`message-num`1
@@ -1203,6 +1206,7 @@
       queued-message-acks=(map message-num ack)
       =packet-pump-state
   ==
+::
 +$  ames-state-14  ames-state-16
 +$  ames-state-15  ames-state-16
 +$  ames-state-16
@@ -1216,14 +1220,14 @@
       snub=[form=?(%allow %deny) ships=(set ship)]
       cong=[msg=@ud mem=@ud]
   ==
-  ::
-  +$  alien-agenda-17
-    $+  alien-agenda
-    $:  messages=(list [=duct =plea])
-        packets=(set =blob)
-        heeds=(set duct)
-        keens=(jug path duct)
-    ==
+::
++$  alien-agenda-17
+  $+  alien-agenda
+  $:  messages=(list [=duct =plea])
+      packets=(set =blob)
+      heeds=(set duct)
+      keens=(jug path duct)
+  ==
 ::
 +$  ship-state-16
   $+  ship-state-16
@@ -1287,49 +1291,66 @@
       counter=@ud
   ==
 ::
-+$  queued-event-11-and-16
-  $+  queued-event-11-and-16
-  $%  [%call =duct wrapped-task=(hobo task-11-and-16)]
++$  queued-event-10-to-13
+  $+  queued-event-10-to-13
+  $%  [%call =duct wrapped-task=(hobo task-10-to-13)]
       [%take =wire =duct =sign]
   ==
 ::
-+$  task-11-and-16
-  $+  task-11-and-16
-  $%  [%kroc dry=?]
-      [%keen spar]
-      [%snub ships=(list ship)]
-      $<(?(%snub %kroc) task-17)
++$  task-10-to-13
+  $+  task-10-to-13
+  $%  [%kroc dry=?]                 ::  introduced in state %10, modified in %15
+      [%snub ships=(list ship)]     ::  introduced in state %9,  modified in %13
+      $<(?(%snub %kroc) task)
   ==
 ::
-+$  task-17
-  $+  task-17
-  $%  $<(?(%deep %keen) task)
-      [%keen spar]
-      $:  %deep
++$  queued-event-13
+  $+  queued-event-13
+  $%  [%call =duct wrapped-task=(hobo task-13)]
+      [%take =wire =duct =sign]
+  ==
+::
++$  task-13
+  $+  task-13
+  $%  [%kroc dry=?]                 ::  introduced in state %10, modified in %15
+      [%keen spar]                  ::  introduced in state %13, modified in %19
+      $<(?(%keen %kroc) task)
+  ==
+::
++$  queued-event-14
+  $+  queued-event-14
+  $%  [%call =duct wrapped-task=(hobo task-14)]
+      [%take =wire =duct =sign]
+  ==
+::
++$  task-14
+  $+  task-14
+  $%  [%kroc dry=?]                 ::  introduced in state %10, modified in %15
+      [%keen spar]                  ::  introduced in state %13, modified in %19
+      deep-task-14                  ::  introduced in state %14, modified in %19
+      $<(?(%keen %kroc %deep) task)
+  ==
+::
++$  deep-task-14
+  $:  %deep
       $%  [%nack =ship =nack=bone =message-blob]
           [%sink =ship =target=bone naxplanation=[=message-num =error]]
           [%drop =ship =nack=bone =message-num]
           [%cork =ship =bone]
           [%kill =ship =bone]
-      ==  ==
-  ==
+  ==  ==
 ::
-+$  queued-event-17
-  $+  queued-event-17
-  $%  [%call =duct wrapped-task=(hobo task-17)]
++$  queued-event-15-to-18
+  $+  queued-event-15-to-18
+  $%  [%call =duct wrapped-task=(hobo task-15-to-18)]
       [%take =wire =duct =sign]
   ==
 ::
-+$  queued-event-16
-  $+  queued-event-16
-  $%  [%call =duct wrapped-task=(hobo task-16)]
-      [%take =wire =duct =sign]
-  ==
-::
-+$  task-16
-  $+  task-16
-  $%  [%kroc dry=?]
-      $<(%kroc task-17)
++$  task-15-to-18
+  $+  task-15-to-18
+  $%  [%keen spar]                  ::  introduced in state %13, modified in %19
+      deep-task-14                  ::  introduced in state %14, modified in %19
+      $<(?(%keen %deep) task)
   ==
 ::  $bug: debug printing configuration
 ::
@@ -1644,77 +1665,77 @@
                   ==
                   [%adult state=ames-state-8]
               ==  ==
-              $:  %9
+              $:  %9                                  :: %snub introduced
               $%  $:  %larva
-                      events=(qeu queued-event-11)
+                      events=(qeu queued-event-9)
                       state=ames-state-9
                   ==
                   [%adult state=ames-state-9]
               ==  ==
-              $:  %10
+              $:  %10                                 :: %kroc introduced
               $%  $:  %larva
-                      events=(qeu queued-event-11-and-16)
+                      events=(qeu queued-event-10-to-13)
                       state=ames-state-10
                   ==
                   [%adult state=ames-state-10]
               ==  ==
               $:  %11
               $%  $:  %larva
-                      events=(qeu queued-event-11-and-16)
+                      events=(qeu queued-event-10-to-13)
                       state=ames-state-11
                   ==
                   [%adult state=ames-state-11]
               ==  ==
               $:  %12
               $%  $:  %larva
-                      events=(qeu queued-event-16)
+                      events=(qeu queued-event-10-to-13)
                       state=ames-state-12
                   ==
                   [%adult state=ames-state-12]
               ==  ==
-              $:  %13
-              $%  $:  %larva
-                      events=(qeu queued-event-16)
+              $:  %13                                 :: %snub modified
+              $%  $:  %larva                          :: %keen introduced
+                      events=(qeu queued-event-13)
                       state=ames-state-13
                   ==
                   [%adult state=ames-state-13]
               ==  ==
-              $:  %14
+              $:  %14                                 :: %deep introduced
               $%  $:  %larva
-                      events=(qeu queued-event-16)
+                      events=(qeu queued-event-14)
                       state=ames-state-14
                   ==
                   [%adult state=ames-state-14]
               ==  ==
-              $:  %15
+              $:  %15                                 :: %kroc modified
               $%  $:  %larva
-                      events=(qeu queued-event-16)
+                      events=(qeu queued-event-15-to-18)
                       state=ames-state-15
                   ==
                   [%adult state=ames-state-15]
               ==  ==
               $:  %16
               $%  $:  %larva
-                      events=(qeu queued-event-16)
+                      events=(qeu queued-event-15-to-18)
                       state=ames-state-16
                   ==
                   [%adult state=ames-state-16]
               ==  ==
               $:  %17
               $%  $:  %larva
-                      events=(qeu queued-event-17)
+                      events=(qeu queued-event-15-to-18)
                       state=ames-state-17
                   ==
                   [%adult state=ames-state-17]
               ==  ==
               $:  %18
               $%  $:  %larva
-                      events=(qeu queued-event-17)
+                      events=(qeu queued-event-15-to-18)
                       state=ames-state-18
                   ==
                   [%adult state=ames-state-18]
               ==  ==
-              $:  %19
+              $:  %19                                 :: %keen & %deep modified
               $%  $:  %larva
                       events=(qeu queued-event)
                       state=_ames-state.adult-gate
@@ -1782,7 +1803,7 @@
           [%9 %larva *]
         ~>  %slog.0^leaf/"ames: larva: load"
         =.  cached-state  `[%9 state.old]
-        =.  queued-events  (event-11-to-12 events.old)
+        =.  queued-events  (event-9-to-last events.old)
         larval-gate
       ::
           [%10 %adult *]
@@ -1793,7 +1814,7 @@
           [%10 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%10 state.old]
-        =.  queued-events  (event-17-to-19 (event-11-to-17 events.old))
+        =.  queued-events  (event-10-til-13-to-last events.old)
         larval-gate
       ::
           [%11 %adult *]
@@ -1804,7 +1825,7 @@
           [%11 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%11 state.old]
-        =.  queued-events  (event-17-to-19 (event-11-to-17 events.old))
+        =.  queued-events  (event-10-til-13-to-last events.old)
         larval-gate
       ::
           [%12 %adult *]
@@ -1815,7 +1836,7 @@
           [%12 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%12 state.old]
-        =.  queued-events  (event-17-to-19 (event-16-to-17 events.old))
+        =.  queued-events  (event-10-til-13-to-last events.old)
         larval-gate
       ::
           [%13 %adult *]
@@ -1826,7 +1847,7 @@
           [%13 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%13 state.old]
-        =.  queued-events  (event-17-to-19 (event-16-to-17 events.old))
+        =.  queued-events  (event-13-to-last events.old)
         larval-gate
       ::
           [%14 %adult *]
@@ -1837,7 +1858,7 @@
           [%14 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%14 state.old]
-        =.  queued-events  (event-17-to-19 (event-16-to-17 events.old))
+        =.  queued-events  (event-14-to-last events.old)
         larval-gate
       ::
           [%15 %adult *]
@@ -1848,7 +1869,7 @@
           [%15 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%15 state.old]
-        =.  queued-events  (event-17-to-19 (event-16-to-17 events.old))
+        =.  queued-events  (event-15-til-18-to-last events.old)
         larval-gate
       ::
           [%16 %adult *]
@@ -1859,7 +1880,7 @@
           [%16 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%16 state.old]
-        =.  queued-events  (event-17-to-19 (event-16-to-17 events.old))
+        =.  queued-events  (event-15-til-18-to-last events.old)
         larval-gate
       ::
           [%17 %adult *]
@@ -1870,7 +1891,7 @@
           [%17 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%17 state.old]
-        =.  queued-events  (event-17-to-19 events.old)
+        =.  queued-events  (event-15-til-18-to-last events.old)
         larval-gate
       ::
           [%18 %adult *]
@@ -1881,7 +1902,7 @@
           [%18 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  cached-state  `[%18 state.old]
-        =.  queued-events  (event-17-to-19 events.old)
+        =.  queued-events  (event-15-til-18-to-last events.old)
         larval-gate
       ::
           [%19 %adult *]  (load:adult-core %19 state.old)
@@ -1893,28 +1914,28 @@
         larval-gate
       ==
       ::
-      ++  event-11-to-12
-        |=  events=(qeu queued-event-11)
+      ++  event-9-to-last
+        |=  events=(qeu queued-event-9)
         ^-  (qeu queued-event)
         ::  "+rep:in on a +qeu looks strange, but works fine."
         ::
         %-  ~(rep in events)
-        |=  [e=queued-event-11 q=(qeu queued-event)]
+        |=  [e=queued-event-9 q=(qeu queued-event)]
         %-  ~(put to q)  ^-  queued-event
         ?.  ?=(%call -.e)  e
-        =/  task=task-11  ((harden task-11) wrapped-task.e)
+        =/  task=task-9  ((harden task-9) wrapped-task.e)
         %=  e
           wrapped-task  ?.(?=(%snub -.task) task [%snub %deny ships.task])
         ==
       ::
-      ++  event-11-to-17
-        |=  events=(qeu queued-event-11-and-16)
-        ^-  (qeu queued-event-17)
+      ++  event-10-til-13-to-last
+        |=  events=(qeu queued-event-10-to-13)
+        ^-  (qeu queued-event)
         %-  ~(rep in events)
-        |=  [e=queued-event-11-and-16 q=(qeu queued-event-17)]
-        %-  ~(put to q)  ^-  queued-event-17
+        |=  [e=queued-event-10-to-13 q=(qeu queued-event)]
+        %-  ~(put to q)  ^-  queued-event
         ?.  ?=(%call -.e)  e
-        =/  task=task-11-and-16  ((harden task-11-and-16) wrapped-task.e)
+        =/  task=task-10-to-13  ((harden task-10-to-13) wrapped-task.e)
         %=    e
             wrapped-task
           ?+  -.task  task
@@ -1923,38 +1944,66 @@
           ==
         ==
       ::
-      ++  event-16-to-17
-        |=  events=(qeu queued-event-16)
-        ^-  (qeu queued-event-17)
+      ++  event-13-to-last
+        |=  events=(qeu queued-event-13)
+        ^-  (qeu queued-event)
         %-  ~(rep in events)
-        |=  [e=queued-event-16 q=(qeu queued-event-17)]
-        %-  ~(put to q)  ^-  queued-event-17
+        |=  [e=queued-event-13 q=(qeu queued-event)]
+        %-  ~(put to q)  ^-  queued-event
         ?.  ?=(%call -.e)  e
-        =/  task=task-16  ((harden task-16) wrapped-task.e)
+        =/  task=task-13  ((harden task-13) wrapped-task.e)
         %=    e
             wrapped-task
-          ^-  task-17
+          ^-  ^task
           ?+  -.task  task
             %kroc  [%kroc ~]
+            %keen  [%keen ~ +.task]
           ==
         ==
       ::
-      ++  event-17-to-19
-        |=  events=(qeu queued-event-17)
+      ++  event-14-to-last
+        |=  events=(qeu queued-event-14)
         ^-  (qeu queued-event)
         %-  ~(rep in events)
-        |=  [e=queued-event-17 q=(qeu queued-event)]
+        |=  [e=queued-event-14 q=(qeu queued-event)]
         %-  ~(put to q)  ^-  queued-event
         ?.  ?=(%call -.e)  e
-        =/  task=task-17  ((harden task-17) wrapped-task.e)
-        %=  e
-          wrapped-task
-          ?:  ?=(%keen -.task) 
+        =/  task=task-14  ((harden task-14) wrapped-task.e)
+        %=    e
+            wrapped-task
+          ^-  ^task
+          ?:  ?=(%kroc -.task)
+            [%kroc ~]
+          ?:  ?=(%keen -.task)
             [%keen ~ +.task]
           ?.  ?=([%deep %nack *] task)  task
           =/  msg  =>([cue=cue arg=message-blob.task] ~+((cue arg)))
           =/  hed
-            ?:  =(1 (end 0 nack-bone.task))          
+            ?.  =(1 (end 0 nack-bone.task))
+              %plea
+            ?:  =(0 (end 0 (rsh 0 nack-bone.task)))
+              %boon
+            %naxplanation
+          [%deep %nack ship.task nack-bone.task ;;(message [hed msg])]
+        ==
+      ::
+      ++  event-15-til-18-to-last
+        |=  events=(qeu queued-event-15-to-18)
+        ^-  (qeu queued-event)
+        %-  ~(rep in events)
+        |=  [e=queued-event-15-to-18 q=(qeu queued-event)]
+        %-  ~(put to q)  ^-  queued-event
+        ?.  ?=(%call -.e)  e
+        =/  task=task-15-to-18  ((harden task-15-to-18) wrapped-task.e)
+        %=    e
+            wrapped-task
+          ^-  ^task
+          ?:  ?=(%keen -.task)
+            [%keen ~ +.task]
+          ?.  ?=([%deep %nack *] task)  task
+          =/  msg  =>([cue=cue arg=message-blob.task] ~+((cue arg)))
+          =/  hed
+            ?:  =(1 (end 0 nack-bone.task))
               ?:  =(0 (end 0 (rsh 0 nack-bone.task)))
                 %boon
               %naxplanation
@@ -2662,7 +2711,7 @@
           =/  [key=@ ,path]  (~(got by chain.u.per) (slav %ud idx.wire))
           =/  raw=@t
             (dy:crub:crypto key (slav %uv cyf.rest.path.s))
-          =/  pax=path   
+          =/  pax=path
             (stab raw)
           =;  dat=(unit (unit page))
             (emit duct [%give %near [ship.s pax] dat])
@@ -3236,7 +3285,7 @@
         |=  =path
         ^+  event-core
         =/  key=@  (shaz eny) :: TODO: check key width
-        =/  num=@ud  
+        =/  num=@ud
           ?~  latest=(pry:on:chain chain.ames-state)
             1
           .+(key.u.latest)
@@ -3282,7 +3331,7 @@
           (emit duct %pass wir %a %keen ~ ship lav)
         :: XX: key exchange over ames forces all encrypted scries to be
         :: to a known peer
-        ?>  ?=(~ sec) 
+        ?>  ?=(~ sec)
         %^  enqueue-alien-todo  ship  ship-state
         |=  todos=alien-agenda
         todos(keens (~(put ju keens.todos) path duct))
@@ -5634,6 +5683,7 @@
         ==
       --
     ==
+  ::
   ++  state-18-to-19
     |=  old=ames-state-18
     ^-  ^ames-state
@@ -5645,7 +5695,7 @@
       %-  ~(run by peers.old)
       |=  s=ship-state-17
       ^-  ship-state
-      ?:  ?=(%alien -.s)  
+      ?:  ?=(%alien -.s)
         %=  s
           keens  [keens.s ~]
         ==
@@ -5667,11 +5717,11 @@
           |=  b=message-blob
           ^-  message
            =/  hed
-             ?:  =(1 (end 0 bone))          
-               ?:  =(0 (end 0 (rsh 0 bone)))
-                 %boon
-               %naxplanation
-             %plea
+             ?.  =(1 (end 0 bone))
+               %plea
+             ?:  =(0 (end 0 (rsh 0 bone)))
+               %boon
+             %naxplanation
            =/  msg  =>([cue=cue arg=b] ~+((cue arg)))
           ;;(message [hed msg])
       ==  ==  ==
@@ -5699,7 +5749,7 @@
         [%fine %shut kef=@ enc=@ ~]
       =/  key-idx  (slav %ud kef.tyl)
       =/  key  (got:on:chain chain.ames-state (slav %ud kef.tyl))
-      =/  pat=(unit path)  
+      =/  pat=(unit path)
         (rush `@t`(dy:crub:crypto key.key (slav %uv enc.tyl)) stap)
       ?~  pat
         [~ ~]
@@ -5709,7 +5759,7 @@
         ~&  key-validation-failed/[u.pat key-idx chain.ames-state]
         [~ ~]
       =/  res  (rof [~ ~] /ames (as-omen:balk u.blk))
-      ?~  res  
+      ?~  res
         ~&  %bailing-close
         [~ ~]
       ?~  u.res
