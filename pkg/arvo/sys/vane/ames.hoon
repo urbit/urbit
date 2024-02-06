@@ -5632,6 +5632,7 @@
         ==
       --
     ==
+  ::
   ++  state-18-to-19
     |=  old=ames-state-18
     ^-  ^ames-state

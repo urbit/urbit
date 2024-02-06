@@ -569,13 +569,13 @@
       ==  ==
     ::
     +$  gift
-    ::+$  client-gift  :: gifts emitted when sending requests/responses
+        ::  client-gift  :: gifts emitted when sending requests/responses
+        ::
       $%  [%send p=(list lane:pact) q=@]     :: send a request/response packet
-          [%response $>(%page mess)]         :: produce a response message
-    ::  ==
-    ::+$  publisher-gift  :: gifts emitted when hearing requests
-      ::$%
-          [%boon message=*]                    :: assembled %boon
+          [%response load=$>(%page mess)]    :: produce a response message
+        ::  publisher-gift  :: gifts emitted when hearing requests
+        ::
+          [%boon payload=*]                    :: assembled %boon
           [%done error=(unit error)]           :: ack to client vane
       ==
     +$  mesa-message
@@ -724,7 +724,7 @@
     ::
     ::  poke/flow layer spec
     ::
-    ::  + incoming-tasks:
+    ::  - incoming-tasks:
         :: client :  send plea    =>  recv plea  : server
         ::          recv (n)ack   <=  send (n)ack
         ::
@@ -752,23 +752,23 @@
     ::        |         |         |                                |
     ::    +pe-core      |         |                            +ma:ev-res
     ::        |         |         |                                |
-:: +call:fo-core(%done) |         |                           [%mess %poke]
+   ::call:fo-core(%done)|         |                           [%mess %poke]
     ::        |_________|         |________________________________| unix
     ::                                                      ------------
     ::                                                          ~nec (gets %poke plea)
     ::
-::          ~nec
-::        ----------                      |--------------
-::       [%done err=~]             give %response       |
-::            |                           |             |           to-vane
-::        +ev-res                      +ma-page         |              |
-::            |                           |             | +take-ack:fo-core(%response)
-::        +pe-core                    +ma:ev-res        |              |
-::            |                           |             |       +take:ma:ev-res
-:: +take:fo-core(%done)                   |             |              |
-::            |                       [%mess %page]     |     /[wire-of-ack]/%int
-::         emit ack (unix)                | unix        |              |
-::                                       ~zod           |_______[%response =page]
+    ::          ~nec
+    ::        ----------                      |--------------              ^
+    ::       [%done err=~]             give %response       |              |
+    ::            |                           |             |           to-vane
+    ::        +ev-res                      +ma-page         |              |
+    ::            |                           |             | +take-ack:fo-core(%response)
+    ::        +pe-core                    +ma:ev-res        |              |
+    ::            |                           |             |       +take:ma:ev-res
+    :: +take:fo-core(%done)                   |             |              |
+    ::            |                       [%mess %page]     |     /[wire-of-ack]/%int
+    ::         emit ack (unix)                | unix        |              |
+    ::                                       ~zod           |_______[%response =page]
     ::  ++fo core focuses on (map bone=@ud flow-state)
     ::
     |%
@@ -845,18 +845,18 @@
             $%  [%old her=ship =bone]
                 [%new her=ship =rift =bone seq=@ud]
             ==
-        ?.  ?|  ?=([%flow @ @ @ ~] wire) ::?|  ?=([%bone @ @ @ ~] wire)
-                ?=([%flow @ @ ~] wire)   ::    ?=([%bone @ @ ~] wire)
+        ?.  ?|  ?=([%flow @ @ @ @ ?(%out %ext %int) ~] wire) ::?|  ?=([%bone @ @ @ ~] wire)
+                ?=([%flow @ @ @ ?(%out %ext %int) ~] wire)   ::    ?=([%bone @ @ ~] wire)
             ==                           ::
           ::  ignore malformed wires
           ::
           ~
         ?+    wire  ~
-            [%flow @ @ ~]
+            [%flow @ @ @ @ ~]
           ~
           ::`[%old `@p`(slav %p i.t.wire) `@ud`(slav %ud i.t.t.wire)]
         ::
-            [%flow @ @ @ @ ~]
+            [%flow @ @ @ @ @ ~]
           %-  some
           :*      %new
                 her=`@p`(slav %p i.t.wire)
@@ -871,7 +871,7 @@
     ++  ev-req  ::  send %peek/%poke requests
       =|  moves=(list move)
       ~%  %event-gate  ..ev-req  ~
-      |_  hen=duct  ::  XX hen=duct
+      |_  hen=duct
       :: ~%  %req-core  ..$  ~
       +|  %helpers
       ::
@@ -959,9 +959,6 @@
           [pe-nex-bone:pe-core (pe-new-duct:pe-core hen)]
         ::
         ::  XX handle corked/closing bones
-       ::
-        ::  XX add seq to the gift, for tracking it in the wire
-        ::
         =^  [gifts=(list [seq=@ud spar path]) moves-flow=_moves]  ax
           =<  fo-abut
           (fo-call:(fo-abed:fo hen bone pe-chan:pe-core) plea/[vane wire payload])
@@ -1201,9 +1198,7 @@
         ::
         ++  take
           =>  |%  +$  take-response
-                    $%  [%response load=$>(%page mess)]  ::  acks
-                                                         ::  XX poke payloads?
-                         $>(%done gift)
+                    $%  $>(?(%response %done) gift) ::  acks (frome vane and network)
                     ==
               --
           |=  [=wire take=take-response]
@@ -1274,7 +1269,7 @@
           ::
           ::  flip bone's last bit to account for flow switching
           ::
-          =/  =bone  (mix 1 bone:de:pok)    ::(ev-get-bone %poke mess)
+          =/  =bone  (mix 1 bone:de:pok)
           =/  req=mesa-message
             ?>  ?=(%message -.page)  :: XX ??
             ::  the bone will tell us if this is a %boon or a %plea
@@ -1317,6 +1312,7 @@
             res-core
           ::  XX use $pith for this?
           =/  [=bone seq=@ud pe-chan=[channel peer-state]]  u.u-bone-her
+
           =/  flow=?(%int %ext %out)  %int  ::  XX support %ext payloads?
                                        ::  are these always handled by the
                                        ::  packet layer?
@@ -1348,7 +1344,7 @@
             res-core
           ::  XX use $pith for this
           =/  [=bone seq=@ud pe-chan=[channel peer-state]]  u.u-bone-her
-          =/  flow=?(%int %ext %out)  %out
+          =/  flow=?(%int %ext %out)  %out  ::  XX parse wire
           ::  relay the vane ack to the foreign peer
           ::
           =^  moves  ax
@@ -1373,7 +1369,7 @@
       ++  sys-born  sys-core(ax ax(unix-duct hen))
       --
     ::
-    :: +|  %internals
+    +|  %internals
     ::  +pe: per-peer processing
     ::
     ++  pe
@@ -1655,15 +1651,16 @@
           ~|(%dangling-bone^her^bone (~(got by by-bone.ossuary.peer-state) bone))
         =.  fo-core  (fo-emit duct %give %boon message)
         ::  XX handle a previous crash
-        :: =?  nax.state  ?=(^ error)
-        ::   =?  nax.state  (gth seq 10)
-        ::     ::  only keep the last 10 nacks
-        ::     ::
-        ::     (~(del in nax.state) (sub seq 10))
-        ::   (~(put in nax.state) seq)
+        :: =?  moves  !ok
+        ::   ::  we previously crashed on this message; notify client vane
+        ::   ::
+        ::   %+  turn  moves
+        ::   |=  =move
+        ::   ?.  ?=([* %give %boon *] move)  move
+        ::   [duct.move %give %lost ~]
         ::  ack unconditionally
         ::
-         =.  last-acked.state  +(last-acked.state)
+        =.  last-acked.state  +(last-acked.state)
         ::  XX emit ack to unix
         fo-core
       ::
@@ -1683,6 +1680,7 @@
               [(scot %ud bone)]
               [(scot %ud seq)]    ::  XX  seq not needed  :: XX $% ?
               %out  ::  ?(for-acks=%int for-payloads=%ext to-vanes=%out)
+                    ::  move to begining of wire
           ==
         ?:  =(vane.plea %$)
           fo-core  ::  XX handle pre-cork ships
@@ -1812,6 +1810,13 @@
       [%make-peek p=spar:ames]           :: initiate %peek request
       [%make-poke p=spar:ames q=path]    :: initiate %poke request
   ==
+::  to %lull
++$  new-sign
+  $%  ::[%ames %response $>(%page mess)]   :: produce a response message
+      ::sign-arvo
+      [%ames gift]
+      sign-arvo
+  ==
 ::
 ++  call
   ::
@@ -1850,7 +1855,7 @@
   [moves mesa-gate]
 ::
 ++  take
-  |=  [=wire hen=duct dud=(unit goof) sign=sign-arvo]
+  |=  [=wire hen=duct dud=(unit goof) sign=new-sign]
   ^-  [(list move) _mesa-gate]
   ?^  dud
     ~|(%mesa-take-dud (mean tang.u.dud))
@@ -1875,12 +1880,18 @@
       [@ %boon *]  req-abet:(take:~(. ev-req hen) wire %boon payload.sign)
     ::
     ::  network responses: acks/poke payloads
+    ::                     reentrant from %ames (either message or packet layer)
     ::
-      :: [%ames %response *]
+      [%ames %response *]
     ::
-    ::  XX  check the wire here if this is an ack or a payload
+      =<  res-abet
+      ::  XX  check the wire here if this is internal (ack) or external (payload)
+      %.  [wire %response +>.sign]
+      ?+  wire   ~|  %ames-evil-response-wire^wire  !!
+        [%flow @ @ @ @ %int ~]  take:ma:~(. ev-res hen)  ::  %ack
+        [%flow @ @ @ @ %out ~]  !!  :: take:pa:~(. ev-res hen)  ::  %poke payload
+      ==
     ::
-    :: res-abet:(take:ma:~(. ev-res hen) wire %response +>.sign)
     ==
   [moves mesa-gate]
 ::

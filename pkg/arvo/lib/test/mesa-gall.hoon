@@ -142,12 +142,21 @@
   |=  [=gall-gate =wire =duct =sign-arvo =roof]
   %.  [wire duct dud=~ sign-arvo]
   take:(gall-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
+::
+::  to %lull
++$  new-task
+  $%  [%hear p=mesa-lane:ames q=@]            :: receive a packet
+      $<(%hear task:ames)
+      [%mess p=(unit mesa-lane:ames) q=mess:ames]  :: receive a message
+      [%make-peek p=spar:ames]           :: initiate %peek request
+      [%make-poke p=spar:ames q=path]    :: initiate %poke request
+  ==
 ::  +mesa-check-call: run gall task, assert produces expected-moves
 ::
 ++  mesa-check-call
   |=  $:  =mesa-gate
           [now=@da eny=@ =roof]
-          [=duct task=(hobo task:ames)]
+          [=duct task=(hobo new-task)]
           expected-moves=(list move:mesa-bunt)
       ==
   ^-  [tang ^mesa-gate]
@@ -156,22 +165,28 @@
   [(expect-eq !>(expected-moves) !>(moves)) mesa-gate]
 ::
 ++  mesa-call
-  |=  [=mesa-gate =duct task=(hobo task:ames) =roof]
+  |=  [=mesa-gate =duct task=(hobo new-task) =roof]
   %.  [duct dud=~ task]
   call:(mesa-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
-::  +sema: run sema sign, assert produces expected-moves
+::  +mesa: run mesa sign, assert produces expected-moves
 ::
-:: ++  mesa-check-take
-::   |=  $:  =mesa-gate
-::           [now=@da eny=@ =roof]
-::           [=wire =duct =sign:mesa-bunt]
-::           expected-moves=(list move:mesa-bunt)
-::       ==
-::   ^-  [tang ^mesa-gate]
-::   =/  mesa-core  (mesa-gate now eny roof)
-::   =^  moves  mesa-gate  (take:mesa-core wire duct dud=~ sign)
-::   [(expect-eq !>(expected-moves) !>(moves)) mesa-gate]
-::
++$  new-sign
+  $%  ::[%ames %response $>(%page mess)]   :: produce a response message
+      ::sign-arvo
+      [%ames gift:mesa-bunt]
+      sign-arvo
+  ==
+++  mesa-check-take
+  |=  $:  =mesa-gate
+          [now=@da eny=@ =roof]
+          [=wire =duct sign=new-sign]  ::  XX gift => sign
+          expected-moves=(list move:mesa-bunt)
+      ==
+  ^-  [tang ^mesa-gate]
+  =/  mesa-core  (mesa-gate now eny roof)
+  =^  moves  mesa-gate  (take:mesa-core wire duct dud=~ sign)  ::  XX gift => sign
+  [(expect-eq !>(expected-moves) !>(moves)) mesa-gate]
+
 :: ++  mesa-scry-hunk
 ::   |=  $:  =mesa-gate
 ::           [now=@da eny=@ =roof]
