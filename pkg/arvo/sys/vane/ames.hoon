@@ -1279,28 +1279,28 @@
       counter=@ud
   ==
 ::
-+$  queued-event-9-til-13
-  $+  queued-event-9-til-13
-  $%  [%call =duct wrapped-task=(hobo task-9-til-13)]
++$  queued-event-9-til-11
+  $+  queued-event-9-til-11
+  $%  [%call =duct wrapped-task=(hobo task-9-til-11)]
       [%take =wire =duct =sign]
   ==
 ::
-+$  task-9-til-13
-  $+  task-9-til-13
-  $%  [%kroc dry=?]                 ::  introduced in state %10, modified in %16
-      [%snub ships=(list ship)]     ::  introduced in state %9,  modified in %13
++$  task-9-til-11
+  $+  task-9-til-11
+  $%  [%kroc dry=?]                 ::  introduced in state %10, modified in %17
+      [%snub ships=(list ship)]     ::  introduced in state %9,  modified in %11
       $<(?(%snub %kroc %deep %keen) task) ::  %deep/%keen introduced later
   ==
 ::
-+$  queued-event-14-and-15
-  $+  queued-event-14-and-15
-  $%  [%call =duct wrapped-task=(hobo task-14-and-15)]
++$  queued-event-12-til-16
+  $+  queued-event-12-til-16
+  $%  [%call =duct wrapped-task=(hobo task-12-til-16)]
       [%take =wire =duct =sign]
   ==
 ::
-+$  task-14-and-15
-  $+  task-14-and-15
-  $%  [%kroc dry=?]                 ::  introduced in state %10, modified in %16
++$  task-12-til-16
+  $+  task-12-til-16
+  $%  [%kroc dry=?]                 ::  introduced in state %10, modified in %17
       [%keen spar]                  ::  introduced in state %13, modified in %19
       deep-task-14                  ::  introduced in state %14, modified in %19
       $<(?(%kroc %keen %deep) task)
@@ -1315,14 +1315,14 @@
           [%kill =ship =bone]
   ==  ==
 ::
-+$  queued-event-16-to-18
-  $+  queued-event-16-to-18
-  $%  [%call =duct wrapped-task=(hobo task-16-to-18)]
++$  queued-event-17-and-18
+  $+  queued-event-17-and-18
+  $%  [%call =duct wrapped-task=(hobo task-16-and-18)]
       [%take =wire =duct =sign]
   ==
 ::
-+$  task-16-to-18
-  $+  task-16-to-18
++$  task-16-and-18
+  $+  task-16-and-18
   $%  [%keen spar]                  ::  introduced in state %13, modified in %19
       deep-task-14                  ::  introduced in state %14, modified in %19
       $<(?(%keen %deep) task)
@@ -1642,70 +1642,70 @@
               ==  ==
               $:  %9                                  :: %snub introduced
               $%  $:  %larva
-                      events=(qeu queued-event-9-til-13)
+                      events=(qeu queued-event-9-til-11)
                       state=ames-state-9
                   ==
                   [%adult state=ames-state-9]
               ==  ==
               $:  %10                                 :: %kroc introduced
               $%  $:  %larva
-                      events=(qeu queued-event-9-til-13)
+                      events=(qeu queued-event-9-til-11)
                       state=ames-state-10
                   ==
                   [%adult state=ames-state-10]
               ==  ==
               $:  %11
               $%  $:  %larva
-                      events=(qeu queued-event-9-til-13)
+                      events=(qeu queued-event-9-til-11)
                       state=ames-state-11
                   ==
                   [%adult state=ames-state-11]
               ==  ==
-              $:  %12
+              $:  %12                                 :: %snub modified
               $%  $:  %larva
-                      events=(qeu queued-event-9-til-13)
+                      events=(qeu queued-event-12-til-16)
                       state=ames-state-12
                   ==
                   [%adult state=ames-state-12]
               ==  ==
-              $:  %13                                 :: %snub modified
+              $:  %13
               $%  $:  %larva                          :: %keen introduced
-                      events=(qeu queued-event-9-til-13)
+                      events=(qeu queued-event-12-til-16)
                       state=ames-state-13
                   ==
                   [%adult state=ames-state-13]
               ==  ==
               $:  %14                                 :: %deep introduced
               $%  $:  %larva
-                      events=(qeu queued-event-14-and-15)
+                      events=(qeu queued-event-12-til-16)
                       state=ames-state-14
                   ==
                   [%adult state=ames-state-14]
               ==  ==
               $:  %15
               $%  $:  %larva
-                      events=(qeu queued-event-14-and-15)
+                      events=(qeu queued-event-12-til-16)
                       state=ames-state-15
                   ==
                   [%adult state=ames-state-15]
               ==  ==
-              $:  %16                                 :: %kroc modified
+              $:  %16
               $%  $:  %larva
-                      events=(qeu queued-event-16-to-18)
+                      events=(qeu queued-event-12-til-16)
                       state=ames-state-16
                   ==
                   [%adult state=ames-state-16]
               ==  ==
-              $:  %17
+              $:  %17                                 :: %kroc modified
               $%  $:  %larva
-                      events=(qeu queued-event-16-to-18)
+                      events=(qeu queued-event-17-and-18)
                       state=ames-state-17
                   ==
                   [%adult state=ames-state-17]
               ==  ==
               $:  %18
               $%  $:  %larva
-                      events=(qeu queued-event-16-to-18)
+                      events=(qeu queued-event-17-and-18)
                       state=ames-state-18
                   ==
                   [%adult state=ames-state-18]
@@ -1728,225 +1728,225 @@
       ::
           [%5 %adult *]
         =.  cached-state  `[%5 state.old]
-        ~>  %slog.0^leaf/"ames: larva reload"
+        ~>  %slog.0^leaf/"ames: larva %5 reload"
         larval-gate
       ::
           [%5 %larva *]
-        ~>  %slog.0^leaf/"ames: larva: load"
+        ~>  %slog.0^leaf/"ames: larva %5 load"
         =.  cached-state  `[%5 state.old]
         =.  queued-events  events.old
         larval-gate
       ::
           [%6 %adult *]
         =.  cached-state  `[%6 state.old]
-        ~>  %slog.0^leaf/"ames: larva reload"
+        ~>  %slog.0^leaf/"ames: larva %6 reload"
         larval-gate
       ::
           [%6 %larva *]
-        ~>  %slog.0^leaf/"ames: larva: load"
+        ~>  %slog.0^leaf/"ames: larva %6 load"
         =.  cached-state  `[%6 state.old]
         =.  queued-events  events.old
         larval-gate
       ::
           [%7 %adult *]
         =.  cached-state  `[%7 state.old]
-        ~>  %slog.0^leaf/"ames: larva reload"
+        ~>  %slog.0^leaf/"ames: larva %7 reload"
         larval-gate
       ::
           [%7 %larva *]
-        ~>  %slog.0^leaf/"ames: larva: load"
+        ~>  %slog.0^leaf/"ames: larva %7 load"
         =.  queued-events  events.old
         =.  cached-state  `[%7 state.old]
         larval-gate
       ::
           [%8 %adult *]
         =.  cached-state  `[%8 state.old]
-        ~>  %slog.0^leaf/"ames: larva reload"
+        ~>  %slog.0^leaf/"ames: larva %8 reload"
         larval-gate
       ::
           [%8 %larva *]
-        ~>  %slog.0^leaf/"ames: larva: load"
+        ~>  %slog.0^leaf/"ames: larva %8 load"
         =.  cached-state  `[%8 state.old]
         =.  queued-events  events.old
         larval-gate
       ::
           [%9 %adult *]
         =.  cached-state  `[%9 state.old]
-        ~>  %slog.0^leaf/"ames: larva reload"
+        ~>  %slog.0^leaf/"ames: larva %9 reload"
         larval-gate
       ::
           [%9 %larva *]
-        ~>  %slog.0^leaf/"ames: larva: load"
+        ~>  %slog.0^leaf/"ames: larva %9 load"
         =.  cached-state  `[%9 state.old]
-        =.  queued-events  %-  event-16-til-18-to-last
-                           %-  event-14-and-15-to-16
-                           %-  event-9-til-13-to-14
+        =.  queued-events  %-  event-17-and-18-to-last
+                           %-  event-12-til-16-to-17
+                           %-  event-9-til-11-to-12
                            events.old
         larval-gate
       ::
           [%10 %adult *]
         =.  cached-state  `[%10 state.old]
-        ~>  %slog.0^leaf/"ames: larva reload"
+        ~>  %slog.0^leaf/"ames: larva %10 reload"
         larval-gate
       ::
           [%10 %larva *]
-        ~>  %slog.1^leaf/"ames: larva: load"
+        ~>  %slog.1^leaf/"ames: larva %10 load"
         =.  cached-state  `[%10 state.old]
-        =.  queued-events  %-  event-16-til-18-to-last
-                           %-  event-14-and-15-to-16
-                           %-  event-9-til-13-to-14
+        =.  queued-events  %-  event-17-and-18-to-last
+                           %-  event-12-til-16-to-17
+                           %-  event-9-til-11-to-12
                            events.old
         larval-gate
       ::
           [%11 %adult *]
         =.  cached-state  `[%11 state.old]
-        ~>  %slog.0^leaf/"ames: larva reload"
+        ~>  %slog.0^leaf/"ames: larva %11 reload"
         larval-gate
       ::
           [%11 %larva *]
-        ~>  %slog.1^leaf/"ames: larva: load"
+        ~>  %slog.1^leaf/"ames: larva %11 load"
         =.  cached-state  `[%11 state.old]
-        =.  queued-events  %-  event-16-til-18-to-last
-                           %-  event-14-and-15-to-16
-                           %-  event-9-til-13-to-14
+        =.  queued-events  %-  event-17-and-18-to-last
+                           %-  event-12-til-16-to-17
+                           %-  event-9-til-11-to-12
                            events.old
         larval-gate
       ::
           [%12 %adult *]
         =.  cached-state  `[%12 state.old]
-        ~>  %slog.0^leaf/"ames: larva reload"
+        ~>  %slog.0^leaf/"ames: larva %12 reload"
         larval-gate
       ::
           [%12 %larva *]
-        ~>  %slog.1^leaf/"ames: larva: load"
+        ~>  %slog.1^leaf/"ames: larva %12 load"
         =.  cached-state  `[%12 state.old]
-        =.  queued-events  %-  event-16-til-18-to-last
-                           %-  event-14-and-15-to-16
-                           %-  event-9-til-13-to-14
+        =.  queued-events  %-  event-17-and-18-to-last
+                           %-  event-12-til-16-to-17
                            events.old
         larval-gate
       ::
           [%13 %adult *]
         =.  cached-state  `[%13 state.old]
-        ~>  %slog.0^leaf/"ames: larva reload"
+        ~>  %slog.0^leaf/"ames: larva %13 reload"
         larval-gate
       ::
           [%13 %larva *]
-        ~>  %slog.1^leaf/"ames: larva: load"
+        ~>  %slog.1^leaf/"ames: larva %13 load"
         =.  cached-state  `[%13 state.old]
-        =.  queued-events  %-  event-16-til-18-to-last
-                           %-  event-14-and-15-to-16
-                           %-  event-9-til-13-to-14
+        =.  queued-events  %-  event-17-and-18-to-last
+                           %-  event-12-til-16-to-17
                            events.old
         larval-gate
       ::
           [%14 %adult *]
         =.  cached-state  `[%14 state.old]
-        ~>  %slog.0^leaf/"ames: larva reload"
+        ~>  %slog.0^leaf/"ames: larva %14 reload"
         larval-gate
       ::
           [%14 %larva *]
-        ~>  %slog.1^leaf/"ames: larva: load"
+        ~>  %slog.1^leaf/"ames: larva %14 load"
         =.  cached-state  `[%14 state.old]
-        =.  queued-events  %-  event-16-til-18-to-last
-                           %-  event-14-and-15-to-16
+        =.  queued-events  %-  event-17-and-18-to-last
+                           %-  event-12-til-16-to-17
                            events.old
         larval-gate
       ::
           [%15 %adult *]
         =.  cached-state  `[%15 state.old]
-        ~>  %slog.0^leaf/"ames: larva reload"
+        ~>  %slog.0^leaf/"ames: larva %15 reload"
         larval-gate
       ::
           [%15 %larva *]
-        ~>  %slog.1^leaf/"ames: larva: load"
+        ~>  %slog.1^leaf/"ames: larva %15 load"
         =.  cached-state  `[%15 state.old]
-        =.  queued-events  %-  event-16-til-18-to-last
-                           %-  event-14-and-15-to-16
+        =.  queued-events  %-  event-17-and-18-to-last
+                           %-  event-12-til-16-to-17
                            events.old
         larval-gate
       ::
           [%16 %adult *]
         =.  cached-state  `[%16 state.old]
-        ~>  %slog.0^leaf/"ames: larva reload"
+        ~>  %slog.0^leaf/"ames: larva %16 reload"
         larval-gate
       ::
           [%16 %larva *]
-        ~>  %slog.1^leaf/"ames: larva: load"
+        ~>  %slog.1^leaf/"ames: larva %16 load"
         =.  cached-state  `[%16 state.old]
-        =.  queued-events  (event-16-til-18-to-last events.old)
+        =.  queued-events  %-  event-17-and-18-to-last
+                           %-  event-12-til-16-to-17
+                           events.old
         larval-gate
       ::
           [%17 %adult *]
         =.  cached-state  `[%17 state.old]
-        ~>  %slog.0^leaf/"ames: larva reload"
+        ~>  %slog.0^leaf/"ames: larva %17 reload"
         larval-gate
       ::
           [%17 %larva *]
-        ~>  %slog.1^leaf/"ames: larva: load"
+        ~>  %slog.1^leaf/"ames: larva %17 load"
         =.  cached-state  `[%17 state.old]
-        =.  queued-events  (event-16-til-18-to-last events.old)
+        =.  queued-events  (event-17-and-18-to-last events.old)
         larval-gate
       ::
           [%18 %adult *]
         =.  cached-state  `[%18 state.old]
-        ~>  %slog.0^leaf/"ames: larva reload"
+        ~>  %slog.0^leaf/"ames: larva %18 reload"
         larval-gate
       ::
           [%18 %larva *]
-        ~>  %slog.1^leaf/"ames: larva: load"
+        ~>  %slog.1^leaf/"ames: larva %18 load"
         =.  cached-state  `[%18 state.old]
-        =.  queued-events  (event-16-til-18-to-last events.old)
+        =.  queued-events  (event-17-and-18-to-last events.old)
         larval-gate
       ::
           [%19 %adult *]  (load:adult-core %19 state.old)
       ::
           [%19 %larva *]
-        ~>  %slog.1^leaf/"ames: larva: load"
+        ~>  %slog.1^leaf/"ames: larva %19 load"
         =.  queued-events  events.old
         =.  adult-gate     (load:adult-core %19 state.old)
         larval-gate
       ==
       ::
-      ++  event-9-til-13-to-14
-        |=  events=(qeu queued-event-9-til-13)
-        ^-  (qeu queued-event-14-and-15)
+      ++  event-9-til-11-to-12
+        |=  events=(qeu queued-event-9-til-11)
+        ^-  (qeu queued-event-12-til-16)
         %-  ~(rep in events)
-        |=  [e=queued-event-9-til-13 q=(qeu queued-event-14-and-15)]
-        %-  ~(put to q)  ^-  queued-event-14-and-15
+        |=  [e=queued-event-9-til-11 q=(qeu queued-event-12-til-16)]
+        %-  ~(put to q)  ^-  queued-event-12-til-16
         ?.  ?=(%call -.e)  e
-        =/  task=task-9-til-13  ((harden task-9-til-13) wrapped-task.e)
+        =/  task=task-9-til-11  ((harden task-9-til-11) wrapped-task.e)
         %=    e
             wrapped-task
-          ^-  task-14-and-15
+          ^-  task-12-til-16
           ?+  -.task  task
             %snub  [%snub %deny ships.task]
           ==
         ==
       ::
-      ++  event-14-and-15-to-16
-        |=  events=(qeu queued-event-14-and-15)
-        ^-  (qeu queued-event-16-to-18)
+      ++  event-12-til-16-to-17
+        |=  events=(qeu queued-event-12-til-16)
+        ^-  (qeu queued-event-17-and-18)
         %-  ~(rep in events)
-        |=  [e=queued-event-14-and-15 q=(qeu queued-event-16-to-18)]
-        %-  ~(put to q)  ^-  queued-event-16-to-18
+        |=  [e=queued-event-12-til-16 q=(qeu queued-event-17-and-18)]
+        %-  ~(put to q)  ^-  queued-event-17-and-18
         ?.  ?=(%call -.e)  e
-        =/  task=task-14-and-15  ((harden task-14-and-15) wrapped-task.e)
+        =/  task=task-12-til-16  ((harden task-12-til-16) wrapped-task.e)
         %=    e
             wrapped-task
-          ^-  task-16-to-18
+          ^-  task-16-and-18
           ?.  ?=(%kroc -.task)  task
           [%kroc ~]
         ==
       ::
-      ++  event-16-til-18-to-last
-        |=  events=(qeu queued-event-16-to-18)
+      ++  event-17-and-18-to-last
+        |=  events=(qeu queued-event-17-and-18)
         ^-  (qeu queued-event)
         %-  ~(rep in events)
-        |=  [e=queued-event-16-to-18 q=(qeu queued-event)]
+        |=  [e=queued-event-17-and-18 q=(qeu queued-event)]
         %-  ~(put to q)  ^-  queued-event
         ?.  ?=(%call -.e)  e
-        =/  task=task-16-to-18  ((harden task-16-to-18) wrapped-task.e)
+        =/  task=task-16-and-18  ((harden task-16-and-18) wrapped-task.e)
         %=    e
             wrapped-task
           ^-  ^task

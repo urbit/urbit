@@ -95,9 +95,9 @@
           run-nonce=@t
           sub-nonce=_1
           =stats
-          $+(bitt =bitt)
-          $+(boat =boat)
-          $+(boar =boar)
+          =bitt
+          =boat
+          =boar
           code=*
           agent=(each agent vase)
           =beak
