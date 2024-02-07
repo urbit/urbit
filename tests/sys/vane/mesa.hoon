@@ -24,7 +24,7 @@
       :~  [~[/poke] [%pass /~bud/0/0 %b %wait ~1111.1.1..00.00.30]]
         ::
           :-  ~[/poke]
-          [%pass /flow/~bud/0/0/1/int %a make-poke]
+          [%pass /flow/~bud/0/0/1/int %m make-poke]
       ==
     ==
   ::
@@ -42,19 +42,21 @@
   ::
   :-  moves-2  |.  :-  %|
   ~?  >  dbug  '~bud hears %poke-plea from ~nec'
-  =/  message
+  =/  message=mess:mesa
     ::  XX  the message layer should only get the inner path (from rift onwards)
     ::
-    :^    %poke
+    :*  %poke
         [~bud /ax/~bud//1/mess/0/~bud/ack/~nec/flow/0/1]
-      [~nec /ax/~bud//1/mess/0/~nec/poke/~bud/flow/0/1]
-    page=message/poke-plea
+        [~nec /ax/~bud//1/mess/0/~nec/poke/~bud/flow/0/1]
+        auth=&+*@uxJ
+        page=message/poke-plea
+    ==
   ::
   =^  moves-3  ames.bud
     %:  mesa-check-call:v  ames.bud
       [~1111.1.2 0xbeef.dead *roof]
       :-  ~[//unix]
-      [%sink lane=`*@ux |+message]
+      [%mess lane=`*@ux message]
     ::
       :~  :-  ~[//unix]
           [%pass /flow/~nec/0/1/1/out %g %plea ~nec poke-plea]

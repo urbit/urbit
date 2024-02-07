@@ -5330,7 +5330,7 @@
         %hear  (on-hear:event-core lane.task blob.task dud)
       ==
     ::
-    ?+  -.task  !!  ::  mesa %sink
+    ?-  -.task
       %born  on-born:event-core
       %hear  (on-hear:event-core [lane blob ~]:task)
       %dear  (on-dear:event-core +.task)

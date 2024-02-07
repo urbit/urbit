@@ -1,5 +1,5 @@
 !:
-=,  ames
+=,  mesa
 =/  packet-size  13
 ::  %plxt core
 ::
@@ -17,6 +17,8 @@
 ::  %dire helpers
 ::
 =>  |%
+    ::  atom ops
+    ::
     +|  %atomics
     ::
     ::  +rig: convert between bloqs
@@ -148,6 +150,19 @@
       :-  [a d]
       $(d -.d, a (peg a 2), s [[(peg a 3) +.d] s])
     ::
+    +|  %messages
+    ::
+    ++  mess
+      =>  |%
+          +$  auth  (each @uxJ @uxI) :: &+sig, |+hmac
+          +$  gage  $@(~ page)
+          +$  sage  (trel spar auth gage)
+          --
+      $%  [%page sage]
+          [%peek p=spar]
+          [%poke p=spar q=sage]
+      ==
+    ::
     ::  packet de/serialization
     ::
     +|  %packets
@@ -158,15 +173,30 @@
     ++  pact
       =>  |%
           +$  name  [p=ship q=rift r=path s=bloq t=num=@udF]
-          +$  data  [tot=@udF aut=@ux dat=@]
+          +$  auth
+            ::
+            ::  %0 for fragment 0 or auth packet
+            ::    ~      for 1-fragment message and auth packets
+            ::    [~ %&] for >4-fragment messages
+            ::    [~ %&] for 2-fragment messages
+            ::    [~ %|] for 3-4-fragment
+            ::
+            ::  %1 for fragments 1 - N/2
+            ::  ~  for fragments (N/2)+1 - N
+            ::
+            $@  ~
+            $%  [%0 p=auth:mess q=(unit $@(@uxI (pair @uxI @uxI)))]
+                [%1 p=(pair @uxI @uxI)]
+            ==
+          +$  data  [tot=@udF aut=auth:pact dat=@]
           +$  lane  $@  @ux
                     $%  [%if p=@ifF q=@udE]
                         [%is p=@isH q=@udE]
                     ==
           +$  next  (list lane)
           +$  pact  $%  [%page p=name q=data r=next]
-                        [%peek p=name]
                         [%poke p=name q=name r=data]
+                        [%peek p=name]
                     ==
           --
       ::
@@ -371,43 +401,212 @@
     ++  data
       |%
       ++  en
-        |=  [tot=@udF aut=@ux dat=@]
+        |=  [tot=@udF aut=auth:pact dat=@]
         ^-  plot
-        =/  mot  (met 3 (end 5 tot))
-        =/  mut  ?:(=(0 aut) 0 1)
-        =/  lut  (end 3 (met 3 aut))
+        =/  lot  (met 3 (end 5 tot))
+        ::
+        =/  [[aul=@ubB aum=plat] aur=@ubB aup=plat]
+          ?~  aut           [[0b0 0] 0b0 0]
+          ?:  ?=(%| -.aut)  [[0b1 [32 p]] 0b0 32 q]:p.aut
+          :-  =>  p.aut
+              ?:(?=(%& -) [0b10 64 p] [0b11 32 p])
+          =/  [aur=@ubB has=(list plat)]
+            ?~    q.aut  [0b0 ~]
+            ?@  u.q.aut  [0b1 [1 u.q.aut] ~]
+            [0b10 [[1 p] 1 q ~]:u.q.aut]
+          [aur s+~ 8 has]
+        ::
         =/  len  (met 3 dat)
-        =/  men  (met 3 len)
+        =/  men
+          ?:((lth len 3) [len 0] [0b11 (met 3 len)])
         :+  bloq=3
-          [s+~ 0 [2 (dec mot)] [1 mut] [5 men] ~]
-        [[mot tot] [mut lut] [lut aut] [men len] [len dat] ~]
+          [s+~ 0 [2 (dec lot)] [2 aul] [2 aur] [2 -.men] ~]
+        [[lot tot] aum aup [+.men len] [len dat] ~]
       ::
       ++  de
         |=  a=bite
         =/  b=[bloq step]  [0 ?@(a 0 (rig [bloq.a 0] step.a))]
         |=  dat=@
-        ^-  [[tot=@udF aut=@ux dat=@] bloq step]
-        =+  ^=  [[bot mut men] b]  ((hew b dat) [2 1 5])
-        =+  ^=  [len nex]          [(rig [bloq.b 3] step.b) +(bot)]
+        ^-  [[tot=@udF aut=auth:pact dat=@] bloq step]
+        =+  ^=  [[bot [aul aur] men] b]  ((hew b dat) [2 [2 2] 2])
+        =+  ^=  [len nex]                [(rig [bloq.b 3] step.b) +(bot)]
         =/  tot  (cut 3 [len nex] dat)
-        =:  len  (add len nex)
-            nex  mut
+        =.  len  (add len nex)
+        =^  mes=(unit auth:mess)  nex
+          ?+  aul  !!
+            %0b0   ?>(=(0b0 aur) [~ nex])
+            %0b1   ?>(=(0b10 aur) [~ nex])
+            %0b10  [`&+(cut 3 [len 64] dat) 64]
+            %0b11  [`|+(cut 3 [len 32] dat) 32]
           ==
-        =/  lut  (cut 3 [len nex] dat)
-        =:  len  (add len nex)
-            nex  lut
+        =.  len  (add len nex)
+        =^  pac=(unit $@(@uxI (pair @uxI @uxI)))  nex
+          ?+  aur  !!
+            %0b0   [~ 0]
+            %0b1   [`(cut 3 [len 32] dat) 32]
+            %0b10  [`[(cut 3 [len 32] dat) (cut 3 [(add len 32) 32] dat)] 64]
           ==
-        =/  aut  (cut 3 [len nex] dat)
-        =:  len  (add len nex)
-            nex  men
-          ==
-        =/  lat  (cut 3 [len nex] dat)
-        =:  len  (add len nex)
-            nex  lat
-          ==
+        =/  aut=auth:pact
+          ?~  mes
+            ?:  =(0b0 aul)  ~
+            ?>  &(=(0b1 aul) ?=([~ @ @] pac))
+            [%1 u.pac]
+          [%0 u.mes pac]
+        =.  len  (add len nex)
+        =^  lat  len
+          ?.  =(3 men)  [men len]
+          [(cut 3 [len 1] dat) +(len)]
+        =.  nex  lat
         [[tot aut (cut 3 [len nex] dat)] 3 (add len nex)]
       --
-
+    ::
+    ++  lss
+      =,  blake:crypto
+      |%
+      ++  root-hash
+        |=  o=output:blake3
+        ^-  @ux
+        (output-cv:blake3 (set-flag:blake3 f-root:blake3 o))
+      ::
+      ++  leaf-hash
+        |=  [counter=@ leaf=@]
+        ^-  @ux
+        (output-cv:blake3 (chunk-output:blake3 counter 1.024^leaf))
+      ::
+      ::  +build: compute proof data for a message
+      ::
+      ++  build
+        |=  msg=octs
+        ^-  [root=@ux proof=(list @ux) pairs=(list [l=@ux r=@ux])]
+        =/  chunks  (split-octs:blake3 13 msg)
+        =+
+          |-  ^-  [o=output:blake3 pairs=(list [l=@ux r=@ux])]
+          =/  mid  (div (bex (xeb (dec (lent chunks)))) 2)
+          =+  [l=(scag mid chunks) r=(slag mid chunks)]
+          ?>  ?=(^ chunks)
+          ?~  t.chunks  [(chunk-output:blake3 i.chunks) ~]
+          =+  [left=$(chunks l) right=$(chunks r)]
+          =/  pair  [(output-cv:blake3 o.left) (output-cv:blake3 o.right)]
+          [(parent-output:blake3 pair) [pair (weld pairs.left pairs.right)]]
+        =/  root  (root-hash o)
+        ?:  =(~ pairs)  [root ~ ~]
+        =/  height  (xeb (dec (lent chunks)))
+        =/  proof  (turn (scag height pairs) tail)
+        =.  proof  (flop (snoc proof l:(snag (dec height) pairs)))
+        =.  pairs  (slag height pairs)
+        [root proof pairs]
+      ::
+      ::  +verifier: stateful core for sequentially verifying messages
+      ::
+      ++  verifier
+        =<
+          |%
+          ::
+          ++  init
+            |=  [leaves=@ root=@ux proof=(list @ux)]
+            ^-  (unit state)
+            ?~  proof
+              ::  need at least two leaves to have a proof
+              ::
+              ?.  (lte leaves 1)  ~
+              `[leaves 0 [0 1] ~ ~]
+            ::  recover root from proof
+            ::
+            ?.  ?=([@ @ *] proof)  ~
+            =*  l0  i.proof
+            =*  l1  i.t.proof
+            =/  rut
+              %-  root-hash
+              %+  roll  t.t.proof
+              |:  [p=0x0 n=(parent-output:blake3 l0 l1)]
+              (parent-output:blake3 (output-cv:blake3 n) p)
+            ?.  =(rut root)  ~
+            ::  initialize leaf queue and parent stack with proof hashes;
+            ::  after the first two leaves, the next subtree is [2 4]
+            ::
+            =/  state  [leaves 0 [0 1] ~ t.t.proof]
+            `(push-leaves state [l0 l1])
+          ::
+          ++  verify-msg
+            |=  [=state [leaf=octs pair=(unit [l=@ux r=@ux])]]
+            ^-  (unit _state)
+            ?~  ustate=(verify-leaf state leaf)  ~
+            ?~  pair  `u.ustate
+            ?~  ustate=(verify-pair u.ustate u.pair)  ~
+            ::  all good; if the pair held leaf hashes, add them
+            ::  to the queue and advance past them; if it held parent
+            ::  hashes, add them to the parent stack
+            ::
+            =.  state  (advance u.ustate)
+            ?:  (at-leaf state)
+              `(push-leaves state u.pair)
+            `(push-parents state u.pair)
+          --
+        |%
+        +$  state
+            $:
+                leaves=@
+                leaf=@                 :: current leaf index
+                cur=[l=@ r=@]          :: current pair subtree
+                leaf-queue=(list @ux)
+                parent-stack=(list @ux)
+            ==
+        ::
+        ++  at-leaf  |=(state =(r.cur +(l.cur)))
+        ::
+        ++  advance
+          |=  =state
+          %=  state
+            cur  =,  cur.state
+                ::  if at a leaf, ascend the next subtree;
+                ::  otherwise, descend into the left child
+                ::
+                ?:  (at-leaf state)
+                  [+(l) (min leaves.state (add r (bex (ctz r))))]
+                [l (add l (bex (dec (xeb (dec (sub r l))))))]
+          ==
+        ::
+        ++  push-leaves
+          |=  [=state [l=@ux r=@ux]]
+          ^+  state
+          ::  NOTE: using a list as a queue isn't ideal, performance-wise,
+          ::  but this list never grows larger than log(n) so in practice
+          ::  it's fine
+          ::
+          %-  advance  %-  advance
+          state(leaf-queue (weld leaf-queue.state ~[l r]))
+        ::
+        ++  push-parents
+          |=  [=state [l=@ux r=@ux]]
+          ^+  state
+          state(parent-stack (weld ~[l r] parent-stack.state))
+        ::
+        ++  verify-leaf
+          |=  [=state leaf=octs]
+          ^-  (unit _state)
+          =/  cv  (output-cv:blake3 (chunk-output:blake3 leaf.state leaf))
+          ::  if leaf queue is empty, draw from parent stack; this is
+          ::  necessary for any tree with an odd number of leaves, since
+          ::  such a tree will contain a pair where the left child is a
+          ::  parent and the right child is a leaf
+          ::
+          ?^  leaf-queue.state
+            ?.  =(i.leaf-queue.state cv)  ~
+            `state(leaf +(leaf.state), leaf-queue t.leaf-queue.state)
+          ?^  parent-stack.state
+            ?.  =(i.parent-stack.state cv)  ~
+            `state(leaf +(leaf.state), parent-stack t.parent-stack.state)
+          ~
+        ::
+        ++  verify-pair
+          |=  [=state pair=[l=@ux r=@ux]]
+          ^-  (unit _state)
+          =/  cv  (output-cv:blake3 (parent-output:blake3 pair))
+          ?~  parent-stack.state          ~
+          ?.  =(i.parent-stack.state cv)  ~
+          `state(parent-stack t.parent-stack.state)
+        --
+      --
     --
 ::  helper core
 ::
@@ -418,7 +617,7 @@
       =<  mop
       |%
       ++  on   ((^on ,@ ,[key=@ =path]) lte)
-      +$  mop  ^chain
+      +$  mop  chain:ames
       --
     ::
     ++  parse-inner-path
@@ -464,6 +663,7 @@
         ::
     ::
     ++  parse-packet  |=(a=@ -:($:de:pact a))
+    ++  encode-packet  |=(p=pact:pact (en:pact p))
     ++  is-auth-packet  |
     ++  inner-path-to-beam
       |=  [=ship =path]
@@ -539,10 +739,10 @@
     ::
     +$  note
       $~  [%b %wait *@da]
-      $%  $:  %a
+      $%  $:  %m
               :: $>(?(%deep %keen) task:ames)
-          $%  [%make-peek p=spar:ames]           :: initiate %peek request
-              [%make-poke p=spar:ames q=path]    :: initiate %poke request
+          $%  [%make-peek p=spar]           :: initiate %peek request
+              [%make-poke p=spar q=path]    :: initiate %poke request
           ==  ==
           $:  %b
               $>(?(%wait %rest) task:behn)
@@ -568,135 +768,17 @@
               $>(%plea vane-task)
       ==  ==
     ::
-    +$  gift
-        ::  client-gift  :: gifts emitted when sending requests/responses
-        ::
-      $%  [%send p=(list lane:pact) q=@]     :: send a request/response packet
-          [%response load=$>(%page mess)]    :: produce a response message
-        ::  publisher-gift  :: gifts emitted when hearing requests
-        ::
-          [%boon payload=*]                    :: assembled %boon
-          [%done error=(unit error)]           :: ack to client vane
-      ==
-    +$  mesa-message
-      $+  mesa-message
-      $%  [%plea plea]       ::  client vane remote request
-          [%boon payload=*]  ::  %facts, subscription updates
-          [%cork ~]          ::  client vane is done, close flow
-                             ::  XX %corks are a subsset ot pleas
-                             ::  where =($% vane.plea)
+    ::  to %lull
+    +$  sign
+      $%  ::[%ames %response $>(%page mess)]   :: produce a response message
+          ::sign-arvo
+          [%mesa gift]
+          sign-arvo
       ==
     ::
     +$  peer-task  ,*        ::  XX fill out
     ::
-    +$  sig    @uxJ    :: (ed25519)
-    +$  hmac   @uxI   :: (keyed blake3)
-    +$  proof  (list @uxI)
-    +$  root  @uxI
-    +$  once  [tot=@udF tag=?(sig hmac) aut=?(root proof) dat=@]
-    +$  more  [aut=$@(~ [@uxI @uxI]) dat=@]
-    +$  spac  ?(%pact %publ %mess %chum %shut)
-    +$  name  [p=ship q=rift r=path s=bloq t=num=@udF]
-    +$  data  [tot=@udF aut=@ux dat=@]
-    +$  next  (list lane)
-    +$  pact
-      $%  [%page p=name q=data r=next]  :: [%page p=name q=(each once more) r=next]
-          [%peek p=name]
-          [%poke p=name q=name r=data]  :: [%poke p=name q=name r=once]
-      ==
-    ::
-    +$  mess
-      $%  [%page p=spar:ames q=page]        :: XX need auth data on %page and %poke
-          [%peek p=spar:ames]
-          [%poke p=spar:ames q=spar:ames r=page]
-      ==
-    ::
-    +$  packet-state
-      $:  nex=(each %auth fragment=@ud)
-          tot=@ud
-          :: XX lockstep state
-      ==
-    ::
-    +$  ship-state
-      $+  ship-state
-      $%  [%known new-peer-state]
-          $<(%known peer-state:ames)
-      ==
-    ::
-    +$  peer-state  new-peer-state
-    ::
-    +$  flow-state
-      $:  :: my %poke payloads, bounded in the namespace for others to read
-          ::  always and only for requests,
-          ::
-          ::  as soon as we can read the ack for the %poke we remove it from
-          ::  the queue since that proof that they have processed the message
-          ::
-          ::  (n)acks are considered payload responses, and are part of
-          ::  received pokes, so we track them in last-acked and nax
-          ::
-          ::  both for boons and pleas, and per (seq)message
-          ::  the ordered map guarantees that we receive the acks in ordered
-          ::  if (dec received-ack=@ud) has not been acked, we drop it
-          ::
-          ::  payloads can be +peek'ed via a well-formed path with a known structure
-          ::  e.g.  /~zod/poke/~nec/flow/bone=0/seq=1
-          ::
-          loads=((mop ,@ud mesa-message) lte)  :: all unacked
-          next-load=_1  :: next %poke to send, one behind the last-acked
-        ::
-          ::  %pokes that I receive, pending the ack from the vane
-          ::
-          ::  acks can be +peek'ed via a well-formed path with a known structure
-          ::    e.g. /~nec/ack/~zod/flow/bone=1/ack=1 (as stored in the producer of the ack)
-          ::                                          (the reader will be using bone=0)
-          ::
-          last-acked=@ud   :: for acking old duplicates (only 10)
-                            :: and dropping future acks
-                              :: only +(last-acked) messages are handled
-                              :: duplicate heards, are looked up in pending-ack
-                            ::
-          pending-ack=(unit seq=@ud) :: ack == +(last-acked)
-                                      :: there's only one pending ack
-                                      :: to guarantee that messages are delivered
-                                      :: in order
-          nax=(set seq=@ud)  :: messages you have nacked,
-                              ::  for every seq in the set (last-acked - 10 <= ack <= last-acked)
-          ::  XX how is this calculated?
-          ::  XX inferred by the dumb internal congestion control
-          ::  XX and by vere if we have a smart interpreter?
-          ::
-          send-window-max=_1  :: how many pleas i can send
-          send-window=_1      ::
-      ==
-    ::
-    +$  request-state
-      $+  request-state
-      $:  for=(set duct)
-          pay=(unit path)
-          ps=(unit packet-state)
-      ==
-    ::
-    +$  azimuth-state  [=symmetric-key =life =rift =public-key sponsor=ship]
-    +$  new-peer-state
-      $+  peer-state
-      $:  azimuth-state
-          route=(unit [direct=? =lane])  ::  XX (list)
-          =qos
-          heeds=(set duct)
-          closing=(set bone)
-          corked=(set bone)
-          =chain
-        ::  flow mapping  [next-bone duct->bone bone->duct]
-          =ossuary
-          flows=(map bone=@ud flow-state)  :: XX remove next-bone from ossuary?
-        ::  outgoing/incoming requests
-          ::  write-data: path=pok-path  /~zod/poke/~nec/flow/bone=0/mess=1/frag=1
-          ::  read data:  path=pek-path
-          ::              path=ack-path  /~nec/ack/~zod/flow/bone=0/mess=1/frag=1
-          ::
-          pit=(map path request-state)
-      ==
+    +$  spac  ?(%pact %publ %mess %chum %shut)  :: XX remove
     ::
     +$  axle
       $:  peers=(map ship ship-state)
@@ -752,7 +834,8 @@
     ::        |         |         |                                |
     ::    +pe-core      |         |                            +ma:ev-res
     ::        |         |         |                                |
-   ::call:fo-core(%done)|         |                           [%mess %poke]
+    ::  call:fo-core    |         |                           [%mess %poke]
+    ::     (%done)      |         |                                 |
     ::        |_________|         |________________________________| unix
     ::                                                      ------------
     ::                                                          ~nec (gets %poke plea)
@@ -775,44 +858,9 @@
     ::
     +|  %helpers
     ::
-    ++  ev-get-them
-      |=  =mess
-      ^-  [sndr=(unit ship) rcvr=ship]  :: XX dyad?
-      ?-  -.mess
-        %peek  [~ ship.p.mess]
-        %page  [~ ship.p.mess]
-        %poke  [`ship.q.mess ship.p.mess]
-      ==
-    ::
-    ++  ev-is-flow-path
-      |=  path=(pole knot)
-      ^-  ?
-      ?=([sndr=@ vane=%$ rcvr=@ %flow bone=@ message=@] path)
-    ::
-    ++  ev-get-bone  :: XX unused?
-      |=  =mess
-      |^  ^-  bone
-      ?:  ?=(%poke -.mess)
-        (parse-path `(pole knot)`path.q.mess)
-      :: ?>  ?=(?(%page %peek) -.pact)
-      *bone  :: XX
-      ::=/  =name  p.pact
-      ::(parse-path `(pole knot)`q.name)
-      ::
-      ++  parse-path
-        |=  path=(pole knot)
-        ^-  bone
-        ?>  ?=([%ax her=@ vane=%$ ver=@ spac=@ rift=@ inner-path=*] path)
-        ?>  =(ver.path '1')
-        :: ?>  =(spac spac.path)
-        ?>  ?=([reqr=@ ?(%ack %poke) rcvr=@ %flow bone=@ *] inner-path.path)
-        (rash bone.inner-path.path dem)
-      --
-    ::
-    ::  XX add parsing for flow-source = ?(%int %ext %out)
     ++  ev-validate-wire
       |=  [hen=duct =wire]
-      ^-  (unit [=bone seq=@ud channel peer-state])
+      ^-  (unit [=bone seq=@ud channel peer-state])   ::  XX add parsing for flow-source = ?(%int %ext %out)
       |^  ?~  parsed=(parse-bone-wire wire)
         ::  no-op
         ::
@@ -936,7 +984,7 @@
               %int      ::  ?(for-acks=%int for-payloads=%ext to-vanes=%out)
                         ::  XX skip, but use a %deep task instead?
            ==
-        (req-emit:co hen %pass wire %a make-poke/[spar path]:gift)
+        (req-emit:co hen %pass wire %m make-poke/[spar path]:gift)
       ::
       ++  req-poke
         |=  [=ship vane=@tas =wire payload=*]
@@ -980,7 +1028,7 @@
               %int      ::  ?(for-acks=%int for-payloads=%ext to-vanes=%out)
                         ::  XX skip, but use a %deep task instead?
            ==
-        (req-emit:co hen %pass wire %a make-poke/[spar path]:gift)
+        (req-emit:co hen %pass wire %m make-poke/[spar path]:gift)
       ::
       ++  req-peek
         |=  spar
@@ -1083,19 +1131,19 @@
         +|  %entry-points
         ::
         ++  call
-          |=  [(unit lane) blob=@]
+          |=  [lane blob=@]
           ^+  res-core
-          =/  =pact  (parse-packet blob)
+          =/  =pact:pact  (parse-packet blob)
           ?-  -.pact
-              %page  (pa-page +.pact)
-              %peek  (pa-peek +.pact)
-              %poke  (pa-poke +.pact)
+            %page  (pa-page +.pact)
+            %peek  (pa-peek +.pact)
+            %poke  (pa-poke +.pact)
           ==
         ::
         +|  %internals
         ::
         ++  pa-poke
-          |=  [=ack=name =poke=name =data]
+          |=  [=ack=name:pact =poke=name:pact =data:pact]
           ::  XX dispatch/hairpin &c
           ::
           ::  - pre-check that we want to process this poke (recognize ack path, ship not blacklisted, &c)
@@ -1109,7 +1157,7 @@
           !!
         ::
         ++  pa-peek
-          |=  =name
+          |=  =name:pact
           ?.  =(our p.name)
             res-core
           =/  res=(unit (unit cage))
@@ -1120,7 +1168,7 @@
           res-core
         ::
         ++  pa-page
-          |=  [=name =data =next]
+          |=  [=name:pact =data:pact =next:pact]
           ::  XX initialize message core
           ::
           :: ma-abet:ma-hear:(ma hen p.p.pact)
@@ -1188,8 +1236,9 @@
         +|  %entry-points
         ::
         ++  call
-          |=  [(unit lane:^pact) =^mess]
+          |=  [(unit lane) =mess]
           ^+  res-core
+          ~!  mess
           ?-  -.mess
             %page  (ma-page +.mess)
             %peek  (ma-peek +.mess)
@@ -1210,7 +1259,7 @@
         +|  %message-tasks
         ::
         ++  ma-page
-          |=  [=spar =page]
+          |=  [=spar auth:mess =gage:mess]
           =*  ship  ship.spar
           ?~  rs=(~(get by peers.ax) ship)
             :: [~ ax]
@@ -1231,7 +1280,7 @@
           res-core
         ::
         ++  ma-poke
-          |=  [=ack=spar =pok=spar =page]
+          |=  [=ack=spar =pok=spar auth:mess =gage:mess]
           =*  mess  +<
           ::  XX dispatch/hairpin &c
           ::
@@ -1271,16 +1320,16 @@
           ::
           =/  =bone  (mix 1 bone:de:pok)
           =/  req=mesa-message
-            ?>  ?=(%message -.page)  :: XX ??
+            ?>  ?=([%message *] gage)  :: XX ??
             ::  the bone will tell us if this is a %boon or a %plea
             ::  (corks are always sent on bone %0 and received by bone %1)
             ::
             ?:  =(%0 (mod bone 4))
               ::  %boon(s) sink on bone %0
-              boon/+.page
+              boon/+.gage
             ?.  =(%1 (mod bone 4))  !!
             ::  %plea(s) and %cork(s) sink on bone %1
-            plea/;;(plea +.page)
+            plea/;;(plea +.gage)
           ::
           =^  moves  ax
             =<  fo-abet
@@ -1495,12 +1544,12 @@
           +$  message-sign
             $%  [%done error=(unit error)]  ::  hear (n)ack for %poke, can trigger %peek for naxplanation
                 ::[%boon ~]  :: XX handle
-                [%response seq=@ud spar =page]
+                [%response seq=@ud sage:mess]
             ==
           ::
           ::  XX move to top leve data-types core
           ::
-          +$  gift  [seq=@ud =spar =path]  ::[p=spar:ames q=(unit path)]
+          +$  gift  [seq=@ud =spar =path]  ::[p=spar q=(unit path)]
           --
       ::
       =|  moves=(list move)
@@ -1686,14 +1735,14 @@
           fo-core  ::  XX handle pre-cork ships
                    ::  XX maybe when checking path/protocol version
         =.  fo-core
-          ?+  vane.plea  ~|  %ames-evil-vane^our^her^vane.plea  !!
+          ?+  vane.plea  ~|  %mesa-evil-vane^our^her^vane.plea  !!
             ?(%c %e %g %j)  (fo-emit hen %pass wire vane.plea plea/her^plea)
           ==
         ::
         fo-core(pending-ack.state `seq)
       ::
       ++  fo-take-ack
-        |=  [seq=@ud =spar:ames =page]
+        |=  [seq=@ud =spar auth:mess =gage:mess]
         ^+  fo-core
         ::  only handle acks for %poke that have been sent
         ::
@@ -1714,8 +1763,8 @@
         ::  XX handle closing and corked bones
         ::
         ?:  =(%1 (mod bone 4))  fo-core  ::  %boon %ack, no-op
-        ?>  ?=(%message -.page)
-        =+  ;;(error=(unit error) +.page)
+        ?>  ?=([%message *] gage)
+        =+  ;;(error=(unit error) +.gage)
         =?  fo-core  ?=(^ error)
           ::  XX if error start %peek for naxplanation
           fo-core
@@ -1748,7 +1797,7 @@
       |_  hen=duct
       ::
       ++  ev-make-mess
-        |=  [p=spar:ames q=(unit path)]
+        |=  [p=spar q=(unit path)]
         ^-  [(list move) axle]
         =/  per  (~(gut by peers.ax) ship.p *peer-state)  :: XX alien-agenda
         ?>  ?=([%known *] per)  ::  XX alien agenda
@@ -1788,41 +1837,27 @@
           [%poke nam man *data:pact]  :: XX first-fragment or auth from payload
         ::
         ::(req-emit unix-duct.ax %give %send ~ blob=0)  :: XX use en:pact for blob
+        :: ~&  >>>  pact/(encode-packet pact)
         :_  ax
         [unix-duct.ax %give %send ~ blob=0]~
       ::
       ++  ev-make-peek
-        |=  p=spar:ames
+        |=  p=spar
         (ev-make-mess p ~)
       ::
       ++  ev-make-poke
-        |=  [p=spar:ames q=path]
+        |=  [p=spar q=path]
         (ev-make-mess p `q)
       --
     --
 ::
 |%
-::  to %lull
-+$  new-task
-  $%  [%hear p=lane:pact q=@]            :: receive a packet
-      $<(%hear task:ames)
-      [%mess p=(unit lane:pact) q=mess]  :: receive a message
-      [%make-peek p=spar:ames]           :: initiate %peek request
-      [%make-poke p=spar:ames q=path]    :: initiate %poke request
-  ==
-::  to %lull
-+$  new-sign
-  $%  ::[%ames %response $>(%page mess)]   :: produce a response message
-      ::sign-arvo
-      [%ames gift]
-      sign-arvo
-  ==
 ::
 ++  call
   ::
-  |=  [hen=duct dud=(unit goof) wrapped-task=(hobo new-task)]
+  |=  [hen=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _mesa-gate]
-  =/  task=new-task    ((harden new-task) wrapped-task)
+  =/  =task  ((harden task) wrapped-task)
   ::
   =^  moves  ax
     ::  XX  handle error notifications
@@ -1831,6 +1866,7 @@
       !!
     ::
     ?+  -.task  !!
+      %vega  `ax
       %born  sys-abet:~(sys-born ev-sys hen)
     ::
       %plea  req-abet:(~(req-poke ev-req hen) [ship plea]:task)
@@ -1839,23 +1875,16 @@
     ::
       %make-peek  (~(ev-make-peek ev hen) p.task)
       %make-poke  (~(ev-make-poke ev hen) p.task q.task)
+    ::  XX
     ::
-      :: XX use two tasks:
-      ::
-      ::  %sink-mess  =>  %mess
-      ::  %sink-pact  =>  %hear
-      %sink  =<  res-abet
-             =+  res-core=~(. ev-res hen)
-             ?-  -.request.task
-               %&  (call:pa:res-core lane.task +.request.task)
-             ::
-               %|  (call:ma:res-core [lane +.request]:task)
-    ==       ==
+      %hear  res-abet:(call:pa:~(. ev-res hen) [p q]:task)
+      %mess  res-abet:(call:ma:~(. ev-res hen) [p q]:task)
+    ==
     ::
   [moves mesa-gate]
 ::
 ++  take
-  |=  [=wire hen=duct dud=(unit goof) sign=new-sign]
+  |=  [=wire hen=duct dud=(unit goof) =sign]
   ^-  [(list move) _mesa-gate]
   ?^  dud
     ~|(%mesa-take-dud (mean tang.u.dud))
@@ -1882,12 +1911,12 @@
     ::  network responses: acks/poke payloads
     ::                     reentrant from %ames (either message or packet layer)
     ::
-      [%ames %response *]
+      [%mesa %response *]
     ::
       =<  res-abet
       ::  XX  check the wire here if this is internal (ack) or external (payload)
       %.  [wire %response +>.sign]
-      ?+  wire   ~|  %ames-evil-response-wire^wire  !!
+      ?+  wire   ~|  %mesa-evil-response-wire^wire  !!
         [%flow @ @ @ @ %int ~]  take:ma:~(. ev-res hen)  ::  %ack
         [%flow @ @ @ @ %out ~]  !!  :: take:pa:~(. ev-res hen)  ::  %poke payload
       ==

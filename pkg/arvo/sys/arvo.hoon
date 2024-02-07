@@ -1745,6 +1745,7 @@
     %j  %jael
     %k  %khan
     %l  %lick
+    %m  %mesa
   ==
 --  =>
 ::

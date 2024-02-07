@@ -142,21 +142,12 @@
   |=  [=gall-gate =wire =duct =sign-arvo =roof]
   %.  [wire duct dud=~ sign-arvo]
   take:(gall-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
-::
-::  to %lull
-+$  new-task
-  $%  [%hear p=mesa-lane:ames q=@]            :: receive a packet
-      $<(%hear task:ames)
-      [%mess p=(unit mesa-lane:ames) q=mess:ames]  :: receive a message
-      [%make-peek p=spar:ames]           :: initiate %peek request
-      [%make-poke p=spar:ames q=path]    :: initiate %poke request
-  ==
 ::  +mesa-check-call: run gall task, assert produces expected-moves
 ::
 ++  mesa-check-call
   |=  $:  =mesa-gate
           [now=@da eny=@ =roof]
-          [=duct task=(hobo new-task)]
+          [=duct task=(hobo task:mesa)]
           expected-moves=(list move:mesa-bunt)
       ==
   ^-  [tang ^mesa-gate]
@@ -165,21 +156,15 @@
   [(expect-eq !>(expected-moves) !>(moves)) mesa-gate]
 ::
 ++  mesa-call
-  |=  [=mesa-gate =duct task=(hobo new-task) =roof]
+  |=  [=mesa-gate =duct task=(hobo task:mesa) =roof]
   %.  [duct dud=~ task]
   call:(mesa-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
 ::  +mesa: run mesa sign, assert produces expected-moves
 ::
-+$  new-sign
-  $%  ::[%ames %response $>(%page mess)]   :: produce a response message
-      ::sign-arvo
-      [%ames gift:mesa-bunt]
-      sign-arvo
-  ==
 ++  mesa-check-take
   |=  $:  =mesa-gate
           [now=@da eny=@ =roof]
-          [=wire =duct sign=new-sign]  ::  XX gift => sign
+          [=wire =duct sign=sign:mesa-bunt]  ::  XX gift => sign
           expected-moves=(list move:mesa-bunt)
       ==
   ^-  [tang ^mesa-gate]

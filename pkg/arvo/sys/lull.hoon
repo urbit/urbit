@@ -793,28 +793,9 @@
   ::    %trim: release memory
   ::    %vega: kernel reload notification
   ::
-  +$  name  [p=ship q=path r=bloq s=num=@udF]
-  +$  data  [tot=@udF aut=@ux dat=@]
-  +$  mesa-lane
-    $@  @ux
-    $%  [%if p=@ifF q=@udE]
-        [%is p=@isH q=@udE]
-    ==
-  +$  next  (list mesa-lane)
-  +$  pact
-    $%  [%page p=name q=data r=next]  :: [%page p=name q=(each once more) r=next]
-        [%peek p=name]
-        [%poke p=name q=name r=data]  :: [%poke p=name q=name r=once]
-    ==
-  +$  mess
-    $%  [%page p=spar q=page]        :: XX need auth data on %page and %poke
-        [%peek p=spar]
-        [%poke p=spar q=spar r=page]
-    ==
   +$  task
     $+  ames-task
     $%  [%hear =lane =blob]
-        [%sink lane=(unit mesa-lane) request=(each blob mess)]  ::  xX only mess
         [%dear =ship =lane]
         [%heed =ship]
         [%jilt =ship]
@@ -3346,6 +3327,184 @@
   +$  name  path
   --  ::lick
 ::
+++  mesa  ^?
+  |%
+  +$  name  [p=ship q=rift r=path s=bloq t=num=@udF]
+  +$  auth
+    ::
+    ::  %0 for fragment 0 or auth packet
+    ::    ~      for 1-fragment message and auth packets
+    ::    [~ %&] for >4-fragment messages
+    ::    [~ %&] for 2-fragment messages
+    ::    [~ %|] for 3-4-fragment
+    ::
+    ::  %1 for fragments 1 - N/2
+    ::  ~  for fragments (N/2)+1 - N
+    ::
+    $@  ~
+    $%  [%0 p=auth:mess q=(unit $@(@uxI (pair @uxI @uxI)))]
+        [%1 p=(pair @uxI @uxI)]
+    ==
+  +$  data  [tot=@udF aut=auth dat=@]
+  +$  lane  $@  @ux
+            $%  [%if p=@ifF q=@udE]
+                [%is p=@isH q=@udE]
+            ==
+  +$  next  (list lane)
+  +$  pact
+    $%  [%page p=name q=data r=next]  :: [%page p=name q=(each once more) r=next]
+        [%peek p=name]
+        [%poke p=name q=name r=data]  :: [%poke p=name q=name r=once]
+    ==
+  :: +$  auth  (each @uxJ @uxI) :: &+sig, |+hmac
+  +$  gage  $@(~ page)
+  +$  sage  (trel spar auth=(each @uxJ @uxI) gage)
+  +$  mess
+    $%  [%page sage]
+        [%peek p=spar]
+        [%poke p=spar q=sage]
+    ==
+  +$  task
+    $+  mesa-task
+    :: $~  [%vega ~]                                       ::
+    $%  [%hear p=lane q=@]            :: receive a packet
+        [%mess p=(unit lane) q=mess]  :: receive a message
+        [%make-poke p=spar q=path]    :: initiate %poke request
+        [%make-peek p=spar]           :: initiate %peek request
+        $>(?(%plea %born %trim %vega %init) vane-task)
+    ::
+        [%keen sec=(unit [idx=@ key=@]) spar]
+    ::
+    ==
+  ::
+  +$  gift
+      ::  client-gift  :: gifts emitted when sending requests/responses
+      ::
+    $%  [%send p=(list lane:pact) q=@]     :: send a request/response packet
+        [%response load=$>(%page mess)]    :: produce a response message
+      ::  publisher-gift  :: gifts emitted when hearing requests
+      ::
+        [%boon payload=*]                    :: assembled %boon
+        [%done error=(unit error)]           :: ack to client vane
+    ==
+  +$  error  [tag=@tas =tang]
+  +$  plea  [vane=@tas =path payload=*]
+  +$  spar  [=ship =path]
+  +$  bone           @udbone
+  +$  fragment       @uwfragment
+  +$  fragment-num   @udfragmentnum
+  +$  message-blob   @udmessageblob
+  +$  message-num    @udmessagenum
+  +$  public-key     @uwpublickey
+  +$  symmetric-key  @uwsymmetrickey
+  +$  dyad  [sndr=ship rcvr=ship]
+  ::
+  +$  packet-state
+    $:  nex=(each %auth fragment=@ud)
+        tot=@ud
+        :: XX lockstep state
+    ==
+  ::
+  +$  ship-state
+    $+  ship-state
+    $%  [%known peer-state]
+    ==
+  ::
+  ::
+  +$  mesa-message
+    $+  mesa-message
+    $%  [%plea plea]       ::  client vane remote request
+        [%boon payload=*]  ::  %facts, subscription updates
+        [%cork ~]          ::  client vane is done, close flow
+                            ::  XX %corks are a subsset ot pleas
+                            ::  where =($% vane.plea)
+    ==
+  +$  flow-state
+    $:  :: my %poke payloads, bounded in the namespace for others to read
+        ::  always and only for requests,
+        ::
+        ::  as soon as we can read the ack for the %poke we remove it from
+        ::  the queue since that proof that they have processed the message
+        ::
+        ::  (n)acks are considered payload responses, and are part of
+        ::  received pokes, so we track them in last-acked and nax
+        ::
+        ::  both for boons and pleas, and per (seq)message
+        ::  the ordered map guarantees that we receive the acks in ordered
+        ::  if (dec received-ack=@ud) has not been acked, we drop it
+        ::
+        ::  payloads can be +peek'ed via a well-formed path with a known structure
+        ::  e.g.  /~zod/poke/~nec/flow/bone=0/seq=1
+        ::
+        ::  XX option to include messages that won't be bounded into the namespace (two-layer queue)
+        loads=((mop ,@ud mesa-message) lte)  :: all unacked
+        ::  XX remove next-load, count how many loads in the queue
+        next-load=_1  :: next %poke to send, one behind the last-acked
+      ::
+        ::  %pokes that I receive, pending the ack from the vane
+        ::
+        ::  acks can be +peek'ed via a well-formed path with a known structure
+        ::    e.g. /~nec/ack/~zod/flow/bone=1/ack=1 (as stored in the producer of the ack)
+        ::                                          (the reader will be using bone=0)
+        ::
+        last-acked=@ud   :: for acking old duplicates (only 10)
+                          :: and dropping future acks
+                            :: only +(last-acked) messages are handled
+                            :: duplicate heards, are looked up in pending-ack
+                          ::
+        ::  XX pending-ack=?
+        pending-ack=(unit seq=@ud) ::  XX turn this into a bit, remove seq
+                                        :: ack == +(last-acked)
+                                    :: there's only one pending ack
+                                    :: to guarantee that messages are delivered
+                                    :: in order
+                                    :: also used to not duplicate sending the ack to the vane
+        nax=(set seq=@ud)  :: messages you have nacked,
+                            ::  for every seq in the set (last-acked - 10 <= ack <= last-acked)
+        ::  XX how is this calculated?
+        ::  XX inferred by the dumb internal congestion control
+        ::  XX and by vere if we have a smart interpreter?
+        ::
+        send-window-max=_1  :: how many pleas i can send
+        send-window=_1      ::
+    ==
+  ::
+  +$  request-state
+    $+  request-state
+    $:  for=(set duct)
+        pay=(unit path)
+        ps=(unit packet-state)
+    ==
+  ::
+  :: ++  chain
+  ::   =<  mop
+  ::   |%
+  ::   ++  on   ((^on ,@ ,[key=@ =path]) lte)
+  ::   +$  mop  ^chain
+  ::   --
+  +$  azimuth-state  [=symmetric-key =life =rift =public-key sponsor=ship]
+  +$  peer-state
+    $+  peer-state
+    $:  azimuth-state
+        route=(unit [direct=? =lane])  ::  XX (list)
+        =qos:ames
+        heeds=(set duct)
+        closing=(set bone)
+        corked=(set bone)
+        :: =chain
+      ::  flow mapping  [next-bone duct->bone bone->duct]
+        =ossuary:ames
+        flows=(map bone=@ud flow-state)  :: XX remove next-bone from ossuary?
+      ::  outgoing/incoming requests
+        ::  write-data: path=pok-path  /~zod/poke/~nec/flow/bone=0/mess=1/frag=1
+        ::  read data:  path=pek-path
+        ::              path=ack-path  /~nec/ack/~zod/flow/bone=0/mess=1/frag=1
+        ::
+        pit=(map path request-state)
+    ==
+  ::
+  --
+::
 ++  rand                                                ::  computation
   |%
   +$  card  card:agent:gall
@@ -3548,6 +3707,7 @@
       gift:jael
       gift:khan
       gift:lick
+      gift:mesa
   ==
 +$  task-arvo                                           ::  in request ->$
   $%  task:ames
@@ -3560,6 +3720,7 @@
       task:jael
       task:khan
       task:lick
+      task:mesa
   ==
 +$  note-arvo                                           ::  out request $->
   $~  [%b %wake ~]
@@ -3573,6 +3734,7 @@
       [%j task:jael]
       [%k task:khan]
       [%l task:lick]
+      [%m task:mesa]
       [%$ %whiz ~]
       [@tas %meta vase]
   ==
@@ -3596,6 +3758,7 @@
       [%jael gift:jael]
       [%khan gift:khan]
       [%lick gift:lick]
+      [%mesa gift:mesa]
   ==
 ::  $unix-task: input from unix
 ::
