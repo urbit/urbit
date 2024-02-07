@@ -116,7 +116,7 @@
     =/  frm  (get-farm pos)
     ?~  frm  ~
     =.  farm  u.frm
-    |- 
+    |-
     ?:  ?=(%coop -.farm)
       ~[pos]
     %-  zing
@@ -285,7 +285,7 @@
     =*  tap-plot  $
     ?:  ?=(%coop -.farm)
       %+  turn  ~(tap by q.farm)
-      |=  [=path =plot] 
+      |=  [=path =plot]
       [(welp wer path) plot]
     %+  welp  ?~(p.farm ~ [wer u.p.farm]~)
     %-  zing
@@ -526,7 +526,7 @@
           agent         &+agent
           run-nonce     (scot %uw (end 5 (shas %yoke-nonce eny)))
       ::
-          sky           
+          sky
         ?~  yak  *farm
         =|  =farm
         =.  farm  (need (~(gas-hutch of-farm farm) ~(tap by cop.u.yak)))
@@ -535,7 +535,7 @@
         ?~  sky  farm
         =.  farm  (need (~(put-grow of-farm farm) spur.i.sky [`bob.i.sky ~]))
         $(sky t.sky)
-      == 
+      ==
     ::
     =/  old  mo-core
     =/  wag
@@ -839,7 +839,7 @@
     =/  =routes  [disclosing=~ attributing=[our /]]
     =/  ap-core  (ap-abed:ap agent.pole routes)
     ?+    rest.pole  ~|(mo-handle-key-bad-wire/wire !!)
-        [%pug rest=*]  
+        [%pug rest=*]
       ?>  ?=([%ames %stub *] syn)
       ap-abet:(ap-stub:ap-core rest.rest.pole [num key]:syn)
     ::
@@ -1170,7 +1170,7 @@
         %u  [%leave ~]
       ==
     (mo-pass wire %g %deal [ship our /] agent-name deal)
-    
+
   ::  +mo-spew: handle request to set verbosity toggles on debug output
   ::
   ++  mo-spew
@@ -1292,8 +1292,8 @@
       ?+    syn  ~|(weird-sign-ap-take-brood/-.syn !!)
           [%ames %boon *]
         =/  bud  (fall ((soft fine-response) payload.syn) *fine-response)
-        |-  
-        ?~  wis  
+        |-
+        ?~  wis
           =.  pen.yoke  (~(del by pen.yoke) [ship t.wire])
           ap-core
         ?~  bod.bud
@@ -1426,7 +1426,7 @@
           u.h
         *hutch
       =.  hutch  [.+(rev.hutch) num key]
-      =.  sky.yoke  
+      =.  sky.yoke
         ?^  new-sky=(~(put-hutch of-farm sky.yoke) coop hutch)
           u.new-sky
         sky.yoke
@@ -2429,7 +2429,7 @@
         [%14 spore-14]
         [%15 spore-15]
     ==
-  +$  spore-15  
+  +$  spore-15
     $+  spore-15
     $:  system-duct=duct
         outstanding=(map [wire duct] (qeu remote-request))
@@ -2483,7 +2483,7 @@
             old-state=[%| vase]
             =beak
             marks=(map duct mark)
-            sky=(map spur farm)
+            sky=(map spur plot)
     ==  ==
   +$  spore-11
     $:  system-duct=duct
@@ -2657,7 +2657,8 @@
       |=  [a=term e=egg-12]
       ^-  egg-15
       ?:  ?=(%nuke -.e)  e
-      !!  :: e(sky [sky.e ken:*$>(%live egg-13)])
+      ::!!
+      e(sky [sky.e ken:*$>(%live egg-15)])
     ==
   ::
   ++  spore-13-to-14
@@ -2715,10 +2716,10 @@
         :-  ~
         =/  m  ~(val by fan.p)
         %+  gas:on-path  *_fan.p
-        %+  turn  
-          ^-  (list @)                                                           
-          =/  wit  ~(wyt by fan.p)                                               
-          ?:  =(0 wit)  ~                                                        
+        %+  turn
+          ^-  (list @)
+          =/  wit  ~(wyt by fan.p)
+          ?:  =(0 wit)  ~
           (gulf 1 wit)
         |=  a=@ud
         [a (snag (dec a) m)]
