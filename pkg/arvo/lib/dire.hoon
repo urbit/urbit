@@ -167,7 +167,11 @@
 ::
 ++  pact
   =>  |%
-      +$  name  [p=ship q=rift r=path s=bloq t=num=@udF]
+      +$  frag  @udF
+      +$  ship  @pH
+      +$  rift  @udF
+      +$  bloq  @D
+      +$  name  [[her=ship rif=rift] [boq=bloq fag=frag] pat=path]
       +$  auth
         ::
         ::  %0 for fragment 0 or auth packet
@@ -328,10 +332,10 @@
 ::
 ::  +name: encoded-path
 ::
-::  range:  { meta[1], her[2^1-4], rif[1-4], typ[2^0-1], pat[2^0-16], boq[0-1], fag[1-4] }
-::  max:    { meta[1], her[16],    rif[4],   typ[2],     pat[65.536], boq[1],   fag[4]   }
-::          { meta-byte, address,  rift,    path-length, path,       bloq-size, fragment-number }
-::  actual: { meta[1], her[16],    rif[4],   typ[2],     pat[309],    boq[1],   fag[4]   }
+::  range:  { meta[1], her[2^1-4], rif[1-4], boq[0-1],  fag[1-4], typ[2^0-1],  pat[2^0-16] }
+::  max:    { meta[1], her[16],    rif[4],   boq[1],    fag[4],   typ[2],      pat[65.536] }
+::          { meta-byte, address,  rift,     bloq-size, fragment, path-length, path }
+::  actual: { meta[1], her[16],    rif[4],   boq[1],    fag[4],   typ[2],      pat[309]   }
 ::
 ::    > :(add 1 16 4 2 309 4)
 ::    336
@@ -339,49 +343,56 @@
 ++  name
   |%
   ++  en
-    |=  [her=@pH rif=@udF pat=path boq=@D num=@udF]
+    |=  name:pact
     ^-  plot
     =/  ran  ?~(her 0 (dec (met 0 (met 4 (end 7 her)))))
     =/  ryf  ?~(rif 0 (dec (met 3 rif)))  :: XX is rift always non-zero?
+    =/  loq  ?:(=(13 boq) 0 1)
+    =/  gaf  ?~(fag 0 (dec (met 3 (end 5 fag))))
     =/  tap  =-([p=(met 3 -) q=-] `@t`(rap 3 (join '/' pat)))
     ?>  (lth p.tap ^~((bex 16)))
     =/  typ  (dec (met 3 p.tap))
-    =/  loq  ?:(=(13 boq) 0 1)
-    =/  fag  ?~(num 0 (dec (met 3 (end 5 num))))
     :+  bloq=3
-      [s+~ 0 [2 ran] [2 ryf] [1 typ] [1 loq] [2 fag] ~]
-    [[(bex +(ran)) her] [+(ryf) rif] [+(typ) p.tap] tap [loq boq] [+(fag) num] ~]
+      [s+~ 0 [2 ran] [2 ryf] [1 loq] [2 gaf] [1 typ] ~]
+    [[(bex +(ran)) her] [+(ryf) rif] [loq boq] [+(gaf) fag] [+(typ) p.tap] tap ~]
   ::
   ++  de
     |=  a=bite
     =/  b=[bloq step]  [0 ?@(a 0 (rig [bloq.a 0] step.a))]
     |=  pat=@
-    ^-  [[her=@p rif=@udF pat=path boq=bloq num=@udF] bloq step]
-    =+  [[ran ryf typ loq fag] b]=((hew b pat) [2 2 1 1 2])
+    ^-  [name:pact bloq step]
+    =+  [[ran ryf loq gaf typ] b]=((hew b pat) [2 2 1 2 1])
     =+  [len nex]=[(rig [bloq.b 3] step.b) (bex +(ran))]
     =/  her  (cut 3 [len nex] pat)
+    ::
     =:  len  (add len nex)
         nex  +(ryf)
       ==
     =/  rif  (cut 3 [len nex] pat)
-    =:  len  (add len nex)
-        nex  +(typ)
-      ==
-    =/  tap  (cut 3 [len nex] pat)
-    =:  len  (add len nex)
-        nex  tap
-      ==
-    =/  tap
-      %+  rash  (cut 3 [len nex] pat)
-      (more fas (cook crip (star ;~(less fas prn))))
+    ::
     =:  len  (add len nex)
         nex  loq
       ==
     =/  boq  ?~(loq 13 (cut 3 [len nex] pat))
+    ::
     =:  len  (add len nex)
-        nex  +(fag)
+        nex  +(gaf)
       ==
-    [[her rif tap boq (cut 3 [len nex] pat)] 3 (add len nex)]
+    =/  fag  (cut 3 [len nex] pat)
+    ::
+    =:  len  (add len nex)
+        nex  +(typ)
+      ==
+    =/  tap  (cut 3 [len nex] pat)
+    ::
+    =:  len  (add len nex)
+        nex  tap
+      ==
+    =/  pat
+      %+  rash  (cut 3 [len nex] pat)
+      (more fas (cook crip (star ;~(less fas prn))))
+    ::
+    [[[her rif] [boq fag] pat] 3 (add len nex)]
   --
 ::
 ::  +data: response data
@@ -702,12 +713,12 @@
       ::
       ::  check for pending request (peek|poke)
       ::
-      ?~  per=(~(get by p.ax) p.p.pac)
+      ?~  per=(~(get by p.ax) her.p.pac)
         [~ ax]
-      ?~  res=(~(get by pit.u.per) r.p.pac)
+      ?~  res=(~(get by pit.u.per) pat.p.pac)
         [~ ax]
       ::
-      ?:  =(0 t.p.pac)        :: is-first-fragment
+      ?:  =(0 fag.p.pac)        :: is-first-fragment
         ?.  =(~ ps.u.res)
           [~ ax]
         ::
@@ -726,11 +737,11 @@
           =>  aut.q.pac
           ?>  ?=([%0 *] .)
           ?~(q ~ ?@(u.q [u.q ~] [p q ~]:u.q))
-        =.  proof  [(leaf-hash:lss t.p.pac dat.q.pac) proof]
+        =.  proof  [(leaf-hash:lss fag.p.pac dat.q.pac) proof]
         =|  root=@ux :: XX compute from proof + leaf
         ?~  state=(init:verifier:lss tot.q.pac root proof)
           [~ ax]
-        =.  ps.u.res  `[[%| 1] t.p.pac u.state]
+        =.  ps.u.res  `[[%| 1] fag.p.pac u.state]
         ::
         ::  XX request next fragment
         !!
@@ -751,7 +762,7 @@
         ::
         !!
       ::
-      ?.  &(=(13 s.p.pac) ?=(%| -.nex.u.ps.u.res) =(p.nex.u.ps.u.res t.p.pac))
+      ?.  &(=(13 boq.p.pac) ?=(%| -.nex.u.ps.u.res) =(p.nex.u.ps.u.res fag.p.pac))
         [~ ax]
       ::
       =/  pair=(unit [l=@ux r=@ux])
@@ -764,7 +775,7 @@
       ::
       ::  XX persist fragment
       ::
-      ?:  =(t.p.pac tot.u.ps.u.res)  :: complete
+      ?:  =(fag.p.pac tot.u.ps.u.res)  :: complete
         ::  XX produce as already-validated message
         !!
       ::  XX request next fragment
@@ -772,7 +783,7 @@
       !!
     ::
         %peek
-      ?.  =(our p.p.pac)
+      ?.  =(our her.p.pac)
         [~ ax]
       =/  res=(unit (unit cage))
         !!  :: scry for path
@@ -854,7 +865,7 @@
     ::
     =/  =pact:pact
       =/  nam
-        [ship.p *rift path.p 13 0] :: XX rift from peer-state
+        [[ship.p *rift] [13 0] path.p] :: XX rift from peer-state
       ?~  q
         [%peek nam]
       ::  XX if path will be too long, put in [tmp] and use that path
@@ -862,7 +873,7 @@
       ::  =.  tmp.ax  (~(put by tmp.ax) has [%some-envelope original-path u.u.res])
       ::  //ax/[$ship]//1/temp/[hash]
       =/  man
-        [our *rift u.q 13 0]      :: XX our rift
+        [[our *rift] [13 0] u.q]      :: XX our rift
       [%poke nam man *data:pact]  :: XX first-fragment or auth from payload
     ::
     [~ ax]
@@ -1022,7 +1033,7 @@
         [~ ~]
       =/  lss-proof  (build:lss (met 3 ser)^ser)  :: XX cache this
       =/  =pact:pact
-        =/  nam  [our u.ryf pat.tyl u.boq u.fag]
+        =/  nam  [[our u.ryf] [u.boq u.fag] pat.tyl]
         =/  aut=auth:pact
           =/  mes=auth:mess  ?:(?=(%sign typ.msg) &+aut.msg |+aut.msg)
           ?:  =(0 u.fag)
@@ -1077,7 +1088,7 @@
       ?.  ?=(%0 u.fag)  ~  :: non-standard proofs for later
       =/  =pact:pact
         =/  nam
-          [our u.ryf pat.tyl u.boq u.fag]
+          [[our u.ryf] [u.boq u.fag] pat.tyl]
         =/  lss-proof  (build:lss (met 3 ser)^ser) ::  XX cache this
         =/  dat  [wid aut (rep 8 proof.lss-proof)]  :: XX types
         [%page nam dat ~]
