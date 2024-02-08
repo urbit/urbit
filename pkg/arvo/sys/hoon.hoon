@@ -6510,6 +6510,7 @@
     [%wtpt p=wing q=hoon r=hoon]                        ::  ?@  if p is atom
     [%wtsg p=wing q=hoon r=hoon]                        ::  ?~  if p is null
     [%wthx p=skin q=wing]                               ::  ?#  if q matches p
+    [%wtcb p=hoon q=wing]                               ::  ?_  if q equals p
     [%wtts p=spec q=wing]                               ::  ?=  if q matches p
     [%wtzp p=hoon]                                      ::  ?!  loobean not
   ::                                            ::::::  special
@@ -7511,6 +7512,7 @@
   ++  wtsg  |=([sic=hoon non=hoon] (gray [%wtsg puce (blue sic) (blue non)]))
   ++  wthx  |=(syn=skin (gray [%wthx (tele syn) puce]))
   ++  wtts  |=(mod=spec (gray [%wtts (teal mod) puce]))
+  ++  wtcb  |=(sic=hoon (gray [%wtcb (blue sic) puce]))
   --
 ::
 ++  ax
@@ -8681,6 +8683,7 @@
         [%wtpt *]   [%wtcl [%wtts [%base %atom %$] p.gen] q.gen r.gen]
         [%wtsg *]   [%wtcl [%wtts [%base %null] p.gen] q.gen r.gen]
         [%wtts *]   [%fits ~(example ax p.gen) q.gen]
+        [%wtcb *]   [%dtts p.gen [%wing q.gen]]
         [%wtzp *]   [%wtcl p.gen [%rock %f 1] [%rock %f 0]]
         [%zpgr *]
       [%cncl [%limb %onan] [%zpmc [%kttr [%bcmc %limb %abel]] p.gen] ~]
@@ -9719,6 +9722,10 @@
     |=  [how=? gen=hoon]  ^-  type
     ?:  ?=([%wtts *] gen)
       (cool how q.gen (play ~(example ax p.gen)))
+    ?:  ?=([%wtcb *] gen)
+      =/  p  (play p.gen)
+      ?.  |(how const(sut p))  sut
+      (cool how q.gen p)
     ?:  ?=([%wthx *] gen)
       =+  fid=(find %both q.gen)
       ?-  -.fid
@@ -10317,6 +10324,28 @@
       ==           ==
     --
   ++  mite  |=(ref=type |((nest | ref) (nest(sut ref) & sut)))
+  ++  const
+    ^-  ?
+    =<  !=(~ .)
+    =|  seg=(set type)
+    |-  ^-  (unit *)
+    ?-  sut
+        %void      ~
+        %noun      ~
+        [%atom *]  q.sut
+        [%cell *]  (both $(sut p.sut) $(sut q.sut))
+        [%core *]  ~
+        [%face *]  $(sut q.sut)
+        [%fork *]  ?~  fok=~(tap in p.sut)  ~
+                   ?~  i=%_($ sut i.fok)  ~
+                   ?.((lien t.fok |=(type =(i ^$(sut +<)))) ~ i)
+        [%hint *]  $(sut q.sut)
+        [%hold *]  ?:  (~(has in seg) sut)  ~
+                   %=  $
+                     sut  repo
+                     fan  (~(put in fan) +.sut)
+      ==           ==
+  ::
   ++  nest
     ~/  %nest
     |=  [tel=? ref=type]
@@ -13369,6 +13398,7 @@
                   ['.' (rune dot %wtdt expc)]
                   ['<' (rune gal %wtgl expb)]
                   ['>' (rune gar %wtgr expb)]
+                  ['_' ;~(pfix cab (toad txcb))]
                   ['-' ;~(pfix hep (toad txhp))]
                   ['^' ;~(pfix ket (toad tkkt))]
                   ['=' ;~(pfix tis (toad txts))]
@@ -13676,6 +13706,7 @@
     ++  expx  |.(;~(goop ropa loaf loaf))               ::  wings and two hoons
     ++  expy  |.(loaf(bug &))                           ::  hoon with tracing
     ++  expz  |.(;~(goop loan loaf loaf loaf))          ::  spec and three hoons
+    ++  exp0  |.(;~(goop loaf rope))                    ::  hoon, wing
     ::  spec contents
     ::
     ++  exqa  |.(loan)                                  ::  one spec
@@ -13713,6 +13744,9 @@
     ++  txts  |.  %+  cook  |=  [a=spec b=tiki]
                             (~(wtts ah b) a)
                   ;~(gunk loan teak)
+    ++  txcb  |.  %+  cook  |=  [a=hoon b=tiki]
+                            (~(wtcb ah b) a)
+                  ;~(gunk loaf teak)
     ++  txhx  |.  %+  cook  |=  [a=skin b=tiki]
                             (~(wthx ah b) a)
                   ;~(gunk lore teak)
