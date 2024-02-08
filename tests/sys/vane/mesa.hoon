@@ -12,8 +12,8 @@
   ::
   =/  make-poke=[%make-poke spar:ames path]
     :+  %make-poke
-      ^-  spar:ames  [~bud /~bud/ack/~nec/flow/0/1]
-    /~nec/poke/~bud/flow/0/1
+      ^-  spar:ames  [~bud /~bud/ack/~nec/flow/0/for/1]
+    /~nec/poke/~bud/flow/0/for/1
   ::
   =^  moves-1  ames.nec
     %:    mesa-check-call:v  ames.nec
@@ -24,7 +24,7 @@
       :~  [~[/poke] [%pass /~bud/0/0 %b %wait ~1111.1.1..00.00.30]]
         ::
           :-  ~[/poke]
-          [%pass /flow/~bud/0/0/1/int %m make-poke]
+          [%pass /flow/~bud/0/0/1/int/for %m make-poke]
       ==
     ==
   ::
@@ -34,7 +34,7 @@
     %:    mesa-check-call:v  ames.nec
         [~1111.1.1 0xdead.beef *roof]
     ::
-      [~[/flow/~bud/0/0/1/int /poke] make-poke]
+      [~[/flow/~bud/0/0/1/int/for /poke] make-poke]
     ::
       :~  [~[//unix] %give %send lanes=~ blob=0] :: XX TODO
       ==
@@ -46,8 +46,8 @@
     ::  XX  the message layer should only get the inner path (from rift onwards)
     ::
     :*  %poke
-        [~bud /ax/~bud//1/mess/0/~bud/ack/~nec/flow/0/1]
-        [~nec /ax/~bud//1/mess/0/~nec/poke/~bud/flow/0/1]
+        [~bud /ax/~bud//1/mess/0/~bud/ack/~nec/flow/0/for/1]
+        [~nec /ax/~bud//1/mess/0/~nec/poke/~bud/flow/0/for/1]
         auth=&+*@uxJ
         page=message/poke-plea
     ==
@@ -59,7 +59,7 @@
       [%mess lane=`*@ux message]
     ::
       :~  :-  ~[//unix]
-          [%pass /flow/~nec/0/1/1/out %g %plea ~nec poke-plea]
+          [%pass /flow/~nec/0/0/1/out/bak %g %plea ~nec poke-plea]
       ==
     ==
   ::
@@ -74,14 +74,14 @@
             [~1111.1.10 0xdead.beef *roof]
             [~bud ~nec]
           ==
-        (~(has by flows) 1)  :: XX check that pending-ack is flows is [~ 1]
+        (~(has by flows) 0 %bak)  :: XX check that pending-ack is flows is [~ 1]
   ::
   :-  moves-4  |.  :-  %|
   ~?  >  dbug  '%gall gives %done to %ames'
   =^  moves-5  ames.bud
     %:  mesa-check-take:v  ames.bud
       [~1111.1.2 0xbeef.dead *roof]
-      :+  /flow/~nec/0/1/1/out  ~[//unix]
+      :+  /flow/~nec/0/0/1/out/bak  ~[//unix]
       [%gall %done ~]
     ::
       ~  :: XX emit ack to unix
@@ -103,12 +103,13 @@
             [~1111.1.10 0xdead.beef *roof]
             [~bud ~nec]
           ==
-       last-acked:(~(got by flows) 1)
+        =;  flow  ?>(?=(%in -.flow) last-acked.flow)
+        (~(got by flows) 0 %bak)
   ::
   :-  moves-6  |.  :-  %&
-  ~?  >  dbug  '~nec %ames next bone is 2'
+  ~?  >  dbug  '~nec %ames next bone is 1'
   %+  expect-eq
-  !>  2
+  !>  1
   !>  =<  next-bone.ossuary
       %:  mesa-scry-peer:v
         ames.nec

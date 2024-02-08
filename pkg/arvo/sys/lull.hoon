@@ -3420,54 +3420,52 @@
                             ::  where =($% vane.plea)
     ==
   +$  flow-state
-    $:  :: my %poke payloads, bounded in the namespace for others to read
+    $%  ::  outbound %poke payloads, bounded in the ship's namespace
         ::  always and only for requests,
         ::
-        ::  as soon as we can read the ack for the %poke we remove it from
-        ::  the queue since that proof that they have processed the message
-        ::
-        ::  (n)acks are considered payload responses, and are part of
-        ::  received pokes, so we track them in last-acked and nax
-        ::
-        ::  both for boons and pleas, and per (seq)message
-        ::  the ordered map guarantees that we receive the acks in ordered
-        ::  if (dec received-ack=@ud) has not been acked, we drop it
-        ::
-        ::  payloads can be +peek'ed via a well-formed path with a known structure
-        ::  e.g.  /~zod/poke/~nec/flow/bone=0/seq=1
-        ::
-        ::  XX option to include messages that won't be bounded into the namespace (two-layer queue)
-        loads=((mop ,@ud mesa-message) lte)  :: all unacked
-        ::  XX remove next-load, count how many loads in the queue
-        next-load=_1  :: next %poke to send, one behind the last-acked
+        $:  %out
+            ::  as soon as we can read the ack for the %poke we remove it from
+            ::  the queue since that proof that they have processed the message
+            ::
+            ::  (n)acks are considered payload responses, and are part of
+            ::  received pokes, so we track them in last-acked and nax
+            ::
+            ::  both for boons and pleas, and per (seq)message
+            ::  the ordered map guarantees that we receive the acks in ordered
+            ::  if (dec received-ack=@ud) has not been acked, we drop it
+            ::
+            ::  payloads can be +peek'ed via a well-formed path with a known structure
+            ::  e.g.  /~zod/poke/~nec/flow/bone=0/seq=1
+            ::
+            ::  XX option to include messages that won't be bounded into the namespace (two-layer queue)
+            loads=((mop ,@ud mesa-message) lte)  :: all unacked
+            ::  XX how is this calculated?
+            ::  XX inferred by the dumb internal congestion control
+            ::  XX and by vere if we have a smart interpreter?
+            ::
+            send-window-max=_1  :: how many pleas i can send
+            send-window=_1      ::
+        ==
+      ::  incoming %pokes, pending their ack from the vane
       ::
-        ::  %pokes that I receive, pending the ack from the vane
-        ::
-        ::  acks can be +peek'ed via a well-formed path with a known structure
-        ::    e.g. /~nec/ack/~zod/flow/bone=1/ack=1 (as stored in the producer of the ack)
-        ::                                          (the reader will be using bone=0)
-        ::
-        last-acked=@ud   :: for acking old duplicates (only 10)
-                          :: and dropping future acks
-                            :: only +(last-acked) messages are handled
-                            :: duplicate heards, are looked up in pending-ack
-                          ::
-        ::  XX pending-ack=?
-        pending-ack=(unit seq=@ud) ::  XX turn this into a bit, remove seq
-                                        :: ack == +(last-acked)
-                                    :: there's only one pending ack
-                                    :: to guarantee that messages are delivered
-                                    :: in order
-                                    :: also used to not duplicate sending the ack to the vane
-        nax=(set seq=@ud)  :: messages you have nacked,
-                            ::  for every seq in the set (last-acked - 10 <= ack <= last-acked)
-        ::  XX how is this calculated?
-        ::  XX inferred by the dumb internal congestion control
-        ::  XX and by vere if we have a smart interpreter?
-        ::
-        send-window-max=_1  :: how many pleas i can send
-        send-window=_1      ::
-    ==
+        $:  %in
+            ::  acks can be +peek'ed via a well-formed path with a known structure
+            ::    e.g. /~nec/ack/~zod/flow/bone=1/ack=1 (as stored in the producer of the ack)
+            ::                                          (the reader will be using bone=0)
+            ::
+            last-acked=@ud   :: for acking old duplicates (only 10)
+                              :: and dropping future acks
+                                :: only +(last-acked) messages are handled
+                                :: duplicate heards, are looked up in pending-ack
+                              ::
+            pending-ack=?  :: there's only one pending ack
+                           :: to guarantee that messages are delivered
+                           :: in order
+                           :: also used to not duplicate sending the ack to the vane
+            $+  naxplanations
+            nax=(map seq=@ud error)  :: messages you have nacked,
+                               ::  for every seq in the set (last-acked - 10 <= ack <= last-acked)
+    ==  ==
   ::
   +$  request-state
     $+  request-state
@@ -3494,7 +3492,10 @@
         :: =chain
       ::  flow mapping  [next-bone duct->bone bone->duct]
         =ossuary:ames
-        flows=(map bone=@ud flow-state)  :: XX remove next-bone from ossuary?
+        ::  [0 %for]    =>  %poke %plea %watch  =>  [0 %back]
+        ::  [0 %back]  <=   %poke %boon        <=  [0 %for]
+        ::
+          flows=(map [bone=@ud flow=?(%for %bak)] flow-state)
       ::  outgoing/incoming requests
         ::  write-data: path=pok-path  /~zod/poke/~nec/flow/bone=0/mess=1/frag=1
         ::  read data:  path=pek-path

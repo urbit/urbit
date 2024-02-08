@@ -893,18 +893,18 @@
             $%  [%old her=ship =bone]
                 [%new her=ship =rift =bone seq=@ud]
             ==
-        ?.  ?|  ?=([%flow @ @ @ @ ?(%out %ext %int) ~] wire) ::?|  ?=([%bone @ @ @ ~] wire)
-                ?=([%flow @ @ @ ?(%out %ext %int) ~] wire)   ::    ?=([%bone @ @ ~] wire)
+        ?.  ?|  ?=([%flow @ @ @ @ ?(%out %ext %int) ?(%for %bak) ~] wire) ::?|  ?=([%bone @ @ @ ~] wire)
+                ?=([%flow @ @ @ ?(%out %ext %int) ?(%for %bak) ~] wire)   ::    ?=([%bone @ @ ~] wire)
             ==                           ::
           ::  ignore malformed wires
           ::
           ~
         ?+    wire  ~
-            [%flow @ @ @ @ ~]
+            [%flow @ @ @ @ @ ~]
           ~
           ::`[%old `@p`(slav %p i.t.wire) `@ud`(slav %ud i.t.t.wire)]
         ::
-            [%flow @ @ @ @ @ ~]
+            [%flow @ @ @ @ @ @ ~]
           %-  some
           :*      %new
                 her=`@p`(slav %p i.t.wire)
@@ -951,21 +951,24 @@
         ^+  req-core
         ?~  u-bone-her=(ev-validate-wire hen wire.task)
           req-core
-        =/  [=bone seq=@ud pe-chan=[=channel =peer-state]]  u.u-bone-her
+        =/  [=bone seq=@ud pe-chan=[=channel =peer-state]]
+          u.u-bone-her
+        =/  dire=?(%for %bak)  %bak
+        ?>  ?=(%bak dire)  :: XX add more of these checks ?
         ::(req-poke [ship $% / payload]:task)
-        (req-boon-poke her.channel.pe-chan bone pe-chan payload.task)
+        (req-boon-poke bone pe-chan payload.task)
       ::
       +|  %internals
       ::
       ++  req-boon-poke  :: XX refactor with req-poke
-        |=  [=ship =bone pe-chan=[=channel =peer-state] load=*]
+        |=  [=bone pe-chan=[=channel =peer-state] load=*]
         ::  XX handle corked/closing bones
        ::
         ::  XX add seq to the gift, for tracking it in the wire
         ::
         =^  [gifts=(list [seq=@ud spar path]) moves-flow=_moves]  ax
           =<  fo-abut
-          (fo-call:(fo-abed:fo hen bone pe-chan) boon/load)
+          (fo-call:(fo-abed:fo hen bone flow=%out dire=%bak pe-chan) boon/load)
         ::
         ::  XX this can be done internally in fo-call:fo-core
         %+  roll  gifts
@@ -977,12 +980,13 @@
         ::
          =/  =wire
           :~  %flow               :: flow request triggered "internally"
-              rcvr=[(scot %p ship)]
+              rcvr=[(scot %p her.channel.pe-chan)]
               rift=[(scot %ud rift.peer-state.pe-chan)]
               bone=[(scot %ud bone)]
               seq=[(scot %ud seq.gift)]
-              %int      ::  ?(for-acks=%int for-payloads=%ext to-vanes=%out)
+              flow=%int      ::  ?(for-acks=%int for-payloads=%ext to-vanes=%out)
                         ::  XX skip, but use a %deep task instead?
+              dire=%bak      ::  %boon(s) always sent backward
            ==
         (req-emit:co hen %pass wire %m make-poke/[spar path]:gift)
       ::
@@ -1009,7 +1013,8 @@
         ::  XX handle corked/closing bones
         =^  [gifts=(list [seq=@ud spar path]) moves-flow=_moves]  ax
           =<  fo-abut
-          (fo-call:(fo-abed:fo hen bone pe-chan:pe-core) plea/[vane wire payload])
+          %.  plea/[vane wire payload]
+          fo-call:(fo-abed:fo hen bone %out dire=%for pe-chan:pe-core)
         ::
         ::  XX this can be done internally in fo-call:fo-core
         %+  roll  gifts
@@ -1025,8 +1030,9 @@
               rift=[(scot %ud rift.peer-state)]
               bone=[(scot %ud bone)]
               seq=[(scot %ud seq.gift)]
-              %int      ::  ?(for-acks=%int for-payloads=%ext to-vanes=%out)
+              flow=%int      ::  ?(for-acks=%int for-payloads=%ext to-vanes=%out)
                         ::  XX skip, but use a %deep task instead?
+              dire=%for      ::  %for; %plea(s) are always sent forward
            ==
         (req-emit:co hen %pass wire %m make-poke/[spar path]:gift)
       ::
@@ -1086,16 +1092,18 @@
           ::
           =>  ?>  ?&  ?=([%ax her=@ vane=%$ ver=@ %mess rift=@ ack=*] path)
                     =(ver.path '1')
-                    ?=([rcvr=@ %ack reqr=@ %flow bone=@ mess=@ *] ack.path)
+                    ?=  [rcvr=@ %ack reqr=@ %flow bone=@ dire=?(%for %bak) mess=@ *]
+                        ack.path
                 ==
               [path .]
           ::
           =,  ack.-
           |%  ++  bone  (rash ^bone dem)
-              ++  rcvr  (slav %p ^rcvr)
-              ++  reqr  (slav %p ^reqr)
+              ++  rcvr  `@p`(slav %p ^rcvr)
+              ++  reqr  `@p`(slav %p ^reqr)
               ++  rift  (rash ^rift dem)
               ++  mess  (rash ^mess dem)
+              ++  dire  ^dire
           --
         --
       ::
@@ -1108,18 +1116,20 @@
           ::  path validation
           ::  XX  validate that =(ship rcvr)
           ::
-          =>  ?>  ?&  ?=([%ax her=@ vane=%$ ver=@ %mess rift=@ ack=*] path)
-                    =(ver.path '1')
-                    ?=([reqr=@ %poke rcvr=@ %flow bone=@ mess=@ *] ack.path)
+          =>  ?>  ?&  ?=([%ax her=@ vane=%$ ver=@ %mess rift=@ pok=*] path)
+                      =(ver.path '1')
+                      ?=  [sndr=@ %poke rcvr=@ %flow bone=@ dire=?(%for %bak) mess=@ *]
+                      pok.path
                 ==
               [path .]
           ::
-          =,  ack.-
+          =,  pok.-
           |%  ++  bone  (rash ^bone dem)
-              ++  rcvr  (slav %p ^rcvr)
-              ++  reqr  (slav %p ^reqr)
+              ++  rcvr  `@p`(slav %p ^rcvr)
+              ++  sndr  `@p`(slav %p ^sndr)
               ++  rift  (rash ^rift dem)
               ++  mess  (rash ^mess dem)
+              ++  dire  ^dire
           --
         --
       ::
@@ -1293,8 +1303,8 @@
           ::  XX  wait for cork to clean the flow
           ::
           ::  XX  fake decoding
-          :: ack-spar  =  /~nec/ack/~zod/flow/bone=0/message=1
-          :: poke-spar =  /~zod/poke/~nec/flow/bone=0/message=1
+          :: ack-spar  =  /~nec/ack/~zod/flow/bone=0/?(plea=%for boon=%bak)/message=1
+          :: poke-spar =  /~zod/poke/~nec/flow/bone=0/?(plea=%for boon=%bak)/message=1
           ::
           =+  ack=~(. parse-ack-path [ship path]:ack-spar)
           =+  pok=~(. parse-pok-path [ship path]:pok-spar)
@@ -1303,10 +1313,13 @@
           ::  XX move all validation to parse-ack-path
           ::
           ?.  =(rcvr our)
+            ~&  >>  %wrong-rcvr^rcvr^our
             res-core
           ?.  =(rcvr:de:ack our)  ::  do we need to respond to this ack?
+            ~&  >>  %not-our-ack^rcvr:de:ack^our
             res-core
           ?.  =(rcvr:de:pok our)  ::  are we the receiver of the poke?
+            ~&  >  %poke-for-other^[rcvr:de:pok our]
             res-core
           =/  ship-state  (~(get by peers.ax) sndr)
           ?.  ?=([~ %known *] ship-state)
@@ -1316,25 +1329,36 @@
           =*  peer-state  +.u.ship-state
           =+  pe-core=(pe-abed-her:pe hen sndr peer-state)
           ::
-          ::  flip bone's last bit to account for flow switching
+          ::  XX not supported (flip bone's last bit to account for flow switching)
           ::
-          =/  =bone  (mix 1 bone:de:pok)
+          =/  =bone  bone:de:pok  ::  (mix 1 bone:de:pok)
+          =/  dire=?(%for %bak)  :: flow swtiching
+            ?:  =(%for dire:de:pok)  %bak
+            ?.  =(%bak dire:de:pok)  !!
+            %for
+            :: ?+  dire:de:pok  !!
+            ::   %for  %bak
+            ::   %bak  %for
+            :: ==
           =/  req=mesa-message
             ?>  ?=([%message *] gage)  :: XX ??
             ::  the bone will tell us if this is a %boon or a %plea
             ::  (corks are always sent on bone %0 and received by bone %1)
             ::
-            ?:  =(%0 (mod bone 4))
-              ::  %boon(s) sink on bone %0
+            ::  %boon(s) sink forward in the reverse %plea direction
+            ?:  =(%for dire) :: ?:  =(%0 (mod bone 4))
+                             ::  %boon(s) sink on bone %0
               boon/+.gage
-            ?.  =(%1 (mod bone 4))  !!
-            ::  %plea(s) and %cork(s) sink on bone %1
+            ::  %ples(s) (%corks as well) sink backward
+            ?>  =(%bak dire)
+            :: ?.  =(%1 (mod bone 4))  !!
+            :: ::  %plea(s) and %cork(s) sink on bone %1
             plea/;;(plea +.gage)
           ::
           =^  moves  ax
             =<  fo-abet
             %.  [%sink mess:de:pok req]
-            fo-call:(fo-abed:fo hen bone pe-chan:pe-core)
+            fo-call:(fo-abed:fo hen bone %in dire pe-chan:pe-core)
           (res-emil moves)
         ::
         ++  ma-peek
@@ -1361,7 +1385,6 @@
             res-core
           ::  XX use $pith for this?
           =/  [=bone seq=@ud pe-chan=[channel peer-state]]  u.u-bone-her
-
           =/  flow=?(%int %ext %out)  %int  ::  XX support %ext payloads?
                                        ::  are these always handled by the
                                        ::  packet layer?
@@ -1380,10 +1403,11 @@
           ::  proessing an ack or a payload
           ::
           ::
+          =/  dire=?(%for %bak)  %for  ::  XX get from wire to know if ack for %plea or %boon
           =^  moves  ax
             =<  fo-abet
             ::  XX parse $ack payload in here, and call task instead?
-            (fo-take:(fo-abed:fo hen bone pe-chan) flow response/[seq +.load])
+            (fo-take:(fo-abed:fo hen bone %out dire pe-chan) flow response/[seq +.load])
           (res-emil moves)
         ::
         ++  ma-poke-done
@@ -1394,6 +1418,8 @@
           ::  XX use $pith for this
           =/  [=bone seq=@ud pe-chan=[channel peer-state]]  u.u-bone-her
           =/  flow=?(%int %ext %out)  %out  ::  XX parse wire
+          =/  dire=?(%for %bak)       %bak  ::  XX from wire?
+                                            ::  vane acks only happe on backward flows
           ::  relay the vane ack to the foreign peer
           ::
           =^  moves  ax
@@ -1401,7 +1427,7 @@
             ::  XX since we ack one message at at time, seq is not needed?
             ::  XX use it as an assurance check?
             ::
-            (fo-take:(fo-abed:fo hen bone pe-chan) %out done/error)
+            (fo-take:(fo-abed:fo hen bone %in dire pe-chan) %out done/error)
           (res-emil moves)
         ::
         :: +|  %internals
@@ -1502,7 +1528,7 @@
         ^+  pe-core
         =*  ossa  ossuary.peer-state
         =.  ossa
-          :+  (add 2 next-bone.ossa)
+          :+  +(next-bone.ossa)
             (~(put by by-duct.ossa) duct next-bone.ossa)
           (~(put by by-bone.ossa) next-bone.ossa duct)
         pe-core
@@ -1563,7 +1589,7 @@
       ::  XX add seq=message-num as [bone seq] to be +abed'ed?
       ::  currently passed in in ++call
       ::
-      |_  [[hen=duct =bone peer-channel] state=flow-state]
+      |_  [[hen=duct =bone dire=?(%bak %for) peer-channel] state=flow-state]
       ::
       +*  veb    veb.bug.channel
           her    her.channel
@@ -1573,15 +1599,25 @@
       +|  %helpers
       ::
       ++  fo-core  .
-      ++  fo-abed
-        |=  [=duct =^bone peer-channel]
-        =.  state  (~(gut by flows.peer-state) bone *flow-state)
-        fo-core(hen duct, bone bone, channel channel, peer-state peer-state)
+      +$  fo-inbound   $~  [%in 0 | ~]
+                       $>(%in flow-state)
       ::
-      ++  fo-abet  ::moves^state  :: XX (flop moves) done outside
+      +$  fo-outbound  $~  [%out ~ 1 1]
+                       $>(%out flow-state)
+      ++  fo-abed
+        |=  [=duct =^bone flow=?(%in %out) dire=?(%bak %for) peer-channel]
+        =.  state
+          %+  ~(gut by flows.peer-state)  bone^dire
+          ?:  ?=(%out flow)
+            *fo-outbound  :: XX *$>(flow flow-state)
+          *fo-inbound
+        fo-core(hen duct, bone bone, channel channel, peer-state peer-state, dire dire)
+      ::
+      ++  fo-abet  ::moves^state  :: XX (flop moves) done outside?
+                                  :: XX (flop gifts) ??
         ^+  [moves ax]
         ::
-        =.  flows.peer-state  (~(put by flows.peer-state) bone state)
+        =.  flows.peer-state  (~(put by flows.peer-state) bone^dire state)
         =.  peers.ax          (~(put by peers.ax) her known/peer-state)
         [moves ax]
       ::
@@ -1590,8 +1626,8 @@
       ++  fo-emil      |=(mos=(list move) fo-core(moves (weld mos moves)))
       ++  fo-give      |=(=gift fo-core(gifts [gift gifts]))
       ++  fo-gifs      |=(gis=(list gift) fo-core(gifts (weld gis gifts)))
-      ++  fo-ack-path  |=([seq=@ud =dyad] (fo-path seq %ack dyad))
-      ++  fo-pok-path  |=([seq=@ud =dyad] (fo-path seq %poke dyad))
+      ++  fo-ack-path  |=([dire=?(%for %bak) seq=@ud =dyad] (fo-path seq %ack dire dyad))
+      ++  fo-pok-path  |=([dire=?(%for %bak) seq=@ud =dyad] (fo-path seq %poke dire dyad))
       ++  fo-mop       ((on ,@ud mesa-message) lte)
       ::
       +|  %gifts
@@ -1606,11 +1642,11 @@
         --
       ::
       ++  fo-path
-        |=  [seq=@ud path=?(%ack %poke) =dyad]
+        |=  [seq=@ud path=?(%ack %poke) dire=?(%for %bak) =dyad]
         ::  %+  fo-en-spac  %mess  ::  XX remove, done by ++pa
         ^-  ^path
         :~  reqr=(scot %p sndr.dyad)  path  rcvr=(scot %p rcvr.dyad)
-            %flow  (scot %ud bone)  (scot %ud seq)
+            %flow  (scot %ud bone)  dire  (scot %ud seq)
         ==
       ::
       ++  fo-pek-path  !!
@@ -1621,7 +1657,7 @@
         =>  |%
             +$  poke-task
               $%  [%sink seq=@ud mess=mesa-message]
-                  ::  XX remove %naxplanation from lull
+                  ::  XX remove %fo-planation from lull
                   mesa-message
               ==
             --
@@ -1634,7 +1670,12 @@
           ::
           ?(%plea %boon %cork)
             ::  XX move to a separate arm
-            =.  loads.state  (put:fo-mop loads.state next-load.state poke)
+            ::  XX can we (re)use a sequence number after poping a previous one
+            ::  off the queue?
+            ::
+            ?>  ?=(%out -.state)
+            =/  next-load=@ud  ?~(next=(ram:fo-mop loads.state) 1 +(key.u.next))
+            =.  loads.state  (put:fo-mop loads.state next-load poke)
             =;  core=_fo-core
               ::  XX sets one timer for all the messsages in the bone
               ::
@@ -1643,7 +1684,10 @@
                 %pass
               /[(scot %p her)]/[(scot %ud bone)]/[(scot %ud rift.peer-state)]
               [%b %wait `@da`(add now ~s30)]
+            ::  XX does it help?
+            ::  =>  ?>(?=(%out -.state) .)
             |-  ^+  fo-core
+            =*  loop  $
             =+  num=(wyt:fo-mop loads.state)
             ?:  =(0 num)
               fo-core
@@ -1651,17 +1695,22 @@
               fo-core
             =/  [[seq=@ud request=mesa-message] load=_loads.state]
               (pop:fo-mop loads.state)
-            :: ?>  ?=(%plea -.request)  :: XX handle %boon and %cork
-            ~!  request
+            :: ?>  ?=(%plea -.request)  :: XX handle %cork
+            :: ~!  +.state
             =:  send-window.state  (dec send-window.state)
-                next-load.state    +(next-load.state)
                 loads.state        load
               ==
-            %_    $
-                fo-core
-              %-  fo-give
-              [seq her^(fo-ack-path seq her our) (fo-pok-path seq our her)]
-            ==
+            =/  dire=?(%for %bak)
+              ?+  -.poke  !!  :: XX handle %cork
+                %plea  %for
+                %boon  %bak
+              ==
+            :: XX FIXME
+            :: =.  fo-core  fo-core
+              :: %-  fo-give  ^-  gift
+            =.  gifts  :_  gifts  ^-  gift
+              [seq her^(fo-ack-path dire seq her our) (fo-pok-path dire seq our her)]
+            loop
           ::  XX responses: (n)acks, %poke payloads
           ::
           %sink  (fo-sink +.poke)
@@ -1686,19 +1735,28 @@
       ::
       ++  fo-sink
         |=  [seq=@ud mess=mesa-message]
-        ?+  -.mess  !!
-          %plea  (fo-sink-plea seq +.mess)
-          %boon  (fo-sink-boon seq +.mess)
-          ::  %cork  (fo-sink-cork seq +.mess)
+        ::  a %plea sinks on the backward receiver (coming from a forward flow)
+        ::  a %boon sinks on the forward receiver (coming from a backward flow)
+        ::
+        ~|  mess
+        ?-  dire
+          %bak  ?>(?=(%plea -.mess) (fo-sink-plea seq +.mess))
+          %for  ?>(?=(%boon -.mess) (fo-sink-boon seq +.mess))
         ==
+        ::  use the -.mess instead?
+        :: ?+  -.mess  !!
+        ::   %plea  (fo-sink-plea seq +.mess)
+        ::   %boon  (fo-sink-boon seq +.mess)
+        ::   ::  %cork  (fo-sink-cork seq +.mess)
+        :: ==
       ::
       ++  fo-sink-boon
         |=  [seq=@ud message=*] :: XX =error
         ^+  fo-core
+        ?>  ?=(%in -.state)
         =/  =duct
           :: XX +pe-got-duct
           ~|(%dangling-bone^her^bone (~(got by by-bone.ossuary.peer-state) bone))
-        =.  fo-core  (fo-emit duct %give %boon message)
         ::  XX handle a previous crash
         :: =?  moves  !ok
         ::   ::  we previously crashed on this message; notify client vane
@@ -1707,11 +1765,14 @@
         ::   |=  =move
         ::   ?.  ?=([* %give %boon *] move)  move
         ::   [duct.move %give %lost ~]
+        ::  XX emit ack to unix
         ::  ack unconditionally
         ::
         =.  last-acked.state  +(last-acked.state)
-        ::  XX emit ack to unix
-        fo-core
+        ::  XX
+        :: =.  fo-core
+          (fo-emit duct %give %boon message)
+        :: fo-core
       ::
       ++  fo-sink-plea
         |=  [seq=@ud =plea]
@@ -1730,6 +1791,7 @@
               [(scot %ud seq)]    ::  XX  seq not needed  :: XX $% ?
               %out  ::  ?(for-acks=%int for-payloads=%ext to-vanes=%out)
                     ::  move to begining of wire
+              dire  ::  %bak; %plea(s) always sink backward
           ==
         ?:  =(vane.plea %$)
           fo-core  ::  XX handle pre-cork ships
@@ -1739,14 +1801,17 @@
             ?(%c %e %g %j)  (fo-emit hen %pass wire vane.plea plea/her^plea)
           ==
         ::
-        fo-core(pending-ack.state `seq)
+        ?>  ?=(%in -.state)
+        fo-core(pending-ack.state %.y)
       ::
       ++  fo-take-ack
         |=  [seq=@ud =spar auth:mess =gage:mess]
         ^+  fo-core
+        ?>  ?=(%out -.state)
         ::  only handle acks for %poke that have been sent
         ::
-        ?:  (gte seq next-load.state)
+        =/  next-load=@ud  ?~(next=(ram:fo-mop loads.state) 1 key.u.next)
+        ?:  (gth seq next-load)
           :: XX log?
           fo-core
         ::  if all pokes have been processed no-op
@@ -1762,12 +1827,14 @@
         =^  *  loads.state  (del:fo-mop loads.state seq)
         ::  XX handle closing and corked bones
         ::
-        ?:  =(%1 (mod bone 4))  fo-core  ::  %boon %ack, no-op
+        ?:  ?=(%bak dire)  fo-core   ::  %boon %ack, no-op
+        :: ?:  =(%1 (mod bone 2))  fo-core  ::  %boon %ack, no-op
         ?>  ?=([%message *] gage)
         =+  ;;(error=(unit error) +.gage)
-        =?  fo-core  ?=(^ error)
-          ::  XX if error start %peek for naxplanation
-          fo-core
+        ::  XX FIXME: have.?(%bak %for) -need.%for
+        :: =?  fo-core  ?=(^ error)
+        ::   ::  XX if error start %peek for naxplanation
+        ::   fo-core
         =/  =duct
           :: XX +pe-got-duct
           ~|(%dangling-bone^her^bone (~(got by by-bone.ossuary.peer-state) bone))
@@ -1776,16 +1843,17 @@
       ++  fo-take-done
         |=  error=(unit error)
         ^+  fo-core
-        ::  get the pending-vane ack
-        ?>  ?=(^ pending-ack.state)
-        =*  seq  u.pending-ack.state
+        ?>  ?=(%in -.state)
+        ::  if there's a pending-vane ack, is always +(last-acked)
+        ?>  =(%.y pending-ack.state)
+        =/  seq=@ud  +(last-acked.state)
         =.  last-acked.state  +(last-acked.state)
         =?  nax.state  ?=(^ error)
           =?  nax.state  (gth seq 10)
             ::  only keep the last 10 nacks
             ::
-            (~(del in nax.state) (sub seq 10))
-          (~(put in nax.state) seq)
+            (~(del by nax.state) (sub seq 10))
+          (~(put by nax.state) seq u.error)
         ::  XX emit ack to unix
         fo-core
       ::
