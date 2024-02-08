@@ -347,10 +347,10 @@
     ?>  (lth p.tap ^~((bex 16)))
     =/  typ  (dec (met 3 p.tap))
     =/  loq  ?:(=(13 boq) 0 1)
-    =/  fag  =-([p=(met 3 -) q=-] (end 5 num))
+    =/  fag  ?~(num 0 (dec (met 3 (end 5 num))))
     :+  bloq=3
-      [s+~ 0 [2 ran] [2 ryf] [1 typ] [1 loq] [2 (dec p.fag)] ~]
-    [[(bex +(ran)) her] [+(ryf) rif] [+(typ) p.tap] tap [loq (end 3 boq)] fag ~]
+      [s+~ 0 [2 ran] [2 ryf] [1 typ] [1 loq] [2 fag] ~]
+    [[(bex +(ran)) her] [+(ryf) rif] [+(typ) p.tap] tap [loq boq] [+(fag) num] ~]
   ::
   ++  de
     |=  a=bite
