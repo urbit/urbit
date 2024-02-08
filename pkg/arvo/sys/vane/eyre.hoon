@@ -907,11 +907,12 @@
     ::
     ?:  =('/_~_/' (end [3 5] url.request))
       (handle-http-scry authenticated request)
-    ::  handle requests to the cache
+    ::  handle requests to the cache, if a non-empty entry exists
     ::
-    =/  entry  (~(get by cache.state) url.request)
-    ?:  &(?=(^ entry) ?=(%'GET' method.request))
-      (handle-cache-req authenticated request val.u.entry)
+    =/  cached=(unit [aeon=@ud val=(unit cache-entry)])
+      (~(get by cache.state) url.request)
+    ?:  &(?=([~ @ ^] cached) ?=(%'GET' method.request))
+      (handle-cache-req authenticated request u.val.u.cached)
     ::
     ?-    -.action
         %gen
@@ -1053,13 +1054,11 @@
   ::  +handle-cache-req: respond with cached value, 404 or 500
   ::
   ++  handle-cache-req
-    |=  [authenticated=? =request:http entry=(unit cache-entry)]
+    |=  [authenticated=? =request:http entry=cache-entry]
     |^  ^-  (quip move server-state)
-    ?~  entry
-      (error-response 404 "cache entry for that binding was deleted")
-    ?:  &(auth.u.entry !authenticated)
+    ?:  &(auth.entry !authenticated)
       (error-response 403 ~)
-    =*  body  body.u.entry
+    =*  body  body.entry
     ?-    -.body
         %payload
       %-  handle-response
@@ -4144,7 +4143,7 @@
     ?~  entry=(~(get by cache) u.url)  ~
     ?.  =(u.aeon aeon.u.entry)         ~
     ?~  val=val.u.entry                ~
-    ?:  &(auth.u.val !=([~ ~] lyc))    ~ 
+    ?:  &(auth.u.val !=([~ ~] lyc))    ~
     ``noun+!>(u.val)
   :: private endpoints
   ?.  ?=([~ ~] lyc)  ~
