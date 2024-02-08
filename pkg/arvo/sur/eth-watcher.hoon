@@ -21,11 +21,10 @@
       to=(unit number:block)
       contracts=(list address:ethereum)
       batchers=(list address:ethereum)
-      =topics
+      =topics:ethereum-types
   ==
 ::
 +$  loglist  (list event-log:rpc:ethereum)
-+$  topics   (list ?(@ux (list @ux)))
 +$  watchpup
   $:  config
       =number:block
