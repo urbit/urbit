@@ -24,7 +24,7 @@
       :~  [~[/poke] [%pass /~bud/0/0 %b %wait ~1111.1.1..00.00.30]]
         ::
           :-  ~[/poke]
-          [%pass /flow/~bud/0/0/1/int/for %m make-poke]
+          [%pass /flow/int/for/~bud/0/0/1 %m make-poke]
       ==
     ==
   ::
@@ -34,7 +34,7 @@
     %:    mesa-check-call:v  ames.nec
         [~1111.1.1 0xdead.beef *roof]
     ::
-      [~[/flow/~bud/0/0/1/int/for /poke] make-poke]
+      [~[/flow/int/for/~bud/0/0/1 /poke] make-poke]
     ::
       :~  [~[//unix] %give %send lanes=~ blob=0] :: XX TODO
       ==
@@ -46,8 +46,8 @@
     ::  XX  the message layer should only get the inner path (from rift onwards)
     ::
     :*  %poke
-        [~bud /ax/~bud//1/mess/0/~bud/ack/~nec/flow/0/for/1]
-        [~nec /ax/~bud//1/mess/0/~nec/poke/~bud/flow/0/for/1]
+        [~bud /0/~bud/ack/~nec/flow/0/for/1]
+        [~nec /0/~nec/poke/~bud/flow/0/for/1]
         auth=&+*@uxJ
         page=message/poke-plea
     ==
@@ -59,12 +59,12 @@
       [%mess lane=`*@ux message]
     ::
       :~  :-  ~[//unix]
-          [%pass /flow/~nec/0/0/1/out/bak %g %plea ~nec poke-plea]
+          [%pass /flow/out/bak/~nec/0/0/1 %g %plea ~nec poke-plea]
       ==
     ==
   ::
   :-  moves-3  |.  :-  %|
-  ~?  >  dbug  '~bud %ames has flow=[0 %bak] backwards flow'
+  ~?  >  dbug  '~bud %ames has flow=[0 %bak] backwards flow with a pending ack'
   =/  moves-4
     %+  expect-eq
     !>  %.y
@@ -74,14 +74,19 @@
             [~1111.1.10 0xdead.beef *roof]
             [~bud ~nec]
           ==
-        (~(has by flows) 0 %bak)  :: XX check that pending-ack is flows is [~ 1]
+        ?&  (~(has by flows) 0 %bak)
+          ::
+            =;  flow  ?>(?=(%in -.flow) pending-ack.flow)
+            (~(got by flows) 0 %bak)
+        ==
   ::
   :-  moves-4  |.  :-  %|
   ~?  >  dbug  '%gall gives %done to %ames'
   =^  moves-5  ames.bud
     %:  mesa-check-take:v  ames.bud
       [~1111.1.2 0xbeef.dead *roof]
-      :+  /flow/~nec/0/0/1/out/bak  ~[//unix]
+      :+  /flow/out/bak/~nec/0/0/1
+        ~[//unix]
       [%gall %done ~]
     ::
       ~  :: XX emit ack to unix

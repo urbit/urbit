@@ -1056,61 +1056,38 @@
       ++  res-emit  |=(=move res-core(moves [move moves]))
       ++  res-emil  |=(mos=(list move) res-core(moves (weld (flop mos) moves)))
       ::
-      :: /~nec/ack/~zod/flow/bone=0/message=1
-      :: /~zod/poke/~nec/flow/bone=0/message=1
+      ::   /~nec/ack/~zod/flow/bone=0/message=1
+      ::   /~zod/poke/~nec/flow/bone=0/message=1
+      ::   /sndr=~zod/?(%poke %ack)/rcvr=~nec/bone=0/message=1
       ::
-      ::  XX unify parse-ack-path and parse-pok-path
       ::  XX convert path to $pith
       ::
-      ++  parse-ack-path
+      ++  parse-poke-paths
         |_  [=ship path=(pole knot)]
-        ::  ?>  ?=([%ax her=@ vane=%$ ver=@ spac=@ rift=@ inner-path=*] path)
-        ::
-        ++  ship  ^ship
-        ++  de
-          ::  path validation
-          ::  XX  validate that =(ship resp)
-          ::
-          =>  ?>  ?&  ?=([%ax her=@ vane=%$ ver=@ %mess rift=@ ack=*] path)
-                    =(ver.path '1')
-                    ?=  [rcvr=@ %ack reqr=@ %flow bone=@ dire=?(%for %bak) mess=@ *]
-                        ack.path
-                ==
-              [path .]
-          ::
-          =,  ack.-
-          |%  ++  bone  (rash ^bone dem)
-              ++  rcvr  `@p`(slav %p ^rcvr)
-              ++  reqr  `@p`(slav %p ^reqr)
-              ++  rift  (rash ^rift dem)
-              ++  mess  (rash ^mess dem)
-              ++  dire  ^dire
-          --
-        --
-      ::
-      ++  parse-pok-path
-        |_  [=ship path=(pole knot)]
-        ::  ?>  ?=([%ax her=@ vane=%$ ver=@ spac=@ rift=@ inner-path=*] path)
         ::
         ++  ship  ^ship
         ++  de
           ::  path validation
           ::  XX  validate that =(ship rcvr)
-          ::
-          =>  ?>  ?&  ?=([%ax her=@ vane=%$ ver=@ %mess rift=@ pok=*] path)
-                      =(ver.path '1')
-                      ?=  [sndr=@ %poke rcvr=@ %flow bone=@ dire=?(%for %bak) mess=@ *]
-                      pok.path
-                ==
+          ::          ::  XX pre-inner-path validation done by the packet layer
+          =>  ?>  ?&  ::  ?=([%ax her=@ vane=%$ ver=@ %mess rift=@ pok=*] path)
+                      ::  =(ver.path '1')
+                      ?=  $:  rift=@  sndr=@  load=?(%poke %ack)  rcvr=@
+                              %flow   bone=@  dire=?(%for %bak)   mess=@
+                              ~
+                          ==
+                      path
+                  ==
               [path .]
           ::
-          =,  pok.-
+          =,  -
           |%  ++  bone  (rash ^bone dem)
               ++  rcvr  `@p`(slav %p ^rcvr)
               ++  sndr  `@p`(slav %p ^sndr)
-              ++  rift  (rash ^rift dem)
-              ++  mess  (rash ^mess dem)
+              ++  rift  (rash ^rift dem)  ::  XX dot separators?
+              ++  mess  (rash ^mess dem)  ::  XX dot separators?
               ++  dire  ^dire
+              ++  load  `?(%poke %ack)`^load
           --
         --
       ::
@@ -1287,40 +1264,32 @@
           :: ack-spar  =  /~nec/ack/~zod/flow/bone=0/?(plea=%for boon=%bak)/message=1
           :: poke-spar =  /~zod/poke/~nec/flow/bone=0/?(plea=%for boon=%bak)/message=1
           ::
-          =+  ack=~(. parse-ack-path [ship path]:ack-spar)
-          =+  pok=~(. parse-pok-path [ship path]:pok-spar)
+          =+  ack=~(de parse-poke-paths [ship path]:ack-spar)
+          =+  pok=~(de parse-poke-paths [ship path]:pok-spar)
+          ?>  =(%ack load:ack)
+          ?>  =(%poke load:pok)
           ::
-          =/  [sndr=@p rcvr=@p]  [ship.pok-spar ship.ack-spar]
+          :: =/  [sndr=@p rcvr=@p]  [ship.pok-spar ship.ack-spar]  :: XX validated in the packet layer?
           ::  XX move all validation to parse-ack-path
           ::
-          ?.  =(rcvr our)
-            ~&  >>  %wrong-rcvr^rcvr^our
+          ?.  =(sndr:ack our)  ::  do we need to respond to this ack?
+            ~&  >>  %not-our-ack^sndr:ack^our
             res-core
-          ?.  =(rcvr:de:ack our)  ::  do we need to respond to this ack?
-            ~&  >>  %not-our-ack^rcvr:de:ack^our
+          ?.  =(rcvr:pok our)  ::  are we the receiver of the poke?
+            ~&  >  %poke-for-other^[rcvr:pok our]
             res-core
-          ?.  =(rcvr:de:pok our)  ::  are we the receiver of the poke?
-            ~&  >  %poke-for-other^[rcvr:de:pok our]
-            res-core
-          =/  ship-state  (~(get by peers.ax) sndr)
+          =/  ship-state  (~(get by peers.ax) sndr:pok)
           ?.  ?=([~ %known *] ship-state)
             ::  XX handle
             !!
           ::
           =*  peer-state  +.u.ship-state
-          =+  pe-core=(pe-abed-her:pe hen sndr peer-state)
+          =+  pe-core=(pe-abed-her:pe hen sndr:pok peer-state)
           ::
-          ::  XX not supported (flip bone's last bit to account for flow switching)
-          ::
-          =/  =bone  bone:de:pok  ::  (mix 1 bone:de:pok)
+          =/  =bone  bone:pok
           =/  dire=?(%for %bak)  :: flow swtiching
-            ?:  =(%for dire:de:pok)  %bak
-            ?.  =(%bak dire:de:pok)  !!
-            %for
-            :: ?+  dire:de:pok  !!
-            ::   %for  %bak
-            ::   %bak  %for
-            :: ==
+            ?:  =(%for dire:pok)  %bak
+            ?>  =(%bak dire:pok)  %for
           =/  req=mesa-message
             ?>  ?=([%message *] gage)  :: XX ??
             ::  the bone will tell us if this is a %boon or a %plea
@@ -1338,7 +1307,7 @@
           ::
           =^  moves  ax
             =<  fo-abet
-            %.  [%sink mess:de:pok req]
+            %.  [%sink mess:pok req]
             fo-call:(fo-abed:fo hen bone^dire %in pe-chan:pe-core)
           (res-emil moves)
         ::
