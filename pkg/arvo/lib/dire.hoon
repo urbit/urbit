@@ -485,7 +485,7 @@
   :*  %ax
       (scot %p her)  %$  '1'
       %mess  (scot %ud rif)
-      %pact  (scot %ud boq)
+      %pact  (scot %ud boq)  %pure
       ?~  wan  [%init pat]
       [typ.wan (scot %ud fag.wan) pat]
   ==
@@ -980,22 +980,23 @@
                 $=  pac       ::  XX control packet serialization
                 $@  ~
                 $:  boq=bloq
+                    ser=?
                     wan=$@(~ [typ=?(%auth %data) fag=@ud])
             ==  ==
         ?+    res.tyl  ~
             [%$ pat=*]  [pat.res.tyl ~]
         ::
-            [%pact boq=@ %init pat=*]
+            [%pact boq=@ ser=?(%etch %pure) %init pat=*]
           ?~  boq=(slaw %ud boq.res.tyl)
             ~
-          [pat.res.tyl u.boq ~]
+          [pat.res.tyl u.boq ?=(%etch ser.res.tyl) ~]
         ::
-            [%pact boq=@ typ=?(%auth %data) fag=@ pat=*]
+            [%pact boq=@ ser=?(%etch %pure) typ=?(%auth %data) fag=@ pat=*]
           =/  boq  (slaw %ud boq.res.tyl)
           =/  fag  (slaw %ud fag.res.tyl)
           ?:  |(?=(~ boq) ?=(~ fag))
             ~
-          [pat.res.tyl u.boq typ.res.tyl u.fag]
+          [pat.res.tyl u.boq ?=(%etch ser.res.tyl) typ.res.tyl u.fag]
         ==
       ::
       ?~  nex
@@ -1026,44 +1027,48 @@
       =*  fag  fag.wan.pac.nex
       ?.  (gth wid fag)
         [~ ~]
+      ?:  ?&  ?=(%auth typ.wan.pac.nex)
+              !=(0 fag)
+          ==
+        ~  :: non-standard proofs for later
+      =;  [nam=name:pact dat=data:pact]
+        =/  pac=pact:pact  [%page nam dat ~]
+        ?.  ser.pac.nex
+          ``[%packet !>(pac)]
+        ``[%atom !>(q:(fax (en:pact pac)))]
+      ::
       ?-    typ.wan.pac.nex
           %auth
-        ?.  ?=(%0 fag)
-          ~  :: non-standard proofs for later
-        =/  =pact:pact
-          =/  nam  [[our rif] [boq %auth fag] pat]
-          ::  NB: root excluded as it can be recalculated by the client
-          ::
-          =/  aut  [%0 mes ~]
-          =/  lss-proof  (build:lss (met 3 ser)^ser) ::  XX cache this
-          =/  dat  [wid aut (rep 8 proof.lss-proof)]  :: XX types
-          [%page nam dat ~]
-        ``[%packet !>(pact)]
+        =/  nam  [[our rif] [boq %auth fag] pat]
+        ::  NB: root excluded as it can be recalculated by the client
+        ::
+        =/  aut  [%0 mes ~]
+        =/  lss-proof  (build:lss (met 3 ser)^ser) ::  XX cache this
+        =/  dat  [wid aut (rep 8 proof.lss-proof)]  :: XX types
+        [nam dat]
       ::
           %data
-        =/  =pact:pact
-          =/  lss-proof  (build:lss (met 3 ser)^ser)  :: XX cache this
-          =/  nam  [[our rif] [boq %data fag] pat]
-          =/  aut=auth:pact
-            ?:  =(0 fag)
-              :+  %0  mes
-              ?:  =(1 wid)  ~  ::  single fragment
-              ?:  (gth wid 4)  `root.lss-proof
-              =/  tal  (tail proof.lss-proof)
-              ?:  ?=(?(%1 %2) wid)
-                ?>  ?=([* ~] tal)
-                `i.tal
-              ?>  ?=([* * ~] tal)
-              `[i i.t]:tal
-            ::
-            ::  subsequent fragment; provide a pair of sibling hashes
-            ::
-            ?:  (gte fag (lent pairs.lss-proof))  ~
-            [%1 (snag fag pairs.lss-proof)]
+        =/  lss-proof  (build:lss (met 3 ser)^ser)  :: XX cache this
+        =/  nam  [[our rif] [boq %data fag] pat]
+        =/  aut=auth:pact
+          ?:  =(0 fag)
+            :+  %0  mes
+            ?:  =(1 wid)  ~  ::  single fragment
+            ?:  (gth wid 4)  `root.lss-proof
+            =/  tal  (tail proof.lss-proof)
+            ?:  ?=(?(%1 %2) wid)
+              ?>  ?=([* ~] tal)
+              `i.tal
+            ?>  ?=([* * ~] tal)
+            `[i i.t]:tal
           ::
-          =/  dat  [wid aut (cut boq [fag 1] ser)]
-          [%page nam dat ~]
-        ``[%packet !>(pact)]
+          ::  subsequent fragment; provide a pair of sibling hashes
+          ::
+          ?:  (gte fag (lent pairs.lss-proof))  ~
+          [%1 (snag fag pairs.lss-proof)]
+        ::
+        =/  dat  [wid aut (cut boq [fag 1] ser)]
+        [nam dat]
       ==
     ::
     ::  XX need a single namespace entrypoint to validate
