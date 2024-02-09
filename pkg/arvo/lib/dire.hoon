@@ -173,8 +173,7 @@
       +$  bloq  @D
       +$  name
         $:  [her=ship rif=rift]
-            [boq=bloq fag=frag]
-            aut=$~(| ?)
+            [boq=bloq typ=$@(~ [fag=frag aut=$~(| ?)])]
             pat=path
         ==
       +$  auth
@@ -342,6 +341,8 @@
 ::          { meta-byte, address,  rift,     bloq-size, fragment, path-length, path }
 ::  actual: { meta[1], her[16],    rif[4],   boq[1],    fag[4],   typ[2],      pat[309]   }
 ::
+::  meta: { rank[2], rift[2], init[1], is-auth[1], fag[2] }
+::
 ::    > :(add 1 16 4 2 309 4)
 ::    336
 ::
@@ -352,21 +353,23 @@
     ^-  plot
     =/  ran  ?~(her 0 (dec (met 0 (met 4 (end 7 her)))))
     =/  ryf  ?~(rif 0 (dec (met 3 rif)))  :: XX is rift always non-zero?
-    =/  gaf  ?~(fag 0 (dec (met 3 (end 5 fag))))
-    =/  tau  ?:(aut 0b1 0b0)
+    =+  ^=  [nit tau gaf gyf fag]
+      ?~  typ  [0b1 0b0 0b0 0 0]
+      =/  gyf  ?~(fag.typ 1 (met 3 (end 5 fag.typ)))
+      [0b0 ?:(aut.typ 0b1 0b0) (dec gyf) gyf fag.typ]
+    ::
     =/  tap  =-([p=(met 3 -) q=-] `@t`(rap 3 (join '/' pat)))
-    ?>  (lth p.tap ^~((bex 16)))
-    =/  typ  (dec (met 3 p.tap))
+    ?>  (lth p.tap ^~((bex 16))) :: XX truncate instead?
     :+  bloq=3
-      [s+~ 0 [2 ran] [2 ryf] [2 gaf] [1 tau] [1 typ] ~]
-    [[(bex +(ran)) her] [+(ryf) rif] [1 boq] [+(gaf) fag] [+(typ) p.tap] tap ~]
+      [s+~ 0 [2 ran] [2 ryf] [1 nit] [1 tau] [2 gaf] ~]
+    [[(bex +(ran)) her] [+(ryf) rif] [1 boq] [gyf fag] [2 p.tap] tap ~]
   ::
   ++  de
     |=  a=bite
     =/  b=[bloq step]  [0 ?@(a 0 (rig [bloq.a 0] step.a))]
     |=  pat=@
     ^-  [name:pact bloq step]
-    =+  [[ran ryf gaf tau typ] b]=((hew b pat) [2 2 2 1 1])
+    =+  [[ran ryf nit tau gaf] b]=((hew b pat) [2 2 1 1 2])
     =+  [len nex]=[(rig [bloq.b 3] step.b) (bex +(ran))]
     =/  her  (cut 3 [len nex] pat)
     ::
@@ -381,12 +384,12 @@
     =/  boq  (cut 3 [len nex] pat)
     ::
     =:  len  (add len nex)
-        nex  +(gaf)
+        nex  ?:(=(0b1 nit) 0 +(gaf))
       ==
     =/  fag  (cut 3 [len nex] pat)
     ::
     =:  len  (add len nex)
-        nex  +(typ)
+        nex  2
       ==
     =/  tap  (cut 3 [len nex] pat)
     ::
@@ -397,7 +400,12 @@
       %+  rash  (cut 3 [len nex] pat)
       (more fas (cook crip (star ;~(less fas prn))))
     ::
-    [[[her rif] [boq fag] =(1 tau) pat] 3 (add len nex)]
+    =/  typ
+      ?.  =(0b1 nit)
+        [fag =(1 tau)]
+      ?>(&(=(0 tau) =(0 fag)) ~)
+    ::
+    [[[her rif] [boq typ] pat] 3 (add len nex)]
   --
 ::
 ::  +data: response data
@@ -723,51 +731,66 @@
       ?~  res=(~(get by pit.u.per) pat.p.pac)
         [~ ax]
       ::
-      ?:  =(0 fag.p.pac)        :: is-first-fragment
-        ?.  =(~ ps.u.res)
-          [~ ax]
-        ::
-        ?:  =(1 tot.q.pac)    :: complete
-          ::  XX produce as message w/ auth tag
-          !!
-        ::
-        ?:  (gth tot.q.pac 4) :: auth-packet-needed
-          ::  XX authenticate at message level with given root hash
-          ::  XX request-auth-packet
-          ::     by setting %auth in ps.request-state, regenerating next packet
-          !!
-        ::  proof is inlined
-        ::  XX cut+validate sig/hmac
-        =/  proof=(list @ux)
-          =>  aut.q.pac
-          ?>  ?=([%0 *] .)
-          ?~(q ~ ?@(u.q [u.q ~] [p q ~]:u.q))
-        =.  proof  [(leaf-hash:lss fag.p.pac dat.q.pac) proof]
-        =|  root=@ux :: XX compute from proof + leaf
-        ?~  state=(init:verifier:lss tot.q.pac root proof)
-          [~ ax]
-        =.  ps.u.res  `[[%| 1] fag.p.pac u.state]
-        ::
-        ::  XX request next fragment
-        !!
+      =/  [fag=@ud typ=?(%auth %data)]
+        ?~  typ.p.pac
+          [0 ?:((gth tot.q.pac 4) %auth %data)]
+        [fag ?:(aut %auth %data)]:typ.p.pac
       ::
+      ?:  =(0 fag)
+        ?-    typ
+            %auth
+          ?.  ?|  ?=(~ ps.u.res)
+                  ?=([%& %auth] nex.u.ps.u.res)
+              ==
+            [~ ax]
+          ::  XX cut+validate sig/hmac
+          =|  root=@ux   :: XX compute from proof
+          =/  proof=(list @ux)  (rip 8 dat.q.pac)
+          ?~  state=(init:verifier:lss tot.q.pac root proof)
+            [~ ax]
+          =.  ps.u.res
+            ?~  ps.u.res
+              `[[%| 0] tot.q.pac u.state]
+            ps.u.res(los.u u.state)
+          ::
+          ::  XX request next fragment
+          ::
+          !!
+        ::
+            %data
+          ?.  =(~ ps.u.res)
+            [~ ax]
+          ::
+          ?:  =(1 tot.q.pac)    :: complete
+            ::  XX produce as message w/ auth tag
+            !!
+          ::
+          ?:  (gth tot.q.pac 4) :: auth-packet-needed
+            ::  XX authenticate at message level with given root hash
+            ::  XX request-auth-packet
+            ::     by setting %auth in ps.request-state, regenerating next packet
+            !!
+          ::  proof is inlined
+          ::  XX cut+validate sig/hmac
+          =/  proof=(list @ux)
+            =>  aut.q.pac
+            ?>  ?=([%0 *] .)
+            ?~(q ~ ?@(u.q [u.q ~] [p q ~]:u.q))
+          =.  proof  [(leaf-hash:lss fag dat.q.pac) proof]
+          =|  root=@ux :: XX compute from proof + leaf
+          ?~  state=(init:verifier:lss tot.q.pac root proof)
+            [~ ax]
+          =.  ps.u.res  `[[%| 1] tot.q.pac u.state]
+          ::
+          ::  XX request next fragment
+          !!
+        ==
+      ::
+      ?:  ?=(%auth typ)  :: auth packets for subsequent fragments are not requested
+        [~ ax]
       ?~  ps.u.res
         [~ ax]
-      ?:  is-auth-packet
-        ?.  ?=([%& %auth] nex.u.ps.u.res)
-          [~ ax]
-        ::  XX cut+validate sig/hmac
-        =|  root=@ux   :: XX compute from proof
-        =/  proof=(list @ux)  (rip 8 dat.q.pac)
-        ?~  state=(init:verifier:lss tot.q.pac root proof)
-          [~ ax]
-        =.  los.u.ps.u.res  u.state
-        ::
-        ::  XX request next fragment
-        ::
-        !!
-      ::
-      ?.  &(=(13 boq.p.pac) ?=(%| -.nex.u.ps.u.res) =(p.nex.u.ps.u.res fag.p.pac))
+      ?.  &(=(13 boq.p.pac) ?=(%| -.nex.u.ps.u.res) =(p.nex.u.ps.u.res fag))
         [~ ax]
       ::
       =/  pair=(unit [l=@ux r=@ux])
@@ -780,7 +803,7 @@
       ::
       ::  XX persist fragment
       ::
-      ?:  =(fag.p.pac tot.u.ps.u.res)  :: complete
+      ?:  =(+(fag) tot.u.ps.u.res)  :: complete
         ::  XX produce as already-validated message
         !!
       ::  XX request next fragment
@@ -870,7 +893,7 @@
     ::
     =/  =pact:pact
       =/  nam
-        [[ship.p *rift] [13 0] | path.p] :: XX rift from peer-state
+        [[ship.p *rift] [13 0 |] path.p] :: XX rift from peer-state
       ?~  q
         [%peek nam]
       ::  XX if path will be too long, put in [tmp] and use that path
@@ -878,7 +901,7 @@
       ::  =.  tmp.ax  (~(put by tmp.ax) has [%some-envelope original-path u.u.res])
       ::  //ax/[$ship]//1/temp/[hash]
       =/  man
-        [[our *rift] [13 0] | u.q]      :: XX our rift
+        [[our *rift] [13 0 |] u.q]      :: XX our rift
       [%poke nam man *data:pact]  :: XX first-fragment or auth from payload
     ::
     [~ ax]
@@ -941,55 +964,67 @@
         ~
       =*  rif  u.ryf
       =/  nex
-        ^-  %-  unit
-            ::  XX add init and serialization control
-            $%  [%mess pat=path ~]
-                [%pact pat=path typ=?(%auth %data) boq=bloq fag=@ud]
-            ==
+        ^-  $@  ~
+            $:  pat=path
+                $=  pac       ::  XX control packet serialization
+                $@  ~
+                $:  boq=bloq
+                    $=  typ
+                    $%  [%init ~]
+                        [%data fag=@ud]
+                        [%auth fag=@ud]
+            ==  ==  ==
         ::
         ?+    res.tyl  ~
-            [%$ pat=*]  `[%mess pat.res.tyl ~]
+            [%$ pat=*]  [pat.res.tyl ~]
         ::
-            [%pact boq=@ fag=@ typ=?(%auth %data) pat=*]
+            [%pact boq=@ %init pat=*]
+          =/  boq  (slaw %ud boq.res.tyl)
+          ?~  boq  ~
+          [pat.res.tyl u.boq %init ~]
+        ::
+            [%pact boq=@ typ=?(%auth %data) fag=@ pat=*]
           =/  boq  (slaw %ud boq.res.tyl)
           =/  fag  (slaw %ud fag.res.tyl)
           ?:  |(?=(~ boq) ?=(~ fag))
             ~
-          `[%pact pat.res.tyl typ.res.tyl u.boq u.fag]
+          [pat.res.tyl u.boq ?:(?=(%auth typ.res.tyl) auth+u.fag data+u.fag)]
         ==
       ::
       ?~  nex
         [~ ~]
-      =*  pat  pat.u.nex
+      =*  pat  pat.nex
       =/  res  $(lyc ~, pov /ames/mess, s.bem pat)
       ?.  ?&  ?=([~ ~ %message *] res)
         :: ...validate that it's really a message
         :: =>  [%message tag=?(sig hmac) ser=@]
           ==
         ~
-      ?:  ?=([%mess *] u.nex)
-        res
+      ?~  pac.nex  res
       ::
       ::  packets
       ::
-      =*  boq  boq.u.nex
-      =*  fag  fag.u.nex
+      =*  boq  boq.pac.nex
       ?.  ?=(%13 boq)
         ~ :: non-standard fragments for later
-      ::
       =/  msg  ;;([typ=?(%sign %hmac) aut=@ ser=@] q.q.u.u.res)  :: XX types
       =/  mes=auth:mess  ?:(?=(%sign typ.msg) &+aut.msg |+aut.msg)
       =*  ser  ser.msg
       =/  wid  (met boq ser)
       ?<  ?=(%0 wid)  :: XX is this true?
+      |-  ^-  (unit (unit cage))
+      ?:  ?=(%init -.typ.pac.nex)
+        $(typ.pac.nex ?:((gth wid 4) [%auth 0] [%data 0]))
+      ::
+      =*  fag  fag.typ.pac.nex
       ?.  (gth wid fag)
         [~ ~]
-      ?-    typ.u.nex
+      ?-    -.typ.pac.nex
           %auth
         ?.  ?=(%0 fag)
           ~  :: non-standard proofs for later
         =/  =pact:pact
-          =/  nam  [[our rif] [boq fag] & pat]
+          =/  nam  [[our rif] [boq fag &] pat]
           ::  NB: root excluded as it can be recalculated by the client
           ::
           =/  aut  [%0 mes ~]
@@ -1001,7 +1036,7 @@
           %data
         =/  =pact:pact
           =/  lss-proof  (build:lss (met 3 ser)^ser)  :: XX cache this
-          =/  nam  [[our rif] [boq fag] | pat]
+          =/  nam  [[our rif] [boq fag |] pat]
           =/  aut=auth:pact
             ?:  =(0 fag)
               :+  %0  mes
