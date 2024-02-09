@@ -171,7 +171,12 @@
       +$  ship  @pH
       +$  rift  @udF
       +$  bloq  @D
-      +$  name  [[her=ship rif=rift] [boq=bloq fag=frag] pat=path]
+      +$  name
+        $:  [her=ship rif=rift]
+            [boq=bloq fag=frag]
+            aut=$~(| ?)
+            pat=path
+        ==
       +$  auth
         ::
         ::  %0 for fragment 0 or auth packet
@@ -332,7 +337,7 @@
 ::
 ::  +name: encoded-path
 ::
-::  range:  { meta[1], her[2^1-4], rif[1-4], boq[0-1],  fag[1-4], typ[2^0-1],  pat[2^0-16] }
+::  range:  { meta[1], her[2^1-4], rif[1-4], boq[1],    fag[1-4], typ[2^0-1],  pat[2^0-16] }
 ::  max:    { meta[1], her[16],    rif[4],   boq[1],    fag[4],   typ[2],      pat[65.536] }
 ::          { meta-byte, address,  rift,     bloq-size, fragment, path-length, path }
 ::  actual: { meta[1], her[16],    rif[4],   boq[1],    fag[4],   typ[2],      pat[309]   }
@@ -347,21 +352,21 @@
     ^-  plot
     =/  ran  ?~(her 0 (dec (met 0 (met 4 (end 7 her)))))
     =/  ryf  ?~(rif 0 (dec (met 3 rif)))  :: XX is rift always non-zero?
-    =/  loq  ?:(=(13 boq) 0 1)
     =/  gaf  ?~(fag 0 (dec (met 3 (end 5 fag))))
+    =/  tau  ?:(aut 0b1 0b0)
     =/  tap  =-([p=(met 3 -) q=-] `@t`(rap 3 (join '/' pat)))
     ?>  (lth p.tap ^~((bex 16)))
     =/  typ  (dec (met 3 p.tap))
     :+  bloq=3
-      [s+~ 0 [2 ran] [2 ryf] [1 loq] [2 gaf] [1 typ] ~]
-    [[(bex +(ran)) her] [+(ryf) rif] [loq boq] [+(gaf) fag] [+(typ) p.tap] tap ~]
+      [s+~ 0 [2 ran] [2 ryf] [2 gaf] [1 tau] [1 typ] ~]
+    [[(bex +(ran)) her] [+(ryf) rif] [1 boq] [+(gaf) fag] [+(typ) p.tap] tap ~]
   ::
   ++  de
     |=  a=bite
     =/  b=[bloq step]  [0 ?@(a 0 (rig [bloq.a 0] step.a))]
     |=  pat=@
     ^-  [name:pact bloq step]
-    =+  [[ran ryf loq gaf typ] b]=((hew b pat) [2 2 1 2 1])
+    =+  [[ran ryf gaf tau typ] b]=((hew b pat) [2 2 2 1 1])
     =+  [len nex]=[(rig [bloq.b 3] step.b) (bex +(ran))]
     =/  her  (cut 3 [len nex] pat)
     ::
@@ -371,9 +376,9 @@
     =/  rif  (cut 3 [len nex] pat)
     ::
     =:  len  (add len nex)
-        nex  loq
+        nex  1
       ==
-    =/  boq  ?~(loq 13 (cut 3 [len nex] pat))
+    =/  boq  (cut 3 [len nex] pat)
     ::
     =:  len  (add len nex)
         nex  +(gaf)
@@ -392,7 +397,7 @@
       %+  rash  (cut 3 [len nex] pat)
       (more fas (cook crip (star ;~(less fas prn))))
     ::
-    [[[her rif] [boq fag] pat] 3 (add len nex)]
+    [[[her rif] [boq fag] =(1 tau) pat] 3 (add len nex)]
   --
 ::
 ::  +data: response data
@@ -865,7 +870,7 @@
     ::
     =/  =pact:pact
       =/  nam
-        [[ship.p *rift] [13 0] path.p] :: XX rift from peer-state
+        [[ship.p *rift] [13 0] | path.p] :: XX rift from peer-state
       ?~  q
         [%peek nam]
       ::  XX if path will be too long, put in [tmp] and use that path
@@ -873,7 +878,7 @@
       ::  =.  tmp.ax  (~(put by tmp.ax) has [%some-envelope original-path u.u.res])
       ::  //ax/[$ship]//1/temp/[hash]
       =/  man
-        [[our *rift] [13 0] u.q]      :: XX our rift
+        [[our *rift] [13 0] | u.q]      :: XX our rift
       [%poke nam man *data:pact]  :: XX first-fragment or auth from payload
     ::
     [~ ax]
@@ -984,7 +989,7 @@
         ?.  ?=(%0 fag)
           ~  :: non-standard proofs for later
         =/  =pact:pact
-          =/  nam  [[our rif] [boq fag] pat]
+          =/  nam  [[our rif] [boq fag] & pat]
           ::  NB: root excluded as it can be recalculated by the client
           ::
           =/  aut  [%0 mes ~]
@@ -996,7 +1001,7 @@
           %data
         =/  =pact:pact
           =/  lss-proof  (build:lss (met 3 ser)^ser)  :: XX cache this
-          =/  nam  [[our rif] [boq fag] pat]
+          =/  nam  [[our rif] [boq fag] | pat]
           =/  aut=auth:pact
             ?:  =(0 fag)
               :+  %0  mes
