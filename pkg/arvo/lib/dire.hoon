@@ -479,6 +479,17 @@
     [[tot aut (cut 3 [len nex] dat)] 3 (add len nex)]
   --
 ::
+++  name-to-path
+  |=  name:pact
+  ^-  path
+  :*  %ax
+      (scot %p her)  %$  '1'
+      %mess  (scot %ud rif)
+      %pact  (scot %ud boq)
+      ?~  typ  [%init pat]
+      [?:(aut.typ %auth %data) (scot %ud fag.typ) pat]
+  ==
+::
 ++  lss
   =,  blake:crypto
   |%
