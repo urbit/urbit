@@ -64,7 +64,7 @@
     ==
   ::
   :-  moves-3  |.  :-  %|
-  ~?  >  dbug  '~bud %ames owns bone 1'
+  ~?  >  dbug  '~bud %ames has flow=[0 %bak] backwards flow'
   =/  moves-4
     %+  expect-eq
     !>  %.y

@@ -3480,6 +3480,7 @@
   ::   ++  on   ((^on ,@ ,[key=@ =path]) lte)
   ::   +$  mop  ^chain
   ::   --
+  +$  side  [=bone dire=?(%bak %for)]
   +$  azimuth-state  [=symmetric-key =life =rift =public-key sponsor=ship]
   +$  peer-state
     $+  peer-state
@@ -3495,7 +3496,7 @@
         ::  [0 %for]    =>  %poke %plea %watch  =>  [0 %back]
         ::  [0 %back]  <=   %poke %boon        <=  [0 %for]
         ::
-          flows=(map [bone=@ud flow=?(%for %bak)] flow-state)
+          flows=(map side flow-state)
       ::  outgoing/incoming requests
         ::  write-data: path=pok-path  /~zod/poke/~nec/flow/bone=0/mess=1/frag=1
         ::  read data:  path=pek-path
