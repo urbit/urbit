@@ -927,26 +927,105 @@
     =/  tyl=(pole knot)  s.bem
     ?+    tyl  ~
     ::
-    ::  message-level entrypoints
+    ::  publisher-side, protocol-level
     ::
-        [%mess ryf=@ pat=*]
+        [%mess ryf=@ res=*]
       =/  ryf  (slaw %ud ryf.tyl)
       ?~  ryf  [~ ~]
       ?.  =(*rift u.ryf)      :: XX our rift, XX unauthenticated
         ~
-      =/  res  $(lyc ~, pov /ames/mess, s.bem pat.tyl)
+      =*  rif  u.ryf
+      =/  nex
+        ^-  %-  unit
+            ::  XX add init and serialization control
+            $%  [%mess pat=path ~]
+                [%pact pat=path typ=?(%auth %data) boq=bloq fag=@ud]
+            ==
+        ::
+        ?+    res.tyl  ~
+            [%$ pat=*]  `[%mess pat.res.tyl ~]
+        ::
+            [%pact boq=@ fag=@ typ=?(%auth %data) pat=*]
+          =/  boq  (slaw %ud boq.res.tyl)
+          =/  fag  (slaw %ud fag.res.tyl)
+          ?:  |(?=(~ boq) ?=(~ fag))
+            ~
+          `[%pact pat.res.tyl typ.res.tyl u.boq u.fag]
+        ==
+      ::
+      ?~  nex
+        [~ ~]
+      =*  pat  pat.u.nex
+      =/  res  $(lyc ~, pov /ames/mess, s.bem pat)
       ?.  ?&  ?=([~ ~ %message *] res)
         :: ...validate that it's really a message
         :: =>  [%message tag=?(sig hmac) ser=@]
           ==
         ~
-      res
+      ?:  ?=([%mess *] u.nex)
+        res
+      ::
+      ::  packets
+      ::
+      =*  boq  boq.u.nex
+      =*  fag  fag.u.nex
+      ?.  ?=(%13 boq)
+        ~ :: non-standard fragments for later
+      ::
+      =/  msg  ;;([typ=?(%sign %hmac) aut=@ ser=@] q.q.u.u.res)  :: XX types
+      =/  mes=auth:mess  ?:(?=(%sign typ.msg) &+aut.msg |+aut.msg)
+      =*  ser  ser.msg
+      =/  wid  (met boq ser)
+      ?<  ?=(%0 wid)  :: XX is this true?
+      ?.  (gth wid fag)
+        [~ ~]
+      ?-    typ.u.nex
+          %auth
+        ?.  ?=(%0 fag)
+          ~  :: non-standard proofs for later
+        =/  =pact:pact
+          =/  nam  [[our rif] [boq fag] pat]
+          ::  NB: root excluded as it can be recalculated by the client
+          ::
+          =/  aut  [%0 mes ~]
+          =/  lss-proof  (build:lss (met 3 ser)^ser) ::  XX cache this
+          =/  dat  [wid aut (rep 8 proof.lss-proof)]  :: XX types
+          [%page nam dat ~]
+        ``[%packet !>(pact)]
+      ::
+          %data
+        =/  =pact:pact
+          =/  lss-proof  (build:lss (met 3 ser)^ser)  :: XX cache this
+          =/  nam  [[our rif] [boq fag] pat]
+          =/  aut=auth:pact
+            ?:  =(0 fag)
+              :+  %0  mes
+              ?:  =(1 wid)  ~  ::  single fragment
+              ?:  (gth wid 4)  `root.lss-proof
+              =/  tal  (tail proof.lss-proof)
+              ?:  ?=(?(%1 %2) wid)
+                ?>  ?=([* ~] tal)
+                `i.tal
+              ?>  ?=([* * ~] tal)
+              `[i i.t]:tal
+            ::
+            ::  subsequent fragment; provide a pair of sibling hashes
+            ::
+            ?:  (gte fag (lent pairs.lss-proof))  ~
+            [%1 (snag fag pairs.lss-proof)]
+          ::
+          =/  dat  [wid aut (cut boq [fag 1] ser)]
+          [%page nam dat ~]
+        ``[%packet !>(pact)]
+      ==
     ::
     ::  XX need a single namespace entrypoint to validate
     ::     generically any authentication tag for a message
     ::
     ::    /ax/[$ship]//1/validate-message/[auth-string]/[blake3-hash]/[path]
     ::
+    ::
+    ::  publisher-side, message-level
     ::
         [%publ lyf=@ pat=*]
       =/  lyf  (slaw %ud lyf.tyl)
@@ -1007,94 +1086,6 @@
       =/  ser  (jam gag)
       =/  rot  (blake3 ser)
       ``[%message !>([%sign (sign:crypt ryf ful rot) ser])]
-    ::
-    ::  packet-level entrypoints
-    ::
-        [%pact ryf=@ boq=@ fag=@ %data pat=*]
-      =/  ryf  (slaw %ud ryf.tyl)
-      =/  boq  (slaw %ud boq.tyl)
-      =/  fag  (slaw %ud fag.tyl)
-      ?:  |(?=(~ ryf) ?=(~ boq) ?=(~ fag))
-        [~ ~]
-      ?.  ?=(%13 u.boq)  ~ :: non-standard fragments for later
-      ?.  =(*rift u.ryf)      :: XX our rift
-        ~
-      =/  res  $(lyc ~, pov /ames/pact/data, s.bem pat.tyl)
-      ?.  ?&  ?=([~ ~ %message *] res)
-        :: ...validate that it's really a message
-        :: =>  [tag=?(sig hmac) ser=@]
-          ==
-        ~
-      =/  msg  ;;([typ=?(%sign %hmac) aut=@ ser=@] q.q.u.u.res)  :: XX types
-      =*  ser  ser.msg
-      =/  wid  (met u.boq ser)
-      ?<  ?=(%0 wid)  :: XX is this true?
-      ?.  (gth wid u.fag)
-        [~ ~]
-      =/  lss-proof  (build:lss (met 3 ser)^ser)  :: XX cache this
-      =/  =pact:pact
-        =/  nam  [[our u.ryf] [u.boq u.fag] pat.tyl]
-        =/  aut=auth:pact
-          =/  mes=auth:mess  ?:(?=(%sign typ.msg) &+aut.msg |+aut.msg)
-          ?:  =(0 u.fag)
-            :+  %0  mes
-            ?:  =(1 wid)  ~  ::  single fragment
-            ?:  (gth wid 4)  `root.lss-proof
-            =/  tal  (tail proof.lss-proof)
-            ?:  ?=(?(%1 %2) wid)
-              ?>  ?=([* ~] tal)
-              `i.tal
-            ?>  ?=([* * ~] tal)
-            `[i i.t]:tal
-          ::
-          ::  subsequent fragment; provide a pair of sibling hashes
-          ::
-          ?:  (gte u.fag (lent pairs.lss-proof))  ~
-          [%1 (snag u.fag pairs.lss-proof)]
-        ::
-        =/  dat  [wid aut (cut u.boq [u.fag 1] ser)]
-        [%page nam dat ~]
-      ::
-      ::  XX produce typed packet or serialized?
-      ::
-      ``[%packet !>(pact)]
-    ::
-        [%pact ryf=@ boq=@ fag=@ %auth pat=*]
-      =/  ryf  (slaw %ud ryf.tyl)
-      =/  boq  (slaw %ud boq.tyl)
-      =/  fag  (slaw %ud fag.tyl)
-      ?:  |(?=(~ ryf) ?=(~ boq) ?=(~ fag))
-        [~ ~]
-      ?.  ?=(%13 u.boq)  ~ :: XX LSS: non-standard fragments for later
-      ?.  =(*rift u.ryf)   :: XX our rift
-        ~
-      =/  res  $(lyc ~, pov /ames/pact/auth, s.bem pat.tyl)
-      ?.  ?&  ?=([~ ~ %message *] res)
-        :: ...validate that it's really a message
-        :: =>  [tag=?(sig hmac) ser=@]
-          ==
-        ~
-      =/  msg  ;;([typ=?(%sign %hmac) aut=@ ser=@] q.q.u.u.res)  :: XX types
-      =*  ser  ser.msg
-      =/  aut
-        ::  NB: root excluded as it can be recalculated by the client
-        ::
-        =/  mes=auth:mess  ?:(?=(%sign typ.msg) &+aut.msg |+aut.msg)
-        [%0 mes ~]
-      =/  wid  (met u.boq ser)
-      ?<  ?=(%0 wid)
-      ?.  (gth wid u.fag)
-        [~ ~]
-      ?.  ?=(%0 u.fag)  ~  :: non-standard proofs for later
-      =/  =pact:pact
-        =/  nam
-          [[our u.ryf] [u.boq u.fag] pat.tyl]
-        =/  lss-proof  (build:lss (met 3 ser)^ser) ::  XX cache this
-        =/  dat  [wid aut (rep 8 proof.lss-proof)]  :: XX types
-        [%page nam dat ~]
-      ::  XX produce typed packet or serialized?
-      ::
-      ``[%packet !>(pact)]
     ==
   ~
 --
