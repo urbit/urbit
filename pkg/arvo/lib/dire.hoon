@@ -173,7 +173,7 @@
       +$  bloq  @D
       +$  name
         $:  [her=ship rif=rift]
-            [boq=bloq typ=$@(~ [fag=frag aut=$~(| ?)])]
+            [boq=bloq wan=$@(~ [typ=?(%auth %data) fag=frag])]
             pat=path
         ==
       +$  auth
@@ -354,9 +354,9 @@
     =/  ran  ?~(her 0 (dec (met 0 (met 4 (end 7 her)))))
     =/  ryf  ?~(rif 0 (dec (met 3 rif)))  :: XX is rift always non-zero?
     =+  ^=  [nit tau gaf gyf fag]
-      ?~  typ  [0b1 0b0 0b0 0 0]
-      =/  gyf  ?~(fag.typ 1 (met 3 (end 5 fag.typ)))
-      [0b0 ?:(aut.typ 0b1 0b0) (dec gyf) gyf fag.typ]
+      ?~  wan  [0b1 0b0 0b0 0 0]
+      =/  gyf  ?~(fag.wan 1 (met 3 (end 5 fag.wan)))
+      [0b0 ?:(?=(%auth typ.wan) 0b1 0b0) (dec gyf) gyf fag.wan]
     ::
     =/  tap  =-([p=(met 3 -) q=-] `@t`(rap 3 (join '/' pat)))
     ?>  (lth p.tap ^~((bex 16))) :: XX truncate instead?
@@ -400,12 +400,12 @@
       %+  rash  (cut 3 [len nex] pat)
       (more fas (cook crip (star ;~(less fas prn))))
     ::
-    =/  typ
+    =/  wan
       ?.  =(0b1 nit)
-        [fag =(1 tau)]
+        [?:(=(1 tau) %auth %data) fag]
       ?>(&(=(0 tau) =(0 fag)) ~)
     ::
-    [[[her rif] [boq typ] pat] 3 (add len nex)]
+    [[[her rif] [boq wan] pat] 3 (add len nex)]
   --
 ::
 ::  +data: response data
@@ -486,8 +486,8 @@
       (scot %p her)  %$  '1'
       %mess  (scot %ud rif)
       %pact  (scot %ud boq)
-      ?~  typ  [%init pat]
-      [?:(aut.typ %auth %data) (scot %ud fag.typ) pat]
+      ?~  wan  [%init pat]
+      [typ.wan (scot %ud fag.wan) pat]
   ==
 ::
 ++  lss
@@ -742,10 +742,10 @@
       ?~  res=(~(get by pit.u.per) pat.p.pac)
         [~ ax]
       ::
-      =/  [fag=@ud typ=?(%auth %data)]
-        ?~  typ.p.pac
-          [0 ?:((gth tot.q.pac 4) %auth %data)]
-        [fag ?:(aut %auth %data)]:typ.p.pac
+      =/  [typ=?(%auth %data) fag=@ud]
+        ?~  wan.p.pac
+          [?:((gth tot.q.pac 4) %auth %data) 0]
+        [typ fag]:wan.p.pac
       ::
       ?:  =(0 fag)
         ?-    typ
@@ -904,7 +904,7 @@
     ::
     =/  =pact:pact
       =/  nam
-        [[ship.p *rift] [13 0 |] path.p] :: XX rift from peer-state
+        [[ship.p *rift] [13 ~] path.p] :: XX rift from peer-state
       ?~  q
         [%peek nam]
       ::  XX if path will be too long, put in [tmp] and use that path
@@ -912,8 +912,8 @@
       ::  =.  tmp.ax  (~(put by tmp.ax) has [%some-envelope original-path u.u.res])
       ::  //ax/[$ship]//1/temp/[hash]
       =/  man
-        [[our *rift] [13 0 |] u.q]      :: XX our rift
-      [%poke nam man *data:pact]  :: XX first-fragment or auth from payload
+        [[our *rift] [13 ~] u.q]      :: XX our rift
+      [%poke nam man *data:pact]  :: XX resolve /init
     ::
     [~ ax]
   ::
@@ -980,26 +980,22 @@
                 $=  pac       ::  XX control packet serialization
                 $@  ~
                 $:  boq=bloq
-                    $=  typ
-                    $%  [%init ~]
-                        [%data fag=@ud]
-                        [%auth fag=@ud]
-            ==  ==  ==
-        ::
+                    wan=$@(~ [typ=?(%auth %data) fag=@ud])
+            ==  ==
         ?+    res.tyl  ~
             [%$ pat=*]  [pat.res.tyl ~]
         ::
             [%pact boq=@ %init pat=*]
-          =/  boq  (slaw %ud boq.res.tyl)
-          ?~  boq  ~
-          [pat.res.tyl u.boq %init ~]
+          ?~  boq=(slaw %ud boq.res.tyl)
+            ~
+          [pat.res.tyl u.boq ~]
         ::
             [%pact boq=@ typ=?(%auth %data) fag=@ pat=*]
           =/  boq  (slaw %ud boq.res.tyl)
           =/  fag  (slaw %ud fag.res.tyl)
           ?:  |(?=(~ boq) ?=(~ fag))
             ~
-          [pat.res.tyl u.boq ?:(?=(%auth typ.res.tyl) auth+u.fag data+u.fag)]
+          [pat.res.tyl u.boq typ.res.tyl u.fag]
         ==
       ::
       ?~  nex
@@ -1024,18 +1020,18 @@
       =/  wid  (met boq ser)
       ?<  ?=(%0 wid)  :: XX is this true?
       |-  ^-  (unit (unit cage))
-      ?:  ?=(%init -.typ.pac.nex)
-        $(typ.pac.nex ?:((gth wid 4) [%auth 0] [%data 0]))
+      ?~  wan.pac.nex
+        $(wan.pac.nex [?:((gth wid 4) %auth %data) 0])
       ::
-      =*  fag  fag.typ.pac.nex
+      =*  fag  fag.wan.pac.nex
       ?.  (gth wid fag)
         [~ ~]
-      ?-    -.typ.pac.nex
+      ?-    typ.wan.pac.nex
           %auth
         ?.  ?=(%0 fag)
           ~  :: non-standard proofs for later
         =/  =pact:pact
-          =/  nam  [[our rif] [boq fag &] pat]
+          =/  nam  [[our rif] [boq %auth fag] pat]
           ::  NB: root excluded as it can be recalculated by the client
           ::
           =/  aut  [%0 mes ~]
@@ -1047,7 +1043,7 @@
           %data
         =/  =pact:pact
           =/  lss-proof  (build:lss (met 3 ser)^ser)  :: XX cache this
-          =/  nam  [[our rif] [boq fag |] pat]
+          =/  nam  [[our rif] [boq %data fag] pat]
           =/  aut=auth:pact
             ?:  =(0 fag)
               :+  %0  mes
