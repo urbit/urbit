@@ -1,20 +1,51 @@
 !:
 |%
-+$  plat
-  $@  @                                       ::  measure atom
-  $^  $%  [[%c ~] (pair (pair step step) @)]  ::  cut slice
-          [[%m ~] (pair (pair step step) @)]  ::  measure slice
-          [[%s ~] p=plot]                     ::  subslice
-      ==                                      ::
-  (pair step @)                               ::  prefix
-+$  plot  $^  [l=plot r=plot]                 ::  concatenate
-          [a=bloq b=(list plat)]              ::  serialize
---
-::
-|%
 ::  atom ops
 ::
 +|  %atomics
+::
+++  plot
+  =>  |%
+      +$  plat
+        $@  @                                       ::  measure atom
+        $^  $%  [[%c ~] (pair (pair step step) @)]  ::  cut slice
+                [[%m ~] (pair (pair step step) @)]  ::  measure slice
+                [[%s ~] p=plot]                     ::  subslice
+            ==                                      ::
+        (pair step @)                               ::  prefix
+      --                                            ::
+  |^  $^  [l=$ r=$]                                 ::  concatenate
+      [a=bloq b=(list plat)]                        ::  serialize
+  ::
+  ::  +fax: encode a plot
+  ::
+  ++  fax
+    :: ~/  %fax
+    |=  p=$
+    ^-  (pair step @)
+    =<  +
+    |-  ^-  (trel bloq step @)
+    ?^  -.p
+      =/  l  $(p l.p)
+      =/  r  $(p r.p)
+      =/  s  (rig [p.l p.r] q.l)
+      [p.r (add q.r s) (add r.l (lsh [p.r s] r.r))]
+    ::
+    ?~  b.p  [a.p 0 0]
+    =;  c=(pair step @)
+      =/  d  ^$(b.p t.b.p)
+      [a.p (add p.c p.d) (add q.c (lsh [a.p p.c] q.d))]
+    ::
+    ?@  i.b.p
+      [(met a.p i.b.p) i.b.p]
+    ?-  -.i.b.p
+      @       [p.i.b.p (end [a.p p.i.b.p] q.i.b.p)]
+      [%c ~]  [q.p.i.b.p (cut a.p [p q]:i.b.p)]
+      [%m ~]  =+((cut a.p [p q]:i.b.p) [(met a.p -) -])
+      [%s ~]  =/  e  $(p p.i.b.p)
+              [(rig [p.e a.p] q.e) r.e]
+    ==
+  --
 ::
 ::  +rig: convert between bloqs
 ::
@@ -27,35 +58,6 @@
   =/  d  [0 (sub b a)]
   =/  e  (rsh d c)
   ?:(=(0 (end d c)) e +(e))
-::
-::  +fax: encode a plot
-::
-++  fax
-  :: ~/  %fax
-  |=  p=plot
-  ^-  (pair step @)
-  =<  +
-  |-  ^-  (trel bloq step @)
-  ?^  -.p
-    =/  l  $(p l.p)
-    =/  r  $(p r.p)
-    =/  s  (rig [p.l p.r] q.l)
-    [p.r (add q.r s) (add r.l (lsh [p.r s] r.r))]
-  ::
-  ?~  b.p  [a.p 0 0]
-  =;  c=(pair step @)
-    =/  d  ^$(b.p t.b.p)
-    [a.p (add p.c p.d) (add q.c (lsh [a.p p.c] q.d))]
-  ::
-  ?@  i.b.p
-    [(met a.p i.b.p) i.b.p]
-  ?-  -.i.b.p
-    @       [p.i.b.p (end [a.p p.i.b.p] q.i.b.p)]
-    [%c ~]  [q.p.i.b.p (cut a.p [p q]:i.b.p)]
-    [%m ~]  =+((cut a.p [p q]:i.b.p) [(met a.p -) -])
-    [%s ~]  =/  e  $(p p.i.b.p)
-            [(rig [p.e a.p] q.e) r.e]
-  ==
 ::
 ::  +nac: reverse +can
 ::
@@ -220,7 +222,7 @@
         ?^  t.r.pak          0b11
         ?:(?=([%if *] i.r.pak) 0b1 0b10)
       =/  hop  0 :: XX
-      (en:head nex -.pak hop (mug q:(fax bod)))
+      (en:head nex -.pak hop (mug q:(fax:plot bod)))
     [hed bod]
   ::
   ++  de
@@ -281,8 +283,8 @@
     ?~  nex  ~
     ?:  ?=([[%if *] ~] nex)
       [[4 p] [2 q] ~]:i.nex
-    |-  ^-  (list plat)
-    =;  one=(list plat)
+    |-  ^-  (list plat:plot)
+    =;  one=(list plat:plot)
       ?~(t.nex one (weld one $(nex t.nex)))
     ?-  i.nex
       @        =/  l  (met 3 i.nex)
@@ -424,12 +426,12 @@
     ^-  plot
     =/  lot  (met 3 (end 5 tot))
     ::
-    =/  [[aul=@ubB aum=plat] aur=@ubB aup=plat]
+    =/  [[aul=@ubB aum=plat:plot] aur=@ubB aup=plat:plot]
       ?~  aut           [[0b0 0] 0b0 0]
       ?:  ?=(%1 -.aut)  [[0b1 [32 p]] 0b0 32 q]:p.aut
       :-  =>  p.aut
           ?:(?=(%& -) [0b10 64 p] [0b11 32 p])
-      =/  [aur=@ubB has=(list plat)]
+      =/  [aur=@ubB has=(list plat:plot)]
         ?~    q.aut  [0b0 ~]
         ?@  u.q.aut  [0b1 [1 u.q.aut] ~]
         [0b10 [[1 p] 1 q ~]:u.q.aut]
@@ -1035,7 +1037,7 @@
         =/  pac=pact:pact  [%page nam dat ~]
         ?.  ser.pac.nex
           ``[%packet !>(pac)]
-        ``[%atom !>(q:(fax (en:pact pac)))]
+        ``[%atom !>(q:(fax:plot (en:pact pac)))]
       ::
       ?-    typ.wan.pac.nex
           %auth
