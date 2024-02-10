@@ -289,12 +289,13 @@
     =/  b=[bloq step]  [0 ?@(a 0 (rig [bloq.a 0] step.a))]
     |=  dat=@
     ^-  [[nex=@B typ=?(%page %peek %poke) hop=@ gum=@F] bloq step]
-    =+  [[res nex ver tip hop gum tok] b]=((hew b dat) [2 2 3 2 3 20 32])
-    ?>  =(0 res)
-    ?>  =(1 ver)
-    ?>  =(~tasfyn-partyv tok)
-    =/  typ  ?+(tip !! %0b1 %page, %0b10 %peek, %0b11 %poke)
-    [[nex typ hop gum] b]
+    =^  c  b
+      ((hew b dat) [res=2 nex=2 ver=3 tip=2 hop=3 gum=20 tok=32])
+    ?>  =(0 res.c)
+    ?>  =(1 ver.c)
+    ?>  =(~tasfyn-partyv tok.c)
+    =/  typ  ?+(tip.c !! %0b1 %page, %0b10 %peek, %0b11 %poke)
+    [[nex.c typ hop.c gum.c] b]
   --
 ::
 ++  next
@@ -391,46 +392,30 @@
   ::
   ++  de
     |=  a=bite
-    =/  b=[bloq step]  [0 ?@(a 0 (rig [bloq.a 0] step.a))]
+    =/  b=[boq=bloq sep=step]  [0 ?@(a 0 (rig [bloq.a 0] step.a))]
     |=  pat=@
-    ^-  [name:pact bloq step]
-    =+  [[ran ryf nit tau gaf] b]=((hew b pat) [2 2 1 1 2])
-    =+  [len nex]=[(rig [bloq.b 3] step.b) (bex +(ran))]
-    =/  her  (cut 3 [len nex] pat)
+    ^-  [name:pact _b]
+    =^  c  b
+      ((hew b pat) [ran=2 ryf=2 nit=1 tau=1 gaf=2])
     ::
-    =:  len  (add len nex)
-        nex  +(ryf)
-      ==
-    =/  rif  (cut 3 [len nex] pat)
+    =.  b  [3 (rig [boq.b 3] sep.b)]
+    =^  d  b
+      %-  (hew b pat)
+      :^    who=[her=(bex +(ran.c)) rif=+(ryf.c)]
+          boq=1
+        fag=?:(=(0b1 nit.c) 0 +(gaf.c))
+      tap=2
     ::
-    =:  len  (add len nex)
-        nex  1
-      ==
-    =/  boq  (cut 3 [len nex] pat)
-    ::
-    =:  len  (add len nex)
-        nex  ?:(=(0b1 nit) 0 +(gaf))
-      ==
-    =/  fag  (cut 3 [len nex] pat)
-    ::
-    =:  len  (add len nex)
-        nex  2
-      ==
-    =/  tap  (cut 3 [len nex] pat)
-    ::
-    =:  len  (add len nex)
-        nex  tap
-      ==
     =/  pat
-      %+  rash  (cut 3 [len nex] pat)
+      %+  rash  (cut boq.b [sep.b tap.d] pat)
       (more fas (cook crip (star ;~(less fas prn))))
-    ::
     =/  wan
-      ?.  =(0b1 nit)
-        [?:(=(1 tau) %auth %data) fag]
-      ?>(&(=(0 tau) =(0 fag)) ~)
+      ?.  =(0b1 nit.c)
+        [?:(=(1 tau.c) %auth %data) fag.d]
+      ?>(&(=(0 tau.c) =(0 fag.d)) ~)
     ::
-    [[[her rif] [boq wan] pat] 3 (add len nex)]
+    =.  sep.b  (add sep.b tap.d)
+    [[who.d [boq.d wan] pat] b]
   --
 ::
 ::  +data: response data
