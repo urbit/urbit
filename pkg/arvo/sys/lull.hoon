@@ -3423,7 +3423,7 @@
     $%  ::  outbound %poke payloads, bounded in the ship's namespace
         ::  always and only for requests,
         ::
-        $:  %out
+        $:  %outbound
             ::  as soon as we can read the ack for the %poke we remove it from
             ::  the queue since that proof that they have processed the message
             ::
@@ -3448,7 +3448,7 @@
         ==
       ::  incoming %pokes, pending their ack from the vane
       ::
-        $:  %in
+        $:  %inbound
             ::  acks can be +peek'ed via a well-formed path with a known structure
             ::    e.g. /~nec/ack/~zod/flow/bone=1/ack=1 (as stored in the producer of the ack)
             ::                                          (the reader will be using bone=0)

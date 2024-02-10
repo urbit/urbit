@@ -858,47 +858,34 @@
     ::
     +|  %helpers
     ::
+    +$  ev-flow-wire
+      $:  %flow
+          were=?(%out %ext %int)
+          dire=?(%for %bak)
+          [%p her=@p]
+          [%ud rift=@ud]
+          [%ud bone=@ud]
+          [%ud seq=@ud]
+          ~
+      ==
+    ::
+    ++  ev-pave
+      |=  =path
+      ^-  pith
+      %+  turn  path
+      |=  i=@ta
+      (fall (rush i spot:stip) i)
+    ::
     ++  ev-validate-wire
       |=  [hen=duct =wire]
-      ^-  %-  unit
-          [=bone seq=@ud wer=?(%out %ext %int) dir=?(%for %bak) =channel =peer-state]
-      |^  ?~  parsed=(parse-bone-wire wire)
-        ::  no-op
-        ::
-        ~>  %slog.0^leaf/"mesa: dropping malformed wire: {(spud wire)}"
-        ~
-      ?>  ?=([@ @ @ her=ship *] u.parsed)
-      =*  her  her.u.parsed
-      =+  pe-core=(pe-abed-got:pe hen her)
-      ?:  (lth rift.u.parsed rift.peer-state.pe-core)
-        ::  ignore events from an old rift
-        ::
-        ~
-      =,  u.parsed
-      `[bone seq wer dir pe-chan:pe-core]
-      ::  +parse-bone-wire: decode ship, bone and rift from wire from local vane
-      ::  XX %old handling still needed?
-      ::
-      ++  parse-bone-wire
-        |=  =^wire
-        =>  .(wire `(pole knot)`wire)
-        ::
-        ^-  %-  unit
-            [her=@p =rift =bone seq=@ud wer=?(%out %ext %int) dir=?(%for %bak)]
-        ?+    wire  ~  ::  ignore malformed wires
-            $:  %flow  wer=?(%out %ext %int)  dir=?(%for %bak)
-                her=@  rift=@  bone=@  seq=@  ~
-            ==
-          %-  some
-          :*  her=`@p`(slav %p her.wire)
-              rift=`@ud`(slav %ud rift.wire)
-              bone=`@ud`(slav %ud bone.wire)
-              seq=`@ud`(slav %ud seq.wire)
-              wer=wer.wire
-              dir=dir.wire
-          ==
-        ==
-      --
+      ^-  (unit [ev-flow-wire =channel =peer-state])
+      =>  .(wire `(pole iota)`(ev-pave wire))
+      ?.   ?=(ev-flow-wire wire)
+        ~>  %slog.0^leaf/"mesa: malformed wire: {(spud (pout wire))}"  ~
+      =+  pe-core=(pe-abed-got:pe hen her.wire)
+      ?:  (lth rift.wire rift.peer-state.pe-core)
+        ~  ::  ignore events from an old rift
+      `[wire pe-chan:pe-core]
     ::
     +|  %entry-points
     ::
@@ -938,7 +925,7 @@
         ?~  u-bone-her=(ev-validate-wire hen wire.task)
           req-core
         =,  u.u-bone-her
-        ?>  ?=(%bak dir)  :: XX add more of these checks ?
+        ?>  ?=(%bak dire)  :: XX add more of these checks ?
         ::(req-poke [ship $% / payload]:task)
         (req-boon-poke bone [channel peer-state] payload.task)
       ::
@@ -951,7 +938,7 @@
         ::
         =^  [gifts=(list [seq=@ud spar path]) moves-flow=_moves]  ax
           =<  fo-abut
-          (fo-call:(fo-abed:fo hen bone^dire=%bak flow=%out pe-chan) boon/load)
+          (fo-call:(fo-abed:fo hen bone^dire=%bak %outbound pe-chan) boon/load)
         ::
         ::  XX this can be done internally in fo-call:fo-core
         %+  roll  gifts
@@ -963,7 +950,7 @@
         ::
          =/  =wire
           :~  %flow      :: flow request triggered "internally"
-              flow=%int  ::  ?(for-acks=%int for-payloads=%ext to-vanes=%out)
+              were=%int  ::  ?(for-acks=%int for-payloads=%ext to-vanes=%out)
               dire=%bak  ::  %boon(s) always sent backward
               rcvr=[(scot %p her.channel.pe-chan)]
               rift=[(scot %ud rift.peer-state.pe-chan)]
@@ -996,7 +983,7 @@
         =^  [gifts=(list [seq=@ud spar path]) moves-flow=_moves]  ax
           =<  fo-abut
           %.  plea/[vane wire payload]
-          fo-call:(fo-abed:fo hen bone^dire=%for %out pe-chan:pe-core)
+          fo-call:(fo-abed:fo hen bone^dire=%for %outbound pe-chan:pe-core)
         ::
         ::  XX this can be done internally in fo-call:fo-core
         %+  roll  gifts
@@ -1008,7 +995,7 @@
         ::
          =/  =^wire
           :~  %flow      :: flow request triggered "internally"
-              flow=%int  ::  ?(for-acks=%int for-payloads=%ext to-vane=%out)
+              were=%int  ::  ?(for-acks=%int for-payloads=%ext to-vane=%out)
               dire=%for  ::  %for; %plea(s) are always sent forward
               rcvr=[(scot %p ship)]
               rift=[(scot %ud rift.peer-state)]
@@ -1066,12 +1053,6 @@
             [%ud mess=@ud]
             ~
         ==
-      ++  res-pave
-        |=  =path
-        ^-  pith
-        %+  turn  path
-        |=  i=@ta
-        (fall (rush i spot:stip) i)
       ::
       +|  %internals
       ::
@@ -1242,8 +1223,8 @@
           ::  XX  emit $page as an effect to vere to cache it
           ::  XX  wait for cork to clean the flow
           ::
-          =/  ack=(pole iota)  (res-pave path.ack-spar)
-          =/  pok=(pole iota)  (res-pave path.pok-spar)
+          =/  ack=(pole iota)  (ev-pave path.ack-spar)
+          =/  pok=(pole iota)  (ev-pave path.pok-spar)
           ~|  path-validation-failed/ack^pok
           ?>  &(?=(res-mess-pith ack) ?=(res-mess-pith pok))
           ::
@@ -1283,7 +1264,7 @@
           =^  moves  ax
             =<  fo-abet
             %.  [%sink mess.pok req]
-            fo-call:(fo-abed:fo hen bone.pok^dire %in pe-chan:pe-core)
+            fo-call:(fo-abed:fo hen bone.pok^dire %inbound pe-chan:pe-core)
           (res-emil moves)
         ::
         ++  ma-peek
@@ -1326,8 +1307,8 @@
           =^  moves  ax
             =<  fo-abet
             ::  XX parse $ack payload in here, and call task instead?
-            %.  [flow=wer response/[seq +.load]]
-            fo-take:(fo-abed:fo hen bone^dire=dir %out channel peer-state)
+            %.  [were response/[seq +.load]]
+            fo-take:(fo-abed:fo hen bone^dire %outbound channel peer-state)
           (res-emil moves)
         ::
         ++  ma-poke-done
@@ -1337,7 +1318,7 @@
             res-core
           ::  XX use $pith for this
           =,  u.u-bone-her
-          ?>  ?=([%out %bak] [wer dir])  ::  vane acks happen on backward flows
+          ?>  ?=([%out %bak] [were dire])  ::  vane acks happen on backward flows
           ::
           ::  relay the vane ack to the foreign peer
           ::
@@ -1347,7 +1328,7 @@
             ::  XX use it as an assurance check?
             ::
             %.  [%out done/error]
-            fo-take:(fo-abed:fo hen bone^dire=%bak %in channel peer-state)
+            fo-take:(fo-abed:fo hen bone^dire=%bak %inbound channel peer-state)
           (res-emil moves)
         ::
         :: +|  %internals
@@ -1511,17 +1492,17 @@
       +|  %helpers
       ::
       ++  fo-core  .
-      +$  fo-inbound   $~  [%in 0 | ~]
-                       $>(%in flow-state)  :: XX  *$>(%in flow-state)    works
+      +$  fo-inbound   $~  [%inbound 0 | ~]
+                       $>(%inbound flow-state)  :: XX  *$>(%inbound flow-state)    works
       ::
-      +$  fo-outbound  $~  [%out ~ 1 1]
-                       $>(%out flow-state)  :: XX  *$>(%out flow-state)  fails
+      +$  fo-outbound  $~  [%outbound ~ 1 1]
+                       $>(%outbound flow-state)  :: XX  *$>(%outbound flow-state)  fails
       ++  fo-abed
-        |=  [=duct =^side flow=?(%in %out) peer-channel]
+        |=  [=duct =^side part=?(%inbound %outbound) peer-channel]
         =.  state
           %+  ~(gut by flows.peer-state)  side
-          ?:  ?=(%out flow)
-            *fo-outbound  :: XX *$>(flow flow-state)
+          ?:  ?=(%outbound part)
+            *fo-outbound  :: XX *$>(part flow-state)
           *fo-inbound
         fo-core(hen duct, side side, channel channel, peer-state peer-state)
       ::
@@ -1585,7 +1566,7 @@
             ::  XX can we (re)use a sequence number after poping a previous one
             ::  off the queue?
             ::
-            ?>  ?=(%out -.state)
+            ?>  ?=(%outbound -.state)
             =/  next-load=@ud  ?~(next=(ram:fo-mop loads.state) 1 +(key.u.next))
             =.  loads.state  (put:fo-mop loads.state next-load poke)
             =;  core=_fo-core
@@ -1597,7 +1578,7 @@
               /[(scot %p her)]/[(scot %ud bone)]/[(scot %ud rift.peer-state)]
               [%b %wait `@da`(add now ~s30)]
             ::  XX does it help?
-            ::  =>  ?>(?=(%out -.state) .)
+            ::  =>  ?>(?=(%outbound -.state) .)
             |-  ^+  fo-core
             =*  loop  $
             =+  num=(wyt:fo-mop loads.state)
@@ -1624,13 +1605,13 @@
         ==
       ::
       ++  fo-take
-        |=  [flow=?(%ext %int %out) sign=message-sign]
+        |=  [were=?(%ext %int %out) sign=message-sign]
         ^+  fo-core
         ::
         ?-  -.sign
-             %done   ?>(?=(%out flow) (fo-take-done +.sign))  :: ack from client vane
+             %done   ?>(?=(%out were) (fo-take-done +.sign))  :: ack from client vane
           ::
-          %response   ?+  flow  !!
+          %response   ?+  were  !!
                         :: XX payload given by the packet layer
                         :: via the wire used when %pass %a peek-for-poke
                         :: and only handled there?
@@ -1660,7 +1641,7 @@
       ++  fo-sink-boon
         |=  [seq=@ud message=*] :: XX =error
         ^+  fo-core
-        ?>  ?=(%in -.state)
+        ?>  ?=(%inbound -.state)
         =/  =duct
           :: XX +pe-got-duct
           ~|(%dangling-bone^her^bone (~(got by by-bone.ossuary.peer-state) bone))
@@ -1711,13 +1692,13 @@
             ?(%c %e %g %j)  (fo-emit hen %pass wire vane.plea plea/her^plea)
           ==
         ::
-        ?>  ?=(%in -.state)
+        ?>  ?=(%inbound -.state)
         fo-core(pending-ack.state %.y)
       ::
       ++  fo-take-ack
         |=  [seq=@ud =spar auth:mess =gage:mess]
         ^+  fo-core
-        ?>  ?=(%out -.state)
+        ?>  ?=(%outbound -.state)
         ::  only handle acks for %poke that have been sent
         ::
         =/  next-load=@ud  ?~(next=(ram:fo-mop loads.state) 1 key.u.next)
@@ -1753,7 +1734,7 @@
       ++  fo-take-done
         |=  error=(unit error)
         ^+  fo-core
-        ?>  ?=(%in -.state)
+        ?>  ?=(%inbound -.state)
         ::  if there's a pending-vane ack, is always +(last-acked)
         ::
         ?>  =(%.y pending-ack.state)

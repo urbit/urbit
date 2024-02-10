@@ -76,7 +76,7 @@
           ==
         ?&  (~(has by flows) 0 %bak)
           ::
-            =;  flow  ?>(?=(%in -.flow) pending-ack.flow)
+            =;  flow  ?>(?=(%inbound -.flow) pending-ack.flow)
             (~(got by flows) 0 %bak)
         ==
   ::
@@ -108,7 +108,7 @@
             [~1111.1.10 0xdead.beef *roof]
             [~bud ~nec]
           ==
-        =;  flow  ?>(?=(%in -.flow) last-acked.flow)
+        =;  flow  ?>(?=(%inbound -.flow) last-acked.flow)
         (~(got by flows) 0 %bak)
   ::
   :-  moves-6  |.  :-  %&
