@@ -1055,33 +1055,23 @@
       ++  res-abet  [(flop moves) ax]
       ++  res-emit  |=(=move res-core(moves [move moves]))
       ++  res-emil  |=(mos=(list move) res-core(moves (weld (flop mos) moves)))
-      ::
-      ::   /~nec/ack/~zod/flow/bone=0/message=1
-      ::   /~zod/poke/~nec/flow/bone=0/message=1
-      ::   /sndr=~zod/?(%poke %ack)/rcvr=~nec/bone=0/message=1
-      ::
-      ::  XX convert path to $pith
-      ::
-      :: ++  parse-poke-paths
-      ::   |_  path=(pole iota)
-      ::   ::
-      ::   ++  de
-      ::     ::  path validation
-      ::     ::  XX  validate that =(ship rcvr)
-      ::     ::          ::  XX pre-inner-path validation done by the packet layer
-      ::     =>  ?>  ?=  #/rift=@ud/sndr=@p/load=@tas/rcvr=@p/flow=@ta/bone=@ud/dire=@ta/mess=@ud
-      ::                 path
-      ::         [path .]
-      ::     ::
-      ::     |%  ++  bone  ^bone ::  (rash ^bone dem)
-      ::         ++  rcvr  ^rcvr ::  `@p`(slav %p ^rcvr)
-      ::         ++  sndr  ^sndr ::  `@p`(slav %p ^sndr)
-      ::         ++  rift  ^rift ::  (rash ^rift dem)  ::  XX dot separators?
-      ::         ++  mess  ^mess ::  (rash ^mess dem)  ::  XX dot separators?
-      ::         ++  dire  ^dire ::  ^dire
-      ::         :: ++  load  `?(%poke %ack)`^load
-      ::     --
-      ::   --
+      +$  res-mess-pith
+        $:  [%ud rift=@ud]
+            [%p sndr=@p]
+            ?(%poke %ack)
+            [%p rcvr=@p]
+            %flow
+            [%ud bone=@ud]
+            dire=?(%for %back)
+            [%ud mess=@ud]
+            ~
+        ==
+      ++  res-pave
+        |=  =path
+        ^-  pith
+        %+  turn  path
+        |=  i=@ta
+        (fall (rush i spot:stip) i)
       ::
       +|  %internals
       ::
@@ -1252,25 +1242,10 @@
           ::  XX  emit $page as an effect to vere to cache it
           ::  XX  wait for cork to clean the flow
           ::
-          ::  XX  fake decoding
-          :: ack-spar  =  /~nec/ack/~zod/flow/bone=0/?(plea=%for boon=%bak)/message=1
-          :: poke-spar =  /~zod/poke/~nec/flow/bone=0/?(plea=%for boon=%bak)/message=1
-          ::
-          =/  ack=pith  (pave path.ack-spar)
-          =/  pok=pith  (pave path.pok-spar)
-          =>  .(ack `(pole iota)`ack, pok `(pole iota)`pok)
-          ~|  path.ack-spar^path.pok-spar
-          ?>  ?&  ?=  #/rift=@ud/sndr=@p/load=@ta/rcvr=@p/flow=@ta/bone=@ud/dire=@ta/mess=@ud
-                      ack
-                  =(load.ack %ack)  ::  XX should be parsed as /ack/.../flow/...
-                  =(flow.ack %flow)  ::  XX should be parsed as /ack/.../flow/...
-              ==
-          ?>  ?&  ?=  #/rift=@ud/sndr=@p/load=@ta/rcvr=@p/flow=@ta/bone=@ud/dire=@ta/mess=@ud
-                      pok
-                  =(load.pok %poke)  ::  XX should be parsed as /poke/.../flow/...
-                  =(flow.pok %flow)  ::  XX should be parsed as /poke/.../flow/...
-              ==
-          =,  pith
+          =/  ack=(pole iota)  (res-pave path.ack-spar)
+          =/  pok=(pole iota)  (res-pave path.pok-spar)
+          ~|  path-validation-failed/ack^pok
+          ?>  &(?=(res-mess-pith ack) ?=(res-mess-pith pok))
           ::
           :: =/  [sndr=@p rcvr=@p]  [ship.pok-spar ship.ack-spar]  :: XX validated in the packet layer?
           ?.  =(sndr.ack our)  ::  do we need to respond to this ack?
