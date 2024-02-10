@@ -42,6 +42,32 @@
       [%s ~]  =/  e  $(p p.i.b.p)
               [p.e (rig [q.e a.p] r.e)]
     ==
+  ::
+  ::  +mes: measure a plot
+  ::
+  ++  mes
+    |=  p=$
+    ^-  [q=bloq r=step]
+    ?^  -.p
+      =/  l  $(p l.p)
+      =/  r  $(p r.p)
+      =/  s  (rig [q.l q.r] r.l)
+      [q.r (add r.r s)]
+    ::
+    ?~  b.p  [a.p 0]
+    =;  c=q=step
+      =/  d  $(b.p t.b.p)
+      [a.p (add q.c r.d)]
+    ::
+    ?@  i.b.p
+      (met a.p i.b.p)
+    ?-  -.i.b.p
+      @       p.i.b.p
+      [%c ~]  q.p.i.b.p
+      [%m ~]  =+((cut a.p [p q]:i.b.p) (met a.p -))
+      [%s ~]  =/  e  $(p p.i.b.p)
+              (rig [q.e a.p] r.e)
+    ==
   --
 ::
 ::  +rig: convert between bloqs
