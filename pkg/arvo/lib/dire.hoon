@@ -20,30 +20,27 @@
   ::  +fax: encode a plot
   ::
   ++  fax
-    :: ~/  %fax
     |=  p=$
-    ^-  (pair step @)
-    =<  +
-    |-  ^-  (trel bloq step @)
+    ^-  (trel @ bloq step)
     ?^  -.p
       =/  l  $(p l.p)
       =/  r  $(p r.p)
-      =/  s  (rig [p.l p.r] q.l)
-      [p.r (add q.r s) (add r.l (lsh [p.r s] r.r))]
+      =/  s  (rig [q.l q.r] r.l)
+      [(add p.l (lsh [q.r s] p.r)) q.r (add r.r s)]
     ::
-    ?~  b.p  [a.p 0 0]
-    =;  c=(pair step @)
-      =/  d  ^$(b.p t.b.p)
-      [a.p (add p.c p.d) (add q.c (lsh [a.p p.c] q.d))]
+    ?~  b.p  [0 a.p 0]
+    =;  c=(pair @ step)
+      =/  d  $(b.p t.b.p)
+      [(add p.c (lsh [a.p q.c] p.d)) a.p (add q.c r.d)]
     ::
     ?@  i.b.p
-      [(met a.p i.b.p) i.b.p]
+      [i.b.p (met a.p i.b.p)]
     ?-  -.i.b.p
-      @       [p.i.b.p (end [a.p p.i.b.p] q.i.b.p)]
-      [%c ~]  [q.p.i.b.p (cut a.p [p q]:i.b.p)]
-      [%m ~]  =+((cut a.p [p q]:i.b.p) [(met a.p -) -])
+      @       [(end [a.p p.i.b.p] q.i.b.p) p.i.b.p]
+      [%c ~]  [(cut a.p [p q]:i.b.p) q.p.i.b.p]
+      [%m ~]  =+((cut a.p [p q]:i.b.p) [- (met a.p -)])
       [%s ~]  =/  e  $(p p.i.b.p)
-              [(rig [p.e a.p] q.e) r.e]
+              [p.e (rig [q.e a.p] r.e)]
     ==
   --
 ::
@@ -222,7 +219,7 @@
         ?^  t.r.pak          0b11
         ?:(?=([%if *] i.r.pak) 0b1 0b10)
       =/  hop  0 :: XX
-      (en:head nex -.pak hop (mug q:(fax:plot bod)))
+      (en:head nex -.pak hop (mug p:(fax:plot bod)))
     [hed bod]
   ::
   ++  de
@@ -1037,7 +1034,7 @@
         =/  pac=pact:pact  [%page nam dat ~]
         ?.  ser.pac.nex
           ``[%packet !>(pac)]
-        ``[%atom !>(q:(fax:plot (en:pact pac)))]
+        ``[%atom !>(p:(fax:plot (en:pact pac)))]
       ::
       ?-    typ.wan.pac.nex
           %auth
