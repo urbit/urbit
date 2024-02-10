@@ -336,8 +336,8 @@
 ::
 ::  +name: encoded-path
 ::
-::  range:  { meta[1], her[2^1-4], rif[1-4], boq[1],    fag[1-4], typ[2^0-1],  pat[2^0-16] }
-::  max:    { meta[1], her[16],    rif[4],   boq[1],    fag[4],   typ[2],      pat[65.536] }
+::  range:  { meta[1], her[2^1-4], rif[1-4], boq[1],    fag[1-4], typ[2],      pat[2^0-16] }
+::  max:    { meta[1], her[16],    rif[4],   boq[1],    fag[4],   typ[2],      pat[8.192] }
 ::          { meta-byte, address,  rift,     bloq-size, fragment, path-length, path }
 ::  actual: { meta[1], her[16],    rif[4],   boq[1],    fag[4],   typ[2],      pat[309]   }
 ::
@@ -426,7 +426,7 @@
     ::
     =/  [[aul=@ubB aum=plat] aur=@ubB aup=plat]
       ?~  aut           [[0b0 0] 0b0 0]
-      ?:  ?=(%| -.aut)  [[0b1 [32 p]] 0b0 32 q]:p.aut
+      ?:  ?=(%1 -.aut)  [[0b1 [32 p]] 0b0 32 q]:p.aut
       :-  =>  p.aut
           ?:(?=(%& -) [0b10 64 p] [0b11 32 p])
       =/  [aur=@ubB has=(list plat)]
