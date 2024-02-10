@@ -25,7 +25,7 @@
     ?^  -.p
       =/  l  $(p l.p)
       =/  r  $(p r.p)
-      =/  s  (rig [q.l q.r] r.l)
+      =/  s  (rig +.l q.r)
       [(add p.l (lsh [q.r s] p.r)) q.r (add r.r s)]
     ::
     ?~  b.p  [0 a.p 0]
@@ -40,7 +40,7 @@
       [%c ~]  [(cut a.p [p q]:i.b.p) q.p.i.b.p]
       [%m ~]  =+((cut a.p [p q]:i.b.p) [- (met a.p -)])
       [%s ~]  =/  e  $(p p.i.b.p)
-              [p.e (rig [q.e a.p] r.e)]
+              [p.e (rig +.e a.p)]
     ==
   ::
   ::  +mes: measure a plot
@@ -51,7 +51,7 @@
     ?^  -.p
       =/  l  $(p l.p)
       =/  r  $(p r.p)
-      =/  s  (rig [q.l q.r] r.l)
+      =/  s  (rig l q.r)
       [q.r (add r.r s)]
     ::
     ?~  b.p  [a.p 0]
@@ -66,15 +66,17 @@
       [%c ~]  q.p.i.b.p
       [%m ~]  =+((cut a.p [p q]:i.b.p) (met a.p -))
       [%s ~]  =/  e  $(p p.i.b.p)
-              (rig [q.e a.p] r.e)
+              (rig e a.p)
     ==
   --
 ::
 ::  +rig: convert between bloqs
 ::
 ++  rig
-  |=  [[a=bloq b=bloq] c=step]
+  |=  [=bite b=bloq]
   ^-  step
+  ?@  bite  0
+  =/  [a=bloq c=step]  bite
   ?:  =(a b)  c
   ?:  (gth a b)
     (lsh [0 (sub a b)] c)
@@ -269,7 +271,7 @@
                [[typ.hed nam dam dat] b]
       ==
     =/  gum
-      (end [0 20] (mug (cut -.c [(rig [-.b -.c] +.b) +.c] dat)))
+      (end [0 20] (mug (cut -.c [(rig b -.c) +.c] dat)))
     ?>(=(gum.hed gum) [pac c])
   --
 ::
@@ -286,7 +288,7 @@
   ::
   ++  de
     |=  a=bite
-    =/  b=[bloq step]  [0 ?@(a 0 (rig [bloq.a 0] step.a))]
+    =/  b=[bloq step]  [0 (rig a 0)]
     |=  dat=@
     ^-  [[nex=@B typ=?(%page %peek %poke) hop=@ gum=@F] bloq step]
     =^  c  b
@@ -322,7 +324,7 @@
   ::
   ++  de
     |=  [a=bite b=@B]
-    =/  c=[bloq step]  [3 ?@(a 0 (rig [bloq.a 3] step.a))]
+    =/  c=[bloq step]  [3 (rig a 3)]
     |=  dat=@
     ^-  [next:pact bloq step]
     =<  ?+  b  !!
@@ -392,13 +394,13 @@
   ::
   ++  de
     |=  a=bite
-    =/  b=[boq=bloq sep=step]  [0 ?@(a 0 (rig [bloq.a 0] step.a))]
+    =/  b=[boq=bloq sep=step]  [0 (rig a 0)]
     |=  pat=@
     ^-  [name:pact _b]
     =^  c  b
       ((hew b pat) [ran=2 ryf=2 nit=1 tau=1 gaf=2])
     ::
-    =.  b  [3 (rig [boq.b 3] sep.b)]
+    =.  b  [3 (rig b 3)]
     =^  d  b
       %-  (hew b pat)
       :^    who=[her=(bex +(ran.c)) rif=+(ryf.c)]
@@ -454,11 +456,11 @@
   ::
   ++  de
     |=  a=bite
-    =/  b=[bloq step]  [0 ?@(a 0 (rig [bloq.a 0] step.a))]
+    =/  b=[bloq step]  [0 (rig a 0)]
     |=  dat=@
     ^-  [[tot=@udF aut=auth:pact dat=@] bloq step]
     =+  ^=  [[bot [aul aur] men] b]  ((hew b dat) [2 [2 2] 2])
-    =+  ^=  [len nex]                [(rig [bloq.b 3] step.b) +(bot)]
+    =+  ^=  [len nex]                [(rig b 3) +(bot)]
     =/  tot  (cut 3 [len nex] dat)
     =.  len  (add len nex)
     =^  mes=(unit auth:mess)  nex
