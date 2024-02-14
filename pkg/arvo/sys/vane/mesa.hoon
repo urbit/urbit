@@ -933,6 +933,27 @@
             [%ud mess=@ud]
             ~
         ==
+      ::  /ax/~snip//ver=1/mess/rift=1/pact/bloq=13/init/[...]
+      ::  /ax/~snip//ver=1/mess/rift=1/pact/bloq=13/pure/auth/frag=1/[...]
+      ::  /ax/~snip//ver=1/mess/rift=1/pact/bloq=13/pure/data/frag=1/[...]
+      ::
+      +$  res-pact-head
+        $:  %ax
+            [%p her=@p]
+            %'1'
+            %mess
+            [%ud rift=@ud]
+            %pact
+            [%ud bloq=@ud]
+            inner=?(%init %pure)
+            *  ::  if %pure, $res-pure-pith
+        ==
+      ::
+      +$  res-pure-pith
+        $:  ?(%auth %data)
+            [%ud frag=@ud]
+            *
+        ==
       ::
       +|  %internals
       ::
@@ -1405,7 +1426,7 @@
       +|  %helpers
       ::
       ++  fo-core  .
-      +$  fo-incoming   $~  [%incoming 0 | ~]
+      +$  fo-incoming  $~  [%incoming 0 | ~]
                        $>(%incoming flow-state)  :: XX  *$>(%incoming flow-state)    works
       ::
       +$  fo-outbound  $~  [%outbound ~ 1 1]
@@ -1709,8 +1730,7 @@
             [[our *rift] [13 ~] u.q]      :: XX our rift
           [%poke nam man *data:pact]  :: XX resolve /init
         ::
-        ::(req-emit unix-duct.ax %give %send ~ blob=0)  :: XX use en:pact for blob
-        :: ~&  >>>  pact/(encode-packet pact)
+        ::(req-emit unix-duct.ax %give %send ~ blob=0)  :: XX use  (en:^pact pact) for blob
         :_  ax
         [unix-duct.ax %give %send ~ blob=0]~
       ::
@@ -1988,5 +2008,27 @@
       =/  rot  (blake3 ser)
       ``[%message !>([%sign (sign:crypt ryf ful rot) ser])]
     ==
-  ~
+  ::  only respond for the local identity, %$ desk, current timestamp
+  ::
+  ?.  ?&  =(our p.bem)
+          =([%da now] r.bem)
+          =(%$ q.bem)
+      ==
+    ~
+  ::
+  ::  /ax/peers/[ship]               ship-state
+  ::
+  ?.  ?=(%x car)  ~
+  =/  tyl=(pole knot)  s.bem
+  ::  private endpoints
+  ::
+  ?.  =([~ ~] lyc)  ~
+  ?+    tyl  ~
+        [%peers her=@ ~]
+      =/  who  (slaw %p her.tyl)
+      ?~  who  [~ ~]
+      ?~  peer=(~(get by peers.ax) u.who)
+        [~ ~]
+      ``noun+!>(u.peer)
+  ==
 --

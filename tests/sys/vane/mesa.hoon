@@ -76,8 +76,8 @@
           ==
         ?&  (~(has by flows) 0 %bak)
           ::
-            =;  flow  ?>(?=(%incoming -.flow) pending-ack.flow)
-            (~(got by flows) 0 %bak)
+            =+  flow=(~(got by flows) 0 %bak)
+            ?>(?=(%incoming -.flow) pending-ack.flow)
         ==
   ::
   :-  moves-4  |.  :-  %|
@@ -108,8 +108,8 @@
             [~1111.1.10 0xdead.beef *roof]
             [~bud ~nec]
           ==
-        =;  flow  ?>(?=(%incoming -.flow) last-acked.flow)
-        (~(got by flows) 0 %bak)
+        =+  flow=(~(got by flows) 0 %bak)
+        ?>(?=(%incoming -.flow) last-acked.flow)
   ::
   :-  moves-6  |.  :-  %&
   ~?  >  dbug  '~nec %ames next bone is 1'
