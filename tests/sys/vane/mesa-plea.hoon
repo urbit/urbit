@@ -7,14 +7,13 @@
   %-  run-chain
   |.  :-  %|
   =+  (nec-bud:v [nec=2 bud=3] nec=0 bud=0)
-  ~?  >  dbug  'send %poke-plea to ~bud'
   =/  poke-plea  [%g /ge/pok [%0 %m noun/0]]
-  ::
+  =/  poke-path  /~nec/poke/~bud/flow/0/for/1
+  =/  ack-path   /~bud/ack/~nec/flow/0/for/1
   =/  make-poke=[%make-poke spar:ames path]
-    :+  %make-poke
-      ^-  spar:ames  [~bud /~bud/ack/~nec/flow/0/for/1]
-    /~nec/poke/~bud/flow/0/for/1
+    [%make-poke [~bud ack-path] poke-path]
   ::
+  ~?  >  dbug  'send %poke-plea to ~bud'
   =^  moves-1  ames.nec
     %:    mesa-check-call:v  ames.nec
         [~1111.1.1 0xdead.beef *roof]
@@ -46,8 +45,8 @@
     ::  XX  the message layer should only get the inner path (from rift onwards)
     ::
     :*  %poke
-        [~bud /0/~bud/ack/~nec/flow/0/for/1]
-        [~nec /0/~nec/poke/~bud/flow/0/for/1]
+        [~bud ack-path]
+        [~nec poke-path]
         auth=&+*@uxJ
         page=message/poke-plea
     ==
@@ -111,14 +110,40 @@
         =+  flow=(~(got by flows) 0 %bak)
         ?>(?=(%incoming -.flow) last-acked.flow)
   ::
-  :-  moves-6  |.  :-  %&
-  ~?  >  dbug  '~nec %ames next bone is 1'
-  %+  expect-eq
-  !>  1
-  !>  =<  next-bone.ossuary
-      %:  mesa-scry-peer:v
-        ames.nec
-        [~1111.1.10 0xdead.beef *roof]
-        [~nec ~bud]
+  :-  moves-6  |.  :-  %|
+  ~?  >  dbug  '~nec hears %ack from ~bud, gives to gall'
+  =^  moves-7  ames.nec
+    %:    mesa-check-take:v  ames.nec
+        [~1111.1.1 0xdead.beef *roof]
+      :+  /flow/int/for/~bud/0/0/1
+        ~[/poke]
+      [%mesa %response %page ~bud^ack-path *(each @uxJ @uxI) `page`message/|]
+    ::
+      :~  :-  ~[/poke]
+          [%give %done ~]
       ==
+    ==
+  :-  moves-7  |.  :-  %|
+  ~?  >  dbug  '~nec %ames removes the payload for the poke after ack'
+  =/  moves-8
+    %+  expect-eq
+    !>  ~
+    !>  =/  flows  =<  flows
+          %:  mesa-scry-peer:v
+            ames.nec
+            [~1111.1.10 0xdead.beef *roof]
+            [~nec ~bud]
+          ==
+        =+  flow=(~(got by flows) 0 %for)
+        ?>(?=(%outbound -.flow) loads.flow)
+  ~?  >  dbug  '~nec %ames next bone is 1'
+  :-  moves-8  |.  :-  %&
+    %+  expect-eq
+    !>  1
+    !>  =<  next-bone.ossuary
+        %:  mesa-scry-peer:v
+          ames.nec
+          [~1111.1.10 0xdead.beef *roof]
+          [~nec ~bud]
+        ==
 --
