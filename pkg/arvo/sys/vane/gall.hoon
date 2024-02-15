@@ -2854,6 +2854,7 @@
       ~
     ``case/!>(ud/key.u.las)
   ::
+  =?  path  =(/whey path)  /1/whey
   ?:  &(?=(%x care) ?=([%'1' *] path))
     =>  .(path t.path)
     ?.  =(p.bem our)  ~
