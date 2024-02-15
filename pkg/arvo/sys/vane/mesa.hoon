@@ -797,10 +797,11 @@
       ::  should ack and payloads responses be handled here instead of by ev-res?
       ++  take
         =>  |%  +$  res-task  $:  =wire
-                                  $%  $>(%boon gift:ames)
+                                  $%  $>(%boon gift:ames) :: XX
                               ==  ==
             --
-        |=  task=res-task
+        |=  ::task=res-task
+            task=[=wire %boon payload=*]
         ^+  req-core
         ?~  u-bone-her=(ev-validate-wire hen wire.task)
           req-core
@@ -860,6 +861,7 @@
         |=  [=bone pe-chan=[=channel =peer-state] load=*]
         ::  XX handle corked/closing bones
         ::
+        ~&  req-boon-poke/load
         =^  [gifts=(list [seq=@ud spar path]) moves-flow=_moves]  ax
           =<  fo-abut
           (fo-call:(fo-abed:fo hen bone^dire=%bak %outbound pe-chan) boon/load)
@@ -928,7 +930,7 @@
             [%p rcvr=@p]
             %flow
             [%ud bone=@ud]
-            dire=?(%for %back)
+            dire=?(%for %bak)
             [%ud mess=@ud]
             ~
         ==
@@ -1159,7 +1161,7 @@
           ::
           =/  ack=(pole iota)  (ev-pave path.ack-spar)
           =/  pok=(pole iota)  (ev-pave path.pok-spar)
-          ~|  path-validation-failed/ack^pok
+          ~|  path-validation-failed/path.ack-spar^path.pok-spar
           ?>  &(?=(res-mess-pith ack) ?=(res-mess-pith pok))
           ::
           :: =/  [sndr=@p rcvr=@p]  [ship.pok-spar ship.ack-spar]  :: XX validated in the packet layer?
@@ -1426,19 +1428,17 @@
       +|  %helpers
       ::
       ++  fo-core  .
-      +$  fo-incoming  $~  [%incoming 0 | ~]
-                       $>(%incoming flow-state)  :: XX  *$>(%incoming flow-state)    works
-      ::
-      +$  fo-outbound  $~  [%outbound ~ 1 1]
-                       $>(%outbound flow-state)  :: XX  *$>(%outbound flow-state)  fails
+      :: +$  fo-incoming  $~  [%incoming 0 | ~]
+      ::                  $>(%incoming flow-state)  :: XX  *$>(%incoming flow-state)    works
+      :: ::
+      :: +$  fo-outbound  $~  [%outbound ~ 1 1]
+      ::                  $>(%outbound flow-state)  :: XX  *$>(%outbound flow-state)  fails
       ::
       ++  fo-abed
         |=  [=duct =^side part=?(%incoming %outbound) peer-channel]
-        =.  state
-          %+  ~(gut by flows.peer-state)  side
-          ?:  ?=(%outbound part)
-            *fo-outbound  :: XX *$>(part flow-state)
-          *fo-incoming
+        ~?  (~(has by flows.peer-state) side)
+          part^state/state
+        =.  state  (~(gut by flows.peer-state) side *flow-state)
         fo-core(hen duct, side side, channel channel, peer-state peer-state)
       ::
       ++  fo-abet  ::moves^state  :: XX (flop moves) done outside?
@@ -1539,7 +1539,7 @@
         ::  XX can we (re)use a sequence number after poping a previous one
         ::  off the queue?
         ::
-        ?>  ?=(%outbound -.state)
+        :: ?>  ?=(%outbound -.state)
         =/  next-load=@ud  ?~(next=(ram:fo-mop loads.state) 1 +(key.u.next))
         =.  loads.state  (put:fo-mop loads.state next-load poke)
         =;  core=_fo-core
@@ -1577,7 +1577,7 @@
       ++  fo-sink-boon
         |=  [seq=@ud message=*] :: XX =error
         ^+  fo-core
-        ?>  ?=(%incoming -.state)
+        :: ?>  ?=(%incoming -.state)
         =/  =duct
           :: XX +pe-got-duct
           ~|(%dangling-bone^her^bone (~(got by by-bone.ossuary.peer-state) bone))
@@ -1628,13 +1628,13 @@
             ?(%c %e %g %j)  (fo-emit hen %pass wire vane.plea plea/her^plea)
           ==
         ::
-        ?>  ?=(%incoming -.state)
+        :: ?>  ?=(%incoming -.state)
         fo-core(pending-ack.state %.y)
       ::
       ++  fo-take-ack
         |=  [seq=@ud =spar auth:mess =gage:mess]
         ^+  fo-core
-        ?>  ?=(%outbound -.state)
+        :: ?>  ?=(%outbound -.state)
         ::  only handle acks for %poke that have been sent
         ::
         =/  next-load=@ud  ?~(next=(ram:fo-mop loads.state) 1 key.u.next)
@@ -1671,7 +1671,7 @@
       ++  fo-take-done
         |=  error=(unit error)
         ^+  fo-core
-        ?>  ?=(%incoming -.state)
+        :: ?>  ?=(%incoming -.state)
         ::  if there's a pending-vane ack, is always +(last-acked)
         ::
         ?>  =(%.y pending-ack.state)

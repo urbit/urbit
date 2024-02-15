@@ -171,7 +171,11 @@
   =/  mesa-core  (mesa-gate now eny roof)
   =^  moves  mesa-gate  (take:mesa-core wire duct dud=~ sign)  ::  XX gift => sign
   [(expect-eq !>(expected-moves) !>(moves)) mesa-gate]
-
+::
+++  mesa-take
+  |=  [=mesa-gate =wire =duct sign=sign:mesa-bunt =roof]
+  %.  [wire duct dud=~ sign]
+  take:(mesa-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
 :: ++  mesa-scry-hunk
 ::   |=  $:  =mesa-gate
 ::           [now=@da eny=@ =roof]
