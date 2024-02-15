@@ -31750,7 +31750,6 @@
                 global$2[key] = "esm";
               }
             }
-            //# sourceMappingURL=react-router.js.map
 
             /**
              * The public API for a <Router> that uses HTML5 history.
@@ -32055,7 +32054,6 @@
                 style: propTypes.object
               });
             }
-            //# sourceMappingURL=react-router-dom.js.map
 
             var classnames = createCommonjsModule(function (module) {
             /*!
@@ -49271,6 +49269,7 @@
                   this.clayCommits(data, state);
                 //
                   this.eyreBindings(data, state);
+                  this.eyreCache(data, state);
                   this.eyreConnections(data, state);
                   this.eyreAuthentication(data, state);
                   this.eyreChannels(data, state);
@@ -49404,6 +49403,13 @@
                 }
               }
 
+              eyreCache(obj, state) {
+                const data = lodash.get(obj, 'eyreCache', false);
+                if (data) {
+                  state.cache = data;
+                }
+              }
+
               eyreConnections(obj, state) {
                 const data = lodash.get(obj, 'eyreConnections', false);
                 if (data) {
@@ -49436,6 +49442,7 @@
                   timers: [],
                   commits: [],
                   bindings: [],
+                  cache: [],
                   connections: [],
                   authentication: {
                     sessions: [],
@@ -55399,6 +55406,13 @@
                 );
               }
 
+              getCache() {
+                this.getJson('/eyre/cache',
+                  this.wrapLocal('eyreCache'),
+                  this.showStatus('error fetching eyre cache')
+                );
+              }
+
               getConnections() {
                 this.getJson('/eyre/connections',
                   this.wrapLocal('eyreConnections'),
@@ -55418,6 +55432,11 @@
                   this.wrapLocal('eyreChannels'),
                   this.showStatus('error fetching eyre channels')
                 );
+              }
+
+              clearCache(url) {
+                return this.action("dbug", "json", { 'clear-eyre-cache': { url: url } })
+                  .then(this.getCache.bind(this));
               }
 
               // local
@@ -55468,7 +55487,7 @@
 
             let subscription = new Subscription();
 
-            const _jsxFileName = "/Users/jose/urbit/urbit/pkg/interface/dbug/src/js/components/skeleton.js";
+            const _jsxFileName = "/Users/plfn/repos/urbit/urbit/pkg/interface/dbug/src/js/components/skeleton.js";
             class SidebarItem extends react_1 {
               render() {
                 const { props } = this;
@@ -55544,7 +55563,7 @@
               }
             }
 
-            const _jsxFileName$1 = "/Users/jose/urbit/urbit/pkg/interface/dbug/src/js/components/message-screen.js";
+            const _jsxFileName$1 = "/Users/plfn/repos/urbit/urbit/pkg/interface/dbug/src/js/components/message-screen.js";
             class MessageScreen extends react_1 {
               render() {
                 return (
@@ -64082,7 +64101,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               ob
             );
 
-            const _jsxFileName$2 = "/Users/jose/urbit/urbit/pkg/interface/dbug/src/js/components/searchable-list.js";
+            const _jsxFileName$2 = "/Users/plfn/repos/urbit/urbit/pkg/interface/dbug/src/js/components/searchable-list.js";
             class SearchableList extends react_1 {
               // expected props:
               // items: [{key: 'some key', jsx: <w/e>}, ...]
@@ -64126,12 +64145,15 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 return (react.createElement('div', { style: {position: 'relative', border: '1px solid grey', padding: '4px'}, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 43}}
                   , props.children
                   , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$2, lineNumber: 45}}, searchBar, " (" , items.length, ")")
-                  , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$2, lineNumber: 46}}, items.length === 0 ? 'none' : items)
+                  , react.createElement('details', { open: (props.open === undefined) ? true : props.open, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 46}}
+                    , react.createElement('summary', {__self: this, __source: {fileName: _jsxFileName$2, lineNumber: 47}}, items.length, " items" )
+                    , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$2, lineNumber: 48}}, items.length === 0 ? 'none' : items)
+                  )
                 ));
               }
             }
 
-            const _jsxFileName$3 = "/Users/jose/urbit/urbit/pkg/interface/dbug/src/js/components/subscriptions.js";
+            const _jsxFileName$3 = "/Users/plfn/repos/urbit/urbit/pkg/interface/dbug/src/js/components/subscriptions.js";
             class Subscriptions extends react_1 {
               constructor(props) {
                 super(props);
@@ -64195,7 +64217,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$4 = "/Users/jose/urbit/urbit/pkg/interface/dbug/src/js/components/summary.js";
+            const _jsxFileName$4 = "/Users/plfn/repos/urbit/urbit/pkg/interface/dbug/src/js/components/summary.js";
             class Summary extends react_1 {
               // expected props:
               // id: 'id'
@@ -64231,7 +64253,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$5 = "/Users/jose/urbit/urbit/pkg/interface/dbug/src/js/views/apps.js";
+            const _jsxFileName$5 = "/Users/plfn/repos/urbit/urbit/pkg/interface/dbug/src/js/views/apps.js";
             class Apps extends react_1 {
 
               constructor(props) {
@@ -64351,7 +64373,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$6 = "/Users/jose/urbit/urbit/pkg/interface/dbug/src/js/views/spider.js";
+            const _jsxFileName$6 = "/Users/plfn/repos/urbit/urbit/pkg/interface/dbug/src/js/views/spider.js";
             class Spider extends react_1 {
 
               constructor(props) {
@@ -64406,7 +64428,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$7 = "/Users/jose/urbit/urbit/pkg/interface/dbug/src/js/views/ames.js";
+            const _jsxFileName$7 = "/Users/plfn/repos/urbit/urbit/pkg/interface/dbug/src/js/views/ames.js";
             class Ames extends react_1 {
 
               constructor(props) {
@@ -64833,7 +64855,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$8 = "/Users/jose/urbit/urbit/pkg/interface/dbug/src/js/views/behn.js";
+            const _jsxFileName$8 = "/Users/plfn/repos/urbit/urbit/pkg/interface/dbug/src/js/views/behn.js";
             class Behn extends react_1 {
 
               constructor(props) {
@@ -64896,7 +64918,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 Orientation["Horizontal"] = "horizontal";
                 Orientation["HorizontalReverse"] = "horizontal-reverse";
             })(Orientation = exports.Orientation || (exports.Orientation = {}));
-            //# sourceMappingURL=orientation.js.map
+
             });
 
             unwrapExports(orientation);
@@ -65048,7 +65070,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 }
                 return Math.atan2(alphaY, alphaX);
             }
-            //# sourceMappingURL=utils.js.map
+
             });
 
             unwrapExports(utils);
@@ -65235,7 +65257,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 return template;
             }
             exports.getTemplate = getTemplate;
-            //# sourceMappingURL=template.js.map
+
             });
 
             unwrapExports(template);
@@ -65274,7 +65296,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 }
             }
             exports.Tag = Tag;
-            //# sourceMappingURL=tag.js.map
+
             });
 
             unwrapExports(tag);
@@ -65428,7 +65450,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 }
             }
             exports.Commit = Commit;
-            //# sourceMappingURL=commit.js.map
+
             });
 
             unwrapExports(commit);
@@ -65580,7 +65602,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
             function isBranchMergeOptions(options) {
                 return typeof options === "object" && !(options instanceof BranchUserApi);
             }
-            //# sourceMappingURL=branch-user-api.js.map
+
             });
 
             unwrapExports(branchUserApi);
@@ -65624,7 +65646,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 });
             }
             exports.createDeletedBranch = createDeletedBranch;
-            //# sourceMappingURL=branch.js.map
+
             });
 
             unwrapExports(branch);
@@ -65639,7 +65661,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 Mode["Compact"] = "compact";
             })(Mode || (Mode = {}));
             exports.Mode = Mode;
-            //# sourceMappingURL=mode.js.map
+
             });
 
             unwrapExports(mode);
@@ -65685,7 +65707,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 array.forEach((value) => set.add(value));
                 return Array.from(set);
             }
-            //# sourceMappingURL=regular.js.map
+
             });
 
             unwrapExports(regular);
@@ -65717,7 +65739,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 }
             }
             exports.CompactGraphRows = CompactGraphRows;
-            //# sourceMappingURL=compact.js.map
+
             });
 
             unwrapExports(compact);
@@ -65735,7 +65757,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                     : new regular.RegularGraphRows(commits);
             }
             exports.createGraphRows = createGraphRows;
-            //# sourceMappingURL=index.js.map
+
             });
 
             unwrapExports(graphRows);
@@ -65771,7 +65793,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 }
             }
             exports.BranchesOrder = BranchesOrder;
-            //# sourceMappingURL=branches-order.js.map
+
             });
 
             unwrapExports(branchesOrder);
@@ -65850,7 +65872,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 }
             }
             exports.Refs = Refs;
-            //# sourceMappingURL=refs.js.map
+
             });
 
             unwrapExports(refs);
@@ -66081,7 +66103,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                     .join(" ");
             }
             exports.toSvgPath = toSvgPath;
-            //# sourceMappingURL=branches-paths.js.map
+
             });
 
             unwrapExports(branchesPaths);
@@ -66259,7 +66281,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 }
             }
             exports.GitgraphUserApi = GitgraphUserApi;
-            //# sourceMappingURL=gitgraph-user-api.js.map
+
             });
 
             unwrapExports(gitgraphUserApi);
@@ -66531,7 +66553,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 }
             }
             exports.GitgraphCore = GitgraphCore;
-            //# sourceMappingURL=gitgraph.js.map
+
             });
 
             unwrapExports(gitgraph);
@@ -66565,7 +66587,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
             exports.toSvgPath = branchesPaths.toSvgPath;
 
             exports.arrowSvgPath = utils.arrowSvgPath;
-            //# sourceMappingURL=index.js.map
+
             });
 
             unwrapExports(lib);
@@ -66621,7 +66643,6 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 BranchLabel.paddingY = 5;
                 return BranchLabel;
             }(react_1));
-            //# sourceMappingURL=BranchLabel.js.map
 
             var __extends$1 = (undefined && undefined.__extends) || (function () {
                 var extendStatics = function (d, b) {
@@ -66675,7 +66696,6 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 Tooltip.padding = 10;
                 return Tooltip;
             }(react_1));
-            //# sourceMappingURL=Tooltip.js.map
 
             var Dot = function (_a) {
                 var commit = _a.commit, onMouseOver = _a.onMouseOver, onMouseOut = _a.onMouseOut;
@@ -66709,7 +66729,6 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                         react_3("use", { xlinkHref: "#" + commit.hash, clipPath: "url(#clip-" + commit.hash + ")", stroke: commit.style.dot.strokeColor, strokeWidth: commit.style.dot.strokeWidth && commit.style.dot.strokeWidth * 2 }),
                         commit.dotText && (react_3("text", { alignmentBaseline: "central", textAnchor: "middle", x: commit.style.dot.size, y: commit.style.dot.size, style: { font: commit.style.dot.font } }, commit.dotText)))));
             };
-            //# sourceMappingURL=Dot.js.map
 
             var TAG_PADDING_X = 10;
             var TAG_PADDING_Y = 5;
@@ -66743,7 +66762,6 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                     react_3("path", { d: path, fill: tag.style.bgColor, stroke: tag.style.strokeColor }),
                     react_3("text", { ref: $text, fill: tag.style.color, style: { font: tag.style.font }, alignmentBaseline: "middle", dominantBaseline: "middle", x: offset + TAG_PADDING_X, y: 0 }, tag.name)));
             }
-            //# sourceMappingURL=Tag.js.map
 
             var __extends$2 = (undefined && undefined.__extends) || (function () {
                 var extendStatics = function (d, b) {
@@ -67064,9 +67082,8 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 var transform = target.getAttribute("transform") || "translate(0, 0)";
                 target.setAttribute("transform", transform.replace(/translate\(([\d\.]+),/, "translate(" + x + ","));
             }
-            //# sourceMappingURL=Gitgraph.js.map
 
-            const _jsxFileName$9 = "/Users/jose/urbit/urbit/pkg/interface/dbug/src/js/views/clay.js";
+            const _jsxFileName$9 = "/Users/plfn/repos/urbit/urbit/pkg/interface/dbug/src/js/views/clay.js";
             class Clay extends react_1 {
               constructor(props) {
                 super(props);
@@ -67206,7 +67223,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$a = "/Users/jose/urbit/urbit/pkg/interface/dbug/src/js/views/eyre.js";
+            const _jsxFileName$a = "/Users/plfn/repos/urbit/urbit/pkg/interface/dbug/src/js/views/eyre.js";
             class Eyre extends react_1 {
 
               constructor(props) {
@@ -67214,6 +67231,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 this.state = {};
 
                 this.loadBindings = this.loadBindings.bind(this);
+                this.loadCache = this.loadCache.bind(this);
                 this.loadConnections = this.loadConnections.bind(this);
                 this.loadAuthenticationState = this.loadAuthenticationState.bind(this);
                 this.loadChannels = this.loadChannels.bind(this);
@@ -67222,6 +67240,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               componentDidMount() {
                 const { props } = this;
                 if (props.bindings.length === 0)      this.loadBindings();
+                if (props.cache.length === 0)         this.loadCache();
                 if (props.connections.length == 0)    this.loadConnections();
                 if (props.authentication.sessions.length == 0) this.loadAuthenticationState();
                 if (props.channels.length == 0)       this.loadChannels();
@@ -67233,6 +67252,14 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
               loadBindings() {
                 api.getBindings();
+              }
+
+              loadCache() {
+                api.getCache();
+              }
+
+              clearCache(url) {
+                api.clearCache(url);
               }
 
               loadConnections() {
@@ -67252,41 +67279,71 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 const { props, state } = this;
 
                 const bindingItems = props.bindings.map(binding => {
-                  return {key: binding.location + ' ' + binding.action, jsx: (react.createElement('div', { class: "flex", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 54}}
-                    , react.createElement('div', { class: "flex-auto", style: {maxWidth: '50%'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 55}}
+                  return {key: binding.location + ' ' + binding.action, jsx: (react.createElement('div', { class: "flex", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 64}}
+                    , react.createElement('div', { class: "flex-auto", style: {maxWidth: '50%'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 65}}
                       , binding.location
                     )
-                    , react.createElement('div', { class: "flex-auto", style: {maxWidth: '50%'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 58}}
+                    , react.createElement('div', { class: "flex-auto", style: {maxWidth: '50%'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 68}}
                       , binding.action
                     )
                   ))};
                 });
 
+                const cacheItems = props.cache.map(entry => {
+                  return {key: entry.url + ' ' + (entry.val ? 'LIVE' : 'CLEARED'), jsx: (react.createElement('div', { class: "flex", style: { marginBottom: '3px' }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 75}}
+                    , react.createElement('div', { style: { width: '45%' }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 76}}
+                      , entry.url
+                    )
+                    , react.createElement('div', { style: { width: '5%' }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 79}}, "(v"
+                      , entry.aeon, ")"
+                    )
+                    ,  !entry.val ? 'cleared' :
+                      react.createElement('div', { style: { width: '50%', position: 'relative' }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 83}}
+                        , react.createElement('div', { style: { display: 'inline-block', width: '10%' }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 84}}
+                          , entry.val.auth ? 'auth' : 'free'
+                        )
+                        , react.createElement('div', { style: { display: 'inline-block', width: '10%' }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 87}}
+                          , entry.val.payload.status
+                        )
+                        , react.createElement('div', { style: { display: 'inline-block', width: '50%' }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 90}}
+                          , entry.val.payload.headers.reduce((o, h) => (o ? o+'; ': '') + h.key + '=' + h.value, '')
+                        )
+                        , react.createElement('div', { style: { display: 'inline-block', width: '25%' }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 93}}
+                          , entry.val.payload.data ? entry.val.payload.data.toLocaleString('de-DE')+' bytes' : 'no data'
+                        )
+                        , react.createElement('div', { style: { display: 'inline-block', width: '5%' }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 96}}
+                          , react.createElement('button', { onClick: () => { this.clearCache(entry.url); }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 97}}, "clear")
+                        )
+                      )
+                    
+                  ))};
+                });
+
                 const connectionItems = props.connections.map(c => {
                   return {key: c.duct + ' ' + c.action, jsx: (
-                    react.createElement('table', { style: {borderBottom: '1px solid black'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 66}}, react.createElement('tbody', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 66}}
-                      , react.createElement('tr', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 67}}
-                        , react.createElement('td', { class: "inter", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 68}}, "duct")
-                        , react.createElement('td', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 69}}, c.duct)
+                    react.createElement('table', { style: {borderBottom: '1px solid black'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 106}}, react.createElement('tbody', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 106}}
+                      , react.createElement('tr', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 107}}
+                        , react.createElement('td', { class: "inter", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 108}}, "duct")
+                        , react.createElement('td', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 109}}, c.duct)
                       )
-                      , react.createElement('tr', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 71}}
-                        , react.createElement('td', { class: "inter", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 72}}, "binding")
-                        , react.createElement('td', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 73}}, c.action)
+                      , react.createElement('tr', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 111}}
+                        , react.createElement('td', { class: "inter", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 112}}, "binding")
+                        , react.createElement('td', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 113}}, c.action)
                       )
-                      , react.createElement('tr', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 75}}
-                        , react.createElement('td', { class: "inter", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 76}}, "request")
-                        , react.createElement('td', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 77}}, "from "
+                      , react.createElement('tr', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 115}}
+                        , react.createElement('td', { class: "inter", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 116}}, "request")
+                        , react.createElement('td', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 117}}, "from "
                            , c.request.source, ","
                           , c.request.authenticated ? ' ' : ' un', "authenticated and"
                           , c.request.secure ? ' ' : ' in', "secure"
                         )
                       )
-                      , react.createElement('tr', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 83}}
-                        , react.createElement('td', { class: "inter", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 84}}, "response")
-                        , react.createElement('td', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 85}}, "sent "
-                           , c.response.sent, " bytes." , react.createElement('br', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 86}})
+                      , react.createElement('tr', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 123}}
+                        , react.createElement('td', { class: "inter", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 124}}, "response")
+                        , react.createElement('td', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 125}}, "sent "
+                           , c.response.sent, " bytes." , react.createElement('br', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 126}})
                           , !c.response.header ? null : react.createElement(react.Fragment, null, "status "
-                             , c.response.header['status-code'], react.createElement('br', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 88}})
+                             , c.response.header['status-code'], react.createElement('br', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 128}})
                             , c.response.header.headers.reduce((a, b) => a + b + ', ', '')
                           )
                         )
@@ -67298,49 +67355,49 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 const channelItems = props.channels.map(c => {
                   const summary = (react.createElement(react.Fragment, null
                     , c.session
-                    , react.createElement('table', { style: {borderBottom: '1px solid black'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 100}}, react.createElement('tbody', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 100}}
-                      , react.createElement('tr', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 101}}
-                        , react.createElement('td', { class: "inter", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 102}}, "identity")
-                        , react.createElement('td', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 103}}, c['identity'])
+                    , react.createElement('table', { style: {borderBottom: '1px solid black'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 140}}, react.createElement('tbody', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 140}}
+                      , react.createElement('tr', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 141}}
+                        , react.createElement('td', { class: "inter", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 142}}, "identity")
+                        , react.createElement('td', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 143}}, c['identity'])
                       )
-                      , react.createElement('tr', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 105}}
-                        , react.createElement('td', { class: "inter", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 106}}, "connected?")
-                        , react.createElement('td', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 107}}, c.connected
+                      , react.createElement('tr', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 145}}
+                        , react.createElement('td', { class: "inter", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 146}}, "connected?")
+                        , react.createElement('td', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 147}}, c.connected
                           ? 'connected'
                           : 'disconnected, expires ' + msToDa(c.expiry)
                         )
                       )
-                      , react.createElement('tr', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 112}}
-                        , react.createElement('td', { class: "inter", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 113}}, "next-id")
-                        , react.createElement('td', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 114}}, c['next-id'])
+                      , react.createElement('tr', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 152}}
+                        , react.createElement('td', { class: "inter", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 153}}, "next-id")
+                        , react.createElement('td', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 154}}, c['next-id'])
                       )
-                      , react.createElement('tr', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 116}}
-                        , react.createElement('td', { class: "inter", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 117}}, "last-ack")
-                        , react.createElement('td', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 118}}, msToDa(c['last-ack']))
+                      , react.createElement('tr', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 156}}
+                        , react.createElement('td', { class: "inter", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 157}}, "last-ack")
+                        , react.createElement('td', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 158}}, msToDa(c['last-ack']))
                       )
-                      , react.createElement('tr', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 120}}
-                        , react.createElement('td', { class: "inter", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 121}}, "unacked")
-                        , react.createElement('td', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 122}}, c.unacked.reduce((a, b) => a + b + ', ', ''))
+                      , react.createElement('tr', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 160}}
+                        , react.createElement('td', { class: "inter", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 161}}, "unacked")
+                        , react.createElement('td', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 162}}, c.unacked.reduce((a, b) => a + b + ', ', ''))
                       )
                     ))
                   ));
                   const subscriptionItems = c.subscriptions.map(s => {
                     //NOTE jsx sorta copied from /components/subscriptions
                     return {key: `${s.id} ${s.ship} ${s.app} ${s.path}`, jsx: (
-                      react.createElement('div', { class: "flex", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 129}}
-                        , react.createElement('div', { class: "flex-auto", style: {maxWidth: '15%'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 130}}
+                      react.createElement('div', { class: "flex", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 169}}
+                        , react.createElement('div', { class: "flex-auto", style: {maxWidth: '15%'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 170}}
                           , s.id
                         )
-                        , react.createElement('div', { class: "flex-auto", style: {maxWidth: '15%'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 133}}, "~"
+                        , react.createElement('div', { class: "flex-auto", style: {maxWidth: '15%'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 173}}, "~"
                           , s.ship
                         )
-                        , react.createElement('div', { class: "flex-auto", style: {maxWidth: '20%'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 136}}
+                        , react.createElement('div', { class: "flex-auto", style: {maxWidth: '20%'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 176}}
                           , s.app
                         )
-                        , react.createElement('div', { class: "flex-auto", style: {maxWidth: '35%'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 139}}
+                        , react.createElement('div', { class: "flex-auto", style: {maxWidth: '35%'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 179}}
                           , s.path
                         )
-                        , react.createElement('div', { class: "flex-auto", style: {maxWidth: '15%'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 142}}
+                        , react.createElement('div', { class: "flex-auto", style: {maxWidth: '15%'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 182}}
                           , s.unacked
                         )
                       )
@@ -67350,51 +67407,51 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                     react.createElement(Summary, { summary: summary, details: (
                       react.createElement(SearchableList, {
                         placeholder: "id, ship, app, path"   ,
-                        items: subscriptionItems, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 150}}
+                        items: subscriptionItems, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 190}}
                       )
-                    ), __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 149}} )
+                    ), __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 189}} )
                   )};
                 });
 
                 //TODO  also make sure column headings get rendered
                 const sessionItems = props.authentication.sessions.map(s => {
-                  return ({key: s.identity, jsx: (react.createElement('div', { class: "flex", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 160}}
-                    , react.createElement('div', { class: "flex-auto", style: {maxWidth: '5em'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 161}}
+                  return ({key: s.identity, jsx: (react.createElement('div', { class: "flex", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 200}}
+                    , react.createElement('div', { class: "flex-auto", style: {maxWidth: '5em'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 201}}
                       , s.cookie.slice(0,6), "…"
                     )
-                    , react.createElement('div', { class: "flex-auto", style: {width: '40%'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 164}}, "~"
+                    , react.createElement('div', { class: "flex-auto", style: {width: '40%'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 204}}, "~"
                       , s.identity
                     )
-                    , react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 167}}
+                    , react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 207}}
                       , msToDa(s.expiry)
                     )
-                    , react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 170}}
+                    , react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 210}}
                       , s.channels, " channel(s)"
                     )
-                    , react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 173}}
-                      , react.createElement('form', { method: "post", action: "/~/logout?redirect=/~debug/eyre", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 174}}
-                        , react.createElement('input', { type: "hidden", name: "sid", value: s.cookie, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 175}} )
-                        , react.createElement('button', { type: "submit", name: "all", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 176}}, "kick")
+                    , react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 213}}
+                      , react.createElement('form', { method: "post", action: "/~/logout?redirect=/~debug/eyre", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 214}}
+                        , react.createElement('input', { type: "hidden", name: "sid", value: s.cookie, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 215}} )
+                        , react.createElement('button', { type: "submit", name: "all", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 216}}, "kick")
                       )
                     )
                   ))});
                 });
 
                 const visitingItems = props.authentication.visiting.map(v => {
-                  return ({key: '~'+v.who+':'+v.nonce, jsx: (react.createElement('div', { class: "flex", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 183}}
-                    , react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 184}}, "~"
+                  return ({key: '~'+v.who+':'+v.nonce, jsx: (react.createElement('div', { class: "flex", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 223}}
+                    , react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 224}}, "~"
                       , v.who
                     )
-                    , react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 187}}
+                    , react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 227}}
                       , v.nonce
                     )
-                    , react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 190}}
+                    , react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 230}}
                       ,  v.goal ? 'pending, will return to '+v.goal :
-                        react.createElement('form', { method: "post", action: "/~/logout?redirect=/~debug/eyre", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 192}}, "logged in since "
+                        react.createElement('form', { method: "post", action: "/~/logout?redirect=/~debug/eyre", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 232}}, "logged in since "
                              , msToDa(v.made)
-                          , react.createElement('input', { type: "hidden", name: "host", value: '~'+v.who, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 194}} )
-                          , react.createElement('input', { type: "hidden", name: "sid", value: v.nonce, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 195}} )
-                          , react.createElement('button', { type: "submit", name: "eauth", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 196}}, "log out" )
+                          , react.createElement('input', { type: "hidden", name: "host", value: '~'+v.who, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 234}} )
+                          , react.createElement('input', { type: "hidden", name: "sid", value: v.nonce, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 235}} )
+                          , react.createElement('button', { type: "submit", name: "eauth", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 236}}, "log out" )
                         )
                       
                     )
@@ -67402,25 +67459,25 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 });
 
                 const visitorsItems = props.authentication.visitors.map(v => {
-                  return ({key: v.nonce+':~'+v.ship, jsx: (react.createElement('div', { class: "flex", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 204}}
-                    , react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 205}}
+                  return ({key: v.nonce+':~'+v.ship, jsx: (react.createElement('div', { class: "flex", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 244}}
+                    , react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 245}}
                       , v.nonce
                     )
-                    , react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 208}}
+                    , react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 248}}
                       , v.duct
                     )
-                    ,  v.sesh ? react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 211}}, "session: " , v.sesh.slice(0,6), "…") :
+                    ,  v.sesh ? react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 251}}, "session: " , v.sesh.slice(0,6), "…") :
                       react.createElement(react.Fragment, null
-                        , react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 213}}
+                        , react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 253}}
                           , v.pend ? 'request pending' : 'no pending request'
                         )
-                        , react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 216}}
+                        , react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 256}}
                           , v.ship
                         )
-                        , react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 219}}, "redirect: "
+                        , react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 259}}, "redirect: "
                            , v.last
                         )
-                        , react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 222}}
+                        , react.createElement('div', { class: "flex-auto", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 262}}
                           , v.toke ? 'token received' : 'no token yet'
                         )
                       ) 
@@ -67428,44 +67485,52 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                 });
 
                 return (react.createElement(react.Fragment, null
-                  , react.createElement('h4', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 230}}, "Bindings")
-                  , react.createElement(SearchableList, { placeholder: "binding", items: bindingItems, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 231}}
-                    , react.createElement('button', { onClick: this.loadBindings, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 232}}, "refresh")
+                  , react.createElement('h4', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 270}}, "Bindings")
+                  , react.createElement(SearchableList, { placeholder: "binding", items: bindingItems, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 271}}
+                    , react.createElement('button', { onClick: this.loadBindings, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 272}}, "refresh")
                   )
 
-                  , react.createElement('h4', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 235}}, "Connections")
-                  , react.createElement(SearchableList, { placeholder: "duct, binding" , items: connectionItems, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 236}}
-                    , react.createElement('button', { onClick: this.loadConnections, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 237}}, "refresh")
+                  , react.createElement('h4', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 275}}, "Cache")
+                  , props.cache.reduce((sum, entry) => {
+                    return sum + (entry.val && entry.val.payload.data || 0);
+                  }, 0).toLocaleString('de-DE'), " bytes in cache"
+                  , react.createElement(SearchableList, { placeholder: "cache url, LIVE vs CLEARED"    , items: cacheItems, open: false, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 279}}
+                    , react.createElement('button', { onClick: this.loadCache, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 280}}, "refresh")
                   )
 
-                  , react.createElement('h4', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 240}}, "Channels")
-                  , react.createElement(SearchableList, { placeholder: "session id" , items: channelItems, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 241}}
-                    , react.createElement('button', { onClick: this.loadChannels, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 242}}, "refresh")
+                  , react.createElement('h4', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 283}}, "Connections")
+                  , react.createElement(SearchableList, { placeholder: "duct, binding" , items: connectionItems, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 284}}
+                    , react.createElement('button', { onClick: this.loadConnections, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 285}}, "refresh")
                   )
 
-                  , react.createElement('h4', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 245}}, "Authentication")
-                  , react.createElement('form', { method: "post", action: "/~/logout", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 246}}
-                    , react.createElement('button', { type: "submit", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 247}}, "logout self" )
+                  , react.createElement('h4', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 288}}, "Channels")
+                  , react.createElement(SearchableList, { placeholder: "session id" , items: channelItems, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 289}}
+                    , react.createElement('button', { onClick: this.loadChannels, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 290}}, "refresh")
                   )
-                  , react.createElement('form', { method: "post", action: "/~/logout", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 249}}
-                    , react.createElement('button', { type: "submit", name: "all", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 250}}, "logout all selves"  )
+
+                  , react.createElement('h4', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 293}}, "Authentication")
+                  , react.createElement('form', { method: "post", action: "/~/logout", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 294}}
+                    , react.createElement('button', { type: "submit", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 295}}, "logout self" )
                   )
-                  , react.createElement('br', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 252}})
-                  , react.createElement('button', { onClick: this.loadAuthenticationState, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 253}}, "refresh")
-                  , react.createElement('h3', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 254}}, "Sessions")
-                  , react.createElement(SearchableList, { placeholder: "identity", items: sessionItems, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 255}}
+                  , react.createElement('form', { method: "post", action: "/~/logout", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 297}}
+                    , react.createElement('button', { type: "submit", name: "all", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 298}}, "logout all selves"  )
                   )
-                  , react.createElement('h3', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 257}}, "Outgoing eauth" )
-                  , react.createElement(SearchableList, { placeholder: "host", items: visitingItems, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 258}}
+                  , react.createElement('br', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 300}})
+                  , react.createElement('button', { onClick: this.loadAuthenticationState, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 301}}, "refresh")
+                  , react.createElement('h3', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 302}}, "Sessions")
+                  , react.createElement(SearchableList, { placeholder: "identity", items: sessionItems, open: false, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 303}}
                   )
-                  , react.createElement('h3', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 260}}, "Incoming eauth" )
-                  , react.createElement(SearchableList, { placeholder: "visitor", items: visitorsItems, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 261}}
+                  , react.createElement('h3', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 305}}, "Outgoing eauth" )
+                  , react.createElement(SearchableList, { placeholder: "host", items: visitingItems, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 306}}
+                  )
+                  , react.createElement('h3', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 308}}, "Incoming eauth" )
+                  , react.createElement(SearchableList, { placeholder: "visitor", items: visitorsItems, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 309}}
                   )
                 ));
               }
             }
 
-            const _jsxFileName$b = "/Users/jose/urbit/urbit/pkg/interface/dbug/src/js/components/root.js";
+            const _jsxFileName$b = "/Users/plfn/repos/urbit/urbit/pkg/interface/dbug/src/js/components/root.js";
             class Root extends react_1 {
               constructor(props) {
                 super(props);
@@ -67550,6 +67615,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                           react.createElement(Skeleton, { status: state.status, selected: "eyre", __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 100}}
                             , react.createElement(Eyre, {
                               bindings: state.bindings,
+                              cache: state.cache,
                               connections: state.connections,
                               authentication: state.authentication,
                               channels: state.channels,
@@ -67565,7 +67631,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               }
             }
 
-            const _jsxFileName$c = "/Users/jose/urbit/urbit/pkg/interface/dbug/src/index.js";
+            const _jsxFileName$c = "/Users/plfn/repos/urbit/urbit/pkg/interface/dbug/src/index.js";
             api$1.setAuthTokens({
               ship: window.ship
             });

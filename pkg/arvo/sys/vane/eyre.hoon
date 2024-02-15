@@ -4152,6 +4152,7 @@
     ?+  tyl  ~
       [%$ %whey ~]         =-  ``mass+!>(`(list mass)`-)
                            :~  bindings+&+bindings.server-state.ax
+                               cache+&+cache.server-state.ax
                                auth+&+auth.server-state.ax
                                connections+&+connections.server-state.ax
                                channels+&+channel-state.server-state.ax
@@ -4188,6 +4189,7 @@
   ?.  ?=(%$ ren)  ~
   ?+  syd  ~
     %bindings              ``noun+!>(bindings.server-state.ax)
+    %cache                 ``noun+!>(cache.server-state.ax)
     %connections           ``noun+!>(connections.server-state.ax)
     %authentication-state  ``noun+!>(auth.server-state.ax)
     %channel-state         ``noun+!>(channel-state.server-state.ax)
