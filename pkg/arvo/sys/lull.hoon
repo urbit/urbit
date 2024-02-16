@@ -3858,6 +3858,7 @@
         [%make-poke p=spar q=path]    :: initiate %poke request
         [%make-peek p=spar]           :: initiate %peek request
         $>(?(%plea %born %trim %vega %init) vane-task)
+        $>(%cork task:ames)
     ::
         [%keen sec=(unit [idx=@ key=@]) spar]
     ::

@@ -784,14 +784,14 @@
       +|  %tasks
       ::
       ++  call
-        =>  |%  +$  req-task  $%  $>(?(%plea %keen) task)
-                              ==
+        =>  |%  +$  req-task  $>(?(%plea %keen %cork) task)
             --
         |=  task=req-task
         ^+  req-core
         ?-  -.task
           %plea  (req-plea [ship plea]:task)
           %keen  (req-peek +>.task)  ::  XX sec
+          %cork  (req-plea ship.task %$ /cork %cork ~)
         ==
       ::
       ::  should ack and payloads responses be handled here instead of by ev-res?
@@ -832,30 +832,18 @@
           ::
           [pe-nex-bone:pe-core (pe-new-duct:pe-core hen)]
         ::
-        ::  XX handle corked/closing bones
-        =^  [gifts=(list [seq=@ud spar path]) moves-flow=_moves]  ax
-          =<  fo-abut
+        ::  handle cork
+        ::
+        =?  pe-core  =([%$ /flow %cork ~] vane^wire^payload)
+          ?.  (~(has by by-bone.ossuary.peer-state.pe-core) bone)
+            ~&  "trying to cork {<bone=bone>}, not in the ossuary, ignoring"
+            pe-core
+          pe-core(closing.peer-state (~(put in closing.peer-state.pe-core) bone))
+        =^  moves  ax
+          =<  fo-abet
           %.  plea/[vane wire payload]
           fo-call:(fo-abed:fo hen bone^dire=%for pe-chan:pe-core)
-        ::
-        ::  XX this can be done internally in fo-call:fo-core
-        %+  roll  gifts
-        |=  [gift=[seq=@ud =spar =path] co=_(req-emil moves-flow)]  :: XX =gift
-        ::  XX %ames call itself with a %make-poke tasks
-        ::  on a wire used to infer the listener (the %poke %plea request; this)
-        ::  when getting the %response $page with the %ack (tagged with %int)
-        ::  and similarly for %boon payloads (tagged with %ext)
-        ::
-         =/  =^wire
-          :~  %flow      :: flow request triggered "internally"
-              were=%int  ::  XX better names ?(for-acks=%int for-nax-payloads=%ext to-vane=%out)
-              dire=%for  ::  %for; %plea(s) are always sent forward
-              rcvr=[(scot %p ship)]
-              rift=[(scot %ud rift.peer-state)]
-              bone=[(scot %ud bone)]
-              seq=[(scot %ud seq.gift)]
-           ==
-        (req-emit:co hen %pass wire %m make-poke/[spar path]:gift)
+        (req-emil moves)
       ::
       ++  req-boon-poke  :: XX refactor with req-plea
         |=  [=bone pe-chan=[=channel =peer-state] load=*]
@@ -911,6 +899,8 @@
         ::  XX construct and emit initial request packet
         ::
         req-core
+
+      ::
       --
     ::
     ++  ev-res  ::  hear %pact(++pa)/%mess(++ma) requests, send response
@@ -1461,6 +1451,10 @@
       ++  fo-ack-path  |=([seq=@ud =dyad] (fo-path seq %ack dyad))
       ++  fo-pok-path  |=([seq=@ud =dyad] (fo-path seq %poke dyad))
       ++  fo-mop       ((on ,@ud mesa-message) lte)
+      ++  fo-corked    (~(has in corked.peer-state) bone)
+      ++  fo-closing   (~(has in closing.peer-state) bone)
+      ++  fo-to-close
+        |=(poke=mesa-message ?&(fo-closing !=(poke [%plea %$ /flow %cork ~])))
       ::
       +|  %builders
       ::
@@ -1551,10 +1545,11 @@
       ::
       ++  fo-send-poke
         |=  poke=mesa-message
+        ?:  |((fo-to-close poke) fo-corked)  fo-core
+        ::
         ::  XX can we (re)use a sequence number after poping a previous one
         ::  off the queue?
         ::
-        :: ?>  ?=(%outbound -.state)
         =/  next-load=@ud  ?~(next=(ram:fo-mop loads.state) 1 +(key.u.next))
         =.  loads.state  (put:fo-mop loads.state next-load poke)
         =;  core=_fo-core
@@ -1565,8 +1560,6 @@
             %pass
           /[(scot %p her)]/[(scot %ud bone)]/[(scot %ud rift.peer-state)]
           [%b %wait `@da`(add now ~s30)]
-        ::  XX does it help?
-        ::  =>  ?>(?=(%outbound -.state) .)
         =+  loads=loads.state  ::  cache
         |-  ^+  fo-core
         =*  loop  $
@@ -1575,18 +1568,20 @@
           fo-core
         ?.  (lte num send-window.state)
           fo-core
-        :: =/  [[seq=@ud request=mesa-message] load=_loads.state]
-        =^  [seq=@ud request=mesa-message]   loads
-          (pop:fo-mop loads)
+        ::
+        =^  [seq=@ud request=mesa-message]  loads  (pop:fo-mop loads)
         :: ?>  ?=(%plea -.request)  :: XX handle %cork
         :: ~!  +.state
         =.  send-window.state  (dec send-window.state)
-        :: XX FIXME
-        :: =.  fo-core  fo-core
-          :: %-  fo-give  ^-  gift
-        ::  XX don't use gifts
-        =.  gifts  :_  gifts  ^-  gift
-          [seq her^(fo-ack-path seq her our) (fo-pok-path seq our her)]
+        =/  paths=[spar path]
+          [her^(fo-ack-path seq her our) (fo-pok-path seq our her)]
+        =/  =wire  (fo-make-wire %int seq)
+        ::  XX %ames call itself with a %make-poke tasks
+        ::  on a wire used to infer the listener (the %poke %plea request; this)
+        ::  when getting the %response $page with the %ack (tagged with %int)
+        ::  and similarly for %naxplanation payloads (tagged with %ext)
+        ::
+        =.  fo-core  (fo-emit hen %pass wire %m make-poke/paths)
         loop
       ::
       ++  fo-sink-boon
@@ -1608,10 +1603,7 @@
         ::  ack unconditionally
         ::
         =.  last-acked.state  +(last-acked.state)
-        ::  XX
-        :: =.  fo-core
-          (fo-emit duct %give %boon message)
-        :: fo-core
+        (fo-emit duct %give %boon message)
       ::
       ++  fo-sink-plea
         |=  [seq=@ud =plea]
@@ -2016,6 +2008,7 @@
       =/  ser  (jam gag)
       =/  rot  (blake3 ser)
       ``[%message !>([%sign (sign:crypt ryf ful rot) ser])]
+    ::
     ::  publisher-side, flow-level
     ::
         res-mess-pith:ev-res  ::  /[~sndr]/[load]/[~rcvr]/flow/[bone]/[dire]/[mess]
@@ -2030,7 +2023,7 @@
         fo-read:(fo-abed:fo ~[//scry] [bone dire]:tyl pe-chan:pe-core)
       ?~(res ~ ``[%message !>(u.res)])
     ==
-  ::  only respond for the local identity, %$1 desk, current timestamp
+  ::  only respond for the local identity, %$ desk, current timestamp
   ::
   ?.  ?&  =(our p.bem)
           =([%da now] r.bem)
