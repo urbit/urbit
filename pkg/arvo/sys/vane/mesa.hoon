@@ -923,9 +923,35 @@
       ++  res-abet  [(flop moves) ax]
       ++  res-emit  |=(=move res-core(moves [move moves]))
       ++  res-emil  |=(mos=(list move) res-core(moves (weld (flop mos) moves)))
+      ::
+      +|  %top-level-paths
+      ::
+      ::  /ax/~ship//ver=1/mess/rift=1//[...]
+      ::
+      ::  /ax/~ship//ver=1/mess/rift=1/pact/bloq=13/ init/[...]
+      ::
+      ::  /ax/~ship//ver=1/mess/rift=1/pact/bloq=13/pure/auth/frag=1/[...]
+      ::  /ax/~ship//ver=1/mess/rift=1/pact/bloq=13/pure/data/frag=1/[...]
+      ::
+      +$  res-scry-head  [%ax [%p her=@p] %'1' res=*]
+      +$  res-mess-head  [%mess [%ud ryf=@ud] res=*]
+      +$  res-pact-head  [%pact [%ud boq=@ud] ser=?(%etch %pure) pat=*]
+      +$  res-pure-pith  [typ=?(%auth %data) [%ud fag=@ud] pat=*]
+      ::
+      +|  %namespace-paths
+      ::
+      ::  /[..]/publ/life=1/[...]
+      ::  /[..]/chum/life=1/her=@p/hyf=@ud/encrypted-path=@uv
+      ::  /[..]/shut/key=1/encrypted-path=@uv
+      ::
+      +$  publ-pith  [%publ [%ud lyf=@ud] pat=*]
+      +$  chum-pith  [%chum [%ud lyf=@ud] [%p her=@p] [%ud hyf=@ud] [%uv cyf=@uv] ~]
+      +$  shut-pith  [%shut [%ud kid=@ud] [%uv cyf=@uv] ~]
+      ::
+      +|  %message-flow-paths
+      ::
       +$  res-mess-pith
-        $:  ::[%ud rift=@ud]  :: XX ?
-            [%p sndr=@p]
+        $:  [%p sndr=@p]
             ?(%poke %ack)
             [%p rcvr=@p]
             %flow
@@ -933,27 +959,6 @@
             dire=?(%for %bak)
             [%ud mess=@ud]
             ~
-        ==
-      ::  /ax/~snip//ver=1/mess/rift=1/pact/bloq=13/init/[...]
-      ::  /ax/~snip//ver=1/mess/rift=1/pact/bloq=13/pure/auth/frag=1/[...]
-      ::  /ax/~snip//ver=1/mess/rift=1/pact/bloq=13/pure/data/frag=1/[...]
-      ::
-      +$  res-pact-head
-        $:  %ax
-            [%p her=@p]
-            %'1'
-            %mess
-            [%ud rift=@ud]
-            %pact
-            [%ud bloq=@ud]
-            inner=?(%init %pure)
-            *  ::  if %pure, $res-pure-pith
-        ==
-      ::
-      +$  res-pure-pith
-        $:  ?(%auth %data)
-            [%ud frag=@ud]
-            *
         ==
       ::
       +|  %internals
@@ -1436,8 +1441,6 @@
       ::
       ++  fo-abed
         |=  [=duct =^side part=?(%incoming %outbound) peer-channel]
-        ~?  (~(has by flows.peer-state) side)
-          part^state/state
         =.  state  (~(gut by flows.peer-state) side *flow-state)
         fo-core(hen duct, side side, channel channel, peer-state peer-state)
       ::
@@ -1840,20 +1843,18 @@
           =([%ud 1] r.bem)
           =(%x car)
       ==
-    =/  tyl=(pole knot)  s.bem
+    =/  tyl=(pole iota)  (ev-pave s.bem)
     ?+    tyl  ~
     ::
     ::  publisher-side, protocol-level
     ::
-        [%mess ryf=@ res=*]
-      =/  ryf  (slaw %ud ryf.tyl)
-      ?~  ryf  [~ ~]
-      ?.  =(*rift u.ryf)      :: XX our rift, XX unauthenticated
+        [%mess [%ud ryf=@ud] res=*]  ::  /mess/rift=1/[...]
+      ?~  ryf.tyl  [~ ~]
+      ?.  =(*rift ryf.tyl)      :: XX our rift, XX unauthenticated
         ~
-      =*  rif  u.ryf
       =/  nex
         ^-  $@  ~
-            $:  pat=path
+            $:  pat=pith
                 $=  pac       ::  XX control packet serialization
                 $@  ~
                 $:  boq=bloq
@@ -1863,22 +1864,17 @@
         ?+    res.tyl  ~
             [%$ pat=*]  [pat.res.tyl ~]
         ::
-            [%pact boq=@ ser=?(%etch %pure) %init pat=*]
-          ?~  boq=(slaw %ud boq.res.tyl)
+            [%pact [%ud boq=@ud] ser=?(%etch %pure) pat=*]
+          ?:  ?=([%init inner-pat=*] pat.res.tyl)
+            [inner-pat.pat boq ?=(%etch ser) ~]:res.tyl
+          ?.  ?=([typ=?(%auth %data) [%ud fag=@ud] inner-pat=*] pat.res.tyl)
             ~
-          [pat.res.tyl u.boq ?=(%etch ser.res.tyl) ~]
-        ::
-            [%pact boq=@ ser=?(%etch %pure) typ=?(%auth %data) fag=@ pat=*]
-          =/  boq  (slaw %ud boq.res.tyl)
-          =/  fag  (slaw %ud fag.res.tyl)
-          ?:  |(?=(~ boq) ?=(~ fag))
-            ~
-          [pat.res.tyl u.boq ?=(%etch ser.res.tyl) typ.res.tyl u.fag]
+          [inner-pat.pat boq ?=(%etch ser) typ.pat fag.pat]:res.tyl
         ==
       ::
       ?~  nex
         [~ ~]
-      =*  pat  pat.nex
+      =/  pat  (pout pat.nex)
       =/  res  $(lyc ~, pov /ames/mess, s.bem pat)
       ?.  ?&  ?=([~ ~ %message *] res)
         :: ...validate that it's really a message
@@ -1916,7 +1912,7 @@
       ::
       ?-    typ.wan.pac.nex
           %auth
-        =/  nam  [[our rif] [boq %auth fag] pat]
+        =/  nam  [[our ryf.tyl] [boq %auth fag] pat]
         ::  NB: root excluded as it can be recalculated by the client
         ::
         =/  aut  [%0 mes ~]
@@ -1926,7 +1922,7 @@
       ::
           %data
         =/  lss-proof  (build:lss (met 3 ser)^ser)  :: XX cache this
-        =/  nam  [[our rif] [boq %data fag] pat]
+        =/  nam  [[our ryf.tyl] [boq %data fag] pat]
         =/  aut=auth:pact
           ?:  =(0 fag)
             :+  %0  mes
@@ -1956,12 +1952,11 @@
     ::
     ::  publisher-side, message-level
     ::
-        [%publ lyf=@ pat=*]
-      =/  lyf  (slaw %ud lyf.tyl)
-      ?~  lyf  [~ ~]
-      ?.  =(u.lyf *life) :: XX our life
+        [%publ [%ud lyf=@ud] pit=*]
+      ?~  lyf.tyl  [~ ~]
+      ?.  =(lyf.tyl *life) :: XX our life
         ~
-      ?~  inn=(inner-path-to-beam our pat.tyl)
+      ?~  inn=(inner-path-to-beam our (pout pit.tyl))
         [~ ~]
       ?~  res=(rof ~ /ames/publ vew.u.inn bem.u.inn)
         ~
@@ -1972,21 +1967,17 @@
       =/  rot  (blake3 ser)
       ``[%message !>([%sign (sign:crypt ryf ful rot) ser])]
     ::
-        [%chum lyf=@ her=@ hyf=@ cyf=@ ~]
-      =/  lyf  (slaw %ud lyf.tyl)
-      =/  her  (slaw %p her.tyl)
-      =/  hyf  (slaw %ud hyf.tyl)
-      =/  cyf  (slaw %uv cyf.tyl)
-      ?:  |(?=(~ lyf) ?=(~ her) ?=(~ hyf) ?=(~ cyf))
-        [~ ~]
-      ?.  =(u.lyf *life) :: XX our life
+        [%chum [%ud lyf=@ud] [%p her=@p] [%ud hyf=@ud] [%uv cyf=@uv] ~]
+      :: ?:  |(?=(~ lyf) ?=(~ her) ?=(~ hyf) ?=(~ cyf))
+      ::   [~ ~]  :: XX parsing to fail returns ~
+      ?.  =(lyf.tyl *life) :: XX our life
         ~
-      ?~  key=(get-key-for u.her u.hyf)  :: eddh with our key
+      ?~  key=(get-key-for [her hyf]:tyl)  :: eddh with our key
         ~
-      ?~  tap=(decrypt:crypt u.cyf)  ~
+      ?~  tap=(decrypt:crypt cyf.tyl)  ~
       ?~  pat=(parse-path u.tap)  ~
       ?~  inn=(inner-path-to-beam our u.pat)  ~
-      ?~  res=(rof `[u.her ~ ~] /ames/chum vew.u.inn bem.u.inn)
+      ?~  res=(rof `[her.tyl ~ ~] /ames/chum vew.u.inn bem.u.inn)
         ~
       =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
       =/  ful  (en-beam bem)
@@ -1995,14 +1986,12 @@
       =/  rot  (blake3 ser)
       ``[%message !>([%hmac (hmac:crypt ryf ful rot) ser])]
     ::
-        [%shut kid=@ cyf=@ ~]
-      =/  kid  (slaw %ud kid.tyl)
-      =/  cyf  (slaw %uv cyf.tyl)
-      ?:  |(?=(~ kid) ?=(~ cyf))
-        [~ ~]
-      ?~  key=(get-group-key-for u.kid) :: symmetric key lookup
+        [%shut [%ud kid=@ud] [%uv cyf=@uv] ~]
+      :: ?:  |(?=(~ kid) ?=(~ cyf))
+      ::   [~ ~]    :: XX parsing to fail returns ~
+      ?~  key=(get-group-key-for kid.tyl) :: symmetric key lookup
         ~
-      ?~  tap=(decrypt:crypt u.cyf)  ~
+      ?~  tap=(decrypt:crypt cyf.tyl)  ~
       ?~  pat=(parse-path u.tap)  ~
       ::  XX check path prefix
       ?~  inn=(inner-path-to-beam our u.pat)
@@ -2015,6 +2004,9 @@
       =/  ser  (jam gag)
       =/  rot  (blake3 ser)
       ``[%message !>([%sign (sign:crypt ryf ful rot) ser])]
+    ::  publisher-side, flow-level
+    ::
+    ::  XX
     ==
   ::  only respond for the local identity, %$ desk, current timestamp
   ::

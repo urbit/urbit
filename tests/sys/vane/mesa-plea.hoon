@@ -74,9 +74,7 @@
             [~bud ~nec]
           ==
         ?&  (~(has by flows) 0 %bak)
-          ::
-            =+  flow=(~(got by flows) 0 %bak)
-            ?>(?=(%incoming -.flow) pending-ack.flow)
+            pending-ack:(~(got by flows) 0 %bak)
         ==
   ::
   :-  moves-4  |.  :-  %|
@@ -107,8 +105,7 @@
             [~1111.1.10 0xdead.beef *roof]
             [~bud ~nec]
           ==
-        =+  flow=(~(got by flows) 0 %bak)
-        ?>(?=(%incoming -.flow) last-acked.flow)
+        last-acked:(~(got by flows) 0 %bak)
   ::
   :-  moves-6  |.  :-  %|
   ~?  >  dbug  '~nec hears %ack from ~bud, gives to gall'
@@ -134,8 +131,7 @@
             [~1111.1.10 0xdead.beef *roof]
             [~nec ~bud]
           ==
-        =+  flow=(~(got by flows) 0 %for)
-        ?>(?=(%outbound -.flow) loads.flow)
+        loads:(~(got by flows) 0 %for)
   ~?  >  dbug  '~nec %ames next bone is 1'
   :-  moves-8  |.  :-  %&
     %+  expect-eq
