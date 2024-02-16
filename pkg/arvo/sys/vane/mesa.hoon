@@ -836,7 +836,7 @@
         =^  [gifts=(list [seq=@ud spar path]) moves-flow=_moves]  ax
           =<  fo-abut
           %.  plea/[vane wire payload]
-          fo-call:(fo-abed:fo hen bone^dire=%for %outbound pe-chan:pe-core)
+          fo-call:(fo-abed:fo hen bone^dire=%for pe-chan:pe-core)
         ::
         ::  XX this can be done internally in fo-call:fo-core
         %+  roll  gifts
@@ -864,7 +864,7 @@
         ~&  req-boon-poke/load
         =^  [gifts=(list [seq=@ud spar path]) moves-flow=_moves]  ax
           =<  fo-abut
-          (fo-call:(fo-abed:fo hen bone^dire=%bak %outbound pe-chan) boon/load)
+          (fo-call:(fo-abed:fo hen bone^dire=%bak pe-chan) boon/load)
         ::
         ::  XX this can be done internally in fo-call:fo-core
         %+  roll  gifts
@@ -950,9 +950,10 @@
       ::
       +|  %message-flow-paths
       ::
+      ::
       +$  res-mess-pith
         $:  [%p sndr=@p]
-            ?(%poke %ack)
+            load=?(%poke %ack)
             [%p rcvr=@p]
             %flow
             [%ud bone=@ud]
@@ -1205,7 +1206,7 @@
           =^  moves  ax
             =<  fo-abet
             %.  [%sink mess.pok req]
-            fo-call:(fo-abed:fo hen bone.pok^dire %incoming pe-chan:pe-core)
+            fo-call:(fo-abed:fo hen bone.pok^dire pe-chan:pe-core)
           (res-emil moves)
         ::
         ++  ma-peek
@@ -1249,7 +1250,7 @@
             =<  fo-abet
             ::  XX parse $ack payload in here, and call task instead?
             %.  [were response/[seq +.load]]
-            fo-take:(fo-abed:fo hen bone^dire %outbound channel peer-state)
+            fo-take:(fo-abed:fo hen bone^dire channel peer-state)
           (res-emil moves)
         ::
         ++  ma-poke-done
@@ -1269,7 +1270,7 @@
             ::  XX use it as an assurance check?
             ::
             %.  [%out done/error]
-            fo-take:(fo-abed:fo hen bone^dire=%bak %incoming channel peer-state)
+            fo-take:(fo-abed:fo hen bone^dire=%bak channel peer-state)
           (res-emil moves)
         ::
         :: +|  %internals
@@ -1412,7 +1413,7 @@
       ::
       =|  moves=(list move)
       =|  gifts=(list gift)
-      ::  key = /from=~zod/poke/to=~nec/flow/[bone] {seq-no in ++pa layer}
+      ::  key = /from=~zod/poke/to=~nec/flow/[bone]/[seq]
       ::  val = flow-state
       ::
       ::  bone is (mix 1 bone) if it comes via a %sink
@@ -1440,7 +1441,7 @@
       ::                  $>(%outbound flow-state)  :: XX  *$>(%outbound flow-state)  fails
       ::
       ++  fo-abed
-        |=  [=duct =^side part=?(%incoming %outbound) peer-channel]
+        |=  [=duct =^side peer-channel]
         =.  state  (~(gut by flows.peer-state) side *flow-state)
         fo-core(hen duct, side side, channel channel, peer-state peer-state)
       ::
@@ -1534,6 +1535,17 @@
                         %ext  !!  ::  (fo-take-load +.sign)
                         %int  (fo-take-ack +.sign)
         ==            ==
+      ::
+      ++  fo-read
+        |=  [load=?(%poke %ack) mess=@ud]
+        ^-  (unit page)
+        ?-  load
+          %ack   ?.(=(mess last-acked.state) ~ `ack/%.y)
+          %poke  ?~  v=(get:fo-mop loads.state mess)  ~
+                 ?+  -.u.v  ~  :: XX cork?
+                     %plea  `plea/[vane path payload]:u.v
+                     %boon  `boon/payload.u.v
+        ==       ==
       ::
       +|  %tasks
       ::
@@ -2006,9 +2018,19 @@
       ``[%message !>([%sign (sign:crypt ryf ful rot) ser])]
     ::  publisher-side, flow-level
     ::
-    ::  XX
+        res-mess-pith:ev-res  ::  /[~sndr]/[load]/[~rcvr]/flow/[bone]/[dire]/[mess]
+      ?.  =(our sndr.tyl)
+        ~  :: we didn't send this poke
+      =/  ship-state  (~(get by peers.ax) rcvr.tyl)
+      ?.  ?=([~ %known *] ship-state)
+        ~
+      =+  pe-core=(pe-abed-her:pe ~[//scry] rcvr.tyl +.u.ship-state)
+      =/  res=(unit page)
+        %.  [load mess]:tyl
+        fo-read:(fo-abed:fo ~[//scry] [bone dire]:tyl pe-chan:pe-core)
+      ?~(res ~ ``[%message !>(u.res)])
     ==
-  ::  only respond for the local identity, %$ desk, current timestamp
+  ::  only respond for the local identity, %$1 desk, current timestamp
   ::
   ?.  ?&  =(our p.bem)
           =([%da now] r.bem)

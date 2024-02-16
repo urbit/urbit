@@ -107,9 +107,20 @@
           ==
         last-acked:(~(got by flows) 0 %bak)
   ::
+  ~?  >  dbug  'poke payload is accesible at /~nec/poke/~bud/flow/0/for/1'
   :-  moves-6  |.  :-  %|
+  =/  moves-7
+    %+  expect-eq
+    !>  plea/poke-plea
+    !>  !<  page
+        =<  ?>  ?=(%message p)  q
+        %-  need   %-  need
+        %-  scry:(ames.nec ~1111.1.10 `@`0xdead.beef *roof)
+        [[~ ~] / %x [[~nec %$ ud+1] poke-path]]
+  ::
+  :-  moves-7  |.  :-  %|
   ~?  >  dbug  '~nec hears %ack from ~bud, gives to gall'
-  =^  moves-7  ames.nec
+  =^  moves-8  ames.nec
     %:    mesa-check-take:v  ames.nec
         [~1111.1.1 0xdead.beef *roof]
       :+  /flow/int/for/~bud/0/0/1
@@ -120,9 +131,9 @@
           [%give %done ~]
       ==
     ==
-  :-  moves-7  |.  :-  %|
+  :-  moves-8  |.  :-  %|
   ~?  >  dbug  '~nec %ames removes the payload for the poke after ack'
-  =/  moves-8
+  =/  moves-9
     %+  expect-eq
     !>  ~
     !>  =/  flows  =<  flows
@@ -133,7 +144,7 @@
           ==
         loads:(~(got by flows) 0 %for)
   ~?  >  dbug  '~nec %ames next bone is 1'
-  :-  moves-8  |.  :-  %&
+  :-  moves-9  |.  :-  %&
     %+  expect-eq
     !>  1
     !>  =<  next-bone.ossuary
