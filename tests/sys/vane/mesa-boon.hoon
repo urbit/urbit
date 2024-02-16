@@ -51,10 +51,10 @@
   ::  start
   ::
   =/  poke-boon  [%x ~]  :: %kick
-  =/  poke-path  /~bud/poke/~nec/flow/0/bak/1
+  =/  boon-path  /~bud/poke/~nec/flow/0/bak/1
   =/  ack-path   /~nec/ack/~bud/flow/0/bak/1
   =/  make-poke=[%make-poke spar:ames path]
-    [%make-poke [~nec ack-path] poke-path]
+    [%make-poke [~nec ack-path] boon-path]
   ~?  >  dbug  'send %poke-boon to ~nec'
   =^  moves-1  ames.bud
     %:    mesa-check-take:v  ames.bud
@@ -81,19 +81,30 @@
       ==
     ==
   ::
+  ~?  >  dbug  'boon payload is accesible at /~bud/poke/~nec/flow/0/for/1'
   :-  moves-2  |.  :-  %|
+  =/  moves-3
+    %+  expect-eq
+    !>  boon/poke-boon
+    !>  !<  page
+        =<  ?>  ?=(%message p)  q
+        %-  need   %-  need
+        %-  scry:(ames.bud ~1111.1.10 `@`0xdead.beef *roof)
+        [[~ ~] / %x [[~bud %$ ud+1] boon-path]]
+  ::
+  :-  moves-3  |.  :-  %|
   ~?  >  dbug  '~nec hears %poke-boon from ~bud'
   =/  message=mess:mesa
     ::  XX  the message layer should only get the inner path (from rift onwards)
     ::
     :*  %poke
         [~nec ack-path]
-        [~bud poke-path]
+        [~bud boon-path]
         auth=&+*@uxJ
         page=message/poke-boon
     ==
   ::
-  =^  moves-3  ames.nec
+  =^  moves-4  ames.nec
     %:  mesa-check-call:v  ames.nec
       [~1111.1.2 0xbeef.dead *roof]
       :-  ~[//unix]
@@ -102,7 +113,8 @@
       :~  [~[/poke] [%give %boon poke-boon]]
       ==
     ==
-  :-  moves-3  |.  :-  %&
+  ::
+  :-  moves-4  |.  :-  %&
     %+  expect-eq
     !>  0
     !>  =<  next-bone.ossuary
