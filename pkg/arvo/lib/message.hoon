@@ -23,8 +23,8 @@
 ++  deps   *deps:neo
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo untyp-sta=* *]
-  +*  sta  ;;(state untyp-sta)
+  |_  [=bowl:neo case=@ud vase-state=vase *]
+  +*  sta  !<(state vase-state)
   ++  call
     |=  [old-state=* act=*]
     ::  =+  ;;(=action act)
@@ -32,13 +32,13 @@
     *(list card:neo)
   ++  reduce
     |=  act=*
-    ^-  *
-    state
+    ^-  vase
+    !>(sta)
   ++  init
-    |=  old=(unit *)
-    ?>  ?=(^ old)
-    =+  ;;(sta=state u.old)
-    sta
+    |=  vas=(unit vase)
+    ?>  ?=(^ vas)
+    =+  !<(=state u.vas)
+    !>(state)
   ++  echo
     |=  [=pith val=*]
     *(list card:neo)

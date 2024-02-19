@@ -16,7 +16,32 @@
 ::
 ::  
 |%
-+$  pith  $+(pith ^pith)
+++  pith
+  |^  $+(pith ^pith)
+  ++  en-tape
+    |=  pit=$
+    (spud (pout pit))
+  --
+++  name
+  |^  ,[=ship =pith]  
+  ++  en-pith
+    |=  nam=$
+    ^-  pith
+    [p/ship.nam pith.nam]
+  ++  en-tape
+    |=  nam=$
+    (spud (pout (en-pith nam)))
+  ++  en-path
+    |=  nam=$
+    (pout (en-pith nam)) 
+  ++  de-pith  |=(pith (need (de-pith-soft +<)))
+  ++  de-pith-soft
+    |=  =pith
+    ^-  (unit ^$)
+    ?.  ?=([[%p @] *] pith)
+      ~
+    `[+.i.pith t.pith]
+  --
 +$  pate  [[%p p=ship] q=pith]
 ++  petty-port
   |*  a=mold
@@ -29,12 +54,34 @@
   $%  [%arvo note-arvo]
       [%neo note]
   ==
++$  request
+  [src=pith dest=pith val=*]
++$  response
+  [src=pith dest=pith status=response-status]
++$  update
+  $:  =pith
+      case=@ud
+      p=*
+  ==
++$  watch  (list update)
+::
++$  err
+  $%  [%here =pith]
+      [%goof err=*]
+      [%fail err=*]
+  ==
+
++$  response-status
+  $%  [%done ~]
+      err
+  ==
+::
 +$  note
   %+  pair  pith
-  $%  [%make src=path init=(unit *) =conf] :: todo: configuration values, init cannot be ^ if installing over
+  $%  [%make src=path init=(unit vase) =conf] :: todo: configuration values, init cannot be ^ if installing over
       [%poke val=*]
       [%tomb =case]
-      [%link from=pith]
+      [%link from=pith src=path]
   ==
 +$  poke
   (pair pith *)
@@ -42,6 +89,8 @@
   $+  yard
   $~  ~
   (map iota hall)
++$  sign-neo
+  [%poke dest=pith status=response-status]
 +$  sign
   $+  sign
   $%  [%arvo p=sign-arvo]
@@ -51,12 +100,20 @@
 +$  move  (pair pith card)
 +$  span  (pair path firm)
 +$  icon
-  [state=* history=(list *) migration=(list *)]
+  [case=@ud state=vase history=(list *) migration=(list *)]
 +$  hall
   $%  [%exit pith]
       [%room room]
   ==
+:: subscription metadata
++$  cell  ~
++$  jail
+  [=icon =cell]
+::  $room: state of a shrub
+::    
+::    TODO: refactor for networking?
 +$  room
+  $+  room
   $~  [*span ~ ~ *icon]
   $:  =span
       =conf
@@ -119,7 +176,7 @@
   $_  ^|
   |_  [=bowl =icon]
   ++  call
-    |~  [prev=* val=*]
+    |~  [prev=vase val=*]
     *(list card)
   ::  +reduce: apply %poke, producing state
   ::
@@ -127,15 +184,15 @@
   ::    ('liam' 'ruby' ~) [%del who='ruby'] -> ('liam')
   ++  reduce
     |~  val=*
-    **
+    *vase
   ++  take
     |~  =sign
     *(list card)
   ++  born
     *(list card)
   ++  init
-    |~  old=(unit *)
-    **
+    |~  old=(unit vase)
+    *vase
   ++  echo
     |~  [=pith val=*]
     *(list card)

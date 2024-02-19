@@ -52,34 +52,36 @@
   --
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo untyped-state=* *]
-  +*  sta  ;;(state untyped-state)
+  |_  [=bowl:neo case=@ud state-vase=vase *]
+  +*  sta  !<(state state-vase)
   ++  call
-    |=  [old-state=* act=*]
+    |=  [old-state=vase act=*]
     =+  ;;(=poke act)
     ?:  ?=(%dbug -.poke)
       ~&  dbug/bowl
       *(list card)
     ?.  ?=(%msg -.poke)
       *(list card)
-    [%neo (welp were.bowl ~[da/now.bowl]) %make (msg-loc bowl) `msg.poke ~]^~
+    [%neo (welp were.bowl ~[da/now.bowl]) %make (msg-loc bowl) `!>(msg.poke) ~]^~
   ++  reduce
     |=  pok=*
-    ^-  *
+    ^-  vase
     =+  ;;(=poke pok)
     =/  sta  sta
     ?.  ;;(? +:(~(gut by deps.bowl) %open [*pith &]))
-      ~&(dropping-poke/poke sta)
-    ?>  (~(has in who.sta) src.bowl)
+      ~&(dropping-poke/poke !>(sta))
+    ?>  |(=(our src):bowl (~(has in who.sta) src.bowl))
+    =-  !>(-)
+    ^-  state
     ?-  -.poke
-      %title  sta(title +.poke)
+      %title  sta(title title.poke)
       %add    sta(who (~(put in who.sta) ship.poke))
       %del    sta(who (~(del in who.sta) ship.poke))
       ?(%dbug %msg)   sta
     ==
   ++  init
-    |=  old=(unit *)
-    *state
+    |=  old=(unit vase)
+    !>(*state)
   ++  born  *(list card:neo)
   ++  echo
     |=  [=pith val=*]
