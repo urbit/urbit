@@ -798,14 +798,15 @@
     =*  headers  header-list.request
     ::  for requests from localhost, respect the "forwarded" header
     ::
-    =/  [secure=? =^address]
-      =*  same  [secure address]
+    =/  [secure=? host=(unit @t) =^address]
+      =/  host=(unit @t)  (get-header:http 'host' headers)
+      =*  same  [secure host address]
       ?.  =([%ipv4 .127.0.0.1] address)        same
       ?~  forwards=(forwarded-params headers)  same
-      :-  (fall (forwarded-secure u.forwards) secure)
+      :+  (fall (forwarded-secure u.forwards) secure)
+        (clap (forwarded-host u.forwards) host head)
       (fall (forwarded-for u.forwards) address)
     ::
-    =/  host  (get-header:http 'host' headers)
     =/  [=action suburl=@t]
       (get-action-for-binding host url.request)
     ::
@@ -3240,6 +3241,12 @@
     %http   `|
     %https  `&
   ==
+::
+++  forwarded-host
+  |=  forwards=(list (map @t @t))
+  ^-  (unit @t)
+  ?.  ?=(^ forwards)  ~
+  (~(get by i.forwards) 'host')
 ::
 ++  parse-request-line
   |=  url=@t
