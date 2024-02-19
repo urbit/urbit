@@ -1308,9 +1308,15 @@
       ::
       =?  endpoint.auth.state  ?=(^ host)
         %-  (trace 2 |.("eauth: storing endpoint at {(trip u.host)}"))
-        :+  user.endpoint.auth.state
+        =/  new-auth=(unit @t)
           `(cat 3 ?:(secure 'https://' 'http://') u.host)
-        now
+        =,  endpoint.auth.state
+        :+  user  new-auth
+        ::  only update the timestamp if the derived endpoint visibly changed.
+        ::  that is, it's not hidden behind a user-provided hardcoded url,
+        ::  and the new value is different from the old.)
+        ::
+        ?:(|(?=(^ user) =(new-auth auth)) time now)
       ::
       =;  out=[moves=(list move) server-state]
         out(moves [give-session-tokens :(weld moz moves.fex moves.out)])
@@ -3513,6 +3519,8 @@
     $(moves [mov moves], siz t.siz)
   ::
   ?:  ?=(%eauth-host -.task)
+    ?:  =(user.endpoint.auth.server-state.ax host.task)
+      [~ http-server-gate]
     =.  user.endpoint.auth.server-state.ax  host.task
     =.  time.endpoint.auth.server-state.ax  now
     [~ http-server-gate]
