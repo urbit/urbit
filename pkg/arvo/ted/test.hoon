@@ -10,7 +10,7 @@
 +$  test       [=beam func=test-func]
 +$  test-arm   [name=term func=test-func]
 +$  test-func  (trap tang)
-+$  args       quiet=_&
++$  args       quiet=?
 --
 =>
 |_  =args
@@ -18,7 +18,7 @@
   |=  =beam
   =/  m  (strand ,[(unit vase) tang])
   ^-  form:m
-  ;<  res=(unit vase)  bind:m 
+  ;<  res=(unit vase)  bind:m
     (build-file:strandio beam)
   %+  pure:m  res
   ?.  =(res ~)
@@ -117,16 +117,20 @@
 =/  m  (strand ,vase)
 ^-  form:m
 ;<  =bowl:strand  bind:m  get-bowl:strandio
-=/  paz=(list path)
-  :: if no args, test everything under /=base=/tests
+=/  [quiet=? paz=(list path)]
+  ::  if no args, test everything under /=base=/tests
   ::
-  ?~  q.arg
+  =*  default-tests
     ~[/(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/tests]
-  :: else cast path to ~[path] if needed
-  ::
-  ?@  +<.q.arg
-    [(tail !<([~ path] arg)) ~]
-  (tail !<([~ (list path)] arg))
+  ?+  q.arg  !!
+    ~                                                   [& default-tests]
+    [~ ?]      =+  !<([~ quiet=?] arg)                  [quiet default-tests]
+    [~ ? ^ *]  =+  !<([~ quiet=? paz=(list path)] arg)  [quiet paz]
+    [~ ? ^]    =+  !<([~ quiet=? pax=path] arg)         [quiet pax ~]
+    [~ ^ *]    =+  !<([~ paz=(list path)] arg)          [& paz]
+    [~ *]      =+  !<([~ pax=path] arg)                 [& pax ~]
+  ==
+=.  quiet.args  quiet
 =/  bez=(list beam)
   (turn paz |=(p=path ~|([%test-not-beam p] (need (de-beam p)))))
 ;<  fiz=(set [=beam test=(unit term)])  bind:m  (find-test-files bez)
