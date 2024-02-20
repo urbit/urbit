@@ -438,21 +438,22 @@
     ::
     =/  [[aul=@ubB aum=plat:plot] aur=@ubB aup=plat:plot]
       ?~  aut           [[0b0 0] 0b0 0]
-      ?:  ?=(%1 -.aut)  [[0b1 [32 p]] 0b0 32 q]:p.aut
+      ?:  ?=(%1 -.aut)  [[0b1 [32 p]] 0b10 [32 q]]:p.aut
       :-  =>  p.aut
           ?:(?=(%& -) [0b10 64 p] [0b11 32 p])
       =/  [aur=@ubB has=(list plat:plot)]
         ?~    q.aut  [0b0 ~]
         ?@  u.q.aut  [0b1 [1 u.q.aut] ~]
-        [0b10 [[1 p] 1 q ~]:u.q.aut]
+        [0b10 [[1 p] [1 q] ~]:u.q.aut]
       [aur s+~ 8 has]
     ::
     =/  len  (met 3 dat)
-    =/  men
-      ?:((lth len 3) [len 0] [0b11 (met 3 len)])
+    =/  nel  (met 3 len)
+    =/  men=(pair @B @A)
+      ?:((lth nel 3) [nel 0] [0b11 1])
     :+  bloq=3
-      [s+~ 0 [2 (dec lot)] [2 aul] [2 aur] [2 -.men] ~]
-    [[lot tot] aum aup [+.men len] [len dat] ~]
+      [s+~ 0 [2 (dec lot)] [2 aul] [2 aur] [2 p.men] ~]
+    [[lot tot] aum aup [q.men nel] [nel len] [len dat] ~]
   ::
   ++  de
     |=  a=bite
@@ -465,8 +466,8 @@
     =.  len  (add len nex)
     =^  mes=(unit auth:mess)  nex
       ?+  aul  !!
-        %0b0   ?>(=(0b0 aur) [~ nex])
-        %0b1   ?>(=(0b10 aur) [~ nex])
+        %0b0   ?>(=(0b0 aur) [~ 0])
+        %0b1   ?>(=(0b10 aur) [~ 0])
         %0b10  [`&+(cut 3 [len 64] dat) 64]
         %0b11  [`|+(cut 3 [len 32] dat) 32]
       ==
@@ -484,9 +485,11 @@
         [%1 u.pac]
       [%0 u.mes pac]
     =.  len  (add len nex)
-    =^  lat  len
+    =^  nel  len
       ?.  =(3 men)  [men len]
       [(cut 3 [len 1] dat) +(len)]
+    =^  lat  len
+      [(cut 3 [len nel] dat) (add len nel)]
     =.  nex  lat
     [[tot aut (cut 3 [len nex] dat)] 3 (add len nex)]
   --
