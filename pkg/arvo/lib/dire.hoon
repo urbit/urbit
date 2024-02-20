@@ -457,41 +457,42 @@
   ::
   ++  de
     |=  a=bite
-    =/  b=[bloq step]  [0 (rig a 0)]
+    =/  b=[boq=bloq sep=step]  [0 (rig a 0)]
     |=  dat=@
-    ^-  [[tot=@udF aut=auth:pact dat=@] boq=bloq sep=step]
-    =+  ^=  [[bot [aul aur] men] b]  ((hew b dat) [2 [2 2] 2])
-    =+  ^=  [len nex]                [(rig b 3) +(bot)]
-    =/  tot  (cut 3 [len nex] dat)
-    =.  len  (add len nex)
-    =^  mes=(unit auth:mess)  nex
-      ?+  aul  !!
-        %0b0   ?>(=(0b0 aur) [~ 0])
-        %0b1   ?>(=(0b10 aur) [~ 0])
-        %0b10  [`&+(cut 3 [len 64] dat) 64]
-        %0b11  [`|+(cut 3 [len 32] dat) 32]
-      ==
-    =.  len  (add len nex)
-    =^  pac=(unit $@(@uxI (pair @uxI @uxI)))  nex
-      ?+  aur  !!
-        %0b0   [~ 0]
-        %0b1   [`(cut 3 [len 32] dat) 32]
-        %0b10  [`[(cut 3 [len 32] dat) (cut 3 [(add len 32) 32] dat)] 64]
-      ==
+    ^-  [data:pact boq=bloq sep=step]
+    =^  c  b
+      ((hew b dat) [bot=2 [aul=2 aur=2] men=2])
+    =.  b  [3 (rig b 3)]
+    =^  d  b
+      %-  (hew b dat)
+      :^    tot=+(bot.c)
+          aum=?+(aul.c 0x0 %0b10 `@`64, %0b11 `@`32)
+        aup=?+(aur.c 0x0 %0b1 `@`32, %0b10 [`@`32 `@`32])
+      nel=?.(=(3 men.c) 0 1)
+    ::
     =/  aut=auth:pact
-      ?~  mes
-        ?:  =(0b0 aul)  ~
-        ?>  &(=(0b1 aul) ?=([~ @ @] pac))
-        [%1 u.pac]
-      [%0 u.mes pac]
-    =.  len  (add len nex)
-    =^  nel  len
-      ?.  =(3 men)  [men len]
-      [(cut 3 [len 1] dat) +(len)]
-    =^  lat  len
-      [(cut 3 [len nel] dat) (add len nel)]
-    =.  nex  lat
-    [[tot aut (cut 3 [len nex] dat)] 3 (add len nex)]
+      =/  mes=(unit auth:mess)
+        ?+  aul.c  !!
+          %0b0   ?>(=(0b0 aur.c) ~)
+          %0b1   ?>(=(0b10 aur.c) ~)
+          %0b10  `&+aum.d
+          %0b11  `|+aum.d
+        ==
+      =/  pac=(unit $@(@uxI (pair @uxI @uxI)))
+        ?+  aur.c  !!
+          %0b0   ?>(=(0 aup.d) ~)
+          %0b1   ?>(?=(@ aup.d) `aup.d)
+          %0b10  ?>(?=(^ aup.d) `aup.d)
+        ==
+      ?^  mes  [%0 u.mes pac]
+      ?:  =(0b0 aul.c)  ~
+      ?>  &(=(0b1 aul.c) ?=([~ @ @] pac))
+      [%1 u.pac]
+    ::
+    =/  nel  ?.(=(3 men.c) men.c nel.d)
+    =^  len  sep.b  [(cut 3 [sep.b nel] dat) (add sep.b nel)]
+    =^  dat  sep.b  [(cut 3 [sep.b len] dat) (add sep.b len)]
+    [[tot.d aut dat] b]
   --
 ::
 ++  name-to-path
