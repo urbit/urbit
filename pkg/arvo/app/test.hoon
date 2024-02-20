@@ -2,7 +2,7 @@
 !:
 |%
 +$  card  card:agent:gall
-+$  test  ?(%agents %marks %generators)
++$  test  ?(%agents %marks %generators %threads)
 +$  state
   $:  app=(set path)
       app-ok=?
@@ -10,6 +10,8 @@
       mar-ok=?
       gen=(set path)
       gen-ok=?
+      ted=(set path)
+      ted-ok=?
   ==
 --
 =,  format
@@ -29,9 +31,10 @@
   |^
   =+  !<(=test vase)
   ?-  test
-    %marks   test-marks
-    %agents  test-agents
+    %marks       test-marks
+    %agents      test-agents
     %generators  test-generators
+    %threads     test-threads
   ==
   ::
   ++  test-marks
@@ -100,6 +103,25 @@
       gen.state  (~(put in gen.state) i.paz)
     ==
   ::
+  ++  test-threads
+    =|  fex=(list card)
+    ^+  [fex this]
+    ?>  =(~ ted.state)
+    =.  ted-ok.state  %.y
+    =+  .^(paz=(list path) ct+(en-beam now-beak /ted))
+    |-  ^+  [fex this]
+    ?~  paz  [(flop fex) this]
+    =/  xap=path  (flop i.paz)
+    ?.  ?=([%hoon *] xap)
+      $(paz t.paz)
+    =/  sing=card
+      :+  %pass  build+i.paz
+      [%arvo %c %warp our.bowl q.byk.bowl ~ %sing %a da+now.bowl i.paz]
+    %_  $
+      paz        t.paz
+      fex        [sing fex]
+      ted.state  (~(put in ted.state) i.paz)
+    ==
   ++  now-beak  %_(byk.bowl r [%da now.bowl])
   --
 ++  on-watch  on-watch:def
@@ -149,6 +171,15 @@
     =.  gen.state  (~(del in gen.state) path)
     ~?  =(~ gen.state)
       ?:(gen-ok.state %all-generators-built %some-generators-failed)
+    [~ this]
+  ::
+      [%ted *]
+    =/  ok  ?=(^ p.sign-arvo)
+    %-  (report path ok)
+    =?  ted-ok.state  !ok  %.n
+    =.  ted.state  (~(del in ted.state) path)
+    ~?  =(~ ted.state)
+      ?:(ted-ok.state %all-threads-built %some-threads-failed)
     [~ this]
   ==
 ++  on-fail   on-fail:def
