@@ -92,6 +92,7 @@ in pkgs.stdenvNoCC.mkDerivation {
     ${click} -k -p -i ${pokeApp "%agents" "noun" "test"} ./pier
     ${click} -k -p -i ${pokeApp "%generators" "noun" "test"} ./pier
     ${click} -k -p -i ${pokeApp "%marks" "noun" "test"} ./pier
+    ${click} -k -p -i ${pokeApp "%threads" "noun" "test"} ./pier
 
     ${click} -k -p -i ${appThread "mass" "hood"} ./pier
     sleep 2
