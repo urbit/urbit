@@ -10,7 +10,7 @@
 +$  test       [=beam func=test-func]
 +$  test-arm   [name=term func=test-func]
 +$  test-func  (trap tang)
-+$  args       quiet=_&
++$  args       quiet=?
 --
 =>
 |_  =args
@@ -18,7 +18,7 @@
   |=  =beam
   =/  m  (strand ,[(unit vase) tang])
   ^-  form:m
-  ;<  res=(unit vase)  bind:m 
+  ;<  res=(unit vase)  bind:m
     (build-file:strandio beam)
   %+  pure:m  res
   ?.  =(res ~)
@@ -27,15 +27,14 @@
   ::  +run-test: execute an individual test
 ::
 ++  run-test
-  |=  [pax=path test=test-func]
-  ^-  [ok=? output=tang result=tang]
-  =+  name=(spud pax)
+  |=  [bem=beam test=test-func]
+  ^-  [ok=? =tang]
   =+  run=(mule test)
   ?-  -.run
-    %|  |+[p.run [leaf+"CRASHED {name}" ~]]
+    %|  |+p.run
     %&  ?:  =(~ p.run)
-          &+[p.run [leaf+"OK      {name}" ~]]
-        |+[p.run [leaf+"FAILED  {name}" ~]]
+          &+~
+        |+(flop `tang`[leaf+"FAILED" p.run])
   ==
 ::  +resolve-test-paths: add test names to file paths to form full identifiers
 ::
@@ -118,16 +117,20 @@
 =/  m  (strand ,vase)
 ^-  form:m
 ;<  =bowl:strand  bind:m  get-bowl:strandio
-=/  paz=(list path)
-  :: if no args, test everything under /=base=/tests
+=/  [quiet=? paz=(list path)]
+  ::  if no args, test everything under /=base=/tests
   ::
-  ?~  q.arg
+  =*  default-tests
     ~[/(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/tests]
-  :: else cast path to ~[path] if needed
-  ::
-  ?@  +<.q.arg
-    [(tail !<([~ path] arg)) ~]
-  (tail !<([~ (list path)] arg))
+  ?+  q.arg  !!
+    ~                                                   [& default-tests]
+    [~ ?]      =+  !<([~ quiet=?] arg)                  [quiet default-tests]
+    [~ ? ^ *]  =+  !<([~ quiet=? paz=(list path)] arg)  [quiet paz]
+    [~ ? ^]    =+  !<([~ quiet=? pax=path] arg)         [quiet pax ~]
+    [~ ^ *]    =+  !<([~ paz=(list path)] arg)          [& paz]
+    [~ *]      =+  !<([~ pax=path] arg)                 [& pax ~]
+  ==
+=.  quiet.args  quiet
 =/  bez=(list beam)
   (turn paz |=(p=path ~|([%test-not-beam p] (need (de-beam p)))))
 ;<  fiz=(set [=beam test=(unit term)])  bind:m  (find-test-files bez)
@@ -139,9 +142,7 @@
 ?^  fiz
   ;<  [cor=(unit vase) =tang]  bind:m  (build-file beam.i.fiz)
   ?~  cor
-    ~>  %slog.3^leaf+"FAILED  {(spud s.beam.i.fiz)} (build)"
-    gather-tests(fiz t.fiz, build-ok |)
-  ~>  %slog.0^leaf+"built   {(spud s.beam.i.fiz)}"
+    gather-tests(fiz t.fiz, build-failed [[beam.i.fiz tang] build-failed])
   =/  arms=(list test-arm)  (get-test-arms u.cor)
   ::  if test path specified an arm prefix, filter arms to match
   =?  arms  ?=(^ test.i.fiz)
@@ -157,9 +158,10 @@
   |=  [=beam *]
   beam
 %+  roll  (resolve-test-paths test-arms)
-|=  [[=path =test-func] ok=_build-ok]
-^+  ok
-=/  res  (run-test path test-func)
-%-  (%*(. slog pri ?:(ok.res 0 3)) output.res)
-%-  (%*(. slog pri ?:(ok.res 0 3)) result.res)
-&(ok ok.res)
+|=  [[=beam =test-func] failed=_build-failed]
+^+  failed
+=/  res  (run-test beam test-func)
+?:  -.res
+  failed
+:_  failed
+[beam +.res]
