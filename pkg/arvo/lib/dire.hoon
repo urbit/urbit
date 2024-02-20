@@ -459,7 +459,7 @@
     |=  a=bite
     =/  b=[bloq step]  [0 (rig a 0)]
     |=  dat=@
-    ^-  [[tot=@udF aut=auth:pact dat=@] bloq step]
+    ^-  [[tot=@udF aut=auth:pact dat=@] boq=bloq sep=step]
     =+  ^=  [[bot [aul aur] men] b]  ((hew b dat) [2 [2 2] 2])
     =+  ^=  [len nex]                [(rig b 3) +(bot)]
     =/  tot  (cut 3 [len nex] dat)
@@ -504,6 +504,123 @@
       ?~  wan  [%init pat]
       [typ.wan (scot %ud fag.wan) pat]
   ==
+::
+++  roundtrip
+  |*  [dat=* en=$-(* plot) de=$-(@ [* boq=@ sep=@])]
+  ^-  ?
+  =/  pol  (en dat)
+  =/  ser  (fax:plot pol)
+  =/  ron  (de p.ser)
+  ?&  =(dat -.ron)
+      =(q.ser boq.ron)
+      =(r.ser sep.ron)
+  ==
+++  generator
+  |_  og=_og
+  ++  ship  (raws:og 128)
+  ++  rift  (raws:og 32)
+  ++  bloq  (raws:og 8)
+  ++  frag  rift
+  ::
+  ++  knot
+    =/  [wyd=@ud car=@ta]
+      ^~  =-  [(met 3 -) -]
+      (crip :(weld "-~_." (gulf '0' '9') (gulf 'a' 'z')))
+    ::
+    |=  max=@ud
+    =^  len  og  (rads:og max)
+    =|  [i=@ud tap=tape]
+    |-  ^-  [@ta _og]
+    ?:  =(i len)  [(crip tap) og]
+    =^  inx  og  (rads:og wyd)
+    $(tap [(cut 3 [inx 1] car) tap], i +(i))
+  ::
+  ++  path
+    |=  [max=@ud mal=@ud]
+    =^  len  og
+      |-  ^-  [@ _og]
+      =^  a  og  (rads:og max)
+      ?:(=(0 a) $ [a og])
+
+    =|  [i=@ lit=(list @ta)]
+    |-  ^+  [lit og]
+    ?:  =(i len)  [lit og]
+    =^  nex  og  (knot mal)
+    $(lit [nex lit], i +(i))
+  ::
+  ++  name
+    ^-  [name:pact _og]
+    =^  her  og  ship
+    =^  rif  og  rift
+    =^  boq  og  bloq
+    =^  wan  og
+      =^  a    og  (rads:og 3)
+      ?:  =(0 a)  [~ og]
+      =^  fag  og  frag
+      [[?:(=(1 a) %data %auth) fag] og]
+    =^  pat  og  (path 10 32)
+    [[[her rif] [boq wan] pat] og]
+  ::
+  ++  auth
+    ^-  [auth:pact _og]
+    =^  a  og  (rads:og 3)
+    ?+  a  !!
+      %0  [~ og]
+    ::
+      %1  =^  p  og
+            =^  b  og  (raws:og 1)
+            ?+  b  !!
+              %0  =^  c  og  (raws:og 512)
+                  [&+c og]
+              %1  =^  c  og  (raws:og 256)
+                  [|+c og]
+            ==
+          =^  q  og
+            =^  b  og  (rads:og 3)
+            ?+  b  !!
+              %0  [~ og]
+              %1  =^  c  og  (raws:og 256)
+                  [`c og]
+              %2  =^  c  og  (raws:og 256)
+                  =^  d  og  (raws:og 256)
+                  [`[c d] og]
+            ==
+          [[%0 p q] og]
+
+    ::
+      %2  =^  l  og  (raws:og 256)
+          =^  r  og  (raws:og 256)
+          [[%1 l r] og]
+    ==
+  ::
+  ++  data
+    ^-  [data:pact _og]
+    =^  tot  og  frag
+    =^  aut  og  auth
+    =^  dat  og  (raws:og ^~((bex 16)))
+    [[tot aut dat] og]
+  --
+::
+++  test
+  |_  [eny=@uvJ len=@ud]
+  ++  name
+    =|  i=@ud
+    |-  ^-  ?
+    ?:  =(i len)  &
+    =/  nam  -:~(name generator ~(. og eny))
+    ?.  (roundtrip nam en:^name $:de:^name)
+      ~&([i=i eny=eny nam] |)
+    $(i +(i), eny +(eny))
+  ::
+  ++  data
+    =|  i=@ud
+    |-  ^-  ?
+    ?:  =(i len)  &
+    =/  dat  -:~(data generator ~(. og eny))
+    ?.  (roundtrip dat en:^data $:de:^data)
+      ~&([i=i eny=eny dat] |)
+    $(i +(i), eny +(eny))
+  --
 ::
 ++  lss
   =,  blake:crypto
