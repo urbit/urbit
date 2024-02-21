@@ -776,7 +776,7 @@
 ::
 =>
 |%
-+$  move  (wite note gift)
++$  move  (pair duct (wite note gift))
 ::
 +$  task
   $%  [%hear p=lane:pact q=@]            :: receive a packet
@@ -1029,10 +1029,13 @@
       %+  ~(put by pit.per)  path.p
       u.res(for (~(put in for.u.res) hen))
     ::
-    ::  XX resolve path to validate
+    ::  XX resolve payload path if present to validate
     ::
-    =/  res  *(unit (unit cage)) :: (rof ~ /ames/foo [[our ...] u.q])
-    ?.  ?=([~ ~ %message *] res)
+    ?:  ?&  ?=(^ q)
+            =/  res  *(unit (unit cage))
+              :: (rof ~ /ames/foo [[our ...] u.q])
+            !?=([~ ~ %message *] res)
+        ==
       !! :: XX wat do?
     ::
     =|  new=request-state
@@ -1055,7 +1058,7 @@
         [[our *rift] [13 ~] u.q]      :: XX our rift
       [%poke nam man *data:pact]  :: XX resolve /init
     ::
-    [~ ax]
+    [[[[/ ~] %give %send ~ p:(fax:plot (en:^pact pact))] ~] ax]
   ::
   ++  ev-make-peek
     |=  p=spar:ames
