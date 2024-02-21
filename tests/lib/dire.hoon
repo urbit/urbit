@@ -15,10 +15,14 @@
 ::
 |%
 ++  test-dire-peek
-  =^  mov  dire-zod
+  =^  mov1  dire-zod
     %-  call:(dire-zod *@da *@uvJ bex-roof)
+    =/  pat  /publ/0/g/x/0/dap//some/data/atom
     [`duct`[/foo ~] ~ %soft `task:dire`[%make-peek ~nec /foo/bar]]
-  ~&  mov
+  :: =^  mov2  dire-nec
+  ::   %-  call:(dire-nec *@da *@uvJ bex-roof)
+  ::   [`duct`[/foo ~] ~ %soft `task:dire`[%hear *lane:pact:dire PACKET_FROM_MOV1]]
+  ~&  mov1
   ~
 ++  test-dire-ns
   =/  res
