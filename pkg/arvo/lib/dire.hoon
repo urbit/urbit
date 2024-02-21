@@ -838,9 +838,16 @@
 ++  parse-packet  |=(a=@ -:($:de:pact a))
 ++  is-auth-packet  |
 ++  inner-path-to-beam
-  |=  [=ship =path]
+  |=  [her=ship pat=(pole knot)]
   ^-  (unit [vew=view bem=beam])
-  `[*view *beam]  :: XX
+  ::  /vane/care/case/desk/[spur]
+  ::
+  ?.  ?=([van=@ car=@ cas=@ des=@ pur=*] pat)
+    ~
+  ?~  cas=(de-case cas.pat)
+    ~
+  `[[van car]:pat [her des.pat u.cas] pur.pat]  :: XX
+::
 ++  parse-path  |=(@ *(unit path))
 ++  blake3  |=(* *@)
 ++  get-key-for  |=([=ship =life] *@)
@@ -1153,9 +1160,10 @@
       =*  ser  ser.msg
       =/  wid  (met boq ser)
       ?<  ?=(%0 wid)  :: XX is this true?
+      =/  nit=?  |    :: XX refactor
       |-  ^-  (unit (unit cage))
       ?~  wan.pac.nex
-        $(wan.pac.nex [?:((gth wid 4) %auth %data) 0])
+        $(nit &, wan.pac.nex [?:((gth wid 4) %auth %data) 0])
       ::
       =*  fag  fag.wan.pac.nex
       ?.  (gth wid fag)
@@ -1172,7 +1180,7 @@
       ::
       ?-    typ.wan.pac.nex
           %auth
-        =/  nam  [[our rif] [boq %auth fag] pat]
+        =/  nam  [[our rif] [boq ?:(nit ~ [%auth fag])] pat]
         ::  NB: root excluded as it can be recalculated by the client
         ::
         =/  aut  [%0 mes ~]
@@ -1182,7 +1190,7 @@
       ::
           %data
         =/  lss-proof  (build:lss (met 3 ser)^ser)  :: XX cache this
-        =/  nam  [[our rif] [boq %data fag] pat]
+        =/  nam  [[our rif] [boq ?:(nit ~ [%data fag])] pat]
         =/  aut=auth:pact
           ?:  =(0 fag)
             :+  %0  mes

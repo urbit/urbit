@@ -9,7 +9,7 @@
       ^-  (unit (unit cage))
       ?>  =(s.bem //some/data/atom)
       ?+  vis  ~
-        %gx  ``atom+!>((bex (bex 14)))
+        [%g %x]  ``atom+!>((bex (bex 14)))
       ==
     --
 ::
@@ -29,6 +29,6 @@
     ~&  %sig  ~
   ?~  u.res
     ~&  %inner-sig  ~
-  ~&  [p q.q]:u.u.res
+  ~&  ;;([@tas pact:pact:dire] [p q.q]:u.u.res)
   ~
 --
