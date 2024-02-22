@@ -33,8 +33,9 @@
   =^  mov5  dire-zod  (reply dire-zod mov4) :: "ok, give me the 3rd fragment"
   =^  mov6  dire-nec  (reply dire-nec mov5) :: "ok, here is the 3rd fragment"
   =^  mov7  dire-zod  (reply dire-zod mov6) :: "ok, here is the complete message"
-  ~&  mov7+mov7
-  ~
+  ?>  ?=([[* [%give [%response *]]] ~] mov7)
+  ?>  ?=([@tas @] r.gift.q.i.mov7)
+  (expect-eq !>(q.r.gift.q.i.mov7) !>((bex (bex 14))))
 ++  test-dire-ns
   =/  res
     %-  scry:(dire-zod *@da *@uvJ bex-roof)

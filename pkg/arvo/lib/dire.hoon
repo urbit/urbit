@@ -943,6 +943,7 @@
   $:  nex=(each %auth @ud)
       tot=@ud
       los=state:verifier:lss
+      fags=(list @)
   ==
 ::
 ++  parse-packet  |=(a=@ -:($:de:pact a))
@@ -1011,7 +1012,7 @@
             [~ ax]
           =.  ps.u.res
             ?~  ps.u.res
-              `[[%| 0] tot.q.pac u.state]
+              `[[%| 0] tot.q.pac u.state ~]
             ps.u.res(los.u u.state)
           ::
           ::  XX request next fragment
@@ -1043,9 +1044,8 @@
           ?~  state=(init:verifier:lss tot.q.pac proof)
             [~ ax]
           ?~  state=(verify-msg:verifier:lss u.state dat.q.pac ~)
-            ~&  verify0+0
             [~ ax]
-          =.  ps.u.res  `[[%| 1] tot.q.pac u.state]
+          =.  ps.u.res  `[[%| 1] tot.q.pac u.state ~[dat.q.pac]]
           =.  p.ax
             %+  ~(put by p.ax)  her.p.pac
             =-  u.per(pit -)
@@ -1062,27 +1062,29 @@
         [~ ax]
       ?~  ps.u.res
         [~ ax]
-      ?.  &(=(13 boq.p.pac) ?=(%| -.nex.u.ps.u.res) =(p.nex.u.ps.u.res fag))
+      =*  ps  u.ps.u.res
+      ?.  &(=(13 boq.p.pac) ?=(%| -.nex.ps) =(p.nex.ps fag))
         [~ ax]
       ::
       =/  pair=(unit [l=@ux r=@ux])
         ?~  aut.q.pac  ~
         `?>(?=([%1 *] .) p):aut.q.pac
-      ?~  state=(verify-msg:verifier:lss los.u.ps.u.res dat.q.pac pair)
+      ?~  state=(verify-msg:verifier:lss los.ps dat.q.pac pair)
         [~ ax]
-      =.  los.u.ps.u.res  u.state
-      =.  p.nex.u.ps.u.res  +(p.nex.u.ps.u.res) :: XX do we even need nex?
+      =.  los.ps  u.state
+      =.  fags.ps  [dat.q.pac fags.ps]
+      =.  p.nex.ps  +(p.nex.ps) :: XX nex and tot are redundant with los
       =.  p.ax
         %+  ~(put by p.ax)  her.p.pac
         =-  u.per(pit -)
         %+  ~(put by pit.u.per)  pat.p.pac
         u.res
       ::
-      ::  XX persist fragment
-      ::
-      ?:  =(+(fag) tot.u.ps.u.res)  :: complete
-        ::  XX produce as already-validated message
-        !!
+      ?:  =(+(fag) tot.ps)  :: complete
+        =/  =spar:ames  [her.p.pac pat.p.pac]
+        =/  auth  [%| *@uxI] :: XX should be stored in ps?
+        =/  =page  ;;(page (cue (rep 13 (flop fags.ps))))
+        [[[[/ ~] %give %response [%page [spar auth page]]] ~] ax]
       ::  request next fragment
       ::
       =/  =pact:pact  [%peek p.pac(wan [%data leaf.u.state])]
