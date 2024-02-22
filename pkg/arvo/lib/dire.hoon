@@ -253,7 +253,7 @@
   ++  de
     |=  a=bite
     |=  dat=@
-    ^-  [pact bloq step]
+    ^-  [pact boq=bloq sep=step]
     =+  ^=  [hed b]  ((de:head a) dat)
     =+  ^=  [pac c]
       ?-  typ.hed
@@ -507,98 +507,190 @@
 ::
 ++  roundtrip
   |*  [dat=* en=$-(* plot) de=$-(@ [* boq=@ sep=@])]
-  ^-  ?
+  ^-  (unit _dat)
   =/  pol  (en dat)
   =/  ser  (fax:plot pol)
   =/  ron  (de p.ser)
-  ?&  =(dat -.ron)
-      =(q.ser boq.ron)
-      =(r.ser sep.ron)
-  ==
+  ?.  =(dat -.ron)
+    ~&  %roundtrip-fail-a
+    `-.ron
+  ?.  =(q.ser boq.ron)
+    ~&  [%roundtrip-fail-b q.ser boq.ron]
+    `-.ron
+  ?.  =(r.ser sep.ron)
+    ~&  [%roundtrip-fail-c r.ser sep.ron]
+    `-.ron
+  ~
 ++  generator
-  |_  og=_og
-  ++  ship  (raws:og 128)
-  ++  rift  (raws:og 32)
-  ++  bloq  (raws:og 8)
-  ++  frag  rift
+  |%
+  ++  just  |*(a=* |=(eny=@uvJ [a (shaz eny)]))
   ::
-  ++  knot
-    =/  [wyd=@ud car=@ta]
-      ^~  =-  [(met 3 -) -]
-      (crip :(weld "-~_." (gulf '0' '9') (gulf 'a' 'z')))
+  ++  cook
+    |*  [a=$-(* *) b=$-(@uvJ [* @uvJ])]
+    |=  eny=@uvJ
+    =^  c  eny  (b eny)
+    [(a c) eny]
+  ::
+  ++  flag
+    |=  eny=@uvJ
+    =+  [b og]=(~(raws og eny) 1)
+    [=(b 0) a.og]
+  ::
+  ++  rand
+    |=  top=@u
+    |=  eny=@uvJ
+    =/  og  ~(. og eny)
+    |-  ^-  [@ @uvJ]
+    =^  a  og  (rads:og (met 0 top))
+    =^  b  og  (raws:og a)
+    ?:((gte b top) $ [b a.og])
+  ::
+  ++  bits
+    |=  [zer=? top=@ud]
+    |=  eny=@uvJ
+    ^-  [@ @uvJ]
+    =^  a  eny  ((rand top) eny)
+    =+  [b og]=(~(raws og eny) a)
+    ?:  &(!zer =(0 b))  $
+    [b a.og]
+  ::
+  ++  char
+    |=  [boq=bloq src=@]
+    =/  wyd  (met boq src)
+    |=  eny=@uvJ
+    ^-  [@ @uvJ]
+    =^  a  eny  ((rand wyd) eny)
+    [(cut boq [a 1] src) eny]
+  ::
+  ++  many
+    |*  [[min=@ud max=@ud] gen=$-(@uvJ [* @uvJ])]
+    |=  eny=@uvJ
+    =^  a  eny  ((rand max) eny)
+    ?:  (lth a min)  $
+    =|  [i=@ud lit=(list _-:$:gen)]
+    |-  ^+  [lit eny]
+    ?:  =(i a)  [lit eny]
+    =^  b  eny  (gen eny)
+    $(lit [b lit], i +(i))
+  ::
+  ++  both
+    |*  [l=$-(@uvJ [* @uvJ]) r=$-(@uvJ [* @uvJ])]
+    |=  eny=@uvJ
+    =^  a  eny  (l eny)
+    =^  b  eny  (r eny)
+    [[a b] eny]
+  ::
+  ++  pick
+    |*  [l=$-(@uvJ [* @uvJ]) r=$-(@uvJ [* @uvJ])]
+    |=  eny=@uvJ
+    =^  a  eny  (flag eny)
+    (?:(a l r) eny)
+  ::
+  ++  aura
+    =|  zer=?
+    |=  yaz=@t
+    ~+
+    ^-  $-(@uvJ [@ @uvJ])
+    =/  [max=@ud aur=@ta]
+      =/  len  (met 3 yaz)
+      ?:  =(0 len)
+        [0 %$]
+      =.  len  (dec len)
+      =/  tyl  (rsh [3 len] yaz)
+      ?.  &((gte tyl 'A') (lte tyl 'Z'))
+        [0 yaz]
+      [(sub tyl 'A') (end [3 len] yaz)]
     ::
-    |=  max=@ud
-    =^  len  og  (rads:og max)
-    =|  [i=@ud tap=tape]
-    |-  ^-  [@ta _og]
-    ?:  =(i len)  [(crip tap) og]
-    =^  inx  og  (rads:og wyd)
-    $(tap [(cut 3 [inx 1] car) tap], i +(i))
-  ::
-  ++  path
-    |=  [max=@ud mal=@ud]
-    =^  len  og
-      |-  ^-  [@ _og]
-      =^  a  og  (rads:og max)
-      ?:(=(0 a) $ [a og])
-
-    =|  [i=@ lit=(list @ta)]
-    |-  ^+  [lit og]
-    ?:  =(i len)  [lit og]
-    =^  nex  og  (knot mal)
-    $(lit [nex lit], i +(i))
-  ::
-  ++  name
-    ^-  [name:pact _og]
-    =^  her  og  ship
-    =^  rif  og  rift
-    =^  boq  og  bloq
-    =^  wan  og
-      =^  a    og  (rads:og 3)
-      ?:  =(0 a)  [~ og]
-      =^  fag  og  frag
-      [[?:(=(1 a) %data %auth) fag] og]
-    =^  pat  og  (path 10 32)
-    [[[her rif] [boq wan] pat] og]
-  ::
-  ++  auth
-    ^-  [auth:pact _og]
-    =^  a  og  (rads:og 3)
-    ?+  a  !!
-      %0  [~ og]
+    =-  ?@  -  (just -)
+        ?:  ?=(%| -<)  ->
+        (bits zer ?:(=(0 max) -> (bex max)))
     ::
-      %1  =^  p  og
-            =^  b  og  (raws:og 1)
-            ?+  b  !!
-              %0  =^  c  og  (raws:og 512)
-                  [&+c og]
-              %1  =^  c  og  (raws:og 256)
-                  [|+c og]
-            ==
-          =^  q  og
-            =^  b  og  (rads:og 3)
-            ?+  b  !!
-              %0  [~ og]
-              %1  =^  c  og  (raws:og 256)
-                  [`c og]
-              %2  =^  c  og  (raws:og 256)
-                  =^  d  og  (raws:og 256)
-                  [`[c d] og]
-            ==
-          [[%0 p q] og]
-
+    =+  yed=(rip 3 aur)
+    ?+  yed  &+256
+      [%c *]           :-  %|
+                       %+  cook  (cury rep 5)
+                       (many [0 256] (rand 0x11.0000))  :: XX nonzero?
     ::
-      %2  =^  l  og  (raws:og 256)
-          =^  r  og  (raws:og 256)
-          [[%1 l r] og]
+      [%d ?(%a %r) *]  &+128
+      [%f *]           &+1
+      [%n *]           `@`0
+      [%i %f *]        &+32
+      [%i %s *]        &+128
+      [?(%p %q) *]     &+128
+      [%r %h *]        &+16
+      [%r %s *]        &+32
+      [%r %d *]        &+64
+      [%r %q *]        &+128
+    ::
+      [%u %c *]        |+(cook enc:fa (bits & 256))
+    ::
+      [%t %a %s *]     :-  %|
+                       %+  cook  crip
+                       %+  both
+                         (char 3 ^~((crip (gulf 'a' 'z'))))
+                       %+  many  [0 32]
+                       %+  char  3
+                       ^~((crip (weld (gulf '0' '9') ['-' (gulf 'a' 'z')])))
+    ::
+      [%t %a *]        :-  %|
+                       %+  cook  crip
+                       %+  many  [0 64]
+                       %+  char  3
+                       ^~((crip :(weld "-~_." (gulf '0' '9') (gulf 'a' 'z'))))
+    ::
+      [%t *]           :-  %|
+                       %+  cook  (corl tuft (cury rep 5))
+                       (many [0 256] (rand 0x11.0000))  :: XX nonzero?
     ==
   ::
+  ++  name
+    =>  |%
+        ++  ship  (aura 'pH')
+        ++  rift  (aura 'udF')
+        ++  bloq  (aura 'udD')
+        ++  frag  rift
+        ++  want  %+  pick  (just ~)
+                  (both (pick (just %auth) (just %data)) frag)
+        ++  path  (many [1 10] (aura %ta))
+        --
+    ^-  $-(@uvJ [name:pact @uvJ])
+    %+  both  (both ship rift)
+    (both (both bloq want) path)
+  ::
   ++  data
-    ^-  [data:pact _og]
-    =^  tot  og  frag
-    =^  aut  og  auth
-    =^  dat  og  (raws:og ^~((bex 16)))
-    [[tot aut dat] og]
+    =>  |%
+        ++  frag  (=+(aura -(zer |)) 'udF')
+        ++  hash  (aura 'uxI')
+        ++  mess-auth
+          (pick (both (just %&) (aura 'uxJ')) (both (just %|) hash))
+        ++  pact-auth
+          (pick (just ~) (both (just ~) (pick hash (both hash hash))))
+        ++  auth
+          %+  pick  (just ~)
+          %+  pick
+            :(both (just %1) hash hash)
+          :(both (just %0) mess-auth pact-auth)
+        --
+    ^-  $-(@uvJ [data:pact @uvJ])
+    :(both frag auth (bits & ^~((bex 16))))
+  ::
+  ++  lane
+    =>  |%
+        ++  port  (aura 'udE')
+        --
+    %+  pick
+      (bits & 256)
+    %+  pick
+      :(both (just %if) (aura 'ifF') port)
+    :(both (just %is) (aura 'isH') port)
+  ::
+  ++  pactt
+    ^-  $-(@uvJ [pact:pact @uvJ])
+    %+  pick
+      (both (just %peek) name)
+    %+  pick
+      :(both (just %page) name data (many [0 2] lane))
+    :(both (just %poke) name name data)
   --
 ::
 ++  test
@@ -607,19 +699,31 @@
     =|  i=@ud
     |-  ^-  ?
     ?:  =(i len)  &
-    =/  nam  -:~(name generator ~(. og eny))
-    ?.  (roundtrip nam en:^name $:de:^name)
-      ~&([i=i eny=eny nam] |)
-    $(i +(i), eny +(eny))
+    =/  old  eny
+    =^  nam  eny  (name:generator eny)
+    ?^  ron=(roundtrip nam en:^name $:de:^name)
+      ~&([i=i eny=old nam u.ron] |)
+    $(i +(i))
   ::
   ++  data
     =|  i=@ud
     |-  ^-  ?
     ?:  =(i len)  &
-    =/  dat  -:~(data generator ~(. og eny))
-    ?.  (roundtrip dat en:^data $:de:^data)
-      ~&([i=i eny=eny dat] |)
-    $(i +(i), eny +(eny))
+    =/  old  eny
+    =^  dat  eny  (data:generator eny)
+    ?^  ron=(roundtrip dat en:^data $:de:^data)
+      ~&([i=i eny=old dat u.ron] |)
+    $(i +(i))
+  ::
+  ++  all
+    =|  i=@ud
+    |-  ^-  ?
+    ?:  =(i len)  &
+    =/  old  eny
+    =^  pac  eny  (pactt:generator eny)
+    ?^  ron=(roundtrip pac en:pact $:de:pact)
+      ~&([i=i eny=old pac u.ron] |)
+    $(i +(i))
   --
 ::
 ++  lss

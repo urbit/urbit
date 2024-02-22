@@ -6,4 +6,6 @@
     ~>  %bout.[0 '$name']  ~(name test:d [eny 1.000])
     ~&  %starting-data-10k
     ~>  %bout.[0 '$data']  ~(data test:d [eny 10.000])
+    ~&  %starting-pact-1k
+    ~>  %bout.[0 '$pact']  ~(all test:d [eny 1.000])
 ==
