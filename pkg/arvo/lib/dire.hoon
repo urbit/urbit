@@ -495,13 +495,12 @@
     [[tot.d aut dat] b]
   --
 ::
-++  name-to-path
+++  name-to-beam
   |=  name:pact
-  ^-  path
-  :*  %ax
-      (scot %p her)  %$  '1'
+  ^-  beam
+  :*  [her %$ ud+1]
       %mess  (scot %ud rif)
-      %pact  (scot %ud boq)  %pure
+      %pact  (scot %ud boq)  %etch
       ?~  wan  [%init pat]
       [typ.wan (scot %ud fag.wan) pat]
   ==
@@ -659,6 +658,16 @@
     =.  pairs  (slag height pairs)
     [root proof pairs]
   ::
+  ++  recover-root
+    |=  proof=(list @ux)
+    ?>  ?=([@ @ *] proof)
+    =*  l0  i.proof
+    =*  l1  i.t.proof
+    %-  root-hash
+    %+  roll  t.t.proof
+    |:  [p=0x0 n=(parent-output:blake3 l0 l1)]
+    (parent-output:blake3 (output-cv:blake3 n) p)
+  ::
   ::  +verifier: stateful core for sequentially verifying messages
   ::
   ++  verifier
@@ -666,32 +675,22 @@
       |%
       ::
       ++  init
-        |=  [leaves=@ root=@ux proof=(list @ux)]
+        |=  [leaves=@ proof=(list @ux)]
         ^-  (unit state)
         ?~  proof
           ::  need at least two leaves to have a proof
           ::
           ?.  (lte leaves 1)  ~
           `[leaves 0 [0 1] ~ ~]
-        ::  recover root from proof
-        ::
         ?.  ?=([@ @ *] proof)  ~
-        =*  l0  i.proof
-        =*  l1  i.t.proof
-        =/  rut
-          %-  root-hash
-          %+  roll  t.t.proof
-          |:  [p=0x0 n=(parent-output:blake3 l0 l1)]
-          (parent-output:blake3 (output-cv:blake3 n) p)
-        ?.  =(rut root)  ~
         ::  initialize leaf queue and parent stack with proof hashes;
         ::  after the first two leaves, the next subtree is [2 4]
         ::
         =/  state  [leaves 0 [0 1] ~ t.t.proof]
-        `(push-leaves state [l0 l1])
+        `(push-leaves state [i.proof i.t.proof])
       ::
       ++  verify-msg
-        |=  [=state [leaf=octs pair=(unit [l=@ux r=@ux])]]
+        |=  [=state [leaf=@ pair=(unit [l=@ux r=@ux])]]
         ^-  (unit _state)
         ?~  ustate=(verify-leaf state leaf)  ~
         ?~  pair  `u.ustate
@@ -745,9 +744,10 @@
       state(parent-stack (weld ~[l r] parent-stack.state))
     ::
     ++  verify-leaf
-      |=  [=state leaf=octs]
+      |=  [=state leaf=@]
       ^-  (unit _state)
-      =/  cv  (output-cv:blake3 (chunk-output:blake3 leaf.state leaf))
+      =/  wid  ?.(=(+(leaf.state) leaves.state) 1.024 (met 3 leaf))
+      =/  cv  (output-cv:blake3 (chunk-output:blake3 leaf.state [wid leaf]))
       ::  if leaf queue is empty, draw from parent stack; this is
       ::  necessary for any tree with an odd number of leaves, since
       ::  such a tree will contain a pair where the left child is a
@@ -854,8 +854,9 @@
 ++  get-group-key-for  |=(@ud *(unit @))
 ++  crypt
   |%
-  ++  sign  |=(* *@)
-  ++  hmac  |=(* *@)
+  ++  sign     |=(* *@)
+  ++  verify   |=(* *?)
+  ++  hmac     |=(* *@)
   ++  encrypt  |=(@ @)
   ++  decrypt  |=(@ *(unit @))
   --
@@ -894,10 +895,9 @@
                   ?=([%& %auth] nex.u.ps.u.res)
               ==
             [~ ax]
-          ::  XX cut+validate sig/hmac
-          =|  root=@ux   :: XX compute from proof
           =/  proof=(list @ux)  (rip 8 dat.q.pac)
-          ?~  state=(init:verifier:lss tot.q.pac root proof)
+          ?>  (verify:crypt (recover-root:lss proof) aut.q.pac)
+          ?~  state=(init:verifier:lss tot.q.pac proof)
             [~ ax]
           =.  ps.u.res
             ?~  ps.u.res
@@ -922,19 +922,30 @@
             ::     by setting %auth in ps.request-state, regenerating next packet
             !!
           ::  proof is inlined
-          ::  XX cut+validate sig/hmac
+          ::
+          ?>  ?=([%0 *] aut.q.pac)
           =/  proof=(list @ux)
             =>  aut.q.pac
             ?>  ?=([%0 *] .)
             ?~(q ~ ?@(u.q [u.q ~] [p q ~]:u.q))
           =.  proof  [(leaf-hash:lss fag dat.q.pac) proof]
-          =|  root=@ux :: XX compute from proof + leaf
-          ?~  state=(init:verifier:lss tot.q.pac root proof)
+          ?>  (verify:crypt (recover-root:lss proof) p.aut.q.pac)
+          ?~  state=(init:verifier:lss tot.q.pac proof)
+            [~ ax]
+          ?~  state=(verify-msg:verifier:lss u.state dat.q.pac ~)
+            ~&  verify0+0
             [~ ax]
           =.  ps.u.res  `[[%| 1] tot.q.pac u.state]
+          =.  p.ax
+            %+  ~(put by p.ax)  her.p.pac
+            =-  u.per(pit -)
+            %+  ~(put by pit.u.per)  pat.p.pac
+            u.res
           ::
-          ::  XX request next fragment
-          !!
+          ::  request next fragment
+          ::
+          =/  =pact:pact  [%peek p.pac(wan [%data 1])]
+          [[[[/ ~] %give %send ~ p:(fax:plot (en:^pact pact))] ~] ax]
         ==
       ::
       ?:  ?=(%auth typ)  :: auth packets for subsequent fragments are not requested
@@ -947,29 +958,33 @@
       =/  pair=(unit [l=@ux r=@ux])
         ?~  aut.q.pac  ~
         `?>(?=([%1 *] .) p):aut.q.pac
-      =/  msg  (met 3 dat.q.pac)^dat.q.pac
-      ?~  state=(verify-msg:verifier:lss los.u.ps.u.res msg pair)
+      ?~  state=(verify-msg:verifier:lss los.u.ps.u.res dat.q.pac pair)
         [~ ax]
       =.  los.u.ps.u.res  u.state
+      =.  p.nex.u.ps.u.res  +(p.nex.u.ps.u.res) :: XX do we even need nex?
+      =.  p.ax
+        %+  ~(put by p.ax)  her.p.pac
+        =-  u.per(pit -)
+        %+  ~(put by pit.u.per)  pat.p.pac
+        u.res
       ::
       ::  XX persist fragment
       ::
       ?:  =(+(fag) tot.u.ps.u.res)  :: complete
         ::  XX produce as already-validated message
         !!
-      ::  XX request next fragment
-      ::     by incrementing fragment number in ps.request-state, regenerating next packet
-      !!
+      ::  request next fragment
+      ::
+      =/  =pact:pact  [%peek p.pac(wan [%data leaf.u.state])]
+      [[[[/ ~] %give %send ~ p:(fax:plot (en:^pact pact))] ~] ax]
     ::
         %peek
       ?.  =(our her.p.pac)
         [~ ax]
-      =/  res=(unit (unit cage))
-        !!  :: scry for path
+      =/  res=(unit (unit cage))  (scry ~ /ames %x (name-to-beam p.pac))
       ?.  ?=([~ ~ ^] res)
         [~ ax]
-      ::  XX [%give %send-response q.q.u.u.res]
-      [~ ax]
+      [[[[/ ~] %give %send ~ !<(@ q.u.u.res)] ~] ax]
     ::
         %poke
       ::  XX dispatch/hairpin &c
