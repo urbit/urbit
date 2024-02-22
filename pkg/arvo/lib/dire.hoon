@@ -218,7 +218,7 @@
         $%  [%0 p=auth:mess q=(unit $@(@uxI (pair @uxI @uxI)))]
             [%1 p=(pair @uxI @uxI)]
         ==
-      +$  data  [tot=@udF aut=auth:pact dat=@]
+      +$  data  [tot=frag aut=auth:pact dat=@]
       +$  lane  $@  @ux
                 $%  [%if p=@ifF q=@udE]
                     [%is p=@isH q=@udE]
@@ -379,7 +379,12 @@
   ++  en
     |=  name:pact
     ^-  plot
-    =/  ran  ?~(her 0 (dec (met 0 (met 4 (end 7 her)))))
+    =/  ran  :: XX wrong ?~(her 0 (dec (met 0 (met 4 (end 7 her)))))
+      ?+  (clan:title her)  0b0
+        %duke  0b1
+        %earl  0b10
+        %pawn  0b11
+      ==
     =/  ryf  ?~(rif 0 (dec (met 3 rif)))  :: XX is rift always non-zero?
     =+  ^=  [nit tau gaf gyf fag]
       ?~  wan  [0b1 0b0 0b0 0 0]
@@ -387,7 +392,7 @@
       [0b0 ?:(?=(%auth typ.wan) 0b1 0b0) (dec gyf) gyf fag.wan]
     ::
     =/  tap  =-([p=(met 3 -) q=-] `@t`(rap 3 (join '/' pat)))
-    ?>  (lth p.tap ^~((bex 16))) :: XX truncate instead?
+    ?>  &(?=(^ pat) (lth p.tap ^~((bex 16)))) :: XX truncate instead?
     :+  bloq=3
       [s+~ 0 [2 ran] [2 ryf] [1 nit] [1 tau] [2 gaf] ~]
     [[(bex +(ran)) her] [+(ryf) rif] [1 boq] [gyf fag] [2 p.tap] tap ~]
@@ -408,6 +413,7 @@
         fag=?:(=(0b1 nit.c) 0 +(gaf.c))
       tap=2
     ::
+    ::  XX ?<  =(0 tap.d)
     =/  pat
       %+  rash  (cut boq.b [sep.b tap.d] pat)
       (more fas (cook crip (star ;~(less fas prn))))
@@ -432,7 +438,7 @@
 ++  data
   |%
   ++  en
-    |=  [tot=@udF aut=auth:pact dat=@]
+    |=  [tot=frag:pact aut=auth:pact dat=@]
     ^-  plot
     =/  lot  (met 3 (end 5 tot))
     ::
