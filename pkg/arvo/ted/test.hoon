@@ -98,10 +98,10 @@
 =/  m  (strand ,vase)
 ^-  form:m
 ;<  =bowl:strand  bind:m  get-bowl:strandio
-=/  paz=(list path)
-  :: if no args, test everything under /=base=/tests
+=/  [quiet=? paz=(list path)]
+  ::  if no args, test everything under /=base=/tests
   ::
-  ?~  q.arg
+  =*  default-tests
     ~[/(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/tests]
   :: else cast path to ~[path] if needed
   ::

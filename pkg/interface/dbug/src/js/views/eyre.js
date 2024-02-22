@@ -12,6 +12,7 @@ export class Eyre extends Component {
     this.state = {};
 
     this.loadBindings = this.loadBindings.bind(this);
+    this.loadCache = this.loadCache.bind(this);
     this.loadConnections = this.loadConnections.bind(this);
     this.loadAuthenticationState = this.loadAuthenticationState.bind(this);
     this.loadChannels = this.loadChannels.bind(this);
@@ -20,6 +21,7 @@ export class Eyre extends Component {
   componentDidMount() {
     const { props } = this;
     if (props.bindings.length === 0)      this.loadBindings();
+    if (props.cache.length === 0)         this.loadCache();
     if (props.connections.length == 0)    this.loadConnections();
     if (props.authentication.sessions.length == 0) this.loadAuthenticationState();
     if (props.channels.length == 0)       this.loadChannels();
@@ -32,6 +34,14 @@ export class Eyre extends Component {
 
   loadBindings() {
     api.getBindings();
+  }
+
+  loadCache() {
+    api.getCache();
+  }
+
+  clearCache(url) {
+    api.clearCache(url);
   }
 
   loadConnections() {
@@ -60,6 +70,36 @@ export class Eyre extends Component {
         </div>
       </div>)};
     });
+
+    const cacheItems = props.cache.map(entry => {
+      return {key: entry.url + ' ' + (entry.val ? 'LIVE' : 'CLEARED'), jsx: (<div class="flex" style={{ marginBottom: '3px' }}>
+        <div style={{ width: '45%' }}>
+          {entry.url}
+        </div>
+        <div style={{ width: '5%' }}>
+          (v{entry.aeon})
+        </div>
+        { !entry.val ? 'cleared' :
+          <div style={{ width: '50%', position: 'relative' }}>
+            <div style={{ display: 'inline-block', width: '10%' }}>
+              {entry.val.auth ? 'auth' : 'free'}
+            </div>
+            <div style={{ display: 'inline-block', width: '10%' }}>
+              {entry.val.payload.status}
+            </div>
+            <div style={{ display: 'inline-block', width: '50%' }}>
+              {entry.val.payload.headers.reduce((o, h) => (o ? o+'; ': '') + h.key + '=' + h.value, '')}
+            </div>
+            <div style={{ display: 'inline-block', width: '25%' }}>
+              {entry.val.payload.data ? entry.val.payload.data.toLocaleString('de-DE')+' bytes' : 'no data'}
+            </div>
+            <div style={{ display: 'inline-block', width: '5%' }}>
+              <button onClick={() => { this.clearCache(entry.url) }}>clear</button>
+            </div>
+          </div>
+        }
+      </div>)};
+    })
 
     const connectionItems = props.connections.map(c => {
       return {key: c.duct + ' ' + c.action, jsx: (
@@ -232,6 +272,14 @@ export class Eyre extends Component {
         <button onClick={this.loadBindings}>refresh</button>
       </SearchableList>
 
+      <h4>Cache</h4>
+      {props.cache.reduce((sum, entry) => {
+        return sum + (entry.val && entry.val.payload.data || 0);
+      }, 0).toLocaleString('de-DE')} bytes in cache
+      <SearchableList placeholder="cache url, LIVE vs CLEARED" items={cacheItems} open={false}>
+        <button onClick={this.loadCache}>refresh</button>
+      </SearchableList>
+
       <h4>Connections</h4>
       <SearchableList placeholder="duct, binding" items={connectionItems}>
         <button onClick={this.loadConnections}>refresh</button>
@@ -252,7 +300,7 @@ export class Eyre extends Component {
       <br/>
       <button onClick={this.loadAuthenticationState}>refresh</button>
       <h3>Sessions</h3>
-      <SearchableList placeholder="identity" items={sessionItems}>
+      <SearchableList placeholder="identity" items={sessionItems} open={false}>
       </SearchableList>
       <h3>Outgoing eauth</h3>
       <SearchableList placeholder="host" items={visitingItems}>
