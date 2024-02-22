@@ -1,4 +1,4 @@
-::  test send %poke sema vane
+::  test send %poke
 ::
 /+  *test, v=test-mesa-gall
 |%
@@ -9,7 +9,7 @@
   =+  (nec-bud:v [nec=2 bud=3] nec=0 bud=0)
   =/  poke-plea  [%g /ge/pok [%0 %m noun/0]]
   =/  poke-path  /~nec/poke/~bud/flow/0/for/1
-  =/  ack-path   /~bud/ack/~nec/flow/0/for/1
+  =/  ack-path   /~bud/ack/~nec/flow/0/bak/1
   =/  make-poke=[%make-poke spar:ames path]
     [%make-poke [~bud ack-path] poke-path]
   ::
@@ -120,6 +120,7 @@
   ::
   :-  moves-7  |.  :-  %|
   ~?  >  dbug  '~nec hears %ack from ~bud, gives to gall'
+  ~&  ~bud^ack-path
   =^  moves-8  ames.nec
     %:    mesa-check-take:v  ames.nec
         [~1111.1.1 0xdead.beef *roof]

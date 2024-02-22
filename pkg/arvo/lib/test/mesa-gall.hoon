@@ -155,9 +155,25 @@
   =^  moves  mesa-gate  (call:mesa-core duct dud=~ task)
   [(expect-eq !>(expected-moves) !>(moves)) mesa-gate]
 ::
+++  mesa-check-call-with-dude
+  |=  $:  =mesa-gate
+          [now=@da eny=@ =roof]
+          [=goof =duct task=(hobo task:mesa)]
+          expected-moves=(list move:mesa-bunt)
+      ==
+  ^-  [tang ^mesa-gate]
+  =/  mesa-core  (mesa-gate now eny roof)
+  =^  moves  mesa-gate  (call:mesa-core duct dud=`goof task)
+  [(expect-eq !>(expected-moves) !>(moves)) mesa-gate]
+::
 ++  mesa-call
   |=  [=mesa-gate =duct task=(hobo task:mesa) =roof]
   %.  [duct dud=~ task]
+  call:(mesa-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
+::
+++  mesa-call-with-dude
+  |=  [=mesa-gate =goof =duct task=(hobo task:mesa) =roof]
+  %.  [duct `goof task]
   call:(mesa-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
 ::  +mesa: run mesa sign, assert produces expected-moves
 ::

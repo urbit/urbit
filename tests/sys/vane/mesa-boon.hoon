@@ -1,4 +1,4 @@
-::  test send %poke sema vane
+::  test send %poke %boon
 ::
 /+  *test, v=test-mesa-gall
 |%
@@ -7,9 +7,11 @@
   %-  run-chain
   |.  :-  %|
   =+  (nec-bud:v [nec=2 bud=3] nec=0 bud=0)
-  =/  poke-plea  [%g /ge/pok [%0 %m noun/0]]
-  =/  poke-path  /~nec/poke/~bud/flow/0/for/1
-  =/  ack-path   /~bud/ack/~nec/flow/0/for/1
+  =/  poke-plea   [%g /ge/pok [%0 %m noun/0]]
+  =/  poke-path   /~nec/poke/~bud/flow/0/for/1
+  =/  ack-path    /~bud/ack/~nec/flow/0/bak/1
+  =/  ack-wire    /flow/int/for/~bud/0/0/1
+  =/  vane-wire   /flow/out/bak/~nec/0/0/1
   =/  make-poke=[%make-poke spar:ames path]
     [%make-poke [~bud ack-path] poke-path]
   ::  preamble
@@ -18,32 +20,18 @@
     (mesa-call:v ames.nec [~[/poke] [%plea ~bud poke-plea] *roof])
   ::
   =^  *  ames.nec
-    %:    mesa-call:v  ames.nec
-      [~[/flow/int/for/~bud/0/0/1 /poke] make-poke *roof]
-    ==
+    (mesa-call:v ames.nec ~[ack-wire /poke] make-poke *roof)
   =/  message=mess:mesa
     [%poke [~bud ack-path] [~nec poke-path] auth=&+*@uxJ page=message/poke-plea]
   ::
   =^  *  ames.bud
-    %:  mesa-call:v  ames.bud
-    ::
-      ~[//unix]
-      [%mess lane=`*@ux message]
-      *roof
-    ==
+    (mesa-call:v ames.bud ~[//unix] [%mess lane=`*@ux message] *roof)
   ::
   =^  *  ames.bud
-    %:  mesa-take:v  ames.bud
-      /flow/out/bak/~nec/0/0/1
-      ~[//unix]
-      [%gall %done ~]
-      *roof
-    ==
+    (mesa-take:v ames.bud vane-wire ~[//unix] [%gall %done ~] *roof)
   ::
   =^  *  ames.nec
-    %:    mesa-take:v  ames.nec
-    ::
-      /flow/int/for/~bud/0/0/1
+    %:    mesa-take:v  ames.nec  ack-wire
       ~[/poke]
       [%mesa %response %page ~bud^ack-path *(each @uxJ @uxI) `page`message/|]
       *roof
@@ -52,7 +40,7 @@
   ::
   =/  poke-boon  [%x ~]  :: %kick
   =/  boon-path  /~bud/poke/~nec/flow/0/bak/1
-  =/  ack-path   /~nec/ack/~bud/flow/0/bak/1
+  =/  ack-path   /~nec/ack/~bud/flow/0/for/1
   =/  make-poke=[%make-poke spar:ames path]
     [%make-poke [~nec ack-path] boon-path]
   ~?  >  dbug  'send %poke-boon to ~nec'
@@ -60,7 +48,7 @@
     %:    mesa-check-take:v  ames.bud
         [~1111.1.1 0xdead.beef *roof]
     ::
-      [/flow/out/bak/~nec/0/0/1 ~[/poke] %mesa %boon `*`poke-boon]
+      [vane-wire ~[/poke] %mesa %boon `*`poke-boon]
     ::
       :~  [~[/poke] [%pass /~nec/0/0 %b %wait ~1111.1.1..00.00.30]]
         ::
