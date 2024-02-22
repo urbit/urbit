@@ -3814,7 +3814,6 @@
     =|  i=@ud
     |-(?:(=(1 (cut 0 [i 1] a)) i $(i +(i))))
   ::
-  ::
   +$  name  [p=ship q=rift r=path s=bloq t=num=@udF]
   +$  auth
     ::
