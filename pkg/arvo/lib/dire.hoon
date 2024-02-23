@@ -940,9 +940,7 @@
       ps=(unit packet-state)
   ==
 +$  packet-state
-  $:  nex=(each %auth @ud)
-      tot=@ud
-      los=state:verifier:lss
+  $:  los=state:verifier:lss
       fags=(list @)
   ==
 ::
@@ -1002,7 +1000,6 @@
       ?-    typ
           %auth
         ?.  ?|  ?=(~ ps.u.res)
-                ?=([%& %auth] nex.u.ps.u.res)
                 =(0 fag)
                 (gth tot.q.pac 4)
             ==
@@ -1011,16 +1008,11 @@
         ?>  (verify:crypt (recover-root:lss proof) aut.q.pac)
         ?~  state=(init:verifier:lss tot.q.pac proof)
           [~ ax]
-        =.  ps.u.res
-          ?~  ps.u.res
-            `[[%| 0] tot.q.pac u.state ~]
-          ps.u.res(los.u u.state)
         =.  p.ax
           %+  ~(put by p.ax)  her.p.pac
           =-  u.per(pit -)
           %+  ~(put by pit.u.per)  pat.p.pac
-          u.res
-        ::
+          u.res(ps `[u.state ~])
         ::  request next fragment
         ::
         =/  =pact:pact  [%peek p.pac(wan [%data 0])]
@@ -1063,13 +1055,13 @@
             %+  ~(put by p.ax)  her.p.pac
             =-  u.per(pit -)
             %+  ~(put by pit.u.per)  pat.p.pac
-            u.res(ps `[[%| 1] tot.q.pac u.state ~[dat.q.pac]])
-          =/  =pact:pact  [%peek p.pac(wan [%data 1])]
+            u.res(ps `[u.state ~[dat.q.pac]])
+          =/  =pact:pact  [%peek p.pac(wan [%data leaf.u.state])]
           [[[[/ ~] %give %send ~ p:(fax:plot (en:^pact pact))] ~] ax]
         ::  yes, we do have packet state already
         ::
         =*  ps  u.ps.u.res
-        ?.  &(?=(%| -.nex.ps) =(p.nex.ps fag))
+        ?.  =(leaf.los.ps fag)
           [~ ax]
         ::  extract the pair (if present) and verify
         ::
@@ -1082,7 +1074,6 @@
         ::
         =.  los.ps  u.state
         =.  fags.ps  [dat.q.pac fags.ps]
-        =.  p.nex.ps  +(p.nex.ps) :: XX nex and tot are redundant with los; remove them?
         =.  p.ax
           %+  ~(put by p.ax)  her.p.pac
           =-  u.per(pit -)
@@ -1090,7 +1081,7 @@
           u.res
         ::  is the message incomplete?
         ::
-        ?.  =(+(fag) tot.ps)
+        ?.  =(+(fag) leaves.los.ps)
           ::  request next fragment
           ::
           =/  =pact:pact  [%peek p.pac(wan [%data leaf.u.state])]
