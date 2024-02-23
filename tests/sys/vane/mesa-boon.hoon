@@ -42,7 +42,7 @@
   =/  boon-path  /~bud/poke/~nec/flow/0/bak/1
   =/  ack-path   /~nec/ack/~bud/flow/0/for/1
   =/  make-poke=[%make-poke spar:ames path]
-    [%make-poke [~nec ack-path] boon-path]
+    [%make-poke [~nec [%$ %x '1' %$ ack-path]] [%$ %x '1' %$ boon-path]]
   ~?  >  dbug  'send %poke-boon to ~nec'
   =^  moves-1  ames.bud
     %:    mesa-check-take:v  ames.bud

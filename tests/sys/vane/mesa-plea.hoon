@@ -11,7 +11,7 @@
   =/  poke-path  /~nec/poke/~bud/flow/0/for/1
   =/  ack-path   /~bud/ack/~nec/flow/0/bak/1
   =/  make-poke=[%make-poke spar:ames path]
-    [%make-poke [~bud ack-path] poke-path]
+    [%make-poke [~bud [%$ %x '1' %$ ack-path]] [%$ %x '1' %$ poke-path]]
   ::
   ~?  >  dbug  'send %poke-plea to ~bud'
   =^  moves-1  ames.nec
