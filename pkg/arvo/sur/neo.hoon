@@ -16,6 +16,13 @@
 ::
 ::  
 |%
+::  $stud: mark name
++$  stud
+  $@  @tas                                 ::  auth=urbit
+  $:  mark=@tas                            :: 
+      =name                                :: 
+  ==                                            ::
+::
 ++  pith
   |^  $+(pith ^pith)
   ++  en-tape
@@ -58,10 +65,14 @@
   [src=pith dest=pith val=*]
 +$  response
   [src=pith dest=pith status=response-status]
++$  diff
+  $%  [%poke p=*]
+      [%init p=*]
+  ==
 +$  update
   $:  =pith
       case=@ud
-      p=*
+      =diff
   ==
 +$  watch  (list update)
 ::
@@ -78,10 +89,10 @@
 ::
 +$  note
   %+  pair  pith
-  $%  [%make src=path init=(unit vase) =conf] :: todo: configuration values, init cannot be ^ if installing over
+  $%  [%make =stud init=(unit vase) =conf] :: todo: configuration values, init cannot be ^ if installing over
       [%poke val=*]
       [%tomb =case]
-      [%link from=pith src=path]
+      [%link from=pith src=stud]
   ==
 +$  poke
   (pair pith *)
@@ -98,7 +109,7 @@
   ==
 
 +$  move  (pair pith card)
-+$  span  (pair path firm)
++$  span  (pair stud firm)
 +$  icon
   [case=@ud state=vase history=(list *) migration=(list *)]
 +$  hall
@@ -106,9 +117,21 @@
       [%room room]
   ==
 :: subscription metadata
-+$  cell  ~
 +$  jail
-  [=icon =cell]
+  $+  jail
+  $~  ~
+  (map iota cell)
++$  cell
+  $+  cell
+  [case=@ud state=vase =span =jail]
++$  brig
+  $+  brig
+  $~  ~
+  (map pith cell)
++$  fleet
+  $+  fleet
+  $~  ~
+  (map ship brig)
 ::  $room: state of a shrub
 ::    
 ::    TODO: refactor for networking?

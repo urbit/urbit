@@ -62,7 +62,7 @@
       *(list card)
     ?.  ?=(%msg -.poke)
       *(list card)
-    [%neo (welp were.bowl ~[da/now.bowl]) %make (msg-loc bowl) `!>(msg.poke) ~]^~
+    [%neo (welp were.bowl ~[da/now.bowl]) %make %message `!>(msg.poke) ~]^~
   ++  reduce
     |=  pok=*
     ^-  vase

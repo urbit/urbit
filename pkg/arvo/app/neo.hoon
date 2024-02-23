@@ -4,7 +4,7 @@
 +$  pith   pith:neo
 +$  card  card:agent:gall
 +$  state-0
-  [%0 apex=hall:neo foreign=(map name:neo jail:neo)]
+  [%0 apex=hall:neo =fleet:neo husks=(jug stud:neo name:neo)]
 ++  is-parent
   |=  [parent=pith kid=pith]
   ^-  ?
@@ -92,10 +92,11 @@
 ++  emit  |=(card run(cards [+< cards]))
 ++  emil  |=(caz=(list card) run(cards (welp (flop caz) cards)))
 ++  sync-room
-  |=  =pith:neo
+  |=  [=pith:neo src=stud:neo]
   ^+  run
   =/  =wire  sync/(pout pith) 
   =/  =name:neo   (de-pith:name:neo pith)
+  =.  run  abet:~(init xeno name)
   (emit %pass wire %agent [ship.name dap.bowl] %watch [%sync %init (pout pith.name)])
 ::
 ++  take-arvo
@@ -103,6 +104,8 @@
   ^+  run
   ?:  ?=(%remote -.pith)
     !! :: abet:(~(take xeno pith) syn)
+  ?:  ?=([%husk @ *] pith)
+    (~(take husk i.t.pith) (pout t.t.pith) syn)
   abet:(~(take arvo [pith pith ~ ~ ~]) pith syn)
 ::
 ++  forward-poke
@@ -194,7 +197,7 @@
       %+  turn  ~(tap by ros)
       |=  [p=pith:neo =room:neo]
       ^-  update:neo
-      [p [case state]:icon.room]
+      [p [case %init q.state]:icon.room]
 
 
     ==
@@ -296,33 +299,96 @@
   =.  run  
     abet:(~(hear xeno [src.bowl pith.i.watch]) +.i.watch)
   $(watch t.watch)
+++  husk
+  |_  =stud:neo
+  ++  spur
+    ^-  path
+    ?>  ?=(@ stud)
+    /lib/[stud]/hoon
+  ++  resolve
+    ^-  path
+    ?>  ?=(@ stud)
+    %+  welp
+      /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)
+    spur
+  ++  firm-vase
+    .^(vase %ca resolve)
+  ++  firm
+    ^-  firm:neo
+    !<(=firm:neo firm-vase)
+  ++  wire
+    ?>  ?=(@ stud)
+    ^-  ^wire
+    /husk/[stud]
+  ++  watch
+    ^+  run
+    ?>  ?=(@ stud)
+    =/  =riff:clay
+      [q.byk.bowl `[%sing %a da/now.bowl spur]]
+    =/  wir  (snoc wire %build)
+    (emit %pass wir %arvo %c %warp our.bowl riff)
+  ++  start
+    |=  =name:neo
+    =/  new=?  =(~ (~(get ju husks) stud))
+    =.  husks  (~(put ju husks) stud name)
+    ?.  new
+      run
+    watch
+  ++  take
+    |=  [=(pole knot) syn=sign-arvo]
+    ^+  run
+    ?>  ?=([%build ~] pole)
+    ?>  ?=([%clay %writ *] syn)
+    ?~  p.syn
+      ~&  bad-take-husk/pole
+      =.  husks  (~(del in husks) stud)
+      run
+    ?:  =(~ (~(get ju husks) stud))
+      run
+    watch
+  ::
+  ++  stop
+    |=  =name:neo
+    =.  husks  (~(del ju husks) stud name)
+    run
+  --
 ++  xeno
   |_  =name:neo
   ++  xeno  .
   ++  abet  run
-  ++  get  `(unit jail:neo)`(~(get by foreign) name)
-  ++  got  (need get)
+  ++  brig  (~(gut by fleet) ship.name ~)
+  ++  cell  (~(gut by brig) pith.name *cell:neo)
+  ++  got   (~(got by (~(got by fleet) ship.name)) pith.name)
   ++  put
-    |=  =jail:neo
-    =.  foreign  (~(put by foreign) name jail)
+    |=  =cell:neo
+    =/  =brig:neo  brig
+    =.  brig  (~(put by brig) pith.name cell)
+    =.  fleet  (~(put by fleet) ship.name brig)
     xeno
   ++  wire  `^wire`xeno/(pout (en-pith:name:neo name))
   ++  dock  `^dock`[ship.name dap.bowl]
+  ++  init
+    |=  src=stud:neo
+    =.  run  (~(start husk src) name)
+    (put 0 *vase [src ~(firm husk src)] *jail:neo)
   ++  watch
     =/  =path  [%sync %init (pout pith.name)]
     =.  run
       (emit %pass wire %agent dock %watch path)
     xeno
   ++  hear
-    |=  [case=@ud sta=*]
+    |=  [case=@ud =diff:neo]
     ^+  xeno
-    xeno
-    :: =+  jal=get
-    :: =;  =jail:neo
-    :: (put jail)
-    ::?~  jal
-    :: [[case sta ~ ~] *cell:neo]
-    :: u.jal(case.icon case, state.icon sta) 
+    ~|  hear-name/name
+    =+  cel=got
+    =/  firm  ~(firm-vase husk p.span.cel)
+    =/  =vase
+      ?:  ?=(%poke -.diff)
+        =/  func  (slap firm !,(*hoon reduce:form))
+        !<(vase (slym func p.diff))
+      =/  func  (slap firm !,(*hoon state))
+      (slym func p.diff)
+    (put cel(case case, state vase))
   --
 ::
 ++  arvo
@@ -362,10 +428,10 @@
     $(arvo new-arvo, done (snoc done nex))
   ::
   ++  link
-    |=  [to=pith from=pith]
+    |=  [to=pith from=pith src=stud:neo]
     ^+  run
     =.  apex  (put-hall apex to exit/from)
-    (sync-room from)
+    (sync-room from src)
 
   ++  take
     |=  [=pith syn=sign-arvo]
@@ -390,7 +456,7 @@
           %poke  (poke [p +.q]:note)
           %link  
         :-  ~
-        =.  run  (link [p from.q]:note)
+        =.  run  (link [p from.q src.q]:note)
         arvo
       ==
     (ingest p.note caz)
@@ -423,10 +489,10 @@
     work
   ::
   ++  make
-    |=  [=pith src=path init=(unit vase) =conf:neo]
+    |=  [=pith src=stud:neo init=(unit vase) =conf:neo]
     =/  =name:neo  (de-pith:name:neo pith)
-    =+  .^(=firm=vase %ca src) :: TODO: case watching for upgrades, given path can't contain case
-    =+  !<(=firm:neo firm-vase)
+    =/  =firm:neo  ~(firm husk src)
+    =.  run        (~(start husk src) our.bowl pith)
     =/  =form:neo  form:firm
     =/  =span:neo  [src firm]
     =|  =yard:neo
@@ -489,7 +555,7 @@
       site
     ++  si-grab-watch
       ^-  watch:neo
-      [pith [case state]:icon.room]~
+      [pith [case %init q.state]:icon.room]~
     ++  si-sync-paths
       ^-  (list path)
       =-  ~(tap in -)
