@@ -1286,7 +1286,8 @@
           =+  ?~  dud  ~
               %-  %+  slog  leaf+"mesa: fragment crashed {<mote.u.dud>}"
                   tang.u.dud
-              ::  XX what if the crash is due to path validation?
+              ::  XX what if the crash is due to path validation
+              ::  and we can't infer the sequence number?
               ~
           =/  ack=(pole iota)  (ev-pave path.ack-spar)
           =/  pok=(pole iota)  (ev-pave path.pok-spar)
@@ -1328,7 +1329,7 @@
           ::
           =^  moves  ax
             =<  fo-abet
-            %.  [%sink mess.pok req dud]
+            %.  [%sink mess.pok req ?=(~ dud)]
             fo-call:(fo-abed:fo hen bone.pok^dire pe-chan:pe-core)
           (res-emil moves)
         ::
@@ -1602,6 +1603,8 @@
         ^-  ^path
         :~  reqr=(scot %p sndr)     path  rcvr=(scot %p rcvr)
             %flow  (scot %ud bone)
+        ::  %ack(s) and %naxplanation(s) are on the other side, and not bounded
+        ::  on out namespace
             ?:(=(%poke path) dire fo-flip-dire)
             (scot %ud seq)
         ==
@@ -1612,8 +1615,11 @@
         ::  %for: %plea(s) are always sent forward, %boon(s) %bak
         ::  both .to-vane and .dire are asserted when receiving the vane %ack
         ::  since they will always be %out and %bak
+        ::
         :~  %flow  were  dire
             rcvr=[(scot %p her)]
+          :: add rift to avoid dangling bones from previous eras
+          ::
             rift=[(scot %ud rift.peer-state)]
             bone=[(scot %ud bone)]
             seq=[(scot %ud seq)]
@@ -1624,7 +1630,7 @@
       ++  fo-call
         =>  |%
             +$  poke-task
-              $%  [%sink seq=@ud mess=mesa-message dud=(unit goof)]
+              $%  [%sink seq=@ud mess=mesa-message ok=?]
                   ::  XX remove %fo-planation from lull
                   mesa-message
               ==
@@ -1635,7 +1641,6 @@
         ::
         ?-  -.poke
           ?(%plea %boon %cork)  (fo-send-poke poke)
-          ::  XX responses: (n)acks
           ::
             %sink
           ~|  mess.poke
@@ -1643,15 +1648,9 @@
           ::  a %boon sinks on the forward receiver (from a backward flow)
           ::
           ?-  dire
-            %bak  ?>(?=(%plea -.mess.poke) (fo-sink-plea [seq +.mess dud]:poke))
-            %for  ?>(?=(%boon -.mess.poke) (fo-sink-boon [seq +.mess dud]:poke))
+            %bak  ?>(?=(%plea -.mess.poke) (fo-sink-plea [seq +.mess ok]:poke))
+            %for  ?>(?=(%boon -.mess.poke) (fo-sink-boon [seq +.mess ok]:poke))
           ==
-          ::  use the -.mess instead?
-          :: ?+  -.mess  !!
-          ::   %plea  (fo-sink-plea seq +.mess)
-          ::   %boon  (fo-sink-boon seq +.mess)
-          ::   ::  %cork  (fo-sink-cork seq +.mess)
-          :: ==
         ==
       ::
       ++  fo-take
@@ -1691,11 +1690,7 @@
         |=  poke=mesa-message
         ?:  |((fo-to-close poke) fo-corked)  fo-core
         ::
-        ::  XX can we (re)use a sequence number after poping a previous one
-        ::  off the queue?
-        ::
-        =/  next-load=@ud  ?~(next=(ram:fo-mop loads.state) 1 +(key.u.next))
-        =.  loads.state  (put:fo-mop loads.state next-load poke)
+        =.  loads.state  (put:fo-mop loads.state next-load.state poke)
         =;  core=_fo-core
           ::  XX sets one timer for all the messsages in the bone
           ::
@@ -1717,7 +1712,9 @@
         =^  [seq=@ud request=mesa-message]  loads  (pop:fo-mop loads)
         :: ?>  ?=(%plea -.request)  :: XX handle %cork
         :: ~!  +.state
-        =.  send-window.state  (dec send-window.state)
+        =:  send-window.state  (dec send-window.state)
+            next-load.state    +(next-load.state)
+          ==
         =/  paths=[spar path]
           [her^(fo-ack-path seq her our) (fo-pok-path seq our her)]
         =/  =wire  (fo-make-wire %int seq)
@@ -1730,12 +1727,14 @@
         loop
       ::
       ++  fo-sink-boon
-        |=  [seq=@ud message=* dud=(unit goof)] :: XX =error
+        |=  [seq=@ud message=* ok=?]
         ^+  fo-core
-        :: ?>  ?=(%incoming -.state)
         =/  =duct  (pe-got-duct:(pe-abed-her:pe hen her peer-state) bone)
+        =.  fo-core
+          %+  fo-emit  (pe-got-duct:(pe-abed-her:pe hen her peer-state) bone)
+          [%give %boon message]
         ::  XX handle a previous crash
-        :: =?  moves  ?=(^ dud)
+        :: =?  moves  !ok
         ::   ::  we previously crashed on this message; notify client vane
         ::   ::
         ::   %+  turn  moves
@@ -1746,20 +1745,18 @@
         ::  ack unconditionally
         ::
         =.  last-acked.state  +(last-acked.state)
-        %+  fo-emit  (pe-got-duct:(pe-abed-her:pe hen her peer-state) bone)
-        [%give %boon message]
+        fo-core
       ::
       ++  fo-sink-plea
-        |=  [seq=@ud =plea dud=(unit goof)]
+        |=  [seq=@ud =plea ok=?]
         ^+  fo-core
         ::  receiver of a %plea request
         ::
         ::  XX check that the message can be acked (not in future, or far back past)
         ::
-        ?^  dud
-          %.  dud
+        ?.  ok
+          %.  `*error
           fo-take-done:fo-core(pending-ack.state %.y)
-        :: add rift to avoid dangling bones from previous eras
         ::
         =/  =wire  (fo-make-wire %out seq)
         ?:  =(vane.plea %$)
@@ -1767,8 +1764,7 @@
           ::  mark flow as closing (in the flow-state?)
           ::  publish %ack (+fo-take-done)
           ::
-          fo-core  ::  XX handle pre-cork ships
-                   ::  XX maybe when checking path/protocol version
+          fo-core
         =.  fo-core
           ?+  vane.plea  ~|  %mesa-evil-vane^our^her^vane.plea  !!
             ?(%c %e %g %j)  (fo-emit hen %pass wire vane.plea plea/her^plea)
@@ -1783,8 +1779,7 @@
         :: ?>  ?=(%outbound -.state)
         ::  only handle acks for %poke that have been sent
         ::
-        =/  next-load=@ud  ?~(next=(ram:fo-mop loads.state) 1 key.u.next)
-        ?:  (gth seq next-load)
+        ?:  (gth seq next-load.state)
           :: XX log?
           fo-core
         ::  if all pokes have been processed no-op
