@@ -3895,9 +3895,7 @@
     ==
   ::
   +$  packet-state
-    $:  nex=(each %auth @ud)
-        tot=@ud
-        los=state:verifier:lss
+    $:  los=state:verifier:lss
         fags=(list @)
     ==
   ::

@@ -142,6 +142,22 @@
   |=  [=gall-gate =wire =duct =sign-arvo =roof]
   %.  [wire duct dud=~ sign-arvo]
   take:(gall-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
+::
+++  mesa-reply
+  |=  [=mesa-gate =duct pac=(list move:mesa-bunt) =roof]
+  ^-  [(list move:mesa-bunt) ^mesa-gate]
+  ~|  pac
+  ?>  ?=([[* [%give [%send *]]] ~] pac)
+  =/  mesa-core  (mesa-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
+  %-  call:mesa-core
+  [duct dud=~ %soft `task:mesa`[%hear *lane:pact:mesa q.gift.card.i.pac]]
+::
+++  mesa-expect-msg
+  |=  [pac=(list move:mesa-bunt) exp=@]
+  ?>  ?=([[* [%give [%response *]]] ~] pac)
+  ~!  pac
+  ?>  ?=([%page ^ ^ r=@] load.gift.card.i.pac)
+  (expect-eq !>(r.load.gift.card.i.pac) !>(exp))
 ::  +mesa-check-call: run gall task, assert produces expected-moves
 ::
 ++  mesa-check-call

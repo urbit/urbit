@@ -1240,42 +1240,49 @@
           [?:((gth tot.data 4) %auth %data) 0]
         [typ fag]:wan.name
       ::
-      ?:  =(0 fag)
-        ?-    typ
-            %auth
-          ?.  ?|  ?=(~ ps.u.res)
-                  ?=([%& %auth] nex.u.ps.u.res)
-              ==
-            ev-core
-          =/  proof=(list @ux)  (rip 8 dat.data)
-          ?>  (verify:crypt (recover-root:lss proof) aut.data)
-          ?~  state=(init:verifier:lss tot.data proof)
-            ev-core
-          =.  ps.u.res
-            ?~  ps.u.res
-              `[[%| 0] tot.data u.state ~]
-            ps.u.res(los.u u.state)
-          ::
-          ::  XX request next fragment
-          ::
-          !!
+      ?-    typ
+          %auth
+        ?.  ?|  ?=(~ ps.u.res)
+                =(0 fag)
+                (gth tot.data 4)
+            ==
+          ev-core
+        =/  proof=(list @ux)  (rip 8 dat.data)
+        ?>  (verify:crypt (recover-root:lss proof) aut.data)
+        ?~  state=(init:verifier:lss tot.data proof)
+          ev-core
+        =.  peers.ax
+          %+  ~(put by peers.ax)  her.name
+          =-  u.per(pit -)
+          %+  ~(put by pit.u.per)  pat.name
+          u.res(ps `[u.state ~])
         ::
-            %data
-          ?.  =(~ ps.u.res)
-            ev-core
+        ::  request next fragment
+        ::
+        =/  =pact:pact  [%peek name(wan [%data 0])]
+        (ev-emit unix-duct.ax %give %send ~ p:(fax:plot (en:^pact pact)))
+      ::
+          %data
+        ?>  =(13 boq.name)  :: non-standard
+        ::  do we have packet state already?
+        ::
+        ?~  ps.u.res
+          ::  no; then this should be the first fragment, and auth should be present
           ::
-          ?:  =(1 tot.data)    :: complete
-            ::  XX produce as message w/ auth tag
-            !!
-          ::
-          ?:  (gth tot.data 4) :: auth-packet-needed
-            ::  XX authenticate at message level with given root hash
-            ::  XX request-auth-packet
-            ::     by setting %auth in ps.request-state, regenerating next packet
-            !!
-          ::  proof is inlined
-          ::
+          ?>  =(0 fag)
           ?>  ?=([%0 *] aut.data)
+          ::  is this a standalone message?
+          ::
+          ?:  =(1 tot.data)
+            ?>  (verify:crypt (blake3 dat.data) p.aut.data)
+            =/  =spar:ames  [her.name pat.name]
+            =/  =auth:mess  p.aut.data
+            =/  =page  ;;(page (cue dat.data))
+            (ev-emit hen %give %response [%page [spar auth page]])
+          ::  no; then the proof should be inlined; verify it
+          ::  (otherwise, we should have received an %auth packet already)
+          ::
+          ?>  (lte tot.data 4)
           =/  proof=(list @ux)
             =>  aut.data
             ?>  ?=([%0 *] .)
@@ -1286,50 +1293,50 @@
             ev-core
           ?~  state=(verify-msg:verifier:lss u.state dat.data ~)
             ev-core
-          =.  ps.u.res  `[[%| 1] tot.data u.state ~[dat.data]]
+          ::  initialize packet state and request next fragment
+          ::
           =.  peers.ax
             %+  ~(put by peers.ax)  her.name
             =-  u.per(pit -)
             %+  ~(put by pit.u.per)  pat.name
-            u.res
-          ::
+            u.res(ps `[u.state ~[dat.data]])
+          =/  =pact:pact  [%peek name(wan [%data leaf.u.state])]
+          (ev-emit unix-duct.ax %give %send ~ p:(fax:plot (en:^pact pact)))
+        ::  yes, we do have packet state already
+        ::
+        =*  ps  u.ps.u.res
+        ?.  =(leaf.los.ps fag)
+          ev-core
+        ::  extract the pair (if present) and verify
+        ::
+        =/  pair=(unit [l=@ux r=@ux])
+          ?~  aut.data  ~
+          `?>(?=([%1 *] .) p):aut.data
+        ?~  state=(verify-msg:verifier:lss los.ps dat.data pair)
+          ev-core
+        ::  update packet state
+        ::
+        =.  los.ps  u.state
+        =.  fags.ps  [dat.data fags.ps]
+        =.  peers.ax
+          %+  ~(put by peers.ax)  her.name
+          =-  u.per(pit -)
+          %+  ~(put by pit.u.per)  pat.name
+          u.res
+        ::  is the message incomplete?
+        ::
+        ?.  =(+(fag) leaves.los.ps)
           ::  request next fragment
           ::
-          =/  =pact:pact  [%peek name(wan [%data 1])]
-          (ev-emit hen %give %send ~ p:(fax:plot (en:^pact pact)))
-        ==
-      ::
-      ?:  ?=(%auth typ)  :: auth packets for subsequent fragments are not requested
-        ev-core
-      ?~  ps.u.res
-        ev-core
-      =*  ps  u.ps.u.res
-      ?.  &(=(13 boq.name) ?=(%| -.nex.ps) =(p.nex.ps fag))
-        ev-core
-      ::
-      =/  pair=(unit [l=@ux r=@ux])
-        ?~  aut.data  ~
-        `?>(?=([%1 *] .) p):aut.data
-      ?~  state=(verify-msg:verifier:lss los.ps dat.data pair)
-        ev-core
-      =.  los.ps  u.state
-      =.  fags.ps  [dat.data fags.ps]
-      =.  p.nex.ps  +(p.nex.ps) :: XX nex and tot are redundant with los
-      =.  peers.ax
-        %+  ~(put by peers.ax)  her.name
-        =-  u.per(pit -)
-        %+  ~(put by pit.u.per)  pat.name
-        u.res
-      ::
-      ?:  =(+(fag) tot.ps)  :: complete
+          =/  =pact:pact  [%peek name(wan [%data leaf.u.state])]
+          (ev-emit unix-duct.ax %give %send ~ p:(fax:plot (en:^pact pact)))
+        ::  yield complete message
+        ::
         =/  =spar:ames  [her.name pat.name]
         =/  auth  [%| *@uxI] :: XX should be stored in ps?
         =/  =page  ;;(page (cue (rep 13 (flop fags.ps))))
-        (ev-emit [/ ~] %give %response [%page [spar auth page]]) :: XX duct?
-      ::  request next fragment
-      ::
-      =/  =pact:pact  [%peek name(wan [%data leaf.u.state])]
-      (ev-emit hen %give %send ~ p:(fax:plot (en:^pact pact)))
+        (ev-emit hen %give %response [%page [spar auth page]])
+      ==
     ::
     ++  ev-mess-page
       |=  [=spar auth:mess =gage:mess]
@@ -1490,7 +1497,7 @@
     ++  ev-make-mess
       |=  [p=spar q=(unit path)]
       ^+  ev-core
-      =/  per  (~(gut by peers.ax) ship.p *peer-state)
+      =/  per  (~(gut by peers.ax) ship.p *ship-state)
       ?>  ?=([%known *] per)  ::  XX alien agenda
       ?^  res=(~(get by pit.per) path.p)
         ?>  =(q pay.u.res)  ::  prevent overriding payload
@@ -1531,8 +1538,7 @@
           [[our rift.ax] [13 ~] u.q]      :: XX our rift
         [%poke nam man *data:pact]  :: XX resolve /init
       ::
-      :: (ev-emit unix-duct.ax %give %send ~ p:(fax:plot (en:^pact pact)))  :: XX decrement underflow
-      (ev-emit unix-duct.ax %give %send ~ blob=0)
+      (ev-emit unix-duct.ax %give %send ~ p:(fax:plot (en:^pact pact)))
     ::
     ++  ev-make-peek
       |=  p=spar
@@ -2178,10 +2184,11 @@
         =/  lss-proof  (build:lss (met 3 ser)^ser)  :: XX cache this
         =/  nam  [[our rif] [boq ?:(nit ~ [%data fag])] pat]
         =/  aut=auth:pact
-          ?:  =(0 fag)
+          ?:  &((lte wid 4) =(0 fag))
+            :: inline (or absent) proof
+            ::
             :+  %0  mes
-            ?:  =(1 wid)  ~  ::  single fragment
-            ?:  (gth wid 4)  `root.lss-proof
+            ?:  =(1 wid)  ~
             =/  tal  (tail proof.lss-proof)
             ?:  ?=(?(%1 %2) wid)
               ?>  ?=([* ~] tal)
@@ -2189,7 +2196,7 @@
             ?>  ?=([* * ~] tal)
             `[i i.t]:tal
           ::
-          ::  subsequent fragment; provide a pair of sibling hashes
+          :: full proof; provide a pair of sibling hashes
           ::
           ?:  (gte fag (lent pairs.lss-proof))  ~
           [%1 (snag fag pairs.lss-proof)]
