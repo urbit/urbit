@@ -189,7 +189,7 @@
 ::
 +|  %packets
 ::
-::    > :(add 8 336 1.128)
+::    > :(add 8 305 1.159)
 ::    1.472
 ::
 ++  pact
@@ -364,15 +364,18 @@
 ::
 ::  +name: encoded-path
 ::
-::  range:  { meta[1], her[2^1-4], rif[1-4], boq[1],    fag[1-4], typ[2],      pat[2^0-16] }
-::  max:    { meta[1], her[16],    rif[4],   boq[1],    fag[4],   typ[2],      pat[8.192] }
-::          { meta-byte, address,  rift,     bloq-size, fragment, path-length, path }
-::  actual: { meta[1], her[16],    rif[4],   boq[1],    fag[4],   typ[2],      pat[309]   }
+::  range:  { meta[1], her[2^1-4], rif[1-4], boq[1], fag[1-4], len[2], pat[2^0-16 - 1] }
+::  max:    {      1,      16,         4,        1,      4,        2,      65.535      }
+::  actual: {      1,      16,         4,        1,      4,        2,      277         }
 ::
-::  meta: { rank[2], rift[2], init[1], is-auth[1], fag[2] }
+::  XX increment path-len by one, exclude zero-length paths
 ::
-::    > :(add 1 16 4 2 309 4)
-::    336
+::    > :(add 1 16 4 1 4 2 277)
+::    305
+::
+::  for %poke:
+::    > (div (sub 305 (mul 2 (sub 305 277))) 2)
+::    124
 ::
 ++  name
   |%
@@ -428,12 +431,16 @@
 ::
 ::  +data: response data
 ::
-::  range:  { meta[1], tot[1-4], lut[0-1], aut[0-255], len[0-32], dat[0-2^252-1] }
-::  max:    { meta[1], tot[4],   lut[1],   aut[255],   len[32],   dat[2^252-1]   }
-::  actual: { meta[1], tot[4],   lut[1],   aut[96],    len[2],    dat[0-2^10-1]  }
+::  range:  { meta[1], tot[1-4], aum[32*0-2], aup[32*0-2], len-len[0-1], len[0-255], dat[0-2^252-1] }
+::  max:    {      1,      4,        64,          64,              1,        255,        2^252-1    }
+::  actual: {      1,      4,        64,          64,              0,        2,          1.024      }
 ::
-::    > :(add 1 4 1 96 2 1.024)
-::    1.128
+::  XX increment len-len by 3, recalculate max limits
+::  XX max len-len s/b 32 to align with max bloq size
+::  XX move tot after auth to avoid trailing zeros?
+::
+::    > :(add 1 4 64 64 2 1.024)
+::    1.159
 ::
 ++  data
   |%
