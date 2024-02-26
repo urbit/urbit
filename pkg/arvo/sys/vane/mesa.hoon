@@ -1048,11 +1048,11 @@
     +|  %message-flow-paths
     ::
     +$  res-mess-pith
-      $:  [%p sndr=@p]
+      $:  %flow
+          [%ud bone=@ud]
+          [%p sndr=@p]
           load=?(%poke %ack %nax)
           [%p rcvr=@p]
-          %flow
-          [%ud bone=@ud]
           dire=?(%for %bak)
           [%ud mess=@ud]
           ~
@@ -1279,7 +1279,9 @@
             =/  =spar:ames  [her.name pat.name]
             =/  =auth:mess  p.aut.data
             =/  =page  ;;(page (cue dat.data))
-            (ev-emit hen %give %response [%page [spar auth page]])
+            %-  ~(rep in for.u.res)
+            |=  [hen=duct c=_ev-core]
+            (ev-emit:c hen %give %response [%page [spar auth page]])
           ::  no; then the proof should be inlined; verify it
           ::  (otherwise, we should have received an %auth packet already)
           ::
@@ -1730,13 +1732,14 @@
       ::
       ++  fo-path
         |=  [seq=@ud path=?(%ack %poke %nax) dyad]
-        ::  %+  fo-en-spac  %publ  ::  XX %publ, %chum, %chut ?
         ^-  ^path
-        :~  vane=%$  care=%x  case='1'  desk=%$
-            reqr=(scot %p sndr)     path  rcvr=(scot %p rcvr)
+        ::  %+  fo-en-spac  %publ  ::  XX %publ, %chum, %shut ?
+        :~  %publ  %'0'  ::  XX
+            vane=%$  care=%x  case='1'  desk=%$
             %flow  (scot %ud bone)
+            reqr=(scot %p sndr)  path  rcvr=(scot %p rcvr)
         ::  %ack(s) and %naxplanation(s) are on the other side, and not bounded
-        ::  on out namespace
+        ::  on our namespace
             ?:(=(%poke path) dire fo-flip-dire)
             (scot %ud seq)
         ==
@@ -1989,6 +1992,7 @@
         ::
         =^  *  loads.state  (del:fo-mop loads.state seq)
         ::  XX check path.spar
+        ::  XX path.spar will be the full namespace path, peel off before?
         ::
         ?>  ?=([%message *] gage)
         =+  ;;(=error +.gage)  ::  XX
@@ -2188,7 +2192,7 @@
         ::  publisher-side, flow-level
         ::
             ::res-mess-pith:ev-res  ::  /[~sndr]/[load]/[~rcvr]/flow/[bone]/[dire]/[mess]
-            [sndr=@ load=?(%poke %ack %nax) rcvr=@ %flow bone=@ dire=?(%for %bak) mess=@ ~]
+            [%flow bone=@ sndr=@ load=?(%poke %ack %nax) rcvr=@ dire=?(%for %bak) mess=@ ~]
           ::  XX remove typed-paths
           =>  .(tyl `(pole iota)`(ev-pave tyl))
           ?>  ?=(res-mess-pith tyl)

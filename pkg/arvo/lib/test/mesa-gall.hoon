@@ -153,10 +153,10 @@
   [duct dud=~ %soft `task:mesa`[%hear *lane:pact:mesa q.gift.card.i.pac]]
 ::
 ++  mesa-expect-msg
-  |=  [pac=(list move:mesa-bunt) exp=@]
+  |=  [pac=(list move:mesa-bunt) exp=noun]
   ?>  ?=([[* [%give [%response *]]] ~] pac)
   ~|  pac
-  ?>  ?=([%page ^ ^ [@tas @]] load.gift.card.i.pac)
+  ?>  ?=([%page ^ ^ [@tas *]] load.gift.card.i.pac)
   (expect-eq !>(q.r.load.gift.card.i.pac) !>(exp))
 ::  +mesa-check-call: run gall task, assert produces expected-moves
 ::
