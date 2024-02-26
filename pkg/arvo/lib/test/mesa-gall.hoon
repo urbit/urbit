@@ -155,9 +155,9 @@
 ++  mesa-expect-msg
   |=  [pac=(list move:mesa-bunt) exp=@]
   ?>  ?=([[* [%give [%response *]]] ~] pac)
-  ~!  pac
-  ?>  ?=([%page ^ ^ r=@] load.gift.card.i.pac)
-  (expect-eq !>(r.load.gift.card.i.pac) !>(exp))
+  ~|  pac
+  ?>  ?=([%page ^ ^ [@tas @]] load.gift.card.i.pac)
+  (expect-eq !>(q.r.load.gift.card.i.pac) !>(exp))
 ::  +mesa-check-call: run gall task, assert produces expected-moves
 ::
 ++  mesa-check-call
@@ -196,12 +196,12 @@
 ++  mesa-check-take
   |=  $:  =mesa-gate
           [now=@da eny=@ =roof]
-          [=wire =duct sign=sign:mesa-bunt]  ::  XX gift => sign
+          [=wire =duct sign=sign:mesa-bunt]
           expected-moves=(list move:mesa-bunt)
       ==
   ^-  [tang ^mesa-gate]
   =/  mesa-core  (mesa-gate now eny roof)
-  =^  moves  mesa-gate  (take:mesa-core wire duct dud=~ sign)  ::  XX gift => sign
+  =^  moves  mesa-gate  (take:mesa-core wire duct dud=~ sign)
   [(expect-eq !>(expected-moves) !>(moves)) mesa-gate]
 ::
 ++  mesa-take

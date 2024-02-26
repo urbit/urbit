@@ -1,12 +1,26 @@
 ::  test %peek for %naxplanation
 ::
 /+  *test, v=test-mesa-gall
+=+  (nec-bud:v [nec=2 bud=3] nec=0 bud=0)
 |%
 ++  dbug  `?`&
+++  make-roof
+  |=  [pax=path val=cage]
+  ^-  roof
+  |=  [lyc=gang pov=path vis=view bem=beam]
+  ^-  (unit (unit cage))
+  ?.  &(=(s.bem pax) |(=(vis %x) =(vis [%g %x])))  [~ ~]
+  ``val
+::
+++  nec-scry-roof
+  scry:(ames.nec now=~1111.1.1 eny=`@`0xdead.beef *roof)
+::
+++  bud-scry-roof
+  scry:(ames.bud now=~1111.1.1 eny=`@`0xdead.beef *roof)
+::
 ++  test-watch
   %-  run-chain
   |.  :-  %|
-  =+  (nec-bud:v [nec=2 bud=3] nec=0 bud=0)
   =/  poke-plea   [%x /ge/pok [%0 %m noun/0]]
   =/  poke-path   /~nec/poke/~bud/flow/0/for/1
   =/  ack-path    /~bud/ack/~nec/flow/0/for/1
@@ -14,13 +28,14 @@
   =/  vane-wire   /flow/out/bak/~nec/0/0/1
   =/  make-poke=[%make-poke spar:ames path]
     [%make-poke [~bud ack-path] poke-path]
+  =/  bex-roof  (make-roof poke-path message+!>(plea/poke-plea))
   ::  preamble
   ::
   =^  *  ames.nec
-    (mesa-call:v ames.nec [~[/poke] [%plea ~bud poke-plea] *roof])
+    (mesa-call:v ames.nec [~[/poke] [%plea ~bud poke-plea] bex-roof])
   ::
   =^  *  ames.nec
-    (mesa-call:v ames.nec ~[ack-wire /poke] make-poke *roof)
+    (mesa-call:v ames.nec ~[ack-wire /poke] make-poke bex-roof)
   =/  message=mess:mesa
     [%poke [~bud ack-path] [~nec poke-path] auth=&+*@uxJ page=message/poke-plea]
   ::
@@ -30,14 +45,14 @@
       :^    *goof
           ~[//unix]
         [%mess lane=`*@ux message]
-      *roof
+      bex-roof
     ==
   ::
   =^  *  ames.nec
     %:    mesa-take:v  ames.nec  ack-wire
       ~[/poke]
       [%mesa %response %page ~bud^ack-path *(each @uxJ @uxI) `page`message/&]
-      *roof
+      bex-roof
     ==
   ::  start
   ::
