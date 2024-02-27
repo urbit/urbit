@@ -3,15 +3,25 @@
 /+  *test, v=test-mesa-gall
 |%
 ++  dbug  `?`&
+++  make-roof
+  |=  [pax=path val=cage]
+  ^-  roof
+  |=  [lyc=gang pov=path vis=view bem=beam]
+  ^-  (unit (unit cage))
+  ?.  &(=(s.bem pax) |(=(vis %x) =(vis [%$ %x]) =(vis [%g %x])))  [~ ~]
+  ``val
+::
 ++  test-watch
   %-  run-chain
   |.  :-  %|
   =+  (nec-bud:v [nec=2 bud=3] nec=0 bud=0)
   =/  poke-plea  [%g /ge/pok [%0 %m noun/0]]
-  =/  poke-path  /~nec/poke/~bud/flow/0/for/1
-  =/  ack-path   /~bud/ack/~nec/flow/0/bak/1
-  =/  make-poke=[%make-poke spar:ames path]
-    [%make-poke [~bud [%$ %x '1' %$ ack-path]] [%$ %x '1' %$ poke-path]]
+  =/  poke-path  /flow/0/~nec/poke/~bud/for/1
+  =/  ack-path   /flow/0/~bud/ack/~nec/bak/1
+  =/  ack-wire   /flow/int/for/~bud/0/0/1
+  =/  vane-wire  /flow/out/bak/~nec/0/0/1
+  =/  make-poke=[%make-poke =spar:ames =path]
+    [%make-poke [~bud ack-path] poke-path]
   ::
   ~?  >  dbug  'send %poke-plea to ~bud'
   =^  moves-1  ames.nec
@@ -23,19 +33,28 @@
       :~  [~[/poke] [%pass /~bud/0/0 %b %wait ~1111.1.1..00.00.30]]
         ::
           :-  ~[/poke]
-          [%pass /flow/int/for/~bud/0/0/1 %m make-poke]
+          [%pass ack-wire %m make-poke]
       ==
     ==
   ::
+  =/  ack-full-path  (weld /mess/0//publ/0//x/1/[%$] ack-path)
+  =/  pok-full-path  (weld /mess/0//publ/0//x/1/[%$] poke-path)
   :-  moves-1  |.  :-  %|
   ~?  >  dbug  '~nec makes $pact and sends it'
+  =/  poke-roof  (make-roof /flow/0/~nec/poke/~bud/for/1 message+!>(poke-plea))
   =^  moves-2  ames.nec
     %:    mesa-check-call:v  ames.nec
-        [~1111.1.1 0xdead.beef *roof]
+        [~1111.1.1 0xdead.beef poke-roof]
     ::
       [~[/flow/int/for/~bud/0/0/1 /poke] make-poke]
     ::
-      :~  [~[//unix] %give %send lanes=~ blob=0] :: XX TODO
+      =/  blob=@
+        %:   mesa-make-pact:v  ames.nec
+          ~bud^ack-full-path
+          poke-path
+          rift=0
+        ==
+      :~  [~[//unix] %give %send lanes=~ blob]
       ==
     ==
   ::
@@ -58,7 +77,7 @@
       [%mess lane=`*@ux message]
     ::
       :~  :-  ~[//unix]
-          [%pass /flow/out/bak/~nec/0/0/1 %g %plea ~nec poke-plea]
+          [%pass vane-wire %g %plea ~nec poke-plea]
       ==
     ==
   ::
@@ -82,7 +101,7 @@
   =^  moves-5  ames.bud
     %:  mesa-check-take:v  ames.bud
       [~1111.1.2 0xbeef.dead *roof]
-      :+  /flow/out/bak/~nec/0/0/1
+      :+  vane-wire
         ~[//unix]
       [%gall %done ~]
     ::
@@ -120,11 +139,10 @@
   ::
   :-  moves-7  |.  :-  %|
   ~?  >  dbug  '~nec hears %ack from ~bud, gives to gall'
-  ~&  ~bud^ack-path
   =^  moves-8  ames.nec
     %:    mesa-check-take:v  ames.nec
         [~1111.1.1 0xdead.beef *roof]
-      :+  /flow/int/for/~bud/0/0/1
+      :+  ack-wire
         ~[/poke]
       [%mesa %response %page ~bud^ack-path *(each @uxJ @uxI) `page`message/|]
     ::

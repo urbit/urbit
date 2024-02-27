@@ -804,9 +804,9 @@
         ~
       `[[van car]:pat [her des.pat u.cas] pur.pat]  :: XX
     ::
-    ++  parse-path  |=(@ *(unit path))
-    ++  blake3  |=(* *@)
-    ++  get-key-for  |=([=ship =life] *@)
+    ++  parse-path         |=(@ *(unit path))
+    ++  blake3             |=(* *@)
+    ++  get-key-for        |=  [=ship =life]  *@
     ++  get-group-key-for  |=(@ud *(unit @))
     ++  crypt
       |%
@@ -816,6 +816,8 @@
       ++  encrypt  |=(@ @)
       ++  decrypt  |=(@ *(unit @))
       --
+    ::
+    ++  jim  |=(n=* ~>(%memo./mesa/jam (jam n)))
     --
 ::  vane types  ::  XX move to lull.hoon
 ::
@@ -1513,33 +1515,20 @@
       ::
       ?:  ?&  ?=(^ q)
               =/  res=(unit (unit cage))
-                (rof ~ /mesa %x [our %$ ud+1] u.q)
+                ::(rof ~ /mesa %x [our %$ ud+1] u.q)
+                (inner-scry ~ /mesa %x [our %$ ud+1] u.q)
               !?=([~ ~ %message *] res)
           ==
         !! :: XX wat do?
       =|  new=request-state
-      =.  for.new  (~(put in for.new) hen)
-      =.  pay.new  q
+      =.  for.new   (~(put in for.new) hen)
+      =.  pay.new   q
+      =.  path.p    (weld /mess/0//publ/0//x/1/[%$] path.p) ::  XX right envelope
       =.  peers.ax  (~(put by peers.ax) ship.p per(pit (~(put by pit.per) path.p new)))
       ::
       ::  XX construct and emit initial request packet
       ::
-      =/  =pact:pact
-        =/  nam
-          [[ship.p rift.per] [13 ~] path.p]
-        ?~  q
-          [%peek nam]
-        ::  XX if path will be too long, put in [tmp] and use that path
-        ::  =/  has  (shax u.u.res)
-        ::  =.  tmpeers.ax  (~(put by tmpeers.ax) has [%some-envelope original-path u.u.res])
-        ::  //ax/[$ship]//1/temp/[hash]
-        =/  man
-          [[our rift.ax] [13 ~] u.q]
-        =+  ;;  payload=mesa-message
-            =<  q.q  %-  need  %-  need
-            (rof ~ /mesa %x [our %$ ud+1] (need q))
-        ::  [%poke nam man *data:pact]  :: XX resolve /init
-        [%poke nam man tot=1 *auth:pact (jam payload)]  :: XX  > 1 fragment payload?
+      =/  =pact:pact  (ev-make-pact p q rift.per)
       ::
       (ev-emit unix-duct.ax %give %send ~ p:(fax:plot (en:^pact pact)))
     ::
@@ -1550,6 +1539,25 @@
     ++  ev-make-poke
       |=  [p=spar q=path]
       (ev-make-mess p `q)
+    ::
+    ++  ev-make-pact
+      |=  [p=spar q=(unit path) =per=rift]
+      ^-  pact:pact
+      =/  nam
+        [[ship.p per-rift] [13 ~] path.p]
+      ?~  q
+        [%peek nam]
+      ::  XX if path will be too long, put in [tmp] and use that path
+      ::  =/  has  (shax u.u.res)
+      ::  =.  tmpeers.ax  (~(put by tmpeers.ax) has [%some-envelope original-path u.u.res])
+      ::  //ax/[$ship]//1/temp/[hash]
+      =+  ;;  payload=mesa-message
+          =<  q.q  %-  need  %-  need
+          (inner-scry ~ /mesa %x [our %$ ud+1] (need q))
+      =/  man
+        [[our rift.ax] [13 ~] (weld /mess/0//publ/0//x/1/[%$] u.q)]  ::  XX right envelope
+      ::  [%poke nam man *data:pact]  :: XX resolve /init
+      [%poke nam man tot=1 *auth:pact (jim payload)]  :: XX  > 1 fragment payload?
     ::
     +|  %internals
     ::  +pe: per-peer processing
@@ -1734,8 +1742,11 @@
         |=  [seq=@ud path=?(%ack %poke %nax) dyad]
         ^-  ^path
         ::  %+  fo-en-spac  %publ  ::  XX %publ, %chum, %shut ?
-        :~  %publ  %'0'  ::  XX
-            vane=%$  care=%x  case='1'  desk=%$
+        :~  ::  %mess  %'0'
+            :: %pact  (scot %ud packet-size)  %etch
+            :: %init  ::  %pure  %data  %'0'  :: XX  frag=0
+            :: %publ  %'0'  ::  XX
+            ::vane=%$  care=%x  case='1'  desk=%$
             %flow  (scot %ud bone)
             reqr=(scot %p sndr)  path  rcvr=(scot %p rcvr)
         ::  %ack(s) and %naxplanation(s) are on the other side, and not bounded

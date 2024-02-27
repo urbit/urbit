@@ -33,14 +33,14 @@
   ::
   =/  make-poke=[%make-poke spar:ames path]
     [%make-poke [~bud ack-path] poke-path]
-  =/  bex-roof  (make-roof poke-path message+!>(plea/poke-plea))
+  =/  plea-roof  (make-roof poke-path message+!>(plea/poke-plea))
   ::  preamble
   ::
   =^  *  ames.nec
-    (mesa-call:v ames.nec [~[/poke] [%plea ~bud poke-plea] bex-roof])
+    (mesa-call:v ames.nec [~[/poke] [%plea ~bud poke-plea] plea-roof])
   ::
   =^  *  ames.nec
-    (mesa-call:v ames.nec ~[ack-wire /poke] make-poke bex-roof)
+    (mesa-call:v ames.nec ~[ack-wire /poke] make-poke plea-roof)
   ::
   =/  message=mess:mesa
     [%poke [~bud ack-path] [~nec poke-path] auth=&+*@uxJ page=message/poke-plea]
@@ -51,12 +51,14 @@
       :^    *goof
           ~[//unix]
         [%mess lane=`*@ux message]
-      bex-roof
+      plea-roof
     ==
   ::
-  =/  make-peek  [%make-peek ~bud (weld /publ/0//x/1/[%$] nax-path)]
+  =/  full-nax-path  (weld /mess/0//publ/0//x/1/[%$] nax-path)
+  =/  make-peek  [%make-peek ~bud nax-path]
+  ~?  >  dbug  'produce %make-peek request'
   =^  error-moves  ames.nec
-    %:    mesa-check-take:v  ames.nec  [now=~1111.1.1 eny=`@`0xdead.beef bex-roof]
+    %:    mesa-check-take:v  ames.nec  [now=~1111.1.1 eny=`@`0xdead.beef plea-roof]
       :+  ack-wire  ~[/poke]
       [%mesa %response %page ~bud^ack-path *(each @uxJ @uxI) `page`message/error=&]
     ::
@@ -82,14 +84,14 @@
   ~?  >  dbug  '~nec starts %peeking for the naxplanation on ~bud'
   ::
   =/  naxplanation=*  *error:mesa
-  =/  bex-roof        (make-roof nax-path message+!>(naxplanation))
-  :::
+  =/  nax-roof        (make-roof nax-path message+!>(naxplanation))
+  ::
   =^  moves-x  ames.nec
-    (mesa-call:v ames.nec [~[nax-wire /poke] make-peek bex-roof])
+    (mesa-call:v ames.nec [~[nax-wire /poke] make-peek nax-roof])
   ~?  >  dbug  '~bud gives ~nec the first fragment'
-  =^  moves-y  ames.bud     (mesa-reply:v ames.bud ~[/unix-pact] moves-x bex-roof)
+  =^  moves-y  ames.bud     (mesa-reply:v ames.bud ~[/unix-pact] moves-x nax-roof)
   ~?  >  dbug  '~nec hears complete message'
-  =^  moves-page  ames.nec  (mesa-reply:v ames.nec ~[/unix-pact] moves-y bex-roof)
+  =^  moves-page  ames.nec  (mesa-reply:v ames.nec ~[/unix-pact] moves-y nax-roof)
   ::
   :-  (mesa-expect-msg:v moves-page naxplanation)  |.  :-  %|
   ~?  >  dbug  '~nec takes %naxplanation from ~bud, given by the packet layer'
@@ -97,9 +99,7 @@
     %:    mesa-check-take:v  ames.nec
         [~1111.1.1 0xdead.beef *roof]
       ?>  ?=([[^ [%give %response *]] *] moves-page)
-      :+  wire=i.duct.i.moves-page
-        duct=t.duct.i.moves-page
-      [%mesa gift.card.i.moves-page]
+      [wire=i.duct duct=t.duct %mesa gift.card]:i.moves-page
     ::
       :~  :-  ~[/poke]
           [%give %done `*goof]
