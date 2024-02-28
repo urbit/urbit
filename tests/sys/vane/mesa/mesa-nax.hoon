@@ -1,7 +1,8 @@
 ::  test %peek for %naxplanation
 ::
 /+  *test, v=test-mesa-gall
-=+  (nec-bud:v [nec=2 bud=3] nec=0 bud=0)
+=+  [nec-life=2 bud-life=3]
+=+  (nec-bud:v [nec-life bud-life] nec=0 bud=0)
 |%
 ++  dbug  `?`&
 ++  make-roof
@@ -31,8 +32,8 @@
   =/  vane-wire  /flow/out/bak/~nec/0/0/1
   =/  nax-wire   /flow/ext/for/~bud/0/0/1
   ::
-  =/  make-poke=[%make-poke spar:ames path]
-    [%make-poke [~bud ack-path] poke-path]
+  =/  make-poke=[%make-poke namespace:mesa spar:ames path]
+    [%make-poke %publ^life=bud-life [~bud ack-path] poke-path]
   =/  plea-roof  (make-roof poke-path message+!>(plea/poke-plea))
   ::  preamble
   ::
@@ -54,8 +55,8 @@
       plea-roof
     ==
   ::
-  =/  full-nax-path  (weld /mess/0//publ/0//x/1/[%$] nax-path)
-  =/  make-peek  [%make-peek ~bud nax-path]
+  =/  full-nax-path  (weld /mess/0//publ/[(scot %ud nec-life)]//x/1/[%$] nax-path)
+  =/  make-peek  [%make-peek %publ^life=bud-life ~bud nax-path]
   ~?  >  dbug  'produce %make-peek request'
   =^  error-moves  ames.nec
     %:    mesa-check-take:v  ames.nec  [now=~1111.1.1 eny=`@`0xdead.beef plea-roof]

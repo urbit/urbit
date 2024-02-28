@@ -878,10 +878,8 @@
     +$  note
       $~  [%b %wait *@da]
       $%  $:  %m
-              :: $>(?(%deep %keen) task:ames)
-          $%  [%make-peek p=spar]           :: initiate %peek request
-              [%make-poke p=spar q=path]    :: initiate %poke request
-          ==  ==
+              $>(?(%make-peek %make-poke) task:mesa)
+          ==
           $:  %b
               $>(?(%wait %rest) task:behn)
           ==
@@ -909,14 +907,11 @@
     ::  to %lull
     +$  sign
       $%  ::[%ames %response $>(%page mess)]   :: produce a response message
-          ::sign-arvo
           [%mesa gift]
           sign-arvo
       ==
     ::
     +$  peer-task  ,*        ::  XX fill out
-    ::
-    +$  spac  ?(%pact %publ %mess %chum %shut)  :: XX remove
     ::
     +$  axle
       $:  peers=(map ship ship-state)
@@ -1199,7 +1194,6 @@
       ::  XX construct and emit initial request packet
       ::
       ev-core
-
     ::
     +|  %response-flow
     ::
@@ -1500,7 +1494,7 @@
     +|  %messages
     ::
     ++  ev-make-mess
-      |=  [p=spar q=(unit path)]
+      |=  [p=spar q=(unit path) r=namespace]
       ^+  ev-core
       =/  per  (~(gut by peers.ax) ship.p *ship-state)
       ?>  ?=([%known *] per)  ::  XX alien agenda
@@ -1511,37 +1505,33 @@
         =-  per(pit -)
         %+  ~(put by pit.per)  path.p
         u.res(for (~(put in for.u.res) hen))
-      ::  XX resolve payload path if present to validate
       ::
       ?:  ?&  ?=(^ q)
               =/  res=(unit (unit cage))
                 ::(rof ~ /mesa %x [our %$ ud+1] u.q)
-                (inner-scry ~ /mesa %x [our %$ ud+1] u.q)
+                (inner-scry ~ /mesa %x [our %$ ud+1] u.q)  ::  XX (rof ...)
               !?=([~ ~ %message *] res)
           ==
         !! :: XX wat do?
       =|  new=request-state
       =.  for.new   (~(put in for.new) hen)
       =.  pay.new   q
-      =.  path.p    (weld /mess/0//publ/0//x/1/[%$] path.p) ::  XX right envelope
+      =.  path.p    (ev-mess-spac r pax/path.p)
       =.  peers.ax  (~(put by peers.ax) ship.p per(pit (~(put by pit.per) path.p new)))
       ::
-      ::  XX construct and emit initial request packet
-      ::
-      =/  =pact:pact  (ev-make-pact p q rift.per)
-      ::
+      =/  =pact:pact  (ev-make-pact p q rift.per r)
       (ev-emit unix-duct.ax %give %send ~ p:(fax:plot (en:^pact pact)))
     ::
     ++  ev-make-peek
-      |=  p=spar
-      (ev-make-mess p ~)
+      |=  [spac=namespace p=spar]
+      (ev-make-mess p ~ spac)
     ::
     ++  ev-make-poke
-      |=  [p=spar q=path]
-      (ev-make-mess p `q)
+      |=  [spac=namespace p=spar q=path]
+      (ev-make-mess p `q spac)
     ::
     ++  ev-make-pact
-      |=  [p=spar q=(unit path) =per=rift]
+      |=  [p=spar q=(unit path) =per=rift spac=namespace]
       ^-  pact:pact
       =/  nam
         [[ship.p per-rift] [13 ~] path.p]
@@ -1554,14 +1544,32 @@
       ::  =.  tmpeers.ax  (~(put by tmpeers.ax) has [%some-envelope original-path u.u.res])
       ::  //ax/[$ship]//1/temp/[hash]
       =/  man=name:pact  [[our rift.ax] [13 ~] u.q]
-      =.  pat.man  (weld /publ/0//x/1/[%$] pat.man)    ::  XX fix namespace
+      =?  spac  ?=(?(%publ %chum) -.spac)
+        ?>  ?=(%publ -.spac)  :: XX chum
+        spac(life life.ax)
+      =.  pat.man  (ev-mess-spac spac pax/pat.man)    ::  XX fix namespace
       :^  %poke  nam  man
       =;  page=pact:pact  ?>(?=(%page -.page) q.page)
       %-  parse-packet
       =<  ;;(@ q.q)  %-  need  %-  need
-      (inner-scry ~ /ames %x (name-to-beam man))
+      (inner-scry ~ /ames %x (name-to-beam man))  ::  XX rof
     ::
-    +|  %internals
+    ++  ev-mess-spac
+      |=  [spac=namespace path=$%([%cyf cyf=@] [%pax pax=path])]
+      ^-  ^path
+      ::  :^  %mess  (scot %ud rift.ax)  %$  ::  XX
+      ?-  -.spac
+        %publ  ^-  ^path  %+  weld
+                 /publ/[(scot %ud life.spac)]//x/1
+               ^-  ^path  [%$ ?>(?=(%pax -.path) pax.path)]
+        %shut  ^-  ^path  %+  weld
+                 /shut/[(scot %ud kid.spac)]
+               /[?>(?=(%cyf -.path) (scot %ud cyf.path))]
+        %chum  ^-  ^path  %+  weld  =,  spac
+                 /chum/[(scot %ud life)]/[(scot %p her)]/(scot %ud kid)
+               /[?>(?=(%cyf -.path) (scot %ud cyf.path))]
+      ==
+    ::
     ::  +pe: per-peer processing
     ::
     ++  pe
@@ -1652,7 +1660,7 @@
       +|  %tasks
       ::
       ++  pe-call
-        |=  [=spac task=peer-task]  ::  XX any namespace task?
+        |=  [spac=* task=peer-task]  ::  XX any namespace task?
         ^+  pe-core
         =^  moves  peer-state  ::  XX ... save in state
           [~ peer-state]
@@ -1871,7 +1879,8 @@
         ::  when getting the %response $page with the %ack (tagged with %int)
         ::  and similarly for %naxplanation payloads (tagged with %ext)
         ::
-        =.  fo-core  (fo-emit hen %pass wire %m make-poke/paths)
+        =/  spac=namespace  publ/life.peer-state  ::  XX %chum
+        =.  fo-core  (fo-emit hen %pass wire %m make-poke/[spac paths])
         loop
       ::
       ++  fo-sink-boon
@@ -1959,7 +1968,8 @@
         ::  when getting the %response $page with or %naxplanation payloads
         ::  (tagged with %ext)
         ::
-        (fo-emit hen %pass wire %m make-peek/her^path)
+        =/  spac=namespace  publ/life.peer-state  ::  XX %chum
+        (fo-emit hen %pass wire %m make-peek/[spac her^path])
       ::
       ++  fo-take-done
         |=  error=(unit error)
@@ -2032,7 +2042,7 @@
             [%mess ryf=@ res=*]
           =/  ryf  (slaw %ud ryf.tyl)
           ?~  ryf  [~ ~]
-          ?.  =(*rift u.ryf)      :: XX our rift, XX unauthenticated
+          ?.  =(rift.ax u.ryf)      ::  XX unauthenticated
             ~
           =*  rif  u.ryf
           =/  nex
@@ -2145,7 +2155,7 @@
             [%publ lyf=@ pat=*]
           =/  lyf  (slaw %ud lyf.tyl)
           ?~  lyf  [~ ~]
-          ?.  =(u.lyf *life) :: XX our life
+          ?.  =(u.lyf life.ax)
             ~
           ?~  inn=(inner-path-to-beam our pat.tyl)
             [~ ~]
@@ -2176,7 +2186,7 @@
             ~
           =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
           =/  ful  (en-beam bem)
-          =/  ryf  *rift :: XX our rift
+          =/  ryf  rift.ax
           =/  ser  (jam gag)
           =/  rot  (blake3 ser)
           ``[%message !>([%hmac (hmac:crypt ryf ful rot) ser])]
@@ -2197,11 +2207,10 @@
             ~
           =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
           =/  ful  (en-beam bem)
-          =/  ryf  *rift :: XX our rift
+          =/  ryf  rift.ax
           =/  ser  (jam gag)
           =/  rot  (blake3 ser)
           ``[%message !>([%sign (sign:crypt ryf ful rot) ser])]
-        ::
         ::  publisher-side, flow-level
         ::
             ::res-mess-pith:ev-res  ::  /[~sndr]/[load]/[~rcvr]/flow/[bone]/[dire]/[mess]
@@ -2272,8 +2281,8 @@
       %keen  ev-abet:(~(ev-call ev-core hen) %keen +.task)
     ::  from internal %ames request
     ::
-      %make-peek  ev-abet:(~(ev-make-peek ev-core hen) p.task)
-      %make-poke  ev-abet:(~(ev-make-poke ev-core hen) p.task q.task)
+      %make-peek  ev-abet:(~(ev-make-peek ev-core hen) [spac p]:task)
+      %make-poke  ev-abet:(~(ev-make-poke ev-core hen) [spac p q]:task)
     ::  XX
     ::
       %hear  ev-abet:(~(ev-call ev-core hen) %hear [p q]:task)  ::  XX dud

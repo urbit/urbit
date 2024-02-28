@@ -3808,7 +3808,7 @@
         `state(parent-stack t.parent-stack.state)
       --
     --
-
+  ::
   ++  ctz
     |=  a=@
     ?:  =(0 a)  0
@@ -3850,16 +3850,20 @@
         [%peek p=spar]
         [%poke p=spar q=sage]
     ==
+  +$  namespace
+    $%  [%publ =life]
+        [%chum =life her=ship kid=@]
+        [%shut kid=@]
+    ==
   +$  task
-    $+  mesa-task
-    :: $~  [%vega ~]                                       ::
+    $+  mesa-task                                ::
     $%  [%hear p=lane q=@]            :: receive a packet
         [%mess p=(unit lane) q=mess]  :: receive a message
-        [%make-poke p=spar q=path]    :: initiate %poke request
-        [%make-peek p=spar]           :: initiate %peek request
+        [%make-poke spac=namespace p=spar q=path]  :: initiate %poke request
+        [%make-peek spac=namespace p=spar]         :: initiate %peek request
+    ::
         $>(?(%plea %born %trim %vega %init) vane-task)
         $>(%cork task:ames)
-    ::
         [%keen sec=(unit [idx=@ key=@]) spar]
     ::
     ==

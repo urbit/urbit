@@ -160,12 +160,10 @@
   (expect-eq !>(q.r.load.gift.card.i.pac) !>(exp))
 ::
 ++  mesa-make-pact
-  |=  $:  =mesa-gate
-          =spar:ames  =path  =per=rift
-      ==
+  |=  [=mesa-gate =spar:ames =path =per=rift spac=namespace:mesa-bunt]
   ^-  @
   =/  mesa-core  (mesa-gate now=~1111.1.1 eny=`@`0xdead.beef *roof)
-  =/  =pact:pact:mesa-bunt  (ev-make-pact:mesa-core spar `path per-rift)
+  =/  =pact:pact:mesa-bunt  (ev-make-pact:mesa-core spar `path per-rift spac)
   p:(fax:plot:mesa-bunt (en:pact:mesa-bunt pact))
 ::  +mesa-check-call: run gall task, assert produces expected-moves
 ::
