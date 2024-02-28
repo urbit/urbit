@@ -8,6 +8,7 @@
   ^-  roof
   |=  [lyc=gang pov=path vis=view bem=beam]
   ^-  (unit (unit cage))
+  ~&  s.bem^pax
   ?.  &(=(s.bem pax) |(=(vis %x) =(vis [%$ %x]) =(vis [%g %x])))  [~ ~]
   ``val
 ::

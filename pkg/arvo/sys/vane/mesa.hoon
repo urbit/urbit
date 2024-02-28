@@ -1548,16 +1548,18 @@
       ?~  q
         [%peek nam]
       ::  XX if path will be too long, put in [tmp] and use that path
+      :: (mes:plot:d (en:name:d [[her=~nec rif=40] [boq=0 wan=~] pat=['c~_h' ~]]))
+      :: [bloq=q=3 step=r=12]
       ::  =/  has  (shax u.u.res)
       ::  =.  tmpeers.ax  (~(put by tmpeers.ax) has [%some-envelope original-path u.u.res])
       ::  //ax/[$ship]//1/temp/[hash]
-      =+  ;;  payload=mesa-message
-          =<  q.q  %-  need  %-  need
-          (inner-scry ~ /mesa %x [our %$ ud+1] (need q))
-      =/  man
-        [[our rift.ax] [13 ~] (weld /mess/0//publ/0//x/1/[%$] u.q)]  ::  XX right envelope
-      ::  [%poke nam man *data:pact]  :: XX resolve /init
-      [%poke nam man tot=1 *auth:pact (jim payload)]  :: XX  > 1 fragment payload?
+      =/  man=name:pact  [[our rift.ax] [13 ~] u.q]
+      =.  pat.man  (weld /publ/0//x/1/[%$] pat.man)    ::  XX fix namespace
+      :^  %poke  nam  man
+      =;  page=pact:pact  ?>(?=(%page -.page) q.page)
+      %-  parse-packet
+      =<  ;;(@ q.q)  %-  need  %-  need
+      (inner-scry ~ /ames %x (name-to-beam man))
     ::
     +|  %internals
     ::  +pe: per-peer processing
@@ -1814,7 +1816,7 @@
                         %int  (fo-take-ack +.sign)
         ==            ==
       ::
-      ++  fo-read
+      ++  fo-peek
         |=  [load=?(%poke %ack %nax) mess=@ud]
         ^-  (unit page)
         ::  XX assert flow direction?
@@ -2005,8 +2007,8 @@
         ::  XX check path.spar
         ::  XX path.spar will be the full namespace path, peel off before?
         ::
-        ?>  ?=([%message *] gage)
-        =+  ;;(=error +.gage)  ::  XX
+        ?>  ?=([%message %nax *] gage)
+        =+  ;;(=error +>.gage)  ::  XX
         %+  fo-emit  (pe-got-duct:(pe-abed-her:pe hen her peer-state) bone)
         [%give %done `error]
       :: +|  %internals
@@ -2147,11 +2149,11 @@
             ~
           ?~  inn=(inner-path-to-beam our pat.tyl)
             [~ ~]
-          ?~  res=(rof ~ /ames/publ vew.u.inn bem.u.inn)
+          ?~  res=(inner-scry ~ /ames/publ %x bem.u.inn)  :: XX back to roof
             ~
           =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
           =/  ful  (en-beam bem)
-          =/  ryf  *rift :: XX our rift
+          =/  ryf  rift.ax
           =/  ser  (jam gag)
           =/  rot  (blake3 ser)
           ``[%message !>([%sign (sign:crypt ryf ful rot) ser])]
@@ -2163,7 +2165,7 @@
           =/  cyf  (slaw %uv cyf.tyl)
           ?:  |(?=(~ lyf) ?=(~ her) ?=(~ hyf) ?=(~ cyf))
             [~ ~]
-          ?.  =(u.lyf *life) :: XX our life
+          ?.  =(u.lyf life.ax)
             ~
           ?~  key=(get-key-for u.her u.hyf)  :: eddh with our key
             ~
@@ -2203,6 +2205,7 @@
         ::  publisher-side, flow-level
         ::
             ::res-mess-pith:ev-res  ::  /[~sndr]/[load]/[~rcvr]/flow/[bone]/[dire]/[mess]
+            ::  XX drop sndr, it's always our
             [%flow bone=@ sndr=@ load=?(%poke %ack %nax) rcvr=@ dire=?(%for %bak) mess=@ ~]
           ::  XX remove typed-paths
           =>  .(tyl `(pole iota)`(ev-pave tyl))
@@ -2215,7 +2218,7 @@
           =+  pe-core=(pe-abed-her:pe ~[//scry] rcvr.tyl +.u.ship-state)
           =/  res=(unit page)
             %.  [load mess]:tyl
-            fo-read:(fo-abed:fo ~[//scry] [bone dire]:tyl pe-chan:pe-core)
+            fo-peek:(fo-abed:fo ~[//scry] [bone dire]:tyl pe-chan:pe-core)
           ?~(res ~ ``[%message !>(u.res)])
         ==
       ::  only respond for the local identity, %$ desk, current timestamp

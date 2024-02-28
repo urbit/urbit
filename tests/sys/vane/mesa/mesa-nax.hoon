@@ -93,7 +93,7 @@
   ~?  >  dbug  '~nec hears complete message'
   =^  moves-page  ames.nec  (mesa-reply:v ames.nec ~[/unix-pact] moves-y nax-roof)
   ::
-  :-  (mesa-expect-msg:v moves-page naxplanation)  |.  :-  %|
+  :-  (mesa-expect-msg:v moves-page nax/naxplanation)  |.  :-  %|
   ~?  >  dbug  '~nec takes %naxplanation from ~bud, given by the packet layer'
   =^  moves-3  ames.nec
     %:    mesa-check-take:v  ames.nec
@@ -102,7 +102,7 @@
       [wire=i.duct duct=t.duct %mesa gift.card]:i.moves-page
     ::
       :~  :-  ~[/poke]
-          [%give %done `*goof]
+          [%give %done `*error:mesa]
       ==
     ==
   :-  moves-3  |.  :-  %&
