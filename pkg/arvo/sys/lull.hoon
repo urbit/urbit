@@ -3302,22 +3302,13 @@
   --  ::khan
 ++  xmas
   |%
-  +$  plat
-    $@  @                                       ::  measure atom
-    $^  $%  [[%c ~] (pair (pair step step) @)]  ::  cut slice
-            [[%m ~] (pair (pair step step) @)]  ::  measure slice
-            [[%s ~] p=plot]                     ::  subslice
-        ==                                      ::
-    (pair step @)                               ::  prefix
-  +$  plot  $^  [l=plot r=plot]                 ::  concatenate
-            [a=bloq b=(list plat)]              ::  serialize
-
-  ::
   +$  task
+    $~  vega+~
     $%  [%heer p=lane:pact q=@]            :: receive a packet
         [%mess p=(unit lane:pact) q=mess]  :: receive a message
         [%make-peek p=spar:ames]           :: initiate %peek request
         [%make-poke p=spar:ames q=path]    :: initiate %poke request
+        $>(%vega vane-task)
         :: XX combined with $<(%page mess) ?
         :: XX make encrypted request a la %chum / %keen+^
     ==
@@ -3358,88 +3349,109 @@
         pay=(unit path)
         ps=(unit packet-state)
     ==
-
-  ++  lss
-    |%
-    ++  verifier
-      |%
-      +$  state
-        $:
-            leaves=@
-            leaf=@                 :: current leaf index
-            cur=[l=@ r=@]          :: current pair subtree
-            leaf-queue=(list @ux)
-            parent-stack=(list @ux)
-        ==
-      --
-    --
-  ::
-  +$  packet-state
-    $:  nex=(each %auth @ud)
-        tot=@ud
-        los=state:verifier:lss
+  ++  packet-state
+    ::  XX duplicated in %zuse
+    ::
+    =>  |%
+        ++  lss
+          |%
+          ++  verifier
+            |%
+            +$  state
+              $:  leaves=@
+                  leaf=@                 :: current leaf index
+                  cur=[l=@ r=@]          :: current pair subtree
+                  leaf-queue=(list @ux)
+                  parent-stack=(list @ux)
+              ==
+            --
+          --
+        --
+    $:  los=state:verifier:lss
+        fags=(list @)
     ==
-  ::
-  ++  parse-packet  |=(a=@ -:($:de:pact a))
-  ++  is-auth-packet  |
-  ++  inner-path-to-beam
-    |=  [=ship =path]
-    ^-  (unit [vew=view bem=beam])
-    `[*view *beam]  :: XX
-  ++  parse-path  |=(@ *(unit path))
-  ++  blake3  |=(* *@)
-  ++  get-key-for  |=([=ship =life] *@)
-  ++  get-group-key-for  |=(@ud *(unit @))
-  ++  crypt
-    |%
-    ++  sign  |=(* *@)
-    ++  hmac  |=(* *@)
-    ++  encrypt  |=(@ @)
-    ++  decrypt  |=(@ *(unit @))
-    --
   ::  atom ops
   ::
+  ::
+  ++  plot
+    =>  |%
+        +$  plat
+          $@  @                                       ::  measure atom
+          $^  $%  [[%c ~] (pair (pair step step) @)]  ::  cut slice
+                  [[%m ~] (pair (pair step step) @)]  ::  measure slice
+                  [[%s ~] p=plot]                     ::  subslice
+              ==                                      ::
+          (pair step @)                               ::  prefix
+        --                                            ::
+    |^  $^  [l=$ r=$]                                 ::  concatenate
+        [a=bloq b=(list plat)]                        ::  serialize
+    ::
+    ::  +fax: encode a plot
+    ::
+    ++  fax
+      |=  p=$
+      ^-  (trel @ bloq step)
+      ?^  -.p
+        =/  l  $(p l.p)
+        =/  r  $(p r.p)
+        =/  s  (rig +.l q.r)
+        [(add p.l (lsh [q.r s] p.r)) q.r (add r.r s)]
+      ::
+      ?~  b.p  [0 a.p 0]
+      =;  c=(pair @ step)
+        =/  d  $(b.p t.b.p)
+        [(add p.c (lsh [a.p q.c] p.d)) a.p (add q.c r.d)]
+      ::
+      ?@  i.b.p
+        [i.b.p (met a.p i.b.p)]
+      ?-  -.i.b.p
+        @       [(end [a.p p.i.b.p] q.i.b.p) p.i.b.p]
+        [%c ~]  [(cut a.p [p q]:i.b.p) q.p.i.b.p]
+        [%m ~]  =+((cut a.p [p q]:i.b.p) [- (met a.p -)])
+        [%s ~]  =/  e  $(p p.i.b.p)
+                [p.e (rig +.e a.p)]
+      ==
+    ::
+    ::  +mes: measure a plot
+    ::
+    ++  mes
+      |=  p=$
+      ^-  [q=bloq r=step]
+      ?^  -.p
+        =/  l  $(p l.p)
+        =/  r  $(p r.p)
+        =/  s  (rig l q.r)
+        [q.r (add r.r s)]
+      ::
+      ?~  b.p  [a.p 0]
+      =;  c=q=step
+        =/  d  $(b.p t.b.p)
+        [a.p (add q.c r.d)]
+      ::
+      ?@  i.b.p
+        (met a.p i.b.p)
+      ?-  -.i.b.p
+        @       p.i.b.p
+        [%c ~]  q.p.i.b.p
+        [%m ~]  =+((cut a.p [p q]:i.b.p) (met a.p -))
+        [%s ~]  =/  e  $(p p.i.b.p)
+                (rig e a.p)
+      ==
+    --
   ::
   ::  +rig: convert between bloqs
   ::
   ++  rig
-    |=  [[a=bloq b=bloq] c=step]
+    |=  [=bite b=bloq]
     ^-  step
+    ?@  bite  0
+    =/  [a=bloq c=step]  bite
     ?:  =(a b)  c
     ?:  (gth a b)
       (lsh [0 (sub a b)] c)
     =/  d  [0 (sub b a)]
     =/  e  (rsh d c)
     ?:(=(0 (end d c)) e +(e))
-  ::
-  ::  +fax: encode a plot
-  ::
-  ++  fax
-    :: ~/  %fax
-    |=  p=plot
-    ^-  (pair step @)
-    =<  +
-    |-  ^-  (trel bloq step @)
-    ?^  -.p
-      =/  l  $(p l.p)
-      =/  r  $(p r.p)
-      =/  s  (rig [p.l p.r] q.l)
-      [p.r (add q.r s) (add r.l (lsh [p.r s] r.r))]
-    ::
-    ?~  b.p  [a.p 0 0]
-    =;  c=(pair step @)
-      =/  d  ^$(b.p t.b.p)
-      [a.p (add p.c p.d) (add q.c (lsh [a.p p.c] q.d))]
-    ::
-    ?@  i.b.p
-      [(met a.p i.b.p) i.b.p]
-    ?-  -.i.b.p
-      @       [p.i.b.p (end [a.p p.i.b.p] q.i.b.p)]
-      [%c ~]  [q.p.i.b.p (cut a.p [p q]:i.b.p)]
-      [%m ~]  =+((cut a.p [p q]:i.b.p) [(met a.p -) -])
-      [%s ~]  =/  e  $(p p.i.b.p)
-              [(rig [p.e a.p] q.e) r.e]
-    ==
   ::
   ::  +nac: reverse +can
   ::
@@ -3546,7 +3558,7 @@
   ::
   :: +|  %packets
   ::
-  ::    > :(add 8 336 1.128)
+  ::    > :(add 8 305 1.159)
   ::    1.472
   ::
   ++  pact
@@ -3575,7 +3587,7 @@
           $%  [%0 p=auth:mess q=(unit $@(@uxI (pair @uxI @uxI)))]
               [%1 p=(pair @uxI @uxI)]
           ==
-        +$  data  [tot=@udF aut=auth:pact dat=@]
+        +$  data  [tot=frag aut=auth:pact dat=@]
         +$  lane  $@  @ux
                   $%  [%if p=@ifF q=@udE]
                       [%is p=@isH q=@udE]
@@ -3604,13 +3616,13 @@
           ?^  t.r.pak          0b11
           ?:(?=([%if *] i.r.pak) 0b1 0b10)
         =/  hop  0 :: XX
-        (en:head nex -.pak hop (mug q:(fax bod)))
+        (en:head nex -.pak hop (mug p:(fax:plot bod)))
       [hed bod]
     ::
     ++  de
       |=  a=bite
       |=  dat=@
-      ^-  [pact bloq step]
+      ^-  [pact boq=bloq sep=step]
       =+  ^=  [hed b]  ((de:head a) dat)
       =+  ^=  [pac c]
         ?-  typ.hed
@@ -3628,7 +3640,7 @@
                  [[typ.hed nam dam dat] b]
         ==
       =/  gum
-        (end [0 20] (mug (cut -.c [(rig [-.b -.c] +.b) +.c] dat)))
+        (end [0 20] (mug (cut -.c [(rig b -.c) +.c] dat)))
       ?>(=(gum.hed gum) [pac c])
     --
   ::
@@ -3645,15 +3657,16 @@
     ::
     ++  de
       |=  a=bite
-      =/  b=[bloq step]  [0 ?@(a 0 (rig [bloq.a 0] step.a))]
+      =/  b=[bloq step]  [0 (rig a 0)]
       |=  dat=@
       ^-  [[nex=@B typ=?(%page %peek %poke) hop=@ gum=@F] bloq step]
-      =+  [[res nex ver tip hop gum tok] b]=((hew b dat) [2 2 3 2 3 20 32])
-      ?>  =(0 res)
-      ?>  =(1 ver)
-      ?>  =(~tasfyn-partyv tok)
-      =/  typ  ?+(tip !! %0b1 %page, %0b10 %peek, %0b11 %poke)
-      [[nex typ hop gum] b]
+      =^  c  b
+        ((hew b dat) [res=2 nex=2 ver=3 tip=2 hop=3 gum=20 tok=32])
+      ?>  =(0 res.c)
+      ?>  =(1 ver.c)
+      ?>  =(~tasfyn-partyv tok.c)
+      =/  typ  ?+(tip.c !! %0b1 %page, %0b10 %peek, %0b11 %poke)
+      [[nex.c typ hop.c gum.c] b]
     --
   ::
   ++  next
@@ -3665,8 +3678,8 @@
       ?~  nex  ~
       ?:  ?=([[%if *] ~] nex)
         [[4 p] [2 q] ~]:i.nex
-      |-  ^-  (list plat)
-      =;  one=(list plat)
+      |-  ^-  (list plat:plot)
+      =;  one=(list plat:plot)
         ?~(t.nex one (weld one $(nex t.nex)))
       ?-  i.nex
         @        =/  l  (met 3 i.nex)
@@ -3680,7 +3693,7 @@
     ::
     ++  de
       |=  [a=bite b=@B]
-      =/  c=[bloq step]  [3 ?@(a 0 (rig [bloq.a 3] step.a))]
+      =/  c=[bloq step]  [3 (rig a 3)]
       |=  dat=@
       ^-  [next:pact bloq step]
       =<  ?+  b  !!
@@ -3720,22 +3733,25 @@
   ::
   ::  +name: encoded-path
   ::
-  ::  range:  { meta[1], her[2^1-4], rif[1-4], boq[1],    fag[1-4], typ[2^0-1],  pat[2^0-16] }
-  ::  max:    { meta[1], her[16],    rif[4],   boq[1],    fag[4],   typ[2],      pat[65.536] }
-  ::          { meta-byte, address,  rift,     bloq-size, fragment, path-length, path }
-  ::  actual: { meta[1], her[16],    rif[4],   boq[1],    fag[4],   typ[2],      pat[309]   }
+  ::  range:  { meta[1], her[2^1-4], rif[1-4], boq[1], fag[1-4], len[2], pat[2^0-16 - 1] }
+  ::  max:    {      1,      16,         4,        1,      4,        2,      65.535      }
+  ::  actual: {      1,      16,         4,        1,      4,        2,      277         }
   ::
-  ::  meta: { rank[2], rift[2], init[1], is-auth[1], fag[2] }
+  ::  XX increment path-len by one, exclude zero-length paths
   ::
-  ::    > :(add 1 16 4 2 309 4)
-  ::    336
+  ::    > :(add 1 16 4 1 4 2 277)
+  ::    305
+  ::
+  ::  for %poke:
+  ::    > (div (sub 305 (mul 2 (sub 305 277))) 2)
+  ::    124
   ::
   ++  name
     |%
     ++  en
       |=  name:pact
       ^-  plot
-      =/  ran  ?~(her 0 (dec (met 0 (met 4 (end 7 her)))))
+      =/  ran  ?~(her 0 (xeb (dec (met 4 (end 7 her)))))
       =/  ryf  ?~(rif 0 (dec (met 3 rif)))  :: XX is rift always non-zero?
       =+  ^=  [nit tau gaf gyf fag]
         ?~  wan  [0b1 0b0 0b0 0 0]
@@ -3743,133 +3759,125 @@
         [0b0 ?:(?=(%auth typ.wan) 0b1 0b0) (dec gyf) gyf fag.wan]
       ::
       =/  tap  =-([p=(met 3 -) q=-] `@t`(rap 3 (join '/' pat)))
-      ?>  (lth p.tap ^~((bex 16))) :: XX truncate instead?
+      ?>  &(?=(^ pat) (lth p.tap ^~((bex 16)))) :: XX truncate instead?
       :+  bloq=3
         [s+~ 0 [2 ran] [2 ryf] [1 nit] [1 tau] [2 gaf] ~]
       [[(bex +(ran)) her] [+(ryf) rif] [1 boq] [gyf fag] [2 p.tap] tap ~]
     ::
     ++  de
       |=  a=bite
-      =/  b=[bloq step]  [0 ?@(a 0 (rig [bloq.a 0] step.a))]
+      =/  b=[boq=bloq sep=step]  [0 (rig a 0)]
       |=  pat=@
-      ^-  [name:pact bloq step]
-      =+  [[ran ryf nit tau gaf] b]=((hew b pat) [2 2 1 1 2])
-      =+  [len nex]=[(rig [bloq.b 3] step.b) (bex +(ran))]
-      =/  her  (cut 3 [len nex] pat)
+      ^-  [name:pact _b]
+      =^  c  b
+        ((hew b pat) [ran=2 ryf=2 nit=1 tau=1 gaf=2])
       ::
-      =:  len  (add len nex)
-          nex  +(ryf)
-        ==
-      =/  rif  (cut 3 [len nex] pat)
+      =.  b  [3 (rig b 3)]
+      =^  d  b
+        %-  (hew b pat)
+        :^    who=[her=(bex +(ran.c)) rif=+(ryf.c)]
+            boq=1
+          fag=?:(=(0b1 nit.c) 0 +(gaf.c))
+        tap=2
       ::
-      =:  len  (add len nex)
-          nex  1
-        ==
-      =/  boq  (cut 3 [len nex] pat)
-      ::
-      =:  len  (add len nex)
-          nex  ?:(=(0b1 nit) 0 +(gaf))
-        ==
-      =/  fag  (cut 3 [len nex] pat)
-      ::
-      =:  len  (add len nex)
-          nex  2
-        ==
-      =/  tap  (cut 3 [len nex] pat)
-      ::
-      =:  len  (add len nex)
-          nex  tap
-        ==
+      ::  XX ?<  =(0 tap.d)
       =/  pat
-        %+  rash  (cut 3 [len nex] pat)
+        %+  rash  (cut boq.b [sep.b tap.d] pat)
         (more fas (cook crip (star ;~(less fas prn))))
-      ::
       =/  wan
-        ?.  =(0b1 nit)
-          [?:(=(1 tau) %auth %data) fag]
-        ?>(&(=(0 tau) =(0 fag)) ~)
+        ?.  =(0b1 nit.c)
+          [?:(=(1 tau.c) %auth %data) fag.d]
+        ?>(&(=(0 tau.c) =(0 fag.d)) ~)
       ::
-      [[[her rif] [boq wan] pat] 3 (add len nex)]
+      =.  sep.b  (add sep.b tap.d)
+      [[who.d [boq.d wan] pat] b]
     --
   ::
   ::  +data: response data
   ::
-  ::  range:  { meta[1], tot[1-4], lut[0-1], aut[0-255], len[0-32], dat[0-2^252-1] }
-  ::  max:    { meta[1], tot[4],   lut[1],   aut[255],   len[32],   dat[2^252-1]   }
-  ::  actual: { meta[1], tot[4],   lut[1],   aut[96],    len[2],    dat[0-2^10-1]  }
+  ::  range:  { meta[1], tot[1-4], aum[32*0-2], aup[32*0-2], len-len[0-1], len[0-255], dat[0-2^252-1] }
+  ::  max:    {      1,      4,        64,          64,              1,        255,        2^252-1    }
+  ::  actual: {      1,      4,        64,          64,              0,        2,          1.024      }
   ::
-  ::    > :(add 1 4 1 96 2 1.024)
-  ::    1.128
+  ::  XX increment len-len by 3, recalculate max limits
+  ::  XX max len-len s/b 32 to align with max bloq size
+  ::  XX move tot after auth to avoid trailing zeros?
+  ::
+  ::    > :(add 1 4 64 64 2 1.024)
+  ::    1.159
   ::
   ++  data
     |%
     ++  en
-      |=  [tot=@udF aut=auth:pact dat=@]
+      |=  [tot=frag:pact aut=auth:pact dat=@]
       ^-  plot
       =/  lot  (met 3 (end 5 tot))
       ::
-      =/  [[aul=@ubB aum=plat] aur=@ubB aup=plat]
+      =/  [[aul=@ubB aum=plat:plot] aur=@ubB aup=plat:plot]
         ?~  aut           [[0b0 0] 0b0 0]
-        ?:  ?=(%| -.aut)  [[0b1 [32 p]] 0b0 32 q]:p.aut
+        ?:  ?=(%1 -.aut)  [[0b1 [32 p]] 0b10 [32 q]]:p.aut
         :-  =>  p.aut
             ?:(?=(%& -) [0b10 64 p] [0b11 32 p])
-        =/  [aur=@ubB has=(list plat)]
+        =/  [aur=@ubB has=(list plat:plot)]
           ?~    q.aut  [0b0 ~]
           ?@  u.q.aut  [0b1 [1 u.q.aut] ~]
-          [0b10 [[1 p] 1 q ~]:u.q.aut]
+          [0b10 [[1 p] [1 q] ~]:u.q.aut]
         [aur s+~ 8 has]
       ::
       =/  len  (met 3 dat)
-      =/  men
-        ?:((lth len 3) [len 0] [0b11 (met 3 len)])
+      =/  nel  (met 3 len)
+      =/  men=(pair @B @A)
+        ?:((lth nel 3) [nel 0] [0b11 1])
       :+  bloq=3
-        [s+~ 0 [2 (dec lot)] [2 aul] [2 aur] [2 -.men] ~]
-      [[lot tot] aum aup [+.men len] [len dat] ~]
+        [s+~ 0 [2 (dec lot)] [2 aul] [2 aur] [2 p.men] ~]
+      [[lot tot] aum aup [q.men nel] [nel len] [len dat] ~]
     ::
     ++  de
       |=  a=bite
-      =/  b=[bloq step]  [0 ?@(a 0 (rig [bloq.a 0] step.a))]
+      =/  b=[boq=bloq sep=step]  [0 (rig a 0)]
       |=  dat=@
-      ^-  [[tot=@udF aut=auth:pact dat=@] bloq step]
-      =+  ^=  [[bot [aul aur] men] b]  ((hew b dat) [2 [2 2] 2])
-      =+  ^=  [len nex]                [(rig [bloq.b 3] step.b) +(bot)]
-      =/  tot  (cut 3 [len nex] dat)
-      =.  len  (add len nex)
-      =^  mes=(unit auth:mess)  nex
-        ?+  aul  !!
-          %0b0   ?>(=(0b0 aur) [~ nex])
-          %0b1   ?>(=(0b10 aur) [~ nex])
-          %0b10  [`&+(cut 3 [len 64] dat) 64]
-          %0b11  [`|+(cut 3 [len 32] dat) 32]
-        ==
-      =.  len  (add len nex)
-      =^  pac=(unit $@(@uxI (pair @uxI @uxI)))  nex
-        ?+  aur  !!
-          %0b0   [~ 0]
-          %0b1   [`(cut 3 [len 32] dat) 32]
-          %0b10  [`[(cut 3 [len 32] dat) (cut 3 [(add len 32) 32] dat)] 64]
-        ==
+      ^-  [data:pact boq=bloq sep=step]
+      =^  c  b
+        ((hew b dat) [bot=2 [aul=2 aur=2] men=2])
+      =.  b  [3 (rig b 3)]
+      =^  d  b
+        %-  (hew b dat)
+        :^    tot=+(bot.c)
+            aum=?+(aul.c 0x0 %0b10 `@`64, %0b11 `@`32)
+          aup=?+(aur.c 0x0 %0b1 `@`32, %0b10 [`@`32 `@`32])
+        nel=?.(=(3 men.c) 0 1)
+      ::
       =/  aut=auth:pact
-        ?~  mes
-          ?:  =(0b0 aul)  ~
-          ?>  &(=(0b1 aul) ?=([~ @ @] pac))
-          [%1 u.pac]
-        [%0 u.mes pac]
-      =.  len  (add len nex)
-      =^  lat  len
-        ?.  =(3 men)  [men len]
-        [(cut 3 [len 1] dat) +(len)]
-      =.  nex  lat
-      [[tot aut (cut 3 [len nex] dat)] 3 (add len nex)]
+        =/  mes=(unit auth:mess)
+          ?+  aul.c  !!
+            %0b0   ?>(=(0b0 aur.c) ~)
+            %0b1   ?>(=(0b10 aur.c) ~)
+            %0b10  `&+aum.d
+            %0b11  `|+aum.d
+          ==
+        =/  pac=(unit $@(@uxI (pair @uxI @uxI)))
+          ?+  aur.c  !!
+            %0b0   ?>(=(0 aup.d) ~)
+            %0b1   ?>(?=(@ aup.d) `aup.d)
+            %0b10  ?>(?=(^ aup.d) `aup.d)
+          ==
+        ?^  mes  [%0 u.mes pac]
+        ?:  =(0b0 aul.c)  ~
+        ?>  &(=(0b1 aul.c) ?=([~ @ @] pac))
+        [%1 u.pac]
+      ::
+      =/  nel  ?.(=(3 men.c) men.c nel.d)
+      =^  len  sep.b  [(cut 3 [sep.b nel] dat) (add sep.b nel)]
+      =^  dat  sep.b  [(cut 3 [sep.b len] dat) (add sep.b len)]
+      [[tot.d aut dat] b]
     --
   ::
-  ++  name-to-path
+  ++  name-to-beam
     |=  name:pact
-    ^-  path
-    :*  %ax
-        (scot %p her)  %$  '1'
+    ^-  beam
+    :*  [her %$ ud+1]
         %mess  (scot %ud rif)
-        %pact  (scot %ud boq)  %pure
+        %pact  (scot %ud boq)  %etch
         ?~  wan  [%init pat]
         [typ.wan (scot %ud fag.wan) pat]
     ==

@@ -6125,7 +6125,6 @@
 ++  lss
   =,  blake:crypto
   |%
-  ::
   ++  clz
     |=  [a=bite b=@]
     (sub ?@(a (bex a) (mul (bex bloq.a) step.a)) (met 0 b))
@@ -6178,7 +6177,7 @@
       $(d d.i.s, a axe.i.s, s t.s)
     :-  [a d]
     $(d -.d, a (peg a 2), s [[(peg a 3) +.d] s])
-
+  ::
   ++  root-hash
     |=  o=output:blake3
     ^-  @ux
@@ -6212,6 +6211,16 @@
     =.  pairs  (slag height pairs)
     [root proof pairs]
   ::
+  ++  recover-root
+    |=  proof=(list @ux)
+    ?>  ?=([@ @ *] proof)
+    =*  l0  i.proof
+    =*  l1  i.t.proof
+    %-  root-hash
+    %+  roll  t.t.proof
+    |:  [p=0x0 n=(parent-output:blake3 l0 l1)]
+    (parent-output:blake3 (output-cv:blake3 n) p)
+  ::
   ::  +verifier: stateful core for sequentially verifying messages
   ::
   ++  verifier
@@ -6219,32 +6228,22 @@
       |%
       ::
       ++  init
-        |=  [leaves=@ root=@ux proof=(list @ux)]
+        |=  [leaves=@ proof=(list @ux)]
         ^-  (unit state)
         ?~  proof
           ::  need at least two leaves to have a proof
           ::
           ?.  (lte leaves 1)  ~
           `[leaves 0 [0 1] ~ ~]
-        ::  recover root from proof
-        ::
         ?.  ?=([@ @ *] proof)  ~
-        =*  l0  i.proof
-        =*  l1  i.t.proof
-        =/  rut
-          %-  root-hash
-          %+  roll  t.t.proof
-          |:  [p=0x0 n=(parent-output:blake3 l0 l1)]
-          (parent-output:blake3 (output-cv:blake3 n) p)
-        ?.  =(rut root)  ~
         ::  initialize leaf queue and parent stack with proof hashes;
         ::  after the first two leaves, the next subtree is [2 4]
         ::
         =/  state  [leaves 0 [0 1] ~ t.t.proof]
-        `(push-leaves state [l0 l1])
+        `(push-leaves state [i.proof i.t.proof])
       ::
       ++  verify-msg
-        |=  [=state [leaf=octs pair=(unit [l=@ux r=@ux])]]
+        |=  [=state [leaf=@ pair=(unit [l=@ux r=@ux])]]
         ^-  (unit _state)
         ?~  ustate=(verify-leaf state leaf)  ~
         ?~  pair  `u.ustate
@@ -6298,9 +6297,10 @@
       state(parent-stack (weld ~[l r] parent-stack.state))
     ::
     ++  verify-leaf
-      |=  [=state leaf=octs]
+      |=  [=state leaf=@]
       ^-  (unit _state)
-      =/  cv  (output-cv:blake3 (chunk-output:blake3 leaf.state leaf))
+      =/  wid  ?.(=(+(leaf.state) leaves.state) 1.024 (met 3 leaf))
+      =/  cv  (output-cv:blake3 (chunk-output:blake3 leaf.state [wid leaf]))
       ::  if leaf queue is empty, draw from parent stack; this is
       ::  necessary for any tree with an odd number of leaves, since
       ::  such a tree will contain a pair where the left child is a
@@ -6323,5 +6323,4 @@
       `state(parent-stack t.parent-stack.state)
     --
   --
-
 --
