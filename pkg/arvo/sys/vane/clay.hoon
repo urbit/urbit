@@ -729,11 +729,7 @@
       ::
       %-  (trace 1 |.("make cast {<a>} -> {<b>}"))
       =^  old=vase  nub  (build-fit %mar a)
-      ?:  =/  ram  (mule |.((slap old !,(*hoon grow))))
-          ?:  ?=(%| -.ram)  %.n
-          =/  lab  (mule |.((slob b p.p.ram)))
-          ?:  ?=(%| -.lab)  %.n
-          p.lab
+      ?:  (has-arm %grow b old)
         ::  +grow core has .b arm; use that
         ::
         %+  gain-leak  cast+a^b
@@ -749,8 +745,9 @@
       ::  try direct +grab
       ::
       =^  new=vase  nub  (build-fit %mar b)
+      =/  arm=?  (has-arm %grab a new)
       =/  rab  (mule |.((slap new tsgl/[limb/a limb/%grab])))
-      ?:  &(?=(%& -.rab) ?=(^ q.p.rab))
+      ?:  &(arm ?=(%& -.rab) ?=(^ q.p.rab))
         %+  gain-leak  cast+a^b
         |=  nob=state
         %-  (trace 4 |.("{<a>} -> {<b>}: +{(trip a)}:grab:{(trip b)}"))
@@ -759,11 +756,11 @@
       ::  try +jump
       ::
       =/  jum  (mule |.((slap old tsgl/[limb/b limb/%jump])))
-      ?:  ?=(%& -.jum)
+      ?:  &((has-arm %jump a old) ?=(%& -.jum))
         =/  via  !<(mark p.jum)
         %-  (trace 4 |.("{<a>} -> {<b>}: via {<via>} per +jump:{(trip a)}"))
         (compose-casts a via b)
-      ?:  ?=(%& -.rab)
+      ?:  &(arm ?=(%& -.rab))
         =/  via  !<(mark p.rab)
         %-  (trace 4 |.("{<a>} -> {<b>}: via {<via>} per +grab:{(trip b)}"))
         (compose-casts a via b)
@@ -787,6 +784,15 @@
       %+  slap
         (with-faces uno+uno dos+dos ~)
       !,(*hoon |=(_+<.uno (dos (uno +<))))
+    ::
+    ++  has-arm
+      |=  [arm=@tas =mark core=vase]
+      ^-  ?
+      =/  rib  (mule |.((slap core [%wing ~[arm]])))
+      ?:  ?=(%| -.rib)  %.n
+      =/  lab  (mule |.((slob mark p.p.rib)))
+      ?:  ?=(%| -.lab)  %.n
+      p.lab
     ::  +build-tube: produce a $tube mark conversion gate from .a to .b
     ::
     ++  build-tube
@@ -1518,7 +1524,7 @@
       [%c care (scot case) desk path]
     :-  [time path]
     %-  emil
-    :~  [hen %pass wire %a %keen ship path]
+    :~  [hen %pass wire %a %keen ~ ship path]
         [hen %pass wire %b %wait time]
     ==
   ::
@@ -5934,6 +5940,7 @@
   ::
   =/  for=(unit ship)  ?~(lyc ~ ?~(u.lyc ~ `n.u.lyc))
   ?:  &(=(our his) ?=(?(%d %x) ren) =(%$ syd) =([%da now] u.luk))
+    ?.  =([~ ~] lyc)  ~
     ?-  ren
       %d  (read-buc-d tyl)
       %x  (read-buc-x tyl)

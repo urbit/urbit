@@ -3,7 +3,7 @@
     flake-utils.url = "github:numtide/flake-utils";
     tools = {
       flake = false;
-      url = "github:urbit/tools";
+      url = "github:urbit/tools/d454e2482c3d4820d37db6d5625a6d40db975864";
     };
   };
 
