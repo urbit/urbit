@@ -1374,8 +1374,16 @@
           ::  XX what if the crash is due to path validation
           ::  and we can't infer the sequence number?
           ~
-      =/  ack=(pole iota)  (ev-pave path.ack-spar)
-      =/  pok=(pole iota)  (ev-pave path.pok-spar)
+      =/  ack=(pole iota)
+        %-  ev-pave
+        ?~  inn=(inner-path-to-beam *@p path.ack-spar)  ~  ::  XX to helper arm
+        ?>  =([[%$ %x] *@p %$ ud+1] [vew -.bem]:u.inn)
+        s.bem.u.inn
+      =/  pok=(pole iota)
+        %-  ev-pave
+        ?~  inn=(inner-path-to-beam *@p path.pok-spar)  ~  ::  XX to helper arm
+        ?>  =([[%$ %x] *@p %$ ud+1] [vew -.bem]:u.inn)
+        s.bem.u.inn
       ~|  path-validation-failed/path.ack-spar^path.pok-spar
       ?>  &(?=(res-mess-pith ack) ?=(res-mess-pith pok))
       ::
@@ -1507,16 +1515,18 @@
         u.res(for (~(put in for.u.res) hen))
       ::
       ?:  ?&  ?=(^ q)
-              =/  res=(unit (unit cage))
-                ::(rof ~ /mesa %x [our %$ ud+1] u.q)
-                (inner-scry ~ /mesa %x [our %$ ud+1] u.q)  ::  XX (rof ...)
-              !?=([~ ~ %message *] res)
+              =;  res=(unit (unit cage))
+                !?=([~ ~ %message *] res)
+              ?~  inn=(inner-path-to-beam our u.q)
+                ~
+              %-  inner-scry
+              [~ /mesa [?>(?=(^ vew) car.vew) bem]:u.inn]  ::  XX (rof ...)
           ==
         !! :: XX wat do?
       =|  new=request-state
       =.  for.new   (~(put in for.new) hen)
       =.  pay.new   q
-      =.  path.p    (ev-mess-spac r pax/path.p)
+      =.  path.p    (ev-mess-spac r pax/path.p)  :: XX (add-beam  ...
       =.  peers.ax  (~(put by peers.ax) ship.p per(pit (~(put by pit.per) path.p new)))
       ::
       =/  =pact:pact  (ev-make-pact p q rift.per r)
@@ -1546,8 +1556,8 @@
       =/  man=name:pact  [[our rift.ax] [13 ~] u.q]
       =?  spac  ?=(?(%publ %chum) -.spac)
         ?>  ?=(%publ -.spac)  :: XX chum
-        spac(life life.ax)
-      =.  pat.man  (ev-mess-spac spac pax/pat.man)    ::  XX fix namespace
+        spac(life life.ax)  ::  our life for poke payloads
+      =.  pat.man  (ev-mess-spac spac pax/u.q)  :: XX (add-beam  ...
       :^  %poke  nam  man
       =;  page=pact:pact  ?>(?=(%page -.page) q.page)
       %-  parse-packet
@@ -1559,13 +1569,13 @@
       ^-  ^path
       ::  :^  %mess  (scot %ud rift.ax)  %$  ::  XX
       ?-  -.spac
-        %publ  ^-  ^path  %+  weld
-                 /publ/[(scot %ud life.spac)]//x/1
-               ^-  ^path  [%$ ?>(?=(%pax -.path) pax.path)]
-        %shut  ^-  ^path  %+  weld
+        %publ  %+  weld
+                 /publ/[(scot %ud life.spac)]
+               ?>(?=(%pax -.path) pax.path)
+        %shut  %+  weld
                  /shut/[(scot %ud kid.spac)]
                /[?>(?=(%cyf -.path) (scot %ud cyf.path))]
-        %chum  ^-  ^path  %+  weld  =,  spac
+        %chum  %+  weld  =,  spac
                  /chum/[(scot %ud life)]/[(scot %p her)]/(scot %ud kid)
                /[?>(?=(%cyf -.path) (scot %ud cyf.path))]
       ==
@@ -1751,12 +1761,11 @@
       ++  fo-path
         |=  [seq=@ud path=?(%ack %poke %nax) dyad]
         ^-  ^path
-        ::  %+  fo-en-spac  %publ  ::  XX %publ, %chum, %shut ?
+        %-  fo-view-beam
         :~  ::  %mess  %'0'
             :: %pact  (scot %ud packet-size)  %etch
             :: %init  ::  %pure  %data  %'0'  :: XX  frag=0
             :: %publ  %'0'  ::  XX
-            ::vane=%$  care=%x  case='1'  desk=%$
             %flow  (scot %ud bone)
             reqr=(scot %p sndr)  path  rcvr=(scot %p rcvr)
         ::  %ack(s) and %naxplanation(s) are on the other side, and not bounded
@@ -1764,6 +1773,8 @@
             ?:(=(%poke path) dire fo-flip-dire)
             (scot %ud seq)
         ==
+      ::
+      ++  fo-view-beam  |=(=path `^path`[vane=%$ care=%x case='1' desk=%$ path])
       ::
       ++  fo-make-wire
         |=  [were=?(%int %ext %out) seq=@ud]  ::  XX better names ?(for-acks=%int for-nax-payloads=%ext to-vane=%out)
@@ -2230,6 +2241,13 @@
             fo-peek:(fo-abed:fo ~[//scry] [bone dire]:tyl pe-chan:pe-core)
           ?~(res ~ ``[%message !>(u.res)])
         ==
+      ::  XX stub for app-level scries (e.g. /g/x/0/dap[...])
+      ::
+      ?:  ?&  =(our p.bem)
+              ?|  =([%ud 0] r.bem)  :: XX
+                  =([%ud 1] r.bem)
+          ==  ==
+        (rof [~ ~] /ames/dap %x bem)
       ::  only respond for the local identity, %$ desk, current timestamp
       ::
       ?.  ?&  =(our p.bem)

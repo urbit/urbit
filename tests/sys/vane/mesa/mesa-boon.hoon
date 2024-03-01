@@ -1,6 +1,8 @@
 ::  test send %poke %boon
 ::
 /+  *test, v=test-mesa-gall
+=+  [nec-life=2 bud-life=3]
+=+  (nec-bud:v [nec-life bud-life] nec=0 bud=0)
 |%
 ++  dbug  `?`&
 ++  make-roof
@@ -14,14 +16,14 @@
 ++  test-watch
   %-  run-chain
   |.  :-  %|
-  =+  (nec-bud:v [nec=2 bud=3] nec=0 bud=0)
   =/  poke-plea   [%g /ge/pok [%0 %m noun/0]]
-  =/  poke-path   /flow/0/~nec/poke/~bud/for/1
-  =/  ack-path    /flow/0/~bud/ack/~nec/bak/1
+  =/  poke-path   //x/1//flow/0/~nec/poke/~bud/for/1
+  =/  ack-path    //x/1//flow/0/~bud/ack/~nec/bak/1
+  ::
   =/  ack-wire    /flow/int/for/~bud/0/0/1
   =/  vane-wire   /flow/out/bak/~nec/0/0/1
-  =/  make-poke=[%make-poke spar:ames path]
-    [%make-poke [~bud ack-path] poke-path]
+  =/  make-poke=[%make-poke namespace:mesa spar:ames path]
+    [%make-poke publ/bud-life [~bud ack-path] poke-path]
   =/  poke-roof  (make-roof /flow/0/~nec/poke/~bud/for/1 message+!>(poke-plea))
   ::  preamble
   ::
@@ -48,10 +50,10 @@
   ::  start
   ::
   =/  poke-boon  [%x ~]  :: %kick
-  =/  boon-path  /flow/0/~bud/poke/~nec/bak/1
-  =/  ack-path   /flow/0/~nec/ack/~bud/for/1
-  =/  make-poke=[%make-poke spar:ames path]
-    [%make-poke [~nec ack-path] boon-path]
+  =/  boon-path  //x/1//flow/0/~bud/poke/~nec/bak/1
+  =/  ack-path   //x/1//flow/0/~nec/ack/~bud/for/1
+  =/  make-poke=[%make-poke namespace:mesa spar:ames path]
+    [%make-poke publ/nec-life [~nec ack-path] boon-path]
   ~?  >  dbug  'send %poke-boon to ~nec'
   =^  moves-1  ames.bud
     %:    mesa-check-take:v  ames.bud
@@ -64,8 +66,8 @@
       ==
     ==
 ::
-  =/  ack-full-path   (weld /mess/0//publ/0//x/1/[%$] ack-path)
-  =/  boon-full-path  (weld /mess/0//publ/0//x/1/[%$] boon-path)
+  =/  ack-full-path   (weld /publ/[(scot %ud nec-life)] ack-path)
+  =/  boon-full-path  (weld /publ/[(scot %ud bud-life)] boon-path)
   :-  moves-1  |.  :-  %|
   ~?  >  dbug  '~bud makes $pact and sends it'
   =^  moves-2  ames.bud
@@ -79,6 +81,7 @@
           ~nec^ack-full-path
           boon-path
           rift=0
+          publ/nec-life
         ==
       :~  [~[//unix] %give %send lanes=~ blob]
       ==
@@ -91,9 +94,7 @@
     !>  boon/poke-boon
     !>  !<  page
         =<  ?>  ?=(%message p)  q
-        %-  need   %-  need
-        %-  scry:(ames.bud ~1111.1.10 `@`0xdead.beef *roof)
-        [[~ ~] / %x [[~bud %$ ud+1] boon-path]]
+        (mesa-scry-payload:v ames.bud ~bud boon-path)
   ::
   :-  moves-3  |.  :-  %|
   ~?  >  dbug  '~nec hears %poke-boon from ~bud'

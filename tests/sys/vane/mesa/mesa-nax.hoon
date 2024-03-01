@@ -24,9 +24,9 @@
   |.  :-  %|
   ::
   =/  poke-plea  [%x /ge/pok [%0 %m noun/0]]
-  =/  poke-path  /flow/0/~nec/poke/~bud/for/1
-  =/  ack-path   /flow/0/~bud/ack/~nec/bak/1
-  =/  nax-path   /flow/0/~bud/nax/~nec/bak/1
+  =/  poke-path  //x/1//flow/0/~nec/poke/~bud/for/1
+  =/  ack-path   //x/1//flow/0/~bud/ack/~nec/bak/1
+  =/  nax-path   //x/1//flow/0/~bud/nax/~nec/bak/1
   ::
   =/  ack-wire   /flow/int/for/~bud/0/0/1
   =/  vane-wire  /flow/out/bak/~nec/0/0/1
@@ -77,9 +77,7 @@
     !>  nax/*goof
     !>  !<  page
         =<  ?>  ?=(%message p)  q
-        %-  need   %-  need
-        %-  scry:(ames.bud ~1111.1.10 `@`0xdead.beef *roof)
-        [[~ ~] / %x [[~bud %$ ud+1] nax-path]]
+        (mesa-scry-payload:v ames.bud ~bud nax-path)
   ::
   :-  moves-1  |.  :-  %|
   ~?  >  dbug  '~nec starts %peeking for the naxplanation on ~bud'

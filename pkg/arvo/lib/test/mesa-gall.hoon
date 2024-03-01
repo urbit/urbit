@@ -154,8 +154,8 @@
 ::
 ++  mesa-expect-msg
   |=  [pac=(list move:mesa-bunt) exp=noun]
-  ?>  ?=([[* [%give [%response *]]] ~] pac)
   ~|  pac
+  ?>  ?=([[* [%give [%response *]]] ~] pac)
   ?>  ?=([%page ^ ^ [@tas *]] load.gift.card.i.pac)
   (expect-eq !>(q.r.load.gift.card.i.pac) !>(exp))
 ::
@@ -165,6 +165,17 @@
   =/  mesa-core  (mesa-gate now=~1111.1.1 eny=`@`0xdead.beef *roof)
   =/  =pact:pact:mesa-bunt  (ev-make-pact:mesa-core spar `path per-rift spac)
   p:(fax:plot:mesa-bunt (en:pact:mesa-bunt pact))
+::
+++  mesa-scry-payload
+  |=  [=mesa-gate =ship =path]
+  ^-  cage
+  =/  mesa-core  (mesa-gate now=~1111.1.1 eny=`@`0xdead.beef *roof)
+  %-  need   %-  need
+  %-  scry:(mesa-gate ~1111.1.10 `@`0xdead.beef *roof)
+  =;  [care=@tas =beam]
+    [[~ ~] / care beam]
+  =<  [?>(?=(^ vew) car.vew) bem]
+  (need (inner-path-to-beam:mesa-core ship path))
 ::  +mesa-check-call: run gall task, assert produces expected-moves
 ::
 ++  mesa-check-call

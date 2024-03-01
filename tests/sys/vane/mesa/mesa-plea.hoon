@@ -1,6 +1,8 @@
 ::  test send %poke
 ::
 /+  *test, v=test-mesa-gall
+=+  [nec-life=2 bud-life=3]
+=+  (nec-bud:v [nec-life bud-life] nec=0 bud=0)
 |%
 ++  dbug  `?`&
 ++  make-roof
@@ -15,14 +17,14 @@
 ++  test-watch
   %-  run-chain
   |.  :-  %|
-  =+  (nec-bud:v [nec=2 bud=3] nec=0 bud=0)
   =/  poke-plea  [%g /ge/pok [%0 %m noun/0]]
-  =/  poke-path  /flow/0/~nec/poke/~bud/for/1
-  =/  ack-path   /flow/0/~bud/ack/~nec/bak/1
+  =/  poke-path  //x/1//flow/0/~nec/poke/~bud/for/1
+  =/  ack-path   //x/1//flow/0/~bud/ack/~nec/bak/1
+  ::
   =/  ack-wire   /flow/int/for/~bud/0/0/1
   =/  vane-wire  /flow/out/bak/~nec/0/0/1
-  =/  make-poke=[%make-poke =spar:ames =path]
-    [%make-poke [~bud ack-path] poke-path]
+  =/  make-poke=[%make-poke namespace:mesa =spar:ames =path]
+    [%make-poke %publ^life=bud-life [~bud ack-path] poke-path]
   ::
   ~?  >  dbug  'send %poke-plea to ~bud'
   =^  moves-1  ames.nec
@@ -38,8 +40,8 @@
       ==
     ==
   ::
-  =/  ack-full-path  (weld /mess/0//publ/0//x/1/[%$] ack-path)
-  =/  pok-full-path  (weld /mess/0//publ/0//x/1/[%$] poke-path)
+  =/  ack-full-path  (weld /publ/[(scot %ud bud-life)] ack-path)
+  =/  pok-full-path  (weld /publ/[(scot %ud nec-life)] poke-path)
   :-  moves-1  |.  :-  %|
   ~?  >  dbug  '~nec makes $pact and sends it'
   =/  poke-roof  (make-roof /flow/0/~nec/poke/~bud/for/1 message+!>(poke-plea))
@@ -54,6 +56,7 @@
           ~bud^ack-full-path
           poke-path
           rift=0
+          publ/bud-life
         ==
       :~  [~[//unix] %give %send lanes=~ blob]
       ==
@@ -134,9 +137,7 @@
     !>  plea/poke-plea
     !>  !<  page
         =<  ?>  ?=(%message p)  q
-        %-  need   %-  need
-        %-  scry:(ames.nec ~1111.1.10 `@`0xdead.beef *roof)
-        [[~ ~] / %x [[~nec %$ ud+1] poke-path]]
+        (mesa-scry-payload:v ames.nec ~nec poke-path)
   ::
   :-  moves-7  |.  :-  %|
   ~?  >  dbug  '~nec hears %ack from ~bud, gives to gall'
