@@ -176,7 +176,7 @@
 ::
 ++  mess
   =>  |%
-      +$  auth  (each @uxJ @uxI) :: &+sig, |+hmac
+      +$  auth  (each @uxJ @uxH) :: &+sig, |+hmac
       +$  gage  $@(~ page)
       +$  sage  (trel spar:ames auth gage)
       --
@@ -775,6 +775,15 @@
     =.  pairs  (slag height pairs)
     [root proof pairs]
   ::
+  ::  +root: compute just the root hash for a message
+  ::
+  ++  root
+    |=  msg=@
+    ^-  @ux
+    (blake3 32 (met 3 msg)^msg)
+  ::
+  ::  +recover-root: compute the root hash of a leaf proof
+  ::
   ++  recover-root
     |=  proof=(list @ux)
     ?>  ?=([@ @ *] proof)
@@ -952,7 +961,6 @@
   ==
 ::
 ++  parse-packet  |=(a=@ -:($:de:pact a))
-++  is-auth-packet  |
 ++  inner-path-to-beam
   |=  [her=ship pat=(pole knot)]
   ^-  (unit [vew=view bem=beam])
@@ -964,17 +972,47 @@
     ~
   `[[van car]:pat [her des.pat u.cas] pur.pat]  :: XX
 ::
-++  parse-path  |=(@ *(unit path))
-++  blake3  |=(* *@)
 ++  get-key-for  |=([=ship =life] *@)
 ++  get-group-key-for  |=(@ud *(unit @))
++$  binding  [=path root=@uxI]
 ++  crypt
   |%
-  ++  sign     |=(* *@)
-  ++  verify   |=(* *?)
-  ++  hmac     |=(* *@)
-  ++  encrypt  |=(@ @)
-  ++  decrypt  |=(@ *(unit @))
+  ::
+  ++  sign
+    |=  [sek=@uxI =binding]
+    ^-  @uxJ
+    (sign:ed:crypto (jam binding) sek)
+  ++  verify-sig
+    |=  [pub=@uxI sig=@uxJ =binding]
+    ^-  ?
+    (veri:ed:crypto sig (jam binding) pub)
+  ::
+  ++  mac
+    |=  [key=@uxI =binding]
+    ^-  @uxH
+    =/  msg  (jam binding)
+    ((keyed:blake3:blake:crypto 32^key) 16 (met 3 msg)^msg)
+  ++  verify-mac
+    |=  [key=@uxI tag=@uxH =binding]
+    ^-  ?
+    =(0 (~(dif fe 7) tag (mac key binding)))  :: XX jet for constant-time
+  ::
+  ++  encrypt
+    |=  [key=@uxI iv=@ msg=@]
+    ^+  msg
+    (~(en ctrc:aes:crypto key 7 (met 3 msg) iv) msg) :: TODO: chacha8
+  ++  decrypt  encrypt
+  ++  encrypt-path
+    |=  [key=@uxI =path]
+    ^-  @
+    =/  iv  0  :: XX
+    (encrypt key iv (jam path))
+  ++  decrypt-path
+    |=  [key=@uxI cyf=@]
+    ^-  path
+    =/  iv  0  :: XX
+    =/  pat  (decrypt key iv cyf)
+    ;;(path (cue pat))
   --
 --
 ::
@@ -992,17 +1030,62 @@
     ?-  -.pac
         %page
       ::
+      ::  decrypt path
+      ::
+      =/  pat
+        =/  tyl=(pole knot)  pat.p.pac
+        ?+  tyl  !!
+          [%publ lyf=@ pat=*]  :: unencrypted
+            tyl
+          [%chum lyf=@ her=@ hyf=@ pat=[cyf=@ ~]]  :: encrypted with eddh key, hmac as iv
+            =/  lyf  (slaw %ud lyf.tyl)
+            =/  her  (slaw %p her.tyl)
+            =/  hyf  (slaw %ud hyf.tyl)
+            =/  cyf  (slaw %uv cyf.pat.tyl)
+            ?>  &(?=(^ lyf) ?=(^ her) ?=(^ hyf) ?=(^ cyf))
+            =/  key  (get-key-for u.her u.hyf)
+            tyl(pat (decrypt-path:crypt key u.cyf))
+          [%shut kid=@ pat=[cyf=@ ~]]  :: encrypted with group key, sig as iv
+            =/  kid  (slaw %ud kid.tyl)
+            =/  cyf  (slaw %uv cyf.pat.tyl)
+            ?>  &(?=(^ kid) ?=(^ cyf))
+            =/  key  (need (get-group-key-for u.kid)) :: XX handle ~
+            tyl(pat (decrypt-path:crypt key u.cyf))
+        ==
+      ::
       ::  check for pending request (peek|poke)
       ::
       ?~  per=(~(get by p.ax) her.p.pac)
         [~ ax]
-      ?~  res=(~(get by pit.u.per) pat.p.pac)
+      ?~  res=(~(get by pit.u.per) pat)
         [~ ax]
       ::
       =/  [typ=?(%auth %data) fag=@ud]
         ?~  wan.p.pac
           [?:((gth tot.q.pac 4) %auth %data) 0]
         [typ fag]:wan.p.pac
+      ::
+      =/  authenticate
+        |=  rut=@uxI
+        ?>  ?=([%0 *] aut.q.pac)
+        =*  auth  p.aut.q.pac
+        =/  =beak  [her.p.pac %$ ud+1]  :: XX where do we get this?
+        =/  ful  (en-beam [beak pat.p.pac])
+        ?-  -.auth
+          %&
+            =/  pub  (puck:ed:crypto 0)  :: XX get from jael?
+            (verify-sig:crypt pub p.auth ful rut)
+          %|
+            =/  key
+              :: XX is there an easier way to get this?
+              =/  tyl=(pole knot)  pat.p.pac
+              ?>  ?=([%chum lyf=@ her=@ hyf=@ *] tyl)
+              =/  her  (slaw %p her.tyl)
+              =/  hyf  (slaw %ud hyf.tyl)
+              ?>  &(?=(^ her) ?=(^ hyf))
+              (get-key-for u.her u.hyf)
+            (verify-mac:crypt key p.auth ful rut)
+        ==
       ::
       ?-    typ
           %auth
@@ -1012,7 +1095,7 @@
             ==
           [~ ax]
         =/  proof=(list @ux)  (rip 8 dat.q.pac)
-        ?>  (verify:crypt (recover-root:lss proof) aut.q.pac)
+        ?>  (authenticate (recover-root:lss proof))
         ?~  state=(init:verifier:lss tot.q.pac proof)
           [~ ax]
         =.  p.ax
@@ -1037,10 +1120,10 @@
           ::  is this a standalone message?
           ::
           ?:  =(1 tot.q.pac)
-            ?>  (verify:crypt (blake3 dat.q.pac) p.aut.q.pac)
+            ?>  (authenticate (root:lss dat.q.pac))
             =/  =spar:ames  [her.p.pac pat.p.pac]
             =/  =auth:mess  p.aut.q.pac
-            =/  =page  ;;(page (cue dat.q.pac))
+            =/  =page  ;;(page (cue dat.q.pac)) :: XX what if we get ~ instead of a page?
             [[[[/ ~] %give %response [%page [spar auth page]]] ~] ax]
           ::  no; then the proof should be inlined; verify it
           ::  (otherwise, we should have received an %auth packet already)
@@ -1051,7 +1134,7 @@
             ?>  ?=([%0 *] .)
             ?~(q ~ ?@(u.q [u.q ~] [p q ~]:u.q))
           =.  proof  [(leaf-hash:lss fag dat.q.pac) proof]
-          ?>  (verify:crypt (recover-root:lss proof) p.aut.q.pac)
+          ?>  (authenticate (recover-root:lss proof))
           ?~  state=(init:verifier:lss tot.q.pac proof)
             [~ ax]
           ?~  state=(verify-msg:verifier:lss u.state dat.q.pac ~)
@@ -1096,7 +1179,7 @@
         ::  yield complete message
         ::
         =/  =spar:ames  [her.p.pac pat.p.pac]
-        =/  auth  [%| *@uxI] :: XX should be stored in ps?
+        =/  =auth:mess  [%| *@uxH] :: XX should be stored in ps?
         =/  =page  ;;(page (cue (rep 13 (flop fags.ps))))
         [[[[/ ~] %give %response [%page [spar auth page]]] ~] ax]
       ==
@@ -1184,8 +1267,22 @@
     ::  XX construct and emit initial request packet
     ::
     =/  =pact:pact
+      =/  pat=path
+        =/  tyl=(pole knot)  path.p
+        ?+  tyl  !!
+          [%publ lyf=@ pat=*]  :: unencrypted
+            tyl
+          [%chum lyf=@ her=@ hyf=@ pat=*]  :: encrypted with eddh key, hmac as iv
+            =/  key  (get-key-for her.tyl hyf.tyl)
+            =/  cyf  (encrypt-path:crypt key pat.tyl)
+            tyl(pat ~[(scot %uv cyf)])
+          [%shut kid=@ pat=*]  :: encrypted with group key, sig as iv
+            =/  key  (need (get-group-key-for kid.tyl)) :: XX handle ~
+            =/  cyf  (encrypt-path:crypt key pat.tyl)
+            tyl(pat ~[(scot %uv cyf)])
+        ==
       =/  nam
-        [[ship.p *rift] [13 ~] path.p] :: XX rift from peer-state
+        [[ship.p *rift] [13 ~] pat] :: XX rift from peer-state
       ?~  q
         [%peek nam]
       ::  XX if path will be too long, put in [tmp] and use that path
@@ -1371,12 +1468,12 @@
         [~ ~]
       ?~  res=(rof ~ /ames/publ vew.u.inn bem.u.inn)
         ~
-      =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
+      =/  gag  ?~(u.res ~ [p q.q]:u.u.res)  :: XX how does receiver distinguish these?
       =/  ful  (en-beam bem)
       =/  ryf  *rift :: XX our rift
+      =|  sec=@uxI :: XX derive from rift??
       =/  ser  (jam gag)
-      =/  rot  (blake3 ser)
-      ``[%message !>([%sign (sign:crypt ryf ful rot) ser])]
+      ``[%message !>([%sign (sign:crypt sec ful (root:lss ser)) ser])]
     ::
         [%chum lyf=@ her=@ hyf=@ cyf=@ ~]
       =/  lyf  (slaw %ud lyf.tyl)
@@ -1387,40 +1484,33 @@
         [~ ~]
       ?.  =(u.lyf *life) :: XX our life
         ~
-      ?~  key=(get-key-for u.her u.hyf)  :: eddh with our key
-        ~
-      ?~  tap=(decrypt:crypt u.cyf)  ~
-      ?~  pat=(parse-path u.tap)  ~
-      ?~  inn=(inner-path-to-beam our u.pat)  ~
+      =/  key  (get-key-for u.her u.hyf)  :: eddh with our key
+      =/  pat  (decrypt-path:crypt key u.cyf)
+      ?~  inn=(inner-path-to-beam our pat)  ~
       ?~  res=(rof `[u.her ~ ~] /ames/chum vew.u.inn bem.u.inn)
         ~
       =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
       =/  ful  (en-beam bem)
-      =/  ryf  *rift :: XX our rift
       =/  ser  (jam gag)
-      =/  rot  (blake3 ser)
-      ``[%message !>([%hmac (hmac:crypt ryf ful rot) ser])]
+      ``[%message !>([%hmac (mac:crypt key ful (root:lss ser)) ser])]
     ::
         [%shut kid=@ cyf=@ ~]
       =/  kid  (slaw %ud kid.tyl)
       =/  cyf  (slaw %uv cyf.tyl)
       ?:  |(?=(~ kid) ?=(~ cyf))
         [~ ~]
-      ?~  key=(get-group-key-for u.kid) :: symmetric key lookup
+      ?~  key=(get-group-key-for u.kid)
         ~
-      ?~  tap=(decrypt:crypt u.cyf)  ~
-      ?~  pat=(parse-path u.tap)  ~
+      =/  pat  (decrypt-path:crypt u.key u.cyf)
       ::  XX check path prefix
-      ?~  inn=(inner-path-to-beam our u.pat)
+      ?~  inn=(inner-path-to-beam our pat)
         ~
       ?~  res=(rof [~ ~] /ames/shut vew.u.inn bem.u.inn)
         ~
       =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
       =/  ful  (en-beam bem)
-      =/  ryf  *rift :: XX our rift
       =/  ser  (jam gag)
-      =/  rot  (blake3 ser)
-      ``[%message !>([%sign (sign:crypt ryf ful rot) ser])]
+      ``[%message !>([%sign (sign:crypt u.key ful (root:lss ser)) ser])]
     ==
   ~
 --
