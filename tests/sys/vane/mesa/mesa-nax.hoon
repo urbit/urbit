@@ -57,7 +57,7 @@
   ::
   =/  full-nax-path  (weld /mess/0//publ/[(scot %ud nec-life)]//x/1/[%$] nax-path)
   =/  make-peek  [%make-peek %publ^life=bud-life ~bud nax-path]
-  ~?  >  dbug  'produce %make-peek request'
+  ~?  >  dbug  '~nec hears %nack, produces %make-peek request'
   =^  error-moves  ames.nec
     %:    mesa-check-take:v  ames.nec  [now=~1111.1.1 eny=`@`0xdead.beef plea-roof]
       :+  ack-wire  ~[/poke]

@@ -3968,7 +3968,8 @@
                               ::  for every seq in the set (last-acked - 10 <= ack <= last-acked)
     ==
   +$  flow-state
-    $:  outbound-flow
+    $:  closing=?(%.y %.n)
+        outbound-flow
         incoming-flow
     ==
   ::
@@ -3979,12 +3980,6 @@
         ps=(unit packet-state)
     ==
   ::
-  :: ++  chain
-  ::   =<  mop
-  ::   |%
-  ::   ++  on   ((^on ,@ ,[key=@ =path]) lte)
-  ::   +$  mop  ^chain
-  ::   --
   +$  side  [=bone dire=?(%bak %for)]
   +$  azimuth-state  [=symmetric-key =life =rift =public-key sponsor=ship]
   +$  peer-state
@@ -3993,8 +3988,7 @@
         route=(unit [direct=? =lane])  ::  XX (list)
         =qos:ames
         heeds=(set duct)
-        closing=(set bone)
-        corked=(set bone)
+        corked=(set side)  ::  XX how many flows to keep here?
         :: =chain
       ::  flow mapping  [next-bone duct->bone bone->duct]
         =ossuary:ames
