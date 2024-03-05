@@ -1180,26 +1180,22 @@
     ++  ev-req-peek
       |=  spar
       ^+  ev-core
-      :: =/  ship-state  (~(get by peers) ship.p)
-      :: :: ::
-      :: ?.  ?=([~ %known *] ship-state)
-      ::   ::  XX handle
-      ::   !!
-      :: :: ::
-      =+  peer-core=(pe-abed:pe hen ship)
-      =*  peer-state  peer-state.peer-core
+      =+  per-sat=(ev-get-per ship)
+      ?.  ?=([~ ~ *] per-sat)
+        ev-core  ::  %alien or missing
+      =.  per  [ship u.u.per-sat]
       :: ::
-      ?^  ms=(~(get by pit.peer-state) path)
+      ?^  ms=(~(get by pit.sat.per) path)
         =.  peers.ax
           =/  pit
-            (~(put by pit.peer-state) path u.ms(for (~(put in for.u.ms) hen)))
-          (~(put by peers.ax) ship known/peer-state(pit pit))
+            (~(put by pit.sat.per) path u.ms(for (~(put in for.u.ms) hen)))
+          (~(put by peers.ax) ship known/sat.per(pit pit))
         ev-core
       =|  new=request-state
       =.  for.new  (~(put in for.new) hen)
       =.  peers.ax
         %+  ~(put by peers.ax)  ship
-        known/peer-state(pit (~(put by pit.peer-state) path new))
+        known/sat.per(pit (~(put by pit.sat.per) path new))
       ::  XX construct and emit initial request packet
       ::
       ev-core
@@ -1533,15 +1529,6 @@
         fo-take:(fo-abed:fo hen bone^dire=%bak ev-chan ~)
       (ev-emil moves)
     ::
-    +|  %system
-    ::
-    ++  ev-sys  ::  system/internal: %born, %heed, %kroc, %prod...
-      |_  hen=duct
-      ++  sys-core  .
-      ++  sys-abet  [moves ax]
-      ++  sys-born  sys-core(ax ax(unix-duct hen))
-      --
-    ::
     +|  %messages
     ::
     ++  ev-make-mess
@@ -1662,108 +1649,6 @@
       |=  =bone
       ^-  duct
       ~|(%dangling-bone^ship.per^bone (~(got by by-bone.ossuary.sat.per) bone))
-    :: ++  ev-make-channel
-    ::   |=  her=ship
-    ::   ^-  channel
-    ::   [[our her] now [life crypto-core bug]:ax -.per]
-    ::  +pe: per-peer processing
-    ::
-    ++  pe
-      |_  [hen=duct =channel =peer-state]
-      +*  veb    veb.bug.channel
-          her    her.channel
-          keens  keens.peer-state
-      ::
-      +|  %helpers
-      ++  pe-core      .
-      ++  pe-emit      |=(=move pe-core(moves [move moves]))
-      ++  pe-emil      |=(mos=(list move) pe-core(moves (weld mos moves)))
-      ++  pe-abed      |=([d=duct s=@p] (pe-abed-her d s (pe-gut-her-state s)))
-      ++  pe-abed-got  |=([d=duct s=@p] (pe-abed-her d s (pe-got-her-state s)))
-      ++  pe-abed-her
-        |=  [=duct =ship peer=^peer-state]
-        %_  pe-core
-                hen   duct
-          peer-state  peer
-             channel  [[our ship] now [life crypto-core bug]:ax -.peer]
-        ==
-      ::
-      :: ++  pe-abort    pe-core  :: keeps moves, discards state changes
-      ++  pe-abet
-        ^+  [moves ax]
-        =.  peers.ax  (~(put by peers.ax) her known/peer-state) ::  XX outside?
-        ~&  >>  next-bone/pe-nex-bone
-        [moves ax]
-      ::
-      ++  pe-chan  [channel peer-state]  :: XX add type for this
-      ::  +get-her-state: lookup .her state or ~
-      ::
-      ++  pe-get-her-state
-        |=  her=ship
-        ^-  (unit ^peer-state)
-        ::
-        =-  ?.  ?=([~ %known *] -)
-              ~
-            `+.u
-        (~(get by peers.ax) her)
-      ::  +got-her-state: lookup .her state or crash
-      ::
-      ++  pe-got-her-state
-        |=  her=ship
-        ^+  peer-state
-        ::
-        ~|  %freaky-alien^her
-        =-  ?>(?=(%known -<) ->)
-        (~(got by peers.ax) her)
-      ::  +gut-her-state: lookup .her state or default
-      ::
-      ++  pe-gut-her-state
-        |=  her=ship
-        ^+  peer-state
-        =/  ship-state  (~(get by peers.ax) her)
-        ?.  ?=([~ %known *] ship-state)
-          *^peer-state
-        +.u.ship-state
-      ::
-      :: ++  pe-trace
-      ::   |=  [verb=? print=(trap tape)]
-      ::   ^+  same
-      ::   (ev-trace verb her print)
-      ::  +pe-got-duct: look up $duct by .bone, asserting already bound
-      ::
-      ++  pe-got-duct
-        |=  =bone
-        ^-  duct
-        ~|(%dangling-bone^her^bone (~(got by by-bone.ossuary.peer-state) bone))
-      ::
-      ++  pe-nex-bone  next-bone.ossuary.peer-state
-      ++  pe-get-bone
-        |=  =duct
-        ^-  (unit bone)
-        (~(get by by-duct.ossuary.peer-state) duct)
-      ::  +pe-new-duct:  make new $bone for .duct in .ossuary
-      ::
-      ++  pe-new-duct
-        |=  =duct
-        ^+  pe-core
-        =*  ossa  ossuary.peer-state
-        =.  ossa
-          :+  +(next-bone.ossa)
-            (~(put by by-duct.ossa) duct next-bone.ossa)
-          (~(put by by-bone.ossa) next-bone.ossa duct)
-        pe-core
-      ::
-      +|  %tasks
-      ::
-      ++  pe-call
-        |=  [spac=* task=peer-task]  ::  XX any namespace task?
-        ^+  pe-core
-        =^  moves  peer-state  ::  XX ... save in state
-          [~ peer-state]
-        (pe-emil moves)
-      ::
-      :: +|  %internals
-      --
     ::
     ++  fo  ::  ++flow (fo)
       =>  |%
@@ -2388,7 +2273,17 @@
             [~ ~]
           ``noun+!>(u.peer)
       ==
-    --
+    ::
+    +|  %system
+    ::
+    ++  sy  ::  system/internal: %born, %heed, %kroc, %prod...
+      |_  hen=duct
+      ++  sy-core  .
+      ++  sy-abet  [moves ax]
+      ++  sy-born  sy-core(ax ax(unix-duct hen))
+      --
+    ::
+--
 ::
 |%
 ::
@@ -2410,7 +2305,7 @@
     ::
     ?+  -.task  !!
       %vega  `ax
-      %born  sys-abet:~(sys-born ev-sys hen)
+      %born  sy-abet:~(sy-born sy hen)
     ::
       %plea  ev-abet:(~(ev-call ev-core hen) %plea [ship plea]:task)
       %keen  ev-abet:(~(ev-call ev-core hen) %keen +.task)
@@ -2440,9 +2335,9 @@
       ::  XX handle
       :: [%behn %wake *]  (~(take ev-req hen) wire %wake error.sign)
     ::
-      :: [%jael %turf *]          sys-abet:(~(on-take-turf ev-sys hen) turf.sign)
-      :: [%jael %private-keys *]  sys-abet:(~(on-priv ev-sys hen) [life vein]:sign)
-      :: [%jael %public-keys *]   sys-abet:(~(on-publ ev-sys hen) wire public-keys-result.sign)
+      :: [%jael %turf *]          sy-abet:(~(on-take-turf sy hen) turf.sign)
+      :: [%jael %private-keys *]  sy-abet:(~(on-priv sy hen) [life vein]:sign)
+      :: [%jael %public-keys *]   sy-abet:(~(on-publ sy hen) wire public-keys-result.sign)
     ::  vane (n)ack
     ::
       [@ %done *]  ev-abet:(~(ev-take ev-core hen) wire %done error.sign)
