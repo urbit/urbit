@@ -118,7 +118,7 @@
     ==
   ::
   :-  moves-5  |.  :-  %|
-  ~?  >  dbug  '~bud %ames acks the packet'
+  ~?  >  dbug  '~bud %ames acks the %poke'
   =/  moves-6
     %+  expect-eq
     !>  1
@@ -148,8 +148,11 @@
         ~[/poke]
       [%mesa %response %page ~bud^ack-path *(each @uxJ @uxI) `page`message/|]
     ::
-      :~  :-  ~[/poke]
-          [%give %done ~]
+      :~  :-  ~[/ames]
+          [%pass /~bud/0/0 %b %rest ~1111.1.1..00.00.30]
+        ::
+        :-  ~[/poke]
+        [%give %done ~]
       ==
     ==
   :-  moves-8  |.  :-  %|

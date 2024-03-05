@@ -52,6 +52,7 @@
   =/  poke-boon  [%x ~]  :: %kick
   =/  boon-path  //x/1//flow/0/~bud/poke/~nec/bak/1
   =/  ack-path   //x/1//flow/0/~nec/ack/~bud/for/1
+  =/  ack-wire   /flow/int/bak/~nec/0/0/1
   =/  make-poke=[%make-poke namespace:mesa spar:ames path]
     [%make-poke publ/nec-life [~nec ack-path] boon-path]
   ~?  >  dbug  'send %poke-boon to ~nec'
@@ -118,7 +119,47 @@
       ==
     ==
   ::
-  :-  moves-4  |.  :-  %&
+  :-  moves-4  |.  :-  %|
+  ~?  >  dbug  '~nec %ames acks the boon'
+  =/  moves-5
+    %+  expect-eq
+    !>  1
+    !>  =/  flows  =<  flows
+          %:  mesa-scry-peer:v
+            ames.nec
+            [~1111.1.10 0xdead.beef *roof]
+            [~nec ~bud]
+          ==
+        last-acked:(~(got by flows) 0 %for)
+  ::
+  :-  moves-5  |.  :-  %|
+  ~?  >  dbug  '~bud hears %ack from ~nec, clears timers'
+  =^  moves-6  ames.bud
+    %:    mesa-check-take:v  ames.bud
+        [~1111.1.1 0xdead.beef *roof]
+      :+  ack-wire
+        ~[/poke]
+      [%mesa %response %page ~nec^ack-path *(each @uxJ @uxI) `page`message/|]
+    ::
+      :~  :-  ~[/ames]
+          [%pass /~nec/0/0 %b %rest ~1111.1.1..00.00.30]
+      ==
+    ==
+  ::
+  :-  moves-6  |.  :-  %|
+  ~?  >  dbug  '~bud %ames removes the boon payload after ack'
+  =/  moves-6
+    %+  expect-eq
+    !>  ~
+    !>  =/  flows  =<  flows
+          %:  mesa-scry-peer:v
+            ames.bud
+            [~1111.1.10 0xdead.beef *roof]
+            [~bud ~nec]
+          ==
+        loads:(~(got by flows) 0 %bak)
+  ::
+  :-  moves-6  |.  :-  %&
     %+  expect-eq
     !>  0
     !>  =<  next-bone.ossuary

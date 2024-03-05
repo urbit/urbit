@@ -1166,7 +1166,7 @@
       =^  moves  ax
         =<  fo-abet
         %.  plea/[vane wire payload]
-        fo-call:(fo-abed:fo hen bone^dire=%for ev-chan cork)
+        fo-call:(fo-abed:fo hen bone^dire=%for ev-chan `cork)
       (ev-emil moves)
     ::
     ++  ev-req-boon  :: XX refactor with req-plea
@@ -1174,7 +1174,7 @@
       ::  XX handle corked/closing bones
       ::
       =^  moves  ax
-        fo-abet:(fo-call:(fo-abed:fo hen bone^dire=%bak channel %.n) boon/load)
+        fo-abet:(fo-call:(fo-abed:fo hen bone^dire=%bak channel ~) boon/load)
       (ev-emil moves)
     ::
     ++  ev-req-peek
@@ -1436,23 +1436,21 @@
       ::
       =/  fo-core
         %.  [%sink mess.pok req ?=(~ dud)]
-        fo-call:(fo-abed:fo hen bone.pok^dire ev-chan %.n)
+        fo-call:(fo-abed:fo hen bone.pok^dire ev-chan ~)
       =^  moves  ax
         ?.  closing.state.fo-core
           fo-abet:fo-core
         :: if the flow changed to closing, we received a %cork;
         :: remove the flow and publish %cork %ack in the namespace
         ::
+        ::  XX to arm
         =.  sat.per
           =,  sat.per
           %_  sat.per
-            flows            (~(del by flows) bone.pok^dire)
-            corked           (~(put in corked) bone.pok^dire) :: bind in namespace
-            by-duct.ossuary  (~(del by by-duct.ossuary) (ev-got-duct bone.pok))
-            by-bone.ossuary  (~(del by by-bone.ossuary) bone.pok)
+            flows   (~(del by flows) bone.pok^dire)
+            corked  (~(put in corked) bone.pok^dire) :: XX bind in namespace
           ==
-        =.  peers.ax  (~(put by peers.ax) [ship known/sat]:per)
-        [moves.fo-core ax]
+        [moves:fo-core ax(peers (~(put by peers.ax) [ship known/sat]:per))]
       (ev-emil moves)
     ::
     ++  ev-mess-peek
@@ -1492,11 +1490,26 @@
       ::  proessing an ack or a naxplanation payload
       ::
       ::
-      =^  moves  ax
-        =<  fo-abet
+      =/  fo-core
         ::  XX parse $ack payload in here, and call task instead?
         %.  [were response/[seq +.load]]
-        fo-take:(fo-abed:fo hen bone^dire ev-chan %.n)
+        fo-take:(fo-abed:fo hen bone^dire ev-chan ~)
+      =^  moves  ax
+        ?.  closing.state.fo-core
+          fo-abet:fo-core
+        :: if the flow changed to closing, we received an %ack for a %cork;
+        :: remove the flow and it's associated bone in the ossuary
+        ::
+        ::  XX to arm
+        =.  sat.per
+          =,  sat.per
+          %_  sat.per
+            flows            (~(del by flows) bone^dire)
+            corked           (~(put in corked) bone^dire)
+            by-duct.ossuary  (~(del by by-duct.ossuary) (ev-got-duct bone))  ::  XX bone^side=%for
+            by-bone.ossuary  (~(del by by-bone.ossuary) bone)                ::  XX bone^side=%for
+          ==
+        [moves.fo-core ax(peers (~(put by peers.ax) [ship known/sat]:per))]
       (ev-emil moves)
     ::  +ev-poke-done: vane responses
     ::
@@ -1517,7 +1530,7 @@
         ::  XX use it as an assurance check?
         ::
         %.  [%out done/error]
-        fo-take:(fo-abed:fo hen bone^dire=%bak ev-chan %.n)
+        fo-take:(fo-abed:fo hen bone^dire=%bak ev-chan ~)
       (ev-emil moves)
     ::
     +|  %system
@@ -1786,10 +1799,10 @@
       ::
       |_  [[hen=duct =side =channel] state=flow-state]
       ::
-      +*  veb    veb.bug.channel
-          her    her.channel
-          bone   bone.side
-          dire   dire.side
+      +*  veb         veb.bug.channel
+          her         her.channel
+          bone        bone.side
+          dire        dire.side
           peer-state  sat.per
       ::
       +|  %helpers
@@ -1802,9 +1815,9 @@
       ::                  $>(%outbound flow-state)  :: XX  *$>(%outbound flow-state)  fails
       ::
       ++  fo-abed
-        |=  [=duct =^side =^channel cork=?]  :: XX remove channel
+        |=  [=duct =^side =^channel cork=(unit ?)]  :: XX remove channel
         =.  state  (~(gut by flows.peer-state) side *flow-state)
-        =.  closing.state  cork
+        =?  closing.state  ?=(^ cork)  u.cork
         fo-core(hen duct, side side, channel channel)
       ::
       ++  fo-abet  ::moves^state  :: XX (flop moves) done outside?
@@ -1933,13 +1946,14 @@
         ::
         =.  loads.state  (put:fo-mop loads.state next-load.state poke)
         =;  core=_fo-core
-          ::  XX sets one timer for all the messsages in the bone
+          =.  next-wake.state.core  `(add now ~s30)
+          ::  XX sets one timer for all the messsages in the flow
           ::
           %-  fo-emit:core
           :^    hen
               %pass
             /[(scot %p her)]/[(scot %ud bone)]/[(scot %ud rift.peer-state)]
-          [%b %wait `@da`(add now ~s30)]
+          [%b %wait `@da`(need next-wake.state.core)]
         ::
         =+  loads=loads.state  ::  cache
         |-  ^+  fo-core
@@ -1971,10 +1985,7 @@
       ++  fo-sink-boon
         |=  [seq=@ud message=* ok=?]
         ^+  fo-core
-        =/  =duct  (pe-got-duct:(pe-abed-her:pe hen her peer-state) bone)
-        =.  fo-core
-          %+  fo-emit  (pe-got-duct:(pe-abed-her:pe hen her peer-state) bone)
-          [%give %boon message]
+        =.  fo-core  (fo-emit (ev-got-duct bone) %give %boon message)
         ::  XX handle a previous crash
         :: =?  moves  !ok
         ::   ::  we previously crashed on this message; notify client vane
@@ -2006,6 +2017,12 @@
           ::  mark flow as closing
           ::  publish %cork %ack (in +ev-mess-poke) in corked.peer-state
           ::
+          =?  fo-core  ?=(^ next-wake.state)
+            =/  =^wire
+              /[(scot %p her)]/[(scot %ud bone)]/[(scot %ud rift.peer-state)]  :: XX to arm
+            ::  reset timer for %boon(s)
+            ::
+            (fo-emit [[/ames]~ %pass wire %b %rest u.next-wake.state])
           ::  XX just fo-core(closing.state %.y) ?
           (fo-take-done:fo-core(closing.state %.y, pending-ack.state %.y) ~)
         =.  fo-core
@@ -2019,7 +2036,7 @@
         |=  [seq=@ud =spar auth:mess =gage:mess]
         ^+  fo-core
         :: ?>  ?=(%outbound -.state)
-        ::  only handle acks for %poke that have been sent
+        ::  only handle acks for %pokes that have been sent
         ::
         ?:  (gth seq next-load.state)
           :: XX log?
@@ -2032,19 +2049,35 @@
         ::
         ?.  =(key.u.first seq)
           fo-core
-        ::  XX handle closing and corked bones
-        ::
-        ?:  ?=(%bak dire)  fo-core   ::  %boon %ack, no-op
-        :: ?:  =(%1 (mod bone 2))  fo-core  ::  %boon %ack, no-op
         ?>  ?=([%message *] gage)
         =+  ;;(error=? +.gage)  ::  XX
-        ::  XX FIXME: have.?(%bak %for) -need.%for
         ?.  error
-          ::  ack is for the first, oldest pending-ack set message, remove it
+          ::  ack is for the first, oldest pending-ack sent message; remove it
           ::
           =^  *  loads.state  (del:fo-mop loads.state seq)
-          %+  fo-emit  (pe-got-duct:(pe-abed-her:pe hen her peer-state) bone)
-          [%give %done ~]
+          ::  increase the send-window so we can send the next message
+          ::
+          =.  send-window.state  +(send-window.state)
+          =/  =wire
+            /[(scot %p her)]/[(scot %ud bone)]/[(scot %ud rift.peer-state)]  :: XX to arm
+          :: ::  XX FIXME: have.?(%bak %for) -need.%for
+          :: =?  fo-core  ?=(~ loads.state)  ::  no pending messages to be sent
+          ::   (fo-emit [/ames]~ %pass wire %b %rest (need next-wake.state))
+          =;  core=_fo-core
+            ?^  loads.state  core
+            ::  no pending messages to be sent
+            ::
+            (fo-emit:core [/ames]~ %pass wire %b %rest (need next-wake.state))
+          ?:  ?|  closing.state  ::  %cork %ack; implicit ack
+                  ?=(%bak dire)  ::  %boon %ack; assumed %acked from vane
+              ==
+            fo-core
+          ::  XX we only get acks for the oldest message, since we only
+          ::  send one (send-window=_1) at a time; when changing that,
+          ::  the logic for knowing if the ack is for the cork will need
+          ::  to be revisited
+          ::
+          (fo-emit (ev-got-duct bone) %give %done ~)
         ::  if error start %peek for naxplanation
         =/  =wire  (fo-make-wire %ext seq)
         =/  =path  (fo-nax-path seq her^our)
@@ -2104,8 +2137,7 @@
         ::
         ?>  ?=([%message %nax *] gage)
         =+  ;;(=error +>.gage)  ::  XX
-        %+  fo-emit  (pe-got-duct:(pe-abed-her:pe hen her peer-state) bone)
-        [%give %done `error]
+        (fo-emit (ev-got-duct bone) %give %done `error)
       :: +|  %internals
       ::
       --
@@ -2323,7 +2355,7 @@
           ::
           =/  res=(unit page)
             %.  [load mess]:tyl
-            fo-peek:(fo-abed:fo ~[//scry] [bone dire]:tyl ev-chan %.n)
+            fo-peek:(fo-abed:fo ~[//scry] [bone dire]:tyl ev-chan ~)
           ?~(res ~ ``[%message !>(u.res)])
         ==
       ::  XX stub for app-level scries (e.g. /g/x/0/dap[...])

@@ -3938,6 +3938,7 @@
         ::  XX option to include messages that won't be bounded into the namespace (two-layer queue)
         loads=((mop ,@ud mesa-message) lte)  :: all unacked
         next-load=_1 :: next %poke to send, one behind last-acked
+        next-wake=(unit @da)
         ::  XX how is this calculated?
         ::  XX inferred by the dumb internal congestion control
         ::  XX and by vere if we have a smart interpreter?
