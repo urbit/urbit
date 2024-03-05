@@ -1012,7 +1012,7 @@
     ::
     +$  ev-flow-wire
       $:  %flow
-          were=?(%out %ext %int)
+          were=?(%out %ext %int %cor)
           dire=?(%for %bak)
           [%p her=@p]
           [%ud rift=@ud]
@@ -1430,22 +1430,20 @@
         :: ::  %plea(s) and %cork(s) sink on bone %1
         plea/;;(plea +.gage)
       ::
+      :: =/  already-closing=?  closing.flow.sat.per  :: XX
       =/  fo-core
         %.  [%sink mess.pok req ?=(~ dud)]
         fo-call:(fo-abed:fo hen bone.pok^dire ev-chan ~)
       =^  moves  ax
         ?.  closing.state.fo-core
           fo-abet:fo-core
+        :: ?.  already-closing
+        ::   ::  XX log?
+        ::   [moves:fo-core ax]
         :: if the flow changed to closing, we received a %cork;
         :: remove the flow and publish %cork %ack in the namespace
         ::
-        ::  XX to arm
-        =.  sat.per
-          =,  sat.per
-          %_  sat.per
-            flows   (~(del by flows) bone.pok^dire)
-            corked  (~(put in corked) bone.pok^dire) :: XX bind in namespace
-          ==
+        =.  corked.sat.per  (~(put in corked.sat.per) bone.pok^dire)
         [moves:fo-core ax(peers (~(put by peers.ax) [ship known/sat]:per))]
       (ev-emil moves)
     ::
@@ -1471,7 +1469,6 @@
       =^  u-bone-her  ev-core
         (ev-validate-wire hen wire)
       ?~  u-bone-her  ev-core
-      ::  XX use $pith for this?
       =,  u.u-bone-her
       ::  XX replaced by the flow "dire"ction ?(%for %bak)
       ::  based on the bone we can know if this payload is an ack?
@@ -1491,8 +1488,15 @@
         %.  [were response/[seq +.load]]
         fo-take:(fo-abed:fo hen bone^dire ev-chan ~)
       =^  moves  ax
-        ?.  closing.state.fo-core
+        ?:  &(=(were %cor) =(dire %bak) (~(has in corked.sat.per) bone^dire))
+          ::  if the bone is corked, we have received the ack;
+          ::  we can safely delete the flow
+          ::
+          =.  flows.sat.per  (~(del by flows.sat.per) bone^dire)
+          [moves:fo-core ax(peers (~(put by peers.ax) [ship known/sat]:per))]
+        ?.  closing.state.fo-core  :: XX check that it was not closing before
           fo-abet:fo-core
+        ?>  =(were %int)
         :: if the flow changed to closing, we received an %ack for a %cork;
         :: remove the flow and it's associated bone in the ossuary
         ::
@@ -1701,6 +1705,7 @@
       ::
       ++  fo-abed
         |=  [=duct =^side =^channel cork=(unit ?)]  :: XX remove channel
+        ::  XX use got by in another arm to assert when the flow should exist
         =.  state  (~(gut by flows.peer-state) side *flow-state)
         =?  closing.state  ?=(^ cork)  u.cork
         fo-core(hen duct, side side, channel channel)
@@ -1717,6 +1722,7 @@
       ++  fo-ack-path  |=([seq=@ud =dyad] (fo-path seq %ack dyad))
       ++  fo-pok-path  |=([seq=@ud =dyad] (fo-path seq %poke dyad))
       ++  fo-nax-path  |=([seq=@ud =dyad] (fo-path seq %nax dyad))
+      ++  fo-cor-path  |=([seq=@ud =dyad] (fo-path seq %cork dyad))
       ++  fo-mop       ((on ,@ud mesa-message) lte)
       ++  fo-corked    (~(has in corked.peer-state) side)
       ++  fo-closing   closing.state
@@ -1731,7 +1737,7 @@
       +|  %builders
       ::
       ++  fo-path
-        |=  [seq=@ud path=?(%ack %poke %nax) dyad]
+        |=  [seq=@ud path=?(%ack %poke %nax %cork) dyad]
         ^-  ^path
         %-  fo-view-beam
         :~  ::  %mess  %'0'
@@ -1740,8 +1746,8 @@
             :: %publ  %'0'  ::  XX
             %flow  (scot %ud bone)
             reqr=(scot %p sndr)  path  rcvr=(scot %p rcvr)
-        ::  %ack(s) and %naxplanation(s) are on the other side, and not bounded
-        ::  on our namespace
+        ::  %ack(s), %naxplanation(s) and %cork(s) are on the other side,
+        ::  and not bounded on our namespace
             ?:(=(%poke path) dire fo-flip-dire)
             (scot %ud seq)
         ==
@@ -1749,7 +1755,8 @@
       ++  fo-view-beam  |=(=path `^path`[vane=%$ care=%x case='1' desk=%$ path])
       ::
       ++  fo-make-wire
-        |=  [were=?(%int %ext %out) seq=@ud]  ::  XX better names ?(for-acks=%int for-nax-payloads=%ext to-vane=%out)
+        ::  XX better names ?(for-acks=%int for-nax-payloads=%ext to-vane=%out for-corks=%cor)
+        |=  [were=?(%int %ext %out %cor) seq=@ud]
         ^-  wire
         ::  %for: %plea(s) are always sent forward, %boon(s) %bak
         ::  both .to-vane and .dire are asserted when receiving the vane %ack
@@ -1793,19 +1800,20 @@
         ==
       ::
       ++  fo-take
-        |=  [were=?(%ext %int %out) sign=message-sign]
+        |=  [were=?(%ext %int %out %cor) sign=message-sign]
         ^+  fo-core
         ::
         ?-  -.sign
              %done   ?>(?=(%out were) (fo-take-done +.sign))  :: ack from client vane
           ::
-          %response   ?+  were  !!
-                        :: XX payload given by the packet layer
-                        :: via the wire used when %pass %a peek-for-poke
-                        :: and only handled there?
-                        %ext  (fo-take-naxplanation +.sign)
-                        %int  (fo-take-ack +.sign)
-        ==            ==
+          %response  ?+  were  !!
+                      :: XX payload given by the packet layer
+                      :: via the wire used when %pass %a peek-for-poke
+                      :: and only handled there?
+                      %ext  (fo-take-naxplanation +.sign)
+                      %int  (fo-take-ack +.sign)
+                      %cor  (fo-take-client-cork +.sign)
+        ==           ==
       ::
       ++  fo-peek
         |=  [load=?(%poke %ack %nax) mess=@ud]
@@ -1823,11 +1831,13 @@
                      %boon  `boon/payload.u.v
         ==       ==
       ::
-      +|  %tasks
+      +|  %request
       ::
       ++  fo-send-poke
         |=  poke=mesa-message
-        ?:  |((fo-to-close poke) fo-corked)  fo-core
+        ?:  |((fo-to-close poke) fo-corked)
+          ::  XX log
+          fo-core
         ::
         =.  loads.state  (put:fo-mop loads.state next-load.state poke)
         =;  core=_fo-core
@@ -1866,6 +1876,8 @@
         =/  spac=namespace  publ/life.peer-state  ::  XX %chum
         =.  fo-core  (fo-emit hen %pass wire %m make-poke/[spac paths])
         loop
+      ::
+      +|  %response
       ::
       ++  fo-sink-boon
         |=  [seq=@ud message=* ok=?]
@@ -1908,6 +1920,14 @@
             ::  reset timer for %boon(s)
             ::
             (fo-emit [[/ames]~ %pass wire %b %rest u.next-wake.state])
+          =.  fo-core
+            %-  fo-emit
+            ::  start %peek request to check if they have corked the flow
+            ::  after reading the ack from our namespace
+            ::
+            =/  =path  (fo-cor-path seq her^our)
+            =/  spac=namespace  publ/life.peer-state  ::  XX %chum
+            [hen %pass wire=(fo-make-wire %cor seq) %m make-peek/spac^her^path]
           ::  XX just fo-core(closing.state %.y) ?
           (fo-take-done:fo-core(closing.state %.y, pending-ack.state %.y) ~)
         =.  fo-core
@@ -1917,10 +1937,33 @@
         ::
         fo-core(pending-ack.state %.y)
       ::
+      +|  %from-vane
+      ::
+      ++  fo-take-done
+        |=  error=(unit error)
+        ^+  fo-core
+        :: ?>  ?=(%incoming -.state)
+        ::  if there's a pending-vane ack, is always +(last-acked)
+        ::
+        ?>  =(%.y pending-ack.state)
+        =/  seq=@ud  +(last-acked.state)
+        =:  last-acked.state   seq
+            pending-ack.state  %.n
+          ==
+        =?  nax.state  ?=(^ error)
+          =?  nax.state  (gth seq 10)
+            ::  only keep the last 10 nacks
+            ::
+            (~(del by nax.state) (sub seq 10))
+          (~(put by nax.state) seq u.error)
+        ::  XX emit ack to unix
+        fo-core
+      ::
+      +|  %from-network
+      ::
       ++  fo-take-ack
         |=  [seq=@ud =spar auth:mess =gage:mess]
         ^+  fo-core
-        :: ?>  ?=(%outbound -.state)
         ::  only handle acks for %pokes that have been sent
         ::
         ?:  (gth seq next-load.state)
@@ -1934,7 +1977,7 @@
         ::
         ?.  =(key.u.first seq)
           fo-core
-        ?>  ?=([%message *] gage)
+        ?>  ?=([%message *] gage)  ::  XX [%message %ack *] ?
         =+  ;;(error=? +.gage)  ::  XX
         ?.  error
           ::  ack is for the first, oldest pending-ack sent message; remove it
@@ -1974,32 +2017,9 @@
         =/  spac=namespace  publ/life.peer-state  ::  XX %chum
         (fo-emit hen %pass wire %m make-peek/[spac her^path])
       ::
-      ++  fo-take-done
-        |=  error=(unit error)
-        ^+  fo-core
-        :: ?>  ?=(%incoming -.state)
-        ::  if there's a pending-vane ack, is always +(last-acked)
-        ::
-        ?>  =(%.y pending-ack.state)
-        =/  seq=@ud  +(last-acked.state)
-        =:  last-acked.state   seq
-            pending-ack.state  %.n
-          ==
-        =?  nax.state  ?=(^ error)
-          =?  nax.state  (gth seq 10)
-            ::  only keep the last 10 nacks
-            ::
-            (~(del by nax.state) (sub seq 10))
-          (~(put by nax.state) seq u.error)
-        ::  XX emit ack to unix
-        fo-core
-      ::
       ++  fo-take-naxplanation
         |=  [seq=@ud =spar auth:mess =gage:mess]
         ^+  fo-core
-        ::  XX  the payload of the poke we sent has been removed already at this
-        ::  point:
-        ::
         ::  XX same as fo-take-ack refactor
         ::
         =/  next-load=@ud  ?~(next=(ram:fo-mop loads.state) 1 key.u.next)
@@ -2017,13 +2037,30 @@
         ::  ack is for the first, oldest pending-ack set message, remove it
         ::
         =^  *  loads.state  (del:fo-mop loads.state seq)
+        ::  increase the send-window so we can send the next message
+        ::
+        =.  send-window.state  +(send-window.state)
         ::  XX check path.spar
         ::  XX path.spar will be the full namespace path, peel off before?
+        ::  XX clear timer for the failed %poke
         ::
         ?>  ?=([%message %nax *] gage)
         =+  ;;(=error +>.gage)  ::  XX
         (fo-emit (ev-got-duct bone) %give %done `error)
-      :: +|  %internals
+      ::
+      ++  fo-take-client-cork
+        |=  [seq=@ud =spar auth:mess =gage:mess]
+        ^+  fo-core
+        ::  sanity checks on the state of the flow
+        ::
+        ?>  ?&  ?=([%message *] gage)
+                ;;(ack=? +.gage)            ::  client has corked the flow
+                =(seq last-acked.state)     ::  %cork is the higest acked seq
+                !pending-ack.state          ::  there are no pending acks
+                closing.state               ::  the flow is in closing
+                !(~(has by nax.state) seq)  ::  the %cork was not nacked
+            ==
+        fo-core
       ::
       --
     ::
@@ -2217,7 +2254,7 @@
         ::
             ::res-mess-pith:ev-res  ::  /[~sndr]/[load]/[~rcvr]/flow/[bone]/[dire]/[mess]
             ::  XX drop sndr, it's always our
-            [%flow bone=@ sndr=@ load=?(%poke %ack %nax) rcvr=@ dire=?(%for %bak) mess=@ ~]
+            [%flow bone=@ sndr=@ load=?(%poke %ack %nax %cork) rcvr=@ dire=?(%for %bak) mess=@ ~]
           ::  XX remove typed-paths
           =>  .(tyl `(pole iota)`(ev-pave tyl))
           ?>  ?=(res-mess-pith tyl)
@@ -2231,9 +2268,10 @@
             ~  ::  %alien or missing
           =.  per  [rcvr.tyl u.u.per-sat]
           ?:  ?&  (~(has in corked.sat.per) [bone dire]:tyl)
-                  =(%ack load.tyl)
+                  ?=(?(%cork %ack) load.tyl)
               ==
-              ::  if %ack for a %corked flow, produce %ack
+              ::  if %ack for a %corked flow (for both client and server),
+              ::  produce %ack
               ::  XX when are corked bones evicted?
               ::
               ``[%message !>(`ack/%.y)]
@@ -2280,7 +2318,61 @@
       |_  hen=duct
       ++  sy-core  .
       ++  sy-abet  [moves ax]
+      ++  sy-emil  |=(mos=(list move) sy-core(moves (weld mos moves)))
       ++  sy-born  sy-core(ax ax(unix-duct hen))
+      ++  sy-init
+        ^+  sy-core
+        %-  sy-emil
+        :~  [hen %pass /turf %j %turf ~]
+            [hen %pass /private-keys %j %private-keys ~]
+            [hen %pass /public-keys %j %public-keys [n=our ~ ~]]
+        ==
+      ::
+      ++  sy-priv
+        |=  [=life vein=(map life private-key)]
+        ^+  sy-core
+        ::
+        =/  =private-key    (~(got by vein) life)
+        =.  life.ax         life
+        ::  XX don't keep the crypto core in state
+        :: =.  crypto-core.ax  (nol:nu:crub:crypto private-key)
+        ::  recalculate each peer's symmetric key
+        ::
+        =/  our-private-key  sec:ex:crypto-core.ax
+        =.  peers.ax
+          %-  ~(run by peers.ax)
+          |=  =ship-state
+          ^+  ship-state
+          ::
+          :: ?.  ?=(%known -.ship-state)  :: XX %alien
+          ::   ship-state
+          ::
+          =/  =peer-state  +.ship-state
+          =.  symmetric-key.peer-state
+            (derive-symmetric-key public-key.+.ship-state our-private-key)
+          ::
+          [%known peer-state]
+        ::
+        sy-core
+      ::
+      :: +|  %internals
+      ::
+      ::  +derive-symmetric-key: $symmetric-key from $private-key and $public-key
+      ::
+      ::    Assumes keys have a tag on them like the result of the |ex:crub core.
+      ::
+      ++  derive-symmetric-key
+        ~/  %derive-symmetric-key
+        |=  [=public-key =private-key]
+        ^-  symmetric-key
+        ::
+        ?>  =('b' (end 3 public-key))
+        =.  public-key  (rsh 8 (rsh 3 public-key))
+        ::
+        ?>  =('B' (end 3 private-key))
+        =.  private-key  (rsh 8 (rsh 3 private-key))
+        ::
+        `@`(shar:ed:crypto public-key private-key)
       --
     ::
 --
@@ -2305,6 +2397,7 @@
     ::
     ?+  -.task  !!
       %vega  `ax
+      %init  sy-abet:~(sy-init sy hen)
       %born  sy-abet:~(sy-born sy hen)
     ::
       %plea  ev-abet:(~(ev-call ev-core hen) %plea [ship plea]:task)
@@ -2336,7 +2429,7 @@
       :: [%behn %wake *]  (~(take ev-req hen) wire %wake error.sign)
     ::
       :: [%jael %turf *]          sy-abet:(~(on-take-turf sy hen) turf.sign)
-      :: [%jael %private-keys *]  sy-abet:(~(on-priv sy hen) [life vein]:sign)
+      [%jael %private-keys *]  sy-abet:(~(sy-priv sy hen) [life vein]:sign)
       :: [%jael %public-keys *]   sy-abet:(~(on-publ sy hen) wire public-keys-result.sign)
     ::  vane (n)ack
     ::

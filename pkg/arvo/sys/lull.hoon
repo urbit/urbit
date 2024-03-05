@@ -3889,6 +3889,8 @@
   +$  message-num    @udmessagenum
   +$  public-key     @uwpublickey
   +$  symmetric-key  @uwsymmetrickey
+  +$  private-key    @uwprivatekey
+  +$  signature      @uwsignature
   ::
   ::  +address: client IP address
   ::
@@ -3905,7 +3907,7 @@
   ::
   +$  ship-state
     $+  ship-state
-    $%  [%known peer-state]
+    $%  [%known peer-state]  :: XX %alien
     ==
   ::
   +$  mesa-message
@@ -3989,8 +3991,8 @@
         route=(unit [direct=? =lane])  ::  XX (list)
         =qos:ames
         heeds=(set duct)
-        corked=(set side)  ::  XX how many flows to keep here?
-        :: =chain
+        corked=(set side)  ::  XX how many flows to keep here
+                           ::  can be +peeked in the namespace
       ::  flow mapping  [next-bone duct->bone bone->duct]
         =ossuary:ames
         ::  [0 %for]    =>  %poke: %plea %watch  =>  [0 %bak]
