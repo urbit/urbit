@@ -44,7 +44,7 @@
   =^  *  ames.nec
     %:    mesa-take:v  ames.nec  ack-wire
       ~[/poke]
-      [%mesa %response %page ~bud^ack-path *(each @uxJ @uxI) `page`message/|]
+      [%mesa %response %page ~bud^ack-path &+0x0 `page`message/[%ack error=|]]
       *roof
     ==
   ::  start
@@ -139,7 +139,7 @@
         [~1111.1.1 0xdead.beef *roof]
       :+  ack-wire
         ~[/poke]
-      [%mesa %response %page ~nec^ack-path *(each @uxJ @uxI) `page`message/|]
+      [%mesa %response %page ~nec^ack-path &+0x0 `page`message/[%ack error=|]]
     ::
       :~  :-  ~[/ames]
           [%pass /~nec/0/0 %b %rest ~1111.1.1..00.00.30]

@@ -1977,8 +1977,8 @@
         ::
         ?.  =(key.u.first seq)
           fo-core
-        ?>  ?=([%message *] gage)  ::  XX [%message %ack *] ?
-        =+  ;;(error=? +.gage)  ::  XX
+        ?>  ?=([%message *] gage)
+        =+  ;;([%ack error=?] +.gage)  ::  XX
         ?.  error
           ::  ack is for the first, oldest pending-ack sent message; remove it
           ::

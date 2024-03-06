@@ -61,7 +61,7 @@
   =^  error-moves  ames.nec
     %:    mesa-check-take:v  ames.nec  [now=~1111.1.1 eny=`@`0xdead.beef plea-roof]
       :+  ack-wire  ~[/poke]
-      [%mesa %response %page ~bud^ack-path *(each @uxJ @uxI) `page`message/error=&]
+      [%mesa %response %page ~bud^ack-path &+0x0 `page`message/[%ack error=&]]
     ::
       :~  :-  ~[/poke]
           [%pass nax-wire %m make-peek]
