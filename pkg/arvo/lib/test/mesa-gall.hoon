@@ -63,8 +63,7 @@
           public-key=bud-pub
           sponsor=~bud
       ==
-    ::=.  route.peer-state  `[direct=%.y `lane:ames`[%& ~bud]]
-    =.  route.peer-state  `[direct=%.y *@ux]
+    =.  route.peer-state  `[direct=%.y *lane:mesa]
     [%known peer-state]
   ::  tell ~bud about ~nec
   ::
@@ -78,8 +77,7 @@
           public-key=nec-pub
           sponsor=~nec
       ==
-    ::=.  route.peer-state  `[direct=%.y `lane:ames`[%& ~nec]]
-    =.  route.peer-state  `[direct=%.y *@ux]
+    =.  route.peer-state  `[direct=%.y *lane:mesa]
     [%known peer-state]
   ::  metamorphose
   ::
@@ -105,8 +103,8 @@
   =.  gall-nec  (load-agent ~nec gall-nec %sub test-sub)
   =/  gall-bud  (make-gall ~bud)
   =.  gall-bud  (load-agent ~bud gall-bud %pub test-pub)
-  :*  nec=[ames=nec.a gall=gall-nec]
-      bud=[ames=bud.a gall=gall-bud]
+  :*  nec=[mesa=nec.a gall=gall-nec]
+      bud=[mesa=bud.a gall=gall-bud]
   ==
 ::  +gall-check-call: run gall task, assert produces expected-moves
 ::
@@ -150,7 +148,7 @@
   ?>  ?=([[* [%give [%send *]]] ~] pac)
   =/  mesa-core  (mesa-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
   %-  call:mesa-core
-  [duct dud=~ %soft `task:mesa`[%hear *lane:pact:mesa q.gift.card.i.pac]]
+  [duct dud=~ %soft `task:mesa`[%heer *lane:pact:mesa q.gift.card.i.pac]]
 ::
 ++  mesa-expect-msg
   |=  [pac=(list move:mesa-bunt) exp=noun]
@@ -160,10 +158,10 @@
   (expect-eq !>(q.r.load.gift.card.i.pac) !>(exp))
 ::
 ++  mesa-make-pact
-  |=  [=mesa-gate =spar:ames =path =per=rift spac=namespace:mesa-bunt]
+  |=  [=mesa-gate =spar:ames =path =per=rift =space:mesa-bunt]
   ^-  @
   =/  mesa-core  (mesa-gate now=~1111.1.1 eny=`@`0xdead.beef *roof)
-  =/  =pact:pact:mesa-bunt  (ev-make-pact:mesa-core spar `path per-rift spac)
+  =/  =pact:pact:mesa-bunt  (ev-make-pact:mesa-core spar `path per-rift space)
   p:(fax:plot:mesa-bunt (en:pact:mesa-bunt pact))
 ::
 ++  mesa-scry-payload

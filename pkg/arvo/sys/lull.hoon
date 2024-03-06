@@ -448,336 +448,6 @@
     ^-  @ud
     ?~(a 0 +((add $(a l.a) $(a r.a))))
   --
-::  XX from zuse.hoon
-::
-++  blake
-  ~%  %blake  ..part  ~
-  |%
-  ++  blake3
-    =<
-      =<  hash  :: cuter API
-      =+  [cv=iv flags=0b0]
-      ^?  ~/  %blake3
-      |%
-      ::
-      ++  keyed  |=(key=octs hash(cv q.key, flags f-keyedhash))
-      ::
-      ++  hash
-        ~/  %hash
-        |=  [out=@ud msg=octs]
-        ^-  @ux
-        =/  root  (root-output (turn (split-octs 13 msg) chunk-output))
-        %+  end  [3 out]
-        %+  rep  9
-        %+  turn  (gulf 0 (div out 64))
-        |=(i=@ (compress root(counter i)))
-      ::
-      ++  root-output
-        |=  outputs=(list output)
-        ^-  output
-        %+  set-flag  f-root
-        |-
-        =/  mid  (div (bex (xeb (dec (lent outputs)))) 2)
-        =+  [l=(scag mid outputs) r=(slag mid outputs)]
-        ?>  ?=(^ outputs)
-        ?~  t.outputs  i.outputs
-        %-  parent-output
-        [(compress $(outputs l)) (compress $(outputs r))]
-      ::
-      ++  parent-output
-        |=  [l=@ux r=@ux]
-        ^-  output
-        %+  set-flag  f-parent
-        [cv 0 (rep 8 ~[l r]) 64 flags]
-      ::
-      ++  chunk-output
-        ~/  %chunk-output
-        |=  [counter=@ chunk=octs]
-        ^-  output
-        %+  set-flag  f-chunkend
-        %+  roll  (split-octs 9 chunk)
-        |=  [[i=@ block=octs] prev=output]
-        ?:  =(0 i)  [cv counter q.block p.block (con flags f-chunkstart)]
-        [(output-cv prev) counter q.block p.block flags]
-      --
-    ~%  %blake3-impl  ..blake3  ~
-    |%
-    ::
-    +$  output
-      $:  cv=@ux
-          counter=@ud
-          block=@ux
-          blocklen=@ud
-          flags=@ub
-      ==
-    ::
-    ++  compress
-      ~/  %compress
-      |=  output
-      ^-  @
-      |^
-        =/  state  (can32 [8 cv] [4 iv] [2 counter] [1 blocklen] [1 flags] ~)
-        =.  state  (round state block)  =.  block  (permute block)
-        =.  state  (round state block)  =.  block  (permute block)
-        =.  state  (round state block)  =.  block  (permute block)
-        =.  state  (round state block)  =.  block  (permute block)
-        =.  state  (round state block)  =.  block  (permute block)
-        =.  state  (round state block)  =.  block  (permute block)
-        =.  state  (round state block)  (mix state (rep 8 ~[(rsh 8 state) cv]))
-      ::
-      ++  round
-        |=  [state=@ block=@]
-        ^+  state
-        |^
-          =.  state  (g 0x0 0x4 0x8 0xc 0x0 0x1)
-          =.  state  (g 0x1 0x5 0x9 0xd 0x2 0x3)
-          =.  state  (g 0x2 0x6 0xa 0xe 0x4 0x5)
-          =.  state  (g 0x3 0x7 0xb 0xf 0x6 0x7)
-          =.  state  (g 0x0 0x5 0xa 0xf 0x8 0x9)
-          =.  state  (g 0x1 0x6 0xb 0xc 0xa 0xb)
-          =.  state  (g 0x2 0x7 0x8 0xd 0xc 0xd)
-          =.  state  (g 0x3 0x4 0x9 0xe 0xe 0xf)
-          state
-        ::
-        ++  g
-          |=  [a=@ b=@ c=@ d=@ mx=@ my=@]
-          ^+  state
-          =.  state  (set a :(sum32 (get a) (get b) (getb mx)))
-          =.  state  (set d (rox (get d) (get a) 16))
-          =.  state  (set c :(sum32 (get c) (get d)))
-          =.  state  (set b (rox (get b) (get c) 12))
-          =.  state  (set a :(sum32 (get a) (get b) (getb my)))
-          =.  state  (set d (rox (get d) (get a) 8))
-          =.  state  (set c :(sum32 (get c) (get d)))
-          =.  state  (set b (rox (get b) (get c) 7))
-          state
-        ::
-        ++  getb  (curr get32 block)
-        ++  get  (curr get32 state)
-        ++  set  |=([i=@ w=@] (set32 i w state))
-        ++  rox  |=([a=@ b=@ n=@] (ror32 n (mix a b)))
-        --
-      ::
-      ++  permute
-        |=  block=@
-        ^+  block
-        (rep 5 (turn perm (curr get32 block)))
-      --
-    ::  constants and helpers
-    ::
-    ++  iv  0x5be0.cd19.1f83.d9ab.9b05.688c.510e.527f.
-              a54f.f53a.3c6e.f372.bb67.ae85.6a09.e667
-    ++  perm  (rip 2 0x8fe9.5cb1.d407.a362)
-    ++  f-chunkstart    ^~  (bex 0)
-    ++  f-chunkend      ^~  (bex 1)
-    ++  f-parent        ^~  (bex 2)
-    ++  f-root          ^~  (bex 3)
-    ++  f-keyedhash     ^~  (bex 4)
-    ++  f-derivekeyctx  ^~  (bex 5)
-    ++  f-derivekeymat  ^~  (bex 6)
-    ++  set-flag  |=([f=@ o=output] o(flags (con flags.o f)))
-    ++  fe32   ~(. fe 5)
-    ++  ror32  (cury ror:fe32 0)
-    ++  sum32  sum:fe32
-    ++  can32  (cury can 5)
-    ++  get32  |=([i=@ a=@] (cut 5 [i 1] a))
-    ++  set32  |=([i=@ w=@ a=@] (sew 5 [i 1 w] a))
-    ++  output-cv  |=(o=output `@ux`(rep 8 ~[(compress o)]))
-    ++  split-octs
-      |=  [a=bloq msg=octs]
-      ^-  (list [i=@ octs])
-      ?>  ?=(@ q.msg)  :: simplfy jet logic
-      =/  per  (bex (sub a 3))
-      =|  chunk-octs=(list [i=@ octs])
-      =|  i=@
-      |-
-      ?:  (lte p.msg per)  [[i msg] chunk-octs]
-      :-  [i per^(end a q.msg)]
-      $(i +(i), msg (sub p.msg per)^(rsh a q.msg))
-    --
-  ::
-  ::TODO  generalize for both blake2 variants
-  ++  blake2b
-    ~/  %blake2b
-    |=  [msg=byts key=byts out=@ud]
-    ^-  @
-    ::  initialization vector
-    =/  iv=@
-      0x6a09.e667.f3bc.c908.
-        bb67.ae85.84ca.a73b.
-        3c6e.f372.fe94.f82b.
-        a54f.f53a.5f1d.36f1.
-        510e.527f.ade6.82d1.
-        9b05.688c.2b3e.6c1f.
-        1f83.d9ab.fb41.bd6b.
-        5be0.cd19.137e.2179
-    ::  per-round constants
-    =/  sigma=(list (list @ud))
-      :~
-        :~   0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  ==
-        :~  14  10   4   8   9  15  13   6   1  12   0   2  11   7   5   3  ==
-        :~  11   8  12   0   5   2  15  13  10  14   3   6   7   1   9   4  ==
-        :~   7   9   3   1  13  12  11  14   2   6   5  10   4   0  15   8  ==
-        :~   9   0   5   7   2   4  10  15  14   1  11  12   6   8   3  13  ==
-        :~   2  12   6  10   0  11   8   3   4  13   7   5  15  14   1   9  ==
-        :~  12   5   1  15  14  13   4  10   0   7   6   3   9   2   8  11  ==
-        :~  13  11   7  14  12   1   3   9   5   0  15   4   8   6   2  10  ==
-        :~   6  15  14   9  11   3   0   8  12   2  13   7   1   4  10   5  ==
-        :~  10   2   8   4   7   6   1   5  15  11   9  14   3  12  13   0  ==
-        :~   0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  ==
-        :~  14  10   4   8   9  15  13   6   1  12   0   2  11   7   5   3  ==
-      ==
-    =>  |%
-        ++  get-word-list
-          |=  [h=@ w=@ud]
-          ^-  (list @)
-          %-  flop
-          =+  l=(rip 6 h)
-          =-  (weld - l)
-          (reap (sub w (lent l)) 0)
-        ::
-        ++  get-word
-          |=  [h=@ i=@ud w=@ud]
-          ^-  @
-          %+  snag  i
-          (get-word-list h w)
-        ::
-        ++  put-word
-          |=  [h=@ i=@ud w=@ud d=@]
-          ^-  @
-          %+  rep  6
-          =+  l=(get-word-list h w)
-          %-  flop
-          %+  weld  (scag i l)
-          [d (slag +(i) l)]
-        ::
-        ++  mod-word
-          |*  [h=@ i=@ud w=@ud g=$-(@ @)]
-          (put-word h i w (g (get-word h i w)))
-        ::
-        ++  pad
-          |=  [byts len=@ud]
-          (lsh [3 (sub len wid)] dat)
-        ::
-        ++  compress
-          |=  [h=@ c=@ t=@ud l=?]
-          ^-  @
-          ::  set up local work vector
-          =+  v=(add (lsh [6 8] h) iv)
-          ::  xor the counter t into v
-          =.  v
-            %-  mod-word
-            :^  v  12  16
-            (cury mix (end [0 64] t))
-          =.  v
-            %-  mod-word
-            :^  v  13  16
-            (cury mix (rsh [0 64] t))
-          ::  for the last block, invert v14
-          =?  v  l
-            %-  mod-word
-            :^  v  14  16
-            (cury mix 0xffff.ffff.ffff.ffff)
-          ::  twelve rounds of message mixing
-          =+  i=0
-          =|  s=(list @)
-          |^
-            ?:  =(i 12)
-              ::  xor upper and lower halves of v into state h
-              =.  h  (mix h (rsh [6 8] v))
-              (mix h (end [6 8] v))
-            ::  select message mixing schedule and mix v
-            =.  s  (snag (mod i 10) sigma)
-            =.  v  (do-mix 0 4 8 12 0 1)
-            =.  v  (do-mix 1 5 9 13 2 3)
-            =.  v  (do-mix 2 6 10 14 4 5)
-            =.  v  (do-mix 3 7 11 15 6 7)
-            =.  v  (do-mix 0 5 10 15 8 9)
-            =.  v  (do-mix 1 6 11 12 10 11)
-            =.  v  (do-mix 2 7 8 13 12 13)
-            =.  v  (do-mix 3 4 9 14 14 15)
-            $(i +(i))
-          ::
-          ++  do-mix
-            |=  [na=@ nb=@ nc=@ nd=@ nx=@ ny=@]
-            ^-  @
-            =-  =.  v  (put-word v na 16 a)
-                =.  v  (put-word v nb 16 b)
-                =.  v  (put-word v nc 16 c)
-                        (put-word v nd 16 d)
-            %-  b2mix
-            :*  (get-word v na 16)
-                (get-word v nb 16)
-                (get-word v nc 16)
-                (get-word v nd 16)
-                (get-word c (snag nx s) 16)
-                (get-word c (snag ny s) 16)
-            ==
-          --
-        ::
-        ++  b2mix
-          |=  [a=@ b=@ c=@ d=@ x=@ y=@]
-          ^-  [a=@ b=@ c=@ d=@]
-          =.  x  (rev 3 8 x)
-          =.  y  (rev 3 8 y)
-          =+  fed=~(. fe 6)
-          =.  a  :(sum:fed a b x)
-          =.  d  (ror:fed 0 32 (mix d a))
-          =.  c  (sum:fed c d)
-          =.  b  (ror:fed 0 24 (mix b c))
-          =.  a  :(sum:fed a b y)
-          =.  d  (ror:fed 0 16 (mix d a))
-          =.  c  (sum:fed c d)
-          =.  b  (ror:fed 0 63 (mix b c))
-          [a b c d]
-        --
-    ::  ensure inputs adhere to contraints
-    =.  out  (max 1 (min out 64))
-    =.  wid.msg  (min wid.msg (bex 128))
-    =.  wid.key  (min wid.key 64)
-    =.  dat.msg  (end [3 wid.msg] dat.msg)
-    =.  dat.key  (end [3 wid.key] dat.key)
-    ::  initialize state vector
-    =+  h=iv
-    ::  mix key length and output length into h0
-    =.  h
-      %-  mod-word
-      :^  h  0  8
-      %+  cury  mix
-      %+  add  0x101.0000
-      (add (lsh 3 wid.key) out)
-    ::  keep track of how much we've compressed
-    =*  mes  dat.msg
-    =+  com=0
-    =+  rem=wid.msg
-    ::  if we have a key, pad it and prepend to msg
-    =?  mes  (gth wid.key 0)
-      (can 3 ~[rem^mes 128^(pad key 128)])
-    =?  rem  (gth wid.key 0)
-      (add rem 128)
-    |-
-    ::  compress 128-byte chunks of the message
-    ?:  (gth rem 128)
-      =+  c=(cut 3 [(sub rem 128) 128] mes)
-      =.  com   (add com 128)
-      %_  $
-        rem   (sub rem 128)
-        h     (compress h c com |)
-      ==
-    ::  compress the final bytes of the msg
-    =+  c=(cut 3 [0 rem] mes)
-    =.  com  (add com rem)
-    =.  c  (pad [rem c] 128)
-    =.  h  (compress h c com &)
-    ::  produce output of desired length
-    %+  rsh  [3 (sub 64 out)]
-    ::  do some word
-    %+  rep  6
-    %+  turn  (flop (gulf 0 7))
-    |=  a=@
-    (rev 3 8 (get-word h a 8))
-  --  ::blake
-::
 ::
 +$  deco  ?(~ %bl %br %un)                              ::  text decoration
 +$  json                                                ::  normal json value
@@ -3659,239 +3329,43 @@
 ::
 ++  mesa  ^?
   |%
-  ::
-  ++  lss
-    =,  blake
-    |%
-    ++  root-hash
-      |=  o=output:blake3
-      ^-  @ux
-      (output-cv:blake3 (set-flag:blake3 f-root:blake3 o))
-    ::
-    ++  leaf-hash
-      |=  [counter=@ leaf=@]
-      ^-  @ux
-      (output-cv:blake3 (chunk-output:blake3 counter 1.024^leaf))
-    ::
-    ::  +build: compute proof data for a message
-    ::
-    ++  build
-      |=  msg=octs
-      ^-  [root=@ux proof=(list @ux) pairs=(list [l=@ux r=@ux])]
-      =/  chunks  (split-octs:blake3 13 msg)
-      =+
-        |-  ^-  [o=output:blake3 pairs=(list [l=@ux r=@ux])]
-        =/  mid  (div (bex (xeb (dec (lent chunks)))) 2)
-        =+  [l=(scag mid chunks) r=(slag mid chunks)]
-        ?>  ?=(^ chunks)
-        ?~  t.chunks  [(chunk-output:blake3 i.chunks) ~]
-        =+  [left=$(chunks l) right=$(chunks r)]
-        =/  pair  [(output-cv:blake3 o.left) (output-cv:blake3 o.right)]
-        [(parent-output:blake3 pair) [pair (weld pairs.left pairs.right)]]
-      =/  root  (root-hash o)
-      ?:  =(~ pairs)  [root ~ ~]
-      =/  height  (xeb (dec (lent chunks)))
-      =/  proof  (turn (scag height pairs) tail)
-      =.  proof  (flop (snoc proof l:(snag (dec height) pairs)))
-      =.  pairs  (slag height pairs)
-      [root proof pairs]
-    ::
-    ++  recover-root
-      |=  proof=(list @ux)
-      ?>  ?=([@ @ *] proof)
-      =*  l0  i.proof
-      =*  l1  i.t.proof
-      %-  root-hash
-      %+  roll  t.t.proof
-      |:  [p=0x0 n=(parent-output:blake3 l0 l1)]
-      (parent-output:blake3 (output-cv:blake3 n) p)
-    ::
-    ::  +verifier: stateful core for sequentially verifying messages
-    ::
-    ++  verifier
-      =<
-        |%
-        ::
-        ++  init
-          |=  [leaves=@ proof=(list @ux)]
-          ^-  (unit state)
-          ?~  proof
-            ::  need at least two leaves to have a proof
-            ::
-            ?.  (lte leaves 1)  ~
-            `[leaves 0 [0 1] ~ ~]
-          ?.  ?=([@ @ *] proof)  ~
-          ::  initialize leaf queue and parent stack with proof hashes;
-          ::  after the first two leaves, the next subtree is [2 4]
-          ::
-          =/  state  [leaves 0 [0 1] ~ t.t.proof]
-          `(push-leaves state [i.proof i.t.proof])
-        ::
-        ++  verify-msg
-          |=  [=state [leaf=@ pair=(unit [l=@ux r=@ux])]]
-          ^-  (unit _state)
-          ?~  ustate=(verify-leaf state leaf)  ~
-          ?~  pair  `u.ustate
-          ?~  ustate=(verify-pair u.ustate u.pair)  ~
-          ::  all good; if the pair held leaf hashes, add them
-          ::  to the queue and advance past them; if it held parent
-          ::  hashes, add them to the parent stack
-          ::
-          =.  state  (advance u.ustate)
-          ?:  (at-leaf state)
-            `(push-leaves state u.pair)
-          `(push-parents state u.pair)
-        --
-      |%
-      +$  state
-          $:
-              leaves=@
-              leaf=@                 :: current leaf index
-              cur=[l=@ r=@]          :: current pair subtree
-              leaf-queue=(list @ux)
-              parent-stack=(list @ux)
-          ==
-      ::
-      ++  at-leaf  |=(state =(r.cur +(l.cur)))
-      ::
-      ++  advance
-        |=  =state
-        %=  state
-          cur  =,  cur.state
-              ::  if at a leaf, ascend the next subtree;
-              ::  otherwise, descend into the left child
-              ::
-              ?:  (at-leaf state)
-                [+(l) (min leaves.state (add r (bex (ctz r))))]
-              [l (add l (bex (dec (xeb (dec (sub r l))))))]
-        ==
-      ::
-      ++  push-leaves
-        |=  [=state [l=@ux r=@ux]]
-        ^+  state
-        ::  NOTE: using a list as a queue isn't ideal, performance-wise,
-        ::  but this list never grows larger than log(n) so in practice
-        ::  it's fine
-        ::
-        %-  advance  %-  advance
-        state(leaf-queue (weld leaf-queue.state ~[l r]))
-      ::
-      ++  push-parents
-        |=  [=state [l=@ux r=@ux]]
-        ^+  state
-        state(parent-stack (weld ~[l r] parent-stack.state))
-      ::
-      ++  verify-leaf
-        |=  [=state leaf=@]
-        ^-  (unit _state)
-        =/  wid  ?.(=(+(leaf.state) leaves.state) 1.024 (met 3 leaf))
-        =/  cv  (output-cv:blake3 (chunk-output:blake3 leaf.state [wid leaf]))
-        ::  if leaf queue is empty, draw from parent stack; this is
-        ::  necessary for any tree with an odd number of leaves, since
-        ::  such a tree will contain a pair where the left child is a
-        ::  parent and the right child is a leaf
-        ::
-        ?^  leaf-queue.state
-          ?.  =(i.leaf-queue.state cv)  ~
-          `state(leaf +(leaf.state), leaf-queue t.leaf-queue.state)
-        ?^  parent-stack.state
-          ?.  =(i.parent-stack.state cv)  ~
-          `state(leaf +(leaf.state), parent-stack t.parent-stack.state)
-        ~
-      ::
-      ++  verify-pair
-        |=  [=state pair=[l=@ux r=@ux]]
-        ^-  (unit _state)
-        =/  cv  (output-cv:blake3 (parent-output:blake3 pair))
-        ?~  parent-stack.state          ~
-        ?.  =(i.parent-stack.state cv)  ~
-        `state(parent-stack t.parent-stack.state)
-      --
-    --
-  ::
-  ++  ctz
-    |=  a=@
-    ?:  =(0 a)  0
-    =|  i=@ud
-    |-(?:(=(1 (cut 0 [i 1] a)) i $(i +(i))))
-  ::
-  +$  name  [p=ship q=rift r=path s=bloq t=num=@udF]
-  +$  auth
-    ::
-    ::  %0 for fragment 0 or auth packet
-    ::    ~      for 1-fragment message and auth packets
-    ::    [~ %&] for >4-fragment messages
-    ::    [~ %&] for 2-fragment messages
-    ::    [~ %|] for 3-4-fragment
-    ::
-    ::  %1 for fragments 1 - N/2
-    ::  ~  for fragments (N/2)+1 - N
-    ::
-    $@  ~
-    $%  [%0 p=auth:mess q=(unit $@(@uxI (pair @uxI @uxI)))]
-        [%1 p=(pair @uxI @uxI)]
-    ==
-  +$  data  [tot=@udF aut=auth dat=@]
-  +$  lane  $@  @ux
-            $%  [%if p=@ifF q=@udE]
-                [%is p=@isH q=@udE]
-            ==
-  +$  next  (list lane)
-  +$  pact
-    $%  [%page p=name q=data r=next]  :: [%page p=name q=(each once more) r=next]
-        [%peek p=name]
-        [%poke p=name q=name r=data]  :: [%poke p=name q=name r=once]
-    ==
-  :: +$  auth  (each @uxJ @uxI) :: &+sig, |+hmac
-  +$  gage  $@(~ page)
-  +$  sage  (trel spar auth=(each @uxJ @uxI) gage)
-  +$  mess
-    $%  [%page sage]
-        [%peek p=spar]
-        [%poke p=spar q=sage]
-    ==
-  +$  namespace
-    $%  [%publ =life]
-        [%chum =life her=ship kid=@]
-        [%shut kid=@]
-    ==
   +$  task
-    $+  mesa-task                                ::
-    $%  [%hear p=lane q=@]            :: receive a packet
-        [%mess p=(unit lane) q=mess]  :: receive a message
-        [%make-poke spac=namespace p=spar q=path]  :: initiate %poke request
-        [%make-peek spac=namespace p=spar]         :: initiate %peek request
+    $+  mesa-task
+    $~  vega+~
+    $%  [%heer p=lane:pact q=@]            :: receive a packet
+        [%mess p=(unit lane:pact) q=mess]  :: receive a message
+        [%make-poke =space p=spar q=path]  :: initiate %poke request
+        [%make-peek =space p=spar]         :: initiate %peek request
     ::
         $>(?(%plea %born %trim %vega %init) vane-task)
         $>(%cork task:ames)
         [%keen sec=(unit [idx=@ key=@]) spar]
-    ::
     ==
   ::
   +$  gift
-      ::  client-gift  :: gifts emitted when sending requests/responses
-      ::
-    $%  [%send p=(list lane:pact) q=@]     :: send a request/response packet
-        [%response load=$>(%page mess)]    :: produce a response message
-      ::  publisher-gift  :: gifts emitted when hearing requests
-      ::
-        [%boon payload=*]                    :: assembled %boon
-        [%done error=(unit error)]           :: ack to client vane
+    $%  [%send p=(list lane:pact) q=@]   :: send a request/response packet
+        [%response load=$>(%page mess)]  :: produce a response message
+        [%boon payload=*]                :: assembled %boon
+        [%done error=(unit error)]       :: ack to client vane
     ==
-  +$  error  [tag=@tas =tang]
-  +$  plea   [vane=@tas =path payload=*]
-  +$  spar   [=ship =path]
-  +$  dyad   [sndr=ship rcvr=ship]
-  +$  bone           @udbone
-  +$  fragment       @uwfragment
-  +$  fragment-num   @udfragmentnum
-  +$  message-blob   @udmessageblob
-  +$  message-num    @udmessagenum
-  +$  public-key     @uwpublickey
-  +$  symmetric-key  @uwsymmetrickey
-  +$  private-key    @uwprivatekey
-  +$  signature      @uwsignature
   ::
+  +$  axle
+    $:  %0
+        peers=(map ship ship-state)
+        =unix=duct
+        =life
+        =rift
+        ::  TODOs
+        crypto-core=acru:ames  ::  XX move out of state (used in the mesa-gall tests)
+        :: =chain:ames             ::  for %shut requests
+        :: =bug                    ::  debugging info
+        :: snub=[form=?(%allow %deny) ships=(set ship)]  :: white/black listing
+        :: XX tmp=(map @ux page)   :: temporary hash-addressed bindings
+        :: $=  dead                :: dead-flow consolidation timers
+        :: $:  flow=[%flow (unit dead-timer)]
+        ::     cork=[%cork (unit dead-timer)]
+        :: ==
+    ==
   ::  +address: client IP address
   ::
   +$  address
@@ -3900,14 +3374,74 @@
         ::  [%ames @p]
     ==
   ::
-  +$  packet-state
-    $:  los=state:verifier:lss
-        fags=(list @)
+  +$  space
+    $%  [%publ =life]
+        [%chum =life her=ship kid=@]
+        [%shut kid=@]
     ==
+  +$  lane           (each @pC address)
+  +$  public-key     @uwpublickey
+  +$  symmetric-key  @uwsymmetrickey
+  +$  bone           @udbone
+  +$  private-key    @uwprivatekey
+  ::  [0 %for]    =>  %poke: %plea %watch  =>  [0 %bak]
+  ::  [0 %for]   <=   %poke: %boon        <=   [0 %bak]
   ::
+  +$  side           [=bone dire=?(%bak %for)]
+  +$  error          error:ames
+  +$  plea           plea:ames
+  +$  spar           spar:ames
+  +$  dyad           dyad:ames
+  +$  azimuth-state  [=symmetric-key =life =rift =public-key sponsor=ship]
   +$  ship-state
     $+  ship-state
     $%  [%known peer-state]  :: XX %alien
+    ==
+  ::
+  +$  peer-state
+    $+  peer-state
+    $:  azimuth-state
+        route=(unit [direct=? =lane])  ::  XX (list)
+        =qos:ames
+        heeds=(set duct)
+        corked=(set side)  ::  can be +peeked in the namespace
+                           ::  XX how many flows to keep here?
+        =ossuary:ames      ::  XX redefine ossuary in terms of bone^side
+        flows=(map side flow-state)
+      ::  outgoing/incoming requests
+        ::  write-data: path=pok-path  /~zod/poke/~nec/flow/bone=0/mess=1/frag=1
+        ::  read data:  path=pek-path
+        ::              path=ack-path  /~nec/ack/~zod/flow/bone=0/mess=1/frag=1
+        ::
+        pit=(map path request-state)
+    ==
+  ::
+  +$  request-state
+    $:  for=(set duct)
+        pay=(unit path)
+        ps=(unit packet-state)
+    ==
+  ::
+  ++  packet-state
+    ::  XX duplicated in %zuse
+    ::
+    =>  |%
+        ++  lss
+          |%
+          ++  verifier
+            |%
+            +$  state
+              $:  leaves=@
+                  leaf=@                 :: current leaf index
+                  cur=[l=@ r=@]          :: current pair subtree
+                  leaf-queue=(list @ux)
+                  parent-stack=(list @ux)
+              ==
+            --
+          --
+        --
+    $:  los=state:verifier:lss
+        fags=(list @)
     ==
   ::
   +$  mesa-message
@@ -3919,94 +3453,799 @@
                             ::  where =($% vane.plea)
     ==
   ::
-  +$  outbound-flow
-    ::  outbound %poke payloads, bounded in the ship's namespace
-    ::  always and only for requests
-    ::
-    $:  %outbound
-        ::  as soon as we can read the ack for the %poke we remove it from
-        ::  the queue since that proof that they have processed the message
-        ::
-        ::  (n)acks are considered payload responses, and are part of
-        ::  received pokes, so we track them in last-acked and nax
-        ::
-        ::  both for boons and pleas, and per (seq)message
-        ::  the ordered map guarantees that we receive the acks in ordered
-        ::  if (dec received-ack=@ud) has not been acked, we drop it
-        ::
-        ::  payloads can be +peek'ed via a well-formed path with a known structure
-        ::  e.g.  /~zod/poke/~nec/flow/bone=0/seq=1
-        ::
-        ::  XX option to include messages that won't be bounded into the namespace (two-layer queue)
-        loads=((mop ,@ud mesa-message) lte)  :: all unacked
-        next-load=_1 :: next %poke to send, one behind last-acked
-        next-wake=(unit @da)
-        ::  XX how is this calculated?
-        ::  XX inferred by the dumb internal congestion control
-        ::  XX and by vere if we have a smart interpreter?
-        ::
-        send-window-max=_1  :: how many pleas i can send
-        send-window=_1      ::
-    ==
-  ::
-  +$  incoming-flow
-    ::  incoming %pokes, pending their ack from the vane
-    ::
-    $:  %incoming
-            ::  acks can be +peek'ed via a well-formed path with a known structure
-            ::    e.g. /~nec/ack/~zod/flow/bone=1/ack=1 (as stored in the producer of the ack)
-            ::                                          (the reader will be using bone=0)
-            ::
-            last-acked=@ud   :: for acking old duplicates (only 10)
-                              :: and dropping future acks
-                                :: only +(last-acked) messages are handled
-                                :: duplicate heards, are looked up in pending-ack
-                              ::
-            pending-ack=?  :: there's only one pending ack
-                          :: to guarantee that messages are delivered
-                          :: in order
-                          :: also used to not duplicate sending the ack to the vane
-            $+  naxplanations
-            nax=(map seq=@ud error)  :: messages you have nacked,
-                              ::  for every seq in the set (last-acked - 10 <= ack <= last-acked)
-    ==
   +$  flow-state
-    $:  closing=?(%.y %.n)
-        outbound-flow
-        incoming-flow
-    ==
-  ::
-  +$  request-state
-    $+  request-state
-    $:  for=(set duct)
-        pay=(unit path)
-        ps=(unit packet-state)
-    ==
-  ::
-  +$  side  [=bone dire=?(%bak %for)]
-  +$  azimuth-state  [=symmetric-key =life =rift =public-key sponsor=ship]
-  +$  peer-state
-    $+  peer-state
-    $:  azimuth-state
-        route=(unit [direct=? =lane])  ::  XX (list)
-        =qos:ames
-        heeds=(set duct)
-        corked=(set side)  ::  XX how many flows to keep here
-                           ::  can be +peeked in the namespace
-      ::  flow mapping  [next-bone duct->bone bone->duct]
-        =ossuary:ames
-        ::  [0 %for]    =>  %poke: %plea %watch  =>  [0 %bak]
-        ::  [0 %for]   <=   %poke: %boon        <=   [0 %bak]
+    $:  ::  a flow switches to closing when:
+        ::    - forward: a %cork %plea %poke request is sent
+        ::    - backward: a %cork %plea %poke request is received
         ::
-          flows=(map side flow-state)
-      ::  outgoing/incoming requests
-        ::  write-data: path=pok-path  /~zod/poke/~nec/flow/bone=0/mess=1/frag=1
-        ::  read data:  path=pek-path
-        ::              path=ack-path  /~nec/ack/~zod/flow/bone=0/mess=1/frag=1
+        ::  the flow is deleted first on the forward side when it can read the
+        ::  %ack for the %cork, and then on the backward side when it can +peek
+        ::  the corked flow from the forward namespace
         ::
-        pit=(map path request-state)
+        closing=?(%.y %.n)
+        ::  outbound %poke payloads, bounded in the ship's namespace
+        ::  always and only for requests
+        ::
+        $:  %outbound
+          ::  as soon as we can read the ack for the %poke we remove it from
+          ::  the queue since that proof that they have processed the message
+          ::
+          ::  (n)acks are considered payload responses, and are part of
+          ::  received pokes, so we track them in last-acked and nax
+          ::
+          ::  both for boons and pleas, and per (seq)message
+          ::  the ordered map guarantees that we receive the acks in ordered
+          ::  if (dec received-ack=@ud) has not been acked, we drop it
+          ::
+          ::  payloads can be +peek'ed via a well-formed path with a known structure
+          ::  e.g.  /flow/bone=0/~zod/poke/~nec/for/seq=1
+          ::
+          ::  XX option to include messages that won't be bounded into the namespace (two-layer queue)
+          loads=((mop ,@ud mesa-message) lte)  :: all unacked
+          next-load=_1 :: next %poke to send, always +(last-acked)
+          next-wake=(unit @da)
+          ::  XX how is this calculated?
+          ::  XX inferred by the dumb internal congestion control
+          ::  XX and by vere if we have a smart interpreter?
+          ::
+          send-window-max=_1  :: how many pleas i can send
+          send-window=_1      ::
+        ==
+        ::  incoming %pokes, pending their ack from the vane
+        ::
+        $:  %incoming
+          ::  acks can be +peek'ed via a well-formed path with a known structure
+          ::    e.g. /floe/bone=0/~nec/ack/~zod/bak/ack=1 (as stored in the producer of the ack)
+          ::                                          (the reader will be using bone=0)
+          ::
+          last-acked=@ud   :: for acking old duplicates (only 10)
+                            :: and dropping future acks
+                              :: only +(last-acked) messages are handled
+                              :: duplicate heards, are looked up in pending-ack
+                            ::
+          pending-ack=?  :: there's only one pending ack
+                        :: to guarantee that messages are delivered
+                        :: in order
+                        :: also used to not duplicate sending the ack to the vane
+          $+  naxplanations
+          nax=(map seq=@ud error)  :: messages you have nacked,
+                            ::  for every seq in the set (last-acked - 10 <= ack <= last-acked)
+    ==  ==
+  ::  atom ops
+  ::
+  ::
+  ++  plot
+    =>  |%
+        +$  plat
+          $@  @                                       ::  measure atom
+          $^  $%  [[%c ~] (pair (pair step step) @)]  ::  cut slice
+                  [[%m ~] (pair (pair step step) @)]  ::  measure slice
+                  [[%s ~] p=plot]                     ::  subslice
+              ==                                      ::
+          (pair step @)                               ::  prefix
+        --                                            ::
+    |^  $^  [l=$ r=$]                                 ::  concatenate
+        [a=bloq b=(list plat)]                        ::  serialize
+    ::
+    ::  +fax: encode a plot
+    ::
+    ++  fax
+      |=  p=$
+      ^-  (trel @ bloq step)
+      ?^  -.p
+        =/  l  $(p l.p)
+        =/  r  $(p r.p)
+        =/  s  (rig +.l q.r)
+        [(add p.l (lsh [q.r s] p.r)) q.r (add r.r s)]
+      ::
+      ?~  b.p  [0 a.p 0]
+      =;  c=(pair @ step)
+        =/  d  $(b.p t.b.p)
+        [(add p.c (lsh [a.p q.c] p.d)) a.p (add q.c r.d)]
+      ::
+      ?@  i.b.p
+        [i.b.p (met a.p i.b.p)]
+      ?-  -.i.b.p
+        @       [(end [a.p p.i.b.p] q.i.b.p) p.i.b.p]
+        [%c ~]  [(cut a.p [p q]:i.b.p) q.p.i.b.p]
+        [%m ~]  =+((cut a.p [p q]:i.b.p) [- (met a.p -)])
+        [%s ~]  =/  e  $(p p.i.b.p)
+                [p.e (rig +.e a.p)]
+      ==
+    ::
+    ::  +mes: measure a plot
+    ::
+    ++  mes
+      |=  p=$
+      ^-  [q=bloq r=step]
+      ?^  -.p
+        =/  l  $(p l.p)
+        =/  r  $(p r.p)
+        =/  s  (rig l q.r)
+        [q.r (add r.r s)]
+      ::
+      ?~  b.p  [a.p 0]
+      =;  c=q=step
+        =/  d  $(b.p t.b.p)
+        [a.p (add q.c r.d)]
+      ::
+      ?@  i.b.p
+        (met a.p i.b.p)
+      ?-  -.i.b.p
+        @       p.i.b.p
+        [%c ~]  q.p.i.b.p
+        [%m ~]  =+((cut a.p [p q]:i.b.p) (met a.p -))
+        [%s ~]  =/  e  $(p p.i.b.p)
+                (rig e a.p)
+      ==
+    --
+  ::
+  ::  +rig: convert between bloqs
+  ::
+  ++  rig
+    |=  [=bite b=bloq]
+    ^-  step
+    ?@  bite  0
+    =/  [a=bloq c=step]  bite
+    ?:  =(a b)  c
+    ?:  (gth a b)
+      (lsh [0 (sub a b)] c)
+    =/  d  [0 (sub b a)]
+    =/  e  (rsh d c)
+    ?:(=(0 (end d c)) e +(e))
+  ::
+  ::  +nac: reverse +can
+  ::
+  ++  nac
+    |=  [a=bloq b=(list (pair step step)) c=@]
+    ^-  (list @)
+    ?~  b  ~
+    [(cut a [i.b] c) $(b t.b)]
+  ::
+  ::  +dew: dry +hew
+  ::
+  ++  dew
+    |=  [a=bite b=* c=@]
+    ^-  *
+    =<  -
+    =/  [d=bloq e=step]  ?^(a a [a 0])
+    |-  ^-  (pair * step)
+    ?@  b
+      [(cut d [e b] c) (add e b)]
+    =^  f  e  $(b -.b)
+    =^  g  e  $(b +.b)
+    [[f g] e]
+  ::
+  ::  +hew: cut many
+  ::
+  ++  hew
+    |=  [a=bite c=@]
+    =/  d=[=bloq =step]  ?^(a a [a 0])
+    |*  b=*
+    ^+  [b d]
+    ?@  b
+      [(cut bloq.d [step.d b] c) bloq.d (add step.d b)]
+    =^  f  d  $(b -.b)
+    =^  g  d  $(b +.b)
+    [[f g] d]
+  ::
+  ++  clz
+    |=  [a=bite b=@]
+    (sub ?@(a (bex a) (mul (bex bloq.a) step.a)) (met 0 b))
+  ::
+  ++  ctz
+    |=  a=@
+    ?:  =(0 a)  0
+    =|  i=@ud
+    |-(?:(=(1 (cut 0 [i 1] a)) i $(i +(i))))
+  ::
+  ++  ham  :: popcount
+    |=  a=@
+    ?:  =(0 a)  0
+    =|  n=@ud
+    =/  m  (dec (met 0 a))
+    |-  ^-  @ud
+    =?  n  =(1 (cut 0 [m 1] a))
+      +(n)
+    ?:(=(0 m) n $(m (dec m)))
+  ::
+  ::  binary tree ops
+  ::
+  :: +|  %arboric
+  ::
+  ++  bao
+    |=  n=@ud
+    =|  i=@ud
+    =|  s=(list)
+    |-  ^-  *
+    ?:  =(i n)
+      =^  d  s  s
+      |-(?~(s d $(d [i.s d], s t.s)))
+    ::
+    =/  d=*  i
+    =.  i  +(i)
+    =/  j  (ctz i)
+    |-  ^-  *
+    ?:  =(0 j)
+      ^$(s [d s])
+    =^  e  s  s
+    $(d [e d], j (dec j))
+  ::
+  ++  unroll
+    |=  d=*
+    =|  s=(list [axe=@ d=*])
+    =/  a  1
+    |-  ^+  s
+    ?@  d
+      ?~  s  ~
+      $(d d.i.s, a axe.i.s, s t.s)
+    :-  [a d]
+    $(d -.d, a (peg a 2), s [[(peg a 3) +.d] s])
+  ::
+  :: +|  %messages
+  ::
+  ++  mess
+    =>  |%
+        +$  auth  (each @uxJ @uxI) :: &+sig, |+hmac
+        +$  gage  $@(~ page)
+        +$  sage  (trel spar:ames auth gage)
+        --
+    $%  [%page sage]
+        [%peek p=spar:ames]
+        [%poke p=spar:ames q=sage]
     ==
   ::
+  ::  packet de/serialization
+  ::
+  :: +|  %packets
+  ::
+  ::    > :(add 8 305 1.159)
+  ::    1.472
+  ::
+  ++  pact
+    =>  |%
+        +$  frag  @udF
+        +$  ship  @pH
+        +$  rift  @udF
+        +$  bloq  @D
+        +$  name
+          $:  [her=ship rif=rift]
+              [boq=bloq wan=$@(~ [typ=?(%auth %data) fag=frag])]
+              pat=path
+          ==
+        +$  auth
+          ::
+          ::  %0 for fragment 0 or auth packet
+          ::    ~      for 1-fragment message and auth packets
+          ::    [~ %&] for >4-fragment messages
+          ::    [~ %&] for 2-fragment messages
+          ::    [~ %|] for 3-4-fragment
+          ::
+          ::  %1 for fragments 1 - N/2
+          ::  ~  for fragments (N/2)+1 - N
+          ::
+          $@  ~
+          $%  [%0 p=auth:mess q=(unit $@(@uxI (pair @uxI @uxI)))]
+              [%1 p=(pair @uxI @uxI)]
+          ==
+        +$  data  [tot=frag aut=auth:pact dat=@]
+        +$  lane  $@  @ux
+                  $%  [%if p=@ifF q=@udE]
+                      [%is p=@isH q=@udE]
+                  ==
+        +$  next  (list lane)
+        +$  pact  $%  [%page p=name q=data r=next]
+                      [%poke p=name q=name r=data]
+                      [%peek p=name]
+                  ==
+        --
+    ::
+    |%
+    ++  en
+      |=  pak=pact
+      ^-  plot
+      =/  bod=plot
+        ?-  -.pak
+          %page  [(en:^name p.pak) (en:^data q.pak) (en:^next r.pak)]
+          %peek  (en:^name p.pak)
+          %poke  [(en:^name p.pak) (en:^name q.pak) (en:^data r.pak)]
+        ==
+      =/  hed=plot
+        =/  nex=@B
+          ?.  ?=(%page -.pak)  0b0
+          ?~  r.pak            0b0
+          ?^  t.r.pak          0b11
+          ?:(?=([%if *] i.r.pak) 0b1 0b10)
+        =/  hop  0 :: XX
+        (en:head nex -.pak hop (mug p:(fax:plot bod)))
+      [hed bod]
+    ::
+    ++  de
+      |=  a=bite
+      |=  dat=@
+      ^-  [pact boq=bloq sep=step]
+      =+  ^=  [hed b]  ((de:head a) dat)
+      =+  ^=  [pac c]
+        ?-  typ.hed
+          %page  =^  nam  b  ((de:^name b) dat)
+                 =^  dat  b  ((de:^data b) dat)
+                 =^  nex  b  ((de:^next b nex.hed) ^dat)
+                 [[typ.hed nam dat nex] b]
+        ::
+          %peek  =^  nam  b  ((de:^name b) dat)
+                [[typ.hed nam] b]
+        ::
+          %poke  =^  nam  b  ((de:^name b) dat)
+                 =^  dam  b  ((de:^name b) dat)
+                 =^  dat  b  ((de:^data b) dat)
+                 [[typ.hed nam dam dat] b]
+        ==
+      =/  gum
+        (end [0 20] (mug (cut -.c [(rig b -.c) +.c] dat)))
+      ?>(=(gum.hed gum) [pac c])
+    --
+  ::
+  ++  head
+    |%
+    ++  en
+      |=  [nex=@B typ=?(%page %peek %poke) hop=@ gum=@F]
+      ^-  plot
+      =/  tip  ?-(typ %page 0b1, %peek 0b10, %poke 0b11)
+      =.  hop  (min 7 hop)
+      =*  tok  [32 ~tasfyn-partyv]
+      :-  bloq=0
+      [[2 0] [2 nex] [3 ver=1] [2 tip] [3 hop] [20 gum] tok ~]
+    ::
+    ++  de
+      |=  a=bite
+      =/  b=[bloq step]  [0 (rig a 0)]
+      |=  dat=@
+      ^-  [[nex=@B typ=?(%page %peek %poke) hop=@ gum=@F] bloq step]
+      =^  c  b
+        ((hew b dat) [res=2 nex=2 ver=3 tip=2 hop=3 gum=20 tok=32])
+      ?>  =(0 res.c)
+      ?>  =(1 ver.c)
+      ?>  =(~tasfyn-partyv tok.c)
+      =/  typ  ?+(tip.c !! %0b1 %page, %0b10 %peek, %0b11 %poke)
+      [[nex.c typ hop.c gum.c] b]
+    --
+  ::
+  ++  next
+    |%
+    ++  en
+      |=  nex=next:pact
+      ^-  plot
+      :-  bloq=3
+      ?~  nex  ~
+      ?:  ?=([[%if *] ~] nex)
+        [[4 p] [2 q] ~]:i.nex
+      |-  ^-  (list plat:plot)
+      =;  one=(list plat:plot)
+        ?~(t.nex one (weld one $(nex t.nex)))
+      ?-  i.nex
+        @        =/  l  (met 3 i.nex)
+                 ?>  (lth l 255)
+                 [[1 +(l)] [1 2] [l i.nex] ~]
+        [%if *]  [[1 7] [1 0] [4 p] [2 q] ~]:i.nex
+        [%is *]  =/  l  (met 3 p.i.nex)
+                 ?>  (lth l 253)
+                 [[1 (add 3 l)] [1 1] [l p.i.nex] [2 q.i.nex] ~]
+      ==
+    ::
+    ++  de
+      |=  [a=bite b=@B]
+      =/  c=[bloq step]  [3 (rig a 3)]
+      |=  dat=@
+      ^-  [next:pact bloq step]
+      =<  ?+  b  !!
+            %0b0   [~ c]
+          ::
+            %0b1   =^  if=[@ @]  c  ((hew c dat) 4 2)
+                   [[if+if ~] c]
+          ::
+            %0b10  =^  la  c  (need one)
+                   [[la ~] c]
+          ::
+            %0b11  =|  nex=next:pact
+                   |-  ^-  [next:pact bloq step]
+                   =/  a  one
+                   ?~  a  [(flop nex) c]
+                   $(nex [-.u.a nex], c +.u.a)
+          ==
+      |%
+      ++  one
+        ^-  (unit [lane:pact bloq step])
+        =^  raw  c  ((hew c dat) 1 1)
+        ?:  =(0 -.raw)  ~
+        ?+  +.raw  !!
+          %0  ?>  =(7 -.raw)
+              =^  if=[@ @]  c  ((hew c dat) 4 2)
+              `[if+if c]
+        ::
+          %1  ?>  (gte -.raw 3)
+              =^  is=[@ @]  c  ((hew c dat) (sub -.raw 3) 2)
+              `[is+is c]
+        ::
+          %2  =^  la  c  ((hew c dat) (dec -.raw))
+              `[la c]
+        ==
+      --
+    --
+  ::
+  ::  +name: encoded-path
+  ::
+  ::  range:  { meta[1], her[2^1-4], rif[1-4], boq[1], fag[1-4], len[2], pat[2^0-16 - 1] }
+  ::  max:    {      1,      16,         4,        1,      4,        2,      65.535      }
+  ::  actual: {      1,      16,         4,        1,      4,        2,      277         }
+  ::
+  ::  XX increment path-len by one, exclude zero-length paths
+  ::
+  ::    > :(add 1 16 4 1 4 2 277)
+  ::    305
+  ::
+  ::  for %poke:
+  ::    > (div (sub 305 (mul 2 (sub 305 277))) 2)
+  ::    124
+  ::
+  ++  name
+    |%
+    ++  en
+      |=  name:pact
+      ^-  plot
+      =/  ran  ?~(her 0 (xeb (dec (met 4 (end 7 her)))))
+      =/  ryf  ?~(rif 0 (dec (met 3 rif)))  :: XX is rift always non-zero?
+      =+  ^=  [nit tau gaf gyf fag]
+        ?~  wan  [0b1 0b0 0b0 0 0]
+        =/  gyf  ?~(fag.wan 1 (met 3 (end 5 fag.wan)))
+        [0b0 ?:(?=(%auth typ.wan) 0b1 0b0) (dec gyf) gyf fag.wan]
+      ::
+      =/  tap  =-([p=(met 3 -) q=-] `@t`(rap 3 (join '/' pat)))
+      ?>  &(?=(^ pat) (lth p.tap ^~((bex 16)))) :: XX truncate instead?
+      :+  bloq=3
+        [s+~ 0 [2 ran] [2 ryf] [1 nit] [1 tau] [2 gaf] ~]
+      [[(bex +(ran)) her] [+(ryf) rif] [1 boq] [gyf fag] [2 p.tap] tap ~]
+    ::
+    ++  de
+      |=  a=bite
+      =/  b=[boq=bloq sep=step]  [0 (rig a 0)]
+      |=  pat=@
+      ^-  [name:pact _b]
+      =^  c  b
+        ((hew b pat) [ran=2 ryf=2 nit=1 tau=1 gaf=2])
+      ::
+      =.  b  [3 (rig b 3)]
+      =^  d  b
+        %-  (hew b pat)
+        :^    who=[her=(bex +(ran.c)) rif=+(ryf.c)]
+            boq=1
+          fag=?:(=(0b1 nit.c) 0 +(gaf.c))
+        tap=2
+      ::
+      ::  XX ?<  =(0 tap.d)
+      =/  pat
+        %+  rash  (cut boq.b [sep.b tap.d] pat)
+        (more fas (cook crip (star ;~(less fas prn))))
+      =/  wan
+        ?.  =(0b1 nit.c)
+          [?:(=(1 tau.c) %auth %data) fag.d]
+        ?>(&(=(0 tau.c) =(0 fag.d)) ~)
+      ::
+      =.  sep.b  (add sep.b tap.d)
+      [[who.d [boq.d wan] pat] b]
+    --
+  ::
+  ::  +data: response data
+  ::
+  ::  range:  { meta[1], tot[1-4], aum[32*0-2], aup[32*0-2], len-len[0-1], len[0-255], dat[0-2^252-1] }
+  ::  max:    {      1,      4,        64,          64,              1,        255,        2^252-1    }
+  ::  actual: {      1,      4,        64,          64,              0,        2,          1.024      }
+  ::
+  ::  XX increment len-len by 3, recalculate max limits
+  ::  XX max len-len s/b 32 to align with max bloq size
+  ::  XX move tot after auth to avoid trailing zeros?
+  ::
+  ::    > :(add 1 4 64 64 2 1.024)
+  ::    1.159
+  ::
+  ++  data
+    |%
+    ++  en
+      |=  [tot=frag:pact aut=auth:pact dat=@]
+      ^-  plot
+      =/  lot  (met 3 (end 5 tot))
+      ::
+      =/  [[aul=@ubB aum=plat:plot] aur=@ubB aup=plat:plot]
+        ?~  aut           [[0b0 0] 0b0 0]
+        ?:  ?=(%1 -.aut)  [[0b1 [32 p]] 0b10 [32 q]]:p.aut
+        :-  =>  p.aut
+            ?:(?=(%& -) [0b10 64 p] [0b11 32 p])
+        =/  [aur=@ubB has=(list plat:plot)]
+          ?~    q.aut  [0b0 ~]
+          ?@  u.q.aut  [0b1 [1 u.q.aut] ~]
+          [0b10 [[1 p] [1 q] ~]:u.q.aut]
+        [aur s+~ 8 has]
+      ::
+      =/  len  (met 3 dat)
+      =/  nel  (met 3 len)
+      =/  men=(pair @B @A)
+        ?:((lth nel 3) [nel 0] [0b11 1])
+      :+  bloq=3
+        [s+~ 0 [2 (dec lot)] [2 aul] [2 aur] [2 p.men] ~]
+      [[lot tot] aum aup [q.men nel] [nel len] [len dat] ~]
+    ::
+    ++  de
+      |=  a=bite
+      =/  b=[boq=bloq sep=step]  [0 (rig a 0)]
+      |=  dat=@
+      ^-  [data:pact boq=bloq sep=step]
+      =^  c  b
+        ((hew b dat) [bot=2 [aul=2 aur=2] men=2])
+      =.  b  [3 (rig b 3)]
+      =^  d  b
+        %-  (hew b dat)
+        :^    tot=+(bot.c)
+            aum=?+(aul.c 0x0 %0b10 `@`64, %0b11 `@`32)
+          aup=?+(aur.c 0x0 %0b1 `@`32, %0b10 [`@`32 `@`32])
+        nel=?.(=(3 men.c) 0 1)
+      ::
+      =/  aut=auth:pact
+        =/  mes=(unit auth:mess)
+          ?+  aul.c  !!
+            %0b0   ?>(=(0b0 aur.c) ~)
+            %0b1   ?>(=(0b10 aur.c) ~)
+            %0b10  `&+aum.d
+            %0b11  `|+aum.d
+          ==
+        =/  pac=(unit $@(@uxI (pair @uxI @uxI)))
+          ?+  aur.c  !!
+            %0b0   ?>(=(0 aup.d) ~)
+            %0b1   ?>(?=(@ aup.d) `aup.d)
+            %0b10  ?>(?=(^ aup.d) `aup.d)
+          ==
+        ?^  mes  [%0 u.mes pac]
+        ?:  =(0b0 aul.c)  ~
+        ?>  &(=(0b1 aul.c) ?=([~ @ @] pac))
+        [%1 u.pac]
+      ::
+      =/  nel  ?.(=(3 men.c) men.c nel.d)
+      =^  len  sep.b  [(cut 3 [sep.b nel] dat) (add sep.b nel)]
+      =^  dat  sep.b  [(cut 3 [sep.b len] dat) (add sep.b len)]
+      [[tot.d aut dat] b]
+    --
+  ::
+  ++  name-to-beam
+    |=  name:pact
+    ^-  beam
+    :*  [her %$ ud+1]
+        %mess  (scot %ud rif)
+        %pact  (scot %ud boq)  %etch
+        ?~  wan  [%init pat]
+        [typ.wan (scot %ud fag.wan) pat]
+    ==
+  ::
+  ::  XX to lib?
+  ::
+  ++  roundtrip
+    |*  [dat=* en=$-(* plot) de=$-(@ [* boq=@ sep=@])]
+    ^-  (unit _dat)
+    =/  pol  (en dat)
+    =/  ser  (fax:plot pol)
+    =/  ron  (de p.ser)
+    ?.  =(dat -.ron)
+      ~&  %roundtrip-fail-a
+      `-.ron
+    ?.  =(q.ser boq.ron)
+      ~&  [%roundtrip-fail-b q.ser boq.ron]
+      `-.ron
+    ?.  =(r.ser sep.ron)
+      ~&  [%roundtrip-fail-c r.ser sep.ron]
+      `-.ron
+    ~
+  ::
+  ++  generator
+    |%
+    ++  just  |*(a=* |=(eny=@uvJ [a (shaz eny)]))
+    ::
+    ++  cook
+      |*  [a=$-(* *) b=$-(@uvJ [* @uvJ])]
+      |=  eny=@uvJ
+      =^  c  eny  (b eny)
+      [(a c) eny]
+    ::
+    ++  flag
+      |=  eny=@uvJ
+      =+  [b og]=(~(raws og eny) 1)
+      [=(b 0) a.og]
+    ::
+    ++  rand
+      |=  top=@u
+      |=  eny=@uvJ
+      =/  og  ~(. og eny)
+      |-  ^-  [@ @uvJ]
+      =^  a  og  (rads:og (met 0 top))
+      =^  b  og  (raws:og a)
+      ?:((gte b top) $ [b a.og])
+    ::
+    ++  bits
+      |=  [zer=? top=@ud]
+      |=  eny=@uvJ
+      ^-  [@ @uvJ]
+      =^  a  eny  ((rand top) eny)
+      =+  [b og]=(~(raws og eny) a)
+      ?:  &(!zer =(0 b))  $
+      [b a.og]
+    ::
+    ++  char
+      |=  [boq=bloq src=@]
+      =/  wyd  (met boq src)
+      |=  eny=@uvJ
+      ^-  [@ @uvJ]
+      =^  a  eny  ((rand wyd) eny)
+      [(cut boq [a 1] src) eny]
+    ::
+    ++  many
+      |*  [[min=@ud max=@ud] gen=$-(@uvJ [* @uvJ])]
+      |=  eny=@uvJ
+      =^  a  eny  ((rand max) eny)
+      ?:  (lth a min)  $
+      =|  [i=@ud lit=(list _-:$:gen)]
+      |-  ^+  [lit eny]
+      ?:  =(i a)  [lit eny]
+      =^  b  eny  (gen eny)
+      $(lit [b lit], i +(i))
+    ::
+    ++  both
+      |*  [l=$-(@uvJ [* @uvJ]) r=$-(@uvJ [* @uvJ])]
+      |=  eny=@uvJ
+      =^  a  eny  (l eny)
+      =^  b  eny  (r eny)
+      [[a b] eny]
+    ::
+    ++  pick
+      |*  [l=$-(@uvJ [* @uvJ]) r=$-(@uvJ [* @uvJ])]
+      |=  eny=@uvJ
+      =^  a  eny  (flag eny)
+      (?:(a l r) eny)
+    ::
+    ++  aura
+      =|  zer=?
+      |=  yaz=@t
+      ~+
+      ^-  $-(@uvJ [@ @uvJ])
+      =/  [max=@ud aur=@ta]
+        =/  len  (met 3 yaz)
+        ?:  =(0 len)
+          [0 %$]
+        =.  len  (dec len)
+        =/  tyl  (rsh [3 len] yaz)
+        ?.  &((gte tyl 'A') (lte tyl 'Z'))
+          [0 yaz]
+        [(sub tyl 'A') (end [3 len] yaz)]
+      ::
+      =-  ?@  -  (just -)
+          ?:  ?=(%| -<)  ->
+          (bits zer ?:(=(0 max) -> (bex max)))
+      ::
+      =+  yed=(rip 3 aur)
+      ?+  yed  &+256
+        [%c *]           :-  %|
+                        %+  cook  (cury rep 5)
+                        (many [0 256] (rand 0x11.0000))  :: XX nonzero?
+      ::
+        [%d ?(%a %r) *]  &+128
+        [%f *]           &+1
+        [%n *]           `@`0
+        [%i %f *]        &+32
+        [%i %s *]        &+128
+        [?(%p %q) *]     &+128
+        [%r %h *]        &+16
+        [%r %s *]        &+32
+        [%r %d *]        &+64
+        [%r %q *]        &+128
+      ::
+        [%u %c *]        |+(cook enc:fa (bits & 256))
+      ::
+        [%t %a %s *]     :-  %|
+                        %+  cook  crip
+                        %+  both
+                          (char 3 ^~((crip (gulf 'a' 'z'))))
+                        %+  many  [0 32]
+                        %+  char  3
+                        ^~((crip (weld (gulf '0' '9') ['-' (gulf 'a' 'z')])))
+      ::
+        [%t %a *]        :-  %|
+                        %+  cook  crip
+                        %+  many  [0 64]
+                        %+  char  3
+                        ^~((crip :(weld "-~_." (gulf '0' '9') (gulf 'a' 'z'))))
+      ::
+        [%t *]           :-  %|
+                        %+  cook  (corl tuft (cury rep 5))
+                        (many [0 256] (rand 0x11.0000))  :: XX nonzero?
+      ==
+    ::
+    ++  name
+      =>  |%
+          ++  ship  (aura 'pH')
+          ++  rift  (aura 'udF')
+          ++  bloq  (aura 'udD')
+          ++  frag  rift
+          ++  want  %+  pick  (just ~)
+                    (both (pick (just %auth) (just %data)) frag)
+          ++  path  (many [1 10] (aura %ta))
+          --
+      ^-  $-(@uvJ [name:pact @uvJ])
+      %+  both  (both ship rift)
+      (both (both bloq want) path)
+    ::
+    ++  data
+      =>  |%
+          ++  frag  (=+(aura -(zer |)) 'udF')
+          ++  hash  (aura 'uxI')
+          ++  mess-auth
+            (pick (both (just %&) (aura 'uxJ')) (both (just %|) hash))
+          ++  pact-auth
+            (pick (just ~) (both (just ~) (pick hash (both hash hash))))
+          ++  auth
+            %+  pick  (just ~)
+            %+  pick
+              :(both (just %1) hash hash)
+            :(both (just %0) mess-auth pact-auth)
+          --
+      ^-  $-(@uvJ [data:pact @uvJ])
+      :(both frag auth (bits & ^~((bex 16))))
+    ::
+    ++  lane
+      =>  |%
+          ++  port  (aura 'udE')
+          --
+      %+  pick
+        (bits & 256)
+      %+  pick
+        :(both (just %if) (aura 'ifF') port)
+      :(both (just %is) (aura 'isH') port)
+    ::
+    ++  pactt
+      ^-  $-(@uvJ [pact:pact @uvJ])
+      %+  pick
+        (both (just %peek) name)
+      %+  pick
+        :(both (just %page) name data (many [0 2] lane))
+      :(both (just %poke) name name data)
+    --
+  ::
+  ++  test
+    |_  [eny=@uvJ len=@ud]
+    ++  name
+      =|  i=@ud
+      |-  ^-  ?
+      ?:  =(i len)  &
+      =/  old  eny
+      =^  nam  eny  (name:generator eny)
+      ?^  ron=(roundtrip nam en:^name $:de:^name)
+        ~&([i=i eny=old nam u.ron] |)
+      $(i +(i))
+    ::
+    ++  data
+      =|  i=@ud
+      |-  ^-  ?
+      ?:  =(i len)  &
+      =/  old  eny
+      =^  dat  eny  (data:generator eny)
+      ?^  ron=(roundtrip dat en:^data $:de:^data)
+        ~&([i=i eny=old dat u.ron] |)
+      $(i +(i))
+    ::
+    ++  all
+      =|  i=@ud
+      |-  ^-  ?
+      ?:  =(i len)  &
+      =/  old  eny
+      =^  pac  eny  (pactt:generator eny)
+      ?^  ron=(roundtrip pac en:pact $:de:pact)
+        ~&([i=i eny=old pac u.ron] |)
+      $(i +(i))
+    --
   --
 ::
 ++  rand                                                ::  computation

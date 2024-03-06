@@ -23,12 +23,12 @@
   ::
   =/  ack-wire   /flow/int/for/~bud/0/0/1
   =/  vane-wire  /flow/out/bak/~nec/0/0/1
-  =/  make-poke=[%make-poke namespace:mesa =spar:ames =path]
+  =/  make-poke=[%make-poke space:mesa =spar:ames =path]
     [%make-poke %publ^life=bud-life [~bud ack-path] poke-path]
   ::
   ~?  >  dbug  'send %poke-plea to ~bud'
-  =^  moves-1  ames.nec
-    %:    mesa-check-call:v  ames.nec
+  =^  moves-1  mesa.nec
+    %:    mesa-check-call:v  mesa.nec
         [~1111.1.1 0xdead.beef *roof]
     ::
       [~[/poke] %plea ~bud poke-plea]
@@ -45,14 +45,14 @@
   :-  moves-1  |.  :-  %|
   ~?  >  dbug  '~nec makes $pact and sends it'
   =/  poke-roof  (make-roof /flow/0/~nec/poke/~bud/for/1 message+!>(poke-plea))
-  =^  moves-2  ames.nec
-    %:    mesa-check-call:v  ames.nec
+  =^  moves-2  mesa.nec
+    %:    mesa-check-call:v  mesa.nec
         [~1111.1.1 0xdead.beef poke-roof]
     ::
       [~[/flow/int/for/~bud/0/0/1 /poke] make-poke]
     ::
       =/  blob=@
-        %:   mesa-make-pact:v  ames.nec
+        %:   mesa-make-pact:v  mesa.nec
           ~bud^ack-full-path
           poke-path
           rift=0
@@ -74,8 +74,8 @@
         page=message/poke-plea
     ==
   ::
-  =^  moves-3  ames.bud
-    %:  mesa-check-call:v  ames.bud
+  =^  moves-3  mesa.bud
+    %:  mesa-check-call:v  mesa.bud
       [~1111.1.2 0xbeef.dead *roof]
       :-  ~[//unix]
       [%mess lane=`*@ux message]
@@ -92,7 +92,7 @@
     !>  %.y
     !>  =/  flows  =<  flows
           %:  mesa-scry-peer:v
-            ames.bud
+            mesa.bud
             [~1111.1.10 0xdead.beef *roof]
             [~bud ~nec]
           ==
@@ -102,8 +102,8 @@
   ::
   :-  moves-4  |.  :-  %|
   ~?  >  dbug  '%gall gives %done to %ames'
-  =^  moves-5  ames.bud
-    %:  mesa-check-take:v  ames.bud
+  =^  moves-5  mesa.bud
+    %:  mesa-check-take:v  mesa.bud
       [~1111.1.2 0xbeef.dead *roof]
       :+  vane-wire
         ~[//unix]
@@ -124,7 +124,7 @@
     !>  1
     !>  =/  flows  =<  flows
           %:  mesa-scry-peer:v
-            ames.bud
+            mesa.bud
             [~1111.1.10 0xdead.beef *roof]
             [~bud ~nec]
           ==
@@ -137,12 +137,12 @@
     !>  plea/poke-plea
     !>  !<  page
         =<  ?>  ?=(%message p)  q
-        (mesa-scry-payload:v ames.nec ~nec poke-path)
+        (mesa-scry-payload:v mesa.nec ~nec poke-path)
   ::
   :-  moves-7  |.  :-  %|
   ~?  >  dbug  '~nec hears %ack from ~bud, gives to gall'
-  =^  moves-8  ames.nec
-    %:    mesa-check-take:v  ames.nec
+  =^  moves-8  mesa.nec
+    %:    mesa-check-take:v  mesa.nec
         [~1111.1.1 0xdead.beef *roof]
       :+  ack-wire
         ~[/poke]
@@ -162,7 +162,7 @@
     !>  ~
     !>  =/  flows  =<  flows
           %:  mesa-scry-peer:v
-            ames.nec
+            mesa.nec
             [~1111.1.10 0xdead.beef *roof]
             [~nec ~bud]
           ==
@@ -173,7 +173,7 @@
     !>  1
     !>  =<  next-bone.ossuary
         %:  mesa-scry-peer:v
-          ames.nec
+          mesa.nec
           [~1111.1.10 0xdead.beef *roof]
           [~nec ~bud]
         ==

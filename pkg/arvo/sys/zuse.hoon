@@ -6121,4 +6121,205 @@
     =+  vis=(cat 3 van.bulk car.bulk)
     [vis bem]
   --
+++  lss
+  =,  blake:crypto
+  |%
+  ++  clz
+    |=  [a=bite b=@]
+    (sub ?@(a (bex a) (mul (bex bloq.a) step.a)) (met 0 b))
+  ::
+  ++  ctz
+    |=  a=@
+    ?:  =(0 a)  0
+    =|  i=@ud
+    |-(?:(=(1 (cut 0 [i 1] a)) i $(i +(i))))
+  ::
+  ++  ham  :: popcount
+    |=  a=@
+    ?:  =(0 a)  0
+    =|  n=@ud
+    =/  m  (dec (met 0 a))
+    |-  ^-  @ud
+    =?  n  =(1 (cut 0 [m 1] a))
+      +(n)
+    ?:(=(0 m) n $(m (dec m)))
+  ::
+  ::  binary tree ops
+  ::
+  :: +|  %arboric
+  ::
+  ++  bao
+    |=  n=@ud
+    =|  i=@ud
+    =|  s=(list)
+    |-  ^-  *
+    ?:  =(i n)
+      =^  d  s  s
+      |-(?~(s d $(d [i.s d], s t.s)))
+    ::
+    =/  d=*  i
+    =.  i  +(i)
+    =/  j  (ctz i)
+    |-  ^-  *
+    ?:  =(0 j)
+      ^$(s [d s])
+    =^  e  s  s
+    $(d [e d], j (dec j))
+  ::
+  ++  unroll
+    |=  d=*
+    =|  s=(list [axe=@ d=*])
+    =/  a  1
+    |-  ^+  s
+    ?@  d
+      ?~  s  ~
+      $(d d.i.s, a axe.i.s, s t.s)
+    :-  [a d]
+    $(d -.d, a (peg a 2), s [[(peg a 3) +.d] s])
+  ::
+  ++  root-hash
+    |=  o=output:blake3
+    ^-  @ux
+    (output-cv:blake3 (set-flag:blake3 f-root:blake3 o))
+  ::
+  ++  leaf-hash
+    |=  [counter=@ leaf=@]
+    ^-  @ux
+    (output-cv:blake3 (chunk-output:blake3 counter 1.024^leaf))
+  ::
+  ::  +build: compute proof data for a message
+  ::
+  ++  build
+    |=  msg=octs
+    ^-  [root=@ux proof=(list @ux) pairs=(list [l=@ux r=@ux])]
+    =/  chunks  (split-octs:blake3 13 msg)
+    =+
+      |-  ^-  [o=output:blake3 pairs=(list [l=@ux r=@ux])]
+      =/  mid  (div (bex (xeb (dec (lent chunks)))) 2)
+      =+  [l=(scag mid chunks) r=(slag mid chunks)]
+      ?>  ?=(^ chunks)
+      ?~  t.chunks  [(chunk-output:blake3 i.chunks) ~]
+      =+  [left=$(chunks l) right=$(chunks r)]
+      =/  pair  [(output-cv:blake3 o.left) (output-cv:blake3 o.right)]
+      [(parent-output:blake3 pair) [pair (weld pairs.left pairs.right)]]
+    =/  root  (root-hash o)
+    ?:  =(~ pairs)  [root ~ ~]
+    =/  height  (xeb (dec (lent chunks)))
+    =/  proof  (turn (scag height pairs) tail)
+    =.  proof  (flop (snoc proof l:(snag (dec height) pairs)))
+    =.  pairs  (slag height pairs)
+    [root proof pairs]
+  ::
+  ++  recover-root
+    |=  proof=(list @ux)
+    ?>  ?=([@ @ *] proof)
+    =*  l0  i.proof
+    =*  l1  i.t.proof
+    %-  root-hash
+    %+  roll  t.t.proof
+    |:  [p=0x0 n=(parent-output:blake3 l0 l1)]
+    (parent-output:blake3 (output-cv:blake3 n) p)
+  ::
+  ::  +verifier: stateful core for sequentially verifying messages
+  ::
+  ++  verifier
+    =<
+      |%
+      ::
+      ++  init
+        |=  [leaves=@ proof=(list @ux)]
+        ^-  (unit state)
+        ?~  proof
+          ::  need at least two leaves to have a proof
+          ::
+          ?.  (lte leaves 1)  ~
+          `[leaves 0 [0 1] ~ ~]
+        ?.  ?=([@ @ *] proof)  ~
+        ::  initialize leaf queue and parent stack with proof hashes;
+        ::  after the first two leaves, the next subtree is [2 4]
+        ::
+        =/  state  [leaves 0 [0 1] ~ t.t.proof]
+        `(push-leaves state [i.proof i.t.proof])
+      ::
+      ++  verify-msg
+        |=  [=state [leaf=@ pair=(unit [l=@ux r=@ux])]]
+        ^-  (unit _state)
+        ?~  ustate=(verify-leaf state leaf)  ~
+        ?~  pair  `u.ustate
+        ?~  ustate=(verify-pair u.ustate u.pair)  ~
+        ::  all good; if the pair held leaf hashes, add them
+        ::  to the queue and advance past them; if it held parent
+        ::  hashes, add them to the parent stack
+        ::
+        =.  state  (advance u.ustate)
+        ?:  (at-leaf state)
+          `(push-leaves state u.pair)
+        `(push-parents state u.pair)
+      --
+    |%
+    +$  state
+        $:
+            leaves=@
+            leaf=@                 :: current leaf index
+            cur=[l=@ r=@]          :: current pair subtree
+            leaf-queue=(list @ux)
+            parent-stack=(list @ux)
+        ==
+    ::
+    ++  at-leaf  |=(state =(r.cur +(l.cur)))
+    ::
+    ++  advance
+      |=  =state
+      %=  state
+        cur  =,  cur.state
+            ::  if at a leaf, ascend the next subtree;
+            ::  otherwise, descend into the left child
+            ::
+            ?:  (at-leaf state)
+              [+(l) (min leaves.state (add r (bex (ctz r))))]
+            [l (add l (bex (dec (xeb (dec (sub r l))))))]
+      ==
+    ::
+    ++  push-leaves
+      |=  [=state [l=@ux r=@ux]]
+      ^+  state
+      ::  NOTE: using a list as a queue isn't ideal, performance-wise,
+      ::  but this list never grows larger than log(n) so in practice
+      ::  it's fine
+      ::
+      %-  advance  %-  advance
+      state(leaf-queue (weld leaf-queue.state ~[l r]))
+    ::
+    ++  push-parents
+      |=  [=state [l=@ux r=@ux]]
+      ^+  state
+      state(parent-stack (weld ~[l r] parent-stack.state))
+    ::
+    ++  verify-leaf
+      |=  [=state leaf=@]
+      ^-  (unit _state)
+      =/  wid  ?.(=(+(leaf.state) leaves.state) 1.024 (met 3 leaf))
+      =/  cv  (output-cv:blake3 (chunk-output:blake3 leaf.state [wid leaf]))
+      ::  if leaf queue is empty, draw from parent stack; this is
+      ::  necessary for any tree with an odd number of leaves, since
+      ::  such a tree will contain a pair where the left child is a
+      ::  parent and the right child is a leaf
+      ::
+      ?^  leaf-queue.state
+        ?.  =(i.leaf-queue.state cv)  ~
+        `state(leaf +(leaf.state), leaf-queue t.leaf-queue.state)
+      ?^  parent-stack.state
+        ?.  =(i.parent-stack.state cv)  ~
+        `state(leaf +(leaf.state), parent-stack t.parent-stack.state)
+      ~
+    ::
+    ++  verify-pair
+      |=  [=state pair=[l=@ux r=@ux]]
+      ^-  (unit _state)
+      =/  cv  (output-cv:blake3 (parent-output:blake3 pair))
+      ?~  parent-stack.state          ~
+      ?.  =(i.parent-stack.state cv)  ~
+      `state(parent-stack t.parent-stack.state)
+    --
+  --
 --

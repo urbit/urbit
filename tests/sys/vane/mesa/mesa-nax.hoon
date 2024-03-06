@@ -14,10 +14,10 @@
   ``val
 ::
 ++  nec-scry-roof
-  scry:(ames.nec now=~1111.1.1 eny=`@`0xdead.beef *roof)
+  scry:(mesa.nec now=~1111.1.1 eny=`@`0xdead.beef *roof)
 ::
 ++  bud-scry-roof
-  scry:(ames.bud now=~1111.1.1 eny=`@`0xdead.beef *roof)
+  scry:(mesa.bud now=~1111.1.1 eny=`@`0xdead.beef *roof)
 ::
 ++  test-watch
   %-  run-chain
@@ -32,23 +32,23 @@
   =/  vane-wire  /flow/out/bak/~nec/0/0/1
   =/  nax-wire   /flow/ext/for/~bud/0/0/1
   ::
-  =/  make-poke=[%make-poke namespace:mesa spar:ames path]
+  =/  make-poke=[%make-poke space:mesa spar:ames path]
     [%make-poke %publ^life=bud-life [~bud ack-path] poke-path]
   =/  plea-roof  (make-roof poke-path message+!>(plea/poke-plea))
   ::  preamble
   ::
-  =^  *  ames.nec
-    (mesa-call:v ames.nec [~[/poke] [%plea ~bud poke-plea] plea-roof])
+  =^  *  mesa.nec
+    (mesa-call:v mesa.nec [~[/poke] [%plea ~bud poke-plea] plea-roof])
   ::
-  =^  *  ames.nec
-    (mesa-call:v ames.nec ~[ack-wire /poke] make-poke plea-roof)
+  =^  *  mesa.nec
+    (mesa-call:v mesa.nec ~[ack-wire /poke] make-poke plea-roof)
   ::
   =/  message=mess:mesa
     [%poke [~bud ack-path] [~nec poke-path] auth=&+*@uxJ page=message/poke-plea]
   ::
   ~?  >  dbug  'place %naxplanation payload in namespace'
-  =^  *  ames.bud
-    %:  mesa-call-with-dude:v  ames.bud
+  =^  *  mesa.bud
+    %:  mesa-call-with-dude:v  mesa.bud
       :^    *goof
           ~[//unix]
         [%mess lane=`*@ux message]
@@ -58,8 +58,8 @@
   =/  full-nax-path  (weld /mess/0//publ/[(scot %ud nec-life)]//x/1/[%$] nax-path)
   =/  make-peek  [%make-peek %publ^life=bud-life ~bud nax-path]
   ~?  >  dbug  '~nec hears %nack, produces %make-peek request'
-  =^  error-moves  ames.nec
-    %:    mesa-check-take:v  ames.nec  [now=~1111.1.1 eny=`@`0xdead.beef plea-roof]
+  =^  error-moves  mesa.nec
+    %:    mesa-check-take:v  mesa.nec  [now=~1111.1.1 eny=`@`0xdead.beef plea-roof]
       :+  ack-wire  ~[/poke]
       [%mesa %response %page ~bud^ack-path &+0x0 `page`message/[%ack error=&]]
     ::
@@ -77,7 +77,7 @@
     !>  nax/*goof
     !>  !<  page
         =<  ?>  ?=(%message p)  q
-        (mesa-scry-payload:v ames.bud ~bud nax-path)
+        (mesa-scry-payload:v mesa.bud ~bud nax-path)
   ::
   :-  moves-1  |.  :-  %|
   ~?  >  dbug  '~nec starts %peeking for the naxplanation on ~bud'
@@ -85,17 +85,17 @@
   =/  naxplanation=*  *error:mesa
   =/  nax-roof        (make-roof nax-path message+!>(naxplanation))
   ::
-  =^  moves-x  ames.nec
-    (mesa-call:v ames.nec [~[nax-wire /poke] make-peek nax-roof])
+  =^  moves-x  mesa.nec
+    (mesa-call:v mesa.nec [~[nax-wire /poke] make-peek nax-roof])
   ~?  >  dbug  '~bud gives ~nec the first fragment'
-  =^  moves-y  ames.bud     (mesa-reply:v ames.bud ~[/unix-pact] moves-x nax-roof)
+  =^  moves-y  mesa.bud     (mesa-reply:v mesa.bud ~[/unix-pact] moves-x nax-roof)
   ~?  >  dbug  '~nec hears complete message'
-  =^  moves-page  ames.nec  (mesa-reply:v ames.nec ~[/unix-pact] moves-y nax-roof)
+  =^  moves-page  mesa.nec  (mesa-reply:v mesa.nec ~[/unix-pact] moves-y nax-roof)
   ::
   :-  (mesa-expect-msg:v moves-page nax/naxplanation)  |.  :-  %|
   ~?  >  dbug  '~nec takes %naxplanation from ~bud, given by the packet layer'
-  =^  moves-3  ames.nec
-    %:    mesa-check-take:v  ames.nec
+  =^  moves-3  mesa.nec
+    %:    mesa-check-take:v  mesa.nec
         [~1111.1.1 0xdead.beef *roof]
       ?>  ?=([[^ [%give %response *]] *] moves-page)
       [wire=i.duct duct=t.duct %mesa gift.card]:i.moves-page
@@ -109,7 +109,7 @@
     !>  0
     !>  =<  next-bone.ossuary
         %:  mesa-scry-peer:v
-          ames.bud
+          mesa.bud
           [~1111.1.10 0xdead.beef *roof]
           [~bud ~nec]
         ==
