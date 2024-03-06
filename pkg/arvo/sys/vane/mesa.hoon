@@ -230,6 +230,13 @@
           ~
       ==
     ::
+    +$  ev-timer-wire
+      $:  :: ?(%poke %dead %alien ...)  :: XX add tag for each timer flow
+          [%p her=@p]
+          [%ud bone=@ud]
+          [%ud rift=@ud]  :: XX needed?
+      ==
+    ::
     ++  ev-pave
       |=  =path
       ^-  pith
@@ -325,17 +332,20 @@
                 $:  =wire
                     $=  take
                     $%  $>(?(%done %response %boon) gift) :: XX
+                         $>(%wake gift:behn)
                 ==  ==
           --
       |=  task=res-task
       |^  ^+  ev-core
       ?-  -.take.task
+            %wake  (take-wake +.take.task)
             %boon  take-boon
             %done  (ev-poke-done wire.task +.take.task)
         %response  (ev-response wire.task +.take.task)
       ==
       ::
       ++  take-boon
+        ^+  ev-core
         =^  u-bone-her  ev-core
           (ev-validate-wire hen wire.task)
         ?~  u-bone-her  ev-core
@@ -343,6 +353,25 @@
         ?>  ?=([%out %bak] [were dire])  ::  vane acks happen on backward flows
         ~!  task
         (ev-req-boon bone ev-chan +.take.task)
+      ::
+      ++  take-wake
+        |=  error=(unit tang)
+        ^+  ev-core
+        =>  .(wire.task `(pole iota)`(ev-pave wire.task))
+        ?.  ?=(ev-timer-wire wire.task)  ~|  %evil-behn-timer^wire.task  !!
+        ::  XX only timed-out outgoing %poke requests
+        =.  ev-core  (ev-got-per hen her.wire.task)
+        ::  XX log if error
+        ::  XX if we wake up too early, no-op, otherwise set new timer
+        ::  XX if timed-out, update qos
+        ::  XX expire direct route if the peer is not responding (%nail)
+        ::  XX re-send comet attestation?
+        =/  dire=?(%for %bak)  %for  :: XX get from wire
+        ?:  (~(has in corked.sat.per) bone.wire.task dire)
+          ev-core
+        =^  moves  ax
+          fo-abet:(fo-call:(fo-abed:fo hen bone.wire.task^dire ev-chan ~) wake/~)
+        (ev-emil moves)
       --
     ::
     +|  %request-flow
@@ -962,6 +991,7 @@
         =>  |%
             +$  poke-task
               $%  [%sink seq=@ud mess=mesa-message ok=?]
+                  [%wake ~]
                   ::  XX remove %fo-planation from lull
                   mesa-message
               ==
@@ -970,8 +1000,17 @@
         |=  poke=poke-task
         ^+  fo-core
         ::
-        ?-  -.poke
-          ?(%plea %boon %cork)  (fo-send-poke poke)
+        ?-    -.poke
+            %wake
+          ::  XX reset send-window?
+          ::
+          fo-send(send-window.state 1)
+          ::
+            ?(%plea %boon %cork)
+          ?:  |((fo-to-close poke) fo-corked)
+            ::  XX log
+            fo-core
+          fo-send(loads.state (put:fo-mop loads.state next-load.state poke))
           ::
             %sink
           ~|  mess.poke
@@ -1018,13 +1057,8 @@
       ::
       +|  %request
       ::
-      ++  fo-send-poke
-        |=  poke=mesa-message
-        ?:  |((fo-to-close poke) fo-corked)
-          ::  XX log
-          fo-core
-        ::
-        =.  loads.state  (put:fo-mop loads.state next-load.state poke)
+      ++  fo-send
+        ^+  fo-core
         =;  core=_fo-core
           =.  next-wake.state.core  `(add now ~s30)
           ::  XX sets one timer for all the messsages in the flow
@@ -1032,7 +1066,7 @@
           %-  fo-emit:core
           :^    hen
               %pass
-            /[(scot %p her)]/[(scot %ud bone)]/[(scot %ud rift.peer-state)]
+            /[(scot %p her)]/[(scot %ud bone)]/[(scot %ud rift.peer-state)]  :: XX to arm; add side=%for
           [%b %wait `@da`(need next-wake.state.core)]
         ::
         =+  loads=loads.state  ::  cache
@@ -1045,8 +1079,6 @@
           fo-core
         ::
         =^  [seq=@ud request=mesa-message]  loads  (pop:fo-mop loads)
-        :: ?>  ?=(%plea -.request)  :: XX handle %cork
-        :: ~!  +.state
         =:  send-window.state  (dec send-window.state)
             next-load.state    +(next-load.state)
           ==
@@ -1101,7 +1133,7 @@
           ::
           =?  fo-core  ?=(^ next-wake.state)
             =/  =^wire
-              /[(scot %p her)]/[(scot %ud bone)]/[(scot %ud rift.peer-state)]  :: XX to arm
+              /[(scot %p her)]/[(scot %ud bone)]/[(scot %ud rift.peer-state)]  :: XX to arm; add side=%bak
             ::  reset timer for %boon(s)
             ::
             (fo-emit [[/ames]~ %pass wire %b %rest u.next-wake.state])
@@ -1172,7 +1204,7 @@
           ::
           =.  send-window.state  +(send-window.state)
           =/  =wire
-            /[(scot %p her)]/[(scot %ud bone)]/[(scot %ud rift.peer-state)]  :: XX to arm
+            /[(scot %p her)]/[(scot %ud bone)]/[(scot %ud rift.peer-state)]  :: XX to arm; add side=%for
           :: ::  XX FIXME: have.?(%bak %for) -need.%for
           :: =?  fo-core  ?=(~ loads.state)  ::  no pending messages to be sent
           ::   (fo-emit [/ames]~ %pass wire %b %rest (need next-wake.state))
@@ -1246,7 +1278,6 @@
                 !(~(has by nax.state) seq)  ::  the %cork was not nacked
             ==
         fo-core
-      ::
       --
     ::
     ++  inner-scry
@@ -1610,8 +1641,7 @@
       `ax
     ::
     ?+  sign  !!
-      ::  XX handle
-      :: [%behn %wake *]  (~(take ev-req hen) wire %wake error.sign)
+      [%behn %wake *]  ev-abet:(~(ev-take ev-core hen) wire %wake error.sign)
     ::
       :: [%jael %turf *]          sy-abet:(~(on-take-turf sy hen) turf.sign)
       [%jael %private-keys *]  sy-abet:(~(sy-priv sy hen) [life vein]:sign)
