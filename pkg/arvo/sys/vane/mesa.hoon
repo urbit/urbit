@@ -399,12 +399,14 @@
     ++  ev-req-plea
       |=  [=ship vane=@tas =wire payload=*]
       ^+  ev-core
-      =+  per-sat=(ev-get-per ship)
-      ?.  ?=([~ ~ *] per-sat)
-        ::  XX handle
-        !!
+      =/  ship-state  (~(get by peers.ax) ship)
       ::
-      =.  per  ship^u.u.per-sat
+      ?.  ?=([~ %known *] ship-state)
+        %^  ev-enqueue-alien-todo  ship  ship-state
+        |=  todos=ovni-state
+        todos(messages [[hen plea/vane^wire^payload] messages.todos])
+      ::
+      =.  per  ship^u.ship-state
       ?>  ?=(%known -.sat.per)
       =^  bone  ossuary.sat.per  ::  XX  to arm?
         =,  ossuary.sat.per
@@ -427,7 +429,7 @@
         fo-call:(fo-abed:fo hen bone^dire=%for ev-chan `cork)
       (ev-emil moves)
     ::
-    ++  ev-req-boon  :: XX refactor with req-plea
+    ++  ev-req-boon
       |=  [=bone =channel load=*]
       ::  XX handle corked/closing bones
       ::
@@ -874,14 +876,15 @@
       ^-  (unit (unit ship-state))
       ::
       ?~  per=(~(get by peers.ax) her)  ~
-      ?:  ?=([~ %alien *] per)  [~ ~]
-      ``known/+.u.per
+      `per
     ::
     ++  ev-got-duct
       |=  =bone
       ^-  duct
       ?>  ?=(%known -.sat.per)
       ~|(%dangling-bone^ship.per^bone (~(got by by-bone.ossuary.sat.per) bone))
+    ::
+    +|  %flows
     ::
     ++  fo
       =>  .(sat.per ?>(?=(%known -.sat.per) sat.per))
@@ -1254,6 +1257,38 @@
             ==
         fo-core
       --
+    ::
+    +|  %aliens
+    ::  +ev-enqueue-alien-todo: helper to enqueue a pending request
+    ::
+    ::    Also requests key and life from Jael on first request.
+    ::    If talking to a comet, requests attestation packet.
+    ::
+    ++  ev-enqueue-alien-todo
+      |=  $:  =ship
+              ship-state=(unit ship-state)
+              mutate=$-(ovni-state ovni-state)
+          ==
+      ^+  ev-core
+      ::  create a default $ovni-state on first contact
+      ::
+      =/  [already-pending=? todos=ovni-state]
+        ?~  ship-state
+          [%.n *ovni-state]
+        [%.y ?>(?=(%alien -.u.ship-state) +.u.ship-state)]
+      ::  mutate .todos and apply to permanent state
+      ::
+      =.  todos     (mutate todos)
+      =.  peers.ax  (~(put by peers.ax) ship %alien todos)
+      ?:  already-pending  ev-core
+      ::
+      ?:  =(%pawn (clan:title ship))
+        ::  XX  (request-attestation ship)
+        ev-core
+      ::  NB: we specifically look for this wire in +public-keys-give in
+      ::  Jael.  if you change it here, you must change it there.
+      ::
+      (ev-emit hen %pass /public-keys %j %public-keys [n=ship ~ ~])
     ::
     ++  inner-scry
       ^-  roon
