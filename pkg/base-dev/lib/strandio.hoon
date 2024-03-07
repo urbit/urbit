@@ -331,12 +331,6 @@
   ;<  ~  bind:m  (send-wait until)
   (take-wake `until)
 ::
-++  keen
-  |=  [=wire =spar:ames]
-  =/  m  (strand ,~)
-  ^-  form:m
-  (send-raw-card %pass wire %arvo %a %keen spar)
-::
 ++  sleep
   |=  for=@dr
   =/  m  (strand ,~)
