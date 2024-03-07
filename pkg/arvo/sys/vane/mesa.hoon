@@ -930,6 +930,7 @@
       +|  %builders
       ::
       ++  fo-mop  ((on ,@ud mesa-message) lte)
+      ++  fo-cac  ((on ,@ud ?) lte)
       ++  fo-path
         |=  [seq=@ud path=?(%ack %poke %nax %cork) dyad]
         ^-  ^path
@@ -1168,49 +1169,59 @@
         ::
         ?~  first=(pry:fo-mop loads.state)
           fo-core
-        ::XX  if the ack we receive is not for the first, no-op
-        ::
-        ?.  =(key.u.first seq)
-          fo-core
         ?>  ?=([%message *] gage)
         =+  ;;([%ack error=?] +.gage)  ::  XX
-        ?.  error
-          ::  ack is for the first, oldest pending-ack sent message; remove it
+        ?.  =(key.u.first seq)
+          :: if the ack we receive is not for the first, save it
+          ::  XX if error, start +peeking right away?
           ::
-          =^  *  loads.state  (del:fo-mop loads.state seq)
-          ::  increase the send-window so we can send the next message
+          fo-core(cache.state (put:fo-cac cache.state seq error))
+        |-  ^+  fo-core
+        ?:  error
+          ::  if error start %peek for naxplanation
           ::
-          =.  send-window.state  +(send-window.state)
-          =/  =wire
-            /[(scot %p her)]/[(scot %ud bone)]/[(scot %ud rift.sat.per)]  :: XX to arm; add side=%for
-          :: ::  XX FIXME: have.?(%bak %for) -need.%for
-          :: =?  fo-core  ?=(~ loads.state)  ::  no pending messages to be sent
-          ::   (fo-emit [/ames]~ %pass wire %b %rest (need next-wake.state))
-          =;  core=_fo-core
-            ?^  loads.state  core
-            ::  no pending messages to be sent
-            ::
-            (fo-emit:core [/ames]~ %pass wire %b %rest (need next-wake.state))
-          ?:  ?|  closing.state  ::  %cork %ack; implicit ack
-                  ?=(%bak dire)  ::  %boon %ack; assumed %acked from vane
-              ==
+          =/  =wire  (fo-wire %ext seq)
+          =/  =path  (fo-nax-path seq her^our)
+          ::  XX %ames call itself with a %make-peek task
+          ::  on a wire used to infer the listener (the %poke %nax request; us)
+          ::  when getting the %response $page with or %naxplanation payloads
+          ::  (tagged with %ext)
+          ::
+          =/  =space  publ/life.sat.per  ::  XX %chum
+          (fo-emit hen %pass wire %m make-peek/[space her^path])
+        ::  ack is for the first, oldest pending-ack sent message;
+        ::  remove it and XX start processing cached acks
+        ::
+        =^  *  loads.state  (del:fo-mop loads.state seq)
+        ::  increase the send-window so we can send the next message
+        ::
+        =.  send-window.state  +(send-window.state)
+        =/  =wire
+          /[(scot %p her)]/[(scot %ud bone)]/[(scot %ud rift.sat.per)]  :: XX to arm; add side=%for
+        :: ::  XX FIXME: have.?(%bak %for) -need.%for
+        :: =?  fo-core  ?=(~ loads.state)  ::  no pending messages to be sent
+        ::   (fo-emit [/ames]~ %pass wire %b %rest (need next-wake.state))
+        =.  fo-core
+          ?:  ?|  ?=(%bak dire)          ::  %boon %ack; assumed %acked from vane
+                  ?&  closing.state      ::  %cork %ack; implicit ack
+                      ?=(~ loads.state)  ::  nothing else is pending
+              ==  ==
             fo-core
-          ::  XX we only get acks for the oldest message, since we only
-          ::  send one (send-window=_1) at a time; when changing that,
-          ::  the logic for knowing if the ack is for the cork will need
-          ::  to be revisited
+          ::  don't give %done for %boon and %cork; implicit %ack
           ::
           (fo-emit (ev-got-duct bone) %give %done ~)
-        ::  if error start %peek for naxplanation
-        =/  =wire  (fo-wire %ext seq)
-        =/  =path  (fo-nax-path seq her^our)
-        ::  XX %ames call itself with a %make-peek task
-        ::  on a wire used to infer the listener (the %poke %nax request; us)
-        ::  when getting the %response $page with or %naxplanation payloads
-        ::  (tagged with %ext)
+        ?~  loads.state
+          ::  no pending messages to be sent; reset timer
+          ::
+          (fo-emit [/ames]~ %pass wire %b %rest (need next-wake.state))
+        ::  are there any cached acks?
         ::
-        =/  =space  publ/life.sat.per  ::  XX %chum
-        (fo-emit hen %pass wire %m make-peek/[space her^path])
+        ?~  cack=(pry:fo-cac cache.state)  fo-core
+        ?.  =(key.u.cack +(seq))           fo-core
+        ::  first ack in the cache is the next sent %poke; process
+        ::
+        =^  *  cache.state  (del:fo-cac cache.state key.u.cack)
+        $(error val.u.cack, seq key.u.cack)
       ::
       ++  fo-take-naxplanation
         |=  [seq=@ud =spar auth:mess =gage:mess]
@@ -1225,7 +1236,9 @@
         ::
         ?~  first=(pry:fo-mop loads.state)
           fo-core
-        ::XX  if the ack we receive is not for the first, no-op
+        :: XX  if the ack we receive is not for the first, no-op
+        :: XX as currently implemented we only hear for the naxplanation of the
+        ::  oldest message
         ::
         ?.  =(key.u.first seq)
           fo-core

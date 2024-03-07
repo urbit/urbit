@@ -3489,6 +3489,7 @@
           ::
           ::  XX option to include messages that won't be bounded into the namespace (two-layer queue)
           loads=((mop ,@ud mesa-message) lte)  :: all unacked
+          cache=((mop ,@ud ?) lte)         :: out-of-order acks
           next-load=_1 :: next %poke to send, always +(last-acked)
           next-wake=(unit @da)
           ::  XX how is this calculated?
