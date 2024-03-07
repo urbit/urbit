@@ -3396,6 +3396,13 @@
   +$  ship-state
     $+  ship-state
     $%  [%known peer-state]  :: XX %alien
+        [%alien ovni-state]
+    ==
+  ::
+  +$  ovni-state
+    $+  ovni-state
+    $:  messages=(list [=duct message=mesa-message])
+        heeds=(set duct)
     ==
   ::
   +$  peer-state
