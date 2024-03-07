@@ -33,9 +33,7 @@
     ::
       [~[/poke] %plea ~bud poke-plea]
     ::
-      :~  [~[/poke] [%pass /~bud/0/0 %b %wait ~1111.1.1..00.00.30]]
-        ::
-          :-  ~[/poke]
+      :~  :-  ~[/poke]
           [%pass ack-wire %m make-poke]
       ==
     ==
@@ -148,11 +146,8 @@
         ~[/poke]
       [%mesa %response %page ~bud^ack-path &+0x0 `page`message/[%ack error=|]]
     ::
-      :~  :-  ~[/ames]
-          [%pass /~bud/0/0 %b %rest ~1111.1.1..00.00.30]
-        ::
-        :-  ~[/poke]
-        [%give %done ~]
+      :~  :-  ~[/poke]
+          [%give %done ~]
       ==
     ==
   :-  moves-8  |.  :-  %|

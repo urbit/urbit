@@ -3326,7 +3326,9 @@
   ::
   +$  name  path
   --  ::lick
-::
+::                                                      ::::
+::::                    ++mesa                            ::  (1k) m e s a
+  ::
 ++  mesa  ^?
   |%
   +$  task
@@ -3361,11 +3363,10 @@
         :: =bug                    ::  debugging info
         :: snub=[form=?(%allow %deny) ships=(set ship)]  :: white/black listing
         :: XX tmp=(map @ux page)   :: temporary hash-addressed bindings
-        :: $=  dead                :: dead-flow consolidation timers
-        :: $:  flow=[%flow (unit dead-timer)]
-        ::     cork=[%cork (unit dead-timer)]
-        :: ==
-    ==
+        $=  dead                   :: dead-flow consolidation timers
+        $:  flow=[%flow (unit dead-timer)]
+    ==  ==
+  +$  dead-timer  [=duct =wire date=@da]
   ::  +address: client IP address
   ::
   +$  address
@@ -3489,9 +3490,8 @@
           ::
           ::  XX option to include messages that won't be bounded into the namespace (two-layer queue)
           loads=((mop ,@ud mesa-message) lte)  :: all unacked
-          cache=((mop ,@ud ?) lte)         :: out-of-order acks
+          cache=((mop ,@ud ?) lte)             :: out-of-order acks
           next-load=_1 :: next %poke to send, always +(last-acked)
-          next-wake=(unit @da)
           ::  XX how is this calculated?
           ::  XX inferred by the dumb internal congestion control
           ::  XX and by vere if we have a smart interpreter?
@@ -4254,7 +4254,7 @@
         ~&([i=i eny=old pac u.ron] |)
       $(i +(i))
     --
-  --
+  --  ::mesa
 ::
 ++  rand                                                ::  computation
   |%

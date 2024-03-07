@@ -42,7 +42,6 @@
       $(path t.path, gol t.gol)
     ::
     ++  derive-symmetric-key
-      ~/  %derive-symmetric-key
       |=  [public-key=@uw private-key=@uw]
       ^-  symmetric-key
       ::
@@ -53,7 +52,6 @@
       =.  private-key  (rsh 8 (rsh 3 private-key))
       ::
       `@`(shar:ed:crypto public-key private-key)
-        ::
     ::
     ++  parse-packet  |=(a=@ -:($:de:pact a))
     ++  is-auth-packet  |
@@ -246,11 +244,11 @@
           ~
       ==
     ::
-    +$  ev-timer-wire
+    +$  ev-timer-wire  :: XX revisit
       $:  :: ?(%poke %dead %alien ...)  :: XX add tag for each timer flow
           [%p her=@p]
           [%ud bone=@ud]
-          [%ud rift=@ud]  :: XX needed?
+          [%ud rift=@ud]
           ~
       ==
     ::
@@ -377,20 +375,36 @@
         |=  error=(unit tang)
         ^+  ev-core
         =>  .(wire.task `(pole iota)`(ev-pave wire.task))
-        ?.  ?=(ev-timer-wire wire.task)  ~|  %evil-behn-timer^wire.task  !!
-        ::  XX only timed-out outgoing %poke requests
-        =.  per  (ev-got-per her.wire.task)
+        ?.  ?|  ?=(ev-timer-wire wire.task)
+                ?=([%dead-flow ~] wire.task)
+            ==
+          ~|  %evil-behn-timer^wire.task  !!
         ::  XX log if error
         ::  XX if we wake up too early, no-op, otherwise set new timer
         ::  XX if timed-out, update qos
         ::  XX expire direct route if the peer is not responding (%nail)
         ::  XX re-send comet attestation?
-        =/  dire=?(%for %bak)  %for  :: XX get from wire
+        ::  XX only timed-out (dead) outgoing %poke requests
+        ::
+        =.  flow.dead.ax  flow/`[~[/mesa] /dead-flow `@da`(add now ~m2)]
+        =.  ev-core
+          (ev-emit ~[/mesa] %pass /dead-flow %b %wait `@da`(add now ~m2))
+        %-  ~(rep by peers.ax)
+        |=  [[=ship =ship-state] core=_ev-core]
+        ^+  core
+        =+  per-sat=(ev-get-per ship)
+        ?.  ?=([~ ~ *] per-sat)
+          core  ::  %alien or missing
+        =.  per  [ship u.u.per-sat]
         ?>  ?=(%known -.sat.per)
-        ?:  (~(has in corked.sat.per) bone.wire.task dire)
-          ev-core
+        %-  ~(rep by flows.sat.per)
+        |=  [[[=bone dire=?(%bak %for)] flow=flow-state] core=_core]
+        ?:  ?|  (~(has in corked.sat.per) bone dire)  :: XX not possible?
+                closing.flow
+            ==
+          core
         =^  moves  ax
-          fo-abet:(fo-call:(fo-abed:fo hen bone.wire.task^dire ev-chan ~) wake/~)
+          fo-abet:(fo-call:(fo-abed:fo hen bone^dire ev-chan ~) wake/~)
         (ev-emil moves)
       --
     ::
@@ -1038,17 +1052,7 @@
       ::
       ++  fo-send
         ^+  fo-core
-        =;  core=_fo-core
-          =.  next-wake.state.core  `(add now ~s30)
-          ::  XX sets one timer for all the messsages in the flow
-          ::
-          %-  fo-emit:core
-          :^    hen
-              %pass
-            /[(scot %p her)]/[(scot %ud bone)]/[(scot %ud rift.sat.per)]  :: XX to arm; add side=%for
-          [%b %wait `@da`(need next-wake.state.core)]
-        ::
-        =+  loads=loads.state  ::  cache
+        =+  loads=loads.state ::  cache
         |-  ^+  fo-core
         =*  loop  $
         =+  num=(wyt:fo-mop loads)
@@ -1110,12 +1114,6 @@
           ::  mark flow as closing
           ::  publish %cork %ack (in +ev-mess-poke) in corked.sat.per
           ::
-          =?  fo-core  ?=(^ next-wake.state)
-            =/  =^wire
-              /[(scot %p her)]/[(scot %ud bone)]/[(scot %ud rift.sat.per)]  :: XX to arm; add side=%bak
-            ::  reset timer for %boon(s)
-            ::
-            (fo-emit [[/ames]~ %pass wire %b %rest u.next-wake.state])
           =.  fo-core
             %-  fo-emit
             ::  start %peek request to check if they have corked the flow
@@ -1196,11 +1194,6 @@
         ::  increase the send-window so we can send the next message
         ::
         =.  send-window.state  +(send-window.state)
-        =/  =wire
-          /[(scot %p her)]/[(scot %ud bone)]/[(scot %ud rift.sat.per)]  :: XX to arm; add side=%for
-        :: ::  XX FIXME: have.?(%bak %for) -need.%for
-        :: =?  fo-core  ?=(~ loads.state)  ::  no pending messages to be sent
-        ::   (fo-emit [/ames]~ %pass wire %b %rest (need next-wake.state))
         =.  fo-core
           ?:  ?|  ?=(%bak dire)          ::  %boon %ack; assumed %acked from vane
                   ?&  closing.state      ::  %cork %ack; implicit ack
@@ -1210,10 +1203,6 @@
           ::  don't give %done for %boon and %cork; implicit %ack
           ::
           (fo-emit (ev-got-duct bone) %give %done ~)
-        ?~  loads.state
-          ::  no pending messages to be sent; reset timer
-          ::
-          (fo-emit [/ames]~ %pass wire %b %rest (need next-wake.state))
         ::  are there any cached acks?
         ::
         ?~  cack=(pry:fo-cac cache.state)  fo-core
@@ -1566,6 +1555,7 @@
         :~  [hen %pass /turf %j %turf ~]
             [hen %pass /private-keys %j %private-keys ~]
             [hen %pass /public-keys %j %public-keys [n=our ~ ~]]
+            [~[/mesa] %pass /dead-flow %b %wait `@da`(add now ~m2)]
         ==
       ::
       ++  sy-priv
@@ -1594,24 +1584,6 @@
         ::
         sy-core
       ::
-      :: +|  %internals
-      ::
-      ::  +derive-symmetric-key: $symmetric-key from $private-key and $public-key
-      ::
-      ::    Assumes keys have a tag on them like the result of the |ex:crub core.
-      ::
-      ++  derive-symmetric-key
-        ~/  %derive-symmetric-key
-        |=  [=public-key =private-key]
-        ^-  symmetric-key
-        ::
-        ?>  =('b' (end 3 public-key))
-        =.  public-key  (rsh 8 (rsh 3 public-key))
-        ::
-        ?>  =('B' (end 3 private-key))
-        =.  private-key  (rsh 8 (rsh 3 private-key))
-        ::
-        `@`(shar:ed:crypto public-key private-key)
       --
     ::
 --

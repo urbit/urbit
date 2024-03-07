@@ -62,8 +62,7 @@
     ::
       [vane-wire ~[/poke] %mesa %boon `*`poke-boon]
     ::
-      :~  [~[/poke] [%pass /~nec/0/0 %b %wait ~1111.1.1..00.00.30]]
-          [~[/poke] [%pass /flow/int/bak/~nec/0/0/1 %m make-poke]]
+      :~  [~[/poke] [%pass /flow/int/bak/~nec/0/0/1 %m make-poke]]
       ==
     ==
 ::
@@ -141,9 +140,7 @@
         ~[/poke]
       [%mesa %response %page ~nec^ack-path &+0x0 `page`message/[%ack error=|]]
     ::
-      :~  :-  ~[/ames]
-          [%pass /~nec/0/0 %b %rest ~1111.1.1..00.00.30]
-      ==
+      ~
     ==
   ::
   :-  moves-6  |.  :-  %|
