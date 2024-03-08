@@ -1,10 +1,22 @@
-/-  neo
-/+  default-agent, dbug, verb
+/-  neo, sole-sur=sole
+/+  default-agent, dbug, verb, shoe
 |%
+++  sole
+  |%
+  +$  id  sole-id:sole-sur
+  +$  action  sole-action:sole-sur
+  --
 +$  pith   pith:neo
 +$  card  card:agent:gall
++$  race-form  _*eval-form:(pike:neo ,vase)
++$  race
+  $:  sock=term
+      form=race-form
+      grab=(list item:pike:neo)
+      have=(list clot:goon:neo)
+  ==
 +$  state-0
-  [%0 apex=hall:neo =fleet:neo husks=(jug stud:neo name:neo)]
+  [%0 apex=hall:neo =fleet:neo husks=(jug stud:neo name:neo) races=(map id:sole race)]
 ++  is-parent
   |=  [parent=pith kid=pith]
   ^-  ?
@@ -36,12 +48,18 @@
   =/  recur  $(wer (snoc wer p.i.kids), kids ~(tap by yard.q.i.kids))
   =.  res  (~(uni by res) recur)
   $(kids t.kids)
++$  gait
+  $%  [%start sock=@tas]
+      [%clot =clot:goon:neo]
+      [%dbug foo=*]
+  ==
 --
 =|  state-0
 =*  state  -
 =<
   %-  agent:dbug
   %+  verb  &
+  %-  (agent:shoe gait)  
   |_  =bowl:gall
   +*  this  .
       run   ~(. +> [bowl ~])
@@ -85,6 +103,27 @@
     [cards this]
   ++  on-fail   on-fail:def
   ++  on-peek   on-peek:def
+  ++  command-parser 
+    |=  =id:sole
+    ~(parser walk:run id)
+  ++  tab-list
+    |=  =id:sole
+    ~
+  ++  on-command
+    |=  [=id:sole =gait] 
+    =^  cards  state
+      abet:(~(do walk:run id) gait)
+    [cards this]
+      
+  ++  can-connect
+    |=  =id:sole
+    =(our src):bowl
+  ++  on-connect
+    |=  =id:sole
+    `this
+  ++  on-disconnect
+    |=  =id:sole
+    `this
   --
 |_  [=bowl:gall cards=(list card)]
 ++  abet  [(flop cards) state]
@@ -584,5 +623,119 @@
       |=  syn=sign-arvo
       (si-emil (take:si-form arvo/syn))
     --
+  --
+++  sock
+  |_  for=@tas
+  ++  spur
+    ^-  path
+    /lib/[for]/hoon
+  ++  resolve
+    ^-  path
+    %+  welp
+      /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)
+    spur
+  ++  sock-vase
+    .^(vase %ca resolve)
+  ++  form-typ  form:(pike:neo vase)
+  ++  form  
+    !<(form-typ sock-vase)
+  --
+++  walk
+  |_  =id:sole
+  ++  parser
+    ^-  _|~(nail *(like [? gait]))
+    ?~  rac=(~(get by races) id)
+      ^-  _|~(nail *(like [? gait]))
+      ;~(plug (easy |) (stag %start sym))
+    ?~  grab.u.rac
+      ^-  _|~(nail *(like [? gait]))
+      ;~(plug (easy |) (stag %dbug (easy ~)))
+    ^-  _|~(nail *(like [? gait]))
+    =-  ;~(plug (easy |) (stag %clot -))
+
+    ?+  scar.i.grab.u.rac  !!
+      %cord   (stag %cord (cook crip (star prn)))
+      %patud  (stag %patud dem:ag)
+    ==
+  ++  do
+    |=  =gait
+    ^+  run
+    ~&  gait/gait
+    ?-  -.gait
+      %start  (start +.gait)
+      %dbug   run
+      %clot   (take-clot +.gait)
+    ==
+  ++  take-clot
+    |=  =clot:goon:neo
+    ~&  clot/clot
+    ^+  run
+    =/  =race  (~(got by races) id)
+    =.  have.race  (snoc have.race clot)
+    =.  grab.race
+      ?>  ?=(^ grab.race)
+      t.grab.race
+    ?~  grab.race
+      =/  have  have.race
+      =.  have.race  ~
+      =.  races  (~(put by races) id race)
+      (take `[%grab have])
+    =.  races  (~(put by races) id race)
+    show-grab
+  ::
+  ++  put
+    |=  =race
+    ^+  run
+    =.  races  (~(put by races) id race)
+    run
+  ++  make-bowl
+    `bowl:pike:neo`[*name:neo eny.bowl now.bowl]
+  ++  take
+    |=  syn=(unit sign:pike:neo)
+    =/  =race  (~(got by races) id)
+    |-
+    ~&  syn/syn
+    ~&  run/sock.race
+    =/  pike  (pike:neo vase)
+    =^  res=eval-result:pike  form.race
+      (take:pike form.race [make-bowl syn])
+    ?-    -.res
+        %done
+      %-  (slog %done (sell value.res) ~)
+      =.  races  (~(del by races) id)
+      run
+        %fail
+      =.  races  (~(del by races) id)
+      run
+        %emit  
+      ~|  res
+      ?-    -.car.res
+      :: TODO: actually scry
+          %peek  $(syn `[%peek addr-info/!>(['New York' 'NY'])])
+          %grab
+        =.  grab.race  items.car.res
+        =.  races  (~(put by races) id race)
+        show-grab
+      ==
+    ==
+  ++  show-grab
+    =/  =race  (~(got by races) id)
+    |-  ^+  run
+    ?~  grab.race
+      run
+    =/  =item:pike:neo  i.grab.race
+    ~&  print/lede.item
+    run
+
+  ++  start
+    |=  soc=@tas
+    ^+  run
+    =/  =race
+      [soc ~(form sock soc) ~ ~]
+    =.  races  (~(put by races) id race)
+    (take ~)
+    :: ?~  
+    :: =/  =wire  /race/(scot %p who.id)/[ses.id]
+    :: (emit %pass wire %agent [
   --
 --
