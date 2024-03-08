@@ -235,7 +235,7 @@
     ::
     +$  ev-flow-wire
       $:  %flow
-          were=?(%out %ext %int %cor)
+          were=?(%van %ext %int %cor)
           dire=?(%for %bak)
           [%p her=@p]
           [%ud rift=@ud]
@@ -367,7 +367,7 @@
         ?:  (lth rift rift.sat.per)
           :: XX log
           ev-core  ::  ignore events from an old rift
-        ?>  ?=([%out %bak] [were dire])  ::  vane acks happen on backward flows
+        ?>  ?=([%van %bak] [were dire])  ::  vane acks happen on backward flows
         ~!  task
         (ev-req-boon bone ev-chan +.lope.task)
       ::
@@ -413,6 +413,7 @@
     ++  ev-req-plea
       |=  [=ship vane=@tas =wire payload=*]
       ^+  ev-core
+      =.  ax  (ev-put-per ship)  ::  XX fake peer discovery
       =/  ship-state  (~(get by peers.ax) ship)
       ::
       ?.  ?=([~ %known *] ship-state)
@@ -454,6 +455,7 @@
     ++  ev-req-peek
       |=  spar
       ^+  ev-core
+      =.  ax  (ev-put-per ship)  ::  XX fake peer discovery
       =+  per-sat=(ev-get-per ship)
       ?.  ?=([~ ~ *] per-sat)
         ev-core  ::  %alien or missing
@@ -471,9 +473,9 @@
       =.  peers.ax
         %+  ~(put by peers.ax)  ship
         sat.per(pit (~(put by pit.sat.per) path new))
-      ::  XX construct and emit initial request packet
-      ::
-      ev-core
+      =/  =space      publ/life.sat.per  ::  XX %chum
+      =/  =pact:pact  (ev-make-pact ship^path ~ rift.sat.per space)
+      (ev-emit unix-duct.ax %give %send ~[`@ux`ship] p:(fax:plot (en:^pact pact)))
     ::
     +|  %response-flow
     ::
@@ -495,7 +497,7 @@
       |=  =name:pact
       ?.  =(our her.name)
         ev-core
-      =/  res=(unit (unit cage))  (inner-scry ~ /ames %x (name-to-beam name))  :: XX rof
+      =/  res=(unit (unit cage))  (rof ~ /ames %x (name-to-beam name))
       ?.  ?=([~ ~ ^] res)
         ev-core
       (ev-emit hen %give %send ~ !<(@ q.u.u.res))
@@ -769,7 +771,7 @@
       ?:  (lth rift rift.sat.per)
         :: XX log
         ev-core  ::  ignore events from an old rift
-      ?>  ?=([%out %bak] [were dire])  ::  vane acks happen on backward flows
+      ?>  ?=([%van %bak] [were dire])  ::  vane acks happen on backward flows
       ::
       ::  relay the vane ack to the foreign peer
       ::
@@ -778,7 +780,7 @@
         ::  XX since we ack one message at at time, seq is not needed?
         ::  XX use it as an assurance check?
         ::
-        %.  [%out done/error]
+        %.  [%van done/error]
         fo-take:(fo-abed:fo hen bone^dire=%bak ev-chan ~)
       (ev-emil moves)
     ::
@@ -787,14 +789,14 @@
     ++  ev-make-mess
       |=  [p=spar q=(unit path) r=space]
       ^+  ev-core
-      =/  per  (~(gut by peers.ax) ship.p *ship-state)
-      ?>  ?=([%known *] per)  ::  XX alien agenda
-      ?^  res=(~(get by pit.per) path.p)
+      =/  her  (~(gut by peers.ax) ship.p *ship-state)
+      ?>  ?=([%known *] her)  ::  XX alien agenda
+      ?^  res=(~(get by pit.her) path.p)
         ?>  =(q pay.u.res)  ::  prevent overriding payload
         =-  ev-core(peers.ax -)
         %+  ~(put by peers.ax)  ship.p
-        =-  per(pit -)
-        %+  ~(put by pit.per)  path.p
+        =-  her(pit -)
+        %+  ~(put by pit.her)  path.p
         u.res(for (~(put in for.u.res) hen))
       ::
       ?:  ?&  ?=(^ q)
@@ -802,7 +804,7 @@
                 !?=([~ ~ %message *] res)
               ?~  inn=(inner-path-to-beam our u.q)
                 ~
-              %-  inner-scry
+              %-  rof
               [~ /mesa [?>(?=(^ vew) car.vew) bem]:u.inn]  ::  XX (rof ...)
           ==
         ~|  q
@@ -811,9 +813,9 @@
       =.  for.new   (~(put in for.new) hen)
       =.  pay.new   q
       =.  path.p    (ev-mess-spac r pax/path.p)  :: XX (add-beam  ...
-      =.  peers.ax  (~(put by peers.ax) ship.p per(pit (~(put by pit.per) path.p new)))
+      =.  peers.ax  (~(put by peers.ax) ship.p her(pit (~(put by pit.her) path.p new)))
       ::
-      =/  =pact:pact  (ev-make-pact p q rift.per r)
+      =/  =pact:pact  (ev-make-pact p q rift.her r)
       (ev-emit unix-duct.ax %give %send ~ p:(fax:plot (en:^pact pact)))
     ::
     ++  ev-make-peek
@@ -846,7 +848,7 @@
       =;  page=pact:pact  ?>(?=(%page -.page) q.page)
       %-  parse-packet
       =<  ;;(@ q.q)  %-  need  %-  need
-      (inner-scry ~ /ames %x (name-to-beam man))  ::  XX rof
+      (rof ~ /ames %x (name-to-beam man))  ::  XX rof
     ::
     ++  ev-mess-spac
       |=  [=space path=$%([%cyf cyf=@] [%pax pax=path])]
@@ -891,6 +893,12 @@
       ::
       ?~  per=(~(get by peers.ax) her)  ~
       `per
+    ::
+    ++  ev-put-per
+      |=  =ship
+      ^+  ax
+      =.  peers.ax  (~(put by peers.ax) ship known/*peer-state)
+      ax
     ::
     ++  ev-got-duct
       |=  =bone
@@ -964,12 +972,12 @@
       ++  fo-view-beam  |=(=path `^path`[vane=%$ care=%x case='1' desk=%$ path])
       ::
       ++  fo-wire
-        ::  XX better names ?(for-acks=%int for-nax-payloads=%ext to-vane=%out for-corks=%cor)
-        |=  [were=?(%int %ext %out %cor) seq=@ud]
+        ::  XX better names ?(for-acks=%int for-nax-payloads=%ext to-vane=%van for-corks=%cor)
+        |=  [were=?(%int %ext %van %cor) seq=@ud]
         ^-  wire
         ::  %for: %plea(s) are always sent forward, %boon(s) %bak
         ::  both .to-vane and .dire are asserted when receiving the vane %ack
-        ::  since they will always be %out and %bak
+        ::  since they will always be %van and %bak
         ::
         :~  %flow  were  dire
             rcvr=[(scot %p her)]
@@ -1019,10 +1027,10 @@
         ==
       ::
       ++  fo-take
-        |=  [were=?(%ext %int %out %cor) sign=flow-sign]
+        |=  [were=?(%ext %int %van %cor) sign=flow-sign]
         ^+  fo-core
         ?-  -.sign
-             %done   ?>(?=(%out were) (fo-take-done +.sign))  :: ack from client vane
+             %done   ?>(?=(%van were) (fo-take-done +.sign))  :: ack from client vane
           %response  ?+  were  !!
                       :: XX payload given by the packet layer
                       :: via the wire used when %pass %a peek-for-poke
@@ -1108,7 +1116,7 @@
           %.  `*error
           fo-take-done:fo-core(pending-ack.state %.y)
         ::
-        =/  =wire  (fo-wire %out seq)
+        =/  =wire  (fo-wire %van seq)
         ?:  &(=(vane %$) ?=([%cork ~] payload) ?=([%flow ~] path)):plea
           ::  publisher receives %cork
           ::  mark flow as closing
@@ -1292,255 +1300,6 @@
       ::
       (ev-emit hen %pass /public-keys %j %public-keys [n=ship ~ ~])
     ::
-    ++  inner-scry
-      ^-  roon
-      |=  [lyc=gang pov=path car=term bem=beam]
-      ^-  (unit (unit cage))
-      ?:  ?&  =(our p.bem)
-              =(%$ q.bem)
-              =([%ud 1] r.bem)
-              =(%x car)
-          ==
-        =/  tyl=(pole knot)  s.bem
-        ?+    tyl  ~
-        ::
-        ::  publisher-side, protocol-level
-        ::
-            [%mess ryf=@ res=*]
-          =/  ryf  (slaw %ud ryf.tyl)
-          ?~  ryf  [~ ~]
-          ?.  =(rift.ax u.ryf)      ::  XX unauthenticated
-            ~
-          =*  rif  u.ryf
-          =/  nex
-            ^-  $@  ~
-                $:  pat=path
-                    $=  pac       ::  XX control packet serialization
-                    $@  ~
-                    $:  boq=bloq
-                        ser=?
-                        wan=$@(~ [typ=?(%auth %data) fag=@ud])
-                ==  ==
-            ?+    res.tyl  ~
-                [%$ pat=*]  [pat.res.tyl ~]
-            ::
-                [%pact boq=@ ser=?(%etch %pure) %init pat=*]
-              ?~  boq=(slaw %ud boq.res.tyl)
-                ~
-              [pat.res.tyl u.boq ?=(%etch ser.res.tyl) ~]
-            ::
-                [%pact boq=@ ser=?(%etch %pure) typ=?(%auth %data) fag=@ pat=*]
-              =/  boq  (slaw %ud boq.res.tyl)
-              =/  fag  (slaw %ud fag.res.tyl)
-              ?:  |(?=(~ boq) ?=(~ fag))
-                ~
-              [pat.res.tyl u.boq ?=(%etch ser.res.tyl) typ.res.tyl u.fag]
-            ==
-          ::
-          ?~  nex
-            [~ ~]
-          =*  pat  pat.nex
-          =/  res  $(lyc ~, pov /ames/mess, s.bem pat)
-          ?.  ?&  ?=([~ ~ %message *] res)
-            :: ...validate that it's really a message
-            :: =>  [%message tag=?(sig hmac) ser=@]
-              ==
-            ~
-          ?~  pac.nex  res
-          ::
-          ::  packets
-          ::
-          =*  boq  boq.pac.nex
-          ?.  ?=(%13 boq)
-            ~ :: non-standard fragments for later
-          =/  msg  ;;([typ=?(%sign %hmac) aut=@ ser=@] q.q.u.u.res)  :: XX types
-          =/  mes=auth:mess  ?:(?=(%sign typ.msg) &+aut.msg |+aut.msg)
-          =*  ser  ser.msg
-          =/  wid  (met boq ser)
-          ?<  ?=(%0 wid)  :: XX is this true?
-          =/  nit=?  |    :: XX refactor
-          |-  ^-  (unit (unit cage))
-          ?~  wan.pac.nex
-            $(nit &, wan.pac.nex [?:((gth wid 4) %auth %data) 0])
-          ::
-          =*  fag  fag.wan.pac.nex
-          ?.  (gth wid fag)
-            [~ ~]
-          ?:  ?&  ?=(%auth typ.wan.pac.nex)
-                  !=(0 fag)
-              ==
-            ~  :: non-standard proofs for later
-          =;  [nam=name:pact dat=data:pact]
-            =/  pac=pact:pact  [%page nam dat ~]
-            ?.  ser.pac.nex
-              ``[%packet !>(pac)]
-            ``[%atom !>(p:(fax:plot (en:pact pac)))]
-          ::
-          ?-    typ.wan.pac.nex
-              %auth
-            =/  nam  [[our rif] [boq ?:(nit ~ [%auth fag])] pat]
-            ::  NB: root excluded as it can be recalculated by the client
-            ::
-            =/  aut  [%0 mes ~]
-            =/  lss-proof  (build:lss (met 3 ser)^ser) ::  XX cache this
-            =/  dat  [wid aut (rep 8 proof.lss-proof)]  :: XX types
-            [nam dat]
-          ::
-              %data
-            =/  lss-proof  (build:lss (met 3 ser)^ser)  :: XX cache this
-            =/  nam  [[our rif] [boq ?:(nit ~ [%data fag])] pat]
-            =/  aut=auth:pact
-              ?:  &((lte wid 4) =(0 fag))
-                :: inline (or absent) proof
-                ::
-                :+  %0  mes
-                ?:  =(1 wid)  ~
-                =/  tal  (tail proof.lss-proof)
-                ?:  ?=(?(%1 %2) wid)
-                  ?>  ?=([* ~] tal)
-                  `i.tal
-                ?>  ?=([* * ~] tal)
-                `[i i.t]:tal
-              ::
-              :: full proof; provide a pair of sibling hashes
-              ::
-              ?:  (gte fag (lent pairs.lss-proof))  ~
-              [%1 (snag fag pairs.lss-proof)]
-            ::
-            =/  dat  [wid aut (cut boq [fag 1] ser)]
-            [nam dat]
-          ==
-        ::
-        ::  XX need a single namespace entrypoint to validate
-        ::     generically any authentication tag for a message
-        ::
-        ::    /ax/[$ship]//1/validate-message/[auth-string]/[blake3-hash]/[path]
-        ::
-        ::
-        ::  publisher-side, message-level
-        ::
-            [%publ lyf=@ pat=*]
-          =/  lyf  (slaw %ud lyf.tyl)
-          ?~  lyf  [~ ~]
-          ?.  =(u.lyf life.ax)
-            ~
-          ?~  inn=(inner-path-to-beam our pat.tyl)
-            [~ ~]
-          ?~  res=(inner-scry ~ /ames/publ %x bem.u.inn)  :: XX back to roof
-            ~
-          =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
-          =/  ful  (en-beam bem)
-          =/  ryf  rift.ax
-          =/  ser  (jam gag)
-          =/  rot  (blake3 ser)
-          ``[%message !>([%sign (sign:crypt ryf ful rot) ser])]
-        ::
-            [%chum lyf=@ her=@ hyf=@ cyf=@ ~]
-          =/  lyf  (slaw %ud lyf.tyl)
-          =/  her  (slaw %p her.tyl)
-          =/  hyf  (slaw %ud hyf.tyl)
-          =/  cyf  (slaw %uv cyf.tyl)
-          ?:  |(?=(~ lyf) ?=(~ her) ?=(~ hyf) ?=(~ cyf))
-            [~ ~]
-          ?.  =(u.lyf life.ax)
-            ~
-          ?~  key=(get-key-for u.her u.hyf)  :: eddh with our key
-            ~
-          ?~  tap=(decrypt:crypt u.cyf)  ~
-          ?~  pat=(parse-path u.tap)  ~
-          ?~  inn=(inner-path-to-beam our u.pat)  ~
-          ?~  res=(rof `[u.her ~ ~] /ames/chum vew.u.inn bem.u.inn)
-            ~
-          =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
-          =/  ful  (en-beam bem)
-          =/  ryf  rift.ax
-          =/  ser  (jam gag)
-          =/  rot  (blake3 ser)
-          ``[%message !>([%hmac (hmac:crypt ryf ful rot) ser])]
-        ::
-            [%shut kid=@ cyf=@ ~]
-          =/  kid  (slaw %ud kid.tyl)
-          =/  cyf  (slaw %uv cyf.tyl)
-          ?:  |(?=(~ kid) ?=(~ cyf))
-            [~ ~]
-          ?~  key=(get-group-key-for u.kid) :: symmetric key lookup
-            ~
-          ?~  tap=(decrypt:crypt u.cyf)  ~
-          ?~  pat=(parse-path u.tap)  ~
-          ::  XX check path prefix
-          ?~  inn=(inner-path-to-beam our u.pat)
-            ~
-          ?~  res=(rof [~ ~] /ames/shut vew.u.inn bem.u.inn)
-            ~
-          =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
-          =/  ful  (en-beam bem)
-          =/  ryf  rift.ax
-          =/  ser  (jam gag)
-          =/  rot  (blake3 ser)
-          ``[%message !>([%sign (sign:crypt ryf ful rot) ser])]
-        ::  publisher-side, flow-level
-        ::
-            ::res-mess-pith:ev-res  ::  /[~sndr]/[load]/[~rcvr]/flow/[bone]/[dire]/[mess]
-            ::  XX drop sndr, it's always our
-            [%flow bone=@ sndr=@ load=?(%poke %ack %nax %cork) rcvr=@ dire=?(%for %bak) mess=@ ~]
-          ::  XX remove typed-paths
-          =>  .(tyl `(pole iota)`(ev-pave tyl))
-          ?>  ?=(res-mess-pith tyl)
-          ?.  =(our sndr.tyl)
-            ~  :: we didn't send this poke
-          ::  XX refactor block when +inner-scry arms goes back into +scry
-          ::     to get all arms from ev-core
-          ::
-          =+  per-sat=(ev-get-per rcvr.tyl)
-          ?.  ?=([~ ~ *] per-sat)
-            ~  ::  %alien or missing
-          =.  per  [rcvr.tyl u.u.per-sat]
-          ?>  ?=(%known -.sat.per)
-          ?:  ?&  (~(has in corked.sat.per) [bone dire]:tyl)
-                  ?=(?(%cork %ack) load.tyl)
-              ==
-              ::  if %ack for a %corked flow (for both client and server),
-              ::  produce %ack
-              ::  XX when are corked bones evicted?
-              ::
-              ``[%message !>(`ack/%.y)]
-          ::
-          =/  res=(unit page)
-            %.  [load mess]:tyl
-            fo-peek:(fo-abed:fo ~[//scry] [bone dire]:tyl ev-chan ~)
-          ?~(res ~ ``[%message !>(u.res)])
-        ==
-      ::  XX stub for app-level scries (e.g. /g/x/0/dap[...])
-      ::
-      ?:  ?&  =(our p.bem)
-              ?|  =([%ud 0] r.bem)  :: XX
-                  =([%ud 1] r.bem)
-          ==  ==
-        (rof [~ ~] /ames/dap %x bem)
-      ::  only respond for the local identity, %$ desk, current timestamp
-      ::
-      ?.  ?&  =(our p.bem)
-              =([%da now] r.bem)
-              =(%$ q.bem)
-          ==
-        ~
-      ::
-      ::  /ax/peers/[ship]               ship-state
-      ::
-      ?.  ?=(%x car)  ~
-      =/  tyl=(pole knot)  s.bem
-      ::  private endpoints
-      ::
-      ?.  =([~ ~] lyc)  ~
-      ?+    tyl  ~
-            [%peers her=@ ~]
-          =/  who  (slaw %p her.tyl)
-          ?~  who  [~ ~]
-          ?~  peer=(~(get by peers.ax) u.who)
-            [~ ~]
-          ``noun+!>(u.peer)
-      ==
-    ::
     +|  %system
     ::
     ++  sy  ::  system/internal: %born, %heed, %kroc, %prod...
@@ -1548,7 +1307,7 @@
       ++  sy-core  .
       ++  sy-abet  [moves ax]
       ++  sy-emil  |=(mos=(list move) sy-core(moves (weld mos moves)))
-      ++  sy-born  sy-core(ax ax(unix-duct hen))
+      ++  sy-born  ~&  >>  unix/hen  sy-core(ax ax(unix-duct hen))
       ++  sy-init
         ^+  sy-core
         %-  sy-emil
@@ -1663,7 +1422,7 @@
           ::  %acks come directly into the message layer since they are always one
           ::  packet, and then given back to the flow layer that called them
           ::
-          ev-flow-wire
+          ?([%keen ~] ev-flow-wire)
         ev-take:ev-core  ::  %ack and %naxplanation payload
       ==
     ::
@@ -1678,5 +1437,248 @@
   ::mesa-gate(ax old)
   mesa-gate
 ::
-++  scry  inner-scry  ::  XX  just for testing, with a custom roof
+++  scry
+  ^-  roon
+  |=  [lyc=gang pov=path car=term bem=beam]
+  ^-  (unit (unit cage))
+  ?:  ?&  =(our p.bem)
+          =(%$ q.bem)
+          =([%ud 1] r.bem)
+          =(%x car)
+      ==
+    =/  tyl=(pole knot)  s.bem
+    ?+    tyl  ~
+    ::
+    ::  publisher-side, protocol-level
+    ::
+        [%mess ryf=@ res=*]
+      =/  ryf  (slaw %ud ryf.tyl)
+      ?~  ryf  [~ ~]
+      ?.  =(rift.ax u.ryf)      ::  XX unauthenticated
+        ~
+      =*  rif  u.ryf
+      =/  nex
+        ^-  $@  ~
+            $:  pat=path
+                $=  pac       ::  XX control packet serialization
+                $@  ~
+                $:  boq=bloq
+                    ser=?
+                    wan=$@(~ [typ=?(%auth %data) fag=@ud])
+            ==  ==
+        ?+    res.tyl  ~
+            [%$ pat=*]  [pat.res.tyl ~]
+        ::
+            [%pact boq=@ ser=?(%etch %pure) %init pat=*]
+          ?~  boq=(slaw %ud boq.res.tyl)
+            ~
+          [pat.res.tyl u.boq ?=(%etch ser.res.tyl) ~]
+        ::
+            [%pact boq=@ ser=?(%etch %pure) typ=?(%auth %data) fag=@ pat=*]
+          =/  boq  (slaw %ud boq.res.tyl)
+          =/  fag  (slaw %ud fag.res.tyl)
+          ?:  |(?=(~ boq) ?=(~ fag))
+            ~
+          [pat.res.tyl u.boq ?=(%etch ser.res.tyl) typ.res.tyl u.fag]
+        ==
+      ::
+      ?~  nex
+        [~ ~]
+      =*  pat  pat.nex
+      =/  res  $(lyc ~, pov /ames/mess, s.bem pat)
+      ?.  ?&  ?=([~ ~ %message *] res)
+        :: ...validate that it's really a message
+        :: =>  [%message tag=?(sig hmac) ser=@]
+          ==
+        ~
+      ?~  pac.nex  res
+      ::
+      ::  packets
+      ::
+      =*  boq  boq.pac.nex
+      ?.  ?=(%13 boq)
+        ~ :: non-standard fragments for later
+      =/  msg  ;;([typ=?(%sign %hmac) aut=@ ser=@] q.q.u.u.res)  :: XX types
+      =/  mes=auth:mess  ?:(?=(%sign typ.msg) &+aut.msg |+aut.msg)
+      =*  ser  ser.msg
+      =/  wid  (met boq ser)
+      ?<  ?=(%0 wid)  :: XX is this true?
+      =/  nit=?  |    :: XX refactor
+      |-  ^-  (unit (unit cage))
+      ?~  wan.pac.nex
+        $(nit &, wan.pac.nex [?:((gth wid 4) %auth %data) 0])
+      ::
+      =*  fag  fag.wan.pac.nex
+      ?.  (gth wid fag)
+        [~ ~]
+      ?:  ?&  ?=(%auth typ.wan.pac.nex)
+              !=(0 fag)
+          ==
+        ~  :: non-standard proofs for later
+      =;  [nam=name:pact dat=data:pact]
+        =/  pac=pact:pact  [%page nam dat ~]
+        ?.  ser.pac.nex
+          ``[%packet !>(pac)]
+        ``[%atom !>(p:(fax:plot (en:pact pac)))]
+      ::
+      ?-    typ.wan.pac.nex
+          %auth
+        =/  nam  [[our rif] [boq ?:(nit ~ [%auth fag])] pat]
+        ::  NB: root excluded as it can be recalculated by the client
+        ::
+        =/  aut  [%0 mes ~]
+        =/  lss-proof  (build:lss (met 3 ser)^ser) ::  XX cache this
+        =/  dat  [wid aut (rep 8 proof.lss-proof)]  :: XX types
+        [nam dat]
+      ::
+          %data
+        =/  lss-proof  (build:lss (met 3 ser)^ser)  :: XX cache this
+        =/  nam  [[our rif] [boq ?:(nit ~ [%data fag])] pat]
+        =/  aut=auth:pact
+          ?:  &((lte wid 4) =(0 fag))
+            :: inline (or absent) proof
+            ::
+            :+  %0  mes
+            ?:  =(1 wid)  ~
+            =/  tal  (tail proof.lss-proof)
+            ?:  ?=(?(%1 %2) wid)
+              ?>  ?=([* ~] tal)
+              `i.tal
+            ?>  ?=([* * ~] tal)
+            `[i i.t]:tal
+          ::
+          :: full proof; provide a pair of sibling hashes
+          ::
+          ?:  (gte fag (lent pairs.lss-proof))  ~
+          [%1 (snag fag pairs.lss-proof)]
+        ::
+        =/  dat  [wid aut (cut boq [fag 1] ser)]
+        [nam dat]
+      ==
+    ::
+    ::  XX need a single namespace entrypoint to validate
+    ::     generically any authentication tag for a message
+    ::
+    ::    /ax/[$ship]//1/validate-message/[auth-string]/[blake3-hash]/[path]
+    ::
+    ::  publisher-side, message-level
+    ::
+        [%publ lyf=@ pat=*]
+      =/  lyf  (slaw %ud lyf.tyl)
+      ?~  lyf  [~ ~]
+      ?.  =(u.lyf life.ax)
+        ~
+      ?~  inn=(inner-path-to-beam our pat.tyl)
+        [~ ~]
+      :: =/  view  ?@(vew.u.inn vew.u.inn (cat 3 [way car]:vew.u.inn))
+      :: ?~  res=(rof ~ /ames/publ view bem.u.inn)
+      ::   ~
+      =/  res=(unit (unit cage))  ``noun/!>(%hola)
+      ?>  ?=([~ *] res)
+      =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
+      =/  ful  (en-beam bem)
+      =/  ryf  rift.ax
+      =/  ser  (jam gag)
+      =/  rot  (blake3 ser)
+      ``[%message !>([%sign (sign:crypt ryf ful rot) ser])]
+    ::
+        [%chum lyf=@ her=@ hyf=@ cyf=@ ~]
+      =/  lyf  (slaw %ud lyf.tyl)
+      =/  her  (slaw %p her.tyl)
+      =/  hyf  (slaw %ud hyf.tyl)
+      =/  cyf  (slaw %uv cyf.tyl)
+      ?:  |(?=(~ lyf) ?=(~ her) ?=(~ hyf) ?=(~ cyf))
+        [~ ~]
+      ?.  =(u.lyf life.ax)
+        ~
+      ?~  key=(get-key-for u.her u.hyf)  :: eddh with our key
+        ~
+      ?~  tap=(decrypt:crypt u.cyf)  ~
+      ?~  pat=(parse-path u.tap)  ~
+      ?~  inn=(inner-path-to-beam our u.pat)  ~
+      ?~  res=(rof `[u.her ~ ~] /ames/chum vew.u.inn bem.u.inn)
+        ~
+      =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
+      =/  ful  (en-beam bem)
+      =/  ryf  rift.ax
+      =/  ser  (jam gag)
+      =/  rot  (blake3 ser)
+      ``[%message !>([%hmac (hmac:crypt ryf ful rot) ser])]
+    ::
+        [%shut kid=@ cyf=@ ~]
+      =/  kid  (slaw %ud kid.tyl)
+      =/  cyf  (slaw %uv cyf.tyl)
+      ?:  |(?=(~ kid) ?=(~ cyf))
+        [~ ~]
+      ?~  key=(get-group-key-for u.kid) :: symmetric key lookup
+        ~
+      ?~  tap=(decrypt:crypt u.cyf)  ~
+      ?~  pat=(parse-path u.tap)  ~
+      ::  XX check path prefix
+      ?~  inn=(inner-path-to-beam our u.pat)
+        ~
+      ?~  res=(rof [~ ~] /ames/shut vew.u.inn bem.u.inn)
+        ~
+      =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
+      =/  ful  (en-beam bem)
+      =/  ryf  rift.ax
+      =/  ser  (jam gag)
+      =/  rot  (blake3 ser)
+      ``[%message !>([%sign (sign:crypt ryf ful rot) ser])]
+    ::  publisher-side, flow-level
+    ::
+        ::res-mess-pith:ev-res  ::  /[~sndr]/[load]/[~rcvr]/flow/[bone]/[dire]/[mess]
+        ::  XX drop sndr, it's always our
+        [%flow bone=@ sndr=@ load=?(%poke %ack %nax %cork) rcvr=@ dire=?(%for %bak) mess=@ ~]
+      ::  XX remove typed-paths
+      =>  .(tyl `(pole iota)`(ev-pave tyl))
+      ?>  ?=(res-mess-pith tyl)
+      ?.  =(our sndr.tyl)
+        ~  :: we didn't send this poke
+      ::  XX refactor block when +rof arms goes back into +scry
+      ::     to get all arms from ev-core
+      ::
+      =.  ax  (ev-put-per rcvr.tyl)  ::  XX fake peer discovery
+      =+  per-sat=(ev-get-per rcvr.tyl)
+      ?.  ?=([~ ~ *] per-sat)
+        ~  ::  %alien or missing
+      =.  per  [rcvr.tyl u.u.per-sat]
+      ?>  ?=(%known -.sat.per)
+      ?:  ?&  (~(has in corked.sat.per) [bone dire]:tyl)
+              ?=(?(%cork %ack) load.tyl)
+          ==
+          ::  if %ack for a %corked flow (for both client and server),
+          ::  produce %ack
+          ::  XX when are corked bones evicted?
+          ::
+          ``[%message !>(`ack/%.y)]
+      ::
+      =/  res=(unit page)
+        %.  [load mess]:tyl
+        fo-peek:(fo-abed:fo ~[//scry] [bone dire]:tyl ev-chan ~)
+      ?~(res ~ ``[%message !>(u.res)])
+    ==
+  ::  only respond for the local identity, %$ desk, current timestamp
+  ::
+  ?.  ?&  =(our p.bem)
+          =([%da now] r.bem)
+          =(%$ q.bem)
+      ==
+    ~
+  ::
+  ::  /ax/peers/[ship]               ship-state
+  ::
+  ?.  ?=(%x car)  ~
+  =/  tyl=(pole knot)  s.bem
+  ::  private endpoints
+  ::
+  ?.  =([~ ~] lyc)  ~
+  ?+    tyl  ~
+        [%peers her=@ ~]
+      =/  who  (slaw %p her.tyl)
+      ?~  who  [~ ~]
+      ?~  peer=(~(get by peers.ax) u.who)
+        [~ ~]
+      ``noun+!>(u.peer)
+  ==
 --
