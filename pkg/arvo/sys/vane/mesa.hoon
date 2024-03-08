@@ -1432,10 +1432,9 @@
 ++  stay  `axle`ax
 ::
 ++  load
-  |=  old=*
+  |=  old=axle
   ^+  mesa-gate
-  ::mesa-gate(ax old)
-  mesa-gate
+  mesa-gate(ax old)
 ::
 ++  scry
   ^-  roon
