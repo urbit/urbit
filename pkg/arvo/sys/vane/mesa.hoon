@@ -326,7 +326,7 @@
       ::  %request-entry-points
       ::
         %plea  (ev-req-plea [ship plea]:task)
-        %keen  (ev-req-peek +>.task)  ::  XX sec
+        %keen  (ev-req-peek +.task)
         %cork  (ev-req-plea ship.task %$ /cork %cork ~)
       ::  %packet-response-entry-point
       ::
@@ -453,7 +453,7 @@
       (ev-emil moves)
     ::
     ++  ev-req-peek
-      |=  spar
+      |=  [sec=(unit [idx=@ key=@]) spar]
       ^+  ev-core
       =.  ax  (ev-put-per ship)  ::  XX fake peer discovery
       =+  per-sat=(ev-get-per ship)
@@ -461,7 +461,7 @@
         ev-core  ::  %alien or missing
       =.  per  [ship u.u.per-sat]
       ?>  ?=(%known -.sat.per)
-      :: ::
+      ::
       ?^  ms=(~(get by pit.sat.per) path)
         =.  peers.ax
           =/  pit
@@ -473,7 +473,8 @@
       =.  peers.ax
         %+  ~(put by peers.ax)  ship
         sat.per(pit (~(put by pit.sat.per) path new))
-      =/  =space      publ/life.sat.per  ::  XX %chum
+      =/  =space  ?~(sec publ/life.sat.per !!) ::  XX %chum
+      =.  path    (ev-mess-spac space pax/path)
       =/  =pact:pact  (ev-make-pact ship^path ~ rift.sat.per space)
       (ev-emit unix-duct.ax %give %send ~[`@ux`ship] p:(fax:plot (en:^pact pact)))
     ::
