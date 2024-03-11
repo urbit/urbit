@@ -3349,6 +3349,8 @@
         [%response load=$>(%page mess)]  :: produce a response message
         [%boon payload=*]                :: assembled %boon
         [%done error=(unit error)]       :: ack to client vane
+        [%nail =ship lanes=(list lane)]
+        [%saxo sponsors=(list ship)]
     ==
   ::
   +$  axle

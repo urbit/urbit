@@ -6,6 +6,50 @@
 =>  |%
     +|  %helpers
     ::
+    :: +get-forward-lanes: get all lanes to send to when forwarding to peer
+    ::
+    ++  get-forward-lanes
+      |=  [our=@p peer=peer-state peers=(map ship ship-state)]
+      ^-  (list lane)
+      =;  zar=(trap (list lane))
+        ?~  route.peer  $:zar
+        =*  rot  u.route.peer
+        ?:(direct.rot [lane.rot ~] [lane.rot $:zar])
+      ::
+      |.  ^-  (list lane)
+      ?:  ?=(%czar (clan:title sponsor.peer))
+        ?:  =(our sponsor.peer)
+          ~
+        [%& sponsor.peer]~
+      =/  next  (~(get by peers) sponsor.peer)
+      ?.  ?=([~ %known *] next)
+        ~
+      $(peer +.u.next)
+    ::  +trace: print if .verb is set and we're tracking .ship
+    :: ++  trace
+    ::   |=  [verb=? =ship ships=(set ship) print=(trap tape)]
+    ::   ^+  same
+    ::   ?.  verb
+    ::     same
+    ::   ?.  =>  [ship=ship ships=ships in=in]
+    ::       ~+  |(=(~ ships) (~(has in ships) ship))
+    ::     same
+    ::   (slog leaf/"{mesa: {(scow %p ship)}: {(print)}" ~)
+
+    ::  +qos-update-text: notice text for if connection state changes
+    ::
+    :: ++  qos-update-text
+    ::   |=  [=ship old=qos:ames new=qos:ames k=? ships=(set ship)]
+    ::   ^-  (unit tape)
+    ::   ::
+    ::   ?+  [-.old -.new]  ~
+    ::     [%unborn %live]  `"; {(scow %p ship)} is your neighbor"
+    ::     [%dead %live]    (trace k ship ships |.("is ok"))
+    ::     [%live %dead]    (trace k ship ships |.("not responding still trying"))
+    ::     [%unborn %dead]  (trace k ship ships |.("not responding still trying"))
+    ::     [%live %unborn]  `"; {(scow %p ship)} has sunk"
+    ::     [%dead %unborn]  `"; {(scow %p ship)} has sunk"
+    ::   ==
     ++  chain
       =<  mop
       |%
@@ -498,7 +542,7 @@
       |=  =name:pact
       ?.  =(our her.name)
         ev-core
-      =/  res=(unit (unit cage))  (rof ~ /ames %x (name-to-beam name))
+      =/  res=(unit (unit cage))  (rof ~ /mesa %x (name-to-beam name))
       ?.  ?=([~ ~ ^] res)
         ev-core
       (ev-emit hen %give %send ~ !<(@ q.u.u.res))
@@ -849,7 +893,7 @@
       =;  page=pact:pact  ?>(?=(%page -.page) q.page)
       %-  parse-packet
       =<  ;;(@ q.q)  %-  need  %-  need
-      (rof ~ /ames %x (name-to-beam man))  ::  XX rof
+      (rof ~ /mesa %x (name-to-beam man))  ::  XX rof
     ::
     ++  ev-mess-spac
       |=  [=space path=$%([%cyf cyf=@] [%pax pax=path])]
@@ -870,14 +914,12 @@
     +|  %peer-helpers
     ::
     ++  ev-gut-per
-      |=  [=duct =ship]
-      ^+  ev-core
-      =.  per
-        :-  ship
-        =/  ship-state  (~(get by peers.ax) ship)
-        :-  %known
-        ?.(?=([~ %known *] ship-state) *peer-state +.u.ship-state)
-      ev-core
+      |=  =ship
+      ^+  per
+      :-  ship
+      =/  ship-state  (~(get by peers.ax) ship)
+      :-  %known
+      ?.(?=([~ %known *] ship-state) *peer-state +.u.ship-state)
     ::
     ++  ev-got-per
       |=  =ship
@@ -898,8 +940,7 @@
     ++  ev-put-per
       |=  =ship
       ^+  ax
-      =.  peers.ax  (~(put by peers.ax) ship known/*peer-state)
-      ax
+      ax(peers (~(put by peers.ax) ship known/*peer-state))
     ::
     ++  ev-got-duct
       |=  =bone
@@ -1305,9 +1346,16 @@
     ::
     ++  sy  ::  system/internal: %born, %heed, %kroc, %prod...
       |_  hen=duct
+      ::
+      +|  %helpers
+      ::
       ++  sy-core  .
       ++  sy-abet  [moves ax]
+      ++  sy-emit  |=(=move sy-core(moves [move moves]))
       ++  sy-emil  |=(mos=(list move) sy-core(moves (weld mos moves)))
+      ::
+      +|  %entry-points
+      ::
       ++  sy-born  ~&  >>  unix/hen  sy-core(ax ax(unix-duct hen))
       ++  sy-init
         ^+  sy-core
@@ -1317,6 +1365,280 @@
             [hen %pass /public-keys %j %public-keys [n=our ~ ~]]
             [~[/mesa] %pass /dead-flow %b %wait `@da`(add now ~m2)]
         ==
+      ::
+      ++  sy-publ
+        |=  [=wire =public-keys-result:jael]
+        |^  ^+  sy-core
+        ::
+        ?-    public-keys-result
+            [%diff @ %rift *]
+          (on-publ-rift [who to.diff]:public-keys-result)
+        ::
+            [%diff @ %keys *]
+          (on-publ-rekey [who to.diff]:public-keys-result)
+        ::
+            [%diff @ %spon *]
+          (on-publ-sponsor [who to.diff]:public-keys-result)
+        ::
+            [%full *]
+          (on-publ-full points.public-keys-result)
+        ::
+            [%breach *]
+          (on-publ-breach who.public-keys-result)
+        ==
+        ::  +on-publ-breach: handle continuity breach of .ship; wipe its state
+        ::
+        ::    Abandon all pretense of continuity and delete all messaging state
+        ::    associated with .ship, including sent and unsent messages.
+        ::    Also cancel all timers related to .ship.
+        ::
+        ++  on-publ-breach
+          |=  =ship
+          ^+  sy-core
+          ?:  =(our ship)
+            sy-core
+          ::
+          =/  ship-state  (~(get by peers.ax) ship)
+          ::  we shouldn't be hearing about ships we don't care about
+          ::
+          ?~  ship-state
+            ~>  %slog.0^leaf/"ames: breach unknown {<our ship>}"
+            sy-core
+          ::  if an alien breached, this doesn't affect us
+          ::
+          ?:  ?=([~ %alien *] ship-state)
+            ~>  %slog.0^leaf/"ames: breach alien {<our ship>}"
+            sy-core
+          ~>  %slog.0^leaf/"ames: breach peer {<our ship>}"
+          ::  a peer breached; drop messaging state
+          ::
+          =/  =peer-state       +.u.ship-state
+          =/  old-qos=qos:ames  qos.peer-state
+          ::  reset all peer state other than pki data
+          ::
+          =.  +.peer-state  +:*^peer-state
+          ::  print change to quality of service, if any
+          ::
+          :: =/  text=(unit tape)
+          ::   %^  qos-update-text  ship  %ames
+          ::   [old-qos qos.peer-state kay.veb ships.bug.ax]
+          ::
+          :: =?  sy-core  ?=(^ text)
+          ::   (sy-emit duct %pass /qos %d %flog %text u.text)
+          ::  reinitialize galaxy route if applicable
+          ::
+          =?  route.peer-state  =(%czar (clan:title ship))
+            `[direct=%.y lane=[%& ship]]
+          ::
+          =.  peers.ax
+            (~(put by peers.ax) ship [%known peer-state])
+          ::
+          =.  sy-core
+            %-  sy-emit
+            :*  unix-duct.ax  %give  %nail  ship
+                (get-forward-lanes our peer-state peers.ax)
+            ==
+          ::  if one of our sponsors breached, give the updated list to vere
+          ::
+          =/  sponsors  (~(gas in *(set ^ship)) sy-get-sponsors)
+          =?  sy-core  (~(has in sponsors) ship)
+            (sy-emit unix-duct.ax %give %saxo ~(tap in sponsors))
+          :: ::
+          sy-core
+        ::  +on-publ-rekey: handle new key for peer
+        ::
+        ::    TODO: assert .crypto-suite compatibility
+        ::
+        ++  on-publ-rekey
+          |=  $:  =ship
+                  =life
+                  crypto-suite=@ud
+                  =public-key
+              ==
+          ^+  sy-core
+          ?:  =(our ship)
+            sy-core
+          ::
+          =/  ship-state  (~(get by peers.ax) ship)
+          ?.  ?=([~ %known *] ship-state)
+            =|  =point:jael
+            =.  life.point     life
+            =.  keys.point     (my [life crypto-suite public-key]~)
+            =.  sponsor.point  `(^^sein:title rof /mesa our now ship)
+            ::
+            (on-publ-full (my [ship point]~))
+          ::
+          =/  =peer-state   +.u.ship-state
+          :: =/  =private-key  sec:ex:crypto-core.ax  :XX
+          :: =.  symmetric-key.peer-state
+          ::   (derive-symmetric-key public-key private-key)
+          ::
+          =.  life.peer-state        life
+          =.  public-key.peer-state  public-key
+          ::
+          =.  peers.ax
+           (~(put by peers.ax) ship %known peer-state)
+          sy-core
+        ::  +on-publ-sponsor: handle new or lost sponsor for peer
+        ::
+        ::    TODO: really handle sponsor loss
+        ::
+        ++  on-publ-sponsor
+          |=  [=ship sponsor=(unit ship)]
+          ^+  sy-core
+          ::
+          ?:  =(our ship)
+            (sy-emit unix-duct.ax %give %saxo sy-get-sponsors)
+          ?~  sponsor
+            %-  (slog leaf+"ames: {(scow %p ship)} lost sponsor, ignoring" ~)
+            sy-core
+          ::
+          =/  state=(unit ship-state)  (~(get by peers.ax) ship)
+          ?.  ?=([~ %known *] state)
+            %-  (slog leaf+"ames: missing peer-state, ignoring" ~)
+            sy-core
+          =.  sponsor.+.u.state   u.sponsor
+          =.  peers.ax  (~(put by peers.ax) ship %known +.u.state)
+          =.  sy-core
+            %-  sy-emit
+            :*  unix-duct.ax  %give  %nail  ship
+                (get-forward-lanes our +.u.state peers.ax)
+            ==
+          ::
+          sy-core
+        ::  +on-publ-full: handle new pki data for peer(s)
+        ::
+        ++  on-publ-full
+          |=  points=(map ship point:jael)
+          ^+  sy-core
+          ::
+          =>  .(points ~(tap by points))
+          |^  ^+  sy-core
+              ?~  points  sy-core
+              ::
+              =+  ^-  [=ship =point:jael]  i.points
+              ::
+              =?  rift.ax  =(our ship)
+                rift.point
+              ::
+              ::  XX not needed?
+              :: =?  sy-core  =(our ship)
+              ::   (sy-emit unix-duct.ax %give %saxo get-sponsors)
+              ?.  (~(has by keys.point) life.point)
+                $(points t.points)
+              ::
+              =/  old-ship-state  (~(get by peers.ax) ship)
+              ::
+              =.  sy-core  (insert-peer-state ship point)
+              ::
+              =?  sy-core  ?=([~ %alien *] old-ship-state)
+                (meet-alien ship point +.u.old-ship-state)
+              ::
+              $(points t.points)
+          ::
+          ++  meet-alien
+            |=  [=ship =point:jael todos=ovni-state]
+            |^  ^+  sy-core
+            ::  if we're a comet, send self-attestation packet first
+            ::
+            :: =?  sy-core  =(%pawn (clan:title our))
+            ::   =/  blob=@  (attestation-packet ship life.point)
+            ::   (send-blob for=| ship blob (~(get by peers.ax) ship))
+            ::  save current duct
+            ::
+            =/  original-duct  hen
+            ::  apply heeds
+            ::
+            :: =.  sy-core
+            ::   %+  roll  ~(tap in heeds.todos)
+            ::   |=  [=duct core=_sy-core]
+            ::   (on-heed:core(duct duct) ship)
+            ::  apply outgoing messages, reversing for FIFO order
+            ::
+            =.  sy-core
+              %+  reel  messages.todos
+              |=  [[=duct =plea] core=_sy-core]
+              ?:  ?=(%$ -.plea)
+                (on-cork:core(duct duct) ship)
+              (on-plea:core(duct duct) ship plea)
+            ::  apply outgoing packet blobs
+            ::
+            :: =.  sy-core
+            ::   %+  roll  ~(tap in packets.todos)
+            ::   |=  [blob=@ core=_sy-core]
+            ::   (send-blob:core for=| ship blob (~(get by peers.ax) ship))
+            ::  apply remote scry requests
+            ::
+            :: =.  sy-core  (meet-alien-fine keens.todos)
+            ::
+            sy-core(hen original-duct)
+            ::
+            ++  meet-alien-fine
+              |=  peens=(jug path duct)
+              ^+  sy-core  !!
+              :: =+  peer-core=(abed:pe ship)
+              :: =<   abet  ^+  peer-core
+              :: %-  ~(rep by peens)
+              :: |=  [[=path ducts=(set ^duct)] cor=_peer-core]
+              :: (~(rep in ducts) |=([=^duct c=_cor] (on-keen:c path duct)))
+            --
+          --
+        ::  on-publ-rift: XX
+        ::
+        ++  on-publ-rift
+          |=  [=ship =rift]
+          ^+  sy-core
+          =?  rift.ax  =(our ship)
+            rift
+          ?~  ship-state=(~(get by peers.ax) ship)
+            ::  print error here? %rift was probably called before %keys
+            ::
+            ~>  %slog.1^leaf/"ames: missing peer-state on-publ-rift"
+            sy-core
+          ?:  ?=([%alien *] u.ship-state)
+            ::  ignore aliens
+            ::
+            sy-core
+          =/  =peer-state      +.u.ship-state
+          =.  rift.peer-state  rift
+          =.  peers.ax
+            (~(put by peers.ax) ship %known peer-state)
+          sy-core
+        ::
+        ++  insert-peer-state
+          |=  [=ship =point:jael]
+          ^+  sy-core
+          ::
+          =/  =ship-state      sat:(ev-gut-per ship)
+          =/  =public-key      pass:(~(got by keys.point) life.point)
+          =/  =private-key     sec:ex:crypto-core.ax
+          =/  =symmetric-key   (derive-symmetric-key public-key private-key)
+          ::
+          ?>  ?=(%known -.ship-state)
+          =.  qos.ship-state            [%unborn now]
+          =.  life.ship-state           life.point
+          =.  rift.ship-state           rift.point
+          =.  public-key.ship-state     public-key
+          =.  symmetric-key.ship-state  symmetric-key
+          =.  sponsor.ship-state
+            ?^  sponsor.point
+              u.sponsor.point
+            (^^sein:title rof /mesa our now ship)
+          ::  automatically set galaxy route, since unix handles lookup
+          ::
+          =?  route.ship-state  ?=(%czar (clan:title ship))
+            `[direct=%.y lane=[%& ship]]
+          ::
+          =.  peers.ax
+            (~(put by peers.ax) ship ship-state)
+          ::
+          =?  sy-core  ?=(%czar (clan:title ship))
+            %-  sy-emit
+            :*  unix-duct.ax  %give  %nail  ship
+                (get-forward-lanes our +.ship-state peers.ax)
+            ==
+          sy-core
+        --
       ::
       ++  sy-priv
         |=  [=life vein=(map life private-key)]
@@ -1329,21 +1651,27 @@
         ::  recalculate each peer's symmetric key
         ::
         =/  our-private-key  private-key  ::  sec:ex:crypto-core.ax  :: XX
-        :: =.  peers.ax
-        ::   %-  ~(run by peers.ax)
-        ::   |=  =ship-state
-        ::   ^+  ship-state
-        ::   ::
-        ::   ?.  ?=(%known -.ship-state)  :: XX %alien
-        ::     ship-state
-        ::   =/  =peer-state  +.ship-state
-        ::   =.  symmetric-key.peer-state
-        ::     (derive-symmetric-key public-key.+.ship-state our-private-key)
-        ::   ::
-        ::   known/peer-state
+        =.  peers.ax
+          %-  ~(run by peers.ax)
+          |=  =ship-state
+          ^+  ship-state
+          ::
+          ?.  ?=(%known -.ship-state)
+            ship-state
+          =/  =peer-state  +.ship-state
+          =.  symmetric-key.peer-state
+            (derive-symmetric-key public-key.+.ship-state our-private-key)
+          ::
+          known/peer-state
         ::
         sy-core
       ::
+      +|  %internals
+      ::
+      ++  sy-get-sponsors
+        ;;  (list ship)
+        =<  q.q  %-  need  %-  need
+        (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p our)])
       --
     ::
 --
@@ -1402,7 +1730,7 @@
     ::
       :: [%jael %turf *]          sy-abet:(~(on-take-turf sy hen) turf.sign)
       [%jael %private-keys *]  sy-abet:(~(sy-priv sy hen) [life vein]:sign)
-      :: [%jael %public-keys *]   sy-abet:(~(on-publ sy hen) wire public-keys-result.sign)
+      [%jael %public-keys *]   sy-abet:(~(sy-publ sy hen) wire +>.sign)
     ::  vane (n)ack
     ::
       [@ %done *]  ev-abet:(ev-take:ev-core [wire %done error.sign])
@@ -1485,7 +1813,7 @@
       ?~  nex
         [~ ~]
       =*  pat  pat.nex
-      =/  res  $(lyc ~, pov /ames/mess, s.bem pat)
+      =/  res  $(lyc ~, pov /mesa/mess, s.bem pat)
       ?.  ?&  ?=([~ ~ %message *] res)
         :: ...validate that it's really a message
         :: =>  [%message tag=?(sig hmac) ser=@]
@@ -1571,7 +1899,7 @@
       ?~  inn=(inner-path-to-beam our pat.tyl)
         [~ ~]
       :: =/  view  ?@(vew.u.inn vew.u.inn (cat 3 [way car]:vew.u.inn))
-      :: ?~  res=(rof ~ /ames/publ view bem.u.inn)
+      :: ?~  res=(rof ~ /mesa/publ view bem.u.inn)
       ::   ~
       =/  res=(unit (unit cage))  ``noun/!>(%hola)
       ?>  ?=([~ *] res)
@@ -1596,7 +1924,7 @@
       ?~  tap=(decrypt:crypt u.cyf)  ~
       ?~  pat=(parse-path u.tap)  ~
       ?~  inn=(inner-path-to-beam our u.pat)  ~
-      ?~  res=(rof `[u.her ~ ~] /ames/chum vew.u.inn bem.u.inn)
+      ?~  res=(rof `[u.her ~ ~] /mesa/chum vew.u.inn bem.u.inn)
         ~
       =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
       =/  ful  (en-beam bem)
@@ -1617,7 +1945,7 @@
       ::  XX check path prefix
       ?~  inn=(inner-path-to-beam our u.pat)
         ~
-      ?~  res=(rof [~ ~] /ames/shut vew.u.inn bem.u.inn)
+      ?~  res=(rof [~ ~] /mesa/shut vew.u.inn bem.u.inn)
         ~
       =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
       =/  ful  (en-beam bem)
