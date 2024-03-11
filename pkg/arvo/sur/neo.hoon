@@ -253,8 +253,14 @@
   $+  yard
   $~  ~
   (map iota hall)
++$  sign-conf
+  $%  [%val p=vase]
+      [%pith p=pith q=vase]
+  ==
 +$  sign-neo
-  [%poke dest=pith status=response-status]
+  $%  [%poke dest=pith status=response-status]
+      [%conf p=sign-conf]
+  ==
 +$  sign
   $+  sign
   $%  [%arvo p=sign-arvo]
@@ -313,7 +319,6 @@
 ::  $firm: type of the value in the urbit namespace
 ::
 +$  firm
- 
   $_  ^&
   |%
   ::  $state: the state of this value in the urbit namespace
