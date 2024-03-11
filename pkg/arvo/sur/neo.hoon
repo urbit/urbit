@@ -164,6 +164,23 @@
   ++  en-tape
     |=  pit=$
     (spud (pout pit))
+  ++  prefix
+    =|  res=$
+    |=  [long=$ curt=$]
+    ^-  (unit _res)
+    ?~  curt  `(flop res)
+    ?~  long  ~
+    ?.  =(i.long i.curt)
+      ~
+    $(long t.long, curt t.curt, res [i.long res])
+  ++  suffix
+    |=  [long=$ curt=$]
+    ^-  _curt
+    ?~  curt
+      long
+    ?~  long
+      ~
+    $(curt t.curt, long t.long)
   --
 ++  name
   |^  ,[=ship =pith]  

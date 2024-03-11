@@ -145,7 +145,7 @@
     !! :: abet:(~(take xeno pith) syn)
   ?:  ?=([%husk @ *] pith)
     (~(take husk i.t.pith) (pout t.t.pith) syn)
-  abet:(~(take arvo [pith pith ~ ~ ~]) pith syn)
+  abet:(take:(abed:arvo / pith) pith syn)
 ::
 ++  forward-poke
   |=  [=name:neo pok=*]
@@ -220,7 +220,7 @@
   ?.  =(our.bowl ship.name)
     ?>  ?=(%poke -.q.note)
     (forward-poke name val.q.note)
-  abet:(~(apply arvo [pith.name pith.name ~ ~ ~]) note)
+  abet:(apply:(abed:arvo / p.note) note)
 ::
 ++  watch
   |=  =(pole knot)
@@ -429,13 +429,37 @@
       (slym func p.diff)
     (put cel(case case, state vase))
   --
+++  give-nack
+  |=  [src=pith err=tang]
+  ?:  =(/ src) :: special case outside
+    run
+  =/  nam=name:neo  (de-pith:name:neo src)
+  %-  (slog leaf/(en-tape:pith:neo src) err)
+  ?:  =(our.bowl ship.nam)
+    run
+  run
 ::
 ++  arvo
   =+  verb=&
-  |_  [init=pith here=pith done=(list note:neo) down=(list note:neo) up=(list move:neo)]
+  |_  $:  [src=pith init=pith here=pith]
+          [done=(list note:neo) down=(list note:neo) up=(list move:neo)]
+          [old=state-0 err=(unit tang)]
+      ==
   ++  abet  
-    =.  cards  (welp cards (turn up deal))
-    run
+    ?~  err  
+      =.  cards  (welp cards (turn up deal))
+      run
+    =.  state  old
+    (give-nack init u.err)
+  ++  abed
+    |=  [source=pith ini=pith]
+    ^+  arvo
+    %_  arvo
+      src   source
+      init  ini
+      here  ini
+      old   state
+    ==
   ++  deal
     |=  =move:neo
     ^-  card
@@ -459,7 +483,9 @@
   ++  echo  arvo  :: TODO walk done
   ++  work
     ^+  arvo
-    |- 
+    |-  ^+  arvo
+    ?^  err
+      arvo
     ?~  down
       arvo
     =/  nex=note:neo  i.down
@@ -477,18 +503,21 @@
     ^+  arvo
     =/  si  (si-abed:site pith)
     =^  caz=(list card:neo)  arvo
-      si-abet:(si-take-arvo:si syn)
+      (soft-site |.(si-abet:(si-take-arvo:si syn)))
     (ingest pith caz)
   ++  poke
     |=  [=pith val=*]
+    ^-  (quip card:neo _arvo)
     =/  =name:neo  (de-pith:name:neo pith)
     ?>  =(our.bowl ship.name)
-    si-abet:(si-poke:(si-abed:site pith.name) val)
+    (soft-site |.(si-abet:(si-poke:(si-abed:site pith.name) val)))
   ::
   ++  apply
     |=  note=note:neo
-    %-  (trace leaf/"{<-.q.note>} {(spud (pout p.note))}" ~)
     ^+  arvo
+    ?.  =(~ err)
+      arvo
+    :: %-  (trace leaf/"{<-.q.note>} {(spud (pout p.note))}" ~)
     =^  caz=(list card:neo)  arvo
       ?+    -.q.note  !!
           %make  (make [p +.q]:note)
@@ -540,7 +569,16 @@
     ?>  =(~ (check-conf conf deps:firm))
     =/  =room:neo  [span conf yard icon]
     =.  apex  (put-hall apex pith.name room/room)
-    si-abet:si-born:(si-abed:site pith.name)
+    (soft-site |.(si-abet:si-born:(si-abed:site pith.name)))
+  ++  soft-site
+    |=  tap=(trap (quip card:neo _arvo))
+    ^-  (quip card:neo _arvo)
+    =/  res=(each (quip card:neo _arvo) tang)
+      (mule tap)
+    ?:  ?=(%& -.res)
+      p.res
+    =.  err  `p.res
+    `arvo
   ::
   ++  site
     |_  [=pith =room:neo cards=(list card:neo)]
@@ -550,6 +588,7 @@
       =.  apex  (put-hall apex pith room/room)
       :: TODO: process cards
       [cards arvo]
+    ::
     ++  si-abed
       |=  p=^pith
       ?<  ?=([[%p @] *] p)
