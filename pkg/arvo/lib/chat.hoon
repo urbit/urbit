@@ -74,7 +74,7 @@
     =-  !>(-)
     ^-  state
     ?-  -.poke
-      %title  sta(title title.poke)
+      %title  !! :: sta(title title.poke)
       %add    sta(who (~(put in who.sta) ship.poke))
       %del    sta(who (~(del in who.sta) ship.poke))
       ?(%dbug %msg)   sta

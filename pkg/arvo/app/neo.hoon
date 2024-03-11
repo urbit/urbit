@@ -137,6 +137,7 @@
   =/  =name:neo   (de-pith:name:neo pith)
   =.  run  abet:~(init xeno name)
   (emit %pass wire %agent [ship.name dap.bowl] %watch [%sync %init (pout pith.name)])
+++  our-sys-pith  `pith:neo`[p/our.bowl ~]
 ::
 ++  take-arvo
   |=  [=pith syn=sign-arvo]
@@ -145,7 +146,7 @@
     !! :: abet:(~(take xeno pith) syn)
   ?:  ?=([%husk @ *] pith)
     (~(take husk i.t.pith) (pout t.t.pith) syn)
-  abet:(take:(abed:arvo / pith) pith syn)
+  abet:(take:(abed:arvo our-sys-pith pith) pith syn)
 ::
 ++  forward-poke
   |=  [=name:neo pok=*]
@@ -220,7 +221,7 @@
   ?.  =(our.bowl ship.name)
     ?>  ?=(%poke -.q.note)
     (forward-poke name val.q.note)
-  abet:(apply:(abed:arvo / p.note) note)
+  abet:(apply:(abed:arvo our-sys-pith pith.name) note)
 ::
 ++  watch
   |=  =(pole knot)
@@ -431,11 +432,11 @@
   --
 ++  give-nack
   |=  [src=pith err=tang]
-  ?:  =(/ src) :: special case outside
-    run
-  =/  nam=name:neo  (de-pith:name:neo src)
   %-  (slog leaf/(en-tape:pith:neo src) err)
-  ?:  =(our.bowl ship.nam)
+  =/  nam=name:neo  (de-pith:name:neo src)
+  ?.  =(our.bowl ship.nam)
+    run
+  ?:  =(/ pith.nam) :: special case outside
     run
   run
 ::
@@ -450,7 +451,7 @@
       =.  cards  (welp cards (turn up deal))
       run
     =.  state  old
-    (give-nack init u.err)
+    (give-nack src u.err)
   ++  abed
     |=  [source=pith ini=pith]
     ^+  arvo
