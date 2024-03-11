@@ -280,7 +280,7 @@
   --
 ++  get-val-at-path
   |=  =pith
-  ^-  (unit *)
+  ^-  (unit vase)
   ?~  val=(get-hall apex pith)
     ~
   `state.icon.u.val
@@ -605,20 +605,24 @@
       site
     ++  si-resolve-kids  ~
     ++  si-resolve-deps
-      %-  ~(gas by *(map term [^pith *]))
-      ^-  (list [term ^pith *])
+      %-  ~(gas by *(map term [^pith vase]))
+      ^-  (list [term ^pith vase])
       %+  murn  ~(tap by deps:si-firm)
       |=  [=term required=? =port:neo]
-      ^-  (unit [^term ^pith *])
+      ^-  (unit [^term ^pith vase])
       =/  dep=(unit ^pith)  (~(get by conf.room) term)
       ?~  dep
-        ~|  %invariant-missing-required-conf
+        ~|  invariant-missing-required-conf/term
         ?<  required
         ~
-      =/  val  (get-val-at-path u.dep)
+      =/  =name:neo  (de-pith:name:neo u.dep)
+      ?>  =(our.bowl ship.name)
+      =/  val  (get-val-at-path pith.name)
       ?~  val
-        ~|  %invariant-no-value-at-path
+        ~|  invariant-no-value-at-path/pith.name
         !!
+      ~&  dep/[term u.dep]
+        %-  (slog (sell u.val) ~)
       `[term u.dep u.val]
       ::  TODO type this w/ port??
     ++  si-bowl    

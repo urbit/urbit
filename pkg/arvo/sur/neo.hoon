@@ -254,8 +254,8 @@
   $~  ~
   (map iota hall)
 +$  sign-conf
-  $%  [%val p=vase]
-      [%pith p=pith q=vase]
+  $%  [%val p=term]
+      [%pith p=term q=pith]
   ==
 +$  sign-neo
   $%  [%poke dest=pith status=response-status]
@@ -264,7 +264,7 @@
 +$  sign
   $+  sign
   $%  [%arvo p=sign-arvo]
-      [%neo ~]
+      [%neo p=sign-neo]
   ==
 
 +$  move  (pair pith card)
@@ -307,8 +307,8 @@
       our=@p
       were=pith
       now=@da
-      deps=(map term (pair pith *))
-      kids=(map pith *)
+      deps=(map term (pair pith vase))
+      kids=(map pith vase)
   ==
 +$  fief
   [required=? =port]
