@@ -1555,12 +1555,12 @@
             ::   (on-heed:core(duct duct) ship)
             ::  apply outgoing messages, reversing for FIFO order
             ::
-            =.  sy-core
-              %+  reel  messages.todos
-              |=  [[=duct =plea] core=_sy-core]
-              ?:  ?=(%$ -.plea)
-                (on-cork:core(duct duct) ship)
-              (on-plea:core(duct duct) ship plea)
+            :: =.  sy-core
+            ::   %+  reel  messages.todos
+            ::   |=  [[=duct =plea] core=_sy-core]
+            ::   ?:  ?=(%$ -.plea)
+            ::     (on-cork:core(duct duct) ship)
+            ::   (on-plea:core(duct duct) ship plea)
             ::  apply outgoing packet blobs
             ::
             :: =.  sy-core
@@ -1901,7 +1901,7 @@
       :: =/  view  ?@(vew.u.inn vew.u.inn (cat 3 [way car]:vew.u.inn))
       :: ?~  res=(rof ~ /mesa/publ view bem.u.inn)
       ::   ~
-      =/  res=(unit (unit cage))  ``noun/!>(%hola)
+      =/  res=(unit (unit cage))  ``noun/!>((bex (bex 13)))
       ?>  ?=([~ *] res)
       =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
       =/  ful  (en-beam bem)
