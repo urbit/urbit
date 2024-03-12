@@ -1,5 +1,5 @@
 /-  neo, sole-sur=sole
-/+  default-agent, dbug, verb, shoe
+/+  default-agent, dbug, verb, shoe, ford=ford-parser
 |%
 ++  sole
   |%
@@ -202,6 +202,8 @@
   |=  [=mark =vase]
   ^+  run
   ?>  ?=(%noun mark)
+  ?:  =(%clay q.vase)
+    copy-clay
   ?:  =(%dbug q.vase)
     ?>  =(our src):bowl
     %-  print-dbug
@@ -236,9 +238,18 @@
   |=  [=(pole knot) =sign:agent:gall]
   |^  ^+  run
   ?+  pole  ~|(on-agent-bad-wire/pole !!)
+    [%test ~]       test-wire 
     [%sync rest=*]  (sync (pave rest.pole))
     [%forward rest=*]  (forward (pave rest.pole))
   ==
+  ++  test-wire
+    ?.  ?=(%poke-ack -.sign)
+      !!
+    %.  run
+    ?~  p.sign
+      same
+    (slog leaf/"nack on test wire" u.p.sign)
+
   ++  forward
     |=  =pith
     ?.  ?=(%poke-ack -.sign)
@@ -267,6 +278,30 @@
       ~&  'TODO: resub logic'
       run
     ==
+  --
+++  copy-clay
+  |^  ^+  run
+  =+  .^(paths=(list path) %ct root)
+  |-  ^+  run
+  ?~  paths
+    run
+  =.  run  (read-file i.paths)
+  $(paths t.paths)
+  ++  root
+    /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/neo
+  ++  read-file
+    |=  pax=path
+    ^+  run
+    =.  pax
+      ?>  ?=(^ pax)
+      t.pax
+    =+  .^(src=@t %cx (welp root pax))
+    =/  =file:ford  (scan (trip src) apex:rein:ford)
+    =/  =conf:neo
+      (~(gas by *conf:neo) [%sut [p/our.bowl (pave /sys/reef)]] ~)
+    =/  =note:neo
+      [[p/our.bowl (pave pax)] %make %nhoon `!>([~ hoon.file]) conf]
+    (emit %pass /test %agent [our dap]:bowl %poke %noun !>(note))
   --
 ++  get-val-at-path
   |=  =pith
