@@ -463,7 +463,7 @@
       ?.  ?=([~ %known *] ship-state)
         %^  ev-enqueue-alien-todo  ship  ship-state
         |=  todos=ovni-state
-        todos(messages [[hen plea/vane^wire^payload] messages.todos])
+        todos(pokes [[hen plea/vane^wire^payload] pokes.todos])
       ::
       =.  per  ship^u.ship-state
       ?>  ?=(%known -.sat.per)
@@ -1545,44 +1545,38 @@
             :: =?  sy-core  =(%pawn (clan:title our))
             ::   =/  blob=@  (attestation-packet ship life.point)
             ::   (send-blob for=| ship blob (~(get by peers.ax) ship))
-            ::  save current duct
-            ::
-            =/  original-duct  hen
             ::  apply heeds
             ::
             :: =.  sy-core
             ::   %+  roll  ~(tap in heeds.todos)
             ::   |=  [=duct core=_sy-core]
             ::   (on-heed:core(duct duct) ship)
-            ::  apply outgoing messages, reversing for FIFO order
             ::
-            :: =.  sy-core
-            ::   %+  reel  messages.todos
-            ::   |=  [[=duct =plea] core=_sy-core]
-            ::   ?:  ?=(%$ -.plea)
-            ::     (on-cork:core(duct duct) ship)
-            ::   (on-plea:core(duct duct) ship plea)
-            ::  apply outgoing packet blobs
+            =.  ev-core
+              =~  .(ev-core meet-alien-poke)  ::  apply outgoing messages
+                  meet-alien-peek             ::  apply remote scry requests
+              ==
             ::
-            :: =.  sy-core
-            ::   %+  roll  ~(tap in packets.todos)
-            ::   |=  [blob=@ core=_sy-core]
-            ::   (send-blob:core for=| ship blob (~(get by peers.ax) ship))
-            ::  apply remote scry requests
+            sy-core
             ::
-            :: =.  sy-core  (meet-alien-fine keens.todos)
+            ++  meet-alien-peek
+              ^+  ev-core
+              %-  ~(rep by peeks.todos)
+              |=  [[=path ducts=(set duct)] core=_ev-core]
+              %-  ~(rep in ducts)
+              |=([=duct c=_core] (ev-req-peek:(ev-abed:c duct) ~ ship path))
             ::
-            sy-core(hen original-duct)
+            ++  meet-alien-poke
+              ^+  ev-core
+              %+  reel  pokes.todos  ::  reversing for FIFO order
+              |=  [[=duct mess=mesa-message] core=_ev-core]
+              ?+  -.mess  !!  :: XX log alien peer %boon?
+                %plea  (ev-req-plea:(ev-abed:core duct) ship +.mess)
+                %cork  (ev-req-plea:(ev-abed:core duct) ship %$ /cork %cork ~)
+              ==
             ::
-            ++  meet-alien-fine
-              |=  peens=(jug path duct)
-              ^+  sy-core  !!
-              :: =+  peer-core=(abed:pe ship)
-              :: =<   abet  ^+  peer-core
-              :: %-  ~(rep by peens)
-              :: |=  [[=path ducts=(set ^duct)] cor=_peer-core]
-              :: (~(rep in ducts) |=([=^duct c=_cor] (on-keen:c path duct)))
             --
+          ::
           --
         ::  on-publ-rift: XX
         ::

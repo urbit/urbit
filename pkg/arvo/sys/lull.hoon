@@ -3405,7 +3405,8 @@
   ::
   +$  ovni-state
     $+  ovni-state
-    $:  messages=(list [=duct message=mesa-message])
+    $:  pokes=(list [=duct message=mesa-message])
+        peeks=(jug path duct)  ::  XX %chum?
         heeds=(set duct)
     ==
   ::
