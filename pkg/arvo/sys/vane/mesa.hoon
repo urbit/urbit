@@ -666,7 +666,8 @@
       ==
     ::
     ++  ev-mess-page
-      |=  [=spar auth:mess =gage:mess]
+      |=  [=spar =auth:mess =gage:mess]
+      ^+  ev-core
       =*  ship  ship.spar
       ?~  rs=(~(get by peers.ax) ship)
         ev-core
@@ -682,7 +683,9 @@
       ::  XX abet
       =.  pit.u.rs  (~(del by pit.u.rs) path.spar)
       =.  peers.ax  (~(put by peers.ax) ship.spar u.rs)
-      ev-core
+      %-  ~(rep in for.u.ms)
+      |=  [hen=duct c=_ev-core]
+      (ev-emit:c hen %give %response [%page [spar auth gage]])
     ::
     ++  ev-mess-poke
       |=  [dud=(unit goof) =ack=spar =pok=spar auth:mess =gage:mess]
