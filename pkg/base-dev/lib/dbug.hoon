@@ -50,8 +50,13 @@
         =/  result=(each ^vase tang)
           (mule |.(q:(need (need (on-peek:ag /x/dbug/state)))))
         ?:(?=(%& -.result) p.result on-save:ag)
+      =/  prelude=^vase
+        =/  bek  
+          /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)
+        =+  .^(=open:clay %cs (welp bek /open/foo))
+        (fall (mole |.((open /app/[dap.bowl]/hoon))) !>(..zuse))
       %+  slap
-        (slop state !>([bowl=bowl ..zuse]))
+        :(slop state !>(bowl=bowl) prelude)
       (ream grab.dbug)
     ::
         %incoming
