@@ -973,10 +973,15 @@
   `[[van car]:pat [her des.pat u.cas] pur.pat]  :: XX
 ::
 ++  get-key-for  |=([=ship =life] *@)
-++  get-group-key-for  |=(@ud *(unit @))
+++  get-group-key-for  |=(@ud `(unit @uxI)`(some `@uxI`0))
 +$  binding  [=path root=@uxI]
 ++  crypt
   |%
+  ::
+  ++  const-cmp
+    |=  [a=@ b=@]
+    ^-  ?
+    =(0 (~(dif fe 7) a b))  :: XX jet for constant-time
   ::
   ++  sign
     |=  [sek=@uxI =binding]
@@ -995,23 +1000,27 @@
   ++  verify-mac
     |=  [key=@uxI tag=@uxH =binding]
     ^-  ?
-    =(0 (~(dif fe 7) tag (mac key binding)))  :: XX jet for constant-time
+    (const-cmp tag (mac key binding))
   ::
   ++  encrypt
     |=  [key=@uxI iv=@ msg=@]
     ^+  msg
     (~(en ctrc:aes:crypto key 7 (met 3 msg) iv) msg) :: TODO: chacha8
   ++  decrypt  encrypt
-  ++  encrypt-path
+  ::
+  ++  seal-path
     |=  [key=@uxI =path]
     ^-  @
-    =/  iv  0  :: XX
-    (encrypt key iv (jam path))
-  ++  decrypt-path
-    |=  [key=@uxI cyf=@]
+    =/  pat  (jam path)
+    =/  tag  ((keyed:blake3:blake:crypto 32^key) 16 (met 3 pat)^pat)
+    =/  cyf  (encrypt (mix key tag) tag pat)
+    (jam [tag cyf])
+  ++  open-path
+    |=  [key=@uxI sealed=@]
     ^-  path
-    =/  iv  0  :: XX
-    =/  pat  (decrypt key iv cyf)
+    =+  ;;([tag=@ cyf=@] (cue sealed))
+    =/  pat  (decrypt (mix key tag) tag cyf)
+    ?>  (const-cmp tag ((keyed:blake3:blake:crypto 32^key) 16 (met 3 pat)^pat))
     ;;(path (cue pat))
   --
 --
@@ -1037,27 +1046,27 @@
         ?+  tyl  !!
           [%publ lyf=@ pat=*]  :: unencrypted
             tyl
-          [%chum lyf=@ her=@ hyf=@ pat=[cyf=@ ~]]  :: encrypted with eddh key, hmac as iv
+          [%chum lyf=@ her=@ hyf=@ pat=[cyf=@ ~]]  :: encrypted with eddh key
             =/  lyf  (slaw %ud lyf.tyl)
             =/  her  (slaw %p her.tyl)
             =/  hyf  (slaw %ud hyf.tyl)
             =/  cyf  (slaw %uv cyf.pat.tyl)
             ?>  &(?=(^ lyf) ?=(^ her) ?=(^ hyf) ?=(^ cyf))
             =/  key  (get-key-for u.her u.hyf)
-            tyl(pat (decrypt-path:crypt key u.cyf))
-          [%shut kid=@ pat=[cyf=@ ~]]  :: encrypted with group key, sig as iv
+            tyl(pat (open-path:crypt key u.cyf))
+          [%shut kid=@ pat=[cyf=@ ~]]  :: encrypted with group key
             =/  kid  (slaw %ud kid.tyl)
             =/  cyf  (slaw %uv cyf.pat.tyl)
             ?>  &(?=(^ kid) ?=(^ cyf))
             =/  key  (need (get-group-key-for u.kid)) :: XX handle ~
-            tyl(pat (decrypt-path:crypt key u.cyf))
+            tyl(pat (open-path:crypt key u.cyf))
         ==
       ::
       ::  check for pending request (peek|poke)
       ::
       ?~  per=(~(get by p.ax) her.p.pac)
         [~ ax]
-      ?~  res=(~(get by pit.u.per) pat)
+      ?~  res=(~(get by pit.u.per) pat.p.pac)
         [~ ax]
       ::
       =/  [typ=?(%auth %data) fag=@ud]
@@ -1121,7 +1130,7 @@
           ::
           ?:  =(1 tot.q.pac)
             ?>  (authenticate (root:lss dat.q.pac))
-            =/  =spar:ames  [her.p.pac pat.p.pac]
+            =/  =spar:ames  [her.p.pac pat]
             =/  =auth:mess  p.aut.q.pac
             =/  =page  ;;(page (cue dat.q.pac)) :: XX what if we get ~ instead of a page?
             [[[[/ ~] %give %response [%page [spar auth page]]] ~] ax]
@@ -1178,7 +1187,7 @@
           [[[[/ ~] %give %send ~ p:(fax:plot (en:^pact pact))] ~] ax]
         ::  yield complete message
         ::
-        =/  =spar:ames  [her.p.pac pat.p.pac]
+        =/  =spar:ames  [her.p.pac pat]
         =/  =auth:mess  [%| *@uxH] :: XX should be stored in ps?
         =/  =page  ;;(page (cue (rep 13 (flop fags.ps))))
         [[[[/ ~] %give %response [%page [spar auth page]]] ~] ax]
@@ -1242,12 +1251,30 @@
   ++  ev-make-mess
     |=  [p=spar:ames q=(unit path)]
     =/  per  (~(gut by p.ax) ship.p *peer-state)  :: XX alien-agenda
-    ?^  res=(~(get by pit.per) path.p)
+    ::
+    ::  encrypt path
+    ::
+    =/  pat=path
+      =/  tyl=(pole knot)  path.p
+      ?+  tyl  !!
+        [%publ lyf=@ pat=*]  :: unencrypted
+          tyl
+        [%chum lyf=@ her=@ hyf=@ pat=*]  :: encrypted with eddh key
+          =/  key  (get-key-for her.tyl hyf.tyl)
+          =/  cyf  (seal-path:crypt key pat.tyl)
+          tyl(pat ~[(scot %uv cyf)])
+        [%shut kid=@ pat=*]  :: encrypted with group key
+          =/  key  (need (get-group-key-for kid.tyl)) :: XX handle ~
+          =/  cyf  (seal-path:crypt key pat.tyl)
+          tyl(pat ~[(scot %uv cyf)])
+      ==
+    ::
+    ?^  res=(~(get by pit.per) pat)
       ?>  =(q pay.u.res)  ::  prevent overriding payload
       =-  [~ ax(p -)]
       %+  ~(put by p.ax)  ship.p
       =-  per(pit -)
-      %+  ~(put by pit.per)  path.p
+      %+  ~(put by pit.per)  pat
       u.res(for (~(put in for.u.res) hen))
     ::
     ::  XX resolve payload path if present to validate
@@ -1262,35 +1289,19 @@
     =|  new=request-state
     =.  for.new  (~(put in for.new) hen)
     =.  pay.new  q
-    =.  p.ax  (~(put by p.ax) ship.p per(pit (~(put by pit.per) path.p new)))
+    =.  p.ax  (~(put by p.ax) ship.p per(pit (~(put by pit.per) pat new)))
     ::
     ::  XX construct and emit initial request packet
     ::
     =/  =pact:pact
-      =/  pat=path
-        =/  tyl=(pole knot)  path.p
-        ?+  tyl  !!
-          [%publ lyf=@ pat=*]  :: unencrypted
-            tyl
-          [%chum lyf=@ her=@ hyf=@ pat=*]  :: encrypted with eddh key, hmac as iv
-            =/  key  (get-key-for her.tyl hyf.tyl)
-            =/  cyf  (encrypt-path:crypt key pat.tyl)
-            tyl(pat ~[(scot %uv cyf)])
-          [%shut kid=@ pat=*]  :: encrypted with group key, sig as iv
-            =/  key  (need (get-group-key-for kid.tyl)) :: XX handle ~
-            =/  cyf  (encrypt-path:crypt key pat.tyl)
-            tyl(pat ~[(scot %uv cyf)])
-        ==
-      =/  nam
-        [[ship.p *rift] [13 ~] pat] :: XX rift from peer-state
+      =/  nam  [[ship.p *rift] [13 ~] pat] :: XX rift from peer-state
       ?~  q
         [%peek nam]
       ::  XX if path will be too long, put in [tmp] and use that path
       ::  =/  has  (shax u.u.res)
       ::  =.  tmp.ax  (~(put by tmp.ax) has [%some-envelope original-path u.u.res])
       ::  //ax/[$ship]//1/temp/[hash]
-      =/  man
-        [[our *rift] [13 ~] u.q]      :: XX our rift
+      =/  man  [[our *rift] [13 ~] u.q]      :: XX our rift
       [%poke nam man *data:pact]  :: XX resolve /init
     ::
     [[[[/ ~] %give %send ~ p:(fax:plot (en:^pact pact))] ~] ax]
@@ -1485,7 +1496,7 @@
       ?.  =(u.lyf *life) :: XX our life
         ~
       =/  key  (get-key-for u.her u.hyf)  :: eddh with our key
-      =/  pat  (decrypt-path:crypt key u.cyf)
+      =/  pat  (open-path:crypt key u.cyf)
       ?~  inn=(inner-path-to-beam our pat)  ~
       ?~  res=(rof `[u.her ~ ~] /ames/chum vew.u.inn bem.u.inn)
         ~
@@ -1501,7 +1512,7 @@
         [~ ~]
       ?~  key=(get-group-key-for u.kid)
         ~
-      =/  pat  (decrypt-path:crypt u.key u.cyf)
+      =/  pat  (open-path:crypt u.key u.cyf)
       ::  XX check path prefix
       ?~  inn=(inner-path-to-beam our pat)
         ~

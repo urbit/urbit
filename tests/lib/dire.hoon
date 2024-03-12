@@ -44,7 +44,7 @@
   =/  bex-roof  (make-roof //some/data/atom atom+!>(dat))
   =^  mov1  dire-zod
     %-  call:(dire-zod *@da *@uvJ bex-roof)
-    =/  pat  /publ/0/g/x/0/dap//some/data/atom
+    =/  pat  /chum/0/~nec/0/g/x/0/dap//some/data/atom
     [`duct`[/foo ~] ~ %soft `task:dire`[%make-peek ~nec pat]]
   =^  mov2  dire-nec  (reply dire-nec bex-roof mov1) :: "ok, here is the 1st fragment"
   =^  mov3  dire-zod  (reply dire-zod bex-roof mov2) :: "ok, give me the 2nd fragment"
@@ -61,7 +61,7 @@
   =/  bex-roof  (make-roof //shrek/atom atom+!>(dat))
   =^  mov1  dire-zod
     %-  call:(dire-zod *@da *@uvJ bex-roof)
-    =/  pat  /publ/0/g/x/0/dap//shrek/atom
+    =/  pat  /shut/0/g/x/0/dap//shrek/atom
     [`duct`[/foo ~] ~ %soft `task:dire`[%make-peek ~nec pat]]
   =^  mov2  dire-nec  (reply dire-nec bex-roof mov1) :: "ok, here is the proof"
   =^  mov3  dire-zod  (reply dire-zod bex-roof mov2) :: "ok, give me the 1st fragment"
