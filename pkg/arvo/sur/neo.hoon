@@ -202,6 +202,97 @@
       ~
     `[+.i.pith t.pith]
   --
++$  axal
+  $~  [~ ~]
+  [fil=(unit hall) kid=(map iota axal)]
+++  of
+  |_  fat=axal
+  ++  del
+    |=  pax=pith
+    ^+  fat
+    ?~  pax  [~ kid.fat]
+    =/  kid  (~(get by kid.fat) i.pax)
+    ?~  kid  fat
+    fat(kid (~(put by kid.fat) i.pax $(fat u.kid, pax t.pax)))
+  ::  Descend to the axal at this path
+  ::
+  ++  dip
+    |=  pax=pith
+    ^+  fat
+    ?~  pax  fat
+    =/  kid  (~(get by kid.fat) i.pax)
+    ?~  kid  [~ ~]
+    $(fat u.kid, pax t.pax)
+  ::
+  ++  gas
+    |=  lit=(list (pair pith hall))
+    ^+  fat
+    ?~  lit  fat
+    $(fat (put p.i.lit q.i.lit), lit t.lit)
+  ++  got-room
+    |=  pax=pith
+    ^-  room
+    (de-hall:room (got pax))
+  ++  got
+    |=  pax=pith
+    ~|  missing-room/pax
+    (need (get pax))
+  ::
+  ++  get
+    |=  pax=pith
+    fil:(dip pax)
+  ::  Fetch file at longest existing prefix of the path
+  ::
+  ++  fit
+    |=  pax=pith
+    ^+  [pax fil.fat]
+    ?~  pax  [~ fil.fat]
+    =/  kid  (~(get by kid.fat) i.pax)
+    ?~  kid  [pax fil.fat]
+    =/  low  $(fat u.kid, pax t.pax)
+    ?~  +.low
+      [pax fil.fat]
+    low
+  ::
+  ++  has
+    |=  pax=path
+    !=(~ (get pax))
+  ::  Delete subtree
+  ::
+  ++  lop
+    |=  pax=path
+    ^+  fat
+    ?~  pax  fat
+    |-
+    ?~  t.pax  fat(kid (~(del by kid.fat) i.pax))
+    =/  kid  (~(get by kid.fat) i.pax)
+    ?~  kid  fat
+    fat(kid (~(put by kid.fat) i.pax $(fat u.kid, pax t.pax)))
+  ::
+  ++  put
+    |=  [pax=pith dat=hall]
+    |-  ^+  fat
+    ?~  pax  fat(fil `dat)
+    =/  kid  (~(gut by kid.fat) i.pax ^+(fat [~ ~]))
+    fat(kid (~(put by kid.fat) i.pax $(fat kid, pax t.pax)))
+  ::
+  ++  tap
+    =|  pax=pith
+    =|  out=(list (pair pith _?>(?=(^ fil.fat) u.fil.fat)))
+    |-  ^+   out
+    =?  out  ?=(^ fil.fat)  :_(out [pax u.fil.fat])
+    =/  kid  ~(tap by kid.fat)
+    |-  ^+   out
+    ?~  kid  out
+    %=  $
+      kid  t.kid
+      out  ^$(pax (weld pax /[p.i.kid]), fat q.i.kid)
+    ==
+  ::  Serialize to map
+  ::
+  ++  tar
+    (~(gas by *(map pith hall)) tap)
+  --
 +$  pate  [[%p p=ship] q=pith]
 ++  petty-port
   |*  a=mold
@@ -253,6 +344,51 @@
   $+  yard
   $~  ~
   (map iota hall)
+++  yird
+  |%
+  +$  yird
+    $+  yird
+    $~  ~
+    (map iota $+(yird-inner $~([%& *hall] (each hall yird))))
+  ++  put
+    |=  [y=yird p=pith h=hall]
+    ^+  y
+    ?>  ?=(^ p)
+    =/  in  (~(got by y) i.p)
+    ?>  ?=(%| -.in)
+    %+  ~(put by y)  i.p
+    ?:  =(~ t.p)
+      &/h
+    [%| (~(put by y) i.p [%| $(y p.in, p t.p)])]
+  ++  get-fit
+    |=  [y=yird p=pith]
+    ^-  (unit [pith hall])
+    ?>  ?=(^ p)
+    =/  in  (~(get by y) i.p)
+    ?~  in
+      ~
+    ?~  t.p
+      ?>  ?=(%& -.u.in)
+      `[~ p.u.in]
+    ?.  ?=(%| -.u.in)
+      `[t.p p.u.in]
+    $(y p.u.in, p t.p)
+
+  ++  get
+    |=  [y=yird p=pith]
+    ^-  (unit hall)
+    ?>  ?=(^ p)
+    =/  in  (~(get by y) i.p)
+    ?~  in
+      ~
+    ?~  t.p
+      ?>  ?=(%& -.u.in)
+      `p.u.in
+    ?.  ?=(%| -.u.in)
+      ~
+    $(y p.u.in, p t.p)
+  --
+::
 +$  sign-conf
   $%  [%val p=term]
       [%pith p=term q=pith]
@@ -271,10 +407,6 @@
 +$  span  (pair stud firm)
 +$  icon
   [case=@ud state=vase history=(list *) migration=(list *)]
-+$  hall
-  $%  [%exit pith]
-      [%room room]
-  ==
 :: subscription metadata
 +$  jail
   $+  jail
@@ -291,17 +423,34 @@
   $+  fleet
   $~  ~
   (map ship brig)
++$  hall  hall:room
 ::  $room: state of a shrub
 ::    
 ::    TODO: refactor for networking?
-+$  room
-  $+  room
-  $~  [*span ~ ~ *icon]
-  $:  =span
-      =conf
-      =yard
-      =icon
-  ==
+++  room
+  =<  room
+  |%
+  +$  hall
+    $%  [%exit pith]
+        [%room room]
+    ==
+  +$  room
+    $+  room
+    $~  [*span ~ *icon]
+    $:  =span
+        =conf
+        =icon
+    ==
+  ++  de-hall-soft
+    |=  hal=hall
+    ^-  (unit room)
+    ?.  ?=(%room -.hal)
+      ~
+    `+.hal
+   ++  de-hall
+     |=  hal=hall
+     (need (de-hall-soft hal))
+  --
 +$  bowl
   $:  src=@p
       our=@p

@@ -16,7 +16,12 @@
       have=(list clot:goon:neo)
   ==
 +$  state-0
-  [%0 apex=hall:neo =fleet:neo husks=(jug stud:neo name:neo) races=(map id:sole race)]
+  $:  %0
+      apex=axal:neo
+      =fleet:neo
+      husks=(jug stud:neo name:neo)
+      races=(map id:sole race)
+  ==
 ++  is-parent
   |=  [parent=pith kid=pith]
   ^-  ?
@@ -30,24 +35,6 @@
   ^-  @p
   ?>  ?=([[%p @] *] pith)
   +.i.pith
-++  denorm-children
-  =|  res=(map pith room:neo)
-  |=  [wer=pith =yard:neo]
-  =/  kids=(list (pair iota hall:neo))
-    ~(tap by yard)
-  |-  ^+  res
-  ~&  wer/wer
-  ?~  kids
-    res
-  ?.  ?=(%room -.q.i.kids)
-    $(kids t.kids)
-  =/  =room:neo
-    +.q.i.kids
-  =.  res
-    (~(put by res) (snoc wer p.i.kids) +.q.i.kids)
-  =/  recur  $(wer (snoc wer p.i.kids), kids ~(tap by yard.q.i.kids))
-  =.  res  (~(uni by res) recur)
-  $(kids t.kids)
 +$  gait
   $%  [%start sock=@tas]
       [%clot =clot:goon:neo]
@@ -66,7 +53,6 @@
       def   ~(. (default-agent this %|) bowl)
   ++  on-init  
     ^-  (quip card _this)
-    =.  apex  (put-hall apex (pave /(scot %p our.bowl)) %room *room:neo)
     `this
   ++  on-save  !>(state)
   ++  on-load
@@ -130,6 +116,7 @@
 ++  run  .
 ++  emit  |=(card run(cards [+< cards]))
 ++  emil  |=(caz=(list card) run(cards (welp (flop caz) cards)))
+++  of-top  ~(. of:neo apex)
 ++  sync-room
   |=  [=pith:neo src=stud:neo]
   ^+  run
@@ -161,37 +148,41 @@
   %-  lure
   :+  %rose  [ret "Shrubbery" sep]
   :~  leaf/"Local"
-      (local-hall *pith apex)
+      (local-axal *pith apex)
   ==
   ++  ret  [',' (reap 4 ' ')]
   ++  sep  *tape
-  ++  local-yard
-    |=  [=pith =yard:neo]
-    ~&  pith/pith
+  ++  local-kids
+    |=  [=pith =axal:neo]
     ^-  tank
-    ?:  =(~ yard)
+    ?:  =(~ kid.axal)
       leaf/"No children"
     :+  %rose  [ret "Kids:" sep]
-    %+  turn  ~(tap by yard)
-    |=  [=iota =hall:neo]
-    (local-hall (snoc pith iota) hall)
-
-  ++  local-hall
-    |=  [=pith =hall:neo]
+    %+  turn  ~(tap by kid.axal)
+    |=  [=iota a=axal:neo]
+    (local-axal (snoc pith iota) a)
+  ++  local-axal
+    |=  [=pith =axal:neo]
     ^-  tank
-    ~&  pith/pith
     :+  %rose  [ret (en-tape:pith:neo pith) sep]
+    ^-  (list tank)
+    %-  snoc
+    :_  (local-kids pith axal)
+    ^-  (list tank)
+    ?~  fil.axal
+      ~[leaf/"No data"]
+    =/  =hall:neo  u.fil.axal
     ?:  ?=(%exit -.hall)
       :~  leaf/"%link"
           leaf/(en-tape:pith:neo +.hall)
       ==
-    %-  snoc
-    :_  (local-yard pith yard.hall)
-    ^-  (list tank)
     ?:  =(case.icon.hall 0)
       ~[leaf/"No data at this path"]
     :*  leaf/"State"
+        ?:  (lth 10.000 (met 3 (jam q.state.icon.hall)))
+          leaf/"Too large to print"
         (sell state.icon.hall)
+          
         leaf/"Case: {(scow %ud case.icon.hall)}"
       ::
       ::
@@ -204,7 +195,6 @@
         %+  turn  ~(tap by conf.hall)
         |=  [=term p=^pith]
         leaf/"{<term>} -> {(en-tape:pith:neo p)}"
-
     ==
   --
 ::
@@ -232,14 +222,14 @@
         [%init path=*]
       =/  =pith:neo  (pave path.rest.pole)
       =-  (emit %give %fact ~ neo-watch+!>(-))
-      =/  ros=(map pith:neo room:neo)
-        (get-deep-hall apex pith)
-      %+  turn  ~(tap by ros)
-      |=  [p=pith:neo =room:neo]
-      ^-  update:neo
-      [p [case %init q.state]:icon.room]
-
-
+      =/  ros=(map pith:neo hall:neo)
+        ~(tar of:neo (dip:of-top pith))
+      %+  murn  ~(tap by ros)
+      |=  [p=pith:neo =hall:neo]
+      ^-  (unit update:neo)
+      ?.  ?=(%room -.hall)
+        ~
+      `[p [case %init q.state]:icon.hall]
     ==
   ==
 ++  take-agent
@@ -281,48 +271,10 @@
 ++  get-val-at-path
   |=  =pith
   ^-  (unit vase)
-  ?~  val=(get-hall apex pith)
+  ?~  val=(bind (get:of-top pith) de-hall:room:neo)
     ~
   `state.icon.u.val
 ::
-++  has-hall
-  |=  =pith:neo
-  =(~ (get-hall apex pith))
-::
-++  put-hall
-  |=  [into=hall:neo =pith =hall:neo]
-  ~|  pith
-  |-  ^-  hall:neo
-  ?~  pith
-    hall
-  ?.  ?=(%room -.into)
-    ~|(%cannot-put-thru-symlink !!)
-  ?~  nex=(~(get by yard.into) i.pith)
-    ?>  ?=(~ t.pith)
-    into(yard (~(put by yard.into) i.pith hall))
-    :: ~|(no-ancestors/pith !!)
-  into(yard (~(put by yard.into) i.pith $(pith t.pith, into u.nex)))
-++  get-deep-hall
-  |=  [from=hall:neo =pith]
-  ^-  (map pith:neo room:neo)
-  ?~  rom=(get-hall from pith)
-    ~
-  =/  =room:neo  u.rom
-  =/  kids  (denorm-children pith yard.room)
-  (~(put by kids) pith room)
-++  get-hall
-  |=  [from=hall:neo =pith]
-  ^-  (unit room:neo)
-  ?.  ?=(%room -.from)
-    $(from apex, pith +.from)
-  ?~  pith  `+.from
-  ?~  nex=(~(get by yard.from) i.pith)
-    ~
-  ?.  ?=(%room -.u.nex)
-    ~
-  ?~  t.pith
-    `+.u.nex
-  $(from u.nex, pith t.pith)
 ++  check-conf
   |=  [conf=(map term pith) =deps:neo]
   ^-  (set term)
@@ -496,7 +448,7 @@
   ++  link
     |=  [to=pith from=pith src=stud:neo]
     ^+  run
-    =.  apex  (put-hall apex to exit/from)
+    =.  apex  (put:of-top to exit/from)
     (sync-room from src)
 
   ++  take
@@ -564,12 +516,11 @@
     =.  run        (~(start husk src) our.bowl pith)
     =/  =form:neo  form:firm
     =/  =span:neo  [src firm]
-    =|  =yard:neo
     =/  =icon:neo  [1 (init:form init) ~ ~]
     =/  =deps:neo  deps:firm
     ?>  =(~ (check-conf conf deps:firm))
-    =/  =room:neo  [span conf yard icon]
-    =.  apex  (put-hall apex pith.name room/room)
+    =/  =room:neo  [span conf icon]
+    =.  apex  (put:of-top pith.name room/room)
     (soft-site |.(si-abet:si-born:(si-abed:site pith.name)))
   ++  soft-site
     |=  tap=(trap (quip card:neo _arvo))
@@ -586,7 +537,7 @@
     ++  site  .
     ++  si-emil  |=(caz=(list card:neo) site(cards (welp cards caz)))
     ++  si-abet
-      =.  apex  (put-hall apex pith room/room)
+      =.  apex  (put:of-top pith room/room)
       :: TODO: process cards
       [cards arvo]
     ::
@@ -594,9 +545,7 @@
       |=  p=^pith
       ?<  ?=([[%p @] *] p)
       =.  pith  p
-      =/  r=room:neo
-        ~|  missing-room/pith
-        (need (get-hall apex pith))
+      =/  r=room:neo  (got-room:of-top pith)
       site(pith p, room r)
     ++  si-init
       |=  foo=*
@@ -621,8 +570,6 @@
       ?~  val
         ~|  invariant-no-value-at-path/pith.name
         !!
-      ~&  dep/[term u.dep]
-        %-  (slog (sell u.val) ~)
       `[term u.dep u.val]
       ::  TODO type this w/ port??
     ++  si-bowl    
