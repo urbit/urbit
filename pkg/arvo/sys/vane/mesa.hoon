@@ -1350,21 +1350,21 @@
       +|  %helpers
       ::
       ++  sy-core  .
-      ++  sy-abet  [moves ax]
-      ++  sy-emit  |=(=move sy-core(moves [move moves]))
-      ++  sy-emil  |=(mos=(list move) sy-core(moves (weld mos moves)))
+      ++  sy-abet  ev-core
       ::
       +|  %entry-points
       ::
-      ++  sy-born  ~&  >>  unix/hen  sy-core(ax ax(unix-duct hen))
+      ++  sy-born  sy-core(ax ax(unix-duct hen))
       ++  sy-init
         ^+  sy-core
-        %-  sy-emil
-        :~  [hen %pass /turf %j %turf ~]
-            [hen %pass /private-keys %j %private-keys ~]
-            [hen %pass /public-keys %j %public-keys [n=our ~ ~]]
-            [~[/mesa] %pass /dead-flow %b %wait `@da`(add now ~m2)]
-        ==
+        =.  ev-core
+          %-  ev-emil
+          :~  [hen %pass /turf %j %turf ~]
+              [hen %pass /private-keys %j %private-keys ~]
+              [hen %pass /public-keys %j %public-keys [n=our ~ ~]]
+              [~[/mesa] %pass /dead-flow %b %wait `@da`(add now ~m2)]
+          ==
+        sy-core
       ::
       ++  sy-publ
         |=  [=wire =public-keys-result:jael]
@@ -1424,7 +1424,7 @@
           ::   [old-qos qos.peer-state kay.veb ships.bug.ax]
           ::
           :: =?  sy-core  ?=(^ text)
-          ::   (sy-emit duct %pass /qos %d %flog %text u.text)
+          ::   (ev-emit duct %pass /qos %d %flog %text u.text)
           ::  reinitialize galaxy route if applicable
           ::
           =?  route.peer-state  =(%czar (clan:title ship))
@@ -1433,16 +1433,16 @@
           =.  peers.ax
             (~(put by peers.ax) ship [%known peer-state])
           ::
-          =.  sy-core
-            %-  sy-emit
+          =.  ev-core
+            %-  ev-emit
             :*  unix-duct.ax  %give  %nail  ship
                 (get-forward-lanes our peer-state peers.ax)
             ==
           ::  if one of our sponsors breached, give the updated list to vere
           ::
           =/  sponsors  (~(gas in *(set ^ship)) sy-get-sponsors)
-          =?  sy-core  (~(has in sponsors) ship)
-            (sy-emit unix-duct.ax %give %saxo ~(tap in sponsors))
+          =?  ev-core  (~(has in sponsors) ship)
+            (ev-emit unix-duct.ax %give %saxo ~(tap in sponsors))
           :: ::
           sy-core
         ::  +on-publ-rekey: handle new key for peer
@@ -1469,9 +1469,10 @@
             (on-publ-full (my [ship point]~))
           ::
           =/  =peer-state   +.u.ship-state
-          :: =/  =private-key  sec:ex:crypto-core.ax  :XX
-          :: =.  symmetric-key.peer-state
-          ::   (derive-symmetric-key public-key private-key)
+          =/  crypto-core   (nol:nu:crub:crypto priv.ax)
+          =/  =private-key  sec:ex:crypto-core
+          =.  symmetric-key.peer-state
+            (derive-symmetric-key public-key private-key)
           ::
           =.  life.peer-state        life
           =.  public-key.peer-state  public-key
@@ -1488,7 +1489,7 @@
           ^+  sy-core
           ::
           ?:  =(our ship)
-            (sy-emit unix-duct.ax %give %saxo sy-get-sponsors)
+            sy-core(ev-core (ev-emit unix-duct.ax %give %saxo sy-get-sponsors))
           ?~  sponsor
             %-  (slog leaf+"ames: {(scow %p ship)} lost sponsor, ignoring" ~)
             sy-core
@@ -1499,8 +1500,8 @@
             sy-core
           =.  sponsor.+.u.state   u.sponsor
           =.  peers.ax  (~(put by peers.ax) ship %known +.u.state)
-          =.  sy-core
-            %-  sy-emit
+          =.  ev-core
+            %-  ev-emit
             :*  unix-duct.ax  %give  %nail  ship
                 (get-forward-lanes our +.u.state peers.ax)
             ==
@@ -1523,7 +1524,7 @@
               ::
               ::  XX not needed?
               :: =?  sy-core  =(our ship)
-              ::   (sy-emit unix-duct.ax %give %saxo get-sponsors)
+              ::   (ev-emit unix-duct.ax %give %saxo get-sponsors)
               ?.  (~(has by keys.point) life.point)
                 $(points t.points)
               ::
@@ -1611,7 +1612,8 @@
           ::
           =/  =ship-state      sat:(ev-gut-per ship)
           =/  =public-key      pass:(~(got by keys.point) life.point)
-          =/  =private-key     sec:ex:crypto-core.ax
+          =/  crypto-core      (nol:nu:crub:crypto priv.ax)
+          =/  =private-key     sec:ex:crypto-core
           =/  =symmetric-key   (derive-symmetric-key public-key private-key)
           ::
           ?>  ?=(%known -.ship-state)
@@ -1632,8 +1634,8 @@
           =.  peers.ax
             (~(put by peers.ax) ship ship-state)
           ::
-          =?  sy-core  ?=(%czar (clan:title ship))
-            %-  sy-emit
+          =?  ev-core  ?=(%czar (clan:title ship))
+            %-  ev-emit
             :*  unix-duct.ax  %give  %nail  ship
                 (get-forward-lanes our +.ship-state peers.ax)
             ==
@@ -1644,13 +1646,11 @@
         |=  [=life vein=(map life private-key)]
         ^+  sy-core
         ::
-        =/  =private-key    (~(got by vein) life)
-        =.  life.ax         life
-        ::  XX don't keep the crypto core in state
-        :: =.  crypto-core.ax  (nol:nu:crub:crypto private-key)
+        =.  priv.ax      (~(got by vein) life)
+        =.  life.ax      life
+        =/  crypto-core  (nol:nu:crub:crypto priv.ax)
         ::  recalculate each peer's symmetric key
         ::
-        =/  our-private-key  private-key  ::  sec:ex:crypto-core.ax  :: XX
         =.  peers.ax
           %-  ~(run by peers.ax)
           |=  =ship-state
@@ -1660,7 +1660,7 @@
             ship-state
           =/  =peer-state  +.ship-state
           =.  symmetric-key.peer-state
-            (derive-symmetric-key public-key.+.ship-state our-private-key)
+            (derive-symmetric-key public-key.+.ship-state sec:ex:crypto-core)
           ::
           known/peer-state
         ::
@@ -1695,21 +1695,22 @@
         %mess  ev-abet:(ev-call:ev-core %mess p.task q.task dud)
       ==
     ::
+    =<  ev-abet
     ?+  -.task  !!
-      %vega  `ax
+      %vega  ev-core
       %init  sy-abet:~(sy-init sy hen)
       %born  sy-abet:~(sy-born sy hen)
     ::
-      %plea  ev-abet:(ev-call:ev-core %plea [ship plea]:task)
-      %keen  ev-abet:(ev-call:ev-core %keen +.task)
+      %plea  (ev-call:ev-core %plea [ship plea]:task)
+      %keen  (ev-call:ev-core %keen +.task)
     ::  from internal %ames request
     ::
-      %make-peek  ev-abet:(ev-make-peek:ev-core [space p]:task)
-      %make-poke  ev-abet:(ev-make-poke:ev-core [space p q]:task)
+      %make-peek  (ev-make-peek:ev-core [space p]:task)
+      %make-poke  (ev-make-poke:ev-core [space p q]:task)
     ::  XX
     ::
-      %heer  ev-abet:(ev-call:ev-core task)  ::  XX dud
-      %mess  ev-abet:(ev-call:ev-core %mess p.task q.task ~)  ::  XX acks go direclty here
+      %heer  (ev-call:ev-core task)  ::  XX dud
+      %mess  (ev-call:ev-core %mess p.task q.task ~)  ::  XX acks go direclty here
     ==
     ::
   [moves mesa-gate]
@@ -1725,19 +1726,20 @@
     ?:  ?=([%gall %unto *] sign)  :: XX from poking %ping app
       `ax
     ::
+    =<  ev-abet
     ?+  sign  !!
-      [%behn %wake *]  ev-abet:(ev-take:ev-core [wire %wake error.sign])
+      [%behn %wake *]  (ev-take:ev-core [wire %wake error.sign])
     ::
       :: [%jael %turf *]          sy-abet:(~(on-take-turf sy hen) turf.sign)
       [%jael %private-keys *]  sy-abet:(~(sy-priv sy hen) [life vein]:sign)
       [%jael %public-keys *]   sy-abet:(~(sy-publ sy hen) wire +>.sign)
     ::  vane (n)ack
     ::
-      [@ %done *]  ev-abet:(ev-take:ev-core [wire %done error.sign])
+      [@ %done *]  (ev-take:ev-core [wire %done error.sign])
     ::
     ::  vane gifts
     ::
-      [@ %boon *]  ev-abet:(ev-take:ev-core [wire %boon payload.sign])
+      [@ %boon *]  (ev-take:ev-core [wire %boon payload.sign])
     ::
     ::  network responses: acks/naxplanation payloads
     ::                     reentrant from %ames (either message or packet layer)
@@ -1745,7 +1747,6 @@
       [%mesa %response *]
     ::
       =/  response-pith  `(pole iota)`(ev-pave wire)
-      =<  ev-abet
       %.  [wire %response +>.sign]
       ?+    response-pith   ~|  %mesa-evil-response-wire^wire  !!
           ::  %acks come directly into the message layer since they are always one

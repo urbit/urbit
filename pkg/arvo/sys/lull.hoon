@@ -3357,6 +3357,7 @@
     $:  %0
         peers=(map ship ship-state)
         =unix=duct
+        priv=private-key
         =life
         =rift
         ::  TODOs
