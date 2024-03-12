@@ -457,7 +457,6 @@
     ++  ev-req-plea
       |=  [=ship vane=@tas =wire payload=*]
       ^+  ev-core
-      =.  ax  (ev-put-per ship)  ::  XX fake peer discovery
       =/  ship-state  (~(get by peers.ax) ship)
       ::
       ?.  ?=([~ %known *] ship-state)
@@ -499,11 +498,13 @@
     ++  ev-req-peek
       |=  [sec=(unit [idx=@ key=@]) spar]
       ^+  ev-core
-      =.  ax  (ev-put-per ship)  ::  XX fake peer discovery
-      =+  per-sat=(ev-get-per ship)
-      ?.  ?=([~ ~ *] per-sat)
-        ev-core  ::  %alien or missing
-      =.  per  [ship u.u.per-sat]
+      =/  ship-state  (~(get by peers.ax) ship)
+      ::
+      ?.  ?=([~ %known *] ship-state)
+        %^  ev-enqueue-alien-todo  ship  ship-state
+        |=  todos=ovni-state
+        todos(peeks (~(put ju peeks.todos) path hen))
+      =.  per  ship^u.ship-state
       ?>  ?=(%known -.sat.per)
       ::
       ?^  ms=(~(get by pit.sat.per) path)
@@ -702,12 +703,14 @@
       ?.  =(rcvr.pok our)  ::  are we the receiver of the poke?
         ~&  >  %poke-for-other^[rcvr.pok our]
         ev-core
-      =+  per-sat=(ev-get-per sndr.pok)
-      ?.  ?=([~ ~ *] per-sat)
-        ::  XX handle %alien
-        !!
+      =/  ship-state  (~(get by peers.ax) sndr.pok)
       ::
-      =.  per  sndr.pok^u.u.per-sat
+      ?.  ?=([~ %known *] ship-state)
+        ::  request public keys from %jael and drop the packet; it'll be re-send
+        ::
+        (ev-enqueue-alien-todo sndr.pok ship-state |=(ovni-state +<))
+      ::
+      =.  per  sndr.pok^u.ship-state
       ?>  ?=(%known -.sat.per)
       =/  dire=?(%for %bak)  :: flow swtiching
         ?:  =(%for dire.pok)  %bak
@@ -1961,7 +1964,6 @@
       ::  XX refactor block when +rof arms goes back into +scry
       ::     to get all arms from ev-core
       ::
-      =.  ax  (ev-put-per rcvr.tyl)  ::  XX fake peer discovery
       =+  per-sat=(ev-get-per rcvr.tyl)
       ?.  ?=([~ ~ *] per-sat)
         ~  ::  %alien or missing
