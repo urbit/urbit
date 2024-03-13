@@ -1,4 +1,3 @@
-/-  neo
 ::  sender ship namesapce (~bus)
 ::  /messages/1
 ::  host ship namespace
