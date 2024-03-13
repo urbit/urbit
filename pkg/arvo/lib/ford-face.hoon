@@ -32,9 +32,12 @@
   ++  apex
     %-  ~(gas by *deps:neo)
     :~  sut/sut
+        face/face
     ==
   ++  sut
     [& ,[cache=(unit vase) *] ,*]
+  ++  face
+    [& ,@tas ,*]
   --
 ++  form
   ^-  form:neo
