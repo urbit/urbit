@@ -3336,6 +3336,7 @@
     $~  vega+~
     $%  [%heer p=lane:pact q=@]            :: receive a packet
         [%mess p=(unit lane:pact) q=mess]  :: receive a message
+        [%mess-ser p=(unit lane:pact) q=mess]  :: XX
         [%make-poke =space p=spar q=path]  :: initiate %poke request
         [%make-peek =space p=spar]         :: initiate %peek request
     ::
@@ -3346,7 +3347,8 @@
   ::
   +$  gift
     $%  [%send p=(list lane:pact) q=@]   :: send a request/response packet
-        [%response load=$>(%page mess)]  :: produce a response message
+        [%mess-response =sage:mess]      :: XX (names) produce deserialized response message
+        [%response load=$>(%page mess)]  :: XX (names) produce serialized response message
         [%boon payload=*]                :: assembled %boon
         [%done error=(unit error)]       :: ack to client vane
         [%nail =ship lanes=(list lane)]
@@ -3698,11 +3700,11 @@
   ::
   ++  mess
     =>  |%
-        +$  auth  (each @uxJ @uxI) :: &+sig, |+hmac
+        +$  auth  (each @uxJ @uxI) :: &+sig, |+hmac  ::  (each @uxJ @uxH)
         +$  gage  $@(~ page)
-        +$  sage  (trel spar:ames auth gage)
+        +$  sage  (pair spar:ames gage)
         --
-    $%  [%page sage]
+    $%  [%page (trel spar:ames auth @)]
         [%peek p=spar:ames]
         [%poke p=spar:ames q=sage]
     ==

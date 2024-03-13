@@ -177,12 +177,12 @@
               $>(%plea vane-task)
       ==  ==
     ::
-    +$  lope
+    +$  lope  :: XX remove?
       $~  [%wake ~]
       $%  $>(%wake gift:behn)
           $>(?(%flub %unto) gift:gall)
           $>(?(%private-keys %public-keys %turf) gift:jael)
-          $>(?(%response %boon %done) gift)
+          $>(?(%mess-response %boon %done) gift)
       ==
     ::
     +$  sign
@@ -190,12 +190,12 @@
       $%  [%behn $>(%wake lope)]
           [%gall $>(?(%flub %unto) lope)]
           [%jael $>(?(%private-keys %public-keys %turf) lope)]
-          [%mesa $>(%response lope)]  :: produce a response message
+          [%mesa $>(%mess-response lope)]  :: produce a response message
           [@tas $>(?(%boon %done) lope)]
       ==
     +$  flow-sign
       $%  $>(%done lope)  ::  hear (n)ack for %poke, can trigger %peek for naxplanation
-          [%response seq=@ud sage:mess] :: added seq number to $>(%response lope)
+          [%mess-response seq=@ud sage:mess] :: added seq number to $>(%response lope)
       ==
     --
 ::
@@ -392,13 +392,13 @@
       ==
     ::
     ++  ev-take
-      |=  task=[=wire lope=$>(?(%done %response %boon %wake) lope)]
+      |=  task=[=wire lope=$>(?(%done %mess-response %boon %wake) lope)]
       |^  ^+  ev-core
       ?-  -.lope.task
-            %wake  (take-wake +.lope.task)
-            %boon  take-boon
-            %done  (ev-poke-done wire.task +.lope.task)
-        %response  (ev-response wire.task +.lope.task)
+        %wake           (take-wake +.lope.task)
+        %boon           take-boon
+        %done           (ev-poke-done wire.task +.lope.task)
+        %mess-response  (ev-response wire.task +.lope.task)
       ==
       ::
       ++  take-boon
@@ -515,11 +515,11 @@
         ev-core
       =|  new=request-state
       =.  for.new  (~(put in for.new) hen)
+      =/  =space  ?~(sec publ/life.sat.per !!) ::  XX %chum
+      =.  path    (ev-mess-spac space pax/path)
       =.  peers.ax
         %+  ~(put by peers.ax)  ship
         sat.per(pit (~(put by pit.sat.per) path new))
-      =/  =space  ?~(sec publ/life.sat.per !!) ::  XX %chum
-      =.  path    (ev-mess-spac space pax/path)
       =/  =pact:pact  (ev-make-pact ship^path ~ rift.sat.per space)
       (ev-emit unix-duct.ax %give %send ~[`@ux`ship] p:(fax:plot (en:^pact pact)))
     ::
@@ -602,10 +602,11 @@
             ?>  (verify:crypt (blake3 dat.data) p.aut.data)
             =/  =spar:ames  [her.name pat.name]
             =/  =auth:mess  p.aut.data
-            =/  =page  ;;(page (cue dat.data))
+            =/  gift        [%give %response [%page [spar auth dat.data]]]
+            ::  XX TODO call mesa with a mess %task instead
             %-  ~(rep in for.u.res)
             |=  [hen=duct c=_ev-core]
-            (ev-emit:c hen %give %response [%page [spar auth page]])
+            (ev-emit:c hen gift)
           ::  no; then the proof should be inlined; verify it
           ::  (otherwise, we should have received an %auth packet already)
           ::
@@ -661,12 +662,13 @@
         ::
         =/  =spar:ames  [her.name pat.name]
         =/  auth  [%| *@uxI] :: XX should be stored in ps?
-        =/  =page  ;;(page (cue (rep 13 (flop fags.ps))))
-        (ev-emit hen %give %response [%page [spar auth page]])
+        =/  res  (rep 13 (flop fags.ps))
+        ::  XX TODO call mesa with a mess %task instead
+        (ev-emit hen %give %response [%page spar auth res])
       ==
     ::
     ++  ev-mess-page
-      |=  [=spar =auth:mess =gage:mess]
+      |=  [=spar =auth:mess res=@]
       ^+  ev-core
       =*  ship  ship.spar
       ?~  rs=(~(get by peers.ax) ship)
@@ -676,21 +678,18 @@
         ev-core
       ::
       ::  XX validate response
-      ::  XX give to all ducts in [for.u.ms]
       ::
-      ::  [%give %response mess]
-      ::
-      ::  XX abet
       =.  pit.u.rs  (~(del by pit.u.rs) path.spar)
       =.  peers.ax  (~(put by peers.ax) ship.spar u.rs)
+      =/  gift      [%give %mess-response [spar ;;(gage:mess (cue res))]]
       %-  ~(rep in for.u.ms)
       |=  [hen=duct c=_ev-core]
-      (ev-emit:c hen %give %response [%page [spar auth gage]])
+      (ev-emit:c hen gift)
     ::
     ++  ev-mess-poke
-      |=  [dud=(unit goof) =ack=spar =pok=spar auth:mess =gage:mess]
+      |=  [dud=(unit goof) =ack=spar =pok=spar =gage:mess]
       =+  ?~  dud  ~
-          %-  %+  slog  leaf+"mesa: fragment crashed {<mote.u.dud>}"
+          %-  %+  slog  leaf+"mesa: message crashed {<mote.u.dud>}"
               tang.u.dud
           ::  XX what if the crash is due to path validation
           ::  and we can't infer the sequence number?
@@ -758,7 +757,7 @@
     ::  +ev-response: network responses
     ::
     ++  ev-response
-      |=  [=wire load=[%page sage:mess]]
+      |=  [=wire =sage:mess]
       ^+  ev-core
       ?~  flow-wire=(ev-validate-wire wire)
         ev-core
@@ -783,7 +782,7 @@
       ::
       =/  fo-core
         ::  XX parse $ack payload in here, and call task instead?
-        %.  [were response/[seq +.load]]
+        %.  [were mess-response/[seq sage]]
         fo-take:(fo-abed:fo hen bone^dire ev-chan ~)
       =^  moves  ax
         ?:  &(=(were %cor) =(dire %bak) (~(has in corked.sat.per) bone^dire))
@@ -1079,14 +1078,17 @@
         ^+  fo-core
         ?-  -.sign
              %done   ?>(?=(%van were) (fo-take-done +.sign))  :: ack from client vane
-          %response  ?+  were  !!
-                      :: XX payload given by the packet layer
-                      :: via the wire used when %pass %a peek-for-poke
-                      :: and only handled there?
-                      %ext  (fo-take-naxplanation +.sign)
-                      %int  (fo-take-ack +.sign)
-                      %cor  (fo-take-client-cork +.sign)
-        ==           ==
+        ::
+            %mess-response
+          ?+  were  !!
+            :: XX payload given by the packet layer
+            :: via the wire used when %pass %a peek-for-poke
+            :: and only handled there?
+            %ext  (fo-take-naxplanation +.sign)
+            %int  (fo-take-ack +.sign)
+            %cor  (fo-take-client-cork +.sign)
+          ==
+        ==
       ::
       ++  fo-peek
         |=  [load=?(%poke %ack %nax) mess=@ud]
@@ -1212,7 +1214,7 @@
       +|  %from-network
       ::
       ++  fo-take-ack
-        |=  [seq=@ud =spar auth:mess =gage:mess]
+        |=  [seq=@ud =spar =gage:mess]
         ^+  fo-core
         ::  only handle acks for %pokes that have been sent
         ::
@@ -1269,7 +1271,7 @@
         $(error val.u.cack, seq key.u.cack)
       ::
       ++  fo-take-naxplanation
-        |=  [seq=@ud =spar auth:mess =gage:mess]
+        |=  [seq=@ud =spar =gage:mess]
         ^+  fo-core
         ::  XX same as fo-take-ack refactor
         ::
@@ -1302,7 +1304,7 @@
         (fo-emit (ev-got-duct bone) %give %done `error)
       ::
       ++  fo-take-client-cork
-        |=  [seq=@ud =spar auth:mess =gage:mess]
+        |=  [seq=@ud =spar =gage:mess]
         ^+  fo-core
         ::  sanity checks on the state of the flow
         ::
@@ -1691,7 +1693,10 @@
     ?^  dud
       ?+  -.task  !!
           :: (on-crud:event-core -.task tang.u.dud)
-        %heer  !!
+        %heer   %-  %-  slog
+                    :_  tang.u.dud
+                    leaf+"mesa: %heer crashed {<mote.u.dud>}"
+               `ax
         %mess  ev-abet:(ev-call:ev-core %mess p.task q.task dud)
       ==
     ::
@@ -1744,10 +1749,10 @@
     ::  network responses: acks/naxplanation payloads
     ::                     reentrant from %ames (either message or packet layer)
     ::
-      [%mesa %response *]
+      [%mesa %mess-response *]
     ::
       =/  response-pith  `(pole iota)`(ev-pave wire)
-      %.  [wire %response +>.sign]
+      %.  [wire %mess-response +>.sign]
       ?+    response-pith   ~|  %mesa-evil-response-wire^wire  !!
           ::  %acks come directly into the message layer since they are always one
           ::  packet, and then given back to the flow layer that called them
@@ -1895,14 +1900,15 @@
         [%publ lyf=@ pat=*]
       =/  lyf  (slaw %ud lyf.tyl)
       ?~  lyf  [~ ~]
-      ?.  =(u.lyf life.ax)
-        ~
+      ::  XX uncomment
+      :: ?.  =(u.lyf life.ax)
+      ::   ~&  1/[u.lyf life.ax]
+      ::   ~
       ?~  inn=(inner-path-to-beam our pat.tyl)
         [~ ~]
-      :: =/  view  ?@(vew.u.inn vew.u.inn (cat 3 [way car]:vew.u.inn))
-      :: ?~  res=(rof ~ /mesa/publ view bem.u.inn)
-      ::   ~
-      =/  res=(unit (unit cage))  ``noun/!>((bex (bex 13)))
+      =/  view  ?@(vew.u.inn vew.u.inn (cat 3 [way car]:vew.u.inn))
+      ?~  res=(rof ~ /mesa/publ view bem.u.inn)
+        ~
       ?>  ?=([~ *] res)
       =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
       =/  ful  (en-beam bem)
