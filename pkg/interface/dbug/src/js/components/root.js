@@ -100,6 +100,7 @@ export class Root extends Component {
               <Skeleton status={state.status} selected="eyre">
                 <Eyre
                   bindings={state.bindings}
+                  cache={state.cache}
                   connections={state.connections}
                   authentication={state.authentication}
                   channels={state.channels}
