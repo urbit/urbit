@@ -1,6 +1,8 @@
 /-  neo, sole-sur=sole
 /+  default-agent, dbug, verb, shoe, ford=ford-parser
 |%
+++  pave  pave:neo
+
 ++  sole
   |%
   +$  id  sole-id:sole-sur
@@ -53,7 +55,9 @@
       def   ~(. (default-agent this %|) bowl)
   ++  on-init  
     ^-  (quip card _this)
-    `this
+    =^  cards  state
+      abet:init:run
+    [cards this]
   ++  on-save  !>(state)
   ++  on-load
     |=  =vase
@@ -117,6 +121,15 @@
 ++  emit  |=(card run(cards [+< cards]))
 ++  emil  |=(caz=(list card) run(cards (welp (flop caz) cards)))
 ++  of-top  ~(. of:neo apex)
+++  clay-beak
+  /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)
+++  init
+  ^+  run
+  =/  =name:neo  [our.bowl #/src/reef]
+  =+  .^(neo-vase=vase %ca (welp clay-beak /sur/neo/hoon))
+  =/  reef=vase  (slop !>(..zuse) neo-vase(p [%face %neo p.neo-vase]))
+  =/  =note:neo  [(en-pith:name:neo name) %make %ford-reef `!>(reef) ~]
+  (on-note pith.name note)
 ++  sync-room
   |=  [=pith:neo src=stud:neo]
   ^+  run
@@ -213,7 +226,10 @@
   ?.  =(our.bowl ship.name)
     ?>  ?=(%poke -.q.note)
     (forward-poke name val.q.note)
-  abet:(apply:(abed:arvo our-sys-pith pith.name) note)
+  (on-note pith.name note)
+++  on-note
+  |=  [=pith =note:neo]
+  abet:(apply:(abed:arvo our-sys-pith pith) note)
 ::
 ++  watch
   |=  =(pole knot)
@@ -285,23 +301,139 @@
   |-  ^+  run
   ?~  paths
     run
-  =.  run  (read-file i.paths)
-  $(paths t.paths)
+  =^  pat=(unit path)  run
+    (read-file i.paths)
+  ?~  pat
+    $(paths t.paths)
+  $(paths (snoc t.paths u.pat))
   ++  root
     /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/neo
+  ++  exists-file
+    |=  pax=path
+    =/  p=path
+      (welp root pax)
+    =.  p  (snoc p %hoon)
+    ~&  exists/p
+    =-  ~&(- -)
+    .^(? %cu p)
+  ++  lib
+    |_  =name:neo
+    ++  path
+      ^-  ^path
+      ?>  =(our.bowl ship.name)
+      [%src (pout pith.name)]
+    ++  built
+      (has:of-top %src pith.name)
+    ++  pith
+      [p/ship.name pith.name]
+    ++  exists
+      (exists-file path)
+    --
+  ++  pro
+    |_  =stud:neo
+    ++  built
+      ~&  built/[stud pith]
+      ~&  keys/~(key by kid:(dip:of-top /src/std/pro))
+      =-  ~&(- -)
+      (has:of-top pith)
+    ++  pith
+      `pith:neo`(pave path)
+    ++  path
+      ^-  ^path
+      :-  %src
+      ?@  stud
+        /std/pro/[stud]
+      ?:  =(our.bowl ship.stud)
+        /our/[desk.stud]/pro/[mark.stud]
+      :+  %ext  (scot %p ship.stud)
+      /[desk.stud]/pro/[mark.stud]
+    ++  exists
+      (exists-file path)
+    --
+  ++  do-make
+    |=  [=pith:neo =stud:neo sta=(unit vase) =conf:neo]
+    ~&  make/[stud pith conf]
+    =/  =name:neo  (de-pith:name:neo pith)
+    (on-note pith.name pith %make stud sta conf)
+  ++  slop
+    |=  [wer=pith a=pith b=pith]
+    ~|  %ford-slop
+    %^  do-make  wer  %ford-slop
+    `(~(gas by *conf:neo) a/a b/b ~)
+  ++  face
+    |=  [wer=pith face=pith sut=pith]
+    ~|  %ford-face
+    %^  do-make  wer  %ford-face
+    ~&  face/face
+    `(~(gas by *conf:neo) face/(ours face) sut/(ours sut) ~)
+  ++  same
+    |=  [wer=pith from=pith]
+    ~|  %ford-same
+    %^  do-make  wer  %ford-same
+    `(~(gas by *conf:neo) src/from ~)
+  ++  ours
+    |=  p=pith:neo  `pith:neo`[p/our.bowl p]
+  ++  make-pros
+    =|  idx=@ud
+    |=  [pat=pith pros=(list pro:ford)]
+    ^+  run
+    ?~  pros
+      %+  same  (ours pat)
+      ?:  =(0 idx)
+        (ours #/src/reef)
+      (ours (snoc pat ud/(dec idx)))
+    =/  wer=pith  (snoc pat ud/idx)
+    =/  fac=pith  (snoc wer %face)
+    =/  fav=pith  (snoc fac %term)
+    =.  run
+      (do-make (ours fav) %sym `!>(face.i.pros) ~)
+    =.  run
+      (face (ours fac) fav ~(pith pro stud.i.pros))
+    =/  prev=pith
+      %-  ours
+      ?:  =(idx 0)
+        #/src/reef
+      (snoc pat ud/(dec idx))
+    ~&  make
+    =.  run
+      (slop (ours wer) prev (ours fac))
+    $(pros t.pros, idx +(idx))
+  ++  make-prelude
+    |=  [pax=pith =file:ford]
+    ^-  [pith _run]
+    =/  pre-path=pith  [%pre pax]
+    [pre-path (make-pros pre-path pro.file)]
   ++  read-file
     |=  pax=path
-    ^+  run
+    ^-  [(unit path) _run]
     =.  pax
       ?>  ?=(^ pax)
       t.pax
+    ~&  read-file/pax
     =+  .^(src=@t %cx (welp root pax))
-    =/  =file:ford  (scan (trip src) apex:rein:ford)
+    =/  =file:ford
+      ~|  parsing/pax
+      (scan (trip src) apex:rein:ford)
+    ~&  pro/pro.file
+    =/  has-imports=?
+      ?&  (levy pro.file |=(pro:ford ~(exists pro stud)))
+          (levy lib.file |=(lib:ford ~(exists lib name)))
+      ==
+    ?.  has-imports
+      ~|  %no-imports
+      !!
+    =/  built-imports=?
+      ?&  (levy pro.file |=(pro:ford ~(built pro stud)))
+          (levy lib.file |=(lib:ford ~(built lib name)))
+      ==
+    ?.  built-imports
+      [`[%neo pax] run]
+    =/  pit=pith  (pave (snip pax))
+    =^  pre=pith  run  
+      (make-prelude pit file)
     =/  =conf:neo
-      (~(gas by *conf:neo) [%sut [p/our.bowl (pave /sys/reef)]] ~)
-    =/  =note:neo
-      [[p/our.bowl (pave pax)] %make %nhoon `!>([~ hoon.file]) conf]
-    (emit %pass /test %agent [our dap]:bowl %poke %noun !>(note))
+      (~(gas by *conf:neo) [%sut (ours pre)] ~)
+    [~ (do-make (ours pit) %nhoon `!>([~ hoon.file]) conf)]
   --
 ++  get-val-at-path
   |=  =pith
@@ -358,6 +490,7 @@
     |=  =name:neo
     =/  new=?  =(~ (~(get ju husks) stud))
     =.  husks  (~(put ju husks) stud name)
+    ?:  =(1 1)  run
     ?.  new
       run
     watch

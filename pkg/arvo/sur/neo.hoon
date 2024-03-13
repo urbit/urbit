@@ -16,6 +16,38 @@
 ::
 ::  
 |%
+++  pave
+  |=  p=path
+  ^-  pith
+  %+  turn  p
+  |=  i=@ta
+  (fall (rush i spot:stip) [%ta i])
+::
+++  stip                                                ::  typed path parser
+  =<  swot
+  |%
+  ++  swot  |=(n=nail `(like pith)`(;~(pfix fas (more fas spot)) n))
+  ::
+  ++  spot
+    %+  sear
+      |=  a=*
+      ^-  (unit iota)
+      ?+  a  ~
+        @      ?:(((sane %tas) a) [~ `@tas`a] ~)
+        [@ @]  ((soft iota) a)
+      ==
+    %-  stew
+    ^.  stet  ^.  limo
+    :~  :-  'a'^'z'  sym
+        :-  '$'      (cold [%tas %$] buc)
+        :-  '0'^'9'  bisk:so
+        :-  '-'      tash:so
+        :-  '.'      zust:so
+        :-  '~'      ;~(pfix sig ;~(pose crub:so (easy [%n ~])))
+        :-  '\''     (stag %t qut)
+    ==
+  --
+
 ++  goon
   |%
   ::  $date: date w/ TZ offset
@@ -156,7 +188,7 @@
 +$  stud
   $@  @tas                                 ::  auth=urbit
   $:  mark=@tas                            :: 
-      =name                                :: 
+      [=ship =desk]
   ==                                            ::
 ::
 ++  pith
@@ -194,7 +226,7 @@
   ++  en-path
     |=  nam=$
     (pout (en-pith nam)) 
-  ++  de-pith  |=(pith (need (de-pith-soft +<)))
+  ++  de-pith  |=(pith ~|(de-pith/+< (need (de-pith-soft +<))))
   ++  de-pith-soft
     |=  =pith
     ^-  (unit ^$)
@@ -255,12 +287,12 @@
     low
   ::
   ++  has
-    |=  pax=path
+    |=  pax=pith
     !=(~ (get pax))
   ::  Delete subtree
   ::
   ++  lop
-    |=  pax=path
+    |=  pax=pith
     ^+  fat
     ?~  pax  fat
     |-
@@ -449,7 +481,7 @@
     `+.hal
    ++  de-hall
      |=  hal=hall
-     (need (de-hall-soft hal))
+    (need (de-hall-soft hal))
   --
 +$  bowl
   $:  src=@p
