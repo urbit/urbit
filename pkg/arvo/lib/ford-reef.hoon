@@ -2,7 +2,6 @@
 => 
 |%
 ++  card  card:neo
-++  reef  ^~(!>(..zuse))
 --
 ^-  firm:neo
 |%
@@ -23,7 +22,8 @@
     state-vase
   ++  init
     |=  old=(unit vase)
-    !>(`state`[`reef ~])
+    =+  !<(ref=vase (need old))
+    !>(`state`[`ref ~])
   ++  born  *(list card:neo)
   ++  echo
     |=  [=pith val=*]
