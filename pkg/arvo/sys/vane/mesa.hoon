@@ -527,6 +527,7 @@
     ::
     ++  ev-pact-poke
       |=  [=ack=name:pact =poke=name:pact =data:pact]
+      ^+  ev-core
       ::  XX dispatch/hairpin &c
       ::
       ::  - pre-check that we want to process this poke (recognize ack path, ship not blacklisted, &c)
@@ -537,7 +538,39 @@
       ::
       :: ?.  =(1 tot.payload)
       ::  !!  ::  XX  need to retrieve other fragments
-      !!
+      ::
+      ::  path validation
+      =/  ack=(pole iota)  (ev-validate-flow-path pat.ack-name)
+      =/  pok=(pole iota)  (ev-validate-flow-path pat.poke-name)
+      ~|  path-validation-failed/pat.ack-name^pat.poke-name
+      ?>  &(?=(res-mess-pith ack) ?=(res-mess-pith pok))
+      ::
+      ?.  =(sndr.ack our)  ::  do we need to respond to this ack?
+        ~&  >>  %not-our-ack^sndr.ack^our
+        ev-core  :: XX TODO
+      ?.  =(rcvr.pok our)  ::  are we the receiver of the poke?
+        ~&  >  %poke-for-other^[rcvr.pok our]
+        ev-core  :: XX TODO
+      =/  ship-state  (~(get by peers.ax) sndr.pok)
+      ::
+      ?.  ?=([~ %known *] ship-state)
+        ::  request public keys from %jael and drop the packet; it'll be re-send
+        ::
+        ::  XX TODO
+        (ev-enqueue-alien-todo sndr.pok ship-state |=(ovni-state +<))
+      ::
+      =.  per  sndr.pok^u.ship-state
+      ?>  ?=(%known -.sat.per)
+      ?.  =(1 tot.data)
+        ::  %make-peek for path.poke-name
+         ev-core
+      ::
+      %:  ev-mess-poke
+        ~   :: XX refactor function signature
+        rcvr.ack^pat.ack-name
+        sndr.pok^pat.poke-name
+        ;;(gage:mess (cue dat.data))
+      ==
     ::
     ++  ev-pact-peek
       |=  =name:pact
@@ -686,7 +719,7 @@
       |=  [hen=duct c=_ev-core]
       (ev-emit:c hen gift)
     ::
-    ++  ev-mess-poke
+    ++  ev-mess-poke  :: XX refactor function signature
       |=  [dud=(unit goof) =ack=spar =pok=spar =gage:mess]
       =+  ?~  dud  ~
           %-  %+  slog  leaf+"mesa: message crashed {<mote.u.dud>}"
