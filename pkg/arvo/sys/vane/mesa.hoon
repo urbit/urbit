@@ -351,9 +351,11 @@
     ++  ev-validate-flow-path
       |=  =path
       ^-  (pole iota)
+      ~|  path
       %-  ev-pave
       ?~  inn=(inner-path-to-beam *@p path)  ~
-      ?>  =([[%$ %x] *@p %$ ud+1] [vew -.bem]:u.inn)
+      ~|  u.inn
+      ?>  =([[%m %x] *@p %$ ud+1] [vew -.bem]:u.inn)
       s.bem.u.inn
     ::
     +|  %entry-points
@@ -527,6 +529,7 @@
     ::
     ++  ev-pact-poke
       |=  [=ack=name:pact =poke=name:pact =data:pact]
+      ~&  ev-pact-poke++6
       ^+  ev-core
       ::  XX dispatch/hairpin &c
       ::
@@ -1048,7 +1051,7 @@
             (scot %ud seq)
         ==
       ::
-      ++  fo-view-beam  |=(=path `^path`[vane=%$ care=%mx case='1' desk=%$ path])
+      ++  fo-view-beam  |=(=path `^path`[vane=%m care=%x case='1' desk=%$ path])
       ::
       ++  fo-wire
         ::  XX better names ?(for-acks=%int for-nax-payloads=%ext to-vane=%van for-corks=%cor)
