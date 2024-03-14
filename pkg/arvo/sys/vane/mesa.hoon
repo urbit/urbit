@@ -898,7 +898,7 @@
       =.  peers.ax  (~(put by peers.ax) ship.p her(pit (~(put by pit.her) path.p new)))
       ::
       =/  =pact:pact  (ev-make-pact p q rift.her r)
-      (ev-emit unix-duct.ax %give %send ~ p:(fax:plot (en:^pact pact)))
+      (ev-emit unix-duct.ax %give %send ~[`@ux`ship.p] p:(fax:plot (en:^pact pact)))
     ::
     ++  ev-make-peek
       |=  [=space p=spar]
