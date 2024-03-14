@@ -576,7 +576,7 @@
       |=  =name:pact
       ?.  =(our her.name)
         ev-core
-      =/  res=(unit (unit cage))  (rof ~ /mesa %x (name-to-beam name))
+      =/  res=(unit (unit cage))  (rof ~ /mesa %mx (name-to-beam name))
       ?.  ?=([~ ~ ^] res)
         ev-core
       (ev-emit hen %give %send ~ !<(@ q.u.u.res))
@@ -887,8 +887,7 @@
                 !?=([~ ~ %message *] res)
               ?~  inn=(inner-path-to-beam our u.q)
                 ~
-              %-  rof
-              [~ /mesa [?>(?=(^ vew) car.vew) bem]:u.inn]  ::  XX (rof ...)
+              (rof ~ /mesa/make/mess [%mx bem]:u.inn)
           ==
         ~|  q
         !! :: XX wat do?
@@ -931,7 +930,7 @@
       =;  page=pact:pact  ?>(?=(%page -.page) q.page)
       %-  parse-packet
       =<  ;;(@ q.q)  %-  need  %-  need
-      (rof ~ /mesa %x (name-to-beam man))  ::  XX rof
+      (rof ~ /mesa %mx (name-to-beam man))  ::  XX rof
     ::
     ++  ev-mess-spac
       |=  [=space path=$%([%cyf cyf=@] [%pax pax=path])]
@@ -1049,7 +1048,7 @@
             (scot %ud seq)
         ==
       ::
-      ++  fo-view-beam  |=(=path `^path`[vane=%$ care=%x case='1' desk=%$ path])
+      ++  fo-view-beam  |=(=path `^path`[vane=%$ care=%mx case='1' desk=%$ path])
       ::
       ++  fo-wire
         ::  XX better names ?(for-acks=%int for-nax-payloads=%ext to-vane=%van for-corks=%cor)
@@ -1217,7 +1216,10 @@
           (fo-take-done:fo-core(closing.state %.y, pending-ack.state %.y) ~)
         =.  fo-core
           ?+  vane.plea  ~|  %mesa-evil-vane^our^her^vane.plea  !!
-            ?(%c %e %g %j)  (fo-emit hen %pass wire vane.plea plea/her^plea)
+            ?(%c %e %g %j)
+              ~&  no-op/[hen %pass wire vane.plea plea/her^plea]
+              fo-core
+              :: (fo-emit hen %pass wire vane.plea plea/her^plea)
           ==
         ::
         fo-core(pending-ack.state %.y)
@@ -1806,6 +1808,7 @@
 ++  load
   |=  old=axle
   ^+  mesa-gate
+  ~&  peers.old
   mesa-gate(ax old)
 ::
 ++  scry
