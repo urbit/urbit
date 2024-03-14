@@ -9,7 +9,8 @@
 ;<  ~  bind:m
   (meen:strandio /meen spar)
 ;<  [=spar:mesa =gage:mess:mesa]  bind:m
-  (take-message:strandio /keen)
+  (take-message:strandio /meen)
+~&  %message
 ?~  gage
   (pure:m !>(~))
 ::

@@ -1362,7 +1362,10 @@
       ::
       +|  %entry-points
       ::
-      ++  sy-born  sy-core(ax ax(unix-duct hen))
+      ++  sy-born
+        ::  XX
+        =.  ev-core  (ev-emit hen %pass /private-keys %j %private-keys ~)
+        sy-core(ax ax(unix-duct hen))
       ++  sy-init
         ^+  sy-core
         =.  ev-core
@@ -1441,11 +1444,11 @@
           =.  peers.ax
             (~(put by peers.ax) ship [%known peer-state])
           ::
-          =.  ev-core
-            %-  ev-emit
-            :*  unix-duct.ax  %give  %nail  ship
-                (get-forward-lanes our peer-state peers.ax)
-            ==
+          :: =.  ev-core
+          ::   %-  ev-emit
+          ::   :*  unix-duct.ax  %give  %nail  ship
+          ::       (get-forward-lanes our peer-state peers.ax)
+          ::   ==
           ::  if one of our sponsors breached, give the updated list to vere
           ::
           =/  sponsors  (~(gas in *(set ^ship)) sy-get-sponsors)
@@ -1508,11 +1511,11 @@
             sy-core
           =.  sponsor.+.u.state   u.sponsor
           =.  peers.ax  (~(put by peers.ax) ship %known +.u.state)
-          =.  ev-core
-            %-  ev-emit
-            :*  unix-duct.ax  %give  %nail  ship
-                (get-forward-lanes our +.u.state peers.ax)
-            ==
+          :: =.  ev-core
+          ::   %-  ev-emit
+          ::   :*  unix-duct.ax  %give  %nail  ship
+          ::       (get-forward-lanes our +.u.state peers.ax)
+          ::   ==
           ::
           sy-core
         ::  +on-publ-full: handle new pki data for peer(s)
@@ -1636,11 +1639,11 @@
           =.  peers.ax
             (~(put by peers.ax) ship ship-state)
           ::
-          =?  ev-core  ?=(%czar (clan:title ship))
-            %-  ev-emit
-            :*  unix-duct.ax  %give  %nail  ship
-                (get-forward-lanes our +.ship-state peers.ax)
-            ==
+          :: =?  ev-core  ?=(%czar (clan:title ship))
+          ::   %-  ev-emit
+          ::   :*  unix-duct.ax  %give  %nail  ship
+          ::       (get-forward-lanes our +.ship-state peers.ax)
+          ::   ==
           sy-core
         --
       ::
@@ -1649,6 +1652,7 @@
         ^+  sy-core
         ::
         =.  priv.ax      (~(got by vein) life)
+        ~&  >>  mesa/priv.ax
         =.  life.ax      life
         =/  crypto-core  (nol:nu:crub:crypto priv.ax)
         ::  recalculate each peer's symmetric key
@@ -1735,7 +1739,7 @@
     ?+  sign  !!
       [%behn %wake *]  (ev-take:ev-core [wire %wake error.sign])
     ::
-      :: [%jael %turf *]          sy-abet:(~(on-take-turf sy hen) turf.sign)
+      [%jael %turf *]          ev-core  ::sy-abet:(~(on-take-turf sy hen) turf.sign)
       [%jael %private-keys *]  sy-abet:(~(sy-priv sy hen) [life vein]:sign)
       [%jael %public-keys *]   sy-abet:(~(sy-publ sy hen) wire +>.sign)
     ::  vane (n)ack

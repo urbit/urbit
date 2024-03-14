@@ -317,6 +317,7 @@
             [hen %slip %d %init ~]
             [hen %slip %g %init ~]
             [hen %slip %c %init ~]
+            :: [hen %slip %my %init ~]  XX mesa doesn't exist before %jael; see %arvo ++grow arm
             [hen %slip %a %init ~]
         ==
       +>.$
@@ -358,6 +359,7 @@
             [hen %slip %d %init ~]
             [hen %slip %g %init ~]
             [hen %slip %c %init ~]
+            :: [hen %slip %m %init ~]  XX mesa doesn't exist before %jael; see %arvo ++grow arm
             [hen %slip %a %init ~]
         ==
       +>.$
