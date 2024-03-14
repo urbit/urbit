@@ -8,7 +8,7 @@
 =+  !<([~ =spar:mesa] arg)
 ;<  ~  bind:m
   (meen:strandio /meen spar)
-;<  [=spar:mesa auth:mess:mesa =gage:mess:mesa]  bind:m
+;<  [=spar:mesa =gage:mess:mesa]  bind:m
   (take-message:strandio /keen)
 ?~  gage
   (pure:m !>(~))
