@@ -1808,7 +1808,6 @@
 ++  load
   |=  old=axle
   ^+  mesa-gate
-  ~&  peers.old
   mesa-gate(ax old)
 ::
 ++  scry
