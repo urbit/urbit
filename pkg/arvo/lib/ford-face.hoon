@@ -17,14 +17,15 @@
   ?~  sut=(get-sut bowl)
     ~
   `u.sut(p [%face (get-face bowl) p.u.sut])
-
---
-^-  firm:neo
-|%
 +$  state  [cache=(unit vase) ~]
 +$  poke
   $%  [%dep ~]
   ==
+--
+^-  firm:neo
+|%
++$  poke    ^poke
++$  state   ^state
 ++  kids  ~
 ++  deps
   =<  apex
@@ -42,20 +43,20 @@
 ++  form
   ^-  form:neo
   |_  [=bowl:neo case=@ud state-vase=vase *]
-  +*  sta  !<(state state-vase)
+  +*  sta  !<(^state state-vase)
   ++  call
     |=  [old-state=vase act=*]
     *(list card)
   ++  reduce
     |=  pok=*
     ^-  vase
-    =+  ;;(=poke pok)
+    =+  ;;(=^poke pok)
     =/  sta  sta
     =.  cache.sta  (build bowl)
     !>(sta)
   ++  init
     |=  vax=(unit vase)
-    !>(*state)
+    !>(*^state)
   ++  born
     =-  ~[-]
     [%neo were.bowl %poke %dep ~]

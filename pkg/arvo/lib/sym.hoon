@@ -26,6 +26,7 @@
     |=  old=(unit vase)
     ?~  old
       !>(*state)
+    ~&  u.old
     u.old
   ++  born  *(list card:neo)
   ++  echo

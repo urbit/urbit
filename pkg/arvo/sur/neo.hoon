@@ -494,7 +494,7 @@
 +$  fief
   [required=? =port]
 +$  port :: TODO: how to specify behaviour
-  [state=mold action=mold]
+  [state=* diff=*] :: state, diff actually $stud
 +$  deps  (map term fief)
 +$  kids  (map pish port)
 ::  $firm: type of the value in the urbit namespace
@@ -510,7 +510,7 @@
   ::    ```
   ::
   ::    ```
-  ++  state  *mold
+  ++  state  ** :: stud
   ::  $poke: a poke is a request to change a value in teh urbit
   ::  namespace.
   ::
@@ -519,7 +519,7 @@
   ::      [%del who=user]
   ::
   ::
-  ++  poke   *mold
+  ++  poke   ** :: stud
   ++  form   *^form
   ::
   ::  +kids: Some nodes in the namespace define what children are

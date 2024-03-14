@@ -554,6 +554,7 @@
   |=  [src=pith err=tang]
   %-  (slog leaf/(en-tape:pith:neo src) err)
   =/  nam=name:neo  (de-pith:name:neo src)
+  ?:  =(1 1)  !!
   ?.  =(our.bowl ship.nam)
     run
   ?:  =(/ pith.nam) :: special case outside

@@ -7,11 +7,13 @@
   ^-  (unit vase)
   =+  !<([cac=(unit vase) *] q:(~(got by deps.bowl) %src))
   cac
++$  state  [cache=(unit vase) ~]
++$  poke   [%dep ~]
 --
 ^-  firm:neo
 |%
-+$  state  [cache=(unit vase) ~]
-+$  poke   [%dep ~]
++$  poke    ^poke
++$  state   ^state
 ++  kids  ~
 ++  deps
   =<  apex
@@ -26,20 +28,20 @@
 ++  form
   ^-  form:neo
   |_  [=bowl:neo case=@ud state-vase=vase *]
-  +*  sta  !<(state state-vase)
+  +*  sta  !<(^state state-vase)
   ++  call
     |=  [old-state=vase act=*]
     *(list card)
   ++  reduce
     |=  pok=*
     ^-  vase
-    =+  ;;(=poke pok)
+    =+  ;;(poke=^poke pok)
     =/  sta  sta
     =.  cache.sta  (get-src bowl)
     !>(sta)
   ++  init
     |=  vax=(unit vase)
-    !>(*state)
+    !>(*^state)
   ++  born
     =-  ~[-]
     [%neo were.bowl %poke %dep ~]

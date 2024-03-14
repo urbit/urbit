@@ -12,16 +12,24 @@
   ^-  (unit vase)
   ?~  sut=(get-sut bowl)
     ~
-  `(slap u.sut hoon)
-
---
-^-  firm:neo
-|%
-+$  state  [cache=(unit vase) =hoon]
-+$  poke
+  ~|  p:(~(got by deps.bowl) %sut)
+  =/  res=(each vase tang)
+    (mule |.((slap u.sut hoon)))
+  ?:  ?=(%| -.res)
+    %-  (slog p.res)
+    ^-  (unit vase)
+    !!
+  `p.res
++$  poke  
   $%  [%dep ~]
       [%hoon =hoon]
   ==
++$  state  [cache=(unit vase) =hoon]
+--
+^-  firm:neo
+|%
++$  poke    ^poke
++$  state   ^state
 ++  kids  ~
 ++  deps
   =<  apex
@@ -36,14 +44,14 @@
 ++  form
   ^-  form:neo
   |_  [=bowl:neo case=@ud state-vase=vase *]
-  +*  sta  !<(state state-vase)
+  +*  sta  !<(^state state-vase)
   ++  call
     |=  [old-state=vase act=*]
     *(list card)
   ++  reduce
     |=  pok=*
     ^-  vase
-    =+  ;;(=poke pok)
+    =+  ;;(poke=^poke pok)
     =/  sta  sta
     =?  hoon.sta  ?=(%hoon -.poke)
       hoon.poke
@@ -51,9 +59,9 @@
     !>(sta)
   ++  init
     |=  vax=(unit vase)
-    ?~  vax  !>(*state)
+    ?~  vax  !>(*^state)
     =+  !<([cac=(unit vase) =hoon] u.vax)
-    !>(`state`[~ hoon])
+    !>(`^state`[~ hoon])
   ++  born
     =-  ~[-]
     [%neo were.bowl %poke %dep ~]
