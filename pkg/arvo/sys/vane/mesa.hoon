@@ -897,7 +897,6 @@
       =|  new=request-state
       =.  for.new   (~(put in for.new) hen)
       =.  pay.new   q
-      =.  path.p    (ev-mess-spac r pax/path.p)  :: XX (add-beam  ...
       =.  peers.ax  (~(put by peers.ax) ship.p her(pit (~(put by pit.her) path.p new)))
       ::
       =/  =pact:pact  (ev-make-pact p q rift.her r)
@@ -925,14 +924,18 @@
       ::  =.  tmpeers.ax  (~(put by tmpeers.ax) has [%some-envelope original-path u.u.res])
       ::  //ax/[$ship]//1/temp/[hash]
       =/  man=name:pact  [[our rift.ax] [13 ~] u.q]
+      :^  %poke  nam  man
+      =;  page=pact:pact
+        ?>(?=(%page -.page) q.page)
+      %-  parse-packet
+      =<  ;;(@ q.q)  %-  need  %-  need
+      ::  namespace overlays are excluded from the flow path we encode
+      ::  and only used here for retrieving the raw noun
+      ::
+      =.  pat.man  (ev-mess-spac space pax/u.q)
       =?  space  ?=(?(%publ %chum) -.space)
         ?>  ?=(%publ -.space)  :: XX chum
         space(life life.ax)    ::  our life for poke payloads
-      =.  pat.man  (ev-mess-spac space pax/u.q)  :: XX (add-beam  ...
-      :^  %poke  nam  man
-      =;  page=pact:pact  ?>(?=(%page -.page) q.page)
-      %-  parse-packet
-      =<  ;;(@ q.q)  %-  need  %-  need
       (rof ~ /mesa %mx (name-to-beam man))  ::  XX rof
     ::
     ++  ev-mess-spac
