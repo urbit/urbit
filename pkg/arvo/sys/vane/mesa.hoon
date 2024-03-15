@@ -443,15 +443,17 @@
           core  ::  %alien or missing
         =.  per  [ship u.u.per-sat]
         ?>  ?=(%known -.sat.per)
-        %-  ~(rep by flows.sat.per)
-        |=  [[[=bone dire=?(%bak %for)] flow=flow-state] core=_core]
-        ?:  ?|  (~(has in corked.sat.per) bone dire)  :: XX not possible?
-                closing.flow
-            ==
+        %-  ~(rep by pit.sat.per)
+        |=  [[=path req=request-state] core=_core]
+        ?~  pay.req
+          ::  external %peek request, not a dead flow
+          ::
+          ::  XX TODO %naxplanation and %cork reads?
           core
-        =^  moves  ax
-          fo-abet:(fo-call:(fo-abed:fo hen bone^dire ev-chan ~) wake/~)
-        (ev-emil moves)
+        =/  spac=space   publ/life.sat.per  ::  XX always %chum for flows?
+        =/  =pact:pact   (ev-make-pact ship.per^path pay.req rift.sat.per spac)  :: XX memoize?
+        %+  ev-emit:core   unix-duct.ax
+        [%give %send ~[`@ux`ship.per] p:(fax:plot (en:^pact pact))]
       --
     ::
     +|  %request-flow
@@ -1079,7 +1081,6 @@
         =>  |%
             +$  poke-task
               $%  [%sink seq=@ud mess=mesa-message ok=?]
-                  [%wake ~]
                   ::  XX remove %fo-planation from lull
                   mesa-message
               ==
@@ -1089,11 +1090,6 @@
         ^+  fo-core
         ::
         ?-    -.poke
-            %wake
-          ::  XX reset send-window?
-          ::
-          fo-send(send-window.state 1)
-          ::
             ?(%plea %boon %cork)
           ?:  |((fo-to-close poke) fo-corked)
             ::  XX log
