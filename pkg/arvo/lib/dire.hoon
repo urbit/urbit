@@ -1076,6 +1076,7 @@
       ::
       =/  authenticate
         |=  rut=@uxI
+        ^-  ?
         ?>  ?=([%0 *] aut.q.pac)
         =*  auth  p.aut.q.pac
         =/  =beak  [her.p.pac %$ ud+1]  :: XX where do we get this?
@@ -1094,6 +1095,30 @@
               ?>  &(?=(^ her) ?=(^ hyf))
               (get-key-for u.her u.hyf)
             (verify-mac:crypt key p.auth ful rut)
+        ==
+      =/  decrypt
+        |=  cyf=@
+        ^-  @
+        =/  tyl=(pole knot)  pat.p.pac
+        ?+  tyl  !!
+          [%publ *]  :: unencrypted
+            cyf
+          [%chum lyf=@ her=@ hyf=@ pyf=@ ~]  :: encrypted with eddh key
+            =/  lyf  (slaw %ud lyf.tyl)
+            =/  her  (slaw %p her.tyl)
+            =/  hyf  (slaw %ud hyf.tyl)
+            =/  pyf  (slaw %uv pyf.tyl)
+            ?>  &(?=(^ lyf) ?=(^ her) ?=(^ hyf) ?=(^ pyf))
+            =/  key  (get-key-for u.her u.hyf)
+            =*  iv  u.pyf  :: XX
+            (decrypt:crypt key iv cyf)
+          [%shut kid=@ pyf=@ ~]  :: encrypted with group key
+            =/  kid  (slaw %ud kid.tyl)
+            =/  pyf  (slaw %uv pyf.tyl)
+            ?>  &(?=(^ kid) ?=(^ pyf))
+            =/  key  (need (get-group-key-for u.kid)) :: XX handle ~
+            =*  iv  u.pyf  :: XX
+            (decrypt:crypt key iv cyf)
         ==
       ::
       ?-    typ
@@ -1132,7 +1157,7 @@
             ?>  (authenticate (root:lss dat.q.pac))
             =/  =spar:ames  [her.p.pac pat]
             =/  =auth:mess  p.aut.q.pac
-            =/  =page  ;;(page (cue dat.q.pac)) :: XX what if we get ~ instead of a page?
+            =/  =page  ;;(page (cue (decrypt dat.q.pac))) :: XX what if we get ~ instead of a page?
             [[[[/ ~] %give %response [%page [spar auth page]]] ~] ax]
           ::  no; then the proof should be inlined; verify it
           ::  (otherwise, we should have received an %auth packet already)
@@ -1189,7 +1214,7 @@
         ::
         =/  =spar:ames  [her.p.pac pat]
         =/  =auth:mess  [%| *@uxH] :: XX should be stored in ps?
-        =/  =page  ;;(page (cue (rep 13 (flop fags.ps))))
+        =/  =page  ;;(page (cue (decrypt (rep 13 (flop fags.ps)))))
         [[[[/ ~] %give %response [%page [spar auth page]]] ~] ax]
       ==
     ::
@@ -1483,7 +1508,7 @@
       =/  ful  (en-beam bem)
       =/  ryf  *rift :: XX our rift
       =|  sec=@uxI :: XX derive from rift??
-      =/  ser  (jam gag)
+      =/  ser  (jam gag)  :: unencrypted
       ``[%message !>([%sign (sign:crypt sec ful (root:lss ser)) ser])]
     ::
         [%chum lyf=@ her=@ hyf=@ cyf=@ ~]
@@ -1502,7 +1527,8 @@
         ~
       =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
       =/  ful  (en-beam bem)
-      =/  ser  (jam gag)
+      =*  iv  u.cyf  :: XX
+      =/  ser  (encrypt:crypt key iv (jam gag))
       ``[%message !>([%hmac (mac:crypt key ful (root:lss ser)) ser])]
     ::
         [%shut kid=@ cyf=@ ~]
@@ -1520,7 +1546,8 @@
         ~
       =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
       =/  ful  (en-beam bem)
-      =/  ser  (jam gag)
+      =*  iv  u.cyf  :: XX
+      =/  ser  (encrypt:crypt u.key iv (jam gag))
       ``[%message !>([%sign (sign:crypt u.key ful (root:lss ser)) ser])]
     ==
   ~
