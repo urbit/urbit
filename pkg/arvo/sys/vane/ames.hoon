@@ -2046,7 +2046,7 @@
         ::  start sending informal pings to the sponsorship chain
         ::
         ?~  unix-duct.+.u.cached-state
-          ~
+          moz
         ~>  %slog.0^leaf/"ames: retrieving sponsorship chain"
         ^-  (list move)
         :_  moz
