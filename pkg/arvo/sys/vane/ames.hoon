@@ -619,7 +619,7 @@
 ::    dead:        dead flow consolidation timer and recork timer, if set
 ::
 +$  ames-state
-  $+  ames-state-19
+  $+  ames-state-20
   $:  peers=(map ship ship-state)
       =unix=duct
       =life
@@ -1327,6 +1327,8 @@
       deep-task-14                  ::  introduced in state %14, modified in %19
       $<(?(%keen %deep) task)
   ==
+::
++$  ames-state-19  ames-state
 ::  $bug: debug printing configuration
 ::
 ::    veb: verbosity toggles
@@ -1479,7 +1481,8 @@
             [%16 ames-state-16]
             [%17 ames-state-17]
             [%18 ames-state-17]
-            [%19 ^ames-state]
+            [%19 ames-state-19]
+            [%20 ^ames-state]
         ==
     ::
     |=  [now=@da eny=@ rof=roof]
@@ -1602,7 +1605,7 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%19 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%20 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
           $%  $:  %4
@@ -1711,6 +1714,13 @@
                   [%adult state=ames-state-18]
               ==  ==
               $:  %19                                 :: %keen & %deep modified
+              $%  $:  %larva
+                      events=(qeu queued-event)
+                      state=ames-state-19
+                  ==
+                  [%adult state=ames-state-19]
+              ==  ==
+              $:  %20                                 :: start informal %ping
               $%  $:  %larva
                       events=(qeu queued-event)
                       state=_ames-state.adult-gate
@@ -1899,12 +1909,23 @@
         =.  queued-events  (event-17-and-18-to-last events.old)
         larval-gate
       ::
-          [%19 %adult *]  (load:adult-core %19 state.old)
+          [%19 %adult *]
+        =.  cached-state  `[%19 state.old]
+        ~>  %slog.0^leaf/"ames: larva %19 reload"
+        larval-gate
       ::
           [%19 %larva *]
         ~>  %slog.1^leaf/"ames: larva %19 load"
+        =.  cached-state  `[%19 state.old]
         =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %19 state.old)
+        larval-gate
+      ::
+          [%20 %adult *]  (load:adult-core %20 state.old)
+      ::
+          [%20 %larva *]
+        ~>  %slog.1^leaf/"ames: larva %20 load"
+        =.  queued-events  events.old
+        =.  adult-gate     (load:adult-core %20 state.old)
         larval-gate
       ==
       ::
@@ -2017,7 +2038,22 @@
       ::
       =?  u.cached-state  ?=(%18 -.u.cached-state)
         19+(state-18-to-19:load:adult-core +.u.cached-state)
-      ?>  ?=(%19 -.u.cached-state)
+      =^  moz  u.cached-state
+        ?.  ?=(%19 -.u.cached-state)  [~ u.cached-state]
+        :_  [%20 +.u.cached-state]
+        ::  if we didn't have a unix-duct, the larval stage will be expecting
+        ::  a %born task from unix, which will in turn emit the %saxo that will
+        ::  start sending informal pings to the sponsorship chain
+        ::
+        ?~  unix-duct.+.u.cached-state
+          ~
+        ~>  %slog.0^leaf/"ames: retrieving sponsorship chain"
+        ^-  (list move)
+        :_  moz
+        =+  ev-core=(ev [now eny rof] [/saxo]~ ames-state.adult-gate)
+        [unix-duct.+.u.cached-state %give %saxo get-sponsors:ev-core]
+      ::
+      ?>  ?=(%20 -.u.cached-state)
       =.  ames-state.adult-gate  +.u.cached-state
       [moz larval-core(cached-state ~)]
     --
@@ -5392,15 +5428,15 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%19 %adult ames-state]
+++  stay  [%20 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
   =<  |=  $=  old-state
-          $%  [%19 ^ames-state]
+          $%  [%20 ^ames-state]
           ==
       ^+  ames-gate
-      ?>  ?=(%19 -.old-state)
+      ?>  ?=(%20 -.old-state)
       ames-gate(ames-state +.old-state)
   ::  all state transitions are called from larval ames
   ::
