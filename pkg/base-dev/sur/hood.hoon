@@ -251,13 +251,11 @@
     ^-  @t
     ?:  =(~ wefts)
       '~'
-    %+  rap  3
-    %+  join  ' '
-    %+  turn
-      (sort ~(tap in wefts) aor)
-    |=  =weft
-    ^-  @t
-    (rap 3 '[%' lal.weft ' ' (scot %ud num.weft) ']' ~)
+    %+  roll  (sort ~(tap in wefts) aor)
+    |=  [=weft out=@t]
+    ?:  =('' out)
+      (rap 3 '[%' lal.weft ' ' (scot %ud num.weft) ']' ~)
+    (rap 3 out ' [%' lal.weft ' ' (scot %ud num.weft) ']' ~)
   ::
   ++  print-shorthash
     |=  hash=@uv
