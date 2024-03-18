@@ -756,11 +756,13 @@
         ?:  =(%for dire.pok)  %bak
         ?>  =(%bak dire.pok)  %for
       =/  req=mesa-message
+        ~|  gage-parsing-failed/gage
         ?>  ?=([%message *] gage)  :: XX [%message %mark *] ??
         ?:  =(%for dire)  ::  %boon(s) sink forward (reversed %plea direction)
-          boon/+.gage
+          ?>(?=([%boon *] +.gage) +.gage)
         ?>  =(%bak dire)  ::  %pleas(s) and %corks sink backward
-        plea/;;(plea +.gage)
+        ?>  ?=([%plea *] +.gage)
+        plea/;;(plea +>.gage)
       ::
       :: =/  already-closing=?  closing.flow.sat.per  :: XX
       =/  fo-core
