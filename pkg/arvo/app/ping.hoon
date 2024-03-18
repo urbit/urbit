@@ -37,7 +37,8 @@
 +$  state-3
   $:  %3
      mode=?(%formal %informal)
-     sent=?
+     pokes=@ud
+     timer=(unit [=wire date=@da])
      galaxy=@p
   ==
 --
@@ -55,16 +56,16 @@
     $(ship next)
   ::
   ++  wait-card
-    |=  now=@da
+    |=  [=wire now=@da]
     ^-  card
-    [%pass /wait %arvo %b %wait (add nat-timeout now)]
+    [%pass wire %arvo %b %wait (add nat-timeout now)]
   ::
   ++  ping
-    |=  =ship
+    |=  [=ship force=?]
     ^-  (quip card _state)
-    ?:  &(sent.state =(ship galaxy.state))
+    ?:  &(!force (gth pokes.state 0) =(ship galaxy.state))
       [~ state]
-    :_  state(sent %.y, galaxy ship)
+    :_  state(pokes +(pokes.state), galaxy ship)
     [%pass /ping/(scot %p ship) %agent [ship %ping] %poke %noun !>(~)]~
 --
 %+  verb  |
@@ -78,7 +79,7 @@
 ++  on-init
   ^-  [(list card) _this]
   =.  mode.state    %formal
-  =.  sent.state    %.n
+  =.  pokes.state    0
   =.  galaxy.state  (galaxy-for our.bowl bowl)
   [~ this]
 ::
@@ -124,7 +125,7 @@
   ++  state-2-to-3
     |=  old=state-2
     ^-  state-3
-    [%3 %formal %.n (galaxy-for our.bowl bowl)]
+    [%3 %formal 0 ~ (galaxy-for our.bowl bowl)]
   --
 ::  +on-poke: positively acknowledge pokes
 ::
@@ -137,11 +138,11 @@
     ?:  ?=([%kick ?] q.vase)
       =?  mode.state  =(+.q.vase %.y)
         %formal
-      (ping (galaxy-for our.bowl bowl))
+      (ping (galaxy-for our.bowl bowl) %.n)
     ::
     ?:  |(=(q.vase %once) =(q.vase %stop))  :: NB: ames calls this on %once
       =.  mode.state  %informal
-      (ping (galaxy-for our.bowl bowl))
+      (ping (galaxy-for our.bowl bowl) %.y)
     `state
   [cards this]
 ::
@@ -158,9 +159,16 @@
     `this
   ?.  =(galaxy.state (slav %p i.t.wire))
     `this
-  =.  sent.state  %.n
-  ?.  ?=(%formal mode.state)  `this
-  [[(wait-card now.bowl)]~ this]
+  ?.  ?=(%poke-ack -.sign)
+    `this
+  =.  pokes.state  (dec pokes.state)
+  ?.  |(?=(%formal mode.state) ?=(^ p.sign))
+    `this
+  ?.  =(pokes.state 0)
+    `this
+  =/  wir  /wait
+  =.  timer.state  `[wire now.bowl]
+  [[(wait-card wir now.bowl)]~ this]
 ::  +on-arvo: handle timer firing
 ::
 ++  on-arvo
@@ -174,7 +182,8 @@
       ?^  error.sign-arvo
         %-  (slog 'ping: strange wake fail!' u.error.sign-arvo)
         `state
-      (ping (galaxy-for our.bowl bowl))
+      =.  timer.state  ~
+      (ping (galaxy-for our.bowl bowl) %.n)
     ::
     ==
   [cards this]
