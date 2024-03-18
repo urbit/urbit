@@ -10,6 +10,7 @@
   ^-  path
   /(scot %p our.bowl)/base/(scot %da now.bowl)/lib/message/hoon
 ++  poke  chat-diff
+++  card  card:neo
 --
 ^-  firm:neo
 |%
@@ -43,32 +44,37 @@
   +*  sta  !<(chat state-vase)
   ++  call
     |=  [old-state=vase act=*]
-    =+  ;;(=poke act)
+    =+  ;;(=^poke act)
     ?:  ?=(%dbug -.poke)
       ~&  dbug/bowl
       *(list card)
     ?.  ?=(%msg -.poke)
       *(list card)
-    [%neo (welp were.bowl ~[da/now.bowl]) %make %message `!>(msg.poke) ~]^~
+    =-  ~[-]
+    ^-  card
+    :-  %neo
+    ^-  note:neo
+    :-  (welp were.bowl ~[da/now.bowl])
+    [%make stud/%message `!>(msg.poke) ~]
   ++  reduce
     |=  pok=*
     ^-  vase
-    =+  ;;(=poke pok)
+    =+  ;;(=^poke pok)
     =/  sta  sta
     ?.  ;;(? +:(~(gut by deps.bowl) %open [*pith &]))
       ~&(dropping-poke/poke !>(sta))
     ?>  |(=(our src):bowl (~(has in who.sta) src.bowl))
     =-  !>(-)
-    ^-  state
+    ^-  ^state
     ?-  -.poke
-      %title  !! :: sta(title title.poke)
+      %title  sta(title title.poke)
       %add    sta(who (~(put in who.sta) ship.poke))
       %del    sta(who (~(del in who.sta) ship.poke))
       ?(%dbug %msg)   sta
     ==
   ++  init
     |=  old=(unit vase)
-    !>(*state)
+    !>(*^state)
   ++  born  *(list card:neo)
   ++  echo
     |=  [=pith val=*]

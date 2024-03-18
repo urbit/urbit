@@ -52,7 +52,7 @@
   ::  +tab-list: autocomplete options for the session (to match +command-parser)
   ::
   ++  tab-list
-    |~  =sole-id
+    |~  [=sole-id query=@t]
     ::  (list [@t tank])
     *(list (option:auto tank))
   ::  +on-command: called when a valid command is run
@@ -123,7 +123,7 @@
     (easy *[? command-type])
   ::
   ++  tab-list
-    |=  =sole-id
+    |=  [=sole-id query=@t]
     ~
   ::
   ++  on-command
@@ -323,7 +323,7 @@
       ::  autocomplete empty command iff user at start of command
       ::
       =/  options=(list (option:auto tank))
-        (search-prefix:auto needle (tab-list:og sole-id))
+        (search-prefix:auto needle (tab-list:og sole-id needle))
       =/  advance=term
         (longest-match:auto options)
       =/  to-send=tape

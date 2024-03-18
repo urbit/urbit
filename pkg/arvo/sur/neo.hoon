@@ -100,7 +100,8 @@
         =scar:goon
     ==
   +$  bowl
-    $:  wer=name
+    $:  our=@p
+        wer=name
         eny=@uvJ
         now=@da
     ==
@@ -215,21 +216,26 @@
     $(curt t.curt, long t.long)
   --
 ++  name
-  |^  ,[=ship =pith]  
+  =<  name
+  |%
+  +$  name  [=ship =pith]  
+  ++  rule
+    :: ^-  _|~(nail *(like name))
+    ;~(plug ;~(pfix fas sig fed:ag) stip)
   ++  en-pith
-    |=  nam=$
+    |=  nam=name
     ^-  pith
     [p/ship.nam pith.nam]
   ++  en-tape
-    |=  nam=$
+    |=  nam=name
     (spud (pout (en-pith nam)))
   ++  en-path
-    |=  nam=$
+    |=  nam=name
     (pout (en-pith nam)) 
   ++  de-pith  |=(pith ~|(de-pith/+< (need (de-pith-soft +<))))
   ++  de-pith-soft
     |=  =pith
-    ^-  (unit ^$)
+    ^-  (unit name)
     ?.  ?=([[%p @] *] pith)
       ~
     `[+.i.pith t.pith]
@@ -362,10 +368,12 @@
   $%  [%done ~]
       err
   ==
++$  page  (pair stud *)
+:: +$  cage  (pair stud vase)
 ::
 +$  note
   %+  pair  pith
-  $%  [%make =stud init=(unit vase) =conf] :: todo: configuration values, init cannot be ^ if installing over
+  $%  [%make =code init=(unit vase) =conf] :: todo: configuration values, init cannot be ^ if installing over
       [%poke val=*]
       [%tomb =case]
       [%link from=pith src=stud]
@@ -434,9 +442,14 @@
   $%  [%arvo p=sign-arvo]
       [%neo p=sign-neo]
   ==
-
++$  ewer  (pair stud vase)
++$  vial  (pair stud *)
 +$  move  (pair pith card)
-+$  span  (pair stud firm)
++$  code
+  $%  [%clay p=path]
+      [%stud p=stud]
+  ==
++$  span  (pair code firm)
 +$  icon
   [case=@ud state=vase history=(list *) migration=(list *)]
 :: subscription metadata
