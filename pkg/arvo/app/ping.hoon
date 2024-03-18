@@ -22,18 +22,6 @@
 ::
 +$  card  card:agent:gall
 ::
-+$  state-2
-  $:  %2
-      ships=(set ship)
-      nonce=@ud
-      $=  plan
-      $~  [%nat ~]
-      $%  [%nat ~]
-          [%pub ip=(unit @t)]
-          [%off ~]
-          [%one ~]
-      ==
-  ==
 +$  state-3
   $:  %3
      mode=?(%formal %informal)
@@ -66,7 +54,7 @@
     ?:  &(!force (gth pokes.state 0) =(ship galaxy.state))
       [~ state]
     :_  state(pokes +(pokes.state), galaxy ship)
-    [%pass /ping/(scot %p ship) %agent [ship %ping] %poke %noun !>(~)]~
+    [%pass /ping %agent [ship %ping] %poke %noun !>(~)]~
 --
 %+  verb  |
 ^-  agent:gall
@@ -111,6 +99,18 @@
         $%  [%nat ~]
             [%pub ip=(unit @t)]
     ==  ==
+  +$  state-2
+    $:  %2
+        ships=(set ship)
+        nonce=@ud
+        $=  plan
+        $~  [%nat ~]
+        $%  [%nat ~]
+            [%pub ip=(unit @t)]
+            [%off ~]
+            [%one ~]
+        ==
+    ==
   ::
   ++  state-0-to-1
     |=  old=state-0
@@ -125,7 +125,14 @@
   ++  state-2-to-3
     |=  old=state-2
     ^-  state-3
-    [%3 %formal 0 ~ (galaxy-for our.bowl bowl)]
+    :*  %3  %formal  0  ~
+    =/  galaxy=(list @p)
+      %+  skim  ~(tap in ships.old)
+      |=(p=@p ?=(%czar (clan:title p)))
+    ?:  =(1 (lent galaxy))
+      -.galaxy
+    (head (flop (^saxo:title our.bowl)))
+    ==
   --
 ::  +on-poke: positively acknowledge pokes
 ::
@@ -155,19 +162,17 @@
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  [(list card) _this]
-  ?.  ?=([%ping s=@ *] wire)
-    `this
-  ?.  =(galaxy.state (slav %p i.t.wire))
+  ?.  ?=([%ping *] wire)
     `this
   ?.  ?=(%poke-ack -.sign)
     `this
   =.  pokes.state  (dec pokes.state)
-  ?.  |(?=(%formal mode.state) ?=(^ p.sign))
-    `this
   ?.  =(pokes.state 0)
     `this
+  ?.  |(?=(%formal mode.state) ?=(^ p.sign))
+    `this
   =/  wir  /wait
-  =.  timer.state  `[wire now.bowl]
+  =.  timer.state  `[wir now.bowl]
   [[(wait-card wir now.bowl)]~ this]
 ::  +on-arvo: handle timer firing
 ::
