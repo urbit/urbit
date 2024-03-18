@@ -49,7 +49,7 @@
   ++  galaxy-for
     |=  [=ship =bowl:gall]
     ^-  @p
-    =/  next  (sein:title [our now our]:bowl)
+    =/  next  (sein:title our.bowl now.bowl ship)
     ?:  ?=(%czar (clan:title next))
       next
     $(ship next)
