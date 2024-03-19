@@ -101,6 +101,7 @@
       rot=`?`%.n  ::  routing attempts
       kay=`?`%.n  ::  is ok/not responding
       fin=`?`%.n  ::  remote-scry
+      sun=`?`%.n  ::  STUN
   ==
 =/  packet-size  13
 =>
@@ -850,7 +851,7 @@
       =life
       =rift
       crypto-core=acru:ames
-      =bug
+      bug=bug-19
       snub=[form=?(%allow %deny) ships=(set ship)]
       cong=[msg=@ud mem=@ud]
   ==
@@ -1150,7 +1151,7 @@
       =life
       =rift
       crypto-core=acru:ames
-      =bug
+      bug=bug-19
       snub=[form=?(%allow %deny) ships=(set ship)]
       cong=[msg=_5 mem=_100.000]
     ::
@@ -1204,7 +1205,7 @@
       =life
       =rift
       crypto-core=acru:ames
-      =bug
+      bug=bug-19
       snub=[form=?(%allow %deny) ships=(set ship)]
       cong=[msg=@ud mem=@ud]
   ==
@@ -1328,7 +1329,28 @@
       $<(?(%keen %deep) task)
   ==
 ::
-+$  ames-state-19  ames-state
++$  bug-19
+  $:  veb=_[`?`%.n `?`%.n `?`%.n `?`%.n `?`%.n `?`%.n `?`%.n `?`%.n `?`%.n]
+      ships=(set ship)
+  ==
+::
++$  ames-state-19
+  $+  ames-state-19
+  $:  peers=(map ship ship-state)
+      =unix=duct
+      =life
+      =rift
+      crypto-core=acru:ames
+      bug=bug-19
+      snub=[form=?(%allow %deny) ships=(set ship)]
+      cong=[msg=@ud mem=@ud]
+      $=  dead
+      $:  flow=[%flow (unit dead-timer)]
+          cork=[%cork (unit dead-timer)]
+      ==
+    ::
+      =chain
+  ==
 ::  $bug: debug printing configuration
 ::
 ::    veb: verbosity toggles
@@ -2040,7 +2062,7 @@
         19+(state-18-to-19:load:adult-core +.u.cached-state)
       =^  moz  u.cached-state
         ?.  ?=(%19 -.u.cached-state)  [~ u.cached-state]
-        :_  [%20 +.u.cached-state]
+        :_  20+(state-19-to-20:load:adult-core +.u.cached-state)
         ::  if we didn't have a unix-duct, the larval stage will be expecting
         ::  a %born task from unix, which will in turn emit the %saxo that will
         ::  start sending informal pings to the sponsorship chain
@@ -2234,6 +2256,7 @@
             %rot  acc(rot %.y)
             %kay  acc(kay %.y)
             %fin  acc(fin %.y)
+            %sun  acc(sun %.y)
           ==
         event-core
       ::  +on-prod: re-send a packet per flow to each of .ships
@@ -2803,6 +2826,19 @@
       ++  on-stun
         |=  =stun
         ^+  event-core
+        %-  %^  ev-trace  sun.veb  ship.stun
+            =/  lane=tape
+              ?:  &
+                ::  turn off until correct parsing ip/port in ames.c
+                ::  (see https://github.com/urbit/vere/pull/623)
+                ""
+              ?:  ?=(%& -.lane.stun)
+                "from {<p.lane.stun>}"
+              =,  lane.stun
+              =/  ip=@if  (end [0 32] p)
+              =/  pt=@ud  (cut 0 [32 16] p)
+              "lane {(scow %if ip)}:{((d-co:co 1) pt)} ({(scow %ux p)})"
+            |.("inject %stun {<-.stun>} {lane}")
         %-  emit
         %^  poke-ping-app  unix-duct.ames-state  our
         ?.  ?=(%fail -.stun)  -.stun
@@ -5670,7 +5706,7 @@
   ::
   ++  state-18-to-19
     |=  old=ames-state-18
-    ^-  ^ames-state
+    ^-  ames-state-19
     %=    old
     ::
         dead  [dead.old ~]
@@ -5707,6 +5743,13 @@
           ~+  ;;(message [hed (cue arg)])
         ==
       ==
+    ==
+  ::
+  ++  state-19-to-20
+    |=  old=ames-state-19
+    ^-  ^ames-state
+    %=  old
+      veb.bug  [&1 &2 &3 &4 &5 &6 &7 &8 |8 %.n]:veb.bug.old
     ==
   --
 ::  +scry: dereference namespace
