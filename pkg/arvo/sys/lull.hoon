@@ -894,7 +894,7 @@
   +$  address  @uxaddress
   ::  $verb: verbosity flag for ames
   ::
-  +$  verb  ?(%snd %rcv %odd %msg %ges %for %rot %kay %fin)
+  +$  verb  ?(%snd %rcv %odd %msg %ges %for %rot %kay %fin %sun)
   ::  $blob: raw atom to or from unix, representing a packet
   ::
   +$  blob  @uxblob
