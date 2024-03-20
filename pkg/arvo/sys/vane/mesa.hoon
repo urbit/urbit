@@ -595,6 +595,7 @@
         todos(peeks (~(put ju peeks.todos) path hen))
       =.  per  ship^u.ship-state
       ?>  ?=(%known -.sat.per)
+        ::  XX store key^path in chain.ax
       =/  =space  ?~(sec publ/life.sat.per shut/[idx `key]:u.sec)
       =.  path    (ev-mess-spac space path)
       (ev-make-mess ship^path ~ space)
@@ -1045,14 +1046,12 @@
         =/  =symmetric-key
           =+  per=(ev-got-per her.space)
           ?>  ?=(%known -.sat.per)  :: XX %alien?
-          symmetric-key.sat.per  :: XX check life.space with life.sat.per
+          symmetric-key.sat.per     :: XX check hyf.space with life.sat.per?
         =/  cyf=@  (seal-path:crypt `@`symmetric-key path)
         :-  %chum  =,  space
-        ::  XX  hyf.space?
-        /[(scot %ud life)]/[(scot %p her)]/[(scot %ud hyf.space)]/[(scot %uv cyf)]
+        /[(scot %ud life)]/[(scot %p her)]/[(scot %ud hyf)]/[(scot %uv cyf)]
       ::
           %shut  :: encrypted with group key
-        ::  XX retrieve key from chain.ax
         =/  key
           ?^  key.space  u.key.space  :: key provided by the %keen task
           (need (get-group-key-for kid.space)) :: XX handle ~
