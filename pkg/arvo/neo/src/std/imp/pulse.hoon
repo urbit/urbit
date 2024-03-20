@@ -1,4 +1,3 @@
-/-  neo
 ::  sender ship namesapce (~bus)
 ::  /messages/1
 ::  host ship namespace
@@ -19,13 +18,16 @@
 =>
 |%
 ++  behn
-  (pave //sys/behn)
+  |=  our=@p
+  ^-  pith:neo
+  [p/our #/$/behn]
 --
 |%
 +$  state  [count=@ud last=@da freq=@dr]
 +$  poke
   $%  [%freq freq=@dr]
       [%last last=@da]
+      [%wake ~]
   ==
   
 ++  kids   *kids:neo
@@ -39,10 +41,9 @@
     ^-  (list card:neo)
     =/  old-state  !<(state ole)
     =/  sta  sta
-    ?:  =(freq.old-state freq.sta)
+    ?:  &(=(freq.old-state freq.sta) =(last.old-state last.state))
       ~
-    =/  behn=pith
-      (pave //vane/behn)
+    =/  behn=pith  (behn our.bowl)
     =/  wait=req:behn:neo
       [%rest (add [last freq]:old-state)]
     =/  rest=req:behn:neo
@@ -59,6 +60,7 @@
     ?-  -.poke
       %freq  sta(freq freq.poke)
       %last  sta(last last.poke)
+      %wake  sta(last now.bowl, count +(count.sta))
     ==
   ++  init
     |=  old=(unit vase)
@@ -70,7 +72,7 @@
     *(list card:neo)
   ++  born
     =/  sta  sta
-    [behn %poke %wait (add now.bowl freq.sta)]^~
+    [(behn our.bowl) %poke %wait (add now.bowl freq.sta)]^~
   ::
   ++  take
     |=  =sign:neo
@@ -79,7 +81,7 @@
     ?.  ?=([%arvo %behn %wake *] sign)
       ~
     :~  [were.bowl %poke %last now.bowl]
-        [behn %poke %wait (add now.bowl freq.sta)]
+        [(behn our.bowl) %poke %wait (add now.bowl freq.sta)]
     ==
   --
 --

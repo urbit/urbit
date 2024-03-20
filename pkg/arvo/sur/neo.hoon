@@ -1,3 +1,4 @@
+
 ::  $neo: New Shrub
 ::
 ::    Urbit is a namespace, from a path -> data
@@ -16,6 +17,82 @@
 ::
 ::  
 |%
+++  ford
+  |%
+  ++  rerun
+    |=  =bowl
+    |=  =sign
+    ^-  (list card)
+    ?>  ?=([%conf %val @] sign)
+    ~&  were.bowl
+    [were.bowl %poke %dep ~]^~
+  ++  run
+    |=  txt=@t
+    (scan (trip txt) rein)
+  +$  lib
+    [face=(unit term) =name]
+  +$  pro
+    [face=term =stud]
+  +$  file
+    $:  pro=(list pro)
+        lib=(list lib)
+        =hoon
+    ==
+  ++  rein
+    =<  apex
+    |%
+    ++  nam
+      :: ^-  $-(nail (like name:neo))
+      ;~(plug ;~(pfix fas sig fed:ag) stip)
+    ++  std
+      ;~  pose
+        ;~(plug sym ;~(pfix col sig fed:ag) ;~(pfix fas sym))
+        sym
+      ==
+    ++  pro
+      :: ^-  $-(nail (like ^pro))
+      %+  rune  pat
+      ;~  pose
+        %+  cook
+          |=  =stud
+          ?@  stud  [stud stud]
+          [mark.stud stud]
+        std
+        ;~(plug sym ;~(pfix gap std))
+      ==
+    ++  lib
+      :: ^-  $-(nail (like ^lib))
+      %+  rune  cen
+      ;~  pose
+        (stag ~ nam)
+        ;~(plug (stag ~ sym) ;~(pfix gap nam))
+      ==
+    ++  rune
+      |*  [car=rule rul=rule]
+      (ifix [;~(plug fas car gap) gay] rul)
+
+    ++  libs
+      :: ^-  $-(nail (like (list ^lib)))
+      (star lib)
+    ++  pros
+      :: ^-  $-(nail (like (list ^pro)))
+      (star pro)
+    ++  hone
+      :: ^-  $-(nail (like hoon))
+      =+  vaz=vast
+      (ifix [gay gay] tall:vaz)
+    ++  apex
+      :: ^-  rule
+      ;~  plug 
+        pros
+        libs
+        hone
+      ==
+    --
+  ++  with-face
+    |=  [fac=@tas =vase]
+    vase(p [%face fac p.vase])
+  --
 ++  behn
   |%
   +$  req  $>(?(%rest %wait) task:^behn)
@@ -455,19 +532,16 @@
     $(y p.u.in, p t.p)
   --
 ::
-+$  sign-conf
-  $%  [%val p=term]
-      [%pith p=term q=pith]
+++  sign
+  |^
+  $%  [%poke status=response-status]
+      [%conf conf]
   ==
-+$  sign-neo
-  $%  [%poke dest=pith status=response-status]
-      [%conf p=sign-conf]
-  ==
-+$  sign
-  $+  sign
-  $%  [%arvo p=sign-arvo]
-      [%neo p=sign-neo]
-  ==
+  +$  conf
+    $%  [%val p=term]
+        [%pith p=term q=pith]
+    ==
+  --
 +$  ewer  (pair stud vase)
 +$  vial  (pair stud *)
 +$  move  (pair pith card)
@@ -522,7 +596,7 @@
     (need (de-hall-soft hal))
   --
 +$  bowl
-  $:  src=@p
+  $:  src=name
       our=@p
       were=pith :: XX: rename to here
       now=@da
