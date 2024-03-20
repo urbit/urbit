@@ -595,7 +595,7 @@
         todos(peeks (~(put ju peeks.todos) path hen))
       =.  per  ship^u.ship-state
       ?>  ?=(%known -.sat.per)
-      =/  =space  ?~(sec publ/life.sat.per chum/[life.sat.per ship u.sec])
+      =/  =space  ?~(sec publ/life.sat.per shut/[idx `key]:u.sec)
       =.  path    (ev-mess-spac space path)
       (ev-make-mess ship^path ~ space)
     ::
@@ -1030,7 +1030,7 @@
       ::
       =.  pat.man  (ev-mess-spac space u.q)
       =?  space  ?=(?(%publ %chum) -.space)
-        ?:  ?=(%publ -.space)  :: XX chum
+        ?:  ?=(%publ -.space)
           space(life life.ax)    ::  our life for poke payloads
         space(life life.ax)      ::  XX  tack.life
       (rof ~ /mesa %mx (name-to-beam man))  ::  XX rof
@@ -1042,14 +1042,20 @@
           %publ  `^path`[%publ (scot %ud life.space) path]  :: unencrypted
       ::
           %chum  :: encrypted with eddh key
-        =/  idx  ?@(hyf.space hyf.space idx.hyf.space)
-        =/  key  ?^(hyf.space key.hyf.space (get-key-for her.space hyf.space))
-        =/  cyf  (seal-path:crypt key path)
+        =/  =symmetric-key
+          =+  per=(ev-got-per her.space)
+          ?>  ?=(%known -.sat.per)  :: XX %alien?
+          symmetric-key.sat.per  :: XX check life.space with life.sat.per
+        =/  cyf=@  (seal-path:crypt `@`symmetric-key path)
         :-  %chum  =,  space
-        /[(scot %ud life)]/[(scot %p her)]/[(scot %ud idx)]/[(scot %uv cyf)]
+        ::  XX  hyf.space?
+        /[(scot %ud life)]/[(scot %p her)]/[(scot %ud hyf.space)]/[(scot %uv cyf)]
       ::
           %shut  :: encrypted with group key
-        =/  key  (need (get-group-key-for kid.space)) :: XX handle ~
+        ::  XX retrieve key from chain.ax
+        =/  key
+          ?^  key.space  u.key.space  :: key provided by the %keen task
+          (need (get-group-key-for kid.space)) :: XX handle ~
         =/  cyf  (seal-path:crypt key path)
        /shut/[(scot %ud kid.space)]/[(scot %uv cyf)]
       ==

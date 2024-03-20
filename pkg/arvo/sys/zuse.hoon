@@ -6209,6 +6209,14 @@
     =.  proof  (flop (snoc proof l:(snag (dec height) pairs)))
     =.  pairs  (slag height pairs)
     [root proof pairs]
+  ::  +root: compute just the root hash for a message
+  ::
+  ++  root
+    |=  msg=@
+    ^-  @ux
+    (blake3 32 (met 3 msg)^msg)
+  ::
+  ::  +recover-root: compute the root hash of a leaf proof
   ::
   ++  recover-root
     |=  proof=(list @ux)

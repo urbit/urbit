@@ -3370,7 +3370,17 @@
         :: XX tmp=(map @ux page)   :: temporary hash-addressed bindings
         $=  dead                   :: dead-flow consolidation timers
         $:  flow=[%flow (unit dead-timer)]
+        ::
+        :: =chain  :: XX
     ==  ==
+  ::
+  ++  chain
+    =<  mop
+    |%
+    ++  on   ((^on ,@ ,[key=@ =path]) lte)
+    +$  mop  chain:ames
+    --
+  ::
   +$  dead-timer  [=duct =wire date=@da]
   ::  +address: client IP address
   ::
@@ -3382,8 +3392,8 @@
   ::
   +$  space
     $%  [%publ =life]
-        [%chum =life her=ship hyf=$@(@ [idx=@ key=@])]
-        [%shut kid=@]
+        [%chum =life her=ship hyf=@]  :: XX hyf?
+        [%shut kid=@ key=(unit @)]
     ==
   +$  lane           (each @pC address)
   +$  public-key     @uwpublickey
