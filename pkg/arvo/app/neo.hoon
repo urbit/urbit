@@ -407,6 +407,7 @@
     `pith:neo`(pave path)
   ++  path
     ^-  ^path
+    =-  ~&(pro/[stud -] -)
     :-  %src
     ?@  stud
       /std/pro/[stud]
@@ -424,6 +425,7 @@
   =/  p=path
     (welp root pax)
   =.  p  (snoc p %hoon)
+  =-  ~&(exists/[p -] -)
   .^(? %cu p)
 
 ++  copy-clay
@@ -520,6 +522,7 @@
     =/  =file:ford
       ~|  parsing/pax
       (scan (trip src) apex:rein:ford)
+    ~&  imports/[pro lib]:file
     =/  has-imports=?
       ?&  (levy pro.file |=(pro:ford ~(exists pro stud)))
           (levy lib.file |=(lib:ford ~(exists lib name)))
@@ -583,16 +586,24 @@
   --
 ++  stud-husk
   |_  =stud:neo
+  ++  pith
+    ^-  pith:neo
+    :-  %src
+    %-  pave:neo
+    ?@  stud 
+      /std/imp/[stud]
+    ?:  =(our.bowl ship.stud)
+      /our/[desk.stud]/imp/[mark.stud]
+    /her/(scot %p ship.stud)/[desk.stud]/imp/[mark.stud]
   ++  firm-vase
-    ?>  ?=(@ stud)
-    =/  rom=room:neo  (got:of-top /src/std/imp/[stud])
+    =/  rom=room:neo  (got:of-top pith)
     =+  !<([cac=(unit vase) *] state.icon.rom)
     (need cac)
   ++  firm
     !<(=firm:neo firm-vase)
   ++  wire
-    ?>  ?=(@ stud)
-    /husk/stud/[stud]
+    %+  welp  /husk/stud
+    (pout pith)
   --
 ++  clay-husk
   |_  =path

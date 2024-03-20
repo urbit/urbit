@@ -19,8 +19,8 @@
     ;~(plug ;~(pfix fas sig fed:ag) stip)
   ++  std
     ;~  pose
-      sym
       ;~(plug sym ;~(pfix col sig fed:ag) ;~(pfix fas sym))
+      sym
     ==
   ++  pro
     :: ^-  $-(nail (like ^pro))

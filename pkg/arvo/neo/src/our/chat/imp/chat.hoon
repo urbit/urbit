@@ -1,6 +1,6 @@
-/@  message :: message:/~zod/desk/1 <- [p=stud q=*]
-/@  chat-diff
-/@  chat
+/@  message:~met/chat
+/@  chat-diff:~met/chat
+/@  chat:~met/chat
 /@  sig
 => 
 |%
