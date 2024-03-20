@@ -34,7 +34,7 @@
     :~  open/open
     ==
   ++  open
-    [required=| %bool %sig]
+    [required=| %x %bool %sig]
   --
 ++  form
   ^-  form:neo
@@ -49,10 +49,9 @@
     ?.  ?=(%msg -.poke)
       *(list card)
     =-  ~[-]
-    ^-  card
-    :-  %neo
-    ^-  note:neo
+    ^-  card:neo
     :-  (welp were.bowl ~[da/now.bowl])
+    ^-  note:neo
     [%make stud/%message `!>(msg.poke) ~]
   ++  reduce
     |=  pok=* :: XX: vaseify

@@ -163,8 +163,8 @@
   =/  =name:neo  [our.bowl #/src/reef]
   =+  .^(neo-vase=vase %ca (welp clay-beak /sur/neo/hoon))
   =/  reef=vase  (slop !>(..zuse) neo-vase(p [%face %neo p.neo-vase]))
-  =/  =note:neo  [(en-pith:name:neo name) %make (clay-lib %ford-reef) `!>(reef) ~]
-  (on-note note)
+  =/  =card:neo  [(en-pith:name:neo name) %make (clay-lib %ford-reef) `!>(reef) ~]
+  (on-card card)
 ++  sync-room
   |=  [=stud:neo =name:neo]
   ^+  run
@@ -188,7 +188,7 @@
   =/  =wire  forward/(en-path:name:neo name)
   =/  =dock  [ship.name dap.bowl]
   =-  (emit %pass wire %agent dock %poke -)
-  noun+!>(`note:neo`[(en-pith:name:neo name) %poke pok])
+  noun+!>(`card:neo`[(en-pith:name:neo name) %poke pok])
 ++  print-dbug
   |=  veb=?
   |^  ^+  same
@@ -301,24 +301,22 @@
   ?:  ?=(%out -.q.vase)
     =+  ;;(=out:neo +.q.vase)
     (do-out out)
-  =+  ;;(=note:neo q.vase)
-  =/  =name:neo  (de-pith:name:neo p.note) 
+  =+  ;;(=card:neo q.vase)
+  =/  =name:neo  (de-pith:name:neo p.card) 
   ?.  =(our.bowl ship.name)
-    ?>  ?=(%poke -.q.note)
-    (forward-poke name val.q.note)
-  (on-note note)
-++  on-note
-  |=  =note:neo
-  =/  =name:neo   (de-pith:name:neo p.note)
-  ?>  =(our.bowl ship.name)
-  abet:(apply:(abed:arvo our-sys-pith pith.name) note)
+    ?>  ?=(%poke -.q.card)
+    (forward-poke name val.q.card)
+  (on-card card)
+++  on-card
+  |=  =card:neo
+  (on-move our-sys-pith card)
 ::
 ++  on-move
   |=  =move:neo
-  ?>  ?=(%neo -.q.move)
   =/  =name:neo  (de-pith:name:neo p.q.move)
+  ~&  move/name
   ?>  =(our.bowl ship.name)
-  abet:(apply:(abed:arvo p.move pith.name) +.q.move)
+  abet:(apply:(abed:arvo p.move pith.name) move)
 ::
 ++  watch
   |=  =(pole knot)
@@ -455,7 +453,7 @@
   ++  do-make
     |=  [=pith:neo lib=term sta=(unit vase) =conf:neo]
     =/  =name:neo  (de-pith:name:neo pith)
-    =.  run  (on-note pith %make (clay-lib lib) sta conf)
+    =.  run  (on-card pith %make (clay-lib lib) sta conf)
     ?:  =(lib %sym)
       run
     =/  rom  (got:of-top pith.name)
@@ -697,7 +695,6 @@
 ::
 ++  give-nack
   |=  [src=pith err=tang]
-  %-  (slog leaf/(en-tape:pith:neo src) err)
   =/  nam=name:neo  (de-pith:name:neo src)
   ?:  =(1 1)  !!
   ?.  =(our.bowl ship.nam)
@@ -763,7 +760,7 @@
 ++  arvo
   =+  verb=&
   |_  $:  [src=pith init=pith here=pith]
-          [done=(list note:neo) down=(list note:neo) up=(list move:neo) change=(set pith)]
+          [done=(list move:neo) down=(list move:neo) up=(list move:neo) change=(set pith)]
           [old=state-0 err=(unit tang)]
       ==
   ++  abet  
@@ -787,27 +784,18 @@
     ^-  card
     :+  %pass  local/(pout p.move)
     ^-  note:agent:gall
-    ?:  ?=(%arvo -.q.move)
-      q.move
-    =/  =note:neo  +.q.move
     =/  her=ship
-      ~|  p.note
-      ?>  ?=([[%p @p] *] p.note)
-      +.i.p.note
+      ~|  p.move
+      ?>  ?=([[%p @p] *] p.q.move)
+      +.i.p.q.move
     [%agent [her dap.bowl] %poke neo-move+!>(move)]
   ++  arvo  .
-  ++  emit  |=(=note:neo arvo(down [note down]))
+  ++  emit  |=(=move:neo arvo(down [move down]))
   ++  trace-card
     |=  =move:neo
     ^-  tank
     :-  %leaf
-    %+  welp
-      "{(en-tape:pith:neo p.move)} -> "
-    ?-    -.q.move
-        %arvo  "arvo {<-.+.q.move>}"
-        %neo
-      "{(en-tape:pith:neo p.q.move)}: {<-.q.q.move>}"
-    ==
+    "{(en-tape:pith:neo p.move)} -> {(en-tape:pith:neo p.q.move)}: {<-.q.q.move>}"
   ++  trace
     |=  =tang
     ?.  verb  same
@@ -824,7 +812,7 @@
       arvo
     ?~  down
       arvo
-    =/  nex=note:neo  i.down
+    =/  nex=move:neo  i.down
     =/  new-arvo  (apply:arvo(down t.down) nex) :: XX: weird compiler?
     $(arvo new-arvo, done (snoc done nex))
   ++  take-neo
@@ -846,18 +834,18 @@
     (soft-site |.(si-abet:(si-poke:site val)))
   ::
   ++  apply
-    |=  note=note:neo
+    |=  =move:neo
     ^+  arvo
     ?.  =(~ err)
       arvo
-    =/  =name:neo  (de-pith:name:neo p.note)
-    =.  src   here
-    =.  here  pith.name
-    %-  (trace leaf/"{<-.q.note>} {(spud (pout here))}" ~)
+    =.  src   p.move
+    =/  =name:neo  (de-pith:name:neo p.q.move)
+    =.  here       pith.name
+    %-  (trace leaf/"{<-.q.q.move>} {(spud (pout here))}" ~)
     =^  caz=(list card:neo)  arvo
-      ?+    -.q.note  !!
-          %make  (make +.q:note)
-          %poke  (poke +.q:note)
+      ?+    -.q.q.move  !!
+          %make  (make +.q.q:move)
+          %poke  (poke +.q.q:move)
           %link   !!
         :: :-  ~
         ::=.  run  (link [p from.q src.q]:note)
@@ -873,9 +861,7 @@
       %+  murn  caz
       |=  =card:neo
       ^-  (unit move:neo)
-      ?:  ?=(%arvo -.card)
-        `[pith card]
-      =/  inside  +.card
+      :: =/  inside  +.card
       =/  =name:neo  (de-pith:name:neo p.card)
       ?.  =(our.bowl ship.name)
         `[pith card]
@@ -888,19 +874,19 @@
       :_  down
       %+  murn  caz
       |=  =card:neo
-      ^-  (unit note:neo)
-      ?:  ?=(%arvo -.card)  ~
+      ^-  (unit move:neo)
       =/  =name:neo  (de-pith:name:neo p.card)
       ?.  =(our.bowl ship.name)
         ~
       ?.  (is-parent pith pith.name)
         ~
-      `[p q]:card
+      `[pith card]
     work
   ::
   ++  make
     |=  [src=code:neo init=(unit vase) =conf:neo]
     =/  =firm:neo  ~(firm husk src)
+    ~&  here
     :: =.  run        (~(start husk src) our.bowl pith)
     =/  =form:neo  form:firm
     =/  =span:neo  [src firm]
@@ -1311,8 +1297,8 @@
       ?-    -.res
           %done
         =/  =pith:neo  (en-pith:name:neo get:cwd:peel)
-        =/  =note:neo  [pith %poke q.q.value.res]
-        =.  run  (on-note note) 
+        =/  =card:neo  [pith %poke q.q.value.res]
+        =.  run  (on-card card) 
         =;  ef=shoe-effect:shoe
           =.  run  (shoe-ef ef)
           hike

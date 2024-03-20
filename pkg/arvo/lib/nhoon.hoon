@@ -39,7 +39,7 @@
     :~  sut/sut
     ==
   ++  sut
-    [& ,[cache=(unit vase) *] ,*]
+    [& %x ,[cache=(unit vase) *] ,*]
   --
 ++  form
   ^-  form:neo
@@ -64,7 +64,7 @@
     !>(`^state`[~ hoon])
   ++  born
     =-  ~[-]
-    [%neo were.bowl %poke %dep ~]
+    [were.bowl %poke %dep ~]
   ++  echo
     |=  [=pith val=*]
     *(list card:neo)
@@ -74,6 +74,6 @@
     ?.  ?=([%neo %conf %val @] sign)
       !!
     =-  ~[-]
-    [%neo were.bowl %poke %dep ~]
+    [were.bowl %poke %dep ~]
   --
 --

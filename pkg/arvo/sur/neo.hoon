@@ -16,6 +16,12 @@
 ::
 ::  
 |%
+++  behn
+  |%
+  +$  req  $>(?(%rest %wait) task:^behn)
+  +$  res  $>(%wake gift:^behn)
+  --
+
 ::  Total version
 +$  ever  [node=@ud tree=@ud]
 ::  $once: reference to version
@@ -362,11 +368,7 @@
 +$  dita  (each iota aura)
 +$  pish  (list dita)
 +$  conf  (map term pith)
-+$  card
-  $+  card-neo
-  $%  [%arvo note-arvo]
-      [%neo note]
-  ==
++$  card  (pair pith note)
 +$  request
   [src=pith dest=pith val=*]
 +$  response
@@ -397,7 +399,6 @@
 :: +$  cage  (pair stud vase)
 ::
 +$  note
-  %+  pair  pith
   $%  [%make =code init=(unit vase) =conf] :: todo: configuration values, init cannot be ^ if installing over
       [%poke val=*]
       [%tomb =case]
@@ -528,8 +529,12 @@
       deps=(map term (pair pith vase))
       kids=(map pith vase)
   ==
-+$  fief
-  [required=? =port]
++$  quay
+  $%  [%x =port]
+      [%z =dock]
+  ==
++$  fief  [required=? =quay]
++$  dock  [=port =kids]
 +$  port :: TODO: how to specify behaviour
   [state=* diff=*] :: state, diff actually $stud
 +$  deps  (map term fief)
