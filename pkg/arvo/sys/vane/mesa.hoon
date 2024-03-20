@@ -67,9 +67,52 @@
       `[[i.p i.t.p] [[our u.des u.ved] t.t.t.t.p]]
     ::
     ++  decrypt
-      |=  [p=@t key=@]
-      ^-  (unit path)
-      (rush `@t`(dy:crub:crypto key (slav %uv p)) stap)
+      |=  [cyf=@ =path]
+      ^-  @
+      =/  tyl=(pole knot)  path
+      ?+  tyl  !!
+        [%publ *]  :: unencrypted
+          cyf
+        [%chum lyf=@ her=@ hyf=@ pyf=@ ~]  :: encrypted with eddh key
+          =/  lyf  (slaw %ud lyf.tyl)
+          =/  her  (slaw %p her.tyl)
+          =/  hyf  (slaw %ud hyf.tyl)
+          =/  pyf  (slaw %uv pyf.tyl)
+          ?>  &(?=(^ lyf) ?=(^ her) ?=(^ hyf) ?=(^ pyf))
+          =/  key  (get-key-for u.her u.hyf)
+          =*  iv  u.pyf  :: XX
+          (decrypt:crypt key iv cyf)
+        [%shut kid=@ pyf=@ ~]  :: encrypted with group key
+          =/  kid  (slaw %ud kid.tyl)
+          =/  pyf  (slaw %uv pyf.tyl)
+          ?>  &(?=(^ kid) ?=(^ pyf))
+          =/  key  (need (get-group-key-for u.kid)) :: XX handle ~
+          =*  iv  u.pyf  :: XX
+          (decrypt:crypt key iv cyf)
+      ==
+    ::
+    ++  authenticate
+      |=  [rut=@uxI aut=auth:pact =name:pact]
+      ^-  ?
+      ?>  ?=([%0 *] aut)
+      =*  auth  p.aut
+      =/  =beak  [her.name %$ ud+1]  :: XX where do we get this?
+      =/  ful  (en-beam [beak pat.name])
+      ?-  -.auth
+        %&
+          =/  pub  (puck:ed:crypto 0)  :: XX get from jael?
+          (verify-sig:crypt pub p.auth ful rut)
+        %|
+          =/  key
+            :: XX is there an easier way to get this?
+            =/  tyl=(pole knot)  pat.name
+            ?>  ?=([%chum lyf=@ her=@ hyf=@ *] tyl)
+            =/  her  (slaw %p her.tyl)
+            =/  hyf  (slaw %ud hyf.tyl)
+            ?>  &(?=(^ her) ?=(^ hyf))
+            (get-key-for u.her u.hyf)
+          (verify-mac:crypt key p.auth ful rut)
+      ==
     ::
     ++  check-fine-key
       |=  [c=chain:ames =balk key-idx=@]
@@ -98,7 +141,6 @@
       `@`(shar:ed:crypto public-key private-key)
     ::
     ++  parse-packet  |=(a=@ -:($:de:pact a))
-    ++  is-auth-packet  |
     ++  inner-path-to-beam
       |=  [her=ship pat=(pole knot)]
       ^-  (unit [vew=view bem=beam])
@@ -110,17 +152,57 @@
         ~
       `[[van car]:pat [her des.pat u.cas] pur.pat]  :: XX
     ::
-    ++  parse-path         |=(@ *(unit path))
-    ++  blake3             |=(* *@)
     ++  get-key-for        |=  [=ship =life]  *@
-    ++  get-group-key-for  |=(@ud *(unit @))
+    ++  get-group-key-for  |=(@ud `(unit @uxI)`(some `@uxI`0))
+    +$  binding            [=path root=@uxI]
     ++  crypt
       |%
-      ++  sign     |=(* *@)
-      ++  verify   |=(* *?)
-      ++  hmac     |=(* *@)
-      ++  encrypt  |=(@ @)
-      ++  decrypt  |=(@ *(unit @))
+      ::
+      ++  const-cmp
+        |=  [a=@ b=@]
+        ^-  ?
+        =(0 (~(dif fe 7) a b))  :: XX jet for constant-time
+      ::
+      ++  sign
+        |=  [sek=@uxI =binding]
+        ^-  @uxJ
+        (sign:ed:crypto (jam binding) sek)
+      ++  verify-sig
+        |=  [pub=@uxI sig=@uxJ =binding]
+        ^-  ?
+        (veri:ed:crypto sig (jam binding) pub)
+      ::
+      ++  mac
+        |=  [key=@uxI =binding]
+        ^-  @uxH
+        =/  msg  (jam binding)
+        ((keyed:blake3:blake:crypto 32^key) 16 (met 3 msg)^msg)
+      ::
+      ++  verify-mac
+        |=  [key=@uxI tag=@uxI =binding]  ::  [key=@uxI tag=@uxH =binding]
+        ^-  ?
+        (const-cmp tag (mac key binding))
+      ::
+      ++  encrypt
+        |=  [key=@uxI iv=@ msg=@]
+        ^+  msg
+        (~(en ctrc:aes:crypto key 7 (met 3 msg) iv) msg) :: TODO: chacha8
+      ++  decrypt  encrypt
+      ::
+      ++  seal-path
+        |=  [key=@uxI =path]
+        ^-  @
+        =/  pat  (jam path)
+        =/  tag  ((keyed:blake3:blake:crypto 32^key) 16 (met 3 pat)^pat)
+        =/  cyf  (encrypt (mix key tag) tag pat)
+        (jam [tag cyf])
+      ++  open-path
+        |=  [key=@uxI sealed=@]
+        ^-  path
+        =+  ;;([tag=@ cyf=@] (cue sealed))
+        =/  pat  (decrypt (mix key tag) tag cyf)
+        ?>  (const-cmp tag ((keyed:blake3:blake:crypto 32^key) 16 (met 3 pat)^pat))
+        ;;(path (cue pat))
       --
     ::
     ++  jim  |=(n=* ~>(%memo./mesa/jam (jam n)))
@@ -151,7 +233,7 @@
     +$  note
       $~  [%b %wait *@da]
       $%  $:  %m
-              $>(?(%make-peek %make-poke) task:mesa)
+              $>(?(%make-peek %make-poke %mess-ser) task:mesa)
           ==
           $:  %b
               $>(?(%wait %rest) task:behn)
@@ -177,7 +259,7 @@
               $>(%plea vane-task)
       ==  ==
     ::
-    +$  lope  :: XX remove?
+    +$  lope
       $~  [%wake ~]
       $%  $>(%wake gift:behn)
           $>(?(%flub %unto) gift:gall)
@@ -362,7 +444,7 @@
     ::
     ++  ev-call
       =>  |%  +$  req-task
-                $%  $<(%mess $>(?(%plea %keen %cork %heer) task))
+                $%  $<(%mess $>(?(%plea %keen %cork %heer %mess-ser) task))
                     [%mess (unit lane:pact) =mess dud=(unit goof)]
                 ==
           --
@@ -391,6 +473,9 @@
           %peek  (ev-mess-peek +.mess.task)
           %poke  (ev-mess-poke [dud +.mess]:task)
         ==
+      ::  XX completed, serialized and encrypted response from the packet layer
+          %mess-ser
+        (ev-mess-page +.load.task(r (decrypt r.+.load.task path.task)))
       ==
     ::
     ++  ev-take
@@ -510,22 +595,9 @@
         todos(peeks (~(put ju peeks.todos) path hen))
       =.  per  ship^u.ship-state
       ?>  ?=(%known -.sat.per)
-      ::
-      ?^  ms=(~(get by pit.sat.per) path)
-        =.  peers.ax
-          =/  pit
-            (~(put by pit.sat.per) path u.ms(for (~(put in for.u.ms) hen)))
-          (~(put by peers.ax) ship sat.per(pit pit))
-        ev-core
-      =|  new=request-state
-      =.  for.new  (~(put in for.new) hen)
-      =/  =space  ?~(sec publ/life.sat.per !!) ::  XX %chum
-      =.  path    (ev-mess-spac space pax/path)
-      =.  peers.ax
-        %+  ~(put by peers.ax)  ship
-        sat.per(pit (~(put by pit.sat.per) path new))
-      =/  =pact:pact  (ev-make-pact ship^path ~ rift.sat.per space)
-      (ev-emit unix-duct.ax %give %send ~[`@ux`ship] p:(fax:plot (en:^pact pact)))
+      =/  =space  ?~(sec publ/life.sat.per chum/[life.sat.per ship u.sec])
+      =.  path    (ev-mess-spac space path)
+      (ev-make-mess ship^path ~ space)
     ::
     +|  %response-flow
     ::
@@ -589,13 +661,35 @@
     ++  ev-pact-page
       |=  [=name:pact =data:pact =next:pact]
       ^+  ev-core
+      ::  decrypt path
+      ::
+      =/  pat
+        =/  tyl=(pole knot)  pat.name
+        ?+  tyl  !!
+          [%publ lyf=@ pat=*]  :: unencrypted
+            tyl
+          [%chum lyf=@ her=@ hyf=@ pat=[cyf=@ ~]]  :: encrypted with eddh key
+            =/  lyf  (slaw %ud lyf.tyl)
+            =/  her  (slaw %p her.tyl)
+            =/  hyf  (slaw %ud hyf.tyl)
+            =/  cyf  (slaw %uv cyf.pat.tyl)
+            ?>  &(?=(^ lyf) ?=(^ her) ?=(^ hyf) ?=(^ cyf))
+            =/  key  (get-key-for u.her u.hyf)
+            tyl(pat (open-path:crypt key u.cyf))
+          [%shut kid=@ pat=[cyf=@ ~]]  :: encrypted with group key
+            =/  kid  (slaw %ud kid.tyl)
+            =/  cyf  (slaw %uv cyf.pat.tyl)
+            ?>  &(?=(^ kid) ?=(^ cyf))
+            =/  key  (need (get-group-key-for u.kid)) :: XX handle ~
+            tyl(pat (open-path:crypt key u.cyf))
+        ==
       ::  check for pending request (peek|poke)
       ::
       =*  ship  her.name
       ?~  per=(~(get by peers.ax) ship)
         ev-core
       ?>  ?=([~ %known *] per)  ::  XX alien agenda
-      ?~  res=(~(get by pit.u.per) pat.name)
+      ?~  res=(~(get by pit.u.per) pat)
         ev-core
       ::
       =/  [typ=?(%auth %data) fag=@ud]
@@ -611,7 +705,7 @@
             ==
           ev-core
         =/  proof=(list @ux)  (rip 8 dat.data)
-        ?>  (verify:crypt (recover-root:lss proof) aut.data)
+        ?>  (authenticate (recover-root:lss proof) aut.data name)
         ?~  state=(init:verifier:lss tot.data proof)
           ev-core
         =.  peers.ax
@@ -637,14 +731,11 @@
           ::  is this a standalone message?
           ::
           ?:  =(1 tot.data)
-            ?>  (verify:crypt (blake3 dat.data) p.aut.data)
-            =/  =spar:ames  [her.name pat.name]
+            ?>  (authenticate (root:lss dat.data) aut.data name)
+            =/  =spar:ames  [her.name pat]
             =/  =auth:mess  p.aut.data
-            =/  gift        [%give %response [%page [spar auth dat.data]]]
-            ::  XX TODO call mesa with a mess %task instead
-            %-  ~(rep in for.u.res)
-            |=  [hen=duct c=_ev-core]
-            (ev-emit:c hen gift)
+            %+  ev-emit  [/ames]~
+            [%pass /message %m %mess-ser pat.name %page spar auth dat.data]
           ::  no; then the proof should be inlined; verify it
           ::  (otherwise, we should have received an %auth packet already)
           ::
@@ -654,7 +745,7 @@
             ?>  ?=([%0 *] .)
             ?~(q ~ ?@(u.q [u.q ~] [p q ~]:u.q))
           =.  proof  [(leaf-hash:lss fag dat.data) proof]
-          ?>  (verify:crypt (recover-root:lss proof) p.aut.data)
+          ?>  (authenticate (recover-root:lss proof) aut.data name)
           ?~  state=(init:verifier:lss tot.data proof)
             ev-core
           ?~  state=(verify-msg:verifier:lss u.state dat.data ~)
@@ -667,7 +758,8 @@
             %+  ~(put by pit.u.per)  pat.name
             u.res(ps `[u.state ~[dat.data]])
           =/  =pact:pact  [%peek name(wan [%data leaf.u.state])]
-          (ev-emit unix-duct.ax %give %send ~ p:(fax:plot (en:^pact pact)))
+          %+  ev-emit  unix-duct.ax
+          [%give %send ~[`@ux`her.name] p:(fax:plot (en:^pact pact))]
         ::  yes, we do have packet state already
         ::
         =*  ps  u.ps.u.res
@@ -695,18 +787,18 @@
           ::  request next fragment
           ::
           =/  =pact:pact  [%peek name(wan [%data leaf.u.state])]
-          (ev-emit unix-duct.ax %give %send ~ p:(fax:plot (en:^pact pact)))
+          (ev-emit unix-duct.ax %give %send ~[`@ux`her.name] p:(fax:plot (en:^pact pact)))
         ::  yield complete message
         ::
-        =/  =spar:ames  [her.name pat.name]
-        =/  auth  [%| *@uxI] :: XX should be stored in ps?
-        =/  res  (rep 13 (flop fags.ps))
-        ::  XX TODO call mesa with a mess %task instead
-        (ev-emit hen %give %response [%page spar auth res])
+        =/  =spar:ames  [her.name pat]
+        =/  =auth:mess  [%| *@uxH] :: XX should be stored in ps?
+        =/  res         (rep 13 (flop fags.ps))
+        %+  ev-emit  [/ames]~
+        [%pass /message %m %mess-ser pat.name %page spar auth res]
       ==
     ::
     ++  ev-mess-page
-      |=  [=spar =auth:mess res=@]
+      |=  [=spar =auth:mess res=@]  :: res has been decrypted
       ^+  ev-core
       =*  ship  ship.spar
       ?~  rs=(~(get by peers.ax) ship)
@@ -719,7 +811,7 @@
       ::
       =.  pit.u.rs  (~(del by pit.u.rs) path.spar)
       =.  peers.ax  (~(put by peers.ax) ship.spar u.rs)
-      =/  gift      [%give %mess-response [spar ;;(gage:mess (cue res))]]
+      =/  gift      [%give %mess-response spar ;;(gage:mess (cue res))]
       %-  ~(rep in for.u.ms)
       |=  [hen=duct c=_ev-core]
       (ev-emit:c hen gift)
@@ -877,7 +969,7 @@
     +|  %messages
     ::
     ++  ev-make-mess
-      |=  [p=spar q=(unit path) r=space]
+      |=  [p=spar q=(unit path) =space]
       ^+  ev-core
       =/  her  (~(gut by peers.ax) ship.p *ship-state)
       ?>  ?=([%known *] her)  ::  XX alien agenda
@@ -901,9 +993,10 @@
       =|  new=request-state
       =.  for.new   (~(put in for.new) hen)
       =.  pay.new   q
-      =.  peers.ax  (~(put by peers.ax) ship.p her(pit (~(put by pit.her) path.p new)))
+      =.  peers.ax
+        (~(put by peers.ax) ship.p her(pit (~(put by pit.her) path.p new)))
       ::
-      =/  =pact:pact  (ev-make-pact p q rift.her r)
+      =/  =pact:pact  (ev-make-pact p q rift.her space)
       (ev-emit unix-duct.ax %give %send ~[`@ux`ship.p] p:(fax:plot (en:^pact pact)))
     ::
     ++  ev-make-peek
@@ -917,8 +1010,7 @@
     ++  ev-make-pact
       |=  [p=spar q=(unit path) =per=rift =space]
       ^-  pact:pact
-      =/  nam
-        [[ship.p per-rift] [13 ~] path.p]
+      =/  nam  [[ship.p per-rift] [13 ~] path.p]
       ?~  q
         [%peek nam]
       ::  XX if path will be too long, put in [tmp] and use that path
@@ -936,26 +1028,30 @@
       ::  namespace overlays are excluded from the flow path we encode
       ::  and only used here for retrieving the raw noun
       ::
-      =.  pat.man  (ev-mess-spac space pax/u.q)
+      =.  pat.man  (ev-mess-spac space u.q)
       =?  space  ?=(?(%publ %chum) -.space)
-        ?>  ?=(%publ -.space)  :: XX chum
-        space(life life.ax)    ::  our life for poke payloads
+        ?:  ?=(%publ -.space)  :: XX chum
+          space(life life.ax)    ::  our life for poke payloads
+        space(life life.ax)      ::  XX  tack.life
       (rof ~ /mesa %mx (name-to-beam man))  ::  XX rof
     ::
     ++  ev-mess-spac
-      |=  [=space path=$%([%cyf cyf=@] [%pax pax=path])]
-      ^-  ^path
-      ::  :^  %mess  (scot %ud rift.ax)  %$  ::  XX
-      ?-  -.space
-        %publ  %+  weld
-                 /publ/[(scot %ud life.space)]
-               ?>(?=(%pax -.path) pax.path)
-        %shut  %+  weld
-                 /shut/[(scot %ud kid.space)]
-               /[?>(?=(%cyf -.path) (scot %ud cyf.path))]
-        %chum  %+  weld  =,  space
-                 /chum/[(scot %ud life)]/[(scot %p her)]/(scot %ud kid)
-               /[?>(?=(%cyf -.path) (scot %ud cyf.path))]
+      |=  [=space =path]
+      ^+  path
+      ?-    -.space
+          %publ  `^path`[%publ (scot %ud life.space) path]  :: unencrypted
+      ::
+          %chum  :: encrypted with eddh key
+        =/  idx  ?@(hyf.space hyf.space idx.hyf.space)
+        =/  key  ?^(hyf.space key.hyf.space (get-key-for her.space hyf.space))
+        =/  cyf  (seal-path:crypt key path)
+        :-  %chum  =,  space
+        /[(scot %ud life)]/[(scot %p her)]/[(scot %ud idx)]/[(scot %uv cyf)]
+      ::
+          %shut  :: encrypted with group key
+        =/  key  (need (get-group-key-for kid.space)) :: XX handle ~
+        =/  cyf  (seal-path:crypt key path)
+       /shut/[(scot %ud kid.space)]/[(scot %uv cyf)]
       ==
     ::
     +|  %peer-helpers
@@ -998,13 +1094,16 @@
     +|  %flows
     ::
     ++  fo
-      =>  .(sat.per ?>(?=(%known -.sat.per) sat.per))
-      |_  [[hen=duct =side =channel] state=flow-state]
+      ::  flows exist only for known peers
       ::
-      +*  veb         veb.bug.channel
-          her         her.channel
-          bone        bone.side
-          dire        dire.side
+      =>  .(sat.per ?>(?=(%known -.sat.per) sat.per))
+      ::
+      |_  [[hen=duct =side =channel] state=flow-state]  :: XX remove channel
+      ::
+      +*  veb   veb.bug.channel
+          her   her.channel
+          bone  bone.side
+          dire  dire.side
       ::
       +|  %helpers
       ::
@@ -1046,11 +1145,7 @@
         |=  [seq=@ud path=?(%ack %poke %nax %cork) dyad]
         ^-  ^path
         %-  fo-view-beam
-        :~  ::  %mess  %'0'
-            :: %pact  (scot %ud packet-size)  %etch
-            :: %init  ::  %pure  %data  %'0'  :: XX  frag=0
-            :: %publ  %'0'  ::  XX
-            %flow  (scot %ud bone)
+        :~  %flow  (scot %ud bone)
             reqr=(scot %p sndr)  path  rcvr=(scot %p rcvr)
         ::  %ack(s), %naxplanation(s) and %cork(s) are on the other side,
         ::  and not bounded on our namespace
@@ -1757,8 +1852,9 @@
       %make-poke  (ev-make-poke:ev-core [space p q]:task)
     ::  XX
     ::
-      %heer  (ev-call:ev-core task)  ::  XX dud
-      %mess  (ev-call:ev-core %mess p.task q.task ~)  ::  XX acks go direclty here
+      %heer      (ev-call:ev-core task)  ::  XX dud
+      %mess      (ev-call:ev-core %mess p.task q.task ~)  ::  XX acks go direclty here
+      %mess-ser  (ev-call:ev-core task)
     ==
     ::
   [moves mesa-gate]
@@ -1953,12 +2049,12 @@
       ?~  res=(rof ~ /mesa/publ view bem.u.inn)
         ~
       ?>  ?=([~ *] res)
-      =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
+      =/  gag  ?~(u.res ~ [p q.q]:u.u.res)  :: XX how does receiver distinguish these?
       =/  ful  (en-beam bem)
       =/  ryf  rift.ax
-      =/  ser  (jam gag)
-      =/  rot  (blake3 ser)
-      ``[%message !>([%sign (sign:crypt ryf ful rot) ser])]
+      =|  sec=@uxI :: XX derive from rift??
+      =/  ser  (jam gag)  :: unencrypted
+      ``[%message !>([%sign (sign:crypt sec ful (root:lss ser)) ser])]
     ::
         [%chum lyf=@ her=@ hyf=@ cyf=@ ~]
       =/  lyf  (slaw %ud lyf.tyl)
@@ -1969,40 +2065,37 @@
         [~ ~]
       ?.  =(u.lyf life.ax)
         ~
-      ?~  key=(get-key-for u.her u.hyf)  :: eddh with our key
-        ~
-      ?~  tap=(decrypt:crypt u.cyf)  ~
-      ?~  pat=(parse-path u.tap)  ~
-      ?~  inn=(inner-path-to-beam our u.pat)  ~
+      =/  key  (get-key-for u.her u.hyf)  :: eddh with our key
+      =/  pat  (open-path:crypt key u.cyf)
+      ?~  inn=(inner-path-to-beam our pat)  ~
       ?~  res=(rof `[u.her ~ ~] /mesa/chum vew.u.inn bem.u.inn)
         ~
       =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
       =/  ful  (en-beam bem)
-      =/  ryf  rift.ax
-      =/  ser  (jam gag)
-      =/  rot  (blake3 ser)
-      ``[%message !>([%hmac (hmac:crypt ryf ful rot) ser])]
+      =*  iv   u.cyf  :: XX
+      =/  ser  (encrypt:crypt key iv (jam gag))
+      =/  ryf  rift.ax  ::  XX
+      ``[%message !>([%hmac (mac:crypt key ful (root:lss ser)) ser])]
     ::
         [%shut kid=@ cyf=@ ~]
       =/  kid  (slaw %ud kid.tyl)
       =/  cyf  (slaw %uv cyf.tyl)
       ?:  |(?=(~ kid) ?=(~ cyf))
         [~ ~]
-      ?~  key=(get-group-key-for u.kid) :: symmetric key lookup
+      ?~  key=(get-group-key-for u.kid)
         ~
-      ?~  tap=(decrypt:crypt u.cyf)  ~
-      ?~  pat=(parse-path u.tap)  ~
+      =/  pat  (open-path:crypt u.key u.cyf)
       ::  XX check path prefix
-      ?~  inn=(inner-path-to-beam our u.pat)
+      ?~  inn=(inner-path-to-beam our pat)
         ~
       ?~  res=(rof [~ ~] /mesa/shut vew.u.inn bem.u.inn)
         ~
       =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
       =/  ful  (en-beam bem)
-      =/  ryf  rift.ax
-      =/  ser  (jam gag)
-      =/  rot  (blake3 ser)
-      ``[%message !>([%sign (sign:crypt ryf ful rot) ser])]
+      =*  iv   u.cyf  :: XX
+      =/  ser  (encrypt:crypt u.key iv (jam gag))
+      =/  ryf  rift.ax  :: XX
+      ``[%message !>([%sign (sign:crypt u.key ful (root:lss ser)) ser])]
     ::  publisher-side, flow-level
     ::
         ::res-mess-pith:ev-res  ::  /[~sndr]/[load]/[~rcvr]/flow/[bone]/[dire]/[mess]
@@ -2058,4 +2151,5 @@
         [~ ~]
       ``noun+!>(u.peer)
   ==
+::
 --

@@ -3336,7 +3336,7 @@
     $~  vega+~
     $%  [%heer p=lane:pact q=@]            :: receive a packet
         [%mess p=(unit lane:pact) q=mess]  :: receive a message
-        [%mess-ser p=(unit lane:pact) q=mess]  :: XX
+        [%mess-ser =path load=$>(%page mess)]  :: XX give message from packet layer
         [%make-poke =space p=spar q=path]  :: initiate %poke request
         [%make-peek =space p=spar]         :: initiate %peek request
     ::
@@ -3382,7 +3382,7 @@
   ::
   +$  space
     $%  [%publ =life]
-        [%chum =life her=ship kid=@]
+        [%chum =life her=ship hyf=$@(@ [idx=@ key=@])]
         [%shut kid=@]
     ==
   +$  lane           (each @pC address)
@@ -3700,7 +3700,7 @@
   ::
   ++  mess
     =>  |%
-        +$  auth  (each @uxJ @uxI) :: &+sig, |+hmac  ::  (each @uxJ @uxH)
+        +$  auth  (each @uxJ @uxH) :: &+sig, |+hmac
         +$  gage  $@(~ page)
         +$  sage  (pair spar:ames gage)
         --
