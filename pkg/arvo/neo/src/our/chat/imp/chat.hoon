@@ -60,7 +60,7 @@
     =/  sta  sta
     ?.  ;;(? +:(~(gut by deps.bowl) %open [*pith &]))
       ~&(dropping-poke/poke !>(sta))
-    ?>  |(=(our src):bowl (~(has in who.sta) src.bowl))
+    ?>  |(=(our ship.src):bowl (~(has in who.sta) ship.src.bowl))
     =-  !>(-)
     ^-  ^state
     ?-  -.poke

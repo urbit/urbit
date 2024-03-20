@@ -1,4 +1,3 @@
-
 ::  $neo: New Shrub
 ::
 ::    Urbit is a namespace, from a path -> data
@@ -79,7 +78,7 @@
       (star pro)
     ++  hone
       :: ^-  $-(nail (like hoon))
-      =+  vaz=vast
+      =+  vaz=(vang & /test)
       (ifix [gay gay] tall:vaz)
     ++  apex
       :: ^-  rule
@@ -593,7 +592,7 @@
     `+.hal
    ++  de-hall
      |=  hal=hall
-    (need (de-hall-soft hal))
+     (need (de-hall-soft hal))
   --
 +$  bowl
   $:  src=name

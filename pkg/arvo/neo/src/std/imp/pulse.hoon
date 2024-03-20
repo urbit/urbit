@@ -76,12 +76,6 @@
   ::
   ++  take
     |=  =sign:neo
-    ^-  (list card:neo)
-    ~&  now/now.bowl
-    ?.  ?=([%arvo %behn %wake *] sign)
-      ~
-    :~  [were.bowl %poke %last now.bowl]
-        [(behn our.bowl) %poke %wait (add now.bowl freq.sta)]
-    ==
+    *(list card:neo)
   --
 --

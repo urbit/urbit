@@ -38,6 +38,7 @@
     =+  ;;(poke=^poke pok)
     =/  sta  sta
     =.  cache.sta  (get-src bowl)
+    ~&  ford-same/[were.bowl !=(~ cache.sta)]
     !>(sta)
   ++  init
     |=  vax=(unit vase)

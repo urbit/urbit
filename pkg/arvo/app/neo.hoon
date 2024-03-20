@@ -379,7 +379,7 @@
       |-  ^+  run
       ?~  requested
         run
-      =/  =move:neo   [[p/our.bowl #/$/behn] [p/our.bowl i.requested] note]
+      =/  =move:neo   [[p/our.bowl #/$/behn] i.requested note]
       =.  run  (poke-our wire neo-move+!>(move))
       $(requested t.requested)
     --
@@ -416,7 +416,6 @@
   ^+  run
   =;  new=_run
     =.  run  new
-    ~&  (turn ~(val by fleet) |=(b=brig:neo ~(key by ~(tar of:neo b))))
     run
   ?-  -.out
     %sync  (sync-room [stud name]:out)
@@ -431,7 +430,13 @@
     [%sync rest=*]  (sync (pave rest.pole))
     [%forward rest=*]  (forward (pave rest.pole))
     [%local rest=*]    (take-local-agent (pave rest.pole) sign)
+    [%nack ~]          take-nack
   ==
+  ++  take-nack
+    ?>  ?=(%poke-ack -.sign)
+    %.  run
+    ?~  p.sign  same
+    (slog leaf/"failed poke" u.p.sign)
   ++  test-wire
     ?.  ?=(%poke-ack -.sign)
       !!
@@ -478,10 +483,9 @@
   ++  built
     (has:of-top pith)
   ++  pith
-    `pith:neo`(pave path)
+    `pith:neo`(pave:neo path)
   ++  path
     ^-  ^path
-    =-  ~&(pro/[stud -] -)
     :-  %src
     ?@  stud
       /std/pro/[stud]
@@ -499,7 +503,6 @@
   =/  p=path
     (welp root pax)
   =.  p  (snoc p %hoon)
-  =-  ~&(exists/[p -] -)
   .^(? %cu p)
 
 ++  copy-clay
@@ -518,7 +521,7 @@
     ++  path
       ^-  ^path
       ?>  =(our.bowl ship.name)
-      [%src (pout pith.name)]
+      (pout pith.name)
     ++  built
       (has:of-top %src pith.name)
     ++  pith
@@ -529,10 +532,13 @@
   ++  do-make
     |=  [=pith:neo lib=term sta=(unit vase) =conf:neo]
     =/  =name:neo  [our.bowl pith]
+    ~|  conf/conf
+    ~|  make-name/name
     =.  run  
       (on-card (en-pith:name:neo name) %make (clay-lib lib) sta conf)
     ?:  =(lib %sym)
       run
+    ~|  ~(key by ~(tar of:neo apex))
     =/  rom  (got:of-top pith.name)
     =+  !<([cache=(unit vase) *] state.icon.rom)
     ?.  !=(~ cache)
@@ -553,7 +559,7 @@
     `(~(gas by *conf:neo) face/(ours face) sut/(ours sut) ~)
   ++  same
     |=  [wer=pith from=pith]
-    ~|  %ford-same
+    ~|  ford-same/[wer from]
     %^  do-make  wer  %ford-same
     `(~(gas by *conf:neo) src/(ours from) ~)
   ++  ours
@@ -563,6 +569,7 @@
     |=  [pat=pith pros=(list pro:ford)]
     ^+  run
     ?~  pros
+      ~|  pat
       %+  same  pat
       ?:  =(0 idx)
         #/src/reef
@@ -596,7 +603,6 @@
     =/  =file:ford
       ~|  parsing/pax
       (scan (trip src) rein:ford)
-    ~&  imports/[pro lib]:file
     =/  has-imports=?
       ?&  (levy pro.file |=(pro:ford ~(exists pro stud)))
           (levy lib.file |=(lib:ford ~(exists lib name)))
@@ -615,7 +621,7 @@
       (make-prelude pit file)
     =/  =conf:neo
       (~(gas by *conf:neo) [%sut (ours pre)] ~)
-    [~ (do-make (ours pit) %nhoon `!>([~ hoon.file]) conf)]
+    [~ (do-make pit %nhoon `!>([~ hoon.file]) conf)]
   --
 ++  get-val-at-path
   |=  =pith
@@ -848,6 +854,8 @@
     ?~  err  
       =.  cards  (welp cards (turn up deal))
       (do-hear (turn ~(tap in change) (lead our.bowl)))
+    ~&  >>>  %reverting
+    %-  (slog u.err)
     =.  state  old
     (give-nack src.init dst.init u.err)
   ++  abed
@@ -922,7 +930,7 @@
     ~|  apply/[p.move p.q.move]
     =.  src   (de-pith:name:neo p.move)
     =/  =name:neo  (de-pith:name:neo p.q.move)
-    =.  here       p.q.move
+    =.  here       +:p.q.move
     %-  (trace leaf/"{<-.q.q.move>} {(spud (pout here))}" ~)
     =^  caz=(list card:neo)  arvo
       ?+    -.q.q.move  !!
@@ -937,17 +945,13 @@
   ++  ingest
     |=  caz=(list card:neo)
     ^+  arvo
-    =/  =pith  here
+    =/  =pith  [p/our.bowl here]
     =.  up
       %+  welp  up
       %+  murn  caz
       |=  =card:neo
       ^-  (unit move:neo)
-      :: =/  inside  +.card
-      =/  =name:neo  (de-pith:name:neo p.card)
-      ?.  =(our.bowl ship.name)
-        `[pith card]
-      ?:  (is-parent pith pith.name)
+      ?:  (is-parent pith p.card)
         ~
       `[pith card]
 
@@ -957,10 +961,7 @@
       %+  murn  caz
       |=  =card:neo
       ^-  (unit move:neo)
-      =/  =name:neo  (de-pith:name:neo p.card)
-      ?.  =(our.bowl ship.name)
-        ~
-      ?.  (is-parent pith pith.name)
+      ?.  (is-parent pith p.card)
         ~
       `[pith card]
     work
@@ -968,7 +969,6 @@
   ++  make
     |=  [src=code:neo init=(unit vase) =conf:neo]
     =/  =firm:neo  ~(firm husk src)
-    ~&  here
     :: =.  run        (~(start husk src) our.bowl pith)
     =/  =form:neo  form:firm
     =/  =span:neo  [src firm]
@@ -1021,6 +1021,8 @@
       `[term u.dep u.val]
       ::  TODO type this w/ port??
     ++  si-bowl    
+      :: =/  hare  pith:(de-pith:name:neo here)
+      :: ~&  hare/hare
       [src our.bowl [p/our.bowl here] now.bowl si-resolve-deps si-resolve-kids]
     ++  si-form    ~(. form:si-firm [si-bowl icon.room])
     ++  si-firm    q.span.room
@@ -1051,7 +1053,6 @@
     ++  si-born   
       ^+  site
       =.  site  (si-emil born:si-form)
-      ~&  cards  
       si-tell
     ++  si-poke
       |=  val=*
@@ -1213,6 +1214,8 @@
         'cd'^leaf/"Change directory"
         '.'^leaf/"Print node at path"
         't'^leaf/"List child shrubs at current path, recursively"
+        'p'^leaf/"manual poke (takes [=stud val=*])"
+        'r'^leaf/"start form (takes form-name)"
     ==
   ++  tab
     |=  query=@t 

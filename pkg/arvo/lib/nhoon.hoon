@@ -68,12 +68,6 @@
   ++  echo
     |=  [=pith val=*]
     *(list card:neo)
-  ++  take
-    |=  =sign:neo
-    ^-  (list card:neo)
-    ?.  ?=([%neo %conf %val @] sign)
-      !!
-    =-  ~[-]
-    [were.bowl %poke %dep ~]
+  ++  take  (rerun:ford:neo bowl)
   --
 --
