@@ -69,7 +69,5 @@
     :~  [%neo were.bowl %poke %last now.bowl]
         [%arvo %b %wait (add now.bowl freq.sta)]
     ==
-    
-    
   --
 --

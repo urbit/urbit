@@ -16,6 +16,25 @@
 ::
 ::  
 |%
+::  Total version
++$  ever  [node=@ud tree=@ud]
+::  $once: reference to version
++$  once  $%([%node p=@ud] [%tree p=@ud])
+::  $road: fully qualified path
++$  road   [=name =once grab=pith]
++$  tour   [=name =ever]
+:: +$  pike   (each road name)
+:: * A `$bolt` is a `[=stud =once]`
+
++$  sound
+  $%  [%dep p=term q=pith]
+      [%sync ~]
+  ==
+::
++$  out
+  $%  [%sync =name =stud]
+      [%stop =name]
+  ==
 ++  pave
   |=  p=path
   ^-  pith
@@ -23,7 +42,7 @@
   |=  i=@ta
   (fall (rush i spot:stip) [%ta i])
 ::
-++  stip                                                ::  typed path parser
+++  stip                                                ::  typed path parser 
   =<  swot
   |%
   ++  swot  |=(n=nail `(like pith)`(;~(pfix fas (more fas spot)) n))
@@ -240,11 +259,12 @@
       ~
     `[+.i.pith t.pith]
   --
-+$  axal
-  $~  [~ ~]
-  [fil=(unit hall) kid=(map iota axal)]
+++  axal
+  |$  [item]  
+  [fil=(unit item) kid=(map iota $)]
 ++  of
-  |_  fat=axal
+  =|  fat=(axal)
+  |@  
   ++  del
     |=  pax=pith
     ^+  fat
@@ -252,6 +272,7 @@
     =/  kid  (~(get by kid.fat) i.pax)
     ?~  kid  fat
     fat(kid (~(put by kid.fat) i.pax $(fat u.kid, pax t.pax)))
+  ::
   ::  Descend to the axal at this path
   ::
   ++  dip
@@ -263,18 +284,19 @@
     $(fat u.kid, pax t.pax)
   ::
   ++  gas
-    |=  lit=(list (pair pith hall))
+    |*  lit=(list (pair pith _?>(?=(^ fil.fat) u.fil.fat)))
     ^+  fat
     ?~  lit  fat
     $(fat (put p.i.lit q.i.lit), lit t.lit)
-  ++  got-room
-    |=  pax=pith
-    ^-  room
-    (de-hall:room (got pax))
   ++  got
     |=  pax=pith
     ~|  missing-room/pax
     (need (get pax))
+  ++  gut
+    |*  [pax=pith dat=*]
+    =>  .(dat `_?>(?=(^ fil.fat) u.fil.fat)`dat, pax `pith`pax)
+    ^+  dat
+    (fall (get pax) dat)
   ::
   ++  get
     |=  pax=pith
@@ -308,7 +330,8 @@
     fat(kid (~(put by kid.fat) i.pax $(fat u.kid, pax t.pax)))
   ::
   ++  put
-    |=  [pax=pith dat=hall]
+    |*  [pax=pith dat=*]
+    =>  .(dat `_?>(?=(^ fil.fat) u.fil.fat)`dat, pax `pith`pax)
     |-  ^+  fat
     ?~  pax  fat(fil `dat)
     =/  kid  (~(gut by kid.fat) i.pax ^+(fat [~ ~]))
@@ -329,7 +352,7 @@
   ::  Serialize to map
   ::
   ++  tar
-    (~(gas by *(map pith hall)) tap)
+    (~(gas by *(map pith _?>(?=(^ fil.fat) u.fil.fat))) tap)
   --
 +$  pate  [[%p p=ship] q=pith]
 ++  petty-port
@@ -340,6 +363,7 @@
 +$  pish  (list dita)
 +$  conf  (map term pith)
 +$  card
+  $+  card-neo
   $%  [%arvo note-arvo]
       [%neo note]
   ==
@@ -353,6 +377,7 @@
   ==
 +$  update
   $:  =pith
+      =stud
       case=@ud
       =diff
   ==
@@ -461,9 +486,8 @@
   $+  cell
   [case=@ud state=vase =span =jail]
 +$  brig
-  $+  brig
-  $~  ~
-  (map pith cell)
+  $+  brig  (axal cell)
+  
 +$  fleet
   $+  fleet
   $~  ~
@@ -499,7 +523,7 @@
 +$  bowl
   $:  src=@p
       our=@p
-      were=pith
+      were=pith :: XX: rename to here
       now=@da
       deps=(map term (pair pith vase))
       kids=(map pith vase)

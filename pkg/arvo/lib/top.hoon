@@ -2,21 +2,21 @@
 => 
 |%
 ++  card  card:neo
+++  get-face
+  |=  =bowl:neo
+  ^-  @tas
+  !<(@tas q:(~(got by deps.bowl) %face))
 ++  get-sut
-  |=  [sid=?(%a %b) =bowl:neo]
+  |=  =bowl:neo
   ^-  (unit vase)
-  =+  !<([cac=(unit vase) *] q:(~(got by deps.bowl) sid))
+  =+  !<([cac=(unit vase) *] q:(~(got by deps.bowl) %sut))
   cac
 ++  build
   |=  =bowl:neo
   ^-  (unit vase)
-  ?~  a=(get-sut %a bowl)
-    ~&  missing-a/were.bowl
+  ?~  sut=(get-sut bowl)
     ~
-  ?~  b=(get-sut %b bowl)
-    ~&  missing-b/were.bowl
-    ~
-  `(slop u.a u.b)
+  `u.sut(p [%face (get-face bowl) p.u.sut])
 +$  state  [cache=(unit vase) ~]
 +$  poke
   $%  [%dep ~]
@@ -24,19 +24,21 @@
 --
 ^-  firm:neo
 |%
-+$  state  ^state
-+$  poke   ^poke
++$  poke    ^poke
++$  state   ^state
 ++  kids  ~
 ++  deps
   =<  apex
   |%
   ++  apex
     %-  ~(gas by *deps:neo)
-    :~  a/sut
-        b/sut
+    :~  sut/sut
+        face/face
     ==
   ++  sut
     [& ,[cache=(unit vase) *] ,*]
+  ++  face
+    [& ,@tas ,*]
   --
 ++  form
   ^-  form:neo

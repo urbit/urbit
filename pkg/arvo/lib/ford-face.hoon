@@ -15,6 +15,7 @@
   |=  =bowl:neo
   ^-  (unit vase)
   ?~  sut=(get-sut bowl)
+    ~&  missing-sut/were.bowl
     ~
   `u.sut(p [%face (get-face bowl) p.u.sut])
 +$  state  [cache=(unit vase) ~]
