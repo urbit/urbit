@@ -1046,6 +1046,7 @@
         =/  =symmetric-key
           =+  per=(ev-got-per her.space)
           ?>  ?=(%known -.sat.per)  :: XX %alien?
+          ::  (get-key-for [her hyf]:space)  ::  retrieve key from?
           symmetric-key.sat.per     :: XX check hyf.space with life.sat.per?
         =/  cyf=@  (seal-path:crypt `@`symmetric-key path)
         :-  %chum  =,  space
@@ -1913,7 +1914,15 @@
 ++  load
   |=  old=axle
   ^+  mesa-gate
-  mesa-gate(ax old)
+  =.  peers.old
+    %-  ~(run by peers.old)
+    |=  =ship-state
+    ?:  ?=(%alien -.ship-state)  ship-state
+    %_  ship-state
+      flows  ~
+      pit    ~
+    ==
+  mesa-gate  ::  (ax old)
 ::
 ++  scry
   ^-  roon
