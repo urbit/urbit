@@ -190,9 +190,12 @@
       (lte lal.a lal.b)
     |=  [=weft =tape]
     (welp " {<[lal num]:weft>}" tape)
+  =/  ese=tape
+    ?:(.^(? %cx /[ego]//[wen]/esse/[syd]) "yes" "no")
   ?.  verb
     :~  leaf/"/sys/kelvin:          {kul}"
         leaf/"%cz hash ends in:      {(truncate-hash hash)}"
+        leaf/"essential desk:        {ese}"
         leaf/"app status:            {sat}"
         leaf/"source ship:           {?~(sink <~> <her.u.sink>)}"
         leaf/"pending updates:       {<`(list [@tas @ud])`~(tap in wic.dek)>}"
@@ -205,6 +208,7 @@
       leaf/"base hash:        {?.(=(1 (lent meb)) <meb> <(head meb)>)}"
       leaf/"%cz hash:         {<hash>}"
       ::
+      leaf/"essential desk:   {ese}"
       leaf/"app status:       {sat}"
       leaf/"force on:         {<(sort (turn on head) aor)>}"
       leaf/"force off:        {<(sort (turn of head) aor)>}"
