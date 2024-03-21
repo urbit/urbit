@@ -3306,7 +3306,7 @@
         ^+  event-core
         =/  key=@  (shaz eny) :: TODO: check key width
         =/  num=@ud
-          ?~  latest=(pry:on:chain chain.ames-state)
+          ?~  latest=(ram:on:chain chain.ames-state)
             1
           .+(key.u.latest)
         =.  chain.ames-state
