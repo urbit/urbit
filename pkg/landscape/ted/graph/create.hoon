@@ -32,7 +32,7 @@
      [%add-group rid policy.associated %.y]
   ;<  =bowl:spider  bind:m  get-bowl:strandio
   ;<  ~  bind:m
-    (poke-our %group-store group-update-0+!>([%add-members rid (sy our.bowl ~)]))
+    (poke-our %group-store group-update-0+!>([%add-members rid (silt our.bowl ~)]))
   ;<  ~  bind:m
     (poke-our %group-push-hook push-hook-act)
   ;<  ~  bind:m

@@ -27,7 +27,7 @@
   [%add-group rid policy.action %.n]
 ;<  ~  bind:m  (poke-our %group-store %group-action !>(group-act))
 ;<  =bowl:spider  bind:m  get-bowl:strandio
-;<  ~  bind:m  (poke-our %group-store %group-action !>([%add-members rid (sy our.bowl ~)]))
+;<  ~  bind:m  (poke-our %group-store %group-action !>([%add-members rid (silt our.bowl ~)]))
 =/  push-hook-act=cage
   :-  %push-hook-action
   !>  ^-  action:push-hook

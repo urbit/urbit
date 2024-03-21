@@ -3,7 +3,7 @@
 ++  test-set
   ;:  weld
     %+  expect-eq
-      !>  (some (sy 1 2 ~))
+      !>  (some (silt 1 2 ~))
       !>  ((soft (set)) [2 [1 ~ ~] ~])
   ::
     %+  expect-eq
@@ -14,7 +14,7 @@
 ++  test-map
   ;:  weld
     %+  expect-eq
-      !>  (some (my [1 2] [3 4] ~))
+      !>  (some (malt [1 2] [3 4] ~))
       !>  ((soft (map)) [[1 2] ~ [[3 4] ~ ~]])
   ::
     %+  expect-eq

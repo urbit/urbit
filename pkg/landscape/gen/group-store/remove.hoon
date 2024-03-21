@@ -7,4 +7,4 @@
     ==
 :-  %group-action
 ^-  action
-[%remove-members [p.beak term] (sy ships)]
+[%remove-members [p.beak term] (silt ships)]

@@ -2226,14 +2226,14 @@
       ++  on-sift
         |=  ships=(list ship)
         ^+  event-core
-        =.  ships.bug.ames-state  (sy ships)
+        =.  ships.bug.ames-state  (silt ships)
         event-core
       ::  +on-snub: handle request to change ship blacklist
       ::
       ++  on-snub
         |=  [form=?(%allow %deny) ships=(list ship)]
         ^+  event-core
-        =.  snub.ames-state  [form (sy ships)]
+        =.  snub.ames-state  [form (silt ships)]
         event-core
       ::  +on-spew: handle request to set verbosity toggles on debug output
       ::
@@ -2532,14 +2532,14 @@
         =.  event-core
           =/  crypto-suite=@ud  1
           =/  keys
-            (my [sndr-life.open-packet crypto-suite public-key.open-packet]~)
+            (malt [sndr-life.open-packet crypto-suite public-key.open-packet]~)
           =/  =point
             :*  ^=     rift  0
                 ^=     life  sndr-life.open-packet
                 ^=     keys  keys
                 ^=  sponsor  `(^sein:title sndr.shot)
             ==
-          (on-publ / [%full (my [sndr.shot point]~)])
+          (on-publ / [%full (malt [sndr.shot point]~)])
         ::  manually add the lane to the peer state
         ::
         =/  =peer-state  (gut-peer-state sndr.shot)
@@ -3086,10 +3086,10 @@
           ?.  ?=([~ %known *] ship-state)
             =|  =point
             =.  life.point     life
-            =.  keys.point     (my [life crypto-suite public-key]~)
+            =.  keys.point     (malt [life crypto-suite public-key]~)
             =.  sponsor.point  `(^^sein:title rof /ames our now ship)
             ::
-            (on-publ-full (my [ship point]~))
+            (on-publ-full (malt [ship point]~))
           ::
           =/  =peer-state   +.u.ship-state
           =/  =private-key  sec:ex:crypto-core.ames-state

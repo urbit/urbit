@@ -457,7 +457,7 @@
       ?.  (~(has by binds) g)  g
       =/  available=(list glyph)
         %~  tap  in
-        (~(dif in `(set glyph)`(sy glyphs)) ~(key by binds))
+        (~(dif in `(set glyph)`(silt glyphs)) ~(key by binds))
       ?~  available  g
       (choose available)
   ++  choose

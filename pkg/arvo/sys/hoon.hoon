@@ -570,13 +570,6 @@
   ?:  (b i.a)  &
   $(a t.a)
 ::
-++  limo                                                ::  listify
-  |*  a=*
-  ^+  =<  $
-    |@  ++  $  ?~(a ~ ?:(*? [i=-.a t=$] $(a +.a)))
-    --
-  a
-::
 ++  murn                                                ::  maybe transform
   ~/  %murn
   |*  [a=(list) b=$-(* (unit))]
@@ -1815,69 +1808,48 @@
     ?~(r.a [~ n.a] $(a r.a))
   --
 ::
-::    2l: container from container
-+|  %container-from-container
-::
-++  malt                                                ::  map from list
-  |*  a=(list)
-  (molt `(list [p=_-<.a q=_->.a])`a)
-::
-++  molt                                                ::  map from pair list
-  |*  a=(list (pair))  ::  ^-  =,(i.-.a (map _p _q))
-  (~(gas by `(tree [p=_p.i.-.a q=_q.i.-.a])`~) a)
-::
-++  silt                                                ::  set from list
-  |*  a=(list)  ::  ^-  (set _i.-.a)
-  =+  b=*(tree _?>(?=(^ a) i.a))
-  (~(gas in b) a)
-::
 ::    2m: container from noun
 +|  %container-from-noun
 ::
-++  ly                                                  ::  list from raw noun
-  le:nl
+++  limo                                                ::  list from raw noun
+  los:nl
 ::
-++  my                                                  ::  map from raw noun
-  my:nl
+++  malt                                                ::  map from raw noun
+  mop:nl
 ::
-++  sy                                                  ::  set from raw noun
-  si:nl
+++  silt                                                ::  set from raw noun
+  sot:nl
 ::
 ++  nl
+  =>
+    |%
+    ::                                                  ::
+    ++  snag                                            ::  index
+      |*  [a=@ b=(list)]
+      ?~  b
+        ~_  leaf+"snag-fail"
+        !!
+      ?:  =(0 a)  i.b
+      $(b t.b, a (dec a))
+    --
   |%
   ::                                                    ::
-  ++  le                                                ::  construct list
+  ++  los                                               ::  construct list
     |*  a=(list)
     ^+  =<  $
       |@  ++  $  ?:(*? ~ [i=(snag 0 a) t=$])
       --
     a
   ::                                                    ::
-  ++  my                                                ::  construct map
-    |*  a=(list (pair))
-    =>  .(a ^+((le a) a))
-    (~(gas by `(map _p.i.-.a _q.i.-.a)`~) a)
-  ::                                                    ::
-  ++  si                                                ::  construct set
+  ++  mop                                               ::  construct map
     |*  a=(list)
-    =>  .(a ^+((le a) a))
+    =>  .(a ^+((los a) a))
+    (~(gas by `(map _,.-<.a _,.->.a)`~) a)
+  ::                                                    ::
+  ++  sot                                               ::  construct set
+    |*  a=(list)
+    =>  .(a ^+((los a) a))
     (~(gas in `(set _i.-.a)`~) a)
-  ::                                                    ::
-  ++  snag                                              ::  index
-    |*  [a=@ b=(list)]
-    ?~  b
-      ~_  leaf+"snag-fail"
-      !!
-    ?:  =(0 a)  i.b
-    $(b t.b, a (dec a))
-  ::                                                    ::
-  ++  weld                                              ::  concatenate
-    |*  [a=(list) b=(list)]
-    =>  .(a ^+((le a) a), b ^+((le b) b))
-    =+  42
-    |-
-    ?~  a  b
-    [i=i.a t=$(a t.a)]
   --
 ::    2n: functional hacks
 +|  %functional-hacks

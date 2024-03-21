@@ -1837,7 +1837,7 @@
       !<(weft (slap !>(~) hoon))
     ?:  ?=([* ~] wefts)
       i.wefts
-    [[%1 ~] (sy wefts)]
+    [[%1 ~] (silt wefts)]
   ::
   ++  waft-to-wefts
     |=  kal=waft

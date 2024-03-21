@@ -466,7 +466,7 @@
   =/  =cage
     :-  %group-update-0
     !>  ^-  update:store
-    [%add-members rid (sy our.bol ~)]
+    [%add-members rid (silt our.bol ~)]
   =/  =wire
     [%try-rejoin (scot %ud nack-count) (en-path:resource rid)]
   [%pass wire %agent [entity.rid %group-push-hook] %poke cage]
@@ -564,7 +564,7 @@
       %+  ~(jab by groups)  rid
       |=  group
       ?>  ?=(~ (~(dif in ships) members))
-      +<(tags (merge-tags tags ships (sy tag ~)))
+      +<(tags (merge-tags tags ships (silt tag ~)))
     :_  state
     (send-diff %add-tag rid tag ships)
   ::  +remove-tag: remove tag from ships

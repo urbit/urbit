@@ -34,7 +34,7 @@
       :-  ~[/use/sub/0w1.d6Isf/out/~bud/pub/1/sub-foo/~bud /init]
       [%deal [~nec ~bud /] %pub %watch /foo]
       :~  :-  ~[/init]  [%pass /sys/lag %a %heed ~bud]
-          :-  ~[/init]  [%pass /sys/era %j %public-keys (sy ~bud ~)]
+          :-  ~[/init]  [%pass /sys/era %j %public-keys (silt ~bud ~)]
           :-  ~[/use/sub/0w1.d6Isf/out/~bud/pub/1/sub-foo/~bud /init]
           [%pass /sys/way/~bud/pub %a %plea ~bud %g /ge/pub [%0 %s /foo]]
       ==
@@ -85,7 +85,7 @@
       :-  ~[/bone/~nec/0/1 //unix]
       [%plea ~nec %g /ge/pub [%0 %s /foo]]
       :~  :-  ~[/init]  [%pass /sys/lag %a %heed ~nec]
-          :-  ~[/init]  [%pass /sys/era %j %public-keys (sy ~nec ~)]
+          :-  ~[/init]  [%pass /sys/era %j %public-keys (silt ~nec ~)]
           :-  ~[/bone/~nec/0/1 //unix]
           [%pass /sys/req/~nec/pub %g %deal [~nec ~bud /] %pub %watch /foo]
       ==
@@ -506,7 +506,7 @@
   :-  t34  |.  :-  %&
   ;:  weld
     %+  expect-eq
-      !>  (sy 0 ~)
+      !>  (silt 0 ~)
       !>  =<  corked
           %:  ames-scry-peer:v
             ames.nec
@@ -515,7 +515,7 @@
           ==
   ::
     %+  expect-eq
-      !>  (sy 1 ~)
+      !>  (silt 1 ~)
       !>  =<  corked
           %:  ames-scry-peer:v
             ames.bud

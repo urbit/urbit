@@ -463,9 +463,9 @@
     ::  new: always break on these characters, consuming them
     ::
     ^-  [for=(set @t) aft=(set @t) new=(set @t)]
-    ?+  wut  [(sy " ") (sy ".:-/") (sy "\0a")]
-      ?(%p %q)  [(sy "-") (sy "-") ~]
-      %ux       [(sy ".") ~ ~]
+    ?+  wut  [(silt " ") (silt ".:-/") (silt "\0a")]
+      ?(%p %q)  [(silt "-") (silt "-") ~]
+      %ux       [(silt ".") ~ ~]
     ==
   ::
   ++  break

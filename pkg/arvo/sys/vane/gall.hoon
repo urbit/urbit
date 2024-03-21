@@ -1191,7 +1191,7 @@
   ++  mo-sift
     |=  dudes=(list dude)
     ^+  mo-core
-    =.  dudes.bug.state  (sy dudes)
+    =.  dudes.bug.state  (silt dudes)
     mo-core
   ::
   ++  mo-handle-nacked-leaves

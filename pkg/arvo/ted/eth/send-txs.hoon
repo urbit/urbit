@@ -33,7 +33,7 @@
 =/  pending=(each (set @ux) [term tang])
   =|  pending=(list @ux)
   |-
-  ?~  responses  &+(sy pending)
+  ?~  responses  &+(silt pending)
   =/  res=response:rpc  i.responses  ::NOTE  =* breaks typechecks
   ?+  -.res  |+[%unexpected-non-result >res< ~]
       %result
@@ -81,7 +81,7 @@
 =/  unconfirmed=(each (set @ux) [term tang])
   =|  done=(list @ux)
   |-
-  ?~  responses  &+(~(dif in p.pending) (sy done))
+  ?~  responses  &+(~(dif in p.pending) (silt done))
   =/  res=response:rpc  i.responses  ::NOTE  =* breaks typechecks
   ?.  ?=(?(%error %result) -.res)
     |+[%unexpected-non-result >res< ~]

@@ -2695,12 +2695,12 @@
       ++  calc-diffs
         |=  [hed=yaki bas=yaki]
         ^-  cane
-        :*  %-  molt
+        :*  %-  malt
             %+  skip  ~(tap by q.hed)
             |=  [pax=path lob=lobe]
             (~(has by q.bas) pax)
           ::
-            %-  molt
+            %-  malt
             %+  skip  ~(tap by q.hed)
             |=  [pax=path lob=lobe]
             =+  (~(get by q.bas) pax)
@@ -2867,7 +2867,7 @@
           :-  p.cage
           (~(pact dais q.cage) q.u.cay)
         =/  con=(map path *)                            ::  2-change conflict
-          %-  molt
+          %-  malt
           %+  skim  ~(tap by bof)
           |=([pax=path cay=(unit cage)] ?=(~ cay))
         =/  cab=(map path lobe)                         ::  conflict base
@@ -4455,8 +4455,8 @@
         :*  ~  ~  %dome  -:!>(*domo)
             ^-  domo
             :*  let=yon
-                hit=(molt (skim ~(tap by hit.dom) |=([p=@ud *] (lte p yon))))
-                lab=(molt (skim ~(tap by lab.dom) |=([* p=@ud] (lte p yon))))
+                hit=(malt (skim ~(tap by hit.dom) |=([p=@ud *] (lte p yon))))
+                lab=(malt (skim ~(tap by lab.dom) |=([* p=@ud] (lte p yon))))
         ==  ==
       ?:  (gth yon let.dom)
         ~
@@ -4509,7 +4509,7 @@
       ^-  arch
       :-  (~(get by q.yak) pax)
       ^-  (map knot ~)
-      %-  molt  ^-  (list (pair knot ~))
+      %-  malt  ^-  (list (pair knot ~))
       %+  turn
         ^-  (list (pair path lobe))
         %+  skim  ~(tap by (~(del by q.yak) pax))
@@ -4681,7 +4681,7 @@
       |=  =dude:gall
       =(`| (~(get by ren) dude))
     ::
-    =/  dus  (sy duz)
+    =/  dus  (silt duz)
     =.  duz
       %+  weld  duz
       %+  murn  ~(tap by ren)

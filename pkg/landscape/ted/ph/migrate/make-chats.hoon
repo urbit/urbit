@@ -51,8 +51,8 @@
       '~web <-> ~zod'  ''
       /~web/dm--zod
       /ship/~web/dm--zod
-      [%invite (sy ~zod ~)]
-      (sy ~zod ~)
+      [%invite (silt ~zod ~)]
+      (silt ~zod ~)
       %.y
       %.n
   ==

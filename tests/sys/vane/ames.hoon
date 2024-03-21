@@ -351,14 +351,14 @@
       !>  moves1
   ::
     %+  expect-eq
-      !>  %-  sy
+      !>  %-  silt
           :~  :^  ~[//unix]  %pass  /bone/~bus/0/1
               [%g %plea ~bus %g /talk [%first %post]]
           ::
               :^  ~[//unix]  %pass  /qos
               [%d %flog %text "; ~bus is your neighbor"]
           ==
-      !>  (sy ,.moves3)
+      !>  (silt ,.moves3)
   ==
 ::
 ++  test-message-flow  ^-  tang
@@ -387,12 +387,12 @@
       !>  moves2
   ::
     %+  expect-eq
-      !>  %-  sy
+      !>  %-  silt
           :~  [~[/ames] %pass /pump/~bud/0 %b %rest ~1111.1.1..00.00.02]
               [~[//unix] %pass /qos %d %flog %text "; ~bud is your neighbor"]
               [~[/g/talk] %give %done error=~]
           ==
-      !>  (sy ,.moves4)
+      !>  (silt ,.moves4)
   ::
     %+  expect-eq
       !>  [~[/g/talk] %give %boon [%post 'first1']]
@@ -650,7 +650,7 @@
   ::
   %+  expect-eq
     !>  ~
-    !>  (sy ,.moves3)
+    !>  (silt ,.moves3)
 ::
 ++  test-ames-flow-with-new-rift  ^-  tang
   ::  ~nec receives a gift from %jael with ~bud's new rift
@@ -686,12 +686,12 @@
       !>  moves3
   ::
     %+  expect-eq
-      !>  %-  sy
+      !>  %-  silt
           :~  [~[/ames] %pass /pump/~bud/0 %b %rest ~1111.1.1..00.00.03]
               [~[//unix] %pass /qos %d %flog %text "; ~bud is your neighbor"]
               [~[/g/talk] %give %done error=~]
           ==
-      !>  (sy ,.moves5)
+      !>  (silt ,.moves5)
   ::
     %+  expect-eq
       !>  [~[/g/talk] %give %boon [%post '¡hola!']]

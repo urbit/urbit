@@ -1767,7 +1767,7 @@
       |=  [width=@ud]
       ::  assert valid blockwidth.
       ?>  =-  (~(has in -) width)
-          (sy 25 50 100 200 400 800 1.600 ~)
+          (silt 25 50 100 200 400 800 1.600 ~)
       ::  assumes 5x5 lanes state, as is the keccak
       ::  standard.
       =+  size=5
@@ -3789,7 +3789,7 @@
       |*  [fel=rule wit=fist]
       %+  cu
         |=  a=(list (pair _(wonk *fel) _(need *wit)))
-        (my:nl a)
+        (malt a)
       %-  ci  :_  (om wit)
       |=  a=(map cord _(need *wit))
       ^-  (unit (list _[(wonk *fel) (need *wit)]))
@@ -4839,7 +4839,7 @@
     ++  enty                                            ::  entity
       %+  ifix  pam^mic
       ;~  pose
-        =+  def=^+(ent (my:nl [%gt '>'] [%lt '<'] [%amp '&'] [%quot '"'] ~))
+        =+  def=^+(ent (malt [%gt '>'] [%lt '<'] [%amp '&'] [%quot '"'] ~))
         %+  sear  ~(get by (~(uni by def) ent))
         (cook crip ;~(plug alf (stun 1^31 aln)))
         %+  cook  |=(a=@c ?:((gth a 0x10.ffff) '�' (tuft a)))

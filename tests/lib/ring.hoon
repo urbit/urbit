@@ -15,7 +15,7 @@
 =/  two-privkey=@udscalar  2
 =/  two-pubkey=@udpoint    (scalarmult-base:ed:crypto two-privkey)
 ::
-=/  public-key-set         (sy (turn (gulf 1 5) scalarmult-base:ed:crypto))
+=/  public-key-set         (silt (turn (gulf 1 5) scalarmult-base:ed:crypto))
 |%
 ++  test-basic-unlinked
   =/  unlinked

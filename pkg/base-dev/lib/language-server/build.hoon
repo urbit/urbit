@@ -38,7 +38,7 @@
   |=  uri=@t
   ^-  path
   =/  pier-root=(set cord)
-    %-  sy
+    %-  silt
     ['app' 'gen' 'lib' 'mar' 'ren' 'sur' 'sys' 'test' ~]
   =/  path=(list cord)
     (parse-uri uri)

@@ -1,11 +1,11 @@
 ^?  |%
 ++  remake-set
   |*  s=(tree)
-  (sy ~(tap in s))
+  (silt ~(tap in s))
 ::
 ++  remake-map
   |*  m=(tree)
-  (my ~(tap by m))
+  (malt ~(tap by m))
 ::
 ++  remake-jug
   |*  j=(tree [* (tree)])
