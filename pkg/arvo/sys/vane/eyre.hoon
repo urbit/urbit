@@ -1311,7 +1311,7 @@
           ::
           ?&  ?=(^ host)
           ?|  ?=(~ auth.endpoint.auth.state)
-              !=('localhost' (fall (rush u.host host-sans-port) '')))
+              !=('localhost' (fall (rush u.host host-sans-port) ''))
           ==  ==
         %-  (trace 2 |.("eauth: storing endpoint at {(trip u.host)}"))
         =/  new-auth=(unit @t)

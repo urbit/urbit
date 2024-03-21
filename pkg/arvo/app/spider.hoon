@@ -490,9 +490,9 @@
     ^-  [(list card) _state]
     %+  roll  cards.r
     |=  [=card cards=(list card) s=_state]
-    :_  =?  scrying.s  ?=([%pass ^ %arvo %a %keen @ *] card)
-          ::  wire ship path
-          scrying.s ::  (~(put ju scrying.s) tid [&2 +>+>+>]:card)
+    :_  =?  scrying.s  ?=([%pass ^ %arvo %a %keen ?(~ ^) @ *] card)
+          ::  &2=wire &7=ship 7|=path
+          (~(put ju scrying.s) tid [&2 &7 |7]:card)
         s
     :_  cards
     ^-  ^card
