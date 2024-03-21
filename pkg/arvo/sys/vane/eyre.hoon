@@ -1306,7 +1306,13 @@
         o(session-id session.fex)
       ::  store the hostname used for this login, later reuse it for eauth
       ::
-      =?  endpoint.auth.state  ?=(^ host)
+      =?  endpoint.auth.state
+          ::  avoid overwriting public domains with localhost
+          ::
+          ?&  ?=(^ host)
+          ?|  ?=(~ auth.endpoint.auth.state)
+              !=('localhost' (fall (rush u.host host-sans-port) ''))
+          ==  ==
         %-  (trace 2 |.("eauth: storing endpoint at {(trip u.host)}"))
         =/  new-auth=(unit @t)
           `(cat 3 ?:(secure 'https://' 'http://') u.host)
