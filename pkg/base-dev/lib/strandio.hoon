@@ -366,16 +366,10 @@
   (send-raw-card %pass wire %arvo %a %keen ~ spar)
 ::
 ++  meen
-  |=  [=wire =spar:mesa]
+  |=  [=wire =spar:mesa sec=(unit [@ @])]
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass wire %arvo %m %keen ~ spar)
-::
-:: ++  grow
-::   |=  [=wire =spur]
-::   =/  m  (strand ,~)
-::   ^-  form:m
-::   (send-raw-card %pass wire %arvo %g %grow spur data/(bex 10))
+  (send-raw-card %pass wire %arvo %m %keen sec spar)
 ::
 ++  keen-shut
   |=  [=wire =spar:ames]

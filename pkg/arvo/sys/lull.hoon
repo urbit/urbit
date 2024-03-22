@@ -3341,18 +3341,15 @@
         [%make-peek =space p=spar]         :: initiate %peek request
     ::
         $>(?(%plea %born %trim %vega %init) vane-task)
-        $>(%cork task:ames)
-        [%keen sec=(unit [idx=@ key=@]) spar]
+        $>(?(%cork %plug %keen) task:ames)
     ==
   ::
   +$  gift
     $%  [%send p=(list lane:pact) q=@]   :: send a request/response packet
         [%mess-response =sage:mess]      :: XX (names) produce deserialized response message
         [%response load=$>(%page mess)]  :: XX (names) produce serialized response message
-        [%boon payload=*]                :: assembled %boon
-        [%done error=(unit error)]       :: ack to client vane
-        [%nail =ship lanes=(list lane)]
-        [%saxo sponsors=(list ship)]
+        ::
+        $>(?(%boon %stub %done %nail %saxo) gift:ames)
     ==
   ::
   +$  axle
@@ -3362,24 +3359,15 @@
         priv=private-key
         =life
         =rift
+        =server=chain:ames                  ::  for serving %shut requests
+        $=  dead                            ::  dead-flow consolidation timers
+        $:  flow=[%flow (unit dead-timer)]
         ::  TODOs
-        crypto-core=acru:ames  ::  XX move out of state (used in the mesa-gall tests)
-        :: =chain:ames             ::  for %shut requests
-        :: =bug                    ::  debugging info
+        :: =bug                   ::  debugging info
         :: snub=[form=?(%allow %deny) ships=(set ship)]  :: white/black listing
         :: XX tmp=(map @ux page)   :: temporary hash-addressed bindings
-        $=  dead                   :: dead-flow consolidation timers
-        $:  flow=[%flow (unit dead-timer)]
         ::
-        :: =chain  :: XX
     ==  ==
-  ::
-  ++  chain
-    =<  mop
-    |%
-    ++  on   ((^on ,@ ,[key=@ =path]) lte)
-    +$  mop  chain:ames
-    --
   ::
   +$  dead-timer  [=duct =wire date=@da]
   ::  +address: client IP address
@@ -3393,7 +3381,7 @@
   +$  space
     $%  [%publ =life]
         [%chum =life her=ship hyf=@]  ::  XX  =our=life her =her=life
-        [%shut kid=@ key=(unit @)]
+        [%shut kid=@ key=@uxI]
     ==
   +$  lane           (each @pC address)
   +$  public-key     @uwpublickey
@@ -3438,6 +3426,7 @@
         ::              path=ack-path  /~nec/ack/~zod/flow/bone=0/mess=1/frag=1
         ::
         pit=(map path request-state)
+        =client=chain:ames            ::  stores keys for %shut requests
     ==
   ::
   +$  request-state

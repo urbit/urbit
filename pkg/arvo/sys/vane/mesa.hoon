@@ -50,12 +50,6 @@
     ::     [%live %unborn]  `"; {(scow %p ship)} has sunk"
     ::     [%dead %unborn]  `"; {(scow %p ship)} has sunk"
     ::   ==
-    ++  chain
-      =<  mop
-      |%
-      ++  on   ((^on ,@ ,[key=@ =path]) lte)
-      +$  mop  chain:ames
-      --
     ::
     ++  parse-inner-path
       |=  [our=ship p=path]
@@ -65,31 +59,6 @@
         ~
       ?~  ved=(de-case i.t.t.t.p)  ~
       `[[i.p i.t.p] [[our u.des u.ved] t.t.t.t.p]]
-    ::
-    ++  decrypt
-      |=  [cyf=@ =path]
-      ^-  @
-      =/  tyl=(pole knot)  path
-      ?+  tyl  !!
-        [%publ *]  :: unencrypted
-          cyf
-        [%chum lyf=@ her=@ hyf=@ pyf=@ ~]  :: encrypted with eddh key
-          =/  lyf  (slaw %ud lyf.tyl)
-          =/  her  (slaw %p her.tyl)
-          =/  hyf  (slaw %ud hyf.tyl)
-          =/  pyf  (slaw %uv pyf.tyl)
-          ?>  &(?=(^ lyf) ?=(^ her) ?=(^ hyf) ?=(^ pyf))
-          =/  key  (get-key-for u.her u.hyf)
-          =*  iv  u.pyf  :: XX
-          (decrypt:crypt key iv cyf)
-        [%shut kid=@ pyf=@ ~]  :: encrypted with group key
-          =/  kid  (slaw %ud kid.tyl)
-          =/  pyf  (slaw %uv pyf.tyl)
-          ?>  &(?=(^ kid) ?=(^ pyf))
-          =/  key  (need (get-group-key-for u.kid)) :: XX handle ~
-          =*  iv  u.pyf  :: XX
-          (decrypt:crypt key iv cyf)
-      ==
     ::
     ++  authenticate
       |=  [rut=@uxI aut=auth:pact =name:pact]
@@ -114,10 +83,11 @@
           (verify-mac:crypt key p.auth ful rut)
       ==
     ::
+    ++  key-chain  ((on ,@ ,[key=@ =path]) lte)
     ++  check-fine-key
       |=  [c=chain:ames =balk key-idx=@]
       ^-  ?
-      ?~  link=(get:on:chain c key-idx)
+      ?~  link=(get:key-chain c key-idx)
         |
       =/  gol  path.u.link
       =/  =path  [van.balk car.balk spr.balk]
@@ -166,7 +136,8 @@
       ++  sign
         |=  [sek=@uxI =binding]
         ^-  @uxJ
-        (sign:ed:crypto (jam binding) sek)
+        (sigh:as:(nol:nu:crub:crypto sek) (jam binding))
+      ::
       ++  verify-sig
         |=  [pub=@uxI sig=@uxJ =binding]
         ^-  ?
@@ -290,59 +261,6 @@
 =*  mesa-gate  .
 =>  ::  inner event-handling
     ::
-    ::  XX flopping is only done in the ev-req/ev-res cores
-    ::  XX have moves at to top-level core, with emit/emil helpers
-    ::
-    ::  poke/flow layer spec
-    ::
-    ::  - incoming-tasks:
-        :: client :  send plea    =>  recv plea  : server
-        ::          recv (n)ack   <=  send (n)ack
-        ::
-        ::           recv boon  ?(<=) send boon
-    ::
-    ::  "send plea/boon: both go into the sender-pump queue,
-    ::  and bind their payload into the namespaces to be read,
-    ::
-    ::  every `=>` delivers a full message to the packet layer if the
-    ::  sender window allows it
-    ::  otherwise a timer will try again,
-    ::
-    ::  both client and server send and receive %pokes
-    ::    client sends only %poke %plea  to %clay/%gall/%jael
-    ::    server sends only %poke %boons to %clay/%gall/%jael
-    ::
-    ::  XX we need to track data for both sending %pokes and receiving them
-    ::  (sequence numbers in the receiver enforce exactly-one message delivery),
-    ::
-    ::      ~zod (sends-plea to ~nec)                           to-vane
-    ::    ----------                                               |
-    ::   [%plea task]   ^  [%make-poke task] (1 packet)    +fo-core (%sink)
-    ::        |         |         |                                |
-    ::    +ev-req       | [%peek for-ack]  [%send %poke]        +pe-core
-    ::        |         |         |                                |
-    ::    +pe-core      |         |                            +ma:ev-res
-    ::        |         |         |                                |
-    ::  call:fo-core    |         |                           [%mess %poke]
-    ::     (%done)      |         |                                 |
-    ::        |_________|         |________________________________| unix
-    ::                                                      ------------
-    ::                                                          ~nec (gets %poke plea)
-    ::
-    ::          ~nec
-    ::        ----------               |--------------              ^
-    ::       [%done err=~]      give %response       |              |
-    ::            |                    |             |           to-vane
-    ::        +ev-res               +ma-page         |              |
-    ::            |                    |             | +take-ack:fo-core(%response)
-    ::        +pe-core             +ma:ev-res        |              |
-    ::            |                    |             |       +take:ma:ev-res
-    :: +take:fo-core(%done)            |             |              |
-    ::            |                [%mess %page]     |     /[wire-of-ack]/%int
-    ::         emit ack (unix)         | unix        |              |
-    ::                                ~zod           |_______[%response =page]
-    ::
-    ::
     =|  moves=(list move)
     ::
     |_  [hen=duct per=[=ship sat=ship-state]]
@@ -440,6 +358,34 @@
       ?>  =([[%m %x] *@p %$ ud+1] [vew -.bem]:u.inn)
       s.bem.u.inn
     ::
+    ++  ev-decrypt-load
+      |=  [=path cyf=@]
+      ^-  @
+      =/  tyl=(pole knot)  path
+      ?+  tyl  !!
+        [%publ *]  :: unencrypted
+          cyf
+        [%chum lyf=@ her=@ hyf=@ pyf=@ ~]  :: encrypted with eddh key
+          =/  lyf  (slaw %ud lyf.tyl)
+          =/  her  (slaw %p her.tyl)
+          =/  hyf  (slaw %ud hyf.tyl)
+          =/  pyf  (slaw %uv pyf.tyl)
+          ?>  &(?=(^ lyf) ?=(^ her) ?=(^ hyf) ?=(^ pyf))
+          =/  key  (get-key-for u.her u.hyf)
+          =*  iv  u.pyf  :: XX
+          (decrypt:crypt key iv cyf)
+        [%shut kid=@ pyf=@ ~]  :: encrypted with group key
+          =/  kid  (slaw %ud kid.tyl)
+          =/  pyf  (slaw %uv pyf.tyl)
+          ?>  &(?=(^ kid) ?=(^ pyf))
+          ?>  ?=(%known -.sat.per)
+          ~&  client-chain.sat.per^u.kid
+          ?~  key=(get:key-chain client-chain.sat.per u.kid)
+            !!  ::  XX handle
+          =*  iv  u.pyf  :: XX
+          (decrypt:crypt -.u.key iv cyf)
+      ==
+    ::
     +|  %entry-points
     ::
     ++  ev-call
@@ -475,7 +421,8 @@
         ==
       ::  XX completed, serialized and encrypted response from the packet layer
           %mess-ser
-        (ev-mess-page +.load.task(r (decrypt r.+.load.task path.task)))
+        =.  per  (ev-got-per ship.p.+.load.task)
+        (ev-mess-page +.load.task(r (ev-decrypt-load path.task r.+.load.task)))
       ==
     ::
     ++  ev-take
@@ -585,7 +532,7 @@
       (ev-emil moves)
     ::
     ++  ev-req-peek
-      |=  [sec=(unit [idx=@ key=@]) spar]
+      |=  [sec=(unit [kid=@ key=@]) spar]
       ^+  ev-core
       =/  ship-state  (~(get by peers.ax) ship)
       ::
@@ -595,12 +542,22 @@
         todos(peeks (~(put ju peeks.todos) path hen))
       =.  per  ship^u.ship-state
       ?>  ?=(%known -.sat.per)
-        ::  XX store key^path in chain.ax
-      =/  =space  ?~(sec publ/life.sat.per shut/[idx `key]:u.sec)
+      ::  +sy-plug should have already stored [kid key path] in chain.ax
+      ::  on the server, and the client would have retrieved the key via
+      ::  the %ames key exchange. here we store it in their peer state
+      ::
+      =/  =space  ?~(sec publ/life.sat.per shut/[kid key]:u.sec)
+      ::
+      =?  peers.ax  ?=(%shut -.space)
+        %+  ~(put by peers.ax)  ship
+        %_    sat.per
+            client-chain
+          (put:key-chain client-chain.sat.per kid.space key.space path)
+        ==
       =.  path    (ev-mess-spac space path)
       (ev-make-mess ship^path ~ space)
     ::
-    +|  %response-flow
+    +|  %packet-entry-points
     ::
     ++  ev-pact-poke
       |=  [=ack=name:pact =poke=name:pact =data:pact]
@@ -662,6 +619,12 @@
     ++  ev-pact-page
       |=  [=name:pact =data:pact =next:pact]
       ^+  ev-core
+      ::  check for pending request (peek|poke)
+      ::
+      =*  ship  her.name
+      ?~  per=(~(get by peers.ax) ship)
+        ev-core
+      ?>  ?=([~ %known *] per)  ::  XX alien agenda
       ::  decrypt path
       ::
       =/  pat
@@ -681,15 +644,11 @@
             =/  kid  (slaw %ud kid.tyl)
             =/  cyf  (slaw %uv cyf.pat.tyl)
             ?>  &(?=(^ kid) ?=(^ cyf))
-            =/  key  (need (get-group-key-for u.kid)) :: XX handle ~
-            tyl(pat (open-path:crypt key u.cyf))
+            ?~  key=(get:key-chain client-chain.u.per u.kid)
+              !!  :: XX handle
+            tyl(pat (open-path:crypt -.u.key u.cyf))
         ==
-      ::  check for pending request (peek|poke)
-      ::
-      =*  ship  her.name
-      ?~  per=(~(get by peers.ax) ship)
-        ev-core
-      ?>  ?=([~ %known *] per)  ::  XX alien agenda
+      ~&  >>  pat/pat
       ?~  res=(~(get by pit.u.per) pat)
         ev-core
       ::
@@ -798,8 +757,10 @@
         [%pass /message %m %mess-ser pat.name %page spar auth res]
       ==
     ::
+    +|  %messages-entry-point
+    ::
     ++  ev-mess-page
-      |=  [=spar =auth:mess res=@]  :: res has been decrypted
+      |=  [=spar =auth:mess res=@]  :: XX res has been decrypted
       ^+  ev-core
       =*  ship  ship.spar
       ?~  rs=(~(get by peers.ax) ship)
@@ -807,9 +768,13 @@
       ?>  ?=([~ %known *] rs)  ::  XX alien agenda
       ?~  ms=(~(get by pit.u.rs) path.spar)
         ev-core
+      =.  per  ship^u.rs
+      ?>  ?=(%known -.sat.per)
       ::
       ::  XX validate response
       ::
+      =/  res       (ev-decrypt-load path.spar res)  :: XX should have happened before
+                                                     :: XX breaks non-encrypted %keen tasks
       =.  pit.u.rs  (~(del by pit.u.rs) path.spar)
       =.  peers.ax  (~(put by peers.ax) ship.spar u.rs)
       =/  gift      [%give %mess-response spar ;;(gage:mess (cue res))]
@@ -967,7 +932,7 @@
         fo-take:(fo-abed:fo hen bone^dire=%bak ev-chan ~)
       (ev-emil moves)
     ::
-    +|  %messages
+    +|  %message-constructor
     ::
     ++  ev-make-mess
       |=  [p=spar q=(unit path) =space]
@@ -1046,18 +1011,16 @@
         =/  =symmetric-key
           =+  per=(ev-got-per her.space)
           ?>  ?=(%known -.sat.per)  :: XX %alien?
-          ::  (get-key-for [her hyf]:space)  ::  retrieve key from?
           symmetric-key.sat.per     :: XX check hyf.space with life.sat.per?
         =/  cyf=@  (seal-path:crypt `@`symmetric-key path)
         :-  %chum  =,  space
         /[(scot %ud life)]/[(scot %p her)]/[(scot %ud hyf)]/[(scot %uv cyf)]
       ::
           %shut  :: encrypted with group key
-        =/  key
-          ?^  key.space  u.key.space  :: key provided by the %keen task
-          (need (get-group-key-for kid.space)) :: XX handle ~
-        =/  cyf  (seal-path:crypt key path)
-       /shut/[(scot %ud kid.space)]/[(scot %uv cyf)]
+        :: key provided by the %keen task, or retrieved from client-chain.per.sat
+        ::
+        =/  cyf  (seal-path:crypt key.space path)
+        /shut/[(scot %ud kid.space)]/[(scot %uv cyf)]
       ==
     ::
     +|  %peer-helpers
@@ -1516,6 +1479,24 @@
               [~[/mesa] %pass /dead-flow %b %wait `@da`(add now ~m2)]
           ==
         sy-core
+      ::  +sy-plug: handle key reservation
+      ::
+      ++  sy-plug
+        |=  =path
+        ^+  sy-core
+        =/  key=@
+          sec:ex:(pit:nu:crub:crypto 512 (shaz eny))
+        =/  kid=@ud
+          ?~  latest=(ram:key-chain server-chain.ax)
+            1
+          .+(key.u.latest)
+        =.  server-chain.ax
+          (put:key-chain server-chain.ax kid [key path])
+        ~&  >  plug/[kid key path]
+        ::  kid^key kill be used by remote %keen task when sending $peek
+        ::
+        :: sy-core(ev-core (ev-emit hen %give %stub kid key))
+        sy-core
       ::
       ++  sy-publ
         |=  [=wire =public-keys-result:jael]
@@ -1825,7 +1806,6 @@
 |%
 ::
 ++  call
-  ::
   |=  [hen=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _mesa-gate]
   =/  =task  ((harden task) wrapped-task)
@@ -1849,6 +1829,7 @@
       %vega  ev-core
       %init  sy-abet:~(sy-init sy hen)
       %born  sy-abet:~(sy-born sy hen)
+      %plug  sy-abet:(~(sy-plug sy hen) path.task)
     ::
       %plea  (ev-call:ev-core %plea [ship plea]:task)
       %keen  (ev-call:ev-core %keen +.task)
@@ -1922,7 +1903,7 @@
       flows  ~
       pit    ~
     ==
-  mesa-gate  ::  (ax old)
+  mesa-gate(ax old)
 ::
 ++  scry
   ^-  roon
@@ -2096,9 +2077,10 @@
       =/  cyf  (slaw %uv cyf.tyl)
       ?:  |(?=(~ kid) ?=(~ cyf))
         [~ ~]
-      ?~  key=(get-group-key-for u.kid)
+      :: ?~  key=(get-group-key-for u.kid)
+      ?~  key=(get:key-chain server-chain.ax u.kid)
         ~
-      =/  pat  (open-path:crypt u.key u.cyf)
+      =/  pat  (open-path:crypt -.u.key u.cyf)
       ::  XX check path prefix
       ?~  inn=(inner-path-to-beam our pat)
         ~
@@ -2106,10 +2088,10 @@
         ~
       =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
       =/  ful  (en-beam bem)
-      =*  iv   u.cyf  :: XX
-      =/  ser  (encrypt:crypt u.key iv (jam gag))
+      =*  iv   u.cyf
+      =/  ser  (encrypt:crypt -.u.key iv (jam gag))
       =/  ryf  rift.ax  :: XX
-      ``[%message !>([%sign (sign:crypt u.key ful (root:lss ser)) ser])]
+      ``[%message !>([%sign (sign:crypt -.u.key ful (root:lss ser)) ser])]
     ::  publisher-side, flow-level
     ::
         ::res-mess-pith:ev-res  ::  /[~sndr]/[load]/[~rcvr]/flow/[bone]/[dire]/[mess]

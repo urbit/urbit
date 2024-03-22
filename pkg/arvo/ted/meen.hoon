@@ -5,12 +5,11 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([~ =spar:mesa] arg)
+=+  !<([~ =spar:mesa sec=(unit [idx=@ key=@])] arg)
 ;<  ~  bind:m
-  (meen:strandio /meen spar)
+  (meen:strandio /meen spar sec)
 ;<  [=spar:mesa =gage:mess:mesa]  bind:m
   (take-message:strandio /meen)
-~&  %message
 ?~  gage
   (pure:m !>(~))
 ::
