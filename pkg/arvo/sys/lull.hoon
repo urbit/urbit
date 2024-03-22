@@ -3380,7 +3380,7 @@
   ::
   +$  space
     $%  [%publ =life]
-        [%chum =life her=ship hyf=@]  ::  XX  =our=life her =her=life
+        [%chum =our=life her=ship =her=life key=@]
         [%shut kid=@ key=@uxI]
     ==
   +$  lane           (each @pC address)

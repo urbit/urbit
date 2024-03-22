@@ -309,10 +309,10 @@
     +$  res-mess-pith
       $:  %flow
           [%ud bone=@ud]
-          [%p sndr=@p]
+          [%p sndr=@p]   ::  XX drop this
           =load
           [%p rcvr=@p]
-          =dire
+          =dire          ::  XX revisit; could be inferred by entry-point + flow
           [%ud mess=@ud]
           ~
       ==
@@ -336,36 +336,75 @@
       s.bem.u.inn
     ::
     ++  ev-decrypt-load
-      |=  [=path cyf=@]
+      |=  [[=ship =path] cyf=@]
       ^-  @
       =/  tyl=(pole knot)  path
-      ?+  tyl  !!
-        [%publ *]  :: unencrypted
-          cyf
-        [%chum lyf=@ her=@ hyf=@ pyf=@ ~]  :: encrypted with eddh key
-          =/  lyf  (slaw %ud lyf.tyl)
-          =/  her  (slaw %p her.tyl)
-          =/  hyf  (slaw %ud hyf.tyl)
-          =/  pyf  (slaw %uv pyf.tyl)
-          ?>  &(?=(^ lyf) ?=(^ her) ?=(^ hyf) ?=(^ pyf))
-          =/  key  ::  (get-key-for u.her u.hyf)
-            =+  per=(ev-got-per u.her)      :: XX ev-get-per
-            ?>  ?=(%known -.sat.per)        :: XX wat if %alien?
-            ?.  =(u.hyf life.sat.per)   !!  :: XX
-            symmetric-key.sat.per
-          =*  iv  u.pyf  :: XX
-          (decrypt:crypt `@`key iv cyf)
-        [%shut kid=@ pyf=@ ~]  :: encrypted with group key
-          =/  kid  (slaw %ud kid.tyl)
-          =/  pyf  (slaw %uv pyf.tyl)
-          ?>  &(?=(^ kid) ?=(^ pyf))
-          ?>  ?=(%known -.sat.per)
-          ~&  client-chain.sat.per^u.kid
-          ?~  key=(get:key-chain client-chain.sat.per u.kid)
-            !!  ::  XX handle
-          =*  iv  u.pyf  :: XX
-          (decrypt:crypt -.u.key iv cyf)
+      ?+    tyl  !!
+          [%publ *]  :: unencrypted
+        cyf
+      ::
+          [%chum lyf=@ her=@ hyf=@ pyf=@ ~]  :: encrypted with eddh key
+        =/  lyf  (slaw %ud lyf.tyl)
+        =/  her  (slaw %p her.tyl)
+        =/  hyf  (slaw %ud hyf.tyl)
+        =/  pyf  (slaw %uv pyf.tyl)
+        ?>  &(?=(^ lyf) ?=(^ her) ?=(^ hyf) ?=(^ pyf))
+        =/  key  ::  (get-key-for u.her u.hyf)
+          =/  her=@p  ?:(=(u.her our) ship u.her)  :: %poke payload are for us
+          =+  per=(ev-got-per her)        :: XX ev-get-per
+          ?>  ?=(%known -.sat.per)        :: XX wat if %alien?
+          ?.  =(u.hyf life.sat.per)   !!  :: XX
+          symmetric-key.sat.per
+        =*  iv  u.pyf  :: XX
+        (decrypt:crypt `@`key iv cyf)
+      ::
+          [%shut kid=@ pyf=@ ~]  :: encrypted with group key
+        =/  kid  (slaw %ud kid.tyl)
+        =/  pyf  (slaw %uv pyf.tyl)
+        ?>  &(?=(^ kid) ?=(^ pyf))
+        ?>  ?=(%known -.sat.per)
+        ?~  key=(get:key-chain client-chain.sat.per u.kid)
+          !!  ::  XX handle
+        =*  iv  u.pyf  :: XX
+        (decrypt:crypt -.u.key iv cyf)
       ==
+    ::
+    ++  ev-decrypt-path
+      |=  [=path =ship]
+      ^+  [path path]
+      =/  tyl=(pole knot)  path
+      ?+    tyl  !!
+          [%publ lyf=@ pat=*]  :: unencrypted
+        [pat.tyl tyl]
+      ::
+          [%chum lyf=@ her=@ hyf=@ pat=[cyf=@ ~]]  :: encrypted with eddh key
+        =/  lyf  (slaw %ud lyf.tyl)
+        =/  her  (slaw %p her.tyl)
+        =/  hyf  (slaw %ud hyf.tyl)
+        =/  cyf  (slaw %uv cyf.pat.tyl)
+        ?>  &(?=(^ lyf) ?=(^ her) ?=(^ hyf) ?=(^ cyf))
+        =/  key  ::  (get-key-for u.her u.hyf)
+          ::  XX check =(ship u.her)
+          =/  her=@p  ?:(=(u.her our) ship u.her)  :: %poke payload are for us
+          =+  per=(ev-got-per her)        :: XX ev-get-per
+          ?>  ?=(%known -.sat.per)        :: XX wat if %alien?
+          ?.  =(u.hyf life.sat.per)   !!  :: XX
+          symmetric-key.sat.per
+        =+  pat=(open-path:crypt `@`key u.cyf)
+        [pat tyl(pat pat)]
+      ::
+          [%shut kid=@ pat=[cyf=@ ~]]  :: encrypted with group key
+        =/  kid  (slaw %ud kid.tyl)
+        =/  cyf  (slaw %uv cyf.pat.tyl)
+        ?>  &(?=(^ kid) ?=(^ cyf))
+        =+  per=(ev-got-per ship)      :: XX ev-get-per
+        ?>  ?=(%known -.sat.per)       :: XX wat if %alien?
+        ?~  key=(get:key-chain client-chain.sat.per u.kid)
+          !!  :: XX handle
+        =+  pat=(open-path:crypt -.u.key u.cyf)
+        [pat tyl(pat pat)]
+      ==
+    ::
     ++  ev-authenticate
       |=  [rut=@uxI aut=auth:pact =name:pact]
       ^-  ?
@@ -427,10 +466,12 @@
           %peek  (ev-mess-peek +.mess.task)
           %poke  (ev-mess-poke [dud +.mess]:task)
         ==
-      ::  XX completed, serialized and encrypted response from the packet layer
+      ::  XX completed, serialized, and encrypted response from the packet layer
           %mess-ser
-        =.  per  (ev-got-per ship.p.+.load.task)
-        (ev-mess-page +.load.task(r (ev-decrypt-load path.task r.+.load.task)))
+        =*  her  ship.p.+.load.task
+        =.  per  (ev-got-per her)
+        %-  ev-mess-page
+        +.load.task(r (ev-decrypt-load her^path.task r.+.load.task))
       ==
     ::
     ++  ev-take
@@ -483,6 +524,7 @@
           core  ::  %alien or missing
         =.  per  [ship u.u.per-sat]
         ?>  ?=(%known -.sat.per)
+        =/  =space  chum/[life.sat.per our life.ax symmetric-key.sat.per]
         %-  ~(rep by pit.sat.per)
         |=  [[=path req=request-state] core=_core]
         ?~  pay.req
@@ -490,8 +532,8 @@
           ::
           ::  XX TODO %naxplanation and %cork reads?
           core
-        =/  spac=space   publ/life.sat.per  ::  XX always %chum for flows?
-        =/  =pact:pact   (ev-make-pact ship.per^path pay.req rift.sat.per spac)  :: XX memoize?
+        =/  =pact:pact
+          (ev-make-pact ship.per^path pay.req rift.sat.per `space)  :: XX memoize?
         %+  ev-emit:core   unix-duct.ax
         [%give %send ~[`@ux`ship.per] p:(fax:plot (en:^pact pact))]
       --
@@ -562,8 +604,7 @@
             client-chain
           (put:key-chain client-chain.sat.per kid.space key.space path)
         ==
-      =.  path    (ev-mess-spac space path)
-      (ev-make-mess ship^path ~ space)
+      (ev-make-peek space ship^(ev-mess-spac space path))
     ::
     +|  %packet-entry-points
     ::
@@ -582,10 +623,19 @@
       :: ?.  =(1 tot.payload)
       ::  !!  ::  XX  need to retrieve other fragments
       ::
-      ::  path validation
-      =/  ack=(pole iota)  (ev-validate-flow-path pat.ack-name)
-      =/  pok=(pole iota)  (ev-validate-flow-path pat.poke-name)
-      ~|  path-validation-failed/pat.ack-name^pat.poke-name
+      ::  path validation/decryption
+      ::
+      ~|  path-decryption-failed/pat.ack-name^pat.poke-name
+      =/  ack=(pole iota)
+        =^  path  pat.ack-name
+         (ev-decrypt-path [pat.ack-name her.poke-name])
+        (ev-validate-flow-path path)
+      =/  pok=(pole iota)
+        =^  path  pat.poke-name
+         (ev-decrypt-path [pat her]:poke-name)
+        (ev-validate-flow-path path)
+      ::
+      ~|  path-validation-failed/ack^pok
       ?>  &(?=(res-mess-pith ack) ?=(res-mess-pith pok))
       ::
       ?.  =(sndr.ack our)  ::  do we need to respond to this ack?
@@ -608,11 +658,12 @@
         ::  %make-peek for path.poke-name
          ev-core
       ::
+      =/  res  (ev-decrypt-load [[her pat]:poke-name] dat.data)
       %:  ev-mess-poke
         ~   :: XX refactor function signature
-        rcvr.ack^pat.ack-name
-        sndr.pok^pat.poke-name
-        ;;(gage:mess (cue dat.data))
+        rcvr.ack^(pout ack)
+        sndr.pok^(pout pok)
+        ;;(gage:mess (cue res))
       ==
     ::
     ++  ev-pact-peek
@@ -635,32 +686,8 @@
       ?>  ?=([~ %known *] per)  ::  XX alien agenda
       ::  decrypt path
       ::
-      =/  pat
-        =/  tyl=(pole knot)  pat.name
-        ?+  tyl  !!
-          [%publ lyf=@ pat=*]  :: unencrypted
-            tyl
-          [%chum lyf=@ her=@ hyf=@ pat=[cyf=@ ~]]  :: encrypted with eddh key
-            =/  lyf  (slaw %ud lyf.tyl)
-            =/  her  (slaw %p her.tyl)
-            =/  hyf  (slaw %ud hyf.tyl)
-            =/  cyf  (slaw %uv cyf.pat.tyl)
-            ?>  &(?=(^ lyf) ?=(^ her) ?=(^ hyf) ?=(^ cyf))
-            =/  key  ::  (get-key-for u.her u.hyf)
-              =+  per=(ev-got-per u.her)      :: XX ev-get-per
-              ?>  ?=(%known -.sat.per)        :: XX wat if %alien?
-              ?.  =(u.hyf life.sat.per)   !!  :: XX
-              symmetric-key.sat.per
-            tyl(pat (open-path:crypt `@`key u.cyf))
-          [%shut kid=@ pat=[cyf=@ ~]]  :: encrypted with group key
-            =/  kid  (slaw %ud kid.tyl)
-            =/  cyf  (slaw %uv cyf.pat.tyl)
-            ?>  &(?=(^ kid) ?=(^ cyf))
-            ?~  key=(get:key-chain client-chain.u.per u.kid)
-              !!  :: XX handle
-            tyl(pat (open-path:crypt -.u.key u.cyf))
-        ==
-      ~&  >>  pat/pat
+      =^   *   pat.name  (ev-decrypt-path pat.name ship)
+      =*  pat  pat.name
       ?~  res=(~(get by pit.u.per) pat)
         ev-core
       ::
@@ -785,8 +812,8 @@
       ::
       ::  XX validate response
       ::
-      =/  res       (ev-decrypt-load path.spar res)  :: XX should have happened before
-                                                     :: XX breaks non-encrypted %keen tasks
+      =/  res       (ev-decrypt-load spar res)  :: XX should have happened before
+                                                :: XX breaks non-encrypted %keen tasks
       =.  pit.u.rs  (~(del by pit.u.rs) path.spar)
       =.  peers.ax  (~(put by peers.ax) ship.spar u.rs)
       =/  gift      [%give %mess-response spar ;;(gage:mess (cue res))]
@@ -802,17 +829,12 @@
           ::  XX what if the crash is due to path validation
           ::  and we can't infer the sequence number?
           ~
-      =/  ack=(pole iota)  (ev-validate-flow-path path.ack-spar)
-      =/  pok=(pole iota)  (ev-validate-flow-path path.pok-spar)
-      ~|  path-validation-failed/path.ack-spar^path.pok-spar
+      =/  ack=(pole iota)  (ev-pave path.ack-spar)
+      =/  pok=(pole iota)  (ev-pave path.pok-spar)
       ?>  &(?=(res-mess-pith ack) ?=(res-mess-pith pok))
       ::
-      ?.  =(sndr.ack our)  ::  do we need to respond to this ack?
-        ~&  >>  %not-our-ack^sndr.ack^our
-        ev-core
-      ?.  =(rcvr.pok our)  ::  are we the receiver of the poke?
-        ~&  >  %poke-for-other^[rcvr.pok our]
-        ev-core
+      ::  the packet layer has already validated that this is a valid %poke
+      ::
       =/  ship-state  (~(get by peers.ax) sndr.pok)
       ::
       ?.  ?=([~ %known *] ship-state)
@@ -947,7 +969,7 @@
     +|  %message-constructor
     ::
     ++  ev-make-mess
-      |=  [p=spar q=(unit path) =space]
+      |=  [p=spar q=(unit path) spac=(unit space)]
       ^+  ev-core
       =/  her  (~(gut by peers.ax) ship.p *ship-state)
       ?>  ?=([%known *] her)  ::  XX alien agenda
@@ -974,19 +996,20 @@
       =.  peers.ax
         (~(put by peers.ax) ship.p her(pit (~(put by pit.her) path.p new)))
       ::
-      =/  =pact:pact  (ev-make-pact p q rift.her space)
+      =/  =pact:pact  (ev-make-pact p q rift.her spac)
       (ev-emit unix-duct.ax %give %send ~[`@ux`ship.p] p:(fax:plot (en:^pact pact)))
     ::
     ++  ev-make-peek
       |=  [=space p=spar]
-      (ev-make-mess p ~ space)
+      (ev-make-mess p ~ `space)
     ::
     ++  ev-make-poke
-      |=  [=space p=spar q=path]
-      (ev-make-mess p `q space)
+      |=  [=space =ack=spar =poke=path]
+      =.  path.ack-spar   (ev-mess-spac space path.ack-spar)
+      (ev-make-mess ack-spar `poke-path `space)
     ::
     ++  ev-make-pact
-      |=  [p=spar q=(unit path) =per=rift =space]
+      |=  [p=spar q=(unit path) =per=rift spac=(unit space)]
       ^-  pact:pact
       =/  nam  [[ship.p per-rift] [13 ~] path.p]
       ?~  q
@@ -997,21 +1020,23 @@
       ::  =/  has  (shax u.u.res)
       ::  =.  tmpeers.ax  (~(put by tmpeers.ax) has [%some-envelope original-path u.u.res])
       ::  //ax/[$ship]//1/temp/[hash]
-      =/  man=name:pact  [[our rift.ax] [13 ~] u.q]
+      ::  switch life(s) for payloads
+      ::  XX  test that these lifes are correctly checked in the +scry handler
+      ::
+      ?>  ?=(^ spac)
+      =?  u.spac  ?=(?(%publ %chum) -.u.spac)
+        ?:  ?=(%publ -.u.spac)
+          u.spac(life life.ax)
+        u.spac(our-life her-life.u.spac, her-life our-life.u.spac, her ship.p)
+      ::
+      =/  man=name:pact  [[our rift.ax] [13 ~] (ev-mess-spac u.spac u.q)]
+      ::
       :^  %poke  nam  man
       =;  page=pact:pact
         ?>(?=(%page -.page) q.page)
       %-  parse-packet
       =<  ;;(@ q.q)  %-  need  %-  need
-      ::  namespace overlays are excluded from the flow path we encode
-      ::  and only used here for retrieving the raw noun
-      ::
-      =.  pat.man  (ev-mess-spac space u.q)
-      =?  space  ?=(?(%publ %chum) -.space)
-        ?:  ?=(%publ -.space)
-          space(life life.ax)    ::  our life for poke payloads
-        space(life life.ax)      ::  XX  tack.life
-      (rof ~ /mesa %mx (name-to-beam man))  ::  XX rof
+      (rof ~ /mesa %mx (name-to-beam man))
     ::
     ++  ev-mess-spac
       |=  [=space =path]
@@ -1020,13 +1045,11 @@
           %publ  `^path`[%publ (scot %ud life.space) path]  :: unencrypted
       ::
           %chum  :: encrypted with eddh key
-        =/  =symmetric-key
-          =+  per=(ev-got-per her.space)
-          ?>  ?=(%known -.sat.per)  :: XX %alien?
-          symmetric-key.sat.per     :: XX check hyf.space with life.sat.per?
-        =/  cyf=@  (seal-path:crypt `@`symmetric-key path)
-        :-  %chum  =,  space
-        /[(scot %ud life)]/[(scot %p her)]/[(scot %ud hyf)]/[(scot %uv cyf)]
+        :-  %chum
+        ^+  path  =,  space
+        :~  (scot %ud our-life)  (scot %p her)  (scot %ud her-life)
+            (scot %uv (seal-path:crypt `@`key path))
+        ==
       ::
           %shut  :: encrypted with group key
         :: key provided by the %keen task, or retrieved from client-chain.per.sat
@@ -1235,15 +1258,23 @@
         =:  send-window.state  (dec send-window.state)
             next-load.state    +(next-load.state)
           ==
-        =/  paths=[spar path]
-          [her^(fo-ack-path seq her our) (fo-pok-path seq our her)]
-        =/  =wire  (fo-wire %int seq)
         ::  XX %ames call itself with a %make-poke task
         ::  on a wire used to infer the listener (the %poke %plea request; this)
         ::  when getting the %response $page with the %ack (tagged with %int)
         ::  and similarly for %naxplanation payloads (tagged with %ext)
         ::
-        =/  =space   publ/life.sat.per  ::  XX %chum
+        ::  XX  namespace encoding here, on inside the +make-poke?
+        :: =/  paths=[spar path]
+        ::   :-  =/  =ack=space
+        ::         chum/[life.sat.per our life.ax symmetric-key.sat.per]
+        ::       her^(ev-mess-spac ack-space (fo-ack-path seq her our))
+        ::   =/  =poke=space
+        ::     chum/[life.ax ship.per [life symmetric-key]:sat:per]
+        ::   (ev-mess-spac poke-space (fo-pok-path seq our her))
+        =/  paths=[spar path]
+          [her^(fo-ack-path seq her our) (fo-pok-path seq our her)]
+        =/  =space   chum/[life.sat.per our life.ax symmetric-key.sat.per]
+        =/  =wire    (fo-wire %int seq)
         =.  fo-core  (fo-emit hen %pass wire %m make-poke/[space paths])
         loop
       ::
@@ -1289,14 +1320,16 @@
             ::  start %peek request to check if they have corked the flow
             ::  after reading the ack from our namespace
             ::
-            =/  =path   (fo-cor-path seq her^our)
-            =/  =space  publ/life.sat.per  ::  XX %chum
+            =/  =space  chum/[life.sat.per our life.ax symmetric-key.sat.per]
+            =/  =path   (ev-mess-spac space (fo-cor-path seq her^our))
             [hen %pass wire=(fo-wire %cor seq) %m make-peek/space^her^path]
           ::  XX just fo-core(closing.state %.y) ?
           (fo-take-done:fo-core(closing.state %.y, pending-ack.state %.y) ~)
         =.  fo-core
           ?+  vane.plea  ~|  %mesa-evil-vane^our^her^vane.plea  !!
             ?(%c %e %g %j)
+              ::  XX remove when %gall supports %mesa
+              ::
               ~&  no-op/[hen %pass wire vane.plea plea/her^plea]
               fo-core
               :: (fo-emit hen %pass wire vane.plea plea/her^plea)
@@ -1352,13 +1385,13 @@
           ::  if error start %peek for naxplanation
           ::
           =/  =wire  (fo-wire %ext seq)
-          =/  =path  (fo-nax-path seq her^our)
           ::  XX %ames call itself with a %make-peek task
           ::  on a wire used to infer the listener (the %poke %nax request; us)
           ::  when getting the %response $page with or %naxplanation payloads
           ::  (tagged with %ext)
           ::
-          =/  =space  publ/life.sat.per  ::  XX %chum
+          =/  =space  chum/[life.sat.per our life.ax symmetric-key.sat.per]
+          =/  =path   (ev-mess-spac space (fo-nax-path seq her^our))
           (fo-emit hen %pass wire %m make-peek/[space her^path])
         ::  ack is for the first, oldest pending-ack sent message;
         ::  remove it and XX start processing cached acks
