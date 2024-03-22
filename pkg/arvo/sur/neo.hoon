@@ -23,6 +23,13 @@
   ==
 +$  tour   [=care =pith]
 +$  block  [get=(set tour) err=(unit tang)]
++$  curb   @ud :: blocking request ID
++$  halt
+  $:  by-tour=(map tour flow)
+      by-flow=(jug flow tour)
+      clog=(map flow (qeu move))
+  ==
++$  flow  (pair pith pith)
 ::
 ++  ford
   |%
@@ -114,15 +121,28 @@
 +$  road   [=name =once grab=pith]
 :: +$  pike   (each road name)
 :: * A `$bolt` is a `[=stud =once]`
-
+::
+::  $tone: parent change tracking
++$  tone
+  $%  [%dep =term =care =name]
+      [%sync =care]
+  ==
+::  $sound: change tracking listeners
 +$  sound
-  $%  [%dep p=term q=pith]
+  $:  voice=(jug pith [to=pith =term]) :: %x listeners
+      tones=(jug pith [to=pith =term]) :: %y listeners
+      noise=(jug pith [to=pith =term]) :: %z listeners
+  ==
+::  $ring: node change tracking
+::
++$  ring
+  $%  [%dep p=term =care q=name]
       [%sync ~]
   ==
 ::
 +$  out
-  $%  [%sync =name =stud]
-      [%stop =name]
+  $%  [%sync p=tour]
+      [%stop p=tour]
   ==
 ++  pave
   |=  p=path
@@ -351,9 +371,82 @@
 ++  axal
   |$  [item]  
   [fil=(unit item) kid=(map iota $)]
+++  axil
+  |$  [item]
+  [fil=(unit item) kid=(map pith item)]
 ++  of
   =|  fat=(axal)
-  |@  
+  |@ 
+  ++  view
+    =|  res=(map pith _?>(?=(^ fil.fat) u.fil.fat))
+    |=  [=care pax=pith]
+    =.  fat  (dip pax)
+    =?  res  ?=(^ fil.fat)
+     (~(put by res) ~ u.fil.fat)
+    ?-  care
+      %x  res
+      %y  =.(fat snip (~(uni by res) tar))
+      %z  (~(uni by res) tar)
+    ==
+  ::
+  ++  anc-jab
+    |*  [pax=pith fun=$-(* *)]
+    ^+  fat
+    ?~  pax
+      fat
+    =?  fil.fat  ?=(^ fil.fat)
+      `(fun u.fil.fat)
+    fat(kid (~(put by kid.fat) i.pax $(fat (~(got by kid.fat) i.pax), pax t.pax)))
+    
+  ::
+  ++  anc
+    =|  res=(list pith)
+    =|  cur=pith
+    |=  pax=pith
+    ^-  (set pith)
+    ?~  pax
+      (~(gas in *(set pith)) res)
+    =?  res  ?=(^ fil.fat)
+      [cur res]
+    $(fat (~(got by kid.fat) i.pax), pax t.pax, cur (snoc cur i.pax))
+  ++  parent
+    =|  res=(unit pith)
+    =|  cur=pith
+    |=  pax=pith
+    |-  ^+  res
+    ?~  pax
+      res
+    =?  res  ?=(^ fil.fat)
+      `cur
+    =/  nex  (~(get by kid.fat) i.pax)
+    ?~  nex
+      res
+    $(fat u.nex, pax t.pax, cur (snoc cur i.pax))
+  ++  snip
+    |-  ^+  fat
+    =*  loop  $
+    %_    fat
+        kid
+      %-  ~(run by kid.fat)
+      |=  f=_fat
+      ?^  fil.f
+        [`u.fil.f ~]
+      loop(fat f)
+    ==
+  ::
+  ++  kid
+    |=  pax=pith
+    ^-  (map pith _?>(?=(^ fil.fat) u.fil.fat))
+    =.  fat  (dip pax)
+    =.  fat  snip
+    tar
+  ::
+  ++  kids
+    |=  pax=pith
+    ^-  (axil _?>(?=(^ fil.fat) u.fil.fat))
+    :-  (get pax)
+    (kid pax)
+  ::
   ++  del
     |=  pax=pith
     ^+  fat
@@ -460,10 +553,7 @@
       [%sec p=(set pith)]
       [%err p=tang]
   ==
-+$  update
-  $:  =stud
-      =diff
-  ==
++$  update  diff
 +$  watch  (list update)
 ::
 +$  err
@@ -492,31 +582,61 @@
   $~  ~
   (map iota hall)
 +$  rely
-  [=term =pith =stem]
+  [=term =stem]
 +$  mode  ?(%add %dif %del)
 +$  stem
+  $~  [[0 0] %x %stud *vase]
+  %+  pair  ever
+  $%  [%x =pail]
+      [%y =pail kids=(map pith [=ever =mode =pail])]
+      [%z =pail kids=(map pith [=ever =mode =pail])]
+  ==
++$  twig
   $~  [[0 0] %x %stud ~]
   %+  pair  ever
-  $%  [%x =bulb]
-      [%z kids=(map pith [=mode =bulb])]
+  $%  [%x =vial]
+      [%y =vial kids=(map pith [=ever =mode =vial])]
+      [%z =vial kids=(map pith [=ever =mode =vial])]
   ==
+++  bulb  [=ever =pail]
+++  wand
+  |^
+  $~  [%x [0 0] [%$ ~] ~]
+  $:  =care
+      =ever
+      =vial
+      kids=(map pith [=ever =vial])
+  ==
+  ++  make
+    |=  [=care at=pith ax=(axal room)]
+    ^-  ^$
+    =/  rot  (need fil.ax)
+    :+  care  ever.icon.rot
+    :-  [state:q.span.rot q.state.icon.rot]
+    %-  ~(gas by *(map pith [ever vial]))
+    =-  %+  turn  ~(tap by -)
+        |=([k=pith v=[ever vial]] [(welp at k) v])
+    ?-    care
+        %x  ~
+        %y
+      =.  ax  ~(snip of ax)
+      (~(run by ~(tar of ax)) |=(r=room [ever.icon.r (to-vial:room r)]))
+    ::
+        %z
+      (~(run by ~(tar of ax)) |=(r=room [ever.icon.r (to-vial:room r)]))
+    ==  
+  --
 +$  cane
   $~  [%x [0 0] [%$ *vase] ~]
   $:  =care
       =ever
       =pail
-      kids=(map pith cane)
+      kids=(map pith [=ever =pail])
   ==
 ::
-+$  twig
-  $~  [[0 0] %x ~]
-  %+  pair  ever
-  $%  [%x ~]
-      [%z kids=(map pith =mode)]
-  ==
 ::  !!stud refers to imp/ different from $vial
-+$  bulb  (pair stud *)
-+$  diff  [=name =stem]
++$  diff  [=pith =ever dat=(unit vial)]
+:: +$  mace  [=pith =ever =diff]
 ::
 ++  sign
   |^
@@ -577,6 +697,16 @@
         =conf
         =icon
     ==
+  ++  to-vial
+    |=  rom=room
+    ^-  vial
+    [state:q.span.rom q.state.icon.rom]
+  ::
+  ++  to-pail
+    |=  rom=room
+    ^-  pail
+    [state:q.span.rom state.icon.rom]
+  ::
   ++  de-hall-soft
     |=  hal=hall
     ^-  (unit room)
@@ -598,6 +728,7 @@
   ==
 +$  quay
   $%  [%x =port]
+      [%y =dock]
       [%z =dock]
   ==
 +$  fief  [required=? =quay]

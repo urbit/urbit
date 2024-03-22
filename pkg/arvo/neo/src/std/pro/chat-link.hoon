@@ -1,4 +1,3 @@
 /@  chat
-~|  .
-,[src=pith =pail:neo]
+,[=chat unread=@ud]
 
