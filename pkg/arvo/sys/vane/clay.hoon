@@ -4648,10 +4648,12 @@
         $(desks t.desks)
       =^  res  den  (aver:den ~ %x da+now /desk/bill)
       =.  ruf  +:abet:den
-      ?.  ?=([~ ~ *] res)
+      =/  bill
+        ?.  ?=([~ ~ *] res)  *bill
+        ~|([%building-bill i.desks] !<(bill q.u.u.res))
+      ?~  rid=(override bill ren.dom.den)
+        %-  (trace 2 |.("{<i.desks>} has no dudes"))
         $(desks t.desks)
-      =/  bill  ~|  [%building-bill i.desks]  !<(bill q.u.u.res)
-      =/  rid  (override bill ren.dom.den)
       %-  %+  trace  2  |.
           "{<i.desks>} has bill {<bill>} and rein {<ren.dom.den>}, so {<rid>}"
       =^  sats  ..abet  $(desks t.desks)
@@ -4674,22 +4676,9 @@
   ::  +override: apply rein to bill
   ::
   ++  override
-    |=  [duz=bill ren=(map dude:gall ?)]
-    ^-  bill
-    =.  duz
-      %+  skip  duz
-      |=  =dude:gall
-      =(`| (~(get by ren) dude))
-    ::
-    =/  dus  (sy duz)
-    =.  duz
-      %+  weld  duz
-      %+  murn  ~(tap by ren)
-      |=  [=dude:gall on=?]
-      ?:  &(?=(%& on) !(~(has in dus) dude))
-        `u=dude
-      ~
-    duz
+    |=  [duz=bill ren=(map dude:gall ?)]  ^-  bill
+    =/  out=bill  (skip duz ~(has by ren))
+    (~(rep by ren) |=([[d=dude:gall r=?] =_out] ?.(r out [d out])))
   ::  +apply-precedence: resolve conflicts between $bill's
   ::
   ::    policy is to crash if multiple desks are trying to run the same
