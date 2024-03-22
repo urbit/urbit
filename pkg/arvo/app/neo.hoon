@@ -3,7 +3,11 @@
 |%
 ++  pave  pave:neo
 ++  ford  ford:neo
-
+++  bump-ever
+  |=  =ever:neo
+  ^-  ever:neo
+  [+(-.ever) +(+.ever)]
+::
 ++  sole
   |%
   +$  id  sole-id:sole-sur
@@ -34,6 +38,7 @@
       [%cd =name:neo]
       [%race rout=@tas]
       [%poke p=hoon]
+      [%ford ~]
       [%comm ~]
       [%clay ~]
   ==
@@ -170,17 +175,53 @@
   ^-  code:neo
   clay/:(welp clay-beak /lib/[lib]/hoon)
 ++  init
-  ^+  run
-  =/  =name:neo  [our.bowl #/src/reef]
+  |^  ^+  run
   =+  .^(neo-vase=vase %ca (welp clay-beak /sur/neo/hoon))
   =/  reef=vase  (slop !>(..zuse) neo-vase(p [%face %neo p.neo-vase]))
-  =/  =card:neo  [(en-pith:name:neo name) %make (clay-lib %ford-reef) `!>(reef) ~]
-  (on-card card)
+  =.  run  (make-riff #/src/reef reef)
+  =.  run  (make-riff #/src/std/pro/ford-out (ford-out reef))
+  =.  run  (make-riff #/src/std/pro/ford-in (ford-in reef))
+  =.  run  (make-riff #/src/std/pro/nhoon (nhoon reef))
+  (make-riff #/src/std/pro/term (term reef))
+  ::
+  ++  term
+    |=  reef=vase
+    ^-  vase
+    %+  slap  reef
+    !,  *hoon
+    ,term
+  ++  nhoon
+    |=  reef=vase
+    ^-  vase
+    %+  slap  reef
+    !,  *hoon
+    ,[cache=(unit vase) =hoon]
+  ::
+  ++  ford-out
+    |=  reef=vase
+    ^-  vase
+    %+  slap  reef
+    !,  *hoon
+    ,[cache=(unit vase) *]
+  ::
+  ++  ford-in
+    |=  reef=vase
+    ^-  vase
+    %+  slap  reef
+    !,(*hoon ,~)
+  ::
+  ++  make-riff
+    |=  [=pith riff=vase]
+    ^+  run
+    =.  pith  [p/our.bowl pith]
+    (on-card pith %make (clay-lib %ford-reef) `!>(riff) ~)
+  --
+
 ++  sync-room
   |=  [=stud:neo =name:neo]
   ^+  run
   =/  =wire  sync/(pout pith.name) 
-  =.  run  abet:(~(init xeno name) stud/stud)
+  :: =.  run  abet:(~(init xeno name) stud/stud)
   (emit %pass wire %agent [ship.name dap.bowl] %watch [%sync %init (pout pith.name)])
 ++  our-sys-name  `name:neo`[our.bowl `pith:neo`#/$/sys]
 ++  our-sys-pith  (en-pith:name:neo our-sys-name)
@@ -200,8 +241,9 @@
   ^+  run
   =/  =wire  forward/(en-path:name:neo name)
   =/  =dock  [ship.name dap.bowl]
-  =-  (emit %pass wire %agent dock %poke -)
-  noun+!>(`card:neo`[(en-pith:name:neo name) %poke pok])
+  run :: XX: revive
+  :: =-  (emit %pass wire %agent dock %poke -)
+  :: noun+!>(`card:neo`[(en-pith:name:neo name) %poke pok])
 ++  print-dbug
   |=  veb=?
   |^  ^+  same
@@ -276,14 +318,14 @@
     ?~  fil.axal
       ~[leaf/"No data"]
     =/  =room:neo  u.fil.axal
-    ?:  =(case.icon.room 0)
+    ?:  =(ever.icon.room [0 0])
       ~[leaf/"No data at this path"]
     :*  leaf/"State"
         ?:  (lth 10.000 (met 3 (jam q.state.icon.room)))
           leaf/"Too large to print"
         (sell state.icon.room)
           
-        leaf/"Case: {(scow %ud case.icon.room)}"
+        leaf/"Case: {(scow %ud node.ever.icon.room)}"
       ::
       ::
         leaf/"Source: {<p.span.room>}"
@@ -318,10 +360,11 @@
   =/  =name:neo  (de-pith:name:neo p.card) 
   ?.  =(our.bowl ship.name)
     ?>  ?=(%poke -.q.card)
-    (forward-poke name val.q.card)
+    !! :: XX: fix(forward-poke name val.q.card)
   (on-card card)
 ++  on-card
   |=  =card:neo
+  ^+  run
   (on-move our-sys-pith card)
 ::
 ++  on-move
@@ -329,24 +372,23 @@
   =/  =name:neo  (de-pith:name:neo p.q.move)
   ?>  =(our.bowl ship.name)
   =/  src=name:neo  [src.bowl p.move]
-  ?:  ?=([%$ *] pith.name)
-    (on-move:sys p.move q.move(p t.pith.name))
-    :: ((on-move sys p.move) q.move(p t.pith.name))
-  abet:(apply:(abed:arvo src pith.name) move)
+  ?.  ?=([%$ *] pith.name)
+    abet:(arvo move)
+  (on-move:sys p.move q.move(p t.pith.name))
 ++  sys
   |%  
   ++  on-move
     |=  [src=pith =card:neo]
     |^  ^+  run
-    ?+    p.card  ~|(bad-sys-move-pith/p.card !!)
-        [%behn ~]
-      (behn q.card)
+    ?+  p.card  ~|(bad-sys-move-pith/p.card !!)
+      [%behn ~]  (behn q.card)
     ==
     ++  behn
       |=  =note:neo
       ^+  run
       ?>  ?=(%poke -.note)
-      =+  ;;(=req:behn:neo val.note)
+      ?>  ?=(%behn-req p.pail.note)
+      =+  !<(=req:behn:neo q.pail.note)
       ?-    -.req
           %rest
         =/  =wire  /sys/behn/wait/(scot %da p.req)
@@ -375,7 +417,7 @@
       ?>  ?=(%wake +<.syn)
       =/  requested  ~(tap in (~(get ju timers.unix) da))
       =/  =wire  /sys/behn/res/(scot %da da) 
-      =/  =note:neo  [%poke %wake ~]
+      =/  =note:neo  [%poke %behn-res !>([%wake ~])]
       |-  ^+  run
       ?~  requested
         run
@@ -408,7 +450,7 @@
       |=  [p=pith:neo =room:neo]
       ^-  update:neo
       ?>  ?=(%stud -.p.span.room) 
-      [(welp pith p) p.p.span.room [case %init q.state]:icon.room]
+      !! :: XX fix: [(welp pith p) p.p.span.room [case %init q.state]:icon.room]
     ==
   ==
 ++  do-out
@@ -453,8 +495,7 @@
     ?~  p.sign
       same
     (slog leaf/"failed forward poke {(spud (pout pith))}" u.p.sign)
-      
-
+  ::
   ++  sync
     |=  =pith
     ?+    -.sign  ~|(weird-sync-sign/-.sign !!)
@@ -504,7 +545,7 @@
     (welp root pax)
   =.  p  (snoc p %hoon)
   .^(? %cu p)
-
+::
 ++  copy-clay
   |^  ^+  run
   =+  .^(paths=(list path) %ct root)
@@ -536,14 +577,15 @@
     ~|  make-name/name
     =.  run  
       (on-card (en-pith:name:neo name) %make (clay-lib lib) sta conf)
-    ?:  =(lib %sym)
+    ?:  =(lib %term)
       run
     ~|  ~(key by ~(tar of:neo apex))
     =/  rom  (got:of-top pith.name)
     =+  !<([cache=(unit vase) *] state.icon.rom)
     ?.  !=(~ cache)
       ~|  conf/conf
-      !!
+      run
+      :: :: !!
     run
       
 
@@ -578,7 +620,7 @@
     =/  fac=pith  (snoc wer %face)
     =/  fav=pith  (snoc fac %term)
     =.  run
-      (do-make fav %sym `!>(face.i.pros) ~)
+      (do-make fav %term `!>(face.i.pros) ~)
     =.  run
       (face fac fav ~(pith pro stud.i.pros))
     =/  prev=pith
@@ -602,7 +644,7 @@
     =+  .^(src=@t %cx (welp root pax))
     =/  =file:ford
       ~|  parsing/pax
-      (scan (trip src) rein:ford)
+      (scan (trip src) (rein:ford pax))
     =/  has-imports=?
       ?&  (levy pro.file |=(pro:ford ~(exists pro stud)))
           (levy lib.file |=(lib:ford ~(exists lib name)))
@@ -623,18 +665,30 @@
       (~(gas by *conf:neo) [%sut (ours pre)] ~)
     [~ (do-make pit %nhoon `!>([~ hoon.file]) conf)]
   --
+++  get-local-tour
+  |=  =tour:neo
+  ^-  (unit cane:neo)
+  ?~  val=(get:of-top pith.tour)
+    ~
+  ~&  state:q.span.u.val
+  =/  =stud:neo  state:q.span.u.val
+  =/  kids
+    ?:  ?=(%x care.tour)
+      ~
+    ~ :: XX: revive
+  `[care.tour ever.icon.u.val [stud state.icon.u.val] kids]
 ++  get-val-at-path
   |=  =pith
   ^-  (unit vase)
   ?~  val=(get:of-top pith)
     ~
   `state.icon.u.val
-::
+::  XX: invert and check typing
 ++  check-conf
   |=  [conf=(map term pith) =deps:neo]
   ^-  (set term)
   %+  roll  ~(tap by deps)
-  |=  [[=term required=? =port:neo] out=(set term)]
+  |=  [[=term required=? =quay:neo] out=(set term)]
   ?.  &(required !(~(has by conf) term))
     out
   (~(put in out) term)
@@ -643,9 +697,8 @@
   ^+  run
   ?~  watch
     run
-  ~|  hear/pith.i.watch
-  =.  run  
-    abet:(~(hear xeno [src.bowl pith.i.watch]) +.i.watch)
+  :: =.  run  
+    :: abet:(~(hear xeno [src.bowl pith.i.watch]) +.i.watch)
   $(watch t.watch)
 ++  husk
   |_  =code:neo
@@ -678,6 +731,7 @@
   ++  firm-vase
     =/  rom=room:neo  (got:of-top pith)
     =+  !<([cac=(unit vase) *] state.icon.rom)
+    ~|  firm/pith
     (need cac)
   ++  firm
     !<(=firm:neo firm-vase)
@@ -720,7 +774,6 @@
 ++  xeno
   |_  =name:neo
   ++  xeno  .
-  ++  abet  run
   ++  brig  (~(gut by fleet) ship.name *(axal:neo cell:neo))
   ++  cell  (~(gut of:neo brig) pith.name *cell:neo)
   ++  got   (~(got of:neo (~(got by fleet) ship.name)) pith.name)
@@ -744,20 +797,14 @@
       (emit %pass wire %agent dock %watch path)
     xeno
   ++  hear
-    |=  [=stud:neo case=@ud =diff:neo]
+    |=  [=stud:neo case=@ud =pith =diff:neo]
     ^+  xeno
     ~|  hear-name/name
     =?  xeno  !has
       (init stud/stud)
     =+  cel=got 
     =/  firm  ~(firm-vase husk p.span.cel)
-    =/  =vase
-      ?:  ?=(%poke -.diff)
-        =/  func  (slap firm !,(*hoon reduce:form))
-        !<(vase (slym func p.diff))
-      =+  ;;(state=stud:neo +:(slap firm !,(*hoon state)))
-      =/  func   (need ~(grab pro stud))
-      (slym func p.diff)
+    =|  =vase
     (put cel(case case, state vase))
   --
 ::
@@ -783,12 +830,13 @@
     !!
   :: TODO: revisit ordering semantics 
   =/  =wire  /nack
+  ::  XX: handle remote case
   %^  poke-neo  wire  ship.src
-  :-  %neo-response
-  !>  ^-  response:neo
+  :-  %neo-move
+  !>  ^-  move:neo
   :+  (en-pith:name:neo src)
     (en-pith:name:neo dst)
-  [%fail tang]
+  [%poke %ack !>([%err err])]
 ++  do-hear
   |=  new=(list name:neo)
   ^+  run
@@ -812,7 +860,7 @@
   ==
 ++  dep-change
   |=  [=term from=name:neo to=pith]
-  abet:(take-neo:(abed:arvo from to) %conf %val term)
+  !!  :: XX fix abet:(take-neo:(abed:arvo from to) %conf %val term)
 ++  give
   |=  =gift:agent:gall
   (emit %give gift)
@@ -826,9 +874,9 @@
   =/  =room:neo  (got:of-top pith.name)
   =/  =cage
     :-  %neo-update
-    !>  ^-  update:neo
-    ?>  ?=(%stud -.p.span.room)
-    [pith.name p.p.span.room [case %init q.state]:icon.room]
+    !>  *update:neo
+    :: ?>  ?=(%stud -.p.span.room)
+    :: [pith.name p.p.span.room [case %init q.state]:icon.room]
   =;  paths=(list path)
     ?:  =(~ paths)
       run
@@ -843,31 +891,48 @@
   ?.  (is-parent-p target path)
     ~
   `path
+++  grab-tour
+  |=  =tour:neo
+  ~&  dependency-on/tour
+  run
 ::
 ++  arvo
   =+  verb=&
-  |_  $:  [src=name:neo init=[src=name:neo dst=name:neo] here=pith]
-          [done=(list move:neo) down=(list move:neo) up=(list move:neo) change=(set pith)]
-          [old=state-0 err=(unit tang)]
+  =/  old  state
+  =|  =block:neo
+  ::  callstack
+  =|  $:  done=(list move:neo)
+          down=(list move:neo)
+          up=(list move:neo)
+          change=(set pith)
       ==
-  ++  abet  
-    ?~  err  
+  |=  =move:neo
+  =/  src=name:neo  (de-pith:name:neo p.move)
+  =/  init=[src=name:neo dst=name:neo]
+    [src (de-pith:name:neo p.q.move)]
+  =/  src=name:neo  src.init
+  =/  here  pith.dst.init
+  ?>  =(our.bowl ship.dst.init)
+  =<  (apply move)
+  |%
+  ++  abet
+    ^+  run
+    ?:  =([~ ~] block)  
       =.  cards  (welp cards (turn up deal))
       (do-hear (turn ~(tap in change) (lead our.bowl)))
     ~&  >>>  %reverting
-    %-  (slog u.err)
     =.  state  old
-    (give-nack src.init dst.init u.err)
-  ++  abed
-    |=  [source=name:neo ini=pith]
-    ^+  arvo
-    %_  arvo
-      src       source
-      src.init  source
-      dst.init  [our.bowl ini]
-      here  ini
-      old   state
-    ==
+    ?:  =(~ get.block)
+      ?>  ?=(^ err.block)
+      %-  (slog u.err.block)
+      (give-nack src.init dst.init u.err.block)
+    =/  get  ~(tap in get.block)
+    |-
+    ?~  get
+      run
+    =.  run  (grab-tour i.get)
+    $(get t.get)
+  ::
   ++  deal
     |=  =move:neo
     ^-  card
@@ -904,28 +969,23 @@
   ++  work
     ^+  arvo
     |-  ^+  arvo
-    ?^  err
+    ?^  err.block
       arvo
     ?~  down
       arvo
     =/  nex=move:neo  i.down
     =/  new-arvo  (apply:arvo(down t.down) nex) :: XX: weird compiler?
     $(arvo new-arvo, done (snoc done nex))
-  ++  take-neo
-    |=  =sign:neo
-    %-  (trace leaf/"{(en-tape:pith:neo here)}: take-neo {<-.sign>}" ~)
-    =^  caz=(list card:neo)  arvo  
-      (soft-site |.(si-abet:(si-take:site sign)))
-    (ingest caz)
   ++  poke
-    |=  val=*
+    |=  =pail:neo
     ^-  (quip card:neo _arvo)
-    (soft-site |.(si-abet:(si-poke:site val)))
+    (soft-site |.(si-abet:(si-poke:site pail)))
   ::
   ++  apply
     |=  =move:neo
     ^+  arvo
-    ?.  =(~ err)
+    ?.  =(~ err.block)
+      :: skip if we have errored
       arvo
     ~|  apply/[p.move p.q.move]
     =.  src   (de-pith:name:neo p.move)
@@ -972,12 +1032,12 @@
     :: =.  run        (~(start husk src) our.bowl pith)
     =/  =form:neo  form:firm
     =/  =span:neo  [src firm]
-    =/  =icon:neo  [1 (init:form init) ~ ~]
+    =/  =icon:neo  [[0 0] *vase ~ ~]
     =/  =deps:neo  deps:firm
     ?>  =(~ (check-conf conf deps:firm))
     =/  =room:neo  [span conf icon]
     =.  apex  (put:of-top here room)
-    (soft-site |.(si-abet:si-born:site))
+    (soft-site |.(si-abet:(si-init:site init)))
 
   ++  soft-site
     |=  tap=(trap (quip card:neo _arvo))
@@ -986,7 +1046,7 @@
       (mule tap)
     ?:  ?=(%& -.res)
       p.res
-    =.  err  `p.res
+    =.  err.block  `p.res
     `arvo
   ::
   ++  site
@@ -997,16 +1057,22 @@
     ++  site  .
     ++  si-emil  |=(caz=(list card:neo) site(cards (welp cards caz)))
     ++  si-abet
+      =/  old   (got:of-top here)
+      ::  TODO: bump
       =.  apex  (put:of-top here room)
       [cards arvo]
     ::
     ++  si-resolve-kids  ~
     ++  si-resolve-deps
-      %-  ~(gas by *(map term [pith vase]))
-      ^-  (list [term pith vase])
+      %-  ~(gas by *(map term [pith cane:neo]))
+      ^-  (list [term pith cane:neo])
       %+  murn  ~(tap by deps:si-firm)
-      |=  [=term required=? =port:neo]
-      ^-  (unit [^term pith vase])
+      |=  [=term required=? =quay:neo]
+      ^-  (unit [^term pith cane:neo])
+      =-  
+        ?~  -  ~
+        ~&  dep/[->- ->+<]
+        -
       =/  dep=(unit pith)  (~(get by conf.room) term)
       ?~  dep
         ~|  invariant-missing-required-conf/term
@@ -1014,7 +1080,7 @@
         ~
       =/  =name:neo  (de-pith:name:neo u.dep)
       ?>  =(our.bowl ship.name)
-      =/  val  (get-val-at-path pith.name)
+      =/  val  (get-local-tour -.quay pith.name)
       ?~  val
         ~|  invariant-no-value-at-path/pith.name
         !!
@@ -1023,7 +1089,8 @@
     ++  si-bowl    
       :: =/  hare  pith:(de-pith:name:neo here)
       :: ~&  hare/hare
-      [src our.bowl [p/our.bowl here] now.bowl si-resolve-deps si-resolve-kids]
+      =/  hare  [p/our.bowl here]
+      [src our.bowl hare hare now.bowl si-resolve-deps si-resolve-kids]
     ++  si-form    ~(. form:si-firm [si-bowl icon.room])
     ++  si-firm    q.span.room
     ++  si-tell
@@ -1038,7 +1105,7 @@
       ^-  watch:neo
       ?.  ?=(%stud -.p.span.room)
         *watch:neo
-      [here p.p.span.room [case %init q.state]:icon.room]~
+      *watch:neo :: [here p.p.span.room [case %init q.state]:icon.room]~
     ++  si-sync-paths
       ^-  (list path)
       =-  ~(tap in -)
@@ -1050,25 +1117,23 @@
       ?.  ?=([%sync *] path)  
         ~
       `path
-    ++  si-born   
+    ++  si-init   
+      |=  old=(unit vase)
       ^+  site
-      =.  site  (si-emil born:si-form)
-      si-tell
+      =^  cards=(list card:neo)  state.icon.room
+        (init:si-form old)
+      =.  ever.icon.room  [1 1]
+      (si-emil cards)
+
     ++  si-poke
-      |=  val=*
+      |=  =pail:neo
       ^+  site
-      =/  old-state  state.icon.room
-      =.  state.icon.room   (reduce:si-form val)
-      =.  site  (si-emil (call:si-form old-state val))
-      ?:  =(old-state state.icon.room)
-        site
-      =.  case.icon.room  +(case.icon.room)
+      =^  cards  state.icon.room
+        (poke:si-form pail)
+      =.  site  (si-emil cards)
+      ::  XX: maybe skip if no change?
+      =.  ever.icon.room  (bump-ever ever.icon.room)
       si-tell
-    ::
-    ++  si-take
-      |=  =sign:neo
-      ^+  site
-      (si-emil (take:si-form sign))
     --
   --
 ++  sock
@@ -1100,6 +1165,14 @@
       ~
     (get:of-top pith.name)
   ++  kids  (desc 0)
+  ++  ford
+    =/  rom  (need get)
+    ^+  run
+    =+  !<([vax=(unit vase) *] state.icon.rom)
+    %.  run
+    ?~  vax
+      (slog leaf/"no ford build here" ~)
+    (slog leaf/"Ford build" (sell u.vax) ~)
   ++  desc
     =/  dip
       ?>  =(our.bowl ship.name)
@@ -1139,7 +1212,7 @@
         ~
       :~  t/(spat (pout pith.name))
           t/(code p.span.u.rom)
-          ud/case.icon.u.rom
+          ud/node.ever.icon.u.rom
       ==
     --
   ++  show
@@ -1264,6 +1337,7 @@
 
       (cold ls/~ (jest 'ls'))
       (cold show/~ dot)
+      (cold ford/~ (jest 'f'))
       (stag %tree ;~(pfix (jest 't') dem:ag))
       (stag %race ;~(pfix (jest 'r') ace sym))
       (stag %poke ;~(pfix (jest 'p') ace van))
@@ -1318,17 +1392,20 @@
       %ls     (tree 0)
       %cd     abet:(set:cwd:peel name.hull)
       %tree   (tree depth.hull)
+      %ford   ford:tell:peel
       %race   (do-race rout.hull)
       %poke   (do-poke p.hull)
       %comm   run
       %clay   clay
     ==
+
     ++  do-poke
       |=  =hoon
       =/  vax=vase
         (slap (slop !>(..zuse) (with-face:ford %neo !>(neo))) hoon)
       =+  !<([=stud:neo rest=*] vax)
-      (on-card (en-pith:name:neo get:cwd:peel) %poke rest)
+      =.  vax  (slot 3 vax)
+      (on-card (en-pith:name:neo get:cwd:peel) %poke stud vax)
     ++  clay
       =/  rom  (got:of-top pith:get:cwd:peel)
       =+  !<([cac=(unit vase) *] state.icon.rom)
@@ -1384,13 +1461,13 @@
     ++  take
       |=  syn=(unit sign:pike:neo)
       |-  ^+  hike
-      =/  pike  (pike:neo ewer:neo)
+      =/  pike  (pike:neo pail:neo)
       =^  res=eval-result:pike  form.race
         (take:pike form.race [make-bowl syn])
       ?-    -.res
           %done
         =/  =pith:neo  (en-pith:name:neo get:cwd:peel)
-        =/  =card:neo  [pith %poke q.q.value.res]
+        =/  =card:neo  [pith %poke value.res]
         =.  run  (on-card card) 
         =;  ef=shoe-effect:shoe
           =.  run  (shoe-ef ef)

@@ -2,53 +2,38 @@
 => 
 |%
 ++  card  card:neo
-++  get-src
-  |=  =bowl:neo
-  ^-  (unit vase)
-  =+  !<([cac=(unit vase) *] q:(~(got by deps.bowl) %src))
-  cac
 +$  state  [cache=(unit vase) ~]
 +$  poke   [%dep ~]
 --
 ^-  firm:neo
 |%
-+$  poke    ^poke
-+$  state   ^state
+++  poke    (sy %ford-in ~)
+++  state   %ford-out
 ++  kids  ~
 ++  deps
-  =<  apex
-  |%
-  ++  apex
-    %-  ~(gas by *deps:neo)
-    :~  src/src
-    ==
-  ++  src
-    [%& %x ,[cache=(unit vase) *] ,*]
-  --
+  %-  ~(gas by *deps:neo)
+  :~  src/dep:ford:neo
+  ==
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo case=@ud state-vase=vase *]
-  +*  sta  !<(^state state-vase)
-  ++  call
-    |=  [old-state=vase act=*]
-    *(list card)
-  ++  reduce
-    |=  pok=*
-    ^-  vase
-    =+  ;;(poke=^poke pok)
+  |_  [=bowl:neo =ever:neo state-vase=vase *]
+  +*  sta  !<([cache=(unit vase) ~] state-vase)
+  ++  poke
+    |=  [=stud:neo vax=vase]
+    ^-  (quip card:neo vase)
+    ?>  =(?(%ford-in %rely) stud)
     =/  sta  sta
-    =.  cache.sta  (get-src bowl)
-    ~&  ford-same/[were.bowl !=(~ cache.sta)]
-    !>(sta)
+    =.  cache.sta  (get-output:ford:neo bowl %src)
+    :: ~&  ford-same/[were.bowl !=(~ cache.sta)]
+    `!>(sta)
   ++  init
     |=  vax=(unit vase)
-    !>(*^state)
-  ++  born
-    =-  ~[-]
-    [were.bowl %poke %dep ~]
-  ++  echo
-    |=  [=pith val=*]
-    *(list card:neo)
-  ++  take  (rerun:ford:neo bowl)
+    ^-  (quip card:neo vase)
+    =|  sta=[cache=(unit vase) ~]
+    =.  cache.sta  (get-output:ford:neo bowl %src)
+    
+    %-  ?~  cache.sta  (slog leaf/"no link" ~)
+        (slog leaf/"link" (sell u.cache.sta) ~)
+    `!>(sta)
   --
 --

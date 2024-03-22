@@ -2,65 +2,43 @@
 => 
 |%
 ++  card  card:neo
-++  get-sut
-  |=  [sid=?(%a %b) =bowl:neo]
-  ^-  (unit vase)
-  =+  !<([cac=(unit vase) *] q:(~(got by deps.bowl) sid))
-  cac
 ++  build
   |=  =bowl:neo
   ^-  (unit vase)
-  ?~  a=(get-sut %a bowl)
+  ?~  a=(get-output:ford:neo bowl %a)
     ~&  missing-a/were.bowl
     ~
-  ?~  b=(get-sut %b bowl)
+  ?~  b=(get-output:ford:neo bowl %b)
     ~&  missing-b/were.bowl
     ~
   `(slop u.a u.b)
 +$  state  [cache=(unit vase) ~]
-+$  poke
-  $%  [%dep ~]
-  ==
 --
 ^-  firm:neo
 |%
-+$  state  ^state
-+$  poke   ^poke
+++  state  %ford-out
+++  poke   (sy %rely %ford-in ~)
 ++  kids  ~
 ++  deps
-  =<  apex
-  |%
-  ++  apex
-    %-  ~(gas by *deps:neo)
-    :~  a/sut
-        b/sut
-    ==
-  ++  sut
-    [& %x ,[cache=(unit vase) *] ,*]
-  --
+  %-  ~(gas by *deps:neo)
+  :~  a/dep:ford:neo
+      b/dep:ford:neo
+  ==
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo case=@ud state-vase=vase *]
+  |_  [=bowl:neo =ever:neo state-vase=vase *]
   +*  sta  !<(^state state-vase)
-  ++  call
-    |=  [old-state=vase act=*]
-    *(list card)
-  ++  reduce
-    |=  pok=*
-    ^-  vase
-    =+  ;;(=^poke pok)
+  ++  poke
+    |=  [=stud:neo vax=vase]
+    ^-  (quip card:neo vase)
+    ?>  ?=(?(%rely %ford-in) stud)
     =/  sta  sta
     =.  cache.sta  (build bowl)
-    !>(sta)
+    `!>(sta)
   ++  init
     |=  vax=(unit vase)
-    !>(*^state)
-  ++  born
-    =-  ~[-]
-    [were.bowl %poke %dep ~]
-  ++  echo
-    |=  [=pith val=*]
-    *(list card:neo)
-  ++  take  (rerun:ford:neo bowl)
+    =/  sta  *^state
+    =.  cache.sta  (build bowl)
+    `!>(sta)
   --
 --

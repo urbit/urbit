@@ -5,31 +5,23 @@
 --
 ^-  firm:neo
 |%
-+$  state  [cache=(unit vase) ~]
-+$  poke  ~
+++  state  %ford-out
+++  poke   *(set stud:neo)
 ++  kids  ~
 ++  deps  ~
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo case=@ud state-vase=vase *]
-  +*  sta  !<(state state-vase)
-  ++  call
-    |=  [old-state=vase act=*]
-    *(list card:neo)
-  ++  reduce
-    |=  pok=*
-    ^-  vase
-    state-vase
+  |_  [=bowl:neo =ever:neo state-vase=vase *]
+  +*  sta  !<([cache=(unit vase) ~] state-vase)
+  ++  poke
+    |=  =pail:neo  
+    ^-  (quip card:neo vase)
+    `state-vase
+  ::
   ++  init
     |=  old=(unit vase)
+    ^-  (quip card:neo vase)
     =+  !<(ref=vase (need old))
-    !>(`state`[`ref ~])
-  ++  born  *(list card:neo)
-  ++  echo
-    |=  [=pith val=*]
-    *(list card:neo)
-  ++  take
-    |=  =sign:neo
-    *(list card:neo)
+    `!>(`[cache=(unit vase) ~]`[`ref ~])
   --
 --

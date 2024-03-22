@@ -1,0 +1,3 @@
+$%  [%freq freq=@dr]
+    [%reset ~]
+==

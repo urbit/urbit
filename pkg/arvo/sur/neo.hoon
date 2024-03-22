@@ -16,18 +16,25 @@
 ::
 ::  
 |%
++$  care
+  $?  %x  :: single node
+      %y  :: single node and immediate children
+      %z  :: single node and all descendants
+  ==
++$  tour   [=care =pith]
++$  block  [get=(set tour) err=(unit tang)]
+::
 ++  ford
   |%
-  ++  rerun
-    |=  =bowl
-    |=  =sign
-    ^-  (list card)
-    ?>  ?=([%conf %val @] sign)
-    ~&  were.bowl
-    [were.bowl %poke %dep ~]^~
+  ++  dep  `fief`[& %x %ford-in %ford-out]
+  ++  get-output
+    |=  [=bowl =term]
+    ^-  (unit vase)
+    =+  !<([vax=(unit vase) *] q.pail.q:(~(got by deps.bowl) term))
+    vax
   ++  run
     |=  txt=@t
-    (scan (trip txt) rein)
+    (scan (trip txt) (rein /))
   +$  lib
     [face=(unit term) =name]
   +$  pro
@@ -38,6 +45,7 @@
         =hoon
     ==
   ++  rein
+    |=  pax=path
     =<  apex
     |%
     ++  nam
@@ -78,7 +86,7 @@
       (star pro)
     ++  hone
       :: ^-  $-(nail (like hoon))
-      =+  vaz=(vang & /test)
+      =+  vaz=(vang & pax)
       (ifix [gay gay] tall:vaz)
     ++  apex
       :: ^-  rule
@@ -104,7 +112,6 @@
 +$  once  $%([%node p=@ud] [%tree p=@ud])
 ::  $road: fully qualified path
 +$  road   [=name =once grab=pith]
-+$  tour   [=name =ever]
 :: +$  pike   (each road name)
 :: * A `$bolt` is a `[=stud =once]`
 
@@ -148,7 +155,7 @@
         :-  '\''     (stag %t qut)
     ==
   --
-
+::
 ++  goon
   |%
   ::  $date: date w/ TZ offset
@@ -447,16 +454,14 @@
 +$  card  (pair pith note)
 +$  request
   [src=pith dest=pith val=*]
-+$  response
-  [src=pith dest=pith status=response-status]
-+$  diff
-  $%  [%poke p=*]
-      [%init p=*]
++$  ack  (unit nack)
++$  nack
+  $%  [%get p=(set pith)]
+      [%sec p=(set pith)]
+      [%err p=tang]
   ==
 +$  update
-  $:  =pith
-      =stud
-      case=@ud
+  $:  =stud
       =diff
   ==
 +$  watch  (list update)
@@ -476,7 +481,7 @@
 ::
 +$  note
   $%  [%make =code init=(unit vase) =conf] :: todo: configuration values, init cannot be ^ if installing over
-      [%poke val=*]
+      [%poke =pail]
       [%tomb =case]
       [%link from=pith src=stud]
   ==
@@ -486,50 +491,32 @@
   $+  yard
   $~  ~
   (map iota hall)
-++  yird
-  |%
-  +$  yird
-    $+  yird
-    $~  ~
-    (map iota $+(yird-inner $~([%& *hall] (each hall yird))))
-  ++  put
-    |=  [y=yird p=pith h=hall]
-    ^+  y
-    ?>  ?=(^ p)
-    =/  in  (~(got by y) i.p)
-    ?>  ?=(%| -.in)
-    %+  ~(put by y)  i.p
-    ?:  =(~ t.p)
-      &/h
-    [%| (~(put by y) i.p [%| $(y p.in, p t.p)])]
-  ++  get-fit
-    |=  [y=yird p=pith]
-    ^-  (unit [pith hall])
-    ?>  ?=(^ p)
-    =/  in  (~(get by y) i.p)
-    ?~  in
-      ~
-    ?~  t.p
-      ?>  ?=(%& -.u.in)
-      `[~ p.u.in]
-    ?.  ?=(%| -.u.in)
-      `[t.p p.u.in]
-    $(y p.u.in, p t.p)
-
-  ++  get
-    |=  [y=yird p=pith]
-    ^-  (unit hall)
-    ?>  ?=(^ p)
-    =/  in  (~(get by y) i.p)
-    ?~  in
-      ~
-    ?~  t.p
-      ?>  ?=(%& -.u.in)
-      `p.u.in
-    ?.  ?=(%| -.u.in)
-      ~
-    $(y p.u.in, p t.p)
-  --
++$  rely
+  [=term =pith =stem]
++$  mode  ?(%add %dif %del)
++$  stem
+  $~  [[0 0] %x %stud ~]
+  %+  pair  ever
+  $%  [%x =bulb]
+      [%z kids=(map pith [=mode =bulb])]
+  ==
++$  cane
+  $~  [%x [0 0] [%$ *vase] ~]
+  $:  =care
+      =ever
+      =pail
+      kids=(map pith cane)
+  ==
+::
++$  twig
+  $~  [[0 0] %x ~]
+  %+  pair  ever
+  $%  [%x ~]
+      [%z kids=(map pith =mode)]
+  ==
+::  !!stud refers to imp/ different from $vial
++$  bulb  (pair stud *)
++$  diff  [=name =stem]
 ::
 ++  sign
   |^
@@ -537,10 +524,12 @@
       [%conf conf]
   ==
   +$  conf
-    $%  [%val p=term]
-        [%pith p=term q=pith]
+    $%  [%val ~]
+        [%pith ~ q=pith]
     ==
   --
++$  pail  (pair stud vase)
+:: $ewer: deprecated
 +$  ewer  (pair stud vase)
 +$  vial  (pair stud *)
 +$  move  (pair pith card)
@@ -550,7 +539,11 @@
   ==
 +$  span  (pair code firm)
 +$  icon
-  [case=@ud state=vase history=(list *) migration=(list *)]
+  $:  =ever
+      state=vase
+      history=(list *)
+      migration=(list *)
+  ==
 :: subscription metadata
 +$  jail
   $+  jail
@@ -598,9 +591,10 @@
   $:  src=name
       our=@p
       were=pith :: XX: rename to here
+      here=pith
       now=@da
-      deps=(map term (pair pith vase))
-      kids=(map pith vase)
+      deps=(map term (pair pith cane))
+      kids=(map pith vase) :: XX: vase ->
   ==
 +$  quay
   $%  [%x =port]
@@ -609,7 +603,7 @@
 +$  fief  [required=? =quay]
 +$  dock  [=port =kids]
 +$  port :: TODO: how to specify behaviour
-  [state=* diff=*] :: state, diff actually $stud
+  [state=stud diff=stud] :: state, diff actually $stud
 +$  deps  (map term fief)
 +$  kids  (map pish port)
 ::  $firm: type of the value in the urbit namespace
@@ -625,7 +619,7 @@
   ::    ```
   ::
   ::    ```
-  ++  state  ** :: stud
+  ++  state  *stud
   ::  $poke: a poke is a request to change a value in teh urbit
   ::  namespace.
   ::
@@ -634,7 +628,7 @@
   ::      [%del who=user]
   ::
   ::
-  ++  poke   ** :: stud
+  ++  poke   *(set stud)
   ++  form   *^form
   ::
   ::  +kids: Some nodes in the namespace define what children are
@@ -652,26 +646,15 @@
 +$  form
   $_  ^|
   |_  [=bowl =icon]
-  ++  call
-    |~  [prev=vase val=*]
-    *(list card)
-  ::  +reduce: apply %poke, producing state
+  ::  +reduce: apply %poke, producing state and IO
   ::
   ::    ('liam'' ~) [%add who='ruby'] -> ('liam' 'ruby')
   ::    ('liam' 'ruby' ~) [%del who='ruby'] -> ('liam')
-  ++  reduce
-    |~  val=*
-    *vase
-  ++  take
-    |~  =sign
-    *(list card)
-  ++  born
-    *(list card)
+  ++  poke
+    |~  [=stud val=vase]
+    *(quip card vase)
   ++  init
     |~  old=(unit vase)
-    *vase
-  ++  echo
-    |~  [=pith val=*]
-    *(list card)
+    *(quip card vase)
   --
 --

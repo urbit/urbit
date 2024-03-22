@@ -2,72 +2,54 @@
 => 
 |%
 ++  card  card:neo
-++  get-sut
-  |=  =bowl:neo
-  ^-  (unit vase)
-  =+  !<([cac=(unit vase) *] q:(~(got by deps.bowl) %sut))
-  cac
 ++  build
-  |=  [=bowl:neo =hoon]
-  ^-  (unit vase)
-  ?~  sut=(get-sut bowl)
-    ~
-  ~|  p:(~(got by deps.bowl) %sut)
+  |=  [=bowl:neo sta=state]
+  ^-  state
+  ?~  sut=(get-output:ford:neo bowl %sut)
+    sta(cache ~)
   =/  res=(each vase tang)
-    (mule |.((slap u.sut hoon)))
+    (mule |.((slap u.sut hoon.sta)))
   ?:  ?=(%| -.res)
     %-  (slog p.res)
-    ^-  (unit vase)
+    ^-  state
     !!
-  `p.res
-+$  poke  
-  $%  [%dep ~]
-      [%hoon =hoon]
-  ==
+  %-  (slog leaf/"built" (sell p.res) ~)
+  sta(cache `p.res)
 +$  state  [cache=(unit vase) =hoon]
 --
 ^-  firm:neo
 |%
-+$  poke    ^poke
-+$  state   ^state
+++  poke   (sy %hoon %rely ~)
+++  state   %nhoon
 ++  kids  ~
 ++  deps
-  =<  apex
-  |%
-  ++  apex
-    %-  ~(gas by *deps:neo)
-    :~  sut/sut
-    ==
-  ++  sut
-    [& %x ,[cache=(unit vase) *] ,*]
-  --
+  %-  ~(gas by *deps:neo)
+  :~  sut/dep:ford:neo
+  ==
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo case=@ud state-vase=vase *]
+  |_  [=bowl:neo =ever:neo state-vase=vase *]
   +*  sta  !<(^state state-vase)
-  ++  call
-    |=  [old-state=vase act=*]
-    *(list card)
-  ++  reduce
-    |=  pok=*
-    ^-  vase
-    =+  ;;(poke=^poke pok)
+  ++  poke
+    |=  [=stud:neo =vase]
     =/  sta  sta
-    =?  hoon.sta  ?=(%hoon -.poke)
-      hoon.poke
-    =.  cache.sta  (build bowl hoon.sta)
-    !>(sta)
+    |^  ^-  (quip card:neo ^vase)
+    ?+  stud  !!
+      %hoon              hone
+      ?(%rely %ford-in)  rely    
+    ==
+    ++  hone
+      =+  !<(=hoon vase)
+      =.  hoon.sta  hoon
+      `!>((build bowl sta))
+    ++  rely  `!>((build bowl sta))
+    --
   ++  init
     |=  vax=(unit vase)
-    ?~  vax  !>(*^state)
-    =+  !<([cac=(unit vase) =hoon] u.vax)
-    !>(`^state`[~ hoon])
-  ++  born
-    =-  ~[-]
-    [were.bowl %poke %dep ~]
-  ++  echo
-    |=  [=pith val=*]
-    *(list card:neo)
-  ++  take  (rerun:ford:neo bowl)
+    ^-  (quip card:neo vase)
+    ?~  vax  
+      `!>(*^state)
+    =+  !<(sta=^state u.vax)
+    `!>((build bowl sta))
   --
 --
