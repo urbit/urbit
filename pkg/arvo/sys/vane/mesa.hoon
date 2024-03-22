@@ -60,29 +60,6 @@
       ?~  ved=(de-case i.t.t.t.p)  ~
       `[[i.p i.t.p] [[our u.des u.ved] t.t.t.t.p]]
     ::
-    ++  authenticate
-      |=  [rut=@uxI aut=auth:pact =name:pact]
-      ^-  ?
-      ?>  ?=([%0 *] aut)
-      =*  auth  p.aut
-      =/  =beak  [her.name %$ ud+1]  :: XX where do we get this?
-      =/  ful  (en-beam [beak pat.name])
-      ?-  -.auth
-        %&
-          =/  pub  (puck:ed:crypto 0)  :: XX get from jael?
-          (verify-sig:crypt pub p.auth ful rut)
-        %|
-          =/  key
-            :: XX is there an easier way to get this?
-            =/  tyl=(pole knot)  pat.name
-            ?>  ?=([%chum lyf=@ her=@ hyf=@ *] tyl)
-            =/  her  (slaw %p her.tyl)
-            =/  hyf  (slaw %ud hyf.tyl)
-            ?>  &(?=(^ her) ?=(^ hyf))
-            (get-key-for u.her u.hyf)
-          (verify-mac:crypt key p.auth ful rut)
-      ==
-    ::
     ++  key-chain  ((on ,@ ,[key=@ =path]) lte)
     ++  check-fine-key
       |=  [c=chain:ames =balk key-idx=@]
@@ -280,7 +257,7 @@
     +$  ev-flow-wire
       $:  %flow
           were=?(%van %ext %int %cor)
-          dire=?(%for %bak)
+          =dire
           [%p her=@p]
           [%ud rift=@ud]
           [%ud bone=@ud]
@@ -333,9 +310,9 @@
       $:  %flow
           [%ud bone=@ud]
           [%p sndr=@p]
-          load=?(%poke %ack %nax)
+          =load
           [%p rcvr=@p]
-          dire=?(%for %bak)
+          =dire
           [%ud mess=@ud]
           ~
       ==
@@ -371,9 +348,13 @@
           =/  hyf  (slaw %ud hyf.tyl)
           =/  pyf  (slaw %uv pyf.tyl)
           ?>  &(?=(^ lyf) ?=(^ her) ?=(^ hyf) ?=(^ pyf))
-          =/  key  (get-key-for u.her u.hyf)
+          =/  key  ::  (get-key-for u.her u.hyf)
+            =+  per=(ev-got-per u.her)      :: XX ev-get-per
+            ?>  ?=(%known -.sat.per)        :: XX wat if %alien?
+            ?.  =(u.hyf life.sat.per)   !!  :: XX
+            symmetric-key.sat.per
           =*  iv  u.pyf  :: XX
-          (decrypt:crypt key iv cyf)
+          (decrypt:crypt `@`key iv cyf)
         [%shut kid=@ pyf=@ ~]  :: encrypted with group key
           =/  kid  (slaw %ud kid.tyl)
           =/  pyf  (slaw %uv pyf.tyl)
@@ -385,6 +366,32 @@
           =*  iv  u.pyf  :: XX
           (decrypt:crypt -.u.key iv cyf)
       ==
+    ++  ev-authenticate
+      |=  [rut=@uxI aut=auth:pact =name:pact]
+      ^-  ?
+      ?>  ?=([%0 *] aut)
+      =*  auth  p.aut
+      =/  =beak  [her.name %$ ud+1]  :: XX where do we get this?
+      =/  ful  (en-beam [beak pat.name])
+      ?-  -.auth
+        %&
+          =/  pub  (puck:ed:crypto 0)  :: XX get from jael?
+          (verify-sig:crypt pub p.auth ful rut)
+        %|
+          =/  key
+            :: XX is there an easier way to get this?
+            =/  tyl=(pole knot)  pat.name
+            ?>  ?=([%chum lyf=@ her=@ hyf=@ *] tyl)
+            =/  her  (slaw %p her.tyl)
+            =/  hyf  (slaw %ud hyf.tyl)
+            ?>  &(?=(^ her) ?=(^ hyf))
+            :: (get-key-for u.her u.hyf)
+            =+  per=(ev-got-per u.her)      :: XX ev-get-per
+            ?>  ?=(%known -.sat.per)        :: XX wat if %alien?
+            ?.  =(u.hyf life.sat.per)   !!  :: XX
+            symmetric-key.sat.per
+          (verify-mac:crypt `@`key p.auth ful rut)
+      ==
     ::
     +|  %entry-points
     ::
@@ -394,6 +401,7 @@
                     [%mess (unit lane:pact) =mess dud=(unit goof)]
                 ==
           --
+      ::
       |=  task=req-task
       ^+  ev-core
       ?-  -.task
@@ -638,8 +646,12 @@
             =/  hyf  (slaw %ud hyf.tyl)
             =/  cyf  (slaw %uv cyf.pat.tyl)
             ?>  &(?=(^ lyf) ?=(^ her) ?=(^ hyf) ?=(^ cyf))
-            =/  key  (get-key-for u.her u.hyf)
-            tyl(pat (open-path:crypt key u.cyf))
+            =/  key  ::  (get-key-for u.her u.hyf)
+              =+  per=(ev-got-per u.her)      :: XX ev-get-per
+              ?>  ?=(%known -.sat.per)        :: XX wat if %alien?
+              ?.  =(u.hyf life.sat.per)   !!  :: XX
+              symmetric-key.sat.per
+            tyl(pat (open-path:crypt `@`key u.cyf))
           [%shut kid=@ pat=[cyf=@ ~]]  :: encrypted with group key
             =/  kid  (slaw %ud kid.tyl)
             =/  cyf  (slaw %uv cyf.pat.tyl)
@@ -665,7 +677,7 @@
             ==
           ev-core
         =/  proof=(list @ux)  (rip 8 dat.data)
-        ?>  (authenticate (recover-root:lss proof) aut.data name)
+        ?>  (ev-authenticate (recover-root:lss proof) aut.data name)
         ?~  state=(init:verifier:lss tot.data proof)
           ev-core
         =.  peers.ax
@@ -691,7 +703,7 @@
           ::  is this a standalone message?
           ::
           ?:  =(1 tot.data)
-            ?>  (authenticate (root:lss dat.data) aut.data name)
+            ?>  (ev-authenticate (root:lss dat.data) aut.data name)
             =/  =spar:ames  [her.name pat]
             =/  =auth:mess  p.aut.data
             %+  ev-emit  [/ames]~
@@ -705,7 +717,7 @@
             ?>  ?=([%0 *] .)
             ?~(q ~ ?@(u.q [u.q ~] [p q ~]:u.q))
           =.  proof  [(leaf-hash:lss fag dat.data) proof]
-          ?>  (authenticate (recover-root:lss proof) aut.data name)
+          ?>  (ev-authenticate (recover-root:lss proof) aut.data name)
           ?~  state=(init:verifier:lss tot.data proof)
             ev-core
           ?~  state=(verify-msg:verifier:lss u.state dat.data ~)
@@ -810,7 +822,7 @@
       ::
       =.  per  sndr.pok^u.ship-state
       ?>  ?=(%known -.sat.per)
-      =/  dire=?(%for %bak)  :: flow swtiching
+      =/  =dire  :: flow swtiching
         ?:  =(%for dire.pok)  %bak
         ?>  =(%bak dire.pok)  %for
       =/  req=mesa-message
@@ -1191,12 +1203,12 @@
         ==
       ::
       ++  fo-peek
-        |=  [load=?(%poke %ack %nax) mess=@ud]
+        |=  [=load mess=@ud]
         ^-  (unit page)
         ::  XX assert flow direction?
         ::  %ack and %nax can be both %for (%plea) and %bak (%boon)
         ::
-        ?-  load
+        ?+  load  !!  ::  XX
           ::  if mess > gth 10, no-op ?
           %ack   ?.(=(mess last-acked.state) ~ `ack/!(fo-is-naxed mess))
           %nax   ?~(nax=(~(get by nax.state) mess) ~ `nax/u.nax)
@@ -2060,7 +2072,12 @@
         [~ ~]
       ?.  =(u.lyf life.ax)
         ~
-      =/  key  (get-key-for u.her u.hyf)  :: eddh with our key
+      :: =/  key  (get-key-for u.her u.hyf)  :: eddh with our key
+      =/  key=@
+        =+  per=(ev-got-per u.her)      :: XX ev-get-per
+        ?>  ?=(%known -.sat.per)        :: XX no-op if %alien?
+        ?.  =(u.hyf life.sat.per)   !!  :: XX
+        symmetric-key.sat.per
       =/  pat  (open-path:crypt key u.cyf)
       ?~  inn=(inner-path-to-beam our pat)  ~
       ?~  res=(rof `[u.her ~ ~] /mesa/chum vew.u.inn bem.u.inn)
@@ -2096,7 +2113,7 @@
     ::
         ::res-mess-pith:ev-res  ::  /[~sndr]/[load]/[~rcvr]/flow/[bone]/[dire]/[mess]
         ::  XX drop sndr, it's always our
-        [%flow bone=@ sndr=@ load=?(%poke %ack %nax %cork) rcvr=@ dire=?(%for %bak) mess=@ ~]
+        [%flow bone=@ sndr=@ load=@ rcvr=@ dire=@ mess=@ ~]
       ::  XX remove typed-paths
       =>  .(tyl `(pole iota)`(ev-pave tyl))
       ?>  ?=(res-mess-pith tyl)

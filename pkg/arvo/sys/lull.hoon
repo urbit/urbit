@@ -3391,7 +3391,9 @@
   ::  [0 %for]    =>  %poke: %plea %watch  =>  [0 %bak]
   ::  [0 %for]   <=   %poke: %boon        <=   [0 %bak]
   ::
-  +$  side           [=bone dire=?(%bak %for)]
+  +$  load           ?(%poke %ack %nax %cork)
+  +$  dire           ?(%bak %for)
+  +$  side           [=bone =dire]
   +$  error          error:ames
   +$  plea           plea:ames
   +$  spar           spar:ames
