@@ -77,7 +77,7 @@
     %-  zing
     %+  turn
       ?^  desks
-        `(list desk)`desks
+        (flop desks)
       %+  sort  ~(tap in ~(key by tyr.prep))
       |=  [a=desk b=desk]
       ?:  |(=(a %kids) =(b %base))  &
@@ -91,7 +91,7 @@
       ?:  |(=(a %kids) =(b %base))  &
       ?:  |(=(a %base) =(b %kids))  |
       (aor b a)
-    %+  murn  `(list desk)`desks
+    %+  murn  (flop desks)
     |=  des=desk
     ^-  (unit [=desk =zest wic=(set weft)])
     ?~  got=(~(get by tyr.prep) des)
