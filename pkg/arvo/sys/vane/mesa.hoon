@@ -1330,9 +1330,7 @@
             ?(%c %e %g %j)
               ::  XX remove when %gall supports %mesa
               ::
-              ~&  no-op/[hen %pass wire vane.plea plea/her^plea]
-              fo-core
-              :: (fo-emit hen %pass wire vane.plea plea/her^plea)
+              (fo-emit hen %pass wire vane.plea plea/her^plea)
           ==
         ::
         fo-core(pending-ack.state %.y)

@@ -121,7 +121,7 @@
     =/  frm  (get-farm pos)
     ?~  frm  ~
     =.  farm  u.frm
-    |- 
+    |-
     ?:  ?=(%coop -.farm)
       ~[pos]
     %-  zing
@@ -272,7 +272,7 @@
     =*  tap-plot  $
     ?:  ?=(%coop -.farm)
       %+  turn  ~(tap by q.farm)
-      |=  [=path =plot] 
+      |=  [=path =plot]
       [(welp wer path) plot]
     %+  welp  ?~(p.farm ~ [wer u.p.farm]~)
     %-  zing
@@ -513,7 +513,7 @@
           agent         &+agent
           run-nonce     (scot %uw (end 5 (shas %yoke-nonce eny)))
       ::
-          sky           
+          sky
         ?~  yak  *farm
         =|  =farm
         =.  farm  (need (~(gas-hutch of-farm farm) ~(tap by cop.u.yak)))
@@ -522,7 +522,7 @@
         ?~  sky  farm
         =.  farm  (need (~(put of-farm farm) spur.i.sky [`bob.i.sky ~]))
         $(sky t.sky)
-      == 
+      ==
     ::
     =/  old  mo-core
     =/  wag
@@ -561,8 +561,9 @@
       /sys/way/(scot %p ship)/[foreign-agent]
     ::
     =/  =note-arvo
-      =/  =path  /ge/[foreign-agent]
-      [%a %plea ship %g path ames-request-all]
+      =/  =path  /gm/[foreign-agent]
+      ::  [%a %plea ship %g path ames-request-all]
+      [%m %plea ship %g path ames-request-all]  ::  XX different mo-send-foreign-request for %mesa and %ames?
     ::
     =.  outstanding.state
       =/  stand
@@ -665,7 +666,7 @@
     ^+  mo-core
     ::
     ?>  ?=([%lag ~] wire)
-    ?>  ?=([%ames %clog *] sign-arvo)
+    ?>  ?=([?(%ames %mesa) %clog *] sign-arvo)
     ::
     =/  agents=(list [=dude =yoke])  ~(tap by yokes.state)
     |-  ^+  mo-core
@@ -721,7 +722,7 @@
     =/  foreign-agent   i.t.t.wire
     ::
     ?+    sign-arvo  !!
-        [%ames %done *]
+        [?(%ames %mesa) %done *]
       =/  err=(unit tang)
         ?~  error=error.sign-arvo
           ~
@@ -756,7 +757,8 @@
       ::
       =?  mo-core
           &(?=(^ err) |(?=(%watch-as remote-request) ?=(%watch remote-request)))
-        (mo-pass sys+wire %a %cork ship)
+        %+  mo-pass  sys+wire
+        ?-(-.sign-arvo %ames a/cork+ship, %mesa m/cork+ship)
       ::
       ?-  remote-request
         %watch-as  (mo-give %unto %watch-ack err)
@@ -769,7 +771,8 @@
         ::  the /nacked-leaves timer will re-send the %leave eventually.
         ::
         ?~  err
-          (mo-pass sys+wire %a %cork ship)
+          %+  mo-pass  sys+wire
+        ?-(-.sign-arvo %ames a/cork+ship, %mesa m/cork+ship)
         ::  if first time hearing a %nack for a %leave, after upgrade
         ::  or if all outstanding %leaves have been handled, set up timer
         ::
@@ -780,7 +783,7 @@
         mo-core
       ==
     ::
-        [%ames %boon *]
+        [?(%ames %mesa) %boon *]
       ?^  t.t.t.wire
         ::  kill subscriptions which use the old wire format
         ::
@@ -796,10 +799,11 @@
             =/  key  [[%sys wire] hen]
             =?  outstanding.state  =(~ (~(gut by outstanding.state) key ~))
               (~(del by outstanding.state) key)
-            (mo-pass [%sys wire] %a %cork ship)
+            %+  mo-pass  sys+wire
+            ?-(-.sign-arvo %ames a/cork+ship, %mesa m/cork+ship)
       ==
     ::
-        [%ames %lost *]
+        [?(%ames %mesa) %lost *]
       ::  note this should only happen on reverse bones, so only facts
       ::  and kicks
       ::
@@ -826,7 +830,7 @@
     =/  =routes  [disclosing=~ attributing=[our /]]
     =/  ap-core  (ap-abed:ap agent.pole routes)
     ?+    rest.pole  ~|(mo-handle-key-bad-wire/wire !!)
-        [%pug rest=*]  
+        [%pug rest=*]
       ?>  ?=([%ames %stub *] syn)
       ap-abet:(ap-stub:ap-core rest.rest.pole [num key]:syn)
     ::
@@ -1157,7 +1161,6 @@
         %u  [%leave ~]
       ==
     (mo-pass wire %g %deal [ship our /] agent-name deal)
-    
   ::  +mo-spew: handle request to set verbosity toggles on debug output
   ::
   ++  mo-spew
@@ -1185,6 +1188,7 @@
     |=  =wire
     ^+  mo-core
     ?>  ?=([%sys %way @ @ ~] wire)
+    ::  XX %mesa, /gm/[&4.wire]
     (mo-pass wire %a %plea (slav %p &3.wire) %g /ge/[&4.wire] %0 %u ~)
   ::
   ::  +ap: agent engine
@@ -1279,8 +1283,8 @@
       ?+    syn  ~|(weird-sign-ap-take-brood/-.syn !!)
           [%ames %boon *]
         =/  bud  (fall ((soft fine-response) payload.syn) *fine-response)
-        |-  
-        ?~  wis  
+        |-
+        ?~  wis
           =.  pen.yoke  (~(del by pen.yoke) [ship t.wire])
           ap-core
         ?~  bod.bud
@@ -1413,7 +1417,7 @@
           u.h
         *hutch
       =.  hutch  [.+(rev.hutch) num key]
-      =.  sky.yoke  
+      =.  sky.yoke
         ?^  new-sky=(~(put-hutch of-farm sky.yoke) coop hutch)
           u.new-sky
         sky.yoke
@@ -2348,6 +2352,7 @@
             ?=  $?  %ames  %behn  %clay
                     %dill  %eyre  %gall
                     %iris  %jael  %khan
+                    %mesa
                 ==
             i.i.duct
         ==
@@ -2374,7 +2379,7 @@
       =+  ;;(=fine-request noun)
       =<  mo-abet
       (mo-handle-key-request:mo-core ship agent-name path.fine-request)
-    ?>  ?=([%ge @ ~] path)
+    ?>  ?=([?(%ge %gm) @ ~] path)
     =/  agent-name  i.t.path
     ::
     =+  ;;(=ames-request-all noun)
@@ -2422,7 +2427,7 @@
         [%14 spore-14]
         [%15 spore-15]
     ==
-  +$  spore-15  
+  +$  spore-15
     $+  spore-15
     $:  system-duct=duct
         outstanding=(map [wire duct] (qeu remote-request))
