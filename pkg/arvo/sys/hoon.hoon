@@ -3994,7 +3994,7 @@
           u=[p=(a +>-.b) q=[p=(hair -.b) q=(tape +.b)]] ::
 +$  nail  [p=hair q=tape]                               ::  parsing input
 +$  pint  [p=[p=@ q=@] q=[p=@ q=@]]                     ::  line+column range
-+$  rule  _|:($:nail $:edge)                            ::  parsing rule
++$  rule  $-(nail edge)                                 ::  parsing rule
 +$  spot  [p=path q=pint]                               ::  range in file
 +$  tone  $%  [%0 product=*]                            ::  success
               [%1 block=*]                              ::  single block
