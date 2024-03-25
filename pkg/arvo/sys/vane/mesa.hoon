@@ -256,7 +256,7 @@
     ::
     +$  ev-flow-wire
       $:  %flow
-          were=?(%van %ext %int %cor)
+          were=?(%van %ext %int %cor %pok)  ::  XX revisit names
           =dire
           [%p her=@p]
           [%ud rift=@ud]
@@ -650,13 +650,17 @@
       =.  per  sndr.pok^u.ship-state
       ?>  ?=(%known -.sat.per)
       ?.  =(1 tot.data)
-        ::  %make-peek for path.poke-name
-         ev-core
+        =/  =wire
+          %.  [%pok mess.pok]
+          fo-wire:(fo-abed:fo hen [bone dire]:pok ev-chan ~)
+        =/  =space  chum/[life.sat.per our life.ax symmetric-key.sat.per]
+        %+  ev-emit  hen
+        [%pass wire %m make-peek/[space [her pat]:poke-name]]
       ::
       =/  res  (ev-decrypt-load [[her pat]:poke-name] dat.data)
       %:  ev-mess-poke
         ~   :: XX refactor function signature
-        rcvr.ack^(pout ack)
+        rcvr.ack^(pout ack)  ::  XX not used
         sndr.pok^(pout pok)
         ;;(gage:mess (cue res))
       ==
@@ -825,9 +829,9 @@
           ::  XX what if the crash is due to path validation
           ::  and we can't infer the sequence number?
           ~
-      =/  ack=(pole iota)  (ev-pave path.ack-spar)
       =/  pok=(pole iota)  (ev-pave path.pok-spar)
-      ?>  &(?=(res-mess-pith ack) ?=(res-mess-pith pok))
+      ~|  poke-path-failed/path.pok-spar
+      ?>  ?=(res-mess-pith pok)
       ::
       ::  the packet layer has already validated that this is a valid %poke
       ::
@@ -838,6 +842,7 @@
       =/  =dire  :: flow swtiching
         ?:  =(%for dire.pok)  %bak
         ?>  =(%bak dire.pok)  %for
+      ::
       =/  req=mesa-message
         ~|  gage-parsing-failed/gage
         ?>  ?=([%message *] gage)  :: XX [%message %mark *] ??
@@ -899,9 +904,15 @@
       ::  bones for acks are "internal", -- triggered by internal requests
       ::  for %poke payloads "external" -- triggered by hearing a request
       ::
+      ?:  =(%pok were)
+        =/  pok=(pole iota)
+          =^  path  path.p.sage
+            (ev-decrypt-path [path ship]:p.sage)
+          (ev-validate-flow-path path)
+        ?>  ?=(res-mess-pith pok)
+        (ev-mess-poke ~ ack-path=our^/ her^(pout pok) q.sage)
       ::  wires are tagged ?(%int %ext) so we can diferentiate if we are
       ::  proessing an ack or a naxplanation payload
-      ::
       ::
       =/  fo-core
         ::  XX parse $ack payload in here, and call task instead?
@@ -1165,8 +1176,15 @@
       ++  fo-view-beam  |=(=path `^path`[vane=%m care=%x case='1' desk=%$ path])
       ::
       ++  fo-wire
-        ::  XX better names ?(for-acks=%int for-nax-payloads=%ext to-vane=%van for-corks=%cor)
-        |=  [were=?(%int %ext %van %cor) seq=@ud]
+        ::  XX better names
+        ::  $?  for-acks=%int
+        ::      for-nax-payloads=%ext
+        ::      to/from-vane=%van
+        ::      for-corks=%cor
+        ::      for-poke-payloads=%pok
+        ::  ==
+        ::
+        |=  [were=?(%int %ext %van %cor %pok) seq=@ud]
         ^-  wire
         ::  %for: %plea(s) are always sent forward, %boon(s) %bak
         ::  both .to-vane and .dire are asserted when receiving the vane %ack
@@ -1214,13 +1232,13 @@
         ==
       ::
       ++  fo-take
-        |=  [were=?(%ext %int %van %cor) sign=flow-sign]
+        |=  [were=?(%ext %int %van %cor %pok) sign=flow-sign]
         ^+  fo-core
         ?-  -.sign
              %done   ?>(?=(%van were) (fo-take-done +.sign))  :: ack from client vane
         ::
             %mess-response
-          ?+  were  !!
+          ?+  were  !!  :: %pok is handle outside
             :: XX payload given by the packet layer
             :: via the wire used when %pass %a peek-for-poke
             :: and only handled there?
@@ -2133,6 +2151,7 @@
       =/  key=@
         =+  per=(ev-got-per u.her)      :: XX ev-get-per
         ?>  ?=(%known -.sat.per)        :: XX no-op if %alien?
+                                        :: fall back to %jael, do eddh on the side?
         ?.  =(u.hyf life.sat.per)   !!  :: XX
         symmetric-key.sat.per
       =/  pat  (open-path:crypt key u.cyf)
