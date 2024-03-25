@@ -2114,13 +2114,11 @@
       =/  view  ?@(vew.u.inn vew.u.inn (cat 3 [way car]:vew.u.inn))
       ?~  res=(rof ~ /mesa/publ view bem.u.inn)
         ~
-      ?>  ?=([~ *] res)
       =/  gag  ?~(u.res ~ [p q.q]:u.u.res)  :: XX how does receiver distinguish these?
       =/  ful  (en-beam bem)
       =/  ryf  rift.ax
-      =|  sec=@uxI :: XX derive from rift??
       =/  ser  (jam gag)  :: unencrypted
-      ``[%message !>([%sign (sign:crypt sec ful (root:lss ser)) ser])]
+      ``[%message !>([%sign (sign:crypt `@`priv.ax ful (root:lss ser)) ser])]
     ::
         [%chum lyf=@ her=@ hyf=@ cyf=@ ~]
       =/  lyf  (slaw %ud lyf.tyl)
