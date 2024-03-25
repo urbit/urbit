@@ -181,7 +181,7 @@
     +$  note
       $~  [%b %wait *@da]
       $%  $:  %m
-              $>(?(%make-peek %make-poke %mess-ser) task:mesa)
+              $>(?(%make-peek %make-poke %mess-ser %make-page) task:mesa)
           ==
           $:  %b
               $>(?(%wait %rest) task:behn)
@@ -513,9 +513,9 @@
         ::  XX re-send comet attestation?
         ::  XX only timed-out (dead) outgoing %poke requests
         ::
-        =.  flow.dead.ax  flow/`[~[/mesa] /dead-flow `@da`(add now ~m2)]
+        =.  flow.dead.ax  flow/`[~[/mesa] /dead-flow `@da`(add now ~s20)]
         =.  ev-core
-          (ev-emit ~[/mesa] %pass /dead-flow %b %wait `@da`(add now ~m2))
+          (ev-emit ~[/mesa] %pass /dead-flow %b %wait `@da`(add now ~s20))
         %-  ~(rep by peers.ax)
         |=  [[=ship =ship-state] core=_ev-core]
         ^+  core
@@ -527,11 +527,8 @@
         =/  =space  chum/[life.sat.per our life.ax symmetric-key.sat.per]
         %-  ~(rep by pit.sat.per)
         |=  [[=path req=request-state] core=_core]
-        ?~  pay.req
-          ::  external %peek request, not a dead flow
-          ::
-          ::  XX TODO %naxplanation and %cork reads?
-          core
+        ~&  re-sending/path
+        ::  XX if =(~ pay.req); %naxplanation, %cork or external $peek request
         =/  =pact:pact
           (ev-make-pact ship.per^path pay.req rift.sat.per `space)  :: XX memoize?
         %+  ev-emit:core   unix-duct.ax
@@ -620,8 +617,13 @@
       ::    - validation should crash event or ensure that no state is changed
       ::  XX  parse path to get: requester, rift, bone, message
       ::
-      :: ?.  =(1 tot.payload)
-      ::  !!  ::  XX  need to retrieve other fragments
+      =/  ship-state  (~(get by peers.ax) her.poke-name)
+      ::
+      ?.  ?=([~ %known *] ship-state)
+        ::  request public keys from %jael and drop the packet; it'll be re-send
+        ::
+        ::  XX TODO
+        (ev-enqueue-alien-todo her.poke-name ship-state |=(ovni-state +<))
       ::
       ::  path validation/decryption
       ::
@@ -644,13 +646,6 @@
       ?.  =(rcvr.pok our)  ::  are we the receiver of the poke?
         ~&  >  %poke-for-other^[rcvr.pok our]
         ev-core  :: XX TODO
-      =/  ship-state  (~(get by peers.ax) sndr.pok)
-      ::
-      ?.  ?=([~ %known *] ship-state)
-        ::  request public keys from %jael and drop the packet; it'll be re-send
-        ::
-        ::  XX TODO
-        (ev-enqueue-alien-todo sndr.pok ship-state |=(ovni-state +<))
       ::
       =.  per  sndr.pok^u.ship-state
       ?>  ?=(%known -.sat.per)
@@ -823,6 +818,7 @@
     ::
     ++  ev-mess-poke  :: XX refactor function signature
       |=  [dud=(unit goof) =ack=spar =pok=spar =gage:mess]
+      ^+  ev-core
       =+  ?~  dud  ~
           %-  %+  slog  leaf+"mesa: message crashed {<mote.u.dud>}"
               tang.u.dud
@@ -835,15 +831,10 @@
       ::
       ::  the packet layer has already validated that this is a valid %poke
       ::
-      =/  ship-state  (~(get by peers.ax) sndr.pok)
-      ::
-      ?.  ?=([~ %known *] ship-state)
-        ::  request public keys from %jael and drop the packet; it'll be re-send
-        ::
-        (ev-enqueue-alien-todo sndr.pok ship-state |=(ovni-state +<))
-      ::
-      =.  per  sndr.pok^u.ship-state
+      ::  XX ev-got-per; assumes that %aliens are checked in the packet layer
+      =.  per  (ev-got-per sndr.pok)
       ?>  ?=(%known -.sat.per)
+      ::
       =/  =dire  :: flow swtiching
         ?:  =(%for dire.pok)  %bak
         ?>  =(%bak dire.pok)  %for
@@ -1008,6 +999,16 @@
       =.  path.ack-spar   (ev-mess-spac space path.ack-spar)
       (ev-make-mess ack-spar `poke-path `space)
     ::
+    ++  ev-make-page
+      |=  [=space =path]
+      ^+  ev-core
+      =/  =name:pact  [[our rift.ax] [13 ~] (ev-mess-spac space path)]
+      ?~  page=(ev-get-page name)
+        ev-core
+      =/  =pact:pact  page/[name u.page [`@ux`our]~]
+      %+  ev-emit  unix-duct.ax
+      [%give %send ~[`@ux`our] p:(fax:plot (en:^pact pact))]
+    ::
     ++  ev-make-pact
       |=  [p=spar q=(unit path) =per=rift spac=(unit space)]
       ^-  pact:pact
@@ -1031,12 +1032,7 @@
       ::
       =/  man=name:pact  [[our rift.ax] [13 ~] (ev-mess-spac u.spac u.q)]
       ::
-      :^  %poke  nam  man
-      =;  page=pact:pact
-        ?>(?=(%page -.page) q.page)
-      %-  parse-packet
-      =<  ;;(@ q.q)  %-  need  %-  need
-      (rof ~ /mesa %mx (name-to-beam man))
+      [%poke nam man (need (ev-get-page man))]
     ::
     ++  ev-mess-spac
       |=  [=space =path]
@@ -1057,6 +1053,15 @@
         =/  cyf  (seal-path:crypt key.space path)
         /shut/[(scot %ud kid.space)]/[(scot %uv cyf)]
       ==
+    ::
+    ++  ev-get-page
+      |=  =name:pact
+      ^-  (unit data:pact)
+      =/  res=(unit (unit cage))  (rof ~ /mesa %mx (name-to-beam name))
+      ?.  ?=([~ ~ *] res)  ~
+      =;  page=pact:pact
+        ?>(?=(%page -.page) `q.page)
+      (parse-packet ;;(@ q.q.u.u.res))
     ::
     +|  %peer-helpers
     ::
@@ -1305,6 +1310,14 @@
         ::
         ::  XX check that the message can be acked (not in future, or far back past)
         ::
+        ?:  (gth seq +(last-acked.state))
+          ::  no-op if future message
+          ~&  %future-ack
+          fo-core
+        ?:  ::  (lte (sub +(last-acked.state) seq) 10)  :: XX TODO
+            =(seq last-acked.state)
+          ~&  %already-acked
+          (fo-send-ack seq)
         ?.  ok
           %.  `*error
           fo-take-done:fo-core(pending-ack.state %.y)
@@ -1323,14 +1336,11 @@
             =/  =space  chum/[life.sat.per our life.ax symmetric-key.sat.per]
             =/  =path   (ev-mess-spac space (fo-cor-path seq her^our))
             [hen %pass wire=(fo-wire %cor seq) %m make-peek/space^her^path]
-          ::  XX just fo-core(closing.state %.y) ?
+          ::  XX just fo-core(closing.state %.y)?
           (fo-take-done:fo-core(closing.state %.y, pending-ack.state %.y) ~)
         =.  fo-core
           ?+  vane.plea  ~|  %mesa-evil-vane^our^her^vane.plea  !!
-            ?(%c %e %g %j)
-              ::  XX remove when %gall supports %mesa
-              ::
-              (fo-emit hen %pass wire vane.plea plea/her^plea)
+            ?(%c %e %g %j)  (fo-emit hen %pass wire vane.plea plea/her^plea)
           ==
         ::
         fo-core(pending-ack.state %.y)
@@ -1340,7 +1350,6 @@
       ++  fo-take-done
         |=  error=(unit error)
         ^+  fo-core
-        :: ?>  ?=(%incoming -.state)
         ::  if there's a pending-vane ack, is always +(last-acked)
         ::
         ?>  =(%.y pending-ack.state)
@@ -1354,8 +1363,7 @@
             ::
             (~(del by nax.state) (sub seq 10))
           (~(put by nax.state) seq u.error)
-        ::  XX emit ack to unix
-        fo-core
+        (fo-send-ack seq)
       ::
       +|  %from-network
       ::
@@ -1462,6 +1470,20 @@
                 !(~(has by nax.state) seq)  ::  the %cork was not nacked
             ==
         fo-core
+      ::
+      +|  %internals
+      ::
+      ++  fo-send-ack
+        |=  seq=@ud
+        ::  emit ack to unix
+        ::
+        =/  =path
+          ::  we flip the direction of the flow since this is an ack we produce
+          ::
+          (%*(fo-ack-path fo-core dire.side fo-flip-dire) seq our her)
+        =/  =space  chum/[life.ax her [life symmetric-key]:sat.per]
+        (fo-emit hen %pass /make-page %m make-page/[space path])
+      ::
       --
     ::
     +|  %aliens
@@ -1510,6 +1532,11 @@
       ::
       ++  sy-born
         ::  XX
+        ~&  flow.dead.ax
+        =?  ev-core  ?=(~ +.flow.dead.ax)
+          (ev-emit ~[/mesa] %pass /dead-flow %b %wait `@da`(add now ~s1))
+        =?  flow.dead.ax  ?=(~ +.flow.dead.ax)
+          flow/`[~[/mesa] /dead-flow `@da`(add now ~s1)]
         =.  ev-core  (ev-emit hen %pass /private-keys %j %private-keys ~)
         sy-core(ax ax(unix-duct hen))
       ++  sy-init
@@ -1878,8 +1905,9 @@
       %keen  (ev-call:ev-core %keen +.task)
     ::  from internal %ames request
     ::
-      %make-peek  (ev-make-peek:ev-core [space p]:task)
-      %make-poke  (ev-make-poke:ev-core [space p q]:task)
+      %make-peek  (ev-make-peek:ev-core +.task)
+      %make-poke  (ev-make-poke:ev-core +.task)
+      %make-page  (ev-make-page:ev-core +.task)
     ::  XX
     ::
       %heer      (ev-call:ev-core task)  ::  XX dud

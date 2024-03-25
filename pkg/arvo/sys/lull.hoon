@@ -3332,13 +3332,13 @@
 ++  mesa  ^?
   |%
   +$  task
-    $+  mesa-task
     $~  vega+~
     $%  [%heer p=lane:pact q=@]            :: receive a packet
         [%mess p=(unit lane:pact) q=mess]  :: receive a message
         [%mess-ser =path load=$>(%page mess)]  :: XX give message from packet layer
         [%make-poke =space p=spar q=path]  :: initiate %poke request
         [%make-peek =space p=spar]         :: initiate %peek request
+        [%make-page =space =path]          :: send %page response [... =spar] ?
     ::
         $>(?(%plea %born %trim %vega %init) vane-task)
         $>(?(%cork %plug %keen) task:ames)
