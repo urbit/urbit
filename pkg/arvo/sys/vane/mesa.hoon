@@ -1000,14 +1000,14 @@
       (ev-make-mess ack-spar `poke-path `space)
     ::
     ++  ev-make-page
-      |=  [=space =path]
+      |=  [=space spar]
       ^+  ev-core
       =/  =name:pact  [[our rift.ax] [13 ~] (ev-mess-spac space path)]
       ?~  page=(ev-get-page name)
         ev-core
-      =/  =pact:pact  page/[name u.page [`@ux`our]~]
+      =/  =pact:pact  page/[name u.page ~]
       %+  ev-emit  unix-duct.ax
-      [%give %send ~[`@ux`our] p:(fax:plot (en:^pact pact))]
+      [%give %send ~[`@ux`ship] p:(fax:plot (en:^pact pact))]
     ::
     ++  ev-make-pact
       |=  [p=spar q=(unit path) =per=rift spac=(unit space)]
@@ -1238,7 +1238,7 @@
         ::
         ?+  load  !!  ::  XX
           ::  if mess > gth 10, no-op ?
-          %ack   ?.(=(mess last-acked.state) ~ `ack/!(fo-is-naxed mess))
+          %ack   ?.(=(mess last-acked.state) ~ `ack/(fo-is-naxed mess))
           %nax   ?~(nax=(~(get by nax.state) mess) ~ `nax/u.nax)
           %poke  ?~  v=(get:fo-mop loads.state mess)  ~
                  ?+  -.u.v  ~  :: XX cork?
@@ -1372,7 +1372,7 @@
         ^+  fo-core
         ::  only handle acks for %pokes that have been sent
         ::
-        ?:  (gth seq next-load.state)
+        ?.  (lth seq next-load.state)
           :: XX log?
           fo-core
         ::  if all pokes have been processed no-op
@@ -1482,7 +1482,7 @@
           ::
           (%*(fo-ack-path fo-core dire.side fo-flip-dire) seq our her)
         =/  =space  chum/[life.ax her [life symmetric-key]:sat.per]
-        (fo-emit hen %pass /make-page %m make-page/[space path])
+        (fo-emit hen %pass /make-page %m make-page/[space her^path])
       ::
       --
     ::
@@ -2193,7 +2193,7 @@
           ::  produce %ack
           ::  XX when are corked bones evicted?
           ::
-          ``[%message !>(`ack/%.y)]
+          ``[%message !>(`ack/%.n)]
       ::
       =/  res=(unit page)
         %.  [load mess]:tyl
