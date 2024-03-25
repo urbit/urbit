@@ -628,6 +628,8 @@
     ::      duct: ['/paths', ...],
     ::      message-num: 123
     ::    }, ...],
+    ::    closing: [bone, ..., bone],
+    ::    corked: [bone, ..., bone],
     ::    heeds: [['/paths', ...] ...]
     ::    scries:
     ::    ->  { =path
@@ -706,8 +708,8 @@
           |^  =/  mix=(list flow)
                 =-  (sort - dor)
                 %+  welp
-                  (turn ~(tap by snd) (tack %snd))
-                (turn ~(tap by rcv) (tack %rcv))
+                  (turn ~(tap by snd) (tack %snd closing corked))
+                (turn ~(tap by rcv) (tack %rcv closing corked))
               =/  [forward=(list flow) backward=(list flow)]
                 %+  skid  mix
                 |=  [=bone *]
@@ -719,6 +721,8 @@
           ::
           +$  flow
             $:  =bone
+                closing=?
+                corked=?
               ::
                 $=  state
                 $%  [%snd message-pump-state]
@@ -727,17 +731,17 @@
             ==
           ::
           ++  tack
-            |*  =term
+            |*  [=term closing=(set bone) corked=(set bone)]
             |*  [=bone =noun]
-            [bone [term noun]]
+            [bone (~(has in closing) bone) (~(has in corked) bone) [term noun]]
           ::
           ++  build
             |=  flow
             ^-  json
             %+  frond  -.state
             ?-  -.state
-              %snd  (snd-with-bone ossuary bone +.state)
-              %rcv  (rcv-with-bone ossuary bone +.state)
+              %snd  (snd-with-bone ossuary bone closing corked +.state)
+              %rcv  (rcv-with-bone ossuary bone closing corked +.state)
             ==
           --
         ::
@@ -750,20 +754,26 @@
               (bone-to-pairs bone ossuary)
           ==
         ::
+          'closing'^(set-array closing numb)
+        ::
+          'corked'^(set-array corked numb)
+        ::
           'heeds'^(set-array heeds from-duct)
         ::
           'scries'^(scries ~(tap by keens))
       ==
     ::
     ++  snd-with-bone
-      |=  [=ossuary =bone message-pump-state]
+      |=  [=ossuary =bone closing=? corked=? message-pump-state]
       ^-  json
       %-  pairs
-      :*  'current'^(numb current)
+      :*  'closing'^b+closing
+          'corked'^b+corked
+          'current'^(numb current)
           'next'^(numb next)
         ::
           :-  'unsent-messages'  ::  as byte sizes
-          (set-array unsent-messages (cork (cury met 3) numb))
+          (set-array unsent-messages (cork jam (cork (cury met 3) numb)))
         ::
           'unsent-fragments'^(numb (lent unsent-fragments))  ::  as lent
         ::
@@ -811,10 +821,12 @@
       ==
     ::
     ++  rcv-with-bone
-      |=  [=ossuary =bone message-sink-state]
+      |=  [=ossuary =bone closing=? corked=? message-sink-state]
       ^-  json
       %-  pairs
-      :*  'last-acked'^(numb last-acked)
+      :*  'closing'^b+closing
+          'corked'^b+corked
+          'last-acked'^(numb last-acked)
           'last-heard'^(numb last-heard)
         ::
           :-  'pending-vane-ack'

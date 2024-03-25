@@ -654,7 +654,10 @@
   ++  public-keys-give
     |=  [yen=(set duct) =public-keys-result]
     |^
-    =+  yez=(sort ~(tap in yen) sorter)
+    =/  yaz  %+  skid  ~(tap in yen)
+      |=  d=duct
+      &(?=([[%ames @ @ *] *] d) !=(%public-keys i.t.i.d))
+    =/  yez  (weld p.yaz (sort q.yaz sorter))
     |-  ^+  this-su
     ?~  yez  this-su
     =*  d  i.yez
@@ -1065,7 +1068,7 @@
   ::
   ::  XX review for security, stability, cases other than now
   ::
-  ?.  =(lot [%$ %da now])  ~
+  ?.  &(=(lot [%$ %da now]) =([~ ~] lyc))  ~
   ::
   ?:  &(?=(%x ren) =(tyl //whey))
     =/  maz=(list mass)

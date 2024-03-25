@@ -764,6 +764,7 @@
   ::    Messaging Tasks
   ::
   ::    %hear: packet from unix
+  ::    %dear: lane from unix
   ::    %heed: track peer's responsiveness; gives %clog if slow
   ::    %jilt: stop tracking peer's responsiveness
   ::    %cork: request to delete message flow
@@ -771,6 +772,7 @@
   ::    %kroc: request to delete specific message flows, from their bones
   ::    %plea: request to send message
   ::    %deep: deferred calls to %ames, from itself
+  ::    %stun: STUN response (or failure), from unix
   ::
   ::    Remote Scry Tasks
   ::
@@ -794,6 +796,7 @@
   +$  task
     $+  ames-task
     $%  [%hear =lane =blob]
+        [%dear =ship =lane]
         [%heed =ship]
         [%jilt =ship]
         [%cork =ship]
@@ -801,10 +804,13 @@
         [%kroc bones=(list [ship bone])]
         $>(%plea vane-task)
         [%deep =deep]
+        [%stun =stun]
     ::
-        [%keen spar]
+        [%keen sec=(unit [idx=@ key=@]) spar]
+        [%chum spar]
         [%yawn spar]
         [%wham spar]
+        [%plug =path]
     ::
         $>(%born vane-task)
         $>(%init vane-task)
@@ -826,6 +832,7 @@
   ::    %done: notify vane that peer (n)acked our message
   ::    %lost: notify vane that we crashed on %boon
   ::    %send: packet to unix
+  ::    %nail: lanes to unix
   ::
   ::    Remote Scry Gifts
   ::
@@ -834,6 +841,7 @@
   ::    System and Lifecycle Gifts
   ::
   ::    %turf: domain report, relayed from jael
+  ::    %saxo: our sponsor list report
   ::
   +$  gift
     $%  [%boon payload=*]
@@ -841,10 +849,14 @@
         [%done error=(unit error)]
         [%lost ~]
         [%send =lane =blob]
+        [%nail =ship lanes=(list lane)]
     ::
+        [%stub num=@ud key=@]
+        [%near spar dat=(unit (unit page))]
         [%tune spar roar=(unit roar)]
     ::
         [%turf turfs=(list turf)]
+        [%saxo sponsors=(list ship)]
     ==
   ::
   ::::                                                  ::  (1a2)
@@ -882,7 +894,7 @@
   +$  address  @uxaddress
   ::  $verb: verbosity flag for ames
   ::
-  +$  verb  ?(%snd %rcv %odd %msg %ges %for %rot %kay %fin)
+  +$  verb  ?(%snd %rcv %odd %msg %ges %for %rot %kay %fin %sun)
   ::  $blob: raw atom to or from unix, representing a packet
   ::
   +$  blob  @uxblob
@@ -902,6 +914,12 @@
   ::    payload: semantic message contents
   ::
   +$  plea  [vane=@tas =path payload=*]
+  ::
+  +$  message
+    $%  [%plea plea]
+        [%boon payload=*]
+        [%naxplanation =message-num =error]
+    ==
   ::  $spar:  pair of $ship and $path
   ::
   ::    Instead of fully qualifying a scry path, ames infers rift and
@@ -911,11 +929,20 @@
   ::  $deep: deferred %ames call, from self, to keep +abet cores pure
   ::
   +$  deep
-    $%  [%nack =ship =nack=bone =message-blob]
+    $%  [%nack =ship =nack=bone =message]
         [%sink =ship =target=bone naxplanation=[=message-num =error]]
         [%drop =ship =nack=bone =message-num]
         [%cork =ship =bone]
         [%kill =ship =bone]
+    ==
+  ::  $stun: STUN notifications, from unix
+  ::
+  ::    .lane is the latest cached lane in vere, from the point of view of .ship
+  ::
+  +$  stun
+    $%  [%stop =ship =lane]  :: succesful STUN response, stop %ping app
+        [%fail =ship =lane]  :: failure to STUN, re-enable %ping app
+        [%once =ship =lane]  :: new lane discovered, notify ping %app
     ==
   :: +|  %atomics
   ::
@@ -930,10 +957,12 @@
   ::  $hoot: request packet payload
   ::  $yowl: serialized response packet payload
   ::  $hunk: a slice of $yowl fragments
+  ::  $lock: keys for remote scry
   ::
   +$  hoot           @uxhoot
   +$  yowl           @uxyowl
   +$  hunk           [lop=@ len=@]
+  +$  lock           [idx=@ key=@]
   ::
   :: +|  %kinetics
   ::  $dyad: pair of sender and receiver ships
@@ -991,7 +1020,9 @@
         packets=(set =blob)
         heeds=(set duct)
         keens=(jug path duct)
+        chums=(jug path duct)
     ==
+  +$  chain  ((mop ,@ ,[key=@ =path]) lte)
   ::  $peer-state: state for a peer with known life and keys
   ::
   ::    route: transport-layer destination for packets to peer
@@ -1031,6 +1062,7 @@
         closing=(set bone)
         corked=(set bone)
         keens=(map path keen-state)
+        =chain
     ==
   +$  keen-state
     $+  keen-state
@@ -1155,7 +1187,7 @@
     $+  message-pump-state
     $:  current=_`message-num`1
         next=_`message-num`1
-        unsent-messages=(qeu message-blob)
+        unsent-messages=(qeu message)
         unsent-fragments=(list static-fragment)
         queued-message-acks=(map message-num ack)
         =packet-pump-state
@@ -2725,6 +2757,64 @@
   +$  bitt  (map duct (pair ship path))                 ::  incoming subs
   +$  boat  (map [=wire =ship =term] [acked=? =path])   ::  outgoing subs
   +$  boar  (map [=wire =ship =term] nonce=@)           ::  and their nonces
+  ::
+  +$  fans  ((mop @ud (pair @da (each page @uvI))) lte)
+  +$  plot
+    $:  bob=(unit @ud)
+        fan=fans
+    ==
+  +$  stats                                             ::  statistics
+    $:  change=@ud                                      ::  processed move count
+        eny=@uvJ                                        ::  entropy
+        time=@da                                        ::  current event time
+    ==
+  +$  hutch  [rev=@ud idx=@ud key=@]
+  ::
+  +$  farm
+    $+  farm
+    $~  [%plot ~ ~]
+    $%  [%coop p=hutch q=(map path plot)]
+        [%plot p=(unit plot) q=(map @ta farm)]
+    ==
+  ::
+  +$  egg                                               ::  migratory agent state
+    $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)] ::  see /sys/gall $yoke
+        $:  %live
+            control-duct=duct
+            run-nonce=@t
+            sub-nonce=@
+            =stats
+            =bitt
+            =boat
+            =boar
+            code=~
+            old-state=[%| vase]
+            =beak
+            marks=(map duct mark)
+            sky=farm
+            ken=(jug spar:ames wire)
+            pen=(jug spar:ames wire)
+            gem=(jug coop [path page])
+    ==  ==
+  +$  egg-any  $%([%15 egg-15] [%16 egg])
+  +$  egg-15
+    $%  [%nuke sky=(map spur @ud)]
+    $:  %live
+        control-duct=duct
+        run-nonce=@t
+        sub-nonce=@
+        =stats
+        =bitt
+        =boat
+        =boar
+        code=~
+        old-state=[%| vase]
+        =beak
+        marks=(map duct mark)
+        sky=(map spur plot)
+        ken=(jug spar:ames wire)
+    ==  ==
+  ::
   +$  bowl                                              ::  standard app state
     $:  $:  our=ship                                    ::  host
             src=ship                                    ::  guest
@@ -2733,9 +2823,7 @@
         ==                                              ::
         $:  wex=boat                                    ::  outgoing subs
             sup=bitt                                    ::  incoming subs
-            $=  sky                                     ::  scry bindings
-            %+  map  path                               ::
-            ((mop @ud (pair @da (each page @uvI))) lte) ::
+            sky=(map path fans)                         ::  scry bindings
         ==                                              ::
         $:  act=@ud                                     ::  change number
             eny=@uvJ                                    ::  entropy
@@ -2763,6 +2851,7 @@
   ::  TODO: add more flags?
   ::
   +$  verb  ?(%odd)
+  +$  coop  spur
   ::
   ::  +agent: app core
   ::
@@ -2779,6 +2868,12 @@
           [%grow =spur =page]
           [%tomb =case =spur]
           [%cull =case =spur]
+      ::
+          [%tend =coop =path =page]
+          [%germ =coop]
+          [%snip =coop]
+      ::
+          [%keen secret=? spar:ames]
       ==
     +$  task
       $%  [%watch =path]

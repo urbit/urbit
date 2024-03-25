@@ -211,6 +211,82 @@
     ::
   ==
 ::
+::  input chosen as follows:
+::
+::    > =|(i=@ud |-(?.(=(32 (met 3 (shax i))) i $(i +(i)))))
+::    507
+::    > =/(i=@ud 508 |-(?.(=(32 (met 3 (shax i))) i $(i +(i)))))
+::    653
+::
+++  test-shas-smol
+  ^-  tang
+  ;:  weld
+    %+  expect-eq
+      !>  0x5e64.27b4.df50.8044.0556.ea06.d5b7.cc22.35db.d62a.ebeb.6bc5.cfb8.
+            26de.2e31.6920
+      !>  `@ux`(shas %foo 0)
+  ::
+    %+  expect-eq
+      !>  0xecb1.6c06.c8e6.9572.7202.a8f6.cbd8.7b3c.a1ab.4670.2b31.2b36.dabd.
+            4bcb.ebf2.bc4f
+      !>  `@ux`(shas %foo 1)
+  ::
+    %+  expect-eq
+      !>  0x9a02.666a.9860.0575.8996.2929.cbf5.863b.392e.7692.f95b.d591.6508.
+            0e76.5cca.149f
+      !>  `@ux`(shas %foo 506)
+  ::
+    %+  expect-eq
+      !>  0xe0d6.a881.1621.f8fc.deb5.8794.e059.6937.8b74.03d3.d6c7.d140.ced4.
+            3ec2.d935.bbc4
+      !>  `@ux`(shas %foo 507)
+  ::
+    %+  expect-eq
+      !>  0xf184.dab8.34ff.dd4c.6a57.7f49.ac3f.c6d5.4e41.e9e7.30cd.c665.8c51.
+            d2ae.3989.439a
+      !>  `@ux`(shas %foo 652)
+  ::
+    %+  expect-eq
+      !>  0xd7ed.4f04.146d.db1a.604b.6b8e.61a2.83a5.d4dc.7efc.c9e1.5bc6.45ba.
+            7363.b297.0691
+      !>  `@ux`(shas %foo 653)
+  ==
+::
+++  test-shas-long
+  ^-  tang
+  ;:  weld
+  ::
+    %+  expect-eq
+      !>  0x1f88.2572.f898.a8b6.75c6.c660.6315.19a6.dacc.2934.0caa.ee11.b338.
+            1588.1a5d.aee8
+      !>  `@ux`(shas %foobarbazbud-abcdefghijklmnopqrstuvwxyz 0)
+  ::
+    %+  expect-eq
+      !>  0x3f91.8587.1fe4.480a.1cad.0a4f.6feb.e73f.3313.bf21.4dc6.e059.3b72.
+            1227.47ea.70f5
+      !>  `@ux`(shas %foobarbazbud-abcdefghijklmnopqrstuvwxyz 1)
+  ::
+    %+  expect-eq
+      !>  0xfe84.9453.f7f7.2637.25da.8327.e71f.c4c1.baaf.dec5.e790.0d06.83aa.
+            61b2.5e52.5330
+      !>  `@ux`(shas %foobarbazbud-abcdefghijklmnopqrstuvwxyz 506)
+  ::
+    %+  expect-eq
+      !>  0xacd3.eaec.97cc.b5db.4b4f.b055.ad97.7e29.b767.2434.b7de.6193.6616.
+            6852.174a.cb4e
+      !>  `@ux`(shas %foobarbazbud-abcdefghijklmnopqrstuvwxyz 507)
+  ::
+    %+  expect-eq
+      !>  0x911e.59e5.065a.6693.63de.e265.abab.514a.ca11.519b.236c.ebf8.d162.
+            7d16.02e7.0782
+      !>  `@ux`(shas %foobarbazbud-abcdefghijklmnopqrstuvwxyz 652)
+  ::
+    %+  expect-eq
+      !>  0x3912.6b8d.98e1.528a.c9f6.a6ae.1dbe.d496.448e.d5fd.5dda.daaa.e7e8.
+            f01f.06ba.09db
+      !>  `@ux`(shas %foobarbazbud-abcdefghijklmnopqrstuvwxyz 653)
+  ==
+::
 ++  test-shax
   =/  a  ''
   =/  b  'abc'
