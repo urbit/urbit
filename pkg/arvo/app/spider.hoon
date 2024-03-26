@@ -357,7 +357,7 @@
     ::
         %noun
       =/  tube  (convert-tube %noun input-mark desk bowl)
-      =/  body=noun  (cue (slav %uw q.u.body.request.inbound-request))
+      =/  body=noun  (cue q.u.body.request.inbound-request)
       (tube !>(body))
     ==
   =/  boc  bec
@@ -609,7 +609,7 @@
     ::
         %noun
       :-  [500 [['content-type' 'application/x-urb-jam'] ~]]
-      `(as-octs:mimes:html (scot %uw (jam [term tang])))
+      `(as-octs:mimes:html (jam [term tang]))
     ==
   :_  ~  :_  ~
   ?-  term
@@ -651,7 +651,7 @@
     :_  state(serving (~(del by serving.state) tid))
     %+  give-simple-payload:app:server  rid.u.request
     :-  [200 ['content-type' 'application/x-urb-jam']~]
-    `(as-octs:mimes:html (scot %uw (jam q.vase)))
+    `(as-octs:mimes:html (jam q.vase))
   ==
 ::
 ++  thread-done
