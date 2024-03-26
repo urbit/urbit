@@ -30,6 +30,15 @@
       clog=(map flow (qeu move))
   ==
 +$  flow  (pair pith pith)
++$  disk
+  $@(~ [=ship =term])
++$  tack
+  ?(%con %imp %pro)
++$  post  (pair tack stud)
+++  get-stud-name
+  |=  =stud
+  ?@  stud  stud
+  mark.stud
 ::
 ++  ford
   |%
@@ -39,6 +48,7 @@
     ^-  (unit vase)
     =+  !<([vax=(unit vase) *] q.pail.q:(~(got by deps.bowl) term))
     vax
+  ::
   ++  run
     |=  txt=@t
     (scan (trip txt) (rein /))
@@ -46,8 +56,11 @@
     [face=(unit term) =name]
   +$  pro
     [face=term =stud]
+  +$  vale
+    [face=term =stud]
   +$  file
     $:  pro=(list pro)
+        :: grab=(list 
         lib=(list lib)
         =hoon
     ==
@@ -106,6 +119,11 @@
   ++  with-face
     |=  [fac=@tas =vase]
     vase(p [%face fac p.vase])
+  ++  with-faces
+    |=  [reef=vase faces=(list (pair term vase))]
+    ?~  faces
+      reef
+    $(reef (slop reef (with-face i.faces)), faces t.faces)
   --
 ++  behn
   |%
@@ -325,6 +343,9 @@
   ++  en-tape
     |=  pit=$
     (spud (pout pit))
+  ++  en-cord
+    |=  pit=$
+    (spat (pout pit))
   ++  prefix
     =|  res=$
     |=  [long=$ curt=$]
@@ -626,6 +647,7 @@
       (~(run by ~(tar of ax)) |=(r=room [ever.icon.r (to-vial:room r)]))
     ==  
   --
++$  pulp  ?(%noun %json)
 +$  cane
   $~  [%x [0 0] [%$ *vase] ~]
   $:  =care
@@ -633,6 +655,56 @@
       =pail
       kids=(map pith [=ever =pail])
   ==
+::
+++  make-cane
+  |=  [=care at=pith ax=(axal room)]
+  ^-  cane
+  =/  rot  (need fil.ax)
+  :+  care  ever.icon.rot
+  :-  [state:q.span.rot state.icon.rot]
+  %-  ~(gas by *(map pith [ever pail]))
+  =-  %+  turn  ~(tap by -)
+      |=([k=pith v=[ever pail]] [(welp at k) v])
+  ?-    care
+      %x  ~
+      %y
+    =.  ax  ~(snip of ax)
+    (~(run by ~(tar of ax)) |=(r=room [ever.icon.r (to-pail:room r)]))
+  ::
+      %z
+    (~(run by ~(tar of ax)) |=(r=room [ever.icon.r (to-pail:room r)]))
+  ==
+++  enjs
+  =,  enjs:format
+  |%
+  ++  ever
+    |=  eve=^ever
+    ^-  json
+    %-  pairs
+    :~  node/(numb node.eve)
+        tree/(numb tree.eve)
+    ==
+  ::
+  ++  cane
+    |=  [can=^cane con=$-(pail json)]
+    ^-  json
+    =,  enjs:format
+    %-  pairs
+    :~  care/s/care.can
+        ever/(ever ever.can)
+        pail/(con pail.can)
+        :-  %kids
+        %-  pairs
+        %+  turn  ~(tap by kids.can)
+        |=  [pit=pith eve=^ever pal=pail]
+        ^-  [@t json]
+        :-  (en-cord:pith pit)
+        %-  pairs
+        :~  ever/(ever eve)
+            pail/(con pal)
+        ==
+    ==
+  --
 ::
 ::  !!stud refers to imp/ different from $vial
 +$  diff  [=pith =ever dat=(unit vial)]
