@@ -1151,10 +1151,8 @@
   ++  mo-handle-ames-request
     |=  [=ship agent-name=term =ames-request]
     ^+  mo-core
-    ::  %u/%leave gets automatically acked
     ::
     =.  mo-core  (mo-track-ship ship)
-    =?  mo-core  ?=(%u -.ames-request)  (mo-give %done ~)
     ::
     =/  yok=(unit yoke)  (~(get by yokes.state) agent-name)
     ?~  yok
@@ -1164,6 +1162,10 @@
     ?:  ?=(%.n -.agent.u.yok)
       (mo-give %flub ~)
   ::
+    ::  %u/%leave gets automatically acked
+    ::
+    =?  mo-core  ?=(%u -.ames-request)
+      (mo-give %done ~)
     =/  =wire  /sys/req/(scot %p ship)/[agent-name]
     ::
     =/  =deal
