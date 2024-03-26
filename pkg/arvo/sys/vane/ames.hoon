@@ -4585,10 +4585,12 @@
                 %drop  sink(nax.state (~(del in nax.state) message-num.task))
                 %done  (done ok.task)
                 %flub
-              %=  sink
-                last-heard.state        (dec last-heard.state)
-                pending-vane-ack.state  ~(nap to pending-vane-ack.state)
-              ==
+              =?  pending-vane-ack.state  ?=(^ pending-vane-ack.state)
+                ::  a %leave gets acked in %gall before sending the %flub,
+                ::  so %ames has already removed the pending ack from its queue
+                ::
+                ~(nap to pending-vane-ack.state)
+              sink(last-heard.state (dec last-heard.state))
             ::
                 %hear
               |^  ?:  ?|  corked
