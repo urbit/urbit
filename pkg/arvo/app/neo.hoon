@@ -146,7 +146,7 @@
       abet:(take:sys:run rest.pole syn)
     [cards this]
   ++  on-fail   on-fail:def
-  ++  on-peek   on-peek:def
+  ++  on-peek   peek:run
   ++  command-parser 
     |=  =id:sole
     ~(parser walk:run id)
@@ -289,6 +289,37 @@
 ++  our-sys-name  `name:neo`[our.bowl `pith:neo`#/$/sys]
 ++  our-sys-pith  (en-pith:name:neo our-sys-name)
 ::
+++  peek
+  |=  pax=path
+  ^-  (unit (unit cage))
+  ?.  ?=([%x *] pax)
+    [~ ~]
+  ~&  pax/pax
+  =/  pax=(pole iota)  (pave:neo t.pax)
+  ~&  pax/pax
+  ?+  pax  [~ ~]
+    [as=@ car=@ [%p who=@] pith=*]  (run-peek [as car who pith]:pax)
+  ==
+++  run-peek
+  |=  [as=term car=term =name:neo]
+  ^-  (unit (unit cage))
+  =+  ;;(=care:neo car)
+  ?.  =(our.bowl ship.name)
+    [~ ~] :: XX: todo
+  =/  res  (cane:(hall pith.name) care)
+  ?+    as  [~ ~]
+      %noun  ``neo-cane+!>(res)
+      %json
+    ``json+!>((cane:enjs:neo res !<($-(pail:neo json) (all-grow %json))))
+    
+      %html
+    =*  en-html
+      ~(. en-html:neo [#/['~']/scry/[dap.bowl]/html (en-pith:name:neo name)])
+    =-  ``hymn+!>(-)
+    %+  lift-to-hymn:en-html  pith.name
+    (cane:en-html res !<($-(pail:neo manx) (all-grow %node)))
+  ==
+::
 ++  take-arvo
   |=  [=pith syn=sign-arvo]
   ^+  run
@@ -406,6 +437,9 @@
 ++  poke
   |=  [=mark =vase]
   ^+  run
+  ?:  =(%neo-raw-poke mark)
+    =+  !<(raw=raw-poke:neo vase)
+    (on-move (raw-poke:harden raw))
   ?:  =(%neo-move mark)
     =+  !<(=move:neo vase)
     (on-move move)
@@ -508,14 +542,18 @@
         fiesta/fiesta
         grow/!>(grow)
         apex/!>(apex)
+        con/!>(con)
     ==
   !,  *hoon
   |=  =pail:neo
   ^-  out
-  =/  =pith:neo  (~(got by con.fiesta) [p.pail grow])
-  =+  !<([cache=(unit vase)] state.icon:(~(got of:neo pith)))
-  ?>  ?=(^ cache)
-  !<(out (slam u.cache q.pail))
+  ~!  p.pail
+  ~!  grow
+  =/  =stud:neo  
+    ~|  missing-con/[p.pail grow]
+    (~(got by con.fiesta) [p.pail grow])
+  =/  conv  ~(do con stud)
+  !<(out (slam run:conv q.pail))
 ::  
 ++  juice
   |_  =pulp:neo
@@ -711,6 +749,10 @@
 ::
 ++  harden
   |%
+  ++  raw-poke
+    |=  raw=raw-poke:neo
+    ^-  move:neo
+    [p.p.raw q.p.raw %poke (vial q.raw)]
   ++  vial
     |=  =vial:neo
     :-  p.vial
@@ -1029,7 +1071,7 @@
         #/src/reef
       (snoc pat ud/(dec idx))
     =.  run
-      (slop wer prev fac)
+      (slop wer fac prev)
     $(pros t.pros, idx +(idx))
   ++  make-prelude
     |=  [pax=pith =file:ford]
@@ -1051,6 +1093,8 @@
           (levy lib.file |=(lib:ford ~(exists lib name)))
       ==
     ?.  has-imports
+      ~|  pro.file
+      ~|  lib.file
       ~|  %no-imports
       !!
     =/  built-imports=?
@@ -1539,7 +1583,13 @@
       ~|  p.move
       ?>  ?=([[%p @p] *] p.q.move)
       +.i.p.q.move
-    [%agent [her dap.bowl] %poke neo-move+!>(move)]
+    ?:  =(our.bowl her)
+      [%agent [her dap.bowl] %poke neo-move+!>(move)]
+    =/  raw=raw-poke:neo
+      ?>  ?=(%poke -.q.q.move)
+      [[p p.q]:move (pail:soften pail.q.q.move)]
+    ?>  ?=(%poke -.q.q.move)
+    [%agent [her dap.bowl] %poke neo-raw-poke+!>(raw)]
   ++  arvo  .
   ++  emit  |=(=move:neo arvo(down [move down]))
   ++  trace-card
@@ -1672,7 +1722,12 @@
       =.  apex  (put:of-top here room)
       [cards arvo]
     ::
-    ++  si-resolve-kids  ~
+    ++  si-resolve-kids  
+      %-  ~(gas by *(map pith vase))
+      %+  turn  ~(tap by (kid:of-top here))
+      |=  [=pith:neo =room:neo]
+      ^-  [pith:neo vase]
+      [pith state.icon.room]
     ++  si-resolve-deps
       %-  ~(gas by *(map term [pith cane:neo]))
       ^-  (list [term pith cane:neo])
@@ -1986,6 +2041,7 @@
       ?+  scar.i.grab.race  !!
         %cord   (stag %cord (cook crip (star prn)))
         %patud  (stag %patud dem:ag)
+        %patp   (stag %patp ;~(pfix sig fed:ag))
       ==
   --
   ++  shoe-ef

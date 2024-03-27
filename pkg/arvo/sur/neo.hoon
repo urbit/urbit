@@ -80,12 +80,12 @@
       :: ^-  $-(nail (like ^pro))
       %+  rune  pat
       ;~  pose
+        ;~(plug sym ;~(pfix tis std))
         %+  cook
           |=  =stud
           ?@  stud  [stud stud]
           [mark.stud stud]
         std
-        ;~(plug sym ;~(pfix gap std))
       ==
     ++  lib
       :: ^-  $-(nail (like ^lib))
@@ -123,7 +123,7 @@
     |=  [reef=vase faces=(list (pair term vase))]
     ?~  faces
       reef
-    $(reef (slop reef (with-face i.faces)), faces t.faces)
+    $(reef (slop (with-face i.faces) reef), faces t.faces)
   --
 ++  behn
   |%
@@ -189,7 +189,7 @@
         :-  '0'^'9'  bisk:so
         :-  '-'      tash:so
         :-  '.'      zust:so
-        :-  '~'      ;~(pfix sig ;~(pose crub:so (easy [%n ~])))
+        :-  '~'      ;~(pfix sig ;~(pose (stag %da (cook year when:so)) crub:so (easy [%n ~])))
         :-  '\''     (stag %t qut)
     ==
   --
@@ -460,6 +460,7 @@
     ^-  (map pith _?>(?=(^ fil.fat) u.fil.fat))
     =.  fat  (dip pax)
     =.  fat  snip
+    =.  fil.fat  ~
     tar
   ::
   ++  kids
@@ -594,10 +595,10 @@
   $%  [%make =code init=(unit vase) =conf] :: todo: configuration values, init cannot be ^ if installing over
       [%poke =pail]
       [%tomb =case]
-      [%link from=pith src=stud]
+      [%link from=pith src=stud] :: XX deprecate
   ==
-+$  poke
-  (pair pith *)
++$  raw-poke
+  (pair flow vial)
 +$  yard
   $+  yard
   $~  ~
@@ -705,6 +706,105 @@
         ==
     ==
   --
+++  en-html
+  |_  [basename=pith here=pith]
+  ++  basetape  |=(=care (en-tape:pith :(welp basename ~[care] here)))
+  ++  ever
+    |=  eve=^ever
+    ^-  manx
+    ;dl.ever-neo
+      ;dt: Node
+      ;dd: {(a-co:co node.eve)}
+    ::
+      ;dt: Tree
+      ;dd: {(a-co:co tree.eve)}
+    ==
+  ++  link
+    |=  [=care pax=pith]
+    ^-  manx
+    =/  href=tape  "{(welp (basetape care) (en-tape:pith pax))}.html"
+    ;a(href href): As {<care>}
+  ++  path
+    |=  pax=pith
+    ^-  manx
+    ;details
+      ;summary: {(en-tape:pith pax)}
+      ;ul
+        ;li
+          ;+  (link %x pax)
+        ==
+        ;li
+          ;+  (link %y pax)
+        ==
+        ;li
+          ;+  (link %z pax)
+        ==
+      ==
+    ==
+  ++  stud
+    |=  std=^stud
+    ^-  tape
+    ?@  std
+      (trip std)
+    "{(trip mark.std)}/{(scow %p ship.std)}/{(trip desk.std)}"
+    
+  ::
+  ++  cane
+    |=  [can=^cane con=$-(pail manx)]
+    ^-  manx
+    ;dl.cane-neo
+      ;dt: Care
+      ;dd.care-neo: {(trip care.can)}
+    ::
+      ;dt: Ever
+      ;dd
+        ;+  (ever ever.can)
+      ==
+      ;dt: Type
+      ;dd: {(stud p.pail.can)}
+    ::
+      ;dt: Value
+      ;dd
+        ;+  (con pail.can)
+      ==
+    ::
+      ;dt: Children
+      ;dd
+        ;*  
+        %+  turn  ~(tap by kids.can)
+        |=  [pit=pith eve=^ever pal=pail]
+        ^-  manx
+        ;dl
+          ;dt: Path
+          ;dd
+            ;+  (path pit)
+          ==
+        ::
+          ;dt: Ever
+          ;dd 
+            ;+  (ever eve)
+          ==
+        ::
+          ;dt: Value
+          ;dd
+            ;+  (con pal)
+          ==
+        ==
+      ==
+    ==
+  ++  lift-to-hymn
+    |=  [pax=pith in=manx]
+    ^-  manx
+    ;html
+      ;head
+        ;title: {(en-tape:pith pax)}
+      ==
+      ;body
+        ;+  in  
+      ==
+    ==
+
+  --
 ::
 ::  !!stud refers to imp/ different from $vial
 +$  diff  [=pith =ever dat=(unit vial)]
@@ -726,8 +826,8 @@
 +$  vial  (pair stud *)
 +$  move  (pair pith card)
 +$  code
-  $%  [%clay p=path]
-      [%stud p=stud]
+  $%  [%clay p=path] :: XX: %clay is only for app/neo
+      [%stud p=stud] :: look in the imp directory for that name
   ==
 +$  span  (pair code firm)
 +$  icon
@@ -790,13 +890,13 @@
      (need (de-hall-soft hal))
   --
 +$  bowl
-  $:  src=name
-      our=@p
+  $:  src=name :: [=ship =pith]
+      our=@p   :: our
       were=pith :: XX: rename to here
-      here=pith
+      here=pith :: 
       now=@da
       deps=(map term (pair pith cane))
-      kids=(map pith vase) :: XX: vase ->
+      kids=(map pith vase) :: XX: vase -> pail
   ==
 +$  quay
   $%  [%x =port]
