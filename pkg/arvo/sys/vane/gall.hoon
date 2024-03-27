@@ -764,7 +764,7 @@
           ?.  &(?=(^ err) ?=(%leave rr))
             (~(del by outstanding.state) [full-wire hen])
           %-  ~(put by outstanding.state)
-          [[full-wire hen] (~(put to stand) %missing)]
+          [[full-wire hen] (~(gas to stand) ~[%leave %missing])]
         ::  non-null case of wire is old, remove on next breach after
         ::  2019/12
         ::
