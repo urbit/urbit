@@ -861,9 +861,9 @@
   ::  +root: compute just the root hash for a message
   ::
   ++  root
-    |=  msg=@
+    |=  msg=byts
     ^-  @ux
-    (blake3 32 (met 3 msg)^msg)
+    (blake3 32 msg)
   ::
   ::  +recover-root: compute the root hash of a leaf proof
   ::
@@ -1092,10 +1092,10 @@
     (const-cmp tag (mac key binding))
   ::
   ++  encrypt
-    |=  [key=@uxI iv=@ msg=@]
+    |=  [key=@uxI iv=@ msg=byts]
     ^+  msg
     =/  x  (xchacha:chacha key (hash 24 iv))
-    dat:(chacha 8 key.x nonce.x 0 (met 3 msg)^msg)
+    (chacha 8 key.x nonce.x 0 msg)
   ++  decrypt  encrypt
   ::
   ++  seal-path
@@ -1104,14 +1104,14 @@
     =/  keys  (hash 64 key)
     =/  pat  (jam path)
     =/  tag  (keyed-hash (rsh 8 keys) 16 pat)
-    =/  cyf  (encrypt (end 8 keys) tag pat)
+    =/  cyf  (encrypt (end 8 keys) tag (met 3 pat)^pat)
     (jam [tag cyf])
   ++  open-path
     |=  [key=@uxI sealed=@]
     ^-  path
     =/  keys  (hash 64 key)
-    =+  ;;([tag=@ cyf=@] (cue sealed))
-    =/  pat  (decrypt (end 8 keys) tag cyf)
+    =+  ;;([tag=@ cyf=byts] (cue sealed))
+    =/  pat  dat:(decrypt (end 8 keys) tag cyf)
     ?>  (const-cmp tag (keyed-hash (rsh 8 keys) 16 pat))
     ;;(path (cue pat))
   --
@@ -1202,13 +1202,13 @@
             =/  cyf  (slaw %uv cyf.tyl)
             ?>  &(?=(^ lyf) ?=(^ her) ?=(^ hyf) ?=(^ cyf))
             =/  key  (get-key-for u.her u.hyf)
-            (decrypt:crypt key u.cyf ser)
+            dat:(decrypt:crypt key u.cyf (met 3 ser)^ser)
           [%shut kid=@ cyf=@ ~]  :: encrypted with group key
             =/  kid  (slaw %ud kid.tyl)
             =/  cyf  (slaw %uv cyf.tyl)
             ?>  &(?=(^ kid) ?=(^ cyf))
             =/  key  (need (get-group-key-for u.kid)) :: XX handle ~
-            (decrypt:crypt key u.cyf ser)
+            dat:(decrypt:crypt key u.cyf (met 3 ser)^ser)
         ==
       ::
       ?-    typ
@@ -1244,7 +1244,7 @@
           ::  is this a standalone message?
           ::
           ?:  =(1 tot.q.pac)
-            ?>  (authenticate (root:lss dat.q.pac))
+            ?>  (authenticate (root:lss (met 3 dat.q.pac)^dat.q.pac))
             =/  =spar:ames  [her.p.pac pat]
             =/  =auth:mess  p.aut.q.pac
             =/  =page  ;;(page (cue (decrypt dat.q.pac))) :: XX what if we get ~ instead of a page?
@@ -1598,7 +1598,7 @@
       =/  ryf  *rift :: XX our rift
       =|  key=@uxI :: XX derive from rift??
       =/  ser  (jam gag)  :: unencrypted
-      =/  sig  (sign:crypt key (en-beam bem) (root:lss ser))
+      =/  sig  (sign:crypt key (en-beam bem) (root:lss (met 3 ser)^ser))
       ``[%message !>([%sign sig ser])]
     ::
         [%chum lyf=@ her=@ hyf=@ cyf=@ ~]
@@ -1616,9 +1616,10 @@
       ?~  res=(rof `[u.her ~ ~] /ames/chum vew.u.inn bem.u.inn)
         ~
       =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
-      =/  ser  (encrypt:crypt key u.cyf (jam gag))
-      =/  mac  (mac:crypt key (en-beam bem) (root:lss ser))
-      ``[%message !>([%hmac mac ser])]
+      =/  ser  (jam gag)
+      =/  cyr  (encrypt:crypt key u.cyf (met 3 ser)^ser)
+      =/  mac  (mac:crypt key (en-beam bem) (root:lss cyr))
+      ``[%message !>([%hmac mac dat.cyr])]
     ::
         [%shut kid=@ cyf=@ ~]
       =/  kid  (slaw %ud kid.tyl)
@@ -1634,9 +1635,10 @@
       ?~  res=(rof [~ ~] /ames/shut vew.u.inn bem.u.inn)
         ~
       =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
-      =/  ser  (encrypt:crypt u.key u.cyf (jam gag))
-      =/  sig  (sign:crypt u.key (en-beam bem) (root:lss ser))
-      ``[%message !>([%sign sig ser])]
+      =/  ser  (jam gag)
+      =/  cyr  (encrypt:crypt u.key u.cyf (met 3 ser)^ser)
+      =/  sig  (sign:crypt u.key (en-beam bem) (root:lss cyr))
+      ``[%message !>([%sign sig dat.cyr])]
     ==
   ~
 --

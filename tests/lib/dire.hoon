@@ -132,7 +132,7 @@
     =/  i  (ietf:chacha:dire nonce)
     %+  expect-eq
     !>  5^(rev 3 5 0x41.5a3e.498d)
-    !>  `[@ @ux]`(chacha:dire 20 key nonce.i counter.i 5^(rev 3 5 0x23.dbad.0780))
+    !>  (chacha:dire 20 key nonce.i counter.i 5^(rev 3 5 0x23.dbad.0780))
   ::
   ::  xchacha
   ::
