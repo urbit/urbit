@@ -14,19 +14,16 @@
 ::
 +$  card  card:agent:gall
 ::
-++  write-interval  ~d1
+++  write-interval  ~h1
 ::
 ++  write-events
   |=  [our=ship =dude:gall events=(list event-plus:verb)]
   ^-  (list card)
   ?:  =(~ events)  ~  ::NOTE  tmi
+  =/  first=event-plus:verb
+    (rear events)
   =/  pax=path
-    =;  period=time
-      ::NOTE  may overwrite if you write multiple times within a single
-      ::      write-interval. perhaps we should just use the full date?
-      /verb-logger/[dude]/(scot %da period)/json
-    ?>  ?=(^ events)
-    (sub now.i.events (mod now.i.events write-interval))
+    /verb-logger/[dude]/(crip (a-co:co (unm:chrono:userlib now.first)))/json
   =/  vex=@
     (en:json:html (events:enjs our dude events))
   [%pass /write/[dude] %agent [our %hood] %poke %drum-put !>([pax vex])]~
