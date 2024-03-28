@@ -445,7 +445,10 @@
     (on-move move)
   ?>  ?=(%noun mark)
   ?:  =(%clay q.vase)
-    copy-clay
+    (copy-clay ~)
+  ?:  ?=([%file *] q.vase)
+    =+  ;;(=path +.q.vase)
+    (copy-clay `path)
   ?:  ?=([%dbug veb=?] q.vase)
     ?>  =(our src):bowl
     %-  (print-dbug veb.q.vase)
@@ -811,10 +814,8 @@
 
     ++  vale
       ^-  ?
-      ~&  vale-con/stud
       =;  rap=(trap ?)
         =/  res  (mule rap)
-        ~&  vale-con-done/stud
         ?:  ?=(%& -.res)
           p.res
         %-  (slog leaf/"mark-vale" p.res)
@@ -929,8 +930,12 @@
   (need ref)
 ::
 ++  copy-clay
+  |=  just=(unit path)
   |^  ^+  run
-  =+  .^(paths=(list path) %ct root)
+  =/  paths=(list path)
+    ?~  just
+      .^((list path) %ct root)
+    ~[u.just]
 ::  =.  paths
 ::    %+  sort  paths
 ::    |=  [a=path b=path]
@@ -972,7 +977,6 @@
     ?~  imps
       run
     loop(imps ~, paths imps)
-  ~&  reading/i.paths
   =^  pat=(unit path)  run
     (read-file i.paths)
   ?~  pat
@@ -1027,7 +1031,6 @@
       run
     =*  do-con  ~(do con q.u.pos)
     ?.  vale:do-con
-      ~&  con-vale/q.u.pos
       run
     =.  fiesta  register:do-con
     run
@@ -1087,7 +1090,7 @@
     =+  .^(src=@t %cx (welp root pax))
     =/  =file:ford
       ~|  parsing/pax
-      (scan (trip src) (rein:ford pax))
+      (scan (trip src) (rein:ford [our.bowl (pave:neo pax)]))
     =/  has-imports=?
       ?&  (levy pro.file |=(pro:ford ~(exists pro stud)))
           (levy lib.file |=(lib:ford ~(exists lib name)))

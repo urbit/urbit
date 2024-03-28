@@ -14,7 +14,6 @@
     ~
   =/  face=@tas  (get-face bowl)
   :-  ~
-  =-  ((slog leaf/"attaching face" (sell -) ~) -)
   u.sut(p [%face (get-face bowl) p.u.sut])
 +$  state  [cache=(unit vase) ~]
 --

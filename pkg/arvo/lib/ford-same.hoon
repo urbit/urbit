@@ -31,9 +31,6 @@
     ^-  (quip card:neo vase)
     =|  sta=[cache=(unit vase) ~]
     =.  cache.sta  (get-output:ford:neo bowl %src)
-    
-    %-  ?~  cache.sta  (slog leaf/"no link" ~)
-        (slog leaf/"link" (sell u.cache.sta) ~)
     `!>(sta)
   --
 --

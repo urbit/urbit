@@ -51,9 +51,9 @@
   ::
   ++  run
     |=  txt=@t
-    (scan (trip txt) (rein /))
+    (scan (trip txt) (rein *name))
   +$  lib
-    [face=(unit term) =name]
+    [face=term =name]
   +$  pro
     [face=term =stud]
   +$  vale
@@ -65,12 +65,22 @@
         =hoon
     ==
   ++  rein
-    |=  pax=path
+    |=  =name
     =<  apex
     |%
     ++  nam
       :: ^-  $-(nail (like name:neo))
-      ;~(plug ;~(pfix fas sig fed:ag) stip)
+      ;~  pose
+        %+  sear 
+          |=  [kets=(list) pit=pith]
+          ^-  (unit ^name)
+          %-  mole
+          |.  ^-  ^name
+          =.  pit  (scag (sub (lent pit) (lent kets)) pit)
+          name(pith (welp pith.name pit))
+        ;~(pfix cen ;~(plug (star ket) stip))                     :: relative
+        ;~(plug ;~(pfix fas sig fed:ag) stip) :: absolute
+      ==
     ++  std
       ;~  pose
         ;~(plug sym ;~(pfix col sig fed:ag) ;~(pfix fas sym))
@@ -89,10 +99,15 @@
       ==
     ++  lib
       :: ^-  $-(nail (like ^lib))
-      %+  rune  cen
+      %+  rune  hep
       ;~  pose
-        (stag ~ nam)
-        ;~(plug (stag ~ sym) ;~(pfix gap nam))
+        ;~(plug sym ;~(pfix tis nam))
+        %+  cook
+          |=  n=^name
+          =/  last  (rear pith.n)
+          ?>  ?=(@ last)
+          [last n]
+        nam
       ==
     ++  rune
       |*  [car=rule rul=rule]
@@ -106,7 +121,7 @@
       (star pro)
     ++  hone
       :: ^-  $-(nail (like hoon))
-      =+  vaz=(vang & pax)
+      =+  vaz=(vang & (en-path:^name name))
       (ifix [gay gay] tall:vaz)
     ++  apex
       :: ^-  rule
@@ -591,10 +606,12 @@
 +$  page  (pair stud *)
 :: +$  cage  (pair stud vase)
 ::
++$  made
+  [=code init=(unit vase) =conf]
 +$  note
-  $%  [%make =code init=(unit vase) =conf] :: todo: configuration values, init cannot be ^ if installing over
+  $%  [%make made] :: todo: configuration values, init cannot be ^ if installing over
       [%poke =pail]
-      [%tomb =case]
+      [%tomb cas=(unit case)]    :: tom
       [%link from=pith src=stud] :: XX deprecate
   ==
 +$  raw-poke
