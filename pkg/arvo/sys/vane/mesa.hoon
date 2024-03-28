@@ -123,8 +123,7 @@
       ++  mac
         |=  [key=@uxI =binding]
         ^-  @uxH
-        =/  msg  (jam binding)
-        ((keyed:blake3:blake:crypto 32^key) 16 (met 3 msg)^msg)
+        (keyed-hash key 16 (jam binding))
       ::
       ++  verify-mac
         |=  [key=@uxI tag=@uxI =binding]  ::  [key=@uxI tag=@uxH =binding]
@@ -134,26 +133,122 @@
       ++  encrypt
         |=  [key=@uxI iv=@ msg=@]
         ^+  msg
-        (~(en ctrc:aes:crypto key 7 (met 3 msg) iv) msg) :: TODO: chacha8
+        =/  x  (xchacha:chacha key (hash 24 iv))
+        dat:(chacha 8 key.x nonce.x 0 (met 3 msg)^msg)
       ++  decrypt  encrypt
       ::
       ++  seal-path
         |=  [key=@uxI =path]
         ^-  @
+        =/  keys  (hash 64 key)
         =/  pat  (jam path)
-        =/  tag  ((keyed:blake3:blake:crypto 32^key) 16 (met 3 pat)^pat)
-        =/  cyf  (encrypt (mix key tag) tag pat)
+        =/  tag  (keyed-hash (rsh 8 keys) 16 pat)
+        =/  cyf  (encrypt (end 8 keys) tag pat)
         (jam [tag cyf])
+      ::
       ++  open-path
         |=  [key=@uxI sealed=@]
         ^-  path
+        =/  keys  (hash 64 key)
         =+  ;;([tag=@ cyf=@] (cue sealed))
-        =/  pat  (decrypt (mix key tag) tag cyf)
-        ?>  (const-cmp tag ((keyed:blake3:blake:crypto 32^key) 16 (met 3 pat)^pat))
+        =/  pat  (decrypt (end 8 keys) tag cyf)
+        :: ?>  (const-cmp tag (keyed-hash (rsh 8 keys) 16 pat))
         ;;(path (cue pat))
+      ::
       --
     ::
     ++  jim  |=(n=* ~>(%memo./mesa/jam (jam n)))
+    ::
+    ++  chacha
+      =<
+        =<  crypt
+        |%
+        ++  crypt
+          |=  [rounds=@ud key=@uxI nonce=@uxG counter=@udG msg=byts]
+          ^+  msg
+          :-  wid.msg
+          %+  end  [3 wid.msg]
+          %+  mix  dat.msg
+          %+  rep  9
+          %+  turn  (iota (div (add wid.msg 63) 64))
+          |=  i=@
+          =/  state  (can32 [4 sigma] [8 key] [2 (add counter i)] [2 nonce] ~)
+          =/  final  (do-rounds rounds state)
+          %+  rep  5
+          %+  turn  (iota 16)
+          |=(i=@ (add32 (get32 i state) (get32 i final)))
+        ::
+        ++  ietf
+          |=  [nonce=@ux]
+          ^-  [nonce=@uxG counter=@ud]
+          [(rsh 5 nonce) (lsh [5 1] (end 5 nonce))]
+        ::
+        ++  xchacha
+          |=  [key=@uxI nonce=@ux]
+          ^-  [key=@uxI nonce=@uxG]
+          :_  (rsh [5 4] nonce)
+          =/  state  (do-rounds 20 (can32 [4 sigma] [8 key] [4 nonce] ~))
+          (cat 7 (end [5 4] state) (rsh [5 12] state))
+        --
+      |%
+      ++  do-rounds
+        |^
+          |=  [rounds=@ud state=@uxJ]
+          ?:  =(0 rounds)  state
+          $(rounds (sub rounds 2), state (double-round state))
+        ::
+        ++  double-round
+          ;:  cork
+            (quarter-round 0x0 0x4 0x8 0xc)
+            (quarter-round 0x1 0x5 0x9 0xd)
+            (quarter-round 0x2 0x6 0xa 0xe)
+            (quarter-round 0x3 0x7 0xb 0xf)
+          ::
+            (quarter-round 0x0 0x5 0xa 0xf)
+            (quarter-round 0x1 0x6 0xb 0xc)
+            (quarter-round 0x2 0x7 0x8 0xd)
+            (quarter-round 0x3 0x4 0x9 0xe)
+          ==
+        ::
+        ++  quarter-round
+          |=  [a=@ b=@ c=@ d=@]
+          ;:  cork
+            (add a b)  (xor d a)  (rol d 16)
+            (add c d)  (xor b c)  (rol b 12)
+            (add a b)  (xor d a)  (rol d 8)
+            (add c d)  (xor b c)  (rol b 7)
+          ==
+        ::
+        ++  add
+          |=  [i=@ j=@]
+          |=  s=@uxJ
+          (set32 i (add32 (get32 i s) (get32 j s)) s)
+        ++  xor
+          |=  [i=@ j=@]
+          |=  s=@uxJ
+          (set32 i (mix (get32 i s) (get32 j s)) s)
+        ++  rol
+          |=  [i=@ n=@]
+          |=  s=@uxJ
+          (set32 i (rol32 n (get32 i s)) s)
+        --
+      ::
+      ++  sigma  0x6b20.6574.7962.2d32.3320.646e.6170.7865
+      ++  can32  (cury can 5)
+      ++  add32  ~(sum fe 5)
+      ++  rol32  (cury ~(rol fe 5) 0)
+      ++  get32  |=([i=@ a=@] (cut 5 [i 1] a))
+      ++  set32  |=([i=@ w=@ a=@] (sew 5 [i 1 w] a))
+      ++  iota   |=(n=@ ?:(=(0 n) ~ (gulf 0 (dec n))))
+      --
+    ::
+    ++  hash
+      |=  [out=@ud msg=@]
+      (blake3:blake:crypto out (met 3 msg)^msg)
+    ++  keyed-hash
+      |=  [key=@uxI out=@ud msg=@]
+      ((keyed:blake3:blake:crypto 32^key) out (met 3 msg)^msg)
+    ::
     --
 ::  vane types
 ::
