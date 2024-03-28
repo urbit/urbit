@@ -47,7 +47,7 @@
   :_  this
   :_  :_  cards
     (emit-event %on-poke mark)
-  (emit-event-plus bowl [%on-poke mark] cards)
+  (emit-event-plus bowl [%on-poke mark (mug q.vase)] cards)
 ::
 ++  on-watch
   |=  =path
@@ -88,7 +88,14 @@
   :_  this
   :_  :_  cards
     (emit-event %on-agent wire -.sign)
-  (emit-event-plus bowl [%on-agent wire -.sign (mug +.sign)] cards)
+  =;  =^sign
+    (emit-event-plus bowl [%on-agent wire sign] cards)
+  ?-  -.sign
+    %poke-ack   [%poke-ack ?=(~ p.sign)]
+    %watch-ack  [%watch-ack ?=(~ p.sign)]
+    %kick       [%kick ~]
+    %fact       [%fact p.cage.sign (mug q.q.cage.sign)]
+  ==
 ::
 ++  on-arvo
   |=  [=wire =sign-arvo]

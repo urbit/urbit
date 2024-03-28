@@ -21,12 +21,19 @@
 +$  cause
   $%  [%on-init ~]
       [%on-load ~]
-      [%on-poke =mark]
+      [%on-poke =mark mug=@ux]
       [%on-watch =path]
       [%on-leave =path]
-      [%on-agent =wire sign=term mug=@ux]  ::TODO  %fact should show mark?
+      [%on-agent =wire =sign]
       [%on-arvo =wire vane=term sign=term]
       [%on-fail =term]
+  ==
+::
++$  sign
+  $%  [%poke-ack ack=?]
+      [%watch-ack ack=?]
+      [%kick ~]
+      [%fact =mark mug=@ux]
   ==
 ::
 +$  effect

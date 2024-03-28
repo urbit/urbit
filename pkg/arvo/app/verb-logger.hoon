@@ -28,11 +28,7 @@
     ?>  ?=(^ events)
     (sub now.i.events (mod now.i.events write-interval))
   =/  vex=@
-    %-  en:json:html
-    :-  %a
-    %+  roll  events  ::NOTE  we +roll to +turn & +flop simultaneously
-    |=  [event=event-plus:verb out=(list json)]
-    [(event:enjs event) out]
+    (en:json:html (events:enjs our dude events))
   [%pass /write/[dude] %agent [our %hood] %poke %drum-put !>([pax vex])]~
 ::
 ++  ingest-event
@@ -54,42 +50,70 @@
 ++  enjs
   =,  enjs:format
   |%
+  ++  events
+    |=  [our=@p =dude:gall events=(list event-plus:verb)]  ::  latest-first
+    =/  first=event-plus:verb  (rear events)
+    %-  pairs
+    :~  'ship'^s+(scot %p our)
+        'dude'^s+dude
+        'from'^(time now.first)
+      ::
+        :-  'events'
+        :-  %a
+        %+  roll  events  ::NOTE  we +roll to +turn & +flop simultaneously
+        |=  [event=event-plus:verb out=(list json)]
+        [(event:enjs event) out]
+    ==
   ++  event
     |=  event-plus:verb
     %-  pairs
     :~  'act'^(numb act)
         'now'^(time now)  ::  ms timestamp, lossy-ness is fine here
         'src'^s+(scot %p src)
-        'cause'^(^cause cause)
+        'kind'^s+-.cause
+        'deets'^(^cause cause)
         'effects'^a+(turn effects effect)
     ==
   ::
   ++  cause
     |=  =cause:verb
-    %+  frond  -.cause
+    ^-  json
     ?-  -.cause
       %on-init   b+&
       %on-load   b+&
-      %on-poke   s+mark.cause
+      %on-poke   (pairs 'mark'^s+mark.cause 'mug'^(mug mug.cause) ~)
       %on-watch  (path path.cause)
       %on-leave  (path path.cause)
       %on-agent  %-  pairs
-                :~  'wire'^(path wire.cause)
-                    'sign'^s+sign.cause
-                    'mug'^(mug mug.cause)
-                ==
+                 :~  'wire'^(path wire.cause)
+                     'sign'^s+-.sign.cause
+                   ::
+                     :-  'deets'
+                     ?-  -.sign.cause
+                       %poke-ack   b+ack.sign.cause
+                       %watch-ack  b+ack.sign.cause
+                       %kick       ~
+                       %fact       %-  pairs
+                                   :~  'mark'^s+mark.sign.cause
+                                       'mug'^(mug mug.sign.cause)
+                                   ==
+                     ==
+                 ==
       %on-arvo   %-  pairs
-                :~  'wire'^(path wire.cause)
-                    'vane'^s+vane.cause
-                    'sign'^s+sign.cause
-                ==
+                 :~  'wire'^(path wire.cause)
+                     'vane'^s+vane.cause
+                     'sign'^s+sign.cause
+                 ==
       %on-fail   s+term.cause
     ==
   ::
   ++  effect
     |=  effect:verb
     ^-  json
-    %+  frond  +<-
+    %-  pairs
+    :-  'kind'^s++<-
+    :_  ~
+    :-  'deets'
     %-  pairs
     ^-  (list [@t json])
     ?-  +<-
