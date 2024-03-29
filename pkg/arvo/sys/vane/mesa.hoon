@@ -356,7 +356,6 @@
           [%p her=@p]
           [%ud rift=@ud]
           [%ud bone=@ud]
-          [%ud seq=@ud]                    :: XX remove? assume only the last message?
           ~
       ==
     ::
@@ -746,7 +745,7 @@
       ?>  ?=(%known -.sat.per)
       ?.  =(1 tot.data)
         =/  =wire
-          %.  [%pok mess.pok]
+          %.  %pok
           fo-wire:(fo-abed:fo hen [bone dire]:pok ev-chan ~)
         =/  =space  chum/[life.sat.per our life.ax symmetric-key.sat.per]
         %+  ev-emit  hen
@@ -906,11 +905,14 @@
       ::
       ::  XX validate response
       ::
-      =/  res       (ev-decrypt-load spar res)  :: XX should have happened before
-                                                :: XX breaks non-encrypted %keen tasks
-      =.  pit.u.rs  (~(del by pit.u.rs) path.spar)
-      =.  peers.ax  (~(put by peers.ax) ship.spar u.rs)
-      =/  gift      [%give %mess-response spar ;;(gage:mess (cue res))]
+      =/  open-path  -:(ev-decrypt-path [path ship]:spar)   :: XX should have happened before
+      =/  res        (ev-decrypt-load spar res)  :: XX should have happened before
+                                                 :: XX breaks non-encrypted %keen tasks
+      =.  pit.u.rs   (~(del by pit.u.rs) path.spar)
+      =.  peers.ax   (~(put by peers.ax) ship.spar u.rs)
+      ~&  [%give %mess-response spar]
+      =/  gift
+        [%give %mess-response spar(path open-path) ;;(gage:mess (cue res))]
       %-  ~(rep in for.u.ms)
       |=  [hen=duct c=_ev-core]
       (ev-emit:c hen gift)
@@ -979,6 +981,11 @@
       ?:  (lth rift rift.sat.per)
         :: XX log
         ev-core  ::  ignore events from an old rift
+      ::  XX validate that wire and paths have matching flow bones?
+      ::
+      =/  message-path=(pole iota)   (ev-validate-flow-path path.p.sage)
+      ?>  ?=(res-mess-pith message-path)
+      ::
       ::  XX replaced by the flow "dire"ction ?(%for %bak)
       ::  based on the bone we can know if this payload is an ack?
       ::  bone=0                                   bone=1
@@ -989,18 +996,13 @@
       ::  for %poke payloads "external" -- triggered by hearing a request
       ::
       ?:  =(%pok were)
-        =/  pok=(pole iota)
-          =^  path  path.p.sage
-            (ev-decrypt-path [path ship]:p.sage)
-          (ev-validate-flow-path path)
-        ?>  ?=(res-mess-pith pok)
-        (ev-mess-poke ~ ack-path=our^/ her^(pout pok) q.sage)
+        (ev-mess-poke ~ ack-path=our^/ her^path.p.sage q.sage)
       ::  wires are tagged ?(%int %ext) so we can diferentiate if we are
       ::  proessing an ack or a naxplanation payload
       ::
       =/  fo-core
         ::  XX parse $ack payload in here, and call task instead?
-        %.  [were mess-response/[seq sage]]
+        %.  [were mess-response/[mess.message-path sage]]
         fo-take:(fo-abed:fo hen bone^dire ev-chan ~)
       =^  moves  ax
         ?:  &(=(were %cor) =(dire %bak) closing.state.fo-core)
@@ -1271,7 +1273,7 @@
         ::      for-poke-payloads=%pok
         ::  ==
         ::
-        |=  [were=?(%int %ext %van %cor %pok) seq=@ud]
+        |=  were=?(%int %ext %van %cor %pok)
         ^-  wire
         ::  %for: %plea(s) are always sent forward, %boon(s) %bak
         ::  both .to-vane and .dire are asserted when receiving the vane %ack
@@ -1283,7 +1285,6 @@
           ::
             rift=[(scot %ud rift.sat.per)]
             bone=[(scot %ud bone)]
-            seq=[(scot %ud seq)]  ::  XX remove
         ==
       ::
       +|  %entry-points
@@ -1385,7 +1386,7 @@
         =/  paths=[spar path]
           [her^(fo-ack-path seq her our) (fo-pok-path seq our her)]
         =/  =space   chum/[life.sat.per our life.ax symmetric-key.sat.per]
-        =/  =wire    (fo-wire %int seq)
+        =/  =wire    (fo-wire %int)
         =.  fo-core  (fo-emit hen %pass wire %m make-poke/[space paths])
         loop
       ::
@@ -1437,10 +1438,8 @@
           %.  `*error
           fo-take-done:fo-core(pending-ack.state %.y)
         ::
-        ::  XX vane wires need to be the same for every message in the flow
-        ::  until seq is removes from the wire, use "0" as a temporary fix
         ::
-        =/  =wire  (fo-wire %van seq=0)
+        =/  =wire  (fo-wire %van)
         ?.  &(=(vane %$) ?=([%cork ~] payload) ?=([%cork ~] path)):plea
           =.  fo-core
             ?+  vane.plea  ~|  %mesa-evil-vane^our^her^vane.plea  !!
@@ -1459,7 +1458,7 @@
           ::
           =/  =space  chum/[life.sat.per our life.ax symmetric-key.sat.per]
           =/  =path   (ev-mess-spac space (fo-cor-path seq her^our))
-          [hen %pass wire=(fo-wire %cor seq) %m make-peek/space^her^path]
+          [hen %pass wire=(fo-wire %cor) %m make-peek/space^her^path]
         ::  XX just fo-core(closing.state %.y)?
         (fo-take-done:fo-core(closing.state %.y, pending-ack.state %.y) ~)
       ::
@@ -1512,7 +1511,7 @@
           ~&  >>  "error: start %peek for naxplanation "^gage
           ::  if error start %peek for naxplanation
           ::
-          =/  =wire  (fo-wire %ext seq)
+          =/  =wire  (fo-wire %ext)
           ::  XX %ames call itself with a %make-peek task
           ::  on a wire used to infer the listener (the %poke %nax request; us)
           ::  when getting the %response $page with or %naxplanation payloads
