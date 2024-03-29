@@ -1,5 +1,5 @@
 /-  neo, sole-sur=sole
-/+  default-agent, dbug, verb, shoe
+/+  default-agent, dbug, verb, shoe, serv=server
 |%
 ++  pave  pave:neo
 ++  ford  ford:neo
@@ -71,7 +71,8 @@
       hear=(map name:neo sound:neo)
       $=  unix
       $:  timers=(jug @da pith:neo)
-          ~
+          clay-peers=(set [src=pith hand=pith])
+          http-req=(map @ta path)
       ==
   ==
 ++  is-parent-p
@@ -140,6 +141,8 @@
   ++  on-arvo   
     |=  [=(pole knot) syn=sign-arvo]
     ^-  (quip card _this)
+    ?:  ?=([%bind-site ~] pole)
+      `this
     ?.  ?=([%sys rest=*] pole)
       `this
     =^  cards  state
@@ -182,6 +185,7 @@
 ++  emil  |=(caz=(list card) run(cards (welp (flop caz) cards)))
 ++  poke-our  
   |=([=wire =cage] (emit %pass wire %agent [our dap]:bowl %poke cage))
+::
 ++  poke-move
   |=  =move:neo
   =/  =wire  local/(pout p.move)
@@ -240,7 +244,8 @@
   =.  run  (make-riff #/src/std/pro/term (term reef))
   =.  run  (re-export reef %json !,(*hoon json))
   =.  run  (re-export reef %mime !,(*hoon mime))
-  (poke %noun !>(%clay))
+  =.  run  (poke %noun !>(%clay))
+  (emit %pass /bind-site %arvo %e %connect [~ dap.bowl ~] dap.bowl)
   ++  re-export
     |=  [reef=vase =stud:neo =hoon]
     ^+  run
@@ -294,9 +299,8 @@
   ^-  (unit (unit cage))
   ?.  ?=([%x *] pax)
     [~ ~]
-  ~&  pax/pax
   =/  pax=(pole iota)  (pave:neo t.pax)
-  ~&  pax/pax
+  ~&  pax
   ?+  pax  [~ ~]
     [as=@ car=@ [%p who=@] pith=*]  (run-peek [as car who pith]:pax)
   ==
@@ -311,6 +315,7 @@
       %noun  ``neo-cane+!>(res)
       %json
     ``json+!>((cane:enjs:neo res !<($-(pail:neo json) (all-grow %json))))
+  ::
     
       %html
     =*  en-html
@@ -437,6 +442,9 @@
 ++  poke
   |=  [=mark =vase]
   ^+  run
+  ?:  =(%handle-http-request mark)
+    =-  (~(on-req srv id) req)
+    !<([id=@ta req=inbound-request:eyre] vase)
   ?:  =(%neo-raw-poke mark)
     =+  !<(raw=raw-poke:neo vase)
     (on-move (raw-poke:harden raw))
@@ -462,6 +470,71 @@
     ?>  ?=(%poke -.q.card)
     !! :: XX: fix(forward-poke name val.q.card)
   (on-card card)
+++  srv
+  |_  eyre-id=@ta
+  ++  send
+    |=  res=simple-payload:http
+    ^+  run
+    (emil (give-simple-payload:app:serv eyre-id res))
+  ::
+  ++  err
+    |=  =tang
+    =.  http-req.unix  (~(del by http-req.unix) eyre-id)
+    (send (error:gen:serv tang))
+  ::
+  ++  response
+    |=  =path
+    %-  send
+    =/  res=(unit (unit cage))   (fall (mole |.((peek %x path))) [~ ~])
+    ?.  ?=([~ ~ *] res)
+      not-found:gen:serv
+    =*  cag  u.u.res
+    ?+    p.cag  invalid-req:gen:serv
+        %json  (json-response:gen:serv !<(json q.cag))
+        %hymn  (manx-response:gen:serv !<(manx q.cag))
+        %noun
+      :_  `(as-octs:mimes:html (jam q.q.cag))
+      [200 [['content-type' 'application/x-urb-jam'] ~]]
+    ==
+  ::
+  ++  on-req
+    |=  req=inbound-request:eyre
+    ^+  run
+    ::  XX: revive when privacy
+    ::  ?.  authenticated.req
+    ::    (login-redirect:app:serv request.req)
+
+    =/  line=request-line:serv  (parse-request-line:serv url.request.req)
+    ?>  &(?=(^ site.line) =('neo' i.site.line))
+    =/  =path  t.site.line
+    ?:  =(%'POST' method.request.req)
+      ?>  authenticated.req
+      (on-post path (need (de:json:html q:(need body.request.req))))
+    ?.  =('GET' method.request.req)
+      (send invalid-req:gen:serv)
+    (response path)
+  ::
+  ++  on-post
+    |=  [=(pole knot) jon=json]
+    ^+  run
+    ?>  ?=([as=@ car=@ ship=@ rest=*] pole)
+    ?.  =((slav %p ship.pole) our.bowl)
+      (send invalid-req:gen:serv)
+    =/  =pail:neo
+      ((pail:dejs:neo !<($-([stud json] vase) (all-grab %json))) jon)
+    =/  =move:neo
+      :-  #/[p/our.bowl]/$/eyre/req/[eyre-id]
+      [(pave:neo [ship rest]:pole) %poke pail]
+    =.  http-req.unix  (~(put by http-req.unix) eyre-id pole)
+    (poke-move move)
+  ::
+  ++  finish-post
+    =/  =(pole knot)  (~(got by http-req.unix) eyre-id)
+    =.  http-req.unix  (~(del by http-req.unix) eyre-id)
+    (response pole)
+  --
+::
+::
 ++  on-card
   |=  =card:neo
   ^+  run
@@ -486,7 +559,21 @@
     ==
     ++  clay
       |=  =note:neo
-      ^+  run
+      ?>  ?=(%poke -.note)
+      ?>  ?=(%clay-req p.pail.note)
+      =+  !<(=req:clay:neo q.pail.note)
+      ?-    -.req
+          %pull
+        =.  clay-peers.unix  (~(del in clay-peers.unix) src pith.req)
+        run
+      ::
+          %peer
+        =.  clay-peers.unix  (~(put in clay-peers.unix) src pith.req)
+        =/  =wire  (welp /sys/clay/peer (pout (en:drive:neo ~[src pith.req])))
+        =/  =rave:^clay  [%sing =,(peer.req [care da/now.bowl path])]
+        (emit %pass wire %arvo %c %warp our.bowl desk.peer.req `rave)
+      ==
+    ::
     ++  behn
       |=  =note:neo
       ^+  run
@@ -514,8 +601,24 @@
     |^  ^+  run
     ?+  pole  ~|(bad-sys-take/pole !!)
       [%behn %wait date=@da ~]  (behn-wait (slav %da date.pole))
+      [%clay %writ res=*]  (clay-writ res.pole)
     ::  [%behn %res date=@da ~]  (behn-res (slav %da date.pole))
     ==
+    ++  clay-writ
+      ?>  ?=(%writ +<.syn)
+      |=  wir=(^pole knot)
+      =/  paxs=(^pole pith:neo)
+        (de:drive:neo (pave:neo wir))
+      ?>  ?=([src=* hand=* ~] paxs)
+      =/  src=pith  src.paxs
+      =/  hand=pith  hand.paxs
+      ?.  (~(has in clay-peers.unix) [src hand])
+        run
+      =/  =note:neo  [%poke %clay-res !>(`res:clay:neo`[hand %writ p.syn])]
+      =/  =move:neo  [[p/our.bowl #/$/clay] src note]
+      =/  =wire      (welp /sys/clay/res wir)
+      (poke-our wire neo-move+!>(move))
+    ::
     ++  behn-wait
       |=  =@da
       ?>  ?=(%wake +<.syn)
@@ -532,12 +635,42 @@
   ++  take-agent
     |=  [=(pole knot) =sign:agent:gall]
     ^+  run
-    ?>  ?=([%behn %res date=@da ~] pole)
     ?>  ?=(%poke-ack -.sign)
+    ?:  ?=([%eyre %req eyre-id=@ ~] pole)
+      ?^  p.sign
+        (~(err srv eyre-id.pole) u.p.sign)
+      ~(finish-post srv eyre-id.pole)
+
+      
+    ?>  ?=([%behn %res date=@da ~] pole)
     %.  run
     ?~  p.sign  same
     (slog u.p.sign)
   --
+++  all-grab
+  |=  grab=stud:neo
+  ^-  vase :: of $-([to=stud grab-type] vase)
+  =/  in=vase  (need ~(get pro grab))
+  =/  fiesta=vase  !>(fiesta)
+  %+  slap
+    %+  with-faces:ford:neo  get-reef
+    :~  in/in
+        fiesta/fiesta
+        grow/!>(grow)
+        apex/!>(apex)
+        con/!>(con)
+    ==
+  !,  *hoon
+  |=  [to=stud:neo in=in]
+  ^-  vase
+  ~!  p.pail
+  ~!  grow
+  =/  =stud:neo  
+    ~|  missing-con/[p.pail grow]
+    (~(got by con.fiesta) [grab to])
+  =/  conv  ~(do con stud)
+  (slym run:conv in)
+::  
 ++  all-grow
   |=  grow=stud:neo
   ^-  vase :: of $-(pail grow-type)
@@ -579,6 +712,8 @@
   |=  =(pole knot)
   ^+  run
   ?+    pole  ~|(bad-path/pole !!)
+      [%http-response *]  run
+  ::
       [%sync rest=*]
     ?+    rest.pole  !!
         [%init as=@ car=@ ship=@p path=*]

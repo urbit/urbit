@@ -12,7 +12,6 @@
     `state-vase
   ++  init
     |=  vas=(unit vase)
-    ?>  ?=(^ vas)
-    `u.vas
+    `(need vas)
   --
 --

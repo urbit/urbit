@@ -142,6 +142,15 @@
   ++  not-found
     ^-  simple-payload:http
     [[404 ~] ~]
+  ++  error
+    |=  =tang
+    :_  `(as-octt:mimes:html (zing (turn tang |=(tan=tank ~(ram re tan)))))
+    [500 [['content-type' 'text/plain'] ~]]
+  ::
+  ::
+  ++  invalid-req
+    ^-  simple-payload:http
+    [[400 ~] ~]
   ::
   ++  login-redirect
     |=  =request:http

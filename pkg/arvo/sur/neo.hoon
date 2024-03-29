@@ -39,6 +39,25 @@
   |=  =stud
   ?@  stud  stud
   mark.stud
+++  drive
+  |%
+  ++  en
+    =|  res=pith
+    |=  ps=(list pith)
+    ?~  ps
+      res
+    $(res (welp res [%ud (lent i.ps)] i.ps), ps t.ps)
+  ++  de
+    =|  res=(list pith)
+    |=  pax=(pole iota)
+    ^+  res
+    ?:  =(~ pax)
+      (flop res)
+    =^  nex=pith  pax
+      ?>  ?=([[%ud len=@] rest=*] pax)
+      `[pith (pole iota)]`[(scag [len rest]:pax) (slag [len rest]:pax)]
+    $(res [nex res])
+  --
 ::
 ++  ford
   |%
@@ -145,7 +164,15 @@
   +$  req  $>(?(%rest %wait) task:^behn)
   +$  res  $>(%wake gift:^behn)
   --
-
+++  clay
+  |%
+  +$  peer  [=care =desk =path]
+  +$  req
+    $%  [%peer =pith =peer]
+        [%pull =pith]
+    ==
+  +$  res  (pair pith $>(?(%wris %writ) gift:^clay))
+  --
 ::  Total version
 +$  ever  [node=@ud tree=@ud]
 ::  $once: reference to version
@@ -692,6 +719,24 @@
       %z
     (~(run by ~(tar of ax)) |=(r=room [ever.icon.r (to-pail:room r)]))
   ==
+++  dejs
+  =,  dejs:format
+  |%
+  ++  stud
+    ^-  $-(json ^stud)
+    so
+  ++  pail
+    |=  fun=$-([stud json] vase)
+    |=  jon=json
+    ^-  ^pail
+    ?>  ?=(^ jon)
+    ?>  ?=(%o -.jon)
+    =/  std  (~(got by p.jon) %stud)
+    =/  dat  (~(got by p.jon) %data)
+    ?>  ?=(%s -.std)
+    [`@tas`p.std (fun [p.std dat])]
+  --
+
 ++  enjs
   =,  enjs:format
   |%

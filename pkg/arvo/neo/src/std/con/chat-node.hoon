@@ -11,7 +11,7 @@
       ;*  
       %+  turn  ~(tap in who.cat)
       |=  s=ship
-      ;code.ship: (scow %p s)
+      ;code.ship: {(scow %p s)}
     ==
   ==
 ==
