@@ -21,6 +21,7 @@
   let oldestText = null;
   let newestView = null;
   let newestText = null;
+  let clicked = null;
 
   function setup() {
     viewport = document.getElementById('viewport');
@@ -57,7 +58,6 @@
 
   function addLogs(dude, start, newLogs) {
     let agent = agents[dude];
-    console.log('addlogs', dude, start, newLogs);
 
     if (!agent) {
       agent = {
@@ -89,7 +89,18 @@
     newestView.min = dataRange.oldest;
     newestView.max = dataRange.newest;
     newestView.value = Math.min(Math.max(newestView.min, newestView.value), newestView.max);
-    console.log('oldest', dataRange.oldest, oldestView.value);
+  }
+
+  function clickEvent(e) {
+    if (clicked !== null) {
+      clicked.className = clicked.className.replace('focus', '');
+    }
+    if (clicked === e.target) {
+      clicked = null;
+    } else {
+      clicked = e.target;
+      clicked.className= clicked.className + ' focus';
+    }
   }
 
   function render() {
@@ -97,10 +108,11 @@
     //
     let oldest = oldestView.value || dataRange.oldest;
     let newest = newestView.value || dataRange.newest;
-    console.log('oldest/newest', oldestView, newestView, oldest, newest);
 
-    oldestText.innerText = oldest; //(new Date(oldest)).toLocaleString('en-GB'); //'yyyy.MM.dd..hh.mm.SS');
-    newestText.innerText = newest; //(new Date(newest)).toLocaleString('en-GB'); //'yyyy.MM.dd..hh.mm.SS');
+    //TODO  figure out why we need the parseInt here...
+    //TODO  nicer formatting
+    oldestText.innerText = (new Date(Number.parseInt(oldest)));
+    newestText.innerText = (new Date(Number.parseInt(newest)));
 
     // if (viewRange.oldest === null || viewRange.newest === null) {
     //   for (const [dude, agent] of Object.entries(agents)) {
@@ -139,6 +151,7 @@
         const top = (cause.events.length % 18) * 5;
 
         const vent = document.createElement('div');
+        vent.onclick = clickEvent;
         vent.className = 'event';
         if (left > 50) {
           vent.className = 'event right'
@@ -163,10 +176,53 @@
         }
 
         const deet = document.createElement('div');
-        deet.className = 'details';
-        deet.innerText = JSON.stringify(event);
-        vent.appendChild(deet);
+        deet.className = 'details' + ((event.effects.length > 0) ? ' effects' : '');
 
+        let deets =
+          `
+          act: ${event.act}<br/>
+          now: ${(new Date(event.now))}<br/>
+          src: ${event.src}<br/>
+          `;
+        switch (kind) {
+            case 'on-poke':
+          deets = deets +
+            `
+            mark: ${event.deets.mark}<br/>
+            mug: ${event.deets.mug}
+            `;
+          break;
+        //
+            case 'on-watch':
+            case 'on-leave':
+          deets = deets + `path: ${event.deets}`;
+          break;
+        //
+            case 'on-agent':
+          deets = deets +
+            `
+            wire: ${event.deets.wire}<br/>
+            <u>${event.deets.sign}</u><br/>
+            `;
+          switch (event.deets.sign) {
+              case 'poke-ack':
+              case 'watch-ack':
+            deets = deets + (event.deets.deets ? 'ack' : 'nack');
+            break;
+          //
+              case 'fact':
+            deets = deets +
+              `
+              mark: ${event.deets.deets.mark}<br/>
+              mug: ${event.deets.deets.mug}
+              `;
+            break;
+          }
+          break;
+        }
+        deet.innerHTML = deets;
+
+        vent.appendChild(deet);
         cause.events.push(vent);
         causes[kind] = cause;
       }
@@ -198,6 +254,7 @@
   html {
     background-color: white;
     padding-bottom: 10%;
+    font-family: monospace;
   }
   #viewport {
     position: relative;
@@ -233,36 +290,42 @@
     height: 1em;
     border-radius: 50%;
     background-color: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(0,0,0,0);
+    border: 1px dotted rgba(0,0,0,0);
+  }
+  .event.effects {
+    border-style: solid;
   }
   .details {
-    position: relative;
-    top: 0.5em;
-    left: 0.5em;
+    display: none;
+    position: absolute;
+    top: 0.75em;
+    left: 0.75em;
+    z-index: 2;
+    min-width: 20em;
     display: none;
     overflow: visible;
+    border: 1px solid black;
+    background-color: white;
   }
   .event.right .details {
     left: initial;
-    right: 0.5em;
+    right: 0.75em;
   }
-  .event:hover .details, .event:focus .details {
+  .event:hover .details, .event.focus .details {
     display: block;
-    position: absolute;
-    border: 1px solid black;
-    background-color: white;
+  }
+  .event:hover, .event.focus {
+    box-shadow: 0 0 10px 0 #f30;
   }
 </style>
 <body onload="setup()">
   <button onclick="loadLogs()">load logs</button>
   <div id="range">
-    Showing logs from <span id="from">never</span> until <span id="until">never</span>.
+    Showing logs from <label id="oldestText">xx</label> until <label id="newestText">yy</label>.
   </div>
   <div id="controls">
-    <label id="oldestText"></label>
     <input id="oldestView" type="range" onChange="render()" step="1" style="width: 30%" />
     <input id="newestView" type="range" onChange="render()" step="1" style="width: 30%" />
-    <label id="newestText"></label>
   </div>
   <div id="viewport">
     <div class="agent">
