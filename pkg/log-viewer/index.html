@@ -178,6 +178,9 @@
         const deet = document.createElement('div');
         deet.className = 'details' + ((event.effects.length > 0) ? ' effects' : '');
 
+        //  prevents toggling summaries from un/focussing an event
+        deet.onclick = (e) => e.stopPropagation();
+
         let deets =
           `
           act: ${event.act}<br/>
@@ -188,8 +191,8 @@
             case 'on-poke':
           deets = deets +
             `
-            mark: ${event.deets.mark}<br/>
-            mug: ${event.deets.mug}
+            mark: %${event.deets.mark}<br/>
+            mug: 0x${event.deets.mug}
             `;
           break;
         //
@@ -213,13 +216,77 @@
               case 'fact':
             deets = deets +
               `
-              mark: ${event.deets.deets.mark}<br/>
-              mug: ${event.deets.deets.mug}
+              mark: %${event.deets.deets.mark}<br/>
+              mug: 0x${event.deets.deets.mug}
               `;
             break;
           }
           break;
         }
+
+        deets = deets + `<br/><u>${event.effects.length} effects</u>`;
+        if (event.effects.length > 0) {
+          deets = deets + ':';
+          for (effect of event.effects) {
+            deets = deets +
+              `
+              <details><summary>
+                ${effect.kind}, ${effect.deets.wire || effect.deets.mark || ''}
+              </summary>
+              `;
+            switch (effect.kind) {
+                case 'poke':
+              deets = deets +
+                `
+                wire: ${effect.deets.wire}<br/>
+                gill: ${effect.deets.gill}<br/>
+                mark: %${effect.deets.mark}<br/>
+                mug: 0x${effect.deets.mug}
+                `;
+              break;
+            //
+                case 'watch':
+              deets = deets +
+                `
+                wire: ${effect.deets.wire}<br/>
+                gill: ${effect.deets.gill}<br/>
+                path: ${effect.deets.path}
+                `;
+              break;
+            //
+                case 'leave':
+              deets = deets +
+                `
+                wire: ${effect.deets.wire}<br/>
+                gill: ${effect.deets.gill}
+                `;
+              break;
+            //
+                case 'fact':
+              deets = deets +
+                `
+                paths: ${effect.deets.paths.join(', ')}<br/>
+                mark: %${effect.deets.mark}<br/>
+                mug: 0x${effect.deets.mug}
+                `;
+              break;
+            //
+                case 'kick':
+              deets = deets + `paths: ${effect.deets.paths.join(', ')}`;
+              break;
+            //
+                case 'arvo':
+              deets = deets +
+                `
+                wire: ${effect.deets.wire}<br/>
+                task: %${effect.deets.vane} %${effects.deets.task}
+                `;
+              break;
+            }
+            deets = deets + '</details>';
+          }
+        }
+
         deet.innerHTML = deets;
 
         vent.appendChild(deet);
