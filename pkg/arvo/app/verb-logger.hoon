@@ -168,9 +168,18 @@
     this(events (~(del by events) dude))
   ::
       [%flush =dude:gall]
+    |-
     =*  dude  dude.q.vase
-    :-  (write-events our.bowl dude (~(get ja events) dude))
-    this(events (~(del by events) dude))
+    ?.  =(%$ dude)
+      :-  (write-events our.bowl dude (~(get ja events) dude))
+      this(events (~(del by events) dude))
+    =|  cards=(list card)
+    =/  dudes=(list dude:gall)  ~(tap in ~(key by events))
+    |-  ^-  (quip card _this)
+    ?~  dudes  [cards this]
+    =^  caz  this  ^$(dude.q.vase i.dudes)
+    =.  cards  (weld cards caz)
+    $(dudes t.dudes)
   ==
 ::
 ++  on-agent
