@@ -61,6 +61,29 @@
 ::
 ++  ford
   |%
+  ++  riff
+    ^-  firm
+    |%
+    ++  state  %ford-out
+    ++  poke   *(set stud)
+    ++  kids  ~
+    ++  deps  ~
+    ++  form
+      ^-  ^form
+      |_  [=bowl =ever state-vase=vase *]
+      +*  sta  !<([cache=(unit vase) ~] state-vase)
+      ++  poke
+        |=  =pail
+        ^-  (quip card vase)
+        !!
+      ::
+      ++  init
+        |=  old=(unit vase)
+        ^-  (quip card vase)
+        =+  !<(ref=vase (need old))
+        `!>(`[cache=(unit vase) ~]`[`ref ~])
+      --
+    --
   ++  dep  `fief`[& %x %ford-in %ford-out]
   ++  get-output
     |=  [=bowl =term]
@@ -634,7 +657,7 @@
 :: +$  cage  (pair stud vase)
 ::
 +$  made
-  [=code init=(unit vase) =conf]
+  [=stud init=(unit vase) =conf]
 +$  note
   $%  [%make made] :: todo: configuration values, init cannot be ^ if installing over
       [%poke =pail]
@@ -678,7 +701,7 @@
     ^-  ^$
     =/  rot  (need fil.ax)
     :+  care  ever.icon.rot
-    :-  [state:q.span.rot q.state.icon.rot]
+    :-  [state.rot q.state.icon.rot]
     %-  ~(gas by *(map pith [ever vial]))
     =-  %+  turn  ~(tap by -)
         |=([k=pith v=[ever vial]] [(welp at k) v])
@@ -706,7 +729,7 @@
   ^-  cane
   =/  rot  (need fil.ax)
   :+  care  ever.icon.rot
-  :-  [state:q.span.rot state.icon.rot]
+  :-  [state.rot state.icon.rot]
   %-  ~(gas by *(map pith [ever pail]))
   =-  %+  turn  ~(tap by -)
       |=([k=pith v=[ever pail]] [(welp at k) v])
@@ -887,11 +910,6 @@
 +$  ewer  (pair stud vase)
 +$  vial  (pair stud *)
 +$  move  (pair pith card)
-+$  code
-  $%  [%clay p=path] :: XX: %clay is only for app/neo
-      [%stud p=stud] :: look in the imp directory for that name
-  ==
-+$  span  (pair code firm)
 +$  icon
   $:  =ever
       state=vase
@@ -899,15 +917,8 @@
       migration=(list *)
   ==
 :: subscription metadata
-+$  jail
-  $+  jail
-  $~  ~
-  (map iota cell)
-+$  cell
-  $+  cell
-  [case=@ud state=vase =span =jail]
 +$  brig
-  $+  brig  (axal cell)
+  $+  brig  (axal cane)
   
 +$  fleet
   $+  fleet
@@ -926,20 +937,20 @@
     ==
   +$  room
     $+  room
-    $~  [*span ~ *icon]
-    $:  =span
+    $:  code=stud
+        state=stud
         =conf
         =icon
     ==
   ++  to-vial
     |=  rom=room
     ^-  vial
-    [state:q.span.rom q.state.icon.rom]
+    [state.rom q.state.icon.rom]
   ::
   ++  to-pail
     |=  rom=room
     ^-  pail
-    [state:q.span.rom state.icon.rom]
+    [state.rom state.icon.rom]
   ::
   ++  de-hall-soft
     |=  hal=hall

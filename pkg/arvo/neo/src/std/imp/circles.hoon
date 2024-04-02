@@ -12,8 +12,7 @@
   |_  [=bowl:neo =ever:neo state-vase=vase *]
   ++  poke
     |=  [=stud:neo vax=vase]
-    ~&  stud/stud
-    ?>  ?=(%circles-diff stud)
+    ?>  ?=(%circles-diff -.stud)
     =+  !<(=diff vax)
     :_  state-vase
     ?-    -.diff
