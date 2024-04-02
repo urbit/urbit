@@ -64,7 +64,7 @@
     ?.  ?=(%add mode)
       ~
     :+  ~  (welp were.bowl pole)
-    [%make stud/%message `!>((get-message bowl p.pole)) ~]
+    [%make %message `!>((get-message bowl p.pole)) ~]
   ++  init
     |=  old=(unit vase)
     =/  sta

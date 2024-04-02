@@ -12,7 +12,7 @@
   ^-  card:neo
   :-  (welp were.bowl ~[da/now.bowl])
   ^-  note:neo
-  [%make stud/%message `!>(msg) ~]
+  [%make %message `!>(msg) ~]
 
 --
 ^-  firm:neo
@@ -49,6 +49,7 @@
         %dbug   `sta
         %msg    :_(sta (add-msg bowl msg.poke)^~)
       ==
+    ~&  dbug/"testing changes foo bar baz"
     [cards !>(sta)]
   ++  init
     |=  old=(unit vase)

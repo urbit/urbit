@@ -40,7 +40,7 @@
         %add-like
       =.  likes.sta  +(likes.sta)
       :_  !>(sta)
-      [(welp here.bowl %likes p/ship.src.bowl ~) %make stud/%sig ~ ~]~
+      [(welp here.bowl %likes p/ship.src.bowl ~) %make %sig ~ ~]~
     ::
         %add-comment
       =.  comments.sta  +(comments.sta)
