@@ -375,6 +375,7 @@
   ?+    as  [~ ~]
       %noun  ``neo-cane+!>(res)
       %json
+    ~&  %json
     ``json+!>((cane:enjs:neo res !<($-(pail:neo json) (all-grow %json))))
   ::
     
@@ -548,7 +549,13 @@
   ++  response
     |=  =path
     %-  send
-    =/  res=(unit (unit cage))   (fall (mole |.((peek %x path))) [~ ~])
+    ~&  path
+    =/  res=(unit (unit cage))
+      =/  res  (mule |.((peek %x path)))
+      ?:  ?=(%& -.res)
+        p.res
+      %-  (slog leaf/"Failed to generate response" p.res)
+      [~ ~]
     ?.  ?=([~ ~ *] res)
       not-found:gen:serv
     =*  cag  u.u.res
@@ -571,7 +578,7 @@
     ?>  &(?=(^ site.line) =('neo' i.site.line))
     =/  =path  t.site.line
     ?:  =(%'POST' method.request.req)
-      ?>  authenticated.req
+      :: ?>  authenticated.req
       (on-post path (need (de:json:html q:(need body.request.req))))
     ?.  =('GET' method.request.req)
       (send invalid-req:gen:serv)
@@ -580,16 +587,20 @@
   ++  on-post
     |=  [=(pole knot) jon=json]
     ^+  run
+    ~&  "POSTING"
     ?>  ?=([as=@ car=@ ship=@ rest=*] pole)
     ?.  =((slav %p ship.pole) our.bowl)
       (send invalid-req:gen:serv)
+    =/  conv
+      !<($-([@ json] vase) (all-grab %json))
     =/  =pail:neo
-      ((pail:dejs:neo !<($-([stud json] vase) (all-grab %json))) jon)
+      ((pail:dejs:neo conv) jon)
     =/  =move:neo
       :-  #/[p/our.bowl]/$/eyre/req/[eyre-id]
       [(pave:neo [ship rest]:pole) %poke pail]
     =.  http-req.unix  (~(put by http-req.unix) eyre-id pole)
-    (poke-move move)
+    =.  run  (poke-move move)
+    finish-post :: XX: stale
   ::
   ++  finish-post
     =/  =(pole knot)  (~(got by http-req.unix) eyre-id)
@@ -722,14 +733,13 @@
         grow/!>(grow)
         apex/!>(apex)
         con/!>(con)
+        grab/!>(grab)
     ==
   !,  *hoon
   |=  [to=stud:neo in=in]
   ^-  vase
-  ~!  p.pail
-  ~!  grow
   =/  =stud:neo  
-    ~|  missing-con/[p.pail grow]
+    ~|  missing-con/[grab to]
     (~(got by con.fiesta) [grab to])
   =/  conv  ~(do con stud)
   (slym run:conv in)
@@ -1197,7 +1207,7 @@
   ++  pol  `(pole iota)`pax
   ++  eject
     ^-  [(unit disk:neo) _pax]
-    ?.  ?=([%src *] pax)
+    ?.  ?=([@ *] pax)
       `pax
     =/  pol  `(pole iota)`t.pax
     ?+  pol   `pax

@@ -748,11 +748,8 @@
 ++  dejs
   =,  dejs:format
   |%
-  ++  stud
-    ^-  $-(json ^stud)
-    so
   ++  pail
-    |=  fun=$-([stud json] vase)
+    |=  fun=$-([@ json] vase)
     |=  jon=json
     ^-  ^pail
     ?>  ?=(^ jon)
