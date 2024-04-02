@@ -205,17 +205,17 @@
 :: +$  pike   (each road name)
 :: * A `$bolt` is a `[=stud =once]`
 ::
+::  $peer: subscription metadata
++$  peer
+  [=pulp =path]
 ::  $tone: parent change tracking
 +$  tone
-  $%  [%dep =term =care =name]
-      [%sync =care]
+  $%  [%peer =peer]
+      [%rely =term =pith]
   ==
 ::  $sound: change tracking listeners
 +$  sound
-  $:  voice=(jug pith [to=pith =term]) :: %x listeners
-      tones=(jug pith [to=pith =term]) :: %y listeners
-      noise=(jug pith [to=pith =term]) :: %z listeners
-  ==
+  (jug tour tone)
 ::  $ring: node change tracking
 ::
 +$  ring
@@ -673,6 +673,9 @@
 +$  rely
   [=term =stem]
 +$  mode  ?(%add %dif %del)
+::
++$  dish  (pair pith mode)
+::
 +$  stem
   $~  [[0 0] %x %stud *vase]
   %+  pair  ever

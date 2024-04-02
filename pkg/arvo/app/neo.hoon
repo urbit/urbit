@@ -64,7 +64,7 @@
       apex=(axal:neo room:neo)
       :: diary=(axal:neo memo:neo)
       :: dead=(map @uvH (axal:neo room:neo))
-      sound:neo
+      =sound:neo
       foreign=(map [care:neo pith] cane:neo)
       =halt:neo
       =fleet:neo
@@ -833,6 +833,7 @@
   ++  sync
     |=  [=knot =pith]
     =+  ;;(=care:neo knot)
+    ~&  sync/[care pith]
     ?+    -.sign  ~|(weird-sync-sign/-.sign !!)
         %watch-ack
       %.  run
@@ -866,9 +867,118 @@
       run
     =/  =stem:neo  (twig:harden twig)
     =.  u.can  (beat-cane u.can stem)
+    ~&  heard-twig/[care pith]
     =.  foreign  (~(put by foreign) [care pith] u.can)
     run
+  --
+++  is-our
+  |=  pax=pith:neo
+  ?>  ?=([[%p @] *] pax)
+  =(our.bowl +.i.pax)
+++  shout
+  |=  stems=(map tour:neo stem:neo)
+  ^+  run
+  =/  stems  ~(tap by stems)
+  |-
+  =*  loop-stems  $
+  ?~  stems
+    run
+  =/  [=tour:neo =stem:neo]
+    i.stems
+  =/  tones  ~(tap in (~(get ju sound) tour))
+  |-  
+  =*  loop-tones  $
+  ?~  tones
+    loop-stems(stems t.stems)
+  =/  =tone:neo  i.tones
+  =.  run  (yell tone tour stem)
+  loop-tones(tones t.tones)
+
+++  yell
+  |=  [=tone:neo =tour:neo =stem:neo]
+  |^  ^+  run
+  ?-  -.tone
+    %peer  (peer +.tone)
+    %rely  (rely +.tone)
+  ==
+  ++  peer
+    |=  =peer:neo
+    ?>  =(pulp.peer %noun)
+    (fact ~[path.peer] %neo-twig !>((stem:soften stem)))
+  ++  rely
+    |=  [=term pax=pith:neo]
+    =/  =rely:neo  [term stem]
+    (poke-rely pith.tour pax rely)
+  --
+::
+++  dial
+  =|  stems=(map tour:neo stem:neo)
+  |=  changes=(map pith:neo mode:neo)
+  =/  changes  ~(tap by changes)
+  |-  ^+  run
+  =*  loop-changes  $
+  ?~  changes
+    (shout stems)
+  =/  [pax=pith:neo =mode:neo]
+    i.changes
+  =/  tours=(list tour:neo)
+    ~(tap in ~(tours yelp pax))
+  |-  =*  loop-tours  $
+  ?~  tours
+    loop-changes(changes t.changes)
+  =/  =tour:neo  i.tours
+  =/  =stem:neo  (~(gut by stems) tour (make-stem care.tour (got:of-top pax)))
+  =/  pith-tour  
+    ?>  ?=(^ pith.tour)
+    t.pith.tour
+  ?:  =(pith-tour pax)
+    $(stems (~(put by stems) tour stem), tours t.tours)
+  ?>  ?=(?(%y %z) -.q.stem)
+  =.  kids.q.stem
+    =/  sfix=pith:neo  (slag (lent pith-tour) pax)
+    =/  =room:neo  (got:of-top pax)
+    (~(put by kids.q.stem) sfix [ever.icon.room mode [state state.icon]:room])
+  $(stems (~(put by stems) tour stem), tours t.tours)
+++  wash
+  |_  =dish:neo
+  ++  is-our
+    ?>  ?=([[%p @] *] p.dish)
+    =(our.bowl +.i.p.dish)
+  ++  local
+    ?>  ?=([[%p @] *] p.dish)
+    t.p.dish
+  ++  peer  
+    ?.  is-our
+      !! :: XX: revive
+    :: =/  tones  ~(tones yelp local)
+    ~
+  --
     
+++  yelp
+  |_  =pith:neo
+  ++  tours
+     (~(uni in (~(uni in check-x) check-y)) check-z)
+  ++  check-x
+    ^-  (set tour:neo)
+    ?:  =(~ (~(get ju sound) [%x pith]))
+      ~
+    (~(gas in *(set tour:neo)) [%x pith] ~)
+  ++  check-y
+    ^-  (set tour:neo)
+    ?~  par-pith=(parent:of-top pith)
+      ~
+    =/  parent=room:neo  (got:of-top u.par-pith)
+    ?:  =(~ (~(get ju sound) [%y u.par-pith]))
+      ~
+    (~(gas in *(set tour:neo)) [%y pith] ~)
+  ++  check-z
+    ^-  (set tour:neo)
+    %+  roll  ~(tap in (anc:of-top pith))
+    |=  [pax=pith:neo out=(set tour:neo)]
+    %-  ~(gas in out)
+    ?:  =(~ (~(get ju sound) [%z pax]))
+      ~
+    [%z pax]^~
   --
 ++  beat-cane
   |=  [=cane:neo =stem:neo]
@@ -995,6 +1105,15 @@
     ^-  wand:neo
     :^  care.can  ever.can  (pail pail.can)
     (~(run by kids.can) |=([e=ever:neo pal=pail:neo] [e (pail pal)]))
+  ++  stem
+    |=  sem=stem:neo
+    ^-  twig:neo
+    :-  p.sem
+    ?-  -.q.sem
+      %x  [%x (pail pail.q.sem)]
+      %y  [%y (pail pail.q.sem) (~(run by kids.q.sem) |=([e=ever:neo m=mode:neo p=pail:neo] [e m (pail p)]))]
+      %z  [%z (pail pail.q.sem) (~(run by kids.q.sem) |=([e=ever:neo m=mode:neo p=pail:neo] [e m (pail p)]))]
+    ==
   --
 ::
 ++  con
@@ -1183,20 +1302,15 @@
     |=  pax=path
     ^-  ?
     =/  pix  (pave:neo pax)
-    ~&  pix/pix
     ?~  pos=~(post omen pix)
       |
     ?.  ?=(@ q.u.pos)
       |
-    =-  ~&(is-ford/[q.u.pos -] -)
     =(%ford (end 3^4 q.u.pos))
   =^  main=(list path)  paths
     [(skip paths is-ford) (skim paths is-ford)]
   =^  imps=(list path)  main
     [(skim main is-imp) (skip main is-imp)]
-  ~&  imps/imps
-  ~&  paths/paths
-  ~&  main/main
   |-  ^+  run  =*  loop  $
   ?~  paths
     ?^  main
@@ -1401,6 +1515,13 @@
   ?~  val=(get:of-top pith)
     ~
   `state.icon.u.val
+++  get-pail-local
+  |=  =pith
+  ^-  (unit pail:neo)
+  ?~  val=(get:of-top pith)
+    ~
+  `[state.u.val state.icon.u.val]
+
 ++  get-vial-local
   |=  =pith
   ^-  (unit vial:neo)
@@ -1587,7 +1708,7 @@
     ?~  twigs  run
     =/  [=tour:neo =twig:neo]  i.twigs
     =/  =pith:neo  
-      (welp #/sync/init tour)
+      (welp #/sync/init/noun tour)
     =.  run  (fact ~[(pout pith)] neo-twig+!>(twig))
     $(twigs t.twigs)
   =/  [=pulp:neo =tour:neo]  i.tours
@@ -1613,46 +1734,11 @@
   =.  kids.q.twig  (~(put by kids.q.twig) sfix ever:h mode vial:h)
   =.  twigs  (~(put by twigs) tour twig)
   loop-change(change t.change)
-
-
 ::
-++  react
-  |=  changes=(list [=pith:neo =mode:neo])
-  ^+  run
-  =.  changes
-    %+  turn  changes
-    |=([=pith:neo =mode:neo] `[pith:neo mode:neo]`[[p/our.bowl pith] mode])
-  =.  run  (give-facts changes)
-  |-
-  ?~  changes
-    run
-  =.  run  (take-noise i.changes)
-  =.  run  (take-tones i.changes)
-  =.  run  (take-voice i.changes)
-  $(changes t.changes)
-::
-++  take-noise
-  |=  [=pith:neo =mode:neo]
-  ^+  run
-  :: TODO: is ordering important here?
-  =/  noises=(list pith:neo)  ~(tap in ~(key by noise))
-  |-  ^+  run
-  ?~  noises
-    run
-  =;  new=_run
-    $(run new, noises t.noises)
-  run
 ++  poke-rely
   |=  [from=pith:neo to=pith:neo =rely:neo]
   (poke-move [p/our.bowl from] to %poke %rely !>(rely))
 ::
-++  take-voice
-  |=  [=pith:neo =mode:neo]
-  =/  voice  ~(tap in (~(get ju voice) pith))
-  |-  ^+  run
-  ?~  voice
-    run
-  $(voice t.voice)
 ++  make-stem
   |=  [=care:neo =room:neo]
   ^-  stem:neo
@@ -1664,44 +1750,6 @@
     %y  [ever %y pail ~]
     %z  [ever %z pail ~]
   ==
-::
-++  take-tones
-  |=  [=pith:neo =mode:neo]
-  :: =.  pith
-    :: ?>  ?=(^ pith)
-    :: ?>  =(our.bowl +.i.pith)
-    :: t.pith
-  |^  
-  =.  run  check-parent
-  check-node
-  ::
-  ++  check-node
-    =/  rom  (got:of-top (tail pith))
-    =/  tones  ~(tap in (~(get ju tones) pith))
-    |-  ^+  run
-    ?~  tones
-      run
-    =/  =stem:neo  (make-stem %y rom)
-    =.  run
-      (poke-rely pith to.i.tones term.i.tones stem)
-    $(tones t.tones)
-
-  ++  check-parent
-    ?~  par-pith=(parent:of-top (tail pith))
-      run
-    =/  rom  (got:of-top u.par-pith)
-    =/  tones  ~(tap in (~(get ju tones) [p/our.bowl u.par-pith]))
-    |-  ^+  run
-    ?~  tones
-      run
-    =/  =stem:neo  (make-stem %y rom)
-    ?>  ?=(%y -.q.stem)
-    =/  sfix  (slag (lent par-pith) pith)
-    :: =.  kids.q.stem  (~(put by kids.q.stem) sfix mode)  
-    =.  run
-      (poke-rely u.par-pith to.i.tones term.i.tones stem)
-    $(tones t.tones)
-  --
 ::
 ++  dep-change
   |=  [from=name:neo =term to=name:neo]
@@ -1722,7 +1770,7 @@
     run
   =/  =room:neo  (got:of-top pith.name)
   =/  =cage
-    :-  %neo-update
+    :-  %neo-twig
     !>  *update:neo
     :: ?>  ?=(%stud -.p.span.room)
     :: [pith.name p.p.span.room [case %init q.state]:icon.room]
@@ -1780,12 +1828,10 @@
     ^+  run
     ?:  =([~ ~] block)  
       =.  cards  (welp cards (turn up deal))
-      =.  run
-        %-  react 
-        ~(tap by change)
+      (dial change)
         :: %+  turn  ~(tap by change)
         ::  |=([=pith:neo =mode:neo] ^+(+< [[p/our.bowl pith] mode]))
-      run
+      :: run
     ~&  >>>  %reverting
     =.  apex  old :: XX: is apex only state that is touched?
     ?.  =(~ get.block)
@@ -1891,11 +1937,13 @@
     |=  [[=term dep=pith:neo] a=_arvo]
     =/  [req=? =quay:neo]  (~(got by deps) term)
     =/  =pith:neo  [p/our.bowl here]
-    ?-  -.quay
-      %x   a(voice (~(put ju voice) dep pith term))
-      %y   a(tones (~(put ju tones) dep pith term))
-      %z   a(noise (~(put ju noise) dep pith term))
-    ==
+  :: XX: revive
+    a
+::    ?-  -.quay
+::      %x   a(voice (~(put ju voice) dep pith term))
+::      %y   a(tones (~(put ju tones) dep pith term))
+::      %z   a(noise (~(put ju noise) dep pith term))
+::    ==
   ::
   ++  make
     |=  [src=stud:neo init=(unit vase) =conf:neo]
