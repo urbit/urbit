@@ -49,6 +49,7 @@
     ^-  (quip card vase)
     ?>  =(%rely stud)
     =+  !<([=term =stem:neo] vax)
+    ~&  chat-link/[were.bowl stem]
     =/  sta  sta
     =.  chat.sta  (get-chat bowl)
     ?>  ?=(%y -.q.stem)
@@ -71,6 +72,12 @@
       ?~  old  *chat-link
       !<(chat-link u.old)
     =.  chat.sta  (get-chat bowl)
-    `!>(sta)
+    =/  =cane:neo  q:(~(got by deps.bowl) %src)
+    :_  !>(sta)
+    ~&  init/kids.cane
+    %+  murn  ~(tap by kids.cane)
+    |=  [=pith [=ever:neo =pail:neo]]
+    ^-  (unit card)
+    ~
   --
 --

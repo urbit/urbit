@@ -213,9 +213,19 @@
   $%  [%peer =peer]
       [%rely =term =pith]
   ==
-::  $sound: change tracking listeners
+::  $sound: internal change tracking listeners
 +$  sound
   (jug tour tone)
+::  $noise: external change tracking listeners
++$  noise
+  (jug tour rely)
+::  $rave: foreign dependency
++$  rave
+  [=term =pith]
+::  $riot: foreign mirror
++$  riot
+  [=cane deps=(set rave)]
+::
 ::  $ring: node change tracking
 ::
 +$  ring
@@ -408,6 +418,15 @@
   ++  en-tape
     |=  pit=$
     (spud (pout pit))
+  ++  sub
+    |=  [from=$ del=$]
+    ~|  pith-sub/[from del]
+    !.
+    |-  ^+  from
+    ?~  del  from
+    ?>  ?=(^ from)
+    ?>  =(i.del i.from)
+    $(del t.del, from t.from)
   ++  en-cord
     |=  pit=$
     (spat (pout pit))
@@ -740,9 +759,11 @@
       %x  ~
       %y
     =.  ax  ~(snip of ax)
+    =.  fil.ax  ~
     (~(run by ~(tar of ax)) |=(r=room [ever.icon.r (to-pail:room r)]))
   ::
       %z
+    =.  fil.ax  ~
     (~(run by ~(tar of ax)) |=(r=room [ever.icon.r (to-pail:room r)]))
   ==
 ++  dejs
