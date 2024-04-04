@@ -41,10 +41,15 @@
       if (logs.kind !== 'directory') continue;
       if (dude === '.DS_Store')      continue;
 
+      let files = [];
       for await (const [key, log] of logs.entries()) {
-        if (log.kind !== 'file')         continue;
+        if (log.kind !== 'file')       continue;
         if (key.slice(-5) !== '.json') continue;
+        files.push({key, log});
+      }
+      files = files.sort((a, b) => a.key < b.key);
 
+      for (const {key, log} of files) {
         const start = parseInt(key.slice(0, -5));
         const contents = JSON.parse(await (await log.getFile()).text());
         const dudekey = contents.ship + '/' + contents.dude;
