@@ -3391,7 +3391,7 @@
   ::  [0 %for]    =>  %poke: %plea %watch  =>  [0 %bak]
   ::  [0 %for]   <=   %poke: %boon        <=   [0 %bak]
   ::
-  +$  load           ?(%poke %ack %nax %cork)
+  +$  load           ?(%poke %ack %nax)
   +$  dire           ?(%bak %for)
   +$  side           [=bone =dire]
   +$  error          error:ames
@@ -3518,7 +3518,7 @@
                               :: only +(last-acked) messages are handled
                               :: duplicate heards, are looked up in pending-ack
                             ::
-          pending-ack=?  :: there's only one pending ack
+          pending-ack=_`?`%.n  :: there's only one pending ack
                         :: to guarantee that messages are delivered
                         :: in order
                         :: also used to not duplicate sending the ack to the vane
@@ -3797,7 +3797,9 @@
         ==
       =/  gum
         (end [0 20] (mug (cut -.c [(rig b -.c) +.c] dat)))
-      ?>(=(gum.hed gum) [pac c])
+      ~&  gum.hed^gum
+      :: ?>(=(gum.hed gum) [pac c])  :: XX jumbo fragments have wrong mug
+      [pac c]
     --
   ::
   ++  head

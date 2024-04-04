@@ -4,6 +4,7 @@
 ::  helper core
 ::
 =>  |%
+    ::
     +|  %helpers
     ::
     :: +get-forward-lanes: get all lanes to send to when forwarding to peer
@@ -50,15 +51,6 @@
     ::     [%live %unborn]  `"; {(scow %p ship)} has sunk"
     ::     [%dead %unborn]  `"; {(scow %p ship)} has sunk"
     ::   ==
-    ::
-    ++  parse-inner-path
-      |=  [our=ship p=path]
-      ^-  (unit [[@tas @tas] beam])
-      ?.  ?=([@ @ @ @ *] p)  ~
-      ?~  des=?~(i.t.t.p (some %$) (slaw %tas i.t.t.p))
-        ~
-      ?~  ved=(de-case i.t.t.t.p)  ~
-      `[[i.p i.t.p] [[our u.des u.ved] t.t.t.t.p]]
     ::
     ++  key-chain  ((on ,@ ,[key=@ =path]) lte)
     ++  check-fine-key
@@ -131,10 +123,11 @@
         (const-cmp tag (mac key binding))
       ::
       ++  encrypt
-        |=  [key=@uxI iv=@ msg=@]
+        |=  [key=@uxI iv=@ msg=byts]
         ^+  msg
         =/  x  (xchacha:chacha key (hash 24 iv))
-        dat:(chacha 8 key.x nonce.x 0 (met 3 msg)^msg)
+        (chacha 8 key.x nonce.x 0 msg)
+      ::
       ++  decrypt  encrypt
       ::
       ++  seal-path
@@ -143,16 +136,16 @@
         =/  keys  (hash 64 key)
         =/  pat  (jam path)
         =/  tag  (keyed-hash (rsh 8 keys) 16 pat)
-        =/  cyf  (encrypt (end 8 keys) tag pat)
+        =/  cyf  (encrypt (end 8 keys) tag (met 3 pat)^pat)
         (jam [tag cyf])
       ::
       ++  open-path
         |=  [key=@uxI sealed=@]
         ^-  path
         =/  keys  (hash 64 key)
-        =+  ;;([tag=@ cyf=@] (cue sealed))
-        =/  pat  (decrypt (end 8 keys) tag cyf)
-        :: ?>  (const-cmp tag (keyed-hash (rsh 8 keys) 16 pat))
+        =+  ;;([tag=@ cyf=byts] (cue sealed))
+        =/  pat  dat:(decrypt (end 8 keys) tag cyf)
+        ?>  (const-cmp tag (keyed-hash (rsh 8 keys) 16 pat))
         ;;(path (cue pat))
       ::
       --
@@ -245,6 +238,7 @@
     ++  hash
       |=  [out=@ud msg=@]
       (blake3:blake:crypto out (met 3 msg)^msg)
+    ::
     ++  keyed-hash
       |=  [key=@uxI out=@ud msg=@]
       ((keyed:blake3:blake:crypto 32^key) out (met 3 msg)^msg)
@@ -411,6 +405,15 @@
           ~
       ==
     ::
+    +$  res-cork-pith
+      $:  %flow
+          [%ud bone=@ud]
+          [%p sndr=@p]   ::  XX drop this
+          %cork
+          [%p rcvr=@p]
+          =dire          ::  XX revisit; could be inferred by entry-point + flow
+          ~
+      ==
     ++  ev-validate-wire
       |=  =wire
       ^-  (unit ev-flow-wire)
@@ -419,7 +422,7 @@
         ~>  %slog.0^leaf/"mesa: malformed wire: {(spud (pout wire))}"  ~
       `wire
     ::
-    ++  ev-validate-flow-path
+    ++  ev-validate-path
       |=  =path
       ^-  (pole iota)
       ~|  path
@@ -429,20 +432,20 @@
       ?>  =([[%m %x] *@p %$ ud+1] [vew -.bem]:u.inn)
       s.bem.u.inn
     ::
-    ++  ev-decrypt-load
-      |=  [[=ship =path] cyf=@]
+    ++  ev-decrypt-load  :: XX refactor with path decryption
+      |=  [[=ship =path] ser=@]
       ^-  @
       =/  tyl=(pole knot)  path
       ?+    tyl  !!
           [%publ *]  :: unencrypted
-        cyf
+        ser
       ::
-          [%chum lyf=@ her=@ hyf=@ pyf=@ ~]  :: encrypted with eddh key
+          [%chum lyf=@ her=@ hyf=@ cyf=@ ~]  :: encrypted with eddh key
         =/  lyf  (slaw %ud lyf.tyl)
         =/  her  (slaw %p her.tyl)
         =/  hyf  (slaw %ud hyf.tyl)
-        =/  pyf  (slaw %uv pyf.tyl)
-        ?>  &(?=(^ lyf) ?=(^ her) ?=(^ hyf) ?=(^ pyf))
+        =/  cyf  (slaw %uv cyf.tyl)
+        ?>  &(?=(^ lyf) ?=(^ her) ?=(^ hyf) ?=(^ cyf))
         =/  key  ::  (get-key-for u.her u.hyf)
           =/  her=@p  ?:(=(u.her our) ship u.her)  :: %poke payload are for us
           =+  per=(ev-got-per her)        :: XX ev-get-per
@@ -450,26 +453,25 @@
           ?.  =(u.hyf life.sat.per)   !!  :: XX
           symmetric-key.sat.per
         =*  iv  u.pyf  :: XX
-        (decrypt:crypt `@`key iv cyf)
+        dat:(decrypt:crypt `@`key u.cyf (met 3 ser)^ser)
       ::
-          [%shut kid=@ pyf=@ ~]  :: encrypted with group key
+          [%shut kid=@ cyf=@ ~]  :: encrypted with group key
         =/  kid  (slaw %ud kid.tyl)
-        =/  pyf  (slaw %uv pyf.tyl)
-        ?>  &(?=(^ kid) ?=(^ pyf))
+        =/  cyf  (slaw %uv cyf.tyl)
+        ?>  &(?=(^ kid) ?=(^ cyf))
         ?>  ?=(%known -.sat.per)
         ?~  key=(get:key-chain client-chain.sat.per u.kid)
           !!  ::  XX handle
-        =*  iv  u.pyf  :: XX
-        (decrypt:crypt -.u.key iv cyf)
+        dat:(decrypt:crypt -.u.key u.cyf (met 3 ser)^ser)
       ==
     ::
-    ++  ev-decrypt-path
+    ++  ev-decrypt-path  :: XX refactor with load decryption
       |=  [=path =ship]
       ^+  [path path]
       =/  tyl=(pole knot)  path
       ?+    tyl  !!
           [%publ lyf=@ pat=*]  :: unencrypted
-        [pat.tyl tyl]
+        [tyl pat.tyl]
       ::
           [%chum lyf=@ her=@ hyf=@ pat=[cyf=@ ~]]  :: encrypted with eddh key
         =/  lyf  (slaw %ud lyf.tyl)
@@ -485,7 +487,7 @@
           ?.  =(u.hyf life.sat.per)   !!  :: XX
           symmetric-key.sat.per
         =+  pat=(open-path:crypt `@`key u.cyf)
-        [pat tyl(pat pat)]
+        [tyl(pat pat) pat]
       ::
           [%shut kid=@ pat=[cyf=@ ~]]  :: encrypted with group key
         =/  kid  (slaw %ud kid.tyl)
@@ -496,7 +498,7 @@
         ?~  key=(get:key-chain client-chain.sat.per u.kid)
           !!  :: XX handle
         =+  pat=(open-path:crypt -.u.key u.cyf)
-        [pat tyl(pat pat)]
+        [tyl(pat pat) pat]
       ==
     ::
     ++  ev-authenticate
@@ -518,8 +520,9 @@
             =/  her  (slaw %p her.tyl)
             =/  hyf  (slaw %ud hyf.tyl)
             ?>  &(?=(^ her) ?=(^ hyf))
+            ::  XX  =(our u.her) ??
             :: (get-key-for u.her u.hyf)
-            =+  per=(ev-got-per u.her)      :: XX ev-get-per
+            =+  per=(ev-got-per her.name)   :: XX ev-get-per
             ?>  ?=(%known -.sat.per)        :: XX wat if %alien?
             ?.  =(u.hyf life.sat.per)   !!  :: XX
             symmetric-key.sat.per
@@ -564,8 +567,13 @@
           %mess-ser
         =*  her  ship.p.+.load.task
         =.  per  (ev-got-per her)
-        %-  ev-mess-page
-        +.load.task(r (ev-decrypt-load her^path.task r.+.load.task))
+        %*  $  ev-mess-page
+          sealed-path  `path.task
+        ::
+          spar  p.+.load.task
+          auth  q.+.load.task
+          res   (ev-decrypt-load her^path.task r.+.load.task)
+        ==
       ==
     ::
     ++  ev-take
@@ -723,13 +731,13 @@
       ::
       ~|  path-decryption-failed/pat.ack-name^pat.poke-name
       =/  ack=(pole iota)
-        =^  path  pat.ack-name
+        =/  [=outer=path =inner=path]
          (ev-decrypt-path [pat.ack-name her.poke-name])
-        (ev-validate-flow-path path)
+        (ev-validate-path inner-path)
       =/  pok=(pole iota)
-        =^  path  pat.poke-name
+        =/  [=outer=path =inner=path]
          (ev-decrypt-path [pat her]:poke-name)
-        (ev-validate-flow-path path)
+        (ev-validate-path inner-path)
       ::
       ~|  path-validation-failed/ack^pok
       ?>  &(?=(res-mess-pith ack) ?=(res-mess-pith pok))
@@ -779,9 +787,9 @@
       ?>  ?=([~ %known *] per)  ::  XX alien agenda
       ::  decrypt path
       ::
-      =^   *   pat.name  (ev-decrypt-path pat.name ship)
-      =*  pat  pat.name
-      ?~  res=(~(get by pit.u.per) pat)
+      =/  [=outer=path =inner=path]  (ev-decrypt-path pat.name ship)
+      =*  sealed-path  pat.name
+      ?~  res=(~(get by pit.u.per) sealed-path)
         ev-core
       ::
       =/  [typ=?(%auth %data) fag=@ud]
@@ -803,7 +811,7 @@
         =.  peers.ax
           %+  ~(put by peers.ax)  her.name
           =-  u.per(pit -)
-          %+  ~(put by pit.u.per)  pat.name
+          %+  ~(put by pit.u.per)  sealed-path
           u.res(ps `[u.state ~])
         ::
         ::  request next fragment
@@ -816,6 +824,18 @@
         ::  do we have packet state already?
         ::
         ?~  ps.u.res
+          ::  XX is this a complete message?
+          ::
+          ?:  ?&  =(+(fag) tot.data)    :: XX can tot.data be 0 ?
+                  !=(1 tot.data)
+                  ::  XX (gth (met 3 dat.data) 1.024) ??
+              ==
+            ::  yield complete message
+            ::
+            =/  =spar:ames  [her.name inner-path]
+            =/  =auth:mess  [%| *@uxH] :: XX p.aut.data is ~
+            %+  ev-emit  [/ames]~
+            [%pass /message %m %mess-ser sealed-path %page spar auth dat.data]
           ::  no; then this should be the first fragment, and auth should be present
           ::
           ?>  =(0 fag)
@@ -823,11 +843,11 @@
           ::  is this a standalone message?
           ::
           ?:  =(1 tot.data)
-            ?>  (ev-authenticate (root:lss dat.data) aut.data name)
-            =/  =spar:ames  [her.name pat]
+            ?>  (ev-authenticate (root:lss (met 3 dat.data)^dat.data) aut.data name)
+            =/  =spar:ames  [her.name inner-path]
             =/  =auth:mess  p.aut.data
             %+  ev-emit  [/ames]~
-            [%pass /message %m %mess-ser pat.name %page spar auth dat.data]
+            [%pass /message %m %mess-ser sealed-path %page spar auth dat.data]
           ::  no; then the proof should be inlined; verify it
           ::  (otherwise, we should have received an %auth packet already)
           ::
@@ -847,7 +867,7 @@
           =.  peers.ax
             %+  ~(put by peers.ax)  her.name
             =-  u.per(pit -)
-            %+  ~(put by pit.u.per)  pat.name
+            %+  ~(put by pit.u.per)  outer-path  :: XX sealed path?
             u.res(ps `[u.state ~[dat.data]])
           =/  =pact:pact  [%peek name(wan [%data leaf.u.state])]
           %+  ev-emit  unix-duct.ax
@@ -871,7 +891,7 @@
         =.  peers.ax
           %+  ~(put by peers.ax)  her.name
           =-  u.per(pit -)
-          %+  ~(put by pit.u.per)  pat.name
+          %+  ~(put by pit.u.per)  sealed-path
           u.res
         ::  is the message incomplete?
         ::
@@ -882,37 +902,39 @@
           (ev-emit unix-duct.ax %give %send ~[`@ux`her.name] p:(fax:plot (en:^pact pact)))
         ::  yield complete message
         ::
-        =/  =spar:ames  [her.name pat]
+        =/  =spar:ames  [her.name inner-path]
         =/  =auth:mess  [%| *@uxH] :: XX should be stored in ps?
         =/  res         (rep 13 (flop fags.ps))
         %+  ev-emit  [/ames]~
-        [%pass /message %m %mess-ser pat.name %page spar auth res]
+        [%pass /message %m %mess-ser sealed-path %page spar auth res]
       ==
     ::
     +|  %messages-entry-point
     ::
     ++  ev-mess-page
+      =|  sealed-path=(unit path)
       |=  [=spar =auth:mess res=@]  :: XX res has been decrypted
       ^+  ev-core
       =*  ship  ship.spar
       ?~  rs=(~(get by peers.ax) ship)
         ev-core
       ?>  ?=([~ %known *] rs)  ::  XX alien agenda
-      ?~  ms=(~(get by pit.u.rs) path.spar)
+      =+  path=?~(sealed-path path.spar u.sealed-path)
+      ?~  ms=(~(get by pit.u.rs) path)
         ev-core
       =.  per  ship^u.rs
       ?>  ?=(%known -.sat.per)
       ::
       ::  XX validate response
-      ::
-      =/  open-path  -:(ev-decrypt-path [path ship]:spar)   :: XX should have happened before
-      =/  res        (ev-decrypt-load spar res)  :: XX should have happened before
-                                                 :: XX breaks non-encrypted %keen tasks
-      =.  pit.u.rs   (~(del by pit.u.rs) path.spar)
+      =.  pit.u.rs   (~(del by pit.u.rs) path)
       =.  peers.ax   (~(put by peers.ax) ship.spar u.rs)
-      ~&  [%give %mess-response spar]
       =/  gift
-        [%give %mess-response spar(path open-path) ;;(gage:mess (cue res))]
+        ::  XX seeing a crash here (cue res) for this path /chum/1/~dev/1/0v2.vkcu5.pk63o.u35i3.usmth.4hf08.os04b.1bv4s.8j3h7.vi05b.kjdl6.3htvo.hd5ua.402b8.6sp3k.6marq.nf4l1.ku6at.plrh3.sg201
+        ::  when reading a client %cork (/mesa/flow/cor/bak/~fen/0/4) %ack
+        ::  after server %kicks the subscriber
+        ::
+        :: [%give %mess-response spar(path open-path) ;;(gage:mess (cue res))]
+        [%give %mess-response spar ;;(gage:mess (cue res))]
       %-  ~(rep in for.u.ms)
       |=  [hen=duct c=_ev-core]
       (ev-emit:c hen gift)
@@ -977,13 +999,27 @@
         ev-core
       =,  u.flow-wire
       =.  per  (ev-got-per her)
-      ?>  ?=(%known -.sat.per)  :: XX
+      ?>  ?=(%known -.sat.per)  :: XX response from %alien
       ?:  (lth rift rift.sat.per)
         :: XX log
         ev-core  ::  ignore events from an old rift
-      ::  XX validate that wire and paths have matching flow bones?
       ::
-      =/  message-path=(pole iota)   (ev-validate-flow-path path.p.sage)
+      =/  message-path=(pole iota)   (ev-validate-path path.p.sage)
+      ::
+      ?:  &(=(were %cor) =(dire %bak))
+        ::  validate %cork path
+        ::
+        ?>  ?=(res-cork-pith message-path)
+        ::  if we don't crash, the client has removed the flow,
+        ::  and have succesfully +peek'ed the %cork
+        ::
+        =.  ax
+          =<  fo-abel
+          %.(sage fo-take-client-cork:(fo-abed:fo hen bone^dire ev-chan ~))
+        ev-core
+      ::
+      ::  XX  validate thath wire and path match?
+      ::
       ?>  ?=(res-mess-pith message-path)
       ::
       ::  XX replaced by the flow "dire"ction ?(%for %bak)
@@ -996,7 +1032,7 @@
       ::  for %poke payloads "external" -- triggered by hearing a request
       ::
       ?:  =(%pok were)
-        (ev-mess-poke ~ ack-path=our^/ her^path.p.sage q.sage)
+        (ev-mess-poke ~ ack-path=our^/ her^(pout message-path) q.sage)
       ::  wires are tagged ?(%int %ext) so we can diferentiate if we are
       ::  proessing an ack or a naxplanation payload
       ::
@@ -1005,19 +1041,11 @@
         %.  [were mess-response/[mess.message-path sage]]
         fo-take:(fo-abed:fo hen bone^dire ev-chan ~)
       =^  moves  ax
-        ?:  &(=(were %cor) =(dire %bak) closing.state.fo-core)
-          ::  if the bone is in closing, we have received
-          ::  the ack for the %cork; we can safely delete the flow
-          ::
-          =:  flows.sat.per   (~(del by flows.sat.per) bone^dire)
-              corked.sat.per  (~(put in corked.sat.per) bone^dire)
-            ==
-          [moves:fo-core ax(peers (~(put by peers.ax) [ship sat]:per))]
-        ?.  closing.state.fo-core  :: XX check that it was not closing before
+        ?.  can-be-corked.fo-core
           fo-abet:fo-core
-        ?>  =(were %int)
-        :: if the flow was in closing, we received the %ack for the %cork;
-        :: remove the flow and it's associated bone in the ossuary
+        ::  we received the %ack for the %cork %plea;
+        ::  remove the flow and it's associated bone in the ossuary;
+        ::  expose %cork flow in the namespace "~(put in corked)"
         ::
         ::  XX to arm
         =.  sat.per
@@ -1156,7 +1184,6 @@
     ++  ev-get-page
       |=  =name:pact
       ^-  (unit data:pact)
-      ~&  ev-get-page/(name-to-beam name)
       =/  res=(unit (unit cage))  (rof ~ /mesa %mx (name-to-beam name))
       ?.  ?=([~ ~ *] res)  ~
       =;  page=pact:pact
@@ -1207,6 +1234,8 @@
       ::
       =>  .(sat.per ?>(?=(%known -.sat.per) sat.per))
       ::
+      =|  can-be-corked=?(%.y %.n)
+      ::
       |_  [[hen=duct =side =channel] state=flow-state]  :: XX remove channel
       ::
       +*  veb   veb.bug.channel
@@ -1230,6 +1259,14 @@
         =.  flows.sat.per  (~(put by flows.sat.per) bone^dire state)
         [moves ax(peers (~(put by peers.ax) her sat.per))]
       ::
+      ++  fo-abel
+        ^+  ax
+        ::
+        =:  flows.sat.per   (~(del by flows.sat.per) bone^dire)
+            corked.sat.per  (~(put in corked.sat.per) bone^dire)
+          ==
+        ax(peers (~(put by peers.ax) her sat.per))
+      ::
       ++  fo-emit      |=(=move fo-core(moves [move moves]))
       ++  fo-emil      |=(mos=(list move) fo-core(moves (weld mos moves)))
       ++  fo-ack-path  |=([seq=@ud =dyad] (fo-path seq %ack dyad))
@@ -1251,15 +1288,15 @@
       ++  fo-mop  ((on ,@ud mesa-message) lte)
       ++  fo-cac  ((on ,@ud ?) lte)
       ++  fo-path
-        |=  [seq=@ud path=?(%ack %poke %nax %cork) dyad]
-        ^-  ^path
+        |=  [seq=@ud command=?(%ack %poke %nax %cork) dyad]
+        ^-  path
         %-  fo-view-beam
-        :~  %flow  (scot %ud bone)
-            reqr=(scot %p sndr)  path  rcvr=(scot %p rcvr)
+        :*  %flow  (scot %ud bone)
+            reqr=(scot %p sndr)  command  rcvr=(scot %p rcvr)
         ::  %ack(s), %naxplanation(s) and %cork(s) are on the other side,
-        ::  and not bounded on our namespace
-            ?:(=(%poke path) dire fo-flip-dire)
-            (scot %ud seq)
+        ::  and not bounded in our namespace
+            ?:(=(%poke command) dire fo-flip-dire)
+            ?:(=(%cork command) ~ [(scot %ud seq) ~])
         ==
       ::
       ++  fo-view-beam  |=(=path `^path`[vane=%m care=%x case='1' desk=%$ path])
@@ -1332,7 +1369,7 @@
             :: and only handled there?
             %ext  (fo-take-naxplanation +.sign)
             %int  (fo-take-ack +.sign)
-            %cor  (fo-take-client-cork +.sign)
+            %cor  (fo-take-client-cork +>.sign)
           ==
         ==
       ::
@@ -1342,7 +1379,7 @@
         ::  XX assert flow direction?
         ::  %ack and %nax can be both %for (%plea) and %bak (%boon)
         ::
-        ?+  load  ~
+        ?-  load
           :: if mess > gth 10, no-op ?
           ::
           %ack   ?.(=(mess last-acked.state) ~ `ack/(fo-is-naxed mess))
@@ -1528,11 +1565,13 @@
         ::
         =.  send-window.state  +(send-window.state)
         =.  fo-core
-          ?:  ?|  ?=(%bak dire)          ::  %boon %ack; assumed %acked from vane
-                  ?&  closing.state      ::  %cork %ack; implicit ack
-                      ?=(~ loads.state)  ::  nothing else is pending
-              ==  ==
-            ~&  >   no-op/[closing=closing loads=loads]:state
+          =.  can-be-corked
+            ?&  closing.state      ::  we sent a %cork %plea
+                ?=(~ loads.state)  ::  nothing else is pending
+            ==
+          ?:  ?|  ?=(%bak dire)  ::  %boon %ack; assumed %acked from vane
+                  can-be-corked  ::  %cork %ack; implicit ack
+              ==
             fo-core
           ::  don't give %done for %boon and %cork; implicit %ack
           ::
@@ -1576,23 +1615,23 @@
         ::  XX path.spar will be the full namespace path, peel off before?
         ::  XX clear timer for the failed %poke
         ::
-        ?>  ?=([%message %nax *] gage)
-        =+  ;;(=error +>.gage)  ::  XX
+        ?>  ?=([%message *] gage)
+        =+  ;;([%nax =error] +.gage)  ::  XX
         (fo-emit (ev-got-duct bone) %give %done `error)
       ::
       ++  fo-take-client-cork
-        |=  [seq=@ud =spar =gage:mess]
+        |=  [=spar =gage:mess]
         ^+  fo-core
         ::  sanity checks on the state of the flow
         ::
-        ?>  ?&  ?=([%message *] gage)
-                =<  =(error %.n)
-                ;;([%ack error=?] +.gage)  ::  client has corked the flow
-                =(seq last-acked.state)    ::  %cork is the higest acked seq
-                !pending-ack.state         ::  there are no pending acks
-                closing.state              ::  the flow is in closing
-                !(~(has by nax.state) seq) ::  the %cork was not nacked
-            ==
+        ~|  [gage/gage state]
+        ?>
+        ?&  ?=([%message *] gage)                   :: client corked the flow
+            =(%gone ;;(%gone +.gage))
+            !pending-ack.state                      :: there are no pending acks
+            closing.state                           :: the flow is in closing
+            !(~(has by nax.state) last-acked.state) :: the %cork was not nacked
+        ==
         fo-core
       ::
       +|  %internals
@@ -1672,6 +1711,12 @@
               [hen %pass /public-keys %j %public-keys [n=our ~ ~]]
               [~[/mesa] %pass /dead-flow %b %wait `@da`(add now ~m2)]
           ==
+        sy-core
+      ::
+      ++  sy-crud
+        |=  =error
+        ^+  sy-core
+        =.  ev-core  (ev-emit hen %pass /crud %d %flog %crud error)
         sy-core
       ::  +sy-plug: handle key reservation
       ::
@@ -2009,8 +2054,7 @@
     ::  handle error notification
     ::
     ?^  dud
-      ?+  -.task  !!
-          :: (on-crud:event-core -.task tang.u.dud)
+      ?+  -.task  ev-abet:(~(sy-crud sy hen) -.task tang.u.dud)
         %heer   %-  %-  slog
                     :_  tang.u.dud
                     leaf+"mesa: %heer crashed {<mote.u.dud>}"
@@ -2052,9 +2096,12 @@
   =^  moves  ax
     ?:  ?=([%gall %unto *] sign)  :: XX from poking %ping app
       `ax
+    ?:  ?=([%gall %flub ~] sign)  :: XX
+      ~&  >  %flub
+      `ax
     ::
     =<  ev-abet
-    ?+  sign  !!
+    ?-  sign
       [%behn %wake *]  (ev-take:ev-core [wire %wake error.sign])
     ::
       [%jael %turf *]          ev-core  ::sy-abet:(~(on-take-turf sy hen) turf.sign)
@@ -2235,7 +2282,7 @@
       =/  ful  (en-beam bem)
       =/  ryf  rift.ax
       =/  ser  (jam gag)  :: unencrypted
-      ``[%message !>([%sign (sign:crypt `@`priv.ax ful (root:lss ser)) ser])]
+      ``[%message !>([%sign (sign:crypt `@`priv.ax ful (root:lss (met 3 ser)^ser)) ser])]
     ::
         [%chum lyf=@ her=@ hyf=@ cyf=@ ~]
       =/  lyf  (slaw %ud lyf.tyl)
@@ -2261,9 +2308,10 @@
       =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
       =/  ful  (en-beam bem)
       =*  iv   u.cyf  :: XX
-      =/  ser  (encrypt:crypt key iv (jam gag))
+      =/  ser  (jam gag)
+      =/  cyr  (encrypt:crypt key iv (met 3 ser)^ser)
       =/  ryf  rift.ax  ::  XX
-      ``[%message !>([%hmac (mac:crypt key ful (root:lss ser)) ser])]
+      ``[%message !>([%hmac (mac:crypt key ful (root:lss cyr)) dat.cyr])]
     ::
         [%shut kid=@ cyf=@ ~]
       =/  kid  (slaw %ud kid.tyl)
@@ -2282,21 +2330,20 @@
       =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
       =/  ful  (en-beam bem)
       =*  iv   u.cyf
-      =/  ser  (encrypt:crypt -.u.key iv (jam gag))
+      =/  ser  (jam gag)
+      =/  cyr  (encrypt:crypt -.u.key iv (met 3 ser)^ser)
       =/  ryf  rift.ax  :: XX
-      ``[%message !>([%sign (sign:crypt -.u.key ful (root:lss ser)) ser])]
+      =/  sig  (sign:crypt -.u.key ful (root:lss cyr))
+      ``[%message !>([%sign sig dat.cyr])]
     ::  publisher-side, flow-level
     ::
-        ::res-mess-pith:ev-res  ::  /[~sndr]/[load]/[~rcvr]/flow/[bone]/[dire]/[mess]
         ::  XX drop sndr, it's always our
         [%flow bone=@ sndr=@ load=@ rcvr=@ dire=@ mess=@ ~]
       ::  XX remove typed-paths
       =>  .(tyl `(pole iota)`(ev-pave tyl))
       ?>  ?=(res-mess-pith tyl)
       ?.  =(our sndr.tyl)
-        ~  :: we didn't send this poke
-      ::  XX refactor block when +rof arms goes back into +scry
-      ::     to get all arms from ev-core
+        ~
       ::
       =+  per-sat=(ev-get-per rcvr.tyl)
       ?.  ?=([~ ~ *] per-sat)
@@ -2304,20 +2351,36 @@
       =.  per  [rcvr.tyl u.u.per-sat]
       ?>  ?=(%known -.sat.per)
       ?:  ?&  (~(has in corked.sat.per) [bone dire]:tyl)
-              ?=(?(%cork %ack) load.tyl)
+              ?=(%ack load.tyl)
           ==
-          ~&  >>>  corked/corked.sat.per
+          ~&  >>>  corked/load.tyl^corked.sat.per
           ::  if %ack for a %corked flow (for both client and server),
           ::  produce %ack
           ::  XX when are corked bones evicted?
           ::
-          ``[%message !>(ack/error=%.n)]
+          ``[%message !>(cork/error=%.n)]
       ::
       =/  res=(unit page)
         %.  [load mess]:tyl
         fo-peek:(fo-abed:fo ~[//scry] [bone dire]:tyl ev-chan ~)
-      ~&  >  res^(pout tyl)
+      ~&  >  (pout tyl)
       ?~(res ~ ``[%message !>(u.res)])
+    ::  client %mesa %corks, flow-level
+    ::
+        ::  XX drop sndr, it's always our
+        [%flow bone=@ sndr=@ %cork rcvr=@ dire=@ ~]  :: XX remove dire
+      =>  .(tyl `(pole iota)`(ev-pave tyl))
+      ?>  ?=(res-cork-pith tyl)
+      =+  per-sat=(ev-get-per rcvr.tyl)
+      ?.  ?=([~ ~ *] per-sat)
+        ~  ::  %alien or missing
+      =.  per  [rcvr.tyl u.u.per-sat]
+      ?>  ?=(%known -.sat.per)
+      ?.  (~(has in corked.sat.per) [bone dire]:tyl)
+        ~
+      ~&  >>  corked/corked.sat.per
+      ``[%message !>(%gone)]
+  ::
     ==
   ::  only respond for the local identity, %$ desk, current timestamp
   ::

@@ -6212,9 +6212,9 @@
   ::  +root: compute just the root hash for a message
   ::
   ++  root
-    |=  msg=@
+    |=  msg=byts
     ^-  @ux
-    (blake3 32 (met 3 msg)^msg)
+    (blake3 32 msg)
   ::
   ::  +recover-root: compute the root hash of a leaf proof
   ::
