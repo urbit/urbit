@@ -667,19 +667,16 @@
       ?.  (~(has by by-bone.ossuary.sat.per) bone)
         ~&  "trying to cork {<bone=bone>}, not in the ossuary, ignoring"
         ev-core
-      =^  moves  ax
-        =<  fo-abet
-        %.  plea/[vane wire payload]
-        fo-call:(fo-abed:fo hen bone^dire=%for ev-chan `cork)
-      (ev-emil moves)
+      =<  fo-abet
+      %.  plea/[vane wire payload]
+      fo-call:(fo-abed:fo hen bone^dire=%for ev-chan `cork)
     ::
     ++  ev-req-boon
       |=  [=bone =channel load=*]
+      ^+  ev-core
       ::  XX handle corked/closing bones
       ::
-      =^  moves  ax
-        fo-abet:(fo-call:(fo-abed:fo hen bone^dire=%bak channel ~) boon/load)
-      (ev-emil moves)
+      fo-abet:(fo-call:(fo-abed:fo hen bone^dire=%bak channel ~) boon/load)
     ::
     ++  ev-req-peek
       |=  [sec=(unit [kid=@ key=@]) spar]
@@ -971,11 +968,9 @@
         ?>  ?=([%plea *] +.gage)
         plea/;;(plea +>.gage)
       ::
-      =^  moves  ax
-        =<  fo-abet
-        %.  [%sink mess.pok req ?=(~ dud)]
-        fo-call:(fo-abed:fo hen bone.pok^dire ev-chan ~)
-      (ev-emil moves)
+      =<  fo-abet
+      %.  [%sink mess.pok req ?=(~ dud)]
+      fo-call:(fo-abed:fo hen bone.pok^dire ev-chan ~)
     ::
     ++  ev-mess-peek
       |=  =spar
@@ -1013,10 +1008,8 @@
         ::  if we don't crash, the client has removed the flow,
         ::  and have succesfully +peek'ed the %cork
         ::
-        =.  ax
-          =<  fo-abel
-          %.(sage fo-take-client-cork:(fo-abed:fo hen bone^dire ev-chan ~))
-        ev-core
+        =<  fo-abel
+        %.(sage fo-take-client-cork:(fo-abed:fo hen bone^dire ev-chan ~))
       ::
       ::  XX  validate thath wire and path match?
       ::
@@ -1040,24 +1033,23 @@
         ::  XX parse $ack payload in here, and call task instead?
         %.  [were mess-response/[mess.message-path sage]]
         fo-take:(fo-abed:fo hen bone^dire ev-chan ~)
-      =^  moves  ax
-        ?.  can-be-corked.fo-core
-          fo-abet:fo-core
-        ::  we received the %ack for the %cork %plea;
-        ::  remove the flow and it's associated bone in the ossuary;
-        ::  expose %cork flow in the namespace "~(put in corked)"
-        ::
-        ::  XX to arm
-        =.  sat.per
-          =,  sat.per
-          %_  sat.per
-            flows            (~(del by flows) bone^dire)
-            corked           (~(put in corked) bone^dire)
-            by-duct.ossuary  (~(del by by-duct.ossuary) (ev-got-duct bone))   ::  XX bone^side=%for
-            by-bone.ossuary  (~(del by by-bone.ossuary) bone)                 ::  XX bone^side=%for
-          ==
-        [moves.fo-core ax(peers (~(put by peers.ax) [ship sat]:per))]
-      (ev-emil moves)
+      ::
+      ?.  can-be-corked.fo-core
+        fo-abet:fo-core
+      ::  we received the %ack for the %cork %plea;
+      ::  remove the flow and it's associated bone in the ossuary;
+      ::  expose %cork flow in the namespace "~(put in corked)"
+      ::
+      ::  XX to arm
+      =.  sat.per
+        =,  sat.per
+        %_  sat.per
+          flows            (~(del by flows) bone^dire)
+          corked           (~(put in corked) bone^dire)
+          by-duct.ossuary  (~(del by by-duct.ossuary) (ev-got-duct bone))   ::  XX bone^side=%for
+          by-bone.ossuary  (~(del by by-bone.ossuary) bone)                 ::  XX bone^side=%for
+        ==
+      ev-core(ax ax(peers (~(put by peers.ax) [ship sat]:per)))
     ::  +ev-poke-done: vane responses
     ::
     ++  ev-poke-done
@@ -1075,14 +1067,12 @@
       ::
       ::  relay the vane ack to the foreign peer
       ::
-      =^  moves  ax
-        =<  fo-abet
-        ::  XX since we ack one message at at time, seq is not needed?
-        ::  XX use it as an assurance check?
-        ::
-        %.  [%van done/error]
-        fo-take:(fo-abed:fo hen bone^dire=%bak ev-chan ~)
-      (ev-emil moves)
+      =<  fo-abet
+      ::  XX since we ack one message at at time, seq is not needed?
+      ::  XX use it as an assurance check?
+      ::
+      %.  [%van done/error]
+      fo-take:(fo-abed:fo hen bone^dire=%bak ev-chan ~)
     ::
     +|  %message-constructor
     ::
@@ -1254,18 +1244,19 @@
         fo-core(hen duct, side side, channel channel)
       ::
       ++  fo-abet
-        ^+  [moves ax]
+        ^+  ev-core
+        ::
         ::
         =.  flows.sat.per  (~(put by flows.sat.per) bone^dire state)
-        [moves ax(peers (~(put by peers.ax) her sat.per))]
+        ev-core(ax ax(peers (~(put by peers.ax) her sat.per)))
       ::
       ++  fo-abel
-        ^+  ax
+        ^+  ev-core
         ::
         =:  flows.sat.per   (~(del by flows.sat.per) bone^dire)
             corked.sat.per  (~(put in corked.sat.per) bone^dire)
           ==
-        ax(peers (~(put by peers.ax) her sat.per))
+        ev-core(ax ax(peers (~(put by peers.ax) her sat.per)))
       ::
       ++  fo-emit      |=(=move fo-core(moves [move moves]))
       ++  fo-emil      |=(mos=(list move) fo-core(moves (weld mos moves)))
@@ -1296,6 +1287,8 @@
         ::  %ack(s), %naxplanation(s) and %cork(s) are on the other side,
         ::  and not bounded in our namespace
             ?:(=(%poke command) dire fo-flip-dire)
+        ::  %corks refers to the whole flow, so we skip the sequence number
+        ::
             ?:(=(%cork command) ~ [(scot %ud seq) ~])
         ==
       ::
@@ -1575,7 +1568,6 @@
             fo-core
           ::  don't give %done for %boon and %cork; implicit %ack
           ::
-          ~&  give-done-to-vane/bone^seq=seq^dire^(ev-got-duct bone)
           (fo-emit (ev-got-duct bone) %give %done ~)
         ::  are there any cached acks?
         ::
@@ -2138,6 +2130,18 @@
 ++  load
   |=  old=axle
   ^+  mesa-gate
+  :: =.  peers.old
+  ::   %-  ~(run by peers.old)
+  ::   |=  =ship-state
+  ::   ?:  ?=(%alien -.ship-state)  ship-state
+  ::   %_  ship-state
+  ::     flows    ~
+  ::     pit      ~
+  ::     corked   ~
+  ::     ossuary  =|  =ossuary:ames  ossuary
+  ::             :: %_  ossuary
+  ::             ::   next-bone  40
+  ::   ==        :: ==
   mesa-gate(ax old)
 ::
 ++  scry
@@ -2368,7 +2372,7 @@
     ::  client %mesa %corks, flow-level
     ::
         ::  XX drop sndr, it's always our
-        [%flow bone=@ sndr=@ %cork rcvr=@ dire=@ ~]  :: XX remove dire
+        [%flow bone=@ sndr=@ %cork rcvr=@ dire=@ ~]  :: XX remove dire (maybe? what about acks)
       =>  .(tyl `(pole iota)`(ev-pave tyl))
       ?>  ?=(res-cork-pith tyl)
       =+  per-sat=(ev-get-per rcvr.tyl)
