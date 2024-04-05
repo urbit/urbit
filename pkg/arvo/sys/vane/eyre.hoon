@@ -924,7 +924,7 @@
       ?>  =(%vase p.cag)
       =/  gat=vase  !<(vase q.cag)
       =/  res=toon
-        %-  mock  :_  (look rof ?.(authenticated ~ [~ ~]) /eyre)
+        %-  mock  :_  (look rof [~ ~] /eyre)
         :_  [%9 2 %0 1]  |.
         %+  slam
           %+  slam  gat
