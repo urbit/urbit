@@ -3,17 +3,17 @@ import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
 import classnames from 'classnames';
 import _ from 'lodash';
 
-import { api } from '/api';
-import { subscription } from '/subscription';
-import { store } from '/store';
-import { Skeleton } from '/components/skeleton';
-import { MessageScreen } from '/components/message-screen';
-import { Apps } from '/views/apps';
-import { Spider } from '/views/spider';
-import { Ames } from '/views/ames';
-import { Behn } from '/views/behn';
-import { Clay } from '/views/clay';
-import { Eyre } from '/views/eyre';
+import { api } from '../api';
+import { subscription } from '../subscription';
+import { store } from '../store';
+import { Skeleton } from '../components/skeleton';
+import { MessageScreen } from '../components/message-screen';
+import { Apps } from '../views/apps';
+import { Spider } from '../views/spider';
+import { Ames } from '../views/ames';
+import { Behn } from '../views/behn';
+import { Clay } from '../views/clay';
+import { Eyre } from '../views/eyre';
 import { makeRoutePath } from '../lib/util';
 
 export class Root extends Component {

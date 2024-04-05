@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
-import { store } from '/store';
+import { store } from './store';
 import moment from 'moment';
 import { stringToTa } from './lib/util';
 

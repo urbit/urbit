@@ -1,4 +1,4 @@
-import { LocalReducer } from '/reducers/local.js';
+import { LocalReducer } from './reducers/local.js';
 import _ from 'lodash';
 
 class Store {
