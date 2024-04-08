@@ -139,7 +139,7 @@
   ^-  card:agent:gall
   =;  event=event-plus
     [%give %fact ~[/verb/events-plus] %verb-event-plus !>(event)]
-  =-  [act.bowl now.bowl src.bowl cause -]
+  =-  [act.bowl now.bowl src.bowl sap.bowl cause -]
   %+  turn  cards
   |=  =card:agent:gall
   ^-  effect

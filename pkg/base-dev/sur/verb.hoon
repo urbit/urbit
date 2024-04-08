@@ -14,6 +14,7 @@
   $:  act=@ud
       now=@da
       src=@p
+      sap=path
       =cause
       effects=(list effect)
   ==

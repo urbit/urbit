@@ -12,6 +12,7 @@
     :~  'act'^(numb act)
         'now'^(time now)  ::  ms timestamp, lossy-ness is fine here
         'src'^s+(scot %p src)
+        'sap'^s+(spat sap)
         'kind'^s+-.cause
         'deets'^(^cause cause)
         'effects'^a+(turn effects effect)

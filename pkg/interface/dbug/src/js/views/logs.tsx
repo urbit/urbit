@@ -119,7 +119,7 @@ export class Logs extends Component {
       `
       act: ${event.act}<br/>
       now: ${msToDa(event.now, true)}<br/>
-      src: ${event.src}<br/>
+      src: ${event.src}${event.sap}<br/>
       `;
     switch (event.kind) {
       case 'on-poke':
