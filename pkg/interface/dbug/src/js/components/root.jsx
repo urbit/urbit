@@ -9,6 +9,7 @@ import { store } from '../store';
 import { Skeleton } from '../components/skeleton';
 import { MessageScreen } from '../components/message-screen';
 import { Apps } from '../views/apps';
+import { Logs } from '../views/logs';
 import { Spider } from '../views/spider';
 import { Ames } from '../views/ames';
 import { Behn } from '../views/behn';
@@ -49,6 +50,16 @@ export class Root extends Component {
             return (
               <Skeleton status={state.status} selected="apps">
                 <Apps apps={state.apps} {...props}/>
+              </Skeleton>
+            );
+          }}
+        />
+
+        <Route exact path={makeRoutePath('logs')}
+          render={(props) => {
+            return (
+              <Skeleton status={state.status} selected="logs">
+                <Logs logs={state.logs} {...props} />
               </Skeleton>
             );
           }}
