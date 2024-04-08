@@ -72,6 +72,42 @@ class UrbitApi {
     );
   }
 
+  bindToVerbPlus(app) {
+    return this.bind('/verb/events-plus', 'PUT', this.authTokens.ship, app,
+      (result) => {
+        result.data.app = app;
+        store.handleEvent({ data: { local: { verbEventPlus: {
+          gill: `~${this.authTokens.ship}/${app}`,
+          log: result.data
+        } } } });
+      },
+      () => {
+        store.handleEvent({
+          data: {
+            local: {
+              verbStatus: {
+                app: app,
+                msg: 'failed to establish verb+ connection to ' + app
+              }
+            }
+          }
+        });
+      },
+      () => {
+        store.handleEvent({
+          data: {
+            local: {
+              verbStatus: {
+                app: app,
+                msg: 'verb+ connection to ' + app + ' was dropped'
+              }
+            }
+          }
+        });
+      }
+    );
+  }
+
   getJson(path, localTransform, onFail) {
     let source = '/~debug' + path + '.json';
     const query = window.location.href.split('?')[1];
