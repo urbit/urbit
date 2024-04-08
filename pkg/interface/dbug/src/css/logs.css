@@ -42,6 +42,7 @@
   border-style: solid;
 }
 .details {
+  padding: 0.3em;
   display: none;
   position: absolute;
   top: 0.75em;
@@ -62,4 +63,11 @@
 }
 .event:hover, .event.focus {
   box-shadow: 0 0 10px 0 #f30;
+}
+.event details {
+  padding-left: 1em;
+}
+.event details summary {
+  position: relative;
+  left: -1em;
 }
