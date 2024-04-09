@@ -965,6 +965,13 @@
   =/  c=[=bloq =step]  ?^(a a [a 1])
   (sub (mul (bex bloq.c) step.c) (met 0 (end a b)))
 ::
+++  ctz                                                 ::  trailing zeros
+  ~/  %ctz
+  |=  a=@
+  ?:  =(0 a)  0
+  =|  i=@ud
+  |-(?:(=(1 (cut 0 [i 1] a)) i $(i +(i))))
+::
 ++  dis                                                 ::  binary and
   ~/  %dis
   |=  [a=@ b=@]
