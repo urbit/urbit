@@ -6235,7 +6235,7 @@
       |%
       ::
       ++  init
-        |=  [leaves=@ proof=(list @ux)]
+        |=  [leaves=@ud proof=(list @ux)]
         ^-  (unit state)
         ?~  proof
           ::  need at least two leaves to have a proof
@@ -6252,6 +6252,7 @@
       ++  verify-msg
         |=  [=state [leaf=@ pair=(unit [l=@ux r=@ux])]]
         ^-  (unit _state)
+        ?>  =(?=(^ pair) (expect-pair state))
         ?~  ustate=(verify-leaf state leaf)  ~
         ?~  pair  `u.ustate
         ?~  ustate=(verify-pair u.ustate u.pair)  ~
@@ -6267,14 +6268,18 @@
     |%
     +$  state
         $:
-            leaves=@
-            leaf=@                 :: current leaf index
-            cur=[l=@ r=@]          :: current pair subtree
+            leaves=@ud
+            leaf=@ud                 :: current leaf index
+            cur=[l=@ud r=@ud]        :: current pair subtree
             leaf-queue=(list @ux)
             parent-stack=(list @ux)
         ==
     ::
     ++  at-leaf  |=(state =(r.cur +(l.cur)))
+    ::
+    ++  expect-pair
+      |=  state
+      (lth leaf (sub leaves +((xeb (dec leaves)))))
     ::
     ++  advance
       |=  =state
