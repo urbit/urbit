@@ -809,6 +809,19 @@
     (rsh a d)
   $(d (add c (lsh a d)), n +(n))
 ::
+++  hew                                                 ::  cut many
+  ~/  %hew
+  |=  [a=bite c=@]
+  =/  d=[=bloq =step]  ?^(a a [a 0])
+  ~%  %fun  +>+  ~
+  |*  b=*
+  ^+  [b d]
+  ?@  b
+    [(cut bloq.d [step.d b] c) bloq.d (add step.d b)]
+  =^  f  d  $(b -.b)
+  =^  g  d  $(b +.b)
+  [[f g] d]
+::
 ++  lsh                                                 ::  left-shift
   ~/  %lsh
   |=  [a=bite b=@]
