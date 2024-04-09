@@ -855,6 +855,19 @@
     [boz (sub len (met boz dat))]
   (swp boz dat)
 ::
+++  rig                                                 ::  convert bloqs
+  ~/  %rig
+  |=  [=bite b=bloq]
+  ^-  step
+  ?@  bite  0
+  =/  [a=bloq c=step]  bite
+  ?:  =(a b)  c
+  ?:  (gth a b)
+    (lsh [0 (sub a b)] c)
+  =/  d  [0 (sub b a)]
+  =/  e  (rsh d c)
+  ?:(=(0 (end d c)) e +(e))
+::
 ++  rip                                                 ::  disassemble
   ~/  %rip
   |=  [a=bite b=@]
