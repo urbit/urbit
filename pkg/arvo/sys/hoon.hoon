@@ -959,6 +959,12 @@
           ==
   ==
 ::
+++  clz                                                 ::  leading zeros
+  ~/  %clz
+  |=  [a=bite b=@]
+  =/  c=[=bloq =step]  ?^(a a [a 1])
+  (sub (mul (bex bloq.c) step.c) (met 0 (end a b)))
+::
 ++  dis                                                 ::  binary and
   ~/  %dis
   |=  [a=@ b=@]
