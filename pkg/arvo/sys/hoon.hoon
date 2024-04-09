@@ -989,6 +989,17 @@
           ==
   ==
 ::
+++  ham                                                 ::  popcount
+  ~/  %ham
+  |=  a=@
+  ?:  =(0 a)  0
+  =|  n=@ud
+  =/  m  (dec (met 0 a))
+  |-  ^-  @ud
+  =?  n  =(1 (cut 0 [m 1] a))
+    +(n)
+  ?:(=(0 m) n $(m (dec m)))
+::
 ++  mix                                                 ::  binary xor
   ~/  %mix
   |=  [a=@ b=@]
