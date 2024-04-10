@@ -235,12 +235,12 @@
         hone
       ==
     --
-  ::  +with-face: Decorate vase with face
+  ::  +with-face:ford: Decorate vase with face
   ::
   ++  with-face
     |=  [fac=@tas =vase]
     vase(p [%face fac p.vase])
-  ::  +with-faces: Decorate vases with faces, slopped onto reef
+  ::  +with-faces:ford: Decorate vases with faces, slopped onto reef
   ::
   ++  with-faces
     |=  [reef=vase faces=(list (pair term vase))]
@@ -248,40 +248,75 @@
       reef
     $(reef (slop (with-face i.faces) reef), faces t.faces)
   --
+::  +behn: Timer vane
 ++  behn
   |%
+  ::  $req: Timer request
+  ::
+  ::    %wait: Set timer
+  ::    %rest: Cancel timer
+  ::
   +$  req  $>(?(%rest %wait) task:^behn)
+  ::  $behnres: Timer response
+  ::
+  ::    %wake: Timer went off
+  ::
   +$  res  $>(%wake gift:^behn)
   --
+::  +clay: Filesystem overlay
+::
 ++  clay
   |%
+  ::  $peer:clay: Request for file subscription
+  ::
   +$  peer  [=care =desk =path]
+  ::  $req:clay: Filesystem request
+  ::   
+  ::    %peer: Setup file subscription at .pith
+  ::    %pull: Cancel file subscripiton at .pith
+  ::
   +$  req
     $%  [%peer =pith =peer]
         [%pull =pith]
     ==
+  ::  $res:clay: Filesystem response
+  ::  j
   +$  res  (pair pith $>(?(%wris %writ) gift:^clay))
   --
-::  Total version
+::
+::  $ever: Total shrub version
+::
+::    .node is incremented only when the shrub itself changes i.e. it
+::    versions the %x care
+::    .tree is incremented when the shrub or any of its children changes
+::    i.e. it versions the %y care
+::
 +$  ever  [node=@ud tree=@ud]
-::  $once: reference to version
+::  $once: Partial version
+::
+::    Identify shrub by either %node or %tree, as per $ever
+::
 +$  once  $%([%node p=@ud] [%tree p=@ud])
+::
 ::  $road: fully qualified path
 +$  road   [=name =once grab=pith]
-:: +$  pike   (each road name)
 :: * A `$bolt` is a `[=stud =once]`
 ::
-::  $peer: subscription metadata
+::  $peer: Subscription
 +$  peer
   [=pulp =path]
+
 ::  $tone: parent change tracking
+::
 +$  tone
   $%  [%peer =peer]
       [%rely =term =pith]
   ==
 ::  $sound: internal change tracking listeners
+::
 +$  sound
   (jug tour tone)
+::
 ::  $noise: external change tracking listeners
 +$  noise
   (jug tour rely)
@@ -493,9 +528,11 @@
     ?>  ?=(^ from)
     ?>  =(i.del i.from)
     $(del t.del, from t.from)
+  ::
   ++  en-cord
     |=  pit=$
     (spat (pout pit))
+  ::
   ++  prefix
     =|  res=$
     |=  [long=$ curt=$]
@@ -505,6 +542,7 @@
     ?.  =(i.long i.curt)
       ~
     $(long t.long, curt t.curt, res [i.long res])
+  ::
   ++  suffix
     |=  [long=$ curt=$]
     ^-  _curt

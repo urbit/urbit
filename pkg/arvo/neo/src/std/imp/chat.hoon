@@ -2,6 +2,7 @@
 /@  chat-diff
 /@  chat
 /@  sig
+/@  foreign=~zod/desk/lib/file
 => 
 |%
 ++  state  chat
