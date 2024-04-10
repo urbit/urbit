@@ -3662,12 +3662,10 @@
           ?:  ?&  (~(has in closing.peer-state) bone)
                   !=(message [%plea %$ /flow %cork ~])
               ==
-            %-  %+  pe-trace  odd.veb
-                |.("ignoring message on closing bone {<bone>}")
+            ~>  %slog.0^leaf/"ames: ignoring message on closing bone {<bone>}"
             peer-core
           ?:  (~(has in corked.peer-state) bone)
-            %-  %+  pe-trace  odd.veb
-                |.("ignoring message on corked bone {<bone>}")
+            ~>  %slog.0^leaf/"ames: ignoring message on corked bone {<bone>}"
             peer-core
           ::
           =.  peer-core  abet:(call:(abed:mu bone) %memo message)
