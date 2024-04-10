@@ -754,13 +754,17 @@
           ~|  [full-wire=full-wire hen=hen stand=stand]
           =^  rr  stand  ~(get to stand)
           :-  rr
-          ?:  =(~ stand)
-            ::  outstanding leaves are only deleted when acked
-            ::
-            ?:  &(?=(^ err) ?=(%leave rr))
-              outstanding.state
+          ?.  =(~ stand)
+            (~(put by outstanding.state) [full-wire hen] stand)
+          ::  outstanding leaves are only deleted when acked;
+          ::  a nacked %leave is flagged with a %missing request
+          ::  we add to the outstanding queue that is only checked
+          ::  in the nacked-leaves timer to skip dead-flow %leave(s)
+          ::
+          ?.  &(?=(^ err) ?=(%leave rr))
             (~(del by outstanding.state) [full-wire hen])
-          (~(put by outstanding.state) [full-wire hen] stand)
+          %-  ~(put by outstanding.state)
+          [[full-wire hen] (~(gas to stand) ~[%leave %missing])]
         ::  non-null case of wire is old, remove on next breach after
         ::  2019/12
         ::
@@ -3001,14 +3005,29 @@
     %-  ~(rep by outstanding.state)
     |=  [[[=^wire =^duct] stand=(qeu remote-request)] core=_mo-core:mo]
     ?:  =(~ stand)  core
-    =^  rr  stand   ~(get to stand)
+    =^  rr  stand  ~(get to stand)
     ::  sanity check in the outstanding queue:
-    ::  if there's a %leave, that should be the only request
+    ::  if there's a %leave that was nacked, there should be a %missing request
+    ::  otherwise %leave is the only request in the queue, and we haven't heard
+    ::  anc %ack or a %nack, so %ames is still trying to send it.
     ::
-    ~?  >>>  &(?=(%leave rr) =(^ stand))
-      "outstanding queue not empty [{<wire>} {<duct>} {<stand>}]"
-    =?  core  &(?=(%leave rr) =(~ stand))
-      (mo-handle-nacked-leaves:(mo-abed:core duct) wire)
+    ~?  >>>  ?&  ?=(%leave rr)
+                 =(^ stand)
+                 =^(rr stand ~(get to stand) !=(%missing rr))
+              ==
+      "extraneous request outstanding [{<wire>} {<duct>} {<stand>} {<rr>}]"
+    =?  core  ?&  ?=(%leave rr)
+                 =(^ stand)
+                 =^(rr stand ~(get to stand) &(=(%missing rr) =(~ stand)))
+              ==
+      =+  core=(mo-handle-nacked-leaves:(mo-abed:core duct) wire)
+      ::  make sure that only the %leave remains in the queue
+      ::
+      %_    core
+          outstanding.state
+        %+  ~(put by outstanding.state)  [wire duct]
+        (~(put to *(qeu remote-request)) %leave)
+      ==
     core
   ::
   ~|  [%gall-take-failed wire]
