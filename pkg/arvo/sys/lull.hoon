@@ -3349,7 +3349,7 @@
         [%mess-response =sage:mess]      :: XX (names) produce deserialized response message
         [%response load=$>(%page mess)]  :: XX (names) produce serialized response message
         ::
-        $>(?(%boon %stub %done %nail %saxo) gift:ames)
+        $>(?(%boon %stub %done %nail %saxo %lost) gift:ames)
     ==
   ::
   +$  axle
@@ -3595,20 +3595,6 @@
       ==
     --
   ::
-  ::  +rig: convert between bloqs
-  ::
-  ++  rig
-    |=  [=bite b=bloq]
-    ^-  step
-    ?@  bite  0
-    =/  [a=bloq c=step]  bite
-    ?:  =(a b)  c
-    ?:  (gth a b)
-      (lsh [0 (sub a b)] c)
-    =/  d  [0 (sub b a)]
-    =/  e  (rsh d c)
-    ?:(=(0 (end d c)) e +(e))
-  ::
   ::  +nac: reverse +can
   ::
   ++  nac
@@ -3630,39 +3616,6 @@
     =^  f  e  $(b -.b)
     =^  g  e  $(b +.b)
     [[f g] e]
-  ::
-  ::  +hew: cut many
-  ::
-  ++  hew
-    |=  [a=bite c=@]
-    =/  d=[=bloq =step]  ?^(a a [a 0])
-    |*  b=*
-    ^+  [b d]
-    ?@  b
-      [(cut bloq.d [step.d b] c) bloq.d (add step.d b)]
-    =^  f  d  $(b -.b)
-    =^  g  d  $(b +.b)
-    [[f g] d]
-  ::
-  ++  clz
-    |=  [a=bite b=@]
-    (sub ?@(a (bex a) (mul (bex bloq.a) step.a)) (met 0 b))
-  ::
-  ++  ctz
-    |=  a=@
-    ?:  =(0 a)  0
-    =|  i=@ud
-    |-(?:(=(1 (cut 0 [i 1] a)) i $(i +(i))))
-  ::
-  ++  ham  :: popcount
-    |=  a=@
-    ?:  =(0 a)  0
-    =|  n=@ud
-    =/  m  (dec (met 0 a))
-    |-  ^-  @ud
-    =?  n  =(1 (cut 0 [m 1] a))
-      +(n)
-    ?:(=(0 m) n $(m (dec m)))
   ::
   ::  binary tree ops
   ::

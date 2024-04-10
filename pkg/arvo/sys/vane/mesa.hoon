@@ -1,4 +1,4 @@
-!:
+!.
 =,  mesa
 =/  packet-size  13
 ::  helper core
@@ -126,9 +126,16 @@
         |=  [key=@uxI iv=@ msg=byts]
         ^+  msg
         =/  x  (xchacha:chacha key (hash 24 iv))
+        =-  =+  out=(can 3 [wid dat]:- [1 0x1] ~)  :: XX FIXME
+            (met 3 out)^out                        :: XX FIXME
         (chacha 8 key.x nonce.x 0 msg)
       ::
-      ++  decrypt  encrypt
+      ++  decrypt  ::encrypt
+        |=  [key=@uxI iv=@ =byts]
+        ^+  byts
+        =/  wid  (dec wid.byts)              :: XX FIXME
+        ?>  =(0x1 (cut 3 [wid 1] dat.byts))  :: XX FIXME
+        (encrypt `@`key iv wid^dat.byts)
       ::
       ++  seal-path
         |=  [key=@uxI =path]
@@ -145,7 +152,7 @@
         =/  keys  (hash 64 key)
         =+  ;;([tag=@ cyf=byts] (cue sealed))
         =/  pat  dat:(decrypt (end 8 keys) tag cyf)
-        ?>  (const-cmp tag (keyed-hash (rsh 8 keys) 16 pat))
+        :: ?>  (const-cmp tag (keyed-hash (rsh 8 keys) 16 pat))   :: XX FIXME
         ;;(path (cue pat))
       ::
       --
@@ -414,6 +421,7 @@
           =dire          ::  XX revisit; could be inferred by entry-point + flow
           ~
       ==
+    ::
     ++  ev-validate-wire
       |=  =wire
       ^-  (unit ev-flow-wire)
@@ -453,6 +461,7 @@
           ?.  =(u.hyf life.sat.per)   !!  :: XX
           symmetric-key.sat.per
         =*  iv  u.pyf  :: XX
+        :: ~&  (decrypt:crypt `@`key u.cyf (met 3 ser)^ser)
         dat:(decrypt:crypt `@`key u.cyf (met 3 ser)^ser)
       ::
           [%shut kid=@ cyf=@ ~]  :: encrypted with group key
@@ -549,6 +558,7 @@
       ::  %packet-response-entry-point
       ::
           %heer
+        :: ~&  heer/(met 3 q.task)
         =/  =pact:pact  (parse-packet q.task)
         ?-  -.pact
           %page  (ev-pact-page +.pact)
@@ -567,6 +577,9 @@
           %mess-ser
         =*  her  ship.p.+.load.task
         =.  per  (ev-got-per her)
+        :: ~&  sealed/r.+.load.task
+        :: ~&  opened/(ev-decrypt-load her^path.task r.+.load.task)
+        :: ?:  &  ev-core
         %*  $  ev-mess-page
           sealed-path  `path.task
         ::
@@ -827,6 +840,8 @@
                   !=(1 tot.data)
                   ::  XX (gth (met 3 dat.data) 1.024) ??
               ==
+            ::  XX authenticate? where is the proof?
+            ::
             ::  yield complete message
             ::
             =/  =spar:ames  [her.name inner-path]
@@ -840,7 +855,8 @@
           ::  is this a standalone message?
           ::
           ?:  =(1 tot.data)
-            ?>  (ev-authenticate (root:lss (met 3 dat.data)^dat.data) aut.data name)
+            ~&  inner-path^dat.data
+            :: ?>  (ev-authenticate (root:lss (met 3 dat.data)^dat.data) aut.data name)
             =/  =spar:ames  [her.name inner-path]
             =/  =auth:mess  p.aut.data
             %+  ev-emit  [/ames]~
@@ -1436,14 +1452,15 @@
           ~&  %already-acked
           (fo-send-ack seq)
         =.  fo-core  (fo-emit (ev-got-duct bone) %give %boon message)
-        ::  XX handle a previous crash
-        :: =?  moves  !ok
-        ::   ::  we previously crashed on this message; notify client vane
-        ::   ::
-        ::   %+  turn  moves
-        ::   |=  =move
-        ::   ?.  ?=([* %give %boon *] move)  move
-        ::   [duct.move %give %lost ~]
+        ::  handle a previous crash
+        ::
+        =?  moves  !ok
+          ::  we previously crashed on this message; notify client vane
+          ::
+          %+  turn  moves
+          |=  =move
+          ?.  ?=([* %give %boon *] move)  move
+          [duct.move %give %lost ~]
         ::  ack unconditionally
         ::
         =.  last-acked.state  +(last-acked.state)
@@ -2032,7 +2049,58 @@
         (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p our)])
       --
     ::
---
+    :: +|  %internals
+    ::  +check-clog: notify clients if peer has stopped responding
+    :: ::
+    :: ++  ev-check-clog
+    ::   ^+  ev-core
+    ::   ?>  ?=(%known -.sat.per)
+    ::   ::
+    ::   ::    Only look at response bones.  Request bones are unregulated,
+    ::   ::    since requests tend to be much smaller than responses.
+    ::   ::
+    ::   =/  pumps=(list message-pump-state)
+    ::     %+  murn  ~(tap by snd.peer-state)
+    ::     |=  [=bone =message-pump-state]
+    ::     ?:  =(0 (end 0 bone))
+    ::       ~
+    ::     `u=message-pump-state
+    ::   ::  if clogged, notify client vane
+    ::   ::
+    ::   |^  ?.  &(nuf-messages nuf-memory)  peer-core
+    ::       %+  roll  ~(tap in heeds.peer-state)
+    ::       |=([d=^duct core=_peer-core] (pe-emit:core d %give %clog her))
+    ::   ::  +nuf-messages: are there enough messages to mark as clogged?
+    ::   ::
+    ::   ++  nuf-messages
+    ::     =|  num=@ud
+    ::     |-  ^-  ?
+    ::     ?~  pumps  |
+    ::     =.  num
+    ::       ;:  add  num
+    ::         (sub [next current]:i.pumps)
+    ::         ~(wyt in unsent-messages.i.pumps)
+    ::       ==
+    ::     ?:  (gte num msg.cong.ames-state)
+    ::       &
+    ::     $(pumps t.pumps)
+    ::   ::  +nuf-memory: is enough memory used to mark as clogged?
+    ::   ::
+    ::   ++  nuf-memory
+    ::     =|  mem=@ud
+    ::     |-  ^-  ?
+    ::     ?~  pumps  |
+    ::     =.  mem
+    ::       %+  add
+    ::         %-  ~(rep in unsent-messages.i.pumps)
+    ::         |=([m=message b=_mem] (add b (met 3 (jim m))))
+    ::       ?~  unsent-fragments.i.pumps  0
+    ::       (met 3 fragment.i.unsent-fragments.i.pumps)
+    ::     ?:  (gte mem mem.cong.ames-state)
+    ::       &
+    ::     $(pumps t.pumps)
+      :: --
+    --
 ::
 |%
 ::
@@ -2130,18 +2198,18 @@
 ++  load
   |=  old=axle
   ^+  mesa-gate
-  :: =.  peers.old
-  ::   %-  ~(run by peers.old)
-  ::   |=  =ship-state
-  ::   ?:  ?=(%alien -.ship-state)  ship-state
-  ::   %_  ship-state
-  ::     flows    ~
-  ::     pit      ~
-  ::     corked   ~
-  ::     ossuary  =|  =ossuary:ames  ossuary
-  ::             :: %_  ossuary
-  ::             ::   next-bone  40
-  ::   ==        :: ==
+  =.  peers.old
+    %-     ~(run by peers.old)
+    |=  =ship-state
+    ?:  ?=(%alien -.ship-state)  ship-state
+    %_  ship-state
+      flows    ~
+      pit      ~
+      corked   ~
+      ossuary  =|  =ossuary:ames  ossuary
+              :: %_  ossuary
+              ::   next-bone  40
+    ==        :: ==
   mesa-gate(ax old)
 ::
 ++  scry
@@ -2154,7 +2222,47 @@
           =(%x car)
       ==
     =/  tyl=(pole knot)  s.bem
+    :: ~&  tyl/tyl
     ?+    tyl  ~
+    ::  publisher-side, batch-level
+    ::
+        [%hunk lop=@t len=@t pat=*]
+      ::
+      ?>  ?=([%mess ryf=@ %pact boq=@ %etch typ=?(%data %init) res=*] pat.tyl)
+      =/  hunk=[@ @]
+        ?:  =(%init typ.pat.tyl)
+          [0 0]
+        [(slav %ud lop.tyl) (slav %ud len.tyl)]
+      =*  scry  $
+      ::
+      =|  batch=(list @)
+      =/  hunk=(list @)  (gulf hunk)
+      ::
+      :^  ~  ~  %batch
+      !>  ^-  (list @)
+      %-  flop
+      |-  ^-  (list @)
+      ?~  hunk
+        batch
+      =*  fag  i.hunk
+      =/  =path
+        ?:  =(%init typ.pat.tyl)  pat.tyl
+        :*  %mess  ryf.pat.tyl  %pact  boq.pat.tyl  %etch  typ.pat.tyl
+            ?>  ?=(^ res.pat.tyl)
+            [(scot %ud fag) +.res.pat.tyl]
+        ==
+      =/  res=(unit (unit cage))
+        scry(lyc ~, pov /mesa/batch, s.bem path)
+      ?~  res
+         ~&   %nope
+        batch
+      ?:  ?=(~ u.res)
+        ~&  %nope
+        batch
+      ?.  ?=([%atom *] u.u.res)
+        batch
+      :: ~&  atom/u.u.res
+      $(batch [;;(@ q.q.u.u.res) batch], hunk t.hunk)
     ::
     ::  publisher-side, protocol-level
     ::
@@ -2224,6 +2332,11 @@
         ~  :: non-standard proofs for later
       =;  [nam=name:pact dat=data:pact]
         =/  pac=pact:pact  [%page nam dat ~]
+        ?:  (gth fag tot.dat)
+          [~ ~]
+        ::  ~&  (met 3 p:(fax:plot (en:pact pac)))^`@ux`p:(fax:plot (en:pact pac))
+        =/  other=pact:pact  (parse-packet p:(fax:plot (en:pact pac)))
+        :: ~&  other^pac
         ?.  ser.pac.nex
           ``[%packet !>(pac)]
         ``[%atom !>(p:(fax:plot (en:pact pac)))]
@@ -2239,7 +2352,11 @@
         [nam dat]
       ::
           %data
-        =/  lss-proof  (build:lss (met 3 ser)^ser)  :: XX cache this
+
+        =/  lss-proof
+          =>  [ser=ser ..lss]
+          ~>  %memo./ames/lss
+          (build:lss (met 3 ser)^ser)  :: XX cache this
         =/  nam  [[our rif] [boq ?:(nit ~ [%data fag])] pat]
         =/  aut=auth:pact
           ?:  &((lte wid 4) =(0 fag))
@@ -2305,16 +2422,24 @@
         ?.  =(u.hyf life.sat.per)   !!  :: XX
         symmetric-key.sat.per
       =/  pat  (open-path:crypt key u.cyf)
+      :: ~&  >  pat/pov^pat
       ?~  inn=(inner-path-to-beam our pat)
         ~
       ?~  res=(rof `[u.her ~ ~] /mesa/chum vew.u.inn bem.u.inn)
         ~
+      =>  [key=key cyf=cyf bem=bem res=res ryf=rift.ax ..crypt]
+      ~>  %memo./ames/chum
       =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
       =/  ful  (en-beam bem)
       =*  iv   u.cyf  :: XX
       =/  ser  (jam gag)
+      :: ~&  ser/ser
+      :: ~&  key/key
+      :: ~&  iv/iv
       =/  cyr  (encrypt:crypt key iv (met 3 ser)^ser)
-      =/  ryf  rift.ax  ::  XX
+      :: ~&  cyr/cyr
+      :: ~&  decrypt/(decrypt:crypt `@`key iv (met 3 dat.cyr)^dat.cyr)
+      :: =/  ryf  rift.ax  ::  XX
       ``[%message !>([%hmac (mac:crypt key ful (root:lss cyr)) dat.cyr])]
     ::
         [%shut kid=@ cyf=@ ~]
@@ -2367,7 +2492,7 @@
       =/  res=(unit page)
         %.  [load mess]:tyl
         fo-peek:(fo-abed:fo ~[//scry] [bone dire]:tyl ev-chan ~)
-      ~&  >  (pout tyl)
+      :: ~&  >  (pout tyl)
       ?~(res ~ ``[%message !>(u.res)])
     ::  client %mesa %corks, flow-level
     ::
@@ -2383,6 +2508,7 @@
       ?.  (~(has in corked.sat.per) [bone dire]:tyl)
         ~
       ~&  >>  corked/corked.sat.per
+      :: =-  ~&  >  produce/-  -
       ``[%message !>(%gone)]
   ::
     ==
