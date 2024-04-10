@@ -2335,7 +2335,7 @@
         ?:  (gth fag tot.dat)
           [~ ~]
         ::  ~&  (met 3 p:(fax:plot (en:pact pac)))^`@ux`p:(fax:plot (en:pact pac))
-        =/  other=pact:pact  (parse-packet p:(fax:plot (en:pact pac)))
+        ::  =/  other=pact:pact  (parse-packet p:(fax:plot (en:pact pac)))
         :: ~&  other^pac
         ?.  ser.pac.nex
           ``[%packet !>(pac)]
