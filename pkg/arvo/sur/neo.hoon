@@ -16,37 +16,72 @@
 ::
 ::  
 |%
+::  $care: Perspective
+::    
 +$  care
   $?  %x  :: single node
       %y  :: single node and immediate children
       %z  :: single node and all descendants
   ==
+::  $tour: perspective and shrub
+::    
 +$  tour   [=care =pith]
+::  $block: call-stack state for blocking semantics
+::    
 +$  block  [get=(set tour) err=(unit tang)]
-+$  curb   @ud :: blocking request ID
+::  $halt: Currently blocked flows and indices
+::
 +$  halt
   $:  by-tour=(map tour flow)
       by-flow=(jug flow tour)
       clog=(map flow (qeu move))
   ==
+::  $flow: Call direction
+::  
+::    .p is the source
+::    .q is the destination
+::
 +$  flow  (pair pith pith)
+::  $disk: Reference to a suite of code
+::
+::    If sig case, then refers to the %std disk
 +$  disk
   $@(~ [=ship =term])
+::  $tack: Type of code being distributed
+::
+::    %con: CONverter of protocols
+::    %imp: IMPlemenation of shrub
+::    %pro: PROtocol (type)
+::
 +$  tack
   ?(%con %imp %pro)
+::  $post: Name of code being distributed
+::
 +$  post  (pair tack stud)
+::
+::  +get-stud-name: Get name for $stud
+::
 ++  get-stud-name
   |=  =stud
   ?@  stud  stud
   mark.stud
+::  +drive: Path multiplexer core
+::
 ++  drive
   |%
+  ::  +en:drive: Multiplex several paths into one
+  ::    
+  ::    See also: (+de:drive)
   ++  en
     =|  res=pith
     |=  ps=(list pith)
     ?~  ps
       res
     $(res (welp res [%ud (lent i.ps)] i.ps), ps t.ps)
+  ::  +de:drive: Demultiplex one path into several
+  ::    
+  ::    See also: (+en:drive)
+
   ++  de
     =|  res=(list pith)
     |=  pax=(pole iota)
@@ -58,9 +93,15 @@
       `[pith (pole iota)]`[(scag [len rest]:pax) (slag [len rest]:pax)]
     $(res [nex res])
   --
-::
+::  +ford: Container for build system bootstrapping
 ++  ford
   |%
+  ::  +riff:ford: Constant build system node
+  ::  
+  ::    Required for bootstrapping. This is used to put the reef and
+  ::    other ford combinators into the build system to bootstrap
+  ::    everything else. To update a riff, simply %make over the top
+  ::
   ++  riff
     ^-  firm
     |%
@@ -84,28 +125,39 @@
         `!>(`[cache=(unit vase) ~]`[`ref ~])
       --
     --
+  ::  +dep:ford: $fief for a ford dependency
+  ::  
+  ::    Handy shortcut to specifiy a dependency in the build system
   ++  dep  `fief`[& %x %ford-in %ford-out]
+  ::  +get-output: pull build resuit of dependency
+  ::
   ++  get-output
     |=  [=bowl =term]
     ^-  (unit vase)
     =+  !<([vax=(unit vase) *] q.pail.q:(~(got by deps.bowl) term))
     vax
-  ::
   ++  run
     |=  txt=@t
     (scan (trip txt) (rein *name))
+  ::  $lib:ford: Specification of library import
+  ::
   +$  lib
     [face=term =name]
+  ::  $pro:ford: Specification of protocol import
+  ::
   +$  pro
     [face=term =stud]
   +$  vale
     [face=term =stud]
+  ::  $file:ford: Code with imports
+  ::
   +$  file
     $:  pro=(list pro)
         :: grab=(list 
         lib=(list lib)
         =hoon
     ==
+  ::  +rein:ford: Parse code with imports
   ++  rein
     |=  =name
     =<  apex
@@ -123,11 +175,21 @@
         ;~(pfix cen ;~(plug (star ket) stip))                     :: relative
         ;~(plug ;~(pfix fas sig fed:ag) stip) :: absolute
       ==
+    ::  +std:rein:ford: Parse import directive
+    ::
+    ::    Either  name:~ship/desk
+    ::    or      name (from %std disk)
+    ::
     ++  std
       ;~  pose
         ;~(plug sym ;~(pfix col sig fed:ag) ;~(pfix fas sym))
         sym
       ==
+    ::  +pro:rein:ford: Parse protocol import directive
+    ::
+    ::    /@  foo=bar  :: imports %bar protocol from %std disk with name foo
+    ::    /@  bar      :: imports %bar protocol from %std disk with name bar
+    ::
     ++  pro
       :: ^-  $-(nail (like ^pro))
       %+  rune  pat
@@ -173,9 +235,13 @@
         hone
       ==
     --
+  ::  +with-face: Decorate vase with face
+  ::
   ++  with-face
     |=  [fac=@tas =vase]
     vase(p [%face fac p.vase])
+  ::  +with-faces: Decorate vases with faces, slopped onto reef
+  ::
   ++  with-faces
     |=  [reef=vase faces=(list (pair term vase))]
     ?~  faces
