@@ -2068,10 +2068,11 @@
 ::
 ++  scion
   |=  [want=kids:neo =pith:neo =pail:neo]
-  ^-  pail:neo
-  =/  =pish:neo  (need (find:peon:neo pith ~(key by want)))
-  =/  =port:neo  (~(got by want) pish)
-  (plag state.port pail)
+  ^-  (unit pail:neo)
+  ?~  pis=(find:peon:neo pith ~(key by want))
+    ~
+  =/  =port:neo  (~(got by want) u.pis)
+  `(plag state.port pail)
 ::
 ++  moor
   |=  [want=quay:neo =name:neo]
@@ -2080,11 +2081,15 @@
   =/  h  (hall pith.name)
   =/  =cane:neo   (cane:h care)
   =.  pail.cane  (plag state.p.want pail.cane)
+  ~|  want
   =?  kids.cane  ?=(^ q.want)
-    %-  ~(rut by kids.cane)
+    %-  ~(gas by *(map pith:neo [ever:neo pail:neo]))
+    %+  murn  ~(tap by kids.cane)
     |=  [=pith:neo =ever:neo =pail:neo]
-    ^-  [ever:neo pail:neo]
-    [ever (scion q.u.q.want pith pail)]
+    ^-  (unit [pith:neo ever:neo pail:neo])
+    ?~  ion=(scion q.u.q.want pith pail)
+      ~
+    `[pith ever u.ion]
   cane
 ::
 ++  dep-change
@@ -2292,7 +2297,6 @@
     =.  foreign    (~(put by foreign) tour riot)
     arvo
   ++  validate-kids
-    |=  want=stud:neo
     ^-  ?
     ?~  par-pith=(parent:of-top here)
       & :: XX: review
@@ -2301,7 +2305,7 @@
     =/  sfix  (sub:pith:neo here u.par-pith)
     ?~  mat=(find:peon:neo sfix ~(key by kids:parent-firm))
       ~&  >>>  %kids-no-match
-      |
+      &
     & :: XX: enforce conformance
   ::
   ++  make
@@ -2313,6 +2317,7 @@
     =/  =deps:neo  deps:firm
     =^  bad=(set term)  get.block
       (check-conf conf deps:firm)
+    ?>  validate-kids 
     ?.  =(~ bad)
       ~|  missing-dependecies/~(tap in bad)
       !!
@@ -2350,12 +2355,14 @@
       [cards arvo]
     ::
     ++  si-resolve-kids  
+      =/  kids  kids:si-firm
       %-  ~(gas by *(map pith pail:neo))
-      %+  turn  ~(tap by (kid:of-top here))
+      %+  murn  ~(tap by (kid:of-top here))
       |=  [=pith:neo =room:neo]
-      ^-  [pith:neo pail:neo]
-      [pith [state state.icon]:room]
-      ::  [pith (scion kids (welp here pith) [state state.icon]:room)]
+      ^-  (unit [pith:neo pail:neo])
+      ?~  ion=(scion kids pith [state state.icon]:room)
+        ~
+      `[pith u.ion]
     ++  si-resolve-deps
       %-  ~(gas by *(map term [pith cane:neo]))
       ^-  (list [term pith cane:neo])

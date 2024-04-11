@@ -14,7 +14,7 @@
 ++  add-msg
   |=  [=bowl:neo =stud:neo vax=vase]
   ^-  card:neo
-  :-  (welp were.bowl ~[da/now.bowl])
+  :-  (welp were.bowl ~[%messages da/now.bowl])
   ^-  note:neo
   [%make stud `vax ~]
 
