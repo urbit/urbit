@@ -18,7 +18,7 @@
 ++  kids   *kids:neo
 ++  deps
   %-  ~(gas by *deps:neo)
-  :~  src/[req=& %x [%message %sig]]
+  :~  src/[req=& [%message %sig] ~]
   ==
 ++  form
   ^-  form:neo

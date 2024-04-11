@@ -128,7 +128,7 @@
   ::  +dep:ford: $fief for a ford dependency
   ::  
   ::    Handy shortcut to specifiy a dependency in the build system
-  ++  dep  `fief`[& %x %ford-in %ford-out]
+  ++  dep  `fief`[& [%ford-in %ford-out] ~]
   ::  +get-output: pull build resuit of dependency
   ::
   ++  get-output
@@ -136,6 +136,7 @@
     ^-  (unit vase)
     =+  !<([vax=(unit vase) *] q.pail.q:(~(got by deps.bowl) term))
     vax
+  ::
   ++  run
     |=  txt=@t
     (scan (trip txt) (rein *name))
@@ -1096,15 +1097,23 @@
       deps=(map term (pair pith cane))
       kids=(map pith vase) :: XX: vase -> pail
   ==
-+$  quay
-  $%  [%x =port]
-      [%y =dock]
-      [%z =dock]
-  ==
+++  quay
+  =<  quay
+  |%
+  +$  quay   (pair port (unit (pair care kids)))
+  ++  get-care
+    |=  q=quay
+    ^-  care
+    ?~  q.q
+      %x
+    p.u.q.q
+  --
 +$  fief  [required=? =quay]
 +$  dock  [=port =kids]
 +$  port :: TODO: how to specify behaviour
   [state=stud diff=stud] :: state, diff actually $stud
++$  slip
+  [state=stud diffs=(set stud) =kids]
 +$  deps  (map term fief)
 +$  kids  (map pish port)
 ::  $firm: type of the value in the urbit namespace
@@ -1157,5 +1166,36 @@
   ++  init
     |~  old=(unit vase)
     *(quip card vase)
+  --
+++  peon
+  |%
+  ++  match
+    |=  [nedl=pish hstk=pith]
+    ^-  ?
+    ?~  nedl
+      =(~ hstk)
+    ?~  hstk
+      |
+    ?:  ?=(%& -.i.nedl)
+      &(=(p.i.nedl i.hstk) $(nedl t.nedl, hstk t.hstk))
+    ?@  i.hstk
+      =(p.i.nedl %tas)
+    &(=(-.i.hstk p.i.nedl) $(nedl t.nedl, hstk t.hstk))
+      
+  ++  find
+    |=  [pax=pith pis=(set pish)]
+    ^-  (unit pish)
+    ?~  lis=(skim ~(tap in pis) |=(pish (match +< pax)))
+      ~
+    `i.lis
+  ++  moor
+    |=  [want=quay have=slip]
+    ?.  |(=(diff.p.want %sig) (~(has in diffs.have) diff.p.want))
+      |
+    ?.  |(=(state.p.want %sig) =(state.have state.p.want))
+      |
+    ?:  =(q.want ~)
+      &
+    &
   --
 --

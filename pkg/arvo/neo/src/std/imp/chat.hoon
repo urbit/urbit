@@ -1,9 +1,8 @@
-/@  message :: message:/~zod/desk/1 <- [p=stud q=*]
+/@  message
 /@  chat-diff
 /@  chat
 /@  sig
-/@  foreign=~zod/desk/lib/file
-=> 
+=>
 |%
 ++  state  chat
 ++  poke  chat-diff
@@ -14,7 +13,6 @@
   :-  (welp were.bowl ~[da/now.bowl])
   ^-  note:neo
   [%make %message `!>(msg) ~]
-
 --
 ^-  firm:neo
 |%
@@ -27,7 +25,7 @@
   ==
 ++  deps
   %-  ~(gas by *deps:neo)
-  :~  open/[required=| %x %bool %sig]
+  :~  open/[required=| [%bool %sig] ~]
   ==
 ++  form
   ^-  form:neo

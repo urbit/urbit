@@ -33,7 +33,8 @@
   ::
     :-  %src
     ::
-    :^  req=&  %y  [%chat %sig]
+    :+  req=&  [%chat %sig]
+    :+  ~  %y
     %-  ~(gas by *kids:neo)
     :~  :-  ~[&/%messages |/%da]
         [%message %sig]

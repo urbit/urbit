@@ -8,7 +8,7 @@
   ==
 ++  deps
   %-  ~(gas by *deps:neo)
-  :~  acl/[req=& %x %circle %sig]
+  :~  acl/[req=& [%circle %sig] ~]
   ==
 ++  form
   ^-  form:neo

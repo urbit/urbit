@@ -19,7 +19,8 @@
 ++  deps
   %-  ~(gas by *deps:neo)
   :~  :-  %acl
-      :^  req=&  %y  [%circle %sig]
+      :+  req=&  [%circle %sig]
+      :+  ~  %y
       %-  ~(gas by *kids:neo)
       :~  [~[|/%p] %sig %sig]
       ==

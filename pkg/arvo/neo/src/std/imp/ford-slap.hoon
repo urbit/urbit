@@ -37,7 +37,7 @@
 ++  deps
   %-  ~(gas by *deps:neo)
   :~  sut/dep:ford:neo
-      hoon/[& %x %sig %hoon]
+      hoon/[& [%sig %hoon] ~]
   ==
 ++  form
   ^-  form:neo
@@ -54,6 +54,9 @@
     |=  vax=(unit vase)
     =/  sta  *^state
     =.  cache.sta  (build bowl)
+    ?:  =(~ cache.sta)
+      ~&  no-build/bowl
+      !!
     `!>(sta)
   --
 --
