@@ -25,7 +25,7 @@
 ++  deps
   %-  ~(gas by *deps:neo)
   :~  sut/dep:ford:neo
-      face/[& %x %ford-out %sig]
+      face/[& [%term %sig] ~]
   ==
 ++  form
   ^-  form:neo

@@ -96,6 +96,10 @@
 ::  +ford: Container for build system bootstrapping
 ++  ford
   |%
+  ++  is-stud
+    |=  s=stud
+    ?^  s  |
+    =(%ford (end [3 4] s))
   ::  +riff:ford: Constant build system node
   ::  
   ::    Required for bootstrapping. This is used to put the reef and
@@ -128,13 +132,14 @@
   ::  +dep:ford: $fief for a ford dependency
   ::  
   ::    Handy shortcut to specifiy a dependency in the build system
-  ++  dep  `fief`[& [%ford-in %ford-out] ~]
+  ++  dep  `fief`[& [%ford-out %ford-in] ~]
   ::  +get-output: pull build resuit of dependency
   ::
   ++  get-output
     |=  [=bowl =term]
     ^-  (unit vase)
-    =+  !<([vax=(unit vase) *] q.pail.q:(~(got by deps.bowl) term))
+    =/  outer   q.pail.q:(~(got by deps.bowl) term)
+    =+  !<([vax=(unit vase) *] outer)
     vax
   ::
   ++  run
@@ -326,7 +331,7 @@
   [=term =pith]
 ::  $riot: foreign mirror
 +$  riot
-  [=cane deps=(set rave)]
+  [=cane deps=(set rave) =slip]
 ::
 ::  $ring: node change tracking
 ::
@@ -1095,7 +1100,7 @@
       here=pith :: 
       now=@da
       deps=(map term (pair pith cane))
-      kids=(map pith vase) :: XX: vase -> pail
+      kids=(map pith pail)
   ==
 ++  quay
   =<  quay
@@ -1153,6 +1158,7 @@
   ::  in the name
   ++  deps   *(map term fief)
   --
+::
 +$  form
   $_  ^|
   |_  [=bowl =icon]
@@ -1188,14 +1194,5 @@
     ?~  lis=(skim ~(tap in pis) |=(pish (match +< pax)))
       ~
     `i.lis
-  ++  moor
-    |=  [want=quay have=slip]
-    ?.  |(=(diff.p.want %sig) (~(has in diffs.have) diff.p.want))
-      |
-    ?.  |(=(state.p.want %sig) =(state.have state.p.want))
-      |
-    ?:  =(q.want ~)
-      &
-    &
   --
 --

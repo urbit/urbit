@@ -1068,7 +1068,7 @@
     |=  [=care:neo =pith:neo =wand:neo]
     ^+  run
     =/  =cane:neo  (wand:harden wand)
-    =/  =riot:neo  [cane ~]
+    =/  =riot:neo  [cane ~ *slip:neo]
     =.  foreign  (~(put by foreign) [care pith] riot)
     (resolved:stop care pith)
   ++  hear-twig
@@ -1560,6 +1560,7 @@
   =/  is-ford 
     |=  pax=path
     ^-  ?
+    =-  ~&([pax -] -)
     =/  pix  (pave:neo pax)
     ?~  pos=~(post omen pix)
       |
@@ -1567,7 +1568,8 @@
       |
     =(%ford (end 3^4 q.u.pos))
   =^  main=(list path)  paths
-    [(skip paths is-ford) (skim paths is-ford)]
+    ::  [(skip paths is-ford) (skim paths is-ford)]
+    [(skip paths is-ford) ~]
   =^  imps=(list path)  main
     [(skim main is-imp) (skip main is-imp)]
   |-  ^+  run  =*  loop  $
@@ -1859,6 +1861,13 @@
 ::
 ++  hear
   |_  =tour:neo
+  ++  slip
+    |=  s=slip:neo
+    ^+  run
+    =/  =riot:neo  (~(gut by foreign) tour *riot:neo)
+    =.  slip.riot  s
+    =.  foreign  (~(put by foreign) tour riot)
+    run
   ++  cane
     |=  =cane:neo
     =/  =riot:neo  (~(gut by foreign) tour %*(. *riot:neo care.cane care.cane))
@@ -2046,15 +2055,37 @@
     %y  [ever %y pail ~]
     %z  [ever %z pail ~]
   ==
+++  plag
+  |=  [want=stud:neo have=pail:neo]
+  ^-  pail:neo
+  ~|  plug/[p.have want]
+  ?:  =(want p.have)
+    have
+  ?:  =(want %sig)
+    [%sig *vase]
+  =/  conv   run:~(do con (~(got by con.fiesta) [p.have want]))
+  [want (slam conv q.have)]
+::
+++  scion
+  |=  [want=kids:neo =pith:neo =pail:neo]
+  ^-  pail:neo
+  =/  =pish:neo  (need (find:peon:neo pith ~(key by want)))
+  =/  =port:neo  (~(got by want) pish)
+  (plag state.port pail)
 ::
 ++  moor
-  |=  [=quay:neo =pith:neo]
-  |%
-  ++  check
-    !! :: |=  
-  ++  do  !!
-    
-  --
+  |=  [want=quay:neo =name:neo]
+  ^-  cane:neo
+  =/  =care:neo  (get-care:quay:neo want)
+  =/  h  (hall pith.name)
+  =/  =cane:neo   (cane:h care)
+  =.  pail.cane  (plag state.p.want pail.cane)
+  =?  kids.cane  ?=(^ q.want)
+    %-  ~(rut by kids.cane)
+    |=  [=pith:neo =ever:neo =pail:neo]
+    ^-  [ever:neo pail:neo]
+    [ever (scion q.u.q.want pith pail)]
+  cane
 ::
 ++  dep-change
   |=  [from=name:neo =term to=name:neo]
@@ -2293,6 +2324,7 @@
     =.  apex  (put:of-top here room)
     =^  cards=(list card:neo)  arvo
       (soft-site |.(si-abet:(si-init:site init)))
+    ~&  >>  made/here
     (ingest cards)
 
   ++  soft-site
@@ -2318,11 +2350,12 @@
       [cards arvo]
     ::
     ++  si-resolve-kids  
-      %-  ~(gas by *(map pith vase))
+      %-  ~(gas by *(map pith pail:neo))
       %+  turn  ~(tap by (kid:of-top here))
       |=  [=pith:neo =room:neo]
-      ^-  [pith:neo vase]
-      [pith state.icon.room]
+      ^-  [pith:neo pail:neo]
+      [pith [state state.icon]:room]
+      ::  [pith (scion kids (welp here pith) [state state.icon]:room)]
     ++  si-resolve-deps
       %-  ~(gas by *(map term [pith cane:neo]))
       ^-  (list [term pith cane:neo])
@@ -2336,11 +2369,8 @@
         ~
       =/  =name:neo  (de-pith:name:neo u.dep)
       =/  =care:neo  (get-care:quay:neo quay)
-      =/  val  (get-tour care u.dep)
-      ?~  val
-        ~|  invariant-no-value-at-path/pith.name
-        !!
-      `[term u.dep u.val]
+      =/  =cane:neo  (moor quay name)
+      `[term u.dep cane]
       ::  TODO type this w/ port??
     ++  si-bowl    
       :: =/  hare  pith:(de-pith:name:neo here)
@@ -2670,7 +2700,14 @@
     ++  do-poke
       |=  =hoon
       =/  vax=vase
-        (slap (slop !>(..zuse) (with-face:ford %neo !>(neo))) hoon)
+        %-  slap
+        :_  hoon
+        %+  with-faces:ford  !>(..zuse)
+        :~  neo/!>(neo)
+            eny/!>(eny.bowl)
+            now/!>(now.bowl)
+            our/!>(our.bowl)
+        ==
       =+  !<([=stud:neo rest=*] vax)
       =.  vax  (slot 3 vax)
       (on-card (en-pith:name:neo get:cwd:peel) %poke stud vax)

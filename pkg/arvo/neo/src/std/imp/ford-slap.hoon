@@ -22,9 +22,10 @@
   %-  mule
   |.  ^-  hoon
   =/  [pax=pith:neo =cane:neo]  (~(got by deps.bowl) %hoon)
+  =/  =name:neo  (de-pith:name:neo pax)
   =+  !<(src=@t q.pail.cane) 
   =/  =file:ford:neo
-    (scan (trip src) (rein:ford:neo our.bowl pax))
+    (scan (trip src) (rein:ford:neo name))
   hoon.file
 
 +$  state  [cache=(unit vase) ~]
@@ -37,7 +38,7 @@
 ++  deps
   %-  ~(gas by *deps:neo)
   :~  sut/dep:ford:neo
-      hoon/[& [%sig %hoon] ~]
+      hoon/[& [%hoon %sig] ~]
   ==
 ++  form
   ^-  form:neo
