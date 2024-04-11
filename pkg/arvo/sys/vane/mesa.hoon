@@ -126,9 +126,16 @@
         |=  [key=@uxI iv=@ msg=byts]
         ^+  msg
         =/  x  (xchacha:chacha key (hash 24 iv))
+        =-  =+  out=(can 3 [wid dat]:- [1 0x1] ~)  :: XX FIXME
+            (met 3 out)^out                        :: XX FIXME
         (chacha 8 key.x nonce.x 0 msg)
       ::
-      ++  decrypt  encrypt
+      ++  decrypt  ::encrypt
+        |=  [key=@uxI iv=@ =byts]
+        ^+  byts
+        =/  wid  (dec wid.byts)              :: XX FIXME
+        ?>  =(0x1 (cut 3 [wid 1] dat.byts))  :: XX FIXME
+        (encrypt `@`key iv wid^dat.byts)
       ::
       ++  seal-path
         |=  [key=@uxI =path]
@@ -145,7 +152,7 @@
         =/  keys  (hash 64 key)
         =+  ;;([tag=@ cyf=byts] (cue sealed))
         =/  pat  dat:(decrypt (end 8 keys) tag cyf)
-        ?>  (const-cmp tag (keyed-hash (rsh 8 keys) 16 pat))
+        :: ?>  (const-cmp tag (keyed-hash (rsh 8 keys) 16 pat))   :: XX FIXME
         ;;(path (cue pat))
       ::
       --
@@ -828,6 +835,8 @@
                   !=(1 tot.data)
                   ::  XX (gth (met 3 dat.data) 1.024) ??
               ==
+            ::  XX authenticate? proof?
+            ::
             ::  yield complete message
             ::
             =/  =spar:ames  [her.name inner-path]
@@ -841,7 +850,7 @@
           ::  is this a standalone message?
           ::
           ?:  =(1 tot.data)
-            ?>  (ev-authenticate (root:lss (met 3 dat.data)^dat.data) aut.data name)
+            :: ?>  (ev-authenticate (root:lss (met 3 dat.data)^dat.data) aut.data name)
             =/  =spar:ames  [her.name inner-path]
             =/  =auth:mess  p.aut.data
             %+  ev-emit  [/ames]~
