@@ -1144,7 +1144,9 @@
     t.pith.tour
   ?:  =(pith-tour pax)
     $(stems (~(put by stems) tour stem), tours t.tours)
-  ?>  ?=(?(%y %z) -.q.stem)
+  ?.  ?=(?(%y %z) -.q.stem)
+      ~&  pith-tour^pax
+      $(stems (~(put by stems) tour stem), tours t.tours)
   =.  kids.q.stem
     =/  sfix=pith:neo  (slag (lent pith-tour) pax)
     =/  =room:neo  (got:of-top pax)
@@ -2138,11 +2140,15 @@
         ::  |=([=pith:neo =mode:neo] ^+(+< [[p/our.bowl pith] mode]))
       :: run
     ~&  >>>  %reverting
+    ~&  >>>  init
     =.  apex  old :: XX: is apex only state that is touched?
     ?.  =(~ get.block)
       (fresh:stop get.block init-move)
     ?>  ?=(^ err.block)
     %-  (slog u.err.block)
+    ?:  ?=([%poke %rely *] q.q.move)
+      ~&  >>>  rely-nack/[src dst]:init
+      run
     (give-nack src.init dst.init u.err.block)
   ::
   ++  deal
@@ -2343,6 +2349,10 @@
       [src our.bowl hare hare now.bowl si-resolve-deps si-resolve-kids]
     ++  si-form    ~(. form:si-firm [si-bowl icon.room])
     ++  si-firm    `firm:neo`~(firm husk code.room)
+    ++  si-can-poke
+      |=  =stud:neo
+      ^-  ?
+      (~(has in poke:si-firm) stud)
     ++  si-tell
       |=  =mode:neo
       =.  change  (~(put by change) here mode)
@@ -2378,6 +2388,14 @@
     ++  si-poke
       |=  =pail:neo
       ^+  site
+      ?.  (si-can-poke p.pail)
+        ?:  ?&  =(%rely p.pail)
+                ?=([%poke *] q.q.init-move)
+                =(p.pail.q.q.init-move p.pail)
+            ==
+          ~&  >>  si-skip-rely/[src here]
+          site
+        ~|(no-poke-at/[p.pail here] !!)
       =^  cards  state.icon.room
         (poke:si-form pail)
       =.  site  (si-emil cards)

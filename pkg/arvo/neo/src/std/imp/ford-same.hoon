@@ -6,7 +6,7 @@
 --
 ^-  firm:neo
 |%
-++  poke    (sy %ford-in ~)
+++  poke    (sy %ford-in %rely ~)
 ++  state   %ford-out
 ++  kids  ~
 ++  deps
@@ -20,7 +20,8 @@
   ++  poke
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo vase)
-    ?>  =(?(%ford-in %rely) stud)
+    ~|  stud
+    ?>  ?=(?(%ford-in %rely) stud)
     =/  sta  sta
     =.  cache.sta  (get-output:ford:neo bowl %src)
     :: ~&  ford-same/[were.bowl !=(~ cache.sta)]
