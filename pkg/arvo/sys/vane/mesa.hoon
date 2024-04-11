@@ -2167,6 +2167,41 @@
       ==
     =/  tyl=(pole knot)  s.bem
     ?+    tyl  ~
+    ::  publisher-side, batch-level
+    ::
+        [%hunk lop=@t len=@t pat=*]
+      ::
+      ?>  ?=([%mess ryf=@ %pact boq=@ %etch typ=?(%data %init) res=*] pat.tyl)
+      =/  [lop=@ len=@]
+        ?:  =(%init typ.pat.tyl)
+          [0 1]
+        [(slav %ud lop.tyl) (slav %ud len.tyl)]
+      =*  scry  $
+      ::
+      =|  batch=(list @)
+      ::
+      :^  ~  ~  %batch
+      !>  %-  flop
+      |-  ^-  (list @)
+      ?:  =(lop len)
+        batch
+      =*  fag  lop
+      =/  =path
+        ?:  =(%init typ.pat.tyl)
+          pat.tyl
+        :*  %mess  ryf.pat.tyl  %pact  boq.pat.tyl  %etch  typ.pat.tyl
+            ?>  ?=(^ res.pat.tyl)
+            [(scot %ud fag) +.res.pat.tyl]
+        ==
+      =/  res=(unit (unit cage))
+        scry(lyc ~, pov /mesa/batch, s.bem path)
+      ?~  res
+        batch
+      ?:  ?=(~ u.res)
+        batch
+      ?.  ?=([%atom *] u.u.res)
+        batch
+      $(batch [;;(@ q.q.u.u.res) batch], lop +(lop))
     ::
     ::  publisher-side, protocol-level
     ::
@@ -2236,6 +2271,8 @@
         ~  :: non-standard proofs for later
       =;  [nam=name:pact dat=data:pact]
         =/  pac=pact:pact  [%page nam dat ~]
+        ?:  (gth fag tot.dat)
+          [~ ~]
         ?.  ser.pac.nex
           ``[%packet !>(pac)]
         ``[%atom !>(p:(fax:plot (en:pact pac)))]
@@ -2251,7 +2288,10 @@
         [nam dat]
       ::
           %data
-        =/  lss-proof  (build:lss (met 3 ser)^ser)  :: XX cache this
+        =/  lss-proof
+          =>  [ser=ser ..lss]
+          ~>  %memo./ames/lss
+          (build:lss (met 3 ser)^ser)
         =/  nam  [[our rif] [boq ?:(nit ~ [%data fag])] pat]
         =/  aut=auth:pact
           ?:  &((lte wid 4) =(0 fag))
@@ -2321,12 +2361,13 @@
         ~
       ?~  res=(rof `[u.her ~ ~] /mesa/chum vew.u.inn bem.u.inn)
         ~
+      =>  [key=key cyf=cyf bem=bem res=res ryf=rift.ax ..crypt]
+      ~>  %memo./ames/chum
       =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
       =/  ful  (en-beam bem)
       =*  iv   u.cyf  :: XX
       =/  ser  (jam gag)
       =/  cyr  (encrypt:crypt key iv (met 3 ser)^ser)
-      =/  ryf  rift.ax  ::  XX
       ``[%message !>([%hmac (mac:crypt key ful (root:lss cyr)) dat.cyr])]
     ::
         [%shut kid=@ cyf=@ ~]
@@ -2379,7 +2420,6 @@
       =/  res=(unit page)
         %.  [load mess]:tyl
         fo-peek:(fo-abed:fo ~[//scry] [bone dire]:tyl ev-chan ~)
-      ~&  >  (pout tyl)
       ?~(res ~ ``[%message !>(u.res)])
     ::  client %mesa %corks, flow-level
     ::
