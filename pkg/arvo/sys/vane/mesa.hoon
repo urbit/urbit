@@ -414,6 +414,7 @@
           =dire          ::  XX revisit; could be inferred by entry-point + flow
           ~
       ==
+    ::
     ++  ev-validate-wire
       |=  =wire
       ^-  (unit ev-flow-wire)
@@ -1436,14 +1437,16 @@
           ~&  %already-acked
           (fo-send-ack seq)
         =.  fo-core  (fo-emit (ev-got-duct bone) %give %boon message)
-        ::  XX handle a previous crash
-        :: =?  moves  !ok
-        ::   ::  we previously crashed on this message; notify client vane
-        ::   ::
-        ::   %+  turn  moves
-        ::   |=  =move
-        ::   ?.  ?=([* %give %boon *] move)  move
-        ::   [duct.move %give %lost ~]
+        ::  handle a previous crash
+        ::  XX revisit
+        ::
+        =?  moves  !ok
+          ::  we previously crashed on this message; notify client vane
+          ::
+          %+  turn  moves
+          |=  =move
+          ?.  ?=([* %give %boon *] move)  move
+          [duct.move %give %lost ~]
         ::  ack unconditionally
         ::
         =.  last-acked.state  +(last-acked.state)
