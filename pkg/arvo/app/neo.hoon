@@ -1599,17 +1599,25 @@
     :: vale -> [grow
   ::
   ++  lib
-    |_  =name:neo
+    |_  =loc:ford:neo
     ++  path
+      =-  ~&  path-lib/[loc -]
+          -
       ^-  ^path
-      ?>  =(our.bowl ship.name)
-      (pout pith.name)
-    ++  built
-      (has:of-top %src pith.name)
+      %-  welp
+      :_  [%lib (pout pith.loc)]
+      ^-  ^path
+      ?@  disk.loc
+        /std
+      ?:  =(ship.disk.loc our.bowl)
+        /our/[term.disk.loc]
+      /her/(scot %p ship.disk.loc)/[term.disk.loc]
     ++  pith
-      [p/ship.name pith.name]
+      (pave:neo path)
+    ++  built
+      (has:of-top %out pith)
     ++  exists
-      (exists-file path)
+      (exists-file %src path)
     --
   ++  do-make
     |=  [=pith:neo lib=term sta=(unit vase) =conf:neo]
@@ -1658,11 +1666,11 @@
     `(~(gas by *conf:neo) src/(ours from) ~)
   ++  ours
     |=  p=pith:neo  `pith:neo`[p/our.bowl p]
-  ++  make-pros
+  ++  make-deps
     =|  idx=@ud
-    |=  [pat=pith pros=(list pro:ford)]
+    |=  [pat=pith deps=(list [face=term =pith])]
     ^+  run
-    ?~  pros
+    ?~  deps
       ~|  pat
       %+  same  pat
       ?:  =(0 idx)
@@ -1672,21 +1680,27 @@
     =/  fac=pith  (snoc wer %face)
     =/  fav=pith  (snoc fac %term)
     =.  run
-      (do-make fav %term `!>(face.i.pros) ~)
+      (do-make fav %term `!>(face.i.deps) ~)
     =.  run
-      (face fac fav ~(pith pro stud.i.pros))
+      (face fac fav pith.i.deps)
     =/  prev=pith
       ?:  =(idx 0)
         #/out/reef
       (snoc pat ud/(dec idx))
     =.  run
       (slop wer fac prev)
-    $(pros t.pros, idx +(idx))
+    $(deps t.deps, idx +(idx))
+  ++  file-to-deps
+    |=  =file:ford
+    ^-  (list [term pith])
+    %+  welp
+      (turn pro.file |=(p=pro:ford [face.p ~(pith pro stud.p)]))
+    (turn lib.file |=(l=lib:ford [face.l %out ~(pith lib loc.l)]))
   ++  make-prelude
     |=  [pax=pith =file:ford]
     ^-  [pith _run]
     =/  pre-path=pith  [%pre pax]
-    [pre-path (make-pros pre-path pro.file)]
+    [pre-path (make-deps pre-path (file-to-deps file))]
   ++  write-hoon
     |=  [pax=pith fil=@t]
     (do-make pax %hoon `!>(fil) ~)
@@ -1717,7 +1731,7 @@
       (scan (trip src) (rein:ford [our.bowl (pave:neo pax)]))
     =/  has-imports=?
       ?&  (levy pro.file |=(pro:ford ~(exists pro stud)))
-          (levy lib.file |=(lib:ford ~(exists lib name)))
+          (levy lib.file |=(lib:ford ~(exists lib loc)))
       ==
     ?.  has-imports
       ~|  pro.file
@@ -1726,7 +1740,7 @@
       !!
     =/  built-imports=?
       ?&  (levy pro.file |=(pro:ford ~(built pro stud)))
-          (levy lib.file |=(lib:ford ~(built lib name)))
+          (levy lib.file |=(lib:ford ~(built lib loc)))
       ==
     ?.  built-imports
       [`pax run]

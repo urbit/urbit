@@ -2,6 +2,7 @@
 /@  chat-diff
 /@  chat
 /@  sig
+/-  _/thing
 =>
 |%
 ++  state  chat
@@ -55,6 +56,8 @@
         %custom  :_(sta (add-msg bowl [stud vase]:poke)^~)
       ==
     %-  (slog leaf/"debug" (turn ~(val by kids.bowl) |=(p=pail:neo (sell q.p))))
+    ~&  foo/foo:thing
+    ~&  bar/bar:thing
     [cards !>(sta)]
   ++  init
     |=  old=(unit vase)

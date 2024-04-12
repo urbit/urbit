@@ -145,10 +145,12 @@
   ++  run
     |=  txt=@t
     (scan (trip txt) (rein *name))
+  +$  loc
+    [=disk =pith]
   ::  $lib:ford: Specification of library import
   ::
   +$  lib
-    [face=term =name]
+    [face=term =loc]
   ::  $pro:ford: Specification of protocol import
   ::
   +$  pro
@@ -168,7 +170,21 @@
     |=  =name
     =<  apex
     |%
-    ++  nam
+    ++  dis  
+      ;~  pose
+        (cold ~ cab)
+        ;~((glue bar) ;~(pfix sig fed:ag) sym)
+      ==
+    ::  +lib-loc: Parse library location
+    ::
+    ++  lib-loc
+      ;~(plug dis stip)
+    ::  +old-nam: Parse file path (deprecated: XX revisit)
+    ::
+    ::     Examples:
+    ::     Absolute ~hastuc-dibtux/src/foo/bar/test
+    ::     Relative %^/bar
+    ++  old-nam
       :: ^-  $-(nail (like name:neo))
       ;~  pose
         %+  sear 
@@ -177,6 +193,7 @@
           %-  mole
           |.  ^-  ^name
           =.  pit  (scag (sub (lent pit) (lent kets)) pit)
+          =-  ~&(parsed-name/- -)
           name(pith (welp pith.name pit))
         ;~(pfix cen ;~(plug (star ket) stip))                     :: relative
         ;~(plug ;~(pfix fas sig fed:ag) stip) :: absolute
@@ -208,16 +225,37 @@
         std
       ==
     ++  lib
+      %+  rune  hep
+      ;~  pose
+        ;~(plug sym ;~(pfix tis lib-loc))
+        %+  cook
+          |=  [=disk =pith]
+          ^-  ^lib
+          =/  last  (rear pith)
+          ?>  ?=(@ last)
+          [`@tas`last disk pith]
+        lib-loc
+      ==
+
+    ::  +old-lib: Parse arbitrary library import directive
+    ::
+    ::    Unused, todo revive with more recursive build system
+    ::
+    ::    /-  face=~hastuc-dibtux/foo/bar <- imports ~hastuc-dibtux
+    ::    /-  %^/bar <- imports bar/hoon up one level with face bar
+    ::
+    ++  old-lib
       :: ^-  $-(nail (like ^lib))
       %+  rune  hep
       ;~  pose
-        ;~(plug sym ;~(pfix tis nam))
+        ;~(plug sym ;~(pfix tis old-nam))
         %+  cook
           |=  n=^name
           =/  last  (rear pith.n)
-          ?>  ?=(@ last)
-          [last n]
-        nam
+          :_  n
+          ?@  last  last
+          (scot last)
+        old-nam
       ==
     ++  rune
       |*  [car=rule rul=rule]
