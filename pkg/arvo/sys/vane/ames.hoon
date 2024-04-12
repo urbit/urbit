@@ -2306,11 +2306,12 @@
             %-  (slog leaf+"ames: turning off dead flow consolidation" ~)
             =.  event-core
               (emit:event-core duct.u.ded %pass wire.u.ded %b %rest date.u.ded)
+            =.  flow.dead.ames-state.event-core  [%flow ~]
             (wake-dead-flows:event-core ~)
           ::
           %-  (slog leaf+"ames: switching to dead flow consolidation" ~)
           =;  cor=event-core
-            set-dead-flow-timer:(wake-dead-flows:cor ~)
+            set-dead-flow-timer:cor
           %-  ~(rep by peers.ames-state:event-core)
           |=  [[=ship =ship-state] core=_event-core]
           ^+  event-core
@@ -2854,7 +2855,7 @@
       ::                   ames-state changes
       ::
       ++  wake-dead-flows
-        |=  [error=(unit tang)]
+        |=  error=(unit tang)
         ^+  event-core
         %-  ~(rep by peers.ames-state:event-core)
         |=  [[=ship =ship-state] core=_event-core]
