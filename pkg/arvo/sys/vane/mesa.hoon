@@ -845,6 +845,7 @@
             [%pass /message %m %mess-ser sealed-path %page spar auth dat.data]
           ::  no; then this should be the first fragment, and auth should be present
           ::
+          ~|  [fag=fag tot=tot.data]
           ?>  =(0 fag)
           ?>  ?=([%0 *] aut.data)
           ::  is this a standalone message?
@@ -2189,10 +2190,8 @@
       =/  =path
         ?:  =(%init typ.pat.tyl)
           pat.tyl
-        :*  %mess  ryf.pat.tyl  %pact  boq.pat.tyl  %etch  typ.pat.tyl
-            ?>  ?=(^ res.pat.tyl)
-            [(scot %ud fag) +.res.pat.tyl]
-        ==
+        ?>  ?=([fag=@ pat=*] res.pat.tyl)
+        pat.tyl(fag.res (scot %ud fag))
       =/  res=(unit (unit cage))
         scry(lyc ~, pov /mesa/batch, s.bem path)
       ?~  res
@@ -2239,7 +2238,10 @@
       ?~  nex
         [~ ~]
       =*  pat  pat.nex
-      =/  res  $(lyc ~, pov /mesa/mess, s.bem pat)
+      =/  res
+        =>  [pat=pat ..$]
+        ~>  %memo./ames/message  :: XX check how much this saves us
+        $(lyc ~, pov /mesa/message, s.bem pat)
       ?.  ?&  ?=([~ ~ %message *] res)
         :: ...validate that it's really a message
         :: =>  [%message tag=?(sig hmac) ser=@]
