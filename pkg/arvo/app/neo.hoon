@@ -173,7 +173,13 @@
     =^  cards  state
       abet:(take:sys:run rest.pole syn)
     [cards this]
-  ++  on-fail   on-fail:def
+  ++  on-fail   
+    |=  [=term =tang]
+    ^-  (quip card _this)
+    =^  cards  state
+      abet:(on-fail:run term tang)
+    [cards this]
+
   ++  on-peek   peek:run
   ++  command-parser 
     |=  =id:sole
@@ -209,10 +215,20 @@
 ++  give  |=(=gift:agent:gall (emit %give gift))
 ++  fact  |=([pas=(list path) =cage] (give %fact pas cage))
 ++  emil  |=(caz=(list card) run(cards (welp (flop caz) cards)))
+++  def   ~(. (default-agent run %|) bowl)
 ++  std-warp
   =/  =rave:clay
     [%next %z da/now.bowl /neo]
   (pass /next-clay %arvo %c %warp our.bowl q.byk.bowl `rave)
+++  on-fail
+  |=  [=term =tang]
+  ^+  run
+  ?.  =(term %arvo-response)
+    +:(on-fail:def term tang)
+  =.  run  std-warp
+  %-  (slog leaf/"Failed build" (scag 3 tang))
+  run
+
 ++  poke-our  
   |=([=wire =cage] (pass wire %agent [our dap]:bowl %poke cage))
 ::
@@ -1560,7 +1576,6 @@
   =/  is-ford 
     |=  pax=path
     ^-  ?
-    =-  ~&([pax -] -)
     =/  pix  (pave:neo pax)
     ?~  pos=~(post omen pix)
       |
@@ -1601,8 +1616,6 @@
   ++  lib
     |_  =loc:ford:neo
     ++  path
-      =-  ~&  path-lib/[loc -]
-          -
       ^-  ^path
       %-  welp
       :_  [%lib (pout pith.loc)]

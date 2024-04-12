@@ -8,10 +8,12 @@
 ++  state  chat
 ++  poke  chat-diff
 ++  card  card:neo
+::
 ++  add-message
   |=  [=bowl:neo msg=message]
   ^-  card:neo
   (add-msg bowl %message !>(msg))
+::
 ++  add-msg
   |=  [=bowl:neo =stud:neo vax=vase]
   ^-  card:neo
