@@ -40,13 +40,10 @@
   ::  +$  tome  (pair what (map term hoon))
   ::  +$  what  (unit (pair cord (list sect)))
   ~&  %core
-  :: ~&  pt+p.t      :: type
-  :: ~&  qqt+q.q.t   :: coil's type
-  :: ~&  garb+p.q.t  :: coil's garb
-  :: ~&  chapters+~(key by q.r.q.t)  :: terms of coil's map
   =/  coil-mtt  q.r.q.t
   ~&  terms+(~(run by coil-mtt) |=(tom=tome p.tom)) :: terms of coil's map's tomes
-  ~&  whats+(~(run by coil-mtt) |=(tom=tome ~(key by q.tom)))
+  ~&  tome-terms+(~(run by coil-mtt) |=(tom=tome ~(key by q.tom)))
+  ~&  tome-hoons+(~(run by coil-mtt) |=(tom=tome ~(val by q.tom)))
   $(t p.t)
   ::  XX infer the type of each arm and continue into it
     [%face *]
