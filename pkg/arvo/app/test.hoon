@@ -2,7 +2,7 @@
 !:
 |%
 +$  card  card:agent:gall
-+$  command  [=desk =test]
++$  command  $@(=test [=desk =test])
 +$  test  ?(%agents %marks %generators %threads)
 +$  state
   $:  app=(set path)
@@ -29,6 +29,9 @@
   ^-  [(list card) _this]
   ?>  (team:title [our src]:bowl)
   =+  !<(cmd=command vase)
+  =?  cmd  ?=(@ cmd)
+    [q.byk.bowl test.cmd]
+  ?>  ?=(^ cmd)
   |^
   ?-  test.cmd
     %marks       test-marks
