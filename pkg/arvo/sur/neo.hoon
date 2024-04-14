@@ -96,6 +96,10 @@
 ::  +ford: Container for build system bootstrapping
 ++  ford
   |%
+  ++  desk
+    |%
+    ++  kids  *^kids
+    --
   ++  is-stud
     |=  s=stud
     ?^  s  |
@@ -311,9 +315,10 @@
 ::
 ++  clay
   |%
-  ::  $peer:clay: Request for file subscription
+  ::  $peer:clay: Request for file(s) subscription
   ::
-  +$  peer  [=care =desk =path]
+  +$  peer  [=desk =path]
+  ::
   ::  $req:clay: Filesystem request
   ::   
   ::    %peer: Setup file subscription at .pith
@@ -324,8 +329,7 @@
         [%pull =pith]
     ==
   ::  $res:clay: Filesystem response
-  ::  j
-  +$  res  (pair pith $>(?(%wris %writ) gift:^clay))
+  +$  res  [=pith case=@ud files=(axol cage)]
   --
 ::
 ::  $ever: Total shrub version
@@ -621,6 +625,8 @@
       ~
     `[+.i.pith t.pith]
   --
+++  axol  ^axal
+++  axol-of  ^of
 ++  axal
   |$  [item]  
   [fil=(unit item) kid=(map iota $)]

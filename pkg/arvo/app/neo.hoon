@@ -84,7 +84,7 @@
       hear=(map name:neo sound:neo)
       $=  unix
       $:  timers=(jug @da pith:neo)
-          clay-peers=(set [src=pith hand=pith])
+          clay-peers=(map [src=pith hand=pith] [case=@ud =desk =path])
           http-req=(map @ta path)
       ==
       adult=_|
@@ -889,6 +889,13 @@
   (on-move:sys p.move q.move(p t.pith.name))
 ++  sys
   |%  
+  ++  clay-peer
+    |=  [src=pith:neo hand=pith:neo]
+    ^+  run
+    =/  [case=@ud =peer:clay:neo]  (~(got by clay-peers.unix) [src hand])
+    =/  =wire  (welp /sys/clay/peer (pout (en:drive:neo ~[src hand])))
+    =/  =rave:clay  [%sing [%t ud/case path.peer]]
+    (emit %pass wire %arvo %c %warp our.bowl desk.peer `rave)
   ++  on-move
     |=  [src=pith =card:neo]
     |^  ^+  run
@@ -903,14 +910,15 @@
       =+  !<(=req:clay:neo q.pail.note)
       ?-    -.req
           %pull
-        =.  clay-peers.unix  (~(del in clay-peers.unix) src pith.req)
+        =.  clay-peers.unix  (~(del by clay-peers.unix) [src pith.req])
         run
       ::
           %peer
-        =.  clay-peers.unix  (~(put in clay-peers.unix) src pith.req)
-        =/  =wire  (welp /sys/clay/peer (pout (en:drive:neo ~[src pith.req])))
-        =/  =rave:^clay  [%sing =,(peer.req [care da/now.bowl path])]
-        (emit %pass wire %arvo %c %warp our.bowl desk.peer.req `rave)
+        =+  .^(=cass:^clay %cw /(scot %p our.bowl)/[desk.peer.req]/(scot %da now.bowl)/sys/kelvin)
+        =/  [case=@ud =peer:clay:neo]  (~(gut by clay-peers.unix) [src pith.req] [0 peer.req])
+        =.  case  ud.cass
+        =.  clay-peers.unix  (~(put by clay-peers.unix) [src pith.req] [case peer])
+        (clay-peer src pith.req)
       ==
     ::
     ++  behn
@@ -940,7 +948,7 @@
     |^  ^+  run
     ?+  pole  ~|(bad-sys-take/pole !!)
       [%behn %wait date=@da ~]  (behn-wait (slav %da date.pole))
-      [%clay %writ res=*]  (clay-writ res.pole)
+      [%clay %peer res=*]  (clay-writ res.pole)
     ::  [%behn %res date=@da ~]  (behn-res (slav %da date.pole))
     ==
     ++  clay-writ
@@ -951,12 +959,32 @@
       ?>  ?=([src=* hand=* ~] paxs)
       =/  src=pith  src.paxs
       =/  hand=pith  hand.paxs
-      ?.  (~(has in clay-peers.unix) [src hand])
+      ?~  cas=(~(get by clay-peers.unix) [src hand])
         run
-      =/  =note:neo  [%poke %clay-res !>(`res:clay:neo`[hand %writ p.syn])]
+      =/  [case=@ud =peer:clay:neo]  u.cas
+      =.  case  +(case)
+      ?~  p.syn
+        ~&  empty-clay-res/wir
+        run
+      =+  !<(kids=(list path) q.r.u.p.syn)
+      ~&   syn 
+      =/  res=(axal cage)
+        %-  ~(gas of *(axal cage))
+        %+  turn  kids
+        |=  kid=path
+        ^-  [path cage]
+        :-  kid
+        :-  (rear kid)
+        .^(vase %cr (welp /(scot %p our.bowl)/[r.p.u.p.syn]/(scot %da now.bowl) kid))
+      ~&  path/path.peer
+      =.  res  (~(dip of res) path.peer)
+      ~&  res/res
+      =/  =note:neo  [%poke %clay-res !>(`res:clay:neo`[hand case res])]
       =/  =move:neo  [[p/our.bowl #/$/clay] src note]
       =/  =wire      (welp /sys/clay/res wir)
-      (poke-our wire neo-move+!>(move))
+      =.  clay-peers.unix  (~(put by clay-peers.unix) [src hand] [case peer])
+      =.  run  (poke-our wire neo-move+!>(move))
+      (clay-peer src hand)
     ::
     ++  behn-wait
       |=  =@da
@@ -979,9 +1007,6 @@
       ?^  p.sign
         (~(err srv eyre-id.pole) u.p.sign)
       ~(finish-post srv eyre-id.pole)
-
-      
-    ?>  ?=([%behn %res date=@da ~] pole)
     %.  run
     ?~  p.sign  same
     (slog u.p.sign)
@@ -1077,6 +1102,7 @@
   ==
 ++  take-agent
   |=  [=(pole knot) =sign:agent:gall]
+  ~&  pole/pole
   |^  ^+  run
   ?+  pole  ~|(on-agent-bad-wire/pole !!)
     [%sys rest=*]   (take-agent:sys rest.pole sign)
@@ -1574,13 +1600,11 @@
   (need ref)
 ::
 ++  copy-clay
-  |=  just=(unit path)
+  |=  pat=(unit path)
   ~>  %bout.[1 %build]
   |^  ^+  run
   =/  paths=(list path)
-    ?~  just
-      .^((list path) %ct root)
-    ~[u.just]
+    .^((list path) %ct root)
 ::  =.  paths
 ::    %+  sort  paths
 ::    |=  [a=path b=path]
@@ -2253,7 +2277,7 @@
   ++  deal
     |=  =move:neo
     ^-  card
-    :+  %pass  move/(pout p.move)
+    :+  %pass  local/(pout p.move)
     ^-  note:agent:gall
     =/  her=ship
       ~|  p.move
@@ -2375,8 +2399,18 @@
     |=  [src=stud:neo init=(unit vase) =conf:neo]
     =/  =firm:neo  ~(firm husk src)
     :: =.  run        (~(start husk src) our.bowl pith)
+    =/  old  (get:of-top here)
     =/  =form:neo  form:firm
-    =/  =icon:neo  [[0 0] *vase ~ ~]
+    =/  =icon:neo  
+      ?~  old
+        [[0 0] *vase ~ ~]
+      [ever.icon.u.old *vase ~ ~]
+    =?  init  ?=(^ old)
+      ~|  bad-install-over/here
+      ?>  =(state:firm state.u.old)
+      ?:  =(~ init)
+        `state.icon.u.old
+      init
     =/  =deps:neo  deps:firm
     =^  bad=(set term)  get.block
       (check-conf conf deps:firm)
