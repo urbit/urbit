@@ -21,14 +21,13 @@
   ^-  ever:neo
   [+(-.ever) +(+.ever)]
 ::
-  ++  trace-card-gall
-    |=  =card
-    ^-  tank
-    ?:  ?=(%give -.card)
-      leaf/"give"
-    ?>  ?=(%pass -.card)
-    leaf/"%pass {(spud p.card)}"
-
+++  trace-card-gall
+  |=  =card
+  ^-  tank
+  ?:  ?=(%give -.card)
+    leaf/"give"
+  ?>  ?=(%pass -.card)
+  leaf/"%pass {(spud p.card)}"
 ::
 ++  sole
   |%
@@ -268,8 +267,7 @@
     ?:  is-our  (cane:h care)
     (cane:j care)
   --
-  
-  
+::
 ++  jail
   |_  =name:neo
   ++  pith  `pith:neo`(en-pith:name:neo name)
@@ -461,7 +459,7 @@
     [~ ~] :: XX: todo
   ?:  ?=([%see *] pith.name)
     (peek:see t.pith.name)
-  =/  res  (~(cane jail name) care)
+  =/  res  (~(cane dorm name) care)
   ?+    as  [~ ~]
       %noun  ``neo-cane+!>(res)
       %json
