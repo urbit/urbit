@@ -25,7 +25,7 @@
 ++  kids
   %-  ~(gas by *kids:neo)
   :~  :-  ~[&/%messages |/%da]
-      [%message-link %sig]
+      [%message %sig]
   ==
 ++  deps
   %-  ~(gas by *deps:neo)

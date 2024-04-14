@@ -245,6 +245,55 @@
   |=  =room:neo
   ^+  room
   room(tree.ever.icon +(tree.ever.icon.room))
+++  dorm
+  |_  =name:neo
+  ++  is-our
+    =(our.bowl ship.name)
+  ++  h  (hall pith.name)
+  ++  j  ~(. jail name)
+  ++  pail
+    ?:  is-our  pail:h
+    pail:j
+  ++  vial  (pail:soften pail)
+  ++  state  q:pail
+  ++  state-stud  p:pail
+  ++  ever
+    ?:  is-our  ever:h
+    ever:j
+  ++  slip
+    ?:  is-our  slip:h
+    slip:j
+  ++  cane
+    |=  =care:neo
+    ?:  is-our  (cane:h care)
+    (cane:j care)
+  --
+  
+  
+++  jail
+  |_  =name:neo
+  ++  pith  `pith:neo`(en-pith:name:neo name)
+  ++  riot
+    ^-  riot:neo
+    ?^  zed=(~(get by foreign) [%z pith])
+      u.zed
+    ?^  why=(~(get by foreign) [%y pith])
+      u.why
+    ?~  exe=(~(get by foreign) [%x pith])
+      !!
+    u.exe
+  ++  pail
+    pail.cane:riot
+  ++  vial  (pail:soften pail)
+  ++  state  q:pail
+  ++  state-stud  p:pail
+  ++  ever        ever.cane.riot
+  ++  slip        slip.riot
+  ++  cane
+    |=  =care:neo
+    cane:(~(got by foreign) [care pith])
+  --
+  
 ++  hall
   |=  =pith:neo
   =/  =room:neo  (got:of-top pith)
@@ -254,6 +303,8 @@
   ++  state  state.icon.room
   ++  state-stud  `stud:neo`state.room
   ++  ever  ever.icon.room
+  ++  firm  ~(firm husk code.room)
+  ++  slip  [state poke:firm kids:firm]
   ++  cane
     |=  =care:neo
     |^  ^-  cane:neo
@@ -410,7 +461,7 @@
     [~ ~] :: XX: todo
   ?:  ?=([%see *] pith.name)
     (peek:see t.pith.name)
-  =/  res  (cane:(hall pith.name) care)
+  =/  res  (~(cane jail name) care)
   ?+    as  [~ ~]
       %noun  ``neo-cane+!>(res)
       %json
@@ -1155,16 +1206,12 @@
     loop-changes(changes t.changes)
   =/  =tour:neo  i.tours
   =/  =stem:neo  (~(gut by stems) tour (make-stem care.tour (got:of-top pax)))
-  =/  pith-tour  
-    ?>  ?=(^ pith.tour)
-    t.pith.tour
-  ?:  =(pith-tour pax)
+  ?:  =(pith.tour pax)
     $(stems (~(put by stems) tour stem), tours t.tours)
   ?.  ?=(?(%y %z) -.q.stem)
-      ~&  pith-tour^pax
-      $(stems (~(put by stems) tour stem), tours t.tours)
+    $(stems (~(put by stems) tour stem), tours t.tours)
   =.  kids.q.stem
-    =/  sfix=pith:neo  (slag (lent pith-tour) pax)
+    =/  sfix=pith:neo  (slag (lent pith.tour) pax)
     =/  =room:neo  (got:of-top pax)
     (~(put by kids.q.stem) sfix [ever.icon.room mode [state state.icon]:room])
   $(stems (~(put by stems) tour stem), tours t.tours)
@@ -1770,19 +1817,8 @@
   |=  =tour:neo
   ^-  (unit cane:neo)
   =/  =name:neo  (de-pith:name:neo pith.tour)
-  ?:  =(our.bowl ship.name)
-    ?.  (has:of-top pith.name)
-      ~
-    =/  hall  (hall pith.name)
-    =/  =pail:neo  pail:hall
-    =/  kids
-      ?:  ?=(%x care.tour)
-        ~
-      ~ :: XX: revive
-    `[care.tour ever:hall pail kids]
-  ?~  rot=(~(get by foreign) tour)
-    ~
-  `cane.u.rot
+  (mole |.((~(cane dorm name) care.tour)))
+::
 ++  acquire
   |=  =(pole iota:neo)
   ^-  (unit pail:neo)
@@ -1905,6 +1941,7 @@
 
   ++  tell
     |=  [=stem:neo deps=(list rave:neo)]
+    ~&  stem/stem
     ?~  deps
       (resolved:stop tour)
     =/  =rely:neo  [term.i.deps stem]
@@ -2056,6 +2093,8 @@
     loop-change(change t.change)
   ?<  ?=(%x -.q.twig)
   =>  .(pith.tour `pith:neo`pith.tour, pith `pith:neo`pith)
+  ~&  pith/pith.tour
+  ~&  kid/pith
   =/  sfix=pith:neo  (slag (lent pith.tour) pith)
   ?>  ?=([[%p @] *] pith)
   =/  h  (hall t.pith)
@@ -2105,10 +2144,9 @@
   |=  [want=quay:neo =name:neo]
   ^-  cane:neo
   =/  =care:neo  (get-care:quay:neo want)
-  =/  h  (hall pith.name)
-  =/  =cane:neo   (cane:h care)
+  =*  d  ~(. dorm name)
+  =/  =cane:neo   (cane:d care)
   =.  pail.cane  (plag state.p.want pail.cane)
-  ~|  want
   =?  kids.cane  ?=(^ q.want)
     %-  ~(gas by *(map pith:neo [ever:neo pail:neo]))
     %+  murn  ~(tap by kids.cane)
