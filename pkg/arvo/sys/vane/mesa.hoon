@@ -133,6 +133,7 @@
       ++  decrypt  ::encrypt
         |=  [key=@uxI iv=@ =byts]
         ^+  byts
+        ~|  [key=key iv=iv byts=byts]
         =/  wid  (dec wid.byts)              :: XX FIXME
         ?>  =(0x1 (cut 3 [wid 1] dat.byts))  :: XX FIXME
         (encrypt `@`key iv wid^dat.byts)
@@ -1165,6 +1166,8 @@
     ++  ev-mess-spac
       |=  [=space =path]
       ^+  path
+      =>  [space=space path=path ..crypt]
+      ~>  %memo./mesa/mess-spac
       ?-    -.space
           %publ  `^path`[%publ (scot %ud life.space) path]  :: unencrypted
       ::
@@ -1189,6 +1192,8 @@
       ?.  ?=([~ ~ *] res)  ~
       =;  page=pact:pact
         ?>(?=(%page -.page) `q.page)
+      =>  [name=name res=res ..parse-packet]
+      ~>  %memo./mesa/get-page
       (parse-packet ;;(@ q.q.u.u.res))
     ::
     +|  %peer-helpers
@@ -1277,7 +1282,6 @@
       ++  fo-cor-path  |=([seq=@ud =dyad] (fo-path seq %cork dyad))
       ++  fo-corked    (~(has in corked.sat.per) side)
       ++  fo-closing   closing.state
-      ++  fo-is-naxed  |=(seq=@ud (~(has by nax.state) seq))
       ++  fo-to-close
         ::  if the flow is in closing, only allow sending the %cork %plea
         ::
@@ -1378,17 +1382,17 @@
         ==
       ::
       ++  fo-peek
-        |=  [=load mess=@ud]
+        |=  [=load seq=@ud]
         ^-  (unit page)
         ::  XX assert flow direction?
         ::  %ack and %nax can be both %for (%plea) and %bak (%boon)
         ::
         ?-  load
-          :: if mess > gth 10, no-op ?
+          :: if seq > gth 10, no-op ?
           ::
-          %ack   ?.(=(mess last-acked.state) ~ `ack/(fo-is-naxed mess))
-          %nax   ?~(nax=(~(get by nax.state) mess) ~ `nax/u.nax)
-          %poke  ?~  v=(get:fo-mop loads.state mess)  ~
+          %ack   ?.(=(seq last-acked.state) ~ `ack/(~(has by nax.state) seq))
+          %nax   ?~(nax=(~(get by nax.state) seq) ~ `nax/u.nax)
+          %poke  ?~  v=(get:fo-mop loads.state seq)  ~
                  ?+  -.u.v  ~  :: XX cork?
                      %plea  `plea/[vane path payload]:u.v
                      %boon  `boon/payload.u.v
@@ -1631,8 +1635,7 @@
         ::
         ~|  [gage/gage state]
         ?>
-        ?&  ?=([%message *] gage)                   :: client corked the flow
-            =(%gone ;;(%gone +.gage))
+        ?&  ?=([%message %gone] gage)               :: client corked the flow
             !pending-ack.state                      :: there are no pending acks
             closing.state                           :: the flow is in closing
             !(~(has by nax.state) last-acked.state) :: the %cork was not nacked
@@ -2239,8 +2242,6 @@
         [~ ~]
       =*  pat  pat.nex
       =/  res
-        =>  [pat=pat ..$]
-        ~>  %memo./ames/message  :: XX check how much this saves us
         $(lyc ~, pov /mesa/message, s.bem pat)
       ?.  ?&  ?=([~ ~ %message *] res)
         :: ...validate that it's really a message
@@ -2285,14 +2286,17 @@
         ::  NB: root excluded as it can be recalculated by the client
         ::
         =/  aut  [%0 mes ~]
-        =/  lss-proof  (build:lss (met 3 ser)^ser) ::  XX cache this
+        =/  lss-proof
+          =>  [ser=ser ..lss]
+          ~>  %memo./mesa/lss
+          (build:lss (met 3 ser)^ser)
         =/  dat  [wid aut (rep 8 proof.lss-proof)]  :: XX types
         [nam dat]
       ::
           %data
         =/  lss-proof
           =>  [ser=ser ..lss]
-          ~>  %memo./ames/lss
+          ~>  %memo./mesa/lss
           (build:lss (met 3 ser)^ser)
         =/  nam  [[our rif] [boq ?:(nit ~ [%data fag])] pat]
         =/  aut=auth:pact
@@ -2336,11 +2340,12 @@
       =/  view  ?@(vew.u.inn vew.u.inn (cat 3 [way car]:vew.u.inn))
       ?~  res=(rof ~ /mesa/publ view bem.u.inn)
         ~
+      =>  [bem=bem res=res ryf=rift.ax priv=priv.ax ..crypt]
+      ~>  %memo./mesa/chum
       =/  gag  ?~(u.res ~ [p q.q]:u.u.res)  :: XX how does receiver distinguish these?
       =/  ful  (en-beam bem)
-      =/  ryf  rift.ax
       =/  ser  (jam gag)  :: unencrypted
-      ``[%message !>([%sign (sign:crypt `@`priv.ax ful (root:lss (met 3 ser)^ser)) ser])]
+      ``[%message !>([%sign (sign:crypt `@`priv ful (root:lss (met 3 ser)^ser)) ser])]
     ::
         [%chum lyf=@ her=@ hyf=@ cyf=@ ~]
       =/  lyf  (slaw %ud lyf.tyl)
@@ -2364,7 +2369,7 @@
       ?~  res=(rof `[u.her ~ ~] /mesa/chum vew.u.inn bem.u.inn)
         ~
       =>  [key=key cyf=cyf bem=bem res=res ryf=rift.ax ..crypt]
-      ~>  %memo./ames/chum
+      ~>  %memo./mesa/chum
       =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
       =/  ful  (en-beam bem)
       =*  iv   u.cyf  :: XX
@@ -2386,12 +2391,13 @@
         ~
       ?~  res=(rof [~ ~] /mesa/shut vew.u.inn bem.u.inn)
         ~
+      =>  [key=key cyf=cyf bem=bem res=res ryf=rift.ax ..crypt]
+      ~>  %memo./mesa/shut
       =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
       =/  ful  (en-beam bem)
       =*  iv   u.cyf
       =/  ser  (jam gag)
       =/  cyr  (encrypt:crypt -.u.key iv (met 3 ser)^ser)
-      =/  ryf  rift.ax  :: XX
       =/  sig  (sign:crypt -.u.key ful (root:lss cyr))
       ``[%message !>([%sign sig dat.cyr])]
     ::  publisher-side, flow-level

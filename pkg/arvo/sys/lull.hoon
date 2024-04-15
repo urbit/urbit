@@ -3349,7 +3349,7 @@
         [%mess-response =sage:mess]      :: XX (names) produce deserialized response message
         [%response load=$>(%page mess)]  :: XX (names) produce serialized response message
         ::
-        $>(?(%boon %stub %done %nail %saxo) gift:ames)
+        $>(?(%boon %stub %done %nail %saxo %lost) gift:ames)
     ==
   ::
   +$  axle
