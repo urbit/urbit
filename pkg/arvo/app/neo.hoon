@@ -2370,7 +2370,10 @@
     %+  roll  ~(tap by conf)
     |=  [[=term dep=pith:neo] a=_arvo]
     ?>  ?=([[%p @] *] dep)
-    =/  [req=? =quay:neo]  (~(got by deps) term)
+    =/  d=(unit [req=? =quay:neo])  (~(get by deps) term)
+    ?~  d 
+      a
+    =/  [req=? =quay:neo]  u.d
     =/  =tour:neo  [(get-care:quay:neo quay) dep]
     =/  =pith:neo  [p/our.bowl here]
     ?:  =(our.bowl +.i.dep)
