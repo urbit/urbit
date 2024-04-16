@@ -10519,8 +10519,10 @@
       [%ktsg *]  $(gen p.gen)
       [%ktwt *]  (wrap(sut $(gen p.gen)) %lead)
       [%note *]  (hint [sut p.gen] $(gen q.gen))
-      :: $(gen (~(open ap) gen))
-      :: p.gen -> modify $type to include wilt
+      [%sgcn *]  ?.  ?=([%brcn *] s.gen)  $(gen s.gen)
+                   ?@  p.gen
+                     $(gen s.gen(p `p.gen))
+                   $(gen s.gen(p `-.p.gen))
       [%sgzp *]  ~_(duck(sut ^$(gen p.gen)) $(gen q.gen))
       [%sggr *]  $(gen q.gen)
       [%tsgr *]  $(gen q.gen, sut $(gen p.gen))

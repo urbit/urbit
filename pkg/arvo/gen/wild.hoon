@@ -24,10 +24,11 @@
 ?+    t
     ~
     [%cell *]
-  ~&  %cell
   =+  $(t p.t)
   $(t q.t)
     [%core *]
+  ~&  [%type p.t]
+  ~&  [%garb p.q.t]
   ::  p.t type  ...
   ::  q.t coil
   ::    p.q.t garb  (trel (unit term) poly vair)
@@ -39,24 +40,15 @@
   ::
   ::  +$  tome  (pair what (map term hoon))
   ::  +$  what  (unit (pair cord (list sect)))
-  ~&  %core
-  =/  coil-mtt  q.r.q.t
-  ~&  terms+(~(run by coil-mtt) |=(tom=tome p.tom)) :: terms of coil's map's tomes
-  ~&  tome-terms+(~(run by coil-mtt) |=(tom=tome ~(key by q.tom)))
-  ~&  tome-hoons+(~(run by coil-mtt) |=(tom=tome ~(val by q.tom)))
   $(t p.t)
   ::  XX infer the type of each arm and continue into it
     [%face *]
-  ~&  %face
   $(t q.t)
     [%fork *]
-  ~&  %fork
   (~(rep in p.t) |=([t=type ~] ^$(t t)))
     [%hint *]
-  ~&  %hint
   $(t q.t)
     [%hold *]
-  ~&  %hold
   ?:  (~(has in gil) t)  ~
   $(t (~(play ut p.t) q.t), gil (~(put in gil) t))
 ==

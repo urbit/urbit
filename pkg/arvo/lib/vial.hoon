@@ -3,11 +3,11 @@
 |%
 ++  vial-version  +
 --
-~%  %vial.100  +  ~
+~%  %one  +  ~
 |%
 ::  +|  %dumb
-++  fto
-  ~/  %fto
+++  fat
+  ~/  %fat
   42
 ++  inc
   ~/  %inc

@@ -10,8 +10,8 @@
   |=  up=?
   :: ~.  +7..
   ^-  _this
-  ?:  up  this(many +(many))
-  this(many (dec many))
+  ?:  up  this(many (inc many))
+  this
 --
 
 :: [l=/vial.100 s=[& %vial]]
