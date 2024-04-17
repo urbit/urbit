@@ -2661,7 +2661,7 @@
           %-  %^  ev-trace  odd.veb  her
               |.("parsing old wire: {(spud wire)}")
           peer-core
-        abet:(on-memo:peer-core bone [%boon payload])
+        abet:(check-clog:(on-memo:peer-core bone [%boon payload]) bone her)
       ::  +on-plea: handle request to send message
       ::
       ++  on-plea
@@ -3611,12 +3611,7 @@
             peer-core
           ::  print message
           ::
-          =.  peer-core  (pe-emit duct %pass /qos %d %flog %text u.text)
-          ::  if peer has stopped responding, check if %boon's are backing up
-          ::
-          ?.  ?=(?(%dead %unborn) -.qos.peer-state)
-            peer-core
-          check-clog
+          (pe-emit duct %pass /qos %d %flog %text u.text)
         ::  +on-hear-shut-packet: handle receipt of ack or message fragment
         ::
         ++  on-hear-shut-packet
@@ -3655,6 +3650,16 @@
           |=  =bone
           ^+  peer-core
           abet:(call:(abed:mi:peer-core bone) %flub ~)
+        ::
+        ++  check-clog
+          |=  [=bone =ship]
+          ^+  peer-core
+          =/  =message-pump-state  (~(got by snd.peer-state) bone)
+          ?:  ?&  !=(0 (end 0 bone))
+                  (gth ~(wyt in unsent-messages.message-pump-state) msg.cong.ames-state)
+              ==
+            (pe-emit duct %give %clog ship)
+          peer-core
         ::  +on-memo: handle request to send message
         ::
         ++  on-memo
@@ -3669,13 +3674,7 @@
             ~>  %slog.0^leaf/"ames: ignoring message on corked bone {<bone>}"
             peer-core
           ::
-          =.  peer-core  abet:(call:(abed:mu bone) %memo message)
-          ::
-          ?:  ?&  ?=(%boon -.message)
-                  (gte now (add ~s30 last-contact.qos.peer-state))
-              ==
-            check-clog
-          peer-core
+          abet:(call:(abed:mu bone) %memo message)
         ::  +on-wake: handle timer expiration
         ::
         ++  on-wake
@@ -3803,55 +3802,6 @@
           recork-one
         ::
         +|  %implementation
-        ::  +check-clog: notify clients if peer has stopped responding
-        ::
-        ++  check-clog
-          ^+  peer-core
-          ::
-          ::    Only look at response bones.  Request bones are unregulated,
-          ::    since requests tend to be much smaller than responses.
-          ::
-          =/  pumps=(list message-pump-state)
-            %+  murn  ~(tap by snd.peer-state)
-            |=  [=bone =message-pump-state]
-            ?:  =(0 (end 0 bone))
-              ~
-            `u=message-pump-state
-          ::  if clogged, notify client vane
-          ::
-          |^  ?.  &(nuf-messages nuf-memory)  peer-core
-              %+  roll  ~(tap in heeds.peer-state)
-              |=([d=^duct core=_peer-core] (pe-emit:core d %give %clog her))
-          ::  +nuf-messages: are there enough messages to mark as clogged?
-          ::
-          ++  nuf-messages
-            =|  num=@ud
-            |-  ^-  ?
-            ?~  pumps  |
-            =.  num
-              ;:  add  num
-                (sub [next current]:i.pumps)
-                ~(wyt in unsent-messages.i.pumps)
-              ==
-            ?:  (gte num msg.cong.ames-state)
-              &
-            $(pumps t.pumps)
-          ::  +nuf-memory: is enough memory used to mark as clogged?
-          ::
-          ++  nuf-memory
-            =|  mem=@ud
-            |-  ^-  ?
-            ?~  pumps  |
-            =.  mem
-              %+  add
-                %-  ~(rep in unsent-messages.i.pumps)
-                |=([m=message b=_mem] (add b (met 3 (jim m))))
-              ?~  unsent-fragments.i.pumps  0
-              (met 3 fragment.i.unsent-fragments.i.pumps)
-            ?:  (gte mem mem.cong.ames-state)
-              &
-            $(pumps t.pumps)
-          --
         ::  +send-shut-packet: fire encrypted packet at rcvr and maybe sponsors
         ::
         ++  send-shut-packet
