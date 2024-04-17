@@ -895,6 +895,30 @@
   ::  $verb: verbosity flag for ames
   ::
   +$  verb  ?(%snd %rcv %odd %msg %ges %for %rot %kay %fin %sun)
+  ::  $bug: debug printing configuration
+  ::
+  ::    veb: verbosity toggles
+  ::    ships: identity filter; if ~, print for all
+  ::
+  ::  veb: verbosity flags
+  ::
+  +$  veb-all-off
+    $:  snd=_`?`%.n  ::  sending packets
+        rcv=_`?`%.n  ::  receiving packets
+        odd=_`?`%.n  ::  unusual events
+        msg=_`?`%.n  ::  message-level events
+        ges=_`?`%.n  ::  congestion control
+        for=_`?`%.n  ::  packet forwarding
+        rot=_`?`%.n  ::  routing attempts
+        kay=_`?`%.n  ::  is ok/not responding
+        fin=_`?`%.n  ::  remote-scry
+        sun=_`?`%.n  ::  STUN
+    ==
+  ::
+  +$  bug
+    $:  veb=veb-all-off
+        ships=(set ship)
+    ==
   ::  $blob: raw atom to or from unix, representing a packet
   ::
   +$  blob  @uxblob
@@ -3352,20 +3376,25 @@
   ::
   +$  axle
     $:  %0
-        peers=(map ship ship-state)
+        peers=(map ship ship-state:ames)
         =unix=duct
-        priv=private-key
         =life
         =rift
-        =server=chain:ames                  ::  for serving %shut requests
+        crypto-core=acru:ames
+        =bug:ames
+        snub=[form=?(%allow %deny) ships=(set ship)]
+        cong=[msg=_5 mem=_100.000]
         $=  dead                            ::  dead-flow consolidation timers
         $:  flow=[%flow (unit dead-timer)]
-        ::  TODOs
-        :: =bug                   ::  debugging info
-        :: snub=[form=?(%allow %deny) ships=(set ship)]  :: white/black listing
-        :: XX tmp=(map @ux page)   :: temporary hash-addressed bindings
+            cork=[%cork (unit dead-timer)]
+        ==
         ::
-    ==  ==
+        =server=chain:ames  ::  for serving %shut requests
+        priv=private-key    ::  XX remove if we use the crypto core?
+        chums=(map ship ship-state)  ::  XX migrated peers
+        ::  TODOs
+        :: XX tmp=(map @ux page)   :: temporary hash-addressed bindings
+    ==
   ::
   +$  dead-timer  [=duct =wire date=@da]
   ::  +address: client IP address
@@ -3399,7 +3428,7 @@
   +$  azimuth-state  [=symmetric-key =life =rift =public-key sponsor=ship]
   +$  ship-state
     $+  ship-state
-    $%  [%known peer-state]  :: XX %alien
+    $%  [%known peer-state]
         [%alien ovni-state]
     ==
   ::
@@ -3795,8 +3824,8 @@
         ==
       =/  gum
         (end [0 20] (mug (cut -.c [(rig b -.c) +.c] dat)))
-      ~&  gum.hed^gum
-      :: ?>(=(gum.hed gum) [pac c])  :: XX jumbo fragments have wrong mug
+      :: ~&  gum.hed^gum
+      ::?>(=(gum.hed gum) [pac c])  :: XX jumbo fragments have wrong mug
       [pac c]
     --
   ::

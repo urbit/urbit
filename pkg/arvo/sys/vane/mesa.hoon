@@ -157,8 +157,7 @@
         ;;(path (cue pat))
       ::
       --
-    ::
-    ++  jim  |=(n=* ~>(%memo./mesa/jam (jam n)))
+
     ::
     ++  chacha
       =<
@@ -251,11 +250,7 @@
       |=  [key=@uxI out=@ud msg=@]
       ((keyed:blake3:blake:crypto 32^key) out (met 3 msg)^msg)
     ::
-    --
-::  vane types
-::
-=>  |%
-    +|  %types
+    +|  %vane
     ::  $channel: combined sender and receiver identifying data
     ::
     +$  channel
@@ -573,11 +568,14 @@
           %poke  (ev-mess-poke [dud +.mess]:task)
         ==
       ::  XX completed, serialized, and encrypted response from the packet layer
+      ::  path decryption happen in the packet layer, but payload happens here
+      ::  XX avoid intermidiate step and call directly into the message layer?
+      ::
           %mess-ser
         =*  her  ship.p.+.load.task
         =.  per  (ev-got-per her)
         %*  $  ev-mess-page
-          sealed-path  `path.task
+          sealed-path  `path.task  ::  XX we come from the packet layer and might have encrypted path/payload
         ::
           spar  p.+.load.task
           auth  q.+.load.task
@@ -627,7 +625,7 @@
         =.  flow.dead.ax  flow/`[~[/mesa] /dead-flow `@da`(add now ~s20)]
         =.  ev-core
           (ev-emit ~[/mesa] %pass /dead-flow %b %wait `@da`(add now ~s20))
-        %-  ~(rep by peers.ax)
+        %-  ~(rep by chums.ax)
         |=  [[=ship =ship-state] core=_ev-core]
         ^+  core
         =+  per-sat=(ev-get-per ship)
@@ -651,7 +649,7 @@
     ++  ev-req-plea
       |=  [=ship vane=@tas =wire payload=*]
       ^+  ev-core
-      =/  ship-state  (~(get by peers.ax) ship)
+      =/  ship-state  (~(get by chums.ax) ship)
       ::
       ?.  ?=([~ %known *] ship-state)
         %^  ev-enqueue-alien-todo  ship  ship-state
@@ -690,7 +688,7 @@
     ++  ev-req-peek
       |=  [sec=(unit [kid=@ key=@]) spar]
       ^+  ev-core
-      =/  ship-state  (~(get by peers.ax) ship)
+      =/  ship-state  (~(get by chums.ax) ship)
       ::
       ?.  ?=([~ %known *] ship-state)
         %^  ev-enqueue-alien-todo  ship  ship-state
@@ -704,8 +702,8 @@
       ::
       =/  =space  ?~(sec publ/life.sat.per shut/[kid key]:u.sec)
       ::
-      =?  peers.ax  ?=(%shut -.space)
-        %+  ~(put by peers.ax)  ship
+      =?  chums.ax  ?=(%shut -.space)
+        %+  ~(put by chums.ax)  ship
         %_    sat.per
             client-chain
           (put:key-chain client-chain.sat.per kid.space key.space path)
@@ -725,7 +723,7 @@
       ::    - validation should crash event or ensure that no state is changed
       ::  XX  parse path to get: requester, rift, bone, message
       ::
-      =/  ship-state  (~(get by peers.ax) her.poke-name)
+      =/  ship-state  (~(get by chums.ax) her.poke-name)
       ::
       ?.  ?=([~ %known *] ship-state)
         ::  request public keys from %jael and drop the packet; it'll be re-send
@@ -788,12 +786,12 @@
       ::  check for pending request (peek|poke)
       ::
       =*  ship  her.name
-      ?~  per=(~(get by peers.ax) ship)
+      ?~  per=(~(get by chums.ax) ship)
         ev-core
       ?>  ?=([~ %known *] per)  ::  XX alien agenda
       ::  decrypt path
       ::
-      =/  [=outer=path =inner=path]  (ev-decrypt-path pat.name ship)
+      =/  [=outer=path =inner=path]  (ev-decrypt-path pat.name ship)  :: XX revisit
       =*  sealed-path  pat.name
       ?~  res=(~(get by pit.u.per) sealed-path)
         ev-core
@@ -814,8 +812,8 @@
         ?>  (ev-authenticate (recover-root:lss proof) aut.data name)
         ?~  state=(init:verifier:lss tot.data proof)
           ev-core
-        =.  peers.ax
-          %+  ~(put by peers.ax)  her.name
+        =.  chums.ax
+          %+  ~(put by chums.ax)  her.name
           =-  u.per(pit -)
           %+  ~(put by pit.u.per)  sealed-path
           u.res(ps `[u.state ~])
@@ -873,8 +871,8 @@
             ev-core
           ::  initialize packet state and request next fragment
           ::
-          =.  peers.ax
-            %+  ~(put by peers.ax)  her.name
+          =.  chums.ax
+            %+  ~(put by chums.ax)  her.name
             =-  u.per(pit -)
             %+  ~(put by pit.u.per)  outer-path  :: XX sealed path?
             u.res(ps `[u.state ~[dat.data]])
@@ -897,8 +895,8 @@
         ::
         =.  los.ps  u.state
         =.  fags.ps  [dat.data fags.ps]
-        =.  peers.ax
-          %+  ~(put by peers.ax)  her.name
+        =.  chums.ax
+          %+  ~(put by chums.ax)  her.name
           =-  u.per(pit -)
           %+  ~(put by pit.u.per)  sealed-path
           u.res
@@ -921,11 +919,11 @@
     +|  %messages-entry-point
     ::
     ++  ev-mess-page
-      =|  sealed-path=(unit path)
-      |=  [=spar =auth:mess res=@]  :: XX res has been decrypted
+      =|  sealed-path=(unit path)   ::  XX set if coming from the packet layer
+      |=  [=spar =auth:mess res=@]  ::  XX res and path.spar have been decrypted
       ^+  ev-core
       =*  ship  ship.spar
-      ?~  rs=(~(get by peers.ax) ship)
+      ?~  rs=(~(get by chums.ax) ship)
         ev-core
       ?>  ?=([~ %known *] rs)  ::  XX alien agenda
       =+  path=?~(sealed-path path.spar u.sealed-path)
@@ -936,14 +934,8 @@
       ::
       ::  XX validate response
       =.  pit.u.rs   (~(del by pit.u.rs) path)
-      =.  peers.ax   (~(put by peers.ax) ship.spar u.rs)
-      =/  gift
-        ::  XX seeing a crash here (cue res) for this path /chum/1/~dev/1/0v2.vkcu5.pk63o.u35i3.usmth.4hf08.os04b.1bv4s.8j3h7.vi05b.kjdl6.3htvo.hd5ua.402b8.6sp3k.6marq.nf4l1.ku6at.plrh3.sg201
-        ::  when reading a client %cork (/mesa/flow/cor/bak/~fen/0/4) %ack
-        ::  after server %kicks the subscriber
-        ::
-        :: [%give %mess-response spar(path open-path) ;;(gage:mess (cue res))]
-        [%give %mess-response spar ;;(gage:mess (cue res))]
+      =.  chums.ax   (~(put by chums.ax) ship.spar u.rs)
+      =/  gift       [%give %mess-response spar ;;(gage:mess (cue res))]
       %-  ~(rep in for.u.ms)
       |=  [hen=duct c=_ev-core]
       (ev-emit:c hen gift)
@@ -1061,7 +1053,7 @@
           by-duct.ossuary  (~(del by by-duct.ossuary) (ev-got-duct bone))   ::  XX bone^side=%for
           by-bone.ossuary  (~(del by by-bone.ossuary) bone)                 ::  XX bone^side=%for
         ==
-      ev-core(ax ax(peers (~(put by peers.ax) [ship sat]:per)))
+      ev-core(ax ax(chums (~(put by chums.ax) [ship sat]:per)))
     ::  +ev-poke-done: vane responses
     ::
     ++  ev-poke-done
@@ -1091,12 +1083,12 @@
     ++  ev-make-mess
       |=  [p=spar q=(unit path) spac=(unit space)]
       ^+  ev-core
-      =/  her  (~(gut by peers.ax) ship.p *ship-state)
+      =/  her  (~(gut by chums.ax) ship.p *ship-state)
       ?>  ?=([%known *] her)  ::  XX alien agenda
       ?^  res=(~(get by pit.her) path.p)
         ?>  =(q pay.u.res)  ::  prevent overriding payload
-        =-  ev-core(peers.ax -)
-        %+  ~(put by peers.ax)  ship.p
+        =-  ev-core(chums.ax -)
+        %+  ~(put by chums.ax)  ship.p
         =-  her(pit -)
         %+  ~(put by pit.her)  path.p
         u.res(for (~(put in for.u.res) hen))
@@ -1113,8 +1105,8 @@
       =|  new=request-state
       =.  for.new   (~(put in for.new) hen)
       =.  pay.new   q
-      =.  peers.ax
-        (~(put by peers.ax) ship.p her(pit (~(put by pit.her) path.p new)))
+      =.  chums.ax
+        (~(put by chums.ax) ship.p her(pit (~(put by pit.her) path.p new)))
       ::
       =/  =pact:pact  (ev-make-pact p q rift.her spac)
       (ev-emit unix-duct.ax %give %send ~[`@ux`ship.p] p:(fax:plot (en:^pact pact)))
@@ -1148,7 +1140,7 @@
       :: (mes:plot:d (en:name:d [[her=~nec rif=40] [boq=0 wan=~] pat=['c~_h' ~]]))
       :: [bloq=q=3 step=r=12]
       ::  =/  has  (shax u.u.res)
-      ::  =.  tmpeers.ax  (~(put by tmpeers.ax) has [%some-envelope original-path u.u.res])
+      ::  =.  tmchums.ax  (~(put by tmchums.ax) has [%some-envelope original-path u.u.res])
       ::  //ax/[$ship]//1/temp/[hash]
       ::  switch life(s) for payloads
       ::  XX  test that these lifes are correctly checked in the +scry handler
@@ -1202,7 +1194,7 @@
       |=  =ship
       ^+  per
       :-  ship
-      =/  ship-state  (~(get by peers.ax) ship)
+      =/  ship-state  (~(get by chums.ax) ship)
       :-  %known
       ?.(?=([~ %known *] ship-state) *peer-state +.u.ship-state)
     ::
@@ -1212,20 +1204,20 @@
       :-  ship
       ~|  %freaky-alien^ship
       =-  ?>(?=([%known *] -) -)
-      (~(got by peers.ax) ship)
+      (~(got by chums.ax) ship)
     ::  +get-her-state: lookup .her state, ~ if missing, [~ ~] if %alien
     ::
     ++  ev-get-per
       |=  her=ship
       ^-  (unit (unit ship-state))
       ::
-      ?~  per=(~(get by peers.ax) her)  ~
+      ?~  per=(~(get by chums.ax) her)  ~
       `per
     ::
     ++  ev-put-per
       |=  =ship
       ^+  ax
-      ax(peers (~(put by peers.ax) ship known/*peer-state))
+      ax(chums (~(put by chums.ax) ship known/*peer-state))
     ::
     ++  ev-got-duct
       |=  =bone
@@ -1264,7 +1256,7 @@
         ::
         ::
         =.  flows.sat.per  (~(put by flows.sat.per) bone^dire state)
-        ev-core(ax ax(peers (~(put by peers.ax) her sat.per)))
+        ev-core(ax ax(chums (~(put by chums.ax) her sat.per)))
       ::
       ++  fo-abel
         ^+  ev-core
@@ -1272,7 +1264,7 @@
         =:  flows.sat.per   (~(del by flows.sat.per) bone^dire)
             corked.sat.per  (~(put in corked.sat.per) bone^dire)
           ==
-        ev-core(ax ax(peers (~(put by peers.ax) her sat.per)))
+        ev-core(ax ax(chums (~(put by chums.ax) her sat.per)))
       ::
       ++  fo-emit      |=(=move fo-core(moves [move moves]))
       ++  fo-emil      |=(mos=(list move) fo-core(moves (weld mos moves)))
@@ -1678,7 +1670,7 @@
       ::  mutate .todos and apply to permanent state
       ::
       =.  todos     (mutate todos)
-      =.  peers.ax  (~(put by peers.ax) ship %alien todos)
+      =.  chums.ax  (~(put by chums.ax) ship %alien todos)
       ?:  already-pending  ev-core
       ::
       ?:  =(%pawn (clan:title ship))
@@ -1777,7 +1769,7 @@
           ?:  =(our ship)
             sy-core
           ::
-          =/  ship-state  (~(get by peers.ax) ship)
+          =/  ship-state  (~(get by chums.ax) ship)
           ::  we shouldn't be hearing about ships we don't care about
           ::
           ?~  ship-state
@@ -1809,13 +1801,13 @@
           =?  route.peer-state  =(%czar (clan:title ship))
             `[direct=%.y lane=[%& ship]]
           ::
-          =.  peers.ax
-            (~(put by peers.ax) ship [%known peer-state])
+          =.  chums.ax
+            (~(put by chums.ax) ship [%known peer-state])
           ::
           :: =.  ev-core
           ::   %-  ev-emit
           ::   :*  unix-duct.ax  %give  %nail  ship
-          ::       (get-forward-lanes our peer-state peers.ax)
+          ::       (get-forward-lanes our peer-state chums.ax)
           ::   ==
           ::  if one of our sponsors breached, give the updated list to vere
           ::
@@ -1838,7 +1830,7 @@
           ?:  =(our ship)
             sy-core
           ::
-          =/  ship-state  (~(get by peers.ax) ship)
+          =/  ship-state  (~(get by chums.ax) ship)
           ?.  ?=([~ %known *] ship-state)
             =|  =point:jael
             =.  life.point     life
@@ -1856,8 +1848,8 @@
           =.  life.peer-state        life
           =.  public-key.peer-state  public-key
           ::
-          =.  peers.ax
-           (~(put by peers.ax) ship %known peer-state)
+          =.  chums.ax
+           (~(put by chums.ax) ship %known peer-state)
           sy-core
         ::  +on-publ-sponsor: handle new or lost sponsor for peer
         ::
@@ -1873,16 +1865,16 @@
             %-  (slog leaf+"ames: {(scow %p ship)} lost sponsor, ignoring" ~)
             sy-core
           ::
-          =/  state=(unit ship-state)  (~(get by peers.ax) ship)
+          =/  state=(unit ship-state)  (~(get by chums.ax) ship)
           ?.  ?=([~ %known *] state)
             %-  (slog leaf+"ames: missing peer-state, ignoring" ~)
             sy-core
           =.  sponsor.+.u.state   u.sponsor
-          =.  peers.ax  (~(put by peers.ax) ship %known +.u.state)
+          =.  chums.ax  (~(put by chums.ax) ship %known +.u.state)
           :: =.  ev-core
           ::   %-  ev-emit
           ::   :*  unix-duct.ax  %give  %nail  ship
-          ::       (get-forward-lanes our +.u.state peers.ax)
+          ::       (get-forward-lanes our +.u.state chums.ax)
           ::   ==
           ::
           sy-core
@@ -1907,7 +1899,7 @@
               ?.  (~(has by keys.point) life.point)
                 $(points t.points)
               ::
-              =/  old-ship-state  (~(get by peers.ax) ship)
+              =/  old-ship-state  (~(get by chums.ax) ship)
               ::
               =.  sy-core  (insert-peer-state ship point)
               ::
@@ -1923,7 +1915,7 @@
             ::
             :: =?  sy-core  =(%pawn (clan:title our))
             ::   =/  blob=@  (attestation-packet ship life.point)
-            ::   (send-blob for=| ship blob (~(get by peers.ax) ship))
+            ::   (send-blob for=| ship blob (~(get by chums.ax) ship))
             ::  apply heeds
             ::
             :: =.  sy-core
@@ -1964,7 +1956,7 @@
           ^+  sy-core
           =?  rift.ax  =(our ship)
             rift
-          ?~  ship-state=(~(get by peers.ax) ship)
+          ?~  ship-state=(~(get by chums.ax) ship)
             ::  print error here? %rift was probably called before %keys
             ::
             ~>  %slog.1^leaf/"ames: missing peer-state on-publ-rift"
@@ -1975,8 +1967,8 @@
             sy-core
           =/  =peer-state      +.u.ship-state
           =.  rift.peer-state  rift
-          =.  peers.ax
-            (~(put by peers.ax) ship %known peer-state)
+          =.  chums.ax
+            (~(put by chums.ax) ship %known peer-state)
           sy-core
         ::
         ++  insert-peer-state
@@ -2004,13 +1996,13 @@
           =?  route.ship-state  ?=(%czar (clan:title ship))
             `[direct=%.y lane=[%& ship]]
           ::
-          =.  peers.ax
-            (~(put by peers.ax) ship ship-state)
+          =.  chums.ax
+            (~(put by chums.ax) ship ship-state)
           ::
           :: =?  ev-core  ?=(%czar (clan:title ship))
           ::   %-  ev-emit
           ::   :*  unix-duct.ax  %give  %nail  ship
-          ::       (get-forward-lanes our +.ship-state peers.ax)
+          ::       (get-forward-lanes our +.ship-state chums.ax)
           ::   ==
           sy-core
         --
@@ -2025,8 +2017,8 @@
         =/  crypto-core  (nol:nu:crub:crypto priv.ax)
         ::  recalculate each peer's symmetric key
         ::
-        =.  peers.ax
-          %-  ~(run by peers.ax)
+        =.  chums.ax
+          %-  ~(run by chums.ax)
           |=  =ship-state
           ^+  ship-state
           ::
@@ -2048,7 +2040,58 @@
         (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p our)])
       --
     ::
---
+    :: +|  %internals
+    ::  +check-clog: notify clients if peer has stopped responding
+    :: ::
+    :: ++  ev-check-clog
+    ::   ^+  ev-core
+    ::   ?>  ?=(%known -.sat.per)
+    ::   ::
+    ::   ::    Only look at response bones.  Request bones are unregulated,
+    ::   ::    since requests tend to be much smaller than responses.
+    ::   ::
+    ::   =/  pumps=(list message-pump-state)
+    ::     %+  murn  ~(tap by snd.peer-state)
+    ::     |=  [=bone =message-pump-state]
+    ::     ?:  =(0 (end 0 bone))
+    ::       ~
+    ::     `u=message-pump-state
+    ::   ::  if clogged, notify client vane
+    ::   ::
+    ::   |^  ?.  &(nuf-messages nuf-memory)  peer-core
+    ::       %+  roll  ~(tap in heeds.peer-state)
+    ::       |=([d=^duct core=_peer-core] (pe-emit:core d %give %clog her))
+    ::   ::  +nuf-messages: are there enough messages to mark as clogged?
+    ::   ::
+    ::   ++  nuf-messages
+    ::     =|  num=@ud
+    ::     |-  ^-  ?
+    ::     ?~  pumps  |
+    ::     =.  num
+    ::       ;:  add  num
+    ::         (sub [next current]:i.pumps)
+    ::         ~(wyt in unsent-messages.i.pumps)
+    ::       ==
+    ::     ?:  (gte num msg.cong.ames-state)
+    ::       &
+    ::     $(pumps t.pumps)
+    ::   ::  +nuf-memory: is enough memory used to mark as clogged?
+    ::   ::
+    ::   ++  nuf-memory
+    ::     =|  mem=@ud
+    ::     |-  ^-  ?
+    ::     ?~  pumps  |
+    ::     =.  mem
+    ::       %+  add
+    ::         %-  ~(rep in unsent-messages.i.pumps)
+    ::         |=([m=message b=_mem] (add b (met 3 (jim m))))
+    ::       ?~  unsent-fragments.i.pumps  0
+    ::       (met 3 fragment.i.unsent-fragments.i.pumps)
+    ::     ?:  (gte mem mem.cong.ames-state)
+    ::       &
+    ::     $(pumps t.pumps)
+      :: --
+    --
 ::
 |%
 ::
@@ -2144,21 +2187,21 @@
 ++  stay  `axle`ax
 ::
 ++  load
-  |=  old=axle
+  |=  old=*
   ^+  mesa-gate
   :: =.  peers.old
   ::   %-  ~(run by peers.old)
   ::   |=  =ship-state
   ::   ?:  ?=(%alien -.ship-state)  ship-state
   ::   %_  ship-state
-  ::     flows    ~
+  ::     flows     ~
   ::     pit      ~
   ::     corked   ~
   ::     ossuary  =|  =ossuary:ames  ossuary
   ::             :: %_  ossuary
   ::             ::   next-bone  40
   ::   ==        :: ==
-  mesa-gate(ax old)
+  mesa-gate  ::(ax old)
 ::
 ++  scry
   ^-  roon
@@ -2465,7 +2508,7 @@
         [%peers her=@ ~]
       =/  who  (slaw %p her.tyl)
       ?~  who  [~ ~]
-      ?~  peer=(~(get by peers.ax) u.who)
+      ?~  peer=(~(get by chums.ax) u.who)
         [~ ~]
       ``noun+!>(u.peer)
   ==
