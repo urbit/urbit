@@ -8,6 +8,14 @@
 /*  txt-ford-face   %hoon   /neo/src/std/imp/ford-face/hoon
 /*  txt-ford-face   %hoon   /neo/src/std/imp/ford-face/hoon
 /*  txt-ford-reef   %hoon   /neo/src/std/imp/ford-reef/hoon
+/*  date-now   %js   /web/date-now/js
+/*  error-tray   %js   /web/error-tray/js
+/*  atom-input   %js   /web/atom-input/js
+/*  multiline-input   %js   /web/multiline-input/js
+/*  ha-wk   %js   /web/ha-wk/js
+/*  s-k-y   %js   /web/s-k-y/js
+/*  a-i-r   %js   /web/a-i-r/js
+/*  style-css   %css   /web/style/css
 |%
 ++  pave  pave:neo
 ++  ford  ford:neo
@@ -629,173 +637,212 @@
     ^-  (unit (unit cage))
     [~ ~]
   --
-::
 ++  dove
   |_  here=pith:neo
   ++  curr
-    ?~  rom=(get:of-top here)
-      ;summary: Nothing here
-    ;div(class "w-1/3")
-      ;+  (val u.rom)
-      ;dl 
-        ;*  (room-meta here u.rom)
-        ;dt: Dependecies
-        ;dd 
-          ;dl
-            ;*  %-  zing
-            %+  turn  ~(tap by conf.u.rom)
-            |=  [=term dep=pith:neo]
-            :~  
-              ;dt: {(trip term)}
-              ;dd: {(en-tape:pith:neo dep)}
-            ==
-          ==
+    ::
+    =/  rom  (get:of-top here)
+    =-  -(a.g [[%here (en-tape:pith:neo here)] a.g.-])
+    ^-  manx
+    ?~  rom
+      ;div.wf.hf.fc.ac.jc(empty ""): nothing here
+    =/  =room:neo  u.rom
+    =/  stud  ^-  @tas  ?^(state.room mark.state.room state.room)
+    =-  -(a.g [[%stud (trip stud)] a.g.-])
+    (val u.rom)
+    ::
+  ++  children
+    ::
+    =/  dirs
+      ^-  (list iota)
+      %~  tap  in
+      %-  silt
+      %+  turn  ~(tap by (kid:of-top here))
+      |=  [=pith:neo *]
+      -.pith
+    ;div.wf.hf.fc.g1.js.ac
+      =here  (en-tape:pith:neo here)
+      =slot  "tree"
+      ;*
+      ?~  (lent dirs)
+        ;=
+          ;div.wf.hf.fc.ac.jc: no children
         ==
+      %+  turn
+        :: alphabetical sort
+        ^-  (list iota)
+        (sort dirs aor)
+      |=  =iota
+      ;button.p2.br1.b1.hover.wf.fr.js
+        =hx-get  (en-tape:pith:neo :(weld /neo/hawk here /[iota]))
+        =hx-target  "closest ha-wk"
+        =hx-swap  "innerHTML"
+        ; {(trip ?@(iota iota (scot iota)))}
       ==
     ==
+    ::
   ++  val
+    ::
     |=  =room:neo
     ^-  manx
-    =+  !<(grow=$-(pail:neo manx) (all-grow %node))
-    ?^  man=(mole |.((grow [state.room state.icon.room])))
-      u.man
-    ;code
-      {":: unable to render state as manx"}
-      {(text state.icon.room)}
+    =+  !<(grow=$-(pail:neo $-(=bowl:neo manx)) (all-grow %htmx))
+    ^-  manx
+    =/  res=(each $-(=bowl:neo manx) tang)
+      (mule |.((grow [state.room state.icon.room])))
+    ?:  ?=(%& -.res)
+      =+  man=[u=p.res ~]
+      %-  u.man
+      =+  b=*bowl.neo  :: manually constructing a bowl. this is ugly
+      %=  b
+        here  here
+        kids
+          %-  ~(run by (kid:of-top here))
+          |=  =room:neo
+          [state.room state.icon.room]
+      ==
+    ;div.p3.fc.g3
+      ;div.f-error.fc.g2
+        ;span: unable to render as %htmx
+        ;span.bold
+          ;+  ;/
+          ?^  state.room
+            (trip mark.state.room)
+          (trip state.room)
+        ==
+      ==
+      ;code.pre.scroll-x.flex.flex-col
+        ;div: {(text state.icon.room)}
+        ;*
+        %+  turn  p.res
+        |=  tan=tank
+        ;div: {~(ram re tan)}
+      ==
     ==
-  ++  style
+    ::
+  ++  svg-wrapper
+    ::
+    |=  [color=tape viewbox=tape body=manx]
+    ^-  manx
+    ;svg
+      =xmlns  "http://www.w3.org/2000/svg"
+      =viewBox  viewbox
+      =fill  color
+      =style  "height: 1em;"
+      ;+  body
+    ==
+    ::
+  ++  svg-square
+    ::
+    |=  color=(unit tape)
+    %^  svg-wrapper  (fall color "currentColor")
+      "0 0 448 512"
+    ;path(d "M0 96C0 60.7 28.7 32 64 32H384c35.3 0 64 28.7 64 64V416c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96z");
+    ::
+  ++  favicon
+    ::
+    =-
+      ;link
+        =rel  "icon"
+        =type  "image/svg+xml"
+        =href  -
+        ;
+      ==
+    %+  weld  "data:image/svg+xml;utf8,"
+    %-  en-xml:html
+    (svg-square `"white")
+    ::
+  ++  html-enc-js
+    ::
+    ::  htmx extension which encodes the request
+    ::  as the serialized HTML of the calling element
+    ::
     %-  trip
     '''
-    dl {
-      display: grid;
-      grid-gap: 4px 16px;
-      grid-template-columns: max-content;
-    }
-    dt {
-      font-weight: bold;
-    }
-    dd {
-      margin: 0;
-      grid-column-start: 2;
-    }
+    htmx.defineExtension('html-enc', {
+      onEvent: function (name, evt) {
+        if (name === "htmx:configRequest") {
+          evt.detail.headers['Content-Type'] = "text/html";
+        }
+      },
+      encodeParameters : function(xhr, parameters, elt) {
+        xhr.overrideMimeType('text/html');
+        let xmls = new XMLSerializer();
+        return (xmls.serializeToString(elt));
+      }
+    });
     '''
-  ::
+    ::
   ++  lift
+    ::
     |=  in=manx
     ^-  manx
     ;html
       ;head
-        ;title: {(en-tape:pith:neo here)}
-        ;style: {style}
-        ;script@"https://cdn.tailwindcss.com";
+        ;meta(charset "UTF-8");
+        ;title: s k y
+        ;script(src "https://unpkg.com/htmx.org@1.9.11");
+        ;script(src "https://unpkg.com/htmx.org@1.9.11/dist/ext/response-targets.js");
+        ;script: {html-enc-js}
+        ;meta
+          =name  "viewport"
+          =content
+            """
+            width=device-width,
+            initial-scale=1.0,
+            maximum-scale=1.0"
+            """
+          ;
+        ==
+        ;meta
+          =name  "htmx-config"
+          =content  (trip '{"ignoreTitle":"true"}')
+          ;
+        ==
+        ;style
+          ;+  ;/  %-  trip
+          '''
+          @font-face {
+            font-family: 'Urbit Sans';
+            src: url("https://media.urbit.org/fonts/UrbitSans/UrbitSansVFWeb-Regular.woff2") format("woff2");
+            font-style: normal;
+            font-weight: 100 700;
+          }
+          /*
+          @font-face {
+            font-family: 'Urbit';
+            src: url('https://nyc3.digitaloceanspaces.com/drain/hawk/2024.4.10..21.47.28-urbit.ttf') format('truetype');
+          }
+          */
+          '''
+        ==
+        ;script
+          ;+  ;/
+          """
+          const sharedStyles = new CSSStyleSheet();
+          sharedStyles.replaceSync(`{(trip style-css)}`);
+          document.adoptedStyleSheets = [sharedStyles];
+          """
+        ==
+        ;script: {(trip date-now)}
+        ;script: {(trip atom-input)}
+        ;script: {(trip error-tray)}
+        ;script: {(trip multiline-input)}
+        ;script: {(trip ha-wk)}
+        ;script: {(trip s-k-y)}
+        ;script: {(trip a-i-r)}
+        ;+  favicon
       ==
       ;body
+        =hx-ext  "html-enc,response-targets"
+        =hx-swap  "innerHTML"
+        =hx-boost  "true"
+        =hx-history  "false"
+        =hx-replace-url  "/neo/sky"
+        =hx-target  "closest ha-wk"
         ;+  in
       ==
-    ==
-  ++  stud-tape
-    |=  s=stud:neo
-    ^-  tape
-    ?@  s  (trip s)
-    "{(scow %p ship.s)}/{(trip desk.s)}/{(trip mark.s)}"
-  ++  pith-a
-    |=  [=pith:neo in=manx]
-    =/  tap  (en-tape:pith:neo pith)
-    ^-  manx
-    ?.  |(=(~ pith) (has:of-top pith))
-      ;span
-        ;+  in
-      ==
-    ;a.underline/"/neo/hawk{tap}.html"
-      ;+  in
-    ==
-  ::
-  ++  room-li
-    |=  [=pith:neo =room:neo]
-    ^-  manx
-    ;li
-      ;dl
-        ;dt: Pith
-        ;dd
-          ;+  (pith-a (welp here pith) ;/((en-tape:pith:neo pith)))
-        ==
-        ;*  (room-meta pith room)
-      ==
-    ==
-  ++  navbar-item
-    |=  [=pith:neo in=manx]
-    ^-  manx
-    ;li.p-2.border
-      ;+  (pith-a pith in)
-    ==
-  ++  home
-    ^-  manx
-    ;li.p-2.border
-      ;a.underline/"/neo/hawk": Root
-    ==
-  ::
-  ++  navbar
-    ;nav.w-full.my-2
-      ;ol.flex.align-center.justify-center.w-full.space-x-4
-        ;*  
-        :-  home
-        =<  q
-        ^-  (pair pith:neo (list manx))
-        %+  roll  here
-        |=  [=iota pit=pith:neo out=(list manx)]
-        ^-  (pair pith:neo (list manx))
-        =.  pit  (snoc pit iota)
-        :-  pit
-        %+  snoc  out
-        %+  navbar-item  pit
-        ;/(?@(iota "%{(trip iota)}" (scow iota)))
-      ==
-    ==
-  ++  room-meta
-    |=  [=pith:neo =room:neo]
-    ^-  (list manx)
-    :~
-      ;dt: Code
-      ;dd: {(stud-tape code.room)}
-      ;dt: State
-      ;dd: {(stud-tape state.room)}
     ==
   --
-++  is-sys
-  |=  =pith:neo
-  ^-  ?
-  ?.  ?=([@ *] pith)
-    |
-  |(=('out' i.pith) =('pre' i.pith) =('src' i.pith))
-++  hawk
-  |=  req=inbound-request:eyre
-  ^-  simple-payload:http
-  =/  line=request-line:serv  (parse-request-line:serv url.request.req)
-  ?>  ?=([@ @ *] site.line)
-  =/  =pith:neo  (pave:neo t.t.site.line)
-  =?  pith   ?=([%$ ~] pith)
-    ~
-  =/  kids  (kid:of-top pith)
-  =/  par   (parent:of-top pith)
-  =*  dov  ~(. dove pith)
-  %-  manx-response:gen:serv
-  ^-  manx
-  %-  lift:dov
-  ;main.flex.flex-col.space-y-4
-    ;+  navbar:dov
-    ;div.flex
-      ;*  ?:((has:of-top pith) (limo curr:dov ~) *(list manx))
-      ;div.flex.flex-col
-        ;h3: Children
-        ;ol.flex.flex-col
-          ;*  (turn (skip ~(tap by kids) |=([p=pith:neo *] (is-sys p))) room-li:dov)
-        ==
-      ==
-      ;*  ?^  par  ~
-          ~  :: (make-form)
-          
-    ==
-  ==
 ::
 ++  srv
   |_  eyre-id=@ta
@@ -836,12 +883,137 @@
     ::  XX: revive when privacy
     ::  ?.  authenticated.req
     ::    (login-redirect:app:serv request.req)
-
     =/  line=request-line:serv  (parse-request-line:serv url.request.req)
     ?>  &(?=([@ @ *] site.line) =('neo' i.site.line))
     ?.  =('scry' i.t.site.line)
+      =/  purl  ::  parsed url with query params
+        ::
+        ^-  [pax=path pam=(map @t @t)]
+        =+  %+  rash  url.request.req
+            ;~  plug
+                ;~(pfix fas (more fas smeg:de-purl:html))
+                yque:de-purl:html
+            ==
+        [->+.- (molt +.-)]
+        ::
+      =/  body  :: body parsed to a manx
+        ::
+        %+  fall
+          (de-xml:html q:(fall body.request.req [p=0 q='']))
+        *manx
+        ::
+      =/  here=path  (welp /[(scot %p our.bowl)] pax.purl)
+      =/  =pith  (pave:neo pax.purl)
+      =*  dov  ~(. dove pith)
+      ::
+      ?:  =('sky' i.t.site.line)
+        ::
+        =/  here  (pave:neo /sky)
+        ?~  rum=(get:of-top here)
+          ::
+          ::  create default tree
+          =/  bootstrap
+            ^-  (list card:neo)
+            :~
+              [(weld #/[p/our.bowl] here) %make %sky `!>([%system ~ 0]) ~]
+              [#/[p/our.bowl]/home/diary %make %diary `!>('') ~]
+              [#/[p/our.bowl]/home/iframes/wiki %make %iframe `!>('https://en.wikipedia.org/wiki/Main_Page') ~]
+            ==
+            |-
+            ?~  bootstrap
+              %-  send
+              %-  manx-response:gen:serv
+              %-  ~(lift dove pax.purl)
+              ;div.wf.hf.fc.jc.ac
+                =hx-get  "/neo/sky"
+                =hx-target  "this"
+                =hx-swap  "outerHTML"
+                =hx-trigger  "load"
+                ; initializing
+              ==
+            =.  run
+              %-  poke-move
+              :-  #/[p/our.bowl]/$/eyre/req/[eyre-id]
+              i.bootstrap
+            $(bootstrap t.bootstrap)
+            ::
+        %-  send
+        %-  manx-response:gen:serv
+        %-  ~(lift dove pax.purl)
+        =+  !<(grow=$-(pail:neo $-(=bowl:neo manx)) (all-grow %htmx))
+        ?~  man=(mole |.((grow [%sky state.icon.u.rum])))
+          ~&  'could not convert sky to htmx'
+          !!
+        %-  u.man
+        =+  b=*bowl.neo
+        %=  b
+          here  here
+          kids
+            %-  ~(run by (kid:of-top here))
+            |=  =room:neo
+            [state.room state.icon.room]
+        ==
       ?>  =('hawk' i.t.site.line)
-      (send (hawk req))
+        ::
+        ?:  =(%'POST' method.request.req)  ::  %poke
+          ::
+          =/  stud  (@tas (~(got by pam.purl) 'stud'))
+          =/  conv  !<($-([@ manx] vase) (all-grab %node))
+          ?@  vert=(mole |.((conv [stud body])))
+            (send (manx-response:gen:serv ;/("failed to convert")))
+          =/  =pail:neo  [stud u.vert]
+          =.  run
+            %-  poke-move
+            :-  #/[p/our.bowl]/$/eyre/req/[eyre-id]
+            [(pave here) %poke pail]
+          %-  send
+          ::
+          %-  manx-response:gen:serv
+          =+  !<(grow=$-(pail:neo $-(=bowl:neo manx)) (all-grow %htmx))
+          ?^  man=(mole |.((grow pail)))
+            %-  u.man
+            =+  b=*bowl.neo  :: manually constructing a bowl. this is ugly
+            %=  b
+              here  (pave pax.purl)
+            ==
+          ;div: some sorta error occured
+          ::
+        ?:  =(%'PUT' method.request.req)    ::  %make
+          ::
+          =/  stud  (@tas (~(got by pam.purl) 'stud'))
+          =/  conv  !<($-([@ manx] vase) (all-grab %node))
+          ?@  vert=(mole |.((conv [stud body])))
+            (send (manx-response:gen:serv ;/("failed to convert")))
+          =/  =pail:neo  [stud u.vert]
+          =.  run
+            %-  poke-move
+            :-  #/[p/our.bowl]/$/eyre/req/[eyre-id]
+            [(pave here) %make p.pail `q.pail ~]
+          %-  send
+          ::
+          %-  manx-response:gen:serv
+          =+  !<(grow=$-(pail:neo $-(=bowl:neo manx)) (all-grow %htmx))
+          ?^  man=(mole |.((grow pail)))
+            %-  u.man
+            =+  b=*bowl.neo  :: manually constructing a bowl. this is ugly
+            %=  b
+              here  (pave pax.purl)
+            ==
+          ;div: some sorta error occured
+          ::
+          ::
+        ?:  =(%'DELETE' method.request.req) ::  %tomb
+          ::
+          !!
+          ::
+        ::    %'GET'  :: "read"
+          ::
+          %-  send
+          %-  manx-response:gen:serv
+          ?:  (~(has by pam.purl) 'tree')
+            children:dov
+          curr:dov
+        ::
     =/  =path  t.t.site.line
     ?:  =(%'POST' method.request.req)
       :: ?>  authenticated.req
