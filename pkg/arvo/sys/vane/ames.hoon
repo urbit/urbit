@@ -4099,9 +4099,7 @@
                 |=  =bone  :: XX do something with bone?
                   ^+  peer-core
                 =|  chum=peer-state:mesa
-                |^
-                =^  flow-moves  flows.chum   make-flows
-                =:           -.chum  azimuth-state=-.peer-state
+                |^  =:        -.chum  azimuth-state=-.peer-state
                           route.chum  get-route
                             qos.chum  qos.peer-state
                           heeds.chum  heeds.peer-state
@@ -4109,6 +4107,7 @@
                         ossuary.chum  align-bones
                    client-chain.chum  chain.peer-state
                   ==
+                =^  flow-moves  flows.chum   make-flows
                 =.  chums.ames-state
                   (~(put by chums.ames-state) her known/chum)
                 =.  event-core  (emil flow-moves)
@@ -4138,24 +4137,38 @@
                       ::  naxplanations
                       ::
                       !!
-                    =.  closing.flow    (~(has in closing.peer-state) bone)
+                    =.    closing.flow  (~(has in closing.peer-state) bone)
                     =.  next-load.flow  next.pump
-                    =.  loads.flow
-                      =<  loads
+                    ::
+                    =.  fo-core
+                      %*  .   fo-core
+                        flows.sat.per  (~(put by flows) bone^%for flow)
+                      ==
+                    ::  XX  TODO live-packets in packet-pump-state.pump
+                    ::
+                    =/  unsent-messages
+                      =/  unsent-messages=(list message)
+                       ~(tap to unsent-messages.pump)
+                      ?:  =(~ unsent-fragments.pump)
+                        unsent-messages
+                      =;  raw=*
+                        [;;(=message raw) unsent-messages]
+                      %-  assemble-fragments
+                      %+  roll  unsent-fragments.pump
+                      |=  [static-fragment n=@ fags=(map fragment-num fragment)]
+                      ?>  =(message-num current.pump)
+                      :-  num-fragments
+                      (~(put by fags) fragment-num fragment)
+                    ::
+                    =.  flow
+                      =<  state.core
                       %-  ~(rep in unsent-messages.pump)
-                      :: XX if there are packets, current then should be +(current)
-                      ::  unsent-packets vs packet-state?
                       ::
-                      |=  [=message current=_current.pump loads=_loads.flow]
+                      |=  [=message current=_current.pump core=_fo-core]
                       :-  +(current)
-                      ?:  ?=(%naxplanation -.message)  loads  :: XX TODO
-                      =/  hen=^duct  (got-duct bone)
-                      ::  XX init sat.per
-                      ::
-                      =.  fo-core
-                        %.  message
-                        fo-call:(fo-abed:fo-core hen bone^dire=%for ~)
-                      loads
+                      ?:  ?=(%naxplanation -.message)  core  :: XX TODO
+                      %.  message
+                      fo-call:(fo-abed:fo-core (got-duct bone) [bone %for] ~)
                     ::
                     (~(put in flows) [bone %for] flow)
                   =.  flows.chum
@@ -7323,7 +7336,7 @@
             ::
             =|  can-be-corked=?(%.y %.n)
             ::
-            |_  [[hen=duct =side her=ship] state=flow-state]  :: XX remove channel
+            |_  [[hen=duct =side] state=flow-state]
             ::
             +*  ::veb   veb.bug.channel  ::  XX TODO
                 bone  bone.side
@@ -7334,7 +7347,7 @@
             ::
             ++  fo-core  .
             ++  fo-abed
-              |=  [=duct =^side cork=(unit ?)]   :: XX remove channel
+              |=  [=duct =^side cork=(unit ?)]
               ::  XX use got by in another arm to assert when the flow should exist
               =.  state  (~(gut by flows.sat.per) side *flow-state)
               =?  closing.state  ?=(^ cork)  u.cork
@@ -7342,8 +7355,6 @@
             ::
             ++  fo-abet
               ^+  ev-core
-              ::
-              ::
               =.  flows.sat.per  (~(put by flows.sat.per) bone^dire state)
               ev-core(ames-state ames-state(chums (~(put by chums.ames-state) her sat.per)))
             ::
