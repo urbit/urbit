@@ -2005,7 +2005,7 @@
                         ==
                         [%adult state=ames-state-20]
                     ==  ==
-                    $:  %0                            :: directed messaging
+                    $:  %0                             :: directed messaging
                     $%  $:  %larva
                             events=(qeu queued-event)
                             state=_ames-state
@@ -3075,6 +3075,7 @@
                 %drop  abet:(clear-nack [nack-bone message-num]:deep)
                 %cork  =~((cork-bone bone.deep) (emit duct %give %done ~))
                 %kill  (kill-bone bone.deep)
+                %ahoy  (emit duct %give %done ~)  :: XX migrate this flow to chums
               ==
               ::
               ++  send-nack-trace
@@ -5110,11 +5111,20 @@
                           %g  (pe-emit duct %pass wire %g %plea her plea)
                           %j  (pe-emit duct %pass wire %j %plea her plea)
                         ==
-                      ::  a %cork plea is handled using %$ as the recipient vane to
-                      ::  account for publishers that still handle ames-to-ames %pleas
+                      ::  a %cork and %ahoy pleas (both introduced to account
+                      ::  for checking per-peer protocol updates) are handled
+                      ::  using %$ as the recipient vane to account for peers
+                      ::  that have not migrated into the new protocol
                       ::
-                      ?>  &(?=([%cork *] payload.plea) ?=(%flow -.path.plea))
-                      (pe-emit duct %pass wire %a %deep %cork her bone)
+                      ?+    payload.plea  !!
+                          %ahoy
+                        ?>  ?=(%mesa -.path.plea)
+                        (pe-emit duct %pass wire %a %deep %ahoy her bone)
+                      ::
+                          %cork
+                        ?>  ?=(%flow -.path.plea)
+                        (pe-emit duct %pass wire %a %deep %cork her bone)
+                      ==
                     sink
                   ::
                   ::  +ha-boon: handle response message, acking unconditionally

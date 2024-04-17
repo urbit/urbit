@@ -958,6 +958,7 @@
         [%drop =ship =nack=bone =message-num]
         [%cork =ship =bone]
         [%kill =ship =bone]
+        [%ahoy =ship =bone]
     ==
   ::  $stun: STUN notifications, from unix
   ::
