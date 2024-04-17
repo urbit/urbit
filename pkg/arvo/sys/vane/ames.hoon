@@ -4128,6 +4128,8 @@
                 ::
                 ++  make-flows
                   ^-  (quip move (map side:mesa flow-state:mesa))
+                  ::  forward flows
+                  ::
                   =^  forward-moves  flows.chum
                     %-  ~(rep by snd.peer-state)
                     |=  $:  [=^bone pump=message-pump-state]
@@ -4174,6 +4176,7 @@
                     ::
                     :-  (weld forward-moves moves)
                     (~(put in flows) [bone %for] flow)
+                  ::  backward flows
                   ::
                   =.  flows.chum
                     %-  ~(rep by rcv.peer-state)
@@ -4195,6 +4198,43 @@
                         (turn ~(tap in nax.sink) (late *error:mesa))
                       ==
                     (~(put in flows) [bone %bak] flow)
+                  ::  naxplanations
+                  ::  XX  check that this is true
+                  ::
+                  ::entries in nax.peer-stat meen that we have unprocessed nacks
+                  ::  we have received a nack, but are waiting on the naxplanation
+                  ::  so the message pump still has messages that have not been acked,
+                  ::  and should still be in snd.pump which should have already been processed
+                  ::  peeks for naxplanation won't be triggered in the migration but rather from
+                  ::  the re-send of the messages in the message pump
+                  ::
+                  :: =.  flows.chum
+                  ::   %-  ~(rep by nax.peer-state)
+                  ::   |=  [[=^bone =message-num] flows=_flows.chum]
+                  ::   =|  flow=flow-state:mesa
+                  ::   ::  XX check if bone has been corked?
+                  ::   ::
+                  ::   =/  sink=message-sink-state  (~(got by rcv.peer-state) bone)
+                  ::   ?.  =(%3 (mod bone 4))
+                  ::     flows  :: XX
+                  ::   ::  XX same as backward messages (message-sink) refactor
+                  ::   ::
+                  ::   ::  any partially received messages in live-messages.sink are dropped
+                  ::   ::
+                  ::   =:      closing.flow  (~(has in closing.peer-state) bone)
+                  ::        last-acked.flow  last-acked.sink
+                  ::       ::  XX if there's a pending-vane ack it should have
+                  ::       ::  been sent to the vane already?
+                  ::       ::
+                  ::       pending-ack.flow  ?=(^ pending-vane-ack.sink)
+                  ::     ::
+                  ::         nax.flow
+                  ::       %-  ~(gas by *_nax.flow)
+                  ::       (turn ~(tap in nax.sink) (late *error:mesa))
+                  ::     ==
+                  ::   ::
+                  ::   ::
+                  ::   (~(put in flows) [bone %bak] flow)
                   `flows.chum
                 ::
                 ++  make-peeks
