@@ -4138,7 +4138,7 @@
                     ?.  =(%0 (mod bone 4))
                       ::  naxplanations
                       ::
-                      !!
+                      moves^flows
                     =.    closing.flow  (~(has in closing.peer-state) bone)
                     =.  next-load.flow  next.pump
                     ::
@@ -4179,14 +4179,20 @@
                     %-  ~(rep by rcv.peer-state)
                     |=  [[=^bone sink=message-sink-state] flows=_flows.chum]
                     =|  flow=flow-state:mesa
-                    ?.  =(%0 (mod bone 4))
-                      ::  naxplanations
-                      ::
-                      !!
+                    ?.  =(%1 (mod bone 4))
+                      flows  :: XX
+                    ::  any partially received messages in live-messages.sink are dropped
+                    ::
                     =:      closing.flow  (~(has in closing.peer-state) bone)
                          last-acked.flow  last-acked.sink
+                        ::  XX if there's a pending-vane ack it should have
+                        ::  been sent to the vane already?
+                        ::
                         pending-ack.flow  ?=(^ pending-vane-ack.sink)
-                                nax.flow  ~
+                      ::
+                          nax.flow
+                        %-  ~(gas by *_nax.flow)
+                        (turn ~(tap in nax.sink) (late *error:mesa))
                       ==
                     (~(put in flows) [bone %bak] flow)
                   `flows.chum
