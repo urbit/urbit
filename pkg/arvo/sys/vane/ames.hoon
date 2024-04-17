@@ -1735,6 +1735,13 @@
 ::
 =>  |%
     ++  ames
+      ::  initialize fo-core for flow migration in +on-migrate:pe
+      ::  XX  move to +on-migrate:pe
+      ::
+      =/  fo-core
+        =<  fo
+        %*(ev-core mesa sat.per known/*peer-state:^mesa)
+      ::
       =,  ames-helper
       ::
       =<  ::  larval ames, before %born sets .unix-duct; wraps adult ames core
@@ -3073,10 +3080,14 @@
                 %nack  abet:(send-nack-trace [nack-bone message]:deep)
                 %sink  abet:(sink-naxplanation [target-bone naxplanation]:deep)
                 %drop  abet:(clear-nack [nack-bone message-num]:deep)
-                %cork  =~((cork-bone bone.deep) (emit duct %give %done ~))
+                %cork  (cork-bone bone.deep)
                 %kill  (kill-bone bone.deep)
-                %ahoy  (emit duct %give %done ~)  :: XX migrate this flow to chums
+                %ahoy  (migrate-peer bone.deep)
               ==
+              ::
+              ++  migrate-peer
+                |=  =bone
+                =~(abet:(on-migrate:peer-core bone) (emit duct %give %done ~))
               ::
               ++  send-nack-trace
                 |=  [=nack=bone =message]
@@ -3098,7 +3109,10 @@
               ::  flow (+kill-bone)
               ::
               ::
-              ++  cork-bone  |=(=bone abet:(on-cork-flow:peer-core bone))
+              ++  cork-bone
+                |=  =bone
+                =~(abet:(on-cork-flow:peer-core bone) (emit duct %give %done ~))
+              ::
               ++  kill-bone  |=(=bone abet:(on-kill-flow:peer-core bone))
               --
             ::  +on-stun: poke %ping app when hearing a STUN response
@@ -4080,6 +4094,97 @@
                 ::  since we got one cork ack, try the next one
                 ::
                 recork-one
+              ::
+              ++  on-migrate
+                |=  =bone  :: XX do something with bone?
+                  ^+  peer-core
+                =|  chum=peer-state:mesa
+                |^
+                =^  flow-moves  flows.chum   make-flows
+                =:           -.chum  azimuth-state=-.peer-state
+                          route.chum  get-route
+                            qos.chum  qos.peer-state
+                          heeds.chum  heeds.peer-state
+                         corked.chum  divide-bones
+                        ossuary.chum  align-bones
+                   client-chain.chum  chain.peer-state
+                  ==
+                =.  chums.ames-state
+                  (~(put by chums.ames-state) her known/chum)
+                =.  event-core  (emil flow-moves)
+                peer-core
+                ::
+                ++  flow-queue  ((on ,@ud mesa-message:mesa) lte)
+                ++  align-bones
+                  ^+  ossuary.peer-state
+                  ::  XX save .next-bone.ossuary as a marker for "migrated" flows
+                  ::
+                  ossuary.peer-state
+                ::
+                ++  divide-bones
+                  ^-  (set side:mesa)
+                  %-  ~(rep in corked.peer-state)
+                  |=  [=^bone corked=_corked.chum]
+                  (~(put in corked) bone ?:(=(%0 (mod bone 4)) %for %bak))
+                ::
+                ++  make-flows
+                  ^-  (quip move (map side:mesa flow-state:mesa))
+                  :: |=  [=_snd.peer-state =_rcv.peer-state =_nax.peer-state]
+                  =.  flows.chum
+                    %-  ~(rep by snd.peer-state)
+                    |=  [[=^bone pump=message-pump-state] flows=_flows.chum]
+                    =|  flow=flow-state:mesa
+                    ?.  =(%0 (mod bone 4))
+                      ::  naxplanations
+                      ::
+                      !!
+                    =.  closing.flow    (~(has in closing.peer-state) bone)
+                    =.  next-load.flow  next.pump
+                    =.  loads.flow
+                      =<  loads
+                      %-  ~(rep in unsent-messages.pump)
+                      :: XX if there are packets, current then should be +(current)
+                      ::  unsent-packets vs packet-state?
+                      ::
+                      |=  [=message current=_current.pump loads=_loads.flow]
+                      :-  +(current)
+                      ?:  ?=(%naxplanation -.message)  loads  :: XX TODO
+                      =/  hen=^duct  (got-duct bone)
+                      ::  XX init sat.per
+                      ::
+                      =.  fo-core
+                        %.  message
+                        fo-call:(fo-abed:fo-core hen bone^dire=%for ~)
+                      loads
+                    ::
+                    (~(put in flows) [bone %for] flow)
+                  =.  flows.chum
+                    %-  ~(rep by rcv.peer-state)
+                    |=  [[=^bone sink=message-sink-state] flows=_flows.chum]
+                    =|  flow=flow-state:mesa
+                    ?.  =(%0 (mod bone 4))
+                      ::  naxplanations
+                      ::
+                      !!
+                    =:      closing.flow  (~(has in closing.peer-state) bone)
+                         last-acked.flow  last-acked.sink
+                        pending-ack.flow  ?=(^ pending-vane-ack.sink)
+                                nax.flow  ~
+                      ==
+                    (~(put in flows) [bone %bak] flow)
+                  `flows.chum
+                ::
+                ++  make-peeks
+                  :: |=  =_keens.peer-state
+                  ^-  (map path request-state:mesa)
+                  !!  ::  side effect of making a flow
+                ::
+                ++  get-route
+                  :: |=  =_route.peer-state
+                  ^-  (unit [direct=? =lane:mesa])
+                  !!
+                ::
+                --
               ::
               +|  %implementation
               ::  +check-clog: notify clients if peer has stopped responding
@@ -6660,14 +6765,14 @@
               ev-core
             =<  fo-abet
             %.  plea/[vane wire payload]
-            fo-call:(fo-abed:fo hen bone^dire=%for ev-chan `cork)
+            fo-call:(fo-abed:fo hen bone^dire=%for `cork)
           ::
           ++  ev-req-boon
             |=  [=bone =channel load=*]
             ^+  ev-core
             ::  XX handle corked/closing bones
             ::
-            fo-abet:(fo-call:(fo-abed:fo hen bone^dire=%bak channel ~) boon/load)
+            fo-abet:(fo-call:(fo-abed:fo hen bone^dire=%bak ~) boon/load)
           ::
           ++  ev-req-peek
             |=  [sec=(unit [kid=@ key=@]) spar]
@@ -6742,7 +6847,7 @@
             ?.  =(1 tot.data)
               =/  =wire
                 %.  %pok
-                fo-wire:(fo-abed:fo hen [bone dire]:pok ev-chan ~)
+                fo-wire:(fo-abed:fo hen [bone dire]:pok ~)
               =/  =space  chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
               %+  ev-emit  hen
               [%pass wire %m make-peek/[space [her pat]:poke-name]]
@@ -6958,7 +7063,7 @@
             ::
             =<  fo-abet
             %.  [%sink mess.pok req ?=(~ dud)]
-            fo-call:(fo-abed:fo hen bone.pok^dire ev-chan ~)
+            fo-call:(fo-abed:fo hen bone.pok^dire ~)
           ::
           ++  ev-mess-peek
             |=  =spar
@@ -6997,7 +7102,7 @@
               ::  and have succesfully +peek'ed the %cork
               ::
               =<  fo-abel
-              %.(sage fo-take-client-cork:(fo-abed:fo hen bone^dire ev-chan ~))
+              %.(sage fo-take-client-cork:(fo-abed:fo hen bone^dire ~))
             ::
             ::  XX  validate thath wire and path match?
             ::
@@ -7020,7 +7125,7 @@
             =/  fo-core
               ::  XX parse $ack payload in here, and call task instead?
               %.  [were mess-response/[mess.message-path sage]]
-              fo-take:(fo-abed:fo hen bone^dire ev-chan ~)
+              fo-take:(fo-abed:fo hen bone^dire ~)
             ::
             ?.  can-be-corked.fo-core
               fo-abet:fo-core
@@ -7060,7 +7165,7 @@
             ::  XX use it as an assurance check?
             ::
             %.  [%van done/error]
-            fo-take:(fo-abed:fo hen bone^dire=%bak ev-chan ~)
+            fo-take:(fo-abed:fo hen bone^dire=%bak ~)
           ::
           +|  %message-constructor
           ::
@@ -7218,22 +7323,22 @@
             ::
             =|  can-be-corked=?(%.y %.n)
             ::
-            |_  [[hen=duct =side =channel] state=flow-state]  :: XX remove channel
+            |_  [[hen=duct =side her=ship] state=flow-state]  :: XX remove channel
             ::
-            +*  veb   veb.bug.channel
-                her   her.channel
+            +*  ::veb   veb.bug.channel  ::  XX TODO
                 bone  bone.side
                 dire  dire.side
+                her   ship.per
             ::
             +|  %helpers
             ::
             ++  fo-core  .
             ++  fo-abed
-              |=  [=duct =^side =^channel cork=(unit ?)]   :: XX remove channel
+              |=  [=duct =^side cork=(unit ?)]   :: XX remove channel
               ::  XX use got by in another arm to assert when the flow should exist
               =.  state  (~(gut by flows.sat.per) side *flow-state)
               =?  closing.state  ?=(^ cork)  u.cork
-              fo-core(hen duct, side side, channel channel)
+              fo-core(hen duct, side side)
             ::
             ++  fo-abet
               ^+  ev-core
@@ -8410,7 +8515,7 @@
             ::
             =/  res=(unit page)
               %.  [load mess]:tyl
-              fo-peek:(fo-abed:fo ~[//scry] [bone dire]:tyl ev-chan ~)
+              fo-peek:(fo-abed:fo ~[//scry] [bone dire]:tyl ~)
             ?~(res ~ ``[%message !>(u.res)])
           ::  client %mesa %corks, flow-level
           ::
