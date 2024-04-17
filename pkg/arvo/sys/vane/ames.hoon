@@ -4128,10 +4128,12 @@
                 ::
                 ++  make-flows
                   ^-  (quip move (map side:mesa flow-state:mesa))
-                  :: |=  [=_snd.peer-state =_rcv.peer-state =_nax.peer-state]
-                  =.  flows.chum
+                  =^  forward-moves  flows.chum
                     %-  ~(rep by snd.peer-state)
-                    |=  [[=^bone pump=message-pump-state] flows=_flows.chum]
+                    |=  $:  [=^bone pump=message-pump-state]
+                            moves=(list move:mesa-helper)
+                            flows=_flows.chum
+                        ==
                     =|  flow=flow-state:mesa
                     ?.  =(%0 (mod bone 4))
                       ::  naxplanations
@@ -4144,7 +4146,7 @@
                       %*  .   fo-core
                         flows.sat.per  (~(put by flows) bone^%for flow)
                       ==
-                    ::  XX  TODO live-packets in packet-pump-state.pump
+                    ::  XX  TODO live- packets in packet-pump-state.pump
                     ::
                     =/  unsent-messages
                       =/  unsent-messages=(list message)
@@ -4160,8 +4162,8 @@
                       :-  num-fragments
                       (~(put by fags) fragment-num fragment)
                     ::
-                    =.  flow
-                      =<  state.core
+                    =^  forward-moves  flow
+                      =<  [moves state]:core
                       %-  ~(rep in unsent-messages.pump)
                       ::
                       |=  [=message current=_current.pump core=_fo-core]
@@ -4170,7 +4172,9 @@
                       %.  message
                       fo-call:(fo-abed:fo-core (got-duct bone) [bone %for] ~)
                     ::
+                    :-  (weld forward-moves moves)
                     (~(put in flows) [bone %for] flow)
+                  ::
                   =.  flows.chum
                     %-  ~(rep by rcv.peer-state)
                     |=  [[=^bone sink=message-sink-state] flows=_flows.chum]
