@@ -58,9 +58,9 @@
     ;textarea.p2.border.br1.ma.scroll-x.pre.mono.wf
       =style  "max-width: 650px;"
       =autocomplete  "off"
-      =rows  "4"
+      =rows  "45"
       =name  "text"
-      =oninput  "this.setAttribute('value', this.value); this.rows = this.value.split('\\n')"
+      =oninput  "this.setAttribute('value', this.value);"
       ;*
       %+  turn  src
       |=  lin=@t

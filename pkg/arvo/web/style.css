@@ -327,8 +327,8 @@ select {
 }
 textarea {
   display: block;
-  resize: none;
   outline: none;
+  resize: vertical;
   border-radius: 0;
   border: 0;
   background-color: inherit;
