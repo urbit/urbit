@@ -650,7 +650,7 @@
     =/  stud  ^-  @tas  ?^(state.room mark.state.room state.room)
     =-  -(a.g [[%stud (trip stud)] a.g.-])
     (val u.rom)
-    ::
+  ::
   ++  children
     ::
     =/  dirs
@@ -872,10 +872,16 @@
     ?+    p.cag  invalid-req:gen:serv
         %json  (json-response:gen:serv !<(json q.cag))
         %hymn  (manx-response:gen:serv !<(manx q.cag))
+        %mime  (mime-response !<(mime q.cag))
         %noun
       :_  `(as-octs:mimes:html (jam q.q.cag))
       [200 [['content-type' 'application/x-urb-jam'] ~]]
     ==
+  ++  mime-response
+    |=  =mime
+    ^-  simple-payload:http
+    :_  `q.mime
+    [200 [['content-type' (crip (slag 1 (spud p.mime)))] ~]]
   ::
   ++  on-req
     |=  req=inbound-request:eyre
