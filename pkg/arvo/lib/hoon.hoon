@@ -8774,7 +8774,7 @@
     ?@  chum
       chum
     ?@  +.chum
-      (cat 3 -.chum (scot %ud +.chum))
+      (rap 3 -.chum '.' (scot %ud +.chum) ~)
     -.chum  ::  XX handle ven/pro/ver
   ++  clip
     |=  ref=type
