@@ -1,7 +1,7 @@
-/@  txt
+/@  iframe
 |%
-++  state  %txt
-++  poke   (sy %txt ~)
+++  state  %iframe
+++  poke   (sy %iframe ~)
 ++  kids   *kids:neo
 ++  deps   *deps:neo
 ++  form
@@ -10,8 +10,8 @@
   ++  poke
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo vase)
-    ?>  =(%txt stud)
-    =/  new  (txt !<(txt vax))
+    ?>  =(%iframe stud)
+    =/  new  (iframe !<(iframe vax))
     `!>(new)
   ++  init
     |=  vas=(unit vase)

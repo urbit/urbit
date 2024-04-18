@@ -1,7 +1,7 @@
-/@  txt
+/@  sky
 |%
-++  state  %txt
-++  poke   (sy %txt ~)
+++  state  %sky
+++  poke   (sy %sky ~)
 ++  kids   *kids:neo
 ++  deps   *deps:neo
 ++  form
@@ -10,8 +10,8 @@
   ++  poke
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo vase)
-    ?>  =(%txt stud)
-    =/  new  (txt !<(txt vax))
+    ?>  =(%sky stud)
+    =/  new  (sky !<(sky vax))
     `!>(new)
   ++  init
     |=  vas=(unit vase)
