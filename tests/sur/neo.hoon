@@ -50,4 +50,42 @@
     %+  expect-eq  !>(~)
     !>((find:peon:neo comment-pith (~(del in all-pish) comment-pish)))
   ==
+++  curb-test
+  ^-  curb:neo
+  :~  %or
+    :-  %sol
+    [[%rol %sender pro/%sol-addr] [%rol %receiver pro/%sol-addr]]
+  ==
+++  sut  -:!>(~)
+++  curb-test-hoon
+  ^-  type
+  =;  =hoon
+    =<  -
+    %-  sped
+    (~(mint ut sut) %noun hoon)
+  !,  *hoon
+  ^~
+  =<  *typ
+  |%
+  +$  typ
+    $%  [%eth sender=@uxH receiver=@uxH]
+        [%sol sender=@uxH receiver=@uxH]
+    ==
+  --
+++  dummy-get
+  |=  =stud:neo
+  -:!>(*@uxH)
+++  raw  `*`[%sol 0x0 0x0]
+++  left
+  ^-  vase
+  [curb-test-hoon raw]
+++  right
+  [res raw]
+++  res
+  (compile-curb:neo curb-test dummy-get)
+::
+++  test-compile-curb
+  %-  (slog (sell:neo !>(-:left)) ~)
+  %-  (slog (sell:neo !>(-:right)) ~)
+  (expect-eq left right)
 --
