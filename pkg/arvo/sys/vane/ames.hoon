@@ -1369,7 +1369,7 @@
       +$  note
         $~  [%b %wait *@da]
         $%  $:  %a
-                $>(?(%deep %keen) task:ames)
+                $>(?(%deep %keen %mako) task:ames)
             ==
             $:  %b
                 $>(?(%wait %rest) task:behn)
@@ -1675,8 +1675,8 @@
       ::
       +$  note
         $~  [%b %wait *@da]
-        $%  $:  %m
-                $>(?(%make-peek %make-poke %mess-ser %make-page) task:mesa)
+        $%  $:  %a
+                $>(?(%meek %mako %mess-ser %mage) task)
             ==
             $:  %b
                 $>(?(%wait %rest) task:behn)
@@ -4107,11 +4107,11 @@
                         ossuary.chum  align-bones
                    client-chain.chum  chain.peer-state
                   ==
-                =^  flow-moves  flows.chum   make-flows
+                =^  moves  flows.chum   make-flows
                 =.  chums.ames-state
                   (~(put by chums.ames-state) her known/chum)
-                =.  event-core  (emil flow-moves)
-                peer-core
+                ?>  ?=([[* [%pass ^ [%a %mako *]]] ~] moves)
+                peer-core(event-core (emil moves))
                 ::
                 ++  flow-queue  ((on ,@ud mesa-message:mesa) lte)
                 ++  align-bones
@@ -5838,7 +5838,7 @@
               %hear  (on-hear:event-core lane.task blob.task dud)
             ==
           ::
-          ?-  -.task
+          ?+  -.task  !! ::  XX  %mesa migration
             %born  on-born:event-core
             %hear  (on-hear:event-core [lane blob ~]:task)
             %dear  (on-dear:event-core +.task)
@@ -6566,7 +6566,7 @@
             %-  ev-pave
             ?~  inn=(inner-path-to-beam *@p path)  ~
             ~|  u.inn
-            ?>  =([[%m %x] *@p %$ ud+1] [vew -.bem]:u.inn)
+            ?>  =([[%a %x] *@p %$ ud+1] [vew -.bem]:u.inn)
             s.bem.u.inn
           ::
           ++  ev-decrypt-load  :: XX refactor with path decryption
@@ -6894,7 +6894,7 @@
                 fo-wire:(fo-abed:fo hen [bone dire]:pok ~)
               =/  =space  chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
               %+  ev-emit  hen
-              [%pass wire %m make-peek/[space [her pat]:poke-name]]
+              [%pass wire %a meek/[space [her pat]:poke-name]]
             ::
             =/  res  (ev-decrypt-load [[her pat]:poke-name] dat.data)
             %:  ev-mess-poke
@@ -6908,7 +6908,7 @@
             |=  =name:pact
             ?.  =(our her.name)
               ev-core
-            =/  res=(unit (unit cage))  (rof ~ /mesa %mx (name-to-beam name))
+            =/  res=(unit (unit cage))  (rof ~ /mesa %ax (name-to-beam name))
             ?.  ?=([~ ~ ^] res)
               ev-core
             (ev-emit hen %give %send ~ !<(@ q.u.u.res))
@@ -6974,7 +6974,7 @@
                   =/  =spar:ames  [her.name inner-path]
                   =/  =auth:mess  [%| *@uxH] :: XX p.aut.data is ~
                   %+  ev-emit  [/ames]~
-                  [%pass /message %m %mess-ser sealed-path %page spar auth dat.data]
+                  [%pass /message %a %mess-ser sealed-path %page spar auth dat.data]
                 ::  no; then this should be the first fragment, and auth should be present
                 ::
                 ~|  [fag=fag tot=tot.data]
@@ -6987,7 +6987,7 @@
                   =/  =spar:ames  [her.name inner-path]
                   =/  =auth:mess  p.aut.data
                   %+  ev-emit  [/ames]~
-                  [%pass /message %m %mess-ser sealed-path %page spar auth dat.data]
+                  [%pass /message %a %mess-ser sealed-path %page spar auth dat.data]
                 ::  no; then the proof should be inlined; verify it
                 ::  (otherwise, we should have received an %auth packet already)
                 ::
@@ -7046,7 +7046,7 @@
               =/  =auth:mess  [%| *@uxH] :: XX should be stored in ps?
               =/  res         (rep 13 (flop fags.ps))
               %+  ev-emit  [/ames]~
-              [%pass /message %m %mess-ser sealed-path %page spar auth res]
+              [%pass /message %a %mess-ser sealed-path %page spar auth res]
             ==
           ::
           +|  %messages-entry-point
@@ -7313,7 +7313,7 @@
           ++  ev-get-page
             |=  =name:pact
             ^-  (unit data:pact)
-            =/  res=(unit (unit cage))  (rof ~ /mesa %mx (name-to-beam name))
+            =/  res=(unit (unit cage))  (rof ~ /mesa %ax (name-to-beam name))
             ?.  ?=([~ ~ *] res)  ~
             =;  page=pact:pact
               ?>(?=(%page -.page) `q.page)
@@ -7430,7 +7430,7 @@
                   ?:(=(%cork command) ~ [(scot %ud seq) ~])
               ==
             ::
-            ++  fo-view-beam  |=(=path `^path`[vane=%m care=%x case='1' desk=%$ path])
+            ++  fo-view-beam  |=(=path `^path`[vane=%a care=%x case='1' desk=%$ path])
             ::
             ++  fo-wire
               ::  XX better names
@@ -7538,7 +7538,7 @@
               =:  send-window.state  (dec send-window.state)
                   next-load.state    +(next-load.state)
                 ==
-              ::  XX %ames call itself with a %make-poke task
+              ::  XX %ames call itself with a %mako task
               ::  on a wire used to infer the listener (the %poke %plea request; this)
               ::  when getting the %response $page with the %ack (tagged with %int)
               ::  and similarly for %naxplanation payloads (tagged with %ext)
@@ -7555,7 +7555,7 @@
                 [her^(fo-ack-path seq her our) (fo-pok-path seq our her)]
               =/  =space   chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
               =/  =wire    (fo-wire %int)
-              =.  fo-core  (fo-emit hen %pass wire %m make-poke/[space paths])
+              =.  fo-core  (fo-emit hen %pass wire %a mako/[space paths])
               loop
             ::
             +|  %response
@@ -7628,7 +7628,7 @@
                 ::
                 =/  =space  chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
                 =/  =path   (ev-mess-spac space (fo-cor-path seq her^our))
-                [hen %pass wire=(fo-wire %cor) %m make-peek/space^her^path]
+                [hen %pass wire=(fo-wire %cor) %a meek/space^her^path]
               ::  XX just fo-core(closing.state %.y)?
               (fo-take-done:fo-core(closing.state %.y, pending-ack.state %.y) ~)
             ::
@@ -7682,14 +7682,14 @@
                 ::  if error start %peek for naxplanation
                 ::
                 =/  =wire  (fo-wire %ext)
-                ::  XX %ames call itself with a %make-peek task
+                ::  XX %ames call itself with a %meek task
                 ::  on a wire used to infer the listener (the %poke %nax request; us)
                 ::  when getting the %response $page with or %naxplanation payloads
                 ::  (tagged with %ext)
                 ::
                 =/  =space  chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
                 =/  =path   (ev-mess-spac space (fo-nax-path seq her^our))
-                (fo-emit hen %pass wire %m make-peek/[space her^path])
+                (fo-emit hen %pass wire %a meek/[space her^path])
               ::  ack is for the first, oldest pending-ack sent message;
               ::  remove it and XX start processing cached acks
               ::
@@ -7776,7 +7776,7 @@
                 ::
                 (%*(fo-ack-path fo-core dire.side fo-flip-dire) seq our her)
               =/  =space  chum/[life.ames-state her [life symmetric-key]:sat.per]
-              (fo-emit hen %pass /make-page %m make-page/[space her^path])
+              (fo-emit hen %pass /make-page %a mage/[space her^path])
             ::
             --
           ::
@@ -8212,9 +8212,9 @@
             %keen  (ev-call:ev-core %keen +.task)
           ::  from internal %ames request
           ::
-            %make-peek  (ev-make-peek:ev-core +.task)
-            %make-poke  (ev-make-poke:ev-core +.task)
-            %make-page  (ev-make-page:ev-core +.task)
+            %meek  (ev-make-peek:ev-core +.task)
+            %mako  (ev-make-poke:ev-core +.task)
+            %mage  (ev-make-page:ev-core +.task)
           ::  XX
           ::
             %heer      (ev-call:ev-core task)  ::  XX dud
