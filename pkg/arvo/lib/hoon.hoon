@@ -6284,7 +6284,6 @@
               r=(pair seminoun (map term tome))         ::  chapters
           ==                                            ::
 +$  garb  (trel (unit term) poly vair)                  ::  core
-:: put core label in the (unit term)
 +$  poly  ?(%wet %dry)                                  ::  polarity
 +$  foot  $%  [%dry p=hoon]                             ::  dry arm, geometric
               [%wet p=hoon]                             ::  wet arm, generic

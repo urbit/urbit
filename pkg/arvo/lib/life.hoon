@@ -7,13 +7,13 @@
   ?>  =(pax /how/many)
   many
 ++  poke
-  |=  up=?
   :: ~.  +7..
+  |=  up=?
   ^-  _this
   ?:  up  this(many (inc many))
   this
 --
 
-:: [l=/vial.100 s=[& %vial]]
-:: [l=/one/vial.100 s=[[& &] [<one battery> %vial]]
-:: [l=/dec/one/vial.100 s=[[& | & &] <dec battery> ~ <one battery> %vial]
+:: [l=/v.100 s=[& %v]]
+:: [l=/one/v.100 s=[[& &] [<one battery> %v]]
+:: [l=/dec/one/v.100 s=[[& | & &] <dec battery> ~ <one battery> %v]

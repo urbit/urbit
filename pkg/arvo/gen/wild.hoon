@@ -20,6 +20,7 @@
 |=  [t=type]
 =|  gil=(set type)
 :: =|  wlt=wilt
+:: |-  ^-  wilt
 |-  ^-  ~
 ?+    t
     ~
@@ -27,20 +28,33 @@
   =+  $(t p.t)
   $(t q.t)
     [%core *]
+  ~&  [%core]
   ~&  [%type p.t]
   ~&  [%garb p.q.t]
+  ::  [%core p=type q=coil]
   ::  p.t type  ...
   ::  q.t coil
   ::    p.q.t garb  (trel (unit term) poly vair)
   ::    q.q.t type  ...
-  ::    seminoun is battery if already known
   ::    r.q.t (pair seminoun (map term tome))
-  ::      p.r.q.t seminoun  "partial noun"
+  ::      p.r.q.t seminoun  "partial noun" (battery if known)
   ::      q.r.q.t (map term tome)
   ::
   ::  +$  tome  (pair what (map term hoon))
   ::  +$  what  (unit (pair cord (list sect)))
-  $(t p.t)
+  =/  semi  `seminoun`p.r.q.t
+  ~&  semi+`@ux`(mug data.semi)  :: mug of the battery
+  =/  toms  `(list tome)`~(val by q.r.q.t)
+  =/  mats  `(list (map term hoon))`(turn toms |=(tom=tome q.tom))
+  =/  hots  `(list term)`(zing (turn mats |=(mat=(map term hoon) ~(tap in ~(key by mat)))))
+  =/  hons  `(list hoon)`(zing (turn mats |=(mat=(map term hoon) ~(val by mat))))
+  =/  mins  `(list (pair type nock))`(turn hons |=(hon=hoon (~(mint ut t) %noun hon)))
+  =/  mits  `(list type)`(turn mins |=(min=(pair type nock) p.min))
+  =+  %+  turn  mits  |=  ty=type
+                      ?:  (~(has in gil) ty)  ~
+                      ^$(t ty, gil (~(put in gil) ty))
+  ~
+  :: $(t p.t)
   ::  XX infer the type of each arm and continue into it
     [%face *]
   $(t q.t)
