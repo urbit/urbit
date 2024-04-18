@@ -4127,26 +4127,29 @@
                   (~(put in corked) bone ?:(=(%0 (mod bone 4)) %for %bak))
                 ::
                 ++  make-flows
-                  ^-  (quip move (map side:mesa flow-state:mesa))
+                  ^-  (quip move:mesa-helper (map side:mesa flow-state:mesa))
                   ::  forward flows
                   ::
-                  =^  forward-moves  flows.chum
+                  =^  moves  flows.chum
                     %-  ~(rep by snd.peer-state)
                     |=  $:  [=^bone pump=message-pump-state]
                             moves=(list move:mesa-helper)
                             flows=_flows.chum
                         ==
                     =|  flow=flow-state:mesa
-                    ?.  =(%0 (mod bone 4))
-                      ::  naxplanations
-                      ::
-                      moves^flows
+                    =/  =dire:mesa
+                       ?:  =(%0 (mod bone 4))  %for  :: %plea(s)
+                       %bak  ::  boon(s) and naxplanation(s)
+                    ::
+                    ::  XX if naxplanation bone, find reference flow?
+                    ::  XX what message got nacked? nax.peer-state is not used
+                    ::
                     =.    closing.flow  (~(has in closing.peer-state) bone)
                     =.  next-load.flow  next.pump
                     ::
                     =.  fo-core
-                      %*  .   fo-core
-                        flows.sat.per  (~(put by flows) bone^%for flow)
+                      %*  .  fo-core
+                        flows.sat.per  (~(put by flows) bone^dire flow)
                       ==
                     ::  XX  TODO live- packets in packet-pump-state.pump
                     ::
@@ -4170,20 +4173,21 @@
                       ::
                       |=  [=message current=_current.pump core=_fo-core]
                       :-  +(current)
-                      ?:  ?=(%naxplanation -.message)  core  :: XX TODO
+                      ?:  ?=(%naxplanation -.message)
+                        core  :: XX TODO bind naxplanation in nax.flow for the reference flow
                       %.  message
                       fo-call:(fo-abed:fo-core (got-duct bone) [bone %for] ~)
                     ::
                     :-  (weld forward-moves moves)
-                    (~(put in flows) [bone %for] flow)
+                    (~(put in flows) [bone dire] flow)
                   ::  backward flows
                   ::
                   =.  flows.chum
                     %-  ~(rep by rcv.peer-state)
                     |=  [[=^bone sink=message-sink-state] flows=_flows.chum]
                     =|  flow=flow-state:mesa
-                    ?.  =(%1 (mod bone 4))
-                      flows  :: XX
+                    ?:  =(%2 (mod bone 4))
+                      flows  :: %naxplanation %ack on receiver
                     ::  any partially received messages in live-messages.sink are dropped
                     ::
                     =:      closing.flow  (~(has in closing.peer-state) bone)
@@ -4195,47 +4199,24 @@
                       ::
                           nax.flow
                         %-  ~(gas by *_nax.flow)
+                        ::  if there are entries in nax/sink, we have nacked a
+                        ::  plea/boon, but we were waiting on the naxplanation.
+                        ::
+                        ::  naxplanations are not sent anymore, just exposed
+                        ::  in the namespace.
+                        ::
+                        ::  peeks for naxplanation won't be triggered in the
+                        ::  migration but rather from the re-send of the orginal
+                        ::  messages in the message pump
+                        ::
                         (turn ~(tap in nax.sink) (late *error:mesa))
                       ==
                     (~(put in flows) [bone %bak] flow)
                   ::  naxplanations
                   ::  XX  check that this is true
+                  ::  XX entries in nax.peer-state have not been used
                   ::
-                  ::entries in nax.peer-stat meen that we have unprocessed nacks
-                  ::  we have received a nack, but are waiting on the naxplanation
-                  ::  so the message pump still has messages that have not been acked,
-                  ::  and should still be in snd.pump which should have already been processed
-                  ::  peeks for naxplanation won't be triggered in the migration but rather from
-                  ::  the re-send of the messages in the message pump
-                  ::
-                  :: =.  flows.chum
-                  ::   %-  ~(rep by nax.peer-state)
-                  ::   |=  [[=^bone =message-num] flows=_flows.chum]
-                  ::   =|  flow=flow-state:mesa
-                  ::   ::  XX check if bone has been corked?
-                  ::   ::
-                  ::   =/  sink=message-sink-state  (~(got by rcv.peer-state) bone)
-                  ::   ?.  =(%3 (mod bone 4))
-                  ::     flows  :: XX
-                  ::   ::  XX same as backward messages (message-sink) refactor
-                  ::   ::
-                  ::   ::  any partially received messages in live-messages.sink are dropped
-                  ::   ::
-                  ::   =:      closing.flow  (~(has in closing.peer-state) bone)
-                  ::        last-acked.flow  last-acked.sink
-                  ::       ::  XX if there's a pending-vane ack it should have
-                  ::       ::  been sent to the vane already?
-                  ::       ::
-                  ::       pending-ack.flow  ?=(^ pending-vane-ack.sink)
-                  ::     ::
-                  ::         nax.flow
-                  ::       %-  ~(gas by *_nax.flow)
-                  ::       (turn ~(tap in nax.sink) (late *error:mesa))
-                  ::     ==
-                  ::   ::
-                  ::   ::
-                  ::   (~(put in flows) [bone %bak] flow)
-                  `flows.chum
+                  moves^flows.chum
                 ::
                 ++  make-peeks
                   :: |=  =_keens.peer-state
