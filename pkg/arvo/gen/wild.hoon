@@ -17,21 +17,17 @@
 +$  wilt  (list [l=* s=sock])  ::  list of labeled masked cores
 --
 ::
-|=  [t=type]
 =|  gil=(set type)
-:: =|  wlt=wilt
-:: |-  ^-  wilt
-|-  ^-  ~
+=|  wit=wilt
+|=  t=type
+^-  wilt
 ?+    t
-    ~
+    wit
     [%cell *]
-  =+  $(t p.t)
-  $(t q.t)
+  ~&  %cell
+  (weld $(t p.t) $(t q.t))
     [%core *]
-  ~&  [%core]
-  ~&  [%type p.t]
-  ~&  [%garb p.q.t]
-  ::  [%core p=type q=coil]
+  ::  [%core p=type q=coil] :: p is type of the payload
   ::  p.t type  ...
   ::  q.t coil
   ::    p.q.t garb  (trel (unit term) poly vair)
@@ -42,27 +38,38 @@
   ::
   ::  +$  tome  (pair what (map term hoon))
   ::  +$  what  (unit (pair cord (list sect)))
-  =/  semi  `seminoun`p.r.q.t
-  ~&  semi+`@ux`(mug data.semi)  :: mug of the battery
-  =/  toms  `(list tome)`~(val by q.r.q.t)
-  =/  mats  `(list (map term hoon))`(turn toms |=(tom=tome q.tom))
-  =/  hots  `(list term)`(zing (turn mats |=(mat=(map term hoon) ~(tap in ~(key by mat)))))
-  =/  hons  `(list hoon)`(zing (turn mats |=(mat=(map term hoon) ~(val by mat))))
-  =/  mins  `(list (pair type nock))`(turn hons |=(hon=hoon (~(mint ut t) %noun hon)))
-  =/  mits  `(list type)`(turn mins |=(min=(pair type nock) p.min))
-  =+  %+  turn  mits  |=  ty=type
-                      ?:  (~(has in gil) ty)  ~
-                      ^$(t ty, gil (~(put in gil) ty))
-  ~
-  :: $(t p.t)
-  ::  XX infer the type of each arm and continue into it
+  ~&  %core
+  ~&  [%payload p.t]
+  ~&  [%garb p.q.t]
+  =+  [semi chapters]=[p q]:r.q.t
+  ~&  batt+`@ux`(mug data.semi)  :: mug of the battery
+  =/  mats=(list (map term hoon))
+    (turn ~(val by chapters) |=(tom=tome q.tom))
+  =/  hops=(list (pair term hoon))
+    (zing (turn mats |=(mat=(map term hoon) ~(tap by mat))))
+  =/  mits=(list type)
+    (turn hops |=(hop=(pair term hoon) p:(~(mint ut t) %noun q.hop)))
+  =.  wit
+    %+  weld  wit  ^-  wilt
+    %-  zing
+    %+  turn  mits
+    |=  t=type
+    ?:  (~(has in gil) t)  wit
+    ^$(t t, gil (~(put in gil) t))
+  ?:  (~(has in gil) t)  wit
+  (weld wit $(t p.t, gil (~(put in gil) t)))
     [%face *]
+  ~&  %face
   $(t q.t)
     [%fork *]
-  (~(rep in p.t) |=([t=type ~] ^$(t t)))
+  ~&  %fork
+  %+  weld  wit  ^-  wilt
+  (zing (turn ~(tap in p.t) |=([t=type] ^$(t t))))
     [%hint *]
+  ~&  %hint
   $(t q.t)
     [%hold *]
-  ?:  (~(has in gil) t)  ~
+  ~&  %hold
+  ?:  (~(has in gil) t)  wit
   $(t (~(play ut p.t) q.t), gil (~(put in gil) t))
 ==

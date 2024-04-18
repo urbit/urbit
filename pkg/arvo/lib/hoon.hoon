@@ -8768,6 +8768,14 @@
       ==
   =+  sut=`type`%noun
   |%
+  ++  chut
+    |=  =chum
+    ^-  @t
+    ?@  chum
+      chum
+    ?@  +.chum
+      (cat 3 -.chum (scot %ud +.chum))
+    -.chum  ::  XX handle ven/pro/ver
   ++  clip
     |=  ref=type
     ?>  ?|(!vet (nest(sut ref) & sut))
@@ -10518,10 +10526,10 @@
       [%ktsg *]  $(gen p.gen)
       [%ktwt *]  (wrap(sut $(gen p.gen)) %lead)
       [%note *]  (hint [sut p.gen] $(gen q.gen))
-      [%sgcn *]  ?.  ?=([%brcn *] s.gen)  $(gen s.gen)
-                   ?@  p.gen
-                     $(gen s.gen(p `p.gen))
-                   $(gen s.gen(p `-.p.gen))
+      [%sgcn *]  =+  res=$(gen ~(open ap gen))
+                 ::  XX use repo
+                 ?>  ?=([%core *] res)
+                 res(p.p.q `(chut p.gen))
       [%sgzp *]  ~_(duck(sut ^$(gen p.gen)) $(gen q.gen))
       [%sggr *]  $(gen q.gen)
       [%tsgr *]  $(gen q.gen, sut $(gen p.gen))
