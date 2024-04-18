@@ -2985,7 +2985,6 @@
                 event-core
               abet:on-tame:(abed-peer:pe ship u.peer-state)
             ::
-            ::
             ++  on-tune
               |=  [=wire s=[=ship path=(pole knot)] roar=(unit roar)]
               ^+  event-core
@@ -8602,6 +8601,44 @@
       ::
       --
     ::
+    ++  peer
+      |%
+      +$  task  $%  task:mesa
+                    task:ames
+                ==
+      ::
+      ++  call
+        |=  [hen=duct dud=(unit goof) wrapped-task=(hobo task)]
+        :: ^-  [(list move) _mesa-gate]
+        =/  =task  ((harden task) wrapped-task)
+        ?+  -.task  !!  ::  XX %stun
+          ::  %ames-only tasks
+          ::
+            ?(%kroc %deep %hear %chum %cong)
+          ::  XX can we call the wrong core? still check if ship has migrated?
+          ::
+          (call:(ames now eny rof) hen dud task)
+          ::  %mesa-only tasks
+          ::
+            ?(%meek %mako %mage %heer %mess %mess-ser)
+          ::  XX can we call the wrong core? still check if ship has migrated?
+          ::
+          (call:(mesa now eny rof) hen dud task)
+          ::  peer-independent tasks
+          ::
+            ?(%vega %init %born)  :: XX %stun
+          (call:(mesa now eny rof) hen dud task)
+          ::  common tasks
+          ::
+            $?  %plug  %plea  %cork  %keen  %dear
+                %heed  %init  %yawn  %wham  %jilt
+                %prod  %sift  %snub  %spew  %stir
+                %trim  %tame
+            ==
+          !!
+        ::
+        ==
+      --
     --
 ::
 |%
