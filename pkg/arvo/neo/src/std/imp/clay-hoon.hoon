@@ -23,7 +23,7 @@
     |=  old=(unit vase)
     =+  !<(=desk (need old))
     :_  !>(desk)
-    [#/[p/our.bowl]/$/clay %poke %clay-req !>(`req:clay:neo`[%peer ~ desk /neo])]^~
+    [#/[p/our.bowl]/$/clay %poke %clay-req !>(`req:clay:neo`[%peer ~ desk /neo ~])]^~
   --
 --
   

@@ -317,7 +317,7 @@
   |%
   ::  $peer:clay: Request for file(s) subscription
   ::
-  +$  peer  [=desk =path]
+  +$  peer  [=desk =path as=(unit mark)]
   ::
   ::  $req:clay: Filesystem request
   ::   

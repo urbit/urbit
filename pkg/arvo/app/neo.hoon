@@ -92,7 +92,7 @@
       hear=(map name:neo sound:neo)
       $=  unix
       $:  timers=(jug @da pith:neo)
-          clay-peers=(map [src=pith hand=pith] [case=@ud =desk =path])
+          clay-peers=(map [src=pith hand=pith] [case=@ud =desk =path as=(unit mark)])
           http-req=(map @ta path)
       ==
       adult=_|
@@ -1151,12 +1151,16 @@
         %+  turn  kids
         |=  kid=path
         ^-  [path cage]
+        :: =?  kid   ?=(^ as.peer)
+          ::(snoc (snip kid) u.as.peer)
         :-  kid
-        :-  (rear kid)
-        .^(vase %cr (welp /(scot %p our.bowl)/[r.p.u.p.syn]/(scot %da now.bowl) kid))
-      ~&  path/path.peer
+        ~&  trying/kid
+        :-  (fall as.peer (rear kid))
+        %.  .^(vase %cr (welp /(scot %p our.bowl)/[r.p.u.p.syn]/(scot %da now.bowl) kid))
+        ^-  $-(vase vase)
+        ?~  as.peer  |=(=vase vase)
+        .^(tube:clay %cc (welp /(scot %p our.bowl)/[r.p.u.p.syn]/(scot %da now.bowl) /(rear kid)/[u.as.peer]))
       =.  res  (~(dip of res) path.peer)
-      ~&  res/res
       =/  =note:neo  [%poke %clay-res !>(`res:clay:neo`[hand case res])]
       =/  =move:neo  [[p/our.bowl #/$/clay] src note]
       =/  =wire      (welp /sys/clay/res wir)
