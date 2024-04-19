@@ -93,7 +93,7 @@
       $=  unix
       $:  timers=(jug @da pith:neo)
           clay-peers=(map [src=pith hand=pith] [case=@ud =desk =path as=(unit mark)])
-          http-req=(map @ta path)
+          eyre-req=(map @ta path)
       ==
       adult=_|
   ==
@@ -602,7 +602,7 @@
 ++  poke
   |=  [=mark =vase]
   ^+  run
-  ?:  =(%handle-http-request mark)
+  ?:  =(%handle-eyre-request mark)
     =-  (~(on-req srv id) req)
     !<([id=@ta req=inbound-request:eyre] vase)
   ?:  =(%neo-raw-poke mark)
@@ -854,7 +854,7 @@
   ::
   ++  err
     |=  =tang
-    =.  http-req.unix  (~(del by http-req.unix) eyre-id)
+    =.  eyre-req.unix  (~(del by eyre-req.unix) eyre-id)
     (send (error:gen:serv tang))
   ::
   ++  response
@@ -1041,13 +1041,13 @@
     =/  =move:neo
       :-  #/[p/our.bowl]/$/eyre/req/[eyre-id]
       [(pave:neo [ship rest]:pole) %poke pail]
-    =.  http-req.unix  (~(put by http-req.unix) eyre-id pole)
+    =.  eyre-req.unix  (~(put by eyre-req.unix) eyre-id pole)
     =.  run  (poke-move move)
     finish-post :: XX: stale
   ::
   ++  finish-post
-    =/  =(pole knot)  (~(got by http-req.unix) eyre-id)
-    =.  http-req.unix  (~(del by http-req.unix) eyre-id)
+    =/  =(pole knot)  (~(got by eyre-req.unix) eyre-id)
+    =.  eyre-req.unix  (~(del by eyre-req.unix) eyre-id)
     (response pole)
   --
 ::
@@ -2342,7 +2342,6 @@
 ++  scion
   |=  [want=kids:neo =pith:neo =pail:neo]
   ^-  (unit pail:neo)
-  ~&  scion/[want pith]
   ?~  pis=(find:peon:neo pith ~(key by want))
     ~
   =/  =port:neo  (~(got by want) u.pis)
@@ -2753,28 +2752,21 @@
       |=  =pail:neo
       ^+  site
       ?.  (si-can-poke p.pail)
-        ?:  ?&  =(%rely p.pail)
-                ?=([%poke *] q.q.init-move)
-                =(p.pail.q.q.init-move p.pail)
-            ==
+        ?:  =(%rely p.pail)
           ~&  >>  si-skip-rely/[src here]
           site
-        ?:  ?&  =(%gift p.pail)
-                ?=([%poke *] q.q.init-move)
-                =(p.pail.q.q.init-move p.pail)
-            ==
+        ?:  =(%gift p.pail)
           site
-        ?:  ?&  =(%ack p.pail)
-                ?=([%poke *] q.q.init-move)
-                =(p.pail.q.q.init-move p.pail)
-            ==
+        ?:  =(%ack p.pail)
           ~&  >>  si-skip-ack/[src here]
           site
         ~|(no-poke-at/[p.pail here] !!)
-
+      =/  old  state.icon.room
       =^  cards  state.icon.room
         (poke:si-form pail)
       =.  site  (si-emil cards)
+      ?:  =(old state.icon.room)
+        site
       ::  XX: maybe skip if no change?
       =.  ever.icon.room  (bump-ever ever.icon.room)
       =.  site  si-bump
