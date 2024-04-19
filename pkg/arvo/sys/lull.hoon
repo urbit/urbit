@@ -2734,7 +2734,7 @@
   |%
   +$  gift                                              ::  outgoing result
     $%  [%boon payload=*]                               ::  ames response
-        [%noon =duct payload=*]
+        [%noon id=* payload=*]
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
         [%flub ~]                                       ::  not ready to handle plea
         [%unto p=unto]                                  ::

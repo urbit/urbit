@@ -724,10 +724,6 @@
     ::
     ?+    sign-arvo  !!
       ::
-        [%ames %clog @]
-      =+  ;;([dap=@tas =duct] id.clog)
-      (mo-handle-sys-clog duct dap)
-      ::
         [%ames %done *]
       =/  err=(unit tang)
         ?~  error=error.sign-arvo
@@ -2358,7 +2354,9 @@
   =/  mo-core  (mo-abed:mo duct)
   ?-    -.task
       %clog
-    mo-abet:(mo-handle-sys-clog )
+    =+  ;;([dap=@tas =^duct] id.task)
+    mo-abet:(mo-handle-sys-clog:mo-core duct dap)
+      ::
       %deal
     =/  [=sack =term =deal]  [p q r]:task
     ?.  =(q.sack our)
