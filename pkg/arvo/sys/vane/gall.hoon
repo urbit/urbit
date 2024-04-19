@@ -2423,23 +2423,13 @@
         [%14 spore-14]
         [%15 spore-15]
     ==
-  +$  spore-16
-    $+  spore-16
-    $:  system-duct=duct
-        outstanding=(map [wire duct] (qeu remote-request))
-        contacts=(set ship)
-        eggs=(map term egg)
-        blocked=(map term (qeu blocked-move-15))
-        =bug
-        leaves=(unit [=duct =wire date=@da])
-    ==
   +$  spore-15
     $+  spore-15
     $:  system-duct=duct
         outstanding=(map [wire duct] (qeu remote-request))
         contacts=(set ship)
         eggs=(map term egg-15)
-        blocked=(map term (qeu blocked-move-15))
+        blocked=(map term (qeu blocked-move))
         =bug
         leaves=(unit [=duct =wire date=@da])
     ==
@@ -2448,7 +2438,7 @@
         outstanding=(map [wire duct] (qeu remote-request))
         contacts=(set ship)
         eggs=(map term egg-15)
-        blocked=(map term (qeu blocked-move-15))
+        blocked=(map term (qeu blocked-move))
         =bug
     ==
   ::
@@ -2460,17 +2450,8 @@
         blocked=(map term (qeu blocked-move-13))
         =bug
     ==
-  +$  blocked-move-15  [=duct =routes move=(each deal unto-15)]
   ::
-  +$  unto-15
-    $%  [%raw-fact =mark =noun]
-        [%poke-ack p=(unit tang)]
-        [%watch-ack p=(unit tang)]
-        [%fact =cage]
-        [%kick ~]
-    ==
-  ::
-  +$  blocked-move-13  [=duct routes=routes-13 move=(each deal unto-15)]
+  +$  blocked-move-13  [=duct routes=routes-13 move=(each deal unto)]
   +$  routes-13
     $:  disclosing=(unit (set ship))
         attributing=ship
@@ -2681,13 +2662,13 @@
     ^-  spore-14
     %=    old
         blocked
-      ^-  (map term (qeu blocked-move-15))
+      ^-  (map term (qeu blocked-move))
       %-  ~(run by blocked.old)
       |=  q=(qeu blocked-move-13)
-      %-  ~(gas to *(qeu blocked-move-15))
+      %-  ~(gas to *(qeu blocked-move))
       %+  turn  ~(tap to q)
       |=  blocked=blocked-move-13
-      ^-  blocked-move-15
+      ^-  blocked-move
       %=  blocked
         attributing.routes  [ship=attributing.routes.blocked path=/]
       ==
@@ -2703,8 +2684,8 @@
   ::
   ++  spore-15-to-16
     |=  old=spore-15
-    :-  %16
     ^-  spore-16
+    :-  %16
     %=    old
         eggs
       %-  ~(urn by eggs.old)
