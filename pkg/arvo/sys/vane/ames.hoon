@@ -1890,7 +1890,7 @@
           ::  lifecycle arms; mostly pass-throughs to the contained adult ames
           ::
           ++  scry  scry:adult-core
-          ++  stay  [%0 %larva queued-events ames-state.adult-gate]
+          ++  stay  !!  ::  boot directly into |mesa; larval stage gone
           ++  load
             |=  $=  old
                 $%  $:  %4
@@ -2012,13 +2012,9 @@
                         ==
                         [%adult state=ames-state-20]
                     ==  ==
-                    $:  %0                             :: directed messaging
-                    $%  $:  %larva
-                            events=(qeu queued-event)
-                            state=_ames-state
-                        ==
-                        [%adult state=_ames-state]
-                ==  ==  ==
+                    ::
+                    axle:mesa                          :: directed messaging
+                ==
 
             |^  ?-  old
                 [%4 %adult *]
@@ -2223,13 +2219,7 @@
               =.  queued-events  events.old
               larval-gate
             ::
-                [%0 %adult *]  (load:adult-core state.old)
-            ::
-                [%0 %larva *]
-              ~>  %slog.1^leaf/"ames: larva %0 load"
-              =.  queued-events  events.old
-              =.  adult-gate     (load:adult-core state.old)
-              larval-gate
+                [%0 *]  (load:adult-core old)
             ==
             ::
             ++  event-9-til-11-to-12
@@ -5900,7 +5890,7 @@
         [moves ames-gate]
       ::  +stay: extract state before reload
       ::
-      ++  stay  [%0 %adult ames-state]
+      ++  stay  ames-state
       ::  +load: load in old state after reload
       ::
       ++  load
@@ -8643,8 +8633,8 @@
 ::
 |%
 ++  call  call:(ames now eny rof)
+++  take  take:(ames now eny rof)
+++  stay  stay:(ames now eny rof)
 ++  load  load:(ames now eny rof)
 ++  scry  scry:(ames now eny rof)
-++  stay  stay:(ames now eny rof)
-++  take  take:(ames now eny rof)
 --
