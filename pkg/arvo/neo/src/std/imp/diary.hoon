@@ -8,7 +8,7 @@
 ++  poke  (sy %diary-diff ~)
 ++  kids
   %-  ~(gas by *kids:neo)
-  :~  :-  ~[|/%da]
+  :~  :-  [|/%da |]
       [%txt %sig]
   ==
 ++  deps  *deps:neo

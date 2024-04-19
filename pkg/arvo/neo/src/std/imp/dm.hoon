@@ -10,7 +10,7 @@
 ++  poke  (sy %dm-diff %rely ~)
 ++  kids
   %-  ~(gas by *kids:neo)
-  :~  :-  ~[|/%da]
+  :~  :-  [|/%da |]
       [%message %sig]
   ==
 ++  deps
@@ -22,7 +22,7 @@
   :+  req=|  [%sig %dm-diff]
   :+  ~  %y
   %-  ~(gas by *kids:neo)
-  :~  :-  [|/%da]~
+  :~  :-  [|/%da |]
       [%message %sig]
     ==
   ==

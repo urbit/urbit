@@ -2327,22 +2327,26 @@
   ==
 ++  plag
   |=  [want=stud:neo have=pail:neo]
-  ^-  pail:neo
+  ^-  (unit pail:neo)
   ~|  plug/[p.have want]
   ?:  =(want p.have)
-    have
+    `have
   ?:  =(want %sig)
-    [%sig *vase]
+    `[%sig *vase]
+  ?.  (~(has by con.fiesta) [p.have want])
+    ~
+    
   =/  conv   run:~(do con (~(got by con.fiesta) [p.have want]))
-  [want (slam conv q.have)]
+  `[want (slam conv q.have)]
 ::
 ++  scion
   |=  [want=kids:neo =pith:neo =pail:neo]
   ^-  (unit pail:neo)
+  ~&  scion/[want pith]
   ?~  pis=(find:peon:neo pith ~(key by want))
     ~
   =/  =port:neo  (~(got by want) u.pis)
-  `(plag state.port pail)
+  (plag state.port pail)
 ::
 ++  moor
   |=  [want=quay:neo =name:neo]
@@ -2350,7 +2354,7 @@
   =/  =care:neo  (get-care:quay:neo want)
   =*  d  ~(. dorm name)
   =/  =cane:neo   (cane:d care)
-  =.  pail.cane  (plag state.p.want pail.cane)
+  =.  pail.cane  (need (plag state.p.want pail.cane))
   =?  kids.cane  ?=(^ q.want)
     %-  ~(gas by *(map pith:neo [ever:neo pail:neo]))
     %+  murn  ~(tap by kids.cane)
@@ -2421,6 +2425,8 @@
           down=(list move:neo)
           up=(list move:neo)
           change=(map pith mode:neo)
+          changes=(map pith mode:neo)
+          gifts=(list [pith:neo gift:neo])
       ==
   |=  =move:neo
   =/  src=name:neo  (de-pith:name:neo p.move)
@@ -2440,7 +2446,7 @@
     ^+  run
     ?:  =([~ ~] block)  
       =.  cards  (welp cards (turn up deal))
-      (dial change)
+      (dial changes)
         :: %+  turn  ~(tap by change)
         ::  |=([=pith:neo =mode:neo] ^+(+< [[p/our.bowl pith] mode]))
       :: run
@@ -2474,6 +2480,21 @@
     [%agent [her dap.bowl] %poke neo-raw-poke+!>(raw)]
   ++  arvo  .
   ++  emit  |=(=move:neo arvo(down [move down]))
+  ++  give
+    ^+  arvo
+    ?~  gifts
+      arvo
+    =/  [=pith:neo =gift:neo]  i.gifts
+    =>  .(gifts `(list [pith:neo gift:neo])`gifts)
+    =.  gifts
+      ?>  ?=(^ gifts)
+      t.gifts
+    =.  here  pith
+    =/  =pail:neo
+      gift/!>(gift)
+    =^  cards=(list card:neo)  arvo
+      (soft-site |.(si-abet:(si-poke:site pail)))
+    (ingest cards)
   ++  trace-card
     |=  =move:neo
     ^-  tank
@@ -2488,13 +2509,34 @@
     ==
   ++  inside  (cury is-parent init)
   ++  echo  arvo  :: TODO walk done
+  ++  finalize
+    ^+  arvo
+    ~&  finalising/change
+    
+    =.  gifts
+      =-  ~(tap by -)
+      ^-  (map pith:neo gift:neo)
+      %+  roll  ~(tap by change)
+      |=  [[=pith:neo =mode:neo] out=(map pith:neo gift:neo)]
+      ?~  par=(parent:of-top pith)
+        out
+      =/  parent  (~(gut by out) u.par *gift:neo)
+      =.  parent  (~(put by parent) (sub:pith:neo pith u.par) mode)
+      (~(put by out) u.par parent)
+    =.  changes  (~(uni by changes) changes)
+    =.  change   *(map pith:neo mode:neo)
+    ?~  gifts
+      arvo
+    give
+    :: $(gifts t.gifts)
+    
   ++  work
     ^+  arvo
     |-  ^+  arvo
     ?^  err.block
       arvo
     ?~  down
-      arvo
+      finalize
     =/  nex=move:neo  i.down
     =/  new-arvo  (apply:arvo(down t.down) nex) :: XX: weird compiler?
     $(arvo new-arvo, done (snoc done nex))
@@ -2570,6 +2612,8 @@
     arvo
   ++  validate-kids
     ^-  ?
+    ?:  =(1 1)
+      &
     ?~  par-pith=(parent:of-top here)
       & :: XX: review
     =/  parent=room:neo  (got:of-top u.par-pith)
@@ -2599,7 +2643,8 @@
     =/  =deps:neo  deps:firm
     =^  bad=(set term)  get.block
       (check-conf conf deps:firm)
-    ?>  validate-kids 
+    ?.  validate-kids 
+      !!
     ?.  =(~ bad)
       ~|  missing-dependecies/~(tap in bad)
       !!
@@ -2714,7 +2759,19 @@
             ==
           ~&  >>  si-skip-rely/[src here]
           site
+        ?:  ?&  =(%gift p.pail)
+                ?=([%poke *] q.q.init-move)
+                =(p.pail.q.q.init-move p.pail)
+            ==
+          site
+        ?:  ?&  =(%ack p.pail)
+                ?=([%poke *] q.q.init-move)
+                =(p.pail.q.q.init-move p.pail)
+            ==
+          ~&  >>  si-skip-ack/[src here]
+          site
         ~|(no-poke-at/[p.pail here] !!)
+
       =^  cards  state.icon.room
         (poke:si-form pail)
       =.  site  (si-emil cards)

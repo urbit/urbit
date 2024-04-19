@@ -4,7 +4,7 @@
 ++  poke   (sy %circle-diff ~)
 ++  kids   
   %-  ~(gas by *kids:neo)
-  :~  [~[|/%p] %sig %sig]
+  :~  [[|/%p |] %sig %sig]
   ==
 ++  deps   *deps:neo
 ++  form

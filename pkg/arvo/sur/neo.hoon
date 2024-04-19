@@ -515,7 +515,10 @@
   ::
   ++  duck  (dial dole)
   --
-
+:: $gift: notification that a children changed
+::
++$  gift  (map pith mode)
+  
 ::
 ::  $care: Perspective
 ::    
@@ -1298,7 +1301,14 @@
   ^-  port
   [a a]
 +$  dita  (each iota aura)
-+$  pish  (list dita)
+::  $pish: Pattern match over a path
+::  
+::    Ending with & indicates that the path match continues with
+::    Ending with | indicates that the path match stops
+::
++$  pish
+  $@(? [i=dita t=pish])
+
 +$  conf  (map term pith)
 +$  card  (pair pith note)
 +$  request
@@ -1718,8 +1728,8 @@
   ++  match
     |=  [nedl=pish hstk=pith]
     ^-  ?
-    ?~  nedl
-      =(~ hstk)
+    ?@  nedl
+      |(nedl =(~ hstk))
     ?~  hstk
       |
     ?:  ?=(%& -.i.nedl)

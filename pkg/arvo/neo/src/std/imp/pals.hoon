@@ -47,7 +47,7 @@
 ++  poke  (sy %pals-diff ~)
 ++  kids
   %-  ~(gas by *kids:neo)
-  :~  :-  ~[&/%pals |/%p] :: /pals/[who=@p]
+  :~  :-  [&/%pals |/%p |] :: /pals/[who=@p]
       [%pal %pal-diff]   :: state = %pal, diff = %pal-diff
   ==
 ++  deps  *deps:neo
