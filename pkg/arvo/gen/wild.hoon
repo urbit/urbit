@@ -3,6 +3,7 @@
 ::::  /hoon/wild/gen
   ::
 /?    310
+/+  h=hoon  ::  XX remove later
 ::
 ::::
   ::
@@ -48,7 +49,7 @@
   =/  hops=(list (pair term hoon))
     (zing (turn mats |=(mat=(map term hoon) ~(tap by mat))))
   =/  mits=(list type)
-    (turn hops |=(hop=(pair term hoon) p:(~(mint ut t) %noun q.hop)))
+    (turn hops |=(hop=(pair term hoon) p:(~(mint ut.h t) %noun q.hop)))
   =.  wit
     %+  weld  wit  ^-  wilt
     %-  zing
@@ -71,5 +72,5 @@
     [%hold *]
   ~&  %hold
   ?:  (~(has in gil) t)  wit
-  $(t (~(play ut p.t) q.t), gil (~(put in gil) t))
+  $(t (~(play ut.h p.t) q.t), gil (~(put in gil) t))
 ==
