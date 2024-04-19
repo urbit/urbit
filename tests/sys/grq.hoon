@@ -172,18 +172,6 @@
       ~
     ==
   :-  t11  |.  :-  %|
-  ::  start the clog and kick process; give clog to publisher gall
-  ~?  >  dbug  'start the clog and kick process; give clog to publisher gall'
-  =^  t12  gall.bud
-    %:  gall-check-take:v  gall.bud
-      [~1111.1.4 0xbeef.dead *roof]
-      :+  /sys/lag  ~[/init]
-      [%ames %clog ~nec]
-      :~  :-  ~[/sys/req/~nec/pub /bone/~nec/0/1 //unix]
-          [%give %unto %kick ~]
-      ==
-    ==
-  :-  t12  |.  :-  %|
   ::  gall gives %kick %boon to ames
   ~?  >  dbug  'gall gives %kick %boon to ames'
   =^  t13  gall.bud

@@ -42,9 +42,9 @@
 ::  $move: Arvo-level move
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
-::  $state-17: overall gall state, versioned
+::  $state-16: overall gall state, versioned
 ::
-+$  state-17  [%17 state]
++$  state-16  [%16 state]
 ::  $state: overall gall state
 ::
 ::    system-duct: TODO document
@@ -390,11 +390,11 @@
       =bug
       leaves=(unit [=duct =wire date=@da])
   ==
-+$  spore-17  [%17 spore]
++$  spore-16  [%16 spore]
 --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
-=|  state=state-17
+=|  state=state-16
 |=  [now=@da eny=@uvJ rof=roof]
 =*  gall-payload  .
 ~%  %gall-top  ..part  ~
@@ -702,7 +702,7 @@
     ::
         %fact
       =+  [mark noun]=[p q.q]:cage.unto
-      (mo-give %noon [dap duct.unto] %d mark noun)
+      (mo-give %noon [dap [/gall/sys/req/[i.t.wire]/[dap] hen]] %d mark noun)
     ::
         %kick
       (mo-give %boon %x ~)
@@ -1552,7 +1552,7 @@
         =/  =mark  (~(gut by marks.yoke) duct p.cage)
         ::
         ?:  =(mark p.cage)
-          [duct %give %unto %fact duct cage.gift]~
+          [duct %give %unto %fact cage.gift]~
         =/  =mars:clay  [p.cage mark]
         =/  =case       da+now
         =/  bek=beak    [our q.beak.yoke case]
@@ -1572,7 +1572,7 @@
           :~  :*  duct  %pass  /nowhere  %c  %warp  our  q.beak.yoke  ~
                   %sing  %c  case  mars-path
               ==
-              [duct %give %unto %fact duct b.mars p.res]
+              [duct %give %unto %fact b.mars p.res]
           ==
         ==
       ::
@@ -1878,7 +1878,7 @@
           [unto ap-core]
         =/  =case  da+now
         ?:  ?=(%spider agent-name)
-          :-  [%fact ~ mark.unto !>(noun.unto)]
+          :-  [%fact mark.unto !>(noun.unto)]
           ap-core
         =/  sky  (rof [~ ~] /gall %cb [our q.beak.yoke case] /[mark.unto])
         ?.  ?=([~ ~ *] sky)
@@ -1888,7 +1888,7 @@
         =/  res  (mule |.((vale:dais noun.unto)))
         ?:  ?=(%| -.res)
           (mean leaf+"gall: ames vale fail {<mark.unto>}" p.res)
-        :-  [%fact ~ mark.unto p.res]
+        :-  [%fact mark.unto p.res]
         %-  ap-move  :_  ~
         :^  hen  %pass  /nowhere
         [%c %warp our q.beak.yoke ~ %sing %b case /[mark.unto]]
@@ -2408,12 +2408,11 @@
       =?  old  ?=(%13 -.old)  (spore-13-to-14 +.old)
       =?  old  ?=(%14 -.old)  (spore-14-to-15 +.old)
       =?  old  ?=(%15 -.old)  (spore-15-to-16 +.old)
-      =?  old  ?=(%16 -.old)  (spore-16-to-17 +.old)
-      ?>  ?=(%17 -.old)
+      ?>  ?=(%16 -.old)
       gall-payload(state old)
   ::
   +$  spore-any
-    $%  [%17 spore]
+    $%  [%16 spore]
         [%7 spore-7]
         [%8 spore-8]
         [%9 spore-9]
@@ -2423,7 +2422,6 @@
         [%13 spore-13]
         [%14 spore-14]
         [%15 spore-15]
-        [%16 spore-16]
     ==
   +$  spore-16
     $+  spore-16
@@ -2741,31 +2739,6 @@
         [a (snag (dec a) m)]
       ==
     ==
-  :: add duct to %fact to fix ames clogs
-  ::
-  ++  spore-16-to-17
-    |=  old=spore-16
-    ^-  spore-17
-    :-  %17
-    %=    old
-        blocked
-      ^-  (map term (qeu blocked-move))
-      %-  ~(run by blocked.old)
-      |=  q=(qeu blocked-move-15)
-      %-  ~(gas to *(qeu blocked-move))
-      %+  turn  ~(tap to q)
-      |=  blocked=blocked-move-15
-      ^-  blocked-move
-      ?:  ?=(%.y -.move.blocked)
-        blocked
-      =/  unto=unto-15  +.move.blocked
-      %=  blocked
-        move
-      ?.  ?=(%fact -.unto)
-        [%.n unto]
-      [%.n %fact ~ cage.unto]
-      ==
-    ==
   --
 ::  +scry: standard scry
 ::
@@ -2879,7 +2852,7 @@
           p.agent.u.yok
         on-save:p.agent.u.yok
       ==
-    ``noun+!>(`egg-any`[-:*spore-17 egg])
+    ``noun+!>(`egg-any`[-:*spore-16 egg])
   ::
   ?:  ?&  =(%w care)
           =([%$ %da now] coin)
@@ -3000,7 +2973,7 @@
 ::    TODO: superfluous? see +molt
 ::
 ++  stay
-  ^-  spore-17
+  ^-  spore-16
   =;  eggs=(map term egg)  state(yokes eggs)
   %-  ~(run by yokes.state)
   |=  =yoke
