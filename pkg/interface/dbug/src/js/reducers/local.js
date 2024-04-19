@@ -23,6 +23,7 @@ export class LocalReducer {
       this.clayCommits(data, state);
     //
       this.eyreBindings(data, state);
+      this.eyreCache(data, state);
       this.eyreConnections(data, state);
       this.eyreAuthentication(data, state);
       this.eyreChannels(data, state);
@@ -153,6 +154,13 @@ export class LocalReducer {
     const data = _.get(obj, 'eyreBindings', false);
     if (data) {
       state.bindings = data;
+    }
+  }
+
+  eyreCache(obj, state) {
+    const data = _.get(obj, 'eyreCache', false);
+    if (data) {
+      state.cache = data;
     }
   }
 

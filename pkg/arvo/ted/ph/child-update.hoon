@@ -18,9 +18,10 @@
   |=  [her=@p =desk]
   =/  m  (strand ,[path @t])
   ^-  form:m
-  ;<  ~        bind:m  (mount her desk)
-  ;<  our=@p   bind:m  get-our
-  ;<  now=@da  bind:m  get-time
+  ;<  ~         bind:m  (mount her desk)
+  ;<  our=@p    bind:m  get-our
+  ;<  now=@da   bind:m  get-time
+  ;<  tick=@ud  bind:m  get-tick
   |^
   =/  zuse-contents
     %^  cat  3  '=/  new-val  57  '
@@ -47,6 +48,6 @@
   ::
   ++  get-val
     |=  =path
-    (need (scry-aqua:util (unit @) our now (aqua-path path)))
+    (need (scry-aqua:util (unit @) our now tick (aqua-path path)))
   --
 --

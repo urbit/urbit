@@ -771,7 +771,7 @@
   ~%  %eyre-per-server-event  ..part  ~
   ::  gate that produces the +per-server-event core from event information
   ::
-  |=  [[eny=@ =duct now=@da tick=@ud rof=roof] state=server-state]
+  |=  [[eny=@uvJ =duct now=@da tick=@ud rof=roof] state=server-state]
   =/  eyre-id  (scot %ta (cat 3 'eyre_' (scot %uv (sham duct))))
   |%
   ::  +request-local: bypass authentication for local lens connections
@@ -798,14 +798,15 @@
     =*  headers  header-list.request
     ::  for requests from localhost, respect the "forwarded" header
     ::
-    =/  [secure=? =^address]
-      =*  same  [secure address]
+    =/  [secure=? host=(unit @t) =^address]
+      =/  host=(unit @t)  (get-header:http 'host' headers)
+      =*  same  [secure host address]
       ?.  =([%ipv4 .127.0.0.1] address)        same
       ?~  forwards=(forwarded-params headers)  same
-      :-  (fall (forwarded-secure u.forwards) secure)
+      :+  (fall (forwarded-secure u.forwards) secure)
+        (clap (forwarded-host u.forwards) host head)
       (fall (forwarded-for u.forwards) address)
     ::
-    =/  host  (get-header:http 'host' headers)
     =/  [=action suburl=@t]
       (get-action-for-binding host url.request)
     ::
@@ -907,11 +908,12 @@
     ::
     ?:  =('/_~_/' (end [3 5] url.request))
       (handle-http-scry authenticated request)
-    ::  handle requests to the cache
+    ::  handle requests to the cache, if a non-empty entry exists
     ::
-    =/  entry  (~(get by cache.state) url.request)
-    ?:  &(?=(^ entry) ?=(%'GET' method.request))
-      (handle-cache-req authenticated request val.u.entry)
+    =/  cached=(unit [aeon=@ud val=(unit cache-entry)])
+      (~(get by cache.state) url.request)
+    ?:  &(?=([~ @ ^] cached) ?=(%'GET' method.request))
+      (handle-cache-req authenticated request u.val.u.cached)
     ::
     ?-    -.action
         %gen
@@ -923,7 +925,7 @@
       ?>  =(%vase p.cag)
       =/  gat=vase  !<(vase q.cag)
       =/  res=toon
-        %-  mock  :_  (look rof ?.(authenticated ~ [~ ~]) /eyre)
+        %-  mock  :_  (look rof [~ ~] /eyre)
         :_  [%9 2 %0 1]  |.
         %+  slam
           %+  slam  gat
@@ -1054,13 +1056,11 @@
   ::  +handle-cache-req: respond with cached value, 404 or 500
   ::
   ++  handle-cache-req
-    |=  [authenticated=? =request:http entry=(unit cache-entry)]
+    |=  [authenticated=? =request:http entry=cache-entry]
     |^  ^-  (quip move server-state)
-    ?~  entry
-      (error-response 404 "cache entry for that binding was deleted")
-    ?:  &(auth.u.entry !authenticated)
+    ?:  &(auth.entry !authenticated)
       (error-response 403 ~)
-    =*  body  body.u.entry
+    =*  body  body.entry
     ?-    -.body
         %payload
       %-  handle-response
@@ -1307,11 +1307,23 @@
         o(session-id session.fex)
       ::  store the hostname used for this login, later reuse it for eauth
       ::
-      =?  endpoint.auth.state  ?=(^ host)
+      =?  endpoint.auth.state
+          ::  avoid overwriting public domains with localhost
+          ::
+          ?&  ?=(^ host)
+          ?|  ?=(~ auth.endpoint.auth.state)
+              !=('localhost' (fall (rush u.host host-sans-port) ''))
+          ==  ==
         %-  (trace 2 |.("eauth: storing endpoint at {(trip u.host)}"))
-        :+  user.endpoint.auth.state
+        =/  new-auth=(unit @t)
           `(cat 3 ?:(secure 'https://' 'http://') u.host)
-        now
+        =,  endpoint.auth.state
+        :+  user  new-auth
+        ::  only update the timestamp if the derived endpoint visibly changed.
+        ::  that is, it's not hidden behind a user-provided hardcoded url,
+        ::  and the new value is different from the old.)
+        ::
+        ?:(|(?=(^ user) =(new-auth auth)) time now)
       ::
       =;  out=[moves=(list move) server-state]
         out(moves [give-session-tokens :(weld moz moves.fex moves.out)])
@@ -3243,6 +3255,12 @@
     %https  `&
   ==
 ::
+++  forwarded-host
+  |=  forwards=(list (map @t @t))
+  ^-  (unit @t)
+  ?.  ?=(^ forwards)  ~
+  (~(get by i.forwards) 'host')
+::
 ++  parse-request-line
   |=  url=@t
   ^-  [[ext=(unit @ta) site=(list @t)] args=(list [key=@t value=@t])]
@@ -3364,7 +3382,7 @@
 =|  ax=axle
 ::  a vane is activated with current date, entropy, and a namespace function
 ::
-|=  [now=@da eny=@uvJ tick=@ rof=roof]
+|=  [now=@da tick=@ud eny=@uvJ rof=roof]
 ::  allow jets to be registered within this core
 ::
 ~%  %http-server  ..part  ~
@@ -3512,6 +3530,8 @@
     $(moves [mov moves], siz t.siz)
   ::
   ?:  ?=(%eauth-host -.task)
+    ?:  =(user.endpoint.auth.server-state.ax host.task)
+      [~ http-server-gate]
     =.  user.endpoint.auth.server-state.ax  host.task
     =.  time.endpoint.auth.server-state.ax  now
     [~ http-server-gate]
@@ -4149,7 +4169,7 @@
     ?~  entry=(~(get by cache) u.url)  ~
     ?.  =(u.aeon aeon.u.entry)         ~
     ?~  val=val.u.entry                ~
-    ?:  &(auth.u.val !=([~ ~] lyc))    ~ 
+    ?:  &(auth.u.val !=([~ ~] lyc))    ~
     ``noun+!>(u.val)
   :: private endpoints
   ?.  ?=([~ ~] lyc)  ~
@@ -4158,6 +4178,7 @@
     ?+  tyl  ~
       [%$ %whey ~]         =-  ``mass+!>(`(list mass)`-)
                            :~  bindings+&+bindings.server-state.ax
+                               cache+&+cache.server-state.ax
                                auth+&+auth.server-state.ax
                                connections+&+connections.server-state.ax
                                channels+&+channel-state.server-state.ax
@@ -4194,6 +4215,7 @@
   ?.  ?=(%$ ren)  ~
   ?+  syd  ~
     %bindings              ``noun+!>(bindings.server-state.ax)
+    %cache                 ``noun+!>(cache.server-state.ax)
     %connections           ``noun+!>(connections.server-state.ax)
     %authentication-state  ``noun+!>(auth.server-state.ax)
     %channel-state         ``noun+!>(channel-state.server-state.ax)

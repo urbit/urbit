@@ -978,8 +978,8 @@
         ::  rof: namespace resolver
         ::
         now=@da
+        tick=@ud
         eny=@uvJ
-        tick=@
         rof=roof
     ==
 ^?

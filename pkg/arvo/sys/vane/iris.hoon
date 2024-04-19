@@ -102,7 +102,7 @@
 ::  +per-client-event: per-event client core
 ::
 ++  per-client-event
-  |=  [[eny=@ =duct now=@da tick=@ud rof=roof] =state]
+  |=  [[eny=@uvJ =duct now=@da tick=@ud rof=roof] =state]
   |%
   ::  +request: makes an external web request
   ::
@@ -297,7 +297,7 @@
 =|  ax=axle
 ::  a vane is activated with current date, entropy, and a namespace function
 ::
-|=  [now=@da eny=@uvJ tick=@ rof=roof]
+|=  [now=@da tick=@ud eny=@uvJ rof=roof]
 ::  allow jets to be registered within this core
 ::
 ~%  %http-client  ..part  ~

@@ -79,7 +79,7 @@
 ::::::::                                                ::  dill tiles
 --
 =|  all=axle
-|=  [now=@da eny=@uvJ tick=@ rof=roof]                  ::  current invocation
+|=  [now=@da tick=@ud eny=@uvJ rof=roof]                ::  current invocation
 =>  ~%  %dill  ..part  ~
     |%
     ++  as                                              ::  per cause

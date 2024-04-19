@@ -2,6 +2,6 @@
 :-  %say
 |=  [[now=@da tick=@ud @ our=@p ^] [syd=desk ~] verb=_&]
 :*  %tang
-    leaf+"Notice: +vat is deprecated. use +vats which now takes one or more desks as arguments. e.g. '+vats %base %garden'"
+    leaf+"Notice: +vat is deprecated. use +vats which now takes one or more desks as arguments. e.g. '+vats %base %landscape'"
     (report-vat (report-prep our now tick) our now tick syd verb)
 ==

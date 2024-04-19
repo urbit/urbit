@@ -11,6 +11,7 @@ class Store {
       timers: [],
       commits: [],
       bindings: [],
+      cache: [],
       connections: [],
       authentication: {
         sessions: [],

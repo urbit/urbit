@@ -122,7 +122,7 @@
 --
 =|  khan-state
 =*  state  -
-|=  [now=@da eny=@uvJ tick=@ rof=roof]
+|=  [now=@da tick=@ud eny=@uvJ rof=roof]
 =*  khan-gate  .
 ^?
 |%

@@ -201,6 +201,13 @@ class UrbitApi {
     );
   }
 
+  getCache() {
+    this.getJson('/eyre/cache',
+      this.wrapLocal('eyreCache'),
+      this.showStatus('error fetching eyre cache')
+    );
+  }
+
   getConnections() {
     this.getJson('/eyre/connections',
       this.wrapLocal('eyreConnections'),
@@ -220,6 +227,11 @@ class UrbitApi {
       this.wrapLocal('eyreChannels'),
       this.showStatus('error fetching eyre channels')
     );
+  }
+
+  clearCache(url) {
+    return this.action("dbug", "json", { 'clear-eyre-cache': { url: url } })
+      .then(this.getCache.bind(this));
   }
 
   // local

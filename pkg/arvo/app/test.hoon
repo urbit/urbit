@@ -2,7 +2,8 @@
 !:
 |%
 +$  card  card:agent:gall
-+$  test  ?(%agents %marks %generators)
++$  command  $@(=test [=desk =test])
++$  test  ?(%agents %marks %generators %threads)
 +$  state
   $:  app=(set path)
       app-ok=?
@@ -10,6 +11,8 @@
       mar-ok=?
       gen=(set path)
       gen-ok=?
+      ted=(set path)
+      ted-ok=?
   ==
 --
 =,  format
@@ -26,12 +29,16 @@
   |=  [=mark =vase]
   ^-  [(list card) _this]
   ?>  (team:title [our src]:bowl)
+  =+  !<(cmd=command vase)
+  =?  cmd  ?=(@ cmd)
+    [q.byk.bowl test.cmd]
+  ?>  ?=(^ cmd)
   |^
-  =+  !<(=test vase)
-  ?-  test
+  ?-  test.cmd
     %marks       test-marks
     %agents      test-agents
     %generators  test-generators
+    %threads     test-threads
   ==
   ::
   ++  test-marks
@@ -100,7 +107,26 @@
       gen.state  (~(put in gen.state) i.paz)
     ==
   ::
-  ++  now-beck  `beck`byk.bowl(r [da+now.bowl ud+tick.bowl])
+  ++  test-threads
+    =|  fex=(list card)
+    ^+  [fex this]
+    ?>  =(~ ted.state)
+    =.  ted-ok.state  %.y
+    =+  .^(paz=(list path) ct+(en-bema now-beck /ted))
+    |-  ^+  [fex this]
+    ?~  paz  [(flop fex) this]
+    =/  xap=path  (flop i.paz)
+    ?.  ?=([%hoon *] xap)
+      $(paz t.paz)
+    =/  sing=card
+      :+  %pass  build+i.paz
+      [%arvo %c %warp our.bowl q.byk.bowl ~ %sing %a da+now.bowl i.paz]
+    %_  $
+      paz        t.paz
+      fex        [sing fex]
+      ted.state  (~(put in ted.state) i.paz)
+    ==
+  ++  now-beck  `beck`byk.bowl(q desk.cmd, r [da+now.bowl ud+tick.bowl])
   --
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
@@ -149,6 +175,15 @@
     =.  gen.state  (~(del in gen.state) path)
     ~?  =(~ gen.state)
       ?:(gen-ok.state %all-generators-built %some-generators-failed)
+    [~ this]
+  ::
+      [%ted *]
+    =/  ok  ?=(^ p.sign-arvo)
+    %-  (report path ok)
+    =?  ted-ok.state  !ok  %.n
+    =.  ted.state  (~(del in ted.state) path)
+    ~?  =(~ ted.state)
+      ?:(ted-ok.state %all-threads-built %some-threads-failed)
     [~ this]
   ==
 ++  on-fail   on-fail:def

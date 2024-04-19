@@ -86,8 +86,8 @@
   =/  eyre-core
     %:  gate.state
         now=now.state
-        eny=`@uvJ`0xdead.beef
         tick=0
+        eny=`@uvJ`0xdead.beef
         scry=scry-provides-code
     ==
   =^  moves  gate.state
@@ -102,8 +102,8 @@
   =/  eyre-core
     %:  gate.state
         now=now.state
-        eny=`@uvJ`0xdead.beef
         tick=0
+        eny=`@uvJ`0xdead.beef
         scry=scry-provides-code
     ==
   =^  moves  gate.state

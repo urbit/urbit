@@ -28,6 +28,6 @@
           scry=roof
           call-args=[=duct wrapped-task=(hobo task:gall)]
       ==
-  =/  gall-core  (nec now=now eny=`@`0xdead.beef tick=0 scry=scry)
+  =/  gall-core  (nec now=now tick=0 eny=`@`0xdead.beef scry=scry)
   (call:gall-core duct.call-args dud=~ wrapped-task.call-args)
 --

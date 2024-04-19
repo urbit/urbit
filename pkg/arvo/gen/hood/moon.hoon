@@ -23,6 +23,14 @@
   ?^  arg
     mon.arg
   (add our (lsh 5 (end 5 (shaz eny))))
+=/  ryf=(unit rift)
+  .^((unit rift) %j (en-bema [our %ryft da+now ud+tick] /(scot %p mon)))
+?^  ryf
+  %.  ~
+  %-  slog
+  :~  leaf+"can't create {(scow %p mon)}, it already exists."
+      'use |moon-breach and/or |moon-cycle-keys instead.'
+  ==
 =/  seg=ship  (sein:title our now tick mon)
 ?.  =(our seg)
   %-  %-  slog  :_  ~

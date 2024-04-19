@@ -393,7 +393,7 @@
       ==    ==
   ^-  [(list move:khan-gate) _khan-gate]
   =/  khan-core
-    (khan-gate now eny=`@uvJ`0xdead.beef tick=0 scry=scry)
+    (khan-gate now tick=0 eny=`@uvJ`0xdead.beef scry=scry)
   (call:khan-core [duct dud wrapped-task]:call-args)
 ++  khan-call-all
   |=  $:  khan-gate=_khan-gate
@@ -427,7 +427,7 @@
       ==    ==
   ^-  [(list move:khan-gate) _khan-gate]
   =/  khan-core
-    (khan-gate now eny=`@uvJ`0xdead.beef tick=0 scry=scry)
+    (khan-gate now tick=0 eny=`@uvJ`0xdead.beef scry=scry)
   (take:khan-core [wire duct dud sign]:take-args)
 ++  khan-take-all
   |=  $:  khan-gate=_khan-gate

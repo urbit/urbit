@@ -17,12 +17,4 @@
         [filt=@tas verb=_|]
     ==
 :-  %tang  ^-  tang
-?.  &(=(~ deks) =(%$ filt))
-  (report-vats our now tick deks filt verb)
-%-  zing
-%+  turn
-  %+  sort
-    =/  sed  .^((set desk) %cd (en-bema [our %$ [da+now ud+tick]] /))
-    (sort ~(tap in sed) |=([a=@ b=@] !(aor a b)))
-  |=([a=desk b=desk] ?|(=(a %kids) =(b %base)))
-|=(syd=desk (report-vat (report-prep our now tick) our now tick syd verb))
+(report-vats our now tick deks filt verb)

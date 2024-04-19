@@ -176,7 +176,7 @@
     ::
       ;~  pfix  tis
         ;~  pose
-          (parse-variable (jest %dir) ;~(pfix ace :(stag 0 %ex parse-rood)))
+          (parse-variable (cold %dir (jest 'dir ')) :(stag 0 %ex parse-rood))
           (parse-variable sym ;~(pfix ace parse-source))
         ==
       ==

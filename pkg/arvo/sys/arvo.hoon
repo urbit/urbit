@@ -207,12 +207,12 @@
       van=(map term (trap vase))
   ==
 +$  heir
-   $%  $:  %grub
-           $%  [?(%240 %239 %238 %237 %236) =grub]
-       ==  ==
-       [?(%240 %239 %238 %237) =debt:k237:versions =soul]
-       [%236 =debt:k236:versions =soul]
-   ==
+  $%  $:  %grub
+          $%  [?(%240 %239 %238 %237 %236) =grub]
+      ==  ==
+      [?(%240 %239 %238 %237) =debt:k237:versions =soul]
+      [%236 =debt:k236:versions =soul]
+  ==
 +$  plan  plan:k236:versions
 +$  soul
   $:  ::  identity, time, entropy
@@ -1190,7 +1190,7 @@
   ++  va
     =>  ~%  %va-ctx  ..va  ~
         |%
-        +$  vane-sample  [now=@da eny=@uvJ tick=@ud rof=rook]
+        +$  vane-sample  [now=@da tick=@ud eny=@uvJ rof=rook]
         ::
         ++  smit
           |=  [cap=tape sub=vase pax=path txt=@t]
@@ -1249,7 +1249,7 @@
         =/  o=omen  (omer-to-omen vis bam)
         ::  namespace reads receive no entropy
         ::
-        =/  sam=vane-sample  [now *@uvJ tick rok]
+        =/  sam=vane-sample  [now tick *@uvJ rok]
         =^  rig  sac
           ~>  %mean.'peek: activation failed'
           (~(slym wa sac) vax sam)
@@ -1273,7 +1273,7 @@
         |=  [hen=duct eny=@uvJ dud=(unit goof)]
         =*  duc  [duc.vil hen]
         =*  err  [dud.vil dud]
-        =/  sam=vane-sample  [now eny tick rok]
+        =/  sam=vane-sample  [now tick eny rok]
         =^  rig  sac
           ~>  %mean.'spin: activation failed'
           (~(slym wa sac) vax sam)
@@ -1951,8 +1951,7 @@
   ::
   =.  sol
     ?-  -.hir
-      ?(%240 %239 %238 %237)  soul.hir
-      %236  soul.hir
+      ?(%240 %239 %238 %237 %236)  soul.hir
     ==
   ::  clear compiler caches
   ::

@@ -518,7 +518,7 @@
   ^-  [tang _http-client-gate]
   ::
   =/  http-client-core
-    (http-client-gate now=now eny=`@uvJ`0xdead.beef tick=0 scry=scry)
+    (http-client-gate now=now tick=0 eny=`@uvJ`0xdead.beef scry=scry)
   ::
   =^  moves  http-client-gate  (call:http-client-core [duct dud wrapped-task]:call-args)
   ::
