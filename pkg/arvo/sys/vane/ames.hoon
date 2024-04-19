@@ -218,10 +218,7 @@
 ::
 ++  parse-bone-wire
   |=  =wire
-  ^-  %-  unit
-      $%  [%old her=ship =bone]
-          [%new her=ship =rift =bone]
-      ==
+  ^-  (unit parsed-bone-wire)
   ?.  ?|  ?=([%bone @ @ @ ~] wire)
           ?=([%bone @ @ ~] wire)
       ==
@@ -238,6 +235,11 @@
         `@p`(slav %p i.t.wire)
       `@ud`(slav %ud i.t.t.wire)
     `@ud`(slav %ud i.t.t.t.wire)
+  ==
+::
++$  parsed-bone-wire
+  $%  [%old her=ship =bone]
+      [%new her=ship =rift =bone]
   ==
 ::  +make-pump-timer-wire: construct wire for |packet-pump timer
 ::
@@ -2174,27 +2176,14 @@
           ~>  %slog.0^leaf/"ames: dropping malformed wire: {(spud wire)}"
           event-core
         ?>  ?=([@ her=ship *] u.parsed)
-        =*  her        her.u.parsed
-        =/  peer-core  (abed-got:pe her)
-        |^
-        ?:  ?&  ?=([%new *] u.parsed)
-                (lth rift.u.parsed rift.peer-state.peer-core)
-            ==
-          ::  ignore events from an old rift
-          ::
-          %-  %^  ev-trace  odd.veb  her
-              |.("dropping old rift wire: {(spud wire)}")
+        =/  peer-core  (abed-got:pe her.u.parsed)
+        ?~  bon=(bone-ok u.parsed wire rift.peer-state.peer-core)
           event-core
-        =/  =bone
-          ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
-        =?  peer-core  ?=([%old *] u.parsed)
-          %-  %^  ev-trace  odd.veb  her
-              |.("parsing old wire: {(spud wire)}")
-          peer-core
+        |^
         ::  relay the vane ack to the foreign peer
         ::
         =<  abet
-        ?~(error (send-ack bone) (send-nack bone u.error))
+        ?~(error (send-ack u.bon) (send-nack u.bon u.error))
         ::
         ::  if processing succeded, send positive ack packet and exit
         ::
@@ -2635,32 +2624,39 @@
         =<  abet
         (~(on-hear-shut-packet pe peer-state channel) [lane u.shut-packet dud])
       ::
+      ++  bone-ok
+        |=  [parsed=parsed-bone-wire =wire =rift]
+        ^-  (unit bone)
+        =*  her        her.parsed
+        ::
+        ?:  ?&  ?=([%new *] parsed)
+                (lth rift.parsed rift)
+            ==
+          ::  ignore events from an old rift
+          ::
+          %-  %^  ev-trace  odd.veb  her
+              |.("dropping old rift wire: {(spud wire)}")
+          ~
+        =/  =bone
+          ?-(parsed [%new *] bone.parsed, [%old *] bone.parsed)
+        =+  ?.  ?=([%old *] parsed)  ~
+          %-  %^  ev-trace  odd.veb  her
+              |.("parsing old wire: {(spud wire)}")
+          ~
+        `bone
+      ::
       ++  on-take-noon
         |=  [=wire payload=* id=*]
         ^+  event-core
         ?~  parsed=(parse-bone-wire wire)
           ~>  %slog.0^leaf/"ames: dropping malformed wire: {(spud wire)}"
           event-core
-        ::
         ?>  ?=([@ her=ship *] u.parsed)
-        =*  her        her.u.parsed
-        =/  peer-core  (abed-got:pe her)
-        ::
-        ?:  ?&  ?=([%new *] u.parsed)
-                (lth rift.u.parsed rift.peer-state.peer-core)
-            ==
-          ::  ignore events from an old rift
-          ::
-          %-  %^  ev-trace  odd.veb  her
-              |.("dropping old rift wire: {(spud wire)}")
+        =/  peer-core  (abed-got:pe her.u.parsed)
+        ?~  bone=(bone-ok u.parsed wire rift.peer-state.peer-core)
           event-core
-        =/  =bone
-          ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
-        =?  peer-core  ?=([%old *] u.parsed)
-          %-  %^  ev-trace  odd.veb  her
-              |.("parsing old wire: {(spud wire)}")
-          peer-core
-        abet:(check-clog:(on-memo:peer-core bone [%boon payload]) bone id)
+        ::
+        abet:(check-clog:(on-memo:peer-core u.bone [%boon payload]) u.bone id)
       ::  +on-take-boon: receive request to give message to peer
       ::
       ++  on-take-boon
@@ -2671,24 +2667,10 @@
           event-core
         ::
         ?>  ?=([@ her=ship *] u.parsed)
-        =*  her        her.u.parsed
-        =/  peer-core  (abed-got:pe her)
-        ::
-        ?:  ?&  ?=([%new *] u.parsed)
-                (lth rift.u.parsed rift.peer-state.peer-core)
-            ==
-          ::  ignore events from an old rift
-          ::
-          %-  %^  ev-trace  odd.veb  her
-              |.("dropping old rift wire: {(spud wire)}")
+        =/  peer-core  (abed-got:pe her.u.parsed)
+        ?~  bone=(bone-ok u.parsed wire rift.peer-state.peer-core)
           event-core
-        =/  =bone
-          ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
-        =?  peer-core  ?=([%old *] u.parsed)
-          %-  %^  ev-trace  odd.veb  her
-              |.("parsing old wire: {(spud wire)}")
-          peer-core
-        abet:(on-memo:peer-core bone [%boon payload])
+        abet:(on-memo:peer-core u.bone [%boon payload])
       ::  +on-plea: handle request to send message
       ::
       ++  on-plea
