@@ -2787,7 +2787,7 @@
           ?~  jsin=((soft json) noun.event)
             %.  [~ ~]
             (slog leaf+"eyre: dropping fake json for {(scow %ud request-id)}" ~)
-          [~ `[%fact %json !>(u.jsin)]]
+          [~ `[%fact ~ %json !>(u.jsin)]]
         ::  find and use tube from fact mark to json
         ::
         ::
@@ -2800,7 +2800,7 @@
         ?~  convert
           ((trace 0 |.("no convert from {(trip have)} to json")) [~ ~])
         ~|  "conversion failed from {(trip have)} to json"
-        [`[desk.event have] `[%fact %json (slym u.convert noun.event)]]
+        [`[desk.event have] `[%fact ~ %json (slym u.convert noun.event)]]
       ?~  jsyn  ~
       %-  some
       :-  ?~  from  ~

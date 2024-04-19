@@ -1283,7 +1283,7 @@
 +$  queued-event-9-til-11
   $+  queued-event-9-til-11
   $%  [%call =duct wrapped-task=(hobo task-9-til-11)]
-      [%take =wire =duct =sign]
+      [%take =wire =duct sign=sign-20]
   ==
 ::
 +$  task-9-til-11
@@ -1296,7 +1296,7 @@
 +$  queued-event-12-til-16
   $+  queued-event-12-til-16
   $%  [%call =duct wrapped-task=(hobo task-12-til-16)]
-      [%take =wire =duct =sign]
+      [%take =wire =duct sign=sign-20]
   ==
 ::
 +$  task-12-til-16
@@ -1316,10 +1316,32 @@
           [%kill =ship =bone]
   ==  ==
 ::
++$  queued-event-20
+  $+  queued-event-20
+  $%  [%call =duct wrapped-task=(hobo task)]
+      [%take =wire =duct sign=sign-20]
+  ==
+::
++$  sign-20
+  $+  sign-20
+  $~  [%behn %wake ~]
+  $%  $<(%gall sign)
+  $:  %gall
+    $%  $>(%flub gift:gall)
+    $:  %unto
+    $%  [%raw-fact =mark =noun]
+        $<(%fact unto:gall)
+        [%fact =cage]
+    ==
+    ==
+    ==
+  ==
+  ==
+::
 +$  queued-event-17-and-18
   $+  queued-event-17-and-18
   $%  [%call =duct wrapped-task=(hobo task-16-and-18)]
-      [%take =wire =duct =sign]
+      [%take =wire =duct sign=sign-20]
   ==
 ::
 +$  task-16-and-18
@@ -1399,7 +1421,7 @@
           $>(%flog task:dill)
       ==
       $:  %g
-          $>(%deal task:gall)
+          $>(?(%clog %deal) task:gall)
       ==
       $:  %j
           $>  $?  %private-keys
@@ -1433,7 +1455,7 @@
           gift:jael
       ==
       $:  @tas
-          $>(?(%boon %done) gift:ames)
+          $>(?(%noon %boon %done) gift:ames)
   ==  ==
 ::
 ::  $message-pump-task: job for |message-pump
@@ -1505,6 +1527,7 @@
             [%18 ames-state-17]
             [%19 ames-state-19]
             [%20 ^ames-state]
+            [%21 ^ames-state]
         ==
     ::
     |=  [now=@da eny=@ rof=roof]
@@ -1627,7 +1650,7 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%20 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%21 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
           $%  $:  %4
@@ -1737,12 +1760,19 @@
               ==  ==
               $:  %19                                 :: %keen & %deep modified
               $%  $:  %larva
-                      events=(qeu queued-event)
+                      events=(qeu queued-event-20)
                       state=ames-state-19
                   ==
                   [%adult state=ames-state-19]
               ==  ==
               $:  %20                                 :: start informal %ping
+              $%  $:  %larva
+                      events=(qeu queued-event-20)
+                      state=_ames-state.adult-gate
+                  ==
+                  [%adult state=_ames-state.adult-gate]
+              ==  ==
+              $:  %21                                 :: fix clog notifications
               $%  $:  %larva
                       events=(qeu queued-event)
                       state=_ames-state.adult-gate
@@ -1810,7 +1840,8 @@
           [%9 %larva *]
         ~>  %slog.0^leaf/"ames: larva %9 load"
         =.  cached-state  `[%9 state.old]
-        =.  queued-events  %-  event-17-and-18-to-last
+        =.  queued-events  %-  event-20-to-21
+                           %-  event-17-and-18-to-last
                            %-  event-12-til-16-to-17
                            %-  event-9-til-11-to-12
                            events.old
@@ -1824,7 +1855,8 @@
           [%10 %larva *]
         ~>  %slog.1^leaf/"ames: larva %10 load"
         =.  cached-state  `[%10 state.old]
-        =.  queued-events  %-  event-17-and-18-to-last
+        =.  queued-events  %-  event-20-to-21
+                           %-  event-17-and-18-to-last
                            %-  event-12-til-16-to-17
                            %-  event-9-til-11-to-12
                            events.old
@@ -1838,7 +1870,8 @@
           [%11 %larva *]
         ~>  %slog.1^leaf/"ames: larva %11 load"
         =.  cached-state  `[%11 state.old]
-        =.  queued-events  %-  event-17-and-18-to-last
+        =.  queued-events  %-  event-20-to-21
+                           %-  event-17-and-18-to-last
                            %-  event-12-til-16-to-17
                            %-  event-9-til-11-to-12
                            events.old
@@ -1852,7 +1885,8 @@
           [%12 %larva *]
         ~>  %slog.1^leaf/"ames: larva %12 load"
         =.  cached-state  `[%12 state.old]
-        =.  queued-events  %-  event-17-and-18-to-last
+        =.  queued-events  %-  event-20-to-21
+                           %-  event-17-and-18-to-last
                            %-  event-12-til-16-to-17
                            events.old
         larval-gate
@@ -1865,7 +1899,8 @@
           [%13 %larva *]
         ~>  %slog.1^leaf/"ames: larva %13 load"
         =.  cached-state  `[%13 state.old]
-        =.  queued-events  %-  event-17-and-18-to-last
+        =.  queued-events  %-  event-20-to-21
+                           %-  event-17-and-18-to-last
                            %-  event-12-til-16-to-17
                            events.old
         larval-gate
@@ -1878,7 +1913,8 @@
           [%14 %larva *]
         ~>  %slog.1^leaf/"ames: larva %14 load"
         =.  cached-state  `[%14 state.old]
-        =.  queued-events  %-  event-17-and-18-to-last
+        =.  queued-events  %-  event-20-to-21
+                           %-  event-17-and-18-to-last
                            %-  event-12-til-16-to-17
                            events.old
         larval-gate
@@ -1891,7 +1927,8 @@
           [%15 %larva *]
         ~>  %slog.1^leaf/"ames: larva %15 load"
         =.  cached-state  `[%15 state.old]
-        =.  queued-events  %-  event-17-and-18-to-last
+        =.  queued-events  %-  event-20-to-21
+                           %-  event-17-and-18-to-last
                            %-  event-12-til-16-to-17
                            events.old
         larval-gate
@@ -1904,7 +1941,8 @@
           [%16 %larva *]
         ~>  %slog.1^leaf/"ames: larva %16 load"
         =.  cached-state  `[%16 state.old]
-        =.  queued-events  %-  event-17-and-18-to-last
+        =.  queued-events  %-  event-20-to-21
+                           %-  event-17-and-18-to-last
                            %-  event-12-til-16-to-17
                            events.old
         larval-gate
@@ -1917,7 +1955,7 @@
           [%17 %larva *]
         ~>  %slog.1^leaf/"ames: larva %17 load"
         =.  cached-state  `[%17 state.old]
-        =.  queued-events  (event-17-and-18-to-last events.old)
+        =.  queued-events  (event-20-to-21 (event-17-and-18-to-last events.old))
         larval-gate
       ::
           [%18 %adult *]
@@ -1928,7 +1966,7 @@
           [%18 %larva *]
         ~>  %slog.1^leaf/"ames: larva %18 load"
         =.  cached-state  `[%18 state.old]
-        =.  queued-events  (event-17-and-18-to-last events.old)
+        =.  queued-events  (event-20-to-21 (event-17-and-18-to-last events.old))
         larval-gate
       ::
           [%19 %adult *]
@@ -1939,15 +1977,26 @@
           [%19 %larva *]
         ~>  %slog.1^leaf/"ames: larva %19 load"
         =.  cached-state  `[%19 state.old]
-        =.  queued-events  events.old
+        =.  queued-events  (event-20-to-21 events.old)
         larval-gate
       ::
-          [%20 %adult *]  (load:adult-core %20 state.old)
+          [%20 %adult *]  
+        =.  cached-state  `[%20 state.old]
+        ~>  %slog.0^leaf/"ames: larva %20 reload"
+        larval-gate
       ::
           [%20 %larva *]
         ~>  %slog.1^leaf/"ames: larva %20 load"
+        =.  cached-state  `[%20 state.old]
+        =.  queued-events  (event-20-to-21 events.old)
+        larval-gate
+      ::
+          [%21 %adult *]  (load:adult-core %21 state.old)
+      ::
+          [%21 %larva *]
+        ~>  %slog.1^leaf/"ames: larva %21 load"
         =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %20 state.old)
+        =.  adult-gate     (load:adult-core %21 state.old)
         larval-gate
       ==
       ::
@@ -1984,10 +2033,10 @@
       ::
       ++  event-17-and-18-to-last
         |=  events=(qeu queued-event-17-and-18)
-        ^-  (qeu queued-event)
+        ^-  (qeu queued-event-20)
         %-  ~(rep in events)
-        |=  [e=queued-event-17-and-18 q=(qeu queued-event)]
-        %-  ~(put to q)  ^-  queued-event
+        |=  [e=queued-event-17-and-18 q=(qeu queued-event-20)]
+        %-  ~(put to q)  ^-  queued-event-20
         ?.  ?=(%call -.e)  e
         =/  task=task-16-and-18  ((harden task-16-and-18) wrapped-task.e)
         %=    e
@@ -2004,6 +2053,20 @@
               %boon
             %naxplanation
           [%deep %nack ship.task nack-bone.task ;;(message [hed msg])]
+        ==
+      ++  event-20-to-21
+        |=  events=(qeu queued-event-20)
+        ^-  (qeu queued-event)
+        %-  ~(rep in events)
+        |=  [e=queued-event-20 q=(qeu queued-event)]
+        %-  ~(put to q)  ^-  queued-event
+        ?.  ?=(%take -.e)  e
+        ^-  queued-event
+        %=    e
+            sign
+          ?.  ?=([%gall %unto %fact *] sign.e)
+            sign.e
+          [%gall %unto %fact ~ cage.sign.e]
         ==
       --
     ::  +molt: re-evolve to adult-ames
@@ -2075,7 +2138,9 @@
         =+  ev-core=(ev [now eny rof] [/saxo]~ ames-state.adult-gate)
         [unix-duct.+.u.cached-state %give %saxo get-sponsors:ev-core]
       ::
-      ?>  ?=(%20 -.u.cached-state)
+      =?  u.cached-state  ?=(%20 -.u.cached-state)
+        [%21 +.u.cached-state]
+      ?>  ?=(%21 -.u.cached-state)
       =.  ames-state.adult-gate  +.u.cached-state
       [moz larval-core(cached-state ~)]
     --
@@ -2634,6 +2699,33 @@
         ::
         =<  abet
         (~(on-hear-shut-packet pe peer-state channel) [lane u.shut-packet dud])
+      ::
+      ++  on-take-noon
+        |=  [=wire payload=* id=*]
+        ^+  event-core
+        ?~  parsed=(parse-bone-wire wire)
+          ~>  %slog.0^leaf/"ames: dropping malformed wire: {(spud wire)}"
+          event-core
+        ::
+        ?>  ?=([@ her=ship *] u.parsed)
+        =*  her        her.u.parsed
+        =/  peer-core  (abed-got:pe her)
+        ::
+        ?:  ?&  ?=([%new *] u.parsed)
+                (lth rift.u.parsed rift.peer-state.peer-core)
+            ==
+          ::  ignore events from an old rift
+          ::
+          %-  %^  ev-trace  odd.veb  her
+              |.("dropping old rift wire: {(spud wire)}")
+          event-core
+        =/  =bone
+          ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
+        =?  peer-core  ?=([%old *] u.parsed)
+          %-  %^  ev-trace  odd.veb  her
+              |.("parsing old wire: {(spud wire)}")
+          peer-core
+        abet:(check-clog:(on-memo:peer-core bone [%boon payload]) bone id)
       ::  +on-take-boon: receive request to give message to peer
       ::
       ++  on-take-boon
@@ -2661,7 +2753,7 @@
           %-  %^  ev-trace  odd.veb  her
               |.("parsing old wire: {(spud wire)}")
           peer-core
-        abet:(check-clog:(on-memo:peer-core bone [%boon payload]) bone her)
+        abet:(on-memo:peer-core bone [%boon payload])
       ::  +on-plea: handle request to send message
       ::
       ++  on-plea
@@ -3652,13 +3744,12 @@
           abet:(call:(abed:mi:peer-core bone) %flub ~)
         ::
         ++  check-clog
-          |=  [=bone =ship]
+          |=  [=bone id=*]
           ^+  peer-core
           =/  =message-pump-state  (~(got by snd.peer-state) bone)
-          ?:  ?&  !=(0 (end 0 bone))
-                  (gth ~(wyt in unsent-messages.message-pump-state) msg.cong.ames-state)
-              ==
-            (pe-emit duct %give %clog ship)
+          ~&  [%check-clog ~(wyt in unsent-messages.message-pump-state)]
+          ?:  (gth ~(wyt in unsent-messages.message-pump-state) msg.cong.ames-state)
+            (pe-emit [/ames]~ %pass /clog %g %clog id)
           peer-core
         ::  +on-memo: handle request to send message
         ::
@@ -5388,7 +5479,7 @@
   |=  [=wire =duct dud=(unit goof) =sign]
   ^-  [(list move) _ames-gate]
   ?^  dud
-    ~|(%ames-take-dud (mean tang.u.dud))
+    ~&(%ames-take-dud (mean tang.u.dud))
   ::
   =/  event-core  (ev [now eny rof] duct ames-state)
   ::
@@ -5400,6 +5491,7 @@
     ?-  sign
       [@ %done *]   (on-take-done:event-core wire error.sign)
       [@ %boon *]   (on-take-boon:event-core wire payload.sign)
+      [@ %noon *]   (on-take-noon:event-core wire payload.sign id.sign)
     ::
       [%ames %tune *]  (on-tune:event-core wire [[ship path] roar]:sign)
     ::
@@ -5415,15 +5507,15 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%20 %adult ames-state]
+++  stay  [%21 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
   =<  |=  $=  old-state
-          $%  [%20 ^ames-state]
+          $%  [%21 ^ames-state]
           ==
       ^+  ames-gate
-      ?>  ?=(%20 -.old-state)
+      ?>  ?=(%21 -.old-state)
       ames-gate(ames-state +.old-state)
   ::  all state transitions are called from larval ames
   ::

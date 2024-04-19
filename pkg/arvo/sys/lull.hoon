@@ -828,6 +828,7 @@
   ::    Messaging Gifts
   ::
   ::    %boon: response message from remote ship
+  ::    %noon: boon with duct for clog tracking
   ::    %clog: notify vane that %boon's to peer are backing up locally
   ::    %done: notify vane that peer (n)acked our message
   ::    %lost: notify vane that we crashed on %boon
@@ -845,7 +846,7 @@
   ::
   +$  gift
     $%  [%boon payload=*]
-        [%clog =ship]
+        [%noon id=* payload=*]
         [%done error=(unit error)]
         [%lost ~]
         [%send =lane =blob]
@@ -2733,13 +2734,15 @@
   |%
   +$  gift                                              ::  outgoing result
     $%  [%boon payload=*]                               ::  ames response
+        [%noon =duct payload=*]
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
         [%flub ~]                                       ::  not ready to handle plea
         [%unto p=unto]                                  ::
     ==                                                  ::
   +$  task                                              ::  incoming request
     $~  [%vega ~]                                       ::
-    $%  [%deal p=sack q=term r=deal]                    ::  full transmission
+    $%  [%clog id=*]                                    ::  clog notification
+        [%deal p=sack q=term r=deal]                    ::  full transmission
         [%sear =ship]                                   ::  clear pending queues
         [%jolt =desk =dude]                             ::  (re)start agent
         [%idle =dude]                                   ::  suspend agent
@@ -2796,7 +2799,7 @@
             pen=(jug spar:ames wire)
             gem=(jug coop [path page])
     ==  ==
-  +$  egg-any  $%([%15 egg-15] [%16 egg])
+  +$  egg-any  $%([%15 egg-15] [%16 egg] [%17 egg])
   +$  egg-15
     $%  [%nuke sky=(map spur @ud)]
     $:  %live
@@ -2891,7 +2894,7 @@
     +$  sign
       $%  [%poke-ack p=(unit tang)]
           [%watch-ack p=(unit tang)]
-          [%fact =cage]
+          [%fact =duct =cage]
           [%kick ~]
       ==
     ++  form
@@ -3484,8 +3487,9 @@
           ?.  ?=(%fact -.sign.in)  `in
           ::
           :-  ~
-          :^  %agent  wire.in  %fact
-          (validate-mark q.q.cage.sign.in p.cage.sign.in bowl.strand-input)
+          :*  %agent  wire.in  %fact  duct.sign.in
+              (validate-mark q.q.cage.sign.in p.cage.sign.in bowl.strand-input)
+          ==
         ::  run the strand callback
         ::
         =/  =output  (form.eval-form strand-input)
