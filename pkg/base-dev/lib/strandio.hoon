@@ -205,7 +205,7 @@
   ?+    in.tin  `[%skip ~]
       ~  `[%wait ~]
     ::
-      [~ %sign * %mesa %mess-response sage=*]
+      [~ %sign * %ames %mess-response sage=*]
     ?.  =(wire wire.u.in.tin)
       `[%skip ~]
     `[%done sage.sign-arvo.u.in.tin]
@@ -369,7 +369,7 @@
   |=  [=wire =spar:mesa sec=(unit [@ @])]
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass wire %arvo %m %keen sec spar)
+  (send-raw-card %pass wire %arvo %a %keen sec spar)
 ::
 ++  keen-shut
   |=  [=wire =spar:ames]

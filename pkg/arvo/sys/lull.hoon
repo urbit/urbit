@@ -4521,7 +4521,10 @@
   ==
 +$  note-arvo                                           ::  out request $->
   $~  [%b %wake ~]
-  $%  [%a task:ames]
+  $%  $:  %a
+          $%  task:mesa
+              task:ames
+      ==  ==
       [%b task:behn]
       [%c task:clay]
       [%d task:dill]
@@ -4531,14 +4534,17 @@
       [%j task:jael]
       [%k task:khan]
       [%l task:lick]
-      [%m task:mesa]
+      [%m task:mesa]  :: XX remove
       [%$ %whiz ~]
       [@tas %meta vase]
   ==
 ::  full vane names are required in vanes
 ::
 +$  sign-arvo                                           ::  in result $<-
-  $%  [%ames gift:ames]
+  $%  $:  %ames
+          $%   gift:ames
+               gift:mesa
+      ==  ==
       $:  %behn
           $%  gift:behn
               $>(%wris gift:clay)
@@ -4555,7 +4561,7 @@
       [%jael gift:jael]
       [%khan gift:khan]
       [%lick gift:lick]
-      [%mesa gift:mesa]
+      [%mesa gift:mesa]  ::  XX remove
   ==
 ::  $unix-task: input from unix
 ::

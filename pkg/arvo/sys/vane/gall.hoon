@@ -574,9 +574,8 @@
       /sys/way/(scot %p ship)/[foreign-agent]
     ::
     =/  =note-arvo
-      =/  =path  /gm/[foreign-agent]
-      ::  [%a %plea ship %g path ames-request-all]
-      [%m %plea ship %g path ames-request-all]  ::  XX different mo-send-foreign-request for %mesa and %ames?
+      =/  =path  /ge/[foreign-agent]
+      [%a %plea ship %g path ames-request-all]
     ::
     =.  outstanding.state
       =/  stand
@@ -679,7 +678,7 @@
     ^+  mo-core
     ::
     ?>  ?=([%lag ~] wire)
-    ?>  ?=([?(%ames %mesa) %clog *] sign-arvo)
+    ?>  ?=([%ames %clog *] sign-arvo)
     ::
     =/  agents=(list [=dude =yoke])  ~(tap by yokes.state)
     |-  ^+  mo-core
@@ -735,7 +734,7 @@
     =/  foreign-agent   i.t.t.wire
     ::
     ?+    sign-arvo  !!
-        [?(%ames %mesa) %done *]
+        [%ames %done *]
       =/  err=(unit tang)
         ?~  error=error.sign-arvo
           ~
@@ -774,8 +773,7 @@
       ::
       =?  mo-core
           &(?=(^ err) |(?=(%watch-as remote-request) ?=(%watch remote-request)))
-        %+  mo-pass  sys+wire
-        ?-(-.sign-arvo %ames a/cork+ship, %mesa m/cork+ship)
+        (mo-pass sys+wire a/cork+ship)
       ::
       ?-  remote-request
         %watch-as  (mo-give %unto %watch-ack err)
@@ -788,8 +786,7 @@
         ::  the /nacked-leaves timer will re-send the %leave eventually.
         ::
         ?~  err
-          %+  mo-pass  sys+wire
-        ?-(-.sign-arvo %ames a/cork+ship, %mesa m/cork+ship)
+          (mo-pass sys+wire a/cork+ship)
         ::  if first time hearing a %nack for a %leave, after upgrade
         ::  or if all outstanding %leaves have been handled, set up timer
         ::
@@ -800,7 +797,7 @@
         mo-core
       ==
     ::
-        [?(%ames %mesa) %boon *]
+        [%ames %boon *]
       ?^  t.t.t.wire
         ::  kill subscriptions which use the old wire format
         ::
@@ -816,11 +813,10 @@
             =/  key  [[%sys wire] hen]
             =?  outstanding.state  =(~ (~(gut by outstanding.state) key ~))
               (~(del by outstanding.state) key)
-            %+  mo-pass  sys+wire
-            ?-(-.sign-arvo %ames a/cork+ship, %mesa m/cork+ship)
+            (mo-pass sys+wire a/cork+ship)
       ==
     ::
-        [?(%ames %mesa) %lost *]
+        [%ames %lost *]
       ::  note this should only happen on reverse bones, so only facts
       ::  and kicks
       ::
@@ -1207,7 +1203,6 @@
     |=  =wire
     ^+  mo-core
     ?>  ?=([%sys %way @ @ ~] wire)
-    ::  XX %mesa, /gm/[&4.wire]
     (mo-pass wire %a %plea (slav %p &3.wire) %g /ge/[&4.wire] %0 %u ~)
   ::
   ::  +ap: agent engine
@@ -2365,7 +2360,6 @@
             ?=  $?  %ames  %behn  %clay
                     %dill  %eyre  %gall
                     %iris  %jael  %khan
-                    %mesa
                 ==
             i.i.duct
         ==

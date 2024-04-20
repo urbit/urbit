@@ -273,7 +273,7 @@
     +$  note
       $~  [%b %wait *@da]
       $%  $:  %m
-              $>(?(%make-peek %make-poke %mess-ser %make-page) task:mesa)
+              $>(?(%meek %mako %mess-ser %mage) task:mesa)
           ==
           $:  %b
               $>(?(%wait %rest) task:behn)
@@ -761,7 +761,7 @@
           fo-wire:(fo-abed:fo hen [bone dire]:pok ev-chan ~)
         =/  =space  chum/[life.sat.per our life.ax symmetric-key.sat.per]
         %+  ev-emit  hen
-        [%pass wire %m make-peek/[space [her pat]:poke-name]]
+        [%pass wire %m meek/[space [her pat]:poke-name]]
       ::
       =/  res  (ev-decrypt-load [[her pat]:poke-name] dat.data)
       %:  ev-mess-poke
@@ -1407,7 +1407,7 @@
         =:  send-window.state  (dec send-window.state)
             next-load.state    +(next-load.state)
           ==
-        ::  XX %ames call itself with a %make-poke task
+        ::  XX %ames call itself with a %mako task
         ::  on a wire used to infer the listener (the %poke %plea request; this)
         ::  when getting the %response $page with the %ack (tagged with %int)
         ::  and similarly for %naxplanation payloads (tagged with %ext)
@@ -1424,7 +1424,7 @@
           [her^(fo-ack-path seq her our) (fo-pok-path seq our her)]
         =/  =space   chum/[life.sat.per our life.ax symmetric-key.sat.per]
         =/  =wire    (fo-wire %int)
-        =.  fo-core  (fo-emit hen %pass wire %m make-poke/[space paths])
+        =.  fo-core  (fo-emit hen %pass wire %m mako/[space paths])
         loop
       ::
       +|  %response
@@ -1497,7 +1497,7 @@
           ::
           =/  =space  chum/[life.sat.per our life.ax symmetric-key.sat.per]
           =/  =path   (ev-mess-spac space (fo-cor-path seq her^our))
-          [hen %pass wire=(fo-wire %cor) %m make-peek/space^her^path]
+          [hen %pass wire=(fo-wire %cor) %m meek/space^her^path]
         ::  XX just fo-core(closing.state %.y)?
         (fo-take-done:fo-core(closing.state %.y, pending-ack.state %.y) ~)
       ::
@@ -1551,14 +1551,14 @@
           ::  if error start %peek for naxplanation
           ::
           =/  =wire  (fo-wire %ext)
-          ::  XX %ames call itself with a %make-peek task
+          ::  XX %ames call itself with a %meek task
           ::  on a wire used to infer the listener (the %poke %nax request; us)
           ::  when getting the %response $page with or %naxplanation payloads
           ::  (tagged with %ext)
           ::
           =/  =space  chum/[life.sat.per our life.ax symmetric-key.sat.per]
           =/  =path   (ev-mess-spac space (fo-nax-path seq her^our))
-          (fo-emit hen %pass wire %m make-peek/[space her^path])
+          (fo-emit hen %pass wire %m meek/[space her^path])
         ::  ack is for the first, oldest pending-ack sent message;
         ::  remove it and XX start processing cached acks
         ::
@@ -1645,7 +1645,7 @@
           ::
           (%*(fo-ack-path fo-core dire.side fo-flip-dire) seq our her)
         =/  =space  chum/[life.ax her [life symmetric-key]:sat.per]
-        (fo-emit hen %pass /make-page %m make-page/[space her^path])
+        (fo-emit hen %pass /make-page %m mage/[space her^path])
       ::
       --
     ::
@@ -1695,11 +1695,11 @@
       ::
       ++  sy-born
         ::  XX
-        ~&  flow.dead.ax
-        =?  ev-core  ?=(~ +.flow.dead.ax)
-          (ev-emit ~[/mesa] %pass /dead-flow %b %wait `@da`(add now ~s1))
-        =?  flow.dead.ax  ?=(~ +.flow.dead.ax)
-          flow/`[~[/mesa] /dead-flow `@da`(add now ~s1)]
+        :: ~&  flow.dead.ax
+        :: =?  ev-core  ?=(~ +.flow.dead.ax)
+        ::   (ev-emit ~[/mesa] %pass /dead-flow %b %wait `@da`(add now ~s1))
+        :: =?  flow.dead.ax  ?=(~ +.flow.dead.ax)
+        ::   flow/`[~[/mesa] /dead-flow `@da`(add now ~s1)]
         =.  ev-core  (ev-emit hen %pass /private-keys %j %private-keys ~)
         sy-core(ax ax(unix-duct hen))
       ++  sy-init
@@ -2125,9 +2125,9 @@
       %keen  (ev-call:ev-core %keen +.task)
     ::  from internal %ames request
     ::
-      %make-peek  (ev-make-peek:ev-core +.task)
-      %make-poke  (ev-make-poke:ev-core +.task)
-      %make-page  (ev-make-page:ev-core +.task)
+      %meek  (ev-make-peek:ev-core +.task)
+      %mako  (ev-make-poke:ev-core +.task)
+      %mage  (ev-make-page:ev-core +.task)
     ::  XX
     ::
       %heer      (ev-call:ev-core task)  ::  XX dud
