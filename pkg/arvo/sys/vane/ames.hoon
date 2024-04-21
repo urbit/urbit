@@ -3731,7 +3731,6 @@
           |=  [=bone id=*]
           ^+  peer-core
           =/  =message-pump-state  (~(got by snd.peer-state) bone)
-          ~&  [%check-clog unsent-messages.message-pump-state]
           ?:  (gth ~(wyt in unsent-messages.message-pump-state) msg.cong.ames-state)
             (pe-emit [/ames]~ %pass /clog %g %clog id)
           peer-core
