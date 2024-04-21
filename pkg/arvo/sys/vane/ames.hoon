@@ -3730,8 +3730,9 @@
         ++  check-clog
           |=  [=bone id=*]
           ^+  peer-core
-          =/  =message-pump-state  (~(got by snd.peer-state) bone)
-          ?:  (gth ~(wyt in unsent-messages.message-pump-state) msg.cong.ames-state)
+          =/  m=(unit message-pump-state)  (~(get by snd.peer-state) bone)
+          ?~  m  peer-core
+          ?:  (gth ~(wyt in unsent-messages.u.m) msg.cong.ames-state)
             (pe-emit [/ames]~ %pass /clog %g %clog id)
           peer-core
         ::  +on-memo: handle request to send message
