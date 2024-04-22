@@ -6,11 +6,13 @@
   (update-crc 0x0 file)
 ++  make-crc-table
   ^-  (list @ux)
-  %+  turn  (gulf 0 255)  |=  a=@
-    %+  roll  (gulf 0 7)  |:  [b=1 c=a]
-      ?:  (gth (dis c 1) 0)
-        (mix 0xedb8.8320 (rsh [0 1] c))
-      (rsh [0 1] c)
+  %+  turn  (gulf 0 255)
+  |=  a=@
+  %+  roll  (gulf 0 7)
+  |:  [b=1 c=a]
+    ?:  (gth (dis c 1) 0)
+      (mix 0xedb8.8320 (rsh [0 1] c))
+    (rsh [0 1] c)
 ++  update-crc
   |=  [crc=@ux file=octs]
   ^-  @ux
@@ -23,11 +25,7 @@
   =/  input-list  (rip 3 q.file)
   =/  leading-zeros  (sub p.file (met 3 q.file))
   =?  input-list  (gth leading-zeros 0)
-    =/  i  0
-    |-
-    ?:  =(i leading-zeros)
-      input-list
-    $(input-list [0x0 input-list], i +(i))
+    (weld (reap leading-zeros 0x0) input-list)
   |-
   ?:  =(n (lent input-list))
     (mix c 0xffff.ffff)
