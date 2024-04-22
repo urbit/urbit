@@ -934,6 +934,7 @@
             :~
               [(weld #/[p/our.bowl] here) %make %sky `!>([%system ~ 0]) ~]
               [#/[p/our.bowl]/home/diary %make %diary `!>('') ~]
+              [#/[p/our.bowl]/home/tasks %make %task `!>(['' | ~]) ~]
               [#/[p/our.bowl]/home/iframes/wiki %make %iframe `!>('https://en.wikipedia.org/wiki/Main_Page') ~]
             ==
             |-
@@ -977,25 +978,53 @@
           ::
           =/  stud  (@tas (~(got by pam.purl) 'stud'))
           =/  conv  !<($-([@ manx] vase) (all-grab %node))
-          ?@  vert=(mole |.((conv [stud body])))
-            (send (manx-response:gen:serv ;/("failed to convert")))
-          =/  =pail:neo  [stud u.vert]
-          =.  run
-            %-  poke-move
-            :-  #/[p/our.bowl]/$/eyre/req/[eyre-id]
-            [(pave here) %poke pail]
-          %-  send
-          ::
-          %-  manx-response:gen:serv
-          =+  !<(grow=$-(pail:neo $-(=bowl:neo manx)) (all-grow %htmx))
-          ?^  man=(mole |.((grow pail)))
-            %-  u.man
-            =+  b=*bowl.neo  :: manually constructing a bowl. this is ugly
-            %=  b
-              here  (pave pax.purl)
-            ==
-          ;div: some sorta error occured
-          ::
+          =/  vert  (mule |.((conv [stud body])))
+          ?-  -.vert
+            %.n
+              %-  send
+              =-  -(status-code.response-header 400)
+              %-  manx-response:gen:serv
+              ;div.fc.p2.border.br1.scroll-x.scroll-y.wf.pre.mono
+                =style  "max-height: 400px;"
+                =here  (en-tape:pith:neo pith)
+                ;*
+                %+  turn  (tang p.vert)
+                |=  =tank
+                ;div: {(of-wall:format (~(win re tank) 0 55))}
+              ==
+            %.y
+              =/  =pail:neo  [stud p.vert]
+              =.  run
+                %-  poke-move
+                :-  #/[p/our.bowl]/$/eyre/req/[eyre-id]
+                [(pave:neo here) %poke pail]
+              ::
+              =+  !<(grow=$-(pail:neo $-(=bowl:neo manx)) (all-grow %htmx))
+              =/  man  (mule |.((grow pail)))
+              %-  send
+              ?-  -.man
+                %.y
+                  %-  manx-response:gen:serv
+                  %-  p.man
+                  =+  b=*bowl.neo
+                  %=  b
+                    here  pith
+                  ==
+                %.n
+                  =-  -(status-code.response-header 500)
+                  %-  manx-response:gen:serv
+                  ;div.fc.p2.border.br1.scroll-x.scroll-y.wf.pre.mono
+                    =style  "max-height: 400px;"
+                    =here  (en-tape:pith:neo (pave:neo pax.purl))
+                    ;*
+                    %+  turn  (tang p.man)
+                    |=  =tank
+                    ;div: {(of-wall:format (~(win re tank) 0 55))}
+                  ==
+                ::
+              ==
+            ::
+          ==
         ?:  =(%'PUT' method.request.req)    ::  %make
           ::
           =/  stud  (@tas (~(got by pam.purl) 'stud'))
@@ -1006,16 +1035,16 @@
           =.  run
             %-  poke-move
             :-  #/[p/our.bowl]/$/eyre/req/[eyre-id]
-            [(pave here) %make p.pail `q.pail ~]
-          %-  send
+            [(pave:neo here) %make p.pail `q.pail ~]
           ::
+          %-  send
           %-  manx-response:gen:serv
           =+  !<(grow=$-(pail:neo $-(=bowl:neo manx)) (all-grow %htmx))
           ?^  man=(mole |.((grow pail)))
             %-  u.man
             =+  b=*bowl.neo  :: manually constructing a bowl. this is ugly
             %=  b
-              here  (pave pax.purl)
+              here  (pave:neo pax.purl)
             ==
           ;div: some sorta error occured
           ::

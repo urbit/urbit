@@ -15,8 +15,9 @@
   font: inherit;
   color: inherit;
 }
-form, p, li, ul, ol, div, button, h1, h2, h3, h4, h5, h6 {
+form, a, input, p, li, ul, ol, div, button, h1, h2, h3, h4, h5, h6 {
   margin: 0;
+  line-height: 1;
 }
 html {
   height: 100%;
@@ -36,6 +37,7 @@ body {
 a {
   cursor: pointer;
   text-decoration: none;
+  font: inherit;
 }
 button, input, textarea, iframe {
   border: unset;
@@ -98,6 +100,9 @@ button, input, textarea, iframe {
 }
 .bold {
   font-weight: bold;
+}
+.strike {
+  text-decoration: line-through;
 }
 .pre {
   white-space: pre;
@@ -324,11 +329,13 @@ select {
   border-radius: 0;
   background-color: inherit;
   color: inherit;
+  font: inherit;
+  line-height: inherit;
 }
 textarea {
   display: block;
   outline: none;
-  resize: vertical;
+  resize: none;
   border-radius: 0;
   border: 0;
   background-color: inherit;

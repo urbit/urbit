@@ -4,7 +4,7 @@
 |=  =bowl:neo
 ;form.fc.p2
   =here  (en-tape:pith:neo here.bowl)
-  =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=txt"
+  =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=txt&refresh"
   =hx-trigger  "input changed delay:0.4s from:find textarea"
   =hx-swap  "none"
   ;textarea.wf.p2.border.br1.ma
