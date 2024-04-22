@@ -670,7 +670,6 @@
       ::  handle cork
       ::
       =/  cork=?  =([%$ /cork %cork ~] vane^wire^payload)
-      ~&  >>>  is-cork/cork
       ?.  (~(has by by-bone.ossuary.sat.per) bone)
         ~&  "trying to cork {<bone=bone>}, not in the ossuary, ignoring"
         ev-core

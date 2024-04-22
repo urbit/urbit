@@ -1565,8 +1565,10 @@
       ++  chacha
         =<
           =<  crypt
+          :: ~%  %chacha  ..part  ~
           |%
           ++  crypt
+            :: ~/  %crypt
             |=  [rounds=@ud key=@uxI nonce=@uxG counter=@udG msg=byts]
             ^+  msg
             :-  wid.msg
@@ -1587,6 +1589,7 @@
             [(rsh 5 nonce) (lsh [5 1] (end 5 nonce))]
           ::
           ++  xchacha
+            :: ~/  %xchacha
             |=  [key=@uxI nonce=@ux]
             ^-  [key=@uxI nonce=@uxG]
             :_  (rsh [5 4] nonce)
