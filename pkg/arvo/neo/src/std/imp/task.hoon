@@ -6,7 +6,7 @@
 ++  kids   
   ^-  kids:neo
   %-  ~(gas by *kids:neo)
-  :~  :-  ~[|/%tas]
+  :~  :-  [|/%tas |]
     [%task %task-diff]
   ==
 ++  deps   *deps:neo
