@@ -1,3 +1,4 @@
-$:  hoon=@t      :: (add - ->)
-    result=vase
-==
+::$:  formula=hoon
+::    refs=(list pith)
+::== 
+(map term *)

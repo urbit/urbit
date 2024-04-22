@@ -6,7 +6,7 @@
 ++  poke  (sy %accel-diff ~)
 ++  kids
   %-  ~(gas by *kids:neo)
-  :~  :-  [|/%tas |]
+  :~  :-  ~[|/%tas]
       [%accel-node %sig]
   ==
 ++  deps  *deps:neo
@@ -21,6 +21,7 @@
     ^-  (quip card:neo vase)
     ?>  =(%accel-diff stud)
     =/  poke  !<(accel-diff vax)
+    ~&  >  (malt refs.poke)
     ?>  =(our ship.src):bowl
     ?-    -.poke
         %new
