@@ -10,7 +10,11 @@
 |%
 ++  state  %atom
 ++  kids   *kids:neo
-++  deps   *deps:neo
+++  deps   
+  %-  ~(gas by *deps:neo)
+  :~  [%a & [%atom %sig] ~]
+      [%b & [%atom %sig] ~]
+  ==
 ++  farm
   |=  =bowl:neo
   ^-  vase

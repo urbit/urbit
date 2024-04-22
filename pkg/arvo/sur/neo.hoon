@@ -1727,7 +1727,7 @@
     *^form
   --
 +$  soil
-  $:  cases=(map name ever)
+  $:  init=(pair ever (map name ever))
       dirt=(unit dirt)
   ==
 +$  dirt

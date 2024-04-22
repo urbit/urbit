@@ -519,7 +519,7 @@
       |=  [=ship =brig:neo]
       (remote-axal [p/ship]~ brig)
   ==
-  ++  ret  [',' (reap 4 ' ')]
+  ++  ret  [',' (^reap 4 ' ')]
   ++  sep  *tape
   ++  remote-kids
     |=  [=pith =(axal:neo cane:neo)]
@@ -2644,9 +2644,28 @@
       ~&  >>>  %kids-no-match
       &
     & :: XX: enforce conformance
+  ++  make-plot
+    |=  [src=stud:neo =conf:neo]
+    =/  =plot:neo  (need ~(plot husk src))
+    =/  =deps:neo  deps:plot
+    =^  bad=(set term)  get.block
+      (check-conf conf deps:plot)
+    ?.  =(~ get.block)
+      arvo
+    =/  =soil:neo
+      [[[1 1] ~] ~]
+    =/  =room:neo
+      [src state:plot conf soil/soil]
+    =.  apex  (put:of-top here room)
+    ~&  put/here
+    work
   ::
   ++  make
     |=  [src=stud:neo init=(unit vase) =conf:neo]
+    ?:  ~(is-plot husk src)
+      ~|  %cant-make-plot-w-init
+      ?>  ?=(~ init)
+      (make-plot src conf)
     =/  =firm:neo  ~(firm husk src)
     :: =.  run        (~(start husk src) our.bowl pith)
     =/  old  (get:of-top here)
@@ -2706,30 +2725,8 @@
       =.  apex  (put:of-top here room)
       [cards arvo]
     ::
-    ++  si-resolve-kids  
-      =/  kids  kids:si-firm
-      %-  ~(gas by *(map pith pail:neo))
-      %+  murn  ~(tap by (kid:of-top here))
-      |=  [=pith:neo =room:neo]
-      ^-  (unit [pith:neo pail:neo])
-      ?~  ion=(scion kids pith (to-pail:room:neo room))
-        ~
-      `[pith u.ion]
-    ++  si-resolve-deps
-      %-  ~(gas by *(map term [pith cane:neo]))
-      ^-  (list [term pith cane:neo])
-      %+  murn  ~(tap by deps:si-firm)
-      |=  [=term required=? =quay:neo]
-      ^-  (unit [^term pith cane:neo])
-      =/  dep=(unit pith)  (~(get by conf.room) term)
-      ?~  dep
-        ~|  invariant-missing-required-conf/term
-        ?<  required
-        ~
-      =/  =name:neo  (de-pith:name:neo u.dep)
-      =/  =care:neo  (get-care:quay:neo quay)
-      =/  =cane:neo  (moor quay name)
-      `[term u.dep cane]
+    ++  si-resolve-kids   kids:(land here)
+    ++  si-resolve-deps   deps:(land here)
       ::  TODO type this w/ port??
     ++  si-bowl    
       :: =/  hare  pith:(de-pith:name:neo here)
@@ -2871,7 +2868,9 @@
       ?~  rom
         ~
       ?.  ?=(%icon -.seat.u.rom)
-        ~
+        :~  t/(spat (pout pith.name))
+            t/(code code.u.rom)
+        ==
       :~  t/(spat (pout pith.name))
           t/(code code.u.rom)
           ud/node.ever.icon.seat.u.rom
@@ -2885,9 +2884,55 @@
     ?~  rom
       leaf/"No data"
     ?.  ?=(%icon -.seat.u.rom)
-      leaf/"Virtual node"
+      (sell q:value:(reap pith.name))
     (sell state.icon.seat.u.rom)
   --
+++  land
+  |=  here=pith:neo
+  =/  =room:neo  (got:of-top here)
+  |%
+  ++  firm  ~(firm husk code.room)
+  ++  kids
+    =/  kids  kids:firm
+    %-  ~(gas by *(map pith pail:neo))
+    %+  murn  ~(tap by (kid:of-top here))
+    |=  [=pith:neo =room:neo]
+    ^-  (unit [pith:neo pail:neo])
+    ?~  ion=(scion kids pith (to-pail:room:neo room))
+      ~
+    `[pith u.ion]
+  ++  deps
+    %-  ~(gas by *(map term [pith cane:neo]))
+    ^-  (list [term pith cane:neo])
+    %+  murn  ~(tap by deps:firm)
+    |=  [=term required=? =quay:neo]
+    ^-  (unit [^term pith cane:neo])
+    =/  dep=(unit pith)  (~(get by conf.room) term)
+    ?~  dep
+      ~|  invariant-missing-required-conf/term
+      ?<  required
+      ~
+    =/  =name:neo  (de-pith:name:neo u.dep)
+    =/  =care:neo  (get-care:quay:neo quay)
+    =/  =cane:neo  (moor quay name)
+    `[term u.dep cane]
+  --
+++  reap
+  |=  here=pith:neo
+  =/  =room:neo  (got:of-top here)
+  |%
+  ++  deps  deps:(land here)
+  ++  kids  kids:(land here)
+  ++  bowl    
+    :: =/  hare  pith:(de-pith:name:neo here)
+    :: ~&  hare/hare
+    =/  hare  [p/our.^bowl here]
+    [[our.^bowl here] our.^bowl hare hare *time deps kids]
+  ++  plot  (need ~(plot husk code.room))
+  ++  value
+    `pail:neo`[state.room (farm:plot bowl)]
+  --
+::
 ++  walk
   |_  =id:sole
   ++  start 
