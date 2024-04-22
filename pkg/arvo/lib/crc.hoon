@@ -1,6 +1,7 @@
 ~%  %crc  ..part  ~
 |%
 ++  crc32
+  ~/  %crc32
   |=  file=octs
   (update-crc 0x0 file)
 ++  make-crc-table
