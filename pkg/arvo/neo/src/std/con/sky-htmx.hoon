@@ -21,7 +21,7 @@
     --f2: #999;
     --f3: #777;
     --f4: #555;
-    --f-error: orange;
+    --f-error: #531;
     --f-success: lightgreen;
     --link: lightblue;
     --hover:  115%;
