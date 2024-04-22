@@ -94,6 +94,8 @@
       $:  timers=(jug @da pith:neo)
           clay-peers=(map [src=pith hand=pith] [case=@ud =desk =path as=(unit mark)])
           eyre-req=(map @ta path)
+          :: iris-req=(map [src=pith hand=pith] 
+
       ==
       adult=_|
   ==
@@ -251,7 +253,9 @@
 ++  bump-room-tree
   |=  =room:neo
   ^+  room
-  room(tree.ever.icon +(tree.ever.icon.room))
+  ?.  ?=(%icon -.seat.room)
+    room
+  room(tree.ever.icon.seat +(tree.ever.icon.seat.room))
 ++  dorm
   |_  =name:neo
   ++  is-our
@@ -303,12 +307,13 @@
 ++  hall
   |=  =pith:neo
   =/  =room:neo  (got:of-top pith)
+  ?>  ?=(%icon -.seat.room)
   |%
   ++  pail  `pail:neo`[state-stud state]
   ++  vial  (pail:soften pail)
-  ++  state  state.icon.room
+  ++  state  state.icon.seat.room
   ++  state-stud  `stud:neo`state.room
-  ++  ever  ever.icon.room
+  ++  ever  ever.icon.seat.room
   ++  firm  ~(firm husk code.room)
   ++  slip  [state poke:firm kids:firm]
   ++  cane
@@ -327,7 +332,7 @@
     ++  room-to-ever
       |=  =room:neo
       ^-  [ever:neo pail:neo]
-      [ever.icon.room [state.room state.icon.room]]
+      [(get-ever:room:neo room) (to-pail:room:neo room)]
     --
       
   --
@@ -358,7 +363,7 @@
   =+  .^(neo-vase=vase %ca (welp clay-beak /sur/neo/hoon))
   =/  reef=vase  (slop !>(..zuse) neo-vase(p [%face %neo p.neo-vase]))
   =/  riff=room:neo
-    [%ford-riff %ford-out ~ [1 1] !>(`[cac=(unit vase) ~]`[`!>(ford-riff) ~]) ~ ~]
+    [%ford-riff %ford-out ~ icon/[[1 1] !>(`[cac=(unit vase) ~]`[`!>(ford-riff) ~]) ~ ~ ~]]
   =.  apex  (put:of-top #/out/std/imp/ford-riff riff)
   =.  run  (make-riff #/out/reef reef)
   =.  run  (re-export reef %hoon !,(*hoon @t))
@@ -574,29 +579,30 @@
     %-  snoc
     :_  (local-kids pith axal)
     ^-  (list tank)
-    ?~  fil.axal
-      ~[leaf/"No data"]
-    =/  =room:neo  u.fil.axal
-    ?:  =(ever.icon.room [0 0])
-      ~[leaf/"No data at this path"]
-    :*  leaf/"State"
-        ?:  (lth 10.000 (met 3 (jam q.state.icon.room)))
-          leaf/"Too large to print"
-        (sell state.icon.room)
-          
-        leaf/"Case: {(scow %ud node.ever.icon.room)}"
-      ::
-      ::
-        leaf/"Source: {<code.room>}"
-        ^-  (list tank)
-        ?:  =(~ conf.room)
-          ~
-        :_  ~
-        :+  %rose  [" " "Dependencies" sep]
-        %+  turn  ~(tap by conf.room)
-        |=  [=term p=^pith]
-        leaf/"{<term>} -> {(en-tape:pith:neo p)}"
-    ==
+    ~
+::  ?~  fil.axal
+::    ~[leaf/"No data"]
+::  =/  =room:neo  u.fil.axal
+::  ?:  =(ever.icon.room [0 0])
+::    ~[leaf/"No data at this path"]
+::  :*  leaf/"State"
+::      ?:  (lth 10.000 (met 3 (jam q.state.icon.room)))
+::        leaf/"Too large to print"
+::      (sell state.icon.room)
+::        
+::      leaf/"Case: {(scow %ud node.ever.icon.room)}"
+::    ::
+::    ::
+::      leaf/"Source: {<code.room>}"
+::      ^-  (list tank)
+::      ?:  =(~ conf.room)
+::        ~
+::      :_  ~
+::      :+  %rose  [" " "Dependencies" sep]
+::      %+  turn  ~(tap by conf.room)
+::      |=  [=term p=^pith]
+::      leaf/"{<term>} -> {(en-tape:pith:neo p)}"
+::  ==
   --
 ::
 ++  poke
@@ -688,7 +694,7 @@
     =+  !<(grow=$-(pail:neo $-(=bowl:neo manx)) (all-grow %htmx))
     ^-  manx
     =/  res=(each $-(=bowl:neo manx) tang)
-      (mule |.((grow [state.room state.icon.room])))
+      (mule |.((grow (to-pail:room:neo room))))
     ?:  ?=(%& -.res)
       =+  man=[u=p.res ~]
       %-  u.man
@@ -698,7 +704,7 @@
         kids
           %-  ~(run by (kid:of-top here))
           |=  =room:neo
-          [state.room state.icon.room]
+          (to-pail:room:neo room)
       ==
     ;div.p3.fc.g3
       ;div.f-error.fc.g2
@@ -711,7 +717,7 @@
         ==
       ==
       ;code.pre.scroll-x.flex.flex-col
-        ;div: {(text state.icon.room)}
+        ;div: {?>(?=(%icon -.seat.room) (text state.icon.seat.room))}
         ;*
         %+  turn  p.res
         |=  tan=tank
@@ -947,7 +953,8 @@
         %-  manx-response:gen:serv
         %-  ~(lift dove pax.purl)
         =+  !<(grow=$-(pail:neo $-(=bowl:neo manx)) (all-grow %htmx))
-        ?~  man=(mole |.((grow [%sky state.icon.u.rum])))
+        ?>  ?=(%icon -.seat.u.rum)
+        ?~  man=(mole |.((grow [%sky state.icon.seat.u.rum])))
           ~&  'could not convert sky to htmx'
           !!
         %-  u.man
@@ -957,7 +964,7 @@
           kids
             %-  ~(run by (kid:of-top here))
             |=  =room:neo
-            [state.room state.icon.room]
+            (to-pail:room:neo room)
         ==
       ?>  =('hawk' i.t.site.line)
         ::
@@ -1419,7 +1426,9 @@
   =.  kids.q.stem
     =/  sfix=pith:neo  (slag (lent pith.tour) pax)
     =/  =room:neo  (got:of-top pax)
-    (~(put by kids.q.stem) sfix [ever.icon.room mode [state state.icon]:room])
+    =/  =pail:neo  (to-pail:room:neo room)
+    =/  =ever:neo  (get-ever:room:neo room)
+    (~(put by kids.q.stem) sfix [ever mode pail])
   $(stems (~(put by stems) tour stem), tours t.tours)
 ::
 ++  wash
@@ -1648,7 +1657,7 @@
 ++  con
   |_  =stud:neo
   ++  do  
-    =+  !<([vix=(unit vase) *] state.icon:(got:of-top pith))
+    =+  !<([vix=(unit vase) *] q:(to-pail:room:neo (got:of-top pith)))
     =/  vax  (need vix)
     |%
     ++  grab  !<(stud:neo (slot 4 vax))
@@ -1749,7 +1758,7 @@
   ++  get  grab
   ++  grab
     =/  rom  (got:of-top pith)
-    =+  !<([cac=(unit vase) *] state.icon.rom)
+    =+  !<([cac=(unit vase) *] q:(to-pail:room:neo rom))
     cac
   ++  built
     (has:of-top pith)
@@ -1778,7 +1787,7 @@
   =.  p  (snoc p %hoon)
   .^(? %cu p)
 ++  get-reef
-  =+  !<([ref=(unit vase) *] state:icon:(got:of-top #/out/reef))
+  =+  !<([ref=(unit vase) *] q:(to-pail:room:neo (got:of-top #/out/reef)))
   (need ref)
 ::
 ++  copy-clay
@@ -1894,7 +1903,7 @@
       run
     ~|  ~(key by ~(tar of:neo apex))
     =/  rom  (got:of-top pith.name)
-    =+  !<([cache=(unit vase) *] state.icon.rom)
+    =+  !<([cache=(unit vase) *] q:(to-pail:room:neo rom))
     ?~  cache
       ~&  failed-to-build/pith
       run
@@ -1979,7 +1988,7 @@
       &
     ?~  rom=(get:of-top pax)
       &
-    !=(txt q.state.icon.u.rom)
+    !=(txt q.q:(to-pail:room:neo u.rom))
   ++  read-file
     |=  pax=path
     ^-  [(unit path) _run]
@@ -2030,7 +2039,7 @@
   ?:  =(our.bowl ship.pole)
     ?~  val=(get:of-top rest.pole)
       ~
-    `[state.u.val state.icon.u.val]
+    `(to-pail:room:neo u.val)
   ?~  val=(~(get by foreign) [%x pole])
     ~
   `pail.cane.u.val
@@ -2044,20 +2053,22 @@
   ^-  (unit vase)
   ?~  val=(get:of-top pith)
     ~
-  `state.icon.u.val
+  ?.  ?=(%icon -.seat.u.val)
+    ~
+  `state.icon.seat.u.val
 ++  get-pail-local
   |=  =pith
   ^-  (unit pail:neo)
   ?~  val=(get:of-top pith)
     ~
-  `[state.u.val state.icon.u.val]
+  `(to-pail:room:neo u.val)
 
 ++  get-vial-local
   |=  =pith
   ^-  (unit vial:neo)
   ?~  val=(get:of-top pith)
     ~
-  `[state.u.val q.state.icon.u.val]
+  `(to-vial:room:neo u.val)
 
 ::  XX: invert and check typing
 ++  check-conf
@@ -2095,15 +2106,26 @@
     ?:  =(our.bowl ship.stud)
       /our/[desk.stud]/imp/[mark.stud]
     /her/(scot %p ship.stud)/[desk.stud]/imp/[mark.stud]
-  ++  firm-vase
+  ++  vase
+    ^-  ^vase
     ~|  firm/pith
     =/  rom=room:neo  (got:of-top pith)
-    ~|  vase/(sell state.icon.rom)
-    ~|  room/rom(state.icon *vase)
-    =+  !<([cac=(unit vase) *] state.icon.rom)
+    ?>  ?=(%icon -.seat.rom)
+    ~|  vase/(sell state.icon.seat.rom)
+    =+  !<([cac=(unit ^vase) *] state.icon.seat.rom)
     (need cac)
   ++  firm
-    !<(firm:neo firm-vase)
+    ^-  firm:neo
+    ?.  is-plot
+      !<(firm:neo vase)
+    (till:neo (need plot))
+  ++  is-plot
+    (~(nest ut -:!>(*plot:neo)) | p:vase)
+  ++  plot
+    ^-  (unit plot:neo)
+    ?.  is-plot
+      ~
+    `!<(plot:neo vase)
   ++  wire
     %+  welp  /husk/stud
     (pout pith)
@@ -2317,9 +2339,9 @@
 ++  make-stem
   |=  [=care:neo =room:neo]
   ^-  stem:neo
-  =/  =ever:neo  ever.icon.room  
+  =/  =ever:neo  (get-ever:room:neo room)
   =/  =pail:neo
-    [state.room state.icon.room]
+    (to-pail:room:neo room)
   ?-  care
     %x  [ever %x pail]
     %y  [ever %y pail ~]
@@ -2631,13 +2653,16 @@
     =/  =form:neo  form:firm
     =/  =icon:neo  
       ?~  old
-        [[0 0] *vase ~ ~]
-      [ever.icon.u.old *vase ~ ~]
+        [[1 1] *vase ~ ~]
+      ?>  ?=(%icon -.seat.u.old)
+      [ever.icon.seat.u.old *vase ~ ~]
     =?  init  ?=(^ old)
       ~|  bad-install-over/here
       ?>  =(state:firm state.u.old)
       ?:  =(~ init)
-        `state.icon.u.old
+        ?.  ?=(%icon -.seat.u.old)
+          init
+        `state.icon.seat.u.old
       init
     =/  =deps:neo  deps:firm
     =^  bad=(set term)  get.block
@@ -2651,7 +2676,7 @@
       ~&  get/get.block
       arvo
     =.  arvo  (listen-conf conf deps:firm)
-    =/  =room:neo  [src state:firm conf icon]
+    =/  =room:neo  [src state:firm conf icon/icon]
     =.  apex  (put:of-top here room)
     =^  cards=(list card:neo)  arvo
       (soft-site |.(si-abet:(si-init:site init)))
@@ -2671,6 +2696,7 @@
   ++  site
     =/  =room:neo
       (got:of-top here)
+    ?>  ?=(%icon -.seat.room)
     =|  cards=(list card:neo)
     |%  
     ++  site  .
@@ -2686,7 +2712,7 @@
       %+  murn  ~(tap by (kid:of-top here))
       |=  [=pith:neo =room:neo]
       ^-  (unit [pith:neo pail:neo])
-      ?~  ion=(scion kids pith [state state.icon]:room)
+      ?~  ion=(scion kids pith (to-pail:room:neo room))
         ~
       `[pith u.ion]
     ++  si-resolve-deps
@@ -2710,7 +2736,8 @@
       :: ~&  hare/hare
       =/  hare  [p/our.bowl here]
       [src our.bowl hare hare now.bowl si-resolve-deps si-resolve-kids]
-    ++  si-form    ~(. form:si-firm [si-bowl icon.room])
+    ++  si-form    
+      ~(. form:si-firm [si-bowl +.seat.room])
     ++  si-firm    `firm:neo`~(firm husk code.room)
     ++  si-can-poke
       |=  =stud:neo
@@ -2741,9 +2768,8 @@
     ++  si-init   
       |=  old=(unit vase)
       ^+  site
-      =^  cards=(list card:neo)  state.icon.room
+      =^  cards=(list card:neo)  state.icon.seat.room
         (init:si-form old)
-      =.  ever.icon.room  [1 1]
       =.  site  si-bump
       =.  site  (si-emil cards)
       (si-tell %add)
@@ -2761,14 +2787,14 @@
           ~&  >>  si-skip-ack/[src here]
           site
         ~|(no-poke-at/[p.pail here] !!)
-      =/  old  state.icon.room
-      =^  cards  state.icon.room
+      =/  old  state.icon.seat.room
+      =^  cards  state.icon.seat.room
         (poke:si-form pail)
       =.  site  (si-emil cards)
-      ?:  =(old state.icon.room)
+      ?:  =(old state.icon.seat.room)
         site
       ::  XX: maybe skip if no change?
-      =.  ever.icon.room  (bump-ever ever.icon.room)
+      =.  ever.icon.seat.room  (bump-ever ever.icon.seat.room)
       =.  site  si-bump
       (si-tell %dif)
     --
@@ -2805,7 +2831,7 @@
   ++  ford
     =/  rom  (need get)
     ^+  run
-    =+  !<([vax=(unit vase) *] state.icon.rom)
+    =+  !<([vax=(unit vase) *] q:(to-pail:room:neo rom))
     %.  run
     ?~  vax
       (slog leaf/"no ford build here" ~)
@@ -2844,10 +2870,12 @@
       ^-  (list dime)
       ?~  rom
         ~
+      ?.  ?=(%icon -.seat.u.rom)
+        ~
       :~  t/(spat (pout pith.name))
           t/(code code.u.rom)
-          ud/node.ever.icon.u.rom
-          ud/tree.ever.icon.u.rom
+          ud/node.ever.icon.seat.u.rom
+          ud/tree.ever.icon.seat.u.rom
       ==
     --
   ++  show
@@ -2856,7 +2884,9 @@
     %-  lure
     ?~  rom
       leaf/"No data"
-    (sell state.icon.u.rom)
+    ?.  ?=(%icon -.seat.u.rom)
+      leaf/"Virtual node"
+    (sell state.icon.seat.u.rom)
   --
 ++  walk
   |_  =id:sole
@@ -3051,7 +3081,7 @@
       (on-card (en-pith:name:neo get:cwd:peel) %poke stud vax)
     ++  clay
       =/  rom  (got:of-top pith:get:cwd:peel)
-      =+  !<([cac=(unit vase) *] state.icon.rom)
+      =+  !<([cac=(unit vase) *] q:(to-pail:room:neo rom))
       =/  desc=@t 
         ?~  cac
           'No cache'

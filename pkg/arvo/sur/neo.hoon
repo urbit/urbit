@@ -836,6 +836,12 @@
   +$  res  [=pith case=@ud files=(axol cage)]
   --
 ::
+++  iris
+  |%
+  ++  req  request:http
+  +$  res  client-response:^iris
+  --
+::
 ::  $ever: Total shrub version
 ::
 ::    .node is incremented only when the shrub itself changes i.e. it
@@ -1382,8 +1388,8 @@
     |=  [=care at=pith ax=(axal room)]
     ^-  ^$
     =/  rot  (need fil.ax)
-    :+  care  ever.icon.rot
-    :-  [state.rot q.state.icon.rot]
+    :+  care  (get-ever:room rot)
+    :-  (to-vial:room rot)
     %-  ~(gas by *(map pith [ever vial]))
     =-  %+  turn  ~(tap by -)
         |=([k=pith v=[ever vial]] [(welp at k) v])
@@ -1391,10 +1397,10 @@
         %x  ~
         %y
       =.  ax  ~(snip of ax)
-      (~(run by ~(tar of ax)) |=(r=room [ever.icon.r (to-vial:room r)]))
+      (~(run by ~(tar of ax)) |=(r=room [(get-ever:room r) (to-vial:room r)]))
     ::
         %z
-      (~(run by ~(tar of ax)) |=(r=room [ever.icon.r (to-vial:room r)]))
+      (~(run by ~(tar of ax)) |=(r=room [(get-ever:room r) (to-vial:room r)]))
     ==  
   --
 +$  pulp  ?(%noun %json)
@@ -1410,8 +1416,10 @@
   |=  [=care at=pith ax=(axal room)]
   ^-  cane
   =/  rot  (need fil.ax)
-  :+  care  ever.icon.rot
-  :-  [state.rot state.icon.rot]
+  ?>  ?=(%icon -.seat.rot)
+  =/  =icon  icon.seat.rot
+  :+  care  ever.icon
+  :-  [state.rot state.icon]
   %-  ~(gas by *(map pith [ever pail]))
   =-  %+  turn  ~(tap by -)
       |=([k=pith v=[ever pail]] [(welp at k) v])
@@ -1420,11 +1428,11 @@
       %y
     =.  ax  ~(snip of ax)
     =.  fil.ax  ~
-    (~(run by ~(tar of ax)) |=(r=room [ever.icon.r (to-pail:room r)]))
+    (~(run by ~(tar of ax)) |=(r=room [(get-ever:room r) (to-pail:room r)]))
   ::
       %z
     =.  fil.ax  ~
-    (~(run by ~(tar of ax)) |=(r=room [ever.icon.r (to-pail:room r)]))
+    (~(run by ~(tar of ax)) |=(r=room [(get-ever:room r) (to-pail:room r)]))
   ==
 ++  dejs
   =,  dejs:format
@@ -1606,6 +1614,10 @@
   $~  ~
   (map ship brig)
 +$  hall  hall:room
++$  seat
+  $%  [%icon =icon]
+      [%soil =soil]
+  ==
 ::  $room: state of a shrub
 ::    
 ::    TODO: refactor for networking?
@@ -1621,17 +1633,22 @@
     $:  code=stud
         state=stud
         =conf
-        =icon
+        =seat
     ==
-  ++  to-vial
+  ++  get-ever
     |=  rom=room
-    ^-  vial
-    [state.rom q.state.icon.rom]
+    ^-  ever
+    ?>  ?=(%icon -.seat.rom)
+    ever.icon.seat.rom
   ::
   ++  to-pail
     |=  rom=room
     ^-  pail
-    [state.rom state.icon.rom]
+    ?>  ?=(%icon -.seat.rom)
+    [state.rom state.icon.seat.rom]
+  ++  to-vial
+    |=  rom=room
+    [p q.q]:(to-pail rom)
   ::
   ++  de-hall-soft
     |=  hal=hall
@@ -1671,6 +1688,57 @@
   [state=stud diffs=(set stud) =kids]
 +$  deps  (map term fief)
 +$  kids  (map pish port)
+::  $plot: virtual namespace binding
+::
++$  plot
+  $_  ^&
+  |%
+  ::  $state: the state of this value in the urbit namespace
+  ::
+  ::    For instance, a message would be
+  ::      [author=ship time-sent=time message=txt]
+  ::
+  ++  state  *stud
+  ++  farm   *^farm
+  ::
+  ::  +kids: Some nodes in the namespace define what children are
+  ::  allowed to be under them. For instance, it should not  be allowed
+  ::  to create /~hastuc-dibtux/chats/unit-731/blog-post-1. This is
+  ::  nonsensical because blog posts don't go in chats.
+  ++  kids   *(map pish port)
+  ::
+  ::  +deps: Some nodes in the namespace might like to hear about other
+  ::  things that happen in the namespace. For instance, a substack-type
+  ::  software would like to know where the wallet software is located
+  ::  in the name
+  ++  deps   *(map term fief)
+  --
+++  till
+  |=  =plot
+  ^-  firm
+  |%
+  ++  state  state:plot
+  ++  poke   *(set stud)
+  ++  kids   kids:plot
+  ++  deps   deps:plot
+  ++  form   
+    ^-  ^form
+    ~&  %accessing-bad-form
+    *^form
+  --
++$  soil
+  $:  cases=(map name ever)
+      dirt=(unit dirt)
+  ==
++$  dirt
+  $:  =ever
+      =vase
+  ==
+::  $farm: produce reactive value
++$  farm
+  $_  ^|
+  |=  =bowl
+  *vase
 ::  $firm: type of the value in the urbit namespace
 ::
 +$  firm
