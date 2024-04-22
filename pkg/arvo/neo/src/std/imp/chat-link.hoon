@@ -24,7 +24,7 @@
 ++  poke   (sy %rely ~)
 ++  kids
   %-  ~(gas by *kids:neo)
-  :~  :-  ~[&/%messages |/%da]
+  :~  :-  [&/%messages |/%da |]
       [%message %sig]
   ==
 ++  deps
@@ -36,7 +36,7 @@
     :+  req=&  [%chat %sig]
     :+  ~  %y
     %-  ~(gas by *kids:neo)
-    :~  :-  ~[&/%messages |/%da]
+    :~  :-  [&/%messages |/%da |]
         [%message %sig]
   ::
     ==

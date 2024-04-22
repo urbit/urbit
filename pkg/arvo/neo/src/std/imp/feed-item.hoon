@@ -13,8 +13,8 @@
 ++  poke   (sy %feed-item-diff ~)
 ++  kids   
   %-  ~(gas by *kids:neo)
-  :~  [~[&/%likes |/%p] %sig %sig]
-      [~[&/%comments |/%p] %feed-comment %sig]
+  :~  [[&/%likes |/%p |] %sig %sig]
+      [[&/%comments |/%p |] %feed-comment %sig]
   ==
 ++  deps
   %-  ~(gas by *deps:neo)
@@ -22,7 +22,7 @@
       :+  req=&  [%circle %sig]
       :+  ~  %y
       %-  ~(gas by *kids:neo)
-      :~  [~[|/%p] %sig %sig]
+      :~  [[|/%p |] %sig %sig]
       ==
   ==
 ++  form

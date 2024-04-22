@@ -4,7 +4,7 @@
 ++  poke   (sy %feed-diff ~)
 ++  kids   
   %-  ~(gas by *kids:neo)
-  :~  [~[&/%items |/%da] %feed-item %feed-item-diff]
+  :~  [[&/%items |/%da |] %feed-item %feed-item-diff]
   ==
 ++  deps
   %-  ~(gas by *deps:neo)

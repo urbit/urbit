@@ -28,7 +28,7 @@
 ++  poke  (sy %chat-diff ~)
 ++  kids
   %-  ~(gas by *kids:neo)
-  :~  :-  ~[&/%messages |/%da]
+  :~  :-  [&/%messages |/%da |]
       [%message %sig]
   ==
 ++  deps
