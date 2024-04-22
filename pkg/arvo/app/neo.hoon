@@ -262,6 +262,7 @@
     =(our.bowl ship.name)
   ++  h  (hall pith.name)
   ++  j  ~(. jail name)
+  ++  r  (reap pith.name)
   ++  pail
     ?:  is-our  pail:h
     pail:j
@@ -276,8 +277,12 @@
     slip:j
   ++  cane
     |=  =care:neo
-    ?:  is-our  (cane:h care)
-    (cane:j care)
+    ?.  is-our  
+      (cane:j care)
+    =/  =room:neo  (got:of-top pith.name)
+    ?:  ~(is-plot husk code.room)
+      (cane:r care)
+    (cane:h care)
   --
 ::
 ++  jail
@@ -1406,6 +1411,7 @@
   =|  stems=(map tour:neo stem:neo)
   |=  changes=(map pith:neo mode:neo)
   =/  changes  ~(tap by changes)
+  ~&  changes/changes  
   |-  ^+  run
   =*  loop-changes  $
   ?~  changes
@@ -1418,7 +1424,7 @@
   ?~  tours
     loop-changes(changes t.changes)
   =/  =tour:neo  i.tours
-  =/  =stem:neo  (~(gut by stems) tour (make-stem care.tour (got:of-top pax)))
+  =/  =stem:neo  (~(gut by stems) tour (make-stem care.tour pax))
   ?:  =(pith.tour pax)
     $(stems (~(put by stems) tour stem), tours t.tours)
   ?.  ?=(?(%y %z) -.q.stem)
@@ -2330,23 +2336,25 @@
 ::
 ++  poke-rely
   |=  [from=pith:neo to=pith:neo =rely:neo]
+  ~&  rely/[from to rely]
   (poke-move [p/our.bowl from] to %poke %rely !>(rely))
 ::
 ++  poke-rely-xeno
   |=  [from=pith:neo to=pith:neo =rely:neo]
+  ~&  rely-xeno/[from to rely]
   (poke-move from to %poke %rely !>(rely))
 ::
 ++  make-stem
-  |=  [=care:neo =room:neo]
+  |=  [=care:neo =pith:neo]
   ^-  stem:neo
-  =/  =ever:neo  (get-ever:room:neo room)
-  =/  =pail:neo
-    (to-pail:room:neo room)
+  =/  =cane:neo  (~(cane dorm [our.bowl pith]) care)
+  :-  ever.cane
   ?-  care
-    %x  [ever %x pail]
-    %y  [ever %y pail ~]
-    %z  [ever %z pail ~]
+    %x  [%x pail.cane]
+    %y  [%y pail.cane ~]
+    %z  [%z pail.cane ~]
   ==
+  
 ++  plag
   |=  [want=stud:neo have=pail:neo]
   ^-  (unit pail:neo)
@@ -2544,7 +2552,7 @@
       =/  parent  (~(gut by out) u.par *gift:neo)
       =.  parent  (~(put by parent) (sub:pith:neo pith u.par) mode)
       (~(put by out) u.par parent)
-    =.  changes  (~(uni by changes) changes)
+    =.  changes  (~(uni by changes) change)
     =.  change   *(map pith:neo mode:neo)
     ?~  gifts
       arvo
@@ -2564,6 +2572,11 @@
   ++  poke
     |=  =pail:neo
     ^+  arvo
+    =/  =room:neo  (got:of-top here)
+    ?:  &(=(%rely p.pail) ~(is-plot husk code.room))
+      =.  change  (~(put by change) here %dif)
+      work
+      
     =^  cards=(list card:neo)  arvo
       (soft-site |.(si-abet:(si-poke:site pail)))
     (ingest cards)
@@ -2612,25 +2625,30 @@
   ++  listen-conf
     |=  [=conf:neo =deps:neo]
     ^+  arvo
-    %+  roll  ~(tap by conf)
-    |=  [[=term dep=pith:neo] a=_arvo]
+    =/  conf  ~(tap by conf)
+    |-
+    ?~  conf
+      arvo
+    =/  [=term dep=pith:neo]  i.conf
     ?>  ?=([[%p @] *] dep)
     =/  d=(unit [req=? =quay:neo])  (~(get by deps) term)
     ?~  d 
-      a
+      $(conf t.conf)
     =/  [req=? =quay:neo]  u.d
     =/  =tour:neo  [(get-care:quay:neo quay) dep]
     =/  =pith:neo  [p/our.bowl here]
     ?:  =(our.bowl +.i.dep)
       =/  =tone:neo  [%rely term pith]
       =.  sound  (~(put ju sound) [care.tour t.dep] tone)
-      arvo
+      ~&  added-listener/[care.tour t.dep tone]
+      $(conf t.conf)
     ::
     =/  =riot:neo  (~(got by foreign) tour)
     =/  =rave:neo   [term pith]
     =.  deps.riot  (~(put in deps.riot) rave)
     =.  foreign    (~(put by foreign) tour riot)
-    arvo
+    $(conf t.conf)
+  ::
   ++  validate-kids
     ^-  ?
     ?:  =(1 1)
@@ -2652,6 +2670,7 @@
       (check-conf conf deps:plot)
     ?.  =(~ get.block)
       arvo
+    =.  arvo  (listen-conf conf deps:plot)
     =/  =soil:neo
       [[[1 1] ~] ~]
     =/  =room:neo
@@ -2931,6 +2950,17 @@
   ++  plot  (need ~(plot husk code.room))
   ++  value
     `pail:neo`[state.room (farm:plot bowl)]
+  ++  cane
+    |=  =care:neo
+    ^-  cane:neo
+    ?>  =(%x care)
+    :*  care
+        *ever:neo :: TODO: fix ever handling
+        value
+        ~
+    ==
+
+
   --
 ::
 ++  walk
