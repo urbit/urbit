@@ -2387,6 +2387,8 @@
   |=  [want=stud:neo have=pail:neo]
   ^-  (unit pail:neo)
   ~|  plug/[p.have want]
+  ?:  =(want %pail)
+    `have
   ?:  =(want p.have)
     `have
   ?:  =(want %sig)
