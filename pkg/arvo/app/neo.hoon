@@ -613,7 +613,8 @@
 ++  poke
   |=  [=mark =vase]
   ^+  run
-  ?:  =(%handle-eyre-request mark)
+  ~|  mark/mark
+  ?:  =(%handle-http-request mark)
     =-  (~(on-req srv id) req)
     !<([id=@ta req=inbound-request:eyre] vase)
   ?:  =(%neo-raw-poke mark)
@@ -1440,7 +1441,6 @@
   =|  stems=(map tour:neo stem:neo)
   |=  changes=(map pith:neo mode:neo)
   =/  changes  ~(tap by changes)
-  ~&  changes/changes  
   |-  ^+  run
   =*  loop-changes  $
   ?~  changes
@@ -2146,7 +2146,6 @@
     ~|  firm/pith
     =/  rom=room:neo  (got:of-top pith)
     ?>  ?=(%icon -.seat.rom)
-    ~|  vase/(sell state.icon.seat.rom)
     =+  !<([cac=(unit ^vase) *] state.icon.seat.rom)
     (need cac)
   ++  firm
@@ -2569,8 +2568,6 @@
   ++  echo  arvo  :: TODO walk done
   ++  finalize
     ^+  arvo
-    ~&  finalising/change
-    
     =.  gifts
       =-  ~(tap by -)
       ^-  (map pith:neo gift:neo)
@@ -2669,7 +2666,6 @@
     ?:  =(our.bowl +.i.dep)
       =/  =tone:neo  [%rely term pith]
       =.  sound  (~(put ju sound) [care.tour t.dep] tone)
-      ~&  added-listener/[care.tour t.dep tone]
       $(conf t.conf)
     ::
     =/  =riot:neo  (~(got by foreign) tour)
@@ -2705,7 +2701,6 @@
     =/  =room:neo
       [src state:plot conf soil/soil]
     =.  apex  (put:of-top here room)
-    ~&  put/here
     work
   ::
   ++  make
@@ -2747,7 +2742,6 @@
     =.  apex  (put:of-top here room)
     =^  cards=(list card:neo)  arvo
       (soft-site |.(si-abet:(si-init:site init)))
-    ~&  >>  made/here
     (ingest cards)
 
   ++  soft-site
