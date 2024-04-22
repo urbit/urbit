@@ -1,27 +1,15 @@
 ~%  %crc  ..part  ~
 |%
 ++  crc32
-  ~/  %crc32
   |=  file=octs
   (update-crc 0x0 file)
 ++  make-crc-table
   ^-  (list @ux)
-  =|  crc-table=(list @ux)
-  =/  i  0
-  |-
-  ?:  =(i 256)
-    (flop crc-table)
-  =/  temp  i
-  =/  j  0
-  =/  c  |-
-    ?:  =(j 8)
-      temp
-    =.  temp
-      ?:  (gth (dis temp 1) 0)
-        (mix 0xedb8.8320 (rsh [0 1] temp))
-      (rsh [0 1] temp)
-    $(j +(j))
-  $(crc-table [`@ux`c crc-table], i +(i))
+  %+  turn  (gulf 0 255)  |=  a=@
+    %+  roll  (gulf 0 7)  |:  [b=1 c=a]
+      ?:  (gth (dis c 1) 0)
+        (mix 0xedb8.8320 (rsh [0 1] c))
+      (rsh [0 1] c)
 ++  update-crc
   |=  [crc=@ux file=octs]
   ^-  @ux
@@ -38,7 +26,7 @@
     |-
     ?:  =(i leading-zeros)
       input-list
-    $(input-list [`@ux`0 input-list], i +(i))
+    $(input-list [0x0 input-list], i +(i))
   |-
   ?:  =(n (lent input-list))
     (mix c 0xffff.ffff)
