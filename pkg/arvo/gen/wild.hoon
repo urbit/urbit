@@ -13,12 +13,13 @@
 %.  arg
 =>
 |%
-+$  cape  $@(? [cape cape])    ::  noun mask; & means known, | unknown
-+$  sock  [=cape data=*]       ::  core with mask; only & values need to match
-+$  wilt  (list [l=* s=sock])  ::  list of labeled masked cores
++$  cape  $@(? [cape cape])
++$  sock  [=cape data=*]
+:: +$  wilt  (list [l=* s=sock])
++$  wilt  (list [l=path s=sock])  :: just useful for pretty printing
 --
 ::
-=|  gil=(set type)
+=|  gil=(set type)       ::  all seen types
 =|  wit=wilt
 |=  t=type
 ^-  wilt
@@ -28,37 +29,54 @@
   ~&  %cell
   (weld $(t p.t) $(t q.t))
     [%core *]
-  ::  [%core p=type q=coil] :: p is type of the payload
-  ::  p.t type  ...
+  ::  [%core p=type q=coil]
+  ::  p.t payload type
   ::  q.t coil
   ::    p.q.t garb  (trel (unit term) poly vair)
-  ::    q.q.t type  ...
+  ::    q.q.t sample type where the core was defined
   ::    r.q.t (pair seminoun (map term tome))
   ::      p.r.q.t seminoun  "partial noun" (battery if known)
   ::      q.r.q.t (map term tome)
   ::
   ::  +$  tome  (pair what (map term hoon))
   ::  +$  what  (unit (pair cord (list sect)))
-  ~&  %core
-  ~&  [%payload p.t]
-  ~&  [%garb p.q.t]
   =+  [semi chapters]=[p q]:r.q.t
-  ~&  batt+`@ux`(mug data.semi)  :: mug of the battery
+  =/  bell  (need p.p.q.t)
   =/  mats=(list (map term hoon))
     (turn ~(val by chapters) |=(tom=tome q.tom))
   =/  hops=(list (pair term hoon))
     (zing (turn mats |=(mat=(map term hoon) ~(tap by mat))))
   =/  mits=(list type)
     (turn hops |=(hop=(pair term hoon) p:(~(mint ut.h t) %noun q.hop)))
+  ::
+  ~&  ~
+  ~&  [%batt `@ux`(mug data.semi)]
+  ~&  [%load p.t]
+  ~&  [%bell bell]
+  ::
   =.  wit
     %+  weld  wit  ^-  wilt
     %-  zing
     %+  turn  mits
     |=  t=type
     ?:  (~(has in gil) t)  wit
-    ^$(t t, gil (~(put in gil) t))
+    %=  ^$  ::  traverse minted types
+      t    t
+      gil  (~(put in gil) t)
+      wit  ~[[l=~[bell] s=[& ~]]]
+      :: wit  %+  turn  wit
+      ::      |=  p=[l=path s=sock]
+      ::      [l=(weld l.p ~[bell]) s=s.p]
+    ==
   ?:  (~(has in gil) t)  wit
-  (weld wit $(t p.t, gil (~(put in gil) t)))
+  %+  weld  wit
+  %=  $  ::  traverse payload type
+    t  p.t
+    gil  (~(put in gil) t)
+    wit  %+  turn  wit
+         |=  p=[l=path s=sock]
+         [l=(weld l.p ~[bell]) s=s.p]
+  ==
     [%face *]
   ~&  %face
   $(t q.t)

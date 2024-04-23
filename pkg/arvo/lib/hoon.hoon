@@ -9985,12 +9985,13 @@
       =+  hum=$(gen q.gen)
       [(hint [sut p.gen] p.hum) q.hum]
     ::
-        ::  XX modify type, leave the nock, maybe with helper
-        ::     helper could be [type chum] -> [type nock]
         [%sgcn *]
-      =+  ply=(play gen)
+      ::  XX check that parent axis is core?
       =+  res=$(gen ~(open ap gen))
-      [ply q.res]
+      ::  XX use repo
+      ~|  p.res
+      ?>  ?=([%core *] p.res)
+      res(p.p.q.p `(chut p.gen))
     ::
         [%sgzp *]  ~_(duck(sut (play p.gen)) $(gen q.gen))
         [%sggr *]
