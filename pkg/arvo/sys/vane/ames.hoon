@@ -1591,17 +1591,15 @@
           |=  [key=@uxI iv=@ msg=byts]
           ^+  msg
           =/  x  (xchacha:chacha key (hash 24 iv))
-          =-  =+  out=(can 3 [wid dat]:- [1 0x1] ~)  :: XX FIXME
-              (met 3 out)^out                        :: XX FIXME
+          =-  +(wid)^(can 3 wid^dat [1 0x1] ~)
           (chacha 8 key.x nonce.x 0 msg)
         ::
-        ++  decrypt  ::encrypt
+        ++  decrypt
           |=  [key=@uxI iv=@ =byts]
           ^+  byts
           ~|  [key=key iv=iv byts=byts]
-          =/  wid  (dec wid.byts)              :: XX FIXME
-          ?>  =(0x1 (cut 3 [wid 1] dat.byts))  :: XX FIXME
-          :: (encrypt `@`key iv wid^dat.byts)
+          =/  wid  (dec wid.byts)
+          ?>  =(0x1 (cut 3 [wid 1] dat.byts))
           =/  x  (xchacha:chacha key (hash 24 iv))
           (chacha 8 key.x nonce.x 0 wid^dat.byts)
         ::
@@ -8306,19 +8304,19 @@
       ++  load
         |=  old=axle
         ^+  mesa-gate
-        =.  chums.old
-          %-  ~(run by chums.old)
-          |=  =ship-state
-          ?:  ?=(%alien -.ship-state)  ship-state
-          ~&  %cleaning
-          %_  ship-state
-            flows    ~
-            pit      ~
-            corked   ~
-            ossuary  =|  =ossuary:ames  ossuary
-                    :: %_  ossuary
-                    ::   next-bone  40
-          ==        :: ==
+        :: =.  chums.old
+        ::   %-  ~(run by chums.old)
+        ::   |=  =ship-state
+        ::   ?:  ?=(%alien -.ship-state)  ship-state
+        ::   ~&  %cleaning
+        ::   %_  ship-state
+        ::     flows    ~
+        ::     pit      ~
+        ::     corked   ~
+        ::     ossuary  =|  =ossuary:ames  ossuary
+        ::             :: %_  ossuary
+        ::             ::   next-bone  40
+        ::   ==        :: ==
         mesa-gate(ames-state old)
       ::
       ++  scry
