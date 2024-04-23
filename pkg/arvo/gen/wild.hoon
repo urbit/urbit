@@ -54,28 +54,23 @@
   ~&  [%load p.t]
   ~&  [%bell bell]
   ::
-  =.  wit
-    %+  weld  wit  ^-  wilt
-    %-  zing
-    %+  turn  mits
-    |=  t=type
-    ?:  (~(has in gil) t)  wit
-    %=  ^$  ::  traverse minted types
-      t    t
+  ?:  (~(has in gil) t)
+    wit
+  %+  weld
+    %=  $  ::  recur with payload type
+      t    p.t
       gil  (~(put in gil) t)
-      wit  ~[[l=~[bell] s=[& ~]]]
-      :: wit  %+  turn  wit
-      ::      |=  p=[l=path s=sock]
-      ::      [l=(weld l.p ~[bell]) s=s.p]
+      wit  wit
     ==
-  ?:  (~(has in gil) t)  wit
-  %+  weld  wit
-  %=  $  ::  traverse payload type
-    t  p.t
+  ^-  wilt
+  %-  zing
+  %+  turn
+    mits
+  |=  t=type
+  %=  ^$  ::  recur with types of minted arms
+    t    t
     gil  (~(put in gil) t)
-    wit  %+  turn  wit
-         |=  p=[l=path s=sock]
-         [l=(weld l.p ~[bell]) s=s.p]
+    wit  wit
   ==
     [%face *]
   ~&  %face
