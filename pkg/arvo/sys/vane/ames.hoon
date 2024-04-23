@@ -1766,7 +1766,7 @@
                 $>(%flog task:dill)
             ==
             $:  %g
-                $>(%deal task:gall)
+                $>(?(%clog %deal) task:gall)
             ==
             $:  %j
                 $>  $?  %private-keys
@@ -1785,7 +1785,7 @@
         $%  $>(%wake gift:behn)
             $>(?(%flub %unto) gift:gall)
             $>(?(%private-keys %public-keys %turf) gift:jael)
-            $>(?(%mess-response %boon %done) gift)
+            $>(?(%mess-response %noon %boon %done) gift)
         ==
       ::
       +$  sign
@@ -1794,7 +1794,7 @@
             [%gall $>(?(%flub %unto) lope)]
             [%jael $>(?(%private-keys %public-keys %turf) lope)]
             [%ames $>(%mess-response lope)]  :: produce a response message
-            [@tas $>(?(%boon %done) lope)]
+            [@tas $>(?(%noon %boon %done) lope)]
         ==
       +$  flow-sign
         $%  $>(%done lope)  ::  hear (n)ack for %poke, can trigger %peek for naxplanation
@@ -6780,11 +6780,11 @@
             ==
           ::
           ++  ev-take
-            |=  task=[=wire lope=$>(?(%done %mess-response %boon %wake) lope)]
+            |=  task=[=wire lope=$>(?(%done %mess-response %boon %wake %noon) lope)]
             |^  ^+  ev-core
             ?-  -.lope.task
               %wake           (take-wake +.lope.task)
-              %boon           take-boon
+              ?(%noon %boon)  take-boon
               %done           (ev-poke-done wire.task +.lope.task)
               %mess-response  (ev-response wire.task +.lope.task)
             ==
@@ -6801,7 +6801,11 @@
                 ev-core  ::  ignore events from an old rift
               ?>  ?=([%van %bak] [were dire])  ::  vane acks happen on backward flows
               ~!  task
-              (ev-req-boon bone ev-chan +.lope.task)
+              %+  ev-req-boon  bone
+              ?+  -.lope.task  !!
+                %boon  `payload.lope.task
+                %noon  [`id payload]:lope.task
+              ==
             ::
             ++  take-wake
               |=  error=(unit tang)
@@ -6875,11 +6879,18 @@
             fo-call:(fo-abed:fo hen bone^dire=%for `cork)
           ::
           ++  ev-req-boon
-            |=  [=bone =channel load=*]
+            |=  [=bone id=(unit *) load=*]
             ^+  ev-core
             ::  XX handle corked/closing bones
             ::
-            fo-abet:(fo-call:(fo-abed:fo hen bone^dire=%bak ~) boon/load)
+            =+  fo-core=(fo-abed:fo hen bone^dire=%bak ~)
+            =.  ev-core  fo-abet:(fo-call:fo-core boon/load)
+            ?~  id
+              ev-core
+            ?.  %+  gth  (wyt:fo-mop:fo-core loads.state.fo-core)
+                msg.cong.ames-state
+              ev-core
+            (ev-emit:ev-core [/ames]~ %pass /clog %g clog/u.id)
           ::
           ++  ev-req-peek
             |=  [sec=(unit [kid=@ key=@]) spar]
@@ -8309,6 +8320,7 @@
           ::  vane gifts
           ::
             [@ %boon *]  (ev-take:ev-core [wire %boon payload.sign])
+            [@ %noon *]  (ev-take:ev-core [wire %noon payload.sign id.sign])
           ::
           ::  network responses: acks/naxplanation payloads
           ::                     reentrant from %ames (either message or packet layer)
