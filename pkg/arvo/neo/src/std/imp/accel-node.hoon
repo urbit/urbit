@@ -1,6 +1,17 @@
 /@  accel-node
 ::
 ^-  firm:neo
+::=>
+::|%
+::::  Put all vase:pail in deps in a vase, along with stdlib
+::++  envase-deps
+::  |=  =bowl:neo
+::  !>  :-  .
+::  %~  val  by
+::  %-  ~(run by deps.bowl)
+::  |=  val=(pair pith cane)
+::  q.pail.q
+::--
 |%
 ++  state  %accel-node
 ++  poke  (sy %rely ~)
@@ -9,7 +20,7 @@
   %-  ~(gas by *deps:neo)
   =/  q 
     :-  req=|  
-    :-  [%sig %sig]
+    :-  [%pail %sig]
     `[%x ~]
   :~  [%a q]  [%b q]  [%c q]
       [%d q]  [%e q]  [%f q]
@@ -25,14 +36,15 @@
     ?>  =(%rely stud)
     =+  !<([=term =stem:neo] vax)
     ~&  >  [term stem]
+    ~&  >>>  deps.bowl
     ?>  ?=(%x -.q.stem)
-    =/  old  !<(accel-node state-vase)
-    =/  new  (~(put by old) term q.pail.q.stem)
-    [~ !>(new)]
+    ::=/  sta  !<(accel-node state-vase)
+    ::=/  all-deps  (envase-deps bowl)
+    ::=/  result  (slap all-deps (ream hoon.sta))
+    ::[~ !>([hoon.sta result])]
+    [~ state-vase]
   ++  init
     |=  old=(unit vase)
-    ::=/  d  ~(val by deps.bowl)
-    ::~&  >  pail:q:(snag 0 d)
     `(need old)
   --
 --
