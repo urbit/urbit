@@ -1,6 +1,10 @@
 /@  accel-node
 ::
 ^-  firm:neo
+::  :neo [[[%p our] %atoma ~] [%make [%atom `!>(10) ~]]]
+::  :neo [[[%p our] %atomacc ~] [%make [%accel `!>(~) ~]]]
+::  
+::
 ::=>
 ::|%
 ::::  Put all vase:pail in deps in a vase, along with stdlib
@@ -10,6 +14,7 @@
 ::  %~  val  by
 ::  %-  ~(run by deps.bowl)
 ::  |=  val=(pair pith cane)
+::  how to in-line convert here?
 ::  q.pail.q
 ::--
 |%
@@ -45,6 +50,7 @@
     [~ state-vase]
   ++  init
     |=  old=(unit vase)
+    ~&  >  deps.bowl
     `(need old)
   --
 --

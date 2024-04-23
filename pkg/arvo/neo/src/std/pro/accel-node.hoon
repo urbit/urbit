@@ -1,3 +1,3 @@
-$:  hoon=@t
+$:  hoon=@t      :: (add - ->)
     result=vase
 ==
