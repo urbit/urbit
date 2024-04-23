@@ -1,4 +1,3 @@
-::$:  formula=hoon
-::    refs=(list pith)
-::== 
-(map term *)
+$:  hoon=@t
+    result=vase
+==
