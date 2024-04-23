@@ -3440,8 +3440,7 @@
   +$  ovni-state
     $+  ovni-state
     $:  pokes=(list [=duct message=mesa-message])
-        peeks=(jug path duct)  ::  XX %chum?
-        heeds=(set duct)
+        peeks=(jug path duct)
     ==
   ::
   +$  peer-state
@@ -3449,7 +3448,6 @@
     $:  azimuth-state
         route=(unit [direct=? =lane])  ::  XX (list)
         =qos:ames
-        heeds=(set duct)
         corked=(set side)  ::  can be +peeked in the namespace
                            ::  XX how many flows to keep here?
         =ossuary:ames      ::  XX redefine ossuary in terms of bone^side
