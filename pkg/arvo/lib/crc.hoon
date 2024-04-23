@@ -4,7 +4,7 @@
   ~/  %crc32
   |=  file=octs
   (update-crc 0x0 file)
-++  make-crc-table
+++  crc-table
   ^-  (list @ux)
   %+  turn  (gulf 0 255)
   |=  i=@
@@ -18,10 +18,9 @@
   ^-  @ux
   ?:  =(q.file 0x0)
     0x0
-  =/  crc-table  make-crc-table
   =/  input-list  (weld (reap (sub p.file (met 3 q.file)) 0x0) (rip 3 q.file))
-  =/  c  %+  roll  input-list
+  %+  mix  0xffff.ffff
+  %+  roll  input-list
   |:  [a=1 acc=(mix crc 0xffff.ffff)]
   (mix (snag (dis (mix acc a) 0xff) crc-table) (rsh [0 8] acc))
-  (mix c 0xffff.ffff)
 --
