@@ -5,7 +5,11 @@
 ++  state  %grid-cell
 ++  poke  ~
 ++  kids  *kids:neo
-++  deps  *deps:neo
+++  deps
+  %-  ~(gas by *deps:neo)
+  :~  [%ref | [%grid-cell %sig] ~]
+  ==
+::
 ++  form
   ^-  form:neo
   |_  [=bowl:neo =ever:neo state-vase=vase *]

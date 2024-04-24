@@ -22,11 +22,15 @@
     ?>  =(%grid-diff stud)
     =/  poke  !<(grid-diff vax)
     ?>  =(our ship.src):bowl
+    :_  sta
     ?-    -.poke
         %new
-      :_  sta
       :~  :-  (welp here.bowl ~[[ud/row.poke] [ud/column.poke]])
           [%make %grid-cell `!>(value.poke) ~]
+      ==
+        %new
+      :~  :-  (welp here.bowl ~[[ud/row.poke] [ud/column.poke]])
+          [%make %grid-cell `!>(~) ref.poke]
       ==
     ==
   --
