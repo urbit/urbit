@@ -151,7 +151,7 @@
       ::    +encrypt, we interpret this to get the actual fragment.
       ::
       ++  split-message
-        :: ~/  %split-message
+        ~/  %split-message
         |=  [=message-num =message-blob]
         ^-  (list static-fragment)
         ::
@@ -167,7 +167,7 @@
       ::  +assemble-fragments: concatenate fragments into a $message
       ::
       ++  assemble-fragments
-        :: ~/  %assemble-fragments
+        ~/  %assemble-fragments
         |=  [num-fragments=fragment-num fragments=(map fragment-num fragment)]
         ^-  *
         ::
@@ -252,7 +252,7 @@
       ::    Assumes keys have a tag on them like the result of the |ex:crub core.
       ::
       ++  derive-symmetric-key
-        :: ~/  %derive-symmetric-key
+        ~/  %derive-symmetric-key
         |=  [=public-key =private-key]
         ^-  symmetric-key
         ::
