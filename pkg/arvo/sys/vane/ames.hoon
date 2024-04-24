@@ -5931,7 +5931,7 @@
           ?-  sign
             [@ %done *]  (on-take-done:event-core wire error.sign)
             [@ %boon *]  (on-take-boon:event-core wire payload.sign)
-            [@ %noon *]  (on-take-noon:event-core wire payload.sign id.sign)
+            [@ %noon *]  (on-take-noon:event-core wire id.sign payload.sign)
           ::
             [%ames %tune *]  (on-tune:event-core wire [[ship path] roar]:sign)
           ::
@@ -6843,6 +6843,7 @@
                 (ev-make-pact ship.per^path pay.req rift.sat.per `space)  :: XX memoize?
               %+  ev-emit:core   unix-duct.ames-state
               [%give %send ~[`@ux`ship.per] p:(fax:plot (en:^pact pact))]
+            ::
             --
           ::
           +|  %request-flow
@@ -7590,9 +7591,9 @@
                 %ack   ?.(=(seq last-acked.state) ~ `ack/(~(has by nax.state) seq))
                 %nax   ?~(nax=(~(get by nax.state) seq) ~ `nax/u.nax)
                 %poke  ?~  v=(get:fo-mop loads.state seq)  ~
-                      ?+  -.u.v  ~  :: XX cork?
-                          %plea  `plea/[vane path payload]:u.v
-                          %boon  `boon/payload.u.v
+                       ?+  -.u.v  ~  :: XX cork?
+                         %plea  `plea/[vane path payload]:u.v
+                         %boon  `boon/payload.u.v
               ==       ==
             ::
             +|  %request
@@ -8320,7 +8321,7 @@
           ::  vane gifts
           ::
             [@ %boon *]  (ev-take:ev-core [wire %boon payload.sign])
-            [@ %noon *]  (ev-take:ev-core [wire %noon payload.sign id.sign])
+            [@ %noon *]  (ev-take:ev-core [wire %noon id.sign payload.sign])
           ::
           ::  network responses: acks/naxplanation payloads
           ::                     reentrant from %ames (either message or packet layer)
