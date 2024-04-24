@@ -921,7 +921,6 @@
     |=  [=meta fun=ops]
     ^-  $-([@ @] @)
     =,  meta
-    ~&  >>  [meta fun rnd]
     ?+    `^kind`kind  ~|(kind !!)
         %real
       ?+    `^bloq`bloq  !!
