@@ -23,15 +23,14 @@
     =/  poke  !<(grid-diff vax)
     ?>  =(our ship.src):bowl
     :_  sta
-    ?-    -.poke
-        %new
-      :~  :-  (welp here.bowl ~[[ud/row.poke] [ud/column.poke]])
+    :~  :-  (welp here.bowl ~[[ud/row.poke] [ud/column.poke]])
+        ::  if user input a path, create a mirror.
+        ::  else, treat as plaintext.
+        =/  upith  (mole |.((pave:neo (stab value.poke))))
+        ?~  upith
           [%make %grid-cell `!>(value.poke) ~]
-      ==
-        %new
-      :~  :-  (welp here.bowl ~[[ud/row.poke] [ud/column.poke]])
-          [%make %grid-cell `!>(~) ref.poke]
-      ==
+        =/  conf  (malt ~[[%ref (welp here.bowl (need upith))]])
+        [%make %grid-cell `!>(~) conf]
     ==
   --
 --

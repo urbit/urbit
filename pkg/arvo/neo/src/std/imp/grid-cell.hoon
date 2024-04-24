@@ -19,6 +19,12 @@
     [~ state-vase]
   ++  init
     |=  old=(unit vase)
-    `(need old)
+    ::  if we have a dependency, mirror its vale
+    ::  else, use the value we were given on make
+    =/  dep=(unit (pair pith cane:neo))  
+      (~(get by deps.bowl) %ref)
+    ?~  dep
+      [~ (need old)]
+    [~ q:pail:q:(need dep)]
   --
 --
