@@ -5301,18 +5301,16 @@
                     =.  peer-core
                       =+  ;;  =plea  message
                       ?.  =(vane.plea %$)
-                        ?+  vane.plea  ~|  %ames-evil-vane^our^her^vane.plea  !!
-                          %c  (pe-emit duct %pass wire %c %plea her plea)
-                          %e  (pe-emit duct %pass wire %e %plea her plea)
-                          %g  (pe-emit duct %pass wire %g %plea her plea)
-                          %j  (pe-emit duct %pass wire %j %plea her plea)
+                        ?+    vane.plea  ~|(ames-evil-vane/our^her^vane.plea !!)
+                            ?(%c %e %g %j)
+                          (pe-emit duct %pass wire vane.plea %plea her plea)
                         ==
                       ::  a %cork and %ahoy pleas (both introduced to account
                       ::  for checking per-peer protocol updates) are handled
                       ::  using %$ as the recipient vane to account for peers
                       ::  that have not migrated into the new protocol
                       ::
-                      ?+    payload.plea  !!
+                      ?+    -.payload.plea  !!
                           %ahoy
                         ?>  ?=(%mesa -.path.plea)
                         (pe-emit duct %pass wire %a %deep %ahoy her bone)
