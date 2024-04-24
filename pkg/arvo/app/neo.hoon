@@ -792,6 +792,7 @@
       ;head
         ;meta(charset "UTF-8");
         ;title: s k y
+        ;script(src "https://code.jquery.com/jquery-3.7.1.js");
         ;script(src "https://unpkg.com/htmx.org@1.9.11");
         ;script(src "https://unpkg.com/htmx.org@1.9.11/dist/ext/response-targets.js");
         ;script: {html-enc-js}
@@ -833,6 +834,8 @@
           const sharedStyles = new CSSStyleSheet();
           sharedStyles.replaceSync(`{(trip style-css)}`);
           document.adoptedStyleSheets = [sharedStyles];
+          window.log=function()\{if(this.console)\{console.log(Array.prototype.slice.call(arguments));}};
+          jQuery.fn.log=function (msg)\{console.log(msg, this); return this;};
           """
         ==
         ;script: {(trip date-now)}
@@ -936,6 +939,7 @@
               [(weld #/[p/our.bowl] here) %make %sky `!>([%system ~ 0]) ~]
               [#/[p/our.bowl]/home/diary %make %diary `!>('') ~]
               [#/[p/our.bowl]/home/tasks %make %task `!>(['' | ~]) ~]
+              [#/[p/our.bowl]/home/sail %make %sail `!>(['' 'prose p3' ~]) ~]
               [#/[p/our.bowl]/home/iframes/wiki %make %iframe `!>('https://en.wikipedia.org/wiki/Main_Page') ~]
             ==
             |-
