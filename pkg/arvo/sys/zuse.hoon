@@ -2687,13 +2687,13 @@
       =<  crypt
       |%
       ++  crypt
-        |=  [rounds=@ud key=@uxI nonce=@uxG counter=@udG msg=byts]
+        |=  [rounds=@ud key=@uxI nonce=@uxG counter=@udG msg=octs]
         ^+  msg
-        :-  wid.msg
-        %+  end  [3 wid.msg]
-        %+  mix  dat.msg
+        :-  p.msg
+        %+  end  [3 p.msg]
+        %+  mix  q.msg
         %+  rep  9
-        %+  turn  (iota (div (add wid.msg 63) 64))
+        %+  turn  (iota (div (add p.msg 63) 64))
         |=  i=@
         =/  state  (can32 [4 sigma] [8 key] [2 (add counter i)] [2 nonce] ~)
         =/  final  (do-rounds rounds state)
