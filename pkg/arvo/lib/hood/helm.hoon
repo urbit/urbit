@@ -188,6 +188,20 @@
       %helm-hi  !>(?~(mes '' (crip u.mes)))
   ==
 ::
+++  poke-send-ahoy
+  |=  her=ship  =<  abet
+  (emit %pass /helm/ahoy/[(scot %p her)] %arvo %a %ahoy her)
+::
+++  take-ahoy
+  |=  [way=wire error=(unit error:ames)]
+  ?^  error
+    ::  XX retry?
+    ::
+    %-  (slog %take-ahoy u.error)
+    abet
+  ?>  ?=([@ ~] way)
+  =/  =ship  (slav %p i.way)
+  abet:(emit %pass /helm/migrate %arvo %a %mate ship)
 ::
 ++  poke-hi
   |=  mes=@t
@@ -306,6 +320,7 @@
     %helm-pass             =;(f (f !<(_+<.f vase)) poke-pass)
     %helm-rekey            =;(f (f !<(_+<.f vase)) poke-rekey)
     %helm-send-hi          =;(f (f !<(_+<.f vase)) poke-send-hi)
+    %helm-send-ahoy        =;(f (f !<(_+<.f vase)) poke-send-ahoy)
     %helm-serve            =;(f (f !<(_+<.f vase)) poke-serve)
     %helm-trim             =;(f (f !<(_+<.f vase)) poke-trim)
     %helm-verb             =;(f (f !<(_+<.f vase)) poke-verb)
@@ -314,9 +329,10 @@
 ::
 ++  take-agent
   |=  [=wire =sign:agent:gall]
-  ?+  wire  ~|([%helm-bad-take-agent wire -.sign] !!)
-    [%hi *]  ?>  ?=(%poke-ack -.sign)
-                   (coup-hi t.wire p.sign)
+  ?+    wire  ~|([%helm-bad-take-agent wire -.sign] !!)
+      [%hi *]
+    ?>  ?=(%poke-ack -.sign)
+    (coup-hi t.wire p.sign)
   ==
 ::
 ++  take-bound
@@ -332,6 +348,8 @@
                       ?>(?=(%bound +<.sign-arvo) +>.sign-arvo)
     [%moon-breach *]  %+  take-wake-moon-breach  t.wire
                       ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
+    [%ahoy *]         %+  take-ahoy  t.wire
+                      ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
     [%pass *]         abet
   ==
 --

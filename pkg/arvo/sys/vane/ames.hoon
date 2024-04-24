@@ -3193,7 +3193,7 @@
                 %drop  abet:(clear-nack [nack-bone message-num]:deep)
                 %cork  (cork-bone bone.deep)
                 %kill  (kill-bone bone.deep)
-                %ahoy  (migrate-peer bone.deep)
+                %ahoy  (migrate-peer bone.deep)  :: XX remove bone; it's just next-bone.ossuary
               ==
               ::
               ++  migrate-peer
@@ -3634,7 +3634,8 @@
                 ::
                 =/  =peer-state     (gut-peer-state ship)
                 =/  =public-key     pass:(~(got by keys.point) life.point)
-                =/  =private-key    sec:ex:crypto-core.ames-state
+                =/  =private-key    priv.ames-state
+                  ::  sec:ex:crypto-core.ames-state  :: XX FIXME
                 =/  =symmetric-key  (derive-symmetric-key public-key private-key)
                 ::
                 =.  qos.peer-state            [%unborn now]
@@ -3783,6 +3784,21 @@
               ?.  (~(has by keens.peer-state.peer) path)
                 event-core
               abet:fi-abet:(fi-unsub:(abed:fi:peer path) duct all)
+            ::
+            +|  %migration-entry-points
+            ::
+            ++  on-ahoy
+              |=  =ship
+              ^+  event-core
+              (on-plea ship %$ /mesa %ahoy ~)
+            ::
+            ++  on-mate
+              |=  =ship
+              ^+  event-core
+              =/  ship-state  (~(get by peers.ames-state) ship)
+              ?>  ?=([~ %known *] ship-state)
+              =+  pe-core=(abed-peer:pe ship +.u.ship-state)
+              abet:(on-migrate:pe-core next-bone.ossuary.peer-state.pe-core)  :: XX (dec next-bone)
             ::
             +|  %implementation
             ::  +enqueue-alien-todo: helper to enqueue a pending request
@@ -4193,6 +4209,7 @@
               ::
               ++  on-migrate
                 |=  =bone  :: XX do something with bone? save high water mark
+                           :: XX remove bone; it's just next-bone.ossuary
                 ^+  peer-core
                 =|  chum=peer-state:mesa
                 |^  =:        -.chum  azimuth-state=-.peer-state
@@ -5908,6 +5925,9 @@
             %chum  (on-chum:event-core +.task)
             %yawn  (on-cancel-scry:event-core | +.task)
             %wham  (on-cancel-scry:event-core & +.task)
+          ::
+            %ahoy  (on-ahoy:event-core ship.task)
+            %mate  (on-mate:event-core ship.task)
           ==
         ::
         [moves ames-gate]

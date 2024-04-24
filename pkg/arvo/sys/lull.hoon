@@ -819,6 +819,8 @@
         $>(%trim vane-task)
         $>(%vega vane-task)
     ::
+        [%ahoy =ship]                 ::  send %ahoy plea
+        [%mate =ship]                 ::  migrate .ship
         [%mako =space p=spar q=path]  :: XX flow migration
                                       :: $>(%mako task:mesa)
     ==
@@ -964,7 +966,7 @@
         [%drop =ship =nack=bone =message-num]
         [%cork =ship =bone]
         [%kill =ship =bone]
-        [%ahoy =ship =bone]
+        [%ahoy =ship =bone]  :: XX remove bone; it's just next-bone.ossuary
     ==
   ::  $stun: STUN notifications, from unix
   ::
