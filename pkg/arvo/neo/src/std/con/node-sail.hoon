@@ -5,7 +5,10 @@
 |^
   ^-  sail
   =/  code-el  (snag 1 c.nod)
-  =/  code  (crip (~(got by (malt a.g.code-el)) %value))
+  =/  code
+    =/  raw=tape  (~(got by (malt a.g.code-el)) %value)
+    ?:  =((rear raw) '\0a')  (crip (snip raw))
+    (crip raw)
   =/  class-el  (snag 0 c.nod)
   =/  class  (crip (~(got by (malt a.g.class-el)) %value))
   [code class `(render-udon code)]
