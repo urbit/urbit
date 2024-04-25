@@ -15,11 +15,13 @@
 |%
 +$  cape  $@(? [cape cape])
 +$  sock  [=cape data=*]
-:: +$  wilt  (list [l=* s=sock])
-+$  wilt  (list [l=path s=sock])  :: just useful for pretty printing
++$  wilt  (list [l=path s=sock])    ::  XX switch back to *
 --
 ::
-=|  gil=(set type)       ::  all seen types
+=|  sirs=(map type [l=path s=sock])  ::  parents of each type
+=|  kids=(map type [l=path s=sock])  ::  children of each type
+=|  cot=(set type)                   ::  core types seen
+=|  gil=(set type)                   ::  all types seen
 =|  wit=wilt
 |=  t=type
 ^-  wilt
@@ -46,7 +48,7 @@
     (turn ~(val by chapters) |=(tom=tome q.tom))
   =/  hops=(list (pair term hoon))
     (zing (turn mats |=(mat=(map term hoon) ~(tap by mat))))
-  =/  mits=(list type)
+  =/  kits=(list type)  ::  types of each "kid" (types of minted arms)
     (turn hops |=(hop=(pair term hoon) p:(~(mint ut.h t) %noun q.hop)))
   ::
   ~&  ~
@@ -54,24 +56,20 @@
   ~&  [%load p.t]
   ~&  [%bell bell]
   ::
-  ?:  (~(has in gil) t)
-    wit
-  %+  weld
-    %=  $  ::  recur with payload type
-      t    p.t
-      gil  (~(put in gil) t)
-      wit  wit
-    ==
-  ^-  wilt
-  %-  zing
-  %+  turn
-    mits
-  |=  t=type
-  %=  ^$  ::  recur with types of minted arms
-    t    t
-    gil  (~(put in gil) t)
-    wit  wit
-  ==
+  ::  1. collect the input type's list of parents
+  ::  2. collect the input type's children to be processed
+  ::  3. collect each children's list of parents
+  ::  4. zip the values into full label hierarchies
+  ::
+  ::  cot=(set type) all core types seen
+  ::  gil=(set type) all non-core types seen
+  ::  kids=(map type [l=path s=sock]) tracks each type's children
+  ::  sirs=(map type [l=path s=sock]) tracks each type's parents
+  ::
+  ?.  (~(has in cot) t)
+    =.  cot  (~(put in cot) t)
+    (weld ~[[l=~[bell] s=[& (mug data.semi)]]] $(t p.t))
+  wit
     [%face *]
   ~&  %face
   $(t q.t)
