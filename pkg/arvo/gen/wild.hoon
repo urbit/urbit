@@ -18,10 +18,8 @@
 +$  wilt  (list [l=path s=sock])    ::  XX switch back to *
 --
 ::
-=|  sirs=(map type [l=path s=sock])  ::  parents of each type
-=|  kids=(map type [l=path s=sock])  ::  children of each type
-=|  cot=(set type)                   ::  core types seen
-=|  gil=(set type)                   ::  all types seen
+=|  cot=(map type path)             ::  core types
+=|  gil=(set type)                  ::  all types seen
 =|  wit=wilt
 |=  t=type
 ^-  wilt
@@ -43,7 +41,7 @@
   ::  +$  tome  (pair what (map term hoon))
   ::  +$  what  (unit (pair cord (list sect)))
   =+  [semi chapters]=[p q]:r.q.t
-  =/  bell  (need p.p.q.t)
+  =/  bell  (need p.p.q.t)  ::  XX
   =/  mats=(list (map term hoon))
     (turn ~(val by chapters) |=(tom=tome q.tom))
   =/  hops=(list (pair term hoon))
@@ -55,21 +53,18 @@
   ~&  [%batt `@ux`(mug data.semi)]
   ~&  [%load p.t]
   ~&  [%bell bell]
-  ::
-  ::  1. collect the input type's list of parents
-  ::  2. collect the input type's children to be processed
-  ::  3. collect each children's list of parents
-  ::  4. zip the values into full label hierarchies
-  ::
-  ::  cot=(set type) all core types seen
-  ::  gil=(set type) all non-core types seen
-  ::  kids=(map type [l=path s=sock]) tracks each type's children
-  ::  sirs=(map type [l=path s=sock]) tracks each type's parents
-  ::
-  ?.  (~(has in cot) t)
-    =.  cot  (~(put in cot) t)
-    (weld ~[[l=~[bell] s=[& (mug data.semi)]]] $(t p.t))
-  wit
+  =.  gil  ?:  (~(has in gil) t)  gil  (~(put in gil) t)
+  =/  past=wilt  $(t p.t)
+  :: =/  next=wilt  (zing (turn kits |=(t=type ^$(t t))))
+  =/  root=?  =(~ past)
+  ?:  root
+    =.  cot  (~(put by cot) t ~[bell])
+    ~[[l=~[bell] s=[& (mug data.semi)]]]  ::  XX nix mug
+  =/  olds=path  (zing (turn past |=(p=[l=path s=sock] l.p)))
+  %-  zing
+  :+  past
+    ~[[l=(weld ~[bell] olds) s=[& (mug data.semi)]]]  ::  XX nix mug
+  ~
     [%face *]
   ~&  %face
   $(t q.t)
