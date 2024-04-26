@@ -4529,7 +4529,6 @@
       [%j task:jael]
       [%k task:khan]
       [%l task:lick]
-      [%m task:mesa]  :: XX remove
       [%$ %whiz ~]
       [@tas %meta vase]
   ==
@@ -4556,7 +4555,6 @@
       [%jael gift:jael]
       [%khan gift:khan]
       [%lick gift:lick]
-      [%mesa gift:mesa]  ::  XX remove
   ==
 ::  $unix-task: input from unix
 ::
