@@ -53,18 +53,32 @@
   ~&  [%batt `@ux`(mug data.semi)]
   ~&  [%load p.t]
   ~&  [%bell bell]
-  =.  gil  ?:  (~(has in gil) t)  gil  (~(put in gil) t)
-  =/  past=wilt  $(t p.t)
-  :: =/  next=wilt  (zing (turn kits |=(t=type ^$(t t))))
-  =/  root=?  =(~ past)
-  ?:  root
-    =.  cot  (~(put by cot) t ~[bell])
-    ~[[l=~[bell] s=[& (mug data.semi)]]]  ::  XX nix mug
-  =/  olds=path  (zing (turn past |=(p=[l=path s=sock] l.p)))
+  ::
+  :: =/  past=wilt  $(t p.t)
+  :: =/  root=?  =(~ past)
+  :: ?:  root
+  ::   =.  cot  (~(put by cot) t ~[bell])
+  ::   ~[[l=~[bell] s=[& (mug data.semi)]]]  ::  XX nix mug
+  :: =/  olds=path  (zing (turn past |=(p=[l=path s=sock] l.p)))
+  :: %-  zing
+  :: :+  past
+  ::   ~[[l=(weld ~[bell] olds) s=[& (mug data.semi)]]]  ::  XX nix mug
+  :: ~
+  ::
+  =/  self=wilt  ~[[l=~[bell] s=[& (mug data.semi)]]]
+  =/  next=(list wilt)  (skip (turn kits |=(t=type ^$(t t))) |=(w=wilt =(~ w)))
+  =/  leaf=?  =(~ next)
+  ~&  [%next bell next]
+  ?:  leaf
+    =.  cot  (~(put by cot) t -<.self)
+    self
+  ::  turn over the next=(list wilt)
+  ::  the gate should produce a new wilt that is equivalent to the input wilt
+  ::  except the l=path element should have self's path appended to it
+  ::
+  ::  note that we can be sure that each input wilt only has one element
   %-  zing
-  :+  past
-    ~[[l=(weld ~[bell] olds) s=[& (mug data.semi)]]]  ::  XX nix mug
-  ~
+  `(list wilt)`(turn next |=(w=wilt ~[[l=(weld `path`-<.w `path`-<.self) s=[& ~]]]))
     [%face *]
   ~&  %face
   $(t q.t)
