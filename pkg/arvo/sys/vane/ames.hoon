@@ -6851,7 +6851,7 @@
               =/  =pact:pact
                 (ev-make-pact ship.per^path pay.req rift.sat.per `space)  :: XX memoize?
               %+  ev-emit:core   unix-duct.ames-state
-              [%give %send ~[`@ux`ship.per] p:(fax:plot (en:^pact pact))]
+              [%give %push ~[`@ux`ship.per] p:(fax:plot (en:^pact pact))]
             ::
             --
           ::
@@ -6995,7 +6995,7 @@
             =/  res=(unit (unit cage))  (rof ~ /ames %ax (name-to-beam name))
             ?.  ?=([~ ~ ^] res)
               ev-core
-            (ev-emit hen %give %send ~ !<(@ q.u.u.res))
+            (ev-emit hen %give %push ~ !<(@ q.u.u.res))
           ::
           ++  ev-pact-page
             |=  [=name:pact =data:pact =next:pact]
@@ -7038,7 +7038,7 @@
               ::  request next fragment
               ::
               =/  =pact:pact  [%peek name(wan [%data 0])]
-              (ev-emit unix-duct.ames-state %give %send ~ p:(fax:plot (en:^pact pact)))
+              (ev-emit unix-duct.ames-state %give %push ~ p:(fax:plot (en:^pact pact)))
             ::
                 %data
               ?>  =(13 boq.name)  :: non-standard
@@ -7095,7 +7095,7 @@
                   u.res(ps `[u.state ~[dat.data]])
                 =/  =pact:pact  [%peek name(wan [%data leaf.u.state])]
                 %+  ev-emit  unix-duct.ames-state
-                [%give %send ~[`@ux`her.name] p:(fax:plot (en:^pact pact))]
+                [%give %push ~[`@ux`her.name] p:(fax:plot (en:^pact pact))]
               ::  yes, we do have packet state already
               ::
               =*  ps  u.ps.u.res
@@ -7123,7 +7123,7 @@
                 ::  request next fragment
                 ::
                 =/  =pact:pact  [%peek name(wan [%data leaf.u.state])]
-                (ev-emit unix-duct.ames-state %give %send ~[`@ux`her.name] p:(fax:plot (en:^pact pact)))
+                (ev-emit unix-duct.ames-state %give %push ~[`@ux`her.name] p:(fax:plot (en:^pact pact)))
               ::  yield complete message
               ::
               =/  =spar:ames  [her.name inner-path]
@@ -7326,7 +7326,7 @@
               (~(put by chums.ames-state) ship.p her(pit (~(put by pit.her) path.p new)))
             ::
             =/  =pact:pact  (ev-make-pact p q rift.her spac)
-            (ev-emit unix-duct.ames-state %give %send ~[`@ux`ship.p] p:(fax:plot (en:^pact pact)))
+            (ev-emit unix-duct.ames-state %give %push ~[`@ux`ship.p] p:(fax:plot (en:^pact pact)))
           ::
           ++  ev-make-peek
             |=  [=space p=spar]
@@ -7345,7 +7345,7 @@
               ev-core
             =/  =pact:pact  page/[name u.page ~]
             %+  ev-emit  unix-duct.ames-state
-            [%give %send ~[`@ux`ship] p:(fax:plot (en:^pact pact))]
+            [%give %push ~[`@ux`ship] p:(fax:plot (en:^pact pact))]
           ::
           ++  ev-make-pact
             |=  [p=spar q=(unit path) =per=rift spac=(unit space)]
