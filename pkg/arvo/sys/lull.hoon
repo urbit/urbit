@@ -3322,16 +3322,21 @@
 ::
 ++  rand                                                ::  computation
   |%
-  +$  card  card:agent:gall
+  +$  card  $+(card card:agent:gall)
   +$  input
+    $+  input
     $%  [%poke =cage]
         [%sign =wire =sign-arvo]
         [%agent =wire =sign:agent:gall]
         [%watch =path]
     ==
-  +$  strand-input  [=bowl in=(unit input)]
+  +$  error  (pair term $+(tang tang))
+  +$  strand-input
+    $+  strand-input
+    [=bowl in=(unit input)]
   +$  tid   @tatid
   +$  bowl
+    $+  strand-bowl
     $:  our=ship
         src=ship
         tid=tid
@@ -3359,27 +3364,29 @@
   ::
   ++  strand-output-raw
     |*  a=mold
+    $+  strand-output-raw
     $~  [~ %done *a]
     $:  cards=(list card)
         $=  next
         $%  [%wait ~]
             [%skip ~]
             [%cont self=(strand-form-raw a)]
-            [%fail err=(pair term tang)]
+            [%fail err=error]
             [%done value=a]
         ==
     ==
   ::
   ++  strand-form-raw
     |*  a=mold
+    $+  strand-form-raw
     $-(strand-input (strand-output-raw a))
   ::
   ::  Abort strand computation with error message
   ::
   ++  strand-fail
-    |=  err=(pair term tang)
+    |=  =error
     |=  strand-input
-    [~ %fail err]
+    [~ %fail error]
   ::
   ::  Asynchronous transcaction monad.
   ::
@@ -3392,11 +3399,11 @@
   ++  strand
     |*  a=mold
     |%
-    ++  output  (strand-output-raw a)
+    ++  output  $+(output (strand-output-raw a))
     ::
     ::  Type of an strand computation.
     ::
-    ++  form  (strand-form-raw a)
+    ++  form  $+(form (strand-form-raw a))
     ::
     ::  Monadic pure.  Identity computation for bind.
     ::
