@@ -3361,24 +3361,19 @@
 ++  mesa  ^?
   |%
   +$  task
-    $~  vega+~
+    $~  heer/*@ux^*@
     $%  [%heer p=lane:pact q=@]                :: receive a packet
         [%mess p=(unit lane:pact) q=mess]      :: receive a message
         [%mess-ser =path load=$>(%page mess)]  :: XX give message from packet layer
         [%mako =space p=spar q=path]           :: initiate %poke request
         [%meek =space p=spar]                  :: initiate %peek request
         [%mage =space p=spar]
-    ::
-        $>(?(%plea %born %trim %vega %init) vane-task)
-        $>(?(%cork %plug %keen) task:ames)
     ==
   ::
   +$  gift
-    $%  [%send p=(list lane:pact) q=@]   :: send a request/response packet
+    $%  [%push p=(list lane:pact) q=@]   :: send a request/response packet
         [%mess-response =sage:mess]      :: XX (names) produce deserialized response message
         [%response load=$>(%page mess)]  :: XX (names) produce serialized response message
-        ::
-        $>(?(%noon %boon %stub %done %nail %saxo %lost) gift:ames)
     ==
   ::
   +$  axle

@@ -84,6 +84,29 @@
 =/  packet-size  13
 ::
 =>  |%
+    +$  task  $%  task:mesa
+                  task:ames
+              ==
+    ::
+    +$  gift  $%  gift:mesa
+                  gift:ames
+              ==
+    ::
+    +$  sign
+      $~  [%behn %wake ~]
+      $%  $:  %ames
+              $%  $>(%tune gift:ames)
+                  $>(?(%mess-response) gift:mesa)
+          ==  ==
+          [%behn $>(%wake gift:behn)]
+          [%gall $>(?(%flub %unto) gift:gall)]
+          [%jael $>(?(%private-keys %public-keys %turf) gift:jael)]
+          $:  @tas
+              $>(?(%noon %boon %done) gift)
+      ==  ==
+    --
+::
+=>  |%
     ::
     ++  ames-helper
       =,  ames
@@ -1469,30 +1492,6 @@
             $:  @tas
                 $>(%plea vane-task)
         ==  ==
-      ::  $sign: response from other vane
-      ::
-      +$  sign
-        $~  [%behn %wake ~]
-        $%  $:  %ames
-                $>(%tune gift:ames)
-            ==
-            $:  %behn
-                $>(%wake gift:behn)
-            ==
-            $:  %gall
-                $>(?(%flub %unto) gift:gall)
-            ==
-            $:  %jael
-                $>  $?  %private-keys
-                        %public-keys
-                        %turf
-                    ==
-                gift:jael
-            ==
-            $:  @tas
-                $>(?(%noon %boon %done) gift:ames)
-        ==  ==
-      ::
       ::  $message-pump-task: job for |message-pump
       ::
       ::    %memo: packetize and send application-level message
@@ -1635,15 +1634,14 @@
           ;;(path (cue pat))
         ::
         --
-
       ::
       ++  chacha
         =<
           =<  crypt
-          :: ~%  %chacha  ..part  ~
+          ~%  %chacha  ..part  ~
           |%
           ++  crypt
-            :: ~/  %crypt
+            ~/  %crypt
             |=  [rounds=@ud key=@uxI nonce=@uxG counter=@udG msg=byts]
             ^+  msg
             :-  wid.msg
@@ -1664,7 +1662,7 @@
             [(rsh 5 nonce) (lsh [5 1] (end 5 nonce))]
           ::
           ++  xchacha
-            :: ~/  %xchacha
+            ~/  %xchacha
             |=  [key=@uxI nonce=@ux]
             ^-  [key=@uxI nonce=@uxG]
             :_  (rsh [5 4] nonce)
@@ -1749,7 +1747,7 @@
       ::
       ::  $move: output effect; either request (to other vane) or response
       ::
-      +$  move  [=duct card=(wite note gift)]
+      +$  move  [=duct card=(wite note ^gift)] ::  XX combined gifts
       ::
       +$  note
         $~  [%b %wait *@da]
@@ -1785,17 +1783,9 @@
         $%  $>(%wake gift:behn)
             $>(?(%flub %unto) gift:gall)
             $>(?(%private-keys %public-keys %turf) gift:jael)
-            $>(?(%mess-response %noon %boon %done) gift)
+            $>(?(%mess-response %noon %boon %done) ^gift) ::  XX combined gifts
         ==
       ::
-      +$  sign
-        $~  [%behn *$>(%wake lope)]
-        $%  [%behn $>(%wake lope)]
-            [%gall $>(?(%flub %unto) lope)]
-            [%jael $>(?(%private-keys %public-keys %turf) lope)]
-            [%ames $>(%mess-response lope)]  :: produce a response message
-            [@tas $>(?(%noon %boon %done) lope)]
-        ==
       +$  flow-sign
         $%  $>(%done lope)  ::  hear (n)ack for %poke, can trigger %peek for naxplanation
             [%mess-response seq=@ud sage:mess] :: added seq number to $>(%response lope)
@@ -3853,7 +3843,7 @@
             ::    request the information from Jael if we haven't already.
             ::
             ++  send-blob
-              :: ~/  %send-blob
+              :: ~/  %send-blobs
               |=  [for=? =ship =blob ship-state=(unit ship-state)]
               ::
               =/  final-ship  ship
@@ -5946,7 +5936,7 @@
             `ames-state
           ::
           =<  abet
-          ?-  sign
+          ?+  sign  ~&(ames-take-sign/[&1^&2]:sign event-core)
             [@ %done *]  (on-take-done:event-core wire error.sign)
             [@ %boon *]  (on-take-boon:event-core wire payload.sign)
             [@ %noon *]  (on-take-noon:event-core wire id.sign payload.sign)
@@ -6751,13 +6741,14 @@
           ::
           ++  ev-call
             =>  |%  +$  req-task
-                      $%  $<(%mess $>(?(%plea %keen %cork %heer %mess-ser) task))
+                      $%  $<(%mess $>(?(%plea %keen %cork %heer %mess-ser) ^task))  ::  XX common tasks
                           [%mess (unit lane:pact) =mess dud=(unit goof)]
                       ==
                 --
             ::
             |=  task=req-task
             ^+  ev-core
+            ~!  task
             ?-  -.task
             ::  %request-entry-points
             ::
@@ -8270,9 +8261,10 @@
       ::
       |%
       ++  call
-        |=  [hen=duct dud=(unit goof) wrapped-task=(hobo task)]
+        |=  [hen=duct dud=(unit goof) wrapped-task=(hobo ^task)]  :: XX common tasks
         ^-  [(list move) _mesa-gate]
-        =/  =task  ((harden task) wrapped-task)
+        =/  =^task  ((harden ^task) wrapped-task)
+        ~!  task
         =+  ev-core=(ev-abed:ev-core [now eny rof] hen)
         ::
         =^  moves  ames-state
@@ -8288,7 +8280,8 @@
             ==
           ::
           =<  ev-abet
-          ?+  -.task  ~&  -.task  ev-core
+          ::  ?(%trim %snub %spew %stir %stun %sift %dear %prod %tame %ahoy %chum %cong %deep %hear %kroc %mate %wham %yawn)
+          ?+  -.task  !! ::  XX TODO
             %vega  ev-core
             %init  sy-abet:~(sy-init sy hen)
             %born  sy-abet:~(sy-born sy hen)
@@ -8326,7 +8319,7 @@
             `ames-state
           ::
           =<  ev-abet
-          ?-  sign
+          ?+  sign  ~&(mesa-take-sign/[&1^&2]:sign ev-core)
             [%behn %wake *]  (ev-take:ev-core [wire %wake error.sign])
           ::
             [%jael %turf *]          ev-core  ::sy-abet:(~(on-take-turf sy hen) turf.sign)
