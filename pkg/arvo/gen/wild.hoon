@@ -14,7 +14,7 @@
 =>
 |%
 +$  cape  $@(? [cape cape])
-+$  sock  [=cape data=*]
++$  sock  [=cape data=@ux]          ::  XX switch back to *
 +$  wilt  (list [l=path s=sock])    ::  XX switch back to *
 --
 ::
@@ -46,7 +46,7 @@
     (turn ~(val by chapters) |=(tom=tome q.tom))
   =/  hops=(list (pair term hoon))
     (zing (turn mats |=(mat=(map term hoon) ~(tap by mat))))
-  =/  kits=(list type)  ::  types of each "kid" (types of minted arms)
+  =/  kits=(list type)  ::  type of each "kid" (types of minted arms)
     (turn hops |=(hop=(pair term hoon) p:(~(mint ut.h t) %noun q.hop)))
   ::
   ~&  ~
@@ -54,31 +54,26 @@
   ~&  [%load p.t]
   ~&  [%bell bell]
   ::
-  :: =/  past=wilt  $(t p.t)
-  :: =/  root=?  =(~ past)
-  :: ?:  root
-  ::   =.  cot  (~(put by cot) t ~[bell])
-  ::   ~[[l=~[bell] s=[& (mug data.semi)]]]  ::  XX nix mug
-  :: =/  olds=path  (zing (turn past |=(p=[l=path s=sock] l.p)))
-  :: %-  zing
-  :: :+  past
-  ::   ~[[l=(weld ~[bell] olds) s=[& (mug data.semi)]]]  ::  XX nix mug
-  :: ~
-  ::
   =/  self=wilt  ~[[l=~[bell] s=[& (mug data.semi)]]]
-  =/  next=(list wilt)  (skip (turn kits |=(t=type ^$(t t))) |=(w=wilt =(~ w)))
-  =/  leaf=?  =(~ next)
-  ~&  [%next bell next]
-  ?:  leaf
-    =.  cot  (~(put by cot) t -<.self)
+  =/  past=wilt  $(t p.t)
+  ~&  [%past bell past]
+  =/  root=?  =(~ past)
+  ?:  root
+    =.  cot  (~(put by cot) t ~[bell])
     self
-  ::  turn over the next=(list wilt)
-  ::  the gate should produce a new wilt that is equivalent to the input wilt
-  ::  except the l=path element should have self's path appended to it
+  =/  olds=path  (zing (turn past |=(p=[l=path s=sock] l.p)))
+  ~[[l=(weld `path`-<.self olds) s=[& (mug data.semi)]]]  ::  XX nix mug
   ::
-  ::  note that we can be sure that each input wilt only has one element
-  %-  zing
-  `(list wilt)`(turn next |=(w=wilt ~[[l=(weld `path`-<.w `path`-<.self) s=[& ~]]]))
+  :: =/  self=wilt  ~[[l=~[bell] s=[& (mug data.semi)]]]
+  :: =/  next=(list wilt)  (skip (turn kits |=(t=type ^$(t t))) |=(w=wilt =(~ w)))
+  :: =/  leaf=?  =(~ next)
+  :: ~&  [%next bell next]
+  :: ?:  leaf
+  ::   =.  cot  (~(put by cot) t -<.self)
+  ::   self
+  :: %-  zing
+  :: %+  turn  next
+  :: |=  w=wilt  ~[[l=(weld `path`-<.w `path`-<.self) s=[& ~]]]
     [%face *]
   ~&  %face
   $(t q.t)
