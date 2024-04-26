@@ -8685,10 +8685,98 @@
       --
     ::
     ++  peer
-      |%
-      +$  task  $%  task:mesa
-                    task:ames
+      =>  ::  per-peer core-routing migration check
+          ::
+          ::
+          |_  [[now=@da eny=@uvJ rof=roof] hen=duct]
+          ::
+          +|  %helpers
+          ::
+          ++  pe-core  .
+          ++  me-core  (ev-abed:ev-core:mesa [now eny rof] hen)
+          ++  pe-abed
+            |=  [now=@da eny=@uvJ rof=roof =duct]
+            pe-core(hen duct, now now, eny eny, rof rof)
+          ::
+          ++  pe-find-peer
+            |=  =ship
+            ^-  $%  [%mesa (unit ship-state:mesa)]
+                    [%ames (unit ship-state:ames)]
                 ==
+            ?^  chum-state=(~(get by chums.ames-state) ship)
+              mesa/chum-state
+            ames/(~(get by peers.ames-state) ship)
+          ::
+          +|  %entry-points
+          ::
+          ++  call
+            |=  =task
+            ?+  -.task  !!
+              %plea  (pe-plea +.task)
+              %cork  (pe-cork +.task)
+              %keen  (pe-keen +.task)
+              %yawn  (pe-yawn +.task)
+              %wham  (pe-wham +.task)
+            ==
+          ::
+          +|  %internals
+          ::
+          ++  pe-plea
+            |=  [=ship =plea:ames]
+            =/  ship-state  (pe-find-peer ship)
+            ::
+            ?:  ?=(%ames -.ship-state)
+              :: ^-  [(list move:ames) _ames-gate]
+              (call:(ames now eny rof) hen ~ soft+plea/+<)
+            =<  ev-abet
+            ?:  ?=([~ %known *] +.ship-state)
+              (%*(ev-req-plea me-core per ship^u.ship-state) ship plea)
+            ::
+            %^  ev-enqueue-alien-todo:me-core  ship  +.ship-state
+            |=  todos=ovni-state:me-core
+            todos(pokes [[hen^plea/plea] pokes.todos])
+          ::
+          ++  pe-cork
+            |=  her=ship
+            =/  =plea:ames  [%$ /cork %cork ~]
+            =/  ship-state  (pe-find-peer her)
+            ::
+            ?:  ?=(%ames -.ship-state)
+              (call:(ames now eny rof) hen ~ soft+cork/+<)
+            =<  ev-abet
+            ?:  ?=([~ %known *] +.ship-state)
+              (%*(ev-req-plea me-core per her^u.ship-state) her plea)
+            ::
+            %^  ev-enqueue-alien-todo:me-core  her  +.ship-state
+            |=  todos=ovni-state:me-core
+            todos(pokes [[hen^plea/plea] pokes.todos])
+          ::
+          ++  pe-keen
+            |=  [sec=(unit [idx=@ key=@]) spar:ames]
+            =/  ship-state  (pe-find-peer ship)
+            ?:  ?=(%ames -.ship-state)
+              (call:(ames now eny rof) hen ~ soft+keen/+<)
+            =<  ev-abet
+            ?:  ?=([~ %known *] +.ship-state)
+              (%*(ev-req-peek me-core per ship^u.ship-state) sec ship path)
+            ::
+            %^  ev-enqueue-alien-todo:me-core  ship  +.ship-state
+            |=  todos=ovni-state:me-core
+            todos(peeks (~(put ju peeks.todos) path hen))
+            ::
+          ::
+          ++  pe-yawn
+            |=  *  !!
+          ::
+          ++  pe-wham
+            |=  *  !!
+          ::
+          --
+      ::
+      |=  [now=@da eny=@uvJ rof=roof]
+      =*  mesa-gate  .
+      ::
+      |%
       ::
       ++  call
         |=  [hen=duct dud=(unit goof) wrapped-task=(hobo task)]
@@ -8697,7 +8785,7 @@
         ?+  -.task  !!  ::  XX %stun
           ::  %ames-only tasks
           ::
-            ?(%kroc %deep %hear %chum %cong)
+            ?(%kroc %deep %hear %chum %cong %mate)
           ::  XX can we call the wrong core? still check if ship has migrated?
           ::
           (call:(ames now eny rof) hen dud task)
@@ -8707,26 +8795,33 @@
           ::  XX can we call the wrong core? still check if ship has migrated?
           ::
           (call:(mesa now eny rof) hen dud task)
-          ::  peer-independent tasks
+          ::  flow-independent tasks
           ::
-            ?(%vega %init %born)  :: XX %stun
+            ?(%vega %init %born %trim %snub %spew %stir %stun %sift %plug %dear %init %prod %tame)
           (call:(mesa now eny rof) hen dud task)
           ::  common tasks
           ::
-            $?  %plug  %plea  %cork  %keen  %dear
-                %init  %yawn  %wham  %prod  %sift
-                %snub  %spew  %stir  %trim  %tame
-            ==
-          !!
+            ?(%plea %cork %keen %yawn %wham)
+          (call:(pe-abed:pe-core now eny rof hen) task)
         ::
         ==
+      ::
+      ++  take
+        |=  [=wire =duct dud=(unit goof) =sign]
+        :: ^-  [(list move) _ames-gate]
+        ?^  dud
+          ~|(%ames-take-dud (mean tang.u.dud))
+        ?.  ?=([%mesa *] wire)
+          (take:(ames now eny rof) wire duct dud sign)
+        (take:(mesa now eny rof) wire duct dud sign)
+      ::
       --
     --
 ::
 |%
-++  call  call:(mesa now eny rof)
-++  take  take:(mesa now eny rof)
-++  stay  stay:(mesa now eny rof)
-++  load  load:(mesa now eny rof)
-++  scry  scry:(mesa now eny rof)
+++  call  call:(ames now eny rof)
+++  take  take:(ames now eny rof)
+++  stay  stay:(ames now eny rof)
+++  load  load:(ames now eny rof)
+++  scry  scry:(ames now eny rof)
 --
