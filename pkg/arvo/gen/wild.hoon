@@ -54,26 +54,28 @@
   ~&  [%load p.t]
   ~&  [%bell bell]
   ::
-  =/  self=wilt  ~[[l=~[bell] s=[& (mug data.semi)]]]
-  =/  past=wilt  $(t p.t)
-  ~&  [%past bell past]
-  =/  root=?  =(~ past)
-  ?:  root
-    =.  cot  (~(put by cot) t ~[bell])
-    self
-  =/  olds=path  (zing (turn past |=(p=[l=path s=sock] l.p)))
-  ~[[l=(weld `path`-<.self olds) s=[& (mug data.semi)]]]  ::  XX nix mug
-  ::
   :: =/  self=wilt  ~[[l=~[bell] s=[& (mug data.semi)]]]
-  :: =/  next=(list wilt)  (skip (turn kits |=(t=type ^$(t t))) |=(w=wilt =(~ w)))
-  :: =/  leaf=?  =(~ next)
-  :: ~&  [%next bell next]
-  :: ?:  leaf
-  ::   =.  cot  (~(put by cot) t -<.self)
+  :: =/  past=wilt  $(t p.t)
+  :: ~&  [%past bell past]
+  :: =/  root=?  =(~ past)
+  :: ?:  root
+  ::   =.  cot  (~(put by cot) t ~[bell])
   ::   self
-  :: %-  zing
-  :: %+  turn  next
-  :: |=  w=wilt  ~[[l=(weld `path`-<.w `path`-<.self) s=[& ~]]]
+  :: =/  olds=path  (zing (turn past |=(p=[l=path s=sock] l.p)))
+  :: ~[[l=(weld `path`-<.self olds) s=[& (mug data.semi)]]]  ::  XX nix mug
+  ::
+  =/  self=wilt  ~[[l=~[bell] s=[& (mug data.semi)]]]
+  =/  next=(list wilt)  (skip (turn kits |=(t=type ^$(t t))) |=(w=wilt =(~ w)))
+  =/  leaf=?  =(~ next)
+  ~&  [%next bell next]
+  ?:  leaf
+    =.  cot  (~(put by cot) t -<.self)
+    self
+  %-  zing
+  %+  turn  next
+  |=  w=wilt
+  ^-  wilt
+  ~[[l=(weld `path`-<.w `path`-<.self) s=[& (mug data.semi)]]]
     [%face *]
   ~&  %face
   $(t q.t)
