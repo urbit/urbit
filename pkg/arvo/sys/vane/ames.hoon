@@ -6509,8 +6509,9 @@
           ::
           +|  %flow-wires
           ::
-          +$  ev-flow-wire
-            $:  %flow
+          +$   ev-flow-wire
+            $:  %mesa
+                %flow
                 were=?(%van %ext %int %cor %pok)  ::  XX revisit names
                 =dire
                 [%p her=@p]
@@ -6520,7 +6521,8 @@
             ==
           ::
           +$  ev-timer-wire  :: XX revisit
-            $:  :: ?(%poke %dead %alien ...)  :: XX add tag for each timer flow
+            $:  %mesa
+                :: ?(%poke %dead %alien ...)  :: XX add tag for each timer flow
                 [%p her=@p]
                 [%ud bone=@ud]
                 [%ud rift=@ud]
@@ -6779,9 +6781,7 @@
               |=  error=(unit tang)
               ^+  ev-core
               =>  .(wire.task `(pole iota)`(ev-pave wire.task))
-              ?.  ?|  ?=(ev-timer-wire wire.task)
-                      ?=([%dead-flow ~] wire.task)
-                  ==
+              ?.  ?=([%mesa %dead-flow ~] wire.task)
                 ~&  %evil-behn-timer^wire.task  ev-core
               ::  XX log if error
               ::  XX if we wake up too early, no-op, otherwise set new timer
@@ -6791,9 +6791,9 @@
               ::  XX only timed-out (dead) outgoing %poke requests
               ::
               =.  flow.dead.ames-state
-                flow/`[~[/ames] /dead-flow `@da`(add now ~m2)]
+                flow/`[~[/ames] /mesa/dead-flow `@da`(add now ~m2)]
               =.  ev-core
-                (ev-emit ~[/ames] %pass /dead-flow %b %wait `@da`(add now ~m2))
+                (ev-emit ~[/ames] %pass /mesa/dead-flow %b %wait `@da`(add now ~m2))
               %-  ~(rep by chums.ames-state)
               |=  [[=ship =ship-state] core=_ev-core]
               ^+  core
@@ -7490,7 +7490,7 @@
               ::  both .to-vane and .dire are asserted when receiving the vane %ack
               ::  since they will always be %van and %bak
               ::
-              :~  %flow  were  dire
+              :~  %mesa  %flow  were  dire
                   rcvr=[(scot %p her)]
                 :: add rift to avoid dangling bones from previous eras
                 ::
@@ -7869,9 +7869,9 @@
             ::
             ++  sy-born
               =?  ev-core  ?=(~ +.flow.dead.ames-state)
-                (ev-emit ~[/ames] %pass /dead-flow %b %wait `@da`(add now ~m2))
+                (ev-emit ~[/ames] %pass /mesa/dead-flow %b %wait `@da`(add now ~m2))
               =?  flow.dead.ames-state  ?=(~ +.flow.dead.ames-state)
-                flow/`[~[/ames] /dead-flow `@da`(add now ~m2)]
+                flow/`[~[/ames] /mesa/dead-flow `@da`(add now ~m2)]
               ::  XX %give %turf
               ::     %give %saxo
               ::     %kick %ping-app
@@ -7882,9 +7882,9 @@
               ^+  sy-core
               =.  ev-core
                 %-  ev-emil
-                :~  [hen %pass /turf %j %turf ~]
-                    [hen %pass /private-keys %j %private-keys ~]
-                    [hen %pass /public-keys %j %public-keys [n=our ~ ~]]
+                :~  [hen %pass /mesa/turf %j %turf ~]
+                    [hen %pass /mesa/private-keys %j %private-keys ~]
+                    [hen %pass /mesa/public-keys %j %public-keys [n=our ~ ~]]
                 ==
               sy-core
             ::
