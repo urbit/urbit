@@ -18,7 +18,6 @@
 +$  wilt  (list [l=path s=sock])    ::  XX switch back to *
 --
 ::
-=|  cot=(map type path)             ::  core types
 =|  gil=(set type)                  ::  all types seen
 =|  wit=wilt
 |=  t=type
@@ -61,7 +60,6 @@
   ~&  [%past bell past]
   =/  root=?  =(~ past)
   ?:  root
-    =.  cot  (~(put by cot) t ~[bell])
     self
   =/  old=wilt  ~[(snag (dec (lent past)) past)]
   =/  olds=path  -<.old
@@ -76,7 +74,6 @@
   ::   (skip (turn kits |=(t=type ^$(t t))) |=(w=wilt =(~ w)))
   :: =/  leaf=?  =(~ next)
   :: ?:  leaf
-  ::   =.  cot  (~(put by cot) t -<.self)
   ::   self
   :: %-  zing
   :: %+  turn  next
