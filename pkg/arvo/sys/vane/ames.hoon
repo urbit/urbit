@@ -104,6 +104,40 @@
           $:  @tas
               $>(?(%noon %boon %done) gift)
       ==  ==
+    ::  $move: output effect; either request or response
+    ::
+    +$  move  [=duct card=(wind note gift)]
+    ::  $note: request to other vane
+    ::
+    +$  note
+      $~  [%b %wait *@da]
+      $%  $:  %a
+              $%  $>(?(%deep %keen) task:ames)
+                  $>(?(%meek %mako %mess-ser %mage) task:mesa)
+          ==  ==
+          $:  %b
+              $>(?(%wait %rest) task:behn)
+          ==
+          $:  %c
+              $>(%warp task:clay)
+          ==
+          $:  %d
+              $>(%flog task:dill)
+          ==
+          $:  %g
+              $>(?(%clog %deal) task:gall)
+          ==
+          $:  %j
+              $>  $?  %private-keys
+                      %public-keys
+                      %turf
+                      %ruin
+                  ==
+              task:jael
+          ==
+          $:  @tas
+              $>(%plea vane-task)
+      ==  ==
     --
 ::
 =>  |%
@@ -1442,10 +1476,6 @@
         ==
       ::
       +|  %dialectics
-      ::
-      ::  $move: output effect; either request or response
-      ::
-      +$  move  [=duct card=(wind note gift)]
       ::  $queued-event: event to be handled after initial boot completes
       ::
       +$  queued-event
@@ -1453,45 +1483,6 @@
         $%  [%call =duct wrapped-task=(hobo task)]
             [%take =wire =duct =sign]
         ==
-      ::  $note: request to other vane
-      ::
-      ::    Ames passes a %plea note to another vane when it receives a
-      ::    message on a "forward flow" from a peer, originally passed from
-      ::    one of the peer's vanes to the peer's Ames.
-      ::
-      ::    Ames passes a %deep task to itself to handle deferred calls
-      ::    Ames passes a %private-keys to Jael to request our private keys.
-      ::    Ames passes a %public-keys to Jael to request a peer's public
-      ::    keys.
-      ::
-      +$  note
-        $~  [%b %wait *@da]
-        $%  $:  %a
-                $>(?(%deep %keen) task:ames)
-            ==
-            $:  %b
-                $>(?(%wait %rest) task:behn)
-            ==
-            $:  %c
-                $>(%warp task:clay)
-            ==
-            $:  %d
-                $>(%flog task:dill)
-            ==
-            $:  %g
-                $>(?(%clog %deal) task:gall)
-            ==
-            $:  %j
-                $>  $?  %private-keys
-                        %public-keys
-                        %turf
-                        %ruin
-                    ==
-                task:jael
-            ==
-            $:  @tas
-                $>(%plea vane-task)
-        ==  ==
       ::  $message-pump-task: job for |message-pump
       ::
       ::    %memo: packetize and send application-level message
@@ -1745,38 +1736,6 @@
                 her-sponsor=ship
         ==  ==
       ::
-      ::  $move: output effect; either request (to other vane) or response
-      ::
-      +$  move  [=duct card=(wite note ^gift)] ::  XX combined gifts
-      ::
-      +$  note
-        $~  [%b %wait *@da]
-        $%  $:  %a
-                $>(?(%meek %mako %mess-ser %mage) task)
-            ==
-            $:  %b
-                $>(?(%wait %rest) task:behn)
-            ==
-            $:  %c
-                $>(%warp task:clay)
-            ==
-            $:  %d
-                $>(%flog task:dill)
-            ==
-            $:  %g
-                $>(?(%clog %deal) task:gall)
-            ==
-            $:  %j
-                $>  $?  %private-keys
-                        %public-keys
-                        %turf
-                        %ruin
-                    ==
-                task:jael
-            ==
-            $:  @tas
-                $>(%plea vane-task)
-        ==  ==
       ::
       +$  lope
         $~  [%wake ~]
