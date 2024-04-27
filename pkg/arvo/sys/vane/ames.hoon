@@ -1758,7 +1758,7 @@
 =|  ames-state=axle:mesa
 ::
 |=  [now=@da eny=@uvJ rof=roof]
-=*  ames-gate  .
+=*  vane-gate  .
 ::
 =>  |%
     ++  ames
@@ -1918,7 +1918,7 @@
           ::  lifecycle arms; mostly pass-throughs to the contained adult ames
           ::
           ++  scry  scry:adult-core
-          ++  stay  !!  ::  boot directly into |mesa; larval stage gone
+          ++  stay  [%larva queued-events ames-state.adult-gate]  ::  XX  boot directly into |mesa; larval stage gone
           ++  load
             |=  $=  old
                 $%  $:  %4
@@ -2048,9 +2048,13 @@
                         [%adult state=ames-state-21]
                     ==  ==
                   ::
-                    axle:mesa                          :: directed messaging
-                ==
+                    $%  axle:mesa
+                        $:  %larva                     :: directed messaging
+                            events=(qeu queued-event)
+                            state=axle:mesa
+                        ==
 
+                ==  ==
             |^  ?-  old
                 [%4 %adult *]
               $(old [%5 %adult (state-4-to-5:load:adult-core state.old)])
@@ -2294,6 +2298,12 @@
               larval-gate
             ::
                 [%0 *]  (load:adult-core old)
+            ::
+                [%larva *]
+              ~>  %slog.1^leaf/"ames: larva %0 load"
+              =.  queued-events  events.old
+              =.  adult-gate     (load:adult-core state.old)
+              larval-gate
             ==
             ::
             ++  event-9-til-11-to-12
@@ -8216,12 +8226,11 @@
           --
       ::
       |=  [now=@da eny=@uvJ rof=roof]
-      =*  mesa-gate  .
       ::
       |%
       ++  call
         |=  [hen=duct dud=(unit goof) wrapped-task=(hobo ^task)]  :: XX common tasks
-        ^-  [(list move) _mesa-gate]
+        ^-  [(list move) _vane-gate]
         =/  =^task  ((harden ^task) wrapped-task)
         ~!  task
         =+  ev-core=(ev-abed:ev-core [now eny rof] hen)
@@ -8240,7 +8249,7 @@
           ::
           =<  ev-abet
           ::  ?(%trim %snub %spew %stir %stun %sift %dear %prod %tame %ahoy %chum %cong %deep %hear %kroc %mate %wham %yawn)
-          ?+  -.task  !! ::  XX TODO
+          ?+  -.task  ev-core ::  XX TODO
             %vega  ev-core
             %init  sy-abet:~(sy-init sy hen)
             %born  sy-abet:~(sy-born sy hen)
@@ -8261,11 +8270,11 @@
             %mess-ser  (ev-call:ev-core task)
           ==
           ::
-        [moves mesa-gate]
+        [moves vane-gate]
       ::
       ++  take
         |=  [=wire hen=duct dud=(unit goof) =sign]
-        ^-  [(list move) _mesa-gate]
+        ^-  [(list move) _vane-gate]
         ?^  dud
           ~|(%mesa-take-dud (mean tang.u.dud))
         ::
@@ -8309,13 +8318,13 @@
             ==
           ::
           ==
-        [moves mesa-gate]
+        [moves vane-gate]
       ::
       ++  stay  `axle`ames-state
       ::
       ++  load
-        |=  old=axle
-        ^+  mesa-gate
+        |=  old=axle:mesa
+        ^+  vane-gate
         :: =.  chums.old
         ::   %-  ~(run by chums.old)
         ::   |=  =ship-state
@@ -8326,10 +8335,10 @@
         ::     pit      ~
         ::     corked   ~
         ::     ossuary  =|  =ossuary:ames  ossuary
-        ::             :: %_  ossuary
+        ::              :: %_  ossuary
         ::             ::   next-bone  40
         ::   ==        :: ==
-        mesa-gate(ames-state old)
+        vane-gate(ames-state old)
       ::
       ++  scry
         ^-  roon
@@ -8643,7 +8652,7 @@
       ::
       --
     ::
-    ++  peer
+    ++  peer  ::  XX move to vane formal interface
       =>  ::  per-peer core-routing migration check
           ::
           ::
@@ -8733,54 +8742,63 @@
           --
       ::
       |=  [now=@da eny=@uvJ rof=roof]
-      =*  mesa-gate  .
+      =*  peer-gate  .
       ::
       |%
       ::
       ++  call
         |=  [hen=duct dud=(unit goof) wrapped-task=(hobo task)]
-        :: ^-  [(list move) _mesa-gate]
         =/  =task  ((harden task) wrapped-task)
         ?+  -.task  !!  ::  XX %stun
           ::  %ames-only tasks
           ::
             ?(%kroc %deep %hear %chum %cong %mate)
+          :: ^-  [(list move) _ames-gate]  XX returns either adult (ames-gate) or larval-gate
           ::  XX can we call the wrong core? still check if ship has migrated?
           ::
           (call:(ames now eny rof) hen dud task)
           ::  %mesa-only tasks
           ::
             ?(%meek %mako %mage %heer %mess %mess-ser)
+          ^-  [(list move) _vane-gate]
           ::  XX can we call the wrong core? still check if ship has migrated?
           ::
           (call:(mesa now eny rof) hen dud task)
           ::  flow-independent tasks
           ::
             ?(%vega %init %born %trim %snub %spew %stir %stun %sift %plug %dear %init %prod %tame)
+          ^-  [(list move) _vane-gate]
           (call:(mesa now eny rof) hen dud task)
           ::  common tasks
           ::
             ?(%plea %cork %keen %yawn %wham)
+          :: ^-  [(list move) _ames-gate]  XX if |ames, can return either adult (ames-gate) or larval-gate
           (call:(pe-abed:pe-core now eny rof hen) task)
         ::
         ==
       ::
       ++  take
         |=  [=wire =duct dud=(unit goof) =sign]
-        :: ^-  [(list move) _ames-gate]
+        ^-  [(list move) _vane-gate]
+        =+  ames-gate=(ames now eny rof)
         ?^  dud
           ~|(%ames-take-dud (mean tang.u.dud))
-        ?.  ?=([%mesa *] wire)
+        ?:  ?=([%mesa *] wire)
+          (take:(mesa now eny rof) wire duct dud sign)
+        =+  ^=  [moves gate]
+        :: =^  moves  ames-gate
           (take:(ames now eny rof) wire duct dud sign)
-        (take:(mesa now eny rof) wire duct dud sign)
+        ~!  gate
+        :: [moves vane-gate(ames-state ames-state.gate)]
+        moves^vane-gate
       ::
       --
     --
 ::
 |%
-++  call  call:(ames now eny rof)
-++  take  take:(ames now eny rof)
-++  stay  stay:(ames now eny rof)
-++  load  load:(ames now eny rof)
-++  scry  scry:(ames now eny rof)
+++  call  call:(mesa now eny rof)
+++  take  take:(mesa now eny rof)
+++  stay  stay:(mesa now eny rof)
+++  load  load:(mesa now eny rof)
+++  scry  scry:(mesa now eny rof)
 --
