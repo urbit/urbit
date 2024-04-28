@@ -8085,18 +8085,20 @@
           ::
           ++  pe-plea
             |=  [=ship =plea:ames]
+            ^-  [(list move) _vane-gate]
             =/  ship-state  (pe-find-peer ship)
             ::
             ?:  ?=(%ames -.ship-state)
-              :: ^-  [(list move:ames) _ames-gate]
               (call:(ames now eny rof) hen ~ soft+plea/+<)
-            =<  ev-abet
-            ?:  ?=([~ %known *] +.ship-state)
-              (%*(ev-req-plea me-core per ship^u.ship-state) ship plea)
-            ::
-            %^  ev-enqueue-alien-todo:me-core  ship  +.ship-state
-            |=  todos=ovni-state:me-core
-            todos(pokes [[hen^plea/plea] pokes.todos])
+            =^  moves  ames-state
+              =<  ev-abet
+              ?:  ?=([~ %known *] +.ship-state)
+                (%*(ev-req-plea me-core per ship^u.ship-state) ship plea)
+              ::
+              %^  ev-enqueue-alien-todo:me-core  ship  +.ship-state
+              |=  todos=ovni-state:me-core
+              todos(pokes [[hen^plea/plea] pokes.todos])
+            moves^vane-gate
           ::
           ++  pe-cork
             |=  her=ship
@@ -8105,26 +8107,30 @@
             ::
             ?:  ?=(%ames -.ship-state)
               (call:(ames now eny rof) hen ~ soft+cork/+<)
-            =<  ev-abet
-            ?:  ?=([~ %known *] +.ship-state)
-              (%*(ev-req-plea me-core per her^u.ship-state) her plea)
-            ::
-            %^  ev-enqueue-alien-todo:me-core  her  +.ship-state
-            |=  todos=ovni-state:me-core
-            todos(pokes [[hen^plea/plea] pokes.todos])
+            =^  moves  ames-state
+              =<  ev-abet
+              ?:  ?=([~ %known *] +.ship-state)
+                (%*(ev-req-plea me-core per her^u.ship-state) her plea)
+              ::
+              %^  ev-enqueue-alien-todo:me-core  her  +.ship-state
+              |=  todos=ovni-state:me-core
+              todos(pokes [[hen^plea/plea] pokes.todos])
+            moves^vane-gate
           ::
           ++  pe-keen
             |=  [sec=(unit [idx=@ key=@]) spar:ames]
             =/  ship-state  (pe-find-peer ship)
             ?:  ?=(%ames -.ship-state)
               (call:(ames now eny rof) hen ~ soft+keen/+<)
-            =<  ev-abet
-            ?:  ?=([~ %known *] +.ship-state)
-              (%*(ev-req-peek me-core per ship^u.ship-state) sec ship path)
-            ::
-            %^  ev-enqueue-alien-todo:me-core  ship  +.ship-state
-            |=  todos=ovni-state:me-core
-            todos(peeks (~(put ju peeks.todos) path hen))
+            =^  moves  ames-state
+              =<  ev-abet
+              ?:  ?=([~ %known *] +.ship-state)
+                (%*(ev-req-peek me-core per ship^u.ship-state) sec ship path)
+              ::
+              %^  ev-enqueue-alien-todo:me-core  ship  +.ship-state
+              |=  todos=ovni-state:me-core
+              todos(peeks (~(put ju peeks.todos) path hen))
+            moves^vane-gate
             ::
           ::
           ++  pe-yawn
@@ -8142,31 +8148,28 @@
       ::
       ++  call
         |=  [hen=duct dud=(unit goof) wrapped-task=(hobo task)]
+        ^-  [(list move) _vane-gate]
         =/  =task  ((harden task) wrapped-task)
-        ?+  -.task  !!  ::  XX %stun
+        ?+  -.task  !!
           ::  %ames-only tasks
           ::
             ?(%kroc %deep %hear %chum %cong %mate)
-          :: ^-  [(list move) _ames-gate]   XX FIXME
           ::  XX can we call the wrong core? still check if ship has migrated?
           ::
           (call:(ames now eny rof) hen dud task)
           ::  %mesa-only tasks
           ::
             ?(%meek %mako %mage %heer %mess %mess-ser)
-          ^-  [(list move) _vane-gate]
           ::  XX can we call the wrong core? still check if ship has migrated?
           ::
           (call:(mesa now eny rof) hen dud task)
           ::  flow-independent tasks
           ::
             ?(%vega %init %born %trim %snub %spew %stir %stun %sift %plug %dear %init %prod %tame)
-          ^-  [(list move) _vane-gate]
           (call:(mesa now eny rof) hen dud task)
           ::  common tasks
           ::
             ?(%plea %cork %keen %yawn %wham)
-          :: ^-  [(list move) _vane-gate]  XX FIXME
           (call:(pe-abed:pe-core now eny rof hen) task)
         ::
         ==
@@ -8185,9 +8188,9 @@
     --
 ::
 |%
-++  call  call:(mesa now eny rof)
-++  take  take:(mesa now eny rof)
+++  call  call:(peer now eny rof)
+++  take  take:(peer now eny rof)
 ++  stay  stay:(mesa now eny rof)
 ++  load  load:(mesa now eny rof)
-++  scry  scry:(mesa now eny rof)
+++  scry  scry:(mesa now eny rof)  ::  XX scry unification
 --
