@@ -7792,24 +7792,78 @@
 ::
 ++  load
   =<  |=  $=  old
-          $%  [%4 ?(%adult %larva) state=ames-state-4:ames-helper]
-              [%5 ?(%adult %larva) state=ames-state-5:ames-helper]
-              [%6 ?(%adult %larva) state=ames-state-6:ames-helper]
-              [%7 ?(%adult %larva) state=ames-state-7:ames-helper]
-              [%8 ?(%adult %larva) state=ames-state-8:ames-helper]
-              [%9 ?(%adult %larva) state=ames-state-9:ames-helper]
-              [%10 ?(%adult %larva) state=ames-state-10:ames-helper]
-              [%11 ?(%adult %larva) state=ames-state-11:ames-helper]
-              [%12 ?(%adult %larva) state=ames-state-12:ames-helper]
-              [%13 ?(%adult %larva) state=ames-state-13:ames-helper]
-              [%14 ?(%adult %larva) state=ames-state-14:ames-helper]
-              [%15 ?(%adult %larva) state=ames-state-15:ames-helper]
-              [%16 ?(%adult %larva) state=ames-state-16:ames-helper]
-              [%17 ?(%adult %larva) state=ames-state-17:ames-helper]
-              [%18 ?(%adult %larva) state=ames-state-18:ames-helper]
-              [%19 ?(%adult %larva) state=ames-state-19:ames-helper]
-              [%20 ?(%adult %larva) state=ames-state-20:ames-helper]
-              [%21 ?(%adult %larva) state=ames-state-21:ames-helper]
+          $%  $:  %4
+                  $%  [%larva *]
+                      [%adult state=ames-state-4:ames-helper]
+              ==  ==
+              $:  %5
+                  $%  [%larva *]
+                      [%adult state=ames-state-5:ames-helper]
+              ==  ==
+              $:  %6
+                  $%  [%larva *]
+                      [%adult state=ames-state-6:ames-helper]
+              ==  ==
+              $:  %7
+                  $%  [%larva *]
+                      [%adult state=ames-state-7:ames-helper]
+              ==  ==
+              $:  %8
+                  $%  [%larva *]
+                      [%adult state=ames-state-8:ames-helper]
+              ==  ==
+              $:  %9
+                  $%  [%larva *]
+                      [%adult state=ames-state-9:ames-helper]
+              ==  ==
+              $:  %10
+                  $%  [%larva *]
+                      [%adult state=ames-state-10:ames-helper]
+              ==  ==
+              $:  %11
+                  $%  [%larva *]
+                      [%adult state=ames-state-11:ames-helper]
+              ==  ==
+              $:  %12
+                  $%  [%larva *]
+                      [%adult state=ames-state-12:ames-helper]
+              ==  ==
+              $:  %13
+                  $%  [%larva *]
+                      [%adult state=ames-state-13:ames-helper]
+              ==  ==
+              $:  %14
+                  $%  [%larva *]
+                      [%adult state=ames-state-14:ames-helper]
+              ==  ==
+              $:  %15
+                  $%  [%larva *]
+                      [%adult state=ames-state-15:ames-helper]
+              ==  ==
+              $:  %16
+                  $%  [%larva *]
+                      [%adult state=ames-state-16:ames-helper]
+              ==  ==
+              $:  %17
+                  $%  [%larva *]
+                      [%adult state=ames-state-17:ames-helper]
+              ==  ==
+              $:  %18
+                  $%  [%larva *]
+                      [%adult state=ames-state-18:ames-helper]
+              ==  ==
+              $:  %19
+                  $%  [%larva *]
+                      [%adult state=ames-state-19:ames-helper]
+              ==  ==
+              $:  %20
+                  $%  [%larva *]
+                      [%adult state=ames-state-20:ames-helper]
+              ==  ==
+              $:  %21
+                  $%  [%larva *]
+                      [%adult state=ames-state-21:ames-helper]
+              ==  ==
               axle:mesa
           ==
       =|  moz=(list move)
