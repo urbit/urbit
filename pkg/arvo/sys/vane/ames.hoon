@@ -3506,11 +3506,9 @@
                 =^  moves  flows.chum   make-flows
                 =.  chums.ames-state
                   (~(put by chums.ames-state) her known/chum)
-                peer-core
-                :: ?>  ?=([[* [%pass ^ [%a %mako *]]] ~] moves)
-                :: peer-core(event-core (emil moves))
+                ?>  ?=([[* [%pass ^ [%a %mako *]]] ~] moves)
+                peer-core(event-core (emil moves))
                 ::
-                ++  flow-queue  ((on ,@ud mesa-message:mesa) lte)
                 ++  align-bones
                   ^+  ossuary.peer-state
                   ::  XX save .next-bone.ossuary as a marker for "migrated" flows
@@ -3621,9 +3619,19 @@
                   !!  ::  side effect of making a flow
                 ::
                 ++  get-route
-                  :: |=  =_route.peer-state
                   ^-  (unit [direct=? =lane:mesa])
-                  !!
+                  ?~  route.peer-state  ~
+                  =*  lane  lane.u.route.peer-state
+                  :+  ~  direct.u.route.peer-state
+                  ^-  lane:mesa
+                  ?-  -.lane
+                    %&  lane
+                  ::
+                      %|
+                    =/  ip=@if  (end [0 32] p.lane)
+                    :: =/  pt=@ud  (cut 0 [32 16] p.lane)
+                    |+ipv4/ip
+                  ==
                 ::
                 --
               ::
