@@ -819,8 +819,7 @@
         $>(%trim vane-task)
         $>(%vega vane-task)
     ::
-        [%ahoy =ship]                 ::  send %ahoy plea
-        [%mate =ship]                 ::  migrate .ship
+        [%mate (unit ship)]            ::  migrate all provided ship
         [%mako =space p=spar q=path]  :: XX flow migration
                                       :: $>(%mako task:mesa)
     ==
@@ -3371,7 +3370,7 @@
     ==
   ::
   +$  gift
-    $%  [%push p=(list lane:pact) q=@]   :: send a request/response packet
+    $%  [%send p=(list lane:pact) q=@]   :: send a request/response packet
         [%mess-response =sage:mess]      :: XX (names) produce deserialized response message
         [%response load=$>(%page mess)]  :: XX (names) produce serialized response message
     ==

@@ -3066,18 +3066,23 @@
             ::
             +|  %migration-entry-points
             ::
-            ++  on-ahoy
-              |=  =ship
-              ^+  event-core
-              (on-plea ship %$ /mesa %ahoy ~)
-            ::
             ++  on-mate
-              |=  =ship
-              ^+  event-core
-              =/  ship-state  (~(get by peers.ames-state) ship)
-              ?>  ?=([~ %known *] ship-state)
-              =+  pe-core=(abed-peer:pe ship +.u.ship-state)
-              abet:(on-migrate:pe-core next-bone.ossuary.peer-state.pe-core)  :: XX (dec next-bone)
+              |=  ship=(unit ship)
+              |^  ^+  event-core
+              ?^  ship
+                (migrate-peer u.ship (~(got by peers.ames-state) u.ship))
+              %-  ~(rep by peers.ames-state)
+              |=  [[=^ship state=ship-state] core=_event-core]
+              ?:  ?=(%alien -.state)  core
+              (migrate-peer ship state)
+              ::
+              ++  migrate-peer
+                |=  [=^ship =ship-state]
+                ^+  event-core
+                ?>  ?=([%known *] ship-state)
+                =+  pe-core=(abed-peer:pe ship +.ship-state)
+                abet:(on-migrate:pe-core next-bone.ossuary.peer-state.pe-core)  :: XX (dec next-bone)
+              --
             ::
             +|  %implementation
             ::  +enqueue-alien-todo: helper to enqueue a pending request
@@ -5204,8 +5209,7 @@
             %yawn  (on-cancel-scry:event-core | +.task)
             %wham  (on-cancel-scry:event-core & +.task)
           ::
-            %ahoy  (on-ahoy:event-core ship.task)
-            %mate  (on-mate:event-core ship.task)
+            %mate  (on-mate:event-core +.task)
           ==
         ::
         [moves vane-gate]
@@ -7257,7 +7261,7 @@
             ==
           ::
           =<  ev-abet
-          ::  ?(%trim %snub %spew %stir %stun %sift %dear %prod %tame %ahoy %chum %cong %deep %hear %kroc %mate %wham %yawn)
+          ::  ?(%trim %snub %spew %stir %stun %sift %dear %prod %tame %chum %cong %deep %hear %kroc %mate %wham %yawn)
           ?+  -.task  ev-core ::  XX TODO
             %vega  ev-core
             %init  sy-abet:~(sy-init sy hen)
@@ -7745,7 +7749,7 @@
         |=  [hen=duct dud=(unit goof) wrapped-task=(hobo task)]
         ^-  [(list move) _vane-gate]
         =/  =task  ((harden task) wrapped-task)
-        ?+  -.task  !!
+        ?-  -.task
           ::  %ames-only tasks
           ::
             ?(%kroc %deep %hear %chum %cong %mate)

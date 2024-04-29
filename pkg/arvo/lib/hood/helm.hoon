@@ -190,7 +190,7 @@
 ::
 ++  poke-send-ahoy
   |=  her=ship  =<  abet
-  (emit %pass /helm/ahoy/[(scot %p her)] %arvo %a %ahoy her)
+  (emit %pass /helm/ahoy/[(scot %p her)] %arvo %a %plea her %$ /mesa %ahoy ~)
 ::
 ++  take-ahoy
   |=  [way=wire error=(unit error:ames)]
@@ -200,8 +200,7 @@
     %-  (slog %take-ahoy u.error)
     abet
   ?>  ?=([@ ~] way)
-  =/  =ship  (slav %p i.way)
-  abet:(emit %pass /helm/migrate %arvo %a %mate ship)
+  abet:(emit %pass /helm/migrate %arvo %a %mate (slaw %p i.way))
 ::
 ++  poke-hi
   |=  mes=@t
