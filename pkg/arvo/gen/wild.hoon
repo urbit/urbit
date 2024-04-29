@@ -36,11 +36,11 @@
   =/  bell  (need p.p.q.t)  ::  XX
   ~[[l=~[bell p] s=[& (mug data.semi)]]]
 --
-%.  arg
+%.  [arg ~]
 =|  cot=(map type wilt)
 =|  gil=(set type)                  ::  all types seen
 =|  wit=wilt
-|=  t=type
+|=  [t=type brud=(list type)]
 ^-  wilt
 ?+    t
     wit
@@ -67,7 +67,7 @@
   ~&  [%batt `@ux`(mug data.semi)]
   ~&  [%load p.t]
   ~&  [%bell bell]
-  ~&  [%cot cot]
+  ~&  cot
   ?~  papa
     =.  cot
     %-  ~(run by cot)
@@ -79,7 +79,22 @@
       w
     ~[[l=(weld `path`-<.w ~[bell]) s=->.w]]
     (zing ~(val by cot))
-  $(t p.t)
+  ?.  =(~ brud)
+    =/  pars=(list [t=type w=wilt])
+      %+  turn
+        brud
+      |=  b=type
+      =/  orig=wilt  (need (~(get by cot) b))
+      [b `wilt`~[[l=(weld `path`-<.orig ~[bell]) s=->.orig]]]
+    =.  cot  (~(gas by cot) pars)
+    %=  $
+      t     p.t
+      brud  ~
+    ==
+  %=  $
+    t     p.t
+    brud  `(list type)`(snoc kits t)
+  ==
     [%face *]
   ~&  %face
   $(t q.t)
