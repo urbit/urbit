@@ -33,7 +33,9 @@
   ?.  ?=([%core *] t)
     ~
   =+  [semi chapters]=[p q]:r.q.t
-  =/  bell  (need p.p.q.t)  ::  XX
+  ?~  p.p.q.t
+    ~
+  =/  bell  (need p.p.q.t)
   ~[[l=~[bell p] s=[& (mug data.semi)]]]
 --
 %.  [arg ~]
@@ -67,15 +69,15 @@
   ~&  [%batt `@ux`(mug data.semi)]
   ~&  [%load p.t]
   ~&  [%bell bell]
-  ~&  cot
   ?~  papa
+    ::  if you have no papa, then you are the papa
     =.  cot
     %-  ~(run by cot)
     |=  w=wilt
     ^-  wilt
     ?~  w
       w
-    ?:  =(~[bell] `path`-<.w)
+    ?:  |(=(~[bell] `path`-<.w) =(bell (rear `path`-<.w)))
       w
     ~[[l=(weld `path`-<.w ~[bell]) s=->.w]]
     (zing ~(val by cot))
