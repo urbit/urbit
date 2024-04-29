@@ -5191,7 +5191,7 @@
               %hear  (on-hear:event-core lane.task blob.task dud)
             ==
           ::
-          ?+  -.task  !! ::  XX  %mesa migration
+          ?-  -.task
             %born  on-born:event-core
             %hear  (on-hear:event-core [lane blob ~]:task)
             %dear  (on-dear:event-core +.task)
@@ -7696,7 +7696,7 @@
             =/  ship-state  (pe-find-peer ship)
             ::
             ?:  ?=(%ames -.ship-state)
-              (call:(ames now eny rof) hen ~ soft+plea/+<)
+              (call:(ames now eny rof) hen ~ soft+plea/ship^plea)
             =^  moves  ames-state
               =<  ev-abet
               ?:  ?=([~ %known *] +.ship-state)
@@ -7713,7 +7713,7 @@
             =/  ship-state  (pe-find-peer her)
             ::
             ?:  ?=(%ames -.ship-state)
-              (call:(ames now eny rof) hen ~ soft+cork/+<)
+              (call:(ames now eny rof) hen ~ soft+cork/ship)
             =^  moves  ames-state
               =<  ev-abet
               ?:  ?=([~ %known *] +.ship-state)
@@ -7728,7 +7728,7 @@
             |=  [sec=(unit [idx=@ key=@]) spar:ames]
             =/  ship-state  (pe-find-peer ship)
             ?:  ?=(%ames -.ship-state)
-              (call:(ames now eny rof) hen ~ soft+keen/+<)
+              (call:(ames now eny rof) hen ~ soft+keen/sec^ship^path)
             =^  moves  ames-state
               =<  ev-abet
               ?:  ?=([~ %known *] +.ship-state)
@@ -7795,8 +7795,8 @@
     --
 ::
 |%
-++  call  call:(ames now eny rof)  ::  XX  call:(peer now eny rof)
-++  take  take:(ames now eny rof)  ::  XX  take:(peer now eny rof)
+++  call  call:(peer now eny rof)
+++  take  take:(peer now eny rof)
 ::  +stay: extract state before reload
 ::
 ++  stay  ames-state
@@ -8262,6 +8262,8 @@
     old(chain [server-chain=chain.old priv=sec:ex:crypto-core.old chums=~])
   ::
   --
+::  +scry: dereference namespace
 ::
 ++  scry  scry:(ames now eny rof)  ::  XX scry unification
+::
 --

@@ -819,9 +819,7 @@
         $>(%trim vane-task)
         $>(%vega vane-task)
     ::
-        [%mate (unit ship)]            ::  migrate all provided ship
-        [%mako =space p=spar q=path]  :: XX flow migration
-                                      :: $>(%mako task:mesa)
+        [%mate (unit ship)]            ::  migrate peers
     ==
   ::
   +$  space    :: XX type error if space:mesa
