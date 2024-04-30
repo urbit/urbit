@@ -1,0 +1,1 @@
+,[code=@t result=(unit (each manx tang))]
