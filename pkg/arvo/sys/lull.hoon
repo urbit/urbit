@@ -822,11 +822,6 @@
         [%mate (unit ship)]            ::  migrate peers
     ==
   ::
-  +$  space    :: XX type error if space:mesa
-    $%  [%publ =life]
-        [%chum =our=life her=ship =her=life key=@]
-        [%shut kid=@ key=@uxI]
-    ==
   ::  $gift: effect from ames
   ::
   ::    Messaging Gifts
@@ -3368,7 +3363,7 @@
     ==
   ::
   +$  gift
-    $%  [%send p=(list lane:pact) q=@]   :: send a request/response packet
+    $%  [%push p=(list lane:pact) q=@]   :: send a request/response packet
         [%mess-response =sage:mess]      :: XX (names) produce deserialized response message
         [%response load=$>(%page mess)]  :: XX (names) produce serialized response message
     ==

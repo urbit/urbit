@@ -88,15 +88,15 @@
                   task:ames
               ==
     ::
-    +$  gift  $%  gift:mesa
-                  gift:ames
+    +$  gift  $%  gift:ames
+                  gift:mesa
               ==
     ::
     +$  sign
       $~  [%behn %wake ~]
       $%  $:  %ames
               $%  $>(%tune gift:ames)
-                  $>(?(%mess-response) gift:mesa)
+                  $>(%mess-response gift:mesa)
           ==  ==
           [%behn $>(%wake gift:behn)]
           [%gall $>(?(%flub %unto) gift:gall)]
@@ -138,6 +138,7 @@
           $:  @tas
               $>(%plea vane-task)
       ==  ==
+    ::
     --
 ::
 =>  |%
@@ -148,6 +149,9 @@
       |%
       ::
       +|  %helpers
+      ::  $move: output effect; either request or response
+      ::
+      +$  move  [=duct card=(wind note gift)]
       :: +get-forward-lanes: get all lanes to send to when forwarding to peer
       ::
       ++  get-forward-lanes
@@ -1749,6 +1753,7 @@
         $%  $>(%done lope)  ::  hear (n)ack for %poke, can trigger %peek for naxplanation
             [%mess-response seq=@ud sage:mess] :: added seq number to $>(%response lope)
         ==
+      ::
       --
     ::
     --
