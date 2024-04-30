@@ -58,7 +58,11 @@
   =/  hops=(list (pair term hoon))
     (zing (turn mats |=(mat=(map term hoon) ~(tap by mat))))
   =/  kits=(list type)
-    (turn hops |=(hop=(pair term hoon) p:(~(mint ut.h t) %noun q.hop)))
+    %+  skip
+      (turn hops |=(hop=(pair term hoon) p:(~(mint ut.h t) %noun q.hop)))
+    |=  kit=type
+    ^-  ?
+    &(?=([%core *] kit) =(~ p.p.q.kit))
   =/  papa=(unit type)  (rent t)
   =/  self=wilt  ~[[l=~[bell] s=[& (mug data.semi)]]]
   ::
@@ -69,6 +73,7 @@
   ~&  [%batt `@ux`(mug data.semi)]
   ~&  [%load p.t]
   ~&  [%bell bell]
+  ~&  [%kits kits]
   ?~  papa
     ::  if you have no papa, then you are the papa
     =.  cot
@@ -82,13 +87,13 @@
     ~[[l=(weld `path`-<.w ~[bell]) s=->.w]]
     (zing ~(val by cot))
   ?.  =(~ brud)
-    =/  pars=(list [t=type w=wilt])
+    =/  sons=(list [t=type w=wilt])
       %+  turn
         brud
       |=  b=type
       =/  orig=wilt  (need (~(get by cot) b))
       [b `wilt`~[[l=(weld `path`-<.orig ~[bell]) s=->.orig]]]
-    =.  cot  (~(gas by cot) pars)
+    =.  cot  (~(gas by cot) sons)
     %=  $
       t     p.t
       brud  ~
