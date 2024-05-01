@@ -1729,13 +1729,6 @@
 ::
 =>  |%
     ++  ames
-      ::  initialize fo-core for flow migration in +on-migrate:pe
-      ::  XX  move to +on-migrate:pe
-      ::
-      =/  fo-core
-        =<  fo
-        %*(ev-core mesa sat.per known/*fren-state:^ames)
-      ::
       =,  ames-helper
       ::
       =>  ~%  %per-event  ..trace  ~
@@ -3508,9 +3501,11 @@
                     ::
                     =.    closing.flow  (~(has in closing.peer-state) bone)
                     =.  next-load.flow  next.pump
+                    ::  initialize fo-core
                     ::
-                    =.  fo-core
-                      %*  .  fo-core
+                    =/  fo-core
+                      =+  ev-core=%*(ev-core mesa sat.per known/*fren-state)
+                      %*  .  fo:ev-core
                         flows.sat.per  (~(put by flows) bone^dire flow)
                       ==
                     ::  XX  TODO live- packets in packet-pump-state.pump
@@ -3538,7 +3533,7 @@
                       ?:  ?=(%naxplanation -.message)
                         core  :: XX TODO bind naxplanation in nax.flow for the reference flow
                       %.  message
-                      fo-call:(fo-abed:fo-core (got-duct bone) [bone %for] ~)
+                      fo-call:(fo-abed:core (got-duct bone) [bone %for] ~)
                     ::
                     :-  (weld forward-moves moves)
                     (~(put in flows) [bone dire] flow)
