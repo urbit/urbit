@@ -84,37 +84,25 @@
 =/  packet-size  13
 ::
 =>  |%
-    +$  task  $%  task:mesa
-                  task:ames
-              ==
-    ::
-    +$  gift  $%  gift:ames
-                  gift:mesa
-              ==
-    ::
     +$  sign
       $~  [%behn %wake ~]
-      $%  $:  %ames
-              $%  $>(%tune gift:ames)
-                  $>(%mess-response gift:mesa)
-          ==  ==
+      $%  [%ames $>(?(%tune %mess-response) gift:ames)]
           [%behn $>(%wake gift:behn)]
           [%gall $>(?(%flub %unto) gift:gall)]
           [%jael $>(?(%private-keys %public-keys %turf) gift:jael)]
           $:  @tas
-              $>(?(%noon %boon %done) gift)
+              $>(?(%noon %boon %done) gift:ames)
       ==  ==
     ::  $move: output effect; either request or response
     ::
-    +$  move  [=duct card=(wind note gift)]
+    +$  move  [=duct card=(wind note gift:ames)]
     ::  $note: request to other vane
     ::
     +$  note
       $~  [%b %wait *@da]
       $%  $:  %a
-              $%  $>(?(%deep %keen) task:ames)
-                  $>(?(%meek %mako %mess-ser %mage) task:mesa)
-          ==  ==
+              $>(?(%deep %keen %meek %mako %mess-ser %mage) task:ames)
+          ==
           $:  %b
               $>(?(%wait %rest) task:behn)
           ==
@@ -141,10 +129,10 @@
     ::
     --
 ::
-=>  |%
+=>  =,  ames
+    |%
     ::
     ++  ames-helper
-      =,  ames
       ~%  %ames  ..part  ~
       |%
       ::
@@ -528,7 +516,7 @@
         (~(de sivc:aes:crypto (shaz symmetric-key) vec) siv len cyf)
       ::
       ++  is-our-bulk
-        |=  [our=ship ames-state=axle:mesa =balk]
+        |=  [our=ship ames-state=axle:ames =balk]
         ^-  ?
         =-  ~?  =(| -)
               [%fine-mismatch our=[rift life]:ames-state her=[her rif lyf]:balk]
@@ -539,7 +527,7 @@
         ==
       ::
       ++  check-fine-key
-        |=  [ames-state=axle:mesa =balk key-idx=@]
+        |=  [ames-state=axle:ames =balk key-idx=@]
         ^-  ?
         ?~  link=(get:on:chain server-chain.ames-state key-idx)
           |
@@ -1533,23 +1521,11 @@
       --
     ::
     ++  mesa-helper
-      =,  mesa
       |%
       ::
       +|  %helpers
       ::
       ++  key-chain  ((on ,@ ,[key=@ =path]) lte)
-      ++  derive-symmetric-key
-        |=  [public-key=@uw private-key=@uw]
-        ^-  symmetric-key
-        ::
-        ?>  =('b' (end 3 public-key))
-        =.  public-key  (rsh 8 (rsh 3 public-key))
-        ::
-        ?>  =('B' (end 3 private-key))
-        =.  private-key  (rsh 8 (rsh 3 private-key))
-        ::
-        `@`(shar:ed:crypto public-key private-key)
       ::
       ++  parse-packet  |=(a=@ -:($:de:pact a))
       ++  inner-path-to-beam
@@ -1725,28 +1701,13 @@
         ((keyed:blake3:blake:crypto 32^key) out (met 3 msg)^msg)
       ::
       +|  %vane
-      ::  $channel: combined sender and receiver identifying data
-      ::
-      +$  channel
-        $:  [our=ship her=ship]
-            now=@da
-            =our=life
-            ::  her data, specific to this dyad
-            ::
-            $:  =symmetric-key
-                =her=life
-                =her=rift
-                =her=public-key
-                her-sponsor=ship
-        ==  ==
-      ::
       ::
       +$  lope
         $~  [%wake ~]
         $%  $>(%wake gift:behn)
             $>(?(%flub %unto) gift:gall)
             $>(?(%private-keys %public-keys %turf) gift:jael)
-            $>(?(%mess-response %noon %boon %done) ^gift) ::  XX combined gifts
+            $>(?(%mess-response %noon %boon %done) gift) ::  XX combined gifts
         ==
       ::
       +$  flow-sign
@@ -1760,7 +1721,7 @@
 ::  external vane interface
 ::
 |=  our=ship
-=|  ames-state=axle:mesa
+=|  ames-state=axle:ames
 =|  queued-moves=(list move)  :: XX when to handle this
 ::
 |=  [now=@da eny=@uvJ rof=roof]
@@ -1773,7 +1734,7 @@
       ::
       =/  fo-core
         =<  fo
-        %*(ev-core mesa sat.per known/*peer-state:^mesa)
+        %*(ev-core mesa sat.per known/*fren-state:^ames)
       ::
       =,  ames-helper
       ::
@@ -1784,7 +1745,7 @@
           ++  ev
             =|  moves=(list move)
             :: ~%  %event-gate  ..ev  ~
-            |=  [[now=@da eny=@ rof=roof] =duct ames-state=axle:mesa]
+            |=  [[now=@da eny=@ rof=roof] =duct ames-state=axle:ames]
             =*  veb  veb.bug.ames-state
             =|  cork-bone=(unit bone)  ::  modified by +on-kroc
             :: ~%  %event-core  ..$  ~
@@ -1793,7 +1754,8 @@
             ::
             ++  event-core  .
             ++  abet  [(flop moves) ames-state]
-            ++  emit  |=(=move event-core(moves [move moves]))
+            ++  emit  |=  =move
+                      event-core(moves [move moves])
             ++  emil  |=(mos=_moves event-core(moves (weld (flop mos) moves)))
             ++  channel-state  [life crypto-core bug]:ames-state
             ++  trace-fine     (cury trace %fine)
@@ -3004,7 +2966,7 @@
               ^+  event-core
               =;  rui=(set @p)
                 (emit duct %pass /ruin %j %ruin rui)
-              =-  (silt (turn - head))
+              =-  (silt (turn - ^head))  ::  XX
               %+  skim
                 ~(tap by peers.ames-state)
               |=  [=ship s=ship-state]
@@ -3142,7 +3104,7 @@
             ::    request the information from Jael if we haven't already.
             ::
             ++  send-blob
-              :: ~/  %send-blobs
+              :: ~/  %send-blob
               |=  [for=? =ship =blob ship-state=(unit ship-state)]
               ::
               =/  final-ship  ship
@@ -3500,17 +3462,17 @@
                 |=  =bone  :: XX do something with bone? save high water mark
                            :: XX remove bone; it's just next-bone.ossuary
                 ^+  peer-core
-                =|  chum=peer-state:mesa
-                |^  =:        -.chum  azimuth-state=-.peer-state
-                          route.chum  get-route
-                            qos.chum  qos.peer-state
-                         corked.chum  divide-bones
-                        ossuary.chum  align-bones
-                   client-chain.chum  chain.peer-state
+                =|  fren=fren-state
+                |^  =:        -.fren  azimuth-state=-.peer-state
+                          route.fren  ~  ::  get-route
+                            qos.fren  qos.peer-state
+                         corked.fren  divide-bones
+                        ossuary.fren  align-bones
+                   client-chain.fren  chain.peer-state
                   ==
-                =^  moves  flows.chum   make-flows
+                =^  moves  flows.fren   make-flows
                 =.  chums.ames-state
-                  (~(put by chums.ames-state) her known/chum)
+                  (~(put by chums.ames-state) her known/fren)
                 ?>  ?=([[* [%pass ^ [%a %mako *]]] ~] moves)
                 peer-core(event-core (emil moves))
                 ::
@@ -3521,23 +3483,23 @@
                   ossuary.peer-state
                 ::
                 ++  divide-bones
-                  ^-  (set side:mesa)
+                  ^-  (set side)
                   %-  ~(rep in corked.peer-state)
-                  |=  [=^bone corked=_corked.chum]
+                  |=  [=^bone corked=_corked.fren]
                   (~(put in corked) bone ?:(=(%0 (mod bone 4)) %for %bak))
                 ::
                 ++  make-flows
-                  ^-  (quip move:mesa-helper (map side:mesa flow-state:mesa))
+                  ^-  (quip move:mesa-helper (map side flow-state))
                   ::  forward flows
                   ::
-                  =^  moves  flows.chum
+                  =^  moves  flows.fren
                     %-  ~(rep by snd.peer-state)
                     |=  $:  [=^bone pump=message-pump-state]
                             moves=(list move:mesa-helper)
-                            flows=_flows.chum
+                            flows=_flows.fren
                         ==
-                    =|  flow=flow-state:mesa
-                    =/  =dire:mesa
+                    =|  flow=flow-state
+                    =/  =dire
                        ?:  =(%0 (mod bone 4))  %for  :: %plea(s)
                        %bak  ::  boon(s) and naxplanation(s)
                     ::
@@ -3582,10 +3544,10 @@
                     (~(put in flows) [bone dire] flow)
                   ::  backward flows
                   ::
-                  =.  flows.chum
+                  =.  flows.fren
                     %-  ~(rep by rcv.peer-state)
-                    |=  [[=^bone sink=message-sink-state] flows=_flows.chum]
-                    =|  flow=flow-state:mesa
+                    |=  [[=^bone sink=message-sink-state] flows=_flows.fren]
+                    =|  flow=flow-state
                     ?:  =(%2 (mod bone 4))
                       flows  :: %naxplanation %ack on receiver
                     ::  any partially received messages in live-messages.sink are dropped
@@ -3609,34 +3571,35 @@
                         ::  migration but rather from the re-send of the orginal
                         ::  messages in the message pump
                         ::
-                        (turn ~(tap in nax.sink) (late *error:mesa))
+                        (turn ~(tap in nax.sink) (late *error))
                       ==
                     (~(put in flows) [bone %bak] flow)
                   ::  naxplanations
                   ::  XX  check that this is true
                   ::  XX entries in nax.peer-state have not been used
                   ::
-                  moves^flows.chum
+                  moves^flows.fren
                 ::
                 ++  make-peeks
                   :: |=  =_keens.peer-state
-                  ^-  (map path request-state:mesa)
+                  ^-  (map path request-state)
                   !!  ::  side effect of making a flow
                 ::
                 ++  get-route
-                  ^-  (unit [direct=? =lane:mesa])
-                  ?~  route.peer-state  ~
-                  =*  lane  lane.u.route.peer-state
-                  :+  ~  direct.u.route.peer-state
-                  ^-  lane:mesa
-                  ?-  -.lane
-                    %&  lane
-                  ::
-                      %|
-                    =/  ip=@if  (end [0 32] p.lane)
-                    :: =/  pt=@ud  (cut 0 [32 16] p.lane)
-                    |+ipv4/ip
-                  ==
+                  ^-  (unit [direct=? =lane])
+                  ~
+                  :: ?~  route.peer-state  ~
+                  :: =*  lane  lane.u.route.peer-state
+                  :: :+  ~  direct.u.route.peer-state
+                  :: ^-  ^lane
+                  :: ?-  -.lane
+                  ::   %&  lane
+                  :: ::
+                  ::     %|
+                  ::   =/  ip=@if  (end [0 32] p.lane)
+                  ::   :: =/  pt=@ud  (cut 0 [32 16] p.lane)
+                  ::   |+ipv4/ip
+                  :: ==
                 ::
                 --
               ::
@@ -5196,7 +5159,7 @@
               %hear  (on-hear:event-core lane.task blob.task dud)
             ==
           ::
-          ?-  -.task
+          ?+  -.task  !!  ::  XX mesa tasks; no-op?
             %born  on-born:event-core
             %hear  (on-hear:event-core [lane blob ~]:task)
             %dear  (on-dear:event-core +.task)
@@ -5413,7 +5376,7 @@
               [%peers ~]
             :^  ~  ~  %noun
             !>  ^-  (map ship ?(%alien %known))
-            (~(run by peers.ames-state) head)
+            (~(run by peers.ames-state) ^head)  :: XX
           ::
               [%peers her=@ req=*]
             =/  who  (slaw %p her.tyl)
@@ -5529,7 +5492,7 @@
           ::
           =|  moves=(list move)
           ::
-          |_  [[now=@da eny=@uvJ rof=roof] hen=duct per=[=ship sat=ship-state]]
+          |_  [[now=@da eny=@uvJ rof=roof] hen=duct per=[=ship sat=chum-state]]
           ::
           +|  %helpers
           ::
@@ -5831,7 +5794,7 @@
               =.  ev-core
                 (ev-emit ~[/ames] %pass /mesa/dead-flow %b %wait `@da`(add now ~m2))
               %-  ~(rep by chums.ames-state)
-              |=  [[=ship =ship-state] core=_ev-core]
+              |=  [[=ship =chum-state] core=_ev-core]
               ^+  core
               =+  per-sat=(ev-get-per ship)
               ?.  ?=([~ ~ *] per-sat)
@@ -5855,14 +5818,14 @@
           ++  ev-req-plea
             |=  [=ship vane=@tas =wire payload=*]
             ^+  ev-core
-            =/  ship-state  (~(get by chums.ames-state) ship)
+            =/  chum-state  (~(get by chums.ames-state) ship)
             ::
-            ?.  ?=([~ %known *] ship-state)
-              %^  ev-enqueue-alien-todo  ship  ship-state
+            ?.  ?=([~ %known *] chum-state)
+              %^  ev-enqueue-alien-todo  ship  chum-state
               |=  todos=ovni-state
               todos(pokes [[hen plea/vane^wire^payload] pokes.todos])
             ::
-            =.  per  ship^u.ship-state
+            =.  per  ship^u.chum-state
             ?>  ?=(%known -.sat.per)
             =^  bone  ossuary.sat.per  ::  XX  to arm?
               =,  ossuary.sat.per
@@ -5900,13 +5863,13 @@
           ++  ev-req-peek
             |=  [sec=(unit [kid=@ key=@]) spar]
             ^+  ev-core
-            =/  ship-state  (~(get by chums.ames-state) ship)
+            =/  chum-state  (~(get by chums.ames-state) ship)
             ::
-            ?.  ?=([~ %known *] ship-state)
-              %^  ev-enqueue-alien-todo  ship  ship-state
+            ?.  ?=([~ %known *] chum-state)
+              %^  ev-enqueue-alien-todo  ship  chum-state
               |=  todos=ovni-state
               todos(peeks (~(put ju peeks.todos) path hen))
-            =.  per  ship^u.ship-state
+            =.  per  ship^u.chum-state
             ?>  ?=(%known -.sat.per)
             ::  +sy-plug should have already stored [kid key path] in chain.ames-state
             ::  on the server, and the client would have retrieved the key via
@@ -5935,13 +5898,13 @@
             ::    - validation should crash event or ensure that no state is changed
             ::  XX  parse path to get: requester, rift, bone, message
             ::
-            =/  ship-state  (~(get by chums.ames-state) her.poke-name)
+            =/  chum-state  (~(get by chums.ames-state) her.poke-name)
             ::
-            ?.  ?=([~ %known *] ship-state)
+            ?.  ?=([~ %known *] chum-state)
               ::  request public keys from %jael and drop the packet; it'll be re-send
               ::
               ::  XX TODO
-              (ev-enqueue-alien-todo her.poke-name ship-state |=(ovni-state +<))
+              (ev-enqueue-alien-todo her.poke-name chum-state |=(ovni-state +<))
             ::
             ::  path validation/decryption
             ::
@@ -5965,7 +5928,7 @@
               ~&  >  %poke-for-other^[rcvr.pok our]
               ev-core  :: XX TODO
             ::
-            =.  per  sndr.pok^u.ship-state
+            =.  per  sndr.pok^u.chum-state
             ?>  ?=(%known -.sat.per)
             ?.  =(1 tot.data)
               =/  =wire
@@ -6295,7 +6258,7 @@
           ++  ev-make-mess
             |=  [p=spar q=(unit path) spac=(unit space)]
             ^+  ev-core
-            =/  her  (~(gut by chums.ames-state) ship.p *ship-state)
+            =/  her  (~(gut by chums.ames-state) ship.p *chum-state)
             ?>  ?=([%known *] her)  ::  XX alien agenda
             ?^  res=(~(get by pit.her) path.p)
               ?>  =(q pay.u.res)  ::  prevent overriding payload
@@ -6400,15 +6363,15 @@
             ~>  %memo./ames/get-page
             (parse-packet ;;(@ q.q.u.u.res))
           ::
-          +|  %peer-helpers
+          +|  %fren-helpers
           ::
           ++  ev-gut-per
             |=  =ship
             ^+  per
             :-  ship
-            =/  ship-state  (~(get by chums.ames-state) ship)
+            =/  chum-state  (~(get by chums.ames-state) ship)
             :-  %known
-            ?.(?=([~ %known *] ship-state) *peer-state +.u.ship-state)
+            ?.(?=([~ %known *] chum-state) *fren-state +.u.chum-state)
           ::
           ++  ev-got-per
             |=  =ship
@@ -6421,7 +6384,7 @@
           ::
           ++  ev-get-per
             |=  her=ship
-            ^-  (unit (unit ship-state))
+            ^-  (unit (unit chum-state))
             ::
             ?~  per=(~(get by chums.ames-state) her)  ~
             `per
@@ -6429,7 +6392,7 @@
           ++  ev-put-per
             |=  =ship
             ^+  ames-state
-            ames-state(chums (~(put by chums.ames-state) ship known/*peer-state))
+            ames-state(chums (~(put by chums.ames-state) ship known/*fren-state))
           ::
           ++  ev-got-duct
             |=  =bone
@@ -6867,16 +6830,16 @@
           ::
           ++  ev-enqueue-alien-todo
             |=  $:  =ship
-                    ship-state=(unit ship-state)
+                    chum-state=(unit chum-state)
                     mutate=$-(ovni-state ovni-state)
                 ==
             ^+  ev-core
             ::  create a default $ovni-state on first contact
             ::
             =/  [already-pending=? todos=ovni-state]
-              ?~  ship-state
+              ?~  chum-state
                 [%.n *ovni-state]
-              [%.y ?>(?=(%alien -.u.ship-state) +.u.ship-state)]
+              [%.y ?>(?=(%alien -.u.chum-state) +.u.chum-state)]
             ::  mutate .todos and apply to permanent state
             ::
             =.  todos     (mutate todos)
@@ -6980,25 +6943,25 @@
                 ?:  =(our ship)
                   sy-core
                 ::
-                =/  ship-state  (~(get by chums.ames-state) ship)
+                =/  chum-state  (~(get by chums.ames-state) ship)
                 ::  we shouldn't be hearing about ships we don't care about
                 ::
-                ?~  ship-state
+                ?~  chum-state
                   ~>  %slog.0^leaf/"ames: breach unknown {<our ship>}"
                   sy-core
                 ::  if an alien breached, this doesn't affect us
                 ::
-                ?:  ?=([~ %alien *] ship-state)
+                ?:  ?=([~ %alien *] chum-state)
                   ~>  %slog.0^leaf/"ames: breach alien {<our ship>}"
                   sy-core
                 ~>  %slog.0^leaf/"ames: breach peer {<our ship>}"
                 ::  a peer breached; drop messaging state
                 ::
-                =/  =peer-state       +.u.ship-state
-                =/  old-qos=qos:ames  qos.peer-state
+                =/  =fren-state       +.u.chum-state
+                =/  old-qos=qos:ames  qos.fren-state
                 ::  reset all peer state other than pki data
                 ::
-                =.  +.peer-state  +:*^peer-state
+                =.  +.fren-state  +:*^fren-state
                 ::  print change to quality of service, if any
                 ::
                 :: =/  text=(unit tape)
@@ -7009,11 +6972,11 @@
                 ::   (ev-emit duct %pass /qos %d %flog %text u.text)
                 ::  reinitialize galaxy route if applicable
                 ::
-                =?  route.peer-state  =(%czar (clan:title ship))
+                =?  route.fren-state  =(%czar (clan:title ship))
                   `[direct=%.y lane=[%& ship]]
                 ::
                 =.  chums.ames-state
-                  (~(put by chums.ames-state) ship [%known peer-state])
+                  (~(put by chums.ames-state) ship [%known fren-state])
                 ::
                 :: =.  ev-core
                 ::   %-  ev-emit
@@ -7041,8 +7004,8 @@
                 ?:  =(our ship)
                   sy-core
                 ::
-                =/  ship-state  (~(get by chums.ames-state) ship)
-                ?.  ?=([~ %known *] ship-state)
+                =/  chum-state  (~(get by chums.ames-state) ship)
+                ?.  ?=([~ %known *] chum-state)
                   =|  =point:jael
                   =.  life.point     life
                   =.  keys.point     (my [life crypto-suite public-key]~)
@@ -7050,17 +7013,17 @@
                   ::
                   (on-publ-full (my [ship point]~))
                 ::
-                =/  =peer-state   +.u.ship-state
+                =/  =fren-state   +.u.chum-state
                 =/  crypto-core   (nol:nu:crub:crypto priv.ames-state)
                 =/  =private-key  sec:ex:crypto-core
-                =.  symmetric-key.peer-state
-                  (derive-symmetric-key public-key private-key)
+                =.  symmetric-key.fren-state
+                  (derive-symmetric-key:ames-helper public-key private-key)
                 ::
-                =.  life.peer-state        life
-                =.  public-key.peer-state  public-key
+                =.  life.fren-state        life
+                =.  public-key.fren-state  public-key
                 ::
                 =.  chums.ames-state
-                (~(put by chums.ames-state) ship %known peer-state)
+                (~(put by chums.ames-state) ship %known fren-state)
                 sy-core
               ::  +on-publ-sponsor: handle new or lost sponsor for peer
               ::
@@ -7076,7 +7039,7 @@
                   %-  (slog leaf+"ames: {(scow %p ship)} lost sponsor, ignoring" ~)
                   sy-core
                 ::
-                =/  state=(unit ship-state)  (~(get by chums.ames-state) ship)
+                =/  state=(unit chum-state)  (~(get by chums.ames-state) ship)
                 ?.  ?=([~ %known *] state)
                   %-  (slog leaf+"ames: missing peer-state, ignoring" ~)
                   sy-core
@@ -7110,12 +7073,12 @@
                     ?.  (~(has by keys.point) life.point)
                       $(points t.points)
                     ::
-                    =/  old-ship-state  (~(get by chums.ames-state) ship)
+                    =/  old-chum-state  (~(get by chums.ames-state) ship)
                     ::
-                    =.  sy-core  (insert-peer-state ship point)
+                    =.  sy-core  (insert-fren-state ship point)
                     ::
-                    =?  sy-core  ?=([~ %alien *] old-ship-state)
-                      (meet-alien ship point +.u.old-ship-state)
+                    =?  sy-core  ?=([~ %alien *] old-chum-state)
+                      (meet-alien ship point +.u.old-chum-state)
                     ::
                     $(points t.points)
                 ::
@@ -7163,53 +7126,53 @@
                 ^+  sy-core
                 =?  rift.ames-state  =(our ship)
                   rift
-                ?~  ship-state=(~(get by chums.ames-state) ship)
+                ?~  chum-state=(~(get by chums.ames-state) ship)
                   ::  print error here? %rift was probably called before %keys
                   ::
                   ~>  %slog.1^leaf/"ames: missing peer-state on-publ-rift"
                   sy-core
-                ?:  ?=([%alien *] u.ship-state)
+                ?:  ?=([%alien *] u.chum-state)
                   ::  ignore aliens
                   ::
                   sy-core
-                =/  =peer-state      +.u.ship-state
-                =.  rift.peer-state  rift
+                =/  =fren-state      +.u.chum-state
+                =.  rift.fren-state  rift
                 =.  chums.ames-state
-                  (~(put by chums.ames-state) ship %known peer-state)
+                  (~(put by chums.ames-state) ship %known fren-state)
                 sy-core
               ::
-              ++  insert-peer-state
+              ++  insert-fren-state
                 |=  [=ship =point:jael]
                 ^+  sy-core
                 ::
-                =/  =ship-state      sat:(ev-gut-per ship)
+                =/  =chum-state      sat:(ev-gut-per ship)
                 =/  =public-key      pass:(~(got by keys.point) life.point)
                 =/  crypto-core      (nol:nu:crub:crypto priv.ames-state)
                 =/  =private-key     sec:ex:crypto-core
-                =/  =symmetric-key   (derive-symmetric-key public-key private-key)
+                =/  =symmetric-key   (derive-symmetric-key:ames-helper public-key private-key)
                 ::
-                ?>  ?=(%known -.ship-state)
-                =.  qos.ship-state            [%unborn now]
-                =.  life.ship-state           life.point
-                =.  rift.ship-state           rift.point
-                =.  public-key.ship-state     public-key
-                =.  symmetric-key.ship-state  symmetric-key
-                =.  sponsor.ship-state
+                ?>  ?=(%known -.chum-state)
+                =.  qos.chum-state            [%unborn now]
+                =.  life.chum-state           life.point
+                =.  rift.chum-state           rift.point
+                =.  public-key.chum-state     public-key
+                =.  symmetric-key.chum-state  symmetric-key
+                =.  sponsor.chum-state
                   ?^  sponsor.point
                     u.sponsor.point
                   (^^sein:title rof /ames our now ship)
                 ::  automatically set galaxy route, since unix handles lookup
                 ::
-                =?  route.ship-state  ?=(%czar (clan:title ship))
+                =?  route.chum-state  ?=(%czar (clan:title ship))
                   `[direct=%.y lane=[%& ship]]
                 ::
                 =.  chums.ames-state
-                  (~(put by chums.ames-state) ship ship-state)
+                  (~(put by chums.ames-state) ship chum-state)
                 ::
                 :: =?  ev-core  ?=(%czar (clan:title ship))
                 ::   %-  ev-emit
                 ::   :*  unix-duct.ames-state  %give  %nail  ship
-                ::       (get-forward-lanes our +.ship-state chums.ames-state)
+                ::       (get-forward-lanes our +.chum-state chums.ames-state)
                 ::   ==
                 sy-core
               --
@@ -7226,16 +7189,16 @@
               ::
               =.  chums.ames-state
                 %-  ~(run by chums.ames-state)
-                |=  =ship-state
-                ^+  ship-state
+                |=  =chum-state
+                ^+  chum-state
                 ::
-                ?.  ?=(%known -.ship-state)
-                  ship-state
-                =/  =peer-state  +.ship-state
-                =.  symmetric-key.peer-state
-                  (derive-symmetric-key public-key.+.ship-state sec:ex:crypto-core)
+                ?.  ?=(%known -.chum-state)
+                  chum-state
+                =/  =fren-state  +.chum-state
+                =.  symmetric-key.fren-state
+                  (derive-symmetric-key:ames-helper public-key.fren-state sec:ex:crypto-core)
                 ::
-                known/peer-state
+                known/fren-state
               ::
               sy-core
             ::
@@ -7674,8 +7637,8 @@
           ::
           ++  pe-find-peer
             |=  =ship
-            ^-  $%  [%mesa (unit ship-state:mesa)]
-                    [%ames (unit ship-state:ames)]
+            ^-  $%  [%mesa (unit chum-state:^ames)]
+                    [%ames (unit ship-state:^ames)]
                 ==
             ?^  chum-state=(~(get by chums.ames-state) ship)
               mesa/chum-state
@@ -7730,7 +7693,7 @@
             moves^vane-gate
           ::
           ++  pe-keen
-            |=  [sec=(unit [idx=@ key=@]) spar:ames]
+            |=  [sec=(unit [idx=@ key=@]) spar:^ames]
             =/  ship-state  (pe-find-peer ship)
             ?:  ?=(%ames -.ship-state)
               (call:(ames now eny rof) hen ~ soft+keen/sec^ship^path)
@@ -7768,17 +7731,17 @@
             ?(%kroc %deep %hear %chum %cong %mate)
           ::  XX can we call the wrong core? still check if ship has migrated?
           ::
-          (call:(ames now eny rof) hen dud task)
+          (call:(ames now eny rof) hen dud soft/task)
           ::  %mesa-only tasks
           ::
             ?(%meek %mako %mage %heer %mess %mess-ser)
           ::  XX can we call the wrong core? still check if ship has migrated?
           ::
-          (call:(mesa now eny rof) hen dud task)
+          (call:(mesa now eny rof) hen dud soft/task)
           ::  flow-independent tasks
           ::
             ?(%vega %init %born %trim %snub %spew %stir %stun %sift %plug %dear %init %prod %tame)
-          (call:(mesa now eny rof) hen dud task)
+          (call:(mesa now eny rof) hen dud soft/task)
           ::  common tasks
           ::
             ?(%plea %cork %keen %yawn %wham)
@@ -7881,7 +7844,7 @@
                   $%  [%larva *]
                       [%adult state=ames-state-21:ames-helper]
               ==  ==
-              axle:mesa
+              axle:ames
           ==
       =|  moz=(list move)
       |-  ^+  vane-gate
@@ -7889,7 +7852,7 @@
       ?:  ?=([@ %larva *] old)
         ::  XX we need to handle the %larva type to account for %larval ++stay
         ::  but all live ships should have metamorphosed and if booting
-        ::  from the first time, %ames will produce %0 axle:mesa in ++stay
+        ::  from the first time, %ames will produce %0 axle:ames in ++stay
         ::
         !!  ::  $(+<.old %adult, +>.old state.old)
       ?:  ?=(%0 -.old)
@@ -8262,7 +8225,7 @@
   ::
   ++  state-21-to-0
     |=  old=ames-state-21
-    ^-  axle:mesa
+    ^-  axle:ames
     :-  %0
     old(chain [server-chain=chain.old priv=sec:ex:crypto-core.old chums=~])
   ::
