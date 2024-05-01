@@ -1603,7 +1603,9 @@
         ++  encrypt
           |=  [key=@uxI iv=@ msg=byts]
           ^+  msg
+          ~&  %in
           =/  x  (xchacha:chacha key (hash 24 iv))
+          ~&  %out
           =-  +(wid)^(can 3 wid^dat [1 0x1] ~)
           (chacha 8 key.x nonce.x 0 msg)
         ::
@@ -1640,10 +1642,10 @@
       ++  chacha
         =<
           =<  crypt
-          :: ~%  %chacha  ..part  ~
+          ~%  %chacha  ..part  ~
           |%
           ++  crypt
-            :: ~/  %crypt
+            ~/  %crypt
             |=  [rounds=@ud key=@uxI nonce=@uxG counter=@udG msg=byts]
             ^+  msg
             :-  wid.msg
@@ -1664,7 +1666,7 @@
             [(rsh 5 nonce) (lsh [5 1] (end 5 nonce))]
           ::
           ++  xchacha
-            :: ~/  %xchacha
+            ~/  %xchacha
             |=  [key=@uxI nonce=@ux]
             ^-  [key=@uxI nonce=@uxG]
             :_  (rsh [5 4] nonce)
@@ -8409,6 +8411,7 @@
             ?:  =(lop len)
               batch
             =*  fag  lop
+            ~&  fag
             =/  =path
               ?:  =(%init typ.pat.tyl)
                 pat.tyl
@@ -8507,16 +8510,20 @@
               =/  aut  [%0 mes ~]
               =/  lss-proof
                 =>  [ser=ser ..lss]
+                ~&  %in-auth
                 ~>  %memo./ames/lss
                 (build:lss (met 3 ser)^ser)
+              ~&  lss-proof
               =/  dat  [wid aut (rep 8 proof.lss-proof)]  :: XX types
               [nam dat]
             ::
                 %data
               =/  lss-proof
                 =>  [ser=ser ..lss]
+                ~&  %in-data
                 ~>  %memo./ames/lss
                 (build:lss (met 3 ser)^ser)
+              ~&  lss-proof
               =/  nam  [[our rif] [boq ?:(nit ~ [%data fag])] pat]
               =/  aut=auth:pact
                 ?:  &((lte wid 4) =(0 fag))

@@ -2,11 +2,11 @@
 ::::    /sys/hoon                                       ::
   ::                                                    ::
 =<  ride
-=>  %138  =>
+=>  %137  =>
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
-~%  %k.138  ~  ~                                        ::
+~%  %k.137  ~  ~                                        ::
 |%
 ++  hoon-version  +
 --  =>
@@ -809,6 +809,19 @@
     (rsh a d)
   $(d (add c (lsh a d)), n +(n))
 ::
+++  hew                                                 ::  cut many
+  ~/  %hew
+  |=  [a=bite c=@]
+  =/  d=[=bloq =step]  ?^(a a [a 0])
+  ~%  %fun  +>+  ~
+  |*  b=*
+  ^+  [b d]
+  ?@  b
+    [(cut bloq.d [step.d b] c) bloq.d (add step.d b)]
+  =^  f  d  $(b -.b)
+  =^  g  d  $(b +.b)
+  [[f g] d]
+::
 ++  lsh                                                 ::  left-shift
   ~/  %lsh
   |=  [a=bite b=@]
@@ -854,6 +867,19 @@
   %+  lsh
     [boz (sub len (met boz dat))]
   (swp boz dat)
+::
+++  rig                                                 ::  convert bloqs
+  ~/  %rig
+  |=  [=bite b=bloq]
+  ^-  step
+  ?@  bite  0
+  =/  [a=bloq c=step]  bite
+  ?:  =(a b)  c
+  ?:  (gth a b)
+    (lsh [0 (sub a b)] c)
+  =/  d  [0 (sub b a)]
+  =/  e  (rsh d c)
+  ?:(=(0 (end d c)) e +(e))
 ::
 ++  rip                                                 ::  disassemble
   ~/  %rip
@@ -946,6 +972,19 @@
           ==
   ==
 ::
+++  clz                                                 ::  leading zeros
+  ~/  %clz
+  |=  [a=bite b=@]
+  =/  c=[=bloq =step]  ?^(a a [a 1])
+  (sub (mul (bex bloq.c) step.c) (met 0 (end a b)))
+::
+++  ctz                                                 ::  trailing zeros
+  ~/  %ctz
+  |=  a=@
+  ?:  =(0 a)  0
+  =|  i=@ud
+  |-(?:(=(1 (cut 0 [i 1] a)) i $(i +(i))))
+::
 ++  dis                                                 ::  binary and
   ~/  %dis
   |=  [a=@ b=@]
@@ -962,6 +1001,17 @@
               =(0 (end 0 b))
           ==
   ==
+::
+++  ham                                                 ::  popcount
+  ~/  %ham
+  |=  a=@
+  ?:  =(0 a)  0
+  =|  n=@ud
+  =/  m  (dec (met 0 a))
+  |-  ^-  @ud
+  =?  n  =(1 (cut 0 [m 1] a))
+    +(n)
+  ?:(=(0 m) n $(m (dec m)))
 ::
 ++  mix                                                 ::  binary xor
   ~/  %mix
