@@ -1,3 +1,4 @@
+/-  *lagoon
 /+  *test
 /+  *lagoon
   ::
@@ -9,15 +10,15 @@
     ==
 ::  Auxiliary tools
 ++  is-equal
-  |=  [a=ray:la b=ray:la]  ^-  tang
+  |=  [a=ray b=ray]  ^-  tang
   ?:  =(a b)  ~
   :~  [%palm [": " ~ ~ ~] [leaf+"expected" "{<a>}"]]
       [%palm [": " ~ ~ ~] [leaf+"actual  " "{<b>}"]]
   ==
 ::
 ++  is-close
-  |=  [a=ray:la b=ray:la =term]  ^-  tang
-  ?:  (all:la (is-close:la a b term [atol rtol]))  ~
+  |=  [a=ray b=ray =term]  ^-  tang
+  ?:  (all:la (is-close:la a b [atol rtol]))  ~
   :~  [%palm [": " ~ ~ ~] [leaf+"expected" "{<a>}"]]
       [%palm [": " ~ ~ ~] [leaf+"actual  " "{<b>}"]]
   ==
@@ -214,7 +215,7 @@
 :: get-item-index
 :: ravel
 
-:: en-ray
+:: en-ray:la
 :: de-ray
 :: get-item-baum
 :: fill
