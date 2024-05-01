@@ -658,13 +658,14 @@
     |^
     =/  yaz  %+  skid  ~(tap in yen)
       |=  d=duct
-      &(?=([[%ames @ @ *] *] d) !=(%public-keys i.t.i.d))
+      ~&  d/d
+      &(?=([[%ames ?(%ames %mesa) @ @ *] *] d) !=(%public-keys i.t.t.i.d))
     =/  yez  (weld p.yaz (sort q.yaz sorter))
     |-  ^+  this-su
     ?~  yez  this-su
     =*  d  i.yez
     =.  this-su
-      ?.  &(?=([[%ames @ @ *] *] d) !=(%public-keys i.t.i.d))
+      ?.  &(?=([[%ames ?(%ames %mesa) @ @ *] *] d) !=(%public-keys i.t.t.i.d))
         %-  emit
         [d %give %public-keys public-keys-result]
       %-  emit

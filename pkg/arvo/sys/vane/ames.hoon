@@ -6852,7 +6852,7 @@
             ::  NB: we specifically look for this wire in +public-keys-give in
             ::  Jael.  if you change it here, you must change it there.
             ::
-            (ev-emit hen %pass /public-keys %j %public-keys [n=ship ~ ~])
+            (ev-emit hen %pass /mesa/public-keys %j %public-keys [n=ship ~ ~])
           ::
           +|  %system
           ::
@@ -7611,12 +7611,12 @@
         ::
         ?.  =([~ ~] lyc)  ~
         ?+    tyl  ~
-              [%peers her=@ ~]
+              [%chums her=@ ~]
             =/  who  (slaw %p her.tyl)
             ?~  who  [~ ~]
-            ?~  peer=(~(get by chums.ames-state) u.who)
+            ?~  chum=(~(get by chums.ames-state) u.who)
               [~ ~]
-            ``noun+!>(u.peer)
+            ``noun+!>(u.chum)
         ==
       ::
       --
@@ -7763,8 +7763,8 @@
     --
 ::
 |%
-++  call  call:(peer now eny rof)
-++  take  take:(peer now eny rof)
+++  call  call:(mesa now eny rof)
+++  take  take:(mesa now eny rof)
 ::  +stay: extract state before reload
 ::
 ++  stay  ames-state
@@ -8232,6 +8232,6 @@
   --
 ::  +scry: dereference namespace
 ::
-++  scry  scry:(ames now eny rof)  ::  XX scry unification
+++  scry  scry:(mesa now eny rof)  ::  XX scry unification
 ::
 --

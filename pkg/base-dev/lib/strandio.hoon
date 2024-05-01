@@ -199,7 +199,7 @@
 ::
 ++  take-message
   |=  =wire
-  =/  m  (strand ,sage:mess:mesa)
+  =/  m  (strand ,sage:mess:ames)
   ^-  form:m
   |=  tin=strand-input:strand
   ?+    in.tin  `[%skip ~]
@@ -366,7 +366,7 @@
   (send-raw-card %pass wire %arvo %a %keen ~ spar)
 ::
 ++  meen
-  |=  [=wire =spar:mesa sec=(unit [@ @])]
+  |=  [=wire =spar:ames sec=(unit [@ @])]
   =/  m  (strand ,~)
   ^-  form:m
   (send-raw-card %pass wire %arvo %a %keen sec spar)
