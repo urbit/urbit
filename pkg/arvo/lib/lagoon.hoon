@@ -46,7 +46,10 @@
   ::
   ++  get-term
     |=  =meta
-    ?+    kind.meta  ~|(kind.meta !!)
+    ?-    kind.meta
+        %uint
+      %ud
+      ::
         %real
       ?+    bloq.meta  ~|(bloq.meta !!)
         %7  %rq
@@ -293,6 +296,7 @@
     ::
     =,  meta.ray
     ?:  =(1 (lent shape))
+      ::  Snip off tail which is the pinned 0x1 MSB
       (snip (rip bloq data.ray))
     ::
     ?:  =(2 (lent shape))
@@ -302,13 +306,13 @@
       |-
       ?:  =(0x1 data.ray)  (welp ~[;;((list ndray) els)] ;;((list ndray) fin))
       %=  $
-        els   (flop (rip bloq (cut bloq [0 (snag 0 dims)] data.ray)))
+        els   (tail (flop (rip bloq (cut bloq [0 +((snag 0 dims))] data:(spac `^ray`[[~[(snag 0 dims) 1] bloq kind fxp] `@ux`data.ray])))))
         fin   ?~  els  fin
               (welp ~[;;((list ndray) els)] ;;((list ndray) fin))
         data.ray  (rsh [bloq (snag 0 dims)] data.ray)
       ==
-    ::  cut off end
     !!
+    ::  cut off end
     ++  rip
       |=  [a=bite b=@]
       ^-  (list @)
@@ -381,7 +385,9 @@
         r
       ~[i i]
     ^-  @
-    ?+    kind.meta  ~|(kind.meta !!)
+    ?-    kind.meta
+        %uint  `@`1
+      ::
         %real
       ?+  bloq.meta  ~|(bloq.meta !!)
         %7  .~~~1
@@ -403,7 +409,9 @@
     |=  =meta  ^-  ray
     ~_  leaf+"lagoon-fail"
     =/  one
-      ?+    kind.meta  ~|(kind.meta !!)
+      ?-    kind.meta
+          %uint  `@`1
+        ::
           %real
         ?+  bloq.meta  !!
           %7  .~~~1
@@ -552,7 +560,10 @@
     |=  [=meta data=@]
     ^-  ray
     =.  shape.meta  `(list @)`(zing (reap (lent shape.meta) ~[1]))
-    ?+    kind.meta  !!
+    ?-    kind.meta
+        %uint
+      (spac [meta `@ux`data])
+      ::
         %real
       ::  convert date to fl to @r XXX TODO REVISIT whether we want to specify input type
       =/  fin
@@ -910,6 +921,7 @@
                 %mul
                 %div
                 %mod
+                %pow
                 %gth
                 %gte
                 %lth
@@ -921,7 +933,23 @@
     |=  [=meta fun=ops]
     ^-  $-([@ @] @)
     =,  meta
-    ?+    `^kind`kind  ~|(kind !!)
+    ?-    `^kind`kind
+        %uint
+      ?+  fun  !!
+        %add  ~(sum fe bloq)
+        %sub  ~(dif fe bloq)
+        %mul  |=([b=_1 c=_1] (~(sit fe bloq) (^mul b c)))
+        %div  |=([b=_1 c=_1] (~(sit fe bloq) (^div b c)))
+        %mod  |=([b=@ c=@] (~(sit fe bloq) (^mod b c)))
+        %pow  |=([b=@ c=@] (~(sit fe bloq) (^pow b c)))
+        ::%exp  |=([b=@ c=@] (~(sit fe bloq) (^pow b c)))
+        ::%log  |=([b=@ c=@] (~(sit fe bloq) (^pow b c)))
+        %gth  |=([b=@ c=@] !(^gth b c))
+        %gte  |=([b=@ c=@] !(^gte b c))
+        %lth  |=([b=@ c=@] !(^lth b c))
+        %lte  |=([b=@ c=@] !(^lte b c))
+      ==
+      ::
         %real
       ?+    `^bloq`bloq  !!
           %7
@@ -935,6 +963,7 @@
           %gte  |=([a=@rq b=@rq] ?:((~(gte rq rnd) a b) .~~~1 .~~~0))
           %lth  |=([a=@rq b=@rq] ?:((~(lth rq rnd) a b) .~~~1 .~~~0))
           %lte  |=([a=@rq b=@rq] ?:((~(lte rq rnd) a b) .~~~1 .~~~0))
+          :: %eq   |=([a=@rq b=@rq] .=([a b] .~~~1 .~~~0)
         ==
           %6
         ?+  fun  !!
@@ -978,7 +1007,12 @@
   ++  trans-scalar
     |=  [=bloq =kind fun=ops]
     ^-  $-(@ @)
-    ?+    kind  ~|(kind !!)
+    ?-    kind
+        %uint  
+      ?+  fun  !!
+        %abs  |=(b=@ b)
+      ==
+      ::
         %real
       ?+    bloq  !!
           %7
@@ -1025,6 +1059,22 @@
       (gulf 0 (dec (lent ali)))
     |=  i=@
     (op (snag i ali) (snag i bob))
+  ::
+  ++  ter-op
+    |=  [a=ray b=ray c=ray op=$-([@ @ @] @)]
+    ^-  ray
+    ?>  =(meta.a meta.b)
+    ?>  =(meta.c meta.b)
+    %-  spac:la
+    :-  meta.a
+    =/  ali  (ravel:la a)
+    =/  bob  (ravel:la b)
+    =/  car  (ravel:la c)
+    %^  rev  bloq.meta.a  (lent ali)
+    %+  rep  bloq.meta.a
+    %+  turn
+      (gulf 0 (dec (lent ali)))
+    |=  i=@
+    (op (snag i ali) (snag i bob) (snag i car))
+  --
 --
---
- 
