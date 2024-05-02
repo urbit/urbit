@@ -15,34 +15,12 @@
 +$  cape  $@(? [cape cape])
 +$  sock  [=cape data=*]
 +$  wilt  (list [l=path s=sock])    ::  XX switch back to *
-++  rent
-  ::  find the parent %core type of the given %core type
-  |=  t=type
-  ^-  (unit type)
-  ?+    t
-      ~
-      [%core *]
-    ?:  ?=([%core *] p.t)
-      `p.t
-    ~
-  ==
-++  kilt
-  ::  get a kid's wilt, where p is its papa's label
-  |=  [t=type p=term]
-  ^-  wilt
-  ?.  ?=([%core *] t)
-    ~
-  =+  [semi chapters]=[p q]:r.q.t
-  ?~  p.p.q.t
-    ~
-  =/  bell  (need p.p.q.t)
-  ~[[l=~[bell p] s=[& (mug data.semi)]]]
 --
-%.  [arg ~]
+%.  [arg ~ ~]
 =|  cot=(map type wilt)
 =|  gil=(set type)                  ::  all types seen
 =|  wit=wilt
-|=  [t=type brud=(list type)]
+|=  [t=type brud=(list type) pops=(unit wilt)]
 ^-  wilt
 ?+    t
     wit
@@ -50,34 +28,51 @@
   ~&  %cell
   (weld $(t p.t) $(t q.t))
     [%core *]
+  ::  extract info from type
+  =+  [semi chap]=[p q]:r.q.t
+  ?~  p.p.q.t
+    $(t p.t)
+  =/  bell  (need p.p.q.t)
+  =/  self=wilt  ~[[l=~[bell] s=[& (mug data.semi)]]]
   ::
-  =+  [semi chapters]=[p q]:r.q.t
-  =/  bell  (need p.p.q.t)  ::  XX
   =/  mats=(list (map term hoon))
-    (turn ~(val by chapters) |=(tom=tome q.tom))
+    (turn ~(val by chap) |=(tom=tome q.tom))
   =/  hops=(list (pair term hoon))
     (zing (turn mats |=(mat=(map term hoon) ~(tap by mat))))
-  =/  kits=(list type)
-    %+  skip
+  =/  kits=(list type)  ::  get the types of the minted arms
+    %+  skip  ::  skip unjetted arms
       (turn hops |=(hop=(pair term hoon) p:(~(mint ut.h t) %noun q.hop)))
     |=  kit=type
     ^-  ?
     &(?=([%core *] kit) =(~ p.p.q.kit))
-  =/  papa=(unit type)  (rent t)
-  =/  self=wilt  ~[[l=~[bell] s=[& (mug data.semi)]]]
   ::
-  =/  kids=(list [t=type w=wilt])  (turn kits |=(t=type [t (kilt t bell)]))
+  =/  kids=(list [type wilt])
+    %+  turn
+      kits
+    |=  t=type
+    ^-  [type wilt]
+    [t ^$(t t, pops `self)]
+  ~&  [%kids bell (snoc kids [t self])]
   =.  cot  (~(gas by cot) (snoc kids [t self]))
   ::
   ~&  ~
   ~&  [%batt `@ux`(mug data.semi)]
   ~&  [%load p.t]
   ~&  [%bell bell]
-  ~&  [%kits kits]
-  ?~  papa
-    ::  if you have no papa, then you are the papa
+  ::
+  ?.  =(~ pops)  ::  we know our pops
+    =/  dath=path  -<:(need pops)
+    =/  rest=wilt  ~[[l=(weld ~[bell] dath) s=[& (mug data.semi)]]]
+    ~&  [%rest rest]
+    rest
+  ::
+  =/  papa=(unit type)
+    ?:  ?=([%core *] p.t)
+      `p.t
+    ~
+  ?~  papa  ::  we are the papa
     =.  cot
-    %-  ~(run by cot)
+    %-  ~(run by cot)  ::  add our label to cot's entries
     |=  w=wilt
     ^-  wilt
     ?~  w
@@ -85,20 +80,22 @@
     ?:  |(=(~[bell] `path`-<.w) =(bell (rear `path`-<.w)))
       w
     ~[[l=(weld `path`-<.w ~[bell]) s=->.w]]
-    (zing ~(val by cot))
-  ?.  =(~ brud)
+    (zing ~(val by cot))  ::  we're done
+  ::
+  ?.  =(~ brud)  ::  we know our kids
     =/  sons=(list [t=type w=wilt])
-      %+  turn
+      %+  turn  ::  prepend our label to all our sons
         brud
       |=  b=type
       =/  orig=wilt  (need (~(get by cot) b))
       [b `wilt`~[[l=(weld `path`-<.orig ~[bell]) s=->.orig]]]
-    =.  cot  (~(gas by cot) sons)
-    %=  $
+    =.  cot  (~(gas by cot) sons)  ::  update sons in cot
+    %=  $  ::  recurse with empty brood
       t     p.t
       brud  ~
     ==
-  %=  $
+  ::
+  %=  $  ::  recurse with ~[kits t] as brood
     t     p.t
     brud  `(list type)`(snoc kits t)
   ==
