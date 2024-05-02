@@ -1603,9 +1603,7 @@
         ++  encrypt
           |=  [key=@uxI iv=@ msg=byts]
           ^+  msg
-          ~&  %in
           =/  x  (xchacha:chacha key (hash 24 iv))
-          ~&  %out
           =-  +(wid)^(can 3 wid^dat [1 0x1] ~)
           (chacha 8 key.x nonce.x 0 msg)
         ::
@@ -1637,7 +1635,6 @@
           ;;(path (cue pat))
         ::
         --
-
       ::
       ++  chacha
         =<
@@ -8513,17 +8510,14 @@
                 ~&  %in-auth
                 ~>  %memo./ames/lss
                 (build:lss (met 3 ser)^ser)
-              ~&  lss-proof
               =/  dat  [wid aut (rep 8 proof.lss-proof)]  :: XX types
               [nam dat]
             ::
                 %data
               =/  lss-proof
                 =>  [ser=ser ..lss]
-                ~&  %in-data
                 ~>  %memo./ames/lss
                 (build:lss (met 3 ser)^ser)
-              ~&  lss-proof
               =/  nam  [[our rif] [boq ?:(nit ~ [%data fag])] pat]
               =/  aut=auth:pact
                 ?:  &((lte wid 4) =(0 fag))
