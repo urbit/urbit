@@ -5695,7 +5695,8 @@
           ::
           ++  ev-call
             =>  |%  +$  req-task
-                      $%  $<(%mess $>(?(%plea %keen %cork %heer %mess-ser) ^task))  ::  XX common tasks
+                      $%  $<  %mess
+                          $>(?(%plea %keen %cork %heer %mess-ser) ^task)  ::  XX common tasks
                           [%mess (unit lane:pact) =mess dud=(unit goof)]
                       ==
                 --
@@ -6087,12 +6088,9 @@
             ?>  ?=(%known -.sat.per)
             ::
             ::  XX validate response
-            =.  pit.u.rs   (~(del by pit.u.rs) path)
+            =.  pit.u.rs           (~(del by pit.u.rs) path)
             =.  chums.ames-state   (~(put by chums.ames-state) ship.spar u.rs)
-            =/  gift       [%give %mess-response spar ;;(gage:mess (cue res))]
-            %-  ~(rep in for.u.ms)
-            |=  [hen=duct c=_ev-core]
-            (ev-emit:c hen gift)
+            (ev-give-response for.u.ms path.spar ;;(gage:mess (cue res)))
           ::
           ++  ev-mess-poke  :: XX refactor function signature
             |=  [dud=(unit goof) =ack=spar =pok=spar =gage:mess]
@@ -6157,7 +6155,7 @@
               :: XX log
               ev-core  ::  ignore events from an old rift
             ::
-            =/  message-path=(pole iota)   (ev-validate-path path.p.sage)
+            =/  message-path=(pole iota)  (ev-validate-path path.p.sage)
             ::
             ?:  &(=(were %cor) =(dire %bak))
               ::  validate %cork path
@@ -6319,9 +6317,11 @@
             ::
                 %chum  :: encrypted with eddh key
               :-  %chum
-              ^+  path  =,  space
-              :~  (scot %ud our-life)  (scot %p her)  (scot %ud her-life)
-                  (scot %uv (seal-path:crypt `@`key path))
+              ^+  path
+              :~  (scot %ud our-life.space)
+                  (scot %p her.space)
+                  (scot %ud her-life.space)
+                  (scot %uv (seal-path:crypt `@`key.space path))
               ==
             ::
                 %shut  :: encrypted with group key
@@ -6359,7 +6359,7 @@
             ~|  %freaky-alien^ship
             =-  ?>(?=([%known *] -) -)
             (~(got by chums.ames-state) ship)
-          ::  +get-her-state: lookup .her state, ~ if missing, [~ ~] if %alien
+          ::  +ev-get-per: lookup .her state, ~ if missing, [~ ~] if %alien
           ::
           ++  ev-get-per
             |=  her=ship
@@ -6378,6 +6378,30 @@
             ^-  duct
             ?>  ?=(%known -.sat.per)
             ~|(%dangling-bone^ship.per^bone (~(got by by-bone.ossuary.sat.per) bone))
+          ::
+          +|  %peek-subscribers
+          ::
+          ++  ev-give-response
+            |=  [listeners=(set duct) =path =gage:mess]
+            ^+  ev-core
+            %-  ~(rep in listeners)
+            |=  [hen=duct c=_ev-core]
+            (ev-emit:c hen %give %mess-response ship.per^path gage)
+          ::
+          ++  ev-cancel-peek
+            |=  [all=? =path]
+            ^+  ev-core
+            ?>  ?=(%known -.sat.per)
+            ?~  ms=(~(get by pit.sat.per) path)
+              ev-core
+            =;  core=_ev-core
+              core(chums.ames-state (~(put by chums.ames-state) [ship sat]:per.core))
+            ?:  all
+              =.  pit.sat.per  (~(del by pit.sat.per) path)
+              (ev-give-response for.u.ms path ~)
+            =.  for.u.ms     (~(del in for.u.ms) hen)
+            =.  pit.sat.per  (~(put by pit.sat.per) path u.ms)
+            ev-core
           ::
           +|  %flows
           ::
@@ -7190,7 +7214,6 @@
             ::
             --
           ::
-          :: +|  %internals
           --
       ::
       |=  [now=@da eny=@uvJ rof=roof]
@@ -7631,8 +7654,8 @@
               %plea  (pe-plea +.task)
               %cork  (pe-cork +.task)
               %keen  (pe-keen +.task)
-              %yawn  (pe-yawn +.task)
-              %wham  (pe-wham +.task)
+              %yawn  (pe-cancel all=| +.task)
+              %wham  (pe-cancel all=& +.task)
             ==
           ::
           +|  %internals
@@ -7687,8 +7710,19 @@
             moves^vane-gate
             ::
           ::
-          ++  pe-yawn
-            |=  *  !!
+          ++  pe-cancel
+            |=  [all=? =spar]
+            =/  ship-state  (pe-find-peer ship.spar)
+            ::
+            ?:  ?=(%ames -.ship-state)
+              (call:(ames now eny rof) hen ~ soft+yawn/all^spar)
+            =^  moves  ames-state
+              =<  ev-abet
+              ?.  ?=([~ %known *] +.ship-state)
+                ::  XX delete from alien agenda?
+                ~&("peer still alien, skip peek cancel" me-core)
+              (%*(ev-cancel-peek me-core per ship.spar^u.ship-state) all path.spar)
+            moves^vane-gate
           ::
           ++  pe-wham
             |=  *  !!
