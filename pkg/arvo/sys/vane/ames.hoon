@@ -5499,11 +5499,10 @@
           ::
           ++  ev-emit  |=(=move ev-core(moves [move moves]))
           ++  ev-emil  |=(mos=(list move) ev-core(moves (weld mos moves)))
-          ++  ev-chan  [[our ship.per] now life.ames-state ?>(?=(%known -.sat.per) +<.sat.per)]
           ::
           +|  %flow-wires
           ::
-          +$   ev-flow-wire
+          +$  ev-flow-wire
             $:  %mesa
                 %flow
                 were=?(%van %ext %int %cor %pok)  ::  XX revisit names
@@ -5813,14 +5812,6 @@
           ++  ev-req-plea
             |=  [=ship vane=@tas =wire payload=*]
             ^+  ev-core
-            =/  chum-state  (~(get by chums.ames-state) ship)
-            ::
-            ?.  ?=([~ %known *] chum-state)
-              %^  ev-enqueue-alien-todo  ship  chum-state
-              |=  todos=ovni-state
-              todos(pokes [[hen plea/vane^wire^payload] pokes.todos])
-            ::
-            =.  per  ship^u.chum-state
             ?>  ?=(%known -.sat.per)
             =^  bone  ossuary.sat.per  ::  XX  to arm?
               =,  ossuary.sat.per
@@ -5858,13 +5849,6 @@
           ++  ev-req-peek
             |=  [sec=(unit [kid=@ key=@]) spar]
             ^+  ev-core
-            =/  chum-state  (~(get by chums.ames-state) ship)
-            ::
-            ?.  ?=([~ %known *] chum-state)
-              %^  ev-enqueue-alien-todo  ship  chum-state
-              |=  todos=ovni-state
-              todos(peeks (~(put ju peeks.todos) path hen))
-            =.  per  ship^u.chum-state
             ?>  ?=(%known -.sat.per)
             ::  +sy-plug should have already stored [kid key path] in chain.ames-state
             ::  on the server, and the client would have retrieved the key via
@@ -7758,8 +7742,8 @@
     --
 ::
 |%
-++  call  call:(mesa now eny rof)
-++  take  take:(mesa now eny rof)
+++  call  call:(peer now eny rof)
+++  take  take:(peer now eny rof)
 ::  +stay: extract state before reload
 ::
 ++  stay  ames-state
