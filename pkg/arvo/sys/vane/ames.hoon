@@ -8398,6 +8398,7 @@
               ?:  =(%init typ.pat.tyl)
                 [0 1]
               [(slav %ud lop.tyl) (slav %ud len.tyl)]
+            ~&  >>  [lop len]
             =*  scry  $
             ::
             =|  batch=(list @)
@@ -8408,7 +8409,6 @@
             ?:  =(lop len)
               batch
             =*  fag  lop
-            ~&  fag
             =/  =path
               ?:  =(%init typ.pat.tyl)
                 pat.tyl
