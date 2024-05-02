@@ -888,6 +888,18 @@
     ^-  ray
     (bin-op a b (fun-scalar meta.a %lte))
   ::
+  ++  equ
+    :: ~/  %equ
+    |=  [a=ray b=ray]
+    ^-  ray
+    (bin-op a b (fun-scalar meta.a %equ))
+  ::
+  ++  neq
+    :: ~/  %equ
+    |=  [a=ray b=ray]
+    ^-  ray
+    (bin-op a b (fun-scalar meta.a %neq))
+  ::
   ++  mpow-n
     |=  [a=ray n=@ud]
     ^-  ray
@@ -926,6 +938,8 @@
                 %gte
                 %lth
                 %lte
+                %equ
+                %neq
                 %abs
             ==
   ::
@@ -948,6 +962,8 @@
         %gte  |=([b=@ c=@] !(^gte b c))
         %lth  |=([b=@ c=@] !(^lth b c))
         %lte  |=([b=@ c=@] !(^lte b c))
+        %equ  |=([b=@ c=@] ?:(.=(b c) 1 0))
+        %neq  |=([b=@ c=@] ?:(.=(b c) 0 1))
       ==
       ::
         %real
@@ -963,7 +979,8 @@
           %gte  |=([a=@rq b=@rq] ?:((~(gte rq rnd) a b) .~~~1 .~~~0))
           %lth  |=([a=@rq b=@rq] ?:((~(lth rq rnd) a b) .~~~1 .~~~0))
           %lte  |=([a=@rq b=@rq] ?:((~(lte rq rnd) a b) .~~~1 .~~~0))
-          :: %eq   |=([a=@rq b=@rq] .=([a b] .~~~1 .~~~0)
+          %equ  |=([a=@rq b=@rq] ?:(.=(a b) .~~~1 .~~~0))
+          %neq  |=([a=@rq b=@rq] ?:(.=(a b) .~~~0 .~~~1))
         ==
           %6
         ?+  fun  !!
@@ -976,6 +993,8 @@
           %gte  |=([a=@rd b=@rd] ?:((~(gte rd rnd) a b) .~1 .~0))
           %lth  |=([a=@rd b=@rd] ?:((~(lth rd rnd) a b) .~1 .~0))
           %lte  |=([a=@rd b=@rd] ?:((~(lte rd rnd) a b) .~1 .~0))
+          %equ  |=([a=@rd b=@rd] ?:(.=(a b) .~1 .~0))
+          %neq  |=([a=@rd b=@rd] ?:(.=(a b) .~0 .~1))
         ==
           %5
         ?+  fun  !!
@@ -984,10 +1003,12 @@
           %mul  ~(mul rs rnd)
           %div  ~(div rs rnd)
           %mod  |=([a=@rs b=@rs] (~(sub rs rnd) a (~(mul rs rnd) b (~(san rs rnd) (need (~(toi rs rnd) (~(div rs rnd) a b)))))))
-          %gth  |=([a=@rs b=@rs] ?:((~(gth rs rnd) a b) .~~~1 .~~~0))
+          %gth  |=([a=@rs b=@rs] ?:((~(gth rs rnd) a b) .1 .0))
           %gte  |=([a=@rs b=@rs] ?:((~(gte rs rnd) a b) .1 .0))
           %lth  |=([a=@rs b=@rs] ?:((~(lth rs rnd) a b) .1 .0))
           %lte  |=([a=@rs b=@rs] ?:((~(lte rs rnd) a b) .1 .0))
+          %equ  |=([a=@rs b=@rs] ?:(.=(a b) .1 .0))
+          %neq  |=([a=@rs b=@rs] ?:(.=(a b) .0 .1))
         ==
           %4
         ?+  fun  !!
@@ -1000,6 +1021,8 @@
           %gte  |=([a=@rh b=@rh] ?:((~(gte rh rnd) a b) .~~1 .~~0))
           %lth  |=([a=@rh b=@rh] ?:((~(lth rh rnd) a b) .~~1 .~~0))
           %lte  |=([a=@rh b=@rh] ?:((~(lte rh rnd) a b) .~~1 .~~0))
+          %equ  |=([a=@rh b=@rh] ?:(.=(a b) .~~1 .~~0))
+          %neq  |=([a=@rh b=@rh] ?:(.=(a b) .~~0 .~~1))
         ==
       ==  :: bloq real
     ==  :: kind
