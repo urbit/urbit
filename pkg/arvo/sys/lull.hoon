@@ -819,7 +819,8 @@
         $>(%trim vane-task)
         $>(%vega vane-task)
     ::
-        [%mate (unit ship)]            ::  migrate peers
+        [%mate (unit ship)]            ::  per-peer migration
+        [%load ?(%mesa %ames)]         ::  load core for new peers; XX make it term for flexibility?
     ::
         [%heer p=lane:pact q=@]                :: receive a packet
         [%mess p=(unit lane:pact) q=mess]      :: receive a message
@@ -1530,6 +1531,7 @@
         =server=chain  ::  for serving %shut requests
         priv=private-key    ::  XX remove if we use the crypto core?
         chums=(map ship chum-state)  ::  XX migrated peers
+        core=?(%ames %mesa)          ::  XX use migrated core by default
         ::  TODOs
         :: XX tmp=(map @ux page)   :: temporary hash-addressed bindings
     ==

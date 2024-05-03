@@ -7662,11 +7662,13 @@
           ::
           ++  pe-find-peer
             |=  =ship
-            ^-  $%  [%mesa (unit chum-state:^ames)]
-                    [%ames (unit ship-state:^ames)]
+            ^-  $%  [%ames (unit ship-state:ames)]
+                    [%mesa (unit chum-state:ames)]
                 ==
             ?^  chum-state=(~(get by chums.ames-state) ship)
               mesa/chum-state
+            ?:  ?=(%mesa core.ames-state)
+              mesa/~
             ames/(~(get by peers.ames-state) ship)
           ::
           +|  %entry-points
@@ -7674,6 +7676,7 @@
           ++  call
             |=  =task
             ?+  -.task  !!
+              %load  `vane-gate(ames-state ames-state(core +.task))
               %plea  (pe-plea +.task)
               %cork  (pe-cork +.task)
               %keen  (pe-keen +.task)
@@ -7780,7 +7783,7 @@
           (call:(mesa now eny rof) hen dud soft/task)
           ::  common tasks
           ::
-            ?(%plea %cork %keen %yawn %wham)
+            ?(%plea %cork %keen %yawn %wham %load)
           (call:(pe-abed:pe-core now eny rof hen) task)
         ::
         ==
@@ -8263,8 +8266,9 @@
     |=  old=ames-state-21
     ^-  axle:ames
     :-  %0
-    old(chain [server-chain=chain.old priv=sec:ex:crypto-core.old chums=~])
-  ::
+    %=  old
+      chain  [server-chain=chain.old priv=sec:ex:crypto-core.old chums=~ %ames]
+    ==
   --
 ::  +scry: dereference namespace
 ::
