@@ -1617,14 +1617,7 @@
         fags=(list @)
     ==
   ::
-  +$  mesa-message
-    $+  mesa-message
-    $%  [%plea plea]       ::  client vane remote request
-        [%boon payload=*]  ::  %facts, subscription updates
-        [%cork ~]          ::  client vane is done, close flow
-                            ::  XX %corks are a subsset ot pleas
-                            ::  where =($% vane.plea)
-    ==
+  +$  mesa-message  $>(?(%plea %boon) message)
   ::
   +$  flow-state
     $:  ::  a flow switches to closing when:

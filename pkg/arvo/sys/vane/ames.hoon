@@ -6528,7 +6528,7 @@
               ^+  fo-core
               ::
               ?-    -.poke
-                  ?(%plea %boon %cork)  :: XX remove %cork; subsumed under %plea
+                  ?(%plea %boon)
                 ?:  |((fo-to-close poke) fo-corked)
                   ::  XX log
                   fo-core
@@ -6585,7 +6585,7 @@
                   ?(%plea %boon)
                 ?~  v=(get:fo-mop loads.state seq)   ~
                 ?>  =(load -.u.v)
-                ?+  -.u.v  ~  :: XX cork?
+                ?-  -.u.v
                   %plea  `plea/[vane path payload]:u.v
                   %boon  `boon/payload.u.v
                 ==
@@ -7142,7 +7142,6 @@
                     =.  core  (ev-abed:core [now eny rof] duct)
                     ?+  -.mess  !!  :: XX log alien peer %boon?
                       %plea  (ev-req-plea:core ship +.mess)
-                      %cork  (ev-req-plea:core ship %$ /cork %cork ~)
                     ==
                   ::
                   --
