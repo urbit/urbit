@@ -5558,10 +5558,8 @@
           +$  res-mess-pith
             $:  %flow
                 [%ud bone=@ud]
-                [%p sndr=@p]   ::  XX drop this
-                =load
+                load=?(%plea %boon %ack-plea %ack-boon %nax)  ::  XX to %lul
                 [%p rcvr=@p]
-                =dire          ::  XX revisit; could be inferred by entry-point + flow
                 [%ud mess=@ud]
                 ~
             ==
@@ -5569,10 +5567,8 @@
           +$  res-cork-pith
             $:  %flow
                 [%ud bone=@ud]
-                [%p sndr=@p]   ::  XX drop this
-                %cork
+                %cork             :: XX allow to read "server" corks
                 [%p rcvr=@p]
-                =dire          ::  XX revisit; could be inferred by entry-point + flow
                 ~
             ==
           ::
@@ -5901,19 +5897,22 @@
             ~|  path-validation-failed/ack^pok
             ?>  &(?=(res-mess-pith ack) ?=(res-mess-pith pok))
             ::
-            ?.  =(sndr.ack our)  ::  do we need to respond to this ack?
-              ~&  >>  %not-our-ack^sndr.ack^our
+            ?.  =(her.ack-name our)  ::  do we need to respond to this ack?
+              ~&  >>  %not-our-ack^her.ack-name^our
               ev-core  :: XX TODO
             ?.  =(rcvr.pok our)  ::  are we the receiver of the poke?
               ~&  >  %poke-for-other^[rcvr.pok our]
               ev-core  :: XX TODO
             ::
-            =.  per  sndr.pok^u.chum-state
+            =.  per  her.poke-name^u.chum-state
             ?>  ?=(%known -.sat.per)
             ?.  =(1 tot.data)
+              =/  =dire  :: flow swtiching
+                %*(fo-flip-dire fo side *@ud^(fo-infer-dire:fo load.pok))  :: XX assert load is plea/boon
+              ::  XX move to arm
               =/  =wire
                 %.  %pok
-                fo-wire:(fo-abed:fo hen [bone dire]:pok ~)
+                fo-wire:(fo-abed:fo hen bone.pok^dire ~)
               =/  =space  chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
               %+  ev-emit  hen
               [%pass wire %a meek/[space [her pat]:poke-name]]
@@ -5921,8 +5920,8 @@
             =/  res  (ev-decrypt-load [[her pat]:poke-name] dat.data)
             %:  ev-mess-poke
               ~   :: XX refactor function signature
-              rcvr.ack^(pout ack)  ::  XX not used
-              sndr.pok^(pout pok)
+              her.ack-name^(pout ack)  ::  XX not used
+              her.poke-name^(pout pok)
               ;;(gage:mess (cue res))
             ==
           ::
@@ -6092,7 +6091,7 @@
             =.  chums.ames-state   (~(put by chums.ames-state) ship.spar u.rs)
             (ev-give-response for.u.ms path.spar ;;(gage:mess (cue res)))
           ::
-          ++  ev-mess-poke  :: XX refactor function signature
+          ++  ev-mess-poke  :: XX refactor function signature; ack-spar not used
             |=  [dud=(unit goof) =ack=spar =pok=spar =gage:mess]
             ^+  ev-core
             =+  ?~  dud  ~
@@ -6108,12 +6107,11 @@
             ::  the packet layer has already validated that this is a valid %poke
             ::
             ::  XX ev-got-per; assumes that %aliens are checked in the packet layer
-            =.  per  (ev-got-per sndr.pok)
+            =.  per  (ev-got-per ship.pok-spar)
             ?>  ?=(%known -.sat.per)
             ::
             =/  =dire  :: flow swtiching
-              ?:  =(%for dire.pok)  %bak
-              ?>  =(%bak dire.pok)  %for
+              %*(fo-flip-dire fo side *@ud^(fo-infer-dire:fo load.pok))  :: XX assert load is plea/boon
             ::
             =/  req=mesa-message
               ~|  gage-parsing-failed/gage
@@ -6122,7 +6120,7 @@
                 ?>(?=([%boon *] +.gage) +.gage)
               ?>  =(%bak dire)  ::  %pleas(s) and %corks sink backward
               ?>  ?=([%plea *] +.gage)
-              plea/;;(plea +>.gage)
+              ;;([%plea plea] +.gage)
             ::
             =<  fo-abet
             %.  [%sink mess.pok req ?=(~ dud)]
@@ -6157,7 +6155,7 @@
             ::
             =/  message-path=(pole iota)  (ev-validate-path path.p.sage)
             ::
-            ?:  &(=(were %cor) =(dire %bak))
+            ?:  =(were %cor)
               ::  validate %cork path
               ::
               ?>  ?=(res-cork-pith message-path)
@@ -6165,7 +6163,7 @@
               ::  and have succesfully +peek'ed the %cork
               ::
               =<  fo-abel
-              %.(sage fo-take-client-cork:(fo-abed:fo hen bone^dire ~))
+              %.(sage fo-take-client-cork:(fo-abed:fo hen bone^dire=%bak ~))
             ::
             ::  XX  validate thath wire and path match?
             ::
@@ -6444,10 +6442,10 @@
             ::
             ++  fo-emit      |=(=move fo-core(moves [move moves]))
             ++  fo-emil      |=(mos=(list move) fo-core(moves (weld mos moves)))
-            ++  fo-ack-path  |=([seq=@ud =dyad] (fo-path seq %ack dyad))
-            ++  fo-pok-path  |=([seq=@ud =dyad] (fo-path seq %poke dyad))
-            ++  fo-nax-path  |=([seq=@ud =dyad] (fo-path seq %nax dyad))
-            ++  fo-cor-path  |=([seq=@ud =dyad] (fo-path seq %cork dyad))
+            ++  fo-ack-path  |=([seq=@ud rcvr=@p] (fo-path seq (fo-infer-load %ack) rcvr))
+            ++  fo-pok-path  |=([seq=@ud rcvr=@p] (fo-path seq (fo-infer-load %poke) rcvr))
+            ++  fo-nax-path  |=([seq=@ud rcvr=@p] (fo-path seq %nax rcvr))
+            ++  fo-cor-path  |=([seq=@ud rcvr=@p] (fo-path seq %cork rcvr))
             ++  fo-corked    (~(has in corked.sat.per) side)
             ++  fo-closing   closing.state
             ++  fo-to-close
@@ -6456,25 +6454,42 @@
               |=(poke=mesa-message ?&(fo-closing !=(poke [%plea %$ /cork %cork ~])))
             ::
             ++  fo-flip-dire  ?:(=(dire %for) %bak %for)
+            ::  +fo-infer-dire: infer the side that's producing this payload
+            ::  (e.g. when hearing a +peek request for this path, if the payload
+            ::  is a %plea, is always produced on the %for side)
+            ::
+            ++  fo-infer-dire
+              |=  command=?(%plea %boon %ack-plea %ack-boon %nax)  ::  to %lull
+              ?+  command  !!  ::  XX naxplanation
+                %plea      %for
+                %boon      %bak
+                %ack-plea  %bak
+                %ack-boon  %for
+              ==
+            ::  +fo-add-command: when binding a payload we produce
+            ::
+            ++  fo-infer-load
+              |=  command=?(%ack %poke)
+              ?:  &(?=(%poke command) ?=(%for dire.side))  %plea        ::  /~a/poke/~b/for
+              ?:  &(?=(%poke command) ?=(%bak dire.side))  %boon        ::  /~a/poke/~b/bak
+              ?:  &(?=(%ack command) ?=(%for dire.side))   %ack-boon    ::  /~b/ack/~a/bak
+              ?>  &(?=(%ack command) ?=(%bak dire.side))   %ack-plea    ::  /~b/ack/~a/for
             ::
             +|  %builders
             ::
             ++  fo-mop  ((on ,@ud mesa-message) lte)
             ++  fo-cac  ((on ,@ud ?) lte)
             ++  fo-path
-              |=  [seq=@ud command=?(%ack %poke %nax %cork) dyad]
+              |=  [seq=@ud load=term rcvr=@p]  :: XX lead from lull
               ^-  path
               :*  vane=%a  care=%x  case='1'  desk=%$
                 ::
-                  %flow    (scot %ud bone)
-                  reqr=(scot %p sndr)  command  rcvr=(scot %p rcvr)
-                ::  an %ack, %naxplanation or a %cork is on the other side,
-                ::  and not bounded in our namespace
-                ::
-                  ?:(=(%poke command) dire fo-flip-dire)
+                  %flow  (scot %ud bone)
+                  ::reqr=(scot %p sndr)  ::  the sender is already in the full path
+                  load  rcvr=(scot %p rcvr)
                 ::  %corks refers to the whole flow; skip the sequence number
                 ::
-                  ?:(=(%cork command) ~ [(scot %ud seq) ~])
+                  ?:(=(%cork load) ~ [(scot %ud seq) ~])
               ==
             ::
             ++  fo-wire
@@ -6550,21 +6565,27 @@
               ==
             ::
             ++  fo-peek
-              |=  [=load seq=@ud]
+              |=  [load=?(%plea %boon %ack-plea %ack-boon %nax) seq=@ud]
               ^-  (unit page)
               ::  XX assert flow direction?
               ::  %ack and %nax can be both %for (%plea) and %bak (%boon)
               ::
-              ?-  load
+              ?-    load
+                  %nax
+                ?~(nax=(~(get by nax.state) seq) ~ `nax/u.nax)
                 :: if seq > gth 10, no-op ?
                 ::
-                %ack   ?.(=(seq last-acked.state) ~ `ack/(~(has by nax.state) seq))
-                %nax   ?~(nax=(~(get by nax.state) seq) ~ `nax/u.nax)
-                %poke  ?~  v=(get:fo-mop loads.state seq)  ~
-                       ?+  -.u.v  ~  :: XX cork?
-                         %plea  `plea/[vane path payload]:u.v
-                         %boon  `boon/payload.u.v
-              ==       ==
+                  ?(%ack-plea %ack-boon)
+                ?.  =(seq last-acked.state)  ~
+                `ack/(~(has by nax.state) seq)
+                  ?(%plea %boon)
+                ?~  v=(get:fo-mop loads.state seq)  ~
+                ?>  =(load -.u.v)
+                ?+  -.u.v  ~  :: XX cork?
+                  %plea  `plea/[vane path payload]:u.v
+                  %boon  `boon/payload.u.v
+                ==
+              ==
             ::
             +|  %request
             ::
@@ -6597,7 +6618,11 @@
               ::     chum/[life.ames-state ship.per [life symmetric-key]:sat:per]
               ::   (ev-mess-spac poke-space (fo-pok-path seq our her))
               =/  paths=[spar path]
-                [her^(fo-ack-path seq her our) (fo-pok-path seq our her)]
+                :_  (fo-pok-path seq her)
+                :-  her
+                ::  an %ack is on the other side
+                ::
+                (%*(fo-ack-path fo-core dire.side fo-flip-dire) seq our)
               =/  =space   chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
               =/  =wire    (fo-wire %int)
               =.  fo-core  (fo-emit hen %pass wire %a mako/[space paths])
@@ -6672,7 +6697,7 @@
                 ::  after reading the ack from our namespace
                 ::
                 =/  =space  chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
-                =/  =path   (ev-mess-spac space (fo-cor-path seq her^our))
+                =/  =path   (ev-mess-spac space (fo-cor-path seq our))
                 [hen %pass wire=(fo-wire %cor) %a meek/space^her^path]
               ::  XX just fo-core(closing.state %.y)?
               (fo-take-done:fo-core(closing.state %.y, pending-ack.state %.y) ~)
@@ -6733,7 +6758,7 @@
                 ::  (tagged with %ext)
                 ::
                 =/  =space  chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
-                =/  =path   (ev-mess-spac space (fo-nax-path seq her^our))
+                =/  =path   (ev-mess-spac space (fo-nax-path seq our))
                 (fo-emit hen %pass wire %a meek/[space her^path])
               ::  ack is for the first, oldest pending-ack sent message;
               ::  remove it and XX start processing cached acks
@@ -6816,10 +6841,7 @@
               |=  seq=@ud
               ::  emit ack to unix
               ::
-              =/  =path
-                ::  we flip the direction of the flow since this is an ack we produce
-                ::
-                (%*(fo-ack-path fo-core dire.side fo-flip-dire) seq our her)
+              =/  =path   (fo-ack-path seq her)
               =/  =space  chum/[life.ames-state her [life symmetric-key]:sat.per]
               (fo-emit hen %pass /make-page %a mage/[space her^path])
             ::
@@ -7553,23 +7575,21 @@
             ``[%message !>([%sign sig dat.cyr])]
           ::  publisher-side, flow-level
           ::
-              ::  XX drop sndr, it's always our
-              [%flow bone=@ sndr=@ load=@ rcvr=@ dire=@ mess=@ ~]
+              [%flow bone=@ load=@ rcvr=@ mess=@ ~]
             ::  XX remove typed-paths
             =>  .(tyl `(pole iota)`(ev-pave tyl))
             ?>  ?=(res-mess-pith tyl)
-            ?.  =(our sndr.tyl)
-              ~
             ::
             =+  per-sat=(ev-get-per rcvr.tyl)
             ?.  ?=([~ ~ *] per-sat)
               ~  ::  %alien or missing
             =.  per  [rcvr.tyl u.u.per-sat]
             ?>  ?=(%known -.sat.per)
-            ?:  ?&  (~(has in corked.sat.per) [bone dire]:tyl)
-                    ?=(%ack load.tyl)
+            =/  dire=?(%for %bak)  (fo-infer-dire:fo load.tyl)
+            ?:  ?&  (~(has in corked.sat.per) bone.tyl dire)
+                    |(?=(%ack-plea load.tyl) ?=(%ack-boon load.tyl))
                 ==
-                ~&  >>>  corked/load.tyl^corked.sat.per
+                ~&  >>>  corked/load.tyl^corked.sat.per  :: XX remove
                 ::  if %ack for a %corked flow (for both client and server),
                 ::  produce %ack
                 ::  XX when are corked bones evicted?
@@ -7578,12 +7598,11 @@
             ::
             =/  res=(unit page)
               %.  [load mess]:tyl
-              fo-peek:(fo-abed:fo ~[//scry] [bone dire]:tyl ~)
+              fo-peek:(fo-abed:fo ~[//scry] [bone.tyl dire] ~)
             ?~(res ~ ``[%message !>(u.res)])
           ::  client %mesa %corks, flow-level
           ::
-              ::  XX drop sndr, it's always our
-              [%flow bone=@ sndr=@ %cork rcvr=@ dire=@ ~]  :: XX remove dire (maybe? what about acks)
+              [%flow bone=@ %cork rcvr=@ ~]
             =>  .(tyl `(pole iota)`(ev-pave tyl))
             ?>  ?=(res-cork-pith tyl)
             =+  per-sat=(ev-get-per rcvr.tyl)
@@ -7591,7 +7610,7 @@
               ~  ::  %alien or missing
             =.  per  [rcvr.tyl u.u.per-sat]
             ?>  ?=(%known -.sat.per)
-            ?.  (~(has in corked.sat.per) [bone dire]:tyl)
+            ?.  (~(has in corked.sat.per) bone.tyl dire=%for)  :: XX allow to read "server" corks
               ~
             ~&  >>  corked/corked.sat.per
             ``[%message !>(%gone)]
