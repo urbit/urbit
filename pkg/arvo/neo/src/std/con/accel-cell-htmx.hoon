@@ -6,23 +6,30 @@
   ;form.fr.af.js.hf
     =hx-post  "/neo/hawk{(en-tape:pith:neo (snip (snip here.bowl)))}?stud=accel-diff"
     =hx-trigger  "input changed delay:0.4s from:find textarea"
-    =hx-swap  "none"
-    =hx-target  "#output"
-    =hx-select  "#output"
+    =hx-swap  "outerHTML"
+    =hx-target  "#spinner .loading"
+    =hx-indicator  "#spinner"
     =row  (scow %ud +:x)
     =col  (scow %ud +:y)
     ;+  input
-    ;div.grow.border.basis-half
+    ;div#config.grow.border.basis-half.fc
+      ;+  spinner
       ;+  deps
       ;+  output
     ==
   ==
 ++  x  (rear (snip here.bowl))
 ++  y  (rear here.bowl)
+++  spinner
+  ;div#spinner.b1.loader.p1.s-2.f2
+    ;span.loaded: saved
+    ;span.loading: ---
+  ==
 ++  input
-  ;textarea#input.border.grow.basis-half.wf
+  ;textarea#input.border.grow.basis-half.wf.p2.pre.mono
     =name  "code"
     =placeholder  "code"
+    =spellcheck  "false"
     =value  (trip code.accel-cell)
     =oninput  "this.setAttribute('value', this.value);"
     ; {(trip code.accel-cell)}
@@ -40,8 +47,8 @@
   ==
 ++  error
   |=  =tang
-  ;div.fc.g3.p3
-    ;div.pre.mono
+  ;div.fc.g3.p3.scroll-x
+    ;div.pre.mono.scroll-x
       ;*
       %+  turn  (scag 25 tang)
       |=  =tank
