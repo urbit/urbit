@@ -7088,15 +7088,15 @@
                     ::
                     =/  old-chum-state  (~(get by chums.ames-state) ship)
                     ::
-                    =.  sy-core  (insert-fren-state ship point)
+                    =^  chum-state  sy-core  (insert-fren-state ship point)
                     ::
                     =?  sy-core  ?=([~ %alien *] old-chum-state)
-                      (meet-alien ship point +.u.old-chum-state)
+                      (meet-alien ship point +.u.old-chum-state chum-state)
                     ::
                     $(points t.points)
                 ::
                 ++  meet-alien
-                  |=  [=ship =point:jael todos=ovni-state]
+                  |=  [=ship =point:jael todos=ovni-state =chum-state]
                   |^  ^+  sy-core
                   ::  if we're a comet, send self-attestation packet first
                   ::
@@ -7117,6 +7117,7 @@
                     |=  [[=path ducts=(set duct)] core=_ev-core]
                     %-  ~(rep in ducts)
                     |=  [=duct c=_core]
+                    ::  XX FIXME  per  = ship^chum-state
                     (ev-req-peek:(ev-abed:c [now eny rof] duct) ~ ship path)
                   ::
                   ++  meet-alien-poke
@@ -7124,8 +7125,9 @@
                     %+  reel  pokes.todos  ::  reversing for FIFO order
                     |=  [[=duct mess=mesa-message] core=_ev-core]
                     =.  core  (ev-abed:core [now eny rof] duct)
-                    ?+  -.mess  !!  :: XX log alien peer %boon?
-                      %plea  (ev-req-plea:core ship +.mess)
+                    ?+    -.mess  !!  :: XX log alien peer %boon?
+                        %plea
+                      (%*(ev-req-plea core per ship^chum-state) ship +.mess)
                     ==
                   ::
                   --
@@ -7155,7 +7157,7 @@
               ::
               ++  insert-fren-state
                 |=  [=ship =point:jael]
-                ^+  sy-core
+                ^-  [chum-state _sy-core]
                 ::
                 =/  =chum-state      sat:(ev-gut-per ship)
                 =/  =public-key      pass:(~(got by keys.point) life.point)
@@ -7186,7 +7188,7 @@
                 ::   :*  unix-duct.ames-state  %give  %nail  ship
                 ::       (get-forward-lanes our +.chum-state chums.ames-state)
                 ::   ==
-                sy-core
+                chum-state^sy-core
               --
             ::
             ++  sy-priv
@@ -7276,6 +7278,7 @@
             %init  sy-abet:~(sy-init sy hen)
             %born  sy-abet:~(sy-born sy hen)
             %plug  sy-abet:(~(sy-plug sy hen) path.task)
+            %prod  sy-abet:~(sy-prod sy hen)
           ::
             %plea  (ev-call:ev-core %plea [ship plea]:task)
             %cork  (ev-call:ev-core %cork ship.task)

@@ -1619,7 +1619,9 @@
         fags=(list @)
     ==
   ::
-  +$  mesa-message  $>(?(%plea %boon) message)
+  +$  mesa-message
+    $~  [%plea *plea]
+    $>(?(%plea %boon) message)
   ::
   +$  flow-state
     $:  ::  a flow switches to closing when:
