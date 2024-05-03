@@ -3,30 +3,22 @@
 ^-  firm:neo
 =>
 |%
-::  from migrev:
-++  render-udon
-  |=  code=@t
-  ^-  (unit (each manx tang))
-  ::  this doesn't actually run the code you give it!
-  ::  it just expects sail and then renders it.
-  ::  you can't do arbitrary hoon
-  =/  newline  (trip 10)
-  =/  udon
-    :: format as udon document
+++  render-hoon
+  |=  [code=@t ref=vase]
+  ^-  (unit (each vase tang))
+  =/  code
     %-  crip
-    ;:  welp
-      ";>"  newline  newline
-      (trip code)  newline
-    ==
-  ~&  >  udon
+    :: (trip 10) = tape of newline
+    :: to ensure user-error doesn't break evaluation
+    (welp (trip code) (trip 10))
   =/  mul
     %-  mule
     |.
-    !<  manx
-    %+  slap  !>(..zuse)
-    (ream udon)
+    %+  slap
+      (slop !>(..zuse) ref(p [%face %ref p.ref]))
+    (ream code)
   ?-  -.mul
-    %.y  (some [%.y (manx p.mul)])
+    %.y  (some [%.y p.mul])
     %.n  (some [%.n (tang p.mul)])
   ==
 --
@@ -36,7 +28,7 @@
 ++  kids  *kids:neo
 ++  deps
   %-  ~(gas by *deps:neo)
-  :~  [%ref | [%accel-cell %sig] ~]
+  :~  [%ref | [%pail %sig] ~]
   ==
 ::
 ++  form
@@ -48,10 +40,14 @@
     [~ state-vase]
   ++  init
     |=  old=(unit vase)
-    =/  text  ;;(@t !<(@t (need old)))
-    =/  ref=(unit (pair pith cane:neo))  
+    =/  cell  (accel-cell !<(accel-cell (need old)))
+    =/  ref=(unit (pair pith cane:neo))
       (~(get by deps.bowl) %ref)
     :-  ~
-    !>([text (render-udon text)])
+    =/  vax
+      ?~  ref  !>(~)
+      q.pail.q.u.ref
+    =.  result.cell  (render-hoon code.cell vax)
+    !>(cell)
   --
 --

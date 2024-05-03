@@ -1134,6 +1134,10 @@
               [#/[p/our.bowl]/home/diary %make %diary `!>('') ~]
               [#/[p/our.bowl]/home/tasks %make %task `!>(['' | ~]) ~]
               [#/[p/our.bowl]/home/sail %make %sail `!>(['' 'prose p3' ~]) ~]
+              [#/[p/our.bowl]/home/accel %make %accel `!>(~) ~]
+              [#/[p/our.bowl]/home/accel/1/1 %make %accel-cell `!>(['test' ~ ~]) ~]
+              [#/[p/our.bowl]/home/accel/1/2 %make %accel-cell `!>(['' ~ ~]) ~]
+              [#/[p/our.bowl]/home/accel/1/3 %make %accel-cell `!>(['' ~ ~]) ~]
               [#/[p/our.bowl]/home/iframes/wiki %make %iframe `!>('https://en.wikipedia.org/wiki/Main_Page') ~]
             ==
           |-

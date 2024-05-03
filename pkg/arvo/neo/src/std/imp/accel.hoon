@@ -25,10 +25,9 @@
     :_  sta
     :~  :-  (welp here.bowl ~[[ud/row.poke] [ud/column.poke]])
         ?~  ref.poke
-          [%make %accel-cell `!>(text.poke) ~]
-        ::  only handles local piths so far
-        =/  conf  (malt ~[[%ref (welp here.bowl (need ref.poke))]])
-        [%make %accel-cell `!>(text.poke) conf]
+          [%make %accel-cell `!>([text.poke ~ ~]) ~]
+        =/  conf  (malt ~[[%ref u.ref.poke]])
+        [%make %accel-cell `!>([text.poke ~ ref.poke]) conf]
     ==
   --
 --
