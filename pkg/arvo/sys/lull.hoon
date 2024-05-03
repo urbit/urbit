@@ -1551,8 +1551,11 @@
   :: +$  lane           (each @pC address)
   ::  [0 %for]    =>  %poke: %plea %watch  =>  [0 %bak]
   ::  [0 %for]   <=   %poke: %boon        <=   [0 %bak]
+  ::  +load: payloads bounded in the namespace
   ::
-  +$  load           ?(%poke %ack %nax)
+  +$  load           ?(%plea %boon %ack-plea %ack-boon %nax %cork)
+  ::  +dire: side of the flow (%bak: %boon sender; %for: %plea sender)
+  ::
   +$  dire           ?(%bak %for)
   +$  side           [=bone =dire]
   +$  azimuth-state  [=symmetric-key =life =rift =public-key sponsor=ship]

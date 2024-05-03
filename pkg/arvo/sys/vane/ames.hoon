@@ -6442,10 +6442,6 @@
             ::
             ++  fo-emit      |=(=move fo-core(moves [move moves]))
             ++  fo-emil      |=(mos=(list move) fo-core(moves (weld mos moves)))
-            ++  fo-ack-path  |=([seq=@ud rcvr=@p] (fo-path seq (fo-infer-load %ack) rcvr))
-            ++  fo-pok-path  |=([seq=@ud rcvr=@p] (fo-path seq (fo-infer-load %poke) rcvr))
-            ++  fo-nax-path  |=([seq=@ud rcvr=@p] (fo-path seq %nax rcvr))
-            ++  fo-cor-path  |=([seq=@ud rcvr=@p] (fo-path seq %cork rcvr))
             ++  fo-corked    (~(has in corked.sat.per) side)
             ++  fo-closing   closing.state
             ++  fo-to-close
@@ -6479,14 +6475,16 @@
             ::
             ++  fo-mop  ((on ,@ud mesa-message) lte)
             ++  fo-cac  ((on ,@ud ?) lte)
+            ++  fo-ack-path  |=([s=@ r=@p] (fo-path s (fo-infer-load %ack) r))
+            ++  fo-pok-path  |=([s=@ r=@p] (fo-path s (fo-infer-load %poke) r))
+            ++  fo-nax-path  |=([s=@ r=@p] (fo-path s %nax r))
+            ++  fo-cor-path  |=([s=@ r=@p] (fo-path s %cork r))
             ++  fo-path
-              |=  [seq=@ud load=term rcvr=@p]  :: XX lead from lull
+              |=  [seq=@ud =load rcvr=@p]  :: XX lead from lull
               ^-  path
               :*  vane=%a  care=%x  case='1'  desk=%$
                 ::
-                  %flow  (scot %ud bone)
-                  ::reqr=(scot %p sndr)  ::  the sender is already in the full path
-                  load  rcvr=(scot %p rcvr)
+                  %flow  (scot %ud bone)  load  rcvr=(scot %p rcvr)
                 ::  %corks refers to the whole flow; skip the sequence number
                 ::
                   ?:(=(%cork load) ~ [(scot %ud seq) ~])
@@ -6565,7 +6563,7 @@
               ==
             ::
             ++  fo-peek
-              |=  [load=?(%plea %boon %ack-plea %ack-boon %nax) seq=@ud]
+              |=  [=load seq=@ud]
               ^-  (unit page)
               ::  XX assert flow direction?
               ::  %ack and %nax can be both %for (%plea) and %bak (%boon)
@@ -6573,13 +6571,19 @@
               ?-    load
                   %nax
                 ?~(nax=(~(get by nax.state) seq) ~ `nax/u.nax)
+              ::
+                  ?(%ack-plea %ack-boon)
                 :: if seq > gth 10, no-op ?
                 ::
-                  ?(%ack-plea %ack-boon)
-                ?.  =(seq last-acked.state)  ~
-                `ack/(~(has by nax.state) seq)
+                ?.(=(seq last-acked.state) ~ `ack/(~(has by nax.state) seq))
+              ::
+                  %cork
+                ?.  (~(has in corked.sat.per) side)  ~
+                ~&  >>  corked/corked.sat.per
+                `gone/~
+              ::
                   ?(%plea %boon)
-                ?~  v=(get:fo-mop loads.state seq)  ~
+                ?~  v=(get:fo-mop loads.state seq)   ~
                 ?>  =(load -.u.v)
                 ?+  -.u.v  ~  :: XX cork?
                   %plea  `plea/[vane path payload]:u.v
@@ -6828,7 +6832,7 @@
               ::
               ~|  [gage/gage state]
               ?>
-              ?&  ?=([%message %gone] gage)               :: client corked the flow
+              ?&  ?=([%message %gone ~] gage)             :: client corked the flow
                   !pending-ack.state                      :: there are no pending acks
                   closing.state                           :: the flow is in closing
                   !(~(has by nax.state) last-acked.state) :: the %cork was not nacked
@@ -7589,12 +7593,13 @@
             ?:  ?&  (~(has in corked.sat.per) bone.tyl dire)
                     |(?=(%ack-plea load.tyl) ?=(%ack-boon load.tyl))
                 ==
-                ~&  >>>  corked/load.tyl^corked.sat.per  :: XX remove
-                ::  if %ack for a %corked flow (for both client and server),
+                ~&  >>>  corked-flow-dropping/load.tyl^corked.sat.per  :: XX remove
+                ::  XX if %ack for a %corked flow (for both client and server),
                 ::  produce %ack
+                ::  if the flow is corked, refuse to answer
                 ::  XX when are corked bones evicted?
                 ::
-                ``[%message !>(cork/error=%.n)]
+                ~  ::  XX  [~ ~]
             ::
             =/  res=(unit page)
               %.  [load mess]:tyl
@@ -7610,10 +7615,10 @@
               ~  ::  %alien or missing
             =.  per  [rcvr.tyl u.u.per-sat]
             ?>  ?=(%known -.sat.per)
-            ?.  (~(has in corked.sat.per) bone.tyl dire=%for)  :: XX allow to read "server" corks
-              ~
-            ~&  >>  corked/corked.sat.per
-            ``[%message !>(%gone)]
+            =/  res=(unit page)
+              %.  [%cork *@ud]
+              fo-peek:(fo-abed:fo ~[//scry] [bone.tyl dire=%for] ~)  :: XX allow to read "server" corks
+            ?~(res ~ ``[%message !>(u.res)])
         ::
           ==
         ::  only respond for the local identity, %$ desk, current timestamp
