@@ -5784,23 +5784,7 @@
                 flow/`[~[/ames] /mesa/dead-flow `@da`(add now ~m2)]
               =.  ev-core
                 (ev-emit ~[/ames] %pass /mesa/dead-flow %b %wait `@da`(add now ~m2))
-              %-  ~(rep by chums.ames-state)
-              |=  [[=ship =chum-state] core=_ev-core]
-              ^+  core
-              =+  per-sat=(ev-get-per ship)
-              ?.  ?=([~ ~ *] per-sat)
-                core  ::  %alien or missing
-              =.  per  [ship u.u.per-sat]
-              ?>  ?=(%known -.sat.per)
-              =/  =space  chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
-              %-  ~(rep by pit.sat.per)
-              |=  [[=path req=request-state] core=_core]
-              ~&  re-sending/path
-              ::  XX if =(~ pay.req); %naxplanation, %cork or external $peek request
-              =/  =pact:pact
-                (ev-make-pact ship.per^path pay.req rift.sat.per `space)  :: XX memoize?
-              %+  ev-emit:core   unix-duct.ames-state
-              [%give %push ~[`@ux`ship.per] p:(fax:plot (en:^pact pact))]
+              sy-abet:sy-prod:sy
             ::
             --
           ::
@@ -7229,6 +7213,28 @@
                 known/fren-state
               ::
               sy-core
+            ::
+            ++  sy-prod
+              =;  core=_ev-core
+                sy-core(ev-core core)
+              %-  ~(rep by chums.ames-state)
+              |=  [[=ship =chum-state] core=_ev-core]
+              ^+  core
+              =+  per-sat=(ev-get-per ship)
+              ?.  ?=([~ ~ *] per-sat)
+                core  ::  %alien or missing
+              =.  per  [ship u.u.per-sat]
+              ?>  ?=(%known -.sat.per)
+              =/  =space
+                chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
+              %-  ~(rep by pit.sat.per)
+              |=  [[=path req=request-state] core=_core]
+              ~&  re-sending/path
+              ::  XX if =(~ pay.req); %naxplanation, %cork or external $peek request
+              =/  =pact:pact
+                (ev-make-pact ship.per^path pay.req rift.sat.per `space)  :: XX memoize?
+              %+  ev-emit:core   unix-duct.ames-state
+              [%give %push ~[`@ux`ship.per] p:(fax:plot (en:^pact pact))]
             ::
             +|  %internals
             ::
