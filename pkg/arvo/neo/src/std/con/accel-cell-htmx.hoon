@@ -12,7 +12,7 @@
     =row  (scow %ud +:x)
     =col  (scow %ud +:y)
     ;+  input
-    ;div#config.grow.border.basis-half.fc
+    ;div#config.grow.border.basis-half.fc.scroll-x
       ;+  spinner
       ;+  deps
       ;+  output
@@ -35,8 +35,8 @@
     ; {(trip code.accel-cell)}
   ==
 ++  deps
-  ;label.fc
-    ;span.f3.s-2.p1: dependency
+  ;label.fc.p1
+    ;span.f3.s-2.p1: ref
     ;input.border.wf
       =placeholder  "/path/to/dep"
       =value  ?~(ref.accel-cell "" (en-tape:pith:neo u.ref.accel-cell))
@@ -47,17 +47,15 @@
   ==
 ++  error
   |=  =tang
-  ;div.fc.g3.p3.scroll-x
-    ;div.pre.mono.scroll-x
-      ;*
-      %+  turn  (scag 25 tang)
-      |=  =tank
-      ;span: {(of-wall:format (~(win re tank) 0 80))}
-    ==
+  ;div.pre.mono.p2
+    ;*
+    %+  turn  (scag 25 tang)
+    |=  =tank
+    ;span: {(of-wall:format (~(win re tank) 0 80))}
   ==
 ++  output
-  ;div#output.grow.scroll-x.scroll-y
-    =style  "min-width: 300px;"
+  ;div#output.grow.scroll-x.scroll-y.p1
+    ;div.f2.s-2: result
     ;+
     ?~  result.accel-cell
       ;div.prose.p3
@@ -67,7 +65,12 @@
     ?-  -.res
       %.n  (error +.res)
         %.y
-      ;div.pre.mono: {(of-wall:format (~(win re (sell +.res)) 0 80))}
+      ;div.pre.mono.p2
+        ;+
+        ?:  (gth (met 2 (jam +.res)) 1.000)
+          ;/  "too large"
+        ;/  (of-wall:format (~(win re (sell +.res)) 0 80))
+      ==
     ==
   ==
 --

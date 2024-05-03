@@ -24,7 +24,7 @@
 --
 |%
 ++  state  %accel-cell
-++  poke  ~
+++  poke  (sy %rely ~)
 ++  kids  *kids:neo
 ++  deps
   %-  ~(gas by *deps:neo)
@@ -37,7 +37,13 @@
   ++  poke
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo vase)
-    [~ state-vase]
+    ?.  =(stud %rely)  [~ state-vase]
+    =+  !<([=term =stem:neo] vax)
+    ?>  ?=(%x -.q.stem)
+    =/  vax  q.pail.q.stem
+    =/  this  (accel-cell !<(accel-cell state-vase))
+    =.  result.this  (render-hoon code.this vax)
+    [~ !>(this)]
   ++  init
     |=  old=(unit vase)
     =/  cell  (accel-cell !<(accel-cell (need old)))

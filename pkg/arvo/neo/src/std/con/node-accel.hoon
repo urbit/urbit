@@ -4,7 +4,7 @@
 |=  nod=node
 ^-  accel-diff
 =/  input-el  (snag 0 c.nod)
-=/  dep-el  (snag 1 c:(snag 0 c:(snag 1 c.nod)))
+=/  dep-el  (snag 1 c:(snag 1 c:(snag 1 c.nod)))
 =/  ref-path
   %+  rust  (~(gut by (malt a.g.dep-el)) %value "")
   stap

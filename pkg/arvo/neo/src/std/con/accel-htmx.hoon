@@ -13,27 +13,33 @@
   ;table.wf.grow.basis-half
     ;tbody.scroll-none
       ;*
-      %+  turn  (gulf 1 10)
+      %+  turn  (gulf 1 2)
       |=  x=@
       ;tr
         ;*
-        %+  turn  (gulf 1 4)
+        %+  turn  (gulf 1 2)
         |=  y=@
         =/  val=(unit pail:neo)  (~(get by kids.bowl) ~[ud/x ud/y])
         =/  vaf  (fall val [%accel-cell !>(*accel-cell)])
         ;td.border
           ;+
           =/  cell  !<(accel-cell +:vaf)
-          ;button.b1.wf.hf.scroll-none.hover
+          ;button.b1.wf.hf.scroll-none.hover.cell-btn
             =hx-get  "/neo/hawk{(en-tape:pith:neo here.bowl)}/{<x>}/{<y>}"
             =hx-target  "#dashboard"
             =hx-swap  "innerHTML"
+            =onclick  "$('.cell-btn').removeClass('toggled');$(this).addClass('toggled');"
             ;+
             ?~  result.cell  ;/("")
-            =/  eachy  (need result.cell)
-            ?-  -.eachy
+            =/  res  (need result.cell)
+            ?-  -.res
               %.y
-                ;div.mono: {(of-wall:format (~(win re (sell +.eachy)) 0 999))}
+                ;div.mono
+                  ;+
+                  ?:  (gth (met 2 (jam +.res)) 1.000)
+                    ;/  "too large"
+                  ;/  (of-wall:format (~(win re (sell +.res)) 0 80))
+                ==
               %.n
                 ;span: ERROR
             ==

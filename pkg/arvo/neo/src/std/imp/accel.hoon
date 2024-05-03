@@ -25,7 +25,7 @@
     :_  sta
     :~  :-  (welp here.bowl ~[[ud/row.poke] [ud/column.poke]])
         ?~  ref.poke
-          [%make %accel-cell `!>([text.poke ~ ~]) ~]
+          [%make %accel-cell `!>([text.poke ~ ref.poke]) ~]
         =/  conf  (malt ~[[%ref u.ref.poke]])
         [%make %accel-cell `!>([text.poke ~ ref.poke]) conf]
     ==
