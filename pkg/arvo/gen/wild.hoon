@@ -16,10 +16,10 @@
 +$  sock  [=cape data=*]
 +$  wilt  (list [l=path s=sock])    ::  XX switch back to *
 --
-%.  arg
+%.  [arg ~]
 =|  cot=(map type wilt)
-=|  gil=(set type)                  ::  all types seen
-|=  t=type
+=|  gil=(set type)
+|=  [t=type pops=(unit wilt)]
 ^-  [wit=wilt cot=(map type wilt)]
 ?+    t
     [(zing ~(val by cot)) cot]
@@ -47,15 +47,41 @@
     ^-  ?
     &(?=([%core *] k) !=(~ p.p.q.k))
   ::
-  ::  XX update cot with self
+  ~&  ~
+  ~&  [%self self]
+  ::
   =^  kids=(list [wit=wilt cot=(map type wilt)])  cot
-    =/  kips  (turn kits |=(k=type ^$(t k)))
+    =/  kips=(list [wit=wilt cot=(map type wilt)])
+      (turn kits |=(k=type ^$(t k, pops `self)))
     :-  kips
+    %-  ~(uni by cot)
     %+  roll
-      kips
-    |=  [a=[wit=wilt cot=(map type wilt)] b=[wit=wilt cot=(map type wilt)]]
-    (~(uni by cot.a) cot.b)
-  [(zing ~(val by cot)) cot]
+      (turn kips |=(p=[wit=wilt cot=(map type wilt)] cot.p))
+    |=  [a=(map type wilt) b=(map type wilt)]
+    ^-  (map type wilt)
+    (~(uni by a) b)
+  ::
+  ?.  =(~ pops)
+    =/  dath=path  -<:(need pops)
+    =/  silt=wilt  ~[[l=(weld ~[bell] dath) s=[& (mug data.semi)]]]
+    :-  silt
+    (~(put by cot) [t silt])
+  ::
+  =/  papa=?  ?!  ?=([%core *] p.t)  ::  XX not thorough
+  ?:  papa
+    ~&  [%papa bell]
+    =.  cot
+    %-  ~(run by cot)
+    |=  w=wilt
+    ^-  wilt
+    ?~  w
+      w
+    ?:  |(=(~[bell] `path`-<.w) =(bell (rear `path`-<.w)))
+      w
+    ~[[l=(weld `path`-<.w ~[bell]) s=->.w]]
+    [(zing ~(val by cot)) cot]
+  ::
+  $(t p.t)
     [%face *]
   ~&  %face
   $(t q.t)
