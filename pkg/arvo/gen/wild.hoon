@@ -16,10 +16,10 @@
 +$  sock  [=cape data=*]
 +$  wilt  (list [l=path s=sock])    ::  XX switch back to *
 --
-%.  [arg ~]
+%.  [arg ~ |]
 =|  cot=(map type wilt)
 =|  gil=(set type)
-|=  [t=type pops=(unit wilt)]
+|=  [t=type pops=(unit wilt) pop=?]
 ^-  [wit=wilt cot=(map type wilt)]
 ?+    t
     [(zing ~(val by cot)) cot]
@@ -34,7 +34,9 @@
   ?~  p.p.q.t
     [wit cot]:$(t p.t)
   =/  bell  (need p.p.q.t)
-  =/  self=wilt  ~[[l=~[bell] s=[& (mug data.semi)]]]
+  =/  dath=path  ?:(=(~ pops) ~ -<:(need pops))
+  =/  self=wilt
+    ~[[l=(weld ~[bell] dath) s=[& (mug data.semi)]]]
   ::
   =/  mats=(list (map term hoon))
     (turn ~(val by chap) |=(tom=tome q.tom))
@@ -68,8 +70,7 @@
     (~(put by cot) [t silt])
   ::
   =/  papa=?  ?!  ?=([%core *] p.t)  ::  XX not thorough
-  ?:  papa
-    ~&  [%papa bell]
+  ?:  pop
     =.  cot
     %-  ~(run by cot)
     |=  w=wilt
@@ -79,9 +80,11 @@
     ?:  |(=(~[bell] `path`-<.w) =(bell (rear `path`-<.w)))
       w
     ~[[l=(weld `path`-<.w ~[bell]) s=->.w]]
-    [(zing ~(val by cot)) cot]
+    ?:  papa
+      [(zing ~(val by cot)) cot]
+    $(t p.t, pop &)
   ::
-  $(t p.t)
+  $(t p.t, pop &)
     [%face *]
   ~&  %face
   $(t q.t)
