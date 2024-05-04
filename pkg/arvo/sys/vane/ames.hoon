@@ -7189,6 +7189,7 @@
                 ::       (get-forward-lanes our +.chum-state chums.ames-state)
                 ::   ==
                 chum-state^sy-core
+              ::
               --
             ::
             ++  sy-priv
@@ -7275,10 +7276,10 @@
           ::  ?(%trim %snub %spew %stir %stun %sift %dear %prod %tame %chum %cong %deep %hear %kroc %mate %wham %yawn)
           ?+  -.task  ev-core ::  XX TODO
             %vega  ev-core
-            %init  sy-abet:~(sy-init sy hen)
-            %born  sy-abet:~(sy-born sy hen)
-            %plug  sy-abet:(~(sy-plug sy hen) path.task)
-            %prod  sy-abet:~(sy-prod sy hen)
+            %init  sy-abet:~(sy-init sy:ev-core hen)
+            %born  sy-abet:~(sy-born sy:ev-core hen)
+            %plug  sy-abet:(~(sy-plug sy:ev-core hen) path.task)
+            %prod  sy-abet:~(sy-prod sy:ev-core hen)  ::  XX handle ships=(list @p)
           ::
             %plea  (ev-call:ev-core %plea [ship plea]:task)
             %cork  (ev-call:ev-core %cork ship.task)
