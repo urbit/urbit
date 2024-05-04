@@ -765,8 +765,6 @@
   ::
   ::    %hear: packet from unix
   ::    %dear: lane from unix
-  ::    %heed: track peer's responsiveness; gives %clog if slow
-  ::    %jilt: stop tracking peer's responsiveness
   ::    %cork: request to delete message flow
   ::    %tame: request to delete route for ship
   ::    %kroc: request to delete specific message flows, from their bones
@@ -797,8 +795,6 @@
     $+  ames-task
     $%  [%hear =lane =blob]
         [%dear =ship =lane]
-        [%heed =ship]
-        [%jilt =ship]
         [%cork =ship]
         [%tame =ship]
         [%kroc bones=(list [ship bone])]
@@ -828,6 +824,7 @@
   ::    Messaging Gifts
   ::
   ::    %boon: response message from remote ship
+  ::    %noon: boon with duct for clog tracking
   ::    %clog: notify vane that %boon's to peer are backing up locally
   ::    %done: notify vane that peer (n)acked our message
   ::    %lost: notify vane that we crashed on %boon
@@ -845,7 +842,7 @@
   ::
   +$  gift
     $%  [%boon payload=*]
-        [%clog =ship]
+        [%noon id=* payload=*]
         [%done error=(unit error)]
         [%lost ~]
         [%send =lane =blob]
@@ -894,7 +891,7 @@
   +$  address  @uxaddress
   ::  $verb: verbosity flag for ames
   ::
-  +$  verb  ?(%snd %rcv %odd %msg %ges %for %rot %kay %fin)
+  +$  verb  ?(%snd %rcv %odd %msg %ges %for %rot %kay %fin %sun)
   ::  $blob: raw atom to or from unix, representing a packet
   ::
   +$  blob  @uxblob
@@ -1012,13 +1009,11 @@
   ::
   ::    messages: pleas local vanes have asked us to send
   ::    packets: packets we've tried to send
-  ::    heeds: local tracking requests; passed through into $peer-state
   ::
   +$  alien-agenda
     $+  alien-agenda
     $:  messages=(list [=duct =plea])
         packets=(set =blob)
-        heeds=(set duct)
         keens=(jug path duct)
         chums=(jug path duct)
     ==
@@ -1040,7 +1035,6 @@
   ::         information completes the packet+nack-trace, we remove the
   ::         entry and emit a nack to the local vane that asked us to send
   ::         the message.
-  ::    heeds: listeners for %clog notifications
   ::    closing: bones closed on the sender side
   ::    corked:  bones closed on both sender and receiver
   ::
@@ -1058,7 +1052,6 @@
         snd=(map bone message-pump-state)
         rcv=(map bone message-sink-state)
         nax=(set [=bone =message-num])
-        heeds=(set duct)
         closing=(set bone)
         corked=(set bone)
         keens=(map path keen-state)
@@ -2733,13 +2726,15 @@
   |%
   +$  gift                                              ::  outgoing result
     $%  [%boon payload=*]                               ::  ames response
+        [%noon id=* payload=*]
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
         [%flub ~]                                       ::  not ready to handle plea
         [%unto p=unto]                                  ::
     ==                                                  ::
   +$  task                                              ::  incoming request
     $~  [%vega ~]                                       ::
-    $%  [%deal p=sack q=term r=deal]                    ::  full transmission
+    $%  [%clog id=*]                                    ::  clog notification
+        [%deal p=sack q=term r=deal]                    ::  full transmission
         [%sear =ship]                                   ::  clear pending queues
         [%jolt =desk =dude]                             ::  (re)start agent
         [%idle =dude]                                   ::  suspend agent

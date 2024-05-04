@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
-import { store } from '/store';
+import { store } from './store';
 import moment from 'moment';
 import { stringToTa } from './lib/util';
 
@@ -68,6 +68,42 @@ class UrbitApi {
           app: app,
           msg: 'verb connection to ' + app + ' was dropped'
         }}}});
+      }
+    );
+  }
+
+  bindToVerbPlus(app) {
+    return this.bind('/verb/events-plus', 'PUT', this.authTokens.ship, app,
+      (result) => {
+        result.data.app = app;
+        store.handleEvent({ data: { local: { verbEventPlus: {
+          gill: `~${this.authTokens.ship}/${app}`,
+          log: result.data
+        } } } });
+      },
+      () => {
+        store.handleEvent({
+          data: {
+            local: {
+              verbStatus: {
+                app: app,
+                msg: 'failed to establish verb+ connection to ' + app
+              }
+            }
+          }
+        });
+      },
+      () => {
+        store.handleEvent({
+          data: {
+            local: {
+              verbStatus: {
+                app: app,
+                msg: 'verb+ connection to ' + app + ' was dropped'
+              }
+            }
+          }
+        });
       }
     );
   }
