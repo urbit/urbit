@@ -19,7 +19,9 @@
 %.  [arg ~ |]
 =|  cot=(map type wilt)
 =|  gil=(set type)
-|=  [t=type pops=(unit wilt) pop=?]
+::  pops: who is your daddy and what does he do?
+::  papa:  i am a daddy
+|=  [t=type pops=(unit wilt) papa=?]
 ^-  [wit=wilt cot=(map type wilt)]
 ?+    t
     [(zing ~(val by cot)) cot]
@@ -51,6 +53,7 @@
   ::
   ~&  ~
   ~&  [%self self]
+  =.  cot  (~(put by cot) [t self])
   ::
   =^  kids=(list [wit=wilt cot=(map type wilt)])  cot
     =/  kips=(list [wit=wilt cot=(map type wilt)])
@@ -64,27 +67,26 @@
     (~(uni by a) b)
   ::
   ?.  =(~ pops)
-    =/  dath=path  -<:(need pops)
-    =/  silt=wilt  ~[[l=(weld ~[bell] dath) s=[& (mug data.semi)]]]
-    :-  silt
-    (~(put by cot) [t silt])
+    [self (~(put by cot) [t self])]
   ::
-  =/  papa=?  ?!  ?=([%core *] p.t)  ::  XX not thorough
-  ?:  pop
+  ?:  papa
     =.  cot
     %-  ~(run by cot)
     |=  w=wilt
     ^-  wilt
-    ?~  w
-      w
-    ?:  |(=(~[bell] `path`-<.w) =(bell (rear `path`-<.w)))
+    ?:  ?|  =(~ w)
+            =(~[bell] `path`-<.w)
+            =(bell (rear `path`-<.w))
+        ==
       w
     ~[[l=(weld `path`-<.w ~[bell]) s=->.w]]
-    ?:  papa
+    =/  root=?  ?!  ?=([%core *] p.t)  ::  XX not thorough
+    ?:  root
+      =.  cot  (~(put by cot) [t self])
       [(zing ~(val by cot)) cot]
-    $(t p.t, pop &)
+    $(t p.t, papa &)
   ::
-  $(t p.t, pop &)
+  $(t p.t, papa &)
     [%face *]
   ~&  %face
   $(t q.t)
