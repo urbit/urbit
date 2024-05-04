@@ -3322,7 +3322,7 @@
 ::
 ++  rand                                                ::  computation
   |%
-  +$  card  $+(card card:agent:gall)
+  +$  card  card:agent:gall
   +$  input
     $+  input
     $%  [%poke =cage]
