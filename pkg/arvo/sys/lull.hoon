@@ -2811,6 +2811,7 @@
     ==  ==
   ::
   +$  bowl                                              ::  standard app state
+    $+  gall-agent-bowl                                 ::
     $:  $:  our=ship                                    ::  host
             src=ship                                    ::  guest
             dap=term                                    ::  agent
@@ -2854,8 +2855,11 @@
     =<  form
     |%
     +$  step  (quip card form)
-    +$  card  (wind note gift)
+    +$  card
+      $+  gall-agent-card
+      (wind note gift)
     +$  note
+      $+  gall-agent-note
       $%  [%agent [=ship name=term] =task]
           [%arvo note-arvo]
           [%pyre =tang]
@@ -2871,6 +2875,7 @@
           [%keen secret=? spar:ames]
       ==
     +$  task
+      $+  gall-agent-task
       $%  [%watch =path]
           [%watch-as =mark =path]
           [%leave ~]
@@ -2878,12 +2883,14 @@
           [%poke-as =mark =cage]
       ==
     +$  gift
+      $+  gall-agent-gift
       $%  [%fact paths=(list path) =cage]
           [%kick paths=(list path) ship=(unit ship)]
           [%watch-ack p=(unit tang)]
           [%poke-ack p=(unit tang)]
       ==
     +$  sign
+      $+  gall-agent-sign
       $%  [%poke-ack p=(unit tang)]
           [%watch-ack p=(unit tang)]
           [%fact =cage]
