@@ -3533,7 +3533,7 @@
                       ?:  ?=(%naxplanation -.message)
                         core  :: XX TODO bind naxplanation in nax.flow for the reference flow
                       %.  message
-                      fo-call:(fo-abed:core (got-duct bone) [bone %for] ~)
+                      fo-call:(fo-abed:core (got-duct bone) bone %for)
                     ::
                     :-  (weld forward-moves moves)
                     (~(put in flows) [bone dire] flow)
@@ -5806,19 +5806,20 @@
             ::  handle cork
             ::
             =/  cork=?  =([%$ /cork %cork ~] vane^wire^payload)
-            ?.  (~(has by by-bone.ossuary.sat.per) bone)
+            ?:  &(cork !(~(has by by-bone.ossuary.sat.per) bone))
               ~&  "trying to cork {<bone=bone>}, not in the ossuary, ignoring"
               ev-core
+            =+  fo-core=(fo-abed:fo hen bone dire=%for)
             =<  fo-abet
             %.  plea/[vane wire payload]
-            fo-call:(fo-abed:fo hen bone^dire=%for `cork)
+            fo-call:fo-core(closing.state cork)
           ::
           ++  ev-req-boon
             |=  [=bone id=(unit *) load=*]
             ^+  ev-core
             ::  XX handle corked/closing bones
             ::
-            =+  fo-core=(fo-abed:fo hen bone^dire=%bak ~)
+            =+  fo-core=(fo-abed:fo hen bone dire=%bak)
             =.  ev-core  fo-abet:(fo-call:fo-core boon/load)
             ?~  id
               ev-core
@@ -5870,12 +5871,12 @@
             ::
             ~|  path-decryption-failed/pat.ack-name^pat.poke-name
             =/  ack=(pole iota)
-              =/  [=outer=path =inner=path]
-              (ev-decrypt-path [pat.ack-name her.poke-name])
+              =/  [* =inner=path]
+                (ev-decrypt-path pat.ack-name her.poke-name)
               (ev-validate-path inner-path)
             =/  pok=(pole iota)
-              =/  [=outer=path =inner=path]
-              (ev-decrypt-path [pat her]:poke-name)
+              =/  [* =inner=path]
+                (ev-decrypt-path [pat her]:poke-name)
               (ev-validate-path inner-path)
             ::
             ~|  path-validation-failed/ack^pok
@@ -5896,7 +5897,7 @@
               ::  XX move to arm
               =/  =wire
                 %.  %pok
-                fo-wire:(fo-abed:fo hen bone.pok^dire ~)
+                fo-wire:(fo-abed:fo hen bone.pok dire)
               =/  =space  chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
               %+  ev-emit  hen
               [%pass wire %a meek/[space [her pat]:poke-name]]
@@ -6044,7 +6045,8 @@
                 ::  request next fragment
                 ::
                 =/  =pact:pact  [%peek name(wan [%data leaf.u.state])]
-                (ev-emit unix-duct.ames-state %give %push ~[`@ux`her.name] p:(fax:plot (en:^pact pact)))
+                %+  ev-emit  unix-duct.ames-state
+                [%give %push ~[`@ux`her.name] p:(fax:plot (en:^pact pact))]
               ::  yield complete message
               ::
               =/  =spar:ames  [her.name inner-path]
@@ -6108,7 +6110,7 @@
             ::
             =<  fo-abet
             %.  [%sink mess.pok req ?=(~ dud)]
-            fo-call:(fo-abed:fo hen bone.pok^dire ~)
+            fo-call:(fo-abed:fo hen bone.pok dire)
           ::
           ++  ev-mess-peek
             |=  =spar
@@ -6147,7 +6149,7 @@
               ::  and have succesfully +peek'ed the %cork
               ::
               =<  fo-abel
-              %.(sage fo-take-client-cork:(fo-abed:fo hen bone^dire=%bak ~))
+              %.(sage fo-take-client-cork:(fo-abed:fo hen bone dire=%bak))
             ::
             ::  XX  validate thath wire and path match?
             ::
@@ -6170,7 +6172,7 @@
             =/  fo-core
               ::  XX parse $ack payload in here, and call task instead?
               %.  [were mess-response/[mess.message-path sage]]
-              fo-take:(fo-abed:fo hen bone^dire ~)
+              fo-take:(fo-abed:fo hen bone dire)
             ::
             ?.  can-be-corked.fo-core
               fo-abet:fo-core
@@ -6210,7 +6212,7 @@
             ::  XX use it as an assurance check?
             ::
             %.  [%van done/error]
-            fo-take:(fo-abed:fo hen bone^dire=%bak ~)
+            fo-take:(fo-abed:fo hen bone dire=%bak)
           ::
           +|  %message-constructor
           ::
@@ -6405,10 +6407,9 @@
             ::
             ++  fo-core  .
             ++  fo-abed
-              |=  [=duct =^side cork=(unit ?)]
+              |=  [=duct =^side]
               ::  XX use got by in another arm to assert when the flow should exist
               =.  state  (~(gut by flows.sat.per) side *flow-state)
-              =?  closing.state  ?=(^ cork)  u.cork
               fo-core(hen duct, side side)
             ::
             ++  fo-abet
@@ -6426,12 +6427,11 @@
             ::
             ++  fo-emit      |=(=move fo-core(moves [move moves]))
             ++  fo-emil      |=(mos=(list move) fo-core(moves (weld mos moves)))
-            ++  fo-corked    (~(has in corked.sat.per) side)
-            ++  fo-closing   closing.state
             ++  fo-to-close
               ::  if the flow is in closing, only allow sending the %cork %plea
               ::
-              |=(poke=mesa-message ?&(fo-closing !=(poke [%plea %$ /cork %cork ~])))
+              |=  poke=mesa-message
+              ?&(closing.state !=(poke [%plea %$ /cork %cork ~]))
             ::
             ++  fo-flip-dire  ?:(=(dire %for) %bak %for)
             ::  +fo-infer-dire: infer the side that's producing this payload
@@ -6513,7 +6513,7 @@
               ::
               ?-    -.poke
                   ?(%plea %boon)
-                ?:  |((fo-to-close poke) fo-corked)
+                ?:  |((fo-to-close poke) (~(has in corked.sat.per) side))
                   ::  XX log
                   fo-core
                 fo-send(loads.state (put:fo-mop loads.state next-load.state poke))
@@ -7612,7 +7612,7 @@
             ::
             =/  res=(unit page)
               %.  [load mess]:tyl
-              fo-peek:(fo-abed:fo ~[//scry] [bone.tyl dire] ~)
+              fo-peek:(fo-abed:fo ~[//scry] bone.tyl dire)
             ?~(res ~ ``[%message !>(u.res)])
           ::  client %mesa %corks, flow-level
           ::
@@ -7626,7 +7626,7 @@
             ?>  ?=(%known -.sat.per)
             =/  res=(unit page)
               %.  [%cork *@ud]
-              fo-peek:(fo-abed:fo ~[//scry] [bone.tyl dire=%for] ~)  :: XX allow to read "server" corks
+              fo-peek:(fo-abed:fo ~[//scry] bone.tyl dire=%for)  :: XX allow to read "server" corks
             ?~(res ~ ``[%message !>(u.res)])
         ::
           ==
