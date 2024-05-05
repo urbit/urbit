@@ -7117,8 +7117,8 @@
                     |=  [[=path ducts=(set duct)] core=_ev-core]
                     %-  ~(rep in ducts)
                     |=  [=duct c=_core]
-                    ::  XX FIXME  per  = ship^chum-state
-                    (ev-req-peek:(ev-abed:c [now eny rof] duct) ~ ship path)
+                    =.  core  (ev-abed:core [now eny rof] duct)
+                    (%*(ev-req-peek core per ship^chum-state) ~ ship path)
                   ::
                   ++  meet-alien-poke
                     ^+  ev-core
