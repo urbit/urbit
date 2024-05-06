@@ -1711,7 +1711,7 @@
         ==
       ::
       +$  flow-sign
-        $%  $>(%done lope)  ::  hear (n)ack for %poke, can trigger %peek for naxplanation
+        $%  $>(?(%flub %done) lope)
             [%mess-response seq=@ud sage:mess] :: added seq number to $>(%response lope)
         ==
       ::
@@ -5740,11 +5740,12 @@
             ==
           ::
           ++  ev-take
-            |=  task=[=wire lope=$>(?(%done %mess-response %boon %wake %noon) lope)]
+            |=  task=[=wire lope=$>(?(%done %mess-response %boon %wake %noon %flub) lope)]
             |^  ^+  ev-core
             ?-  -.lope.task
               %wake           (take-wake +.lope.task)
               ?(%noon %boon)  take-boon
+              %flub           take-flub
               %done           (ev-poke-done wire.task +.lope.task)
               %mess-response  (ev-response wire.task +.lope.task)
             ==
@@ -5785,6 +5786,19 @@
               =.  ev-core
                 (ev-emit ~[/ames] %pass /mesa/dead-flow %b %wait `@da`(add now ~m2))
               sy-abet:sy-prod:sy
+            ::
+            ++  take-flub
+              ^+  ev-core
+              ?~  flow-wire=(ev-validate-wire wire.task)
+                ev-core
+              =,  u.flow-wire
+              =.  per  (ev-got-per her)
+              ?>  ?=(%known -.sat.per)
+              ?:  (lth rift rift.sat.per)
+                :: XX log
+                ev-core  ::  ignore events from an old rift
+              ?>  ?=([%van %bak] [were dire])
+              fo-abet:(fo-take:(fo-abed:fo hen bone dire=%bak) %van flub/~)
             ::
             --
           ::
@@ -6205,8 +6219,6 @@
               ev-core  ::  ignore events from an old rift
             ?>  ?=([%van %bak] [were dire])  ::  vane acks happen on backward flows
             ::
-            ::  relay the vane ack to the foreign peer
-            ::
             =<  fo-abet
             ::  XX since we ack one message at at time, seq is not needed?
             ::  XX use it as an assurance check?
@@ -6373,7 +6385,7 @@
             (ev-emit:c hen %give %mess-response ship.per^path gage)
           ::
           ++  ev-cancel-peek
-            |=  [all=? =path]
+            |=  [all=? =path]  :: XX namespace?
             ^+  ev-core
             ?>  ?=(%known -.sat.per)
             ?~  ms=(~(get by pit.sat.per) path)
@@ -6533,7 +6545,8 @@
               |=  [were=?(%ext %int %van %cor %pok) sign=flow-sign]
               ^+  fo-core
               ?-  -.sign
-                  %done   ?>(?=(%van were) (fo-take-done +.sign))  :: ack from client vane
+                  %done  ?>(?=(%van were) (fo-take-done +.sign))  :: ack from client vane
+                  %flub  ?>(?=(%van were) fo-core(pending-ack.state %.n))
               ::
                   %mess-response
                 ?+  were  !!  :: %pok is handle outside
@@ -7308,9 +7321,6 @@
         =^  moves  ames-state
           ?:  ?=([%gall %unto *] sign)  :: XX from poking %ping app
             `ames-state
-          ?:  ?=([%gall %flub ~] sign)  :: XX
-            ~&  >  %flub
-            `ames-state
           ::
           =<  ev-abet
           ?+  sign  ~&(mesa-take-sign/[&1^&2]:sign ev-core)
@@ -7319,9 +7329,10 @@
             [%jael %turf *]          ev-core  ::sy-abet:(~(on-take-turf sy hen) turf.sign)
             [%jael %private-keys *]  sy-abet:(~(sy-priv sy hen) [life vein]:sign)
             [%jael %public-keys *]   sy-abet:(~(sy-publ sy hen) wire +>.sign)
-          ::  vane (n)ack
+          ::  vane gifts
           ::
-            [@ %done *]  (ev-take:ev-core [wire %done error.sign])
+            [%gall %flub ~]  (ev-take:ev-core wire %flub ~)
+            [@ %done *]      (ev-take:ev-core [wire %done error.sign])
           ::
           ::  vane gifts
           ::
