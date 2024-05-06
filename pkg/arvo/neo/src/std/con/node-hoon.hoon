@@ -1,8 +1,9 @@
 /@  hoon
 /@  node
+/-  _/manx-utils
 :-  [%node %hoon]
 |=  nod=node
 ^-  hoon
-=/  text  (snag 1 c.nod)
 %-  crip
-(~(got by (malt a.g.text)) %value)
+%-  need
+(~(value manx-utils nod) "text")

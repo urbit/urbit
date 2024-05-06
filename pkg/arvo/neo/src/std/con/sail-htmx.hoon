@@ -77,7 +77,7 @@
     =hx-indicator  "#ind-{id}"
     ;input.p2.mono
       =style  "border-bottom: 1px solid var(--f3);"
-      =name  "class"
+      =name  "classes"
       =placeholder  "prose p3"
       =type  "text"
       =autocomplete  "off"

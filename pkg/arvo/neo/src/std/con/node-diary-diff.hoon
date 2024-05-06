@@ -1,14 +1,13 @@
 /@  node
 /@  diary-diff
+/-  _/manx-utils
 :-  [%node %diary-diff]
 |=  nod=node
 ^-  diary-diff
-=/  head  (@tas (crip (~(got by (malt a.g.nod)) %head)))
-=/  id-el  (snag 0 c.nod)
-=/  text-el  (snag 1 c.nod)
+=/  head  (@tas (crip (need (~(get-attribute manx-utils nod) %head))))
 =/  id
   %+  slav  %da
-  (crip (~(got by (malt a.g.id-el)) %value))
+  (crip (need (~(value manx-utils nod) "id")))
 =/  text
-  (crip (~(got by (malt a.g.text-el)) %value))
+  (crip (need (~(value manx-utils nod) "text")))
 [%put-entry id text]
