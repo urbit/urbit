@@ -1,6 +1,6 @@
 /@  diff=circle-diff
 |%
-++  state  %sig
+++  state  %circle
 ++  poke   (sy %circle-diff ~)
 ++  kids   
   %-  ~(gas by *kids:neo)
@@ -28,6 +28,6 @@
     ==
   ++  init
     |=  vas=(unit vase)
-    `*vase
+    `!>(~)
   --
 --
