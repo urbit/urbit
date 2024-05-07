@@ -16,7 +16,11 @@
 ::
 =>  
 |%
-::  $stud: mark name
+::  $stud: name for build system outputs
+::  
+::    Build system outputs cannot live at arbitrary points in the
+::    namespace, to allow for the build system to bootstrap itself.
+::    
 +$  stud
   $@  @tas                                 ::  auth=urbit
   $:  mark=@tas                            :: 
@@ -24,13 +28,14 @@
   ==                                            ::
 --
 |%
+::  $curt: Single constraint
 +$  curt
   $~  [%pro %$]
   $%  [%or p=(list [@tas curb])] :: product type
       [%rol p=stud q=curb] :: decorate with role
       [%pro p=stud] :: base case
   ==
-::
+::  $curb: Apply constraints
 +$  curb
   $~  [%pro %$]
   $^  [p=curb q=curb]
@@ -515,37 +520,46 @@
   ::
   ++  duck  (dial dole)
   --
-:: $gift: notification that a children changed
+::
+::  $gift: notification that a children changed
 ::
 +$  gift  (map pith mode)
-  
-::
-::  $care: Perspective
+::  
+::  $care: Perspective on a path
 ::    
 +$  care
   $?  %x  :: single node
       %y  :: single node and immediate children
       %z  :: single node and all descendants
   ==
-::  $tour: perspective and shrub
+::
+::  $hunt: perspective and shrub
 ::    
-+$  tour   [=care =pith]
++$  hunt   [=care =pith] ::
++$  tour   hunt
 ::  $block: call-stack state for blocking semantics
+::
+::    .get is the list of blocking requests
+::    .err is the possible error state
+::    If .err is not ~, then .get is functionally ~
 ::    
-+$  block  [get=(set tour) err=(unit tang)]
++$  block  [get=(set hunt) err=(unit tang)]
+::
 ::  $halt: Currently blocked flows and indices
 ::
 +$  halt
-  $:  by-tour=(map tour flow)
-      by-flow=(jug flow tour)
-      clog=(map flow (qeu move))
+  $:  by-tour=(map tour flow) :: flow blocked by hunt
+      by-flow=(jug flow tour) :: hunts blocked by flow
+      clog=(map flow (qeu move)) :: enqueued moves to send on unblock
   ==
+::
 ::  $flow: Call direction
 ::  
 ::    .p is the source
 ::    .q is the destination
 ::
 +$  flow  (pair pith pith)
+::
 ::  $disk: Reference to a suite of code
 ::
 ::    If sig case, then refers to the %std disk
@@ -870,14 +884,15 @@
   $%  [%peer =peer]
       [%rely =term =pith]
   ==
+:: $song
 ::  $sound: internal change tracking listeners
 ::
 +$  sound
-  (jug tour tone)
+  (jug hunt tone)
 ::
 ::  $noise: external change tracking listeners
 +$  noise
-  (jug tour rely)
+  (jug hunt rely)
 ::  $rave: foreign dependency
 +$  rave
   [=term =pith]
@@ -893,8 +908,8 @@
   ==
 ::
 +$  out
-  $%  [%sync p=tour]
-      [%stop p=tour]
+  $%  [%sync p=hunt]
+      [%stop p=hunt]
   ==
 ++  pave
   |=  p=path
@@ -1065,7 +1080,7 @@
       ==
     --
   --
-
+::
 ::
 ++  pith
   |^  $+(pith ^pith)
@@ -1307,6 +1322,7 @@
   ^-  port
   [a a]
 +$  dita  (each iota aura)
++$  zeta  (each iota aura)
 ::  $pish: Pattern match over a path
 ::  
 ::    Ending with & indicates that the path match continues with
@@ -1314,8 +1330,13 @@
 ::
 +$  pish
   $@(? [i=dita t=pish])
-
++$  rail
+  $@(? [i=zeta t=rail])
 +$  conf  (map term pith)
++$  crew  (map term pith)
+::  $deck: ???
+::
+::  apse, cove, dais, 
 +$  card  (pair pith note)
 +$  request
   [src=pith dest=pith val=*]
@@ -1357,9 +1378,14 @@
   (map iota hall)
 +$  rely
   [=term =stem]
+::
 +$  mode  ?(%add %dif %del)
 ::
 +$  dish  (pair pith mode)
++$  yarn  (pair aeon mode)
+::  $lore: diff over namespace
++$  lore
+  (axal yarn)
 ::
 +$  stem
   $~  [[0 0] %x %stud *vase]
@@ -1404,6 +1430,28 @@
     ==  
   --
 +$  pulp  ?(%noun %json)
+::  $hash: Hash
++$  hash   @uvH
+::  $seal: Signature
+::
++$  seal   @uvH
+::  $myth: Binding, possibly tombstoned
+::
++$  myth
+  $:  pail=(pair stud (each vase hash))
+      =aeon
+  ==
+::
++$  aeon  (pair ever seal)
+:: 
++$  saga
+  $:  =pail
+      =aeon
+  ==
+::
++$  epic  (axal saga)
+::
+::  $cane: (deprecated)
 +$  cane
   $~  [%x [0 0] [%$ *vase] ~]
   $:  =care
@@ -1686,7 +1734,11 @@
   [state=stud diff=stud] :: state, diff actually $stud
 +$  slip
   [state=stud diffs=(set stud) =kids]
-+$  deps  (map term fief)
+::  
++$  deps  band
+::  $band: Dependencies
+::
++$  band  (map term fief)
 +$  kids  (map pish port)
 ::  $plot: virtual namespace binding
 ::

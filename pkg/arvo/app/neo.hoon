@@ -17,6 +17,7 @@
 /*  a-i-r   %js   /web/a-i-r/js
 /*  style-css   %css   /web/style/css
 |%
+::
 ++  pave  pave:neo
 ++  ford  ford:neo
 ++  slug
@@ -2612,6 +2613,16 @@
     =^  cards=(list card:neo)  arvo
       (soft-site |.(si-abet:(si-poke:site pail)))
     (ingest cards)
+  ::  XX: a hack
+  ::
+  ::    this is implicity recursive, and all external dependencies of
+  ::    the children need to be woken up. this also breaks referential 
+  ::    transparency
+  ++  tomb
+    |=  *
+    =.  apex  (del:of-top here)
+    =.  change  (~(put by change) here %del)
+    work
   ::
   ++  apply
     |=  =move:neo
@@ -2624,9 +2635,10 @@
     =/  =name:neo  (de-pith:name:neo p.q.move)
     =.  here       +:p.q.move
     %-  (trace leaf/"{<-.q.q.move>} {(spud (pout here))}" ~)
-    ?+  -.q.q.move  !!
+    ?-  -.q.q.move
       %make  (make +.q.q:move)
       %poke  (poke +.q.q:move)
+      %tomb  (tomb +.q.q:move)
       %link   !!
     ==
   ::
