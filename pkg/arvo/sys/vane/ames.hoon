@@ -6066,7 +6066,7 @@
             |=  [=wire error=(unit tang)]
             ^+  ev-core
             =>  .(wire `(pole iota)`(ev-pave wire))
-            ?.  ?=([%mesa %dead-flow ~] wire.task)
+            ?.  ?=([%mesa %dead-flow ~] wire)
               ~&  %evil-behn-timer^wire  ev-core
             ::  XX log if error
             ::  XX if we wake up too early, no-op, otherwise set new timer
@@ -7690,15 +7690,15 @@
 ::
 =>  ::  per-peer core-routing migration check
     ::
-    |_  [[now=@da eny=@uvJ rof=roof] hen=duct]
+    |_  [sample=[now=@da eny=@uvJ rof=roof] hen=duct]
     ::
     +|  %helpers
     ::
     ++  pe-core  .
-    ++  me-core  (ev-abed:ev-core:mesa [now eny rof] hen)
+    ++  me-core  (ev-abed:ev-core:mesa [now eny rof]:sample hen)
     ++  pe-abed
       |=  [now=@da eny=@uvJ rof=roof =duct]
-      pe-core(hen duct, now now, eny eny, rof rof)
+      pe-core(hen duct, now.sample now, eny.sample eny, rof.sample rof)
     ::
     ++  pe-find-peer
       |=  =ship
@@ -7732,7 +7732,7 @@
       =/  ship-state  (pe-find-peer ship)
       ::
       ?:  ?=(%ames -.ship-state)
-        (call:(ames now eny rof) hen ~ soft+plea/ship^plea)
+        (call:(ames [now eny rof]:sample) hen ~ soft+plea/ship^plea)
       =^  moves  ames-state
         =<  ev-abet
         ?:  ?=([~ %known *] +.ship-state)
@@ -7749,7 +7749,7 @@
       =/  ship-state  (pe-find-peer her)
       ::
       ?:  ?=(%ames -.ship-state)
-        (call:(ames now eny rof) hen ~ soft+cork/ship)
+        (call:(ames [now eny rof]:sample) hen ~ soft+cork/ship)
       =^  moves  ames-state
         =<  ev-abet
         ?:  ?=([~ %known *] +.ship-state)
@@ -7764,7 +7764,7 @@
       |=  [sec=(unit [idx=@ key=@]) spar:^ames]
       =/  ship-state  (pe-find-peer ship)
       ?:  ?=(%ames -.ship-state)
-        (call:(ames now eny rof) hen ~ soft+keen/sec^ship^path)
+        (call:(ames [now eny rof]:sample) hen ~ soft+keen/sec^ship^path)
       =^  moves  ames-state
         =<  ev-abet
         ?:  ?=([~ %known *] +.ship-state)
@@ -7781,7 +7781,7 @@
       =/  ship-state  (pe-find-peer ship.spar)
       ::
       ?:  ?=(%ames -.ship-state)
-        (call:(ames now eny rof) hen ~ soft+yawn/all^spar)
+        (call:(ames [now eny rof]:sample) hen ~ soft+yawn/all^spar)
       =^  moves  ames-state
         =<  ev-abet
         ?.  ?=([~ %known *] +.ship-state)
