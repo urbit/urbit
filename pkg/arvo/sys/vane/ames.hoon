@@ -1525,6 +1525,26 @@
       ::
       +|  %helpers
       ::
+      :: +get-forward-lanes: get all lanes to send to when forwarding to peer
+      ::
+      ++  get-forward-lanes
+        |=  [our=@p fren=fren-state chums=(map ship chum-state)]
+        ^-  (list lane)
+        =;  zar=(trap (list lane))
+          ?~  route.fren  $:zar
+          =*  rot  u.route.fren
+          ?:(direct.rot [lane.rot ~] [lane.rot $:zar])
+        ::
+        |.  ^-  (list lane)
+        ?:  ?=(%czar (clan:title sponsor.fren))
+          ?:  =(our sponsor.fren)
+            ~
+          [%& sponsor.fren]~
+        =/  next  (~(get by chums) sponsor.fren)
+        ?.  ?=([~ %known *] next)
+          ~
+        $(fren +.u.next)
+      ::
       ++  key-chain  ((on ,@ ,[key=@ =path]) lte)
       ::
       ++  parse-packet  |=(a=@ -:($:de:pact a))
@@ -1722,6 +1742,7 @@
 ::
 |=  our=ship
 =|  ames-state=axle:ames
+=*  unix-duct  unix-duct.ames-state
 =|  queued-moves=(list move)  :: XX when to handle this
 ::
 |=  [now=@da eny=@uvJ rof=roof]
@@ -1866,13 +1887,6 @@
               ^+  event-core
               =.  ships.bug.ames-state  (sy ships)
               event-core
-            ::  +on-snub: handle request to change ship blacklist
-            ::
-            ++  on-snub
-              |=  [form=?(%allow %deny) ships=(list ship)]
-              ^+  event-core
-              =.  snub.ames-state  [form (sy ships)]
-              event-core
             ::  +on-spew: handle request to set verbosity toggles on debug output
             ::
             ++  on-spew
@@ -1918,6 +1932,7 @@
                 ?~  bones      abet:peer-core
                 =.  peer-core  abet:(call:(abed:mu:peer-core i.bones) %prod ~)
                 $(bones t.bones)
+              ::
               --
             ::  +on-cong: adjust congestion control parameters
             ::
@@ -2579,6 +2594,13 @@
               ?.  ?=(%known -.sat)
                 $(pez t.pez)
               $(pez t.pez, event-core abet:recork-one:(abed-peer:pe her +.sat))
+            ::  XX  only call sy-init?
+            ::  mesa touches chums=(map ship chum-state) for the public keys of the ships;
+            ::  ames touches peers=(map ship peer-state). Each core is called based
+            ::  on the wire (mesa tags wires with /mesa)
+            ::  If mesa is always call for newly booted ships, and chums is always used
+            ::  we need a way to deal with version negotiation
+            ::
             ::  +on-init: first boot; subscribe to our info from jael
             ::
             ++  on-init
@@ -2900,14 +2922,8 @@
                       (get-forward-lanes our peer-state peers.ames-state)
                   ==
                 event-core
-              --
-            ::  +on-take-turf: relay %turf move from jael to unix
-            ::
-            ++  on-take-turf
-              |=  turfs=(list turf)
-              ^+  event-core
               ::
-              (emit unix-duct.ames-state %give %turf turfs)
+              --
             ::  +on-born: handle unix process restart
             ::
             ++  on-born
@@ -2936,21 +2952,6 @@
                   [duct %give %saxo get-sponsors]
                   (poke-ping-app duct our %kick fail=%.n)
               ==
-            ::  +on-vega: handle kernel reload
-            ::
-            ++  on-vega  event-core
-            ::  +on-plug: handle key reservation
-            ++  on-plug
-              |=  =path
-              ^+  event-core
-              =/  key=@  (shaz eny) :: TODO: check key width
-              =/  num=@ud
-                ?~  latest=(pry:on:chain server-chain.ames-state)
-                  1
-                .+(key.u.latest)
-              =.  server-chain.ames-state
-                (put:on:chain server-chain.ames-state num [key path])
-              (emit duct %give %stub num key)
             ::  +on-trim: handle request to free memory
             ::
             ::  %ruin comets not seen for six months
@@ -5128,7 +5129,9 @@
                   metrics
                 --
               --
+            ::
             --
+          ::
           --
       ::  adult ames, after metamorphosis from larva
       ::
@@ -5161,19 +5164,15 @@
             %init  on-init:event-core
             %prod  (on-prod:event-core ships.task)
             %sift  (on-sift:event-core ships.task)
-            %snub  (on-snub:event-core [form ships]:task)
             %spew  (on-spew:event-core veb.task)
             %cong  (on-cong:event-core [msg mem]:task)
             %stir  (on-stir:event-core arg.task)
             %trim  on-trim:event-core
-            %vega  on-vega:event-core
             %plea  (on-plea:event-core [ship plea]:task)
             %cork  (on-cork:event-core ship.task)
             %tame  (on-tame:event-core ship.task)
             %kroc  (on-kroc:event-core bones.task)
             %deep  (on-deep:event-core deep.task)
-            %stun  (on-stun:event-core stun.task)
-            %plug  (on-plug:event-core +.task)
           ::
             %keen  (on-keen:event-core +.task)
             %chum  (on-chum:event-core +.task)
@@ -5210,7 +5209,6 @@
           ::
             [%gall %flub ~]  (on-take-flub:event-core wire)
           ::
-            [%jael %turf *]          (on-take-turf:event-core turf.sign)
             [%jael %private-keys *]  (on-priv:event-core [life vein]:sign)
             [%jael %public-keys *]   (on-publ:event-core wire public-keys-result.sign)
           ==
@@ -5478,6 +5476,7 @@
           ==
         ::
 
+      ::
       --
     ::
     ++  mesa
@@ -6893,21 +6892,31 @@
             +|  %entry-points
             ::
             ++  sy-born
+              =/  turfs
+                ;;  (list turf)
+                =<  q.q  %-  need  %-  need
+                (rof [~ ~] /ames %j `beam`[[our %turf %da now] /])
+              ::
+              =*  duct  unix-duct.ames-state
               =?  ev-core  ?=(~ +.flow.dead.ames-state)
                 (ev-emit ~[/ames] %pass /mesa/dead-flow %b %wait `@da`(add now ~m2))
               =?  flow.dead.ames-state  ?=(~ +.flow.dead.ames-state)
                 flow/`[~[/ames] /mesa/dead-flow `@da`(add now ~m2)]
-              ::  XX %give %turf
-              ::     %give %saxo
-              ::     %kick %ping-app
-              ::
+              =.  ev-core
+                %-  ev-emil
+                ^-  (list move)
+                :~  [hen %give %turf turfs]
+                    [hen %give %saxo sy-get-sponsors]
+                    (poke-ping-app:ames-helper hen our %kick fail=%.n)
+                ==
               sy-core(ames-state ames-state(unix-duct hen))
+            ::  +sy-init: first boot; subscribe to our info from jael
             ::
             ++  sy-init
               ^+  sy-core
               =.  ev-core
                 %-  ev-emil
-                :~  [hen %pass /mesa/turf %j %turf ~]
+                :~  [hen %pass /turf %j %turf ~]
                     [hen %pass /mesa/private-keys %j %private-keys ~]
                     [hen %pass /mesa/public-keys %j %public-keys [n=our ~ ~]]
                 ==
@@ -6924,7 +6933,7 @@
               |=  =path
               ^+  sy-core
               =/  key=@
-                sec:ex:(pit:nu:crub:crypto 512 (shaz eny))
+                sec:ex:(pit:nu:crub:crypto 512 (shaz eny)) :: TODO: check key width
               =/  kid=@ud
                 ?~  latest=(ram:key-chain server-chain.ames-state)
                   1
@@ -6934,8 +6943,7 @@
               ~&  >  plug/[kid key path]
               ::  kid^key kill be used by remote %keen task when sending $peek
               ::
-              :: sy-core(ev-core (ev-emit hen %give %stub kid key))
-              sy-core
+              sy-core(ev-core (ev-emit hen %give %stub kid key))
             ::
             ++  sy-publ
               |=  [=wire =public-keys-result:jael]
@@ -7088,7 +7096,7 @@
                 |^  ^+  sy-core
                     ?~  points  sy-core
                     ::
-                    =+  ^-  [=ship =point:jael]  i.points
+                    =/  [=ship =point:jael]  i.points
                     ::
                     =?  rift.ames-state  =(our ship)
                       rift.point
@@ -7251,6 +7259,36 @@
                 (ev-make-pact ship.per^path pay.req rift.sat.per `space)  :: XX memoize?
               %+  ev-emit:core   unix-duct.ames-state
               [%give %push ~[`@ux`ship.per] p:(fax:plot (en:^pact pact))]
+            ::  +sy-snub: handle request to change ship blacklist
+            ::
+            ++  sy-snub
+              |=  [form=?(%allow %deny) ships=(list ship)]
+              ^+  sy-core
+              =.  snub.ames-state  [form (^sy ships)]
+              sy-core
+            ::
+            ++  sy-stun
+              |=  =stun
+              ^+  sy-core
+              :: %-  %^  ev-trace  sun.veb  ship.stun
+              ::     =/  lane=tape
+              ::       ?:  &
+              ::         ::  turn off until correct parsing ip/port in ames.c
+              ::         ::  (see https://github.com/urbit/vere/pull/623)
+              ::         ""
+              ::       ?:  ?=(%& -.lane.stun)
+              ::         "from {<p.lane.stun>}"
+              ::       =,  lane.stun
+              ::       =/  ip=@if  (end [0 32] p)
+              ::       =/  pt=@ud  (cut 0 [32 16] p)
+              ::       "lane {(scow %if ip)}:{((d-co:co 1) pt)} ({(scow %ux p)})"
+              ::     |.("inject %stun {<-.stun>} {lane}")
+              =.  ev-core
+                %-  ev-emit
+                %^  poke-ping-app:ames-helper  unix-duct.ames-state  our
+                ?.  ?=(%fail -.stun)  -.stun
+                [%kick fail=%.y]
+              sy-core
             ::
             +|  %internals
             ::
@@ -7286,13 +7324,15 @@
             ==
           ::
           =<  ev-abet
-          ::  ?(%trim %snub %spew %stir %stun %sift %dear %prod %tame %chum %cong %deep %hear %kroc %mate %wham %yawn)
+          ::  ?(%trim %spew %stir %sift %dear %tame %chum %cong %deep %hear %kroc %mate %wham %yawn)
           ?+  -.task  ev-core ::  XX TODO
-            %vega  ev-core
+            %vega  ev-core  ::  handle kernel reload
             %init  sy-abet:~(sy-init sy:ev-core hen)
             %born  sy-abet:~(sy-born sy:ev-core hen)
             %plug  sy-abet:(~(sy-plug sy:ev-core hen) path.task)
             %prod  sy-abet:~(sy-prod sy:ev-core hen)  ::  XX handle ships=(list @p)
+            %snub  sy-abet:(~(sy-snub sy:ev-core hen) [form ships]:task)
+            %stun  sy-abet:(~(sy-stun sy:ev-core hen) stun.task)
           ::
             %plea  (ev-call:ev-core %plea [ship plea]:task)
             %cork  (ev-call:ev-core %cork ship.task)
@@ -7326,9 +7366,11 @@
           ?+  sign  ~&(mesa-take-sign/[&1^&2]:sign ev-core)
             [%behn %wake *]  (ev-take:ev-core [wire %wake error.sign])
           ::
-            [%jael %turf *]          ev-core  ::sy-abet:(~(on-take-turf sy hen) turf.sign)
             [%jael %private-keys *]  sy-abet:(~(sy-priv sy hen) [life vein]:sign)
             [%jael %public-keys *]   sy-abet:(~(sy-publ sy hen) wire +>.sign)
+          ::
+            [%jael %turf *]
+          (ev-emit:ev-core unix-duct %give %turf +>.sign)
           ::  vane gifts
           ::
             [%gall %flub ~]  (ev-take:ev-core wire %flub ~)
@@ -7771,9 +7813,6 @@
               (%*(ev-cancel-peek me-core per ship.spar^u.ship-state) all path.spar)
             moves^vane-gate
           ::
-          ++  pe-wham
-            |=  *  !!
-          ::
           --
       ::
       |=  [now=@da eny=@uvJ rof=roof]
@@ -7788,7 +7827,7 @@
         ?-  -.task
           ::  %ames-only tasks
           ::
-            ?(%kroc %deep %hear %chum %cong %mate)
+            ?(%kroc %deep %hear %chum %cong %mate %stir)
           ::  XX can we call the wrong core? still check if ship has migrated?
           ::
           (call:(ames now eny rof) hen dud soft/task)
@@ -7800,12 +7839,19 @@
           (call:(mesa now eny rof) hen dud soft/task)
           ::  flow-independent tasks
           ::
-            ?(%vega %init %born %trim %snub %spew %stir %stun %sift %plug %dear %init %prod %tame)
+            ?(%vega %init %born %snub %spew %stun %sift %plug %dear %init %tame)
           (call:(mesa now eny rof) hen dud soft/task)
           ::  common tasks
           ::
             ?(%plea %cork %keen %yawn %wham %load)
           (call:(pe-abed:pe-core now eny rof hen) task)
+          ::  core-dependent tasks
+          ::
+            ?(%prod %trim)
+          ?-  core.ames-state
+            %ames  (call:(mesa now eny rof) hen ~ soft+task)
+            %mesa  (call:(ames now eny rof) hen ~ soft+task)
+          ==
         ::
         ==
       ::
@@ -7814,7 +7860,8 @@
         ^-  [(list move) _vane-gate]
         ?^  dud
           ~|(%ames-take-dud (mean tang.u.dud))
-        ?:  ?=([%mesa *] wire)
+          ::
+        ?:  ?=([?(%turf %mesa) *] wire)
           (take:(mesa +<.peer-gate) +<)
         (take:(ames +<.peer-gate) +<)
       ::
