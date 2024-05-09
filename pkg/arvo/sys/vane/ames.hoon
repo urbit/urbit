@@ -3503,7 +3503,7 @@
                         flows.sat.per  (~(put by flows) bone^dire flow)
                       ==
                     ::
-                    =/  unsent-messages=(list message)
+                    =/  unsent=(list message)
                       =+  unsent=~(tap to unsent-messages.pump)
                       ?:  =(~ unsent-fragments.pump)
                         unsent
@@ -3515,11 +3515,17 @@
                       ?>  =(message-num current.pump)
                       :-  num-fragments
                       (~(put by fags) fragment-num fragment)
+                    ::  XX FIXME
+                    ::  some fragments of the current message could be in unsent
+                    ::  (rejected by the packet pump due to congestion) and others
+                    ::  could be live
+                    ::  TODO: move live inside the roll of unsent fragments
+                    ::
                     ::  live packets in packet-pump-state are reconstructed; the
                     ::  receiver will droppped any partially received fragments
                     ::  so the full message will need to be resent
                     ::
-                    =/  live-messages=(list message)
+                    =/  live=(list message)
                       =+  queue=((on ,@ud partial-rcv-message) lte)
                       =;  acc
                         %-  flop
@@ -3541,7 +3547,7 @@
                       [num-fragments recv=*@ud (~(put by fags) fag fragment)]
                     =^  forward-moves  flow
                       =<  [moves state]:core
-                      %-  ~(rep in unsent-messages.pump)
+                      %+  roll  (weld live unsent)  :: XX sort? it shouldn't? check
                       ::
                       |=  [=message current=_current.pump core=_fo-core]
                       :-  +(current)
