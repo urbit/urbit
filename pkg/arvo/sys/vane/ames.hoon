@@ -84,8 +84,9 @@
 =*  public-keys-result  public-keys-result:jael
 =/  packet-size  13
 ::
-=>  |%                                ::  vane IO
+=>  ::  vane IO
     ::
+    |%
     +$  sign
       $~  [%behn %wake ~]
       $%  [%ames $>(?(%tune %mess-response) gift)]
@@ -131,7 +132,9 @@
     ::
     --
 ::
-=>  ~%  %ames  ..part  ~              ::  ames helpers
+=>  ::  ames helpers
+    ::
+    ~%  %ames  ..part  ~
     |%
     ::
     +|  %helpers
@@ -1518,7 +1521,9 @@
       :: +get-forward-lanes-mesa: get all lanes to send to when forwarding to peer
       ::
 ::
-=>  |%                                ::  mesa helpers
+=>  ::  mesa helpers
+    ::
+    |%
     ::
     +|  %helpers
     ::
@@ -1746,11 +1751,11 @@
           ::
           ++  ev
             =|  moves=(list move)
-            :: ~%  %event-gate  ..ev  ~
+            ~%  %event-gate  ..ev  ~
             |=  [[now=@da eny=@ rof=roof] =duct ames-state=axle]
             =*  veb  veb.bug.ames-state
             =|  cork-bone=(unit bone)  ::  modified by +on-kroc
-            :: ~%  %event-core  ..$  ~
+            ~%  %event-core  ..$  ~
             |%
             +|  %helpers
             ::
@@ -2177,7 +2182,7 @@
             ::  +on-hear-shut: handle receipt of encrypted packet
             ::
             ++  on-hear-shut
-              :: ~/  %on-hear-shut
+              ~/  %on-hear-shut
               |=  [=lane =shot dud=(unit goof)]
               ^+  event-core
               =/  sndr-state  (~(get by peers.ames-state) sndr.shot)
@@ -3086,7 +3091,7 @@
             ::    request the information from Jael if we haven't already.
             ::
             ++  send-blob
-              :: ~/  %send-blob
+              ~/  %send-blob
               |=  [for=? =ship =blob ship-state=(unit ship-state)]
               ::
               =/  final-ship  ship
@@ -3497,22 +3502,43 @@
                       %*  .  fo:ev-core
                         flows.sat.per  (~(put by flows) bone^dire flow)
                       ==
-                    ::  XX  TODO live- packets in packet-pump-state.pump
                     ::
-                    =/  unsent-messages
-                      =/  unsent-messages=(list message)
-                       ~(tap to unsent-messages.pump)
+                    =/  unsent-messages=(list message)
+                      =+  unsent=~(tap to unsent-messages.pump)
                       ?:  =(~ unsent-fragments.pump)
-                        unsent-messages
+                        unsent
                       =;  raw=*
-                        [;;(=message raw) unsent-messages]
+                        [;;(=message raw) unsent]
                       %-  assemble-fragments
                       %+  roll  unsent-fragments.pump
                       |=  [static-fragment n=@ fags=(map fragment-num fragment)]
                       ?>  =(message-num current.pump)
                       :-  num-fragments
                       (~(put by fags) fragment-num fragment)
+                    ::  live packets in packet-pump-state are reconstructed; the
+                    ::  receiver will droppped any partially received fragments
+                    ::  so the full message will need to be resent
                     ::
+                    =/  live-messages=(list message)
+                      =+  queue=((on ,@ud partial-rcv-message) lte)
+                      =;  acc
+                        %-  flop
+                        %+  roll  (tap:queue acc)
+                        |=  [[* partial-rcv-message] live=(list message)]
+                        :_  live
+                        ;;  =message
+                        (assemble-fragments num-fragments fragments)
+                      %+  roll
+                        (tap:packet-queue:$:pu:mu live.packet-pump-state.pump)
+                      |=  $:  [[seq=@ud fag=@ud] live-packet-val]
+                              acc=((mop message-num partial-rcv-message) lte)
+                          ==
+                      =/  fags
+                        ?~  val=(get:queue acc seq)  ~
+                        fragments:u.val
+                      %+  put:queue  acc
+                      :-  seq
+                      [num-fragments recv=*@ud (~(put by fags) fag fragment)]
                     =^  forward-moves  flow
                       =<  [moves state]:core
                       %-  ~(rep in unsent-messages.pump)
