@@ -1,7 +1,10 @@
 /@  node
 /@  txt
+/-  _/manx-utils
 :-  [%node %txt]
 |=  nod=node
 ^-  txt
-=/  el  (snag 0 c.nod)
-(crip (~(got by (malt a.g.el)) %value))
+%-  crip
+%-  need
+(~(value manx-utils nod) "text")
+

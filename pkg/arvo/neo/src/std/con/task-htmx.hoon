@@ -25,6 +25,7 @@
       ^-  manx
       ;input
         =type  "checkbox"
+        =name  "done"
         =onclick  (trip 'if (this.checked) { this.setAttribute("checked", "")} else {this.removeAttribute("checked")}')
         ;
       ==
@@ -62,7 +63,7 @@
       =hx-swap  "outerHTML"
       =hx-target  "find button .loading"
       ;input.wf.p1.border.br1.grow
-        =name  "text"
+        =name  "name"
         =autocomplete  "off"
         =type  "text"
         =pattern  (trip '[a-z]{1}[a-z0-9\\-]+')
@@ -179,6 +180,7 @@
         =head  "become"
         ;input.grow.p2.br1.border
           =type  "text"
+          =name  "path"
           =value  (en-tape:pith:neo (welp here.bowl pith))
           =oninput  "this.setAttribute('value', this.value);"
           ;

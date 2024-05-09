@@ -17,6 +17,7 @@
       =style  "border-bottom: 1px solid #777;"
       ;input.p2.grow
         =type  "text"
+        =name  "text"
         =value  url
         =is  "atom-input"
         =oninput  "this.parentNode.nextElementSibling.src = this.value;"

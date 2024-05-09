@@ -12,8 +12,9 @@
     =hx-target  "this"
     =hx-swap  "afterend"
     =head  "put-entry"
-    ;date-now;
+    ;date-now(name "id");
     ;textarea.p2.border.br1
+      =name  "text"
       =placeholder  ". . . text"
       =oninput  "this.setAttribute('value', this.value)"
       =rows  "4"
