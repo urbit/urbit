@@ -1,43 +1,34 @@
-=>  %1  =>
-~%  %v.1  ~  ~
-|%
-++  vial-version  +
-++  via
-  ~/  %via
-  |=  v=@  ^-  @  +(v)
---  =>
-~%  %one  +  ~
-|%
-++  fat
-  ~/  %fat
-  |=  [a=* b=*]  42
-++  inc
-  ~/  %inc
-  |=  a=@  ^-  @  +(a)
---
-~%  %two  +  ~
-|%
-++  foo
-  ~%  %foo  +  ~
-  |_  f=@
-    ++  baz
-    ~%  %baz  +  ~
-    |_  z=@
-      ++  lay
-      ~/  %lay
-      |=  y=@  ^-  ^  [+(f) +(z)]
-    --
-  --
-++  bar
-  ~/  %bar
-  |=  d=@  ^-  @  +(d)
---
-
-:: [l=/v.1 s=[& %v.1]]
-:: [l=/via/v.1 s=[[& &] [<via battery> %v.1]]
-:: [l=/one/v.1 s=[[& &] [<one battery> %v.1]]
-:: [l=/fat/one/v.1 s=[[& | & &] <fat battery> ~ <one battery> %v.1]
-:: [l=/inc/one/v.1 s=[[& | & &] <inc battery> ~ <one battery> %v.1]
-:: [l=/two/one/v.1 s=[[& | & &] [<two battery> ~ <one battery> %v.1]]
-:: [l=/foo/two/one/v.1 s=[[& | & | &] <foo battery> ~ <two battery> ~ <one battery> %v.1]
-:: [l=/bar/two/one/v.1 s=[[& | & | &] <foo battery> ~ <two battery> ~ <one battery> %v.1]
+=>  %1  =>                         ::
+~%  %v.1  ~  ~                     ::  0. /v.1
+|%                                 ::
+++  vial-version  +                ::  
+++  via                            ::  1. /via/v.1
+  ~/  %via                         ::
+  |=  v=@  ^-  @  +(v)             ::  
+--  =>                             ::  
+~%  %one  +  ~                     ::  2. /one/v.1
+|%                                 ::
+++  fat                            ::  3. /fat/one/v.1
+  ~/  %fat                         ::
+  |=  [a=* b=*]  42                ::  
+++  inc                            ::  4. /inc/one/v.1
+  ~/  %inc                         ::
+  |=  a=@  ^-  @  +(a)             ::  
+--                                 ::  
+~%  %two  +  ~                     ::  5. /two/one/v.1
+|%                                 ::  
+++  foo                            ::  6. /foo/two/one/v.1
+  ~%  %foo  +  ~                   ::  
+  |_  f=@                          ::  
+    ++  baz                        ::  7. /baz/foo/two/one/v.1
+    ~%  %baz  +  ~                 ::  
+    |_  z=@                        ::  
+      ++  lay                      ::  8. /lay/baz/foo/two/one/v.1
+      ~/  %lay                     ::  
+      |=  y=@  ^-  ^  [+(f) +(z)]  ::  
+    --                             ::  
+  --                               ::  
+++  bar                            ::  9. /bar/two/one/v.1
+  ~/  %bar                         ::
+  |=  d=@  ^-  @  +(d)             ::
+--                                 ::

@@ -1,106 +1,72 @@
-::  Generate a $wilt from a given noun's type.
-::
-::::  /hoon/wild/gen
-  ::
-/?    310
-/+  h=hoon  ::  XX remove later
-::
-::::
-  ::
-:-  %say
-|=  [^ [arg=type ~] ~]
-:-  %noun
-=>
-|%
-+$  cape  $@(? [cape cape])
-+$  sock  [=cape data=*]
-+$  wilt  (list [l=path s=sock])    ::  XX switch back to *
---
-%.  [arg ~ |]
-=|  cot=(map type wilt)
-=|  gil=(set type)
-::  pops: who is your daddy and what does he do?
-::  papa:  i am a daddy
-|=  [t=type pops=(unit wilt) papa=?]
-^-  [wit=wilt cot=(map type wilt)]
-?+    t
-    [(zing ~(val by cot)) cot]
-    [%cell *]
-  ~&  %cell
-  =+  [lw lc]=[wit cot]:$(t p.t)
-  =+  [rw rc]=[wit cot]:$(t q.t)
-  [(weld lw rw) (~(uni by lc) rc)]
-    [%core *]
-  ::  extract info from type
-  =+  [semi chap]=[p q]:r.q.t
-  ?~  p.p.q.t
-    [wit cot]:$(t p.t)
-  =/  bell  (need p.p.q.t)
-  =/  dath=path  ?:(=(~ pops) ~ -<:(need pops))
-  =/  self=wilt
-    ~[[l=(weld ~[bell] dath) s=[& (mug data.semi)]]]
-  ::
-  =/  mats=(list (map term hoon))
-    (turn ~(val by chap) |=(tom=tome q.tom))
-  =/  hops=(list (pair term hoon))
-    (zing (turn mats |=(mat=(map term hoon) ~(tap by mat))))
-  =/  kits=(list type)  ::  get the types of the minted arms
-    %+  skim
-      (turn hops |=(hop=(pair term hoon) p:(~(mint ut.h t) %noun q.hop)))
-    |=  k=type
-    ^-  ?
-    &(?=([%core *] k) !=(~ p.p.q.k))
-  ::
-  ~&  ~
-  ~&  [%self self]
-  =.  cot  (~(put by cot) [t self])
-  ::
-  =^  kids=(list [wit=wilt cot=(map type wilt)])  cot
-    =/  kips=(list [wit=wilt cot=(map type wilt)])
-      (turn kits |=(k=type ^$(t k, pops `self)))
-    :-  kips
-    %-  ~(uni by cot)
-    %+  roll
-      (turn kips |=(p=[wit=wilt cot=(map type wilt)] cot.p))
-    |=  [a=(map type wilt) b=(map type wilt)]
-    ^-  (map type wilt)
-    (~(uni by a) b)
-  ::
-  ?.  =(~ pops)
-    [self (~(put by cot) [t self])]
-  ::
-  ?:  papa
-    =.  cot
-    %-  ~(run by cot)
-    |=  w=wilt
-    ^-  wilt
-    ?:  ?|  =(~ w)
-            =(~[bell] `path`-<.w)
-            =(bell (rear `path`-<.w))
-        ==
-      w
-    ~[[l=(weld `path`-<.w ~[bell]) s=->.w]]
-    =/  root=?  ?!  ?=([%core *] p.t)  ::  XX not thorough
-    ?:  root
-      =.  cot  (~(put by cot) [t self])
-      [(zing ~(val by cot)) cot]
-    $(t p.t, papa &)
-  ::
-  $(t p.t, papa &)
-    [%face *]
-  ~&  %face
-  $(t q.t)
-    [%fork *]
-  ~&  %fork
-  =/  wit
-  %+  weld  `wilt`(zing ~(val by cot))  ^-  wilt
-  (zing (turn ~(tap in p.t) |=([t=type] wit:^$(t t))))
-  [wit cot]
-    [%hint *]
-  ~&  %hint
-  $(t q.t)
-    [%hold *]
-  ~&  %hold
-  ?:  (~(has in gil) t)  [(zing ~(val by cot)) cot]
-  $(t (~(play ut.h p.t) q.t), gil (~(put in gil) t))
-==
+::  Generate a $wilt from a given noun's type.          ::
+::  XX put extra %wild hint in transient compute cores? ::
+::                                                      ::
+::::  /hoon/wild/gen                                    ::
+  ::                                                    ::
+/?    310                                               ::
+/+  h=hoon                                              ::  XX remove later
+::                                                      ::
+::::                                                    ::
+  ::                                                    ::
+:-  %say                                                ::
+|=  [^ [arg=type ~] ~]                                  ::
+:-  %noun                                               ::
+=>                                                      ::
+|%                                                      ::
++$  cape  $@(? [cape cape])                             ::
++$  sock  [=cape data=*]                                ::
++$  wilt  (list [l=path s=sock])                        ::
++$  kind  [tags=(list path) fin=(map type (list path))] ::
+--                                                      ::
+%.  arg                                                 ::
+=|  gil=(set type)                                      ::  processing
+=|  fin=(map type (list path))                          ::  finished state
+=|  pop=(unit type)                                     ::  father
+|=  t=type                                              ::
+^-  kind                                                ::
+?:  (~(has in gil) t)                                   ::
+  [~ fin]                                               ::
+?:  (~(has by fin) t)                                   ::
+  [(~(get by fin) t) fin]                               ::
+=.  gil  (~(put in gil) t)                              ::
+?+    t                                                 ::
+    [~ fin]                                             ::
+    [%cell *]                                           ::
+  ~&  %cell                                             ::
+  =/  l=kind  $(t p.t)                                  ::
+  =/  r=kind  $(t q.t, fin fin.l)                       ::
+  [(weld tags.l tags.r) fin.r]                          ::
+    [%core *]                                           ::
+  =+  [semi chap]=[p q]:r.q.t                           ::  seminoun, chapters
+  =/  tabs=(list (map term hoon))                       ::  chapter contents
+    (turn ~(val by chap) |=(t=tome q.t))                ::
+  =/  bell=(unit term)  p.p.q.t                         ::
+  ?~  bell                                              ::
+    $(t p.t)                                            ::
+  =/  code=(list hoon)                                  ::  arm codes
+    %-  zing                                            ::
+    (turn tabs |=(t=(map term hoon) ~(val by t)))       ::
+  =/  arms=(list type)                                  ::  arm types
+    (turn code |=(c=hoon p:(~(mint ut.h t) %noun c)))   ::
+  =/  sons=(list kind)                                  ::  sons
+    (turn arms |=(t=type ^$(t t, pop `t)))              ::
+  [(need (~(get by fin) t)) fin]                        ::
+    [%face *]                                           ::
+  ~&  %face                                             ::
+  $(t q.t)                                              ::
+    [%fork *]                                           ::
+  ~&  %fork                                             ::
+  [~ fin]  ::  XX                                       ::
+  :: =/  ways  (turn ~(tap in p.t) |=(t=type ^$(t t)))  ::
+  :: =/  wit                                            ::
+  :: %+  weld  `wilt`(zing ~(val by fin))  ^-  wilt     ::
+  :: (zing (turn ~(tap in p.t) |=([t=type] wit:^$(t t)))::
+  :: [wit cot]                                          ::
+    [%hint *]                                           ::
+  ~&  %hint                                             ::
+  $(t q.t)                                              ::
+    [%hold *]                                           ::
+  ~&  %hold                                             ::
+  ?:  (~(has in gil) t)  [(zing ~(val by fin)) fin]     ::
+  $(t (~(play ut.h p.t) q.t), gil (~(put in gil) t))    ::
+==                                                      ::
