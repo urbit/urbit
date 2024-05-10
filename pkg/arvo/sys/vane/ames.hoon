@@ -3503,51 +3503,51 @@
                         flows.sat.per  (~(put by flows) bone^dire flow)
                       ==
                     ::
-                    =/  unsent=(list message)
-                      =+  unsent=~(tap to unsent-messages.pump)
-                      ?:  =(~ unsent-fragments.pump)
-                        unsent
-                      =;  raw=*
-                        [;;(=message raw) unsent]
-                      %-  assemble-fragments
-                      %+  roll  unsent-fragments.pump
-                      |=  [static-fragment n=@ fags=(map fragment-num fragment)]
-                      ?>  =(message-num current.pump)
-                      :-  num-fragments
-                      (~(put by fags) fragment-num fragment)
-                    ::  XX FIXME
-                    ::  some fragments of the current message could be in unsent
-                    ::  (rejected by the packet pump due to congestion) and others
-                    ::  could be live
-                    ::  TODO: move live inside the roll of unsent fragments
-                    ::
                     ::  live packets in packet-pump-state are reconstructed; the
                     ::  receiver will droppped any partially received fragments
-                    ::  so the full message will need to be resent
+                    ::  so the full message will need to be resent.
                     ::
                     =/  live=(list message)
                       =+  queue=((on ,@ud partial-rcv-message) lte)
-                      =;  acc
+                      =;  fragments
                         %-  flop
-                        %+  roll  (tap:queue acc)
-                        |=  [[* partial-rcv-message] live=(list message)]
-                        :_  live
-                        ;;  =message
-                        (assemble-fragments num-fragments fragments)
+                        %+  roll  (tap:queue fragments)
+                        |=  [[* partial-rcv-message] total=(list message)]
+                        :_  total
+                        ;;(message (assemble-fragments num-fragments fragments))
+                      |^
+                      =/  unsent=((mop `@ud partial-rcv-message) lte)
+                        %+  roll  unsent-fragments.pump
+                        |=  $:  static-fragment
+                                live=((mop `@ud partial-rcv-message) lte)
+                            ==
+                        ?>  =(message-num current.pump)  :: XX
+                        %-  acc-fragments
+                        [message-num num-fragments fragment-num fragment live]
+                      ::  fragments of the current message could be in unsent
+                      ::  (rejected by the packet pump due to congestion) but
+                      ::  some could be live, so we need to get those before
+                      ::  assembling.
+                      ::
                       %+  roll
                         (tap:packet-queue:$:pu:mu live.packet-pump-state.pump)
-                      |=  $:  [[seq=@ud fag=@ud] live-packet-val]
-                              acc=((mop message-num partial-rcv-message) lte)
-                          ==
-                      =/  fags
-                        ?~  val=(get:queue acc seq)  ~
-                        fragments:u.val
-                      %+  put:queue  acc
-                      :-  seq
-                      [num-fragments recv=*@ud (~(put by fags) fag fragment)]
+                      |=  [[live-packet-key live-packet-val] acc=_unsent]
+                      %-  acc-fragments
+                      [message-num num-fragments fragment-num fragment acc]
+                      ::
+                      ++  acc-fragments
+                        |=  $:  seq=@ud  n-fags=@ud  n-fag=@ud  fag=fragment
+                                acc=((mop ,@ud partial-rcv-message) lte)
+                            ==
+                        =/  fags  ?~(val=(get:queue acc seq) ~ fragments:u.val)
+                        %+  put:queue  acc
+                        [seq n-fags recv=*@ud (~(put by fags) n-fag fag)]
+                      ::
+                      --
+                    ::
                     =^  forward-moves  flow
                       =<  [moves state]:core
-                      %+  roll  (weld live unsent)  :: XX sort? it shouldn't? check
+                      %+  roll  (weld live ~(tap to unsent-messages.pump))
                       ::
                       |=  [=message current=_current.pump core=_fo-core]
                       :-  +(current)
