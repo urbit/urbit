@@ -21,7 +21,7 @@
 %.  arg                                                 ::
 =|  gil=(set type)                                      ::  processing
 =|  fin=(map type (list path))                          ::  finished state
-=|  pop=(unit type)                                     ::  father
+=|  dad=path                                            ::  father
 |=  t=type                                              ::
 ^-  kind                                                ::
 ?:  (~(has in gil) t)                                   ::
@@ -39,48 +39,43 @@
   =+  [semi chap]=[p q]:r.q.t                           ::  seminoun, chapters
   =/  tabs=(list (map term hoon))                       ::  chapter contents
     (turn ~(val by chap) |=(t=tome q.t))                ::
-  =/  bell=(unit term)  p.p.q.t                         ::
+  =*  bell  p.p.q.t                                     ::
   ?~  bell                                              ::
-    $(t p.t)                                            ::
+    $(t p.t)                                            ::  XX
+  =/  pay=kind  $(t p.t)
   =/  code=(list hoon)                                  ::  arm codes
     %-  zing                                            ::
     (turn tabs |=(t=(map term hoon) ~(val by t)))       ::
-  =/  arms=(list type)                                  ::  arm types
+  =/  pros=(list type)                                  ::  arm product types
     (turn code |=(c=hoon p:(~(mint ut.h t) %noun c)))   ::
-  =/  sons=(list kind)                                  ::  sons
-    %+  skip
-      (turn arms |=(t=type ^$(t t)))
-    |=(k=kind &(=(~ tags.k)))
-  ?~  sons                                              ::  leaf
-    =/  leaf  ~[/[u.bell]]
-    =.  fin  (~(put by fin) t leaf)
-    [leaf fin]
-  =/  kids=(list path)                                  ::
-    (zing (turn sons |=(k=kind tags.k)))
-  =.  fin                                               ::  append bell
-    %+  ~(put by fin)
-      t
-    (turn kids |=(p=path (snoc p u.bell)))              ::
-  =.  fin                                               ::  interpath
-    %+  ~(jab by fin)
-      t
-    |=(tags=(list path) (snoc tags /[u.bell]))
-  =/  papa=kind  $(t p.t)
-  =/  tags=(list path)
-    (weld tags.papa (need (~(get by fin) t)))
-  [tags (~(uni by fin.papa) fin)]
+  =/  self=path  [u.bell dad]
+  =/  arms=kind
+    =|  pax=(list (list path))
+    |-  ^-  kind
+    ?~  pros
+      [(zing pax) fin]
+    =/  kid=kind  ^$(t i.pros, dad self)
+    %=  $
+      pros  t.pros
+      pax   [tags.kid pax]
+      fin   fin.kid
+    ==
+  =/  tags=(list path)  [self tags.arms]
+  =.  fin  (~(put by fin) t tags)
+  [(weld tags tags.pay) fin.pay]
     [%face *]                                           ::
   $(t q.t)                                              ::
     [%fork *]                                           ::
-  [~ fin]  ::  XX                                       ::
-  :: =/  ways  (turn ~(tap in p.t) |=(t=type ^$(t t)))  ::
-  :: =/  wit                                            ::
-  :: %+  weld  `wilt`(zing ~(val by fin))  ^-  wilt     ::
-  :: (zing (turn ~(tap in p.t) |=([t=type] wit:^$(t t)))::
-  :: [wit cot]                                          ::
+  =|  pax=(list (list path))
+  |-  ^-  kind
+  ?~  p.t
+    [(zing pax) fin]
+  =^  n=(list path)  fin  ^$(t n.p.t)
+  =^  l=(list path)  fin  $(p.t l.p.t)
+  =^  r=(list path)  fin  $(p.t r.p.t)
+  [:(weld n l r) fin]
     [%hint *]                                           ::
   $(t q.t)                                              ::
     [%hold *]                                           ::
-  ?:  (~(has in gil) t)  [(zing ~(val by fin)) fin]     ::
-  $(t (~(play ut.h p.t) q.t), gil (~(put in gil) t))    ::
+  $(t p:(~(mint ut.h p.t) %noun q.t))                   ::
 ==                                                      ::
