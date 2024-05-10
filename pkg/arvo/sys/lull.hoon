@@ -36,6 +36,56 @@
       max-size=_2.048
       depth=_1
   ==
+::
+::  $plot: composable serialization
+::
+++  plot
+  =>  |%
+      +$  plat
+        $@  @                                       ::  measure atom
+        $^  $%  [[%c ~] (pair (pair step step) @)]  ::  cut slice
+                [[%m ~] (pair (pair step step) @)]  ::  measure slice
+                [[%s ~] p=plot]                     ::  subslice
+            ==                                      ::
+        (pair step @)                               ::  prefix
+      --                                            ::
+  =<  $
+  ~%  %plot  ..plot  ~
+  |%
+  ++  $
+    $^  [l=$ r=$]                                   ::  concatenate
+    [a=bloq b=(list plat)]                          ::  serialize
+  ::
+  ++  fax                                           ::  encode
+    ~/  %fax
+    |=  p=$
+    ^-  (trel @ bloq step)
+    ?^  -.p
+      =/  l  $(p l.p)
+      =/  r  $(p r.p)
+      =/  s  (rig +.l q.r)
+      [(add p.l (lsh [q.r s] p.r)) q.r (add r.r s)]
+    ::
+    ?~  b.p  [0 a.p 0]
+    =;  c=(pair @ step)
+      =/  d  $(b.p t.b.p)
+      [(add p.c (lsh [a.p q.c] p.d)) a.p (add q.c r.d)]
+    ::
+    ?@  i.b.p
+      [i.b.p (^met a.p i.b.p)]
+    ?-  -.i.b.p
+      @       [(end [a.p p.i.b.p] q.i.b.p) p.i.b.p]
+      [%c ~]  [(cut a.p [p q]:i.b.p) q.p.i.b.p]
+      [%m ~]  =+((cut a.p [p q]:i.b.p) [- (^met a.p -)])
+      [%s ~]  =/  e  $(p p.i.b.p)
+              [p.e (rig +.e a.p)]
+    ==
+  ::
+  ++  met                                           ::  measure
+    ~/  %met
+    |=(p=$ `(pair bloq step)`+:(fax p))
+  --
+::
 ::  +mop: constructs and validates ordered ordered map based on key,
 ::  val, and comparator gate
 ::
