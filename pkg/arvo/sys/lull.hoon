@@ -1733,87 +1733,6 @@
     ==  ==
   ::  atom ops
   ::
-  ::
-  ++  plot
-    =>  |%
-        +$  plat
-          $@  @                                       ::  measure atom
-          $^  $%  [[%c ~] (pair (pair step step) @)]  ::  cut slice
-                  [[%m ~] (pair (pair step step) @)]  ::  measure slice
-                  [[%s ~] p=plot]                     ::  subslice
-              ==                                      ::
-          (pair step @)                               ::  prefix
-        --                                            ::
-    |^  $^  [l=$ r=$]                                 ::  concatenate
-        [a=bloq b=(list plat)]                        ::  serialize
-    ::
-    ::  +fax: encode a plot
-    ::
-    ++  fax
-      |=  p=$
-      ^-  (trel @ bloq step)
-      ?^  -.p
-        =/  l  $(p l.p)
-        =/  r  $(p r.p)
-        =/  s  (rig +.l q.r)
-        [(add p.l (lsh [q.r s] p.r)) q.r (add r.r s)]
-      ::
-      ?~  b.p  [0 a.p 0]
-      =;  c=(pair @ step)
-        =/  d  $(b.p t.b.p)
-        [(add p.c (lsh [a.p q.c] p.d)) a.p (add q.c r.d)]
-      ::
-      ?@  i.b.p
-        [i.b.p (met a.p i.b.p)]
-      ?-  -.i.b.p
-        @       [(end [a.p p.i.b.p] q.i.b.p) p.i.b.p]
-        [%c ~]  [(cut a.p [p q]:i.b.p) q.p.i.b.p]
-        [%m ~]  =+((cut a.p [p q]:i.b.p) [- (met a.p -)])
-        [%s ~]  =/  e  $(p p.i.b.p)
-                [p.e (rig +.e a.p)]
-      ==
-    ::
-    ::  +mes: measure a plot
-    ::
-    ++  mes
-      |=  p=$
-      ^-  [q=bloq r=step]
-      ?^  -.p
-        =/  l  $(p l.p)
-        =/  r  $(p r.p)
-        =/  s  (rig l q.r)
-        [q.r (add r.r s)]
-      ::
-      ?~  b.p  [a.p 0]
-      =;  c=q=step
-        =/  d  $(b.p t.b.p)
-        [a.p (add q.c r.d)]
-      ::
-      ?@  i.b.p
-        (met a.p i.b.p)
-      ?-  -.i.b.p
-        @       p.i.b.p
-        [%c ~]  q.p.i.b.p
-        [%m ~]  =+((cut a.p [p q]:i.b.p) (met a.p -))
-        [%s ~]  =/  e  $(p p.i.b.p)
-                (rig e a.p)
-      ==
-    --
-  ::
-  ::  +rig: convert between bloqs
-  ::
-  ++  rig
-    |=  [=bite b=bloq]
-    ^-  step
-    ?@  bite  0
-    =/  [a=bloq c=step]  bite
-    ?:  =(a b)  c
-    ?:  (gth a b)
-      (lsh [0 (sub a b)] c)
-    =/  d  [0 (sub b a)]
-    =/  e  (rsh d c)
-    ?:(=(0 (end d c)) e +(e))
-  ::
   ::  +nac: reverse +can
   ::
   ++  nac
@@ -1835,39 +1754,6 @@
     =^  f  e  $(b -.b)
     =^  g  e  $(b +.b)
     [[f g] e]
-  ::
-  ::  +hew: cut many
-  ::
-  ++  hew
-    |=  [a=bite c=@]
-    =/  d=[=bloq =step]  ?^(a a [a 0])
-    |*  b=*
-    ^+  [b d]
-    ?@  b
-      [(cut bloq.d [step.d b] c) bloq.d (add step.d b)]
-    =^  f  d  $(b -.b)
-    =^  g  d  $(b +.b)
-    [[f g] d]
-  ::
-  ++  clz
-    |=  [a=bite b=@]
-    (sub ?@(a (bex a) (mul (bex bloq.a) step.a)) (met 0 b))
-  ::
-  ++  ctz
-    |=  a=@
-    ?:  =(0 a)  0
-    =|  i=@ud
-    |-(?:(=(1 (cut 0 [i 1] a)) i $(i +(i))))
-  ::
-  ++  ham  :: popcount
-    |=  a=@
-    ?:  =(0 a)  0
-    =|  n=@ud
-    =/  m  (dec (met 0 a))
-    |-  ^-  @ud
-    =?  n  =(1 (cut 0 [m 1] a))
-      +(n)
-    ?:(=(0 m) n $(m (dec m)))
   ::
   ::  binary tree ops
   ::
