@@ -36,8 +36,8 @@
   =/  r=kind  $(t q.t, fin fin.l)                       ::
   [(weld tags.l tags.r) fin.r]                          ::
     [%core *]                                           ::
-  =*  semi  p.q.r.t                                     ::
-  =*  chap  q.q.r.t                                     ::
+  =*  semi  p.r.q.t                                     ::
+  =*  chap  q.r.q.t                                     ::
   =/  tabs=(list (map term hoon))                       ::  chapter contents
     (turn ~(val by chap) |=(t=tome q.t))                ::
   =*  bell  p.p.q.t                                     ::
