@@ -36,44 +36,45 @@
   =/  r=kind  $(t q.t, fin fin.l)                       ::
   [(weld tags.l tags.r) fin.r]                          ::
     [%core *]                                           ::
-  =+  [semi chap]=[p q]:r.q.t                           ::  seminoun, chapters
+  =*  semi  p.q.r.t                                     ::
+  =*  chap  q.q.r.t                                     ::
   =/  tabs=(list (map term hoon))                       ::  chapter contents
     (turn ~(val by chap) |=(t=tome q.t))                ::
   =*  bell  p.p.q.t                                     ::
   ?~  bell                                              ::
     $(t p.t)                                            ::  XX
-  =/  pay=kind  $(t p.t)
+  =/  pay=kind  $(t p.t)                                ::
   =/  code=(list hoon)                                  ::  arm codes
     %-  zing                                            ::
     (turn tabs |=(t=(map term hoon) ~(val by t)))       ::
   =/  pros=(list type)                                  ::  arm product types
     (turn code |=(c=hoon p:(~(mint ut.h t) %noun c)))   ::
-  =/  self=path  [u.bell dad]
-  =/  arms=kind
-    =|  pax=(list (list path))
-    |-  ^-  kind
-    ?~  pros
-      [(zing pax) fin]
-    =/  kid=kind  ^$(t i.pros, dad self)
-    %=  $
-      pros  t.pros
-      pax   [tags.kid pax]
-      fin   fin.kid
-    ==
-  =/  tags=(list path)  [self tags.arms]
-  =.  fin  (~(put by fin) t tags)
-  [(weld tags tags.pay) fin.pay]
+  =/  self=path  [u.bell dad]                           ::
+  =/  arms=kind                                         ::
+    =|  pax=(list (list path))                          ::
+    |-  ^-  kind                                        ::
+    ?~  pros                                            ::
+      [(zing pax) fin]                                  ::
+    =/  kid=kind  ^$(t i.pros, dad self)                ::
+    %=  $                                               ::
+      pros  t.pros                                      ::
+      pax   [tags.kid pax]                              ::
+      fin   fin.kid                                     ::
+    ==                                                  ::
+  =/  tags=(list path)  [self tags.arms]                ::
+  =.  fin  (~(put by fin) t tags)                       ::
+  [(weld tags tags.pay) fin.pay]                        ::
     [%face *]                                           ::
   $(t q.t)                                              ::
     [%fork *]                                           ::
-  =|  pax=(list (list path))
-  |-  ^-  kind
-  ?~  p.t
-    [(zing pax) fin]
-  =^  n=(list path)  fin  ^$(t n.p.t)
-  =^  l=(list path)  fin  $(p.t l.p.t)
-  =^  r=(list path)  fin  $(p.t r.p.t)
-  [:(weld n l r) fin]
+  =|  pax=(list (list path))                            ::
+  |-  ^-  kind                                          ::
+  ?~  p.t                                               ::
+    [(zing pax) fin]                                    ::
+  =^  n=(list path)  fin  ^$(t n.p.t)                   ::
+  =^  l=(list path)  fin  $(p.t l.p.t)                  ::
+  =^  r=(list path)  fin  $(p.t r.p.t)                  ::
+  [:(weld n l r) fin]                                   ::
     [%hint *]                                           ::
   $(t q.t)                                              ::
     [%hold *]                                           ::
