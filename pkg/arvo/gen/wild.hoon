@@ -32,7 +32,6 @@
 ?+    t                                                 ::
     [~ fin]                                             ::
     [%cell *]                                           ::
-  ~&  %cell                                             ::
   =/  l=kind  $(t p.t)                                  ::
   =/  r=kind  $(t q.t, fin fin.l)                       ::
   [(weld tags.l tags.r) fin.r]                          ::
@@ -49,13 +48,30 @@
   =/  arms=(list type)                                  ::  arm types
     (turn code |=(c=hoon p:(~(mint ut.h t) %noun c)))   ::
   =/  sons=(list kind)                                  ::  sons
-    (turn arms |=(t=type ^$(t t, pop `t)))              ::
-  [(need (~(get by fin) t)) fin]                        ::
+    %+  skip
+      (turn arms |=(t=type ^$(t t)))
+    |=(k=kind &(=(~ tags.k)))
+  ?~  sons                                              ::  leaf
+    =/  leaf  ~[/[u.bell]]
+    =.  fin  (~(put by fin) t leaf)
+    [leaf fin]
+  =/  kids=(list path)                                  ::
+    (zing (turn sons |=(k=kind tags.k)))
+  =.  fin                                               ::  append bell
+    %+  ~(put by fin)
+      t
+    (turn kids |=(p=path (snoc p u.bell)))              ::
+  =.  fin                                               ::  interpath
+    %+  ~(jab by fin)
+      t
+    |=(tags=(list path) (snoc tags /[u.bell]))
+  =/  papa=kind  $(t p.t)
+  =/  tags=(list path)
+    (weld tags.papa (need (~(get by fin) t)))
+  [tags (~(uni by fin.papa) fin)]
     [%face *]                                           ::
-  ~&  %face                                             ::
   $(t q.t)                                              ::
     [%fork *]                                           ::
-  ~&  %fork                                             ::
   [~ fin]  ::  XX                                       ::
   :: =/  ways  (turn ~(tap in p.t) |=(t=type ^$(t t)))  ::
   :: =/  wit                                            ::
@@ -63,10 +79,8 @@
   :: (zing (turn ~(tap in p.t) |=([t=type] wit:^$(t t)))::
   :: [wit cot]                                          ::
     [%hint *]                                           ::
-  ~&  %hint                                             ::
   $(t q.t)                                              ::
     [%hold *]                                           ::
-  ~&  %hold                                             ::
   ?:  (~(has in gil) t)  [(zing ~(val by fin)) fin]     ::
   $(t (~(play ut.h p.t) q.t), gil (~(put in gil) t))    ::
 ==                                                      ::
