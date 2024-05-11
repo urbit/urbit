@@ -8768,14 +8768,6 @@
       ==
   =+  sut=`type`%noun
   |%
-  ++  chut
-    |=  =chum
-    ^-  @t
-    ?@  chum
-      chum
-    ?@  +.chum
-      (rap 3 -.chum '.' (scot %ud +.chum) ~)
-    -.chum  ::  XX handle ven/pro/ver
   ++  clip
     |=  ref=type
     ?>  ?|(!vet (nest(sut ref) & sut))
@@ -9985,14 +9977,6 @@
       =+  hum=$(gen q.gen)
       [(hint [sut p.gen] p.hum) q.hum]
     ::
-        [%sgcn *]
-      ::  XX check that parent axis is core?
-      =+  res=$(gen ~(open ap gen))
-      ::  XX use repo
-      ~|  p.res
-      ?>  ?=([%core *] p.res)
-      res(p.p.q.p `(chut p.gen))
-    ::
         [%sgzp *]  ~_(duck(sut (play p.gen)) $(gen q.gen))
         [%sggr *]
       =+  hum=$(gen q.gen)
@@ -10534,10 +10518,6 @@
       [%ktsg *]  $(gen p.gen)
       [%ktwt *]  (wrap(sut $(gen p.gen)) %lead)
       [%note *]  (hint [sut p.gen] $(gen q.gen))
-      [%sgcn *]  =+  res=$(gen ~(open ap gen))
-                 ::  XX use repo
-                 ?>  ?=([%core *] res)
-                 res(p.p.q `(chut p.gen))
       [%sgzp *]  ~_(duck(sut ^$(gen p.gen)) $(gen q.gen))
       [%sggr *]  $(gen q.gen)
       [%tsgr *]  $(gen q.gen, sut $(gen p.gen))

@@ -9990,8 +9990,9 @@
       =+  res=$(gen ~(open ap gen))
       ::  XX use repo
       ~|  p.res
-      ?>  ?=([%core *] p.res)
-      res(p.p.q.p `(chut p.gen))
+      ?:  ?=([%core *] p.res)
+        res(p.p.q.p `(chut p.gen))
+      res
     ::
         [%sgzp *]  ~_(duck(sut (play p.gen)) $(gen q.gen))
         [%sggr *]
@@ -10536,8 +10537,9 @@
       [%note *]  (hint [sut p.gen] $(gen q.gen))
       [%sgcn *]  =+  res=$(gen ~(open ap gen))
                  ::  XX use repo
-                 ?>  ?=([%core *] res)
-                 res(p.p.q `(chut p.gen))
+                 ?:  ?=([%core *] res)
+                   res(p.p.q `(chut p.gen))
+                 res
       [%sgzp *]  ~_(duck(sut ^$(gen p.gen)) $(gen q.gen))
       [%sggr *]  $(gen q.gen)
       [%tsgr *]  $(gen q.gen, sut $(gen p.gen))

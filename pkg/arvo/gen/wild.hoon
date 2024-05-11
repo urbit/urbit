@@ -4,6 +4,7 @@
 ::::  /hoon/wild/gen                                    ::
   ::                                                    ::
 /?    310                                               ::
+/+  h=hoon
 ::                                                      ::
 ::::                                                    ::
   ::                                                    ::
@@ -47,7 +48,7 @@
     %-  zing                                            ::
     (turn tabs |=(t=(map term hoon) ~(val by t)))       ::
   =/  pros=(list type)                                  ::  arm product types
-    (turn code |=(c=hoon p:(~(mint ut t) %noun c)))   ::
+    (turn code |=(c=hoon p:(~(mint ut.h t) %noun c)))   ::
   =/  self=path  [u.bell dad]                           ::
   =/  arms=kind                                         ::
     =|  pax=(list (list path))                          ::
@@ -77,5 +78,5 @@
     [%hint *]                                           ::
   $(t q.t)                                              ::
     [%hold *]                                           ::
-  $(t p:(~(mint ut p.t) %noun q.t))                   ::
+  $(t p:(~(mint ut.h p.t) %noun q.t))                   ::
 ==                                                      ::
