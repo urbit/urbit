@@ -594,9 +594,6 @@
     ::  first contact; update state and subscribe to notifications
     ::
     =.  contacts.state  (~(put in contacts.state) ship)
-    ::  ask ames to track .ship's connectivity
-    ::
-    =.  moves  [[system-duct.state %pass /sys/lag %a %heed ship] moves]
     ::  ask jael to track .ship's breaches
     ::
     =/  =note-arvo  [%j %public-keys (silt ship ~)]
@@ -615,8 +612,6 @@
     ::  delete .ship from state and kill subscriptions
     ::
     =.  contacts.state  (~(del in contacts.state) ship)
-    ::
-    =.  moves  [[system-duct.state %pass /sys/lag %a %jilt ship] moves]
     ::
     =/  =note-arvo  [%j %nuke (silt ship ~)]
     =.  moves
@@ -657,7 +652,6 @@
       %lyv  ..mo-core  ::  vestigial
       %cor  ..mo-core  ::  vestigial
       %era  (mo-handle-sys-era wire sign-arvo)
-      %lag  (mo-handle-sys-lag wire sign-arvo)
       %req  (mo-handle-sys-req wire sign-arvo)
       %way  (mo-handle-sys-way wire sign-arvo)
     ==
@@ -671,24 +665,20 @@
     ?.  ?=(%breach -.public-keys-result.sign-arvo)
       mo-core
     (mo-breach /jael who.public-keys-result.sign-arvo)
-  ::  +mo-handle-sys-lag: handle an ames %clog notification
+  ::  +mo-handle-sys-clog: handle an ames %clog notification
   ::
-  ++  mo-handle-sys-lag
-    |=  [=wire =sign-arvo]
+  ++  mo-handle-sys-clog
+    |=  [=duct agent-name=term]
     ^+  mo-core
+    =/  yoke  (~(get by yokes.state) agent-name)
+    ?~  yoke
+      mo-core
+    =?  mo-core  ?=(%live -.u.yoke)
+      =/  app  (ap-abed:ap agent-name [~ our /ames])
+      ap-abet:(ap-clog:app duct)
     ::
-    ?>  ?=([%lag ~] wire)
-    ?>  ?=([%ames %clog *] sign-arvo)
-    ::
-    =/  agents=(list [=dude =yoke])  ~(tap by yokes.state)
-    |-  ^+  mo-core
-    ?~  agents  mo-core
-    ::
-    =?  mo-core  ?=(%live -.yoke.i.agents)
-      =/  app  (ap-abed:ap dude.i.agents [~ our /ames])
-      ap-abet:(ap-clog:app ship.sign-arvo)
-    ::
-    $(agents t.agents)
+    mo-core
+  ::
   ::  +mo-handle-sys-req: TODO description
   ::
   ::    TODO: what should we do if the remote nacks our %pull?
@@ -699,7 +689,6 @@
     ?>  ?=([%req @ @ ~] wire)
     =/  him  (slav %p i.t.wire)
     =/  dap  i.t.t.wire
-    ::
     ?>  ?=([?(%gall %behn) %unto *] sign-arvo)
     =/  =unto  +>.sign-arvo
     ::
@@ -713,7 +702,7 @@
     ::
         %fact
       =+  [mark noun]=[p q.q]:cage.unto
-      (mo-give %boon %d mark noun)
+      (mo-give %noon [dap [/gall/sys/req/[i.t.wire]/[dap] hen]] %d mark noun)
     ::
         %kick
       (mo-give %boon %x ~)
@@ -734,6 +723,7 @@
     =/  foreign-agent   i.t.t.wire
     ::
     ?+    sign-arvo  !!
+      ::
         [%ames %done *]
       =/  err=(unit tang)
         ?~  error=error.sign-arvo
@@ -754,13 +744,17 @@
           ~|  [full-wire=full-wire hen=hen stand=stand]
           =^  rr  stand  ~(get to stand)
           :-  rr
-          ?:  =(~ stand)
-            ::  outstanding leaves are only deleted when acked
-            ::
-            ?:  &(?=(^ err) ?=(%leave rr))
-              outstanding.state
+          ?.  =(~ stand)
+            (~(put by outstanding.state) [full-wire hen] stand)
+          ::  outstanding leaves are only deleted when acked;
+          ::  a nacked %leave is flagged with a %missing request
+          ::  we add to the outstanding queue that is only checked
+          ::  in the nacked-leaves timer to skip dead-flow %leave(s)
+          ::
+          ?.  &(?=(^ err) ?=(%leave rr))
             (~(del by outstanding.state) [full-wire hen])
-          (~(put by outstanding.state) [full-wire hen] stand)
+          %-  ~(put by outstanding.state)
+          [[full-wire hen] (~(gas to stand) ~[%leave %missing])]
         ::  non-null case of wire is old, remove on next breach after
         ::  2019/12
         ::
@@ -1147,10 +1141,8 @@
   ++  mo-handle-ames-request
     |=  [=ship agent-name=term =ames-request]
     ^+  mo-core
-    ::  %u/%leave gets automatically acked
     ::
     =.  mo-core  (mo-track-ship ship)
-    =?  mo-core  ?=(%u -.ames-request)  (mo-give %done ~)
     ::
     =/  yok=(unit yoke)  (~(get by yokes.state) agent-name)
     ?~  yok
@@ -1160,6 +1152,10 @@
     ?:  ?=(%.n -.agent.u.yok)
       (mo-give %flub ~)
   ::
+    ::  %u/%leave gets automatically acked
+    ::
+    =?  mo-core  ?=(%u -.ames-request)
+      (mo-give %done ~)
     =/  =wire  /sys/req/(scot %p ship)/[agent-name]
     ::
     =/  =deal
@@ -1647,17 +1643,11 @@
     ::    TODO: %drip local app notification for error isolation
     ::
     ++  ap-clog
-      |=  =ship
+      |=  =duct
       ^+  ap-core
       ::
-      =/  in=(list [=duct =^ship =path])  ~(tap by bitt.yoke)
-      |-  ^+  ap-core
-      ?~  in  ap-core
-      ::
-      =?  ap-core  =(ship ship.i.in)
-        =/  core  ap-kill-up(agent-duct duct.i.in)
-        core(agent-duct agent-duct)
-      $(in t.in)
+      =/  core  ap-kill-up(agent-duct duct)
+      core(agent-duct agent-duct)
     ::  +ap-agent-core: agent core with current bowl and state
     ::
     ++  ap-agent-core
@@ -2363,6 +2353,10 @@
   ::
   =/  mo-core  (mo-abed:mo duct)
   ?-    -.task
+      %clog
+    =+  ;;([dap=@tas =^duct] id.task)
+    mo-abet:(mo-handle-sys-clog:mo-core duct dap)
+      ::
       %deal
     =/  [=sack =term =deal]  [p q r]:task
     ?.  =(q.sack our)
@@ -2456,6 +2450,7 @@
         blocked=(map term (qeu blocked-move-13))
         =bug
     ==
+  ::
   +$  blocked-move-13  [=duct routes=routes-13 move=(each deal unto)]
   +$  routes-13
     $:  disclosing=(unit (set ship))
@@ -2854,6 +2849,7 @@
       ~
     ``case/!>(ud/key.u.las)
   ::
+  =?  path  =(/whey path)  /1/whey
   ?:  &(?=(%x care) ?=([%'1' *] path))
     =>  .(path t.path)
     ?.  =(p.bem our)  ~
@@ -2998,14 +2994,29 @@
     %-  ~(rep by outstanding.state)
     |=  [[[=^wire =^duct] stand=(qeu remote-request)] core=_mo-core:mo]
     ?:  =(~ stand)  core
-    =^  rr  stand   ~(get to stand)
+    =^  rr  stand  ~(get to stand)
     ::  sanity check in the outstanding queue:
-    ::  if there's a %leave, that should be the only request
+    ::  if there's a %leave that was nacked, there should be a %missing request
+    ::  otherwise %leave is the only request in the queue, and we haven't heard
+    ::  anc %ack or a %nack, so %ames is still trying to send it.
     ::
-    ~?  >>>  &(?=(%leave rr) =(^ stand))
-      "outstanding queue not empty [{<wire>} {<duct>} {<stand>}]"
-    =?  core  &(?=(%leave rr) =(~ stand))
-      (mo-handle-nacked-leaves:(mo-abed:core duct) wire)
+    ~?  >>>  ?&  ?=(%leave rr)
+                 =(^ stand)
+                 =^(rr stand ~(get to stand) !=(%missing rr))
+              ==
+      "extraneous request outstanding [{<wire>} {<duct>} {<stand>} {<rr>}]"
+    =?  core  ?&  ?=(%leave rr)
+                 =(^ stand)
+                 =^(rr stand ~(get to stand) &(=(%missing rr) =(~ stand)))
+              ==
+      =+  core=(mo-handle-nacked-leaves:(mo-abed:core duct) wire)
+      ::  make sure that only the %leave remains in the queue
+      ::
+      %_    core
+          outstanding.state
+        %+  ~(put by outstanding.state)  [wire duct]
+        (~(put to *(qeu remote-request)) %leave)
+      ==
     core
   ::
   ~|  [%gall-take-failed wire]

@@ -17,14 +17,14 @@
 ::
 ++  run-test
   |=  [pax=path test=test-func]
-  ^-  [ok=? output=tang result=tang]
+  ^-  [ok=? =tang]
   =+  name=(spud pax)
   =+  run=(mule test)
   ?-  -.run
-    %|  |+[p.run [leaf+"CRASHED {name}" ~]]
+    %|  |+(welp p.run leaf+"CRASHED {name}" ~)
     %&  ?:  =(~ p.run)
-          &+[p.run [leaf+"OK      {name}" ~]]
-        |+[p.run [leaf+"FAILED  {name}" ~]]
+          &+[leaf+"OK      {name}"]~
+        |+(flop `tang`[leaf+"FAILED  {name}" p.run])
   ==
 ::  +resolve-test-paths: add test names to file paths to form full identifiers
 ::
@@ -103,10 +103,10 @@
   ::
   ?~  q.arg
     ~[/(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/tests]
-  :: else cast path to ~[path] if needed
-  ::
   ?~  +.q.arg
     ~[/(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/tests]
+  :: else cast path to ~[path] if needed
+  ::
   ?@  +<.q.arg
     [(tail !<([~ path] arg)) ~]
   (tail !<([~ (list path)] arg))
@@ -121,7 +121,7 @@
 ?^  fiz
   ;<  cor=(unit vase)  bind:m  (build-file:strandio beam.i.fiz)
   ?~  cor
-    ~>  %slog.3^leaf+"FAILED  {(spud s.beam.i.fiz)} (build)"
+    ~>  %slog.0^leaf+"FAILED  {(spud s.beam.i.fiz)} (build)"
     gather-tests(fiz t.fiz, build-ok |)
   ~>  %slog.0^leaf+"built   {(spud s.beam.i.fiz)}"
   =/  arms=(list test-arm)  (get-test-arms u.cor)
@@ -137,6 +137,5 @@
 |=  [[=path =test-func] ok=_build-ok]
 ^+  ok
 =/  res  (run-test path test-func)
-%-  (%*(. slog pri ?:(ok.res 0 3)) output.res)
-%-  (%*(. slog pri ?:(ok.res 0 3)) result.res)
+%-  (slog (flop tang.res))
 &(ok ok.res)

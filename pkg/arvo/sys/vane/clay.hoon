@@ -729,11 +729,7 @@
       ::
       %-  (trace 1 |.("make cast {<a>} -> {<b>}"))
       =^  old=vase  nub  (build-fit %mar a)
-      ?:  =/  ram  (mule |.((slap old !,(*hoon grow))))
-          ?:  ?=(%| -.ram)  %.n
-          =/  lab  (mule |.((slob b p.p.ram)))
-          ?:  ?=(%| -.lab)  %.n
-          p.lab
+      ?:  (has-arm %grow b old)
         ::  +grow core has .b arm; use that
         ::
         %+  gain-leak  cast+a^b
@@ -749,8 +745,9 @@
       ::  try direct +grab
       ::
       =^  new=vase  nub  (build-fit %mar b)
+      =/  arm=?  (has-arm %grab a new)
       =/  rab  (mule |.((slap new tsgl/[limb/a limb/%grab])))
-      ?:  &(?=(%& -.rab) ?=(^ q.p.rab))
+      ?:  &(arm ?=(%& -.rab) ?=(^ q.p.rab))
         %+  gain-leak  cast+a^b
         |=  nob=state
         %-  (trace 4 |.("{<a>} -> {<b>}: +{(trip a)}:grab:{(trip b)}"))
@@ -759,11 +756,11 @@
       ::  try +jump
       ::
       =/  jum  (mule |.((slap old tsgl/[limb/b limb/%jump])))
-      ?:  ?=(%& -.jum)
+      ?:  &((has-arm %jump a old) ?=(%& -.jum))
         =/  via  !<(mark p.jum)
         %-  (trace 4 |.("{<a>} -> {<b>}: via {<via>} per +jump:{(trip a)}"))
         (compose-casts a via b)
-      ?:  ?=(%& -.rab)
+      ?:  &(arm ?=(%& -.rab))
         =/  via  !<(mark p.rab)
         %-  (trace 4 |.("{<a>} -> {<b>}: via {<via>} per +grab:{(trip b)}"))
         (compose-casts a via b)
@@ -787,6 +784,15 @@
       %+  slap
         (with-faces uno+uno dos+dos ~)
       !,(*hoon |=(_+<.uno (dos (uno +<))))
+    ::
+    ++  has-arm
+      |=  [arm=@tas =mark core=vase]
+      ^-  ?
+      =/  rib  (mule |.((slap core [%wing ~[arm]])))
+      ?:  ?=(%| -.rib)  %.n
+      =/  lab  (mule |.((slob mark p.p.rib)))
+      ?:  ?=(%| -.lab)  %.n
+      p.lab
     ::  +build-tube: produce a $tube mark conversion gate from .a to .b
     ::
     ++  build-tube
@@ -4642,10 +4648,12 @@
         $(desks t.desks)
       =^  res  den  (aver:den ~ %x da+now /desk/bill)
       =.  ruf  +:abet:den
-      ?.  ?=([~ ~ *] res)
+      =/  bill
+        ?.  ?=([~ ~ *] res)  *bill
+        ~|([%building-bill i.desks] !<(bill q.u.u.res))
+      ?~  rid=(override bill ren.dom.den)
+        %-  (trace 2 |.("{<i.desks>} has no dudes"))
         $(desks t.desks)
-      =/  bill  ~|  [%building-bill i.desks]  !<(bill q.u.u.res)
-      =/  rid  (override bill ren.dom.den)
       %-  %+  trace  2  |.
           "{<i.desks>} has bill {<bill>} and rein {<ren.dom.den>}, so {<rid>}"
       =^  sats  ..abet  $(desks t.desks)
@@ -4668,22 +4676,9 @@
   ::  +override: apply rein to bill
   ::
   ++  override
-    |=  [duz=bill ren=(map dude:gall ?)]
-    ^-  bill
-    =.  duz
-      %+  skip  duz
-      |=  =dude:gall
-      =(`| (~(get by ren) dude))
-    ::
-    =/  dus  (sy duz)
-    =.  duz
-      %+  weld  duz
-      %+  murn  ~(tap by ren)
-      |=  [=dude:gall on=?]
-      ?:  &(?=(%& on) !(~(has in dus) dude))
-        `u=dude
-      ~
-    duz
+    |=  [duz=bill ren=(map dude:gall ?)]  ^-  bill
+    =/  out=bill  (skip duz ~(has by ren))
+    (~(rep by ren) |=([[d=dude:gall r=?] =_out] ?.(r out [d out])))
   ::  +apply-precedence: resolve conflicts between $bill's
   ::
   ::    policy is to crash if multiple desks are trying to run the same

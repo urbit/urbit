@@ -670,7 +670,9 @@
     $(yez t.yez)
     ::
     ::  We want to notify Ames, then Clay, then Gall.  This happens to
-    ::  be alphabetical, but this is mostly a coincidence.
+    ::  be alphabetical, but this is mostly a coincidence. We also have
+    ::  to notify Gall the vane before we notify any Gall agents, so we
+    ::  can kiss the coincidence goodbye.
     ::
     ++  sorter
       |=  [a=duct b=duct]
@@ -678,6 +680,8 @@
         |
       ?.  ?=([[@ *] *] b)
         &
+      ?:  &(?=([[%gall *] *] a) ?=([[%gall *] *] b))
+        ?=([%gall %sys *] i.a)
       (lth (end 3 i.i.a) (end 3 i.i.b))
     --
   ::

@@ -42,8 +42,8 @@
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
+    ?>  =(our src):bowl
     ?:  ?=(%noun mark)
-      ?>  (team:title [our src]:bowl)
       =/  code  !<((unit @t) vase)
       =/  msg=tape
         ?~  code
@@ -55,6 +55,13 @@
         """
       %-  (slog leaf+msg ~)
       [~ this(passcode code)]
+    ?:  ?=(%json mark)
+      =/  jon=json  !<(json vase)
+      =,  dejs:format
+      =/  cmd
+        ((of clear-eyre-cache+(ot url+so ~) ~) jon)
+      ?>  ?=(%clear-eyre-cache -.cmd)
+      [[%pass /cmd %arvo %e %set-response +.cmd ~]~ this]
     ?.  ?=(%handle-http-request mark)
       (on-poke:def mark vase)
     =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
@@ -316,6 +323,19 @@
         'action'^(render-action:v-eyre action)
     ==
   ::
+    ::  /eyre/cache.json
+    ::
+      [%eyre %cache ~]
+    %-  some
+    :-  %a
+    %+  turn  (sort ~(tap by cache:v-eyre) aor)
+    |=  [url=@t aeon=@ud val=(unit cache-entry:eyre)]
+    %-  pairs
+    :~  'url'^s+url
+        'aeon'^(numb aeon)
+        'val'^?~(val ~ (render-cache-entry:v-eyre u.val))
+    ==
+  ::
     ::  /eyre/connections.json
     ::
       [%eyre %connections ~]
@@ -566,7 +586,6 @@
       %-  pairs
       :~  'messages'^(numb (lent messages))
           'packets'^(numb ~(wyt in packets))
-          'heeds'^(set-array heeds from-duct)
           'keens'^(set-array ~(key by keens) path)
       ==
     ::
@@ -630,7 +649,6 @@
     ::    }, ...],
     ::    closing: [bone, ..., bone],
     ::    corked: [bone, ..., bone],
-    ::    heeds: [['/paths', ...] ...]
     ::    scries:
     ::    ->  { =path
     ::          keen-state: {
@@ -757,8 +775,6 @@
           'closing'^(set-array closing numb)
         ::
           'corked'^(set-array corked numb)
-        ::
-          'heeds'^(set-array heeds from-duct)
         ::
           'scries'^(scries ~(tap by keens))
       ==
@@ -1038,6 +1054,9 @@
   ++  bindings
     (scry ,(list [=binding =duct =action]) %e %bindings ~)
   ::
+  ++  cache
+    (scry ,(map url=@t [aeon=@ud (unit cache-entry)]) %e %cache ~)
+  ::
   ++  connections
     (scry ,(map duct outstanding-connection) %e %connections ~)
   ::
@@ -1064,6 +1083,27 @@
     ?+  -.action  -.action
       %gen  :((cury cat 3) '+' (spat [desk path]:generator.action))
       %app  (cat 3 ':' app.action)
+    ==
+  ::
+  ++  render-cache-entry
+    |=  cache-entry
+    ^-  json
+    %-  pairs:enjs:format
+    :~  'auth'^b+auth
+        'payload'^(render-simple-payload simple-payload.body)
+    ==
+  ::
+  ++  render-simple-payload
+    |=  simple-payload:http
+    ^-  json
+    =,  enjs:format
+    %-  pairs
+    :~  'status'^(numb status-code.response-header)
+        'data'^?~(data ~ (numb p.u.data))
+      ::
+        :+  'headers'  %a
+        %+  turn  headers.response-header
+        |=([k=@t v=@t] (pairs 'key'^s+k 'value'^s+v ~))
     ==
   --
 ::
