@@ -67,8 +67,6 @@
         %.y
       ;div.pre.mono.p2
         ;+
-        ?:  (gth (met 2 (jam +.res)) 1.000)
-          ;/  "too large"
         ;/  (of-wall:format (~(win re (sell +.res)) 0 80))
       ==
     ==
