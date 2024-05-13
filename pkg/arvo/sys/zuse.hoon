@@ -6275,26 +6275,55 @@
   ::
   ::  +build: compute proof data for a message
   ::
-  ++  build
+  ++  build  |=(msg=octs (lss-traversal (build-tree msg)))
+  ++  build-tree
+    =,  blake3:blake:crypto
     |=  msg=octs
-    ^-  [root=@ux proof=(list @ux) pairs=(list [l=@ux r=@ux])]
-    =/  chunks  (split-octs:blake3 13 msg)
-    =+
-      |-  ^-  [o=output:blake3 pairs=(list [l=@ux r=@ux])]
-      =/  mid  (div (bex (xeb (dec (lent chunks)))) 2)
-      =+  [l=(scag mid chunks) r=(slag mid chunks)]
-      ?>  ?=(^ chunks)
-      ?~  t.chunks  [(chunk-output:blake3 i.chunks) ~]
-      =+  [left=$(chunks l) right=$(chunks r)]
-      =/  pair  [(output-cv:blake3 o.left) (output-cv:blake3 o.right)]
-      [(parent-output:blake3 pair) [pair (weld pairs.left pairs.right)]]
-    =/  root  (root-hash o)
-    ?:  =(~ pairs)  [root ~ ~]
-    =/  height  (xeb (dec (lent chunks)))
-    =/  proof  (turn (scag height pairs) tail)
-    =.  proof  (flop (snoc proof l:(snag (dec height) pairs)))
-    =.  pairs  (slag height pairs)
-    [root proof pairs]
+    ^-  (tree @ux)
+    =|  i=@ud
+    =|  s=(list [n=@ux l=(tree @ux) r=(tree @ux)])
+    =/  len  ?~(p.msg 0 (dec (rig [3 p.msg] 13)))
+    |-  ^-  (tree @ux)
+    =|  [l=(tree @ux) r=(tree @ux)]
+    ?:  =(i len)
+      =/  o  =/  las  =+((end 0^10 p.msg) ?~(- 1.024 -))
+            (chunk-output i las (cut 13 [i 1] q.msg))
+      |-  ^-  (tree @ux)
+      ?~  s  [(output-cv (set-flag f-root o)) l r]
+      =/  n  (output-cv o)
+      $(s t.s, o (parent-output n.i.s n), l i.s, r [n l r])
+    ::
+    =/  n  (output-cv (chunk-output i 1.024 (cut 13 [i 1] q.msg)))
+    =/  j  (ctz +(i))
+    |-  ^-  (tree @ux)
+    ?:  =(0 j)
+      ^$(i +(i), s [[n l r] s])
+    ?>  ?=(^ s)
+    $(j (dec j), s t.s, n (output-cv (parent-output n.i.s n)), l i.s, r [n l r])
+  ::
+  ++  lss-traversal
+    |=  t=(tree @ux)
+    =|  out=(list (pair @ux @ux))
+    =|  pof=(list @ux)
+    =|  s=(list (tree @ux))
+    ^-  [root=@ux proof=_pof pairs=_out]
+    ?>  ?=(^ t)
+    :-  n.t
+    |-  ^-  [proof=_pof pairs=_out]
+    ?^  r.t
+      ?>  ?=(^ l.t)
+      $(pof [n.r.t pof], s [r.t s], t l.t)
+    =.  pof  [n.t pof]
+    ?~  s  [pof ~]
+    =>  .(s t.s, t i.s)
+    |-  ^-  [proof=_pof pairs=_out]
+    ?~  t
+      ?~  s  [pof (flop out)]
+      $(s t.s, t i.s)
+    =?  out  ?=(^ r.t)
+      ?>  ?=(^ l.t)
+      [[n.l.t n.r.t] out]
+    $(s [r.t s], t l.t)
   ::  +root: compute just the root hash for a message
   ::
   ++  root
