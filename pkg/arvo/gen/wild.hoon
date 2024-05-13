@@ -40,16 +40,14 @@
   =*  chap  q.r.q.t                                     ::
   =/  tabs=(list (map term hoon))                       ::  chapter contents
     (turn ~(val by chap) |=(t=tome q.t))                ::
-  =*  bell  p.p.q.t                                     ::
-  ?~  bell                                              ::
-    $(t p.t)                                            ::  XX
   =/  pay=kind  $(t p.t)                                ::
   =/  code=(list hoon)                                  ::  arm codes
     %-  zing                                            ::
     (turn tabs |=(t=(map term hoon) ~(val by t)))       ::
   =/  pros=(list type)                                  ::  arm product types
     (turn code |=(c=hoon p:(~(mint ut.h t) %noun c)))   ::
-  =/  self=path  [u.bell dad]                           ::
+  =*  bell  p.p.q.t                                     ::  label
+  =/  self=path  ?~  bell  dad  [u.bell dad]            ::
   =/  arms=kind                                         ::
     =|  pax=(list (list path))                          ::
     |-  ^-  kind                                        ::
