@@ -6898,7 +6898,7 @@
                 ~>  %slog.0^leaf/"ames: breach peer {<our ship>}"
                 ::  a peer breached; drop messaging state
                 ::
-                =/  =fren-state       +.u.chum-state
+                =/  =fren-state  +.u.chum-state
                 =/  old-qos=qos  qos.fren-state
                 ::  reset all peer state other than pki data
                 ::
@@ -6942,11 +6942,10 @@
                         =public-key
                     ==
                 ^+  sy-core
-                ?:  =(our ship)
-                  sy-core
+                ?:  =(our ship)  sy-core
                 ::
-                =/  chum-state  (~(get by chums.ames-state) ship)
-                ?.  ?=([~ %known *] chum-state)
+                =/  peer  (find-peer ship)
+                ?.  ?=([?(%ship %chum) ~ %known *] peer)
                   =|  =point:jael
                   =.  life.point     life
                   =.  keys.point     (my [life crypto-suite public-key]~)
@@ -6954,17 +6953,19 @@
                   ::
                   (on-publ-full (my [ship point]~))
                 ::
-                =/  =fren-state   +.u.chum-state
+                =|  =azimuth-state
                 =/  crypto-core   (nol:nu:crub:crypto priv.ames-state)
                 =/  =private-key  sec:ex:crypto-core
-                =.  symmetric-key.fren-state
+                ::
+                =.  symmetric-key.azimuth-state
                   (derive-symmetric-key public-key private-key)
+                =.  life.azimuth-state        life
+                =.  public-key.azimuth-state  public-key
                 ::
-                =.  life.fren-state        life
-                =.  public-key.fren-state  public-key
-                ::
-                =.  chums.ames-state
-                (~(put by chums.ames-state) ship %known fren-state)
+                =?  chums.ames-state  ?=(%chum -.peer)
+                  (~(put by chums.ames-state) ship u.peer)
+                =?  peers.ames-state  ?=(%ship -.peer)
+                  (~(put by peers.ames-state) ship u.peer)
                 sy-core
               ::  +on-publ-sponsor: handle new or lost sponsor for peer
               ::
@@ -6975,17 +6976,22 @@
                 ^+  sy-core
                 ::
                 ?:  =(our ship)
-                  sy-core(ev-core (ev-emit unix-duct.ames-state %give %saxo sy-get-sponsors))
+                  =.  ev-core
+                    (ev-emit unix-duct.ames-state %give %saxo sy-get-sponsors)
+                  sy-core
                 ?~  sponsor
                   %-  (slog leaf+"ames: {(scow %p ship)} lost sponsor, ignoring" ~)
                   sy-core
                 ::
-                =/  state=(unit chum-state)  (~(get by chums.ames-state) ship)
-                ?.  ?=([~ %known *] state)
+                =/  peer  (find-peer ship)
+                ?.  ?=([?(%ship %chum) ~ %known *] peer)
                   %-  (slog leaf+"ames: missing peer-state, ignoring" ~)
                   sy-core
-                =.  sponsor.+.u.state   u.sponsor
-                =.  chums.ames-state  (~(put by chums.ames-state) ship %known +.u.state)
+                =.  sponsor.+.u.peer   u.sponsor
+                =?  chums.ames-state  ?=(%chum -.peer)
+                  (~(put by chums.ames-state) ship u.peer)
+                =?  peers.ames-state  ?=(%ship -.peer)
+                  (~(put by peers.ames-state) ship u.peer)
                 :: =.  ev-core
                 ::   %-  ev-emit
                 ::   :*  unix-duct.ames-state  %give  %nail  ship
@@ -7014,16 +7020,22 @@
                     ?.  (~(has by keys.point) life.point)
                       $(points t.points)
                     ::
-                    =/  old-chum-state  (~(get by chums.ames-state) ship)
+                    =/  old-peer-state  (find-peer ship)
                     ::
-                    =^  chum-state  sy-core  (insert-fren-state ship point)
+                    =^  new-state  sy-core
+                      (insert-ship-state -.old-peer-state ship point)
                     ::
-                    =?  sy-core  ?=([~ %alien *] old-chum-state)
-                      (meet-alien ship point +.u.old-chum-state chum-state)
+                    =?  sy-core  ?=([?(%ship %chum) ~ %alien *] old-peer-state)
+                      ?:  ?=(%ship -.old-peer-state)
+                        meet-alien-ship
+                      ?>  ?=([%chum *] new-state)
+                      (meet-alien-chum ship point +.u.old-peer-state +.new-state)
                     ::
                     $(points t.points)
                 ::
-                ++  meet-alien
+                ++  meet-alien-ship  !!  :: XX TODO
+                ::
+                ++  meet-alien-chum
                   |=  [=ship =point:jael todos=ovni-state =chum-state]
                   |^  ^+  sy-core
                   ::  if we're a comet, send self-attestation packet first
@@ -7083,40 +7095,72 @@
                   (~(put by chums.ames-state) ship %known fren-state)
                 sy-core
               ::
-              ++  insert-fren-state
-                |=  [=ship =point:jael]
-                ^-  [chum-state _sy-core]
+              ++  insert-ship-state
+                |=  [wer=?(%ship %chum) =ship =point:jael]
+                ^-  $:  $%  [%ship ship-state]
+                            [%chum chum-state]
+                        ==
+                        _sy-core
+                    ==
                 ::
-                =/  =chum-state      sat:(ev-gut-per ship)
-                =/  =public-key      pass:(~(got by keys.point) life.point)
-                =/  crypto-core      (nol:nu:crub:crypto priv.ames-state)
-                =/  =private-key     sec:ex:crypto-core
-                =/  =symmetric-key   (derive-symmetric-key public-key private-key)
+                =/  =public-key     pass:(~(got by keys.point) life.point)
+                =/  crypto-core     (nol:nu:crub:crypto priv.ames-state)
+                =/  =private-key    sec:ex:crypto-core
+                =/  =symmetric-key  (derive-symmetric-key public-key private-key)
                 ::
-                ?>  ?=(%known -.chum-state)
-                =.  qos.chum-state            [%unborn now]
-                =.  life.chum-state           life.point
-                =.  rift.chum-state           rift.point
-                =.  public-key.chum-state     public-key
-                =.  symmetric-key.chum-state  symmetric-key
-                =.  sponsor.chum-state
+                =|  route=(unit [direct=? =lane])
+                =|  =azimuth-state
+                =.  life.azimuth-state           life.point
+                =.  rift.azimuth-state           rift.point
+                =.  public-key.azimuth-state     public-key
+                =.  symmetric-key.azimuth-state  symmetric-key
+                =.  sponsor.azimuth-state
                   ?^  sponsor.point
                     u.sponsor.point
                   (^^sein:title rof /ames our now ship)
                 ::  automatically set galaxy route, since unix handles lookup
                 ::
-                =?  route.chum-state  ?=(%czar (clan:title ship))
+                =?  route  ?=(%czar (clan:title ship))  :: XX check that we are not replacing anything
                   `[direct=%.y lane=[%& ship]]
-                ::
-                =.  chums.ames-state
-                  (~(put by chums.ames-state) ship chum-state)
-                ::
+                ::  XX TODO
                 :: =?  ev-core  ?=(%czar (clan:title ship))
                 ::   %-  ev-emit
                 ::   :*  unix-duct.ames-state  %give  %nail  ship
                 ::       (get-forward-lanes our +.chum-state chums.ames-state)
                 ::   ==
-                chum-state^sy-core
+                ::  XX if the peer doesn't previously exist we insert it
+                ::  based on the chosen core in state; see find-peer
+                ::
+                :_  sy-core
+                ?:  ?=(%chum wer)
+                  =/  =chum-state  sat:(ev-gut-per ship)
+                  ?>  ?=([%known *] chum-state)
+                  =.  chums.ames-state
+                    %+  ~(put by chums.ames-state)  ship
+                    chum-state(+< azimuth-state, route.+ route, qos.+ [%unborn now])
+                  [%chum chum-state]
+                =/  =peer-state
+                  ::  XX from arm?
+                  =/  ship-state  (~(get by peers.ames-state) ship)
+                  ?.  ?=([~ %known *] ship-state)
+                    *peer-state
+                  +.u.ship-state
+                ::
+                =.  peers.ames-state
+                  %+  ~(put by peers.ames-state)  ship
+                  known/peer-state(- azimuth-state, route route, qos [%unborn now])
+                [%ship known/peer-state]
+              ::
+              ++  find-peer
+                |=  =ship
+                ^-  $%  [%ship (unit ship-state)]
+                        [%chum (unit chum-state)]
+                    ==
+                ?^  chum-state=(~(get by chums.ames-state) ship)
+                  chum/chum-state
+                ?^  ship-state=(~(get by peers.ames-state) ship)
+                  ship/ship-state
+                ?:(?=(%mesa core.ames-state) [%chum ~] [%ship ~])
               ::
               --
             ::  +sy-priv:  set our private key to jael's response
