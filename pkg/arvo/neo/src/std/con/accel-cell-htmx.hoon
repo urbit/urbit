@@ -67,7 +67,7 @@
         %.y
       ;div.pre.mono.p2
         ;+
-        ;/  (of-wall:format (~(win re (sell +.res)) 0 80))
+        ;/  (of-wall:format (~(win re (sell (sped +.res))) 0 80))
       ==
     ==
   ==

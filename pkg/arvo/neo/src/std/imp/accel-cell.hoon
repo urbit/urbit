@@ -41,7 +41,7 @@
     =+  !<([=term =stem:neo] vax)
     ?>  ?=(%x -.q.stem)
     =/  vax  q.pail.q.stem
-    =/  this  (accel-cell !<(accel-cell state-vase))
+    =/  this  !<(accel-cell state-vase)
     =.  result.this  (render-hoon code.this vax)
     [~ !>(this)]
   ++  init
