@@ -7829,8 +7829,8 @@
     ::
       ?(%prod %trim)
     ?-  core.ames-state
-      %ames  (call:(mesa now eny rof) hen ~ soft+task)
-      %mesa  (call:(ames now eny rof) hen ~ soft+task)
+      %ames  (call:(ames now eny rof) hen ~ soft+task)
+      %mesa  (call:(mesa now eny rof) hen ~ soft+task)
     ==
   ::
   ==
