@@ -1,23 +1,39 @@
   ::  /lib/text
-::::  Version ~2024.5.13 by ~lagrev-nocfep
-::
+::::
+::  Some common text conversion routines targeted towards beginners.
+::  See also https://docs.urbit.org/language/hoon/reference/zuse/2d_7,
+::  which require head tags on JSON-style values.
 ::
 |%
-++  int-to-text     (cury scot %ud)
-++  hex-to-text     (cury scot %ux)
-++  bin-to-text     (cury scot %ub)
-++  ship-to-text    (cury scot %p)
-++  float-to-text   (cury scot %rs)
-++  half-to-text    (cury scot %rh)
-++  double-to-text  (cury scot %rd)
-++  quad-to-text    (cury scot %rq)
-::
-++  text-to-int     (cury slav %ud)
-++  text-to-hex     (cury slav %ux)
-++  text-to-bin     (cury slav %ub)
-++  text-to-ship    (cury slav %p)
-++  text-to-float   (cury slav %rs)
-++  text-to-half    (cury slav %rh)
-++  text-to-double  (cury slav %rd)
-++  text-to-quad    (cury slav %rq)
+::  Conversions from atom to text.
+++  from-da      (cury scot %da)
+++  from-dr      (cury scot %dr)
+++  from-p       (cury scot %p)
+++  from-rd      (cury scot %rd)
+++  from-rh      (cury scot %rh)
+++  from-rq      (cury scot %rq)
+++  from-rs      (cury scot %rs)
+++  from-ub      (cury scot %ub)
+++  from-ud      (cury scot %ud)
+++  from-ux      (cury scot %ux)
+++  from-path    (cork spud crip)
+++  from-number  :(cork rlyd r-co:co crip)
+++  from-int     (cork (d-co:co 1) crip)
+::  Conversions from text to atom.
+++  to-da      (cury slav %da)
+++  to-dr      (cury slav %dr)
+++  to-p       (cury slav %p)
+++  to-bin     (cury slav %ub)
+++  to-int     (cury slav %ud)
+++  to-hex     (cury slav %ux)
+++  to-double  (cury slav %rd)
+++  to-half    (cury slav %rh)
+++  to-quad    (cury slav %rq)
+++  to-float   (cury slav %rs)
+++  to-path    stab
+++  to-number  |=(=cord (need (ne:dejs-soft:format [%n cord])))
+++  to-int     |=(=cord (need (ni:dejs-soft:format [%n cord])))
+::  Aliases
+++  from-tape  crip
+++  to-tape    trip
 --
