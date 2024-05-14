@@ -2529,33 +2529,6 @@
                   (emit duct %pass /private-keys %j %private-keys ~)
                   (emit duct %pass /public-keys %j %public-keys [n=our ~ ~])
               ==
-            ::  +on-priv: set our private key to jael's response
-            ::
-            ++  on-priv
-              |=  [=life vein=(map life private-key)]
-              ^+  event-core
-              ::
-              =/  =private-key            (~(got by vein) life)
-              =.  life.ames-state         life
-              =.  crypto-core.ames-state  (nol:nu:crub:crypto private-key)
-              ::  recalculate each peer's symmetric key
-              ::
-              =/  our-private-key  sec:ex:crypto-core.ames-state
-              =.  peers.ames-state
-                %-  ~(run by peers.ames-state)
-                |=  =ship-state
-                ^+  ship-state
-                ::
-                ?.  ?=(%known -.ship-state)
-                  ship-state
-                ::
-                =/  =peer-state  +.ship-state
-                =.  symmetric-key.peer-state
-                  (derive-symmetric-key public-key.+.ship-state our-private-key)
-                ::
-                [%known peer-state]
-              ::
-              event-core
             ::  +on-publ: update pki data for peer or self
             ::
             ++  on-publ
@@ -5155,7 +5128,6 @@
           ::
             [%gall %flub ~]  (on-take-flub:event-core wire)
           ::
-            [%jael %private-keys *]  (on-priv:event-core [life vein]:sign)
             [%jael %public-keys *]   (on-publ:event-core wire public-keys-result.sign)
           ==
         ::
@@ -7147,15 +7119,15 @@
                 chum-state^sy-core
               ::
               --
+            ::  +sy-priv:  set our private key to jael's response
             ::
             ++  sy-priv
               |=  [=life vein=(map life private-key)]
               ^+  sy-core
               ::
-              =.  priv.ames-state      (~(got by vein) life)
-              ~&  >>  mesa/priv.ames-state
-              =.  life.ames-state      life
-              =/  crypto-core  (nol:nu:crub:crypto priv.ames-state)
+              =.  priv.ames-state  (~(got by vein) life)
+              =.  life.ames-state  life
+              =/  crypto-core      (nol:nu:crub:crypto priv.ames-state)
               ::  recalculate each peer's symmetric key
               ::
               =.  chums.ames-state
@@ -7171,6 +7143,19 @@
                 ::
                 known/fren-state
               ::
+              =.  peers.ames-state
+                %-  ~(run by peers.ames-state)
+                |=  =ship-state
+                ^+  ship-state
+                ::
+                ?.  ?=(%known -.ship-state)
+                  ship-state
+                ::
+                =/  =peer-state  +.ship-state
+                =.  symmetric-key.peer-state
+                  (derive-symmetric-key public-key.+.ship-state sec:ex:crypto-core)
+                ::
+                known/peer-state
               sy-core
             ::
             ++  sy-prod
@@ -7347,7 +7332,6 @@
         |=  [hen=duct dud=(unit goof) wrapped-task=(hobo task)]  :: XX common tasks
         ^-  [(list move) _vane-gate]
         =/  =task  ((harden task) wrapped-task)
-        ~!  task
         =+  ev-core=(ev-abed:ev-core [now eny rof] hen)
         ::
         =^  moves  ames-state
@@ -7405,11 +7389,12 @@
           ?+  sign  ~&(mesa-take-sign/[&1^&2]:sign ev-core)
             [%behn %wake *]  (ev-take-wake:ev-core [wire error.sign])
           ::
-            [%jael %private-keys *]  sy-abet:(~(sy-priv sy hen) [life vein]:sign)
-            [%jael %public-keys *]   sy-abet:(~(sy-publ sy hen) wire +>.sign)
+              [%jael %private-keys *]
+            sy-abet:(~(sy-priv sy hen) [life vein]:sign)
           ::
-            [%jael %turf *]
-          (ev-emit:ev-core unix-duct %give %turf +>.sign)
+            [%jael %public-keys *]  sy-abet:(~(sy-publ sy hen) wire +>.sign)
+          ::
+            [%jael %turf *]  (ev-emit:ev-core unix-duct %give %turf +>.sign)
           ::  vane gifts
           ::
             [%gall %flub ~]  (ev-take-flub:ev-core wire)
@@ -7841,7 +7826,7 @@
   ?^  dud
     ~|(%ames-take-dud (mean tang.u.dud))
     ::
-  ?:  ?=([?(%turf %mesa) *] wire)
+  ?:  ?=([?(%turf %mesa %private-keys) *] wire)
     (take:(mesa +<.vane-gate) +<)
   (take:(ames +<.vane-gate) +<)
 ::  +stay: extract state before reload
@@ -7938,10 +7923,10 @@
         =.  queued-moves  moz  :: XX check on every call/take if there are queued moves?
         :: =.  chums.old
         ::   %-  ~(run by chums.old)
-        ::   |=  =ship-state
-        ::   ?:  ?=(%alien -.ship-state)  ship-state
+        ::   |=  =chum-state
+        ::   ?:  ?=(%alien -.chum-state)  chum-state
         ::   ~&  %cleaning
-        ::   %_  ship-state
+        ::   %_  chum-state
         ::     flows    ~
         ::     pit      ~
         ::     corked   ~
@@ -8004,7 +7989,6 @@
         ::   :: [unix-duct.state.old %give %saxo get-sponsors:ev-core]  ::  XX can't scry on ++load
                                                                         ::  ask %jael to give us this on ++take
         ::   [[//ames/0v0]~ %give %saxo get-sponsors:ev-core]
-        ~&  >  %recurse
         $(old 20+adult/(state-19-to-20 state.old))
       ::
       ?:  ?=(%20 -.old)  $(old 21+adult/(state-20-to-21 state.old))
