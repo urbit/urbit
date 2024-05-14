@@ -1561,8 +1561,20 @@
     ::
     +|  %encryption
     ::
-    +$  binding            [=path root=@uxI]
-    ++  get-key-for        |=  [=ship =life]  *@                ::  XX implement?
+    +$  binding  [=path root=@uxI]
+    ::  +get-key-for : eddh with our key
+    ::
+    ++  get-key-for
+      |=  [=ship =life chums=(map ship chum-state)]
+      ^-  (unit pass)
+      =+  chum=(~(get by chums) ship)
+      ?.  ?=([~ %known *] chum)
+        =<  `pass  :: XX check suite?
+        .^([suite=@ud =pass] %j /=puby=/[(scot %p ship)]/[(scot %ud life)])
+      ?.  =(life life.+.u.chum)
+         ~  :: XX  log?
+      `symmetric-key.+.u.chum
+    ::
     ++  get-group-key-for  |=(@ud `(unit @uxI)`(some `@uxI`0))  ::  XX implement?
     ++  crypt
       |%
