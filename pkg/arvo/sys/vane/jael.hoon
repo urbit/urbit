@@ -317,7 +317,6 @@
             [hen %slip %d %init ~]
             [hen %slip %g %init ~]
             [hen %slip %c %init ~]
-            :: [hen %slip %my %init ~]  XX mesa doesn't exist before %jael; see %arvo ++grow arm
             [hen %slip %a %init ~]
         ==
       +>.$
@@ -359,7 +358,6 @@
             [hen %slip %d %init ~]
             [hen %slip %g %init ~]
             [hen %slip %c %init ~]
-            :: [hen %slip %m %init ~]  XX mesa doesn't exist before %jael; see %arvo ++grow arm
             [hen %slip %a %init ~]
         ==
       +>.$
@@ -658,7 +656,6 @@
     |^
     =/  yaz  %+  skid  ~(tap in yen)
       |=  d=duct
-      ~&  d/d
       &(?=([[%ames ?(%ames %mesa) @ @ *] *] d) !=(%public-keys i.t.t.i.d))
     =/  yez  (weld p.yaz (sort q.yaz sorter))
     |-  ^+  this-su
@@ -1277,6 +1274,18 @@
       %turf
     ?.  ?=(~ tyl)  [~ ~]
     [~ ~ %noun !>(tuf.own.pki.lex)]
+  ::
+      %puby                                            ::  unitized public-key
+    ?.  ?=([@ @ ~] tyl)  [~ ~]
+    ?.  =([%& our] why)
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    =/  lif  (slaw %p i.t.tyl)
+    ?~  who  [~ ~]
+    ?~  lif  [~ ~]
+    =/  pos  (~(get by pos.zim.pki.lex) u.who)
+    ?~  pos  ``[%noun !>(~)]
+    ``[%noun !>((~(get by keys.u.pos) u.lif))]
   ==
 ::                                                      ::  ++stay
 ++  stay                                                ::  preserve
