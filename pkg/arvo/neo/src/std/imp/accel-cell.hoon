@@ -52,7 +52,14 @@
     :-  ~
     =/  vax
       ?~  ref  !>(~)
-      q.pail.q.u.ref
+      ?.  =(%accel-cell p.pail.q.u.ref)
+        q.pail.q.u.ref
+      =/  v  !<(accel-cell q.pail.q.u.ref)
+      ?~  result.v  !>(~)
+      ?-  -.u.result.v
+        %.n  !>(~)
+        %.y  +.u.result.v
+      ==
     =.  result.cell  (render-hoon code.cell vax)
     !>(cell)
   --
