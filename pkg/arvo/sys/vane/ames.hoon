@@ -5499,7 +5499,7 @@
           ::
           +|  %message-flow-paths
           ::
-          +$  res-mess-pith
+          +$  flow-pith
             $:  %flow
                 [%ud bone=@ud]
                 load=?(%plea %boon %ack-plea %ack-boon %nax)  ::  XX to %lul
@@ -5508,7 +5508,7 @@
                 ~
             ==
           ::
-          +$  res-cork-pith
+          +$  cork-pith
             $:  %flow
                 [%ud bone=@ud]
                 %cork             :: XX allow to read "server" corks
@@ -5775,7 +5775,7 @@
               (ev-validate-path inner-path)
             ::
             ~|  path-validation-failed/ack^pok
-            ?>  &(?=(res-mess-pith ack) ?=(res-mess-pith pok))
+            ?>  &(?=(flow-pith ack) ?=(flow-pith pok))
             ::
             ?.  =(her.ack-name our)  ::  do we need to respond to this ack?
               ~&  >>  %not-our-ack^her.ack-name^our
@@ -5983,7 +5983,7 @@
                 ~
             =/  pok=(pole iota)  (ev-pave path.pok-spar)
             ~|  poke-path-failed/path.pok-spar
-            ?>  ?=(res-mess-pith pok)
+            ?>  ?=(flow-pith pok)
             ::
             ::  the packet layer has already validated that this is a valid %poke
             ::
@@ -6072,7 +6072,7 @@
             ?:  =(were %cor)
               ::  validate %cork path
               ::
-              ?>  ?=(res-cork-pith message-path)
+              ?>  ?=(cork-pith message-path)
               ::  if we don't crash, the client has removed the flow,
               ::  and have succesfully +peek'ed the %cork
               ::
@@ -6081,7 +6081,7 @@
             ::
             ::  XX  validate thath wire and path match?
             ::
-            ?>  ?=(res-mess-pith message-path)
+            ?>  ?=(flow-pith message-path)
             ::
             ::  XX replaced by the flow "dire"ction ?(%for %bak)
             ::  based on the bone we can know if this payload is an ack?
@@ -7234,6 +7234,110 @@
             ::
             --
           ::
+          +|  %namespaces
+          ::
+          ++  ev-peek-publ
+            |=  [lyf=@ud =path]
+            ^-  (unit (unit cage))
+            ?~  lyf
+              [~ ~]
+            ?.  =(lyf life.ames-state)
+              ~
+            ?~  inn=(inner-path-to-beam our path)
+              [~ ~]
+            =/  view  ?@(vew.u.inn vew.u.inn (cat 3 [way car]:vew.u.inn))
+            ?~  res=(rof ~ /ames/publ view bem.u.inn)
+              ~
+            =>  [bem=bem.u.inn res=res ryf=rift.ames-state priv=priv.ames-state ..crypt]
+            ~>  %memo./ames/publ
+            =/  gag  ?~(u.res ~ [p q.q]:u.u.res)  :: XX how does receiver distinguish these?
+            =/  ful  (en-beam bem)
+            =/  ser  (jam gag)  :: unencrypted
+            ``[%message !>([%sign (sign:crypt `@`priv ful (root:lss (met 3 ser)^ser)) ser])]
+          ::
+          ++  ev-peek-chum
+            |=  [bem=beam her=@p lyf=@ud hyf=@ud cyf=@uv]
+            ^-  (unit (unit cage))
+            ?.  =(lyf life.ames-state)
+              ~
+            ?~  key=(get-key-for her hyf chums.ames-state)
+              ~
+            =/  pat=path  (open-path:crypt u.key cyf)
+            ?~  inn=(inner-path-to-beam our pat)
+              ~
+            =/  res
+              ?.  =(%$ q.bem.u.inn)
+                ::  data produced by other vanes
+                ::
+                (rof `[her ~ ~] /ames/chum vew.u.inn bem.u.inn)
+              ?+    s.bem.u.inn  ~
+              ::
+                  [%flow bone=@ load=@ rcvr=@ mess=@ ~]
+                =>  :*  path=s.bem.u.inn  peek=ev-peek-flow
+                        pole=(pole iota)  pave=ev-pave
+                        pith=flow-pith
+                    ==
+                ~>  %memo./ames/peek/flow
+                =/  path=pole  `pole`(pave path)
+                ?>  ?=(pith path)
+                (peek [bone load rcvr mess]:path)
+              ==
+            ?~  res
+              ~
+            =>  [key=u.key cyf=cyf bem=bem res=res ..crypt] :: XX rift.ames-state
+            ~>  %memo./ames/chum
+            =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
+            =/  ful  (en-beam bem)
+            =/  ser  (jam gag)
+            =/  cyr  (encrypt:crypt key cyf (met 3 ser)^ser)
+            ``[%message !>([%hmac (mac:crypt key ful (root:lss cyr)) dat.cyr])]
+          ::
+          ++  ev-peek-shut
+            |=  [bem=beam kid=@ cyf=@uv]
+            ^-  (unit (unit cage))
+            ?~  key=(get:key-chain server-chain.ames-state kid)
+              ~
+            =/  pat  (open-path:crypt -.u.key cyf)
+            ::  XX check path prefix
+            ?~  inn=(inner-path-to-beam our pat)
+              ~
+            ?~  res=(rof [~ ~] /ames/shut vew.u.inn bem.u.inn)
+              ~
+            =>  [key=key cyf=cyf bem=bem res=res ryf=rift.ames-state ..crypt]
+            ~>  %memo./ames/shut
+            =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
+            =/  ful  (en-beam bem)
+            =/  ser  (jam gag)
+            =/  cyr  (encrypt:crypt -.u.key iv=cyf (met 3 ser)^ser)
+            =/  sig  (sign:crypt -.u.key ful (root:lss cyr))
+            ``[%message !>([%sign sig dat.cyr])]
+          ::
+          ++  ev-peek-flow
+            |=  [bone=@ud load=?(%plea %boon %ack-plea %ack-boon %nax) rcvr=ship mess=@ud]
+            ^-  (unit (unit cage))
+            =+  per-sat=(ev-get-per rcvr)
+            ?.  ?=([~ ~ *] per-sat)
+              ~  ::  %alien or missing
+            =.  per  [rcvr u.u.per-sat]
+            ?>  ?=(%known -.sat.per)
+            =/  dire=?(%for %bak)  (fo-infer-dire:fo load)
+            ?:  ?&  (~(has in corked.sat.per) bone dire)
+                    |(?=(%ack-plea load) ?=(%ack-boon load))
+                ==
+                ~&  >>>  corked-flow-dropping/load^corked.sat.per  :: XX remove
+                ::  XX if %ack for a %corked flow (for both client and server),
+                ::  produce %ack
+                ::  if the flow is corked, refuse to answer
+                ::  XX when are corked bones evicted?
+                ::
+                ~  ::  XX  [~ ~]
+            ::
+            =/  res=(unit page)
+              %.  [load mess]
+              fo-peek:(fo-abed:fo ~[//scry] bone dire)
+            ?~(res ~ ``[%message !>(u.res)])
+          ::
+          ::  ++  ev-peek-cork :: XX TODO?
           --
       ::
       |=  [now=@da eny=@uvJ rof=roof]
@@ -7416,7 +7520,30 @@
               [~ ~]
             =*  pat  pat.nex
             =/  res
-              $(lyc ~, pov /ames/message, s.bem pat)
+              ?+    pat
+                  $(lyc ~, pov /ames/message, s.bem pat)
+              ::
+                  [%publ lyf=@ pat=*]
+                =>  [pat=pat peek=ev-peek-publ pave=ev-pave pole=(pole iota) pout=pout pith=publ-pith]
+                ~>  %memo./ames/peek/publ
+                =+  pat=`pole`(pave pat)
+                ?.  ?=(pith pat)  [~ ~]
+                (peek lyf.pat (pout pat.pat))
+              ::
+                  [%chum lyf=@ her=@ hyf=@ cyf=@ ~]
+                =>  [pat=pat bem=bem peek=ev-peek-chum pave=ev-pave pole=(pole iota) pith=chum-pith]
+                ~>  %memo./ames/peek/chum
+                =>  .(pat `pole`(pave pat))
+                ?.  ?=(pith pat)  [~ ~]
+                (peek bem [her lyf hyf cyf]:pat)
+              ::
+                  [%shut kid=@ cyf=@ ~]
+                =>  [pat=pat bem=bem peek=ev-peek-shut pave=ev-pave pole=(pole iota) pith=shut-pith]
+                ~>  %memo./ames/peek/shut
+                =>  .(pat `pole`(pave pat))  :: XX move to top
+                ?.  ?=(pith pat)  [~ ~]
+                (peek bem [kid cyf]:pat)
+              ==
             ?.  ?&  ?=([~ ~ %message *] res)
               :: ...validate that it's really a message
               :: =>  [%message tag=?(sig hmac) ser=@]
@@ -7500,113 +7627,35 @@
           ::
           ::    /ax/[$ship]//1/validate-message/[auth-string]/[blake3-hash]/[path]
           ::
-          ::  publisher-side, message-level
+          ::  publisher-side, message-level (public namespace)
           ::
               [%publ lyf=@ pat=*]
-            =/  lyf  (slaw %ud lyf.tyl)
-            ?~  lyf  [~ ~]
-            ::  XX uncomment
-            :: ?.  =(u.lyf life.ames-state)
-            ::   ~&  1/[u.lyf life.ames-state]
-            ::   ~
-            ?~  inn=(inner-path-to-beam our pat.tyl)
-              [~ ~]
-            =/  view  ?@(vew.u.inn vew.u.inn (cat 3 [way car]:vew.u.inn))
-            ?~  res=(rof ~ /ames/publ view bem.u.inn)
-              ~
-            =>  [bem=bem res=res ryf=rift.ames-state priv=priv.ames-state ..crypt]
-            ~>  %memo./ames/publ
-            =/  gag  ?~(u.res ~ [p q.q]:u.u.res)  :: XX how does receiver distinguish these?
-            =/  ful  (en-beam bem)
-            =/  ser  (jam gag)  :: unencrypted
-            ``[%message !>([%sign (sign:crypt `@`priv ful (root:lss (met 3 ser)^ser)) ser])]
+            =>  .(tyl `(pole iota)`(ev-pave tyl))  :: XX move to top
+            ?.  ?=(publ-pith tyl)  [~ ~]
+            (ev-peek-publ lyf.tyl (pout pat.tyl))
+          ::  publisher-side, message-level (two-party encrypted namespace)
           ::
               [%chum lyf=@ her=@ hyf=@ cyf=@ ~]
-            =/  lyf  (slaw %ud lyf.tyl)
-            =/  her  (slaw %p her.tyl)
-            =/  hyf  (slaw %ud hyf.tyl)
-            =/  cyf  (slaw %uv cyf.tyl)
-            ?:  |(?=(~ lyf) ?=(~ her) ?=(~ hyf) ?=(~ cyf))
-              [~ ~]
-            ?.  =(u.lyf life.ames-state)
-              ~
-            :: =/  key  (get-key-for u.her u.hyf)  :: eddh with our key
-            =/  key=@
-              =+  per=(ev-got-per u.her)      :: XX ev-get-per
-              ?>  ?=(%known -.sat.per)        :: XX no-op if %alien?
-                                              :: fall back to %jael, do eddh on the side?
-              ?.  =(u.hyf life.sat.per)   !!  :: XX
-              symmetric-key.sat.per
-            =/  pat  (open-path:crypt key u.cyf)
-            ?~  inn=(inner-path-to-beam our pat)
-              ~
-            ?~  res=(rof `[u.her ~ ~] /ames/chum vew.u.inn bem.u.inn)
-              ~
-            =>  [key=key cyf=cyf bem=bem res=res ryf=rift.ames-state ..crypt]
-            ~>  %memo./ames/chum
-            =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
-            =/  ful  (en-beam bem)
-            =*  iv   u.cyf  :: XX
-            =/  ser  (jam gag)
-            =/  cyr  (encrypt:crypt key iv (met 3 ser)^ser)
-            ``[%message !>([%hmac (mac:crypt key ful (root:lss cyr)) dat.cyr])]
+            =>  .(tyl `(pole iota)`(ev-pave tyl))  :: XX move to top
+            ?.  ?=(chum-pith tyl)  [~ ~]
+            (ev-peek-chum bem [her lyf hyf cyf]:tyl)
+          ::  publisher-side, message-level (group encrypted namespace)
           ::
               [%shut kid=@ cyf=@ ~]
-            =/  kid  (slaw %ud kid.tyl)
-            =/  cyf  (slaw %uv cyf.tyl)
-            ?:  |(?=(~ kid) ?=(~ cyf))
-              [~ ~]
-            :: ?~  key=(get-group-key-for u.kid)
-            ?~  key=(get:key-chain server-chain.ames-state u.kid)
-              ~
-            =/  pat  (open-path:crypt -.u.key u.cyf)
-            ::  XX check path prefix
-            ?~  inn=(inner-path-to-beam our pat)
-              ~
-            ?~  res=(rof [~ ~] /ames/shut vew.u.inn bem.u.inn)
-              ~
-            =>  [key=key cyf=cyf bem=bem res=res ryf=rift.ames-state ..crypt]
-            ~>  %memo./ames/shut
-            =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
-            =/  ful  (en-beam bem)
-            =*  iv   u.cyf
-            =/  ser  (jam gag)
-            =/  cyr  (encrypt:crypt -.u.key iv (met 3 ser)^ser)
-            =/  sig  (sign:crypt -.u.key ful (root:lss cyr))
-            ``[%message !>([%sign sig dat.cyr])]
+            =>  .(tyl `(pole iota)`(ev-pave tyl))  :: XX move to top
+            ?.  ?=(shut-pith tyl)  [~ ~]
+            (ev-peek-shut bem [kid cyf]:tyl)
           ::  publisher-side, flow-level
           ::
               [%flow bone=@ load=@ rcvr=@ mess=@ ~]
-            ::  XX remove typed-paths
-            =>  .(tyl `(pole iota)`(ev-pave tyl))
-            ?>  ?=(res-mess-pith tyl)
-            ::
-            =+  per-sat=(ev-get-per rcvr.tyl)
-            ?.  ?=([~ ~ *] per-sat)
-              ~  ::  %alien or missing
-            =.  per  [rcvr.tyl u.u.per-sat]
-            ?>  ?=(%known -.sat.per)
-            =/  dire=?(%for %bak)  (fo-infer-dire:fo load.tyl)
-            ?:  ?&  (~(has in corked.sat.per) bone.tyl dire)
-                    |(?=(%ack-plea load.tyl) ?=(%ack-boon load.tyl))
-                ==
-                ~&  >>>  corked-flow-dropping/load.tyl^corked.sat.per  :: XX remove
-                ::  XX if %ack for a %corked flow (for both client and server),
-                ::  produce %ack
-                ::  if the flow is corked, refuse to answer
-                ::  XX when are corked bones evicted?
-                ::
-                ~  ::  XX  [~ ~]
-            ::
-            =/  res=(unit page)
-              %.  [load mess]:tyl
-              fo-peek:(fo-abed:fo ~[//scry] bone.tyl dire)
-            ?~(res ~ ``[%message !>(u.res)])
+            =>  .(tyl `(pole iota)`(ev-pave tyl))  :: XX move to top
+            ?>  ?=(flow-pith tyl)
+            (ev-peek-flow [bone load rcvr mess]:tyl)
           ::  client %mesa %corks, flow-level
           ::
               [%flow bone=@ %cork rcvr=@ ~]
             =>  .(tyl `(pole iota)`(ev-pave tyl))
-            ?>  ?=(res-cork-pith tyl)
+            ?>  ?=(cork-pith tyl)
             =+  per-sat=(ev-get-per rcvr.tyl)
             ?.  ?=([~ ~ *] per-sat)
               ~  ::  %alien or missing
