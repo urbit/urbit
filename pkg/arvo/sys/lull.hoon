@@ -1566,7 +1566,7 @@
   +$  axle
     $:  %0
         peers=(map ship ship-state)
-        unix-duct=_`duct`[//ames ~]
+        unix-duct=_`duct`[//ames/0v0 ~]
         =life
         =rift
         crypto-core=acru
