@@ -7037,31 +7037,17 @@
                 ::
                 ++  meet-alien-chum
                   |=  [=ship =point:jael todos=ovni-state =chum-state]
-                  |^  ^+  sy-core
+                  ^+  sy-core
                   ::  if we're a comet, send self-attestation packet first
                   ::
                   :: =?  sy-core  =(%pawn (clan:title our))
                   ::   =/  blob=@  (attestation-packet ship life.point)
                   ::   (send-blob for=| ship blob (~(get by chums.ames-state) ship))
                   ::
+
                   =.  ev-core
-                    =~  .(ev-core meet-alien-poke)  ::  apply outgoing messages
-                        meet-alien-peek             ::  apply remote scry requests
-                    ==
-                  ::
-                  sy-core
-                  ::
-                  ++  meet-alien-peek
-                    ^+  ev-core
-                    %-  ~(rep by peeks.todos)
-                    |=  [[=path ducts=(set duct)] core=_ev-core]
-                    %-  ~(rep in ducts)
-                    |=  [=duct c=_core]
-                    =.  core  (ev-abed:core [now eny rof] duct)
-                    (%*(ev-req-peek core per ship^chum-state) ~ ship path)
-                  ::
-                  ++  meet-alien-poke
-                    ^+  ev-core
+                    ::  apply outgoing messages
+                    ::
                     %+  reel  pokes.todos  ::  reversing for FIFO order
                     |=  [[=duct mess=mesa-message] core=_ev-core]
                     =.  core  (ev-abed:core [now eny rof] duct)
@@ -7069,8 +7055,17 @@
                         %plea
                       (%*(ev-req-plea core per ship^chum-state) ship +.mess)
                     ==
+                  =.  ev-core
+                    ::  apply remote scry requests
+                    ::
+                    %-  ~(rep by peeks.todos)
+                    |=  [[=path ducts=(set duct)] core=_ev-core]
+                    %-  ~(rep in ducts)
+                    |=  [=duct c=_core]
+                    =.  core  (ev-abed:core [now eny rof] duct)
+                    (%*(ev-req-peek core per ship^chum-state) ~ ship path)
                   ::
-                  --
+                  sy-core
                 ::
                 --
               ::  on-publ-rift: XX
@@ -7080,19 +7075,21 @@
                 ^+  sy-core
                 =?  rift.ames-state  =(our ship)
                   rift
-                ?~  chum-state=(~(get by chums.ames-state) ship)
+                =/  peer  (find-peer ship)
+                ?~  ?=([?(%ship %chum) ~] peer)
                   ::  print error here? %rift was probably called before %keys
                   ::
                   ~>  %slog.1^leaf/"ames: missing peer-state on-publ-rift"
                   sy-core
-                ?:  ?=([%alien *] u.chum-state)
+                ?.  ?=([?(%ship %chum) ~ %known *] peer)
                   ::  ignore aliens
                   ::
                   sy-core
-                =/  =fren-state      +.u.chum-state
-                =.  rift.fren-state  rift
-                =.  chums.ames-state
-                  (~(put by chums.ames-state) ship %known fren-state)
+                =.  rift.+.u.peer  rift
+                =?  chums.ames-state  ?=(%chum -.peer)
+                  (~(put by chums.ames-state) ship u.peer)
+                =?  peers.ames-state  ?=(%ship -.peer)
+                  (~(put by peers.ames-state) ship u.peer)
                 sy-core
               ::
               ++  insert-ship-state
