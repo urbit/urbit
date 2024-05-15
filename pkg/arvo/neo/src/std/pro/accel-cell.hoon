@@ -1,1 +1,5 @@
-,[code=@t result=(unit (each vase tang)) ref=(unit pith)]
+$:  code=@t 
+    result=(unit (each vase tang)) 
+    refa=(unit pith)
+    refb=(unit pith)
+==

@@ -14,7 +14,8 @@
     ;+  input
     ;div#config.grow.border.basis-half.fc.scroll-x
       ;+  spinner
-      ;+  deps
+      ;+  depsa
+      ;+  depsb
       ;+  output
     ==
   ==
@@ -34,14 +35,25 @@
     =oninput  "this.setAttribute('value', this.value);"
     ; {(trip code.accel-cell)}
   ==
-++  deps
+++  depsa
   ;label.fc.p1
-    ;span.f3.s-2.p1: ref
+    ;span.f3.s-2.p1: a
     ;input.border.wf
       =placeholder  "/path/to/dep"
-      =value  ?~(ref.accel-cell "" (en-tape:pith:neo u.ref.accel-cell))
+      =value  ?~(refa.accel-cell "" (en-tape:pith:neo u.refa.accel-cell))
       =oninput  "this.setAttribute('value', this.value);"
-      =name  "dep"
+      =name  "a"
+      ;
+    ==
+  ==
+++  depsb
+  ;label.fc.p1
+    ;span.f3.s-2.p1: b
+    ;input.border.wf
+      =placeholder  "/path/to/dep"
+      =value  ?~(refb.accel-cell "" (en-tape:pith:neo u.refb.accel-cell))
+      =oninput  "this.setAttribute('value', this.value);"
+      =name  "b"
       ;
     ==
   ==

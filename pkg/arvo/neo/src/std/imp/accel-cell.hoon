@@ -4,7 +4,7 @@
 =>
 |%
 ++  render-hoon
-  |=  [code=@t ref=vase]
+  |=  [code=@t a=vase b=vase]
   ^-  (unit (each vase tang))
   =/  code
     %-  crip
@@ -16,7 +16,11 @@
     %-  mule
     |.
     %+  slap
-      (slop !>(..zuse) ref(p [%face %ref p.ref]))
+      %+  slop
+        %+  slop
+          !>(..zuse) 
+        a(p [%face %a p.a])
+      b(p [%face %b p.b])
     (ream code)
   ?-  -.mul
     %.y  (some [%.y p.mul])
@@ -39,6 +43,29 @@
     %.n  !>(~)
     %.y  +.u.result.v
   ==
+::
+++  get-deps-vases
+  |=  =bowl:neo
+  ^-  [vase vase]
+  =/  a=(unit (pair pith cane:neo))
+    (~(get by deps.bowl) %a)
+  =/  b=(unit (pair pith cane:neo))
+    (~(get by deps.bowl) %b)
+  =/  va
+    ?~  a  !>(~)
+    (maybe-promote-vase pail.q.u.a)
+  =/  vb
+    ?~  b  !>(~)
+    (maybe-promote-vase pail.q.u.b)
+  [va vb]
+::
+++  update
+  |=  [cell=accel-cell =bowl:neo]
+  ^-  (quip card:neo vase)
+  =/  vavb=[vase vase]  (get-deps-vases bowl)
+  =.  result.cell
+    (render-hoon code.cell vavb)
+  [~ !>(cell)]
 --
 |%
 ++  state  %accel-cell
@@ -46,7 +73,8 @@
 ++  kids  *kids:neo
 ++  deps
   %-  ~(gas by *deps:neo)
-  :~  [%ref | [%pail %sig] ~]
+  :~  [%a | [%pail %sig] ~]
+      [%b | [%pail %sig] ~]
   ==
 ::
 ++  form
@@ -55,24 +83,17 @@
   ++  poke
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo vase)
-    ?.  =(stud %rely)  [~ state-vase]
+    ?.  =(stud %rely)  
+      [~ state-vase]
     =+  !<([=term =stem:neo] vax)
     ?>  ?=(%x -.q.stem)
-    =/  =pail:neo  pail.q.stem
     =/  cell  !<(accel-cell state-vase)
-    =.  result.cell
-      %+  render-hoon  code.cell
-      (maybe-promote-vase pail.q.stem)
-    [~ !>(cell)]
+    (update cell bowl)
+  ::
   ++  init
     |=  old=(unit vase)
+    ^-  (quip card:neo vase)
     =/  cell  !<(accel-cell (need old))
-    =/  ref=(unit (pair pith cane:neo))
-      (~(get by deps.bowl) %ref)
-    =.  result.cell
-      %+  render-hoon  code.cell
-      ?~  ref  !>(~)
-      (maybe-promote-vase pail.q.u.ref)
-    [~ !>(cell)]
+    (update cell bowl) 
   --
 --

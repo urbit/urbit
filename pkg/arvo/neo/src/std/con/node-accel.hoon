@@ -14,4 +14,5 @@
     (crip (~(got by (malt a.g.input-el)) %value))
     ?~  ref-path  ~
     `(pave:neo u.ref-path)
+    ~  :: XX fix refs here
 ==

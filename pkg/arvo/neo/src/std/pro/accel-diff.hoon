@@ -4,6 +4,7 @@ $%  ::[%new row=@ud column=@ud value=@t]
         row=@ud
         column=@ud
         text=@t
-        ref=(unit pith)
+        refa=(unit pith)
+        refb=(unit pith)
     ==
 ==
