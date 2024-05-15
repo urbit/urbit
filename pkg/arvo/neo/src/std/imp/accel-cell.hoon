@@ -9,7 +9,8 @@
   =/  code
     %-  crip
     :: (trip 10) = tape of newline
-    :: to ensure user-error doesn't break evaluation
+    :: to ensure that lack of newline at end
+    :: of file doesn't break evaluation
     (welp (trip code) (trip 10))
   =/  mul
     %-  mule
@@ -18,8 +19,25 @@
       (slop !>(..zuse) ref(p [%face %ref p.ref]))
     (ream code)
   ?-  -.mul
-    %.y  (some [%.y p.mul])
+    %.y  (some [%.y (sped p.mul)])
     %.n  (some [%.n (tang p.mul)])
+  ==
+++  maybe-promote-vase
+  ::  if the stud of the pail is %accel-cell,
+  ::  'promote' the vase in its 'result'.
+  ::  this avoids putting vases inside of vases
+  ::  AND provides a better experience for the user
+  ::  by no longer requiring them to unvase accel-cell
+  ::  references themselves.
+  |=  =pail:neo
+  ^-  vase
+  ?.  =(%accel-cell p.pail)
+    q.pail
+  =/  v  !<(accel-cell q.pail)
+  ?~  result.v  !>(~)
+  ?-  -.u.result.v
+    %.n  !>(~)
+    %.y  +.u.result.v
   ==
 --
 |%
@@ -40,27 +58,21 @@
     ?.  =(stud %rely)  [~ state-vase]
     =+  !<([=term =stem:neo] vax)
     ?>  ?=(%x -.q.stem)
-    =/  vax  q.pail.q.stem
-    =/  this  !<(accel-cell state-vase)
-    =.  result.this  (render-hoon code.this vax)
-    [~ !>(this)]
+    =/  =pail:neo  pail.q.stem
+    =/  cell  !<(accel-cell state-vase)
+    =.  result.cell
+      %+  render-hoon  code.cell
+      (maybe-promote-vase pail.q.stem)
+    [~ !>(cell)]
   ++  init
     |=  old=(unit vase)
-    =/  cell  (accel-cell !<(accel-cell (need old)))
+    =/  cell  !<(accel-cell (need old))
     =/  ref=(unit (pair pith cane:neo))
       (~(get by deps.bowl) %ref)
-    :-  ~
-    =/  vax
+    =.  result.cell
+      %+  render-hoon  code.cell
       ?~  ref  !>(~)
-      ?.  =(%accel-cell p.pail.q.u.ref)
-        q.pail.q.u.ref
-      =/  v  !<(accel-cell q.pail.q.u.ref)
-      ?~  result.v  !>(~)
-      ?-  -.u.result.v
-        %.n  !>(~)
-        %.y  +.u.result.v
-      ==
-    =.  result.cell  (render-hoon code.cell vax)
-    !>(cell)
+      (maybe-promote-vase pail.q.u.ref)
+    [~ !>(cell)]
   --
 --
