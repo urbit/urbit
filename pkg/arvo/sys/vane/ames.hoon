@@ -6953,14 +6953,13 @@
                   ::
                   (on-publ-full (my [ship point]~))
                 ::
-                =|  =azimuth-state
                 =/  crypto-core   (nol:nu:crub:crypto priv.ames-state)
                 =/  =private-key  sec:ex:crypto-core
                 ::
-                =.  symmetric-key.azimuth-state
+                =.  symmetric-key.+.u.peer
                   (derive-symmetric-key public-key private-key)
-                =.  life.azimuth-state        life
-                =.  public-key.azimuth-state  public-key
+                =.  life.+.u.peer        life
+                =.  public-key.+.u.peer  public-key
                 ::
                 =?  chums.ames-state  ?=(%chum -.peer)
                   (~(put by chums.ames-state) ship u.peer)
@@ -7105,19 +7104,29 @@
                 =/  =private-key    sec:ex:crypto-core
                 =/  =symmetric-key  (derive-symmetric-key public-key private-key)
                 ::
-                =|  route=(unit [direct=? =lane])
-                =|  =azimuth-state
-                =.  life.azimuth-state           life.point
-                =.  rift.azimuth-state           rift.point
-                =.  public-key.azimuth-state     public-key
-                =.  symmetric-key.azimuth-state  symmetric-key
-                =.  sponsor.azimuth-state
+                =/  peer
+                  ::  XX if the peer doesn't previously exist we insert it
+                  ::  based on the chosen core in state; see find-peer
+                  ?:  ?=(%chum wer)
+                    =/  =chum-state  sat:(ev-gut-per ship)
+                    ?>(?=([%known *] chum-state) chum/+.chum-state)
+                  =/  ship-state  (~(get by peers.ames-state) ship)
+                  :-  %ship
+                  ?.  ?=([~ %known *] ship-state)
+                    *peer-state
+                  +.u.ship-state
+                =.  life.peer           life.point
+                =.  rift.peer           rift.point
+                =.  public-key.peer     public-key
+                =.  symmetric-key.peer  symmetric-key
+                =.  qos.peer            [%unborn now]
+                =.  sponsor.peer
                   ?^  sponsor.point
                     u.sponsor.point
                   (^^sein:title rof /ames our now ship)
                 ::  automatically set galaxy route, since unix handles lookup
                 ::
-                =?  route  ?=(%czar (clan:title ship))  :: XX check that we are not replacing anything
+                =?  route.peer   ?=(%czar (clan:title ship))
                   `[direct=%.y lane=[%& ship]]
                 ::  XX TODO
                 :: =?  ev-core  ?=(%czar (clan:title ship))
@@ -7125,28 +7134,16 @@
                 ::   :*  unix-duct.ames-state  %give  %nail  ship
                 ::       (get-forward-lanes our +.chum-state chums.ames-state)
                 ::   ==
-                ::  XX if the peer doesn't previously exist we insert it
-                ::  based on the chosen core in state; see find-peer
                 ::
                 :_  sy-core
-                ?:  ?=(%chum wer)
-                  =/  =chum-state  sat:(ev-gut-per ship)
-                  ?>  ?=([%known *] chum-state)
+                ?:  ?=(%chum -.peer)
                   =.  chums.ames-state
-                    %+  ~(put by chums.ames-state)  ship
-                    chum-state(+< azimuth-state, route.+ route, qos.+ [%unborn now])
-                  [%chum chum-state]
-                =/  =peer-state
-                  ::  XX from arm?
-                  =/  ship-state  (~(get by peers.ames-state) ship)
-                  ?.  ?=([~ %known *] ship-state)
-                    *peer-state
-                  +.u.ship-state
+                    (~(put by chums.ames-state) ship known/+.peer)
+                  [%chum known/+.peer]
                 ::
                 =.  peers.ames-state
-                  %+  ~(put by peers.ames-state)  ship
-                  known/peer-state(- azimuth-state, route route, qos [%unborn now])
-                [%ship known/peer-state]
+                  (~(put by peers.ames-state) ship known/+.peer)
+                [%ship known/+.peer]
               ::
               ++  find-peer
                 |=  =ship
