@@ -22,6 +22,7 @@
 =|  gil=(set type)                                      ::  processing
 =|  fin=(map type (list path))                          ::  finished state
 =|  dad=path                                            ::  father
+=|  vet=?                                               ::
 |=  t=type                                              ::
 ^-  kind                                                ::
 ?:  (~(has in gil) t)                                   ::
@@ -38,14 +39,19 @@
     [%core *]                                           ::
   =*  semi  p.r.q.t                                     ::
   =*  chap  q.r.q.t                                     ::
+  =?  vet  ?=(%wet q.p.q.t)  |                          ::
   =/  tabs=(list (map term hoon))                       ::  chapter contents
     (turn ~(val by chap) |=(t=tome q.t))                ::
-  =/  pay=kind  $(t p.t)                                ::
+  =/  pay=kind  $(t q.q.t)                              ::  XX wet
   =/  code=(list hoon)                                  ::  arm codes
     %-  zing                                            ::
     (turn tabs |=(t=(map term hoon) ~(val by t)))       ::
   =/  pros=(list type)                                  ::  arm product types
-    (turn code |=(c=hoon p:(~(mint ut.h t) %noun c)))   ::
+    =.  t  t(r.p.q %gold)                               ::
+    %+  turn                                            ::
+      code                                              ::
+    |=  c=hoon                                          ::
+    p:(%*(mint ut.h +6 t, vet vet) %noun c)             ::
   =*  bell  p.p.q.t                                     ::  label
   =/  self=path  ?~  bell  dad  [u.bell dad]            ::
   =/  arms=kind                                         ::
@@ -59,7 +65,8 @@
       pax   [tags.kid pax]                              ::
       fin   fin.kid                                     ::
     ==                                                  ::
-  =/  tags=(list path)  [self tags.arms]                ::
+  =/  tags=(list path)                                  ::
+    ?~  self  tags.arms  [self tags.arms]               ::
   =.  fin  (~(put by fin) t tags)                       ::
   [(weld tags tags.pay) fin.pay]                        ::
     [%face *]                                           ::
@@ -76,5 +83,5 @@
     [%hint *]                                           ::
   $(t q.t)                                              ::
     [%hold *]                                           ::
-  $(t p:(~(mint ut.h p.t) %noun q.t))                   ::
+  $(t p:(%*(mint ut.h +6 p.t, vet vet) %noun q.t))      ::
 ==                                                      ::

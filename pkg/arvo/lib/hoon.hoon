@@ -8339,6 +8339,60 @@
       ?.  ?=([%name @ [%base %noun]] p.gen)  ~
       `[%name term.p.gen skin]
     ==
+  ++  zoom
+    |=  bell=(unit term)
+    ^-  hoon
+    ?+    gen  ~&  [%zoom-open -.gen]  open
+        [%note *]  $(gen q.gen)
+        [%dbug *]  gen(q $(gen q.gen))
+        [%brbc *]  =-  ?~  -  !!
+                       :+  %brtr  ::  XX maybe recur
+                         [%bccl -]
+                       |-
+                       ?.  ?=([%gist *] body.gen)
+                         [%ktcl body.gen]
+                       [%note p.body.gen $(body.gen q.body.gen)]
+                   %+  turn  `(list term)`sample.gen
+                   |=  =term
+                   ^-  spec
+                   =/  tar  [%base %noun]
+                   [%bcts term [%bcsg tar [%bchp tar tar]]]
+        [%brcb *]  :+  %tsls  [%kttr p.gen]
+                   :+  %brcn  bell
+                   %-  ~(run by r.gen)
+                   |=  =tome
+                   :-  p.tome
+                   %-  ~(run by q.tome)
+                   |=  =hoon
+                   ?~  q.gen  hoon
+                   [%tstr [p.i.q.gen ~] q.i.q.gen $(q.gen t.q.gen)]
+        [%brcl *]  [%tsls p.gen $(gen [%brdt q.gen])]  ::  XX $ with gen -
+        [%brcn *]  [%brcn bell q.gen]
+        [%brdt *]  :+  %brcn  bell
+                   =-  [[%$ ~ -] ~ ~]
+                   (~(put by *(map term hoon)) %$ p.gen)
+        [%brkt *]  :+  %tsgl  [%limb %$]
+                   :+  %brcn  bell  ::  XX use bell
+                   =+  zil=(~(get by q.gen) %$)
+                   ?~  zil
+                     %+  ~(put by q.gen)  %$
+                     [*what [[%$ p.gen] ~ ~]]
+                   %+  ~(put by q.gen)  %$
+                   [p.u.zil (~(put by q.u.zil) %$ p.gen)]
+        [%brpt *]  [%brpt bell q.gen]
+        [%brhp *]  [%tsgl [%limb %$] [%brdt p.gen]]  ::  XX maybe recur
+        [%brsg *]  [%ktbr $(gen [%brts p.gen q.gen])]
+        [%brtr *]  :+  %tsls  [%kttr p.gen]
+                   :+  %brpt  bell
+                   =-  [[%$ ~ -] ~ ~]
+                   (~(put by *(map term hoon)) %$ q.gen)
+        [%brts *]  %=  $
+                     gen  :+  %brcb  p.gen
+                          =-  [~ [[%$ ~ -] ~ ~]]
+                          (~(put by *(map term hoon)) %$ q.gen)
+                   ==
+        [%brwt *]  [%ktwt $(gen [%brdt p.gen])]
+  ==
   ::
   ::  +open: desugarer
   ++  open
@@ -8394,49 +8448,16 @@
         [%note *]  q.gen
     ::
     ::TODO: does %gist need to be special cased here?
-        [%brbc *]  =-  ?~  -  !!
-                       :+  %brtr
-                         [%bccl -]
-                       |-
-                       ?.  ?=([%gist *] body.gen)
-                         [%ktcl body.gen]
-                       [%note p.body.gen $(body.gen q.body.gen)]
-                   %+  turn  `(list term)`sample.gen
-                   |=  =term
-                   ^-  spec
-                   =/  tar  [%base %noun]
-                   [%bcts term [%bcsg tar [%bchp tar tar]]]
-        [%brcb *]  :+  %tsls  [%kttr p.gen]
-                   :+  %brcn  ~
-                   %-  ~(run by r.gen)
-                   |=  =tome
-                   :-  p.tome
-                   %-  ~(run by q.tome)
-                   |=  =hoon
-                   ?~  q.gen  hoon
-                   [%tstr [p.i.q.gen ~] q.i.q.gen $(q.gen t.q.gen)]
-        [%brcl *]  [%tsls p.gen [%brdt q.gen]]
-        [%brdt *]  :+  %brcn  ~
-                   =-  [[%$ ~ -] ~ ~]
-                   (~(put by *(map term hoon)) %$ p.gen)
-        [%brkt *]  :+  %tsgl  [%limb %$]
-                   :+  %brcn  ~
-                   =+  zil=(~(get by q.gen) %$)
-                   ?~  zil
-                     %+  ~(put by q.gen)  %$
-                     [*what [[%$ p.gen] ~ ~]]
-                   %+  ~(put by q.gen)  %$
-                   [p.u.zil (~(put by q.u.zil) %$ p.gen)]
-        [%brhp *]  [%tsgl [%limb %$] [%brdt p.gen]]
-        [%brsg *]  [%ktbr [%brts p.gen q.gen]]
-        [%brtr *]  :+  %tsls  [%kttr p.gen]
-                   :+  %brpt  ~
-                   =-  [[%$ ~ -] ~ ~]
-                   (~(put by *(map term hoon)) %$ q.gen)
-        [%brts *]  :+  %brcb  p.gen
-                   =-  [~ [[%$ ~ -] ~ ~]]
-                   (~(put by *(map term hoon)) %$ q.gen)
-        [%brwt *]  [%ktwt %brdt p.gen]
+        [%brbc *]  (zoom ~)
+        [%brcb *]  (zoom ~)
+        [%brcl *]  (zoom ~)
+        [%brdt *]  (zoom ~)
+        [%brkt *]  (zoom ~)
+        [%brhp *]  (zoom ~)
+        [%brsg *]  (zoom ~)
+        [%brtr *]  (zoom ~)
+        [%brts *]  (zoom ~)
+        [%brwt *]  (zoom ~)
     ::
         [%clkt *]  [p.gen q.gen r.gen s.gen]
         [%clls *]  [p.gen q.gen r.gen]
@@ -8513,7 +8534,15 @@
         ?~  r.gen
           nob
         [[[%rock %$ p.i.r.gen] [%zpts q.i.r.gen]] $(r.gen t.r.gen)]
-      s.gen
+      %-  zoom(gen s.gen)
+      :-  ~  %.  p.gen
+      |=  =chum
+      ^-  @t
+      ?@  chum
+        chum
+      ?@  +.chum
+        (rap 3 -.chum '.' (scot %ud +.chum) ~)
+      -.chum  ::  XX handle ven/pro/ver
     ::
         [%sgfs *]  [%sgcn p.gen [%$ 7] ~ q.gen]
         [%sggl *]  [%tsgl [%sggr p.gen [%$ 1]] q.gen]
@@ -9493,6 +9522,7 @@
     |=  [way=vial hyp=wing]
     ^-  port
     ~_  (show [%c %find] %l hyp)
+    ~|  (mug sut)
     =-  ?@  -  !!
         ?-    -<
           %&  [%& p.-]
@@ -9984,15 +10014,6 @@
         [%note *]
       =+  hum=$(gen q.gen)
       [(hint [sut p.gen] p.hum) q.hum]
-    ::
-        [%sgcn *]
-      ::  XX check that parent axis is core?
-      =+  res=$(gen ~(open ap gen))
-      ::  XX use repo
-      ~|  p.res
-      ?:  ?=([%core *] p.res)
-        res(p.p.q.p `(chut p.gen))
-      res
     ::
         [%sgzp *]  ~_(duck(sut (play p.gen)) $(gen q.gen))
         [%sggr *]
@@ -10535,11 +10556,6 @@
       [%ktsg *]  $(gen p.gen)
       [%ktwt *]  (wrap(sut $(gen p.gen)) %lead)
       [%note *]  (hint [sut p.gen] $(gen q.gen))
-      [%sgcn *]  =+  res=$(gen ~(open ap gen))
-                 ::  XX use repo
-                 ?:  ?=([%core *] res)
-                   res(p.p.q `(chut p.gen))
-                 res
       [%sgzp *]  ~_(duck(sut ^$(gen p.gen)) $(gen q.gen))
       [%sggr *]  $(gen q.gen)
       [%tsgr *]  $(gen q.gen, sut $(gen p.gen))
