@@ -16,6 +16,65 @@
 ::
 =>  
 |%
+::  
+::  $care: Perspective on a path
+::    
++$  care
+  $?  %x  :: single node
+      %y  :: single node and immediate children
+      %z  :: single node and all descendants
+  ==
+::  $over: range of time for case bookkeeping
+::
+::
++$  over
+  $:  why=(pair @ud @ud)
+      zed=(pair @ud @ud)
+  ==
+::
+::  $ever: Total shrub version
+::
+::    .exe is incremented only when the shrub itself changes i.e. it
+::    versions the %x care
+::    .why is incremented when the shrub or any of its children changes
+::    i.e. it versions the %y care
+::    .zed is incremened when the shrub of any of its descendants change
+::
++$  ever  
+  $:  exe=@ud 
+      why=@ud
+      zed=@ud
+  ==
+::  $once: Partial version
+::
+::    Identify shrub by either %node or %tree, as per $ever
+::
++$  once  $%([%node p=@ud] [%tree p=@ud])
+
++$  pulp  ?(%noun %json)
+::  $hash: Hash
++$  hash   @uvH
+::  $seal: Signature
+::
++$  seal   @uvH
+::  $myth: Binding, possibly tombstoned
+::
++$  myth
+  $:  pail=(unit pail)
+      =aeon
+  ==
++$  book  (pair tale pail)
++$  poem  (pair tale (unit pail))
+::
++$  aeon  (pair ever oath)
++$  tale  (pair case oath)
++$  oath  (pair hash seal)
+:: 
++$  saga  (pair aeon pail)
++$  pail  (pair stud vase)
+::
++$  epic  (axal saga)
+
 ::  $stud: name for build system outputs
 ::  
 ::    Build system outputs cannot live at arbitrary points in the
@@ -25,7 +84,217 @@
   $@  @tas                                 ::  auth=urbit
   $:  mark=@tas                            :: 
       [=ship =desk]
-  ==                                            ::
+  ==
+++  axal
+  |$  [item]  
+  [fil=(unit item) kid=(map iota $)]
+++  axil
+  |$  [item]
+  [fil=(unit item) kid=(map pith item)]
+++  of
+  =|  fat=(axal)
+  |@ 
+  ++  view
+    =|  res=(map pith _?>(?=(^ fil.fat) u.fil.fat))
+    |=  [=care pax=pith]
+    =.  fat  (dip pax)
+    =?  res  ?=(^ fil.fat)
+     (~(put by res) ~ u.fil.fat)
+    ?-  care
+      %x  res
+      %y  =.(fat snip (~(uni by res) tar))
+      %z  (~(uni by res) tar)
+    ==
+  ::
+  ++  anc-jab
+    |*  [pax=pith fun=$-(* *)]
+    ^+  fat
+    ?~  pax
+      fat
+    =?  fil.fat  ?=(^ fil.fat)
+      `(fun u.fil.fat)
+    fat(kid (~(put by kid.fat) i.pax $(fat (~(got by kid.fat) i.pax), pax t.pax)))
+    
+  ::
+  ++  anc
+    =|  res=(list pith)
+    =|  cur=pith
+    |=  pax=pith
+    ^-  (set pith)
+    ?~  pax
+      (~(gas in *(set pith)) res)
+    =?  res  ?=(^ fil.fat)
+      [cur res]
+    $(fat (~(got by kid.fat) i.pax), pax t.pax, cur (snoc cur i.pax))
+  ++  parent
+    =|  res=(unit pith)
+    =|  cur=pith
+    |=  pax=pith
+    |-  ^+  res
+    ?~  pax
+      res
+    =?  res  ?=(^ fil.fat)
+      `cur
+    =/  nex  (~(get by kid.fat) i.pax)
+    ?~  nex
+      res
+    $(fat u.nex, pax t.pax, cur (snoc cur i.pax))
+  ++  snip
+    |-  ^+  fat
+    =*  loop  $
+    %_    fat
+        kid
+      %-  ~(run by kid.fat)
+      |=  f=_fat
+      ?^  fil.f
+        [`u.fil.f ~]
+      loop(fat f)
+    ==
+  ::
+  ++  kid
+    |=  pax=pith
+    ^-  (map pith _?>(?=(^ fil.fat) u.fil.fat))
+    =.  fat  (dip pax)
+    =.  fat  snip
+    =.  fil.fat  ~
+    tar
+  ::
+  ++  kids
+    |=  pax=pith
+    ^-  (axil _?>(?=(^ fil.fat) u.fil.fat))
+    :-  (get pax)
+    (kid pax)
+  ::
+  ++  del
+    |=  pax=pith
+    ^+  fat
+    ?~  pax  [~ kid.fat]
+    =/  kid  (~(get by kid.fat) i.pax)
+    ?~  kid  fat
+    fat(kid (~(put by kid.fat) i.pax $(fat u.kid, pax t.pax)))
+  ::
+  ::  Descend to the axal at this path
+  ::
+  ++  dip
+    |=  pax=pith
+    ^+  fat
+    ?~  pax  fat
+    =/  kid  (~(get by kid.fat) i.pax)
+    ?~  kid  [~ ~]
+    $(fat u.kid, pax t.pax)
+  ::
+  ++  gas
+    |*  lit=(list (pair pith _?>(?=(^ fil.fat) u.fil.fat)))
+    ^+  fat
+    ?~  lit  fat
+    $(fat (put p.i.lit q.i.lit), lit t.lit)
+  ++  got
+    |=  pax=pith
+    ~|  missing-room/pax
+    (need (get pax))
+  ++  gut
+    |*  [pax=pith dat=*]
+    =>  .(dat `_?>(?=(^ fil.fat) u.fil.fat)`dat, pax `pith`pax)
+    ^+  dat
+    (fall (get pax) dat)
+  ::
+  ++  get
+    |=  pax=pith
+    fil:(dip pax)
+  ::  Fetch file at longest existing prefix of the path
+  ::
+  ++  fit
+    |=  pax=pith
+    ^+  [pax fil.fat]
+    ?~  pax  [~ fil.fat]
+    =/  kid  (~(get by kid.fat) i.pax)
+    ?~  kid  [pax fil.fat]
+    =/  low  $(fat u.kid, pax t.pax)
+    ?~  +.low
+      [pax fil.fat]
+    low
+  ::
+  ++  has
+    |=  pax=pith
+    !=(~ (get pax))
+  ::  Delete subtree
+  ::
+  ++  lop
+    |=  pax=pith
+    ^+  fat
+    ?~  pax  fat
+    |-
+    ?~  t.pax  fat(kid (~(del by kid.fat) i.pax))
+    =/  kid  (~(get by kid.fat) i.pax)
+    ?~  kid  fat
+    fat(kid (~(put by kid.fat) i.pax $(fat u.kid, pax t.pax)))
+  ::
+  ++  put
+    |*  [pax=pith dat=*]
+    =>  .(dat `_?>(?=(^ fil.fat) u.fil.fat)`dat, pax `pith`pax)
+    |-  ^+  fat
+    ?~  pax  fat(fil `dat)
+    =/  kid  (~(gut by kid.fat) i.pax ^+(fat [~ ~]))
+    fat(kid (~(put by kid.fat) i.pax $(fat kid, pax t.pax)))
+  ::
+  ++  tap
+    =|  pax=pith
+    =|  out=(list (pair pith _?>(?=(^ fil.fat) u.fil.fat)))
+    |-  ^+   out
+    =?  out  ?=(^ fil.fat)  :_(out [pax u.fil.fat])
+    =/  kid  ~(tap by kid.fat)
+    |-  ^+   out
+    ?~  kid  out
+    %=  $
+      kid  t.kid
+      out  ^$(pax (weld pax /[p.i.kid]), fat q.i.kid)
+    ==
+  ::  Serialize to map
+  ::
+  ++  tar
+    (~(gas by *(map pith _?>(?=(^ fil.fat) u.fil.fat))) tap)
+  --
+::  $span: 
++$  span  (pair @ud seal)
+::  $case: Canonical (%x) version
++$  case  @ud
+::  $past: Past aeons, indexed by x
+++  past
+  =<  past
+  |%
+  ++  on  ((^on case poem) lte)
+  +$  past  ((mop case poem) lte)
+  --
+::  $dirt: Layer 1 of the namespace
+++  dirt
+  |%
+  +$  card  (pair pith note)
+  +$  note
+    $%  [%grow =pail =oath]
+        [%cull ~]
+    ==
+  +$  loam  (axal soil)
+  +$  soil
+    $:  live=(unit book)
+        bone=past
+    ==
+  +$  state  (map ship soil)
+  +$  dust   ?(%grow %cull)
+  +$  gift   (trel pith case dust)
+  --
+--
+|%
+++  land
+  =<  land
+  |%
+  +$  land  ((mop case over) lte)
+  ++  on    ((^on case over) lte)
+  --
+++  farm
+  =<  farm
+  |%
+  +$  farm  (axal land)
+  --
 --
 |%
 ::  $curt: Single constraint
@@ -524,14 +793,6 @@
 ::  $gift: notification that a children changed
 ::
 +$  gift  (map pith mode)
-::  
-::  $care: Perspective on a path
-::    
-+$  care
-  $?  %x  :: single node
-      %y  :: single node and immediate children
-      %z  :: single node and all descendants
-  ==
 ::
 ::  $hunt: perspective and shrub
 ::    
@@ -855,20 +1116,6 @@
   ++  req  request:http
   +$  res  client-response:^iris
   --
-::
-::  $ever: Total shrub version
-::
-::    .node is incremented only when the shrub itself changes i.e. it
-::    versions the %x care
-::    .tree is incremented when the shrub or any of its children changes
-::    i.e. it versions the %y care
-::
-+$  ever  [node=@ud tree=@ud]
-::  $once: Partial version
-::
-::    Identify shrub by either %node or %tree, as per $ever
-::
-+$  once  $%([%node p=@ud] [%tree p=@ud])
 ::
 ::  $road: fully qualified path
 +$  road   [=name =once grab=pith]
@@ -1290,6 +1537,18 @@
     =/  kid  (~(get by kid.fat) i.pax)
     ?~  kid  fat
     fat(kid (~(put by kid.fat) i.pax $(fat u.kid, pax t.pax)))
+  ++  rep
+    |*  [pax=pith fit=_fat]
+    |-  ^+  fat
+    ?~  pax  fit
+    =/  kid  (~(gut by kid.fat) i.pax ^+(fat [~ ~]))
+    fat(kid (~(put by kid.fat) i.pax $(fat kid, pax t.pax)))
+  ::
+  ++  jab
+    |*  [pax=pith fun=$-(_?>(?=(^ fil.fat) u.fil.fat) _?>(?=(^ fil.fat) u.fil.fat))]
+    ^+  fat
+    =/  kid  (got pax)
+    (put pax (fun kid))
   ::
   ++  put
     |*  [pax=pith dat=*]
@@ -1388,14 +1647,14 @@
   (axal yarn)
 ::
 +$  stem
-  $~  [[0 0] %x %stud *vase]
+  $~  [[0 0 0] %x %stud *vase]
   %+  pair  ever
   $%  [%x =pail]
       [%y =pail kids=(map pith [=ever =mode =pail])]
       [%z =pail kids=(map pith [=ever =mode =pail])]
   ==
 +$  twig
-  $~  [[0 0] %x %stud ~]
+  $~  [[0 0 0] %x %stud ~]
   %+  pair  ever
   $%  [%x =vial]
       [%y =vial kids=(map pith [=ever =mode =vial])]
@@ -1404,7 +1663,7 @@
 ++  bulb  [=ever =pail]
 ++  wand
   |^
-  $~  [%x [0 0] [%$ ~] ~]
+  $~  [%x [0 0 0] [%$ ~] ~]
   $:  =care
       =ever
       =vial
@@ -1429,31 +1688,10 @@
       (~(run by ~(tar of ax)) |=(r=room [(get-ever:room r) (to-vial:room r)]))
     ==  
   --
-+$  pulp  ?(%noun %json)
-::  $hash: Hash
-+$  hash   @uvH
-::  $seal: Signature
-::
-+$  seal   @uvH
-::  $myth: Binding, possibly tombstoned
-::
-+$  myth
-  $:  pail=(pair stud (each vase hash))
-      =aeon
-  ==
-::
-+$  aeon  (pair ever seal)
-:: 
-+$  saga
-  $:  =pail
-      =aeon
-  ==
-::
-+$  epic  (axal saga)
 ::
 ::  $cane: (deprecated)
 +$  cane
-  $~  [%x [0 0] [%$ *vase] ~]
+  $~  [%x [0 0 0] [%$ *vase] ~]
   $:  =care
       =ever
       =pail
@@ -1504,8 +1742,8 @@
     |=  eve=^ever
     ^-  json
     %-  pairs
-    :~  node/(numb node.eve)
-        tree/(numb tree.eve)
+    :~  node/(numb exe.eve)
+        tree/(numb why.eve)
     ==
   ::
   ++  cane
@@ -1536,10 +1774,10 @@
     ^-  manx
     ;dl.ever-neo
       ;dt: Node
-      ;dd: {(a-co:co node.eve)}
+      ;dd: {(a-co:co exe.eve)}
     ::
       ;dt: Tree
-      ;dd: {(a-co:co tree.eve)}
+      ;dd: {(a-co:co why.eve)}
     ==
   ++  link
     |=  [=care pax=pith]
@@ -1642,7 +1880,6 @@
         [%pith ~ q=pith]
     ==
   --
-+$  pail  (pair stud vase)
 :: $ewer: deprecated
 +$  ewer  (pair stud vase)
 +$  vial  (pair stud *)
@@ -1751,7 +1988,7 @@
   ::      [author=ship time-sent=time message=txt]
   ::
   ++  state  *stud
-  ++  farm   *^farm
+  ++  farm   *o-farm
   ::
   ::  +kids: Some nodes in the namespace define what children are
   ::  allowed to be under them. For instance, it should not  be allowed
@@ -1780,14 +2017,14 @@
   --
 +$  soil
   $:  init=(pair ever (map name ever))
-      dirt=(unit dirt)
+      dirt=(unit o-dirt)
   ==
-+$  dirt
++$  o-dirt
   $:  =ever
       =vase
   ==
 ::  $farm: produce reactive value
-+$  farm
++$  o-farm
   $_  ^|
   |=  =bowl
   *vase
