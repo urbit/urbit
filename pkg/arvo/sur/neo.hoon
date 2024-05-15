@@ -23,6 +23,10 @@
   $?  %x  :: single node
       %y  :: single node and immediate children
       %z  :: single node and all descendants
+      :: without pails or vials
+      %a  :: single node (%x)
+      %b  :: node and immediate children (%y)
+      %c  :: node and all descendants
   ==
 ::  $over: range of time for case bookkeeping
 ::
@@ -47,9 +51,13 @@
   ==
 ::  $once: Partial version
 ::
-::    Identify shrub by either %node or %tree, as per $ever
+::    Identify shrub by either %x, %y or %z, as per $ever
 ::
-+$  once  $%([%node p=@ud] [%tree p=@ud])
++$  once
+  $%  [%x p=case]
+      [%y p=@ud]
+      [%z p=@ud]
+  ==
 
 +$  pulp  ?(%noun %json)
 ::  $hash: Hash
@@ -100,7 +108,7 @@
     =.  fat  (dip pax)
     =?  res  ?=(^ fil.fat)
      (~(put by res) ~ u.fil.fat)
-    ?-  care
+    ?+  care  !!
       %x  res
       %y  =.(fat snip (~(uni by res) tar))
       %z  (~(uni by res) tar)
@@ -1678,7 +1686,7 @@
     %-  ~(gas by *(map pith [ever vial]))
     =-  %+  turn  ~(tap by -)
         |=([k=pith v=[ever vial]] [(welp at k) v])
-    ?-    care
+    ?+    care  !!
         %x  ~
         %y
       =.  ax  ~(snip of ax)
@@ -1709,7 +1717,7 @@
   %-  ~(gas by *(map pith [ever pail]))
   =-  %+  turn  ~(tap by -)
       |=([k=pith v=[ever pail]] [(welp at k) v])
-  ?-    care
+  ?+    care   !!
       %x  ~
       %y
     =.  ax  ~(snip of ax)

@@ -2,6 +2,13 @@
 ::  Layer 1
 =>
 |%
+::  +nail: convert $over to $ever
+++  nail
+  |=  [=over:neo =case:neo]
+  ^-  ever:neo
+  [case p.why.over p.zed.over]
+::  $bump: Apply child or descendant change to $land
+::
 ++  bump
   |=  [=land:neo kind=?(%y %z)]
   ^+  land
@@ -12,6 +19,7 @@
   ?:  ?=(%y kind)
     over(q.why +(q.why.over))
   over(q.zed +(q.zed.over))
+::  $jolt: Apply self change to $land
 ::
 ++  jolt
   |=  [parent=land:neo =land:neo]
@@ -28,6 +36,37 @@
   :*  [. .]:.+(q.why.over)
       [. .]:.+(q.zed.over)
   ==
+::  $jerk: resolve $once to $ever with $land
+::
+++  jerk
+  =|  res=(unit ever:neo)
+  |=  [=land:neo =once:neo]
+  ^+  res
+  =<  -
+  ^-  [(unit ever:neo) land:neo]
+  %^  (dip:on:land:neo _res)  land  res
+  |=  [state=(unit ever:neo) [=case:neo =over:neo]]
+  ^-  [(unit over:neo) ? _res]
+  :-  `over
+  ^-  [? (unit ever:neo)]
+  ?:  ?=(%x -.once)
+    ?.  =(case p.once)
+      [| ~]
+    :-  %&
+    `(nail over case)
+  =/  hav=(pair @ud @ud)
+    ?-  -.once
+      %y  why.over
+      %z  zed.over
+    ==
+  =/  wan=@ud  
+    ?-  -.once
+      %y   p.once
+      %z   p.once
+    ==
+  ?.  &((lte p.hav wan) (gth q.hav wan))
+    [| ~]
+  [%& `[case p.why.over p.zed.over]]
 ::
 ++  tend
   ~+
@@ -80,30 +119,39 @@
       ==
     :_  (~(rep of:neo loam) p.card lom)
     (turn gifts |=(@ `gift:dirt:neo`[p.card +< -.q.card]))
+  ++  look
+    |=  [=case:neo =pith:neo]
+    ^-  (unit (unit poem:neo))
+    [~ ~]
   ++  scry
     |=  [=case:neo =pith:neo]
-    ^-  (unit poem:neo)
+    ^-  (unit (unit poem:neo))
     =/  lom  (~(dip of:neo loam) pith)
     ?~  fil.lom
       ~
     ?:  ?&  ?=(^ live.u.fil.lom)
             =(case p.p.u.live.u.fil.lom)
         ==
-      `[p `q]:u.live.u.fil.lom
-    (get:on:past:neo bone.u.fil.lom case)
+      ``[p `q]:u.live.u.fil.lom
+    =/  latest=case:neo  ~(case tend loam)
+    ?.  (lte case latest)
+      ~
+    `(get:on:past:neo bone.u.fil.lom case)
   ++  peek
     |=  =pith:neo
-    ^-  (unit book:neo)
+    ^-  (unit case:neo)
     =/  lom  (~(dip of:neo loam) pith)
     ?~  fil.lom
       ~
-    live.u.fil.lom
+    ?~  live.u.fil.lom
+      ~
+    `p.p.u.live.u.fil.lom
   --
 --
 ::  layer 2
 |%
 ++  till
-  |_  =farm:neo
+  |_  [=loam:dirt:neo =farm:neo]
   ++  self
     |=  [=pith:neo case=@ud]
     =/  parent=land:neo
@@ -145,6 +193,28 @@
     |=  =gift:dirt:neo
     ^-  farm:neo
     (eternal [p q]:gift)
+  ++  look
+    |=  [from=pith:neo =once:neo grab=pith:neo]
+    ^-  (unit (unit ever:neo))
+    =/  lan  (~(dip of:neo farm) from)
+    ?~  fil.lan
+      ~
+    ?~  eve=(jerk u.fil.lan once)
+      ~
+    ``u.eve
+  ::
+  ++  scry
+    |=  [=loam:dirt:neo =care:neo =case:neo =pith:neo]
+    ^-  (unit (unit myth:neo))
+    =+  pom=(~(scry plow loam) case pith)
+    ?:  ?=($?(~ [~ ~]) pom)
+      pom
+    ?~  val=(~(get of:neo farm) pith)
+      ~
+    ?~  ver=(pry:on:land:neo u.val)
+      ~
+    =/  =ever:neo  (nail val.u.ver case)
+    ``[q.u.u.pom ever q.p.u.u.pom]
   --
 --
 
