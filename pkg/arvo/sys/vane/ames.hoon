@@ -6884,25 +6884,19 @@
                 ?:  =(our ship)
                   sy-core
                 ::
-                =/  chum-state  (~(get by chums.ames-state) ship)
+                =/  peer  (find-peer ship)
                 ::  we shouldn't be hearing about ships we don't care about
                 ::
-                ?~  chum-state
+                ?~  +.peer
                   ~>  %slog.0^leaf/"ames: breach unknown {<our ship>}"
                   sy-core
                 ::  if an alien breached, this doesn't affect us
                 ::
-                ?:  ?=([~ %alien *] chum-state)
+                ?:  ?=([?(%ship %chum) ~ %alien *] peer)
                   ~>  %slog.0^leaf/"ames: breach alien {<our ship>}"
                   sy-core
                 ~>  %slog.0^leaf/"ames: breach peer {<our ship>}"
-                ::  a peer breached; drop messaging state
-                ::
-                =/  =fren-state  +.u.chum-state
-                =/  old-qos=qos  qos.fren-state
-                ::  reset all peer state other than pki data
-                ::
-                =.  +.fren-state  +:*^fren-state
+                =/  old-qos=qos  qos.+.u.peer
                 ::  print change to quality of service, if any
                 ::
                 :: =/  text=(unit tape)
@@ -6913,11 +6907,17 @@
                 ::   (ev-emit duct %pass /qos %d %flog %text u.text)
                 ::  reinitialize galaxy route if applicable
                 ::
-                =?  route.fren-state  =(%czar (clan:title ship))
+                =?  route.+.u.peer  =(%czar (clan:title ship))
                   `[direct=%.y lane=[%& ship]]
+                =/  cache-route  route.+.u.peer
+                ::  a peer breached; drop all peer state other than pki data
                 ::
-                =.  chums.ames-state
-                  (~(put by chums.ames-state) ship [%known fren-state])
+                =?  chums.ames-state  ?=(%chum -.peer)
+                  =.  +>.u.peer  +:*fren-state
+                  (~(put by chums.ames-state) ship u.peer(route cache-route))
+                =?  peers.ames-state  ?=(%ship -.peer)
+                  =.  +>.u.peer  +:*peer-state
+                  (~(put by peers.ames-state) ship u.peer(route cache-route))
                 ::
                 :: =.  ev-core
                 ::   %-  ev-emit
