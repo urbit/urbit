@@ -1,7 +1,8 @@
+/@  home
 ^-  firm:neo
 |%
-++  state  %sig
-++  poke  ~
+++  state  %home
+++  poke  (sy %home ~)
 ++  kids  *kids:neo
 ++  deps  *deps:neo
 ++  form
@@ -10,7 +11,7 @@
   ++  init
     |=  old=(unit vase)
     ^-  (quip card:neo vase)
-    :_  *vase
+    :_  !>(*home)
     :~  [#/[p/our.bowl]/home/diary %make %diary `!>('') ~]
         [#/[p/our.bowl]/home/tasks %make %task `!>(['' | ~]) ~]
         [#/[p/our.bowl]/home/sail %make %sail `!>(['' 'prose p3' ~]) ~]
@@ -25,6 +26,8 @@
   ++  poke
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo vase)
-    !!
+    ?>  =(stud %home)
+    ~&  !<(home vax)
+    [~ vax]
   --
 --

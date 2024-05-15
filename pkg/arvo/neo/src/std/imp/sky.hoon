@@ -91,6 +91,7 @@
     ^-  (quip card:neo vase)
     :-
       :~  [(welp here.bowl /settings) %make %sky-settings ~ ~]
+          [~[p/our.bowl %home] %make %home ~ ~]
       ==
     !>
     :_  1
