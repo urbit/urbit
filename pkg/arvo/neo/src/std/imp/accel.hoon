@@ -16,23 +16,13 @@
   ++  init
     |=  old=(unit vase)
     :_  (need old)
-    :~  [#/[p/our.bowl]/home/accel/1/1 %make %accel-cell `!>(['~' ~ ~ ~]) ~]
-        [#/[p/our.bowl]/home/accel/1/2 %make %accel-cell `!>(['~' ~ ~ ~]) ~]
-        [#/[p/our.bowl]/home/accel/1/3 %make %accel-cell `!>(['~' ~ ~ ~]) ~]
-        [#/[p/our.bowl]/home/accel/1/4 %make %accel-cell `!>(['~' ~ ~ ~]) ~]
-        [#/[p/our.bowl]/home/accel/2/1 %make %accel-cell `!>(['~' ~ ~ ~]) ~]
-        [#/[p/our.bowl]/home/accel/2/2 %make %accel-cell `!>(['~' ~ ~ ~]) ~]
-        [#/[p/our.bowl]/home/accel/2/3 %make %accel-cell `!>(['~' ~ ~ ~]) ~]
-        [#/[p/our.bowl]/home/accel/2/4 %make %accel-cell `!>(['~' ~ ~ ~]) ~]
-        [#/[p/our.bowl]/home/accel/3/1 %make %accel-cell `!>(['~' ~ ~ ~]) ~]
-        [#/[p/our.bowl]/home/accel/3/2 %make %accel-cell `!>(['~' ~ ~ ~]) ~]
-        [#/[p/our.bowl]/home/accel/3/3 %make %accel-cell `!>(['~' ~ ~ ~]) ~]
-        [#/[p/our.bowl]/home/accel/3/4 %make %accel-cell `!>(['~' ~ ~ ~]) ~]
-        [#/[p/our.bowl]/home/accel/4/1 %make %accel-cell `!>(['~' ~ ~ ~]) ~]
-        [#/[p/our.bowl]/home/accel/4/2 %make %accel-cell `!>(['~' ~ ~ ~]) ~]
-        [#/[p/our.bowl]/home/accel/4/3 %make %accel-cell `!>(['~' ~ ~ ~]) ~]
-        [#/[p/our.bowl]/home/accel/4/4 %make %accel-cell `!>(['~' ~ ~ ~]) ~]
-    ==
+    %-  zing
+    %+  turn  (gulf 1 10)
+    |=  col=@ud
+    %+  turn  (gulf 1 10)
+    |=  row=@ud
+    [#/[p/our.bowl]/home/accel/[ud/col]/[ud/row] %make %accel-cell `!>(['~' ~ ~ ~]) ~]
+  ::
   ++  poke
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo vase)
