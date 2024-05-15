@@ -5608,20 +5608,16 @@
           ++  ev-call
             =>  |%
                  +$  req-task
-                   $%  $<(%mess $>(?(%plea %keen %cork %heer %mess-ser) task))  ::  XX common tasks
+                   ::  ?(%plea %keen %cork) request tasks are called directly
+                   ::
+                   $%  $<(%mess $>(?(%heer %mess-ser) task))  ::  XX common tasks
                        [%mess (unit lane:pact) =mess dud=(unit goof)]
                    ==
                 --
             ::
             |=  task=req-task
             ^+  ev-core
-            ~!  task
             ?-  -.task
-            ::  %request-entry-points
-            ::
-              %plea  (ev-req-plea [ship plea]:task)
-              %keen  (ev-req-peek +.task)
-              %cork  (ev-req-plea ship.task %$ /cork %cork ~)
             ::  %packet-response-entry-point
             ::
                 %heer
@@ -5658,7 +5654,7 @@
           +|  %request-flow
           ::
           ++  ev-req-plea
-            |=  [=ship vane=@tas =wire payload=*]
+            |=  [vane=@tas =wire payload=*]
             ^+  ev-core
             ?>  ?=(%known -.sat.per)
             =^  bone  ossuary.sat.per  ::  XX  to arm?
@@ -5696,7 +5692,7 @@
             (ev-emit:ev-core [/ames]~ %pass /clog %g clog/u.id)
           ::
           ++  ev-req-peek
-            |=  [sec=(unit [kid=@ key=@]) spar]
+            |=  [sec=(unit [kid=@ key=@]) =path]
             ^+  ev-core
             ?>  ?=(%known -.sat.per)
             ::  +sy-plug should have already stored [kid key path] in chain.ames-state
@@ -5706,12 +5702,12 @@
             =/  =space  ?~(sec publ/life.sat.per shut/[kid key]:u.sec)
             ::
             =?  chums.ames-state  ?=(%shut -.space)
-              %+  ~(put by chums.ames-state)  ship
+              %+  ~(put by chums.ames-state)  ship.per
               %_    sat.per
                   client-chain
                 (put:key-chain client-chain.sat.per kid.space key.space path)
               ==
-            (ev-make-peek space ship^(ev-mess-spac space path))
+            (ev-make-peek space ship.per^(ev-mess-spac space path))
           ::
           +|  %packet-entry-points
           ::
@@ -7026,33 +7022,73 @@
                     ::
                     =?  sy-core  ?=([?(%ship %chum) ~ %alien *] old-peer-state)
                       ?:  ?=(%ship -.old-peer-state)
-                        meet-alien-ship
-                      ?>  ?=([%chum *] new-state)
+                        (meet-alien-ship ship point +.u.old-peer-state)
+                      ?>  ?=(%chum -.new-state)
                       (meet-alien-chum ship point +.u.old-peer-state +.new-state)
                     ::
                     $(points t.points)
                 ::
-                ++  meet-alien-ship  !!  :: XX TODO
+                ++  meet-alien-ship
+                  |=  [=ship =point todos=alien-agenda]
+                  ^+  sy-core
+                  ::  init event-core:ames
+                  ::
+                  =/  ames-core  (ev:ames [now eny rof] hen ames-state)
+                  ::  if we're a comet, send self-attestation packet first
+                  ::
+                  =?  ames-core  =(%pawn (clan:title our))
+                    =/  =blob  (attestation-packet:ames-core ship life.point)
+                    %-  send-blob:ames-core
+                    [for=| ship blob (~(get by peers.ames-state) ship)]
+                  ::  save current duct
+                  ::
+                  =/  original-duct  hen
+                  ::  apply outgoing messages, reversing for FIFO order
+                  ::
+                  =.  ames-core
+                    %+  reel  messages.todos
+                    |=  [[=duct =plea] core=_ames-core]
+                    ?:  ?=(%$ -.plea)
+                      (on-cork:core(duct duct) ship)
+                    (on-plea:core(duct duct) ship plea)
+                  ::  apply outgoing packet blobs
+                  ::
+                  =.  ames-core
+                    %+  roll  ~(tap in packets.todos)
+                    |=  [=blob core=_ames-core]
+                    (send-blob:core for=| ship blob (~(get by peers.ames-state) ship))
+                  ::  apply remote scry requests
+                  ::
+                  =^  moves  ames-state
+                    =+  peer-core=(abed:pe:ames-core ship)
+                    =<  abet  ^+  ames-core
+                    =<  abet  ^+  peer-core
+                    %-  ~(rep by keens.todos)
+                    |=  [[=path ducts=(set duct)] cor=_peer-core]
+                    (~(rep in ducts) |=([=duct c=_cor] (on-keen:c path duct)))
+                  ::
+                  sy-core
                 ::
                 ++  meet-alien-chum
                   |=  [=ship =point:jael todos=ovni-state =chum-state]
                   ^+  sy-core
+                  ::  init ev-core with provided chum-state
+                  ::
+                  =.  ev-core  %*(. ev-core per ship^chum-state)
                   ::  if we're a comet, send self-attestation packet first
                   ::
                   :: =?  sy-core  =(%pawn (clan:title our))
                   ::   =/  blob=@  (attestation-packet ship life.point)
                   ::   (send-blob for=| ship blob (~(get by chums.ames-state) ship))
                   ::
-
                   =.  ev-core
                     ::  apply outgoing messages
                     ::
                     %+  reel  pokes.todos  ::  reversing for FIFO order
-                    |=  [[=duct mess=mesa-message] core=_ev-core]
-                    =.  core  (ev-abed:core [now eny rof] duct)
+                    |=  [[=duct mess=mesa-message] c=_ev-core]
                     ?+    -.mess  !!  :: XX log alien peer %boon?
                         %plea
-                      (%*(ev-req-plea core per ship^chum-state) ship +.mess)
+                      (ev-req-plea:(ev-abed:c [now eny rof] duct) +.mess)
                     ==
                   =.  ev-core
                     ::  apply remote scry requests
@@ -7061,8 +7097,7 @@
                     |=  [[=path ducts=(set duct)] core=_ev-core]
                     %-  ~(rep in ducts)
                     |=  [=duct c=_core]
-                    =.  core  (ev-abed:core [now eny rof] duct)
-                    (%*(ev-req-peek core per ship^chum-state) ~ ship path)
+                    (ev-req-peek:(ev-abed:c [now eny rof] duct) ~ path)
                   ::
                   sy-core
                 ::
@@ -7380,13 +7415,17 @@
               %heer   %-  %-  slog
                           :_  tang.u.dud
                           leaf+"mesa: %heer crashed {<mote.u.dud>}"
-                    `ames-state
+                      `ames-state
               %mess  ev-abet:(ev-call:ev-core %mess p.task q.task dud)
             ==
           ::
           =<  ev-abet
-          ::  ?(%trim %spew %stir %sift %dear %tame %chum %cong %deep %hear %kroc %mate %wham %yawn)
-          ?+  -.task  ev-core ::  XX TODO
+
+          ?+  -.task
+              ::  ?(%plea %keen %cork) calls are handled directly in |peer
+              ::
+              ev-core ::  XX TODO: ?(%trim %spew %stir %sift %dear %tame %cong)
+          ::
             %vega  ev-core  ::  handle kernel reload
             %init  sy-abet:~(sy-init sy:ev-core hen)
             %born  sy-abet:~(sy-born sy:ev-core hen)
@@ -7394,10 +7433,7 @@
             %prod  sy-abet:~(sy-prod sy:ev-core hen)  ::  XX handle ships=(list @p)
             %snub  sy-abet:(~(sy-snub sy:ev-core hen) [form ships]:task)
             %stun  sy-abet:(~(sy-stun sy:ev-core hen) stun.task)
-          ::
-            %plea  (ev-call:ev-core %plea [ship plea]:task)
-            %cork  (ev-call:ev-core %cork ship.task)
-            %keen  (ev-call:ev-core %keen +.task)
+            :: %dear  sy-abet:(~(sy-dear sy:ev-core hen) +.task)
           ::  from internal %ames request
           ::
             %meek  (ev-make-peek:ev-core +.task)
@@ -7766,7 +7802,7 @@
       =^  moves  ames-state
         =<  ev-abet
         ?:  ?=([~ %known *] +.ship-state)
-          (%*(ev-req-plea me-core per ship^u.ship-state) ship plea)
+          (%*(ev-req-plea me-core per ship^u.ship-state) plea)
         ::
         %^  ev-enqueue-alien-todo:me-core  ship  +.ship-state
         |=  todos=ovni-state:me-core
@@ -7783,7 +7819,7 @@
       =^  moves  ames-state
         =<  ev-abet
         ?:  ?=([~ %known *] +.ship-state)
-          (%*(ev-req-plea me-core per her^u.ship-state) her plea)
+          (%*(ev-req-plea me-core per her^u.ship-state) plea)
         ::
         %^  ev-enqueue-alien-todo:me-core  her  +.ship-state
         |=  todos=ovni-state:me-core
@@ -7798,7 +7834,7 @@
       =^  moves  ames-state
         =<  ev-abet
         ?:  ?=([~ %known *] +.ship-state)
-          (%*(ev-req-peek me-core per ship^u.ship-state) sec ship path)
+          (%*(ev-req-peek me-core per ship^u.ship-state) sec path)
         ::
         %^  ev-enqueue-alien-todo:me-core  ship  +.ship-state
         |=  todos=ovni-state:me-core
