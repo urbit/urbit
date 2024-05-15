@@ -19,7 +19,7 @@
       (slop !>(..zuse) ref(p [%face %ref p.ref]))
     (ream code)
   ?-  -.mul
-    %.y  (some [%.y (sped p.mul)])
+    %.y  (some [%.y p.mul])
     %.n  (some [%.n (tang p.mul)])
   ==
 ++  maybe-promote-vase
