@@ -4,42 +4,43 @@
 :-  [%node %task-diff]
 |=  nod=node
 ^-  task-diff
-=/  head  (@tas (crip (need (~(get-attribute manx-utils nod) %head))))
+=/  mu  ~(. manx-utils nod)
+=/  head  (@tas (got:mu %head))
 %-  task-diff
 ?+  head
   ~|  [%unknown-head head]
   !!
     %become
-  =/  path  (stab (crip (need (~(value manx-utils nod) "path"))))
+  =/  path  (stab (vol:mu "path"))
   [head (pave:neo path)]
 ::
     %nest
-  =/  name  (@tas (crip (need (~(value manx-utils nod) "name"))))
+  =/  name  (vol:mu "name")
   [head name '' | ~]
 ::
     %prep
-  =/  name  (@tas (crip (need (~(value manx-utils nod) "name"))))
+  =/  name  (vol:mu "name")
   [head name '' | ~]
 ::
     %oust
-  =/  path  (stab (crip (need (~(get-attribute manx-utils nod) %pith))))
+  =/  path  (stab (got:mu %pith))
   [head (pave:neo path)]
 ::
     %edit
-  =/  text  (crip (need (~(value manx-utils nod) "text")))
-  =/  done-el  (need (~(named manx-utils nod) "done"))
+  =/  text  (vol:mu "text")
+  =/  done-el  (need (named:mu "done"))
   =/  done  (~(has by (malt a.g.done-el)) %checked)
   [head text done]
 ::
     %kid-done
-  =/  path  (stab (crip (need (~(get-attribute manx-utils nod) %pith))))
+  =/  path  (stab (got:mu %pith))
   [head (pave:neo path)]
 ::
     %reorder
   =/  piths
     %+  turn  c.nod
     |=  =manx
-    =/  here  (~(get-attribute manx-utils nod) %here)
+    =/  here  (get:mu %here)
     ?~  here
       ~&  >>>  [%bad-here manx]
       !!
