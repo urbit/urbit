@@ -30,7 +30,7 @@
     =/  poke  !<(accel-diff vax)
     ?>  =(our ship.src):bowl
     :_  sta
-    =;  conf  
+    =;  conf
       :~  :-  (welp here.bowl ~[[ud/row.poke] [ud/column.poke]])
           [%make %accel-cell `!>([text.poke ~ refa.poke refb.poke]) conf]
       ==

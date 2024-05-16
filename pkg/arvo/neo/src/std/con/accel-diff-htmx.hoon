@@ -8,7 +8,7 @@
   =hx-target  "table"
   =hx-select  "table"
   =hx-indicator  "closest .loader"
-  =hx-swap  "outerHTML"
+  =hx-swap  "morph"
   =hx-trigger  "load"
   ; +++
 ==
@@ -17,7 +17,7 @@
   =hx-target  "#config"
   =hx-select  "#config"
   =hx-indicator  "closest .loader"
-  =hx-swap  "outerHTML"
+  =hx-swap  "morph"
   =hx-trigger  "load"
   ; +++
 ==

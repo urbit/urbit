@@ -1,18 +1,28 @@
 /@  node
 /@  accel-diff
+/-  _/manx-utils
 :-  [%node %accel-diff]
 |=  nod=node
 ^-  accel-diff
-=/  input-el  (snag 0 c.nod)
-=/  dep-el  (snag 1 c:(snag 1 c:(snag 1 c.nod)))
-=/  ref-path
-  %+  rust  (~(gut by (malt a.g.dep-el)) %value "")
-  stap
+=/  mu  ~(. manx-utils nod)
+=/  a  (vol:mu "a")
+=/  b  (vol:mu "b")
+::
+=/  a-path  (rush a stap)
+=/  b-path  (rush b stap)
+::  check that if user typed anything at all
+::  to the ref textboxes,
+::  they were valid paths
+?:  &(=(~ a-path) !=('' a))
+    ~|  "not a valid path {<a>}"
+    !!
+?:  &(=(~ b-path) !=('' b))
+    ~|  "not a valid path {<b>}"
+    !!
 :*  %new
-    (slav %ud (crip (~(got by (malt a.g.nod)) %row)))
-    (slav %ud (crip (~(got by (malt a.g.nod)) %col)))
-    (crip (~(got by (malt a.g.input-el)) %value))
-    ?~  ref-path  ~
-    `(pave:neo u.ref-path)
-    ~  :: XX fix refs here
+    (slav %ud (got:mu %row))
+    (slav %ud (got:mu %col))
+    (vol:mu "code")
+    ?~(a-path ~ `(pave:neo u.a-path))
+    ?~(b-path ~ `(pave:neo u.b-path))
 ==
