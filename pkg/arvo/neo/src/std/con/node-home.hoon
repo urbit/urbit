@@ -8,7 +8,4 @@
 |=  =manx
 %-  pave:neo
 %-  stab
-%-  crip
-%-  need
-(~(get-attribute manx-utils manx) %pith)
-
+(~(got manx-utils manx) %pith)
