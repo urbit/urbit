@@ -12,23 +12,42 @@
     =((~(gut by (malt a.g.manx)) %name "") name)
   ?:  =(0 (lent n))  ~
   `(snag 0 n)
-:: get-attribute
+:: get
 ::
 ::   tape at attribute, or null
 ::
-++  get-attribute
+++  get
   |=  =mane
   ^-  (unit tape)
   (~(get by (malt a.g.a)) mane)
-:: value
+:: got
 ::
-::  value attribute of first named descendant, or null
-++  value
+::   cord of attribute, or crash
+::
+++  got
+  |=  =mane
+  ^-  cord
+  ~|  (crip "cannont find attribute {<mane>}")
+  (crip (need (get mane)))
+:: val
+::
+::   value (tape) attribute of first named descendant, or null
+::
+++  val
   |=  name=tape
   ^-  (unit tape)
   ?~  t=(named name)  ~
   =.  a  u.t
-  (get-attribute %value)
+  (get %value)
+:: vol
+::
+::  value (cord) attribute of first named descendant, or crash
+::
+++  vol
+  |=  name=tape
+  ^-  cord
+  ~|  (crip "cannont find element with name '{<name>}'")
+  (crip (need (val name)))
 :: whitelisted
 ::
 ::   check all tags are in whitelist

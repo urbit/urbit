@@ -4,7 +4,5 @@
 :-  [%node %txt]
 |=  nod=node
 ^-  txt
-%-  crip
-%-  need
-(~(value manx-utils nod) "text")
+(~(vol manx-utils nod) "text")
 

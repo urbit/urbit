@@ -4,6 +4,4 @@
 :-  [%node %hoon]
 |=  nod=node
 ^-  hoon
-%-  crip
-%-  need
-(~(value manx-utils nod) "text")
+(~(vol manx-utils nod) "text")

@@ -5,11 +5,12 @@
 |=  nod=node
 |^
   ^-  sail
+  =/  mu  ~(. manx-utils nod)
   =/  code
-    =/  raw=tape  (need (~(value manx-utils nod) "code"))
+    =/  raw=tape  (need (val:mu "code"))
     ?:  =((rear raw) '\0a')  (crip (snip raw))
     (crip raw)
-  =/  class  (crip (need (~(value manx-utils nod) "classes")))
+  =/  class  (vol:mu "classes")
   [code class `(render-udon code)]
 ++  render-udon
   |=  code=@t
@@ -28,8 +29,8 @@
     !<  manx
     %+  slap
       ;:  slop
-        !>(manx-utils=manx-utils)
         !>(..zuse)
+        !>(manx-utils=manx-utils)
       ==
     (ream udon)
   ?-  -.mul

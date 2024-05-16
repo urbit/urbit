@@ -782,6 +782,15 @@
         return (xmls.serializeToString(elt));
       }
     });
+    Idiomorph.defaults.ignoreActive = true;
+    Idiomorph.defaults.callbacks.beforeAttributeUpdated = (name, node, type) => {
+      if (node.hasAttribute('morph-retain')) {
+        let ribs = node.getAttribute('morph-retain').split(',').map(t => t.trim());
+        if (ribs.includes(name)) {
+          return false;
+        }
+      }
+    }
     '''
     ::
   ++  lift
@@ -794,6 +803,7 @@
         ;title: s k y
         ;script(src "https://code.jquery.com/jquery-3.7.1.js");
         ;script(src "https://unpkg.com/htmx.org@1.9.11");
+        ;script(src "https://unpkg.com/idiomorph/dist/idiomorph-ext.min.js");
         ;script(src "https://unpkg.com/htmx.org@1.9.11/dist/ext/response-targets.js");
         ;script: {html-enc-js}
         ;meta
@@ -848,7 +858,7 @@
         ;+  favicon
       ==
       ;body
-        =hx-ext  "html-enc,response-targets"
+        =hx-ext  "html-enc,response-targets,morph"
         =hx-swap  "innerHTML"
         =hx-boost  "true"
         =hx-history  "false"

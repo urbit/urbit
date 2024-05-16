@@ -4,6 +4,4 @@
 :-  [%node %iframe]
 |=  nod=node
 ^-  iframe
-%-  crip
-%-  need
-(~(value manx-utils nod) "text")
+(~(vol manx-utils nod) "text")
