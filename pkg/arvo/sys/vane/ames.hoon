@@ -4499,7 +4499,7 @@
                         ==
                       ::  a %cork and %ahoy pleas (both introduced to account
                       ::  for checking per-peer protocol updates) are handled
-                      ::  using %$ as the recipient vane to account for peers
+                      ::  using %$ as the recipient vane to handle peers
                       ::  that have not migrated into the new protocol
                       ::
                       ?+    -.payload.plea  !!
@@ -7170,15 +7170,14 @@
                 ::       (get-forward-lanes our +.chum-state chums.ames-state)
                 ::   ==
                 ::
-                :_  sy-core
                 ?:  ?=(%chum -.peer)
                   =.  chums.ames-state
                     (~(put by chums.ames-state) ship known/+.peer)
-                  [%chum known/+.peer]
+                  [%chum known/+.peer]^sy-core
                 ::
                 =.  peers.ames-state
                   (~(put by peers.ames-state) ship known/+.peer)
-                [%ship known/+.peer]
+                [%ship known/+.peer]^sy-core
               ::
               ++  find-peer
                 |=  =ship
@@ -7306,12 +7305,13 @@
             =/  view  ?@(vew.u.inn vew.u.inn (cat 3 [way car]:vew.u.inn))
             ?~  res=(rof ~ /ames/publ view bem.u.inn)
               ~
-            =>  [bem=bem.u.inn res=res ryf=rift.ames-state priv=priv.ames-state ..crypt]
-            ~>  %memo./ames/publ
+            =*  priv  priv.ames-state
+            ::  XX  rift.ames-state
             =/  gag  ?~(u.res ~ [p q.q]:u.u.res)  :: XX how does receiver distinguish these?
-            =/  ful  (en-beam bem)
+            =/  ful  (en-beam bem.u.inn)
             =/  ser  (jam gag)  :: unencrypted
-            ``[%message !>([%sign (sign:crypt `@`priv ful (root:lss (met 3 ser)^ser)) ser])]
+            :^  ~  ~  %message
+            !>([%sign (sign:crypt `@`priv ful (root:lss (met 3 ser)^ser)) ser])
           ::
           ++  ev-peek-chum
             |=  [bem=beam her=@p lyf=@ud hyf=@ud cyf=@uv]
@@ -7323,32 +7323,14 @@
             =/  pat=path  (open-path:crypt u.key cyf)
             ?~  inn=(inner-path-to-beam our pat)
               ~
-            =/  res
-              ?.  =(%$ q.bem.u.inn)
-                ::  data produced by other vanes
-                ::
-                (rof `[her ~ ~] /ames/chum vew.u.inn bem.u.inn)
-              ?+    s.bem.u.inn  ~
-              ::
-                  [%flow bone=@ load=@ rcvr=@ mess=@ ~]
-                =>  :*  path=s.bem.u.inn  peek=ev-peek-flow
-                        pole=(pole iota)  pave=ev-pave
-                        pith=flow-pith
-                    ==
-                ~>  %memo./ames/peek/flow
-                =/  path=pole  `pole`(pave path)
-                ?>  ?=(pith path)
-                (peek [bone load rcvr mess]:path)
-              ==
-            ?~  res
+            ?~  res=(rof `[her ~ ~] /ames/chum vew.u.inn bem.u.inn)
               ~
-            =>  [key=u.key cyf=cyf bem=bem res=res ..crypt] :: XX rift.ames-state
-            ~>  %memo./ames/chum
+            :: XX rift.ames-state
             =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
             =/  ful  (en-beam bem)
             =/  ser  (jam gag)
-            =/  cyr  (encrypt:crypt key cyf (met 3 ser)^ser)
-            ``[%message !>([%hmac (mac:crypt key ful (root:lss cyr)) dat.cyr])]
+            =/  cyr  (encrypt:crypt u.key cyf (met 3 ser)^ser)
+            ``[%message !>([%hmac (mac:crypt u.key ful (root:lss cyr)) dat.cyr])]
           ::
           ++  ev-peek-shut
             |=  [bem=beam kid=@ cyf=@uv]
@@ -7361,8 +7343,7 @@
               ~
             ?~  res=(rof [~ ~] /ames/shut vew.u.inn bem.u.inn)
               ~
-            =>  [key=key cyf=cyf bem=bem res=res ryf=rift.ames-state ..crypt]
-            ~>  %memo./ames/shut
+            ::  XX  rift.ames-state
             =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
             =/  ful  (en-beam bem)
             =/  ser  (jam gag)
@@ -7385,7 +7366,7 @@
                 ~&  >>>  corked-flow-dropping/load^corked.sat.per  :: XX remove
                 ::  XX if %ack for a %corked flow (for both client and server),
                 ::  produce %ack
-                ::  if the flow is corked, refuse to answer
+                ::  if the flow is corked, block
                 ::  XX when are corked bones evicted?
                 ::
                 ~  ::  XX  [~ ~]
@@ -7506,6 +7487,7 @@
                 =([%ud 1] r.bem)
                 =(%x car)
             ==
+          =+  core=(ev-abed:ev-core [now eny rof] ~[//scry])
           =/  tyl=(pole knot)  s.bem
           ?+    tyl  ~
           ::  publisher-side, batch-level
@@ -7579,30 +7561,7 @@
               [~ ~]
             =*  pat  pat.nex
             =/  res
-              ?+    pat
-                  $(lyc ~, pov /ames/message, s.bem pat)
-              ::
-                  [%publ lyf=@ pat=*]
-                =>  [pat=pat peek=ev-peek-publ pave=ev-pave pole=(pole iota) pout=pout pith=publ-pith]
-                ~>  %memo./ames/peek/publ
-                =+  pat=`pole`(pave pat)
-                ?.  ?=(pith pat)  [~ ~]
-                (peek lyf.pat (pout pat.pat))
-              ::
-                  [%chum lyf=@ her=@ hyf=@ cyf=@ ~]
-                =>  [pat=pat bem=bem peek=ev-peek-chum pave=ev-pave pole=(pole iota) pith=chum-pith]
-                ~>  %memo./ames/peek/chum
-                =>  .(pat `pole`(pave pat))
-                ?.  ?=(pith pat)  [~ ~]
-                (peek bem [her lyf hyf cyf]:pat)
-              ::
-                  [%shut kid=@ cyf=@ ~]
-                =>  [pat=pat bem=bem peek=ev-peek-shut pave=ev-pave pole=(pole iota) pith=shut-pith]
-                ~>  %memo./ames/peek/shut
-                =>  .(pat `pole`(pave pat))  :: XX move to top
-                ?.  ?=(pith pat)  [~ ~]
-                (peek bem [kid cyf]:pat)
-              ==
+              $(lyc ~, pov /ames/message, s.bem pat)
             ?.  ?&  ?=([~ ~ %message *] res)
               :: ...validate that it's really a message
               :: =>  [%message tag=?(sig hmac) ser=@]
@@ -7689,27 +7648,45 @@
           ::  publisher-side, message-level (public namespace)
           ::
               [%publ lyf=@ pat=*]
-            =>  .(tyl `(pole iota)`(ev-pave tyl))  :: XX move to top
-            ?.  ?=(publ-pith tyl)  [~ ~]
-            (ev-peek-publ lyf.tyl (pout pat.tyl))
+            =>  [tyl=tyl peek=ev-peek-publ:core slaw=slaw]
+            ~>  %memo./ames/peek/publ
+            =/  lyf  (slaw %ud lyf.tyl)
+            ?~  lyf  [~ ~]
+            (peek u.lyf pat.tyl)
           ::  publisher-side, message-level (two-party encrypted namespace)
           ::
               [%chum lyf=@ her=@ hyf=@ cyf=@ ~]
-            =>  .(tyl `(pole iota)`(ev-pave tyl))  :: XX move to top
-            ?.  ?=(chum-pith tyl)  [~ ~]
-            (ev-peek-chum bem [her lyf hyf cyf]:tyl)
+            =>  [tyl=tyl bem=bem peek=ev-peek-chum:core slaw=slaw]
+            ~>  %memo./ames/peek/chum
+            =/  lyf  (slaw %ud lyf.tyl)
+            =/  her  (slaw %p her.tyl)
+            =/  hyf  (slaw %ud hyf.tyl)
+            =/  cyf  (slaw %uv cyf.tyl)
+            ?:  |(?=(~ lyf) ?=(~ her) ?=(~ hyf) ?=(~ cyf))
+              [~ ~]
+            (peek bem u.her u.lyf u.hyf u.cyf)
+
           ::  publisher-side, message-level (group encrypted namespace)
           ::
               [%shut kid=@ cyf=@ ~]
-            =>  .(tyl `(pole iota)`(ev-pave tyl))  :: XX move to top
-            ?.  ?=(shut-pith tyl)  [~ ~]
-            (ev-peek-shut bem [kid cyf]:tyl)
+            =>  [tyl=tyl bem=bem peek=ev-peek-shut:core slaw=slaw]
+            ~>  %memo./ames/peek/shut
+            =/  kid  (slaw %ud kid.tyl)
+            =/  cyf  (slaw %uv cyf.tyl)
+            ?:  |(?=(~ kid) ?=(~ cyf))
+              [~ ~]
+            (peek bem u.kid u.cyf)
           ::  publisher-side, flow-level
           ::
-              [%flow bone=@ load=@ rcvr=@ mess=@ ~]
-            =>  .(tyl `(pole iota)`(ev-pave tyl))  :: XX move to top
-            ?>  ?=(flow-pith tyl)
-            (ev-peek-flow [bone load rcvr mess]:tyl)
+              [%flow bone=@ load=?(%plea %boon %ack-plea %ack-boon %nax) rcvr=@ mess=@ ~]
+            =>  [tyl=tyl peek=ev-peek-flow:core slaw=slaw]
+            ~>  %memo./ames/peek/flow
+            =/  bone  (slaw %ud bone.tyl)
+            =/  rcvr  (slaw %p rcvr.tyl)
+            =/  mess  (slaw %ud mess.tyl)
+            ?:  |(?=(~ bone) ?=(~ rcvr) ?=(~ mess))
+              [~ ~]
+            (peek u.bone load.tyl u.rcvr u.mess)
           ::  client %mesa %corks, flow-level
           ::
               [%flow bone=@ %cork rcvr=@ ~]
