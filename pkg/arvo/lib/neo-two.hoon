@@ -151,7 +151,7 @@
 ::  layer 2
 |%
 ++  till
-  |_  [=loam:dirt:neo =farm:neo]
+  |_  =farm:neo
   ++  self
     |=  [=pith:neo case=@ud]
     =/  parent=land:neo

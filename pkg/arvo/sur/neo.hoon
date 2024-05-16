@@ -821,6 +821,7 @@
       by-flow=(jug flow tour) :: hunts blocked by flow
       clog=(map flow (qeu move)) :: enqueued moves to send on unblock
   ==
+++  ack  (pair flow (unit tang))
 ::
 ::  $flow: Call direction
 ::  
@@ -1336,6 +1337,7 @@
     --
   --
 ::
+++  poth   (pole iota)
 ::
 ++  pith
   |^  $+(pith ^pith)
@@ -1607,7 +1609,6 @@
 +$  card  (pair pith note)
 +$  request
   [src=pith dest=pith val=*]
-+$  ack  (unit nack)
 +$  nack
   $%  [%get p=(set pith)]
       [%sec p=(set pith)]
