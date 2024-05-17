@@ -892,38 +892,32 @@
       ==
     ==
     ::
-  ++  svg-wrapper
-    ::
-    |=  [color=tape viewbox=tape body=manx]
-    ^-  manx
-    ;svg
-      =xmlns  "http://www.w3.org/2000/svg"
-      =viewBox  viewbox
-      =fill  color
-      =style  "height: 1em;"
-      ;+  body
+  ++  data-encode
+    |=  [content-type=tape data=tape]
+    (welp "data:{content-type};utf8," data)
+  ++  icon-url
+    %+  welp
+      "https://nyc3.digitaloceanspaces.com"
+    "/drain/hawk/2024.5.18..00.23.39-hawk.png"
+++  favicon
+    ;link
+      =rel  "icon"
+      =type  "img/png"
+      =href  icon-url
+      ;
     ==
-    ::
-  ++  svg-square
-    ::
-    |=  color=(unit tape)
-    %^  svg-wrapper  (fall color "currentColor")
-      "0 0 448 512"
-    ;path(d "M0 96C0 60.7 28.7 32 64 32H384c35.3 0 64 28.7 64 64V416c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96z");
-    ::
-  ++  favicon
-    ::
-    =-
-      ;link
-        =rel  "icon"
-        =type  "image/svg+xml"
-        =href  -
-        ;
-      ==
-    %+  weld  "data:image/svg+xml;utf8,"
-    %-  en-xml:html
-    (svg-square `"white")
-    ::
+  ::  XX host this from a shrub
+  ++  manifest-url
+    %+  welp
+      "https://nyc3.digitaloceanspaces.com"
+    "/drain/hawk/2024.5.24..07.14.40-manifest.json"
+++  manifest
+    ;link
+      =rel  "manifest"
+      =type  "application/json"
+      =href  manifest-url
+      ;
+    ==
   ++  html-enc-js
     ::
     ::  htmx extension which encodes the request
@@ -1026,6 +1020,7 @@
         ;script: {(trip multiline-input)}
         ;script: {(trip a-i-r)}
         ;+  favicon
+        ;+  manifest
       ==
       ;body
         =hx-ext  "html-enc,response-targets,morph"
@@ -1046,6 +1041,16 @@
     ==
   --
 ::
+++  html-page-response
+  |=  =manx
+  ^-  simple-payload:http
+  :-  [200 [['content-type' 'text/html'] ~]]
+  :-  ~
+  %-  as-octs:mimes:html
+  %-  crip
+  %+  weld  "<!DOCTYPE html>"
+  %-  en-xml:html
+  manx
 ++  srv
   |_  eyre-id=@ta
   ++  send
