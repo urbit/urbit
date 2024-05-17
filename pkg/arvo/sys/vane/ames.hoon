@@ -5488,6 +5488,16 @@
                 ~
             ==
           ::
+          +|  %attestation-path
+          ::
+          +$  poof-pith
+            $:  %comet
+                %proof
+                [%p rcvr=@p]
+                [%ud life=@ud]
+                ~
+            ==
+          ::
           ++  ev-validate-wire
             |=  =wire
             ^-  (unit ev-flow-wire)
@@ -5541,7 +5551,7 @@
           ::
           ++  ev-decrypt-path  :: XX refactor with load decryption
             |=  [=path =ship]
-            ^+  [path path]
+            ^+  [outer=path inner=path]
             =/  tyl=(pole knot)  path
             ?+    tyl  !!
                 [%publ lyf=@ pat=*]  :: unencrypted
@@ -5723,24 +5733,34 @@
             ::  XX  parse path to get: requester, rift, bone, message
             ::
             =/  chum-state  (~(get by chums.ames-state) her.poke-name)
-            ::
-            ?.  ?=([~ %known *] chum-state)
-              ::  request public keys from %jael and drop the packet; it'll be re-send
+            ?:  ?&  ?=(%pawn (clan:title her.poke-name))
+                    !?=([~ %known *] chum-state)
+                ==
+              ::  if (not pretending to know) comet, read attestation proof
               ::
-              ::  XX TODO
-              (ev-enqueue-alien-todo her.poke-name chum-state |=(ovni-state +<))
+              (ev-read-proof her.poke-name)
+            ::
+            ::  XX  too ugly
+            ::  XX  allow to read from %alien in +ev-make-mess ??
+            ?:  ?&  ?=(%pawn (clan:title her.poke-name))
+                    ?=([~ %known *] chum-state)
+                    =(*public-key public-key.u.chum-state)  :: XX this is a hack
+                ==
+              ::  still waiting to hear attestation proof; no-op
+              ::
+              ev-core
+            ?.  ?=([~ %known *] chum-state)
+                ::  request public keys from %jael and drop the packet; it'll be re-send
+                ::
+                (ev-enqueue-alien-todo her.poke-name chum-state |=(ovni-state +<))
             ::
             ::  path validation/decryption
             ::
             ~|  path-decryption-failed/pat.ack-name^pat.poke-name
             =/  ack=(pole iota)
-              =/  [* =inner=path]
-                (ev-decrypt-path pat.ack-name her.poke-name)
-              (ev-validate-path inner-path)
+              (ev-validate-path +:(ev-decrypt-path pat.ack-name her.poke-name))
             =/  pok=(pole iota)
-              =/  [* =inner=path]
-                (ev-decrypt-path [pat her]:poke-name)
-              (ev-validate-path inner-path)
+              (ev-validate-path +:(ev-decrypt-path [pat her]:poke-name))
             ::
             ~|  path-validation-failed/ack^pok
             ?>  &(?=(flow-pith ack) ?=(flow-pith pok))
@@ -6027,7 +6047,24 @@
             |=  [=wire =sage:mess]
             ^+  ev-core
             ?~  flow-wire=(ev-validate-wire wire)
-              ev-core
+              ::  check if attestation proof response
+              ::
+              ?.  ?=([%mesa %comet %proof ~] wire)
+                ev-core
+              ::
+              ?>  ?=(%pawn (clan:title ship.p.sage))
+              =+  path=`(pole iota)`(ev-pave path.p.sage)
+              ?>  ?=(poof-pith path)
+              ::  this is an attestation for us, at our current life
+              ::
+              ?>  &(=(our rcvr.path) =(life.path life.ames-state))
+              ?>  ?=([%message *] q.sage)
+              ::
+              =+  ;;([signature=@ signed=@] (cue ;;(@ +.q.sage)))
+              =+  ;;(comet-proof=[pub=pass her=@p =life] (cue signed)) ::  XX to %lull
+              ::  update comet's keys
+              ::
+              (ev-register-comet ship.p.sage comet-proof signature signed)
             =,  u.flow-wire
             =.  per  (ev-got-per her)
             ?>  ?=(%known -.sat.per)  :: XX response from %alien
@@ -6067,8 +6104,8 @@
             ::
             =/  fo-core
               ::  XX parse $ack payload in here, and call task instead?
-              %.  [were mess-response/[mess.message-path sage]]
-              fo-take:(fo-abed:fo hen bone dire)
+              %-  fo-take:(fo-abed:fo hen bone dire)
+              [were mess-response/[mess.message-path sage]]
             ::
             ?.  can-be-corked.fo-core
               fo-abet:fo-core
@@ -6133,8 +6170,13 @@
           ++  ev-make-mess
             |=  [p=spar q=(unit path) spac=(unit space)]
             ^+  ev-core
-            =/  her  (~(gut by chums.ames-state) ship.p *chum-state)
-            ?>  ?=([%known *] her)  ::  XX alien agenda
+            =/  her
+              =/  her  (~(get by chums.ames-state) ship.p)
+              ?:  ?=([~ %known *] her)  u.her
+              ::  if %alien we can only make messages to comets
+              ::
+              ?>  ?=(%pawn (clan:title ship.p))
+              =|(=fren-state known/fren-state(rift 0, life 1))  :: comets don't rotate keys
             ?^  res=(~(get by pit.her) path.p)
               ?>  =(q pay.u.res)  ::  prevent overriding payload
               =-  ev-core(chums.ames-state -)
@@ -6159,7 +6201,8 @@
               (~(put by chums.ames-state) ship.p her(pit (~(put by pit.her) path.p new)))
             ::
             =/  =pact:pact  (ev-make-pact p q rift.her spac)
-            (ev-emit unix-duct.ames-state %give %push ~[`@ux`ship.p] p:(fax:plot (en:^pact pact)))
+            %+  ev-emit   unix-duct.ames-state
+            [%give %push ~[`@ux`ship.p] p:(fax:plot (en:^pact pact))]
           ::
           ++  ev-make-peek
             |=  [=space p=spar]
@@ -6201,7 +6244,8 @@
                 u.spac(life life.ames-state)
               u.spac(our-life her-life.u.spac, her-life our-life.u.spac, her ship.p)
             ::
-            =/  man=name:pact  [[our rift.ames-state] [13 ~] (ev-mess-spac u.spac u.q)]
+            =/  man=name:pact
+              [[our rift.ames-state] [13 ~] (ev-mess-spac u.spac u.q)]  :: XX add namespace before
             ::
             [%poke nam man (need (ev-get-page man))]
           ::
@@ -6750,7 +6794,7 @@
             ::
             --
           ::
-          +|  %aliens
+          +|  %aliens-and-comets
           ::  +ev-enqueue-alien-todo: helper to enqueue a pending request
           ::
           ::    Also requests key and life from Jael on first request.
@@ -6770,17 +6814,51 @@
               [%.y ?>(?=(%alien -.u.chum-state) +.u.chum-state)]
             ::  mutate .todos and apply to permanent state
             ::
-            =.  todos     (mutate todos)
+            =.  todos  (mutate todos)
             =.  chums.ames-state  (~(put by chums.ames-state) ship %alien todos)
-            ?:  already-pending  ev-core
+            ?:  already-pending
+              ev-core
             ::
             ?:  =(%pawn (clan:title ship))
-              ::  XX  (request-attestation ship)
-              ev-core
+               (ev-read-proof ship)
             ::  NB: we specifically look for this wire in +public-keys-give in
             ::  Jael.  if you change it here, you must change it there.
             ::
             (ev-emit hen %pass /mesa/public-keys %j %public-keys [n=ship ~ ~])
+          ::
+          ++  ev-register-comet
+            |=  [comet=@p [pub=pass her=@p =life] signature=@ signed=@]  :: XX to %lull
+            ^+  ev-core
+            =/  crub  (com:nu:crub:crypto pub)
+            ::  verify signature
+            ::
+            ?>  (safe:as:crub signature signed)
+            ::  assert the contents of the proof match those of a comet
+            ::
+            ?>  &(=(her comet) =(life 1))
+            ::  only a star can sponsor a comet
+            ::
+            ?>  =(%king (clan:title (^sein:title comet)))
+            ::  comet public-key must hash to its @p address
+            ::
+            ?>  =(comet fig:ex:crub)
+            =/  keys  (~(put by *(map ^life [suite=@ud pass])) life suite=1 pub)
+            ::  insert comet
+            ::
+            =|  =point:jael
+            =>  %^  ~(sy-publ sy hen)  /comet  %full
+                %+  ~(put by *(map ship point:jael))  comet
+                point(rift 0, life 1, keys keys, sponsor `(^sein:title comet))
+            sy-abet
+          ::
+          ++  ev-read-proof
+            |=  comet=ship
+            =/  =wire   /mesa/comet/pof
+            =/  =space  [%publ 1]
+            =/  =path
+              %+  ev-mess-spac  space
+              /comet/proof/[(scot %p our)]/[(scot %p life.ames-state)]
+            (ev-emit hen %pass wire %a meek/[space comet path])
           ::
           +|  %system
           ::
@@ -7075,11 +7153,6 @@
                   ::  init ev-core with provided chum-state
                   ::
                   =.  ev-core  %*(. ev-core per ship^chum-state)
-                  ::  if we're a comet, send self-attestation packet first
-                  ::
-                  :: =?  sy-core  =(%pawn (clan:title our))
-                  ::   =/  blob=@  (attestation-packet ship life.point)
-                  ::   (send-blob for=| ship blob (~(get by chums.ames-state) ship))
                   ::
                   =.  ev-core
                     ::  apply outgoing messages
@@ -7701,6 +7774,32 @@
               %.  [%cork *@ud]
               fo-peek:(fo-abed:fo ~[//scry] bone.tyl dire=%for)  :: XX allow to read "server" corks
             ?~(res ~ ``[%message !>(u.res)])
+          ::  comet attestations
+          ::
+              [%comet %proof rcvr=@ life=@ ~]
+            ::  only comets have this
+            ::
+            ?.  ?=(%pawn (clan:title our))
+              [~ ~]
+            =/  rcvr  (slaw %p rcvr.tyl)
+            =/  life  (slaw %ud life.tyl)
+            ?:  |(?=(~ life) ?=(~ rcvr))
+              [~ ~]
+            ::  XX get life from chum state?
+            :: ::  XX save in chums state on meet-alien-chum?
+            :: =+  chum=(~(get by chums.ames-state) u.rcvr)
+            :: ?.  ?=([~ %known *] chum)
+            ::   ~  :: XX we havent' contacted this ship
+            =+  core=(ev:ames [now eny rof] ~[//attestation] ames-state)
+            =/  comet-proof=@
+              %-  jam
+              :*  pub:ex:crypto-core.ames-state
+                  our
+                  life.ames-state
+              ==
+            =*  priv  priv.ames-state
+            :+  ~  ~
+            [%message !>((sign:as:(nol:nu:crub:crypto priv) comet-proof))]
         ::
           ==
         ::  only respond for the local identity, %$ desk, current timestamp
