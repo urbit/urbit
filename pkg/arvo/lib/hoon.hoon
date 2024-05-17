@@ -8342,7 +8342,7 @@
   ++  zoom
     |=  bell=(unit term)
     ^-  hoon
-    ?+    gen  ~&  [%zoom-open -.gen]  open
+    ?+    gen  open
         [%note *]  $(gen q.gen)
         [%dbug *]  gen(q $(gen q.gen))
         [%brbc *]  =-  ?~  -  !!
