@@ -267,12 +267,13 @@
 +$  span  (pair @ud seal)
 ::  $case: Canonical (%x) version
 +$  case  @ud
-::  $past: Past aeons, indexed by x
-++  past
-  =<  past
+::  $soil: aeons, indexed by x
+++  soil
+  =<  a
+  ^~
   |%
-  ++  on  ((^on case poem) lte)
-  +$  past  ((mop case poem) lte)
+  ++  on    ((^on case poem) lte)
+  +$  a  ((mop case poem) lte)
   --
 ::  $dirt: Layer 1 of the namespace
 ++  dirt
@@ -283,11 +284,6 @@
         [%cull ~]
     ==
   +$  loam  (axal soil)
-  +$  soil
-    $:  live=(unit book)
-        bone=past
-    ==
-  +$  state  (map ship soil)
   +$  dust   ?(%grow %cull)
   +$  gift   (trel pith case dust)
   --
@@ -1684,7 +1680,6 @@
       [%y =vial kids=(map pith [=ever =mode =vial])]
       [%z =vial kids=(map pith [=ever =mode =vial])]
   ==
-++  bulb  [=ever =pail]
 ++  wand
   |^
   $~  [%x [0 0 0] [%$ ~] ~]
@@ -2039,7 +2034,7 @@
     ~&  %accessing-bad-form
     *^form
   --
-+$  soil
++$  o-soil
   $:  init=(pair ever (map name ever))
       dirt=(unit o-dirt)
   ==

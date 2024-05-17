@@ -31,9 +31,21 @@
   ;<  caz=(list card)  bind:m
     (do-poke %neo-dirt-card !>((make-grow pith atom+!>(1))))
   ;<  caz=(list card)  bind:m
+    (do-poke %neo-dirt-card !>((make-grow #/foo/bar atom+!>(1))))
+  ;<  caz=(list card)  bind:m
+    (do-poke %neo-dirt-card !>((make-grow #/foo/bar/baz atom+!>(1))))
+  ;<  caz=(list card)  bind:m
     (do-poke %neo-dirt-card !>((make-grow pith atom+!>(2))))
   ;<  caz=(list card)  bind:m
+    (do-poke %neo-dirt-card !>((make-grow #/foo/bar atom+!>(2))))
+  ;<  caz=(list card)  bind:m
+    (do-poke %neo-dirt-card !>((make-grow #/foo/bar/baz atom+!>(2))))
+  ;<  caz=(list card)  bind:m
     (do-poke %neo-dirt-card !>((make-grow pith atom+!>(3))))
+  ;<  caz=(list card)  bind:m
+    (do-poke %neo-dirt-card !>((make-grow #/foo/bar atom+!>(3))))
+  ;<  caz=(list card)  bind:m
+    (do-poke %neo-dirt-card !>((make-grow #/foo/bar/baz atom+!>(3))))
   ;<  vax=vase  bind:m  get-save
   %-  (slog (sell vax) ~)
   (pure:m ~)

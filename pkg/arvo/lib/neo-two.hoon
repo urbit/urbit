@@ -12,7 +12,7 @@
 ++  bump
   |=  [=land:neo kind=?(%y %z)]
   ^+  land
-  ?~  pie=(pry:on:land:neo land)
+  ?~  pie=(ram:on:land:neo land)
     land
   =/  [=case:neo =over:neo]  u.pie
   %^  put:on:land:neo  land  case
@@ -25,10 +25,10 @@
   |=  [parent=land:neo =land:neo]
   ^+  land
   =/  [=case:neo =over:neo]
-    ?^  pie=(pry:on:land:neo land)
+    ?^  pie=(ram:on:land:neo land)
       u.pie
     :-  0
-    ?~  par=(pry:on:land:neo parent)
+    ?~  par=(ram:on:land:neo parent)
       [[0 0] [0 0]]
     [[. .]:key.u.par [. .]:q.zed.val.u.par]
   %^  put:on:land:neo  land   +(case)
@@ -67,58 +67,44 @@
   ?.  &((lte p.hav wan) (gth q.hav wan))
     [| ~]
   [%& `[case p.why.over p.zed.over]]
-::
-++  tend
-  ~+
-  |_  =loam:dirt:neo
-  +*  bone  bone.loam
-      live  live.loam
-  ++  case
-    ^-  case:neo
-    ?~  fil.loam  0
-    ?~  pie=(pry:on:past:neo bone.u.fil.loam)
-      0
-    -.u.pie
-  ++  grow
-    |=  [=pail:neo =oath:neo]
-    ^-  (quip case:neo loam:dirt:neo)
-    ~&  a/loam
-    =.  loam  +:cull 
-    ~&  b/loam
-    =.  fil.loam
-      =/  =tale:neo  [+(case) oath]
-      ^-  (unit soil:dirt:neo)
-      :-  ~
-      :-  `[tale pail]
-      ?~  fil.loam
-        *past:neo
-      bone.u.fil.loam
-    ~&  c/loam
-    [~[+(case)] loam]
-  ++  cull
-    ^-  (quip case:neo loam:dirt:neo)
-    ?~  fil.loam
-      [~ loam]
-    ?~  live.u.fil.loam
-      [~ loam]
-    =/  =poem:neo  [p `q]:u.live.u.fil.loam
-    =.  bone.u.fil.loam  (put:on:past:neo bone.u.fil.loam p.p.u.live.u.fil.loam poem)
-    =/  =case:neo  p.p.u.live.u.fil.loam
-    =>  .(u.fil.loam `soil:dirt:neo`u.fil.loam)
-    =.  live.u.fil.loam  ~
-    [~[case] loam]
-  --
 ::  +plow: operate on $soil
 ++  plow
   |_  =loam:dirt:neo
+  ++  case
+    ^-  case:neo
+    ?~  fil.loam  0
+    ?~  pie=(ram:on:soil:neo u.fil.loam)
+      0
+    key.u.pie
+  ++  grow
+    |=  [=pail:neo =oath:neo]
+    ^-  (quip case:neo loam:dirt:neo)
+    =/  =poem:neo  [[+(case) oath] `pail]
+    (make poem)
+  ++  make
+    |=  =poem:neo
+    ^-  (quip case:neo loam:dirt:neo)
+    =?  fil.loam  ?=(~ fil.loam)
+      `*soil:neo
+    ?>  ?=(^ fil.loam)
+    =/  new=case:neo  +(case)
+    ?>  =(new p.p.poem)
+    :-  ~[new]
+    loam(fil `(put:on:soil:neo u.fil.loam new poem))
+  ::
+  ++  cull
+    ?~  fil.loam
+      [~ loam]
+    (make [[+(case) *oath:neo] ~])
+  ::
   ++  call
     |=  =card:dirt:neo
     ^-  (quip gift:dirt:neo _loam)
     =/  lom   (~(dip of:neo loam) p.card)
     =^  gifts=(list case:neo)  lom
       ?-  -.q.card
-        %grow  (~(grow tend lom) +.q.card)
-        %cull  ~(cull tend lom)
+        %grow  (~(grow plow lom) +.q.card)
+        %cull  ~(cull plow lom)
       ==
     :_  (~(rep of:neo loam) p.card lom)
     (turn gifts |=(@ `gift:dirt:neo`[p.card +< -.q.card]))
@@ -127,28 +113,15 @@
     ^-  (unit (unit poem:neo))
     [~ ~]
   ++  scry
-    |=  [=case:neo =pith:neo]
+    |=  [wan=case:neo =pith:neo]
     ^-  (unit (unit poem:neo))
     =/  lom  (~(dip of:neo loam) pith)
     ?~  fil.lom
       ~
-    ?:  ?&  ?=(^ live.u.fil.lom)
-            =(case p.p.u.live.u.fil.lom)
-        ==
-      ``[p `q]:u.live.u.fil.lom
-    =/  latest=case:neo  ~(case tend loam)
-    ?.  (lte case latest)
+    =/  latest=case:neo  case
+    ?.  (lte wan latest)
       ~
-    `(get:on:past:neo bone.u.fil.lom case)
-  ++  peek
-    |=  =pith:neo
-    ^-  (unit case:neo)
-    =/  lom  (~(dip of:neo loam) pith)
-    ?~  fil.lom
-      ~
-    ?~  live.u.fil.lom
-      ~
-    `p.p.u.live.u.fil.lom
+    `(get:on:soil:neo u.fil.lom wan)
   --
 --
 ::  layer 2
@@ -161,12 +134,14 @@
       ?~  par=(~(parent of:neo farm) pith)
         *land:neo
       (~(got of:neo farm) u.par)
-    (~(put of:neo farm) pith (jolt parent (~(got of:neo farm) pith)))
+    =/  me  (~(gut of:neo farm) pith *land:neo)
+    (~(put of:neo farm) pith (jolt parent me))
   ::
   ++  eternal
     |=  [=pith:neo case=@ud]
     =.  farm  (heir pith)
-    (chain pith)
+    =.  farm  (chain pith)
+    (self pith case)
   ++  chain
     |=  =pith:neo
     ?~  pith
@@ -199,16 +174,6 @@
       farm
     $(farm (eternal [p q]:i.gis), gis t.gis)
   ::
-  ++  look
-    |=  [from=pith:neo =once:neo grab=pith:neo]
-    ^-  (unit (unit ever:neo))
-    =/  lan  (~(dip of:neo farm) from)
-    ?~  fil.lan
-      ~
-    ?~  eve=(jerk u.fil.lan once)
-      ~
-    ``u.eve
-  ::
   ++  scry
     |=  [=loam:dirt:neo =care:neo =case:neo =pith:neo]
     ^-  (unit (unit myth:neo))
@@ -217,7 +182,7 @@
       pom
     ?~  val=(~(get of:neo farm) pith)
       ~
-    ?~  ver=(pry:on:land:neo u.val)
+    ?~  ver=(ram:on:land:neo u.val)
       ~
     =/  =ever:neo  (nail val.u.ver case)
     ``[q.u.u.pom ever q.p.u.u.pom]
