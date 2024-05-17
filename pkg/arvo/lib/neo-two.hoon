@@ -127,7 +127,12 @@
 ::  layer 2
 |%
 ++  till
-  |_  =farm:neo
+  |_  [=soil:neo =farm:neo =plot:neo]
+  ++  area  +<
+  ++  reap
+    |=  =pith:neo
+
+
   ++  self
     |=  [=pith:neo case=@ud]
     =/  parent=land:neo
@@ -139,6 +144,7 @@
   ::
   ++  eternal
     |=  [=pith:neo case=@ud]
+    ^+  +<
     =.  farm  (heir pith)
     =.  farm  (chain pith)
     (self pith case)
@@ -150,6 +156,11 @@
     =?  fil.farm   ?=(^ fil.farm)
       `(bump u.fil.farm %z)
     farm(kid (~(put by kid.farm) i.pith $(farm kid, pith t.pith)))
+  ++  slip
+    |=  [=pith:neo =ever:neo]
+    ^-  (list pith:neo)
+    !!
+
   ::
   ++  heir
     |=  =pith:neo
@@ -174,18 +185,20 @@
       farm
     $(farm (eternal [p q]:i.gis), gis t.gis)
   ::
-  ++  scry
+  ++  look
     |=  [=loam:dirt:neo =care:neo =case:neo =pith:neo]
-    ^-  (unit (unit myth:neo))
+    ^-  (unit (unit (axal saga:neo)))
     =+  pom=(~(scry plow loam) case pith)
     ?:  ?=($?(~ [~ ~]) pom)
       pom
+    ?~  q.u.u.pom
+      [~ ~]
     ?~  val=(~(get of:neo farm) pith)
       ~
     ?~  ver=(ram:on:land:neo u.val)
       ~
     =/  =ever:neo  (nail val.u.ver case)
-    ``[q.u.u.pom ever q.p.u.u.pom]
+    !! :: ``[q.u.u.pom ever q.p.u.u.pom]
   --
 --
 

@@ -1,6 +1,7 @@
 /-  neo
 /+  lib=neo-two
 /+  default-agent
+/+  dbug
 |%
 +$  card  $+(card card:agent:gall)
 +$  state-0
@@ -22,6 +23,7 @@
 =*  state  -
 =<
   !:
+  %-  agent:dbug
   ^-  agent:gall
   |_  =bowl:gall
   +*  this  .
@@ -135,8 +137,10 @@
   ^+  run
   ?+  mark  ~|(bad-poke-mark/mark !!)
     %neo-move        =;(f (f !<(_+<.f vase)) on-move)
+    %neo-dirt-card   =;(f (f !<(_+<.f vase)) on-dirt-card)
+    %neo-sync        =;(f (f !<(_+<.f vase)) on-sync)
+  ::
     %neo-raw-poke    (on-move (poke:harden !<(raw-poke:neo vase)))
-    %neo-dirt-card   (on-dirt-card !<(=card:dirt:neo vase))
   ==
 ++  on-move
   |=  =move:neo
@@ -152,6 +156,22 @@
     (~(call plow:lib loam) card)
   =.  farm  (~(take till:lib farm) gifts)
   run
+++  on-sync
+  |=  =sync:neo
+  ^+  run
+  ?-    r.sync
+    %start   abet:(start:rare [p q]:sync)
+    %stop    abet:(stop:rare [p q]:sync)
+  ==
+++  on-sync-start
+  |=  [src=pith:neo =hunt:neo]
+  ^+  run
+  !!
+++  on-sync-stop
+  |=  [src=pith:neo =hunt:neo]
+  ^+  run
+  !!
+::
 ++  on-watch
   |=  =(pole knot)
   ^+  run
@@ -161,7 +181,7 @@
   =/  paxs=(list road:neo)  (de:drive:neo pith)
   ?>  ?=([^ ^ ~] paxs)
   ?+  i.paxs  !!
-    [car=@ [%ud since=@] ~]  !!  :: XX: TODO:
+    [car=@ [%ud since=@] ~]  abet:(serve:rare ;;(care:neo car.i.paxs) i.t.paxs)
   ==
 ++  on-agent
   |=  [=wire =sign:agent:gall]
@@ -169,7 +189,7 @@
   =/  =road:neo  (pave:neo wire)
   ?+  road  +:(on-agent:def wire sign)
     [%deal rest=*]  (on-deal-sign rest.road sign)
-    [%sync rest=*]  (on-sync-sign rest.road sign)
+    [%sync rest=*]  abet:(on-sign:rare rest.road sign)
   ==
 ++  on-deal-sign
   |=  [=road:neo =sign:agent:gall]
@@ -178,11 +198,7 @@
   :: run
   !! :: XX: deliver nack
 ::
-++  on-sync-sign
-  |=  [=road:neo =sign:agent:gall]
-  ^+  run
-  !!
-    
+   
 ++  on-arvo
   |=  [=wire syn=sign-arvo]
   ^+  run
@@ -234,11 +250,29 @@
     |=  [=pith:neo =mall:neo]
     %-  pout
     (welp #/sync (en:drive:neo #/[(care mart.mall)]/[ud/0] pith ~))
-  ++  peer
-    |=  [=pith:neo =mall:neo]
-    =/  =name:neo  (de-pith:name:neo pith)
-    =/  =wire  sync/(pout pith)
-    (do-watch-her wire ship.name (peer-path pith mall))
+  ++  stop
+    |=  [src=pith:neo =hunt:neo]
+    ^+  rare
+    !!
+  ++  start
+    |=  [src=pith:neo =hunt:neo]
+    ^+  rare
+    =/  ton  (~(dip of:neo town) pith.hunt)
+    ?^  fil.ton
+      =.  mart.u.fil.ton  (~(put in mart.u.fil.ton) [care.hunt src])
+      =.  town  (~(rep of:neo town) pith.hunt ton)
+      rare
+    =>  .(fil.ton `(unit mall:neo)`fil.ton)
+    ::  XX: search upwards for 
+    =|  =mall:neo
+    =.  mart.mall  (~(put in mart.mall) [care.hunt src])
+    =.  del.mall  `*deli:neo
+    =/  =wire  sync/(pout pith.hunt)
+    =/  =name:neo  (de-pith:name:neo pith.hunt)
+    =.  run        (emit (do-watch-her wire ship.name (peer-path pith.hunt mall)))
+    =.  fil.ton   `mall
+    =.  town      (~(rep of:neo town) pith.hunt ton)
+    rare
   ++  resign
     |=  =pith:neo
     ^-  (unit pith:neo)
@@ -284,6 +318,31 @@
       ~&  last-standing-ending-sub/pith
       (leave pith)
     !!
+  ++  on-sign
+    |=  [=pith:neo =sign:agent:gall]
+    ^+  rare
+    =/  ton  (~(dip of:neo town) pith)
+    ?+    -.sign  ~|(bad-sign/-.sign !!)
+        %watch-ack
+      %.  rare
+      ?~  p.sign
+        same
+      (slog u.p.sign)
+    ::
+        %fact
+      %-  (slog leaf/"got fact" (sell q.cage.sign) ~)
+      rare
+    ::
+        %kick
+      ~&  'todo: kick handling'
+      rare
+    ==
+  ++  serve
+    |=  =hunt:neo
+    ^+  rare
+    =|  =epic:neo
+    !!
+
   --
 ++  rent
   |_  =city:neo

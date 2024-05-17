@@ -29,6 +29,7 @@
       %b  :: node and immediate children (%y)
       %c  :: node and all descendants
   ==
++$  hunt   [=care =pith] ::
 ::  $over: range of time for case bookkeeping
 ::
 ::
@@ -46,9 +47,19 @@
 ::    .zed is incremened when the shrub of any of its descendants change
 ::
 +$  ever  
-  $:  exe=@ud 
-      why=@ud
+  $:  
       zed=@ud
+      zed-mut=@ud
+      why=@ud
+      why-mut=@ud
+      exe=@ud 
+    ::
+      shrub-life=@ud
+      shrub-rift=@ud
+      ship-life=@ud
+      ship-rift=@ud
+    ::
+      block=@ux
   ==
 ::  $once: Partial version
 ::
@@ -295,13 +306,14 @@
   +$  land  ((mop case over) lte)
   ++  on    ((^on case over) lte)
   --
-++  farm
-  =<  farm
-  |%
-  +$  farm  (axal land)
-  --
++$  plot
+  $:  by-kids=(jug [=pith why=@ud] pith:neo)
+      by-desc=(jug [=pith zed=@ud] pith:neo)
+  ==
+++  farm  (axal land)
 --
 |%
++$  sync  (trel pith hunt ?(%start %stop))
 ::  $curt: Single constraint
 +$  curt
   $~  [%pro %$]
@@ -801,7 +813,6 @@
 ::
 ::  $hunt: perspective and shrub
 ::    
-+$  hunt   [=care =pith] ::
 +$  tour   hunt
 ::  $block: call-stack state for blocking semantics
 ::
@@ -1662,6 +1673,7 @@
 ::
 +$  dish  (pair pith mode)
 +$  yarn  (pair aeon mode)
++$  idea  (unit (unit (axal saga)))
 ::  $lore: diff over namespace
 +$  lore
   (axal yarn)
@@ -1998,7 +2010,7 @@
 +$  kids  (map pish port)
 ::  $plot: virtual namespace binding
 ::
-+$  plot
++$  o-plot
   $_  ^&
   |%
   ::  $state: the state of this value in the urbit namespace

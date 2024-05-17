@@ -1,6 +1,6 @@
 /-  neo
 /+  *test-agent
-/=  neo-agent  /app/neo-two
+/=  neo-agent  /app/neo
 |%
 ++  scry-handler
   |=  =(pole knot)
