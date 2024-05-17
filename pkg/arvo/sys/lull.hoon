@@ -1615,6 +1615,7 @@
     $+  chum-state
     $%  [%known fren-state]
         [%alien ovni-state]
+        :: [%comet =life =rift pit=(map path request-state)]  :: XX
     ==
   ::
   +$  ovni-state

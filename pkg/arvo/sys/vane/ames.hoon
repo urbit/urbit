@@ -600,7 +600,6 @@
     ::    This data structure gets signed and jammed to form the .contents
     ::    field of a $packet.
     ::
-    :: TODO add rift to prevent replay attacks
     ::
     +$  open-packet
       $:  =public-key
@@ -5739,12 +5738,11 @@
               ::  if (not pretending to know) comet, read attestation proof
               ::
               (ev-read-proof her.poke-name)
-            ::
             ::  XX  too ugly
-            ::  XX  allow to read from %alien in +ev-make-mess ??
+            ::  XX  use [%comet =life =rift pit=(map path request-state)] as the check
             ?:  ?&  ?=(%pawn (clan:title her.poke-name))
-                    ?=([~ %known *] chum-state)
-                    =(*public-key public-key.u.chum-state)  :: XX this is a hack
+                    ?=([~ %known *] chum-state)  :: XX  %comet
+                    =(*public-key public-key.u.chum-state)  :: XX this is a hack; remove
                 ==
               ::  still waiting to hear attestation proof; no-op
               ::
@@ -6061,7 +6059,7 @@
               ?>  ?=([%message *] q.sage)
               ::
               =+  ;;([signature=@ signed=@] (cue ;;(@ +.q.sage)))
-              =+  ;;(comet-proof=[pub=pass her=@p =life] (cue signed)) ::  XX to %lull
+              =+  ;;(comet-proof=open-packet (cue signed))
               ::  update comet's keys
               ::
               (ev-register-comet ship.p.sage comet-proof signature signed)
@@ -6176,6 +6174,7 @@
               ::  if %alien we can only make messages to comets
               ::
               ?>  ?=(%pawn (clan:title ship.p))
+              ::  XX update to [%comet =life =rift pit=(map path request-state)]
               =|(=fren-state known/fren-state(rift 0, life 1))  :: comets don't rotate keys
             ?^  res=(~(get by pit.her) path.p)
               ?>  =(q pay.u.res)  ::  prevent overriding payload
@@ -6827,22 +6826,26 @@
             (ev-emit hen %pass /mesa/public-keys %j %public-keys [n=ship ~ ~])
           ::
           ++  ev-register-comet
-            |=  [comet=@p [pub=pass her=@p =life] signature=@ signed=@]  :: XX to %lull
+            |=  [comet=@p open-packet signature=@ signed=@]  :: XX to %lull
             ^+  ev-core
-            =/  crub  (com:nu:crub:crypto pub)
+            =/  crub  (com:nu:crub:crypto public-key)
             ::  verify signature
             ::
             ?>  (safe:as:crub signature signed)
             ::  assert the contents of the proof match those of a comet
             ::
-            ?>  &(=(her comet) =(life 1))
+            ?>  &(=(sndr comet) =(sndr-life 1))
+            ::  assert the contents of the proof match ours
+            ::
+            ?>  &(=(rcvr our) =(rcvr-life life.ames-state))
             ::  only a star can sponsor a comet
             ::
             ?>  =(%king (clan:title (^sein:title comet)))
             ::  comet public-key must hash to its @p address
             ::
             ?>  =(comet fig:ex:crub)
-            =/  keys  (~(put by *(map ^life [suite=@ud pass])) life suite=1 pub)
+            =/  keys
+              (~(put by *(map life [suite=@ud pass])) life=1 suite=1 public-key)
             ::  insert comet
             ::
             =|  =point:jael
@@ -7785,21 +7788,18 @@
             =/  life  (slaw %ud life.tyl)
             ?:  |(?=(~ life) ?=(~ rcvr))
               [~ ~]
-            ::  XX get life from chum state?
-            :: ::  XX save in chums state on meet-alien-chum?
-            :: =+  chum=(~(get by chums.ames-state) u.rcvr)
-            :: ?.  ?=([~ %known *] chum)
-            ::   ~  :: XX we havent' contacted this ship
+            ::
             =+  core=(ev:ames [now eny rof] ~[//attestation] ames-state)
-            =/  comet-proof=@
-              %-  jam
+            =/  comet-proof=open-packet
               :*  pub:ex:crypto-core.ames-state
                   our
                   life.ames-state
+                  u.rcvr
+                  u.life
               ==
             =*  priv  priv.ames-state
             :+  ~  ~
-            [%message !>((sign:as:(nol:nu:crub:crypto priv) comet-proof))]
+            [%message !>((sign:as:(nol:nu:crub:crypto priv) (jam comet-proof)))]
         ::
           ==
         ::  only respond for the local identity, %$ desk, current timestamp
