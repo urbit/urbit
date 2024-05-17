@@ -82,7 +82,9 @@
   ++  grow
     |=  [=pail:neo =oath:neo]
     ^-  (quip case:neo loam:dirt:neo)
+    ~&  a/loam
     =.  loam  +:cull 
+    ~&  b/loam
     =.  fil.loam
       =/  =tale:neo  [+(case) oath]
       ^-  (unit soil:dirt:neo)
@@ -91,6 +93,7 @@
       ?~  fil.loam
         *past:neo
       bone.u.fil.loam
+    ~&  c/loam
     [~[+(case)] loam]
   ++  cull
     ^-  (quip case:neo loam:dirt:neo)
@@ -190,9 +193,12 @@
     farm(kid (~(put by kid.farm) i.pith $(farm kid, pith t.pith)))
   ::
   ++  take
-    |=  =gift:dirt:neo
+    |=  gis=(list gift:dirt:neo)
     ^-  farm:neo
-    (eternal [p q]:gift)
+    ?~  gis
+      farm
+    $(farm (eternal [p q]:i.gis), gis t.gis)
+  ::
   ++  look
     |=  [from=pith:neo =once:neo grab=pith:neo]
     ^-  (unit (unit ever:neo))

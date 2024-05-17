@@ -20,6 +20,7 @@
 ::  $care: Perspective on a path
 ::    
 +$  care
+  $~  %x
   $?  %x  :: single node
       %y  :: single node and immediate children
       %z  :: single node and all descendants
@@ -1125,9 +1126,6 @@
   ++  req  request:http
   +$  res  client-response:^iris
   --
-::
-::  $road: fully qualified path
-+$  road   [=name =once grab=pith]
 :: * A `$bolt` is a `[=stud =once]`
 ::
 ::  $peer: Subscription
@@ -1166,6 +1164,23 @@
 +$  out
   $%  [%sync p=hunt]
       [%stop p=hunt]
+  ==
+::  $town: foreign
++$  town  (axal mall)
++$  deli
+  $:  last=ever
+      ~
+  ==
++$  mall
+  $:  mart=(set hunt)  :: subscriberes
+      del=(unit deli) :: if responsible, subscription info
+      ~
+  ==
+::  $city: local
++$  city  (axal ward)
++$  ward
+  $:  =skin
+      =conf
   ==
 ++  pave
   |=  p=path
@@ -1337,7 +1352,7 @@
     --
   --
 ::
-++  poth   (pole iota)
+++  road   (pole iota)
 ::
 ++  pith
   |^  $+(pith ^pith)
