@@ -1526,7 +1526,7 @@
     ::
     +|  %helpers
     ::
-    ++  get-forward-lanes-mesa
+    ++  get-forward-lanes-mesa  ::  XX refactor get-forward-lanes
       |=  [our=@p fren=fren-state chums=(map ship chum-state)]
       ^-  (list lane)
       =;  zar=(trap (list lane))
@@ -6961,7 +6961,7 @@
                 ?:  =(our ship)
                   sy-core
                 ::
-                =/  peer  (find-peer ship)
+                =/  peer  (sy-find-peer ship)
                 ::  we shouldn't be hearing about ships we don't care about
                 ::
                 ?~  +.peer
@@ -6996,11 +6996,13 @@
                   =.  +>.u.peer  +:*peer-state
                   (~(put by peers.ames-state) ship u.peer(route cache-route))
                 ::
-                :: =.  ev-core
-                ::   %-  ev-emit
-                ::   :*  unix-duct.ames-state  %give  %nail  ship
-                ::       (get-forward-lanes our peer-state chums.ames-state)
-                ::   ==
+                =.  ev-core
+                  %-  ev-emit
+                  :*  unix-duct.ames-state  %give  %nail  ship
+                      ?:  ?=(%chum -.peer)
+                        (get-forward-lanes-mesa our +.u.peer chums.ames-state)
+                      (get-forward-lanes our +.u.peer peers.ames-state)
+                  ==
                 ::  if one of our sponsors breached, give the updated list to vere
                 ::
                 =/  sponsors  (~(gas in *(set ^ship)) sy-get-sponsors)
@@ -7021,7 +7023,7 @@
                 ^+  sy-core
                 ?:  =(our ship)  sy-core
                 ::
-                =/  peer  (find-peer ship)
+                =/  peer  (sy-find-peer ship)
                 ?.  ?=([?(%ship %chum) ~ %known *] peer)
                   =|  =point:jael
                   =.  life.point     life
@@ -7059,7 +7061,7 @@
                   %-  (slog leaf+"ames: {(scow %p ship)} lost sponsor, ignoring" ~)
                   sy-core
                 ::
-                =/  peer  (find-peer ship)
+                =/  peer  (sy-find-peer ship)
                 ?.  ?=([?(%ship %chum) ~ %known *] peer)
                   %-  (slog leaf+"ames: missing peer-state, ignoring" ~)
                   sy-core
@@ -7068,11 +7070,13 @@
                   (~(put by chums.ames-state) ship u.peer)
                 =?  peers.ames-state  ?=(%ship -.peer)
                   (~(put by peers.ames-state) ship u.peer)
-                :: =.  ev-core
-                ::   %-  ev-emit
-                ::   :*  unix-duct.ames-state  %give  %nail  ship
-                ::       (get-forward-lanes our +.u.state chums.ames-state)
-                ::   ==
+                =.  ev-core
+                  %-  ev-emit
+                  :*  unix-duct.ames-state  %give  %nail  ship
+                      ?:  ?=(%chum -.peer)
+                        (get-forward-lanes-mesa our +.u.peer chums.ames-state)
+                      (get-forward-lanes our +.u.peer peers.ames-state)
+                  ==
                 ::
                 sy-core
               ::  +on-publ-full: handle new pki data for peer(s)
@@ -7096,7 +7100,7 @@
                     ?.  (~(has by keys.point) life.point)
                       $(points t.points)
                     ::
-                    =/  old-peer-state  (find-peer ship)
+                    =/  old-peer-state  (sy-find-peer ship)
                     ::
                     =^  new-state  sy-core
                       (insert-ship-state -.old-peer-state ship point)
@@ -7185,7 +7189,7 @@
                 ^+  sy-core
                 =?  rift.ames-state  =(our ship)
                   rift
-                =/  peer  (find-peer ship)
+                =/  peer  (sy-find-peer ship)
                 ?~  ?=([?(%ship %chum) ~] peer)
                   ::  print error here? %rift was probably called before %keys
                   ::
@@ -7237,14 +7241,16 @@
                   (^^sein:title rof /ames our now ship)
                 ::  automatically set galaxy route, since unix handles lookup
                 ::
-                =?  route.peer   ?=(%czar (clan:title ship))
+                =?  route.peer  ?=(%czar (clan:title ship))
                   `[direct=%.y lane=[%& ship]]
-                ::  XX TODO
-                :: =?  ev-core  ?=(%czar (clan:title ship))
-                ::   %-  ev-emit
-                ::   :*  unix-duct.ames-state  %give  %nail  ship
-                ::       (get-forward-lanes our +.chum-state chums.ames-state)
-                ::   ==
+                ::
+                =?  ev-core  ?=(%czar (clan:title ship))
+                  %-  ev-emit
+                  :*  unix-duct.ames-state  %give  %nail  ship
+                      ?:  ?=(%chum -.peer)
+                        (get-forward-lanes-mesa our +.peer chums.ames-state)
+                      (get-forward-lanes our +.peer peers.ames-state)
+                  ==
                 ::
                 ?:  ?=(%chum -.peer)
                   =.  chums.ames-state
@@ -7254,17 +7260,6 @@
                 =.  peers.ames-state
                   (~(put by peers.ames-state) ship known/+.peer)
                 [%ship known/+.peer]^sy-core
-              ::
-              ++  find-peer
-                |=  =ship
-                ^-  $%  [%ship (unit ship-state)]
-                        [%chum (unit chum-state)]
-                    ==
-                ?^  chum-state=(~(get by chums.ames-state) ship)
-                  chum/chum-state
-                ?^  ship-state=(~(get by peers.ames-state) ship)
-                  ship/ship-state
-                ?:(?=(%mesa core.ames-state) [%chum ~] [%ship ~])
               ::
               --
             ::  +sy-priv:  set our private key to jael's response
@@ -7357,6 +7352,30 @@
                 ?.  ?=(%fail -.stun)  -.stun
                 [%kick fail=%.y]
               sy-core
+            :: +sy-dear: handle lane from unix
+            ::
+            ++  sy-dear
+              |=  [=ship =lane]
+              ^+  sy-core
+              ?:  ?=(%.y -.lane)
+                sy-core
+              =/  ip=@if  (end [0 32] p.lane)
+              =/  pt=@ud  (cut 0 [32 16] p.lane)
+              ?:  =(%czar (clan:title ship))
+                :: %-  %^  ev-trace  odd.veb  ship
+                ::   |.("ignoring %dear lane {(scow %if ip)}:{(scow %ud pt)} for galaxy")
+                sy-core
+              =/  peer  (sy-find-peer ship)
+              ?.  ?=([?(%ship %chum) ~ %known *] peer)
+                :: %-  %^  ev-trace  odd.veb  ship
+                ::   |.("no peer-state for ship, ignoring %dear")
+                sy-core
+              :: %-  %^  ev-trace  rcv.veb  ship
+              ::   |.("incoming %dear lane {(scow %if ip)}:{(scow %ud pt)}")
+              =.  route.+.u.peer  `[%.y lane]  :: XX (list lane)
+              =.  ev-core
+                (ev-emit unix-duct.ames-state %give %nail ship ~[lane])
+              sy-core
             ::
             +|  %internals
             ::
@@ -7364,6 +7383,17 @@
               ;;  (list ship)
               =<  q.q  %-  need  %-  need
               (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p our)])
+            ::
+            ++  sy-find-peer
+              |=  =ship
+              ^-  $%  [%ship (unit ship-state)]
+                      [%chum (unit chum-state)]
+                  ==
+              ?^  chum-state=(~(get by chums.ames-state) ship)
+                chum/chum-state
+              ?^  ship-state=(~(get by peers.ames-state) ship)
+                ship/ship-state
+              ?:(?=(%mesa core.ames-state) [%chum ~] [%ship ~])
             ::
             --
           ::
