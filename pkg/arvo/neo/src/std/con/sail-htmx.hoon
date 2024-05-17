@@ -132,389 +132,714 @@
   ==
 ::  XX import from source file instead of copying
 ++  docs
-;div.grow.border.basis-half.scroll-x.scroll-y.hidden.prose.p3
+;div.grow.border.basis-half.scroll-x.scroll-y.hidden
 =id  "docs-{id}"
 =style  "min-width: 300px; height: 100%;"
+;div.prose.p3
 
-# CSS Utility Classes
+# Intro to Feather
+
+Feather is a _Design System_ which gives
+Sail developers easy access to a small set of
+predefined styles.
+
+Feather is implemented as a library of CSS classes,
+and is bundled with Sky and Hawk.
+
+
+Benefits of opting into
+Feather's constraints:
+
+- Feather uses CSS variables that...
+  - the user can override
+  - respect OS light/dark theme
+- UIs styled with Feather fit in
+  with the style of Sky and Hawk
+  - "birds of a feather flock together"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------
+## The `prose` Class
+
+the `.prose` class adds blog-like spacing,
+sizing, and readability styling to semantic
+children such as `p`
+`li` `h1` `h2` `a` etc.
+
+This document uses it.
 
 ```
+;article.prose
 
-.hidden, .folded {
-  display: none !important;
-}
+  # cool
 
-.wfc {
-  width: fit-content;
-}
-.wf {
-  width: 100%;
-}
-.mw-page {
-  max-width: 650px;
-}
-.hf {
-  height: 100%;
-}
-.hfc {
-  height: fit-content;
-}
+  - neat
+  - fine
 
-.mono {
-  font-variation-settings: "xtab" 500;
-  font-size: 0.8em;
-}
-.bold {
-  font-weight: bold;
-}
-.strike {
-  text-decoration: line-through;
-}
-.pre {
-  white-space: pre;
-}
-.pre-line {
-  white-space: pre-line;
-}
-
-.tl {
-  text-align: left;
-}
-.tc {
-  text-align: center;
-}
-.tr {
-  text-align: right;
-}
+==
+```
 
 
-.fc {
-  display: flex;
-  flex-direction: column;
-}
-.fcr {
-  display: flex;
-  flex-direction: column-reverse;
-}
-.fr {
-  display: flex;
-  flex-direction: row;
-}
-.frw {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-}
 
-.jc {
-  justify-content: center;
-}
-.jb {
-  justify-content: space-between;
-}
-.ja {
-  justify-content: space-around;
-}
-.js {
-  justify-content: start;
-}
-.je {
-  justify-content: end;
-}
-.js {
-  justify-content: start;
-}
-.as {
-  align-items: start;
-}
-.af {
-  align-items: stretch;
-}
-.ae {
-  align-items: end;
-}
-.ac {
-  align-items: center;
-}
+-----------------------------------------------
+## Flexbox
 
-.basis-full {
-  flex-basis: 100%;
-}
-.basis-half {
-  flex-basis: 50%;
-  flex-shrink: 0;
-}
-.basis-none {
-  flex-basis: 0%;
-  flex-shrink: 1;
-}
-.shrink-0 {
-  flex-shrink: 0;
-}
-.grow {
-  flex-grow: 1;
-}
+;*
+%+  turn
+:~
+  "fr jb"
+  "fr ja"
+  "fr jc"
+  "fr js"
+  "fr je"
+  "fc ac"
+  "fc as"
+  "fc ae"
+  "fc af"
+==
+|=  =tape
+;div.fc.g1.br1(style "margin-top: 20px;")
+;code: {tape}
+;div
+  =class  "bd1 br1 p3 g1 {tape}"
+  ;*  %+  turn  (gulf 1 3)
+  |=  n=@
+  ;b.b1.f3.p1.br1: X
+==
+==
 
-.g1 {
-  gap: 4px;
-}
-.g2 {
-  gap: 8px;
-}
-.g3 {
-  gap: 12px;
-}
-.g4 {
-  gap: 16px;
-}
-.g5 {
-  gap: 20px;
-}
-.g6 {
-  gap: 24px;
-}
-.g7 {
-  gap: 28px;
-}
+;div.fc.g3(style "margin-top: 50px;")
+;*
+%+  turn
+:~
+  "fr g0"
+  "fr g1"
+  "fr g2"
+  "fr g3"
+  "fr g4"
+  "fr g5"
+  "fr g6"
+  "fr g7"
+  "fr g8"
+==
+|=  =tape
+;div
+  =class  "s-2 mono {tape}"
+  ;div.bd1.p2: {tape}
+  ;*  %+  turn  (gulf 1 3)
+  |=  n=@
+  ;div.bd1.p2;
+==
+==
 
-.relative {
-  position: relative;
-}
-.absolute {
-  position: absolute;
-}
-.fixed {
-  position: fixed;
-}
-.sticky {
-  position: sticky;
-}
-.z-2 {
-  z-index: -20;
-}
-.z-1 {
-  z-index: -10;
-}
-.z0 {
-  z-index: 0;
-}
-.z1 {
-  z-index: 10;
-}
-.z2 {
-  z-index: 20;
-}
 
-.block {
-  display: block;
-}
+;div.fr.g2(style "margin-top: 50px;")
+;*
+%+  turn
+:~
+  "fc g0"
+  "fc g1"
+  "fc g2"
+  "fc g3"
+  "fc g4"
+  "fc g5"
+  "fc g6"
+  "fc g7"
+  "fc g8"
+==
+|=  =tape
+;div
+  =class  "s-2 mono {tape}"
+  ;div.bd1.p1(style "width: min-content;"): {tape}
+  ;*  %+  turn  (gulf 1 3)
+  |=  n=@
+  ;div.bd1.p2;
+==
+==
 
-.p-1 {
-  padding: 0px 4px;
-}
-.p0 {
-  padding: 0;
-}
-.p1 {
-  padding: 4px;
-}
-.p2 {
-  padding: 8px;
-}
-.p3 {
-  padding: 12px;
-}
-.p4 {
-  padding: 16px;
-}
-.p-page {
-  padding-top: 30px;
-  padding-bottom: 200px;
-  padding-left: 12px;
-  padding-right: 12px;
-}
-.ma {
-  margin: auto;
-}
 
-.scroll-y {
-  overflow-y: auto;
-}
-.scroll-x {
-  overflow-x: auto;
-}
-.scroll-hidden {
-  overflow: hidden;
-}
+;div.frw.g2(style "margin-top: 50px;")
+;*
+%+  turn  (gulf 1 10)
+|=  n=@
+;div.p2.bd1.mono: frw g2
+==
 
-.break {
-  word-break: break-word;
-}
-.action {
-  touch-action: manipulation;
-}
 
-.f1 {
-  color: var(--f1);
-}
-.f2 {
-  color: var(--f2);
-}
-.f3 {
-  color: var(--f3);
-}
-.f-success {
-  color: var(--f-success);
-}
-.f-error {
-  color: var(--f-error);
-}
-.b0 {
-  background-color: var(--b0);
-}
-.b1 {
-  background-color: var(--b1);
-}
-.b2 {
-  background-color: var(--b2);
-}
-.b3 {
-  background-color: var(--b3);
-}
-.b-success {
-  background-color: var(--b-success);
-}
-.b-error {
-  background-color: var(--b-error);
-}
+;div.f2.mono
+  ;div.fr.g4.p2.bd1.br1(style "margin-top: 50px;")
+    ;div.p2.br1.b1;
+    ;div.p2.br1.b1.tc.grow: grow
+    ;div.p2.br1.b1;
+  ==
 
-.s-2 {
-  font-size: 0.7em;
+  ;div.fr.g4.p2.bd1.br1(style "margin-top: 20px;")
+    ;div.p2.br1.b1;
+    ;div.p2.br1.b1;
+    ;div.p2.br1.b1.tc.grow: grow
+  ==
+
+  ;div.fr.g4.p2.bd1.br1(style "margin-top: 20px;")
+    ;div.p2.br1.b1.tc.grow: grow
+    ;div.p2.br1.b1;
+    ;div.p2.br1.b1.tc.grow: grow
+  ==
+==
+
+
+-----------------------------------------------
+## Typography
+
+;div.frw.g1.br1.ac.jc
+;*
+%+  turn
+:~
+  "s-2"
+  "s-1"
+  "s0"
+  "s2"
+  "s3"
+  "s4"
+  "s5"
+  "s6"
+==
+|=  =tape
+
+;span
+  =class  "p2 {tape}"
+  ; {tape}
+==
+==
+;div.frw.g1.br1.ac.jc
+;*
+%+  turn
+:~
+  "mono"
+  "bold"
+  "italic"
+  "underline"
+  "strike"
+==
+|=  =tape
+
+;span
+  =class  "p2 {tape}"
+  ; {tape}
+==
+==
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------
+## Text Alignment
+
+;*
+%+  turn
+:~
+  "tl"
+  "tc"
+  "tr"
+==
+|=  =tape
+
+;div
+  =class  "mono {tape}"
+  ; {tape}
+==
+
+
+
+-----------------------------------------------
+## Foreground & Background Colors
+
+;div.frw.g1.br1.ac.jc.mono
+;*
+%+  turn
+:~
+  "f-3"
+  "f-2"
+  "f-1"
+  "f0"
+  "f1"
+  "f2"
+  "f3"
+  "f4"
+==
+|=  =tape
+;span
+  =class  "p2 bold {tape}"
+  ; {tape}
+==
+==
+
+
+
+
+;div.frw.g1.br1.ac.jc.mono
+;*
+%+  turn
+:~
+  "b-3"
+  "b-2"
+  "b-1"
+  "b0"
+  "b1"
+  "b2"
+  "b3"
+  "b4"
+==
+|=  =tape
+
+;span
+  =class  "p2 {tape}"
+  ; {tape}
+==
+==
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------
+## Padding
+
+;div.fc.ac.g2
+;*
+%+  turn
+:~
+  "p-8"
+  "p-7"
+  "p-6"
+  "p-5"
+  "p-4"
+  "p-3"
+  "p-2"
+  "p-1"
+  "p0"
+  "p1"
+  "p2"
+  "p3"
+  "p4"
+  "p5"
+  "p6"
+  "p7"
+  "p8"
+  "p-page"
+==
+|=  =tape
+;div
+  =class  "wfc mono f2 b1 {tape}"
+  ; {tape}
+==
+==
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------
+## Margin
+
+;div
+;*
+%+  turn
+:~
+  "m0"
+  "ma"
+  "mt1"
+  "mt2"
+  "mt3"
+==
+|=  =tape
+;div
+  =class  "mono f2 b2 br1 wfc p2 {tape}"
+  ; {tape}
+==
+==
+
+
+
+
+
+
+
+
+-----------------------------------------------
+## Opacity
+
+;div.frw.g2.ac.jc
+
+;*
+%+  turn
+:~
+  "o0"
+  "o1"
+  "o2"
+  "o3"
+  "o4"
+  "o5"
+  "o6"
+  "o7"
+  "o8"
+  "o9"
+  "o10"
+==
+|=  =tape
+;div.fc.g1.ac.jc
+  ;span.mono.s-1.f2: {tape}
+;div
+  =class  "wfc mono f0 b1 p4 bd1 {tape}"
+  ;
+==
+==
+==
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------
+## Borders
+
+;div.frw.ac.g2(style "margin-top: 20px;")
+;*
+%+  turn
+:~
+  "bd0"
+  "bd1"
+  "bd2"
+  "bd3"
+==
+|=  =tape
+;div
+  =class  "wfc mono f2 p2 {tape}"
+  ; {tape}
+==
+==
+
+;div.frw.ac.g2(style "margin-top: 20px;")
+;*
+%+  turn
+:~
+  "br0"
+  "br1"
+  "br2"
+  "br3"
+==
+|=  =tape
+;div
+  =class  "wfc mono f2 p2 bd1 {tape}"
+  ; {tape}
+==
+==
+
+
+
+-----------------------------------------------
+## Dimensions
+
+- `wf` width: full
+- `wfc` width: fit-content
+- `mw-page` max-width: page (650px)
+- `hf` height: full
+- `hfc` height: fit-content
+
+
+
+
+
+-----------------------------------------------
+## Special
+
+;*
+%+  turn
+:~
+  "toggled"
+  "hover"
+==
+|=  =tape
+;button(style "margin: 5px;")
+  =class  "wfc mono f0 b0 p2 bd1 {tape}"
+  ; {tape}
+==
+
+the `hidden` class hides the element.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------
+## Request indicators
+
+
+`loader`  indicator parent
+
+`loading`  loading state
+
+`loaded`  loaded state
+
+
+
+
+;details.mt1
+  ;summary: Example
+;button.mt1.b1.p1.hover.br1.bd1.f1.loader
+  =onclick  "$(this).toggleClass('htmx-request')"
+  ;span.loaded: toggle load state
+  ;span.loading.f1: ...loading
+==
+
+```
+;button.loader
+  =onclick  "$(this).toggleClass('htmx-request')"
+  ;span.loaded:  toggle load state
+  ;span.loading: ...loading
+==
+```
+
+==
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------
+## Misc
+
+
+`scroll-y`\
+scroll-y: auto
+
+`scroll-x`\
+scroll-x: auto
+
+`relative`\
+position: relative
+
+`sticky`\
+position: sticky
+
+`absolute`\
+position: absolute
+
+`fixed`\
+postion: fixed
+
+`block`\
+display: block
+
+`inline`\
+display: inline-block
+
+`pre`\
+white-space: pre
+
+`pre-line`\
+white-space: pre-line
+
+`break`\
+word-break: break-word
+
+`action`\
+touch-action: manipulation
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------
+## Feather Sutra
+
+> Order requires constraints.
+
+
+### Primary Constraint
+
+Interfaces must work on a mobile web browser.
+
+
+### Consequent Constraints
+
+- no element should need to be wider than 350px
+- avoid horizontal scrolling
+- left-click is the only mouse event
+
+
+### Locality of Behavior
+
+- co-locate actionable elements with the elements on which they act
+- put styling inline
+- put javascript inline
+
+
+### Mechanical Simplicity
+
+- don't fight the browser
+- avoid animations
+- prefer [bubbling-event](https://htmx.org/attributes/hx-on/)
+  architectures
+- store state as text attributes in the DOM, not javascript state
+
+
+### UX low-hanging fruit
+
+- network requests should always have indicators
+- prefer autosave to manually saving
+- be semantic with your tags
+
+
+
+
+
+
+
+
+
+-----------------------------------------------
+## Feather Tantra
+
+> Life evolves through a vital chaos.
+
+
+```
+;div.any.class(style "any: css;");
+
+;div
+  =class  "any class"
+  =style
+    """
+    any: "css";
+    that-you: "want;
+    """
+  ;
+==
+
+;style
+  ;+  ;/  %-  trip
+  '''
+  .any-css {
+    that-you: "want";
   }
-.s-1 {
-  font-size: 0.85em;
-}
-.s0 {
-  font-size: 1em;
-}
-.s1 {
-  font-size: 1.15em;
-}
-.s2 {
-  font-size: 1.3em;
-}
-.s3 {
-  font-size: 1.45em;
-}
-.s4 {
-  font-size: 1.6em;
-}
+  '''
+==
 
-.border {
-  border: 1.2px solid var(--f3);
-}
-.border-2 {
-  border: 1px solid var(--f4);
-}
-.br1 {
-  border-radius: 3px;
-}
-.br2 {
-  border-radius: 6px;
-}
+;script
+  ;+  ;/  %-  trip
+  '''
+  // any javascript you want
+  '''
+==
 
-.hover:hover {
-  filter: invert(20%);
-}
-
-.toggled {
-  filter: invert(100%);
-}
-.hover.toggled:hover {
-  filter: invert(100%);
-}
-
-.active,
-.selected {
-  filter: invert(10%);
-}
-.hover.active:hover,
-.hover.selected:hover {
-  filter: invert(25%);
-}
 
 ```
 
-# The .prose Class
 
-```
 
-.prose h1 {
-  font-size: 1.45rem;
-  margin: 1rem 0;
-}
-.prose h2 {
-  font-size: 1.3rem;
-  margin: 1rem 0;
-}
-.prose h3 {
-  font-size: 1.15rem;
-  margin: 1rem 0;
-}
-.prose h1, .prose h2, .prose h3 {
-  font-weight: bold;
-}
-.prose p {
-  margin-bottom: 1rem;
-  line-height: 1.3;
-}
-.prose img {
-  max-width: 100%;
-  display: block;
-  max-height: 350px;
-}
-.prose details {
-  margin-bottom: 1rem;
-}
-.prose a {
-  text-decoration: underline;
-}
-.prose mono {
-  font-size: 1em;
-}
-.prose pre {
-  font-variation-settings: "xtab" 500;
-  font-size: 0.8em;
-  overflow-x: auto;
-  width: 100%;
-  display: block;
-  padding: 8px;
-}
-.prose code {
-  white-space: pre;
-  overflow-x: auto;
-  width: 100%;
-  display: block;
-  padding: 8px;
-}
-.prose ul,
-.prose ol {
-  padding-left: 19px;
-  line-height: 1.2;
-  margin-bottom: 1rem;
-}
-.prose ul p,
-.prose ol p {
-  margin-bottom: 0;
-  line-height: 1.4;
-}
-.prose ul ul,
-.prose ol ul,
-.prose ul ol,
-.prose ol ol {
-  margin-bottom: 0;
-}
-```
 
+
+
+;div.end;
+
+;style
+;+  ;/  %-  trip
+'''
+details {
+  display: flex !important;
+  flex-direction: column;
+  padding: 12px;
+  background: var(--b1);
+  box-sizing: border-box;
+}
+.end {
+  margin-bottom: 450px;
+}
+
+hr {
+  margin: 100px 0;
+}
+'''
+==
+
+
+
+==
 ==
 --

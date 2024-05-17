@@ -16,6 +16,8 @@ class extends HTMLElement {
           overflow: hidden;
           flex-direction: column;
           position: relative;
+          font-size: 1rem !important;
+          background-color: var(--b0);
         }
         section {
           position: sticky;
@@ -41,7 +43,7 @@ class extends HTMLElement {
       </style>
       <template id="button-template">
         <button
-          class="b2 hover p1 br1 mono"
+          class="b2 hover p1 br1"
           hx-target="closest ha-wk"
           hx-swap="innerHTML"
           slot="crumbs"
@@ -49,28 +51,28 @@ class extends HTMLElement {
         </button>
       </template>
       <section id="section" class="fc g2">
-        <nav class="fr g1">
+        <nav class="frw g1 ac">
           <button
             id="tree-btn"
             class="b2 hover p1 br1 mono f2"
             onclick="this.getRootNode().host.toggleAttribute('tree-open')"
             slot="crumbs"
             >
-            z
+            ${this.iconFiles()}
           </button>
           <button
             class="b2 hover p1 br1 mono f2"
             onclick="this.getRootNode().host.toggleMore(event)"
             slot="crumbs"
             >
-            #
+            ${this.iconMore()}
           </button>
           <div id="breadcrumbs">
             <slot id="btns" name="crumbs"></slot>
           </div>
           <div id="actions" class="f2">
             <button
-              class="b2 hover p1 br1 mono"
+              class="b2 hover p1 br1 mono hidden"
               onclick="this.getRootNode().host.clone(event)"
               slot="crumbs"
               >
@@ -81,24 +83,24 @@ class extends HTMLElement {
               onclick="this.getRootNode().host.raise(event)"
               slot="crumbs"
               >
-              &lt;
+              ${this.chevronLeft()}
             </button>
             <button
               class="b2 hover p1 br1 mono"
               onclick="this.getRootNode().host.drop(event)"
               slot="crumbs"
               >
-              &gt;
+              ${this.chevronRight()}
             </button>
             <button
               class="b2 hover p1 br1 mono"
               onclick="this.getRootNode().host.burry(event)"
               slot="crumbs"
               >
-              _
+              ${this.iconClose()}
             </button>
             <button
-              class="b2 hover p1 br1 mono"
+              class="b2 hover p1 br1 mono hidden"
               onclick="this.getRootNode().host.suicide()"
               slot="crumbs"
               >
@@ -287,5 +289,56 @@ class extends HTMLElement {
       composed: true,
     });
     par.dispatchEvent(event);
+  }
+  chevronLeft() {
+    return `
+      <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 -960 960 960"
+          width="1rem"
+          fill="currentColor"><path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z"/></svg>
+    `
+  }
+  chevronRight() {
+    return `
+      <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 -960 960 960"
+          width="1rem"
+          fill="currentColor"><path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z"/></svg>
+    `
+  }
+  iconClose() {
+    return `
+      <svg
+       xmlns="http://www.w3.org/2000/svg"
+       viewBox="0 -960 960 960"
+       width="1rem"
+       fill="currentColor">
+       <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+    `
+  }
+  iconMore() {
+    return `
+      <svg
+       xmlns="http://www.w3.org/2000/svg"
+       viewBox="0 -960 960 960"
+       width="1rem"
+       fill="currentColor">
+       <path d="M480-160q-33 0-56.5-23.5T400-240q0-33 23.5-56.5T480-320q33 0 56.5
+        23.5T560-240q0 33-23.5 56.5T480-160Zm0-240q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33
+        0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm0-240q-33 0-56.5-23.5T400-720q0-33 23.5-56.5T480-800q33
+        0 56.5 23.5T560-720q0 33-23.5 56.5T480-640Z"/></svg>
+    `
+  }
+  iconFiles() {
+    return `
+      <svg
+       xmlns="http://www.w3.org/2000/svg"
+       viewBox="0 -960 960 960"
+       width="1rem"
+       fill="currentColor">
+       <path d="M120-240v-80h240v80H120Zm0-200v-80h480v80H120Zm0-200v-80h720v80H120Z"/></svg>
+    `
   }
 })

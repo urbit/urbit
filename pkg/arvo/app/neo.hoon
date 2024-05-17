@@ -15,7 +15,7 @@
 /*  ha-wk   %js   /web/ha-wk/js
 /*  s-k-y   %js   /web/s-k-y/js
 /*  a-i-r   %js   /web/a-i-r/js
-/*  style-css   %css   /web/style/css
+/*  feather-css   %css   /web/feather/css
 |%
 ++  pave  pave:neo
 ++  ford  ford:neo
@@ -812,7 +812,7 @@
             """
             width=device-width,
             initial-scale=1.0,
-            maximum-scale=1.0"
+            maximum-scale=1.0
             """
           ;
         ==
@@ -842,7 +842,7 @@
           ;+  ;/
           """
           const sharedStyles = new CSSStyleSheet();
-          sharedStyles.replaceSync(`{(trip style-css)}`);
+          sharedStyles.replaceSync(`{(trip feather-css)}`);
           document.adoptedStyleSheets = [sharedStyles];
           window.log=function()\{if(this.console)\{console.log(Array.prototype.slice.call(arguments));}};
           jQuery.fn.log=function (msg)\{console.log(msg, this); return this;};

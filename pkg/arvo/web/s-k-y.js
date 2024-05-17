@@ -16,15 +16,15 @@ class extends HTMLElement {
          height: 100%;
        }
       </style>
-      <a-i-r class="wf hf">
+      <a-i-r class="wf hf b1">
         <nav slot="nav" class="wf hf scroll-y fc g2 p2">
           <button
             class="p2 tc hover br1 b1"
             onclick="this.getRootNode().host.newTab()"
             >
-            +
+            ${this.iconAdd()}
           </button>
-          <div class="fr g2">
+          <div class="fr g2 hidden">
             <button
               class="p1 br1 b1 grow hover"
               onclick="this.getRootNode().host.cull()"
@@ -40,16 +40,16 @@ class extends HTMLElement {
           </div>
           <div id="tabs" class="fc g1 wf">
             <template id="tab-template">
-              <div class="mono fr b1 br1" style="cursor: pointer;">
+              <div class="frw b1 br1" style="cursor: pointer;">
                 <button
                   class="action p2 b1 hover br1 hidden"
                 >+</button>
                 <button
-                  class="action p2 b1 hover grow tl br1"
+                  class="action p2 b1 hover grow tl br1 break"
                 ></button>
                 <button
                   class="action p2 hover br1"
-                >x</button>
+                >${this.iconClose()}</button>
               </div>
             </template>
           </div>
@@ -221,11 +221,21 @@ class extends HTMLElement {
       sel.addEventListener('click', (e) => {
         e.preventDefault();
         this.insertAdjacentElement("afterbegin", f);
-        this.trueSlots();
+        if (f.hasAttribute("slot")) {
+          this.trueSlots();
+        } else {
+          this.grow();
+        }
       })
       del.addEventListener('click', (e) => {
         e.preventDefault();
+        let cullp = f.hasAttribute("slot");
         f.suicide();
+        if (cullp) {
+          this.cull();
+        } else {
+          this.trueSlots();
+        }
       })
       tabs.appendChild(tab);
     })
@@ -266,14 +276,32 @@ class extends HTMLElement {
   async syncTabs() {
     let frames = [...this.childNodes].filter(c => c.nodeName === 'HA-WK');
     let forms = frames.map(f => {
-      return `
-      <p here="${f.getAttribute('here')}"></p>
-      `
+      return `<p here="${f.getAttribute('here')}"></p>`
     })
     await fetch(`/neo/hawk/sky?stud=sky`, {
       method: 'POST',
       headers: {'content-type': 'text/html'},
-      body: `<div slots="${this.hawks}">${forms.join("")}</div>`
+      body: `<div slots="${this.hawks}">${forms.join("").trim()}</div>`
     })
+  }
+  iconClose() {
+    return `
+      <svg
+       xmlns="http://www.w3.org/2000/svg"
+       viewBox="0 -960 960 960"
+       width="1rem"
+       fill="currentColor">
+       <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+    `
+  }
+  iconAdd() {
+    return `
+      <svg
+       xmlns="http://www.w3.org/2000/svg"
+       viewBox="0 -960 960 960"
+       width="1.2rem"
+       fill="currentColor">
+       <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
+    `
   }
 });

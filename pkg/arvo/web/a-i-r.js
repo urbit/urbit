@@ -8,6 +8,7 @@ class extends HTMLElement {
     //
     super();
     this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [sharedStyles];
     this.shadowRoot.innerHTML = `
       <style>
        * {
@@ -145,9 +146,6 @@ class extends HTMLElement {
        button {
          background-color: var(--b1);
          color: var(--f1);
-         margin: 8px;
-         border: 1px solid var(--f4);
-         border-radius: 4px;
        }
        @media (max-width: 900px) {
          :host {
@@ -196,6 +194,7 @@ class extends HTMLElement {
       </style>
       <slot name="button">
         <button
+          class="hover b1 bold s2"
           onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('sky-open', {bubbles:true, composed: true}))"
           >
           ~

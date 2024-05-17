@@ -1,4 +1,5 @@
 /@  sky
+/@  sky-settings
 :-  [%sky %htmx]
 |=  =sky
 |=  =bowl:neo
@@ -6,66 +7,23 @@
 |^
   shell
 ::
-++  theme-dark
-  ::
-  %-  trip
-  '''
-  :root {
-    --b0: #222;
-    --b1: #333;
-    --b2: #444;
-    --b3: #555;
-    --be: #752;
-    --b-success: #351;
-    --f1: #ccc;
-    --f2: #999;
-    --f3: #777;
-    --f4: #555;
-    --f-error: #531;
-    --f-success: lightgreen;
-    --link: lightblue;
-    --hover:  115%;
-  }
-  '''
-  ::
-++  theme-light
-  ::
-  %-  trip
-  '''
-  :root {
-    --f1: #333;
-    --f2: #555;
-    --f3: #777;
-    --f4: #999;
-    --f-error: #953;
-    --f-success: #351;
-    --b0: #eee;
-    --b1: #ccc;
-    --b2: #bbb;
-    --b3: #888;
-    --b-error: #ca8;
-    --b-success: #8c8;
-    --link: blue;
-    --hover: 87%;
-  }
-  '''
-  ::
-++  theme-system
-  ::
+++  map-to-css-tape
+  |=  m=(map @t @t)
+  ^-  tape
+  %-  zing
+  %+  turn  ~(tap by m)
+  |=  [key=@t val=@t]
   """
-  {theme-light}
-  @media (prefers-color-scheme: dark) \{
-  {theme-dark}
-  }
+  --{(trip key)}: {(trip val)};
   """
-  ::
 ++  shell
-  =/  theme  theme.sky
-  =/  colors
-    ?:  =(theme %light)  theme-light
-    ?:  =(theme %dark)  theme-dark
-    theme-system
-    ::
+  =/  settings
+    ^-  (unit sky-settings)
+    =/  s  (~(get by kids.bowl) /settings)
+    ?~  s  ~
+    :-  ~
+    !<  sky-settings
+    q.u.s
   ;s-k-y.wf.hf(open "", hawks "{<slots.sky>}")
     ;*
     =<  p
@@ -86,6 +44,15 @@
         ==
       ==
     ==
-    ;style: {colors}
+    ;style
+      ;+  ;/
+      ?~  settings
+        ""
+      """
+      html \{
+        {(map-to-css-tape u.settings)}
+      }
+      """
+    ==
   ==
 --
