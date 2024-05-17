@@ -1952,27 +1952,6 @@
               |=  =error
               ^+  event-core
               (emit duct %pass /crud %d %flog %crud error)
-            :: +on-dear: handle lane from unix
-            ::
-            ++  on-dear
-              |=  [=ship =lane]
-              ^+  event-core
-              ?:  ?=(%.y -.lane)
-                event-core
-              =/  ip=@if  (end [0 32] p.lane)
-              =/  pt=@ud  (cut 0 [32 16] p.lane)
-              ?:  =(%czar (clan:title ship))
-                %-  %^  ev-trace  odd.veb  ship
-                  |.("ignoring %dear lane {(scow %if ip)}:{(scow %ud pt)} for galaxy")
-                event-core
-              =/  peer-state=(unit peer-state)  (get-peer-state ship)
-              ?~  peer-state
-                %-  %^  ev-trace  odd.veb  ship
-                  |.("no peer-state for ship, ignoring %dear")
-                event-core
-              %-  %^  ev-trace  rcv.veb  ship
-                |.("incoming %dear lane {(scow %if ip)}:{(scow %ud pt)}")
-              abet:(on-dear:(abed-peer:pe ship u.peer-state) lane)
             ::  +on-hear: handle raw packet receipt
             ::
             ++  on-hear
@@ -2253,21 +2232,6 @@
                   =/  rcvr  [ship her-life.channel.peer-core]
                   "plea {<sndr rcvr bone=bone vane.plea path.plea>}"
               abet:(on-memo:peer-core bone [%plea plea])
-            ::  +on-tame: handle request to delete a route
-            ::
-            ++  on-tame
-              |=  =ship
-              ^+  event-core
-              ?:  =(%czar (clan:title ship))
-                %-  %+  slog
-                  leaf+"ames: bad idea to %tame galaxy {(scow %p ship)}, ignoring"
-                ~
-                event-core
-              =/  peer-state=(unit peer-state)  (get-peer-state ship)
-              ?~  peer-state
-                %-  (slog leaf+"ames: no peer-state for {(scow %p ship)}, ignoring" ~)
-                event-core
-              abet:on-tame:(abed-peer:pe ship u.peer-state)
             ::
             ++  on-tune
               |=  [=wire s=[=ship path=(pole knot)] roar=(unit roar)]
@@ -3303,16 +3267,6 @@
                 =.  keens  (~(put by keens) path *keen-state)
                 fi-abet:(fi-start:(abed:fi path) duct)
               ::
-              ++  on-dear
-                |=  =lane
-                ^+  peer-core
-                %-  pe-emit:peer-core(route.peer-state `[%.y lane])
-                [unix-duct.ames-state %give %nail her ~[lane]]
-              ::
-              ++  on-tame
-                ^+  peer-core
-                %-  pe-emit:peer-core(route.peer-state ~)
-                [unix-duct.ames-state %give %nail her ~]
               ::  +on-cork-flow: mark .bone as closing
               ::
               ++  on-cork-flow
@@ -5078,7 +5032,6 @@
           ?+  -.task  !!  ::  XX mesa tasks; no-op?
             %born  on-born:event-core
             %hear  (on-hear:event-core [lane blob ~]:task)
-            %dear  (on-dear:event-core +.task)
             %init  on-init:event-core
             %prod  (on-prod:event-core ships.task)
             %sift  (on-sift:event-core ships.task)
@@ -5088,7 +5041,6 @@
             %trim  on-trim:event-core
             %plea  (on-plea:event-core [ship plea]:task)
             %cork  (on-cork:event-core ship.task)
-            %tame  (on-tame:event-core ship.task)
             %kroc  (on-kroc:event-core bones.task)
             %deep  (on-deep:event-core deep.task)
           ::
@@ -7373,8 +7325,35 @@
               :: %-  %^  ev-trace  rcv.veb  ship
               ::   |.("incoming %dear lane {(scow %if ip)}:{(scow %ud pt)}")
               =.  route.+.u.peer  `[%.y lane]  :: XX (list lane)
+              =?  chums.ames-state  ?=(%chum -.peer)
+                (~(put by chums.ames-state) ship u.peer)
+              =?  peers.ames-state  ?=(%ship -.peer)
+                (~(put by peers.ames-state) ship u.peer)
               =.  ev-core
                 (ev-emit unix-duct.ames-state %give %nail ship ~[lane])
+              sy-core
+            ::
+            ::  +sy-tame: handle request to delete a route
+            ::
+            ++  sy-tame
+              |=  =ship
+              ^+  sy-core
+              ?:  =(%czar (clan:title ship))
+                %-  %+  slog
+                  leaf+"ames: bad idea to %tame galaxy {(scow %p ship)}, ignoring"
+                ~
+                sy-core
+              =/  peer  (sy-find-peer ship)
+              ?.  ?=([?(%ship %chum) ~ %known *] peer)
+                %-  (slog leaf+"ames: no peer-state for {(scow %p ship)}, ignoring" ~)
+                sy-core
+              =.  route.+.u.peer  ~
+              =?  chums.ames-state  ?=(%chum -.peer)
+                (~(put by chums.ames-state) ship u.peer)
+              =?  peers.ames-state  ?=(%ship -.peer)
+                (~(put by peers.ames-state) ship u.peer)
+              =.  ev-core
+                (ev-emit unix-duct.ames-state %give %nail ship ~)
               sy-core
             ::
             +|  %internals
@@ -7511,7 +7490,7 @@
           ?+  -.task
               ::  ?(%plea %keen %cork) calls are handled directly in |peer
               ::
-              ev-core ::  XX TODO: ?(%trim %spew %stir %sift %dear %tame %cong)
+              ev-core ::  XX TODO: ?(%trim %spew %stir %sift %cong)
           ::
             %vega  ev-core  ::  handle kernel reload
             %init  sy-abet:~(sy-init sy:ev-core hen)
@@ -7520,7 +7499,8 @@
             %prod  sy-abet:~(sy-prod sy:ev-core hen)  ::  XX handle ships=(list @p)
             %snub  sy-abet:(~(sy-snub sy:ev-core hen) [form ships]:task)
             %stun  sy-abet:(~(sy-stun sy:ev-core hen) stun.task)
-            :: %dear  sy-abet:(~(sy-dear sy:ev-core hen) +.task)
+            %dear  sy-abet:(~(sy-dear sy:ev-core hen) +.task)
+            %tame  sy-abet:(~(sy-tame sy:ev-core hen) ship.task)
           ::  from internal %ames request
           ::
             %meek  (ev-make-peek:ev-core +.task)
