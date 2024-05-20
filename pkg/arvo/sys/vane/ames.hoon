@@ -3284,6 +3284,10 @@
                 =^  moves  flows.fren   make-flows
                 =.  chums.ames-state
                   (~(put by chums.ames-state) her known/fren)
+                ::  when .her is fully migrated, delete it from peers
+                ::
+                =.  peers.ames-state
+                  (~(del by peers.ames-state) her)
                 ?>  ?=([[* [%pass ^ [%a %mako *]]] ~] moves)
                 peer-core(event-core (emil moves))
                 ::
