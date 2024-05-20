@@ -5597,7 +5597,7 @@
               ?^  bone=(~(get by by-duct) hen)
                 [u.bone ossuary.sat.per]
               :-  next-bone  ^+  ossuary.sat.per
-              :+  +(next-bone)
+              :+  (add 4 next-bone)
                 (~(put by by-duct) hen next-bone)
               (~(put by by-bone) next-bone hen)
             ::
