@@ -132,6 +132,21 @@
     ::
     --
 ::
+=>  ::  common helpers
+    |%
+    ::  +trace: print if .verb is set and we're tracking .ship
+    ::
+    ++  trace
+      |=  [mode=?(%ames %fine) verb=? =ship ships=(set ship) print=(trap tape)]
+      ^+  same
+      ?.  verb
+        same
+      ?.  =>  [ship=ship ships=ships in=in]
+          ~+  |(=(~ ships) (~(has in ships) ship))
+        same
+      (slog leaf/"{(trip mode)}: {(scow %p ship)}: {(print)}" ~)
+    ::
+    --
 =>  ::  ames helpers
     ::
     ~%  %ames  ..part  ~
@@ -164,17 +179,6 @@
       ++  on   ((^on ,@ ,[key=@ =path]) lte)
       +$  mop  ^chain
       --
-    ::  +trace: print if .verb is set and we're tracking .ship
-    ::
-    ++  trace
-      |=  [mode=?(%ames %fine) verb=? =ship ships=(set ship) print=(trap tape)]
-      ^+  same
-      ?.  verb
-        same
-      ?.  =>  [ship=ship ships=ships in=in]
-          ~+  |(=(~ ships) (~(has in ships) ship))
-        same
-      (slog leaf/"{(trip mode)}: {(scow %p ship)}: {(print)}" ~)
     ::  +qos-update-text: notice text for if connection state changes
     ::
     ++  qos-update-text
@@ -1797,37 +1801,6 @@
                 =/  nack-bone=^bone  (mix 0b10 bone)
                 abet:(call:(abed:mu:peer-core nack-bone) %memo message)
               --
-            ::  +on-sift: handle request to filter debug output by ship
-            ::
-            ++  on-sift
-              |=  ships=(list ship)
-              ^+  event-core
-              =.  ships.bug.ames-state  (sy ships)
-              event-core
-            ::  +on-spew: handle request to set verbosity toggles on debug output
-            ::
-            ++  on-spew
-              |=  verbs=(list verb)
-              ^+  event-core
-              ::  start from all %.n's, then flip requested toggles
-              ::
-              =.  veb.bug.ames-state
-                %+  roll  verbs
-                |=  [=verb acc=veb-all-off]
-                ^+  veb.bug.ames-state
-                ?-  verb
-                  %snd  acc(snd %.y)
-                  %rcv  acc(rcv %.y)
-                  %odd  acc(odd %.y)
-                  %msg  acc(msg %.y)
-                  %ges  acc(ges %.y)
-                  %for  acc(for %.y)
-                  %rot  acc(rot %.y)
-                  %kay  acc(kay %.y)
-                  %fin  acc(fin %.y)
-                  %sun  acc(sun %.y)
-                ==
-              event-core
             ::  +on-prod: re-send a packet per flow to each of .ships
             ::
             ++  on-prod
@@ -5033,8 +5006,6 @@
             %hear  (on-hear:event-core [lane blob ~]:task)
             %init  on-init:event-core
             %prod  (on-prod:event-core ships.task)
-            %sift  (on-sift:event-core ships.task)
-            %spew  (on-spew:event-core veb.task)
             %cong  (on-cong:event-core [msg mem]:task)
             %stir  (on-stir:event-core arg.task)
             %trim  on-trim:event-core
@@ -7362,6 +7333,38 @@
                 (ev-emit unix-duct.ames-state %give %nail ship ~)
               sy-core
             ::
+            ::  +sy-sift: handle request to filter debug output by ship
+            ::
+            ++  sy-sift
+              |=  ships=(list ship)
+              ^+  sy-core
+              =.  ships.bug.ames-state  (^sy ships)
+              sy-core
+            ::  +sy-spew: handle request to set verbosity toggles on debug output
+            ::
+            ++  sy-spew
+              |=  verbs=(list verb)
+              ^+  sy-core
+              ::  start from all %.n's, then flip requested toggles
+              ::
+              =.  veb.bug.ames-state
+                %+  roll  verbs
+                |=  [=verb acc=veb-all-off]
+                ^+  veb.bug.ames-state
+                ?-  verb
+                  %snd  acc(snd %.y)
+                  %rcv  acc(rcv %.y)
+                  %odd  acc(odd %.y)
+                  %msg  acc(msg %.y)
+                  %ges  acc(ges %.y)
+                  %for  acc(for %.y)
+                  %rot  acc(rot %.y)
+                  %kay  acc(kay %.y)
+                  %fin  acc(fin %.y)
+                  %sun  acc(sun %.y)
+                ==
+              sy-core
+            ::
             +|  %internals
             ::
             ++  sy-get-sponsors
@@ -7496,7 +7499,7 @@
           ?+  -.task
               ::  ?(%plea %keen %cork) calls are handled directly in |peer
               ::
-              ev-core ::  XX TODO: ?(%trim %spew %stir %sift %cong)
+              ev-core ::  XX TODO: ?(%trim %stir %cong)
           ::
             %vega  ev-core  ::  handle kernel reload
             %init  sy-abet:~(sy-init sy:ev-core hen)
@@ -7507,10 +7510,12 @@
             %stun  sy-abet:(~(sy-stun sy:ev-core hen) stun.task)
             %dear  sy-abet:(~(sy-dear sy:ev-core hen) +.task)
             %tame  sy-abet:(~(sy-tame sy:ev-core hen) ship.task)
+            %sift  sy-abet:(~(sy-sift sy:ev-core hen) ships.task)
+            %spew  sy-abet:(~(sy-spew sy:ev-core hen) veb.task)
           ::  from internal %ames request
           ::
             %meek  (ev-make-peek:ev-core +.task)
-            %mako  (ev-make-poke:ev-core +.task)
+            %mako  (ev-make-poke:ev-core +.task)  :: XX %moke?
             %mage  (ev-make-page:ev-core +.task)
           ::  XX
           ::
