@@ -1,1 +1,3 @@
-,~
+$:  width=@ud
+    height=@ud
+==
