@@ -35,7 +35,10 @@
 ::
 +$  over
   $:  why=(pair @ud @ud)
+      why-mut=(pair @ud @ud)
       zed=(pair @ud @ud)
+      zed-mut=(pair @ud @ud)
+      =rift
   ==
 ::
 ::  $ever: Total shrub version
@@ -46,20 +49,22 @@
 ::    i.e. it versions the %y care
 ::    .zed is incremened when the shrub of any of its descendants change
 ::
+::  $lock: Data and shape numbers
+::
+::     .p is the data version
+::     .q is the shape version
++$  lock  (pair @ud @ud)
+::
 +$  ever  
-  $:  
-      zed=@ud
-      zed-mut=@ud
-      why=@ud
-      why-mut=@ud
-      exe=@ud 
+  $:  exe=lock
+      why=lock
+      zed=lock
     ::
-      shrub-life=@ud
-      shrub-rift=@ud
-      ship-life=@ud
-      ship-rift=@ud
+      shrub-life=@ud :: 3
+      ship-life=@ud :: 6
+      ship-rift=@ud :: 9
     ::
-      block=@ux
+      =time
   ==
 ::  $once: Partial version
 ::
@@ -295,8 +300,7 @@
         [%cull ~]
     ==
   +$  loam  (axal soil)
-  +$  dust   ?(%grow %cull)
-  +$  gift   (trel pith case dust)
+  +$  gift   (trel pith @ud ?)
   --
 --
 |%
@@ -306,11 +310,18 @@
   +$  land  ((mop case over) lte)
   ++  on    ((^on case over) lte)
   --
++$  turf  [=land =plot]
+++  plan
+  =<  plan
+  |%
+  +$  plan  ((mop @ud ,(set pith)) lte)
+  ++  on    ((^on @ud ,(set pith)) lte)
+  --
 +$  plot
-  $:  by-kids=(jug [=pith why=@ud] pith:neo)
-      by-desc=(jug [=pith zed=@ud] pith:neo)
+  $:  by-kids=plan
+      by-desc=plan
   ==
-++  farm  (axal land)
+++  farm  (axal turf)
 --
 |%
 +$  sync  (trel pith hunt ?(%start %stop))
@@ -1679,14 +1690,14 @@
   (axal yarn)
 ::
 +$  stem
-  $~  [[0 0 0] %x %stud *vase]
+  $~  [*ever %x %stud *vase]
   %+  pair  ever
   $%  [%x =pail]
       [%y =pail kids=(map pith [=ever =mode =pail])]
       [%z =pail kids=(map pith [=ever =mode =pail])]
   ==
 +$  twig
-  $~  [[0 0 0] %x %stud ~]
+  $~  [*ever %x %stud ~]
   %+  pair  ever
   $%  [%x =vial]
       [%y =vial kids=(map pith [=ever =mode =vial])]
@@ -1694,7 +1705,7 @@
   ==
 ++  wand
   |^
-  $~  [%x [0 0 0] [%$ ~] ~]
+  $~  [%x *ever [%$ ~] ~]
   $:  =care
       =ever
       =vial
@@ -1722,7 +1733,7 @@
 ::
 ::  $cane: (deprecated)
 +$  cane
-  $~  [%x [0 0 0] [%$ *vase] ~]
+  $~  [%x *ever [%$ *vase] ~]
   $:  =care
       =ever
       =pail
@@ -1764,137 +1775,6 @@
     =/  dat  (~(got by p.jon) %data)
     ?>  ?=(%s -.std)
     [`@tas`p.std (fun [p.std dat])]
-  --
-
-++  enjs
-  =,  enjs:format
-  |%
-  ++  ever
-    |=  eve=^ever
-    ^-  json
-    %-  pairs
-    :~  node/(numb exe.eve)
-        tree/(numb why.eve)
-    ==
-  ::
-  ++  cane
-    |=  [can=^cane con=$-(pail json)]
-    ^-  json
-    =,  enjs:format
-    %-  pairs
-    :~  care/s/care.can
-        ever/(ever ever.can)
-        pail/(con pail.can)
-        :-  %kids
-        %-  pairs
-        %+  turn  ~(tap by kids.can)
-        |=  [pit=pith eve=^ever pal=pail]
-        ^-  [@t json]
-        :-  (en-cord:pith pit)
-        %-  pairs
-        :~  ever/(ever eve)
-            pail/(con pal)
-        ==
-    ==
-  --
-++  en-html
-  |_  [basename=pith here=pith]
-  ++  basetape  |=(=care (en-tape:pith :(welp basename ~[care] here)))
-  ++  ever
-    |=  eve=^ever
-    ^-  manx
-    ;dl.ever-neo
-      ;dt: Node
-      ;dd: {(a-co:co exe.eve)}
-    ::
-      ;dt: Tree
-      ;dd: {(a-co:co why.eve)}
-    ==
-  ++  link
-    |=  [=care pax=pith]
-    ^-  manx
-    =/  href=tape  "{(welp (basetape care) (en-tape:pith pax))}.html"
-    ;a(href href): As {<care>}
-  ++  path
-    |=  pax=pith
-    ^-  manx
-    ;details
-      ;summary: {(en-tape:pith pax)}
-      ;ul
-        ;li
-          ;+  (link %x pax)
-        ==
-        ;li
-          ;+  (link %y pax)
-        ==
-        ;li
-          ;+  (link %z pax)
-        ==
-      ==
-    ==
-  ++  stud
-    |=  std=^stud
-    ^-  tape
-    ?@  std
-      (trip std)
-    "{(trip mark.std)}/{(scow %p ship.std)}/{(trip desk.std)}"
-    
-  ::
-  ++  cane
-    |=  [can=^cane con=$-(pail manx)]
-    ^-  manx
-    ;dl.cane-neo
-      ;dt: Care
-      ;dd.care-neo: {(trip care.can)}
-    ::
-      ;dt: Ever
-      ;dd
-        ;+  (ever ever.can)
-      ==
-      ;dt: Type
-      ;dd: {(stud p.pail.can)}
-    ::
-      ;dt: Value
-      ;dd
-        ;+  (con pail.can)
-      ==
-    ::
-      ;dt: Children
-      ;dd
-        ;*  
-        %+  turn  ~(tap by kids.can)
-        |=  [pit=pith eve=^ever pal=pail]
-        ^-  manx
-        ;dl
-          ;dt: Path
-          ;dd
-            ;+  (path pit)
-          ==
-        ::
-          ;dt: Ever
-          ;dd 
-            ;+  (ever eve)
-          ==
-        ::
-          ;dt: Value
-          ;dd
-            ;+  (con pal)
-          ==
-        ==
-      ==
-    ==
-  ++  lift-to-hymn
-    |=  [pax=pith in=manx]
-    ^-  manx
-    ;html
-      ;head
-        ;title: {(en-tape:pith pax)}
-      ==
-      ;body
-        ;+  in  
-      ==
-    ==
-
   --
 ::
 ::  !!stud refers to imp/ different from $vial
@@ -2033,19 +1913,19 @@
   ::  in the name
   ++  deps   *(map term fief)
   --
-++  till
-  |=  =plot
-  ^-  firm
-  |%
-  ++  state  state:plot
-  ++  poke   *(set stud)
-  ++  kids   kids:plot
-  ++  deps   deps:plot
-  ++  form   
-    ^-  ^form
-    ~&  %accessing-bad-form
-    *^form
-  --
+++  o-till  !!
+::|=  plot=*
+::^-  firm
+::|%
+::++  state  state:plot
+::++  poke   *(set stud)
+::++  kids   kids:plot
+::++  deps   deps:plot
+::++  form   
+::  ^-  ^form
+::  ~&  %accessing-bad-form
+::  *^form
+::--
 +$  o-soil
   $:  init=(pair ever (map name ever))
       dirt=(unit o-dirt)

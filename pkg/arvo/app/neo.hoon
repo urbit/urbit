@@ -154,7 +154,7 @@
   ^+  run
   =^  gifts=(list gift:dirt:neo)  loam
     (~(call plow:lib loam) card)
-  =.  farm  (~(take till:lib farm) gifts)
+  =.  farm  (~(take till:lib [loam farm]) gifts)
   run
 ++  on-sync
   |=  =sync:neo
