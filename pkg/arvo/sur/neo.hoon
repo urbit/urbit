@@ -318,9 +318,17 @@
   ++  on    ((^on @ud ,(set pith)) lte)
   --
 +$  plot
-  $:  by-kids=plan
-      by-desc=plan
+  $:  by-kids-mut=plan
+      by-desc-mut=plan
+      by-kids=tend
+      by-desc=tend
   ==
+++  tend
+  =<  tend
+  |%
+  +$  tend  ((mop @ud ,(map pith =case)) lte)
+  ++  on    ((^on @ud ,(map pith =case)) lte)
+  --
 ++  farm  (axal turf)
 --
 |%
@@ -1595,6 +1603,7 @@
   ::
   ++  put
     |*  [pax=pith dat=*]
+    ^+  fat
     =>  .(dat `_?>(?=(^ fil.fat) u.fil.fat)`dat, pax `pith`pax)
     |-  ^+  fat
     ?~  pax  fat(fil `dat)

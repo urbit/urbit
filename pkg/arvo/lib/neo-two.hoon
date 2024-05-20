@@ -17,16 +17,35 @@
 ::  $bump: Apply child or descendant change to $land
 ::
 ++  bump
-  |=  [=loam:dirt:neo =turf:neo kind=?(%y %z) rift=?]
+  |=  [=loam:dirt:neo =turf:neo =pith:neo =case:neo kind=?(%y %z) rift=?]
   ^-  turf:neo
+  =/  =tend:neo
+    ?:  ?=(%y kind)
+      by-kids.plot.turf
+    by-desc.plot.turf
+  =/  cone=@ud
+    ?~  old=(ram:on:tend:neo tend)
+      1
+    +(key.u.old)
+  =.  tend   (put:on:tend:neo tend cone (~(vest plow loam) kind))
+  =?  by-kids.plot.turf  ?=(%y kind)
+    tend
+  =?  by-desc.plot.turf  ?=(%z kind)
+    tend
   ?~  pie=(ram:on:land:neo land.turf)
     turf
   =/  [=case:neo =over:neo]  u.pie
   =.  land.turf
-    %^  put:on:land:neo  land.turf  case
-    ?:  ?=(%y kind)
-      over(q.why +(q.why.over))
-    over(q.zed +(q.zed.over))
+    %^  put:on:land:neo  land.turf  case 
+    =?  q.why.over  ?=(%y kind)
+      cone
+    =?  q.zed.over  ?=(%z kind)
+      cone
+    =?  q.why-mut.over  &(?=(%y kind) rift)
+      +(q.why-mut.over)
+    =?  q.zed-mut.over  &(?=(%z kind) rift)
+      +(q.zed-mut.over)
+    over
   ?.  rift  turf
   (jump loam turf kind)
 ::  $jolt: Apply self change to $land
@@ -42,9 +61,9 @@
     %^  put:on:land:neo  land.turf   +(case)
     ^-  over:neo
     :*  [. .]:.+(q.why.over)
-        [. .]:.+(q.why-mut.over)
+        [. .]:?:(rift +(q.why-mut.over) q.why-mut.over)
         [. .]:.+(q.zed.over)
-        [. .]:.+(q.zed-mut.over)
+        ?.(rift zed-mut.over [. .]:+(q.zed-mut.over))
         ?:(rift +(rift.over) rift.over)
     ==
   turf
@@ -85,8 +104,8 @@
   ^+  turf
   =/  =plan:neo
     ?-  kind
-      %y  by-kids.plot.turf
-      %z  by-desc.plot.turf
+      %y  by-kids-mut.plot.turf
+      %z  by-desc-mut.plot.turf
     ==
   =/  case=@ud
     ?~  res=(ram:on:plan:neo plan)
@@ -98,9 +117,9 @@
       %y   (~(kid of:neo loam) ~)
       %z   =.(fil.loam ~ ~(tar of:neo loam))
     ==
-  =?  by-kids.plot.turf  ?=(%y kind)
+  =?  by-kids-mut.plot.turf  ?=(%y kind)
     (put:on:plan:neo plan +(case) piths)
-  =?  by-desc.plot.turf  ?=(%z kind)
+  =?  by-desc-mut.plot.turf  ?=(%z kind)
     (put:on:plan:neo plan +(case) piths)
   turf
 ::  +plow: operate on $soil
@@ -122,6 +141,21 @@
     ?:  grow
       =(~ q.val.u.old)
     !=(~ q.val.u.old)
+  ++  vest
+    |=  kind=?(%y %z)
+    ^-  (map pith:neo case:neo)
+    =.  fil.loam  ~
+    =?  loam  ?=(%y kind)
+      ~(snip of:neo loam)
+    %-  ~(gas by *(map pith:neo @ud))
+    %+  murn   ~(tap by ~(tar of:neo loam))
+    |=  [=pith:neo =soil:neo]
+    ^-  (unit [pith:neo case:neo])
+    ?~  lat=(ram:on:soil:neo soil)
+      ~
+    ?~  q.val.u.lat
+      ~
+    `[pith key.u.lat]
   ::
   ++  grow
     |=  [=pail:neo =oath:neo]
@@ -185,18 +219,18 @@
   ++  eternal
     |=  [=pith:neo case=@ud rif=?]
     ^+  farm
-    =.  farm  (heir pith rif)
-    =.  farm  (chain pith rif)
+    =.  farm  (heir pith case rif)
+    =.  farm  (chain pith case rif)
     (self pith case rif)
   ++  chain
     =|  here=pith:neo
-    |=  [=pith:neo rift=?]
+    |=  [=pith:neo =case:neo rift=?]
     ?~  pith
       farm
     =/  kid  (~(gut by kid.farm) i.pith `farm:neo`[~ ~])
-    =.  here  (snoc here i.pith)
     =?  fil.farm   ?=(^ fil.farm)
-      `(bump (~(dip of:neo loam) here) u.fil.farm %z rift)
+      `(bump (~(dip of:neo loam) here) u.fil.farm pith case %z rift)
+    =.  here  (snoc here i.pith)
     farm(kid (~(put by kid.farm) i.pith $(farm kid, pith t.pith)))
   ++  slip
     |=  [=pith:neo =ever:neo]
@@ -205,14 +239,14 @@
 
   ::
   ++  heir
-    |=  [=pith:neo rift=?]
+    |=  [=pith:neo =case:neo rift=?]
     ^-  farm:neo
     ?~  par=(~(parent of:neo farm) pith)
       farm
     =/  lan=turf:neo  (~(got of:neo farm) u.par)
     %+  ~(put of:neo farm)  u.par
     ^-  turf:neo
-    (bump (~(dip of:neo loam) u.par) lan %y rift)
+    (bump (~(dip of:neo loam) u.par) lan pith case %y rift)
   ::
   ++  take-cull
     |=  [=pith:neo =case:neo]
@@ -228,21 +262,82 @@
     ?~  gis
       farm
     $(farm (eternal [p q r]:i.gis), gis t.gis)
-  ::
-  ++  look
-    |=  [=loam:dirt:neo =care:neo =case:neo =pith:neo]
-    ^-  (unit (unit (axal saga:neo)))
-    =+  pom=(~(scry plow loam) case pith)
-    ?:  ?=($?(~ [~ ~]) pom)
-      pom
-    ?~  q.u.u.pom
+  ++  scry
+    |=  [=case:neo =pith:neo]
+    ^-  (unit (unit saga:neo))
+    =/  mit  (~(scry plow loam) case pith)
+    ?:  ?=($@(~ [~ ~]) mit)
+      mit
+    ?~  q.u.u.mit
       [~ ~]
     ?~  val=(~(get of:neo farm) pith)
+      [~ ~] :: probably crash?
+    ?~  ver=(get:on:land:neo land.u.val case)
+      [~ ~]
+    =/  =ever:neo  (nail u.ver plot.u.val case)
+    ``[[ever q.p.u.u.mit] u.q.u.u.mit]
+  ::
+  ++  look
+    |=  [=care:neo =once:neo =pith:neo]
+    ^-  (unit (unit (axal:neo saga:neo)))
+    ?~  val=(~(get of:neo farm) pith)
       ~
-    [~ ~]
-::  ?~  ver=(ram:on:land:neo u.val)
-::    ~
-::  =/  =ever:neo  (nail val.u.ver case)
+    ?~  ver=(jerk u.val once)
+      ~
+    =/  =ever:neo  u.ver
+    =|  axe=(axal:neo saga:neo)
+    |^  
+    :+  ~  ~
+    ^+  axe
+    ?+  care  axe
+      %x  read-x
+      %y  read-y
+      %z  read-z
+    ==
+    ++  gas
+      |=  res=(list (pair pith:neo saga:neo))
+      ^+  axe
+      ?~  res
+        axe
+      $(axe (~(put of:neo axe) p.i.res q.i.res), res t.res)
+    ++  read-x  (gas read-x-raw)
+    ++  read-x-raw
+      ^-  (list (pair pith:neo saga:neo))
+      =+  val=(scry p.exe.ever pith)
+      ?:  ?=($@(~ [~ ~]) val)
+        ~
+      [pith u.u.val]^~
+    ::
+    ++  read-y
+      =;  res=(list (pair pith:neo saga:neo))
+        (gas res)
+      ^-  (list (pair pith:neo saga:neo))
+      %+  welp  read-x-raw
+      =/  kids  (got:on:tend:neo by-kids.plot.u.val p.why.ever)
+      %+  murn  ~(tap by kids)
+      |=  [kid=pith:neo cas=@ud]
+      ^-  (unit [pith:neo saga:neo])
+      =/  pit  (welp pith kid)
+      =/  child  (scry cas pit)
+      ?:  ?=($@(~ [~ ~]) child)
+        ~
+      `[pit u.u.child]
+    ::
+    ++  read-z
+      =;  res=(list (pair pith:neo saga:neo))
+        (gas res)
+      ^-  (list (pair pith:neo saga:neo))
+      %+  welp  read-x-raw
+      =/  kids  (got:on:tend:neo by-desc.plot.u.val p.zed.ever)
+      %+  murn  ~(tap by kids)
+      |=  [kid=pith:neo cas=@ud]
+      ^-  (unit [pith:neo saga:neo])
+      =/  pit  (welp pith kid)
+      =/  child  (scry cas pit)
+      ?:  ?=($@(~ [~ ~]) child)
+        ~
+      `[pit u.u.child]
+    --
 ::  !! :: ``[q.u.u.pom ever q.p.u.u.pom]
   --
 --
