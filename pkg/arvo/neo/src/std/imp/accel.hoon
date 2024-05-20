@@ -11,7 +11,7 @@
   |=  col=@ud
   %+  turn  (gulf rowstart rowend)
   |=  row=@ud
-  [#/[p/our.bowl]/home/accel/[ud/col]/[ud/row] %make %accel-cell `!>(['~' ~ ~ ~]) ~]
+  [#/[p/our.bowl]/home/accel/[ud/col]/[ud/row] %make %accel-cell `!>(['~' ~ ~ ~ ~]) ~]
 --
 ::
 ^-  firm:neo
@@ -56,7 +56,11 @@
       :_  sta
       =;  conf
         :~  :-  (welp here.bowl ~[[ud/row.poke] [ud/column.poke]])
-            [%make %accel-cell `!>([text.poke ~ refa.poke refb.poke]) conf]
+            :*  %make 
+                %accel-cell 
+                `!>([text.poke ~ refa.poke refb.poke target.poke]) 
+                conf
+            ==
         ==
       :: there has to be a more elegant way to do this
       ?~  refa.poke

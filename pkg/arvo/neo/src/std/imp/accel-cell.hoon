@@ -65,7 +65,13 @@
   =/  vavb=[vase vase]  (get-deps-vases bowl)
   =.  result.cell
     (render-hoon code.cell vavb)
-  [~ !>(cell)]
+  :_  !>(cell)
+  ?~  target.cell  ~
+  ?~  result.cell  ~
+  ?-  -.u.result.cell  
+    %.n  ~
+    %.y  [pith.u.target.cell %poke [stud.u.target.cell p.u.result.cell]]~
+  ==
 --
 |%
 ++  state  %accel-cell
