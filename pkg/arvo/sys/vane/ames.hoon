@@ -1660,7 +1660,6 @@
 |=  our=ship
 =|  ames-state=axle
 =*  unix-duct  unix-duct.ames-state
-=|  queued-moves=(list move)  :: XX when to handle this
 ::
 |=  [now=@da eny=@uvJ rof=roof]
 =*  vane-gate  .
@@ -5685,20 +5684,22 @@
             ::
             =/  chum-state  (~(get by chums.ames-state) her.poke-name)
             ?:  ?&  ?=(%pawn (clan:title her.poke-name))
-                    !?=([~ %known *] chum-state)
+                    |(?=(~ chum-state) ?=([~ %alien *] chum-state))
                 ==
-              ::  if (not pretending to know) comet, read attestation proof
+              =?  chum-state  ?=(~ chum-state)
+                ::  first time: upgrade to %comet and +peek attestation proof
+                ::
+                `alien/*ovni-state
+              ?>  ?=([~ %alien *] chum-state)
+              ?:  ?=(^ pit.u.chum-state)
+                ::  still waiting to hear attestation proof
+                ::
+                ev-core
+              =.  chums.ames-state
+                (~(put by chums.ames-state) her.poke-name u.chum-state)
+              ::  start peeking the attestation proof
               ::
               (ev-read-proof her.poke-name)
-            ::  XX  too ugly
-            ::  XX  use [%comet =life =rift pit=(map path request-state)] as the check
-            ?:  ?&  ?=(%pawn (clan:title her.poke-name))
-                    ?=([~ %known *] chum-state)  :: XX  %comet
-                    =(*public-key public-key.u.chum-state)  :: XX this is a hack; remove
-                ==
-              ::  still waiting to hear attestation proof; no-op
-              ::
-              ev-core
             ?.  ?=([~ %known *] chum-state)
                 ::  request public keys from %jael and drop the packet; it'll be re-send
                 ::
@@ -6120,21 +6121,24 @@
           ++  ev-make-mess
             |=  [p=spar q=(unit path) spac=(unit space)]
             ^+  ev-core
-            =/  her
+            =/  [=rift her=chum-state]
               =/  her  (~(get by chums.ames-state) ship.p)
-              ?:  ?=([~ %known *] her)  u.her
-              ::  if %alien we can only make messages to comets
+              ?:  ?=([~ %known *] her)  [rift .]:u.her
+              ::  only an %alien %comet is allowed to use the pit
               ::
+              ?>  ?=([~ %alien *] her)
               ?>  ?=(%pawn (clan:title ship.p))
-              ::  XX update to [%comet =life =rift pit=(map path request-state)]
-              =|(=fren-state known/fren-state(rift 0, life 1))  :: comets don't rotate keys
-            ?^  res=(~(get by pit.her) path.p)
+              [0 u.her]
+            =/  pit
+              ?:(?=(%known -.her) pit.her pit.her)          ::  XX find-fork
+            ?^  res=(~(get by pit) path.p)
               ?>  =(q pay.u.res)  ::  prevent overriding payload
               =-  ev-core(chums.ames-state -)
               %+  ~(put by chums.ames-state)  ship.p
-              =-  her(pit -)
-              %+  ~(put by pit.her)  path.p
-              u.res(for (~(put in for.u.res) hen))
+              =.  pit
+                %+  ~(put by pit)  path.p
+                u.res(for (~(put in for.u.res) hen))
+              ?:(?=(%known -.her) her(pit pit) her(pit pit))   ::  XX find-fork
             ::
             ?:  ?&  ?=(^ q)
                     =;  res=(unit (unit cage))
@@ -6149,9 +6153,11 @@
             =.  for.new   (~(put in for.new) hen)
             =.  pay.new   q
             =.  chums.ames-state
-              (~(put by chums.ames-state) ship.p her(pit (~(put by pit.her) path.p new)))
+              %+  ~(put by chums.ames-state)  ship.p
+              =.  pit  (~(put by pit) path.p new)
+              ?:(?=(%known -.her) her(pit pit) her(pit pit))   ::  XX find-fork
             ::
-            =/  =pact:pact  (ev-make-pact p q rift.her spac)
+            =/  =pact:pact  (ev-make-pact p q rift spac)
             %+  ev-emit   unix-duct.ames-state
             [%give %push ~[`@ux`ship.p] p:(fax:plot (en:^pact pact))]
           ::

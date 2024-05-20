@@ -842,7 +842,6 @@
   ::    %vega: kernel reload notification
   ::
   +$  task
-    $+  ames-task
     $%  [%hear =lane =blob]
         [%dear =ship =lane]
         [%cork =ship]
@@ -1615,13 +1614,22 @@
     $+  chum-state
     $%  [%known fren-state]
         [%alien ovni-state]
-        :: [%comet =life =rift pit=(map path request-state)]  :: XX
+        :: [%comet comet-state]  :: XX
     ==
+  ::
+  +$  comet-state
+    ::  XX move this into ovni-state?
+    ::  ovni-state needs to exist if we try to comunicate before the proof
+    ::  comes back with the comet's keys, so we can later upgrade those
+    ::  pokes/peeks into real requests
+    ::
+    [life=_1 rift=_0 pit=(map path request-state) =ovni-state]
   ::
   +$  ovni-state
     $+  ovni-state
     $:  pokes=(list [=duct message=mesa-message])
         peeks=(jug path duct)
+        pit=(map path request-state)  ::  XX only for comets
     ==
   ::
   +$  fren-state
