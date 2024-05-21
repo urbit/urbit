@@ -197,6 +197,20 @@
     `[%done +>.sign-arvo.u.in.tin]
   ==
 ::
+++  take-near
+  |=  =wire
+  =/  m  (strand ,[spar:ames (unit (unit page))])
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+    in.tin  `[%skip ~]
+      ~  `[%wait ~]
+    ::
+      [~ %sign * %ames %near ^ *]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done +>.sign-arvo.u.in.tin]
+  ==
+::
 ++  take-poke-ack
   |=  =wire
   =/  m  (strand ,~)

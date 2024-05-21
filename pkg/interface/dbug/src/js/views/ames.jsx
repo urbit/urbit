@@ -46,16 +46,6 @@ export class Ames extends Component {
     return <SearchableList placeholder="path" items={items}/>;
   }
 
-  renderDucts(ducts) {
-    const items = ducts.map(duct => {
-      return {
-        key: duct.join(' '),
-        jsx: (<div>{renderDuct(duct)}</div>)
-      }
-    });
-    return <SearchableList placeholder="duct" items={items}/>
-  }
-
   renderSnd(snd) {
     const unsent = snd['unsent-messages'].reduce((a, b) => {
       return a + b + ' bytes, ';
@@ -153,8 +143,12 @@ export class Ames extends Component {
                      snd['packet-pump-state'].live.length > 0 )
       ? 'active, '
       : '';
+    const color = snd['closing'] ? 'lightyellow': snd['corked'] ? 'lightred' : 'transparent';
+
     return {key: 'snd ' + active + snd.bone + ', ' + renderDuct(snd.duct), jsx: (
-      <Summary summary={summary} details={details} />
+      <div style={{backgroundColor: color}}>
+        <Summary summary={summary} details={details} />
+       </div>
     )};
   }
 
@@ -198,8 +192,12 @@ export class Ames extends Component {
       {nax}<br/>
       {liveMessages}
     </>);
+    const color =  rcv['closing'] ? 'ligthyellow': rcv['corked'] ? 'lightred' : 'transparent';
+
     return {key: 'rcv ' + rcv.bone + ', ' + renderDuct(rcv.duct), jsx: (
-      <Summary summary={summary} details={details} />
+      <div style={{backgroundColor: color}}>
+        <Summary summary={summary} details={details} />
+      </div>
     )};
   }
 
@@ -301,7 +299,6 @@ export class Ames extends Component {
         return (<>
           Pending messages: {peer.alien.messages}
           Pending packets: {peer.alien.packets}
-          Heeds: {this.renderDucts(peer.alien.heeds)}
           Keens: {this.renderPaths(peer.alien.keens)}
         </>);
       } else if (peer.known) {
@@ -328,6 +325,13 @@ export class Ames extends Component {
               <td>
                 {p.qos.kind},
                 last contact {msToDa(p.qos['last-contact'])}
+              </td>
+            </tr>
+            <tr>
+              <td class="inter">Bones </td>
+              <td>
+                closing: {p.closing.length},
+                corked: {p.corked.length}
               </td>
             </tr>
           </tbody></table>
@@ -358,11 +362,6 @@ export class Ames extends Component {
           <SearchableList placeholder="bone" items={naxItems} />
         </>);
 
-        const heeds = (<>
-          <h4 style={{marginTop: '1em'}}>heeds</h4>
-          {this.renderDucts(p.heeds)}
-        </>);
-
         const scryItems = p.scries.map(this.renderScry);
         const scry = (<>
           <h4 style={{marginTop: '1em'}}>scries</h4>
@@ -380,7 +379,6 @@ export class Ames extends Component {
           {forward}
           {backward}
           {nax}
-          {heeds}
           {scry}
         </>);
       } else {

@@ -42,8 +42,8 @@
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
+    ?>  =(our src):bowl
     ?:  ?=(%noun mark)
-      ?>  (team:title [our src]:bowl)
       =/  code  !<((unit @t) vase)
       =/  msg=tape
         ?~  code
@@ -55,6 +55,13 @@
         """
       %-  (slog leaf+msg ~)
       [~ this(passcode code)]
+    ?:  ?=(%json mark)
+      =/  jon=json  !<(json vase)
+      =,  dejs:format
+      =/  cmd
+        ((of clear-eyre-cache+(ot url+so ~) ~) jon)
+      ?>  ?=(%clear-eyre-cache -.cmd)
+      [[%pass /cmd %arvo %e %set-response +.cmd ~]~ this]
     ?.  ?=(%handle-http-request mark)
       (on-poke:def mark vase)
     =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
@@ -316,6 +323,19 @@
         'action'^(render-action:v-eyre action)
     ==
   ::
+    ::  /eyre/cache.json
+    ::
+      [%eyre %cache ~]
+    %-  some
+    :-  %a
+    %+  turn  (sort ~(tap by cache:v-eyre) aor)
+    |=  [url=@t aeon=@ud val=(unit cache-entry:eyre)]
+    %-  pairs
+    :~  'url'^s+url
+        'aeon'^(numb aeon)
+        'val'^?~(val ~ (render-cache-entry:v-eyre u.val))
+    ==
+  ::
     ::  /eyre/connections.json
     ::
       [%eyre %connections ~]
@@ -566,7 +586,6 @@
       %-  pairs
       :~  'messages'^(numb (lent messages))
           'packets'^(numb ~(wyt in packets))
-          'heeds'^(set-array heeds from-duct)
           'keens'^(set-array ~(key by keens) path)
       ==
     ::
@@ -628,7 +647,8 @@
     ::      duct: ['/paths', ...],
     ::      message-num: 123
     ::    }, ...],
-    ::    heeds: [['/paths', ...] ...]
+    ::    closing: [bone, ..., bone],
+    ::    corked: [bone, ..., bone],
     ::    scries:
     ::    ->  { =path
     ::          keen-state: {
@@ -706,8 +726,8 @@
           |^  =/  mix=(list flow)
                 =-  (sort - dor)
                 %+  welp
-                  (turn ~(tap by snd) (tack %snd))
-                (turn ~(tap by rcv) (tack %rcv))
+                  (turn ~(tap by snd) (tack %snd closing corked))
+                (turn ~(tap by rcv) (tack %rcv closing corked))
               =/  [forward=(list flow) backward=(list flow)]
                 %+  skid  mix
                 |=  [=bone *]
@@ -719,6 +739,8 @@
           ::
           +$  flow
             $:  =bone
+                closing=?
+                corked=?
               ::
                 $=  state
                 $%  [%snd message-pump-state]
@@ -727,17 +749,17 @@
             ==
           ::
           ++  tack
-            |*  =term
+            |*  [=term closing=(set bone) corked=(set bone)]
             |*  [=bone =noun]
-            [bone [term noun]]
+            [bone (~(has in closing) bone) (~(has in corked) bone) [term noun]]
           ::
           ++  build
             |=  flow
             ^-  json
             %+  frond  -.state
             ?-  -.state
-              %snd  (snd-with-bone ossuary bone +.state)
-              %rcv  (rcv-with-bone ossuary bone +.state)
+              %snd  (snd-with-bone ossuary bone closing corked +.state)
+              %rcv  (rcv-with-bone ossuary bone closing corked +.state)
             ==
           --
         ::
@@ -750,20 +772,24 @@
               (bone-to-pairs bone ossuary)
           ==
         ::
-          'heeds'^(set-array heeds from-duct)
+          'closing'^(set-array closing numb)
+        ::
+          'corked'^(set-array corked numb)
         ::
           'scries'^(scries ~(tap by keens))
       ==
     ::
     ++  snd-with-bone
-      |=  [=ossuary =bone message-pump-state]
+      |=  [=ossuary =bone closing=? corked=? message-pump-state]
       ^-  json
       %-  pairs
-      :*  'current'^(numb current)
+      :*  'closing'^b+closing
+          'corked'^b+corked
+          'current'^(numb current)
           'next'^(numb next)
         ::
           :-  'unsent-messages'  ::  as byte sizes
-          (set-array unsent-messages (cork (cury met 3) numb))
+          (set-array unsent-messages (cork jam (cork (cury met 3) numb)))
         ::
           'unsent-fragments'^(numb (lent unsent-fragments))  ::  as lent
         ::
@@ -811,10 +837,12 @@
       ==
     ::
     ++  rcv-with-bone
-      |=  [=ossuary =bone message-sink-state]
+      |=  [=ossuary =bone closing=? corked=? message-sink-state]
       ^-  json
       %-  pairs
-      :*  'last-acked'^(numb last-acked)
+      :*  'closing'^b+closing
+          'corked'^b+corked
+          'last-acked'^(numb last-acked)
           'last-heard'^(numb last-heard)
         ::
           :-  'pending-vane-ack'
@@ -1026,6 +1054,9 @@
   ++  bindings
     (scry ,(list [=binding =duct =action]) %e %bindings ~)
   ::
+  ++  cache
+    (scry ,(map url=@t [aeon=@ud (unit cache-entry)]) %e %cache ~)
+  ::
   ++  connections
     (scry ,(map duct outstanding-connection) %e %connections ~)
   ::
@@ -1052,6 +1083,27 @@
     ?+  -.action  -.action
       %gen  :((cury cat 3) '+' (spat [desk path]:generator.action))
       %app  (cat 3 ':' app.action)
+    ==
+  ::
+  ++  render-cache-entry
+    |=  cache-entry
+    ^-  json
+    %-  pairs:enjs:format
+    :~  'auth'^b+auth
+        'payload'^(render-simple-payload simple-payload.body)
+    ==
+  ::
+  ++  render-simple-payload
+    |=  simple-payload:http
+    ^-  json
+    =,  enjs:format
+    %-  pairs
+    :~  'status'^(numb status-code.response-header)
+        'data'^?~(data ~ (numb p.u.data))
+      ::
+        :+  'headers'  %a
+        %+  turn  headers.response-header
+        |=([k=@t v=@t] (pairs 'key'^s+k 'value'^s+v ~))
     ==
   --
 ::
