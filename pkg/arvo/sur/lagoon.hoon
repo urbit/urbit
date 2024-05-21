@@ -4,7 +4,7 @@
 |%
 +$  ray               ::  $ray:  n-dimensional array
   $:  =meta           ::  descriptor
-      data=@ux        ::  data, row-major order
+      data=@ux        ::  data, row-major order, 1-pin MSB
   ==
 ::
 +$  prec  [a=@ b=@]   ::  fixed-point precision, a+b+1=bloq
@@ -18,10 +18,10 @@
 +$  kind              ::  $kind:  type of array scalars
   $?  %real           ::  IEEE 754 float
       %uint           ::  unsigned integer
-      :: %int2           ::  2s-complement integer
+      %int2           ::  2s-complement integer (/lib/twoc)
       :: %cplx           ::  BLAS-compatible packed floats
-      :: %unum           ::  unum/posit
-      :: %fixp           ::  fixed-precision
+      :: %unum           ::  unum/posit  @ruw, @ruh, @rub
+      :: %fixp           ::  fixed-precision (/lib/fixed)
   ==
 ::
 +$  baum              ::  $baum:  ndray with metadata

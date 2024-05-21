@@ -50,6 +50,9 @@
         %uint
       %ud
       ::
+        %int2
+      !!
+      ::
         %real
       ?+    bloq.meta  ~|(bloq.meta !!)
         %7  %rq
@@ -388,6 +391,8 @@
     ?-    kind.meta
         %uint  `@`1
       ::
+        %int2  !!
+      ::
         %real
       ?+  bloq.meta  ~|(bloq.meta !!)
         %7  .~~~1
@@ -411,6 +416,8 @@
     =/  one
       ?-    kind.meta
           %uint  `@`1
+        ::
+          %int2  !!
         ::
           %real
         ?+  bloq.meta  !!
@@ -564,6 +571,9 @@
         %uint
       (spac [meta `@ux`data])
       ::
+        %int2
+      (spac [meta `@ux`data])
+      ::
         %real
       ::  convert date to fl to @r XXX TODO REVISIT whether we want to specify input type
       =/  fin
@@ -583,7 +593,7 @@
     |=  a=ray
     =/  fun
       |:  [b=1 c=-:(ravel a)] 
-      ?:  =(((fun-scalar meta.a %gth) b c) 0)
+      ?.  =(((fun-scalar meta.a %gth) b c) 0)
         b  c 
     (scalar-to-ray meta.a (reel (ravel a) fun))
   ::
@@ -598,7 +608,7 @@
     |=  a=ray
     =/  fun
       |:  [b=1 c=-:(ravel a)] 
-      ?:  =(((fun-scalar meta.a %lth) b c) 0)
+      ?.  =(((fun-scalar meta.a %lth) b c) 0)
         b  c 
     (scalar-to-ray meta.a (reel (ravel a) fun))
   ::
@@ -966,6 +976,8 @@
         %neq  |=([b=@ c=@] ?:(.=(b c) 0 1))
       ==
       ::
+        %int2  !!
+      ::
         %real
       ?+    `^bloq`bloq  !!
           %7
@@ -1035,6 +1047,8 @@
       ?+  fun  !!
         %abs  |=(b=@ b)
       ==
+      ::
+        %int2  !!
       ::
         %real
       ?+    bloq  !!
