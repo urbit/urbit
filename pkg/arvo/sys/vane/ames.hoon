@@ -5583,6 +5583,7 @@
                 %peek  (ev-mess-peek +.mess.task)
                 %poke  (ev-mess-poke [dud +.mess]:task)
               ==
+            ::  XX not used; remove
             ::  XX completed, serialized, and encrypted response from the packet layer
             ::  path decryption happen in the packet layer, but payload happens here
             ::  XX avoid intermidiate step and call directly into the message layer?
@@ -5804,8 +5805,14 @@
                   ::
                   =/  =spar  [her.name inner-path]
                   =/  =auth:mess  [%| *@uxH] :: XX p.aut.data is ~
-                  %+  ev-emit  [/ames]~
-                  [%pass /message %a %mess-ser sealed-path %page spar auth dat.data]
+                  ::  if %chum/%shut, we need to pass the sealed-path to find it
+                  ::  in the pit.fren-state and then remove it
+                  ::
+                  %*  $  ev-mess-page
+                    sealed-path  `sealed-path
+                  ::
+                    +<  [spar auth dat.data]
+                  ==
                 ::  no; then this should be the first fragment, and auth should be present
                 ::
                 ~|  [fag=fag tot=tot.data]
@@ -5819,8 +5826,10 @@
                   =/  =spar  [her.name inner-path]
                   =/  =auth:mess  p.aut.data
                   =/  res=@  (ev-decrypt-spac space dat.data cyf)
-                  %+  ev-emit  [/ames]~
-                  [%pass /message %a %mess-ser sealed-path %page spar auth res]
+                  ::  if %chum/%shut, we need to pass the sealed-path to find it
+                  ::  in the pit.fren-state and then remove it
+                  ::
+                  %*($ ev-mess-page sealed-path `sealed-path, +< spar^auth^res)
                 ::  no; then the proof should be inlined; verify it
                 ::  (otherwise, we should have received an %auth packet already)
                 ::
@@ -5879,8 +5888,10 @@
               =/  =spar  [her.name inner-path]
               =/  =auth:mess  [%| *@uxH] :: XX should be stored in ps?
               =/  res=@  (ev-decrypt-spac space (rep 13 (flop fags.ps)) cyf)
-              %+  ev-emit  [/ames]~
-              [%pass /message %a %mess-ser sealed-path %page spar auth res]
+              ::  if %chum/%shut, we need to pass the sealed-path to find it
+              ::  in the pit.fren-state and then remove it
+              ::
+              %*($ ev-mess-page sealed-path `sealed-path, +< [spar auth res])
             ==
           ::
           +|  %messages-entry-point
@@ -7542,8 +7553,8 @@
           ::  XX
           ::
             %heer      (ev-call:ev-core task)  ::  XX dud
-            %mess      (ev-call:ev-core %mess p.task q.task ~)  ::  XX acks go direclty here
-            %mess-ser  (ev-call:ev-core task)
+            %mess      (ev-call:ev-core %mess p.task q.task ~)
+            %mess-ser  (ev-call:ev-core task)                   ::  XX remove
           ==
           ::
         [moves vane-gate]
