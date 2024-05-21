@@ -1,3 +1,4 @@
+/@  circle
 /@  diff=circle-diff
 |%
 ++  state  %circle
@@ -27,7 +28,10 @@
       [(snoc here.bowl p/ship) %tomb ~]
     ==
   ++  init
-    |=  vas=(unit vase)
-    `!>(~)
+    |=  new=(unit vase)
+    :-  ~
+    ?~  new
+      !>(*circle)
+    u.new
   --
 --

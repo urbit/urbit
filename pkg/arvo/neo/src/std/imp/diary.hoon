@@ -35,7 +35,10 @@
       ==
     [cards !>(sta)]
   ++  init
-    |=  old=(unit vase)
-    `(need old)
+    |=  new=(unit vase)
+    :-  ~
+    ?~  new
+      !>(*diary)
+    u.new
   --
 --
