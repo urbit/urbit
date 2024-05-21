@@ -147,6 +147,7 @@
       (slog leaf/"{(trip mode)}: {(scow %p ship)}: {(print)}" ~)
     ::
     --
+::
 =>  ::  ames helpers
     ::
     ~%  %ames  ..part  ~
@@ -5423,6 +5424,8 @@
                 ~
             ==
           ::
+          +|  %validation
+          ::
           ++  ev-validate-wire
             |=  =wire
             ^-  (unit ev-flow-wire)
@@ -5441,7 +5444,7 @@
             ?>  =([[%a %x] *@p %$ ud+1] [vew -.bem]:u.inn)
             s.bem.u.inn
           ::
-          ++  ev-decrypt-load  :: XX refactor with path decryption
+          ++  ev-decrypt-load
             |=  [[=ship =path] ser=@]
             ^-  @
             =/  tyl=(pole knot)  path
@@ -5474,13 +5477,22 @@
               dat:(decrypt:crypt -.u.key u.cyf (met 3 ser)^ser)
             ==
           ::
-          ++  ev-decrypt-path  :: XX refactor with load decryption
+          ++  ev-decrypt-spac
+            |=  [=space ser=@ cyf=(unit @)]
+            ^+  ser
+            ?-  -.space
+              %publ  ser
+              %shut  dat:(decrypt:crypt key.space (need cyf) (met 3 ser)^ser)
+              %chum  dat:(decrypt:crypt key.space (need cyf) (met 3 ser)^ser)
+            ==
+          ::
+          ++  ev-decrypt-path
             |=  [=path =ship]
-            ^+  [outer=path inner=path]
+            ^-  [=space (unit cyf=@) inner=^path]
             =/  tyl=(pole knot)  path
             ?+    tyl  !!
                 [%publ lyf=@ pat=*]  :: unencrypted
-              [tyl pat.tyl]
+              [publ/(slav %ud lyf.tyl) ~ pat.tyl]
             ::
                 [%chum lyf=@ her=@ hyf=@ pat=[cyf=@ ~]]  :: encrypted with eddh key
               =/  lyf  (slaw %ud lyf.tyl)
@@ -5488,15 +5500,15 @@
               =/  hyf  (slaw %ud hyf.tyl)
               =/  cyf  (slaw %uv cyf.pat.tyl)
               ?>  &(?=(^ lyf) ?=(^ her) ?=(^ hyf) ?=(^ cyf))
-              =/  key  ::  (get-key-for u.her u.hyf)
-                ::  XX check =(ship u.her)
-                =/  her=@p  ?:(=(u.her our) ship u.her)  :: %poke payload are for us
-                =+  per=(ev-got-per her)        :: XX ev-get-per
-                ?>  ?=(%known -.sat.per)        :: XX wat if %alien?
-                ?.  =(u.hyf life.sat.per)   !!  :: XX
-                symmetric-key.sat.per
-              =+  pat=(open-path:crypt `@`key u.cyf)
-              [tyl(pat pat) pat]
+              ::  XX check =(ship u.her)
+              =/  her=@p  ?:(=(u.her our) ship u.her)  :: %poke payloads are for us
+              =+  per=(ev-got-per her)        :: XX ev-get-per
+              ?>  ?=(%known -.sat.per)        :: XX wat if %alien?
+              ?.  =(u.hyf life.sat.per)   !!  :: XX
+              =*  key  symmetric-key.sat.per
+              :+  [%chum life.ames-state her life.sat.per key]
+                cyf
+              (open-path:crypt `@`key u.cyf)
             ::
                 [%shut kid=@ pat=[cyf=@ ~]]  :: encrypted with group key
               =/  kid  (slaw %ud kid.tyl)
@@ -5506,8 +5518,9 @@
               ?>  ?=(%known -.sat.per)       :: XX wat if %alien?
               ?~  key=(get:key-chain client-chain.sat.per u.kid)
                 !!  :: XX handle
-              =+  pat=(open-path:crypt -.u.key u.cyf)
-              [tyl(pat pat) pat]
+              :+  [%shut u.kid -.u.key]
+                cyf
+              (open-path:crypt -.u.key u.cyf)
             ==
           ::
           ++  ev-authenticate
@@ -5577,12 +5590,14 @@
                 %mess-ser
               =*  her  ship.p.+.load.task
               =.  per  (ev-got-per her)
+              ::  XX
+              :: (%*($ ev-mess-page sealed-path `path.task) +.load.task)
               %*  $  ev-mess-page
                 sealed-path  `path.task  ::  XX we come from the packet layer and might have encrypted path/payload
               ::
                 spar  p.+.load.task
                 auth  q.+.load.task
-                res   (ev-decrypt-load her^path.task r.+.load.task)
+                res   r.+.load.task
               ==
             ==
           ::
@@ -5676,17 +5691,18 @@
               ::
               (ev-read-proof her.poke-name)
             ?.  ?=([~ %known *] chum-state)
-                ::  request public keys from %jael and drop the packet; it'll be re-send
-                ::
-                (ev-enqueue-alien-todo her.poke-name chum-state |=(ovni-state +<))
+              ::  request public keys from %jael and drop the packet; it'll be re-send
+              ::
+              (ev-enqueue-alien-todo her.poke-name chum-state |=(ovni-state +<))
             ::
             ::  path validation/decryption
             ::
             ~|  path-decryption-failed/pat.ack-name^pat.poke-name
             =/  ack=(pole iota)
-              (ev-validate-path +:(ev-decrypt-path pat.ack-name her.poke-name))
-            =/  pok=(pole iota)
-              (ev-validate-path +:(ev-decrypt-path [pat her]:poke-name))
+              (ev-validate-path inner:(ev-decrypt-path pat.ack-name her.poke-name))
+            =/  [=space cyf=(unit @) =inner=path]
+              (ev-decrypt-path [pat her]:poke-name)
+            =/  pok=(pole iota)  (ev-validate-path inner-path)
             ::
             ~|  path-validation-failed/ack^pok
             ?>  &(?=(flow-pith ack) ?=(flow-pith pok))
@@ -5707,16 +5723,16 @@
               =/  =wire
                 %.  %pok
                 fo-wire:(fo-abed:fo hen bone.pok dire)
-              =/  =space  chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
+              =/  =^space
+                chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
               %+  ev-emit  hen
               [%pass wire %a meek/[space [her pat]:poke-name]]
             ::
-            =/  res  (ev-decrypt-load [[her pat]:poke-name] dat.data)
             %:  ev-mess-poke
               ~   :: XX refactor function signature
               her.ack-name^(pout ack)  ::  XX not used
               her.poke-name^(pout pok)
-              ;;(gage:mess (cue res))
+              ;;(gage:mess (cue (ev-decrypt-spac space dat.data cyf)))
             ==
           ::
           ++  ev-pact-peek
@@ -5737,9 +5753,8 @@
             ?~  per=(~(get by chums.ames-state) ship)
               ev-core
             ?>  ?=([~ %known *] per)  ::  XX alien agenda
-            ::  decrypt path
-            ::
-            =/  [=outer=path =inner=path]  (ev-decrypt-path pat.name ship)  :: XX revisit
+            =/  [=space cyf=(unit @) =inner=path]
+              (ev-decrypt-path pat.name ship)
             =*  sealed-path  pat.name
             ?~  res=(~(get by pit.u.per) sealed-path)
               ev-core
@@ -5769,7 +5784,8 @@
               ::  request next fragment
               ::
               =/  =pact:pact  [%peek name(wan [%data 0])]
-              (ev-emit unix-duct.ames-state %give %push ~ p:(fax:plot (en:^pact pact)))
+              %+  ev-emit  unix-duct.ames-state
+              [%give %push ~ p:(fax:plot (en:^pact pact))]
             ::
                 %data
               ?>  =(13 boq.name)  :: non-standard
@@ -5798,11 +5814,13 @@
                 ::  is this a standalone message?
                 ::
                 ?:  =(1 tot.data)
+                  ::  XX remove comment
                   :: ?>  (ev-authenticate (root:lss (met 3 dat.data)^dat.data) aut.data name)
                   =/  =spar  [her.name inner-path]
                   =/  =auth:mess  p.aut.data
+                  =/  res=@  (ev-decrypt-spac space dat.data cyf)
                   %+  ev-emit  [/ames]~
-                  [%pass /message %a %mess-ser sealed-path %page spar auth dat.data]
+                  [%pass /message %a %mess-ser sealed-path %page spar auth res]
                 ::  no; then the proof should be inlined; verify it
                 ::  (otherwise, we should have received an %auth packet already)
                 ::
@@ -5822,7 +5840,7 @@
                 =.  chums.ames-state
                   %+  ~(put by chums.ames-state)  her.name
                   =-  u.per(pit -)
-                  %+  ~(put by pit.u.per)  outer-path  :: XX sealed path?
+                  %+  ~(put by pit.u.per)  sealed-path  :: XX was outer-path?
                   u.res(ps `[u.state ~[dat.data]])
                 =/  =pact:pact  [%peek name(wan [%data leaf.u.state])]
                 %+  ev-emit  unix-duct.ames-state
@@ -5860,7 +5878,7 @@
               ::
               =/  =spar  [her.name inner-path]
               =/  =auth:mess  [%| *@uxH] :: XX should be stored in ps?
-              =/  res         (rep 13 (flop fags.ps))
+              =/  res=@  (ev-decrypt-spac space (rep 13 (flop fags.ps)) cyf)
               %+  ev-emit  [/ames]~
               [%pass /message %a %mess-ser sealed-path %page spar auth res]
             ==
