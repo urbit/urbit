@@ -189,10 +189,19 @@
       ==
     :_  (~(rep of:neo loam) p.card lom)
     (turn gifts |=([@ ?] `gift:dirt:neo`[p.card +<]))
+  ::
   ++  look
-    |=  [=case:neo =pith:neo]
+    |=  =pith:neo
     ^-  (unit (unit poem:neo))
-    [~ ~]
+    (scry case pith)
+  ++  peek
+    |=  =pith:neo
+    ^-  (unit pail:neo)
+    =/  res  (look pith)
+    ?:  ?=($@(~ [~ ~]) res)
+      ~
+    q.u.u.res
+  ::
   ++  scry
     |=  [wan=case:neo =pith:neo]
     ^-  (unit (unit poem:neo))

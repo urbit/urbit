@@ -2,6 +2,14 @@
 /+  lib=neo-two
 /+  default-agent
 /+  dbug
+/*  txt-hoon-imp    %hoon   /neo/src/std/imp/hoon/hoon
+/*  txt-term-imp    %hoon   /neo/src/std/imp/term/hoon
+/*  txt-ford-same   %hoon   /neo/src/std/imp/ford-same/hoon
+/*  txt-ford-slop   %hoon   /neo/src/std/imp/ford-slop/hoon
+/*  txt-ford-slap   %hoon   /neo/src/std/imp/ford-slap/hoon
+/*  txt-ford-face   %hoon   /neo/src/std/imp/ford-face/hoon
+/*  txt-ford-face   %hoon   /neo/src/std/imp/ford-face/hoon
+/*  txt-ford-reef   %hoon   /neo/src/std/imp/ford-reef/hoon
 |%
 +$  card  $+(card card:agent:gall)
 +$  state-0
@@ -9,6 +17,7 @@
       =farm:neo
       =town:neo
       =city:neo
+      =tide:neo
       =halt:neo
       dev=_|
   ==
@@ -18,6 +27,25 @@
   ?:  dev
     !:  +<
   !.  +<
+::
+++  is-parent-p
+  |=  [parent=path kid=path]
+  ^-  ?
+  ?~  parent  &
+  ?~  kid     |
+  ?.  =(i.parent i.kid)
+    |
+  $(parent t.parent, kid t.kid)
+
+++  is-parent
+  |=  [parent=pith kid=pith]
+  ^-  ?
+  ?~  parent  &
+  ?~  kid     |
+  ?.  =(i.parent i.kid)
+    |
+  $(parent t.parent, kid t.kid)
+
 --
 =|  state-0
 =*  state  -
@@ -31,7 +59,9 @@
       def   ~(. (default-agent this %|) bowl)
   ++  on-init  
     ^-  (quip card _this)
-    `this
+    =^  cards  state
+      abet:boot:run
+    [cards this]
   ++  on-save  !>(state)
   ++  on-load
     |=  vax=vase
@@ -99,18 +129,23 @@
 ::
 ++  do-poke
   |=  [=wire =dock =cage]
+  ^-  card
   (pass wire %agent dock poke/cage)
 ++  do-poke-our
   |=  [=wire =dude:gall =cage]
+  ^-  card
   (do-poke wire [our.bowl dude] cage)
 ++  do-poke-her
   |=  [=wire her=ship =cage]
+  ^-  card
   (do-poke wire [her dap.bowl] cage)
 ++  do-poke-self
   |=  [=wire =cage]
+  ^-  card
   (do-poke-our wire dap:bowl cage)
 ++  do-move
   |=  =move:neo
+  ^-  card
   =/  dst=name:neo  (de-pith:name:neo p.q.move)
   =/  src=name:neo  (de-pith:name:neo p.move)
   ?>  =(ship.src our.bowl)
@@ -118,6 +153,10 @@
   ?:  =(our.bowl ship.dst)
     (do-poke-self wire neo-move+!>(move))
   (do-poke-her wire ship.dst neo-raw-poke+!>((move:soften move)))
+++  do-card
+  |=  =card:neo
+  (do-move sys-pith card)
+::
 ++  do-ack
   |=  =ack:neo
   ^-  (list card)
@@ -129,9 +168,23 @@
   =/  src=name:neo  (de-pith:name:neo p.p.ack)
   =/  =wire  nack/(pout p.p.ack)
   (do-poke-her wire ship.src neo-ack+!>(ack))^~
+++  do-grow
+  |=  [=pith:neo =pail:neo]
+  ^-  card:dirt:neo
+  [pith %grow pail *oath:neo]
+++  do-grow-our
+  |=  [=pith:neo =pail:neo]
+  ^-  card:dirt:neo
+  (do-grow [p/our.bowl pith] pail)
+++  do-std-warp
+  =/  =rave:clay
+    [%next %z da/now.bowl /neo]
+  (pass /next-clay %arvo %c %warp our.bowl q.byk.bowl `rave)
+
 :: ?:  =(p.flow 
 ::  |on: event handlers
 +|  %on
+::
 ++  on-poke
   |=  [=mark =vase] 
   ^+  run
@@ -406,7 +459,172 @@
     $
   --
 ::
-
+++  dial
+  |=  *
+  ^+  run
+  run
+::
+++  husk
+  |_  =stud:neo
+  ++  pith
+    ^-  pith:neo
+    :+  p/our.bowl  %out
+    %-  pave:neo
+    ?@  stud 
+      /std/imp/[stud]
+    ?:  =(our.bowl ship.stud)
+      /our/[desk.stud]/imp/[mark.stud]
+    /her/(scot %p ship.stud)/[desk.stud]/imp/[mark.stud]
+  ++  vase
+    ^-  ^vase
+    ~|  firm/pith
+    =/  =pail:neo  (need (~(peek plow:lib loam) pith))
+    =+  !<([cac=(unit ^vase) *] q.pail)
+    (need cac)
+  ++  kook
+    ^-  kook:neo
+    !<(kook:neo vase)
+  ++  is-plot
+    (~(nest ut -:!>(*plot:neo)) | p:vase)
+  ++  plot
+    ^-  (unit plot:neo)
+    ?.  is-plot
+      ~
+    `!<(plot:neo vase)
+  ++  wire
+    %+  welp  /husk/stud
+    (pout pith)
+  --
+::
+++  pro
+  |_  =stud:neo
+  ++  get  grab
+  ++  grab
+    =/  =pail:neo  (need (~(peek plow:lib loam) pith))
+    =+  !<([cac=(unit vase) *] q.pail)
+    cac
+  ++  built
+    !=(~ (~(peek plow:lib loam) pith))
+  ++  pith
+    `pith:neo`(pave:neo path)
+  ++  path
+    ^-  ^path
+    :-  %out
+    ?@  stud
+      /std/pro/[stud]
+    ?:  =(our.bowl ship.stud)
+      /our/[desk.stud]/pro/[mark.stud]
+    :+  %ext  (scot %p ship.stud)
+    /[desk.stud]/pro/[mark.stud]
+  ++  exists
+    =/  pax  path
+    ?>  ?=(^ pax)
+    (exists-file %src t.pax)
+  -- ::
+++  root
+  /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/neo
+++  exists-file
+  |=  pax=path
+  =/  p=path
+    (welp root pax)
+  =.  p  (snoc p %hoon)
+  .^(? %cu p)
+++  get-reef
+  =+  !<([ref=(unit vase) *] q:(need (~(peek plow:lib loam) #/[p/our.bowl]/out/reef)))
+  (need ref)
+::
+++  boot
+  |^  ^+  run
+  =+  .^(neo-vase=vase %ca (welp clay-beak /sur/neo/hoon))
+  =/  reef=vase  (slop !>(..zuse) neo-vase(p [%face %neo p.neo-vase]))
+  =/  riff=pail:neo
+    [%ford-out !>(`[cac=(unit vase) ~]`[`!>(riff-kook) ~])]
+  =.  run  (on-dirt-card (do-grow-our #/out/std/imp/ford-riff ford-out+!>(riff)))
+  =.  run  (make-riff #/out/reef reef)
+  =.  run  (re-export reef %hoon !,(*hoon @t))
+  =.  run  (make-riff #/out/std/pro/ford-out (ford-out reef))
+  =.  run  (make-riff #/out/std/pro/ford-in (ford-in reef))
+  =.  run  (make-riff #/out/std/pro/term (term reef))
+  =.  run  (make-riff-slap #/out/std/imp/hoon reef txt-hoon-imp)
+  =.  run  (make-riff-slap #/out/std/imp/term reef txt-term-imp)
+  =.  run  (make-riff-slap #/out/std/imp/ford-same reef txt-ford-same)
+  =.  run  (make-riff-slap #/out/std/imp/ford-face reef txt-ford-face)
+  =.  run  (make-riff-slap #/out/std/imp/ford-slop reef txt-ford-slop)
+  =.  run  (make-riff-slap #/out/std/imp/ford-slap reef txt-ford-slap)
+  =.  run  (re-export reef %json !,(*hoon json))
+  =.  run  (re-export reef %mime !,(*hoon mime))
+  =.  run  (on-poke %noun !>(%clay))
+  =.  run  (emit %pass /bind-site %arvo %e %connect [~ dap.bowl ~] dap.bowl)
+  (emit do-std-warp)
+  ++  clay-beak  ^-  path
+    /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)
+  ++  ford-slip
+    ^-  slip:neo
+    [%ford-out ~ ~]
+  ++  make-riff-slap
+    |=  [wer=pith:neo reef=vase txt=@t]
+    ~|  wer
+    =;  =vase
+      (make-riff wer vase)
+    =+  vaz=(vang & (pout wer))
+    %+  slap  reef
+    (scan (trip txt) (full (ifix [gay gay] tall:vaz)))
+  ::
+  ++  riff-kook
+    ^-  kook:neo
+    |%
+    ++  state  %ford-out
+    ++  poke   *(set stud:neo)
+    ++  kids  ~
+    ++  deps  ~
+    ++  form
+      ^-  form:neo
+      |_  [=bowl:neo =ever:neo state-vase=vase *]
+      +*  sta  !<([cache=(unit vase) ~] state-vase)
+      ++  poke
+        |=  =pail:neo  
+        ^-  (quip card:neo vase)
+        `state-vase
+      ::
+      ++  init
+        |=  old=(unit vase)
+        ^-  (quip card:neo vase)
+        =+  !<(sta=[ref=(unit vase) ~] (need old))
+        `!>(sta)
+      --
+    --
+  ++  re-export
+    |=  [reef=vase =stud:neo =hoon]
+    ^+  run
+    %+  make-riff  ~(pith pro stud)
+    (slap reef hoon)
+  ::
+  ++  term
+    |=  reef=vase
+    ^-  vase
+    %+  slap  reef
+    !,  *hoon
+    ,term
+  ::
+  ++  ford-out
+    |=  reef=vase
+    ^-  vase
+    %+  slap  reef
+    !,  *hoon
+    ,[cache=(unit vase) *]
+  ::
+  ++  ford-in
+    |=  reef=vase
+    ^-  vase
+    %+  slap  reef
+    !,(*hoon ,~)
+  ::
+  ++  make-riff
+    |=  [=pith riff=vase]
+    ^+  run
+    =.  pith  [p/our.bowl pith]
+    (emit (do-card pith %make %ford-riff `!>([`riff ~]) ~))
+  --
 ::  +arvo: local callstack
 ++  arvo
   =+  verb=&
@@ -422,76 +640,73 @@
           gifts=(list [pith:neo gift:neo]) :: return values
       ==
   |=  =move:neo
+  =/  src=name:neo  (de-pith:name:neo p.move)
+  =/  init=[src=name:neo dst=name:neo]
+    [src (de-pith:name:neo p.q.move)]
+  =/  init-move  move
+  =/  src=name:neo  src.init
+  =/  here  pith.dst.init
+  ?>  =(our.bowl ship.dst.init)
+  =<
+  ?.  (is-congested:stop move)
+    (apply move)
+  =.  run  (add:stop move)
+  arvo
   |%
-  ++  abet  run
-  --
-::=/  src=name:neo  (de-pith:name:neo p.move)
-::=/  init=[src=name:neo dst=name:neo]
-::  [src (de-pith:name:neo p.q.move)]
-::=/  init-move  move
-::=/  src=name:neo  src.init
-::=/  here  pith.dst.init
-::?>  =(our.bowl ship.dst.init)
-::=<
-::?.  (is-congested:stop move)
-::  (apply move)
-::=.  run  (add:stop move)
-::arvo
-::|%
-::++  abet
-::  ^+  run
-::  ?:  =([~ ~] block)  
-::    =.  run    (emit (do-ack [p q]:init-move err.block))
-::    =.  cards  (welp cards (turn up do-move))
-::    (dial changes)
-::      :: %+  turn  ~(tap by change)
-::      ::  |=([=pith:neo =mode:neo] ^+(+< [[p/our.bowl pith] mode]))
-::    :: run
-::  ~&  >>>  %reverting
-::  ~&  >>>  init
-::  =.  state  old :: XX: is apex only state that is touched?
-::  ?.  =(~ get.block)
-::    (fresh:stop get.block init-move)
-::  ?>  ?=(^ err.block)
-::  ::  %-  (slog u.err.block)
-::  ?:  ?=([%poke %rely *] q.q.move)
-::    ~&  >>>  rely-nack/[src dst]:init
-::    run
-::  (emit (do-nack [p q]:init-move err.block))
-::::
-::++  arvo  .
-::++  emit  |=(=move:neo arvo(down [move down]))
-::++  give
-::  ^+  arvo
-::  ?~  gifts
-::    arvo
-::  =/  [=pith:neo =gift:neo]  i.gifts
-::  =>  .(gifts `(list [pith:neo gift:neo])`gifts)
-::  =.  gifts
-::    ?>  ?=(^ gifts)
-::    t.gifts
-::  =.  here  pith
-::  =/  =pail:neo
-::    gift/!>(gift)
-::  =^  cards=(list card:neo)  arvo
-::    `arvo :: (soft-site |.(si-abet:(si-poke:site pail)))
-::  (ingest cards)
-::++  trace-card
-::  |=  =move:neo
-::  ^-  tank
-::  :-  %leaf
-::  "{(en-tape:pith:neo p.move)} -> {(en-tape:pith:neo p.q.move)}: {<-.q.q.move>}"
-::++  trace
-::  |=  =tang
-::  ?.  verb  same
-::  %.  tang
-::  %*  .  slog
-::    pri  2
-::  ==
-::++  inside  (cury is-parent init)
-::++  echo  arvo  :: TODO walk done
-::++  finalize
-::  ^+  arvo
+  ++  abet
+    ^+  run
+    ?:  =([~ ~] block)  
+      =.  run    (emil `(list card)`(do-ack [p p.q]:init-move err.block))
+      =.  run    (emil (turn up do-move))
+      (dial changes)
+        :: %+  turn  ~(tap by change)
+        ::  |=([=pith:neo =mode:neo] ^+(+< [[p/our.bowl pith] mode]))
+      :: run
+    ~&  >>>  %reverting
+    ~&  >>>  init
+    =.  state  old :: XX: is apex only state that is touched?
+    ?.  =(~ get.block)
+      (fresh:stop get.block init-move)
+    ?>  ?=(^ err.block)
+    ::  %-  (slog u.err.block)
+    ?:  ?=([%poke %rely *] q.q.move)
+      ~&  >>>  rely-nack/[src dst]:init
+      run
+    (emil (do-ack [p p.q]:init-move err.block))
+  ::
+  ++  arvo  .
+  ++  emit  |=(=move:neo arvo(down [move down]))
+  ++  give
+    ^+  arvo
+    ?~  gifts
+      arvo
+    =/  [=pith:neo =gift:neo]  i.gifts
+    =>  .(gifts `(list [pith:neo gift:neo])`gifts)
+    =.  gifts
+      ?>  ?=(^ gifts)
+      t.gifts
+    =.  here  pith
+    =/  =pail:neo
+      gift/!>(gift)
+    =^  cards=(list card:neo)  arvo
+      `arvo :: (soft-site |.(si-abet:(si-poke:site pail)))
+    (ingest cards)
+  ++  trace-card
+    |=  =move:neo
+    ^-  tank
+    :-  %leaf
+    "{(en-tape:pith:neo p.move)} -> {(en-tape:pith:neo p.q.move)}: {<-.q.q.move>}"
+  ++  trace
+    |=  =tang
+    ?.  verb  same
+    %.  tang
+    %*  .  slog
+      pri  2
+    ==
+  ++  inside  (cury is-parent init)
+  ++  echo  arvo  :: TODO walk done
+  ++  finalize
+    ^+  arvo
 ::  =.  gifts
 ::    =-  ~(tap by -)
 ::    ^-  (map pith:neo gift:neo)
@@ -506,22 +721,22 @@
 ::  =.  change   *(map pith:neo mode:neo)
 ::  ?~  gifts
 ::    arvo
-::  give
-::  :: $(gifts t.gifts)
-::  
-::++  work
-::  ^+  arvo
-::  |-  ^+  arvo
-::  ?^  err.block
-::    arvo
-::  ?~  down
-::    finalize
-::  =/  nex=move:neo  i.down
-::  =/  new-arvo  (apply:arvo(down t.down) nex) :: XX: weird compiler?
-::  $(arvo new-arvo, done (snoc done nex))
-::++  poke
-::  |=  =pail:neo
-::  ^+  arvo
+    give
+    :: $(gifts t.gifts)
+    
+  ++  work
+    ^+  arvo
+    |-  ^+  arvo
+    ?^  err.block
+      arvo
+    ?~  down
+      finalize
+    =/  nex=move:neo  i.down
+    =/  new-arvo  (apply:arvo(down t.down) nex) :: XX: weird compiler?
+    $(arvo new-arvo, done (snoc done nex))
+  ++  poke
+    |=  =pail:neo
+    ^+  arvo
 ::  =/  =room:neo  (got:of-top here)
 ::  ?:  &(=(%rely p.pail) ~(is-plot husk code.room))
 ::    =.  change  (~(put by change) here %dif)
@@ -529,63 +744,64 @@
 ::    
 ::  =^  cards=(list card:neo)  arvo
 ::    `arvo :: (soft-site |.(si-abet:(si-poke:site pail)))
-::  (ingest cards)
-::::  XX: a hack
-::::
-::::    this is implicity recursive, and all external dependencies of
-::::    the children need to be woken up. this also breaks referential 
-::::    transparency
-::++  tomb
-::  |=  *
-::  =.  apex  (del:of-top here)
-::  =.  change  (~(put by change) here %del)
-::  work
-::::
-::++  apply
-::  |=  =move:neo
-::  ^+  arvo
-::  ?.  =(~ err.block)
-::    :: skip if we have errored
-::    arvo
-::  ~|  apply/[p.move p.q.move]
-::  =.  src   (de-pith:name:neo p.move)
-::  =/  =name:neo  (de-pith:name:neo p.q.move)
-::  =.  here       +:p.q.move
-::  %-  (trace leaf/"{<-.q.q.move>} {(spud (pout here))}" ~)
-::  ?-  -.q.q.move
-::    %make  (make +.q.q:move)
-::    %poke  (poke +.q.q:move)
-::    %tomb  (tomb +.q.q:move)
-::    %link   !!
-::  ==
-::::
-::++  ingest
-::  |=  caz=(list card:neo)
-::  ^+  arvo
-::  =/  =pith  [p/our.bowl here]
-::  =.  up
-::    %+  welp  up
-::    %+  murn  caz
-::    |=  =card:neo
-::    ^-  (unit move:neo)
-::    ?:  (is-parent pith p.card)
-::      ~
-::    `[pith card]
+    (ingest ~) ::  cards)
+  ::  XX: a hack
+  ::
+  ::    this is implicity recursive, and all external dependencies of
+  ::    the children need to be woken up. this also breaks referential 
+  ::    transparency
+  ++  tomb
+    |=  *
+    ::  =.  apex  (del:of-top here)
+    =.  change  (~(put by change) here %del)
+    work
+  ::
+  ++  apply
+    |=  =move:neo
+    ^+  arvo
+    ?.  =(~ err.block)
+      :: skip if we have errored
+      arvo
+    ~|  apply/[p.move p.q.move]
+    =.  src   (de-pith:name:neo p.move)
+    =/  =name:neo  (de-pith:name:neo p.q.move)
+    =.  here       +:p.q.move
+    %-  (trace leaf/"{<-.q.q.move>} {(spud (pout here))}" ~)
+    ?-  -.q.q.move
+      %make  (make +.q.q:move)
+      %poke  (poke +.q.q:move)
+      %tomb  (tomb +.q.q:move)
+      %link   !!
+    ==
+  ::
+  ++  ingest
+    |=  caz=(list card:neo)
+    ^+  arvo
+    =/  =pith  [p/our.bowl here]
+    =.  up
+      %+  welp  up
+      %+  murn  caz
+      |=  =card:neo
+      ^-  (unit move:neo)
+      ?:  (is-parent pith p.card)
+        ~
+      `[pith card]
 
-::  =.  down
-::    %-  welp
-::    :_  down
-::    %+  murn  caz
-::    |=  =card:neo
-::    ^-  (unit move:neo)
-::    ?.  (is-parent pith p.card)
-::      ~
-::    `[pith card]
-::  work
-::::
-::++  listen-conf
-::  |=  [=conf:neo =deps:neo]
-::  ^+  arvo
+    =.  down
+      %-  welp
+      :_  down
+      %+  murn  caz
+      |=  =card:neo
+      ^-  (unit move:neo)
+      ?.  (is-parent pith p.card)
+        ~
+      `[pith card]
+    work
+  ::
+  ++  listen-conf
+    |=  [=conf:neo =deps:neo]
+    ^+  arvo
+    arvo
 ::  =/  conf  ~(tap by conf)
 ::  |-
 ::  ?~  conf
@@ -608,9 +824,9 @@
 ::  =.  deps.riot  (~(put in deps.riot) rave)
 ::  =.  foreign    (~(put by foreign) tour riot)
 ::  $(conf t.conf)
-::::
-::++  validate-kids
-::  ^-  ?
+  ::
+  ++  validate-kids
+    ^-  ?
 ::  ?:  =(1 1)
 ::    &
 ::  ?~  par-pith=(parent:of-top here)
@@ -621,74 +837,45 @@
 ::  ?~  mat=(find:peon:neo sfix ~(key by kids:parent-firm))
 ::    ~&  >>>  %kids-no-match
 ::    &
-::  & :: XX: enforce conformance
-::++  make-plot
-::  |=  [src=stud:neo =conf:neo]
-::  =/  =plot:neo  (need ~(plot husk src))
-::  =/  =deps:neo  deps:plot
-::  =^  bad=(set term)  get.block
-::    (check-conf conf deps:plot)
-::  ?.  =(~ get.block)
-::    arvo
-::  =.  arvo  (listen-conf conf deps:plot)
-::  =/  =soil:neo
-::    [[[1 1] ~] ~]
-::  =/  =room:neo
-::    [src state:plot conf soil/soil]
-::  =.  apex  (put:of-top here room)
-::  work
-::::
-::++  make
-::  |=  [src=stud:neo init=(unit vase) =conf:neo]
+    & :: XX: enforce conformance
+  ++  make-plot
+    |=  [src=stud:neo =conf:neo]
+    work
+  ::
+  ++  make
+    |=  [src=stud:neo init=(unit vase) =conf:neo]
+    work
 ::  ?:  ~(is-plot husk src)
 ::    ~|  %cant-make-plot-w-init
 ::    ?>  ?=(~ init)
 ::    (make-plot src conf)
-::  =/  =firm:neo  ~(firm husk src)
-::  :: =.  run        (~(start husk src) our.bowl pith)
-::  =/  old  (get:of-top here)
-::  =/  =form:neo  form:firm
-::  =/  =icon:neo  
-::    ?~  old
-::      [[1 1] *vase ~ ~]
-::    ?>  ?=(%icon -.seat.u.old)
-::    [ever.icon.seat.u.old *vase ~ ~]
-::  =?  init  ?=(^ old)
-::    ~|  bad-install-over/here
-::    ?>  =(state:firm state.u.old)
-::    ?:  =(~ init)
-::      ?.  ?=(%icon -.seat.u.old)
-::        init
-::      `state.icon.seat.u.old
-::    init
-::  =/  =deps:neo  deps:firm
-::  =^  bad=(set term)  get.block
-::    (check-conf conf deps:firm)
-::  ?.  validate-kids 
-::    !!
-::  ?.  =(~ bad)
-::    ~|  missing-dependecies/~(tap in bad)
-::    !!
-::  ?.  =(~ get.block)
-::    ~&  get/get.block
-::    arvo
-::  =.  arvo  (listen-conf conf deps:firm)
-::  =/  =room:neo  [src state:firm conf icon/icon]
-::  =.  apex  (put:of-top here room)
-::  =^  cards=(list card:neo)  arvo
-::    `arvo ::  (soft-site |.(si-abet:(si-init:site init)))
-::  (ingest cards)
+::     =/  =firm:neo  ~(firm husk src)
+    :: =.  run        (~(start husk src) our.bowl pith)
+    ::  =/  old  (get:of-top here)
+::     =/  =form:neo  form:firm
+:: `arvo
 
-::++  soft-site
-::  |=  tap=(trap (quip card:neo _arvo))
-::  ^-  (quip card:neo _arvo)
-::  =/  res=(each (quip card:neo _arvo) tang)
-::    (mule tap)
-::  ?:  ?=(%& -.res)
-::    p.res
-::  =.  err.block  `p.res
-::  `arvo
-::--
+  ++  soft-site
+    |=  tap=(trap (quip card:neo _arvo))
+    ^-  (quip card:neo _arvo)
+    =/  res=(each (quip card:neo _arvo) tang)
+      (mule tap)
+    ?:  ?=(%& -.res)
+      p.res
+    =.  err.block  `p.res
+    `arvo
+  ++  surf
+    =/  =wave:neo  (~(got of:neo tide) here)
+    |%
+    ++  su-core  .
+    ++  su-abet
+      ::  TODO: bump
+      =.  tide  (~(put of:neo tide) here wave)
+      [cards arvo]
+    --
+
+
+  --
 ::  |util: utilties
 +|  %util
 ++  soften

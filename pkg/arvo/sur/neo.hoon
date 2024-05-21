@@ -926,7 +926,7 @@
   ::    everything else. To update a riff, simply %make over the top
   ::
   ++  riff
-    ^-  firm
+    ^-  kook
     |%
     ++  state  %ford-out
     ++  poke   *(set stud)
@@ -1240,143 +1240,6 @@
     ==
   --
 ::
-++  goon
-  |%
-  ::  $date: date w/ TZ offset
-  +$  date   [dat=@da off=@ud]
-  ::  $size: size of a rect
-  +$  size   [w=@ud h=@ud]
-  ::  $hsrc:  HTTP source (URL)
-  +$  hsrc   @t
-  ::  $dims: Spatial dimensions
-  +$  dims   [ideal=size min=(unit size)]
-  ::  $dimt: Temporal dimension
-  +$  dimt   [len=@dr sta=@ud]
-  +$  scar
-    $?  %patp
-        %patud
-        %cord
-        %patda
-        %date
-        %img
-        %video
-        %audio
-    ==
-  +$  clot
-    $?  [%patp p=@p]
-        [%patud p=@ud]
-        [%cord p=cord]
-        [%patda p=@da]
-        [%date =date]
-        [%img =hsrc =dims]
-        [%video =hsrc =dims =dimt]
-        [%audio =hsrc =dimt]
-    ==
-  --
-
-++  pike
-  =<  pike
-  |%
-  ++  card
-    $%  [%peek =path]
-        [%grab items=(list item)]
-    ==
-  ++  sign
-    $%  [%peek =cage]
-        [%grab items=(list clot:goon)]
-    ==
-  +$  item
-    $:  lede=cord
-        info=cord
-        err=(unit cord)
-        =scar:goon
-    ==
-  +$  bowl
-    $:  our=@p
-        wer=name
-        eny=@uvJ
-        now=@da
-    ==
-  +$  input  [=bowl syn=(unit sign)]
-  ++  raw
-    |%
-    ++  output
-      |*  a=mold
-      $~  [%done *a]
-      $%  [%emit =card]
-          [%cont self=(form a)]
-          [%fail err=(pair term tang)]
-          [%done value=a]
-      ==
-    ++  form  |*(a=mold $-(input (output a)))
-    --
-  ++  fail
-    |=  err=(pair term tang)
-    |=  input
-    [~ %fail err]
-  ++  pikv
-    (pike vase)
-  ++  pike
-    |*  a=mold
-    |%
-    ++  output  (output:raw a)
-    ++  form    (form:raw a)
-    ++  pure    
-      |=  arg=a
-      ^-  form
-      |=  input
-      [%done arg]
-    ++  bind
-      |*  b=mold
-      |=  [m-b=(form:raw b) fun=$-(b form)]
-      ^-  form
-      =*  loop  $
-      |=  in=input
-      =/  b-res=(output:raw b)
-        (m-b in)
-      ^-  output
-      ?-    -.b-res
-        %emit   [%emit card.b-res]
-        %cont   [%cont loop(m-b self.b-res)]
-        %fail   [%fail err.b-res]
-        %done   [%cont (fun value.b-res)]
-      ==
-    +$  eval-form
-      $:  =form
-      ==
-    ::
-    ::  Convert initial form to eval-form
-    ::
-    ++  from-form
-      |=  =form
-      ^-  eval-form
-      form
-    ::
-    ::  The cases of results of +take
-    ::
-    +$  eval-result
-      $%  [%emit car=card]
-          [%fail err=(pair term tang)]
-          [%done value=a]
-      ==
-    ++  take
-      |=  [=eval-form =input]
-      ^-  [=eval-result _eval-form]
-      =*  take-loop  $
-      :: =?  car.input  ?=(^ car.input)
-      =/  =output  (form.eval-form input)
-      ?-    -.output
-          %emit  [[%emit card.output] eval-form]
-          %fail  [[%fail err.output] eval-form]
-          %done  [[%done value.output] eval-form]
-          %cont 
-        %_  take-loop
-          form.eval-form  self.output
-          input    [bowl.input ~]
-        ==
-      ==
-    --
-  --
 ::
 ++  road   (pole iota)
 ::
@@ -1897,9 +1760,9 @@
 ::
 +$  band  (map term fief)
 +$  kids  (map pish port)
-::  $plot: virtual namespace binding
+::  $dude: virtual namespace binding
 ::
-+$  o-plot
++$  dude
   $_  ^&
   |%
   ::  $state: the state of this value in the urbit namespace
@@ -1908,7 +1771,9 @@
   ::      [author=ship time-sent=time message=txt]
   ::
   ++  state  *stud
-  ++  farm   *o-farm
+  ++  work
+    |~  =bowl
+    *vase
   ::
   ::  +kids: Some nodes in the namespace define what children are
   ::  allowed to be under them. For instance, it should not  be allowed
@@ -1948,9 +1813,9 @@
   $_  ^|
   |=  =bowl
   *vase
-::  $firm: type of the value in the urbit namespace
+::  $kook: type of the value in the urbit namespace
 ::
-+$  firm
++$  kook
   $_  ^&
   |%
   ::  $state: the state of this value in the urbit namespace
@@ -1985,6 +1850,11 @@
   ::  in the name
   ++  deps   *(map term fief)
   --
++$  wave
+  $:  =slip
+      =crew
+  ==
++$  tide  (axal wave)
 ::
 +$  form
   $_  ^|
