@@ -1612,7 +1612,7 @@
       ++  encrypt
         |=  [key=@uxI iv=@ msg=byts]
         ^+  msg
-        =/  x  (xchacha:chacha:crypto key (hash 24 iv))
+        =/  x  (xchacha:chacha:crypto 8 key (hash 24 iv))
         =;  =octs  +(p.octs)^(can 3 octs [1 0x1] ~)
         (chacha:crypto 8 key.x nonce.x 0 msg)
       ::
