@@ -12,6 +12,7 @@ export class LocalReducer {
       this.appFailed(data, state);
       this.verbResult(data, state);
       this.verbStatus(data, state);
+      this.verbEventPlus(data, state);
     //
       this.threads(data, state);
     //
@@ -100,6 +101,26 @@ export class LocalReducer {
       if (!state.apps[data.app])      state.apps[data.app] = {};
       if (!state.apps[data.app].events) state.apps[data.app].events = [];
       state.apps[data.app].events.push(data.msg);
+    }
+  }
+
+  verbEventPlus(obj, state) {
+    const data = _.get(obj, 'verbEventPlus', false);
+    if (data) {
+      //NOTE  this is just a store.addLogs() that makes some assumptions
+      if (!state.logs[data.gill]) {
+        state.logs[data.gill] = {
+          logs: [data.log],
+          oldest: data.log.now,
+          newest: data.log.now,
+        };
+        state.logsRange.oldest = Math.min(state.logsRange.oldest || data.log.now, data.log.now);
+        state.logsRange.newest = data.log.now;
+      } else {
+        state.logs[data.gill].logs.push(data.log);
+        state.logs[data.gill].newest = data.log.now;
+        state.logsRange.newest = data.log.now;
+      }
     }
   }
 

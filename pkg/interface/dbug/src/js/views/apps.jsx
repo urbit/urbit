@@ -94,11 +94,13 @@ export class Apps extends Component {
             <pre>{(data.state || data.simpleState).join('\n')}</pre>
           </div>
           <div>
-            <Subscriptions {...data.subscriptions} />
+            <button onClick={() => { api.bindToVerb(app) }}>listen to simple verb (here)</button>
+            {' '}
+            <button onClick={() => { api.bindToVerbPlus(app) }}>listen to verb+ (logs viewer)</button>
+            <SearchableList placeholder="event description" items={events} />
           </div>
           <div>
-            <button onClick={()=>{api.bindToVerb(app)}}>listen to verb</button>
-            <SearchableList placeholder="event description" items={events} />
+            <Subscriptions {...data.subscriptions} />
           </div>
         </>)
       }

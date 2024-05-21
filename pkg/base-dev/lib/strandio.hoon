@@ -197,6 +197,20 @@
     `[%done +>.sign-arvo.u.in.tin]
   ==
 ::
+++  take-message
+  |=  =wire
+  =/  m  (strand ,sage:mess:ames)
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+    in.tin  `[%skip ~]
+      ~  `[%wait ~]
+    ::
+      [~ %sign * %ames %mess-response sage=*]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done sage.sign-arvo.u.in.tin]
+  ==
+::
 ++  take-near
   |=  =wire
   =/  m  (strand ,[spar:ames (unit (unit page))])
@@ -350,6 +364,12 @@
   =/  m  (strand ,~)
   ^-  form:m
   (send-raw-card %pass wire %arvo %a %keen ~ spar)
+::
+++  meen
+  |=  [=wire =spar:ames sec=(unit [@ @])]
+  =/  m  (strand ,~)
+  ^-  form:m
+  (send-raw-card %pass wire %arvo %a %keen sec spar)
 ::
 ++  keen-shut
   |=  [=wire =spar:ames]

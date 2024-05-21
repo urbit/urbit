@@ -586,7 +586,6 @@
       %-  pairs
       :~  'messages'^(numb (lent messages))
           'packets'^(numb ~(wyt in packets))
-          'heeds'^(set-array heeds from-duct)
           'keens'^(set-array ~(key by keens) path)
       ==
     ::
@@ -650,7 +649,6 @@
     ::    }, ...],
     ::    closing: [bone, ..., bone],
     ::    corked: [bone, ..., bone],
-    ::    heeds: [['/paths', ...] ...]
     ::    scries:
     ::    ->  { =path
     ::          keen-state: {
@@ -778,8 +776,6 @@
         ::
           'corked'^(set-array corked numb)
         ::
-          'heeds'^(set-array heeds from-duct)
-        ::
           'scries'^(scries ~(tap by keens))
       ==
     ::
@@ -851,7 +847,7 @@
         ::
           :-  'pending-vane-ack'
           =-  a+(turn - numb)
-          (sort (turn ~(tap in pending-vane-ack) head) dor)  ::  sort by msg #
+          (sort (turn ~(tap in pending-vane-ack) ^head) dor)  ::  sort by msg #
         ::
           :-  'live-messages'
           :-  %a

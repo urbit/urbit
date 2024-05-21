@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { SearchableList } from '../components/searchable-list';
+import { SearchableList } from './searchable-list';
 import { renderDuct } from '../lib/util';
 
 export class Subscriptions extends Component {
@@ -65,4 +65,4 @@ export class Subscriptions extends Component {
   }
 }
 
-export default Links;
+export default Subscriptions;

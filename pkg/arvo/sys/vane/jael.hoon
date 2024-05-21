@@ -656,13 +656,13 @@
     |^
     =/  yaz  %+  skid  ~(tap in yen)
       |=  d=duct
-      &(?=([[%ames @ @ *] *] d) !=(%public-keys i.t.i.d))
+      &(?=([[%ames ?(%ames %mesa) @ @ *] *] d) !=(%public-keys i.t.t.i.d))
     =/  yez  (weld p.yaz (sort q.yaz sorter))
     |-  ^+  this-su
     ?~  yez  this-su
     =*  d  i.yez
     =.  this-su
-      ?.  &(?=([[%ames @ @ *] *] d) !=(%public-keys i.t.i.d))
+      ?.  &(?=([[%ames ?(%ames %mesa) @ @ *] *] d) !=(%public-keys i.t.t.i.d))
         %-  emit
         [d %give %public-keys public-keys-result]
       %-  emit
@@ -1274,6 +1274,18 @@
       %turf
     ?.  ?=(~ tyl)  [~ ~]
     [~ ~ %noun !>(tuf.own.pki.lex)]
+  ::
+      %puby                                            ::  unitized public-key
+    ?.  ?=([@ @ ~] tyl)  [~ ~]
+    ?.  =([%& our] why)
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    =/  lif  (slaw %p i.t.tyl)
+    ?~  who  [~ ~]
+    ?~  lif  [~ ~]
+    =/  pos  (~(get by pos.zim.pki.lex) u.who)
+    ?~  pos  ``[%noun !>(~)]
+    ``[%noun !>((~(get by keys.u.pos) u.lif))]
   ==
 ::                                                      ::  ++stay
 ++  stay                                                ::  preserve

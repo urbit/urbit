@@ -2,6 +2,7 @@
 !:
 |%
 +$  card  card:agent:gall
++$  command  $@(=test [=desk =test])
 +$  test  ?(%agents %marks %generators %threads)
 +$  state
   $:  app=(set path)
@@ -14,7 +15,6 @@
       ted-ok=?
   ==
 --
-=,  format
 ^-  agent:gall
 =|  =state
 |_  =bowl:gall
@@ -28,9 +28,12 @@
   |=  [=mark =vase]
   ^-  [(list card) _this]
   ?>  (team:title [our src]:bowl)
+  =+  !<(cmd=command vase)
+  =?  cmd  ?=(@ cmd)
+    [q.byk.bowl test.cmd]
+  ?>  ?=(^ cmd)
   |^
-  =+  !<(=test vase)
-  ?-  test
+  ?-  test.cmd
     %marks       test-marks
     %agents      test-agents
     %generators  test-generators
@@ -54,7 +57,7 @@
       |=(c=@tD `@tD`?:(=('/' c) '-' c))
     =/  sing=card
       :+  %pass  /build/mar/[mak]
-      [%arvo %c %warp our.bowl q.byk.bowl ~ %sing %b da+now.bowl /[mak]]
+      [%arvo %c %warp our.bowl desk.cmd ~ %sing %b da+now.bowl /[mak]]
     %_  $
       paz        t.paz
       fex        [sing fex]
@@ -76,7 +79,7 @@
       $(daz t.daz)
     =/  sing=card
       :+  %pass  /build/app/[i.daz]
-      [%arvo %c %warp our.bowl q.byk.bowl ~ %sing %a da+now.bowl dap-pax]
+      [%arvo %c %warp our.bowl desk.cmd ~ %sing %a da+now.bowl dap-pax]
     %_  $
       daz        t.daz
       fex        [sing fex]
@@ -96,7 +99,7 @@
       $(paz t.paz)
     =/  sing=card
       :+  %pass  build+i.paz
-      [%arvo %c %warp our.bowl q.byk.bowl ~ %sing %a da+now.bowl i.paz]
+      [%arvo %c %warp our.bowl desk.cmd ~ %sing %a da+now.bowl i.paz]
     %_  $
       paz        t.paz
       fex        [sing fex]
@@ -116,13 +119,13 @@
       $(paz t.paz)
     =/  sing=card
       :+  %pass  build+i.paz
-      [%arvo %c %warp our.bowl q.byk.bowl ~ %sing %a da+now.bowl i.paz]
+      [%arvo %c %warp our.bowl desk.cmd ~ %sing %a da+now.bowl i.paz]
     %_  $
       paz        t.paz
       fex        [sing fex]
       ted.state  (~(put in ted.state) i.paz)
     ==
-  ++  now-beak  %_(byk.bowl r [%da now.bowl])
+  ++  now-beak  [our.bowl desk.cmd da+now.bowl]
   --
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def

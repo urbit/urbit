@@ -27,6 +27,7 @@ export class Skeleton extends Component {
 
     let items = [
       'apps',
+      'logs',
       'spider',
       'ames',
       'behn',
