@@ -11,7 +11,7 @@
   q.pail.q:(~(got by deps.bowl) %src)
 ::
 --
-^-  firm:neo
+^-  kook:neo
 |%
 ++  state  %message
 ++  poke   (sy %rely ~)

@@ -4,7 +4,7 @@
 |%
 ++  card  card:neo
 --
-^-  firm:neo
+^-  kook:neo
 |%
 ++  state  %pal
 ++  poke  (sy %pal-diff ~)

@@ -5,8 +5,8 @@
 ++  wrap-firm
   |=  vax=vase
   ^-  vase
-  =+  !<(inner=firm:neo vax)
-  !>  ^-  firm:neo
+  =+  !<(inner=kook:neo vax)
+  !>  ^-  kook:neo
   |%
   ++  poke  poke:inner
   ++  state  state:inner
@@ -30,7 +30,7 @@
     --
   --
 --
-^-  firm:neo
+^-  kook:neo
 |%
 ++  poke    (sy %ford-in ~)
 ++  state   %ford-out

@@ -16,7 +16,7 @@
 ::  possibly optimisticaly update, then forward note to foreign ship
 ::
 ::  %make
-:: ^-  firm:neo
+:: ^-  kook:neo
 =>
 |%
 ++  behn

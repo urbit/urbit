@@ -193,7 +193,8 @@
   ++  look
     |=  =pith:neo
     ^-  (unit (unit poem:neo))
-    (scry case pith)
+    (scry ~(case plow (~(dip of:neo loam) pith)) pith)
+  ::
   ++  peek
     |=  =pith:neo
     ^-  (unit pail:neo)
@@ -208,7 +209,7 @@
     =/  lom  (~(dip of:neo loam) pith)
     ?~  fil.lom
       ~
-    =/  latest=case:neo  case
+    =/  latest=case:neo  ~(case plow lom)
     ?.  (lte wan latest)
       ~
     `(get:on:soil:neo u.fil.lom wan)
@@ -285,6 +286,29 @@
       [~ ~]
     =/  =ever:neo  (nail u.ver plot.u.val case)
     ``[[ever q.p.u.u.mit] u.q.u.u.mit]
+  ++  peek
+    |=  [=care:neo =pith:neo]
+    ^-  (unit (unit (axal:neo saga:neo)))
+    ?~  val=(~(get of:neo farm) pith)
+      ~
+    =;  =once:neo
+      (look care once pith)
+    ?+    care  !!
+        %x
+      ?~  ove=(ram:on:land:neo land.u.val)
+        !!
+      x/key.u.ove
+    ::
+        %y
+      ?~  ove=(ram:on:tend:neo by-kids.plot.u.val)
+        !!
+      y/key.u.ove
+    ::
+        %z
+      ?~  ove=(ram:on:tend:neo by-desc.plot.u.val)
+        !!
+      z/key.u.ove
+    ==
   ::
   ++  look
     |=  [=care:neo =once:neo =pith:neo]

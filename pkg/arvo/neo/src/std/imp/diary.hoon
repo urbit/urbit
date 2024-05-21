@@ -2,7 +2,7 @@
 /@  diary
 /@  diary-diff
 ::
-^-  firm:neo
+^-  kook:neo
 |%
 ++  state  %diary
 ++  poke  (sy %diary-diff ~)

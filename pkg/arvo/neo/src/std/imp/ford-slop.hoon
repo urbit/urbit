@@ -13,7 +13,7 @@
   `(slop u.a u.b)
 +$  state  [cache=(unit vase) ~]
 --
-^-  firm:neo
+^-  kook:neo
 |%
 ++  state  %ford-out
 ++  poke   (sy %rely %ford-in ~)

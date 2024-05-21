@@ -4,7 +4,10 @@
 ++  get-face
   |=  =bowl:neo
   ^-  @tas
-  !<(@tas q.pail.q:(~(got by deps.bowl) %face))
+  =/  =epic:neo  q:(~(got by deps.bowl) %face)
+  =/  =saga:neo  ~(rot of:neo epic)
+  !<(@tas q.q.saga)
+::
 ++  build
   |=  =bowl:neo
   ^-  (unit vase)
@@ -16,7 +19,7 @@
   u.sut(p [%face (get-face bowl) p.u.sut])
 +$  state  [cache=(unit vase) ~]
 --
-^-  firm:neo
+^-  kook:neo
 |%
 ++  poke    (sy %rely %ford-in ~)
 ++  state   %ford-out

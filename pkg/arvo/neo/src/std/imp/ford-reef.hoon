@@ -2,7 +2,7 @@
 |%
 ++  card  card:neo
 --
-^-  firm:neo
+^-  kook:neo
 |%
 ++  state  %ford-out
 ++  poke   *(set stud:neo)

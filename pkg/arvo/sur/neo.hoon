@@ -98,7 +98,7 @@
 +$  saga  (pair aeon pail)
 +$  pail  (pair stud vase)
 ::
-+$  epic  (axal saga)
++$  epic  $+(epic (axal saga))
 
 ::  $stud: name for build system outputs
 ::  
@@ -291,6 +291,8 @@
   ++  on    ((^on case poem) lte)
   +$  a  ((mop case poem) lte)
   --
++$  dust   (trel pith @ud ?)
++$  grit   (list dust)
 ::  $dirt: Layer 1 of the namespace
 ++  dirt
   |%
@@ -300,7 +302,7 @@
         [%cull ~]
     ==
   +$  loam  (axal soil)
-  +$  gift   (trel pith @ud ?)
+  +$  gift   dust
   --
 --
 |%
@@ -915,6 +917,9 @@
     |%
     ++  kids  *^kids
     --
+  ++  slip
+    ^-  ^slip
+    [%ford-out ~ ~]
   ++  is-stud
     |=  s=stud
     ?^  s  |
@@ -957,7 +962,7 @@
   ++  get-output
     |=  [=bowl =term]
     ^-  (unit vase)
-    =/  outer   q.pail.q:(~(got by deps.bowl) term)
+    =/  outer  q.q:(~(got of q:(~(got by deps.bowl) term)) /)
     =+  !<([vax=(unit vase) *] outer)
     vax
   ::
@@ -1317,6 +1322,9 @@
 ++  of
   =|  fat=(axal)
   |@ 
+  ++  rot
+    (need fil.fat)
+
   ++  view
     =|  res=(map pith _?>(?=(^ fil.fat) u.fil.fat))
     |=  [=care pax=pith]
@@ -1473,6 +1481,15 @@
     =/  kid  (~(gut by kid.fat) i.pax ^+(fat [~ ~]))
     fat(kid (~(put by kid.fat) i.pax $(fat kid, pax t.pax)))
   ::
+  ++  rut
+    =|  here=pith
+    |*  fun=$-([pith _?>(?=(^ fil.fat) u.fil.fat)] _?>(?=(^ fil.fat) u.fil.fat))
+    ^+  fat
+    %=  fat
+      fil  ?~(fil.fat ~ `(fun here u.fil.fat))
+      kid  (~(rut by kid.fat) |=([iot=iota f=_fat] ^$(here (snoc here iot), fat f)))
+    ==
+  ::
   ++  tap
     =|  pax=pith
     =|  out=(list (pair pith _?>(?=(^ fil.fat) u.fil.fat)))
@@ -1541,6 +1558,7 @@
   $%  [%make made] :: todo: configuration values, init cannot be ^ if installing over
       [%poke =pail]
       [%tomb cas=(unit case)]    :: tom
+      [%cull ~]
       [%link from=pith src=stud] :: XX deprecate
   ==
 +$  raw-poke
@@ -1734,8 +1752,8 @@
       were=pith :: XX: rename to here
       here=pith :: 
       now=@da
-      deps=(map term (pair pith cane))
-      kids=(map pith pail)
+      deps=(map term (pair pith epic))
+      kids=epic
   ==
 ++  quay
   =<  quay
@@ -1851,7 +1869,8 @@
   ++  deps   *(map term fief)
   --
 +$  wave
-  $:  =slip
+  $:  code=stud
+      =slip
       =crew
   ==
 +$  tide  (axal wave)

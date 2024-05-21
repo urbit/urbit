@@ -22,7 +22,7 @@
   [%make stud `vax ~]
 
 --
-^-  firm:neo
+^-  kook:neo
 |%
 ++  state  %chat
 ++  poke  (sy %chat-diff ~)

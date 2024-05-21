@@ -4,7 +4,7 @@
 +$  state  [cache=(unit vase) ~]
 +$  poke   [%dep ~]
 --
-^-  firm:neo
+^-  kook:neo
 |%
 ++  poke    (sy %ford-in %rely ~)
 ++  state   %ford-out

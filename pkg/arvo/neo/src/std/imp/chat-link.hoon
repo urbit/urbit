@@ -18,7 +18,7 @@
   =/  msg=pail:neo  pail:(~(got by kids.dep) pit)
   !<(message q.msg)
 --
-^-  firm:neo
+^-  kook:neo
 |%
 ++  state  %chat-link
 ++  poke   (sy %rely ~)

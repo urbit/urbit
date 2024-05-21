@@ -1,5 +1,5 @@
 /-  neo
-/+  lib=neo-two
+/+  aux=neo-two
 /+  default-agent
 /+  dbug
 /*  txt-hoon-imp    %hoon   /neo/src/std/imp/hoon/hoon
@@ -21,6 +21,7 @@
       =halt:neo
       dev=_|
   ==
+++  ford  ford:neo
 ++  mute
   |=  dev=?
   |*  *
@@ -101,6 +102,7 @@
 +|  %aux
 ++  abet  [(flop cards) state]
 ++  run  .
+++  our  our.bowl
 ++  emit  |=(=card run(cards [card cards]))
 ++  pass  |=([=wire =note:agent:gall] `card`[%pass wire note])
 ++  give  |=(=gift:agent:gall (emit %give gift))
@@ -193,8 +195,19 @@
     %neo-dirt-card   =;(f (f !<(_+<.f vase)) on-dirt-card)
     %neo-sync        =;(f (f !<(_+<.f vase)) on-sync)
   ::
+    %noun            (on-noun q.vase)
     %neo-raw-poke    (on-move (poke:harden !<(raw-poke:neo vase)))
   ==
+++  on-noun
+  |=  non=*
+  ^+  run
+  ?+  non  ~|(bad-noun-poke/non !!)
+    %dbug   ((slog (print-dbug ~)) run)
+  ==
+++  on-card
+  |=  =card:neo
+  (on-move sys-pith card)
+::
 ++  on-move
   |=  =move:neo
   ^+  run
@@ -205,10 +218,7 @@
 ++  on-dirt-card
   |=  =card:dirt:neo
   ^+  run
-  =^  gifts=(list gift:dirt:neo)  loam
-    (~(call plow:lib loam) card)
-  =.  farm  (~(take till:lib [loam farm]) gifts)
-  run
+  +:(take-dirt-card card)
 ++  on-sync
   |=  =sync:neo
   ^+  run
@@ -249,9 +259,11 @@
   ^+  run
   ?>  ?=(%poke-ack -.sign)
   :: run
-  !! :: XX: deliver nack
+  %.  run
+  ?~  p.sign
+    same
+  (slog leaf/"neo: bad deal: {(en-tape:pith:neo road)}" u.p.sign)
 ::
-   
 ++  on-arvo
   |=  [=wire syn=sign-arvo]
   ^+  run
@@ -265,7 +277,7 @@
   |^
   =/  =road:neo  (pave:neo t.path)
   ?+  road  [~ ~]
-    [%loam [%ud cas=@] rest=*]  (sing (~(scry plow:lib loam) [cas rest]:road))
+    [%loam [%ud cas=@] rest=*]  (sing (~(scry plow:aux loam) [cas rest]:road))
   ==
   ::
   ++  raise
@@ -284,6 +296,18 @@
   --
 ::  |jungle: shurb manipulations
 +|  %jungle
+::  +crop: build (possibly virtual value)
+::
+::    TODO: does not work as advertised
+++  crop
+  |=  =pith:neo
+  ^-  [(unit (unit saga:neo)) _run]
+  :_  run
+  =/  res  (~(peek till:aux [loam farm]) %x pith)
+  ?:  ?=($@(~ [~ ~]) res)
+    res
+  ``(~(got of:neo u.u.res) /)
+::  +rare: synchronisation
 ++  rare
   =/  =town:neo   town
   |%  
@@ -401,6 +425,13 @@
   |_  =city:neo
   ++  scry  ~
   --
+++  take-dirt-card
+  |=  =card:dirt:neo
+  ^-  (quip gift:dirt:neo _run)
+  =^  gifts=(list gift:dirt:neo)  loam
+    (~(call plow:aux loam) card)
+  =.  farm  (~(take till:aux [loam farm]) gifts)
+  [gifts run]
 
 ::  +stop: helper for blocking semantics
 ++  stop
@@ -466,6 +497,9 @@
 ::
 ++  husk
   |_  =stud:neo
+  ++  slip
+    ^-  slip:neo
+    [state poke kids]:kook
   ++  pith
     ^-  pith:neo
     :+  p/our.bowl  %out
@@ -478,7 +512,7 @@
   ++  vase
     ^-  ^vase
     ~|  firm/pith
-    =/  =pail:neo  (need (~(peek plow:lib loam) pith))
+    =/  =pail:neo  (need (~(peek plow:aux loam) pith))
     =+  !<([cac=(unit ^vase) *] q.pail)
     (need cac)
   ++  kook
@@ -495,16 +529,35 @@
     %+  welp  /husk/stud
     (pout pith)
   --
+++  lib
+  |_  =loc:ford:neo
+  ++  path
+    ^-  ^path
+    %-  welp
+    :_  [%lib (pout pith.loc)]
+    ^-  ^path
+    ?@  disk.loc
+      /std
+    ?:  =(ship.disk.loc our.bowl)
+      /our/[term.disk.loc]
+    /her/(scot %p ship.disk.loc)/[term.disk.loc]
+  ++  pith
+    (pave:neo path)
+  ++  built
+    !=(~ (~(peek plow:aux loam) p/our.bowl pith))
+  ++  exists
+    (exists-file %src path)
+  --
 ::
 ++  pro
   |_  =stud:neo
   ++  get  grab
   ++  grab
-    =/  =pail:neo  (need (~(peek plow:lib loam) pith))
+    =/  =pail:neo  (need (~(peek plow:aux loam) pith))
     =+  !<([cac=(unit vase) *] q.pail)
     cac
   ++  built
-    !=(~ (~(peek plow:lib loam) pith))
+    !=(~ (~(peek plow:aux loam) pith))
   ++  pith
     `pith:neo`(pave:neo path)
   ++  path
@@ -530,8 +583,164 @@
   =.  p  (snoc p %hoon)
   .^(? %cu p)
 ++  get-reef
-  =+  !<([ref=(unit vase) *] q:(need (~(peek plow:lib loam) #/[p/our.bowl]/out/reef)))
+  =+  !<([ref=(unit vase) *] q:(need (~(peek plow:aux loam) #/[p/our.bowl]/out/reef)))
   (need ref)
+::
+++  copy-clay
+  ~>  %bout.[1 %build]
+  |^  ^+  run
+  =/  paths=(list path)
+    .^((list path) %ct root)
+  =.  paths
+    %+  turn  paths
+    |=  pax=path
+    =.  pax  (snip pax)
+    ?>  ?=(^ pax)
+    t.pax
+  |-
+  ?~  paths
+    run
+  =.  run  (read-file i.paths)
+  $(paths t.paths)
+  ++  adult  %.n
+  ::
+  ++  has-modified
+    |=  [txt=@t pax=pith:neo]
+    ?.  adult
+      &
+    ?~  pal=(~(peek plow:aux loam) [p/our.bowl pax])
+      &
+    !=(txt q.q.u.pal)
+  ::
+  ++  read-file
+    |=  pax=path
+    ^+  run
+    ?:  =((rear pax) %ford-parser)
+      run
+    =+  .^(src=@t %cx `path`(snoc `path`(welp root pax) %hoon))
+    ?.  (has-modified src (pave:neo pax))
+      run
+    ~?  >>>  adult
+      [%update pax]
+    =/  =file:ford:neo
+      ~|  parsing/pax
+      (scan (trip src) (rein:ford [our.bowl (pave:neo pax)]))
+    =/  has-imports=?
+      ?&  (levy pro.file |=(pro:ford ~(exists pro stud)))
+          (levy lib.file |=(lib:ford ~(exists lib loc)))
+      ==
+    ?.  has-imports
+      ~|  pro.file
+      ~|  lib.file
+      ~|  %no-imports
+      !!
+    =.  run  (build-pros (turn pro.file tail))
+    =.  run  (build-libs (turn lib.file tail))
+    =/  built-imports=?
+      ?&  (levy pro.file |=(pro:ford ~(built pro stud)))
+          (levy lib.file |=(lib:ford ~(built lib loc)))
+      ==
+    ?>  built-imports
+    =^  pre=pith  run  
+      (make-prelude pax file)
+    =/  =conf:neo
+      (~(gas by *conf:neo) [%sut (ours pre)] ~)
+    =.  run  (write-hoon pax src)
+    =/  pit  (src-to-out pax)
+    (ford-slap (src-to-out pax) pre pax)
+  ++  build-pros
+    |=  pos=(list stud:neo)
+    ^+  run
+    ?~  pos
+      run
+    =/  pat  
+      ~(path pro i.pos)
+    ?>  ?=(^ pat)
+    =.  run  (read-file %src t.pat)
+    $(pos t.pos)
+  ++  build-libs
+    |=  lis=(list loc:ford:neo)
+    ^+  run
+    ?~  lis
+      run
+    =/  pat  
+      ~(path lib i.lis)
+    ?>  ?=(^ pat)
+    =.  run  (read-file %src t.pat)
+    $(lis t.lis)
+  ++  do-make
+    |=  [=pith:neo lib=term sta=(unit vase) =conf:neo]
+    =/  =name:neo  [our.bowl pith]
+    ~|  conf/conf
+    ~|  make-name/name
+    (on-card (en-pith:name:neo name) %make lib sta conf)
+  ::
+  ++  ford-slap
+    |=  [wer=pith sut=pith src=pith]
+    %^  do-make  wer  %ford-slap
+    `(~(gas by *conf:neo) sut/(ours sut) hoon/(ours src) ~)
+  ::
+  ++  slop
+    |=  [wer=pith a=pith b=pith]
+    ~|  %ford-slop
+    %^  do-make  wer  %ford-slop
+    `(~(gas by *conf:neo) a/(ours a) b/(ours b) ~)
+  ++  face
+    |=  [wer=pith face=pith sut=pith]
+    ~|  %ford-face
+    %^  do-make  wer  %ford-face
+    `(~(gas by *conf:neo) face/(ours face) sut/(ours sut) ~)
+  ++  same
+    |=  [wer=pith from=pith]
+    ~|  ford-same/[wer from]
+    %^  do-make  wer  %ford-same
+    `(~(gas by *conf:neo) src/(ours from) ~)
+  ++  ours
+    |=  p=pith:neo  `pith:neo`[p/our.bowl p]
+  ++  make-deps
+    =|  idx=@ud
+    |=  [pat=pith deps=(list [face=term =pith])]
+    ^+  run
+    ?~  deps
+      ~|  pat
+      %+  same  pat
+      ?:  =(0 idx)
+        #/out/reef
+      (snoc pat ud/(dec idx))
+    =/  wer=pith  (snoc pat ud/idx)
+    =/  fac=pith  (snoc wer %face)
+    =/  fav=pith  (snoc fac %term)
+    =.  run
+      (do-make fav %term `!>(face.i.deps) ~)
+    =.  run
+      (face fac fav pith.i.deps)
+    =/  prev=pith
+      ?:  =(idx 0)
+        #/out/reef
+      (snoc pat ud/(dec idx))
+    =.  run
+      (slop wer fac prev)
+    $(deps t.deps, idx +(idx))
+  ++  file-to-deps
+    |=  =file:ford
+    ^-  (list [term pith])
+    %+  welp
+      (turn pro.file |=(p=pro:ford [face.p ~(pith pro stud.p)]))
+    (turn lib.file |=(l=lib:ford [face.l %out ~(pith lib loc.l)]))
+  ++  make-prelude
+    |=  [pax=pith =file:ford]
+    ^-  [pith _run]
+    =/  pre-path=pith  [%pre pax]
+    [pre-path (make-deps pre-path (file-to-deps file))]
+  ++  write-hoon
+    |=  [pax=pith fil=@t]
+    (do-make pax %hoon `!>(fil) ~)
+  ++  src-to-out
+    |=  pax=pith:neo
+    ^-  pith:neo
+    ?>  ?=([@ *] pax)
+    [%out t.pax]
+  --
 ::
 ++  boot
   |^  ^+  run
@@ -539,7 +748,8 @@
   =/  reef=vase  (slop !>(..zuse) neo-vase(p [%face %neo p.neo-vase]))
   =/  riff=pail:neo
     [%ford-out !>(`[cac=(unit vase) ~]`[`!>(riff-kook) ~])]
-  =.  run  (on-dirt-card (do-grow-our #/out/std/imp/ford-riff ford-out+!>(riff)))
+  =.  run  (on-dirt-card (do-grow-our #/out/std/imp/ford-riff riff))
+  %-  (slog (print-dbug /))
   =.  run  (make-riff #/out/reef reef)
   =.  run  (re-export reef %hoon !,(*hoon @t))
   =.  run  (make-riff #/out/std/pro/ford-out (ford-out reef))
@@ -553,7 +763,7 @@
   =.  run  (make-riff-slap #/out/std/imp/ford-slap reef txt-ford-slap)
   =.  run  (re-export reef %json !,(*hoon json))
   =.  run  (re-export reef %mime !,(*hoon mime))
-  =.  run  (on-poke %noun !>(%clay))
+  ::  =.  run  copy-clay
   =.  run  (emit %pass /bind-site %arvo %e %connect [~ dap.bowl ~] dap.bowl)
   (emit do-std-warp)
   ++  clay-beak  ^-  path
@@ -635,6 +845,7 @@
   =|  $:  done=(list move:neo)  :: moves we've completed
           down=(list move:neo)  :: pending moves for children
           up=(list move:neo)    :: pending moves for uncles
+          grit=(list dust:neo)  :: raw changelist
           change=(map pith mode:neo)  :: changeset
           changes=(map pith mode:neo) :: also changeset
           gifts=(list [pith:neo gift:neo]) :: return values
@@ -705,6 +916,14 @@
     ==
   ++  inside  (cury is-parent init)
   ++  echo  arvo  :: TODO walk done
+  ++  grow
+    |=  =pail:neo
+    ^+  arvo
+    =^  git=grit:neo  run
+      (take-dirt-card [p/our.bowl here] %grow pail *oath:neo)
+    =.  grit  (welp grit git)
+    arvo
+      
   ++  finalize
     ^+  arvo
 ::  =.  gifts
@@ -772,6 +991,7 @@
       %poke  (poke +.q.q:move)
       %tomb  (tomb +.q.q:move)
       %link   !!
+      %cull   !!
     ==
   ::
   ++  ingest
@@ -843,7 +1063,9 @@
     work
   ::
   ++  make
-    |=  [src=stud:neo init=(unit vase) =conf:neo]
+    |=  [src=stud:neo init=(unit vase) =crew:neo]
+    =/  =wave:neo  [src ~(slip husk src) crew]
+    =.  tide  (~(put of:neo tide) here wave)
     work
 ::  ?:  ~(is-plot husk src)
 ::    ~|  %cant-make-plot-w-init
@@ -855,7 +1077,7 @@
 ::     =/  =form:neo  form:firm
 :: `arvo
 
-  ++  soft-site
+  ++  soft-surf
     |=  tap=(trap (quip card:neo _arvo))
     ^-  (quip card:neo _arvo)
     =/  res=(each (quip card:neo _arvo) tang)
@@ -866,18 +1088,120 @@
     `arvo
   ++  surf
     =/  =wave:neo  (~(got of:neo tide) here)
+    =|  cards=(list card:neo)
+    =/  =kook:neo  ~(kook husk code.wave)
     |%
     ++  su-core  .
-    ++  su-abet
-      ::  TODO: bump
+    ++  su-emil  |=(caz=(list card:neo) su-core(cards (welp cards caz)))
+    ++  su-bowl  
+      =/  hare  [p/our.bowl here]
+      ^-  bowl:neo
+      :*  src
+          our.bowl 
+          hare 
+          hare 
+          now.bowl
+          su-deps 
+          su-kids
+      ==
+    ++  su-kids
+      =/  kids  kids:kook
+      %-  gas-epic
+      =/  child  (need (need (~(peek till:aux [loam farm]) %y [p/our.bowl here])))
+      %+  murn  ~(tap by ~(tar of:neo child))
+      |=  [=pith:neo =saga:neo]
+      ^-  (unit [pith:neo saga:neo])
+      ?~  ion=(scion kids pith saga)
+        ~
+      `[pith u.ion]
+    ++  su-deps
+      %-  ~(gas by *(map term [pith epic:neo]))
+      ^-  (list [term pith epic:neo])
+      %+  murn  ~(tap by deps:kook)
+      |=  [=term required=? =quay:neo]
+      ^-  (unit [^term pith:neo epic:neo])
+      =/  dep=(unit pith)  (~(get by crew.wave) term)
+      ?~  dep
+        ~|  invariant-missing-required-conf/term
+        ?<  required
+        ~
+      =/  =name:neo  (de-pith:name:neo u.dep)
+      =/  =care:neo  (get-care:quay:neo quay)
+      =/  =epic:neo  (moor quay name)
+      `[term u.dep epic]
+    ::
+    ++  su-form  ~(. form:kook su-bowl)
+    ++  su-abet ::  TODO: bump
       =.  tide  (~(put of:neo tide) here wave)
       [cards arvo]
+    ++  su-make
+      |=  init=(unit vase)
+      =/  [cards=(list card:neo) new=vase]
+        (init:form:kook init)
+      =.  su-core  (su-emil cards)
+      (su-grow new)
+    ++  su-grow
+      |=  =vase
+      ^+  su-core
+      =.  arvo  (grow state.slip.wave vase)
+      su-core
     --
-
-
   --
 ::  |util: utilties
 +|  %util
+++  plag
+  |=  [want=stud:neo have=saga:neo]
+  ^-  (unit saga:neo)
+  =/  =stud:neo  p.q.have
+  ~|  plug/[p.have want]
+  ?:  =(want %pail)
+    `have
+  ?:  =(want stud)
+    `have
+  ?:  =(want %sig)
+    `have(q sig/!>(~))
+  ~
+::
+::?.  (~(has by con.fiesta) [p.have want])
+::  ~
+::  
+::=/  conv   run:~(do con (~(got by con.fiesta) [p.have want]))
+::`[want (slam conv q.have)]
+::
+++  scion
+  |=  [want=kids:neo =pith:neo =saga:neo]
+  ^-  (unit saga:neo)
+  ?~  pis=(find:peon:neo pith ~(key by want))
+    ~
+  =/  =port:neo  (~(got by want) u.pis)
+  (plag state.port saga)
+::
+++  moor
+  |=  [want=quay:neo =name:neo]
+  ^-  epic:neo
+  =/  =care:neo  (get-care:quay:neo want)
+  =/  =epic:neo  (need (need (~(peek till:aux [loam farm]) care (en-pith:name:neo name))))
+  %-  gas-epic
+  ^-  (list (pair pith:neo saga:neo))
+  %+  murn  ~(tap by ~(tar of:neo epic))
+  |=  [=pith:neo =saga:neo]
+  ^-  (unit [pith:neo saga:neo])
+  ?:  =(pith ~)
+    `[*pith:neo (need (plag state.p.want saga))]
+  ?~  q.want
+    ~
+  ?~  ion=(scion q.u.q.want pith saga)
+      ~
+  `[pith u.ion]
+++  gas-epic
+  =|  =epic:neo
+  |=  lst=(list [pith:neo saga:neo])
+  ^+  epic
+  ?~  lst
+    epic
+  =.  epic   (~(put of:neo epic) i.lst)
+  $(lst t.lst)
+::
 ++  soften
   |%
   ++  move
@@ -902,5 +1226,35 @@
     *vase
     ::  (slym (need ~(get pro p.vial)) q.vial)
   --
+++  print-dbug
+  |=  prefix=pith:neo
+  =/  lom  (~(dip of:neo loam) prefix)
+  =/  fam  (~(dip of:neo farm) prefix)
+  ^-  tang
+  %-  zing
+  ^-  (list tang)
+  %+  turn   ~(tap by ~(tar of:neo lom))
+  |=  [=pith:neo =soil:neo]
+  ^-  tang
+  ?~  val=(ram:on:soil:neo soil)
+    ~
+  ?~  q.val.u.val
+    ~
+  =/  =pail:neo  u.q.val.u.val
+  ~|  stud/p.pail
+  ~|  pith/pith
+  :*  leaf/"Path: {(en-tape:pith:neo pith)}"
+      ?.  =(%ford-out p.pail)
+        :~  leaf/"Data"
+            (sell q.pail)
+        ==
+
+      =+  !<(vax=(unit vase) (slot 2 q.pail))
+      ?~  vax
+        ~[leaf/"Value: Ford build (crashed)"]
+      :~  leaf/"Value: Ford build"
+          (sell u.vax)
+      ==
+  ==
 --
 

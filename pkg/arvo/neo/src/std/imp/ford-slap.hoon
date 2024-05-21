@@ -21,16 +21,16 @@
     ~
   %-  mule
   |.  ^-  hoon
-  =/  [pax=pith:neo =cane:neo]  (~(got by deps.bowl) %hoon)
+  =/  [pax=pith:neo =epic:neo]  (~(got by deps.bowl) %hoon)
   =/  =name:neo  (de-pith:name:neo pax)
-  =+  !<(src=@t q.pail.cane) 
+  =+  !<(src=@t q.q:~(rot of:neo epic))
   =/  =file:ford:neo
     (scan (trip src) (rein:ford:neo name))
   hoon.file
 
 +$  state  [cache=(unit vase) ~]
 --
-^-  firm:neo
+^-  kook:neo
 |%
 ++  state  %ford-out
 ++  poke   (sy %rely %ford-in ~)

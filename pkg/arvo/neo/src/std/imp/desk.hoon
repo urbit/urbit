@@ -2,7 +2,7 @@
 |%
 +$  card  card:neo
 --
-^-  firm:neo
+^-  kook:neo
 |%
 ++  state  %clay-desk
 ++  poke   (sy %clay-res ~)

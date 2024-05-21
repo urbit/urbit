@@ -41,7 +41,7 @@
   [were %poke %pals-diff !>(diff)]
 
 --
-^-  firm:neo
+^-  kook:neo
 |%
 ++  state  %sig
 ++  poke  (sy %pals-diff ~)
