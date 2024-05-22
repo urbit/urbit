@@ -4643,7 +4643,29 @@
             |=  task=message-sink-task
             ^+  sink
             ?-    -.task
-                %drop  sink(nax.state (~(del in nax.state) message-num.task))
+                %drop
+              ::  ignore message-num.task; it refers to a message in the
+              ::  naxplanation flow associated with the reference bone
+              ::
+              %_   sink
+                  nax.state
+                %-  ~(rep in nax.state)
+                |=  [=message-num nax=_nax.state]
+                ::  XX  nax.peer-state was never used after %alef became %ames
+                ::  track nacks in here, but keep e.g. only the last 10?
+                ::
+                :: =?  nax.peer-state  (lte message-num last-acked.state)
+                ::   (~(put in nax.peer-state) bone message-num)
+                ::
+                ::  we can safely assume that any messages less or equal than
+                ::  last acked have been already processed, independent or what
+                ::  naxplanation ack triggered the %drop task.
+                ::
+                =?  nax  (lte message-num last-acked.state)
+                  (~(del in nax) message-num)
+                nax
+              ==
+            ::
                 %done  (done ok.task)
                 %flub
               %=  sink
