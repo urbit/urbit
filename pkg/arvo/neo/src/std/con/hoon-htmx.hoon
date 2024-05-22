@@ -38,7 +38,7 @@
         ^-  manx
         ;a.p2.br1.b1.hover
           =hx-get  (spud (post-href %pro stud.pro))
-          =hx-target  "closest ha-wk"
+          =hx-target  "closest .hawk"
           =hx-swap  "innerHTML"
           ; {<stud.pro>}
         ==

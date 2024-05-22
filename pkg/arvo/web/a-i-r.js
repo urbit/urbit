@@ -8,7 +8,6 @@ class extends HTMLElement {
     //
     super();
     this.attachShadow({ mode: 'open' });
-    this.shadowRoot.adoptedStyleSheets = [sharedStyles];
     this.shadowRoot.innerHTML = `
       <style>
        * {
@@ -16,9 +15,6 @@ class extends HTMLElement {
        }
        ::slotted(*) {
          overflow: auto;
-       }
-       button {
-         border: none;
        }
        :host {
          display: grid;
@@ -28,14 +24,14 @@ class extends HTMLElement {
          overflow: hidden;
          margin: 0;
          grid-template-columns: 230px auto;
-         grid-template-rows: 50px auto;
+         grid-template-rows: auto 1fr;
          grid-template-areas:
          "btn main"
          "nav main";
        }
        :host(.closed) {
          grid-template-columns: 50px auto;
-         grid-template-rows: 50px auto;
+         grid-template-rows: auto 1fr;
          grid-template-areas:
          "btn main"
          ". main";
@@ -120,8 +116,9 @@ class extends HTMLElement {
        main.s4 #s4 {
          display: block;
        }
-       button {
+       #button {
          grid-area: btn;
+         height: fit-content;
        }
        main {
          display: grid;
@@ -133,34 +130,37 @@ class extends HTMLElement {
        }
        #s1 {
          grid-area: s1;
+         padding: 3px;
        }
        #s2 {
          grid-area: s2;
+         padding: 3px;
        }
        #s3 {
          grid-area: s3;
+         padding: 3px;
        }
        #s4 {
          grid-area: s4;
-       }
-       button {
-         background-color: var(--b1);
-         color: var(--f1);
+         padding: 3px;
        }
        @media (max-width: 900px) {
          :host {
            grid-template-columns: auto;
-           grid-template-rows: auto 50px;
+           grid-template-rows: 1fr auto;
            grid-template-areas:
            "main"
            "btn";
          }
          :host(.closed) {
            grid-template-columns: auto;
-           grid-template-rows: auto 50px;
+           grid-template-rows: 1fr auto;
            grid-template-areas:
            "nav"
            "btn";
+         }
+         button {
+           height: min-content;
          }
          :host(.closed) main {
            display: none;
@@ -172,8 +172,12 @@ class extends HTMLElement {
            grid-template-areas:
            "s1";
          }
+         #nav {
+           --rem: 24px;
+         }
          #s1 {
            display: block;
+           padding: 0;
          }
          main #s2 {
            display: none !important;
@@ -192,9 +196,9 @@ class extends HTMLElement {
          }
        }
       </style>
-      <slot name="button">
+      <slot name="button" id="button">
         <button
-          class="hover b1 bold s2"
+          style="border: 2px solid var(--b3);"
           onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('sky-open', {bubbles:true, composed: true}))"
           >
           ~

@@ -9,4 +9,4 @@
 |=  =manx
 =/  here  (rush (~(got manx-utils manx) %here) stap)
 ?~  here  ~
-`(pave:neo u.here)
+`[*@da (pave:neo u.here)]

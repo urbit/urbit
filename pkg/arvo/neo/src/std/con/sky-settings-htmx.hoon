@@ -5,8 +5,8 @@
 ^-  manx
 |^
   ;div.wf.p-page
+    =label  "Settings"
     ;form.fc.g5.mw-page.ma
-      =label  "Settings"
       =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=sky-settings"
       =hx-swap  "none"
       ;+  script
@@ -18,7 +18,8 @@
         ;button.p3.br1.b1.hover
           =onclick  "document.body.removeAttribute('style')"
           =hx-get  "/neo/hawk{(en-tape:pith:neo here.bowl)}"
-          =hx-select  "ha-wk"
+          =hx-target  "closest .hawk"
+          =hx-select  ".hawk"
           ;span: Reset
         ==
         ;button.p3.br1.b1.hover.loader
@@ -32,7 +33,7 @@
   ;div.fc.js.g2.ja.p2
     ;label.fc.g1.mt1
       ;span.s-1: Main font
-      ;select.br1
+      ;select.br1.bd1.p2
         =oninput  "setCss('font', this.value); $(this).attr('value', this.value);"
         =value  (trip (~(gut by settings) 'font' ''))
         =var  "font"
@@ -69,7 +70,7 @@
     ==
     ;label.fc.g1
       ;span.s-1: Monospace font
-      ;select.br1
+      ;select.br1.bd1.p2
         =oninput  "setCss('font-mono', `'$\{this.value}'`); $(this).attr('value', this.value);"
         =value  (trip (~(gut by settings) 'font-mono' ''))
         =var  "font-mono"
@@ -181,7 +182,7 @@
     ;+  ;/  %-  trip
     '''
     function setCss(name, val) {
-      document.body.style
+      document.documentElement.style
         .setProperty('--'+name, val, 'important');
     }
     '''

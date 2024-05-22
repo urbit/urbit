@@ -15,9 +15,9 @@
      --letter-spacing: 0.024em;
      --line-height: 1.4;
    */
-
   --0in: calc(0 * var(--1in));
   --1in: 4px;
+  --font-size: calc(4 * var(--1in));
   --2in: calc(2 * var(--1in));
   --3in: calc(3 * var(--1in));
   --4in: calc(4 * var(--1in));
@@ -133,41 +133,29 @@
     --f4:  var(--dark-f4);
   }
 }
-
 * {
-  box-sizing: border-box;
-  font: inherit;
-  color: inherit;
+  font-size: var(--font-size);
 }
-form, a, input, p, li, ul, ol, div, button, h1, h2, h3, h4, h5, h6 {
-  margin: 0;
-  line-height: 1;
+/*
+@media (max-width: 900px) {
+  :root {
+    --font-size: calc(1.3 * var(--font-size));
+  }
 }
-html {
-  height: 100%;
-}
+*/
 body {
-  margin: 0;
-  font-family: var(--font), sans-serif;
-  font-feature-settings: normal;
-  font-variation-settings: normal;
+  font-family: var(--font);
   letter-spacing: var(--letter-spacing);
   line-height: 1;
   background-color: var(--b0);
   color: var(--f1);
-  min-height: 100%;
 }
-a {
-  cursor: pointer;
-  text-decoration: none;
-  font: inherit;
-}
-button, input, textarea, iframe {
+button {
   border: unset;
+  background: unset;
+  color: unset;
 }
-img {
-  max-width: 100%;
-}
+
 .break {
   word-break: break-word;
 }
@@ -226,12 +214,6 @@ img {
 .mono {
   font-family: var(--font-mono), monospace;
   font-size: calc(1em * var(--mono-scale));
-}
-b {
-  font-weight: bold;
-}
-i {
-  font-style: italic;
 }
 .italic {
   font-style: italic;
@@ -594,7 +576,9 @@ i {
 .s6 {
   font-size: 2.4rem;
 }
-
+.bd0 {
+  border: none;
+}
 .bd1 {
   border: 0.8px solid var(--f3);
 }
@@ -619,30 +603,6 @@ i {
   border-radius: 12px;
 }
 
-
-input,
-select {
-  outline: none;
-  border-radius: 0;
-  background-color: inherit;
-  color: inherit;
-  font: inherit;
-  line-height: inherit;
-}
-textarea {
-  display: block;
-  outline: none;
-  resize: none;
-  border-radius: 0;
-  border: 0;
-  background-color: inherit;
-  color: inherit;
-}
-button {
-  cursor: pointer;
-  background-color: inherit;
-  color: inherit;
-}
 .hover:hover {
   filter: invert(20%);
 }
@@ -745,7 +705,7 @@ button {
 .prose ol ol {
   margin-bottom: 0;
 }
-summary {
+.prose summary {
   user-select: none;
   cursor: pointer;
 }

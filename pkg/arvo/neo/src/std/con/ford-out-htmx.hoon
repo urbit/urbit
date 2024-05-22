@@ -661,7 +661,7 @@
     ;h5: State
     ;button.b1.br1.p2.hover.wfc
       =hx-get  (spud (post-href %pro state:u.fim))
-      =hx-target  "closest ha-wk"
+      =hx-target  "closest .hawk"
       =hx-swap  "innerHTML"
       ; {<state:u.fim>}
     ==
@@ -673,7 +673,7 @@
       ^-  manx
       ;button.p2.br1.b1.hover
         =hx-get  (spud (post-href %pro stud))
-        =hx-target  "closest ha-wk"
+        =hx-target  "closest .hawk"
         =hx-swap  "innerHTML"
         ; {<stud>}
       ==
