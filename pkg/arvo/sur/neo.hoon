@@ -335,35 +335,32 @@
 --
 |%
 +$  sync  (trel pith hunt ?(%start %stop))
-::  $curt: Single constraint
-+$  curt
-  $~  [%pro %$]
-  $%  [%or p=(list [@tas curb])] :: product type
-      [%rol p=stud q=curb] :: decorate with role
-      [%pro p=stud] :: base case
-  ==
-::  $curb: Apply constraints
+::  $curb: Constraint
 +$  curb
   $~  [%pro %$]
-  $^  [p=curb q=curb]
-  curt
-::
+  $%  [%or p=(list curb)] :: product type
+      [%only p=stud] :: exclusivel
+      [%rol p=stud q=curb]
+      [%not p=curb q=curb] :: q not p
+      [%pro p=stud] :: base case
+      [%any ~]
+  ==
 ++  compile-curb
   =|  fac=_|  :: did we just apply a face
   |=  [cur=curb get=$-(stud type)]
   =*  loop  $
   ^-  type
-  ?-    -.cur
-      ^  [%cell $(cur p.cur, fac |) $(cur q.cur, fac |)]
+  ?+    -.cur  !!
       %or   
     :-  %fork
     %-  ~(gas in *(set type))
     %+  turn  p.cur
-    |=  [tag=@tas c=curb]
+    |=  c=curb
     ^-  type
-    :+  %cell
-      [%atom %tas `tag]
-    loop(cur c, fac |)
+    !!
+    :: :+  %cell
+::    [%atom %tas `tag]
+::  loop(cur c, fac |)
   ::
       %rol
     [%face (get-stud-name p.cur) $(cur q.cur, fac &)]
@@ -917,13 +914,16 @@
     |%
     ++  kids  *^kids
     --
-  ++  slip
-    ^-  ^slip
-    [%ford-out ~ ~]
+  ++  dock
+    ^-  ^dock
+    [pro/%ford-out ~ ~]
   ++  is-stud
     |=  s=stud
     ?^  s  |
     =(%ford (end [3 4] s))
+  ++  out
+    ^-  curb
+    [%or pro/%vase pro/%tang ~]
   ::  +riff:ford: Constant build system node
   ::  
   ::    Required for bootstrapping. This is used to put the reef and
@@ -933,39 +933,40 @@
   ++  riff
     ^-  kook
     |%
-    ++  state  %ford-out
+    ++  state  out:ford
     ++  poke   *(set stud)
     ++  kids  ~
     ++  deps  ~
     ++  form
       ^-  ^form
-      |_  [=bowl =ever state-vase=vase *]
+      |_  [=bowl =aeon =stud state-vase=vase]
       +*  sta  !<([cache=(unit vase) ~] state-vase)
       ++  poke
-        |=  =pail
-        ^-  (quip card vase)
+        |=  pal=pail
+        ^-  (quip card pail)
         !!
       ::
       ++  init
-        |=  old=(unit vase)
-        ^-  (quip card vase)
-        =+  !<(ref=vase (need old))
-        `!>(`[cache=(unit vase) ~]`[`ref ~])
+        |=  pal=(unit pail)
+        ^-  (quip card pail)
+        =/  old  (need pal)
+        ?>  ?=(%vase p.old)
+        `old
       --
     --
   ::  +dep:ford: $fief for a ford dependency
   ::  
   ::    Handy shortcut to specifiy a dependency in the build system
-  ++  dep  `fief`[& [%ford-out %ford-in] ~]
+  ++  dep  `fief`[& [pro/%ford-out (sy %ford-in ~)] ~]
   ::  +get-output: pull build resuit of dependency
   ::
   ++  get-output
     |=  [=bowl =term]
     ^-  (unit vase)
-    =/  [=pith =epic]  (~(got by deps.bowl) term)
-    =/  outer  q.q:(need fil.epic)
-    =+  !<([vax=(unit vase) *] outer)
-    vax
+    =/  [=pith =lore]  (~(got by deps.bowl) term)
+    ?~  fil.lore
+      ~
+    `q.pail.u.fil.lore
   ::
   ++  run
     |=  txt=@t
@@ -1184,7 +1185,7 @@
   [=term =pith]
 ::  $riot: foreign mirror
 +$  riot
-  [=cane deps=(set rave) =slip]
+  [=cane deps=(set rave) =dock]
 ::
 ::  $ring: node change tracking
 ::
@@ -1554,7 +1555,7 @@
 :: +$  cage  (pair stud vase)
 ::
 +$  made
-  [=stud init=(unit vase) =conf]
+  [=stud init=(unit pail) =conf]
 +$  note
   $%  [%make made] :: todo: configuration values, init cannot be ^ if installing over
       [%poke =pail]
@@ -1575,10 +1576,16 @@
 ::
 +$  dish  (pair pith mode)
 +$  yarn  (pair aeon mode)
-+$  idea  (unit (unit (axal saga)))
-::  $lore: diff over namespace
-+$  lore
+::  $leaf: diff over namespace
++$  leaf
   (axal yarn)
+::
++$  lore  (axal idea)
++$  idea
+  $:  =saga
+      thru=(unit stud)
+      =pail
+  ==
 ::
 +$  stem
   $~  [*ever %x %stud *vase]
@@ -1754,8 +1761,8 @@
       were=pith :: XX: rename to here
       here=pith :: 
       now=@da
-      deps=(map term (pair pith epic))
-      kids=epic
+      deps=(map term (pair pith lore))
+      kids=lore
   ==
 ++  dbug
   |%
@@ -1776,7 +1783,7 @@
 ++  quay
   =<  quay
   |%
-  +$  quay   (pair port (unit (pair care kids)))
+  +$  quay   (pair lash (unit (pair care kids)))
   ++  get-care
     |=  q=quay
     ^-  care
@@ -1785,17 +1792,22 @@
     p.u.q.q
   --
 +$  fief  [required=? =quay]
-+$  dock  [=port =kids]
-+$  port :: TODO: how to specify behaviour
-  [state=stud diff=stud] :: state, diff actually $stud
-+$  slip
-  [state=stud diffs=(set stud) =kids]
-::  
+::
+::  $port: Single shrub API
+::
++$  port
+  [state=stud poke=(set stud)] 
++$  lash
+  [state=curb poke=(set stud)]
++$  dock
+  [state=curb poke=(set stud) =kids]
+:: +$  slip
+::  [state=stud diffs=(set stud) =kids] ::  
 +$  deps  band
 ::  $band: Dependencies
 ::
 +$  band  (map term fief)
-+$  kids  (map pish port)
++$  kids  (map pish lash)
 ::  $dude: virtual namespace binding
 ::
 +$  dude
@@ -1815,7 +1827,7 @@
   ::  allowed to be under them. For instance, it should not  be allowed
   ::  to create /~hastuc-dibtux/chats/unit-731/blog-post-1. This is
   ::  nonsensical because blog posts don't go in chats.
-  ++  kids   *(map pish port)
+  ++  kids   *(map pish lash)
   ::
   ::  +deps: Some nodes in the namespace might like to hear about other
   ::  things that happen in the namespace. For instance, a substack-type
@@ -1862,7 +1874,7 @@
   ::    ```
   ::
   ::    ```
-  ++  state  *stud
+  ++  state  *curb
   ::  $poke: a poke is a request to change a value in teh urbit
   ::  namespace.
   ::
@@ -1878,7 +1890,7 @@
   ::  allowed to be under them. For instance, it should not  be allowed
   ::  to create /~hastuc-dibtux/chats/unit-731/blog-post-1. This is
   ::  nonsensical because blog posts don't go in chats.
-  ++  kids   *(map pish port)
+  ++  kids   *(map pish lash)
   ::
   ::  +deps: Some nodes in the namespace might like to hear about other
   ::  things that happen in the namespace. For instance, a substack-type
@@ -1888,25 +1900,34 @@
   --
 +$  wave
   $:  code=stud
-      =slip
+      =dock
       =crew
   ==
 +$  tide  (axal wave)
 ::
 +$  form
   $_  ^|
-  |_  [=bowl =icon]
+  |_  [=bowl =saga]
   ::  +reduce: apply %poke, producing state and IO
   ::
   ::    ('liam'' ~) [%add who='ruby'] -> ('liam' 'ruby')
   ::    ('liam' 'ruby' ~) [%del who='ruby'] -> ('liam')
   ++  poke
     |~  [=stud val=vase]
-    *(quip card vase)
+    *(quip card pail)
   ++  init
-    |~  old=(unit vase)
-    *(quip card vase)
+    |~  old=(unit pail)
+    *(quip card pail)
   --
++$  gang  (axal cove)
++$  cove
+  $:  =crew
+      =rime
+  ==
++$  rime
+  $:  jazz=(map term once)
+  ==
++$  lads  ~
 ++  peon
   |%
   ++  match
