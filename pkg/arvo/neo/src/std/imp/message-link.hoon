@@ -7,29 +7,29 @@
 ++  card  card:neo
 ++  get-msg
   |=  =bowl:neo
-  ^-  vase
-  q.q:(need fil.q:(~(got by deps.bowl) %src))
+  ^-  pail:neo
+  pail:(need fil.q:(~(got by deps.bowl) %src))
 ::
 --
 ^-  kook:neo
 |%
-++  state  %message
+++  state  pro/%message
 ++  poke   (sy %rely ~)
 ++  kids   *kids:neo
 ++  deps
   %-  ~(gas by *deps:neo)
-  :~  src/[req=& [%message %sig] ~]
+  :~  src/[req=& [pro/%message ~] ~]
   ==
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo =ever:neo state-vase=vase *]
+  |_  [=bowl:neo =saga:neo]
   ++  poke
     |=  [=stud:neo vax=vase]
-    ^-  (quip card vase)
-    ?>  =(%rely stud)
+    ^-  (quip card pail:neo)
     `(get-msg bowl)
   ++  init
-    |=  old=(unit vase)
+    |=  old=(unit pail:neo)
+    ^-  (quip card pail:neo)
     `(get-msg bowl)
   --
 --

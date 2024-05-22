@@ -916,7 +916,7 @@
     --
   ++  dock
     ^-  ^dock
-    [pro/%ford-out ~ ~]
+    [pro/%vase ~ ~]
   ++  is-stud
     |=  s=stud
     ?^  s  |
@@ -957,7 +957,7 @@
   ::  +dep:ford: $fief for a ford dependency
   ::  
   ::    Handy shortcut to specifiy a dependency in the build system
-  ++  dep  `fief`[& [pro/%ford-out (sy %ford-in ~)] ~]
+  ++  dep  `fief`[& [pro/%vase (sy %ford-in ~)] ~]
   ::  +get-output: pull build resuit of dependency
   ::
   ++  get-output

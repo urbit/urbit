@@ -5,16 +5,16 @@
 |%
 ++  check-perms
   |=  =bowl:neo
-  =+  !<(=circle q.q:(need fil.q:(~(got by deps.bowl) %acl)))
+  =+  !<(=circle q.pail:(need fil.q:(~(got by deps.bowl) %acl)))
   (~(has in circle) ship.src.bowl)
 --
 |%
-++  state  %feed-item
+++  state  pro/%feed-item
 ++  poke   (sy %feed-item-diff ~)
 ++  kids   
   %-  ~(gas by *kids:neo)
-  :~  [[&/%likes |/%p |] %sig %sig]
-      [[&/%comments |/%p |] %feed-comment %sig]
+  :~  [[&/%likes |/%p |] pro/%sig ~]
+      [[&/%comments |/%p |] pro/%feed-comment ~]
   ==
 ++  deps
   %-  ~(gas by *deps:neo)
@@ -22,12 +22,12 @@
       :+  req=&  [%circle %sig]
       :+  ~  %y
       %-  ~(gas by *kids:neo)
-      :~  [[|/%p |] %sig %sig]
+      :~  [[|/%p |] pro/%sig ~]
       ==
   ==
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo =ever:neo state-vase=vase *]
+  |_  [=bowl:neo =aeon:neo stud:neo state-vase=vase]
   +*  sta  !<(^state state-vase)
   ++  poke
     |=  [=stud:neo vax=vase]
@@ -36,20 +36,20 @@
     ?>  (check-perms bowl)
     ?>  ?=(%feed-item-diff stud)
     =+  !<(=diff vax)
-    ~!  diff
     ?-    -.diff
         %add-like
       =.  likes.sta  +(likes.sta)
-      :_  !>(sta)
+      :_  feed-item/!>(sta)
       [(welp here.bowl %likes p/ship.src.bowl ~) %make %sig ~ ~]~
     ::
         %add-comment
       =.  comments.sta  +(comments.sta)
-      :_  !>(sta)
+      :_  feed-item/!>(sta)
       [(welp here.bowl %comments da/now.bowl ~) %make made.diff]~
     ==
   ++  init
-    |=  vas=(unit vase)
-    `(need vas)
+    |=  pal=(unit pail:neo)
+    ^-  (quip card:neo pail:neo)
+    `(need pal)
   --
 --

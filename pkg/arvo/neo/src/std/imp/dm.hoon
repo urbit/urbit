@@ -6,12 +6,12 @@
 --
 ^-  kook:neo
 |%
-++  state  %sig
+++  state  pro/%sig
 ++  poke  (sy %dm-diff %rely ~)
 ++  kids
   %-  ~(gas by *kids:neo)
   :~  :-  [|/%da |]
-      [%message %sig]
+      [pro/%message %sig]
   ==
 ++  deps
   %-  ~(gas by *deps:neo)
@@ -23,15 +23,15 @@
   :+  ~  %y
   %-  ~(gas by *kids:neo)
   :~  :-  [|/%da |]
-      [%message %sig]
+      [pro/%message %sig]
     ==
   ==
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo =ever:neo state-vase=vase *]
+  |_  [=bowl:neo =aeon:neo sta=pail:neo]
   ++  poke
     |=  [=stud:neo vax=vase]
-    ^-  (quip card:neo vase)
+    ^-  (quip card:neo pail:neo)
     ?:  =(%rely stud)
       =+  !<([=term =stem:neo] vax)
       ?>  ?=(%y -.q.stem)
@@ -39,7 +39,7 @@
       =+  !<(=message q.pail)
       ::  TODO handle
       ?<  =(our.bowl from.message)
-      :_  !>(~)
+      :_  sta
       :_  ~  
       :*                               
         (welp here.bowl ~[da/now.bowl])
@@ -50,7 +50,7 @@
     =/  poke  !<(dm-diff vax)
     ?>  =(our ship.src):bowl
     ?>  =(%msg -.poke)
-    :_  !>(~)
+    :_  sta
     :~  
       :*
         (welp were.bowl ~[da/now.bowl])
@@ -59,6 +59,8 @@
       ==
     ==
   ++  init
-    |=  old=(unit vase)  `!>(~)
+    |=  old=(unit pail:neo)  
+    ^-  (quip card:neo pail:neo)
+    `sig/!>(~)
   --
 --

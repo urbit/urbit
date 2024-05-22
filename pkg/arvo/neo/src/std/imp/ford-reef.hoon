@@ -4,23 +4,22 @@
 --
 ^-  kook:neo
 |%
-++  state  %ford-out
+++  state  pro/%ford-out
 ++  poke   *(set stud:neo)
 ++  kids  ~
 ++  deps  ~
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo =ever:neo state-vase=vase *]
+  |_  [=bowl:neo =aeon:neo =pail:neo]
   +*  sta  !<([cache=(unit vase) ~] state-vase)
   ++  poke
-    |=  =pail:neo  
-    ^-  (quip card:neo vase)
-    `state-vase
+    |=  pail:neo  
+    ^-  (quip card:neo pail:neo)
+    `pail
   ::
   ++  init
-    |=  old=(unit vase)
-    ^-  (quip card:neo vase)
-    =+  !<(sta=[ref=(unit vase) ~] (need old))
-    `!>(sta)
+    |=  old=(unit pail:neo)
+    ^-  (quip card:neo pail:neo)
+    `(need old)
   --
 --

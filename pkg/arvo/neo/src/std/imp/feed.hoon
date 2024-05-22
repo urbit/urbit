@@ -1,23 +1,23 @@
 /@  diff=feed-diff
 |%
-++  state  %sig
+++  state  pro/%sig
 ++  poke   (sy %feed-diff ~)
 ++  kids   
   %-  ~(gas by *kids:neo)
-  :~  [[&/%items |/%da |] %feed-item %feed-item-diff]
+  :~  [[&/%items |/%da |] pro/%feed-item (sy %feed-item-diff ~)]
   ==
 ++  deps
   %-  ~(gas by *deps:neo)
-  :~  acl/[req=& [%circle %sig] ~]
+  :~  acl/[req=& [pro/%circle ~] ~]
   ==
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo =ever:neo state-vase=vase *]
+  |_  [=bowl:neo =saga:neo]
   ++  poke
     |=  [=stud:neo vax=vase]
     ?>  ?=(%feed-diff stud)
     =+  !<(=diff vax)
-    :_  state-vase
+    :_  q.saga
     ?-    -.diff
         %add  
       [(snoc here.bowl da/now.bowl) %make p.diff]~
@@ -29,6 +29,6 @@
     ==
   ++  init
     |=  vas=(unit vase)
-    `*vase
+    `sig/!>(~)
   --
 --

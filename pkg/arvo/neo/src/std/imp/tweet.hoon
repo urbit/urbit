@@ -1,7 +1,7 @@
 /@  tweet
 /@  tweet-diff
 |%
-++  state  %tweet
+++  state  pro/%tweet
 ++  poke
   %-  ~(gas in *(set stud:neo))
   :~  %tweet-diff
@@ -10,15 +10,16 @@
 ++  deps   *deps:neo
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo =ever:neo state-vase=vase *]
+  |_  [=bowl:neo =aeon:neo stud:neo state-vase=vase]
   +*  sta  !<(tweet state-vase)  
   ++  poke
     |=  [=stud:neo vax=vase]
-    ^-  (quip card:neo vase)
+    ^-  (quip card:neo pail:neo)
     =/  sta  sta
     ?>  ?=(%tweet-diff stud)
     =+  !<(diff=tweet-diff vax)
     :-  ~
+    :-  %tweet
     !>  ^-  tweet
     ?-  -.diff
       %add-fave  sta(favs (~(put in favs.sta) ship.src.bowl))
@@ -26,9 +27,8 @@
     ==
   ::
   ++  init
-    |=  vas=(unit vase)
-    ^-  (quip card:neo vase)
-    =+  !<(=tweet (need vas))
-    `!>(tweet)
+    |=  pal=(unit pail:neo)
+    ^-  (quip card:neo pail:neo)
+    `(need pal)
   --
 --

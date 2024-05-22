@@ -21,9 +21,9 @@
     ~
   %-  mule
   |.  ^-  hoon
-  =/  [pax=pith:neo =epic:neo]  (~(got by deps.bowl) %hoon)
+  =/  [pax=pith:neo =lore:neo]  (~(got by deps.bowl) %hoon)
   =/  =name:neo  (de-pith:name:neo pax)
-  =+  !<(src=@t q.q:~(rot of:neo epic))
+  =+  !<(src=@t q.pail:~(rot of:neo lore))
   =/  =file:ford:neo
     (scan (trip src) (rein:ford:neo name))
   hoon.file
@@ -32,32 +32,24 @@
 --
 ^-  kook:neo
 |%
-++  state  %ford-out
+++  state  pro/%ford-out
 ++  poke   (sy %rely %ford-in ~)
 ++  kids  ~
 ++  deps
   %-  ~(gas by *deps:neo)
   :~  sut/dep:ford:neo
-      hoon/[& [%hoon %sig] ~]
+      hoon/[& [pro/%hoon ~] ~]
   ==
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo =ever:neo state-vase=vase *]
-  +*  sta  !<(^state state-vase)
+  |_  [=bowl:neo =saga:neo]
   ++  poke
     |=  [=stud:neo vax=vase]
-    ^-  (quip card:neo vase)
-    ?>  ?=(?(%rely %ford-in) stud)
-    =/  sta  sta
-    =.  cache.sta  (build bowl)
-    `!>(sta)
+    ^-  (quip card:neo pail:neo)
+    `vase/(need (build bowl))
   ++  init
-    |=  vax=(unit vase)
-    =/  sta  *^state
-    =.  cache.sta  (build bowl)
-    ?:  =(~ cache.sta)
-      ~&  no-build/bowl
-      !!
-    `!>(sta)
+    |=  pal=(unit pail:neo)
+    ^-  (quip card:neo pail:neo)
+    `vase/(need (build bowl))
   --
 --

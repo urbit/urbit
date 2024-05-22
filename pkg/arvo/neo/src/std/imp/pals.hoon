@@ -12,7 +12,7 @@
   =/  =pith  #/pals/[p/ship]
   ?~  kid=(~(get of:neo kids.bowl) pith)
     ~
-  =+  !<(child=pal-type q.q.u.kid)
+  =+  !<(child=pal-type q.pail.u.kid)
   `type.child
 ++  her-hey
   |=  kin=(unit kind)
@@ -43,17 +43,17 @@
 --
 ^-  kook:neo
 |%
-++  state  %sig
+++  state  pro/%sig
 ++  poke  (sy %pals-diff ~)
 ++  kids
   %-  ~(gas by *kids:neo)
   :~  :-  [&/%pals |/%p |] :: /pals/[who=@p]
-      [%pal %pal-diff]   :: state = %pal, diff = %pal-diff
+      [pro/%pal (sy %pal-diff ~)]   :: state = %pal, diff = %pal-diff
   ==
 ++  deps  *deps:neo
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo =ever:neo state=vase *]
+  |_  [=bowl:neo =saga:neo]
   ++  poke
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo vase)
@@ -62,7 +62,7 @@
       =+  !<(poke=pals-diff vax)
       :: ?.  ;;(? +:(~(gut by deps.bowl) %open [*pith &]))
        :: ~&(dropping-poke/poke !>(sta))
-      :_  state
+      :_  q.saga
       (add-pal %leeche bowl ship.src.bowl)^~
     ::
         %pals-action
@@ -71,13 +71,13 @@
         ?:  ?=(%meet -.poke)
           hey/~
         bye/~
-      :_  state
+      :_  q.saga
       :~  (tell-pal ship.poke diff)
           (add-pal %target bowl ship.poke)
       ==
     ==
   ++  init
-    |=  old=(unit vase)
-    `!>(~)
+    |=  old=(unit pail:neo)
+    `sig/!>(~)
   --
 --

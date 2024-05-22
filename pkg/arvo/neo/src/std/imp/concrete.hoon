@@ -3,7 +3,7 @@
   ++  get-dep
     |=  =bowl:neo
     ^-  @ud
-    !<(@ud q.q:(need fil.q:(~(got by deps.bowl) %a)))
+    !<(@ud q.pail:(need fil.q:(~(got by deps.bowl) %a)))
   --
 |%
 ++  state  %atom
@@ -11,17 +11,19 @@
 ++  kids   *kids:neo
 ++  deps
   %-  ~(gas by *deps:neo)
-  :~  [%a & [%atom %sig] ~]
+  :~  [%a & [pro/%atom ~] ~]
   ==
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo =ever:neo state-vase=vase *]
+  |_  [=bowl:neo *]
   ++  poke
     |=  [=stud:neo vax=vase]
+    ^-  (quip card:neo pail:neo)
     =+  !<(=rely:neo vax)
-    `!>((get-dep bowl))
+    `atom/!>((get-dep bowl))
   ++  init
-    |=  vas=(unit vase)
-    `!>((get-dep bowl))
+    |=  pal=(unit pail:neo)
+    ^-  (quip card:neo pail:neo)
+    `atom/!>((get-dep bowl))
   --
 --

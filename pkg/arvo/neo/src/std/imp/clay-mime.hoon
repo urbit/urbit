@@ -4,19 +4,19 @@
 --
 ^-  kook:neo
 |%
-++  state  %sig
+++  state  pro/%desk
 ++  poke   (sy %clay-res ~)
 ++  deps   *deps:neo
 ++  kids   *kids:neo
 ++  form
-  |_  [=bowl:neo =ever:neo state=vase *]
+  |_  [=bowl:neo =aeon:neo stud:neo state-vase=vase]
   +*  sta  !<(@t state-vase)
   ++  poke
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo vase)
     ?>  =(%clay-res stud)
     =+  !<(=res:clay:neo vax)
-    :_  state
+    :_  desk/state-vase
     %+  murn  ~(tap axol-of:neo files.res)
     |=  [=path =cage]
     ^-  (unit card)
@@ -26,7 +26,7 @@
   ++  init
     |=  old=(unit vase)
     =+  !<(=desk (need old))
-    :_  !>(desk)
+    :_  desk/!>(desk)
     [#/[p/our.bowl]/$/clay %poke %clay-req !>(`req:clay:neo`[%peer ~ desk /neo `%mime])]^~
   --
 --

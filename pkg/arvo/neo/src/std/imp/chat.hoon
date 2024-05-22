@@ -29,19 +29,19 @@
 ++  kids
   %-  ~(gas by *kids:neo)
   :~  :-  [&/%messages |/%da |]
-      [%message %sig]
+      [pro/%message ~]
   ==
 ++  deps
   %-  ~(gas by *deps:neo)
-  :~  open/[required=| [%bool %sig] ~]
+  :~  open/[required=| [pro/%bool ~] ~]
   ==
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo =ever:neo state-vase=vase *]
+  |_  [=bowl:neo =aeon:neo stud:neo state-vase=vase]
   +*  sta  !<(chat state-vase)
   ++  poke
     |=  [=stud:neo vax=vase]
-    ^-  (quip card:neo vase)
+    ^-  (quip card:neo pail:neo)
     ?>  =(%chat-diff stud)
     =+  !<(poke=chat-diff vax)
     =/  sta  sta
@@ -58,9 +58,10 @@
         %custom  :_(sta (add-msg bowl [stud vase]:poke)^~)
       ==
     %-  (slog leaf/"debug" (turn ~(val by ~(tar of:neo kids.bowl)) |=(=saga:neo (sell q.q.saga))))
-    [cards !>(sta)]
+    [cards chat/!>(sta)]
   ++  init
-    |=  old=(unit vase)
-    `!>(*^state)
+    |=  old=(unit pail:neo)
+    ^-  (quip card:neo pail:neo)
+    `chat/!>(*chat)
   --
 --

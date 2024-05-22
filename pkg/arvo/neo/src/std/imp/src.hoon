@@ -4,17 +4,17 @@
 --
 ^-  kook:neo
 |%
-++  state  %counter
+++  state  pro/%counter
 ++  poke  (sy %gift ~)
 ++  kids
   %-  ~(gas by *kids:neo)
   :~  :-  &
-      [%hoon %sig]
+      [pro/%hoon ~]
   ==
 ++  deps  *deps:neo
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo =ever:neo state-vase=vase *]
+  |_  [=bowl:neo =aeon:neo stud:neo sta=vase]
   ++  poke
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo vase)
@@ -22,10 +22,10 @@
     =+  !<(=gift:neo vax)
     %-  (slog leaf/"gift" (sell vax) ~)
     :-  ~
-    =-  !>(-)
-    +(!<(@ud state-vase))
+    =-  counter/!>(-)
+    +(!<(@ud sta))
   ::
   ++  init
-    |=  old=(unit vase)  `!>(0)
+    |=  old=(unit pail:neo)  `counter/!>(0)
   --
 --

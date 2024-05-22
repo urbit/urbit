@@ -4,17 +4,17 @@
 ++  poke   (sy %circles-diff ~)
 ++  kids   
   %-  ~(gas by *kids:neo)
-  :~  [[%|^%tas |] [%sig %circle-diff]]
+  :~  [[%|^%tas |] [pro/%sig (sy %circle-diff ~)]]
   ==
 ++  deps   *deps:neo
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo =ever:neo state-vase=vase *]
+  |_  [=bowl:neo =aeon:neo =pail:neo]
   ++  poke
     |=  [=stud:neo vax=vase]
     ?>  ?=(%circles-diff -.stud)
     =+  !<(=diff vax)
-    :_  state-vase
+    :_  pail
     ?-    -.diff
         %add  
       %+  turn  ~(tap by p.diff)
@@ -28,6 +28,6 @@
     ==
   ++  init
     |=  vas=(unit vase)
-    `*vase
+    `sig/!>(~)
   --
 --

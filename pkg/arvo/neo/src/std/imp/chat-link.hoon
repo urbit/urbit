@@ -7,27 +7,26 @@
 ++  card  card:neo
 ++  get-chat-ax
   |=  =bowl:neo
-  ^-  epic:neo
+  ^-  lore:neo
   q:(~(got by deps.bowl) %src)
 ++  get-chat
   |=  =bowl:neo
-  !<(chat q.q:(need fil:(get-chat-ax bowl)))
+  !<(chat q.pail:(need fil:(get-chat-ax bowl)))
 ++  get-message
   |=  [=bowl:neo id=@da]
   ^-  message
   =/  pit=pith:neo  ~[%messages da/id]
-  =/  dep=epic:neo  q:(~(got by deps.bowl) %src)
-  =/  msg=pail:neo  q:(~(got of:neo dep) pit)
-  !<(message q.msg)
+  =/  dep=lore:neo  q:(~(got by deps.bowl) %src)
+  !<(message q.pail:(~(got of:neo dep) pit))
 --
 ^-  kook:neo
 |%
-++  state  %chat-link
+++  state  pro/%chat-link
 ++  poke   (sy %rely ~)
 ++  kids
   %-  ~(gas by *kids:neo)
   :~  :-  [&/%messages |/%da |]
-      [%message %sig]
+      [%message ~]
   ==
 ++  deps
   %-  ~(gas by *deps:neo)
@@ -39,17 +38,17 @@
     :+  ~  %y
     %-  ~(gas by *kids:neo)
     :~  :-  [&/%messages |/%da |]
-        [%message %sig]
+        [%message ~]
   ::
     ==
   ==
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo =ever:neo state-vase=vase *]
+  |_  [=bowl:neo =aeon:neo stud:neo state-vase=vase]
   +*  sta  !<(chat-link state-vase)
   ++  poke
     |=  [=stud:neo vax=vase]
-    ^-  (quip card vase)
+    ^-  (quip card pail:neo)
     ?>  =(%rely stud)
     =+  !<([=term =stem:neo] vax)
     ~&  chat-link/[were.bowl stem]
@@ -59,7 +58,7 @@
     =.  unread.sta  
       %+  add  unread.sta 
       (lent (skim ~(val by kids.q.stem) |=(* =(%add +<))))
-    :_  !>(sta)
+    :_  chat-link/!>(sta)
     %+  murn  ~(tap by kids.q.stem)
     |=  [=(pole iota) [=ever:neo =mode:neo *]]
     ^-  (unit card:neo)
@@ -70,15 +69,16 @@
     :+  ~  (welp were.bowl pole)
     [%make %message `!>((get-message bowl p.pole)) ~]
   ++  init
-    |=  old=(unit vase)
+    |=  old=(unit pail:neo)
+    ^-  (quip card pail:neo)
     =/  sta
       ?~  old  *chat-link
       !<(chat-link u.old)
     =.  chat.sta  (get-chat bowl)
-    :_  !>(sta)
+    :_  chat-link/!>(sta)
     =/  kids  ~(tap of:neo (get-chat-ax bowl))
     %+  murn  kids
-    |=  [=pith =saga:neo]
+    |=  [=pith =idea:neo]
     ^-  (unit card)
     ~
   --

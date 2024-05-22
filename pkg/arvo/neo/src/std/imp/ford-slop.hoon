@@ -11,11 +11,10 @@
     ~&  missing-b/were.bowl
     ~
   `(slop u.a u.b)
-+$  state  [cache=(unit vase) ~]
 --
 ^-  kook:neo
 |%
-++  state  %ford-out
+++  state  pro/%ford-out
 ++  poke   (sy %rely %ford-in ~)
 ++  kids  ~
 ++  deps
@@ -25,19 +24,14 @@
   ==
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo =ever:neo state-vase=vase *]
-  +*  sta  !<(^state state-vase)
+  |_  [=bowl:neo =saga:neo]
   ++  poke
     |=  [=stud:neo vax=vase]
-    ^-  (quip card:neo vase)
-    ?>  ?=(?(%rely %ford-in) stud)
-    =/  sta  sta
-    =.  cache.sta  (build bowl)
-    `!>(sta)
+    ^-  (quip card:neo pail:neo)
+    `vase/(need (build bowl))
   ++  init
-    |=  vax=(unit vase)
-    =/  sta  *^state
-    =.  cache.sta  (build bowl)
-    `!>(sta)
+    |=  pal=(unit pail:neo)
+    ^-  (quip card:neo pail:neo)
+    `vase/(need (build bowl))
   --
 --

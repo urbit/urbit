@@ -4,23 +4,23 @@
 ::
 ^-  kook:neo
 |%
-++  state  %diary
+++  state  pro/%diary
 ++  poke  (sy %diary-diff ~)
 ++  kids
   %-  ~(gas by *kids:neo)
   :~  :-  [|/%da |]
-      [%txt %sig]
+      [pro/%txt ~]
   ==
 ++  deps  *deps:neo
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo =ever:neo state-vase=vase *]
+  |_  [=bowl:neo =aeon:neo state=pail:neo]
   ++  poke
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo vase)
     ?>  =(%diary-diff stud)
-    =/  poke  (diary-diff !<(diary-diff vax))
-    =/  sta  (diary !<(diary state-vase))
+    =/  poke  !<(diary-diff vax))
+    =/  sta  !<(diary q.state)
     ?>  =(our ship.src):bowl
     =^  cards=(list card:neo)  sta
       ?-  -.poke
@@ -33,9 +33,10 @@
           ==
         %del-entry  `sta
       ==
-    [cards !>(sta)]
+    [cards diary/!>(sta)]
   ++  init
-    |=  old=(unit vase)
+    |=  old=(unit pail:neo)
+    ^-  (quip card:neo pail:neo)
     `(need old)
   --
 --

@@ -1,13 +1,11 @@
 => 
 |%
 ++  card  card:neo
-+$  state  [cache=(unit vase) ~]
-+$  poke   [%dep ~]
 --
 ^-  kook:neo
 |%
 ++  poke    (sy %ford-in %rely ~)
-++  state   %ford-out
+++  state   pro/%vase
 ++  kids  ~
 ++  deps
   %-  ~(gas by *deps:neo)
@@ -15,22 +13,14 @@
   ==
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo =ever:neo state-vase=vase *]
-  +*  sta  !<([cache=(unit vase) ~] state-vase)
+  |_  [=bowl:neo =saga:neo]
   ++  poke
     |=  [=stud:neo vax=vase]
-    ^-  (quip card:neo vase)
-    ~|  stud
-    ?>  ?=(?(%ford-in %rely) stud)
-    =/  sta  sta
-    =.  cache.sta  (get-output:ford:neo bowl %src)
-    :: ~&  ford-same/[were.bowl !=(~ cache.sta)]
-    `!>(sta)
+    ^-  (quip card:neo pail:neo)
+    `vase/(need (get-output:ford:neo bowl %src))
   ++  init
-    |=  vax=(unit vase)
-    ^-  (quip card:neo vase)
-    =|  sta=[cache=(unit vase) ~]
-    =.  cache.sta  (get-output:ford:neo bowl %src)
-    `!>(sta)
+    |=  vax=(unit pail:neo)
+    ^-  (quip card:neo pail:neo)
+    `vase/(need (get-output:ford:neo bowl %src))
   --
 --

@@ -33,7 +33,7 @@
   ?-    -.q.card
       %grow 
     :~  leaf/"%grow"
-        ?:  (is-stud:ford:neo p.pail.q.card)
+        ?:  =(%vase p.pail.q.card)
           leaf/"ford build"
         (sell q.pail.q.card)
     ==

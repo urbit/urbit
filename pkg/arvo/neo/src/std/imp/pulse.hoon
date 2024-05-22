@@ -34,18 +34,18 @@
 ::
 --
 |%
-++  state  %pulse
+++  state  pro/%pulse
 ++  poke   %pulse-diff
   
 ++  kids   *kids:neo
 ++  deps   *deps:neo
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo =ever:neo state-vase=vase *]
+  |_  [=bowl:neo =aeon:neo stud:neo state-vase=vase]
   +*  sta  !<(pulse state-vase)
   ++  poke
     |=  [=stud:neo =vase]
-    ^-  (quip card:neo ^vase)
+    ^-  (quip card:neo pail:neo)
     =/  sta  sta
     |^
     ?+    stud  !!
@@ -53,7 +53,7 @@
       =.  count.sta  +(count.sta)
       =/  next  (wait bowl sta)  
       =.  last.sta  now.bowl
-      [next^~ !>(sta)]
+      [next^~ pulse/!>(sta)]
     ::
         %pulse-diff
       =+  !<(diff=pulse-diff vase)
@@ -63,17 +63,17 @@
         =/  stop  (rest bowl sta)
         =.  freq.sta  freq.diff
         =.  last.sta  now.bowl
-        [stop^~ !>(sta)]
+        [stop^~ pulse/!>(sta)]
       ==
     ==
   --
   ::
   ++  init
-    |=  old=(unit vase)
+    |=  old=(unit pail:neo)
     ?>  ?=(^ old)
-    =+  !<(sta=pulse u.old)
+    =+  !<(sta=pulse q.u.old)
     =.  last.sta  now.bowl
-    [(wait bowl sta)^~ !>(sta)]
+    [(wait bowl sta)^~ pulse/!>(sta)]
   ::
   --
 --
