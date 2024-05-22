@@ -8,11 +8,11 @@
   %+  expect-eq
   !>  0xc87.7f61
   !>  (crc32 [28 0x6d6f.632e.6974.6f6f.6265.6620.6d6f.7266.2072.6f74.6365.7620.7473.6554])
-++  test-lz
+++  test-leading-zeros
   %+  expect-eq
   !>  0xbdf3.417e
   !>  (crc32 [3 0x29])
-++  test-zero
+++  test-empty
   %+  expect-eq
   !>  0x0
   !>  (crc32 [0 0x0])
