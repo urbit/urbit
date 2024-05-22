@@ -15,6 +15,7 @@
   |_  [=bowl:neo =saga:neo]
   ++  poke
     |=  [=stud:neo vax=vase]
+    ^-  (quip card:neo pail:neo)
     ?>  ?=(%feed-diff stud)
     =+  !<(=diff vax)
     :_  q.saga
@@ -28,7 +29,7 @@
       [(snoc here.bowl da/da) %tomb ~]
     ==
   ++  init
-    |=  vas=(unit vase)
+    |=  pal=(unit pail:neo)
     `sig/!>(~)
   --
 --

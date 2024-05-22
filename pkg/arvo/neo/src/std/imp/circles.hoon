@@ -1,6 +1,6 @@
 /@  diff=circles-diff
 |%
-++  state  %sig
+++  state  pro/%sig
 ++  poke   (sy %circles-diff ~)
 ++  kids   
   %-  ~(gas by *kids:neo)
@@ -12,6 +12,7 @@
   |_  [=bowl:neo =aeon:neo =pail:neo]
   ++  poke
     |=  [=stud:neo vax=vase]
+    ^-  (quip card:neo pail:neo)
     ?>  ?=(%circles-diff -.stud)
     =+  !<(=diff vax)
     :_  pail
@@ -27,7 +28,8 @@
       [(snoc here.bowl term) %tomb ~]
     ==
   ++  init
-    |=  vas=(unit vase)
+    |=  vas=(unit pail:neo)
+    ^-  (quip card:neo pail:neo)
     `sig/!>(~)
   --
 --

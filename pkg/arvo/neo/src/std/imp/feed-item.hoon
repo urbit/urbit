@@ -19,7 +19,7 @@
 ++  deps
   %-  ~(gas by *deps:neo)
   :~  :-  %acl
-      :+  req=&  [%circle %sig]
+      :+  req=&  [pro/%circle ~]
       :+  ~  %y
       %-  ~(gas by *kids:neo)
       :~  [[|/%p |] pro/%sig ~]
@@ -31,7 +31,7 @@
   +*  sta  !<(^state state-vase)
   ++  poke
     |=  [=stud:neo vax=vase]
-    ^-  (quip card:neo vase)
+    ^-  (quip card:neo pail:neo)
     =/  sta  sta
     ?>  (check-perms bowl)
     ?>  ?=(%feed-item-diff stud)

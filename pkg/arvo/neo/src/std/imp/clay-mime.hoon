@@ -9,11 +9,11 @@
 ++  deps   *deps:neo
 ++  kids   *kids:neo
 ++  form
-  |_  [=bowl:neo =aeon:neo stud:neo state-vase=vase]
+  |_  [=bowl:neo =aeon:neo s=stud:neo state-vase=vase]
   +*  sta  !<(@t state-vase)
   ++  poke
     |=  [=stud:neo vax=vase]
-    ^-  (quip card:neo vase)
+    ^-  (quip card:neo pail:neo)
     ?>  =(%clay-res stud)
     =+  !<(=res:clay:neo vax)
     :_  desk/state-vase
@@ -22,10 +22,10 @@
     ^-  (unit card)
     ?.  =(%mime p.cage)
       ~
-    `[(welp here.bowl (pave:neo path)) %make %mime `q.cage ~]
+    `[(welp here.bowl (pave:neo path)) %make %mime `[%mime q.cage] ~]
   ++  init
-    |=  old=(unit vase)
-    =+  !<(=desk (need old))
+    |=  old=(unit pail:neo)
+    =+  !<(=desk q:(need old))
     :_  desk/!>(desk)
     [#/[p/our.bowl]/$/clay %poke %clay-req !>(`req:clay:neo`[%peer ~ desk /neo `%mime])]^~
   --

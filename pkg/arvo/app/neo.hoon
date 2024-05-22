@@ -781,6 +781,7 @@
   =.  run  (on-dirt-card (do-grow-our #/out/std/imp/ford-riff riff))
   =.  run  (make-riff #/out/reef reef)
   =.  run  (re-export reef %hoon !,(*hoon @t))
+  =.  run  (re-export reef %desk !,(*hoon desk))
   =.  run  (make-riff #/out/std/pro/vase (vase-pro reef))
   =.  run  (make-riff #/out/std/pro/ford-in (ford-in reef))
   =.  run  (make-riff #/out/std/pro/term (term reef))

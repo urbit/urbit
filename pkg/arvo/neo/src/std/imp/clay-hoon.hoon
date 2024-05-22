@@ -13,7 +13,7 @@
   +*  sta  !<(@t state-vase)
   ++  poke
     |=  [=stud:neo vax=vase]
-    ^-  (quip card:neo vase)
+    ^-  (quip card:neo pail:neo)
     ?>  =(%clay-res stud)
     =+  !<(=res:clay:neo vax)
     :_  pail
@@ -21,7 +21,7 @@
     ~
   ++  init
     |=  old=(unit pail:neo)
-    ^-  (quip card:neo vase)
+    ^-  (quip card:neo pail:neo)
     =+  !<(=desk q:(need old))
     :_  desk/!>(desk)
     [#/[p/our.bowl]/$/clay %poke %clay-req !>(`req:clay:neo`[%peer ~ desk /neo ~])]^~

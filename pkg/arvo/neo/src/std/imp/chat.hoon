@@ -19,12 +19,11 @@
   ^-  card:neo
   :-  (welp were.bowl ~[%messages da/now.bowl])
   ^-  note:neo
-  [%make stud `vax ~]
-
+  [%make stud `[%message vax] ~]
 --
 ^-  kook:neo
 |%
-++  state  %chat
+++  state  pro/%chat
 ++  poke  (sy %chat-diff ~)
 ++  kids
   %-  ~(gas by *kids:neo)
@@ -57,7 +56,7 @@
         %msg    :_(sta (add-message bowl message.poke)^~)
         %custom  :_(sta (add-msg bowl [stud vase]:poke)^~)
       ==
-    %-  (slog leaf/"debug" (turn ~(val by ~(tar of:neo kids.bowl)) |=(=saga:neo (sell q.q.saga))))
+    ::  %-  (slog leaf/"debug" (turn ~(val by ~(tar of:neo kids.bowl)) |=(=saga:neo (sell q.q.saga))))
     [cards chat/!>(sta)]
   ++  init
     |=  old=(unit pail:neo)

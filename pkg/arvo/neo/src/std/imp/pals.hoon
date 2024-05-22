@@ -33,7 +33,7 @@
   |=  [kind=?(%target %leeche %mutual) =bowl:neo =ship]
   ^-  card
   =/  init=pal-type  [ship kind ~]
-  [(welp here.bowl (pave:neo /pals/(scot %p ship))) %make %pal `!>(init) ~]
+  [(welp here.bowl (pave:neo /pals/(scot %p ship))) %make %pal `pal/!>(init) ~]
 ++  tell-pal
   |=  [=ship diff=pals-diff]
   ^-  card
@@ -56,7 +56,7 @@
   |_  [=bowl:neo =saga:neo]
   ++  poke
     |=  [=stud:neo vax=vase]
-    ^-  (quip card:neo vase)
+    ^-  (quip card:neo pail:neo)
     ?+    stud  !!
         %pals-diff
       =+  !<(poke=pals-diff vax)

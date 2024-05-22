@@ -26,7 +26,7 @@
 ++  kids
   %-  ~(gas by *kids:neo)
   :~  :-  [&/%messages |/%da |]
-      [%message ~]
+      [pro/%message ~]
   ==
 ++  deps
   %-  ~(gas by *deps:neo)
@@ -34,11 +34,11 @@
   ::
     :-  %src
     ::
-    :+  req=&  [%chat %sig]
+    :+  req=&  [pro/%chat ~]
     :+  ~  %y
     %-  ~(gas by *kids:neo)
     :~  :-  [&/%messages |/%da |]
-        [%message ~]
+        [pro/%message ~]
   ::
     ==
   ==
@@ -67,15 +67,15 @@
     ?.  ?=(%add mode)
       ~
     :+  ~  (welp were.bowl pole)
-    [%make %message `!>((get-message bowl p.pole)) ~]
+    [%make %message `message/!>((get-message bowl p.pole)) ~]
   ++  init
     |=  old=(unit pail:neo)
     ^-  (quip card pail:neo)
-    =/  sta
+    =/  s=chat-link
       ?~  old  *chat-link
-      !<(chat-link u.old)
-    =.  chat.sta  (get-chat bowl)
-    :_  chat-link/!>(sta)
+      !<(chat-link q.u.old)
+    =.  chat.s  (get-chat bowl)
+    :_  chat-link/!>(s)
     =/  kids  ~(tap of:neo (get-chat-ax bowl))
     %+  murn  kids
     |=  [=pith =idea:neo]

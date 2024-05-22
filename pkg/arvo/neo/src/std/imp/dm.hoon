@@ -11,7 +11,7 @@
 ++  kids
   %-  ~(gas by *kids:neo)
   :~  :-  [|/%da |]
-      [pro/%message %sig]
+      [pro/%message ~]
   ==
 ++  deps
   %-  ~(gas by *deps:neo)
@@ -19,11 +19,11 @@
   ::
   :-  %link
   ::
-  :+  req=|  [%sig %dm-diff]
+  :+  req=|  [pro/%sig (sy %dm-diff ~)]
   :+  ~  %y
   %-  ~(gas by *kids:neo)
   :~  :-  [|/%da |]
-      [pro/%message %sig]
+      [pro/%message ~]
     ==
   ==
 ++  form
@@ -44,7 +44,7 @@
       :*                               
         (welp here.bowl ~[da/now.bowl])
         %make                 
-        [%message `q.pail ~]
+        [%message `pail ~]
       ==
     ?>  =(%dm-diff stud)
     =/  poke  !<(dm-diff vax)
@@ -55,7 +55,7 @@
       :*
         (welp were.bowl ~[da/now.bowl])
         %make 
-        [%message `!>(message.poke) ~]
+        [%message `message/!>(message.poke) ~]
       ==
     ==
   ++  init

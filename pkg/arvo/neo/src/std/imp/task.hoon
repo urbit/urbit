@@ -33,12 +33,13 @@
       %-  flop
       ^-  (list card:neo)
       :-
-        [(welp [p/our.bowl]~ pith.diff) %make %task `!>(this) ~]
+        [(welp [p/our.bowl]~ pith.diff) %make %task `task/!>(this) ~]
       %-  zing
       %+  turn  ~(tap by ~(tar of:neo kids.bowl))
-      |=  [=pith =saga:neo]
+      |=  [=pith =idea:neo]
+      ^-  (list card:neo)
       :~
-        [:(welp [p/our.bowl]~ pith.diff pith) %make %task `q.q.saga ~]
+        [:(welp [p/our.bowl]~ pith.diff pith) %make %task `pail.idea ~]
         [(welp here.bowl pith) %poke %task-diff !>([%prayer (welp pith.diff pith)])]
       ==
     ::
@@ -47,7 +48,7 @@
       :_  task/!>(this)
       :_  ~
       :*  (snoc here.bowl name.diff)
-          %make  %task  `!>(task.diff)  ~
+          %make  %task  `task/!>(task.diff)  ~
       ==
     ::
         %prep
@@ -55,7 +56,7 @@
       :_  task/!>(this)
       :_  ~
       :*  (snoc here.bowl name.diff)
-          %make  %task  `!>(task.diff)  ~
+          %make  %task  `task/!>(task.diff)  ~
       ==
     ::
         %edit
@@ -91,6 +92,6 @@
   ++  init
     |=  pal=(unit pail:neo)
     ^-  (quip card:neo pail:neo)
-    `(need pa)
+    `(need pal)
   --
 --
