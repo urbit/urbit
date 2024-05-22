@@ -1692,6 +1692,9 @@
         ::  the corked flow from the forward namespace
         ::
         closing=?(%.y %.n)
+        ::  line: high-water mark for the last-acked message before migration
+        ::
+        :: line=@ud
         ::  outbound %poke payloads, bounded in the ship's namespace
         ::  always and only for requests
         ::
@@ -1727,16 +1730,15 @@
           ::    e.g. /floe/bone=0/~nec/ack/~zod/bak/ack=1 (as stored in the producer of the ack)
           ::                                          (the reader will be using bone=0)
           ::
-          last-acked=@ud   :: for acking old duplicates (only 10)
-                            :: and dropping future acks
-                              :: only +(last-acked) messages are handled
-                              :: duplicate heards, are looked up in pending-ack
-                            ::
+          last-acked=@ud  :: for acking old duplicates (only 10)
+                          :: and dropping future acks
+                          :: only +(last-acked) messages are handled
+                          :: duplicate heards, are looked up in pending-ack
+                          ::
           pending-ack=_`?`%.n  :: there's only one pending ack
-                        :: to guarantee that messages are delivered
-                        :: in order
-                        :: also used to not duplicate sending the ack to the vane
-          $+  naxplanations
+                               :: to guarantee that messages are delivered
+                               :: in order
+                               :: also used to not duplicate sending the ack to the vane
           nax=(map seq=@ud error)  :: messages you have nacked,
                             ::  for every seq in the set (last-acked - 10 <= ack <= last-acked)
     ==  ==

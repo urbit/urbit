@@ -2871,6 +2871,7 @@
                 ?>  ?=([%known *] ship-state)
                 =+  pe-core=(abed-peer:pe ship +.ship-state)
                 abet:(on-migrate:pe-core next-bone.ossuary.peer-state.pe-core)  :: XX (dec next-bone)
+              ::
               --
             ::
             +|  %implementation
@@ -3294,7 +3295,7 @@
                 ::
                 ++  align-bones
                   ^+  ossuary.peer-state
-                  ::  XX save .next-bone.ossuary as a marker for "migrated" flows
+                  ::  XX update ossuary in terms of [bone=@ud dire=?(%for %bak)]
                   ::
                   ossuary.peer-state
                 ::
@@ -3398,6 +3399,9 @@
                     ::  any partially received messages in live-messages.sink are dropped
                     ::
                     =:      closing.flow  (~(has in closing.peer-state) bone)
+                                          ::  XX  consider the oldest seq in nax.sink?
+                                          ::
+                              ::  line.flow  last-acked.sink
                          last-acked.flow  last-acked.sink
                         ::  XX if there's a pending-vane ack it should have
                         ::  been sent to the vane already?
@@ -3406,6 +3410,40 @@
                       ::
                           nax.flow
                         %-  ~(gas by *_nax.flow)
+                        ::  XX  when a message in nacked (e.g. 25), we add it to
+                        ::  nax.sink and create a %naxplanation message (e.g. 1
+                        ::  first ever naxplanation sent) that contains the
+                        ::  nacked sequence number (25), and is sent to the
+                        ::  original sender on the naxplanation flow.
+                        ::
+                        ::  when the ack for the naxplanation (1) comes back, we
+                        ::  know that this was an ack for a naxplanation bone
+                        ::  and then drop the sequence number of _this_
+                        ::  naxplanation message (1) instead of the original
+                        ::  message (25) that was nacked.
+                        ::
+                        ::  this causes a gap or buffer of messages in nax.sink
+                        ::  that will remain there until naxplanations catch
+                        ::  up with the actual message numbers from the
+                        ::  reference flow.
+                        ::
+                        ::  we are removing messages that might not have been
+                        ::  nacked, but that seems ok since the message won't be
+                        ::  there anyway.
+                        ::
+                        ::  for the migration, this could mean that there are
+                        ::  gaps in the sequence of messages that we have nacked
+                        ::  so the fact that there are messages in nax.sink
+                        ::  doesn't mean that we can say: "if a sequence number
+                        ::  higher than what's in the queue is not in nax.sink,
+                        ::  we can we assume that it has not been nacked?".
+                        ::
+                        ::  Because of this is better to draw a "line" by adding
+                        ::  last-acked.sink to line.flow and dropping any reads
+                        ::  to acks older than that sequence number, and not
+                        ::  migrate anything in nax.sink.
+                        ::
+                        =-  ~
                         ::  if there are entries in nax/sink, we have nacked a
                         ::  plea/boon, but we were waiting on the naxplanation.
                         ::
@@ -7177,6 +7215,7 @@
                     ==
                 ::
                 =/  =public-key     pass:(~(got by keys.point) life.point)
+                =.  priv.ames-state  .^(@uw %j /=vein=/1)  :: XX remove
                 =/  crypto-core     (nol:nu:crub:crypto priv.ames-state)
                 =/  =private-key    sec:ex:crypto-core
                 =/  =symmetric-key  (derive-symmetric-key public-key private-key)
@@ -8124,20 +8163,22 @@
         ::
         !!  ::  $(+<.old %adult, +>.old state.old)
       ?:  ?=(%0 -.old)
-        =.  queued-moves  moz  :: XX check on every call/take if there are queued moves?
-        :: =.  chums.old
-        ::   %-  ~(run by chums.old)
-        ::   |=  =chum-state
-        ::   ?:  ?=(%alien -.chum-state)  chum-state
-        ::   ~&  %cleaning
-        ::   %_  chum-state
-        ::     flows    ~
-        ::     pit      ~
-        ::     corked   ~
-        ::     ossuary  =|  =ossuary  ossuary
-        ::              :: %_  ossuary
-        ::             ::   next-bone  40
-        ::   ==        :: ==
+        =.  chums.old
+          %-  ~(run by chums.old)
+          |=  =chum-state
+          ?:  ?=(%alien -.chum-state)
+            ~&  %cleaning-alien
+            chum-state
+            :: chum-state(pit ~)
+          ~&  %cleaning
+          %_  chum-state
+            flows    ~
+            pit      ~
+            corked   ~
+            ossuary  =|  =ossuary  ossuary
+                     :: %_  ossuary
+                    ::   next-bone  40
+          ==        :: ==
         vane-gate(ames-state old)
       ::
       ?>  ?=([@ %adult *] old)
