@@ -3386,8 +3386,14 @@
                       %.  message
                       fo-call:(fo-abed:core (got-duct bone) bone %for)
                     ::
-                    :-  (weld forward-moves moves)
-                    (~(put in flows) [bone dire] flow)
+                    :_  (~(put in flows) [bone dire] flow)
+                    =.  moves  (weld forward-moves moves)
+                    =?  moves  ?=(^ next-wake.packet-pump-state.pump)
+                      =*  wake  u.next-wake.packet-pump-state.pump
+                      :_  moves  ^-  move
+                      :-  [/ames]~
+                      [%pass (make-pump-timer-wire her bone) %b %rest wake]
+                    moves
                   ::  backward flows
                   ::
                   =.  flows.fren
