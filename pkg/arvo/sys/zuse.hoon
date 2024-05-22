@@ -6124,13 +6124,13 @@
 ::
 ::
 ++  crc
-  ~%  %crc  +>+  ~
+  ~%  %crc  ..part  ~
   |%
   ++  crc32
     ~/  %crc32
-    |^  |=  data=octs
+    |=  data=octs
         ^-  @ux
-        ?:  =(q.data 0x0)
+        ?:  =(p.data 0)
           0x0
         =/  input-list  (weld (reap (sub p.data (met 3 q.data)) 0x0) (rip 3 q.data))
         %+  mix  0xffff.ffff
