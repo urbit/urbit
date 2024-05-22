@@ -594,9 +594,6 @@
     ::  first contact; update state and subscribe to notifications
     ::
     =.  contacts.state  (~(put in contacts.state) ship)
-    ::  ask ames to track .ship's connectivity
-    ::
-    =.  moves  [[system-duct.state %pass /sys/lag %a %heed ship] moves]
     ::  ask jael to track .ship's breaches
     ::
     =/  =note-arvo  [%j %public-keys (silt ship ~)]
@@ -615,8 +612,6 @@
     ::  delete .ship from state and kill subscriptions
     ::
     =.  contacts.state  (~(del in contacts.state) ship)
-    ::
-    =.  moves  [[system-duct.state %pass /sys/lag %a %jilt ship] moves]
     ::
     =/  =note-arvo  [%j %nuke (silt ship ~)]
     =.  moves
@@ -657,7 +652,6 @@
       %lyv  ..mo-core  ::  vestigial
       %cor  ..mo-core  ::  vestigial
       %era  (mo-handle-sys-era wire sign-arvo)
-      %lag  (mo-handle-sys-lag wire sign-arvo)
       %req  (mo-handle-sys-req wire sign-arvo)
       %way  (mo-handle-sys-way wire sign-arvo)
     ==
@@ -671,24 +665,20 @@
     ?.  ?=(%breach -.public-keys-result.sign-arvo)
       mo-core
     (mo-breach /jael who.public-keys-result.sign-arvo)
-  ::  +mo-handle-sys-lag: handle an ames %clog notification
+  ::  +mo-handle-sys-clog: handle an ames %clog notification
   ::
-  ++  mo-handle-sys-lag
-    |=  [=wire =sign-arvo]
+  ++  mo-handle-sys-clog
+    |=  [=duct agent-name=term]
     ^+  mo-core
+    =/  yoke  (~(get by yokes.state) agent-name)
+    ?~  yoke
+      mo-core
+    =?  mo-core  ?=(%live -.u.yoke)
+      =/  app  (ap-abed:ap agent-name [~ our /ames])
+      ap-abet:(ap-clog:app duct)
     ::
-    ?>  ?=([%lag ~] wire)
-    ?>  ?=([%ames %clog *] sign-arvo)
-    ::
-    =/  agents=(list [=dude =yoke])  ~(tap by yokes.state)
-    |-  ^+  mo-core
-    ?~  agents  mo-core
-    ::
-    =?  mo-core  ?=(%live -.yoke.i.agents)
-      =/  app  (ap-abed:ap dude.i.agents [~ our /ames])
-      ap-abet:(ap-clog:app ship.sign-arvo)
-    ::
-    $(agents t.agents)
+    mo-core
+  ::
   ::  +mo-handle-sys-req: TODO description
   ::
   ::    TODO: what should we do if the remote nacks our %pull?
@@ -699,7 +689,6 @@
     ?>  ?=([%req @ @ ~] wire)
     =/  him  (slav %p i.t.wire)
     =/  dap  i.t.t.wire
-    ::
     ?>  ?=([?(%gall %behn) %unto *] sign-arvo)
     =/  =unto  +>.sign-arvo
     ::
@@ -713,7 +702,7 @@
     ::
         %fact
       =+  [mark noun]=[p q.q]:cage.unto
-      (mo-give %boon %d mark noun)
+      (mo-give %noon [dap [/gall/sys/req/[i.t.wire]/[dap] hen]] %d mark noun)
     ::
         %kick
       (mo-give %boon %x ~)
@@ -734,6 +723,7 @@
     =/  foreign-agent   i.t.t.wire
     ::
     ?+    sign-arvo  !!
+      ::
         [%ames %done *]
       =/  err=(unit tang)
         ?~  error=error.sign-arvo
@@ -1653,17 +1643,11 @@
     ::    TODO: %drip local app notification for error isolation
     ::
     ++  ap-clog
-      |=  =ship
+      |=  =duct
       ^+  ap-core
       ::
-      =/  in=(list [=duct =^ship =path])  ~(tap by bitt.yoke)
-      |-  ^+  ap-core
-      ?~  in  ap-core
-      ::
-      =?  ap-core  =(ship ship.i.in)
-        =/  core  ap-kill-up(agent-duct duct.i.in)
-        core(agent-duct agent-duct)
-      $(in t.in)
+      =/  core  ap-kill-up(agent-duct duct)
+      core(agent-duct agent-duct)
     ::  +ap-agent-core: agent core with current bowl and state
     ::
     ++  ap-agent-core
@@ -2369,6 +2353,10 @@
   ::
   =/  mo-core  (mo-abed:mo duct)
   ?-    -.task
+      %clog
+    =+  ;;([dap=@tas =^duct] id.task)
+    mo-abet:(mo-handle-sys-clog:mo-core duct dap)
+      ::
       %deal
     =/  [=sack =term =deal]  [p q r]:task
     ?.  =(q.sack our)
@@ -2462,6 +2450,7 @@
         blocked=(map term (qeu blocked-move-13))
         =bug
     ==
+  ::
   +$  blocked-move-13  [=duct routes=routes-13 move=(each deal unto)]
   +$  routes-13
     $:  disclosing=(unit (set ship))
