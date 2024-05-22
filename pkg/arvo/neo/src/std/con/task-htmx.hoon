@@ -4,7 +4,7 @@
 |=  =bowl:neo
 |^
   shell
-++  kids  ~(tap by kids.bowl)
+++  kids  ~(tap by ~(tar of:neo kids.bowl))
 ++  id
   ^-  tape
   %-  zing
@@ -241,10 +241,10 @@
     ;*
     %+  turn  order.t
       |=  =pith
-      =/  kid  (~(get by kids.bowl) pith)
+      =/  kid  (~(get of:neo kids.bowl) pith)
       ?~  kid
         ;div: does not exist {(en-tape:pith:neo pith)}
-      (part-kid [pith (need kid)])
+      (part-kid [pith q.u.kid])
     ::;*
     ::=/  orphans
     ::  %+  skim  kids

@@ -17,7 +17,7 @@
     ?>  =(%clay-res stud)
     =+  !<(=res:clay:neo vax)
     :_  state
-    %+  murn  ~(tap of files.res)
+    %+  murn  ~(tap axol-of:neo files.res)
     |=  [=path =cage]
     ^-  (unit card)
     ?.  =(%mime p.cage)

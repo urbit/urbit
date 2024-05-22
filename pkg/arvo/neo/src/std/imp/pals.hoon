@@ -10,9 +10,9 @@
   |=  [=bowl:neo =ship]
   ^-  (unit kind) 
   =/  =pith  #/pals/[p/ship]
-  ?~  kid=(~(get by kids.bowl) pith)
+  ?~  kid=(~(get of:neo kids.bowl) pith)
     ~
-  =+  !<(child=pal-type q.u.kid)
+  =+  !<(child=pal-type q.q.u.kid)
   `type.child
 ++  her-hey
   |=  kin=(unit kind)

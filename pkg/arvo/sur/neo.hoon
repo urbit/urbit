@@ -375,7 +375,7 @@
   ==
 ::  +sell: pretty-print a vase to a tank using +deal.
 ::
-++  sell
+++  a-sell
   ~/  %sell
   |=  vax=vase
   ^-  tank
@@ -962,7 +962,8 @@
   ++  get-output
     |=  [=bowl =term]
     ^-  (unit vase)
-    =/  outer  q.q:(~(got of q:(~(got by deps.bowl) term)) /)
+    =/  [=pith =epic]  (~(got by deps.bowl) term)
+    =/  outer  q.q:(need fil.epic)
     =+  !<([vax=(unit vase) *] outer)
     vax
   ::
@@ -1311,8 +1312,8 @@
       ~
     `[+.i.pith t.pith]
   --
-++  axol  ^axal
-++  axol-of  ^of
+++  axol  axal:..zuse
+++  axol-of  of:..zuse
 ++  axal
   |$  [item]  
   [fil=(unit item) kid=(map iota $)]
@@ -1685,6 +1686,7 @@
 +$  ewer  (pair stud vase)
 +$  vial  (pair stud *)
 +$  move  (pair pith card)
+::
 +$  icon
   $:  =ever
       state=vase
@@ -1755,6 +1757,22 @@
       deps=(map term (pair pith epic))
       kids=epic
   ==
+++  dbug
+  |%
+  ++  bowl
+    |=  =^bowl
+    ^-  tank
+    =/  bol  bowl(kids ~, deps ~)
+    >bol<
+  ++  epic
+    |=  =^epic
+    ^-  tank
+    >~(key by ~(tar of epic))<
+  ++  deps
+    |=  deps=(map term (pair pith ^epic))
+    =-  (sell !>(-))
+    (turn ~(tap by deps) |=([=term =pith e=^epic] [term pith]))
+  --
 ++  quay
   =<  quay
   |%

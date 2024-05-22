@@ -166,7 +166,7 @@
     %.  *(list card)
     ?~  q.ack
       same
-    (slog leaf/"nack on sys" u.q.ack)
+    (mean leaf/"nack on sys" u.q.ack)
   =/  src=name:neo  (de-pith:name:neo p.p.ack)
   =/  =wire  nack/(pout p.p.ack)
   (do-poke-her wire ship.src neo-ack+!>(ack))^~
@@ -557,7 +557,9 @@
     =+  !<([cac=(unit vase) *] q.pail)
     cac
   ++  built
-    !=(~ (~(peek plow:aux loam) pith))
+    ~&  built/pith
+    =-  ~&(- -)
+    !=(~ (~(peek plow:aux loam) p/our.bowl pith))
   ++  pith
     `pith:neo`(pave:neo path)
   ++  path
@@ -587,6 +589,7 @@
   (need ref)
 ::
 ++  copy-clay
+  !.
   ~>  %bout.[1 %build]
   |^  ^+  run
   =/  paths=(list path)
@@ -640,6 +643,7 @@
       ?&  (levy pro.file |=(pro:ford ~(built pro stud)))
           (levy lib.file |=(lib:ford ~(built lib loc)))
       ==
+    ~|  imports/file
     ?>  built-imports
     =^  pre=pith  run  
       (make-prelude pax file)
@@ -663,10 +667,7 @@
     ^+  run
     ?~  lis
       run
-    =/  pat  
-      ~(path lib i.lis)
-    ?>  ?=(^ pat)
-    =.  run  (read-file %src t.pat)
+    =.  run  (read-file %src ~(path lib i.lis))
     $(lis t.lis)
   ++  do-make
     |=  [=pith:neo lib=term sta=(unit vase) =conf:neo]
@@ -763,8 +764,8 @@
   =.  run  (make-riff-slap #/out/std/imp/ford-slap reef txt-ford-slap)
   =.  run  (re-export reef %json !,(*hoon json))
   =.  run  (re-export reef %mime !,(*hoon mime))
-  ::  =.  run  copy-clay
-  =.  run  (emit %pass /bind-site %arvo %e %connect [~ dap.bowl ~] dap.bowl)
+  =.  run  copy-clay
+  ::  =.  run  (emit %pass /bind-site %arvo %e %connect [~ dap.bowl ~] dap.bowl)
   (emit do-std-warp)
   ++  clay-beak  ^-  path
     /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)
@@ -833,7 +834,7 @@
     |=  [=pith riff=vase]
     ^+  run
     =.  pith  [p/our.bowl pith]
-    (emit (do-card pith %make %ford-riff `!>([`riff ~]) ~))
+    (on-card pith %make %ford-riff `!>([`riff ~]) ~)
   --
 ::  +arvo: local callstack
 ++  arvo
@@ -1066,7 +1067,9 @@
     |=  [src=stud:neo init=(unit vase) =crew:neo]
     =/  =wave:neo  [src ~(slip husk src) crew]
     =.  tide  (~(put of:neo tide) here wave)
-    work
+    =^  cards=(list card:neo)  arvo
+      (soft-surf |.(su-abet:(su-make:surf init)))
+    (ingest cards)
 ::  ?:  ~(is-plot husk src)
 ::    ~|  %cant-make-plot-w-init
 ::    ?>  ?=(~ init)
@@ -1104,10 +1107,15 @@
           su-deps 
           su-kids
       ==
+    ++  su-icon
+      [p.p q.q ~ ~]:su-saga
+    ++  su-saga
+      (dall:aux (lexe:aux (~(peek till:aux [loam farm]) %x [p/our.bowl here])) *saga:neo)
     ++  su-kids
+      =-  ((slog (epic:dbug:neo -) ~) -)
       =/  kids  kids:kook
       %-  gas-epic
-      =/  child  (need (need (~(peek till:aux [loam farm]) %y [p/our.bowl here])))
+      =/  child  (dall:aux (~(peek till:aux [loam farm]) %y [p/our.bowl here]) *epic:neo)  
       %+  murn  ~(tap by ~(tar of:neo child))
       |=  [=pith:neo =saga:neo]
       ^-  (unit [pith:neo saga:neo])
@@ -1115,6 +1123,7 @@
         ~
       `[pith u.ion]
     ++  su-deps
+      =-  ((slog (deps:dbug:neo -) ~) -)
       %-  ~(gas by *(map term [pith epic:neo]))
       ^-  (list [term pith epic:neo])
       %+  murn  ~(tap by deps:kook)
@@ -1127,17 +1136,19 @@
         ~
       =/  =name:neo  (de-pith:name:neo u.dep)
       =/  =care:neo  (get-care:quay:neo quay)
+      ~&  dep/[term name care]
       =/  =epic:neo  (moor quay name)
+      %-  (slog term (epic:dbug:neo epic) ~)
       `[term u.dep epic]
     ::
-    ++  su-form  ~(. form:kook su-bowl)
+    ++  su-form  ~(. form:kook [su-bowl su-icon])
     ++  su-abet ::  TODO: bump
       =.  tide  (~(put of:neo tide) here wave)
       [cards arvo]
     ++  su-make
       |=  init=(unit vase)
       =/  [cards=(list card:neo) new=vase]
-        (init:form:kook init)
+        (init:su-form init)
       =.  su-core  (su-emil cards)
       (su-grow new)
     ++  su-grow
@@ -1181,6 +1192,9 @@
   ^-  epic:neo
   =/  =care:neo  (get-care:quay:neo want)
   =/  =epic:neo  (need (need (~(peek till:aux [loam farm]) care (en-pith:name:neo name))))
+  %-  (slog leaf/"mooring" (epic:dbug:neo epic) ~)
+  =.  epic  (~(dip of:neo epic) (en-pith:name:neo name))
+  %-  (slog leaf/"mooring" (epic:dbug:neo epic) ~)
   %-  gas-epic
   ^-  (list (pair pith:neo saga:neo))
   %+  murn  ~(tap by ~(tar of:neo epic))

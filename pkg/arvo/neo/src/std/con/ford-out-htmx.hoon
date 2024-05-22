@@ -653,8 +653,8 @@
 
 ++  have
   |=  vax=vase
-  =/  fim=(unit firm:neo)
-    (mole |.(!<(firm:neo vax)))
+  =/  fim=(unit kook:neo)
+    (mole |.(!<(kook:neo vax)))
   ?>  ?=(^ fim)
   ;div.p2.fc.g2
     ;h4: Shrub implementation

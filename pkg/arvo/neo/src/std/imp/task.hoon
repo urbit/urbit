@@ -35,10 +35,10 @@
       :-
         [(welp [p/our.bowl]~ pith.diff) %make %task `!>(this) ~]
       %-  zing
-      %+  turn  ~(tap by kids.bowl)
-      |=  [=pith =pail:neo]
+      %+  turn  ~(tap by ~(tar of:neo kids.bowl))
+      |=  [=pith =saga:neo]
       :~
-        [:(welp [p/our.bowl]~ pith.diff pith) %make %task `q.pail ~]
+        [:(welp [p/our.bowl]~ pith.diff pith) %make %task `q.q.saga ~]
         [(welp here.bowl pith) %poke %task-diff !>([%prayer (welp pith.diff pith)])]
       ==
     ::

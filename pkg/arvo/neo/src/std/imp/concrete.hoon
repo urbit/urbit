@@ -3,7 +3,7 @@
   ++  get-dep
     |=  =bowl:neo
     ^-  @ud
-    !<(@ud q.pail.q:(~(got by deps.bowl) %a))
+    !<(@ud q.q:(need fil.q:(~(got by deps.bowl) %a)))
   --
 |%
 ++  state  %atom

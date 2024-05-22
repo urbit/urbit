@@ -1,7 +1,6 @@
 => 
 |%
 ++  card  card:neo
-+$  state  [cache=(unit vase) ~]
 ++  wrap-firm
   |=  vax=vase
   ^-  vase

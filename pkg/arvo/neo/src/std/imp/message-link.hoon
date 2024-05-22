@@ -8,7 +8,7 @@
 ++  get-msg
   |=  =bowl:neo
   ^-  vase
-  q.pail.q:(~(got by deps.bowl) %src)
+  q.q:(need fil.q:(~(got by deps.bowl) %src))
 ::
 --
 ^-  kook:neo

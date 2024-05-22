@@ -1,7 +1,46 @@
 /-  neo
 ::  Layer 1
-=>
+=>  
+=/  verb  &
 |%
+++  lexe
+  |=  res=(unit (unit epic:neo))
+  ^-  (unit (unit saga:neo))
+  ?:  ?=($@(~ [~ ~]) res)
+    res
+  ?~  fil.u.u.res
+    [~ ~]
+  ``u.fil.u.u.res
+++  dall
+  |*  [res=(unit (unit)) def=*] 
+  ?~  res
+    def
+  ?~  u.res
+    def
+  u.u.res
+::
+++  trace
+  |=  [info=tape =tang]
+  ?.  verb
+    same
+  %.  [leaf/"neo: {info}" tang]
+  %*  .  slog
+    pri  3
+  ==
+++  print-card
+  |=  =card:dirt:neo
+  :-  leaf/(en-tape:pith:neo p.card)
+  ?-    -.q.card
+      %grow 
+    :~  leaf/"%grow"
+        ?:  (is-stud:ford:neo p.pail.q.card)
+          leaf/"ford build"
+        (sell q.pail.q.card)
+    ==
+      %cull
+    ~[leaf/"%cull"]
+  ==
+
 ::  +nail: convert $over to $ever
 ++  nail
   |=  [=over:neo =plot:neo =case:neo]
@@ -182,6 +221,7 @@
     |=  =card:dirt:neo
     ^-  (quip gift:dirt:neo _loam)
     =/  lom   (~(dip of:neo loam) p.card)
+    %-  (trace "call" (print-card card))
     =^  gifts=(list [case:neo ?])  lom
       ?-  -.q.card
         %grow  (~(grow plow lom) +.q.card)
@@ -293,20 +333,21 @@
       ~
     =;  =once:neo
       (look care once pith)
+    ~&  peek/[care pith]
     ?+    care  !!
         %x
       ?~  ove=(ram:on:land:neo land.u.val)
-        !!
+        x/0
       x/key.u.ove
     ::
         %y
       ?~  ove=(ram:on:tend:neo by-kids.plot.u.val)
-        !!
+        y/0
       y/key.u.ove
     ::
         %z
       ?~  ove=(ram:on:tend:neo by-desc.plot.u.val)
-        !!
+        z/0
       z/key.u.ove
     ==
   ::

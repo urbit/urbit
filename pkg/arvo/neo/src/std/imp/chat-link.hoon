@@ -5,17 +5,19 @@
 => 
 |%
 ++  card  card:neo
+++  get-chat-ax
+  |=  =bowl:neo
+  ^-  epic:neo
+  q:(~(got by deps.bowl) %src)
 ++  get-chat
   |=  =bowl:neo
-  ^-  chat
-  =/  dep=cane:neo  q:(~(got by deps.bowl) %src)
-  !<(chat q.pail.dep)
+  !<(chat q.q:(need fil:(get-chat-ax bowl)))
 ++  get-message
   |=  [=bowl:neo id=@da]
   ^-  message
   =/  pit=pith:neo  ~[%messages da/id]
-  =/  dep=cane:neo  q:(~(got by deps.bowl) %src)
-  =/  msg=pail:neo  pail:(~(got by kids.dep) pit)
+  =/  dep=epic:neo  q:(~(got by deps.bowl) %src)
+  =/  msg=pail:neo  q:(~(got of:neo dep) pit)
   !<(message q.msg)
 --
 ^-  kook:neo
@@ -73,11 +75,10 @@
       ?~  old  *chat-link
       !<(chat-link u.old)
     =.  chat.sta  (get-chat bowl)
-    =/  =cane:neo  q:(~(got by deps.bowl) %src)
     :_  !>(sta)
-    ~&  init/kids.cane
-    %+  murn  ~(tap by kids.cane)
-    |=  [=pith [=ever:neo =pail:neo]]
+    =/  kids  ~(tap of:neo (get-chat-ax bowl))
+    %+  murn  kids
+    |=  [=pith =saga:neo]
     ^-  (unit card)
     ~
   --

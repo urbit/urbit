@@ -5,7 +5,7 @@
 |%
 ++  check-perms
   |=  =bowl:neo
-  =+  !<(=circle q.pail.q:(~(got by deps.bowl) %acl))
+  =+  !<(=circle q.q:(need fil.q:(~(got by deps.bowl) %acl)))
   (~(has in circle) ship.src.bowl)
 --
 |%

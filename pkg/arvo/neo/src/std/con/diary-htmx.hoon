@@ -28,7 +28,8 @@
   ::
 ++  link-entry
   ::
-  |=  [pax=pith =pail:neo]
+  |=  [pax=pith =saga:neo]
+  =/  =pail:neo  q.saga
   =/  tape  (trip !<(@t q.pail))
   =/  subject-end  (fall (find [10]~ tape) 56)
   =/  subject  (scag subject-end tape)
@@ -54,7 +55,7 @@
       ;+  form-put-entry
       ;*
       %+  turn
-        %+  sort  ~(tap by kids.bowl)
+        %+  sort  ~(tap by ~(tar of:neo kids.bowl))
         |=  [a=[=pith *] b=[=pith *]]
         (gth ->.pith.a ->.pith.b)
       link-entry
