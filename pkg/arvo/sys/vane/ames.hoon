@@ -104,7 +104,7 @@
     +$  note
       $~  [%b %wait *@da]
       $%  $:  %a
-              $>(?(%deep %keen %meek %mako %mess-ser %mage) task)
+              $>(?(%deep %keen %meek %mako %mess-ser %mage %prod) task)
           ==
           $:  %b
               $>(?(%wait %rest) task:behn)
@@ -3291,7 +3291,10 @@
                 =.  peers.ames-state
                   (~(del by peers.ames-state) her)
                 ?>  ?=([[* [%pass ^ [%a %mako *]]] ~] moves)
-                peer-core(event-core (emil moves))
+                ::  enqueue a %prod to start sending unsent messages
+                ::
+                =.  event-core  (emil [[[/ames]~ %pass /mate %a %prod ~] moves])
+                peer-core
                 ::
                 ++  align-bones
                   ^+  ossuary.peer-state
@@ -8243,6 +8246,7 @@
         $(old 20+adult/(state-19-to-20 state.old))
       ::
       ?:  ?=(%20 -.old)  $(old 21+adult/(state-20-to-21 state.old))
+      ::  XX  emit move to start %dead-flow timers
       ?>  ?=(%21 -.old)  $(old (state-21-to-0 state.old))
   ::
   |%
