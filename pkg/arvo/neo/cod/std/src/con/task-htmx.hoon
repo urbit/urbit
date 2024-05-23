@@ -19,7 +19,10 @@
     =hx-trigger  "input changed delay:0.4s from:find textarea, input from:find input"
     =hx-swap  "none"
     =head  "edit"
-    ;label.fr.g2.ac.js
+    ;h2.bold.s2.tc
+      ; {(trip (@t text.t))}
+    ==
+    ;label.fr.g2.ac.js.hidden
       ;+  =-  ?.  done.t:+  -
         -(a.g [[%checked ""] a.g.-])
       ^-  manx
@@ -34,7 +37,7 @@
         ; ---
       ==
     ==
-    ;textarea.wf.p2.border.br1.ma.mono
+    ;textarea.wf.p2.border.br1.ma.mono.hidden
       =name  "text"
       =autocomplete  "off"
       =spellcheck  "false"
@@ -47,29 +50,18 @@
 ++  form-create
   |=  [head=@tas label=tape]
   ^-  manx
-  ;div.fc.g1
-    ;button.b0.br1.hover.p2.wfc.mono.f3
-      =onclick
-        """
-        this.classList.toggle('toggled');
-        this.nextElementSibling.classList.toggle('hidden');
-        this.nextElementSibling.firstChild.focus();
-        """
-      ; {label}
-    ==
-    ;form.fr.g1.hidden
+  ;div.fc.g1.p4
+    ;form.fr.g1
       =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=task-diff"
       =head  (trip head)
       =hx-swap  "outerHTML"
       =hx-target  "find button .loading"
       ;input.wf.p1.border.br1.grow
-        =name  "name"
+        =name  "text"
         =autocomplete  "off"
         =type  "text"
-        =pattern  (trip '[a-z]{1}[a-z0-9\\-]+')
-        =title  "lowercase and heps"
         =required  ""
-        =placeholder  "name"
+        =placeholder  "task"
         =oninput  "this.setAttribute('value', this.value);"
         ;
       ==
@@ -83,27 +75,43 @@
   |=  [=pith =idea:neo]
   =/  =pail:neo  pail.idea
   =/  t=task  !<(task q.pail)
+  =/  pith-tape  (en-tape:pith:neo (welp here.bowl pith))
   =-  ?.  done.t  -
     -(a.g [[%done ""] a.g.-])
   ^-  manx
   ;div.fc.g1
-     =here  (en-tape:pith:neo (welp here.bowl pith))
+    =here  pith-tape
     ;div.fr.g1
-      ;button
-        =class  "b0 br1 hover p1 tl action mono fr g3 f2"
-        =style  "padding: 4px 9px;"
-        =type  "button"
-        =onclick
-          """
-          this.textContent = this.textContent === "=" ? "|" : "="; toggleChildren(this);
-          """
-        ;span.bold: =
+      ;div.fr.ac.g1.grow
+        =hx-post  "/neo/hawk{pith-tape}?stud=task-diff"
+        =hx-trigger  "input changed delay:0.4s from:find .text, input from:find .done"
+        =hx-swap  "none"
+        =head  "edit"
+        ;+
+          =;  m
+            ?.  done.t  m
+            m(a.g [[%checked ""] a.g.m])
+          ^-  manx
+          ;input.p2.br1.border.done.s3
+            =type  "checkbox"
+            =name  "done"
+            =onclick  (trip 'if (this.checked) { this.setAttribute("checked", "")} else {this.removeAttribute("checked")}')
+            ;
+          ==
+        ::
+        ;input.grow.p2.br1.border.text
+          =type  "text"
+          =name  "text"
+          =value  (trip text.t)
+          =oninput  "this.setAttribute('value', this.value);"
+          ;
+        ==
       ==
       ;+  =-
         =/  that  -
         =/  classes
           %+  weld
-            "b0 br1 hover p1 grow tl action mono fr g3"
+            "b0 br1 hover p1 tl action mono fr g3"
           ?:(done.t " strike f3" "")
         that(a.g [[%class classes] a.g.that])
       ^-  manx
@@ -113,8 +121,7 @@
           """
           this.classList.toggle('toggled'); this.parentNode.nextElementSibling.classList.toggle('hidden');
           """
-        ;span.bold: {(trip -:(pout pith))}
-        ;span.break.f2: {(scag (fall (find [10 ~] (trip text.t)) 30) (trip text.t))}
+        ;span: #
       ==
       ;a
         =class  "b0 br1 hover p1 loader f3"
