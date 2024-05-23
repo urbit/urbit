@@ -2,8 +2,8 @@
 $%
   [%become =pith]
   [%prayer =pith]
-  [%prep name=@tas =task]
-  [%nest name=@tas =task]
+  [%prep =task]
+  [%nest =task]
   [%edit text=cord done=?]
   [%done ~]                      :: toggles
   [%kid-done =pith]              :: toggles

@@ -15,12 +15,10 @@
   [head (pave:neo path)]
 ::
     %nest
-  =/  name  (vol:mu "name")
-  [head name '' | ~]
+  [head '' | ~]
 ::
     %prep
-  =/  name  (vol:mu "name")
-  [head name '' | ~]
+  [head '' | ~]
 ::
     %oust
   =/  path  (stab (got:mu %pith))
