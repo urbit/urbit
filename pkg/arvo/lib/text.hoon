@@ -1,8 +1,11 @@
   ::  /lib/text
 ::::
-::  Some common text conversion routines targeted towards beginners.
+::  Provides common text conversion routines targeted towards beginners.
 ::  See also https://docs.urbit.org/language/hoon/reference/zuse/2d_7,
 ::  which require head tags on JSON-style values.
+::
+::  This file is not subject to kelvin versioning and the interface should
+::  not be considered official.
 ::
 |%
 ::  Conversions from atom to text.
