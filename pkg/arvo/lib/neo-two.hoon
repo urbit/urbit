@@ -253,6 +253,23 @@
     ?.  (lte wan latest)
       ~
     `(get:on:soil:neo u.fil.lom wan)
+  ++  parent
+    =|  here=pith:neo
+    =|  res=(unit pith:neo)
+    |=  =pith:neo
+    ^+  res
+    =/  lom  loam
+    ?~  pith
+      res
+    =?  res  ?=(^ fil.lom)
+      ?~  val=(ram:on:soil:neo u.fil.lom)
+        res
+      ?:  =(~ q.val.u.val)
+        res
+      `here
+    =/  nex  (dif:pith:neo here pith)
+    ?>  ?=(^ nex)
+    $(here (snoc here i.nex), pith t.pith)
   --
 --
 ::  layer 2

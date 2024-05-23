@@ -1167,25 +1167,32 @@
 
 ::  $tone: parent change tracking
 ::
++$  yell  (pair care howl)
 +$  tone
-  $%  [%peer =peer]
+  $%  [%sell ~]
       [%rely =term =pith]
   ==
++$  howl  tone
+::  $wail: change result
++$  wail  (trel pith yell ?)
+  
 :: $song
 ::  $sound: internal change tracking listeners
 ::
-+$  sound
++$  roar
   (jug hunt tone)
+  
++$  meow
+  (jug pith (pair care tone))
 ::
 ::  $noise: external change tracking listeners
 +$  noise
   (jug hunt rely)
-::  $rave: foreign dependency
++$  riot  (axal rave)
 +$  rave
-  [=term =pith]
-::  $riot: foreign mirror
-+$  riot
-  [=cane deps=(set rave) =dock]
+  $:  yel=(set yell)
+  ==
+
 ::
 ::  $ring: node change tracking
 ::
@@ -1255,6 +1262,13 @@
   ++  en-tape
     |=  pit=$
     (spud (pout pit))
+  ++  dif
+    |=  [a=$ b=$]
+    |-  ^+  a
+    ?~  a  b
+    ?~  b  a
+    ?>  =(i.a i.b)
+    $(a t.a, b t.b)
   ++  sub
     |=  [from=$ del=$]
     ~|  pith-sub/[from del]
@@ -1586,6 +1600,11 @@
       thru=(unit stud)
       =pail
   ==
++$  dive
+  $:  con=(map [grab=stud role=stud grow=stud] stud)
+      by-grab=(jug stud [role=stud stud]) :: indexed by from type
+      by-grow=(jug stud [role=stud stud]) :: indexed by to type
+  ==
 ::
 +$  stem
   $~  [*ever %x %stud *vase]
@@ -1783,7 +1802,7 @@
 ++  quay
   =<  quay
   |%
-  +$  quay   (pair lash (unit (pair care kids)))
+  +$  quay   (pair lash (unit port))
   ++  get-care
     |=  q=quay
     ^-  care
@@ -1793,10 +1812,10 @@
   --
 +$  fief  [required=? =quay]
 ::
-::  $port: Single shrub API
+::  $port: Children API
 ::
-+$  port
-  [state=stud poke=(set stud)] 
++$  port  (pair care kids)
+::
 +$  lash
   [state=curb poke=(set stud)]
 +$  dock
