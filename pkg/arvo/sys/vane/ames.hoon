@@ -2338,7 +2338,6 @@
           ::
           =/  failed=message-num
             last-acked:(~(got by rcv.peer-state.peer-core) bone)
-          ~&  send-naxplanation/failed
           =/  =message  [%naxplanation failed error]
           ::  send nack-trace message on associated .nack-bone
           ::
@@ -4063,7 +4062,6 @@
               %prod  abet:(call:packet-pump %prod ~)
               %wake  abet:(call:packet-pump %wake current.state)
               %near  %-  on-done
-                    ~&  near/[num=message-num %naxplanation]:naxplanation.task
                     [[message-num %naxplanation error]:naxplanation.task %&]
               %hear
                 ?-    -.ack-meat.task
@@ -4084,7 +4082,6 @@
                         =(message-num:task message-num.key.u.top)
                     ==
                   =+  [ack msg]=[p.ack-meat message-num]:task
-                  ~&  hear-ack/ok.ack^msg
                   =.  pump
                     %-  on-done
                     [[msg ?:(ok.ack [%ok ~] [%nack ~])] cork]
@@ -4121,7 +4118,6 @@
           ::
           ++  on-done
             |=  [[=message-num =ack] cork=?]
-            ~&  done/message-num
             ^+  pump
             ::  unsent messages from the future should never get acked
             ::
@@ -4152,7 +4148,6 @@
               ~
             ::  clear all packets from this message from the packet pump
             ::
-            ~&  clear/message-num
             =.  pump  abet:(call:packet-pump %done message-num lag=*@dr)
             ::  enqueue this ack to be sent back to local client vane
             ::
@@ -4162,14 +4157,12 @@
                 =/  old  (~(get by queued-message-acks.state) message-num)
                 !?=([~ %naxplanation *] old)
               (~(put by queued-message-acks.state) message-num ack)
-            ~&  enqueue/message-num^current/current.state
             ::  emit local acks from .queued-message-acks until incomplete
             ::
             |-  ^+  pump
             ::  if .current hasn't been fully acked, we're done
             ::
             ?~  cur=(~(get by queued-message-acks.state) current.state)
-              ~&  >>>  %current-gone
               pump
             ::  .current is complete; pop, emit local ack, and try next message
             ::
@@ -4199,13 +4192,10 @@
                 (pump-done current.state ~)
               $(current.state +(current.state))
             ::
-                %nack
-            ~&  >>  %nack-wait-for-naxplanation^current.state
-              pump
+                %nack  pump
             ::
                 %naxplanation
               =.  peer-core  (pump-done current.state `error.u.cur)
-              ~&  >  %increase-current^current.state
               $(current.state +(current.state))
             ==
           ::
@@ -4260,7 +4250,6 @@
               ?:  =(0 (end 0 (rsh 0 bone)))  peer-core
               ::  nack-trace bone; assume .ok, clear nack from |sink
               ::
-              ~&  dropping/message-num
               %+  pe-emit  duct
               [%pass /clear-nack %a %deep %drop her (mix 0b10 bone) message-num]
             ::  if the bone belongs to a closing flow and we got a
@@ -4550,7 +4539,6 @@
             ::
             ++  on-done
               |=  =message-num
-              ~&  on-done/message-num
               ^+  pack
               ::
               =-  =.  metrics.state  metrics.-
@@ -4560,7 +4548,6 @@
                   (pu-trace snd.veb |.("done {<num=message-num show:gauge>}"))
               ::
               =/  acc  [metrics=metrics.state num-live=~(wyt by live.state)]
-              ~&  acc/acc
               ::
               ^+  [acc live=live.state]
               ::
@@ -4662,13 +4649,11 @@
               ::
               %_   sink
                   nax.state
-                ~&  last-acked/last-acked.state
                 %-  ~(rep in nax.state)
                 |=  [=message-num nax=_nax.state]
                 ::  XX  nax.peer-state was never used after %alef became %ames
                 ::  track nacks in here, but keep e.g. only the last 10?
                 ::
-                ~&  nax-before/nax
                 :: =?  nax.peer-state  (lte message-num last-acked.state)
                 ::   (~(put in nax.peer-state) bone message-num)
                 ::
@@ -4678,10 +4663,8 @@
                 ::
                 =?  nax  (lte message-num last-acked.state)
                   (~(del in nax) message-num)
-                ~&  nax-after/nax
                 nax
               ==
-              ::
             ::
                 %done  (done ok.task)
                 %flub
@@ -4980,9 +4963,8 @@
               ::  if we get a naxplanation for a %cork, the publisher hasn't
               ::  received the OTA. The /recork timer will retry eventually.
               ::
-              =+  ;;(=naxplanation message)
               %-  %+  pe-trace  msg.veb
-                  =/  dat  [her bone=bone message-num=message-num msg-in-nax=message-num.naxplanation]
+                  =/  dat  [her bone=bone message-num=message-num]
                   |.("sink naxplanation {<dat>}")
               ::  flip .bone's second bit to find referenced flow
               ::
@@ -4992,7 +4974,7 @@
                 ::
                 =/  =wire  (make-bone-wire her her-rift.channel target)
                 %+  pe-emit  duct
-                [%pass wire %a %deep %sink her target naxplanation]
+                [%pass wire %a %deep %sink her target ;;(naxplanation message)]
               ::  ack nack-trace message (only applied if we don't later crash)
               ::
               (done ok=%.y)
