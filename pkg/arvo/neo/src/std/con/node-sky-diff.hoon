@@ -10,14 +10,14 @@
   %new-tab
     [%new-tab ~]
   %minimize
-    [%minimize (dec (slav %ud (got:mu %slot)))]
+    [%minimize (slav %ud (got:mu %hawk-slot))]
   %slide-up
-    [%slide-up (dec (slav %ud (got:mu %slot)))]
+    [%slide-up (slav %ud (got:mu %hawk-slot))]
   %slide-down
-    [%slide-down (dec (slav %ud (got:mu %slot)))]
+    [%slide-down (slav %ud (got:mu %hawk-slot))]
   %maximize
-    [%maximize (dec (slav %ud (got:mu %hawk-slot)))]
+    [%maximize (slav %ud (got:mu %hawk-slot))]
   %close
-    [%close (dec (slav %ud (got:mu %hawk-slot)))]
+    [%close (slav %ud (got:mu %hawk-slot))]
   ::
 ==

@@ -649,51 +649,58 @@
   --
 ++  dove
   |_  [here=pith:neo slot=@ud id=@da]
+  ++  idt  `tape`(zing (scan +:(scow %da id) (most dot (star ;~(less dot prn)))))
   ++  ha-wk
     ;div.hawk.fc.wf.hf
-      =id  "hawk-slot-{<id>}"
+      =id  "hawk-{idt}"
       =hx-params  "id,slot"
       =hx-vals  "\{\"id\": \"{<id>}\", \"slot\": \"{<slot>}\"}"
-      =morph-no-swap  ""
       ;+  header
       ;+  raw
       ;+  rendered
     ==
+  ++  has-app  !=(~ (get:of-top here))
   ++  header
     ;header.b2.p1.frw.g1.ac
+      =id  "hawk-header-{idt}"
       =style  "border: 2px solid var(--b2);"
-      ;button.p1.hover.b2.br1
+      ;button
+        =class  "p1 hover b2 br1 bd0 {(trip ?:(has-app '' 'toggled'))}"
         =onclick
           """
-          $(this).toggleClass('b3');
+          $(this).toggleClass('toggled');
           $(this).closest('.hawk').find('.raw').toggleClass('hidden');
           $(this).closest('.hawk').find('.rendered').toggleClass('hidden');
           $(this).closest('header').children('.hawk-tog').toggleClass('hidden');
           """
         ;+  outline:feather-icons
       ==
-      ;a.p-1.hover.b2.br1.s0.hawk-tog.fc.ac.jc
-        =style  "height: 2rem;"
-        =href  "/neo/hawk"
-        ; /
-      ==
-      ;*
-        =<  p
-        %^  spin  here
-              1
-            |=  [=iota a=@]
-          :_  +(a)
-        ;div.hawk-tog.fr.ac.g1
+      ;div
+        =class  "hawk-tog frw g1 ac grow {(trip ?:(has-app '' 'hidden'))}"
+        ;a.p-1.hover.b2.br1.s0.fc.ac.jc
           =style  "height: 2rem;"
-          ;div.f4.s-1: >
-          ;a.hover.b2.br1.p1.s0
-            =hx-vals  "\{\"id\": \"{<id>}\", \"slot\": \"{<slot>}\"}"
-            =href  "/neo/hawk{(en-tape:pith:neo (scag a here))}"
-            ; {(trip ?@(iota iota (scot iota)))}
-          ==
+          =href  "/neo/hawk"
+          ; /
         ==
-      ;div.hawk-tog.grow;
-      ;form.hawk-tog.hidden.grow.fr.ac.m0.relative
+        ;*
+          =<  p
+          %^  spin  here
+                1
+              |=  [=iota a=@]
+            :_  +(a)
+          ;div.fr.ac.g1
+            =style  "height: 2rem;"
+            ;div.f4.s-1: >
+            ;a.hover.b2.br1.p1.s0
+              =hx-vals  "\{\"id\": \"{<id>}\", \"slot\": \"{<slot>}\"}"
+              =href  "/neo/hawk{(en-tape:pith:neo (scag a here))}"
+              ; {(trip ?@(iota iota (scot iota)))}
+            ==
+          ==
+        ;div.grow;
+      ==
+      ;form
+        =class  "hawk-tog grow fr m0 relative {(trip ?:(has-app 'hidden' ''))}"
         =style  "height: 2rem;"
         =hx-get  "/neo/hawk"
         =hx-target  "closest .hawk"
@@ -706,8 +713,8 @@
             ==
           ==
         ==
-        ;input.p-1.br1.b1.wf.s0.loaded.grow
-          =style  "border: none;"
+        ;input.p-1.br1.b1.wf.s0.loaded.grow.bd0
+          =style  "margin-left: 5px;"
           =type  "text"
           =value  (en-tape:pith:neo here)
           =oninput
@@ -720,12 +727,14 @@
         ==
       ==
       ;div.fr.ac.jc.g1.hawk-actions
+        =id  "hawk-actions-{idt}"
         ;button.p1.hover.b2.br1.loader.s-1
+          =id  "hawk-slide-up-{idt}"
           =hx-post  "/neo/hawk/sky?stud=sky-diff"
           =hx-target  "find .loading"
           =hx-swap  "outerHTML"
           =head  "slide-up"
-          =slot  "{<slot>}"
+          =hawk-slot  "{<slot>}"
           ;span.loaded
             ;+  chevron-left:feather-icons
           ==
@@ -734,11 +743,12 @@
           ==
         ==
         ;button.p1.hover.b2.br1.loader.s-1
+          =id  "hawk-slide-down-{idt}"
           =hx-post  "/neo/hawk/sky?stud=sky-diff"
           =hx-target  "find .loading"
           =hx-swap  "outerHTML"
           =head  "slide-down"
-          =slot  "{<slot>}"
+          =hawk-slot  "{<slot>}"
           ;span.loaded
             ;+  chevron-right:feather-icons
           ==
@@ -747,11 +757,12 @@
           ==
         ==
         ;button.p1.hover.b2.br1.loader.s-1
+          =id  "hawk-close-{idt}"
           =hx-post  "/neo/hawk/sky?stud=sky-diff"
           =hx-target  "find .loading"
           =hx-swap  "outerHTML"
           =head  "minimize"
-          =slot  "{<slot>}"
+          =hawk-slot  "{<slot>}"
           ;span.loaded
             ;+  minimize:feather-icons
           ==
@@ -776,8 +787,10 @@
     =/  rom  (get:of-top here)
     =-  -(a.g [[%here (en-tape:pith:neo here)] a.g.-])
     ^-  manx
-    ;div.rendered.wf.hf.b0.scroll-y.scroll-x
-      =id  "hawk-rendered-{<id>}"
+    ;div
+      =class  "rendered wf hf b0 scroll-y scroll-x {(trip ?:(has-app '' 'hidden'))}"
+      =id  "hawk-rendered-{idt}"
+      =morph-retain  "class"
       ;+
       ?~  rom
         ;div.wf.hf.fc.ac.jc: nothing here
@@ -796,22 +809,48 @@
       %+  turn  ~(tap by (kid:of-top here))
       |=  [=pith:neo *]
       -.pith
-    ;div.raw.hidden.b3.p2.fc.g1.js.ac.scroll-y.wf.hf
+    ;div
+      =class  "raw  b0 p-page fc g1 js af scroll-y wf hf {(trip ?:(has-app 'hidden' ''))}"
+      =morph-retain  "class"
+      ;+
+        =/  rom  (get:of-top here)
+        ?~  rom  ;div.f3.p1: no state
+        =/  =pail:neo  (to-pail:room:neo u.rom)
+        ;details.bd1.br1
+          ;summary.p1.hover: state
+          ;div.fc.g2.p2
+            ;a.p2.br1.border.b1.hover.block.wfc
+              =href  "/neo/hawk/src/std/pro/{(trip ?@(p.pail p.pail mark.p.pail))}"
+              ; {<p.pail>}
+            ==
+            ;div.pre.mono.scroll-x.p2
+              ;+
+              ;/
+              =/  size  (met 3 (jam q.pail))
+              ?:  (gth size 1.500.000)  "vase too large to print: {<size>}"
+              (of-wall:format (~(win re (sell q.pail)) 0 80))
+            ==
+          ==
+        ==
+      ;h2.s1.bold.p1: children
       ;*
       ?~  (lent dirs)
         ;=
-          ;div.wf.hf.fc.ac.jc: no children
+          ;div.p2.f3: None
         ==
       %+  turn
         :: alphabetical sort
         ^-  (list iota)
         (sort dirs aor)
       |=  =iota
-      ;button.p2.br1.b1.hover.wf.fr.js
+      ;button.p2.br1.b1.hover.wf.fr.js.loader
         =hx-get  (en-tape:pith:neo :(weld /neo/hawk here /[iota]))
         =hx-target  "closest .hawk"
         =hx-swap  "outerHTML"
-        ; {(trip ?@(iota iota (scot iota)))}
+        ;span.loaded: {(trip ?@(iota iota (scot iota)))}
+        ;span.loading
+          ;+  loading.feather-icons
+        ==
       ==
     ==
     ::
@@ -918,6 +957,12 @@
         if (oldNode.hasAttribute('morph-no-swap') && oldNode.id === newNode.id) {
           return false;
         }
+        else if (
+          newNode.hasAttribute('morph-if-class') &&
+          !oldNode.classList.contains(newNode.getAttribute('morph-if-class'))
+        ) {
+          return false;
+        }
       }
     }
     '''
@@ -989,6 +1034,13 @@
         =hx-history  "false"
         =hx-replace-url  "/neo/sky"
         =hx-target  "closest .hawk"
+        =style
+          """
+          background-color: var(--b1);
+          background-image: var(--sky-bg-url);
+          background-size: var(--sky-bg-size);
+          background-repeat: var(--sky-bg-repeat);
+          """
         ;+  in
       ==
     ==
@@ -1203,7 +1255,7 @@
             =/  slot  (slav %ud (need s))
             %-  poke-move
             :-  #/[p/our.bowl]/$/eyre/req/[eyre-id]
-            [~[p/[our.bowl] %sky] %poke %sky-diff !>([%move-tab (dec slot) pith])]
+            [~[p/[our.bowl] %sky] %poke %sky-diff !>([%move-tab slot pith])]
           %-  send
           %-  manx-response:gen:serv
           =?  pith  =(pith /sky)  (welp pith /settings)

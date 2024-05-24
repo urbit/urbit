@@ -151,9 +151,9 @@ body {
   color: var(--f1);
 }
 button {
-  border: unset;
-  background: unset;
-  color: unset;
+  border: inherit;
+  background: inherit;
+  color: inherit;
 }
 
 .break {
@@ -580,10 +580,10 @@ button {
   border: none;
 }
 .bd1 {
-  border: 0.8px solid var(--f3);
+  border: 0.8px solid var(--b3);
 }
 .bd2 {
-  border: 1px solid var(--f2);
+  border: 0.8px solid var(--f3);
 }
 .bd3 {
   border: 2px solid var(--f1);

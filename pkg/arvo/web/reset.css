@@ -5,6 +5,7 @@
 *::before,
 *::after {
   box-sizing: border-box;
+  margin: 0;
 }
 
 /* Prevent font size inflation */
@@ -30,6 +31,10 @@ ol[role='list'] {
 h1, h2, h3, h4,
 button, input, label {
   line-height: 1.1;
+}
+
+button, summary {
+  cursor: pointer;
 }
 
 /* Balance text wrapping on headings */
@@ -58,6 +63,9 @@ textarea, select {
   border: inherit;
   background: inherit;
   color: inherit;
+}
+textarea {
+  resize: none;
 }
 
 /* Make sure textareas without a rows attribute are not tiny */

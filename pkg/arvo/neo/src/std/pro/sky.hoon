@@ -1,4 +1,4 @@
 $:
   hawks=(list (pair @da pith))
-  slots=@ud
+  open=@ud
 ==

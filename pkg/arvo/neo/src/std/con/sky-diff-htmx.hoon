@@ -10,7 +10,7 @@
   =hx-indicator  "closest .loader"
   =hx-target  "#air"
   =hx-select  "#air"
-  =hx-swap  "morph:outerHTML"
-  =hx-trigger  "load"
+  =hx-swap  "outerHTML"
+  =hx-trigger  "load once"
   ;+  loading.feather-icons
 ==

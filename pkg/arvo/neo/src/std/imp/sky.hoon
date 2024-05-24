@@ -25,7 +25,7 @@
           %new-tab
             :-  ~
             =.  hawks.this  [[now.bowl /home] hawks.this]
-            =.  slots.this  (min 4 +(slots.this))
+            =.  open.this  (min 4 +(open.this))
             !>(this)
           %move-tab
             :-  ~
@@ -39,7 +39,7 @@
                 (slag +(slot.poke) hawks.this)
                 [(snag slot.poke hawks.this) ~]
               ==
-            =.  slots.this  (dec slots.this)
+            =.  open.this  (dec open.this)
             !>(this)
           %maximize
             :-  ~
@@ -49,30 +49,32 @@
                 (scag slot.poke hawks.this)
                 (slag +(slot.poke) hawks.this)
               ==
-            =?  slots.this  (gth slot.poke slots.this)  (min 4 +(slots.this))
+            =?    open.this
+                (gte slot.poke open.this)
+              (min 4 +(open.this))
             !>(this)
           %close
             :-  ~
             =.  hawks.this  (oust [slot.poke 1] hawks.this)
+            =?    open.this
+                (lth slot.poke open.this)
+              (dec open.this)
             !>(this)
           %slide-up
             :-  ~
             =?  hawks.this
               (gth slot.poke 0)
-              =/  ok
               ;:  welp
                 (scag (dec slot.poke) hawks.this)
                 [(snag slot.poke hawks.this) ~]
                 [(snag (dec slot.poke) hawks.this) ~]
                 (slag +(slot.poke) hawks.this)
               ==
-              ~&  ok
-              ok
             !>(this)
           %slide-down
             :-  ~
             =?  hawks.this
-              (lth slot.poke 4)
+              (lth slot.poke 3)
               ;:  welp
                 (scag slot.poke hawks.this)
                 [(snag +(slot.poke) hawks.this) ~]
@@ -80,7 +82,9 @@
                 (slag (add 2 slot.poke) hawks.this)
               ==
             !>(this)
+          ::
         ==
+      ::
     ==
   ++  init
     |=  vas=(unit vase)

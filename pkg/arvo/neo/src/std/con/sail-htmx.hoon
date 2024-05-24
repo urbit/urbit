@@ -1,4 +1,5 @@
 /@  sail
+/-  _/feather-icons
 :-  [%sail %htmx]
 |=  =sail
 |=  =bowl:neo
@@ -20,37 +21,44 @@
   %+  weld  "--"
   (trip smeg)
 ++  controls
-  ;div.b1.p2.frw.g3.sticky.wf
+  ;div.p2.frw.jc.ac.g3.sticky.wf
     =style  "top:0; left: 0;"
-    ;label.fr.g1
-      ;input
-        =name  "view"
-        =type  "radio"
-        =oninput  "$('#tabs-{id}').children().addClass('hidden');$('#editor-{id}').removeClass('hidden');"
-        ;
-      ==
-      ;span: edit
+    ;button.p-1.br1.b1.hover
+      =type  "button"
+      =onclick
+        """
+        $('#tabs-{id}').children().addClass('hidden');
+        $('#editor-{id}').removeClass('hidden');
+        $(this).siblings().removeClass('toggled');
+        $(this).addClass('toggled');
+        """
+      ; edit
     ==
-    ;label.fr.g1
-      ;input
-        =name  "view"
-        =type  "radio"
-        =oninput  "$('#tabs-{id}').children().addClass('hidden');$('#viewer-{id}').removeClass('hidden');$('#editor-{id}').removeClass('hidden');"
-        ;
-      ==
-      ;span: both
+    ;button.p-1.br1.b1.hover
+      =type  "button"
+      =onclick
+        """
+        $('#tabs-{id}').children().addClass('hidden');
+        $('#viewer-{id}').removeClass('hidden');
+        $('#editor-{id}').removeClass('hidden');
+        $(this).siblings().removeClass('toggled');
+        $(this).addClass('toggled');
+        """
+      ; both
     ==
-    ;label.fr.g1
-      ;input
-        =name  "view"
-        =type  "radio"
-        =checked  ""
-        =oninput  "$('#tabs-{id}').children().addClass('hidden');$('#viewer-{id}').removeClass('hidden');"
+    ;button.p-1.br1.b1.hover.toggled
+      =type  "button"
+      =onclick
+        """
+        $('#tabs-{id}').children().addClass('hidden');
+        $('#viewer-{id}').removeClass('hidden');
+        $(this).siblings().removeClass('toggled');
+        $(this).addClass('toggled');
+        """
         ;
-      ==
-      ;span: view
+      ; view
     ==
-    ;label.fr.je.g1.grow
+    ;label.fr.je.g1.grow.hidden
       ;input
         =name  "view"
         =type  "radio"
@@ -59,14 +67,9 @@
       ==
       ;span: docs
     ==
-    ;div.loader
-      =id  "ind-{id}"
-      ;span.loaded.f3: saved
-      ;span.loading: ---
-    ==
   ==
 ++  editor
-  ;form.fc.hidden.grow.basis-half.border.scroll-y
+  ;form.fc.p1.g1.hidden.grow.basis-half.scroll-y.relative
     =id  "editor-{id}"
     =style  "min-width: 300px; height: 100%;"
     =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=sail"
@@ -74,9 +77,7 @@
     =hx-select  "main > div"
     =hx-target  "#viewer-{id}"
     =hx-trigger  "input changed delay:0.4s from:find textarea, input changed delay:0.4s from:find input"
-    =hx-indicator  "#ind-{id}"
-    ;input.p2.mono
-      =style  "border-bottom: 1px solid var(--f3);"
+    ;input.p2.mono.bd1.br1
       =name  "classes"
       =placeholder  "prose p3"
       =type  "text"
@@ -85,17 +86,27 @@
       =oninput  "$(this).attr('value', this.value);"
       ;
     ==
-    ;textarea.p2.pre.mono.scroll-x.grow
+    ;textarea.p2.pre.mono.scroll-x.grow.bd1.m0.br1
       =name  "code"
       =oninput  "this.setAttribute('value', this.value);"
       =spellcheck  "false"
+      =value  ""
       =placeholder  "# new document"
       ; {(trip code.sail)}
+    ==
+    ;div.absolute
+      =style  "top: 14px; right: 14px;"
+      ;div.loader
+        ;span.loaded(style "opacity: 0;"): ---
+        ;span.loading
+          ;+  loading.feather-icons
+        ==
+      ==
     ==
   ==
 ++  error
   |=  =tang
-  ;div.fc.g3.p3
+  ;div.fc.g3.p3.s0
     ;div.pre.mono
       ;*
       %+  turn  (scag 25 tang)
@@ -112,7 +123,7 @@
     ==
   ==
 ++  viewer
-  ;main.grow.border.basis-half.scroll-x.scroll-y
+  ;main.grow.basis-half.scroll-x.scroll-y.br1
     =id  "viewer-{id}"
     =style  "min-width: 300px; height: 100%;"
     ;+

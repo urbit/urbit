@@ -48,102 +48,135 @@ class extends HTMLElement {
          gap: 12px;
          overflow: auto;
        }
-       main.s0 {
-         grid-template-columns: 1fr;
-         grid-template-rows: 1fr;
-         grid-template-areas:
-         ".";
+       /*
+        *  grid display
+        *
+        */
+       main {
+         display: grid;
+         grid-area: main;
+         overflow: hidden;
+         padding-left: var(--sky-inner-gap);
        }
-       main.s0 #s1,
-       main.s0 #s2,
-       main.s0 #s3,
-       main.s0 #s4 {
-         display: none;
-       }
-       main.s1 {
-         grid-template-columns: 1fr;
-         grid-template-rows: 1fr;
-         grid-template-areas:
-         "s1";
-       }
-       main.s1 #s1 {
-         display: block;
-       }
-       main.s1 #s2,
-       main.s1 #s3,
-       main.s1 #s4 {
-         display: none;
-       }
-       main.s2 {
-         grid-template-columns: 1fr 1fr;
-         grid-template-rows: 1fr;
-         grid-template-areas:
-         "s1 s2";
-       }
-       main.s2 #s1,
-       main.s2 #s2 {
-         display: block;
-       }
-       main.s2 #s3,
-       main.s2 #s4 {
-         display: none;
-       }
-       main.s3 {
-         grid-template-columns: 1fr 1fr;
-         grid-template-rows: 1fr 1fr;
-         grid-template-areas:
-         "s1 s2"
-         "s1 s3";
-       }
-       main.s3 #s1,
-       main.s3 #s2,
-       main.s3 #s3 {
-         display: block;
-       }
-       main.s3 #s4 {
-         display: none;
-       }
-       main.s4 {
-         grid-template-columns: 2fr 1fr 1fr;
-         grid-template-rows: 1fr 1fr;
-         grid-template-areas:
-         "s1 s2 s2"
-         "s1 s3 s4";
-       }
-       main.s4 #s1,
-       main.s4 #s2,
-       main.s4 #s3,
-       main.s4 #s4 {
-         display: block;
+       #s0, #s1, #s2, #s3 {
+         overflow: auto;
        }
        #button {
          grid-area: btn;
          height: fit-content;
        }
-       main {
-         display: grid;
-         grid-area: main;
-         overflow: hidden;
-       }
-       #s1, #s2, #s3, #s4 {
-         overflow: auto;
+       #s0 {
+         grid-area: s0;
        }
        #s1 {
          grid-area: s1;
-         padding: 3px;
        }
        #s2 {
          grid-area: s2;
-         padding: 3px;
        }
        #s3 {
          grid-area: s3;
-         padding: 3px;
        }
-       #s4 {
-         grid-area: s4;
-         padding: 3px;
+       main.open-0 {
+         grid-template-columns: 1fr;
+         grid-template-rows: 1fr;
+         grid-template-areas:
+         ".";
        }
+       main.open-0 #s0,
+       main.open-0 #s1,
+       main.open-0 #s2,
+       main.open-0 #s3 {
+         display: none;
+       }
+       main.open-1 {
+         grid-template-columns: 1fr;
+         grid-template-rows: 1fr;
+         grid-template-areas:
+         "s0";
+       }
+       main.open-1 #s0 {
+         display: block;
+       }
+       main.open-1 #s1,
+       main.open-1 #s2,
+       main.open-1 #s3 {
+         display: none;
+       }
+       main.open-2 {
+         grid-template-columns: 1fr 1fr;
+         grid-template-rows: 1fr;
+         grid-template-areas:
+         "s0 s1";
+       }
+       main.open-2 #s0,
+       main.open-2 #s1 {
+         display: block;
+       }
+       main.open-2 #s2,
+       main.open-2 #s3 {
+         display: none;
+       }
+       main.open-3 {
+         grid-template-columns: 1fr 1fr;
+         grid-template-rows: 1fr 1fr;
+         grid-template-areas:
+         "s0 s1"
+         "s0 s2";
+       }
+       main.open-3 #s0,
+       main.open-3 #s1,
+       main.open-3 #s2 {
+         display: block;
+       }
+       main.open-3 #s3 {
+         display: none;
+       }
+       main.open-4 {
+         grid-template-columns: 2fr 1fr 1fr;
+         grid-template-rows: 1fr 1fr;
+         grid-template-areas:
+         "s0 s1 s1"
+         "s0 s2 s3";
+       }
+       main.open-4 #s0,
+       main.open-4 #s1,
+       main.open-4 #s2,
+       main.open-4 #s3 {
+         display: block;
+       }
+       /*
+        *  gaps
+        *
+        */
+       main.open-1 #s0 {
+         padding-right: 0;
+       }
+       main.open-2 #s0,
+       main.open-3 #s0,
+       main.open-4 #s0 {
+         padding-right: var(--sky-inner-gap);
+       }
+       main.open-1 #s1,
+       main.open-2 #s1 {
+         padding-bottom: 0;
+       }
+       main.open-3 #s1,
+       main.open-4 #s1 {
+         padding-bottom: var(--sky-inner-gap);
+       }
+       main.open-1 #s2,
+       main.open-2 #s2,
+       main.open-3 #s2 {
+         padding-right: 0;
+       }
+       main.open-4 #s2 {
+         padding-right: var(--sky-inner-gap);
+       }
+       /*
+        *  mobile
+        *
+        */
        @media (max-width: 900px) {
          :host {
            grid-template-columns: auto;
@@ -170,22 +203,26 @@ class extends HTMLElement {
            grid-template-columns: auto;
            grid-template-rows: auto;
            grid-template-areas:
-           "s1";
+           "s0";
          }
          #nav {
            --rem: 24px;
          }
-         #s1 {
+         main {
+           padding: 0;
+         }
+         main #s0 {
            display: block;
            padding: 0;
+           padding-right: 0 !important;
+         }
+         main #s1 {
+           display: none !important;
          }
          main #s2 {
            display: none !important;
          }
          main #s3 {
-           display: none !important;
-         }
-         main #s4 {
            display: none !important;
          }
          :host(.closed) #nav {
@@ -206,10 +243,10 @@ class extends HTMLElement {
       </slot>
       <slot id="nav" name="nav"></slot>
       <main>
+        <slot name="s0" id="s0"></slot>
         <slot name="s1" id="s1"></slot>
         <slot name="s2" id="s2"></slot>
         <slot name="s3" id="s3"></slot>
-        <slot name="s4" id="s4"></slot>
       </main>
       <slot id="default" style="display: none;"></slot>
     `
@@ -233,7 +270,7 @@ class extends HTMLElement {
     if (name === "closed") {
       this.classList.toggle("closed");
     } else if (name === "hawks") {
-      this.qs("main").className = `s${this.hawks}`;
+      this.qs("main").className = `open-${this.hawks}`;
     }
   }
 });

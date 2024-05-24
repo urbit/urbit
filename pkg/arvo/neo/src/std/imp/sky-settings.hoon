@@ -22,11 +22,17 @@
       ^-  (list [@t @t])
       :~
         :-  'font'  'Urbit Sans'
-        :-  'font-mono'  'Monaco'
+        :-  'font-mono'  'monospace'
         :-  'mono-scale'  '0.8'
         :-  'letter-spacing'  '0.024em'
         :-  'line-height'  '1.4'
         :-  '1in'  '4px'
+        ::
+        :-  'sky-opacity'  '0.88'
+        :-  'sky-bg-size'  'contain'
+        :-  'sky-bg-url'  ''
+        :-  'sky-outer-gap'  '8px'
+        :-  'sky-inner-gap'  '8px'
         ::
         :-  'light-b-3'  '#dd5522'
         :-  'light-b-2'  '#ddaa33'
