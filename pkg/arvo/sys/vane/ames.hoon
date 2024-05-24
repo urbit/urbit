@@ -7509,6 +7509,7 @@
                 ==
                 ::
                 =^  peek-moves  ames-state  (migrate-peeks ship fren peer)
+                =^  flow-moves  ames-state  (migrate-flows ship fren ames-state)
                 ::
                 :: =.  peers.ames-state
                 ::   (~(put by peers.ames-state) ship known/peer)
@@ -7520,6 +7521,16 @@
                 %-  ~(rep in bones)
                 |=  [side corked=(set bone)]
                 (~(put in corked) ?:(?=(%for dire) bone (mix 0b1 bone)))
+              ::
+              ++  migrate-flows
+                |=  [her=^ship fren=fren-state state=axle]
+                ^-  (quip move axle)
+                =+  event-core=(ev:ames [now eny rof] hen state)
+                =;  core=_event-core
+                  abet:core
+                %-  ~(rep by flows.fren)
+                |=  [[side flow-state] core=_event-core]
+                core
               ::
               ++  migrate-peeks
                 |=  [her=^ship fren=fren-state peer=peer-state]
