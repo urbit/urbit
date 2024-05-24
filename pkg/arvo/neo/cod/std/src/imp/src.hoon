@@ -7,7 +7,8 @@
 ++  state  pro/%counter
 ++  poke  (sy %gift ~)
 ++  kids
-  %-  ~(gas by *kids:neo)
+  :+  ~  %y
+  %-  ~(gas by *lads:neo)
   :~  :-  &
       [pro/%hoon ~]
   ==

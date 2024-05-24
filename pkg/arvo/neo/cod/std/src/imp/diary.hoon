@@ -7,7 +7,8 @@
 ++  state  pro/%diary
 ++  poke  (sy %diary-diff ~)
 ++  kids
-  %-  ~(gas by *kids:neo)
+  :+  ~  %y
+  %-  ~(gas by *lads:neo)
   :~  :-  [|/%da |]
       [pro/%txt ~]
   ==

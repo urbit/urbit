@@ -9,7 +9,8 @@
 ++  state  pro/%sig
 ++  poke  (sy %dm-diff %rely ~)
 ++  kids
-  %-  ~(gas by *kids:neo)
+  :+  ~  %y
+  %-  ~(gas by *lads:neo)
   :~  :-  [|/%da |]
       [pro/%message ~]
   ==
@@ -21,7 +22,7 @@
   ::
   :+  req=|  [pro/%sig (sy %dm-diff ~)]
   :+  ~  %y
-  %-  ~(gas by *kids:neo)
+  %-  ~(gas by *lads:neo)
   :~  :-  [|/%da |]
       [pro/%message ~]
     ==

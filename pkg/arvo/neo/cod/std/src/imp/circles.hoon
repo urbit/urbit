@@ -3,7 +3,8 @@
 ++  state  pro/%sig
 ++  poke   (sy %circles-diff ~)
 ++  kids   
-  %-  ~(gas by *kids:neo)
+  :+  ~  %y
+  %-  ~(gas by *lads:neo)
   :~  [[%|^%tas |] [pro/%sig (sy %circle-diff ~)]]
   ==
 ++  deps   *deps:neo

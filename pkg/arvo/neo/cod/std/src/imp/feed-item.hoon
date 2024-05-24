@@ -12,7 +12,8 @@
 ++  state  pro/%feed-item
 ++  poke   (sy %feed-item-diff ~)
 ++  kids   
-  %-  ~(gas by *kids:neo)
+  :+  ~  %y
+  %-  ~(gas by *lads:neo)
   :~  [[&/%likes |/%p |] pro/%sig ~]
       [[&/%comments |/%p |] pro/%feed-comment ~]
   ==
@@ -21,7 +22,7 @@
   :~  :-  %acl
       :+  req=&  [pro/%circle ~]
       :+  ~  %y
-      %-  ~(gas by *kids:neo)
+      %-  ~(gas by *lads:neo)
       :~  [[|/%p |] pro/%sig ~]
       ==
   ==

@@ -26,7 +26,8 @@
 ++  state  pro/%chat
 ++  poke  (sy %chat-diff ~)
 ++  kids
-  %-  ~(gas by *kids:neo)
+  :+  ~  %y
+  %-  ~(gas by *lads:neo)
   :~  :-  [&/%messages |/%da |]
       [pro/%message ~]
   ==

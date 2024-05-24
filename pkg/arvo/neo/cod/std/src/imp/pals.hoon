@@ -46,7 +46,8 @@
 ++  state  pro/%sig
 ++  poke  (sy %pals-diff ~)
 ++  kids
-  %-  ~(gas by *kids:neo)
+  :+  ~  %y
+  %-  ~(gas by *lads:neo)
   :~  :-  [&/%pals |/%p |] :: /pals/[who=@p]
       [pro/%pal (sy %pal-diff ~)]   :: state = %pal, diff = %pal-diff
   ==

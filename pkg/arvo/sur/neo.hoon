@@ -868,7 +868,7 @@
 ::    %pro: PROtocol (type)
 ::
 +$  tack
-  ?(%con %imp %pro)
+  ?(%con %imp %pro %lib)
 ::  $post: Name of code being distributed
 ::
 +$  post  (pair tack stud)
@@ -910,6 +910,7 @@
 ::  +ford: Container for build system bootstrapping
 ++  ford
   |%
+  +$  kind  ?(%pre %src %out)
   ++  desk
     |%
     ++  kids  *^kids
@@ -1606,6 +1607,17 @@
       by-grow=(jug stud [role=stud stud]) :: indexed by to type
   ==
 ::
+++  unix
+  =<  unix
+  |%
+  +$  unix
+    $:  =clay
+        ~
+    ==
+  +$  clay
+    (map [src=pith hand=pith] [case=@ud =desk =path as=(unit mark)])
+  --
+::
 +$  stem
   $~  [*ever %x %stud *vase]
   %+  pair  ever
@@ -1814,7 +1826,6 @@
 ::
 ::  $port: Children API
 ::
-+$  port  (pair care kids)
 ::
 +$  lash
   [state=curb poke=(set stud)]
@@ -1826,7 +1837,9 @@
 ::  $band: Dependencies
 ::
 +$  band  (map term fief)
-+$  kids  (map pish lash)
++$  lads  (map pish lash)
++$  port  (pair care lads)
++$  kids  (unit port)
 ::  $dude: virtual namespace binding
 ::
 +$  dude
@@ -1846,7 +1859,7 @@
   ::  allowed to be under them. For instance, it should not  be allowed
   ::  to create /~hastuc-dibtux/chats/unit-731/blog-post-1. This is
   ::  nonsensical because blog posts don't go in chats.
-  ++  kids   *(map pish lash)
+  ++  kids   *^kids
   ::
   ::  +deps: Some nodes in the namespace might like to hear about other
   ::  things that happen in the namespace. For instance, a substack-type
@@ -1909,7 +1922,7 @@
   ::  allowed to be under them. For instance, it should not  be allowed
   ::  to create /~hastuc-dibtux/chats/unit-731/blog-post-1. This is
   ::  nonsensical because blog posts don't go in chats.
-  ++  kids   *(map pish lash)
+  ++  kids   *(unit port)
   ::
   ::  +deps: Some nodes in the namespace might like to hear about other
   ::  things that happen in the namespace. For instance, a substack-type
@@ -1941,12 +1954,10 @@
 +$  gang  (axal cove)
 +$  cove
   $:  =crew
-      =rime
+      code=stud
+      rime=case
   ==
-+$  rime
-  $:  jazz=(map term once)
-  ==
-+$  lads  ~
+::
 ++  peon
   |%
   ++  match

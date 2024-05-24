@@ -2,40 +2,45 @@
 /+  aux=neo-two
 /+  default-agent
 /+  dbug
-/*  txt-hoon-imp    %hoon   /neo/src/std/imp/hoon/hoon
-/*  txt-term-imp    %hoon   /neo/src/std/imp/term/hoon
-/*  txt-ford-same   %hoon   /neo/src/std/imp/ford-same/hoon
-/*  txt-ford-slop   %hoon   /neo/src/std/imp/ford-slop/hoon
-/*  txt-ford-slap   %hoon   /neo/src/std/imp/ford-slap/hoon
-/*  txt-ford-face   %hoon   /neo/src/std/imp/ford-face/hoon
-/*  txt-ford-face   %hoon   /neo/src/std/imp/ford-face/hoon
-/*  txt-ford-reef   %hoon   /neo/src/std/imp/ford-reef/hoon
+/*  txt-hoon-imp    %hoon   /neo/cod/std/src/imp/hoon/hoon
+/*  txt-term-imp    %hoon   /neo/cod/std/src/imp/term/hoon
+/*  txt-ford-same   %hoon   /neo/cod/std/src/imp/ford-same/hoon
+/*  txt-ford-slop   %hoon   /neo/cod/std/src/imp/ford-slop/hoon
+/*  txt-ford-slap   %hoon   /neo/cod/std/src/imp/ford-slap/hoon
+/*  txt-ford-face   %hoon   /neo/cod/std/src/imp/ford-face/hoon
+/*  txt-ford-face   %hoon   /neo/cod/std/src/imp/ford-face/hoon
+/*  txt-ford-reef   %hoon   /neo/cod/std/src/imp/ford-reef/hoon
+=>
+  |%
+  ++  dev  &
+  ++  mute
+    ?:  dev  same
+    |*  *
+    !.  +<
+  --
+%-  mute
 |%
 +$  card  $+(card card:agent:gall)
 +$  state-0
-  $:  =loam:dirt:neo
-      =farm:neo
+  $:  =loam:dirt:neo  :: layer 1 
+      =farm:neo       :: layer 2
     ::
-      =town:neo
+      =town:neo       :: subscription
       =city:neo
     ::
-      =riot:neo
+      =riot:neo       :: dependencies
     ::
-      =tide:neo
-      =dive:neo
+      =tide:neo       :: concrete
+      =dive:neo       :: build
     ::
-      =gang:neo
-      =lads:neo
+      =gang:neo       :: overlay
+      =lads:neo       :: virtual
+    ::
+      =unix:neo
     ::
       =halt:neo
       dev=_|
   ==
-++  mute
-  |=  dev=?
-  |*  *
-  ?:  dev
-    !:  +<
-  !.  +<
 ::
 ++  is-parent-p
   |=  [parent=path kid=path]
@@ -59,7 +64,7 @@
 =|  state-0
 =*  state  -
 =<
-  !:
+  %-  mute
   %-  agent:dbug
   ^-  agent:gall
   |_  =bowl:gall
@@ -104,7 +109,7 @@
   ++  on-fail  on-fail:def
   ++  on-peek  on-peek:run
   --
-%-  (mute dev)
+:: %-  mute
 |_  [=bowl:gall cards=(list card)]
 ::  |aux: auxilliary helpers
 +|  %aux
@@ -200,8 +205,10 @@
   ^+  run
   ?+  mark  ~|(bad-poke-mark/mark !!)
     %neo-move        =;(f (f !<(_+<.f vase)) on-move)
+    %neo-card        =;(f (f !<(_+<.f vase)) on-card)
     %neo-dirt-card   =;(f (f !<(_+<.f vase)) on-dirt-card)
     %neo-sync        =;(f (f !<(_+<.f vase)) on-sync)
+    %neo-ack         =;(f (f !<(_+<.f vase)) on-ack)
   ::
     %noun            (on-noun q.vase)
     %neo-raw-poke    (on-move (poke:harden !<(raw-poke:neo vase)))
@@ -220,8 +227,16 @@
   |=  =move:neo
   ^+  run
   =/  src=name:neo  (de-pith:name:neo p.move)
+  =/  dst=name:neo  (de-pith:name:neo p.q.move)
   ?>  =(src.bowl ship.src)
-  abet:(arvo move)
+  ?.  ?=([%$ *] pith.dst)
+    abet:(arvo move)
+  (on-move:sys p.move q.move(p t.pith.dst))
+++  on-ack
+  |=  =ack:neo
+  ~&  ack/ack
+  run
+
 ::
 ++  on-dirt-card
   |=  =card:dirt:neo
@@ -273,10 +288,11 @@
   (slog leaf/"neo: bad deal: {(en-tape:pith:neo road)}" u.p.sign)
 ::
 ++  on-arvo
-  |=  [=wire syn=sign-arvo]
+  |=  [=(pole knot) syn=sign-arvo]
   ^+  run
-  =.  run   +:(on-arvo:def wire syn)
-  run
+  ?+  pole  +:(on-arvo:def pole syn)
+    [%sys rest=*]  (take-arvo:sys rest.pole syn)
+  ==
 ++  on-peek
   |=  =path
   ^-  (unit (unit cage))
@@ -555,21 +571,12 @@
     [state poke kids]:kook
   ++  pith
     ^-  pith:neo
-    :+  p/our.bowl  %out
-    %-  pave:neo
-    ?@  stud 
-      /std/imp/[stud]
-    ?:  =(our.bowl ship.stud)
-      /our/[desk.stud]/imp/[mark.stud]
-    /her/(scot %p ship.stud)/[desk.stud]/imp/[mark.stud]
+    :-  p/our.bowl  
+    (~(pith press imp/stud) %out)
   ++  vase
     ^-  ^vase
-    ~&  firm/pith
-    %-  (slog (print-dbug /))
-
     q:(need (~(peek plow:aux loam) pith))
   ++  is-bunted
-    =-   ~&  is-bunted/[stud -]  -
     (~(nest ut -:!>(~)) | p:vase)
   ++  default-kook
     ^-  kook:neo
@@ -613,7 +620,7 @@
   --
 ++  lib
   |_  =loc:ford:neo
-  ++  path
+  ++  path  
     ^-  ^path
     %-  welp
     :_  [%lib (pout pith.loc)]
@@ -628,7 +635,8 @@
   ++  built
     !=(~ (~(peek plow:aux loam) p/our.bowl pith))
   ++  exists
-    (exists-file %src path)
+    =/  pax  path
+    (exists-file %src pax)
   --
 ::
 ++  con
@@ -667,18 +675,8 @@
       =/  have=type  -:(slot 3 vax)
       (~(nest ut need) & have)
     --
-
-  ++  pith
-    `pith:neo`(pave:neo path)
-  ++  path
-    ^-  ^path
-    :-  %out
-    ?@  stud
-      /std/con/[stud]
-    ?:  =(our.bowl ship.stud)
-      /our/[desk.stud]/con/[mark.stud]
-    :+  %ext  (scot %p ship.stud)
-    /[desk.stud]/con/[mark.stud]
+  ++  pith  (~(pith press con/stud) %out)
+  ++  path  (pout pith)
   --
 
 ::
@@ -689,22 +687,63 @@
     q:(need (~(peek plow:aux loam) pith))
   ++  built
     !=(~ (~(peek plow:aux loam) p/our.bowl pith))
-  ++  pith
-    `pith:neo`(pave:neo path)
+  ++  pith  (~(pith press pro/stud) %out)
+  ++  exists  (exists-file (~(path press pro/stud) %src))
+  -- 
+::
+++  press
+  |_  =post:neo
+  ++  disk  ^-  disk:neo  ?@(q.post ~ +.q.post)
+  ++  stud   q.post
+  ++  eject
+    |=  =pith:neo
+    ^-  [kind:ford:neo post:neo pith:neo]
+    ~|  ejecting/pith
+    =^  =disk:neo  pith  
+      ?>  ?=([%cod *] pith)
+      (eject:floppy t.pith)
+    ?>  ?=([kind:ford:neo tack:neo @ *] pith)
+    =/  =kind:ford:neo  i.pith
+    =/  =tack:neo  i.t.pith
+    :+  kind  [tack ?@(disk i.t.t.pith [i.t.t.pith ship.disk term.disk])]
+    t.t.t.pith
+    
+  ++  slip
+    |=  [=kind:ford:neo pax=pith:neo]
+    =/  [@ p=post:neo =pith:neo]
+      (eject pax)
+    (~(pith press p) kind)
   ++  path
-    ^-  ^path
-    :-  %out
-    ?@  stud
-      /std/pro/[stud]
-    ?:  =(our.bowl ship.stud)
-      /our/[desk.stud]/pro/[mark.stud]
-    :+  %ext  (scot %p ship.stud)
-    /[desk.stud]/pro/[mark.stud]
-  ++  exists
-    =/  pax  path
-    ?>  ?=(^ pax)
-    (exists-file %src t.pax)
-  -- ::
+    |=  =kind:ford:neo
+    (pout (pith kind))
+  ::
+  ++  pith
+    |=  =kind:ford:neo
+    :-  %cod
+    %+  welp  ~(pith floppy disk)
+    :-  kind
+    :-  p.post
+    =-  ~[-]
+    ?@  q.post  q.post
+    mark.q.post
+  --
+::
+++  floppy
+  |_  =disk:neo
+  ++  eject
+    |=  =pith:neo
+    ^-  [disk:neo pith:neo]
+    ?:  ?=([%std *] pith)
+      [~ t.pith]
+    ?>  ?=([[%p @] @ *] pith)
+    [[+.i.pith i.t.pith] t.t.pith]
+  ++  pith
+    ^-  pith:neo
+    ?@  disk
+      #/std
+    [p/ship.disk term.disk ~]
+  --
+::
 ++  root
   /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/neo
 ++  exists-file
@@ -786,6 +825,7 @@
       ?&  (levy pro.file |=(pro:ford:neo ~(built pro stud)))
           (levy lib.file |=(lib:ford:neo ~(built lib loc)))
       ==
+    ~|  ~(key by ~(tar of:neo loam))
     ~|  imports/file
     ?>  built-imports
     =^  pre=pith  run  
@@ -801,9 +841,8 @@
     ?~  pos
       run
     =/  pat  
-      ~(path pro i.pos)
-    ?>  ?=(^ pat)
-    =.  run  (read-file %src t.pat)
+      (~(path press pro/i.pos) %src)
+    =.  run  (read-file pat)
     $(pos t.pos)
   ++  build-libs
     |=  lis=(list loc:ford:neo)
@@ -874,7 +913,8 @@
   ++  make-prelude
     |=  [pax=pith =file:ford:neo]
     ^-  [pith _run]
-    =/  pre-path=pith  [%pre pax]
+    =/  pre-path=pith  
+      (slip:press %pre pax)
     [pre-path (make-deps pre-path (file-to-deps file))]
   ++  write-hoon
     |=  [pax=pith fil=@t]
@@ -882,8 +922,7 @@
   ++  src-to-out
     |=  pax=pith:neo
     ^-  pith:neo
-    ?>  ?=([@ *] pax)
-    [%out t.pax]
+    (slip:press %out pax)
   --
 ::
 ++  boot
@@ -891,24 +930,25 @@
   =+  .^(neo-vase=vase %ca (welp clay-beak /sur/neo/hoon))
   =/  reef=vase  (slop !>(..zuse) neo-vase(p [%face %neo p.neo-vase]))
   =/  riff=pail:neo  [%vase !>(riff-kook)]
-  =.  run  (on-dirt-card (do-grow-our #/out/std/imp/ford-riff riff))
+  =.  run  (on-dirt-card (do-grow-our (pess imp/%ford-riff) riff))
   =.  run  (make-riff #/out/reef reef)
   =.  run  (re-export reef %hoon !,(*hoon @t))
   =.  run  (re-export reef %desk !,(*hoon desk))
-  =.  run  (make-riff #/out/std/pro/vase (vase-pro reef))
-  =.  run  (make-riff #/out/std/pro/ford-in (ford-in reef))
-  =.  run  (make-riff #/out/std/pro/term (term reef))
-  =.  run  (make-riff-slap #/out/std/imp/hoon reef txt-hoon-imp)
-  =.  run  (make-riff-slap #/out/std/imp/term reef txt-term-imp)
-  =.  run  (make-riff-slap #/out/std/imp/ford-same reef txt-ford-same)
-  =.  run  (make-riff-slap #/out/std/imp/ford-face reef txt-ford-face)
-  =.  run  (make-riff-slap #/out/std/imp/ford-slop reef txt-ford-slop)
-  =.  run  (make-riff-slap #/out/std/imp/ford-slap reef txt-ford-slap)
+  =.  run  (make-riff (pess pro/%vase) (vase-pro reef))
+  =.  run  (make-riff (pess pro/%ford-in) (ford-in reef))
+  =.  run  (make-riff (pess pro/%term) (term reef))
+  =.  run  (make-riff-slap (pess imp/%hoon) reef txt-hoon-imp)
+  =.  run  (make-riff-slap (pess imp/%term) reef txt-term-imp)
+  =.  run  (make-riff-slap (pess imp/%ford-same) reef txt-ford-same)
+  =.  run  (make-riff-slap (pess imp/%ford-face) reef txt-ford-face)
+  =.  run  (make-riff-slap (pess imp/%ford-slop) reef txt-ford-slop)
+  =.  run  (make-riff-slap (pess imp/%ford-slap) reef txt-ford-slap)
   =.  run  (re-export reef %json !,(*hoon json))
   =.  run  (re-export reef %mime !,(*hoon mime))
   =.  run  copy-clay
   ::  =.  run  (emit %pass /bind-site %arvo %e %connect [~ dap.bowl ~] dap.bowl)
   (emit do-std-warp)
+  ++  pess  |=(=post:neo (~(pith press post) %out))
   ++  clay-beak  ^-  path
     /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)
   ++  ford-slip
@@ -1096,15 +1136,11 @@
     $(arvo new-arvo, done (snoc done nex))
   ++  poke
     |=  =pail:neo
-    ^+  arvo
-::  =/  =room:neo  (got:of-top here)
-::  ?:  &(=(%rely p.pail) ~(is-plot husk code.room))
-::    =.  change  (~(put by change) here %dif)
-::    work
-::    
-::  =^  cards=(list card:neo)  arvo
-::    `arvo :: (soft-site |.(si-abet:(si-poke:site pail)))
-    (ingest ~) ::  cards)
+    ^+  arvo ::    
+    =^  cards=(list card:neo)  arvo
+      (soft-surf |.(su-abet:(su-poke:surf pail)))
+    (ingest cards)
+  ::
   ::  XX: a hack
   ::
   ::    this is implicity recursive, and all external dependencies of
@@ -1218,6 +1254,9 @@
   ++  soft-surf
     |=  tap=(trap (quip card:neo _arvo))
     ^-  (quip card:neo _arvo)
+    ::  do not virtualise fastboot
+    ?:  =((de-pith:name:neo sys-pith) src.init)
+      (tap)
     =/  res=(each (quip card:neo _arvo) tang)
       (mule tap)
     ?:  ?=(%& -.res)
@@ -1246,14 +1285,17 @@
       [p.p q.q ~ ~]:su-saga
     ++  su-saga
       (dall:aux (lexe:aux (~(peek till:aux [loam farm]) %x [p/our.bowl here])) *saga:neo)
+    ++  su-pail  q:su-saga
     ++  su-kids
       =/  kids  kids:kook
+      ?~  kids
+        *lore:neo
       %-  gas-lore
-      =/  child  (dall:aux (~(peek till:aux [loam farm]) %y [p/our.bowl here]) *epic:neo)  
+      =/  child  (dall:aux (~(peek till:aux [loam farm]) p.u.kids [p/our.bowl here]) *epic:neo)
       %+  murn  ~(tap by ~(tar of:neo child))
       |=  [=pith:neo =saga:neo]
       ^-  (unit [pith:neo idea:neo])
-      ?~  ion=(scion kids pith saga)
+      ?~  ion=(scion q.u.kids pith saga)
         ~
       `[pith u.ion]
     ++  su-deps
@@ -1270,7 +1312,6 @@
         ~
       =/  =name:neo  (de-pith:name:neo u.dep)
       =/  =care:neo  (get-care:quay:neo quay)
-      ~&  dep/[term name care]
       =/  =lore:neo  (need (moor quay name))
 ::      %-  (slog term (epic:dbug:neo epic) ~)
       `[term u.dep lore]
@@ -1291,7 +1332,100 @@
       ::  ?>(check-pail) XX: TODO
       =.  arvo  (grow pail)
       su-core
+    ++  su-poke
+      |=  =pail:neo
+      =/  [caz=(list card:neo) new=pail:neo]
+        (poke:su-form pail)
+      =.  su-core  (su-emil caz)
+      ?:  =(new su-saga)
+        su-core
+      (su-grow new)
     --
+  --
+::  |sys: external interfaces
++|  %sys
+++  sys
+  |%
+  ++  on-move
+    |=  [src=pith:neo dst=pith:neo =note:neo]
+    ^+  run
+    ?+  dst  !!
+      [%clay *]  (call:silt src t.dst note)
+    ==
+  ++  take-arvo
+    |=  [=(pole knot) syn=sign-arvo]
+    ^+  run
+    ?+  pole  ~|(bad-sys-take/pole !!)
+      [%clay %peer rest=*]  (take-peer:silt rest.pole syn)
+    ==
+  --
+++  silt
+  |%
+  ++  call
+    |=  [src=pith:neo dst=pith:neo =note:neo]
+    ?>  ?=(%poke -.note) :: XX: all shanes should be virtualised and hand deliver acks
+    ?>  ?=(%clay-req p.pail.note)
+    =+  !<(=req:clay:neo q.pail.note)
+    ?-    -.req
+        %pull
+      =.  clay.unix  (~(del by clay.unix) [src pith.req])
+      run
+    ::
+        %peer
+      =+  .^(=cass:clay %cw /(scot %p our.bowl)/[desk.peer.req]/(scot %da now.bowl)/sys/kelvin)
+      =/  [case=@ud =peer:clay:neo]  (~(gut by clay.unix) [src pith.req] [0 peer.req])
+      =.  case  ud.cass
+      =.  clay.unix  (~(put by clay.unix) [src pith.req] [case peer])
+      (emit (do-peer src pith.req))
+    ==
+  ++  take-peer
+    |=  [wir=(pole knot) syn=sign-arvo]
+    ?>  ?=(%writ +<.syn)
+    =/  paxs=(pole pith:neo)
+      (de:drive:neo (pave:neo wir))
+    ?>  ?=([src=* hand=* ~] paxs)
+    =/  src=pith  src.paxs
+    =/  hand=pith  hand.paxs
+    ?~  cas=(~(get by clay.unix) [src hand])
+      run
+    =/  [case=@ud =peer:clay:neo]  u.cas
+    =.  case  +(case)
+    ?~  p.syn
+      ~&  empty-clay-res/wir
+      run
+    =+  !<(kids=(list path) q.r.u.p.syn)
+    =/  res=(axal cage)
+      %-  ~(gas of *(axal cage))
+      %+  turn  kids
+      |=  kid=path
+      ^-  [path cage]
+      :: =?  kid   ?=(^ as.peer)
+        ::(snoc (snip kid) u.as.peer)
+      :-  kid
+      ~&  trying/kid
+      :-  (fall as.peer (rear kid))
+      %.  .^(vase %cr (welp /(scot %p our.bowl)/[r.p.u.p.syn]/(scot %da now.bowl) kid))
+      ^-  $-(vase vase)
+      ?~  as.peer  |=(=vase vase)
+      .^(tube:clay %cc (welp /(scot %p our.bowl)/[r.p.u.p.syn]/(scot %da now.bowl) /(rear kid)/[u.as.peer]))
+    ~&  res/~(key by ~(tar of res))
+    =.  res  (~(dip of res) path.peer)
+    ~&  res/~(key by ~(tar of res))
+    =/  =note:neo  [%poke %clay-res !>(`res:clay:neo`[hand case res])]
+    ~&  sending-to/src
+    =/  =move:neo  [[p/our.bowl #/$/clay] src note]
+    =/  =wire      (welp /sys/clay/res wir)
+    =.  clay.unix  (~(put by clay.unix) [src hand] [case peer])
+    =.  run  (emit (do-move move))
+    (emit (do-peer src hand))
+  ::
+  ++  do-peer
+    |=  [src=pith:neo hand=pith:neo]
+    ^-  card
+    =/  [case=@ud =peer:clay:neo]  (~(got by clay.unix) [src hand])
+    =/  =wire  (welp /sys/clay/peer (pout (en:drive:neo ~[src hand])))
+    =/  =rave:clay  [%sing [%t ud/case path.peer]]
+    (pass wire %arvo %c %warp our.bowl desk.peer `rave)
   --
 ::  |util: utilties
 +|  %util
@@ -1317,7 +1451,6 @@
 ++  plag
   =|  rol=(unit stud:neo)
   |=  [want=curb:neo have=saga:neo]
-  ~&  plag/-.want
   ^-  (unit idea:neo)
   =*  loop   $
   =/  =stud:neo  p.q.have
@@ -1359,8 +1492,9 @@
 ::`[want (slam conv q.have)]
 ::
 ++  scion
-  |=  [want=kids:neo =pith:neo =saga:neo]
+  |=  [want=lads:neo =pith:neo =saga:neo]
   ^-  (unit idea:neo)
+
   ?~  pis=(find:peon:neo pith ~(key by want))
     ~
   =/  =lash:neo  (~(got by want) u.pis)
@@ -1387,7 +1521,6 @@
     |/:_(res [*pith:neo u.rot])
   ?~  q.want
     |/res
-  ~&  ion/[pith q.u.q.want p.q.saga]
   ?~  ion=(scion q.u.q.want pith saga)
      &/~
   |/:_(res [pith u.ion])
@@ -1436,8 +1569,6 @@
 ++  print-dbug
   |=  prefix=pith:neo
   ^-  tang
-  ?:  =(1 1)
-    ~
   =/  lom  (~(dip of:neo loam) prefix)
   =/  fam  (~(dip of:neo farm) prefix)
   %-  zing
@@ -1446,6 +1577,7 @@
   |=  [=pith:neo =soil:neo]
   ^-  tang
   ?~  val=(ram:on:soil:neo soil)
+    ~&  missing-value/pith
     ~
   ?~  q.val.u.val
     ~

@@ -3,7 +3,8 @@
 ++  state  pro/%sig
 ++  poke   (sy %feed-diff ~)
 ++  kids   
-  %-  ~(gas by *kids:neo)
+  :+  ~  %y
+  %-  ~(gas by *lads:neo)
   :~  [[&/%items |/%da |] pro/%feed-item (sy %feed-item-diff ~)]
   ==
 ++  deps

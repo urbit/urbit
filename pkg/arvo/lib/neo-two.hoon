@@ -1,7 +1,7 @@
 /-  neo
 ::  Layer 1
 =>  
-=/  verb  &
+=/  verb  |
 |%
 ++  lexe
   |=  res=(unit (unit epic:neo))
@@ -350,7 +350,6 @@
       ~
     =;  =once:neo
       (look care once pith)
-    ~&  peek/[care pith]
     ?+    care  !!
         %x
       ?~  ove=(ram:on:land:neo land.u.val)

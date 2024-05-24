@@ -17,8 +17,14 @@
     ?>  =(%clay-res stud)
     =+  !<(=res:clay:neo vax)
     :_  pail
-    ~&  res/res
-    ~
+    %+  murn  ~(tap of files.res)
+    |=  [=path =cage]
+    ^-  (unit card:neo)
+    ?.  =(%hoon p.cage)
+      ~
+    =.  path  (snip path)
+    ~&  making/path
+    `[(welp here.bowl (pave:neo path)) %make %hoon `cage ~]
   ++  init
     |=  old=(unit pail:neo)
     ^-  (quip card:neo pail:neo)

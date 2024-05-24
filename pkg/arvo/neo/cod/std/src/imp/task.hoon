@@ -4,8 +4,8 @@
 ++  state  pro/%task
 ++  poke   (sy %task-diff ~)
 ++  kids   
-  ^-  kids:neo
-  %-  ~(gas by *kids:neo)
+  :+  ~  %y
+  %-  ~(gas by *lads:neo)
   :~  :-  [|/%tas |]
     [pro/%task (sy %task-diff ~)]
   ==

@@ -24,7 +24,8 @@
 ++  state  pro/%chat-link
 ++  poke   (sy %rely ~)
 ++  kids
-  %-  ~(gas by *kids:neo)
+  :+  ~  %y
+  %-  ~(gas by *lads:neo)
   :~  :-  [&/%messages |/%da |]
       [pro/%message ~]
   ==
@@ -36,7 +37,7 @@
     ::
     :+  req=&  [pro/%chat ~]
     :+  ~  %y
-    %-  ~(gas by *kids:neo)
+    %-  ~(gas by *lads:neo)
     :~  :-  [&/%messages |/%da |]
         [pro/%message ~]
   ::
