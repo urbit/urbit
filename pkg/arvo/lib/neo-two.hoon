@@ -170,16 +170,6 @@
     ?~  pie=(ram:on:soil:neo u.fil.loam)
       0
     key.u.pie
-  ++  rift
-    |=  grow=?
-    ^-  ?
-    ?~  fil.loam
-      grow
-    ?~  old=(ram:on:soil:neo u.fil.loam)
-      grow
-    ?:  grow
-      =(~ q.val.u.old)
-    !=(~ q.val.u.old)
   ++  vest
     |=  kind=?(%y %z)
     ^-  (map pith:neo case:neo)
@@ -198,18 +188,26 @@
   ::
   ++  grow
     |=  [=pail:neo =oath:neo]
-    ^-  (quip [case:neo ?] loam:dirt:neo)
+    ^-  (quip loot:neo loam:dirt:neo)
     =/  =poem:neo  [[+(case) oath] `pail]
     (make poem)
   ++  make
     |=  =poem:neo
-    ^-  (quip [case:neo ?] loam:dirt:neo)
+    ^-  (quip loot:neo loam:dirt:neo)
     =?  fil.loam  ?=(~ fil.loam)
       `*soil:neo
     ?>  ?=(^ fil.loam)
     =/  new=case:neo  +(case)
     ?>  =(new p.p.poem)
-    :-  [new (rift !=(q.poem ~))]^~
+    =/  =mode:neo
+      ?:  =(q.poem ~)
+        %del
+      ?~  old=(ram:on:soil:neo u.fil.loam)
+        %add
+      ?:  =(q.val.u.old ~)
+        %add
+      %dif
+    :-  [new mode]^~
     loam(fil `(put:on:soil:neo u.fil.loam new poem))
   ::
   ++  cull
@@ -222,13 +220,13 @@
     ^-  (quip gift:dirt:neo _loam)
     =/  lom   (~(dip of:neo loam) p.card)
     %-  (trace "call" (print-card card))
-    =^  gifts=(list [case:neo ?])  lom
+    =^  gifts=(list loot:neo)  lom
       ?-  -.q.card
         %grow  (~(grow plow lom) +.q.card)
         %cull  ~(cull plow lom)
       ==
     :_  (~(rep of:neo loam) p.card lom)
-    (turn gifts |=([@ ?] `gift:dirt:neo`[p.card +<]))
+    (turn gifts |=(loot:neo `gift:dirt:neo`[p.card +<]))
   ::
   ++  look
     |=  =pith:neo
@@ -328,7 +326,8 @@
     ^-  farm:neo
     ?~  gis
       farm
-    $(farm (eternal [p q r]:i.gis), gis t.gis)
+    =/  rift  |(=(mode.i.gis %add) =(mode.i.gis %del))
+    $(farm (eternal pith.i.gis case.i.gis rift), gis t.gis)
   ++  scry
     |=  [=case:neo =pith:neo]
     ^-  (unit (unit saga:neo))

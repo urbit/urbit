@@ -291,7 +291,9 @@
   ++  on    ((^on case poem) lte)
   +$  a  ((mop case poem) lte)
   --
-+$  dust   (trel pith @ud ?)
++$  mode  ?(%add %dif %del)
++$  loot  [case=@ud =mode]
++$  dust  [=pith loot]
 +$  grit   (list dust)
 ::  $dirt: Layer 1 of the namespace
 ++  dirt
@@ -827,7 +829,7 @@
 ::
 ::  $gift: notification that a children changed
 ::
-+$  gift  (map pith mode)
++$  gift  (axal loot)
 ::
 ::  $hunt: perspective and shrub
 ::    
@@ -872,6 +874,8 @@
 ::  $post: Name of code being distributed
 ::
 +$  post  (pair tack stud)
+::  $prop: Code unit inside desk
++$  prop  (pair tack mark)
 ::
 ::  +get-stud-name: Get name for $stud
 ::
@@ -1012,7 +1016,7 @@
     ::     Absolute ~hastuc-dibtux/src/foo/bar/test
     ::     Relative %^/bar
     ++  old-nam
-      :: ^-  $-(nail (like name:neo))
+      :: ^-  $-(nail (like name))
       ;~  pose
         %+  sear 
           |=  [kets=(list) pit=pith]
@@ -1175,7 +1179,7 @@
   ==
 +$  howl  tone
 ::  $wail: change result
-+$  wail  (trel pith yell ?)
++$  wail  (trel pith yell mode)
   
 :: $song
 ::  $sound: internal change tracking listeners
@@ -1302,6 +1306,9 @@
     ?~  long
       ~
     $(curt t.curt, long t.long)
+  ++  sort
+    |=  [a=$ b=$]
+    (lte (lent a) (lent b))
   --
 ++  name
   =<  name
@@ -1587,7 +1594,6 @@
 +$  rely
   [=term =stem]
 ::
-+$  mode  ?(%add %dif %del)
 ::
 +$  dish  (pair pith mode)
 +$  yarn  (pair aeon mode)
@@ -1980,4 +1986,57 @@
       ~
     `i.lis
   --
+++  press
+  |_  =post
+  ++  disk  ^-  ^disk  ?@(q.post ~ +.q.post)
+  ++  stud   q.post
+  ++  eject
+    |=  =^pith
+    ^-  [kind:ford _post _pith]
+    ~|  ejecting/pith
+    =^  dis=^disk  pith  
+      ?>  ?=([%cod *] pith)
+      (eject:floppy t.pith)
+    ?>  ?=([kind:ford tack @ *] pith)
+    =/  =kind:ford  i.pith
+    =/  =tack  i.t.pith
+    :+  kind  [tack ?@(dis i.t.t.pith [i.t.t.pith ship.dis term.dis])]
+    t.t.t.pith
+    
+  ++  slip
+    |=  [=kind:ford pax=^pith]
+    =/  [@ p=^post =^pith]
+      (eject pax)
+    (~(pith press p) kind)
+  ++  path
+    |=  =kind:ford
+    (pout (pith kind))
+  ::
+  ++  pith
+    |=  =kind:ford
+    :-  %cod
+    %+  welp  ~(pith floppy disk)
+    :-  kind
+    :-  p.post
+    =-  ~[-]
+    ?@  q.post  q.post
+    mark.q.post
+  --
+++  floppy
+  |_  =disk
+  ++  eject
+    |=  =^pith
+    ^+  [disk pith]
+    ?:  ?=([%std *] pith)
+      [~ t.pith]
+    ?>  ?=([[%p @] @ *] pith)
+    [[+.i.pith i.t.pith] t.t.pith]
+  ++  pith
+    ^-  ^pith
+    ?@  disk
+      #/std
+    [p/ship.disk term.disk ~]
+  --
+
+
 --

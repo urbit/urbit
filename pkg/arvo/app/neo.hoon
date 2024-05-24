@@ -475,7 +475,7 @@
         fu-core
       $(fu-core (fu-tone i.lis), lis t.lis)
     ++  fu-tone
-      |=  [change=pith:neo =case:neo rift=?]
+      |=  [change=pith:neo =case:neo =mode:neo] 
       ^+  fu-core
       =/  yel  ~(tap by yel:fu-rave)
       |-
@@ -486,7 +486,7 @@
       =;  add=?
         ?.  add
           $(yel t.yel)
-        $(yel t.yel, wal :_(wal [pith i.yel rift]))
+        $(yel t.yel, wal :_(wal [pith i.yel mode]))
       ?:  =(change pith)
         &
       ?:  ?=(%y p.i.yel)
@@ -1016,6 +1016,30 @@
     =.  pith  [p/our.bowl pith]
     (on-card pith %make %ford-riff `vase/riff ~)
   --
+:: +abduct: check capture
+++  abduct
+  |=  [par=pith:neo child=pith:neo]
+  ^-  ?
+  ?~  wav=(~(get of:neo tide) par)
+    |
+  ?~  kids.dock.u.wav
+    |
+  ?:  ?=(%y p.u.kids.dock.u.wav)
+    =(par (~(parent of:neo tide) child))
+  !=(~ (dif:pith:neo par child))
+::  +adopt: produce all capturing parents
+::
+++  adopt
+  =|  here=pith:neo
+  =|  res=(set pith:neo)
+  |=  =pith:neo
+  |-  ^+  res
+  =?  res  (abduct here pith)
+    (~(put in res) here)
+  =/  nex  (dif:pith:neo here pith)
+  ?~  nex
+    res
+  $(here (snoc here i.nex))
 ::  +arvo: local callstack
 ++  arvo
   =+  verb=&
@@ -1026,9 +1050,8 @@
   =|  $:  done=(list move:neo)  :: moves we've completed
           down=(list move:neo)  :: pending moves for children
           up=(list move:neo)    :: pending moves for uncles
-          grit=(list dust:neo)  :: raw changelist
-          change=(map pith mode:neo)  :: changeset
-          changes=(map pith mode:neo) :: also changeset
+          smut=(list dust:neo)  :: total changelist
+          grit=(list dust:neo)  :: changelist not gifted
           gifts=(list [pith:neo gift:neo]) :: return values
       ==
   |=  =move:neo
@@ -1050,7 +1073,7 @@
     ?:  =([~ ~] block)  
       =.  run    (emil `(list card)`(do-ack [p p.q]:init-move err.block))
       =.  run    (emil (turn up do-move))
-      (dial changes)
+      (dial smut)
         :: %+  turn  ~(tap by change)
         ::  |=([=pith:neo =mode:neo] ^+(+< [[p/our.bowl pith] mode]))
       :: run
@@ -1078,11 +1101,27 @@
       ?>  ?=(^ gifts)
       t.gifts
     =.  here  pith
-    =/  =pail:neo
-      gift/!>(gift)
     =^  cards=(list card:neo)  arvo
-      `arvo :: (soft-site |.(si-abet:(si-poke:site pail)))
+      (soft-surf |.(su-abet:(su-give:surf gift)))
     (ingest cards)
+  ::
+  ++  plunder
+    ^+  arvo
+    =/  by-parent=(jug pith:neo dust:neo)
+      %+  roll  grit
+      |=  [=dust:neo by-parent=(jug pith:neo dust:neo)]
+      %-  ~(gas ju by-parent)
+      (turn ~(tap in (adopt pith.dust)) |=(=pith:neo [pith [(dif:pith:neo pith pith.dust) +.dust]]))
+    :: XX: assert gifts empty
+    =.  gifts
+      %+  turn  (sort ~(tap in ~(key by by-parent)) sort:pith:neo)
+      |=  =pith:neo
+      ^-  [pith:neo gift:neo]
+      [pith (gas-gift ~(tap in (~(get ju by-parent) pith)))]
+    =.  smut  (welp smut grit)
+    =.  grit   ~
+    give
+  ::
   ++  trace-card
     |=  =move:neo
     ^-  tank
@@ -1104,33 +1143,14 @@
       (take-dirt-card [p/our.bowl here] %grow pail *oath:neo)
     =.  grit  (welp grit git)
     arvo
-      
-  ++  finalize
-    ^+  arvo
-::  =.  gifts
-::    =-  ~(tap by -)
-::    ^-  (map pith:neo gift:neo)
-::    %+  roll  ~(tap by change)
-::    |=  [[=pith:neo =mode:neo] out=(map pith:neo gift:neo)]
-::    ?~  par=(parent:of-top pith)
-::      out
-::    =/  parent  (~(gut by out) u.par *gift:neo)
-::    =.  parent  (~(put by parent) (sub:pith:neo pith u.par) mode)
-::    (~(put by out) u.par parent)
-::  =.  changes  (~(uni by changes) change)
-::  =.  change   *(map pith:neo mode:neo)
-::  ?~  gifts
-::    arvo
-    give
-    :: $(gifts t.gifts)
-    
+  ::
   ++  work
     ^+  arvo
     |-  ^+  arvo
     ?^  err.block
       arvo
     ?~  down
-      finalize
+      plunder
     =/  nex=move:neo  i.down
     =/  new-arvo  (apply:arvo(down t.down) nex) :: XX: weird compiler?
     $(arvo new-arvo, done (snoc done nex))
@@ -1149,7 +1169,6 @@
   ++  tomb
     |=  *
     ::  =.  apex  (del:of-top here)
-    =.  change  (~(put by change) here %del)
     work
   ::
   ++  apply
@@ -1332,6 +1351,14 @@
       ::  ?>(check-pail) XX: TODO
       =.  arvo  (grow pail)
       su-core
+    ::
+    ++  su-give
+      |=  =gift:neo
+      ?.  (~(has in poke.dock.wave) %gift)
+        ~&  skipping-give/here
+        su-core
+      (su-poke gift/!>(gift))
+    ::
     ++  su-poke
       |=  =pail:neo
       =/  [caz=(list card:neo) new=pail:neo]
@@ -1533,6 +1560,16 @@
     epic
   =.  epic   (~(put of:neo epic) i.lst)
   $(lst t.lst)
+::
+++  gas-gift
+  =|  =gift:neo
+  |=  lst=(list [pith:neo loot:neo])
+  ^+  gift
+  ?~  lst
+    gift
+  =.  gift   (~(put of:neo gift) i.lst)
+  $(lst t.lst)
+
 ++  gas-lore
   =|  =lore:neo
   |=  lst=(list [pith:neo idea:neo])
