@@ -1,9 +1,9 @@
 /@  node
-/@  sandbox-diff
+/@  folder-diff
 /-  _/manx-utils
-:-  [%node %sandbox-diff]
+:-  [%node %folder-diff]
 |=  nod=node
-^-  sandbox-diff
+^-  folder-diff
 =/  mu  ~(. manx-utils nod)
 =/  head  (@tas (got:mu %head))
 =/  stud  (vol:mu "stud")

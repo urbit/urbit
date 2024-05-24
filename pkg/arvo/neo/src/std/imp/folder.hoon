@@ -1,9 +1,9 @@
-/@  sandbox
-/@  sandbox-diff
+/@  folder
+/@  folder-diff
 ^-  firm:neo
 |%
-++  state  %sandbox
-++  poke  (sy %sandbox %sandbox-diff ~)
+++  state  %folder
+++  poke  (sy %folder %folder-diff ~)
 ++  kids  *kids:neo
 ++  deps  *deps:neo
 ++  form
@@ -14,15 +14,15 @@
     ^-  (quip card:neo vase)
     :-  ~
     ?~  new
-      !>(*sandbox)
+      !>(*folder)
     u.new
   ::
   ++  poke
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo vase)
     ?+    stud  !!
-        %sandbox-diff
-      =/  poke  !<(sandbox-diff vax)
+        %folder-diff
+      =/  poke  !<(folder-diff vax)
       ?-    -.poke
           %make
         :_  sta

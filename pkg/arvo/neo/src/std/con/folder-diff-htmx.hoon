@@ -1,6 +1,6 @@
-/@  sandbox-diff
-:-  [%sandbox-diff %htmx]
-|=  =sandbox-diff
+/@  folder-diff
+:-  [%folder-diff %htmx]
+|=  =folder-diff
 |=  =bowl:neo
 ;div.loading
   =hx-get  "/neo/hawk{(en-tape:pith:neo here.bowl)}"

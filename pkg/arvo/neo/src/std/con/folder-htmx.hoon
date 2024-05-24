@@ -1,7 +1,7 @@
-/@  sandbox
+/@  folder
 /-  _/feather-icons
-:-  [%sandbox %htmx]
-|=  =sandbox
+:-  [%folder %htmx]
+|=  =folder
 |=  =bowl:neo
 |^
   ;div.wf.hf.relative
@@ -13,7 +13,7 @@
 ::
 ++  form
   ;form.fr.g1.af
-    =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=sandbox-diff"
+    =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=folder-diff"
     =hx-swap  "outerHTML"
     =hx-target  "find .loading"
     =head  "make"
@@ -25,7 +25,7 @@
       =required  ""
       =pattern  (trip '[a-z]{1}[a-z0-9\\-]+')
       =title  "lowercase and heps"
-      =placeholder  "file-name"
+      =placeholder  "file-or-folder-name"
       ;
     ==
     ;select.f1.b0.bd1.br2.p1
@@ -37,14 +37,14 @@
       ;option.f3.o4(value ""): type
       ;*  %+  turn
             ^-  (list @tas)
-            :~  %accel
+            :~  %folder
+                %accel
                 %circle
                 %diary
                 %iframe
                 %task
                 %txt
                 %sail
-                %sandbox
             ==
           |=  t=@tas
           ^-  manx
@@ -55,7 +55,7 @@
       ;
     ==
     ;button.loader.p2.p1.hover.bd1.br2.b1
-      ;span.loaded: Create
+      ;span.loaded: create
       ;span.loading: ...
     ==
   ==

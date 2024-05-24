@@ -18,7 +18,7 @@
         [#/[p/our.bowl]/home/accel %make %accel ~ ~]
         [#/[p/our.bowl]/home/iframes/wiki %make %iframe `!>('https://docs.urbit.org') ~]
         [#/[p/our.bowl]/home/circle %make %circle ~ ~]
-        [#/[p/our.bowl]/home/sandbox %make %sandbox ~ ~]
+        [#/[p/our.bowl]/home/files %make %folder ~ ~]
     ==
   ++  poke
     |=  [=stud:neo vax=vase]
