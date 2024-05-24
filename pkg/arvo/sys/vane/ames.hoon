@@ -3291,10 +3291,13 @@
                 =.  peers.ames-state
                   (~(del by peers.ames-state) her)
                 ?>  ?=([[* [%pass ^ [%a %mako *]]] ~] moves)
-                ::  enqueue a %prod to start sending unsent messages
+                ::  enqueue a %prod to start sending unsent messages, after
+                ::  all the %makos (which trigger +peeks for %acks) have been
+                ::  processed
                 ::
-                =.  event-core  (emil [[[/ames]~ %pass /mate %a %prod ~] moves])
-                peer-core
+                ::  XX TODO  make-peeks
+                =/  prod-move=(list move)  [[/ames]~ %pass /mate %a %prod ~]~
+                peer-core(event-core (emil (weld moves prod-move)))
                 ::
                 ++  align-bones
                   ^+  ossuary.peer-state
@@ -3473,9 +3476,36 @@
                   moves^flows.fren
                 ::
                 ++  make-peeks
-                  :: |=  =_keens.peer-state
-                  ^-  (map path request-state)
-                  !!  ::  side effect of making a flow
+                  :: ^-  (map path request-state)
+                  =+  ev-core=%*(ev-core mesa sat.per known/*fren-state)
+                  =*  per  peer-state
+                  %-  ~(rep by keens.per)
+                  |=  [[=path keen=keen-state] core=_ev-core]
+                  =|  req=request-state
+                  ::  /a/x/1//fine/shut/(scot %ud idx.u.sec)/[enc]
+                  ::  /a/x/1//chum/(scot %p our)/(scot %ud life.ames-state)/[cyf]
+                  =>  .(path `(pole knot)`path)
+                  ?>  ?=([van=%a car=%x cas=@ %$ pat=*] path)
+                  ?>  =('1' cas.path)
+                  =;  [pax=^path =space]
+                    =.  pax  (ev-mess-spac:core space pax)
+                    %-  ~(rep in listeners.keen)
+                    |=  [=^duct core=_core]
+                    (ev-make-peek:core(hen duct) space her pax)
+                  ?+    pat.path  [pat.path [%publ life.per]]  :: XX
+                      [%fine %shut idx=@ cyf=@]
+                    =/  idx=@ud    (slav %ud idx.pat.path)
+                    =/  cyf=@      (slav %ud cyf.pat.path)
+                    =/  key=@      key:(got:on:chain server-chain.ames-state idx)
+                    =/  pax=^path  (rash `@t`(dy:crub:crypto key cyf) stap)
+                    [pax %shut idx key]
+                  ::
+                      [%chum her=@ lyf=@ cyf=@]
+                    =/  cyf=@  (slav %ud cyf.pat.path)
+                    =*  key        symmetric-key.per
+                    =/  pax=^path  (rash `@t`(dy:crub:crypto key cyf) stap)
+                    [pax %chum life.ames-state her life.per key]
+                  ==
                 ::
                 ++  get-route
                   ^-  (unit [direct=? =lane])
@@ -5366,7 +5396,6 @@
           ::
           ==
         ::
-
       ::
       --
     ::
