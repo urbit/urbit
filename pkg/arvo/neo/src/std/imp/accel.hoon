@@ -11,7 +11,7 @@
   |=  col=@ud
   %+  turn  (gulf rowstart rowend)
   |=  row=@ud
-  [#/[p/our.bowl]/home/accel/[ud/col]/[ud/row] %make %accel-cell `!>(['~' ~ ~ ~ ~]) ~]
+  [(welp here.bowl #/[ud/col]/[ud/row]) %make %accel-cell `!>(['~' ~ ~ ~ ~]) ~]
 --
 ::
 ^-  firm:neo
@@ -29,8 +29,8 @@
   |_  [=bowl:neo =ever:neo sta=vase *]
   ++  init
     |=  old=(unit vase)
-    =/  width  2
-    =/  height  2
+    =/  width  10
+    =/  height  10
     :_  !>([width height])
     (make-cells bowl 1 width 1 height)
   ::
@@ -56,9 +56,9 @@
       :_  sta
       =;  conf
         :~  :-  (welp here.bowl ~[[ud/row.poke] [ud/column.poke]])
-            :*  %make 
-                %accel-cell 
-                `!>([text.poke ~ refa.poke refb.poke target.poke]) 
+            :*  %make
+                %accel-cell
+                `!>([text.poke ~ refa.poke refb.poke target.poke])
                 conf
             ==
         ==
