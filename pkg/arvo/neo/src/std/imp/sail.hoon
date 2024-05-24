@@ -14,6 +14,8 @@
     `vax
   ++  init
     |=  vas=(unit vase)
-    `(need vas)
+    :-  ~
+    ?~  vas  !>(*sail)
+    u.vas
   --
 --

@@ -15,6 +15,8 @@
     `!>(new)
   ++  init
     |=  vas=(unit vase)
-    `(need vas)
+    :-  ~
+    ?~  vas  !>(*iframe)
+    u.vas
   --
 --

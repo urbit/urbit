@@ -1,4 +1,5 @@
 /@  home
+/-  _/feather-icons
 :-  [%home %htmx]
 |=  =home
 |=  =bowl:neo
@@ -17,19 +18,24 @@
   %+  weld  "--"
   (trip smeg)
 ++  menu
-  ;div.p4.sticky.z2.b0
+  ;div.p4.sticky.z2
     =style  "top: 36px; left: 0;"
-    ;div.fr.border.br2.b0.g2
-      ;input.p2.grow.br2
+    ;div.fr.g2.relative
+      ;input.p2.grow.br2.border
         =onchange  "alert('not yet implemented')"
         =type  "text"
         =placeholder  "Search..."
         ;
       ==
-      ;div.loader.wfc.fc.p2.f2.s-2.mono
-        =id  "indicator-{id}"
-        ;span.loaded(style "opacity: 0"): ---
-        ;span.loading: ---
+      ;div.absolute
+        =style  "top: 0px; right: 0px;"
+        ;div.loader.wfc.fc.p2.f2.s-2.mono.br2
+          =id  "indicator-{id}"
+          ;span.loaded(style "opacity: 0"): ---
+          ;span.loading
+            ;+  loading.feather-icons
+          ==
+        ==
       ==
     ==
   ==
@@ -49,7 +55,8 @@
       =pith  (en-tape:pith:neo pith)
       ;a.b1.br2.block.fc.as.js.hover.p3.s1.border-2
         =style  "width: 160px; height: 160px;"
-        =hx-swap  "closest ha-wk"
+        =hx-target  "closest .hawk"
+        =hx-swap  "innerHTML"
         =href  (trip (spat ['neo' 'hawk' path]))
         ; {(trip (snag 0 (pout pith)))}
       ==
