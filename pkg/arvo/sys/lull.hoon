@@ -868,8 +868,9 @@
         $>(%trim vane-task)
         $>(%vega vane-task)
     ::
-        [%mate (unit ship)]            ::  per-peer migration
-        [%load ?(%mesa %ames)]         ::  load core for new peers; XX make it term for flexibility?
+        [%mate (unit ship)]                   ::  per-peer migration
+        [%load ?(%mesa %ames)]                ::  load core for new peers; XX make it term for flexibility?
+        [%back (unit ship)]                   ::  per-peer regression
     ::
         [%heer p=lane:pact q=@]                :: receive a packet
         [%mess p=(unit lane:pact) q=mess]      :: receive a message

@@ -7355,11 +7355,16 @@
               =.  per  [ship u.u.per-sat]
               ?>  ?=(%known -.sat.per)
               =/  =space
+                ::  the %chum namespace is only used if the associated path
+                ::  in the pit has a payload (i.e. belongs to a flow)
+                ::
                 chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
               %-  ~(rep by pit.sat.per)
               |=  [[=path req=request-state] core=_core]
               ~&  re-sending/path
-              ::  XX if =(~ pay.req); %naxplanation, %cork or external $peek request
+              ::  if =(~ pay.req); %naxplanation, %cork or external (i.e. not
+              ::  coming from %ames) $peek request
+              ::
               =/  =pact:pact
                 (ev-make-pact ship.per^path pay.req rift.sat.per `space)  :: XX memoize?
               %+  ev-emit:core   unix-duct.ames-state
@@ -7477,6 +7482,90 @@
                   %sun  acc(sun %.y)
                 ==
               sy-core
+            ::
+            ++  sy-back
+              |=  ship=(unit ship)
+              |^  ^+  sy-core
+              ?^  ship
+                =/  =chum-state  (~(got by chums.ames-state) u.ship)
+                ?.  ?=([%known *] chum-state)
+                  sy-core
+                (migrate-chum u.ship +.chum-state)
+              %-  ~(rep by chums.ames-state)
+              |=  [[=^ship state=chum-state] core=_sy-core]
+              ?:  ?=(%alien -.state)  core
+              (migrate-chum ship +.state)
+              ::
+              ++  migrate-chum
+                |=  [=^ship fren=fren-state]
+                ^+  sy-core
+                =|  peer=peer-state
+                =:      -.peer  azimuth-state=-.fren
+                    route.peer  ~  ::  get-route
+                      qos.peer  qos.fren
+                   corked.peer  (divide-bones corked.fren)
+                  ossuary.peer  ossuary.fren
+                    chain.peer  client-chain.fren
+                ==
+                ::
+                =^  peek-moves  ames-state  (migrate-peeks ship fren peer)
+                ::
+                :: =.  peers.ames-state
+                ::   (~(put by peers.ames-state) ship known/peer)
+                sy-core
+              ::
+              ++  divide-bones
+                |=  bones=(set side)
+                ^-  (set bone)
+                %-  ~(rep in bones)
+                |=  [side corked=(set bone)]
+                (~(put in corked) ?:(?=(%for dire) bone (mix 0b1 bone)))
+              ::
+              ++  migrate-peeks
+                |=  [her=^ship fren=fren-state peer=peer-state]
+                ^-  (quip move axle)
+                =+  event-core=(ev:ames [now eny rof] hen ames-state)
+                =;  core=_event-core
+                  abet:core
+                %-  ~(rep by pit.fren)
+                |=  [[=path req=request-state] core=_event-core]
+                ::  if =(~ pay.req) this could be a +peek for a %naxplanation,
+                ::  %cork, or an external +peek (i.e. not part of flow)
+                ::
+                ?:  ?=(^ pay.req)  core  :: flows are migrated separatedly
+                :: ?~  for.req        core  :: XX weird; log?  TMI
+                =|  keen=keen-state
+                =.  listeners.keen
+                  %-  ~(rep in for.req)
+                  |=  [hen=duct for=_for.req]
+                  ::  XX inspect the duct to find %mesa wires?
+                  =?  for  ?=([[%mesa %flow *] *] hen)
+                    (~(del in for) hen)
+                  for
+                ?~  listeners.keen  core
+                ::  after filtering, all these should be external listeners
+                ::
+                =.  path
+                  =/  [=space pax=^path]
+                    [space inner]:(ev-decrypt-path path her)
+                  ?-    -.space
+                      %publ  pax
+                  ::
+                      %chum
+                    =/  cyf
+                      (scot %uv (en:crub:crypto key.space (spat pax)))
+                    /a/x/1//chum/(scot %p our)/(scot %ud life.ames-state)/[cyf]
+                  ::
+                      %shut
+                    =/  enc
+                      (scot %uv (en:crub:crypto key.space (spat pax)))
+                    /a/x/1//fine/shut/(scot %ud kid.space)/[enc]
+                  ==
+                ::
+                (on-keen:core ~ her path)
+                :: peer(keens (~(put by keens.peer) path keen))
+              ::
+              --
             ::
             +|  %internals
             ::
@@ -7625,6 +7714,7 @@
             %tame  sy-abet:(~(sy-tame sy:ev-core hen) ship.task)
             %sift  sy-abet:(~(sy-sift sy:ev-core hen) ships.task)
             %spew  sy-abet:(~(sy-spew sy:ev-core hen) veb.task)
+            %back  sy-abet:(~(sy-back sy:ev-core hen) +.task)
           ::  from internal %ames request
           ::
             %meek  (ev-make-peek:ev-core +.task)
@@ -8082,7 +8172,7 @@
     (call:(ames now eny rof) hen dud soft/task)
     ::  %mesa-only tasks
     ::
-      ?(%meek %mako %mage %heer %mess %mess-ser)
+      ?(%meek %mako %mage %heer %mess %mess-ser %back)
     ::  XX can we call the wrong core? still check if ship has migrated?
     ::
     (call:(mesa now eny rof) hen dud soft/task)
