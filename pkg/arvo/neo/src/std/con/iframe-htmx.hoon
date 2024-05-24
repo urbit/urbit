@@ -27,7 +27,7 @@
         ; Save
       ==
     ==
-    ;iframe.wf.hf
+    ;iframe.wf.hf.bd0
       =style  "background-color: #eee;"
       =id  "iframe-{url}"
       =src  url

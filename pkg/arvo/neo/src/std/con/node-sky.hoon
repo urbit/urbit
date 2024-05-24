@@ -1,11 +1,12 @@
 /@  sky
 /@  node
+/-  _/manx-utils
 :-  [%node %sky]
 |=  nod=node
 ^-  sky
-:+  %system
-  %+  turn  c.nod
-  |=  =manx
-  %-  pave:neo
-  (stab (crip (~(gut by (malt a.g.manx)) %here "/home")))
-(fall (slaw %ud (crip (~(gut by (malt a.g.nod)) %slots "0"))) 0)
+:_  (slav %ud (~(got manx-utils nod) %slots))
+%+  murn  c.nod
+|=  =manx
+=/  here  (rush (~(got manx-utils manx) %here) stap)
+?~  here  ~
+`[*@da (pave:neo u.here)]

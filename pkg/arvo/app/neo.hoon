@@ -1,5 +1,5 @@
 /-  neo, sole-sur=sole
-/+  default-agent, dbug, verb, shoe, serv=server
+/+  default-agent, dbug, verb, shoe, serv=server, feather-icons
 /*  txt-hoon-imp    %hoon   /neo/src/std/imp/hoon/hoon
 /*  txt-term-imp    %hoon   /neo/src/std/imp/term/hoon
 /*  txt-ford-same   %hoon   /neo/src/std/imp/ford-same/hoon
@@ -9,13 +9,11 @@
 /*  txt-ford-face   %hoon   /neo/src/std/imp/ford-face/hoon
 /*  txt-ford-reef   %hoon   /neo/src/std/imp/ford-reef/hoon
 /*  date-now   %js   /web/date-now/js
-/*  error-tray   %js   /web/error-tray/js
 /*  atom-input   %js   /web/atom-input/js
 /*  multiline-input   %js   /web/multiline-input/js
-/*  ha-wk   %js   /web/ha-wk/js
-/*  s-k-y   %js   /web/s-k-y/js
 /*  a-i-r   %js   /web/a-i-r/js
-/*  style-css   %css   /web/style/css
+/*  feather-css   %css   /web/feather/css
+/*  reset-css   %css   /web/reset/css
 |%
 ++  pave  pave:neo
 ++  ford  ford:neo
@@ -650,20 +648,159 @@
     [~ ~]
   --
 ++  dove
-  |_  here=pith:neo
-  ++  curr
+  |_  [here=pith:neo slot=@ud id=@da]
+  ++  idt  `tape`(zing (scan +:(scow %da id) (most dot (star ;~(less dot prn)))))
+  ++  ha-wk
+    ;div.hawk.fc.wf.hf
+      =id  "hawk-{idt}"
+      =hx-params  "id,slot"
+      =hx-vals  "\{\"id\": \"{<id>}\", \"slot\": \"{<slot>}\"}"
+      ;+  header
+      ;+  raw
+      ;+  rendered
+    ==
+  ++  has-app  !=(~ (get:of-top here))
+  ++  header
+    ;header.b2.p1.frw.g1.ac
+      =id  "hawk-header-{idt}"
+      =style  "border: 2px solid var(--b2);"
+      ;button
+        =class  "p1 hover b2 br1 bd0 {(trip ?:(has-app '' 'toggled'))}"
+        =onclick
+          """
+          $(this).toggleClass('toggled');
+          $(this).closest('.hawk').find('.raw').toggleClass('hidden');
+          $(this).closest('.hawk').find('.rendered').toggleClass('hidden');
+          $(this).closest('header').children('.hawk-tog').toggleClass('hidden');
+          """
+        ;+  outline:feather-icons
+      ==
+      ;div
+        =class  "hawk-tog frw g1 ac grow {(trip ?:(has-app '' 'hidden'))}"
+        ;a.p-1.hover.b2.br1.s0.fc.ac.jc
+          =style  "height: 2rem;"
+          =href  "/neo/hawk"
+          ; /
+        ==
+        ;*
+          =<  p
+          %^  spin  here
+                1
+              |=  [=iota a=@]
+            :_  +(a)
+          ;div.fr.ac.g1
+            =style  "height: 2rem;"
+            ;div.f4.s-1: >
+            ;a.hover.b2.br1.p1.s0
+              =hx-vals  "\{\"id\": \"{<id>}\", \"slot\": \"{<slot>}\"}"
+              =href  "/neo/hawk{(en-tape:pith:neo (scag a here))}"
+              ; {(trip ?@(iota iota (scot iota)))}
+            ==
+          ==
+        ;div.grow;
+      ==
+      ;form
+        =class  "hawk-tog grow fr m0 relative {(trip ?:(has-app 'hidden' ''))}"
+        =style  "height: 2rem;"
+        =hx-get  "/neo/hawk"
+        =hx-target  "closest .hawk"
+        ;div.absolute
+          =style  "top: 0.5rem; right: 0.5rem;"
+          ;div.loader
+            ;div.loaded(style "opacity: 0"): ---
+            ;div.loading
+              ;+  loading:feather-icons
+            ==
+          ==
+        ==
+        ;input.p-1.br1.b1.wf.s0.loaded.grow.bd0
+          =style  "margin-left: 5px;"
+          =type  "text"
+          =value  (en-tape:pith:neo here)
+          =oninput
+            """
+            $(this).attr('value', this.value);
+            $(this).parent().attr('hx-get', '/neo/hawk'+this.value);
+            htmx.process(document.body);
+            """
+          ;
+        ==
+      ==
+      ;div.fr.ac.jc.g1.hawk-actions
+        =id  "hawk-actions-{idt}"
+        ;button.p1.hover.b2.br1.loader.s-1
+          =id  "hawk-slide-up-{idt}"
+          =hx-post  "/neo/hawk/sky?stud=sky-diff"
+          =hx-target  "find .loading"
+          =hx-swap  "outerHTML"
+          =head  "slide-up"
+          =hawk-slot  "{<slot>}"
+          ;span.loaded
+            ;+  chevron-left:feather-icons
+          ==
+          ;span.loading
+            ;+  loading.feather-icons
+          ==
+        ==
+        ;button.p1.hover.b2.br1.loader.s-1
+          =id  "hawk-slide-down-{idt}"
+          =hx-post  "/neo/hawk/sky?stud=sky-diff"
+          =hx-target  "find .loading"
+          =hx-swap  "outerHTML"
+          =head  "slide-down"
+          =hawk-slot  "{<slot>}"
+          ;span.loaded
+            ;+  chevron-right:feather-icons
+          ==
+          ;span.loading
+            ;+  loading.feather-icons
+          ==
+        ==
+        ;button.p1.hover.b2.br1.loader.s-1
+          =id  "hawk-close-{idt}"
+          =hx-post  "/neo/hawk/sky?stud=sky-diff"
+          =hx-target  "find .loading"
+          =hx-swap  "outerHTML"
+          =head  "minimize"
+          =hawk-slot  "{<slot>}"
+          ;span.loaded
+            ;+  minimize:feather-icons
+          ==
+          ;span.loading
+            ;+  loading.feather-icons
+          ==
+        ==
+        ;style
+          ;+  ;/  %-  trip
+          '''
+          @media(max-width: 900px) {
+            .hawk-actions {
+              display: none !important;
+            }
+          }
+          '''
+        ==
+      ==
+    ==
+  ++  rendered
     ::
     =/  rom  (get:of-top here)
     =-  -(a.g [[%here (en-tape:pith:neo here)] a.g.-])
     ^-  manx
-    ?~  rom
-      ;div.wf.hf.fc.ac.jc(empty ""): nothing here
-    =/  =room:neo  u.rom
-    =/  stud  ^-  @tas  ?^(state.room mark.state.room state.room)
-    =-  -(a.g [[%stud (trip stud)] a.g.-])
-    (val u.rom)
+    ;div
+      =class  "rendered wf hf b0 scroll-y scroll-x {(trip ?:(has-app '' 'hidden'))}"
+      =id  "hawk-rendered-{idt}"
+      =morph-retain  "class"
+      ;+
+      ?~  rom
+        ;div.wf.hf.fc.ac.jc: nothing here
+      =/  =room:neo  u.rom
+      =/  stud  ^-  @tas  ?^(state.room mark.state.room state.room)
+      =-  -(a.g [[%stud (trip stud)] a.g.-])
+      (val u.rom)
+    ==
   ::
-  ++  children
+  ++  raw
     ::
     =/  dirs
       ^-  (list iota)
@@ -672,24 +809,48 @@
       %+  turn  ~(tap by (kid:of-top here))
       |=  [=pith:neo *]
       -.pith
-    ;div.wf.hf.fc.g1.js.ac
-      =here  (en-tape:pith:neo here)
-      =slot  "tree"
+    ;div
+      =class  "raw  b0 p-page fc g1 js af scroll-y wf hf {(trip ?:(has-app 'hidden' ''))}"
+      =morph-retain  "class"
+      ;+
+        =/  rom  (get:of-top here)
+        ?~  rom  ;div.f3.p1: no state
+        =/  =pail:neo  (to-pail:room:neo u.rom)
+        ;details.bd1.br1
+          ;summary.p1.hover: state
+          ;div.fc.g2.p2
+            ;a.p2.br1.border.b1.hover.block.wfc
+              =href  "/neo/hawk/src/std/pro/{(trip ?@(p.pail p.pail mark.p.pail))}"
+              ; {<p.pail>}
+            ==
+            ;div.pre.mono.scroll-x.p2
+              ;+
+              ;/
+              =/  size  (met 3 (jam q.pail))
+              ?:  (gth size 1.500.000)  "vase too large to print: {<size>}"
+              (of-wall:format (~(win re (sell q.pail)) 0 80))
+            ==
+          ==
+        ==
+      ;h2.s1.bold.p1: children
       ;*
       ?~  (lent dirs)
         ;=
-          ;div.wf.hf.fc.ac.jc: no children
+          ;div.p2.f3: None
         ==
       %+  turn
         :: alphabetical sort
         ^-  (list iota)
         (sort dirs aor)
       |=  =iota
-      ;button.p2.br1.b1.hover.wf.fr.js
+      ;button.p2.br1.b1.hover.wf.fr.js.loader
         =hx-get  (en-tape:pith:neo :(weld /neo/hawk here /[iota]))
-        =hx-target  "closest ha-wk"
-        =hx-swap  "innerHTML"
-        ; {(trip ?@(iota iota (scot iota)))}
+        =hx-target  "closest .hawk"
+        =hx-swap  "outerHTML"
+        ;span.loaded: {(trip ?@(iota iota (scot iota)))}
+        ;span.loading
+          ;+  loading.feather-icons
+        ==
       ==
     ==
     ::
@@ -731,38 +892,32 @@
       ==
     ==
     ::
-  ++  svg-wrapper
-    ::
-    |=  [color=tape viewbox=tape body=manx]
-    ^-  manx
-    ;svg
-      =xmlns  "http://www.w3.org/2000/svg"
-      =viewBox  viewbox
-      =fill  color
-      =style  "height: 1em;"
-      ;+  body
+  ++  data-encode
+    |=  [content-type=tape data=tape]
+    (welp "data:{content-type};utf8," data)
+  ++  icon-url
+    %+  welp
+      "https://nyc3.digitaloceanspaces.com"
+    "/drain/hawk/2024.5.18..00.23.39-hawk.png"
+++  favicon
+    ;link
+      =rel  "icon"
+      =type  "img/png"
+      =href  icon-url
+      ;
     ==
-    ::
-  ++  svg-square
-    ::
-    |=  color=(unit tape)
-    %^  svg-wrapper  (fall color "currentColor")
-      "0 0 448 512"
-    ;path(d "M0 96C0 60.7 28.7 32 64 32H384c35.3 0 64 28.7 64 64V416c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96z");
-    ::
-  ++  favicon
-    ::
-    =-
-      ;link
-        =rel  "icon"
-        =type  "image/svg+xml"
-        =href  -
-        ;
-      ==
-    %+  weld  "data:image/svg+xml;utf8,"
-    %-  en-xml:html
-    (svg-square `"white")
-    ::
+  ::  XX host this from a shrub
+  ++  manifest-url
+    %+  welp
+      "https://nyc3.digitaloceanspaces.com"
+    "/drain/hawk/2024.5.24..07.14.40-manifest.json"
+++  manifest
+    ;link
+      =rel  "manifest"
+      =type  "application/json"
+      =href  manifest-url
+      ;
+    ==
   ++  html-enc-js
     ::
     ::  htmx extension which encodes the request
@@ -791,6 +946,19 @@
         }
       }
     }
+    Idiomorph.defaults.callbacks.beforeNodeMorphed = (oldNode, newNode) => {
+      if (oldNode?.nodeName !== "#text") {
+        if (oldNode.hasAttribute('morph-no-swap') && oldNode.id === newNode.id) {
+          return false;
+        }
+        else if (
+          newNode.hasAttribute('morph-if-class') &&
+          !oldNode.classList.contains(newNode.getAttribute('morph-if-class'))
+        ) {
+          return false;
+        }
+      }
+    }
     '''
     ::
   ++  lift
@@ -812,7 +980,7 @@
             """
             width=device-width,
             initial-scale=1.0,
-            maximum-scale=1.0"
+            maximum-scale=1.0
             """
           ;
         ==
@@ -838,24 +1006,21 @@
           */
           '''
         ==
+        ;style: {(trip feather-css)}
+        ;style: {(trip reset-css)}
         ;script
           ;+  ;/
           """
-          const sharedStyles = new CSSStyleSheet();
-          sharedStyles.replaceSync(`{(trip style-css)}`);
-          document.adoptedStyleSheets = [sharedStyles];
           window.log=function()\{if(this.console)\{console.log(Array.prototype.slice.call(arguments));}};
           jQuery.fn.log=function (msg)\{console.log(msg, this); return this;};
           """
         ==
         ;script: {(trip date-now)}
         ;script: {(trip atom-input)}
-        ;script: {(trip error-tray)}
         ;script: {(trip multiline-input)}
-        ;script: {(trip ha-wk)}
-        ;script: {(trip s-k-y)}
         ;script: {(trip a-i-r)}
         ;+  favicon
+        ;+  manifest
       ==
       ;body
         =hx-ext  "html-enc,response-targets,morph"
@@ -863,12 +1028,29 @@
         =hx-boost  "true"
         =hx-history  "false"
         =hx-replace-url  "/neo/sky"
-        =hx-target  "closest ha-wk"
+        =hx-target  "closest .hawk"
+        =style
+          """
+          background-color: var(--b1);
+          background-image: var(--sky-bg-url);
+          background-size: var(--sky-bg-size);
+          background-repeat: var(--sky-bg-repeat);
+          """
         ;+  in
       ==
     ==
   --
 ::
+++  html-page-response
+  |=  =manx
+  ^-  simple-payload:http
+  :-  [200 [['content-type' 'text/html'] ~]]
+  :-  ~
+  %-  as-octs:mimes:html
+  %-  crip
+  %+  weld  "<!DOCTYPE html>"
+  %-  en-xml:html
+  manx
 ++  srv
   |_  eyre-id=@ta
   ++  send
@@ -934,8 +1116,10 @@
         *manx
         ::
       =/  here=path  (welp /[(scot %p our.bowl)] pax.purl)
-      =/  =pith  (pave:neo pax.purl)
-      =*  dov  ~(. dove pith)
+      =/  =pith:neo  (pave:neo pax.purl)
+      =/  slot  (slav %ud (~(gut by pam.purl) 'slot' '0'))
+      =/  id  (slav %da (~(gut by pam.purl) 'id' '~2000.1.1'))
+      =*  dov  ~(. dove pith slot id)
       ::
       ?:  =('sky' i.t.site.line)
         ::
@@ -946,33 +1130,33 @@
           =/  bootstrap
             ^-  (list card:neo)
             :~
-              [(weld #/[p/our.bowl] here) %make %sky `!>([%system ~ 0]) ~]
+              [(weld #/[p/our.bowl] here) %make %sky ~ ~]
               [#/[p/our.bowl]/home/diary %make %diary `!>('') ~]
               [#/[p/our.bowl]/home/tasks %make %task `!>(['' | ~]) ~]
               [#/[p/our.bowl]/home/sail %make %sail `!>(['' 'prose p3' ~]) ~]
               [#/[p/our.bowl]/home/iframes/wiki %make %iframe `!>('https://en.wikipedia.org/wiki/Main_Page') ~]
             ==
-            |-
-            ?~  bootstrap
-              %-  send
-              %-  manx-response:gen:serv
-              %-  ~(lift dove pax.purl)
-              ;div.wf.hf.fc.jc.ac
-                =hx-get  "/neo/sky"
-                =hx-target  "this"
-                =hx-swap  "outerHTML"
-                =hx-trigger  "load"
-                ; initializing
-              ==
-            =.  run
-              %-  poke-move
-              :-  #/[p/our.bowl]/$/eyre/req/[eyre-id]
-              i.bootstrap
-            $(bootstrap t.bootstrap)
-            ::
+          |-
+          ?~  bootstrap
+            %-  send
+            %-  manx-response:gen:serv
+            %-  ~(lift dove pax.purl 0 *@da)
+            ;div.wf.hf.fc.jc.ac
+              =hx-get  "/neo/sky"
+              =hx-target  "this"
+              =hx-swap  "outerHTML"
+              =hx-trigger  "load"
+              ; initializing
+            ==
+          =.  run
+            %-  poke-move
+            :-  #/[p/our.bowl]/$/eyre/req/[eyre-id]
+            i.bootstrap
+          $(bootstrap t.bootstrap)
+          ::
         %-  send
         %-  manx-response:gen:serv
-        %-  ~(lift dove pax.purl)
+        %-  ~(lift dove pax.purl 0 *@da)
         =+  !<(grow=$-(pail:neo $-(=bowl:neo manx)) (all-grow %htmx))
         ?>  ?=(%icon -.seat.u.rum)
         ?~  man=(mole |.((grow [%sky state.icon.seat.u.rum])))
@@ -1070,11 +1254,17 @@
           ::
         ::    %'GET'  :: "read"
           ::
+          =/  s  (~(get by pam.purl) 'slot')
+          =/  y  (~(get by pam.purl) 'no-save')
+          =?  run  &(!=(~ s) =(~ y))
+            =/  slot  (slav %ud (need s))
+            %-  poke-move
+            :-  #/[p/our.bowl]/$/eyre/req/[eyre-id]
+            [~[p/[our.bowl] %sky] %poke %sky-diff !>([%move-tab slot pith])]
           %-  send
           %-  manx-response:gen:serv
-          ?:  (~(has by pam.purl) 'tree')
-            children:dov
-          curr:dov
+          =?  pith  =(pith /sky)  (welp pith /settings)
+          ha-wk:dov
         ::
     =/  =path  t.t.site.line
     ?:  =(%'POST' method.request.req)
@@ -1340,7 +1530,7 @@
   ==
 ++  take-agent
   |=  [=(pole knot) =sign:agent:gall]
-  ~&  pole/pole
+  ::~&  pole/pole
   |^  ^+  run
   ?+  pole  ~|(on-agent-bad-wire/pole !!)
     [%sys rest=*]   (take-agent:sys rest.pole sign)
