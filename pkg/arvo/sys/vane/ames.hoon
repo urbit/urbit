@@ -3283,21 +3283,21 @@
                         ossuary.fren  align-bones
                    client-chain.fren  chain.peer-state
                   ==
-                =^  moves  flows.fren   make-flows
+                =^  poke-moves  flows.fren   make-flows
                 =.  chums.ames-state
                   (~(put by chums.ames-state) her known/fren)
-                ::  when .her is fully migrated, delete it from peers
-                ::
-                =.  peers.ames-state
-                  (~(del by peers.ames-state) her)
-                ?>  ?=([[* [%pass ^ [%a %mako *]]] ~] moves)
+                ?>  ?=([[* [%pass ^ [%a %mako *]]] ~] poke-moves)
+                =^  peek-moves  ames-state  make-peeks
+                ::  XX  needed?  peek/poke-moves will have %send moves already
                 ::  enqueue a %prod to start sending unsent messages, after
                 ::  all the %makos (which trigger +peeks for %acks) have been
                 ::  processed
                 ::
-                ::  XX TODO  make-peeks
                 =/  prod-move=(list move)  [[/ames]~ %pass /mate %a %prod ~]~
-                peer-core(event-core (emil (weld moves prod-move)))
+                ::  when .her is fully migrated, delete it from peers
+                ::
+                =.  peers.ames-state  (~(del by peers.ames-state) her)
+                peer-core(event-core (emil (weld poke-moves peek-moves)))
                 ::
                 ++  align-bones
                   ^+  ossuary.peer-state
@@ -3476,14 +3476,15 @@
                   moves^flows.fren
                 ::
                 ++  make-peeks
-                  :: ^-  (map path request-state)
+                  ^-  (quip move axle)
                   =+  ev-core=%*(ev-core mesa sat.per known/*fren-state)
                   =*  per  peer-state
+                  =;  core=_ev-core
+                    ev-abet:core
+                  ^+  ev-core
                   %-  ~(rep by keens.per)
                   |=  [[=path keen=keen-state] core=_ev-core]
                   =|  req=request-state
-                  ::  /a/x/1//fine/shut/(scot %ud idx.u.sec)/[enc]
-                  ::  /a/x/1//chum/(scot %p our)/(scot %ud life.ames-state)/[cyf]
                   =>  .(path `(pole knot)`path)
                   ?>  ?=([van=%a car=%x cas=@ %$ pat=*] path)
                   ?>  =('1' cas.path)
@@ -3492,14 +3493,15 @@
                     %-  ~(rep in listeners.keen)
                     |=  [=^duct core=_core]
                     (ev-make-peek:core(hen duct) space her pax)
-                  ?+    pat.path  [pat.path [%publ life.per]]  :: XX
+                  ?+    pat.path  [pat.path [%publ life.per]]
+                    ::
                       [%fine %shut idx=@ cyf=@]
                     =/  idx=@ud    (slav %ud idx.pat.path)
                     =/  cyf=@      (slav %ud cyf.pat.path)
                     =/  key=@      key:(got:on:chain server-chain.ames-state idx)
                     =/  pax=^path  (rash `@t`(dy:crub:crypto key cyf) stap)
                     [pax %shut idx key]
-                  ::
+                    ::
                       [%chum her=@ lyf=@ cyf=@]
                     =/  cyf=@  (slav %ud cyf.pat.path)
                     =*  key        symmetric-key.per
@@ -5405,6 +5407,7 @@
           ::
           =|  moves=(list move)
           ::
+          ::  XX make sat.per fren-state
           |_  [[now=@da eny=@uvJ rof=roof] hen=duct per=[=ship sat=chum-state]]
           ::
           +|  %helpers
