@@ -23,14 +23,17 @@
     ?+    stud  !!
         %folder-diff
       =/  poke  !<(folder-diff vax)
+      =/  this  !<(folder sta)
       ?-    -.poke
           %make
-        :_  sta
+        :_  !>([name.poke this])
         :~  [(snoc here.bowl name.poke) %make stud.poke ~ ~]
         ==
       ::
           %tomb
-        !!
+        :-  ~
+        =/  i  (need (find ~[name.poke] this))
+        !>((oust [i 1] this))
       ==
     ==
   --

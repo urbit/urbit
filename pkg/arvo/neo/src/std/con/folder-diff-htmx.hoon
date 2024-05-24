@@ -1,4 +1,5 @@
 /@  folder-diff
+/-  _/feather-icons
 :-  [%folder-diff %htmx]
 |=  =folder-diff
 |=  =bowl:neo
@@ -8,5 +9,5 @@
   =hx-indicator  "closest .loader"
   =hx-swap  "innerHTML"
   =hx-trigger  "load"
-  ; +++
+  ;+  loading.feather-icons
 ==

@@ -56,7 +56,9 @@
     ==
     ;button.loader.p2.p1.hover.bd1.br2.b1
       ;span.loaded: create
-      ;span.loading: ...
+      ;span.loading
+        ;+  loading.feather-icons
+      ==
     ==
   ==
 ::
@@ -65,22 +67,39 @@
     ;+  ?.  =(0 ~(wyt by kids.bowl))  ;/("")
     ;div.p5.f3.fc.jc.ac: none yet
     ;*
-    %+  turn
-      ~(tap by kids.bowl)
-    |=  [=pith =stud:neo =vase]
+    %+  turn  folder
+    |=  name=@tas
+    =/  pith  ~[name]
+    =/  =pail:neo  (~(got by kids.bowl) pith)
+    =/  =stud:neo  p.pail
     =/  =path  (pout (welp here.bowl pith))
     =/  label
       ?@  stud
         (trip stud)
       (trip mark.stud)
-    ;a.b1.br1.hover.p3.s1.bd1.fr.ac.jb.loader
-      =hx-target  "closest .hawk"
-      =href  (trip (spat ['neo' 'hawk' path]))
-      ;span.loaded: {(trip (snag 0 (pout pith)))}
-      ;span.loading
-        ;+  loading.feather-icons
+    ;div.fr.g1
+      ;a.b1.br1.hover.p3.s1.bd1.fr.ac.jb.loader.grow
+        =hx-target  "closest .hawk"
+        =href  (trip (spat ['neo' 'hawk' path]))
+        ;span.loaded: {(trip (snag 0 (pout pith)))}
+        ;span.loading
+          ;+  loading.feather-icons
+        ==
+        ;span.s-1.f2.loaded: {label}
       ==
-      ;span.s-1.f2.loaded: {label}
+      ;button.b1.br1.hover.p3.s1.bd1.fr.ac.jb.loader
+        =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=folder-diff"
+        =hx-swap  "outerHTML"
+        =hx-target  "find .loading"
+        =head  "tomb"
+        =smeg  (trip name)
+        ;span.loaded
+          ;+  close.feather-icons
+        ==
+        ;span.loading
+          ;+  loading.feather-icons
+        ==
+      ==
     ==
   ==
 --
