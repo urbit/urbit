@@ -827,7 +827,7 @@
               ;+
               ;/
               =/  size  (met 3 (jam q.pail))
-              ?:  (gth size 1.500.000)  "vase too large to print: {<size>}"
+              ?:  (gth size 1.000)  "vase too large to print: {<size>}"
               (of-wall:format (~(win re (sell q.pail)) 0 80))
             ==
           ==

@@ -21,7 +21,7 @@
   ;div.p4.sticky.z2
     =style  "top: 36px; left: 0;"
     ;div.fr.g2.relative
-      ;input.p2.grow.br2.border
+      ;input.p2.grow.br2.border.b0
         =onchange  "alert('not yet implemented')"
         =type  "text"
         =placeholder  "Search..."
@@ -93,4 +93,3 @@
   ==
 ::
 --
-

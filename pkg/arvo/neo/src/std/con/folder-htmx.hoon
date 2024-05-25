@@ -17,7 +17,8 @@
     =hx-swap  "outerHTML"
     =hx-target  "find .loading"
     =head  "make"
-    ;input.p2.bd1.br2.grow
+    ;input.p2.bd1.br2.grow.fr
+      =style  "width: 0;"
       =oninput  "$(this).attr('value', this.value)"
       =autocomplete  "off"
       =name  "name"
@@ -77,7 +78,7 @@
       ?@  stud
         (trip stud)
       (trip mark.stud)
-    ;div.fr.g1
+    ;div.fr.g2
       ;a.b1.br1.hover.p3.s1.bd1.fr.ac.jb.loader.grow
         =hx-target  "closest .hawk"
         =href  (trip (spat ['neo' 'hawk' path]))
@@ -103,4 +104,3 @@
     ==
   ==
 --
-
