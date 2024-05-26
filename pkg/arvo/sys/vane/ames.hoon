@@ -7490,13 +7490,13 @@
                 =/  =chum-state  (~(got by chums.ames-state) u.ship)
                 ?.  ?=([%known *] chum-state)
                   sy-core
-                (migrate-chum u.ship +.chum-state)
+                (regress-chum u.ship +.chum-state)
               %-  ~(rep by chums.ames-state)
               |=  [[=^ship state=chum-state] core=_sy-core]
               ?:  ?=(%alien -.state)  core
-              (migrate-chum ship +.state)
+              (regress-chum ship +.state)
               ::
-              ++  migrate-chum
+              ++  regress-chum
                 |=  [=^ship fren=fren-state]
                 ^+  sy-core
                 =|  peer=peer-state
@@ -7508,12 +7508,10 @@
                     chain.peer  client-chain.fren
                 ==
                 ::
-                =^  peek-moves  ames-state  (migrate-peeks ship fren peer)
-                =^  flow-moves  ames-state  (migrate-flows ship fren ames-state)
+                =^  peek-moves  ames-state  (regress-peeks ship fren peer)
+                =^  flow-moves  ames-state  (regress-flows ship fren ames-state)
                 ::
-                :: =.  peers.ames-state
-                ::   (~(put by peers.ames-state) ship known/peer)
-                sy-core
+                sy-core(ev-core (ev-emil (weld peek-moves flow-moves)))
               ::
               ++  divide-bones
                 |=  bones=(set side)
@@ -7522,17 +7520,43 @@
                 |=  [side corked=(set bone)]
                 (~(put in corked) ?:(?=(%for dire) bone (mix 0b1 bone)))
               ::
-              ++  migrate-flows
+              ++  regress-flows
                 |=  [her=^ship fren=fren-state state=axle]
                 ^-  (quip move axle)
                 =+  event-core=(ev:ames [now eny rof] hen state)
-                =;  core=_event-core
-                  abet:core
+                =/  peer=peer-state  (got-peer-state:event-core her)
+                =+  peer-core=(abed-peer:pe:event-core her peer)
+                =;  core=_peer-core
+                  abet:abet:core
+                =+  ev-core=%*(. ev-core sat.per known/fren)
                 %-  ~(rep by flows.fren)
-                |=  [[side flow-state] core=_event-core]
-                core
+                |=  [[side state=flow-state] core=_peer-core]
+                =+  fo-core=~(. fo:ev-core hen^bone^dire state)  :: XX make sat.per $fren-state
+                ?:  ?=(%for dire)
+                  =;  [cor=_core loads=_loads.state]
+                    cor
+                  ::  message-pump
+                  ::
+                  %^  (dip:fo-mop:fo-core ,cor=_core)  loads.state
+                    core
+                  |=  [cor=_core seq=@ud req=mesa-message]
+                  ^-  [(unit mesa-message) stop=? cor=_core]
+                  `[| (on-memo:peer-core bone req)]
+                ::  message-sink
+                ::
+                =|  sink=message-sink-state
+                ::  drop any pending ack state and past naxplanations
+                ::  XX  if some is still actively reading a naxplanation,
+                ::  do we need send it?
+                ::  XX  better to drop any peeks for %naxplanations, %corks?
+                ::
+                =.  last-acked.sink  last-acked.state
+                =.  last-heard.sink  last-acked.state
+                =.  rcv.peer-state.peer-core
+                  (~(put by rcv.peer-state.peer-core) bone sink)
+                core(peer-state peer-state.peer-core)
               ::
-              ++  migrate-peeks
+              ++  regress-peeks
                 |=  [her=^ship fren=fren-state peer=peer-state]
                 ^-  (quip move axle)
                 =+  event-core=(ev:ames [now eny rof] hen ames-state)
@@ -7549,7 +7573,10 @@
                 =.  listeners.keen
                   %-  ~(rep in for.req)
                   |=  [hen=duct for=_for.req]
-                  ::  XX inspect the duct to find %mesa wires?
+                  ::  XX  inspect the duct to find %mesa wires?
+                  ::  XX  dropping any +peeks for %corks and %naxplanations
+                  ::      can this makes us end up in a bad state?
+                  ::
                   =?  for  ?=([[%mesa %flow *] *] hen)
                     (~(del in for) hen)
                   for
@@ -7574,7 +7601,6 @@
                   ==
                 ::
                 (on-keen:core ~ her path)
-                :: peer(keens (~(put by keens.peer) path keen))
               ::
               --
             ::
