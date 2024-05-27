@@ -33,8 +33,7 @@
       [~1111.1.1 tick=0 `@`0xdead.beef *roof]
       :-  ~[/use/sub/0w1.d6Isf/out/~bud/pub/1/sub-foo/~bud /init]
       [%deal [~nec ~bud /] %pub %watch /foo]
-      :~  :-  ~[/init]  [%pass /sys/lag %a %heed ~bud]
-          :-  ~[/init]  [%pass /sys/era %j %public-keys (sy ~bud ~)]
+      :~  :-  ~[/init]  [%pass /sys/era %j %public-keys (sy ~bud ~)]
           :-  ~[/use/sub/0w1.d6Isf/out/~bud/pub/1/sub-foo/~bud /init]
           [%pass /sys/way/~bud/pub %a %plea ~bud %g /ge/pub [%0 %s /foo]]
       ==
@@ -84,8 +83,7 @@
       [~1111.1.2 tick=0 `@`0xbeef.dead *roof]
       :-  ~[/bone/~nec/0/1 //unix]
       [%plea ~nec %g /ge/pub [%0 %s /foo]]
-      :~  :-  ~[/init]  [%pass /sys/lag %a %heed ~nec]
-          :-  ~[/init]  [%pass /sys/era %j %public-keys (sy ~nec ~)]
+      :~  :-  ~[/init]  [%pass /sys/era %j %public-keys (sy ~nec ~)]
           :-  ~[/bone/~nec/0/1 //unix]
           [%pass /sys/req/~nec/pub %g %deal [~nec ~bud /] %pub %watch /foo]
       ==
@@ -172,18 +170,6 @@
       ~
     ==
   :-  t11  |.  :-  %|
-  ::  start the clog and kick process; give clog to publisher gall
-  ~?  >  dbug  'start the clog and kick process; give clog to publisher gall'
-  =^  t12  gall.bud
-    %:  gall-check-take:v  gall.bud
-      [~1111.1.4 tick=0 `@`0xbeef.dead *roof]
-      :+  /sys/lag  ~[/init]
-      [%ames %clog ~nec]
-      :~  :-  ~[/sys/req/~nec/pub /bone/~nec/0/1 //unix]
-          [%give %unto %kick ~]
-      ==
-    ==
-  :-  t12  |.  :-  %|
   ::  gall gives %kick %boon to ames
   ~?  >  dbug  'gall gives %kick %boon to ames'
   =^  t13  gall.bud

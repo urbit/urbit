@@ -15,7 +15,6 @@
       ted-ok=?
   ==
 --
-=,  format
 ^-  agent:gall
 =|  =state
 |_  =bowl:gall
@@ -58,7 +57,7 @@
       |=(c=@tD `@tD`?:(=('/' c) '-' c))
     =/  sing=card
       :+  %pass  /build/mar/[mak]
-      [%arvo %c %warp our.bowl q.byk.bowl ~ %sing %b da+now.bowl /[mak]]
+      [%arvo %c %warp our.bowl desk.cmd ~ %sing %b da+now.bowl /[mak]]
     %_  $
       paz        t.paz
       fex        [sing fex]
@@ -80,7 +79,7 @@
       $(daz t.daz)
     =/  sing=card
       :+  %pass  /build/app/[i.daz]
-      [%arvo %c %warp our.bowl q.byk.bowl ~ %sing %a da+now.bowl dap-pax]
+      [%arvo %c %warp our.bowl desk.cmd ~ %sing %a da+now.bowl dap-pax]
     %_  $
       daz        t.daz
       fex        [sing fex]
@@ -100,7 +99,7 @@
       $(paz t.paz)
     =/  sing=card
       :+  %pass  build+i.paz
-      [%arvo %c %warp our.bowl q.byk.bowl ~ %sing %a da+now.bowl i.paz]
+      [%arvo %c %warp our.bowl desk.cmd ~ %sing %a da+now.bowl i.paz]
     %_  $
       paz        t.paz
       fex        [sing fex]
@@ -120,13 +119,14 @@
       $(paz t.paz)
     =/  sing=card
       :+  %pass  build+i.paz
-      [%arvo %c %warp our.bowl q.byk.bowl ~ %sing %a da+now.bowl i.paz]
+      [%arvo %c %warp our.bowl desk.cmd ~ %sing %a da+now.bowl i.paz]
     %_  $
       paz        t.paz
       fex        [sing fex]
       ted.state  (~(put in ted.state) i.paz)
     ==
   ++  now-beck  `beck`byk.bowl(q desk.cmd, r [da+now.bowl ud+tick.bowl])
+
   --
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def

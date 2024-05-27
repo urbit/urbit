@@ -582,7 +582,6 @@
       %-  pairs
       :~  'messages'^(numb (lent messages))
           'packets'^(numb ~(wyt in packets))
-          'heeds'^(set-array heeds from-duct)
           'keens'^(set-array ~(key by keens) path)
       ==
     ::
@@ -646,7 +645,6 @@
     ::    }, ...],
     ::    closing: [bone, ..., bone],
     ::    corked: [bone, ..., bone],
-    ::    heeds: [['/paths', ...] ...]
     ::    scries:
     ::    ->  { =path
     ::          keen-state: {
@@ -773,8 +771,6 @@
           'closing'^(set-array closing numb)
         ::
           'corked'^(set-array corked numb)
-        ::
-          'heeds'^(set-array heeds from-duct)
         ::
           'scries'^(scries ~(tap by keens))
       ==
