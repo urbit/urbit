@@ -3283,7 +3283,9 @@
                         ossuary.fren  align-bones
                    client-chain.fren  chain.peer-state
                   ==
-                =^  poke-moves  flows.fren   make-flows
+                =/  [bones=(set ^bone) poke-moves=(list move) flows=_flows.fren]
+                  make-flows
+                =.  flows.fren  flows
                 =.  chums.ames-state
                   (~(put by chums.ames-state) her known/fren)
                 ?>  ?=([[* [%pass ^ [%a %mako *]]] ~] poke-moves)
@@ -3294,9 +3296,22 @@
                 ::  processed
                 ::
                 =/  prod-move=(list move)  [[/ames]~ %pass /mate %a %prod ~]~
-                ::  when .her is fully migrated, delete it from peers
+                ::  if .her is fully migrated, delete it from peers;
+                ::  if not, keep only bones that have live %naxplanations
                 ::
-                =.  peers.ames-state  (~(del by peers.ames-state) her)
+                =.  peers.ames-state
+                  ?:  =(~ bones)  :: XX TMI
+                    (~(del by peers.ames-state) her)
+                  =;  snd=_snd.peer-state
+                    (~(put by peers.ames-state) her known/peer-state(snd snd))
+                  %-  ~(rep by snd.peer-state)
+                  |=  $:  [=^bone pump=message-pump-state]
+                          snd=(map ^bone message-pump-state)
+                      ==
+                  ?.  (~(has in bones) bone)
+                    snd
+                  (~(put by snd) bone pump)
+                ::
                 peer-core(event-core (emil (weld poke-moves peek-moves)))
                 ::
                 ++  align-bones
@@ -3312,12 +3327,13 @@
                   (~(put in corked) bone ?:(=(%0 (mod bone 4)) %for %bak))
                 ::
                 ++  make-flows
-                  ^-  (quip move (map side flow-state))
+                  ^-  [(set ^bone) (list move) (map side flow-state)]
                   ::  forward flows
                   ::
-                  =^  moves  flows.fren
+                  =/  [bones=(set ^bone) moves=(list move) flows=_flows.fren]
                     %-  ~(rep by snd.peer-state)
                     |=  $:  [=^bone pump=message-pump-state]
+                            bones=(set ^bone)
                             moves=(list move)
                             flows=_flows.fren
                         ==
@@ -3326,8 +3342,22 @@
                        ?:  =(%0 (mod bone 4))  %for  :: %plea(s)
                        %bak  ::  boon(s) and naxplanation(s)
                     ::
+                    ?.  =(current next):pump
+                      ::  we are still expecting an ack or a naxplanation for
+                      ::  the current message. since we don't know which one it
+                      ::  is, we can't, in the case of a naxplanation, start
+                      ::  +peeking for it, since the sender won't send the
+                      ::  naxplanation anymore. the flow needs to complete on
+                      ::  its own, and when we reach a quiescence state, we will
+                      ::  be able to migrate safely.
+                      ::
+                      ::  we track this bone to not be removed from the peer.
+                      ::
+                      (~(put in bones) bone)^moves^flows
                     ::  XX if naxplanation bone, find reference flow?
                     ::  XX what message got nacked? nax.peer-state is not used
+                    ::
+                    ::  everything acked; quiescence achieved
                     ::
                     =.    closing.flow  (~(has in closing.peer-state) bone)
                     =.  next-load.flow  next.pump
@@ -3381,30 +3411,45 @@
                       ::
                       --
                     ::
-                    =^  forward-moves  flow
-                      =<  [moves state]:core
+                    =/  [bones=_bones forward-moves=(list move) flow=_flow]
+                      =;  [* bones=_bones core=_fo-core]
+                        [bones [moves state]:core]
                       %+  roll  (weld live ~(tap to unsent-messages.pump))
                       ::
-                      |=  [=message current=_current.pump core=_fo-core]
+                      |=  [=message current=_current.pump bones=_bones core=_fo-core]
                       :-  +(current)
                       ?:  ?=(%naxplanation -.message)
-                        core  :: XX TODO bind naxplanation in nax.flow for the reference flow
+                        ::  if we are still sending a %naxplanation, we need to
+                        ::  stop migrating this flow. find reference flow (since
+                        ::  we have just added it) and remove it from flows, and
+                        ::  add bone to the list so we keep it in the pump
+                        ::
+                        =.  flows.sat.per.core
+                          (~(del by flows.sat.per.core) (mix 0b10 bone)^dire)
+                        =.  ames-state.core
+                          %_    ames-state.core
+                              chums
+                            (~(put by chums.ames-state.core) her sat.per.core)
+                          ==
+                        (~(put in bones) bone)^core
+                      :-  bones
                       %.  message
                       fo-call:(fo-abed:core (got-duct bone) bone %for)
                     ::
-                    :_  (~(put in flows) [bone dire] flow)
-                    =.  moves  (weld forward-moves moves)
-                    =?  moves  ?=(^ next-wake.packet-pump-state.pump)
-                      =*  wake  u.next-wake.packet-pump-state.pump
-                      :_  moves  ^-  move
-                      :-  [/ames]~
-                      [%pass (make-pump-timer-wire her bone) %b %rest wake]
-                    moves
+                    :+  bones
+                      =.  moves  (weld forward-moves moves)
+                      =?  moves  ?=(^ next-wake.packet-pump-state.pump)
+                        =*  wake  u.next-wake.packet-pump-state.pump
+                        :_  moves  ^-  move
+                        :-  [/ames]~
+                        [%pass (make-pump-timer-wire her bone) %b %rest wake]
+                      moves
+                    (~(put in flows) [bone dire] flow)
                   ::  backward flows
                   ::
                   =.  flows.fren
                     %-  ~(rep by rcv.peer-state)
-                    |=  [[=^bone sink=message-sink-state] flows=_flows.fren]
+                    |=  [[=^bone sink=message-sink-state] flows=_flows]
                     =|  flow=flow-state
                     ?:  =(%2 (mod bone 4))
                       flows  :: %naxplanation %ack on receiver
@@ -3473,7 +3518,7 @@
                   ::  XX  check that this is true
                   ::  XX entries in nax.peer-state have not been used
                   ::
-                  moves^flows.fren
+                  bones^moves^flows.fren
                 ::
                 ++  make-peeks
                   ^-  (quip move axle)
@@ -6421,7 +6466,9 @@
               =:  flows.sat.per   (~(del by flows.sat.per) bone^dire)
                   corked.sat.per  (~(put in corked.sat.per) bone^dire)
                 ==
-              ev-core(ames-state ames-state(chums (~(put by chums.ames-state) her sat.per)))
+              =.  ames-state
+                ames-state(chums (~(put by chums.ames-state) her sat.per))
+              ev-core
             ::
             ++  fo-emit      |=(=move fo-core(moves [move moves]))
             ++  fo-emil      |=(mos=(list move) fo-core(moves (weld mos moves)))
