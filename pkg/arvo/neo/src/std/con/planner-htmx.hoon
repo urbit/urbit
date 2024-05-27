@@ -54,17 +54,17 @@
       ;span.loading
         ;+  loading.feather-icons
       ==
-      ;span.loaded: go
+      ;span.loaded: view
     ==
   ==
 ++  add-chapter
   ;div.fc.g1.ae
     ;button.p2.br1.bd1.hover.b1.wfc
       =onclick  "$(this).next().toggleClass('hidden'); $(this).toggleClass('toggled');"
-      ; multi-day event
+      ; create multi-day event
     ==
     ;form.hidden.p2.fc.g2.br1.bd1.wf
-      =style  "margin-bottom: 100px;"
+      =style  "margin-bottom: 30px;"
       =hx-post  post-url
       =hx-target  "find .loading"
       =hx-swap  "outerHTML"
@@ -231,7 +231,7 @@
           =name  "text"
           =autocomplete  "off"
           =oninput  "$(this).attr('value', this.value);"
-          =placeholder  "text"
+          =placeholder  "event title"
           ;
         ==
         ;button.action.loader.p2.b1.hover.bd1.br1
@@ -272,7 +272,7 @@
         =planner-id  (scow %da p.u.chapter)
         =head  "edit"
         =kind  "chapter"
-        ;div.fr.ac.jb.g2
+        ;div.fr.ac.js.g2
           ;input.p-1.br1.bd1.wfc
             =type  "date"
             =name  "start"
@@ -296,7 +296,7 @@
           =required  ""
           =autocomplete  "off"
           =oninput  "$(this).attr('value', this.value);"
-          =placeholder  "some text"
+          =placeholder  "title"
           =value  (trip text.q.u.chapter)
           ;
         ==
@@ -383,7 +383,7 @@
           =required  ""
           =autocomplete  "off"
           =oninput  "$(this).attr('value', this.value);"
-          =placeholder  "some text"
+          =placeholder  "event name"
           =value  (trip text.q.pent)
           ;
         ==
