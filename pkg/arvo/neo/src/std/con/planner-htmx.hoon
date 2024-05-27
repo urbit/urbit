@@ -456,7 +456,7 @@
     ==
   =/  color
     ?:  =(i d:(yell now.bowl))
-      "f-1"
+      "f-3 bold"
     ?:  =(0 w)
       "f0"
     "f3"

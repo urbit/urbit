@@ -871,9 +871,10 @@
     ?:  ?=(%& -.res)
       =+  man=[u=p.res ~]
       %-  u.man
-      =+  b=*bowl.neo  :: manually constructing a bowl. this is ugly
+      =+  b=*bowl.neo
       %=  b
         our  our.bowl
+        now  now.bowl
         here  here
         kids
           %-  ~(run by (kid:of-top here))
@@ -1169,6 +1170,7 @@
         =+  b=*bowl.neo
         %=  b
           our  our.bowl
+          now  now.bowl
           here  here
           kids
             %-  ~(run by (kid:of-top here))
@@ -1212,6 +1214,7 @@
                   =+  b=*bowl.neo
                   %=  b
                     our  our.bowl
+                    now  now.bowl
                     here  pith
                   ==
                 %.n
@@ -1246,9 +1249,10 @@
           =+  !<(grow=$-(pail:neo $-(=bowl:neo manx)) (all-grow %htmx))
           ?^  man=(mole |.((grow pail)))
             %-  u.man
-            =+  b=*bowl.neo  :: manually constructing a bowl. this is ugly
+            =+  b=*bowl.neo
             %=  b
               our  our.bowl
+              now  now.bowl
               here  (pave:neo pax.purl)
             ==
           ;div: some sorta error occured
