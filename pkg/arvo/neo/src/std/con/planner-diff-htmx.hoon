@@ -8,7 +8,7 @@
   =hx-target  "closest .planner"
   =hx-select  ".planner"
   =hx-indicator  "closest .loader"
-  =hx-swap  "morph"
+  =hx-swap  "outerHTML"
   =hx-trigger  "load"
   ;+  loading.feather-icons
 ==
