@@ -6,7 +6,7 @@
     =viewBox  viewbox
     =width  "1em"
     =fill  "currentColor"
-    =style  "display: flex;"
+    =style  "display: flex; font-size:inherit;"
     ;+  body
   ==
 ++  chevron-left

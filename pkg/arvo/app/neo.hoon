@@ -677,10 +677,13 @@
       ==
       ;div
         =class  "hawk-tog frw g1 ac grow {(trip ?:(has-app '' 'hidden'))}"
-        ;a.p-1.hover.b2.br1.s0.fc.ac.jc
+        ;a.p-1.hover.b2.br1.s0.fc.ac.jc.loader
           =style  "height: 2rem;"
           =href  "/neo/hawk"
-          ; /
+          ;span.loaded: /
+          ;span.loading
+            ;+  loading.feather-icons
+          ==
         ==
         ;*
           =<  p
@@ -691,10 +694,13 @@
           ;div.fr.ac.g1
             =style  "height: 2rem;"
             ;div.f4.s-1: >
-            ;a.hover.b2.br1.p1.s0
+            ;a.hover.b2.br1.p1.s0.loader
               =hx-vals  "\{\"id\": \"{<id>}\", \"slot\": \"{<slot>}\"}"
               =href  "/neo/hawk{(en-tape:pith:neo (scag a here))}"
-              ; {(trip ?@(iota iota (scot iota)))}
+              ;span.loaded: {(trip ?@(iota iota (scot iota)))}
+              ;span.loading
+                ;+  loading.feather-icons
+              ==
             ==
           ==
         ;div.grow;

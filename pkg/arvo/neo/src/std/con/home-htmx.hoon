@@ -53,12 +53,16 @@
     =/  =path  (pout (welp here.bowl pith))
     ;div.relative.br2
       =pith  (en-tape:pith:neo pith)
-      ;a.b1.br2.block.fc.as.js.hover.p3.s1.border-2
+      ;a.b1.br2.block.fc.as.js.hover.p3.s1.border-2.loader
         =style  "width: 160px; height: 160px;"
         =hx-target  "closest .hawk"
         =hx-swap  "innerHTML"
+        =hx-indicator  "this"
         =href  (trip (spat ['neo' 'hawk' path]))
-        ; {(trip (snag 0 (pout pith)))}
+        ;span.loaded: {(trip (snag 0 (pout pith)))}
+        ;span.loading.s2
+          ;+  loading.feather-icons
+        ==
       ==
       ;div.br2.b2.z1.f3.fc.wf.border-2
         =style  "position: absolute; bottom: 0; right: 0;"
