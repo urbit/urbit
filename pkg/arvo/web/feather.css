@@ -634,10 +634,6 @@ button {
     display: block;
     counter-increment: line;
 }
-.prose {
-  max-width: 650px;
-  margin: auto;
-}
 .prose h1 {
   font-size: 1.45rem;
   margin: 1rem 0;

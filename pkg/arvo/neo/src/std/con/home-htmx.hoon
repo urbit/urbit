@@ -5,7 +5,7 @@
 |=  =bowl:neo
 |^
   ;div.wf.hf.relative
-    ;div.p3.fc.g5.ma.mw-page
+    ;div.fc.g5.ma.mw-page.p-page
       ;+  menu
       ;+  apps
     ==
@@ -19,15 +19,24 @@
   (trip smeg)
 ++  menu
   ;div.p4.sticky.z2
-    =style  "top: 36px; left: 0;"
+    =style  "top: 20px; left: 0;"
     ;div.fr.g2.relative
-      ;input.p2.grow.br2.border.b0
+      ;input.p2.grow.br2.bd1.b0
         =onchange  "alert('not yet implemented')"
         =type  "text"
         =placeholder  "Search..."
         ;
       ==
-      ;div.absolute
+      ;a.p2.b1.hover.loader.br2.bd1.fr.jc.ac.f3
+        =href  "/neo/hawk/sky/settings"
+        ;span.loaded
+          ;+  settings.feather-icons
+        ==
+        ;span.loading
+          ;+  loading.feather-icons
+        ==
+      ==
+      ;div.absolute.hidden
         =style  "top: 0px; right: 0px;"
         ;div.loader.wfc.fc.p2.f2.s-2.mono.br2
           =id  "indicator-{id}"
