@@ -21,6 +21,7 @@
   ++  init
     |=  vax=(unit pail:neo)
     ^-  (quip card:neo pail:neo)
+    ~|  ~(key by ~(tar of:neo q:(~(got by deps.bowl) %src)))
     `vase/(need (get-output:ford:neo bowl %src))
   --
 --

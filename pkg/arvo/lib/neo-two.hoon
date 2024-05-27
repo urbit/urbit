@@ -210,9 +210,9 @@
     `[pith key.u.lat]
   ::
   ++  grow
-    |=  [=pail:neo =oath:neo]
+    |=  [=pail:neo cas=(unit case:neo) =oath:neo]
     ^-  (quip loot:neo loam:dirt:neo)
-    =/  =poem:neo  [[+(case) oath] `pail]
+    =/  =poem:neo  [[(fall cas +(case)) oath] `pail]
     (make poem)
   ++  make
     |=  =poem:neo
@@ -220,8 +220,9 @@
     =?  fil.loam  ?=(~ fil.loam)
       `*soil:neo
     ?>  ?=(^ fil.loam)
-    =/  new=case:neo  +(case)
-    ?>  =(new p.p.poem)
+    ~|  have/p.p.poem
+    ~|  want/+(case)
+    ?>  (gte p.p.poem +(case))
     =/  =mode:neo
       ?:  =(q.poem ~)
         %del
@@ -230,8 +231,8 @@
       ?:  =(q.val.u.old ~)
         %add
       %dif
-    :-  [new mode]^~
-    loam(fil `(put:on:soil:neo u.fil.loam new poem))
+    :-  [p.p.poem mode]^~
+    loam(fil `(put:on:soil:neo u.fil.loam [p.p .]:poem))
   ::
   ++  cull
     ?~  fil.loam
@@ -366,14 +367,35 @@
       [~ ~]
     =/  =ever:neo  (nail u.ver plot.u.val case)
     ``[[ever q.p.u.u.mit] u.q.u.u.mit]
+  ++  peek-x
+    |=  =pith:neo
+    ^-  (unit (unit saga:neo))
+    =/  res  (peek %x pith)
+    ?:  ?=($@(~ [~ ~]) res)
+      res
+    `(~(get of:neo u.u.res) ~)
+  ++  tell
+    |=  =epic:neo
+    ^+  [loam farm]
+    =/  pic  ~(tap of:neo epic)
+    =|  gifts=(list gift:dirt:neo)
+    |-
+    ?~  pic
+      :-  loam
+      (take gifts)
+    =/  [=pith:neo =saga:neo]  i.pic
+    =/  =card:dirt:neo  [pith %grow q.saga `p.exe.p.p.saga *oath:neo]
+    =^  gis=(list gift:dirt:neo)  loam  
+      (~(call plow loam) card)
+    =.  gifts  (welp gifts gis)
+    $(pic t.pic)
+  ::
   ++  peek
     |=  [=care:neo =pith:neo]
     ^-  (unit (unit (axal:neo saga:neo)))
     ?~  val=(~(get of:neo farm) pith)
-      ~&  missing-farm/pith
       ~
     =;  =once:neo
-      ~&  have-once/[pith once]
       (look care once pith)
     ?+    care  !!
         %x
@@ -391,6 +413,15 @@
         z/1
       z/key.u.ove
     ==
+  ++  look-x
+    |=  [=case:neo =pith:neo]
+    ^-  (unit (unit saga:neo))
+    =/  =once:neo  x/case
+    =/  res  (look %x once pith)
+    ?:  ?=($@(~ [~ ~]) res)
+      res
+    ~&  look-x/[pith ~(key by ~(tar of:neo u.u.res))]
+    `(~(get of:neo u.u.res) ~)
   ::
   ++  look
     |=  [=care:neo =once:neo =pith:neo]
@@ -421,7 +452,7 @@
       =+  val=(scry p.exe.ever pith)
       ?:  ?=($@(~ [~ ~]) val)
         ~
-      [pith u.u.val]^~
+      [/ u.u.val]^~
     ::
     ++  read-y
       =;  res=(list (pair pith:neo saga:neo))
@@ -436,7 +467,7 @@
       =/  child  (scry cas pit)
       ?:  ?=($@(~ [~ ~]) child)
         ~
-      `[pit u.u.child]
+      `[kid u.u.child]
     ::
     ++  read-z
       =;  res=(list (pair pith:neo saga:neo))
@@ -451,7 +482,7 @@
       =/  child  (scry cas pit)
       ?:  ?=($@(~ [~ ~]) child)
         ~
-      `[pit u.u.child]
+      `[kid u.u.child]
     --
 ::  !! :: ``[q.u.u.pom ever q.p.u.u.pom]
   --

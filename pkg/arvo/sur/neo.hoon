@@ -96,6 +96,7 @@
 +$  aeon  (pair ever oath)
 +$  tale  (pair case oath)
 +$  oath  (pair hash seal)
++$  yuga  (axal aeon)
 :: 
 +$  saga  (pair aeon pail)
 +$  pail  (pair stud vase)
@@ -303,7 +304,7 @@
   |%
   +$  card  (pair pith note)
   +$  note
-    $%  [%grow =pail =oath]
+    $%  [%grow =pail case=(unit case) =oath]
         [%cull ~]
     ==
   +$  loam  (axal soil)
@@ -336,7 +337,15 @@
   +$  tend  ((mop @ud ,(map pith =case)) lte)
   ++  on    ((^on @ud ,(map pith =case)) lte)
   --
-++  farm  (axal turf)
+++  farm  
+  =<  farm
+  |%
+  +$  farm  (axal turf)
+  +$  card  (pair pith note)
+  +$  note
+    $%  [%grow p=saga]
+    ==
+  --
 --
 |%
 +$  sync  (trel pith hunt ?(%start %stop))
@@ -1170,8 +1179,6 @@
 :: * A `$bolt` is a `[=stud =once]`
 ::
 ::  $peer: Subscription
-+$  peer
-  [=pulp =path]
 
 ::  $tone: parent change tracking
 ::
@@ -1217,14 +1224,17 @@
 +$  town  (axal mall)
 +$  deli
   $:  last=ever
-      ~
+      desc=_|
+      =yuga :: if nonempty, paths still loading
+      =epic
   ==
 +$  mall
-  $:  mart=(set hunt)  :: subscriberes
+  $:  mart=(set hunt)  :: subscribers
       del=(unit deli) :: if responsible, subscription info
+      shop=(unit aeon) :: if behind, latest case
       ~
   ==
-::  $city: local
+::  $city: synchronsation, indexed by subscriber
 +$  city  (axal ward)
 +$  ward
   $:  =skin
@@ -1235,7 +1245,13 @@
   ^-  pith
   %+  turn  p
   |=  i=@ta
-  (fall (rush i spot:stip) [%ta i])
+  ?^  res=(rush i spot:stip)
+    u.res
+  ?:  =('.y' i)
+    f/&
+  ?:  =('.n' i)
+    f/|
+  [%ta i]
 ::
 ++  stip                                                ::  typed path parser 
   =<  swot
@@ -1320,6 +1336,11 @@
   ++  rule
     :: ^-  _|~(nail *(like name))
     ;~(plug ;~(pfix fas sig fed:ag) stip)
+  ++  en-spar
+    |=  nam=name
+    ^-  spar:ames
+    [ship.nam (pout pith.nam)]
+  ::
   ++  en-pith
     |=  nam=name
     ^-  pith
@@ -1597,6 +1618,12 @@
 +$  rely
   [=term =stem]
 ::
++$  peer
+  $:  run-nonce=@uvJ
+      ~
+  ==
++$  mate  (map ship peer)
++$  meet  (pair ship peer)
 ::
 +$  dish  (pair pith mode)
 +$  yarn  (pair aeon mode)

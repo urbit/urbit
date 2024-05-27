@@ -38,10 +38,14 @@
       =gang:neo       :: overlay
       =lads:neo       :: virtual
     ::
+      =mate:neo       :: peers
+    ::
       =unix:neo
     ::
       =halt:neo
+    ::
       dev=_|
+      run-nonce=@uvJ
   ==
 ::
 ++  is-parent-p
@@ -189,7 +193,7 @@
 ++  do-grow
   |=  [=pith:neo =pail:neo]
   ^-  card:dirt:neo
-  [pith %grow pail *oath:neo]
+  [pith %grow pail ~ *oath:neo]
 ++  do-grow-our
   |=  [=pith:neo =pail:neo]
   ^-  card:dirt:neo
@@ -198,7 +202,25 @@
   =/  =rave:clay
     [%next %z da/now.bowl /neo]
   (pass /next-clay %arvo %c %warp our.bowl q.byk.bowl `rave)
-
+::
+++  do-fetch-fine
+  |=  =pith:neo
+  ^-  card
+  =/  =wire:neo  fetch/(pout pith)
+  =/  =name:neo  (de-pith:name:neo pith)
+  =/  nonce  (scot %uv run-nonce:(~(got by mate) ship.name))
+  =/  =spar:ames  [ship.name [nonce (pout pith)]]
+  ~&  fetching/spar
+  !! :: (pass wire %keen spar)
+++  do-gall-grow
+  |=  [=pith:neo sag=(unit saga:neo)]
+  ^-  card
+  =/  =wire   gall-grow/(pout pith)
+  =/  =page  
+    ?~  sag  none/~
+    neo-feat/(saga:soften u.sag)
+  (pass wire %grow (pout pith) page)
+::
 :: ?:  =(p.flow 
 ::  |on: event handlers
 +|  %on
@@ -251,8 +273,8 @@
   |=  =sync:neo
   ^+  run
   ?-    r.sync
-    %start   abet:(start:sale [p q]:sync)
-    %stop    abet:(stop:sale [p q]:sync)
+    %start   abet:(~(start sale p.sync) [+ -]:q.sync)
+    %stop    abet:(~(stop sale p.sync) [+ -]:q.sync)
   ==
 ++  on-sync-start
   |=  [src=pith:neo =hunt:neo]
@@ -266,13 +288,28 @@
 ++  on-watch
   |=  =(pole knot)
   ^+  run
-  ~|  bad-watch-path/pole
-  ?>  ?=([%sync rest=*] pole)
-  =/  =pith:neo  (pave:neo rest.pole)
+  ?+  pole   ~|  bad-watch-path/pole  !!
+    [%sync rest=*]  (on-watch-sync (pave:neo rest.pole))
+    [%fetch rest=*]  (on-watch-fetch (pave:neo rest.pole))
+  ==
+::
+++  on-watch-fetch
+  |=  =pith:neo
+  ^+  run
+  =/  sag  (need (peek-x:till pith))
+  =/  =feat:neo
+    ?~  sag  [*aeon:neo sig/~]
+    (saga:soften u.sag)
+  =.  run  (emit %give %fact ~ neo-feat+!>(feat))
+  (emit %give %kick ~ ~)
+::
+++  on-watch-sync
+  |=  =pith:neo
+  ^+  run
   =/  paxs=(list road:neo)  (de:drive:neo pith)
   ?>  ?=([^ ^ ~] paxs)
-  ?+  i.paxs  !!
-    [car=@ [%ud since=@] ~]  abet:(serve:sale ;;(care:neo car.i.paxs) i.t.paxs)
+  ?+  i.paxs  ~|(bad-watch-sync/paxs !!)
+    [car=@ [%f meet=?] [%ud since=@] ~]  abet:(~(push sale i.t.paxs) meet.i.paxs ;;(care:neo car.i.paxs))
   ==
 ++  on-agent
   |=  [=wire =sign:agent:gall]
@@ -280,7 +317,8 @@
   =/  =road:neo  (pave:neo wire)
   ?+  road  +:(on-agent:def wire sign)
     [%deal rest=*]  (on-deal-sign rest.road sign)
-    [%sync rest=*]  abet:(on-sign:sale rest.road sign)
+    [%sale %sync rest=*]   abet:(~(on-sync-sign sale rest.road) sign)
+    [%sale %fetch rest=*]  abet:(~(on-fetch-sign sale rest.road) sign)
   ==
 ++  on-deal-sign
   |=  [=road:neo =sign:agent:gall]
@@ -297,6 +335,7 @@
   ^+  run
   ?+  pole  +:(on-arvo:def pole syn)
     [%sys rest=*]  (take-arvo:sys rest.pole syn)
+    [%fetch rest=*]  abet:(~(take-fetch sale (pave:neo rest.pole)) syn)
   ==
 ++  on-peek
   |=  =path
@@ -328,6 +367,16 @@
 ::  +crop: build (possibly virtual value)
 ::
 ::    TODO: does not work as advertised
+++  till  ~(. till:aux [loam farm])
+++  tell
+  |=  [=pith:neo =epic:neo]
+  ^+  run
+  =^  lom=loam:dirt:neo  farm
+    (tell:till epic)
+  =.  loam  lom  
+  run
+::
+++  plow  ~(. plow:aux loam)
 ++  crop
   |=  =pith:neo
   ^-  [(unit (unit saga:neo)) _run]
@@ -344,49 +393,57 @@
 
 ::  +sale: synchronisation
 ++  sale
-  =/  =town:neo   town
-  |%  
-  ++  abet  run(town town)
+  |_  =pith:neo
+  ++  abet  run
   ++  sale  .
   ++  scry   ~
+  ++  get-mall  (~(gut of:neo town) pith *mall:neo)
+  ++  get-ship
+    =/  =name:neo  (de-pith:name:neo pith)
+    ship.name
+  ::
+  ++  put-mall  |=(=mall:neo sale(town (~(put of:neo town) pith mall)))
   ++  wire
-    |=  =pith:neo  `^wire`sale/(pout pith)
+    |=  kind=?(%fetch %sync)
+    ^-  ^wire
+    [%sale kind (pout pith)]
   ++  care
-    |=  mart=(set hunt:neo)
-    %+  roll  ~(tap in mart)
+    ^-  care:neo
+    %+  roll  ~(tap in mart:get-mall)
     |=  [=hunt:neo =care:neo]
     ?:  ?=(?(%z %c) care.hunt)  %z
-    ?.  =(?(%y %b) care.hunt)  %y
-    care.hunt
+    ?.  =(?(%y %b) care.hunt)  %z
+    %x
   ++  peer-path
-    |=  [=pith:neo =mall:neo]
     %-  pout
-    (welp #/sync (en:drive:neo #/[(care mart.mall)]/[ud/0] pith ~))
+    (welp #/sync (en:drive:neo #/[care]/[f/|]/[ud/0] pith ~))
+  ++  fetch-path
+    %-  pout
+    (welp #/fetch pith)
+
   ++  stop
-    |=  [src=pith:neo =hunt:neo]
+    |=  [src=pith:neo =care:neo]
     ^+  sale
     !!
   ++  start
-    |=  [src=pith:neo =hunt:neo]
+    |=  [src=pith:neo =care:neo]
     ^+  sale
-    =/  ton  (~(dip of:neo town) pith.hunt)
-    ?^  fil.ton
-      =.  mart.u.fil.ton  (~(put in mart.u.fil.ton) [care.hunt src])
-      =.  town  (~(rep of:neo town) pith.hunt ton)
+    ~&  town/town
+    =/  mal  (~(get of:neo town) pith)
+    ?^  mal
+      =.  mart.u.mal  (~(put in mart.u.mal) [care src])
+      =.  town  (~(put of:neo town) pith u.mal)
       sale
-    =>  .(fil.ton `(unit mall:neo)`fil.ton)
     ::  XX: search upwards for 
     =|  =mall:neo
-    =.  mart.mall  (~(put in mart.mall) [care.hunt src])
+    =.  mart.mall  (~(put in mart.mall) [care src])
+    ?.  =(~ find-deli)
+      (put-mall mall)
     =.  del.mall  `*deli:neo
-    =/  =wire  sync/(pout pith.hunt)
-    =/  =name:neo  (de-pith:name:neo pith.hunt)
-    =.  run        (emit (do-watch-her wire ship.name (peer-path pith.hunt mall)))
-    =.  fil.ton   `mall
-    =.  town      (~(rep of:neo town) pith.hunt ton)
-    sale
+    watch-sync:(put-mall mall)
+  ::  XX: cancel freshly redundant
+    ::  TODO: cancel subscriptions benear
   ++  resign
-    |=  =pith:neo
     ^-  (unit pith:neo)
     =/  ton  (~(dip of:neo town) pith)
     =|  yoof=(list [pith:neo town:neo])
@@ -406,17 +463,75 @@
       ^-  [pith:neo town:neo]
       [(welp pit ~[iot]) town]
     ?~  fil.tin
-     $(kids t.kids)
+      $(kids t.kids)
     `(welp pith pit)
   ++  leave
-    |=  =pith:neo
-    =/  =wire  sync/(pout pith)
     =/  =name:neo  (de-pith:name:neo pith)
-    =.  run  (emit (do-leave-her wire ship.name))
+    =.  run  (emit (do-leave-her (wire %sync) ship.name))
     sale
+  ++  take-fetch
+    |=  syn=sign-arvo
+    ^+  sale
+    ~&  got-fetch/pith
+    ?>  ?=([%ames %tune *] syn)
+    ?~  roar.syn
+      ~&  missing-roar/pith
+      sale
+    =/  [=path dat=(unit page)]  dat.u.roar.syn
+    ?~  dat  
+      ~&  missing-page/pith
+      sale
+    %-  on-saga
+    ?>  =(p.u.dat %neo-feat)
+    (feat:harden ;;(=feat:neo q.u.dat))
+
+  ++  on-saga
+    |=  res=saga:neo
+    =/  =mall:neo  get-mall
+    =?  shop.mall  ?=(^ shop.mall)
+      ~&  have/p.exe.p.p.res 
+      ~&  want/p.exe.p.u.shop.mall
+      ~
+    =.  run  (on-dirt-card pith %grow q.res ~ q.p.res)
+    ::  XX: check for total growths
+    =.  sale  (put-mall mall) ::
+    =/  del  (need find-deli)
+    abet:(new:~(meat sale del) (dif:pith:neo pith del) res)
+  ::  XX: possibly check that 
+  ++  find-deli
+    =|  res=(unit pith:neo)
+    =/  at=pith:neo  pith
+    ?.  =(~ del:get-mall)
+      `pith
+    =.  pith  ~
+    |-  ^+  res
+    =/  nex  (dif:pith:neo at pith)
+    ?~  nex
+      res
+    =/  =mall:neo  get-mall
+    =?  res  &(?=(^ del.mall) desc.u.del.mall)
+      `pith
+    $(pith (snoc pith i.nex))
+  ++  meat
+    =/  =mall:neo  get-mall
+    =/  =deli:neo  (need del.mall)
+    |%
+    ++  abet  (put-mall mall(del `deli))
+    ++  meat  .
+    ++  new
+      |=  [kid=pith:neo =saga:neo]
+      =.  yuga.deli  (~(del of:neo yuga.deli) kid)
+      =.  epic.deli  (~(put of:neo epic.deli) kid saga)
+      ?.  =(~ yuga.deli)
+        meat
+      =/  =epic:neo  epic.deli
+      =.  epic.deli  *epic:neo
+      =.  run  (tell pith epic)
+      meat
+    --
   ::
   ++  gone
-    |=  [=pith:neo sub=hunt:neo]
+    |=  sub=hunt:neo
     ^+  sale
     =/  ton  (~(dip of:neo town) pith)
     ?~  fil.ton
@@ -426,14 +541,16 @@
     ?~  del.u.fil.ton
       sale
     =/  =deli:neo  u.del.u.fil.ton
-    ?~  sig=(resign pith)
+    =/  resig  resign
+    ?~  resig
       ~&  last-standing-ending-sub/pith
-      (leave pith)
+      leave
     !!
-  ++  on-sign
-    |=  [=pith:neo =sign:agent:gall]
+  ::
+  ++  on-sync-sign
+    |=  =sign:agent:gall
+    ~&  town/town
     ^+  sale
-    =/  ton  (~(dip of:neo town) pith)
     ?+    -.sign  ~|(bad-sign/-.sign !!)
         %watch-ack
       %.  sale
@@ -442,34 +559,105 @@
       (slog u.p.sign)
     ::
         %fact
-      sale
+      ?.  =(%neo-yuga p.cage.sign)
+        ~&  weird-mall-fact/p.cage.sign
+        sale
+      (on-yuga !<(yuga:neo q.cage.sign))
     ::
         %kick
       ~&  'todo: kick handling'
       sale
     ==
-  ::  +sell: new sale
-  ++  sell  sale
+  ::
+  ++  on-fetch-sign
+    |=  =sign:agent:gall
+    ^+  sale
+    ?+    -.sign  ~|(bad-sign/-.sign !!)
+        %watch-ack
+      %.  sale
+      ?~  p.sign
+        same
+      (slog u.p.sign)
+    ::
+        %fact
+      ?.  =(%neo-feat p.cage.sign)
+        ~&  weird-fetch-fact/p.cage.sign
+        sale
+      (on-saga (feat:harden !<(feat:neo q.cage.sign)))
+    ::
+        %kick
+      =/  =mall:neo  get-mall
+      ?~  shop.mall
+        sale
+      watch-fetch
+    ==
+  ::
+  ++  on-yuga
+    |=  =yuga:neo
+    ^+  sale
+    =/  yug  ~(tap of:neo yuga)
+    |-  
+    ?~  yug
+      sale
+    =/  [kid=pith:neo =aeon:neo]  i.yug
+    =/  pit  (welp pith kid)
+    =^  res=(unit (unit saga:neo))  run
+      (crop pit)
+    ?~  res
+      =.  run  abet:(~(fresh sale pit) aeon)
+      ~&  nothing/pit
+      $(yug t.yug)
+    ?~  u.res
+      ~&  dead/pit
+      :: XX: what means??
+      $(yug t.yug)
+    ~&  alive/pit
+    ?:  =(p.u.u.res aeon)
+      ~&  clone/pit
+      $(yug t.yug)
+    ~&  fresh/pit
+    =.  run  abet:(~(fresh sale pit) aeon)
+    $(yug t.yug)
+  ::
+  ++  watch-fetch
+    =/  wir  (wire %fetch)
+    =.  run  (emit (do-watch-her wir get-ship fetch-path))
+    sale
+  ++  watch-sync 
+    =/  wir  (wire %sync)
+    =.  run        (emit (do-watch-her (wire %sync) get-ship peer-path))
+    sale
+  ::
+  ++  fresh
+    |=  =aeon:neo
+    ^+  sale
+    =/  =mall:neo  get-mall
+    =.  shop.mall  `aeon
+    =.  sale  (put-mall mall)
+    watch-fetch
+  ::  +vend: new sale
+  ++  vend  sale
   ::  +serve: first sale
   ++  item
-    |=  =hunt:neo
+    |=  =care:neo
     ^-  cage
-    :-  %neo-gest
-    !>  ^-  gest:neo
-    (epic:soften (epic hunt))
+    :-  %neo-yuga
+    !>  ^-  yuga:neo
+    (yuga care)
   ::
-  ++  epic
-    |=  =hunt:neo
-    ^-  epic:neo
-    ~|  hunt/hunt
-    ?~  pic=(need (look hunt))
-      *epic:neo
-    u.pic
+  ++  yuga
+    |=  =care:neo
+    ^-  yuga:neo
+    ?~  pic=(need (look care pith))
+      *yuga:neo
+    (epic-to-yuga u.pic)
   ::
-  ++  serve
-    |=  =hunt:neo
+  ++  push
+    |=  [meet=? =care:neo]
     ^+  sale
-    =.  run  (emit %give %fact ~ (item hunt))
+    :: =?  run  meet
+      :: (emit %give %fact ~ neo-meet+!>(`meet:neo`[our.bowl run-nonce ~]))
+    =.  run  (emit %give %fact ~ (item care))
     sale
   --
 ++  rent
@@ -521,12 +709,31 @@
       ?=(%z p.i.yel)
     --
   --
+:: 
+++  lazarus
+  |=  git=grit:neo
+  ^+  run
+  ?~  git
+    run
+  =/  [=pith:neo =loot:neo]  i.git
+  =/  =name:neo  (de-pith:name:neo pith)
+  ?.  =(our.bowl ship.name)
+    $(git t.git) :: XX: turn on for caching??
+  ~&  case/case.loot
+  =/  res  (need (look-x:till case.loot pith))
+  ?:  &(?=(^ res) =(%vase p.q.u.res))
+    $(git t.git)
+  =.  run
+    (emit (do-gall-grow pith (need (look-x:till case.loot pith))))
+  $(git t.git)
+
 ++  take-dirt-card
   |=  =card:dirt:neo
   ^-  (quip gift:dirt:neo _run)
   =^  gifts=(list gift:dirt:neo)  loam
     (~(call plow:aux loam) card)
   =.  farm  (~(take till:aux [loam farm]) gifts)
+  =.  run   (lazarus gifts)
   [gifts run]
 
 ::  +stop: helper for blocking semantics
@@ -549,8 +756,9 @@
     =/  =hunt:neo  i.prey
     =.  by-tour.halt   (~(put by by-tour.halt) hunt flow)
     =.  by-flow.halt   (~(put ju by-flow.halt) flow hunt)
-    =.  run  abet:(start:sale p.q.move hunt)
+    =.  run  abet:(~(start sale pith.hunt) p.q.move care.hunt)
     $(prey t.prey)
+  ::
   ++  is-congested
     |=  =move:neo
     =/  =flow:neo  [p p.q]:move
@@ -712,7 +920,8 @@
   |_  =stud:neo
   ++  get  grab
   ++  grab
-    q:(need (~(peek plow:aux loam) pith))
+    ~|  pro-grab/stud
+    q:(need (~(peek plow:aux loam) p/our.bowl pith))
   ++  built
     !=(~ (~(peek plow:aux loam) p/our.bowl pith))
   ++  pith  (~(pith press pro/stud) %out)
@@ -955,6 +1164,7 @@
 ::
 ++  boot
   |^  ^+  run
+  =.  run-nonce  eny.bowl
   =+  .^(neo-vase=vase %ca (welp clay-beak /sur/neo/hoon))
   =/  reef=vase  (slop !>(..zuse) neo-vase(p [%face %neo p.neo-vase]))
   =/  riff=pail:neo  [%vase !>(riff-kook)]
@@ -1168,7 +1378,7 @@
     |=  =pail:neo
     ^+  arvo
     =^  git=grit:neo  run
-      (take-dirt-card [p/our.bowl here] %grow pail *oath:neo)
+      (take-dirt-card [p/our.bowl here] %grow pail ~ *oath:neo)
     =.  grit  (welp grit git)
     arvo
   ::
@@ -1584,7 +1794,6 @@
   ^-  (unit lore:neo)
   =/  =care:neo  (get-care:quay:neo want)
   =/  =epic:neo  (need (need (~(peek till:aux [loam farm]) care (en-pith:name:neo name))))
-  =.  epic  (~(dip of:neo epic) (en-pith:name:neo name))
   =;  [fail=? res=(list (pair pith:neo idea:neo))]
     ?:  fail
       ~
@@ -1640,6 +1849,20 @@
     lore
   =.  lore   (~(put of:neo lore) i.lst)
   $(lst t.lst)
+
+++  gas-yuga
+  =|  =yuga:neo
+  |=  lst=(list [pith:neo aeon:neo])
+  ^+  yuga
+  ?~  lst
+    yuga
+  =.  yuga   (~(put of:neo yuga) i.lst)
+  $(lst t.lst)
+
+::
+++  epic-to-yuga
+  |=  =epic:neo
+ (gas-yuga (turn ~(tap of:neo epic) |=([p=pith:neo s=saga:neo] [p p.s])))
 ::
 ++  soften
   |%
@@ -1673,8 +1896,14 @@
     [p.p.raw q.p.raw %poke (vial q.raw)]
   ++  vial
     |=  =vial:neo
+    ^-  pail:neo
     :-  p.vial
-    *vase
+    (slym ~(get pro p.vial) q.vial)
+  ::
+  ++  feat
+    |=  =feat:neo
+    ^-  saga:neo
+    [p.feat (vial q.feat)]
     ::  (slym (need ~(get pro p.vial)) q.vial)
   --
 ++  print-dbug-all
