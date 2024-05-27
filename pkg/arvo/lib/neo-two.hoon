@@ -90,22 +90,45 @@
 ::  $jolt: Apply self change to $land
 ::
 ++  jolt
-  |=  [=turf:neo rift=?]
-  ^+  turf
+  |=  [=loam:dirt:neo =turf:neo =pith:neo rift=?]
+  |^  ^+  turf
   =/  [=case:neo =over:neo]
     ?^  pie=(ram:on:land:neo land.turf)
       u.pie
     [0 *over:neo]
-  =.  land.turf
-    %^  put:on:land:neo  land.turf   +(case)
-    ^-  over:neo
+  =/  new=over:neo
     :*  [. .]:.+(q.why.over)
         [. .]:?:(rift +(q.why-mut.over) q.why-mut.over)
         [. .]:.+(q.zed.over)
         ?.(rift zed-mut.over [. .]:+(q.zed-mut.over))
         ?:(rift +(rift.over) rift.over)
     ==
+  =.  land.turf
+    (put:on:land:neo land.turf +(case) new)
+  =?  by-kids-mut.plot.turf  rift
+    (do-plan by-kids-mut.plot.turf q.why-mut.new)
+  =?  by-desc-mut.plot.turf  rift
+    (do-plan by-desc-mut.plot.turf q.zed-mut.new)
+  =.  by-kids.plot.turf
+    (do-tend by-kids.plot.turf q.why.new)
+  =.  by-desc.plot.turf
+    (do-tend by-desc.plot.turf q.zed.new)
   turf
+  ++  do-plan
+    |=  [=plan:neo =case:neo]
+    ^-  plan:neo
+    =/  prev=(pair @ud (set pith:neo))
+      (fall (ram:on:plan:neo plan) [0 *(set pith:neo)])
+    ?>  =(case +(p.prev))
+    (put:on:plan:neo plan case q.prev)
+  ++  do-tend
+    |=  [=tend:neo =case:neo]
+    ^-  tend:neo
+    =/  prev=(pair @ud (map pith:neo case:neo))
+      (fall (ram:on:tend:neo tend) [0 *(map pith:neo case:neo)])
+    ?>  =(case +(p.prev))
+    (put:on:tend:neo tend case q.prev)
+  --
 ::  $jerk: resolve $once to $ever with $land
 ::
 ++  jerk
@@ -134,7 +157,7 @@
       %y   p.once
       %z   p.once
     ==
-  ?.  &((lte p.hav wan) (gth q.hav wan))
+  ?.  &((lte p.hav wan) (gte q.hav wan))
     [| ~]
   [%& `(nail over plot.turf case)]
 ::  +jump: react to child/descendant shape change
@@ -277,9 +300,10 @@
   ++  self
     |=  [=pith:neo case=@ud rift=?]
     ^+  farm
-    =/  me  (~(gut of:neo farm) pith *turf:neo)
-    =.  me  (jolt me rift)
-    (~(put of:neo farm) pith me)
+    =/  tuf  (~(gut of:neo farm) pith *turf:neo)
+    =/  lom  (~(dip of:neo loam) pith)
+    =.  tuf  (jolt lom tuf pith rift)
+    (~(put of:neo farm) pith tuf)
   ::
   ++  eternal
     |=  [=pith:neo case=@ud rif=?]
@@ -346,23 +370,25 @@
     |=  [=care:neo =pith:neo]
     ^-  (unit (unit (axal:neo saga:neo)))
     ?~  val=(~(get of:neo farm) pith)
+      ~&  missing-farm/pith
       ~
     =;  =once:neo
+      ~&  have-once/[pith once]
       (look care once pith)
     ?+    care  !!
         %x
       ?~  ove=(ram:on:land:neo land.u.val)
-        x/0
+        x/1
       x/key.u.ove
     ::
         %y
       ?~  ove=(ram:on:tend:neo by-kids.plot.u.val)
-        y/0
+        y/1
       y/key.u.ove
     ::
         %z
       ?~  ove=(ram:on:tend:neo by-desc.plot.u.val)
-        z/0
+        z/1
       z/key.u.ove
     ==
   ::

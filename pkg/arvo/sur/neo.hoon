@@ -88,6 +88,8 @@
   $:  pail=(unit pail)
       =aeon
   ==
+::
++$  vial  (pair stud *)
 +$  book  (pair tale pail)
 +$  poem  (pair tale (unit pail))
 ::
@@ -99,7 +101,8 @@
 +$  pail  (pair stud vase)
 ::
 +$  epic  $+(epic (axal saga))
-
++$  feat  (pair aeon vial)
++$  gest  $+(gest (axal feat))
 ::  $stud: name for build system outputs
 ::  
 ::    Build system outputs cannot live at arbitrary points in the
@@ -1728,7 +1731,6 @@
   --
 :: $ewer: deprecated
 +$  ewer  (pair stud vase)
-+$  vial  (pair stud *)
 +$  move  (pair pith card)
 ::
 +$  icon
