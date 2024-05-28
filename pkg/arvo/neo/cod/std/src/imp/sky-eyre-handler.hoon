@@ -1,5 +1,12 @@
 /@  htmx
 /-  serv=server
+/*  date-now   
+/*  atom-input  
+/*  multiline-input 
+/*  a-i-r
+/*  feather
+/*  reset
+
 =>
   |%
   ++  main
@@ -22,6 +29,49 @@
         ;*  kids
       ==
     ==
+  ++  html-enc-js
+    ::
+    ::  htmx extension which encodes the request
+    ::  as the serialized HTML of the calling element
+    ::
+    %-  trip
+    '''
+    htmx.defineExtension('html-enc', {
+      onEvent: function (name, evt) {
+        if (name === "htmx:configRequest") {
+          evt.detail.headers['Content-Type'] = "text/html";
+        }
+      },
+      encodeParameters : function(xhr, parameters, elt) {
+        xhr.overrideMimeType('text/html');
+        let xmls = new XMLSerializer();
+        return (xmls.serializeToString(elt));
+      }
+    });
+    Idiomorph.defaults.ignoreActive = true;
+    Idiomorph.defaults.callbacks.beforeAttributeUpdated = (name, node, type) => {
+      if (node.hasAttribute('morph-retain')) {
+        let ribs = node.getAttribute('morph-retain').split(',').map(t => t.trim());
+        if (ribs.includes(name)) {
+          return false;
+        }
+      }
+    }
+    Idiomorph.defaults.callbacks.beforeNodeMorphed = (oldNode, newNode) => {
+      if (oldNode?.nodeName !== "#text") {
+        if (oldNode.hasAttribute('morph-no-swap') && oldNode.id === newNode.id) {
+          return false;
+        }
+        else if (
+          newNode.hasAttribute('morph-if-class') &&
+          !oldNode.classList.contains(newNode.getAttribute('morph-if-class'))
+        ) {
+          return false;
+        }
+      }
+    }
+    '''
+  ::
   ++  lift
     |=  in=manx
     ^-  manx
@@ -33,7 +83,7 @@
         ;script(src "https://unpkg.com/htmx.org@1.9.11");
         ;script(src "https://unpkg.com/idiomorph/dist/idiomorph-ext.min.js");
         ;script(src "https://unpkg.com/htmx.org@1.9.11/dist/ext/response-targets.js");
-        :: ;script: {html-enc-js}
+        ;script: {html-enc-js}
         ;meta
           =name  "viewport"
           =content
@@ -66,8 +116,8 @@
           */
           '''
         ==
-        ::  ;style: {(trip feather-css)}
-        ::  ;style: {(trip reset-css)}
+        ;style: {(trip feather)}
+        ;style: {(trip reset)}
         ;script
           ;+  ;/
           """
@@ -76,7 +126,7 @@
           jQuery.fn.emit=function (name)\{(this[0]).dispatchEvent(new Event(name, \{ bubbles: true, cancelable: true, composed: true })); return this;};
           """
         ==
-        :: ;script: {(trip a-i-r)}
+        ;script: {(trip a-i-r)}
         :: ;+  favicon
         :: ;+  manifest
       ==

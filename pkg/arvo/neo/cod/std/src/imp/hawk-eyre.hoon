@@ -23,7 +23,20 @@
       =/  [eyre-id=@ta req=inbound-request:eyre]  task
       =/  lin  (parse-request-line:serv url.request.req)
       =/  inner=pith:neo  (pave:neo (slag 2 site.lin))
-      ?>  ?=([[%p @] *] inner)
+      ?:  ?=([[%p @] *] inner)
+        =/  =manx
+          ;div: 400
+        =/  =pith:neo  #/[p/our.bowl]/$/eyre
+        =/  head=sign:eyre:neo  [eyre-id %head [200 [['content-type' 'text/html'] ~]]]
+        =/  data=sign:eyre:neo  [eyre-id %data `(manx-to-octs:serv manx)]
+        =/  done=sign:eyre:neo  [eyre-id %done ~]
+        :_  sig/!>(~)
+        :~  [pith %poke eyre-sign/!>(head)]
+            [pith %poke eyre-sign/!>(data)]
+            [pith %poke eyre-sign/!>(done)]
+            [here.bowl %cull ~]
+        ==
+
       ~&  inner/inner
       =/  args  (~(gas by *(map @t @t)) args.lin)
       =/  =crew:neo  (~(gas by *crew:neo) src/inner ~)

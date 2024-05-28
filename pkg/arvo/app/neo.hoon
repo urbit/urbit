@@ -12,6 +12,7 @@
 /*  txt-ford-face   %hoon   /neo/cod/std/src/imp/ford-face/hoon
 /*  txt-ford-face   %hoon   /neo/cod/std/src/imp/ford-face/hoon
 /*  txt-ford-reef   %hoon   /neo/cod/std/src/imp/ford-reef/hoon
+/*  txt-ford-text   %hoon   /neo/cod/std/src/imp/ford-text/hoon
 =>
   |%
   ++  dev  &
@@ -982,6 +983,7 @@
     (~(pith press imp/stud) %out)
   ++  vase
     ^-  ^vase
+    ~|  husk/stud
     q:(need (~(peek plow:aux loam) pith))
   ++  is-bunted
     (~(nest ut -:!>(~)) | p:vase)
@@ -1196,13 +1198,11 @@
     !=(txt q.q.u.pal)
   ++  read-txt
     |=  pax=path
-    =/  ext  (rear pax)
+    ~&  reading-txt/pax
+    =+  .^(src=@t %cx `path`(welp root pax))
     =.  pax  (snip pax)
-    =/  nam  (rear pax)
-    =.  pax  (snip pax)
-    =.  pax
-      (snoc pax :((cury cat 3) nam '-' ext))
-    ~&  pax/pax
+    =.  run  (write-txt pax src)
+    =.  run  (ford-text (slip:press %out pax) pax)
     run
   ::
   ++  read-file
@@ -1211,15 +1211,14 @@
     ~&  reading/pax
     ?.  =((rear pax) %hoon)
       (read-txt pax)
-    =.  pax  (snip pax)
-    =+  .^(src=@t %cx `path`(snoc `path`(welp root pax) %hoon))
-    ?.  (has-modified src (pave:neo pax))
+    =+  .^(src=@t %cx `path`(welp root pax))
+    ?.  (has-modified src (pave:neo (snip pax)))
       run
     ~?  >>>  ripe
       [%update pax]
     =/  =file:ford:neo
       ~|  parsing/pax
-      (scan (trip src) (rein:ford:neo [our.bowl (pave:neo pax)]))
+      (scan (trip src) (rein:ford:neo [our.bowl (pave:neo (snip pax))]))
     ~&  [lib=lib pro=pro]:file
     =/  has-imports=?
       ?&  (levy pro.file |=(pro:ford:neo ~(exists pro stud)))
@@ -1232,21 +1231,22 @@
       !!
     =.  run  (build-pros (turn pro.file tail))
     =.  run  (build-libs (turn lib.file tail))
+    =.  run  (build-fils (turn fil.file tail))
     ::  =.  run  (build-fils (turn lib.file tail))
     =/  built-imports=?
       ?&  (levy pro.file |=(pro:ford:neo ~(built pro stud)))
           (levy lib.file |=(lib:ford:neo ~(built lib stud)))
       ==
     ~|  ~(key by ~(tar of:neo loam))
-    ~|  imports/file
+    ~|  imports/file(hoon *hoon)
     ?>  built-imports
     =^  pre=pith  run  
-      (make-prelude pax file)
+      (make-prelude (snip pax) file)
     =/  =conf:neo
       (~(gas by *conf:neo) [%sut (ours pre)] ~)
-    =.  run  (write-hoon pax src)
-    =/  pit  (src-to-out pax)
-    (ford-slap (src-to-out pax) pre pax)
+    =.  run  (write-hoon (snip pax) src)
+    =/  pit  (src-to-out (snip pax))
+    (ford-slap (src-to-out pax) pre (snip pax))
   ++  build-fils
     |=  pos=(list stud:neo)
     ^+  run
@@ -1256,7 +1256,10 @@
       (~(path press fil/i.pos) %src)
     ?:  ~(built pro i.pos)
       $(pos t.pos)
-    =.  run  (read-file (snoc pat %hoon))
+    =+  .^(=arch %cy (welp root pat))
+    ~|  pat/pat
+    =/  ext  (snag 0 ~(tap in ~(key by dir.arch)))
+    =.  run  (read-txt (snoc pat ext))
     $(pos t.pos)
   ::
   ++  build-pros
@@ -1293,6 +1296,11 @@
     |=  [wer=pith sut=pith src=pith]
     %^  do-make  wer  %ford-slap
     `(~(gas by *conf:neo) sut/(ours sut) hoon/(ours src) ~)
+  ::
+  ++  ford-text
+    |=  [wer=pith txt=pith]
+    %^  do-make  wer  %ford-text
+    `(~(gas by *conf:neo) txt/(ours txt) ~)
   ::
   ++  slop
     |=  [wer=pith a=pith b=pith]
@@ -1338,9 +1346,11 @@
   ++  file-to-deps
     |=  =file:ford:neo
     ^-  (list [term pith])
-    %+  welp
-      (turn pro.file |=(p=pro:ford:neo [face.p ~(pith pro stud.p)]))
-    (turn lib.file |=(l=lib:ford:neo [face.l (~(pith press lib/stud.l) %out)]))
+    %-  zing
+    :~  (turn pro.file |=(p=pro:ford:neo [face.p ~(pith pro stud.p)]))
+        (turn fil.file |=(f=fil:ford:neo [face.f (~(pith press fil/stud.f) %out)]))
+        (turn lib.file |=(l=lib:ford:neo [face.l (~(pith press lib/stud.l) %out)]))
+    ==
   ++  make-prelude
     |=  [pax=pith =file:ford:neo]
     ^-  [pith _run]
@@ -1350,6 +1360,10 @@
   ++  write-hoon
     |=  [pax=pith fil=@t]
     (do-make pax %hoon `hoon/!>(fil) ~)
+  ++  write-txt
+    |=  [pax=pith fil=@t]
+    (do-make pax %txt `txt/!>(fil) ~)
+
   ++  src-to-out
     |=  pax=pith:neo
     ^-  pith:neo
@@ -1363,8 +1377,10 @@
   =/  reef=vase  (slop !>(..zuse) neo-vase(p [%face %neo p.neo-vase]))
   =/  riff=pail:neo  [%vase !>(riff-kook)]
   =.  run  (on-dirt-card (do-grow-our (pess imp/%ford-riff) riff))
+  =.  run  (on-dirt-card (do-grow-our (pess imp/%txt) vase/!>(~)))
   =.  run  (make-riff #/out/reef reef)
   =.  run  (re-export reef %hoon !,(*hoon @t))
+  =.  run  (re-export reef %txt !,(*hoon @t))
   =.  run  (re-export reef %desk !,(*hoon desk))
   =.  run  (make-riff (pess pro/%vase) (vase-pro reef))
   =.  run  (make-riff (pess pro/%ford-in) (ford-in reef))
@@ -1374,13 +1390,19 @@
   =.  run  (make-riff-slap (pess imp/%ford-same) reef txt-ford-same)
   =.  run  (make-riff-slap (pess imp/%ford-face) reef txt-ford-face)
   =.  run  (make-riff-slap (pess imp/%ford-slop) reef txt-ford-slop)
+  =.  run  (make-riff-slap (pess imp/%ford-text) reef txt-ford-text)
   =.  run  (make-riff-slap (pess imp/%ford-slap) reef txt-ford-slap)
   =.  run  (re-export reef %json !,(*hoon json))
   =.  run  (re-export reef %mime !,(*hoon mime))
   =.  run  copy-clay
   ::  =.  run  (emit %pass /bind-site %arvo %e %connect [~ dap.bowl ~] dap.bowl)
   =.  run  (emit do-std-warp)
-  =.  run  (emit (do-card #/[p/our.bowl]/sky %make %sky `sky/!>([%system [~[%home] ~] 1]) ~))
+  =.  run  
+    (emit (do-card #/[p/our.bowl]/sky %make %sky `sky/!>([%system [~[%home] ~] 1]) ~))
+  =.  run  
+    (emit (do-card #/[p/our.bowl]/srv/hawk %make %hawk-eyre ~ ~))
+  =.  run  
+    (emit (do-card #/[p/our.bowl]/srv/sky %make %sky-eyre ~ ~))
   run
   ++  pess  |=(=post:neo (~(pith press post) %out))
   ++  clay-beak  ^-  path
