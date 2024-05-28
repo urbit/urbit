@@ -71,10 +71,7 @@
 ::    Identify shrub by either %x, %y or %z, as per $ever
 ::
 +$  once
-  $%  [%x p=case]
-      [%y p=@ud]
-      [%z p=@ud]
-  ==
+  [?(%x %y %z) p=case]
 
 +$  pulp  ?(%noun %json)
 ::  $hash: Hash
@@ -298,7 +295,7 @@
 +$  mode  ?(%add %dif %del)
 +$  loot  [case=@ud =mode]
 +$  dust  [=pith loot]
-+$  grit   (list dust)
++$  grit  (list dust)
 ::  $dirt: Layer 1 of the namespace
 ++  dirt
   |%
@@ -857,8 +854,8 @@
 ::  $halt: Currently blocked flows and indices
 ::
 +$  halt
-  $:  by-tour=(map tour flow) :: flow blocked by hunt
-      by-flow=(jug flow tour) :: hunts blocked by flow
+  $:  by-hunt=(map hunt flow) :: flow blocked by hunt
+      by-flow=(jug flow hunt) :: hunts blocked by flow
       clog=(map flow (qeu move)) :: enqueued moves to send on unblock
   ==
 ++  ack  (pair flow (unit tang))
@@ -1186,16 +1183,16 @@
 +$  tone
   $%  [%sell ~]
       [%rely =term =pith]
+      [%halt ~]
   ==
 +$  howl  tone
 ::  $wail: change result
-+$  wail  (trel pith yell mode)
++$  wail  (trel hunt howl mode)
   
 :: $song
 ::  $sound: internal change tracking listeners
 ::
-+$  roar
-  (jug hunt tone)
++$  roar  (pair pith tone)
   
 +$  meow
   (jug pith (pair care tone))
@@ -1205,7 +1202,9 @@
   (jug hunt rely)
 +$  riot  (axal rave)
 +$  rave
-  $:  yel=(set yell)
+  $:  exe=(set howl)
+      why=(set howl)
+      zed=(set howl)
   ==
 
 ::
@@ -1234,11 +1233,12 @@
       shop=(unit aeon) :: if behind, latest case
       ~
   ==
-::  $city: synchronsation, indexed by subscriber
+::  $city: synchronsation, indexed by publisher
 +$  city  (axal ward)
 +$  ward
-  $:  =skin
-      =conf
+  $:  exe=(set path)
+      why=(set path)
+      zed=(set path)
   ==
 ++  pave
   |=  p=path
@@ -1616,7 +1616,7 @@
   $~  ~
   (map iota hall)
 +$  rely
-  [=term =stem]
+  [=term =leaf]
 ::
 +$  peer
   $:  run-nonce=@uvJ
@@ -1629,7 +1629,7 @@
 +$  yarn  (pair aeon mode)
 ::  $leaf: diff over namespace
 +$  leaf
-  (axal yarn)
+  (axal mode)
 ::
 +$  lore  (axal idea)
 +$  idea
@@ -1873,7 +1873,8 @@
 ::
 +$  band  (map term fief)
 +$  lads  (map pish lash)
-+$  port  (pair care lads)
++$  dare  ?(%y %z)
++$  port  (pair dare lads)
 +$  kids  (unit port)
 ::  $dude: virtual namespace binding
 ::

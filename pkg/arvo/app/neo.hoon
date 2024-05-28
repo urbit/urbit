@@ -98,9 +98,15 @@
     |=  =path
     ^-  (quip card _this)
     =^  cards  state
-      abet:(on-watch:run path)
+      abet:(on-peer:run path |)
     [cards this]
-  ++  on-leave  on-leave:def
+  ++  on-leave
+    |=  =path
+    ^-  (quip card _this)
+    =^  cards  state
+      abet:(on-peer:run path &)
+    [cards this]
+  ::
   ++  on-agent
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
@@ -285,15 +291,15 @@
   ^+  run
   !!
 ::
-++  on-watch
-  |=  =(pole knot)
+++  on-peer
+  |=  [=(pole knot) stop=?]
   ^+  run
   ?+  pole   ~|  bad-watch-path/pole  !!
-    [%sync rest=*]  (on-watch-sync (pave:neo rest.pole))
-    [%fetch rest=*]  (on-watch-fetch (pave:neo rest.pole))
+    [%sync rest=*]  (on-peer-sync (pave:neo rest.pole) stop)
+    [%fetch rest=*]  ?:(stop run (on-peer-fetch (pave:neo rest.pole)))
   ==
 ::
-++  on-watch-fetch
+++  on-peer-fetch
   |=  =pith:neo
   ^+  run
   =/  sag  (need (peek-x:till pith))
@@ -303,13 +309,22 @@
   =.  run  (emit %give %fact ~ neo-feat+!>(feat))
   (emit %give %kick ~ ~)
 ::
-++  on-watch-sync
-  |=  =pith:neo
+++  on-peer-sync
+  |=  [=pith:neo stop=?]
   ^+  run
   =/  paxs=(list road:neo)  (de:drive:neo pith)
   ?>  ?=([^ ^ ~] paxs)
-  ?+  i.paxs  ~|(bad-watch-sync/paxs !!)
-    [car=@ [%f meet=?] [%ud since=@] ~]  abet:(~(push sale i.t.paxs) meet.i.paxs ;;(care:neo car.i.paxs))
+  ?>  ?=([[%p ship=@] rest=*] i.t.paxs)
+  ?>  =(our.bowl ship.i.t.paxs)
+  ?+    i.paxs  ~|(bad-watch-sync/paxs !!)
+      [car=@ [%f meet=?] [%ud since=@] ~]
+    =*  ren  ~(. rent rest.i.t.paxs)
+    =+  ;;(=care:neo car.i.paxs)
+    =/  =path  sync/(pout pith)
+    =<  abet
+    ?:  stop
+      (stop:ren care path)
+    (push:ren meet.i.paxs care path)
   ==
 ++  on-agent
   |=  [=wire =sign:agent:gall]
@@ -371,9 +386,14 @@
 ++  tell
   |=  [=pith:neo =epic:neo]
   ^+  run
-  =^  lom=loam:dirt:neo  farm
+  =/  [gis=(list gift:dirt:neo) lom=loam:dirt:neo fam=farm:neo]
     (tell:till epic)
   =.  loam  lom  
+  =.  farm  fam
+  =.  run   (lazarus gis)
+  =.  run   (take:rage gis)
+  =.  run   (collect-rent gis)
+  ~&  gifs/gis
   run
 ::
 ++  plow  ~(. plow:aux loam)
@@ -428,7 +448,6 @@
   ++  start
     |=  [src=pith:neo =care:neo]
     ^+  sale
-    ~&  town/town
     =/  mal  (~(get of:neo town) pith)
     ?^  mal
       =.  mart.u.mal  (~(put in mart.u.mal) [care src])
@@ -439,7 +458,9 @@
     =.  mart.mall  (~(put in mart.mall) [care src])
     ?.  =(~ find-deli)
       (put-mall mall)
-    =.  del.mall  `*deli:neo
+    =|  =deli:neo
+    =.  desc.deli  !=(%x care)
+    =.  del.mall  `deli
     watch-sync:(put-mall mall)
   ::  XX: cancel freshly redundant
     ::  TODO: cancel subscriptions benear
@@ -489,14 +510,19 @@
     |=  res=saga:neo
     =/  =mall:neo  get-mall
     =?  shop.mall  ?=(^ shop.mall)
-      ~&  have/p.exe.p.p.res 
-      ~&  want/p.exe.p.u.shop.mall
+      ~?  !=(p.exe.p.p.res p.exe.p.u.shop.mall)
+        mismatch-saga-sale/[exe.p.u.shop.mall exe.p.p.res]
       ~
-    =.  run  (on-dirt-card pith %grow q.res ~ q.p.res)
-    ::  XX: check for total growths
-    =.  sale  (put-mall mall) ::
-    =/  del  (need find-deli)
-    abet:(new:~(meat sale del) (dif:pith:neo pith del) res)
+    =.  sale  (put-mall mall)
+    =/  del  
+      ~|  town/town
+      ~|  mall/mall
+      ~|  pith/pith
+      (need find-deli)
+    ~&  del/del
+    =/  kid  (dif:pith:neo pith del)
+    ~&  kid/kid
+    abet:(fetched:~(meat sale del) (dif:pith:neo pith del) res)
   ::  XX: possibly check that 
   ++  find-deli
     =|  res=(unit pith:neo)
@@ -507,6 +533,8 @@
     |-  ^+  res
     =/  nex  (dif:pith:neo at pith)
     ?~  nex
+      ~?  =(~ nex)
+        missing-deli/at
       res
     =/  =mall:neo  get-mall
     =?  res  &(?=(^ del.mall) desc.u.del.mall)
@@ -516,17 +544,24 @@
     =/  =mall:neo  get-mall
     =/  =deli:neo  (need del.mall)
     |%
-    ++  abet  (put-mall mall(del `deli))
+    ++  abet  =.(del.mall `deli (put-mall mall))
     ++  meat  .
     ++  new
+      |=  =yuga:neo
+      =.  yuga.deli  yuga
+      ~&  new-yuga/yuga
+      meat
+    ++  fetched
       |=  [kid=pith:neo =saga:neo]
       =.  yuga.deli  (~(del of:neo yuga.deli) kid)
       =.  epic.deli  (~(put of:neo epic.deli) kid saga)
-      ?.  =(~ yuga.deli)
+      ~&  fetched/deli
+      ?.  =(~ ~(tap of:neo yuga.deli))
         meat
       =/  =epic:neo  epic.deli
+      ~&  finalizing/[pith epic]
       =.  epic.deli  *epic:neo
-      =.  run  (tell pith epic)
+      =.  run  (tell pith (~(rep of:neo *epic:neo) pith epic))
       meat
     --
   ::
@@ -595,29 +630,31 @@
   ++  on-yuga
     |=  =yuga:neo
     ^+  sale
-    =/  yug  ~(tap of:neo yuga)
+    :: =.  sale  abet:(new:meat yuga)
+    =/  lis  ~(tap of:neo yuga)
     |-  
-    ?~  yug
-      sale
-    =/  [kid=pith:neo =aeon:neo]  i.yug
+    ?~  lis
+      ~&  done-yuga-town/town
+      abet:(new:meat yuga)
+    =/  [kid=pith:neo =aeon:neo]  i.lis
     =/  pit  (welp pith kid)
     =^  res=(unit (unit saga:neo))  run
       (crop pit)
     ?~  res
       =.  run  abet:(~(fresh sale pit) aeon)
       ~&  nothing/pit
-      $(yug t.yug)
+      $(lis t.lis)
     ?~  u.res
       ~&  dead/pit
       :: XX: what means??
-      $(yug t.yug)
+      $(lis t.lis)
     ~&  alive/pit
     ?:  =(p.u.u.res aeon)
       ~&  clone/pit
-      $(yug t.yug)
+      $(lis t.lis, yuga (~(del of:neo yuga) kid))
     ~&  fresh/pit
     =.  run  abet:(~(fresh sale pit) aeon)
-    $(yug t.yug)
+    $(lis t.lis)
   ::
   ++  watch-fetch
     =/  wir  (wire %fetch)
@@ -635,8 +672,30 @@
     =.  shop.mall  `aeon
     =.  sale  (put-mall mall)
     watch-fetch
-  ::  +vend: new sale
-  ++  vend  sale
+  --
+++  collect-rent
+  |=  gis=(list gift:dirt:neo)
+  ^+  run
+  ?~  gis
+    run
+  =/  [=pith:neo =loot:neo]  i.gis
+  =/  =name:neo  (de-pith:name:neo pith)
+  ?.  =(our.bowl ship.name)
+    $(gis t.gis)
+  =.  run  abet:(vend:rent pith.name loot)
+  $(gis t.gis)
+++  rent
+  |_  =pith:neo
+  ++  abet  run
+  ++  rent  .
+  ++  get-ward  (~(gut of:neo city) pith *ward:neo)
+  ++  put-ward  |=(=ward:neo rent(city (~(put of:neo city) pith ward)))
+  ++  fact
+    |=  [=care:neo paxs=(set pith:neo)]
+    ?:  =(~ paxs)
+      rent
+    =.  run  (emit %give %fact (turn ~(tap in paxs) pout) (item care))
+    rent
   ::  +serve: first sale
   ++  item
     |=  =care:neo
@@ -648,21 +707,62 @@
   ++  yuga
     |=  =care:neo
     ^-  yuga:neo
-    ?~  pic=(need (look care pith))
+    ?~  pic=(need (look care p/our.bowl pith))
       *yuga:neo
+    ~&  epic/u.pic
     (epic-to-yuga u.pic)
   ::
+  ++  stop
+    |=  [=care:neo =path]
+    ^+  rent
+    =/  =ward:neo  get-ward
+    =.  ward
+      ?+  care  !!
+        %x  ward(exe (~(del in exe.ward) path))
+        %y  ward(why (~(del in why.ward) path))
+        %z  ward(zed (~(del in zed.ward) path))
+      ==
+    (put-ward ward)
+
+  ::
   ++  push
-    |=  [meet=? =care:neo]
-    ^+  sale
+    |=  [meet=? =care:neo =path]
+    ^+  rent
+    =/  =ward:neo  get-ward
+    =.  ward
+      ?+  care  !!
+        %x  ward(exe (~(put in exe.ward) path))
+        %y  ward(why (~(put in why.ward) path))
+        %z  ward(zed (~(put in zed.ward) path))
+      ==
     :: =?  run  meet
       :: (emit %give %fact ~ neo-meet+!>(`meet:neo`[our.bowl run-nonce ~]))
     =.  run  (emit %give %fact ~ (item care))
-    sale
-  --
-++  rent
-  |_  =city:neo
-  ++  scry  ~
+    (put-ward ward)
+  +$  loc  ?(%self %par %anc)
+  ++  get-loc
+    |=  until=pith:neo
+    ?:  =(until pith)
+      %self
+    =/  left  (dif:pith:neo pith until)
+    ?:  (~(has by (~(kid of:neo tide) pith)) left) 
+      %par
+    %anc
+  ::
+  ++  vend
+    =|  loc=?(%self %par %anc)
+    |=  [until=pith:neo =loot:neo]
+    ^+  rent
+    =.  loc  (get-loc until)
+    =/  war  get-ward
+    =?  rent  ?=(%self loc)
+      (fact %x exe.war)
+    =?  rent  ?=(?(%self %par) loc)
+      (fact %y why.war)
+    =.  rent  (fact %z zed.war)
+    ?~  nex=(dif:pith:neo pith until)
+      rent
+    $(pith (snoc pith i.nex))
   --
 ++  rage
   |% 
@@ -670,44 +770,89 @@
     |=  [=hunt:neo =howl:neo]
     ^+  run
     =/  rav  (fall (~(get of:neo riot) pith.hunt) *rave:neo)
-    =.  yel.rav  (~(put in yel.rav) [care.hunt howl])
+    =.  rav  (fume-add rav care.hunt howl)
     =.  riot  (~(put of:neo riot) pith.hunt rav)
     run
-  ::
   ++  fury
-    =|  wal=(list wail:neo)
-    |_  =pith:neo
-    +*  rot  (~(dip of:neo riot) pith)
-    ++  fu-rave  (fall fil:rot *rave:neo)
-    ++  fu-core  .
-    ++  fu-abet  
-      ^-  (quip wail:neo _run)
-      [wal run]
-    ++  fu-peep
-      |=  lis=(list dust:neo)
-      ^+  fu-core
-      ?~  lis
-        fu-core
-      $(fu-core (fu-tone i.lis), lis t.lis)
-    ++  fu-tone
-      |=  [change=pith:neo =case:neo =mode:neo] 
-      ^+  fu-core
-      =/  yel  ~(tap by yel:fu-rave)
-      |-
-      ?~  yel
-        =/  nex  (dif:pith:neo pith change)
-        ?~  nex  fu-core
-        $(pith (snoc pith i.nex))
-      =;  add=?
-        ?.  add
-          $(yel t.yel)
-        $(yel t.yel, wal :_(wal [pith i.yel mode]))
-      ?:  =(change pith)
-        &
-      ?:  ?=(%y p.i.yel)
-        =(pith (~(parent plow:aux loam) change))
-      ?=(%z p.i.yel)
-    --
+    |=  gis=(list gift:dirt:neo)
+    %-  gas-leaf
+    %+  turn  gis
+    |=  [=pith:neo case=@ud =mode:neo]
+    [pith mode]
+  ::
+  ++  spaz
+    |=  [ton=(set howl:neo) =hunt:neo]
+    =/  =leaf:neo  (get-leaf:till hunt)
+    =/  ton  ~(tap in ton)
+    |-
+    ?~  ton
+      run
+    =.  run  (yelp hunt i.ton leaf)
+    $(ton t.ton)
+  ::
+  ++  sweep
+    =|  here=pith:neo
+    |=  [change=pith:neo =loot:neo]
+    =/  =rave:neo  (~(gut of:neo riot) here *rave:neo)
+    =?  run  =(here change)
+      (spaz exe.rave %x change)
+    =?  run   =(here (~(parent of:neo tide) change))
+      (spaz why.rave %y change)
+    =.  run
+      (spaz zed.rave %z change)
+    ?~  nex=(dif:pith:neo here change)
+      run
+    $(here (snoc here i.nex))
+  ::
+  ++  take
+    |=  gis=(list gift:dirt:neo)
+    =/  laf  (fury gis)
+    =*  loop-gift  $
+    ^+  run
+    ?~  gis
+      run
+    =/  [=pith:neo =loot:neo]  i.gis
+    =.  run  (sweep i.gis)
+    $(gis t.gis)
+  ::
+  ++  fume-add
+    |=  [=rave:neo =care:neo =howl:neo]
+    ^+  rave
+    ?+  care  !!
+      %x  rave(exe (~(put in exe.rave) howl))
+      %y  rave(why (~(put in why.rave) howl))
+      %z  rave(zed (~(put in zed.rave) howl))
+    ==
+
+  ++  fume-del
+    |=  [=rave:neo =care:neo =howl:neo]
+    ^+  rave
+    ?+  care  !!
+      %x  rave(exe (~(del in exe.rave) howl))
+      %y  rave(why (~(del in why.rave) howl))
+      %z  rave(zed (~(del in zed.rave) howl))
+    ==
+  ::
+  ++  free
+    |=  =hunt:neo
+    ^+  run
+    ::  XX: weird shadowing, be careful
+    =/  =rave:neo  (~(gut of:neo riot) pith.hunt *rave:neo)
+    =.  rave  
+      (fume-del rave care.hunt halt/~)
+    =.  riot  (~(put of:neo riot) pith.hunt rave)
+    (resolved:stop hunt)
+  ::
+  ++  yelp
+    |=  [from=hunt:neo with=howl:neo =leaf:neo]
+    ?:  ?=(%halt -.with)
+      (free from)
+    ?>  ?=(%rely -.with)
+    =/  [=term =pith:neo]  +.with
+    =/  =rely:neo  [term leaf]
+    =/  =move:neo
+      [pith.from [p/our.bowl pith] %poke %rely !>(rely)]
+    abet:(arvo move)
   --
 :: 
 ++  lazarus
@@ -719,7 +864,6 @@
   =/  =name:neo  (de-pith:name:neo pith)
   ?.  =(our.bowl ship.name)
     $(git t.git) :: XX: turn on for caching??
-  ~&  case/case.loot
   =/  res  (need (look-x:till case.loot pith))
   ?:  &(?=(^ res) =(%vase p.q.u.res))
     $(git t.git)
@@ -734,6 +878,8 @@
     (~(call plow:aux loam) card)
   =.  farm  (~(take till:aux [loam farm]) gifts)
   =.  run   (lazarus gifts)
+  =.  run   (take:rage gifts)
+  =.  run   (collect-rent gifts)
   [gifts run]
 
 ::  +stop: helper for blocking semantics
@@ -754,9 +900,10 @@
     ?~  prey
       run
     =/  =hunt:neo  i.prey
-    =.  by-tour.halt   (~(put by by-tour.halt) hunt flow)
+    =.  by-hunt.halt   (~(put by by-hunt.halt) hunt flow)
     =.  by-flow.halt   (~(put ju by-flow.halt) flow hunt)
     =.  run  abet:(~(start sale pith.hunt) p.q.move care.hunt)
+    =.  run  (stalk:rage hunt halt/~)
     $(prey t.prey)
   ::
   ++  is-congested
@@ -774,12 +921,13 @@
     =.  clog.halt  (~(put by clog.halt) flow q)
     run
   ++  resolved
-    |=  =tour:neo
-    =/  fow=(unit flow:neo)  (~(get by by-tour.halt) tour)
+    |=  =hunt:neo
+    ~&  resolved/hunt
+    =/  fow=(unit flow:neo)  (~(get by by-hunt.halt) hunt)
     ?~  fow
       run
-    =.  by-tour.halt    (~(del by by-tour.halt) tour)
-    =.  by-flow.halt    (~(del ju by-flow.halt) u.fow tour)
+    =.  by-hunt.halt    (~(del by by-hunt.halt) hunt)
+    =.  by-flow.halt    (~(del ju by-flow.halt) u.fow hunt)
     =/  prey=(set hunt:neo)
       (~(get ju by-flow.halt) u.fow)
     ?.  =(~ prey)
@@ -1079,6 +1227,8 @@
       run
     =/  pat  
       (~(path press pro/i.pos) %src)
+    ?:  ~(built pro i.pos)
+      $(pos t.pos)
     =.  run  (read-file pat)
     $(pos t.pos)
   ++  build-libs
@@ -1254,6 +1404,13 @@
     =.  pith  [p/our.bowl pith]
     (on-card pith %make %ford-riff `vase/riff ~)
   --
+++  seize
+  |=  [par=pith:neo child=pith:neo car=?(%y %z)]
+  ^-  ?
+  ?:  =(%y car)
+    =(par (~(parent of:neo tide) child))
+  !=(~ (dif:pith:neo par child))
+::
 :: +abduct: check capture
 ++  abduct
   |=  [par=pith:neo child=pith:neo]
@@ -1262,9 +1419,7 @@
     |
   ?~  kids.dock.u.wav
     |
-  ?:  ?=(%y p.u.kids.dock.u.wav)
-    =(par (~(parent of:neo tide) child))
-  !=(~ (dif:pith:neo par child))
+  (seize par child p.u.kids.dock.u.wav)
 ::  +adopt: produce all capturing parents
 ::
 ++  adopt
@@ -1278,6 +1433,7 @@
   ?~  nex
     res
   $(here (snoc here i.nex))
+::
 ::  +arvo: local callstack
 ++  arvo
   =+  verb=&
@@ -1813,6 +1969,16 @@
      &/~
   |/:_(res [pith u.ion])
 ::
+++  gas-leaf
+  =|  =leaf:neo
+  |=  lst=(list [pith:neo mode:neo])
+  ^+  leaf
+  ?~  lst
+    leaf
+  =.  leaf   (~(put of:neo leaf) i.lst)
+  $(lst t.lst)
+ 
+::
 ++  gas-epic
   =|  =epic:neo
   |=  lst=(list [pith:neo saga:neo])
@@ -1911,7 +2077,9 @@
   ^-  tang
   =/  lom  (~(dip of:neo loam) prefix)
   =/  fam  (~(dip of:neo farm) prefix)
+  =/  rav  (~(dip of:neo riot) prefix)
   :-  >fam<
+  :-  >rav<
   %-  zing
   %+  turn   ~(tap by ~(tar of:neo lom))
   |=  [=pith:neo =soil:neo]
