@@ -1,6 +1,6 @@
 /@  txt
-/-  _/feather-icons
-:-  [%txt %htmx]
+/-  feather-icons
+:-  [%txt %$ %htmx]
 |=  =txt
 |=  =bowl:neo
 ;form.fc.p2.wf.hf.relative

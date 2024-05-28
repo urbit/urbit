@@ -1,4 +1,4 @@
-/+  manx-utils
+/-  manx-utils
 |%
 ++  mx
   |_  a=manx

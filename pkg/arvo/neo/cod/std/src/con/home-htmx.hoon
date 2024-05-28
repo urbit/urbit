@@ -54,10 +54,10 @@
     =hx-swap  "none"
     =hx-indicator  "#indicator-{id}"
     ;*
-    %+  turn
-      %+  welp  apps.home
-      %~  tap  in
-      (~(dif in ~(key by kids.bowl)) `(set pith)`(silt apps.home))
+    %+  turn  apps.home
+      ::  %+  welp  apps.home
+      ::  %~  tap  in
+      ::  (~(dif in ~(key by kids.bowl)) `(set pith)`(silt apps.home))
     |=  =pith
     =/  =path  (pout (welp here.bowl pith))
     ;div.relative.br2

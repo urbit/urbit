@@ -1,5 +1,5 @@
 /@  circle
-:-  [%circle %htmx]
+:-  [%circle %$ %htmx]
 |=  circle
 |=  =bowl:neo
 |^
@@ -19,7 +19,7 @@
     ;*
     %+  turn  
       %+  murn
-        ~(tap in ~(key by kids.bowl))
+        ~  ::~(tap in ~(key by kids.bowl))
       |=  =pith  ((soft ship) ->:pith)
     |=  =ship
     ^-  manx

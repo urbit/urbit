@@ -66,8 +66,8 @@
           */
           '''
         ==
-        :: ;style: {(trip feather-css)}
-        :: ;style: {(trip reset-css)}
+        ::  ;style: {(trip feather-css)}
+        ::  ;style: {(trip reset-css)}
         ;script
           ;+  ;/
           """
@@ -76,9 +76,6 @@
           jQuery.fn.emit=function (name)\{(this[0]).dispatchEvent(new Event(name, \{ bubbles: true, cancelable: true, composed: true })); return this;};
           """
         ==
-        :: ;script: {(trip date-now)}
-        :: ;script: {(trip atom-input)}
-        :: ;script: {(trip multiline-input)}
         :: ;script: {(trip a-i-r)}
         :: ;+  favicon
         :: ;+  manifest

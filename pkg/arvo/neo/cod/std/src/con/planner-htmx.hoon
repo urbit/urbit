@@ -116,10 +116,10 @@
   %-  sort
   :_  |=  [a=pent b=pent]
       (lth when.q.a when.q.b)
-  %+  murn  ~(tap by kids.bowl)
-  |=  [=pith =pail:neo]
+  %+  murn  ~(tap of:neo kids.bowl)
+  |=  [=pith =idea:neo]
   ^-  (unit pent)
-  =/  entry  !<(planner-entry q.pail)
+  =/  entry  !<(planner-entry q.pail.idea)
   ?.  ?&
         (gte when.entry d)
         (lth when.entry (add d ~d1))
@@ -137,10 +137,10 @@
   %-  sort
   :_  |=  [a=pent b=pent]
       (gth when.q.a when.q.b)
-  %+  murn  ~(tap by kids.bowl)
-  |=  [=pith =pail:neo]
+  %+  murn  ~(tap of:neo kids.bowl)
+  |=  [=pith =idea:neo]
   ^-  (unit pent)
-  =/  entry  !<(planner-entry q.pail)
+  =/  entry  !<(planner-entry q.pail.idea)
   ?.  ?&
         (gte d when.entry)
         (lte d (add when.entry length.entry))

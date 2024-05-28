@@ -1,62 +1,64 @@
 /@  planner
 /@  planner-diff
 /@  planner-entry
-^-  firm:neo
+^-  kook:neo
 |%
-++  state  %planner
+++  state  pro/%planner
 ++  poke  (sy %planner-diff ~)
 ++  kids
-  %-  ~(gas by *kids:neo)
+  :-  ~
+  :-  %y
+  %-  ~(gas by *lads:neo)
   :~  :-  [|/%da |]
-      [%planner-entry %sig]
+      [pro/%planner-entry (sy %sig ~)]
   ==
 ++  deps  *deps:neo
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo =ever:neo sta=vase *]
+  |_  [=bowl:neo =aeon:neo =pail:neo]
   ++  init
-    |=  new=(unit vase)
-    ^-  (quip card:neo vase)
+    |=  new=(unit pail:neo)
+    ^-  (quip card:neo pail:neo)
     :-  ~
     ?~  new
-      !>([now.bowl (add now.bowl ~d30)])
+      planner/!>([now.bowl (add now.bowl ~d30)])
     u.new
   ::
   ++  poke
     |=  [=stud:neo vax=vase]
-    ^-  (quip card:neo vase)
+    ^-  (quip card:neo pail:neo)
     ?+    stud  !!
         %planner-diff
       =/  poke  !<(planner-diff vax)
-      =/  this  !<(planner sta)
+      =/  this  !<(planner q.pail)
       ?-    -.poke
           %make
-        :_  !>(this)
+        :_  planner/!>(this)
         ^-  (list card:neo)
         :~
           :-  (snoc here.bowl [%da now.bowl])
-          [%make %planner-entry `!>(entry.poke) ~]
+          [%make %planner-entry `planner-entry/!>(entry.poke) ~]
         ==
       ::
           %edit
-        :_  !>(this)
+        :_  planner/!>(this)
         ^-  (list card:neo)
         :~
           :-  (snoc here.bowl [%da id.poke])
-          [%make %planner-entry `!>(entry.poke) ~]
+          [%make %planner-entry `planner-entry/!>(entry.poke) ~]
         ==
       ::
           %move
         :-  ~
-        !>  this(start start.poke, end end.poke)
+        planner/!>(this(start start.poke, end end.poke))
       ::
           %tomb
-        :_  !>(this)
+        :_  planner/!>(this)
         ^-  (list card:neo)
         :~
           :-  (snoc here.bowl [%da id.poke])
           =/  entry  [*@da %event *@dr '' &]
-          [%make %planner-entry `!>(entry) ~]
+          [%make %planner-entry `planner-entry/!>(entry) ~]
         ==
       ==
     ==

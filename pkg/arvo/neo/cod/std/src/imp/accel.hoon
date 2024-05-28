@@ -11,54 +11,58 @@
   |=  col=@ud
   %+  turn  (gulf rowstart rowend)
   |=  row=@ud
-  [(welp here.bowl #/[ud/col]/[ud/row]) %make %accel-cell `!>(['~' ~ ~ ~ ~]) ~]
+  [(welp here.bowl #/[ud/col]/[ud/row]) %make %accel-cell `accel-cell/!>(['~' ~ ~ ~ ~]) ~]
 --
 ::
-^-  firm:neo
+^-  kook:neo
 |%
-++  state  %accel
+++  state  pro/%accel
 ++  poke  (sy %accel-diff ~)
 ++  kids
-  %-  ~(gas by *kids:neo)
+  :-  ~
+  :-  %y
+  %-  ~(gas by *lads:neo)
   :~  :-  [|/%ud |/%ud |]
-      [%accel-cell %sig]
+      [pro/%accel-cell (sy %sig ~)]
   ==
 ++  deps  *deps:neo
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo =ever:neo sta=vase *]
+  ::|_  [=bowl:neo =ever:neo sta=vase *]
+  |_  [=bowl:neo =aeon:neo =pail:neo]
   ++  init
-    |=  old=(unit vase)
+    |=  old=(unit pail:neo)
+    ^-  (quip card:neo pail:neo)
     =/  width  10
     =/  height  10
-    :_  !>([width height])
+    :_  accel/!>([width height])
     (make-cells bowl 1 width 1 height)
   ::
   ++  poke
     |=  [=stud:neo vax=vase]
-    ^-  (quip card:neo vase)
+    ^-  (quip card:neo pail:neo)
     ?>  =(%accel-diff stud)
-    =/  state  !<(accel sta)
+    =/  state  !<(accel q.pail)
     =/  poke  !<(accel-diff vax)
     ?>  =(our ship.src):bowl
     ?-    -.poke
         %inc-width
       =/  new  (add 1 width.state)
-      :_  !>([new height.state])
+      :_  accel/!>([new height.state])
       (make-cells bowl new new 1 height.state)
     ::
         %inc-height
       =/  new  (add 1 height.state)
-      :_  !>([width.state new])
+      :_  accel/!>([width.state new])
       (make-cells bowl 1 width.state new new)
     ::
         %new
-      :_  sta
+      :_  accel/q.pail
       =;  conf
         :~  :-  (welp here.bowl ~[[ud/row.poke] [ud/column.poke]])
             :*  %make
                 %accel-cell
-                `!>([text.poke ~ refa.poke refb.poke target.poke])
+                `accel-cell/!>([text.poke ~ refa.poke refb.poke target.poke])
                 conf
             ==
         ==

@@ -1044,7 +1044,7 @@
     ~|  con-pith/pith
     |%
     ++  grab  !<(stud:neo (slot 4 vax))
-    ++  thru  !<(stud:neo (slot 10 vax))
+    ++  thru  ~|  pith  !<(stud:neo (slot 10 vax))
     ++  grow  !<(stud:neo (slot 11 vax))
     ++  run   (slot 3 vax)
     ++  sink

@@ -65,13 +65,13 @@
 ::
 ++  shrubs
   ;div.fc.g2
-    ;+  ?.  =(0 ~(wyt by kids.bowl))  ;/("")
-    ;div.p5.f3.fc.jc.ac: none yet
+    ::;+  ?.  =(0 (lent (~(tap of kids.bowl) /)))  ;/("")
+    ::;div.p5.f3.fc.jc.ac: none yet
     ;*
     %+  turn  folder
     |=  name=@tas
     =/  pith  ~[name]
-    =/  =pail:neo  (~(got by kids.bowl) pith)
+    =/  =pail:neo  pail:(~(got of:neo kids.bowl) pith)
     =/  =stud:neo  p.pail
     =/  =path  (pout (welp here.bowl pith))
     =/  label

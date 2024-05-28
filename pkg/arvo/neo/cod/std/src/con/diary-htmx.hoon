@@ -11,10 +11,10 @@
       =style  "max-width: 650px;"
       ;+  form-put-entry
       ;*
-      %+  turn
-        %+  sort  ~(tap of:neo kids.bowl)
-        |=  [a=[=pith *] b=[=pith *]]
-        (gth ->.pith.a ->.pith.b)
+      %+  turn  ~
+        ::  %+  sort  ~(tap of:neo kids.bowl)
+        ::  |=  [a=[=pith *] b=[=pith *]]
+        ::  (gth ->.pith.a ->.pith.b)
       link-entry
     ==
   ==

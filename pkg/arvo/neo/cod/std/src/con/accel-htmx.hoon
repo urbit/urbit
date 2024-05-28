@@ -38,7 +38,7 @@
         ;*
         %+  turn  (gulf 1 10)
         |=  y=@
-        =/  val=(unit pail:neo)  (~(get by kids.bowl) ~[ud/x ud/y])
+        =/  val=(unit pail:neo)  ~::(~(get by kids.bowl) ~[ud/x ud/y])
         =/  vaf  (fall val [%accel-cell !>(*accel-cell)])
         ;td.border
           ;+

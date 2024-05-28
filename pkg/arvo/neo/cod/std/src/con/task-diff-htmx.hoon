@@ -1,5 +1,5 @@
 /@  task-diff
-:-  [%task-diff %htmx]
+:-  [%task-diff %$ %htmx]
 |=  t=task-diff
 |=  =bowl:neo
 ;div.loading

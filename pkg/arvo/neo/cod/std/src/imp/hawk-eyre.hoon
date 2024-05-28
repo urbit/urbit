@@ -23,6 +23,7 @@
       =/  [eyre-id=@ta req=inbound-request:eyre]  task
       =/  lin  (parse-request-line:serv url.request.req)
       =/  inner=pith:neo  (pave:neo (slag 2 site.lin))
+      ?>  ?=([[%p @] *] inner)
       ~&  inner/inner
       =/  args  (~(gas by *(map @t @t)) args.lin)
       =/  =crew:neo  (~(gas by *crew:neo) src/inner ~)
