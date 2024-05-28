@@ -92,6 +92,7 @@
     ^-  (quip card:neo pail:neo)
     :-
       :~  [(welp here.bowl /settings) %make %sky-settings ~ ~]
+          [~[p/our.bowl %home] %make %home ~ ~]
       ==
     :-  %sky
     !>

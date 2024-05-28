@@ -1,8 +1,8 @@
 /@  diff=feed-item-diff
 /@  state=feed-item
-/@  circle
 =>
 |%
++$  circle  (set ship)
 ++  check-perms
   |=  =bowl:neo
   =+  !<(=circle q.pail:(need fil.q:(~(got by deps.bowl) %acl)))
@@ -20,7 +20,7 @@
 ++  deps
   %-  ~(gas by *deps:neo)
   :~  :-  %acl
-      :+  req=&  [pro/%circle ~]
+      :+  req=&  [pro/%circle (sy %circle-diff ~)]
       :+  ~  %y
       %-  ~(gas by *lads:neo)
       :~  [[|/%p |] pro/%sig ~]

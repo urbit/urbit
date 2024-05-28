@@ -23,48 +23,73 @@
 ::
 ++  apex
   ^-  manx
-  ;div.scroll-x.p3
+  ;div.wf.hf.p3.hoon.fc.g2
     ;+  imports
     ;+  contents
+    ;+  style
   ==
 ++  imports
-  ;div.p2
-    ;div.p2.border.br1.fc.g2
-      ;h4.bold: Protocols
-      ;div.frw.g2
-        ;*
-        %+  turn  pro.file
-        |=  =pro:ford:neo
-        ^-  manx
-        ;a.p2.br1.b1.hover
-          =hx-get  (spud (post-href %pro stud.pro))
-          =hx-target  "closest .hawk"
-          =hx-swap  "innerHTML"
-          ; {<stud.pro>}
-        ==
-      ==
+  ;div.frw.g2
+    ;*
+    %+  turn  pro.file
+    |=  =pro:ford:neo
+    ^-  manx
+    ;a.p2.br1.b1.hover.s-1
+      =href  (spud (post-href %pro stud.pro))
+      =hx-target  "closest .hawk"
+      =hx-swap  "innerHTML"
+      ; {<stud.pro>}
+    ==
+  ==
+++  error
+  ;details.error-parent.wf.br1.bd1(open "")
+    =style  "max-height: 220px;"
+    ;summary.p2.br1.b-3.f-3: error
+    ;div.p3
+      ;div.error.empty;
     ==
   ==
 ++  contents
-  ;form.fc.g2.wf.relative.p2
+  ;form.fc.g2.wf.relative.grow.scroll-y
     =hx-put  "{(en-tape:pith:neo (welp /neo/hawk here.bowl))}?stud=hoon"
-    ;div.p2.wf.z1
-      =style  "position: sticky; top: 0; right: 0;"
-      ;button.p2.br1.b1.hover.loader.wf
-        ;span.loaded: save
-        ;span.loading: ...
+    =hx-trigger  "click from:find button, keydown[metaKey&&key=='Enter']"
+    =hx-target  "closest .hoon"
+    =hx-target-error  "find .error"
+    =hx-swap  "morph"
+    ;div.relative.grow.fc
+      ;div.wfc.z1.absolute
+        =style  "top: 15px; right: 15px;"
+        ;button.p2.br2.b1.bd1.hover.loader
+          ;span.loaded.fr.ac.g1
+            ;span.bold: save
+            ;span.f2.s-2: cmd+enter
+          ==
+          ;span.loading: ...
+        ==
+      ==
+      ;textarea.p2.bd1.br1.scroll-x.pre.mono.wf.grow
+        =style  "outline:none;"
+        =autocomplete  "off"
+        =rows  "1"
+        =spellcheck  "false"
+        =name  "text"
+        =oninput  "this.setAttribute('value', this.value);"
+        =value  (trip hon)
+        ;*
+        %+  turn  src
+        |=  lin=@t
+        ;/  "{(trip lin)}\0a"
       ==
     ==
-    ;textarea.p2.border.br1.ma.scroll-x.pre.mono.wf
-      =style  "max-width: 650px;"
-      =autocomplete  "off"
-      =rows  "45"
-      =name  "text"
-      =oninput  "this.setAttribute('value', this.value);"
-      ;*
-      %+  turn  src
-      |=  lin=@t
-      ;/  "{(trip lin)}\0a"
-    ==
+    ;+  error
+  ==
+++  style
+  ;style
+    ;+  ;/  %-  trip
+    '''
+    details.error-parent:has(.error:empty) {
+      display: none;
+    }
+    '''
   ==
 --

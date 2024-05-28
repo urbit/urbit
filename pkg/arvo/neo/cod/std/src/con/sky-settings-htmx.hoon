@@ -1,14 +1,17 @@
 /@  sky-settings
+/-  feather-icons
 :-  [%sky-settings %$ %htmx]
 |=  settings=sky-settings
 |=  =bowl:neo
 ^-  manx
 |^
-  ;div.wf.p-page
-    =label  "Settings"
-    ;form.fc.g5.mw-page.ma
+  ;div.wf.hf.relative
+    ;form.fc.g5.mw-page.ma.p-page
       =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=sky-settings"
-      =hx-swap  "none"
+      =hx-swap  "outerHTML"
+      =hx-target  "this"
+      =hx-select  "form"
+      ;+  header
       ;+  script
       ;+  background-image
       ;+  spacing
@@ -16,24 +19,17 @@
       ;+  (colors "light")
       ;+  (colors "dark")
       ;+  style
-      ;div.frw.g2
-        ;button.p3.br1.b1.hover
-          =onclick  "document.body.removeAttribute('style')"
-          =hx-get  "/neo/hawk{(en-tape:pith:neo here.bowl)}"
-          =hx-target  "closest .hawk"
-          =hx-select  ".hawk"
-          ;span: Reset
-        ==
-        ;button.p3.br1.b1.hover.loader
-          ;span.loaded: Save
-          ;span.loading: ---
-        ==
-      ==
     ==
   ==
 ++  curr
   |=  var=cord
   (trip (~(gut by settings) var ''))
+++  carr
+  |=  [var=cord head=@ud tail=@ud]
+  =/  val  (trip (~(gut by settings) var ''))
+  =/  wit  (add head tail)
+  ?.  (gth (lent val) wit)  val
+  (swag [head (sub (lent val) wit)] val)
 ++  selected
   |=  [f=? =manx]
   %=  manx
@@ -41,20 +37,61 @@
       ?.  f  a.g.manx
       [[%selected ""] a.g.manx]
   ==
+++  home-button
+  ;a.p2.br1.bd1.b1.hover.loader.wfc.block
+    =href  "/neo/hawk/home"
+    =hx-swap  "innerHTML"
+    =hx-target  "closest .hawk"
+    =hx-select  ".hawk"
+    ;span.loaded: home
+    ;span.loading
+      ;+  loading.feather-icons
+    ==
+  ==
+++  header
+  ;header.sticky.z1.b0.fc.g1
+    =style  "top:0px; left: 0;"
+    ;h1.bold.s2.p1: settings
+    ;div.frw.g2.ac
+      ;+  home-button
+      ;div.grow;
+      ;button.p2.bd1.br1.b1.hover
+        =type  "button"
+        =onclick  "document.documentElement.removeAttribute('style')"
+        =hx-get  "/neo/hawk{(en-tape:pith:neo here.bowl)}"
+        =hx-target  "closest .hawk"
+        =hx-select  ".hawk"
+        ;span: reset
+      ==
+      ;button.p2.bd1.br1.b1.hover.loader
+        ;span.loaded: save
+        ;span.loading
+          ;+  loading.feather-icons
+        ==
+      ==
+    ==
+  ==
 ++  background-image
-  ;div.fc.js.g2.ja.p2
+  ;div.fc.js.g2.ja.prose
+    ;h2: background
     ;label.fc.g1
-      ;span.s-1: Background Image
-      ;input.bd1.border.p2.br1
-        =oninput  "setCss('sky-bg-url', `url('$\{this.value}')`); $(this).attr('value', `url('$\{this.value}')`);"
-        =value  (curr 'sky-bg-url')
+      ;span.s-1: image
+      ;input.hidden
         =var  "sky-bg-url"
+        =value  (curr 'sky-bg-url')
+        ;
+      ==
+      ;input.bd1.border.p2.br1
+        =oninput  "setCss('sky-bg-url', encase(this.value, 'url(', ')')); $(this).prev().attr('value', encase(this.value, 'url(', ')'));"
+        =autocomplete  "off"
+        =placeholder  "https://images.website/waterfall.jpg"
+        =value  (carr 'sky-bg-url' 4 1)
         =type  "text"
         ;
       ==
     ==
-    ;label
-      ;span.s-1: Position
+    ;label.fr.g2.ac
+      ;span.s-1: position
       ;select.br1.bd1.p2
         =oninput  "setCss('sky-bg-size', this.value); $(this).attr('value', this.value);"
         =value  (curr 'sky-bg-size')
@@ -72,7 +109,7 @@
       ==
     ==
     ;label.fc.g1
-      ;span.s-1: Opacity
+      ;span.s-1: opacity
       ;input.bd1.border.p2.br1
         =oninput  "setCss('sky-opacity', this.value); $(this).attr('value', this.value);"
         =value  (trip (~(gut by settings) 'sky-opacity' '1'))
@@ -86,9 +123,10 @@
     ==
   ==
 ++  spacing
-  ;div.fc.g2
+  ;div.fc.g2.prose
+    ;h2: spacing
     ;label.fc.g1
-      ;span.s-1: Outer Gap
+      ;span.s-1: outer gap
       ;input.bd1.border.p2.br1
         =oninput  "setCss('sky-outer-gap', `$\{this.value}px`); $(this).attr('value', this.value);"
         =value  (curr 'sky-outer-gap')
@@ -101,7 +139,7 @@
       ==
     ==
     ;label.fc.g1
-      ;span.s-1: Inner Gap
+      ;span.s-1: inner gap
       ;input.bd1.border.p2.br1
         =oninput  "setCss('sky-inner-gap', `$\{this.value}px`); $(this).attr('value', this.value);"
         =value  (curr 'sky-inner-gap')
@@ -115,9 +153,10 @@
     ==
   ==
 ++  typography
-  ;div.fc.js.g2.ja.p2
+  ;div.fc.js.g2.ja.prose
+    ;h2: typography
     ;label.fc.g1.mt1
-      ;span.s-1: Main font
+      ;span.s-1: main font
       ;select.br1.bd1.p2
         =oninput  "setCss('font', this.value); $(this).attr('value', this.value);"
         =value  (curr 'font')
@@ -126,6 +165,12 @@
         %+  turn
         :~
           "Urbit Sans"
+          "DM Sans"
+          "Lato"
+          "Georgia"
+          "Optima"
+          "DejaVu Sans"
+          "Palatino"
           "Montserrat"
           "Verdana"
           "Gill Sans"
@@ -166,6 +211,7 @@
           "Andale Mono"
           "Urbit Mono"
           "Courier New"
+          "Courier"
           "Monaco"
           "Spot Mono"
         ==
@@ -230,7 +276,8 @@
 ++  colors
   |=  [mode=tape]
   ;div
-    =class  "sky-settings-{mode} frw g2 js p2"
+    =class  "sky-settings-{mode} frw g2 js prose"
+    ;h2.basis-full: colors
     ;div.fc.g1.ac.jc
       ;*
       %+  turn
@@ -271,6 +318,12 @@
     function setCss(name, val) {
       document.documentElement.style
         .setProperty('--'+name, val, 'important');
+    }
+    function encase(val, head, tail) {
+      if (!val.length) {
+        return '';
+      }
+      return `${head}${val}${tail}`;
     }
     '''
   ==

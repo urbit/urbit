@@ -38,6 +38,7 @@
   ++  init
     |=  old=(unit pail:neo)
     ^-  (quip card:neo pail:neo)
-    `(need old)
+    ?^  old  `u.old
+    diary/!>(*diary)
   --
 --

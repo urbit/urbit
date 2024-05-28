@@ -1,6 +1,8 @@
+/@  circle
 /@  diff=circle-diff
+^-  kook:neo
 |%
-++  state  %sig
+++  state  pro/%sig
 ++  poke   (sy %circle-diff ~)
 ++  kids   
   :+  ~  %y
