@@ -4,8 +4,9 @@
 ++  headers
   |=  key=@t
   ^-  (list [k=@t v=@t])
+  =-  ~&(- -)
   :~  'Content-Type'^'application/json'
-      'Authorization'^(crip "Bearer: {(trip key)}")
+      'Authorization'^(crip "Bearer {(trip key)}")
   ==
 
 

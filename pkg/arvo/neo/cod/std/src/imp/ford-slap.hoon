@@ -32,7 +32,7 @@
 --
 ^-  kook:neo
 |%
-++  state  pro/%ford-out
+++  state  [%or pro/%vase pro/%tang ~]
 ++  poke   (sy %rely %ford-in ~)
 ++  kids  ~
 ++  deps

@@ -1131,6 +1131,18 @@
       reef
     $(reef (slop (with-face i.faces) reef), faces t.faces)
   --
+++  gall
+  |%
+  +$  req  
+    $%  [%peek p=@dr]
+        [%keep ~]
+        [%reap ~]
+        [%peer ~]
+    ==
+  +$  peek  [src=(set pith) refresh=@dr]
+  +$  sign  sign:agent:^gall
+  +$  res   (pair pith sign)
+  --
 ::  +behn: Timer vane
 ++  behn
   |%
@@ -1629,9 +1641,9 @@
 ::
 +$  lore  (axal idea)
 +$  idea
-  $:  =saga
-      thru=(unit stud)
-      =pail
+  $:  =saga :: original binding
+      thru=(unit stud) :: any role
+      =pail :: transformed binding
   ==
 +$  dive
   $:  con=(map [grab=stud role=stud grow=stud] stud)
@@ -1646,12 +1658,21 @@
     $:  =clay
         =iris
         =behn
+        =gall
     ==
   +$  behn  (jug @da pith)
   +$  clay
     (map [src=pith hand=pith] [case=@ud =desk =path as=(unit mark)])
   +$  iris
     (set [src=pith hand=pith])
+  ++  gall
+    =<  gall
+    |%
+    +$  gall
+      $:  peer=(jug pith pith)
+          peek=(map pith peek:^^gall)
+      ==
+    --
   --
 ::
 +$  stem

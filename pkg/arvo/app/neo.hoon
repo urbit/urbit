@@ -270,8 +270,10 @@
   (on-move:sys p.move q.move(p t.pith.dst))
 ++  on-ack
   |=  =ack:neo
-  ~&  ack/ack
-  run
+  %.  run
+  ?~  q.ack
+    same
+  (slog leaf/"nacked on flow {<p.ack>}" u.q.ack)
 
 ::
 ++  on-dirt-card
@@ -1797,6 +1799,7 @@
       ~&  next-clay-gone/syn
       run
     copy-clay
+  ::
   ++  on-move
     |=  [src=pith:neo dst=pith:neo =note:neo]
     ^+  run
@@ -1804,6 +1807,7 @@
       [%clay *]  (call:silt src t.dst note)
       [%iris *]  (call:cttp src t.dst note)
       [%behn *]  (call:bide src t.dst note)
+      [%gall *]  (call:rile src t.dst note)
     ==
   ++  take-arvo
     |=  [=(pole knot) syn=sign-arvo]
@@ -1882,6 +1886,74 @@
     =/  =rave:clay  [%sing [%t ud/case path.peer]]
     (pass wire %arvo %c %warp our.bowl desk.peer `rave)
   --
+++  rile
+  |%
+  ++  here
+    `pith:neo`#/[p/our]/$/gall
+  ++  gent
+    |_  =pith:neo
+    ++  here  (welp ^here pith)
+    ++  on-start-peek
+      |=  [src=pith:neo freq=@dr]
+      ^+  run
+      =/  =peek:gall:neo  
+        (~(gut by peek.gall.unix) pith [~ ~h24])
+      =.  refresh.peek  (min freq refresh.peek)
+      =/  new=?  =(~ src.peek)
+      =.  src.peek  (~(put in src.peek) src)
+      =.  peek.gall.unix  (~(put by peek.gall.unix) pith peek)
+      ?.  new
+        run
+      =.  run  on-read-peek
+      (emit (do-peek-timer refresh.peek))
+    ++  on-stop-peek
+      |=  src=pith:neo
+      ^+  run
+      =/  =peek:gall:neo  
+        (~(gut by peek.gall.unix) pith [~ ~h24])
+      =.  src.peek  (~(del in src.peek) src)
+      =.  peek.gall.unix
+        ?:  =(~ src.peek)
+          (~(del by peek.gall.unix) pith)
+        (~(put by peek.gall.unix) pith peek)
+      run
+    ::
+    ++  do-peek-timer
+      |=  freq=@dr
+      ^-  card
+      =/  wir  (welp /sys/gall/peek (pout pith))
+      (pass wir %arvo %b %wait (add now.bowl freq))
+    ++  on-read-peek
+      =/  =road:neo  pith
+      ?>  ?=([dude=@ rest=*] road)
+      =/  pax  
+        %+  welp  /(scot %p our.bowl)/[dude.road]/(scot %da now.bowl)
+        (pout rest.road)
+      =/  =pail:neo  noun/!>(.^(* %gx pax))
+      =.  run  (on-dirt-card here %grow pail ~ *oath:neo)
+      run
+
+    ++  on-wake-peek
+      |=  =pith:neo
+      =/  =peek:gall:neo  (~(gut by peek.gall.unix) pith [~ ~h24])
+      ?:  =(~ src.peek)
+        run
+      =.  run  (emit (do-peek-timer refresh.peek))
+      on-read-peek
+    --
+  ::
+  ++  call
+    |=  [src=pith:neo dst=pith:neo =note:neo]
+    ?>  ?=(%poke -.note) :: XX: all shanes should be virtualised and hand deliver acks
+    ?>  ?=(%gall-req p.pail.note)
+    =+  !<(=req:gall:neo q.pail.note)
+    =*  gen  ~(. gent dst)
+    ?+  -.req  !!
+      %peek  (on-start-peek:gen src p.req)
+      %keep  (on-stop-peek:gen src)
+    ==
+  --
+
 ++  bide
   |%
   ++  call

@@ -1127,6 +1127,7 @@
     ?+  p.card  ~|(bad-sys-move-pith/p.card !!)
       [%behn ~]  (behn q.card)
       [%clay ~]  (clay q.card)
+      [%%
     ==
     ++  clay
       |=  =note:neo
