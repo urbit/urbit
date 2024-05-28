@@ -1,5 +1,4 @@
 $:
-  theme=?(%light %dark %system)
-  hawks=(list pith)
-  slots=@
+  hawks=(list (pair @da pith))
+  open=@ud
 ==
