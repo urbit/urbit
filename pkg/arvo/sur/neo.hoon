@@ -990,7 +990,7 @@
   ::  $lib:ford: Specification of library import
   ::
   +$  lib
-    [face=term =loc]
+    [face=term =stud]
   ::  $pro:ford: Specification of protocol import
   ::
   +$  pro
@@ -1053,6 +1053,7 @@
     ::    /@  foo=bar  :: imports %bar protocol from %std disk with name foo
     ::    /@  bar      :: imports %bar protocol from %std disk with name bar
     ::
+
     ++  pro
       :: ^-  $-(nail (like ^pro))
       %+  rune  pat
@@ -1065,18 +1066,16 @@
         std
       ==
     ++  lib
+      :: ^-  $-(nail (like ^pro))
       %+  rune  hep
       ;~  pose
-        ;~(plug sym ;~(pfix tis lib-loc))
+        ;~(plug sym ;~(pfix tis std))
         %+  cook
-          |=  [=disk =pith]
-          ^-  ^lib
-          =/  last  (rear pith)
-          ?>  ?=(@ last)
-          [`@tas`last disk pith]
-        lib-loc
+          |=  =stud
+          ?@  stud  [stud stud]
+          [mark.stud stud]
+        std
       ==
-
     ::  +old-lib: Parse arbitrary library import directive
     ::
     ::    Unused, todo revive with more recursive build system
@@ -1170,8 +1169,8 @@
 ::
 ++  iris
   |%
-  ++  req  request:http
-  +$  res  client-response:^iris
+  +$  req  [hand=pith dat=request:http]
+  +$  res  [hand=pith dat=client-response:^iris]
   --
 :: * A `$bolt` is a `[=stud =once]`
 ::
@@ -1556,10 +1555,7 @@
     (~(gas by *(map pith _?>(?=(^ fil.fat) u.fil.fat))) tap)
   --
 +$  pate  [[%p p=ship] q=pith]
-++  petty-port
-  |*  a=mold
-  ^-  port
-  [a a]
+  
 +$  dita  (each iota aura)
 +$  zeta  (each iota aura)
 ::  $pish: Pattern match over a path
@@ -1648,10 +1644,12 @@
   |%
   +$  unix
     $:  =clay
-        ~
+        =iris
     ==
   +$  clay
     (map [src=pith hand=pith] [case=@ud =desk =path as=(unit mark)])
+  +$  iris
+    (set [src=pith hand=pith])
   --
 ::
 +$  stem

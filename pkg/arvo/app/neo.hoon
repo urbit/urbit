@@ -889,7 +889,7 @@
   ++  fresh
     |=  [prey=(set hunt:neo) =move:neo]
     =/  =flow:neo  [p p.q]:move
-    ~&  fresh-stop/flow
+    ~&  fresh-stop/[flow prey]
     ?.  =(~ (~(get by clog.halt) flow))
       ~|  trying-to-block-on-congested-flow/flow
       !!
@@ -1003,24 +1003,14 @@
     (pout pith)
   --
 ++  lib
-  |_  =loc:ford:neo
-  ++  path  
-    ^-  ^path
-    %-  welp
-    :_  [%lib (pout pith.loc)]
-    ^-  ^path
-    ?@  disk.loc
-      /std
-    ?:  =(ship.disk.loc our.bowl)
-      /our/[term.disk.loc]
-    /her/(scot %p ship.disk.loc)/[term.disk.loc]
-  ++  pith
-    (pave:neo path)
+  |_  =stud:ford:neo
+  ++  pith  (~(pith press lib/stud) %out)
+  ++  path  (pout pith)
   ++  built
     !=(~ (~(peek plow:aux loam) p/our.bowl pith))
   ++  exists
     =/  pax  path
-    (exists-file %src pax)
+    (exists-file (pout (~(pith press lib/stud) %src)))
   --
 ::
 ++  con
@@ -1195,9 +1185,10 @@
     =/  =file:ford:neo
       ~|  parsing/pax
       (scan (trip src) (rein:ford:neo [our.bowl (pave:neo pax)]))
+    ~&  [lib=lib pro=pro]:file
     =/  has-imports=?
       ?&  (levy pro.file |=(pro:ford:neo ~(exists pro stud)))
-          (levy lib.file |=(lib:ford:neo ~(exists lib loc)))
+          (levy lib.file |=(lib:ford:neo ~(exists lib stud)))
       ==
     ?.  has-imports
       ~|  pro.file
@@ -1208,7 +1199,7 @@
     =.  run  (build-libs (turn lib.file tail))
     =/  built-imports=?
       ?&  (levy pro.file |=(pro:ford:neo ~(built pro stud)))
-          (levy lib.file |=(lib:ford:neo ~(built lib loc)))
+          (levy lib.file |=(lib:ford:neo ~(built lib stud)))
       ==
     ~|  ~(key by ~(tar of:neo loam))
     ~|  imports/file
@@ -1232,11 +1223,15 @@
     =.  run  (read-file pat)
     $(pos t.pos)
   ++  build-libs
-    |=  lis=(list loc:ford:neo)
+    |=  lis=(list stud:ford:neo)
     ^+  run
     ?~  lis
       run
-    =.  run  (read-file %src ~(path lib i.lis))
+    =/  pat  
+      (~(path press lib/i.lis) %src)
+    ?:  ~(built lib i.lis)
+      $(lis t.lis)
+    =.  run  (read-file pat)
     $(lis t.lis)
   ++  do-make
     |=  [=pith:neo lib=term sta=(unit pail:neo) =conf:neo]
@@ -1296,7 +1291,7 @@
     ^-  (list [term pith])
     %+  welp
       (turn pro.file |=(p=pro:ford:neo [face.p ~(pith pro stud.p)]))
-    (turn lib.file |=(l=lib:ford:neo [face.l %out ~(pith lib loc.l)]))
+    (turn lib.file |=(l=lib:ford:neo [face.l (~(pith press lib/stud.l) %out)]))
   ++  make-prelude
     |=  [pax=pith =file:ford:neo]
     ^-  [pith _run]
@@ -1796,12 +1791,14 @@
     ^+  run
     ?+  dst  !!
       [%clay *]  (call:silt src t.dst note)
+      [%iris *]  (call:cttp src t.dst note)
     ==
   ++  take-arvo
     |=  [=(pole knot) syn=sign-arvo]
     ^+  run
     ?+  pole  ~|(bad-sys-take/pole !!)
       [%clay %peer rest=*]  (take-peer:silt rest.pole syn)
+      [%iris %req rest=*]   (take-res:cttp rest.pole syn)
     ==
   --
 ++  silt
@@ -1872,6 +1869,30 @@
     =/  =rave:clay  [%sing [%t ud/case path.peer]]
     (pass wire %arvo %c %warp our.bowl desk.peer `rave)
   --
+::
+++  cttp
+  |%
+  ++  call
+    |=  [src=pith:neo dst=pith:neo =note:neo]
+    ?>  ?=(%poke -.note) :: XX: all shanes should be virtualised and hand deliver acks
+    ?>  ?=(%iris-req p.pail.note)
+    =+  !<(=req:iris:neo q.pail.note)
+    =/  wir  (welp /sys/iris/req (pout (en:drive:neo ~[src hand.req])))
+    =|  =outbound-config:iris
+    (emit (pass wir %arvo %i %request dat.req outbound-config))
+
+  ++  take-res
+    |=  [wir=(pole knot) syn=sign-arvo]
+    ?>  ?=([%iris %http-response *] syn)
+    =/  paxs=(pole pith:neo)
+      (de:drive:neo (pave:neo wir))
+    ?>  ?=([src=* hand=* ~] paxs)
+    =/  src=pith  src.paxs
+    =/  hand=pith  hand.paxs
+    =/  =pail:neo  iris-res/!>([hand +>.syn])
+    (emit (do-move (welp #/[p/our]/$/sys/iris hand) src %poke pail))
+  --
+
 ::  |util: utilties
 +|  %util
 ++  puff
