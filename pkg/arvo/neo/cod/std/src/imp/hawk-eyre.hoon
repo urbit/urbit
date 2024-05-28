@@ -22,18 +22,19 @@
       =+  !<(=task:eyre:neo vax)
       =/  [eyre-id=@ta req=inbound-request:eyre]  task
       =/  lin  (parse-request-line:serv url.request.req)
-      =/  inner=pith:neo  #/[p/our.bowl]/sky
+      =/  inner=pith:neo  (pave:neo (slag 2 site.lin))
+      ~&  inner/inner
       =/  args  (~(gas by *(map @t @t)) args.lin)
       =/  =crew:neo  (~(gas by *crew:neo) src/inner ~)
       :_  sig/!>(~)
-      :~  [(welp here.bowl #/[uv/eny.bowl]) %make %sky-eyre-handler `[stud vax] crew]
+      :~  [(welp here.bowl #/[uv/eny.bowl]) %make %hawk-eyre-handler `[stud vax] crew]
       ==
     ==
   ++  init
     |=  pal=(unit pail:neo)
     :_  sig/!>(~)
     =/  =pith:neo  #/[p/our.bowl]/$/eyre
-    =/  =binding:eyre  [~ ~[%neo %sky]]
+    =/  =binding:eyre  [~ ~[%neo %hawk]]
     =/  =req:eyre:neo  [%connect binding here.bowl]
     :~  [pith %poke eyre-req/!>(req)]
     ==

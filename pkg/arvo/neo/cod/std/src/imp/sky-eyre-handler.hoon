@@ -9,17 +9,95 @@
   ++  kids-curb
     ^-  curb:neo
     any/~
-    
-    :: rol/[%ui-list pro/%htmx]
+  :: rol/[%ui-list pro/%htmx]
   ++  manx-to-octs
     |=  man=manx
     (as-octt:mimes:html (en-xml:html man))
+  ::
   ++  render
     |=  [main=manx kids=marl]
     ;div
       ;+  main
       ;div
         ;*  kids
+      ==
+    ==
+  ++  lift
+    |=  in=manx
+    ^-  manx
+    ;html
+      ;head
+        ;meta(charset "UTF-8");
+        ;title: s k y
+        ;script(src "https://code.jquery.com/jquery-3.7.1.js");
+        ;script(src "https://unpkg.com/htmx.org@1.9.11");
+        ;script(src "https://unpkg.com/idiomorph/dist/idiomorph-ext.min.js");
+        ;script(src "https://unpkg.com/htmx.org@1.9.11/dist/ext/response-targets.js");
+        :: ;script: {html-enc-js}
+        ;meta
+          =name  "viewport"
+          =content
+            """
+            width=device-width,
+            initial-scale=1.0,
+            maximum-scale=1.0
+            """
+          ;
+        ==
+        ;meta
+          =name  "htmx-config"
+          =content  (trip '{"ignoreTitle":"true"}')
+          ;
+        ==
+        ;style
+          ;+  ;/  %-  trip
+          '''
+          @font-face {
+            font-family: 'Urbit Sans';
+            src: url("https://media.urbit.org/fonts/UrbitSans/UrbitSansVFWeb-Regular.woff2") format("woff2");
+            font-style: normal;
+            font-weight: 100 700;
+          }
+          /*
+          @font-face {
+            font-family: 'Urbit';
+            src: url('https://nyc3.digitaloceanspaces.com/drain/hawk/2024.4.10..21.47.28-urbit.ttf') format('truetype');
+          }
+          */
+          '''
+        ==
+        :: ;style: {(trip feather-css)}
+        :: ;style: {(trip reset-css)}
+        ;script
+          ;+  ;/
+          """
+          window.log=function()\{if(this.console)\{console.log(Array.prototype.slice.call(arguments));}};
+          jQuery.fn.log=function (msg)\{console.log(msg, this); return this;};
+          jQuery.fn.emit=function (name)\{(this[0]).dispatchEvent(new Event(name, \{ bubbles: true, cancelable: true, composed: true })); return this;};
+          """
+        ==
+        :: ;script: {(trip date-now)}
+        :: ;script: {(trip atom-input)}
+        :: ;script: {(trip multiline-input)}
+        :: ;script: {(trip a-i-r)}
+        :: ;+  favicon
+        :: ;+  manifest
+      ==
+      ;body
+        =hx-ext  "html-enc,response-targets,morph"
+        =hx-swap  "innerHTML"
+        =hx-boost  "true"
+        =hx-history  "false"
+        =hx-replace-url  "/neo/sky"
+        =hx-target  "closest .hawk"
+        =style
+          """
+          background-color: var(--b1);
+          background-image: var(--sky-bg-url);
+          background-size: var(--sky-bg-size);
+          background-repeat: var(--sky-bg-repeat);
+          """
+        ;+  in
       ==
     ==
   --
@@ -35,7 +113,7 @@
   %-  ~(gas by *band:neo)
   :~  :-  %src
       ^-  fief:neo
-      :-  |
+      :-  req=|
       ^-  quay:neo
       :-  [main ~]
       ^-  (unit port:neo)
@@ -65,6 +143,7 @@
       :~  [pith %poke eyre-sign/!>(head)]
           [pith %poke eyre-sign/!>(data)]
           [pith %poke eyre-sign/!>(done)]
+          [here.bowl %cull ~]
       ==
     ?~  src=(~(get by deps.bowl) %src)
       ;div: 404
@@ -72,7 +151,7 @@
     ?>  =(%htmx p.pail.root)
     =/  bol  *bowl:neo
     =.  here.bol  p.u.src
-    (!<(htmx q.pail.root) bol)
+    (lift (!<(htmx q.pail.root) bol))
   --
 --
 
