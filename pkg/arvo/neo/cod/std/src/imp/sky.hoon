@@ -1,36 +1,37 @@
 /@  sky
 /@  sky-diff
 |%
-++  state  %sky
+++  state  pro/%sky
 ++  poke   (sy %sky %sky-diff ~)
 ++  kids
-  %-  ~(gas by *kids:neo)
-  :~
+  :+  ~  %y
+  %-  ~(gas by *lads:neo)
+  :~  
     :-  [&/%settings |]
-    [%sky-settings %sky-settings]
+    [pro/%sky-settings (sy %sky-settings ~)]
   ==
 ++  deps   *deps:neo
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo =ever:neo state-vase=vase *]
+  |_  [=bowl:neo =aeon:neo =pail:neo]
   ++  poke
     |=  [=stud:neo vax=vase]
-    ^-  (quip card:neo vase)
+    ^-  (quip card:neo pail:neo)
+    =+  !<(this=sky q.pail)
     ?+  stud  !!
-      %sky  [~ vax]
+      %sky  [~ sky/vax]
       %sky-diff
         =/  poke  !<(sky-diff vax)
-        =/  this  !<(sky state-vase)
         ?+  -.poke  !!
           %new-tab
             :-  ~
             =.  hawks.this  [[now.bowl /home] hawks.this]
             =.  open.this  (min 4 +(open.this))
-            !>(this)
+            sky/!>(this)
           %move-tab
             :-  ~
             =.  hawks.this  (snap hawks.this slot.poke [now.bowl pith.poke])
-            !>(this)
+            sky/!>(this)
           %minimize
             :-  ~
             =.  hawks.this
@@ -40,7 +41,7 @@
                 [(snag slot.poke hawks.this) ~]
               ==
             =.  open.this  (dec open.this)
-            !>(this)
+            sky/!>(this)
           %maximize
             :-  ~
             =.  hawks.this
@@ -52,14 +53,14 @@
             =?    open.this
                 (gte slot.poke open.this)
               (min 4 +(open.this))
-            !>(this)
+            sky/!>(this)
           %close
             :-  ~
             =.  hawks.this  (oust [slot.poke 1] hawks.this)
             =?    open.this
                 (lth slot.poke open.this)
               (dec open.this)
-            !>(this)
+            sky/!>(this)
           %slide-up
             :-  ~
             =?  hawks.this
@@ -70,7 +71,7 @@
                 [(snag (dec slot.poke) hawks.this) ~]
                 (slag +(slot.poke) hawks.this)
               ==
-            !>(this)
+            sky/!>(this)
           %slide-down
             :-  ~
             =?  hawks.this
@@ -81,17 +82,18 @@
                 [(snag slot.poke hawks.this) ~]
                 (slag (add 2 slot.poke) hawks.this)
               ==
-            !>(this)
+            sky/!>(this)
           ::
         ==
       ::
     ==
   ++  init
-    |=  vas=(unit vase)
-    ^-  (quip card:neo vase)
+    |=  pal=(unit pail:neo)
+    ^-  (quip card:neo pail:neo)
     :-
       :~  [(welp here.bowl /settings) %make %sky-settings ~ ~]
       ==
+    :-  %sky
     !>
     :_  1
     :~

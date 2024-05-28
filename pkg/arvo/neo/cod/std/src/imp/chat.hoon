@@ -2,7 +2,6 @@
 /@  chat-diff
 /@  chat
 /@  sig
-:: /-  _/thing
 =>
 |%
 ++  state  chat

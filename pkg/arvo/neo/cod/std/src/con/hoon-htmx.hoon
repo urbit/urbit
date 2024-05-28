@@ -1,5 +1,5 @@
 /@  htmx
-:-  [%hoon %htmx]
+:-  [%hoon %$ %htmx]
 |=  hon=@t
 |=  =bowl:neo
 =/  =name:neo

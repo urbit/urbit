@@ -1,5 +1,5 @@
 /@  iframe
-:-  [%iframe %htmx]
+:-  [%iframe %$ %htmx]
 |=  =iframe
 |=  =bowl:neo
 ^-  manx

@@ -1,21 +1,21 @@
 /@  sky-settings
 |%
-++  state  %sky-settings
+++  state  pro/%sky-settings
 ++  poke   (sy %sky-settings ~)
 ++  kids   *kids:neo
 ++  deps   *deps:neo
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo =ever:neo state-vase=vase *]
+  |_  [=bowl:neo =aeon:neo =pail:neo]
   ++  poke
     |=  [=stud:neo vax=vase]
-    ^-  (quip card:neo vase)
-    :-  ~
-    vax
+    ^-  (quip card:neo pail:neo)
+    `pail
   ++  init
-    |=  vas=(unit vase)
-    ^-  (quip card:neo vase)
+    |=  pal=(unit pail:neo)
+    ^-  (quip card:neo pail:neo)
     :-  ~
+    :-  %sky-settings
     !>
     :*
       %-  malt

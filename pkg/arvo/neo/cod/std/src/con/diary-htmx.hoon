@@ -1,5 +1,5 @@
 /@  diary
-:-  [%diary %htmx]
+:-  [%diary %$ %htmx]
 |=  dia=diary
 |=  =bowl:neo
 ^-  manx
@@ -29,7 +29,8 @@
   ::
 ++  link-entry
   ::
-  |=  [pax=pith =pail:neo]
+  |=  [pax=pith =idea:neo]
+  =/  =pail:neo  pail.idea
   =/  tape  (trip !<(@t q.pail))
   =/  subject-end  (fall (find [10]~ tape) 56)
   =/  subject  (scag subject-end tape)
@@ -55,7 +56,7 @@
       ;+  form-put-entry
       ;*
       %+  turn
-        %+  sort  ~(tap by kids.bowl)
+        %+  sort  ~(tap of:neo kids.bowl)
         |=  [a=[=pith *] b=[=pith *]]
         (gth ->.pith.a ->.pith.b)
       link-entry

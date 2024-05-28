@@ -200,7 +200,10 @@
     %.  *(list card)
     ?~  q.ack
       same
-    (mean leaf/"nack on sys" u.q.ack)
+    ?-  -.u.q.ack
+      %goof  (mean leaf/"goof on sys" tang.u.q.ack)
+      %gone  (mean leaf/"no dependency {<term.u.q.ack>}" ~)
+    ==
   =/  src=name:neo  (de-pith:name:neo p.p.ack)
   =/  =wire  nack/(pout p.p.ack)
   (do-poke-her wire ship.src neo-ack+!>(ack))^~
@@ -279,8 +282,10 @@
   %.  run
   ?~  q.ack
     same
-  (slog leaf/"nacked on flow {<p.ack>}" u.q.ack)
-
+  ?-  -.u.q.ack
+    %gone  (slog leaf/"Missing dep: {<term.u.q.ack>}" ~)
+    %goof  (slog leaf/"nacked on flow {<p.ack>}" tang.u.q.ack)
+  ==
 ::
 ++  on-dirt-card
   |=  =card:dirt:neo
@@ -1036,6 +1041,7 @@
   ++  do  
     =/  vax=vase  
       q.q:(need fil:(need (need (~(peek till:aux [loam farm]) %x [p/our.bowl pith]))))
+    ~|  con-pith/pith
     |%
     ++  grab  !<(stud:neo (slot 4 vax))
     ++  thru  !<(stud:neo (slot 10 vax))
@@ -1154,10 +1160,10 @@
   |^  ^+  run
   =/  paths=(list path)
     .^((list path) %ct root)
+  ~&  paths/paths
   =.  paths
     %+  turn  paths
     |=  pax=path
-    =.  pax  (snip pax)
     ?>  ?=(^ pax)
     t.pax
   |-
@@ -1168,7 +1174,7 @@
   ::  +finalize: register conversion
   ++  finalize
     =.  ripe  &
-    =/  base=pith:neo  /out/std/con
+    =/  base=pith:neo  /cod/std/out/con
     =/  cons  
       ~(tap by ~(tar of:neo ~(snip of:neo (~(dip of:neo tide) base))))
     |- 
@@ -1188,12 +1194,24 @@
     ?~  pal=(~(peek plow:aux loam) [p/our.bowl pax])
       &
     !=(txt q.q.u.pal)
+  ++  read-txt
+    |=  pax=path
+    =/  ext  (rear pax)
+    =.  pax  (snip pax)
+    =/  nam  (rear pax)
+    =.  pax  (snip pax)
+    =.  pax
+      (snoc pax :((cury cat 3) nam '-' ext))
+    ~&  pax/pax
+    run
   ::
   ++  read-file
     |=  pax=path
     ^+  run
-    ?:  =((rear pax) %ford-parser)
-      run
+    ~&  reading/pax
+    ?.  =((rear pax) %hoon)
+      (read-txt pax)
+    =.  pax  (snip pax)
     =+  .^(src=@t %cx `path`(snoc `path`(welp root pax) %hoon))
     ?.  (has-modified src (pave:neo pax))
       run
@@ -1214,6 +1232,7 @@
       !!
     =.  run  (build-pros (turn pro.file tail))
     =.  run  (build-libs (turn lib.file tail))
+    ::  =.  run  (build-fils (turn lib.file tail))
     =/  built-imports=?
       ?&  (levy pro.file |=(pro:ford:neo ~(built pro stud)))
           (levy lib.file |=(lib:ford:neo ~(built lib stud)))
@@ -1228,6 +1247,18 @@
     =.  run  (write-hoon pax src)
     =/  pit  (src-to-out pax)
     (ford-slap (src-to-out pax) pre pax)
+  ++  build-fils
+    |=  pos=(list stud:neo)
+    ^+  run
+    ?~  pos
+      run
+    =/  pat  
+      (~(path press fil/i.pos) %src)
+    ?:  ~(built pro i.pos)
+      $(pos t.pos)
+    =.  run  (read-file (snoc pat %hoon))
+    $(pos t.pos)
+  ::
   ++  build-pros
     |=  pos=(list stud:neo)
     ^+  run
@@ -1237,8 +1268,9 @@
       (~(path press pro/i.pos) %src)
     ?:  ~(built pro i.pos)
       $(pos t.pos)
-    =.  run  (read-file pat)
+    =.  run  (read-file (snoc pat %hoon))
     $(pos t.pos)
+  ::
   ++  build-libs
     |=  lis=(list stud:ford:neo)
     ^+  run
@@ -1248,7 +1280,7 @@
       (~(path press lib/i.lis) %src)
     ?:  ~(built lib i.lis)
       $(lis t.lis)
-    =.  run  (read-file pat)
+    =.  run  (read-file (snoc pat %hoon))
     $(lis t.lis)
   ++  do-make
     |=  [=pith:neo lib=term sta=(unit pail:neo) =conf:neo]
@@ -1348,6 +1380,7 @@
   =.  run  copy-clay
   ::  =.  run  (emit %pass /bind-site %arvo %e %connect [~ dap.bowl ~] dap.bowl)
   =.  run  (emit do-std-warp)
+  =.  run  (emit (do-card #/[p/our.bowl]/sky %make %sky `sky/!>([%system [~[%home] ~] 1]) ~))
   run
   ++  pess  |=(=post:neo (~(pith press post) %out))
   ++  clay-beak  ^-  path
@@ -1550,6 +1583,12 @@
       (take-dirt-card [p/our.bowl here] %grow pail ~ *oath:neo)
     =.  grit  (welp grit git)
     arvo
+  ++  cull
+    ^+  arvo
+    =^  git=grit:neo  run
+      (take-dirt-card [p/our.bowl here] %cull ~)
+    =.  grit  (welp grit git)
+    work
   ::
   ++  work
     ^+  arvo
@@ -1594,7 +1633,7 @@
       %poke  (poke +.q.q:move)
       %tomb  (tomb +.q.q:move)
       %link   !!
-      %cull   !!
+      %cull  cull
     ==
   ::
   ++  ingest
@@ -1633,7 +1672,13 @@
       [bad block]
     =/  pit=pith:neo   (~(got by conf) term)
     =/  res  (look care pit)
-    ?~  res  [bad (~(put in block) care pit)]
+    =/  nam=name:neo  (de-pith:name:neo pit)
+    ?~  res  
+      ?:  =(our.bowl ship.nam)
+        ?.  required
+          [bad block]
+        :_(block (~(put in bad) term))
+      [bad (~(put in block) care pit)]
     ?~  u.res
       :_(block (~(put in bad) term))
     [bad block] ::
@@ -1653,7 +1698,7 @@
     =/  [req=? =quay:neo]  u.d
     =/  =hunt:neo  [(get-care:quay:neo quay) pith]
     =/  =name:neo  (de-pith:name:neo pith)
-    ?:  =(~ (moor quay name))
+    ?:  &(req =(~ (moor quay name)))
       ~|  bad-dance/[term name]
       !!
     =.  run  (stalk:rage hunt rely/[term here])
@@ -1711,7 +1756,7 @@
       (mule tap)
     ?:  ?=(%& -.res)
       p.res
-    =.  err.block  `p.res
+    =.  err.block  `[%goof p.res]
     `arvo
   ++  surf
     =/  =wave:neo  (~(got of:neo tide) here)
@@ -1763,9 +1808,11 @@
         ~
       =/  =name:neo  (de-pith:name:neo u.dep)
       =/  =care:neo  (get-care:quay:neo quay)
-      =/  =lore:neo  (need (moor quay name))
+      ?~  lor=(moor quay name)
+        ?<  required
+        ~
 ::      %-  (slog term (epic:dbug:neo epic) ~)
-      `[term u.dep lore]
+      `[term u.dep u.lor]
     ::
     ++  su-form  ~(. form:kook [su-bowl su-saga])
     ++  su-abet ::  TODO: bump
@@ -2069,7 +2116,7 @@
         (emil (give-simple-payload:app:serv eyre-id not-found:gen:serv))
       =.  by-id.eyre.unix     (~(put by by-id.eyre.unix) eyre-id u.bin)
       =.  by-pith.eyre.unix  (~(put by by-pith.eyre.unix) u.bin eyre-id)
-      =/  =card:neo  [u.bin %poke eyre-task/!>([eyre-id req])]
+      =/  =card:neo  [u.bin %poke eyre-task/!>(`task:eyre:neo`[eyre-id req])]
       =/  =move:neo  [#/[p/our.bowl]/$/eyre card]
       (emit (do-move move))
     --
@@ -2174,12 +2221,15 @@
   |=  [want=quay:neo =name:neo]
   ^-  (unit lore:neo)
   =/  =care:neo  (get-care:quay:neo want)
-  =/  =epic:neo  (need (need (~(peek till:aux [loam farm]) care (en-pith:name:neo name))))
+  =/  pic  (~(peek till:aux [loam farm]) care (en-pith:name:neo name))
+  ?:  ?=($@(~ [~ ~]) pic)
+    ~&  lost-moor/name
+    ~
   =;  [fail=? res=(list (pair pith:neo idea:neo))]
     ?:  fail
       ~
     `(gas-lore res)
-  %+  roll  ~(tap by ~(tar of:neo epic))
+  %+  roll  ~(tap by ~(tar of:neo u.u.pic))
   |=  [[=pith:neo =saga:neo] [fail=_| res=(list (pair pith:neo idea:neo))]]
   ^+  +<+
   ?:  fail

@@ -1,4 +1,4 @@
-:-  [%ford-out %htmx]
+:-  [%ford-out %$ %htmx]
 =/  debug  |
 |=  fod=[cache=(unit vase) ~]
 |=  =bowl:neo
@@ -653,17 +653,23 @@
 
 ++  have
   |=  vax=vase
-  =/  fim=(unit firm:neo)
-    (mole |.(!<(firm:neo vax)))
+  =/  fim=(unit kook:neo)
+    (mole |.(!<(kook:neo vax)))
   ?>  ?=(^ fim)
   ;div.p2.fc.g2
     ;h4: Shrub implementation
     ;h5: State
-    ;button.b1.br1.p2.hover.wfc
-      =hx-get  (spud (post-href %pro state:u.fim))
-      =hx-target  "closest .hawk"
-      =hx-swap  "innerHTML"
-      ; {<state:u.fim>}
+    ;div.frw.g2
+      ;*
+      %+  turn  ~(tap in (curt:neo state:u.fim))
+      |=  =post:neo
+      ^-  manx
+      ;button.p2.br1.b1.hover
+        =hx-get  (spud (post-href post))
+        =hx-target  "closest .hawk"
+        =hx-swap  "innerHTML"
+        ; {<p.post>} {<q.post>}
+      ==
     ==
     ;h5: Pokes
     ;div.frw.g2

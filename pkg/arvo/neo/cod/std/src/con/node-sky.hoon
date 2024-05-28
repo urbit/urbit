@@ -1,7 +1,7 @@
 /@  sky
 /@  node
-/-  _/manx-utils
-:-  [%node %sky]
+/-  manx-utils
+:-  [%node %$ %sky]
 |=  nod=node
 ^-  sky
 :_  (slav %ud (~(got manx-utils nod) %slots))

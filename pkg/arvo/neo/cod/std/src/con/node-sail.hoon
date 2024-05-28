@@ -1,7 +1,7 @@
 /@  node
 /@  sail
-/-  _/manx-utils
-:-  [%node %sail]
+/-  manx-utils
+:-  [%node %$ %sail]
 |=  nod=node
 |^
   ^-  sail

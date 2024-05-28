@@ -356,6 +356,7 @@
       [%pro p=stud] :: base case
       [%any ~]
   ==
+
 ++  compile-curb
   =|  fac=_|  :: did we just apply a face
   |=  [cur=curb get=$-(stud type)]
@@ -883,7 +884,7 @@
 ::    %pro: PROtocol (type)
 ::
 +$  tack
-  ?(%con %imp %pro %lib)
+  ?(%con %imp %pro %lib %rol %fil)
 ::  $post: Name of code being distributed
 ::
 +$  post  (pair tack stud)
@@ -924,6 +925,35 @@
       `[pith (pole iota)]`[(scag [len rest]:pax) (slag [len rest]:pax)]
     $(res [nex res])
   --
+++  curt
+  =|  res=(set post)
+  |=  =curb
+  ^+  res
+  =*  loop-curb  $
+  ?-    -.curb
+      ?(%pro %only)
+    (~(put in res) pro/p.curb)
+  ::
+      %or
+    =/  curs  p.curb
+    |-
+    ?~  curs
+      res
+    =/  new  loop-curb(curb i.curs)
+    =.  res  (~(uni in res) new)
+    $(curs t.curs)
+  ::
+      %rol
+    =.  res  (~(put in res) rol/p.curb)
+    $(curb q.curb)
+  ::
+      %not
+    $(curb q.curb)
+  ::
+      %any  res
+
+  ==
+
 ::  +ford: Container for build system bootstrapping
 ++  ford
   |%
@@ -999,6 +1029,8 @@
   ::
   +$  pro
     [face=term =stud]
+  +$  fil  
+    [face=term =stud]
   +$  vale
     [face=term =stud]
   ::  $file:ford: Code with imports
@@ -1007,6 +1039,7 @@
     $:  pro=(list pro)
         :: grab=(list 
         lib=(list lib)
+        fil=(list fil)
         =hoon
     ==
   ::  +rein:ford: Parse code with imports
@@ -1080,6 +1113,18 @@
           [mark.stud stud]
         std
       ==
+    ::
+    ++  fil
+      :: ^-  $-(nail (like ^pro))
+      %+  rune  tar
+      ;~  pose
+        ;~(plug sym ;~(pfix tis std))
+        %+  cook
+          |=  =stud
+          ?@  stud  [stud stud]
+          [mark.stud stud]
+        std
+      ==
     ::  +old-lib: Parse arbitrary library import directive
     ::
     ::    Unused, todo revive with more recursive build system
@@ -1110,6 +1155,7 @@
     ++  pros
       :: ^-  $-(nail (like (list ^pro)))
       (star pro)
+    ++  fils  (star fil)
     ++  hone
       :: ^-  $-(nail (like hoon))
       =+  vaz=(vang & (en-path:^name name))
@@ -1119,6 +1165,7 @@
       ;~  plug 
         pros
         libs
+        fils
         hone
       ==
     --

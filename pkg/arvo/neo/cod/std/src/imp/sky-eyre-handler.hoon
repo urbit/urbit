@@ -4,10 +4,13 @@
   |%
   ++  main
     ^-  curb:neo
-    rol/[%ui-main pro/%htmx]
+    [%or rol/[%ui-main pro/%htmx] pro/%htmx ~]
+    :: rol/[%ui-main pro/%htmx]
   ++  kids-curb
     ^-  curb:neo
-    rol/[%ui-list pro/%htmx]
+    any/~
+    
+    :: rol/[%ui-list pro/%htmx]
   ++  manx-to-octs
     |=  man=manx
     (as-octt:mimes:html (en-xml:html man))
@@ -32,7 +35,7 @@
   %-  ~(gas by *band:neo)
   :~  :-  %src
       ^-  fief:neo
-      :-  &
+      :-  |
       ^-  quay:neo
       :-  [main ~]
       ^-  (unit port:neo)
@@ -55,19 +58,21 @@
     =+  !<([eyre-id=@ta req=inbound-request:eyre] vase)
     :_  [stud vase]
     =/  =pith:neo  #/[p/our.bowl]/$/eyre
-    =/  [src-pit=pith:neo src=lore:neo]  (~(got by deps.bowl) %src)
-    =/  root=idea:neo  (~(got of:neo src) /)
+    =;  =manx
+      =/  head=sign:eyre:neo  [eyre-id %head [200 [['content-type' 'text/html'] ~]]]
+      =/  data=sign:eyre:neo  [eyre-id %data `(manx-to-octs manx)]
+      =/  done=sign:eyre:neo  [eyre-id %done ~]
+      :~  [pith %poke eyre-sign/!>(head)]
+          [pith %poke eyre-sign/!>(data)]
+          [pith %poke eyre-sign/!>(done)]
+      ==
+    ?~  src=(~(get by deps.bowl) %src)
+      ;div: 404
+    =/  root=idea:neo  (~(got of:neo q.u.src) /)
     ?>  =(%htmx p.pail.root)
     =/  bol  *bowl:neo
-    =.  here.bol  src-pit
-    =+  !<(rot=htmx q.pail.root)
-    =/  head=sign:eyre:neo  [eyre-id %head [200 [['content-type' 'text/html'] ~]]]
-    =/  data=sign:eyre:neo  [eyre-id %data `(manx-to-octs (rot bol))]
-    =/  done=sign:eyre:neo  [eyre-id %done ~]
-    :~  [pith %poke eyre-sign/!>(head)]
-        [pith %poke eyre-sign/!>(data)]
-        [pith %poke eyre-sign/!>(done)]
-    ==
+    =.  here.bol  p.u.src
+    (!<(htmx q.pail.root) bol)
   --
 --
 

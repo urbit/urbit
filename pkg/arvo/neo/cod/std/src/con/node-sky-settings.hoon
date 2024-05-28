@@ -1,7 +1,7 @@
 /@  sky-settings
 /@  node
-/-  _/manx-utils
-:-  [%node %sky-settings]
+/-  manx-utils
+:-  [%node %$ %sky-settings]
 |=  nod=node
 ^-  sky-settings
 %-  ~(pre-fold manx-utils nod)

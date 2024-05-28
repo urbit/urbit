@@ -1,6 +1,6 @@
 /@  sail
-/-  _/feather-icons
-:-  [%sail %htmx]
+/-  feather-icons
+:-  [%sail %$ %htmx]
 |=  =sail
 |=  =bowl:neo
 |^

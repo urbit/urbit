@@ -1,7 +1,7 @@
 /@  node
 /@  task-diff
-/-  _/manx-utils
-:-  [%node %task-diff]
+/-  manx-utils
+:-  [%node %$ %task-diff]
 |=  nod=node
 ^-  task-diff
 =/  mu  ~(. manx-utils nod)

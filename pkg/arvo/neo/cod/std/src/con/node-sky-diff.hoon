@@ -1,7 +1,7 @@
 /@  sky-diff
 /@  node
-/-  _/manx-utils
-:-  [%node %sky-diff]
+/-  manx-utils
+:-  [%node %$ %sky-diff]
 |=  nod=node
 ^-  sky-diff
 =*  mu  ~(. manx-utils nod)

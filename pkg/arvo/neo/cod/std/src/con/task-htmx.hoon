@@ -1,10 +1,10 @@
 /@  task
-:-  [%task %htmx]
+:-  [%task %$ %htmx]
 |=  t=task
 |=  =bowl:neo
 |^
   shell
-++  kids  ~(tap by kids.bowl)
+++  kids  ~(tap of:neo kids.bowl)
 ++  id
   ^-  tape
   %-  zing
@@ -80,7 +80,8 @@
     ==
   ==
 ++  part-kid
-  |=  [=pith =pail:neo]
+  |=  [=pith =idea:neo]
+  =/  =pail:neo  pail.idea
   =/  t=task  !<(task q.pail)
   =-  ?.  done.t  -
     -(a.g [[%done ""] a.g.-])
@@ -243,7 +244,7 @@
     ;*
     %+  turn  order.t
       |=  =pith
-      =/  kid  (~(get by kids.bowl) pith)
+      =/  kid  (~(get of:neo kids.bowl) pith)
       ?~  kid
         ;div: does not exist {(en-tape:pith:neo pith)}
       (part-kid [pith (need kid)])

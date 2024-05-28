@@ -1,7 +1,7 @@
 /@  sky
 /@  sky-settings
-/-  _/feather-icons
-:-  [%sky %htmx]
+/-  feather-icons
+:-  [%sky %$ %htmx]
 |=  =sky
 |=  =bowl:neo
 ^-  manx
@@ -33,11 +33,11 @@
 ++  theme-style
   =/  settings
     ^-  (unit sky-settings)
-    =/  s  (~(get by kids.bowl) /settings)
+    =/  s  (~(get of:neo kids.bowl) /settings)
     ?~  s  ~
     :-  ~
     !<  sky-settings
-    q.u.s
+    q.pail.u.s
   ;style
     ;+  ;/
     ?~  settings

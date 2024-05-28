@@ -1,7 +1,7 @@
 /@  node
 /@  diary-diff
-/-  _/manx-utils
-:-  [%node %diary-diff]
+/-  manx-utils
+:-  [%node %$ %diary-diff]
 |=  nod=node
 ^-  diary-diff
 =/  mu  ~(. manx-utils nod)

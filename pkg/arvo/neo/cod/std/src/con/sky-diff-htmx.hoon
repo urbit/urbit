@@ -1,6 +1,6 @@
 /@  sky-diff
-/-  _/feather-icons
-:-  [%sky-diff %htmx]
+/-  feather-icons
+:-  [%sky-diff %$ %htmx]
 |=  diff=sky-diff
 |=  =bowl:neo
 ^-  manx

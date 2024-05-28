@@ -1,5 +1,5 @@
 /@  sky-settings
-:-  [%sky-settings %htmx]
+:-  [%sky-settings %$ %htmx]
 |=  settings=sky-settings
 |=  =bowl:neo
 ^-  manx
