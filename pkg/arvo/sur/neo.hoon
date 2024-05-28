@@ -849,7 +849,7 @@
 ::    .err is the possible error state
 ::    If .err is not ~, then .get is functionally ~
 ::    
-+$  block  [get=(set hunt) err=(unit tang)]
++$  block  [get=(set hunt) err=(unit quit)]
 ::
 ::  $halt: Currently blocked flows and indices
 ::
@@ -858,7 +858,11 @@
       by-flow=(jug flow hunt) :: hunts blocked by flow
       clog=(map flow (qeu move)) :: enqueued moves to send on unblock
   ==
-++  ack  (pair flow (unit tang))
++$  quit
+  $%  [%gone =term] :: injected a bad dependency
+      [%goof =tang] :: crash
+  ==
++$  ack  (pair flow (unit quit))
 ::
 ::  $flow: Call direction
 ::  
@@ -1867,6 +1871,7 @@
       were=pith :: XX: rename to here
       here=pith :: 
       now=@da
+      eny=@uvJ
       deps=(map term (pair pith lore))
       kids=lore
   ==

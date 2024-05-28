@@ -123,7 +123,11 @@
     =^  cards  state
       abet:(on-arvo:run wire syn)
     [cards this]
-  ++  on-fail  on-fail:def
+  ++  on-fail
+    |=  [=term =tang]
+    =^  cards  state
+      abet:(on-fail:run term tang)
+    [cards this]
   ++  on-peek  on-peek:run
   --
 :: %-  mute
@@ -386,6 +390,11 @@
     |=  =myth:neo
     neo-myth+!>(myth)
   --
+++  on-fail
+  |=  [=term =tang]
+  ~&  fail/term
+  %-  (slog tang)
+  (emit do-std-warp)
 ::  |jungle: shurb manipulations
 +|  %jungle
 ::  +crop: build (possibly virtual value)
@@ -1338,7 +1347,8 @@
   =.  run  (re-export reef %mime !,(*hoon mime))
   =.  run  copy-clay
   ::  =.  run  (emit %pass /bind-site %arvo %e %connect [~ dap.bowl ~] dap.bowl)
-  (emit do-std-warp)
+  =.  run  (emit do-std-warp)
+  run
   ++  pess  |=(=post:neo (~(pith press post) %out))
   ++  clay-beak  ^-  path
     /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)
@@ -1718,6 +1728,7 @@
           hare 
           hare 
           now.bowl
+          eny.bowl
           su-deps 
           su-kids
       ==
@@ -1819,6 +1830,7 @@
     ?+  pole  ~|(bad-sys-take/pole !!)
       [%behn %wait rest=*]  (take-wait:bide rest.pole syn)
       [%clay %peer rest=*]  (take-peer:silt rest.pole syn)
+      [%eyre %bind rest=*]  (take-bind:sttp rest.pole syn)
       [%iris %req rest=*]   (take-res:cttp rest.pole syn)
     ==
   --
@@ -1996,6 +2008,10 @@
   --
 ++  sttp
   |%
+  ++  take-bind
+    |=  *
+    run
+  ::
   ++  call
     |=  [src=pith:neo dst=pith:neo =note:neo]
     ?>  ?=(%poke -.note) :: XX: all shanes should be virtualised and hand deliver acks
@@ -2024,7 +2040,7 @@
     ++  on-eyre-sign
       |=  [src=pith:neo eyre-id=@ta =gift:eyre:neo]
       ^+  run
-      ?>  =(src (~(got by by-id.eyre.unix) eyre-id))
+      ::  ?>  =(src (~(got by by-id.eyre.unix) eyre-id))
       =/  =path  /http-response/[eyre-id]
       =;  cag=(unit cage)
         ?~  cag  (give %kick ~[path] ~)
