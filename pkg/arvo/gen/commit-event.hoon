@@ -13,4 +13,4 @@
 ?~  beam=(de-beam path)
   ~|(%path-not-beam !!)
 =+  .^(file=@t %cx path)
-[/c/sync %info desk=q.u.beam | [s.u.beam %ins %mime !>([/ (as-octs:mimes:html file)])]~]
+[/c/sync %info desk=q.u.beam & [s.u.beam %ins %mime !>([/ (as-octs:mimes:html file)])]~]
