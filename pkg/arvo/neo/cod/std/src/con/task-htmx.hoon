@@ -127,7 +127,7 @@
       ^-  manx
       ;button
         =type  "button"
-        =onclick  (trip 'this.classList.toggle("toggled"); this.parentNode.nextElementSibling.classList.toggle("hidden"); if (this.parentNode.nextElementSibling.classList.contains("hidden")){this.innerHTML="<span>V</span>"} else {this.innerHTML="<span>⋀</span>"};')
+        =onclick  (trip 'this.classList.toggle("toggled"); this.parentNode.nextElementSibling.classList.toggle("hidden"); if (this.parentNode.nextElementSibling.classList.contains("hidden")){this.innerHTML="<span class=\'p1\'>V</span>"} else {this.innerHTML="<span class=\'p1\'>⋀</span>"};')
         ;span.p1: V
       ==
       ;a
