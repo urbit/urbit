@@ -1158,6 +1158,19 @@
   ::
   +$  res  $>(%wake gift:^behn)
   --
+++  eyre
+  |%
+  +$  req  [%connect =binding:^eyre =pith]
+  +$  res  [%bound ~]
+  +$  sign  (pair @ta gift)
+  +$  gift
+    $%  [%head =response-header:http]
+        [%data dat=(unit octs)]
+        [%done ~]
+    ==
+  +$  task
+    (pair @ta inbound-request:^eyre)
+  --
 ::  +clay: Filesystem overlay
 ::
 ++  clay
@@ -1659,12 +1672,18 @@
         =iris
         =behn
         =gall
+        =eyre
     ==
   +$  behn  (jug @da pith)
   +$  clay
     (map [src=pith hand=pith] [case=@ud =desk =path as=(unit mark)])
   +$  iris
     (set [src=pith hand=pith])
+  +$  eyre
+    $:  by-id=(map @ta pith)
+        by-pith=(map pith @ta)
+        bind=(map binding:^^eyre pith)
+    ==
   ++  gall
     =<  gall
     |%

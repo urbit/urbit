@@ -3,6 +3,7 @@
 /+  default-agent
 /+  dbug
 /+  libverb=verb
+/+  serv=server
 /*  txt-hoon-imp    %hoon   /neo/cod/std/src/imp/hoon/hoon
 /*  txt-term-imp    %hoon   /neo/cod/std/src/imp/term/hoon
 /*  txt-ford-same   %hoon   /neo/cod/std/src/imp/ford-same/hoon
@@ -246,6 +247,7 @@
   ::
     %noun            (on-noun q.vase)
     %neo-raw-poke    (on-move (poke:harden !<(raw-poke:neo vase)))
+    %handle-http-request  (handle-http-request:sttp !<([@ta inbound-request:eyre] vase))
   ==
 ++  on-noun
   |=  non=*
@@ -302,6 +304,7 @@
   ?+  pole   ~|  bad-watch-path/pole  !!
     [%sync rest=*]  (on-peer-sync (pave:neo rest.pole) stop)
     [%fetch rest=*]  ?:(stop run (on-peer-fetch (pave:neo rest.pole)))
+    [%http-response *]   run
   ==
 ::
 ++  on-peer-fetch
@@ -1808,6 +1811,7 @@
       [%iris *]  (call:cttp src t.dst note)
       [%behn *]  (call:bide src t.dst note)
       [%gall *]  (call:rile src t.dst note)
+      [%eyre *]  (call:sttp src t.dst note)
     ==
   ++  take-arvo
     |=  [=(pole knot) syn=sign-arvo]
@@ -1990,6 +1994,70 @@
     =/  =res:behn:neo  +.syn
     (emit (do-move src i.timers %poke behn-res/!>(res)))
   --
+++  sttp
+  |%
+  ++  call
+    |=  [src=pith:neo dst=pith:neo =note:neo]
+    ?>  ?=(%poke -.note) :: XX: all shanes should be virtualised and hand deliver acks
+    ?+  p.pail.note  ~|(bad-eyre-call/p.pail.note !!)
+      %eyre-req    (on-eyre-req !<(req:eyre:neo q.pail.note))
+      %eyre-sign  (on-eyre-sign src !<(sign:eyre:neo q.pail.note))
+    ==
+    +$  request-line
+      $:  [ext=(unit @ta) site=(list @t)]
+          args=(list [key=@t value=@t])
+      ==
+    ::  +parse-request-line: take a cord and parse out a url
+    ::
+    ++  parse-request-line
+      |=  url=@t
+      ^-  request-line
+      (fall (rush url ;~(plug apat:de-purl:html yque:de-purl:html)) [[~ ~] ~])
+    ::
+    ++  on-eyre-req
+      |=  [%connect =binding:eyre =pith:neo]
+      ?>  =(~ site.binding)
+      =.  bind.eyre.unix  (~(put by bind.eyre.unix) binding pith)
+      =/  wir=wire  (welp /sys/eyre/bind (pout pith))
+      (emit %pass wir %arvo %e %connect binding dap.bowl)
+    ::
+    ++  on-eyre-sign
+      |=  [src=pith:neo eyre-id=@ta =gift:eyre:neo]
+      ^+  run
+      ?>  =(src (~(got by by-id.eyre.unix) eyre-id))
+      =/  =path  /http-response/[eyre-id]
+      =;  cag=(unit cage)
+        ?~  cag  (give %kick ~[path] ~)
+        (give %fact ~[path] u.cag)
+      ?-  -.gift
+        %head  `http-response-header/!>(response-header.gift)
+        %data  `http-response-data/!>(dat.gift)
+        %done  ~
+      ==
+    ++  match-binding
+      =|  test=(list @t)
+      |=  site=(list @t)
+      ^-  (unit pith:neo)
+      ?^  res=(~(get by bind.eyre.unix) [~ test])
+        `u.res
+      =/  nex  (slag (lent test) site)
+      ?~  nex
+        ~
+      $(test (snoc test i.nex))
+    ::
+    ++  handle-http-request
+      |=  [eyre-id=@ta req=inbound-request:eyre]
+      ^+  run
+      =/  lin=request-line   (parse-request-line url.request.req)
+      ?~  bin=(match-binding site.lin)
+        (emil (give-simple-payload:app:serv eyre-id not-found:gen:serv))
+      =.  by-id.eyre.unix     (~(put by by-id.eyre.unix) eyre-id u.bin)
+      =.  by-pith.eyre.unix  (~(put by by-pith.eyre.unix) u.bin eyre-id)
+      =/  =card:neo  [u.bin %poke eyre-task/!>([eyre-id req])]
+      =/  =move:neo  [#/[p/our.bowl]/$/eyre card]
+      (emit (do-move move))
+    --
+
 ++  cttp
   |%
   ++  call
