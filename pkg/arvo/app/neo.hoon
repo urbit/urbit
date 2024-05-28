@@ -44,8 +44,11 @@
     ::
       =halt:neo
     ::
+      ripe=_|
+    ::
       dev=_|
       run-nonce=@uvJ
+
   ==
 ::
 ++  is-parent-p
@@ -349,6 +352,7 @@
   |=  [=(pole knot) syn=sign-arvo]
   ^+  run
   ?+  pole  +:(on-arvo:def pole syn)
+    [%next-clay ~]  (take-next-clay:sys syn)
     [%sys rest=*]  (take-arvo:sys rest.pole syn)
     [%fetch rest=*]  abet:(~(take-fetch sale (pave:neo rest.pole)) syn)
   ==
@@ -1149,6 +1153,7 @@
   $(paths t.paths)
   ::  +finalize: register conversion
   ++  finalize
+    =.  ripe  &
     =/  base=pith:neo  /out/std/con
     =/  cons  
       ~(tap by ~(tar of:neo ~(snip of:neo (~(dip of:neo tide) base))))
@@ -1162,11 +1167,9 @@
     =.  dive  sink:~(do con stud)
     $(cons t.cons)
   ::
-  ++  adult  %.n
-  ::
   ++  has-modified
     |=  [txt=@t pax=pith:neo]
-    ?.  adult
+    ?.  ripe
       &
     ?~  pal=(~(peek plow:aux loam) [p/our.bowl pax])
       &
@@ -1180,7 +1183,7 @@
     =+  .^(src=@t %cx `path`(snoc `path`(welp root pax) %hoon))
     ?.  (has-modified src (pave:neo pax))
       run
-    ~?  >>>  adult
+    ~?  >>>  ripe
       [%update pax]
     =/  =file:ford:neo
       ~|  parsing/pax
@@ -1786,17 +1789,27 @@
 +|  %sys
 ++  sys
   |%
+  ++  take-next-clay
+    |=  syn=sign-arvo
+    ?>  ?=([?(%clay %behn) %writ *] syn)
+    =.  run  (emit do-std-warp)
+    ?~  p.syn
+      ~&  next-clay-gone/syn
+      run
+    copy-clay
   ++  on-move
     |=  [src=pith:neo dst=pith:neo =note:neo]
     ^+  run
     ?+  dst  !!
       [%clay *]  (call:silt src t.dst note)
       [%iris *]  (call:cttp src t.dst note)
+      [%behn *]  (call:bide src t.dst note)
     ==
   ++  take-arvo
     |=  [=(pole knot) syn=sign-arvo]
     ^+  run
     ?+  pole  ~|(bad-sys-take/pole !!)
+      [%behn %wait rest=*]  (take-wait:bide rest.pole syn)
       [%clay %peer rest=*]  (take-peer:silt rest.pole syn)
       [%iris %req rest=*]   (take-res:cttp rest.pole syn)
     ==
@@ -1869,7 +1882,42 @@
     =/  =rave:clay  [%sing [%t ud/case path.peer]]
     (pass wire %arvo %c %warp our.bowl desk.peer `rave)
   --
-::
+++  bide
+  |%
+  ++  call
+    |=  [src=pith:neo dst=pith:neo =note:neo]
+    ?>  ?=(%poke -.note) :: XX: all shanes should be virtualised and hand deliver acks
+    ?>  ?=(%behn-req p.pail.note)
+    =+  !<(=req:behn:neo q.pail.note)
+    ?-    -.req
+        %rest
+      =/  =wire  /sys/behn/wait/(scot %da p.req)
+      =.  behn.unix  (~(del ju behn.unix) p.req src)
+      ?.  =(~ (~(get ju behn.unix) p.req))
+        run
+      (emit %pass wire %arvo %b %rest p.req)
+    ::
+        %wait
+      =/  =wire  /sys/behn/wait/(scot %da p.req)
+      =.  behn.unix  (~(put ju behn.unix) p.req src)
+      ?.  =(1 ~(wyt in (~(get ju behn.unix) p.req)))
+        run
+      (emit %pass wire %arvo %b %wait p.req)
+    ==
+  ++  take-wait
+    |=  [wir=(pole knot) syn=sign-arvo]
+    ?>  ?=([da=@ ~] wir)
+    ?>  ?=([%behn %wake *] syn)
+    =/  =time  (slav %da da.wir)
+    =/  timers  ~(tap in (~(get ju behn.unix) time))
+    |-  
+    ?~  timers
+      =.  behn.unix  (~(del by behn.unix) time)
+      run
+    =/  src=pith:neo  #/[p/our.bowl]/$/sys/behn
+    =/  =res:behn:neo  +.syn
+    (emit (do-move src i.timers %poke behn-res/!>(res)))
+  --
 ++  cttp
   |%
   ++  call

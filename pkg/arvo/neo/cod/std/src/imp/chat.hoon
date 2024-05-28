@@ -45,6 +45,7 @@
     ?>  =(%chat-diff stud)
     =+  !<(poke=chat-diff vax)
     =/  sta  sta
+    ~&  testing-rebuild/2
     :: ?.  ;;(? +:(~(gut by deps.bowl) %open [*pith &]))
      :: ~&(dropping-poke/poke !>(sta))
     ?>  |(=(our ship.src):bowl (~(has in who.sta) ship.src.bowl))

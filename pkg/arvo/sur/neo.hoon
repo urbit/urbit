@@ -1645,7 +1645,9 @@
   +$  unix
     $:  =clay
         =iris
+        =behn
     ==
+  +$  behn  (jug @da pith)
   +$  clay
     (map [src=pith hand=pith] [case=@ud =desk =path as=(unit mark)])
   +$  iris
