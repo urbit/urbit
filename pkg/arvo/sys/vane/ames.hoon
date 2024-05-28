@@ -3297,20 +3297,35 @@
                 ::
                 =/  prod-move=(list move)  [[/ames]~ %pass /mate %a %prod ~]~
                 ::  if .her is fully migrated, delete it from peers;
-                ::  if not, keep only bones that have live %naxplanations
+                ::  if not, keep only bones that have live messages
                 ::
                 =.  peers.ames-state
                   ?:  =(~ bones)  :: XX TMI
                     (~(del by peers.ames-state) her)
-                  =;  snd=_snd.peer-state
-                    (~(put by peers.ames-state) her known/peer-state(snd snd))
-                  %-  ~(rep by snd.peer-state)
-                  |=  $:  [=^bone pump=message-pump-state]
-                          snd=(map ^bone message-pump-state)
-                      ==
-                  ?.  (~(has in bones) bone)
-                    snd
-                  (~(put by snd) bone pump)
+                  =;  [snd=_snd.peer-state rcv=_rcv.peer-state]
+                    %+  ~(put by peers.ames-state)  her
+                    known/peer-state(snd snd, rcv rcv)
+                  ::  for both forward and backward flows, bones contains
+                  ::  reference bones (%plea, %boon) but also %naxplanations
+                  ::
+                  =/  snd=_snd.peer-state
+                    %-  ~(rep by snd.peer-state)
+                    |=  $:  [=^bone pump=message-pump-state]
+                            snd=(map ^bone message-pump-state)
+                        ==
+                    ?.  (~(has in bones) bone)
+                      snd
+                    (~(put by snd) bone pump)
+                  =/  rcv=_rcv.peer-state
+                    %-  ~(rep by rcv.peer-state)
+                    |=  $:  [=^bone sink=message-sink-state]
+                            rcv=(map ^bone message-sink-state)
+                        ==
+                    ?.  (~(has in bones) bone)
+                      rcv
+                    (~(put by rcv) bone sink)
+                  ::
+                  snd^rcv
                 ::
                 peer-core(event-core (emil (weld poke-moves peek-moves)))
                 ::
@@ -3337,12 +3352,7 @@
                             moves=(list move)
                             flows=_flows.fren
                         ==
-                    =|  flow=flow-state
-                    =/  =dire
-                       ?:  =(%0 (mod bone 4))  %for  :: %plea(s)
-                       %bak  ::  boon(s) and naxplanation(s)
-                    ::
-                    ?.  =(current next):pump
+                    ?.  =(current.pump next.pump)
                       ::  we are still expecting an ack or a naxplanation for
                       ::  the current message. since we don't know which one it
                       ::  is, we can't, in the case of a naxplanation, start
@@ -3353,11 +3363,18 @@
                       ::
                       ::  we track this bone to not be removed from the peer.
                       ::
+                      =?  bones  =(%3 (mod bone 4))
+                        ::  if naxplanation bone, add reference flow as well.
+                        ::
+                        (~(put in bones) (mix 0b10 bone))
                       (~(put in bones) bone)^moves^flows
-                    ::  XX if naxplanation bone, find reference flow?
-                    ::  XX what message got nacked? nax.peer-state is not used
                     ::
                     ::  everything acked; quiescence achieved
+                    ::
+                    =|  flow=flow-state
+                    =/  =dire
+                       ?:  =(%0 (mod bone 4))  %for  :: %plea(s)
+                       %bak  ::  boon(s) and naxplanation(s)
                     ::
                     =.    closing.flow  (~(has in closing.peer-state) bone)
                     =.  next-load.flow  next.pump
@@ -3447,12 +3464,19 @@
                     (~(put in flows) [bone dire] flow)
                   ::  backward flows
                   ::
-                  =.  flows.fren
+                  =^  bones  flows.fren
                     %-  ~(rep by rcv.peer-state)
-                    |=  [[=^bone sink=message-sink-state] flows=_flows]
+                    |=  [[=^bone sink=message-sink-state] bones=_bones flows=_flows]
+                    ?.  (lth [last-heard last-acked]:sink)
+                      ::  if the flow is still live, don't migrate it
+                      ::
+                      =?  bones  =(%2 (mod bone 4))
+                        ::  %naxplanation %ack on receiver still live;
+                        ::  add reference flow to the set
+                        ::
+                        (~(put in bones) (mix 0b10 bone))
+                      (~(put in bones) bone)^flows
                     =|  flow=flow-state
-                    ?:  =(%2 (mod bone 4))
-                      flows  :: %naxplanation %ack on receiver
                     ::  any partially received messages in live-messages.sink are dropped
                     ::
                     =:      closing.flow  (~(has in closing.peer-state) bone)
@@ -3513,7 +3537,7 @@
                         ::
                         (turn ~(tap in nax.sink) (late *error))
                       ==
-                    (~(put in flows) [bone %bak] flow)
+                    bones^(~(put in flows) [bone %bak] flow)
                   ::  naxplanations
                   ::  XX  check that this is true
                   ::  XX entries in nax.peer-state have not been used
