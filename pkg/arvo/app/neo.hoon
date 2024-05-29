@@ -1037,6 +1037,53 @@
     =/  pax  path
     (exists-file (pout (~(pith press lib/stud) %src)))
   --
+++  all-grab
+  |=  grab=stud:neo
+  ^-  vase :: of $-([to=stud grab-type] vase)
+  =/  in=vase  ~(get pro grab)
+  =/  dive=vase  !>(dive)
+  %+  slap
+    %+  with-faces:ford:neo  get-reef
+    :~  in/in
+        dive/dive
+        loam/!>(loam)
+        farm/!>(farm)
+        con/!>(con)
+        grab/!>(grab)
+    ==
+  !,  *hoon
+  |=  [to=stud:neo in=in]
+  ^-  vase
+  =/  =stud:neo  
+    ~|  missing-con/[grab to]
+    (~(got by con.dive) [grab %$ to])
+  =/  conv  ~(do con stud)
+  (slym run:conv in)
+::  
+++  all-grow
+  |=  grow=stud:neo
+  ^-  vase :: of $-(pail grow-type)
+  =/  out=vase  ~(get pro grow)
+  %+  slap
+    %+  with-faces:ford:neo  get-reef
+    :~  out/out
+        dive/!>(dive)
+        grow/!>(grow)
+        loam/!>(loam)
+        farm/!>(farm)
+        con/!>(con)
+    ==
+  !,  *hoon
+  |=  =pail:neo
+  ^-  out
+  ~!  p.pail
+  ~!  grow
+  =/  =stud:neo  
+    ~|  missing-con/[p.pail grow]
+    (~(got by con.dive) [p.pail %$ grow])
+  =/  conv  ~(do con stud)
+  !<(out (slam run:conv q.pail))
+::  
 ::
 ++  con
   |_  =stud:neo
@@ -1181,13 +1228,34 @@
       ~(tap by ~(tar of:neo ~(snip of:neo (~(dip of:neo tide) base))))
     |- 
     ?~  cons
-      run
+      =.  run  gen-grab
+      gen-grow
     =/  [p=pith:neo *]  i.cons
     =/  =stud:neo
       ?>  ?&(?=(^ p) ?=(@ i.p))
       i.p
     =.  dive  sink:~(do con stud)
     $(cons t.cons)
+  ::
+  ++  gen-grab
+    =/  grabs  ~(tap in ~(key by by-grab.dive))
+    ~&  genning/grabs
+    |-  
+    ?~  grabs
+      run
+    =/  =vase  (all-grab i.grabs)
+    =.  run  (make-riff (welp #/cod/grab (stud-to-pith:neo i.grabs)) vase)
+    $(grabs t.grabs)
+  ::
+  ++  gen-grow
+    =/  grows  ~(tap in ~(key by by-grow.dive))
+    ~&  genning-grows/grows
+    |-  
+    ?~  grows
+      run
+    =/  =vase  (all-grow i.grows)
+    =.  run  (make-riff (welp #/cod/grow (stud-to-pith:neo i.grows)) vase)
+    $(grows t.grows)
   ::
   ++  has-modified
     |=  [txt=@t pax=pith:neo]
@@ -1232,6 +1300,8 @@
     =.  run  (build-pros (turn pro.file tail))
     =.  run  (build-libs (turn lib.file tail))
     =.  run  (build-fils (turn fil.file tail))
+    =.  run  (build-fars (turn far.file tail))
+    =.  run  (build-fals (turn fal.file tail))
     ::  =.  run  (build-fils (turn lib.file tail))
     =/  built-imports=?
       ?&  (levy pro.file |=(pro:ford:neo ~(built pro stud)))
@@ -1272,6 +1342,34 @@
     ?:  ~(built pro i.pos)
       $(pos t.pos)
     =.  run  (read-file (snoc pat %hoon))
+    $(pos t.pos)
+  ::
+  ++  build-fals
+    |=  pos=(list stud:neo)
+    ^+  run
+    ?~  pos
+      run
+    =/  pat  
+      (welp #/cod/grab (stud-to-pith:neo i.pos))
+    ?:  !=(~ (~(peek plow:aux loam) p/our.bowl pat))
+      $(pos t.pos)
+    =.  run  (on-dirt-card (do-grow-our pat vase/=>(..zuse !>(|=(~ *vase)))))
+    $(pos t.pos)
+  ::
+  ++  build-fars
+    |=  pos=(list stud:neo)
+    ^+  run
+    ?~  pos
+      run
+    =/  pat  
+      (welp #/cod/grow (stud-to-pith:neo i.pos))
+    ?:  !=(~ (~(peek plow:aux loam) p/our.bowl pat))
+      $(pos t.pos)
+    =?  run   !~(built pro i.pos)
+      (build-pros ~[i.pos])
+    =/  grow=vase  ~(get pro i.pos)
+    =/  sut  (with-faces:ford:neo get-reef grow/grow ~)
+    =.  run  (on-dirt-card (do-grow-our pat vase/(slap sut !,(*hoon |=(* *grow)))))
     $(pos t.pos)
   ::
   ++  build-libs
@@ -1350,6 +1448,8 @@
     :~  (turn pro.file |=(p=pro:ford:neo [face.p ~(pith pro stud.p)]))
         (turn fil.file |=(f=fil:ford:neo [face.f (~(pith press fil/stud.f) %out)]))
         (turn lib.file |=(l=lib:ford:neo [face.l (~(pith press lib/stud.l) %out)]))
+        (turn far.file |=(f=far:ford:neo [face.f (welp #/cod/grow (stud-to-pith:neo stud.f))]))
+        (turn fal.file |=(f=fal:ford:neo [face.f (welp #/cod/grab (stud-to-pith:neo stud.f))]))
     ==
   ++  make-prelude
     |=  [pax=pith =file:ford:neo]
@@ -1466,12 +1566,13 @@
     %+  slap  reef
     !,(*hoon ,~)
   ::
-  ++  make-riff
-    |=  [=pith riff=vase]
-    ^+  run
-    =.  pith  [p/our.bowl pith]
-    (on-card pith %make %ford-riff `vase/riff ~)
   --
+++  make-riff
+  |=  [=pith riff=vase]
+  ^+  run
+  =.  pith  [p/our.bowl pith]
+  (on-card pith %make %ford-riff `vase/riff ~)
+
 ++  seize
   |=  [par=pith:neo child=pith:neo car=?(%y %z)]
   ^-  ?
