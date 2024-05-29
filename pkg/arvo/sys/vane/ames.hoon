@@ -3283,7 +3283,7 @@
                         ossuary.fren  align-bones
                    client-chain.fren  chain.peer-state
                   ==
-                =^  poke-moves  flows.fren  make-flows
+                =^  poke-moves  flows.fren  (make-flows fren)
                 =.  chums.ames-state
                   (~(put by chums.ames-state) her known/fren)
                 ?>  ?=([[* [%pass ^ [%a %mako *]]] ~] poke-moves)
@@ -3312,6 +3312,7 @@
                   (~(put in corked) bone ?:(=(%0 (mod bone 4)) %for %bak))
                 ::
                 ++  make-flows
+                  |=  fren=fren-state
                   ^-  (quip move (map side flow-state))
                   ::  forward flows
                   ::
@@ -3321,39 +3322,43 @@
                             moves=(list move)
                             flows=_flows.fren
                         ==
-                    :: ?.  =(current.pump next.pump)
-                    ::  XX TODO
-                    ::   ::  we are still expecting an ack or a naxplanation for
-                    ::   ::  the current message. if there packet-pump has not
-                    ::   ::  state about current.pump, it means that we have heard
-                    ::   ::  the %nack, and clear everything, but deffered
-                    ::   ::  incrementing current until the naxplanation arrives.
-                    ::   ::
-                    ::   ::  the sender of the naxplanation will have bind it in
-                    ::   ::  their namespace, so we start +peeking it
-                    ::   ::
-                    ::   =?  bones  =(%3 (mod bone 4))
-                    ::     ::  if naxplanation bone, add reference flow as well.
-                    ::     ::
-                    ::     (~(put in bones) (mix 0b10 bone))
-                    ::   (~(put in bones) bone)^moves^flows
-                    ::
-                    ::  everything acked; quiescence achieved
-                    ::
                     =|  flow=flow-state
                     =/  =dire
                        ?:  =(%0 (mod bone 4))  %for  :: %plea(s)
                        %bak  ::  boon(s) and naxplanation(s)
-                    ::
-                    =.    closing.flow  (~(has in closing.peer-state) bone)
-                    =.  next-load.flow  next.pump
                     ::  initialize fo-core
                     ::
                     =/  fo-core
-                      =+  ev-core=%*(ev-core mesa sat.per known/*fren-state)
+                      =/  =^duct
+                        (~(gut by by-bone.ossuary.peer-state) bone [/ames]~)
+                      =/  ev-core
+                        (%*(ev-abed mesa sat.per known/fren) now^eny^rof duct)
                       %*  .  fo:ev-core
                         flows.sat.per  (~(put by flows) bone^dire flow)
                       ==
+                    =?  moves  !=(current.pump next.pump)
+                      =*  live  live.packet-pump-state.pump
+                      =/  current-live=?
+                        %-  ~(rep by live)
+                        |=  [[live-packet-key *] has=_|]
+                        =(message-num current.pump)
+                      ?:  current-live  moves
+                      ::  we are still expecting an ack or a naxplanation for
+                      ::  the current message. if there packet-pump has not
+                      ::  state about current.pump, it means that we have heard
+                      ::  the %nack, and clear everything, but deffered
+                      ::  incrementing current until the naxplanation arrives.
+                      ::
+                      ::  the sender of the naxplanation will have bind it in
+                      ::  their namespace, so we start +peeking it
+                      ::
+                      %+  weld  moves
+                      moves:(fo-peek-naxplanation:fo-core current.pump)
+                    ::
+                    ::  everything acked; quiescence achieved
+                    ::
+                    =.    closing.flow  (~(has in closing.peer-state) bone)
+                    =.  next-load.flow  next.pump
                     ::
                     ::  live packets in packet-pump-state are reconstructed; the
                     ::  receiver will droppped any partially received fragments
@@ -6771,15 +6776,7 @@
                 ~&  >>  "error: start %peek for naxplanation "^gage
                 ::  if error start %peek for naxplanation
                 ::
-                =/  =wire  (fo-wire %ext)
-                ::  XX %ames call itself with a %meek task
-                ::  on a wire used to infer the listener (the %poke %nax request; us)
-                ::  when getting the %response $page with or %naxplanation payloads
-                ::  (tagged with %ext)
-                ::
-                =/  =space  chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
-                =/  =path   (ev-mess-spac space (fo-nax-path seq our))
-                (fo-emit hen %pass wire %a meek/[space her^path])
+                (fo-peek-naxplanation seq)
               ::  ack is for the first, oldest pending-ack sent message;
               ::  remove it and XX start processing cached acks
               ::
@@ -6864,6 +6861,18 @@
               =/  =path   (fo-ack-path seq her)
               =/  =space  chum/[life.ames-state her [life symmetric-key]:sat.per]
               (fo-emit hen %pass /make-page %a mage/[space her^path])
+            ::
+            ++  fo-peek-naxplanation
+              |=  seq=@ud
+              ::  XX %ames call itself with a %meek task
+              ::  on a wire used to infer the listener (the %poke %nax request; us)
+              ::  when getting the %response $page with or %naxplanation payloads
+              ::  (tagged with %ext)
+              =/  =wire  (fo-wire %ext)
+              =/  =space
+                chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
+              =/  =path   (ev-mess-spac space (fo-nax-path seq our))
+              (fo-emit hen %pass wire %a meek/[space her^path])
             ::
             --
           ::
