@@ -146,6 +146,22 @@
         same
       (slog leaf/"{(trip mode)}: {(scow %p ship)}: {(print)}" ~)
     ::
+    ::  +qos-update-text: notice text for if connection state changes
+    ::
+    ++  qos-update-text
+      |=  [=ship mode=?(%ames %fine) old=qos new=qos k=? ships=(set ship)]
+      ^-  (unit tape)
+      ::
+      =+  trace=(cury trace mode)
+      ?+  [-.old -.new]  ~
+        [%unborn %live]  `"; {(scow %p ship)} is your neighbor"
+        [%dead %live]    ((trace k ship ships |.("is ok")) ~)
+        [%live %dead]    ((trace k ship ships |.("not responding still trying")) ~)
+        [%unborn %dead]  ((trace k ship ships |.("not responding still trying")) ~)
+        [%live %unborn]  `"; {(scow %p ship)} has sunk"
+        [%dead %unborn]  `"; {(scow %p ship)} has sunk"
+      ==
+    ::
     --
 ::
 =>  ::  ames helpers
@@ -180,21 +196,6 @@
       ++  on   ((^on ,@ ,[key=@ =path]) lte)
       +$  mop  ^chain
       --
-    ::  +qos-update-text: notice text for if connection state changes
-    ::
-    ++  qos-update-text
-      |=  [=ship mode=?(%ames %fine) old=qos new=qos k=? ships=(set ship)]
-      ^-  (unit tape)
-      ::
-      =+  trace=(cury trace mode)
-      ?+  [-.old -.new]  ~
-        [%unborn %live]  `"; {(scow %p ship)} is your neighbor"
-        [%dead %live]    ((trace k ship ships |.("is ok")) ~)
-        [%live %dead]    ((trace k ship ships |.("not responding still trying")) ~)
-        [%unborn %dead]  ((trace k ship ships |.("not responding still trying")) ~)
-        [%live %unborn]  `"; {(scow %p ship)} has sunk"
-        [%dead %unborn]  `"; {(scow %p ship)} has sunk"
-      ==
     ::  +split-message: split message into kilobyte-sized fragments
     ::
     ::    We don't literally split it here since that would allocate many
@@ -5829,6 +5830,9 @@
               ev-core  :: XX TODO
             ::
             =.  per  her.poke-name^u.chum-state
+            ::  update and print connection status
+            ::
+            =.  ev-core  (update-qos %live last-contact=now)
             ?>  ?=(%known -.sat.per)
             ?.  =(1 tot.data)
               =/  =dire  :: flow swtiching
@@ -5872,6 +5876,9 @@
             =*  sealed-path  pat.name
             ?~  res=(~(get by pit.u.per) sealed-path)
               ev-core
+            ::  update and print connection status
+            ::
+            =.  ev-core  (update-qos %live last-contact=now)
             ::
             =/  [typ=?(%auth %data) fag=@ud]
               ?~  wan.name
@@ -6009,6 +6016,8 @@
           ::
           +|  %messages-entry-point
           ::
+          ::  XX call +update-qos again in the message layer?
+          ::
           ++  ev-mess-page
             =|  sealed-path=(unit path)   ::  XX set if coming from the packet layer
             |=  [=spar =auth:mess res=@]  ::  XX res and path.spar have been decrypted
@@ -6092,7 +6101,8 @@
             =.  flow.dead.ames-state
               flow/`[~[/ames] /mesa/dead-flow `@da`(add now ~m2)]
             =.  ev-core
-              (ev-emit ~[/ames] %pass /mesa/dead-flow %b %wait `@da`(add now ~m2))
+              %+  ev-emit  ~[/ames]
+              [%pass /mesa/dead-flow %b %wait `@da`(add now ~m2)]
             sy-abet:sy-prod:sy
           ::
           ++  ev-take-flub
@@ -7070,20 +7080,20 @@
                   ~>  %slog.0^leaf/"ames: breach alien {<our ship>}"
                   sy-core
                 ~>  %slog.0^leaf/"ames: breach peer {<our ship>}"
-                =/  old-qos=qos  qos.+.u.peer
-                ::  print change to quality of service, if any
-                ::
-                :: =/  text=(unit tape)
-                ::   %^  qos-update-text  ship  %ames
-                ::   [old-qos qos.peer-state kay.veb ships.bug.ames-state]
-                ::
-                :: =?  sy-core  ?=(^ text)
-                ::   (ev-emit duct %pass /qos %d %flog %text u.text)
                 ::  reinitialize galaxy route if applicable
                 ::
                 =?  route.+.u.peer  =(%czar (clan:title ship))
                   `[direct=%.y lane=[%& ship]]
                 =/  cache-route  route.+.u.peer
+                ::  print change to quality of service, if any
+                ::
+                =.  ev-core
+                  =/  old-qos=qos  qos.+.u.peer
+                  =/  text=(unit tape)
+                    %^  qos-update-text  ship  %ames
+                    [old-qos *qos [kay.veb ships]:bug.ames-state]
+                  ?~  text  ev-core
+                  (ev-emit hen %pass /qos %d %flog %text u.text)
                 ::  a peer breached; drop all peer state other than pki data
                 ::
                 =?  chums.ames-state  ?=(%chum -.peer)
@@ -7418,11 +7428,20 @@
               %-  ~(rep by pit.sat.per)
               |=  [[=path req=request-state] core=_core]
               ~&  re-sending/path
+              =/  peer=^chum-state  sat.per.core
+              ?>  ?=(%known -.peer)
+              ::  update and print connection status
+              ::
+              =/  expiry=@da  (add ~s30 last-contact.qos.peer)
+              =/  new=qos
+                ?.  (gte now expiry)  qos.peer
+                [%dead now]
+              =.  core  (update-qos:core new)
               ::  if =(~ pay.req); %naxplanation, %cork or external (i.e. not
               ::  coming from %ames) $peek request
               ::
               =/  =pact:pact
-                (ev-make-pact ship.per^path pay.req rift.sat.per `space)  :: XX memoize?
+                (ev-make-pact ship.per^path pay.req rift.peer `space)  :: XX memoize?
               %+  ev-emit:core   unix-duct.ames-state
               [%give %push ~[`@ux`ship.per] p:(fax:plot (en:^pact pact))]
             ::  +sy-snub: handle request to change ship blacklist
@@ -7766,6 +7785,30 @@
             ?~(res ~ ``[%message !>(u.res)])
           ::
           ::  ++  ev-peek-cork :: XX TODO?
+          ::
+          +|  %internals
+          ::
+          ::  XX  refactor; merge with +update-qos in |pe:ames
+          ::  +update-qos: update and maybe print connection status
+          ::
+          ++  update-qos
+            |=  new=qos
+            ^+  ev-core
+            ?>  ?=(%known -.sat.per)
+            =*  old  qos.sat.per
+            =.  chums.ames-state
+              =.  qos.sat.per  new
+              (~(put by chums.ames-state) [ship sat]:per)
+            =/  text
+              %^  qos-update-text  ship.per  %ames
+              [old new [kay.veb ships]:bug.ames-state]
+            ::  if no update worth reporting, we're done
+            ::
+            ?~  text   ev-core
+            ::  print message
+            ::
+            (ev-emit hen %pass /qos %d %flog %text u.text)
+          ::
           --
       ::
       |=  [now=@da eny=@uvJ rof=roof]
