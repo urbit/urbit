@@ -54,11 +54,15 @@
     =hx-swap  "none"
     =hx-indicator  "#indicator-{id}"
     ;*
-    %+  turn  apps.home
-      ::  %+  welp  apps.home
-      ::  %~  tap  in
-      ::  (~(dif in ~(key by kids.bowl)) `(set pith)`(silt apps.home))
+    =/  apps
+      %+  welp  apps.home
+      %~  tap  in
+      (~(dif in ~(key by ~(tar of:neo kids.bowl))) `(set pith)`(silt apps.home))
+    %+  murn  apps
     |=  =pith
+    ^-  (unit manx)
+    ?~  pith  ~
+    :-  ~
     =/  =path  (pout (welp here.bowl pith))
     ;div.relative.br2
       =pith  (en-tape:pith:neo pith)
@@ -68,7 +72,7 @@
         =hx-swap  "innerHTML"
         =hx-indicator  "this"
         =href  (trip (spat ['neo' 'hawk' path]))
-        ;span.loaded: {(trip (snag 0 (pout pith)))}
+        ;span.loaded: {(trip (snag 0 (pout:neo pith)))}
         ;span.loading.s2
           ;+  loading.feather-icons
         ==

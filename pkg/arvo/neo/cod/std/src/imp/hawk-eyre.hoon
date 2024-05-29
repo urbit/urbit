@@ -8,7 +8,7 @@
   :+  ~  %y
   %-  ~(gas by *lads:neo)
   ~
-++  deps  
+++  deps
   %-  ~(gas by *band:neo)
   ~
 ::
@@ -23,7 +23,7 @@
       =/  [eyre-id=@ta req=inbound-request:eyre]  task
       =/  lin  (parse-request-line:serv url.request.req)
       =/  inner=pith:neo  (pave:neo (slag 2 site.lin))
-      ?:  ?=([[%p @] *] inner)
+      ?.  ?=([[%p @] *] inner)
         =/  =manx
           ;div: 400
         =/  =pith:neo  #/[p/our.bowl]/$/eyre
@@ -36,8 +36,6 @@
             [pith %poke eyre-sign/!>(done)]
             [here.bowl %cull ~]
         ==
-
-      ~&  inner/inner
       =/  args  (~(gas by *(map @t @t)) args.lin)
       =/  =crew:neo  (~(gas by *crew:neo) src/inner ~)
       :_  sig/!>(~)

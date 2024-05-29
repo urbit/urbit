@@ -6,7 +6,7 @@
 ++  kids
   :+  ~  %y
   %-  ~(gas by *lads:neo)
-  :~  
+  :~
     :-  [&/%settings |]
     [pro/%sky-settings (sy %sky-settings ~)]
   ==
@@ -98,7 +98,7 @@
     !>
     :_  1
     :~
-      [now.bowl ~[%home]]
+      [now.bowl ~[p/our.bowl %home]]
     ==
   --
 --

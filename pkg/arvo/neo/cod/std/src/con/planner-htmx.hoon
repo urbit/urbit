@@ -119,6 +119,7 @@
   %+  murn  ~(tap of:neo kids.bowl)
   |=  [=pith =idea:neo]
   ^-  (unit pent)
+  ?~  pith  ~
   =/  entry  !<(planner-entry q.pail.idea)
   ?.  ?&
         (gte when.entry d)

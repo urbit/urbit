@@ -1,12 +1,17 @@
 /@  htmx
 /-  serv=server
-/*  date-now   
-/*  atom-input  
-/*  multiline-input 
+/-  feather-icons
+/*  date-now
+/*  atom-input
+/*  multiline-input
 /*  a-i-r
 /*  feather
 /*  reset
-
+/*  hawk-icon
+/*  jquery
+/*  htmx-js
+/*  htmx-response-targets
+/*  htmx-idiomorph
 =>
   |%
   ++  main
@@ -19,7 +24,9 @@
   :: rol/[%ui-list pro/%htmx]
   ++  manx-to-octs
     |=  man=manx
-    (as-octt:mimes:html (en-xml:html man))
+    %-  as-octt:mimes:html
+    %+  welp  "<!DOCTYPE html>"
+    (en-xml:html man)
   ::
   ++  render
     |=  [main=manx kids=marl]
@@ -29,11 +36,58 @@
         ;*  kids
       ==
     ==
-  ++  html-enc-js
-    ::
+  ++  icon-url
+    ^~
+    %-  trip
+    %^    cat
+        3
+      'data:image/png;base64,'
+    %-  ~(en base64:mimes:html & |)
+    (as-octs:mimes:html hawk-icon)
+  ++  favicon
+    ^~
+    =;  m  m(a.g [[%href icon-url] a.g.m])
+    ^-  manx
+    ;link
+      =rel  "icon"
+      =type  "image/png"
+      ;
+    ==
+  ++  manifest-url
+    ^~
+    %-  trip
+    %^    cat
+        3
+      'data:application/json;utf-8,'
+    %-  en:json:html
+    %-  pairs:enjs:format
+    :~
+      ['name' s+'sky']
+      ['description' s+'an urbit namespace viewer']
+      ['start_url' s+'http://localhost/neo/sky']  ::  XX
+      ['display' s+'standalone']
+      ['background_color' s+'black']
+      :+  'icons'  %a
+      :~
+        %-  pairs:enjs:format
+        :~
+          ['src' s+(crip icon-url)]
+          ['sizes' s+'196x196']
+          ['type' s+'image/png']
+        ==
+      ==
+    ==
+  ++  manifest
+    ^~
+    =;  m  m(a.g [[%href manifest-url] a.g.m])
+    ^-  manx
+    ;link
+      =rel  "manifest"
+      ;
+    ==
+  ++  htmx-extensions
     ::  htmx extension which encodes the request
     ::  as the serialized HTML of the calling element
-    ::
     %-  trip
     '''
     htmx.defineExtension('html-enc', {
@@ -79,11 +133,11 @@
       ;head
         ;meta(charset "UTF-8");
         ;title: s k y
-        ;script(src "https://code.jquery.com/jquery-3.7.1.js");
-        ;script(src "https://unpkg.com/htmx.org@1.9.11");
-        ;script(src "https://unpkg.com/idiomorph/dist/idiomorph-ext.min.js");
-        ;script(src "https://unpkg.com/htmx.org@1.9.11/dist/ext/response-targets.js");
-        ;script: {html-enc-js}
+        ;script: {(trip jquery)}
+        ;script: {(trip htmx-js)}
+        ;script: {(trip htmx-response-targets)}
+        ;script: {(trip htmx-idiomorph)}
+        ;script: {htmx-extensions}
         ;meta
           =name  "viewport"
           =content
@@ -99,25 +153,19 @@
           =content  (trip '{"ignoreTitle":"true"}')
           ;
         ==
-        ;style
-          ;+  ;/  %-  trip
-          '''
-          @font-face {
-            font-family: 'Urbit Sans';
-            src: url("https://media.urbit.org/fonts/UrbitSans/UrbitSansVFWeb-Regular.woff2") format("woff2");
-            font-style: normal;
-            font-weight: 100 700;
-          }
-          /*
-          @font-face {
-            font-family: 'Urbit';
-            src: url('https://nyc3.digitaloceanspaces.com/drain/hawk/2024.4.10..21.47.28-urbit.ttf') format('truetype');
-          }
-          */
-          '''
-        ==
-        ;style: {(trip feather)}
+        ::;style
+        ::  ;+  ;/  %-  trip
+        ::  '''
+        ::  @font-face {
+        ::    font-family: 'Urbit Sans';
+        ::    src: url("https://media.urbit.org/fonts/UrbitSans/UrbitSansVFWeb-Regular.woff2") format("woff2");
+        ::    font-style: normal;
+        ::    font-weight: 100 700;
+        ::  }
+        ::  '''
+        ::==
         ;style: {(trip reset)}
+        ;style: {(trip feather)}
         ;script
           ;+  ;/
           """
@@ -127,8 +175,8 @@
           """
         ==
         ;script: {(trip a-i-r)}
-        :: ;+  favicon
-        :: ;+  manifest
+        ;+  favicon
+        ;+  manifest
       ==
       ;body
         =hx-ext  "html-enc,response-targets,morph"
@@ -156,7 +204,7 @@
   :+  ~  %y
   %-  ~(gas by *lads:neo)
   ~
-++  deps  
+++  deps
   %-  ~(gas by *band:neo)
   :~  :-  %src
       ^-  fief:neo
@@ -198,7 +246,11 @@
     ?>  =(%htmx p.pail.root)
     =/  bol  *bowl:neo
     =.  here.bol  p.u.src
+    =.  our.bol  our.bowl
+    =.  now.bol  now.bowl
+    =.  eny.bol  eny.bowl
+    =.  kids.bol  q.u.src
+    ::  XX src.bowl
     (lift (!<(htmx q.pail.root) bol))
   --
 --
-

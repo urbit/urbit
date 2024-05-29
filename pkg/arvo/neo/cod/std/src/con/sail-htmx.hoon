@@ -16,7 +16,7 @@
 ++  id
   ^-  tape
   %-  zing
-  %+  turn  (pout here.bowl)
+  %+  turn  (pout (slag 1 here.bowl))
   |=  smeg=@ta
   %+  weld  "--"
   (trip smeg)

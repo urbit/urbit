@@ -21,7 +21,7 @@
       %-  malt
       ^-  (list [@t @t])
       :~
-        :-  'font'  'Urbit Sans'
+        :-  'font'  'Urbit Sans, sans-serif'
         :-  'font-mono'  'monospace'
         :-  'mono-scale'  '0.8'
         :-  'letter-spacing'  '0.024em'
