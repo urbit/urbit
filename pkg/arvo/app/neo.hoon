@@ -1772,7 +1772,7 @@
     |=  tap=(trap (quip card:neo _arvo))
     ^-  (quip card:neo _arvo)
     ::  do not virtualise fastboot
-    ?:  =((de-pith:name:neo sys-pith) src.init)
+    ?:  &(!ripe =((de-pith:name:neo sys-pith) src.init))
       (tap)
     =/  res=(each (quip card:neo _arvo) tang)
       (mule tap)
