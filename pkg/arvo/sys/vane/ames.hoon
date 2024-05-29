@@ -3450,8 +3450,9 @@
                          last-acked.flow  last-acked.sink
                         ::  XX if there's a pending-vane ack it should have
                         ::  been sent to the vane already?
+                        ::  drop any pending ack
                         ::
-                        pending-ack.flow  ?=(^ pending-vane-ack.sink)
+                        pending-ack.flow  %.n  ::  ?=(^ pending-vane-ack.sink)
                       ::
                           nax.flow
                         %-  ~(gas by *_nax.flow)
