@@ -1,67 +1,74 @@
 /@  dm-diff
-/@  message
-=>
-|%
-++  card  card:neo
---
 ^-  kook:neo
 |%
-++  state  pro/%sig
-++  poke  (sy %dm-diff %rely ~)
+++  state  pro/%ship  :: who I'm chatting with
+++  poke  (sy %dm-diff ~)
 ++  kids
   :+  ~  %y
   %-  ~(gas by *lads:neo)
-  :~  :-  [|/%da |]
-      [pro/%message ~]
+  :~  :-  [|/%theirs |]
+      [pro/%message-pub (sy %sig ~)]
+      :-  [|/%mine |]
+      [pro/%message-sub (sy %sig ~)]
   ==
-++  deps
-  %-  ~(gas by *deps:neo)
-  :~  
-  ::
-  :-  %link
-  ::
-  :+  req=|  [pro/%sig (sy %dm-diff ~)]
-  :+  ~  %y
-  %-  ~(gas by *lads:neo)
-  :~  :-  [|/%da |]
-      [pro/%message ~]
-    ==
-  ==
+++  deps  *deps:neo
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo =aeon:neo sta=pail:neo]
-  ++  poke
-    |=  [=stud:neo vax=vase]
-    ^-  (quip card:neo pail:neo)
-    ?:  =(%rely stud)
-      =+  !<([=term =stem:neo] vax)
-      ?>  ?=(%y -.q.stem)
-      =/  =pail:neo  pail:(snag 0 ~(val by kids.q.stem))
-      =+  !<(=message q.pail)
-      ::  TODO handle
-      ?<  =(our.bowl from.message)
-      :_  sta
-      :_  ~  
-      :*                               
-        (welp here.bowl ~[da/now.bowl])
-        %make                 
-        [%message `pail ~]
-      ==
-    ?>  =(%dm-diff stud)
-    =/  poke  !<(dm-diff vax)
-    ?>  =(our ship.src):bowl
-    ?>  =(%msg -.poke)
-    :_  sta
-    :~  
-      :*
-        (welp were.bowl ~[da/now.bowl])
-        %make 
-        [%message `message/!>(message.poke) ~]
-      ==
-    ==
+  |_  [=bowl:neo =aeon:neo state=pail:neo]
   ++  init
     |=  old=(unit pail:neo)  
     ^-  (quip card:neo pail:neo)
-    `sig/!>(~)
+    ?~  old  !!
+    ?>  =(%dm-diff p.u.old)
+    =/  poke  !<(dm-diff q.u.old)
+    ?+    -.poke  !!
+        :: create me with a pith to a service provider
+        :: to start a new DM with them
+        %initiate
+      :_  ship/!>(partner.poke)
+      :~  :-  (snoc here.bowl %pub)
+          [%make %message-pub ~ ~]
+          ::
+          :-  provider.poke 
+          [%poke dm-diff/!>([%invited here.bowl])]
+      ==
+    ::
+        :: create me with a pith to an inviter's dm
+        :: to accept their DM request
+        %invited
+      :_  ship/!>(partner.poke)
+      :~  :-  (snoc here.bowl %pub) 
+          [%make %message-pub ~ ~]
+          ::
+          :-  (snoc here.bowl %sub) 
+          [%make %message-sub ~ (malt ~[[%pub dm.poke]])]
+          ::
+          :-  dm.poke 
+          [%poke dm-diff/!>([%acked here.bowl])]
+      ==
+    ==
+  ++  poke
+    |=  [=stud:neo vax=vase]
+    ^-  (quip card:neo pail:neo)
+    ?>  =(%dm-diff stud)
+    =/  poke  !<(dm-diff vax)
+    ?+    -.poke  !!
+        :: invitee pokes me with a pith to their DM
+        :: to finalize the negotiation
+        %acked
+      =/  partner  !<(ship q.state)
+      ?>  =(partner ship.src.bowl)
+      :_  state
+      :~  :-  (snoc here.bowl %sub) 
+          [%make %message-sub ~ (malt ~[[%pub dm.poke]])]
+      ==
+    ::
+        %post
+      ?>  =(our ship.src):bowl
+      :_  state
+      :~  :-  (snoc here.bowl %pub)
+          [%poke txt/!>(text.poke)]
+      ==
+    ==
   --
 --
