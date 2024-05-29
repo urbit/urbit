@@ -71,7 +71,10 @@
 ::    Identify shrub by either %x, %y or %z, as per $ever
 ::
 +$  once
-  [?(%x %y %z) p=case]
+  $%  [%x p=case]
+      [%y p=@ud]
+      [%z p=@ud]
+  ==
 
 +$  pulp  ?(%noun %json)
 ::  $hash: Hash
@@ -85,22 +88,18 @@
   $:  pail=(unit pail)
       =aeon
   ==
-::
-+$  vial  (pair stud *)
 +$  book  (pair tale pail)
 +$  poem  (pair tale (unit pail))
 ::
 +$  aeon  (pair ever oath)
 +$  tale  (pair case oath)
 +$  oath  (pair hash seal)
-+$  yuga  (axal aeon)
 :: 
 +$  saga  (pair aeon pail)
 +$  pail  (pair stud vase)
 ::
-+$  epic  $+(epic (axal saga))
-+$  feat  (pair aeon vial)
-+$  gest  $+(gest (axal feat))
++$  epic  (axal saga)
+
 ::  $stud: name for build system outputs
 ::  
 ::    Build system outputs cannot live at arbitrary points in the
@@ -292,20 +291,16 @@
   ++  on    ((^on case poem) lte)
   +$  a  ((mop case poem) lte)
   --
-+$  mode  ?(%add %dif %del)
-+$  loot  [case=@ud =mode]
-+$  dust  [=pith loot]
-+$  grit  (list dust)
 ::  $dirt: Layer 1 of the namespace
 ++  dirt
   |%
   +$  card  (pair pith note)
   +$  note
-    $%  [%grow =pail case=(unit case) =oath]
+    $%  [%grow =pail =oath]
         [%cull ~]
     ==
   +$  loam  (axal soil)
-  +$  gift   dust
+  +$  gift   (trel pith @ud ?)
   --
 --
 |%
@@ -334,45 +329,39 @@
   +$  tend  ((mop @ud ,(map pith =case)) lte)
   ++  on    ((^on @ud ,(map pith =case)) lte)
   --
-++  farm  
-  =<  farm
-  |%
-  +$  farm  (axal turf)
-  +$  card  (pair pith note)
-  +$  note
-    $%  [%grow p=saga]
-    ==
-  --
+++  farm  (axal turf)
 --
 |%
 +$  sync  (trel pith hunt ?(%start %stop))
-::  $curb: Constraint
+::  $curt: Single constraint
++$  curt
+  $~  [%pro %$]
+  $%  [%or p=(list [@tas curb])] :: product type
+      [%rol p=stud q=curb] :: decorate with role
+      [%pro p=stud] :: base case
+  ==
+::  $curb: Apply constraints
 +$  curb
   $~  [%pro %$]
-  $%  [%or p=(list curb)] :: product type
-      [%only p=stud] :: exclusivel
-      [%rol p=stud q=curb]
-      [%not p=curb q=curb] :: q not p
-      [%pro p=stud] :: base case
-      [%any ~]
-  ==
-
+  $^  [p=curb q=curb]
+  curt
+::
 ++  compile-curb
   =|  fac=_|  :: did we just apply a face
   |=  [cur=curb get=$-(stud type)]
   =*  loop  $
   ^-  type
-  ?+    -.cur  !!
+  ?-    -.cur
+      ^  [%cell $(cur p.cur, fac |) $(cur q.cur, fac |)]
       %or   
     :-  %fork
     %-  ~(gas in *(set type))
     %+  turn  p.cur
-    |=  c=curb
+    |=  [tag=@tas c=curb]
     ^-  type
-    !!
-    :: :+  %cell
-::    [%atom %tas `tag]
-::  loop(cur c, fac |)
+    :+  %cell
+      [%atom %tas `tag]
+    loop(cur c, fac |)
   ::
       %rol
     [%face (get-stud-name p.cur) $(cur q.cur, fac &)]
@@ -384,7 +373,7 @@
   ==
 ::  +sell: pretty-print a vase to a tank using +deal.
 ::
-++  a-sell
+++  sell
   ~/  %sell
   |=  vax=vase
   ^-  tank
@@ -839,7 +828,7 @@
 ::
 ::  $gift: notification that a children changed
 ::
-+$  gift  (axal loot)
++$  gift  (map pith mode)
 ::
 ::  $hunt: perspective and shrub
 ::    
@@ -850,20 +839,16 @@
 ::    .err is the possible error state
 ::    If .err is not ~, then .get is functionally ~
 ::    
-+$  block  [get=(set hunt) err=(unit quit)]
++$  block  [get=(set hunt) err=(unit tang)]
 ::
 ::  $halt: Currently blocked flows and indices
 ::
 +$  halt
-  $:  by-hunt=(map hunt flow) :: flow blocked by hunt
-      by-flow=(jug flow hunt) :: hunts blocked by flow
+  $:  by-tour=(map tour flow) :: flow blocked by hunt
+      by-flow=(jug flow tour) :: hunts blocked by flow
       clog=(map flow (qeu move)) :: enqueued moves to send on unblock
   ==
-+$  quit
-  $%  [%gone =term] :: injected a bad dependency
-      [%goof =tang] :: crash
-  ==
-+$  ack  (pair flow (unit quit))
+++  ack  (pair flow (unit tang))
 ::
 ::  $flow: Call direction
 ::  
@@ -884,12 +869,10 @@
 ::    %pro: PROtocol (type)
 ::
 +$  tack
-  ?(%con %imp %pro %lib %rol %fil)
+  ?(%con %imp %pro)
 ::  $post: Name of code being distributed
 ::
 +$  post  (pair tack stud)
-::  $prop: Code unit inside desk
-+$  prop  (pair tack mark)
 ::
 ::  +get-stud-name: Get name for $stud
 ::
@@ -925,53 +908,17 @@
       `[pith (pole iota)]`[(scag [len rest]:pax) (slag [len rest]:pax)]
     $(res [nex res])
   --
-++  curt
-  =|  res=(set post)
-  |=  =curb
-  ^+  res
-  =*  loop-curb  $
-  ?-    -.curb
-      ?(%pro %only)
-    (~(put in res) pro/p.curb)
-  ::
-      %or
-    =/  curs  p.curb
-    |-
-    ?~  curs
-      res
-    =/  new  loop-curb(curb i.curs)
-    =.  res  (~(uni in res) new)
-    $(curs t.curs)
-  ::
-      %rol
-    =.  res  (~(put in res) rol/p.curb)
-    $(curb q.curb)
-  ::
-      %not
-    $(curb q.curb)
-  ::
-      %any  res
-
-  ==
-
 ::  +ford: Container for build system bootstrapping
 ++  ford
   |%
-  +$  kind  ?(%pre %src %out)
   ++  desk
     |%
     ++  kids  *^kids
     --
-  ++  dock
-    ^-  ^dock
-    [pro/%vase ~ ~]
   ++  is-stud
     |=  s=stud
     ?^  s  |
     =(%ford (end [3 4] s))
-  ++  out
-    ^-  curb
-    [%or pro/%vase pro/%tang ~]
   ::  +riff:ford: Constant build system node
   ::  
   ::    Required for bootstrapping. This is used to put the reef and
@@ -979,42 +926,40 @@
   ::    everything else. To update a riff, simply %make over the top
   ::
   ++  riff
-    ^-  kook
+    ^-  firm
     |%
-    ++  state  out:ford
+    ++  state  %ford-out
     ++  poke   *(set stud)
     ++  kids  ~
     ++  deps  ~
     ++  form
       ^-  ^form
-      |_  [=bowl =aeon =stud state-vase=vase]
+      |_  [=bowl =ever state-vase=vase *]
       +*  sta  !<([cache=(unit vase) ~] state-vase)
       ++  poke
-        |=  pal=pail
-        ^-  (quip card pail)
+        |=  =pail
+        ^-  (quip card vase)
         !!
       ::
       ++  init
-        |=  pal=(unit pail)
-        ^-  (quip card pail)
-        =/  old  (need pal)
-        ?>  ?=(%vase p.old)
-        `old
+        |=  old=(unit vase)
+        ^-  (quip card vase)
+        =+  !<(ref=vase (need old))
+        `!>(`[cache=(unit vase) ~]`[`ref ~])
       --
     --
   ::  +dep:ford: $fief for a ford dependency
   ::  
   ::    Handy shortcut to specifiy a dependency in the build system
-  ++  dep  `fief`[& [pro/%vase (sy %ford-in ~)] ~]
+  ++  dep  `fief`[& [%ford-out %ford-in] ~]
   ::  +get-output: pull build resuit of dependency
   ::
   ++  get-output
     |=  [=bowl =term]
     ^-  (unit vase)
-    =/  [=pith =lore]  (~(got by deps.bowl) term)
-    ?~  fil.lore
-      ~
-    `q.pail.u.fil.lore
+    =/  outer   q.pail.q:(~(got by deps.bowl) term)
+    =+  !<([vax=(unit vase) *] outer)
+    vax
   ::
   ++  run
     |=  txt=@t
@@ -1024,24 +969,19 @@
   ::  $lib:ford: Specification of library import
   ::
   +$  lib
-    [face=term =stud]
+    [face=term =loc]
   ::  $pro:ford: Specification of protocol import
   ::
   +$  pro
-    [face=term =stud]
-  +$  fil  
     [face=term =stud]
   +$  vale
     [face=term =stud]
   ::  $file:ford: Code with imports
   ::
-  ::    XX: rename to pile
-  ::
   +$  file
     $:  pro=(list pro)
         :: grab=(list 
         lib=(list lib)
-        fil=(list fil)
         =hoon
     ==
   ::  +rein:ford: Parse code with imports
@@ -1064,7 +1004,7 @@
     ::     Absolute ~hastuc-dibtux/src/foo/bar/test
     ::     Relative %^/bar
     ++  old-nam
-      :: ^-  $-(nail (like name))
+      :: ^-  $-(nail (like name:neo))
       ;~  pose
         %+  sear 
           |=  [kets=(list) pit=pith]
@@ -1092,7 +1032,6 @@
     ::    /@  foo=bar  :: imports %bar protocol from %std disk with name foo
     ::    /@  bar      :: imports %bar protocol from %std disk with name bar
     ::
-
     ++  pro
       :: ^-  $-(nail (like ^pro))
       %+  rune  pat
@@ -1105,28 +1044,18 @@
         std
       ==
     ++  lib
-      :: ^-  $-(nail (like ^pro))
       %+  rune  hep
       ;~  pose
-        ;~(plug sym ;~(pfix tis std))
+        ;~(plug sym ;~(pfix tis lib-loc))
         %+  cook
-          |=  =stud
-          ?@  stud  [stud stud]
-          [mark.stud stud]
-        std
+          |=  [=disk =pith]
+          ^-  ^lib
+          =/  last  (rear pith)
+          ?>  ?=(@ last)
+          [`@tas`last disk pith]
+        lib-loc
       ==
-    ::
-    ++  fil
-      :: ^-  $-(nail (like ^pro))
-      %+  rune  tar
-      ;~  pose
-        ;~(plug sym ;~(pfix tis std))
-        %+  cook
-          |=  =stud
-          ?@  stud  [stud stud]
-          [mark.stud stud]
-        std
-      ==
+
     ::  +old-lib: Parse arbitrary library import directive
     ::
     ::    Unused, todo revive with more recursive build system
@@ -1157,7 +1086,6 @@
     ++  pros
       :: ^-  $-(nail (like (list ^pro)))
       (star pro)
-    ++  fils  (star fil)
     ++  hone
       :: ^-  $-(nail (like hoon))
       =+  vaz=(vang & (en-path:^name name))
@@ -1167,7 +1095,6 @@
       ;~  plug 
         pros
         libs
-        fils
         hone
       ==
     --
@@ -1184,18 +1111,6 @@
       reef
     $(reef (slop (with-face i.faces) reef), faces t.faces)
   --
-++  gall
-  |%
-  +$  req  
-    $%  [%peek p=@dr]
-        [%keep ~]
-        [%reap ~]
-        [%peer ~]
-    ==
-  +$  peek  [src=(set pith) refresh=@dr]
-  +$  sign  sign:agent:^gall
-  +$  res   (pair pith sign)
-  --
 ::  +behn: Timer vane
 ++  behn
   |%
@@ -1210,19 +1125,6 @@
   ::    %wake: Timer went off
   ::
   +$  res  $>(%wake gift:^behn)
-  --
-++  eyre
-  |%
-  +$  req  [%connect =binding:^eyre =pith]
-  +$  res  [%bound ~]
-  +$  sign  (pair @ta gift)
-  +$  gift
-    $%  [%head =response-header:http]
-        [%data dat=(unit octs)]
-        [%done ~]
-    ==
-  +$  task
-    (pair @ta inbound-request:^eyre)
   --
 ::  +clay: Filesystem overlay
 ::
@@ -1247,43 +1149,36 @@
 ::
 ++  iris
   |%
-  +$  req  [hand=pith dat=request:http]
-  +$  res  [hand=pith dat=client-response:^iris]
+  ++  req  request:http
+  +$  res  client-response:^iris
   --
 :: * A `$bolt` is a `[=stud =once]`
 ::
 ::  $peer: Subscription
++$  peer
+  [=pulp =path]
 
 ::  $tone: parent change tracking
 ::
-+$  yell  (pair care howl)
 +$  tone
-  $%  [%sell ~]
+  $%  [%peer =peer]
       [%rely =term =pith]
-      [%halt ~]
   ==
-+$  howl  tone
-::  $wail: change result
-+$  wail  (trel hunt howl mode)
-  
 :: $song
 ::  $sound: internal change tracking listeners
 ::
-+$  roar  (pair pith tone)
-  
-+$  meow
-  (jug pith (pair care tone))
++$  sound
+  (jug hunt tone)
 ::
 ::  $noise: external change tracking listeners
 +$  noise
   (jug hunt rely)
-+$  riot  (axal rave)
+::  $rave: foreign dependency
 +$  rave
-  $:  exe=(set howl)
-      why=(set howl)
-      zed=(set howl)
-  ==
-
+  [=term =pith]
+::  $riot: foreign mirror
++$  riot
+  [=cane deps=(set rave) =slip]
 ::
 ::  $ring: node change tracking
 ::
@@ -1300,35 +1195,25 @@
 +$  town  (axal mall)
 +$  deli
   $:  last=ever
-      desc=_|
-      =yuga :: if nonempty, paths still loading
-      =epic
-  ==
-+$  mall
-  $:  mart=(set hunt)  :: subscribers
-      del=(unit deli) :: if responsible, subscription info
-      shop=(unit aeon) :: if behind, latest case
       ~
   ==
-::  $city: synchronsation, indexed by publisher
++$  mall
+  $:  mart=(set hunt)  :: subscriberes
+      del=(unit deli) :: if responsible, subscription info
+      ~
+  ==
+::  $city: local
 +$  city  (axal ward)
 +$  ward
-  $:  exe=(set path)
-      why=(set path)
-      zed=(set path)
+  $:  =skin
+      =conf
   ==
 ++  pave
   |=  p=path
   ^-  pith
   %+  turn  p
   |=  i=@ta
-  ?^  res=(rush i spot:stip)
-    u.res
-  ?:  =('.y' i)
-    f/&
-  ?:  =('.n' i)
-    f/|
-  [%ta i]
+  (fall (rush i spot:stip) [%ta i])
 ::
 ++  stip                                                ::  typed path parser 
   =<  swot
@@ -1355,6 +1240,143 @@
     ==
   --
 ::
+++  goon
+  |%
+  ::  $date: date w/ TZ offset
+  +$  date   [dat=@da off=@ud]
+  ::  $size: size of a rect
+  +$  size   [w=@ud h=@ud]
+  ::  $hsrc:  HTTP source (URL)
+  +$  hsrc   @t
+  ::  $dims: Spatial dimensions
+  +$  dims   [ideal=size min=(unit size)]
+  ::  $dimt: Temporal dimension
+  +$  dimt   [len=@dr sta=@ud]
+  +$  scar
+    $?  %patp
+        %patud
+        %cord
+        %patda
+        %date
+        %img
+        %video
+        %audio
+    ==
+  +$  clot
+    $?  [%patp p=@p]
+        [%patud p=@ud]
+        [%cord p=cord]
+        [%patda p=@da]
+        [%date =date]
+        [%img =hsrc =dims]
+        [%video =hsrc =dims =dimt]
+        [%audio =hsrc =dimt]
+    ==
+  --
+
+++  pike
+  =<  pike
+  |%
+  ++  card
+    $%  [%peek =path]
+        [%grab items=(list item)]
+    ==
+  ++  sign
+    $%  [%peek =cage]
+        [%grab items=(list clot:goon)]
+    ==
+  +$  item
+    $:  lede=cord
+        info=cord
+        err=(unit cord)
+        =scar:goon
+    ==
+  +$  bowl
+    $:  our=@p
+        wer=name
+        eny=@uvJ
+        now=@da
+    ==
+  +$  input  [=bowl syn=(unit sign)]
+  ++  raw
+    |%
+    ++  output
+      |*  a=mold
+      $~  [%done *a]
+      $%  [%emit =card]
+          [%cont self=(form a)]
+          [%fail err=(pair term tang)]
+          [%done value=a]
+      ==
+    ++  form  |*(a=mold $-(input (output a)))
+    --
+  ++  fail
+    |=  err=(pair term tang)
+    |=  input
+    [~ %fail err]
+  ++  pikv
+    (pike vase)
+  ++  pike
+    |*  a=mold
+    |%
+    ++  output  (output:raw a)
+    ++  form    (form:raw a)
+    ++  pure    
+      |=  arg=a
+      ^-  form
+      |=  input
+      [%done arg]
+    ++  bind
+      |*  b=mold
+      |=  [m-b=(form:raw b) fun=$-(b form)]
+      ^-  form
+      =*  loop  $
+      |=  in=input
+      =/  b-res=(output:raw b)
+        (m-b in)
+      ^-  output
+      ?-    -.b-res
+        %emit   [%emit card.b-res]
+        %cont   [%cont loop(m-b self.b-res)]
+        %fail   [%fail err.b-res]
+        %done   [%cont (fun value.b-res)]
+      ==
+    +$  eval-form
+      $:  =form
+      ==
+    ::
+    ::  Convert initial form to eval-form
+    ::
+    ++  from-form
+      |=  =form
+      ^-  eval-form
+      form
+    ::
+    ::  The cases of results of +take
+    ::
+    +$  eval-result
+      $%  [%emit car=card]
+          [%fail err=(pair term tang)]
+          [%done value=a]
+      ==
+    ++  take
+      |=  [=eval-form =input]
+      ^-  [=eval-result _eval-form]
+      =*  take-loop  $
+      :: =?  car.input  ?=(^ car.input)
+      =/  =output  (form.eval-form input)
+      ?-    -.output
+          %emit  [[%emit card.output] eval-form]
+          %fail  [[%fail err.output] eval-form]
+          %done  [[%done value.output] eval-form]
+          %cont 
+        %_  take-loop
+          form.eval-form  self.output
+          input    [bowl.input ~]
+        ==
+      ==
+    --
+  --
 ::
 ++  road   (pole iota)
 ::
@@ -1363,13 +1385,6 @@
   ++  en-tape
     |=  pit=$
     (spud (pout pit))
-  ++  dif
-    |=  [a=$ b=$]
-    |-  ^+  a
-    ?~  a  b
-    ?~  b  a
-    ?>  =(i.a i.b)
-    $(a t.a, b t.b)
   ++  sub
     |=  [from=$ del=$]
     ~|  pith-sub/[from del]
@@ -1402,9 +1417,6 @@
     ?~  long
       ~
     $(curt t.curt, long t.long)
-  ++  sort
-    |=  [a=$ b=$]
-    (lte (lent a) (lent b))
   --
 ++  name
   =<  name
@@ -1413,11 +1425,6 @@
   ++  rule
     :: ^-  _|~(nail *(like name))
     ;~(plug ;~(pfix fas sig fed:ag) stip)
-  ++  en-spar
-    |=  nam=name
-    ^-  spar:ames
-    [ship.nam (pout pith.nam)]
-  ::
   ++  en-pith
     |=  nam=name
     ^-  pith
@@ -1436,8 +1443,8 @@
       ~
     `[+.i.pith t.pith]
   --
-++  axol  axal:..zuse
-++  axol-of  of:..zuse
+++  axol  ^axal
+++  axol-of  ^of
 ++  axal
   |$  [item]  
   [fil=(unit item) kid=(map iota $)]
@@ -1447,9 +1454,6 @@
 ++  of
   =|  fat=(axal)
   |@ 
-  ++  rot
-    (need fil.fat)
-
   ++  view
     =|  res=(map pith _?>(?=(^ fil.fat) u.fil.fat))
     |=  [=care pax=pith]
@@ -1606,15 +1610,6 @@
     =/  kid  (~(gut by kid.fat) i.pax ^+(fat [~ ~]))
     fat(kid (~(put by kid.fat) i.pax $(fat kid, pax t.pax)))
   ::
-  ++  rut
-    =|  here=pith
-    |*  fun=$-([pith _?>(?=(^ fil.fat) u.fil.fat)] _?>(?=(^ fil.fat) u.fil.fat))
-    ^+  fat
-    %=  fat
-      fil  ?~(fil.fat ~ `(fun here u.fil.fat))
-      kid  (~(rut by kid.fat) |=([iot=iota f=_fat] ^$(here (snoc here iot), fat f)))
-    ==
-  ::
   ++  tap
     =|  pax=pith
     =|  out=(list (pair pith _?>(?=(^ fil.fat) u.fil.fat)))
@@ -1633,7 +1628,10 @@
     (~(gas by *(map pith _?>(?=(^ fil.fat) u.fil.fat))) tap)
   --
 +$  pate  [[%p p=ship] q=pith]
-  
+++  petty-port
+  |*  a=mold
+  ^-  port
+  [a a]
 +$  dita  (each iota aura)
 +$  zeta  (each iota aura)
 ::  $pish: Pattern match over a path
@@ -1675,12 +1673,11 @@
 :: +$  cage  (pair stud vase)
 ::
 +$  made
-  [=stud init=(unit pail) =conf]
+  [=stud init=(unit vase) =conf]
 +$  note
   $%  [%make made] :: todo: configuration values, init cannot be ^ if installing over
       [%poke =pail]
       [%tomb cas=(unit case)]    :: tom
-      [%cull ~]
       [%link from=pith src=stud] :: XX deprecate
   ==
 +$  raw-poke
@@ -1690,62 +1687,16 @@
   $~  ~
   (map iota hall)
 +$  rely
-  [=term =leaf]
+  [=term =stem]
 ::
-+$  peer
-  $:  run-nonce=@uvJ
-      ~
-  ==
-+$  mate  (map ship peer)
-+$  meet  (pair ship peer)
++$  mode  ?(%add %dif %del)
 ::
 +$  dish  (pair pith mode)
 +$  yarn  (pair aeon mode)
-::  $leaf: diff over namespace
-+$  leaf
-  (axal mode)
-::
-+$  lore  (axal idea)
-+$  idea
-  $:  =saga :: original binding
-      thru=(unit stud) :: any role
-      =pail :: transformed binding
-  ==
-+$  dive
-  $:  con=(map [grab=stud role=stud grow=stud] stud)
-      by-grab=(jug stud [role=stud stud]) :: indexed by from type
-      by-grow=(jug stud [role=stud stud]) :: indexed by to type
-  ==
-::
-++  unix
-  =<  unix
-  |%
-  +$  unix
-    $:  =clay
-        =iris
-        =behn
-        =gall
-        =eyre
-    ==
-  +$  behn  (jug @da pith)
-  +$  clay
-    (map [src=pith hand=pith] [case=@ud =desk =path as=(unit mark)])
-  +$  iris
-    (set [src=pith hand=pith])
-  +$  eyre
-    $:  by-id=(map @ta pith)
-        by-pith=(map pith @ta)
-        bind=(map binding:^^eyre pith)
-    ==
-  ++  gall
-    =<  gall
-    |%
-    +$  gall
-      $:  peer=(jug pith pith)
-          peek=(map pith peek:^^gall)
-      ==
-    --
-  --
++$  idea  (unit (unit (axal saga)))
+::  $lore: diff over namespace
++$  lore
+  (axal yarn)
 ::
 +$  stem
   $~  [*ever %x %stud *vase]
@@ -1851,8 +1802,8 @@
   --
 :: $ewer: deprecated
 +$  ewer  (pair stud vase)
++$  vial  (pair stud *)
 +$  move  (pair pith card)
-::
 +$  icon
   $:  =ever
       state=vase
@@ -1920,30 +1871,13 @@
       were=pith :: XX: rename to here
       here=pith :: 
       now=@da
-      eny=@uvJ
-      deps=(map term (pair pith lore))
-      kids=lore
+      deps=(map term (pair pith cane))
+      kids=(map pith pail)
   ==
-++  dbug
-  |%
-  ++  bowl
-    |=  =^bowl
-    ^-  tank
-    =/  bol  bowl(kids ~, deps ~)
-    >bol<
-  ++  epic
-    |=  =^epic
-    ^-  tank
-    >~(key by ~(tar of epic))<
-  ++  deps
-    |=  deps=(map term (pair pith ^epic))
-    =-  (sell !>(-))
-    (turn ~(tap by deps) |=([=term =pith e=^epic] [term pith]))
-  --
 ++  quay
   =<  quay
   |%
-  +$  quay   (pair lash (unit port))
+  +$  quay   (pair port (unit (pair care kids)))
   ++  get-care
     |=  q=quay
     ^-  care
@@ -1952,27 +1886,20 @@
     p.u.q.q
   --
 +$  fief  [required=? =quay]
-::
-::  $port: Children API
-::
-::
-+$  lash
-  [state=curb poke=(set stud)]
-+$  dock
-  [state=curb poke=(set stud) =kids]
-:: +$  slip
-::  [state=stud diffs=(set stud) =kids] ::  
++$  dock  [=port =kids]
++$  port :: TODO: how to specify behaviour
+  [state=stud diff=stud] :: state, diff actually $stud
++$  slip
+  [state=stud diffs=(set stud) =kids]
+::  
 +$  deps  band
 ::  $band: Dependencies
 ::
 +$  band  (map term fief)
-+$  lads  (map pish lash)
-+$  dare  ?(%y %z)
-+$  port  (pair dare lads)
-+$  kids  (unit port)
-::  $dude: virtual namespace binding
++$  kids  (map pish port)
+::  $plot: virtual namespace binding
 ::
-+$  dude
++$  o-plot
   $_  ^&
   |%
   ::  $state: the state of this value in the urbit namespace
@@ -1981,15 +1908,13 @@
   ::      [author=ship time-sent=time message=txt]
   ::
   ++  state  *stud
-  ++  work
-    |~  =bowl
-    *vase
+  ++  farm   *o-farm
   ::
   ::  +kids: Some nodes in the namespace define what children are
   ::  allowed to be under them. For instance, it should not  be allowed
   ::  to create /~hastuc-dibtux/chats/unit-731/blog-post-1. This is
   ::  nonsensical because blog posts don't go in chats.
-  ++  kids   *^kids
+  ++  kids   *(map pish port)
   ::
   ::  +deps: Some nodes in the namespace might like to hear about other
   ::  things that happen in the namespace. For instance, a substack-type
@@ -2023,9 +1948,9 @@
   $_  ^|
   |=  =bowl
   *vase
-::  $kook: type of the value in the urbit namespace
+::  $firm: type of the value in the urbit namespace
 ::
-+$  kook
++$  firm
   $_  ^&
   |%
   ::  $state: the state of this value in the urbit namespace
@@ -2036,7 +1961,7 @@
   ::    ```
   ::
   ::    ```
-  ++  state  *curb
+  ++  state  *stud
   ::  $poke: a poke is a request to change a value in teh urbit
   ::  namespace.
   ::
@@ -2052,7 +1977,7 @@
   ::  allowed to be under them. For instance, it should not  be allowed
   ::  to create /~hastuc-dibtux/chats/unit-731/blog-post-1. This is
   ::  nonsensical because blog posts don't go in chats.
-  ++  kids   *(unit port)
+  ++  kids   *(map pish port)
   ::
   ::  +deps: Some nodes in the namespace might like to hear about other
   ::  things that happen in the namespace. For instance, a substack-type
@@ -2060,34 +1985,21 @@
   ::  in the name
   ++  deps   *(map term fief)
   --
-+$  wave
-  $:  code=stud
-      =dock
-      =crew
-  ==
-+$  tide  (axal wave)
 ::
 +$  form
   $_  ^|
-  |_  [=bowl =saga]
+  |_  [=bowl =icon]
   ::  +reduce: apply %poke, producing state and IO
   ::
   ::    ('liam'' ~) [%add who='ruby'] -> ('liam' 'ruby')
   ::    ('liam' 'ruby' ~) [%del who='ruby'] -> ('liam')
   ++  poke
     |~  [=stud val=vase]
-    *(quip card pail)
+    *(quip card vase)
   ++  init
-    |~  old=(unit pail)
-    *(quip card pail)
+    |~  old=(unit vase)
+    *(quip card vase)
   --
-+$  gang  (axal cove)
-+$  cove
-  $:  =crew
-      code=stud
-      rime=case
-  ==
-::
 ++  peon
   |%
   ++  match
@@ -2110,57 +2022,4 @@
       ~
     `i.lis
   --
-++  press
-  |_  =post
-  ++  disk  ^-  ^disk  ?@(q.post ~ +.q.post)
-  ++  stud   q.post
-  ++  eject
-    |=  =^pith
-    ^-  [kind:ford _post _pith]
-    ~|  ejecting/pith
-    =^  dis=^disk  pith  
-      ?>  ?=([%cod *] pith)
-      (eject:floppy t.pith)
-    ?>  ?=([kind:ford tack @ *] pith)
-    =/  =kind:ford  i.pith
-    =/  =tack  i.t.pith
-    :+  kind  [tack ?@(dis i.t.t.pith [i.t.t.pith ship.dis term.dis])]
-    t.t.t.pith
-    
-  ++  slip
-    |=  [=kind:ford pax=^pith]
-    =/  [@ p=^post =^pith]
-      (eject pax)
-    (~(pith press p) kind)
-  ++  path
-    |=  =kind:ford
-    (pout (pith kind))
-  ::
-  ++  pith
-    |=  =kind:ford
-    :-  %cod
-    %+  welp  ~(pith floppy disk)
-    :-  kind
-    :-  p.post
-    =-  ~[-]
-    ?@  q.post  q.post
-    mark.q.post
-  --
-++  floppy
-  |_  =disk
-  ++  eject
-    |=  =^pith
-    ^+  [disk pith]
-    ?:  ?=([%std *] pith)
-      [~ t.pith]
-    ?>  ?=([[%p @] @ *] pith)
-    [[+.i.pith i.t.pith] t.t.pith]
-  ++  pith
-    ^-  ^pith
-    ?@  disk
-      #/std
-    [p/ship.disk term.disk ~]
-  --
-
-
 --

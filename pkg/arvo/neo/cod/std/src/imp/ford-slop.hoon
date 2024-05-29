@@ -1,4 +1,3 @@
-/-  neo
 => 
 |%
 ++  card  card:neo
@@ -12,11 +11,10 @@
     ~&  missing-b/were.bowl
     ~
   `(slop u.a u.b)
-+$  state  [cache=(unit vase) ~]
 --
-^-  firm:neo
+^-  kook:neo
 |%
-++  state  pro/%vase
+++  state  pro/%ford-out
 ++  poke   (sy %rely %ford-in ~)
 ++  kids  ~
 ++  deps
@@ -26,7 +24,7 @@
   ==
 ++  form
   ^-  form:neo
-  |_  [=bowl:neo =aeon:neo =pail:neo]
+  |_  [=bowl:neo =saga:neo]
   ++  poke
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo pail:neo)
