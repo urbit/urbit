@@ -23,8 +23,7 @@
     ::  and subscribe to that publisher
     ::  XX - maybe move ordering is unpredictable here
     ?~  old
-      :_  :-  %groupchat
-          !>([(sy our.bowl ~) ~ (snoc here.bowl %pub)])
+      :_  groupchat/!>([~ (snoc here.bowl %pub)])
       :~  :-  (snoc here.bowl %pub) 
           [%make %message-pub ~ ~]
           ::
@@ -37,11 +36,11 @@
     =/  poke  !<(groupchat-diff q.u.old)
     ?+    -.poke  !!
         %invited
-      :_  groupchat/!>([~ ~ host.poke])
+      :_  groupchat/!>([~ (snoc chat.poke %pub)])
       :~  :-  (snoc here.bowl %sub) 
-          [%make %message-sub ~ (malt ~[[%pub (snoc host.poke %pub)]])]
+          [%make %message-sub ~ (malt ~[[%pub (snoc chat.poke %pub)]])]
           ::
-          :-  host.poke 
+          :-  chat.poke 
           [%poke groupchat-diff/!>([%acked ~])]
       ==
     ==
@@ -55,48 +54,27 @@
         :: if I'm the host, poke someone's provider to invite them to chat
         %invite
       ?>  =(our ship.src):bowl
-      ?<  (~(has in members.sta) ship.poke)
-      ::  ?>  =(our.bowl ->.host.sta) :: XX need @p, have @t ?
+      ::  ?>  =(our.bowl ->.publisher.sta) :: XX need @p, have @t ?
       :_  :-  %groupchat
           !>(sta(pending (~(put in pending.sta) ship.poke)))
       :~  :-  provider.poke
           [%poke groupchat-diff/!>([%invited here.bowl])]
       ==
     ::
-        ::  remove someone from chat. this only removes their ability to post;
-        ::  they'll still be receiving new messages!
-        %remove
-      ?>  =(our ship.src):bowl
-      ?>  (~(has in members.sta) ship.poke)
-      :-  ~
-      :-  %groupchat
-      !>  %=  sta
-            pending  (~(del in pending.sta) ship.src.bowl)
-            members  (~(del in members.sta) ship.src.bowl)
-          ==
-    ::
         :: when invitee acks, remove them from pending
         :: and add them to pub's permissions
         %acked
       ?>  (~(has in pending.sta) ship.src.bowl)
-      :-  ~
-      :-  %groupchat
-      !>  %=  sta
-            pending  (~(del in pending.sta) ship.src.bowl)
-            members  (~(put in members.sta) ship.src.bowl)
-          ==
-    ::
-        %post-to-host
-      :_  state
-      :~  :-  host.sta
-          [%poke groupchat-diff/!>([%host-to-pub text.poke])]
+      :_  :-  %groupchat
+          !>(sta(pending (~(del in pending.sta) ship.src.bowl)))
+      :~  :-  publisher.sta
+          [%poke ships-diff/!>([%put ship.src.bowl])]
       ==
     ::
-        %host-to-pub
-      ?>  (~(has in members.sta) ship.src.bowl)
+        %post
       :_  state
-      :~  :-  (snoc here.bowl %pub)
-          [%poke message/!>([ship.src.bowl now.bowl text.poke])]
+      :~  :-  publisher.sta
+          [%poke txt/!>(text.poke)]
       ==
     ==
   --

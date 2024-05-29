@@ -36,12 +36,10 @@
     ::
         %groupchat-diff
       =/  poke  !<(groupchat-diff vax)
-      ?+    -.poke  !!
-          %invited
-        :_  state
-        :~  :-  (snoc here.bowl (rear host.poke))
-            [%make %groupchat `groupchat-diff/vax ~]
-        ==
+      ?>  =(%invited -.poke)
+      :_  state
+      :~  :-  (snoc here.bowl (rear pith.src.bowl))
+          [%make %groupchat `groupchat-diff/vax ~]
       ==
     ::
         %messenger-diff

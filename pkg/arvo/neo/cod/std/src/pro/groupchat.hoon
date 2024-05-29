@@ -1,4 +1,3 @@
-$:  members=(set ship)
-    pending=(set ship)
-    host=pith
+$:  pending=(set ship)
+    publisher=pith
 ==

@@ -3,9 +3,17 @@
 |%
 ++  state  pro/%ship  :: who I'm chatting with
 ++  poke  (sy %dm-diff ~)
+++  state  pro/%ship  :: who I'm chatting with
+++  poke  (sy %dm-diff ~)
 ++  kids
   :+  ~  %y
   %-  ~(gas by *lads:neo)
+  :~  :-  [|/%theirs |]
+      [pro/%message-pub (sy %sig ~)]
+      :-  [|/%mine |]
+      [pro/%message-sub (sy %sig ~)]
+  ==
+++  deps  *deps:neo
   :~  :-  [|/%theirs |]
       [pro/%message-pub (sy %sig ~)]
       :-  [|/%mine |]
@@ -41,7 +49,7 @@
           [%make %message-pub ~ ~]
           ::
           :-  (snoc here.bowl %sub) 
-          [%make %message-sub ~ (malt ~[[%pub (snoc dm.poke %pub)]])]
+          [%make %message-sub ~ (malt ~[[%pub dm.poke]])]
           ::
           :-  dm.poke 
           [%poke dm-diff/!>([%acked here.bowl])]
@@ -60,7 +68,7 @@
       ?>  =(partner ship.src.bowl)
       :_  state
       :~  :-  (snoc here.bowl %sub) 
-          [%make %message-sub ~ (malt ~[[%pub (snoc dm.poke %pub)]])]
+          [%make %message-sub ~ (malt ~[[%pub dm.poke]])]
       ==
     ::
         %post
