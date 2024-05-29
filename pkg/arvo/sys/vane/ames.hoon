@@ -8152,7 +8152,7 @@
           ==
       ?^  chum-state=(~(get by chums.ames-state) ship)
         mesa/chum-state
-      ?:  ?=(%mesa core.ames-state)
+      ?:  ?=(%mesa core.ames-state)  :: XX revisit this
         mesa/~
       ames/(~(get by peers.ames-state) ship)
     ::
@@ -8235,6 +8235,33 @@
         (%*(ev-cancel-peek me-core per ship.spar^u.ship-state) all path.spar)
       moves^vane-gate
     ::
+    ++  pe-hear
+      |=  [dud=(unit goof) =lane =blob]
+      ^-  [(list move) _vane-gate]
+      =/  =shot       (sift-shot blob)
+      =/  ship-state  (pe-find-peer sndr.shot)
+      ?:  ?=([%ames *] ship-state)
+        ::  both for %ames and %fine
+        ::
+        (call:(ames [now eny rof]:sample) hen dud soft+hear/lane^blob)
+      ?.  ?=([~ %known *] +.ship-state)
+        ::  XX weird; log
+        `vane-gate
+      ::  XX  TODO: check if we are in fact tracking this path
+      ::  XX  (necessary?)
+      ::
+      =/  [=peep =meow]  (sift-purr `@ux`content.shot)
+      =/  =path  (slag 3 path.peep)
+      ::  old response, no-op. If we can find the peer in chums, it means that
+      ::  they sent an %ahoy plea, but they haven't heard our %ack, and have not
+      ::  migrated us.
+      ::
+      ::  any %fine requests should have been migrated and responses should
+      ::  only come via %heer or %mess. if %ames, we no-op and the %sender will
+      ::  resend the message as soon as they migrate us.
+      ::
+      `vane-gate
+    ::
     --
 ::
 |%
@@ -8242,13 +8269,17 @@
   |=  [hen=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _vane-gate]
   =/  =task  ((harden task) wrapped-task)
-  ?-  -.task
+  ?-    -.task
     ::  %ames-only tasks
     ::
-      ?(%kroc %deep %hear %chum %cong %mate %stir)
+      ?(%kroc %deep %chum %cong %mate %stir)
     ::  XX can we call the wrong core? still check if ship has migrated?
     ::
     (call:(ames now eny rof) hen dud soft/task)
+    ::  %hear; check if this is coming from in-progress migrating flows
+    ::
+      %hear
+    (pe-hear:(pe-abed:pe-core now eny rof hen) dud +.task)
     ::  %mesa-only tasks
     ::
       ?(%meek %mako %mage %heer %mess %mess-ser %back)
