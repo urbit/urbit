@@ -3288,7 +3288,7 @@
                 =.  chums.ames-state
                   (~(put by chums.ames-state) her known/fren)
                 ?>  ?=([[* [%pass ^ [%a %mako *]]] ~] poke-moves)
-                =^  peek-moves  ames-state  make-peeks
+                =^  peek-moves  ames-state  (make-peeks fren)
                 ::  XX  needed?  peek/poke-moves will have %send moves already
                 ::  enqueue a %prod to start sending unsent messages, after
                 ::  all the %makos (which trigger +peeks for %acks) have been
@@ -3333,7 +3333,7 @@
                       =/  =^duct
                         (~(gut by by-bone.ossuary.peer-state) bone [/ames]~)
                       =/  ev-core
-                        (%*(ev-abed mesa sat.per known/fren) now^eny^rof duct)
+                        (%*(ev-abed mesa sat.per fren) now^eny^rof duct)
                       %*  .  fo:ev-core
                         flows.sat.per  (~(put by flows) bone^dire flow)
                       ==
@@ -3511,8 +3511,9 @@
                   moves^flows.fren
                 ::
                 ++  make-peeks
+                  |=  fren=fren-state
                   ^-  (quip move axle)
-                  =+  ev-core=%*(ev-core mesa sat.per known/*fren-state)
+                  =+  ev-core=%*(ev-core mesa sat.per fren)
                   =*  per  peer-state
                   =;  core=_ev-core
                     ev-abet:core
@@ -5442,8 +5443,7 @@
           ::
           =|  moves=(list move)
           ::
-          ::  XX make sat.per fren-state
-          |_  [[now=@da eny=@uvJ rof=roof] hen=duct per=[=ship sat=chum-state]]
+          |_  [[now=@da eny=@uvJ rof=roof] hen=duct per=[=ship sat=fren-state]]
           ::
           +|  %helpers
           ::
@@ -5575,7 +5575,7 @@
               =/  key  ::  (get-key-for u.her u.hyf)
                 =/  her=@p  ?:(=(u.her our) ship u.her)  :: %poke payload are for us
                 =+  per=(ev-got-per her)        :: XX ev-get-per
-                ?>  ?=(%known -.sat.per)        :: XX wat if %alien?
+                :: ::  ?>  ?=(%known -.sat.per)        :: XX wat if %alien?
                 ?.  =(u.hyf life.sat.per)   !!  :: XX
                 symmetric-key.sat.per
               =*  iv  u.pyf  :: XX
@@ -5585,7 +5585,7 @@
               =/  kid  (slaw %ud kid.tyl)
               =/  cyf  (slaw %uv cyf.tyl)
               ?>  &(?=(^ kid) ?=(^ cyf))
-              ?>  ?=(%known -.sat.per)
+              ::  ?>  ?=(%known -.sat.per)
               ?~  key=(get:key-chain client-chain.sat.per u.kid)
                 !!  ::  XX handle
               dat:(decrypt:crypt -.u.key u.cyf (met 3 ser)^ser)
@@ -5617,7 +5617,7 @@
               ::  XX check =(ship u.her)
               =/  her=@p  ?:(=(u.her our) ship u.her)  :: %poke payloads are for us
               =+  per=(ev-got-per her)        :: XX ev-get-per
-              ?>  ?=(%known -.sat.per)        :: XX wat if %alien?
+              :: ::  ?>  ?=(%known -.sat.per)        :: XX wat if %alien?
               ?.  =(u.hyf life.sat.per)   !!  :: XX
               =*  key  symmetric-key.sat.per
               :+  [%chum life.ames-state her life.sat.per key]
@@ -5629,7 +5629,7 @@
               =/  cyf  (slaw %uv cyf.pat.tyl)
               ?>  &(?=(^ kid) ?=(^ cyf))
               =+  per=(ev-got-per ship)      :: XX ev-get-per
-              ?>  ?=(%known -.sat.per)       :: XX wat if %alien?
+              :: ::  ?>  ?=(%known -.sat.per)       :: XX wat if %alien?
               ?~  key=(get:key-chain client-chain.sat.per u.kid)
                 !!  :: XX handle
               :+  [%shut u.kid -.u.key]
@@ -5659,7 +5659,7 @@
                   ::  XX  =(our u.her) ??
                   :: (get-key-for u.her u.hyf)
                   =+  per=(ev-got-per her.name)   :: XX ev-get-per
-                  ?>  ?=(%known -.sat.per)        :: XX wat if %alien?
+                  :: ::  ?>  ?=(%known -.sat.per)        :: XX wat if %alien?
                   ?.  =(u.hyf life.sat.per)   !!  :: XX
                   symmetric-key.sat.per
                 (verify-mac:crypt `@`key p.auth ful rut)
@@ -5721,7 +5721,7 @@
           ++  ev-req-plea
             |=  [vane=@tas =wire payload=*]
             ^+  ev-core
-            ?>  ?=(%known -.sat.per)
+            ::  ?>  ?=(%known -.sat.per)
             =^  bone  ossuary.sat.per  ::  XX  to arm?
               =,  ossuary.sat.per
               ?^  bone=(~(get by by-duct) hen)
@@ -5759,7 +5759,7 @@
           ++  ev-req-peek
             |=  [sec=(unit [kid=@ key=@]) =path]
             ^+  ev-core
-            ?>  ?=(%known -.sat.per)
+            ::  ?>  ?=(%known -.sat.per)
             ::  +sy-plug should have already stored [kid key path] in chain.ames-state
             ::  on the server, and the client would have retrieved the key via
             ::  the %ames key exchange. here we store it in their peer state
@@ -5768,6 +5768,7 @@
             ::
             =?  chums.ames-state  ?=(%shut -.space)
               %+  ~(put by chums.ames-state)  ship.per
+              :-  %known
               %_    sat.per
                   client-chain
                 (put:key-chain client-chain.sat.per kid.space key.space path)
@@ -5829,11 +5830,11 @@
               ~&  >  %poke-for-other^[rcvr.pok our]
               ev-core  :: XX TODO
             ::
-            =.  per  her.poke-name^u.chum-state
+            =.  per  her.poke-name^+.u.chum-state
             ::  update and print connection status
             ::
             =.  ev-core  (update-qos %live last-contact=now)
-            ?>  ?=(%known -.sat.per)
+            ::  ?>  ?=(%known -.sat.per)
             ?.  =(1 tot.data)
               =/  =dire  :: flow swtiching
                 %*(fo-flip-dire fo side *@ud^(fo-infer-dire:fo load.pok))  :: XX assert load is plea/boon
@@ -6029,8 +6030,8 @@
             =+  path=?~(sealed-path path.spar u.sealed-path)
             ?~  ms=(~(get by pit.u.rs) path)
               ev-core
-            =.  per  ship^u.rs
-            ?>  ?=(%known -.sat.per)
+            =.  per  ship^+.u.rs
+            ::  ?>  ?=(%known -.sat.per)
             ::
             ::  XX validate response
             =.  pit.u.rs           (~(del by pit.u.rs) path)
@@ -6054,7 +6055,7 @@
             ::
             ::  XX ev-got-per; assumes that %aliens are checked in the packet layer
             =.  per  (ev-got-per ship.pok-spar)
-            ?>  ?=(%known -.sat.per)
+            :: ::  ?>  ?=(%known -.sat.per)
             ::
             =/  =dire  :: flow swtiching
               %*(fo-flip-dire fo side *@ud^(fo-infer-dire:fo load.pok))  :: XX assert load is plea/boon
@@ -6112,7 +6113,7 @@
               ev-core
             =,  u.flow-wire
             =.  per  (ev-got-per her)
-            ?>  ?=(%known -.sat.per)
+            :: ::  ?>  ?=(%known -.sat.per)
             ?:  (lth rift rift.sat.per)
               :: XX log
               ev-core  ::  ignore events from an old rift
@@ -6145,7 +6146,7 @@
               (ev-register-comet ship.p.sage comet-proof signature signed)
             =,  u.flow-wire
             =.  per  (ev-got-per her)
-            ?>  ?=(%known -.sat.per)  :: XX response from %alien
+            :: ::  ?>  ?=(%known -.sat.per)  :: XX response from %alien
             ?:  (lth rift rift.sat.per)
               :: XX log
               ev-core  ::  ignore events from an old rift
@@ -6200,7 +6201,10 @@
                 by-duct.ossuary  (~(del by by-duct.ossuary) (ev-got-duct bone))   ::  XX bone^side=%for
                 by-bone.ossuary  (~(del by by-bone.ossuary) bone)                 ::  XX bone^side=%for
               ==
-            ev-core(ames-state ames-state(chums (~(put by chums.ames-state) [ship sat]:per)))
+            %_    ev-core
+                ames-state
+              ames-state(chums (~(put by chums.ames-state) [ship known/sat]:per))
+            ==
           ::  +ev-take-done: vane responses
           ::
           ++  ev-take-boon
@@ -6210,7 +6214,7 @@
               ev-core
             =,  u.flow-wire
             =.  per  (ev-got-per her)
-            ?>  ?=(%known -.sat.per)
+            ::  ?>  ?=(%known -.sat.per)
             ?:  (lth rift rift.sat.per)
               :: XX log
               ev-core  ::  ignore events from an old rift
@@ -6230,7 +6234,7 @@
               ev-core
             =,  u.flow-wire
             =.  per  (ev-got-per her)
-            ?>  ?=(%known -.sat.per)
+            ::  ?>  ?=(%known -.sat.per)
             ?:  (lth rift rift.sat.per)
               :: XX log
               ev-core  ::  ignore events from an old rift
@@ -6375,7 +6379,6 @@
             ^+  per
             :-  ship
             =/  chum-state  (~(get by chums.ames-state) ship)
-            :-  %known
             ?.(?=([~ %known *] chum-state) *fren-state +.u.chum-state)
           ::
           ++  ev-got-per
@@ -6383,7 +6386,7 @@
             ^+  per
             :-  ship
             ~|  %freaky-alien^ship
-            =-  ?>(?=([%known *] -) -)
+            =-  ?>(?=([%known *] -) ->)
             (~(got by chums.ames-state) ship)
           ::  +ev-get-per: lookup .her state, ~ if missing, [~ ~] if %alien
           ::
@@ -6402,7 +6405,7 @@
           ++  ev-got-duct
             |=  =bone
             ^-  duct
-            ?>  ?=(%known -.sat.per)
+            ::  ?>  ?=(%known -.sat.per)
             ~|(%dangling-bone^ship.per^bone (~(got by by-bone.ossuary.sat.per) bone))
           ::
           +|  %peek-subscribers
@@ -6417,11 +6420,14 @@
           ++  ev-cancel-peek
             |=  [all=? =path]  :: XX namespace?
             ^+  ev-core
-            ?>  ?=(%known -.sat.per)
+            ::  ?>  ?=(%known -.sat.per)
             ?~  ms=(~(get by pit.sat.per) path)
               ev-core
             =;  core=_ev-core
-              core(chums.ames-state (~(put by chums.ames-state) [ship sat]:per.core))
+              %_    core
+                  chums.ames-state
+                (~(put by chums.ames-state) [ship known/sat]:per.core)
+              ==
             ?:  all
               =.  pit.sat.per  (~(del by pit.sat.per) path)
               (ev-give-response for.u.ms path ~)
@@ -6434,7 +6440,7 @@
           ++  fo
             ::  flows exist only for known peers
             ::
-            =>  .(sat.per ?>(?=(%known -.sat.per) sat.per))
+            :: =>  .(sat.per ?>(?=(%known -.sat.per) sat.per))
             ::
             =|  can-be-corked=?(%.y %.n)
             ::
@@ -6457,7 +6463,10 @@
             ++  fo-abet
               ^+  ev-core
               =.  flows.sat.per  (~(put by flows.sat.per) bone^dire state)
-              ev-core(ames-state ames-state(chums (~(put by chums.ames-state) her sat.per)))
+              %_    ev-core
+                  ames-state
+                ames-state(chums (~(put by chums.ames-state) her known/sat.per))
+              ==
             ::
             ++  fo-abel
               ^+  ev-core
@@ -6466,7 +6475,7 @@
                   corked.sat.per  (~(put in corked.sat.per) bone^dire)
                 ==
               =.  ames-state
-                ames-state(chums (~(put by chums.ames-state) her sat.per))
+                ames-state(chums (~(put by chums.ames-state) her known/sat.per))
               ev-core
             ::
             ++  fo-emit      |=(=move fo-core(moves [move moves]))
@@ -7264,9 +7273,13 @@
                 ++  meet-alien-chum
                   |=  [=ship =point:jael todos=ovni-state =chum-state]
                   ^+  sy-core
+                  ?.  ?=([%known *] chum-state)
+                    ::  +insert-peer should have made this peer %known
+                    ::
+                    sy-core
                   ::  init ev-core with provided chum-state
                   ::
-                  =.  ev-core  %*(. ev-core per ship^chum-state)
+                  =.  ev-core  %*(. ev-core per ship^+.chum-state)
                   ::
                   =.  ev-core
                     ::  apply outgoing messages
@@ -7331,8 +7344,8 @@
                   ::  XX if the peer doesn't previously exist we insert it
                   ::  based on the chosen core in state; see find-peer
                   ?:  ?=(%chum wer)
-                    =/  =chum-state  sat:(ev-gut-per ship)
-                    ?>(?=([%known *] chum-state) chum/+.chum-state)
+                    =/  =fren-state  sat:(ev-gut-per ship)
+                    chum/fren-state
                   =/  ship-state  (~(get by peers.ames-state) ship)
                   :-  %ship
                   ?.  ?=([~ %known *] ship-state)
@@ -7416,10 +7429,10 @@
               |=  [[=ship =chum-state] core=_ev-core]
               ^+  core
               =+  per-sat=(ev-get-per ship)
-              ?.  ?=([~ ~ *] per-sat)
+              ?.  ?=([~ ~ %known *] per-sat)
                 core  ::  %alien or missing
-              =.  per  [ship u.u.per-sat]
-              ?>  ?=(%known -.sat.per)
+              =.  per  [ship +.u.u.per-sat]
+              ::  ?>  ?=(%known -.sat.per)
               =/  =space
                 ::  the %chum namespace is only used if the associated path
                 ::  in the pit has a payload (i.e. belongs to a flow)
@@ -7428,8 +7441,7 @@
               %-  ~(rep by pit.sat.per)
               |=  [[=path req=request-state] core=_core]
               ~&  re-sending/path
-              =/  peer=^chum-state  sat.per.core
-              ?>  ?=(%known -.peer)
+              =*  peer  sat.per.core
               ::  update and print connection status
               ::
               =/  expiry=@da  (add ~s30 last-contact.qos.peer)
@@ -7603,7 +7615,7 @@
                 =+  peer-core=(abed-peer:pe:event-core her peer)
                 =;  core=_peer-core
                   abet:abet:core
-                =+  ev-core=%*(. ev-core sat.per known/fren)
+                =+  ev-core=%*(. ev-core sat.per fren)
                 %-  ~(rep by flows.fren)
                 |=  [[side state=flow-state] core=_peer-core]
                 =+  fo-core=~(. fo:ev-core hen^bone^dire state)  :: XX make sat.per $fren-state
@@ -7763,10 +7775,10 @@
             |=  [bone=@ud load=?(%plea %boon %ack-plea %ack-boon %nax) rcvr=ship mess=@ud]
             ^-  (unit (unit cage))
             =+  per-sat=(ev-get-per rcvr)
-            ?.  ?=([~ ~ *] per-sat)
+            ?.  ?=([~ ~ %known *] per-sat)
               ~  ::  %alien or missing
-            =.  per  [rcvr u.u.per-sat]
-            ?>  ?=(%known -.sat.per)
+            =.  per  [rcvr +.u.u.per-sat]
+            ::  ?>  ?=(%known -.sat.per)
             =/  dire=?(%for %bak)  (fo-infer-dire:fo load)
             ?:  ?&  (~(has in corked.sat.per) bone dire)
                     |(?=(%ack-plea load) ?=(%ack-boon load))
@@ -7794,11 +7806,11 @@
           ++  update-qos
             |=  new=qos
             ^+  ev-core
-            ?>  ?=(%known -.sat.per)
+            ::  ?>  ?=(%known -.sat.per)
             =*  old  qos.sat.per
             =.  chums.ames-state
               =.  qos.sat.per  new
-              (~(put by chums.ames-state) [ship sat]:per)
+              (~(put by chums.ames-state) [ship known/sat]:per)
             =/  text
               %^  qos-update-text  ship.per  %ames
               [old new [kay.veb ships]:bug.ames-state]
@@ -8129,10 +8141,10 @@
             =>  .(tyl `(pole iota)`(ev-pave tyl))
             ?>  ?=(cork-pith tyl)
             =+  per-sat=(ev-get-per rcvr.tyl)
-            ?.  ?=([~ ~ *] per-sat)
+            ?.  ?=([~ ~ %known *] per-sat)
               ~  ::  %alien or missing
-            =.  per  [rcvr.tyl u.u.per-sat]
-            ?>  ?=(%known -.sat.per)
+            =.  per  [rcvr.tyl +.u.u.per-sat]
+            ::  ?>  ?=(%known -.sat.per)
             =/  res=(unit page)
               %.  [%cork *@ud]
               fo-peek:(fo-abed:fo ~[//scry] bone.tyl dire=%for)  :: XX allow to read "server" corks
@@ -8238,7 +8250,7 @@
       =^  moves  ames-state
         =<  ev-abet
         ?:  ?=([~ %known *] +.ship-state)
-          (%*(ev-req-plea me-core per ship^u.ship-state) plea)
+          (%*(ev-req-plea me-core per ship^+.u.ship-state) plea)
         ::
         %^  ev-enqueue-alien-todo:me-core  ship  +.ship-state
         |=  todos=ovni-state:me-core
@@ -8255,7 +8267,7 @@
       =^  moves  ames-state
         =<  ev-abet
         ?:  ?=([~ %known *] +.ship-state)
-          (%*(ev-req-plea me-core per her^u.ship-state) plea)
+          (%*(ev-req-plea me-core per her^+.u.ship-state) plea)
         ::
         %^  ev-enqueue-alien-todo:me-core  her  +.ship-state
         |=  todos=ovni-state:me-core
@@ -8270,7 +8282,7 @@
       =^  moves  ames-state
         =<  ev-abet
         ?:  ?=([~ %known *] +.ship-state)
-          (%*(ev-req-peek me-core per ship^u.ship-state) sec path)
+          (%*(ev-req-peek me-core per ship^+.u.ship-state) sec path)
         ::
         %^  ev-enqueue-alien-todo:me-core  ship  +.ship-state
         |=  todos=ovni-state:me-core
@@ -8289,7 +8301,7 @@
         ?.  ?=([~ %known *] +.ship-state)
           ::  XX delete from alien agenda?
           ~&("peer still alien, skip peek cancel" me-core)
-        (%*(ev-cancel-peek me-core per ship.spar^u.ship-state) all path.spar)
+        (%*(ev-cancel-peek me-core per ship.spar^+.u.ship-state) all path.spar)
       moves^vane-gate
     ::
     ++  pe-hear
