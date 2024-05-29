@@ -1,5 +1,7 @@
 $%  [%invite =ship provider=pith]
-    [%invited chat=pith]
+    [%remove =ship]
+    [%invited host=pith]
     [%acked ~]
-    [%post text=@t]
+    [%post-to-host text=@t]
+    [%host-to-pub text=@t]
 ==
