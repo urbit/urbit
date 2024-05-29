@@ -1695,7 +1695,7 @@
         closing=?(%.y %.n)
         ::  line: high-water mark for the last-acked message before migration
         ::
-        :: line=@ud
+        line=@ud
         ::  outbound %poke payloads, bounded in the ship's namespace
         ::  always and only for requests
         ::

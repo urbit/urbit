@@ -3446,10 +3446,7 @@
                       flows
                     =|  flow=flow-state
                     =:      closing.flow  (~(has in closing.peer-state) bone)
-                                          ::  XX  consider the oldest seq in nax.sink?
-                                          ::
-                              ::  line.flow  last-acked.sink
-                         ::
+                               line.flow  last-acked.sink
                          last-acked.flow  last-acked.sink
                         ::  XX if there's a pending-vane ack it should have
                         ::  been sent to the vane already?
@@ -6594,9 +6591,21 @@
                 ?~(nax=(~(get by nax.state) seq) ~ `nax/u.nax)
               ::
                   ?(%ack-plea %ack-boon)
-                :: if seq > gth 10, no-op ?
-                ::
-                ?.(=(seq last-acked.state) ~ `ack/(~(has by nax.state) seq))
+                ?:  (lte seq line.state)
+                  ::  refuse to answer for pre-migration messages
+                  ::
+                  ~
+                ?:  ?&  (lth seq last-acked.state)
+                        (gth (sub last-acked.state seq) 10)
+                    ==
+                  :: if seq > gth 10, refuse to answer
+                  ::
+                  ~
+                ?.  =(seq last-acked.state)
+                  ::  refuse to answer for future acks
+                  ::
+                  ~
+                `ack/(~(has by nax.state) seq)
               ::
                   %cork
                 ?.  (~(has in corked.sat.per) side)  ~
@@ -6612,7 +6621,7 @@
                 ==
               ==
             ::
-            +|  %request
+            +|  %request-sender
             ::
             ++  fo-send
               ^+  fo-core
@@ -6653,7 +6662,7 @@
               =.  fo-core  (fo-emit hen %pass wire %a mako/[space paths])
               loop
             ::
-            +|  %response
+            +|  %request-receiver
             ::
             ++  fo-sink-boon
               |=  [seq=@ud message=* ok=?]
@@ -6664,9 +6673,11 @@
                 ::  no-op if future message
                 ~&  future-ack/seq=seq^last-acked=last-acked.state
                 fo-core
-              ?:  ::  (lte (sub +(last-acked.state) seq) 10)  :: XX TODO
-                  (lte seq last-acked.state)
-                ~&  %already-acked
+              ?:  (lte seq last-acked.state)
+                ?:  (gth (sub last-acked.state seq) 10)
+                  ~&  %drop-old-seq  ::  XX  use verbosity logs
+                  fo-core
+                ~&  %already-acked  ::  XX  use verbosity logs
                 (fo-send-ack seq)
               =.  fo-core  (fo-emit (ev-got-duct bone) %give %boon message)
               ::  handle a previous crash
@@ -6693,11 +6704,13 @@
               ::
               ?:  (gth seq +(last-acked.state))
                 ::  no-op if future message
-                ~&  %future-ack
+                ~&  %future-ack  ::  XX  use verbosity logs
                 fo-core
-              ?:  ::  (lte (sub +(last-acked.state) seq) 10)  :: XX TODO
-                  (lte seq last-acked.state)
-                ~&  %already-acked
+              ?:  (lte seq last-acked.state)
+                ?:  (gth (sub last-acked.state seq) 10)
+                  ~&  %drop-old-seq  ::  XX  use verbosity logs
+                  fo-core
+                ~&  %already-acked  ::  XX  use verbosity logs
                 (fo-send-ack seq)
               ?.  ok
                 %.  `*error
@@ -6856,7 +6869,7 @@
             ::
             ++  fo-send-ack
               |=  seq=@ud
-              ::  emit ack to unix
+              ::  emit (n)ack to unix; see +fo-peek where the (n)ack is produced
               ::
               =/  =path   (fo-ack-path seq her)
               =/  =space  chum/[life.ames-state her [life symmetric-key]:sat.per]
