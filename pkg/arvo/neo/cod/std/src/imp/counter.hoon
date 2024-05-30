@@ -1,14 +1,12 @@
-/@  number        ::  @ud
-/@  counter-diff  ::  [%inc ~]
-::  XX note about types
+/@  number
+/@  counter-diff
 ::
-::  outer core of a shrub: define state, pokes,
-::  dependencies, and kids
+::  outer core of a shrub
 ^-  kook:neo
 |%
 ::
-::  the state of the counter is a %number, just a @ud
-::  a curb:neo is a constraint imposed on a shrub
+::  the state of counter is a %number, just a @ud
+::  XX explain %pro / $curb?
 ++  state
   ^-  curb:neo
   [%pro %number]
@@ -19,10 +17,8 @@
   ^-  (set stud:neo)
   (sy %counter-diff ~)
 ::
-::
-::  counter does not constrain the type and behaviour of
-::  its children; any shrub can be made below this shrub
-::  in the tree, they can have any state, kids, or pokes
+::  counter can have no children
+::  beneath it in the tree
 ++  kids
   ^-  kids:neo
   *kids:neo
@@ -32,11 +28,34 @@
   ^-  deps:neo
   *deps:neo
 ::
-::  inner core of a shrub: business logic
+::  inner core of a shrub
 ++  form
   ^-  form:neo
   ::  treat this door's sample as boilerplate
-  |_  [=bowl:neo =aeon:neo =pail:neo]
+  |_  [=bowl:neo =aeon:neo stud:neo state-vase=vase]
+    ::
+    ::  de-vase the state; we don't know what it is,
+    ::  in most cases it will be counter's old state
+    +*  this  !<(number state-vase)
+    ::  +poke, like +on-poke
+    ++  poke
+      ::
+      ::  XX explain stud
+      |=  [=stud:neo vaz=vase]
+      ::
+      ::  return a (list card:neo) and a
+      ::  pail, which is a (pair stud vase)
+      ^-  (quip card:neo pail:neo)
+      ::
+      ::  assert that the poke's stud is %counter-diff,
+      ::  which protects counter from evil vases
+      ?>  =(%counter-diff stud)
+      =/  act
+        !<(counter-diff vaz)
+      ?>  =(-.act %inc)
+      ::
+      ::  return no cards and a pail
+      [~ [%number !>(+(this))]]
     ::
     ::  +init, like +on-init
     ++  init
@@ -46,32 +65,5 @@
       |=  old=(unit pail:neo)
       ^-  (quip card:neo pail:neo)
       [~ (need old)]
-    ::
-    ::  +poke, like +on-poke
-    ++  poke
-      ::
-      ::  a stud (e.g. %number or %counter-diff) is
-      ::  like a mark
-      |=  [=stud:neo vaz=vase]
-      ::
-      ::  return a (list card:neo) and a
-      ::  pail, which is a (pair stud vase)
-      ^-  (quip card:neo pail:neo)
-      ::
-      ::  assert the stud of the pail (pair stud vase),
-      ::  which is the shrub's state given in the sample
-      ::  (technically unnecessary in this case, but good
-      ::  hygiene)
-      ?>  =(p.pail %number)
-      =/  state  !<(number q.pail)
-      ::
-      ::  assert that the poke's stud is %counter-diff
-      ?>  =(%counter-diff stud)
-      =/  act
-        !<(counter-diff vaz)
-      ?>  =(-.act %inc)
-      ::
-      ::  return no cards and a pail
-      [~ [%number !>(+(state))]]
   --
 --
