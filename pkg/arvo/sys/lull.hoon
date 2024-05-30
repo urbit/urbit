@@ -2483,6 +2483,9 @@
         ::  in double boot protection
         ::
         [%boot ~]
+        :: responds with the @p of the galaxy of the provided ship
+        ::
+        [%sponsor ~]
         ::  respond with the default file not found page
         ::
         [%four-oh-four ~]

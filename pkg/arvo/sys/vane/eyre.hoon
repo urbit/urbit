@@ -1001,6 +1001,9 @@
         %boot
       (handle-boot identity request)
     ::
+        %sponsor
+      (handle-sponsor identity request)
+    ::
         %four-oh-four
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 authenticated url.request ~)
@@ -1014,6 +1017,33 @@
     ?:  ?=(%czar (clan:title next))
       next
     $(ship next)
+  ::
+  ++  handle-sponsor
+    |=  [=identity =request:http]
+    ^-  (quip move server-state)
+    =/  crumbs  q:(rash url.request apat:de-purl:html)
+    ?.  ?=([@t @t @t ~] crumbs)
+      %^  return-static-data-on-duct  400  'text/html'
+      %:  error-page
+        400
+        &
+        url.request
+        "Invalid input: Expected /~/boot/<ship=@p>"
+      ==
+    =/  ship
+      %+  slaw
+        %p
+      i.t.t.crumbs
+    ?~  ship
+      %^  return-static-data-on-duct  400  'text/html'
+      %:  error-page
+        400
+        &
+        url.request
+        "Invalid input: Expected /~/boot/<ship=@p>"
+      ==
+    %^  return-static-data-on-duct  200  'text/plain'
+    (as-octs:mimes:html (scot %p (galaxy-for u.ship)))
   ::  Takes two path parameters - ship=@p and optional bone=@u.
   ::
   ::  If only ship is provided, responds with the @p of the current sponsor,
@@ -1284,7 +1314,7 @@
         %channel
       on-cancel-request:by-channel
     ::
-        ?(%scry %four-oh-four %name %host %boot)
+        ?(%scry %four-oh-four %name %host %boot %sponsor)
       ::  it should be impossible for these to be asynchronous
       ::
       !!
@@ -3506,6 +3536,7 @@
           [[~ /~/name] duct [%name ~]]
           [[~ /~/host] duct [%host ~]]
           [[~ /~/boot] duct [%boot ~]]
+          [[~ /~/sponsor] duct [%sponsor ~]]
       ==
     [~ http-server-gate]
   ::  %trim: in response to memory pressure
@@ -4194,7 +4225,7 @@
       bindings.old
     ==
   ::
-  ::  adds /~/boot
+  ::  adds /~/boot and /~/sponsor
   ::
       %~2023.5.15
     %=  $
@@ -4203,6 +4234,8 @@
         bindings.old
       %+  insert-binding
         [[~ /~/boot] outgoing-duct.old [%boot ~]]
+      %+  insert-binding
+        [[~ /~/sponsor] outgoing-duct.old [%sponsor ~]]
       bindings.old
     ==
   ::
