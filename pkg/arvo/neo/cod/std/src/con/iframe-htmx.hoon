@@ -19,8 +19,7 @@
         =type  "text"
         =name  "text"
         =value  url
-        =is  "atom-input"
-        =oninput  "this.parentNode.nextElementSibling.src = this.value;"
+        =oninput  "$(this).attr('value', this.value); this.parentNode.nextElementSibling.src = this.value;"
         ;
       ==
       ;button.p2.b1
