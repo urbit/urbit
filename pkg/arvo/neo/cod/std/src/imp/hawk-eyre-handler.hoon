@@ -299,23 +299,47 @@
         ^-  stud:neo
         ~|  %no-stud-specified
         (~(got by pam.purl) 'stud')
-      =/  =pail:neo  [poke-stud (node [poke-stud body])]
-      =/  bol  *bowl:neo
-      =.  here.bol  here
-      =.  our.bol  our.bowl
-      =.  now.bol  now.bowl
-      =.  eny.bol  eny.bowl
-      =/  =manx
-        ?~  converter=(mole |.((htmx pail)))
-          (default-refresher here)
-        ::  XX virtualize
-        (u.converter bol)
-      :-  [here %poke pail]
-      %:  eyre-cards
-          eyre-id
-          bowl
-          200
-          manx
+      =/  mul
+        %-  mule
+        |.((node [poke-stud body]))
+      ?-    -.mul
+          %.n
+        %:  eyre-cards
+            eyre-id
+            bowl
+            400
+            ;div
+              ;*
+              %+  turn  (tang p.mul)
+              |=  =tank
+              ;div: {(of-wall:format (~(win re tank) 0 55))}
+            ==
+        ==
+      ::
+          %.y
+        =/  =pail:neo  [poke-stud p.mul]
+        =/  bol  *bowl:neo
+        =.  here.bol  here
+        =.  our.bol  our.bowl
+        =.  now.bol  now.bowl
+        =.  eny.bol  eny.bowl
+        =/  =manx
+          ?~  converter=(mole |.((htmx pail)))
+            (default-refresher here)
+          =/  mul
+            %-  mule
+            |.((u.converter bol))
+          ?-  -.mul
+            %.y  p.mul
+            %.n  ;div: error
+          ==
+        :-  [here %poke pail]
+        %:  eyre-cards
+            eyre-id
+            bowl
+            200
+            manx
+        ==
       ==
     ==
   --
