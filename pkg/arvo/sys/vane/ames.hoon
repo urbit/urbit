@@ -6092,6 +6092,30 @@
         [%protocol %version ~]
       ``noun+!>(protocol-version)
     ::
+        [%boot ~]
+      =/  who
+        =/  ship  our
+        |-
+        ^-  @p
+        =/  next  (^^sein:title rof /eyre our now ship)
+        ?:  ?=(%czar (clan:title next))
+          next
+        $(ship next)
+      =/  per  (~(get by peers.ames-state) who)
+      ?.  ?=([~ %known *] per)  ``atom+!>(%muna)
+      =,  u.per
+      =/  ducs
+        %+  skim
+          ~(tap in ~(key by by-duct.ossuary))
+        |=  =duct
+        =(-.duct /gall/sys/way/(scot %p who)/ping)
+      ?~  ducs  ``atom+!>(%muna)
+      =/  ping-bone
+        (~(got by by-duct.ossuary) -.ducs)
+      =/  ping-snd
+        (~(got by snd) ping-bone)
+      ``noun+!>([who rift.ames-state life.ames-state ping-bone current.ping-snd])
+    ::
     ==
   ::
 
