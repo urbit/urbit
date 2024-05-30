@@ -2479,6 +2479,10 @@
         ::  respond with the @p of the ship serving the response
         ::
         [%host ~]
+        ::  returns data used to verify sync status between ship and network
+        ::  in double boot protection
+        ::
+        [%boot ~]
         ::  respond with the default file not found page
         ::
         [%four-oh-four ~]
