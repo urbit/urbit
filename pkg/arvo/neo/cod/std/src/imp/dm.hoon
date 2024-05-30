@@ -41,7 +41,7 @@
           [%make %message-pub ~ ~]
           ::
           :-  (snoc here.bowl %sub) 
-          [%make %message-sub ~ (malt ~[[%pub dm.poke]])]
+          [%make %message-sub ~ (malt ~[[%pub (snoc dm.poke %pub)]])]
           ::
           :-  dm.poke 
           [%poke dm-diff/!>([%acked here.bowl])]
@@ -60,7 +60,7 @@
       ?>  =(partner ship.src.bowl)
       :_  state
       :~  :-  (snoc here.bowl %sub) 
-          [%make %message-sub ~ (malt ~[[%pub dm.poke]])]
+          [%make %message-sub ~ (malt ~[[%pub (snoc dm.poke %pub)]])]
       ==
     ::
         %post
