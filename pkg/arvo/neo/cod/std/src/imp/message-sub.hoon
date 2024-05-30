@@ -10,7 +10,7 @@
       [pro/%message ~]
   ==
 ++  deps
-%-  ~(gas by *deps:neo)
+  %-  ~(gas by *deps:neo)
   :~  :-  %pub
       :+  req=&  [pro/%sig (sy %sig ~)]
       :+  ~  %y
