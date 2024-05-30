@@ -2,8 +2,8 @@
 $%
   [%become =pith]
   [%prayer =pith]
-  [%prep =task]
-  [%nest =task]
+  [%prepend =task]
+  [%append =task]
   [%edit text=cord done=?]
   [%check-kids done=?]
   [%done ~]                      :: toggles

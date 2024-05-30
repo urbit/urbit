@@ -36,6 +36,10 @@
 ++  form
   ^-  form:neo
   |_  [=bowl:neo =ever:neo state-vase=vase *]
+  ++  init
+    |=  vas=(unit vase)
+    `(need vas)
+  ::
   ++  poke
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo vase)
@@ -65,7 +69,7 @@
         [(welp here.bowl pith) %poke %task-diff !>([%prayer (welp pith.diff pith)])]
       ==
     ::
-        %nest
+        %append
       =/  name=@ud  (assign-name bowl)
       =/  new-order
         `(list pith)`(snoc order.this `pith`[ud/name ~])
@@ -74,7 +78,7 @@
               [%make %task `!>(task.diff) ~]
       ==
     ::
-        %prep
+        %prepend
       =/  name=@ud  (assign-name bowl)
       :_  !>  this(order `(list pith)`[~[ud/name] order.this])
       :_  ~
@@ -137,8 +141,5 @@
       :-  ~
       !>  this(order order.diff)
     ==
-  ++  init
-    |=  vas=(unit vase)
-    `(need vas)
   --
 --

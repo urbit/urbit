@@ -287,11 +287,11 @@
     ;+  script
     ;+  form-edit
     ;div.fc.g1.kids
-      ::;+  ?~  (lent order.t)  ;/("")  (form-create %prep "+")
-      ::;+  ?~  (lent order.t)  (form-create %nest "+")  ;/("")
+      ::;+  ?~  (lent order.t)  ;/("")  (form-create %prepend "+")
+      ::;+  ?~  (lent order.t)  (form-create %append "+")  ;/("")
       ;+  form-ordered-kids
-      ::;+  ?~  (lent order.t)  ;/("")  (form-create %nest "+")
-      ;+  (form-create %nest "+")
+      ::;+  ?~  (lent order.t)  ;/("")  (form-create %append "+")
+      ;+  (form-create %append "+")
     ==
   ==
 --

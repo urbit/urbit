@@ -14,11 +14,11 @@
   =/  path  (stab (vol:mu "path"))
   [head (pave:neo path)]
 ::
-    %nest
+    %append
   =/  text  (vol:mu "text")
   [head text | ~]
 ::
-    %prep
+    %prepend
   =/  text  (vol:mu "text")
   [head text | ~]
 ::
