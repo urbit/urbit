@@ -5,6 +5,7 @@ $%
   [%prep =task]
   [%nest =task]
   [%edit text=cord done=?]
+  [%check-kids done=?]
   [%done ~]                      :: toggles
   [%kid-done =pith]              :: toggles
   [%oust =pith]

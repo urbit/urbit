@@ -49,6 +49,8 @@
   ==
 ++  form-create
   |=  [head=@tas label=tape]
+  =/  placeholder  ?:(?=([%ud @ud] (rear here.bowl)) "subtask" "task")
+  ::~&  ['pith' sub-task]
   ^-  manx
   ;div.fc.g1.p4
     ;form.fr.g1
@@ -61,7 +63,7 @@
         =autocomplete  "off"
         =type  "text"
         =required  ""
-        =placeholder  "task"
+        =placeholder  placeholder
         =oninput  "this.setAttribute('value', this.value);"
         ;
       ==
@@ -120,9 +122,9 @@
       ;+  =-
         =/  that  -
         =/  classes
-          %+  weld
+          ::%+  weld
             "b0 br1 hover p1 tl action mono fr g3"
-          ?:(done.t " strike f3" "")
+        ::   ?:(done.t " strike f3" "")
         that(a.g [[%class classes] a.g.that])
       ^-  manx
       ;button
@@ -150,30 +152,27 @@
 ++  dropdown-menu
   |=  =pith
   ^-  manx
-  ;div.p2.br1.frw.g2.hidden
+  ;div.p2.br1.fr.g2.hidden
     =hx-disinherit  "hx-indicator"
     =style  "margin-left: 20px;"
-    ;button.b1.br1.p2.hover
+    ;button.b1.br1.p2.hover.hfc
       =onclick  "this.parentNode.parentNode.parentNode?.insertAdjacentElement('beforeend', this.parentNode.parentNode); center(this);"
       ; ↧
     ==
-    ;button.b1.br1.p2.hover
+    ;button.b1.br1.p2.hover.hfc
       =onclick  "this.parentNode.parentNode.nextElementSibling?.insertAdjacentElement('afterend', this.parentNode.parentNode);  center(this);"
       ; ↓
     ==
-    ;button.b1.br1.p2.hover
+    ;button.b1.br1.p2.hover.hfc
       =onclick  "this.parentNode.parentNode.previousElementSibling?.insertAdjacentElement('beforebegin', this.parentNode.parentNode); center(this);"
       ; ↑
     ==
-    ;button.b1.br1.p2.hover
+    ;button.b1.br1.p2.hover.hfc
       =onclick  "this.parentNode.parentNode.parentNode?.insertAdjacentElement('afterbegin', this.parentNode.parentNode);  center(this);"
       ; ↥
     ==
-    ;div.htmx-indicator.reorder-indicator.p2.f2
-      ; ---
-    ==
-    ;div.basis-full;
-    ;button.b1.br1.p2.hover.loader.hidden
+    ;div.basis-full.hidden;
+    ;button.b1.br1.p2.hover.loader.hidden.hfc
       =type  "button"
       =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=task-diff"
       =hx-swap  "outerHTML"
@@ -183,7 +182,7 @@
       ;span.loaded: toggle
       ;span.loading: ---
     ==
-    ;button.b1.br1.p2.hover.loader
+    ;button.b1.br1.p2.hover.loader.hfc
       =type  "button"
       =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=task-diff"
       =hx-swap  "none"
@@ -193,12 +192,12 @@
       ;span.loaded: delete
       ;span.loading: ---
     ==
-    ;button.b1.br1.p2.hover
+    ;button.b1.br1.p2.hover.hfc
       =type  "button"
       =onclick  "this.nextElementSibling.classList.toggle('hidden'); this.classList.toggle('toggled');"
       ; become
     ==
-    ;div.basis-full.hidden.fr.g1
+    ;div.basis-full.hidden.fr.g1.hfc
       =hx-post  "/neo/hawk{(en-tape:pith:neo (welp here.bowl pith))}?stud=task-diff"
       =hx-trigger  "become"
       =hx-target  "find .loading"
@@ -211,12 +210,15 @@
         =oninput  "this.setAttribute('value', this.value);"
         ;
       ==
-      ;button.p2.b1.hover.br1.loader
+      ;button.b1.br1.p2.hover.loader
         =type  "button"
         =onclick  "this.dispatchEvent(new CustomEvent('become', \{composed:true, bubbles: true}))"
         ;span.loaded: become
         ;span.loading: ---
       ==
+    ==
+    ;div.htmx-indicator.reorder-indicator.p2.f2.hfc
+      ; ---
     ==
     ;div.basis-full.p2.pre.mono.scroll-x.hidden
       ; {(trip text.t)}
