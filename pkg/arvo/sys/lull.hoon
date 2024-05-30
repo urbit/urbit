@@ -3064,11 +3064,10 @@
   ::  +feed: potential boot parameters
   ::
   +$  feed
-    $^  [[%1 ~] who=ship kyz=(list [lyf=life key=ring])]
-    seed
-  ::  +seed: individual boot parameters
-  ::
-  +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
+    $^  $%  [[%1 ~] who=ship kyz=(list [lyf=life key=ring])]
+            [[%2 ~] who=ship ryf=rift kyz=(list [lyf=life key=ring])]
+        ==
+    [who=ship lyf=life key=ring sig=(unit oath:pki)]
   ::
   +$  task                                            ::  in request ->$
     $~  [%vega ~]                                     ::
@@ -3092,7 +3091,7 @@
     ==                                                ::
   ::
   +$  dawn-event
-    $:  =seed
+    $:  =feed
         spon=(list [=ship point:azimuth-types])
         czar=(map ship [=rift =life =pass])
         turf=(list turf)
