@@ -1354,7 +1354,7 @@
       (welp #/cod/grab (stud-to-pith:neo i.pos))
     ?:  !=(~ (~(peek plow:aux loam) p/our.bowl pat))
       $(pos t.pos)
-    =.  run  (on-dirt-card (do-grow-our pat vase/=>(..zuse !>(|=(~ *vase)))))
+    =.  run  (on-dirt-card (do-grow-our pat vase/=>(..zuse !>(|=(* *vase)))))
     $(pos t.pos)
   ::
   ++  build-fars
