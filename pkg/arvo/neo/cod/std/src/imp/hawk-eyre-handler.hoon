@@ -66,10 +66,9 @@
       ;
     ==
   ++  hawk
-    |_  [here=pith main=manx raw=manx]
+    |_  [here=pith main=manx raw=manx has-app=?]
     ++  id  *@da
     ++  idt  `tape`(zing (scan +:(scow %da id) (most dot (star ;~(less dot prn)))))
-    ++  has-app  %.y  ::  XX : switch on it. make it real. etc
     ++  slot  0  :: XX fix sky positional saving
     ++  lift
       ;div.hawk.fc.wf.hf
@@ -77,7 +76,10 @@
         =hx-params  "id,slot"
         =hx-vals  "\{\"id\": \"{<id>}\", \"slot\": \"{<slot>}\"}"
         ;+  header
-        ::;+  raw
+        ;div
+          =class  "raw p-page wf hf b0 scroll-y scroll-x {(trip ?:(has-app 'hidden' ''))}"
+          ;+  raw
+        ==
         ;div
           =class  "rendered wf hf b0 scroll-y scroll-x {(trip ?:(has-app '' 'hidden'))}"
           =id  "hawk-rendered-{idt}"
@@ -254,11 +256,15 @@
           ;div: 40
       ==
     ?~  src=(~(get by deps.bowl) %src)
+      =/  main
+        ;div.wf.hf.fc.jc.ac: nothing here
+      =/  raw
+        ;div.wf.hf.fc.jc.ac: raw view
       %:  eyre-cards
           eyre-id
           bowl
-          404
-          ;div: 404
+          200
+          ~(lift hawk #/[p/our.bowl] main raw |)
       ==
     =/  here  p.u.src
     ^-  (list card:neo)
@@ -274,12 +280,13 @@
       =.  kids.bol  q.u.src
       ::  XX src.bowl
       =/  main  (!<(htmx-type q.pail.root) bol)
-      =/  raw  *manx
+      =/  raw
+        ;div.wf.hf.fc.jc.ac: raw view
       %:  eyre-cards
           eyre-id
           bowl
           200
-          ~(lift hawk here.bol main raw)
+          ~(lift hawk here.bol main raw &)
       ==
     ::
         %'POST'
