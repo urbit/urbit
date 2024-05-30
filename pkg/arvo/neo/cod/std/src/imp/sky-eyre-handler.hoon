@@ -176,6 +176,7 @@
           """
         ==
         ;script: {(trip a-i-r)}
+        ;script: {(trip date-now)}
         ;+  favicon
         ;+  manifest
       ==
