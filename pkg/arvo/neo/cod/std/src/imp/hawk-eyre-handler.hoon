@@ -1,6 +1,8 @@
-/@  htmx
+/@  htmx-type=htmx
 /-  feather-icons
 /-  serv=server
+/>  htmx
+/<  node
 =>
   |%
   ++  main
@@ -23,16 +25,57 @@
         ;*  kids
       ==
     ==
+  ++  parse-url
+    |=  =request:http
+    ^-  [pax=path pam=(map @t @t)]
+    =/  parsed
+      %+  rash  url.request
+      ;~  plug
+          ;~(pfix fas (more fas smeg:de-purl:html))
+          yque:de-purl:html
+      ==
+    :-  (slag 2 -.parsed)   :: strip first 2 segments (/neo/hawk)
+    (malt +.parsed)
+  ++  parse-body
+    |=  =request:http
+    ^-  manx
+    %+  fall
+      (de-xml:html q:(fall body.request [p=0 q='']))
+    *manx
+  ++  eyre-cards
+    |=  [eyre-id=@ta =bowl:neo status=@ud =manx]
+    ^-  (list card:neo)
+    =/  =pith:neo  #/[p/our.bowl]/$/eyre
+    =/  head=sign:eyre:neo  [eyre-id %head [status [['content-type' 'text/html'] ~]]]
+    =/  data=sign:eyre:neo  [eyre-id %data `(manx-to-octs manx)]
+    =/  done=sign:eyre:neo  [eyre-id %done ~]
+    :~  [pith %poke eyre-sign/!>(head)]
+        [pith %poke eyre-sign/!>(data)]
+        [pith %poke eyre-sign/!>(done)]
+        [here.bowl %cull ~]
+    ==
+  ++  default-refresher
+    |=  =pith
+    =/  tath  (en-tape:pith:neo pith)
+    ;div
+      =hx-get  "/neo/hawk{tath}"
+      =hx-target  "closest .hawk"
+      =hx-select  ".hawk"
+      =hx-trigger  "load once"
+      =hx-swap  "outerHTML"
+      ;
+    ==
   ++  hawk
     |_  [here=pith main=manx raw=manx]
     ++  id  *@da
     ++  idt  `tape`(zing (scan +:(scow %da id) (most dot (star ;~(less dot prn)))))
     ++  has-app  %.y  ::  XX : switch on it. make it real. etc
+    ++  slot  0  :: XX fix sky positional saving
     ++  lift
       ;div.hawk.fc.wf.hf
         =id  "hawk-{idt}"
         =hx-params  "id,slot"
-        =hx-vals  "\{\"id\": \"{<id>}\", \"slot\": \"{<0>}\"}"
+        =hx-vals  "\{\"id\": \"{<id>}\", \"slot\": \"{<slot>}\"}"
         ;+  header
         ::;+  raw
         ;div
@@ -203,30 +246,67 @@
     =/  [=stud:neo =vase]  (need pal)
     =+  !<([eyre-id=@ta req=inbound-request:eyre] vase)
     :_  [stud vase]
-    =/  =pith:neo  #/[p/our.bowl]/$/eyre
-    =;  =manx
-      =/  head=sign:eyre:neo  [eyre-id %head [200 [['content-type' 'text/html'] ~]]]
-      =/  data=sign:eyre:neo  [eyre-id %data `(manx-to-octs manx)]
-      =/  done=sign:eyre:neo  [eyre-id %done ~]
-      :~  [pith %poke eyre-sign/!>(head)]
-          [pith %poke eyre-sign/!>(data)]
-          [pith %poke eyre-sign/!>(done)]
-          [here.bowl %cull ~]
+    ?.  authenticated.req
+      %:  eyre-cards
+          eyre-id
+          bowl
+          403
+          ;div: 40
       ==
     ?~  src=(~(get by deps.bowl) %src)
-      ;div: 404
-    =/  root=idea:neo  (~(got of:neo q.u.src) /)
-    ?>  =(%htmx p.pail.root)
-    =/  bol  *bowl:neo
-    =.  here.bol  p.u.src
-    =.  our.bol  our.bowl
-    =.  now.bol  now.bowl
-    =.  eny.bol  eny.bowl
-    =.  kids.bol  q.u.src
-    ::  XX src.bowl
-    =/  main  (!<(htmx q.pail.root) bol)
-    =/  raw  *manx
-    ~(lift hawk here.bol main raw)
+      %:  eyre-cards
+          eyre-id
+          bowl
+          404
+          ;div: 404
+      ==
+    =/  here  p.u.src
+    ^-  (list card:neo)
+    ?+    method.request.req  ~|(%unsupported-http-method !!)
+        %'GET'
+      =/  root=idea:neo  (~(got of:neo q.u.src) /)
+      ?>  =(%htmx p.pail.root)
+      =/  bol  *bowl:neo
+      =.  here.bol  here
+      =.  our.bol  our.bowl
+      =.  now.bol  now.bowl
+      =.  eny.bol  eny.bowl
+      =.  kids.bol  q.u.src
+      ::  XX src.bowl
+      =/  main  (!<(htmx-type q.pail.root) bol)
+      =/  raw  *manx
+      %:  eyre-cards
+          eyre-id
+          bowl
+          200
+          ~(lift hawk here.bol main raw)
+      ==
+    ::
+        %'POST'
+      =/  purl  (parse-url request.req)
+      =/  body  (parse-body request.req)
+      =/  poke-stud
+        ^-  stud:neo
+        ~|  %no-stud-specified
+        (~(got by pam.purl) 'stud')
+      =/  =pail:neo  [poke-stud (node [poke-stud body])]
+      =/  bol  *bowl:neo
+      =.  here.bol  here
+      =.  our.bol  our.bowl
+      =.  now.bol  now.bowl
+      =.  eny.bol  eny.bowl
+      =/  =manx
+        ?~  converter=(mole |.((htmx pail)))
+          (default-refresher here)
+        ::  XX virtualize
+        (u.converter bol)
+      :-  [here %poke pail]
+      %:  eyre-cards
+          eyre-id
+          bowl
+          200
+          manx
+      ==
+    ==
   --
 --
-

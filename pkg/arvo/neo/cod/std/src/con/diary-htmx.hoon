@@ -24,8 +24,8 @@
     =style  "margin-bottom: 30px;"
     =hx-post  "{(en-tape:pith:neo :(weld /neo/hawk here.bowl))}?stud=diary-diff"
     =hx-on-submit  "this.reset()"
-    =hx-target  "this"
-    =hx-swap  "afterend"
+    =hx-target  "find .loading"
+    =hx-swap  "outerHTML"
     =head  "put-entry"
     ;date-now(name "id");
     ;textarea.p2.bd1.br1
