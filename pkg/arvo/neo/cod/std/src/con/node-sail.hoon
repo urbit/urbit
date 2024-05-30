@@ -8,8 +8,9 @@
   =/  mu  ~(. manx-utils nod)
   =/  code
     =/  raw=tape  (need (val:mu "code"))
-    ?:  =((rear raw) '\0a')  (crip (snip raw))
-    (crip raw)
+    ?:  =(0 (lent raw))       (crip raw)
+    ?.  =((rear raw) '\0a')   (crip raw)
+    (crip (snip raw))
   =/  class  (vol:mu "classes")
   [code class `(render-udon code)]
 ++  render-udon
