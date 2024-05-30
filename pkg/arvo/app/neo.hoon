@@ -998,9 +998,10 @@
       ^-  form:neo
       |_  [=bowl:neo =saga:neo]
       ++  poke
-        |=  [s=stud:neo vax=^vase]
+        |=  =pail:neo
         ^-  (quip card:neo pail:neo)
-        `q.saga
+        ?>  =(p.pail stud)
+        `pail
       ++  init
         |=  pal=(unit pail:neo)
         ^-  (quip card:neo pail:neo)
