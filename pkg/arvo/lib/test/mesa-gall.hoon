@@ -1,8 +1,8 @@
 /+  *test, test-pub, test-sub
-/=  mesa-raw  /sys/vane/mesa
+/=  ames-raw  /sys/vane/ames
 /=  gall-raw  /sys/vane/gall
 ::
-=/  mesa-bunt  (mesa-raw ~zod)
+=/  ames-bunt  (ames-raw ~zod)
 =/  gall-bunt  (gall-raw ~zod)
 ::  basic helpers
 ::
@@ -23,11 +23,11 @@
   =+  [out adult]=(call:gall-core duct=~[/init] dud=~ task=[%init ~])
   adult
 ::
-++  mesa-nec-bud
+++  ames-nec-bud
   |=  [life=[nec=@ud bud=@ud] rift=[nec=@ud bud=@ud]]
   ::  create ~nec
   ::
-  =/  nec  (mesa-raw ~nec)
+  =/  nec  (ames-raw ~nec)
   =.  now.nec  ~1111.1.1
   =.  eny.nec  0v3f.arfnf
   =.  life.ax.nec  nec.life
@@ -38,7 +38,7 @@
   =/  nec-sec  sec:ex:crypto-core.ax.nec
   ::  create ~bud
   ::
-  =/  bud  (mesa-raw ~bud)
+  =/  bud  (ames-raw ~bud)
   =.  now.bud  ~1111.1.1
   =.  eny.bud  0v3f.arfnf
   =.  life.ax.bud  bud.life
@@ -48,14 +48,14 @@
   =/  bud-pub  pub:ex:crypto-core.ax.bud
   =/  bud-sec  sec:ex:crypto-core.ax.bud
   ::
-  =/  nec-sym  (derive-symmetric-key:mesa-raw bud-pub nec-sec)
-  =/  bud-sym  (derive-symmetric-key:mesa-raw nec-pub bud-sec)
+  =/  nec-sym  (derive-symmetric-key:ames-raw bud-pub nec-sec)
+  =/  bud-sym  (derive-symmetric-key:ames-raw nec-pub bud-sec)
   ?>  =(nec-sym bud-sym)
   ::  tell ~nec about ~bud
   ::
   =.  peers.ax.nec
     %+  ~(put by peers.ax.nec)  ~bud
-    =|  =peer-state:mesa-raw
+    =|  =peer-state:ames-raw
     =.  -.peer-state
       :*  symmetric-key=bud-sym
           life=bud.life
@@ -63,13 +63,13 @@
           public-key=bud-pub
           sponsor=~bud
       ==
-    =.  route.peer-state  `[direct=%.y *lane:mesa]
+    =.  route.peer-state  `[direct=%.y *lane:ames]
     [%known peer-state]
   ::  tell ~bud about ~nec
   ::
   =.  peers.ax.bud
     %+  ~(put by peers.ax.bud)  ~nec
-    =|  =peer-state:mesa-raw
+    =|  =peer-state:ames-raw
     =.  -.peer-state
       :*  symmetric-key=nec-sym
           life=nec.life
@@ -77,7 +77,7 @@
           public-key=nec-pub
           sponsor=~nec
       ==
-    =.  route.peer-state  `[direct=%.y *lane:mesa]
+    =.  route.peer-state  `[direct=%.y *lane:ames]
     [%known peer-state]
   ::  metamorphose
   ::
@@ -89,22 +89,22 @@
 ::  forward-declare to avoid repeated metamorphoses
 ::
 =/  gall-adult  (make-gall ~zod)
-=/  mesa-adult  nec:(mesa-nec-bud [1 1] [0 0])
+=/  ames-adult  nec:(ames-nec-bud [1 1] [0 0])
 ::  main core
 ::
 |%
 +$  gall-gate  _gall-adult
-+$  mesa-gate  _mesa-adult
++$  ames-gate  _ames-adult
 ::
 ++  nec-bud
   |=  [life=[nec=@ud bud=@ud] rift=[nec=@ud bud=@ud]]
-  =/  a  (mesa-nec-bud [nec bud]:life [nec bud]:rift)
+  =/  a  (ames-nec-bud [nec bud]:life [nec bud]:rift)
   =/  gall-nec  (make-gall ~nec)
   =.  gall-nec  (load-agent ~nec gall-nec %sub test-sub)
   =/  gall-bud  (make-gall ~bud)
   =.  gall-bud  (load-agent ~bud gall-bud %pub test-pub)
-  :*  nec=[mesa=nec.a gall=gall-nec]
-      bud=[mesa=bud.a gall=gall-bud]
+  :*  nec=[ames=nec.a gall=gall-nec]
+      bud=[ames=bud.a gall=gall-bud]
   ==
 ::  +gall-check-call: run gall task, assert produces expected-moves
 ::
@@ -141,91 +141,91 @@
   %.  [wire duct dud=~ sign-arvo]
   take:(gall-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
 ::
-++  mesa-reply
-  |=  [=mesa-gate =duct pac=(list move:mesa-bunt) =roof]
-  ^-  [(list move:mesa-bunt) ^mesa-gate]
+++  ames-reply
+  |=  [=ames-gate =duct pac=(list move:ames-bunt) =roof]
+  ^-  [(list move:ames-bunt) ^ames-gate]
   ~|  pac
   ?>  ?=([[* [%give [%send *]]] ~] pac)
-  =/  mesa-core  (mesa-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
-  %-  call:mesa-core
-  [duct dud=~ %soft `task:mesa`[%heer *lane:pact:mesa q.gift.card.i.pac]]
+  =/  ames-core  (ames-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
+  %-  call:ames-core
+  [duct dud=~ %soft `task:ames`[%heer *lane:pact:ames q.gift.card.i.pac]]
 ::
-++  mesa-expect-msg
-  |=  [pac=(list move:mesa-bunt) exp=noun]
-  ~|  pac
+++  ames-expect-msg
+  |=  [pac=(list move:ames-bunt) exp=noun]
   ?>  ?=([[* [%give [%response *]]] ~] pac)
   ?>  ?=([%page ^ ^ [@tas *]] load.gift.card.i.pac)
-  (expect-eq !>(q.r.load.gift.card.i.pac) !>(exp))
+  ~|  r.load.gift.card.i.pac
+  (expect-eq !>(r.load.gift.card.i.pac) !>(exp))
 ::
-++  mesa-make-pact
-  |=  [=mesa-gate =spar:ames =path =per=rift =space:mesa-bunt]
+++  ames-make-pact
+  |=  [=ames-gate =spar:ames =path =per=rift =space:ames-bunt]
   ^-  @
-  =/  mesa-core  (mesa-gate now=~1111.1.1 eny=`@`0xdead.beef *roof)
-  =/  =pact:pact:mesa-bunt  (ev-make-pact:mesa-core spar `path per-rift space)
-  p:(fax:plot:mesa-bunt (en:pact:mesa-bunt pact))
+  =/  ames-core  (ames-gate now=~1111.1.1 eny=`@`0xdead.beef *roof)
+  =/  =pact:pact:ames-bunt  (ev-make-pact:ames-core spar `path per-rift space)
+  p:(fax:plot:ames-bunt (en:pact:ames-bunt pact))
 ::
-++  mesa-scry-payload
-  |=  [=mesa-gate =ship =path]
+++  ames-scry-payload
+  |=  [=ames-gate =ship =path]
   ^-  cage
-  =/  mesa-core  (mesa-gate now=~1111.1.1 eny=`@`0xdead.beef *roof)
+  =/  ames-core  (ames-gate now=~1111.1.1 eny=`@`0xdead.beef *roof)
   %-  need   %-  need
-  %-  scry:(mesa-gate ~1111.1.10 `@`0xdead.beef *roof)
+  %-  scry:(ames-gate ~1111.1.10 `@`0xdead.beef *roof)
   =;  [care=@tas =beam]
     [[~ ~] / care beam]
   =<  [?>(?=(^ vew) car.vew) bem]
-  (need (inner-path-to-beam:mesa-core ship path))
-::  +mesa-check-call: run gall task, assert produces expected-moves
+  (need (inner-path-to-beam:ames-core ship path))
+::  +ames-check-call: run gall task, assert produces expected-moves
 ::
-++  mesa-check-call
-  |=  $:  =mesa-gate
+++  ames-check-call
+  |=  $:  =ames-gate
           [now=@da eny=@ =roof]
-          [=duct task=(hobo task:mesa)]
-          expected-moves=(list move:mesa-bunt)
+          [=duct task=(hobo task:ames)]
+          expected-moves=(list move:ames-bunt)
       ==
-  ^-  [tang ^mesa-gate]
-  =/  mesa-core  (mesa-gate now eny roof)
-  =^  moves  mesa-gate  (call:mesa-core duct dud=~ task)
-  [(expect-eq !>(expected-moves) !>(moves)) mesa-gate]
+  ^-  [tang ^ames-gate]
+  =/  ames-core  (ames-gate now eny roof)
+  =^  moves  ames-gate  (call:ames-core duct dud=~ task)
+  [(expect-eq !>(expected-moves) !>(moves)) ames-gate]
 ::
-++  mesa-check-call-with-dude
-  |=  $:  =mesa-gate
+++  ames-check-call-with-dude
+  |=  $:  =ames-gate
           [now=@da eny=@ =roof]
-          [=goof =duct task=(hobo task:mesa)]
-          expected-moves=(list move:mesa-bunt)
+          [=goof =duct task=(hobo task:ames)]
+          expected-moves=(list move:ames-bunt)
       ==
-  ^-  [tang ^mesa-gate]
-  =/  mesa-core  (mesa-gate now eny roof)
-  =^  moves  mesa-gate  (call:mesa-core duct dud=`goof task)
-  [(expect-eq !>(expected-moves) !>(moves)) mesa-gate]
+  ^-  [tang ^ames-gate]
+  =/  ames-core  (ames-gate now eny roof)
+  =^  moves  ames-gate  (call:ames-core duct dud=`goof task)
+  [(expect-eq !>(expected-moves) !>(moves)) ames-gate]
 ::
-++  mesa-call
-  |=  [=mesa-gate =duct task=(hobo task:mesa) =roof]
+++  ames-call
+  |=  [=ames-gate =duct task=(hobo task:ames) =roof]
   %.  [duct dud=~ task]
-  call:(mesa-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
+  call:(ames-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
 ::
-++  mesa-call-with-dude
-  |=  [=mesa-gate =goof =duct task=(hobo task:mesa) =roof]
+++  ames-call-with-dude
+  |=  [=ames-gate =goof =duct task=(hobo task:ames) =roof]
   %.  [duct `goof task]
-  call:(mesa-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
-::  +mesa: run mesa sign, assert produces expected-moves
+  call:(ames-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
+::  +ames: run ames sign, assert produces expected-moves
 ::
-++  mesa-check-take
-  |=  $:  =mesa-gate
+++  ames-check-take
+  |=  $:  =ames-gate
           [now=@da eny=@ =roof]
-          [=wire =duct sign=sign:mesa-bunt]
-          expected-moves=(list move:mesa-bunt)
+          [=wire =duct sign=sign:ames-bunt]
+          expected-moves=(list move:ames-bunt)
       ==
-  ^-  [tang ^mesa-gate]
-  =/  mesa-core  (mesa-gate now eny roof)
-  =^  moves  mesa-gate  (take:mesa-core wire duct dud=~ sign)
-  [(expect-eq !>(expected-moves) !>(moves)) mesa-gate]
+  ^-  [tang ^ames-gate]
+  =/  ames-core  (ames-gate now eny roof)
+  =^  moves  ames-gate  (take:ames-core wire duct dud=~ sign)
+  [(expect-eq !>(expected-moves) !>(moves)) ames-gate]
 ::
-++  mesa-take
-  |=  [=mesa-gate =wire =duct sign=sign:mesa-bunt =roof]
+++  ames-take
+  |=  [=ames-gate =wire =duct sign=sign:ames-bunt =roof]
   %.  [wire duct dud=~ sign]
-  take:(mesa-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
-:: ++  mesa-scry-hunk
-::   |=  $:  =mesa-gate
+  take:(ames-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
+:: ++  ames-scry-hunk
+::   |=  $:  =ames-gate
 ::           [now=@da eny=@ =roof]
 ::           our=ship
 ::           [lop=@ud len=@ud pax=path]
@@ -241,7 +241,7 @@
 ::     !<  (list @ux)
 ::     =<  q
 ::     %-  need  %-  need
-::     (scry:(mesa-gate now eny roof) ~ / %x beam)
+::     (scry:(ames-gate now eny roof) ~ / %x beam)
 ::   ::
 ::   =/  paz=(list have:ames)
 ::     %+  spun  meows
@@ -250,24 +250,24 @@
 ::     :_  +(num)
 ::     [num (sift-meow:ames blob)]
 ::   ::
-::   :-  sig:(sift-roar:mesa-raw (lent paz) (flop paz))
+::   :-  sig:(sift-roar:ames-raw (lent paz) (flop paz))
 ::   %+  spun  meows
 ::   |=  [meow=@ux num=_1]
 ::   :_  +(num)
 ::   (can 3 4^num 2^wid wid^`@`pat (met 3 meow)^meow ~)
 ::
-++  mesa-scry-peer
-  |=  $:  =mesa-gate
+++  ames-scry-peer
+  |=  $:  =ames-gate
           [now=@da eny=@ =roof]
           our=ship
           her=ship
       ==
-  ^-  peer-state:mesa-raw
+  ^-  peer-state:ames-raw
   =-  ?>(?=(%known -<) ->)
-  !<  ship-state:mesa-raw
+  !<  ship-state:ames-raw
   =<  q
   %-  need  %-  need
-  %-  scry:(mesa-gate now eny roof)
+  %-  scry:(ames-gate now eny roof)
   [[~ ~] / %x [[our %$ da+now] /peers/(scot %p her)]]
 ::
 ++  gall-scry-nonce
