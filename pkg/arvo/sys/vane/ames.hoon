@@ -5925,10 +5925,11 @@
                   ::  if %chum/%shut, we need to pass the sealed-path to find it
                   ::  in the pit.fren-state and then remove it
                   ::
+                  =/  res=@  (ev-decrypt-spac space dat.data cyf)
                   %*  $  ev-mess-page
                     sealed-path  `sealed-path
                   ::
-                    +<  [spar auth dat.data]
+                    +<  [spar auth res]
                   ==
                 ::  no; then this should be the first fragment, and auth should be present
                 ::
@@ -6031,8 +6032,10 @@
             ::  XX validate response
             =.  pit.u.rs           (~(del by pit.u.rs) path)
             =.  chums.ames-state   (~(put by chums.ames-state) ship.spar u.rs)
-            ~&   ev-mess-page/res
-            (ev-give-response for.u.ms path.spar ;;(gage:mess (cue res)))
+            ~|   gage-res-failed/`@ux`res
+            =+  ;;(=gage:mess (cue res))
+            ?>  ?=(^ gage)
+            (ev-give-response for.u.ms path.spar gage)
           ::
           ++  ev-mess-poke  :: XX refactor function signature; ack-spar not used
             |=  [dud=(unit goof) =ack=spar =pok=spar =gage:mess]
