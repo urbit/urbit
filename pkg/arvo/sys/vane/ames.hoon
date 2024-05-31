@@ -1575,7 +1575,7 @@
       =+  chum=(~(get by chums) ship)
       ?.  ?=([~ %known *] chum)
         =<  `pass  :: XX check suite?
-        .^([suite=@ud =pass] %j /=puby=/[(scot %p ship)]/[(scot %ud life)])
+        .^([suite=@ud =pass] %j /=puby=/[(scot %p ship)]/[(scot %ud life)])  :: XX rof
       ?.  =(life life.+.u.chum)
          ~  :: XX  log?
       `symmetric-key.+.u.chum
@@ -1597,7 +1597,7 @@
       ++  verify-sig
         |=  [pub=@uxI sig=@uxJ =binding]
         ^-  ?
-        (veri:ed:crypto sig (jam binding) pub)
+        (safe:as:(com:nu:crub:crypto pub) sig (jam binding))
       ::
       ++  mac
         |=  [key=@uxI =binding]
@@ -1641,6 +1641,7 @@
         =+  ;;([tag=@ cyf=byts] (cue sealed))
         =/  pat  dat:(decrypt (end 8 keys) tag cyf)
         :: ?>  (const-cmp tag (keyed-hash (rsh 8 keys) 16 pat))   :: XX FIXME
+        ~|  pat
         ;;(path (cue pat))
       ::
       --
@@ -5602,11 +5603,12 @@
           ::
           ++  ev-decrypt-path
             |=  [=path =ship]
-            ^-  [=space (unit cyf=@) inner=^path]
+            ^-  [=space (unit cyf=@) key=@ inner=^path]  :: XX remove key
             =/  tyl=(pole knot)  path
             ?+    tyl  !!
                 [%publ lyf=@ pat=*]  :: unencrypted
-              [publ/(slav %ud lyf.tyl) ~ pat.tyl]
+              =+  per=(ev-got-per ship)
+              [publ/(slav %ud lyf.tyl) ~ public-key.sat.per pat.tyl]
             ::
                 [%chum lyf=@ her=@ hyf=@ pat=[cyf=@ ~]]  :: encrypted with eddh key
               =/  lyf  (slaw %ud lyf.tyl)
@@ -5616,24 +5618,26 @@
               ?>  &(?=(^ lyf) ?=(^ her) ?=(^ hyf) ?=(^ cyf))
               ::  XX check =(ship u.her)
               =/  her=@p  ?:(=(u.her our) ship u.her)  :: %poke payloads are for us
-              =+  per=(ev-got-per her)        :: XX ev-get-per
-              :: ::  ?>  ?=(%known -.sat.per)        :: XX wat if %alien?
-              ?.  =(u.hyf life.sat.per)   !!  :: XX
+              =+  per=(ev-got-per her)         :: XX ev-get-per
+              :: ::  ?>  ?=(%known -.sat.per)  :: XX wat if %alien?
+              :: ?.  =(u.hyf life.sat.per)   !!  :: XX
               =*  key  symmetric-key.sat.per
-              :+  [%chum life.ames-state her life.sat.per key]
-                cyf
+              :^    [%chum life.ames-state her life.sat.per key]
+                  cyf
+                key
               (open-path:crypt `@`key u.cyf)
             ::
                 [%shut kid=@ pat=[cyf=@ ~]]  :: encrypted with group key
               =/  kid  (slaw %ud kid.tyl)
               =/  cyf  (slaw %uv cyf.pat.tyl)
               ?>  &(?=(^ kid) ?=(^ cyf))
-              =+  per=(ev-got-per ship)      :: XX ev-get-per
-              :: ::  ?>  ?=(%known -.sat.per)       :: XX wat if %alien?
+              =+  per=(ev-got-per ship)        :: XX ev-get-per
+              :: ::  ?>  ?=(%known -.sat.per)  :: XX wat if %alien?
               ?~  key=(get:key-chain client-chain.sat.per u.kid)
                 !!  :: XX handle
-              :+  [%shut u.kid -.u.key]
-                cyf
+              :^    [%shut u.kid -.u.key]
+                  cyf
+                -.u.key
               (open-path:crypt -.u.key u.cyf)
             ==
           ::
@@ -5642,27 +5646,15 @@
             ^-  ?
             ?>  ?=([%0 *] aut)
             =*  auth  p.aut
-            =/  =beak  [her.name %$ ud+1]  :: XX where do we get this?
-            =/  ful  (en-beam [beak pat.name])
+            =/  [inner=path key=@]
+              [inner key]:(ev-decrypt-path pat.name her.name)
+            ?~  inn=(inner-path-to-beam her.name inner)
+              %.n
+            =/  ful  (en-beam bem.u.inn)
+            ~|  [key=key aut=p.auth ful=ful rut=rut]
             ?-  -.auth
-              %&
-                =/  pub  (puck:ed:crypto 0)  :: XX get from jael?
-                (verify-sig:crypt pub p.auth ful rut)
-              %|
-                =/  key
-                  :: XX is there an easier way to get this?
-                  =/  tyl=(pole knot)  pat.name
-                  ?>  ?=([%chum lyf=@ her=@ hyf=@ *] tyl)
-                  =/  her  (slaw %p her.tyl)
-                  =/  hyf  (slaw %ud hyf.tyl)
-                  ?>  &(?=(^ her) ?=(^ hyf))
-                  ::  XX  =(our u.her) ??
-                  :: (get-key-for u.her u.hyf)
-                  =+  per=(ev-got-per her.name)   :: XX ev-get-per
-                  :: ::  ?>  ?=(%known -.sat.per)        :: XX wat if %alien?
-                  ?.  =(u.hyf life.sat.per)   !!  :: XX
-                  symmetric-key.sat.per
-                (verify-mac:crypt `@`key p.auth ful rut)
+              %&  (verify-sig:crypt key p.auth ful rut)
+              %|  (verify-mac:crypt `@`key p.auth ful rut)
             ==
           ::
           +|  %entry-points
@@ -5816,7 +5808,7 @@
             ~|  path-decryption-failed/pat.ack-name^pat.poke-name
             =/  ack=(pole iota)
               (ev-validate-path inner:(ev-decrypt-path pat.ack-name her.poke-name))
-            =/  [=space cyf=(unit @) =inner=path]
+            =/  [=space cyf=(unit @) key=@ =inner=path]
               (ev-decrypt-path [pat her]:poke-name)
             =/  pok=(pole iota)  (ev-validate-path inner-path)
             ::
@@ -5858,7 +5850,7 @@
             |=  =name:pact
             ?.  =(our her.name)
               ev-core
-            =/  res=(unit (unit cage))  (rof ~ /ames %ax (name-to-beam name))
+            =/  res=(unit (unit cage))  (ev-peek ~ /ames %x (name-to-beam name))
             ?.  ?=([~ ~ ^] res)
               ev-core
             (ev-emit hen %give %push ~ !<(@ q.u.u.res))
@@ -5869,13 +5861,15 @@
             ::  check for pending request (peek|poke)
             ::
             =*  ship  her.name
-            ?~  per=(~(get by chums.ames-state) ship)
+            ?~  chum=(~(get by chums.ames-state) ship)
               ev-core
-            ?>  ?=([~ %known *] per)  ::  XX alien agenda
-            =/  [=space cyf=(unit @) =inner=path]
+            ?>  ?=([~ %known *] chum)  ::  XX alien agenda
+            =.  per  [ship +.u.chum]
+            =*  pit  pit.sat.per
+            =/  [=space cyf=(unit @) key=@ =inner=path]
               (ev-decrypt-path pat.name ship)
             =*  sealed-path  pat.name
-            ?~  res=(~(get by pit.u.per) sealed-path)
+            ?~  res=(~(get by pit) sealed-path)
               ev-core
             ::  update and print connection status
             ::
@@ -5899,8 +5893,8 @@
                 ev-core
               =.  chums.ames-state
                 %+  ~(put by chums.ames-state)  her.name
-                =-  u.per(pit -)
-                %+  ~(put by pit.u.per)  sealed-path
+                =-  known/sat.per(pit -)
+                %+  ~(put by pit)  sealed-path
                 u.res(ps `[u.state ~])
               ::
               ::  request next fragment
@@ -5936,14 +5930,14 @@
                   ==
                 ::  no; then this should be the first fragment, and auth should be present
                 ::
-                ~|  [fag=fag tot=tot.data]
+                ~|  [fag=fag name=name data=data]
                 ?>  =(0 fag)
                 ?>  ?=([%0 *] aut.data)
                 ::  is this a standalone message?
                 ::
                 ?:  =(1 tot.data)
                   ::  XX remove comment
-                  :: ?>  (ev-authenticate (root:lss (met 3 dat.data)^dat.data) aut.data name)
+                  ?>  (ev-authenticate (root:lss (met 3 dat.data)^dat.data) aut.data name)
                   =/  =spar  [her.name inner-path]
                   =/  =auth:mess  p.aut.data
                   =/  res=@  (ev-decrypt-spac space dat.data cyf)
@@ -5969,8 +5963,8 @@
                 ::
                 =.  chums.ames-state
                   %+  ~(put by chums.ames-state)  her.name
-                  =-  u.per(pit -)
-                  %+  ~(put by pit.u.per)  sealed-path  :: XX was outer-path?
+                  =-  known/sat.per(pit -)
+                  %+  ~(put by pit)  sealed-path  :: XX was outer-path?
                   u.res(ps `[u.state ~[dat.data]])
                 =/  =pact:pact  [%peek name(wan [%data leaf.u.state])]
                 %+  ev-emit  unix-duct.ames-state
@@ -5993,8 +5987,8 @@
               =.  fags.ps  [dat.data fags.ps]
               =.  chums.ames-state
                 %+  ~(put by chums.ames-state)  her.name
-                =-  u.per(pit -)
-                %+  ~(put by pit.u.per)  sealed-path
+                =-  known/sat.per(pit -)
+                %+  ~(put by pit)  sealed-path
                 u.res
               ::  is the message incomplete?
               ::
@@ -6036,6 +6030,7 @@
             ::  XX validate response
             =.  pit.u.rs           (~(del by pit.u.rs) path)
             =.  chums.ames-state   (~(put by chums.ames-state) ship.spar u.rs)
+            ~&   ev-mess-page/res
             (ev-give-response for.u.ms path.spar ;;(gage:mess (cue res)))
           ::
           ++  ev-mess-poke  :: XX refactor function signature; ack-spar not used
@@ -6364,7 +6359,8 @@
           ++  ev-get-page
             |=  =name:pact
             ^-  (unit data:pact)
-            =/  res=(unit (unit cage))  (rof ~ /ames %ax (name-to-beam name))
+            =/  res=(unit (unit cage))
+              (ev-peek ~ /ames %x (name-to-beam name))  :: XX
             ?.  ?=([~ ~ *] res)  ~
             =;  page=pact:pact
               ?>(?=(%page -.page) `q.page)
@@ -7335,7 +7331,11 @@
                     ==
                 ::
                 =/  =public-key     pass:(~(got by keys.point) life.point)
-                =.  priv.ames-state  .^(@uw %j /=vein=/1)  :: XX remove
+                =.  priv.ames-state    :: XX remove
+                  ;;  @
+                  =<  q.q  %-  need  %-  need
+                  =-  ~&  -  -
+                  (rof [~ ~] /ames %j `beam`[[our %vein %da now] /1])  :: XX remove
                 =/  crypto-core     (nol:nu:crub:crypto priv.ames-state)
                 =/  =private-key    sec:ex:crypto-core
                 =/  =symmetric-key  (derive-symmetric-key public-key private-key)
@@ -7444,11 +7444,11 @@
               =*  peer  sat.per.core
               ::  update and print connection status
               ::
-              =/  expiry=@da  (add ~s30 last-contact.qos.peer)
-              =/  new=qos
-                ?.  (gte now expiry)  qos.peer
-                [%dead now]
-              =.  core  (update-qos:core new)
+              :: =/  expiry=@da  (add ~s30 last-contact.qos.peer)
+              :: =/  new=qos
+              ::   ?.  (gte now expiry)  qos.peer
+              ::   [%dead now]
+              :: =.  core  (update-qos:core new)
               ::  if =(~ pay.req); %naxplanation, %cork or external (i.e. not
               ::  coming from %ames) $peek request
               ::
