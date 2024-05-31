@@ -13,5 +13,4 @@
 ?~  beam=(de-beam path)
   ~|(%path-not-beam !!)
 =+  .^(file=@t %cx path)
-=+  .^(=tube:clay %cc /(scot %p p.bec)/[q.bec]/(scot %da now)/txt/mime)
-[/c/sync %into desk=q.u.beam | [s.u.beam [~ !<(mime (tube !>(~[file])))]]~]
+[/c/sync %info desk=q.u.beam & [s.u.beam %ins %mime !>([/ (as-octs:mimes:html file)])]~]
