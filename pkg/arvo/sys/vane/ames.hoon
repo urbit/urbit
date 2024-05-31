@@ -5823,13 +5823,6 @@
             ::  update and print connection status
             ::
             =.  ev-core  (update-qos %live last-contact=now)
-            ::  authenticate fragment
-            ::
-            ?>  %^    ev-authenticate
-                    (root:lss (met 3 dat.data)^dat.data)
-                  aut.data
-                poke-name
-            ::
             ?.  =(1 tot.data)
               =/  =dire  :: flow swtiching
                 %*(fo-flip-dire fo side *@ud^(fo-infer-dire:fo load.pok))  :: XX assert load is plea/boon
@@ -5841,6 +5834,12 @@
                 chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
               %+  ev-emit  hen
               [%pass wire %a meek/[space [her pat]:poke-name]]
+            ::  authenticate one-fragment message
+            ::
+            ?>  %^    ev-authenticate
+                    (root:lss (met 3 dat.data)^dat.data)
+                  aut.data
+                poke-name
             ::
             %:  ev-mess-poke
               ~   :: XX refactor function signature
