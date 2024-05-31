@@ -23,17 +23,10 @@
       =/  [eyre-id=@ta req=inbound-request:eyre]  task
       =/  lin  (parse-request-line:serv url.request.req)
       =/  inner=pith:neo  (pave:neo (slag 2 site.lin))
-      ?.  ?=([[%p @] *] inner)
-        =/  =manx
-          ;div: 400
-        =/  eyre=pith:neo  #/[p/our.bowl]/$/eyre
-        :_  sig/!>(~)
-        (~(respond neo:serv eyre) eyre-id (manx-response:gen:serv manx))
-      =/  args  (~(gas by *(map @t @t)) args.lin)
       =/  =crew:neo  (~(gas by *crew:neo) src/inner ~)
-      ~&  crew/crew
+      =/  =made:neo  [%hawk-eyre-handler `[stud vax] crew]
       :_  sig/!>(~)
-      :~  [(welp here.bowl #/[uv/eny.bowl]) %make %hawk-eyre-handler `[stud vax] crew]
+      :~  [(welp here.bowl #/[uv/eny.bowl]) %make made]
       ==
     ==
   ++  init
@@ -46,4 +39,3 @@
     ==
   --
 --
-
