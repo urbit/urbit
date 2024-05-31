@@ -5646,12 +5646,9 @@
             ^-  ?
             ?>  ?=([%0 *] aut)
             =*  auth  p.aut
-            =/  [inner=path key=@]
-              [inner key]:(ev-decrypt-path pat.name her.name)
-            ?~  inn=(inner-path-to-beam her.name inner)
-              %.n
-            =/  ful  (en-beam bem.u.inn)
-            ~|  [key=key aut=p.auth ful=ful rut=rut]
+            =/  key  key:(ev-decrypt-path [pat her]:name)
+            =/  ful  (en-beam [[her.name %$ ud+1] pat.name])
+            ~|  [key=key aut=p.auth ful=ful rut=rut]  =-  ?>(- -)  ::  log crash
             ?-  -.auth
               %&  (verify-sig:crypt key p.auth ful rut)
               %|  (verify-mac:crypt `@`key p.auth ful rut)
@@ -5817,16 +5814,22 @@
             ::
             ?.  =(her.ack-name our)  ::  do we need to respond to this ack?
               ~&  >>  %not-our-ack^her.ack-name^our
-              ev-core  :: XX TODO
+              ev-core  :: XX TODO log
             ?.  =(rcvr.pok our)  ::  are we the receiver of the poke?
               ~&  >  %poke-for-other^[rcvr.pok our]
-              ev-core  :: XX TODO
+              ev-core  :: XX TODO log
             ::
             =.  per  her.poke-name^+.u.chum-state
             ::  update and print connection status
             ::
             =.  ev-core  (update-qos %live last-contact=now)
-            ::  ?>  ?=(%known -.sat.per)
+            ::  authenticate fragment
+            ::
+            ?>  %^    ev-authenticate
+                    (root:lss (met 3 dat.data)^dat.data)
+                  aut.data
+                poke-name
+            ::
             ?.  =(1 tot.data)
               =/  =dire  :: flow swtiching
                 %*(fo-flip-dire fo side *@ud^(fo-infer-dire:fo load.pok))  :: XX assert load is plea/boon
@@ -5914,8 +5917,8 @@
                         !=(1 tot.data)
                         ::  XX (gth (met 3 dat.data) 1.024) ??
                     ==
-                  ::  XX authenticate? proof?
-                  ::
+                  ::  XX  authenticate jumbo frame
+                  ::  ?>  (ev-authenticate (root:lss (met 3 dat.data)^dat.data) aut.data name)
                   ::  yield complete message
                   ::
                   =/  =spar  [her.name inner-path]
@@ -5936,7 +5939,6 @@
                 ::  is this a standalone message?
                 ::
                 ?:  =(1 tot.data)
-                  ::  XX remove comment
                   ?>  (ev-authenticate (root:lss (met 3 dat.data)^dat.data) aut.data name)
                   =/  =spar  [her.name inner-path]
                   =/  =auth:mess  p.aut.data
@@ -7714,7 +7716,7 @@
           +|  %namespaces
           ::
           ++  ev-peek-publ
-            |=  [lyf=@ud =path]
+            |=  [bem=beam lyf=@ud =path]
             ^-  (unit (unit cage))
             ?~  lyf
               [~ ~]
@@ -7728,7 +7730,7 @@
             =*  priv  priv.ames-state
             ::  XX  rift.ames-state
             =/  gag  ?~(u.res ~ [p q.q]:u.u.res)  :: XX how does receiver distinguish these?
-            =/  ful  (en-beam bem.u.inn)
+            =/  ful  (en-beam bem)
             =/  ser  (jam gag)  :: unencrypted
             :^  ~  ~  %message
             !>([%sign (sign:crypt `@`priv ful (root:lss (met 3 ser)^ser)) ser])
@@ -7969,11 +7971,11 @@
               ::  publisher-side, message-level (public namespace)
               ::
                   [%publ lyf=@ pat=*]
-                =>  [tyl=tyl peek=ev-peek-publ:core slaw=slaw]
+                =>  [tyl=tyl bem=bem peek=ev-peek-publ:core slaw=slaw]
                 ~>  %memo./ames/peek/publ
                 =/  lyf  (slaw %ud lyf.tyl)
                 ?~  lyf  [~ ~]
-                (peek u.lyf pat.tyl)
+                (peek bem u.lyf pat.tyl)
               ::  publisher-side, message-level (two-party encrypted namespace)
               ::
                   [%chum lyf=@ her=@ hyf=@ cyf=@ ~]
