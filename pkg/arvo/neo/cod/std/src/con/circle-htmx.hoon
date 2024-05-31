@@ -15,9 +15,9 @@
 ::  manxes
 ++  friends-list
   ^-  manx
-  ;div.fc.g2  
+  ;div.fc.g2
     ;*
-    %+  turn  
+    %+  turn
       %+  murn
         ~  ::~(tap in ~(key by kids.bowl))
       |=  =pith  ((soft ship) ->:pith)

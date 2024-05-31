@@ -8,7 +8,7 @@
   :+  ~  %y
   %-  ~(gas by *lads:neo)
   ~
-++  deps  
+++  deps
   %-  ~(gas by *band:neo)
   ~
 ::
@@ -21,12 +21,11 @@
          %eyre-task
       =+  !<(=task:eyre:neo vax)
       =/  [eyre-id=@ta req=inbound-request:eyre]  task
-      =/  lin  (parse-request-line:serv url.request.req)
       =/  inner=pith:neo  #/[p/our.bowl]/sky
-      =/  args  (~(gas by *(map @t @t)) args.lin)
       =/  =crew:neo  (~(gas by *crew:neo) src/inner ~)
+      =/  =made:neo  [%sky-eyre-handler `[stud vax] crew]
       :_  sig/!>(~)
-      :~  [(welp here.bowl #/[uv/eny.bowl]) %make %sky-eyre-handler `[stud vax] crew]
+      :~  [(welp here.bowl #/[uv/eny.bowl]) %make made]
       ==
     ==
   ++  init
@@ -39,4 +38,3 @@
     ==
   --
 --
-

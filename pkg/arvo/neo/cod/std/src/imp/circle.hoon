@@ -4,7 +4,7 @@
 |%
 ++  state  pro/%sig
 ++  poke   (sy %circle-diff ~)
-++  kids   
+++  kids
   :+  ~  %y
   %-  ~(gas by *lads:neo)
   :~  [[|/%p |] pro/%sig ~]
@@ -19,7 +19,7 @@
     =+  !<(=diff vax)
     :_  pail
     ?-    -.diff
-        %add  
+        %add
       %+  turn  ~(tap by p.diff)
       |=  [=ship =made:neo]
       [(snoc here.bowl p/ship) %make made]
