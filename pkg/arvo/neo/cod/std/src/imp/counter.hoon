@@ -17,8 +17,10 @@
   ^-  (set stud:neo)
   (sy %counter-diff ~)
 ::
-::  counter can have no children
-::  beneath it in the tree
+::
+::  counter does not "constrain" its children;
+::  any shrub can be made below this shrub in the
+::  namespace, they can have any state and any kids
 ++  kids
   ^-  kids:neo
   *kids:neo
@@ -36,11 +38,23 @@
     ::
     ::  de-vase the state; we don't know what it is,
     ::  in most cases it will be counter's old state
-    +*  this  !<(number state-vase)
+    +*  state  !<(number state-vase)
+    ::
+    ::  +init, like +on-init
+    ++  init
+      ::
+      ::  minimal +init, just returns the
+      ::  initial state passed in on %make
+      |=  old=(unit pail:neo)
+      ^-  (quip card:neo pail:neo)
+      [~ (need old)]
+    ::
     ::  +poke, like +on-poke
     ++  poke
       ::
-      ::  XX explain stud
+      ::  a stud (e.g. %number or %counter-diff) is kind
+      ::  of like a mark, it only gets more complicated
+      ::  than that with types from other desks/ships
       |=  [=stud:neo vaz=vase]
       ::
       ::  return a (list card:neo) and a
@@ -55,15 +69,6 @@
       ?>  =(-.act %inc)
       ::
       ::  return no cards and a pail
-      [~ [%number !>(+(this))]]
-    ::
-    ::  +init, like +on-init
-    ++  init
-      ::
-      ::  minimal +init, just returns the
-      ::  initial state passed in on %make
-      |=  old=(unit pail:neo)
-      ^-  (quip card:neo pail:neo)
-      [~ (need old)]
+      [~ [%number !>(+(state))]]
   --
 --
