@@ -6,214 +6,203 @@
 />  htmx
 /<  node
 =>
-  |%
-  ++  main
-    ^-  curb:neo
-    [%or rol/[%ui-main pro/%htmx] pro/%htmx ~]
-    :: rol/[%ui-main pro/%htmx]
-  ++  kids-curb
-    ^-  curb:neo
-    any/~
-  :: rol/[%ui-list pro/%htmx]
-  ++  manx-to-octs
-    |=  man=manx
-    (as-octt:mimes:html (en-xml:html man))
-  ::
-  ++  render
-    |=  [main=manx kids=marl]
-    ;div
-      ;+  main
+|%
+++  manx-to-octs
+  |=  man=manx
+  (as-octt:mimes:html (en-xml:html man))
+++  parse-url
+  |=  =request:http
+  ^-  [pax=path pam=(map @t @t)]
+  =/  parsed
+    %+  rash  url.request
+    ;~  plug
+        ;~(pfix fas (more fas smeg:de-purl:html))
+        yque:de-purl:html
+    ==
+      :: strip first 2 segments (/neo/hawk)
+  :-  (slag 2 -.parsed)
+  (malt +.parsed)
+++  parse-body
+  |=  =request:http
+  ^-  manx
+  %+  fall
+    (de-xml:html q:(fall body.request [p=0 q='']))
+  *manx
+++  eyre-cards
+  |=  [eyre-id=@ta =bowl:neo status=@ud =manx]
+  ^-  (list card:neo)
+  =/  =pith:neo  #/[p/our.bowl]/$/eyre
+  =/  head=sign:eyre:neo  [eyre-id %head [status [['content-type' 'text/html'] ~]]]
+  =/  data=sign:eyre:neo  [eyre-id %data `(manx-to-octs manx)]
+  =/  done=sign:eyre:neo  [eyre-id %done ~]
+  :~  [pith %poke eyre-sign/!>(head)]
+      [pith %poke eyre-sign/!>(data)]
+      [pith %poke eyre-sign/!>(done)]
+      [here.bowl %cull ~]
+  ==
+++  default-refresher
+  |=  =pith
+  =/  tath  (en-tape:pith:neo pith)
+  ;div
+    =hx-get  "/neo/hawk{tath}"
+    =hx-target  "closest .hawk"
+    =hx-select  ".hawk"
+    =hx-trigger  "load once"
+    =hx-swap  "outerHTML"
+    ;
+  ==
+++  hawk
+  |_  [here=pith main=manx raw=manx has-app=?]
+  ++  id  *@da
+  ++  our-tape
+    =/  f  (snag 0 here)
+    ?@(f (trip f) (scow f))
+  ++  idt  `tape`(zing (scan +:(scow %da id) (most dot (star ;~(less dot prn)))))
+  ++  slot  0  :: XX fix sky positional saving
+  ++  lift
+    ;div.hawk.fc.wf.hf
+      =id  "hawk-{idt}"
+      =hx-params  "id,slot"
+      =hx-vals  "\{\"id\": \"{<id>}\", \"slot\": \"{<slot>}\"}"
+      ;+  header
       ;div
-        ;*  kids
+        =class  "raw p-page wf hf b0 scroll-y scroll-x {(trip ?:(has-app 'hidden' ''))}"
+        ;+  raw
+      ==
+      ;div
+        =class  "rendered wf hf b0 scroll-y scroll-x {(trip ?:(has-app '' 'hidden'))}"
+        =id  "hawk-rendered-{idt}"
+        =morph-retain  "class"
+        ;+  main
       ==
     ==
-  ++  parse-url
-    |=  =request:http
-    ^-  [pax=path pam=(map @t @t)]
-    =/  parsed
-      %+  rash  url.request
-      ;~  plug
-          ;~(pfix fas (more fas smeg:de-purl:html))
-          yque:de-purl:html
+  ++  header
+    ;header.b2.p1.frw.g1.ac
+      =id  "hawk-header-{idt}"
+      =style  "border: 2px solid var(--b2);"
+      ;button
+        =class  "p1 hover b2 br1 bd0 {(trip ?:(has-app '' 'toggled'))}"
+        =onclick
+          """
+          $(this).toggleClass('toggled');
+          $(this).closest('.hawk').find('.raw').toggleClass('hidden');
+          $(this).closest('.hawk').find('.rendered').toggleClass('hidden');
+          $(this).closest('header').children('.hawk-tog').toggleClass('hidden');
+          """
+        ;+  outline:feather-icons
       ==
-    :-  (slag 2 -.parsed)   :: strip first 2 segments (/neo/hawk)
-    (malt +.parsed)
-  ++  parse-body
-    |=  =request:http
-    ^-  manx
-    %+  fall
-      (de-xml:html q:(fall body.request [p=0 q='']))
-    *manx
-  ++  eyre-cards
-    |=  [eyre-id=@ta =bowl:neo status=@ud =manx]
-    ^-  (list card:neo)
-    =/  =pith:neo  #/[p/our.bowl]/$/eyre
-    =/  head=sign:eyre:neo  [eyre-id %head [status [['content-type' 'text/html'] ~]]]
-    =/  data=sign:eyre:neo  [eyre-id %data `(manx-to-octs manx)]
-    =/  done=sign:eyre:neo  [eyre-id %done ~]
-    :~  [pith %poke eyre-sign/!>(head)]
-        [pith %poke eyre-sign/!>(data)]
-        [pith %poke eyre-sign/!>(done)]
-        [here.bowl %cull ~]
-    ==
-  ++  default-refresher
-    |=  =pith
-    =/  tath  (en-tape:pith:neo pith)
-    ;div
-      =hx-get  "/neo/hawk{tath}"
-      =hx-target  "closest .hawk"
-      =hx-select  ".hawk"
-      =hx-trigger  "load once"
-      =hx-swap  "outerHTML"
-      ;
-    ==
-  ++  hawk
-    |_  [here=pith main=manx raw=manx]
-    ++  id  *@da
-    ++  idt  `tape`(zing (scan +:(scow %da id) (most dot (star ;~(less dot prn)))))
-    ++  has-app  %.y  ::  XX : switch on it. make it real. etc
-    ++  slot  0  :: XX fix sky positional saving
-    ++  lift
-      ;div.hawk.fc.wf.hf
-        =id  "hawk-{idt}"
-        =hx-params  "id,slot"
-        =hx-vals  "\{\"id\": \"{<id>}\", \"slot\": \"{<slot>}\"}"
-        ;+  header
-        ::;+  raw
-        ;div
-          =class  "rendered wf hf b0 scroll-y scroll-x {(trip ?:(has-app '' 'hidden'))}"
-          =id  "hawk-rendered-{idt}"
-          =morph-retain  "class"
-          ;+  main
-        ==
-      ==
-    ++  header
-      ;header.b2.p1.frw.g1.ac
-        =id  "hawk-header-{idt}"
-        =style  "border: 2px solid var(--b2);"
-        ;button
-          =class  "p1 hover b2 br1 bd0 {(trip ?:(has-app '' 'toggled'))}"
-          =onclick
-            """
-            $(this).toggleClass('toggled');
-            $(this).closest('.hawk').find('.raw').toggleClass('hidden');
-            $(this).closest('.hawk').find('.rendered').toggleClass('hidden');
-            $(this).closest('header').children('.hawk-tog').toggleClass('hidden');
-            """
-          ;+  outline:feather-icons
-        ==
-        ;div
-          =class  "hawk-tog frw g1 ac grow {(trip ?:(has-app '' 'hidden'))}"
-          ;*
-            =<  p
-            %^  spin  here
-                  0
-                |=  [=iota a=@]
-              :_  +(a)
-            ;div.fr.ac.g1
+      ;div
+        =class  "hawk-tog frw g1 ac grow {(trip ?:(has-app '' 'hidden'))}"
+        ;*
+          =<  p
+          %^  spin  here
+                0
+              |=  [=iota a=@]
+            :_  +(a)
+          ;div.fr.ac.g1
+            =style  "height: 2rem;"
+            ;div.f4.s-1: >
+            ;a.hover.b2.br1.p-1.s0.loader.fc.ac.jc
               =style  "height: 2rem;"
-              ;div.f4.s-1: >
-              ;a.hover.b2.br1.p-1.s0.loader.fc.ac.jc
-                =style  "height: 2rem;"
-                =hx-vals  "\{\"id\": \"{<id>}\", \"slot\": \"{<slot>}\"}"
-                =href  "/neo/hawk{(en-tape:pith:neo (scag +(a) here))}"
-                ;span.loaded
-                  ;+  ;/
-                  ?:  =(a 0)  "/"
-                  (trip ?@(iota iota (scot iota)))
-                ==
-                ;span.loading
-                  ;+  loading.feather-icons
-                ==
+              =hx-vals  "\{\"id\": \"{<id>}\", \"slot\": \"{<slot>}\"}"
+              =href  "/neo/hawk{(en-tape:pith:neo (scag +(a) here))}"
+              ;span.loaded
+                ;+  ;/
+                ?:  =(a 0)  "/"
+                (trip ?@(iota iota (scot iota)))
               ==
-            ==
-          ;div.grow;
-        ==
-        ;form
-          =class  "hawk-tog grow fr m0 relative {(trip ?:(has-app 'hidden' ''))}"
-          =style  "height: 2rem;"
-          =hx-get  "/neo/hawk"
-          =hx-target  "closest .hawk"
-          ;div.absolute
-            =style  "top: 0.5rem; right: 0.5rem;"
-            ;div.loader
-              ;div.loaded(style "opacity: 0"): ---
-              ;div.loading
-                ;+  loading:feather-icons
+              ;span.loading
+                ;+  loading.feather-icons
               ==
             ==
           ==
-          ;input.p-1.br1.b1.wf.s0.loaded.grow.bd0
-            =style  "margin-left: 5px;"
-            =type  "text"
-            =value  (en-tape:pith:neo here)
-            =oninput
-              """
-              $(this).attr('value', this.value);
-              $(this).parent().attr('hx-get', '/neo/hawk'+this.value);
-              htmx.process(document.body);
-              """
-            ;
+        ;div.grow;
+      ==
+      ;form
+        =class  "hawk-tog grow fr m0 relative {(trip ?:(has-app 'hidden' ''))}"
+        =style  "height: 2rem;"
+        =hx-get  "/neo/hawk"
+        =hx-target  "closest .hawk"
+        ;div.absolute
+          =style  "top: 0.5rem; right: 0.5rem;"
+          ;div.loader
+            ;div.loaded(style "opacity: 0"): ---
+            ;div.loading
+              ;+  loading:feather-icons
+            ==
           ==
         ==
-        ;div.fr.ac.jc.g1.hawk-actions
-          =id  "hawk-actions-{idt}"
-          ;button.p1.hover.b2.br1.loader.s-1
-            =id  "hawk-slide-up-{idt}"
-            =hx-post  "/neo/hawk/sky?stud=sky-diff"
-            =hx-target  "find .loading"
-            =hx-swap  "outerHTML"
-            =head  "slide-up"
-            =hawk-slot  "{<slot>}"
-            ;span.loaded
-              ;+  chevron-left:feather-icons
-            ==
-            ;span.loading
-              ;+  loading.feather-icons
-            ==
-          ==
-          ;button.p1.hover.b2.br1.loader.s-1
-            =id  "hawk-slide-down-{idt}"
-            =hx-post  "/neo/hawk/sky?stud=sky-diff"
-            =hx-target  "find .loading"
-            =hx-swap  "outerHTML"
-            =head  "slide-down"
-            =hawk-slot  "{<slot>}"
-            ;span.loaded
-              ;+  chevron-right:feather-icons
-            ==
-            ;span.loading
-              ;+  loading.feather-icons
-            ==
-          ==
-          ;button.p1.hover.b2.br1.loader.s-1
-            =id  "hawk-close-{idt}"
-            =hx-post  "/neo/hawk/sky?stud=sky-diff"
-            =hx-target  "find .loading"
-            =hx-swap  "outerHTML"
-            =head  "minimize"
-            =hawk-slot  "{<slot>}"
-            ;span.loaded
-              ;+  minimize:feather-icons
-            ==
-            ;span.loading
-              ;+  loading.feather-icons
-            ==
-          ==
-          ;style
-            ;+  ;/  %-  trip
-            '''
-            @media(max-width: 900px) {
-              .hawk-actions {
-                display: none !important;
-              }
-            }
-            '''
-          ==
+        ;input.p-1.br1.b1.wf.s0.loaded.grow.bd0
+          =style  "margin-left: 5px;"
+          =type  "text"
+          =value  (en-tape:pith:neo here)
+          =oninput
+            """
+            $(this).attr('value', this.value);
+            $(this).parent().attr('hx-get', '/neo/hawk'+this.value);
+            htmx.process(document.body);
+            """
+          ;
         ==
       ==
-    --
+      ;div.fr.ac.jc.g1.hawk-actions
+        =id  "hawk-actions-{idt}"
+        ;button.p1.hover.b2.br1.loader.s-1
+          =id  "hawk-slide-up-{idt}"
+          =hx-post  "/neo/hawk/{our-tape}/sky?stud=sky-diff"
+          =hx-target  "find .loading"
+          =hx-swap  "outerHTML"
+          =head  "slide-up"
+          =hawk-slot  "{<slot>}"
+          ;span.loaded
+            ;+  chevron-left:feather-icons
+          ==
+          ;span.loading
+            ;+  loading.feather-icons
+          ==
+        ==
+        ;button.p1.hover.b2.br1.loader.s-1
+          =id  "hawk-slide-down-{idt}"
+          =hx-post  "/neo/hawk/{our-tape}/sky?stud=sky-diff"
+          =hx-target  "find .loading"
+          =hx-swap  "outerHTML"
+          =head  "slide-down"
+          =hawk-slot  "{<slot>}"
+          ;span.loaded
+            ;+  chevron-right:feather-icons
+          ==
+          ;span.loading
+            ;+  loading.feather-icons
+          ==
+        ==
+        ;button.p1.hover.b2.br1.loader.s-1
+          =id  "hawk-close-{idt}"
+          =hx-post  "/neo/hawk/{our-tape}/sky?stud=sky-diff"
+          =hx-target  "find .loading"
+          =hx-swap  "outerHTML"
+          =head  "minimize"
+          =hawk-slot  "{<slot>}"
+          ;span.loaded
+            ;+  minimize:feather-icons
+          ==
+          ;span.loading
+            ;+  loading.feather-icons
+          ==
+        ==
+        ;style
+          ;+  ;/  %-  trip
+          '''
+          @media(max-width: 900px) {
+            .hawk-actions {
+              display: none !important;
+            }
+          }
+          '''
+        ==
+      ==
+    ==
   --
+--
 ^-  kook:neo
 |%
 ++  state  pro/%eyre-task
@@ -254,7 +243,7 @@
           eyre-id
           bowl
           403
-          ;div: 40
+          ;div: 403
       ==
     ?~  src=(~(get by deps.bowl) %src)
       %:  eyre-cards
@@ -293,23 +282,46 @@
         ^-  stud:neo
         ~|  %no-stud-specified
         (~(got by pam.purl) 'stud')
-      =/  =pail:neo  [poke-stud (node [poke-stud body])]
-      =/  bol  *bowl:neo
-      =.  here.bol  here
-      =.  our.bol  our.bowl
-      =.  now.bol  now.bowl
-      =.  eny.bol  eny.bowl
-      =/  =manx
-        ?~  converter=(mole |.((htmx pail)))
-          (default-refresher here)
-        ::  XX virtualize
-        (u.converter bol)
-      :-  [here %poke pail]
-      %:  eyre-cards
-          eyre-id
-          bowl
-          200
-          manx
+      ::=/  mul  `(each ^vase tang)`[%.y p=!>(~)]        :: stub for build system bug
+      =/  mul  (mule |.((node [poke-stud body])))
+      ?-    -.mul
+          %.n
+        %:  eyre-cards
+            eyre-id
+            bowl
+            400
+            ;div
+              ;*
+              %+  turn  (tang p.mul)
+              |=  =tank
+              ;div: {(of-wall:format (~(win re tank) 0 55))}
+            ==
+        ==
+      ::
+          %.y
+        =/  =pail:neo  [poke-stud p.mul]
+        =/  bol  *bowl:neo
+        =.  here.bol  here
+        =.  our.bol  our.bowl
+        =.  now.bol  now.bowl
+        =.  eny.bol  eny.bowl
+        =/  =manx
+          ?~  converter=(mole |.((htmx pail)))
+            (default-refresher here)
+          =/  mul
+            %-  mule
+            |.((u.converter bol))
+          ?-  -.mul
+            %.y  p.mul
+            %.n  ;div: error
+          ==
+        :-  [here %poke pail]
+        %:  eyre-cards
+            eyre-id
+            bowl
+            200
+            manx
+        ==
       ==
     ==
   --
