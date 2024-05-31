@@ -21,11 +21,13 @@
          %eyre-task
       =+  !<(=task:eyre:neo vax)
       =/  [eyre-id=@ta req=inbound-request:eyre]  task
-      =/  purl  (parse-url:serv request.req)
-      =/  inner=pith:neo  (pave:neo pax.purl)
+      =/  lin  (parse-request-line:serv url.request.req)
+      =/  inner=pith:neo  (pave:neo (slag 2 site.lin))
       =/  =crew:neo  (~(gas by *crew:neo) src/inner ~)
       =/  =made:neo  [%hawk-eyre-handler `[stud vax] crew]
+      =/  =made:neo  [%hawk-eyre-handler `[stud vax] crew]
       :_  sig/!>(~)
+      :~  [(welp here.bowl #/[uv/eny.bowl]) %make made]
       :~  [(welp here.bowl #/[uv/eny.bowl]) %make made]
       ==
     ==
