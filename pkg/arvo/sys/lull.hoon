@@ -1666,11 +1666,9 @@
           ++  verifier
             |%
             +$  state
-              $:  leaves=@
-                  leaf=@                 :: current leaf index
-                  cur=[l=@ r=@]          :: current pair subtree
-                  leaf-queue=(list @ux)
-                  parent-stack=(list @ux)
+              $:  leaves=@ud
+                  counter=@ud
+                  pairs=(map @ud [l=@ux r=@ux])
               ==
             --
           --
