@@ -1622,7 +1622,7 @@
         ~|  [key=key iv=iv byts=byts]
         =/  wid  (dec wid.byts)
         ?>  =(0x1 (cut 3 [wid 1] dat.byts))
-        =/  x  (xchacha:chacha:crypto key (hash 24 iv))
+        =/  x  (xchacha:chacha:crypto 8 key (hash 24 iv))
         (chacha:crypto 8 key.x nonce.x 0 wid^dat.byts)
       ::
       ++  seal-path
