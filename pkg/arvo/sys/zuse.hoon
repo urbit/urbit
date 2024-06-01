@@ -6367,6 +6367,7 @@
       ++  verify-msg
         |=  [=state [leaf=@ pair=(unit [l=@ux r=@ux])]]
         ^-  (unit _state)
+        ~|  [pair=pair leaf=leaf state=state]
         ?>  =(?=(^ pair) (expect-pair state))
         ?~  ustate=(verify-leaf state leaf)  ~
         ?~  pair  `u.ustate

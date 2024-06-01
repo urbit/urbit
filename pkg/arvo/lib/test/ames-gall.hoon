@@ -10,10 +10,15 @@
 ++  crypto-core
   |%  ++  nec  (pit:nu:crub:crypto 512 (shaz 'nec'))
       ++  bud  (pit:nu:crub:crypto 512 (shaz 'bud'))
+      ++  zod  (pit:nu:crub:crypto 512 (shaz 'zod'))
       ++  sign
         |=  [=ship data=@ux]
         %.  data
-        ?:(=(ship ~nec) sigh:as:nec sigh:as:bud)
+        ?:  =(ship ~nec)
+          sigh:as:nec
+        ?:  =(ship ~zod)
+          sigh:as:zod
+        sigh:as:bud
   --
 ::
 ++  make-gall
@@ -23,8 +28,8 @@
   =+  [out adult]=(call:gall-core duct=~[/init] dud=~ task=[%init ~])
   adult
 ::
-++  ames-nec-bud
-  |=  [life=[nec=@ud bud=@ud] rift=[nec=@ud bud=@ud]]
+++  ames-nec-bud-zod
+  |=  [life=[nec=@ud bud=@ud zod=@ud] rift=[nec=@ud bud=@ud zod=@ud]]
   ::  create ~nec
   ::
   =/  nec  (ames-raw ~nec)
@@ -53,6 +58,36 @@
   =/  nec-sym  (derive-symmetric-key:ames-raw bud-pub nec-sec)
   =/  bud-sym  (derive-symmetric-key:ames-raw nec-pub bud-sec)
   ?>  =(nec-sym bud-sym)
+  ::  create ~zod
+  ::
+  =/  zod  (ames-raw ~zod)
+  =.  now.zod  ~1111.1.1
+  =.  eny.zod  0v3f.arfnf
+  =.  life.ames-state.zod  zod.life
+  =.  rift.ames-state.zod  zod.rift
+  =.  rof.zod  |=(* ``[%noun !>(*(list turf))])
+  =.  crypto-core.ames-state.zod  zod:crypto-core
+  =.  priv.ames-state.zod  sec:ex:crypto-core.ames-state.zod
+  =/  zod-pub  0w9M.E8uEq.bMUA6.w3JpW.1mp5L.Olult.RbUD8.zKS7S.6ULTf.2Vu1e.X82gL.sJpEJ.1laGg.OqNMv.Lczji.r12Pn.~Z7bb.GCvty
+  =/  zod-sec  0w84.0MwlQ.y2Ly9.6HVmH.8SYwo.EvuLC.f5YRw.T2NzD.EHtjZ.gpHZb.J0Pu5.aTGVL.UugSA.EZ~E9.~PODC.cohVD.B1zWj.ZWnJ2
+  ::
+  =/  nec-sym  0wRP.97l8B.vvz64.3eFJz.lEp0u.8KKj-.0MiR6.8nbji.DBNki
+  =/  zod-sym  0wRP.97l8B.vvz64.3eFJz.lEp0u.8KKj-.0MiR6.8nbji.DBNki
+  ?>  =(nec-sym zod-sym)
+  ::  tell ~nec about ~zod
+  ::
+  =.  chums.ames-state.nec
+    %+  ~(put by chums.ames-state.nec)  ~zod
+    =|  =fren-state:ames
+    =.  -.fren-state
+      :*  symmetric-key=zod-sym
+          life=zod.life
+          rift=zod.rift
+          public-key=zod-pub
+          sponsor=~zod
+      ==
+    =.  route.fren-state  `[direct=%.y *lane:ames]
+    [%known fren-state]
   ::  tell ~nec about ~bud
   ::
   =.  chums.ames-state.nec
@@ -64,6 +99,20 @@
           rift=bud.rift
           public-key=bud-pub
           sponsor=~bud
+      ==
+    =.  route.fren-state  `[direct=%.y *lane:ames]
+    [%known fren-state]
+  ::  tell ~zod about ~nec
+  ::
+  =.  chums.ames-state.zod
+    %+  ~(put by chums.ames-state.zod)  ~nec
+    =|  =fren-state:ames
+    =.  -.fren-state
+      :*  symmetric-key=nec-sym
+          life=nec.life
+          rift=nec.rift
+          public-key=nec-pub
+          sponsor=~nec
       ==
     =.  route.fren-state  `[direct=%.y *lane:ames]
     [%known fren-state]
@@ -85,28 +134,30 @@
   ::
   =>  .(nec +:(call:(nec) ~[//unix] ~ %born ~))
   =>  .(bud +:(call:(bud) ~[//unix] ~ %born ~))
+  =>  .(zod +:(call:(zod) ~[//unix] ~ %born ~))
   ::
-  [nec=nec bud=bud]
+  [nec=nec bud=bud zod=zod]
 --
 ::  forward-declare to avoid repeated metamorphoses
 ::
 =/  gall-adult  (make-gall ~zod)
-=/  ames-adult  nec:(ames-nec-bud [1 1] [0 0])
+=/  ames-adult  nec:(ames-nec-bud-zod [1 1 1] [0 0 0])
 ::  main core
 ::
 |%
 +$  gall-gate  _gall-adult
 +$  ames-gate  _ames-adult
 ::
-++  nec-bud
-  |=  [life=[nec=@ud bud=@ud] rift=[nec=@ud bud=@ud]]
-  =/  a  (ames-nec-bud [nec bud]:life [nec bud]:rift)
+++  nec-bud-zod
+  |=  [life=[nec=@ud bud=@ud zod=@ud] rift=[nec=@ud bud=@ud zod=@ud]]
+  =/  a  (ames-nec-bud-zod [nec bud zod]:life [nec bud zod]:rift)
   =/  gall-nec  (make-gall ~nec)
   =.  gall-nec  (load-agent ~nec gall-nec %sub test-sub)
   =/  gall-bud  (make-gall ~bud)
   =.  gall-bud  (load-agent ~bud gall-bud %pub test-pub)
   :*  nec=[ames=nec.a gall=gall-nec]
       bud=[ames=bud.a gall=gall-bud]
+      zod=ames=zod.a
   ==
 ::  +gall-check-call: run gall task, assert produces expected-moves
 ::
