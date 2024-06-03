@@ -2768,7 +2768,10 @@
         ?~  bone=(bone-ok u.parsed wire rift.peer-state.peer-core)
           event-core
         ::
-        abet:(check-clog:(on-memo:peer-core u.bone [%boon payload]) u.bone id)
+        =.  peer-core  (on-memo:peer-core u.bone [%boon payload])
+        =?  peer-core  (gte now (add ~s30 last-contact.qos.peer-state.peer-core))
+          (check-clog:peer-core u.bone id)
+        abet:peer-core
       ::  +on-take-boon: receive request to give message to peer
       ::
       ++  on-take-boon
