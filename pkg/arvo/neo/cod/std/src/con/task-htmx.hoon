@@ -19,10 +19,7 @@
     =hx-trigger  "input changed delay:0.4s from:find textarea, input from:find input"
     =hx-swap  "none"
     =head  "edit"
-    ;h2.bold.s2.tc
-      ; {(trip (@t text.t))}
-    ==
-    ;label.fr.g2.ac.js.hidden
+    ;label.fr.g2.ac.js
       ;+  =-  ?.  done.t:+  -
         -(a.g [[%checked ""] a.g.-])
       ^-  manx
@@ -37,7 +34,7 @@
         ; ---
       ==
     ==
-    ;textarea.wf.p2.border.br1.ma.mono.hidden
+    ;textarea.wf.p2.border.br1.ma.mono
       =name  "text"
       =autocomplete  "off"
       =spellcheck  "false"
@@ -49,21 +46,30 @@
   ==
 ++  form-create
   |=  [head=@tas label=tape]
-  =/  placeholder  ?:(?=([%ud @ud] (rear here.bowl)) "subtask" "task")
-  ::~&  ['pith' sub-task]
   ^-  manx
-  ;div.fc.g1.p4
-    ;form.fr.g1
+  ;div.fc.g1
+    ;button.b0.br1.hover.p2.wfc.mono.f3
+      =onclick
+        """
+        this.classList.toggle('toggled');
+        this.nextElementSibling.classList.toggle('hidden');
+        this.nextElementSibling.firstChild.focus();
+        """
+      ; {label}
+    ==
+    ;form.fr.g1.hidden
       =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=task-diff"
       =head  (trip head)
       =hx-swap  "outerHTML"
       =hx-target  "find button .loading"
       ;input.wf.p1.border.br1.grow
-        =name  "text"
+        =name  "name"
         =autocomplete  "off"
         =type  "text"
+        =pattern  (trip '[a-z]{1}[a-z0-9\\-]+')
+        =title  "lowercase and heps"
         =required  ""
-        =placeholder  placeholder
+        =placeholder  "name"
         =oninput  "this.setAttribute('value', this.value);"
         ;
       ==
@@ -77,60 +83,38 @@
   |=  [=pith =idea:neo]
   =/  =pail:neo  pail.idea
   =/  t=task  !<(task q.pail)
-  =/  pith-tape  (en-tape:pith:neo (welp here.bowl pith))
   =-  ?.  done.t  -
     -(a.g [[%done ""] a.g.-])
   ^-  manx
   ;div.fc.g1
-    =here  pith-tape
+     =here  (en-tape:pith:neo (welp here.bowl pith))
     ;div.fr.g1
-      ;div.fr.ac.g1.grow
-        =hx-post  "/neo/hawk{pith-tape}?stud=task-diff"
-        =hx-trigger  "input changed delay:0.4s from:find .text, input from:find .done"
-        =hx-swap  "none"
-        =head  "edit"
-        ;+
-          =;  m
-            ?.  done.t  m
-            m(a.g [[%checked ""] a.g.m])
-          ^-  manx
-          ;input.p2.br1.border.done.s3
-            =type  "checkbox"
-            =name  "done"
-            =onclick  (trip 'if (this.checked) { this.setAttribute("checked", "");$(this.nextElementSibling).addClass("strike f3")} else {this.removeAttribute("checked");$(this.nextElementSibling).removeClass("strike f3")}')
-            ;
-          ==
-        ::
-        ;+  =-
-          =/  that  -
-          =/  classes
-            %+  weld
-              "grow p2 br1 text bold"
-            ?:(done.t " strike f3" "")
-          that(a.g [[%class classes] a.g.that])
-        ^-  manx
-        ;input
-          =type  "text"
-          =name  "text"
-          =value  (trip text.t)
-          =onclick  "$(this).addClass('border');$(this).removeClass('bold')"
-          =onblur  "$(this).addClass('bold');$(this).removeClass('border')"
-          =oninput  "this.setAttribute('value', this.value);"
-          ;
-        ==
+      ;button
+        =class  "b0 br1 hover p1 tl action mono fr g3 f2"
+        =style  "padding: 4px 9px;"
+        =type  "button"
+        =onclick
+          """
+          this.textContent = this.textContent === "=" ? "|" : "="; toggleChildren(this);
+          """
+        ;span.bold: =
       ==
       ;+  =-
         =/  that  -
         =/  classes
-          ::%+  weld
-            "b0 br1 hover p1 tl action mono fr g3"
-        ::   ?:(done.t " strike f3" "")
+          %+  weld
+            "b0 br1 hover p1 grow tl action mono fr g3"
+          ?:(done.t " strike f3" "")
         that(a.g [[%class classes] a.g.that])
       ^-  manx
       ;button
         =type  "button"
-        =onclick  (trip 'this.classList.toggle("toggled"); this.parentNode.nextElementSibling.classList.toggle("hidden"); if (this.parentNode.nextElementSibling.classList.contains("hidden")){this.innerHTML="<span class=\'p1\'>V</span>"} else {this.innerHTML="<span class=\'p1\'>⋀</span>"};')
-        ;span.p1: V
+        =onclick
+          """
+          this.classList.toggle('toggled'); this.parentNode.nextElementSibling.classList.toggle('hidden');
+          """
+        ;span.bold: {(trip -:(pout pith))}
+        ;span.break.f2: {(scag (fall (find [10 ~] (trip text.t)) 30) (trip text.t))}
       ==
       ;a
         =class  "b0 br1 hover p1 loader f3"
@@ -141,7 +125,78 @@
         ;span.loading: .
       ==
     ==
-    ;+  (dropdown-menu pith)
+    ;div.border.p2.br1.frw.g2.hidden
+      =hx-disinherit  "hx-indicator"
+      =style  "margin-left: 20px;"
+      ;button.b1.br1.p2.hover
+        =onclick  "this.parentNode.parentNode.parentNode?.insertAdjacentElement('beforeend', this.parentNode.parentNode); center(this);"
+        ; ↧
+      ==
+      ;button.b1.br1.p2.hover
+        =onclick  "this.parentNode.parentNode.nextElementSibling?.insertAdjacentElement('afterend', this.parentNode.parentNode);  center(this);"
+        ; ↓
+      ==
+      ;button.b1.br1.p2.hover
+        =onclick  "this.parentNode.parentNode.previousElementSibling?.insertAdjacentElement('beforebegin', this.parentNode.parentNode); center(this);"
+        ; ↑
+      ==
+      ;button.b1.br1.p2.hover
+        =onclick  "this.parentNode.parentNode.parentNode?.insertAdjacentElement('afterbegin', this.parentNode.parentNode);  center(this);"
+        ; ↥
+      ==
+      ;div.htmx-indicator.reorder-indicator.p2.f2
+        ; ---
+      ==
+      ;div.basis-full;
+      ;button.b1.br1.p2.hover.loader
+        =type  "button"
+        =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=task-diff"
+        =hx-swap  "outerHTML"
+        =hx-target  "find .loading"
+        =head  "kid-done"
+        =pith  (en-tape:pith:neo pith)
+        ;span.loaded: toggle
+        ;span.loading: ---
+      ==
+      ;button.b1.br1.p2.hover.loader
+        =type  "button"
+        =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=task-diff"
+        =hx-swap  "none"
+        =hx-on--after-request  "this.parentNode.parentNode.remove();"
+        =head  "oust"
+        =pith  (en-tape:pith:neo pith)
+        ;span.loaded: delete
+        ;span.loading: ---
+      ==
+      ;button.b1.br1.p2.hover
+        =type  "button"
+        =onclick  "this.nextElementSibling.classList.toggle('hidden'); this.classList.toggle('toggled');"
+        ; become
+      ==
+      ;div.basis-full.hidden.fr.g1
+        =hx-post  "/neo/hawk{(en-tape:pith:neo (welp here.bowl pith))}?stud=task-diff"
+        =hx-trigger  "become"
+        =hx-target  "find .loading"
+        =hx-swap  "outerHTML"
+        =head  "become"
+        ;input.grow.p2.br1.border
+          =type  "text"
+          =name  "path"
+          =value  (en-tape:pith:neo (welp here.bowl pith))
+          =oninput  "this.setAttribute('value', this.value);"
+          ;
+        ==
+        ;button.p2.b1.hover.br1.loader
+          =type  "button"
+          =onclick  "this.dispatchEvent(new CustomEvent('become', \{composed:true, bubbles: true}))"
+          ;span.loaded: become
+          ;span.loading: ---
+        ==
+      ==
+      ;div.basis-full.p2.pre.mono.scroll-x
+        ; {(trip text.t)}
+      ==
+    ==
     ;div.fc.g2.hidden
       =hx-disinherit  "hx-indicator"
       =style  "margin-left: 20px;"
@@ -149,82 +204,6 @@
     ==
   ==
   ::
-++  dropdown-menu
-  |=  =pith
-  ^-  manx
-  ;div.p2.br1.fr.g2.hidden
-    =hx-disinherit  "hx-indicator"
-    =style  "margin-left: 20px;"
-    ;button.b1.br1.p2.hover.hfc
-      =onclick  "this.parentNode.parentNode.parentNode?.insertAdjacentElement('beforeend', this.parentNode.parentNode); center(this);"
-      ; ↧
-    ==
-    ;button.b1.br1.p2.hover.hfc
-      =onclick  "this.parentNode.parentNode.nextElementSibling?.insertAdjacentElement('afterend', this.parentNode.parentNode);  center(this);"
-      ; ↓
-    ==
-    ;button.b1.br1.p2.hover.hfc
-      =onclick  "this.parentNode.parentNode.previousElementSibling?.insertAdjacentElement('beforebegin', this.parentNode.parentNode); center(this);"
-      ; ↑
-    ==
-    ;button.b1.br1.p2.hover.hfc
-      =onclick  "this.parentNode.parentNode.parentNode?.insertAdjacentElement('afterbegin', this.parentNode.parentNode);  center(this);"
-      ; ↥
-    ==
-    ;div.basis-full.hidden;
-    ;button.b1.br1.p2.hover.loader.hidden.hfc
-      =type  "button"
-      =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=task-diff"
-      =hx-swap  "outerHTML"
-      =hx-target  "find .loading"
-      =head  "kid-done"
-      =pith  (en-tape:pith:neo pith)
-      ;span.loaded: toggle
-      ;span.loading: ---
-    ==
-    ;button.b1.br1.p2.hover.loader.hfc
-      =type  "button"
-      =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=task-diff"
-      =hx-swap  "none"
-      =hx-on--after-request  "this.parentNode.parentNode.remove();"
-      =head  "oust"
-      =pith  (en-tape:pith:neo pith)
-      ;span.loaded: delete
-      ;span.loading: ---
-    ==
-    ;button.b1.br1.p2.hover.hfc
-      =type  "button"
-      =onclick  "this.nextElementSibling.classList.toggle('hidden'); this.classList.toggle('toggled');"
-      ; become
-    ==
-    ;div.basis-full.hidden.fr.g1.hfc
-      =hx-post  "/neo/hawk{(en-tape:pith:neo (welp here.bowl pith))}?stud=task-diff"
-      =hx-trigger  "become"
-      =hx-target  "find .loading"
-      =hx-swap  "outerHTML"
-      =head  "become"
-      ;input.grow.p2.br1.border
-        =type  "text"
-        =name  "path"
-        =value  (en-tape:pith:neo (welp here.bowl pith))
-        =oninput  "this.setAttribute('value', this.value);"
-        ;
-      ==
-      ;button.b1.br1.p2.hover.loader
-        =type  "button"
-        =onclick  "this.dispatchEvent(new CustomEvent('become', \{composed:true, bubbles: true}))"
-        ;span.loaded: become
-        ;span.loading: ---
-      ==
-    ==
-    ;div.htmx-indicator.reorder-indicator.p2.f2.hfc
-      ; ---
-    ==
-    ;div.basis-full.p2.pre.mono.scroll-x.hidden
-      ; {(trip text.t)}
-    ==
-  ==
-::
 ++  script
   ;script
     ;+  ;/  %-  trip

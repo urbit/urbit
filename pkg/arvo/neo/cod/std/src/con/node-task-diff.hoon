@@ -4,7 +4,7 @@
 :-  [%node %$ %task-diff]
 |=  nod=node
 ^-  task-diff
-=*  mu  ~(. manx-utils nod)
+=/  mu  ~(. manx-utils nod)
 =/  head  (@tas (got:mu %head))
 %-  task-diff
 ?+  head
@@ -15,12 +15,12 @@
   [head (pave:neo path)]
 ::
     %append
-  =/  text  (vol:mu "text")
-  [head text | ~]
+  =/  name  (vol:mu "name")
+  [head name '' | ~]
 ::
     %prepend
-  =/  text  (vol:mu "text")
-  [head text | ~]
+  =/  name  (vol:mu "name")
+  [head name '' | ~]
 ::
     %oust
   =/  path  (stab (got:mu %pith))
@@ -40,7 +40,6 @@
   =/  piths
     %+  turn  c.nod
     |=  =manx
-    =.  nod  manx
     =/  here  (get:mu %here)
     ?~  here
       ~&  >>>  [%bad-here manx]
