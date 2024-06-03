@@ -1,5 +1,6 @@
 /@  number        ::  @ud
 /@  counter-diff  ::  [%inc ~]
+::  XX note about types
 ::
 ::  outer core of a shrub: define state, pokes,
 ::  dependencies, and kids
@@ -8,10 +9,9 @@
 ::
 ::  the state of the counter is a %number, just a @ud
 ::  a curb:neo is a constraint imposed on a shrub
-::  here the state is %only ever one thing
 ++  state
   ^-  curb:neo
-  [%only %number]
+  [%pro %number]
 ::
 ::  the set of pokes that counter
 ::  takes only contains %counter-diff
@@ -50,9 +50,8 @@
     ::  +poke, like +on-poke
     ++  poke
       ::
-      ::  a stud (e.g. %number or %counter-diff) is kind
-      ::  of like a mark, it only gets more complicated
-      ::  than that with types from other desks/ships
+      ::  a stud (e.g. %number or %counter-diff) is
+      ::  like a mark
       |=  [=stud:neo vaz=vase]
       ::
       ::  return a (list card:neo) and a
@@ -61,11 +60,12 @@
       ::
       ::  assert the stud of the pail (pair stud vase),
       ::  which is the shrub's state given in the sample
+      ::  (technically unnecessary in this case, but good
+      ::  hygiene)
       ?>  =(p.pail %number)
       =/  state  !<(number q.pail)
       ::
-      ::  assert that the poke's stud is %counter-diff,
-      ::  which protects counter from evil vases
+      ::  assert that the poke's stud is %counter-diff
       ?>  =(%counter-diff stud)
       =/  act
         !<(counter-diff vaz)
