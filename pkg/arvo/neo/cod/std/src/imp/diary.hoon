@@ -1,23 +1,23 @@
 /@  txt         ::  @t
 /@  diary       ::  name=@t
-/@  diary-diff  ::  ?([%del-entry id=@da] [%put-entry id=@da =txt])
+/@  diary-diff  ::  ?([%put-entry id=@da =txt] [%del-entry id=@da])
 ::
 ::  outer core of a shrub: define state, pokes,
 ::  dependencies, and kids
 ^-  kook:neo
 |%
 ::
-::  diary's state is %only a %diary, just a @t
+::  diary's state is a %diary, just a @t
 ++  state
   ^-  curb:neo
-  [%only %diary]
+  [%pro %diary]
 ::
 ::  diary takes pokes with stud %diary-diff
 ++  poke
   ^-  (set stud:neo)
   (sy %diary-diff ~)
 ::
-::  constrain shrubs below diary in the namespace tree
+::  constrain shrubs below diary in the namespace
 ::  by defining the types of their state and pokes
 ++  kids
   ::  kids:neo is a (unit port:neo)
@@ -32,8 +32,9 @@
   %-  ~(gas by *lads:neo)
   :~  :-  ::  pish:neo
           ::  to simplify: [%.n @da] means the kid's
-          ::  path ends with a @da, and %.n is there
-          ::  as boilerplate to complete the pish:neo
+          ::  path contains any @da, and %.n is there
+          ::  to signify that the pith can not have more 
+          ::  fields afterwards
           [[%.n %da] %.n]
       ::  lash:neo is (pair curb:neo (set stud:neo))
       ::  curb:neo defines the kids' state
@@ -69,11 +70,8 @@
     ::  assert the poke comes from our ship
     ::  src.bowl:neo is (pair ship pith)
     ?>  =(our ship.src):bowl
-    ?-  -.act
-        %del-entry
-      [~ [%diary !>(state)]]
-    ::
-        %put-entry
+    ?-    -.act
+       %put-entry
       :_  [%diary !>(state)]
       ::  create list of one card:neo
       ::  card:neo is (pair pith:neo note:neo)
@@ -96,9 +94,18 @@
               `[%txt !>(txt.act)]
               ::  conf:neo is (map term pith:neo)
               ::  declare this new shrub's dependencies,
-              ::  which are also shrubs
+              ::  which are also shrubs; 
+              ::  in this case, none
               ~
           ==
+      ==
+        %del-entry
+      :_  [%diary !>(state)]
+      :~  :-  %+  welp
+                here.bowl
+              ~[[%da id.act]]
+          ^-  note:neo
+          [%tomb ~]
       ==
     ==
   --
