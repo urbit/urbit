@@ -35,12 +35,12 @@
 ^-  kook:neo
 |%
 ++  state  pro/%task
-++  poke   (sy %task-diff %rely ~)
+++  poke   (sy %task-diff %gift ~)
 ++  kids   
   :+  ~  %y
   %-  ~(gas by *lads:neo)
   :~  :-  [|/%ud |]
-    [pro/%task (sy %task-diff %rely ~)]
+    [pro/%task (sy %task-diff %gift ~)]
   ==
 ++  deps   *deps:neo
 ++  form
@@ -55,7 +55,7 @@
     ^-  (quip card:neo pail:neo)
     =/  this  !<(task state-vase)
     ?+    stud  !!
-        %rely
+        %gift
       ::check if all kid tasks are done
       ?:  (check-kids bowl)
         [~ task/!>(this(done %.y))]
