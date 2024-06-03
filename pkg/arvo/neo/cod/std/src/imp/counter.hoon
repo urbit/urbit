@@ -5,9 +5,9 @@
 ^-  kook:neo
 |%
 ::
-::  the state of counter is a %number, just a @ud
-::  curb:neo is a head-tagged constraint on the state
-::  here the state is only ever one thing: a %number
+::  the state of the counter is a %number, just a @ud
+::  a curb:neo is a constraint imposed on a shrub
+::  here the state is %only ever one thing
 ++  state
   ^-  curb:neo
   [%only %number]
