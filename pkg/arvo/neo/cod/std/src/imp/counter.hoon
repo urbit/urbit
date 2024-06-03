@@ -1,7 +1,8 @@
 /@  number
 /@  counter-diff
 ::
-::  outer core of a shrub
+::  outer core of a shrub: define state, pokes,
+::  dependencies, and kids
 ^-  kook:neo
 |%
 ::
@@ -31,7 +32,7 @@
   ^-  deps:neo
   *deps:neo
 ::
-::  inner core of a shrub
+::  inner core of a shrub: business logic
 ++  form
   ^-  form:neo
   ::  treat this door's sample as boilerplate
