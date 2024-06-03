@@ -6,10 +6,11 @@
 |%
 ::
 ::  the state of counter is a %number, just a @ud
-::  XX explain %pro / $curb?
+::  curb:neo is a head-tagged constraint on the state
+::  here the state is only ever one thing: a %number
 ++  state
   ^-  curb:neo
-  [%pro %number]
+  [%only %number]
 ::
 ::  the set of pokes that counter
 ::  takes only contains %counter-diff
