@@ -5946,7 +5946,8 @@
                 ::  is this a standalone message?
                 ::
                 ?:  =(1 tot.data)
-                  :: ?>  (ev-authenticate (root:lss (met 3 dat.data)^dat.data) aut.data name)
+                  =/  rut  (root:builder:lss (met 3 dat.data)^dat.data)
+                  ?>  (ev-authenticate rut aut.data name)
                   =/  =spar  [her.name inner-path]
                   =/  =auth:mess  p.aut.data
                   =/  res=@  (ev-decrypt-spac space dat.data cyf)
@@ -5962,20 +5963,9 @@
                   =>  aut.data
                   ?>  ?=([%0 *] .)
                   ?~(q ~ ?@(u.q [u.q ~] [p q ~]:u.q))
-                :: =.  proof  [(leaf-hash:lss fag dat.data) proof]
-                :: =/  dat  (met 3 dat.data)^dat.data
-                :: =|  =state:builder:lss
-                :: =.  state  (add-leaf:builder:lss state(proof proof) dat)
-                :: =/  b  (finalize:builder:lss state)
-                :: :: ?>  (ev-authenticate (recover-root:lss proof) aut.data name)
-                :: :: ?~  state=(init:verifier:lss tot.data proof)
-
-                :: ~|  [state=state b=b pair=(~(get by pairs.state) fag) fag=fag]
-                :: =/  vstate=state:verifier:lss
-                ::   (init:verifier:lss (lent pairs.b) proof.b)
-                :: =.  vstate  (verify-msg:verifier:lss vstate dat ~)
                 =.  proof  (complete-inline-proof:verifier:lss proof dat.data)
-                :: ?>  (ev-authenticate (recover-root:verifier:lss proof) aut.data name)
+                ~|  ev-authenticate/[proof=proof aut=aut.data name=name]
+                ?>  (ev-authenticate (recover-root:verifier:lss proof) aut.data name)
                 =/  state  (init:verifier:lss tot.data proof)
                 =.  state  (verify-msg:verifier:lss state 1.024^dat.data ~)
                 ::  initialize packet state and request next fragment
@@ -5998,8 +5988,6 @@
               =/  pair=(unit [l=@ux r=@ux])
                 ?~  aut.data  ~
                 `?>(?=([%1 *] .) p):aut.data
-              :: =/  vstate=state:verifier  (init:verifier (lent pairs.p) proof.p)
-              :: =.  vstate  (verify-msg:verifier vstate 1.024^0 &1:pairs.p)
               =/  dat  (met 3 dat.data)^dat.data
               ::  update packet state
               ::
@@ -7957,9 +7945,6 @@
                     =>  [ser=ser ..lss]
                     ~>  %memo./ames/lss
                     (build:builder:lss (met 3 ser)^ser)
-                    :: =|  =state:builder:lss
-                    :: =.  state  (add-leaf:builder:lss state (met 3 ser)^ser)
-                    :: (finalize:builder:lss state)
                   ~&  >>  auth-proof/proof.lss-proof
                   =/  dat  [wid aut (rep 8 proof.lss-proof)]  :: XX types
                   [nam dat]
@@ -7969,13 +7954,6 @@
                     =>  [ser=ser ..lss]
                     ~>  %memo./ames/lss
                     (build:builder:lss (met 3 ser)^ser)
-                    :: =|  =state:builder:lss
-                    :: =|  fag=@ud
-                    :: |-  ^-  [root=@ux proof=(list @ux) pairs=(list (unit (pair @ux @ux)))]
-                    :: ?:  (gte fag wid)
-                    ::   (finalize:builder:lss state)
-                    :: =/  sic  (cut boq [fag 1] ser)
-                    ::   $(fag +(fag), state (add-leaf:builder:lss state (met 3 sic)^sic))
                   =/  nam  [[our rif] [boq ?:(nit ~ [%data fag])] pat]
                   =/  aut=auth:pact
                     ?:  &((lte wid 4) =(0 fag))
@@ -7994,8 +7972,8 @@
                     ::
                     ?:  (gte fag (lent pairs.lss-proof))  ~
                     =/  pair=(unit (pair @ux @ux))
-                      (snag fag pairs.lss-proof)
-                      :: (snag ?:((gth wid 4) fag (dec fag)) pairs.lss-proof)
+                      :: (snag fag pairs.lss-proof)
+                      (snag ?:((gth wid 4) fag (dec fag)) pairs.lss-proof)
                     ~&  >>  pair/pair
                     [%1 (need pair)]
                   ::
