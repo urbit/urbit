@@ -1583,7 +1583,6 @@
 ++  seize
   |=  [par=pith:neo child=pith:neo car=?(%y %z)]
   ^-  ?
-  =-  ~&(seize/[par child -] -)
   ?:  =(%y car)
     =(`par (~(parent of:neo tide) child))
   !=(~ (dif:pith:neo par child))
@@ -1689,14 +1688,12 @@
     (ingest cards)
   ::
   ++  plunder
-    ~&  plundering/~
     ^+  arvo
     =/  by-parent=(jug pith:neo dust:neo)
       %+  roll  grit
       |=  [=dust:neo by-parent=(jug pith:neo dust:neo)]
       %-  ~(gas ju by-parent)
       =/  adoptees  (adopt pith.dust)
-      ~&  adoptees/adoptees
       (turn ~(tap in (adopt pith.dust)) |=(=pith:neo [pith [(dif:pith:neo pith pith.dust) +.dust]]))
     :: XX: assert gifts empty
     =.  gifts
@@ -1704,7 +1701,6 @@
       |=  =pith:neo
       ^-  [pith:neo gift:neo]
       [(tail pith) (gas-gift ~(tap in (~(get ju by-parent) pith)))]
-    ~&  gifts/gifts
     =.  smut  (welp smut grit)
     =.  grit   ~
     give

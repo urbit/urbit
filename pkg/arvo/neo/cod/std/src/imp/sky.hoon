@@ -42,6 +42,7 @@
               ==
             =.  open.this  (dec open.this)
             sky/!>(this)
+        ::
           %maximize
             :-  ~
             =.  hawks.this
