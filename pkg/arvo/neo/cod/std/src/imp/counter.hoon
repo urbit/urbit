@@ -18,9 +18,9 @@
   (sy %counter-diff ~)
 ::
 ::
-::  counter does not "constrain" its children;
-::  any shrub can be made below this shrub in the
-::  namespace, they can have any state and any kids
+::  counter does not constrain the type and behaviour of
+::  its children; any shrub can be made below this shrub
+::  in the tree, they can have any state, kids, or pokes
 ++  kids
   ^-  kids:neo
   *kids:neo
@@ -34,11 +34,7 @@
 ++  form
   ^-  form:neo
   ::  treat this door's sample as boilerplate
-  |_  [=bowl:neo =aeon:neo stud:neo state-vase=vase]
-    ::
-    ::  de-vase the state; we don't know what it is,
-    ::  in most cases it will be counter's old state
-    +*  state  !<(number state-vase)
+  |_  [=bowl:neo =aeon:neo =pail:neo]
     ::
     ::  +init, like +on-init
     ++  init
@@ -60,6 +56,11 @@
       ::  return a (list card:neo) and a
       ::  pail, which is a (pair stud vase)
       ^-  (quip card:neo pail:neo)
+      ::
+      ::  assert the stud of the pail (pair stud vase),
+      ::  which is the shrub's state given in the sample
+      ?>  =(p.pail %number)
+      =/  state  !<(number q.pail)
       ::
       ::  assert that the poke's stud is %counter-diff,
       ::  which protects counter from evil vases
