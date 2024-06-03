@@ -1,6 +1,6 @@
-:-  [%ford-out %$ %htmx]
+:-  [%vase %$ %htmx]
 =/  debug  |
-|=  fod=[cache=(unit vase) ~]
+|=  v=vase
 |=  =bowl:neo
 ^-  manx
 =<  apex
@@ -580,9 +580,7 @@
 ++  apex
   ;div
     ;+
-    ?~  cache.fod
-      empty
-    (have u.cache.fod)
+    (have v)
   ==
 ++  empty
   ;h4: No build result here
