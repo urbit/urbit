@@ -76,7 +76,7 @@
 =*  state  -
 =<
   %-  mute
-  %+  libverb  &
+  %+  libverb  |
   %-  agent:dbug
   ^-  agent:gall
   |_  =bowl:gall
@@ -197,13 +197,13 @@
 ++  do-ack
   |=  =ack:neo
   ^-  (list card)
-  ?:  =(p.p.ack sys-pith)
+  ?:  =(p.ack sys-pith)
     %.  *(list card)
     ?~  q.ack
       same
     ?-  -.u.q.ack
-      %goof  (mean leaf/"goof on sys" tang.u.q.ack)
-      %gone  (mean leaf/"no dependency {<term.u.q.ack>}" ~)
+      %goof  (slog leaf/"goof on sys" tang.u.q.ack)
+      %gone  (slog leaf/"no dependency {<term.u.q.ack>}" ~)
     ==
   =/  src=name:neo  (de-pith:name:neo p.p.ack)
   =/  =wire  nack/(pout p.p.ack)
@@ -272,6 +272,7 @@
 ++  on-move
   |=  =move:neo
   ^+  run
+  %-  (slog leaf/"{(en-tape:pith:neo p.move)} -> {(en-tape:pith:neo p.q.move)}: {<-.q.q.move>}" ~)
   =/  src=name:neo  (de-pith:name:neo p.move)
   =/  dst=name:neo  (de-pith:name:neo p.q.move)
   ?>  =(src.bowl ship.src)
@@ -280,13 +281,17 @@
   (on-move:sys p.move q.move(p t.pith.dst))
 ++  on-ack
   |=  =ack:neo
-  %.  run
-  ?~  q.ack
-    same
-  ?-  -.u.q.ack
-    %gone  (slog leaf/"Missing dep: {<term.u.q.ack>}" ~)
-    %goof  (slog leaf/"nacked on flow {<p.ack>}" tang.u.q.ack)
-  ==
+  =/  dst=name:neo  (de-pith:name:neo p.p.ack)
+  ?>  =(src.bowl ship.dst)
+  ?:  =(sys-pith p.p.ack)
+    %.  run
+    ?~  q.ack
+      same
+    ?-  -.u.q.ack
+      %gone  (slog leaf/"Missing dep: {<term.u.q.ack>}" ~)
+      %goof  (slog leaf/"nacked on flow {<p.ack>}" tang.u.q.ack)
+    ==
+  (on-move q.p.ack p.p.ack %poke ack/!>(q.ack))
 ::
 ++  on-dirt-card
   |=  =card:dirt:neo
@@ -1515,6 +1520,8 @@
     ~|  wer
     =;  =vase
       (make-riff wer vase)
+    %-  need
+    %-  mole  |.
     =+  vaz=(vang & (pout wer))
     %+  slap  reef
     (scan (trip txt) (full (ifix [gay gay] tall:vaz)))
@@ -1576,8 +1583,9 @@
 ++  seize
   |=  [par=pith:neo child=pith:neo car=?(%y %z)]
   ^-  ?
+  =-  ~&(seize/[par child -] -)
   ?:  =(%y car)
-    =(par (~(parent of:neo tide) child))
+    =(`par (~(parent of:neo tide) child))
   !=(~ (dif:pith:neo par child))
 ::
 :: +abduct: check capture
@@ -1585,21 +1593,26 @@
   |=  [par=pith:neo child=pith:neo]
   ^-  ?
   ?~  wav=(~(get of:neo tide) par)
+    ::~&  bailing-no-wave/[par child]
     |
   ?~  kids.dock.u.wav
+    ::~&  bailing-no-kids/[par child]
     |
   (seize par child p.u.kids.dock.u.wav)
 ::  +adopt: produce all capturing parents
 ::
 ++  adopt
-  =|  here=pith:neo
   =|  res=(set pith:neo)
+  =|  here=pith:neo
   |=  =pith:neo
+  =.  pith  (tail pith)
+  ::~&  adopting/pith
   |-  ^+  res
   =?  res  (abduct here pith)
-    (~(put in res) here)
+    (~(put in res) [p/our.bowl here])
   =/  nex  (dif:pith:neo here pith)
   ?~  nex
+    ::~&  adopted/res
     res
   $(here (snoc here i.nex))
 ::
@@ -1631,10 +1644,14 @@
   =.  run  (add:stop move)
   arvo
   |%
+  ++  can-ack
+    ^-  ?
+    !?=([%poke %ack *] q.q.init-move)
   ++  abet
     ^+  run
     ?:  =([~ ~] block)  
-      =.  run    (emil `(list card)`(do-ack [p p.q]:init-move err.block))
+      =?  run   can-ack
+        (emil `(list card)`(do-ack [p p.q]:init-move err.block))
       =.  run    (emil (turn up do-move))
       (dial smut)
         :: %+  turn  ~(tap by change)
@@ -1650,7 +1667,10 @@
     ?:  ?=([%poke %rely *] q.q.move)
       ~&  >>>  rely-nack/[src dst]:init
       run
-    (emil (do-ack [p p.q]:init-move err.block))
+    ?:  can-ack
+      (emil (do-ack [p p.q]:init-move err.block))
+    ~&  ack-nack/u.err.block
+    run
   ::
   ++  arvo  .
   ++  emit  |=(=move:neo arvo(down [move down]))
@@ -1669,18 +1689,22 @@
     (ingest cards)
   ::
   ++  plunder
+    ~&  plundering/~
     ^+  arvo
     =/  by-parent=(jug pith:neo dust:neo)
       %+  roll  grit
       |=  [=dust:neo by-parent=(jug pith:neo dust:neo)]
       %-  ~(gas ju by-parent)
+      =/  adoptees  (adopt pith.dust)
+      ~&  adoptees/adoptees
       (turn ~(tap in (adopt pith.dust)) |=(=pith:neo [pith [(dif:pith:neo pith pith.dust) +.dust]]))
     :: XX: assert gifts empty
     =.  gifts
       %+  turn  (sort ~(tap in ~(key by by-parent)) sort:pith:neo)
       |=  =pith:neo
       ^-  [pith:neo gift:neo]
-      [pith (gas-gift ~(tap in (~(get ju by-parent) pith)))]
+      [(tail pith) (gas-gift ~(tap in (~(get ju by-parent) pith)))]
+    ~&  gifts/gifts
     =.  smut  (welp smut grit)
     =.  grit   ~
     give
@@ -1963,6 +1987,15 @@
     ::
     ++  su-poke
       |=  =pail:neo
+      ^+  su-core
+      ?.  (~(has in poke.dock.wave) p.pail)
+        ?:  ?=(%ack p.pail)
+          %.  su-core
+          =+  !<(ack=(unit quit:neo) q.pail)
+          ?~  ack
+            same
+          (slog (print-quit:neo u.ack))
+        (mean leaf/"no support for {<p.pail>}" ~)
       =/  [caz=(list card:neo) new=pail:neo]
         (poke:su-form pail)
       =.  su-core  (su-emil caz)
@@ -2186,6 +2219,7 @@
     |=  [src=pith:neo dst=pith:neo =note:neo]
     ?>  ?=(%poke -.note) :: XX: all shanes should be virtualised and hand deliver acks
     ?+  p.pail.note  ~|(bad-eyre-call/p.pail.note !!)
+      %ack         run
       %eyre-req    (on-eyre-req !<(req:eyre:neo q.pail.note))
       %eyre-sign  (on-eyre-sign src !<(sign:eyre:neo q.pail.note))
     ==
