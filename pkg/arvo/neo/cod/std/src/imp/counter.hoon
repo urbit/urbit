@@ -1,5 +1,5 @@
-/@  number
-/@  counter-diff
+/@  number        ::  @ud
+/@  counter-diff  ::  [%inc ~]
 ::
 ::  outer core of a shrub: define state, pokes,
 ::  dependencies, and kids
