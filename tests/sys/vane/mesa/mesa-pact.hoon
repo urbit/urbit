@@ -31,7 +31,7 @@
   =^  moves-2  ames.bud  (ames-reply:v ames.bud ~[/pact] moves-1 bex-roof) :: "ok, here is the 1st fragment"
   =^  moves-3  ames.nec  (ames-reply:v ames.nec ~[/pact] moves-2 bex-roof) :: "ok, here is the complete message"
   (ames-expect-msg:v moves-3 dat)
-:: ::
+::
 ++  test-mesa-peek-inline-proof
   ~?  >  dbug  'test-mesa-peek-inline-proof'
   ::  3-fragment message; proof is inlined into first response
