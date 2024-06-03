@@ -65,7 +65,9 @@
     ?>  =(%diary-diff stud)
     =/  state  !<(diary q.pail)
     =/  act    !<(diary-diff vax)
-    ::  XX note new src.bowl type?
+    ::
+    ::  assert the poke comes from our ship
+    ::  src.bowl:neo is (pair ship pith)
     ?>  =(our ship.src):bowl
     ?-  -.act
         %del-entry
@@ -93,7 +95,8 @@
               ::  is the text from the poke
               `[%txt !>(txt.act)]
               ::  conf:neo is (map term pith:neo)
-              ::  XX wat do?
+              ::  declare this new shrub's dependencies,
+              ::  which are also shrubs
               ~
           ==
       ==
