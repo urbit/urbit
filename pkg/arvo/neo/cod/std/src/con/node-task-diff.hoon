@@ -10,19 +10,8 @@
 ?+  head
   ~|  [%unknown-head head]
   !!
-    %become
-  =/  path  (stab (vol:mu "path"))
-  [head (pave:neo path)]
-::
-    %append
+    %new
   [head '' | ~]
-::
-    %prepend
-  [head '' | ~]
-::
-    %oust
-  =/  path  (stab (got:mu %pith))
-  [head (pave:neo path)]
 ::
     %edit
   =/  text  (vol:mu "text")
@@ -30,7 +19,7 @@
   =/  done  (~(has by (malt a.g.done-el)) %checked)
   [head text done]
 ::
-    %kid-done
+    %oust
   =/  path  (stab (got:mu %pith))
   [head (pave:neo path)]
 ::
