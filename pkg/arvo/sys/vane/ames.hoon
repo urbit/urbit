@@ -5836,10 +5836,10 @@
               [%pass wire %a meek/[space [her pat]:poke-name]]
             ::  authenticate one-fragment message
             ::
-            ?>  %^    ev-authenticate
-                    (root:lss (met 3 dat.data)^dat.data)
-                  aut.data
-                poke-name
+            :: ?>  %^    ev-authenticate
+            ::         (root:lss (met 3 dat.data)^dat.data)
+            ::       aut.data
+            ::     poke-name
             ::
             %:  ev-mess-poke
               ~   :: XX refactor function signature
@@ -5890,14 +5890,20 @@
                   ==
                 ev-core
               =/  proof=(list @ux)  (rip 8 dat.data)
-              ?>  (ev-authenticate (recover-root:lss proof) aut.data name)
-              ?~  state=(init:verifier:lss tot.data proof)
-                ev-core
+              :: ?>  (ev-authenticate (recover-root:lss proof) aut.data name)
+              =/  dat  (met 3 dat.data)^dat.data
+              =|  =state:builder:lss
+              =.  state  (add-leaf:builder:lss state(proof proof) dat)
+              =/  b  (finalize:builder:lss state)
+              :: ?>  (ev-authenticate (recover-root:lss proof) aut.data name)
+              :: ?~  state=(init:verifier:lss tot.data proof)
+              =/  vstate=state:verifier:lss
+                (init:verifier:lss (lent pairs.b) proof.b)
               =.  chums.ames-state
                 %+  ~(put by chums.ames-state)  her.name
                 =-  known/sat.per(pit -)
                 %+  ~(put by pit)  sealed-path
-                u.res(ps `[u.state ~])
+                u.res(ps `[vstate ~])
               ::
               ::  request next fragment
               ::
@@ -5939,7 +5945,7 @@
                 ::  is this a standalone message?
                 ::
                 ?:  =(1 tot.data)
-                  ?>  (ev-authenticate (root:lss (met 3 dat.data)^dat.data) aut.data name)
+                  :: ?>  (ev-authenticate (root:lss (met 3 dat.data)^dat.data) aut.data name)
                   =/  =spar  [her.name inner-path]
                   =/  =auth:mess  p.aut.data
                   =/  res=@  (ev-decrypt-spac space dat.data cyf)
@@ -5955,37 +5961,44 @@
                   =>  aut.data
                   ?>  ?=([%0 *] .)
                   ?~(q ~ ?@(u.q [u.q ~] [p q ~]:u.q))
-                =.  proof  [(leaf-hash:lss fag dat.data) proof]
-                ?>  (ev-authenticate (recover-root:lss proof) aut.data name)
-                ?~  state=(init:verifier:lss tot.data proof)
-                  ev-core
-                ?~  state=(verify-msg:verifier:lss u.state dat.data ~)
-                  ev-core
+                :: =.  proof  [(leaf-hash:lss fag dat.data) proof]
+                =/  dat  (met 3 dat.data)^dat.data
+                =|  =state:builder:lss
+                =.  state  (add-leaf:builder:lss state(proof proof) dat)
+                =/  b  (finalize:builder:lss state)
+                :: ?>  (ev-authenticate (recover-root:lss proof) aut.data name)
+                :: ?~  state=(init:verifier:lss tot.data proof)
+
+                ~|  [state=state b=b pair=(~(get by pairs.state) fag) fag=fag]
+                =/  vstate=state:verifier:lss
+                  (init:verifier:lss (lent pairs.b) proof.b)
+                =.  vstate  (verify-msg:verifier:lss vstate dat ~)
                 ::  initialize packet state and request next fragment
                 ::
                 =.  chums.ames-state
                   %+  ~(put by chums.ames-state)  her.name
                   =-  known/sat.per(pit -)
                   %+  ~(put by pit)  sealed-path  :: XX was outer-path?
-                  u.res(ps `[u.state ~[dat.data]])
-                =/  =pact:pact  [%peek name(wan [%data leaf.u.state])]
+                  u.res(ps `[vstate ~[dat.data]])
+                =/  =pact:pact  [%peek name(wan [%data counter.vstate])]
                 %+  ev-emit  unix-duct.ames-state
                 [%give %push ~[`@ux`her.name] p:(fax:plot (en:^pact pact))]
               ::  yes, we do have packet state already
               ::
               =*  ps  u.ps.u.res
-              ?.  =(leaf.los.ps fag)
+              ?.  =(counter.los.ps fag)
                 ev-core
               ::  extract the pair (if present) and verify
               ::
               =/  pair=(unit [l=@ux r=@ux])
                 ?~  aut.data  ~
                 `?>(?=([%1 *] .) p):aut.data
-              ?~  state=(verify-msg:verifier:lss los.ps dat.data pair)
-                ev-core
+              :: =/  vstate=state:verifier  (init:verifier (lent pairs.p) proof.p)
+              :: =.  vstate  (verify-msg:verifier vstate 1.024^0 &1:pairs.p)
+              =/  dat  (met 3 dat.data)^dat.data
               ::  update packet state
               ::
-              =.  los.ps  u.state
+              =.  los.ps   (verify-msg:verifier:lss los.ps dat pair)
               =.  fags.ps  [dat.data fags.ps]
               =.  chums.ames-state
                 %+  ~(put by chums.ames-state)  her.name
@@ -5997,7 +6010,7 @@
               ?.  =(+(fag) leaves.los.ps)
                 ::  request next fragment
                 ::
-                =/  =pact:pact  [%peek name(wan [%data leaf.u.state])]
+                =/  =pact:pact  [%peek name(wan [%data counter.los.ps])]
                 %+  ev-emit  unix-duct.ames-state
                 [%give %push ~[`@ux`her.name] p:(fax:plot (en:^pact pact))]
               ::  yield complete message
@@ -7734,8 +7747,9 @@
             =/  gag  ?~(u.res ~ [p q.q]:u.u.res)  :: XX how does receiver distinguish these?
             =/  ful  (en-beam bem)
             =/  ser  (jam gag)  :: unencrypted
+            =/  rot  (blake3:blake:crypto 32 (met 3 ser)^ser)
             :^  ~  ~  %message
-            !>([%sign (sign:crypt `@`priv ful (root:lss (met 3 ser)^ser)) ser])
+            !>([%sign (sign:crypt `@`priv ful rot) ser])
           ::
           ++  ev-peek-chum
             |=  [bem=beam her=@p lyf=@ud hyf=@ud cyf=@uv]
@@ -7754,7 +7768,8 @@
             =/  ful  (en-beam bem)
             =/  ser  (jam gag)
             =/  cyr  (encrypt:crypt u.key cyf (met 3 ser)^ser)
-            ``[%message !>([%hmac (mac:crypt u.key ful (root:lss cyr)) dat.cyr])]
+            =/  rot  (blake3:blake:crypto 32 cyr)
+            ``[%message !>([%hmac (mac:crypt u.key ful rot) dat.cyr])]
           ::
           ++  ev-peek-shut
             |=  [bem=beam kid=@ cyf=@uv]
@@ -7772,7 +7787,8 @@
             =/  ful  (en-beam bem)
             =/  ser  (jam gag)
             =/  cyr  (encrypt:crypt -.u.key iv=cyf (met 3 ser)^ser)
-            =/  sig  (sign:crypt -.u.key ful (root:lss cyr))
+            =/  rot  (blake3:blake:crypto 32 cyr)
+            =/  sig  (sign:crypt -.u.key ful rot)
             ``[%message !>([%sign sig dat.cyr])]
           ::
           ++  ev-peek-flow
@@ -7814,6 +7830,7 @@
               :: =+  core=(ev-abed:ev-core [now eny rof] ~[//scry])
               =*  core  ev-core
               =/  tyl=(pole knot)  s.bem
+              ~&  ty/tyl
               ?+    tyl  ~
               ::  publisher-side, batch-level
               ::
@@ -7924,6 +7941,7 @@
                     ``[%packet !>(pac)]
                   ``[%atom !>(p:(fax:plot (en:pact pac)))]
                 ::
+                ~&  typ.wan.pac.nex
                 ?-    typ.wan.pac.nex
                     %auth
                   =/  nam  [[our rif] [boq ?:(nit ~ [%auth fag])] pat]
@@ -7933,15 +7951,26 @@
                   =/  lss-proof
                     =>  [ser=ser ..lss]
                     ~>  %memo./ames/lss
-                    (build:lss (met 3 ser)^ser)
+                    :: (build:lss (met 3 ser)^ser)
+                    =|  =state:builder:lss
+                    =.  state  (add-leaf:builder:lss state (met 3 ser)^ser)
+                    (finalize:builder:lss state)
+                  ~&  >>  auth-proof/proof.lss-proof
                   =/  dat  [wid aut (rep 8 proof.lss-proof)]  :: XX types
                   [nam dat]
                 ::
                     %data
                   =/  lss-proof
-                    =>  [ser=ser ..lss]
-                    ~>  %memo./ames/lss
-                    (build:lss (met 3 ser)^ser)
+                    :: =>  [ser=ser ..lss]
+                    :: ~>  %memo./ames/lss
+                    :: (build:lss (met 3 ser)^ser)
+                    =|  =state:builder:lss
+                    =|  fag=@ud
+                    |-  ^-  [root=@ux proof=(list @ux) pairs=(list (unit (pair @ux @ux)))]
+                    ?:  (gte fag wid)
+                      (finalize:builder:lss state)
+                    =/  sic  (cut boq [fag 1] ser)
+                      $(fag +(fag), state (add-leaf:builder:lss state (met 3 sic)^sic))
                   =/  nam  [[our rif] [boq ?:(nit ~ [%data fag])] pat]
                   =/  aut=auth:pact
                     ?:  &((lte wid 4) =(0 fag))
@@ -7959,8 +7988,13 @@
                     :: full proof; provide a pair of sibling hashes
                     ::
                     ?:  (gte fag (lent pairs.lss-proof))  ~
-                    [%1 (snag fag pairs.lss-proof)]
+                    =/  pair=(unit (pair @ux @ux))
+                      :: (snag fag pairs.lss-proof)
+                      (snag ?:((gth wid 4) fag (dec fag)) pairs.lss-proof)
+                    ~&  >>  pair/pair
+                    [%1 (need pair)]
                   ::
+                  ~&  aut/aut
                   =/  dat  [wid aut (cut boq [fag 1] ser)]
                   [nam dat]
                 ==
@@ -8467,7 +8501,7 @@
                   $%  [%larva *]
                       [%adult state=ames-state-21]
               ==  ==
-              axle
+              [%0 *]  ::  axle
           ==
       =|  moz=(list move)
       |-  ^+  vane-gate
@@ -8479,23 +8513,24 @@
         ::
         !!  ::  $(+<.old %adult, +>.old state.old)
       ?:  ?=(%0 -.old)
-        =.  chums.old
-          %-  ~(run by chums.old)
-          |=  =chum-state
-          ?:  ?=(%alien -.chum-state)
-            ~&  %cleaning-alien
-            chum-state
-            :: chum-state(pit ~)
-          ~&  %cleaning
-          %_  chum-state
-            flows    ~
-            pit      ~
-            corked   ~
-            ossuary  =|  =ossuary  ossuary
-                     :: %_  ossuary
-                    ::   next-bone  40
-          ==        :: ==
-        vane-gate(ames-state old)
+        :: =.  chums.old
+        ::   %-  ~(run by chums.old)
+        ::   |=  =chum-state
+        ::   ?:  ?=(%alien -.chum-state)
+        ::     ~&  %cleaning-alien
+        ::     chum-state
+        ::     :: chum-state(pit ~)
+        ::   ~&  %cleaning
+        ::   %_  chum-state
+        ::     flows    ~
+        ::     pit      ~
+        ::     corked   ~
+        ::     ossuary  =|  =ossuary  ossuary
+        ::              :: %_  ossuary
+        ::             ::   next-bone  40
+        ::   ==        :: ==
+        :: vane-gate(ames-state old)
+        vane-gate
       ::
       ?>  ?=([@ %adult *] old)
       ?:  ?=(%5 -.old)   $(old 6+adult/(state-5-to-6 state.old))
