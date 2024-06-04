@@ -198,12 +198,14 @@
       ^-  fief:neo
       :-  req=|
       ^-  quay:neo
-      :-  [[%or rol/[%ui-main pro/%htmx] pro/%htmx ~] ~]
+      :-  [pro/%htmx ~]
+      :::-  [[%or rol/[%ui-main pro/%htmx] pro/%htmx ~] ~]
       ^-  (unit port:neo)
       :+  ~  %y
       %-  ~(gas by *lads:neo)
       :~  :-  &
-          `lash:neo`[[%or pro/%htmx any/~ ~] ~]
+          `lash:neo`[any/~ ~]
+          ::`lash:neo`[[%or rol/[%link pro/%htmx] pro/%htmx any/~ ~] ~]
       ==
   ==
 ::
