@@ -67,7 +67,7 @@
 ^-  kook:neo
 |%
 ++  state  pro/%accel-conf
-++  poke  (sy %hoon %accel-dep %accel-conf %ack ~)
+++  poke  (sy %hoon %add-dep %accel-conf %ack ~)
 ++  kids  *kids:neo
 ++  deps  *deps:neo
 ++  form
@@ -81,9 +81,10 @@
     =.  conf
       ?+  stud  !!
         %hoon        conf(ready |, hoon !<(@t vax))
-        %accel-dep   conf(ready |, crew (~(put by crew.conf) !<([term pith] vax)))
+        %add-dep     conf(ready |, crew (~(put by crew.conf) !<([term pith] vax)))
+        %add-dep     conf(ready |, crew (~(del by crew.conf) !<(term vax)))
         %accel-conf  !<(accel-conf vax)
-        %ack         ((slog leaf/"ack" (sell vax) ~) conf(ready &))
+        %ack         conf(ready &)
       ==
     ?:  ready.conf
       `accel-conf/!>(conf)

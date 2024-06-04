@@ -29,7 +29,7 @@
         :+  ~  %y
         %-  ~(gas by *lads:neo)
         :~  :-  &
-            `lash:neo`[any/~ ~]
+            `lash:neo`[pro/%htmx ~]
         ==
     ==
   ::
