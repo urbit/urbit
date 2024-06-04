@@ -1,6 +1,5 @@
 /@  htmx
 /-  feather-icons
-/-  serv=server
 /*  date-now
 /*  a-i-r
 /*  feather
@@ -47,9 +46,14 @@
       :_  [stud vase]
       =/  =pith:neo  #/[p/our.bowl]/$/eyre
       =;  =manx
-        %+  snoc
-          (~(respond neo:serv pith) eyre-id (manx-response:gen:serv manx))
-        [here.bowl %cull ~]
+        =/  head=sign:eyre:neo  [eyre-id %head [200 [['content-type' 'text/html'] ~]]]
+        =/  data=sign:eyre:neo  [eyre-id %data `(manx-to-octs manx)]
+        =/  done=sign:eyre:neo  [eyre-id %done ~]
+        :~  [pith %poke eyre-sign/!>(head)]
+            [pith %poke eyre-sign/!>(data)]
+            [pith %poke eyre-sign/!>(done)]
+            [here.bowl %cull ~]
+        ==
       ?~  src=(~(get by deps.bowl) %src)
         ;div: 404
       =/  root=idea:neo  (~(got of:neo q.u.src) /)
@@ -65,6 +69,12 @@
     --
   --
 |%
+++  manx-to-octs
+  |=  man=manx
+  %-  as-octt:mimes:html
+  %+  welp  "<!DOCTYPE html>"
+  (en-xml:html man)
+::
 ++  icon-url
   ^~
   %-  trip

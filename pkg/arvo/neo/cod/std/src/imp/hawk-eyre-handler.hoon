@@ -1,6 +1,6 @@
 /@  htmx-type=htmx
 /-  feather-icons
-/-  serv=server
+/-  serv=sky-server
 />  htmx
 /<  node
 =>
@@ -8,24 +8,6 @@
 ++  manx-to-octs
   |=  man=manx
   (as-octt:mimes:html (en-xml:html man))
-++  parse-url
-  |=  =request:http
-  ^-  [pax=path pam=(map @t @t)]
-  =/  parsed
-    %+  rash  url.request
-    ;~  plug
-        ;~(pfix fas (more fas smeg:de-purl:html))
-        yque:de-purl:html
-    ==
-      :: strip first 2 segments (/neo/hawk)
-  :-  (slag 2 -.parsed)
-  (malt +.parsed)
-++  parse-body
-  |=  =request:http
-  ^-  manx
-  %+  fall
-    (de-xml:html q:(fall body.request [p=0 q='']))
-  *manx
 ++  eyre-cards
   |=  [eyre-id=@ta =bowl:neo status=@ud =manx]
   ^-  (list card:neo)
@@ -236,18 +218,25 @@
     =/  [=stud:neo =vase]  (need pal)
     =+  !<([eyre-id=@ta req=inbound-request:eyre] vase)
     :_  [stud vase]
-    =/  =pith:neo  #/[p/our.bowl]/$/eyre
-    =*  eyre  ~(. neo:serv pith)
-    =;  =manx
-      (respond:eyre eyre-id (manx-response:gen:serv manx))
-    ?.  authenticated.req
-      (respond:eyre eyre-id invalid-req:gen:serv)
+    ::XX revive when auth
+    ::?.  authenticated.req
+    ::  %:  eyre-cards
+    ::      eyre-id
+    ::      bowl
+    ::      403
+    ::      ;div: 403
+    ::  ==
     ?~  src=(~(get by deps.bowl) %src)
       =/  main
         ;div.wf.hf.fc.jc.ac: nothing here
       =/  raw
         ;div.wf.hf.fc.jc.ac: raw view
-      (respond:eyre eyre-id (manx-response ~(lift hawk #[p/ur.bowl] main raw |)))
+      %:  eyre-cards
+          eyre-id
+          bowl
+          200
+          ~(lift hawk #/[p/our.bowl] main raw |)
+      ==
     =/  here  p.u.src
     ^-  (list card:neo)
     ?+    method.request.req  ~|(%unsupported-http-method !!)
@@ -264,20 +253,34 @@
       =/  main  (!<(htmx-type q.pail.root) bol)
       =/  raw
         ;div.wf.hf.fc.jc.ac: raw view
-      (respond:eyre eyre-id (manx-response ~(lift hawk here.bowl main raw &)))
+      %:  eyre-cards
+          eyre-id
+          bowl
+          200
+          ~(lift hawk here.bol main raw &)
+      ==
     ::
         %'POST'
-      =/  purl  (parse-url request.req)
-      =/  body  (parse-body request.req)
+      =/  purl  (parse-url:serv request.req)
+      =/  body  (parse-body:serv request.req)
       =/  poke-stud
         ^-  stud:neo
         ~|  %no-stud-specified
         (~(got by pam.purl) 'stud')
-      ::=/  mul  `(each ^vase tang)`[%.y p=!>(~)]        :: stub for build system bug
       =/  mul  (mule |.((node [poke-stud body])))
       ?-    -.mul
           %.n
-        (respond:eyre eyre-id invalid-req)
+        %:  eyre-cards
+            eyre-id
+            bowl
+            400
+            ;div
+              ;*
+              %+  turn  (tang p.mul)
+              |=  =tank
+              ;div: {(of-wall:format (~(win re tank) 0 55))}
+            ==
+        ==
       ::
           %.y
         =/  =pail:neo  [poke-stud p.mul]
@@ -297,7 +300,12 @@
             %.n  ;div: error
           ==
         :-  [here %poke pail]
-        (respond:eyre eyre-id (manx-response manx))
+        %:  eyre-cards
+            eyre-id
+            bowl
+            200
+            manx
+        ==
       ==
     ==
   --
