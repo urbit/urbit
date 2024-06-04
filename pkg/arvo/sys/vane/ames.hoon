@@ -3376,11 +3376,12 @@
                         :_  total
                         ;;(message (assemble-fragments num-fragments fragments))
                       |^
-                      =/  unsent=((mop `@ud partial-rcv-message) lte)
+                      =/  unsent=((mop ,@ud partial-rcv-message) lte)
                         %+  roll  unsent-fragments.pump
                         |=  $:  static-fragment
-                                live=((mop `@ud partial-rcv-message) lte)
+                                live=((mop ,@ud partial-rcv-message) lte)
                             ==
+                        ~|  [seq=message-num current=current.pump]
                         ?>  =(message-num current.pump)  :: XX
                         %-  acc-fragments
                         [message-num num-fragments fragment-num fragment live]
