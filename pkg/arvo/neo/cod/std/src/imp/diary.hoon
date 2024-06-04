@@ -72,6 +72,7 @@
     ?>  =(our ship.src):bowl
     ?-    -.act
        %put-entry
+      ::   return unchanged state
       :_  [%diary !>(state)]
       ::  create list of one card:neo
       ::  card:neo is (pair pith:neo note:neo)
@@ -100,8 +101,13 @@
               ~
           ==
       ==
+    ::
         %del-entry
+      ::  return unchanged state
       :_  [%diary !>(state)]
+      ::  send a %tomb note to /path/to/diary/<id>
+      ::  this will tombstone the diary entry,
+      ::  effectively deleting it from the namespace
       :~  :-  %+  welp
                 here.bowl
               ~[[%da id.act]]
