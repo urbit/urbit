@@ -6217,26 +6217,27 @@
     =|  i=@ud
     |-(?:(=(1 (cut 0 [i 1] a)) i $(i +(i))))
   ::
+  ++  root
+    |=  msg=octs
+    ^-  @ux
+    (blake3 32 msg)
+  ::
+  ++  build
+    |=  msg=octs
+    ^-  [root=@ux proof=(list @ux) pairs=(list (unit (pair @ux @ux)))]
+    =|  =state:builder
+    |-
+    =/  off  (mul leaves.state 1.024)
+    ?:  (lth p.msg off)
+      (finalize:builder state)
+    =/  leaf  [(sub p.msg off) (cut 3 [off 1.024] q.msg)]
+    $(state (add-leaf:builder state leaf))
+  ::
   ::  +builder: stateful core for computing proof data
   ::
   ++  builder
     =<
       |%
-      ::
-      ++  root
-        |=  msg=octs
-        ^-  @ux
-        (blake3 32 msg)
-      ::
-      ++  build
-        |=  msg=octs
-        ^-  [root=@ux proof=(list @ux) pairs=(list (unit (pair @ux @ux)))]
-        =|  =state
-        |-
-        ?:  (lth p.msg (mul leaves.state 1.024))  :: XX counter
-          (finalize state)
-        =/  m  (cut 13 [leaves.state 1] q.msg)
-        $(state (add-leaf state (met 3 m)^m))
       ::
       ++  add-leaf
         |=  [=state leaf=octs]
@@ -6258,9 +6259,9 @@
       ++  finalize
         |=  =state
         ^-  [root=@ux proof=(list @ux) pairs=(list (unit (pair @ux @ux)))]
+        ?:  =(0 leaves.state)
+          [(blake3 32 0^0) ~ ~]
         =^  root  state
-          ?:  =(0 leaves.state)
-            [(blake3 32 0^0) state]
           =/  height  (ctz leaves.state)
           =/  =output:blake3  (~(got by trees.state) height)
           =.  height  +(height)
@@ -6305,32 +6306,36 @@
   ::
   ::  +verifier: stateful core for sequentially verifying messages
   ::
+  ::  NOTE: A verifier can only be used for messages with at least two
+  ::  fragments. Empty and single-fragment messages can be verified by
+  ::  directly computing their blake3 root hash.
+  ::
   ++  verifier
     =<
       |%
       ::
       ++  complete-inline-proof
-        |=  [proof=(list @ux) leaf=@]
+        |=  [proof=(list @ux) leaf=octs]
         ^+  proof
-        [(output-cv:blake3 (chunk-output:blake3 0 (met 3 leaf)^leaf)) proof]
+        [(output-cv:blake3 (chunk-output:blake3 0 leaf)) proof]
       ::
       ++  recover-root
         |=  proof=(list @ux)
         ^-  @ux
         ?>  ?=([@ @ *] proof)
         =/  =output:blake3  (parent-output:blake3 i.proof i.t.proof)
-        =/  proof    t.t.proof
+        =/  proof  t.t.proof
         |-
         ?~  proof
           (output-cv:blake3 (set-flag:blake3 f-root:blake3 output))
-        $(output (parent-output:blake3 i.proof (output-cv:blake3 output)))
+        =/  [l=@ux r=@ux]  [i.proof (output-cv:blake3 output)]
+        $(output (parent-output:blake3 l r), proof t.proof)
       ::
       ++  init
         |=  [leaves=@ud proof=(list @ux)]
         ^-  state
         ?>  (gte leaves 2)
-        ~|  [leaves=leaves proof=proof]
-        ?>  ?=([@ @ *] proof)  :: need at least two leaves to have a proof
+        ?>  ?=([@ @ *] proof)
         =/  pairs  (my [0 [i.proof i.t.proof]] ~)
         =/  proof  t.t.proof
         =/  height  1
@@ -6346,7 +6351,6 @@
       ++  verify-msg
         |=  [=state [leaf=octs pair=(unit [l=@ux r=@ux])]]
         ^+  state
-        ~|  verify-msg/[state=state leaf=leaf pair=pair expect-pair=(expect-pair state)]
         ?>  (lte p.leaf 1.024)
         ?>  =(?=(^ pair) (expect-pair state))
         ?>  (verify-leaf state leaf)
@@ -6381,7 +6385,6 @@
       |=  [=state leaf=octs]
       ^-  ?
       =/  cv  (output-cv:blake3 (chunk-output:blake3 counter.state leaf))
-      =-  ~|  verify-leaf/[state=state leaf=leaf cv]  ?>  -  -
       (have-cv state 0 (mod counter.state 2) cv)
     ::
     ++  verify-pair
@@ -6390,7 +6393,6 @@
       =/  height  +((ctz counter.state))
       =/  sel  (mix 1 (cut 0 [height 1] counter.state))
       =/  cv  (output-cv:blake3 (parent-output:blake3 pair))
-      =-  ~|  verify-pair/[height=height sel=sel cv=cv]  ?>  -  -
       (have-cv state height sel cv)
     --
   --

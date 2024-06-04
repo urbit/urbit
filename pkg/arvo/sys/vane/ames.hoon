@@ -5891,14 +5891,6 @@
                 ev-core
               =/  proof=(list @ux)  (rip 8 dat.data)
               :: ?>  (ev-authenticate (recover-root:lss proof) aut.data name)
-              :: =/  dat  (met 3 dat.data)^dat.data
-              :: =|  =state:builder:lss
-              :: =.  state  (add-leaf:builder:lss state(proof proof) dat)
-              :: =/  b  (finalize:builder:lss state)
-              :: :: ?>  (ev-authenticate (recover-root:lss proof) aut.data name)
-              :: :: ?~  state=(init:verifier:lss tot.data proof)
-              :: =/  vstate=state:verifier:lss
-              ::   (init:verifier:lss (lent pairs.b) proof.b)
               =/   state  (init:verifier:lss tot.data proof)
               =.  chums.ames-state
                 %+  ~(put by chums.ames-state)  her.name
@@ -5946,7 +5938,7 @@
                 ::  is this a standalone message?
                 ::
                 ?:  =(1 tot.data)
-                  =/  rut  (root:builder:lss (met 3 dat.data)^dat.data)
+                  =/  rut  (root:lss (met 3 dat.data)^dat.data)
                   ?>  (ev-authenticate rut aut.data name)
                   =/  =spar  [her.name inner-path]
                   =/  =auth:mess  p.aut.data
@@ -5963,7 +5955,7 @@
                   =>  aut.data
                   ?>  ?=([%0 *] .)
                   ?~(q ~ ?@(u.q [u.q ~] [p q ~]:u.q))
-                =.  proof  (complete-inline-proof:verifier:lss proof dat.data)
+                =.  proof  (complete-inline-proof:verifier:lss proof (met 3 dat.data)^dat.data)
                 ~|  ev-authenticate/[proof=proof aut=aut.data name=name]
                 ?>  (ev-authenticate (recover-root:verifier:lss proof) aut.data name)
                 =/  state  (init:verifier:lss tot.data proof)
@@ -5988,10 +5980,13 @@
               =/  pair=(unit [l=@ux r=@ux])
                 ?~  aut.data  ~
                 `?>(?=([%1 *] .) p):aut.data
-              =/  dat  (met 3 dat.data)^dat.data
+              =/  leaf=octs
+                ?.  =(+(fag) leaves.los.ps)
+                  1.024^dat.data
+                (met 3 dat.data)^dat.data
               ::  update packet state
               ::
-              =.  los.ps   (verify-msg:verifier:lss los.ps dat pair)
+              =.  los.ps  (verify-msg:verifier:lss los.ps [leaf pair])
               =.  fags.ps  [dat.data fags.ps]
               =.  chums.ames-state
                 %+  ~(put by chums.ames-state)  her.name
@@ -7944,7 +7939,7 @@
                   =/  lss-proof
                     =>  [ser=ser ..lss]
                     ~>  %memo./ames/lss
-                    (build:builder:lss (met 3 ser)^ser)
+                    (build:lss (met 3 ser)^ser)
                   ~&  >>  auth-proof/proof.lss-proof
                   =/  dat  [wid aut (rep 8 proof.lss-proof)]  :: XX types
                   [nam dat]
@@ -7953,7 +7948,7 @@
                   =/  lss-proof
                     =>  [ser=ser ..lss]
                     ~>  %memo./ames/lss
-                    (build:builder:lss (met 3 ser)^ser)
+                    (build:lss (met 3 ser)^ser)
                   =/  nam  [[our rif] [boq ?:(nit ~ [%data fag])] pat]
                   =/  aut=auth:pact
                     ?:  &((lte wid 4) =(0 fag))
@@ -7970,12 +7965,9 @@
                     ::
                     :: full proof; provide a pair of sibling hashes
                     ::
-                    ?:  (gte fag (lent pairs.lss-proof))  ~
-                    =/  pair=(unit (pair @ux @ux))
-                      :: (snag fag pairs.lss-proof)
-                      (snag ?:((gth wid 4) fag (dec fag)) pairs.lss-proof)
-                    ~&  >>  pair/pair
-                    [%1 (need pair)]
+                    ?~  p=(snag fag pairs.lss-proof)
+                      ~
+                    [%1 u.p]
                   ::
                   ~&  aut/aut
                   =/  dat  [wid aut (cut boq [fag 1] ser)]
