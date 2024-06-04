@@ -52,6 +52,8 @@
 ++  link-entry
   ::
   |=  [pax=pith =idea:neo]
+  ?.  =(%txt p.pail.idea)
+    ;div: error
   =/  tape  (trip !<(@t q.pail.idea))
   =/  subject-end  (fall (find [10]~ tape) 56)
   =/  subject  (scag subject-end tape)
