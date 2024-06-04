@@ -1,5 +1,5 @@
 /@  eyre-reqs
-/-  serv=server
+/-  serv=sky-server
 ^-  kook:neo
 |%
 ++  state  pro/%sig
@@ -21,8 +21,8 @@
          %eyre-task
       =+  !<(=task:eyre:neo vax)
       =/  [eyre-id=@ta req=inbound-request:eyre]  task
-      =/  lin  (parse-request-line:serv url.request.req)
-      =/  inner=pith:neo  (pave:neo (slag 2 site.lin))
+      =/  purl  (parse-url:serv request.req)
+      =/  inner=pith:neo  (pave:neo pax.purl)
       =/  =crew:neo  (~(gas by *crew:neo) src/inner ~)
       =/  =made:neo  [%hawk-eyre-handler `[stud vax] crew]
       :_  sig/!>(~)
