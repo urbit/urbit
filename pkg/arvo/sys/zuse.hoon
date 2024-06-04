@@ -6228,10 +6228,10 @@
     =|  =state:builder
     |-
     =/  off  (mul leaves.state 1.024)
-    ?:  (lth p.msg off)
+    ?:  (lte p.msg off)
       (finalize:builder state)
-    =/  wid  ?:((gte p.msg (add off 1.024)) 1.024 (sub p.msg off))
-    $(state (add-leaf:builder state [wid (cut 3 [off 1.024] q.msg)]))
+    =/  leaf  [(min 1.024 (sub p.msg off)) (cut 3 [off 1.024] q.msg)]
+    $(state (add-leaf:builder state leaf))
   ::
   ::  +builder: stateful core for computing proof data
   ::
