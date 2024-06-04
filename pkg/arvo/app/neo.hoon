@@ -15,7 +15,7 @@
 /*  txt-ford-text   %hoon   /neo/cod/std/src/imp/ford-text/hoon
 =>
   |%
-  ++  dev  &
+  ++  dev  |
   ++  mute
     ?:  dev  same
     |*  *
@@ -1287,10 +1287,13 @@
     =+  .^(src=@t %cx `path`(welp root pax))
     ?.  (has-modified src (pave:neo (snip pax)))
       run
+
     ~?  >>>  ripe
       [%update pax]
     =/  =file:ford:neo
       ~|  parsing/pax
+      %-  need :: XX: weird memory shit
+      %-   mole   |.
       (scan (trip src) (rein:ford:neo [our.bowl (pave:neo (snip pax))]))
     ~&  [lib=lib pro=pro]:file
     =/  has-imports=?
@@ -1660,9 +1663,10 @@
     ~&  >>>  init
     =.  state  old :: XX: is apex only state that is touched?
     ?.  =(~ get.block)
+      ~&  >>>  %block
       (fresh:stop get.block init-move)
     ?>  ?=(^ err.block)
-    ::  %-  (slog u.err.block)
+    %-  (slog (print-quit:neo u.err.block))
     ?:  ?=([%poke %rely *] q.q.move)
       ~&  >>>  rely-nack/[src dst]:init
       run
@@ -1970,7 +1974,8 @@
     ++  su-grow
       |=  =pail:neo
       ^+  su-core
-      ::  ?>(check-pail) XX: TODO
+      ?.  (blow state:kook p.pail)
+        (mean leaf/"Returned bad state stud, wanted {<state.kook>}, have {<p.pail>}" ~)
       =.  arvo  (grow pail)
       su-core
     ::
@@ -2299,6 +2304,14 @@
 
 ::  |util: utilties
 +|  %util
+++  blow
+  |=  [need=curb:neo have=stud:neo]
+  ^-  ?
+  ?+  -.need   ~|(curb-not-supported/-.need !!)
+      %any            &
+      %or             (lien p.need |=(curb:neo (blow +< have)))
+      ?(%pro %only)   =(p.need have)
+  ==
 ++  puff
   |=  [want=stud:neo role=(unit stud:neo) have=saga:neo]
   ^-  (unit idea:neo)
@@ -2314,9 +2327,15 @@
   =/  rol=stud:neo
     (fall role %$)
   ?~  can=(~(get by con.dive) [p.q.have rol want])
+    ~&  missing-can/[p.q.have rol want]
     ~
   =/  conv  run:~(do con u.can)
-  `[want (slam conv q.q.have)]
+  ~|  dead-horse/[p.q.have rol want u.can]
+  :+  ~  want
+  %+  slam  conv
+  ?:  =(p.q.have %vase)
+    !>(q.q.have)
+  q.q.have
 ::
 ++  plag
   =|  rol=(unit stud:neo)
@@ -2341,15 +2360,19 @@
     `[have ~ q.have]
   ::
       %not
+    =/  r  rol
     ?.  =(~ loop(want p.want))
       ~
+    =.  rol  r
     loop(want q.want)
   ::
       %or
     |-
     ?~  p.want
       ~
+    =/  r  rol
     =/  nex  loop(want i.p.want)
+    =.  rol  r
     ?^  nex
       `u.nex
     $(p.want t.p.want)
@@ -2364,7 +2387,6 @@
 ++  scion
   |=  [want=lads:neo =pith:neo =saga:neo]
   ^-  (unit idea:neo)
-
   ?~  pis=(find:peon:neo pith ~(key by want))
     ~
   =/  =lash:neo  (~(got by want) u.pis)
@@ -2378,24 +2400,25 @@
   ?:  ?=($@(~ [~ ~]) pic)
     ~&  lost-moor/name
     ~
-  =;  [fail=? res=(list (pair pith:neo idea:neo))]
-    ?:  fail
-      ~
+  =;  [fail=(set pith:neo) res=(list (pair pith:neo idea:neo))]
+    :: ?.  =(~ fail)
+      :: ~&  fail-moor/fail
+      :: ~
+    ~?  !=(~ fail)
+      fail/fail
     `(gas-lore res)
   %+  roll  ~(tap by ~(tar of:neo u.u.pic))
-  |=  [[=pith:neo =saga:neo] [fail=_| res=(list (pair pith:neo idea:neo))]]
+  |=  [[=pith:neo =saga:neo] [fail=(set pith:neo) res=(list (pair pith:neo idea:neo))]]
   ^+  +<+
-  ?:  fail
-    [fail ~]
   ?:  =(pith ~)
     ?~  rot=(plag state.p.want saga)
-      &/~
-    |/:_(res [*pith:neo u.rot])
+      [(~(put in fail) pith) res]
+    [fail :_(res [*pith:neo u.rot])]
   ?~  q.want
-    |/res
+    [(~(put in fail) pith) res]
   ?~  ion=(scion q.u.q.want pith saga)
-     &/~
-  |/:_(res [pith u.ion])
+    [(~(put in fail) pith) res]
+  [fail :_(res [pith u.ion])]
 ::
 ++  gas-leaf
   =|  =leaf:neo

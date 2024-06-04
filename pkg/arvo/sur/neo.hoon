@@ -2026,6 +2026,11 @@
 +$  dare  ?(%y %z)
 +$  port  (pair dare lads)
 +$  kids  (unit port)
++$  tear
+  $%  [%only wan=curb hav=stud]
+      [%not not=curb hav=stud]
+  ==
+
 ::  $dude: virtual namespace binding
 ::
 +$  dude

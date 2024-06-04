@@ -72,7 +72,7 @@
         %accel-diff  (on-diff !<(accel-diff vax))
         %gift        (on-gift !<(gift:neo vax))
       ==
-    [cards accell/!>(state)]
+    [cards accel/!>(state)]
     ++  on-diff
       |=  poke=accel-diff
       ?>  =(our ship.src):bowl

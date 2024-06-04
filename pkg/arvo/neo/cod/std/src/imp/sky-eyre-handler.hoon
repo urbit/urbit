@@ -16,11 +16,12 @@
   |%
   ++  main
     ^-  curb:neo
-    [%or rol/[%ui-main pro/%htmx] pro/%htmx ~]
+    pro/%htmx
+    :: [%or rol/[%ui-main pro/%htmx] pro/%htmx ~]
     :: rol/[%ui-main pro/%htmx]
   ++  kids-curb
     ^-  curb:neo
-    any/~
+    pro/%htmx
   :: rol/[%ui-list pro/%htmx]
   ++  manx-to-octs
     |=  man=manx
@@ -212,7 +213,7 @@
       ^-  quay:neo
       :-  [main ~]
       ^-  (unit port:neo)
-      :+  ~  %y
+      :+  ~  %z
       %-  ~(gas by *lads:neo)
       :~  :-  &
           `lash:neo`[kids-curb ~]
@@ -232,14 +233,9 @@
     :_  [stud vase]
     =/  =pith:neo  #/[p/our.bowl]/$/eyre
     =;  =manx
-      =/  head=sign:eyre:neo  [eyre-id %head [200 [['content-type' 'text/html'] ~]]]
-      =/  data=sign:eyre:neo  [eyre-id %data `(manx-to-octs manx)]
-      =/  done=sign:eyre:neo  [eyre-id %done ~]
-      :~  [pith %poke eyre-sign/!>(head)]
-          [pith %poke eyre-sign/!>(data)]
-          [pith %poke eyre-sign/!>(done)]
-          [here.bowl %cull ~]
-      ==
+      %+  snoc
+        (~(respond neo:serv pith) [eyre-id (manx-response:gen:serv manx)])
+      [here.bowl %cull ~]
     ?~  src=(~(get by deps.bowl) %src)
       ;div: 404
     =/  root=idea:neo  (~(got of:neo q.u.src) /)
@@ -250,6 +246,7 @@
     =.  now.bol  now.bowl
     =.  eny.bol  eny.bowl
     =.  kids.bol  q.u.src
+    ~&  kids/~(key by ~(tar of:neo kids.bol))
     ::  XX src.bowl
     (lift (!<(htmx q.pail.root) bol))
   --

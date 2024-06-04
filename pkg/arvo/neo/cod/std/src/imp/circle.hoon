@@ -2,7 +2,7 @@
 /@  diff=circle-diff
 ^-  kook:neo
 |%
-++  state  pro/%sig
+++  state  pro/%circle
 ++  poke   (sy %circle-diff ~)
 ++  kids   
   :+  ~  %y
@@ -31,6 +31,6 @@
     ==
   ++  init
     |=  pal=(unit pail:neo)
-    `sig/!>(~)
+    `circle/!>(~)
   --
 --

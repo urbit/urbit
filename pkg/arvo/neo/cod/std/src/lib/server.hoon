@@ -165,4 +165,18 @@
     ^-  simple-payload:http
     [[307 ['location' redirect]~] ~]
   --
+++  neo
+  |_  eyre=pith:^neo
+  ++  respond
+    |=  [eyre-id=@ta pay=simple-payload:http]
+    ^-  (list card:^neo)
+    =/  head=sign:eyre:^neo  [eyre-id %head response-header.pay]
+    =/  data=sign:eyre:^neo  [eyre-id %data data.pay]
+    =/  done=sign:eyre:^neo  [eyre-id %done ~]
+    :~  [eyre %poke eyre-sign/!>(head)]
+        [eyre %poke eyre-sign/!>(data)]
+        [eyre %poke eyre-sign/!>(done)]
+    ==
+  --
+
 --
