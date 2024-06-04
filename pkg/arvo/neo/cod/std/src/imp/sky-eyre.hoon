@@ -2,7 +2,7 @@
 /-  serv=server
 ^-  kook:neo
 |%
-++  state  pro/%eyre-reqs
+++  state  pro/%sig
 ++  poke   (sy %eyre-task ~)
 ++  kids
   :+  ~  %y

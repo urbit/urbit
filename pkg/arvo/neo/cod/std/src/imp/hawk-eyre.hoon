@@ -2,7 +2,7 @@
 /-  serv=server
 ^-  kook:neo
 |%
-++  state  pro/%eyre-reqs
+++  state  pro/%sig
 ++  poke   (sy %eyre-task ~)
 ++  kids
   :+  ~  %y
@@ -26,18 +26,12 @@
       ?.  ?=([[%p @] *] inner)
         =/  =manx
           ;div: 400
-        =/  =pith:neo  #/[p/our.bowl]/$/eyre
-        =/  head=sign:eyre:neo  [eyre-id %head [200 [['content-type' 'text/html'] ~]]]
-        =/  data=sign:eyre:neo  [eyre-id %data `(manx-to-octs:serv manx)]
-        =/  done=sign:eyre:neo  [eyre-id %done ~]
+        =/  eyre=pith:neo  #/[p/our.bowl]/$/eyre
         :_  sig/!>(~)
-        :~  [pith %poke eyre-sign/!>(head)]
-            [pith %poke eyre-sign/!>(data)]
-            [pith %poke eyre-sign/!>(done)]
-            [here.bowl %cull ~]
-        ==
+        (~(respond neo:serv eyre) eyre-id (manx-response:gen:serv manx))
       =/  args  (~(gas by *(map @t @t)) args.lin)
       =/  =crew:neo  (~(gas by *crew:neo) src/inner ~)
+      ~&  crew/crew
       :_  sig/!>(~)
       :~  [(welp here.bowl #/[uv/eny.bowl]) %make %hawk-eyre-handler `[stud vax] crew]
       ==

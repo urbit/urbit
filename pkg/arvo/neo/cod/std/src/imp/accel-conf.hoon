@@ -35,7 +35,7 @@
       |=  =bowl:neo
       ^-  pail:neo
       =/  res=(each vase tang)
-        (mule |.((slap (get-prelude bowl) hoon.conf)))
+        (mule |.((slap (get-prelude bowl) (ream hoon.conf))))
       ?:  ?=(%& -.res)
         vase/p.res
       tang/!>(p.res)
@@ -80,7 +80,7 @@
     =+  !<(conf=accel-conf q.pail)
     =.  conf
       ?+  stud  !!
-        %hoon        conf(ready |, hoon !<(hoon vax))
+        %hoon        conf(ready |, hoon !<(@t vax))
         %accel-dep   conf(ready |, crew (~(put by crew.conf) !<([term pith] vax)))
         %accel-conf  !<(accel-conf vax)
         %ack         ((slog leaf/"ack" (sell vax) ~) conf(ready &))

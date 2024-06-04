@@ -35,9 +35,10 @@
     ^-  (unit sky-settings)
     =/  s  (~(get of:neo kids.bowl) /settings)
     ?~  s  ~
-    :-  ~
-    !<  sky-settings
-    q.pail.u.s
+    ~
+::  :-  ~
+::  !<  sky-settings
+::  q.pail.u.s
   ;style
     ;+  ;/
     ?~  settings

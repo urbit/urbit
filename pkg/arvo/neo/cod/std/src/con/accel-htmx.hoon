@@ -1,5 +1,7 @@
 /@  accel
 /@  accel-cell
+/@  accel-conf
+/@  htmx
 :-  [%accel %$ %htmx]
 |=  =accel
 |=  =bowl:neo
@@ -13,7 +15,7 @@
 ++  id
   ^-  tape
   %-  zing
-  %+  turn  (pout here.bowl)
+  %+  turn  (pout (tail here.bowl))
   |=  smeg=@ta
   %+  weld  "--"
   (trip smeg)
@@ -38,29 +40,32 @@
         ;*
         %+  turn  (gulf 1 10)
         |=  y=@
-        =/  val=(unit pail:neo)  ~::(~(get by kids.bowl) ~[ud/x ud/y])
-        =/  vaf  (fall val [%accel-cell !>(*accel-cell)])
+        =/  pax=pith:neo  #/[ud/x]/[ud/y]
+        =/  kid  bowl
+        =.  kids.kid  [~ ~]
+        =.  here.kid  :(welp here.bowl pax)
+        =.  deps.kid  ~
+        =/  in=manx
+          ?~  res=(~(get of:neo kids.bowl) (snoc pax %in))
+            *manx
+          =.  here.kid  (snoc here.kid %in)
+          (!<(htmx q.pail.u.res) kid)
+        =/  out=manx  
+          ?~  res=(~(get of:neo kids.bowl) (snoc pax %out))
+            *manx
+          =.  here.kid  (snoc here.kid %out)
+          (!<(htmx q.pail.u.res) kid)
         ;td.border
           ;+
-          =/  cell  !<(accel-cell +:vaf)
           ;button.b1.scroll-none.hover.cell-btn.p2.wf.hf
             =id  "cell-{id}-{<x>}-{<y>}"
-            =hx-get  "/neo/hawk{(en-tape:pith:neo here.bowl)}/{<x>}/{<y>}"
+            =hx-get  "/neo/hawk{(en-tape:pith:neo here.bowl)}/{<x>}/{<y>}/in"
             =hx-target  "#dashboard-{id}"
             =hx-swap  "innerHTML"
             =morph-retain  "class"
             =onclick  "$('.cell-btn').removeClass('toggled');$(this).addClass('toggled');"
-            ;+
-            ?~  result.cell  ;/("")
-            =/  res  (need result.cell)
-            ?-  -.res
-              %.y
-                ;div.mono
-                  ;+
-                  ;/  (of-wall:format (~(win re (sell +.res)) 0 80))
-                ==
-              %.n
-                ;span: ERROR
+            ;div.mono
+              ;+  out
             ==
           ==
         ==

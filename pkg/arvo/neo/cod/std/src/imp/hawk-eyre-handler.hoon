@@ -5,11 +5,13 @@
   |%
   ++  main
     ^-  curb:neo
-    [%or rol/[%ui-main pro/%htmx] pro/%htmx ~]
+    ::[%or rol/[%ui-main pro/%htmx] pro/%htmx ~]
     :: rol/[%ui-main pro/%htmx]
+    pro/%htmx
   ++  kids-curb
     ^-  curb:neo
-    any/~
+    ::[%or rol/[%ui-cell pro/%htmx] pro/%htmx ~]
+    pro/%htmx
   :: rol/[%ui-list pro/%htmx]
   ++  manx-to-octs
     |=  man=manx
@@ -200,19 +202,14 @@
     `pail
   ++  init
     |=  pal=(unit pail:neo)
+    ^-  (quip card:neo pail:neo)
     =/  [=stud:neo =vase]  (need pal)
     =+  !<([eyre-id=@ta req=inbound-request:eyre] vase)
     :_  [stud vase]
     =/  =pith:neo  #/[p/our.bowl]/$/eyre
     =;  =manx
-      =/  head=sign:eyre:neo  [eyre-id %head [200 [['content-type' 'text/html'] ~]]]
-      =/  data=sign:eyre:neo  [eyre-id %data `(manx-to-octs manx)]
-      =/  done=sign:eyre:neo  [eyre-id %done ~]
-      :~  [pith %poke eyre-sign/!>(head)]
-          [pith %poke eyre-sign/!>(data)]
-          [pith %poke eyre-sign/!>(done)]
-          [here.bowl %cull ~]
-      ==
+      %-  ~(respond neo:serv pith)
+      [eyre-id (manx-response:gen:serv manx)]
     ?~  src=(~(get by deps.bowl) %src)
       ;div: 404
     =/  root=idea:neo  (~(got of:neo q.u.src) /)
