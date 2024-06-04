@@ -33,7 +33,7 @@
   :~  :-  ::  pish:neo
           ::  to simplify: [%.n @da] means the kid's
           ::  path contains any @da, and %.n is there
-          ::  to signify that the pith can not have more 
+          ::  to signify that the pith can not have more
           ::  fields afterwards
           [[%.n %da] %.n]
       ::  lash:neo is (pair curb:neo (set stud:neo))
@@ -87,15 +87,16 @@
           ^-  note:neo
           ::  [%make stud:neo (unit pail:neo) conf:neo]
           :*  %make
-              :: new shrub has state type %txt
+              ::  new shrub has the implementation %txt
+              ::  see /imp/txt.hoon, a stub that allows
+              ::  you to create a %txt in the namespace
               %txt
               ::  new shrub's initial state
               ::  is the text from the poke
               `[%txt !>(txt.act)]
               ::  conf:neo is (map term pith:neo)
-              ::  declare this new shrub's dependencies,
-              ::  which are also shrubs; 
-              ::  in this case, none
+              ::  declare this new shrub's dependencies
+              ::  which are also shrubs; diary has none
               ~
           ==
       ==
