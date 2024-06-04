@@ -874,10 +874,9 @@
     ::
         [%heer p=lane:pact q=@]                :: receive a packet
         [%mess p=(unit lane:pact) q=mess]      :: receive a message
-        [%mess-ser =path load=$>(%page mess)]  :: XX not used; remove. give message from packet layer
-        [%mako =space p=spar q=path]           :: initiate %poke request
+        [%moke =space p=spar q=path]           :: initiate %poke request
         [%meek =space p=spar]                  :: initiate %peek request
-        [%mage =space p=spar]
+        [%mage =space p=spar]                  :: send %page of data
     ==
   ::
   ::  $gift: effect from ames

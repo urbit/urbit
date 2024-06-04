@@ -137,7 +137,7 @@
     +$  note
       $~  [%b %wait *@da]
       $%  $:  %a
-              $>(?(%deep %keen %meek %mako %mess-ser %mage %prod) task)
+              $>(?(%deep %keen %meek %moke %mage %prod) task)
           ==
           $:  %b
               $>(?(%wait %rest) task:behn)
@@ -3292,7 +3292,7 @@
                   (~(put by chums.ames-state) her known/fren)
                 ::  XX  needed?  peek/poke-moves will have %send moves already
                 ::  enqueue a %prod to start sending unsent messages, after
-                ::  all the %makos (which trigger +peeks for %acks) have been
+                ::  all the %mokes (which trigger +peeks for %acks) have been
                 ::  processed
                 ::
                 =/  prod-move=(list move)  [[/ames]~ %pass /mate %a %prod ~]~
@@ -3527,7 +3527,7 @@
                   ?>  ?=([van=%a car=%x cas=@ %$ pat=*] path)
                   ?>  =('1' cas.path)
                   =;  [pax=^path =space]
-                    =.  pax  (ev-mess-spac:core space pax)
+                    =.  pax  (ev-make-path:core space pax)
                     %-  ~(rep in listeners.keen)
                     |=  [=^duct core=_core]
                     (ev-make-peek:core(hen duct) space her pax)
@@ -5662,7 +5662,7 @@
                  +$  req-task
                    ::  ?(%plea %keen %cork) request tasks are called directly
                    ::
-                   $%  $<(%mess $>(?(%heer %mess-ser) task))  ::  XX common tasks
+                   $%  $<(%mess $>(%heer task))  ::  XX common tasks
                        [%mess (unit lane:pact) =mess dud=(unit goof)]
                    ==
                 --
@@ -5687,23 +5687,7 @@
                 %peek  (ev-mess-peek +.mess.task)
                 %poke  (ev-mess-poke [dud +.mess]:task)
               ==
-            ::  XX not used; remove
-            ::  XX completed, serialized, and encrypted response from the packet layer
-            ::  path decryption happen in the packet layer, but payload happens here
-            ::  XX avoid intermidiate step and call directly into the message layer?
             ::
-                %mess-ser
-              =*  her  ship.p.+.load.task
-              =.  per  (ev-got-per her)
-              ::  XX
-              :: (%*($ ev-mess-page sealed-path `path.task) +.load.task)
-              %*  $  ev-mess-page
-                sealed-path  `path.task  ::  XX we come from the packet layer and might have encrypted path/payload
-              ::
-                spar  p.+.load.task
-                auth  q.+.load.task
-                res   r.+.load.task
-              ==
             ==
           ::
           +|  %request-flow
@@ -5763,7 +5747,7 @@
                   client-chain
                 (put:key-chain client-chain.sat.per kid.space key.space path)
               ==
-            (ev-make-peek space ship.per^(ev-mess-spac space path))
+            (ev-make-peek space ship.per^(ev-make-path space path))
           ::
           +|  %packet-entry-points
           ::
@@ -6119,7 +6103,6 @@
               ev-core  ::  ignore events from an old rift
             ?>  ?=([%van %bak] [were dire])
             fo-abet:(fo-take:(fo-abed:fo hen bone dire=%bak) %van flub/~)
-          ::
           ::  +ev-response: network responses
           ::
           ++  ev-response
@@ -6298,13 +6281,14 @@
           ::
           ++  ev-make-poke
             |=  [=space =ack=spar =poke=path]
-            =.  path.ack-spar   (ev-mess-spac space path.ack-spar)
+            =.  path.ack-spar   (ev-make-path space path.ack-spar)
             (ev-make-mess ack-spar `poke-path `space)
           ::
           ++  ev-make-page
             |=  [=space spar]
             ^+  ev-core
-            =/  =name:pact  [[our rift.ames-state] [13 ~] (ev-mess-spac space path)]
+            =/  =name:pact
+              [[our rift.ames-state] [13 ~] (ev-make-path space path)]
             ?~  page=(ev-get-page name)
               ev-core
             =/  =pact:pact  page/[name u.page ~]
@@ -6333,15 +6317,15 @@
               u.spac(our-life her-life.u.spac, her-life our-life.u.spac, her ship.p)
             ::
             =/  man=name:pact
-              [[our rift.ames-state] [13 ~] (ev-mess-spac u.spac u.q)]  :: XX add namespace before
+              [[our rift.ames-state] [13 ~] (ev-make-path u.spac u.q)]  :: XX add namespace before
             ::
             [%poke nam man (need (ev-get-page man))]
           ::
-          ++  ev-mess-spac
+          ++  ev-make-path
             |=  [=space =path]
             ^+  path
             =>  [space=space path=path ..crypt]
-            ~>  %memo./ames/mess-spac
+             ~>  %memo./ames/mess-spac
             ?-    -.space
                 %publ  `^path`[%publ (scot %ud life.space) path]  :: unencrypted
             ::
@@ -6370,7 +6354,7 @@
             =;  page=pact:pact
               ?>(?=(%page -.page) `q.page)
             =>  [name=name res=res ..parse-packet]
-            ~>  %memo./ames/get-page
+             ~>  %memo./ames/get-page
             (parse-packet ;;(@ q.q.u.u.res))
           ::
           +|  %fren-helpers
@@ -6659,7 +6643,7 @@
               =:  send-window.state  (dec send-window.state)
                   next-load.state    +(next-load.state)
                 ==
-              ::  XX %ames call itself with a %mako task
+              ::  XX %ames call itself with a %moke task
               ::  on a wire used to infer the listener (the %poke %plea request; this)
               ::  when getting the %response $page with the %ack (tagged with %int)
               ::  and similarly for %naxplanation payloads (tagged with %ext)
@@ -6668,10 +6652,10 @@
               :: =/  paths=[spar path]
               ::   :-  =/  =ack=space
               ::         chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
-              ::       her^(ev-mess-spac ack-space (fo-ack-path seq her our))
+              ::       her^(ev-make-path ack-space (fo-ack-path seq her our))
               ::   =/  =poke=space
               ::     chum/[life.ames-state ship.per [life symmetric-key]:sat:per]
-              ::   (ev-mess-spac poke-space (fo-pok-path seq our her))
+              ::   (ev-make-path poke-space (fo-pok-path seq our her))
               =/  paths=[spar path]
                 :_  (fo-pok-path seq her)
                 :-  her
@@ -6680,7 +6664,7 @@
                 (%*(fo-ack-path fo-core dire.side fo-flip-dire) seq our)
               =/  =space   chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
               =/  =wire    (fo-wire %int)
-              =.  fo-core  (fo-emit hen %pass wire %a mako/[space paths])
+              =.  fo-core  (fo-emit hen %pass wire %a moke/[space paths])
               loop
             ::
             +|  %request-receiver
@@ -6756,7 +6740,7 @@
                 ::  after reading the ack from our namespace
                 ::
                 =/  =space  chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
-                =/  =path   (ev-mess-spac space (fo-cor-path seq our))
+                =/  =path   (ev-make-path space (fo-cor-path seq our))
                 [hen %pass wire=(fo-wire %cor) %a meek/space^her^path]
               ::  XX just fo-core(closing.state %.y)?
               (fo-take-done:fo-core(closing.state %.y, pending-ack.state %.y) ~)
@@ -6905,7 +6889,7 @@
               =/  =wire  (fo-wire %ext)
               =/  =space
                 chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
-              =/  =path   (ev-mess-spac space (fo-nax-path seq our))
+              =/  =path   (ev-make-path space (fo-nax-path seq our))
               (fo-emit hen %pass wire %a meek/[space her^path])
             ::
             --
@@ -6976,7 +6960,7 @@
             =/  =wire   /mesa/comet/pof
             =/  =space  [%publ 1]
             =/  =path
-              %+  ev-mess-spac  space
+              %+  ev-make-path  space
               /comet/proof/[(scot %p our)]/[(scot %p life.ames-state)]
             (ev-emit hen %pass wire %a meek/[space comet path])
           ::
@@ -7933,7 +7917,7 @@
                   =/  aut  [%0 mes ~]
                   =/  lss-proof
                     =>  [ser=ser ..lss]
-                    ~>  %memo./ames/lss
+                    ::  ~>  %memo./ames/lss
                     (build:lss (met 3 ser)^ser)
                   =/  dat  [wid aut (rep 8 proof.lss-proof)]  :: XX types
                   [nam dat]
@@ -7941,7 +7925,7 @@
                     %data
                   =/  lss-proof
                     =>  [ser=ser ..lss]
-                    ~>  %memo./ames/lss
+                    ::  ~>  %memo./ames/lss
                     (build:lss (met 3 ser)^ser)
                   =/  nam  [[our rif] [boq ?:(nit ~ [%data fag])] pat]
                   =/  aut=auth:pact
@@ -7975,7 +7959,7 @@
               ::
                   [%publ lyf=@ pat=*]
                 =>  [tyl=tyl bem=bem peek=ev-peek-publ:core slaw=slaw]
-                ~>  %memo./ames/peek/publ
+                 ~>  %memo./ames/peek/publ
                 =/  lyf  (slaw %ud lyf.tyl)
                 ?~  lyf  [~ ~]
                 (peek bem u.lyf pat.tyl)
@@ -7983,7 +7967,7 @@
               ::
                   [%chum lyf=@ her=@ hyf=@ cyf=@ ~]
                 =>  [tyl=tyl bem=bem peek=ev-peek-chum:core slaw=slaw]
-                ~>  %memo./ames/peek/chum
+                 ~>  %memo./ames/peek/chum
                 =/  lyf  (slaw %ud lyf.tyl)
                 =/  her  (slaw %p her.tyl)
                 =/  hyf  (slaw %ud hyf.tyl)
@@ -7996,7 +7980,7 @@
               ::
                   [%shut kid=@ cyf=@ ~]
                 =>  [tyl=tyl bem=bem peek=ev-peek-shut:core slaw=slaw]
-                ~>  %memo./ames/peek/shut
+                 ~>  %memo./ames/peek/shut
                 =/  kid  (slaw %ud kid.tyl)
                 =/  cyf  (slaw %uv cyf.tyl)
                 ?:  |(?=(~ kid) ?=(~ cyf))
@@ -8006,7 +7990,7 @@
               ::
                   [%flow bone=@ load=?(%plea %boon %ack-plea %ack-boon %nax) rcvr=@ mess=@ ~]
                 =>  [tyl=tyl peek=ev-peek-flow:core slaw=slaw]
-                ~>  %memo./ames/peek/flow
+                 ~>  %memo./ames/peek/flow
                 =/  bone  (slaw %ud bone.tyl)
                 =/  rcvr  (slaw %p rcvr.tyl)
                 =/  mess  (slaw %ud mess.tyl)
@@ -8142,13 +8126,12 @@
           ::  from internal %ames request
           ::
             %meek  (ev-make-peek:ev-core +.task)
-            %mako  (ev-make-poke:ev-core +.task)  :: XX %moke?
+            %moke  (ev-make-poke:ev-core +.task)  :: XX %moke?
             %mage  (ev-make-page:ev-core +.task)
           ::  XX
           ::
             %heer      (ev-call:ev-core task)  ::  XX dud
             %mess      (ev-call:ev-core %mess p.task q.task ~)
-            %mess-ser  (ev-call:ev-core task)                   ::  XX remove
           ==
           ::
         [moves vane-gate]
@@ -8358,7 +8341,7 @@
     (pe-hear:(pe-abed:pe-core now eny rof hen) dud +.task)
     ::  %mesa-only tasks
     ::
-      ?(%meek %mako %mage %heer %mess %mess-ser %back)
+      ?(%meek %moke %mage %heer %mess %back)
     ::  XX can we call the wrong core? still check if ship has migrated?
     ::
     (call:(mesa now eny rof) hen dud soft/task)
