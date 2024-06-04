@@ -84,6 +84,39 @@
 =*  public-keys-result  public-keys-result:jael
 =/  packet-size  13
 ::
+=>  ::  common helpers
+    ~%  %ames  ..part  ~
+    |%
+    ::  +trace: print if .verb is set and we're tracking .ship
+    ::
+    ++  trace
+      |=  [mode=?(%ames %fine) verb=? =ship ships=(set ship) print=(trap tape)]
+      ^+  same
+      ?.  verb
+        same
+      ?.  =>  [ship=ship ships=ships in=in]
+          ~+  |(=(~ ships) (~(has in ships) ship))
+        same
+      (slog leaf/"{(trip mode)}: {(scow %p ship)}: {(print)}" ~)
+    ::
+    ::  +qos-update-text: notice text for if connection state changes
+    ::
+    ++  qos-update-text
+      |=  [=ship mode=?(%ames %fine) old=qos new=qos k=? ships=(set ship)]
+      ^-  (unit tape)
+      ::
+      =+  trace=(cury trace mode)
+      ?+  [-.old -.new]  ~
+        [%unborn %live]  `"; {(scow %p ship)} is your neighbor"
+        [%dead %live]    ((trace k ship ships |.("is ok")) ~)
+        [%live %dead]    ((trace k ship ships |.("not responding still trying")) ~)
+        [%unborn %dead]  ((trace k ship ships |.("not responding still trying")) ~)
+        [%live %unborn]  `"; {(scow %p ship)} has sunk"
+        [%dead %unborn]  `"; {(scow %p ship)} has sunk"
+      ==
+    ::
+    --
+::
 =>  ::  vane IO
     ::
     |%
@@ -132,41 +165,9 @@
     ::
     --
 ::
-=>  ::  common helpers
-    |%
-    ::  +trace: print if .verb is set and we're tracking .ship
-    ::
-    ++  trace
-      |=  [mode=?(%ames %fine) verb=? =ship ships=(set ship) print=(trap tape)]
-      ^+  same
-      ?.  verb
-        same
-      ?.  =>  [ship=ship ships=ships in=in]
-          ~+  |(=(~ ships) (~(has in ships) ship))
-        same
-      (slog leaf/"{(trip mode)}: {(scow %p ship)}: {(print)}" ~)
-    ::
-    ::  +qos-update-text: notice text for if connection state changes
-    ::
-    ++  qos-update-text
-      |=  [=ship mode=?(%ames %fine) old=qos new=qos k=? ships=(set ship)]
-      ^-  (unit tape)
-      ::
-      =+  trace=(cury trace mode)
-      ?+  [-.old -.new]  ~
-        [%unborn %live]  `"; {(scow %p ship)} is your neighbor"
-        [%dead %live]    ((trace k ship ships |.("is ok")) ~)
-        [%live %dead]    ((trace k ship ships |.("not responding still trying")) ~)
-        [%unborn %dead]  ((trace k ship ships |.("not responding still trying")) ~)
-        [%live %unborn]  `"; {(scow %p ship)} has sunk"
-        [%dead %unborn]  `"; {(scow %p ship)} has sunk"
-      ==
-    ::
-    --
-::
 =>  ::  ames helpers
     ::
-    ~%  %ames  ..part  ~
+    ~%  %ames  ..trace  ~
     |%
     ::
     +|  %helpers
