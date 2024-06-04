@@ -55,6 +55,10 @@
 ++  form
   ^-  form:neo
   |_  [=bowl:neo =aeon:neo =pail:neo]
+  ::
+  ::  if diary has no existing state, return
+  ::  the bunt of the state type, otherwise
+  ::  return the existing state
   ++  init
     |=  old=(unit pail:neo)
     ^-  (quip card:neo pail:neo)
