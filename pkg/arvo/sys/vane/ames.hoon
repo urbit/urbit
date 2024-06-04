@@ -3333,9 +3333,7 @@
                     =/  fo-core
                       =/  =^duct
                         (~(gut by by-bone.ossuary.peer-state) bone [/ames]~)
-                      =/  ev-core
-                        (%*(ev-abed mesa sat.per fren) now^eny^rof duct)
-                      %*  .  fo:ev-core
+                      %*  .  fo:~(ev-abed mesa [duct her^fren])
                         flows.sat.per  (~(put by flows) bone^dire flow)
                       ==
                     =?  moves  !=(current.pump next.pump)
@@ -5101,7 +5099,6 @@
           --
       ::  adult ames, after metamorphosis from larva
       ::
-      |=  [now=@da eny=@ rof=roof]
       =*  veb  veb.bug.ames-state
       |%
       ::  +call: handle request $task
@@ -5111,7 +5108,7 @@
         ^-  [(list move) _vane-gate]
         ::
         =/  =task       ((harden task) wrapped-task)
-        =/  event-core  (ev [now eny rof] duct ames-state)
+        =/  event-core  (ev duct ames-state)
         ::
         =^  moves  ames-state
           =<  abet
@@ -5153,7 +5150,7 @@
         ?^  dud
           ~|(%ames-take-dud (mean tang.u.dud))
         ::
-        =/  event-core  (ev [now eny rof] duct ames-state)
+        =/  event-core  (ev duct ames-state)
         ::
         =^  moves  ames-state
           ?:  ?=([%gall %unto *] sign)
@@ -5445,16 +5442,13 @@
           ::
           =|  moves=(list move)
           ::
-          |_  [[now=@da eny=@uvJ rof=roof] hen=duct per=[=ship sat=fren-state]]
+          |_  [hen=duct per=[=ship sat=fren-state]]
           ::
           +|  %helpers
           ::
           ++  ev-core  .
           ++  ev-abet  moves^ames-state
-          ++  ev-abed
-            |=  [[now=@da eny=@uvJ rof=roof] =duct]
-            ev-core(hen duct, now now, eny eny, rof rof)
-          ::
+          ++  ev-abed  |=(=duct ev-core(hen duct))
           ++  ev-emit  |=(=move ev-core(moves [move moves]))
           ++  ev-emil  |=(mos=(list move) ev-core(moves (weld mos moves)))
           ::
@@ -7219,7 +7213,7 @@
                   ^+  sy-core
                   ::  init event-core:ames
                   ::
-                  =/  ames-core  (ev:ames [now eny rof] hen ames-state)
+                  =/  ames-core  (ev:ames hen ames-state)
                   ::  if we're a comet, send self-attestation packet first
                   ::
                   =?  ames-core  =(%pawn (clan:title our))
@@ -7273,7 +7267,7 @@
                     |=  [[=duct mess=mesa-message] c=_ev-core]
                     ?+    -.mess  !!  :: XX log alien peer %boon?
                         %plea
-                      (ev-req-plea:(ev-abed:c [now eny rof] duct) +.mess)
+                      (ev-req-plea:(ev-abed:c duct) +.mess)
                     ==
                   =.  ev-core
                     ::  apply remote scry requests
@@ -7282,7 +7276,7 @@
                     |=  [[=path ducts=(set duct)] core=_ev-core]
                     %-  ~(rep in ducts)
                     |=  [=duct c=_core]
-                    (ev-req-peek:(ev-abed:c [now eny rof] duct) ~ path)
+                    (ev-req-peek:(ev-abed:c duct) ~ path)
                   ::
                   sy-core
                 ::
@@ -7599,7 +7593,7 @@
               ++  regress-flows
                 |=  [her=^ship fren=fren-state state=axle]
                 ^-  (quip move axle)
-                =+  event-core=(ev:ames [now eny rof] hen state)
+                =+  event-core=(ev:ames hen state)
                 =/  peer=peer-state  (got-peer-state:event-core her)
                 =+  peer-core=(abed-peer:pe:event-core her peer)
                 =;  core=_peer-core
@@ -7635,7 +7629,7 @@
               ++  regress-peeks
                 |=  [her=^ship fren=fren-state peer=peer-state]
                 ^-  (quip move axle)
-                =+  event-core=(ev:ames [now eny rof] hen ames-state)
+                =+  event-core=(ev:ames hen ames-state)
                 =;  core=_event-core
                   abet:core
                 %-  ~(rep by pit.fren)
@@ -8023,7 +8017,7 @@
                 ?:  |(?=(~ life) ?=(~ rcvr))
                   [~ ~]
                 ::
-                =+  core=(ev:ames [now eny rof] ~[//attestation] ames-state)
+                =+  core=(ev:ames ~[//attestation] ames-state)
                 =/  comet-proof=open-packet
                   :*  pub:ex:crypto-core.ames-state
                       our
@@ -8084,14 +8078,12 @@
           ::
           --
       ::
-      |=  [now=@da eny=@uvJ rof=roof]
-      ::
       |%
       ++  call
         |=  [hen=duct dud=(unit goof) wrapped-task=(hobo task)]  :: XX common tasks
         ^-  [(list move) _vane-gate]
         =/  =task  ((harden task) wrapped-task)
-        =+  ev-core=(ev-abed:ev-core [now eny rof] hen)
+        =+  ev-core=(ev-abed:ev-core hen)
         ::
         =^  moves  ames-state
           ::  handle error notification
@@ -8142,7 +8134,7 @@
         ?^  dud
           ~|(%mesa-take-dud (mean tang.u.dud))
         ::
-        =+  ev-core=(ev-abed:ev-core [now eny rof] hen)
+        =+  ev-core=(ev-abed:ev-core hen)
         =^  moves  ames-state
           ?:  ?=([%gall %unto *] sign)  :: XX from poking %ping app
             `ames-state
@@ -8186,7 +8178,7 @@
           ==
         [moves vane-gate]
       ::
-      ++  scry  ev-peek:(ev-abed:ev-core [now eny rof] [//scry]~)  :: XX
+      ++  scry  ev-peek:(ev-abed:ev-core [//scry]~)  :: XX
       ::
       --
     ::
@@ -8194,15 +8186,13 @@
 ::
 =>  ::  per-peer core-routing migration check
     ::
-    |_  [sample=[now=@da eny=@uvJ rof=roof] hen=duct]
+    |_  hen=duct
     ::
     +|  %helpers
     ::
     ++  pe-core  .
-    ++  me-core  (ev-abed:ev-core:mesa [now eny rof]:sample hen)
-    ++  pe-abed
-      |=  [now=@da eny=@uvJ rof=roof =duct]
-      pe-core(hen duct, now.sample now, eny.sample eny, rof.sample rof)
+    ++  me-core  (ev-abed:ev-core:mesa hen)
+    ++  pe-abed  |=(=duct pe-core(hen duct))
     ::
     ++  pe-find-peer
       |=  =ship
@@ -8236,7 +8226,7 @@
       =/  ship-state  (pe-find-peer ship)
       ::
       ?:  ?=(%ames -.ship-state)
-        (call:(ames [now eny rof]:sample) hen ~ soft+plea/ship^plea)
+        (call:(ames [now eny rof]) hen ~ soft+plea/ship^plea)
       =^  moves  ames-state
         =<  ev-abet
         ?:  ?=([~ %known *] +.ship-state)
@@ -8253,7 +8243,7 @@
       =/  ship-state  (pe-find-peer her)
       ::
       ?:  ?=(%ames -.ship-state)
-        (call:(ames [now eny rof]:sample) hen ~ soft+cork/ship)
+        (call:(ames [now eny rof]) hen ~ soft+cork/ship)
       =^  moves  ames-state
         =<  ev-abet
         ?:  ?=([~ %known *] +.ship-state)
@@ -8268,7 +8258,7 @@
       |=  [sec=(unit [idx=@ key=@]) spar:^ames]
       =/  ship-state  (pe-find-peer ship)
       ?:  ?=(%ames -.ship-state)
-        (call:(ames [now eny rof]:sample) hen ~ soft+keen/sec^ship^path)
+        (call:(ames [now eny rof]) hen ~ soft+keen/sec^ship^path)
       =^  moves  ames-state
         =<  ev-abet
         ?:  ?=([~ %known *] +.ship-state)
@@ -8285,7 +8275,7 @@
       =/  ship-state  (pe-find-peer ship.spar)
       ::
       ?:  ?=(%ames -.ship-state)
-        (call:(ames [now eny rof]:sample) hen ~ soft+yawn/all^spar)
+        (call:(ames [now eny rof]) hen ~ soft+yawn/all^spar)
       =^  moves  ames-state
         =<  ev-abet
         ?.  ?=([~ %known *] +.ship-state)
@@ -8302,7 +8292,7 @@
       ?:  ?=([%ames *] ship-state)
         ::  both for %ames and %fine
         ::
-        (call:(ames [now eny rof]:sample) hen dud soft+hear/lane^blob)
+        (call:(ames [now eny rof]) hen dud soft+hear/lane^blob)
       ?.  ?=([~ %known *] +.ship-state)
         ::  XX weird; log
         `vane-gate
@@ -8334,32 +8324,31 @@
       ?(%kroc %deep %chum %cong %mate %stir)
     ::  XX can we call the wrong core? still check if ship has migrated?
     ::
-    (call:(ames now eny rof) hen dud soft/task)
+    (call:ames hen dud soft/task)
     ::  %hear; check if this is coming from in-progress migrating flows
     ::
       %hear
-    (pe-hear:(pe-abed:pe-core now eny rof hen) dud +.task)
+    (~(pe-hear pe-core hen) dud +.task)
     ::  %mesa-only tasks
     ::
       ?(%meek %moke %mage %heer %mess %back)
     ::  XX can we call the wrong core? still check if ship has migrated?
     ::
-    (call:(mesa now eny rof) hen dud soft/task)
+    (call:mesa hen dud soft/task)
     ::  flow-independent tasks
     ::
       ?(%vega %init %born %snub %spew %stun %sift %plug %dear %init %tame)
-    (call:(mesa now eny rof) hen dud soft/task)
+    (call:mesa hen dud soft/task)
     ::  common tasks
     ::
       ?(%plea %cork %keen %yawn %wham %load)
-    (call:(pe-abed:pe-core now eny rof hen) task)
+    (~(call pe-core hen) task)
     ::  core-dependent tasks
     ::
       ?(%prod %trim)
-    ?-  core.ames-state
-      %ames  (call:(ames now eny rof) hen ~ soft+task)
-      %mesa  (call:(mesa now eny rof) hen ~ soft+task)
-    ==
+    =^  ames-moves  vane-gate  (call:ames hen ~ soft+task)
+    =^  mesa-moves  vane-gate  (call:mesa hen ~ soft+task)
+    [(weld ames-moves mesa-moves) vane-gate]
   ::
   ==
 ::
@@ -8370,8 +8359,8 @@
     ~|(%ames-take-dud (mean tang.u.dud))
     ::
   ?:  ?=([?(%turf %mesa %private-keys) *] wire)
-    (take:(mesa +<.vane-gate) +<)
-  (take:(ames +<.vane-gate) +<)
+    (take:mesa +<)
+  (take:ames +<)
 ::  +stay: extract state before reload
 ::
 ++  stay  ames-state
@@ -8841,6 +8830,6 @@
   --
 ::  +scry: dereference namespace
 ::
-++  scry  scry:(mesa now eny rof)  ::  XX scry unification
+++  scry  scry:mesa  ::  XX scry unification
 ::
 --
