@@ -97,6 +97,7 @@
       border-collapse: collapse;
       width: 100%;
       grid-area: table;
+      overflow-y: auto;
     }
     .scroll-none {
       overflow-x: auto;
@@ -108,7 +109,7 @@
     }
     .accel-top {
       display: grid;
-      grid-template-rows: 1fr min(auto, 300px);
+      grid-template-rows: 1fr 1fr;
       grid-template-columns: 1fr;
       grid-template-areas:
         "table"

@@ -57,7 +57,14 @@
     ++  poke
       |=  [=stud:neo vax=vase]
       ^-  (quip card:neo pail:neo)
-      `(produce bowl)
+      =/  new=pail:neo  (produce bowl)
+      ?:  =(new pail)
+        `pail
+      :_  pail
+      %+  turn  ~(tap by poke.conf)
+      |=  [=pith:neo =stud:neo]
+      [pith %poke [stud q.pail]]
+    ::
     ++  init
       |=  pal=(unit pail:neo)
       `(produce bowl)
@@ -67,7 +74,7 @@
 ^-  kook:neo
 |%
 ++  state  pro/%accel-conf
-++  poke  (sy %hoon %add-dep %accel-conf %ack ~)
+++  poke  (sy %hoon %add-dep %del-dep %accel-conf %ack %add-poke %del-poke ~)
 ++  kids  *kids:neo
 ++  deps  *deps:neo
 ++  form
@@ -78,11 +85,14 @@
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo pail:neo)
     =+  !<(conf=accel-conf q.pail)
+    %-  (slog leaf/"have {<stud>}," (sell vax) ~)
     =.  conf
       ?+  stud  !!
         %hoon        conf(ready |, hoon !<(@t vax))
         %add-dep     conf(ready |, crew (~(put by crew.conf) !<([term pith] vax)))
-        %add-dep     conf(ready |, crew (~(del by crew.conf) !<(term vax)))
+        %del-dep     conf(ready |, crew (~(del by crew.conf) !<(term vax)))
+        %del-poke    conf(ready |, poke (~(del by poke.conf) !<(pith:neo vax)))
+        %add-poke    conf(ready |, poke (~(put by poke.conf) !<([pith:neo stud:neo] vax)))
         %accel-conf  !<(accel-conf vax)
         %ack         conf(ready &)
       ==
