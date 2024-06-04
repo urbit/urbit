@@ -52,7 +52,6 @@
           =.  here.kid  (snoc here.kid %in)
           (!<(htmx q.pail.u.res) kid)
         =/  out=manx
-        =/  out=manx
           ?~  res=(~(get of:neo kids.bowl) (snoc pax %out))
             *manx
           =.  here.kid  (snoc here.kid %out)
@@ -63,6 +62,7 @@
             =id  "cell-{id}-{<x>}-{<y>}"
             =hx-get  "/neo/hawk{(en-tape:pith:neo here.bowl)}/{<x>}/{<y>}/in"
             =hx-target  "#dashboard-{id}"
+            =hx-select  "form"
             =hx-select  "form"
             =hx-swap  "innerHTML"
             =morph-retain  "class"
