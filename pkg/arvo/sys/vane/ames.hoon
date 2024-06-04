@@ -3287,10 +3287,9 @@
                    client-chain.fren  chain.peer-state
                   ==
                 =^  poke-moves  flows.fren  (make-flows fren)
+                =^  peek-moves  ames-state  (make-peeks fren)
                 =.  chums.ames-state
                   (~(put by chums.ames-state) her known/fren)
-                ?>  ?=([[* [%pass ^ [%a %mako *]]] ~] poke-moves)
-                =^  peek-moves  ames-state  (make-peeks fren)
                 ::  XX  needed?  peek/poke-moves will have %send moves already
                 ::  enqueue a %prod to start sending unsent messages, after
                 ::  all the %makos (which trigger +peeks for %acks) have been
