@@ -1003,9 +1003,10 @@
       ^-  form:neo
       |_  [=bowl:neo =saga:neo]
       ++  poke
-        |=  [s=stud:neo vax=^vase]
+        |=  =pail:neo
         ^-  (quip card:neo pail:neo)
-        `q.saga
+        ?>  =(p.pail stud)
+        `pail
       ++  init
         |=  pal=(unit pail:neo)
         ^-  (quip card:neo pail:neo)
@@ -1361,7 +1362,7 @@
       (welp #/cod/grab (stud-to-pith:neo i.pos))
     ?:  !=(~ (~(peek plow:aux loam) p/our.bowl pat))
       $(pos t.pos)
-    =.  run  (on-dirt-card (do-grow-our pat vase/=>(..zuse !>(|=(~ *vase)))))
+    =.  run  (on-dirt-card (do-grow-our pat vase/=>(..zuse !>(|=(* *vase)))))
     $(pos t.pos)
   ::
   ++  build-fars

@@ -7,14 +7,18 @@
 |^
   ;div.p2
     =label  "Diary"
-    ;div.ma.fc.g2
-      =style  "max-width: 650px;"
+    ;div.ma.fc.g2.mw-page
       ;+  form-put-entry
       ;*
-      %+  turn  ~
-        ::  %+  sort  ~(tap of:neo kids.bowl)
-        ::  |=  [a=[=pith *] b=[=pith *]]
-        ::  (gth ->.pith.a ->.pith.b)
+      %+  turn
+        %+  sort
+          %+  murn
+            ~(tap of:neo kids.bowl)
+          |=  [=pith =idea:neo]
+          ?~  pith  ~
+          `[pith idea]
+        |=  [a=[=pith *] b=[=pith *]]
+        (gth ->.pith.a ->.pith.b)
       link-entry
     ==
   ==
@@ -22,10 +26,10 @@
   ::
   ;form.fc.g2
     =style  "margin-bottom: 30px;"
-    =hx-post  "{(en-tape:pith:neo :(weld /neo/hawk here.bowl))}?stud=diary-diff"
+    =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=diary-diff"
     =hx-on-submit  "this.reset()"
-    =hx-target  "this"
-    =hx-swap  "afterend"
+    =hx-target  "find .loading"
+    =hx-swap  "outerHTML"
     =head  "put-entry"
     ;date-now(name "id");
     ;textarea.p2.bd1.br1
@@ -47,8 +51,8 @@
   ::
 ++  link-entry
   ::
-  |=  [pax=pith =pail:neo]
-  =/  tape  (trip !<(@t q.pail))
+  |=  [pax=pith =idea:neo]
+  =/  tape  (trip !<(@t q.pail.idea))
   =/  subject-end  (fall (find [10]~ tape) 56)
   =/  subject  (scag subject-end tape)
   =/  id  (trip (snag 0 (pout pax)))

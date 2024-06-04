@@ -125,7 +125,7 @@
       =class  "fr ac br1 {color}"
       ;button
         =class  "loader p2 tl br1 hover grow {color}"
-        =hx-post  "/neo/hawk/sky?stud=sky-diff"
+        =hx-post  "/neo/hawk/{<our.bowl>}/sky?stud=sky-diff"
         =hx-target  "find .loading"
         =hx-swap  "outerHTML"
         =head  "maximize"
@@ -137,7 +137,7 @@
       ==
       ;button
         =class  "loader p2 tl br1 hover {color}"
-        =hx-post  "/neo/hawk/sky?stud=sky-diff"
+        =hx-post  "/neo/hawk/{<our.bowl>}/sky?stud=sky-diff"
         =hx-target  "find .loading"
         =hx-swap  "outerHTML"
         =head  "close"
@@ -153,7 +153,7 @@
   ==
 ++  new-tab
   ;button.loader.b2.p2.tc.br1.hover.wfc.s-1
-    =hx-post  "/neo/hawk/sky?stud=sky-diff"
+    =hx-post  "/neo/hawk/{<our.bowl>}/sky?stud=sky-diff"
     =hx-target  "find .loading"
     =hx-swap  "outerHTML"
     =type  "button"

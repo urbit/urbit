@@ -31,9 +31,9 @@
         (~(respond neo:serv eyre) eyre-id (manx-response:gen:serv manx))
       =/  args  (~(gas by *(map @t @t)) args.lin)
       =/  =crew:neo  (~(gas by *crew:neo) src/inner ~)
-      ~&  crew/crew
+      =/  =made:neo  [%hawk-eyre-handler `[stud vax] crew]
       :_  sig/!>(~)
-      :~  [(welp here.bowl #/[uv/eny.bowl]) %make %hawk-eyre-handler `[stud vax] crew]
+      :~  [(welp here.bowl #/[uv/eny.bowl]) %make made]
       ==
     ==
   ++  init
@@ -46,4 +46,3 @@
     ==
   --
 --
-
