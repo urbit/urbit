@@ -1288,13 +1288,15 @@
     =+  .^(src=@t %cx `path`(welp root pax))
     ?.  (has-modified src (pave:neo (snip pax)))
       run
-
     ~?  >>>  ripe
       [%update pax]
     =/  =file:ford:neo
       ~|  parsing/pax
-      %-  need :: XX: weird memory shit
-      %-   mole   |.
+      =;  res=(each file:ford:neo tang)
+        ?:  ?=(%& -.res)
+          p.res
+        (mean p.res)
+      %-   mule   |.
       (scan (trip src) (rein:ford:neo [our.bowl (pave:neo (snip pax))]))
     ~&  [lib=lib pro=pro]:file
     =/  has-imports=?
@@ -1910,6 +1912,7 @@
     =/  =wave:neo  (~(got of:neo tide) here)
     =|  cards=(list card:neo)
     =/  =kook:neo  ~(kook husk code.wave)
+    =.  dock.wave  ~(dock husk code.wave)
     |%
     ++  su-core  .
     ++  su-emil  |=(caz=(list card:neo) su-core(cards (welp cards caz)))

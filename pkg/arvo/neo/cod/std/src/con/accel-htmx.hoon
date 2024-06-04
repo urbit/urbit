@@ -40,8 +40,9 @@
         ;*
         %+  turn  (gulf 1 10)
         |=  y=@
+        ^-  manx
         =/  pax=pith:neo  #/[ud/x]/[ud/y]
-        =/  kid  bowl
+        =/  kid=bowl:neo  bowl
         =.  kids.kid  [~ ~]
         =.  here.kid  :(welp here.bowl pax)
         =.  deps.kid  ~
@@ -61,7 +62,7 @@
             =id  "cell-{id}-{<x>}-{<y>}"
             =hx-get  "/neo/hawk{(en-tape:pith:neo here.bowl)}/{<x>}/{<y>}/in"
             =hx-target  "#dashboard-{id}"
-            =hx-select  "form"
+            =hx-select  ".trans-root"
             =hx-swap  "innerHTML"
             =morph-retain  "class"
             =onclick  "$('.cell-btn').removeClass('toggled');$(this).addClass('toggled');"
@@ -75,8 +76,7 @@
   ==
   ==
 ++  dashboard-stub
-  ;div.b0.fc
-    =style  "grid-area: dashboard;"
+  ;div.b0.fr
     =id  "dashboard-{id}"
     ;
   ==

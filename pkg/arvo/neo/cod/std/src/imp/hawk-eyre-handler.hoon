@@ -40,6 +40,7 @@
   ++  idt  `tape`(zing (scan +:(scow %da id) (most dot (star ;~(less dot prn)))))
   ++  slot  0  :: XX fix sky positional saving
   ++  lift
+    ^-  manx
     ;div.hawk.fc.wf.hf
       =id  "hawk-{idt}"
       =hx-params  "id,slot"
@@ -202,7 +203,7 @@
       :+  ~  %y
       %-  ~(gas by *lads:neo)
       :~  :-  &
-          `lash:neo`[any/~ ~]
+          `lash:neo`[pro/%htmx ~]
       ==
   ==
 ::
@@ -227,7 +228,7 @@
     ::      ;div: 403
     ::  ==
     ?~  src=(~(get by deps.bowl) %src)
-      =/  main
+      =/  main=manx
         ;div.wf.hf.fc.jc.ac: nothing here
       =/  raw
         ;div.wf.hf.fc.jc.ac: raw view

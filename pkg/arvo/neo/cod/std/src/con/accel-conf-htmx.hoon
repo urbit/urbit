@@ -3,47 +3,62 @@
 :-  [%accel-conf %$ %htmx]
 |=  conf=accel-conf
 |=  =bowl:neo
-|^
+|^  ^-  manx
 ::
-;div.fr
-  ;form.fr.af.js.hf
-    =hx-post  "/neo/hawk/{(en-tape:pith:neo here.bowl)}?stud=hoon"
-    =hx-trigger  "input changed delay:0.4s from:find textarea, input changed delay:0.4s from:[name='a']"
-    =hx-swap  "outerHTML"
-    =hx-target  "#spinner .loading"
-    =hx-target-400  "#error-{id}"
-    =hx-indicator  "#spinner"
+;div.fr.trans-root.grow
+  ;form.fc.grow
+    =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=hoon"
+    =hx-trigger  "input changed delay:0.4s from:[name='text'], input changed delay:0.4s from:[name='a']"
+    =hx-swap  "none"
+    =hx-target  "#code-spinner .loading"
+    =hx-target-400  "#error-code-{id}"
+    =hx-indicator  "#code-spinner"
     =row  (scow %ud +:x)
     =col  (scow %ud +:y)
     ;div.fc.border.grow.basis-half.wf
-      ;+  conf-header
-      ;+  input
+      ;+  code-input
+      ;+  (spinner "code")
     ==
   ==
-  ;div.fc
-    ;h3: Add 
-    ;form.fr.af.js.hf
-      =hx-post  "/neo/hawk/{(en-tape:pith:neo here.bowl)}?stud=deps"
-      =hx-trigger  "input changed delay:0.4s from:find textarea, input changed delay:0.4s from:[name='a']"
-      =hx-swap  "outerHTML"
-      =hx-target  "#spinner .loading"
-      =hx-target-400  "#error-{id}"
-      =hx-indicator  "#spinner"
-      =row  (scow %ud +:x)
-      =col  (scow %ud +:y)
-      ;div.fc.border.grow.basis-half.wf
-        ;+  conf-header
-        ;+  input
+  ;div.fc.border
+    ;+  conf-header
+    ;div.fc.p2
+      ::
+      ;+  deps
+      ;form.fr.js.hf
+        =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=add-dep"
+        =hx-swap  "none"
+        =hx-target  "#conf-spinner .loading"
+        =hx-target-400  "#error-add-{id}"
+        =hx-indicator  "#conf-spinner"
+        =row  (scow %ud +:x)
+        =col  (scow %ud +:y)
+        ;div.fc.grow.basis-half.wf
+          ;div.fr
+            ;input
+              =type  "text"
+              =placeholder  "name"
+              =autocomplete  "off"
+              =oninput  "this.setAttribute('value', this.value);"
+              =name  "name"
+              ;
+            ==
+            ;input
+              =type  "text"
+              =placeholder  "/{(scow %p our.bowl)}/demo/cell/5"
+              =autocomplete  "off"
+              =oninput  "this.setAttribute('value', this.value);"
+              =name  "pith"
+              ;
+            ==
+          ==
+          ;button
+            =type  "submit"
+            ;  Add dep
+          ==
+          ;+  (spinner "conf")
+        ==
       ==
-    ==
-
-    ;h3: Dependencies 
-    ;div#config.grow.border.basis-half.fc.scroll-x.scroll-y
-      ;+  spinner
-      ;*  
-      %+  turn  ~(tap by crew.conf)
-      |=  [=term =pith:neo]
-      (deps (trip term) pith)
     ==
   ==
 ==
@@ -58,24 +73,27 @@
 ++  x  (rear (snip (snip here.bowl)))
 ++  y  (rear (snip here.bowl))
 ++  spinner
-  ;div#spinner.b1.loader.p1.s-2.f2
+  |=  =tape
+  ;div.b1.loader.p1.s-2.f2
+    =id  (welp tape "-spinner")
     ;span.loaded: saved
     ;span.loading: ---
   ==
 ++  conf-header
-  ;div.b1.border.fr.ac.jb.p1
-    ;span.p1.mono.s-1: /{(scow %ud +:x)}/{(scow %ud +:y)}
+  =/  pit=tape  (en-tape:pith:neo (snoc (snip here.bowl) %out))
+  ;div.b1.border.fr.jb
+    ;span.p1.mono.s-1: {pit}
     ;button.br1.border.b1.hover
       =style  "padding: 4px 8px;"
       =type  "button"
-      =pith  "/{(scow %p our.bowl)}{(en-tape:pith:neo here.bowl)}"
+      =pith  pit
       =onclick  "navigator.clipboard.writeText(this.getAttribute('pith'));"
       ; copy path
     ==
   ==
-++  input
+++  code-input
   ;textarea#input.wf.p2.pre.mono.grow
-    =name  "code"
+    =name  "text"
     =placeholder  "code"
     =spellcheck  "false"
     =value  (trip hoon.conf)
@@ -83,23 +101,30 @@
     ; {(trip hoon.conf)}
   ==
 ++  deps
-  |=  [term=tape =pith:neo]
-  ;label.fc.p1
-    ;input.border.wf
-      =value  term
-      =placeholder  "var-name"
-      =autocomplete  "off"
-      =oninput  "this.setAttribute('value', this.value);"
-      =name  term
-      ;
-    ==
-    ;input.border.wf
-      =placeholder  "/{(scow %p our.bowl)}/path/to/dep"
-      =value  (en-tape:pith:neo pith)
-      =autocomplete  "off"
-      =oninput  "this.setAttribute('value', this.value);"
-      =name  :(welp term "-" "value")
-      ; {(en-tape:pith:neo pith)}
+  ^-  manx
+  ?:  =(~ crew.conf)
+    ;div.fr: No dependencies
+  ;div.fc
+    ;div.s1.p1: Dependencies
+    ;*
+    %+  turn  ~(tap by crew.conf)
+    |=  [=term =pith:neo]
+    =/  tap  (trip term)
+    ;label.fr.p1
+      ;div.border.wf
+        =name  "name"
+        ; {tap}
+      ==
+      ;label.border.wf: {(en-tape:pith:neo pith)}
+      ;button.border
+        =hx-post  "/neo/sky{(en-tape:pith:neo here.bowl)}?stud=del-dep"
+        ; Delete
+        ;label.hidden
+          =name  "name"
+          =value  tap
+          ;
+        ==
+      ==
     ==
   ==
 ++  error
