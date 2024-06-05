@@ -145,7 +145,6 @@ Let’s look at the rest of the `/imp` file.
 |%
 ::
 ::  the state of counter is a %number, just a @ud
-::  XX explain %pro / $curb?
 ++  state
   ^-  curb:neo
   [%pro %number]
