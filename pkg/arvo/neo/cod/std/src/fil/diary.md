@@ -2,7 +2,7 @@
 
 Now that you understand the structure of a shrub, the natural next step is to look at a shrub with kids.
 
-Unlike the Counter example, there is no equivalent way to implement `/imp/diary` in Gall. We’re now going to work directly with Urbit’s programmable, global, referentially transparent namespace — which is a lot of words to say [￼`+axal`￼](https://docs.urbit.org/language/hoon/reference/arvo#axal) — as a tool to read and write data.
+Unlike the Counter example, there is no equivalent way to implement `/imp/diary` in Gall. We’re now going to work directly with Urbit’s programmable, global, referentially transparent namespace — which is a lot of words to say [`+axal`](https://docs.urbit.org/language/hoon/reference/arvo#axal) — as a tool to read and write data.
 
 ## /imp/diary
 Diary is an app that lets you write timestamped diary entries that the frontend will show in a chronological feed. Here’s a succinct version of the app’s backend logic, which clocks in at 34 lines of code.
