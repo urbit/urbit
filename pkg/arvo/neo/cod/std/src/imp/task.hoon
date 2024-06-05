@@ -70,6 +70,7 @@
           ?:  prepend.diff
             `(list pith)`[~[ud/name] order.this]
           `(list pith)`(snoc order.this `pith`[ud/name ~])
+        =.  done.this  |
         :_  task/!>(this)
         :~  :-  (welp here.bowl ~[ud/name])
             [%make %task `task/!>(task.diff) ~]

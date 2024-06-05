@@ -5,53 +5,16 @@
 |=  =bowl:neo
 |^
   shell
-++  kids  ~(tap of:neo kids.bowl)
-++  id
-  ^-  tape
-  %-  zing
-  %+  turn  (pout here.bowl)
-  |=  smeg=@ta
-  %+  weld  "--"
-  (trip smeg)
-++  form-edit
+++  task-title
   ^-  manx
-  ;form.fc.g2.br1
-    =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=task-diff"
-    =hx-trigger  "input changed delay:0.4s from:find textarea, input from:find input"
-    =hx-swap  "none"
-    =head  "edit"
+  ;div.fc.g2.br1
     ;h2.bold.s2.tc
-      ; {(trip (@t text.t))}
-    ==
-    ;label.fr.g2.ac.js.hidden
-      ;+  =-  ?.  done.t:+  -
-        -(a.g [[%checked ""] a.g.-])
-      ^-  manx
-      ;input
-        =type  "checkbox"
-        =name  "done"
-        =onclick  (trip 'if (this.checked) { this.setAttribute("checked", "")} else {this.removeAttribute("checked")}')
-        ;
-      ==
-      ;span.grow: Done
-      ;div.htmx-indicator
-        ; ---
-      ==
-    ==
-    ;textarea.wf.p2.border.br1.ma.mono.hidden
-      =name  "text"
-      =autocomplete  "off"
-      =spellcheck  "false"
-      =rows  "{<(add 2 (lent (fand ~[10] (trip text.t))))>}"
-      =oninput  "this.setAttribute('value', this.value); this.rows = this.value.split('\\n').length"
-      =value  (trip (@t text.t))
       ; {(trip (@t text.t))}
     ==
   ==
 ++  form-create
-  |=  label=tape
   =/  placeholder  ?:(?=([%ud @ud] (rear here.bowl)) "subtask" "task")
-  ::^-  manx
+  ^-  manx
   ;div.fc.g1.p4
     ;form.fr.g1
       =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=task-diff"
@@ -141,9 +104,7 @@
       ;+  =-
         =/  that  -
         =/  classes
-          ::%+  weld
             "b0 br1 hover p1 tl action mono fr g3"
-          ::?:(done.t " strike f3" "")
         that(a.g [[%class classes] a.g.that])
       ^-  manx
       ;button
@@ -151,8 +112,7 @@
         =onclick  (trip 'this.classList.toggle("toggled"); this.parentNode.nextElementSibling.classList.toggle("hidden"); if (this.parentNode.nextElementSibling.classList.contains("hidden")){this.innerHTML="<span class=\'p1\'>V</span>"} else {this.innerHTML="<span class=\'p1\'>⋀</span>"};')
         ;span.p1: V
       ==
-      ;a
-        =class  "loader b0 br1 hover p1 tl action mono fr g3"
+      ;a.loader.b0.br1.hover.p1.tl.actio.mono.fr.g3
         =hx-indicator  "this"
         =href  "/neo/hawk{(en-tape:pith:neo here.bowl)}{(en-tape:pith:neo pith)}"
         =hx-swap  "innerHTML"
@@ -187,16 +147,6 @@
       ; ↥
     ==
     ;div.basis-full.hidden;
-    ;button.b1.br1.p2.hover.loader.hidden.hfc
-      =type  "button"
-      =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=task-diff"
-      =hx-swap  "outerHTML"
-      =hx-target  "find .loading"
-      =head  "kid-done"
-      =pith  (en-tape:pith:neo pith)
-      ;span.loaded: toggle
-      ;span.loading:  ---
-    ==
     ;button.b1.br1.p2.hover.loader.hfc
       =type  "button"
       =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=task-diff"
@@ -210,38 +160,8 @@
         ;+  loading.feather-icons
       ==
     ==
-    ;button.b1.br1.p2.hover.hfc.hidden
-      =type  "button"
-      =onclick  "this.nextElementSibling.classList.toggle('hidden'); this.classList.toggle('toggled');"
-      ; become
-    ==
-    ;div.basis-full.hidden.fr.g1.hfc
-      =hx-post  "/neo/hawk{(en-tape:pith:neo (welp here.bowl pith))}?stud=task-diff"
-      =hx-trigger  "become"
-      =hx-target  "find .loading"
-      =hx-swap  "outerHTML"
-      =head  "become"
-      ;input.grow.p2.br1.border
-        =type  "text"
-        =name  "path"
-        =value  (en-tape:pith:neo (welp here.bowl pith))
-        =oninput  "this.setAttribute('value', this.value);"
-        ;
-      ==
-      ;buttonb1.br1.p2.hover.loader
-        =type  "button"
-        =onclick  "this.dispatchEvent(new CustomEvent('become', \{composed:true, bubbles: true}))"
-        ;span.loaded: become
-        ;span.loading
-          ;+  loading.feather-icons
-        ==
-      ==
-    ==
     ;div.htmx-indicator.reorder-indicator.p2.f2.hfc
       ; ---
-    ==
-    ;div.basis-full.p2.pre.mono.scroll-x.hidden
-      ; {(trip text.t)}
     ==
   ==
   ::
@@ -256,22 +176,6 @@
         behavior: "instant"
       })
     }
-    function toggleChildren(el) {
-      let kidsDiv = el.parentNode.nextElementSibling.nextElementSibling;
-      if (!kidsDiv.children.length) {
-        let here = el.parentNode.parentNode.getAttribute('here');
-        let stub = document.createElement("div");
-        stub.setAttribute("hx-get", `/neo/hawk${here}`);
-        stub.setAttribute("hx-trigger", 'load');
-        stub.setAttribute("hx-target", 'this');
-        stub.setAttribute("hx-select", '.kids');
-        stub.textContent = "+ + +"
-        stub.className = "fc as jc"
-        stub.style = "padding:10px; padding-left: 20px;"
-        stub.setAttribute("hx-swap", "outerHTML");
-        kidsDiv.appendChild(stub);
-        htmx.process(kidsDiv);
-      }
       kidsDiv.classList.toggle('hidden');
     }
     '''
@@ -289,16 +193,6 @@
       ?~  kid
         ;div: does not exist {(en-tape:pith:neo pith)}
       (part-kid [pith (need kid)])
-    ::;*
-    ::=/  orphans
-    ::  %+  skim  kids
-    ::  |=  [=pith *]
-    ::  =(~ (find [pith ~] order.t))
-    ::%+  turn
-    ::  %+  sort  orphans
-    ::  |=  [a=[=pith *] b=[=pith *]]
-    ::  (lth ->.pith.a ->.pith.b)
-    ::part-kid
   ==
 ++  shell
   ;div.shell.fc.js.af.p2.wf.p1.g5.ma
@@ -311,6 +205,9 @@
       padding-bottom: 50vh; 
       padding-top: 30px;
     }
+    input[type="text"]:hover {
+      cursor: text;
+    }
     input:focus {
       outline: none;
     }
@@ -321,13 +218,10 @@
     '''
     ==
     ;+  script
-    ;+  form-edit
+    ;+  task-title
     ;div.fc.g1.kids
-      ::;+  ?~  (lent order.t)  ;/("")  (form-create %prepend "+")
-      ::;+  ?~  (lent order.t)  (form-create %append "+")  ;/("")
       ;+  form-ordered-kids
-      ::;+  ?~  (lent order.t)  ;/("")  (form-create %append "+")
-      ;+  (form-create "+")
+      ;+  form-create
     ==
   ==
 --
