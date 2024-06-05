@@ -24,13 +24,12 @@
 ::
 ::  ++alpha-upper
 ::
-::  26-letter Roman alphabet, lower case. 
+::  26-letter Roman alphabet, upper case. 
 ::
 ::  Source: 
 ++  alpha-upper     ^~  `tape`(scag 26 alphabet)
 ::
 ::  ++digits
-::
 ::
 ::  Ten decimal digits. 
 ::
@@ -46,7 +45,6 @@
 ::
 ::  ++hexdigits
 ::
-::
 ::  Sixteen hexadecimal digits, upper case and lower case. 
 ::
 ::  Source: 
@@ -59,19 +57,19 @@
 ::  Source: 
 ++  octdigits       ^~  `tape`(gulf 48 55)
 ::
-::  ++punctuation     tape:(weld (gulf 32 47) (gulf 58 64) (gulf 91 96) (gulf 123 126))
+::  ++punctuation
 ::
 ::  All ASCII punctuation characters. 
 ::
 ::  Source: 
 ++  punctuation     ^~  `tape`:(weld (gulf 32 47) (gulf 58 64) (gulf 91 96) (gulf 123 126))
 ::
-::  ++whitespace      tape:(weld " " ~['a'] ~['9'])
+::  ++whitespace
 ::
 ::  All ASCII whitespace characters. 
 ::
 ::  Source: 
-++  whitespace      ^~  `tape`:(weld " " ~['a'] ~['9'])
+++  whitespace      ^~  `tape`:(weld " " ~['\0a'] ~['\09'])
 ::
 ::  ++ascii
 ::
@@ -98,7 +96,7 @@
 ::
 ::  ++set-alpha-upper
 ::
-::  26-letter Roman alphabet, lower case. 
+::  26-letter Roman alphabet, upper case. 
 ::
 ::  Source: 
 ++  set-alpha-upper   ^~  (~(gas in *(set @tD)) alpha-upper)
@@ -153,59 +151,70 @@
 ::  Source: 
 ++  set-ascii         ^~  (~(gas in *(set @tD)) ascii)
 ::
+::  ++tape-in-set
+::
+::  Helper function to compare characters in tape against a set.
+::
+::  Source:
+++  tape-in-set
+  |=  chars=(set @tD)
+  |=  =tape
+  ^-  ?
+  =(~ (~(dif in (~(gas in *(set @tD)) tape)) chars)) 
+::
 ::  ++is-alpha
 ::
 ::  Tests whether all characters in a tape are from the ASCII alphabet.
 ::
 ::  Source:
-++  is-alpha    |=(=tape =(~ (~(dif in (~(gas in *(set @tD)) tape)) set-alphabet)))
+++  is-alpha    (tape-in-set set-alphabet)
 ::
 ::  ++is-lower
 ::
 ::  Tests whether all characters in a tape are from the lower case ASCII alphabet.
 ::
 ::  Source:
-++  is-lower    |=(=tape =(~ (~(dif in (~(gas in *(set @tD)) tape)) set-alpha-lower)))
+++  is-lower    (tape-in-set set-alpha-lower)
 ::
 ::  ++is-upper
 ::
 ::  Tests whether all characters in a tape are from the upper case ASCII alphabet.
 ::
 ::  Source: 
-++  is-upper    |=(=tape =(~ (~(dif in (~(gas in *(set @tD)) tape)) set-alpha-upper)))
+++  is-upper    (tape-in-set set-alpha-upper)
 ::
 ::  ++is-digit.
 ::
 ::  Source: 
-++  is-digit    |=(=tape =(~ (~(dif in (~(gas in *(set @tD)) tape)) set-digits)))
+++  is-digit    (tape-in-set set-digits)
 ::
 ::  ++is-alnum
 ::
 ::  Tests whether all characters in a tape are either ASCII alphabetic characters or decimal digits.
 ::
 ::  Source: 
-++  is-alnum    |=(=tape =(~ (~(dif in (~(gas in *(set @tD)) tape)) set-alpha-digits)))
+++  is-alnum    (tape-in-set set-alpha-digits)
 ::
 ::  ++is-hex
 ::
 ::  Tests whether all characters in a tape are ASCII hexadecimal digits (upper case and lower case).
 ::
 ::  Source: 
-++  is-hex      |=(=tape =(~ (~(dif in (~(gas in *(set @tD)) tape)) set-hexdigits)))
+++  is-hex      (tape-in-set set-hexdigits)
 ::
 ::  ++is-octal
 ::
 ::  Tests whether all characters in a tape are ASCII octal digits.
 ::
 ::  Source: 
-++  is-octal    |=(=tape =(~ (~(dif in (~(gas in *(set @tD)) tape)) set-octdigits)))
+++  is-octal    (tape-in-set set-octdigits)
 ::
 ::  ++is-ascii
 ::
 ::  Tests whether all characters in a tape are from the printable ASCII character set.
 ::
 ::  Source: 
-++  is-ascii    |=(=tape =(~ (~(dif in (~(gas in *(set @tD)) tape)) set-ascii)))
+++  is-ascii    (tape-in-set set-ascii)
 ::
 ::  ++is-decimal
 ::
@@ -230,7 +239,7 @@
 ::  Tests whether all characters in a tape are ASCII whitespace characters.
 ::
 ::  Source: 
-++  is-space    |=(=tape =(~ (~(dif in (~(gas in *(set @tD)) tape)) set-whitespace)))
+++  is-space    (tape-in-set set-whitespace)
 ::
 ::  ++is-title
 ::
