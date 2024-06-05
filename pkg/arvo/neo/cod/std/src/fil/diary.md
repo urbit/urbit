@@ -1,0 +1,297 @@
+# Tutorial 2: Diary
+
+Now that you understand the structure of a shrub, the natural next step is to look at a shrub with kids.
+
+Unlike the Counter example, there is no equivalent way to implement `/imp/diary` in Gall. We’re now going to work directly with Urbit’s programmable, global, referentially transparent namespace — which is a lot of words to say [￼`+axal`￼](https://docs.urbit.org/language/hoon/reference/arvo#axal) — as a tool to read and write data.
+
+## /imp/diary
+Diary is an app that lets you write timestamped diary entries that the frontend will show in a chronological feed. Here’s a succinct version of the app’s backend logic, which clocks in at 34 lines of code.
+
+```hoon
+/@  txt         ::  @t
+/@  diary       ::  name=@t
+/@  diary-diff  ::  ?([%put-entry id=@da =txt] [%del-entry id=@da])
+^-  kook:neo
+|%
+++  state  only/%diary
+++  poke   (sy %diary-diff ~)
+++  kids   `y/(~(gas by *lads:neo) ~[[[|/%da |] [only/%txt ~]]])
+++  deps   *deps:neo
+++  form
+  ^-  form:neo
+  |_  [=bowl:neo =aeon:neo =pail:neo]
+  ++  init
+    |=  old=(unit pail:neo)
+    ^-  (quip card:neo pail:neo)
+    [~ ?~(old diary/!>(*diary) u.old)]
+  ++  poke
+    |=  [=stud:neo vax=vase]
+    ^-  (quip card:neo pail:neo)
+    ?>  =(%diary-diff stud)
+    =/  state  !<(diary q.pail)
+    =/  act    !<(diary-diff vax)
+    ?>  =(our ship.src):bowl
+    ?-    -.act
+       %put-entry
+      :_  diary/!>(state)
+      ~[[(welp here.bowl ~[da/id.act]) [%make %txt `txt/!>(txt.act) ~]]]
+        %del-entry
+      :_  diary/!>(state)
+      ~[[(welp here.bowl ~[da/id.act]) [%tomb ~]]]
+    ==
+  --
+--
+```
+
+Most of this should be legible after the first tutorial. The only new ideas are the `+kids` arm, the use of `bowl`, and `%tomb`.
+
+## +kids
+Every shrub is a node in one tree, with one “root shrub” at the top of that tree. Every shrub below the root shrub is either one of its immediate children or one of its descendants.
+
+In its `+kids` arm, every shrub can define constraints for the shrubs below it in the namespace, whether that’s constraining the types of their state or the pokes they’ll accept from other shrubs.
+
+Let’s expand on diary’s `+kids` arm.
+
+```hoon
+::
+::  constrain shrubs below diary in the namespace
+::  by defining the types of their state and pokes
+++  kids
+  ::
+  ::  kids:neo is a (unit port:neo)
+  ^-  kids:neo
+  %-  some
+  ::
+  ::  port:neo is (pair dare:neo lads:neo)
+  ::  dare:neo is ?(%y %z)
+  ::  if %y, only constrain our immediate children
+  ::  if %z, recursively constrain all descendants
+  :-  %y
+  ::  lads:neo is (map pish:neo lash:neo)
+  %-  ~(gas by *lads:neo)
+  :~  :-  ::
+          ::  pish:neo
+          ::  to simplify: [%.n @da] means the kid's
+          ::  path contains any @da, and %.n is there
+          ::  to signify that the pith can not have more
+          ::  fields afterwards
+          [[%.n %da] %.n]
+      ::
+      ::  lash:neo is (pair curb:neo (set stud:neo))
+      ::  curb:neo defines the kids' state
+      ::  (set stud:neo) defines the kids' pokes
+      [[%only %txt] ~]
+  ==
+```
+
+In this case, Diary only constrains its immediate children. Each of its children lives at `/path/to/diary/<@da>`, where `<@da>` is used as an ID for the entry, and those children are just `%txt`s (cords) which store the text of the diary entry.
+
+There’s no need for Diary to recusrively constrain every single path that nests under `/path/to/diary`, since the app only needs to reserve the first “generation” of shrubs below it in order to work. In this case, the developer has forbidden any shrubs being created under the diary entries by ending the `pish` in a `%.n`. If that were `%.y`, any app could make a shrub at `/path/to/diary/<@da>/comments`. or `/path/to/diary/<@da>/backlinks`.
+
+To define the shrub’s kids, we create an empty map which is the bunt of `lads:neo`, then use `+gas:by` to populate the map with our own data, which will be a `(list (pair pish:neo lash:neo))`.
+
+The `pish:neo` statically types the paths which we’ll allow to be created beneath this shrub, and the `lash:neo` defines the kids’ state and pokes. In this case, the kids take no pokes and their state can only be `%txt`.
+
+(It’s worth flagging that `$curb:neo` contains several combinatorial rules about state types. For example `[%pro %txt]` would mean “the state of the child shrub can be any type which is readily convertible into a `%txt` with a conversion we have available in the `/con` folder”. This gives us a clue as to how we could handle state transitions and interoperability over the lifetime of our shrub, but it’s outside the remit of this tutorial.)
+## bowl:neo
+Notice that the `src` in `bowl:neo` differs from `bowl:gall`. Here’s the new type in full.
+
+```hoon
++$  bowl
+  $:  src=[=ship =pith]                 ::  a request's source ship and shrub
+      our=@p                            ::  our ship
+      here=pith                         ::  path to this shrub
+      now=@da                           ::  current datetime
+      eny=@uvJ                          ::  entropy
+      deps=(map term (pair pith lore))  ::  dependencies
+      kids=lore                         ::  XX
+  ==
+```
+
+## Generating cards, tombstoning shrubs
+We covered `card:neo` in the Counter tutorial, but this is the first time we’re seeing one generated within a shrub. Diary takes two pokes `%put-entry`, to create a new diary entry, and `%del-entry` to tombstone one.
+
+Here’s the `+poke` arm of the Diary shrub, expanded with comments.
+
+```hoon
+++  poke
+  |=  [=stud:neo vax=vase]
+  ^-  (quip card:neo pail:neo)
+  ?>  =(%diary p.pail)
+  ?>  =(%diary-diff stud)
+  =/  state  !<(diary q.pail)
+  =/  act    !<(diary-diff vax)
+  ::
+  ::  assert the poke comes from our ship
+  ::  src.bowl:neo is (pair ship pith)
+  ?>  =(our ship.src):bowl
+  ?-    -.act
+      %put-entry
+    ::   return unchanged state
+    :_  [%diary !>(state)]
+    ::
+    ::  create list of one card:neo
+    ::  card:neo is (pair pith:neo note:neo)
+    :~  :-  %+  welp
+              ::
+              ::  here.bowl is the path of this shrub
+              ::  /path/to/diary
+              here.bowl
+            ::
+            ::  append post id
+            ::  /path/to/diary/~2024.6.3..14.07.15..7098
+            ~[[%da id.act]]
+        ::
+        ::  this note will %make a new shrub
+        ::  at the pith we defined above
+        ^-  note:neo
+        ::  [%make stud:neo (unit pail:neo) conf:neo]
+        :*  %make
+            ::
+            ::  new shrub has the implementation %txt
+            ::  see /imp/txt.hoon, a stub that allows
+            ::  you to create a %txt in the namespace
+            %txt
+            ::
+            ::  new shrub's initial state
+            ::  is the text from the poke
+            `[%txt !>(txt.act)]
+            ::
+            ::  conf:neo is (map term pith:neo)
+            ::  declare this new shrub's dependencies
+            ::  which are also shrubs; diary has none
+            ~
+        ==
+    ==
+  ::
+      %del-entry
+    ::  return unchanged state
+    :_  [%diary !>(state)]
+    ::
+    ::  send a %tomb note to /path/to/diary/<id>
+    ::  this will tombstone the diary entry,
+    ::  effectively deleting it from the namespace
+    :~  :-  %+  welp
+              here.bowl
+            ~[[%da id.act]]
+        ^-  note:neo
+        [%tomb ~]
+    ==
+  ==
+```
+
+The above is mostly self-explanatory, but it’s worth emphasizing a few points.
+
+Diary’s state never changes. Its state is just its name, a `@t`. It stores all its entries in the namespace. This makes every one of them amenable to being scried out by other apps, and it leaves room for other apps to make shrubs beneath `/path/to/diary/<@da>` at paths like `/<@da>/comments`, `/<@da>/reacts`, or `/<@da>/backlinks`.
+
+The location of this shrub, `here.bowl`, is just a list. So it’s easy to `+welp` paths like `/<@da>` or `/<@da>/comments` onto the end. In this context, just keep in mind that they need to be `iota`s like `[%da now.bowl]`.
+
+The `%make` card has two mysteries: it initializes diary entries with an empty `%txt` implementation and an empty map of dependencies. We’ll punt on dependencies until the next tutorial. If you look at `/imp/txt.hoon`, it’s just a `~`. This is an *elegant short-term workaround*  that allows us to shove `%txt`s into the namespace;  if the `/imp/<foo>` file is just a `~`, `/app/neo` will notice this and substitute in a shrub that takes the state of the type defined in `/pro/<foo>`. Like everything else in these tutorials this is subject to change!
+
+## Diary frontend
+Like Counter, the Diary shrub just has two con files to convert to and from an HTMX frontend within the Sky browser.
+
+### /con/diary-htmx.hoon
+```hoon
+/@  diary  ::  name=@t
+/-  feather-icons
+:-  [%diary %$ %htmx]
+|=  dia=diary
+|=  =bowl:neo
+^-  manx
+|^
+  ;div.p2
+    =label  "Diary"
+    ;div.ma.fc.g2
+      =style  "max-width: 650px;"
+      ;+  form-put-entry
+      ;*
+      %+  turn
+        ~
+      link-entry
+    ==
+  ==
+++  form-put-entry
+  ;form.fc.g2
+    =style         "margin-bottom: 30px;"
+    =hx-post       "{(en-tape:pith:neo :(weld /neo/hawk here.bowl))}?stud=diary-diff"
+    =hx-on-submit  "this.reset()"
+    =hx-target     "this"
+    =hx-swap       "afterend"
+    =head          "put-entry"
+    ;date-now(name "id");
+    ;textarea.p2.bd1.br1
+      =name  "text"
+      =placeholder  "today, i ..."
+      =oninput  "this.setAttribute('value', this.value)"
+      =rows  "5"
+      =required  ""
+      =autocomplete  "off"
+      ;
+    ==
+    ;button.p2.b1.br1.bd1.wfc.hover.loader
+      ;span.loaded.s2: create
+      ;span.loading
+        ;+  loading.feather-icons
+      ==
+    ==
+  ==
+++  link-entry
+  |=  [pax=pith =pail:neo]
+  =/  tape  (trip !<(@t q.pail))
+  =/  subject-end  (fall (find [10]~ tape) 56)
+  =/  subject  (scag subject-end tape)
+  =/  id  (trip (snag 0 (pout pax)))
+  ;div.fr.g2
+    ;a.p2.br1.grow.b1.hover.loader
+      =href  "{(en-tape:pith:neo (weld /neo/hawk here.bowl))}/{id}"
+      ;div.loaded.fc.g1.js.as.g2
+        ;span.f3: {(pretty-date `@da`->:pax)}
+        ;span.bold: {subject}
+      ==
+      ;span.loading
+        ;+  loading.feather-icons
+      ==
+    ==
+    ;button.p2.br1.fr.g2.b1.hover.fc.ac.jc.loader
+      =onclick  "alert('not yet implemented. no tombstoning?')"
+      ;span.loaded
+        ;+  close.feather-icons
+      ==
+      ;span.loading
+        ;+  loading.feather-icons
+      ==
+    ==
+  ==
+++  pretty-date
+  |=  date=@da
+  ^-  tape
+  =/  d  (yore date)
+  "{(y-co:co y:d)}-{(y-co:co m:d)}-{(y-co:co d:t:d)}"
+--
+```
+
+There’s only a bit more going on here than in Counter’s `/con/number-htmx.hoon` file. The main thing is that we have `+link-entry` and `+pretty-date` helper arms which are being used like functional frontend components.
+
+The Diary frontend is a text box at the top with a list of entries generated from a list of the `/diary` shrub’s child `pith`s. Nowhere is a list of children in the state being passed from the backend to the frontend, like you might see with a Gall agent passing converting a `(list item)` to a JSON array through a mark in the event that a frontend has scried or subscribed on a path, all of which would require painstaking specification by the developer.
+
+### /con/node-diary-diff.hoon
+```hoon
+/@  node        ::  manx
+/@  diary-diff  ::  ?([%put-entry id=@da txt=@t] [%del-entry id=@da])
+/-  manx-utils
+:-  [%node %$ %diary-diff]
+|=  nod=node
+^-  diary-diff
+=/  mu  ~(. manx-utils nod)
+=/  head  (@tas (got:mu %head))
+=/  id  (slav %da (vol:mu "id"))
+=/  text  (vol:mu "text")
+[%put-entry id text]
+```
+
+Just like the `/con/node-counter-diff.hoon` in the Counter tutorial, all this does is extract attributes from an XML node, having been converted into a `manx`, and manually constructs the poke expected by the shrub.
+
+## Building on Diary
+* Amend the `+kids` arm so that other apps could create shrubs like `/path/to/diary/<@da>/comments`.
+* Diary takes two pokes: `%put-entry` and `%del-entry`, but only one of these is supported on the frontend. Implement a `%dely-entry` poke from the frontend.
