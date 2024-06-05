@@ -5,4 +5,3 @@
 |=  nod=node
 ^-  txt
 (~(vol manx-utils nod) "text")
-
