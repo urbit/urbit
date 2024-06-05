@@ -1,5 +1,16 @@
 /@  folder
 /@  folder-diff
+=>
+  |%
+  ++  default-pails
+    %-  malt
+    ^-  (list [stud:neo pail:neo])
+    :~
+      [%iframe iframe/!>('')]
+      [%txt txt/!>('')]
+      [%sail sail/!>(['' '' ~])]
+    ==
+  --
 ^-  kook:neo
 |%
 ++  state  pro/%folder
@@ -26,7 +37,7 @@
       ?-    -.poke
           %make
         :_  folder/!>([name.poke this])
-        :~  [(snoc here.bowl name.poke) %make stud.poke ~ ~]
+        :~  [(snoc here.bowl name.poke) %make stud.poke (~(get by default-pails) stud.poke) ~]
         ==
       ::
           %tomb

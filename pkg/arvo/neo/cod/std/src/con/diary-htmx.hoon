@@ -14,19 +14,22 @@
   ::  <div class="p2" label="Diary">
   ;div.p2
     =label  "Diary"
-    ::  <div class="ma fc g2" style="max-width: 650px">
-    ;div.ma.fc.g2
-      =style  "max-width: 650px;"
+    ::  <div class="ma fc g2 mw-page">
+    ;div.ma.fc.g2.mw-page
       ::  render the text input for new entries
       ;+  form-put-entry
       ::  compose several link-entry elements generated
       ::  by the +turn gate into one HTMX node
       ;*
       %+  turn
-        ~
-        ::  %+  sort  ~(tap of:neo kids.bowl)
-        ::  |=  [a=[=pith *] b=[=pith *]]
-        ::  (gth ->.pith.a ->.pith.b)
+        %+  sort
+          %+  murn
+            ~(tap of:neo kids.bowl)
+          |=  [=pith =idea:neo]
+          ?~  pith  ~
+          `[pith idea]
+        |=  [a=[=pith *] b=[=pith *]]
+        (gth ->.pith.a ->.pith.b)
       link-entry
     ==  ::  </div>
   ==  ::  </div>
@@ -37,17 +40,17 @@
   ::    class="fc g2"
   ::    style="margin-bottom: 30px"
   ::    head="put-entry"
-  ::    hx-post="{(en-tape:pith:neo :(weld /neo/hawk here.bowl))}?stud=diary-diff"
+  ::    hx-post="/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=diary-diff"
   ::    hx-on-submit="this.reset()"
-  ::    hx-target="this"
-  ::    hx-swap="afterend"
+  ::    hx-target="find .loading"
+  ::    hx-swap="outerHTML"
   ::  >
   ;form.fc.g2
     =style         "margin-bottom: 30px;"
-    =hx-post       "{(en-tape:pith:neo :(weld /neo/hawk here.bowl))}?stud=diary-diff"
+    =hx-post       "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=diary-diff"
     =hx-on-submit  "this.reset()"
-    =hx-target     "this"
-    =hx-swap       "afterend"
+    =hx-target     "find .loading"
+    =hx-swap       "outerHTML"
     =head          "put-entry"
     ::  <date-now name="id" />
     ;date-now(name "id");
@@ -82,9 +85,9 @@
 ::
 ::  entry box
 ++  link-entry
-  |=  [pax=pith =pail:neo]
+  |=  [pax=pith =idea:neo]
   ::  extract information from the given pith and pail:neo
-  =/  tape  (trip !<(@t q.pail))
+  =/  tape  (trip !<(@t q.pail.idea))
   =/  subject-end  (fall (find [10]~ tape) 56)
   =/  subject  (scag subject-end tape)
   =/  id  (trip (snag 0 (pout pax)))

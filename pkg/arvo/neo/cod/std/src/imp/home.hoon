@@ -16,7 +16,6 @@
         [#/[p/our.bowl]/home/tasks %make %task `task/!>(['' | ~]) ~]
         [#/[p/our.bowl]/home/sail %make %sail `sail/!>(['' 'prose p3' ~]) ~]
         [#/[p/our.bowl]/home/accel %make %accel ~ ~]
-        [#/[p/our.bowl]/home/iframes/wiki %make %iframe `iframe/!>('https://docs.urbit.org') ~]
         [#/[p/our.bowl]/home/circle %make %circle ~ ~]
         [#/[p/our.bowl]/home/files %make %folder ~ ~]
         [#/[p/our.bowl]/home/planner %make %planner ~ ~]

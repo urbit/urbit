@@ -13,7 +13,7 @@
 ++  id
   ^-  tape
   %-  zing
-  %+  turn  (pout here.bowl)
+  %+  turn  (pout (slag 1 here.bowl))
   |=  smeg=@ta
   %+  weld  "--"
   (trip smeg)
@@ -28,7 +28,7 @@
         ;
       ==
       ;a.p2.b1.hover.loader.br2.bd1.fr.jc.ac.f3
-        =href  "/neo/hawk/sky/settings"
+        =href  "/neo/hawk/{<our.bowl>}/sky/settings"
         ;span.loaded
           ;+  settings.feather-icons
         ==

@@ -25,7 +25,7 @@
         ?+  -.poke  !!
           %new-tab
             :-  ~
-            =.  hawks.this  [[now.bowl /home] hawks.this]
+            =.  hawks.this  [[now.bowl #/[p/our.bowl]/home] hawks.this]
             =.  open.this  (min 4 +(open.this))
             sky/!>(this)
           %move-tab
@@ -42,6 +42,7 @@
               ==
             =.  open.this  (dec open.this)
             sky/!>(this)
+        ::
           %maximize
             :-  ~
             =.  hawks.this

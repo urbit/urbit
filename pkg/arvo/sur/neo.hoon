@@ -877,6 +877,13 @@
   $%  [%gone =term] :: injected a bad dependency
       [%goof =tang] :: crash
   ==
+++  print-quit
+  |=  q=quit
+  ^-  tang
+  ?-  -.q
+    %goof  tang.q
+    %gone  ~[leaf/"No dependency at {<term>}"]
+  ==
 +$  ack  (pair flow (unit quit))
 ::
 ::  $flow: Call direction
@@ -1416,7 +1423,8 @@
     |-  ^+  a
     ?~  a  b
     ?~  b  a
-    ?>  =(i.a i.b)
+    ?.  =(i.a i.b)
+      a
     $(a t.a, b t.b)
   ++  sub
     |=  [from=$ del=$]
@@ -2018,6 +2026,11 @@
 +$  dare  ?(%y %z)
 +$  port  (pair dare lads)
 +$  kids  (unit port)
++$  tear
+  $%  [%only wan=curb hav=stud]
+      [%not not=curb hav=stud]
+  ==
+
 ::  $dude: virtual namespace binding
 ::
 +$  dude
