@@ -5485,7 +5485,7 @@
         |=  [rof=roof pov=path our=ship now=@da who=ship]
         ;;  ship
         =<  q.q  %-  need  %-  need
-        (rof ~ pov %j `beam`[[our %sein %da now] /(scot %p who)])
+        (rof [~ ~] pov %j `beam`[[our %sein %da now] /(scot %p who)])
       --
   ::  middle core: stateless queries for default numeric sponsorship
   ::
