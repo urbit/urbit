@@ -5,7 +5,7 @@
 ++  check-kids
   |=  =bowl:neo
   ^-  ?
-  ?:  =(kids.bowl ~)
+  ?:  =([~ ~] kids.bowl)
     %.y
   =/  piths  ~(tap in ~(key by ~(tar of:neo kids.bowl)))
   %+  levy  piths
@@ -83,7 +83,7 @@
           text  text.diff
           done  ?:  (check-kids bowl)
                   done.diff
-                %n
+                %.n
         ==
       ::
           %oust

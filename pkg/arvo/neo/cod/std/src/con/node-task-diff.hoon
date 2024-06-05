@@ -11,7 +11,11 @@
   ~|  [%unknown-head head]
   !!
     %new
-  [head '' | ~]
+  =/  text  (vol:mu "text")
+  =/  prepend  (vol:mu "prepend")
+  ?:  =(prepend 'prepend')
+    [head [text | ~] &]
+  [head [text | ~] |]
 ::
     %edit
   =/  text  (vol:mu "text")
@@ -27,7 +31,8 @@
   =/  piths
     %+  turn  c.nod
     |=  =manx
-    =/  here  (get:mu %here)
+    =/  mu-reorder  ~(. manx-utils manx)
+    =/  here  (get:mu-reorder %here)
     ?~  here
       ~&  >>>  [%bad-here manx]
       !!

@@ -1,4 +1,5 @@
 /@  task-diff
+/-  feather-icons
 :-  [%task-diff %$ %htmx]
 |=  t=task-diff
 |=  =bowl:neo
@@ -8,5 +9,7 @@
   =hx-indicator  "closest .loader"
   =hx-swap  "innerHTML"
   =hx-trigger  "load"
-  ; +++
+  ;span.loading
+  ;+  loading.feather-icons
+  ==
 ==
