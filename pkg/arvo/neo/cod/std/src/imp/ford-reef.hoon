@@ -4,7 +4,7 @@
 --
 ^-  kook:neo
 |%
-++  state  pro/%ford-out
+++  state  pro/%vase
 ++  poke   *(set stud:neo)
 ++  kids  ~
 ++  deps  ~

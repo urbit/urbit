@@ -524,7 +524,6 @@
       |=  [kid=pith:neo cas=@ud]
       ^-  (unit [pith:neo saga:neo])
       =/  pit  (welp pith kid)
-      ~&  child/[pit case]
       =/  child  (scry cas pit)
       ?:  ?=($@(~ [~ ~]) child)
         ~
@@ -533,4 +532,3 @@
 ::  !! :: ``[q.u.u.pom ever q.p.u.u.pom]
   --
 --
-

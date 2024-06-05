@@ -15,12 +15,15 @@
 ::  manxes
 ++  friends-list
   ^-  manx
-  ;div.fc.g2  
+  ;div.fc.g2
     ;*
-    %+  turn  
+    %+  turn
       %+  murn
-        ~  ::~(tap in ~(key by kids.bowl))
-      |=  =pith  ((soft ship) ->:pith)
+        ~(tap in ~(key by ~(tar of:neo kids.bowl)))
+      |=  =road:neo  
+      ?.  ?=([[%p ship=@] *] road)
+        ~
+      `ship.road
     |=  =ship
     ^-  manx
     ;div.border.p2.mono.fr.jb

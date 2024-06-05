@@ -1,5 +1,7 @@
 /@  pal-type=pal
 /@  pal-diff
+/>  htmx
+/<  node
 => 
 |%
 ++  card  card:neo
@@ -18,6 +20,9 @@
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo pail:neo)
     =/  sta  sta
+    ?:  =(%test stud)
+      ~&  ((htmx txt/!>('test')) bowl)
+      `pal/!>(sta)
     ?>  =(%pal-diff stud)
     =+  !<(poke=pal-diff vax)
     :-  ~
@@ -30,6 +35,7 @@
   ++  init
     |=  old=(unit pail:neo)
     ^-  (quip card:neo pail:neo)
-    `(need old)
+    =+  !<(pal=pal-type q:(need old))
+    `pal/!>(pal)
   --
 --

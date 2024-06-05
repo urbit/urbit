@@ -101,6 +101,7 @@
 +$  epic  $+(epic (axal saga))
 +$  feat  (pair aeon vial)
 +$  gest  $+(gest (axal feat))
+++  road   (pole iota)
 ::  $stud: name for build system outputs
 ::  
 ::    Build system outputs cannot live at arbitrary points in the
@@ -111,6 +112,19 @@
   $:  mark=@tas                            :: 
       [=ship =desk]
   ==
+++  stud-to-pith
+  |=  s=stud
+  ^-  pith
+  ?@  s  ~[s]
+  #/[p/ship.s]/[desk.s]/[mark.s]
+::
+++  pith-to-stud
+  |=  p=road
+  ^-  stud
+  ?:  ?=([s=@ ~] p)
+    s.p
+  ?>  ?=([[%p ship=@] desk=@ mark=@ ~] p)
+  [mark ship desk]:p
 ++  axal
   |$  [item]  
   [fil=(unit item) kid=(map iota $)]
@@ -863,6 +877,13 @@
   $%  [%gone =term] :: injected a bad dependency
       [%goof =tang] :: crash
   ==
+++  print-quit
+  |=  q=quit
+  ^-  tang
+  ?-  -.q
+    %goof  tang.q
+    %gone  ~[leaf/"No dependency at {<term>}"]
+  ==
 +$  ack  (pair flow (unit quit))
 ::
 ::  $flow: Call direction
@@ -1031,6 +1052,10 @@
     [face=term =stud]
   +$  fil  
     [face=term =stud]
+  +$  far  
+    [face=term =stud]
+  +$  fal
+    [face=term =stud]
   +$  vale
     [face=term =stud]
   ::  $file:ford: Code with imports
@@ -1042,6 +1067,8 @@
         :: grab=(list 
         lib=(list lib)
         fil=(list fil)
+        far=(list far)
+        fal=(list fal)
         =hoon
     ==
   ::  +rein:ford: Parse code with imports
@@ -1127,6 +1154,31 @@
           [mark.stud stud]
         std
       ==
+    ::
+    ++  far
+      :: ^-  $-(nail (like ^pro))
+      %+  rune  gar
+      ;~  pose
+        ;~(plug sym ;~(pfix tis std))
+        %+  cook
+          |=  =stud
+          ?@  stud  [stud stud]
+          [mark.stud stud]
+        std
+      ==
+    ++  fal
+      :: ^-  $-(nail (like ^pro))
+      %+  rune  gal
+      ;~  pose
+        ;~(plug sym ;~(pfix tis std))
+        %+  cook
+          |=  =stud
+          ?@  stud  [stud stud]
+          [mark.stud stud]
+        std
+      ==
+
+
     ::  +old-lib: Parse arbitrary library import directive
     ::
     ::    Unused, todo revive with more recursive build system
@@ -1158,6 +1210,8 @@
       :: ^-  $-(nail (like (list ^pro)))
       (star pro)
     ++  fils  (star fil)
+    ++  fals  (star fal)
+    ++  fars  (star far)
     ++  hone
       :: ^-  $-(nail (like hoon))
       =+  vaz=(vang & (en-path:^name name))
@@ -1168,6 +1222,8 @@
         pros
         libs
         fils
+        fars
+        fals
         hone
       ==
     --
@@ -1356,7 +1412,6 @@
   --
 ::
 ::
-++  road   (pole iota)
 ::
 ++  pith
   |^  $+(pith ^pith)
@@ -1368,7 +1423,8 @@
     |-  ^+  a
     ?~  a  b
     ?~  b  a
-    ?>  =(i.a i.b)
+    ?.  =(i.a i.b)
+      a
     $(a t.a, b t.b)
   ++  sub
     |=  [from=$ del=$]
@@ -1970,6 +2026,11 @@
 +$  dare  ?(%y %z)
 +$  port  (pair dare lads)
 +$  kids  (unit port)
++$  tear
+  $%  [%only wan=curb hav=stud]
+      [%not not=curb hav=stud]
+  ==
+
 ::  $dude: virtual namespace binding
 ::
 +$  dude

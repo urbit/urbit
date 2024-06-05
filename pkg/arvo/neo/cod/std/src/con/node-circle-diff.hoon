@@ -6,4 +6,6 @@
 ^-  circle-diff
 =/  s
   (slav %p (~(vol manx-utils nod) "ship"))
-[%add (malt `(list [ship made:neo])`~[[s [%sig ~ ~]]])]
+=/  =made:neo
+  [%sig `sig/!>(~) ~]
+[%add (~(gas by *(map ship made:neo)) [s made] ~)]
