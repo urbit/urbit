@@ -310,6 +310,7 @@ The Sky homepage shows you one tile for all of the shrubs who are the immediate 
 ```
 
 If you refresh your browser you should now see a tile labelled “counter”. Click there to see the Counter frontend from the `/con` file and increment the state of the `/counter` shrub.
+
 ## Building on the Counter
 If you know your way around Gall, you should now be able to make some minor changes to the counter example above. Try the following:
 
