@@ -3371,7 +3371,11 @@
                         %+  roll  (tap:queue fragments)
                         |=  [[* partial-rcv-message] total=(list message)]
                         :_  total
-                        ;;(message (assemble-fragments num-fragments fragments))
+                        ;;  message
+                        :_  (assemble-fragments num-fragments fragments)
+                        ?:  =(%0 (mod bone 4))  %plea
+                        ?:  =(%1 (mod bone 4))  %boon
+                        ?>  =(%3 (mod bone 4))  %naxplanation
                       |^
                       =/  unsent=((mop ,@ud partial-rcv-message) lte)
                         %+  roll  unsent-fragments.pump
