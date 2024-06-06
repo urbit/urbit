@@ -66,7 +66,7 @@
   ::  <script>
   ;script
     ::  turning fenced cord block into tape
-    ::  function center(el), applies scrollIntoView() methos to provided element
+    ::  function center(el), applies scrollIntoView() methods to provided element
     ::  so the element is visible to the user as specified below
     ::  block: "center" - vertical alignment: center
     ::  inline: "start" - horizontal alignment: start
@@ -88,7 +88,7 @@
   ^-  manx
   :: <div class="fc g2 br1">
   ;div.fc.g2.br1
-    ::  <h2 class="bold.s2.tc">{(trip (@t text.t))}
+    ::  <h2 class="bold.s2.tc">{(trip (@t text.t))}>
     ;h2.bold.s2.tc
       ; {(trip (@t text.t))}
     ==  ::</h2>
@@ -96,17 +96,17 @@
 ::
 ++  form-ordered-kids
   ::  form that keeps track of tasks order 
-  ::  sends %reorder poke if order been ajusted
+  ::  sends %reorder poke if order been adjusted
   ;form.fc.g1
     =hx-post  "/neo/hawk{(pith-tape here.bowl)}?stud=task-diff"
     =head  "reorder"
     =hx-indicator  ".reorder-indicator"
     =hx-swap  "none"
     ;*
-    ::  iterates over the list of pith (maps through it)
+    ::  iterates over the list of piths, turn through kid data
     %+  turn  order.t
       |=  =pith
-      ::  extract kid inforamtion at pith from kids.bowl
+      ::  extract kid information at pith from kids.bowl
       ::  and calls part-kid arm with pith and kid data
       =/  kid  (~(get of:neo kids.bowl) pith)
       ?~  kid  
@@ -115,7 +115,6 @@
   ==
 ::
 ++  part-kid
-::  part-kid arm maps through kid data
 ::  sends %edit poke on input change
   |=  [=pith =idea:neo]
   ::  extracts information from idea:neo to task
@@ -250,7 +249,7 @@
       =onclick  "this.parentNode.parentNode.previousElementSibling?.insertAdjacentElement('beforebegin', this.parentNode.parentNode); center(this);"
       ; ↑
     ==
-    ::  moves kid div to the beggining of the task list and centers view
+    ::  moves kid div to the beginning of the task list and centers view
     ;button.b1.br1.p2.hover.hfc
       =onclick  "this.parentNode.parentNode.parentNode?.insertAdjacentElement('afterbegin', this.parentNode.parentNode);  center(this);"
       ; ↥
