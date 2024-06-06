@@ -8,21 +8,25 @@
     =label  "Messages"
     ;*
     %+  turn
-      %+  sort
-        %+  murn
+      ::%+  sort
+      ::  %+  murn
           ~(tap of:neo kids.bowl)
-        |=  [=pith =idea:neo]
-        ?~  pith  ~
-        ?@  -.pith  ~
-        ?.  =(-<.pith %da)  ~
-        `[pith idea]
-      |=  [a=[=pith *] b=[=pith *]]
-      (lth ->.pith.a ->.pith.b)
+     ::   |=  [=pith =idea:neo]
+     ::   ?~  pith  ~
+     ::   ?@  -.pith  ~
+     ::   ?.  =(-<.pith %da)  ~
+     ::   `[pith idea]
+     :: |=  [a=[=pith *] b=[=pith *]]
+     :: (lth ->.pith.a ->.pith.b)
     render-message
   ==
 ::
 ++  render-message
   |=  [pax=pith =idea:neo]
+  ?.  =(%message p.pail.idea)
+    ?@  p.pail.idea
+      ;p: {(en-tape:pith:neo pax)}
+    ;p: {(trip mark.p.pail.idea)}
   =/  msg  !<(message q.pail.idea)
   ^-  manx
   ;div.fc.g2.border.p3.br1
