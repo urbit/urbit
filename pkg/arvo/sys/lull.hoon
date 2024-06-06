@@ -843,7 +843,7 @@
   ::
   +$  task
     $%  [%hear =lane =blob]
-        [%dear =ship =lane]
+        [%dear =ship =lane:pact]
         [%cork =ship]
         [%tame =ship]
         [%kroc bones=(list [ship bone])]
@@ -1580,7 +1580,7 @@
         =server=chain  ::  for serving %shut requests
         priv=private-key    ::  XX remove if we use the crypto core?
         chums=(map ship chum-state)  ::  XX migrated peers
-        core=?(%ames %mesa)          ::  XX use migrated core by default
+        core=_`?(%ames %mesa)`%ames          ::  XX use migrated core by default
         ::  TODOs
         :: XX tmp=(map @ux page)   :: temporary hash-addressed bindings
     ==
@@ -1635,7 +1635,7 @@
   +$  fren-state
     $+  fren-state
     $:  azimuth-state
-        route=(unit [direct=? =lane])  ::  XX (list)
+        route=(list [direct=? =lane:pact])  :: XX hop missing in pact
         =qos
         corked=(set side)  ::  can be +peeked in the namespace
                           ::  XX how many flows to keep here?
