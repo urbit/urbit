@@ -5,7 +5,6 @@
 |=  =ship
 |=  =bowl:neo
 ^-  manx
-::~&  >  bowl  :: this sigpam results in endless http spinning
 ;div.p2
   =label  "Chat"
   ;div.ma.fc.g2

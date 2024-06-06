@@ -1,4 +1,5 @@
 /@  message
+/-  feather-icons
 |%
 ++  render-messages
   |=  =bowl:neo
