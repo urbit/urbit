@@ -201,7 +201,7 @@
       :-  [pro/%htmx ~]
       :::-  [[%or rol/[%ui-main pro/%htmx] pro/%htmx ~] ~]
       ^-  (unit port:neo)
-      :+  ~  %y
+      :+  ~  %z
       %-  ~(gas by *lads:neo)
       :~  :-  &
           `lash:neo`[any/~ ~]
