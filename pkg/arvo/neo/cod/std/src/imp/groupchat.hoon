@@ -24,7 +24,7 @@
     ::  XX - maybe move ordering is unpredictable here
     ?~  old
       :_  :-  %groupchat
-          !>([(sy our.bowl ~) ~ (snoc here.bowl %pub)])
+          !>([(sy our.bowl ~) ~ here.bowl])
       :~  :-  (snoc here.bowl %pub) 
           [%make %message-pub ~ ~]
           ::
