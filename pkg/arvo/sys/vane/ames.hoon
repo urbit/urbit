@@ -1819,7 +1819,12 @@
                 |=  her=ship
                 ^+  event-core
                 =/  par  (get-peer-state her)
-                ?~  par  event-core
+                ?~  par
+                  ::  XX  this shouldn't be needed
+                  ::  XX  only if %alien
+                  ~&  >>  rettrieve-keys-again/her
+                  (emit [//keys]~ %pass /mesa/public-keys %j %public-keys [n=her ~ ~])
+                  :: event-core
                 =/  peer-core  (abed-peer:pe her u.par)
                 =/  bones  ~(tap in ~(key by snd.u.par))
                 |-  ^+  event-core
@@ -5769,7 +5774,10 @@
             =.  ev-core
               %+  ev-emit  ~[/ames]
               [%pass /mesa/dead-flow %b %wait `@da`(add now ~m2)]
-            sy-abet:sy-prod:sy
+            =+  ames-core=(ev:ames hen ames-state)
+            =^  moves  ames-state  abet:(wake-dead-flows:ames-core error)
+            =.  ev-core  sy-abet:sy-prod:sy
+            (ev-emil moves)
           ::
           ++  ev-take-flub
             |=  =wire
@@ -7113,7 +7121,11 @@
               ^+  core
               =+  per-sat=(ev-get-per ship)
               ?.  ?=([~ ~ %known *] per-sat)
-                core  ::  %alien or missing
+                ::  XX  this shouldn't be needed
+                ::  XX  only if %alien
+                ~&  retrieving-keys-again/ship
+                (ev-emit [//keys]~ %pass /mesa/public-keys %j %public-keys [n=ship ~ ~])
+                ::  %alien or missing
               =.  per  [ship +.u.u.per-sat]
               ::  ?>  ?=(%known -.sat.per)
               =/  =space
