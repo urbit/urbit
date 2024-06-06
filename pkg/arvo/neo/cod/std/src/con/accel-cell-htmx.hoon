@@ -44,7 +44,7 @@
     ;button.br1.border.b1.hover
       =style  "padding: 4px 8px;"
       =type  "button"
-      =pith  "/{(scow %p our.bowl)}{(en-tape:pith:neo here.bowl)}"
+      =pith  "{(en-tape:pith:neo here.bowl)}"
       =onclick  "navigator.clipboard.writeText(this.getAttribute('pith'));"
       ; copy path
     ==

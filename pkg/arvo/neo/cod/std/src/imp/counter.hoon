@@ -1,6 +1,5 @@
 /@  number        ::  @ud
 /@  counter-diff  ::  [%inc ~]
-::  XX note about types
 ::
 ::  outer core of a shrub: define state, pokes,
 ::  dependencies, and kids
@@ -63,6 +62,10 @@
       ::  (technically unnecessary in this case, but good
       ::  hygiene)
       ?>  =(p.pail %number)
+      ::
+      ::  de-vase the payload's vase through the number
+      ::  type; note the difference between the number
+      ::  type and the %number stud
       =/  state  !<(number q.pail)
       ::
       ::  assert that the poke's stud is %counter-diff
