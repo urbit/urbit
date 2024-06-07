@@ -1,20 +1,18 @@
 ::
-::::  /hoon/md/mar
+::::  /hoon/atom/mar
   ::
 /?    310
 ::
-=,  format
+::::  A minimal atom mark
+  ::
 =,  mimes:html
-|_  txt=wain
-::
-++  grab                                                ::  convert from
-  |%
-  ++  mime  |=((pair mite octs) (to-wain q.q))
-  ++  noun  wain                                        ::  clam from %noun
-  --
-++  grow
-  |%
-  ++  mime  [/text/plain (as-octs (of-wain txt))]
-  --
+|_  ato=@
+++  grab  |%
+          ++  noun  @
+          ++  mime  |=([* p=octs] q.p)
+          --
+++  grow  |%
+          ++  mime  [/application/x-urb-unknown (as-octs ato)]
+          --
 ++  grad  %mime
 --
