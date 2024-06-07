@@ -71,6 +71,12 @@
     ::  block: "center" - vertical alignment: center
     ::  inline: "start" - horizontal alignment: start
     ::  behavior: "instant" - scrolling is instant
+    ::
+    ::  document.getElementById("alert").addEventListener 
+    ::  listens to event onclick from element with "alert" id
+    ::  provides alert message functionality 
+    ::  will be used to provide information on why checkbox can't be marked as checked
+    ::
     ;+  ;/  %-  trip
     '''
     function center(el) {
@@ -79,7 +85,13 @@
         inline: "start",
         behavior: "instant"
       })
-    }
+    };
+    document.getElementById("alert").addEventListener("click", function(e){
+      if (document.getElementById("alert").hasAttribute("readonly")){
+      e.preventDefault();
+      alert("Subtasks are not completed");
+      }
+    });
     '''
   ==  ::</script>
 ::
@@ -93,6 +105,21 @@
       ; {(trip (@t text.t))}
     ==  ::</h2>
   ==  ::</div>
+::
+++  kids-check
+::  takes parent pith and ordered task list
+::  returns boolean whether all subtasks are toggled as done %.y
+::  or not %.n
+::  
+  |=  [parent-pith=pith order=(list pith)]
+  ^-  ?
+    %+  levy  order
+    |=  p=pith
+    =/  =task
+      !<  task
+      q.pail:(need (~(get by ~(tar of:neo kids.bowl)) (weld parent-pith p)))
+    done.task
+::
 ::
 ++  form-ordered-kids
   ::  form that keeps track of tasks order 
@@ -119,7 +146,7 @@
   |=  [=pith =idea:neo]
   ::  extracts information from idea:neo to task
   =/  =pail:neo  pail.idea
-  =/  t=task  !<(task q.pail)
+  =/  t=task  !<(task q.pail)  
   ::  converts pith to tape
   =/  pt  (pith-tape (welp here.bowl pith))
   ::  checks if task is done
@@ -127,11 +154,12 @@
   =-  ?.  done.t  -
     -(a.g [[%done ""] a.g.-])
   ^-  manx
-  ::  <div class="fc g1" here="pt" done="">
-  ;div.fc.g1
+  ::  <div class="fc g1" here={pt} done="" ...>
+  ::  toggles hidden attribute on buttons-menu div
+  ;div.fr.g1.p1
     =here  pt
-    ::  <div class="fr g1" done="">
-    ;div.fr.g1  
+    =onmouseover  "this.childNodes[1].classList.remove('hidden');$(this).addClass('b1 br2');"
+    =onmouseout  "this.childNodes[1].classList.add('hidden');$(this).removeClass('b1 br2');"
       ::  div with %edit poke functionality
       ::  sends POST request when input with class="text" 
       ::  or input with class "done" are being changed
@@ -140,19 +168,20 @@
         =hx-trigger  "input changed delay:0.4s from:find .text, input from:find .done"
         =hx-swap  "none"
         =head  "edit"
-        ;+
-          =/  classnames  "p2 br1 border done s3"
+          ;+
+          ::  defines class attribute with class names 
+          =/  class  [%class "p2 br1 border done s3"]
           ::  Below is a checkbox logic:
-          ::  if task is toggled checkbox will appear as checked 
-          ::  if task have kids input will be hidden,
+          ::  if task is toggled, checkbox will appear as checked 
+          ::  if task have kids and all kids are done, user will be free to toggle task 
+          ::  if task have kids and they are not done, 
+          ::  checkbox will have readonly attribute and will have alert onclick
           ::  even tho we have logic for handling toggle of parent task
-          ::  for better user experience we prevent toggling task if it has kids
+          ::  for better user experience we prevent task to be marked as done 
+          ::  if it has untoggled kids
           ::
           ::  combining m named noun and attribute logic with manx below 
           =-  =/  m  -
-              ::  predefining class="class name" attribute for input
-              =/  class  class/classnames
-              =/  class-hidden  [%class (weld "hidden " classnames)]
             ::  checks if task toggled as done
             ?.  done.t  
               ::  not done, has kids?
@@ -160,24 +189,29 @@
                 ::  a.g.m is a part of the manx that contains input checkbox attributes
                 ::  we assign class attribute to the rest of it's data
                 m(a.g [class a.g.m])
-              m(a.g [class-hidden a.g.m])
-            ::  done; has kids ?
-            ?~  order.t
-              ::  assigning checked and class attribute to the rest of manx data
-              m(a.g [[%checked ""] class a.g.m])
-            m(a.g [[%checked ""] class-hidden a.g.m])
+              ::  kids-check arm will check if all kids toggled as done
+              =/  kc  (kids-check pith order.t) 
+              ?:  kc
+                ::  assigning class attribute to the rest of manx data
+                m(a.g [class a.g.m])
+              ::  assigns readonly, id and class attributes to checkbox
+              ::  id will trigger alert script functionality 
+              m(a.g [[%readonly ""] [%id "alert"] class a.g.m])
+            ::  assigning checked and class attributes to the rest of manx data
+            m(a.g [[%checked ""] class a.g.m])
           ^-  manx
-          ::  onclick logic depending if input has been checked or unchecked
-          ::  if checked adds attribute checked="" to local input
+          ::  onclick logic depending if input has been checked or unchecked:
+          ::  if checked and doesn't have attribute readonly
+          ::  adds attribute checked="" to local input
           ::  and assigns classes "strike f3" to sibling input text
           ::  if it's been undone removes attribute checked=""
           ::  and removes "strike f3" classes from sibling input
-          ;input
-            =type  "checkbox"
-            =name  "done"
-            =onclick  (trip 'if (this.checked) { this.setAttribute("checked", "");$(this.nextElementSibling).addClass("strike f3")} else {this.removeAttribute("checked");$(this.nextElementSibling).removeClass("strike f3")}')
-            ;
-          ==
+            ;input
+              =type  "checkbox"
+              =name  "done"
+              =onclick  (trip 'if (this.checked && !this.hasAttribute("readonly")){ this.setAttribute("checked", "");$(this.nextElementSibling).addClass("strike f3")} else {this.removeAttribute("checked");$(this.nextElementSibling).removeClass("strike f3")}')
+              ;
+            ==
         ::  combining that named noun and class name logic with manx below 
         ::  and make it in to an XML node
         ;+  =-
@@ -189,57 +223,51 @@
           ::  assigning classes attribute to the manx below
           that(a.g [[%class classes] a.g.that])
         ^-  manx
-        ::  input below has a task text value 
-        ::  on input change it changes value attribute to update div POST request form
+        ::  input has a task text value 
+        ::  on input change it will change value attribute to update div POST request form
         ;input
           =type  "text"
           =name  "text"
           =value  (trip text.t)
-          =onclick  "$(this).addClass('border');$(this).removeClass('bold')"
+          =onclick  "$(this).addClass('border br2');$(this).removeClass('bold')"
           =onblur  "$(this).addClass('bold');$(this).removeClass('border')"
           =oninput  "this.setAttribute('value', this.value);"
+          =onmouseover  "$(this).addClass('b2 br2');"
+          =onmouseout  "$(this).removeClass('b2');"
           ;
         ==
+      == 
+    ::  buttons menu arm called with pith 
+    ;+  (buttons-menu pith)
+    ::  a-tag, opens subtask view with spinner logic on loading 
+    ;a.p2.br1.hover.action.mono.fr.g2.loader
+      =hx-indicator  "this"
+      =href  "/neo/hawk{(pith-tape here.bowl)}{(pith-tape pith)}"
+      =hx-swap  "innerHTML"
+      ;span.b1.br1.p2.hfc.loaded:  →
+      ;span.b1.br1.p2.hfc.loading
+        ;+  loading.feather-icons
       ==
-      ;+  
-      ^-  manx
-      ::  drop down menu button with logic for it's span change
-      ::  and assigns classes to the manx of dropdown-menu arm
-      ;button.b0.br1.hover.p1.tl.action.mono.fr.g3
-        =type  "button"
-        =onclick  (trip 'this.classList.toggle("toggled"); this.parentNode.nextElementSibling.classList.toggle("hidden"); if (this.parentNode.nextElementSibling.classList.contains("hidden")){this.innerHTML="<span class=\'p1\'>V</span>"} else {this.innerHTML="<span class=\'p1\'>⋀</span>"};')
-        ;span.p1: V
-      ==
-      ::  a-tag, opens subtask view with spinner logic on loading 
-      ;a.loader.b0.br1.hover.p1.tl.actio.mono.fr.g3
-        =hx-indicator  "this"
-        =href  "/neo/hawk{(pith-tape here.bowl)}{(pith-tape pith)}"
-        =hx-swap  "innerHTML"
-        ;span.p1.loaded: →
-        ;span.p1.loading
-          ;+  loading.feather-icons
-        ==
-      ==  
-    == 
-    ::  drop down menu arm called with pith 
-    ;+  (dropdown-menu pith)
+    ==
   ==
 ::
-++  dropdown-menu
+++  buttons-menu
   ::  dropdown-menu arm provides reorder and oust(delete) kid logic 
   |=  =pith
   ^-  manx
   ::  
   ;div.p2.br1.fr.g2.hidden
     =hx-disinherit  "hx-indicator"
-    =style  "margin-left: 20px;"
-    ::  moves whole kid div to the end of the task list 
-    ::  and uses script logic to center user view on moved task 
-    ;button.b1.br1.p2.hover.hfc
-      =onclick  "this.parentNode.parentNode.parentNode?.insertAdjacentElement('beforeend', this.parentNode.parentNode); center(this);"
-      ; ↧
+    =style  "padding-right:0px;"
+    ::
+    ::  indicator that %reorder POST request is in progress 
+    ;div.reorder-indicator.p2.loader
+      ;span.loading.p1
+        ;+  loading.feather-icons
+      ==
     ==
     ::  moves kid div one task down and centers view 
+    ::  and uses script logic to center user view on moved task 
     ;button.b1.br1.p2.hover.hfc
       =onclick  "this.parentNode.parentNode.nextElementSibling?.insertAdjacentElement('afterend', this.parentNode.parentNode);  center(this);"
       ; ↓
@@ -249,12 +277,6 @@
       =onclick  "this.parentNode.parentNode.previousElementSibling?.insertAdjacentElement('beforebegin', this.parentNode.parentNode); center(this);"
       ; ↑
     ==
-    ::  moves kid div to the beginning of the task list and centers view
-    ;button.b1.br1.p2.hover.hfc
-      =onclick  "this.parentNode.parentNode.parentNode?.insertAdjacentElement('afterbegin', this.parentNode.parentNode);  center(this);"
-      ; ↥
-    ==
-    ;div.basis-full.hidden;
     ::  delete button that sends POST request with %oust poke to parent task
     ::  and after request been sent removes subtask div from DOM
     ;button.b1.br1.p2.hover.loader.hfc
@@ -267,12 +289,6 @@
       =pith  (pith-tape pith)
       ;span.loaded: delete
       ;span.loading
-        ;+  loading.feather-icons
-      ==
-    ==
-    ::  indicator that %reorder POST request is in progress 
-    ;div.reorder-indicator.p2.loader
-      ;span.loading.p1
         ;+  loading.feather-icons
       ==
     ==
