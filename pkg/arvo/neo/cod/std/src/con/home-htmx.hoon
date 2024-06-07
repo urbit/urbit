@@ -55,15 +55,20 @@
     =hx-indicator  "#indicator-{id}"
     ;*
     =/  apps
-      %+  welp  apps.home
+      %+  welp
+        apps.home
       %~  tap  in
-      (~(dif in ~(key by ~(tar of:neo kids.bowl))) `(set pith)`(silt apps.home))
+      %-  %~  dif  in
+          %~  key  by
+          %~  tar  of:neo 
+          kids.bowl
+      `(set pith)`(silt apps.home)
     %+  murn  apps
     |=  =pith
     ^-  (unit manx)
     ?~  pith  ~
+    ?:  (gth (lent pith) 1)  ~
     =/  =path  (pout (welp here.bowl pith))
-    ?:  (gth (lent path) 3)  ~  :: /our/home/whatever
     :-  ~
     ;div.relative.br2
       =pith  (en-tape:pith:neo pith)
