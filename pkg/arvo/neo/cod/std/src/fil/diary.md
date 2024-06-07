@@ -86,7 +86,7 @@ Let’s expand on diary’s `+kids` arm.
 
 In this case, Diary only constrains its immediate children. Each of its children lives at `/path/to/diary/<@da>`, where `<@da>` is used as an ID for the entry, and those children are just `%txt`s (cords) which store the text of the diary entry.
 
-There’s no need for Diary to recusrively constrain every single path that nests under `/path/to/diary`, since the app only needs to reserve the first “generation” of shrubs below it in order to work. In this case, the developer has forbidden any shrubs being created under the diary entries by ending the `pish` in a `%.n`. If that were `%.y`, any app could make a shrub at `/path/to/diary/<@da>/comments`. or `/path/to/diary/<@da>/backlinks`.
+There’s no need for Diary to recursively constrain every single path that nests under `/path/to/diary`, since the app only needs to reserve the first “generation” of shrubs below it in order to work. In this case, the developer has forbidden any shrubs being created under the diary entries by ending the `pish` in a `%.n`. If that were `%.y`, any app could make a shrub at `/path/to/diary/<@da>/comments`. or `/path/to/diary/<@da>/backlinks`.
 
 To define the shrub’s kids, we create an empty map which is the bunt of `lads:neo`, then use `+gas:by` to populate the map with our own data, which will be a `(list (pair pish:neo lash:neo))`.
 
