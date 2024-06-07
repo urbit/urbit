@@ -299,4 +299,4 @@ Just like the `/con/node-counter-diff.hoon` in the Counter tutorial, all this do
 
 ## Building on Diary
 * Amend the `+kids` arm so that other apps could create shrubs like `/path/to/diary/<@da>/comments`.
-* Diary takes two pokes: `%put-entry` and `%del-entry`, but only one of these is supported on the frontend. Implement a `%dely-entry` poke from the frontend.
+* Diary takes two pokes: `%put-entry` and `%del-entry`, but only one of these is supported on the frontend. Implement a `%del-entry` poke from the frontend.
