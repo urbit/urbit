@@ -108,7 +108,7 @@ Notice that the `src` in `bowl:neo` differs from `bowl:gall`. Here’s the new t
       now=@da                           ::  current datetime
       eny=@uvJ                          ::  entropy
       deps=(map term (pair pith lore))  ::  dependencies
-      kids=lore                         ::  XX
+      kids=lore                         ::  our kids' state
   ==
 ```
 
