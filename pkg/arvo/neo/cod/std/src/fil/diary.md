@@ -93,6 +93,7 @@ To define the shrub’s kids, we create an empty map which is the bunt of `lads:
 The `pish:neo` statically types the paths which we’ll allow to be created beneath this shrub, and the `lash:neo` defines the kids’ state and pokes. In this case, the kids take no pokes and their state can only be `%txt`.
 
 (It’s worth flagging that `$curb:neo` contains several combinatorial rules about state types. For example `[%pro %txt]` would mean “the state of the child shrub can be any type which is readily convertible into a `%txt` with a conversion we have available in the `/con` folder”. This gives us a clue as to how we could handle state transitions and interoperability over the lifetime of our shrub, but it’s outside the remit of this tutorial.)
+
 ## bowl:neo
 Notice that the `src` in `bowl:neo` differs from `bowl:gall`. Here’s the new type in full.
 
@@ -109,7 +110,7 @@ Notice that the `src` in `bowl:neo` differs from `bowl:gall`. Here’s the new t
 ```
 
 ## Generating cards, tombstoning shrubs
-We covered `card:neo` in the Counter tutorial, but this is the first time we’re seeing one generated within a shrub. Diary takes two pokes `%put-entry`, to create a new diary entry, and `%del-entry` to tombstone one.
+We covered `card:neo` in the Counter tutorial, but this is the first time we’re seeing one generated within a shrub. Diary takes two pokes: `%put-entry`, to create a new diary entry, and `%del-entry` to tombstone one.
 
 Here’s the `+poke` arm of the Diary shrub, expanded with comments.
 
@@ -189,7 +190,7 @@ The location of this shrub, `here.bowl`, is just a list. So it’s easy to `+wel
 The `%make` card has two mysteries: it initializes diary entries with an empty `%txt` implementation and an empty map of dependencies. We’ll punt on dependencies until the next tutorial. If you look at `/imp/txt.hoon`, it’s just a `~`. This is an *elegant short-term workaround*  that allows us to shove `%txt`s into the namespace;  if the `/imp/<foo>` file is just a `~`, `/app/neo` will notice this and substitute in a shrub that takes the state of the type defined in `/pro/<foo>`. Like everything else in these tutorials this is subject to change!
 
 ## Diary frontend
-Like Counter, the Diary shrub just has two con files to convert to and from an HTMX frontend within the Sky browser.
+Like Counter, the Diary shrub just has two `/con` files to convert to and from an HTMX frontend within the Sky browser.
 
 ### /con/diary-htmx.hoon
 ```hoon
