@@ -1,17 +1,17 @@
 # Tutorial 3: Messenger
-The last major component of a `kook:neo` that we need to cover is `+deps`, which is one component of shrubbery’s dependencies system. The other is the `%rely` poke, which is also covered here.
+The last major aspect of shrubbery that we need to cover is the dependency system. This consists of the `+deps` arm and the `%rely` poke.
 
 By the end of this tutorial you’ll understand how dependencies work and how to use them. You should also start to see how you can design functionality that involves multiple shrubs interacting across multiple ships.
 
 We’ll take a look at Messenger. Messenger is one shrub, located at `/imp/messenger.hoon`, but it relies on five other shrubs to work.
-- `/imp/messenger` is the high-level interface and “service provider” that enables user to create groupchats and 1-to-1 DMs, and invite other ships to them.
+- `/imp/messenger` is the high-level interface and “service provider” that enables the user to create groupchats and 1-to-1 DMs, and invite other ships to them.
 - `/imp/message` is a `~` stub that allows us to create `/message`s in the namespace
-- `/imp/message-pub` is a shrub that publishes `/message`s from its host ship.
+- `/imp/message-pub` is a shrub that takes a poke to store `/message`s in the namespace as its kids.
 - `/imp/message-sub` mirrors `/message`s from a `/message-pub` shrub into its own state.
-- `/imp/groupchat` creates a publisher/subscriber pair, and can invite other shrubs on other ships to post/subscribe to the `/message-pub` shrub.
+- `/imp/groupchat` creates a publisher/subscriber pair, and can invite other ships to post/subscribe to the `/message-pub` shrub.
 - `/imp/dm` negotiates a two-way pub/sub relationship and mirrors state between both parties.
 
-One motivation behind this design is to split off functionality into simple, reusable shrubs. This is good practice in general, but in the context of shrubbery “reusable” shrubs could be leveraged by any other shrub on Urbit. `/imp/dm` needn’t just be the DM shrub for `/messenger`, it could also be used off-the-shelf for 1-to-1 chats in shrubs like `/chess`, `/twitter`, or `/ebay`.
+One motivation behind this design is to split off functionality into simple, reusable shrubs. `/imp/dm` needn’t just be the DM shrub for `/messenger`, it could also be used off-the-shelf for 1-to-1 chats in shrubs like `/chess`, `/twitter`, or `/ebay`.
 
 ## /imp/message-pub
 ```hoon
@@ -419,15 +419,20 @@ One motivation behind this design is to split off functionality into simple, reu
 ```
 
 ## The +deps arm
-The only part of this system that uses the `+deps` arm is `/message-sub`.
+The only part of this system that needs to define its dependencies is `/message-sub`.
 
 ```hoon
 ::
 ::  define dependencies
 ++  deps
   ::  deps:neo is (map term fief:neo)
+  ::  a map of a tag to a fief:neo, one for
+  ::  each dependency we want to type here
   %-  ~(gas by *deps:neo)
-  :~  :*  %pub
+  :~  ::
+      ::  %pub is an arbitrary tag which refers to
+      ::  this dependency within this +deps arm
+      :*  %pub
           ::  fief:neo is [required=? =quay]
           req=&
           ::  quay:neo is (pair lash:neo (unit port:neo)
@@ -450,18 +455,20 @@ With regards to the lifecycle of the shrub, the `+deps` arm types the shrubs who
 [%make %message-sub ~ (malt ~[[%pub (snoc host.poke %pub)]])]
 ```
 
-In this card, `+malt` creates a `(map term pith:neo)` where the `term` is `%pub` and the path represented by the `pith` is `/path/to/chat/pub`. At `/path/to/chat/pub`, there’s a shrub which is the canonical “publisher” or “host” of a chat, whether that’s a group chat or a DM. Whenever there’s a state change in the publisher shrub, the `/message-sub` created in this card will be notified about it, but we’ll cover that in more detail in the next section.
+In this card, `+malt` creates a `(map term pith:neo)` where the `term` is `%pub` and the path represented by the `pith` is `/path/to/pub`. At `/path/to/pub`, there’s a shrub which is the canonical “publisher” or “host” of a chat, whether that’s a group chat or a DM. Whenever there’s a state change in the publisher shrub, the `/message-sub` created in this card will be notified about it, but we’ll cover that in more detail in the next section.
 
-The `%pub` `term` will act as the key in the `map` of dependencies. This means `/message-sub` could have several dependencies. `%pub` doesn’t refer to anything, it’s just being defined in the `+deps` arm to differentiate between shrubs being passed in the card’s `conf:neo`; think of how you’d use head tags to route different cases in the `+on-poke` arm of a Gall agent.
+The `%pub` term will act as the key in the map of dependencies, corresponding to the`%pub` key that `/message-sub` used as a tag in its `+deps` arm. This term allows us to differentiate between shrubs being given to us in the `%make` card’s `conf:neo`.
 
-The `required` flag specfies whether the shrub being described in `+deps` needs to already exist in order for this shrub to build. If no publisher exists at `/path/to/chat/pub`, the `/message-sub` we’re trying to `%make` here will fail to build. It can only exist with reference to the publisher shrub.
+The `required` flag specifies that when this shrub is made, it must be passed in a `conf:neo` that contains paths to existing shrubs. If we don't pass in a conf, or if no publisher exists at `/path/to/pub`, the `/message-sub` we’re trying to `%make` here will fail to build. It can only exist with reference to the publisher shrub.
 
-The last “new” idea here is `%sig`. If you look at `/imp/sig.hoon`, it’s just a `~` stub like the `%txt` implementation. `%sig` imps are not special and are not treated differently to any other stub, they’re just a stylistic convention to say that we don’t care about the state of the shrub in question; it could be anything, we won’t constrain it at all. There’s also a `/pro/sig.hoon` which lets us do the same thing for pokes.
+The last “new” idea here is `%sig`. This is a special case of `stud:neo` which tells `/app/neo` that the shrub has no state. We can do the same thing for pokes, as above with `(sy %sig ~)`.
 
-## Listening for state changes in our dependencies
-Unlike a Gall agent, a shrub does not send out `%facts` to subscribers in the event of changes to its state, all of which has to be manually implemented by that agent’s developer. Instead, the shrub listens for changes to its own state and automatically sends a `%rely` poke to shrubs that have declared it as a dependency. The developer of the listener shrub is the only one who has to write the logic to handle this.
+If you look at `/imp/sig.hoon`, it’s just a `~` stub like the `%txt` implementation. `%sig` imps are not special and are not treated differently to any other stub, they’re just a stylistic convention to say that we don’t care about the state of the shrub in question; it could be anything, we won’t constrain it at all. There’s also a `/pro/sig.hoon` which lets us do the same thing for pokes.
 
-In its `+deps` arm, the `/message-sub` shrub declares the type and behaviour of the shrubs it will accept as dependencies. Shrubs that conform to that type, like `/message-pub` , can be passed in through the `%make` card and `/message-sub` will listen to those shrubs for state changes.
+## Handling state changes in our dependencies
+Unlike a Gall agent, a shrub does not send out `%facts` to subscribers in the event of changes to its state, all of which has to be manually implemented by that agent’s developer. Instead, when its state changes `/app/neo` automatically sends a `%rely` poke to shrubs that have declared the shrub as a dependency. The developer of the listener shrub is the only one who has to write the logic to handle this.
+
+In its `+deps` arm, the `/message-sub` shrub declares the type and behaviour of the shrubs it will accept as dependencies. Shrubs that conform to that type, like `/message-pub`, can be passed in through the `%make` card via the `conf` and `/message-sub` will listen to those shrubs for state changes.
 
 ```hoon
 ++  deps
@@ -479,7 +486,7 @@ In its `+deps` arm, the `/message-sub` shrub declares the type and behaviour of 
   ==
 ```
 
-Like we saw in the `+kids` arm in the previous tutorial, the `+deps` arm specifies this `%y` constant. What’s that doing? This is a `care:neo`, similar to the `care`s we see in Arvo vanes.
+Like we saw in the `+kids` arm in the previous tutorial, the `+deps` arm specifies this `%y` constant. This is a `care:neo`.
 
 In the `+kids` arm the `%y` care declares that this shrub is constraining its immediate children, and the `%z` care that it’s recursively constraining all of its descendants in the namespace.
 
