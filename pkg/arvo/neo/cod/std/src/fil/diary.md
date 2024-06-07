@@ -278,7 +278,7 @@ Like Counter, the Diary shrub just has two `/con` files to convert to and from a
 
 There’s only a bit more going on here than in Counter’s `/con/number-htmx.hoon` file. The main thing is that we have `+link-entry` and `+pretty-date` helper arms which are being used like functional frontend components.
 
-The Diary frontend is a text box at the top with a list of entries generated from a list of the `/diary` shrub’s child `pith`s. Nowhere is a list of children in the state being passed from the backend to the frontend, like you might see with a Gall agent passing converting a `(list item)` to a JSON array through a mark in the event that a frontend has scried or subscribed on a path, all of which would require painstaking specification by the developer.
+The Diary frontend is a text box at the top with a list of entries generated from a list of the Diary shrub’s child `pith`s. Nowhere is a list of children in the state being passed from the backend to the frontend, like you might see with a Gall agent passing converting a `(list item)` to a JSON array through a mark in the event that a frontend has scried or subscribed on a path, all of which would require painstaking specification by the developer.
 
 ```hoon
 ::  /con/node-diary-diff.hoon
