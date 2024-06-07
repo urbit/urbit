@@ -57,6 +57,9 @@
     =/  apps
       %+  welp
         apps.home
+      %-  skip
+      :_  |=  =pith
+          (gth (lent pith) 1)
       %~  tap  in
       %-  %~  dif  in
           %~  key  by
@@ -67,7 +70,6 @@
     |=  =pith
     ^-  (unit manx)
     ?~  pith  ~
-    ?:  (gth (lent pith) 1)  ~
     =/  =path  (pout (welp here.bowl pith))
     :-  ~
     ;div.relative.br2
