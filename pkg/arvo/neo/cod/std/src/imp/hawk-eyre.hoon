@@ -1,6 +1,5 @@
 /@  eyre-reqs
 /-  serv=sky-server
-/-  serv=sky-server
 ^-  kook:neo
 |%
 ++  state  pro/%sig
@@ -26,9 +25,7 @@
       =/  inner=pith:neo  (pave:neo pax.purl)
       =/  =crew:neo  (~(gas by *crew:neo) src/inner ~)
       =/  =made:neo  [%hawk-eyre-handler `[stud vax] crew]
-      =/  =made:neo  [%hawk-eyre-handler `[stud vax] crew]
       :_  sig/!>(~)
-      :~  [(welp here.bowl #/[uv/eny.bowl]) %make made]
       :~  [(welp here.bowl #/[uv/eny.bowl]) %make made]
       ==
     ==

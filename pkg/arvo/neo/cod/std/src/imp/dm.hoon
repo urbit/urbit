@@ -3,17 +3,9 @@
 |%
 ++  state  pro/%ship  :: who I'm chatting with
 ++  poke  (sy %dm-diff ~)
-++  state  pro/%ship  :: who I'm chatting with
-++  poke  (sy %dm-diff ~)
 ++  kids
   :+  ~  %y
   %-  ~(gas by *lads:neo)
-  :~  :-  [|/%theirs |]
-      [pro/%message-pub (sy %sig ~)]
-      :-  [|/%mine |]
-      [pro/%message-sub (sy %sig ~)]
-  ==
-++  deps  *deps:neo
   :~  :-  [|/%theirs |]
       [pro/%message-pub (sy %sig ~)]
       :-  [|/%mine |]

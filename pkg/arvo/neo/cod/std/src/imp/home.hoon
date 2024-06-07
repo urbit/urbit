@@ -13,7 +13,7 @@
     ^-  (quip card:neo pail:neo)
     :_  home/!>(*home)
     :~  [#/[p/our.bowl]/home/diary %make %diary ~ ~]
-        [#/[p/our.bowl]/home/tasks %make %task `task/!>(['' | ~]) ~]
+        [#/[p/our.bowl]/home/tasks %make %task `task/!>(['' | & ~]) ~]
         [#/[p/our.bowl]/home/sail %make %sail `sail/!>(['' 'prose p3' ~]) ~]
         [#/[p/our.bowl]/home/accel %make %accel ~ ~]
         [#/[p/our.bowl]/home/circle %make %circle ~ ~]

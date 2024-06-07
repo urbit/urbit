@@ -1,4 +1,4 @@
-/@  task     ::  [text=cord done=? order=(list pith)]
+/@  task     ::  [text=cord done=? kids-done=? order=(list pith)]
 :: import /lib/feather-icons
 /-  feather-icons
 :: declare that this is a conversion from task to HTMX
@@ -108,14 +108,14 @@
 ++  kids-check
   ::
   ::  check if all subtasks are completed
-  |=  [parent-pith=pith order=(list pith)]
+  |=  =pith
+  ~&  >  pith
   ^-  ?
-    %+  levy  order
-    |=  p=pith
-    =/  =task
-      !<  task
-      q.pail:(need (~(get by ~(tar of:neo kids.bowl)) (weld parent-pith p)))
-    done.task
+  =/  t
+    !<  task
+    q.pail:(~(got of:neo kids.bowl) pith)
+  ~&  >>  t
+  kids-done.t
 ::
 ::
 ++  form-ordered-kids
@@ -131,14 +131,15 @@
     ::
     ::  iterates over the list of piths,
     ::  turning through the kids' data
-    %+  turn  order.t
-      |=  =pith
-      ::  extract kid information at pith from kids.bowl
-      ::  and runs +part-kid on pith and kid data
-      =/  kid  (~(get of:neo kids.bowl) pith)
-      ?~  kid
-        ;div: does not exist {(pith-tape pith)}
-      (part-kid [pith (need kid)])
+    %+  turn  
+      order.t
+    |=  =pith
+    ::  extract kid information at pith from kids.bowl
+    ::  and runs +part-kid on pith and kid data
+    =/  kid  (~(get of:neo kids.bowl) pith)
+    ?~  kid
+      ;div: does not exist {(pith-tape pith)}
+    (part-kid [pith (need kid)])
   ==
 ::
 ++  part-kid
@@ -187,9 +188,8 @@
           ::    a task from being marked as done if it
           ::    has untoggled kids
           ::
-          ::  combining m named noun and
-          ::  attribute logic with manx below
-          =-  =/  m  -
+          ::  combining attribute logic with manx below
+          =;  m
             ::  checks if the task toggled as done
             ?.  done.t
               ::  if it's not done, does it have kids?
@@ -201,7 +201,8 @@
                 ::  the rest of its data
                 m(a.g [class a.g.m])
               =/  kc
-                (kids-check pith order.t)
+                (kids-check pith)
+              ~&  >>>  kc
               ?:  kc
                 ::  assigning class attribute to
                 ::  the rest of manx data
@@ -233,10 +234,9 @@
               ;
             ==
         ::
-        ::  combining that named noun and class name
-        ::  logic with manx below and make it in to an XML node
-        ;+  =-
-          =/  that  -
+        ::  combining class logic with 
+        ::  manx below and make it in to an XML node
+        ;+  =;  that
           =/  classes
             %+  weld
               "grow p2 br2 text bold"

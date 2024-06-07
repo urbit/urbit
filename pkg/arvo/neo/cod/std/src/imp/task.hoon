@@ -57,9 +57,8 @@
     ?+    stud  !!
         %gift
       ::check if all kid tasks are done
-      ?:  (check-kids bowl)
-        [~ task/!>(this(done %.y))]
-      [~ task/!>(this(done %.n))]
+      =/  dun  (check-kids bowl)
+      [~ task/!>(this(done dun, kids-done dun))]
     ::  
         %task-diff
       =/  diff  !<(task-diff vax)
@@ -71,6 +70,7 @@
             `(list pith)`[~[ud/name] order.this]
           `(list pith)`(snoc order.this `pith`[ud/name ~])
         =.  done.this  |
+        =.  kids-done.this  |
         :_  task/!>(this)
         :~  :-  (welp here.bowl ~[ud/name])
             [%make %task `task/!>(task.diff) ~]
@@ -82,7 +82,7 @@
         !>
         %=  this
           text  text.diff
-          done  ?:  (check-kids bowl)
+          done  ?:  kids-done.this
                   done.diff
                 %.n
         ==

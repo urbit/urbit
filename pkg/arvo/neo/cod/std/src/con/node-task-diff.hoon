@@ -28,8 +28,8 @@
   =/  prepend  (vol:mu "prepend")
   ?:  =(prepend 'prepend')
   ::  construct the task-diff
-    [head [text | ~] &]
-  [head [text | ~] |]
+    [head [text | & ~] &]
+  [head [text | & ~] |]
 ::
     %edit
   ::  extract text attribute from XML node
