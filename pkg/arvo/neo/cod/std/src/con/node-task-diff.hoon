@@ -1,7 +1,15 @@
-/@  node         ::  manx
-/@  task-diff    ::  ?([%new =task prepend=?] [%edit text=cord done=?] [%oust =pith] [%reorder order=(list pith)])
+/@  node  ::  manx
+::
+::  $task-diff
+::  $%  [%new =task prepend=?]
+::      [%edit text=cord done=?]
+::      [%oust =pith]
+::      [%reorder order=(list pith)]
+::  ==
+/@  task-diff
 ::  import lib/manx-utils
 /-  manx-utils
+::
 ::  declare that this is a conversion from a
 ::  dynamic XML node to task-diff
 :-  [%node %$ %task-diff]
@@ -16,7 +24,7 @@
   !!
     %new
   ::  extract text and prepend attributes from XML node
-  =/  text  (vol:mu "text")
+  =/  text     (vol:mu "text")
   =/  prepend  (vol:mu "prepend")
   ?:  =(prepend 'prepend')
   ::  construct the task-diff
@@ -25,10 +33,10 @@
 ::
     %edit
   ::  extract text attribute from XML node
-  =/  text  (vol:mu "text")
+  =/  text     (vol:mu "text")
   ::  extract checked attribute from done element in XML node
   =/  done-el  (need (named:mu "done"))
-  =/  done  (~(has by (malt a.g.done-el)) %checked)
+  =/  done     (~(has by (malt a.g.done-el)) %checked)
   ::  construct the task-diff
   [head text done]
 ::
@@ -40,12 +48,13 @@
 ::
     %reorder
   =/  piths
-    ::  extracting here attribute from each node in XML list 
-    ::  and return as last element of here path
+    ::
+    ::  extracting here attribute from each node in XML
+    ::  list and return as last element of here path
     %+  turn  c.nod
     |=  =manx
     =/  mu-reorder  ~(. manx-utils manx)
-    =/  here  (get:mu-reorder %here)
+    =/  here        (get:mu-reorder %here)
     ?~  here
       ~&  >>>  [%bad-here manx]
       !!
