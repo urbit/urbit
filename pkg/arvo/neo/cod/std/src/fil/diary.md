@@ -8,6 +8,7 @@ Unlike the Counter example, there is no equivalent way to implement `/imp/diary`
 Diary is an app that lets you write timestamped diary entries that the frontend will show in a chronological feed. Here’s a succinct version of the app’s backend logic, which clocks in at 34 lines of code.
 
 ```hoon
+::  /imp/diary.hoon
 /@  txt         ::  @t
 /@  diary       ::  name=@t
 /@  diary-diff  ::  ?([%put-entry id=@da =txt] [%del-entry id=@da])
@@ -53,6 +54,7 @@ In its `+kids` arm, every shrub can define constraints for the shrubs below it i
 Let’s expand on diary’s `+kids` arm.
 
 ```hoon
+::  /imp/diary.hoon
 ::
 ::  constrain shrubs below diary in the namespace
 ::  by defining the types of their state and pokes
@@ -98,6 +100,7 @@ The `pish:neo` statically types the paths which we’ll allow to be created bene
 Notice that the `src` in `bowl:neo` differs from `bowl:gall`. Here’s the new type in full.
 
 ```hoon
+::  /sur/neo.hoon
 +$  bowl
   $:  src=[=ship =pith]                 ::  a request's source ship and shrub
       our=@p                            ::  our ship
@@ -115,6 +118,7 @@ We covered `card:neo` in the Counter tutorial, but this is the first time we’r
 Here’s the `+poke` arm of the Diary shrub, expanded with comments.
 
 ```hoon
+::  /imp/diary.hoon
 ++  poke
   |=  [=stud:neo vax=vase]
   ^-  (quip card:neo pail:neo)
@@ -192,8 +196,8 @@ The `%make` card has two mysteries: it initializes diary entries with an empty `
 ## Diary frontend
 Like Counter, the Diary shrub just has two `/con` files to convert to and from an HTMX frontend within the Sky browser.
 
-### /con/diary-htmx.hoon
 ```hoon
+::  /con/diary-htmx.hoon
 /@  diary  ::  name=@t
 /-  feather-icons
 :-  [%diary %$ %htmx]
@@ -276,8 +280,8 @@ There’s only a bit more going on here than in Counter’s `/con/number-htmx.ho
 
 The Diary frontend is a text box at the top with a list of entries generated from a list of the `/diary` shrub’s child `pith`s. Nowhere is a list of children in the state being passed from the backend to the frontend, like you might see with a Gall agent passing converting a `(list item)` to a JSON array through a mark in the event that a frontend has scried or subscribed on a path, all of which would require painstaking specification by the developer.
 
-### /con/node-diary-diff.hoon
 ```hoon
+::  /con/node-diary-diff.hoon
 /@  node        ::  manx
 /@  diary-diff  ::  ?([%put-entry id=@da txt=@t] [%del-entry id=@da])
 /-  manx-utils
