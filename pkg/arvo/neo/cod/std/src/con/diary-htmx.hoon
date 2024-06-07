@@ -86,6 +86,9 @@
 ::  entry box
 ++  link-entry
   |=  [pax=pith =idea:neo]
+  ::  make sure the pail does in fact contain %txt
+  ?.  =(%txt p.pail.idea)
+    ;div: error
   ::  extract information from the given pith and pail:neo
   =/  tape  (trip !<(@t q.pail.idea))
   =/  subject-end  (fall (find [10]~ tape) 56)
