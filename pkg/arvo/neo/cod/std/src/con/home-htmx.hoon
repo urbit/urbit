@@ -62,8 +62,9 @@
     |=  =pith
     ^-  (unit manx)
     ?~  pith  ~
-    :-  ~
     =/  =path  (pout (welp here.bowl pith))
+    ?:  (gth (lent path) 3)  ~  :: /our/home/whatever
+    :-  ~
     ;div.relative.br2
       =pith  (en-tape:pith:neo pith)
       ;a.b1.br2.block.fc.as.js.hover.p3.s1.border-2.loader
