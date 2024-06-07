@@ -7021,11 +7021,11 @@
                     ==
                 ::
                 =/  =public-key     pass:(~(got by keys.point) life.point)
-                =.  priv.ames-state    :: XX remove
-                  ;;  @
-                  =<  q.q  %-  need  %-  need
-                  =-  ~&  -  -
-                  (rof [~ ~] /ames %j `beam`[[our %vein %da now] /1])  :: XX remove
+                :: =.  priv.ames-state    :: XX remove
+                ::   ;;  @
+                ::   =<  q.q  %-  need  %-  need
+                ::   =-  ~&  priv/-  -
+                ::   (rof [~ ~] /ames %j `beam`[[our %vein %da now] /1])  :: XX remove
                 =/  crypto-core     (nol:nu:crub:crypto priv.ames-state)
                 =/  =private-key    sec:ex:crypto-core
                 =/  =symmetric-key  (derive-symmetric-key public-key private-key)
@@ -8164,22 +8164,23 @@
         ::
         !!  ::  $(+<.old %adult, +>.old state.old)
       ?:  ?=(%0 -.old)
-        =.  chums.old
-          %-  ~(run by chums.old)
-          |=  =chum-state
-          ?:  ?=(%alien -.chum-state)
-            ~&  %cleaning-alien
-            chum-state
-            :: chum-state(pit ~)
-          ~&  %cleaning
-          %_  chum-state
-            flows    ~
-            pit      ~
-            corked   ~
-            ossuary  =|  =ossuary  ossuary
-                     :: %_  ossuary
-                    ::   next-bone  40
-          ==        :: ==
+         ~&  priv.old
+        :: =.  chums.old
+        ::   %-  ~(run by chums.old)
+        ::   |=  =chum-state
+        ::   ?:  ?=(%alien -.chum-state)
+        ::     ~&  %cleaning-alien
+        ::     chum-state
+        ::     :: chum-state(pit ~)
+        ::   ~&  %cleaning
+        ::   %_  chum-state
+        ::     flows    ~
+        ::     pit      ~
+        ::     corked   ~
+        ::     ossuary  =|  =ossuary  ossuary
+        ::              :: %_  ossuary
+        ::             ::   next-bone  40
+        ::   ==        :: ==
         vane-gate(ames-state old)
       ::
       ?>  ?=([@ %adult *] old)
