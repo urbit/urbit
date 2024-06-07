@@ -7140,7 +7140,7 @@
               %-  ~(rep by pit.sat.per)
               |=  [[=path req=request-state] core=_core]
               ~&  re-sending/path
-              =*  peer  sat.per.core
+              =*  peer  sat.per
               ::  update and print connection status
               ::
               :: =/  expiry=@da  (add ~s30 last-contact.qos.peer)
