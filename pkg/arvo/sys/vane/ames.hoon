@@ -2916,7 +2916,8 @@
                 =/  =path  (slag 3 path.peep)
                 ::
                 ?.  (~(has by keens) path)
-                  ~&(dead-response/peep peer-core)
+                  %-  (fi-trace:fi fin.veb |.("dead-response {path}"))
+                  peer-core
                 fi-abet:(fi-rcv:(abed:fi path) peep meow lane)
               ::
               ++  on-keen
@@ -6941,8 +6942,8 @@
                   ::
                   =.  ames-core
                     %+  roll  ~(tap in packets.todos)
-                    |=  [=blob core=_ames-core]
-                    (send-blob:core for=| ship blob (~(get by peers.ames-state) ship))
+                    |=  [b=blob c=_ames-core]
+                    (send-blob:c for=| ship b (~(get by peers.ames-state) ship))
                   ::  apply remote scry requests
                   ::
                   =^  moves  ames-state
@@ -6953,7 +6954,7 @@
                     |=  [[=path ducts=(set duct)] cor=_peer-core]
                     (~(rep in ducts) |=([=duct c=_cor] (on-keen:c path duct)))
                   ::
-                  sy-core
+                  sy-core(ev-core (ev-emil moves))
                 ::
                 ++  meet-alien-chum
                   |=  [=ship =point:jael todos=ovni-state =chum-state]
@@ -7033,13 +7034,8 @@
                   ::  XX if the peer doesn't previously exist we insert it
                   ::  based on the chosen core in state; see find-peer
                   ?:  ?=(%chum wer)
-                    =/  =fren-state  sat:(ev-gut-per ship)
-                    chum/fren-state
-                  =/  ship-state  (~(get by peers.ames-state) ship)
-                  :-  %ship
-                  ?.  ?=([~ %known *] ship-state)
-                    *peer-state
-                  +.u.ship-state
+                    chum/`fren-state`sat:(ev-gut-per ship)
+                  ship/(gut-peer-state:(ev:ames hen ames-state) ship)
                 =.  life.peer           life.point
                 =.  rift.peer           rift.point
                 =.  public-key.peer     public-key
@@ -7067,10 +7063,11 @@
                     (~(put by chums.ames-state) ship known/+.peer)
                   [%chum known/+.peer]^sy-core
                 ::
-                  =?  route.peer  ?=(%czar (clan:title ship))
-                    `[direct=%.y lane=[%& ship]]
+                =?  route.peer  ?=(%czar (clan:title ship))
+                  `[direct=%.y lane=[%& ship]]
                 =.  peers.ames-state
                   (~(put by peers.ames-state) ship known/+.peer)
+                ::
                 [%ship known/+.peer]^sy-core
               ::
               --
