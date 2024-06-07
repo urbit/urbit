@@ -2319,7 +2319,10 @@
               ::
               ++  migrate-peer
                 |=  =bone
-                =~(abet:(on-migrate:peer-core bone) (emit duct %give %done ~))
+                =.  peer-core  (on-migrate:peer-core bone)
+                =<  abut
+                =<  abet
+                (call:(abed:mi:peer-core bone) %done ok=%.y)
               ::
               ++  send-nack-trace
                 |=  [=nack=bone =message]
@@ -2558,7 +2561,7 @@
                 ^+  event-core
                 ?>  ?=([%known *] ship-state)
                 =+  pe-core=(abed-peer:pe ship +.ship-state)
-                abet:(on-migrate:pe-core next-bone.ossuary.peer-state.pe-core)  :: XX (dec next-bone)
+                abut:(on-migrate:pe-core next-bone.ossuary.peer-state.pe-core)  :: XX (dec next-bone)
               ::
               --
             ::
@@ -2726,6 +2729,11 @@
                 ^+  event-core
                 =.  peers.ames-state
                   (~(put by peers.ames-state) her %known peer-state)
+                event-core
+              ::
+              ++  abut
+                ^+  event-core
+                =.  peers.ames-state  (~(del by peers.ames-state) her)
                 event-core
               ::
               ++  pe-trace
@@ -2982,9 +2990,8 @@
                 ::  processed
                 ::
                 =/  prod-move=(list move)  [[/ames]~ %pass /mate %a %prod ~]~
-                ::  .her is fully migrated, delete it from peers.
+                ::  .her is fully migrated, +abul will delete it from peers.
                 ::
-                =.  peers.ames-state  (~(del by peers.ames-state) her)
                 peer-core(event-core (emil (weld poke-moves peek-moves)))
                 ::
                 ++  align-bones
