@@ -1823,7 +1823,7 @@
                   ::  XX  this shouldn't be needed
                   ::  XX  only if %alien
                   ~&  >>  rettrieve-keys-again/her
-                  (emit [//keys]~ %pass /mesa/public-keys %j %public-keys [n=her ~ ~])
+                  (emit [//keys]~ %pass /public-keys %j %public-keys [n=her ~ ~])
                   :: event-core
                 =/  peer-core  (abed-peer:pe her u.par)
                 =/  bones  ~(tap in ~(key by snd.u.par))
@@ -6110,7 +6110,6 @@
           ++  ev-cancel-peek
             |=  [all=? =path]  :: XX namespace?
             ^+  ev-core
-            ::  ?>  ?=(%known -.sat.per)
             ?~  ms=(~(get by pit.sat.per) path)
               ev-core
             =;  core=_ev-core
@@ -6629,7 +6628,7 @@
             ::  NB: we specifically look for this wire in +public-keys-give in
             ::  Jael.  if you change it here, you must change it there.
             ::
-            (ev-emit hen %pass /mesa/public-keys %j %public-keys [n=ship ~ ~])
+            (ev-emit hen %pass /public-keys %j %public-keys [n=ship ~ ~])
           ::
           ++  ev-register-comet
             |=  [comet=@p open-packet signature=@ signed=@]  :: XX to %lull
@@ -6707,8 +6706,8 @@
               =.  ev-core
                 %-  ev-emil
                 :~  [hen %pass /turf %j %turf ~]
-                    [hen %pass /mesa/private-keys %j %private-keys ~]
-                    [hen %pass /mesa/public-keys %j %public-keys [n=our ~ ~]]
+                    [hen %pass /private-keys %j %private-keys ~]
+                    [hen %pass /public-keys %j %public-keys [n=our ~ ~]]
                 ==
               sy-core
             ::
@@ -7128,7 +7127,7 @@
                 ::  XX  this shouldn't be needed
                 ::  XX  only if %alien
                 ~&  retrieving-keys-again/ship
-                (ev-emit [//keys]~ %pass /mesa/public-keys %j %public-keys [n=ship ~ ~])
+                (ev-emit [//keys]~ %pass /public-keys %j %public-keys [n=ship ~ ~])
                 ::  %alien or missing
               =.  per  [ship +.u.u.per-sat]
               ::  ?>  ?=(%known -.sat.per)
@@ -7140,6 +7139,8 @@
               %-  ~(rep by pit.sat.per)
               |=  [[=path req=request-state] core=_core]
               ~&  re-sending/path
+              ::  XX  restore this when fixing +update-qos
+              ::  =*  peer  sat.per.core
               =*  peer  sat.per
               ::  update and print connection status
               ::
