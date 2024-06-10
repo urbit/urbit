@@ -5800,9 +5800,9 @@
               ev-core  ::  ignore events from an old rift
             ?>  ?=([%van %bak] [were dire])
             fo-abet:(fo-take:(fo-abed:fo hen bone dire=%bak) %van flub/~)
-          ::  +ev-response: network responses
+          ::  +ev-take-response: receive remote responses
           ::
-          ++  ev-response
+          ++  ev-take-response
             |=  [=wire =sage:mess]
             ^+  ev-core
             ?~  flow-wire=(ev-validate-wire wire)
@@ -5826,7 +5826,6 @@
               (ev-register-comet ship.p.sage comet-proof signature signed)
             =,  u.flow-wire
             =.  per  (ev-got-per her)
-            :: ::  ?>  ?=(%known -.sat.per)  :: XX response from %alien
             ?:  (lth rift rift.sat.per)
               :: XX log
               ev-core  ::  ignore events from an old rift
@@ -6059,7 +6058,7 @@
             =;  page=pact:pact
               ?>(?=(%page -.page) `q.page)
             =>  [name=name res=res ..parse-packet]
-             ~>  %memo./ames/get-page
+            ~>  %memo./ames/get-page
             (parse-packet ;;(@ q.q.u.u.res))
           ::
           +|  %fren-helpers
@@ -7631,7 +7630,7 @@
                   =/  aut  [%0 mes ~]
                   =/  lss-proof
                     =>  [ser=ser ..lss]
-                    ::  ~>  %memo./ames/lss
+                    ~>  %memo./ames/lss
                     (build:lss (met 3 ser)^ser)
                   =/  dat  [wid aut (rep 8 proof.lss-proof)]  :: XX types
                   [nam dat]
@@ -7639,7 +7638,7 @@
                     %data
                   =/  lss-proof
                     =>  [ser=ser ..lss]
-                    ::  ~>  %memo./ames/lss
+                    ~>  %memo./ames/lss
                     (build:lss (met 3 ser)^ser)
                   =/  nam  [[our rif] [boq ?:(nit ~ [%data fag])] pat]
                   =/  aut=auth:pact
@@ -7673,7 +7672,7 @@
               ::
                   [%publ lyf=@ pat=*]
                 =>  [tyl=tyl bem=bem peek=ev-peek-publ:core slaw=slaw]
-                 ~>  %memo./ames/peek/publ
+                ~>  %memo./ames/peek/publ
                 =/  lyf  (slaw %ud lyf.tyl)
                 ?~  lyf  [~ ~]
                 (peek bem u.lyf pat.tyl)
@@ -7681,7 +7680,7 @@
               ::
                   [%chum lyf=@ her=@ hyf=@ cyf=@ ~]
                 =>  [tyl=tyl bem=bem peek=ev-peek-chum:core slaw=slaw]
-                 ~>  %memo./ames/peek/chum
+                ~>  %memo./ames/peek/chum
                 =/  lyf  (slaw %ud lyf.tyl)
                 =/  her  (slaw %p her.tyl)
                 =/  hyf  (slaw %ud hyf.tyl)
@@ -7694,7 +7693,7 @@
               ::
                   [%shut kid=@ cyf=@ ~]
                 =>  [tyl=tyl bem=bem peek=ev-peek-shut:core slaw=slaw]
-                 ~>  %memo./ames/peek/shut
+                ~>  %memo./ames/peek/shut
                 =/  kid  (slaw %ud kid.tyl)
                 =/  cyf  (slaw %uv cyf.tyl)
                 ?:  |(?=(~ kid) ?=(~ cyf))
@@ -7704,7 +7703,7 @@
               ::
                   [%flow bone=@ load=?(%plea %boon %ack-plea %ack-boon %nax) rcvr=@ mess=@ ~]
                 =>  [tyl=tyl peek=ev-peek-flow:core slaw=slaw]
-                 ~>  %memo./ames/peek/flow
+                ~>  %memo./ames/peek/flow
                 =/  bone  (slaw %ud bone.tyl)
                 =/  rcvr  (slaw %p rcvr.tyl)
                 =/  mess  (slaw %ud mess.tyl)
@@ -7892,7 +7891,7 @@
                 ::  packet, and then given back to the flow layer that called them
                 ::
                 ?([%keen ~] ev-flow-wire)
-              ev-response:ev-core  ::  %ack and %naxplanation payload
+              ev-take-response:ev-core  ::  %ack and %naxplanation payload
             ==
           ::
           ==
