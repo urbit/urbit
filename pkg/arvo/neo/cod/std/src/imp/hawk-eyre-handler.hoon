@@ -204,8 +204,8 @@
       :+  ~  %z
       %-  ~(gas by *lads:neo)
       :~  :-  &
-          `lash:neo`[any/~ ~]
-          ::`lash:neo`[[%or rol/[%link pro/%htmx] pro/%htmx any/~ ~] ~]
+          ::`lash:neo`[any/~ ~]
+          `lash:neo`[[%or pro/%htmx any/~ ~] ~]
       ==
   ==
 ::
@@ -244,7 +244,24 @@
     ^-  (list card:neo)
     ?+    method.request.req  ~|(%unsupported-http-method !!)
         %'GET'
-      =/  root=idea:neo  (~(got of:neo q.u.src) /)
+      ?~  reet=(~(get of:neo q.u.src) /)
+        =/  bol  *bowl:neo
+        =.  here.bol  here
+        =/  main
+          ;div.fc.jc.ac.wf.hf
+            ; nothing here
+          ==
+        =/  raw
+          ;div.fc.jc.ac.wf.hf
+            ; nothing here
+          ==
+        %:  eyre-cards
+            eyre-id
+            bowl
+            200
+            ~(lift hawk here.bol main raw &)
+        ==
+      =/  root=idea:neo  u.reet
       ?>  =(%htmx p.pail.root)
       =/  bol  *bowl:neo
       =.  here.bol  here
@@ -255,7 +272,25 @@
       ::  XX src.bowl
       =/  main  (!<(htmx-type q.pail.root) bol)
       =/  raw
-        ;div.wf.hf.fc.jc.ac: raw view
+        ;div.fc.g1.p-page
+          ;h1: children
+          ;*
+          =/  top
+            %-  silt
+            %+  turn  ~(tap of:neo kids.bol)
+            |=  [=pith:neo *]
+            -.pith
+          %+  turn  (sort ~(tap in top) aor)
+          |=  =iota
+          =/  tape  ?@(iota (trip iota) (scow iota))
+          ;a.p2.b1.br1.bd1.hover.loader
+            =href  "/neo/hawk{(en-tape:pith:neo here)}/{tape}"
+            ;span.loaded: {tape}
+            ;span.loading
+              ;+  loading.feather-icons
+            ==
+          ==
+        ==
       %:  eyre-cards
           eyre-id
           bowl
