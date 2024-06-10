@@ -319,6 +319,7 @@ One motivation behind this design is to split off functionality into simple, reu
   --
 --
 ```
+
 ## /imp/messenger
 ```hoon
 ::
@@ -562,3 +563,273 @@ The `stem` is head-tagged with a `care:neo`. If the shrub’s dependent is liste
 All stems come with an `ever`, which contains version numbers for the dependency and its descendants. `%x` `stem`s come with a `pail` with the new state of the dependency shrub. The `%y` and `%z` `stem`s come with a `pail` for the dependency shrub, and a map containing all the relevant descendants of that dependency shrub. The `pith` keys in that map give us the locations of the descendants, and the `[=ever =mode =pail]` values give us their own version numbers, their `mode`, and their current state.
 
 The `mode` of these kids is either `%add`, `%dif`, or `%del`. If it’s `%add`, the dependency is telling us it’s a new kid. If `%dif`, the kid isn’t new but its state has changed. If `%del`, it’s telling us the kid was deleted and giving us its final state.
+
+## Messenger: Overview
+There are several shrubs working in tandem here to provide groupchat and DM functionality. Now that we know how `/imp/message-sub` works, let's look at the overall structure.
+
+```
+We’ll take a look at Messenger. Messenger is one shrub, located at `/imp/messenger.hoon`, but it relies on five other shrubs to work.
+- `/imp/messenger` is the high-level interface and “service provider” that enables the user to create groupchats and 1-to-1 DMs, and invite other ships to them.
+- `/imp/message` is a `~` stub that allows us to create `/message`s in the namespace
+- `/imp/message-pub` is a shrub that takes a poke to store `/message`s in the namespace as its kids.
+- `/imp/message-sub` mirrors `/message`s from a `/message-pub` shrub into its own state.
+- `/imp/groupchat` creates a publisher/subscriber pair, and can invite other ships to post/subscribe to the `/message-pub` shrub.
+- `/imp/dm` negotiates a two-way pub/sub relationship and mirrors state between both parties.
+```
+
+### DMs in shrubbery
+If you wanted to implement 1-on-1 DMs in your shrub, you could just include `/imp/dm` in your `+deps` arm and send `%make` and `%poke` cards to it. If that doesn't do what you need, you could base your own DM functionality on this.
+
+`/imp/dm` is short and simple enough that it might be nice to show an equivalent `/app/dm` Gall agent, but there isn't one. `/imp/dm` delegates a lot of functionality to service providers in a way that Gall apps theoretically could, but in practice never do. With the constraints they can set in the `+kids` and `+deps` arms, shrubs can make guarantees about the functionality of third-party service providers in other shrubs and/or other desks. Those service providers can make breaking changes to that functionality, but as long as they have some way of converting data to the type that their parents or dependents accept, those shrubs will still be able to interoperate.
+
+#### kook:neo
+
+```hoon
+::  /imp/dm.hoon
+++  state  [%pro %ship]
+++  poke  (sy %dm-diff ~)
+++  kids
+  %-  some
+  :-  %y
+  %-  ~(gas by *lads:neo)
+  :~  :-  [[%.n %theirs] %.n]
+      [[%pro %message-pub] (sy %sig ~)]
+      :-  [[%.n %mine] %.n]
+      [[%pro %message-sub] (sy %sig ~)]
+  ==
+++  deps  *deps:neo
+++  form
+  ...
+```
+
+A DM shrub only stores one ship, the `@p` of whoever you're chatting with. It only has two kids: `/path/to/this/dm/theirs` and `/path/to/this/dm/mine`. It chooses the service providers at `/imp/message-pub` and `/imp/message-sub` to store the state of `/theirs` and `/mine`, while setting no constraints on the types of poke those service providers can take. In other words, it delegates the functionality to two new instances of `/imp/message-pub` and `/imp/message-sub` rather than subscribing to existing Gall agents that may or may not exist.
+
+```hoon
+$%  [%initiate partner=ship provider=pith]
+    [%invited partner=ship dm=pith]
+  ::
+    [%acked dm=pith]
+  ::
+    [%post text=@t]
+==
+```
+
+`/imp/dm` takes four pokes: `%initiate`, `%invited`, `%acked`, and `%post`.
+- `%initiate`: we initiate a DM, specifying the other ship and the service provider we want to use.
+- `%invited`: someone invites us to a DM, specifying their `@p` and the `pith` for us to send DMs to them.
+- `%acked`: acknowledge creation of a DM.
+- `%post`: send a DM.
+
+#### curb:neo
+Cells like `[%pro %ship]` and `[%pro %message-pub]` are examples of `$curb:neo`. This is a powerful type that's beyond the remit of these tutorials, but it's worth clarifying what these cells mean.
+
+```hoon
++$  curb
+  $~  [%pro %$]
+  $%  [%or p=(list curb)]
+      [%only p=stud]
+      [%rol p=stud q=curb]
+      [%not p=curb q=curb]
+      [%pro p=stud]
+      [%any ~]
+  ==
+```
+
+In all of the shrubs we've looked at in these tutorials we could replace every `%pro` curb with the likes of `[%only %ship]` and `[%only %message-pub]` and lose none of the functionality we've looked at. The `[%only %ship]` curb just declares that the state is exclusively a `ship`. However, the `[%pro ship]` curb says that the state can be any type *which can be converted to a `ship` through an available `/con` file*. This has implications for interoperability and state transitions we have not yet fully explored.
+
+#### form:neo
+When `/imp/dm` is first created with a `%make` card, it needs to be created with some pre-defined state. The intial state it accepts has to be a `%dm-diff`. This is a little unusual, but it's essentially the same as a Gall agent sending a poke to itself `+on-init`, except the poke is defined by the external service provider. Since the service provider could be on our ship or someone else's, the `+init` arm takes both `%initiate` and `%invited` pokes. The `+init` arm is the only context in which these pokes are handles.
+
+```hoon
+++  init
+  |=  old=(unit pail:neo)
+  ^-  (quip card:neo pail:neo)
+  ?~  old  !!
+  ?>  =(%dm-diff p.u.old)
+  =/  poke  !<(dm-diff q.u.old)
+  ?+    -.poke  !!
+      :: create me with a pith to a service provider
+      :: to start a new DM with them
+      %initiate
+    :_  ship/!>(partner.poke)
+    :~  :-  (snoc here.bowl %pub)
+        [%make %message-pub ~ ~]
+        ::
+        :-  provider.poke
+        [%poke dm-diff/!>([%invited here.bowl])]
+    ==
+  ::
+      :: create me with a pith to an inviter's dm
+      :: to accept their DM request
+      %invited
+    :_  ship/!>(partner.poke)
+    :~  :-  (snoc here.bowl %pub)
+        [%make %message-pub ~ ~]
+        ::
+        :-  (snoc here.bowl %sub)
+        [%make %message-sub ~ (malt ~[[%pub (snoc dm.poke %pub)]])]
+        ::
+        :-  dm.poke
+        [%poke dm-diff/!>([%acked here.bowl])]
+    ==
+  ==
+```
+
+The `+poke` arm handles `%acked` and `%post` pokes. When we receive an `%acked`, we create an `/imp/message-sub` to subscribe to DMs from the "publisher", which is whoever we're going to talk to. (DM state is symmetrical: both ships are publishing to eachtoher and subscribed to eachother.) When we receive a `%post` from the publisher, we add it to our service provider at `/path/to/this/dm/pub`, which publishes the DM state to the other ship.
+
+```hoon
+++  poke
+  |=  [=stud:neo vax=vase]
+  ^-  (quip card:neo pail:neo)
+  ?>  =(%dm-diff stud)
+  =/  poke  !<(dm-diff vax)
+  ?+    -.poke  !!
+      :: invitee pokes me with a pith to their DM
+      :: to finalize the negotiation
+      %acked
+    =/  partner  !<(ship q.state)
+    ?>  =(partner ship.src.bowl)
+    :_  state
+    :~  :-  (snoc here.bowl %sub)
+        [%make %message-sub ~ (malt ~[[%pub (snoc dm.poke %pub)]])]
+    ==
+  ::
+      %post
+    ?>  =(our ship.src):bowl
+    :_  state
+    :~  :-  (snoc here.bowl %pub)
+        [%poke txt/!>(text.poke)]
+    ==
+  ==
+```
+
+### Group chats in shrubbery
+`/imp/groupchat` uses exactly the same service providers as `/imp/dm` for publishing and subscribing to messages. The only difference is that it's negotiating state between several ships using a one-to-many flow, rather than carefully mirroring state between two ships.
+
+#### kook:neo
+Lorem
+
+```hoon
+++  state  pro/%groupchat
+++  poke  (sy %groupchat-diff ~)
+++  kids
+  :+  ~  %y
+  %-  ~(gas by *lads:neo)
+  :~  :-  [|/%pub |]
+      [pro/%message-pub (sy %sig ~)]
+      :-  [|/%sub |]
+      [pro/%message-sub (sy %sig ~)]
+  ==
+++  deps  *deps:neo
+++  form
+  ...
+```
+
+Ipsum
+
+```hoon
+$%  [%invite =ship provider=pith]
+    [%remove =ship]
+    [%invited host=pith]
+    [%acked ~]
+    [%post-to-host text=@t]
+    [%host-to-pub text=@t]
+==
+```
+
+Dolor
+
+#### +init
+Lorem
+
+```hoon
+++  init
+  |=  old=(unit pail:neo)
+  ^-  (quip card:neo pail:neo)
+  ::  default case: make new groupchat with self as only member,
+  ::  and subscribe to that publisher
+  ::  XX - maybe move ordering is unpredictable here
+  ?~  old
+    :_  :-  %groupchat
+        !>([(sy our.bowl ~) ~ here.bowl])
+    :~  :-  (snoc here.bowl %pub)
+        [%make %message-pub ~ ~]
+        ::
+        :-  (snoc here.bowl %sub)
+        [%make %message-sub ~ (malt ~[[%pub (snoc here.bowl %pub)]])]
+    ==
+  ::  otherwise, I've been created as an invitee to
+  ::  someone else's groupchat
+  ?>  =(%groupchat-diff p.u.old)
+  =/  poke  !<(groupchat-diff q.u.old)
+  ?+    -.poke  !!
+      %invited
+    :_  groupchat/!>([~ ~ host.poke])
+    :~  :-  (snoc here.bowl %sub)
+        [%make %message-sub ~ (malt ~[[%pub (snoc host.poke %pub)]])]
+        ::
+        :-  host.poke
+        [%poke groupchat-diff/!>([%acked ~])]
+    ==
+  ==
+```
+
+#### +poke
+Lorem
+
+```hoon
+++  poke
+  |=  [=stud:neo vax=vase]
+  ^-  (quip card:neo pail:neo)
+  ?>  =(%groupchat-diff stud)
+  =/  sta  !<(groupchat q.state)
+  =/  poke  !<(groupchat-diff vax)
+  ?+    -.poke  !!
+      :: if I'm the host, poke someone's provider to invite them to chat
+      %invite
+    ?>  =(our ship.src):bowl
+    ?<  (~(has in members.sta) ship.poke)
+    ::  ?>  =(our.bowl ->.host.sta) :: XX need @p, have @t ?
+    :_  :-  %groupchat
+        !>(sta(pending (~(put in pending.sta) ship.poke)))
+    :~  :-  provider.poke
+        [%poke groupchat-diff/!>([%invited here.bowl])]
+    ==
+  ::
+      ::  remove someone from chat. this only removes their ability to post;
+      ::  they'll still be receiving new messages!
+      %remove
+    ?>  =(our ship.src):bowl
+    ?>  (~(has in members.sta) ship.poke)
+    :-  ~
+    :-  %groupchat
+    !>  %=  sta
+          pending  (~(del in pending.sta) ship.src.bowl)
+          members  (~(del in members.sta) ship.src.bowl)
+        ==
+  ::
+      :: when invitee acks, remove them from pending
+      :: and add them to pub's permissions
+      %acked
+    ?>  (~(has in pending.sta) ship.src.bowl)
+    :-  ~
+    :-  %groupchat
+    !>  %=  sta
+          pending  (~(del in pending.sta) ship.src.bowl)
+          members  (~(put in members.sta) ship.src.bowl)
+        ==
+  ::
+      %post-to-host
+    :_  state
+    :~  :-  host.sta
+        [%poke groupchat-diff/!>([%host-to-pub text.poke])]
+    ==
+  ::
+      %host-to-pub
+    ?>  (~(has in members.sta) ship.src.bowl)
+    :_  state
+    :~  :-  (snoc here.bowl %pub)
+        [%poke message/!>([ship.src.bowl now.bowl text.poke])]
+    ==
+  ==
+```
