@@ -9594,6 +9594,7 @@
     ~/  %fuse
     |=  ref=type
     =+  bix=*(set [type type])
+    =+  rev=|
     |-  ^-  type
     ?:  ?|(=(sut ref) =(%noun ref))
       sut
@@ -9609,16 +9610,16 @@
                         [%atom foc q.sut]
                       [%atom foc q.ref]
           [%cell *]   %void
-          *           $(sut ref, ref sut)
+          *           $(sut ref, ref sut, rev !rev)
       ==
         [%cell *]
       ?-  ref
         [%cell *]   (cell $(sut p.sut, ref p.ref) $(sut q.sut, ref q.ref))
-        *           $(sut ref, ref sut)
+        *           $(sut ref, ref sut, rev !rev)
       ==
     ::
         [%core *]  $(sut repo)
-        [%face *]  (face p.sut $(sut q.sut))
+        [%face *]  ?:(rev (face p.sut $(sut q.sut)) $(sut q.sut))
         [%fork *]  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
         [%hint *]  (hint p.sut $(sut q.sut))
         [%hold *]
