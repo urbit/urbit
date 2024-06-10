@@ -9139,12 +9139,12 @@
       ^-  type
       ?+    ref    !!
         [%core *]  sut
-        [%face *]  dext(ref repo(sut ref))
+        [%face *]  dext(ref q.ref)
         [%fork *]  =+  yed=~(tap in p.ref)
                    |-  ^-  type
                    ?~  yed  sut
                    $(yed t.yed, sut dext(ref i.yed))
-        [%hint *]  dext(ref repo(sut ref))
+        [%hint *]  dext(ref q.ref)
         [%hold *]  dext(ref repo(sut ref))
       ==
     --
