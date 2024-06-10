@@ -201,7 +201,7 @@
       :-  [pro/%htmx ~]
       :::-  [[%or rol/[%ui-main pro/%htmx] pro/%htmx ~] ~]
       ^-  (unit port:neo)
-      :+  ~  %y
+      :+  ~  %z
       %-  ~(gas by *lads:neo)
       :~  :-  &
           `lash:neo`[any/~ ~]
@@ -251,7 +251,7 @@
       =.  our.bol  our.bowl
       =.  now.bol  now.bowl
       =.  eny.bol  eny.bowl
-      =.  kids.bol  q.u.src
+      =.  kids.bol  (~(del of:neo q.u.src) /)
       ::  XX src.bowl
       =/  main  (!<(htmx-type q.pail.root) bol)
       =/  raw
