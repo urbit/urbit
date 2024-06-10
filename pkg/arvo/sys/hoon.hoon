@@ -8325,10 +8325,10 @@
       (bind $(gen q.gen) |=(=skin [%help p.p.gen skin]))
     ::
         [%wing *]
-      ?:  ?=([@ ~] p.gen)
-        `i.p.gen
       =/  depth  0
       |-  ^-  (unit skin)
+      ?:  ?=([@ ~] p.gen)
+        `i.p.gen
       ?~  p.gen  `[%wash depth]
       ?.  =([%| 0 ~] i.p.gen)  ~
       $(p.gen t.p.gen)
@@ -9116,8 +9116,13 @@
           [%cell *]
         ?+  ref      sint
           [%atom *]  sut
-          [%cell *]  ?.  (nest(sut p.ref) | p.sut)  sut
-                     (cell p.sut dext(sut q.sut, ref q.ref))
+          [%cell *]  =/  lef  dext(sut p.sut, ref p.ref)
+                     =/  ryt  dext(sut q.sut, ref q.ref)
+                     %-  fork
+                     :~  (cell lef q.sut)
+                         (cell p.sut ryt)
+                         (cell lef ryt)
+                     ==
         ==
       ::
           [%core *]  ?:(?=(?([%atom *] [%cell *]) ref) sut sint)
