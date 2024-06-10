@@ -7,7 +7,7 @@
 ++  render-messages
   |=  =bowl:neo
   ^-  manx
-  ;div
+  ;div.fc.g2
     =label  "Messages"
     ;*
     %+  turn
@@ -42,9 +42,9 @@
   ^-  manx
   ;form.fc.g2
     =hx-post  "{(en-tape:pith:neo :(welp /neo/hawk here.bowl location))}?stud=txt"
+    =hx-swap  "beforebegin"
     =hx-on-submit  "this.reset()"
-    =hx-target  "find button .loading"
-    =hx-swap  "outerHTML"
+    =hx-target  "this"
     =head  "msg"
     ;textarea.p2.border.br1
       =name  "text"
@@ -56,7 +56,7 @@
       ;
     ==
     ;button.p2.b1.br1.bd1.wfc.hover.loader
-      ;span.loaded.s2: create
+      ;span.loaded.s2:  create
       ;span.loading
         ;+  loading.feather-icons
       ==

@@ -7,7 +7,7 @@
 ^-  manx
 ;div.p2
   =label  "Chat"
-  ;div.ma.fc.g2
+    ;div.ma.fc.g2
     =style  "max-width: 650px;"
     ;div.fc.g2
       =id  "children"
