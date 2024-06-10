@@ -435,7 +435,7 @@ The only part of this system that needs to define its dependencies is `/message-
       :*  %pub
           ::  fief:neo is [required=? =quay]
           req=&
-          ::  quay:neo is (pair lash:neo (unit port:neo)
+          ::  quay:neo is (pair lash:neo (unit port:neo))
           ::  lash:neo defines the shrub's state and pokes
           [[%pro %sig] (sy %sig ~)]
           %-  some
