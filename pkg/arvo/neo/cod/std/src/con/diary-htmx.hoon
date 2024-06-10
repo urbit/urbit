@@ -70,7 +70,7 @@
       =rows  "5"
       =required  ""
       =autocomplete  "off"
-      ;  ::  XX unnecessary?
+      ;
     ==  ::  </textarea>
     ::  <button class="p2 b1 br1 bd1 wfc hover loader">
     ;button.p2.b1.br1.bd1.wfc.hover.loader
@@ -87,10 +87,10 @@
 ++  link-entry
   |=  [pax=pith =idea:neo]
   ::  make sure the pail does in fact contain %txt
-  ?.  =(%txt p.pail.idea)
+  ?.  =(%txt p.q.saga.idea)
     ;div: error
   ::  extract information from the given pith and pail:neo
-  =/  tape  (trip !<(@t q.pail.idea))
+  =/  tape  (trip !<(@t q.q.saga.idea))
   =/  subject-end  (fall (find [10]~ tape) 56)
   =/  subject  (scag subject-end tape)
   =/  id  (trip (snag 0 (pout pax)))
