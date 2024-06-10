@@ -1,15 +1,13 @@
 # Tutorial 4: Tasks
 Let’s take a look at the Tasks shrub. From within the Sky frontend, you can create, edit, reorder, and delete nested tasks and subtasks. Checking off all subtasks will mark the parent as complete, which involves some interaction between parent and child shrubs.
 
-This time there are no new concepts on the backend, but there’s much more going on in the UI than we’ve looked at in previous tutorials.
-
 In this lesson we’ll see how shrubs keep their parents informed of state changes using the `%gift` poke. This is the most complex UI we’ve looked at yet, so we’ll also focus on the `/con` files.
 
 ## /imp/task.hoon
 Tasks only needs one `/imp` file: `task.hoon`. The Tasks frontend shows you some tasks that may or may not have other tasks as children.
 
 ```hoon
-/@  task  ::  [text=cord done=? order=(list path]
+/@  task  ::  [text=cord done=? order=(list path)]
 ::
 ::  $task-diff
 ::  $%  [%new =task prepend=?]
@@ -63,26 +61,18 @@ Tasks only needs one `/imp` file: `task.hoon`. The Tasks frontend shows you some
 ::  state is a %task
 ++  state  pro/%task
 ::
-::  we accept %gift and %task-diff pokes
+::  we accept %task-diff and %gift pokes
 ++  poke   (sy %task-diff %gift ~)
 ::
-::  we define one generation of kids at
-::  /path/to/this/task/<@ud> which are
-::  also tasks like their parent, which
-::  means those kids also define one
-::  generation of kids below them, and so on
+::  we define one generation of
+::  kids at /path/to/this/task/<@ud>
 ++  kids
   :+  ~  %y
   %-  ~(gas by *lads:neo)
   :~  :-  [|/%ud |]
     [pro/%task (sy %task-diff %gift ~)]
   ==
-++  deps
-  ::
-  ::  we don't need dependencies to negotiate
-  ::  state between parent and children tasks,
-  ::  but it would be valid to do so
-  *deps:neo
+++  deps  *deps:neo
 ++  form
   ::
   ::  inner core
@@ -111,9 +101,8 @@ Tasks only needs one `/imp` file: `task.hoon`. The Tasks frontend shows you some
         =/  name=@ud  (assign-name bowl)
         =.  order.this
           ?:  prepend.diff
-            ::  XX do we really need to do this? bad look if so
-            `(list pith)`[~[ud/name] order.this]
-          `(list pith)`(snoc order.this `pith`[ud/name ~])
+            [~[ud/name] order.this]
+          (snoc order.this `pith`[ud/name ~])
         =.  done.this  |
         :_  task/!>(this)
         :~  :-  (welp here.bowl ~[ud/name])
@@ -147,9 +136,9 @@ Tasks only needs one `/imp` file: `task.hoon`. The Tasks frontend shows you some
 ```
 
 ## The %gift poke
-In the `+poke` arm we declare this shrub takes a `%gift` as well as a `%task-diff`, but we don’t have to import `%gift` with a `/@` rune. This is a special poke like `%rely` that `/app/neo` gives us when another shrub’s state changes.
+In the `+poke` arm we declare this shrub takes a `%gift` as well as a `%task-diff`, but we don’t have to import `%gift`. This is a special poke like `%rely` that `/app/neo` gives us when another shrub’s state changes.
 
-Our shrub receives a `%gift` poke every time the state of one of its {kids / descendants} changes. Unlike `%rely`, we have to declare that we accept `%gift` pokes in the `+poke` arm.
+Our shrub receives a `%gift` poke every time the state of one of its descendants changes: only kids in the `%y` case, all descendants in the `%z` case.
 
 ```hoon
 ++  state  pro/%task
@@ -172,17 +161,18 @@ Let’s look at the Tasks frontend in detail.
 
 ### Converting tasks to HTMX
 ```hoon
-/@  task     ::  [text=cord done=? order=(list pith)]
+/@  task     ::  [text=cord done=? kids-done=? order=(list pith)]
 :: import /lib/feather-icons
 /-  feather-icons
 :: declare that this is a conversion from task to HTMX
 :-  [%task %$ %htmx]
-::  gate takes a task and a bowl:neo,
-::  so we can access here.bowl and kids.bowl
+::  outer gate takes a task, inner gate takes a bowl:neo,
+::  so we can access here.bowl and kids.bowl in the ui
 |=  t=task
 |=  =bowl:neo
 ::
-::  all sail rendering happens in helper arms
+::  in this case, all sail rendering
+::  happens in helper arms
 |^
   shell
 ::
@@ -282,20 +272,20 @@ Let’s look at the Tasks frontend in detail.
 ++  kids-check
   ::
   ::  check if all subtasks are completed
-  |=  [parent-pith=pith order=(list pith)]
+  |=  =pith
+  ~&  >  pith
   ^-  ?
-    %+  levy  order
-    |=  p=pith
-    =/  =task
-      !<  task
-      q.pail:(need (~(get by ~(tar of:neo kids.bowl)) (weld parent-pith p)))
-    done.task
+  =/  t
+    !<  task
+    q.pail:(~(got of:neo kids.bowl) pith)
+  ~&  >>  t
+  kids-done.t
 ::
 ::
 ++  form-ordered-kids
   ::
-  ::  <form> that keeps track of tasks order, sends
-  ::  %reorder poke if tasks are manually reordered
+  ::  <form> that keeps track of tasks order, sends %reorder
+  ::  poke if tasks are manually reordered by the user
   ;form.fc.g1
     =hx-post       "/neo/hawk{(pith-tape here.bowl)}?stud=task-diff"
     =head          "reorder"
@@ -303,16 +293,16 @@ Let’s look at the Tasks frontend in detail.
     =hx-swap       "none"
     ;*
     ::
-    ::  iterates over the list of piths,
-    ::  turning through the kids' data
-    %+  turn  order.t
-      |=  =pith
-      ::  extract kid information at pith from kids.bowl
-      ::  and runs +part-kid on pith and kid data
-      =/  kid  (~(get of:neo kids.bowl) pith)
-      ?~  kid
-        ;div: does not exist {(pith-tape pith)}
-      (part-kid [pith (need kid)])
+    ::  iterates over the list of piths in order.task
+    %+  turn
+      order.t
+    |=  =pith
+    ::  extract kid information at pith from kids.bowl
+    ::  and runs +part-kid on pith and kid data
+    =/  kid  (~(get of:neo kids.bowl) pith)
+    ?~  kid
+      ;div: does not exist {(pith-tape pith)}
+    (part-kid [pith (need kid)])
   ==
 ::
 ++  part-kid
@@ -361,9 +351,8 @@ Let’s look at the Tasks frontend in detail.
           ::    a task from being marked as done if it
           ::    has untoggled kids
           ::
-          ::  combining m named noun and
-          ::  attribute logic with manx below
-          =-  =/  m  -
+          ::  combining attribute logic with manx below
+          =;  m
             ::  checks if the task toggled as done
             ?.  done.t
               ::  if it's not done, does it have kids?
@@ -375,7 +364,8 @@ Let’s look at the Tasks frontend in detail.
                 ::  the rest of its data
                 m(a.g [class a.g.m])
               =/  kc
-                (kids-check pith order.t)
+                (kids-check pith)
+              ~&  >>>  kc
               ?:  kc
                 ::  assigning class attribute to
                 ::  the rest of manx data
@@ -407,10 +397,9 @@ Let’s look at the Tasks frontend in detail.
               ;
             ==
         ::
-        ::  combining that named noun and class name
-        ::  logic with manx below and make it in to an XML node
-        ;+  =-
-          =/  that  -
+        ::  combining class logic with
+        ::  manx below and make it in to an XML node
+        ;+  =;  that
           =/  classes
             %+  weld
               "grow p2 br2 text bold"

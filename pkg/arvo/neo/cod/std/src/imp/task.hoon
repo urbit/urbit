@@ -1,6 +1,6 @@
 /@  task
 /@  task-diff
-=> 
+=>
 |%
 ++  check-kids
   |=  =bowl:neo
@@ -36,7 +36,7 @@
 |%
 ++  state  pro/%task
 ++  poke   (sy %task-diff %gift ~)
-++  kids   
+++  kids
   :+  ~  %y
   %-  ~(gas by *lads:neo)
   :~  :-  [|/%ud |]
@@ -59,16 +59,16 @@
       ::check if all kid tasks are done
       =/  dun  (check-kids bowl)
       [~ task/!>(this(done dun, kids-done dun))]
-    ::  
+    ::
         %task-diff
       =/  diff  !<(task-diff vax)
       ?-    -.diff
           %new
         =/  name=@ud  (assign-name bowl)
-        =.  order.this  
+        =.  order.this
           ?:  prepend.diff
-            `(list pith)`[~[ud/name] order.this]
-          `(list pith)`(snoc order.this `pith`[ud/name ~])
+            [~[ud/name] order.this]
+          (snoc order.this `pith`[ud/name ~])
         =.  done.this  |
         =.  kids-done.this  |
         :_  task/!>(this)

@@ -3,12 +3,13 @@
 /-  feather-icons
 :: declare that this is a conversion from task to HTMX
 :-  [%task %$ %htmx]
-::  gate takes a task and a bowl:neo,
-::  so we can access here.bowl and kids.bowl
+::  outer gate takes a task, inner gate takes a bowl:neo,
+::  so we can access here.bowl and kids.bowl in the ui
 |=  t=task
 |=  =bowl:neo
 ::
-::  all sail rendering happens in helper arms
+::  in this case, all sail rendering
+::  happens in helper arms
 |^
   shell
 ::
@@ -120,8 +121,8 @@
 ::
 ++  form-ordered-kids
   ::
-  ::  <form> that keeps track of tasks order, sends
-  ::  %reorder poke if tasks are manually reordered
+  ::  <form> that keeps track of tasks order, sends %reorder
+  ::  poke if tasks are manually reordered by the user
   ;form.fc.g1
     =hx-post       "/neo/hawk{(pith-tape here.bowl)}?stud=task-diff"
     =head          "reorder"
@@ -129,9 +130,8 @@
     =hx-swap       "none"
     ;*
     ::
-    ::  iterates over the list of piths,
-    ::  turning through the kids' data
-    %+  turn  
+    ::  iterates over the list of piths in order.task
+    %+  turn
       order.t
     |=  =pith
     ::  extract kid information at pith from kids.bowl
@@ -234,7 +234,7 @@
               ;
             ==
         ::
-        ::  combining class logic with 
+        ::  combining class logic with
         ::  manx below and make it in to an XML node
         ;+  =;  that
           =/  classes
