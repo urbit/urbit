@@ -9623,7 +9623,7 @@
       ==
     ::
         [%core *]  $(sut repo)
-        [%face *]  (face p.sut $(sut q.sut))
+        [%face *]  ?:(rev (face p.sut $(sut q.sut)) $(sut q.sut))
         [%fork *]  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
         [%hint *]  (hint p.sut $(sut q.sut))
         [%hold *]
