@@ -51,10 +51,10 @@
   |=  [=bowl:neo location=pith]
   ^-  manx
   ;form.fc.g2
-    =hx-post  "{(en-tape:pith:neo :(welp /neo/hawk here.bowl location))}?stud=txt"
-    =hx-swap  "beforebegin"
+    =hx-post  "{(en-tape:pith:neo :(welp /neo/hawk here.bowl location))}?stud=message"
+    =hx-swap  "outerHTML swap:5s"
     =hx-on-submit  "this.reset()"
-    =hx-target  "this"
+    =hx-target  "find button .loading"
     =head  "msg"
     =id  "render-sender"
     ;textarea.p2.border.br1
@@ -65,6 +65,16 @@
       =required  ""
       =autocomplete  "off"
       ;
+    ==
+    ;input.hidden
+      =name  "ship"
+      =value  (scow %p our.bowl)
+    ;
+    ==
+    ;input.hidden
+      =name  "date"
+      =value  (scow %da now.bowl)
+    ;
     ==
     ;button.p2.b1.br1.bd1.wfc.hover.loader
       ;span.loaded.s2:  create

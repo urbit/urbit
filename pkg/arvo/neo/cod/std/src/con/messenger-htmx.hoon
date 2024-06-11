@@ -50,9 +50,9 @@
   ;form.fr.jc.g1.createchat.w70
   ::=hx-sync  "closest div:queue last"
   =hx-post  "/neo/hawk{pt}?stud=messenger-diff"
-  =head  "new-groupchat"
-  =hx-target  "find button .loading"
   =hx-swap  "outerHTML"
+  =hx-target  "find button .loading"
+  =head  "new-groupchat"
     ;input.grow.border.p2.br1.grow
     =id  "name-input"
     =name  "name"
@@ -68,7 +68,6 @@
       ;span.loading
         ;+  loading.feather-icons
       ==
-    :: ==
     ==
   ==
 ::
@@ -109,11 +108,12 @@
           ;span.hidden:  no dms
         ?:  (lte 3 (lent pith))  
           ;h1.hidden:  {<pith>}
+        =/  ship  +:;;([%p @p] `(list iota)`(rear pith))
+        ^-   manx
         ;a.br1.hover.b0.fr.jb.wf.border
         =href  "/neo/hawk{(pith-tape here.bowl)}{(pith-tape pith)}"
         =hx-swap  "innerHTML"
-          ;h3.s-1.p2:  {(scow %tas ;;(@tas -.pith))}
-          ;h3.s-1.p2:  {<+:;;([%p @p] (rear pith))>}
+          ;h3.s-1.p2:  {<ship>}
         ==
     ==
     ;div.fc.ac.g2.wf
