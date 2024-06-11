@@ -3,20 +3,26 @@
 :-  [%txt %$ %htmx]
 |=  =txt
 |=  =bowl:neo
-;form.fc.p2.wf.hf.relative
-  =here  (en-tape:pith:neo here.bowl)
-  =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=txt&refresh"
-  =hx-trigger  "input changed delay:0.4s from:find textarea"
-  =hx-swap  "none"
-  ;div.htmx-indicator.absolute
-    =style  "top: 15px; right: 15px"
-    ;+  loading.feather-icons
+:: ;form.fc.p2.wf.hf.relative
+::   =here  (en-tape:pith:neo here.bowl)
+::   =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=txt&refresh"
+::   =hx-trigger  "input changed delay:0.4s from:find textarea"
+::   =hx-swap  "none"
+::   ;div.htmx-indicator.absolute
+::     =style  "top: 15px; right: 15px"
+::     ;+  loading.feather-icons
+::   ==
+::   ;textarea.wf.p2.bd1.br1.grow
+::     =autocomplete  "off"
+::     =rows  "4"
+::     =name  "text"
+::     =oninput  "this.setAttribute('value', this.value);"
+::     ; {(trip (@t txt))}
+::   ==
+  ;div.fc.g2.border.p3.br1
+    ;div.fr.ac.jb
+      ;p.s-2.f3: {(scow %p our.bowl)}
+      ;p.s-2.f3: now
+    ==
+    ;p: {(trip (@t txt))}
   ==
-  ;textarea.wf.p2.bd1.br1.grow
-    =autocomplete  "off"
-    =rows  "4"
-    =name  "text"
-    =oninput  "this.setAttribute('value', this.value);"
-    ; {(trip (@t txt))}
-  ==
-==
