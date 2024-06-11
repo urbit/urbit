@@ -87,12 +87,14 @@
 
     //  tell the user why a clicked checkbox
     //  can't be marked as checked
-    document.getElementById("alert").addEventListener("click", function(e){
-      if (document.getElementById("alert").hasAttribute("readonly")){
-      e.preventDefault();
-      alert("Subtasks are not completed");
-      }
-    });
+    document.querySelectorAll(".alert").forEach(function(element) {
+      element.addEventListener('click', function(e) {
+        if (element.hasAttribute("readonly")){
+        e.preventDefault();
+        alert("Subtasks are not completed");
+          }
+        })
+      })
     '''
   ==  :: </script>
 ::
@@ -174,6 +176,7 @@
           ;+
           ::  defines class attribute with class names
           =/  class  [%class "p2 br1 border done s3"]
+          =/  class-alert  [%class "p2 br1 border done s3 alert"]
           ::
           ::  checkbox logic:
           ::  - if task is toggled, checkbox will
@@ -208,10 +211,10 @@
                 ::  the rest of manx data
                 m(a.g [class a.g.m])
               ::
-              ::  assigns readonly, id and class
-              ::  attributes to checkbox; id will trigger
+              ::  assigns readonly and class
+              ::  attributes to checkbox; 'alert' class will trigger
               ::  alert script functionality
-              m(a.g [[%readonly ""] [%id "alert"] class a.g.m])
+              m(a.g [[%readonly ""] class-alert a.g.m])
             ::
             ::  assigning checked and class attributes
             ::  to the rest of manx data
