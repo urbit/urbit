@@ -2002,6 +2002,7 @@
           ?~  ack
             same
           (slog (print-quit:neo u.ack))
+        ?:  =(p.pail %rely)  !!
         (mean leaf/"no support for {<p.pail>}" ~)
       =/  [caz=(list card:neo) new=pail:neo]
         (poke:su-form pail)
