@@ -172,7 +172,7 @@
     =head  "new-tab"
     ;span.loaded.fr.ac.js.g2
       ;+  add.feather-icons
-      ;span.f3: new tab
+      ;span.f3: new window
     ==
     ;span.loading
       ;+  loading:feather-icons
