@@ -1,97 +1,102 @@
 /@  task
 /@  task-diff
+=>
+|%
+++  check-kids
+  |=  =bowl:neo
+  ^-  ?
+  ?:  =([~ ~] kids.bowl)
+    %.y
+  =/  piths  ~(tap in ~(key by ~(tar of:neo kids.bowl)))
+  %+  levy  piths
+  |=  =pith
+  =/  =task
+    !<  task
+    q.pail:(need (~(get by ~(tar of:neo kids.bowl)) pith))
+  done.task
+::
+++  assign-name
+  |=  =bowl:neo
+  ^-  @ud
+  ?:  =([~ ~] kids.bowl)  1
+  =/  sorted-names=(list @ud)
+    %-  sort  :_  lth
+    %+  turn  ~(tap by ~(tar of:neo kids.bowl))
+      |=  [=pith =idea:neo]
+      +:(,[%ud @ud] (rear pith))
+  =/  last-name=@ud  (rear sorted-names)
+  =/  name-missing=(list @ud)
+    %+  skim  (gulf 1 last-name)
+    |=  n=@ud
+    =(~ (find ~[n] sorted-names))
+  ?~  name-missing  +(last-name)
+  (rear name-missing)
+--
+^-  kook:neo
 |%
 ++  state  pro/%task
-++  poke   (sy %task-diff ~)
-++  kids   
+++  poke   (sy %task-diff %gift ~)
+++  kids
   :+  ~  %y
   %-  ~(gas by *lads:neo)
-  :~  :-  [|/%tas |]
-    [pro/%task (sy %task-diff ~)]
+  :~  :-  [|/%ud |]
+    [pro/%task (sy %task-diff %gift ~)]
   ==
 ++  deps   *deps:neo
 ++  form
   ^-  form:neo
   |_  [=bowl:neo =aeon:neo stud:neo state-vase=vase]
-  ++  poke
-    |=  [=stud:neo vax=vase]
-    ^-  (quip card:neo pail:neo)
-    =/  this  !<(task state-vase)
-    =/  diff  !<(task-diff vax)
-    ?-  -.diff
-        %become
-      ::  XX  if you try to become your own ancestor, then infinite loop
-      =/  there  (welp [p/our.bowl]~ pith.diff)
-      :_  task/!>(this)
-      ^-  (list card:neo)
-      :~
-        [there %poke %task-diff !>([%prayer +.here.bowl])]
-      ==
-    ::
-        %prayer
-      :_  task/!>(this)
-      %-  flop
-      ^-  (list card:neo)
-      :-
-        [(welp [p/our.bowl]~ pith.diff) %make %task `task/!>(this) ~]
-      %-  zing
-      %+  turn  ~(tap by ~(tar of:neo kids.bowl))
-      |=  [=pith =idea:neo]
-      ^-  (list card:neo)
-      :~
-        [:(welp [p/our.bowl]~ pith.diff pith) %make %task `pail.idea ~]
-        [(welp here.bowl pith) %poke %task-diff !>([%prayer (welp pith.diff pith)])]
-      ==
-    ::
-        %nest
-      =.  order.this  `(list pith)`(snoc order.this `pith`[`@tas`name.diff ~])
-      :_  task/!>(this)
-      :_  ~
-      :*  (snoc here.bowl name.diff)
-          %make  %task  `task/!>(task.diff)  ~
-      ==
-    ::
-        %prep
-      =.  order.this  `(list pith)`[[name.diff ~] order.this]
-      :_  task/!>(this)
-      :_  ~
-      :*  (snoc here.bowl name.diff)
-          %make  %task  `task/!>(task.diff)  ~
-      ==
-    ::
-        %edit
-      :-  ~
-      :-  %task
-      !>  this(text text.diff, done done.diff)
-    ::
-        %done
-      :-  ~
-      :-  %task
-      !>  this(done !done.this)
-    ::
-        %kid-done
-      :_  task/!>(this)
-      :_  ~
-      :*  (welp here.bowl pith.diff)
-          %poke  %task-diff  !>([%done ~])
-      ==
-    ::
-        %oust
-      =/  i  (find [pith.diff ~] order.this)
-      ?~  i  `task/!>(this)
-      :_  task/!>(this(order (oust [(need i) 1] order.this)))
-      ~
-      :::_  ~
-      :::*  (welp here.bowl pith.diff)
-      ::    %tomb
-      ::==
-    ::
-        %reorder
-      `task/!>(this(order order.diff))
-    ==
   ++  init
     |=  pal=(unit pail:neo)
     ^-  (quip card:neo pail:neo)
     `(need pal)
+  ++  poke
+    |=  [=stud:neo vax=vase]
+    ^-  (quip card:neo pail:neo)
+    =/  this  !<(task state-vase)
+    ?+    stud  !!
+        %gift
+      ::check if all kid tasks are done
+      =/  dun  (check-kids bowl)
+      [~ task/!>(this(done dun, kids-done dun))]
+    ::
+        %task-diff
+      =/  diff  !<(task-diff vax)
+      ?-    -.diff
+          %new
+        =/  name=@ud  (assign-name bowl)
+        =.  order.this
+          ?:  prepend.diff
+            [~[ud/name] order.this]
+          (snoc order.this `pith`[ud/name ~])
+        =.  done.this  |
+        =.  kids-done.this  |
+        :_  task/!>(this)
+        :~  :-  (welp here.bowl ~[ud/name])
+            [%make %task `task/!>(task.diff) ~]
+        ==
+      ::
+          %edit
+        :-  ~
+        :-  %task
+        !>
+        %=  this
+          text  text.diff
+          done  ?:  kids-done.this
+                  done.diff
+                %.n
+        ==
+      ::
+          %oust
+        =/  i  (find [pith.diff ~] order.this)
+        ?~  i  `task/!>(this)
+        :_  task/!>(this(order (oust [(need i) 1] order.this)))
+        :~  [(welp here.bowl pith.diff) [%tomb ~]]
+        ==
+      ::
+          %reorder
+        `task/!>(this(order order.diff))
+      ==
+    ==
   --
 --

@@ -1,1 +1,1 @@
-,[text=cord done=? order=(list pith)]
+,[text=cord done=? kids-done=? order=(list pith)]
