@@ -141,18 +141,18 @@ In the `+poke` arm we declare this shrub takes a `%gift` as well as a `%task-dif
 Our shrub receives a `%gift` poke every time the state of one of its descendants changes: only kids in the `%y` case, all descendants in the `%z` case.
 
 ```hoon
-++  state  pro/%task
+++  state  [%pro %task]
 ++  poke   (sy %task-diff %gift ~)
 ```
 
-Then we can handle the poke like any other. In this case, when `/imp/task` receives word that one of its kids’ state has changed, it checks to see if all of its kids are completed, then marks its own state as completed or uncompleted accordingly.
+Then we can handle the poke like any other. In this case, when `/imp/task` receives word that one of its kids’ state has changed, it checks to see if all of its subtasks (kids) are completed, then updates its own state accordingly.
 
 ```hoon
 ?+    stud  !!
     %gift
-  ?:  (check-kids bowl)
-    [~ task/!>(this(done %.y))]
-  [~ task/!>(this(done %.n))]
+  ::  check if all kid tasks are done
+  =/  dun  (check-kids bowl)
+  [~ [%task !>(this(done dun, kids-done dun))]]
 ::
 ```
 
