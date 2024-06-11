@@ -10,10 +10,10 @@
 ::
 ++  view
 ^-  manx
-;div.p2.fc.ac.view.g1
+;div.p2.fc.ac.view.g1.ma
   ;style:  {style}
-  ;+  create-groupchat
-  ;+  new-dm
+  ;+  make-groupchat
+  ;+  make-dm
   ;+  all-chats
 ==
 ::
@@ -43,7 +43,7 @@
     '''
 ::
 ::  depending if value in input has space and more 
-++  create-groupchat
+++  make-groupchat
   =/  pt  (pith-tape here.bowl)
   ::
   ^-  manx
@@ -72,7 +72,7 @@
     ==
   ==
 ::
-++  new-dm 
+++  make-dm 
   ;form.fr.jc.g1.w70
   =hx-post  "/neo/hawk{(pith-tape here.bowl)}?stud=messenger-diff"
   =head  "new-dm"
@@ -140,17 +140,17 @@
         ;h3.s-1.p2:  {<org>}
       ==
       ;button.br1.hover.border.b0
-      =onclick  (trip 'this.parentNode.nextElementSibling.classList.toggle("hidden"); this.parentNode.parentNode.classList.toggle("border"); this.parentNode.parentNode.classList.toggle("p2"); this.previousSibling.classList.toggle("border"); this.classList.toggle("border"); if (this.parentNode.nextElementSibling.classList.contains("hidden")){this.innerHTML="<span>V</span>"} else {this.innerHTML="<span>^</span>"}')
-        ;span: V
+      =onclick  (weld (trip 'this.parentNode.parentNode.classList.toggle("border"); this.parentNode.parentNode.classList.toggle("p2"); this.previousSibling.classList.toggle("border"); this.classList.toggle("border"); ') (span-toggle "v" "^"))
+        ;span: v
       ==
     ==
-    ;div.fc.g2.hidden
+    ;div.fc.hidden
       ;div.fc.g2
         ;div.fr.je.g2
           ;+  ?.  =(our.bowl org)  
             ;span.hidden:  ~
           ;button.hover.br1.b0.border
-            =onclick  (trip 'this.parentNode.nextElementSibling.classList.toggle("hidden"); if (this.parentNode.nextElementSibling.classList.contains("hidden")){this.innerHTML="<span>+</span>"} else {this.innerHTML="<span>x</span>"}')
+            =onclick  (span-toggle "+" "x")
             ;span:  +
           ==
         ==
@@ -202,6 +202,10 @@
     =autocomplete  "off"
     ;
     ==
+    ;button.hidden
+    =onclick  "this.parentNode.appendChild(document.createElement('input')) "
+    ;span:  more
+    ==
     ;button.loader.hover.br1.b0.border
       ;span.loaded:  +
       ;span.loading
@@ -209,4 +213,9 @@
       ==
     ==
   ==
+::
+++  span-toggle
+|=  [from=tape to=tape]
+^-  tape
+"this.parentNode.nextElementSibling.classList.toggle('hidden'); if (this.parentNode.nextElementSibling.classList.contains(\"hidden\"))\{this.innerHTML=\"<span>{from}</span>\"} else \{this.innerHTML=\"<span>{to}</span>\"}"
 --

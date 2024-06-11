@@ -7,6 +7,7 @@
 ^-  manx
 ;div.p2
   =label  "Chat"
+    ;+  script:messages
     ;div.ma.fc.g2
     =style  "max-width: 650px;"
     ;div.fc.g2

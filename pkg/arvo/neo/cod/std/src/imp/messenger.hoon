@@ -4,7 +4,7 @@
 ^-  kook:neo
 |%
 ++  state  pro/%sig
-++  poke  (sy %dm-diff %groupchat-diff ~)
+++  poke  (sy %dm-diff %groupchat-diff %messenger-diff ~)
 ++  kids
   :+  ~  %y
   %-  ~(gas by *lads:neo)
@@ -25,6 +25,7 @@
   ++  poke
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo pail:neo)
+    ~&  >>  stud
     ?+    stud  !!
         %dm-diff
       =/  poke  !<(dm-diff vax)
@@ -63,6 +64,7 @@
       ::
           %invite-to-groupchat
         =/  provider  ~[p/ship.poke %home %messenger]
+        ~&  provider 
         :_  state
         :~  :-  (welp here.bowl ~[%groupchats p/our.bowl t/name.poke])
             [%poke groupchat-diff/!>([%invite ship.poke provider])]

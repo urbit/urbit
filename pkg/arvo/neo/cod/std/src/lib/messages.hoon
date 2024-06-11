@@ -4,6 +4,16 @@
 ::  This arm expects messages to be stored at
 ::  ~[%pub [%da ~2024.1.1]] or ~[%sub [%da ~2024.1.1]]
 ::  relative to here.bowl.
+++  script 
+  ;script
+  ;+  ;/  %-  trip
+  '''
+    document.getElementById("render-sender").scrollIntoView({  
+      block: "center",
+      inline: "start",
+      behavior: "instant"});
+  '''
+  ==
 ++  render-messages
   |=  =bowl:neo
   ^-  manx
@@ -46,6 +56,7 @@
     =hx-on-submit  "this.reset()"
     =hx-target  "this"
     =head  "msg"
+    =id  "render-sender"
     ;textarea.p2.border.br1
       =name  "text"
       =placeholder  ". . ."
