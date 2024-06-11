@@ -4,9 +4,14 @@
 :-  [%node %$ %sky]
 |=  nod=node
 ^-  sky
-:_  (slav %ud (~(got manx-utils nod) %slots))
-%+  murn  c.nod
-|=  =manx
-=/  here  (rush (~(got manx-utils manx) %here) stap)
-?~  here  ~
-`[*@da (pave:neo u.here)]
+:*
+  %+  murn  c.nod
+  |=  =manx
+  =/  here  (rush (~(got manx-utils manx) %here) stap)
+  ?~  here  ~
+  `[*@da (pave:neo u.here)]
+  ::
+  (slav %ud (~(got manx-utils nod) %slots))
+  ::
+  %.n
+==

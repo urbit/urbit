@@ -1508,8 +1508,10 @@
   =.  run  copy-clay
   ::  =.  run  (emit %pass /bind-site %arvo %e %connect [~ dap.bowl ~] dap.bowl)
   =.  run  (emit do-std-warp)
-  =.  run  
-    (emit (do-card #/[p/our.bowl]/sky %make %sky `sky/!>([%system [~[%home] ~] 1]) ~))
+  =.  run
+    (emit (do-card #/[p/our.bowl] %make %root ~ ~))
+  =.  run
+    (emit (do-card #/[p/our.bowl]/sky %make %sky ~ ~))
   =.  run  
     (emit (do-card #/[p/our.bowl]/srv/hawk %make %hawk-eyre ~ ~))
   =.  run  
@@ -2000,6 +2002,7 @@
           ?~  ack
             same
           (slog (print-quit:neo u.ack))
+        ?:  =(p.pail %rely)  !!
         (mean leaf/"no support for {<p.pail>}" ~)
       =/  [caz=(list card:neo) new=pail:neo]
         (poke:su-form pail)

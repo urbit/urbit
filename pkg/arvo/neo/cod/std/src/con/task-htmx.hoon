@@ -149,7 +149,7 @@
   ::  sends %edit poke on input change
   |=  [=pith =idea:neo]
   ::  extracts information from idea:neo to task
-  =/  =pail:neo  pail.idea
+  =/  =pail:neo  q.saga.idea
   =/  t=task  !<(task q.pail)
   ::  converts pith to tape
   =/  pt  (pith-tape (welp here.bowl pith))
