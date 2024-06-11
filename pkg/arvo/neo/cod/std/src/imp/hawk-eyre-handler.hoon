@@ -229,7 +229,7 @@
       =/  =pail:neo  q.saga.u.node
       ;div.fc.g2.as.p2
         ;a.p1.mono.f2.b1.br1.bd1.hover.loader
-          =href  "#"
+          =href  "/neo/hawk/{(scow %p our.bowl)}/cod/std/src/pro/{(trip ?@(p.pail p.pail mark.p.pail))}"
           ;span.loaded: {<p.pail>}
           ;span.loading
             ;+  loading.feather-icons
