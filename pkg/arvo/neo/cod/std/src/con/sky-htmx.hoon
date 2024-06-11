@@ -7,6 +7,11 @@
 ^-  manx
 |^
   ;div.wf.hf.relative
+    ;+
+    =;  m
+      ?:  menu.sky  m
+      m(a.g [[%closed ""] a.g.m])
+    ^-  manx
     ;a-i-r.wf.hf.relative
       =style  "opacity: var(--sky-opacity); padding: var(--sky-outer-gap);"
       =id  "air"
@@ -49,9 +54,17 @@
     """
   ==
 ++  menu-btn
+  =;  m
+    ?:  menu.sky  m
+    m(a.g [[%closed ""] a.g.m])
+  ^-  manx
   ;button.hover.f2.b2.fc.ac.jc.air-btn.wf
     =slot  "button"
-    =onclick  "$(this).closest('a-i-r').attr('closed', !$(this).parent().attr('closed'))"
+    =onclick  "this.parentNode.toggleAttribute('closed'); this.toggleAttribute('closed');"
+    =hx-post  "/neo/hawk/{<our.bowl>}/sky?stud=sky-diff"
+    =head  "menu"
+    =hx-target  "this"
+    =hx-swap  "none"
     ;div.fc.ac.jc.bold.s3.f3(style "height: 2rem;"): ~
   ==
 ++  menu-btn-style
@@ -98,7 +111,7 @@
       ;+  loading.feather-icons
     ==
     ;div.hidden
-      =hx-get  "/neo/hawk{ext}?slot={<a>}&id={<id>}&no-save"
+      =hx-get  "/neo/hawk{ext}?slot={<a>}&hawk-id={<id>}&no-save"
       =hx-trigger  "load"
       =hx-target  "#hawk-{idt}"
       =hx-swap  "morph"

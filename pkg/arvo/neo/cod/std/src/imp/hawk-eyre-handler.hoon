@@ -19,7 +19,12 @@
       [pith %poke eyre-sign/!>(data)]
       [pith %poke eyre-sign/!>(done)]
       [here.bowl %cull ~]
+      [here.bowl %tomb ~]
   ==
+++  sky-move-tab
+  |=  [=bowl:neo slot=@ud]
+  ::  assumes location of sky is /sky
+  [#/[p/our.bowl]/sky %poke %sky-diff !>([%move-tab slot here.bowl])]
 ++  default-refresher
   |=  =pith
   =/  tath  (en-tape:pith:neo pith)
@@ -32,19 +37,18 @@
     ;
   ==
 ++  hawk
-  |_  [here=pith main=manx raw=manx has-app=?]
-  ++  id  *@da
+  |_  [here=pith main=manx raw=manx has-app=? meta=[@da @ud]]
   ++  our-tape
     =/  f  (snag 0 here)
     ?@(f (trip f) (scow f))
+  ++  id  -.meta
+  ++  slot  +.meta
   ++  idt  `tape`(zing (scan +:(scow %da id) (most dot (star ;~(less dot prn)))))
-  ++  slot  0  :: XX fix sky positional saving
   ++  lift
     ^-  manx
     ;div.hawk.fc.wf.hf
-      =id  "hawk-{idt}"
-      =hx-params  "id,slot"
-      =hx-vals  "\{\"id\": \"{<id>}\", \"slot\": \"{<slot>}\"}"
+      =hx-params  "hawk-id,slot"
+      =hx-vals  "\{\"hawk-id\": \"{<id>}\", \"slot\": \"{<slot>}\"}"
       ;+  header
       ;div
         =class  "raw p-page wf hf b0 scroll-y scroll-x {(trip ?:(has-app 'hidden' ''))}"
@@ -129,7 +133,6 @@
       ;div.fr.ac.jc.g1.hawk-actions
         =id  "hawk-actions-{idt}"
         ;button.p1.hover.b2.br1.loader.s-1
-          =id  "hawk-slide-up-{idt}"
           =hx-post  "/neo/hawk/{our-tape}/sky?stud=sky-diff"
           =hx-target  "find .loading"
           =hx-swap  "outerHTML"
@@ -143,7 +146,6 @@
           ==
         ==
         ;button.p1.hover.b2.br1.loader.s-1
-          =id  "hawk-slide-down-{idt}"
           =hx-post  "/neo/hawk/{our-tape}/sky?stud=sky-diff"
           =hx-target  "find .loading"
           =hx-swap  "outerHTML"
@@ -157,7 +159,6 @@
           ==
         ==
         ;button.p1.hover.b2.br1.loader.s-1
-          =id  "hawk-close-{idt}"
           =hx-post  "/neo/hawk/{our-tape}/sky?stud=sky-diff"
           =hx-target  "find .loading"
           =hx-swap  "outerHTML"
@@ -187,7 +188,7 @@
 ^-  kook:neo
 |%
 ++  state  pro/%eyre-task
-++  poke   *(set stud:neo)
+++  poke   (sy %rely ~)
 ++  kids
   :+  ~  %y
   %-  ~(gas by *lads:neo)
@@ -199,12 +200,10 @@
       :-  req=|
       ^-  quay:neo
       :-  [pro/%htmx ~]
-      :::-  [[%or rol/[%ui-main pro/%htmx] pro/%htmx ~] ~]
       ^-  (unit port:neo)
-      :+  ~  %z
+      :+  ~  %y
       %-  ~(gas by *lads:neo)
       :~  :-  &
-          ::`lash:neo`[any/~ ~]
           `lash:neo`[[%or pro/%htmx any/~ ~] ~]
       ==
   ==
@@ -214,13 +213,17 @@
   ++  poke
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo pail:neo)
-    `pail
+    !!
   ++  init
     |=  pal=(unit pail:neo)
     ^-  (quip card:neo pail:neo)
     =/  [=stud:neo =vase]  (need pal)
     =+  !<([eyre-id=@ta req=inbound-request:eyre] vase)
     :_  [stud vase]
+    =/  purl  (parse-url:serv request.req)
+    =/  id=@da  (slav %da (~(gut by pam.purl) 'hawk-id' '~2001.1.1'))
+    =/  slot=@ud  (slav %ud (~(gut by pam.purl) 'slot' '0'))
+    =/  meta  [id slot]
     ::XX revive when auth
     ::?.  authenticated.req
     ::  %:  eyre-cards
@@ -231,14 +234,24 @@
     ::  ==
     ?~  src=(~(get by deps.bowl) %src)
       =/  main=manx
-        ;div.wf.hf.fc.jc.ac: nothing here
+        ;div.wf.hf.fc.jc.ac.g2
+          ;h1: nothing here
+          ;a.b1.br1.bd1.hover.loader.p2
+            =href  "/neo/hawk/{(scow %p our.bowl)}/home"
+            ;span.loaded: go home
+            ;span.loading
+              ;+  loading.feather-icons
+            ==
+          ==
+        ==
       =/  raw
         ;div.wf.hf.fc.jc.ac: raw view
+      =/  pit=pith:neo  (pave:neo pax:(parse-url:serv request.req))
       %:  eyre-cards
           eyre-id
           bowl
           200
-          ~(lift hawk #/[p/our.bowl] main raw |)
+          ~(lift hawk pit main raw & meta)
       ==
     =/  here  p.u.src
     ^-  (list card:neo)
@@ -249,7 +262,7 @@
         =.  here.bol  here
         =/  main
           ;div.fc.jc.ac.wf.hf
-            ; nothing here
+            ; no conversion to htmx
           ==
         =/  raw
           ;div.fc.jc.ac.wf.hf
@@ -259,7 +272,7 @@
             eyre-id
             bowl
             200
-            ~(lift hawk here.bol main raw &)
+            ~(lift hawk here.bol main raw & meta)
         ==
       =/  root=idea:neo  u.reet
       ?>  =(%htmx p.pail.root)
@@ -269,33 +282,34 @@
       =.  now.bol  now.bowl
       =.  eny.bol  eny.bowl
       =.  kids.bol  (~(del of:neo q.u.src) /)
-      ::  XX src.bowl
       =/  main  (!<(htmx-type q.pail.root) bol)
       =/  raw
+        ?:  =((lent here) 1)
+          ;div.p2.wf.hf.fc.jc.ac.f3.s-1.italic
+            ; The name that can be named is not the eternal Name.
+          ==
         ;div.fc.g1.p-page
           ;h1: children
           ;*
-          =/  top
-            %-  silt
-            %+  turn  ~(tap of:neo kids.bol)
-            |=  [=pith:neo *]
-            -.pith
-          %+  turn  (sort ~(tap in top) aor)
-          |=  =iota
-          =/  tape  ?@(iota (trip iota) (scow iota))
+          %+  turn  ~(tap by (~(kid of:neo kids.bol) /))
+          |=  [=pith:neo *]
+          =/  tape  (en-tape:pith:neo pith)
           ;a.p2.b1.br1.bd1.hover.loader
-            =href  "/neo/hawk{(en-tape:pith:neo here)}/{tape}"
+            =href  "/neo/hawk{(en-tape:pith:neo here)}{tape}"
             ;span.loaded: {tape}
             ;span.loading
               ;+  loading.feather-icons
             ==
           ==
         ==
+      =;  c
+        ?:  (~(has by pam.purl) 'no-save')  c
+        [(sky-move-tab bol slot) c]
       %:  eyre-cards
           eyre-id
           bowl
           200
-          ~(lift hawk here.bol main raw &)
+          ~(lift hawk here.bol main raw & meta)
       ==
     ::
         %'POST'

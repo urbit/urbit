@@ -77,7 +77,7 @@
       ;a.b1.br2.block.fc.as.js.hover.p3.s1.border-2.loader
         =style  "width: 160px; height: 160px;"
         =hx-target  "closest .hawk"
-        =hx-swap  "innerHTML"
+        =hx-swap  "outerHTML"
         =hx-indicator  "this"
         =href  (trip (spat ['neo' 'hawk' path]))
         ;span.loaded: {(trip (snag 0 (pout:neo pith)))}

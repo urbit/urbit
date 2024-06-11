@@ -7,6 +7,9 @@
 =*  mu  ~(. manx-utils nod)
 =/  head  (@tas (got:mu %head))
 ?+  head  !!
+  %menu
+    =/  c  ?~((get:mu %closed) %.y %.n)
+    [%menu c]
   %new-tab
     [%new-tab ~]
   %minimize

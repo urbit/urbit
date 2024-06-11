@@ -12,8 +12,7 @@
 ::  construct Sail using helper arms
 |^
   ::  <div class="p2" label="Diary">
-  ;div.p2
-    =label  "Diary"
+  ;div.p-page
     ::  <div class="ma fc g2 mw-page">
     ;div.ma.fc.g2.mw-page
       ::  render the text input for new entries

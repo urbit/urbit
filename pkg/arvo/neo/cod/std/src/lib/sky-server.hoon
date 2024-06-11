@@ -10,7 +10,7 @@
     ==
       :: strip first 2 segments (/neo/hawk)
   :-  (slag 2 -.parsed)
-  (malt +.parsed)
+  (~(uni by (malt +.parsed)) (malt header-list.request))
 ++  parse-body
   |=  =request:http
   ^-  manx
