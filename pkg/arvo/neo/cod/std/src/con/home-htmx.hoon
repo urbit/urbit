@@ -63,7 +63,7 @@
       %~  tap  in
       %-  %~  dif  in
           %~  key  by
-          %~  tar  of:neo 
+          %~  tar  of:neo
           kids.bowl
       `(set pith)`(silt apps.home)
     %+  murn  apps

@@ -71,7 +71,7 @@
     %+  turn  folder
     |=  name=@tas
     =/  pith  ~[name]
-    =/  =pail:neo  pail:(~(got of:neo kids.bowl) pith)
+    =/  =pail:neo  q.saga:(~(got of:neo kids.bowl) pith)
     =/  =stud:neo  p.pail
     =/  =path  (pout (welp here.bowl pith))
     =/  label

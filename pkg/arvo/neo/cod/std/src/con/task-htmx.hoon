@@ -81,7 +81,7 @@
   ==
 ++  part-kid
   |=  [=pith =idea:neo]
-  =/  =pail:neo  pail.idea
+  =/  =pail:neo  q.saga.idea
   =/  t=task  !<(task q.pail)
   =-  ?.  done.t  -
     -(a.g [[%done ""] a.g.-])

@@ -37,7 +37,7 @@
     ?~  s  ~
     :-  ~
     !<  sky-settings
-    q.pail.u.s
+    q.q.saga.u.s
   ;style
     ;+  ;/
     ?~  settings
