@@ -30,7 +30,7 @@
           [%make %message-pub ~ ~]
           ::
           :-  provider.poke 
-          [%poke dm-diff/!>([%invited here.bowl])]
+          [%poke dm-diff/!>([%invited our.bowl here.bowl])]
       ==
     ::
         :: create me with a pith to an inviter's dm

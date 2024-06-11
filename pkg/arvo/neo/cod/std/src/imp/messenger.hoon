@@ -28,6 +28,7 @@
     ~&  >>  stud
     ?+    stud  !!
         %dm-diff
+      ~&  >>>  'got dm diff'
       =/  poke  !<(dm-diff vax)
       ?>  =(%invited -.poke)
       :_  state
