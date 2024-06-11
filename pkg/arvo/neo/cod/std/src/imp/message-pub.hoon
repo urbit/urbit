@@ -25,7 +25,7 @@
     ^-  (quip card:neo pail:neo)
     ?>  =(our ship.src):bowl
     :_  state
-    ?+    stud  !!  
+    ?+    stud  !!
         %message
       =/  msg  !<(message vax)
       :~  :-  (welp here.bowl ~[da/now.msg])
