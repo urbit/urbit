@@ -2,6 +2,19 @@
 /@  groupchat-diff
 /@  messenger-diff
 ^-  kook:neo
+=>
+|%
+++  send-invites
+  |=  [invites=(set ship) location=pith]
+  %+  turn
+    ~(tap in invites)
+  |=  =ship
+  :-  location
+  =/  provider  ~[p/ship %home %messenger]
+  ~&  provider
+  [%poke groupchat-diff/!>([%invite ship provider])]
+--
+::
 |%
 ++  state  pro/%sig
 ++  poke  (sy %dm-diff %groupchat-diff %messenger-diff ~)
@@ -58,18 +71,17 @@
         ==
       ::
           %new-groupchat
+        =/  location  
+          (welp here.bowl ~[%groupchats p/our.bowl t/name.poke])
         :_  state
-        :~  :-  (welp here.bowl ~[%groupchats p/our.bowl t/name.poke])
-            [%make %groupchat ~ ~]
-        ==
+        :-  [location [%make %groupchat ~ ~]]
+        (send-invites invites.poke location)
       ::
           %invite-to-groupchat
-        =/  provider  ~[p/ship.poke %home %messenger]
-        ~&  provider 
+        =/  location  
+          (welp here.bowl ~[%groupchats p/our.bowl t/name.poke])
         :_  state
-        :~  :-  (welp here.bowl ~[%groupchats p/our.bowl t/name.poke])
-            [%poke groupchat-diff/!>([%invite ship.poke provider])]
-        ==
+        (send-invites invites.poke location)
       ==
     ==
   --

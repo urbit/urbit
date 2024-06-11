@@ -108,7 +108,7 @@
           ;span.hidden:  no dms
         ?:  (lte 3 (lent pith))  
           ;h1.hidden:  {<pith>}
-        =/  ship  +:;;([%p @p] `(list iota)`(rear pith))
+        =/  ship  +:;;([%p @p] (rear pith))
         ^-   manx
         ;a.br1.hover.b0.fr.jb.wf.border
         =href  "/neo/hawk{(pith-tape here.bowl)}{(pith-tape pith)}"

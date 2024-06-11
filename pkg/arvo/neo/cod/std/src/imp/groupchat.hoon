@@ -21,7 +21,6 @@
     ^-  (quip card:neo pail:neo)
     ::  default case: make new groupchat with self as only member,
     ::  and subscribe to that publisher
-    ::  XX - maybe move ordering is unpredictable here
     ?~  old
       :_  :-  %groupchat
           !>([(sy our.bowl ~) ~ here.bowl])
