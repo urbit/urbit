@@ -6480,7 +6480,8 @@
     [%sgzp p=hoon q=hoon]                               ::  ~!  type on trace
   ::                                            ::::::  miscellaneous
     [%mcts p=marl:hoot]                                 ::  ;=  list templating
-    [%mccl p=hoon q=(list hoon)]                        ::  ;:  binary to nary
+    [%mccl p=hoon q=(list hoon)]                        ::  ;:  binary to nary, right
+    [%mcdt p=hoon q=(list hoon)]                        ::  ;.  binary to nary, left
     [%mcfs p=hoon]                                      ::  ;/  [%$ [%$ p ~] ~]
     [%mcgl p=spec q=hoon r=hoon s=hoon]                 ::  ;<  bind
     [%mcsg p=hoon q=(list hoon)]                        ::  ;~  kleisli arrow
@@ -8569,7 +8570,23 @@
         |-  ^-  hoon
         ?-  yex
           [* ~]  [%tsgr [%$ 3] i.yex]
-          [* ^]   [%cncl [%$ 2] [%tsgr [%$ 3] i.yex] $(yex t.yex) ~]
+          [* ^]  [%cncl [%$ 2] [%tsgr [%$ 3] i.yex] $(yex t.yex) ~]
+          ~      !!
+        ==
+      ==
+    ::
+        [%mcdt *]
+      ?-    q.gen
+          ~      [%zpzp ~]
+          [* ~]  i.q.gen
+          ^
+        :+  %tsls
+          p.gen
+        =+  yex=(flop `(list hoon)`q.gen)
+        |-  ^-  hoon
+        ?-  yex
+          [* ~]  [%tsgr [%$ 3] i.yex]
+          [* ^]  [%cncl [%$ 2] $(yex t.yex) [%tsgr [%$ 3] i.yex] ~]
           ~      !!
         ==
       ==
@@ -13338,6 +13355,7 @@
               %-  stew
               ^.  stet  ^.  limo
               :~  [':' (rune col %mccl expi)]
+                  ['.' (rune dot %mcdt expi)]
                   ['/' (rune fas %mcfs expa)]
                   ['<' (rune gal %mcgl expz)]
                   ['~' (rune sig %mcsg expi)]
