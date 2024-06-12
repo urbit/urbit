@@ -22,6 +22,7 @@
   (en-tape:pith:neo pith)
 ::
 ++  style 
+
   ^~
   %-  trip
     '''
@@ -39,6 +40,9 @@
     .w70{
         width: 70%;
     }
+    .bc1{
+        border: solid var(--b2) 1px;
+    }
     '''
 ::
 ++  make-chat
@@ -46,7 +50,7 @@
   =hx-post  "/neo/hawk{(pith-tape here.bowl)}?stud=messenger-diff"
   =hx-target  "find button .loading"
   =hx-swap  "outerHTML"
-    ;input.grow.border.p2.br1
+    ;input.grow.bc1.p2.br1
     =name  "invites"
     =type  "text"
     =required  ""
@@ -55,14 +59,14 @@
     =autocomplete  "off"
     ;
     ==
-    ;input.hidden.grow.border.p2.br1
+    ;input.hidden.grow.bc1.p2.br1
     =type  "text"
     =name  "name"
     =placeholder  "chat name"
     =oninput  (trip 'this.setAttribute("value", this.value);')
     ;
     ==
-    ;button.loader.br1.hover.p2.b0.border
+    ;button.loader.br1.hover.p2.b0.bc1
       ;span.loaded;  >
       ;span.loading
         ;+  loading.feather-icons
@@ -84,9 +88,13 @@
           ;span.hidden:  no dms
         ?:  (lte 3 (lent pith))  
           ;h1.hidden:  {<pith>}
-        =/  ship  +:;;([%p @p] (rear pith))
+        ~&  >  pith
+        =/  ship
+          ?.  ?=([%p @p] (rear pith))  *@p
+          +:;;([%p @p] (rear pith))
+        ~&  >  ship
         ^-   manx
-        ;a.br1.hover.b0.fr.jb.wf.border
+        ;a.br1.hover.b0.fr.jb.wf.bc1
         =href  "/neo/hawk{(pith-tape here.bowl)}{(pith-tape pith)}"
         =hx-swap  "innerHTML"
           ;h3.s-1.p2:  {<ship>}
@@ -109,13 +117,13 @@
   ^-  manx
   ;div.wf.br1.fc.g1
     ;div.fr.g1
-      ;a.br1.hover.fr.jb.g2.wf.border.b0
+      ;a.br1.hover.fr.jb.g2.wf.bc1.b0
       =href  "/neo/hawk{(pith-tape here.bowl)}{(pith-tape pith)}"
       =hx-swap  "innerHTML"
         ;h3.s-1.p2:  {(trip chat)}
         ;h3.s-1.p2:  {<org>}
       ==
-      ;button.br1.hover.border.b0.hidden
+      ;button.br1.hover.bc1.b0.hidden
       =onclick  (weld (trip 'this.parentNode.parentNode.classList.toggle("border"); this.parentNode.parentNode.classList.toggle("p2"); this.previousSibling.classList.toggle("border"); this.classList.toggle("border"); ') (span-toggle "v" "^"))
         ;span: v
       ==
@@ -125,7 +133,7 @@
         ;div.fr.je.g2
           ;+  ?.  =(our.bowl org)  
             ;span.hidden:  ~
-          ;button.hover.br1.b0.border
+          ;button.hover.br1.b0.bc1
             =onclick  (span-toggle "+" "x")
             ;span:  +
           ==
@@ -140,7 +148,7 @@
             ==
           ;div.fr.jb.g1
           ;span.wf.br1.p1:  {<ship>}
-          ;button.hover.b0.br1.loader.border
+          ;button.hover.b0.br1.loader.bc1
             =hx-post  "/neo/hawk{(pith-tape here.bowl)}?stud=groupchat-diff"
             =hx-target  "find .loading"
             =hx-swap  "outerHTML"
@@ -170,7 +178,7 @@
     =value  (trip chat)
     ;
     ==
-    ;input.grow.border.p2.br1
+    ;input.grow.bc1.p2.br1
     =name  "ship"
     =type  "text"
     =placeholder  "~zod, ~bus"
@@ -182,7 +190,7 @@
     =onclick  "this.parentNode.appendChild(document.createElement('input')) "
     ;span:  more
     ==
-    ;button.loader.hover.br1.b0.border
+    ;button.loader.hover.br1.b0.bc1
       ;span.loaded:  +
       ;span.loading
         ;+  loading.feather-icons

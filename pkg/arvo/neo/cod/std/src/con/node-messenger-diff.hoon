@@ -17,7 +17,7 @@
 ::
     %new-groupchat
   =/  invites=tape  (need (val:mu "invites"))
-  =/  parsed-invites=(list @p)
+  =/  parsed-invites=(set @p)
     %-  silt
     %+  scan  (weld " " invites)
       %-  star

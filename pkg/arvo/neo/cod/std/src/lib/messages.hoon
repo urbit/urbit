@@ -4,6 +4,25 @@
 ::  This arm expects messages to be stored at
 ::  ~[%pub [%da ~2024.1.1]] or ~[%sub [%da ~2024.1.1]]
 ::  relative to here.bowl.
+++  pith-tape
+  |=  =pith 
+  ^-  tape
+  (en-tape:pith:neo pith)
+::
+++  style 
+  ;style
+  ;+  ;/  %-  trip
+  '''
+   .fe {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-end
+    }
+  '''
+  ==
+::::
 ++  script 
   ;script
   ;+  ;/  %-  trip
@@ -38,6 +57,7 @@
 ++  render-message
   |=  [pax=pith =idea:neo]
   =/  msg  !<(message q.pail.idea)
+  ~&  >  msg
   ^-  manx
   ;div.fc.g2.border.p3.br1
     ;div.fr.ac.jb
@@ -49,10 +69,11 @@
 ::
 ++  render-sender
   |=  [=bowl:neo location=pith]
+  ~&  >  "/neo/hawk{(pith-tape (welp here.bowl location))}?stud=message"
   ^-  manx
-  ;form.fc.g2
-    =hx-post  "{(en-tape:pith:neo :(welp /neo/hawk here.bowl location))}?stud=message"
-    =hx-swap  "outerHTML swap:5s"
+  ;form.fc.g2.wf
+    =hx-post  "/neo/hawk{(pith-tape (welp here.bowl location))}?stud=message"
+    =hx-swap  "none"  ::"outerHTML swap:5s"
     =hx-on-submit  "this.reset()"
     =hx-target  "find button .loading"
     =head  "msg"
