@@ -4923,6 +4923,7 @@
             %chum  (on-chum:event-core +.task)
             %yawn  (on-cancel-scry:event-core | +.task)
             %wham  (on-cancel-scry:event-core & +.task)
+            %whit  (on-size:event-core +.task)
           ::
             %mate  (on-mate:event-core +.task)
           ==
@@ -8124,21 +8125,20 @@
       ::
       `vane-gate
     ::
-    ++  pe-whit
+    ++  pe-whit  :: XX add sec
       |=  spar:^ames
       =/  ship-state  (pe-find-peer ship)
       ?:  ?=(%ames -.ship-state)
         (call:ames hen ~ soft+whit/ship^path)
-      !!
-      :: =^  moves  ames-state
-      ::   =<  ev-abet
-      ::   ?:  ?=([~ %known *] +.ship-state)
-      ::     (%*(ev-req-peek me-core per ship^+.u.ship-state) sec path)
-      ::   ::
-      ::   %^  ev-enqueue-alien-todo:me-core  ship  +.ship-state
-      ::   |=  todos=ovni-state:me-core
-      ::   todos(peeks (~(put ju peeks.todos) path hen))
-      :: moves^vane-gate
+      =^  moves  ames-state
+        =<  ev-abet
+        ?:  ?=([~ %known *] +.ship-state)
+          (%*(ev-req-peek me-core per ship^+.u.ship-state) sec=~ path)  ::  XX sec
+        ::
+        %^  ev-enqueue-alien-todo:me-core  ship  +.ship-state
+        |=  todos=ovni-state:me-core
+        todos(peeks (~(put ju peeks.todos) path hen))
+      moves^vane-gate
       ::
     ::
     --
