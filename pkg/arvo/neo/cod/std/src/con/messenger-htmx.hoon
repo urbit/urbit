@@ -12,8 +12,7 @@
 ^-  manx
 ;div.p2.fc.ac.view.g1.ma
   ;style:  {style}
-  ;+  make-groupchat
-  ;+  make-dm
+  ;+  make-chat
   ;+  all-chats
 ==
 ::
@@ -42,52 +41,29 @@
     }
     '''
 ::
-::  depending if value in input has space and more 
-++  make-groupchat
-  =/  pt  (pith-tape here.bowl)
-  ::
-  ^-  manx
-  ;form.fr.jc.g1.createchat.w70
-  ::=hx-sync  "closest div:queue last"
-  =hx-post  "/neo/hawk{pt}?stud=messenger-diff"
-  =hx-swap  "outerHTML"
-  =hx-target  "find button .loading"
-  =head  "new-groupchat"
-    ;input.grow.border.p2.br1.grow
-    =id  "name-input"
-    =name  "name"
-    =type  "text"
-    =required  ""
-    =placeholder  "new groupchat"
-    =oninput  "this.setAttribute('value', this.value);"
-    =autocomplete  "off"
-    ;
-    ==
-    ;button.loader.br1.hover.p2.b0.border
-      ;span.loaded:  create
-      ;span.loading
-        ;+  loading.feather-icons
-      ==
-    ==
-  ==
-::
-++  make-dm 
+++  make-chat
   ;form.fr.jc.g1.w70
   =hx-post  "/neo/hawk{(pith-tape here.bowl)}?stud=messenger-diff"
-  =head  "new-dm"
   =hx-target  "find button .loading"
   =hx-swap  "outerHTML"
     ;input.grow.border.p2.br1
-    =name  "partner"
+    =name  "invites"
     =type  "text"
     =required  ""
-    =placeholder  "~zod"
-    =oninput  "this.setAttribute('value', this.value);"
+    =placeholder  "~zod ~bus"
+    =oninput  (trip 'this.setAttribute("value", this.value); if (this.value.includes(" ~")){this.parentNode.setAttribute("head", "new-groupchat"); this.nextElementSibling.classList.remove("hidden");}else{this.parentNode.setAttribute("head", "new-dm"); this.nextElementSibling.classList.add("hidden");}')
     =autocomplete  "off"
     ;
     ==
+    ;input.hidden.grow.border.p2.br1
+    =type  "text"
+    =name  "name"
+    =placeholder  "chat name"
+    =oninput  (trip 'this.setAttribute("value", this.value);')
+    ;
+    ==
     ;button.loader.br1.hover.p2.b0.border
-      ;span.loaded;  start dm
+      ;span.loaded;  >
       ;span.loading
         ;+  loading.feather-icons
       ==
@@ -139,7 +115,7 @@
         ;h3.s-1.p2:  {(trip chat)}
         ;h3.s-1.p2:  {<org>}
       ==
-      ;button.br1.hover.border.b0
+      ;button.br1.hover.border.b0.hidden
       =onclick  (weld (trip 'this.parentNode.parentNode.classList.toggle("border"); this.parentNode.parentNode.classList.toggle("p2"); this.previousSibling.classList.toggle("border"); this.classList.toggle("border"); ') (span-toggle "v" "^"))
         ;span: v
       ==
