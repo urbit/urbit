@@ -3,8 +3,8 @@
 |%
 +$  card  card:shoe
 +$  state
-  $~  [%27 *state:drum *state:helm *state:kiln]
-  $>(%27 any-state)
+  $~  [%28 *state:drum *state:helm *state:kiln]
+  $>(%28 any-state)
 ::
 +$  any-state
   $%  [ver=?(%1 %2 %3 %4 %5 %6) lac=(map @tas fin-any-state)]
@@ -29,6 +29,7 @@
       [%25 drum=state-5:drum helm=state-2:helm kiln=state-10:kiln]
       [%26 drum=state-6:drum helm=state-2:helm kiln=state-10:kiln]
       [%27 drum=state-6:drum helm=state-2:helm kiln=state-11:kiln]
+      [%28 drum=state-6:drum helm=state-2:helm kiln=state-12:kiln]
   ==
 ::
 +$  any-state-tuple

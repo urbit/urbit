@@ -4,7 +4,7 @@
 =>  ..lull
 ~%  %zuse  ..part  ~
 |%
-++  zuse  %412
+++  zuse  %410
 ::                                                      ::  ::
 ::::                                                    ::  ::  (2) engines
   ::                                                    ::  ::
@@ -2357,6 +2357,149 @@
   ++  blake
     ~%  %blake  ..part  ~
     |%
+    ++  blake3
+      =<
+        =<  hash  :: cuter API
+        =+  [cv=iv flags=0b0]
+        ^?  ~/  %blake3
+        |%
+        ::
+        ++  keyed  |=(key=octs hash(cv q.key, flags f-keyedhash))
+        ::
+        ++  hash
+          ~/  %hash
+          |=  [out=@ud msg=octs]
+          ^-  @ux
+          =/  root  (root-output (turn (split-octs 13 msg) chunk-output))
+          %+  end  [3 out]
+          %+  rep  9
+          %+  turn  (gulf 0 (div out 64))
+          |=(i=@ (compress root(counter i)))
+        ::
+        ++  root-output
+          |=  outputs=(list output)
+          ^-  output
+          %+  set-flag  f-root
+          |-
+          =/  mid  (div (bex (xeb (dec (lent outputs)))) 2)
+          =+  [l=(scag mid outputs) r=(slag mid outputs)]
+          ?>  ?=(^ outputs)
+          ?~  t.outputs  i.outputs
+          %-  parent-output
+          [(compress $(outputs l)) (compress $(outputs r))]
+        ::
+        ++  parent-output
+          |=  [l=@ux r=@ux]
+          ^-  output
+          %+  set-flag  f-parent
+          [cv 0 (rep 8 ~[l r]) 64 flags]
+        ::
+        ++  chunk-output
+          ~/  %chunk-output
+          |=  [counter=@ chunk=octs]
+          ^-  output
+          %+  set-flag  f-chunkend
+          %+  roll  (split-octs 9 chunk)
+          |=  [[i=@ block=octs] prev=output]
+          ?:  =(0 i)  [cv counter q.block p.block (con flags f-chunkstart)]
+          [(output-cv prev) counter q.block p.block flags]
+        --
+      ~%  %blake3-impl  ..blake3  ~
+      |%
+      ::
+      +$  output
+        $:  cv=@ux
+            counter=@ud
+            block=@ux
+            blocklen=@ud
+            flags=@ub
+        ==
+      ::
+      ++  compress
+        ~/  %compress
+        |=  output
+        ^-  @
+        |^
+          =/  state  (can32 [8 cv] [4 iv] [2 counter] [1 blocklen] [1 flags] ~)
+          =.  state  (round state block)  =.  block  (permute block)
+          =.  state  (round state block)  =.  block  (permute block)
+          =.  state  (round state block)  =.  block  (permute block)
+          =.  state  (round state block)  =.  block  (permute block)
+          =.  state  (round state block)  =.  block  (permute block)
+          =.  state  (round state block)  =.  block  (permute block)
+          =.  state  (round state block)  (mix state (rep 8 ~[(rsh 8 state) cv]))
+        ::
+        ++  round
+          |=  [state=@ block=@]
+          ^+  state
+          |^
+            =.  state  (g 0x0 0x4 0x8 0xc 0x0 0x1)
+            =.  state  (g 0x1 0x5 0x9 0xd 0x2 0x3)
+            =.  state  (g 0x2 0x6 0xa 0xe 0x4 0x5)
+            =.  state  (g 0x3 0x7 0xb 0xf 0x6 0x7)
+            =.  state  (g 0x0 0x5 0xa 0xf 0x8 0x9)
+            =.  state  (g 0x1 0x6 0xb 0xc 0xa 0xb)
+            =.  state  (g 0x2 0x7 0x8 0xd 0xc 0xd)
+            =.  state  (g 0x3 0x4 0x9 0xe 0xe 0xf)
+            state
+          ::
+          ++  g
+            |=  [a=@ b=@ c=@ d=@ mx=@ my=@]
+            ^+  state
+            =.  state  (set a :(sum32 (get a) (get b) (getb mx)))
+            =.  state  (set d (rox (get d) (get a) 16))
+            =.  state  (set c :(sum32 (get c) (get d)))
+            =.  state  (set b (rox (get b) (get c) 12))
+            =.  state  (set a :(sum32 (get a) (get b) (getb my)))
+            =.  state  (set d (rox (get d) (get a) 8))
+            =.  state  (set c :(sum32 (get c) (get d)))
+            =.  state  (set b (rox (get b) (get c) 7))
+            state
+          ::
+          ++  getb  (curr get32 block)
+          ++  get  (curr get32 state)
+          ++  set  |=([i=@ w=@] (set32 i w state))
+          ++  rox  |=([a=@ b=@ n=@] (ror32 n (mix a b)))
+          --
+        ::
+        ++  permute
+          |=  block=@
+          ^+  block
+          (rep 5 (turn perm (curr get32 block)))
+        --
+      ::  constants and helpers
+      ::
+      ++  iv  0x5be0.cd19.1f83.d9ab.9b05.688c.510e.527f.
+                a54f.f53a.3c6e.f372.bb67.ae85.6a09.e667
+      ++  perm  (rip 2 0x8fe9.5cb1.d407.a362)
+      ++  f-chunkstart    ^~  (bex 0)
+      ++  f-chunkend      ^~  (bex 1)
+      ++  f-parent        ^~  (bex 2)
+      ++  f-root          ^~  (bex 3)
+      ++  f-keyedhash     ^~  (bex 4)
+      ++  f-derivekeyctx  ^~  (bex 5)
+      ++  f-derivekeymat  ^~  (bex 6)
+      ++  set-flag  |=([f=@ o=output] o(flags (con flags.o f)))
+      ++  fe32   ~(. fe 5)
+      ++  ror32  (cury ror:fe32 0)
+      ++  sum32  sum:fe32
+      ++  can32  (cury can 5)
+      ++  get32  |=([i=@ a=@] (cut 5 [i 1] a))
+      ++  set32  |=([i=@ w=@ a=@] (sew 5 [i 1 w] a))
+      ++  output-cv  |=(o=output `@ux`(rep 8 ~[(compress o)]))
+      ++  split-octs
+        |=  [a=bloq msg=octs]
+        ^-  (list [i=@ octs])
+        ?>  ?=(@ q.msg)  :: simplfy jet logic
+        =/  per  (bex (sub a 3))
+        =|  chunk-octs=(list [i=@ octs])
+        =|  i=@
+        |-
+        ?:  (lte p.msg per)  [[i msg] chunk-octs]
+        :-  [i per^(end a q.msg)]
+        $(i +(i), msg (sub p.msg per)^(rsh a q.msg))
+      --
+    ::
     ::TODO  generalize for both blake2 variants
     ++  blake2b
       ~/  %blake2b
@@ -2538,6 +2681,92 @@
       |=  a=@
       (rev 3 8 (get-word h a 8))
     --  ::blake
+  ::
+  ++  chacha
+    =<
+      =<  crypt
+      ~%  %chacha  ..part  ~
+      |%
+      ++  crypt
+        ~/  %crypt
+        |=  [rounds=@ud key=@uxI nonce=@uxG counter=@udG msg=octs]
+        ^+  msg
+        :-  p.msg
+        %+  end  [3 p.msg]
+        %+  mix  q.msg
+        %+  rep  9
+        %+  turn  (iota (div (add p.msg 63) 64))
+        |=  i=@
+        =/  state  (can32 [4 sigma] [8 key] [2 (add counter i)] [2 nonce] ~)
+        =/  final  (do-rounds rounds state)
+        %+  rep  5
+        %+  turn  (iota 16)
+        |=(i=@ (add32 (get32 i state) (get32 i final)))
+      ::
+      ++  ietf
+        |=  [nonce=@ux]
+        ^-  [nonce=@uxG counter=@ud]
+        [(rsh 5 nonce) (lsh [5 1] (end 5 nonce))]
+      ::
+      ++  xchacha
+        ~/  %xchacha
+        |=  [rounds=@ud key=@uxI nonce=@ux]
+        ^-  [key=@uxI nonce=@uxG]
+        :_  (rsh [5 4] nonce)
+        =/  state  (do-rounds rounds (can32 [4 sigma] [8 key] [4 nonce] ~))
+        (cat 7 (end [5 4] state) (rsh [5 12] state))
+      --
+    |%
+    ++  do-rounds
+      |^
+        |=  [rounds=@ud state=@uxJ]
+        ?:  =(0 rounds)  state
+        $(rounds (sub rounds 2), state (double-round state))
+      ::
+      ++  double-round
+        ;:  cork
+          (quarter-round 0x0 0x4 0x8 0xc)
+          (quarter-round 0x1 0x5 0x9 0xd)
+          (quarter-round 0x2 0x6 0xa 0xe)
+          (quarter-round 0x3 0x7 0xb 0xf)
+        ::
+          (quarter-round 0x0 0x5 0xa 0xf)
+          (quarter-round 0x1 0x6 0xb 0xc)
+          (quarter-round 0x2 0x7 0x8 0xd)
+          (quarter-round 0x3 0x4 0x9 0xe)
+        ==
+      ::
+      ++  quarter-round
+        |=  [a=@ b=@ c=@ d=@]
+        ;:  cork
+          (add a b)  (xor d a)  (rol d 16)
+          (add c d)  (xor b c)  (rol b 12)
+          (add a b)  (xor d a)  (rol d 8)
+          (add c d)  (xor b c)  (rol b 7)
+        ==
+      ::
+      ++  add
+        |=  [i=@ j=@]
+        |=  s=@uxJ
+        (set32 i (add32 (get32 i s) (get32 j s)) s)
+      ++  xor
+        |=  [i=@ j=@]
+        |=  s=@uxJ
+        (set32 i (mix (get32 i s) (get32 j s)) s)
+      ++  rol
+        |=  [i=@ n=@]
+        |=  s=@uxJ
+        (set32 i (rol32 n (get32 i s)) s)
+      --
+    ::
+    ++  sigma  0x6b20.6574.7962.2d32.3320.646e.6170.7865
+    ++  can32  (cury can 5)
+    ++  add32  ~(sum fe 5)
+    ++  rol32  (cury ~(rol fe 5) 0)
+    ++  get32  |=([i=@ a=@] (cut 5 [i 1] a))
+    ++  set32  |=([i=@ w=@ a=@] (sew 5 [i 1 w] a))
+    ++  iota   |=(n=@ ?:(=(0 n) ~ (gulf 0 (dec n))))
+    --
   ::
   ++  argon2
     ~%  %argon  ..part  ~
@@ -5256,7 +5485,7 @@
         |=  [rof=roof pov=path our=ship now=@da who=ship]
         ;;  ship
         =<  q.q  %-  need  %-  need
-        (rof ~ pov %j `beam`[[our %sein %da now] /(scot %p who)])
+        (rof [~ ~] pov %j `beam`[[our %sein %da now] /(scot %p who)])
       --
   ::  middle core: stateless queries for default numeric sponsorship
   ::
@@ -5977,5 +6206,249 @@
     =/  bem=beam  =,(bulk [[her des cas] pax])
     =+  vis=(cat 3 van.bulk car.bulk)
     [vis bem]
+  --
+++  lss
+  =,  blake:crypto
+  |%
+  ++  clz
+    |=  [a=bite b=@]
+    (sub ?@(a (bex a) (mul (bex bloq.a) step.a)) (met 0 b))
+  ::
+  ++  ctz
+    |=  a=@
+    ?:  =(0 a)  0
+    =|  i=@ud
+    |-(?:(=(1 (cut 0 [i 1] a)) i $(i +(i))))
+  ::
+  ++  ham  :: popcount
+    |=  a=@
+    ?:  =(0 a)  0
+    =|  n=@ud
+    =/  m  (dec (met 0 a))
+    |-  ^-  @ud
+    =?  n  =(1 (cut 0 [m 1] a))
+      +(n)
+    ?:(=(0 m) n $(m (dec m)))
+  ::
+  ::  binary tree ops
+  ::
+  :: +|  %arboric
+  ::
+  ++  bao
+    |=  n=@ud
+    =|  i=@ud
+    =|  s=(list)
+    |-  ^-  *
+    ?:  =(i n)
+      =^  d  s  s
+      |-(?~(s d $(d [i.s d], s t.s)))
+    ::
+    =/  d=*  i
+    =.  i  +(i)
+    =/  j  (ctz i)
+    |-  ^-  *
+    ?:  =(0 j)
+      ^$(s [d s])
+    =^  e  s  s
+    $(d [e d], j (dec j))
+  ::
+  ++  unroll
+    |=  d=*
+    =|  s=(list [axe=@ d=*])
+    =/  a  1
+    |-  ^+  s
+    ?@  d
+      ?~  s  ~
+      $(d d.i.s, a axe.i.s, s t.s)
+    :-  [a d]
+    $(d -.d, a (peg a 2), s [[(peg a 3) +.d] s])
+  ::
+  ++  root-hash
+    |=  o=output:blake3
+    ^-  @ux
+    (output-cv:blake3 (set-flag:blake3 f-root:blake3 o))
+  ::
+  ++  leaf-hash
+    |=  [counter=@ leaf=@]
+    ^-  @ux
+    (output-cv:blake3 (chunk-output:blake3 counter 1.024^leaf))
+  ::
+  ::  +build: compute proof data for a message
+  ::
+  ++  build  |=(msg=octs (lss-traversal (build-tree msg)))
+  ++  build-tree
+    =,  blake3:blake:crypto
+    |=  msg=octs
+    ^-  (tree @ux)
+    =|  i=@ud
+    =|  s=(list [n=@ux l=(tree @ux) r=(tree @ux)])
+    =/  len  ?~(p.msg 0 (dec (rig [3 p.msg] 13)))
+    |-  ^-  (tree @ux)
+    =|  [l=(tree @ux) r=(tree @ux)]
+    ?:  =(i len)
+      =/  o  =/  las  =+((end 0^10 p.msg) ?~(- 1.024 -))
+            (chunk-output i las (cut 13 [i 1] q.msg))
+      |-  ^-  (tree @ux)
+      ?~  s  [(output-cv (set-flag f-root o)) l r]
+      =/  n  (output-cv o)
+      $(s t.s, o (parent-output n.i.s n), l i.s, r [n l r])
+    ::
+    =/  n  (output-cv (chunk-output i 1.024 (cut 13 [i 1] q.msg)))
+    =/  j  (ctz +(i))
+    |-  ^-  (tree @ux)
+    ?:  =(0 j)
+      ^$(i +(i), s [[n l r] s])
+    ?>  ?=(^ s)
+    $(j (dec j), s t.s, n (output-cv (parent-output n.i.s n)), l i.s, r [n l r])
+  ::
+  ++  lss-traversal
+    |=  t=(tree @ux)
+    =|  out=(list (pair @ux @ux))
+    =|  pof=(list @ux)
+    =|  s=(list (tree @ux))
+    ^-  [root=@ux proof=_pof pairs=_out]
+    ?>  ?=(^ t)
+    :-  n.t
+    |-  ^-  [proof=_pof pairs=_out]
+    ?^  r.t
+      ?>  ?=(^ l.t)
+      $(pof [n.r.t pof], s [r.t s], t l.t)
+    =.  pof  [n.t pof]
+    ?~  s  [pof ~]
+    =>  .(s t.s, t i.s)
+    |-  ^-  [proof=_pof pairs=_out]
+    ?~  t
+      ?~  s  [pof (flop out)]
+      $(s t.s, t i.s)
+    =?  out  ?=(^ r.t)
+      ?>  ?=(^ l.t)
+      [[n.l.t n.r.t] out]
+    $(s [r.t s], t l.t)
+  ::  +root: compute just the root hash for a message
+  ::
+  ++  root
+    |=  msg=byts
+    ^-  @ux
+    (blake3 32 msg)
+  ::
+  ::  +recover-root: compute the root hash of a leaf proof
+  ::
+  ++  recover-root
+    |=  proof=(list @ux)
+    ?>  ?=([@ @ *] proof)
+    =*  l0  i.proof
+    =*  l1  i.t.proof
+    %-  root-hash
+    %+  roll  t.t.proof
+    |:  [p=0x0 n=(parent-output:blake3 l0 l1)]
+    (parent-output:blake3 (output-cv:blake3 n) p)
+  ::
+  ::  +verifier: stateful core for sequentially verifying messages
+  ::
+  ++  verifier
+    =<
+      |%
+      ::
+      ++  init
+        |=  [leaves=@ud proof=(list @ux)]
+        ^-  (unit state)
+        ?~  proof
+          ::  need at least two leaves to have a proof
+          ::
+          ?.  (lte leaves 1)  ~
+          `[leaves 0 [0 1] ~ ~]
+        ?.  ?=([@ @ *] proof)  ~
+        ::  initialize leaf queue and parent stack with proof hashes;
+        ::  after the first two leaves, the next subtree is [2 4]
+        ::
+        =/  state  [leaves 0 [0 1] ~ t.t.proof]
+        `(push-leaves state [i.proof i.t.proof])
+      ::
+      ++  verify-msg
+        |=  [=state [leaf=@ pair=(unit [l=@ux r=@ux])]]
+        ^-  (unit _state)
+        ~|  [pair=pair leaf=leaf state=state]
+        ?>  =(?=(^ pair) (expect-pair state))
+        ?~  ustate=(verify-leaf state leaf)  ~
+        ?~  pair  `u.ustate
+        ?~  ustate=(verify-pair u.ustate u.pair)  ~
+        ::  all good; if the pair held leaf hashes, add them
+        ::  to the queue and advance past them; if it held parent
+        ::  hashes, add them to the parent stack
+        ::
+        =.  state  (advance u.ustate)
+        ?:  (at-leaf state)
+          `(push-leaves state u.pair)
+        `(push-parents state u.pair)
+      --
+    |%
+    +$  state
+        $:
+            leaves=@ud
+            leaf=@ud                 :: current leaf index
+            cur=[l=@ud r=@ud]        :: current pair subtree
+            leaf-queue=(list @ux)
+            parent-stack=(list @ux)
+        ==
+    ::
+    ++  at-leaf  |=(state =(r.cur +(l.cur)))
+    ::
+    ++  expect-pair
+      |=  state
+      (lth leaf (sub leaves +((xeb (dec leaves)))))
+    ::
+    ++  advance
+      |=  =state
+      %=  state
+        cur  =,  cur.state
+            ::  if at a leaf, ascend the next subtree;
+            ::  otherwise, descend into the left child
+            ::
+            ?:  (at-leaf state)
+              [+(l) (min leaves.state (add r (bex (ctz r))))]
+            [l (add l (bex (dec (xeb (dec (sub r l))))))]
+      ==
+    ::
+    ++  push-leaves
+      |=  [=state [l=@ux r=@ux]]
+      ^+  state
+      ::  NOTE: using a list as a queue isn't ideal, performance-wise,
+      ::  but this list never grows larger than log(n) so in practice
+      ::  it's fine
+      ::
+      %-  advance  %-  advance
+      state(leaf-queue (weld leaf-queue.state ~[l r]))
+    ::
+    ++  push-parents
+      |=  [=state [l=@ux r=@ux]]
+      ^+  state
+      state(parent-stack (weld ~[l r] parent-stack.state))
+    ::
+    ++  verify-leaf
+      |=  [=state leaf=@]
+      ^-  (unit _state)
+      =/  wid  ?.(=(+(leaf.state) leaves.state) 1.024 (met 3 leaf))
+      =/  cv  (output-cv:blake3 (chunk-output:blake3 leaf.state [wid leaf]))
+      ::  if leaf queue is empty, draw from parent stack; this is
+      ::  necessary for any tree with an odd number of leaves, since
+      ::  such a tree will contain a pair where the left child is a
+      ::  parent and the right child is a leaf
+      ::
+      ?^  leaf-queue.state
+        ?.  =(i.leaf-queue.state cv)  ~
+        `state(leaf +(leaf.state), leaf-queue t.leaf-queue.state)
+      ?^  parent-stack.state
+        ?.  =(i.parent-stack.state cv)  ~
+        `state(leaf +(leaf.state), parent-stack t.parent-stack.state)
+      ~
+    ::
+    ++  verify-pair
+      |=  [=state pair=[l=@ux r=@ux]]
+      ^-  (unit _state)
+      =/  cv  (output-cv:blake3 (parent-output:blake3 pair))
+      ?~  parent-stack.state          ~
+      ?.  =(i.parent-stack.state cv)  ~
+      `state(parent-stack t.parent-stack.state)
+    --
   --
 --

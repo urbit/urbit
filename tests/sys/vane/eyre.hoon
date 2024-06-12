@@ -1313,7 +1313,7 @@
       |=  =time
       %+  ex  ~[/http-blah]
       =.  time  (sub time (mod time ~h1))
-      [%pass wire %a %keen ~sampel /e/x/(scot %da time)//eauth/url]
+      [%pass wire %a %keen ~ ~sampel /e/x/(scot %da time)//eauth/url]
     ::
     ++  ex-yawn
       |=  =time
