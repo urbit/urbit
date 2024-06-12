@@ -6029,7 +6029,7 @@
             |=  [=space =path]
             ^+  path
             =>  [space=space path=path ..crypt]
-             ~>  %memo./ames/mess-spac
+            ~>  %memo./ames/mess-spac
             ?-    -.space
                 %publ  `^path`[%publ (scot %ud life.space) path]  :: unencrypted
             ::
@@ -6057,9 +6057,9 @@
             ?.  ?=([~ ~ *] res)  ~
             =;  page=pact:pact
               ?>(?=(%page -.page) `q.page)
-            =>  [name=name res=res ..parse-packet]
+            =>  [res=res de=de:pact]
             ~>  %memo./ames/get-page
-            (parse-packet ;;(@ q.q.u.u.res))
+            -:($:de ;;(@ q.q.u.u.res))
           ::
           +|  %fren-helpers
           ::
@@ -7447,12 +7447,14 @@
               ~
             ?~  res=(rof `[her ~ ~] /ames/chum vew.u.inn bem.u.inn)
               ~
+            =>  [key=u.key cyf=cyf bem=bem res=res ..crypt] :: XX rift.ames-state
+            ~>  %memo./ames/chum
             :: XX rift.ames-state
             =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
             =/  ful  (en-beam bem)
             =/  ser  (jam gag)
-            =/  cyr  (encrypt:crypt u.key cyf (met 3 ser)^ser)
-            ``[%message !>([%hmac (mac:crypt u.key ful (root:lss cyr)) dat.cyr])]
+            =/  cyr  (encrypt:crypt key cyf (met 3 ser)^ser)
+            ``[%message !>([%hmac (mac:crypt key ful (root:lss cyr)) dat.cyr])]
           ::
           ++  ev-peek-shut
             |=  [bem=beam kid=@ cyf=@uv]
@@ -7466,6 +7468,8 @@
             ?~  res=(rof [~ ~] /ames/shut vew.u.inn bem.u.inn)
               ~
             ::  XX  rift.ames-state
+            =>  [key=key cyf=cyf bem=bem res=res ..crypt]
+            ~>  %memo./ames/shut
             =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
             =/  ful  (en-beam bem)
             =/  ser  (jam gag)
@@ -7630,7 +7634,7 @@
                   =/  aut  [%0 mes ~]
                   =/  lss-proof
                     =>  [ser=ser ..lss]
-                    ~>  %memo./ames/lss
+                    ~>  %memo./ames/lss-auth
                     (build:lss (met 3 ser)^ser)
                   =/  dat  [wid aut (rep 8 proof.lss-proof)]  :: XX types
                   [nam dat]
@@ -7638,7 +7642,10 @@
                     %data
                   =/  lss-proof
                     =>  [ser=ser ..lss]
-                    ~>  %memo./ames/lss
+                    :: ~>  %bout.[1 %hint-data-lss]
+                    ~>  %memo./ames/lss-data
+                    :: ~&  data-lss/(met 3 ser)
+                    ~>  %bout.[1 %data-lss]
                     (build:lss (met 3 ser)^ser)
                   =/  nam  [[our rif] [boq ?:(nit ~ [%data fag])] pat]
                   =/  aut=auth:pact
@@ -7671,45 +7678,36 @@
               ::  publisher-side, message-level (public namespace)
               ::
                   [%publ lyf=@ pat=*]
-                =>  [tyl=tyl bem=bem peek=ev-peek-publ:core slaw=slaw]
-                ~>  %memo./ames/peek/publ
                 =/  lyf  (slaw %ud lyf.tyl)
                 ?~  lyf  [~ ~]
-                (peek bem u.lyf pat.tyl)
+                (ev-peek-publ:core bem u.lyf pat.tyl)
               ::  publisher-side, message-level (two-party encrypted namespace)
               ::
                   [%chum lyf=@ her=@ hyf=@ cyf=@ ~]
-                =>  [tyl=tyl bem=bem peek=ev-peek-chum:core slaw=slaw]
-                ~>  %memo./ames/peek/chum
                 =/  lyf  (slaw %ud lyf.tyl)
                 =/  her  (slaw %p her.tyl)
                 =/  hyf  (slaw %ud hyf.tyl)
                 =/  cyf  (slaw %uv cyf.tyl)
                 ?:  |(?=(~ lyf) ?=(~ her) ?=(~ hyf) ?=(~ cyf))
                   [~ ~]
-                (peek bem u.her u.lyf u.hyf u.cyf)
-
+                (ev-peek-chum:core bem u.her u.lyf u.hyf u.cyf)
               ::  publisher-side, message-level (group encrypted namespace)
               ::
                   [%shut kid=@ cyf=@ ~]
-                =>  [tyl=tyl bem=bem peek=ev-peek-shut:core slaw=slaw]
-                ~>  %memo./ames/peek/shut
                 =/  kid  (slaw %ud kid.tyl)
                 =/  cyf  (slaw %uv cyf.tyl)
                 ?:  |(?=(~ kid) ?=(~ cyf))
                   [~ ~]
-                (peek bem u.kid u.cyf)
+                (ev-peek-shut:core bem u.kid u.cyf)
               ::  publisher-side, flow-level
               ::
                   [%flow bone=@ load=?(%plea %boon %ack-plea %ack-boon %nax) rcvr=@ mess=@ ~]
-                =>  [tyl=tyl peek=ev-peek-flow:core slaw=slaw]
-                ~>  %memo./ames/peek/flow
                 =/  bone  (slaw %ud bone.tyl)
                 =/  rcvr  (slaw %p rcvr.tyl)
                 =/  mess  (slaw %ud mess.tyl)
                 ?:  |(?=(~ bone) ?=(~ rcvr) ?=(~ mess))
                   [~ ~]
-                (peek u.bone load.tyl u.rcvr u.mess)
+                (ev-peek-flow:core u.bone load.tyl u.rcvr u.mess)
               ::  client %mesa %corks, flow-level
               ::
                   [%flow bone=@ %cork rcvr=@ ~]
