@@ -21,9 +21,9 @@
 ++  kids
   :+  ~  %y
   %-  ~(gas by *lads:neo)
-  :~  :-  [|/%t |]
+  :~  :-  [&/%dms |/%p |]
       [pro/%dm (sy %dm-diff ~)]
-      :-  [|/%t |]
+      :-  [&/%groupchats |/%p |/%t |]
       [pro/%groupchat (sy %groupchat-diff ~)]
   ==
 ++  deps  *deps:neo
@@ -64,6 +64,8 @@
       =/  poke  !<(messenger-diff vax)
       ?-    -.poke
           %new-dm
+        ?:  (~(has of:neo kids.bowl) ~[%dms p/partner.poke])
+          [~ state]
         =/  provider  ~[p/partner.poke %home %messenger]
         :_  state
         :~  :-  (welp here.bowl ~[%dms p/partner.poke])
