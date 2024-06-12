@@ -19,6 +19,7 @@
         [#/[p/our.bowl]/home/circle %make %circle ~ ~]
         [#/[p/our.bowl]/home/files %make %folder ~ ~]
         [#/[p/our.bowl]/home/planner %make %planner ~ ~]
+        [#/[p/our.bowl]/home/messenger %make %messenger ~ ~]
     ==
   ++  poke
     |=  =pail:neo

@@ -865,6 +865,7 @@
   ++  free
     |=  =hunt:neo
     ^+  run
+    ~&  resolved/hunt
     ::  XX: weird shadowing, be careful
     =/  =rave:neo  (~(gut of:neo riot) pith.hunt *rave:neo)
     =.  rave  
@@ -1811,28 +1812,40 @@
     work
   ::
   ++  jazz
+    =|  bad=(set term)
     |=  [=conf:neo =deps:neo]
-    ^-  [bad=(set term) block=(set tour:neo)]
-    %+  roll  ~(tap by deps)
-    |=  [[=term required=? =quay:neo] bad=(set term) block=(set hunt:neo)]
+    ^+  [bad arvo]
+    =/  deps  ~(tap by deps)
+    |-  ^+  [bad arvo]
+    ?~  deps
+      [bad arvo]
+    =/  [=term required=? =quay:neo]  i.deps
     =/  =care:neo  (get-care:quay:neo quay)
     ?:  &(required !(~(has by conf) term))
-      :_(block (~(put in bad) term))
+      =.  bad  (~(put in bad) term)
+      $(deps t.deps)
     ?:  &(!required !(~(has by conf) term))
-      [bad block]
+      $(deps t.deps)
     =/  pit=pith:neo   (~(got by conf) term)
     =/  res  (look care pit)
     =/  nam=name:neo  (de-pith:name:neo pit)
     ?~  res  
       ?:  =(our.bowl ship.nam)
         ?.  required
-          [bad block]
-        :_(block (~(put in bad) term))
-      [bad (~(put in block) care pit)]
-    ?~  u.res
-      :_(block (~(put in bad) term))
-    [bad block] ::
-  ::
+          $(deps t.deps)
+        =.  bad  (~(put in bad) term)
+        $(deps t.deps)
+      =?  get.block  required
+        (~(put in get.block) care pit)
+      =.  run  abet:(~(start sale pit) [p/our.bowl here] care)
+      =?  run  !required
+        (stalk:rage care^pit %rely term here)
+      $(deps t.deps)
+    ?^  u.res
+      $(deps t.deps)
+    =.  bad  (~(put in bad) term)
+    $(deps t.deps)
+      ::
   ++  dance
     |=  [=crew:neo =band:neo]
     ^+  arvo
@@ -1875,7 +1888,7 @@
     |=  [src=stud:neo init=(unit pail:neo) =crew:neo]
     =/  =wave:neo  [src ~(dock husk src) crew]
     =.  tide  (~(put of:neo tide) here wave)
-    =^  bad=(set term)   get.block
+    =^  bad=(set term)   arvo
       (jazz crew deps:~(kook husk src))
     ?.  =(~ get.block)
       arvo
@@ -2000,6 +2013,8 @@
           ?~  ack
             same
           (slog (print-quit:neo u.ack))
+        ?:  ?=(%rely p.pail)
+          ((slog leaf/"no support for %rely" ~) su-core)
         (mean leaf/"no support for {<p.pail>}" ~)
       =/  [caz=(list card:neo) new=pail:neo]
         (poke:su-form pail)

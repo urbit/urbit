@@ -57,8 +57,8 @@
   ++  init
     |=  old=(unit pail:neo)
     ^-  (quip card:neo pail:neo)
-    =/  width  10
-    =/  height  10
+    =/  width  3
+    =/  height  3
     :_  accel/!>([width height])
     (make-cells bowl 1 width 1 height %in)
   ::

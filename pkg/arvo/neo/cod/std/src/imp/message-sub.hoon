@@ -12,7 +12,7 @@
 ++  deps
   %-  ~(gas by *deps:neo)
   :~  :-  %pub
-      :+  req=&  [pro/%sig (sy %sig ~)]
+      :+  req=|  [pro/%sig (sy %sig ~)]
       :+  ~  %y
       %-  ~(gas by *lads:neo)
       :~  :-  [|/%da |]
