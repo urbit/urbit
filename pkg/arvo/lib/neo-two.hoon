@@ -220,10 +220,14 @@
     `[pith key.u.lat]
   ::
   ++  grow
-    |=  [=pail:neo cas=(unit case:neo) =oath:neo]
-    ^-  (quip loot:neo loam:dirt:neo)
-    =/  =poem:neo  [[(fall cas +(case)) oath] `pail]
-    (make poem)
+    |=  [=pith:neo =pail:neo cas=(unit case:neo) =oath:neo]
+    ^-  (quip dust:neo loam:dirt:neo)
+    =/  l=loam:dirt:neo  (~(dip of:neo loam) pith)
+    =/  =poem:neo  [[(fall cas +(~(case plow l))) oath] `pail]
+    =^  loot=(list loot:neo)  l
+      (~(make plow l) poem)
+    :-  (turn loot (lead pith))
+    (~(rep of:neo loam) pith l)
   ++  make
     |=  =poem:neo
     ^-  (quip loot:neo loam:dirt:neo)
@@ -252,22 +256,36 @@
     loam(fil `(put:on:soil:neo u.fil.loam [p.p .]:poem))
   ::
   ++  cull
-    ?~  fil.loam
-      [~ loam]
-    (make [[+(case) *oath:neo] ~])
+    =|  =grit:neo
+    |=  =pith:neo
+    ^+  [grit loam]
+    =/  [loot=(list loot:neo) l=loam:dirt:neo]
+      =/  lom  (~(dip of:neo loam) pith)
+      ?:  =(~ fil.lom)
+        `lom
+      (~(make plow lom) [[+(~(case plow lom)) *oath:neo] ~])
+    =.  grit  (welp grit (turn loot (lead pith)))
+    =/  kids  ~(tap by kid.l)
+    |-
+    ?~  kids
+      =.  loam  (~(rep of:neo loam) pith l)
+      [grit loam]
+    =/  [iot=iota lo=loam:dirt:neo]  i.kids
+    =/  pit=pith:neo  (snoc pith iot)
+    =/  [loot=(list loot:neo) lom=loam:dirt:neo]
+      (make(loam lo) [[+(case) *oath:neo] ~])
+    =.  grit  (welp grit (turn loot (lead pit)))
+    =.  kid.l  (~(put by kid.l) iot lom)
+    $(kids t.kids) ::
   ::
   ++  call
     |=  =card:dirt:neo
     ^-  (quip gift:dirt:neo _loam)
-    =/  lom   (~(dip of:neo loam) p.card)
     %-  (trace "call" (print-card card))
-    =^  gifts=(list loot:neo)  lom
-      ?-  -.q.card
-        %grow  (~(grow plow lom) +.q.card)
-        %cull  ~(cull plow lom)
-      ==
-    :_  (~(rep of:neo loam) p.card lom)
-    (turn gifts |=(loot:neo `gift:dirt:neo`[p.card +<]))
+    ?-  -.q.card
+      %grow  (~(grow plow loam) p.card +.q.card)
+      %cull  (~(cull plow loam) p.card)
+    ==
   ::
   ++  look
     |=  =pith:neo

@@ -5,16 +5,17 @@
 ::
 =,  format
 =,  mimes:html
-|_  txt=wain
+|_  txt=@
 ::
 ++  grab                                                ::  convert from
   |%
-  ++  mime  |=((pair mite octs) (to-wain q.q))
-  ++  noun  wain                                        ::  clam from %noun
+  ++  mime  |=((pair mite octs) q.q)
+  ++  noun  ,@                                        ::  clam from %noun
   --
 ++  grow
   |%
-  ++  mime  [/text/plain (as-octs (of-wain txt))]
+  ++  mime  [/text/plain (as-octs txt)]
+  ++  noun  txt
   --
 ++  grad  %mime
 --

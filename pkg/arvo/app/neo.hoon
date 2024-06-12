@@ -802,6 +802,29 @@
     =.  rav  (fume-add rav care.hunt howl)
     =.  riot  (~(put of:neo riot) pith.hunt rav)
     run
+  ++  heal
+    |=  [dead=hunt:neo how=(set howl:neo)]
+    ^+  run
+    =/  how  ~(tap in how)
+    |-
+    ?~  how
+      run
+    =/  =howl:neo  i.how
+    ?.  ?=(%rely -.howl) :: XX: handle %halt %sell
+      $(how t.how)
+    =/  [=term =pith:neo]  +.howl
+    =/  =move:neo
+      [pith.dead [p/our.bowl pith] %poke %dead !>(term)]
+    =.  run
+      abet:(arvo move)
+    $(how t.how)
+
+  ++  reap
+    |=  [change=pith:neo =loot:neo]
+    =/  =rave:neo  (~(gut of:neo riot) change *rave:neo)
+    =.  run  (heal:rage:(heal:rage:(heal x/change exe.rave) y/change why.rave) z/change zed.rave)
+    run(riot (~(del of:neo riot) change))
+  ::
   ++  fury
     |=  gis=(list gift:dirt:neo)
     %-  gas-leaf
@@ -835,6 +858,7 @@
   ::
   ++  take
     |=  gis=(list gift:dirt:neo)
+    ~&  gis/gis
     =/  laf  (fury gis)
     =*  loop-gift  $
     ^+  run
@@ -842,6 +866,8 @@
       run
     =/  [=pith:neo =loot:neo]  i.gis
     =.  run  (sweep i.gis)
+    =?  run  =(%del mode.loot)
+      (reap pith loot)
     $(gis t.gis)
   ::
   ++  fume-add
@@ -1714,7 +1740,9 @@
   ::
   ++  trace-card
     |=  =move:neo
-    ^-  tank
+    %-  trace
+    ^-  tang
+    =-  -^~
     :-  %leaf
     "{(en-tape:pith:neo p.move)} -> {(en-tape:pith:neo p.q.move)}: {<-.q.q.move>}"
   ++  trace
@@ -1777,7 +1805,7 @@
     =.  src   (de-pith:name:neo p.move)
     =/  =name:neo  (de-pith:name:neo p.q.move)
     =.  here       +:p.q.move
-    %-  (trace leaf/"{<-.q.q.move>} {(spud (pout here))}" ~)
+    %-  (trace-card move)
     ?-  -.q.q.move
       %make  (make +.q.q:move)
       %poke  (poke +.q.q:move)
@@ -1873,7 +1901,7 @@
   ::
   ++  make
     |=  [src=stud:neo init=(unit pail:neo) =crew:neo]
-    =/  =wave:neo  [src ~(dock husk src) crew]
+    =/  =wave:neo  [src ~(dock husk src) crew &]
     =.  tide  (~(put of:neo tide) here wave)
     =^  bad=(set term)   get.block
       (jazz crew deps:~(kook husk src))
@@ -1913,6 +1941,9 @@
     =|  cards=(list card:neo)
     =/  =kook:neo  ~(kook husk code.wave)
     =.  dock.wave  ~(dock husk code.wave)
+    ?.  live.wave
+      ~|  dead-wave/here
+      !!
     |%
     ++  su-core  .
     ++  su-emil  |=(caz=(list card:neo) su-core(cards (welp cards caz)))
@@ -1993,6 +2024,11 @@
     ++  su-poke
       |=  =pail:neo
       ^+  su-core
+      =?  live.wave  =(p.pail %dead)
+        =+  !<(dead=term q.pail)
+        ?~  dep=(~(get by deps:kook) dead)
+          &
+        !required.u.dep
       ?.  (~(has in poke.dock.wave) p.pail)
         ?:  ?=(%ack p.pail)
           %.  su-core
@@ -2000,6 +2036,8 @@
           ?~  ack
             same
           (slog (print-quit:neo u.ack))
+        ?:  |(=(%dead p.pail) =(%rely p.pail))
+          su-core
         (mean leaf/"no support for {<p.pail>}" ~)
       =/  [caz=(list card:neo) new=pail:neo]
         (poke:su-form pail)
