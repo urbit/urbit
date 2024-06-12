@@ -2,7 +2,7 @@
 ^-  kook:neo
 |%
 ++  state  pro/%sig
-++  poke  ~
+++  poke  (silt %rely ~)
 ++  kids
   :+  ~  %y
   %-  ~(gas by *lads:neo)
@@ -32,20 +32,20 @@
     ^-  (quip card:neo pail:neo)
     ?>  =(%rely stud)
     :_  state
-    =+  !<([=term =stem:neo] vax)
-    ?>  ?=(%y -.q.stem)
+    =+  !<([=term =leaf:neo] vax)
     ::  only get new kids
-    =/  kids
-      %+  skim 
-        ~(val by kids.q.stem) 
-      |=  [=ever:neo =mode:neo =pail:neo] 
-      =(%add mode)
-    ?:  =(~ kids)
+    %+  murn 
+      ~(tap by ~(tar of:neo q:(~(got by deps.bowl) %pub)))
+    |=  [=pith:neo =idea:neo]
+    ^-  (unit card:neo)
+    ~&  pith/pith
+    ?.  ?=([[%da @] ~] pith)
       ~
-    =/  pai=pail:neo  pail:(snag 0 kids)
-    =/  mes  !<(message q.pai)
-    :~  :-  (welp here.bowl ~[da/now.mes])
-        [%make [%message `pai ~]]
-    ==
+    ?:  (~(has of:neo kids.bowl) pith)
+      ~
+    ?.  =(%message p.pail.idea)
+      ~
+    ~&  making/~
+    `[(welp here.bowl pith) %make %message `pail.idea ~]
   --
 --

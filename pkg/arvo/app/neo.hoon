@@ -282,7 +282,7 @@
 ++  on-ack
   |=  =ack:neo
   =/  dst=name:neo  (de-pith:name:neo p.p.ack)
-  ?>  =(src.bowl ship.dst)
+  :: ?>  =(src.bowl ship.dst)
   ?:  =(sys-pith p.p.ack)
     %.  run
     ?~  q.ack
@@ -577,7 +577,18 @@
     ++  meat  .
     ++  new
       |=  =yuga:neo
-      =.  yuga.deli  yuga
+      =.  yuga.deli  
+        %-  gas-yuga
+        %+  murn  ~(tap by ~(tar of:neo yuga))
+        |=  [=pith:neo =aeon:neo]
+        =/  res  (look %x pith)
+        ?:  ?=(?(~ [~ ~]) res)
+          `[pith aeon]
+        ?~  rot=(~(get of:neo u.u.res) ~)
+          `[pith aeon]
+        ?:  =(p.exe.p.p.u.rot p.exe.p.aeon)
+          ~
+        `[pith aeon]
       ~&  new-yuga/yuga
       meat
     ++  fetched
@@ -718,6 +729,7 @@
   ++  abet  run
   ++  rent  .
   ++  get-ward  (~(gut of:neo city) pith *ward:neo)
+  ++  has-kid   !=(~ kid:(~(dip of:neo city) pith))
   ++  put-ward  |=(=ward:neo rent(city (~(put of:neo city) pith ward)))
   ++  fact
     |=  [=care:neo paxs=(set pith:neo)]
@@ -738,7 +750,6 @@
     ^-  yuga:neo
     ?~  pic=(need (look care p/our.bowl pith))
       *yuga:neo
-    ~&  epic/u.pic
     (epic-to-yuga u.pic)
   ::
   ++  stop
@@ -791,6 +802,8 @@
     =.  rent  (fact %z zed.war)
     ?~  nex=(dif:pith:neo pith until)
       rent
+    ?.  has-kid
+      rent
     $(pith (snoc pith i.nex))
   --
 ++  rage
@@ -825,7 +838,8 @@
     =/  =rave:neo  (~(gut of:neo riot) here *rave:neo)
     =?  run  =(here change)
       (spaz exe.rave %x change)
-    =?  run   =(here (~(parent of:neo tide) change))
+    =/  par  (~(parent of:neo loam) change)
+    =?  run   =(`here par)
       (spaz why.rave %y change)
     =.  run
       (spaz zed.rave %z change)
@@ -1273,7 +1287,6 @@
     !=(txt q.q.u.pal)
   ++  read-txt
     |=  pax=path
-    ~&  reading-txt/pax
     =+  .^(src=@t %cx `path`(welp root pax))
     =.  pax  (snip pax)
     =.  run  (write-txt pax src)
@@ -1283,7 +1296,6 @@
   ++  read-file
     |=  pax=path
     ^+  run
-    ~&  reading/pax
     ?.  =((rear pax) %hoon)
       (read-txt pax)
     =+  .^(src=@t %cx `path`(welp root pax))
@@ -1299,7 +1311,6 @@
         (mean p.res)
       %-   mule   |.
       (scan (trip src) (rein:ford:neo [our.bowl (pave:neo (snip pax))]))
-    ~&  [lib=lib pro=pro]:file
     =/  has-imports=?
       ?&  (levy pro.file |=(pro:ford:neo ~(exists pro stud)))
           (levy lib.file |=(lib:ford:neo ~(exists lib stud)))
@@ -2106,9 +2117,7 @@
       ^-  $-(vase vase)
       ?~  as.peer  |=(=vase vase)
       .^(tube:clay %cc (welp /(scot %p our.bowl)/[r.p.u.p.syn]/(scot %da now.bowl) /(rear kid)/[u.as.peer]))
-    ~&  res/~(key by ~(tar of res))
     =.  res  (~(dip of res) path.peer)
-    ~&  res/~(key by ~(tar of res))
     =/  =note:neo  [%poke %clay-res !>(`res:clay:neo`[hand case res])]
     ~&  sending-to/src
     =/  =move:neo  [[p/our.bowl #/$/clay] src note]
@@ -2548,13 +2557,22 @@
   =/  lom  (~(dip of:neo loam) prefix)
   =/  fam  (~(dip of:neo farm) prefix)
   =/  rav  (~(dip of:neo riot) prefix)
+  =/  ton  (~(dip of:neo town) prefix)
+  =/  cit  (~(dip of:neo city) (tail prefix))
   :-  >fam<
   :-  >rav<
+  :-  >ton<
+  :-  >cit<
   %-  zing
   %+  turn   ~(tap by ~(tar of:neo lom))
   |=  [=pith:neo =soil:neo]
   :~  >pith<
       >~(key by soil)<
+      ?~  val=(ram:on:soil:neo soil)
+        leaf/"No data"
+      ?~  q.val.u.val
+        leaf/"~"
+      (sell q.u.q.val.u.val)
   ==
 ::
 ++  print-dbug

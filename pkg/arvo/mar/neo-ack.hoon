@@ -1,14 +1,14 @@
 ::
 /-  neo
-|_  =slip:neo
+|_  =ack:neo
 ::
 ++  grad  %noun
 ++  grab                                                ::  convert from
   |%
-  ++  noun  slip:neo
+  ++  noun  ack:neo
   --
 ++  grow
   |%
-  ++  noun  slip
+  ++  noun  ack
   --
 --

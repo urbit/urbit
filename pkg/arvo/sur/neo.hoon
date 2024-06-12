@@ -2222,6 +2222,29 @@
       #/std
     [p/ship.disk term.disk ~]
   --
-
-
+++  lte-pith
+  |=  [a=pith b=pith]
+  ^-  ?
+  ?~  a  &
+  ?~  b  |
+  ?.  =(i.a i.b)
+    %+  lte-dime
+      ?^(i.a i.a [%tas i.a])
+    ?^(i.b i.b [%tas i.b])
+  $(a t.a, b t.b)
+::
+++  lte-dime
+  |=  [a=dime b=dime]
+  ^-  ?
+  ?.  =(p.a p.b)  
+    (aor -.a -.b)
+  ?+  p.a  (lte q.a q.b)
+    %rd             (lte:rd q.a q.b)
+    %rh             (lte:rh q.a q.b)
+    %rq             (lte:rq q.a q.b)
+    %rs             (lte:rs q.a q.b)
+    %s              !=(--1 (cmp:si q.a q.b))
+    ?(%t %ta %tas)  (aor q.a q.b)
+  ==
+::
 --

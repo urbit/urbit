@@ -395,7 +395,9 @@
     =|  gifts=(list gift:dirt:neo)
     |=  =epic:neo
     ^+  [gifts loam farm]
-    =/  pic  ~(tap of:neo epic)
+    =/  pic  
+      %+  sort  ~(tap of:neo epic)
+      |=([[a=pith:neo *] [b=pith:neo *]] (lte-pith:neo a b))
     |-
     ?~  pic
       :+  gifts  loam
