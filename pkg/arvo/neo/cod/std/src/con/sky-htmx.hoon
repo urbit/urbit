@@ -80,8 +80,8 @@
     @media(max-width: 900px) {
       .air-btn {
         position: absolute;
-        bottom: 25px;
-        right: 25px;
+        bottom: 45px;
+        left: 25px;
         padding: 30px;
         width: 70px;
         height: 70px;

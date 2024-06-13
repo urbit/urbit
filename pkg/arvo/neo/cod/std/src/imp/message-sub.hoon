@@ -34,18 +34,17 @@
     :_  state
     =+  !<([=term =leaf:neo] vax)
     ::  only get new kids
-    %+  murn
-      ~(tap by ~(tar of:neo q:(~(got by deps.bowl) %pub)))
+    %+  murn  ~(tap of:neo q:(~(got by deps.bowl) %pub))
     |=  [=pith:neo =idea:neo]
     ^-  (unit card:neo)
-    ~&  pith/pith
+    ::~&  pith/pith
     ?.  ?=([[%da @] ~] pith)
       ~
     ?:  (~(has of:neo kids.bowl) pith)
       ~
     ?.  =(%message p.pail.idea)
       ~
-    ~&  making/~
+    ::~&  making/~
     `[(welp here.bowl pith) %make %message `pail.idea ~]
   --
 --

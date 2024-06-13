@@ -13,13 +13,6 @@
   ;style
   ;+  ;/  %-  trip
   '''
-  .fe {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    justify-content: flex-end
-    }
   .msg{
     max-width: 70%;
     min-width: 40%;
@@ -75,10 +68,11 @@
     =id  "messages"
     ;+  (refresher bowl)
   ;*
+    =/  msgs  ~(tap of:neo kids.bowl)
     %+  turn
+      %+  slag  (sub (lent msgs) 20)
       %+  sort
-        %+  murn
-          ~(tap of:neo kids.bowl)
+        %+  murn  msgs
         |=  [=pith =idea:neo]
         ?~  pith  ~
         ?.  =(%message p.q.saga.idea)  ~
@@ -94,7 +88,6 @@
 ++  render-message
   |=  [pax=pith =idea:neo =bowl:neo]
   =/  msg  !<(message q.q.saga.idea)
-  ~&  >  msg
   ^-  manx
   ?:  =(our.bowl from.msg)
     (render-our-message msg)
@@ -103,9 +96,9 @@
     =style  "align-self: flex-start;"
     ;div.fr.ac.jb
       ;p.s-2.f3: {(scow %p from.msg)}
-      ;p.s-2.f3: {(scow %da now.msg)}
+      ;p.s-2.f3: {(pretty-date now.msg)}
     ==
-    ;div.border.br1.p3
+    ;div.bd1.br1.p3
       ;p: {(trip contents.msg)}
     ==
   ==
@@ -116,10 +109,10 @@
   =style  "align-self: flex-end;"
   ;div.fr.ac.jb
     ;p.s-2.f3: {(scow %p from.msg)}
-    ;p.s-2.f3: {(scow %da now.msg)}
+    ;p.s-2.f3: {(pretty-date now.msg)}
   ==
-  ;div.fr.je.border.br1.b1.p3
-  ;p:  {(trip contents.msg)}
+  ;div.fr.je.bd2.br1.b1.p3
+    ;p:  {(trip contents.msg)}
   ==
 ==
 ::
@@ -134,14 +127,14 @@
     =hx-on-submit  "this.reset()"
     =head  "msg"
     =id  "render-sender"
-    ;textarea.p2.border.br1.grow
+    ;textarea.p2.bd1.br1.grow
       =name  "text"
       =placeholder  ". . ."
       =oninput  "this.setAttribute('value', this.value)"
       =rows  "2"
       =required  ""
       =autocomplete  "off"
-      =maxlength  "2048"
+      =maxlength  "1024"
       ;
     ==
     ;input.hidden
@@ -158,4 +151,25 @@
     ==
   ==
   ::
+++  pretty-date
+  |=  date=@da
+  ^-  tape
+  =/  d  (yore date)
+  =/  months
+    ^-  (list tape)
+    :~
+      "Jan"
+      "Feb"
+      "Mar"
+      "Apr"
+      "May"
+      "Jun"
+      "Jul"
+      "Aug"
+      "Sep"
+      "Oct"
+      "Nov"
+      "Dec"
+    ==
+  "{(y-co:co h:t:d)}:{(y-co:co m:t:d)} {(y-co:co d:t:d)} {(snag (dec m:d) months)}"
 --

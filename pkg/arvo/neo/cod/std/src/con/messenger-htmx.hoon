@@ -41,7 +41,7 @@
         width: 70%;
     }
     .bc1{
-        border: solid var(--b2) 1px;
+        border: solid 1px var(--b2);
     }
     '''
 ::
