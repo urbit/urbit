@@ -334,8 +334,6 @@ In all of the shrubs we've looked at in these tutorials we could replace every `
 #### form:neo
 When `/imp/dm` is first created with a `%make` card, it needs to be created with some pre-defined state. The intial state it accepts has to be a `%dm-diff`. Taking a poke type as the initial state type is an unusual choice that was done as an experiment, but the result is essentially the same as a Gall agent sending a poke to itself `+on-init`.
 
-{Key point to draw attention to is the chicken-and-egg problem where we need a higher-level thing (aka "service provider" aka messenger) in order to start a DM with someone, because their DM doesn't exist yet and needs to be spawned, and its sub can only be created after our pub has been, etc}
-
 ```hoon
 ++  init
   |=  old=(unit pail:neo)
@@ -553,8 +551,10 @@ Now is a good time to address when developers should store data inside a shrub's
   ==
 ```
 
-### Messenger shrub
+### /imp/messenger
 `/imp/messenger` is the top-level interface through which users can create, post in, and manage groupchats and DMs. This is the shrub that corresponds to the main "Messenger" UI within Sky.
+
+This is a nice way to handle groupchats and DMs all in one place, but it's also a requirement of the way this system is built. There's a chicken-and-egg problem with DMs where ~tex can't invite ~mex to a DM chat unless ~mex already has a DM chat (`/imp/dm`) with ~tex in which to receieve that poke, so DMs rely on `/imp/messenger` to negotiate that with the `%new-dm` poke.
 
 #### kook:neo
 Messenger has no state. This shrub is just an interface for creating groupchats and DMs, which are its kids. If those kids are `/imp/dm`s they take `%dm-diff`s, and if they're `/imp/groupchat`s they take `%groupchat-diff`s.
