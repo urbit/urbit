@@ -371,7 +371,9 @@ When `/imp/dm` is first created with a `%make` card, it needs to be created with
   ==
 ```
 
-The `+poke` arm handles `%acked` and `%post` pokes. When we receive an `%acked`, we create an `/imp/message-sub` to subscribe to DMs from the "publisher", which is whoever we're going to talk to. (DM state is symmetrical: both ships are publishing to eachtoher and subscribed to eachother.) When we receive a `%post` from the publisher, we add it to our service provider at `/path/to/this/dm/pub`, which publishes the DM state to the other ship.
+The `+poke` arm handles `%acked` and `%post` pokes.
+
+DM state is symmetrical: both ships are publishing to each other and subscribed to each other. When we receive an `%acked` poke, we create an `/imp/message-sub` to subscribe to DMs from the "publisher", which is whoever we're going to talk to. When we receive a `%post` poke, we add that new post to our `/pub` shrub and the other ship's `/imp/message-sub` will mirror it in its own state.
 
 ```hoon
 ++  poke
