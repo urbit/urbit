@@ -1640,7 +1640,7 @@
       ++  encrypt
         |=  [key=@uxI iv=@ msg=byts]
         ^+  msg
-        =/  x  (xchacha:chacha:crypto 8 key (hash 24 iv))
+        =/  x  (xchacha:chacha:crypto key (hash 24 iv))  ::  XX rounds=8
         =;  =octs  +(p.octs)^(can 3 octs [1 0x1] ~)
         (chacha:crypto 8 key.x nonce.x 0 msg)
       ::
@@ -1650,7 +1650,7 @@
         ~|  [key=key iv=iv byts=byts]
         =/  wid  (dec wid.byts)
         ?>  =(0x1 (cut 3 [wid 1] dat.byts))
-        =/  x  (xchacha:chacha:crypto 8 key (hash 24 iv))
+        =/  x  (xchacha:chacha:crypto key (hash 24 iv))  ::  XX rounds=8
         (chacha:crypto 8 key.x nonce.x 0 wid^dat.byts)
       ::
       ++  seal-path
@@ -2524,7 +2524,7 @@
             ::
             ++  on-size  |=(spar %*($ on-keen spar +<, fist &))
             ++  on-keen
-              =|  fist=_| :: fist=& request only the first fragment
+              =|  fist=_| :: fist=&ca request only the first fragment
               |=  [sec=(unit [idx=@ key=@]) =spar]
               ^+  event-core
               =*  ship  ship.spar
@@ -2547,7 +2547,10 @@
               ?>  ?=(~ sec)
               %^  enqueue-alien-todo  ship  ship-state
               |=  todos=alien-agenda
-              todos(keens (~(put ju keens.todos) path duct))
+              %_  todos
+                keens  (~(put ju keens.todos) path duct)
+                sizes  (~(put in sizes.todos) path)
+              ==
             ::
             ++  on-chum
               |=  spar
@@ -2567,7 +2570,8 @@
               |=  [all=? spar]
               ^+  event-core
               ?~  ship-state=(~(get by peers.ames-state) ship)
-                ~|(%cancel-scry-missing-peer^ship^path !!)
+                ~&  %cancel-scry-missing-peer^ship^path
+                event-core
               ?.  ?=([~ %known *] ship-state)
                 :: XX delete from alien agenda?
                 %.  event-core
@@ -5510,9 +5514,8 @@
             (ev-emit:ev-core [/ames]~ %pass /clog %g clog/u.id)
           ::
           ++  ev-req-peek
-            |=  [sec=(unit [kid=@ key=@]) =path]
+            |=  [fist=? sec=(unit [kid=@ key=@]) =path]
             ^+  ev-core
-            ::  ?>  ?=(%known -.sat.per)
             ::  +sy-plug should have already stored [kid key path] in chain.ames-state
             ::  on the server, and the client would have retrieved the key via
             ::  the %ames key exchange. here we store it in their peer state
@@ -5523,6 +5526,9 @@
               %+  ~(put by chums.ames-state)  ship.per
               :-  %known
               %_    sat.per
+                  sizes
+                (~(put in sizes.sat.per) path)
+              ::
                   client-chain
                 (put:key-chain client-chain.sat.per kid.space key.space path)
               ==
@@ -7082,7 +7088,8 @@
                     |=  [[=path ducts=(set duct)] core=_ev-core]
                     %-  ~(rep in ducts)
                     |=  [=duct c=_core]
-                    (ev-req-peek:(ev-abed:c duct) ~ path)
+                    %-  ev-req-peek:(ev-abed:c duct)
+                    [fist=(~(has in sizes.todos) path) sec=~ path]
                   ::
                   sy-core
                 ::
@@ -7863,6 +7870,7 @@
                 =/  who  (slaw %p her.tyl)
                 ?~  who  [~ ~]
                 ?~  chum=(~(get by chums.ames-state) u.who)
+                  ~&  (~(get by peers.ames-state) u.who)
                   [~ ~]
                 ``noun+!>(u.chum)
             ==
@@ -8076,7 +8084,7 @@
       =^  moves  ames-state
         =<  ev-abet
         ?:  ?=([~ %known *] +.ship-state)
-          (%*(ev-req-peek me-core per ship^+.u.ship-state) sec path)
+          (%*(ev-req-peek me-core per ship^+.u.ship-state) fist=| sec path)
         ::
         %^  ev-enqueue-alien-todo:me-core  ship  +.ship-state
         |=  todos=ovni-state:me-core
@@ -8133,11 +8141,14 @@
       =^  moves  ames-state
         =<  ev-abet
         ?:  ?=([~ %known *] +.ship-state)
-          (%*(ev-req-peek me-core per ship^+.u.ship-state) sec=~ path)  ::  XX sec
+          (%*(ev-req-peek me-core per ship^+.u.ship-state) fist=& sec=~ path)  ::  XX sec
         ::
         %^  ev-enqueue-alien-todo:me-core  ship  +.ship-state
         |=  todos=ovni-state:me-core
-        todos(peeks (~(put ju peeks.todos) path hen))
+        %_  todos
+          peeks  (~(put ju peeks.todos) path hen)
+          sizes  (~(put in sizes.todos) path)
+        ==
       moves^vane-gate
       ::
     ::
@@ -8161,7 +8172,7 @@
     (~(pe-hear pe-core hen) dud +.task)
     ::  %mesa-only tasks
     ::
-      ?(%meek %moke %mage %heer %mess %back)
+      ?(%meek %moke %mage %heer %mess %back %rate)
     ::  XX can we call the wrong core? still check if ship has migrated?
     ::
     (call:mesa hen dud soft/task)
@@ -8270,7 +8281,7 @@
                   $%  [%larva *]
                       [%adult state=ames-state-21]
               ==  ==
-              [%0 *]  ::  axle
+              axle
           ==
       =|  moz=(list move)
       |-  ^+  vane-gate
@@ -8283,6 +8294,7 @@
         !!  ::  $(+<.old %adult, +>.old state.old)
       ?:  ?=(%0 -.old)
         ::  ~&  priv.old
+        :: =.  peers.old  ~
         :: =.  chums.old
         ::   %-  ~(run by chums.old)
         ::   |=  =chum-state

@@ -2710,10 +2710,10 @@
       ::
       ++  xchacha
         ~/  %xchacha
-        |=  [rounds=@ud key=@uxI nonce=@ux]
+        |=  [key=@uxI nonce=@ux]
         ^-  [key=@uxI nonce=@uxG]
         :_  (rsh [5 4] nonce)
-        =/  state  (do-rounds rounds (can32 [4 sigma] [8 key] [4 nonce] ~))
+        =/  state  (do-rounds 20 (can32 [4 sigma] [8 key] [4 nonce] ~))
         (cat 7 (end [5 4] state) (rsh [5 12] state))
       --
     |%

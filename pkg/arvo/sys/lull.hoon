@@ -850,6 +850,7 @@
         $>(%plea vane-task)
         [%deep =deep]
         [%stun =stun]
+        [%rate =spar fragment=@ud num-fragments=@ud]
     ::
         [%keen sec=(unit [idx=@ key=@]) spar]
         [%chum spar]
@@ -913,8 +914,8 @@
         [%stub num=@ud key=@]
         [%near spar dat=(unit (unit page))]
         [%tune spar roar=(unit roar)]
-        [%rate =spar fragment=@ud num-fragments=@ud]
-        [%size =spar fragment-size=@ud fragments=@ud]
+        [%rate =spar fragment=@ud num-fragments=@ud]   ::  XX combine rate/size
+        [%size =spar fragment-size=@ud fragments=@ud]  ::  XX combine rate/size
     ::
         [%turf turfs=(list turf)]
         [%saxo sponsors=(list ship)]
@@ -1635,6 +1636,7 @@
     $+  ovni-state
     $:  pokes=(list [=duct message=mesa-message])
         peeks=(jug path duct)
+        sizes=(set path)
         pit=(map path request-state)  ::  XX only for comets
     ==
   ::
@@ -1653,6 +1655,7 @@
         ::              path=ack-path  /~nec/ack/~zod/flow/bone=0/mess=1/frag=1
         ::
         pit=(map path request-state)
+        sizes=(set path)
         =client=chain            ::  stores keys for %shut requests
     ==
   ::
