@@ -1,4 +1,4 @@
-# Chapter 0: Introduction
+# Introduction
 
 Shrubbery is a new in-development application model for Urbit. This guide will introduce the foundational Shrubbery concepts and get you started writing shrubs of your own. _It is aimed at Urbit developers who have at least been through App Academy, or are otherwise familiar with Gall agents._
 
