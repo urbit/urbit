@@ -29,6 +29,7 @@
         [#/[p/our.bowl]/home/circle %make %circle ~ ~]
         [#/[p/our.bowl]/home/files %make %folder ~ ~]
         [#/[p/our.bowl]/home/planner %make %planner ~ ~]
+        [#/[p/our.bowl]/home/messenger %make %messenger ~ ~]
         [#/[p/our.bowl]/home/docs %make %folder `folder/!>([%diary %feather ~]) ~]
         [#/[p/our.bowl]/home/docs/feather %make %sail `sail/!>([feather-intro 'prose p-page mw-page ma' ~]) ~]
         [#/[p/our.bowl]/home/docs/diary %make %sail `sail/!>([diary 'prose p-page mw-page ma' ~]) ~]

@@ -2,15 +2,28 @@
 /@  groupchat-diff
 /@  messenger-diff
 ^-  kook:neo
+=>
+|%
+++  send-invites
+  |=  [invites=(set ship) location=pith]
+  %+  turn
+    ~(tap in invites)
+  |=  =ship
+  :-  location
+  =/  provider  ~[p/ship %home %messenger]
+  ~&  provider
+  [%poke groupchat-diff/!>([%invite ship provider])]
+--
+::
 |%
 ++  state  pro/%sig
-++  poke  (sy %dm-diff %groupchat-diff ~)
+++  poke  (sy %dm-diff %groupchat-diff %messenger-diff ~)
 ++  kids
   :+  ~  %y
   %-  ~(gas by *lads:neo)
-  :~  :-  [|/%t |]
+  :~  :-  [&/%dms |/%p |]
       [pro/%dm (sy %dm-diff ~)]
-      :-  [|/%t |]
+      :-  [&/%groupchats |/%p |/%t |]
       [pro/%groupchat (sy %groupchat-diff ~)]
   ==
 ++  deps  *deps:neo
@@ -25,12 +38,14 @@
   ++  poke
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo pail:neo)
+    ~&  >>  stud
     ?+    stud  !!
         %dm-diff
+      ~&  >>>  'got dm diff'
       =/  poke  !<(dm-diff vax)
       ?>  =(%invited -.poke)
       :_  state
-      :~  :-  (snoc here.bowl p/ship.src.bowl)
+      :~  :-  (welp here.bowl ~[%dms p/ship.src.bowl])
           [%make %dm `dm-diff/vax ~]
       ==
     ::
@@ -39,7 +54,7 @@
       ?+    -.poke  !!
           %invited
         :_  state
-        :~  :-  (snoc here.bowl (rear host.poke))
+        :~  :-  (welp here.bowl ~[%groupchats p/ship.src.bowl (rear host.poke)])
             [%make %groupchat `groupchat-diff/vax ~]
         ==
       ==
@@ -49,24 +64,26 @@
       =/  poke  !<(messenger-diff vax)
       ?-    -.poke
           %new-dm
+        ?:  (~(has of:neo kids.bowl) ~[%dms p/partner.poke])
+          [~ state]
         =/  provider  ~[p/partner.poke %home %messenger]
         :_  state
-        :~  :-  (snoc here.bowl p/partner.poke)
+        :~  :-  (welp here.bowl ~[%dms p/partner.poke])
             [%make %dm `dm-diff/!>([%initiate partner.poke provider]) ~]
         ==
       ::
           %new-groupchat
+        =/  location
+          (welp here.bowl ~[%groupchats p/our.bowl t/name.poke])
         :_  state
-        :~  :-  (snoc here.bowl t/name.poke)
-            [%make %groupchat ~ ~]
-        ==
+        :-  [location [%make %groupchat ~ ~]]
+        (send-invites invites.poke location)
       ::
           %invite-to-groupchat
-        =/  provider  ~[p/ship.poke %home %messenger]
+        =/  location
+          (welp here.bowl ~[%groupchats p/our.bowl t/name.poke])
         :_  state
-        :~  :-  (snoc here.bowl t/name.poke)
-            [%poke groupchat-diff/!>([%invite ship.poke provider])]
-        ==
+        (send-invites invites.poke location)
       ==
     ==
   --

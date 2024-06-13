@@ -395,7 +395,9 @@
     =|  gifts=(list gift:dirt:neo)
     |=  =epic:neo
     ^+  [gifts loam farm]
-    =/  pic  ~(tap of:neo epic)
+    =/  pic  
+      %+  sort  ~(tap of:neo epic)
+      |=([[a=pith:neo *] [b=pith:neo *]] (lte-pith:neo a b))
     |-
     ?~  pic
       :+  gifts  loam
@@ -453,11 +455,64 @@
           ~
         `[pit %dif]
     == 
+
+  ++  fallback-peek-kids
+    |=  [=care:neo =pith:neo fam=farm:neo]
+    ^-  (list pith:neo)
+    ?:  ?=(%x care)  ~
+    ?^   fil.fam
+      =/  [=land:neo =plot:neo]  u.fil.fam
+      ?~  kid=(ram:on:plan:neo ?:(?=(%y care) by-kids-mut.plot by-desc-mut.plot))
+        ~
+      ~(tap in val.u.kid)
+    %-  zing
+    %+  turn  ~(tap by kid.fam)
+    |=  [=iota f=farm:neo]
+    ^-  (list pith:neo)
+    (fallback-peek-kids care (snoc pith iota) f)
+  ++  fallback-peek-x
+    |=  =pith:neo
+    ^-  (unit saga:neo)
+    =/  sol  (~(gut of:neo loam) pith *soil:neo)
+    ?~  val=(ram:on:soil:neo sol)
+      ~
+    ?~  q.val.u.val
+      ~
+    `[*aeon:neo u.q.val.u.val]
+  ::
+  ++  fallback-peek
+    |=  [=care:neo =pith:neo]
+    ^-  (axal:neo saga:neo)
+    %-  gas
+    %+  welp
+      ?~  rot=(fallback-peek-x pith)
+        ~
+      [pith u.rot]^~
+    %+  murn  (fallback-peek-kids care pith (~(dip of:neo farm) pith))
+    |=  p=pith:neo
+    ^-  (unit [pith:neo saga:neo])
+    =/  kid  (welp pith p)
+    ?~  sag=(fallback-peek-x kid)
+      ~
+    `[kid u.sag]
+  ++  piek
+    |=  [=care:neo =pith:neo]
+    ^-  (unit (unit (axal:neo saga:neo)))
+    ~&  peek-no-once/[care pith]
+   ``(fallback-peek care pith)
+
+  ::
   ++  peek
     |=  [=care:neo =pith:neo]
     ^-  (unit (unit (axal:neo saga:neo)))
     ?~  nce=(now-once care pith)
+      ~&  peek-no-once/[care pith]
       ~
+::    =/  res
+::      (fallback-peek care pith)
+::    ~?  !=(res [~ ~])
+::      res/res
+::   ``(fallback-peek care pith)
     (look care u.nce pith)
   ++  look-x
     |=  [=case:neo =pith:neo]
@@ -467,6 +522,14 @@
     ?:  ?=($@(~ [~ ~]) res)
       res
     `(~(get of:neo u.u.res) ~)
+  ++  gas
+    =|  axe=(axal:neo saga:neo)
+    |=  res=(list (pair pith:neo saga:neo))
+    ^+  axe
+    ?~  res
+      axe
+    $(axe (~(put of:neo axe) p.i.res q.i.res), res t.res)
+
   ::
   ++  look
     |=  [=care:neo =once:neo =pith:neo]
@@ -485,12 +548,6 @@
       %y  read-y
       %z  read-z
     ==
-    ++  gas
-      |=  res=(list (pair pith:neo saga:neo))
-      ^+  axe
-      ?~  res
-        axe
-      $(axe (~(put of:neo axe) p.i.res q.i.res), res t.res)
     ++  read-x  (gas read-x-raw)
     ++  read-x-raw
       ^-  (list (pair pith:neo saga:neo))
