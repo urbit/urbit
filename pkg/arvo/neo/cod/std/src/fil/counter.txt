@@ -125,14 +125,6 @@ Let's look at the structure of `/imp/counter`.
 
 These lines import two types from our `/pro` folder: `number` and `counter-diff`. To import from `/pro` we use `/@` as a new Ford-style rune.
 
-```
-,@ud
-```
-
-```
-,[%inc ~]
-```
-
 A shrub is a five-arm `|%` core — called a `kook:neo` — with an inner two-arm core called a `form:neo`. The `kook` defines type information about the shrub, and the inner `form` contains business logic.
 
 At first glance the `kook` might look familiar to Gall developers, but this is all new logic defining 1) what's stored at this node in the namespace 2) what can be stored below this node, and 3) what we expect to be stored at existing nodes we declare as dependencies.
