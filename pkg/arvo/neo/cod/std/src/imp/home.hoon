@@ -1,6 +1,10 @@
 /@  home
 /*  feather-intro
 /*  diary
+/*  counter
+/*  tasks
+/*  messenger
+/*  introduction
 ^-  kook:neo
 |%
 ++  state  pro/%home
