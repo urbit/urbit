@@ -235,7 +235,7 @@
     ==
     ;body
       =hx-ext  "html-enc,response-targets,morph"
-      =hx-swap  "innerHTML"
+      =hx-swap  "outerHTML"
       =hx-boost  "true"
       =hx-history  "false"
       =hx-replace-url  "/neo/sky"

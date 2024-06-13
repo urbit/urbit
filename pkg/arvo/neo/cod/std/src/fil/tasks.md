@@ -1,3 +1,166 @@
+# Tutorial 4: Tasks
+Let’s take a look at the Tasks shrub. From within the Sky frontend, you can create, edit, reorder, and delete nested tasks and subtasks. Checking off all subtasks will mark the parent as complete, which involves some interaction between parent and child shrubs.
+
+In this lesson we’ll see how shrubs keep their parents informed of state changes using the `%gift` poke. This is the most complex UI we’ve looked at yet, so we’ll also focus on the `/con` files.
+
+## /imp/task.hoon
+Tasks only needs one `/imp` file: `task.hoon`. The Tasks frontend shows you some tasks that may or may not have other tasks as children.
+
+```hoon
+/@  task  ::  [text=cord done=? order=(list path)]
+::
+::  $task-diff
+::  $%  [%new =task prepend=?]
+::      [%edit text=cord done=?]
+::      [%oust =pith]
+::      [%reorder order=(list pith)]
+::  ==
+/@  task-diff
+=>
+::
+::  helper core
+|%
+::
+::  check if all kids are completed
+++  check-kids
+  |=  =bowl:neo
+  ^-  ?
+  ?:  =([~ ~] kids.bowl)
+    %.y
+  =/  piths  ~(tap in ~(key by ~(tar of:neo kids.bowl)))
+  %+  levy  piths
+  |=  =pith
+  =/  =task
+    !<  task
+    q.pail:(need (~(get by ~(tar of:neo kids.bowl)) pith))
+  done.task
+::
+::  assign a unique numerical ID to a new subtask
+++  assign-name
+  |=  =bowl:neo
+  ^-  @ud
+  ?:  =([~ ~] kids.bowl)  1
+  =/  sorted-names=(list @ud)
+    %-  sort  :_  lth
+    %+  turn  ~(tap by ~(tar of:neo kids.bowl))
+      |=  [=pith =idea:neo]
+      +:(,[%ud @ud] (rear pith))
+  =/  last-name=@ud  (rear sorted-names)
+  =/  name-missing=(list @ud)
+    %+  skim  (gulf 1 last-name)
+    |=  n=@ud
+    =(~ (find ~[n] sorted-names))
+  ?~  name-missing  +(last-name)
+  (rear name-missing)
+--
+::
+::  outer core
+^-  kook:neo
+|%
+::
+::  state is a %task
+++  state  pro/%task
+::
+::  we accept %task-diff and %gift pokes
+++  poke   (sy %task-diff %gift ~)
+::
+::  we define one generation of
+::  kids at /path/to/this/task/<@ud>
+++  kids
+  :+  ~  %y
+  %-  ~(gas by *lads:neo)
+  :~  :-  [|/%ud |]
+    [pro/%task (sy %task-diff %gift ~)]
+  ==
+++  deps  *deps:neo
+++  form
+  ::
+  ::  inner core
+  ^-  form:neo
+  ::  XX refactor sample to same as other tutorials
+  |_  [=bowl:neo =aeon:neo stud:neo state-vase=vase]
+  ::  XX refactor this to default +init from counter
+  ++  init
+    |=  pal=(unit pail:neo)
+    ^-  (quip card:neo pail:neo)
+    `(need pal)
+  ++  poke
+    |=  [=stud:neo vax=vase]
+    ^-  (quip card:neo pail:neo)
+    =/  this  !<(task state-vase)
+    ?+    stud  !!
+        %gift
+      ?:  (check-kids bowl)
+        [~ task/!>(this(done %.y))]
+      [~ task/!>(this(done %.n))]
+    ::
+        %task-diff
+      =/  diff  !<(task-diff vax)
+      ?-    -.diff
+          %new
+        =/  name=@ud  (assign-name bowl)
+        =.  order.this
+          ?:  prepend.diff
+            [~[ud/name] order.this]
+          (snoc order.this `pith`[ud/name ~])
+        =.  done.this  |
+        :_  task/!>(this)
+        :~  :-  (welp here.bowl ~[ud/name])
+            [%make %task `task/!>(task.diff) ~]
+        ==
+      ::
+          %edit
+        :-  ~
+        :-  %task
+        !>
+        %=  this
+          text  text.diff
+          done  ?:  (check-kids bowl)
+                  done.diff
+                %.n
+        ==
+      ::
+          %oust
+        =/  i  (find [pith.diff ~] order.this)
+        ?~  i  `task/!>(this)
+        :_  task/!>(this(order (oust [(need i) 1] order.this)))
+        :~  [(welp here.bowl pith.diff) [%tomb ~]]
+        ==
+      ::
+          %reorder
+        `task/!>(this(order order.diff))
+      ==
+    ==
+  --
+--
+```
+
+## The %gift poke
+In the `+poke` arm we declare this shrub takes a `%gift` as well as a `%task-diff`, but we don’t have to import `%gift`. This is a special poke like `%rely` that `/app/neo` gives us when another shrub’s state changes.
+
+Our shrub receives a `%gift` poke every time the state of one of its descendants changes: only kids in the `%y` case, all descendants in the `%z` case.
+
+```hoon
+++  state  [%pro %task]
+++  poke   (sy %task-diff %gift ~)
+```
+
+Then we can handle the poke like any other. In this case, when `/imp/task` receives word that one of its kids’ state has changed, it checks to see if all of its subtasks (kids) are completed, then updates its own state accordingly.
+
+```hoon
+?+    stud  !!
+    %gift
+  ::  check if all kid tasks are done
+  =/  dun  (check-kids bowl)
+  [~ [%task !>(this(done dun, kids-done dun))]]
+::
+```
+
+## Frontend
+Let’s look at the Tasks frontend in detail.
+
+### Converting tasks to HTMX
+```hoon
 /@  task     ::  [text=cord done=? kids-done=? order=(list pith)]
 :: import /lib/feather-icons
 /-  feather-icons
@@ -87,14 +250,12 @@
 
     //  tell the user why a clicked checkbox
     //  can't be marked as checked
-    document.querySelectorAll(".alert").forEach(function(element) {
-      element.addEventListener('click', function(e) {
-        if (element.hasAttribute("readonly")){
-        e.preventDefault();
-        alert("Subtasks are not completed");
-          }
-        })
-      })
+    document.getElementById("alert").addEventListener("click", function(e){
+      if (document.getElementById("alert").hasAttribute("readonly")){
+      e.preventDefault();
+      alert("Subtasks are not completed");
+      }
+    });
     '''
   ==  :: </script>
 ::
@@ -149,7 +310,7 @@
   ::  sends %edit poke on input change
   |=  [=pith =idea:neo]
   ::  extracts information from idea:neo to task
-  =/  =pail:neo  q.saga.idea
+  =/  =pail:neo  pail.idea
   =/  t=task  !<(task q.pail)
   ::  converts pith to tape
   =/  pt  (pith-tape (welp here.bowl pith))
@@ -176,7 +337,6 @@
           ;+
           ::  defines class attribute with class names
           =/  class  [%class "p2 br1 border done s3"]
-          =/  class-alert  [%class "p2 br1 border done s3 alert"]
           ::
           ::  checkbox logic:
           ::  - if task is toggled, checkbox will
@@ -211,10 +371,10 @@
                 ::  the rest of manx data
                 m(a.g [class a.g.m])
               ::
-              ::  assigns readonly and class
-              ::  attributes to checkbox; 'alert' class will trigger
+              ::  assigns readonly, id and class
+              ::  attributes to checkbox; id will trigger
               ::  alert script functionality
-              m(a.g [[%readonly ""] class-alert a.g.m])
+              m(a.g [[%readonly ""] [%id "alert"] class a.g.m])
             ::
             ::  assigning checked and class attributes
             ::  to the rest of manx data
@@ -362,3 +522,92 @@
     ==
   ==
 --
+```
+
+### Converting %task-diffs to HTMX
+```hoon
+/@  task-diff
+/-  feather-icons
+:-  [%task-diff %$ %htmx]
+|=  t=task-diff
+|=  =bowl:neo
+^-  manx
+;div.loading
+  =hx-get        "/neo/hawk{(en-tape:pith:neo here.bowl)}"
+  =hx-target     "closest .hawk"
+  =hx-indicator  "closest .loader"
+  =hx-swap       "innerHTML"
+  =hx-trigger    "load"
+  ;span.loading
+  ;+  loading.feather-icons
+  ==
+==
+```
+
+### Converting HTMX to %task-diffs
+```hoon
+/@  node  ::  manx
+::
+::  $task-diff
+::  $%  [%new =task prepend=?]
+::      [%edit text=cord done=?]
+::      [%oust =pith]
+::      [%reorder order=(list pith)]
+::  ==
+/@  task-diff
+::  import lib/manx-utils
+/-  manx-utils
+::
+::  declare that this is a conversion from a
+::  dynamic XML node to task-diff
+:-  [%node %$ %task-diff]
+|=  nod=node
+^-  task-diff
+=/  mu  ~(. manx-utils nod)
+::  extract head attribute from XML node
+=/  head  (@tas (got:mu %head))
+%-  task-diff
+?+  head
+  ~|  [%unknown-head head]
+  !!
+    %new
+  ::  extract text and prepend attributes from XML node
+  =/  text     (vol:mu "text")
+  =/  prepend  (vol:mu "prepend")
+  ?:  =(prepend 'prepend')
+  ::  construct the task-diff
+    [head [text | ~] &]
+  [head [text | ~] |]
+::
+    %edit
+  ::  extract text attribute from XML node
+  =/  text     (vol:mu "text")
+  ::  extract checked attribute from done element in XML node
+  =/  done-el  (need (named:mu "done"))
+  =/  done     (~(has by (malt a.g.done-el)) %checked)
+  ::  construct the task-diff
+  [head text done]
+::
+    %oust
+  ::  extract pith attribute from XML node
+  =/  path  (stab (got:mu %pith))
+  ::  construct the task-diff
+  [head (pave:neo path)]
+::
+    %reorder
+  =/  piths
+    ::
+    ::  extracting here attribute from each node in XML
+    ::  list and return as last element of here path
+    %+  turn  c.nod
+    |=  =manx
+    =/  mu-reorder  ~(. manx-utils manx)
+    =/  here        (get:mu-reorder %here)
+    ?~  here
+      ~&  >>>  [%bad-here manx]
+      !!
+    (pave:neo /[(rear (stab (crip (need here))))])
+  ::  construct the task-diff
+  [head piths]
+==
+```

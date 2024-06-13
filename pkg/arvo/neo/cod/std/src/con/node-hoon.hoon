@@ -4,4 +4,10 @@
 :-  [%node %$ %hoon]
 |=  nod=node
 ^-  hoon
-(~(vol manx-utils nod) "text")
+=/  text  (need (~(val manx-utils nod) "text"))
+?:  ?&
+      (gth (lent text) 0)
+      =((rear text) '\0a')
+    ==
+  (crip (snip (text)))
+(crip text)

@@ -1,168 +1,232 @@
 /@  accel-conf
 /@  htmx
+/-  feather-icons
 :-  [%accel-conf %$ %htmx]
 |=  conf=accel-conf
 |=  =bowl:neo
-|^  ^-  manx
+|^
+  ;div.accel-cell.wf.hf.fc
+    ;+  controls
+    ;div.tabs.fc.grow.scroll-y
+      ;div.tab.in.p2.fc.grow
+        =morph-retain  "class"
+        ;+  in
+      ==
+      ;div.tab.ref.p2.hidden.hf
+        =morph-retain  "class"
+        ;+  ref
+      ==
+      ;div.tab.poke.p2.hidden.hf
+        =morph-retain  "class"
+        ;+  poke
+      ==
+    ==
+    ;+  script
+  ==
 ::
-;div.fc.trans-root.grow
+++  out-path  (snoc (snip here.bowl) %out)
+++  print-iota
+  |=  =iota
+  ?@(iota (trip iota) (scow iota))
+++  controls
+  ;div.p-1.fr.g2.ac.je
+    ;button.p-1.br1.bd1.b1.hover.toggled
+      =onclick  "accelSwitchTab(this, 'in');"
+      =morph-retain  "class"
+      ; in
+    ==
+    ;button.p-1.br1.bd1.b1.hover
+      =onclick  "accelSwitchTab(this, 'ref');"
+      =morph-retain  "class"
+      ; ref
+    ==
+    ;button.p-1.br1.bd1.b1.hover
+      =onclick  "accelSwitchTab(this, 'poke');"
+      =morph-retain  "class"
+      ; poke
+    ==
+  ==
+++  in
   ;form.fc.grow
     =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=hoon"
-    =hx-trigger  "input changed delay:0.4s from:[name='text'], input changed delay:0.4s from:[name='a']"
+    =hx-trigger  "input changed delay:0.4s from:find textarea"
+    =hx-on-htmx-after-request  "$(this).closest('.top').find('.refresher').emit('accel-refresh');"
     =hx-swap  "none"
-    =hx-target  "#code-spinner .loading"
-    =hx-target-400  "#error-code-{id}"
-    =hx-indicator  "#code-spinner"
-    =row  (scow %ud +:x)
-    =col  (scow %ud +:y)
-    ;div.fc.border.grow.basis-half.wf
-      ;+  code-input
-      ;+  (spinner "code")
+    ;textarea
+      =class  "p2 bd1 br1 scroll-x pre mono wf grow"
+      =name  "text"
+      =placeholder  "code"
+      =spellcheck  "false"
+      =autocomplete  "off"
+      =value  (trip hoon.conf)
+      =oninput  "this.setAttribute('value', this.value);"
+      ; {(trip hoon.conf)}
     ==
   ==
-  ;div.fc.border
-    ;+  conf-header
-    ;div.fr
-      ;div.fc.p2
-        ;form.fr.js.hf
-          =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=add-poke"
-          =hx-swap  "none"
-          =hx-indicator  "#code-spinner"
-          =hx-target  "#code-spinner .loading"
-          ;input
-            =type  "text"
-            =placeholder  "/{(scow %p our.bowl)}/shrub/to/poke"
-            =name         "pith"
-            =autocomplete  "off"
-            =oninput      "this.setAttribute('value', this.value);"
-            ;
-          ==
-          ;input
-            =type  "text"
-            =placeholder  "%some-type"
-            =name         "stud"
-            =autocomplete  "off"
-            =oninput      "this.setAttribute('value', this.value);"
-            ;
-          ==
-          ;button
-            =type  "submit"
-          ; Route poke
-          ==
-        ==
-      ==
-      ;div.fc.p2
-        ::
-        ;+  deps
-        ;form.fr.js.hf
-          =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=add-dep"
-          =hx-swap  "none"
-          =hx-target  "#conf-spinner .loading"
-          =hx-target-400  "#error-add-{id}"
-          =hx-indicator  "#conf-spinner"
-          =row  (scow %ud +:x)
-          =col  (scow %ud +:y)
-          ;div.fc.grow.basis-half.wf
-            ;div.fr
-              ;input
-                =type  "text"
-                =placeholder  "name"
-                =autocomplete  "off"
-                =oninput  "this.setAttribute('value', this.value);"
-                =name  "name"
-                ;
-              ==
-              ;input
-                =type  "text"
-                =placeholder  "/{(scow %p our.bowl)}/demo/cell/5"
-                =autocomplete  "off"
-                =oninput  "this.setAttribute('value', this.value);"
-                =name  "pith"
-                ;
-              ==
-            ==
-            ;button
-              =type  "submit"
-              ;  Add dep
-            ==
-            ;+  (spinner "conf")
-          ==
-        ==
-      ==
-    ==
+++  poke
+  ;div
+    ;+  add-poke
+    ;+  pokes
   ==
-==
-++  id
-  ^-  tape
-  %-  zing
-  %+  turn  (pout (tail here.bowl))
-  |=  smeg=@ta
-  %+  weld  "--"
-  (trip smeg)
-  ::
-++  x  (rear (snip (snip here.bowl)))
-++  y  (rear (snip here.bowl))
-++  spinner
-  |=  =tape
-  ;div.b1.loader.p1.s-2.f2
-    =id  (welp tape "-spinner")
-    ;span.loaded: saved
-    ;span.loading: ---
+++  ref
+  ;div
+    ;+  add-dep
+    ;+  deps
   ==
-++  conf-header
-  =/  pit=tape  (en-tape:pith:neo (snoc (snip here.bowl) %out))
-  ;div.b1.border.fr.jb
-    ;span.p1.mono.s-1: {pit}
-    ;button.br1.border.b1.hover
-      =style  "padding: 4px 8px;"
-      =type  "button"
-      =pith  pit
-      =onclick  "navigator.clipboard.writeText(this.getAttribute('pith'));"
-      ; copy path
-    ==
-  ==
-++  code-input
-  ;textarea#input.wf.p2.pre.mono.grow
-    =name  "text"
-    =placeholder  "code"
-    =spellcheck  "false"
-    =value  (trip hoon.conf)
-    =oninput  "this.setAttribute('value', this.value);"
-    ; {(trip hoon.conf)}
-  ==
+++  x  (rear `pith`(snip (snip here.bowl)))
+++  y  (rear `pith`(snip here.bowl))
 ++  deps
   ^-  manx
   ?:  =(~ crew.conf)
-    ;div.fr: No dependencies
-  ;div.fc
-    ;div.s1.p1: Dependencies
+    ;div.fr.p2.f3: no deps
+  ;div.fc.g2.p2.scroll-y
     ;*
     %+  turn  ~(tap by crew.conf)
     |=  [=term =pith:neo]
     =/  tap  (trip term)
-    ;label.fr.p1
-      ;div.border.wf
-        =name  "name"
+    ;div.fr.g3.ac
+      =id  "conf-dep-{tap}"
+      ;button.bd1.br1.p-1.b1.hover.loader
+        =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=del-dep"
+        =hx-swap  "outerHTML"
+        =hx-target  "find .loading"
+        =tap  tap
+        ;span.loaded: delete
+        ;span.loading
+          ;+  loading.feather-icons
+        ==
+      ==
+      ;div.f3
         ; {tap}
       ==
-      ;label.border.wf: {(en-tape:pith:neo pith)}
-      ;button.border
-        =hx-post  "/neo/sky{(en-tape:pith:neo here.bowl)}?stud=del-dep"
-        ; Delete
-        ;label.hidden
-          =name  "name"
-          =value  tap
-          ;
-        ==
+      ;div.mono: {(en-tape:pith:neo pith)}
+    ==
+  ==
+++  add-dep
+  ;form.frw.js.g2
+    =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=add-dep"
+    =hx-swap  "outerHTML"
+    =hx-target  "find .loading"
+    =hx-on-htmx-after-request  "$(this).find('input').attr('value', '');this.reset();"
+    =row  (scow %ud +:x)
+    =col  (scow %ud +:y)
+    ;input.p-1.br1.bd1.fr.wfc
+      =style  "min-width: 0; flex: 1;"
+      =type  "text"
+      =placeholder  "name"
+      =autocomplete  "off"
+      =oninput  "this.setAttribute('value', this.value);"
+      =morph-no-swap  ""
+      =name  "name"
+      =required  ""
+      ;
+    ==
+    ;input.p-1.br1.bd1.fr.grow.wfc
+      =style  "min-width: 0; flex: 1;"
+      =type  "text"
+      =placeholder  "/{(scow %p our.bowl)}/demo/cell/5"
+      =autocomplete  "off"
+      =oninput  "this.setAttribute('value', this.value);"
+      =required  ""
+      =morph-no-swap  ""
+      =name  "pith"
+      ;
+    ==
+    ;button.br1.bd1.b1.hover.p-1.loader
+      =type  "submit"
+      ;span.loaded: add dep
+      ;span.loading
+        ;+  loading.feather-icons
       ==
     ==
   ==
-++  error
-  |=  =tang
-  ;div.pre.mono.p2
+++  pokes
+  ^-  manx
+  ?:  =(0 ~(wyt by poke.conf))
+    ;div.fr.p2.f3: no pokes
+  ;div.fc.g2.p2.scroll-y
     ;*
-    %+  turn  (scag 25 tang)
-    |=  =tank
-    ;span: {(of-wall:format (~(win re tank) 0 80))}
+    %+  turn  ~(tap by poke.conf)
+    |=  [=pith:neo =stud:neo]
+    =/  pit  (en-tape:pith:neo pith)
+    =/  tap  (en-tape:pith:neo (snip (snip (snip here.bowl))))
+    ;div.frw.g2.ac
+      ;button.bd1.br1.p-1.b1.hover.loader
+        =hx-post  "/neo/hawk{tap}?stud=send-poke"
+        =hx-swap  "none"
+        =pith  pit
+        =x  (scow %ud +:x)
+        =y  (scow %ud +:y)
+        ;span.loaded: send
+        ;span.loading
+          ;+  loading.feather-icons
+        ==
+      ==
+      ;button.bd1.br1.p-1.b1.hover.loader
+        =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=del-poke"
+        =hx-swap  "outerHTML"
+        =hx-target  "find .loading"
+        =pith  pit
+        ;span.loaded: delete
+        ;span.loading
+          ;+  loading.feather-icons
+        ==
+      ==
+      ;div.f3
+        ; {<stud>}
+      ==
+      ;div.mono: {pit}
+    ==
+  ==
+++  add-poke
+  ;form.fr.js.hf.g2
+    =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=add-poke"
+    =hx-swap  "outerHTML"
+    =hx-target  "find .loading"
+    =hx-on-htmx-after-request  "$(this).find('input').attr('value', '');this.reset();"
+    =row  (scow %ud +:x)
+    =col  (scow %ud +:y)
+    ;input.p-1.br1.bd1
+      =style  "min-width: 0; flex: 1;"
+      =type  "text"
+      =placeholder  "%stud"
+      =autocomplete  "off"
+      =oninput  "this.setAttribute('value', this.value);"
+      =morph-no-swap  ""
+      =name  "stud"
+      =required  ""
+      ;
+    ==
+    ;input.p-1.br1.bd1.grow
+      =style  "min-width: 0; flex: 1;"
+      =type  "text"
+      =placeholder  "/{(scow %p our.bowl)}/poke/target"
+      =autocomplete  "off"
+      =oninput  "this.setAttribute('value', this.value);"
+      =required  ""
+      =morph-no-swap  ""
+      =name  "pith"
+      ;
+    ==
+    ;button.br1.bd1.b1.hover.p-1.loader
+      =type  "submit"
+      ;span.loaded: add poke
+      ;span.loading
+        ;+  loading.feather-icons
+      ==
+    ==
+  ==
+++  script
+  ;script
+    ;+  ;/  %-  trip
+    '''
+    function accelSwitchTab(el, name) {
+      $(el).siblings().removeClass('toggled');
+      $(el).addClass('toggled');
+      let tabs = $(el).closest('.accel-cell').find('.tab');
+      tabs.addClass('hidden');
+      tabs.filter('.'+name).removeClass('hidden');
+    }
+    '''
   ==
 --

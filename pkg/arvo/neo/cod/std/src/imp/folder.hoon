@@ -15,7 +15,15 @@
 |%
 ++  state  pro/%folder
 ++  poke  (sy %folder %folder-diff ~)
-++  kids  *kids:neo
+++  kids
+  :-  ~
+  :-  %y
+  ^-  (map pish:neo lash:neo)
+  %-  malt
+  :~
+    :-  [|/%ta |]
+    [pro/%any ~]
+  ==
 ++  deps  *deps:neo
 ++  form
   ^-  form:neo

@@ -5,7 +5,6 @@
 |=  nod=node
 ^-  del-dep
 =/  mu  ~(. manx-utils nod)
-=/  name=term  (vol:mu "name")
+=/  name=term  (got:mu %tap)
 ?>  ((sane %tas) name)
 name
-

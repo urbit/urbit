@@ -55,22 +55,29 @@
     =hx-indicator  "#indicator-{id}"
     ;*
     =/  apps
-      %+  welp  apps.home
+      %+  welp
+        apps.home
+      %-  skip
+      :_  |=  =pith
+          (gth (lent pith) 1)
       %~  tap  in
-      (~(dif in ~(key by ~(tar of:neo kids.bowl))) `(set pith)`(silt apps.home))
+      %-  %~  dif  in
+          %~  key  by
+          %~  tar  of:neo
+          kids.bowl
+      `(set pith)`(silt apps.home)
     %+  murn  apps
     |=  =pith
     ^-  (unit manx)
     ?~  pith  ~
     =/  =path  (pout (welp here.bowl pith))
-    ?:  (gth (lent path) 3)  ~  :: /our/home/whatever
     :-  ~
     ;div.relative.br2
       =pith  (en-tape:pith:neo pith)
       ;a.b1.br2.block.fc.as.js.hover.p3.s1.border-2.loader
         =style  "width: 160px; height: 160px;"
         =hx-target  "closest .hawk"
-        =hx-swap  "innerHTML"
+        =hx-swap  "outerHTML"
         =hx-indicator  "this"
         =href  (trip (spat ['neo' 'hawk' path]))
         ;span.loaded: {(trip (snag 0 (pout:neo pith)))}
