@@ -20,7 +20,6 @@
       """
     ;+  table
     ;+  dashboards
-    ;+  refresher
     ;+  script
   ==
 ++  resizer
@@ -127,8 +126,9 @@
   ?:  =(0 n)  ;div;
   ;div.fc.jc.ac.b0.p2.f3.s-2: {<n>}
 ++  dashboards
-  ;div.b0.fc
+  ;div.b0.fc.relative
     =style  "border-top: 1px solid var(--f2); max-height: 200px;"
+    ;+  refresher
     ;*
     %+  turn  (gulf 0 (dec (mul rows cols)))
     |=  i=@
@@ -146,7 +146,7 @@
 ++  dashboard
   |=  [x=@ y=@]
   ;div.grow.fr.af.js.hidden
-    =style  "max-height: 200px;"
+    =style  "max-height: 200px; max-width: 100%;"
     =cell  "{<x>}-{<y>}"
     =morph-retain  "class"
     ;+  (out x y)
@@ -159,7 +159,7 @@
   =.  kids.kid  [~ ~]
   =.  here.kid  :(welp here.bowl pax /in)
   =.  deps.kid  ~
-  ;div.basis-half.bd1
+  ;div.basis-half.shrink-0.bd1
     =style  "min-width: 350px;"
     ;+
     ?~  res=(~(get of:neo kids.bowl) (snoc pax %in))
@@ -173,8 +173,8 @@
   =.  kids.kid  [~ ~]
   =.  here.kid  (welp here.bowl pax)
   =.  deps.kid  ~
-  ;div.basis-half.bd1.fc.g2
-    =style  "min-width: 350px;"
+  ;div.basis-half.shrink-0.bd1.fc.g2
+    =style  "min-width: 350px; max-width:50%;"
     ;div.b0.fr.g2.ac.je.p-1.bd1
       ;div.s-1: {(en-tape:pith:neo (snip pax))}
       ;button.p-1.b1.hover.br1.bd1.s-2
@@ -182,7 +182,7 @@
         ; copy full path
       ==
     ==
-    ;div.p2.pre.mono.scroll-y.scroll-x
+    ;div.p2.pre.grow.mono.scroll-y.scroll-x
       ;+
       ?~  res=(~(get of:neo kids.bowl) pax)
         ;div: none out - {<[x y]>}
@@ -190,13 +190,19 @@
     ==
   ==
 ++  refresher
-  ;div.hidden
-    =hx-get  "{(en-tape:pith:neo :(weld /neo/hawk here.bowl))}?no-save"
-    =hx-trigger  "every 3s"
-    =hx-target  "closest .top"
-    =hx-select  ".top"
-    =hx-swap  "morph"
-    ;
+  ;div.absolute
+    =style  "top: 1em; left: 1em;"
+    ;div.loader.refresher
+      =hx-get  "{(en-tape:pith:neo :(weld /neo/hawk here.bowl))}?no-save"
+      =hx-trigger  "every 7s, accel-refresh"
+      =hx-target  "closest .top"
+      =hx-select  ".top"
+      =hx-swap  "morph"
+      ;span.loaded;
+      ;span.loading
+        ;+  loading.feather-icons
+      ==
+    ==
   ==
 ++  script
   ;script

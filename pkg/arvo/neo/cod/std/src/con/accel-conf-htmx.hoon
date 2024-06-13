@@ -1,5 +1,6 @@
 /@  accel-conf
 /@  htmx
+/-  feather-icons
 :-  [%accel-conf %$ %htmx]
 |=  conf=accel-conf
 |=  =bowl:neo
@@ -51,6 +52,7 @@
   ;form.fc.grow
     =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=hoon"
     =hx-trigger  "input changed delay:0.4s from:find textarea"
+    =hx-on-htmx-after-request  "$(this).closest('.top').find('.refresher').emit('accel-refresh');"
     =hx-swap  "none"
     ;textarea
       =class  "p2 bd1 br1 scroll-x pre mono wf grow"
@@ -69,166 +71,70 @@
   ==
 ++  ref
   ;div
-    =morph-no-swap  ""
     ;+  add-dep
     ;+  deps
   ==
-++  old
-;div.fc.trans-root.grow
-  ;form.fc.grow
-    =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=hoon"
-    =hx-trigger  "input changed delay:0.4s from:[name='text'], input changed delay:0.4s from:[name='a']"
-    =hx-swap  "none"
-    =hx-target  "#code-spinner .loading"
-    =hx-target-400  "#error-code-{id}"
-    =hx-indicator  "#code-spinner"
-    =row  (scow %ud +:x)
-    =col  (scow %ud +:y)
-    ;div.fc.border.grow.basis-half.wf
-      ;+  code-input
-      ;+  (spinner "code")
-    ==
-  ==
-  ;div.fc.border
-    ;+  conf-header
-    ;div.fr
-      ;div.fc.p2
-        ;form.fr.js.hf
-          =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=add-poke"
-          =hx-swap  "none"
-          =hx-indicator  "#code-spinner"
-          =hx-target  "#code-spinner .loading"
-          ;input
-            =type  "text"
-            =placeholder  "/{(scow %p our.bowl)}/shrub/to/poke"
-            =name         "pith"
-            =autocomplete  "off"
-            =oninput      "this.setAttribute('value', this.value);"
-            ;
-          ==
-          ;input
-            =type  "text"
-            =placeholder  "%some-type"
-            =name         "stud"
-            =autocomplete  "off"
-            =oninput      "this.setAttribute('value', this.value);"
-            ;
-          ==
-          ;button
-            =type  "submit"
-          ; Route poke
-          ==
-        ==
-      ==
-      ;div.fc.p2
-        ::
-        ;+  deps
-      ==
-    ==
-  ==
-==
-++  id
-  ^-  tape
-  %-  zing
-  %+  turn  (pout (tail here.bowl))
-  |=  smeg=@ta
-  %+  weld  "--"
-  (trip smeg)
-  ::
 ++  x  (rear `pith`(snip (snip here.bowl)))
 ++  y  (rear `pith`(snip here.bowl))
-++  spinner
-  |=  =tape
-  ;div.b1.loader.p1.s-2.f2
-    =id  (welp tape "-spinner")
-    ;span.loaded: saved
-    ;span.loading: ---
-  ==
-++  conf-header
-  =/  pit=tape  (en-tape:pith:neo (snoc (snip here.bowl) %out))
-  ;div.b1.border.fr.jb
-    ;span.p1.mono.s-1: {pit}
-    ;button.br1.border.b1.hover
-      =style  "padding: 4px 8px;"
-      =type  "button"
-      =pith  pit
-      =onclick  "navigator.clipboard.writeText(this.getAttribute('pith'));"
-      ; copy path
-    ==
-  ==
-++  code-input
-  ;textarea#input.wf.p2.pre.mono.grow
-    =name  "text"
-    =placeholder  "code"
-    =spellcheck  "false"
-    =value  (trip hoon.conf)
-    =oninput  "this.setAttribute('value', this.value);"
-    ; {(trip hoon.conf)}
-  ==
 ++  deps
   ^-  manx
   ?:  =(~ crew.conf)
-    ;div.fr: no deps
+    ;div.fr.p2.f3: no deps
   ;div.fc.g2.p2
     ;*
     %+  turn  ~(tap by crew.conf)
     |=  [=term =pith:neo]
     =/  tap  (trip term)
     ;div.fr.g3.ac
-      ;button.bd1.br1.p-1.b1.hover
-        =hx-post  "/neo/sky{(en-tape:pith:neo here.bowl)}?stud=del-dep"
-        ; delete
-        ;label.hidden
-          =name  "name"
-          =value  tap
-          ;
+      ;button.bd1.br1.p-1.b1.hover.loader
+        =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=del-dep"
+        =hx-swap  "outerHTML"
+        =hx-target  "find .loading"
+        =tap  tap
+        ;span.loaded: delete
+        ;span.loading
+          ;+  loading.feather-icons
         ==
       ==
       ;div.f3
-        =name  "name"
         ; {tap}
       ==
       ;div.mono: {(en-tape:pith:neo pith)}
     ==
   ==
 ++  add-dep
-  ;form.fr.js.hf
+  ;form.fr.js.hf.g2
     =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=add-dep"
-    =hx-swap  "none"
+    =hx-swap  "outerHTML"
+    =hx-target  "find .loading"
+    =morph-no-swap  ""
     =row  (scow %ud +:x)
     =col  (scow %ud +:y)
-    ;div.fr.g1
-      ;input.p-1.br1.bd1
-        =type  "text"
-        =placeholder  "name"
-        =autocomplete  "off"
-        =oninput  "this.setAttribute('value', this.value);"
-        =name  "name"
-        =required  ""
-        ;
-      ==
-      ;input.p-1.br1.bd1.grow
-        =type  "text"
-        =placeholder  "/{(scow %p our.bowl)}/demo/cell/5"
-        =autocomplete  "off"
-        =oninput  "this.setAttribute('value', this.value);"
-        =required  ""
-        =name  "pith"
-        ;
-      ==
+    ;input.p-1.br1.bd1
+      =type  "text"
+      =placeholder  "name"
+      =autocomplete  "off"
+      =oninput  "this.setAttribute('value', this.value);"
+      =name  "name"
+      =required  ""
+      ;
     ==
-    ;button.br1.bd1.b1.hover.p-1
+    ;input.p-1.br1.bd1.grow
+      =type  "text"
+      =placeholder  "/{(scow %p our.bowl)}/demo/cell/5"
+      =autocomplete  "off"
+      =oninput  "this.setAttribute('value', this.value);"
+      =required  ""
+      =name  "pith"
+      ;
+    ==
+    ;button.br1.bd1.b1.hover.p-1.loader
       =type  "submit"
-      ;  add dep
+      ;span.loaded: add dep
+      ;span.loading
+        ;+  loading.feather-icons
+      ==
     ==
-  ==
-++  error
-  |=  =tang
-  ;div.pre.mono.p2
-    ;*
-    %+  turn  (scag 25 tang)
-    |=  =tank
-    ;span: {(of-wall:format (~(win re tank) 0 80))}
   ==
 ++  script
   ;script
