@@ -2533,7 +2533,7 @@
               |=  [all=? spar]
               ^+  event-core
               ?~  ship-state=(~(get by peers.ames-state) ship)
-                ~|(%cancel-scry-missing-peer^ship^path !!)
+                ~&(%cancel-scry-missing-peer^ship^path event-core)
               ?.  ?=([~ %known *] ship-state)
                 :: XX delete from alien agenda?
                 %.  event-core
@@ -4990,7 +4990,8 @@
             ?~  res  ~
             =/  =hunk  [(slav %ud lop.tyl) (slav %ud len.tyl)]
             ::
-            =/  hu-co  (etch-hunk our [life crypto-core]:ames-state)
+            =/  hu-co
+              (etch-hunk our life.ames-state (nol:nu:crub:crypto priv.ames-state))
             ?-  res
               [~ ~]    ``noun+!>((etch-open:hu-co pax.tyl hunk ~))
               [~ ~ *]  ``noun+!>((etch-open:hu-co pax.tyl hunk [p q.q]:u.u.res))
