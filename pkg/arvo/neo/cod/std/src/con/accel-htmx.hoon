@@ -16,7 +16,7 @@
       overflow: hidden;
       grid-template-areas:
         "table"
-        "dashboard";
+        "dashboards";
       """
     ;+  table
     ;+  dashboards
@@ -55,7 +55,7 @@
 ++  table
   ;div.scroll-x.scroll-y
     =style  "grid-area: table"
-    ;+  resizer
+    ::;+  resizer
     ;+  grid
   ==
 ++  rows  10
@@ -126,8 +126,8 @@
   ?:  =(0 n)  ;div;
   ;div.fc.jc.ac.b0.p2.f3.s-2: {<n>}
 ++  dashboards
-  ;div.b0.fc.relative
-    =style  "border-top: 1px solid var(--f2); max-height: 200px;"
+  ;div.b0.fc.relative.scroll-x.scroll-y
+    =style  "grid-area: dashboards; border-top: 1px solid var(--f2); max-height: 200px;"
     ;+  refresher
     ;*
     %+  turn  (gulf 0 (dec (mul rows cols)))
@@ -145,12 +145,12 @@
   ==
 ++  dashboard
   |=  [x=@ y=@]
-  ;div.grow.fr.af.js.hidden
-    =style  "max-height: 200px; max-width: 100%;"
+  ;div.grow.frw.af.js.hidden
+    =style  ""
     =cell  "{<x>}-{<y>}"
     =morph-retain  "class"
-    ;+  (out x y)
     ;+  (in x y)
+    ;+  (out x y)
   ==
 ++  in
   |=  [x=@ y=@]
@@ -159,8 +159,8 @@
   =.  kids.kid  [~ ~]
   =.  here.kid  :(welp here.bowl pax /in)
   =.  deps.kid  ~
-  ;div.basis-half.shrink-0.bd1
-    =style  "min-width: 350px;"
+  ;div.basis-half.shrink-0.grow.bd1
+    =style  "min-width: 350px; min-height: 150px;"
     ;+
     ?~  res=(~(get of:neo kids.bowl) (snoc pax %in))
       ;div: none - in {<[x y]>}
@@ -173,8 +173,8 @@
   =.  kids.kid  [~ ~]
   =.  here.kid  (welp here.bowl pax)
   =.  deps.kid  ~
-  ;div.basis-half.shrink-0.bd1.fc.g2
-    =style  "min-width: 350px; max-width:50%;"
+  ;div.basis-half.shrink-0.bd1.fc.g2.grow
+    =style  "min-width: 350px; min-height: 150px;"
     ;div.b0.fr.g2.ac.je.p-1.bd1
       ;div.s-1: {(en-tape:pith:neo (snip pax))}
       ;button.p-1.b1.hover.br1.bd1.s-2

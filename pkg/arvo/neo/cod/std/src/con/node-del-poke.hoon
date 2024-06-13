@@ -5,5 +5,4 @@
 |=  nod=node
 ^-  del-poke
 =/  mu  ~(. manx-utils nod)
-(pave:neo (rash (vol:mu "pith") stap))
-
+(pave:neo (rash (got:mu %pith) stap))

@@ -1,6 +1,7 @@
 /@  accel
 /@  accel-diff
 /@  accel-conf
+/@  send-poke
 ::
 =>
 |%
@@ -22,7 +23,7 @@
   |=  [=bowl:neo row=@ud col=@ud conf=accel-conf =kind]
   ^-  (list card:neo)
   =/  =pith:neo  (welp here.bowl #/[ud/col]/[ud/row])
-  =/  =stud:neo  
+  =/  =stud:neo
     `@tas`(cat 3 'accel-' (scot %t (spat (pout pith))))
   =;  caz=(list card:neo)
     ?-  kind
@@ -39,7 +40,7 @@
 ^-  kook:neo
 |%
 ++  state  pro/%accel
-++  poke  (sy %accel-diff %gift ~)
+++  poke  (sy %accel-diff %gift %send-poke ~)
 ++  kids
   :-  ~
   :-  %y
@@ -71,6 +72,7 @@
       ?+  stud   !!
         %accel-diff  (on-diff !<(accel-diff vax))
         %gift        (on-gift !<(gift:neo vax))
+        %send-poke   (on-route-poke !<(send-poke vax))
       ==
     [cards accel/!>(state)]
     ++  on-diff
@@ -108,6 +110,19 @@
       ?.  ready.conf
         ~
       (make-cell bowl row.road col.road conf %out)
+    ++  on-route-poke
+      |=  s=send-poke
+      ^-  (quip card:neo _state)
+      =/  in  (~(got of:neo kids.bowl) #/[ud/x.s]/[ud/y.s]/in)
+      =+  !<(conf=accel-conf q.pail.in)
+      =/  out  (~(got of:neo kids.bowl) #/[ud/x.s]/[ud/y.s]/out)
+      ?>  =(%vase p.pail.out)
+      ::
+      =/  pit  pith.s
+      =/  sud  (~(got by poke.conf) pit)
+      =/  =card:neo  [pit %poke sud q.pail.out]
+      ~&  card
+      [~[card] state]
     --
   --
 --

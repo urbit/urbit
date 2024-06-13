@@ -1,7 +1,7 @@
-/@  del-dep
+/@  del-poke
 /-  feather-icons
-:-  [%del-dep %$ %htmx]
-|=  dep=del-dep
+:-  [%del-poke %$ %htmx]
+|=  del=del-poke
 |=  =bowl:neo
 ;div.loading
   =hx-get  "/neo/hawk{(en-tape:pith:neo here.bowl)}?no-save"
