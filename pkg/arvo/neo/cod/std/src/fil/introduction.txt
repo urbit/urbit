@@ -29,6 +29,16 @@ Sky is a UI for your local namespace. Three of the four examples in this guide a
 
 Every tile there represents a shrub located immediately beneath `/[%p our]/home` in the namespace. In the Counter tutorial you'll learn how to make your own shrubs at this location.
 
+## Troubleshooting
+
+If in doubt, `|nuke %neo` and `|start %neo`.
+
+You'll definitely have to do this if...
+- You make a change to a `/pro` file.
+- You make a change to the `+init` behavior of a shrub that's in %neo's boot sequence (e.g. `/imp/home`).
+
+If you keep restarting %neo, you'll eventually run out of loom. At this point you should delete your ship and boot up another one.
+
 ## Upcoming Changes
 
 Everything in these guides is accurate at time of writing, but Shrubbery is a work in progress. Many implementation details are subject to change.
