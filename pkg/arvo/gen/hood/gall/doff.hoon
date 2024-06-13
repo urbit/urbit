@@ -1,3 +1,5 @@
+::  Kill old-style subscription.
+::
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
         ~

@@ -1,3 +1,5 @@
+::  Send a %keen remote scry request task
+::
 :-  %say
 |=  [^ [=ship pax=$@(~ [path ~])] ~]
 =/  =path

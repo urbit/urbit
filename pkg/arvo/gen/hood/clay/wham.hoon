@@ -1,3 +1,5 @@
+::  Cancel all outstanding remote scry requests
+::
 :-  %say
 |=  [^ [=ship pax=$@(~ [=path ~])] ~]
 =/  =path

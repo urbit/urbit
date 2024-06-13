@@ -1,4 +1,4 @@
-::  |new-desk: creates a minimal desk
+::  Create a minimal desk
 ::
 /+  *generators
 ::

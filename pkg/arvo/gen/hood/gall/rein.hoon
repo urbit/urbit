@@ -1,3 +1,5 @@
+::  Adjust the state of agents on a desk.
+::
 /-  hood
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
