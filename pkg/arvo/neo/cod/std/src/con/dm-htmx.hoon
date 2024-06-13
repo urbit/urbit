@@ -5,16 +5,21 @@
 |=  =ship
 |=  =bowl:neo
 ^-  manx
-;div.p2
-  =label  "Chat"
+;div.p2.wf.hf
+  =hx-on-message-sent  "$(this).find('.refresher').emit('refresh');"
+  ;div.mw-page.ma.wf.hf
+    =style
+      """
+      display: grid;
+      grid-template-rows: 1fr auto;
+      grid-template-columns: auto;
+      grid-template-areas:
+        "messages"
+        "sender"
+      """
     ;+  script:messages
     ;+  style:messages
-    ;div.ma.fe.g2.wf
-    =style  "max-width: 650px;"
-      ;div.fc.g2.wf
-        =id  "children"
-        ;+  (render-messages:messages bowl)
-      ==
-      ;+  (render-sender:messages [bowl /pub])
+    ;+  (render-messages:messages bowl)
+    ;+  (render-sender:messages [bowl /pub])
   ==
 ==

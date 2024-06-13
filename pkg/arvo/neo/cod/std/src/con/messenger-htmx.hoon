@@ -2,10 +2,10 @@
 /@  ship
 /-  feather-icons
 /-  messages
-:-  [%sig %$ %htmx]
+:-  [%messenger %$ %htmx]
 |=  ~
 |=  =bowl:neo
-|^  
+|^
     view
 ::
 ++  view
@@ -17,18 +17,18 @@
 ==
 ::
 ++  pith-tape
-  |=  =pith 
+  |=  =pith
   ^-  tape
   (en-tape:pith:neo pith)
 ::
-++  style 
+++  style
 
   ^~
   %-  trip
     '''
     .view {
-        max-width: 650px; 
-        padding-bottom: 50vh; 
+        max-width: 650px;
+        padding-bottom: 50vh;
         padding-top: 30px;
     }
     input[type="text"]:hover {
@@ -89,15 +89,15 @@
   =/  kids
     %+  skid  ~(tap of:neo kids.bowl)
         |=  [=pith =idea:neo]
-        =(p.pail.idea %groupchat)
+        =(p.q.saga.idea %groupchat)
   ^-  manx
   ;div.fc.as.g1.w70
     ;div.fc.ac.g1.wf
     ;*  %+  turn  q.kids
         |=  [=pith =idea:neo]
-        ?~  pith  
+        ?~  pith
           ;span.hidden:  no dms
-        ?:  (lte 3 (lent pith))  
+        ?:  (lte 3 (lent pith))
           ;h1.hidden:  {<pith>}
         ~&  >  pith
         =/  ship
@@ -122,7 +122,7 @@
 ++  chat
   |=  [=pith =idea:neo]
   =/  org=@p  +:;;([%p @p] (snag 1 `(list iota)`pith))
-  =/  members=(list ship)  ~(tap in members:!<(groupchat q.pail.idea))
+  =/  members=(list ship)  ~(tap in members:!<(groupchat q.q.saga.idea))
   =/  chat  +:;;([%t @t] (rear pith))
   ~&  >  ['members' members]
   ^-  manx
@@ -142,7 +142,7 @@
     ;div.fc.hidden
       ;div.fc.g2
         ;div.fr.je.g2
-          ;+  ?.  =(our.bowl org)  
+          ;+  ?.  =(our.bowl org)
             ;span.hidden:  ~
           ;button.hover.br1.b0.bc1
             =onclick  (span-toggle "+" "x")
@@ -176,7 +176,7 @@
           ==
     ==
   ==
-++  add-member 
+++  add-member
   |=  chat=cord
   ;form.fr.gb.g1.hidden
   =hx-post  "/neo/hawk{(pith-tape here.bowl)}?stud=messenger-diff"

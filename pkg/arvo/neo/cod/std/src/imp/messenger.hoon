@@ -1,3 +1,4 @@
+/@  messenger
 /@  dm-diff
 /@  groupchat-diff
 /@  messenger-diff
@@ -16,7 +17,7 @@
 --
 ::
 |%
-++  state  pro/%sig
+++  state  pro/%messenger
 ++  poke  (sy %dm-diff %groupchat-diff %messenger-diff ~)
 ++  kids
   :+  ~  %y
@@ -33,7 +34,7 @@
   ++  init
     |=  old=(unit pail:neo)
     ^-  (quip card:neo pail:neo)
-    [~ sig/!>(~)]
+    [~ messenger/!>(~)]
   ::
   ++  poke
     |=  [=stud:neo vax=vase]
