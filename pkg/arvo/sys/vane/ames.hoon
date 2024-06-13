@@ -8550,6 +8550,49 @@
   --
 ::  +scry: dereference namespace
 ::
-++  scry  scry:mesa  ::  XX scry unification
+++  scry
+  ^-  roon
+  |=  [lyc=gang pov=path car=term bem=beam]
+  =*  sample  +<
+  ?:  ?&  =(our p.bem)
+          =(%$ q.bem)
+          =([%ud 1] r.bem)
+          =(%x car)
+      ==
+    =/  tyl=(pole knot)  s.bem
+    ?+    tyl  ~
+        ?([%fine %shut kef=@ enc=@ ~] [%chum her=@ lyf=@ cyf=@ ~])
+      (scry:ames sample)
+    ::
+        $?  [%hunk lop=@t len=@t pat=*]
+            [%mess ryf=@ res=*]
+            [%publ lyf=@ pat=*]
+            [%chum lyf=@ her=@ hyf=@ cyf=@ ~]
+            [%shut kid=@ cyf=@ ~]
+            [%flow bone=@ load=?(%plea %boon %ack-plea %ack-boon %nax) rcvr=@ mess=@ ~]
+            [%flow bone=@ %cork rcvr=@ ~]
+            [%comet %proof rcvr=@ life=@ ~]
+        ==
+      (scry:mesa sample)
+    ==
+  ::
+  ?.  ?&  =(our p.bem)
+          =([%da now] r.bem)
+          =(%$ q.bem)
+      ==
+    ~
+  ::
+  ?.  ?=(%x car)  ~
+  =/  tyl=(pole knot)  s.bem
+  ::  public endpoints
+  ::
+  ?:  ?=([%fine %hunk lop=@t len=@t pax=^] tyl)
+    (scry:ames sample)
+  ::  private endpoints
+  ::
+  ?.  =([~ ~] lyc)  ~
+  ?+  tyl   (scry:ames sample)
+    [%chums her=@ ~]  (scry:mesa sample)
+  ==
 ::
 --
