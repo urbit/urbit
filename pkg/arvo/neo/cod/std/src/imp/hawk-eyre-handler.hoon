@@ -7,7 +7,7 @@
 ^-  kook:neo
 |%
 ++  state  pro/%eyre-task
-++  poke   (sy %rely ~)
+++  poke   *(set stud:neo)
 ++  kids
   :+  ~  %y
   %-  ~(gas by *lads:neo)
@@ -20,7 +20,7 @@
       ^-  quay:neo
       :-  [[%or pro/%htmx any/~ ~] ~]
       ^-  (unit port:neo)
-      :+  ~  %y
+      :+  ~  %z
       %-  ~(gas by *lads:neo)
       :~  :-  &
           `lash:neo`[[%or pro/%htmx any/~ ~] ~]
