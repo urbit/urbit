@@ -14,7 +14,7 @@
 ^-  kook:neo
 |%
 ++  state  pro/%folder
-++  poke  (sy %folder %folder-diff ~)
+++  poke  (sy %folder-diff ~)
 ++  kids
   :-  ~
   :-  %y
@@ -44,7 +44,7 @@
       =/  this  !<(folder q.pail)
       ?-    -.poke
           %make
-        :_  folder/!>([name.poke this])
+        :_  folder/!>([name.poke this])  ::  add new item to head of of list
         :~  [(snoc here.bowl name.poke) %make stud.poke (~(get by default-pails) stud.poke) ~]
         ==
       ::
