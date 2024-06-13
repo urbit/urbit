@@ -8293,7 +8293,7 @@
         ::
         !!  ::  $(+<.old %adult, +>.old state.old)
       ?:  ?=(%0 -.old)
-        ::  ~&  priv.old
+         ~&  priv.old
         :: =.  peers.old  ~
         :: =.  chums.old
         ::   %-  ~(run by chums.old)
@@ -8311,7 +8311,7 @@
         ::              :: %_  ossuary
         ::             ::   next-bone  40
         ::   ==        :: ==
-        vane-gate  ::  (ames-state old)
+        vane-gate(ames-state old)
       ::
       ?>  ?=([@ %adult *] old)
       ?:  ?=(%5 -.old)   $(old 6+adult/(state-5-to-6 state.old))
