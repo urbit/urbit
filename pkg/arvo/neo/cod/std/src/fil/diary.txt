@@ -195,7 +195,7 @@ Diary’s state never changes. Its state is just its name, a `@t`. It stores all
 
 The location of this shrub, `here.bowl`, is just a list. So it’s easy to `+welp` paths like `/<@da>` or `/<@da>/comments` onto the end. In this context, just keep in mind that they need to be `iota`s like `[%da now.bowl]`.
 
-The `%make` card has two mysteries: it initializes diary entries with an empty `%txt` implementation and an empty map of dependencies. We’ll punt on dependencies until the next tutorial. If you look at `/imp/txt.hoon`, it’s just a `~`. This is an *elegant short-term workaround*  that allows us to shove `%txt`s into the namespace;  if the `/imp/<foo>` file is just a `~`, `/app/neo` will notice this and substitute in a shrub that takes the state of the type defined in `/pro/<foo>`. Like everything else in these tutorials this is subject to change!
+The `%make` card has two mysteries: it initializes diary entries with an empty `%txt` implementation and an empty map of dependencies. We’ll punt on dependencies until the next tutorial. If you look at `/imp/txt.hoon`, it’s just a `~`. This allows us to shove `%txt`s into the namespace;  if the `/imp/<foo>` file is just a `~`, `/app/neo` will notice this and substitute in a shrub that takes the state of the type defined in `/pro/<foo>`. Like everything else in these tutorials this is subject to change!
 
 ## Diary frontend
 
