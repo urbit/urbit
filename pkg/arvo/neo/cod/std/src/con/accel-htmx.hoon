@@ -58,8 +58,8 @@
     ::;+  resizer
     ;+  grid
   ==
-++  rows  10
-++  cols  10
+++  rows  5
+++  cols  5
 ++  grid
   ;div
     =style
