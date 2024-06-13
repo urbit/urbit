@@ -24,10 +24,10 @@
     ?~  old
       :_  :-  %groupchat
           !>([(sy our.bowl ~) ~ here.bowl])
-      :~  :-  (snoc here.bowl %pub) 
+      :~  :-  (snoc here.bowl %pub)
           [%make %message-pub ~ ~]
           ::
-          :-  (snoc here.bowl %sub) 
+          :-  (snoc here.bowl %sub)
           [%make %message-sub ~ (malt ~[[%pub (snoc here.bowl %pub)]])]
       ==
     ::  otherwise, I've been created as an invitee to
@@ -37,10 +37,10 @@
     ?+    -.poke  !!
         %invited
       :_  groupchat/!>([~ ~ host.poke])
-      :~  :-  (snoc here.bowl %sub) 
+      :~  :-  (snoc here.bowl %sub)
           [%make %message-sub ~ (malt ~[[%pub (snoc host.poke %pub)]])]
           ::
-          :-  host.poke 
+          :-  host.poke
           [%poke groupchat-diff/!>([%acked ~])]
       ==
     ==

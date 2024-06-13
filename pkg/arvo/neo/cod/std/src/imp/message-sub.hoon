@@ -34,7 +34,7 @@
     :_  state
     =+  !<([=term =leaf:neo] vax)
     ::  only get new kids
-    %+  murn 
+    %+  murn
       ~(tap by ~(tar of:neo q:(~(got by deps.bowl) %pub)))
     |=  [=pith:neo =idea:neo]
     ^-  (unit card:neo)
