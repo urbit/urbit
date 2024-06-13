@@ -27,14 +27,12 @@ The only folders you need to understand for these tutorials are `/pro`, `/imp`, 
 
 Sky is a UI for your local namespace. Three of the four examples in this guide are pre-loaded in there. The exception is Counter, which you'll build in your code editor and deploy in Sky yourself.
 
-You can access Sky at `<localhost:8080>/neo/sky`. Every tile there represents a shrub located immediately beneath `/[%p our]/home` in the namespace. In the Counter tutorial you'll learn how to make your own shrubs at this location.
+Every tile there represents a shrub located immediately beneath `/[%p our]/home` in the namespace. In the Counter tutorial you'll learn how to make your own shrubs at this location.
 
 ## Upcoming Changes
 
 Everything in these guides is accurate at time of writing, but Shrubbery is a work in progress. Many implementation details are subject to change.
 
-Of note:
-- The way Shrubbery handles user interfaces is the most undercooked part of the system that we spend significant time on in these guides. Accessing `bowl:neo` within the `/con` files is a hack and will be deprecated.  `/con` files may or may not exist in the final product.
-- `/imp/txt.hoon` and "stub" implementations like it are a hack.
+The way Shrubbery handles user interfaces is the most undercooked part of the system that we spend significant time on in these guides. Accessing `bowl:neo` within the `/con` files is how we get data into the UI, this is likely to change.
 
 This guide launched at the June 2024 Lake Summit, and has an expiration date of sometime in Q3.
