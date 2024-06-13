@@ -89,7 +89,17 @@
       =/  has-conversion  =(%htmx p.pail.root)
       =/  main
         ?:  has-conversion
-          (!<(htmx-type q.pail.root) bol)
+          =/  mul
+            %-  mule
+            |.
+            (!<(htmx-type q.pail.root) bol)
+          ?-  -.mul
+            %.y  p.mul
+            %.n
+              ;div.b0.p-page.wf.hf.fc.g2.as
+                ;+  (print-tang p.mul)
+              ==
+          ==
         ;div.fc.jc.ac.wf.hf
           ; no renderer for {<p.pail.root>}
         ==
@@ -129,17 +139,7 @@
                   ;+  loading.feather-icons
                 ==
               ==
-              ;div.prose
-                ;h1: crash!
-                ;pre
-                  ;code
-                    ;*
-                    %+  turn  (tang p.mul)
-                    |=  =tank
-                    ;/((of-wall:format (~(win re tank) 0 55)))
-                  ==
-                ==
-              ==
+              ;+  (print-tang (tang p.mul))
             ==
         ==
       ::
@@ -202,6 +202,19 @@
       [pith %poke eyre-sign/!>(done)]
       [here.bowl %cull ~]
       [here.bowl %tomb ~]
+  ==
+++  print-tang
+  |=  =tang
+  ;div.prose
+    ;h1: crash!
+    ;pre
+      ;code
+        ;*
+        %+  turn  tang
+        |=  =tank
+        ;/((of-wall:format (~(win re tank) 0 55)))
+      ==
+    ==
   ==
 ++  sky-move-tab
   |=  [=bowl:neo slot=@ud]
