@@ -1,6 +1,10 @@
 /@  home
 /*  feather-intro
 /*  diary
+/*  counter
+/*  tasks
+/*  messenger
+/*  introduction
 ^-  kook:neo
 |%
 ++  state  pro/%home
@@ -30,12 +34,16 @@
         [#/[p/our.bowl]/home/files %make %folder ~ ~]
         [#/[p/our.bowl]/home/planner %make %planner ~ ~]
         [#/[p/our.bowl]/home/messenger %make %messenger ~ ~]
-        ::
+      ::
         [#/[p/our.bowl]/home/docs %make %folder `folder/!>([%introduction %tutorials %guides ~]) ~]
-        ::
+        [#/[p/our.bowl]/home/docs/introduction %make %sail `sail/!>([introduction 'prose p-page mw-page ma' ~]) ~]
+      ::
         [#/[p/our.bowl]/home/docs/tutorials %make %folder `folder/!>([%counter %diary %messenger %tasks ~]) ~]
+        [#/[p/our.bowl]/home/docs/tutorials/counter %make %sail `sail/!>([counter 'prose p-page mw-page ma' ~]) ~]
         [#/[p/our.bowl]/home/docs/tutorials/diary %make %sail `sail/!>([diary 'prose p-page mw-page ma' ~]) ~]
-        ::
+        [#/[p/our.bowl]/home/docs/tutorials/messenger %make %sail `sail/!>([messenger 'prose p-page mw-page ma' ~]) ~]
+        [#/[p/our.bowl]/home/docs/tutorials/tasks %make %sail `sail/!>([tasks 'prose p-page mw-page ma' ~]) ~]
+      ::
         [#/[p/our.bowl]/home/docs/guides %make %folder `folder/!>([%feather ~]) ~]
         [#/[p/our.bowl]/home/docs/guides/feather %make %sail `sail/!>([feather-intro 'prose p-page mw-page ma' ~]) ~]
     ==

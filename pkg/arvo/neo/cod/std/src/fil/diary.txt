@@ -1,13 +1,14 @@
-# Tutorial 2: Diary
+# Chapter 2: Diary
 
 Now that you understand the structure of a shrub, the natural next step is to look at a shrub with kids.
 
-Unlike the Counter example, there is no equivalent way to implement `/imp/diary` in Gall. We’re now going to work directly with Urbit’s programmable, global, referentially transparent namespace — which is a lot of words to say [`+axal`](https://docs.urbit.org/language/hoon/reference/arvo#axal) — as a tool to read and write data.
+Unlike the Counter example, there is no equivalent way to implement `/imp/diary` in Gall. We’re now going to work directly with Urbit’s programmable, global, referentially transparent namespace as a tool to read and write data.
 
 ## /imp/diary
+
 Diary is an app that lets you write timestamped diary entries that the frontend will show in a chronological feed. Here’s a succinct version of the app’s backend logic, which clocks in at 34 lines of code.
 
-```hoon
+```
 ::  /imp/diary.hoon
 /@  txt         ::  @t
 /@  diary       ::  name=@t
@@ -47,13 +48,14 @@ Diary is an app that lets you write timestamped diary entries that the frontend 
 Most of this should be legible after the first tutorial. The only new ideas are the `+kids` arm, the use of `bowl`, and `%tomb`.
 
 ## +kids
+
 Every shrub is a node in one tree, with one “root shrub” at the top of that tree. Every shrub below the root shrub is either one of its immediate children or one of its descendants.
 
 In its `+kids` arm, every shrub can define constraints for the shrubs below it in the namespace, whether that’s constraining the types of their state or the pokes they’ll accept from other shrubs.
 
 Let’s expand on diary’s `+kids` arm.
 
-```hoon
+```
 ::  /imp/diary.hoon
 ::
 ::  constrain shrubs below diary in the namespace
@@ -97,9 +99,10 @@ The `pish:neo` statically types the paths which we’ll allow to be created bene
 (It’s worth flagging that `$curb:neo` contains several combinatorial rules about state types. For example `[%pro %txt]` would mean “the state of the child shrub can be any type which is readily convertible into a `%txt` with a conversion we have available in the `/con` folder”. This gives us a clue as to how we could handle state transitions and interoperability over the lifetime of our shrub, but it’s outside the remit of this tutorial.)
 
 ## bowl:neo
+
 Notice that the `src` in `bowl:neo` differs from `bowl:gall`. Here’s the new type in full.
 
-```hoon
+```
 ::  /sur/neo.hoon
 +$  bowl
   $:  src=[=ship =pith]                 ::  a request's source ship and shrub
@@ -113,11 +116,12 @@ Notice that the `src` in `bowl:neo` differs from `bowl:gall`. Here’s the new t
 ```
 
 ## Generating cards, tombstoning shrubs
+
 We covered `card:neo` in the Counter tutorial, but this is the first time we’re seeing one generated within a shrub. Diary takes two pokes: `%put-entry`, to create a new diary entry, and `%del-entry` to tombstone one.
 
 Here’s the `+poke` arm of the Diary shrub, expanded with comments.
 
-```hoon
+```
 ::  /imp/diary.hoon
 ++  poke
   |=  [=stud:neo vax=vase]
@@ -191,12 +195,13 @@ Diary’s state never changes. Its state is just its name, a `@t`. It stores all
 
 The location of this shrub, `here.bowl`, is just a list. So it’s easy to `+welp` paths like `/<@da>` or `/<@da>/comments` onto the end. In this context, just keep in mind that they need to be `iota`s like `[%da now.bowl]`.
 
-The `%make` card has two mysteries: it initializes diary entries with an empty `%txt` implementation and an empty map of dependencies. We’ll punt on dependencies until the next tutorial. If you look at `/imp/txt.hoon`, it’s just a `~`. This is an *elegant short-term workaround*  that allows us to shove `%txt`s into the namespace;  if the `/imp/<foo>` file is just a `~`, `/app/neo` will notice this and substitute in a shrub that takes the state of the type defined in `/pro/<foo>`. Like everything else in these tutorials this is subject to change!
+The `%make` card has two mysteries: it initializes diary entries with an empty `%txt` implementation and an empty map of dependencies. We’ll punt on dependencies until the next tutorial. If you look at `/imp/txt.hoon`, it’s just a `~`. This allows us to shove `%txt`s into the namespace;  if the `/imp/<foo>` file is just a `~`, `/app/neo` will notice this and substitute in a shrub that takes the state of the type defined in `/pro/<foo>`. Like everything else in these tutorials this is subject to change!
 
 ## Diary frontend
+
 Like Counter, the Diary shrub just has two `/con` files to convert to and from an HTMX frontend within the Sky browser.
 
-```hoon
+```
 ::  /con/diary-htmx.hoon
 /@  diary  ::  name=@t
 /-  feather-icons
@@ -280,7 +285,7 @@ There’s only a bit more going on here than in Counter’s `/con/number-htmx.ho
 
 The Diary frontend is a text box at the top with a list of entries generated from a list of the Diary shrub’s child `pith`s. Nowhere is a list of children in the state being passed from the backend to the frontend, like you might see with a Gall agent passing converting a `(list item)` to a JSON array through a mark in the event that a frontend has scried or subscribed on a path, all of which would require painstaking specification by the developer.
 
-```hoon
+```
 ::  /con/node-diary-diff.hoon
 /@  node        ::  manx
 /@  diary-diff  ::  ?([%put-entry id=@da txt=@t] [%del-entry id=@da])
@@ -298,5 +303,6 @@ The Diary frontend is a text box at the top with a list of entries generated fro
 Just like the `/con/node-counter-diff.hoon` in the Counter tutorial, all this does is extract attributes from an XML node, having been converted into a `manx`, and manually constructs the poke expected by the shrub.
 
 ## Building on Diary
-* Amend the `+kids` arm so that other apps could create shrubs like `/path/to/diary/<@da>/comments`.
-* Diary takes two pokes: `%put-entry` and `%del-entry`, but only one of these is supported on the frontend. Implement a `%del-entry` poke from the frontend.
+
+- Amend the `+kids` arm so that other apps could create shrubs like `/path/to/diary/<@da>/comments`.
+- Diary takes two pokes: `%put-entry` and `%del-entry`, but only one of these is supported on the frontend. Implement a `%del-entry` poke from the frontend.
