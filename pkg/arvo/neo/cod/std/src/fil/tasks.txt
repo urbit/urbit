@@ -9,21 +9,10 @@ In this lesson we’ll see how shrubs keep their parents informed of state chang
 Tasks only needs one `/imp` file: `task.hoon`. The Tasks frontend shows you some tasks that may or may not have other tasks as children.
 
 ```
-/@  task  ::  [text=cord done=? order=(list path)]
-::
-::  $task-diff
-::  $%  [%new =task prepend=?]
-::      [%edit text=cord done=?]
-::      [%oust =pith]
-::      [%reorder order=(list pith)]
-::  ==
+/@  task
 /@  task-diff
 =>
-::
-::  helper core
 |%
-::
-::  check if all kids are completed
 ++  check-kids
   |=  =bowl:neo
   ^-  ?
@@ -37,7 +26,6 @@ Tasks only needs one `/imp` file: `task.hoon`. The Tasks frontend shows you some
     q.pail:(need (~(get by ~(tar of:neo kids.bowl)) pith))
   done.task
 ::
-::  assign a unique numerical ID to a new subtask
 ++  assign-name
   |=  =bowl:neo
   ^-  @ud
@@ -55,33 +43,20 @@ Tasks only needs one `/imp` file: `task.hoon`. The Tasks frontend shows you some
   ?~  name-missing  +(last-name)
   (rear name-missing)
 --
-::
-::  outer core
 ^-  kook:neo
 |%
-::
-::  state is a %task
 ++  state  pro/%task
-::
-::  we accept %task-diff and %gift pokes
 ++  poke   (sy %task-diff %gift ~)
-::
-::  we define one generation of
-::  kids at /path/to/this/task/<@ud>
 ++  kids
   :+  ~  %y
   %-  ~(gas by *lads:neo)
   :~  :-  [|/%ud |]
     [pro/%task (sy %task-diff %gift ~)]
   ==
-++  deps  *deps:neo
+++  deps   *deps:neo
 ++  form
-  ::
-  ::  inner core
   ^-  form:neo
-  ::  XX refactor sample to same as other tutorials
   |_  [=bowl:neo =aeon:neo stud:neo state-vase=vase]
-  ::  XX refactor this to default +init from counter
   ++  init
     |=  pal=(unit pail:neo)
     ^-  (quip card:neo pail:neo)
@@ -92,9 +67,9 @@ Tasks only needs one `/imp` file: `task.hoon`. The Tasks frontend shows you some
     =/  this  !<(task state-vase)
     ?+    stud  !!
         %gift
-      ?:  (check-kids bowl)
-        [~ task/!>(this(done %.y))]
-      [~ task/!>(this(done %.n))]
+      ::check if all kid tasks are done
+      =/  dun  (check-kids bowl)
+      [~ task/!>(this(done dun, kids-done dun))]
     ::
         %task-diff
       =/  diff  !<(task-diff vax)
@@ -106,6 +81,7 @@ Tasks only needs one `/imp` file: `task.hoon`. The Tasks frontend shows you some
             [~[ud/name] order.this]
           (snoc order.this `pith`[ud/name ~])
         =.  done.this  |
+        =.  kids-done.this  |
         :_  task/!>(this)
         :~  :-  (welp here.bowl ~[ud/name])
             [%make %task `task/!>(task.diff) ~]
@@ -117,7 +93,7 @@ Tasks only needs one `/imp` file: `task.hoon`. The Tasks frontend shows you some
         !>
         %=  this
           text  text.diff
-          done  ?:  (check-kids bowl)
+          done  ?:  kids-done.this
                   done.diff
                 %.n
         ==
@@ -255,12 +231,14 @@ Let’s look at the Tasks frontend in detail.
 
     //  tell the user why a clicked checkbox
     //  can't be marked as checked
-    document.getElementById("alert").addEventListener("click", function(e){
-      if (document.getElementById("alert").hasAttribute("readonly")){
-      e.preventDefault();
-      alert("Subtasks are not completed");
-      }
-    });
+    document.querySelectorAll(".alert").forEach(function(element) {
+      element.addEventListener('click', function(e) {
+        if (element.hasAttribute("readonly")){
+        e.preventDefault();
+        alert("Subtasks are not completed");
+          }
+        })
+      })
     '''
   ==  :: </script>
 ::
@@ -315,7 +293,7 @@ Let’s look at the Tasks frontend in detail.
   ::  sends %edit poke on input change
   |=  [=pith =idea:neo]
   ::  extracts information from idea:neo to task
-  =/  =pail:neo  pail.idea
+  =/  =pail:neo  q.saga.idea
   =/  t=task  !<(task q.pail)
   ::  converts pith to tape
   =/  pt  (pith-tape (welp here.bowl pith))
@@ -342,6 +320,7 @@ Let’s look at the Tasks frontend in detail.
           ;+
           ::  defines class attribute with class names
           =/  class  [%class "p2 br1 border done s3"]
+          =/  class-alert  [%class "p2 br1 border done s3 alert"]
           ::
           ::  checkbox logic:
           ::  - if task is toggled, checkbox will
@@ -376,10 +355,10 @@ Let’s look at the Tasks frontend in detail.
                 ::  the rest of manx data
                 m(a.g [class a.g.m])
               ::
-              ::  assigns readonly, id and class
-              ::  attributes to checkbox; id will trigger
+              ::  assigns readonly and class
+              ::  attributes to checkbox; 'alert' class will trigger
               ::  alert script functionality
-              m(a.g [[%readonly ""] [%id "alert"] class a.g.m])
+              m(a.g [[%readonly ""] class-alert a.g.m])
             ::
             ::  assigning checked and class attributes
             ::  to the rest of manx data
@@ -583,8 +562,8 @@ Let’s look at the Tasks frontend in detail.
   =/  prepend  (vol:mu "prepend")
   ?:  =(prepend 'prepend')
   ::  construct the task-diff
-    [head [text | ~] &]
-  [head [text | ~] |]
+    [head [text | & ~] &]
+  [head [text | & ~] |]
 ::
     %edit
   ::  extract text attribute from XML node
