@@ -37,12 +37,31 @@
       behavior: "instant"});
   '''
   ==
+::
+++  refresher
+  |=  =bowl:neo
+  ;div.absolute
+    =style  "top: 1em; left: 1em;"
+    ;div.loader.refresher
+      =hx-get  "{(en-tape:pith:neo :(weld /neo/hawk here.bowl))}?no-save"
+      =hx-trigger  "every 7s, refresh"
+      =hx-target  "closest .top"
+      =hx-select  ".top"
+      =hx-swap  "morph"
+      ;span.loaded;
+      ;span.loading
+        ;+  loading.feather-icons
+      ==
+    ==
+  ==
+::
 ++  render-messages
   |=  =bowl:neo
   ^-  manx
-  ;div.fc.g2.p1
+  ;div.fc.g2.p1.top
     =label  "Messages"
     =id  "messages"
+  ;+  (refresher bowl)
   ;*
     %+  turn
       %+  sort
