@@ -7429,6 +7429,8 @@
               ~
             =*  priv  priv.ames-state
             ::  XX  rift.ames-state
+            =>  [bem=bem res=res priv=priv.ames-state ..crypt]
+            ~>  %memo./ames/publ
             =/  gag  ?~(u.res ~ [p q.q]:u.u.res)  :: XX how does receiver distinguish these?
             =/  ful  (en-beam bem)
             =/  ser  (jam gag)  :: unencrypted
