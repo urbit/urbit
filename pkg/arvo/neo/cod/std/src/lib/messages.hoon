@@ -67,6 +67,10 @@
     =label  "Messages"
     =id  "messages"
     ;+  (refresher bowl)
+    ;div
+    =style  "margin-top: auto"
+      ;span.hidden;
+    ==
   ;*
     =/  msgs  ~(tap of:neo kids.bowl)
     %+  turn
@@ -91,8 +95,7 @@
   ^-  manx
   ?:  =(our.bowl from.msg)
     (render-our-message msg)
-  ::;div.fc.g2.border.p3.br1.grow.msg
-  ;div.fc.g2.grow.msg
+  ;div.fc.g2.msg
     =style  "align-self: flex-start;"
     ;div.fr.ac.jb
       ;p.s-2.f3: {(scow %p from.msg)}
@@ -105,7 +108,7 @@
 ::
 ++  render-our-message
 |=  msg=message
-;div.fc.g2.grow.msg
+;div.fc.g2.msg
   =style  "align-self: flex-end;"
   ;div.fr.ac.jb
     ;p.s-2.f3: {(scow %p from.msg)}
