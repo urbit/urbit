@@ -10,7 +10,13 @@
 =/  mu  ~(. manx-utils nod)
 ::  extract head, id, and text atttributes from XML node
 =/  head  (@tas (got:mu %head))
-=/  id  (slav %da (vol:mu "id"))
-=/  text  (vol:mu "text")
-::  construct the diary-diff
-[%put-entry id text]
+?+    head  !!
+    %put-entry
+  =/  id  (slav %da (vol:mu "now"))
+  =/  text  (vol:mu "text")
+  ::  construct the diary-diff
+  [%put-entry id text]
+::
+    %del-entry
+  [%del-entry (slav %da (got:mu %diary-id))]
+==

@@ -57,6 +57,7 @@
           eyre-id
           bowl
           404
+          ['content-type' 'text/html']~
           ~(lift hawk pit stub stub & meta)
       ==
     =/  here  p.u.src
@@ -74,6 +75,7 @@
             eyre-id
             bowl
             200
+            ['content-type' 'text/html']~
             ~(lift hawk here.bol stub stub & meta)
         ==
       =/  root=idea:neo  u.reet
@@ -107,6 +109,7 @@
           eyre-id
           bowl
           200
+          ['content-type' 'text/html']~
           ~(lift hawk here.bol main (raw-view bol(kids q.u.src)) has-conversion meta)
       ==
     ::
@@ -120,7 +123,7 @@
       =/  mul  (mule |.((node [poke-stud body])))
       ?-    -.mul
           %.n
-        %:  eyre-cards-2
+        %:  eyre-cards
             eyre-id
             bowl
             500
@@ -162,6 +165,7 @@
             eyre-id
             bowl
             200
+            ['content-type' 'text/html']~
             manx
         ==
       ==
@@ -174,24 +178,11 @@
   |=  man=manx
   (as-octt:mimes:html (en-xml:html man))
 ::
-++  eyre-cards-2
+++  eyre-cards
   |=  [eyre-id=@ta =bowl:neo status=@ud =header-list:http =manx]
   ^-  (list card:neo)
   =/  =pith:neo  #/[p/our.bowl]/$/eyre
   =/  head=sign:eyre:neo  [eyre-id %head [status header-list]]
-  =/  data=sign:eyre:neo  [eyre-id %data `(manx-to-octs manx)]
-  =/  done=sign:eyre:neo  [eyre-id %done ~]
-  :~  [pith %poke eyre-sign/!>(head)]
-      [pith %poke eyre-sign/!>(data)]
-      [pith %poke eyre-sign/!>(done)]
-      [here.bowl %cull ~]
-      [here.bowl %tomb ~]
-  ==
-++  eyre-cards
-  |=  [eyre-id=@ta =bowl:neo status=@ud =manx]
-  ^-  (list card:neo)
-  =/  =pith:neo  #/[p/our.bowl]/$/eyre
-  =/  head=sign:eyre:neo  [eyre-id %head [status [['content-type' 'text/html'] ~]]]
   =/  data=sign:eyre:neo  [eyre-id %data `(manx-to-octs manx)]
   =/  done=sign:eyre:neo  [eyre-id %done ~]
   :~  [pith %poke eyre-sign/!>(head)]
@@ -220,13 +211,13 @@
 ++  default-refresher
   |=  =pith
   =/  tath  (en-tape:pith:neo pith)
-  ;div
+  ;div.loading
     =hx-get  "/neo/hawk{tath}"
     =hx-target  "closest .hawk"
     =hx-select  ".hawk"
     =hx-trigger  "load once"
     =hx-swap  "outerHTML"
-    ;
+    ;+  loading.feather-icons
   ==
 ++  raw-view
   |=  =bowl:neo

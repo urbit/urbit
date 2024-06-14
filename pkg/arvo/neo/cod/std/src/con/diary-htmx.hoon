@@ -51,8 +51,8 @@
     =hx-target     "find .loading"
     =hx-swap       "outerHTML"
     =head          "put-entry"
-    ::  <date-now name="id" />
-    ;date-now(name "id");
+    ::  <date-now name="now" />
+    ;date-now(name "now");
     ::  <textarea
     ::    class="p2 bd1 br1"
     ::    name="text"
@@ -113,22 +113,20 @@
         ;+  loading.feather-icons
       ==  ::  </span>
     ==  ::  </a>
-    ::  <button
-    ::    class="p2 br1 fr g2 b1 hover fc ac jc loader"
-    ::    onclick="alert('not yet implemented. no tombstoning?')"
-    ::  >
     ;button.p2.br1.fr.g2.b1.hover.fc.ac.jc.loader
-      =onclick  "alert('not yet implemented. no tombstoning?')"
-      ::  <span class="loaded">
+      =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=diary-diff"
+      =head  "del-entry"
+      =hx-target  "find .loading"
+      =hx-swap  "outerHTML"
+      =diary-id  id
       ;span.loaded
         ;+  close.feather-icons
-      ==  ::  </span>
-      ::  <span class="loading">
+      ==
       ;span.loading
         ;+  loading.feather-icons
-      ==  ::  </span>
-    ==  ::  </button>
-  ==  ::  </div>
+      ==
+    ==
+  ==
 ::
 ::  styled date string
 ++  pretty-date

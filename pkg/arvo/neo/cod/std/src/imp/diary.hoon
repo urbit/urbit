@@ -121,14 +121,13 @@
       ::  return unchanged state
       :_  [%diary !>(state)]
       ::
-      ::  send a %tomb note to /path/to/diary/<id>
-      ::  this will tombstone the diary entry,
-      ::  effectively deleting it from the namespace
+      ::  send a %cull note to /path/to/diary/<id>
+      ::  this will delete the diary entry.
       :~  :-  %+  welp
                 here.bowl
               ~[[%da id.act]]
           ^-  note:neo
-          [%tomb ~]
+          [%cull ~]
       ==
     ==
   --
