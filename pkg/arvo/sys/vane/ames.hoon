@@ -7526,8 +7526,6 @@
                 ::
                 ?>  ?=([%mess ryf=@ %pact boq=@ %etch typ=?(%data %init) res=*] pat.tyl)
                 =/  [lop=@ len=@]
-                  ?:  =(%init typ.pat.tyl)
-                    [0 1]
                   [(slav %ud lop.tyl) (slav %ud len.tyl)]
                 =*  scry  $
                 ::
@@ -7544,6 +7542,8 @@
                     pat.tyl
                   ?>  ?=([fag=@ pat=*] res.pat.tyl)
                   pat.tyl(fag.res (scot %ud fag))
+                =?  fag  ?=(%data typ.pat.tyl)
+                  +(fag)
                 =/  res=(unit (unit cage))
                   scry(lyc ~, pov /ames/batch, s.bem path)
                 ?~  res
@@ -7552,7 +7552,11 @@
                   batch
                 ?.  ?=([%atom *] u.u.res)
                   batch
-                $(batch [;;(@ q.q.u.u.res) batch], lop +(lop))
+                =?  res.pat.tyl  ?=(%init typ.pat.tyl)
+                  `^path`[fag='0' res.pat.tyl]
+                =?  typ.pat.tyl  ?=(%init typ.pat.tyl)
+                  %data
+                $(batch [;;(@ q.q.u.u.res) batch])
               ::
               ::  publisher-side, protocol-level
               ::
