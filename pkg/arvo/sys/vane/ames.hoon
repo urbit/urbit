@@ -6219,7 +6219,10 @@
               =.  pit.sat.per  (~(del by pit.sat.per) path)
               (ev-give-response for.u.ms path ~)
             =.  for.u.ms     (~(del in for.u.ms) hen)
-            =.  pit.sat.per  (~(put by pit.sat.per) path u.ms)
+            =.  pit.sat.per
+              ?~  for.u.ms
+                (~(del by pit.sat.per) path)
+              (~(put by pit.sat.per) path u.ms)
             ev-core
           ::
           ++  ev-give-rate
@@ -6231,12 +6234,20 @@
             ?~  ms=(~(get by pit.u.rs) path)
               ev-core
             =.  per  ship^+.u.rs
+            =;  [fren=fren-state core=_ev-core]
+              %_    core
+                  chums.ames-state
+                (~(put by chums.ames-state) ship known/fren)
+              ==
             %-  ~(rep in for.u.ms)
-            |=  [hen=duct c=_ev-core]
+            |=  [hen=duct s=_sat.per c=_ev-core]  ::  XX use abet core for this
             ?.  (~(has in sizes.u.rs) path)
-              c
+              [s c]
+            =?  s  =(0 fags)
+              s(sizes (~(del in sizes.s) path))
             =?  c  =(0 fags)
               (ev-emit:c hen %give %size ship^path fag-size=13 total)
+            :-  s
             (ev-emit:c hen %give %rate ship^path fags total)
           ::
           +|  %flows
