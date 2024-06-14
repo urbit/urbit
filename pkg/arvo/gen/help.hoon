@@ -193,36 +193,38 @@
 =.  pax  (welp pax p.typ)
 =.  pat  (welp pat p.typ)
 :-  %tang  %-  flop  ^-  tang
-%+  welp
-  ::  Search in /gen
-  =+  ark=.^(arch cy+pax)
+=/  out
   %+  welp
-    =/  red  ((read-at len (scag len pax)) p.typ ark) :: XX ugly
-    (drop (bind red rend))
+    ::  Search in /gen
+    =+  ark=.^(arch cy+pax)
+    %+  welp
+      =/  red  ((read-at len (scag len pax)) p.typ ark) :: XX ugly
+      (drop (bind red rend))
+    |-  ^-  tang
+    =+  =<  arl=~(tap by (~(urn by dir.ark) .))
+        |=([a=@t ~] .^(arch cy+(welp pax /[a])))
+    %+  welp
+      =/  dir=(list [@ path])
+        (murn arl (read-at len pax))
+      `tang`(turn (sort dir aor) rend)
+    %-  zing  ^-  (list tang)
+    %+  turn  (sort arl aor)
+    |=  [a=@t b=arch]
+    ^$(pax (welp pax /[a]), ark b)
+  ::  Search in /ted
+  =+  art=.^(arch cy+pat)
+  %+  welp
+    =/  ret  ((read-at len (scag len pat)) p.typ art) :: XX ugly
+    (drop (bind ret rent))
   |-  ^-  tang
-  =+  =<  arl=~(tap by (~(urn by dir.ark) .))
-      |=([a=@t ~] .^(arch cy+(welp pax /[a])))
+  =+  =<  arl=~(tap by (~(urn by dir.art) .))
+      |=([a=@t ~] .^(arch cy+(welp pat /[a])))
   %+  welp
     =/  dir=(list [@ path])
-      (murn arl (read-at len pax))
-    `tang`(turn (sort dir aor) rend)
+      (murn arl (read-at len pat))
+    `tang`(turn (sort dir aor) rent)
   %-  zing  ^-  (list tang)
   %+  turn  (sort arl aor)
   |=  [a=@t b=arch]
-  ^$(pax (welp pax /[a]), ark b)
-::  Search in /ted
-=+  art=.^(arch cy+pat)
-%+  welp
-  =/  ret  ((read-at len (scag len pat)) p.typ art) :: XX ugly
-  (drop (bind ret rent))
-|-  ^-  tang
-=+  =<  arl=~(tap by (~(urn by dir.art) .))
-    |=([a=@t ~] .^(arch cy+(welp pat /[a])))
-%+  welp
-  =/  dir=(list [@ path])
-    (murn arl (read-at len pat))
-  `tang`(turn (sort dir aor) rent)
-%-  zing  ^-  (list tang)
-%+  turn  (sort arl aor)
-|=  [a=@t b=arch]
-^$(pat (welp pat /[a]), art b)
+  ^$(pat (welp pat /[a]), art b)
+?~(out `tang`~[[%leaf "{<`path`p.typ>} not found"]] out)
