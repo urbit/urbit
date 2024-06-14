@@ -8097,7 +8097,7 @@
       =/  ship-state  (pe-find-peer ship.spar)
       ::
       ?:  ?=(%ames -.ship-state)
-        (call:ames hen ~ soft+yawn/all^spar)
+        (call:ames hen ~ %soft ?:(all %wham %yawn) spar)
       =^  moves  ames-state
         =<  ev-abet
         ?.  ?=([~ %known *] +.ship-state)
