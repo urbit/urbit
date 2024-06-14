@@ -5987,7 +5987,7 @@
           ::  +ev-take-done: vane responses
           ::
           ++  ev-take-boon
-            |=  [=wire resp=$>(?(%boon %noon) gift)]
+            |=  [=wire =gift]
             ^+  ev-core
             ?~  flow-wire=(ev-validate-wire wire)
               ev-core
@@ -5998,11 +5998,10 @@
               :: XX log
               ev-core  ::  ignore events from an old rift
             ?>  ?=([%van %bak] [were dire])  ::  vane acks happen on backward flows
-            ~!  task
             %+  ev-req-boon  bone
-            ?-  -.resp
-              %boon  `payload.resp
-              %noon  [`id payload]:resp
+            ?+  -.gift  !!
+              %boon  `payload.gift
+              %noon  [`id payload]:gift
             ==
           ::  +ev-poke-done: vane acks
           ::

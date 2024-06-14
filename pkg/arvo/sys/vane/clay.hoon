@@ -363,9 +363,10 @@
           $>  $?  %boon                                 ::  response
                   %done                                 ::  (n)ack
                   %lost                                 ::  lost boon
-                  %tune                                 ::  scry response
+                  %tune                                 ::  |fine response
                   %rate                                 ::  scry progress
                   %size                                 ::  scry total fragments
+                  %mess-response                        ::  |mesa response
               ==                                        ::
           gift:ames                                     ::
       ==                                                ::
@@ -6264,13 +6265,13 @@
   ::
   ?:  ?=([%keen-whit @ @ @ *] tea)
     ?+    +<.hin  ~|  %clay-keen-whit-strange^+<.hin  !!
-        ?(%tune %size %rate)
+        ?(%tune %size %rate %mess-response)
       =/  her=ship   (slav %p i.t.tea)
       =/  =desk      (slav %tas i.t.t.tea)
       =/  index=@ud  (slav %ud i.t.t.t.tea)
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
-        ?:  ?=(?(%rate %tune) +<.hin)
+        ?:  ?=(?(%rate %tune %mess-response) +<.hin)
           ::  no-op, if %tune after %yawn, restart downloads happen in %backfill
           ::
           `ruf
@@ -6295,17 +6296,21 @@
       %-  (slog leaf+"clay: lost backfill from {<tea>}" ~)
       [~ ..^$]
     ::
-        ?(%boon %tune %rate)
+        ?(%boon %tune %rate %mess-response)
       =/  her=ship   (slav %p i.t.tea)
       =/  =desk      (slav %tas i.t.t.tea)
       =/  index=@ud  (slav %ud i.t.t.t.tea)
       ::
       =/  fell=(unit fell)
         ?:  ?=(%boon +<.hin)  `;;(fell payload.hin)
-        ?.  ?=(%tune +<.hin)  ~
-        ?~  roar.hin  ~
-        ?~  q.dat.u.roar.hin  ~
-        `[%1 `u.q.dat.u.roar.hin]
+        ?:  ?=(%tune +<.hin)
+          ?~  roar.hin  ~
+          ?~  q.dat.u.roar.hin  ~
+          `[%1 `u.q.dat.u.roar.hin]
+        ?.  ?=(%mess-response +<.hin)  ~
+        =/  =spar:ames  p.sage.hin
+        ?~  q.sage.hin  ~
+        `[%1 `q.sage.hin]
       ::
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
@@ -6317,7 +6322,7 @@
           ::
           %-  (slog leaf+"clay: got null from {<her>}, falling back to ames" ~)
           abet:(retry-with-ames:den %back-index index)
-        =?  den  ?=(%tune +<.hin)
+        =?  den  ?=(?(%tune %mess-response) +<.hin)
           (cancel-scry-timeout:den index)
         abet:abet:(take-backfill:(foreign-update:den index) u.fell)
       [mos ..^$]
@@ -6426,6 +6431,7 @@
       %tune  !!
       %rate  !!
       %size  !!
+      %mess-response  !!
       %lost  !!
       %unto  !!
       %wris  ~&  %strange-wris  !!
