@@ -70,7 +70,7 @@
   ;*
     =/  msgs  ~(tap of:neo kids.bowl)
     %+  turn
-      %+  slag  (sub (lent msgs) 20)
+      %+  slag  (sub (lent msgs) (min 20 (lent msgs)))
       %+  sort
         %+  murn  msgs
         |=  [=pith =idea:neo]
