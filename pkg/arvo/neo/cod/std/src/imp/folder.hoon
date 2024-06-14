@@ -8,7 +8,6 @@
     :~
       [%iframe iframe/!>('')]
       [%txt txt/!>('')]
-      [%sail sail/!>(['' '' ~])]
     ==
   --
 ^-  kook:neo

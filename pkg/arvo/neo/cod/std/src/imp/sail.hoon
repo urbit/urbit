@@ -1,6 +1,6 @@
 /@  sail
+/-  sl=sail
 ^-  kook:neo
-=<
 |%
 ++  state  pro/%sail
 ++  poke   (sy %sail ~)
@@ -21,35 +21,8 @@
     ?~  pal  sail/!>(*sail)
     ::  non-empty init unit always re-renders the code
     =/  sal  !<(sail q.u.pal)
-
     :-  %sail
     !>
-    sal(result `(render-udon code.sal))
+    sal(result `(render-udon:sl code.sal))
   --
---
-|%
-++  render-udon
-  |=  code=@t
-  ^-  (each manx tang)
-  =/  newline  (trip 10)
-  =/  udon
-    :: format as udon document
-    %-  crip
-    ;:  welp
-      ";>"  newline  newline
-      (trip code)  newline
-    ==
-  =/  mul
-    %-  mule
-    |.
-    !<  manx
-    %+  slap
-      ;:  slop
-        !>(..zuse)
-      ==
-    (ream udon)
-  ?-  -.mul
-    %.y  [%.y (manx p.mul)]
-    %.n  [%.n (tang p.mul)]
-  ==
 --
