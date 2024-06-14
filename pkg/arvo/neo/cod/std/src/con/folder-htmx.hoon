@@ -46,6 +46,7 @@
                 %task
                 %txt
                 %sail
+                %slideshow
             ==
           |=  t=@tas
           ^-  manx
