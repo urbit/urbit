@@ -93,24 +93,24 @@
           ; • • •
         ==
         ;div.fr.hidden.g1.p1
-          ;button.grow.tc.s-2.b0.br2.p1
+          ;button.grow.fr.jc.b0.br2.p1
             =hx-trigger  "click"
             =onclick  "let t = $(this).closest('.relative'); t.parent().prepend(t);"
-            ; |<
+            ;+  chevron-first.feather-icons
           ==
-          ;button.grow.tc.s-2.b0.br2.p1
+          ;button.grow.fr.jc.b0.br2.p1
             =onclick  "let t = $(this).closest('.relative'); t.insertBefore(t.prev());"
             =hx-trigger  "click"
-            ; <
+            ;+  chevron-left.feather-icons
           ==
-          ;button.grow.tc.s-2.b0.br2.p1
+          ;button.grow.fr.jc.b0.br2.p1
             =hx-trigger  "click"
             =onclick  "let t = $(this).closest('.relative'); t.insertAfter(t.next());"
-            ; >
+            ;+  chevron-right.feather-icons
           ==
-          ;button.grow.tc.s-2.b0.br2.p1
+          ;button.grow.fr.jc.b0.br2.p1
             =onclick  "let t = $(this).closest('.relative'); t.parent().append(t);"
-            ; >|
+            ;+  chevron-last.feather-icons
           ==
         ==
       ==
