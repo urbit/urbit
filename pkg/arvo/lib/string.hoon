@@ -69,7 +69,7 @@
 ::  All ASCII whitespace characters. 
 ::
 ::  Source: 
-++  whitespace      ^~  `tape`:(weld " " ~['\0a'] ~['\09'])
+++  whitespace      ^~  `tape`~[' ' '\0a' '\09']
 ::
 ::  ++ascii
 ::
@@ -284,8 +284,9 @@
 ++  is-uc
   |=  =tape
   ^-  ?
-  =/  p  (bisk:so [[1 1] tape])
-  &(=(+((lent tape)) +>+<+:p) =(%uc +>-<:p))
+  ?~  res=(rust tape bisk:so)
+    |
+  =(%uc -.u.res)
 ::
 ::  ++is-ud
 ::
@@ -295,8 +296,9 @@
 ++  is-ud
   |=  =tape
   ^-  ?
-  =/  p  (bisk:so [[1 1] tape])
-  &(=(+((lent tape)) +>+<+:p) =(%ud +>-<:p))
+  ?~  res=(rust tape bisk:so)
+    |
+  =(%ud -.u.res)
 ::
 ::  ++is-ui
 ::
@@ -306,8 +308,9 @@
 ++  is-ui
   |=  =tape
   ^-  ?
-  =/  p  (bisk:so [[1 1] tape])
-  &(=(+((lent tape)) +>+<+:p) =(%ui +>-<:p))
+  ?~  res=(rust tape bisk:so)
+    |
+  =(%ui -.u.res)
 ::
 ::  ++is-uv
 ::
@@ -317,8 +320,9 @@
 ++  is-uv
   |=  =tape
   ^-  ?
-  =/  p  (bisk:so [[1 1] tape])
-  &(=(+((lent tape)) +>+<+:p) =(%uv +>-<:p))
+  ?~  res=(rust tape bisk:so)
+    |
+  =(%uv -.u.res)
 ::
 ::  ++is-uw
 ::
@@ -328,8 +332,9 @@
 ++  is-uw
   |=  =tape
   ^-  ?
-  =/  p  (bisk:so [[1 1] tape])
-  &(=(+((lent tape)) +>+<+:p) =(%uw +>-<:p))
+  ?~  res=(rust tape bisk:so)
+    |
+  =(%uw -.u.res)
 ::
 ::  ++is-ux
 ::
@@ -339,8 +344,9 @@
 ++  is-ux
   |=  =tape
   ^-  ?
-  =/  p  (bisk:so [[1 1] tape])
-  &(=(+((lent tape)) +>+<+:p) =(%ux +>-<:p))
+  ?~  res=(rust tape bisk:so)
+    |
+  =(%ux -.u.res)
 ::
 ::  ++upper
 ::
@@ -378,7 +384,7 @@
   ?.  (gth wid (lent tape))  tape
   =/  lof  (div (sub wid (lent tape)) 2)
   =/  rof  (sub wid (add lof (lent tape)))
-  :(weld `^tape`(zing (reap lof " ")) tape `^tape`(zing (reap rof " ")))
+  :(weld (reap lof ' ') tape (reap rof ' '))
 ::
 ::  ++count
 ::
@@ -401,7 +407,13 @@
 ::  Tests whether a string starts with a given substring.
 ::
 ::  Source: 
-++  starts-with  |=([=tape subs=tape] ^-(? =(subs (scag (lent subs) tape))))
+++  starts-with
+  |=  [=tape subs=tape]
+  ^-  ?
+  ?~  subs  &
+  ?~  tape  |
+  ?.  =(i.tape i.subs)  |
+  $(tape t.tape, subs t.subs)
 ::
 ::  ++ends-with
 ::
@@ -417,16 +429,14 @@
 ::
 ::  Source: 
 ++  link
-  |=  [sep=tape =(list tape)]
+  |=  [sep=tape tapes=(list tape)]
   ^-  tape
-  =/  res   (snag 0 list)
-  =/  list  (slag 1 list)
+  ?~  tapes  ~
+  =/  res=(list tape)  [i.tapes ~]
   |-
-  ?~  list  res
-  %=  $
-    list  t.list
-    res   :(weld res sep i.list)
-  ==
+  ?~  t.tapes
+    (zing (flop res))
+  $(t.tapes t.t.tapes, res [i.t.tapes sep res])
 ::
 ::  ++echo
 ::
@@ -445,7 +455,7 @@
   ^-  ^tape
   ?.  (gth wid (lent tape))  tape
   =/  rof  (sub wid (lent tape))
-  (weld tape `^tape`(zing (reap rof " ")))
+  (weld tape (reap rof ' '))
 ::
 ::  ++rjust
 ::
@@ -457,7 +467,7 @@
   ^-  ^tape
   ?.  (gth wid (lent tape))  tape
   =/  lof  (sub wid (lent tape))
-  (weld `^tape`(zing (reap lof " ")) tape)
+  (weld (reap lof ' ') tape)
 ::
 ::  ++lstrip
 ::
@@ -468,9 +478,10 @@
   |=  =tape
   ^-  ^tape
   |-
-  ?.  (is-space ~[(snag 0 tape)])
+  ?~  tape  tape
+  ?.  (~(has in set-whitespace) i.tape)
     tape
-  $(tape (slag 1 tape))
+  $(tape t.tape)
 ::
 ::  ++rstrip
 ::
@@ -480,17 +491,14 @@
 ++  rstrip
   |=  =tape
   ^-  ^tape
-  |-
-  ?.  (is-space ~[(snag 0 tape)])
-    tape
-  $(tape (slag 1 tape))
+  (flop (lstrip (flop tape)))
 ::
 ::  ++strip
 ::
 ::  Strips whitespace from both ends of a tape.
 ::
 ::  Source: 
-++  strip  |=(=tape (lstrip (rstrip tape)))
+++  strip  |=(=tape (rstrip (lstrip tape)))
 ::
 ::  ++partition
 ::
@@ -500,11 +508,21 @@
 ++  partition
   |=  [nedl=tape hstk=tape]
   ^-  [l=tape n=tape r=tape]
-  =/  l   (scag (need (find nedl hstk)) hstk)
-  =/  nr  (slag (need (find nedl hstk)) hstk)
-  =/  n   (scag (lent nedl) nr)
-  =/  r   (slag (lent nedl) nr)
-  [l=l n=n r=r]
+  =+  [len=(lent nedl) ned=nedl l=*tape]
+  |-
+  ?~  ned
+    =|  i=@
+    :+  |-
+        ?:  =(i len)
+          (flop l)
+        ?>  ?=(^ l)
+        $(l t.l, i +(i))
+      nedl
+    hstk
+  ?>  ?=(^ hstk)
+  ?:  =(i.ned i.hstk)
+    $(l [i.hstk l], ned t.ned, hstk t.hstk)
+  $(l [i.hstk l], ned nedl, hstk t.hstk)
 ::
 ::  ++replace
 ::
@@ -514,11 +532,24 @@
 ++  replace
   |=  [bit=tape bot=tape =tape]
   ^-  ^tape
+  ?:  =(~ bit)  tape
+  =+  [len=(lent bit) bat=bit but=bot out=*^tape]
   |-
-  =/  off  (find bit tape)
-  ?~  off  tape
-  =/  clr  (oust [(need off) (lent bit)] tape)
-  $(tape :(weld (scag (need off) clr) bot (slag (need off) clr)))
+  ?~  bat
+    =|  i=@
+    |-
+    ?:  =(i len)
+      |-
+      ?~  but
+        ^^$(bat bit, but bot)
+      $(out [i.but out], but t.but)
+    ?>  ?=(^ out)
+    $(out t.out, i +(i))
+  ?~  tape
+    (flop out)
+  ?:  =(i.bat i.tape)
+    $(out [i.tape out], bat t.bat, tape t.tape)
+  $(out [i.tape out], bat bit, tape t.tape)
 ::
 ::  ++split
 ::
@@ -528,36 +559,51 @@
 ++  split
   |=  [sep=tape =tape]
   ^-  (list ^tape)
-  =|  res=(list ^tape)
-  |-
-  ?~  tape  (flop res)
-  =/  off  (find sep tape)
-  ?~  off  (flop [`^tape`tape `(list ^tape)`res])
-  %=  $
-    res   [(scag `@ud`(need off) `^tape`tape) res]
-    tape  (slag +(`@ud`(need off)) `^tape`tape)
-  ==
+  =+  rul=(jest (crip sep))
+  (scan tape (more rul (star ;~(less rul next))))
 ::
 ::  ++rfind
 ::
 ::  Locates a value within a string, starting from the right-hand side and searching to the left.
 ::
 ::  Source: 
-++  rfind  |=([seq=tape =tape] ?~((find seq (flop tape)) ~ `(dec (sub (lent tape) (need (find seq (flop tape)))))))
+++  rfind
+  |=  [seq=tape =tape]
+  ^-  (unit @ud)
+  ?~  found=(find (flop seq) (flop tape))
+    ~
+  `(sub (sub (lent tape) u.found) (lent seq))
 ::
 ::  ++title
 ::
 ::  Converts a string to title case (first letter of each space-separated word is capitalized).
 ::
 ::  Source: 
-++  title  |=(=tape (link " " (turn (split " " (zing (turn tape (cork trip lower)))) capitalize)))
+++  title
+  |=  =tape
+  ^-  ^tape
+  =|  last=?
+  |-
+  ?~  tape
+    ~
+  :-  ?.  last
+        i.tape
+      ?.  &((gte i.tape 'a') (lte i.tape 'z'))
+        i.tape
+      (sub i.tape 32)
+  $(tape t.tape, last (~(has in set-whitespace) i.tape))
 ::
+::  ++zfill
+::
+::  Prefix a string with zeros to make it the given length.
+::
+::  Source:
 ++  zfill
   |=  [=tape wid=@ud]
   ^-  ^tape
   ?.  (gth wid (lent tape))  tape
   =/  lof  (sub wid (lent tape))
-  (weld `^tape`(zing (reap lof "0")) tape)
+  (weld (reap lof '0') tape)
 ::
 ::  ++grab
 ::
