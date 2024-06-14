@@ -25,7 +25,6 @@
   =/  c  (to-wain:format a)
   ?~  c  ["{<b>}" "~"]
   =/  ct  (trip i.c)
-  ~&  >  [a b]
   :-  ?:  =(~ (find "|" ct))
         ?-  b
           ~          ~
@@ -70,7 +69,6 @@
         ^  "-{(path2tape b)}"
       ==
   =/  c  (to-wain:format a)
-  ~&  >>  [b c]
   ?~  c  "~"
   ?.  |(=('::  ' (end [3 4] i.c)) =('  ::  ' (end [3 4] i.c)))
     "<undocumented>"
@@ -80,9 +78,9 @@
   |=  [len=@u pax=path]
   |=  [nam=$@(@t p=path) ark=arch]  ^-  (unit [@t path])
   ?.  (~(has by dir.ark) %hoon)  ~
-  %+  bind  (file:space:userlib ;;(path (welp pax ?@(nam /[nam]/hoon (welp nam /hoon)))))
+  %+  bind  (file:space:userlib ;;(path ?@(nam (welp pax /[nam]/hoon) :(welp pax nam /hoon))))
   |=  a=*  ^-  [cord path]
-  [;;(@t a) ;;(path (welp (slag len pax) ?@(nam /[nam]/hoon (welp nam /hoon))))]
+  [;;(@t a) ;;(path (welp (slag len pax) ;;(path ?@(nam /[nam] nam))))]
 ::  Locate a file within a path (if it exists).
 ++  search-down
   |=  [tgt=@tas pax=path]
@@ -92,7 +90,6 @@
     %+  skim  dir
     |=  [a=path]
     !=(~ (find ~[tgt] a))
-  ~&  >>>  res
   ?~(res ~ `res)
 ::
 --
@@ -116,25 +113,51 @@
     %+  welp
       =/  res  (search-down p.typ pax)
       ?~  res  ~
-    ::  strip /gen from head
-    =/  reg  (turn u.res |=(pax=path ?~(pax pax t.pax)))
-    =/  ren  (turn reg (cury rend len))
-    %+  %-  sort  :_  aor
-    =|  out=tang
-    |-  ^-  tang
-    ?~  reg  out
-    %=  $
-      out  [(rend ((read-at len i.reg) )) out]
-      reg  t.reg
-    ==
-
+      ::  strip /gen from head
+      =/  reg  (turn u.res |=(pax=path ?~(pax pax t.pax)))
+      %-  sort  :_  aor  ^-  tang
+      =|  out=tang
+      |-  ^-  tang
+      ?~  reg  out
+      ::  Search in /gen
+      =/  gen  i.reg
+      ::  Trim off trailing /hoon
+      =?  gen  !=(~ gen)  (snip `path`gen)
+      =+  ark=.^(arch cy+(welp pax gen))
+      %=  $
+          reg
+        t.reg
+        ::
+          out
+        %+  welp
+          =/  red  ((read-at len pax) gen ark) :: XX ugly
+          (drop (bind red rend))
+        out
+      ==
     =/  res  (search-down p.typ pat)
     ?~  res  ~
     ::  strip /ted from head
-    =/  ret  (turn u.res |=(pax=path ?~(pax pax t.pax)))
-    =/  ren  (turn ret (cury rent len))
-    `tang`(sort ren aor)
-  ?~(out ~[(crip "{<`@tas`p.typ>} not found")] out)
+    =/  reg  (turn u.res |=(pax=path ?~(pax pax t.pax)))
+    %-  sort  :_  aor  ^-  tang
+    =|  out=tang
+    |-  ^-  tang
+    ?~  reg  out
+    ::  Search in /ted
+    =/  gen  i.reg
+    ::  Trim off trailing /hoon
+    =?  gen  !=(~ gen)  (snip `path`gen)
+    =+  ark=.^(arch cy+(welp pat gen))
+    %=  $
+        reg
+      t.reg
+      ::
+        out
+      %+  welp
+        =/  red  ((read-at len pat) gen ark) :: XX ugly
+        (drop (bind red rent))
+      out
+    ==
+  ?~(out `tang`~[[%leaf "{<`@tas`p.typ>} not found"]] out)
 ::  Branch 3, No search term or path so grab all
 ?~  typ
   :-  %tang  %-  flop  ^-  tang
