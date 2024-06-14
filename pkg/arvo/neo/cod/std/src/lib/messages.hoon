@@ -94,12 +94,12 @@
   =/  msg  !<(message q.q.saga.idea)
   ^-  manx
   ?:  =(our.bowl from.msg)
-    (render-our-message msg)
+    (render-our-message msg bowl)
   ;div.fc.g2.msg
     =style  "align-self: flex-start;"
     ;div.fr.ac.jb
       ;p.s-2.f3: {(scow %p from.msg)}
-      ;p.s-2.f3: {(pretty-date now.msg)}
+      ;p.s-2.f3: {(pretty-date now.msg bowl)}
     ==
     ;div.bd1.br1.p3
       ;p: {(trip contents.msg)}
@@ -107,12 +107,12 @@
   ==
 ::
 ++  render-our-message
-|=  msg=message
+|=  [msg=message =bowl:neo]
 ;div.fc.g2.msg
   =style  "align-self: flex-end;"
   ;div.fr.ac.jb
     ;p.s-2.f3: {(scow %p from.msg)}
-    ;p.s-2.f3: {(pretty-date now.msg)}
+    ;p.s-2.f3: {(pretty-date now.msg bowl)}
   ==
   ;div.fr.je.bd2.br1.b1.p3
     ;p:  {(trip contents.msg)}
@@ -155,7 +155,7 @@
   ==
   ::
 ++  pretty-date
-  |=  date=@da
+  |=  [date=@da =bowl:neo]
   ^-  tape
   =/  d  (yore date)
   =/  months
@@ -174,5 +174,7 @@
       "Nov"
       "Dec"
     ==
+  ?:  &(=(m:d m:(yore now.bowl)) =(d:t:d d:t:(yore now.bowl)))
+    "{(y-co:co h:t:d)}:{(y-co:co m:t:d)}"
   "{(y-co:co h:t:d)}:{(y-co:co m:t:d)} {(y-co:co d:t:d)} {(snag (dec m:d) months)}"
 --
