@@ -6,8 +6,11 @@
 ++  poke   (sy %eyre-task ~)
 ++  kids
   :+  ~  %y
-  %-  ~(gas by *lads:neo)
-  ~
+  ^-  (map pish:neo lash:neo)
+  %-  malt
+  :~  :-  [|/%uv |]
+      [pro/%eyre-task ~]
+  ==
 ++  deps
   %-  ~(gas by *band:neo)
   ~
@@ -18,7 +21,7 @@
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo pail:neo)
     ?+    stud  ~|(bad-stud/stud !!)
-         %eyre-task
+        %eyre-task
       =+  !<(=task:eyre:neo vax)
       =/  [eyre-id=@ta req=inbound-request:eyre]  task
       =/  purl  (parse-url:serv request.req)
