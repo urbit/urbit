@@ -122,7 +122,7 @@
     |%
     +$  sign
       $~  [%behn %wake ~]
-      $%  [%ames $>(?(%tune %mess-response) gift)]
+      $%  [%ames $>(?(%tune %mess-response %size) gift)]
           [%behn $>(%wake gift:behn)]
           [%gall $>(?(%flub %unto) gift:gall)]
           [%jael $>(?(%private-keys %public-keys %turf) gift:jael)]
@@ -5526,13 +5526,15 @@
               %+  ~(put by chums.ames-state)  ship.per
               :-  %known
               %_    sat.per
-                  sizes
-                (~(put in sizes.sat.per) path)
-              ::
                   client-chain
                 (put:key-chain client-chain.sat.per kid.space key.space path)
               ==
-            (ev-make-peek space ship.per^(ev-make-path space path))
+            =.  path  (ev-make-path space path)
+            =?  chums.ames-state  fist
+              ~&  %adding-size
+              %+  ~(put by chums.ames-state)  ship.per
+              known/sat.per(sizes (~(put in sizes.sat.per) path))
+            (ev-make-peek space ship.per path)
           ::
           +|  %packet-entry-points
           ::
@@ -6220,6 +6222,23 @@
             =.  for.u.ms     (~(del in for.u.ms) hen)
             =.  pit.sat.per  (~(put by pit.sat.per) path u.ms)
             ev-core
+          ::
+          ++  ev-give-rate
+            |=  [spar fags=@ud total=@ud]
+            ^+  ev-core
+            ?~  rs=(~(get by chums.ames-state) ship)
+              ev-core
+            ?>  ?=([~ %known *] rs)  ::  XX alien agenda
+            ?~  ms=(~(get by pit.u.rs) path)
+              ev-core
+            =.  per  ship^+.u.rs
+            %-  ~(rep in for.u.ms)
+            |=  [hen=duct c=_ev-core]
+            ?.  (~(has in sizes.u.rs) path)
+              c
+            =?  c  =(0 fags)
+              (ev-emit:c hen %give %size ship^path fag-size=13 total)
+            (ev-emit:c hen %give %rate ship^path fags total)
           ::
           +|  %flows
           ::
@@ -7127,11 +7146,11 @@
                     ==
                 ::
                 =/  =public-key     pass:(~(got by keys.point) life.point)
-                =.  priv.ames-state    :: XX remove
-                  ;;  @
-                  =<  q.q  %-  need  %-  need
-                  =-  ~&  priv/-  -
-                  (rof [~ ~] /ames %j `beam`[[our %vein %da now] /1])  :: XX remove
+                :: =.  priv.ames-state    :: XX remove
+                ::   ;;  @
+                ::   =<  q.q  %-  need  %-  need
+                ::   =-  ~&  priv/-  -
+                ::   (rof [~ ~] /ames %j `beam`[[our %vein %da now] /1])  :: XX remove
                 =/  crypto-core     (nol:nu:crub:crypto priv.ames-state)
                 =/  =private-key    sec:ex:crypto-core
                 =/  =symmetric-key  (derive-symmetric-key public-key private-key)
@@ -7935,7 +7954,12 @@
             %tame  sy-abet:(~(sy-tame sy:ev-core hen) ship.task)
             %sift  sy-abet:(~(sy-sift sy:ev-core hen) ships.task)
             %spew  sy-abet:(~(sy-spew sy:ev-core hen) veb.task)
+        ::  migration
+        ::
             %back  sy-abet:(~(sy-back sy:ev-core hen) +.task)
+        ::  progress rate
+        ::
+            %rate  (ev-give-rate:ev-core +.task)
           ::  from internal %ames request
           ::
             %meek  (ev-make-peek:ev-core +.task)
