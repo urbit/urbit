@@ -27,9 +27,9 @@
             :-  ~
             =.  menu.this  menu.poke
             sky/!>(this)
-          %new-tab
+          %new-hawk
             :-  ~
-            =.  hawks.this  [[now.bowl #/[p/our.bowl]/home] hawks.this]
+            =.  hawks.this  [[now.poke #/[p/our.bowl]/home] hawks.this]
             =.  open.this  (min 4 +(open.this))
             sky/!>(this)
           %move-tab

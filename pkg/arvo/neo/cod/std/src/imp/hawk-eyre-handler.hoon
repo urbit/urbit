@@ -3,6 +3,7 @@
 /-  serv=sky-server
 />  htmx
 /<  node
+/<  http-request
 =<
 ^-  kook:neo
 |%
@@ -38,7 +39,7 @@
     :_  [stud vase]
     =/  purl  (parse-url:serv request.req)
     =/  id=@da  (slav %da (~(gut by pam.purl) 'hawk-id' '~2000.1.1'))
-    =/  slot=@ud  (slav %ud (~(gut by pam.purl) 'slot' '99'))
+    =/  slot=@ud  (slav %ud (~(gut by pam.purl) 'slot' '999'))
     =/  meta  [id slot]
     ?~  src=(~(get by deps.bowl) %src)
       =/  stub
@@ -115,12 +116,21 @@
     ::
         %'POST'
       =/  purl  (parse-url:serv request.req)
+      =/  content-type  (~(gut by pam.purl) 'content-type' 'text/html')
+      ~&  content-type
       =/  body  (parse-body:serv request.req)
       =/  poke-stud
         ^-  stud:neo
         ~|  %no-stud-specified
         (~(got by pam.purl) 'stud')
-      =/  mul  (mule |.((node [poke-stud body])))
+      =/  mul
+        %-  mule
+        |.
+        ?:  =(content-type 'application/x-www-form-urlencoded')
+          ~&  poke-stud
+          =/  fine  (http-request [poke-stud `request:http`request.req])
+          fine
+        (node [poke-stud body])
       ?-    -.mul
           %.n
         %:  eyre-cards
@@ -277,12 +287,27 @@
     ?@(f (trip f) (scow f))
   ++  id  -.meta
   ++  slot  +.meta
+  ++  slot-tag
+    ::  XX  oh boy this is hacky.
+    ::  working with slots in ssr is tough
+    ?:  =(slot 999)  "s-1"
+    "s{<slot>}"
   ++  idt  `tape`(zing (scan +:(scow %da id) (most dot (star ;~(less dot prn)))))
+  ++  vals
+    %^  cat  3  'js:{'
+    %^  cat  3  '"hawk-id": $(event?.target)?.closest("[slot]").attr("hawk-id") || "~2001.1.1"'
+    %^  cat  3  ', '
+    %^  cat  3  'slot: $(event?.target)?.closest("[slot]").attr("slot")?.slice(1) || "0"'
+    '}'
   ++  lift
     ^-  manx
     ;div.hawk.fc.wf.hf
+      =id  "hawk-{idt}"
+      =hawk-id  (scow %da id)
+      =slot  slot-tag
       =hx-params  "hawk-id,slot"
-      =hx-vals  "\{\"hawk-id\": \"{<id>}\", \"slot\": \"{<slot>}\"}"
+      =hx-vals  (trip vals)
+      =hx-target  "closest .hawk"
       =hx-target-x  "closest .rendered"
       =hx-target-404  "this"
       ;+  header
@@ -368,12 +393,24 @@
       ==
       ;div.fr.ac.jc.g1.hawk-actions
         =id  "hawk-actions-{idt}"
+        =hx-ext  "ignore:html-enc"
         ;button.p1.hover.b2.br1.loader.s-1
-          =hx-post  "/neo/hawk/{our-tape}/sky?stud=sky-diff"
-          =hx-target  "find .loading"
-          =hx-swap  "outerHTML"
-          =head  "slide-up"
-          =hawk-slot  "{<slot>}"
+          =hx-post  "/neo/hawk/{our-tape}/sky?stud=sky-diff&head=slide-up"
+          =hx-on-htmx-after-request
+            """
+            let swaper = $(this).closest('[slot]');
+            let slot = parseInt(swaper.attr('slot').slice(1));
+            let swapee = $(this).closest('a-i-r').find(`[slot='s$\{slot-1}']`);
+            if (swaper.length && swapee.length) \{
+              let ee = swapee.attr('slot');
+              let er = swaper.attr('slot');
+              swapee.attr('slot', er);
+              swaper.attr('slot', ee);
+            }
+            $(this).emit('hawks-moved');
+            """
+          =type  "button"
+          =hx-swap  "none"
           ;span.loaded
             ;+  chevron-left:feather-icons
           ==
@@ -382,11 +419,22 @@
           ==
         ==
         ;button.p1.hover.b2.br1.loader.s-1
-          =hx-post  "/neo/hawk/{our-tape}/sky?stud=sky-diff"
-          =hx-target  "find .loading"
-          =hx-swap  "outerHTML"
-          =head  "slide-down"
-          =hawk-slot  "{<slot>}"
+          =hx-post  "/neo/hawk/{our-tape}/sky?stud=sky-diff&head=slide-down"
+          =hx-on-htmx-after-request
+            """
+            let swaper = $(this).closest('[slot]');
+            let slot = parseInt(swaper.attr('slot').slice(1));
+            let swapee = $(this).closest('a-i-r').find(`[slot='s$\{slot+1}']`);
+            if (swaper.length && swapee.length) \{
+              let ee = swapee.attr('slot');
+              let er = swaper.attr('slot');
+              swapee.attr('slot', er);
+              swaper.attr('slot', ee);
+            }
+            $(this).emit('hawks-moved');
+            """
+          =hx-swap  "none"
+          =type  "button"
           ;span.loaded
             ;+  chevron-right:feather-icons
           ==
@@ -395,11 +443,17 @@
           ==
         ==
         ;button.p1.hover.b2.br1.loader.s-1
-          =hx-post  "/neo/hawk/{our-tape}/sky?stud=sky-diff"
-          =hx-target  "find .loading"
-          =hx-swap  "outerHTML"
-          =head  "minimize"
-          =hawk-slot  "{<slot>}"
+          =hx-post  "/neo/hawk/{our-tape}/sky?stud=sky-diff&head=minimize"
+          =hx-swap  "none"
+          =type  "button"
+          =hx-on-htmx-after-request
+            """
+            let air = $(this).closest('a-i-r');
+            let now = parseInt(air.attr('hawks')) - 1;
+            air.attr('hawks', now);
+            $(this).closest('[slot]')[0].removeAttribute('slot');
+            $(this).emit('hawks-moved');
+            """
           ;span.loaded
             ;+  minimize:feather-icons
           ==

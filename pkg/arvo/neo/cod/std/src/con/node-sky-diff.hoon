@@ -10,17 +10,5 @@
   %menu
     =/  c  ?~((get:mu %closed) %.y %.n)
     [%menu c]
-  %new-tab
-    [%new-tab ~]
-  %minimize
-    [%minimize (slav %ud (got:mu %hawk-slot))]
-  %slide-up
-    [%slide-up (slav %ud (got:mu %hawk-slot))]
-  %slide-down
-    [%slide-down (slav %ud (got:mu %hawk-slot))]
-  %maximize
-    [%maximize (slav %ud (got:mu %hawk-slot))]
-  %close
-    [%close (slav %ud (got:mu %hawk-slot))]
   ::
 ==
