@@ -66,7 +66,7 @@
       $~  [%ex *hoon]
       $%  [%ur p=@t]                                    ::  http GET request
           [%ge p=dojo-model]                            ::  generator
-          [%te p=[=desk =term] q=(list dojo-source)]    ::  thread
+          [%te p=[=desk term=$?(=term =path)] q=(list dojo-source)]    ::  thread
           [%dv p=beak q=path]                           ::  core from source
           [%ex p=hoon]                                  ::  hoon expression
           [%sa p=mark]                                  ::  example mark value
@@ -301,7 +301,7 @@
   ++  parse-thread
     ;~  plug
       ;~(pose ;~(sfix sym zap) (easy q.dir))
-      sym
+      (most fas sym)
     ==
   ::
   ++  parse-hoon    tall:hoon-parser
@@ -966,7 +966,7 @@
       (dy-hand %noun q.cag)
     ::
     ++  dy-wool-poke
-      |=  [[=desk =term] src=(list dojo-source)]
+      |=  [[=desk ?(=term =path)] src=(list dojo-source)]
       ^+  +>+>
       ?>  ?=(~ pux)
       =/  tid  (scot %ta (cat 3 'dojo_' (scot %uv (sham eny.hid))))
