@@ -498,7 +498,7 @@
   ++  piek
     |=  [=care:neo =pith:neo]
     ^-  (unit (unit (axal:neo saga:neo)))
-    ~&  peek-no-once/[care pith]
+    :: ~&  peek-no-once/[care pith]
    ``(fallback-peek care pith)
 
   ::
@@ -506,7 +506,7 @@
     |=  [=care:neo =pith:neo]
     ^-  (unit (unit (axal:neo saga:neo)))
     ?~  nce=(now-once care pith)
-      ~&  peek-no-once/[care pith]
+      :: ~&  peek-no-once/[care pith]
       ~
 ::    =/  res
 ::      (fallback-peek care pith)

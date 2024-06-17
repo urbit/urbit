@@ -851,6 +851,12 @@
   ++  duck  (dial dole)
   --
 ::
++$  deed
+  $@  ?
+  $:  time=(unit @dr)
+      req=?
+  ==
+::
 ::  $gift: notification that a children changed
 ::
 +$  gift  (axal loot)
@@ -2007,7 +2013,7 @@
       %x
     p.u.q.q
   --
-+$  fief  [required=? =quay]
++$  fief  [=deed =quay]
 ::
 ::  $port: Children API
 ::

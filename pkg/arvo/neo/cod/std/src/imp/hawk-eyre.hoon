@@ -29,7 +29,7 @@
       =/  =crew:neo  (~(gas by *crew:neo) src/inner ~)
       =/  =made:neo  [%hawk-eyre-handler `[stud vax] crew]
       :_  sig/!>(~)
-      :~  [(welp here.bowl #/[uv/eny.bowl]) %make made]
+      :~  [(welp here.bowl #/[uv/(end [3 4] eny.bowl)]) %make made]
       ==
     ==
   ++  init

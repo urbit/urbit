@@ -197,6 +197,7 @@
 ++  do-ack
   |=  =ack:neo
   ^-  (list card)
+  %-  (slog leaf/"do from: {<p.p.ack>} to: {<q.p.ack>}" ~)
   ?:  =(p.ack sys-pith)
     %.  *(list card)
     ?~  q.ack
@@ -272,7 +273,7 @@
 ++  on-move
   |=  =move:neo
   ^+  run
-  %-  (slog leaf/"{(en-tape:pith:neo p.move)} -> {(en-tape:pith:neo p.q.move)}: {<-.q.q.move>}" ~)
+  :: %-  (slog leaf/"{(en-tape:pith:neo p.move)} -> {(en-tape:pith:neo p.q.move)}: {<-.q.q.move>}" ~)
   =/  src=name:neo  (de-pith:name:neo p.move)
   =/  dst=name:neo  (de-pith:name:neo p.q.move)
   ?>  =(src.bowl ship.src)
@@ -291,6 +292,7 @@
       %gone  (slog leaf/"Missing dep: {<term.u.q.ack>}" ~)
       %goof  (slog leaf/"nacked on flow {<p.ack>}" tang.u.q.ack)
     ==
+  %-  (slog leaf/"on-ack from: {<p.p.ack>} to: {<q.p.ack>}" ~)
   (on-move q.p.ack p.p.ack %poke ack/!>(q.ack))
 ::
 ++  on-dirt-card
@@ -1728,9 +1730,17 @@
   ::
   ++  trace-card
     |=  =move:neo
-    ^-  tank
+    ::?:  =((snag 1 p.q.move) %srv)
+      :: same
+    %-  trace
+    ^-  tang
+    :_  ~
     :-  %leaf
-    "{(en-tape:pith:neo p.move)} -> {(en-tape:pith:neo p.q.move)}: {<-.q.q.move>}"
+    %+  welp
+      "{(en-tape:pith:neo p.move)} -> {(en-tape:pith:neo p.q.move)}: "
+    ?+  -.q.q.move  (trip -.q.q.move)
+      %poke  "%poke {<p.pail.q.q.move>}"
+    ==
   ++  trace
     |=  =tang
     ?.  verb  same
@@ -1784,6 +1794,7 @@
   ++  apply
     |=  =move:neo
     ^+  arvo
+    %-  (trace-card move)
     ?.  =(~ err.block)
       :: skip if we have errored
       arvo
@@ -1791,7 +1802,6 @@
     =.  src   (de-pith:name:neo p.move)
     =/  =name:neo  (de-pith:name:neo p.q.move)
     =.  here       +:p.q.move
-    %-  (trace leaf/"{<-.q.q.move>} {(spud (pout here))}" ~)
     ?-  -.q.q.move
       %make  (make +.q.q:move)
       %poke  (poke +.q.q:move)
@@ -1832,26 +1842,33 @@
     |-  ^+  [bad arvo]
     ?~  deps
       [bad arvo]
-    =/  [=term required=? =quay:neo]  i.deps
+    =/  [=term =deed:neo =quay:neo]  i.deps
+    =/  req=?
+      ?@(deed deed req.deed)
+    =/  timeout=(unit @dr)
+      ?@(deed ~ time.deed)
     =/  =care:neo  (get-care:quay:neo quay)
-    ?:  &(required !(~(has by conf) term))
+    ?:  &(req !(~(has by conf) term))
       =.  bad  (~(put in bad) term)
       $(deps t.deps)
-    ?:  &(!required !(~(has by conf) term))
+    ?:  &(!req !(~(has by conf) term))
       $(deps t.deps)
     =/  pit=pith:neo   (~(got by conf) term)
     =/  res  (look care pit)
     =/  nam=name:neo  (de-pith:name:neo pit)
     ?~  res
       ?:  =(our.bowl ship.nam)
-        ?.  required
+        ?.  req
           $(deps t.deps)
         =.  bad  (~(put in bad) term)
         $(deps t.deps)
-      =?  get.block  required
+      ?:  &(=(timeout `0) req)
+        =.  bad  (~(put in bad) term)
+        $(deps t.deps)
+      =?  get.block  req
         (~(put in get.block) care pit)
       =.  run  abet:(~(start sale pit) [p/our.bowl here] care)
-      =?  run  !required
+      =?  run  !req
         (stalk:rage care^pit %rely term here)
       $(deps t.deps)
     ?^  u.res
@@ -1867,11 +1884,13 @@
     ?~  cew
       arvo
     =/  [=term =pith:neo]  i.cew
-    =/  d=(unit [req=? =quay:neo])  (~(get by band) term)
+    =/  d=(unit [=deed:neo =quay:neo])  (~(get by band) term)
     ::  skip extraneous, XX: is correct?
     ?~  d
       $(cew t.cew)
-    =/  [req=? =quay:neo]  u.d
+    =/  [=deed:neo =quay:neo]  u.d
+    =/  req=?
+      ?@(deed deed req.deed)
     =/  =hunt:neo  [(get-care:quay:neo quay) pith]
     =/  =name:neo  (de-pith:name:neo pith)
     ?:  &(req =(~ (moor quay name)))
@@ -1976,18 +1995,19 @@
       %-  ~(gas by *(map term [pith lore:neo]))
       ^-  (list [term pith lore:neo])
       %+  murn  ~(tap by deps:kook)
-      |=  [=term required=? =quay:neo]
+      |=  [=term =deed:neo =quay:neo]
       ^-  (unit [^term pith:neo lore:neo])
       =/  dep=(unit pith)  (~(get by crew.wave) term)
+      =/  req  ?@(deed deed req.deed)
       ?~  dep
         ~|  invariant-missing-required-conf/term
-        ?<  required
+        ?<  req
         ~
       =/  =name:neo  (de-pith:name:neo u.dep)
       =/  =care:neo  (get-care:quay:neo quay)
       ?~  lor=(moor quay name)
-        ?<  required
-        ~
+        ?<  req
+        `[term u.dep *lore:neo]
 ::      %-  (slog term (epic:dbug:neo epic) ~)
       `[term u.dep u.lor]
     ::
@@ -2012,7 +2032,7 @@
     ++  su-give
       |=  =gift:neo
       ?.  (~(has in poke.dock.wave) %gift)
-        ~&  skipping-give/here
+        ::  ~&  skipping-give/here
         su-core
       (su-poke gift/!>(gift))
     ::
@@ -2027,7 +2047,7 @@
             same
           (slog (print-quit:neo u.ack))
         ?:  ?=(%rely p.pail)
-          ((slog leaf/"no support for %rely" ~) su-core)
+          su-core ::  ((slog leaf/"no support for %rely" ~) su-core)
         (mean leaf/"no support for {<p.pail>}" ~)
       =/  [caz=(list card:neo) new=pail:neo]
         (poke:su-form pail)

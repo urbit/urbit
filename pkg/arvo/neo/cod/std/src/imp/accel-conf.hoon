@@ -5,6 +5,7 @@
 ++  build
   |=  [=bowl:neo conf=accel-conf]
   ^-  (quip card pail:neo)
+  ~&  build/conf
   :_  accel-conf/!>(conf)
   =/  =term
     `@tas`(cat 3 'accel-' (scot %t (spat (pout (snip here.bowl)))))
@@ -30,14 +31,32 @@
       |=  [=term =pith:neo =lore:neo]
       ^-  [^term vase]
       [term (lift-lore lore)]
+    ++  check-prelude
+      =|  res=(set term)
+      |=  =bowl:neo 
+      ^+  res
+      =/  deps  ~(tap by deps.bowl)
+      |-  ^+  res
+      ?~  deps
+        res
+      =/  [=term =pith:neo =lore:neo]  i.deps
+      ?.  =(lore *lore:neo)
+        $(deps t.deps)
+      $(deps t.deps, res (~(put in res) term))
     ::
     ++  produce
       |=  =bowl:neo
       ^-  pail:neo
+      =/  missing  (check-prelude bowl)
+      ~&  hoon/hoon.conf
+      ?.  =(missing ~)
+        :-  %tang  !>  ^-  tang
+        [leaf/"Missing deps" (turn ~(tap in missing) |=(=term leaf/(trip term)))]
       =/  res=(each vase tang)
         (mule |.((slap (get-prelude bowl) (ream hoon.conf))))
       ?:  ?=(%& -.res)
         vase/p.res
+      %-  (slog p.res)
       tang/!>(p.res)
     --
   ^-  kook:neo
@@ -50,7 +69,7 @@
     %+  turn  ~(tap in ~(key by crew.conf))
     |=  =term
     ^-  [_term fief:neo]
-    [term req=& [any/~ ~] ~]
+    [term req=| [any/~ ~] ~]
   ++  form
     ^-  form:neo
     |_  [=bowl:neo =aeon:neo =pail:neo]
@@ -58,16 +77,18 @@
       |=  [=stud:neo vax=vase]
       ^-  (quip card:neo pail:neo)
       =/  new=pail:neo  (produce bowl)
-      ?:  =(new pail)
-        `pail
-      :_  pail
+      %-  (slog leaf/"New val: {<here.bowl>}" (sell q.new) ~)
+      ?:  =(new pail)  `new
+      :_  new
       %+  turn  ~(tap by poke.conf)
       |=  [=pith:neo =stud:neo]
-      [pith %poke [stud q.pail]]
+      [pith %poke [stud q.new]]
     ::
     ++  init
       |=  pal=(unit pail:neo)
-      `(produce bowl)
+      =/  new=pail:neo  (produce bowl)
+      %-  (slog leaf/"New val: {<here.bowl>}" (sell q.new) ~)
+      `new
     --
   --
 --
