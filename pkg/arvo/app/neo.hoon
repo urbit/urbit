@@ -424,7 +424,6 @@
   =.  run   (lazarus gis)
   =.  run   (take:rage gis)
   =.  run   (collect-rent gis)
-  ~&  gifs/gis
   run
 ::
 ++  plow  ~(. plow:aux loam)
@@ -833,10 +832,33 @@
     =.  run
       abet:(arvo move)
     $(how t.how)
-
+  ++  ease
+    |=  [=pith:neo how=(set howl:neo)]
+    %-  ~(gas in *(set howl:neo))
+    %+  skip  ~(tap in how)
+    |=  =howl:neo
+    ?.  ?=(%rely -.howl)
+      |
+    =(pith pith.howl)
+  ++  cure
+    |=  dead=pith:neo
+    =.  riot
+      %-  gas-riot
+      %+  turn  ~(tap by ~(tar of:neo riot))
+      |=  [=pith:neo =rave:neo]
+      =.  exe.rave  (ease dead exe.rave)
+      =.  why.rave  (ease dead why.rave)
+      =.  zed.rave  (ease dead zed.rave)
+      [pith rave]
+    run
   ++  reap
     |=  [change=pith:neo =loot:neo]
+    =/  =name:neo  (de-pith:name:neo change)
+    =?  run  =(our.bowl ship.name)
+      (cure pith.name)
+    ~&  reaping/change
     =/  =rave:neo  (~(gut of:neo riot) change *rave:neo)
+    ~&  rave/rave
     =.  run  (heal:rage:(heal:rage:(heal x/change exe.rave) y/change why.rave) z/change zed.rave)
     run(riot (~(del of:neo riot) change))
   ::
@@ -874,7 +896,6 @@
   ::
   ++  take
     |=  gis=(list gift:dirt:neo)
-    ~&  gis/gis
     =/  laf  (fury gis)
     =*  loop-gift  $
     ^+  run
@@ -1693,7 +1714,7 @@
   |%
   ++  can-ack
     ^-  ?
-    !?=([%poke %ack *] q.q.init-move)
+    !?=([%poke ?(%ack %rely %dead) *] q.q.init-move)
   ++  abet
     ^+  run
     ?:  =([~ ~] block)
@@ -2072,7 +2093,9 @@
         =+  !<(dead=term q.pail)
         ?~  dep=(~(get by deps:kook) dead)
           &
-        !required.u.dep
+        =/  [=deed:neo =quay:neo]  u.dep
+        ?@  deed  !deed
+        !req.deed
       ?.  (~(has in poke.dock.wave) p.pail)
         ?:  ?=(%ack p.pail)
           %.  su-core
@@ -2511,6 +2534,15 @@
   ?~  lst
     leaf
   =.  leaf   (~(put of:neo leaf) i.lst)
+  $(lst t.lst)
+::
+++  gas-riot
+  =|  =riot:neo
+  |=  lst=(list [pith:neo rave:neo])
+  ^+  riot
+  ?~  lst
+    riot
+  =.  riot   (~(put of:neo riot) i.lst)
   $(lst t.lst)
 
 ::
