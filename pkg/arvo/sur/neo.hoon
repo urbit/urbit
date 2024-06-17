@@ -1324,6 +1324,7 @@
       [%rely =term =pith]
       [%halt ~]
   ==
++$  dead  term
 +$  howl  tone
 ::  $wail: change result
 +$  wail  (trel hunt howl mode)
@@ -2131,6 +2132,7 @@
   $:  code=stud
       =dock
       =crew
+      live=?
   ==
 +$  tide  (axal wave)
 ::
