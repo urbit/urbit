@@ -1,1 +1,1 @@
-../arvo/lib/server.hoon
+../../base-dev/lib/server.hoon
