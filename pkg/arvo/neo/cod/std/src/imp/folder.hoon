@@ -1,5 +1,6 @@
 /@  folder
 /@  folder-diff
+/@  tracer
 =>
   |%
   ++  default-pails
@@ -7,6 +8,7 @@
     ^-  (list [stud:neo pail:neo])
     :~
       [%iframe iframe/!>('')]
+      [%hoon hoon/!>('~')]
       [%txt txt/!>('')]
     ==
   --

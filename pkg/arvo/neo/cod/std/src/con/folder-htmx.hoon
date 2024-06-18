@@ -45,6 +45,7 @@
                 %iframe
                 %task
                 %txt
+                %hoon
                 %sail
                 %slideshow
             ==

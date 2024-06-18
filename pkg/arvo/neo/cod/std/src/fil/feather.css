@@ -622,11 +622,11 @@ button {
 .numbered > *:before {
   content: counter(line);
   display: inline-block;
-  border-right: 1px solid var(--f3);
-  padding: 0 .5em;
-  margin-right: .5em;
+  /* border-right: 1px solid var(--f3); */
+  /* padding: 0 .5em; */
+  /* margin-right: .5em; */
   color: var(--f3);
-  min-width: 34px;
+  /* min-width: 34px; */
   text-align: right;
 }
 .numbered > * {

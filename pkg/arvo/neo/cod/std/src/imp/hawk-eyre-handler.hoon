@@ -179,6 +179,72 @@
             manx
         ==
       ==
+    ::
+        %'PUT'
+      =/  purl  (parse-url:serv request.req)
+      =/  content-type  (~(gut by pam.purl) 'content-type' 'text/html')
+      ~&  content-type
+      =/  body  (parse-body:serv request.req)
+      =/  poke-stud
+        ^-  stud:neo
+        ~|  %no-stud-specified
+        (~(got by pam.purl) 'stud')
+      =/  mul
+        %-  mule
+        |.
+        ?:  =(content-type 'application/x-www-form-urlencoded')
+          ~&  poke-stud
+          =/  fine  (http-request [poke-stud `request:http`request.req])
+          fine
+        (node [poke-stud body])
+      ?-    -.mul
+          %.n
+        %:  eyre-cards
+            eyre-id
+            bowl
+            500
+            :~
+              ['content-type' 'text/html']
+              ['HX-Reswap' 'outerHTML']
+            ==
+            ;div.b0.p-page.wf.hf.fc.g2.as
+              ;a.p2.br1.bd1.b1.hover.loader.block
+                =href  "/neo/hawk{(spud pax.purl)}"
+                ;span.loaded: reload
+                ;span.loading
+                  ;+  loading.feather-icons
+                ==
+              ==
+              ;+  (print-tang (tang p.mul))
+            ==
+        ==
+      ::
+          %.y
+        =/  =pail:neo  [poke-stud p.mul]
+        =/  bol  *bowl:neo
+        =.  here.bol  here
+        =.  our.bol  our.bowl
+        =.  now.bol  now.bowl
+        =.  eny.bol  eny.bowl
+        =/  =manx
+          ?~  converter=(mole |.((htmx pail)))
+            (default-refresher here)
+          =/  mul
+            %-  mule
+            |.((u.converter bol))
+          ?-  -.mul
+            %.y  p.mul
+            %.n  ;div: error
+          ==
+        :-  [here %make poke-stud `pail ~]
+        %:  eyre-cards
+            eyre-id
+            bowl
+            200
+            ['content-type' 'text/html']~
+            manx
+        ==
+      ==
     ==
   --
 --
