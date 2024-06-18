@@ -122,7 +122,7 @@
     |%
     +$  sign
       $~  [%behn %wake ~]
-      $%  [%ames $>(?(%tune %mess-response) gift)]
+      $%  [%ames $>(?(%tune %mess-response %size) gift)]
           [%behn $>(%wake gift:behn)]
           [%gall $>(?(%flub %unto) gift:gall)]
           [%jael $>(?(%private-keys %public-keys %turf) gift:jael)]
@@ -659,7 +659,7 @@
     ::
     +$  ames-state-21
       $+  ames-state-21
-      $:  peers=(map ship ship-state)
+      $:  peers=(map ship ship-state-21)
           =unix=duct
           =life
           =rift
@@ -676,6 +676,33 @@
           =chain
         ==
     ::
+    +$  ship-state-21
+      $+  ship-state-21
+      $%  [%alien alien-agenda-21]
+          [%known peer-state-21]
+      ==
+    ::
+    +$  alien-agenda-21
+      $+  alien-agenda-21
+      $:  messages=(list [=duct =plea])
+          packets=(set =blob)
+          keens=(jug path duct)
+          chums=(jug path duct)
+      ==
+    ::
+    +$  peer-state-21
+      $:  azimuth-state
+          route=(unit [direct=? =lane])
+          =qos
+          =ossuary
+          snd=(map bone message-pump-state)
+          rcv=(map bone message-sink-state)
+          nax=(set [=bone =message-num])
+          closing=(set bone)
+          corked=(set bone)
+          keens=(map path keen-state)
+          =chain
+      ==
     +$  dead-timer       [=duct =wire date=@da]
     +$  azimuth-state    [=symmetric-key =life =rift =public-key sponsor=ship]
     +$  azimuth-state-6  [=symmetric-key =life =public-key sponsor=ship]
@@ -1613,7 +1640,7 @@
       ++  encrypt
         |=  [key=@uxI iv=@ msg=byts]
         ^+  msg
-        =/  x  (xchacha:chacha:crypto 8 key (hash 24 iv))
+        =/  x  (xchacha:chacha:crypto key (hash 24 iv))  ::  XX rounds=8
         =;  =octs  +(p.octs)^(can 3 octs [1 0x1] ~)
         (chacha:crypto 8 key.x nonce.x 0 msg)
       ::
@@ -1623,7 +1650,7 @@
         ~|  [key=key iv=iv byts=byts]
         =/  wid  (dec wid.byts)
         ?>  =(0x1 (cut 3 [wid 1] dat.byts))
-        =/  x  (xchacha:chacha:crypto 8 key (hash 24 iv))
+        =/  x  (xchacha:chacha:crypto key (hash 24 iv))  ::  XX rounds=8
         (chacha:crypto 8 key.x nonce.x 0 wid^dat.byts)
       ::
       ++  seal-path
@@ -1687,6 +1714,7 @@
             |=  [=duct ames-state=axle]
             =*  veb  veb.bug.ames-state
             =|  cork-bone=(unit bone)  ::  modified by +on-kroc
+            =|  vane=?(%fine %ames)
             ~%  %event-core  ..$  ~
             |%
             +|  %helpers
@@ -1697,12 +1725,10 @@
                       event-core(moves [move moves])
             ++  emil  |=(mos=_moves event-core(moves (weld (flop mos) moves)))
             ++  channel-state  [life crypto-core bug]:ames-state
-            ++  trace-fine     (cury trace %fine)
-            ++  trace-ames     (cury trace %ames)
             ++  ev-trace
               |=  [verb=? =ship print=(trap tape)]
               ^+  same
-              (trace-ames verb ship ships.bug.ames-state print)
+              (trace vane verb ship ships.bug.ames-state print)
             ::  +get-peer-state: lookup .her state or ~
             ::
             ++  get-peer-state
@@ -2315,6 +2341,7 @@
                 %cork  (cork-bone bone.deep)
                 %kill  (kill-bone bone.deep)
                 %ahoy  (migrate-peer bone.deep)  :: XX remove bone; it's just next-bone.ossuary
+                %diet  (lose-whit path.deep)
               ==
               ::
               ++  migrate-peer
@@ -2349,6 +2376,8 @@
                 =~(abet:(on-cork-flow:peer-core bone) (emit duct %give %done ~))
               ::
               ++  kill-bone  |=(=bone abet:(on-kill-flow:peer-core bone))
+              ++  lose-whit  |=(=path abet:(on-lose-whit:peer-core path))
+              ::
               --
             ::  +on-stun: poke %ping app when hearing a STUN response
             ::
@@ -2493,14 +2522,19 @@
             ::
             +|  %fine-entry-points
             ::
+            ++  on-size  |=(spar %*($ on-keen spar +<, fist &))
             ++  on-keen
-              |=  [sec=(unit [idx=@ key=@]) spar]
+              =|  fist=_| :: fist=&ca request only the first fragment
+              |=  [sec=(unit [idx=@ key=@]) =spar]
               ^+  event-core
+              =*  ship  ship.spar
+              =*  path  path.spar
               =+  ~:(spit path)  ::  assert length
               =/  ship-state  (~(get by peers.ames-state) ship)
               ?:  ?=([~ %known *] ship-state)
                 ?~  sec
-                  abet:(on-keen:(abed-peer:pe ship +.u.ship-state) path duct)
+                  =<  abet
+                  (on-keen:(abed-peer:pe ship +.u.ship-state) fist path duct)
                 =.  chain.u.ship-state  (put:on:chain chain.u.ship-state [idx key /]:u.sec)
                 =.  peers.ames-state  (~(put by peers.ames-state) ship u.ship-state)
                 =/  enc
@@ -2513,7 +2547,10 @@
               ?>  ?=(~ sec)
               %^  enqueue-alien-todo  ship  ship-state
               |=  todos=alien-agenda
-              todos(keens (~(put ju keens.todos) path duct))
+              %_  todos
+                keens  (~(put ju keens.todos) path duct)
+                sizes  (~(put in sizes.todos) path)
+              ==
             ::
             ++  on-chum
               |=  spar
@@ -2537,8 +2574,8 @@
               ?.  ?=([~ %known *] ship-state)
                 :: XX delete from alien agenda?
                 %.  event-core
-                %^  trace-fine  fin.veb  ship
-                [ships.bug.ames-state |.("peer still alien, skip cancel-scry")]
+                %^  trace  vane  fin.veb
+                [ship ships.bug.ames-state |.("peer still alien, skip cancel-scry")]
               =+  peer=(abed:pe ship)
               ?.  (~(has by keens.peer-state.peer) path)
                 event-core
@@ -2710,6 +2747,7 @@
               +*  veb    veb.bug.channel
                   her    her.channel
                   keens  keens.peer-state
+                  sizes  sizes.peer-state
               ::
               +|  %helpers
               ::
@@ -2929,13 +2967,14 @@
                 fi-abet:(fi-rcv:(abed:fi path) peep meow lane)
               ::
               ++  on-keen
-                |=  [=path =^duct]
+                |=  [fist=? =path =^duct]
                 ^+  peer-core
                 ?:  (~(has by keens) path)
                   ::  TODO use fi-trace
-                  ~>  %slog.0^leaf/"fine: dupe {(spud path)}"
+                  ~>  %slog.0^leaf/"fine: dupe {(spud path)} {<duct>}"
                   fi-abet:(fi-sub:(abed:fi path) duct)
                 =.  keens  (~(put by keens) path *keen-state)
+                =?  sizes  fist  (~(put in sizes) path)
                 fi-abet:(fi-start:(abed:fi path) duct)
               ::
               ::  +on-cork-flow: mark .bone as closing
@@ -2967,6 +3006,13 @@
                 ::  since we got one cork ack, try the next one
                 ::
                 recork-one
+              ::
+              ++  on-lose-whit
+                |=  =path
+                ^+  peer-core
+                %-  %^  ev-trace  fin.veb  her
+                    |.("remove path size request {<path>}")
+                peer-core(sizes.peer-state (~(del in sizes.peer-state) path))
               ::
               ++  on-migrate
                 |=  =bone  :: XX do something with bone? save high water mark
@@ -4107,6 +4153,8 @@
                               num-fragments=num-fragments  closing=closing
                           ==
                         "send ack-1 {<data>}"
+                    ::  XX notify %clay about %rate?
+                    ::
                     sink
                   ::  last-heard<seq<10+last-heard; this is a packet in a live message
                   ::
@@ -4154,6 +4202,8 @@
                         =/  data
                           [seq=seq fragment-num=fragment-num fragments=num-fragments]
                         "send ack-2 {<data>}"
+                    ::  XX notify %clay about %rate?
+                    ::
                     (send-shut-packet bone seq %| %& fragment-num)
                   ::  enqueue all completed messages starting at +(last-heard.state)
                   ::
@@ -4384,6 +4434,9 @@
                       ::
                       ?|  =(~ listeners.keen)
                           &(!=(0 num-fragments) =(num-fragments num-received))
+                          ::  XX remove %whit listener when giving %size gift?                    ::?&  (~(has in sizes) path)
+                          ::    =(1 num-received)
+                          ::    =(1 ~(wyt in listeners.keen))
                       ==
                     =.  fine   fi-set-wake
                     peer-core(keens.peer-state (~(put by keens) path keen))  :: XX tack.keens
@@ -4413,22 +4466,34 @@
                   ^+  same
                   (trace %fine verb her ships.bug.ames-state print)
                 ::
-                ++  fi-emit       |=(move fine(event-core (emit +<)))
-                ++  fi-mop        ((on @ud want) lte)
-                ++  fi-gauge      (ga metrics.keen (wyt:fi-mop wan.keen))
-                ++  fi-wait       |=(tim=@da (fi-pass-timer %b %wait tim))
-                ++  fi-rest       |=(tim=@da (fi-pass-timer %b %rest tim))
+                ++  fi-emit   |=(move fine(event-core (emit +<)))
+                ++  fi-emil   |=((list move) fine(event-core (emil +<)))
+                ++  fi-mop    ((on @ud want) lte)
+                ++  fi-gauge  (ga metrics.keen (wyt:fi-mop wan.keen))
+                ++  fi-wait   |=(tim=@da (fi-pass-timer %b %wait tim))
+                ++  fi-rest   |=(tim=@da (fi-pass-timer %b %rest tim))
                 ::
                 ++  fi-etch-wail
                   |=(frag=@ud `hoot``@`(etch-shot (make-shot %0 fi-full-path frag)))
                 ::
                 ++  fi-send
                   |=  =blob
-                  fine(event-core (send-blob for=| her blob `known/peer-state))
+                  =.  event-core
+                    %-  %*(send-blob event-core vane %fine)
+                    [for=| her blob `known/peer-state]
+                  fine
                 ::
                 ++  fi-give-tune
                   |=  dat=(unit roar)
                   |=([=^duct =_fine] (fi-emit:fine duct %give %tune [her path] dat))
+                ::
+                ++  fi-give-rate
+                  |=  [frag=@ud num=@ud]
+                  |=([d=^duct f=_fine] (fi-emit:f d %give %rate [her path] frag^num))
+                ::
+                ++  fi-give-size
+                  |=  num=@ud
+                  |=([d=^duct f=_fine] (fi-emit:f d %give %size [her path] response-size num))
                 ::
                 +|  %entry-points
                 ::
@@ -4455,7 +4520,7 @@
                   ::  update congestion, or fill details
                   ::
                   =?  fine  =(0 num-fragments.keen)
-                    ?>  =(num 1)
+                    ?>  =(num 1) :: XX no-op instead?
                     (fi-first-rcv meow)
                   ::
                   ?.  ?=([@ @ @ *] full-path)
@@ -4488,12 +4553,18 @@
                     ?:  (lth num fra.i.hav.keen)
                       [i.hav.keen $(hav.keen t.hav.keen)]
                     [[num meow] hav.keen]
-                  ?.  =(num-fragments num-received):keen
-                    fi-continue
-                  (fi-done [sig dat]:fi-sift-full)
+                  ?:  =(num-fragments num-received):keen
+                    (fi-done [sig dat]:fi-sift-full)
+                  =?  fine  &((~(has in sizes) path) =(1 num-received.keen))
+                    fi-size
+                  :: XX if there's only one %whit listener, it'll
+                  :: still receive %rate gifts after unsubscribing
+                  fi-continue
                 ::
                 ++  fi-sub
-                  |=(=^duct fine(listeners.keen (~(put in listeners.keen) duct)))
+                  :: XX if dupe and %whit, give size right away
+                  |=  =^duct
+                  fine(listeners.keen (~(put in listeners.keen) duct))
                 ::  scry is autocancelled in +abet if no more listeners
                 ::
                 ++  fi-unsub
@@ -4524,7 +4595,7 @@
                     ?:  =(fra fra.val.u.first)
                       fine
                     =^  resend=?  metrics.keen
-                      (on-skipped-packet:fi-gauge +>.val.u.first)
+                      (%*(on-skipped-packet fi-gauge vane %fine) +>.val.u.first)
                     ?:  !resend
                       fine
                     =.  tries.val.u.first  +(tries.val.u.first)
@@ -4536,7 +4607,7 @@
                   =/  found  (get:fi-mop wan.keen fra)
                   ?~  found
                     [| fine]
-                  =.  metrics.keen  (on-ack:fi-gauge +>.u.found)
+                  =.  metrics.keen  (%*(on-ack fi-gauge vane %fine) +>.u.found)
                   =.  wan.keen  +:(del:fi-mop wan.keen fra)
                   [& fine]
                 ::
@@ -4550,7 +4621,17 @@
                     [[her [life.peer-state sig]] ~ ~]
                   ::
                   %-  (fi-trace fin.veb |.("done {(spud ful)}"))
-                  (~(rep in listeners.keen) (fi-give-tune roar))
+                  %-  ~(rep in listeners.keen)
+                  |=  [=^duct =_fine]
+                  =.  fine
+                    %.(duct^fine (fi-give-rate [num-received num-fragments]:keen))
+                  ((fi-give-tune roar) duct^fine)
+                ::
+                ++  fi-size
+                  %-  (fi-trace fin.veb |.("size received {(spud fi-full-path)}"))
+                  =.  fine  (fi-emit duct %pass /ames %a %deep %diet her path)
+                  %-  ~(rep in listeners.keen)
+                  |=([=^duct =_fine] ((fi-give-size num-fragments.keen) duct^fine))
                 ::
                 ++  fi-first-rcv
                   |=  =meow
@@ -4572,10 +4653,23 @@
                   ?:  |(=(~ nex.keen) =(inx max))
                     fine
                   =^  =want  nex.keen  nex.keen
-                  =.  last-sent.want   now
-                  =.      tries.want   +(tries.want)
-                  =.        wan.keen   (put:fi-mop wan.keen [fra .]:want)
-                  =.            fine   (fi-send `@ux`hoot.want)
+                  =.   last-sent.want  now
+                  =.       tries.want  +(tries.want)
+                  =.         wan.keen  (put:fi-mop wan.keen [fra .]:want)
+                  =.             fine  (fi-send `@ux`hoot.want)
+                  =,  keen
+                  =?  fine  =(0 (mod num-received 100))  ::  rate every 100 frags
+                  ::  XX come up with a better rate
+                  ::
+                  :: =/  modo  (div num-fragments 10)  :: rate for 10% of total
+                  :: =?  fine  ?|  =(0 (mod num-received modo))
+                  ::               :: rate every 100 frags if close to finish
+                  ::               ::
+                  ::               ?&  =(0 (mod num-received 100))
+                  ::                   (gth num-received (sub num-fragments modo))
+                  ::           ==  ==
+                    %-  ~(rep in listeners)
+                    (fi-give-rate num-received num-fragments)
                   $(inx +(inx))
                 ::
                 ++  fi-sift-full
@@ -4640,7 +4734,7 @@
                     :*  unix-duct.ames-state  %give  %nail  her
                         (get-forward-lanes our peer-state peers.ames-state)
                     ==
-                  =.  metrics.keen  on-timeout:fi-gauge
+                  =.  metrics.keen  %*(on-timeout fi-gauge vane %fine)
                   =^  want=(unit want)  wan.keen
                     ?~  res=(pry:fi-mop wan.keen)  `wan.keen
                     (del:fi-mop wan.keen key.u.res)
@@ -4665,7 +4759,7 @@
                 ++  ga-trace
                   |=  [verb=? print=(trap tape)]
                   ^+  same
-                  (trace %ames verb ship ships.bug.channel print)
+                  (trace vane verb ship ships.bug.channel print)
                 ::  +next-expiry: when should a newly sent fresh packet time out?
                 ::
                 ::    Use rtt + 4*sigma, where sigma is the mean deviation of rtt.
@@ -4832,6 +4926,7 @@
             %chum  (on-chum:event-core +.task)
             %yawn  (on-cancel-scry:event-core | +.task)
             %wham  (on-cancel-scry:event-core & +.task)
+            %whit  (on-size:event-core +.task)
           ::
             %mate  (on-mate:event-core +.task)
           ==
@@ -5419,9 +5514,8 @@
             (ev-emit:ev-core [/ames]~ %pass /clog %g clog/u.id)
           ::
           ++  ev-req-peek
-            |=  [sec=(unit [kid=@ key=@]) =path]
+            |=  [fist=? sec=(unit [kid=@ key=@]) =path]
             ^+  ev-core
-            ::  ?>  ?=(%known -.sat.per)
             ::  +sy-plug should have already stored [kid key path] in chain.ames-state
             ::  on the server, and the client would have retrieved the key via
             ::  the %ames key exchange. here we store it in their peer state
@@ -5435,7 +5529,12 @@
                   client-chain
                 (put:key-chain client-chain.sat.per kid.space key.space path)
               ==
-            (ev-make-peek space ship.per^(ev-make-path space path))
+            =.  path  (ev-make-path space path)
+            =?  chums.ames-state  fist
+              ~&  %adding-size
+              %+  ~(put by chums.ames-state)  ship.per
+              known/sat.per(sizes (~(put in sizes.sat.per) path))
+            (ev-make-peek space ship.per path)
           ::
           +|  %packet-entry-points
           ::
@@ -5888,7 +5987,7 @@
           ::  +ev-take-done: vane responses
           ::
           ++  ev-take-boon
-            |=  [=wire resp=$>(?(%boon %noon) gift)]
+            |=  [=wire =gift]
             ^+  ev-core
             ?~  flow-wire=(ev-validate-wire wire)
               ev-core
@@ -5899,11 +5998,10 @@
               :: XX log
               ev-core  ::  ignore events from an old rift
             ?>  ?=([%van %bak] [were dire])  ::  vane acks happen on backward flows
-            ~!  task
             %+  ev-req-boon  bone
-            ?-  -.resp
-              %boon  `payload.resp
-              %noon  [`id payload]:resp
+            ?+  -.gift  !!
+              %boon  `payload.gift
+              %noon  [`id payload]:gift
             ==
           ::  +ev-poke-done: vane acks
           ::
@@ -6121,8 +6219,36 @@
               =.  pit.sat.per  (~(del by pit.sat.per) path)
               (ev-give-response for.u.ms path ~)
             =.  for.u.ms     (~(del in for.u.ms) hen)
-            =.  pit.sat.per  (~(put by pit.sat.per) path u.ms)
+            =.  pit.sat.per
+              ?~  for.u.ms
+                (~(del by pit.sat.per) path)
+              (~(put by pit.sat.per) path u.ms)
             ev-core
+          ::
+          ++  ev-give-rate
+            |=  [spar fags=@ud total=@ud]
+            ^+  ev-core
+            ?~  rs=(~(get by chums.ames-state) ship)
+              ev-core
+            ?>  ?=([~ %known *] rs)  ::  XX alien agenda
+            ?~  ms=(~(get by pit.u.rs) path)
+              ev-core
+            =.  per  ship^+.u.rs
+            =;  [fren=fren-state core=_ev-core]
+              %_    core
+                  chums.ames-state
+                (~(put by chums.ames-state) ship known/fren)
+              ==
+            %-  ~(rep in for.u.ms)
+            |=  [hen=duct s=_sat.per c=_ev-core]  ::  XX use abet core for this
+            ?.  (~(has in sizes.u.rs) path)
+              [s c]
+            =?  s  =(0 fags)
+              s(sizes (~(del in sizes.s) path))
+            =?  c  =(0 fags)
+              (ev-emit:c hen %give %size ship^path fag-size=13 total)
+            :-  s
+            (ev-emit:c hen %give %rate ship^path fags total)
           ::
           +|  %flows
           ::
@@ -6958,7 +7084,9 @@
                     =<  abet  ^+  peer-core
                     %-  ~(rep by keens.todos)
                     |=  [[=path ducts=(set duct)] cor=_peer-core]
-                    (~(rep in ducts) |=([=duct c=_cor] (on-keen:c path duct)))
+                    %-  ~(rep in ducts)
+                    |=  [=duct c=_cor]
+                    (on-keen:c (~(has in sizes.todos) path) path duct)
                   ::
                   sy-core(ev-core (ev-emil moves))
                 ::
@@ -6989,7 +7117,8 @@
                     |=  [[=path ducts=(set duct)] core=_ev-core]
                     %-  ~(rep in ducts)
                     |=  [=duct c=_core]
-                    (ev-req-peek:(ev-abed:c duct) ~ path)
+                    %-  ev-req-peek:(ev-abed:c duct)
+                    [fist=(~(has in sizes.todos) path) sec=~ path]
                   ::
                   sy-core
                 ::
@@ -7774,6 +7903,7 @@
                 =/  who  (slaw %p her.tyl)
                 ?~  who  [~ ~]
                 ?~  chum=(~(get by chums.ames-state) u.who)
+                  ~&  (~(get by peers.ames-state) u.who)
                   [~ ~]
                 ``noun+!>(u.chum)
             ==
@@ -7838,7 +7968,12 @@
             %tame  sy-abet:(~(sy-tame sy:ev-core hen) ship.task)
             %sift  sy-abet:(~(sy-sift sy:ev-core hen) ships.task)
             %spew  sy-abet:(~(sy-spew sy:ev-core hen) veb.task)
+        ::  migration
+        ::
             %back  sy-abet:(~(sy-back sy:ev-core hen) +.task)
+        ::  progress rate
+        ::
+            %rate  (ev-give-rate:ev-core +.task)
           ::  from internal %ames request
           ::
             %meek  (ev-make-peek:ev-core +.task)
@@ -7938,6 +8073,7 @@
         %plea  (pe-plea +.task)
         %cork  (pe-cork +.task)
         %keen  (pe-keen +.task)
+        %whit  (pe-whit +.task)
         %yawn  (pe-cancel all=| +.task)
         %wham  (pe-cancel all=& +.task)
       ==
@@ -7986,7 +8122,7 @@
       =^  moves  ames-state
         =<  ev-abet
         ?:  ?=([~ %known *] +.ship-state)
-          (%*(ev-req-peek me-core per ship^+.u.ship-state) sec path)
+          (%*(ev-req-peek me-core per ship^+.u.ship-state) fist=| sec path)
         ::
         %^  ev-enqueue-alien-todo:me-core  ship  +.ship-state
         |=  todos=ovni-state:me-core
@@ -8035,6 +8171,25 @@
       ::
       `vane-gate
     ::
+    ++  pe-whit  :: XX add sec
+      |=  spar:^ames
+      =/  ship-state  (pe-find-peer ship)
+      ?:  ?=(%ames -.ship-state)
+        (call:ames hen ~ soft+whit/ship^path)
+      =^  moves  ames-state
+        =<  ev-abet
+        ?:  ?=([~ %known *] +.ship-state)
+          (%*(ev-req-peek me-core per ship^+.u.ship-state) fist=& sec=~ path)  ::  XX sec
+        ::
+        %^  ev-enqueue-alien-todo:me-core  ship  +.ship-state
+        |=  todos=ovni-state:me-core
+        %_  todos
+          peeks  (~(put ju peeks.todos) path hen)
+          sizes  (~(put in sizes.todos) path)
+        ==
+      moves^vane-gate
+      ::
+    ::
     --
 ::
 |%
@@ -8055,7 +8210,7 @@
     (~(pe-hear pe-core hen) dud +.task)
     ::  %mesa-only tasks
     ::
-      ?(%meek %moke %mage %heer %mess %back)
+      ?(%meek %moke %mage %heer %mess %back %rate)
     ::  XX can we call the wrong core? still check if ship has migrated?
     ::
     (call:mesa hen dud soft/task)
@@ -8065,7 +8220,7 @@
     (call:mesa hen dud soft/task)
     ::  common tasks
     ::
-      ?(%plea %cork %keen %yawn %wham %load)
+      ?(%plea %cork %keen %yawn %wham %load %whit)
     (~(call pe-core hen) task)
     ::  core-dependent tasks
     ::
@@ -8177,6 +8332,7 @@
         !!  ::  $(+<.old %adult, +>.old state.old)
       ?:  ?=(%0 -.old)
          ~&  priv.old
+        :: =.  peers.old  ~
         :: =.  chums.old
         ::   %-  ~(run by chums.old)
         ::   |=  =chum-state
@@ -8537,7 +8693,7 @@
         peers
       %-  ~(run by peers.old)
       |=  s=ship-state-20
-      ^-  ship-state
+      ^-  ship-state-21
       ?:  ?=(%alien -.s)
         [%alien messages.s packets.s keens.s chums.s]
       :*  -.s  -.+.s  route.s  qos.s  ossuary.s  snd.s  rcv.s
@@ -8550,7 +8706,16 @@
     ^-  axle
     :-  %0
     %=  old
-      chain  [server-chain=chain.old priv=sec:ex:crypto-core.old chums=~ %ames]
+        chain
+      [server-chain=chain.old priv=sec:ex:crypto-core.old chums=~ core=%ames]
+    ::
+        peers
+      %-  ~(run by peers.old)
+      |=  s=ship-state-21
+      ^-  ship-state
+      ?.  ?=(%known -.s)
+        s(chums [chums.s sizes=~])
+      s(chain [chain.s sizes=~])
     ==
   --
 ::  +scry: dereference namespace

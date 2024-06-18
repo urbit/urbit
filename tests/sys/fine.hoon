@@ -129,7 +129,9 @@
           (etch-shot:ames response)
       ==
       :~  [~[//fine] %pass /qos %d %flog %text "; ~bud is your neighbor"]
+          [~[/keen-duct-2] %give %rate [~bud scry-path] 1^1]
           [~[/keen-duct-2] %give %tune [~bud scry-path] roar]
+          [~[/keen-duct-1] %give %rate [~bud scry-path] 1^1]
           [~[/keen-duct-1] %give %tune [~bud scry-path] roar]
           [~[//unix] %pass fine-behn-wire %b %rest ~1111.1.1..00.00.01]
       ==
@@ -303,7 +305,8 @@
       :*  %hear  [%& ~bud]
           (etch-shot:ames resp2)
       ==
-      :~  [~[/keen-duct-1] %give %tune [~bud scry-path] roar]
+      :~  [~[/keen-duct-1] %give %rate [~bud scry-path] 3^3]
+          [~[/keen-duct-1] %give %tune [~bud scry-path] roar]
           [~[//unix] %pass fine-behn-wire %b %rest ~1111.1.2..00.02.00]
       ==
     ==

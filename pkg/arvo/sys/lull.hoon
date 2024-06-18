@@ -837,7 +837,7 @@
   ::    %snub: set packet blocklist to .ships
   ::    %spew: set verbosity toggles
   ::    %cong: adjust congestion control parameters
-  ::    %stir: recover from timer desync and assorted debug commands
+  ::    %stir: recover frofm timer desync and assorted debug commands
   ::    %trim: release memory
   ::    %vega: kernel reload notification
   ::
@@ -850,11 +850,13 @@
         $>(%plea vane-task)
         [%deep =deep]
         [%stun =stun]
+        [%rate =spar fragment=@ud num-fragments=@ud]
     ::
         [%keen sec=(unit [idx=@ key=@]) spar]
         [%chum spar]
         [%yawn spar]
         [%wham spar]
+        [%whit spar]
         [%plug =path]
     ::
         $>(%born vane-task)
@@ -912,6 +914,8 @@
         [%stub num=@ud key=@]
         [%near spar dat=(unit (unit page))]
         [%tune spar roar=(unit roar)]
+        [%rate =spar fragment=@ud num-fragments=@ud]   ::  XX combine rate/size
+        [%size =spar fragment-size=@ud fragments=@ud]  ::  XX combine rate/size
     ::
         [%turf turfs=(list turf)]
         [%saxo sponsors=(list ship)]
@@ -1020,6 +1024,7 @@
         [%drop =ship =nack=bone =message-num]
         [%cork =ship =bone]
         [%kill =ship =bone]
+        [%diet =ship =path]
         [%ahoy =ship =bone]  :: XX remove bone; it's just next-bone.ossuary
     ==
   ::  $stun: STUN notifications, from unix
@@ -1100,13 +1105,15 @@
   ::
   ::    messages: pleas local vanes have asked us to send
   ::    packets: packets we've tried to send
+  ::    heeds: local tracking requests; passed through into $peer-state
+  ::    keens: remote scry request vanes have asked us to send
   ::
   +$  alien-agenda
-    $+  alien-agenda
     $:  messages=(list [=duct =plea])
         packets=(set =blob)
         keens=(jug path duct)
         chums=(jug path duct)
+        sizes=(set path)   ::  XX add ?(%keen %whit) tag to .duct instead?
     ==
   +$  chain  ((mop ,@ ,[key=@ =path]) lte)
   ::  $peer-state: state for a peer with known life and keys
@@ -1130,7 +1137,6 @@
   ::    corked:  bones closed on both sender and receiver
   ::
   +$  peer-state
-    $+  peer-state
     $:  $:  =symmetric-key
             =life
             =rift
@@ -1147,6 +1153,7 @@
         corked=(set bone)
         keens=(map path keen-state)
         =chain
+        sizes=(set path)  ::  XX ?(%keen %whit) tag to .keen-state instead?
     ==
   +$  keen-state
     $+  keen-state
@@ -1629,6 +1636,7 @@
     $+  ovni-state
     $:  pokes=(list [=duct message=mesa-message])
         peeks=(jug path duct)
+        sizes=(set path)
         pit=(map path request-state)  ::  XX only for comets
     ==
   ::
@@ -1647,6 +1655,7 @@
         ::              path=ack-path  /~nec/ack/~zod/flow/bone=0/mess=1/frag=1
         ::
         pit=(map path request-state)
+        sizes=(set path)
         =client=chain            ::  stores keys for %shut requests
     ==
   ::
@@ -2404,6 +2413,8 @@
         [%hill p=(list @tas)]                           ::  mount points
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
         [%mere p=(each (set path) (pair term tang))]    ::  merge result
+        $>(%rate gift:ames)                             ::  XX  $keen progress
+        $>(%size gift:ames)                             ::  XX  $keen size
         [%ogre p=@tas]                                  ::  delete mount point
         [%rule red=dict wit=dict]                       ::  node r+w permissions
         [%tire p=(each rock:tire wave:tire)]            ::  app state

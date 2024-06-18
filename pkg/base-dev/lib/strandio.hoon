@@ -197,6 +197,20 @@
     `[%done +>.sign-arvo.u.in.tin]
   ==
 ::
+++  take-size
+  |=  =wire
+  =/  m  (strand ,[spar:ames fragment-size=@ud num-fragments=@ud])
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+    in.tin  `[%skip ~]
+      ~  `[%wait ~]
+    ::
+      [~ %sign * %ames %size ^ *]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done +>.sign-arvo.u.in.tin]
+  ==
+::
 ++  take-message
   |=  =wire
   =/  m  (strand ,sage:mess:ames)
@@ -376,6 +390,18 @@
   =/  m  (strand ,~)
   ^-  form:m
   (send-raw-card %pass wire %keen & spar)
+::
+++  yawn
+  |=  [=wire =spar:ames]
+  =/  m  (strand ,~)
+  ^-  form:m
+  (send-raw-card %pass wire %arvo %a %yawn spar)
+::
+++  whit
+  |=  [=wire =spar:ames]
+  =/  m  (strand ,~)
+  ^-  form:m
+  (send-raw-card %pass wire %arvo %a %whit spar)
 ::
 ++  sleep
   |=  for=@dr
@@ -609,6 +635,109 @@
   ;<  ~  bind:m  (send-raw-card %pass /warp %arvo %c %warp ship riff)
   (take-writ /warp)
 ::
+++  take-rate
+  |=  =wire
+  =/  m  (strand ,cage)
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+  in.tin  `[%skip ~]
+      ~  `[%wait ~]
+    ::
+      [~ %sign * %clay %size ^ *]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done size/!>(+>.sign-arvo.u.in.tin)]
+    ::
+      [~ %sign * %clay %rate *]
+    ?.  =(wire wire.u.in.tin)  `[%skip ~]
+    `[%done rate/!>([path.spar fragment num-fragments]:+>.sign-arvo.u.in.tin)]
+    ::
+      [~ %sign * ?(%behn %clay) %writ *]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done writ/!>(+>.sign-arvo.u.in.tin)]
+  ==
+::
+++  rate
+  =>  |%
+      +$  rate  [frag=_0 num=_1]
+      +$  size  [fragment=@ud total=@ud]
+      ++  calculate-progress
+        |=  [a=@ud b=@ud]
+        ^-  [int=@ud dec=@ud]
+        =/  progress=@rs
+          (mul:rs (div:rs (sun:rs a) (sun:rs b)) (sun:rs 100))
+        =+  int=(need (toi:rs progress))
+        =/  dec=@ud  =,  rs
+          (abs:si (need (toi (mul .100 (sub progress (san int))))))
+        [(abs:si int) dec]
+      --
+  |=  [=ship sole-id=(unit [who=@p ses=@ta]) =riff:clay]
+  =/  m  (strand ,riot:clay)
+  =|  needs=(map path total=@ud)
+  =|  haves=(map path received=@ud)
+  =|  total-frags=@ud
+  =|  fragment-size=@ud
+  =|  received=@ud
+  =|  =riot:clay
+  =|   =rate
+  =|  last-path=path
+  ;<  ~  bind:m  (send-raw-card %pass /rate %arvo %c %warp ship riff)
+  ::
+  |-  ^-  form:m
+  ?:  ?=(^ riot)
+    (pure:m riot)
+  ;<  now-1=@da  bind:m  get-time
+  ;<  =cage  bind:m  (take-rate /rate)
+  ?:  ?=(%size p.cage)
+    =+  !<([[* =path] =size] q.cage)
+    =.  fragment-size  fragment.size
+    =?  total-frags  !(~(has by needs) path)
+      ::  XX we get the size multiple times...
+      (add total-frags total.size)
+    $(needs (~(put by needs) [path total.size]))
+  ?:  ?=(%rate p.cage)
+    ;<  now-2=@da  bind:m  get-time
+    =/  time=@dr  (sub now-2 now-1)
+    ::
+    =+  !<([loc=path rat=^rate] q.cage)
+    ::
+    =/  byte=@ud
+      %+  div
+        (mul (div (bex fragment-size) (bex 3)) (sub frag.rat frag.rate))
+      (bex 10)
+    =>  .(loc `(pole knot)`loc)
+    ?>  ?=([van=@t car=@t cas=@t file-path=*] loc)
+    =?  haves  =(frag num):rat
+      (~(put by haves) [`path`file-path.loc frag.rat])
+    =/  received=@ud
+      %+  add  ?:(=(frag num):rat 0 frag.rat)
+      (~(rep by haves) |=([[* t=@ud] a=@ud] (add t a)))
+    ;<  ~  bind:m
+      ?~  sole-id  (flog-text "sole-id missing") :: XX (pure:m ~)
+      %^  poke-our  %hood  %rate  !>
+      :*  ::[(abs:si int) dec]                       ::  XX rate per path
+          (calculate-progress received total-frags)  ::  XX global rate
+          `path`file-path.loc
+          [~(wyt by haves) ~(wyt by needs)]
+          ::  XX poke only one time with the total? adds extra state to %kiln...
+          ::
+          [size=fragment-size total=total-frags]
+          [byte (div time (div ~s1 1.000))]
+      ==
+    $(rate rat)
+  ?>  ?=(%writ p.cage)
+  ::  XX print completion of all files -- move to %hood
+  :: ;<  ~  bind:m
+  ::   ?~  sole-id  (flog-text "")
+  ::   =/  =sole-effect:sole
+  ::     klr+~[[[`%un ~ `%g] "file: {<file-path>} [100%]"]]
+  ::   (poke-our %hood rate/!>(sole-effect))
+  ;<  ~  bind:m
+    (poke-our %hood rate/!>([0^0 / [~(wyt in haves) ~(wyt in needs)] 0^0 0^0]))
+  =+  !<(maybe=riot:clay q.cage)
+  $(riot maybe)
+::
 ++  read-file
   |=  [[=ship =desk =case] =spur]
   =*  arg  +<
@@ -634,6 +763,14 @@
     (strand-fail %list-tree >arg< ~)
   (pure:m !<((list path) q.r.u.riot))
 ::
+++  list-desk
+  |=  [[=ship =desk =case] =spur]
+  =*  arg  +<
+  =/  m  (strand arch)
+  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %y case spur)
+  ?~  riot
+    (strand-fail %list-desk >arg< ~)
+  (pure:m !<(arch q.r.u.riot))
 ::  Take Clay read result
 ::
 ++  take-writ
