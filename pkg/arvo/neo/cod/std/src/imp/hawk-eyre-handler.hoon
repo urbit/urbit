@@ -329,7 +329,7 @@
           ::  ignored shrubs
           ?=([[%p @] %cod %grab *] heer)
           ?=([[%p @] %cod %grow *] heer)
-          ?=([[%p @] %cod %std %out *] heer)
+          :: ?=([[%p @] %cod %std %out *] heer)
           ?=([[%p @] %cod %std %pre *] heer)
           ?=([[%p @] %out *] heer)
           ?=([[%p @] %srv *] heer)

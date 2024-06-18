@@ -1,3 +1,5 @@
+/+  dprint
+/+  easy-print=language-server-easy-print
 ::  $neo: New Shrub
 ::
 ::    Urbit is a namespace, from a path -> data
@@ -1705,8 +1707,10 @@
 ::    Ending with | indicates that the path match stops
 ::
 +$  pish
+  $+  pish
   $@(? [i=dita t=pish])
 +$  rail
+  $+  rail
   $@(? [i=zeta t=rail])
 +$  conf  (map term pith)
 +$  crew  (map term pith)
@@ -2028,8 +2032,8 @@
 +$  deps  band
 ::  $band: Dependencies
 ::
-+$  band  (map term fief)
-+$  lads  (map pish lash)
++$  band  $+(band (map term fief))
++$  lads  $+(lads (map pish lash))
 +$  dare  ?(%y %z)
 +$  port  (pair dare lads)
 +$  kids  (unit port)
@@ -2255,4 +2259,20 @@
     ?(%t %ta %tas)  (aor q.a q.b)
   ==
 ::
+++  dprint  ^dprint
+++  easy-print  ^easy-print
+++  slow                                                ::  get arms in core
+  |=  typ=type
+  ^-  (list (list term))
+  ?+    typ  ~
+      [%hold *]  $(typ ~(repo ut typ))
+      [%hint *]  $(typ ~(repo ut typ))
+      [%core *]
+    %-  zing
+    %+  turn  ~(tap by q.r.q.typ)
+      |=  [a=term b=tome]
+    %+  turn  ~(tap by q.b)
+      |=  [c=term *]
+    ~[a c]
+  ==
 --

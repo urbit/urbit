@@ -2,7 +2,6 @@
 /@  dm-diff
 /@  groupchat-diff
 /@  messenger-diff
-^-  kook:neo
 =>
 |%
 ++  send-invites
@@ -18,8 +17,21 @@
 ::
 |%
 ++  state  pro/%messenger
-++  poke  (sy %dm-diff %groupchat-diff %messenger-diff ~)
+::  +poke: The poke types
+::
+::    We allow for the three different kinds of diffs that we support
+::
+++  poke  
+  ::    %dm-diff is for creating DMs
+  (sy %dm-diff %groupchat-diff %messenger-diff ~)
+::  +kids: Children for messenger
 ++  kids
+  ::    Child constraints
+  ::
+  ::  All children under this tree either are DMs, or groupchats
+  ::  Dms are identified by @p
+  ::  Groupchats are identified by [@p @t]
+  ::
   :+  ~  %y
   %-  ~(gas by *lads:neo)
   :~  :-  [&/%dms |/%p |]
@@ -29,7 +41,7 @@
   ==
 ++  deps  *deps:neo
 ++  form
-  ^-  form:neo
+  :: ^-  form:neo
   |_  [=bowl:neo =aeon:neo state=pail:neo]
   ++  init
     |=  old=(unit pail:neo)
