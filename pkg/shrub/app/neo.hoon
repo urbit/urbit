@@ -1,1 +1,1 @@
-../arvo/app/neo.hoon
+../../arvo/app/neo.hoon

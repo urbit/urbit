@@ -1,1 +1,1 @@
-../arvo/sur/neo.hoon
+../../arvo/sur/neo.hoon

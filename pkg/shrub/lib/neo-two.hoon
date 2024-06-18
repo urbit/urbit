@@ -1,1 +1,1 @@
-../arvo/lib/neo-two.hoon
+../../arvo/lib/neo-two.hoon
