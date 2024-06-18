@@ -116,7 +116,7 @@
   ^-  ?
   =/  t
     !<  task
-    q.pail:(~(got of:neo kids.bowl) pith)
+    q.q.saga:(~(got of:neo kids.bowl) pith)
   ~&  >>  t
   kids-done.t
 ::
