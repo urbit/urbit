@@ -330,6 +330,8 @@
   =/  sag  (need (peek-x:till pith))
   =/  =feat:neo
     ?~  sag  [*aeon:neo sig/~]
+    ?:  =(%vase p.q.u.sag)
+      [*aeon:neo sig/~]
     (saga:soften u.sag)
   =.  run  (emit %give %fact ~ neo-feat+!>(feat))
   (emit %give %kick ~ ~)
