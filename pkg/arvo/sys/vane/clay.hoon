@@ -318,7 +318,7 @@
           $>(%what waif)                                ::
       ==                                                ::
       $:  %a                                            ::  to %ames
-          $>(?(%plea %keen %yawn) task:ames)            ::
+          $>(?(%plea %keen %yawn %whit) task:ames)      ::
       ==                                                ::
       $:  %b                                            ::  to %behn
           $>  $?  %drip                                 ::
@@ -362,7 +362,8 @@
           $>  $?  %boon                                 ::  response
                   %done                                 ::  (n)ack
                   %lost                                 ::  lost boon
-                  %tune                                 ::  scry response
+                  %tune                                 ::  |fine response
+                  %mess-response                        ::  |mesa response
               ==                                        ::
           gift:ames                                     ::
       ==                                                ::
@@ -3583,7 +3584,7 @@
         :-  ~
         =/  =wire  (request-wire %back-index her syd inx)
         =/  =path  [%backfill syd (scot %ud inx) ~]
-        ::  TODO: upgrade to %1 when most ships have upgaded
+        ::  TODO: upgrade to %1 when most ships have upgraded
         =/  =fill  [%0 syd lobe]
         (emit hen %pass wire %a %plea her %c path fill)
       ..abet(busy.sat ?~(scry `%ames scry))
@@ -6203,7 +6204,7 @@
     ==
   ::
   ?:  ?=([%back-index @ @ @ *] tea)
-    ?+    +<.hin  ~|  %clay-backfill-index-strange  !!
+    ?+    +<.hin  ~|  %clay-backfill-index-strange^+<.hin  !!
         %done
       ?~  error.hin
         [~ ..^$]
@@ -6217,16 +6218,20 @@
       %-  (slog leaf+"clay: lost backfill from {<tea>}" ~)
       [~ ..^$]
     ::
-        ?(%boon %tune)
+        ?(%boon %tune %mess-response)
       =/  her=ship   (slav %p i.t.tea)
       =/  =desk      (slav %tas i.t.t.tea)
       =/  index=@ud  (slav %ud i.t.t.t.tea)
       ::
       =/  fell=(unit fell)
         ?:  ?=(%boon +<.hin)  `;;(fell payload.hin)
-        ?~  roar.hin  ~
-        ?~  q.dat.u.roar.hin  ~
-        `[%1 `u.q.dat.u.roar.hin]
+        ?:  ?=(%tune +<.hin)
+          ?~  roar.hin  ~
+          ?~  q.dat.u.roar.hin  ~
+          `[%1 `u.q.dat.u.roar.hin]
+        =/  =spar:ames  p.sage.hin
+        ?~  q.sage.hin  ~
+        `[%1 `q.sage.hin]
       ::
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
@@ -6236,7 +6241,7 @@
           ::
           %-  (slog leaf+"clay: got null from {<her>}, falling back to ames" ~)
           abet:(retry-with-ames:den %back-index index)
-        =?  den  ?=(%tune +<.hin)
+        =?  den  ?=(?(%tune %mess-response) +<.hin)
           (cancel-scry-timeout:den index)
         abet:abet:(take-backfill:(foreign-update:den index) u.fell)
       [mos ..^$]
@@ -6343,6 +6348,7 @@
       ::
       %boon  !!
       %tune  !!
+      %mess-response  !!
       %lost  !!
       %unto  !!
       %wris  ~&  %strange-wris  !!
