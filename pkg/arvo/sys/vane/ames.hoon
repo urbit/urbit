@@ -5376,11 +5376,11 @@
             ::  %packet-response-entry-point
             ::
                 %heer
-              =/  =pact:pact  (parse-packet q.task)
+              =/  =pact:pact  (parse-packet p.task)
               ?-  -.pact
-                %page  (ev-pact-page p.task +.pact)
+                %page  (ev-pact-page lane.task +.pact)  :: XX ignore hops
                 %peek  (ev-pact-peek +.pact)
-                %poke  (ev-pact-poke p.task +.pact)
+                %poke  (ev-pact-poke lane.task hops.task +.pact)
               ==
             ::  %message-response-entry-point
             ::
@@ -5454,7 +5454,7 @@
           +|  %packet-entry-points
           ::
           ++  ev-pact-poke
-            |=  [=lane:pact =ack=name:pact =poke=name:pact =data:pact]
+            |=  [=lane:pact hops=@ =ack=name:pact =poke=name:pact =data:pact]
             ^+  ev-core
             ::  XX dispatch/hairpin &c
             ::
@@ -5508,9 +5508,8 @@
             ::
             =.  per  her.poke-name^+.u.chum-state
             ::  evict old lanes; keep the last 5
-            ::  XX inject hop count from unix
             ::
-            =.  route.sat.per  [[direct=%.y lane] (scag 5 route.sat.per)]
+            =.  route.sat.per  [[=(0 hops) lane] (scag 5 route.sat.per)]
             ::  update and print connection status
             ::
             =.  ev-core  (ev-update-qos %live last-contact=now)
@@ -5559,9 +5558,21 @@
             ?>  ?=([~ %known *] chum)  ::  XX alien agenda
             =.  per  [ship +.u.chum]
             ::  evict old lanes; keep the last 5
-            ::  XX inject hop count from unix
             ::
-            =.  route.sat.per  [[direct=%.y lane] (scag 5 route.sat.per)]
+            =.  route.sat.per
+              %+  weld
+                ?~  next
+                  ::  if the lane is direct use that as the next candidate
+                  ::
+                  [direct=%.y lane]~
+                ::  if the lane is indirect, it comes from a relay that we have
+                ::  already used in route.sat.per. (head next) should have the
+                ::  next hop in the routing chain, which will become our next
+                ::  candidate lane
+                ::
+                ~
+              %+  scag  5
+              (weld (turn next (lead direct=%.n)) route.sat.per)
             =*  pit  pit.sat.per
             =/  [=space cyf=(unit @) key=@ =inner=path]
               (ev-decrypt-path pat.name ship)
@@ -7206,7 +7217,6 @@
               ::   |.("incoming %dear lane {(scow %if ip)}:{(scow %ud pt)}")
               =?  chums.ames-state  ?=(%chum -.peer)
                 ::  evict old lanes; keep the last 5
-                ::  XX inject hop count from unix
                 ::
                 =.  route.+.u.peer  [[direct=%.y lane] (scag 5 route.+.u.peer)]
                 (~(put by chums.ames-state) ship u.peer)
@@ -7814,13 +7824,24 @@
             ::
             (ev-emit hen %pass /qos %d %flog %text u.text)
           ::
-          ++  ev-push-pact
+          ++  ev-push-pact  :: XX forwarding?
             |=  =pact:pact
             ^+  ev-core
-            =/  lanes=(list lane:pact:ames)
+            =;  lanes=(list lane:pact:ames)
+              %+  ev-emit  unix-duct.ames-state
+              [%give %push lanes p:(fax:plot (en:^pact pact))]
+            ?^  route.sat.per
               (turn route.sat.per tail)
-            %+  ev-emit  unix-duct.ames-state
-            [%give %push lanes p:(fax:plot (en:^pact pact))]
+            ::  find .ship.sat.per sponsor galaxy's lane
+            ::
+            =/  sax
+              (rof ~ /sax %j `beam`[[our %saxo %da now] /(scot %p ship.per)])
+            ?.  ?=([~ ~ *] sax)
+              ~  :: XX log
+            =/  gal  (rear ;;((list ship) q.q.u.u.sax))  :: XX only galaxy
+            ?:  =(our gal)
+              ~  :: XX log
+            [`@ux`gal]~
           ::
           --
       ::
@@ -7840,7 +7861,7 @@
                           :_  tang.u.dud
                           leaf+"mesa: %heer crashed {<mote.u.dud>}"
                       `ames-state
-              %mess  ev-abet:(ev-call:ev-core %mess p.task q.task dud)
+              %mess  ev-abet:(ev-call:ev-core %mess lane.task mess.task dud)
             ==
           ::
           =<  ev-abet
@@ -7873,7 +7894,7 @@
             %heer      (ev-call:ev-core task)  ::  XX dud
           ::  from packet layer or XX
           ::
-            %mess      (ev-call:ev-core %mess p.task q.task ~)
+            %mess      (ev-call:ev-core %mess lane.task mess.task ~)
           ==
           ::
         [moves vane-gate]
