@@ -856,6 +856,7 @@
         [%yawn spar]
         [%wham spar]
         [%plug =path]
+        [%whit boq=@ud spar]
     ::
         $>(%born vane-task)
         $>(%init vane-task)

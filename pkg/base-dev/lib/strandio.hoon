@@ -197,6 +197,25 @@
     `[%done +>.sign-arvo.u.in.tin]
   ==
 ::
+++  take-size
+  |=  =wire
+  =/  m  (strand ,[spar:ames fragment-size=@ud num-fragments=@ud])
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+    in.tin  `[%skip ~]
+      ~  `[%wait ~]
+    ::
+      [~ %sign * %ames %mess-response sage=*]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    =/  =sage:mess:ames  sage.sign-arvo.u.in.tin
+    :^  ~  %done  spar=p.sage
+    ?~  q.sage
+      [boq=13 tot=0]
+    =<  [boq tot]
+    ;;([%whit boq=@ud tot=@ud] q.sage)
+  ==
+::
 ++  take-message
   |=  =wire
   =/  m  (strand ,sage:mess:ames)
@@ -376,6 +395,18 @@
   =/  m  (strand ,~)
   ^-  form:m
   (send-raw-card %pass wire %keen & spar)
+::
+++  yawn
+  |=  [=wire =spar:ames]
+  =/  m  (strand ,~)
+  ^-  form:m
+  (send-raw-card %pass wire %arvo %a %yawn spar)
+::
+++  whit
+  |=  [=wire boq=@ud =spar:ames]
+  =/  m  (strand ,~)
+  ^-  form:m
+  (send-raw-card %pass wire %arvo %a %whit boq spar)
 ::
 ++  sleep
   |=  for=@dr
@@ -634,6 +665,14 @@
     (strand-fail %list-tree >arg< ~)
   (pure:m !<((list path) q.r.u.riot))
 ::
+++  list-desk
+  |=  [[=ship =desk =case] =spur]
+  =*  arg  +<
+  =/  m  (strand arch)
+  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %y case spur)
+  ?~  riot
+    (strand-fail %list-desk >arg< ~)
+  (pure:m !<(arch q.r.u.riot))
 ::  Take Clay read result
 ::
 ++  take-writ

@@ -5424,7 +5424,6 @@
           ++  ev-req-peek
             |=  [sec=(unit [kid=@ key=@]) =path]
             ^+  ev-core
-            ::  ?>  ?=(%known -.sat.per)
             ::  +sy-plug should have already stored [kid key path] in chain.ames-state
             ::  on the server, and the client would have retrieved the key via
             ::  the %ames key exchange. here we store it in their peer state
@@ -5438,7 +5437,7 @@
                   client-chain
                 (put:key-chain client-chain.sat.per kid.space key.space path)
               ==
-            (ev-make-peek space ship.per^(ev-make-path space path))
+            (ev-make-peek space ship.per (ev-make-path space path))
           ::
           +|  %packet-entry-points
           ::
@@ -5710,11 +5709,10 @@
             ?~  ms=(~(get by pit.u.rs) path)
               ev-core
             =.  per  ship^+.u.rs
-            ::  ?>  ?=(%known -.sat.per)
             ::
             ::  XX validate response
             =.  pit.u.rs           (~(del by pit.u.rs) path)
-            =.  chums.ames-state   (~(put by chums.ames-state) ship.spar u.rs)
+            =.  chums.ames-state   (~(put by chums.ames-state) ship u.rs)
             ~|   gage-res-failed/`@ux`res
             =+  ;;(=gage:mess (cue res))
             ?>  ?=(^ gage)
@@ -7755,6 +7753,17 @@
                 =*  priv  priv.ames-state
                 :+  ~  ~
                 [%message !>((sign:as:(nol:nu:crub:crypto priv) (jam comet-proof)))]
+              ::  weight of a noun bounded at .pat, as measured by .boq
+              ::
+                  [%whit boq=@ pat=*]
+                =/  boq  (slaw %ud boq.tyl)
+                ?~  boq  [~ ~]
+                ?~  inn=(inner-path-to-beam our pat.tyl)
+                  ~
+                ?~  res=(rof ~ /ames/whit vew.u.inn bem.u.inn)  :: XX only public data supported
+                  ~
+                :^  ~  ~  %whit
+                !>([boq=u.boq (met u.boq (jam ?~(u.res ~ [p q.q]:u.u.res)))])
             ::
               ==
             ::  only respond for the local identity, %$ desk, current timestamp
@@ -7841,15 +7850,19 @@
             %tame  sy-abet:(~(sy-tame sy:ev-core hen) ship.task)
             %sift  sy-abet:(~(sy-sift sy:ev-core hen) ships.task)
             %spew  sy-abet:(~(sy-spew sy:ev-core hen) veb.task)
+          ::  migration
+          ::
             %back  sy-abet:(~(sy-back sy:ev-core hen) +.task)
           ::  from internal %ames request
           ::
             %meek  (ev-make-peek:ev-core +.task)
             %moke  (ev-make-poke:ev-core +.task)
             %mage  (ev-make-page:ev-core +.task)
-          ::  XX
+          ::  from unix
           ::
             %heer      (ev-call:ev-core task)  ::  XX dud
+          ::  from packet layer or XX
+          ::
             %mess      (ev-call:ev-core %mess p.task q.task ~)
           ==
           ::
@@ -7941,6 +7954,7 @@
         %plea  (pe-plea +.task)
         %cork  (pe-cork +.task)
         %keen  (pe-keen +.task)
+        %whit  (pe-whit +.task)
         %yawn  (pe-cancel all=| +.task)
         %wham  (pe-cancel all=& +.task)
       ==
@@ -8038,6 +8052,22 @@
       ::
       `vane-gate
     ::
+    ++  pe-whit  :: XX add sec
+      |=  [boq=@ud spar:^ames]
+      =/  ship-state  (pe-find-peer ship)
+      ?:  ?=(%ames -.ship-state)
+        ~&(%whit-is-not-supported-in-ames `vane-gate)
+      =^  moves  ames-state
+        =.  path  [%a %x '1' %$ %whit (scot %ud boq) path]
+        =<  ev-abet
+        ?:  ?=([~ %known *] +.ship-state)
+          (%*(ev-req-peek me-core per ship^+.u.ship-state) sec=~ path)  ::  XX sec
+        ::
+        %^  ev-enqueue-alien-todo:me-core  ship  +.ship-state
+        |=  todos=ovni-state:me-core
+        todos(peeks (~(put ju peeks.todos) path hen))
+      moves^vane-gate
+    ::
     --
 ::
 |%
@@ -8068,7 +8098,7 @@
     (call:mesa hen dud soft/task)
     ::  common tasks
     ::
-      ?(%plea %cork %keen %yawn %wham %load)
+      ?(%plea %cork %keen %yawn %wham %load %whit)  :: XX make %whit only for |mesa
     (~(call pe-core hen) task)
     ::  core-dependent tasks
     ::
@@ -8580,6 +8610,7 @@
             [%flow bone=@ load=?(%plea %boon %ack-plea %ack-boon %nax) rcvr=@ mess=@ ~]
             [%flow bone=@ %cork rcvr=@ ~]
             [%comet %proof rcvr=@ life=@ ~]
+            [%whit boq=@ pat=*]
         ==
       (scry:mesa sample)
     ==
