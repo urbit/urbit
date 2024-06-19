@@ -283,8 +283,8 @@
   =/  tath  (en-tape:pith:neo pith)
   ;div.loading
     =hx-get  "/neo/hawk{tath}"
-    =hx-target  "closest .hawk"
-    =hx-select  ".hawk"
+    =hx-target  "closest .rendered"
+    =hx-select  ".rendered"
     =hx-trigger  "load once"
     =hx-indicator  "closest .loader"
     =hx-swap  "outerHTML"
@@ -406,12 +406,14 @@
                 0
               |=  [=iota a=@]
             :_  +(a)
-          ;div.fr.ac.g1
+          =/  pad  ?:(=(a 0) "p-1" "p1")
+          ;div.fr.ac
             =style  "height: 2rem;"
-            ;div.f4.s-1
+            ;div.f4.s-2
               ;+  chevron-right.feather-icons
             ==
-            ;a.hover.b2.br1.p-1.s0.loader.fc.ac.jc
+            ;a
+              =class  "hover b2 br1 {pad} s0 loader fc ac jc"
               =style  "height: 2rem;"
               =href  "/neo/hawk{(en-tape:pith:neo (scag +(a) here))}"
               ;span.loaded
