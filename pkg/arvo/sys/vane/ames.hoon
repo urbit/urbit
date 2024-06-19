@@ -3018,16 +3018,23 @@
                         ==
                     =|  flow=flow-state
                     =/  =dire
-                       ?:  =(%0 (mod bone 4))  %for  :: %plea(s)
-                       %bak  ::  boon(s) and naxplanation(s)
+                       ?:  =(%0 (mod bone 4))  %for  :: sending %plea(s)
+                       %bak  ::  sending boon(s) and naxplanation(s)
+                    ::
+                    =?  bone  =(%1 (mod bone 4))
+                      (mix 0b1 bone)
+                    =.    closing.flow  (~(has in closing.peer-state) bone)
+                    =.  next-load.flow  next.pump
                     ::  initialize fo-core
                     ::
                     =/  fo-core
                       =/  =^duct
                         (~(gut by by-bone.ossuary.peer-state) bone [/ames]~)
-                      %*  .  fo:~(ev-abed mesa [duct her^fren])
-                        flows.sat.per  (~(put by flows) bone^dire flow)
-                      ==
+                      =/  core
+                        %*  .  fo:~(ev-abed mesa [duct her^fren])
+                          flows.sat.per  (~(put by flows) bone^dire flow)  :: XX check that we don't add naxplanation flows here
+                        ==
+                      (fo-abed:core duct bone dire)
                     =?  moves  !=(current.pump next.pump)
                       =*  live  live.packet-pump-state.pump
                       =/  current-live=?
@@ -3046,11 +3053,6 @@
                       ::
                       %+  weld  moves
                       moves:(fo-peek-naxplanation:fo-core current.pump)
-                    ::
-                    ::  everything acked; quiescence achieved
-                    ::
-                    =.    closing.flow  (~(has in closing.peer-state) bone)
-                    =.  next-load.flow  next.pump
                     ::
                     ::  live packets in packet-pump-state are reconstructed; the
                     ::  receiver will droppped any partially received fragments
@@ -3106,19 +3108,18 @@
                       ::
                       |=  [=message current=_current.pump core=_fo-core]
                       :-  +(current)
-                      ?:  ?=(%naxplanation -.message)
-                        ::  if we are still sending a %naxplanation, we need to
-                        ::  put it in our namespace so the other ship reads it
-                        ::
-                        %_    fo-core
-                            nax.state
-                          %-  ~(put by nax.state.fo-core)
-                          [message-num error]:message
-                        ==
-                      %.  message
-                      fo-call:(fo-abed:core (got-duct bone) bone dire)
+                      ?.  ?=(%naxplanation -.message)
+                        (fo-call:core message)
+                      ::  if we are still sending a %naxplanation, we need to
+                      ::  put it in our namespace so the other ship reads it
+                      ::
+                      %_    fo-core
+                          nax.state
+                        %-  ~(put by nax.state.core)
+                        [message-num error]:message
+                      ==
                     ::
-                    :_  (~(put in flows) [bone dire] flow)
+                    :_  (~(put by flows) [bone dire] flow)
                     =.  moves  (weld forward-moves moves)
                     =?  moves  ?=(^ next-wake.packet-pump-state.pump)
                       =*  wake  u.next-wake.packet-pump-state.pump
@@ -3129,6 +3130,9 @@
                   ::  backward flows
                   ::
                   =.  flows.fren
+                    ::  XX the %ahoy flow is not migrated properly since
+                    ::     at this point we have not acked it yet
+                    ::
                     %-  ~(rep by rcv.peer-state)
                     |=  [[=^bone sink=message-sink-state] flows=_flows.fren]
                     ::  drop any partially received messages in live-messages
@@ -3141,7 +3145,13 @@
                     ?:  =(%2 (mod bone 4))
                       ::  %naxplanation %ack on receiver; skip bone
                       flows
-                    =|  flow=flow-state
+                    =/  =dire
+                       ?:  =(%0 (mod bone 4))  %for  :: receiving %boon(s)
+                       %bak  ::  receiving plea(s)
+                    =/  flow=flow-state
+                      =?  bone  =(%1 (mod bone 4))
+                        (mix 0b1 bone)
+                      (~(gut by flows) bone^dire *flow-state)
                     =:      closing.flow  (~(has in closing.peer-state) bone)
                                line.flow  last-acked.sink
                          last-acked.flow  last-acked.sink
@@ -3199,7 +3209,9 @@
                         ::
                         (turn ~(tap in nax.sink) (late *error))
                       ==
-                    (~(put in flows) [bone %bak] flow)
+                    =?  bone  =(%1 (mod bone 4))
+                      (mix 0b1 bone)
+                    (~(put by flows) bone^dire flow)
                   ::  naxplanations
                   ::  XX  check that this is true
                   ::  XX entries in nax.peer-state have not been used
