@@ -5513,7 +5513,7 @@
             =.  route.sat.per  [[direct=%.y lane] (scag 5 route.sat.per)]
             ::  update and print connection status
             ::
-            =.  ev-core  (update-qos %live last-contact=now)
+            =.  ev-core  (ev-update-qos %live last-contact=now)
             ?.  =(1 tot.data)
               =/  =dire  :: flow swtiching
                 %*(fo-flip-dire fo side *@ud^(fo-infer-dire:fo load.pok))  :: XX assert load is plea/boon
@@ -5570,7 +5570,7 @@
               ev-core
             ::  update and print connection status
             ::
-            =.  ev-core  (update-qos %live last-contact=now)
+            =.  ev-core  (ev-update-qos %live last-contact=now)
             ::
             =/  [typ=?(%auth %data) fag=@ud]
               ?~  wan.name
@@ -5711,7 +5711,7 @@
           ::
           +|  %messages-entry-point
           ::
-          ::  XX call +update-qos again in the message layer?
+          ::  XX call +ev-update-qos again in the message layer?
           ::
           ++  ev-mess-page
             =|  sealed-path=(unit path)   ::  XX set if coming from the packet layer
@@ -7158,7 +7158,7 @@
               %-  ~(rep by pit.sat.per)
               |=  [[=path req=request-state] core=_core]
               ~&  re-sending/path
-              ::  XX  restore this when fixing +update-qos
+              ::  XX  restore this when fixing +ev-update-qos
               ::  =*  peer  sat.per.core
               =*  peer  sat.per
               ::  update and print connection status
@@ -7167,7 +7167,7 @@
               :: =/  new=qos
               ::   ?.  (gte now expiry)  qos.peer
               ::   [%dead now]
-              :: =.  core  (update-qos:core new)
+              :: =.  core  (ev-update-qos:core new)
               ::  if =(~ pay.req); %naxplanation, %cork or external (i.e. not
               ::  coming from %ames) $peek request
               ::
@@ -7812,10 +7812,10 @@
           ::
           +|  %internals
           ::
-          ::  XX  refactor; merge with +update-qos in |pe:ames
-          ::  +update-qos: update and maybe print connection status
+          ::  XX  refactor; merge with +ev-update-qos in |pe:ames
+          ::  +ev-update-qos: update and maybe print connection status
           ::
-          ++  update-qos
+          ++  ev-update-qos
             |=  new=qos
             ^+  ev-core
             =*  old  qos.sat.per
