@@ -1,6 +1,5 @@
 /@  folder
 /@  folder-diff
-/@  tracer
 =>
   |%
   ++  default-pails
