@@ -5507,8 +5507,10 @@
               ev-core  :: XX TODO log
             ::
             =.  per  her.poke-name^+.u.chum-state
-            =.  route.sat.per  ::[[direct=%.y lane] (scag 5 route.sat.per)]  :: XX evict old lanes; keep the last 5
-              [direct=%.y lane]~
+            ::  evict old lanes; keep the last 5
+            ::  XX inject hop count from unix
+            ::
+            =.  route.sat.per  [[direct=%.y lane] (scag 5 route.sat.per)]
             ::  update and print connection status
             ::
             =.  ev-core  (update-qos %live last-contact=now)
@@ -5556,8 +5558,10 @@
               ev-core
             ?>  ?=([~ %known *] chum)  ::  XX alien agenda
             =.  per  [ship +.u.chum]
-            =.  route.sat.per  ::[[direct=%.y lane] (scag 5 route.sat.per)]  :: XX evict old lanes; keep the last 5
-              [direct=%.y lane]~
+            ::  evict old lanes; keep the last 5
+            ::  XX inject hop count from unix
+            ::
+            =.  route.sat.per  [[direct=%.y lane] (scag 5 route.sat.per)]
             =*  pit  pit.sat.per
             =/  [=space cyf=(unit @) key=@ =inner=path]
               (ev-decrypt-path pat.name ship)
@@ -7219,8 +7223,10 @@
               :: %-  %^  ev-trace  rcv.veb  ship
               ::   |.("incoming %dear lane {(scow %if ip)}:{(scow %ud pt)}")
               =?  chums.ames-state  ?=(%chum -.peer)
-                =.  route.+.u.peer  :: [[direct=%.y lane] (scag 5 route.+.u.peer)]  :: XX eviction; keep last 5
-                  [direct=%.y lane]~
+                ::  evict old lanes; keep the last 5
+                ::  XX inject hop count from unix
+                ::
+                =.  route.+.u.peer  [[direct=%.y lane] (scag 5 route.+.u.peer)]
                 (~(put by chums.ames-state) ship u.peer)
               =?  peers.ames-state  ?=(%ship -.peer)
                 =/  =^lane
