@@ -5945,6 +5945,30 @@
           ::
           +|  %message-constructor
           ::
+          ++  ev-make-peek
+            |=  [=space p=spar]
+            (ev-make-mess p ~ `space)
+          ::
+          ++  ev-make-poke
+            |=  [=space =ack=spar =poke=path]
+            =.  path.ack-spar   (ev-make-path space path.ack-spar)
+            (ev-make-mess ack-spar `poke-path `space)
+          ::
+          ++  ev-make-page
+            |=  [=space spar]
+            ^+  ev-core
+            =/  =name:pact
+              [[our rift.ames-state] [13 ~] (ev-make-path space path)]
+            ?~  page=(ev-get-page name)
+              ev-core
+            =/  =pact:pact  page/[name u.page ~]
+            =/  lanes=(list lane:pact:ames)
+              =/  her  (~(got by chums.ames-state) ship)
+              ?>  ?=([%known *] her)
+              (turn route.+.her tail)
+            %+  ev-emit  unix-duct.ames-state
+            [%give %push lanes p:(fax:plot (en:^pact pact))]
+          ::
           ++  ev-make-mess
             |=  [p=spar q=(unit path) spac=(unit space)]
             ^+  ev-core
@@ -5990,30 +6014,6 @@
               ?>  ?=([%known *] her)
               (turn route.+.her tail)
             %+  ev-emit   unix-duct.ames-state
-            [%give %push lanes p:(fax:plot (en:^pact pact))]
-          ::
-          ++  ev-make-peek
-            |=  [=space p=spar]
-            (ev-make-mess p ~ `space)
-          ::
-          ++  ev-make-poke
-            |=  [=space =ack=spar =poke=path]
-            =.  path.ack-spar   (ev-make-path space path.ack-spar)
-            (ev-make-mess ack-spar `poke-path `space)
-          ::
-          ++  ev-make-page
-            |=  [=space spar]
-            ^+  ev-core
-            =/  =name:pact
-              [[our rift.ames-state] [13 ~] (ev-make-path space path)]
-            ?~  page=(ev-get-page name)
-              ev-core
-            =/  =pact:pact  page/[name u.page ~]
-            =/  lanes=(list lane:pact:ames)
-              =/  her  (~(got by chums.ames-state) ship)
-              ?>  ?=([%known *] her)
-              (turn route.+.her tail)
-            %+  ev-emit  unix-duct.ames-state
             [%give %push lanes p:(fax:plot (en:^pact pact))]
           ::
           ++  ev-make-pact
