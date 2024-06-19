@@ -6133,7 +6133,10 @@
               =.  pit.sat.per  (~(del by pit.sat.per) path)
               (ev-give-response for.u.ms path ~)
             =.  for.u.ms     (~(del in for.u.ms) hen)
-            =.  pit.sat.per  (~(put by pit.sat.per) path u.ms)
+            =.  pit.sat.per
+              ?~  for.u.ms
+                (~(del by pit.sat.per) path)
+              (~(put by pit.sat.per) path u.ms)
             ev-core
           ::
           +|  %flows
