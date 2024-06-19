@@ -5546,7 +5546,7 @@
             =/  res=(unit (unit cage))  (ev-peek ~ /ames %x (name-to-beam name))
             ?.  ?=([~ ~ ^] res)
               ev-core
-            (ev-emit hen %give %push ~ !<(@ q.u.u.res))
+            (ev-emit hen %give %push ~ !<(@ q.u.u.res))  :: XX lanes
           ::
           ++  ev-pact-page
             |=  [=lane:pact =name:pact =data:pact =next:pact]
@@ -5596,10 +5596,7 @@
               ::
               ::  request next fragment
               ::
-              =/  =pact:pact  [%peek name(wan [%data 0])]
-              %+  ev-emit  unix-duct.ames-state
-              =/  lanes=(list lane:pact:ames)  (turn route.sat.per tail)
-              [%give %push lanes p:(fax:plot (en:^pact pact))]
+              (ev-push-pact %peek name(wan [%data 0]))
             ::
                 %data
               ?>  =(13 boq.name)  :: non-standard
@@ -5664,10 +5661,7 @@
                   =-  known/sat.per(pit -)
                   %+  ~(put by pit)  sealed-path  :: XX was outer-path?
                   u.res(ps `[u.state ~[dat.data]])
-                =/  =pact:pact  [%peek name(wan [%data leaf.u.state])]
-                %+  ev-emit  unix-duct.ames-state
-                =/  lanes=(list lane:pact:ames)   (turn route.sat.per tail)
-                [%give %push lanes p:(fax:plot (en:^pact pact))]
+                (ev-push-pact %peek name(wan [%data leaf.u.state]))
               ::  yes, we do have packet state already
               ::
               =*  ps  u.ps.u.res
@@ -5694,10 +5688,7 @@
               ?.  =(+(fag) leaves.los.ps)
                 ::  request next fragment
                 ::
-                =/  =pact:pact  [%peek name(wan [%data leaf.u.state])]
-                %+  ev-emit  unix-duct.ames-state
-                =/  lanes=(list lane:pact:ames)   (turn route.sat.per tail)
-                [%give %push lanes p:(fax:plot (en:^pact pact))]
+                (ev-push-pact %peek name(wan [%data leaf.u.state]))
               ::  yield complete message
               ::
               =/  =spar  [her.name inner-path]
@@ -5961,13 +5952,10 @@
               [[our rift.ames-state] [13 ~] (ev-make-path space path)]
             ?~  page=(ev-get-page name)
               ev-core
-            =/  =pact:pact  page/[name u.page ~]
-            =/  lanes=(list lane:pact:ames)
+            =.  sat.per
               =/  her  (~(got by chums.ames-state) ship)
-              ?>  ?=([%known *] her)
-              (turn route.+.her tail)
-            %+  ev-emit  unix-duct.ames-state
-            [%give %push lanes p:(fax:plot (en:^pact pact))]
+              ?>(?=([%known *] her) +.her)
+            (ev-push-pact page/[name u.page ~])
           ::
           ++  ev-make-mess
             |=  [p=spar q=(unit path) spac=(unit space)]
@@ -6009,12 +5997,8 @@
               =.  pit  (~(put by pit) path.p new)
               ?:(?=(%known -.her) her(pit pit) her(pit pit))   ::  XX find-fork
             ::
-            =/  =pact:pact  (ev-make-pact p q rift spac)
-            =/  lanes=(list lane:pact:ames)
-              ?>  ?=([%known *] her)
-              (turn route.+.her tail)
-            %+  ev-emit   unix-duct.ames-state
-            [%give %push lanes p:(fax:plot (en:^pact pact))]
+            =.  sat.per  ?>(?=([%known *] her) +.her)
+            (ev-push-pact (ev-make-pact p q rift spac))
           ::
           ++  ev-make-pact
             |=  [p=spar q=(unit path) =per=rift spac=(unit space)]
@@ -7171,11 +7155,9 @@
               ::  if =(~ pay.req); %naxplanation, %cork or external (i.e. not
               ::  coming from %ames) $peek request
               ::
-              =/  =pact:pact
-                (ev-make-pact ship.per^path pay.req rift.peer `space)  :: XX memoize?
-              %+  ev-emit:core   unix-duct.ames-state
-              =/  lanes=(list lane:pact:ames)  (turn route.sat.per tail)
-              [%give %push lanes p:(fax:plot (en:^pact pact))]
+              =;  =pact:pact
+                (ev-push-pact pact)
+              (ev-make-pact ship.per^path pay.req rift.peer `space)  :: XX can't memoize?
             ::  +sy-snub: handle request to change ship blacklist
             ::
             ++  sy-snub
@@ -7831,6 +7813,14 @@
             ::  print message
             ::
             (ev-emit hen %pass /qos %d %flog %text u.text)
+          ::
+          ++  ev-push-pact
+            |=  =pact:pact
+            ^+  ev-core
+            =/  lanes=(list lane:pact:ames)
+              (turn route.sat.per tail)
+            %+  ev-emit  unix-duct.ames-state
+            [%give %push lanes p:(fax:plot (en:^pact pact))]
           ::
           --
       ::
