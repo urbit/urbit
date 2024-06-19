@@ -13401,6 +13401,39 @@
             ==
       ==
     ::
+    ++  keyword
+      %-  stew  ^.  stet  ^.  limo
+      :~  :-  '#'
+            ;~  pfix  hax
+            ;~  pose
+              ;~(pfix (jest %aint) (stag %wtgl (toad expb)))
+              ;~(pfix (jest %assert-not) (stag %wtgl (toad expb)))
+              ;~(pfix (jest %assert) (stag %wtgr (toad expb)))
+              ;~(pfix (jest %bind) (stag %mcgl (toad expz)))
+              ;~(pfix (jest %cast) (stag %kthp (toad exqc)))
+              ;~(pfix (jest %cell) (stag %clhp (toad expb)))
+              ;~(pfix (jest %compose) (stag %tsgr (toad expb)))
+              ;~(pfix (jest %crash) (stag %zpzp (cold ~ (easy %$))))
+              ;~(pfix (jest %default) (toad txls))
+              ;~(pfix (jest %door) (stag %brcb (toad exqr)))
+              ;~(pfix (jest %function) (stag %brts (toad exqc)))
+              ;~(pfix (jest %if) (stag %wtcl (toad expc)))
+              ;~(pfix (jest %let) (stag %tsfs (toad expo)))
+              ;~(pfix (jest %like) (stag %ktls (toad expb)))
+              ;~(pfix (jest %loop) (stag %brhp (toad expa)))
+              ;~(pfix (jest %mold) (stag %mcmc (toad exqc)))
+              ;~(pfix (jest %pipe) (stag %mcsg (toad expi)))
+              ;~(pfix (jest %print) (stag %sgpm (toad hinf)))
+              ;~(pfix (jest %recur) (stag %cnts (toad exph)))
+              ;~(pfix (jest %scry) (stag %dtkt (toad exqn)))
+              ;~(pfix (jest %switch) (toad txhp))
+              ;~(pfix (jest %tuple) (stag %cltr (toad exps)))
+              ;~(pfix (jest %typeof) (stag %zpgr (toad expa)))
+              ;~(pfix (jest %unless) (stag %wtdt (toad expc)))
+              ;~(pfix (jest %wrap) (stag %tsgl (toad expb)))
+            ==  ==
+      ==
+    ::
     ++  boog  !:
       %+  knee  [p=*whit q=*term r=*help s=*hoon]
       |.(~+((scye ;~(pose bola boba))))
@@ -13871,7 +13904,7 @@
   ::
   ++  tall                                              ::  full tall form
     %+  knee  *hoon
-    |.(~+((wart (clad ;~(pose expression:(norm &) long lute apex:(sail &))))))
+    |.(~+((wart (clad ;~(pose expression:(norm &) keyword:(norm &) long lute apex:(sail &))))))
   ++  till                                              ::  mold tall form
     %+  knee  *spec
     |.(~+((wert (coat ;~(pose structure:(norm &) scad)))))
