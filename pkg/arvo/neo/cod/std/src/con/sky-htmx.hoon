@@ -261,12 +261,15 @@
         let textinput = ['text', 'number', 'email', 'password'].includes(focused.getAttribute('type'));
         if (textarea || textinput) {
           if (e.key === 'Escape') {
-            closeEye();
             document.activeElement.blur();
           }
           return;
         }
-        if (e.key === ' ') {
+        if (e.key === 'Escape') {
+          closeEye();
+          document.activeElement.blur();
+        }
+        else if (e.key === ' ') {
           e.preventDefault();
           if (window.eye.open) {
             closeEye();

@@ -39,7 +39,7 @@
   ==
 ++  home-button
   ;a.p2.br1.bd1.b1.hover.loader.wfc.block
-    =href  "/neo/hawk/home"
+    =href  "/neo/hawk/{(scow %p our.bowl)}/home"
     =hx-swap  "innerHTML"
     =hx-target  "closest .hawk"
     =hx-select  ".hawk"

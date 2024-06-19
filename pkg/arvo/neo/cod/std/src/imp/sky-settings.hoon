@@ -10,7 +10,7 @@
   ++  poke
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo pail:neo)
-    `pail
+    `[stud vax]
   ++  init
     |=  pal=(unit pail:neo)
     ^-  (quip card:neo pail:neo)
