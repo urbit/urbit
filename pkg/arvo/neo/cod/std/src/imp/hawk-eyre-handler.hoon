@@ -413,7 +413,6 @@
             ==
             ;a.hover.b2.br1.p-1.s0.loader.fc.ac.jc
               =style  "height: 2rem;"
-              =hx-vals  "\{\"id\": \"{<id>}\", \"slot\": \"{<slot>}\"}"
               =href  "/neo/hawk{(en-tape:pith:neo (scag +(a) here))}"
               ;span.loaded
                 ;+  ;/
