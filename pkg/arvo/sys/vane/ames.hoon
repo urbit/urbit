@@ -5889,7 +5889,7 @@
           ::  +ev-take-done: vane responses
           ::
           ++  ev-take-boon
-            |=  [=wire resp=$>(?(%boon %noon) gift)]
+            |=  [=wire =gift]
             ^+  ev-core
             ?~  flow-wire=(ev-validate-wire wire)
               ev-core
@@ -5900,11 +5900,10 @@
               :: XX log
               ev-core  ::  ignore events from an old rift
             ?>  ?=([%van %bak] [were dire])  ::  vane acks happen on backward flows
-            ~!  task
             %+  ev-req-boon  bone
-            ?-  -.resp
-              %boon  `payload.resp
-              %noon  [`id payload]:resp
+            ?+  -.gift  !!
+              %boon  `payload.gift
+              %noon  [`id payload]:gift
             ==
           ::  +ev-poke-done: vane acks
           ::
@@ -7880,7 +7879,8 @@
             `ames-state
           ::
           =<  ev-abet
-          ?+  sign  ~&(mesa-take-sign/[&1^&2]:sign ev-core)
+          ~|  sign=sign
+          ?+  sign  ev-core  ::  ~&(mesa-take-sign/[&1^&2]:sign ev-core)
             [%behn %wake *]  (ev-take-wake:ev-core [wire error.sign])
           ::
               [%jael %private-keys *]
@@ -8112,12 +8112,30 @@
 ++  take
   |=  [=wire =duct dud=(unit goof) =sign]
   ^-  [(list move) _vane-gate]
+  =*  sample  +<
   ?^  dud
     ~|(%ames-take-dud (mean tang.u.dud))
     ::
   ?:  ?=([?(%turf %mesa %private-keys %public-keys) *] wire)
-    (take:mesa +<)
-  (take:ames +<)
+    (take:mesa sample)
+  =/  parsed-wire  (parse-bone-wire wire)
+  ?:  ?=(~ parsed-wire)
+    (take:ames sample)
+  ::  XX log
+  ::  migrate wire if the peer is in chums
+  ::
+  =/  ship-state  (pe-find-peer her.u.parsed-wire)
+  ?:  ?=(%ames -.ship-state)
+    (take:ames sample)
+  ?:  ?=(%old -.u.parsed-wire)  `vane-gate  :: drop old wires
+  %-  take:mesa
+  :_  +.sample
+  ^-  ^wire
+  :~  %mesa  %flow  %van  %bak
+     (scot %p her.u.parsed-wire)
+     (scot %ud rift.u.parsed-wire)
+     (scot %ud (mix 0b1 bone.u.parsed-wire))
+  ==
 ::  +stay: extract state before reload
 ::
 ++  stay  ames-state
