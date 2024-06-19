@@ -2,19 +2,26 @@
 :-  [%vase %$ %htmx]
 |=  vax=vase
 |=  =bowl:neo
+=;  revert                                          ::  XX fix vase printing
+  ;/  (of-wall:format (~(win re (sell vax)) 0 80))  ::
 =/  depth=@ud  2
 =/  ty  p.vax
 |-  ^-  manx
 =*  loop  $
 |^  ^-  manx
-?:  =(depth 0)
-  ;/  "Bottoming out"
-=/  arms  (slow:neo ty)
-=/  items=(list item:dprint:neo)
-  (zing (turn arms |=(ls=(list term) `(list item:dprint:neo)`(drop (find-item-in-type:dprint:neo ls ty)))))
-;div
-  ;*  (turn items print-item)
-==
+  ?:  =(depth 0)
+    ;/  "Bottoming out"
+  =/  arms  (slow:neo ty)
+  =/  items=(list item:dprint:neo)
+    (zing (turn arms |=(ls=(list term) `(list item:dprint:neo)`(drop (find-item-in-type:dprint:neo ls ty)))))
+  ;div
+    ;*
+    ?:  =(0 (lent items))
+      ;=
+        ;+  ;/  (of-wall:format (~(win re (sell vax)) 0 80))
+      ==
+    (turn items print-item)
+  ==
 ++  print-item
   |=  val=item:dprint:neo
   ^-  manx
@@ -22,7 +29,7 @@
       %core  (print-core +.val)
       %chapter  (print-chapter +.val)
       %arm   (print-arm +.val)
-      %view  
+      %view
     ;div
       ;*  (turn items.val print-overview-item)
     ==
@@ -30,7 +37,7 @@
 ++  print-overview-item
   |=  tim=overview-item:dprint:neo
   ^-  manx
-  ?-  -.tim 
+  ?-  -.tim
     %header  (print-overview-header +.tim)
     %item    (print-overview-item-actual +.tim)
   ==
@@ -80,7 +87,7 @@
     ;div
        ;*  (print-what "Overview" docs)
        ;*  (print-what "Tome" p.tom)
-       ;*  
+       ;*
        %+  turn  ~(tap by q.tom)
        |=  [=term =hoon]
        ^-  manx
@@ -101,31 +108,33 @@
    =/  t  (~(play ut sut) gen)
 
   ^-  manx
-  ;div
-    ;h3
-      ; +
-      ; {name}
-    ==
-    ;div
-      ;details
-        ;summary: Signature
-        ;code
-          ;pre
-            ;* 
-            %+  turn  (wash [0 80] ~(duck easy-print:neo t))
-            |=  tap=tape
-            ;div: {tap}
-          ==
+  ;div.fc.g2
+    ;h3: {(weld "+" name)}
+    ;details.br1.bd1
+      ;summary.br1.b1.p-1: signature
+      ;code.p2
+        ;pre.mono
+          ;*
+          %+  turn  (wash [0 80] ~(duck easy-print:neo t))
+          |=  tap=tape
+          ;div: {tap}
         ==
       ==
-      ;div: Docs
-      ;*  (print-what "" adoc)
-      ;*  (print-what "Product" pdoc)
-      ;*  (print-what "$" cdoc)
     ==
-    ;div: Children
-    ;+  
-    loop(ty (~(play ut ty) gen), depth (dec depth))
+    ;details.br1.bd1
+      ;summary.br1.b1.p-1: docs
+      ;div.p2.fc.g1
+        ;*  (print-what "" adoc)
+        ;*  (print-what "Product" pdoc)
+        ;*  (print-what "$" cdoc)
+      ==
+    ==
+    ;details.br1.bd1
+      ;summary.br1.b1.p-1: children
+      ;div.p2
+        ;+  loop(ty (~(play ut ty) gen), depth (dec depth))
+      ==
+    ==
   ==
 ::
 ++  print-what
@@ -138,11 +147,11 @@
     ;div
       ;  {(trip p.u.wat)}
     ==
-  ;details
-    ;summary
+  ;details.br1.bd1
+    ;summary.p-1.b1.br1
       ;  {(trip p.u.wat)}
     ==
-    ;div
+    ;div.p2
       ;*  (turn q.u.wat print-sect)
     ==
   ==
