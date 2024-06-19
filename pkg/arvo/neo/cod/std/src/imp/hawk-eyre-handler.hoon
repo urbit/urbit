@@ -117,7 +117,6 @@
         %'POST'
       =/  purl  (parse-url:serv request.req)
       =/  content-type  (~(gut by pam.purl) 'content-type' 'text/html')
-      ~&  content-type
       =/  body  (parse-body:serv request.req)
       =/  poke-stud
         ^-  stud:neo
@@ -127,9 +126,7 @@
         %-  mule
         |.
         ?:  =(content-type 'application/x-www-form-urlencoded')
-          ~&  poke-stud
-          =/  fine  (http-request [poke-stud `request:http`request.req])
-          fine
+          (http-request [poke-stud `request:http`request.req])
         (node [poke-stud body])
       ?-    -.mul
           %.n
@@ -183,7 +180,6 @@
         %'PUT'
       =/  purl  (parse-url:serv request.req)
       =/  content-type  (~(gut by pam.purl) 'content-type' 'text/html')
-      ~&  content-type
       =/  body  (parse-body:serv request.req)
       =/  poke-stud
         ^-  stud:neo
@@ -193,9 +189,7 @@
         %-  mule
         |.
         ?:  =(content-type 'application/x-www-form-urlencoded')
-          ~&  poke-stud
-          =/  fine  (http-request [poke-stud `request:http`request.req])
-          fine
+          (http-request [poke-stud `request:http`request.req])
         (node [poke-stud body])
       ?-    -.mul
           %.n
@@ -292,6 +286,7 @@
     =hx-target  "closest .hawk"
     =hx-select  ".hawk"
     =hx-trigger  "load once"
+    =hx-indicator  "closest .loader"
     =hx-swap  "outerHTML"
     ;+  loading.feather-icons
   ==
@@ -413,7 +408,9 @@
             :_  +(a)
           ;div.fr.ac.g1
             =style  "height: 2rem;"
-            ;div.f4.s-1: >
+            ;div.f4.s-1
+              ;+  chevron-right.feather-icons
+            ==
             ;a.hover.b2.br1.p-1.s0.loader.fc.ac.jc
               =style  "height: 2rem;"
               =hx-vals  "\{\"id\": \"{<id>}\", \"slot\": \"{<slot>}\"}"
