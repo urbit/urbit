@@ -44,6 +44,7 @@
                 %diary
                 %iframe
                 %task
+                %todos
                 %txt
                 %hoon
                 %sail

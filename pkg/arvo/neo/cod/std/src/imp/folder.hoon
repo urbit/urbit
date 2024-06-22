@@ -1,5 +1,6 @@
 /@  folder
 /@  folder-diff
+/@  todos
 =>
   |%
   ++  default-pails
@@ -8,6 +9,7 @@
     :~
       [%iframe iframe/!>('')]
       [%hoon hoon/!>('~')]
+      [%todos todos/!>(*todos)] 
       [%txt txt/!>('')]
     ==
   --
