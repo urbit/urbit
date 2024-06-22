@@ -258,14 +258,14 @@
       function handleKey(e) {
         let focused = document.activeElement;
         let textarea = ['TEXTAREA'].includes(focused.nodeName)
-        let textinput = ['text', 'number', 'email', 'password'].includes(focused.getAttribute('type'));
+        let textinput = ['text', 'number', 'email', 'password'].includes(focused.type);
         if (textarea || textinput) {
           if (e.key === 'Escape') {
             document.activeElement.blur();
           }
           return;
         }
-        if (e.key === 'Escape') {
+        else if (e.key === 'Escape') {
           closeEye();
           document.activeElement.blur();
         }
