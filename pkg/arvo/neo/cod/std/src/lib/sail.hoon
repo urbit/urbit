@@ -1,3 +1,4 @@
+/-  feather-icons
 |%
 ++  render-udon
   |=  code=@t
@@ -15,8 +16,9 @@
     |.
     !<  manx
     %+  slap
-      ;:  slop
-        !>(..zuse)
+      %+  with-faces:ford:neo  !>(..zuse)
+      :~
+        feather-icons/!>(feather-icons)
       ==
     (ream udon)
   ?-  -.mul
