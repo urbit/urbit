@@ -2420,7 +2420,7 @@
   =/  rol=stud:neo
     (fall role %$)
   ?~  can=(~(get by con.dive) [p.q.have rol want])
-    ~&  missing-can/[p.q.have rol want]
+    :: ~&  missing-can/[p.q.have rol want]
     ~
   =/  conv  run:~(do con u.can)
   ~|  dead-horse/[p.q.have rol want u.can]
