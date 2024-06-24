@@ -6102,19 +6102,19 @@
           next
         $(ship next)
       =/  per  (~(get by peers.ames-state) who)
-      ?.  ?=([~ %known *] per)  ``atom+!>(%muna)
+      ?.  ?=([~ %known *] per)  ``noun+!>(~)
       =,  u.per
       =/  ducs
         %+  skim
           ~(tap in ~(key by by-duct.ossuary))
         |=  =duct
         =(-.duct /gall/sys/way/(scot %p who)/ping)
-      ?~  ducs  ``atom+!>(%muna)
+      ?~  ducs  ``noun+!>(~)
       =/  ping-bone
         (~(got by by-duct.ossuary) -.ducs)
       =/  ping-snd
         (~(got by snd) ping-bone)
-      ``noun+!>([who rift.ames-state life.ames-state ping-bone current.ping-snd])
+      ``noun+!>([~ who rift.ames-state life.ames-state ping-bone current.ping-snd])
     ::
     ==
   ::
