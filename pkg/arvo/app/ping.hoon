@@ -141,6 +141,9 @@
   ?.  =(our src):bowl    :: don't crash, this is where pings are handled
     `this
   ::
+  ?:  ?=(%czar (clan:title our.bowl))
+    `this
+  ::
   =^  cards  state
     ?:  ?=([%kick ?] q.vase)
       =?  mode.state  =(+.q.vase %.y)
@@ -182,6 +185,8 @@
   =^  cards  state
     ?+    wire  `state
         [%wait *]
+      ?:  ?=(%czar (clan:title our.bowl))
+        `state
       ?.  ?=(%formal mode.state)  `state
       ?>  ?=(%wake +<.sign-arvo)
       ?^  error.sign-arvo
