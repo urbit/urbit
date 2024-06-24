@@ -1,5 +1,5 @@
 ::  Print the sponsor of this ship
 :-  %say
-|=  [[now=time @ our=ship ^] * ~]
+|=  [[now=@da tick=@ud @ our=@p ^] * ~]
 :-  %ship
-(sein:title our now our)
+(sein:title our now tick our)

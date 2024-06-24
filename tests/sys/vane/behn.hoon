@@ -221,7 +221,7 @@
           args=[=duct task=(hobo task:behn)]
           expected-moves=(list move)
       ==
-  =/  behn-core  (behn-gate now=now eny=`@`0xdead.beef scry=scry)
+  =/  behn-core  (behn-gate now=now tick=0 eny=`@`0xdead.beef scry=scry)
   =^  moves  behn-gate
     (call:behn-core duct.args dud=~ task.args)
   ::

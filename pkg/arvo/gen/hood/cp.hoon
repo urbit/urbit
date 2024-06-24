@@ -8,7 +8,9 @@
 /?    310
 :-  %say
 =,  space:userlib
-|=  [^ [input=path output=path ~] r=_|]
+|=  [[now=@da tick=@ud *] [input=path output=path ~] r=_|]
+=.  input   (en-pick now tick input)
+=.  output  (en-pick now tick output)
 :-  %kiln-info
 ^-  [mez=tape tor=(unit toro:clay)]
 ?.  r
@@ -19,19 +21,19 @@
     [<input> ~]
   :-  "copied"
   `(foal output -:(flop input) [%noun .^(* %cx input)])
-?~  in-beam=(de-beam input)     ["bad input path" ~]
+?~  in-bema=(de-bema input)     ["bad input path" ~]
 ?~  =<(dir .^(arch %cy input))  ["input path isn't a directory" ~]
-?~  out-beam=(de-beam output)   ["bad output path" ~]
-=/  in-beak=beak   [p q r]:u.in-beam
-=/  out-beak=beak  [p q r]:u.out-beam
+?~  out-bema=(de-bema output)   ["bad output path" ~]
+=/  in-beck=beck   -.u.in-bema
+=/  out-beck=beck  -.u.out-bema
 =/  =soba:clay
   %+  murn  .^((list path) %ct input)
   |=  pax=path
-  ?:  =(1 (sub (lent pax) (lent s.u.in-beam)))  ~
+  ?:  =(1 (sub (lent pax) (lent s.u.in-bema)))  ~
   =/  =cage
     :-  -:(flop pax)
-    [%noun .^(* %cx (en-beam in-beak pax))]
-  =/  =spur  (weld s.u.out-beam (slag (lent s.u.in-beam) pax))
-  `[spur (feel (en-beam out-beak spur) cage)]
+    [%noun .^(* %cx (en-bema in-beck pax))]
+  =/  =spur  (weld s.u.out-bema (slag (lent s.u.in-bema) pax))
+  `[spur (feel (en-bema out-beck spur) cage)]
 ?~  soba  ["nothing to copy" ~]
-["copied" `[q.out-beak [%& soba]]]
+["copied" `[q.out-beck [%& soba]]]

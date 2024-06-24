@@ -34,7 +34,7 @@
 ++  de-beak
   |=  pax=path
   ^-  beak
-  =/  bem=beam  (need (de-beam pax))
+  =/  bem=beam  (bema-to-beam (need (de-bema pax)))
   ?>  =(s.bem /)
   -.bem
 ::

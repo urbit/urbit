@@ -339,11 +339,11 @@
   =<  abet
   ~>  %slog.(fmt "boot")
   ::
-  =+  .^(desks=(set desk) %cd /(scot %p our)//(scot %da now))
+  =+  .^(desks=(set desk) %cd /(scot %p our)//(en-cose da+now ud+tick))
   =.  desks  (~(del in desks) %base)
   =.  desks  (~(del in desks) %kids)
   ::
-  =/  sop=ship  (sein:title our now our)
+  =/  sop=ship  (sein:title our now tick our)
   ::  set up base desk
   ::
   =?  ..on-init  ?=(?(%earl %duke %king) (clan:title our))
@@ -359,7 +359,7 @@
     %-  emit
     :^  %pass  /kiln/permission  %arvo
     [%c %perm i.dez / %r `[%black ~]]
-  =/  src  (get-publisher our i.dez now)
+  =/  src  (get-publisher our i.dez now tick)
   =?  ..on-init  &(?=(^ src) !=(our u.src))
     abet:init:(sync i.dez u.src i.dez)
   $(dez t.dez)
@@ -445,7 +445,7 @@
     :-  d
     :_  rein.a
     ?~  rail.a  ~
-    `[(get-publisher our d now) u.rail.a]
+    `[(get-publisher our d now tick) u.rail.a]
   ::
   =?  old  ?=(%8 -.old)
     [%9 +.old]
@@ -516,10 +516,10 @@
   ?+    path  [~ ~]
       [%x %kiln %our ~]  ``noun+!>(our)
       [%x %kiln %lag ~]
-    ``loob+!>(.^(? //(scot %p our)//(scot %da now)/zen/lag))
+    ``loob+!>(.^(? %$ (en-bema [our %$ da+now ud+tick] /zen/lag)))
   ::
       [%x %kiln %base-hash ~]
-    =/  ver  (mergebase-hashes our %base now (~(got by sources) %base))
+    =/  ver  (mergebase-hashes our %base now tick (~(got by sources) %base))
     ``noun+!>(?~(ver 0v0 i.ver))
   ::
       [%x %kiln %jumps ~]      ``kiln-jump+!>([%all hop])
@@ -527,13 +527,13 @@
       [%x %kiln %sources ~]    ``noun+!>(sources)
       [%x %kiln %automerge ~]  ``loob+!>(mer)
       [%x %kiln %pikes ~]
-    =+  .^(=rock:tire %cx /(scot %p our)//(scot %da now)/tire)
+    =+  .^(=rock:tire %cx (en-bema [our %$ da+now ud+tick] /tire))
     :^  ~  ~  %kiln-pikes
     !>  ^-  pikes
     %-  ~(urn by rock)
     |=  [=desk =zest wic=(set weft)]
     ^-  pike
-    =+  .^(hash=@uv %cz /(scot %p our)/[desk]/(scot %da now))
+    =+  .^(hash=@uv %cz (en-bema [our desk da+now ud+tick] /))
     =/  sync  (~(get by sources) desk)
     [sync hash zest wic]
   ::
@@ -556,7 +556,7 @@
 ::
 ++  get-germ
   |=  =desk
-  =+  .^(=cass:clay %cw /(scot %p our)/[desk]/(scot %da now))
+  =+  .^(=cass:clay %cw /(scot %p our)/[desk]/(en-cose da+now ud+tick))
   ?-  ud.cass
     %0  %init
     *   %only-that
@@ -629,7 +629,7 @@
 ++  poke-bump
   |=  ~
   =<  abet
-  =+  .^(=rock:tire %cx /(scot %p our)//(scot %da now)/tire)
+  =+  .^(=rock:tire %cx /(scot %p our)//(en-cose da+now ud+tick)/tire)
   =/  wic
     %+  sort  ~(tap by wic:(~(got by rock) %base))
     |=  [[* a=@ud] [* b=@ud]]
@@ -760,7 +760,7 @@
 ::
 ++  poke-install
   |=  [loc=desk her=ship rem=desk]
-  =+  .^(=rock:tire %cx /(scot %p our)//(scot %da now)/tire)
+  =+  .^(=rock:tire %cx /(scot %p our)//(en-cose da+now ud+tick)/tire)
   =/  =zest
     ?~  got=(~(get by rock) loc)
       %dead
@@ -811,9 +811,10 @@
   |=  [syd=desk her=ship sud=desk]
   ?:  =([our syd] [her sud])
     abet
-  =/  let=@ud  ud:.^(cass:clay %cw /(scot %p our)/[syd]/(scot %da now))
+  =/  let=@ud
+    ud:.^(cass:clay %cw /(scot %p our)/[syd]/(en-cose da+now ud+tick))
   =/  subs=(set [@p rave:clay])
-    .^((set [@p rave:clay]) %cx /(scot %p our)//(scot %da now)/cult/[syd])
+    .^((set [@p rave:clay]) %cx (en-bema [our %$ da+now ud+tick] /cult/[syd]))
   =/  ships=(set @p)
     %+  roll  ~(tap in subs)
     |=  [[=ship =rave:clay] ships=(set @p)]
@@ -891,7 +892,7 @@
   ?.  desk
     (emit %pass /nuke %arvo %g [%nuke term])
   %-  emil
-  %+  turn  (get-apps-have our term now)
+  %+  turn  (get-apps-have our term now tick)
   |=([=dude ?] [%pass /nuke %arvo %g [%nuke dude]])
 ::
 ++  poke-pause
@@ -923,7 +924,7 @@
       |=  [a=(unit toro) b=(unit toro)]
       (clap a b furl)
   |-  ^-  (list (unit toro))
-  =+  b=.^(arch %cy a)
+  =+  b=.^(arch %cy (en-pick now tick a))
   ?:  ?=([^ ~] b)  (snoc c `(fray a))  
   =?  c  ?=(^ fil.b)  (snoc c `(fray a))
   %-  zing
@@ -944,12 +945,14 @@
 ::
 ++  poke-suspend-many
   |=  desks=(list desk)
+  =/  all-desks
+    .^((set desk) %cd (en-bema [our %$ [da+now ud+tick]] /))
   =<  abet
   %-  emil
   %+  turn
     %+  skim  desks
     |=  dek=desk
-    ?:  (~(has in .^((set desk) %cd /(scot %p our)//(scot %da now))) dek)
+    ?:  (~(has in all-desks) dek)
       &  
     ~>  %slog.(fmt "desk does not yet exist: {<dek>}")  |   
   |=(=desk [%pass /kiln/suspend %arvo %c %zest desk %dead])
@@ -989,7 +992,7 @@
 ::
 ++  poke-uninstall
   |=  loc=desk
-  =+  .^(=rock:tire %cx /(scot %p our)//(scot %da now)/tire)
+  =+  .^(=rock:tire %cx (en-bema [our %$ [da+now ud+tick]] /tire))
   ?~  got=(~(get by rock) loc)
     abet:(spam leaf+"desk does not exist: {<loc>}" ~)
   ~>  %slog.(fmt "uninstalling {<loc>}")
@@ -1386,12 +1389,12 @@
       =.  let  +(let)
       ::  If nothing changed, just ensure %kids is up-to-date and advance
       ::
-      ?.  (get-remote-diff our syd now [her sud (dec let)])
+      ?.  (get-remote-diff our syd now tick [her sud (dec let)])
         =<  next:drop
         ?~  kid
           ~>  %slog.(fmt "remote is identical to {here}, skipping")
           ..abet
-        ?.  (get-remote-diff our u.kid now [her sud (dec let)])
+        ?.  (get-remote-diff our u.kid now tick [her sud (dec let)])
           ~>  %slog.(fmt "remote is identical to {here}, skipping")
           ..abet
         ~>  %slog.(fmt "remote is identical to {here}, merging into {<u.kid>}")
@@ -1482,7 +1485,7 @@
     ^+  +>
     ?.  ?=(%auto gim)
       perform(auto |, gem gim, her her, cas cas, sud sud)
-    ?:  =(0 ud:.^(cass:clay %cw /(scot %p our)/[syd]/(scot %da now)))
+    ?:  =(0 ud:.^(cass:clay %cw /(scot %p our)/[syd]/(en-cose da+now ud+tick)))
       =>  $(gim %init)
       .(auto &)
     =>  $(gim %fine)
@@ -1508,13 +1511,14 @@
         =>  .(+>.$ (spam leaf+"mashing conflicts" ~))
         =+  tic=(cat 3 syd '-scratch')
         =/  notations=(list [path (unit [mark vase])])
+          =/  cos  (en-cose da+now ud+tick)
           %+  turn  ~(tap in p.are)
           |=  =path
           =/  =mark    -:(flop path)
-          =/  =dais    .^(dais %cb /(scot %p our)/[syd]/(scot cas)/[mark])
-          =/  base     .^(vase %cr (weld /(scot %p our)/[tic]/(scot cas) path))
-          =/  ali      .^(vase %cr (weld /(scot %p her)/[sud]/(scot cas) path))
-          =/  bob      .^(vase %cr (weld /(scot %p our)/[syd]/(scot cas) path))
+          =/  =dais    .^(dais %cb /(scot %p our)/[syd]/[cos]/[mark])
+          =/  base     .^(vase %cr (weld /(scot %p our)/[tic]/[cos] path))
+          =/  ali      .^(vase %cr (weld /(scot %p her)/[sud]/[cos] path))
+          =/  bob      .^(vase %cr (weld /(scot %p our)/[syd]/[cos] path))
           =/  ali-dif  (~(diff dais base) ali)
           =/  bob-dif  (~(diff dais base) bob)
           =/  mash     (~(mash dais base) [her sud ali-dif] [our syd bob-dif])

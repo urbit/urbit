@@ -5,21 +5,26 @@
 /-  *story
 /+  lib=story
 :-  %say
-|=  $:  [now=@da eny=@uvJ bec=beak]
+|=  $:  [now=@da tick=@ud @ bec=beak]
         [[~] =desk ~]
     ==
 |^
 =/  our                   p.bec
 =?  desk  =(*^desk desk)  q.bec  :: use current desk if user didn't provide
-=/  cas                   r.bec  :: use case from beak
-=/  pax                   /(scot %p our)/[desk]/(scot cas)/story
-?:  !(~(has in .^((set ^desk) %cd /(scot %p our)/$/(scot %da now))) desk)
+=/  cas                          :: use case from beak
+  ?.  =(da+now r.bec)
+    r.bec
+  [da+now ud+tick]
+=/  pax  (en-bema [our desk cas] /story)
+=+  .^(desks=(set ^desk) %cd (en-bema [our %$ [da+now ud+tick]] /))
+?.  (~(has in desks) desk)
   tang+[leaf+"Error: desk {<desk>} does not exist." ~]
-?:  !.^(? %cu pax)
+?.  .^(? %cu pax)
   tang+['Error: No story file found. Please use |story-init to create one.' ~]
-=/  tak   .^(tako:clay %cs /(scot %p our)/[desk]/(scot cas)/tako/~)
-=/  yak   .^(yaki:clay %cs /(scot %p our)/[desk]/(scot cas)/yaki/(scot %uv tak))
-=/  tale  .^(story %cx pax)
+=/  =beck  [our desk cas]
+=/  tak    .^(tako:clay %cs (en-bema beck /tako/~))
+=/  yak    .^(yaki:clay %cs (en-bema beck /yaki/(scot %uv tak)))
+=/  tale   .^(story %cx pax)
 :-  %tang
 (story-read [our desk cas] yak tale)
 ::::
@@ -34,9 +39,9 @@
 ::  But because dojo prints tangs in reverse, we don't flop the results.
 ::::
 ++  story-read
-  |=  [[our=ship syd=^desk cas=case] this-commit=yaki:clay tale=story]
+  |=  [[our=ship syd=^desk cos=cose] this-commit=yaki:clay tale=story]
+  =/  =beck  [our syd cos]
   ^-  tang
-  ::  TODO factor out /(scot %p our)/[syd]/(scot cas)
   %-  head  :: result from state
   =|  state=[result=tang mergebase=(unit tako:clay)]
   |-
@@ -54,7 +59,7 @@
       [tako:clay ~]
     =/  parent  i.reverse-ancestors
     =/  parent-commit
-      .^(yaki:clay %cs /(scot %p our)/[syd]/(scot cas)/yaki/(scot %uv parent))
+      .^(yaki:clay %cs (en-bema beck /yaki/(scot %uv parent)))
     ::
     =/  msg
       (msg-from-commit this-commit tale)
@@ -87,10 +92,9 @@
     ::  XX base-tako ignores beak
     ::
     =/  mergebases
-      .^  (list tako:clay)  %cs
-          (scot %p our)  syd  (scot cas)
-          /base-tako/(scot %uv mainline)/(scot %uv sideline)
-      ==
+      =/  pax
+        (en-bema beck /base-tako/(scot %uv mainline)/(scot %uv sideline))
+      .^((list tako:clay) %cs pax)
     ::
     ::  Take the first valid mergebase (by convention) if exists, else none
     ::
@@ -98,10 +102,10 @@
       ?~(mergebases ~ (some i.mergebases))
     ::
     =/  sideline-commit
-      .^(yaki:clay %cs /(scot %p our)/[syd]/(scot cas)/yaki/(scot %uv sideline))
+      .^(yaki:clay %cs (en-bema beck /yaki/(scot %uv sideline)))
     ::
     =/  mainline-commit
-      .^(yaki:clay %cs /(scot %p our)/[syd]/(scot cas)/yaki/(scot %uv mainline))
+      .^(yaki:clay %cs (en-bema beck /yaki/(scot %uv mainline)))
     ::
     =/  msg=wain  (msg-from-commit this-commit tale)
     ::
@@ -122,16 +126,15 @@
     =/  sideline    i.reverse-ancestors
     =/  nowline     i.t.reverse-ancestors
     =/  mergebases
-      .^  (list tako:clay)  %cs
-          (scot %p our)  syd  (scot cas)
-          /base-tako/(scot %uv nowline)/(scot %uv sideline)
-      ==
+      =/  pax
+        (en-bema beck /base-tako/(scot %uv nowline)/(scot %uv sideline))
+      .^((list tako:clay) %cs pax)
     ::
     ::  Take the first valid mergebase (by convention) if exists, else none
     ::
     =/  next-mergebase   ?~(mergebases ~ (some i.mergebases))
     =/  sideline-commit
-      .^(yaki:clay %cs /(scot %p our)/[syd]/(scot cas)/yaki/(scot %uv sideline))
+      .^(yaki:clay %cs (en-bema beck /yaki/(scot %uv sideline)))
     =.  mergebase.state  next-mergebase
     =.  state  commit-loop(this-commit sideline-commit)             :: downward
     =.  state  ancestor-loop(reverse-ancestors t.reverse-ancestors) :: rightward

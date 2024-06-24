@@ -15,15 +15,15 @@
   ==
 ^-  form:m
 ::
-;<  [our=ship syd=desk =case]  bind:m  get-beak:strandio
-=/  now=@da  ?>(?=(%da -.case) p.case)
-::
+;<  =bowl:spider  bind:m  get-bowl:strandio
 ;<  ~  bind:m
   %-  send-raw-card:strandio
   =-  [%pass /tmp-desks %arvo %c %info %base %& -]
   ^-  soba:clay
   %+  turn  desks
   |=  =desk
-  [/tmp/[desk]/jam %ins %jam %noun (jam-desk:jammer our desk now)]
+  :*  /tmp/[desk]/jam  %ins  %jam  %noun
+      (jam-desk:jammer our.bowl desk now.bowl tick.bowl)
+  ==
 ::
 (pure:m !>(ok=&))

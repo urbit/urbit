@@ -653,11 +653,7 @@
   ::
   ++  public-keys-give
     |=  [yen=(set duct) =public-keys-result]
-    |^
-    =/  yaz  %+  skid  ~(tap in yen)
-      |=  d=duct
-      &(?=([[%ames @ @ *] *] d) !=(%public-keys i.t.i.d))
-    =/  yez  (weld p.yaz (sort q.yaz sorter))
+    =/  yez  ~(tap in yen)
     |-  ^+  this-su
     ?~  yez  this-su
     =*  d  i.yez
@@ -668,22 +664,6 @@
       %-  emit
       [d %give %boon %public-keys-result public-keys-result]
     $(yez t.yez)
-    ::
-    ::  We want to notify Ames, then Clay, then Gall.  This happens to
-    ::  be alphabetical, but this is mostly a coincidence. We also have
-    ::  to notify Gall the vane before we notify any Gall agents, so we
-    ::  can kiss the coincidence goodbye.
-    ::
-    ++  sorter
-      |=  [a=duct b=duct]
-      ?.  ?=([[@ *] *] a)
-        |
-      ?.  ?=([[@ *] *] b)
-        &
-      ?:  &(?=([[%gall *] *] a) ?=([[%gall *] *] b))
-        ?=([%gall %sys *] i.a)
-      (lth (end 3 i.i.a) (end 3 i.i.b))
-    --
   ::
   ++  get-source
     |=  who=@p
@@ -998,6 +978,7 @@
         ::  rof: namespace resolver
         ::
         now=@da
+        tick=@ud
         eny=@uvJ
         rof=roof
     ==

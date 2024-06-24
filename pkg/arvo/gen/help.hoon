@@ -41,19 +41,19 @@
 --
 ::TODO: make this work with doccords
 :-  %say
-|=  [[now=time @ our=ship ^] typ=$@(~ [p=term ~]) ~]
-=/  pax=path  /(scot %p our)/base/(scot %da now)/gen  :: XX hardcoded
+|=  [[now=@da tick=@ud @ our=@p ^] typ=$@(~ [p=term ~]) ~]
+=/  pax=path  (en-bema [our %base [da+now ud+tick]] /gen)  :: XX hardcoded
 =+  len=(lent pax)
 =.  pax  ?~(typ pax (welp pax /[p.typ]))
 :-  %tang  %-  flop  ^-  tang
-=+  ark=.^(arch cy+pax)
+=+  ark=.^(arch %cy pax)
 %+  welp
   ?~  typ  ~
   =/  red  ((read-at len (scag len pax)) p.typ ark) :: XX ugly
   (drop (bind red rend))
 |-  ^-  tang
 =+  =<  arl=~(tap by (~(urn by dir.ark) .))
-    |=([a=@t ~] .^(arch cy+(welp pax /[a])))
+    |=([a=@t ~] .^(arch %cy (welp pax /[a])))
 %+  welp
   =/  dir=(list [@ path])
     (murn arl (read-at len pax))

@@ -771,7 +771,7 @@
   ~%  %eyre-per-server-event  ..part  ~
   ::  gate that produces the +per-server-event core from event information
   ::
-  |=  [[eny=@ =duct now=@da rof=roof] state=server-state]
+  |=  [[eny=@uvJ =duct now=@da tick=@ud rof=roof] state=server-state]
   =/  eyre-id  (scot %ta (cat 3 'eyre_' (scot %uv (sham duct))))
   |%
   ::  +request-local: bypass authentication for local lens connections
@@ -919,7 +919,8 @@
         %gen
       =/  bek=beak  [our desk.generator.action da+now]
       =/  sup=spur  path.generator.action
-      =/  ski       (rof [~ ~] /eyre %ca bek sup)
+      =/  ski
+        (rof [~ ~] /eyre %ca [our desk.generator.action da+now ud+tick] sup)
       =/  cag=cage  (need (need ski))
       ?>  =(%vase p.cag)
       =/  gat=vase  !<(vase q.cag)
@@ -1024,7 +1025,7 @@
       (error-response 405 "may only GET scries")
     =/  req  (parse-request-line url.request)
     =/  fqp  (fully-qualified site.req)
-    =/  mym  (scry-mime now rof ext.req site.req)
+    =/  mym  (scry-mime now tick rof ext.req site.req)
     ?:  ?=(%| -.mym)  (error-response 500 p.mym)
     =*  mime  p.mym
     %-  handle-response
@@ -1137,7 +1138,7 @@
     ++  do-scry
       |=  [care=term =desk =path]
       ^-  (unit (unit cage))
-      (rof [~ ~] /eyre care [our desk da+now] path)
+      (rof [~ ~] /eyre care [our desk da+now ud+tick] path)
     ::
     ++  error-response
       |=  [status=@ud =tape]
@@ -1152,7 +1153,7 @@
     ^-  (quip move server-state)
     ::  if the agent isn't running, we synchronously serve a 503
     ::
-    ?.  !<(? q:(need (need (rof [~ ~] /eyre %gu [our app da+now] /$))))
+    ?.  !<(? q:(need (need (rof [~ ~] /eyre %gu [our app da+now ud+tick] /$))))
       %^  return-static-data-on-duct  503  'text/html'
       %:  error-page
         503
@@ -1557,7 +1558,7 @@
     ++  code
       ^-  @ta
       =/  res=(unit (unit cage))
-        (rof [~ ~] /eyre %j [our %code da+now] /(scot %p our))
+        (rof [~ ~] /eyre %j [our %code da+now ud+tick] /(scot %p our))
       (rsh 3 (scot %p ;;(@ q.q:(need (need res)))))
     ::  +session-cookie-string: compose session cookie
     ::
@@ -2758,7 +2759,7 @@
       ?~  sub
         ((trace 0 |.("no subscription for request-id {(scow %ud request-id)}")) ~)
       =/  des=(unit (unit cage))
-        (rof [~ ~] /eyre %gd [our app.u.sub da+now] /$)
+        (rof [~ ~] /eyre %gd [our app.u.sub [da+now ud+tick]] /$)
       ?.  ?=([~ ~ *] des)
         ((trace 0 |.("no desk for app {<app.u.sub>}")) ~)
       `!<(=desk q.u.u.des)
@@ -2794,7 +2795,7 @@
         =*  have=mark  mark.event
         =/  convert=(unit vase)
           =/  cag=(unit (unit cage))
-            (rof [~ ~] /eyre %cf [our desk.event da+now] /[have]/json)
+            (rof [~ ~] /eyre %cf [our desk.event da+now ud+tick] /[have]/json)
           ?.  ?=([~ ~ *] cag)  ~
           `q.u.u.cag
         ?~  convert
@@ -3307,16 +3308,20 @@
   /(scot %p ship)/[app]/(scot %p from)
 ::
 ++  scry-mime
-  |=  [now=@da rof=roof ext=(unit @ta) pax=path]
+  |=  [now=@da tick=@ud rof=roof ext=(unit @ta) pax=path]
   |^  ^-  (each mime tape)
   ::  parse
   ::
-  =/  u=(unit [view=term bem=beam])
+  =/  u=(unit [view=term bam=bema])
     ?.  ?=([@ @ @ @ *] pax)    ~
     ?~  view=(slaw %tas i.t.pax)    ~
     ?~  path=(expand-path t.t.pax)  ~
     ?~  beam=(de-beam u.path)       ~
-    `[u.view u.beam]
+    =/  =bema
+      ?.  =(r.u.beam da+now)
+        u.beam
+      u.beam(r [da+now ud+tick])
+    `[u.view bema]
   ?~  u  [%| "invalid scry path"]
   ::  perform scry
   ::
@@ -3342,16 +3347,16 @@
     (rush (spat a) (sear plex:vez (stag %clsg ;~(pfix fas poor:vez))))
   ::
   ++  conversion-desk
-    |=  [view=term =beam]
+    |=  [view=term =bema]
     ^-  (each desk tape)
-    ?:  =(%$ q.beam)  [%& %base]
+    ?:  =(%$ q.bema)  [%& %base]
     ?+  (end 3 view)  [%& %base]
         %c
-      [%& q.beam]
+      [%& q.bema]
         %g
-      =/  res  (rof [~ ~] /eyre %gd [our q.beam da+now] /$)
+      =/  res  (rof [~ ~] /eyre %gd [our q.bema da+now ud+tick] /$)
       ?.  ?=([~ ~ *] res)
-        [%| "no desk for app {<q.beam>}"]
+        [%| "no desk for app {<q.bema>}"]
       [%& !<(=desk q.u.u.res)]
     ==
   ::
@@ -3359,7 +3364,7 @@
     |=  [=vase from=mark to=mark =desk]
     ^-  (each ^vase tape)
     ?:  =(from to)  [%& vase]
-    =/  tub  (rof [~ ~] /eyre %cc [our desk da+now] /[from]/[to])
+    =/  tub  (rof [~ ~] /eyre %cc [our desk da+now ud+tick] /[from]/[to])
     ?.  ?=([~ ~ %tube *] tub)
       [%| "no tube from {(trip from)} to {(trip to)}"]
     =/  tube  !<(tube:clay q.u.u.tub)
@@ -3377,7 +3382,7 @@
 =|  ax=axle
 ::  a vane is activated with current date, entropy, and a namespace function
 ::
-|=  [now=@da eny=@uvJ rof=roof]
+|=  [now=@da tick=@ud eny=@uvJ rof=roof]
 ::  allow jets to be registered within this core
 ::
 ~%  %http-server  ..part  ~
@@ -3430,7 +3435,7 @@
   ::    XX cancel active too if =(0 trim-priority) ?
   ::
   ?:  ?=(%trim -.task)
-    =*  event-args  [[eny duct now rof] server-state.ax]
+    =*  event-args  [[eny duct now tick rof] server-state.ax]
     =*  by-channel  by-channel:(per-server-event event-args)
     =*  channel-state  channel-state.server-state.ax
     ::
@@ -3478,7 +3483,7 @@
         [closed-connections server-state.ax]
       ::
       =/  event-args
-        [[eny duct.i.connections now rof] server-state.ax]
+        [[eny duct.i.connections now tick rof] server-state.ax]
       =/  cancel-request  cancel-request:(per-server-event event-args)
       =^  moves  server-state.ax  cancel-request
       ::
@@ -3500,14 +3505,14 @@
         ::  provide a list of valid auth tokens
         ::
         =<  give-session-tokens
-        (per-server-event [eny duct now rof] server-state.ax)
+        (per-server-event [eny duct now tick rof] server-state.ax)
       ::
         (zing ~[closed-connections cache-moves])
     ==
   ::
   ?:  ?=(%code-changed -.task)
     ~>  %slog.[0 leaf+"eyre: code-changed: throwing away local sessions"]
-    =*  event-args  [[eny duct now rof] server-state.ax]
+    =*  event-args  [[eny duct now tick rof] server-state.ax]
     ::  find all the %ours sessions, we must close them
     ::
     =/  siz=(list @uv)
@@ -3533,7 +3538,7 @@
   ::
   ::  all other commands operate on a per-server-event
   ::
-  =/  event-args  [[eny duct now rof] server-state.ax]
+  =/  event-args  [[eny duct now tick rof] server-state.ax]
   =/  server  (per-server-event event-args)
   ::
   ?-    -.task
@@ -3688,7 +3693,7 @@
       [~ http-server-gate]
     ::  we have an error; propagate it to the client
     ::
-    =/  event-args  [[eny duct now rof] server-state.ax]
+    =/  event-args  [[eny duct now tick rof] server-state.ax]
     =/  handle-gall-error
       handle-gall-error:(per-server-event event-args)
     =^  moves  server-state.ax
@@ -3697,7 +3702,7 @@
   ::
   ++  watch-response
     ::
-    =/  event-args  [[eny duct now rof] server-state.ax]
+    =/  event-args  [[eny duct now tick rof] server-state.ax]
     ::
     ?>  ?=([@ *] t.wire)
     ?:  ?=([%gall %unto %watch-ack *] sign)
@@ -3742,7 +3747,7 @@
   ::
   ++  channel
     ::
-    =/  event-args  [[eny duct now rof] server-state.ax]
+    =/  event-args  [[eny duct now tick rof] server-state.ax]
     ::  channel callback wires are triples.
     ::
     ?>  ?=([@ @ @t *] wire)
@@ -3807,7 +3812,7 @@
     ^-  [(list move) _http-server-gate]
     :_  http-server-gate
     :-  =<  give-session-tokens
-        (per-server-event [eny duct now rof] server-state.ax)
+        (per-server-event [eny duct now tick rof] server-state.ax)
     ?:  =(~ sessions)  ~
     =;  next-expiry=@da
       [duct %pass /sessions/expire %b %wait next-expiry]~
@@ -3818,7 +3823,7 @@
   ::
   ++  eauth
     =*  auth  auth.server-state.ax
-    =*  args  [[eny duct now rof] server-state.ax]
+    =*  args  [[eny duct now tick rof] server-state.ax]
     ^-  [(list move) _http-server-gate]
     ~|  [wire +<.sign]
     ?+  t.wire  !!
@@ -4154,7 +4159,7 @@
     :^  ~  ~  %noun
     !>  ^-  (unit @t)
     =<  eauth-url:eauth:authentication
-    (per-server-event [eny *duct now rof] server-state.ax)
+    (per-server-event [eny *duct now tick rof] server-state.ax)
  ::
   ?:  ?=([%cache @ @ ~] tyl)
     ?.  &(?=(%x ren) ?=(%$ syd))  ~
@@ -4199,11 +4204,11 @@
       :^  ~  ~  %noun
       !>  ^-  ?
       %-  =<  request-is-authenticated:authentication
-          (per-server-event [eny *duct now rof] server-state.ax)
+          (per-server-event [eny *duct now tick rof] server-state.ax)
       %*(. *request:http header-list ['cookie' u.cookies]~)
     ::
         [%'_~_' *]
-      =/  mym  (scry-mime now rof (deft:de-purl:html tyl))
+      =/  mym  (scry-mime now tick rof (deft:de-purl:html tyl))
       ?:  ?=(%| -.mym)  [~ ~]
       ``noun+!>(p.mym)
     ==

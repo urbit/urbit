@@ -471,12 +471,8 @@
   ^-  (unit octs)
   ?.  ?=(?(%html %css %js %png) ext)
     ~
-  =/  =path
-    :*  (scot %p our.bowl)
-        q.byk.bowl
-        (scot %da now.bowl)
-        (snoc (weld base file) ext)
-    ==
+  =/  =beck  [our.bowl q.byk.bowl [da+now.bowl ud+tick.bowl]]
+  =/  =path  (en-bema beck (snoc (weld base file) ext))
   ?.  .^(? %cu path)  ~
   %-  some
   %-  as-octs:mimes:html
@@ -964,7 +960,7 @@
 ++  v-clay
   =,  clay
   |%
-  ++  start-path  /(scot %p our.bowl)/base/(scot %da now.bowl)
+  ++  start-path  /(scot %p our.bowl)/base/(en-cose da+now.bowl ud+tick.bowl)
   ::
   +$  commit
     [=tako parents=(list tako) children=(list tako) wen=@da content-hash=@uvI]
@@ -975,7 +971,7 @@
     =/  heads=(list [tako desk])
       %+  turn  ~(tap in desks)
       |=  =desk
-      =+  .^(=domo %cv /(scot %p our.bowl)/[desk]/(scot %da now.bowl))
+      =+  .^(=domo %cv (en-bema [our.bowl desk [da+now.bowl ud+tick.bowl]] /))
       =/  =tako  (~(got by hit.domo) let.domo)
       [tako desk]
     =/  yakis=(set yaki)
@@ -1116,5 +1112,5 @@
 ::
 ++  scry
   |*  [=mold care=term =desk =path]
-  .^(mold care (scot %p our.bowl) desk (scot %da now.bowl) path)
+  .^(mold care (en-bema [our.bowl desk [da+now.bowl ud+tick.bowl]] path))
 --

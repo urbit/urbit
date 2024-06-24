@@ -5,12 +5,11 @@
 /-  *dns, *sole
 /+  *generators
 :-  %ask
-|=  $:  [now=@da eny=@uvJ bec=beak]
+|=  $:  [now=@da tick=@ud @ our=@p ^]
         [arg=$@(~ [addr=@if ~])]
         ~
     ==
 ^-  (sole-result [%dns-address address])
-=*  our  p.bec
 =/  rac  (clan:title our)
 ::
 ?:  ?=(%czar rac)

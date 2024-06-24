@@ -11,7 +11,7 @@
 ::::
   !:
 :-  %say
-|=  $:  [now=@da eny=@uvJ bec=beak]
+|=  $:  [now=@da tick=@ud @ our=@p ^]
       ::
         ::  arg: desks to build pill from
         ::
@@ -40,11 +40,11 @@
   =/  =desk
     ?~  arg  %base
     ?>(?=(@ base.arg) base.arg)
-  /(scot %p p.bec)/[desk]/(scot %da now)/sys
+  (en-bema [our desk [da+now ud+tick]] /sys)
 =/  dez=(list [desk path])
   ?~  arg  ~
   %+  turn  rest.arg
   |=  =desk
-  [desk /(scot %p p.bec)/[desk]/(scot %da now)]
+  [desk /(scot %p our)/[desk]/(en-cose da+now ud+tick)]
 ::
 (solid:pill sys dez dub now prime exc)

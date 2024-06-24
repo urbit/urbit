@@ -1,6 +1,6 @@
-::  Create a private key-file for a random (or specified) moon
+::  change the keys of a moon
 ::
-::::  /hoon/moon/hood/gen
+::::  /hoon/moon-cycle-keys/hood/gen
   ::
 /-  *sole
 /+  *generators
@@ -8,20 +8,19 @@
 ::::
   ::
 :-  %say
-|=  $:  [now=@da eny=@uvJ bec=beak]
+|=  $:  [now=@da tick=@ud eny=@uvJ our=@p ^]
         [mon=@p ~]
         =life
         public-key=pass
     ==
 :-  %helm-moon
 ^-  (unit [=ship =udiff:point:jael])
-=*  our  p.bec
 =/  ran  (clan:title our)
 ?:  ?=([?(%earl %pawn)] ran)
   %-  %-  slog  :_  ~
       leaf+"can't manage a moon from a {?:(?=(%earl ran) "moon" "comet")}"
   ~
-=/  seg=ship  (sein:title our now mon)
+=/  seg=ship  (sein:title our now tick mon)
 ?.  =(our seg)
   %-  %-  slog  :_  ~
       :-  %leaf
@@ -30,7 +29,7 @@
 =/  =^life
   ?.  =(*^life life)
     life
-  +(.^(^life j+/(scot %p our)/life/(scot %da now)/(scot %p mon)))
+  +(.^(^life %j (en-bema [our %life [da+now ud+tick]] /(scot %p mon))))
 =/  =pass
   ?.  =(*pass public-key)
     public-key

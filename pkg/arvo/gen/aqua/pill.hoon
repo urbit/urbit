@@ -2,9 +2,6 @@
 /+  pill
 ::
 :-  %say
-|=  $:  [now=@da eny=@uvJ bec=beak]
-        arg=~
-        ~
-    ==
+|=  [[now=@da tick=@ud @ our=@p ^] ~ ~]
 :-  %pill
-.^(pill:pill %gx /(scot %p p.bec)/aqua/(scot %da now)/pill/noun)
+.^(pill:pill %gx (en-bema [our %aqua [da+now ud+tick]] /pill/noun))

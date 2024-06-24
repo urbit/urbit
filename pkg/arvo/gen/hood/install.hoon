@@ -7,8 +7,6 @@
 ::    installs ~zod's %landscape desk into our %portrait desk.
 ::
 :-  %say
-|=  $:  [now=@da eny=@uvJ bec=beak]
-        [[her=@p rem=desk ~] local=@tas]
-    ==
+|=  [^ [[her=@p rem=desk ~] local=@tas]]
 =/  loc=desk  ?:(=(%$ local) rem local)
 [%kiln-install loc her rem]

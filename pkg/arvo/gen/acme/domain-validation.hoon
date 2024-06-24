@@ -1,6 +1,6 @@
 ::  :acme domain validation request handler
 ::
-|=  [[now=@da eny=@ bek=beak] ~ ~]
+|=  [[now=@da tick=@ud @ our=@p ^] ~ ~]
 |=  [authorized=? =request:http]
 ^-  simple-payload:http
 =/  url=(unit (pair pork:eyre quay:eyre))
@@ -22,9 +22,9 @@
 =/  response
   .^  (unit @t)
     %gx
-    (scot %p p.bek)
+    (scot %p our)
     %acme
-    (scot %da now)
+    (en-cose da+now ud+tick)
     /domain-validation/[challenge]/noun
   ==
 ?~  response

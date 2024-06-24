@@ -5,12 +5,11 @@
 /-  *dns-bind, *sole
 /+  *generators
 :-  %ask
-|=  $:  [now=@da eny=@uvJ bec=beak]
+|=  $:  [now=@da tick=@ud @ our=@p ^]
         [arg=$@(~ [dom=turf ~])]
         ~
     ==
 ^-  (sole-result [%dns-authority authority])
-=*  our  p.bec
 ::  XX must be evaluated outside tapp core due to +mule
 ::
 =/  =hart:eyre  .^(hart:eyre %e /(scot %p our)/host/real)
@@ -18,9 +17,9 @@
 =/  domain  /com/googleapis
 =/  code
   %-  crip
-  +:(scow %p .^(@p %j /(scot %p our)/code/(scot %da now)/(scot %p our)))
+  +:(scow %p .^(@p %j (en-bema [our %code [da+now ud+tick]] /(scot %p our))))
 =/  secrets
-  .^(@t %cx :(weld /(scot %p our)/base/(scot %da now)/sec domain /atom))
+  .^(@t %cx (en-bema [our %base [da+now ud+tick]] :(weld /sec domain /atom)))
 ::
 =-  ?~  arg  -
     (fun.q.q [%& dom.arg])

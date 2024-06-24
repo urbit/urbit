@@ -1,16 +1,10 @@
 /-  h=hood
 :-  %say
-|=  [[now=@da eny=@uvJ bec=beak] ~ ~]
+|=  [[now=@da tick=@ud @ our=@p ^] ~ ~]
 :-  %tang
 ^-  tang
-=+  .^  hop=jump:h
-      %gx
-      (scot %p p.bec)
-      %hood
-      (scot %da now)
-      /kiln/jumps/noun
-    ==
-?>  ?=(%all -.hop)
-%+  turn  ~(tap by all.hop)
+=+  .^(=jump:h %gx (en-bema [our %hood [da+now ud+tick]] /kiln/jumps/noun))
+?>  ?=(%all -.jump)
+%+  turn  ~(tap by all.jump)
 |=  [old=dock new=dock]
 leaf+"{<p.old>}/{(trip q.old)} -> {<p.new>}/{(trip q.new)}"

@@ -5396,10 +5396,10 @@
   ::
   =>  |%
       ++  sein
-        |=  [rof=roof pov=path our=ship now=@da who=ship]
+        |=  [rof=roof pov=path our=ship now=@da tick=@ud who=ship]
         ;;  ship
         =<  q.q  %-  need  %-  need
-        (rof [~ ~] pov %j `beam`[[our %sein %da now] /(scot %p who)])
+        (rof [~ ~] pov %j `bema`[[our %sein [da+now ud+tick]] /(scot %p who)])
       --
   ::  middle core: stateless queries for default numeric sponsorship
   ::
@@ -5464,17 +5464,17 @@
     ==
   ::                                                    ::  ++saxo:title
   ++  saxo                                              ::  autocanon
-    |=  [our=ship now=@da who=ship]
+    |=  [our=ship now=@da tick=@ud who=ship]
     .^  (list ship)
         %j
-        /(scot %p our)/saxo/(scot %da now)/(scot %p who)
+        /(scot %p our)/saxo/(en-cose da+now ud+tick)/(scot %p who)
     ==
   ::                                                    ::  ++sein:title
   ++  sein                                              ::  autoboss
-    |=  [our=ship now=@da who=ship]
+    |=  [our=ship now=@da tick=@ud who=ship]
     .^  ship
         %j
-        /(scot %p our)/sein/(scot %da now)/(scot %p who)
+        /(scot %p our)/sein/(en-cose da+now ud+tick)/(scot %p who)
     ==
   ::  +team was created with two meanings:
   ::    A. her / her moon

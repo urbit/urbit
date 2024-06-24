@@ -204,7 +204,7 @@
 ::
 =|  behn-state
 =*  state  -
-|=  [now=@da eny=@uvJ rof=roof]
+|=  [now=@da tick=@ud eny=@uvJ rof=roof]
 =*  behn-gate  .
 ^?
 |%

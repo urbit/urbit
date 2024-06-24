@@ -3,9 +3,9 @@
 /+  ph-util
 =,  aquarium
 :-  %say
-|*  $:  [now=@da eny=@uvJ bec=beak]
+|*  $:  [now=@da tick=@ud @ bec=beak]
         [a=mold pax=path ~]
         ~
     ==
 :-  %noun
-(scry-aqua:ph-util a p.bec now pax)
+(scry-aqua:ph-util a p.bec now tick pax)

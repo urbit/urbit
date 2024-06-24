@@ -8,10 +8,11 @@
 ::::
   ::
 :-  %say
-|=  [^ [arg=(list path)] vane=?(%g %c)]
+|=  [[now=@da tick=@ud *] [arg=(list path)] vane=?(%g %c)]
 =-  tang+(flop `tang`(zing -))
 %+  turn  arg
 |=  pax=path
+=.  pax  (en-pick now tick pax)
 ^-  tang
 =+  ark=.^(arch (cat 3 vane %y) pax)
 ?^  fil.ark

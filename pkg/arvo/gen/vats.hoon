@@ -12,9 +12,9 @@
 ::
 /-  *hood
 :-  %say
-|=  $:  [now=@da * bec=beak]
+|=  $:  [now=@da tick=@ud @ our=@p ^]
         deks=(list desk)
         [filt=@tas verb=_|]
     ==
 :-  %tang  ^-  tang
-(report-vats p.bec now deks filt verb)
+(report-vats our now tick deks filt verb)

@@ -346,7 +346,7 @@
   ::  +ship-life-to-pubid: fetches public key information from jael
   ::
   ++  ship-life-to-pubid
-    |=  [our=@p now=@da ship=@p =life]
+    |=  [our=@p now=@da tick=@ud ship=@p =life]
     ^-  @udpoint
     ::
     =/  d=[=^life =pass *]
@@ -354,7 +354,7 @@
         :~  %j
             (scot %p our)
             %deed
-            (scot %da now)
+            (en-cose da+now ud+tick)
             (scot %p ship)
             (scot %ud life)
         ==
@@ -367,7 +367,7 @@
     `@udpoint`auth.x
   ::
   ++  build-signing-participants
-    |=  [our=@p now=@da invited=(list @p)]
+    |=  [our=@p now=@da tick=@ud invited=(list @p)]
     ^-  [(set [@p life]) (set @udpoint)]
     ::
     =|  participants=(set [@p life])
@@ -378,12 +378,12 @@
       [participants keys]
     ::
     =/  lyfe=(unit @ud)
-      .^((unit @ud) j+/(scot %p our)/lyfe/(scot %da now)/(scot %p i.invited))
+      .^((unit @ud) j+(en-bema [our %lyfe da+now ud+tick] /(scot %p i.invited)))
     ::
     ?~  lyfe
       $(invited t.invited)
     ::
-    =/  pubkey=@udpoint  (ship-life-to-pubid our now i.invited u.lyfe)
+    =/  pubkey=@udpoint  (ship-life-to-pubid our now tick i.invited u.lyfe)
     ::
     =.  participants  (~(put in participants) [i.invited u.lyfe])
     =.  keys          (~(put in keys) pubkey)
@@ -392,7 +392,7 @@
   ::
   ::
   ++  build-verifying-participants
-    |=  [our=@p now=@da invited=(list [ship=@p =life])]
+    |=  [our=@p now=@da tick=@ud invited=(list [ship=@p =life])]
     ^-  (set @udpoint)
     ::
     =|  keys=(set @udpoint)
@@ -402,7 +402,7 @@
       keys
     ::
     =/  pubkey=@udpoint
-      (ship-life-to-pubid our now ship.i.invited life.i.invited)
+      (ship-life-to-pubid our now tick ship.i.invited life.i.invited)
     =.  keys
       (~(put in keys) pubkey)
     ::
@@ -417,6 +417,7 @@
 ++  sign
   |=  $:  our=@p
           now=@da
+          tick=@ud
           eny=@uvJ
       ::
           message=*
@@ -433,15 +434,15 @@
   ::  get everyone's public keys
   ::
   =/  p=[participants=(set [ship=@p =life]) keys=(set @udpoint)]
-    (build-signing-participants:detail our now ~(tap in anonymity-set))
+    (build-signing-participants:detail our now tick ~(tap in anonymity-set))
   ::  get our ships' current life
   ::
   =/  our-life=life
-    .^(life %j /(scot %p our)/life/(scot %da now)/(scot %p our))
+    .^(life %j /(scot %p our)/life/(en-cose da+now ud+tick)/(scot %p our))
   ::  get our ships' secret keyfile ring
   ::
   =/  secret-ring=ring
-    .^(ring %j /(scot %p our)/vein/(scot %da now)/(scot %ud our-life))
+    .^(ring %j (en-bema [our %vein da+now ud+tick] /(scot %ud our-life)))
   ::  fetch the encoded auth seed from the ring
   ::
   =/  secret-auth-seed=@
@@ -449,7 +450,7 @@
   ::  get our ships' public key
   ::
   =/  public-key=@udpoint
-    (ship-life-to-pubid:detail our now our our-life)
+    (ship-life-to-pubid:detail our now tick our our-life)
   ::
   :-  participants.p
   :-  link-scope
@@ -464,11 +465,12 @@
 ::  +verify: verifies a message against a ring signature
 ::
 ++  verify
-  |=  [our=@p now=@da message=* =ring-signature]
+  |=  [our=@p now=@da tick=@ud message=* =ring-signature]
   ^-  ?
   ::
   =/  keys=(set @udpoint)
-    %^  build-verifying-participants:detail  our  now
+    %-  build-verifying-participants:detail
+    :^  our  now  tick
     ~(tap in participants.ring-signature)
   ::
   =/  msg-hash=@  (shaz (jam message))

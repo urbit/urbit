@@ -4,5 +4,4 @@
 ::
 :-  %say
 |=  [^ dudes=(list dude:gall) ~]
-:-  %helm-gall-sift
-dudes
+[%helm-gall-sift dudes]

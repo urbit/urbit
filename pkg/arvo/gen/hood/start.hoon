@@ -7,7 +7,7 @@
 ::::
   ::
 :-  %say
-|=  $:  [now=@da eny=@uvJ bec=beak]
+|=  $:  [now=@da tick=@ud @ bec=beak]
         [arg=[@ $@(~ [@ ~])] ~]
     ==
 =/  [des=@tas dap=@tas]
@@ -15,7 +15,7 @@
   ?@  +.arg  [q.bec -.arg]
   ?>  ((sane %tas) +<.arg)
   [-.arg +<.arg]
-=+  .^(=cone:clay %cx /(scot %p p.bec)//(scot %da now)/domes)
+=+  .^(=cone:clay %cx (en-bema [p.bec %$ [da+now ud+tick]] /domes))
 =/  =dome:clay  (~(gut by cone) [p.bec des] *dome:clay)
 =+  ((slog ?:(=(%live liv.dome) ~ ['kiln: desk not live' ~])) ~)
 [%kiln-rein des (~(put by ren.dome) dap &)]

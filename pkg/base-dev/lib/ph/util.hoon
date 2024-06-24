@@ -112,12 +112,6 @@
 ::  Scry into a running aqua ship
 ::
 ++  scry-aqua
-  |*  [a=mold our=@p now=@da pax=path]
-  .^  a
-      %gx
-      (scot %p our)
-      %aqua
-      (scot %da now)
-      pax
-  ==
+  |*  [a=mold our=@p now=@da tick=@ud pax=path]
+  .^(a %gx (en-bema [our %aqua [da+now ud+tick]] pax))
 --

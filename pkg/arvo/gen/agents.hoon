@@ -1,10 +1,10 @@
 /-  hood
 :-  %say
-|=  $:  [now=@da eny=@uvJ bec=beak]
+|=  $:  [now=@da tick=@ud @ our=@p ^]
         [[=desk ~] ~]
     ==
 :-  %tang
-%+  turn  (get-apps-have:hood p.bec desk now)
+%+  turn  (get-apps-have:hood our desk now tick)
 |=  [=dude:gall live=?]
 ^-  tank
 =/  liv  ?:(live "running " "archived")

@@ -1,6 +1,6 @@
 /-  hood
 :-  %say
-|=  $:  [now=@da eny=@uvJ bec=beak]
+|=  $:  [now=@da tick=@ud @ our=@p ^]
         $:  =desk
             arg=(list [? dude:gall])
         ==
@@ -8,7 +8,7 @@
     ==
 :-  %kiln-rein
 :-  desk
-=+  .^(=cone:clay %cx /(scot %p p.bec)//(scot %da now)/domes)
+=+  .^(=cone:clay %cx (en-bema [our %$ [da+now ud+tick]] /domes))
 %+  roll  arg
-|:  [*[on=? =dude:gall] rein=ren:(~(got by cone) [p.bec desk])]
+|:  [*[on=? =dude:gall] rein=ren:(~(got by cone) [our desk])]
 (~(put by rein) dude on)

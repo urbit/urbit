@@ -10,7 +10,7 @@
   ::
 =,  generators
 :-  %ask
-|=  $:  [now=@da eny=@uvJ bec=beak]
+|=  $:  ^
         [arg=$@(~ [dom=path ~])]
         ~
     ==

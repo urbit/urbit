@@ -2,9 +2,9 @@
 ::
 /+  jammer=desk-jam
 :-  %say
-|=  $:  [now=@da eny=@uvJ bec=beak]
+|=  $:  [now=@da tick=@ud @ our=@p ^]
         [=desk ~]
         ~
     ==
 :-  %jam
-(jam-desk:jammer p.bec desk now)
+(jam-desk:jammer our desk now tick)

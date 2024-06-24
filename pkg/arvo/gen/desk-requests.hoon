@@ -1,7 +1,7 @@
 ::  +desk-requests: count pending requests for a desk
 ::
 :-  %say
-|=  $:  [now=@da eny=@uvJ bec=beak]
+|=  $:  [now=@da tick=@ud @ our=@p ^]
         [=desk ~]
         ~
     ==
@@ -10,14 +10,14 @@
 =/  cul=(list [@p rave:clay])
   %~  tap  in
   .^  (set [@p rave:clay])
-    /cx/(scot %p p.bec)//(scot %da now)/cult/[desk]
+      %cx  (en-bema [our %$ [da+now ud+tick]] /cult/[desk])
   ==
 ::
 =/  [loc=_cul inc=_cul]
-  (skid cul |=([=@p rave:clay] =(p p.bec)))
+  (skid cul |=([=@p rave:clay] =(p our)))
 =/  syc=_cul
   =/  nex=@ud
-    +(ud:.^(cass:clay %cw /(scot %p p.bec)/[desk]/(scot %da now)))
+    +(ud:.^(cass:clay %cw (en-bema [our desk [da+now ud+tick]] /)))
   (skim inc |=([@p =rave:clay] =([%sing %w ud+nex /] rave)))
 ::
 %-  flop

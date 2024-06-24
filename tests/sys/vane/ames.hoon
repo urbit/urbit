@@ -14,7 +14,7 @@
 =/  comet2  ^$:((ames our-comet2))
 ::
 =.  now.nec        ~1111.1.1
-=.  eny.nec        0xdead.beef
+=.  eny.nec        `@`0xdead.beef
 =.  life.ames-state.nec  2
 =.  rift.ames-state.nec  0
 =.  rof.nec  |=(* ``[%noun !>(*(list turf))])
@@ -23,7 +23,7 @@
 =/  nec-sec  sec:ex:crypto-core.ames-state.nec
 ::
 =.  now.bud        ~1111.1.1
-=.  eny.bud        0xbeef.dead
+=.  eny.bud        `@`0xbeef.dead
 =.  life.ames-state.bud  3
 =.  rift.ames-state.bud  0
 =.  rof.bud  |=(* ``[%noun !>(*(list turf))])
@@ -32,7 +32,7 @@
 =/  bud-sec  sec:ex:crypto-core.ames-state.bud
 ::
 =.  now.marbud        ~1111.1.1
-=.  eny.marbud        0xbeef.beef
+=.  eny.marbud        `@`0xbeef.beef
 =.  life.ames-state.marbud  4
 =.  rift.ames-state.marbud  0
 =.  rof.marbud  |=(* ``[%noun !>(*(list turf))])
@@ -41,7 +41,7 @@
 =/  marbud-sec  sec:ex:crypto-core.ames-state.marbud
 ::
 =.  now.comet        ~1111.1.1
-=.  eny.comet        0xbeef.cafe
+=.  eny.comet        `@`0xbeef.cafe
 =.  life.ames-state.comet  1
 =.  rift.ames-state.comet  0
 =.  rof.comet  |=(* ``[%noun !>(*(list turf))])
@@ -53,7 +53,7 @@
 =/  comet-sec  sec:ex:crypto-core.ames-state.comet
 ::
 =.  now.comet2        ~1111.1.1
-=.  eny.comet2        0xcafe.cafe
+=.  eny.comet2        `@`0xcafe.cafe
 =.  life.ames-state.comet2  1
 =.  rift.ames-state.comet2  0
 =.  rof.comet2  |=(* ``[%noun !>(*(list turf))])
@@ -205,7 +205,7 @@
     ::  custom scry handler for +test-fine-response.
     ::  could be refined further...
     ::
-    |=  [lyc=gang pov=path vis=view bem=beam]
+    |=  [lyc=gang pov=path vis=view bam=bema]
     ^-  (unit (unit cage))
     ?+  vis  ~
         %cp
@@ -214,8 +214,8 @@
       ``noun+!>([black black])
     ::
         %cz
-      ?+  -.r.bem  !!
-        %ud  ``noun+!>((n-frags p.r.bem))
+      ?+  -.r.bam  !!
+        %ud  ``noun+!>((n-frags p.r.bam))
       ==
     ::
         %cx
@@ -598,8 +598,8 @@
   =/  ror  (sift-roar:ames num-frag (flop paz))  :: XX rename
   =/   event-core
     ~!  nec
-    =/   foo  [*@da *@ rof.nec]
-    (ev:(nec foo) [*@da *@ rof.nec] *duct ames-state.nec)
+    =/   foo  [*@da *@ *@ rof.nec]
+    (ev:(nec foo) [*@da *@ *@ rof.nec] *duct ames-state.nec)
   =/  dat
     ?>  ?=(^ dat.ror)
     ;;(@ux q.dat.ror)

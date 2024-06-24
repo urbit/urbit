@@ -4,9 +4,9 @@
   ::
 /?    310
 :-  %say
-|=  $:  [now=@da eny=@ bec=beak]
+|=  $:  [@ @ eny=@ ^]
         [[exp=@ud ~] ~]
     ==
 =+  rab=(~(raw og eny) (bex exp))
 ~&  [%random-bytes (met 3 rab) `@p`(mug rab)]
-atom+rab
+[%atom rab]

@@ -8,13 +8,12 @@
 ::::
   ::
 :-  %say
-|=  $:  [now=@da eny=@uvJ bec=beak]
+|=  $:  [now=@da tick=@ud eny=@uvJ our=@p ^]
         arg=?(~ [mon=@p ~])
         public-key=pass
     ==
 :-  %helm-moon
 ^-  (unit [=ship =udiff:point:jael])
-=*  our  p.bec
 =/  ran  (clan:title our)
 ?:  ?=([?(%earl %pawn)] ran)
   %-  %-  slog  :_  ~
@@ -25,14 +24,14 @@
     mon.arg
   (add our (lsh 5 (end 5 (shaz eny))))
 =/  ryf=(unit rift)
-  .^((unit rift) %j /(scot %p p.bec)/ryft/(scot %da now)/(scot %p mon))
+  .^((unit rift) %j (en-bema [our %ryft da+now ud+tick] /(scot %p mon)))
 ?^  ryf
   %.  ~
   %-  slog
   :~  leaf+"can't create {(scow %p mon)}, it already exists."
       'use |moon-breach and/or |moon-cycle-keys instead.'
   ==
-=/  seg=ship  (sein:title our now mon)
+=/  seg=ship  (sein:title our now tick mon)
 ?.  =(our seg)
   %-  %-  slog  :_  ~
       :-  %leaf
