@@ -75,7 +75,7 @@
 =|  state-0
 =*  state  -
 =<
-  %-  mute
+  !.
   %+  libverb  |
   %-  agent:dbug
   ^-  agent:gall
@@ -132,6 +132,7 @@
   ++  on-peek  on-peek:run
   --
 ::  %-  mute
+!.
 |_  [=bowl:gall cards=(list card)]
 ::  |aux: auxilliary helpers
 +|  %aux
@@ -197,7 +198,7 @@
 ++  do-ack
   |=  =ack:neo
   ^-  (list card)
-  %-  (slog leaf/"do from: {<p.p.ack>} to: {<q.p.ack>}" ~)
+  :: %-  (slog leaf/"do from: {<p.p.ack>} to: {<q.p.ack>}" ~)
   ?:  =(p.ack sys-pith)
     %.  *(list card)
     ?~  q.ack
@@ -229,7 +230,6 @@
   =/  =name:neo  (de-pith:name:neo pith)
   =/  nonce  (scot %uv run-nonce:(~(got by mate) ship.name))
   =/  =spar:ames  [ship.name [nonce (pout pith)]]
-  ~&  fetching/spar
   !! :: (pass wire %keen spar)
 ++  do-gall-grow
   |=  [=pith:neo sag=(unit saga:neo)]
@@ -292,7 +292,7 @@
       %gone  (slog leaf/"Missing dep: {<term.u.q.ack>}" ~)
       %goof  (slog leaf/"nacked on flow {<p.ack>}" tang.u.q.ack)
     ==
-  %-  (slog leaf/"on-ack from: {<p.p.ack>} to: {<q.p.ack>}" ~)
+  :: %-  (slog leaf/"on-ack from: {<p.p.ack>} to: {<q.p.ack>}" ~)
   (on-move q.p.ack p.p.ack %poke ack/!>(q.ack))
 ::
 ++  on-dirt-card
@@ -525,7 +525,6 @@
   ++  take-fetch
     |=  syn=sign-arvo
     ^+  sale
-    ~&  got-fetch/pith
     ?>  ?=([%ames %tune *] syn)
     ?~  roar.syn
       ~&  missing-roar/pith
@@ -551,9 +550,7 @@
       ~|  mall/mall
       ~|  pith/pith
       (need find-deli)
-    ~&  del/del
     =/  kid  (dif:pith:neo pith del)
-    ~&  kid/kid
     abet:(fetched:~(meat sale del) (dif:pith:neo pith del) res)
   ::  XX: possibly check that
   ++  find-deli
@@ -592,17 +589,14 @@
         ?:  =(p.exe.p.p.u.rot p.exe.p.aeon)
           ~
         `[pith aeon]
-      ~&  new-yuga/yuga
       meat
     ++  fetched
       |=  [kid=pith:neo =saga:neo]
       =.  yuga.deli  (~(del of:neo yuga.deli) kid)
       =.  epic.deli  (~(put of:neo epic.deli) kid saga)
-      ~&  fetched/deli
       ?.  =(~ ~(tap of:neo yuga.deli))
         meat
       =/  =epic:neo  epic.deli
-      ~&  finalizing/[pith epic]
       =.  epic.deli  *epic:neo
       =.  run  (tell pith (~(rep of:neo *epic:neo) pith epic))
       meat
@@ -627,7 +621,6 @@
   ::
   ++  on-sync-sign
     |=  =sign:agent:gall
-    ~&  town/town
     ^+  sale
     ?+    -.sign  ~|(bad-sign/-.sign !!)
         %watch-ack
@@ -638,7 +631,6 @@
     ::
         %fact
       ?.  =(%neo-yuga p.cage.sign)
-        ~&  weird-mall-fact/p.cage.sign
         sale
       (on-yuga !<(yuga:neo q.cage.sign))
     ::
@@ -677,7 +669,6 @@
     =/  lis  ~(tap of:neo yuga)
     |-
     ?~  lis
-      ~&  done-yuga-town/town
       abet:(new:meat yuga)
     =/  [kid=pith:neo =aeon:neo]  i.lis
     =/  pit  (welp pith kid)
@@ -688,12 +679,9 @@
       ~&  nothing/pit
       $(lis t.lis)
     ?~  u.res
-      ~&  dead/pit
       :: XX: what means??
       $(lis t.lis)
-    ~&  alive/pit
     ?:  =(p.u.u.res aeon)
-      ~&  clone/pit
       $(lis t.lis, yuga (~(del of:neo yuga) kid))
     ~&  fresh/pit
     =.  run  abet:(~(fresh sale pit) aeon)
@@ -858,9 +846,7 @@
     =/  =name:neo  (de-pith:name:neo change)
     =?  run  =(our.bowl ship.name)
       (cure pith.name)
-    ~&  reaping/change
     =/  =rave:neo  (~(gut of:neo riot) change *rave:neo)
-    ~&  rave/rave
     =.  run  (heal:rage:(heal:rage:(heal x/change exe.rave) y/change why.rave) z/change zed.rave)
     run(riot (~(del of:neo riot) change))
   ::
@@ -930,7 +916,6 @@
   ++  free
     |=  =hunt:neo
     ^+  run
-    ~&  resolved/hunt
     ::  XX: weird shadowing, be careful
     =/  =rave:neo  (~(gut of:neo riot) pith.hunt *rave:neo)
     =.  rave
@@ -962,8 +947,8 @@
   =/  res  (need (look-x:till case.loot pith))
   ?:  &(?=(^ res) =(%vase p.q.u.res))
     $(git t.git)
-  =.  run
-    (emit (do-gall-grow pith (need (look-x:till case.loot pith))))
+::  =.  run
+    :: (emit (do-gall-grow pith (need (look-x:till case.loot pith))))
   $(git t.git)
 
 ++  take-dirt-card
@@ -1017,7 +1002,6 @@
     run
   ++  resolved
     |=  =hunt:neo
-    ~&  resolved/hunt
     =/  fow=(unit flow:neo)  (~(get by by-hunt.halt) hunt)
     ?~  fow
       run
@@ -1688,7 +1672,7 @@
 ::
 ::  +arvo: local callstack
 ++  arvo
-  =+  verb=&
+  =+  verb=|
   =/  old  state
   ::  data for blocking semantics
   =|  =block:neo

@@ -5,7 +5,6 @@
 ++  build
   |=  [=bowl:neo conf=accel-conf]
   ^-  (quip card pail:neo)
-  ~&  build/conf
   :_  accel-conf/!>(conf)
   =/  =term
     `@tas`(cat 3 'accel-' (scot %t (spat (pout (snip here.bowl)))))
@@ -48,7 +47,6 @@
       |=  =bowl:neo
       ^-  pail:neo
       =/  missing  (check-prelude bowl)
-      ~&  hoon/hoon.conf
       ?.  =(missing ~)
         :-  %tang  !>  ^-  tang
         [leaf/"Missing deps" (turn ~(tap in missing) |=(=term leaf/(trip term)))]
@@ -77,7 +75,6 @@
       |=  [=stud:neo vax=vase]
       ^-  (quip card:neo pail:neo)
       =/  new=pail:neo  (produce bowl)
-      %-  (slog leaf/"New val: {<here.bowl>}" (sell q.new) ~)
       ?:  =(new pail)  `new
       :_  new
       %+  turn  ~(tap by poke.conf)
@@ -87,7 +84,6 @@
     ++  init
       |=  pal=(unit pail:neo)
       =/  new=pail:neo  (produce bowl)
-      %-  (slog leaf/"New val: {<here.bowl>}" (sell q.new) ~)
       `new
     --
   --

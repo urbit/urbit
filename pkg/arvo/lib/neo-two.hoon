@@ -248,7 +248,7 @@
         %add
       %dif
     ?:  &(=(%dif mode) =(q.q:(need old) q.poem))
-      ~&  %dupe-skipping
+      ::  ~&  %dupe-skipping
       `loam
     ~|  overwrite-soil/p.p.poem
     ?>  !(has:on:soil:neo u.fil.loam p.p.poem)
