@@ -8356,39 +8356,31 @@
         [%dbug *]   q.gen
         [%eror *]  ~_((crip p.gen) !!)
     ::
-        [%knit *]                                       ::
-      :+  %tsgr  [%ktts %v %$ 1]                        ::  =>  v=.
-      :-  %brhp                                         ::  |-
-      :+  %ktls                                         ::  ^+
-        :-  %brhp                                       ::  |-
-        :^    %wtcl                                     ::  ?:
-            [%bust %flag]                               ::  ?
-          [%bust %null]                                 ::  ~
-        :-  [%ktts %i [%sand 'tD' *@]]                  ::  :-  i=~~
-        [%ktts %t [%limb %$]]                           ::  t=$
-      |-  ^-  hoon                                      ::
-      ?~  p.gen                                         ::
-        [%bust %null]                                   ::  ~
-      =+  res=$(p.gen t.p.gen)                          ::
-      ^-  hoon                                          ::
-      ?@  i.p.gen                                       ::
-        [[%sand 'tD' i.p.gen] res]                      ::  [~~{i.p.gen} {res}]
+        [%knit *]  !.                                   ::
+      =/  bed=hoon                                      ::
+        =/  tap                                         ::
+          !,(*hoon =>(** |-(?:(*? ~ [i=*@tD t=$]))))    ::  "*tape"
+        =/  typ  [%hold %noun tap]                      ::  -:!>(*tape)
+        =-  ?~(t o [[%hand typ %1 t] o])                ::  leading fragment
+        %+  reel  p.gen                                 ::
+        |=  [w=woof t=tape o=_`hoon`[%bust %null]]      ::
+        ?@  w  [[w t] o]                                ::
+        :+  ~                                           ::
+          [%ktls tap [%tsgr [%limb %v] p.w]]            ::  hygienic `tape`{w}
+        ?~(t o [[%hand typ %1 t] o])                    ::  literal fragment
+      ::                                                ::
+      ?:  ?=([[%hand *] [%bust %null]] bed)  p.bed      ::  embed literal
+      =/  lap                                           ::
+        !,  *hoon  =>  **                               ::  "*(list tape)"
+        |-(?:(*? ~ [i=|-(?:(*? ~ [i=*@tD t=$])) t=$]))  ::
       :+  %tsls                                         ::
-        :-  :+  %ktts                                   ::  ^=
-              %a                                        ::  a
-            :+  %ktls                                   ::  ^+
-              [%limb %$]                                ::  $
-            [%tsgr [%limb %v] p.i.p.gen]                ::  =>(v {p.i.p.gen})
-        [%ktts %b res]                                  ::  b=[res]
-      ^-  hoon                                          ::
-      :-  %brhp                                         ::  |-
-      :^    %wtpt                                       ::  ?@
-          [%a ~]                                        ::  a
-        [%limb %b]                                      ::  b
-      :-  [%tsgl [%$ 2] [%limb %a]]                     ::  :-  -.a
-      :+  %cnts                                         ::  %=
-        [%$ ~]                                          ::  $
-      [[[%a ~] [%tsgl [%$ 3] [%limb %a]]] ~]            ::  a  +.a
+        :+  %ktts  %l                                   ::  =+  ^=  l
+        [%tsgr [%ktts %v $+1] [%ktls lap bed]]          ::  =>  v=.
+      !,  *hoon                                         ::  `(list tape){bed}
+      !@  zing  (zing l)                                ::  XX s/b biblical
+      |-  ^+  =>(** |-(?:(*? ~ [i=*@tD t=$])))          ::
+      ?~  l  ~                                          ::
+      |-(?~(i.l ^$(l t.l) [i.i.l $(i.l t.i.l)]))        ::
     ::
         [%leaf *]  ~(factory ax `spec`gen)
         [%limb *]  [%cnts [p.gen ~] ~]
