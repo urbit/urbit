@@ -23,9 +23,13 @@
       %sky-diff
         =/  poke  !<(sky-diff vax)
         ?+  -.poke  !!
-          %new-tab
+          %menu
             :-  ~
-            =.  hawks.this  [[now.bowl #/[p/our.bowl]/home] hawks.this]
+            =.  menu.this  menu.poke
+            sky/!>(this)
+          %new-hawk
+            :-  ~
+            =.  hawks.this  [[now.poke #/[p/our.bowl]/home] hawks.this]
             =.  open.this  (min 4 +(open.this))
             sky/!>(this)
           %move-tab
@@ -97,9 +101,12 @@
       ==
     :-  %sky
     !>
-    :_  1
-    :~
-      [now.bowl ~[p/our.bowl %home]]
+    :*
+      :~
+        [now.bowl ~[p/our.bowl %home]]
+      ==
+      1
+      %.y
     ==
   --
 --

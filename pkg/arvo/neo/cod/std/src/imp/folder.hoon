@@ -1,5 +1,6 @@
 /@  folder
 /@  folder-diff
+/@  todos
 =>
   |%
   ++  default-pails
@@ -7,15 +8,24 @@
     ^-  (list [stud:neo pail:neo])
     :~
       [%iframe iframe/!>('')]
+      [%hoon hoon/!>('~')]
+      [%todos todos/!>(*todos)] 
       [%txt txt/!>('')]
-      [%sail sail/!>(['' '' ~])]
     ==
   --
 ^-  kook:neo
 |%
 ++  state  pro/%folder
-++  poke  (sy %folder %folder-diff ~)
-++  kids  *kids:neo
+++  poke  (sy %folder-diff ~)
+++  kids
+  :-  ~
+  :-  %y
+  ^-  (map pish:neo lash:neo)
+  %-  malt
+  :~
+    :-  [|/%ta |]
+    [pro/%any ~]
+  ==
 ++  deps  *deps:neo
 ++  form
   ^-  form:neo
@@ -36,7 +46,7 @@
       =/  this  !<(folder q.pail)
       ?-    -.poke
           %make
-        :_  folder/!>([name.poke this])
+        :_  folder/!>([name.poke this])  ::  add new item to head of of list
         :~  [(snoc here.bowl name.poke) %make stud.poke (~(get by default-pails) stud.poke) ~]
         ==
       ::

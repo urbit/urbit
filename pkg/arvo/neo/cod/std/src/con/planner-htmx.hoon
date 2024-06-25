@@ -120,7 +120,7 @@
   |=  [=pith =idea:neo]
   ^-  (unit pent)
   ?~  pith  ~
-  =/  entry  !<(planner-entry q.pail.idea)
+  =/  entry  !<(planner-entry q.q.saga.idea)
   ?.  ?&
         (gte when.entry d)
         (lth when.entry (add d ~d1))
@@ -141,7 +141,7 @@
   %+  murn  ~(tap of:neo kids.bowl)
   |=  [=pith =idea:neo]
   ^-  (unit pent)
-  =/  entry  !<(planner-entry q.pail.idea)
+  =/  entry  !<(planner-entry q.q.saga.idea)
   ?.  ?&
         (gte d when.entry)
         (lte d (add when.entry length.entry))

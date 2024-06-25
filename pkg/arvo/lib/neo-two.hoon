@@ -220,10 +220,14 @@
     `[pith key.u.lat]
   ::
   ++  grow
-    |=  [=pail:neo cas=(unit case:neo) =oath:neo]
-    ^-  (quip loot:neo loam:dirt:neo)
-    =/  =poem:neo  [[(fall cas +(case)) oath] `pail]
-    (make poem)
+    |=  [=pith:neo =pail:neo cas=(unit case:neo) =oath:neo]
+    ^-  (quip dust:neo loam:dirt:neo)
+    =/  l=loam:dirt:neo  (~(dip of:neo loam) pith)
+    =/  =poem:neo  [[(fall cas +(~(case plow l))) oath] `pail]
+    =^  loot=(list loot:neo)  l
+      (~(make plow l) poem)
+    :-  (turn loot (lead pith))
+    (~(rep of:neo loam) pith l)
   ++  make
     |=  =poem:neo
     ^-  (quip loot:neo loam:dirt:neo)
@@ -244,7 +248,7 @@
         %add
       %dif
     ?:  &(=(%dif mode) =(q.q:(need old) q.poem))
-      ~&  %dupe-skipping
+      ::  ~&  %dupe-skipping
       `loam
     ~|  overwrite-soil/p.p.poem
     ?>  !(has:on:soil:neo u.fil.loam p.p.poem)
@@ -252,22 +256,36 @@
     loam(fil `(put:on:soil:neo u.fil.loam [p.p .]:poem))
   ::
   ++  cull
-    ?~  fil.loam
-      [~ loam]
-    (make [[+(case) *oath:neo] ~])
+    =|  =grit:neo
+    |=  =pith:neo
+    ^+  [grit loam]
+    =/  [loot=(list loot:neo) l=loam:dirt:neo]
+      =/  lom  (~(dip of:neo loam) pith)
+      ?:  =(~ fil.lom)
+        `lom
+      (~(make plow lom) [[+(~(case plow lom)) *oath:neo] ~])
+    =.  grit  (welp grit (turn loot (lead pith)))
+    =/  kids  ~(tap by kid.l)
+    |-
+    ?~  kids
+      =.  loam  (~(rep of:neo loam) pith l)
+      [grit loam]
+    =/  [iot=iota lo=loam:dirt:neo]  i.kids
+    =/  pit=pith:neo  (snoc pith iot)
+    =/  [loot=(list loot:neo) lom=loam:dirt:neo]
+      (make(loam lo) [[+(case) *oath:neo] ~])
+    =.  grit  (welp grit (turn loot (lead pit)))
+    =.  kid.l  (~(put by kid.l) iot lom)
+    $(kids t.kids) ::
   ::
   ++  call
     |=  =card:dirt:neo
     ^-  (quip gift:dirt:neo _loam)
-    =/  lom   (~(dip of:neo loam) p.card)
     %-  (trace "call" (print-card card))
-    =^  gifts=(list loot:neo)  lom
-      ?-  -.q.card
-        %grow  (~(grow plow lom) +.q.card)
-        %cull  ~(cull plow lom)
-      ==
-    :_  (~(rep of:neo loam) p.card lom)
-    (turn gifts |=(loot:neo `gift:dirt:neo`[p.card +<]))
+    ?-  -.q.card
+      %grow  (~(grow plow loam) p.card +.q.card)
+      %cull  (~(cull plow loam) p.card)
+    ==
   ::
   ++  look
     |=  =pith:neo
@@ -395,7 +413,9 @@
     =|  gifts=(list gift:dirt:neo)
     |=  =epic:neo
     ^+  [gifts loam farm]
-    =/  pic  ~(tap of:neo epic)
+    =/  pic  
+      %+  sort  ~(tap of:neo epic)
+      |=([[a=pith:neo *] [b=pith:neo *]] (lte-pith:neo a b))
     |-
     ?~  pic
       :+  gifts  loam
@@ -453,11 +473,64 @@
           ~
         `[pit %dif]
     == 
+
+  ++  fallback-peek-kids
+    |=  [=care:neo =pith:neo fam=farm:neo]
+    ^-  (list pith:neo)
+    ?:  ?=(%x care)  ~
+    ?^   fil.fam
+      =/  [=land:neo =plot:neo]  u.fil.fam
+      ?~  kid=(ram:on:plan:neo ?:(?=(%y care) by-kids-mut.plot by-desc-mut.plot))
+        ~
+      ~(tap in val.u.kid)
+    %-  zing
+    %+  turn  ~(tap by kid.fam)
+    |=  [=iota f=farm:neo]
+    ^-  (list pith:neo)
+    (fallback-peek-kids care (snoc pith iota) f)
+  ++  fallback-peek-x
+    |=  =pith:neo
+    ^-  (unit saga:neo)
+    =/  sol  (~(gut of:neo loam) pith *soil:neo)
+    ?~  val=(ram:on:soil:neo sol)
+      ~
+    ?~  q.val.u.val
+      ~
+    `[*aeon:neo u.q.val.u.val]
+  ::
+  ++  fallback-peek
+    |=  [=care:neo =pith:neo]
+    ^-  (axal:neo saga:neo)
+    %-  gas
+    %+  welp
+      ?~  rot=(fallback-peek-x pith)
+        ~
+      [pith u.rot]^~
+    %+  murn  (fallback-peek-kids care pith (~(dip of:neo farm) pith))
+    |=  p=pith:neo
+    ^-  (unit [pith:neo saga:neo])
+    =/  kid  (welp pith p)
+    ?~  sag=(fallback-peek-x kid)
+      ~
+    `[kid u.sag]
+  ++  piek
+    |=  [=care:neo =pith:neo]
+    ^-  (unit (unit (axal:neo saga:neo)))
+    :: ~&  peek-no-once/[care pith]
+   ``(fallback-peek care pith)
+
+  ::
   ++  peek
     |=  [=care:neo =pith:neo]
     ^-  (unit (unit (axal:neo saga:neo)))
     ?~  nce=(now-once care pith)
+      :: ~&  peek-no-once/[care pith]
       ~
+::    =/  res
+::      (fallback-peek care pith)
+::    ~?  !=(res [~ ~])
+::      res/res
+::   ``(fallback-peek care pith)
     (look care u.nce pith)
   ++  look-x
     |=  [=case:neo =pith:neo]
@@ -467,6 +540,14 @@
     ?:  ?=($@(~ [~ ~]) res)
       res
     `(~(get of:neo u.u.res) ~)
+  ++  gas
+    =|  axe=(axal:neo saga:neo)
+    |=  res=(list (pair pith:neo saga:neo))
+    ^+  axe
+    ?~  res
+      axe
+    $(axe (~(put of:neo axe) p.i.res q.i.res), res t.res)
+
   ::
   ++  look
     |=  [=care:neo =once:neo =pith:neo]
@@ -485,12 +566,6 @@
       %y  read-y
       %z  read-z
     ==
-    ++  gas
-      |=  res=(list (pair pith:neo saga:neo))
-      ^+  axe
-      ?~  res
-        axe
-      $(axe (~(put of:neo axe) p.i.res q.i.res), res t.res)
     ++  read-x  (gas read-x-raw)
     ++  read-x-raw
       ^-  (list (pair pith:neo saga:neo))

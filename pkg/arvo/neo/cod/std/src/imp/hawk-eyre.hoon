@@ -1,13 +1,17 @@
 /@  eyre-reqs
 /-  serv=sky-server
+/-  srv=server
 ^-  kook:neo
 |%
 ++  state  pro/%sig
 ++  poke   (sy %eyre-task ~)
 ++  kids
   :+  ~  %y
-  %-  ~(gas by *lads:neo)
-  ~
+  ^-  (map pish:neo lash:neo)
+  %-  malt
+  :~  :-  [|/%uv |]
+      [pro/%eyre-task ~]
+  ==
 ++  deps
   %-  ~(gas by *band:neo)
   ~
@@ -18,15 +22,20 @@
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo pail:neo)
     ?+    stud  ~|(bad-stud/stud !!)
-         %eyre-task
+        %eyre-task
       =+  !<(=task:eyre:neo vax)
       =/  [eyre-id=@ta req=inbound-request:eyre]  task
+      ?.  authenticated.req
+        =/  eyre=pith:neo  #/[p/our.bowl]/$/eyre
+        :_  pail
+        %+  ~(respond neo:srv eyre)   eyre-id
+        (login-redirect:gen:srv request.req)
       =/  purl  (parse-url:serv request.req)
       =/  inner=pith:neo  (pave:neo pax.purl)
       =/  =crew:neo  (~(gas by *crew:neo) src/inner ~)
       =/  =made:neo  [%hawk-eyre-handler `[stud vax] crew]
       :_  sig/!>(~)
-      :~  [(welp here.bowl #/[uv/eny.bowl]) %make made]
+      :~  [(welp here.bowl #/[uv/(end 3^4 eny.bowl)]) %make made]
       ==
     ==
   ++  init

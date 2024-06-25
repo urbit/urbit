@@ -10,4 +10,3 @@
 =/  name=term  (vol:mu "name")
 ?>  ((sane %tas) name)
 [name pith]
-

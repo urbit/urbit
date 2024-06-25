@@ -44,8 +44,11 @@
                 %diary
                 %iframe
                 %task
+                %todos
                 %txt
+                %hoon
                 %sail
+                %slideshow
             ==
           |=  t=@tas
           ^-  manx
@@ -71,7 +74,9 @@
     %+  turn  folder
     |=  name=@tas
     =/  pith  ~[name]
-    =/  =pail:neo  pail:(~(got of:neo kids.bowl) pith)
+    ?~  suga=(~(get of:neo kids.bowl) pith)
+      ;div.p3.br1.bd1: no file called {<name>}
+    =/  =pail:neo  q.saga.u.suga
     =/  =stud:neo  p.pail
     =/  =path  (pout (welp here.bowl pith))
     =/  label

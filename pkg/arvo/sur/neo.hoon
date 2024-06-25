@@ -1,3 +1,5 @@
+/+  dprint
+/+  easy-print=language-server-easy-print
 ::  $neo: New Shrub
 ::
 ::    Urbit is a namespace, from a path -> data
@@ -851,6 +853,12 @@
   ++  duck  (dial dole)
   --
 ::
++$  deed
+  $@  ?
+  $:  time=(unit @dr)
+      req=?
+  ==
+::
 ::  $gift: notification that a children changed
 ::
 +$  gift  (axal loot)
@@ -1318,6 +1326,7 @@
       [%rely =term =pith]
       [%halt ~]
   ==
++$  dead  term
 +$  howl  tone
 ::  $wail: change result
 +$  wail  (trel hunt howl mode)
@@ -1698,8 +1707,10 @@
 ::    Ending with | indicates that the path match stops
 ::
 +$  pish
+  $+  pish
   $@(? [i=dita t=pish])
 +$  rail
+  $+  rail
   $@(? [i=zeta t=rail])
 +$  conf  (map term pith)
 +$  crew  (map term pith)
@@ -2007,7 +2018,7 @@
       %x
     p.u.q.q
   --
-+$  fief  [required=? =quay]
++$  fief  [=deed =quay]
 ::
 ::  $port: Children API
 ::
@@ -2021,8 +2032,8 @@
 +$  deps  band
 ::  $band: Dependencies
 ::
-+$  band  (map term fief)
-+$  lads  (map pish lash)
++$  band  $+(band (map term fief))
++$  lads  $+(lads (map pish lash))
 +$  dare  ?(%y %z)
 +$  port  (pair dare lads)
 +$  kids  (unit port)
@@ -2125,6 +2136,7 @@
   $:  code=stud
       =dock
       =crew
+      live=?
   ==
 +$  tide  (axal wave)
 ::
@@ -2222,6 +2234,45 @@
       #/std
     [p/ship.disk term.disk ~]
   --
-
-
+++  lte-pith
+  |=  [a=pith b=pith]
+  ^-  ?
+  ?~  a  &
+  ?~  b  |
+  ?.  =(i.a i.b)
+    %+  lte-dime
+      ?^(i.a i.a [%tas i.a])
+    ?^(i.b i.b [%tas i.b])
+  $(a t.a, b t.b)
+::
+++  lte-dime
+  |=  [a=dime b=dime]
+  ^-  ?
+  ?.  =(p.a p.b)  
+    (aor -.a -.b)
+  ?+  p.a  (lte q.a q.b)
+    %rd             (lte:rd q.a q.b)
+    %rh             (lte:rh q.a q.b)
+    %rq             (lte:rq q.a q.b)
+    %rs             (lte:rs q.a q.b)
+    %s              !=(--1 (cmp:si q.a q.b))
+    ?(%t %ta %tas)  (aor q.a q.b)
+  ==
+::
+++  dprint  ^dprint
+++  easy-print  ^easy-print
+++  slow                                                ::  get arms in core
+  |=  typ=type
+  ^-  (list (list term))
+  ?+    typ  ~
+      [%hold *]  $(typ ~(repo ut typ))
+      [%hint *]  $(typ ~(repo ut typ))
+      [%core *]
+    %-  zing
+    %+  turn  ~(tap by q.r.q.typ)
+      |=  [a=term b=tome]
+    %+  turn  ~(tap by q.b)
+      |=  [c=term *]
+    ~[a c]
+  ==
 --

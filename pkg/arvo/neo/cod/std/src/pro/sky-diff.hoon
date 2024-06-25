@@ -1,7 +1,8 @@
 $%
   [%theme mode=?(%light %dark) palette=(map @t @t)]
   [%hawks hawks=(list pith) slots=@]
-  [%new-tab ~]
+  [%menu menu=?]
+  [%new-hawk now=@da]
   [%move-tab slot=@ud =pith]
   [%minimize slot=@ud]
   [%maximize slot=@ud]

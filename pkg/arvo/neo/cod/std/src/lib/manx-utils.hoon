@@ -1,7 +1,5 @@
 |_  a=manx
-:: named
-::
-::  first child with name=tape, or null
+::  +named: first child with name=tape, or null
 ::
 ++  named
   |=  name=tape
@@ -12,9 +10,7 @@
     =((~(gut by (malt a.g.manx)) %name "") name)
   ?:  =(0 (lent n))  ~
   `(snag 0 n)
-:: get
-::
-::   tape at attribute, or null
+::  +get: tape at attribute, or null
 ::
 ++  get
   |=  =mane

@@ -10,11 +10,21 @@
     ==
       :: strip first 2 segments (/neo/hawk)
   :-  (slag 2 -.parsed)
-  (malt +.parsed)
+  (~(uni by (malt +.parsed)) (malt header-list.request))
 ++  parse-body
   |=  =request:http
   ^-  manx
   %+  fall
     (de-xml:html q:(fall body.request [p=0 q='']))
   *manx
+++  parse-form-body
+  |=  =request:http
+  ^-  (map @t @t)
+  =/  body  q:(fall body.request [p=0 q=''])
+  =/  form  (cat 3 '?' body)
+  %-  malt
+  ^-  (list [@t @t])
+  %+  fall
+    (rush form yque:de-purl:html)
+  ~
 --
