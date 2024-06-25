@@ -6112,9 +6112,13 @@
       ?~  ducs  ``noun+!>(~)
       =/  ping-bone
         (~(got by by-duct.ossuary) -.ducs)
-      =/  ping-snd
+      =/  ping-snd=message-pump-state
         (~(got by snd) ping-bone)
-      ``noun+!>([~ who rift.ames-state life.ames-state ping-bone current.ping-snd])
+      :^  ~  ~  %noun
+      !>  :*  ~  who  rift.ames-state  life.ames-state
+              ping-bone  current.ping-snd
+              ~(wyt in live.packet-pump-state.ping-snd)
+          ==
     ::
     ==
   ::
