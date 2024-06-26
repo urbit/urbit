@@ -5600,14 +5600,13 @@
                   ==
                 ev-core
               =/  proof=(list @ux)  (rip 8 dat.data)
-              ?>  (ev-authenticate (recover-root:lss proof) aut.data name)
-              ?~  state=(init:verifier:lss tot.data proof)
-                ev-core
+              ?>  (ev-authenticate (recover-root:verifier:lss proof) aut.data name)
+              =/  state  (init:verifier:lss tot.data proof)
               =.  chums.ames-state
                 %+  ~(put by chums.ames-state)  her.name
                 =-  known/sat.per(pit -)
                 %+  ~(put by pit)  sealed-path
-                u.res(ps `[u.state ~])
+                u.res(ps `[state ~])
               ::
               ::  request next fragment
               ::
@@ -5663,35 +5662,33 @@
                   =>  aut.data
                   ?>  ?=([%0 *] .)
                   ?~(q ~ ?@(u.q [u.q ~] [p q ~]:u.q))
-                =.  proof  [(leaf-hash:lss fag dat.data) proof]
-                ?>  (ev-authenticate (recover-root:lss proof) aut.data name)
-                ?~  state=(init:verifier:lss tot.data proof)
-                  ev-core
-                ?~  state=(verify-msg:verifier:lss u.state dat.data ~)
-                  ev-core
+                =.  proof  (complete-inline-proof:verifier:lss proof 1.024^dat.data)
+                ?>  (ev-authenticate (recover-root:verifier:lss proof) aut.data name)
+                =/  state  (init:verifier:lss tot.data proof)
+                =.  state  (verify-msg:verifier:lss state 1.024^dat.data ~)
                 ::  initialize packet state and request next fragment
                 ::
                 =.  chums.ames-state
                   %+  ~(put by chums.ames-state)  her.name
                   =-  known/sat.per(pit -)
                   %+  ~(put by pit)  sealed-path  :: XX was outer-path?
-                  u.res(ps `[u.state ~[dat.data]])
-                (ev-push-pact %peek name(wan [%data leaf.u.state]))
+                  u.res(ps `[state ~[dat.data]])
+                (ev-push-pact %peek name(wan [%data counter.state]))
               ::  yes, we do have packet state already
               ::
               =*  ps  u.ps.u.res
-              ?.  =(leaf.los.ps fag)
+              ?.  =(counter.los.ps fag)
                 ev-core
               ::  extract the pair (if present) and verify
               ::
               =/  pair=(unit [l=@ux r=@ux])
                 ?~  aut.data  ~
                 `?>(?=([%1 *] .) p):aut.data
-              ?~  state=(verify-msg:verifier:lss los.ps dat.data pair)
-                ev-core
-              ::  update packet state
-              ::
-              =.  los.ps  u.state
+              =/  leaf=octs
+                ?.  =(+(fag) leaves.los.ps)
+                  1.024^dat.data
+                (met 3 dat.data)^dat.data
+              =.  los.ps  (verify-msg:verifier:lss los.ps [leaf pair])
               =.  fags.ps  [dat.data fags.ps]
               =.  chums.ames-state
                 %+  ~(put by chums.ames-state)  her.name
@@ -5703,7 +5700,7 @@
               ?.  =(+(fag) leaves.los.ps)
                 ::  request next fragment
                 ::
-                (ev-push-pact %peek name(wan [%data leaf.u.state]))
+                (ev-push-pact %peek name(wan [%data counter.los.ps]))
               ::  yield complete message
               ::
               =/  =spar  [her.name inner-path]
@@ -7687,8 +7684,9 @@
                     ::
                     :: full proof; provide a pair of sibling hashes
                     ::
-                    ?:  (gte fag (lent pairs.lss-proof))  ~
-                    [%1 (snag fag pairs.lss-proof)]
+                    ?~  p=(snag fag pairs.lss-proof)
+                      ~
+                    [%1 u.p]
                   ::
                   =/  dat  [wid aut (cut boq [fag 1] ser)]
                   [nam dat]
