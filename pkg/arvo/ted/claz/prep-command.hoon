@@ -1,7 +1,7 @@
 ::  claz/pre-command: sanity-check command and gather prerequisites
 ::
 /-  *claz
-/+  *claz, ethio, strandio
+/+  *claz, eth-provider, strandio
 =,  ethereum-types
 =,  jael
 ::
@@ -22,7 +22,7 @@
     ::
     ~&  [%gonna-get-nonce url as.command]
     ;<  nonce=@ud  bind:m
-      (get-next-nonce:ethio url as.command)
+      (get-next-nonce:eth-provider as.command)
     ~&  [%got-nonce nonce]
     (pure:m !>([%nonce nonce]))
 ::
@@ -44,7 +44,7 @@
   =/  m  (strand:strandio ,(unit tang))
   ^-  form:m
   ;<  responses=(list [@t @t])  bind:m
-    %+  batch-read-contract-strict:ethio  url
+    %-  batch-read-contract-strict:eth-provider  
     %+  turn  ships
     |=  =ship
     ^-  proto-read-request:rpc
@@ -82,7 +82,7 @@
   ;<  pool=@ud  bind:m
     =/  n  (strand:strandio ,@ud)
     ;<  res=@t  bind:n
-      %+  read-contract:ethio  url
+      %-  read-contract:eth-provider
       :+  `'pool'
         ::TODO pass in as argument
         delegated-sending:contracts:azimuth
@@ -90,7 +90,7 @@
     %-  pure:n
     (decode-results:rpc res [%uint]~)
   ;<  responses=(list [id=@t res=@t])  bind:m
-    %+  batch-read-contract-strict:ethio  url
+    %-  batch-read-contract-strict:eth-provider
     %+  turn  ~(tap by counts)
     |=  [=ship @ud]
     ^-  proto-read-request:rpc
