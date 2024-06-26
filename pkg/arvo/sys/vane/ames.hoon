@@ -5378,9 +5378,9 @@
                 %heer
               =/  =pact:pact  (parse-packet p.task)
               ?-  -.pact
-                %page  (ev-pact-page lane.task +.pact)  :: XX ignore hops
+                %page  (ev-pact-page lane.task +.pact)  :: XX ignore hops, uses ?=(~ next.pact) == %direct-lane instead
                 %peek  (ev-pact-peek +.pact)
-                %poke  (ev-pact-poke lane.task hops.task +.pact)
+                %poke  (ev-pact-poke lane.task hops=0 +.pact)  ::  XX hops.task vs direct.task
               ==
             ::  %message-response-entry-point
             ::
@@ -5454,6 +5454,9 @@
           +|  %packet-entry-points
           ::
           ++  ev-pact-poke
+            ::  XX  hops, maybe used to for trace logging?
+            ::      used `direct=?` instead?
+            ::
             |=  [=lane:pact hops=@ =ack=name:pact =poke=name:pact =data:pact]
             ^+  ev-core
             ::  XX dispatch/hairpin &c
@@ -5508,6 +5511,7 @@
             ::
             =.  per  her.poke-name^+.u.chum-state
             ::  evict old lanes; keep the last 5
+            ::  XX  =(0 hops) == %direct-lane
             ::
             =.  route.sat.per  [[=(0 hops) lane] (scag 5 route.sat.per)]
             ::  update and print connection status
@@ -7041,7 +7045,7 @@
                     ==
                 ::
                 =/  =public-key     pass:(~(got by keys.point) life.point)
-                :: =.  priv.ames-state    :: XX remove
+                :: =.  priv.ames-state    :: XX remove; needed when changing types in %lull after ++load is called
                 ::   ;;  @
                 ::   =<  q.q  %-  need  %-  need
                 ::   =-  ~&  priv/-  -
