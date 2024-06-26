@@ -99,7 +99,8 @@
     =head  "menu"
     =hx-target  "this"
     =hx-swap  "none"
-    ;div.fc.ac.jc.bold.s3.f3(style "height: 2rem;"): ~
+    =style  "height: 2rem;"
+    ; ~
   ==
 ++  menu-btn-style
   ;style
@@ -107,9 +108,7 @@
     '''
     .air-btn {
       position: relative;
-      padding: 4px;
       border-radius: 3px;
-      border: 2px solid var(--b2);
     }
     @media(max-width: 900px) {
       .air-btn {
