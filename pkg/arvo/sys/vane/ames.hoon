@@ -2981,8 +2981,6 @@
                   ==
                 =^  poke-moves  flows.fren  (make-flows fren)
                 =^  peek-moves  ames-state  (make-peeks fren)
-                =.  chums.ames-state
-                  (~(put by chums.ames-state) her known/fren)
                 ::  XX  needed?  peek/poke-moves will have %send moves already
                 ::  enqueue a %prod to start sending unsent messages, after
                 ::  all the %mokes (which trigger +peeks for %acks) have been
@@ -3221,22 +3219,31 @@
                 ++  make-peeks
                   |=  fren=fren-state
                   ^-  (quip move axle)
-                  =+  ev-core=%*(ev-core mesa sat.per fren)
+                  =/  ev-core
+                    =/  chums  (~(put by chums.ames-state) her known/fren)
+                    %*  ev-core  mesa
+                      sat.per           fren
+                      chums.ames-state  chums
+                    ==
                   =*  per  peer-state
-                  =;  core=_ev-core
-                    ev-abet:core
+                  =<  ev-abet
                   ^+  ev-core
                   %-  ~(rep by keens.per)
                   |=  [[=path keen=keen-state] core=_ev-core]
                   =|  req=request-state
                   =>  .(path `(pole knot)`path)
-                  ?>  ?=([van=%a car=%x cas=@ %$ pat=*] path)
-                  ?>  =('1' cas.path)
+                  ~|  make-peeks-crashed/path
+                  ?.  ?=([van=@ car=@ cas=@ desk=@ pat=*] path)
+                    :: XX validate van, car, cas, desk ?
+                    ::
+                    ~&  skip-weird-path/path  core
                   =;  [pax=^path =space]
                     =.  pax  (ev-make-path:core space pax)
                     %-  ~(rep in listeners.keen)
                     |=  [=^duct core=_core]
                     (ev-make-peek:core(hen duct) space her pax)
+                  ::  XX unitize this and no-op if failure to convert
+                  ::
                   ?+    pat.path  [pat.path [%publ life.per]]
                     ::
                       [%fine %shut idx=@ cyf=@]
@@ -3247,7 +3254,7 @@
                     [pax %shut idx key]
                     ::
                       [%chum her=@ lyf=@ cyf=@]
-                    =/  cyf=@  (slav %ud cyf.pat.path)
+                    =/  cyf=@      (slav %ud cyf.pat.path)
                     =*  key        symmetric-key.per
                     =/  pax=^path  (rash `@t`(dy:crub:crypto key cyf) stap)
                     [pax %chum life.ames-state her life.per key]
@@ -5684,11 +5691,13 @@
               =/  pair=(unit [l=@ux r=@ux])
                 ?~  aut.data  ~
                 `?>(?=([%1 *] .) p):aut.data
+              ::  update packet state
+              ::
               =/  leaf=octs
                 ?.  =(+(fag) leaves.los.ps)
                   1.024^dat.data
                 (met 3 dat.data)^dat.data
-              =.  los.ps  (verify-msg:verifier:lss los.ps [leaf pair])
+              =.  los.ps   (verify-msg:verifier:lss los.ps [leaf pair])
               =.  fags.ps  [dat.data fags.ps]
               =.  chums.ames-state
                 %+  ~(put by chums.ames-state)  her.name
