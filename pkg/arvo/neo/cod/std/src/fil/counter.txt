@@ -92,6 +92,9 @@ Here's the same thing in Shrubery.
 ++  poke
   ^-  (set stud:neo)
   (sy %counter-diff ~)
+++  kids
+  ^-  kids:neo
+  *kids:neo
 ++  deps
   ^-  deps:neo
   *deps:neo
@@ -101,11 +104,12 @@ Here's the same thing in Shrubery.
     +*  state  !<(number state-vase)
     ++  init
       |=  old=(unit pail:neo)
-      ^-  ((list card:neo) pail:neo)
+      ^-  (quip card:neo pail:neo)
       [~ (need old)]
     ++  poke
       |=  [=stud:neo vaz=vase]
-      ^-  ((list card:neo) pail:neo)
+      ^-  (quip card:neo pail:neo)
+      ?>  =(%counter-diff stud)
       =/  act
         !<(counter-diff vaz)
       ?>  =(-.act %inc)
@@ -170,13 +174,13 @@ The `form` is where the Gall agent-like application logic lives. We only need tw
 ::  unlike +on-init, potentially accept some injected initial state
 ++  init
   |=  old=(unit pail:neo)
-  ^-  ((list card:neo) pail:neo)
+  ^-  (quip card:neo pail:neo)
   !!
 ::
 ::  like +on-poke, run some logic when this shrub is poked
 ++  poke
   |=  [=stud:neo vaz=vase]
-  ^-  ((list card:neo) pail:neo)
+  ^-  (quip card:neo pail:neo)
   !!
 --
 ```
@@ -220,6 +224,12 @@ There are lots of new types here which are flagged with the `:neo` suffix in cod
   ^-  (set stud:neo)
   (sy %counter-diff ~)
 ::
+::  counter does not constrain the state/pokes of shrubs
+::  underneath it in the namespace
+++  kids
+  ^-  kids:neo
+  *kids:neo
+::
 ::  counter has no dependencies
 ++  deps
   ^-  deps:neo
@@ -229,8 +239,8 @@ There are lots of new types here which are flagged with the `:neo` suffix in cod
 ++  form
   ^-  form:neo
   ::
-  ::  the sample is populated with context like bowl, version number, and
-  ::  counter's current state
+  ::  the sample is populated with context like bowl,
+  ::  version number, and counter's current state
   |_  [=bowl:neo =aeon:neo =stud:neo state-vase=vase]
     ::
     ::  de-vase counter's state
@@ -243,13 +253,16 @@ There are lots of new types here which are flagged with the `:neo` suffix in cod
       ::  pail:neo is a (pair stud:neo vase),
       ::  like a cell of a mark and data
       |=  old=(unit pail:neo)
-      ^-  ((list card:neo) pail:neo)
+      ^-  (quip card:neo pail:neo)
       [~ (need old)]
     ::
     ::  +poke, like +on-poke
     ++  poke
       |=  [=stud:neo vaz=vase]
-      ^-  ((list card:neo) pail:neo)
+      ^-  (quip card:neo pail:neo)
+      ::
+      ::  assert that the poke's stud is %counter-diff
+      ?>  =(%counter-diff stud)
       ::
       ::  de-vase the poke
       =/  act
@@ -269,16 +282,17 @@ Once you've saved `/imp/counter.hoon` and the `/pro` files, run `|commit %base` 
 
 ## Poking the shrub
 
-A `card:neo` is a `(pair pith note)`.
+A `card:neo` is a `(pair pith note:neo)`. Data in Shrubbery is stored at its `pith`.
 
-A `pith` is a `(list iota)`, and an `iota` is either a `term` or a head-tagged noun. For instance:
-* `/examples/counter/one` would be represented as `~[%examples %counter %one]`.
-* `/~sampel/examples/counter/one` would be represented as `~[[%p ~sampel] %examples %counter %one]`.
-* `/~sampel/examples/counter/1` would be represented as `~[[%p ~sampel] %examples %counter [%ud 1]]`.
+A `pith` is a `(list iota)`, and an `iota` is either a `term` or a head-tagged noun.
 
-(You might also see a `pith` written in this irregular form `#/[p/our.bowl]/examples/counter/one`.)
+For instance:
 
-Data in Shrubbery is stored by `pith`.
+- `/path/to/counter/one` would be represented as `~[%path %to %counter %one]`.
+- `/~sampel/path/to/counter/one` would be represented as `~[[%p ~sampel] %path %to %counter %one]`.
+- `/~sampel/path/to/counter/1` would be represented as `~[[%p ~sampel] %path %to %counter [%ud 1]]`.
+
+(You might also see a `pith` written in this irregular form `#/[p/our.bowl]/path/to/counter/one`.)
 
 A `note` is one of the four types of command any shrub will accept.
 
@@ -291,19 +305,21 @@ A `note` is one of the four types of command any shrub will accept.
   ==
 ```
 
-Let’s `%make` a shrub at path `/foo/bar` from the Dojo, giving it an initial state of `0`. We’ll explain the structure of the `%make` note in more detail in the Diary tutorial.
+Let’s `%make` a shrub at an arbitrary path `/path/to/counter` from the Dojo, giving it an initial state of `0`. We’ll explain the structure of the `%make` note in more detail in the Diary tutorial.
 
 ```
-:neo &neo-card [~[[%p our] %foo %bar] [%make %counter `[%number !>(0)] ~]]
+:neo &neo-card [~[[%p our] %path %to %counter] [%make %counter `[%number !>(0)] ~]]
 ```
 
-You should see `>> %make /foo/bar` in the Dojo if successful.
+You should see `>>  /~zod/~/sys -> /~zod/path/to/counter: make` in the Dojo if successful.
 
 Now we can now send a `%poke` to the counter shrub at this path.
 
 ```
-:neo &neo-card [~[[%p our] %foo %bar] [%poke [%counter-diff !>([%inc ~])]]]
+:neo &neo-card [~[[%p our] %path %to %counter] [%poke [%counter-diff !>([%inc ~])]]]
 ```
+
+You'll know the poke worked if you see `>>  /~zod/~/sys -> /~zod/counter: %poke %counter-diff` in the Dojo. In the next section, we'll build a simple frontend that will enable us to view and modify the state of the shrub.
 
 ## Counter frontend in Sky
 
