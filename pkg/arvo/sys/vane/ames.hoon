@@ -5520,7 +5520,12 @@
             ::  evict old lanes; keep the last 5
             ::  XX  =(0 hops) == %direct-lane
             ::
-            =.  route.sat.per  [[=(0 hops) lane] (scag 5 route.sat.per)]
+            =.  route.sat.per
+              ?:  ?&  ?=(^ route.sat.per)
+                      =([=(0 hops) lane] i.route.sat.per)
+                  ==
+                route.sat.per
+              [[=(0 hops) lane] (scag 5 route.sat.per)]
             ::  update and print connection status
             ::
             =.  ev-core  (ev-update-qos %live last-contact=now)
@@ -5572,6 +5577,10 @@
             ::
             =.  route.sat.per
               %+  weld
+                ?:  ?&  ?=(^ route.sat.per)
+                        =([direct=?=(~ next) lane] i.route.sat.per)
+                    ==
+                  ~
                 ?~  next
                   ::  if the lane is direct use that as the next candidate
                   ::
@@ -6443,7 +6452,7 @@
                 ?:  (gth (sub last-acked.state seq) 10)
                   ~&  %drop-old-seq  ::  XX  use verbosity logs
                   fo-core
-                ~&  %already-acked  ::  XX  use verbosity logs
+                ::  XX  use verbosity logs
                 (fo-send-ack seq)
               ?.  ok
                 %.  `*error
@@ -7228,7 +7237,12 @@
               =?  chums.ames-state  ?=(%chum -.peer)
                 ::  evict old lanes; keep the last 5
                 ::
-                =.  route.+.u.peer  [[direct=%.y lane] (scag 5 route.+.u.peer)]
+                =.  route.+.u.peer
+                  ?:  ?&  ?=(^ route.+.u.peer)
+                          =([direct=%.y lane] i.route.+.u.peer)
+                      ==
+                    route.+.u.peer
+                  [[direct=%.y lane] (scag 5 route.+.u.peer)]
                 (~(put by chums.ames-state) ship u.peer)
               =?  peers.ames-state  ?=(%ship -.peer)
                 =/  =^lane
