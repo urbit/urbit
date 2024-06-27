@@ -1102,7 +1102,7 @@
     ?>  ?=(%known -.ship-state)
     ?~  bone
       %^  return-static-data-on-duct  200  'text/plain'
-      (as-octs:mimes:html (scot %u (jam [(galaxy-for u.ship) rift.-.+.ship-state life.-.+.ship-state])))
+      (as-octs:mimes:html (scot %uw (jam [(galaxy-for u.ship) rift.-.+.ship-state life.-.+.ship-state])))
     =/  rcv=(map bone:ames message-sink-state:ames)  rcv.+.ship-state
     =/  mss=(unit message-sink-state:ames)  (~(get by rcv) u.bone)
     ?~  mss
