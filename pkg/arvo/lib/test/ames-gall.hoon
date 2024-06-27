@@ -86,7 +86,7 @@
           public-key=zod-pub
           sponsor=~zod
       ==
-    =.  route.fren-state  `[direct=%.y *lane:ames]
+    =.  route.fren-state  [direct=%.y *lane:pact:ames]~
     [%known fren-state]
   ::  tell ~nec about ~bud
   ::
@@ -100,7 +100,7 @@
           public-key=bud-pub
           sponsor=~bud
       ==
-    =.  route.fren-state  `[direct=%.y *lane:ames]
+    =.  route.fren-state  [direct=%.y *lane:pact:ames]~
     [%known fren-state]
   ::  tell ~zod about ~nec
   ::
@@ -114,7 +114,7 @@
           public-key=nec-pub
           sponsor=~nec
       ==
-    =.  route.fren-state  `[direct=%.y *lane:ames]
+    =.  route.fren-state  [direct=%.y *lane:pact:ames]~
     [%known fren-state]
   ::  tell ~bud about ~nec
   ::
@@ -128,7 +128,7 @@
           public-key=nec-pub
           sponsor=~nec
       ==
-    =.  route.fren-state  `[direct=%.y *lane:ames]
+    =.  route.fren-state  [direct=%.y *lane:pact:ames]~
     [%known fren-state]
   ::  metamorphose
   ::
@@ -225,7 +225,7 @@
   ^-  @
   =/  ames-core  (ames-gate now=~1111.1.1 eny=`@`0xdead.beef *roof)
   =/  mesa-core
-    (ev-abed:ev-core:mesa:ames-core [now=~1111.1.1 eny=`@`0xdead.beef *roof] [//test]~)
+    (ev-abed:ev-core:mesa:ames-core [//test]~)
   =/  =pact:pact:ames-bunt  (ev-make-pact:mesa-core spar `path per-rift `space)
   p:(fax:plot:ames-bunt (en:pact:ames-bunt pact))
 ::
