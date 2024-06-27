@@ -39,13 +39,13 @@ Diary is an app that lets you write timestamped diary entries that the frontend 
       ~[[(welp here.bowl ~[da/id.act]) [%make %txt `txt/!>(txt.act) ~]]]
         %del-entry
       :_  diary/!>(state)
-      ~[[(welp here.bowl ~[da/id.act]) [%tomb ~]]]
+      ~[[(welp here.bowl ~[da/id.act]) [%cull ~]]]
     ==
   --
 --
 ```
 
-Most of this should be legible after the first tutorial. The only new ideas are the `+kids` arm, the use of `bowl`, and `%tomb`.
+Most of this should be legible after the first tutorial. The only new ideas are the `+kids` arm, the use of `bowl`, and `%cull`.
 
 ## +kids
 
@@ -115,9 +115,9 @@ Notice that the `src` in `bowl:neo` differs from `bowl:gall`. Here’s the new t
   ==
 ```
 
-## Generating cards, tombstoning shrubs
+## Generating cards, culling shrubs
 
-We covered `card:neo` in the Counter tutorial, but this is the first time we’re seeing one generated within a shrub. Diary takes two pokes: `%put-entry`, to create a new diary entry, and `%del-entry` to tombstone one.
+We covered `card:neo` in the Counter tutorial, but this is the first time we’re seeing one generated within a shrub. Diary takes two pokes: `%put-entry`, to create a new diary entry, and `%del-entry` to cull one.
 
 Here’s the `+poke` arm of the Diary shrub, expanded with comments.
 
@@ -177,14 +177,14 @@ Here’s the `+poke` arm of the Diary shrub, expanded with comments.
     ::  return unchanged state
     :_  [%diary !>(state)]
     ::
-    ::  send a %tomb note to /path/to/diary/<id>
-    ::  this will tombstone the diary entry,
+    ::  send a %cull note to /path/to/diary/<id>
+    ::  this will cull the diary entry,
     ::  effectively deleting it from the namespace
     :~  :-  %+  welp
               here.bowl
             ~[[%da id.act]]
         ^-  note:neo
-        [%tomb ~]
+        [%cull ~]
     ==
   ==
 ```
@@ -264,7 +264,7 @@ Like Counter, the Diary shrub just has two `/con` files to convert to and from a
       ==
     ==
     ;button.p2.br1.fr.g2.b1.hover.fc.ac.jc.loader
-      =onclick  "alert('not yet implemented. no tombstoning?')"
+      =onclick  "alert('not yet implemented. no culling?')"
       ;span.loaded
         ;+  close.feather-icons
       ==
