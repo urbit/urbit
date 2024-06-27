@@ -6116,8 +6116,7 @@
         (~(got by snd) ping-bone)
       :^  ~  ~  %noun
       !>  :*  ~  who  rift.ames-state  life.ames-state
-              ping-bone  current.ping-snd
-              ~(wyt in live.packet-pump-state.ping-snd)
+              ping-bone  current.ping-snd  next.ping-snd
           ==
     ::
     ==
