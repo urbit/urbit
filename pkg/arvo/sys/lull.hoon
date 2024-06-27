@@ -2725,6 +2725,17 @@
   ::
   +$  rout  [p=(list host) q=path r=oryx s=path]        ::  http route (new)
   +$  user  knot                                        ::  username
+  ::
+  ::  Boot response
+  ::
+  +$  boot
+    $:  %1
+        sponsor=ship
+        =rift
+        =life
+        bone=(unit @udbone)
+        last-acked=(unit @udmessagenum)
+    ==
   --  ::eyre
 ::                                                      ::::
 ::::                    ++gall                            ::  (1g) extensions

@@ -1044,15 +1044,17 @@
       ==
     %^  return-static-data-on-duct  200  'text/plain'
     (as-octs:mimes:html (scot %p (galaxy-for u.ship)))
+  ::  Returns peer-state data for verifying sync status between ship and network.
   ::  Takes two path parameters - ship=@p and optional bone=@u.
   ::
-  ::  If only ship is provided, responds with the @p of the current sponsor,
-  ::  rift, and life of that ship, or errors with 404 status code when the
-  ::  provided ship is not a known peer.
+  ::  Responds with a @uw jam of a noun containing:
+  ::  version, sponsor, rift, life, bone as a unit (null if not provided), and
+  ::  the last-acked message-num of the provided ship and bone as a unit (null if
+  ::  bone is not provided).
   ::
-  ::  If both ship and bone are provided, responds with the last acked msg
-  ::  sequence number of the provided ship and bone, or errors with 404 if either
-  ::  peer or bone is not found
+  ::  Responds with a 404 error-page if either:
+  ::  - Peer is not %known
+  ::  - Bone was not found under peer (assuming bone was provided)
   ::
   ++  handle-boot
     |=  [=identity =request:http]
@@ -1102,7 +1104,12 @@
     ?>  ?=(%known -.ship-state)
     ?~  bone
       %^  return-static-data-on-duct  200  'text/plain'
-      (as-octs:mimes:html (scot %uw (jam [(galaxy-for u.ship) rift.-.+.ship-state life.-.+.ship-state])))
+      %-  as-octs:mimes:html
+      %+  scot
+        %uw
+      %-  jam
+      ^-  boot
+      [%1 (galaxy-for u.ship) rift.-.+.ship-state life.-.+.ship-state ~ ~]
     =/  rcv=(map bone:ames message-sink-state:ames)  rcv.+.ship-state
     =/  mss=(unit message-sink-state:ames)  (~(get by rcv) u.bone)
     ?~  mss
@@ -1114,7 +1121,18 @@
         "Bone {(scow %u u.bone)} of peer {(scow %p u.ship)} not found."
       ==
     %^  return-static-data-on-duct  200  'text/plain'
-    (as-octs:mimes:html (scot %u last-acked.u.mss))
+    %-  as-octs:mimes:html
+    %+  scot
+      %uw
+    %-  jam
+    ^-  boot
+    :*  %1
+        (galaxy-for u.ship)
+        rift.-.+.ship-state
+        life.-.+.ship-state
+        bone
+        [~ last-acked.u.mss]
+    ==
   ::  +handle-name: respond with the requester's @p
   ::
   ++  handle-name
