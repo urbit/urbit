@@ -6328,7 +6328,7 @@
         |-
         ?~  proof
           (output-cv:blake3 (set-flag:blake3 f-root:blake3 output))
-        =/  [l=@ux r=@ux]  [i.proof (output-cv:blake3 output)]
+        =/  [l=@ux r=@ux]  [(output-cv:blake3 output) i.proof]
         $(output (parent-output:blake3 l r), proof t.proof)
       ::
       ++  init
