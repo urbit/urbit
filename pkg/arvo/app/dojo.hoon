@@ -66,7 +66,7 @@
       $~  [%ex *hoon]
       $%  [%ur p=@t]                                    ::  http GET request
           [%ge p=dojo-model]                            ::  generator
-          [%te p=[=desk term=$?(=term =path)] q=(list dojo-source)]    ::  thread
+          [%te p=[=desk =term] q=(list dojo-source)]    ::  thread
           [%dv p=beak q=path]                           ::  core from source
           [%ex p=hoon]                                  ::  hoon expression
           [%sa p=mark]                                  ::  example mark value
@@ -299,6 +299,14 @@
     ==
   ::
   ++  parse-thread
+    %+  cook
+      |^
+      |=(a=(list @tas) ?~(a a [i.a (join-hep t.a)]))
+      ++  join-hep
+        |=  a=(list @tas)
+        ^-  term
+        (zing (join "-" (turn a |=(b=@tas (trip b)))))
+      --
     ;~  plug
       ;~(pose ;~(sfix sym zap) (easy q.dir))
       (most fas sym)
