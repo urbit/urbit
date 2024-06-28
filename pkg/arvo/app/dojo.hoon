@@ -974,7 +974,7 @@
       (dy-hand %noun q.cag)
     ::
     ++  dy-wool-poke
-      |=  [[=desk ?(=term =path)] src=(list dojo-source)]
+      |=  [[=desk =term] src=(list dojo-source)]
       ^+  +>+>
       ?>  ?=(~ pux)
       =/  tid  (scot %ta (cat 3 'dojo_' (scot %uv (sham eny.hid))))
