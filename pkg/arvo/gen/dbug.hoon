@@ -1,4 +1,4 @@
-::  +dbug: tell /lib/dbug app to print some generic state
+::  Print generic agent state using /lib/dbug
 ::
 ::    :app +dbug
 ::      the entire state

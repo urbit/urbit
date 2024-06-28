@@ -299,10 +299,18 @@
     ==
   ::
   ++  parse-thread
+    |^
+    %+  cook
+      |=([d=@tas a=(list @tas)] ?~(a [desk=d term=%$] [desk=d term=`@tas`(join-hep a)]))
     ;~  plug
       ;~(pose ;~(sfix sym zap) (easy q.dir))
-      sym
+      (most fas sym)
     ==
+    ++  join-hep
+      |=  a=(list @tas)
+      ^-  @tas
+      (crip (zing (join "-" (turn a |=(b=@tas (trip b))))))
+    --
   ::
   ++  parse-hoon    tall:hoon-parser
   ::
