@@ -375,7 +375,7 @@
 ++  decompress-block-type-2
   |=  [=input =blocks-output i=@ud]
   ^-  [=output i=@ud]
-  ::  HEADERS
+  ::  HEADER
   =/  hlit  (cut 0 [i 5] bitstream.input)
   =.  i  (add i 5)
   =/  hdist  (add 1 (cut 0 [i 5] bitstream.input))
