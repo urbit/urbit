@@ -7643,8 +7643,8 @@
                 ::  packets
                 ::
                 =*  boq  boq.pac.nex
-                ?.  ?=(%13 boq)
-                  ~ :: non-standard fragments for later
+                :: ?.  ?=(%13 boq)
+                ::   ~ :: non-standard fragments for later
                 =/  msg  ;;([typ=?(%sign %hmac) aut=@ ser=@] q.q.u.u.res)  :: XX types
                 =/  mes=auth:mess  ?:(?=(%sign typ.msg) &+aut.msg |+aut.msg)
                 =*  ser  ser.msg
