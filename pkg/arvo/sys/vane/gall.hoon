@@ -2343,7 +2343,7 @@
       ?.(=(p.p.task our) *path r.p.task)
     ?.  ?&  ?=([^ *] duct)
             ?=  $?  %ames  %behn  %clay
-                    %dill  %eyre  %gall
+                    %dill  %eyre  %faye  %gall
                     %iris  %jael  %khan
                 ==
             i.i.duct
