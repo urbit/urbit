@@ -37,14 +37,14 @@
 ?:  =(%thread-fail p.cage)
   (strand-fail:strandio !<([term tang] q.cage))
 ?>  ?=(%thread-done p.cage)
-~&  >  "Successfully retrieved."
-~&  >>  (met 3 (jam q.q.cage))
-:: ~&  >>>  q.q.cage
-:: =/  sob  !<(soba:clay [%noun q.q.cage])
-=/  sob  ;;(soba:clay q.q.cage)
-~&  >  "Merging files into new desk {<desk>}."
+~&  >  "Successfully retrieved files."
+=/  sob  ;;((list [path miso:clay]) q.q.cage)
+~&  >  "Merging {<(lent sob)>} files into new desk {<desk>}."
 ::  Does the desk exist?
-?.  (~(has in .^((set ^desk) %cd /=//=)) desk)
+=/  desks  .^((set ^desk) %cd /=//=)
+~&  >>  desks
+?.  (~(has in desks) desk)
+  ~&  >  "Desk {<desk>} does not exist yet; creating."
   ;<  ~  bind:m  (send-raw-card:strandio [%pass /deployer-commit %arvo %c %merg desk our.bowl desk da+now.bowl %init])
   ;<  ~  bind:m  (send-raw-card:strandio [%pass /deployer-commit %arvo %c %info desk %& sob])
   ;<  ~  bind:m  (sleep:strandio ~s0)  ::  wait for merge to complete
