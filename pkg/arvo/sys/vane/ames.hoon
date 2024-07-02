@@ -6097,7 +6097,7 @@
         =/  ship  our
         |-
         ^-  @p
-        =/  next  (^^sein:title rof /eyre our now ship)
+        =/  next  (^^sein:title rof /ames our now ship)
         ?:  ?=(%czar (clan:title next))
           next
         $(ship next)
