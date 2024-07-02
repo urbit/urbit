@@ -45,8 +45,8 @@
 =/  m  (strand ,vase)
 ^-  form:m
 ;<  =bowl:spider  bind:m  get-bowl:strandio
-=/  repo=path    ;;(path +.q.arg)
-=/  branch=cord  'master'
+=/  repo=path    ;;(path +<.q.arg)
+=/  branch=cord  ;;(cord +>.q.arg)
 ~&  >  "Retrieving latest commit from https://github.com{<repo>}."
 =/  tid  `cord`(cat 3 'strand_' (scot %uv (sham %retrieve-latest-commit eny.bowl)))
 ;<  ~       bind:m  %-  watch-our:strandio

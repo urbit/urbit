@@ -5,25 +5,24 @@
 :-  %ask
 |=  $:  [now=@da eny=@uvJ bek=beak]
         [=desk ~]
-        [from=$~(%base desk) hard=_| gall=_|]
+        [from=$~(/sigilante/sunrise path)]
     ==
 ::
-=;  make-new-desk
-  ?.  ?&  !hard
-          (~(has in .^((set ^desk) %cd (en-beam bek(q %$) /))) desk)
-      ==
-    (make-new-desk)
+=;  make-new-app
   %+  print    (rap 3 'the desk %' desk ' already exists. overwrite it?' ~)
   %+  prompt   [%& %prompt "overwrite? (y/N) "]
   |=  in=tape
   ?.  |(=("y" in) =("Y" in) =("yes" in))
     no-product
-  (make-new-desk)
+  (make-new-app)
 ::
 |.  %-  produce
 :-  %helm-pass
 %^  new-desk:cloy  desk
   ~
+::  Retrieve file data from GitHub.
+=/  
+
 %-  ~(gas by *(map path page:clay))
 |^  =-  (turn - mage)
     ^-  (list path)
