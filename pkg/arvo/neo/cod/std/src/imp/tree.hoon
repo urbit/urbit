@@ -16,6 +16,7 @@
   ++  poke
   |=  [=stud:neo =vase]
   ^-  (quip card:neo pail:neo)
+  ~&  >  stud/stud
   =/  this  !<(=tree q.pail)
   ?+  stud  !!
   %tree  [~ tree/vase]

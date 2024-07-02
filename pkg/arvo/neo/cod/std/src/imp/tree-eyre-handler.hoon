@@ -1,5 +1,4 @@
 /@  htmx-type=htmx
-/-  serv=sky-server
 /*  jquery
 /*  htmx-js
 /*  htmx-response-targets
@@ -52,6 +51,7 @@
         ['content-type' 'text/html']~
         stub
       ==
+    ~&  >  src/p.u.src
     =/  here  p.u.src
     ^-  (list card:neo)
     ?+    method.request.req  ~|(%unsupported-http-method !!)
@@ -115,7 +115,7 @@
   ;html
     ;head
       ;meta(charset "UTF-8");
-      ;title: s k y
+      ;title: tree
       ;script: {(trip jquery)}
       ;script: {(trip htmx-js)}
       ;script: {(trip htmx-response-targets)}
@@ -193,8 +193,7 @@
           ;input 
           =type     "text"
           =name     "diff-type"
-          =value    "this.setAttribute('value', this.value);"
-          =oninput  "this.parentNode.setAttribute('head', this.value);"
+          =oninput  "this.setAttribute('value', this.value); this.parentNode.setAttribute('head', this.value);"
           =autocomplete  "off"
           =placeholder   "diff-type"
           =required      ""
@@ -209,13 +208,13 @@
           ;input 
           =type   "text"
           =name   "value1"
-          =value  "this.setAttribute('value', this.value);"
+          =oninput  "this.setAttribute('value', this.value);"
           =autocomplete  "off"
           =placeholder   "value"
           =required      ""
           ;
           ==
-          ;button
+          ;button.loader
             ;span.loaded:  create
             ;span.loading:  loading
           ==
