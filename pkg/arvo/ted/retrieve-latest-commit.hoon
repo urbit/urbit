@@ -23,7 +23,6 @@
 ^-  form:m
 =/  repo  ;;(path +<.q.arg)
 =/  branch  ;;(cord +>.q.arg)
-~&  >  "Loading latest commit from https://github.com{<repo>}, branch {(trip branch)}."
 ;<  ~  bind:m  (send-raw-card:strandio (build-commit-request repo branch))
 ;<  res=(pair wire sign-arvo)  bind:m  take-sign-arvo:strandio
 ?.  ?=([%iris %http-response %finished *] q.res)
@@ -33,4 +32,5 @@
 =/  res  (need (de:json:html q.data.u.full-file.client-response.q.res))
 ?>  ?=(%o -.res)
 =/  commit  (from-json (~(got by ;;((map cord json) p.+.res)) 'sha'))
+~&  >>  "Latest commit on branch {(trip branch)} is {(trip commit)}."
 (pure:m !>(commit))
