@@ -1103,10 +1103,8 @@
       !<  ship-state:ames  q.u.u.des
     ?>  ?=(%known -.ship-state)
     ?~  bone
-      %^  return-static-data-on-duct  200  'text/plain'
+      %^  return-static-data-on-duct  200  'application/octet-stream'
       %-  as-octs:mimes:html
-      %+  scot
-        %uw
       %-  jam
       ^-  boot
       [%1 (galaxy-for u.ship) rift.-.+.ship-state life.-.+.ship-state ~ ~]
@@ -1120,10 +1118,8 @@
         url.request
         "Bone {(scow %u u.bone)} of peer {(scow %p u.ship)} not found."
       ==
-    %^  return-static-data-on-duct  200  'text/plain'
+    %^  return-static-data-on-duct  200  'application/octet-stream'
     %-  as-octs:mimes:html
-    %+  scot
-      %uw
     %-  jam
     ^-  boot
     :*  %1
