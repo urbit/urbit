@@ -31,15 +31,21 @@
   ?.  =(*^life life)
     life
   +(.^(^life j+/(scot %p our)/life/(scot %da now)/(scot %p mon)))
+=/  ryf=(unit rift)
+  .^((unit rift) %j /(scot %p p.bec)/ryft/(scot %da now)/(scot %p mon))
+?~  ryf
+  %.  ~
+  %-  slog
+  [leaf+"can't cycle keys for {(scow %p mon)}, it doesn't exists."]~
 =/  =pass
   ?.  =(*pass public-key)
     public-key
   =/  cub  (pit:nu:crub:crypto 512 (shaz (jam mon life eny)))
-  =/  =seed:jael
-    [mon life sec:ex:cub ~]
+  =/  =feed:jael
+    [[%2 ~] mon u.ryf [life sec:ex:cub]~]
   %-  %-  slog
       :~  leaf+"moon: {(scow %p mon)}"
-          leaf+(scow %uw (jam seed))
+          leaf+(scow %uw (jam feed))
       ==
   pub:ex:cub
 `[mon *id:block:jael %keys [life 1 pass] %.n]

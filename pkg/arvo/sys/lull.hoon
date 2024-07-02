@@ -2479,6 +2479,13 @@
         ::  respond with the @p of the ship serving the response
         ::
         [%host ~]
+        ::  returns data used to verify sync status between ship and network
+        ::  in double boot protection
+        ::
+        [%boot ~]
+        :: responds with the @p of the galaxy of the provided ship
+        ::
+        [%sponsor ~]
         ::  respond with the default file not found page
         ::
         [%four-oh-four ~]
@@ -2718,6 +2725,17 @@
   ::
   +$  rout  [p=(list host) q=path r=oryx s=path]        ::  http route (new)
   +$  user  knot                                        ::  username
+  ::
+  ::  Boot response
+  ::
+  +$  boot
+    $:  %1
+        sponsor=ship
+        =rift
+        =life
+        bone=(unit @udbone)
+        last-acked=(unit @udmessagenum)
+    ==
   --  ::eyre
 ::                                                      ::::
 ::::                    ++gall                            ::  (1g) extensions
@@ -3064,11 +3082,10 @@
   ::  +feed: potential boot parameters
   ::
   +$  feed
-    $^  [[%1 ~] who=ship kyz=(list [lyf=life key=ring])]
-    seed
-  ::  +seed: individual boot parameters
-  ::
-  +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
+    $^  $%  [[%1 ~] who=ship kyz=(list [lyf=life key=ring])]
+            [[%2 ~] who=ship ryf=rift kyz=(list [lyf=life key=ring])]
+        ==
+    [who=ship lyf=life key=ring sig=(unit oath:pki)]
   ::
   +$  task                                            ::  in request ->$
     $~  [%vega ~]                                     ::
@@ -3092,7 +3109,7 @@
     ==                                                ::
   ::
   +$  dawn-event
-    $:  =seed
+    $:  =feed
         spon=(list [=ship point:azimuth-types])
         czar=(map ship [=rift =life =pass])
         turf=(list turf)
