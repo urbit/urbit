@@ -19,12 +19,12 @@
       ^-  fief:neo
       :-  req=|
       ^-  quay:neo
-      :-  [[%or pro/%htmx any/~ ~] ~]
+      :-  [pro/%htmx ~]
       ^-  (unit port:neo)
       :+  ~  %z
       %-  ~(gas by *lads:neo)
       :~  :-  &
-          `lash:neo`[[%or pro/%htmx any/~ ~] ~]
+          `lash:neo`[any/~ ~]
       ==
   ==
 ++  form 
@@ -110,16 +110,6 @@
       [here.bowl %tomb ~]
   ==
 ::
-++  state-print
-  |=  =pail:neo
-  ^-  manx
-  ;div.pre.mono.scroll-x.p2
-    ;+  ;/
-    =/  size  (met 3 (jam q.q.pail))
-    ?:  (gth size 750)  "vase too large to print: {<size>}"
-    (of-wall:format (~(win re (sell q.pail)) 0 80))
-  ==
-::
 ++  view 
   |=  =bowl:neo
   ;html
@@ -149,19 +139,7 @@
 ++  body-view
   |=  =bowl:neo
   ;div
-    ;p:  state
-    ;+
-    ?~  node=(~(get of:neo kids.bowl) /)
-        ;div.p2: none
-    =/  =pail:neo  q.saga.u.node
-    ;div.fc.g2.as.p2
-      ;span: {<p.pail>}
-      ;div
-        ;span: {<p.pail>}
-        ;+  (state-print pail)
-        ;+  (kids-view bowl)
-      ==
-    ==
+    ;+  (kids-view bowl)
   ==
 ::
 ++  kids-view
@@ -175,10 +153,20 @@
       %+  skim  ~(tap of:neo kids.bowl) 
       |=([=pith:neo *] =(1 (lent pith)))
     aor
-  |=([=pith:neo *] (crip "[{(en-tape:pith:neo pith)}]"))
-  =/  row-template=tape  (join ' 1fr ' `tape`first-kids)
+    |=  [=pith:neo *] 
+    %-  crip  "[{(en-tape:pith:neo pith)}]"
+  =/  row-template=tape  (join ' 1fr ' (weld "[first-row]" `tape`first-kids))
   ;div
   =style  "display: grid; grid-template-rows: {row-template}; grid-template-columns: auto; padding: 12px;"
+    ;+
+      ?~  node=(~(get of:neo kids.bowl) /)
+        ;div.p2: none
+      =/  =pail:neo  q.saga.u.node
+    ;div 
+    =style  "grid-column-start: 1; grid-column-end: 2; grid-row-start: first-row; grid-row-end: first-row; padding: 8px; border: 2px solid black;border-radius: 6px; margin-top: 1rem;"
+      ;p: {<p.pail>}
+      ;+  (state-print pail)
+    ==
     ;*
     %+  turn  
         %+  sort  ~(tap of:neo kids.bowl) 
@@ -190,15 +178,60 @@
       =style  "visibility: hidden"
         nothing
       ==
+    ~&  >  pith/pith
     ;div
-    =style  "grid-column-start: {(scow %ud (lent pith))}; grid-column-end: {(scow %ud +((lent pith)))}; grid-row-start: {(en-tape:pith:neo [-.pith ~])};grid-row-end: {(en-tape:pith:neo [-.pith ~])};padding: 8px; border: 2px solid black;border-radius: 6px;margin-top: 1rem;"
+    =style  "grid-column-start: {(scow %ud +((lent pith)))}; grid-column-end: {(scow %ud (add 2 (lent pith)))}; grid-row-start: {(en-tape:pith:neo [-.pith ~])};grid-row-end: {(en-tape:pith:neo [-.pith ~])}; padding: 8px; border: 2px solid black;border-radius: 6px;margin-top: 1rem;"
       ;h3:  {(en-tape:pith:neo pith)}
       ;+
       =/  pal=pail:neo  q.saga.idea
       ;div
         ;h3:  state
         ;+  (state-print pal)
+        ;form
+        =hx-post    "/neo/tree{(en-tape:pith:neo pith)}?stud=type-diff"
+        =hx-target  "find .loading"
+          ;input 
+          =type     "text"
+          =name     "diff-type"
+          =value    "this.setAttribute('value', this.value);"
+          =oninput  "this.parentNode.setAttribute('head', this.value);"
+          =autocomplete  "off"
+          =placeholder   "diff-type"
+          =required      ""
+          ;
+          ==
+          ;input 
+          =type   "text"
+          =name   "pith"
+          =value  "{(en-tape:pith:neo pith)}"
+          ;
+          ==
+          ;input 
+          =type   "text"
+          =name   "value1"
+          =value  "this.setAttribute('value', this.value);"
+          =autocomplete  "off"
+          =placeholder   "value"
+          =required      ""
+          ;
+          ==
+          ;button
+            ;span.loaded:  create
+            ;span.loading:  loading
+          ==
+        ==
       ==
     ==
   ==
+::
+++  state-print
+  |=  =pail:neo
+  ^-  manx
+  ;div.pre.mono.scroll-x.p2
+    ;+  ;/
+    =/  size  (met 3 (jam q.q.pail))
+    ?:  (gth size 750)  "vase too large to print: {<size>}"
+    (of-wall:format (~(win re (sell q.pail)) 0 80))
+  ==
+::
 --
