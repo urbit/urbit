@@ -126,6 +126,9 @@
 ::  session-timeout: the delay before an idle session expires
 ::
 ++  session-timeout  ~d7
+::  eauth-timeout: max time we wait for remote scry response before serving 504
+::
+++  eauth-timeout         ~s50
 --
 ::  utilities
 ::
@@ -2077,7 +2080,7 @@
       ++  start-timeout
         |=  =path
         ^-  move
-        [duct %pass [%eauth %expire path] %b %wait (add now ~m5)]
+        [duct %pass [%eauth %expire path] %b %wait (add now eauth-timeout)]
       --
     --
   ::  +channel: per-event handling of requests to the channel system
