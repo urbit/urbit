@@ -92,6 +92,7 @@
   ==
 ::
 ~&  >  "Retrieving file URLs in /desk."
+::  current problem:  doesn't preserve directory info
 =/  sob=soba:clay  ~
 |-
 ?~  res  (pure:m !>(`soba:clay`sob))
@@ -104,6 +105,6 @@
   (strand-fail:strand %no-body ~)
 =/  t  (trip (cat 3 '/' path.i.res))
 =/  i  (need (find "." t))
-=/  p  (oust [0 2] (stab (crip (cass (snap t i '/')))))
+=/  p  (oust [0 1] (stab (crip (cass (snap t i '/')))))
 =/  s  `[path miso:clay]`[p %ins %mime !>([/ data.u.full-file.client-response.q.new])]
 $(sob `soba:clay`[s sob], res t.res)
