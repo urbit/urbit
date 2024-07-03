@@ -41,12 +41,11 @@
 =/  sob  ;;((list [path miso:clay]) q.q.cage)
 ~&  >  "Merging {<(lent sob)>} files into new desk {<desk>}."
 ::  Does the desk exist?
-=/  desks  .^((set ^desk) %cd /=//=)
-~&  >>  desks
+=/  desks  .^((set ^desk) %cd /(scot %p our.bowl)//(scot %da now.bowl))
 ?.  (~(has in desks) desk)
   ~&  >  "Desk {<desk>} does not exist yet; creating."
-  ;<  ~  bind:m  (send-raw-card:strandio [%pass /deployer-commit %arvo %c %merg desk our.bowl desk da+now.bowl %init])
-  ;<  ~  bind:m  (send-raw-card:strandio [%pass /deployer-commit %arvo %c %info desk %& sob])
+  ;<  ~  bind:m  (send-raw-card:strandio [%pass /new-app %arvo %c %merg desk our.bowl %base da+now.bowl %init])
+  ;<  ~  bind:m  (send-raw-card:strandio [%pass /new-app %arvo %c %info desk %& sob])
   ;<  ~  bind:m  (sleep:strandio ~s0)  ::  wait for merge to complete
   ~&  >  "Desk {<desk>} created."
   (pure:m !>(desk))
