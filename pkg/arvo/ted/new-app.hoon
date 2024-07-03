@@ -63,8 +63,8 @@
 ~&  dif
 =/  sob  (weld (turn ~(tap by dif) |=(p=path [p %del ~])) sob)
 ;<  now=@da  bind:m  get-time:strandio
-;<  =ship    bind:m  get-our:strandio
-;<  ~  bind:m  (send-raw-card:strandio [%pass /deployer-commit %arvo %c %info desk %& sob])
+;<  =ship    bind:m  get-new-app
+;<  ~  bind:m  (send-raw-card:strandio [%pass /new-app %arvo %c %info desk %& sob])
 ;<  ~  bind:m  (sleep:strandio ~s0)  ::  wait for merge to complete
 ~&  >  "Desk {<desk>} updated."
 (pure:m !>(desk))
