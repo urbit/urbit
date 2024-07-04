@@ -6054,7 +6054,10 @@
             =/  man=name:pact
               [[our rift.ames-state] [13 ~] (ev-make-path u.spac u.q)]  :: XX add namespace before
             ::
-            [%poke nam man (need (ev-get-page man))]
+            ?~  page=(ev-get-page man)
+              ~&  >>>  no-page/man
+              *pact:pact
+            [%poke nam man u.page]
           ::
           ++  ev-make-path
             |=  [=space =path]
@@ -6090,7 +6093,7 @@
               ?>(?=(%page -.page) `q.page)
             =>  [res=res de=de:pact]
             ~>  %memo./ames/get-page
-            -:($:de ;;(@ q.q.u.u.res))
+            -:($:de ;;(@ +.q.q.u.u.res))
           ::
           +|  %fren-helpers
           ::
@@ -7556,6 +7559,7 @@
               :: =+  core=(ev-abed:ev-core [now eny rof] ~[//scry])
               =*  core  ev-core
               =/  tyl=(pole knot)  s.bem
+              ~&   tyl/tyl
               ?+    tyl  ~
               ::  publisher-side, batch-level
               ::
@@ -7662,13 +7666,13 @@
                         !=(0 fag)
                     ==
                   ~  :: non-standard proofs for later
-                =;  [nam=name:pact dat=data:pact]
+                =;  [pairs=(list (unit (pair @ux @ux))) nam=name:pact dat=data:pact]
                   =/  pac=pact:pact  [%page nam dat ~]
                   ?:  (gth fag tot.dat)
                     [~ ~]
                   ?.  ser.pac.nex
-                    ``[%packet !>(pac)]
-                  ``[%atom !>(p:(fax:plot (en:pact pac)))]
+                    ``[%packet !>([pairs pac])]
+                  ``[%packet !>([pairs p:(fax:plot (en:pact pac))])]
                 ::
                 ?-    typ.wan.pac.nex
                     %auth
@@ -7681,7 +7685,7 @@
                     ~>  %memo./ames/lss-auth
                     (build:lss (met 3 ser)^ser)
                   =/  dat  [wid aut (rep 8 proof.lss-proof)]  :: XX types
-                  [nam dat]
+                  [pairs.lss-proof nam dat]
                 ::
                     %data
                   =/  lss-proof
@@ -7712,7 +7716,7 @@
                     [%1 u.p]
                   ::
                   =/  dat  [wid aut (cut boq [fag 1] ser)]
-                  [nam dat]
+                  [pairs.lss-proof nam dat]
                 ==
               ::
               ::  XX need a single namespace entrypoint to validate
