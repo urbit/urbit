@@ -1,42 +1,18 @@
-# Urbit
+# Developer Environment Setup
 
-[Urbit](https://urbit.org) is a personal server stack built from scratch. It
-has an identity layer (Azimuth), virtual machine (Vere), and operating system
-(Arvo).
+The quickest way to get set up to play with Shrubbery and Sky is to [boot a comet](https://docs.urbit.org/manual/getting-started/self-hosted/cli) and run `|install ~met %neo`. You could also [boot a moon](https://docs.urbit.org/manual/os/basics#moons) for this.
 
-A running Urbit "ship" is designed to operate with other ships peer-to-peer.
-Urbit is a general-purpose, peer-to-peer computer and network.
+When you boot your ship you should [use the `--loom 33` flag](https://docs.urbit.org/manual/running/vere#--loom-size), which allocates 8GB of memory on your machine for your ship. During Shrubbery development you could end up nuking and restarting the %neo agent many times, which will quickly use up the 2GB of memory ships are allocated by default. If/when your ship runs out of memory, just boot a new one and copy your work into that.
 
-This repository contains the [Arvo Kernel][arvo]
+If you want to work from the GitHub repo…
+- Clone [urbit/shrub](https://github.com/urbit/shrub) to your machine. (The `develop` branch is the latest stable build.)
+- [Boot a fakeship](https://docs.urbit.org/courses/environment#creating-a-fake-ship)
+- `> |new-desk %neo` on the fakeship
+- `> |mount %neo`
+- `$ rsync -avL path/to/pkg/shrub/* path/to/fakeship/neo`
+- `> |commit %neo`
+- `> |install our %neo`
 
-For the Runtime, see [Vere][vere].
-For more on the identity layer, see [Azimuth][azim].
-To manage your Urbit identity, use [Bridge][brid].
+This will start the %neo agent which runs the Shrubbery prototype. Once that's finished booting, which will take a few minutes, go to `<localhost:port>/neo/sky` to access Sky.
 
-## Install
-
-To install and run Urbit, please follow the instructions at
-[urbit.org/getting-started][start]. You'll be on the live network in a
-few minutes.
-
-[start]: https://urbit.org/getting-started/
-
-## Contributing
-
-Contributions of any form are more than welcome!  Please take a look at our
-[contributing guidelines][cont] for details on our git practices, coding
-styles, and how we manage issues.
-
-You might also be interested in joining the [urbit-dev][list] mailing list.
-
-## Release
-
-For details about our release process, see the [maintainers guidelines][main]
-
-[arvo]: https://github.com/urbit/urbit/tree/master/pkg/arvo
-[azim]: https://github.com/urbit/azimuth
-[brid]: https://github.com/urbit/bridge
-[vere]: https://github.com/urbit/vere
-[list]: https://groups.google.com/a/urbit.org/forum/#!forum/dev
-[cont]: https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md
-[main]: https://github.com/urbit/urbit/blob/master/MAINTAINERS.md
+When you want to move changes from your local repo to the fakeship, repeat the `rsync -avL` command above. The %neo agent can do incremental builds and will make changes to your `/con` and `/imp` files as you'd expect, but if you make a change to a `/pro` file you'll have to `|nuke %neo` and `|revive %neo`.
