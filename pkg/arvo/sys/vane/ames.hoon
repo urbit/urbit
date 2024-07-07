@@ -6025,7 +6025,7 @@
           ~
         ?:  ?=([~ %known *] peer)
           (get-forward-lanes our +.u.peer peers.ames-state)
-        =/  sax  (rof ~ /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
+        =/  sax  (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
         ?.  ?=([~ ~ *] sax)
           ~
         =/  gal  (rear ;;((list ship) q.q.u.u.sax))
