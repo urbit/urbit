@@ -25,7 +25,6 @@
         %eyre-task
       =+  !<(=task:eyre:neo vax)
       =/  [eyre-id=@ta req=inbound-request:eyre]  task
-      ?.  =(['neo' 'sky' ~] (scag 2 (stab url.request.req)))  ~|(not-a-sky-task/url.request.req !!)
       ?.  authenticated.req
         =/  eyre=pith:neo  #/[p/our.bowl]/$/eyre
         :_  pail

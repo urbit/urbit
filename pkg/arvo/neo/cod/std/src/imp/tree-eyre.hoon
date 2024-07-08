@@ -16,7 +16,8 @@
         %eyre-task
       =+  !<(=task:eyre:neo vase)
       =/  [eyre-id=@ta req=inbound-request:eyre]  task
-      ?.  =(['neo' 'tree' ~] (scag 2 (stab url.request.req)))  ~|(not-a-tree-task/url.request.req !!)
+      ::~&  >>  path-req/req
+      :: ?.  =(['neo' 'tree' ~] (scag 2 (stab url.request.req)))  ~|(not-a-tree-task/url.request.req !!)
       ~&  >>>  'in tree!'
       ?.  authenticated.req
         =/  eyre=pith:neo  #/[p/our.bowl]/$/eyre

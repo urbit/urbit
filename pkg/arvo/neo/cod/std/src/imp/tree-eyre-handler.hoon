@@ -1,4 +1,6 @@
 /@  htmx-type=htmx
+/@  tree-diff
+/-  serv=sky-server
 /*  jquery
 /*  htmx-js
 /*  htmx-response-targets
@@ -10,25 +12,26 @@
 ^-  kook:neo
 |%
 ++  state  pro/%eyre-task
-++  poke  *(set stud:neo)
+++  poke   *(set stud:neo)
 ++  kids  *kids:neo
 ++  deps 
+:: static dep to imp folder to create new shrub 
   %-  ~(gas by *band:neo)
   :~  :-  %src
       ^-  fief:neo
       :-  req=|
       ^-  quay:neo
-      :-  [pro/%htmx ~]
+      :-  [[%or pro/%htmx any/~ ~] ~]
       ^-  (unit port:neo)
       :+  ~  %z
       %-  ~(gas by *lads:neo)
       :~  :-  &
-          `lash:neo`[any/~ ~]
+          `lash:neo`[[%or pro/%htmx any/~ ~] ~]
       ==
   ==
 ++  form 
   |_  [=bowl:neo =aeon:neo =pail:neo]
-  ++  poke
+  ++  poke  
     |=  [=stud:neo =vase]
     ^-  (quip card:neo pail:neo)
     !!
@@ -39,6 +42,28 @@
     =+  !<([eyre-id=@ta req=inbound-request:eyre] vase)
     ~&  >  req/req
     :_  [stud vase]
+    ::  deps = band 
+    ::  band = (map term fief)
+    ::  fief = [=deed =quay]
+    ::  quay = (pair lash (unit port))
+    ::  port = (pair dare lads)
+    ::  lads = (map pish lash)
+    ::  lash =   [state=curb poke=(set stud)]
+    ::
+    ::  lore = (axal idea)
+    ::  idea = [saga=(pair aeon pail) thru=(unit stud) pail]
+    ::  saga = (pair aeon pail)
+    ::  aeon = (pair ever oath)  
+    ::  ever - total shrub version 
+    ::  oath = (pair hash=@uvH seal=@uvH)
+    ::  pail = (pair stud vase)
+    ::
+    ::  src - (unit (pair pith lore))
+    ::  p.u.src  -  pith
+    ::  q.u.src  -  lore
+    ::  q.saga.idea.q.u.src - pail
+    ::  ~(tap by q.u.q.quay.u.src)
+    ::  q.q.pail
     ?~  src=(~(get by deps.bowl) %src)
       =/  stub=manx
         ;div
@@ -51,7 +76,8 @@
         ['content-type' 'text/html']~
         stub
       ==
-    ~&  >  src/p.u.src
+    ::  ~&  >  src/p.u.src
+    :: ~&  >  all-deps/~(tap by deps)
     =/  here  p.u.src
     ^-  (list card:neo)
     ?+    method.request.req  ~|(%unsupported-http-method !!)
@@ -70,12 +96,19 @@
             ['content-type' 'text/html']~
             stub
         ==
+      ::  get lash from dep and pass pokes to poke-form 
+      ::  from src
+    ::   ~&  >>>
+    ::   %+  turn  ~(tap of:neo q.u.src)
+    ::   |=  [=pith:neo =idea:neo]
+    ::   pail/(sell q.pail.idea)
       =/  bol  *bowl:neo
       =.  here.bol  here
       =.  our.bol  our.bowl
       =.  now.bol  now.bowl
       =.  eny.bol  eny.bowl
       =.  kids.bol  q.u.src
+      ~&  >  pail/q.saga.u.reet
       =/  stub=manx
         ;div
           ;+  (view bol)
@@ -87,6 +120,46 @@
           ['content-type' 'text/html']~
           stub
       ==
+        %'POST'
+      =/  purl  (parse-url:serv request.req)
+      =/  content-type  (~(gut by pam.purl) 'content-type' 'text/html')
+      =/  body  (parse-body:serv request.req)
+      =/  poke-stud
+        ^-  stud:neo
+        ~|  %no-stud-specified
+        (~(got by pam.purl) 'stud')
+    ~&  >>  poke-stud/poke-stud
+      =/  diff-vase  
+      (http-request [poke-stud `request:http`request.req])
+      ~&  >>>  diff-vase/diff-vase
+      =/  diff-type   -:!<(tree-diff diff-vase)
+      =/  bol  *bowl:neo
+        =.  here.bol  here
+        =.  our.bol  our.bowl
+        =.  now.bol  now.bowl
+        =.  eny.bol  eny.bowl
+        =/  stub=manx
+        ::   ?+  diff-type  
+              ;div
+                ;p:  error 
+              ==
+        ::       %send-poke
+        ::     ;div
+        ::       ;p:  sent
+        ::     ==
+        ::       %send-tomb 
+        ::     ;div
+        ::       ;p:  deleted
+        ::     ==
+        ::   ==
+        :-  [#/[p/our.bowl]/tree %poke %tree-diff diff-vase]
+        %:  eyre-cards
+            eyre-id
+            bol
+            200
+            ['content-type' 'text/html']~
+            stub
+        ==
     ==
   --
 --
@@ -149,12 +222,14 @@
   :: only pith 
   %+  turn 
     ::only short paths
-    %+  sort 
+    %+  sort
       %+  skim  ~(tap of:neo kids.bowl) 
-      |=([=pith:neo *] =(1 (lent pith)))
+      |=  [=pith:neo *] 
+      =(1 (lent pith))
     aor
-    |=  [=pith:neo *] 
-    %-  crip  "[{(en-tape:pith:neo pith)}]"
+  |=  [=pith:neo *] 
+  %-  crip  
+  "[{(en-tape:pith:neo pith)}]"
   =/  row-template=tape  (join ' 1fr ' (weld "[first-row]" `tape`first-kids))
   ;div
   =style  "display: grid; grid-template-rows: {row-template}; grid-template-columns: auto; padding: 12px;"
@@ -163,7 +238,17 @@
         ;div.p2: none
       =/  =pail:neo  q.saga.u.node
     ;div 
-    =style  "grid-column-start: 1; grid-column-end: 2; grid-row-start: first-row; grid-row-end: first-row; padding: 8px; border: 2px solid black;border-radius: 6px; margin-top: 1rem;"
+    =style  
+    """
+    grid-column-start: 1;
+    grid-column-end: 2; 
+    grid-row-start: first-row; 
+    grid-row-end: first-row; 
+    padding: 8px; 
+    border: 2px solid black;
+    border-radius: 6px; 
+    margin-top: 1rem;
+    """
       ;p: {<p.pail>}
       ;+  (state-print pail)
     ==
@@ -178,47 +263,14 @@
       =style  "visibility: hidden"
         nothing
       ==
-    ~&  >  pith/pith
     ;div
     =style  "grid-column-start: {(scow %ud +((lent pith)))}; grid-column-end: {(scow %ud (add 2 (lent pith)))}; grid-row-start: {(en-tape:pith:neo [-.pith ~])};grid-row-end: {(en-tape:pith:neo [-.pith ~])}; padding: 8px; border: 2px solid black;border-radius: 6px;margin-top: 1rem;"
       ;h3:  {(en-tape:pith:neo pith)}
-      ;+
-      =/  pal=pail:neo  q.saga.idea
+      ;+  (tomb-button bowl pith)
       ;div
         ;h3:  state
-        ;+  (state-print pal)
-        ;form
-        =hx-post    "/neo/tree{(en-tape:pith:neo pith)}?stud=type-diff"
-        =hx-target  "find .loading"
-          ;input 
-          =type     "text"
-          =name     "diff-type"
-          =oninput  "this.setAttribute('value', this.value); this.parentNode.setAttribute('head', this.value);"
-          =autocomplete  "off"
-          =placeholder   "diff-type"
-          =required      ""
-          ;
-          ==
-          ;input 
-          =type   "text"
-          =name   "pith"
-          =value  "{(en-tape:pith:neo pith)}"
-          ;
-          ==
-          ;input 
-          =type   "text"
-          =name   "value1"
-          =oninput  "this.setAttribute('value', this.value);"
-          =autocomplete  "off"
-          =placeholder   "value"
-          =required      ""
-          ;
-          ==
-          ;button.loader
-            ;span.loaded:  create
-            ;span.loading:  loading
-          ==
-        ==
+        ;+  (state-print q.saga.idea)
+        ;+  (poke-form pith)
       ==
     ==
   ==
@@ -231,6 +283,57 @@
     =/  size  (met 3 (jam q.q.pail))
     ?:  (gth size 750)  "vase too large to print: {<size>}"
     (of-wall:format (~(win re (sell q.pail)) 0 80))
+  ==
+::
+++  poke-form
+  |=  =pith:neo
+  ^-  manx
+    ;form
+    =hx-post    "/neo/tree{(en-tape:pith:neo pith)}?stud=type-diff"
+    =hx-target  "find .loading"
+      ;input 
+      =type     "text"
+      =name     "diff-type"
+      =oninput  "this.setAttribute('value', this.value); this.parentNode.setAttribute('head', this.value);"
+      =autocomplete  "off"
+      =placeholder   "diff-type"
+      =required      ""
+      ;
+      ==
+      ;input 
+      =type   "text"
+      =name   "pith"
+      =value  "{(en-tape:pith:neo pith)}"
+      ;
+      ==
+      ;input 
+      =type   "text"
+      =name   "value1"
+      =oninput  "this.setAttribute('value', this.value);"
+      =autocomplete  "off"
+      =placeholder   "value"
+      =required      ""
+      ;
+      ==
+      ;button.loader
+        ;span.loaded:  create
+        ;span.loading:  loading
+      ==
+    ==
+::
+++  tomb-button
+  |=  [=bowl:neo =pith:neo]
+  ^-  manx
+  ;form 
+  =hx-post    "/neo/tree{(en-tape:pith:neo here.bowl)}?stud=tree-diff&head=send-tomb"
+  =hx-swap    "outerHTML"
+  =hx-target  "find .loading"
+    ;button.loader
+    =name       "pith"
+    =value      (en-tape:pith:neo (welp here.bowl pith))
+      ;span.loaded:  tomb
+      ;span.loading:  loading
+    ==
   ==
 ::
 --
