@@ -485,6 +485,7 @@
   +$  event-id  [block=@ud log=@ud]
   ::
   ++  events  (set event-id)
+  +$  topics  (list ?(@ux (list @ux)))
   --
 ::                                                      ::::
 ::::                    ++azimuth-types                   ::  az surs for jael

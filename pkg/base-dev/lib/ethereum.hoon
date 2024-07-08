@@ -532,18 +532,18 @@
       ::  supported requests.
       ++  request
         $%  [%eth-block-number ~]
-            [%eth-call cal=call deb=block]
+            [%eth-call cal=call deb=block-input]
             $:  %eth-new-filter
-                fro=(unit block)
-                tob=(unit block)
+                fro=(unit block-input)
+                tob=(unit block-input)
                 adr=(list address)
                 top=(list ?(@ux (list @ux)))
             ==
             [%eth-get-block-by-number bon=@ud txs=?]
             [%eth-get-filter-logs fid=@ud]
             $:  %eth-get-logs
-                fro=(unit block)
-                tob=(unit block)
+                fro=(unit block-input)
+                tob=(unit block-input)
                 adr=(list address)
                 top=(list ?(@ux (list @ux)))
             ==
@@ -554,21 +554,32 @@
             ==
             [%eth-get-filter-changes fid=@ud]
             [%eth-get-transaction-by-hash txh=@ux]
-            [%eth-get-transaction-count adr=address =block]
-            [%eth-get-balance adr=address =block]
+            [%eth-get-transaction-count adr=address =block-input]
+            [%eth-get-balance adr=address =block-input]
             [%eth-get-transaction-receipt txh=@ux]
             [%eth-send-raw-transaction dat=@ux]
         ==
       ::
-      ::TODO  clean up & actually use
+      ++  dirty-response
+        $%
+            response
+            [%error code=@ta message=@t]
+        ==
       ++  response
-        $%  ::TODO
+        $%  
+            [%eth-block-number num=@ud]
+            [%eth-call data=@t]
             [%eth-new-filter fid=@ud]
+            [%eth-get-block-by-number block=(unit block)]
             [%eth-get-filter-logs los=(list event-log)]
             [%eth-get-logs los=(list event-log)]
             [%eth-get-logs-by-hash los=(list event-log)]
-            [%eth-got-filter-changes los=(list event-log)]
-            [%eth-transaction-hash haz=@ux]
+            [%eth-get-filter-changes los=(list event-log)]
+            [%eth-get-transaction-by-hash transaction-result=(unit transaction-result)]
+            [%eth-get-transaction-count count=@ud]
+            [%eth-get-balance balance=@ud]
+            [%eth-get-transaction-receipt transaction-receipt=(unit transaction-receipt)]
+            [%eth-send-raw-transaction hash=@ux]
         ==
       ::
       ++  transaction-result
@@ -578,6 +589,28 @@
             from=@ux
             to=(unit @ux)
             input=@t
+        ==
+      :: TODO pull in all attributes
+      ++  transaction-receipt
+        $:  transaction-hash=@ux
+            transaction-index=@ud
+            blockhash=@ux
+            block-number=@ud
+            from=address
+            to=address
+            cumulative-gas-used=@ud
+            effective-gas-price=@ud
+            gas-used=@ud
+            contract-address=(unit @ux)
+            logs=(list event-log)
+            logs-bloom=@ux
+            type=?(%transfer %call)
+            status=?
+            :: root?
+
+            :: TODO contractAddress is messy because it is a unit
+            :: contract-address=(unit @ux)
+            :: TODO is this correct
         ==
       ::
       ++  event-log
@@ -624,10 +657,39 @@
         ==
       ::
       ::  block to operate on.
-      ++  block
+      ++  block-input
         $%  [%number n=@ud]
             [%label l=?(%earliest %latest %pending)]
         ==
+      ++  block
+        =<  block
+        |%
+        +$  hash       @uxblockhash
+        +$  number     @udblocknumber
+        +$  timestamp  @da
+        +$  id      [=hash =number]
+        +$  block   
+          $:  =id 
+              =parent=hash
+              :: TODO uncles missing
+              :: TODO parse timestamp correctly
+              =timestamp
+              transaction-root=@ux
+              gas-limit=@ux
+              receipts-root=@ux
+              total-difficulty=@ux
+              nonce=@ux
+              gas-used=@ux
+              state-root=@ux
+              extra-data=@ux
+              miner=@ux
+              sha3-uncles=@ux
+              size=@ux
+              difficulty=@ux
+              logs-bloom=@ux
+              mix-hash=@ux
+          ==
+        --
       --
   ::
   ::  logic
@@ -788,13 +850,13 @@
         %eth-get-transaction-count
       :-  'eth_getTransactionCount'
       :~  (tape (address-to-hex adr.req))
-          (block-to-json block.req)
+          (block-to-json block-input.req)
       ==
     ::
         %eth-get-balance
       :-  'eth_getBalance'
       :~  (tape (address-to-hex adr.req))
-          (block-to-json block.req)
+          (block-to-json block-input.req)
       ==
     ::
         %eth-get-transaction-by-hash
@@ -833,7 +895,7 @@
     ==
   ::
   ++  block-to-json
-    |=  dob=block
+    |=  dob=block-input
     ^-  json
     ?-  -.dob
       %number   s+(crip '0' 'x' ((x-co:co 1) n.dob))
@@ -859,13 +921,144 @@
   ::
   ::  parsing responses
   ::
-  ::TODO  ++  parse-response  |=  json  ^-  response
+  ++  parse-response
+    |=  [type=@tas =json]
+    ^-  [id=(unit @t) dirty-response:rpc]
+    =/  id  ((ot ~[id+so]):dejs-soft:format json)
+    ?:  &(?=([%o *] json) (~(has by p.json) 'error'))
+      =/  error=[code=@t message=@t]
+        %.  json
+        =,  dejs:format
+        (ot ~[error+(ot ~[code+no message+so])])
+      [id [%error code.error message.error]]
+    ?.  &(?=([%o *] json) (~(has by p.json) 'result'))
+      !!
+    =/  result  ((ot:dejs:format ~[[%result parse-result]]) json)
+    ?+  type  !!
+      %eth-block-number
+    [id [%eth-block-number (parse-eth-block-number result)]]
+      %eth-call
+    [id [%eth-call (so:dejs:format result)]]
+      %eth-new-filter
+    [id [%eth-new-filter (parse-eth-new-filter-res result)]]
+      %eth-get-block-by-number
+    [id [%eth-get-block-by-number (parse-block result)]]
+      %eth-get-filter-logs
+    [id [%eth-get-filter-logs (parse-event-logs result)]]
+      %eth-get-logs
+    [id [%eth-get-logs (parse-event-logs result)]]
+      %eth-get-logs-by-hash
+    [id [%eth-get-logs-by-hash (parse-event-logs result)]]
+      %eth-get-filter-changes
+    [id [%eth-get-filter-changes (parse-event-logs result)]]
+      %eth-get-transaction-by-hash
+    ?~  result
+      [id [%eth-get-transaction-by-hash ~]]
+    [id [%eth-get-transaction-by-hash [~ (parse-transaction-result result)]]]
+      %eth-get-transaction-count 
+    [id [%eth-get-transaction-count (parse-eth-get-transaction-count result)]]
+      %eth-get-balance
+    [id [%eth-get-balance (parse-eth-get-balance result)]]
+      %eth-get-transaction-receipt
+    [id [%eth-get-transaction-receipt (parse-transaction-receipt result)]]
+      %eth-send-raw-transaction
+    [id [%eth-send-raw-transaction (parse-hex-result result)]]
+    ==
   ::
+  ++  parse-transaction-receipt
+    |=  =json
+    ^-  (unit transaction-receipt)
+    %.  json
+    =,  dejs-soft:format
+    %-  ot
+    :~  'transactionHash'^parse-hex
+        'transactionIndex'^parse-hex
+        'blockHash'^parse-hex
+        'blockNumber'^parse-hex
+        'from'^parse-hex
+        'to'^parse-hex
+        'cumulativeGasUsed'^parse-hex
+        'effectiveGasPrice'^parse-hex
+        'gasUsed'^parse-hex
+        'contractAddress'^parse-hex-unit
+        logs+parse-event-logs-unit
+        'logsBloom'^parse-hex
+        'type'^parse-type
+        :: root
+        'status'^parse-status
+    ==
+  ++  parse-block
+    |=  =json
+    ^-  (unit block)
+    =<  ?~(. ~ `[[&1 &2] |2]:u)
+    ~|  json
+    %.  json
+    =,  dejs-soft:format
+    %-  ot
+    :~  hash+parse-hex
+        number+parse-hex
+        'parentHash'^parse-hex
+        :: TODO change parser
+        'timestamp'^parse-hex-result-timestamp
+        :: TODO uncles (unit)
+        'transactionsRoot'^parse-hex
+        'gasLimit'^parse-hex
+        'receiptsRoot'^parse-hex
+        'totalDifficulty'^parse-hex
+        'nonce'^parse-hex
+        :: TODO transactions (unit)
+        'gasUsed'^parse-hex
+        'stateRoot'^parse-hex
+        'extraData'^parse-hex
+        'miner'^parse-hex
+        'sha3Uncles'^parse-hex
+        'size'^parse-hex
+        'difficulty'^parse-hex
+        'logsBloom'^parse-hex
+        'mixHash'^parse-hex
+    ==
+  ::::
+  ++  parse-result  |=(jon=json jon)
+  ++  parse-hex  |=(=json `(unit @)`(some (parse-hex-result json)))
+  ++  parse-hex-unit  
+    |=  =json  
+    `(unit (unit @))`(some (parse-hex-result-unit json))
+  ++  parse-type
+    |=  j=json
+    ^-  (unit ?(%transfer %call))
+    ?>  ?=(%s -.j)
+    =/  typenum  (hex-to-num p.j)
+    ?:  =(0 typenum)  (some %transfer)
+    ?:  =(2 typenum)  (some %call)
+    ~
+  ++  parse-status
+    |=  j=json
+    ^-  (unit ?)
+    ?>  ?=(%s -.j)
+    =/  typenum  (hex-to-num p.j)
+    ?:  =(1 typenum)  (some %.y)
+    ?:  =(0 typenum)  (some %.n)
+    ~
+  ++  parse-hex-result-timestamp
+    |=  j=json
+    ^-  (unit @)
+    ?>  ?=(%s -.j)
+    %-  some
+    %-  from-unix:chrono:userlib
+    (hex-to-num p.j)
   ++  parse-hex-result
     |=  j=json
     ^-  @
     ?>  ?=(%s -.j)
     (hex-to-num p.j)
+  ++  parse-hex-result-unit
+    |=  j=json
+    ^-  (unit @)
+    ?:  ?=(~ j)
+      ~
+    :: ~
+    ?>  ?=(%s -.j)
+    (some (hex-to-num p.j))
   ::
   ++  parse-eth-new-filter-res  parse-hex-result
   ::
@@ -879,6 +1072,10 @@
   ::
   ++  parse-event-logs
     (ar:dejs:format parse-event-log)
+  ::
+  ++  parse-event-logs-unit 
+    |=  =json
+    `(unit (list event-log))`(some ((ar:dejs:format parse-event-log) json))
   ::
   ++  parse-event-log
     =,  dejs:format

@@ -2,7 +2,7 @@
 ::
 ::    produces list of @da result
 ::
-/+  ethereum, ethio, strandio
+/+  ethereum, eth-provider, strandio
 =,  ethereum-types
 =,  jael
 ::
@@ -13,7 +13,7 @@
 |^  ^-  form:m
     =*  loop  $
     ?:  =(~ blocks)  (pure:m !>(out))  ::TODO  TMI
-    ;<  res=(list [@t json])  bind:m
+    ;<  res=(list [id=(unit @t) res=response:rpc:ethereum])  bind:m
       (request-blocks (scag 100 blocks))
     %_  loop
       out     (weld out (parse-results res))
@@ -22,7 +22,7 @@
 ::
 ++  request-blocks
   |=  blocks=(list @ud)
-  %+  request-batch-rpc-strict:ethio  url
+  %-  request-batch-rpc-strict:eth-provider
   %+  turn  blocks
   |=  block=@ud
   ^-  [(unit @t) request:rpc:ethereum]
@@ -30,15 +30,17 @@
   [%eth-get-block-by-number block |]
 ::
 ++  parse-results
-  |=  res=(list [@t json])
+  |=  res=(list [id=(unit @t) res=response:rpc:ethereum])
   ^+  out
   %+  turn  res
-  |=  [id=@t =json]
+  |=  [id=(unit @t) resp=response:rpc:ethereum]
   ^-  [@ud @da]
-  :-  (slav %ud id)
-  %-  from-unix:chrono:userlib
-  %-  parse-hex-result:rpc:ethereum
-  ~|  json
-  ?>  ?=(%o -.json)
-  (~(got by p.json) 'timestamp')
+  ?~  id  !!
+  ?>  ?=([%block (unit block:rpc:ethereum)] resp)
+  ?~  +.resp  !!
+  =/  block  +>.resp
+  ~&  [%resp timestamp.u.block]
+  ?~  +.resp  !!
+  :-  (slav %ud +.id)
+  timestamp.u.block
 --

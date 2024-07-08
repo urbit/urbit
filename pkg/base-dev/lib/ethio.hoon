@@ -5,9 +5,6 @@
 =,  ethereum-types
 =,  jael
 ::
-=>  |%
-    +$  topics  (list ?(@ux (list @ux)))
-    --
 |%
 ::  +request-rpc: send rpc request, with retry
 ::
