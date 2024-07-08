@@ -1066,17 +1066,12 @@
       :-  %noun
       =/  vaz=(list [term vase])
         (turn ~(tap by var) |=([lal=term cag=cage] [lal q.cag]))
+      =.  vaz  (weld ~[`[term vase]`[`@tas`%help !>(dy-help-message)]] vaz)
       =/  sut  (slop !>([our=our now=now eny=eny]:hid) !>(..zuse))
-      =.  sut  (slop !>(dy-help-message) sut)
       =?  sut  ?=(^ vaz)  (slop (with-faces vaz) sut)
       (slap sut hoon)
     ::
-    ++  dy-help-message
-      !,  *hoon
-      |%
-      ++  help
-        'For more information please type +start'
-      --
+    ++  dy-help-message  'For more information please type +start'
     ::
     ++  dy-step                                         ::  advance project
       |=  nex=@ud
