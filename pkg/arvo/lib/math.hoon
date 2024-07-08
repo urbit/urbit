@@ -1,6 +1,9 @@
   ::
 ::::  Mathematical library
 ::
+::  This file is not (yet) subject to kelvin versioning and the interface should
+::  not be considered stable pending battle-hardening.
+::
 ::  Pure Hoon implementations are naive formally correct algorithms,
 ::  awaiting efficient jetting with GNU Scientific Library.
 ::
