@@ -37,11 +37,14 @@
 ?:  =(%thread-fail p.cage)
   (strand-fail:strandio !<([term tang] q.cage))
 ?>  ?=(%thread-done p.cage)
+~&  >  p.q.cage
+?>  ?=(%noun p.q.cage)
 ?~  q.q.cage
   ~&  >>>  "No files found at /desk in repo."
   (strand-fail:strand %no-desk-in-repo ~)
 ~&  >  "Successfully retrieved files."
-=/  sob  ;;((list [path miso:clay]) q.q.cage)
+::=/  sob  ;;((list [path miso:clay]) q.q.cage)
+=/  sob  !<((list [path miso:clay]) q.cage)
 ~&  >  "Merging {<(lent sob)>} files into new desk {<desk>}."
 ::  Does the desk exist?
 =/  desks  .^((set ^desk) %cd /(scot %p our.bowl)//(scot %da now.bowl))
