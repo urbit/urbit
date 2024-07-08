@@ -66,7 +66,6 @@
       $~  [%ex *hoon]
       $%  [%ur p=@t]                                    ::  http GET request
           [%ge p=dojo-model]                            ::  generator
-          [%ee p=[=desk =term] q=(list dojo-source)]    ::  Easter egg
           [%te p=[=desk =term] q=(list dojo-source)]    ::  thread
           [%dv p=beak q=path]                           ::  core from source
           [%ex p=hoon]                                  ::  hoon expression
@@ -245,16 +244,11 @@
       ;~  pose
         ;~(plug (cold %ur lus) parse-url)
         ;~(plug (cold %ge lus) parse-model)
-        ;~(plug (cold %ee sig) parse-easter-egg)
         ;~(plug (cold %te hep) parse-thread (star ;~(pfix ace parse-source)))
         ;~(plug (cold %as pam) sym ;~(pfix ace parse-source))
         ;~(plug (cold %do cab) parse-hoon ;~(pfix ace parse-source))
         parse-value
       ==
-  ::
-  ++  parse-easter-egg
-    %+  cook  |=(a=cord [p=[%base %egg] q=~])
-    (jest 'Urbit')
   ::
   ++  parse-goal
     %+  cook  |=(a=goal a)
@@ -452,7 +446,6 @@
       |=  bul=dojo-build
       ^+  [bul +>]
       ?-    -.bul
-        %ee  [bul +>.$]
         %ex  [bul +>.$]
         %dv  [bul +>.$]
         %sa  [bul +>.$]
@@ -751,7 +744,7 @@
     =-  >[-]<
     =+  `[@ bil=dojo-build]`a
     |-  ^-  dy-shown
-    ?+  -.bil  !!
+    ?-  -.bil
       $?(%ur %dv %sa)  bil
       %ex  ?.  ?=([%cltr *] p.bil)  p.bil
                |-  ^-  hoon
@@ -998,7 +991,6 @@
           %ex  (dy-mere p.bil)
           %dv  (dy-sing hand+q.bil %a p.bil (snoc q.bil %hoon))
           %ge  (dy-run-generator (dy-cage p.p.p.bil) q.p.bil desk.q.p.p.bil)
-          %ee  (dy-wool-poke p.bil q.bil)  :: Easter egg
           %sa
         =/  has-mark  .?((get-fit:clay he-beak %mar p.bil))
         ?.  has-mark

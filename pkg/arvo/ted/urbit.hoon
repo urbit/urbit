@@ -1,6 +1,6 @@
-::  Easter egg output for "~Urbit"
+::  Easter egg output for (~) Urbit logo
 ::
-::::  /hoon/egg/ted
+::::  /hoon/urbit/ted
   ::
 /-  spider
 /+  strandio
