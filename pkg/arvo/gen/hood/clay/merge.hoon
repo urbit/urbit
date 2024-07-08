@@ -3,7 +3,7 @@
 ::::  /hoon/merge/hood/gen
   ::
 /?    310
-/*  help-text  %txt  /gen/hood/merge/help/txt
+/*  help-text  %txt  /gen/hood/clay/merge/help/txt
 =,  clay
 ::
 |%

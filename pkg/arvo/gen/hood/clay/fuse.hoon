@@ -3,7 +3,7 @@
 ::::  /hoon/fuse/hood/gen
   ::
 /+  *hood-kiln
-/*  help-text  %txt  /gen/hood/fuse/help/txt
+/*  help-text  %txt  /gen/hood/clay/fuse/help/txt
 =,  clay
 ::
 ::::
