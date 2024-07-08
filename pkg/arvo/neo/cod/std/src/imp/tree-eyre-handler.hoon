@@ -1,6 +1,8 @@
 /@  htmx-type=htmx
 /@  tree-diff
 /-  serv=sky-server
+/*  feather
+/*  reset
 /*  jquery
 /*  htmx-js
 /*  htmx-response-targets
@@ -42,28 +44,6 @@
     =+  !<([eyre-id=@ta req=inbound-request:eyre] vase)
     ~&  >  req/req
     :_  [stud vase]
-    ::  deps = band 
-    ::  band = (map term fief)
-    ::  fief = [=deed =quay]
-    ::  quay = (pair lash (unit port))
-    ::  port = (pair dare lads)
-    ::  lads = (map pish lash)
-    ::  lash =   [state=curb poke=(set stud)]
-    ::
-    ::  lore = (axal idea)
-    ::  idea = [saga=(pair aeon pail) thru=(unit stud) pail]
-    ::  saga = (pair aeon pail)
-    ::  aeon = (pair ever oath)  
-    ::  ever - total shrub version 
-    ::  oath = (pair hash=@uvH seal=@uvH)
-    ::  pail = (pair stud vase)
-    ::
-    ::  src - (unit (pair pith lore))
-    ::  p.u.src  -  pith
-    ::  q.u.src  -  lore
-    ::  q.saga.idea.q.u.src - pail
-    ::  ~(tap by q.u.q.quay.u.src)
-    ::  q.q.pail
     ?~  src=(~(get by deps.bowl) %src)
       =/  stub=manx
         ;div
@@ -76,7 +56,7 @@
         ['content-type' 'text/html']~
         stub
       ==
-    ::  ~&  >  src/p.u.src
+    :: ~&  >  src/p.u.src
     :: ~&  >  all-deps/~(tap by deps)
     =/  here  p.u.src
     ^-  (list card:neo)
@@ -140,17 +120,17 @@
         =.  eny.bol  eny.bowl
         =/  stub=manx
         ::   ?+  diff-type  
-              ;div
-                ;p:  error 
-              ==
+            ::   ;div
+            ::     ;p:  error 
+            ::   ==
         ::       %send-poke
         ::     ;div
         ::       ;p:  sent
         ::     ==
         ::       %send-tomb 
-        ::     ;div
-        ::       ;p:  deleted
-        ::     ==
+            ;div
+              ;p:  deleted
+            ==
         ::   ==
         :-  [#/[p/our.bowl]/tree %poke %tree-diff diff-vase]
         %:  eyre-cards
@@ -203,9 +183,11 @@
         =src  "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.15.1/cdn/shoelace.js"
         ;
       ==
+    ;style: {(trip reset)}
+    ;style: {(trip feather)}
     ==
     ;body 
-    ;+  (body-view bowl)
+      ;+  (body-view bowl)
     ==
   ==
 ::
@@ -228,15 +210,14 @@
       =(1 (lent pith))
     aor
   |=  [=pith:neo *] 
-  %-  crip  
-  "[{(en-tape:pith:neo pith)}]"
-  =/  row-template=tape  (join ' 1fr ' (weld "[first-row]" `tape`first-kids))
+  %-  crip  "[{(en-tape:pith:neo pith)}]"
+  =/  row-template=tape  (join ' auto ' (weld "[first-row]" `tape`first-kids))
   ;div
   =style  "display: grid; grid-template-rows: {row-template}; grid-template-columns: auto; padding: 12px;"
     ;+
       ?~  node=(~(get of:neo kids.bowl) /)
-        ;div.p2: none
-      =/  =pail:neo  q.saga.u.node
+        ;div: no kids
+    =/  =pail:neo  q.saga.u.node
     ;div 
     =style  
     """
@@ -248,6 +229,7 @@
     border: 2px solid black;
     border-radius: 6px; 
     margin-top: 1rem;
+    margin-right: 1rem;
     """
       ;p: {<p.pail>}
       ;+  (state-print pail)
@@ -268,9 +250,9 @@
       ;h3:  {(en-tape:pith:neo pith)}
       ;+  (tomb-button bowl pith)
       ;div
-        ;h3:  state
+        ;h3.wfc:  state
         ;+  (state-print q.saga.idea)
-        ;+  (poke-form pith)
+        :: ;+  (poke-form pith)
       ==
     ==
   ==
@@ -324,10 +306,10 @@
 ++  tomb-button
   |=  [=bowl:neo =pith:neo]
   ^-  manx
-  ;form 
+  ;form
   =hx-post    "/neo/tree{(en-tape:pith:neo here.bowl)}?stud=tree-diff&head=send-tomb"
+  =hx-target  "find .loader"
   =hx-swap    "outerHTML"
-  =hx-target  "find .loading"
     ;button.loader
     =name       "pith"
     =value      (en-tape:pith:neo (welp here.bowl pith))
