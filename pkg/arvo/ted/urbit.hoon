@@ -10,8 +10,6 @@
 |^
   =/  m  (strand ,vase)
   ^-  form:m
-  ;<  =bowl:spider  bind:m  get-bowl:strandio
-  ;<  code=@p  bind:m  (scry:strandio @p /j/code/(scot %p our.bowl))
   %-  %-  slog  :_  ~
       urbit-logo
   (pure:m !>(~))
