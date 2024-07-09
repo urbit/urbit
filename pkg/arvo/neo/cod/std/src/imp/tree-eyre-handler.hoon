@@ -57,7 +57,7 @@
         stub
       ==
     :: ~&  >  src/p.u.src
-    :: ~&  >  all-deps/~(tap by deps)
+    :: ~&  >  all-deps/~(tap by deps.bowl)
     =/  here  p.u.src
     ^-  (list card:neo)
     ?+    method.request.req  ~|(%unsupported-http-method !!)
@@ -76,6 +76,28 @@
             ['content-type' 'text/html']~
             stub
         ==
+    ::  deps = band 
+    ::  band = (map term fief)
+    ::  fief = [=deed =quay]
+    ::  quay = (pair lash (unit port))
+    ::  port = (pair dare lads)
+    ::  lads = (map pish lash)
+    ::  lash =   [state=curb poke=(set stud)]
+    ::
+    ::  lore = (axal idea)
+    ::  idea = [saga=(pair aeon pail) thru=(unit stud) pail]
+    ::  saga = (pair aeon pail)
+    ::  aeon = (pair ever oath)  
+    ::  ever - total shrub version 
+    ::  oath = (pair hash=@uvH seal=@uvH)
+    ::  pail = (pair stud vase)
+    ::
+    ::  src - (unit (pair pith lore))
+    ::  p.u.src  -  pith
+    ::  q.u.src  -  lore
+    ::  q.saga.idea.q.u.src - pail
+    ::  ~(tap by q.u.q.quay.u.src)
+    ::  q.q.pail
       ::  get lash from dep and pass pokes to poke-form 
       ::  from src
     ::   ~&  >>>
@@ -108,38 +130,43 @@
         ^-  stud:neo
         ~|  %no-stud-specified
         (~(got by pam.purl) 'stud')
-    ~&  >>  poke-stud/poke-stud
       =/  diff-vase  
       (http-request [poke-stud `request:http`request.req])
-      ~&  >>>  diff-vase/diff-vase
-      =/  diff-type   -:!<(tree-diff diff-vase)
-      =/  bol  *bowl:neo
-        =.  here.bol  here
-        =.  our.bol  our.bowl
-        =.  now.bol  now.bowl
-        =.  eny.bol  eny.bowl
-        =/  stub=manx
-        ::   ?+  diff-type  
-            ::   ;div
-            ::     ;p:  error 
-            ::   ==
-        ::       %send-poke
-        ::     ;div
-        ::       ;p:  sent
-        ::     ==
-        ::       %send-tomb 
-            ;div
-              ;p:  deleted
-            ==
-        ::   ==
-        :-  [#/[p/our.bowl]/tree %poke %tree-diff diff-vase]
-        %:  eyre-cards
-            eyre-id
-            bol
-            200
-            ['content-type' 'text/html']~
-            stub
+      =/  diff-type   !<(tree-diff diff-vase)
+      =/  cards=(list card:neo)
+        ?+  -.diff-type  !!
+            %send-tomb
+          =/  pit=pith:neo  (tail (tail +.diff-type))
+          ~&  >>  what-pith/pit
+          ~&  >>>  to-map/~(key by ~(tar of:neo (~(kids of:neo q.u.src) pit)))
+          =/  kids=(set pith:neo)  ~(key by (~(kid of:neo q.u.src) pit))
+          ~&  >>  kids/kids
+          ?~  kids
+              :~  (poke-tree-card our.bowl diff-vase)
+              ==
+            %-  welp  
+              :_  ~[[(poke-tree-card our.bowl diff-vase)]]
+              %+  turn  ~(tap in ~(key by (~(kid of:neo q.u.src) pit)))
+              |=  =pith:neo
+                ^-  card:neo
+                ~&  >>  pith-in-card/(welp +.diff-type pith)
+                %+  poke-tree-card 
+                    our.bowl 
+                !>([%send-tomb (welp +.diff-type pith)])
         ==
+      =/  bol  *bowl:neo
+      =.  here.bol  here
+      =.  our.bol  our.bowl
+      =.  now.bol  now.bowl
+      =.  eny.bol  eny.bowl
+      %+  welp  cards
+      %:  eyre-cards
+      eyre-id
+      bol
+      200
+      ['content-type' 'text/html']~
+      del-stub
+      ==
     ==
   --
 --
@@ -162,6 +189,21 @@
       [here.bowl %cull ~]
       [here.bowl %tomb ~]
   ==
+::
+++  poke-tree-card
+  |=  [our=@p vax=vase]
+  ^-  card:neo
+  [#/[p/our]/tree %poke %tree-diff vax]
+::
+:: ++  kids-to-card
+:: |=  =pith:neo
+:: ?~  (~(kid of:neo) pith)
+::
+++  del-stub
+^-  manx
+;div
+  ;p:  deleted
+==
 ::
 ++  view 
   |=  =bowl:neo
@@ -218,6 +260,7 @@
       ?~  node=(~(get of:neo kids.bowl) /)
         ;div: no kids
     =/  =pail:neo  q.saga.u.node
+    :: ~&  >>>  reck/(reck (welp /base/neo/cod/std/src/imp [;;(@tas p.pail) ~]))
     ;div 
     =style  
     """
