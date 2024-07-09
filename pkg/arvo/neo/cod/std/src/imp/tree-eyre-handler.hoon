@@ -42,7 +42,6 @@
     ^-  (quip card:neo pail:neo)
     =/  [=stud:neo =vase]  (need pal)
     =+  !<([eyre-id=@ta req=inbound-request:eyre] vase)
-    ~&  >  req/req
     :_  [stud vase]
     ?~  src=(~(get by deps.bowl) %src)
       =/  stub=manx
@@ -56,8 +55,6 @@
         ['content-type' 'text/html']~
         stub
       ==
-    :: ~&  >  src/p.u.src
-    :: ~&  >  all-deps/~(tap by deps.bowl)
     =/  here  p.u.src
     ^-  (list card:neo)
     ?+    method.request.req  ~|(%unsupported-http-method !!)
@@ -76,34 +73,6 @@
             ['content-type' 'text/html']~
             stub
         ==
-    ::  deps = band 
-    ::  band = (map term fief)
-    ::  fief = [=deed =quay]
-    ::  quay = (pair lash (unit port))
-    ::  port = (pair dare lads)
-    ::  lads = (map pish lash)
-    ::  lash =   [state=curb poke=(set stud)]
-    ::
-    ::  lore = (axal idea)
-    ::  idea = [saga=(pair aeon pail) thru=(unit stud) pail]
-    ::  saga = (pair aeon pail)
-    ::  aeon = (pair ever oath)  
-    ::  ever - total shrub version 
-    ::  oath = (pair hash=@uvH seal=@uvH)
-    ::  pail = (pair stud vase)
-    ::
-    ::  src - (unit (pair pith lore))
-    ::  p.u.src  -  pith
-    ::  q.u.src  -  lore
-    ::  q.saga.idea.q.u.src - pail
-    ::  ~(tap by q.u.q.quay.u.src)
-    ::  q.q.pail
-      ::  get lash from dep and pass pokes to poke-form 
-      ::  from src
-    ::   ~&  >>>
-    ::   %+  turn  ~(tap of:neo q.u.src)
-    ::   |=  [=pith:neo =idea:neo]
-    ::   pail/(sell q.pail.idea)
       =/  bol  *bowl:neo
       =.  here.bol  here
       =.  our.bol  our.bowl
@@ -111,6 +80,8 @@
       =.  eny.bol  eny.bowl
       =.  kids.bol  q.u.src
       ~&  >  pail/q.saga.u.reet
+      ::~&  -:!>(kid:(~(kids of:neo q.u.src) /tasks))
+      ~&  ~(key by (~(kid of:neo q.u.src) /tasks))
       =/  stub=manx
         ;div
           ;+  (view bol)
@@ -136,23 +107,11 @@
       =/  cards=(list card:neo)
         ?+  -.diff-type  !!
             %send-tomb
-          =/  pit=pith:neo  (tail (tail +.diff-type))
-          ~&  >>  what-pith/pit
-          ~&  >>>  to-map/~(key by ~(tar of:neo (~(kids of:neo q.u.src) pit)))
-          =/  kids=(set pith:neo)  ~(key by (~(kid of:neo q.u.src) pit))
-          ~&  >>  kids/kids
-          ?~  kids
-              :~  (poke-tree-card our.bowl diff-vase)
-              ==
-            %-  welp  
-              :_  ~[[(poke-tree-card our.bowl diff-vase)]]
-              %+  turn  ~(tap in ~(key by (~(kid of:neo q.u.src) pit)))
-              |=  =pith:neo
-                ^-  card:neo
-                ~&  >>  pith-in-card/(welp +.diff-type pith)
-                %+  poke-tree-card 
-                    our.bowl 
-                !>([%send-tomb (welp +.diff-type pith)])
+          =/  pax=pith:neo  (tail (tail +.diff-type))
+          =/  poke-card=(list card:neo)  ~[(poke-tree-card our.bowl diff-vase)]
+          =/  kids  (kids-to-card pax q.u.src our.bowl here)
+          ?~  kids  poke-card
+          %+  welp  (flop kids)  poke-card
         ==
       =/  bol  *bowl:neo
       =.  here.bol  here
@@ -195,9 +154,39 @@
   ^-  card:neo
   [#/[p/our]/tree %poke %tree-diff vax]
 ::
-:: ++  kids-to-card
-:: |=  =pith:neo
-:: ?~  (~(kid of:neo) pith)
+++  kids-to-card
+  |=  [=pith:neo =lore:neo our=@p head-pith=pith:neo]
+  ^-  (list card:neo)
+  =/  cards  *(list card:neo)
+  =/  kids  (get-kids pith lore)
+  ~&  >>  head-pith/head-pith
+  ~&  >  all-kids/kids
+  ?~  kids  ~
+  %+  turn  kids
+    |=  p=pith:neo 
+    (poke-tree-card our !>([%send-tomb (welp head-pith p)]))
+::
+++  get-kids
+  |=  [=pith:neo =lore:neo]
+  =|  i=@
+  ^-  (list pith:neo)
+  =+  piths=(full-pith pith lore)
+  |-
+  ?:  =(i (lent piths))  piths
+    =/  p=pith:neo  (snag i piths)
+    ?~  (~(kid of:neo lore) p)  
+      $(i +(i))
+    =/  grand-kids  (full-pith p lore)
+    $(i +(i), piths (welp piths grand-kids))
+::
+++  full-pith
+  |=  [parent=pith:neo =lore:neo]
+  ^-  (list pith:neo)
+  ?~  (~(kid of:neo lore) parent)  ~
+  %+  turn  ~(tap in ~(key by (~(kid of:neo lore) parent)))  
+      |=  p=pith:neo 
+      %+  welp  parent
+      p
 ::
 ++  del-stub
 ^-  manx
@@ -260,7 +249,6 @@
       ?~  node=(~(get of:neo kids.bowl) /)
         ;div: no kids
     =/  =pail:neo  q.saga.u.node
-    :: ~&  >>>  reck/(reck (welp /base/neo/cod/std/src/imp [;;(@tas p.pail) ~]))
     ;div 
     =style  
     """
