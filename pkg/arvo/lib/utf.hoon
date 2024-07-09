@@ -13,6 +13,66 @@
 ::  Source
 ++  utf8
   |%
+  ::    $low
+  ::
+  ::  A UTF-8 multibyte character (not necessarily a single byte).
+  ::
+  ::  Source
+  +$  low   ?(@tD @tE @tF @tG)
+  ::    $calf
+  ::
+  ::  A list of UTF-8 multibyte characters (not a tape, which is `(list @tD)`).
+  ::  Since bitwidth letters aren't coercive, this union is advisory.
+  ::    Examples
+  ::      > `(list @ux)``(list @)`"Xanadu"
+  ::      ~[0x58 0x61 0x6e 0x61 0x64 0x75]
+  ::      > `(list @ux)``(list @)`"𐐞𐐰𐑌𐐲𐐼𐐭"
+  ::      ~[0xf0 0x90 0x90 0x9e 0xf0 0x90 0x90 0xb0 0xf0 0x90 0x91 0x8c 0xf0 0x90 0x90 0xb2 0xf0 0x90 0x90 0xbc 0xf0 0x90 0x90 0xad]
+  ::  Source
+  +$  calf  (list low)
+  ::    +lasso:  cord -> calf
+  ::
+  ::  Convert a cord into a calf; that is, unify UTF-8 multi-byte characters into
+  ::  a single $low (possibly multiple bytes) throughout a cord.
+  ::    Examples
+  ::      > (lasso '𐐞𐐰𐑌𐐲𐐼𐐭')
+  ::      ~['𐐞' '𐐰' '𐑌' '𐐲' '𐐼' '𐐭']
+  ::      > `(list @ux)``(list @)`(lasso '𐐞𐐰𐑌𐐲𐐼𐐭')
+  ::      ~[0x9e90.90f0 0xb090.90f0 0x8c91.90f0 0xb290.90f0 0xbc90.90f0 0xad90.90f0]
+  ::  Source
+  ++  lasso
+    |=  a=@t
+    ^-  calf
+    =|  i=@
+    =/  len=@  (met 3 a)
+    ~|  'Invalid UTF-8 string'
+    |-  ^-  calf
+    ?:  =(len i)  ~
+    =/  led=@t  (cut 3 [i 1] a)
+    ?:  =(0x7f (con led 0x7f))                       ::  1B
+      [led $(i +(i))]
+    ?:  =(0xdf (con led 0x1f))                       ::  2B
+      ?>  =(0xbf (con 0x3f (cut 3 [+(i) 1] a)))
+      [(cut 3 [i 2] a) $(i (add 2 i))]
+    ?:  =(0xef (con led 0xf))                        ::  3B
+      ?>  =(0xbf (con 0x3f (cut 3 [+(i) 1] a)))
+      ?>  =(0xbf (con 0x3f (cut 3 [(add 2 i) 1] a)))
+      [(cut 3 [i 3] a) $(i (add 3 i))]
+    ?>  =(0xf7 (con led 0x7))                        ::  4B
+    ?>  =(0xbf (con 0x3f (cut 3 [+(i) 1] a)))
+    ?>  =(0xbf (con 0x3f (cut 3 [(add 2 i) 1] a)))
+    ?>  =(0xbf (con 0x3f (cut 3 [(add 3 i) 1] a)))
+    [(cut 3 [i 4] a) $(i (add 4 i))]
+
+  ::    +brand:  calf -> cord
+  ::
+  ::  Convert a calf back into a cord; that is, split concatenate UTF-8 multi-byte characters
+  ::  back into bytes in a cord.
+  ::    Examples
+  ::      > (brand (lasso '𐐞𐐰𐑌𐐲𐐼𐐭'))
+  ::      '𐐞𐐰𐑌𐐲𐐼𐐭'
+  ::  Source
+  ++  brand  |=(=calf `cord`(rap 3 calf))
   ::  ++of-utf32:utf8
   ::
   ::  Convert UTF-32 atom to UTF-8 atom.
