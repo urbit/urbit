@@ -103,8 +103,11 @@
       =/  diff-vase  
       (http-request [poke-stud `request:http`request.req])
       =/  diff-type   !<(tree-diff diff-vase)
+      ~&  >>  diff-type/diff-type
       =/  cards=(list card:neo)
-        ?+  -.diff-type  !!
+        ?-  -.diff-type
+            %send-poke 
+          ~[(poke-tree-card our.bowl diff-vase)]
             %send-tomb
           =/  pax=pith:neo  (tail (tail +.diff-type))
           =/  poke-card=(list card:neo)  ~[(poke-tree-card our.bowl diff-vase)]
@@ -216,11 +219,26 @@
       ==
     ;style: {(trip reset)}
     ;style: {(trip feather)}
+    ;style: {tree-style}
     ==
     ;body 
       ;+  (body-view bowl)
     ==
   ==
+::
+++  tree-style 
+  ^~
+  %-  trip 
+  '''
+  .red-hover:hover{
+  background-color: #FF0000; 
+  color: white;
+  border-radius: 6px;
+  }
+  .pointer{
+  cursor: pointer;
+  }
+  '''
 ::
 ++  body-view
   |=  =bowl:neo
@@ -290,7 +308,7 @@
         =style  "grid-column: 1 ; grid-row: 1"
         ;  {(en-tape:pith:neo pith)}
         ==
-        ;div.loader.p2.hover
+        ;div.loader.p2.hover.pointer
         =style  "grid-column: 3 ; grid-row: 1; justify-self: end; border: 2px solid black; border-radius: 6px;"
         =onclick  "$(this).next().toggleClass('hidden');"
           ;span.loaded:  tomb
@@ -301,7 +319,7 @@
       ;div
         ;h3.p2:  state:
         ;+  (state-print q.saga.idea)
-        :: ;+  (poke-form pith)
+        ;+  (poke-form bowl pith)
       ==
     ==
   ==
@@ -316,42 +334,6 @@
     ?:  (gth size 750)  "vase too large to print: {<size>}"
     (of-wall:format (~(win re (sell q.pail)) 0 80))
   ==
-::
-++  poke-form
-  |=  =pith:neo
-  ^-  manx
-    ;form
-    =hx-post    "/neo/tree{(en-tape:pith:neo pith)}?stud=type-diff"
-    =hx-target  "find .loading"
-      ;input 
-      =type     "text"
-      =name     "diff-type"
-      =oninput  "this.setAttribute('value', this.value); this.parentNode.setAttribute('head', this.value);"
-      =autocomplete  "off"
-      =placeholder   "diff-type"
-      =required      ""
-      ;
-      ==
-      ;input 
-      =type   "text"
-      =name   "pith"
-      =value  "{(en-tape:pith:neo pith)}"
-      ;
-      ==
-      ;input 
-      =type   "text"
-      =name   "value1"
-      =oninput  "this.setAttribute('value', this.value);"
-      =autocomplete  "off"
-      =placeholder   "value"
-      =required      ""
-      ;
-      ==
-      ;button.loader
-        ;span.loaded:  create
-        ;span.loading:  loading
-      ==
-    ==
 ::
 ++  tomb-button
   |=  [=bowl:neo =pith:neo]
@@ -371,19 +353,55 @@
       ;div.fc.ac
         ;p:  {warning}
       ==
-      ;div.fr.ja
-        ;button.tomb-trigger.hfc.p2.hover
+      ;div.fr.ja.p2
+        ;button.tomb-trigger.hfc.p2.red-hover
         =onclick  "$(this).parent().parent().parent().addClass('hidden');"
         =name     "pith"
         =value    (en-tape:pith:neo (welp here.bowl pith))
           ;span:  yes
         ==
-        ;span.hfc.p2.hover
-        =style    "background-color: #FF0000; color: white;"
+        ;span.hfc.p2.red-hover.pointer
         =onclick  "$(this).parent().parent().parent().addClass('hidden');"
           ;span:  no
         ==
       ==
+    ==
+  ==
+::
+++  poke-form
+  |=  [=bowl:neo =pith:neo]
+  ^-  manx
+  ;form
+  =hx-post    "/neo/tree{(en-tape:pith:neo here.bowl)}?stud=tree-diff&head=send-poke"
+  =hx-target  "find .loading"
+  =hx-swap     "outerHTML"
+    ;input 
+    =type          "text"
+    =name          "stud"
+    =oninput       "this.setAttribute('value', this.value);"
+    =autocomplete  "off"
+    =placeholder   "diff-type"
+    =required      ""
+    ;
+    ==
+    ;input.hidden
+    =type   "text"
+    =name   "pith"
+    =value  (en-tape:pith:neo (welp here.bowl pith))
+    ;
+    ==
+    ;input 
+    =type          "text"
+    =name          "vase"
+    =oninput       "this.setAttribute('value', this.value);"
+    =autocomplete  "off"
+    =placeholder   "[@ @]"
+    =required      ""
+    ;
+    ==
+    ;button.loader
+      ;span.loaded:  create
+      ;span.loading:  loading
     ==
   ==
 ::

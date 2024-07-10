@@ -20,20 +20,27 @@
     ~&  >  stud/stud
     =/  this  !<(=tree q.pail)
     ?+  stud  !!
-    :: ::
-    ::     %ack-nack
-    ::   ~&  >>>  ack-nack/!<((unit tang) vase)
-    ::   [~ tree/!>(~)]
     ::
         %ack
-      ~&  >>  ack-vase-type/+.vase
-      ~&  >>  ack/!<((unit quit:neo) vase)
+    ::   ~&  >>  ack-vase-type/+.vase
+    ::   ~&  >>  ack/!<((unit quit:neo) vase)
       [~ tree/!>(~)]
       ::
         %tree-diff
       =/  diff  !<(tree-diff vase)
       ~&  >>>  diff-tree-imp/diff
-      ?+  -.diff  !!
+      ?-  -.diff  
+      ::
+          %send-poke
+        =/  =pith:neo  pith.diff
+        =/  poke-stud=stud:neo  stud.diff
+        ~&  vase.diff
+        =/  vax  vase.diff
+        :_   tree/!>(~)
+        :~  
+            [pith %poke [poke-stud vax]]
+        ==
+        ::
           %send-tomb
         =/  =pith:neo  +.diff
         ~&  >>>  pith-tomb/pith

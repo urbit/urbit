@@ -1,4 +1,4 @@
 $%  
-  [%send-poke =pith:neo type-diff=@tas val=*]
+  [%send-poke pith=pith:neo stud=stud:neo vase=vase]
   [%send-tomb =pith:neo]
 ==
