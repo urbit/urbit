@@ -600,6 +600,7 @@
     %kiln-uninstall          =;(f (f !<(_+<.f vase)) poke-uninstall)
     %kiln-unmount            =;(f (f !<(_+<.f vase)) poke-unmount)
     %kiln-unsync             =;(f (f !<(_+<.f vase)) poke-unsync)
+    %kiln-essential-desk     =;(f (f !<(_+<.f vase)) poke-essential-desk)
   ==
 ::
 ++  poke-approve-merge
@@ -1018,6 +1019,10 @@
   =.  ..abet  abet:drop:(sync hus)
   =.  zyn  (~(del by zyn) hus)
   abet:(spam (render "cancelling sync" sud.hus her.hus syd.hus kid.u.got) ~)
+::
+++  poke-essential-desk
+  |=  [=desk ese=?]
+  abet:(emit %pass /kiln/essential-desk %arvo %c %esse desk ese)
 ::  +peer: handle %watch
 ::
 ++  peer
