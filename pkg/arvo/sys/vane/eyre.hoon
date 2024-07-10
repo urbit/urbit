@@ -43,7 +43,7 @@
 ++  axle
   $:  ::  date: date at which http-server's state was updated to this data structure
       ::
-      date=%~2023.5.15
+      date=%~2024.6.1
       ::  server-state: state of inbound requests
       ::
       =server-state
@@ -998,9 +998,136 @@
       %^  return-static-data-on-duct  200  'text/plain'
       (as-octs:mimes:html (scot %p our))
     ::
+        %boot
+      (handle-boot identity request)
+    ::
+        %sponsor
+      (handle-sponsor identity request)
+    ::
         %four-oh-four
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 authenticated url.request ~)
+    ==
+  ::  Get current sponsor of ship
+  ::
+  ++  galaxy-for
+    |=  =ship
+    ^-  @p
+    =/  next  (^^sein:title rof /eyre our now ship)
+    ?:  ?=(%czar (clan:title next))
+      next
+    $(ship next)
+  ::
+  ++  handle-sponsor
+    |=  [=identity =request:http]
+    ^-  (quip move server-state)
+    =/  crumbs  q:(rash url.request apat:de-purl:html)
+    ?.  ?=([@t @t @t ~] crumbs)
+      %^  return-static-data-on-duct  400  'text/html'
+      %:  error-page
+        400
+        &
+        url.request
+        "Invalid input: Expected /~/boot/<ship=@p>"
+      ==
+    =/  ship
+      %+  slaw
+        %p
+      i.t.t.crumbs
+    ?~  ship
+      %^  return-static-data-on-duct  400  'text/html'
+      %:  error-page
+        400
+        &
+        url.request
+        "Invalid input: Expected /~/boot/<ship=@p>"
+      ==
+    %^  return-static-data-on-duct  200  'text/plain'
+    (as-octs:mimes:html (scot %p (galaxy-for u.ship)))
+  ::  Returns peer-state data for verifying sync status between ship and network.
+  ::  Takes two path parameters - ship=@p and optional bone=@u.
+  ::
+  ::  Responds with a @uw jam of a noun containing:
+  ::  version, sponsor, rift, life, bone as a unit (null if not provided), and
+  ::  the last-acked message-num of the provided ship and bone as a unit (null if
+  ::  bone is not provided).
+  ::
+  ::  Responds with a 404 error-page if either:
+  ::  - Peer is not %known
+  ::  - Bone was not found under peer (assuming bone was provided)
+  ::
+  ++  handle-boot
+    |=  [=identity =request:http]
+    ^-  (quip move server-state)
+    ?.  =(%'GET' method.request)
+      %^  return-static-data-on-duct  405  'text/html'
+      (error-page 405 & url.request "may only GET boot data")
+    =/  crumbs  q:(rash url.request apat:de-purl:html)
+    ?.  ?=([@t @t @t *] crumbs)
+      %^  return-static-data-on-duct  400  'text/html'
+      %:  error-page
+        400
+        &
+        url.request
+        "Invalid input: Expected /~/boot/<ship=@p> or /~/boot/<ship=@p>/<bone=@u>"
+      ==
+    =/  ship  %+(slaw %p i.t.t.crumbs)
+    =/  bone
+      %+  slaw
+        %ud
+      ?:  ?=([@t @t @t @t ~] crumbs)
+        i.t.t.t.crumbs
+      ''
+    ?:  ?|  ?=(~ ship)
+            ?&(?=([@t @t @t @t ~] crumbs) ?=(~ bone))
+        ==
+      %^  return-static-data-on-duct  400  'text/html'
+      %:  error-page
+        400
+        &
+        url.request
+        "Invalid input: Expected /~/boot/<ship=@p> or /~/boot/<ship=@p>/<bone=@u>"
+      ==
+    =/  des=(unit (unit cage))
+      %:  rof
+        [~ ~]
+        /eyre
+        %ax
+        [our %$ da+now]
+        /peers/(scot %p u.ship)
+      ==
+    ?.  ?=([~ ~ %noun *] des)
+      %^  return-static-data-on-duct  404  'text/html'
+      (error-page 404 & url.request "Peer {(scow %p u.ship)} not found.")
+    =/  ship-state
+      !<  ship-state:ames  q.u.u.des
+    ?>  ?=(%known -.ship-state)
+    ?~  bone
+      %^  return-static-data-on-duct  200  'application/octet-stream'
+      %-  as-octs:mimes:html
+      %-  jam
+      ^-  boot
+      [%1 (galaxy-for u.ship) rift.-.+.ship-state life.-.+.ship-state ~ ~]
+    =/  rcv=(map bone:ames message-sink-state:ames)  rcv.+.ship-state
+    =/  mss=(unit message-sink-state:ames)  (~(get by rcv) u.bone)
+    ?~  mss
+      %^  return-static-data-on-duct  404  'text/html'
+      %:  error-page
+        404
+        &
+        url.request
+        "Bone {(scow %u u.bone)} of peer {(scow %p u.ship)} not found."
+      ==
+    %^  return-static-data-on-duct  200  'application/octet-stream'
+    %-  as-octs:mimes:html
+    %-  jam
+    ^-  boot
+    :*  %1
+        (galaxy-for u.ship)
+        rift.-.+.ship-state
+        life.-.+.ship-state
+        bone
+        [~ last-acked.u.mss]
     ==
   ::  +handle-name: respond with the requester's @p
   ::
@@ -1201,7 +1328,7 @@
         %channel
       on-cancel-request:by-channel
     ::
-        ?(%scry %four-oh-four %name %host)
+        ?(%scry %four-oh-four %name %host %boot %sponsor)
       ::  it should be impossible for these to be asynchronous
       ::
       !!
@@ -3422,6 +3549,8 @@
           [[~ /~/scry] duct [%scry ~]]
           [[~ /~/name] duct [%name ~]]
           [[~ /~/host] duct [%host ~]]
+          [[~ /~/boot] duct [%boot ~]]
+          [[~ /~/sponsor] duct [%sponsor ~]]
       ==
     [~ http-server-gate]
   ::  %trim: in response to memory pressure
@@ -3914,6 +4043,7 @@
             [date=%~2023.3.16 server-state=server-state-2]
             [date=%~2023.4.11 server-state-3]
             [date=%~2023.5.15 server-state]
+            [date=%~2024.6.1 server-state]
         ==
       ::
       +$  server-state-0
@@ -4109,7 +4239,21 @@
       bindings.old
     ==
   ::
+  ::  adds /~/boot and /~/sponsor
+  ::
       %~2023.5.15
+    %=  $
+        date.old  %~2024.6.1
+    ::
+        bindings.old
+      %+  insert-binding
+        [[~ /~/boot] outgoing-duct.old [%boot ~]]
+      %+  insert-binding
+        [[~ /~/sponsor] outgoing-duct.old [%sponsor ~]]
+      bindings.old
+    ==
+  ::
+      %~2024.6.1
     http-server-gate(ax old)
   ==
 ::  +stay: produce current state
