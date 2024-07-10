@@ -5616,6 +5616,7 @@
                   ==
                 ev-core
               =/  proof=(list @ux)  (rip 8 dat.data)
+              ~&  >>>  auth/proof
               ?>  (ev-authenticate (recover-root:verifier:lss proof) aut.data name)
               =/  state  (init:verifier:lss tot.data proof)
               =.  chums.ames-state
@@ -5624,12 +5625,13 @@
                 %+  ~(put by pit)  sealed-path
                 u.res(ps `[state ~])
               ::
+              ~&  >>  "request next fragment"^fag
               ::  request next fragment
               ::
               (ev-push-pact %peek name(wan [%data 0]))
             ::
                 %data
-              ?>  =(13 boq.name)  :: non-standard
+              :: ?>  =(13 boq.name)  :: non-standard
               ::  do we have packet state already?
               ::
               ?~  ps.u.res
@@ -5682,8 +5684,11 @@
                 ?>  (ev-authenticate (recover-root:verifier:lss proof) aut.data name)
                 =/  state  (init:verifier:lss tot.data proof)
                 =.  state  (verify-msg:verifier:lss state 1.024^dat.data ~)
+                ~&  proof/proof
+                ~&  tot/tot.data
                 ::  initialize packet state and request next fragment
                 ::
+                ~&  >>  "request next fragment"^fag
                 =.  chums.ames-state
                   %+  ~(put by chums.ames-state)  her.name
                   =-  known/sat.per(pit -)
@@ -5721,6 +5726,7 @@
                 (ev-push-pact %peek name(wan [%data counter.los.ps]))
               ::  yield complete message
               ::
+              ~&  >>  "yield complete message"^fag
               =/  =spar  [her.name inner-path]
               =/  =auth:mess  [%| *@uxH] :: XX should be stored in ps?
               =/  res=@  (ev-decrypt-spac space (rep 13 (flop fags.ps)) cyf)
@@ -6093,7 +6099,7 @@
               ?>(?=(%page -.page) `q.page)
             =>  [res=res de=de:pact]
             ~>  %memo./ames/get-page
-            -:($:de ;;(@ +.q.q.u.u.res))
+            -:($:de ;;(@ q.q.u.u.res))
           ::
           +|  %fren-helpers
           ::
@@ -7666,13 +7672,13 @@
                         !=(0 fag)
                     ==
                   ~  :: non-standard proofs for later
-                =;  [pairs=(list (unit (pair @ux @ux))) nam=name:pact dat=data:pact]
+                =;  [nam=name:pact dat=data:pact]
                   =/  pac=pact:pact  [%page nam dat ~]
                   ?:  (gth fag tot.dat)
                     [~ ~]
                   ?.  ser.pac.nex
-                    ``[%packet !>([pairs pac])]
-                  ``[%packet !>([pairs p:(fax:plot (en:pact pac))])]
+                    ``[%packet !>(pac)]
+                  ``[%atom !>(p:(fax:plot (en:pact pac)))]
                 ::
                 ?-    typ.wan.pac.nex
                     %auth
@@ -7685,7 +7691,7 @@
                     ~>  %memo./ames/lss-auth
                     (build:lss (met 3 ser)^ser)
                   =/  dat  [wid aut (rep 8 proof.lss-proof)]  :: XX types
-                  [pairs.lss-proof nam dat]
+                  [nam dat]
                 ::
                     %data
                   =/  lss-proof
@@ -7693,7 +7699,7 @@
                     :: ~>  %bout.[1 %hint-data-lss]
                     ~>  %memo./ames/lss-data
                     :: ~&  data-lss/(met 3 ser)
-                    ~>  %bout.[1 %data-lss]
+                    :: ~>  %bout.[1 %data-lss]
                     (build:lss (met 3 ser)^ser)
                   =/  nam  [[our rif] [boq ?:(nit ~ [%data fag])] pat]
                   =/  aut=auth:pact
@@ -7716,7 +7722,7 @@
                     [%1 u.p]
                   ::
                   =/  dat  [wid aut (cut boq [fag 1] ser)]
-                  [pairs.lss-proof nam dat]
+                  [nam dat]
                 ==
               ::
               ::  XX need a single namespace entrypoint to validate
@@ -7827,7 +7833,9 @@
                 =/  who  (slaw %p her.tyl)
                 ?~  who  [~ ~]
                 ?~  chum=(~(get by chums.ames-state) u.who)
+                  ~&  (~(get by peers.ames-state) u.who)
                   [~ ~]
+                ?>  ?=(%known -.u.chum)
                 ``noun+!>(u.chum)
             ==
           ::
@@ -8289,22 +8297,23 @@
         !!  ::  $(+<.old %adult, +>.old state.old)
       ?:  ?=(%0 -.old)
          ~&  priv.old
-        :: =.  chums.old
-        ::   %-  ~(run by chums.old)
-        ::   |=  =chum-state
-        ::   ?:  ?=(%alien -.chum-state)
-        ::     ~&  %cleaning-alien
-        ::     chum-state
-        ::     :: chum-state(pit ~)
-        ::   ~&  %cleaning
-        ::   %_  chum-state
-        ::     flows    ~
-        ::     pit      ~
-        ::     corked   ~
-        ::     ossuary  =|  =ossuary  ossuary
-        ::              :: %_  ossuary
-        ::             ::   next-bone  40
-        ::   ==        :: ==
+        :: =.  peers.old  ~
+        :: =.   chums.old  ~
+          :: %-  ~(run by chums.old)
+          :: |=  =chum-state
+          :: ?:  ?=(%alien -.chum-state)
+          ::   ~&  %cleaning-alien
+          ::   chum-state
+          ::   :: chum-state(pit ~)
+
+          :: %_  chum-state
+          ::   flows    ~&  %cleaning-flows  ~
+          ::   pit      ~&  %cleaning-pit  ~
+          ::   corked   ~
+          ::   ossuary  =|  =ossuary  ossuary
+          ::           ::  %_  ossuary
+          ::             :: next-bone  40
+          :: ==        :: ==
         vane-gate(ames-state old)
       ::
       ?>  ?=([@ %adult *] old)
