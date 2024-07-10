@@ -80,7 +80,6 @@
       =.  eny.bol  eny.bowl
       =.  kids.bol  q.u.src
       ~&  >  pail/q.saga.u.reet
-      ::~&  -:!>(kid:(~(kids of:neo q.u.src) /tasks))
       ~&  ~(key by (~(kid of:neo q.u.src) /tasks))
       =/  stub=manx
         ;div
@@ -189,10 +188,11 @@
       p
 ::
 ++  del-stub
-^-  manx
-;div
-  ;p:  deleted
-==
+  ^-  manx
+  ;div.p2
+  =style  "grid-column: 3 ; grid-row: 1; justify-self: end;"
+    ;p:  deleted
+  ==
 ::
 ++  view 
   |=  =bowl:neo
@@ -277,11 +277,29 @@
         nothing
       ==
     ;div
-    =style  "grid-column-start: {(scow %ud +((lent pith)))}; grid-column-end: {(scow %ud (add 2 (lent pith)))}; grid-row-start: {(en-tape:pith:neo [-.pith ~])};grid-row-end: {(en-tape:pith:neo [-.pith ~])}; padding: 8px; border: 2px solid black;border-radius: 6px;margin-top: 1rem;"
-      ;h3:  {(en-tape:pith:neo pith)}
-      ;+  (tomb-button bowl pith)
+    =style  "grid-column-start: {(scow %ud +((lent pith)))}; grid-column-end: {(scow %ud (add 2 (lent pith)))}; grid-row-start: {(en-tape:pith:neo [-.pith ~])};grid-row-end: {(en-tape:pith:neo [-.pith ~])}; padding: 8px; border: 2px solid black; border-radius: 6px; margin-top: 1rem; margin-right: 1rem;"
       ;div
-        ;h3.wfc:  state
+      =style 
+      """
+      display: grid; 
+      grid-template-rows: auto auto auto; 
+      grid-template-columns: auto auto;
+      row-gap: 8px;
+      """
+        ;h3.p2.hfc
+        =style  "grid-column: 1 ; grid-row: 1"
+        ;  {(en-tape:pith:neo pith)}
+        ==
+        ;div.loader.p2.hover
+        =style  "grid-column: 3 ; grid-row: 1; justify-self: end; border: 2px solid black; border-radius: 6px;"
+        =onclick  "$(this).next().toggleClass('hidden');"
+          ;span.loaded:  tomb
+          ;span.loading:  loading
+        ==
+        ;+  (tomb-button bowl pith)
+      ==
+      ;div
+        ;h3.p2:  state:
         ;+  (state-print q.saga.idea)
         :: ;+  (poke-form pith)
       ==
@@ -291,7 +309,8 @@
 ++  state-print
   |=  =pail:neo
   ^-  manx
-  ;div.pre.mono.scroll-x.p2
+  ::;div.pre.mono.scroll-x.fr.jc.p2
+  ;div.fr.js.p2
     ;+  ;/
     =/  size  (met 3 (jam q.q.pail))
     ?:  (gth size 750)  "vase too large to print: {<size>}"
@@ -336,16 +355,35 @@
 ::
 ++  tomb-button
   |=  [=bowl:neo =pith:neo]
+  =/  warning  
+  ?~  ~(key by (~(kid of:neo kids.bowl) pith))  
+    "Are you sure you want to delete this shrub?"
+  "Are you sure you want to delete this shrub and all their kids?"
   ^-  manx
-  ;form
-  =hx-post    "/neo/tree{(en-tape:pith:neo here.bowl)}?stud=tree-diff&head=send-tomb"
-  =hx-target  "find .loader"
-  =hx-swap    "outerHTML"
-    ;button.loader
-    =name       "pith"
-    =value      (en-tape:pith:neo (welp here.bowl pith))
-      ;span.loaded:  tomb
-      ;span.loading:  loading
+  ;form.hidden.fc.ae.g2.grow
+  =style       "grid-column: 1 / 4; grid-row: 2; justify-self: center;"
+  =hx-post     "/neo/tree{(en-tape:pith:neo here.bowl)}?stud=tree-diff&head=send-tomb"
+  =hx-trigger  "click from:find .tomb-trigger"
+  =hx-target   "previous .loader"
+  =hx-swap     "outerHTML"
+    ;div.p2.grow
+    =style  "border: 2px solid #FF0000; border-radius: 6px;"
+      ;div.fc.ac
+        ;p:  {warning}
+      ==
+      ;div.fr.ja
+        ;button.tomb-trigger.hfc.p2.hover
+        =onclick  "$(this).parent().parent().parent().addClass('hidden');"
+        =name     "pith"
+        =value    (en-tape:pith:neo (welp here.bowl pith))
+          ;span:  yes
+        ==
+        ;span.hfc.p2.hover
+        =style    "background-color: #FF0000; color: white;"
+        =onclick  "$(this).parent().parent().parent().addClass('hidden');"
+          ;span:  no
+        ==
+      ==
     ==
   ==
 ::

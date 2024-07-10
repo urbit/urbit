@@ -3,7 +3,7 @@
 ^-  kook:neo
 |%
 ++  state  pro/%tree
-++  poke  (sy %tree-diff ~)
+++  poke  (sy %tree-diff %ack ~)
 ++  kids  *kids:neo
 ++  deps  *deps:neo
 ++  form  
@@ -20,8 +20,15 @@
     ~&  >  stud/stud
     =/  this  !<(=tree q.pail)
     ?+  stud  !!
-      ::   %tree  
-      :: [~ tree/vase]
+    :: ::
+    ::     %ack-nack
+    ::   ~&  >>>  ack-nack/!<((unit tang) vase)
+    ::   [~ tree/!>(~)]
+    ::
+        %ack
+      ~&  >>  ack-vase-type/+.vase
+      ~&  >>  ack/!<((unit quit:neo) vase)
+      [~ tree/!>(~)]
       ::
         %tree-diff
       =/  diff  !<(tree-diff vase)
@@ -32,8 +39,8 @@
         ~&  >>>  pith-tomb/pith
         :_   tree/!>(~)
         :~  
-            [pith %tomb ~]
             [pith %cull ~]
+            [pith %tomb ~]
         ==
       ==
     ==
