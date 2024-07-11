@@ -58,6 +58,7 @@
     =/  here  p.u.src
     ^-  (list card:neo)
     ?+    method.request.req  ~|(%unsupported-http-method !!)
+      ::
         %'GET'
       ?~  reet=(~(get of:neo q.u.src) /)
         =/  bol  *bowl:neo
@@ -92,6 +93,7 @@
           ['content-type' 'text/html']~
           stub
       ==
+      ::
         %'POST'
       =/  purl  (parse-url:serv request.req)
       =/  content-type  (~(gut by pam.purl) 'content-type' 'text/html')
@@ -104,29 +106,54 @@
       (http-request [poke-stud `request:http`request.req])
       =/  diff-type   !<(tree-diff diff-vase)
       ~&  >>  diff-type/diff-type
-      =/  cards=(list card:neo)
-        ?-  -.diff-type
-            %send-poke 
-          ~[(poke-tree-card our.bowl diff-vase)]
-            %send-tomb
-          =/  pax=pith:neo  (tail (tail +.diff-type))
-          =/  poke-card=(list card:neo)  ~[(poke-tree-card our.bowl diff-vase)]
-          =/  kids  (kids-to-card pax q.u.src our.bowl here)
-          ?~  kids  poke-card
-          %+  welp  (flop kids)  poke-card
-        ==
       =/  bol  *bowl:neo
       =.  here.bol  here
       =.  our.bol  our.bowl
       =.  now.bol  now.bowl
       =.  eny.bol  eny.bowl
-      %+  welp  cards
-      %:  eyre-cards
-      eyre-id
-      bol
-      200
-      ['content-type' 'text/html']~
-      del-stub
+      ?-  -.diff-type
+          %send-poke 
+        ?:  =(stud.diff-type %vase-error)
+          =/  error-stub=manx
+            ;div.p2
+            =style  "color: red;"
+              ;span:  failed to parse entered value to hoon
+            ==
+          %:  eyre-cards
+          eyre-id
+          bol
+          200
+          ['content-type' 'text/html']~
+          error-stub
+          ==
+        =/  poke-stub=manx
+          ;div.p2
+            ;span:  poking
+          ==
+        %+  welp   ~[(poke-tree-card our.bowl diff-vase)]
+        %:  eyre-cards
+        eyre-id
+        bol
+        200
+        ['content-type' 'text/html']~
+        poke-stub
+        ==
+          %send-tomb
+        =/  pax=pith:neo  (tail (tail +.diff-type))
+        =/  poke-card=(list card:neo)  ~[(poke-tree-card our.bowl diff-vase)]
+        =/  kids  (kids-to-card pax q.u.src our.bowl here)
+        ?~  kids  poke-card
+        ;:  welp  
+          (flop kids)  
+          poke-card
+          %:  eyre-cards
+          eyre-id
+          bol
+          200
+          ['content-type' 'text/html']~
+          del-stub
+          ==
+        ==
       ==
     ==
   --
@@ -309,7 +336,14 @@
         ;  {(en-tape:pith:neo pith)}
         ==
         ;div.loader.p2.hover.pointer
-        =style  "grid-column: 3 ; grid-row: 1; justify-self: end; border: 2px solid black; border-radius: 6px;"
+        =style     
+        """
+        grid-column: 3; 
+        grid-row: 1; 
+        justify-self: end; 
+        border: 2px solid black;
+        border-radius: 6px;
+        """
         =onclick  "$(this).next().toggleClass('hidden');"
           ;span.loaded:  tomb
           ;span.loading:  loading
@@ -373,14 +407,14 @@
   ^-  manx
   ;form
   =hx-post    "/neo/tree{(en-tape:pith:neo here.bowl)}?stud=tree-diff&head=send-poke"
-  =hx-target  "find .loading"
-  =hx-swap     "outerHTML"
+  :: =hx-target  "find .loader"
+  =hx-swap     "beforeend"
     ;input 
     =type          "text"
     =name          "stud"
     =oninput       "this.setAttribute('value', this.value);"
     =autocomplete  "off"
-    =placeholder   "diff-type"
+    =placeholder   "%diff-type"
     =required      ""
     ;
     ==

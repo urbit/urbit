@@ -23,8 +23,19 @@
     ::
         %ack
     ::   ~&  >>  ack-vase-type/+.vase
-    ::   ~&  >>  ack/!<((unit quit:neo) vase)
-      [~ tree/!>(~)]
+      :: ~&  >>  ack/!<((unit quit:neo) vase)
+      =/  =quit:neo  (need !<((unit quit:neo) vase))
+      ?+  -.quit  [~ tree/!>(~)]
+          %goof
+        =/  =tang  +.quit
+        ::  send error trace back to eyre-handler 
+        =/  trace
+          %+  turn  tang
+          |=  =tank
+          ~&  >  ~(ram re tank)
+          tank
+        [~ tree/!>(~)]
+      ==
       ::
         %tree-diff
       =/  diff  !<(tree-diff vase)

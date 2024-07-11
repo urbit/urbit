@@ -1,4 +1,4 @@
 $%  
-  [%send-poke pith=pith:neo stud=stud:neo vase=vase]
+  [%send-poke =pith:neo =stud:neo =vase]
   [%send-tomb =pith:neo]
 ==

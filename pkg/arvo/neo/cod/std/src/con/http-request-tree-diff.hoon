@@ -10,8 +10,10 @@
 ?+  head  ~|  [%unknown-head head]  !!
     %send-poke
   =/  =path  (stab (got:bod 'pith'))
-  =/  =stud:neo  `@tas`(got:bod 'stud')
+  =/  =stud:neo  !<(@tas (slap !>(~) (ream (got:bod 'stud'))))
   ~&  >  got-bod-vase/(got:bod 'vase')
+  ?~  (rush (got:bod 'vase') vest) 
+    [head (pave:neo path) %vase-error !>(~)]
   =/  vax=vase  (slap !>(.) (ream (got:bod 'vase')))
   [head (pave:neo path) stud vax]
   ::
@@ -19,4 +21,4 @@
   ~&  >>>  pith/(got:bod 'pith')
   =/  path  (stab (got:bod 'pith'))
   [head (pave:neo path)]
-==
+==  
