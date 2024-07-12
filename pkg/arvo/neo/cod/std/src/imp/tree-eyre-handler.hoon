@@ -65,7 +65,7 @@
         ['content-type' 'text/html']~
         *manx
         ==
-      ::  if goof retur err stack trace 
+      ::  if goof return err stack trace 
           %goof
         =/  =tang  +.quit
         =/  trace-manx
@@ -113,7 +113,7 @@
     =+  !<([eyre-id=@ta req=inbound-request:eyre] vase)
     :_  [stud vase]
     ?~  src=(~(get by deps.bowl) %src)
-      =/  stub=manx
+      =/  empty-view=manx
         ;div
           ;h1: nothing here
         ==
@@ -122,14 +122,14 @@
         bowl
         404
         ['content-type' 'text/html']~
-        stub
+        empty-view
       ==
     =/  here  p.u.src
     ^-  (list card:neo)
     ?+    method.request.req  ~|(%unsupported-http-method !!)
       ::
         %'GET'
-      ?~  reet=(~(get of:neo q.u.src) /)
+      ?~  (~(get of:neo q.u.src) /)
         =/  empty-view=manx
           ;div
             ;h1: nothing here
@@ -144,22 +144,16 @@
       =/  bol  *bowl:neo
       =.  here.bol  here
       =.  kids.bol  q.u.src
-      =/  view=manx
-        ;div
-          ;+  (view bol)
-        ==
       %:  eyre-cards
           eyre-id
           bowl
           200
           ['content-type' 'text/html']~
-          view
+          (view bol)
       ==
       ::
         %'POST'
       =/  purl  (parse-url:serv request.req)
-      =/  content-type  (~(gut by pam.purl) 'content-type' 'text/html')
-      =/  body  (parse-body:serv request.req)
       =/  poke-stud
         ^-  stud:neo
         ~|  %no-stud-specified
@@ -232,8 +226,6 @@
   ^-  (list card:neo)
   =/  cards  *(list card:neo)
   =/  kids  (get-kids pith lore)
-  ~&  >>  head-pith/head-pith
-  ~&  >  all-kids/kids
   ?~  kids  ~
   %+  turn  kids
     |=  p=pith:neo 
@@ -329,7 +321,7 @@
 ::
 ++  body-view
   |=  =bowl:neo
-  ;div
+  ;div.fc.js.p2.wf.p1
     ;+  (kids-view bowl)
   ==
 ::
@@ -349,7 +341,7 @@
   %-  crip  "[{(en-tape:pith:neo pith)}]"
   =/  row-template=tape  (join ' auto ' (weld "[first-row]" `tape`first-kids))
   ;div
-  =style  "display: grid; grid-template-rows: {row-template}; grid-template-columns: auto; padding: 12px;"
+  =style  "display: grid; grid-template-rows: {row-template}; grid-template-columns: auto; padding: 12px; margin:20px"
     ;+
       ?~  node=(~(get of:neo kids.bowl) /)
         ;div: no kids
