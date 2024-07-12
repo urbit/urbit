@@ -4857,7 +4857,10 @@
             =.  peer-core
               (send-shut-packet bone message-num %| %| ok lag=`@dr`0)
             ?~  next=~(top to pending-vane-ack.state)  sink
-            (handle-sink message-num.u.next message.u.next ok)
+            ::  u.next has not been sent to the vane so we assume ok=%.y;
+            ::  +done will be called again in the case of error
+            ::
+            (handle-sink message-num.u.next message.u.next ok=%.y)
           ::
           +|  %implementation
           ::  +handle-sink: dispatch message
@@ -6022,7 +6025,7 @@
           ~
         ?:  ?=([~ %known *] peer)
           (get-forward-lanes our +.u.peer peers.ames-state)
-        =/  sax  (rof ~ /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
+        =/  sax  (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
         ?.  ?=([~ ~ *] sax)
           ~
         =/  gal  (rear ;;((list ship) q.q.u.u.sax))

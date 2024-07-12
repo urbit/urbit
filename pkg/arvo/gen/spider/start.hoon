@@ -1,4 +1,4 @@
-::  Start a thread
+::  :spider|start  Start a thread
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
         [name=term vase=$@(~ [vase ~])]

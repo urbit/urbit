@@ -126,6 +126,11 @@
 ::  session-timeout: the delay before an idle session expires
 ::
 ++  session-timeout  ~d7
+::  eauth-timeout: max time we wait for remote scry response before serving 504
+::  eauth-cache-rounding: scry case rounding for cache hits & clock skew aid
+::
+++  eauth-timeout         ~s50
+++  eauth-cache-rounding  ~m5
 --
 ::  utilities
 ::
@@ -1815,10 +1820,10 @@
           %-  (trace 2 |.("eauth: %{(trip kind)} into {(scow %p ship)}"))
           ::  we round down the time to make it more likely to hit cache,
           ::  at the expense of not working if the endpoint changed within
-          ::  the last hour.
+          ::  the last +eauth-cache-rounding.
           ::
           =/  =wire       /eauth/keen/(scot %p ship)/(scot %uv nonce)
-          =.   time       (sub time (mod time ~h1))
+          =.   time       (sub time (mod time eauth-cache-rounding))
           =/  =spar:ames  [ship /e/x/(scot %da time)//eauth/url]
           [duct %pass wire %a ?-(kind %keen keen+[~ spar], %yawn yawn+spar)]
         ::
@@ -2129,7 +2134,7 @@
       ++  start-timeout
         |=  =path
         ^-  move
-        [duct %pass [%eauth %expire path] %b %wait (add now ~m5)]
+        [duct %pass [%eauth %expire path] %b %wait (add now eauth-timeout)]
       --
     --
   ::  +channel: per-event handling of requests to the channel system
