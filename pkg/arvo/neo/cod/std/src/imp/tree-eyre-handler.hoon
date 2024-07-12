@@ -14,7 +14,7 @@
 ^-  kook:neo
 |%
 ++  state  pro/%eyre-task
-++  poke   *(set stud:neo)
+++  poke   (sy %tree-diff %ack ~)
 ++  kids  *kids:neo
 ++  deps 
 :: static dep to imp folder to create new shrub 
@@ -36,7 +36,76 @@
   ++  poke  
     |=  [=stud:neo =vase]
     ^-  (quip card:neo pail:neo)
-    !!
+    ~&  >  stud/stud
+    =/  this  !<([eyre-id=@ta req=inbound-request:eyre] q.pail)
+    =/  eyre-id  eyre-id.this
+    :_  eyre-task/q.pail
+    ?+  stud  !!
+    ::
+        %ack
+      ?~  !<((unit quit:neo) vase)
+        =/  success-manx
+          ;div.p2
+            ;p:  success
+          ==
+        %:  eyre-cards
+        eyre-id
+        bowl
+        200
+        ['content-type' 'text/html']~
+        success-manx
+        ==
+      =/  =quit:neo  (need !<((unit quit:neo) vase))
+      ::  if not goof crush 404
+      ?+  -.quit  
+        %:  eyre-cards
+        eyre-id
+        bowl
+        404
+        ['content-type' 'text/html']~
+        *manx
+        ==
+      ::  if goof retur err stack trace 
+          %goof
+        =/  =tang  +.quit
+        =/  trace-manx
+          ;div.p2
+            ;*  %+  turn  tang
+              |=  =tank
+              ^-  manx
+              (err-manx ~(ram re tank))
+          ==
+        %:  eyre-cards
+        eyre-id
+        bowl
+        200
+        ['content-type' 'text/html']~
+        trace-manx
+        ==
+      ==
+      ::
+        %tree-diff
+      =/  diff  !<(tree-diff vase)
+      ~&  >>>  diff-tree-imp/diff
+      ?-  -.diff  
+        ::
+          %send-poke
+        =/  =pith:neo  pith.diff
+        =/  poke-stud=stud:neo  stud.diff
+        =/  vax  vase.diff
+        :~  
+            [pith %poke [poke-stud vax]]
+        ==
+        ::
+          %send-tomb
+        =/  =pith:neo  +.diff
+        ~&  >>>  pith-tomb/pith
+        :~  
+            [pith %cull ~]
+            [pith %tomb ~]
+        ==
+      ==
+    ==
   ++  init 
     |=  pal=(unit pail:neo)
     ^-  (quip card:neo pail:neo)
@@ -61,9 +130,7 @@
       ::
         %'GET'
       ?~  reet=(~(get of:neo q.u.src) /)
-        =/  bol  *bowl:neo
-        =.  here.bol  here
-        =/  stub=manx
+        =/  empty-view=manx
           ;div
             ;h1: nothing here
           ==
@@ -72,17 +139,12 @@
             bowl
             200
             ['content-type' 'text/html']~
-            stub
+            empty-view
         ==
       =/  bol  *bowl:neo
       =.  here.bol  here
-      =.  our.bol  our.bowl
-      =.  now.bol  now.bowl
-      =.  eny.bol  eny.bowl
       =.  kids.bol  q.u.src
-      ~&  >  pail/q.saga.u.reet
-      ~&  ~(key by (~(kid of:neo q.u.src) /tasks))
-      =/  stub=manx
+      =/  view=manx
         ;div
           ;+  (view bol)
         ==
@@ -91,7 +153,7 @@
           bowl
           200
           ['content-type' 'text/html']~
-          stub
+          view
       ==
       ::
         %'POST'
@@ -103,55 +165,37 @@
         ~|  %no-stud-specified
         (~(got by pam.purl) 'stud')
       =/  diff-vase  
-      (http-request [poke-stud `request:http`request.req])
+        (http-request [poke-stud `request:http`request.req])
       =/  diff-type   !<(tree-diff diff-vase)
       ~&  >>  diff-type/diff-type
-      =/  bol  *bowl:neo
-      =.  here.bol  here
-      =.  our.bol  our.bowl
-      =.  now.bol  now.bowl
-      =.  eny.bol  eny.bowl
       ?-  -.diff-type
           %send-poke 
         ?:  =(stud.diff-type %vase-error)
-          =/  error-stub=manx
-            ;div.p2
-            =style  "color: red;"
-              ;span:  failed to parse entered value to hoon
-            ==
           %:  eyre-cards
           eyre-id
-          bol
+          bowl
           200
           ['content-type' 'text/html']~
-          error-stub
+          (err-manx ~)
           ==
-        =/  poke-stub=manx
-          ;div.p2
-            ;span:  poking
-          ==
-        %+  welp   ~[(poke-tree-card our.bowl diff-vase)]
-        %:  eyre-cards
-        eyre-id
-        bol
-        200
-        ['content-type' 'text/html']~
-        poke-stub
+        :~  (poke-tree-card here.bowl diff-vase)
         ==
           %send-tomb
         =/  pax=pith:neo  (tail (tail +.diff-type))
-        =/  poke-card=(list card:neo)  ~[(poke-tree-card our.bowl diff-vase)]
-        =/  kids  (kids-to-card pax q.u.src our.bowl here)
-        ?~  kids  poke-card
-        ;:  welp  
+        =/  poke-card=(list card:neo)  ~[(poke-tree-card here.bowl diff-vase)]
+        =/  kids  (kids-to-card pax q.u.src here.bowl here)
+        =/  bol  *bowl:neo
+        =.  here.bol  here
+        =.  kids.bol  q.u.src
+        ;:  welp
           (flop kids)  
           poke-card
           %:  eyre-cards
           eyre-id
-          bol
+          bowl
           200
           ['content-type' 'text/html']~
-          del-stub
+          (view bol)
           ==
         ==
       ==
@@ -179,12 +223,12 @@
   ==
 ::
 ++  poke-tree-card
-  |=  [our=@p vax=vase]
+  |=  [here=pith:neo vax=vase]
   ^-  card:neo
-  [#/[p/our]/tree %poke %tree-diff vax]
+  [here %poke %tree-diff vax]
 ::
 ++  kids-to-card
-  |=  [=pith:neo =lore:neo our=@p head-pith=pith:neo]
+  |=  [=pith:neo =lore:neo here=pith:neo head-pith=pith:neo]
   ^-  (list card:neo)
   =/  cards  *(list card:neo)
   =/  kids  (get-kids pith lore)
@@ -193,7 +237,7 @@
   ?~  kids  ~
   %+  turn  kids
     |=  p=pith:neo 
-    (poke-tree-card our !>([%send-tomb (welp head-pith p)]))
+    (poke-tree-card here !>([%send-tomb (welp head-pith p)]))
 ::
 ++  get-kids
   |=  [=pith:neo =lore:neo]
@@ -217,9 +261,19 @@
       %+  welp  parent
       p
 ::
-++  del-stub
+++  err-manx       
+  |=  =tape
+  =/  msg  
+    ?~  tape  "failed to parse entered value to hoon"
+  tape
   ^-  manx
-  ;div.p2
+  ;div.p2.error
+    ;span:  {msg}
+  ==
+::
+++  del-manx
+  ^-  manx
+  ;div
   =style  "grid-column: 3 ; grid-row: 1; justify-self: end;"
     ;p:  deleted
   ==
@@ -264,6 +318,12 @@
   }
   .pointer{
   cursor: pointer;
+  }
+  .bd {
+  border: 0.8px solid black;
+  }
+  .error{
+  color: #FF0000; 
   }
   '''
 ::
@@ -321,47 +381,58 @@
       =style  "visibility: hidden"
         nothing
       ==
-    ;div
+    ;div.fc
     =style  "grid-column-start: {(scow %ud +((lent pith)))}; grid-column-end: {(scow %ud (add 2 (lent pith)))}; grid-row-start: {(en-tape:pith:neo [-.pith ~])};grid-row-end: {(en-tape:pith:neo [-.pith ~])}; padding: 8px; border: 2px solid black; border-radius: 6px; margin-top: 1rem; margin-right: 1rem;"
-      ;div
-      =style 
-      """
-      display: grid; 
-      grid-template-rows: auto auto auto; 
-      grid-template-columns: auto auto;
-      row-gap: 8px;
-      """
-        ;h3.p2.hfc
-        =style  "grid-column: 1 ; grid-row: 1"
-        ;  {(en-tape:pith:neo pith)}
+      ;div.fc.p2
+        ::;+  (forms bowl pith)
+        ;div.top.fr.jb
+          ;h3.p2.hfc.p2
+          ;  {(en-tape:pith:neo pith)}
+          ==
+          ;div.btn.fr.g4.p2.hover.pointer
+            ;div.tomb.hidden
+              ;div.loader.p2.bd.br2
+              =onclick  
+              """
+              $(this).parent().parent().parent().next().find('.tomb-form').toggleClass('hidden'); 
+              $(this).parent().parent().parent().next().find('.poke-form').toggleClass('hidden');
+              $(this).parent().toggleClass('hidden');
+              """
+                ;span.loaded:  tomb
+                ;span.loading:  loading
+              ==
+            ==
+            ;div.p2.bd.br2.hover.pointer
+            =onclick  
+            """
+            $(this).parent().parent().next().toggleClass('hidden');  
+            $(this).prev().toggleClass('hidden'); 
+            $(this).parent().parent().parent().toggleClass('bd');
+            $(this).parent().parent().parent().toggleClass('br2');
+            """
+              ;span:  ***
+            ==
+          ==
         ==
-        ;div.loader.p2.hover.pointer
-        =style     
-        """
-        grid-column: 3; 
-        grid-row: 1; 
-        justify-self: end; 
-        border: 2px solid black;
-        border-radius: 6px;
-        """
-        =onclick  "$(this).next().toggleClass('hidden');"
-          ;span.loaded:  tomb
-          ;span.loading:  loading
-        ==
-        ;+  (tomb-button bowl pith)
+        ;+  (forms bowl pith)
       ==
-      ;div
-        ;h3.p2:  state:
+      ;div.state.p2
+      =style  "margin-top:auto;"
         ;+  (state-print q.saga.idea)
-        ;+  (poke-form bowl pith)
       ==
     ==
+  ==
+::
+++  forms
+  |=  [=bowl:neo =pith:neo]  
+  ;div.hidden.forms
+    ;+  (poke-form bowl pith)
+    ;+  (tomb-form bowl pith)
   ==
 ::
 ++  state-print
   |=  =pail:neo
   ^-  manx
-  ::;div.pre.mono.scroll-x.fr.jc.p2
   ;div.fr.js.p2
     ;+  ;/
     =/  size  (met 3 (jam q.q.pail))
@@ -369,35 +440,38 @@
     (of-wall:format (~(win re (sell q.pail)) 0 80))
   ==
 ::
-++  tomb-button
+++  tomb-form
   |=  [=bowl:neo =pith:neo]
   =/  warning  
   ?~  ~(key by (~(kid of:neo kids.bowl) pith))  
     "Are you sure you want to delete this shrub?"
   "Are you sure you want to delete this shrub and all their kids?"
   ^-  manx
-  ;form.hidden.fc.ae.g2.grow
-  =style       "grid-column: 1 / 4; grid-row: 2; justify-self: center;"
+  ;form.tomb-form.p2.br2.bd.hidden
+  =style  "border: 2px solid #FF0000; border-radius: 6px;"
   =hx-post     "/neo/tree{(en-tape:pith:neo here.bowl)}?stud=tree-diff&head=send-tomb"
   =hx-trigger  "click from:find .tomb-trigger"
-  =hx-target   "previous .loader"
-  =hx-swap     "outerHTML"
-    ;div.p2.grow
-    =style  "border: 2px solid #FF0000; border-radius: 6px;"
-      ;div.fc.ac
-        ;p:  {warning}
+  ::  FIX THIS
+::   =hx-target   "previous .loader"
+::   =hx-swap     "innerHTML"
+    ;div.fc.ac
+      ;p:  {warning}
+    ==
+    ;div.fr.ja.p2
+      ;button.tomb-trigger.hfc.p2.red-hover
+      =onclick  "$(this).parent().parent().parent().parent().parent().addClass('hidden');"
+      =name     "pith"
+      =value    (en-tape:pith:neo (welp here.bowl pith))
+        ;span:  yes
       ==
-      ;div.fr.ja.p2
-        ;button.tomb-trigger.hfc.p2.red-hover
-        =onclick  "$(this).parent().parent().parent().addClass('hidden');"
-        =name     "pith"
-        =value    (en-tape:pith:neo (welp here.bowl pith))
-          ;span:  yes
-        ==
-        ;span.hfc.p2.red-hover.pointer
-        =onclick  "$(this).parent().parent().parent().addClass('hidden');"
-          ;span:  no
-        ==
+      ;span.hfc.p2.red-hover.pointer
+      =onclick  
+      """
+      $(this).parent().parent().addClass('hidden');
+      $(this).parent().parent().parent().find('.poke-form').toggleClass('hidden');
+      $(this).parent().parent().parent().prev().find('.btn').find('.tomb').toggleClass('hidden');
+      """
+        ;span:  no
       ==
     ==
   ==
@@ -405,11 +479,10 @@
 ++  poke-form
   |=  [=bowl:neo =pith:neo]
   ^-  manx
-  ;form
+  ;form.poke-form.fr.jb.g2
   =hx-post    "/neo/tree{(en-tape:pith:neo here.bowl)}?stud=tree-diff&head=send-poke"
-  :: =hx-target  "find .loader"
-  =hx-swap     "beforeend"
-    ;input 
+  =hx-swap     "beforebegin"
+    ;input.p2.bd.br2.grow
     =type          "text"
     =name          "stud"
     =oninput       "this.setAttribute('value', this.value);"
@@ -424,7 +497,7 @@
     =value  (en-tape:pith:neo (welp here.bowl pith))
     ;
     ==
-    ;input 
+    ;input.p2.bd.br2.grow
     =type          "text"
     =name          "vase"
     =oninput       "this.setAttribute('value', this.value);"
@@ -433,8 +506,8 @@
     =required      ""
     ;
     ==
-    ;button.loader
-      ;span.loaded:  create
+    ;button.loader.bd.br2
+      ;span.loaded:  poke
       ;span.loading:  loading
     ==
   ==
