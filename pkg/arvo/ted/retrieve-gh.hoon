@@ -91,7 +91,6 @@
   ==
 ::
 ~&  >  "Retrieving file URLs in /desk."
-::  current problem:  doesn't preserve directory info
 =/  sob=soba:clay  ~
 |-
 ?~  res  (pure:m !>(`soba:clay`sob))
