@@ -3,10 +3,6 @@
 ::
 /-  spider
 /+  strandio
-=>
-|%
-++  test  !!
---
 =,  strand=strand:spider
 ^-  thread:spider
 |=  arg=vase
