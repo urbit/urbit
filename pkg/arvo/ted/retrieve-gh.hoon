@@ -84,7 +84,6 @@
   %+  skim
     res
   |=  g=github
-  =/  pkg  =('pkg/arvo/' (cut 3 [0 9] path.g))
   ?&  =('blob' type.g)                  :: only files, not trees
       !=('120000' mode.g)               :: do not resolve symlinks
       =('desk/' (cut 3 [0 5] path.g))   :: only grab from /desk
