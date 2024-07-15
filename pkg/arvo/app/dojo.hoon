@@ -560,7 +560,7 @@
       ?:  ?=([%show %3] -.mad)
         (dy-rash %tan (dy-show-source q.mad) ~)
       ?:  ?=(%brev -.mad)
-        ?:  ?=(?(%eny %now %our) p.mad)
+        ?:  ?=(?(%eny %now %our %help) p.mad)
           (dy-rash %tan (cat 3 p.mad ' is immutable') ~)
         =.  var  (~(del by var) p.mad)
         =<  dy-amok
