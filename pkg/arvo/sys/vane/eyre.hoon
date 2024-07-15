@@ -4226,7 +4226,6 @@
   :: private endpoints
   ?.  ?=([~ ~] lyc)  ~
   ::  XX rename http?
-  ::  .^(cache-entry:eyre %ex /=base=/mime/cx/sys/kelvin)
   ::
   ?:  &(?=(%x ren) ?=([%mime @ *] tyl))
     =*  vew   i.t.tyl
@@ -4238,7 +4237,13 @@
     :^  ~  ~  %noun
     !>  ^-  cache-entry
     :-  auth=%|
-    [%payload [200 [['Accept-Ranges' 'bytes'] ~]] `q.mime]
+    :+  %payload
+      :-  200
+      ^=  headers
+      :~  ['accept-ranges' 'bytes']
+          ['content-type' (rsh 3 (spat p.mime))]
+      ==
+    data=[~ q.mime]
   ::
   ?:  &(?=(%x ren) ?=([%range %l @ *] tyl))
     (scry lyc pov car bem(s `path`[%range %lr (scot %ud 0) t.t.tyl]))
