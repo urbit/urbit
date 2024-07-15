@@ -91,9 +91,9 @@
   ==
 ::
 ~&  >  "Retrieving file URLs in /desk."
-=/  sob=soba:clay  ~
+=/  sob=(list (pair path (pair @ud @)))  ~
 |-
-?~  res  (pure:m !>(`soba:clay`sob))
+?~  res  (pure:m !>(`(list (pair path (pair @ud @)))`sob))
 ~&  >>  path.i.res
 ;<  ~  bind:m  (send-raw-card:strandio (build-file-request repo commit path.i.res))
 ;<  new=(pair wire sign-arvo)  bind:m  take-sign-arvo:strandio
@@ -104,5 +104,5 @@
 =/  t  (trip (cat 3 '/' path.i.res))
 =/  i  (need (find "." t))
 =/  p  (oust [0 1] (stab (crip (cass (snap t i '/')))))
-=/  s  `[path miso:clay]`[p %ins %mime !>([/ data.u.full-file.client-response.q.new])]
-$(sob `soba:clay`[s sob], res t.res)
+=/  s  [p data.u.full-file.client-response.q.new]
+$(sob [s sob], res t.res)
