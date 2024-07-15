@@ -314,17 +314,100 @@
   .bd {
   border: 0.8px solid black;
   }
+  .mt05{
+  margin-top: 0.5rem;
+  }
+  .mr05{
+  margin-right: 0.5rem;
+  }
+  .ml05{
+  margin-left: 0.5rem;
+  }
+  .mr1 {
+  margin-right: 1rem;
+  }
+  .ml1{
+  margin-left: 1rem;
+  }
   .error{
   color: #FF0000; 
+  }
+  .opened{
+  background: black;
+  color: white;
+  }
+  .plr3{
+  padding-left: 12px;
+  padding-right: 12px;
+  }
+  .z-100{
+  z-index:100;
+  }
+  .bg-white{
+  background: white;
   }
   '''
 ::
 ++  body-view
   |=  =bowl:neo
-  ;div.fc.js.p2.wf.p1
+  ;div.fc.js.p2.wf
+    ;+  (top-menu bowl)
     ;+  (kids-view bowl)
   ==
 ::
+++  top-menu
+  |=  =bowl:neo 
+  ;div.fc.ae.fixed.z-100.wf
+  =style 
+  """
+  top: 0;
+  left: 0;
+  """
+    ;+  (make-form bowl)
+    ;button.bd.br2.p2.mr1.mt1.bg-white
+      =onclick 
+      """
+      $(this).prev().toggleClass('hidden');
+      $(this).toggleClass('opened');
+      $(this).toggleClass('bg-white');
+      $(this).find('.open').toggleClass('hidden');
+      $(this).find('.close').toggleClass('hidden');
+      """
+      ;span.open.plr3:  V
+      ;span.close.hidden.plr3:  ^
+    ==
+  ==
+++  make-form
+  |=  =bowl:neo
+  ;form.make-form.hidden.bd.br2.fr.jb.g2.p2.wf.bg-white
+    ;input.bd.br2.p2.ml05 
+    =type  "text"
+    =placeholder  "/some/pith"
+    ;
+    ==
+    ;input.bd.br2.p2 
+    =type  "text"
+    =placeholder  "%shrub-type"
+    ;
+    ==
+    ;input.bd.br2.p2.grow
+    =type  "text"
+    =placeholder  "[=(unit pail:neo) =conf:neo]"
+    ;
+    ==
+    ;button.bd.br2.p2.mr05
+    =onclick  
+    """
+    alert('Not implemented yet!');
+    $(this).parent().toggleClass('hidden');
+    $(this).parent().next().toggleClass('opened');
+    $(this).parent().next().toggleClass('bg-white');
+    $(this).parent().next().find('.open').toggleClass('hidden');
+    $(this).parent().next().find('.close').toggleClass('hidden');
+    """
+      ;span:  make
+    ==
+  ==
 ++  kids-view
   |=  =bowl:neo
   =/  first-kids=(list @t)  
@@ -376,34 +459,18 @@
     ;div.fc
     =style  "grid-column-start: {(scow %ud +((lent pith)))}; grid-column-end: {(scow %ud (add 2 (lent pith)))}; grid-row-start: {(en-tape:pith:neo [-.pith ~])};grid-row-end: {(en-tape:pith:neo [-.pith ~])}; padding: 8px; border: 2px solid black; border-radius: 6px; margin-top: 1rem; margin-right: 1rem;"
       ;div.fc.p2
-        ::;+  (forms bowl pith)
         ;div.top.fr.jb
           ;h3.p2.hfc.p2
           ;  {(en-tape:pith:neo pith)}
           ==
-          ;div.btn.fr.g4.p2.hover.pointer
-            ;div.tomb.hidden
-              ;div.loader.p2.bd.br2
-              =onclick  
-              """
-              $(this).parent().parent().parent().next().find('.tomb-form').toggleClass('hidden'); 
-              $(this).parent().parent().parent().next().find('.poke-form').toggleClass('hidden');
-              $(this).parent().toggleClass('hidden');
-              """
-                ;span.loaded:  tomb
-                ;span.loading:  loading
-              ==
-            ==
-            ;div.p2.bd.br2.hover.pointer
-            =onclick  
-            """
-            $(this).parent().parent().next().toggleClass('hidden');  
-            $(this).prev().toggleClass('hidden'); 
-            $(this).parent().parent().parent().toggleClass('bd');
-            $(this).parent().parent().parent().toggleClass('br2');
-            """
-              ;span:  ***
-            ==
+          ;div.menu.p2.bd.br2.hover.pointer
+          =onclick  
+          """
+          $(this).toggleClass('opened');
+          $(this).parent().parent().parent().parent().prev().toggleClass('hidden');
+          $(this).parent().next().toggleClass('hidden');
+          """
+            ;span:  ***
           ==
         ==
         ;+  (forms bowl pith)
@@ -417,10 +484,56 @@
 ::
 ++  forms
   |=  [=bowl:neo =pith:neo]  
-  ;div.hidden.forms
+  =/  =idea:neo
+    ?~  (~(get of:neo kids.bowl) pith)  *idea:neo  
+    (need (~(get of:neo kids.bowl) pith))
+  ;div.hidden.forms.fc.ae.g2.fixed.z-100.wf.p1
+  =style 
+  """
+  top: 0;
+  left: 0;
+  background: white;
+  border-bottom: 2px solid black;
+  """
+    ;+  (top-menu-shrub bowl pith)
+    ;div.wf
+    ;+  (state-print q.saga.idea)
+    ==
     ;+  (poke-form bowl pith)
     ;+  (tomb-form bowl pith)
   ==
+::
+++  top-menu-shrub 
+  |=  [=bowl:neo =pith:neo]
+    ;div.fr.g2.wf.mt05
+      ;h1.grow.p2:  {(en-tape:pith:neo pith)}
+      ;button.p2.bd.br2
+      =onclick  
+      """
+      $(this).toggleClass('opened');
+      $(this).parent().parent().find('.tomb-form').toggleClass('hidden');
+      $(this).parent().parent().find('.poke-form').toggleClass('hidden');
+      """
+        ;span:  tomb
+      ==
+      ;button.p2.bd.br2.mr1
+      =onclick  
+      """
+      $(this).parent().parent().prev().find('.menu').removeClass('opened');
+      $(this).parent().parent().parent().parent().parent().prev().toggleClass('hidden');
+      $(this).parent().parent().toggleClass('hidden');
+      $(this).parent().parent().find('.tomb-form').addClass('hidden');
+      $(this).parent().parent().find('.poke-form').removeClass('hidden');
+      $(this).parent().parent().parent().parent().parent().prev().find('button').removeClass('opened');
+      $(this).parent().parent().parent().parent().parent().prev().find('button').addClass('bg-white');
+      $(this).parent().parent().prev().find('.menu').addClass('bg-white');
+      $(this).parent().parent().parent().parent().parent().prev().find('button').find('.open').removeClass('hidden');
+      $(this).parent().parent().parent().parent().parent().prev().find('button').find('.close').addClass('hidden');
+      $(this).parent().parent().parent().parent().parent().prev().find('.make-form').addClass('hidden');
+      """
+        ;span.plr3:  x
+      ==
+    ==
 ::
 ++  state-print
   |=  =pail:neo
@@ -439,7 +552,7 @@
     "Are you sure you want to delete this shrub?"
   "Are you sure you want to delete this shrub and all their kids?"
   ^-  manx
-  ;form.tomb-form.p2.br2.bd.hidden
+  ;form.tomb-form.hidden.bd.br2.p2.wf
   =style  "border: 2px solid #FF0000; border-radius: 6px;"
   =hx-post     "/neo/tree{(en-tape:pith:neo here.bowl)}?stud=tree-diff&head=send-tomb"
   =hx-trigger  "click from:find .tomb-trigger"
@@ -449,7 +562,7 @@
     ;div.fc.ac
       ;p:  {warning}
     ==
-    ;div.fr.ja.p2
+    ;div.fr.jc.g8.p2
       ;button.tomb-trigger.hfc.p2.red-hover
       =onclick  "$(this).parent().parent().parent().parent().parent().addClass('hidden');"
       =name     "pith"
@@ -461,7 +574,7 @@
       """
       $(this).parent().parent().addClass('hidden');
       $(this).parent().parent().parent().find('.poke-form').toggleClass('hidden');
-      $(this).parent().parent().parent().prev().find('.btn').find('.tomb').toggleClass('hidden');
+      $(this).parent().parent().prev().prev().find('.tomb').removeClass('opened')
       """
         ;span:  no
       ==
@@ -471,10 +584,10 @@
 ++  poke-form
   |=  [=bowl:neo =pith:neo]
   ^-  manx
-  ;form.poke-form.fr.jb.g2
+  ;form.poke-form.bd.br2.fr.jb.g2.p2.wf
   =hx-post    "/neo/tree{(en-tape:pith:neo here.bowl)}?stud=tree-diff&head=send-poke"
   =hx-swap     "beforebegin"
-    ;input.p2.bd.br2.grow
+    ;input.p2.bd.br2.ml05 
     =type          "text"
     =name          "stud"
     =oninput       "this.setAttribute('value', this.value);"
@@ -498,7 +611,7 @@
     =required      ""
     ;
     ==
-    ;button.loader.bd.br2
+    ;button.loader.bd.br2.mr05
       ;span.loaded:  poke
       ;span.loading:  loading
     ==
