@@ -22,7 +22,6 @@
         %+  ~(respond neo:srv eyre)   eyre-id
         (login-redirect:gen:srv request.req)
       =/  purl  (parse-url:serv request.req)
-      ~&  [purl/purl req/request.req]
       =/  inner=pith:neo  (pave:neo pax.purl)
       =/  =crew:neo  (~(gas by *crew:neo) src/inner ~)
       =/  =made:neo  [%tree-eyre-handler `[stud vase] crew]
