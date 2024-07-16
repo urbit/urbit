@@ -1019,8 +1019,6 @@
     =/  nom=@p
       ?+(-.identity who.identity %ours our)
     (as-octs:mimes:html (scot %p nom))
-  ::
-  +$  range  (pair (unit @ud) (unit @ud))
   ::  +handle-http-scry: respond with scry result
   ::
   ++  handle-http-scry
@@ -1029,8 +1027,6 @@
     ?.  authenticated  (error-response 403 ~)
     ?.  =(%'GET' method.request)
       (error-response 405 "may only GET scries")
-    ?:  =('range/' (cut 3 [5 6] url.request))
-      (handle-range authenticated request)
     =/  req  (parse-request-line url.request)
     =/  fqp  (fully-qualified site.req)
     =/  mym  (scry-mime now rof ext.req site.req)
@@ -1047,54 +1043,6 @@
         data=[~ q.mime]
         complete=%.y
     ==
-    ::  /ex/mime/foo -> return mime
-    ::
-    ++  handle-range
-      |=  [authenticated=? =request:http]
-      |^  ^-  (quip move server-state)
-      ?.  authenticated  (error-response 403 ~)
-      ?.  =(%'GET' method.request)
-        (error-response 405 "may only GET scries")
-      =/  req  (parse-request-line url.request)
-      =/  fqp  (fully-qualified site.req)
-      =/  rng  (get-range site.req)
-      =/  pax  (get-site site.req)
-      =/  mym  (scry-mime now rof ext.req pax)
-      ?:  ?=(%| -.mym)  (error-response 500 p.mym)
-      =*  mime  p.mym
-      =/  slic  (get-slice mime rng)
-      %-  handle-response
-      :*  %start
-          :-  status-code=206
-          ^=  headers
-            :~  ['content-type' (rsh 3 (spat p.mime))]
-                ['content-length' (crip (format-ud-as-integer p.slic))]
-                ['cache-control' ?:(fqp 'max-age=31536000' 'no-cache')]
-            ==
-          data=[~ slic]
-          complete=%.y
-      ==
-      ::
-      ++  get-range
-        |=  site=(pole @t)
-        ^-  range
-        ?.  ?=([@ %range start=@t end=@t *] site)
-          [~ ~]
-        [(slaw %ud start.site) (slaw %ud end.site)]
-      ::
-      ++  get-site
-        |=  site=(list @t)
-        ^-  path
-        ['_~_' (slag 4 site)]  ::  XX '_~_'
-      ::
-      ++  get-slice
-        |=  [dat=mime rng=range]
-        ^-  octs
-        =/  s  (fall p.rng 0)
-        =/  e  (fall q.rng p.q.dat)
-        %-  as-octs:mimes:html
-        (cut 3 [s e] q.q.dat)
-      --
     ::
     ++  fully-qualified
       |=  a=path
@@ -4225,7 +4173,6 @@
     ``noun+!>(u.val)
   :: private endpoints
   ?.  ?=([~ ~] lyc)  ~
-  ::  XX rename http?
   ::
   ?:  &(?=(%x ren) ?=([%mime @ *] tyl))
     =*  vew   i.t.tyl
@@ -4245,26 +4192,6 @@
       ==
     data=[~ q.mime]
   ::
-  ?:  &(?=(%x ren) ?=([%range %l @ *] tyl))
-    (scry lyc pov car bem(s `path`[%range %lr (scot %ud 0) t.t.tyl]))
-    ::
-  ?:  &(?=(%x ren) ?=([%range %lr @ @ @ *] tyl))
-    =/  left  (slav %ud i.t.t.tyl)
-    =/  rite  (slaw %ud i.t.t.t.tyl)
-    =*  vew   i.t.t.t.t.tyl
-    =*  rest  t.t.t.t.t.tyl
-    =/  =beak  -.bem
-    =/  mym  (scry-mime now rof ~ [%$ vew (en-beam beak rest)])
-    ?:  ?=(%| -.mym)  [~ ~]
-    =*  mime  p.mym
-    =/  =octs
-      %-  as-octs:mimes:html
-      (cut 3 [left ?~(rite p.q.mime u.rite)] q.q.mime)
-    :^  ~  ~  %noun
-    !>  ^-  cache-entry
-    :-  auth=%|
-    [%payload [200 ~] `octs]
-    ::
   ?:  &(?=(%x ren) ?=(%$ syd))
     =,  server-state.ax
     ?+  tyl  ~
