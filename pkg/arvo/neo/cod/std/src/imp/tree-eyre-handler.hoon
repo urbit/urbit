@@ -470,7 +470,7 @@
           $(this).parent().parent().parent().parent().prev().toggleClass('hidden');
           $(this).parent().next().toggleClass('hidden');
           """
-            ;span:  ***
+            ;span.s-1.wfc:  • • •
           ==
         ==
         ;+  (forms bowl pith)
