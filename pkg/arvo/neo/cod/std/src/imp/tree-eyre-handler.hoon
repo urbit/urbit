@@ -259,7 +259,7 @@
     ?~  tape  "failed to parse entered value to hoon"
   tape
   ^-  manx
-  ;div.p2.error
+  ;div.wf.fr.js.p1.error
     ;span:  {msg}
   ==
 ::
@@ -493,8 +493,8 @@
   top: 0;
   left: 0;
   background: white;
-  border-bottom: 2px solid black;
   """
+  ::  border-bottom: 2px solid black;
     ;+  (top-menu-shrub bowl pith)
     ;div.wf
     ;+  (state-print q.saga.idea)
