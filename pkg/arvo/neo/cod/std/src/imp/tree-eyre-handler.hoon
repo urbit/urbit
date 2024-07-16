@@ -111,6 +111,7 @@
     ^-  (quip card:neo pail:neo)
     =/  [=stud:neo =vase]  (need pal)
     =+  !<([eyre-id=@ta req=inbound-request:eyre] vase)
+    ~&  id/eyre-id
     :_  [stud vase]
     ?~  src=(~(get by deps.bowl) %src)
       =/  empty-view=manx
@@ -141,14 +142,21 @@
             ['content-type' 'text/html']~
             empty-view
         ==
+      ~&  >>>  'in GET'
       =/  bol  *bowl:neo
       =.  here.bol  here
       =.  kids.bol  q.u.src
+      ::~&   ~(key by (~(kid of:neo kids.bol) (tail here)))
+      =/  some-view 
+      ;div
+      ;h1:  some kids
+      ==
       %:  eyre-cards
           eyre-id
           bowl
           200
           ['content-type' 'text/html']~
+          ::some-view
           (view bol)
       ==
       ::
@@ -206,7 +214,11 @@
   |=  [eyre-id=@ta =bowl:neo status=@ud =header-list:http =manx]
   ^-  (list card:neo)
   =/  =pith:neo  #/[p/our.bowl]/$/eyre
-  =/  head=sign:eyre:neo  [eyre-id %head [status header-list]]
+  =/  headers  
+  %+  welp   
+    header-list
+  ['last-tree-location'^(en-cord:pith:neo /home) ~]
+  =/  head=sign:eyre:neo  [eyre-id %head [status headers]]
   =/  data=sign:eyre:neo  [eyre-id %data `(manx-to-octs manx)]
   =/  done=sign:eyre:neo  [eyre-id %done ~]
   :~  [pith %poke eyre-sign/!>(head)]
@@ -335,6 +347,7 @@
     %+  sort
       %+  skim  ~(tap of:neo kids.bowl) 
       |=  [=pith:neo *] 
+      ~&  kids-view/pith
       =(1 (lent pith))
     aor
   |=  [=pith:neo *] 
@@ -373,46 +386,50 @@
       =style  "visibility: hidden"
         nothing
       ==
-    ;div.fc
-    =style  "grid-column-start: {(scow %ud +((lent pith)))}; grid-column-end: {(scow %ud (add 2 (lent pith)))}; grid-row-start: {(en-tape:pith:neo [-.pith ~])};grid-row-end: {(en-tape:pith:neo [-.pith ~])}; padding: 8px; border: 2px solid black; border-radius: 6px; margin-top: 1rem; margin-right: 1rem;"
-      ;div.fc.p2
-        ::;+  (forms bowl pith)
-        ;div.top.fr.jb
-          ;h3.p2.hfc.p2
-          ;  {(en-tape:pith:neo pith)}
-          ==
-          ;div.btn.fr.g4.p2.hover.pointer
-            ;div.tomb.hidden
-              ;div.loader.p2.bd.br2
-              =onclick  
-              """
-              $(this).parent().parent().parent().next().find('.tomb-form').toggleClass('hidden'); 
-              $(this).parent().parent().parent().next().find('.poke-form').toggleClass('hidden');
-              $(this).parent().toggleClass('hidden');
-              """
-                ;span.loaded:  tomb
-                ;span.loading:  loading
-              ==
-            ==
-            ;div.p2.bd.br2.hover.pointer
-            =onclick  
-            """
-            $(this).parent().parent().next().toggleClass('hidden');  
-            $(this).prev().toggleClass('hidden'); 
-            $(this).parent().parent().parent().toggleClass('bd');
-            $(this).parent().parent().parent().toggleClass('br2');
-            """
-              ;span:  ***
-            ==
-          ==
-        ==
-        ;+  (forms bowl pith)
-      ==
-      ;div.state.p2
-      =style  "margin-top:auto;"
-        ;+  (state-print q.saga.idea)
-      ==
+    ~&  >  pith
+    ;div
+    ;h1:  {(en-tape:pith:neo pith)}
     ==
+    :: ;div.fc
+    :: =style  "grid-column-start: {(scow %ud +((lent pith)))}; grid-column-end: {(scow %ud (add 2 (lent pith)))}; grid-row-start: {(en-tape:pith:neo [-.pith ~])};grid-row-end: {(en-tape:pith:neo [-.pith ~])}; padding: 8px; border: 2px solid black; border-radius: 6px; margin-top: 1rem; margin-right: 1rem;"
+    ::   ;div.fc.p2
+    ::     ::;+  (forms bowl pith)
+    ::     ;div.top.fr.jb
+    ::       ;h3.p2.hfc.p2
+    ::       ;  {(en-tape:pith:neo pith)}
+    ::       ==
+    ::       ;div.btn.fr.g4.p2.hover.pointer
+    ::         ;div.tomb.hidden
+    ::           ;div.loader.p2.bd.br2
+    ::           =onclick  
+    ::           """
+    ::           $(this).parent().parent().parent().next().find('.tomb-form').toggleClass('hidden'); 
+    ::           $(this).parent().parent().parent().next().find('.poke-form').toggleClass('hidden');
+    ::           $(this).parent().toggleClass('hidden');
+    ::           """
+    ::             ;span.loaded:  tomb
+    ::             ;span.loading:  loading
+    ::           ==
+    ::         ==
+    ::         ;div.p2.bd.br2.hover.pointer
+    ::         =onclick  
+    ::         """
+    ::         $(this).parent().parent().next().toggleClass('hidden');  
+    ::         $(this).prev().toggleClass('hidden'); 
+    ::         $(this).parent().parent().parent().toggleClass('bd');
+    ::         $(this).parent().parent().parent().toggleClass('br2');
+    ::         """
+    ::           ;span:  ***
+    ::         ==
+    ::       ==
+    ::     ==
+    ::     ;+  (forms bowl pith)
+    ::   ==
+    ::   ;div.state.p2
+    ::   =style  "margin-top:auto;"
+    ::     ;+  (state-print q.saga.idea)
+    ::   ==
+    :: ==
   ==
 ::
 ++  forms
