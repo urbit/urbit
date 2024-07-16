@@ -292,7 +292,7 @@ For instance:
 - `/~sampel/path/to/counter/one` would be represented as `~[[%p ~sampel] %path %to %counter %one]`.
 - `/~sampel/path/to/counter/1` would be represented as `~[[%p ~sampel] %path %to %counter [%ud 1]]`.
 
-(You might also see a `pith` written in this irregular form `#/[p/our.bowl]/path/to/counter/one`.)
+You will also see `pith`s written in this irregular form `#/[p/our.bowl]/path/to/counter/one`.
 
 A `note` is one of the four types of command any shrub will accept.
 
@@ -308,18 +308,16 @@ A `note` is one of the four types of command any shrub will accept.
 Let’s `%make` a shrub at an arbitrary path `/path/to/counter` from the Dojo, giving it an initial state of `0`. We’ll explain the structure of the `%make` note in more detail in the Diary tutorial.
 
 ```
-:neo &neo-card [~[[%p our] %path %to %counter] [%make %counter `[%number !>(0)] ~]]
+:neo &neo-card [#/[p/our]/path/to/counter [%make %counter `[%number !>(0)] ~]]
 ```
-
-You should see `>>  /~zod/~/sys -> /~zod/path/to/counter: make` in the Dojo if successful.
 
 Now we can now send a `%poke` to the counter shrub at this path.
 
 ```
-:neo &neo-card [~[[%p our] %path %to %counter] [%poke [%counter-diff !>([%inc ~])]]]
+:neo &neo-card [#/[p/our]/path/to/counter [%poke [%counter-diff !>([%inc ~])]]]
 ```
 
-You'll know the poke worked if you see `>>  /~zod/~/sys -> /~zod/counter: %poke %counter-diff` in the Dojo. In the next section, we'll build a simple frontend that will enable us to view and modify the state of the shrub.
+How do we know these worked? There's currently no feedback in the Dojo, and no way to inspect the state of a shrub from the Dojo. In the next section, we'll build a simple frontend that will enable us to view the state of the shrub, and modify its state through the UI.
 
 ## Counter frontend in Sky
 
@@ -426,7 +424,7 @@ This is a more straightforward conversion from a dynamic XML node (in this case,
 The Sky homepage shows you one tile for all of the shrubs who are the immediate children of your `/home` shurb, which was made for you upon booting `%neo` for the first time. You won’t see a Counter tile there because there is no `/counter` shrub beneath `/home`, so let’s make one.
 
 ```
-:neo &neo-card [~[[%p our] %home %counter] [%make %counter `[%number !>(0)] ~]]
+:neo &neo-card [#/[p/our]/home/counter [%make %counter `[%number !>(0)] ~]]
 ```
 
 If you refresh your browser you should now see a tile labelled “counter”. Click there to see the Counter frontend from the `/con` file and increment the state of the `/counter` shrub.
