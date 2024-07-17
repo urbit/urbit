@@ -3,6 +3,7 @@
 /@  renderer
 /-  serv=sky-server
 /-  srv=server
+/-  b=blue
 ::  BLUE FALCON - a prototypical alternative to hawk
 ^-  kook:neo
 =<
@@ -74,24 +75,11 @@
         ::  gift: A renderer's manx has updated after
         ::        an http request, and now we must respond
         %gift
-      ::  Find which top-level session this gift
-      ::  (or series of gifts) came from
       :_  pail
-      =/  sesh=road:neo
-        =-  ?~  -  !!  :: if no top-level gifts, ignore request
-            -<-
-        %+  skim
-          ~(tap of:neo !<(gift:neo vax))
-        |=  [=road:neo =loot:neo]
-        =(1 (lent road))
-      ::  Grab the corresponding eyre-task from sessions
-      ::  and respond with updated UI
+      =/  sesh  (gift-session:b !<(gift:neo vax))
+      =/  ui  (session-ui:b [bowl sesh])
       =/  [eyre-id=@ta req=inbound-request:eyre]
         (~(got by sessions.state) sesh)
-      =/  ui
-        =/  =idea:neo  (~(got of:neo kids.bowl) sesh)
-        =/  =pail:neo  q.saga.idea
-        (need ui:!<(renderer q.pail))
       ^-  (list card:neo)
       %:  eyre-cards
         eyre-id

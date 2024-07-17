@@ -2,6 +2,7 @@
 /@  diary-diff
 /-  feather-icons
 /-  manx-utils
+/-  b=blue
 ^-  kook:neo
 =<
 |%
@@ -31,14 +32,13 @@
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo pail:neo)
     ?+    stud  !!
-    ::  rely: The shrub we're rendering updated its state.
-    ::        Re-render the UI and save it to our state.
         %rely
-      =/  sesh  session:!<(renderer q.pail)
-      [~ renderer/!>([sesh ~(render html [bowl sesh])])]
+      (render [bowl q.pail])
     ::
-    ::  manx: A poke comes in as a manx. Parse it,
-    ::        forward it, and then wait for the %rely.
+        %gift
+      (render-child:b [!<(gift:neo vax) bowl q.pail])
+    ::
+    ::  A poke comes in as a manx. Forward it and wait for %rely.
         %manx
       =;  poke
         :_  pail
@@ -65,33 +65,43 @@
     |=  pal=(unit pail:neo)
     ^-  (quip card:neo pail:neo)
     =/  [=stud:neo =vase]  (need pal)
-    =/  sesh  session:!<(renderer vase)
-    [~ renderer/!>([sesh ~(render html [bowl sesh])])]
+    (render [bowl vase])
   --
 --
 ::
 |%
+++  render
+  |=  [=bowl:neo =vase]
+  ^-  (quip card:neo pail:neo)
+  =/  sesh  session:!<(renderer vase)
+  =/  mac=[manx (list card:neo)]
+    ~(render html [bowl sesh])
+  :-  +.mac
+  renderer/!>([sesh `-.mac])
+::
 ++  html
   |_  [=bowl:neo sesh=road:neo]
   ++  render
-    ^-  manx
-    ;div.p-page
-      ;div.ma.fc.g2.mw-page
-        ;+  form-put-entry
-        ;*
-        %-  turn
-        :_  link-entry
-        %+  sort
-          %~  tap
-            of:neo
-          %.  /
-          %~  del 
-            of:neo
-          q:(~(got by deps.bowl) %src)
-        |=  [a=[=pith *] b=[=pith *]]
-        (gth ->.pith.a ->.pith.b)
-      == 
-    ==
+    ^-  [manx (list card:neo)]
+    =;  entries=(list [manx card:neo])
+      :_  (turn entries |=([* =card:neo] card))
+      ;div.p-page
+        ;div.ma.fc.g2.mw-page
+          ;+  form-put-entry
+          ;*  (turn entries |=([=manx *] manx))
+        == 
+      ==
+    %-  turn
+    :_  (recur:b [%txt-ui bowl sesh])
+    %+  sort
+      %~  tap
+        of:neo
+      %.  /
+      %~  del 
+        of:neo
+      q:(~(got by deps.bowl) %src)
+    |=  [a=[=pith *] b=[=pith *]]
+    (gth ->.pith.a ->.pith.b)
   ::
   ++  form-put-entry
     ;form.fc.g2
@@ -118,45 +128,5 @@
         ==
       ==
     ==
-  ::
-  ++  link-entry
-    |=  [pax=pith =idea:neo]
-    =/  tape  (trip !<(@t q.q.saga.idea))
-    =/  subject-end  (fall (find [10]~ tape) 56)
-    =/  subject  (scag subject-end tape)
-    =/  id  (trip (snag 0 (pout pax)))
-    ;div.fr.g2
-      ;a.p2.br1.grow.b1.hover.loader
-        ::  XX can't open this on its own until blue
-        ::     can use other top-level renderers
-        ::  =href  "{(en-tape:pith:neo (weld /neo/blue sesh))}/{id}"
-        ;div.loaded.fc.g1.js.as.g2
-          ;span.f3: {(pretty-date `@da`->:pax)}
-          ;span.bold: {subject}
-        ==
-        ;span.loading
-          ;+  loading.feather-icons
-        ==
-      ==
-      ;button.p2.br1.fr.g2.b1.hover.fc.ac.jc.loader
-        =hx-post  "/neo/blue{(en-tape:pith:neo sesh)}"
-        =head  "del-entry"
-        =hx-target  "find .loading"
-        =hx-swap  "outerHTML"
-        =diary-id  id
-        ;span.loaded
-          ;+  close.feather-icons
-        ==
-        ;span.loading
-          ;+  loading.feather-icons
-        ==
-      ==
-    ==
-  ::
-  ++  pretty-date
-    |=  date=@da
-    ^-  tape
-    =/  d  (yore date)
-    "{(y-co:co y:d)}-{(y-co:co m:d)}-{(y-co:co d:t:d)}"
   --
 --
