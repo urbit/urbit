@@ -26,36 +26,6 @@
     ^-  (quip card:neo pail:neo)
     =/  state  !<(blue q.pail)
     ?+    stud  ~|(bad-stud/stud !!)
-        ::  gift: A renderer's manx has updated after
-        ::        an http request, and now we're responding
-        %gift
-      ::  Find which top-level session this gift
-      ::  (or series of gifts) came from
-      :_  pail
-      =/  sesh=road:neo
-        =-  ?~  -  !!  :: if no top-level gifts, ignore
-            -<-
-        %+  skim
-          ~(tap of:neo !<(gift:neo vax))
-        |=  [=road:neo =loot:neo]
-        =(1 (lent road))
-      ::  Grab the corresponding eyre-task from sessions
-      ::  and respond with updated UI
-      =/  [eyre-id=@ta req=inbound-request:eyre]
-        (~(got by sessions.state) sesh)
-      =/  ui
-        =/  =idea:neo  (~(got of:neo kids.bowl) sesh)
-        =/  =pail:neo  q.saga.idea
-        (need ui:!<(renderer q.pail))
-      ^-  (list card:neo)
-      %:  eyre-cards
-        eyre-id
-        bowl
-        200
-        ['content-type' 'text/html']~
-        ui
-      ==
-    ::
         %eyre-task
       =+  !<(=task:eyre:neo vax)
       =/  [eyre-id=@ta req=inbound-request:eyre]  task
@@ -79,7 +49,7 @@
             (~(put by sessions.state) sesh task)
         :~  :+  (welp here.bowl sesh) 
               %make
-            :+  %diary-ui  ::  (~(got by renderers.state) inner)
+            :+  %diary-ui  ::  XX (~(got by renderers.state) inner)
               `[%renderer !>([sesh ~])]
             (~(gas by *crew:neo) src/inner ~)
         ==
@@ -100,13 +70,43 @@
             [%poke [%manx !>(body)]]
         ==
       ==
+    ::
+        ::  gift: A renderer's manx has updated after
+        ::        an http request, and now we must respond
+        %gift
+      ::  Find which top-level session this gift
+      ::  (or series of gifts) came from
+      :_  pail
+      =/  sesh=road:neo
+        =-  ?~  -  !!  :: if no top-level gifts, ignore request
+            -<-
+        %+  skim
+          ~(tap of:neo !<(gift:neo vax))
+        |=  [=road:neo =loot:neo]
+        =(1 (lent road))
+      ::  Grab the corresponding eyre-task from sessions
+      ::  and respond with updated UI
+      =/  [eyre-id=@ta req=inbound-request:eyre]
+        (~(got by sessions.state) sesh)
+      =/  ui
+        =/  =idea:neo  (~(got of:neo kids.bowl) sesh)
+        =/  =pail:neo  q.saga.idea
+        (need ui:!<(renderer q.pail))
+      ^-  (list card:neo)
+      %:  eyre-cards
+        eyre-id
+        bowl
+        200
+        ['content-type' 'text/html']~
+        ui
+      ==
     ==
   ++  init
     |=  pal=(unit pail:neo)
     ::=/  renderers  
     ::  (malt (limo [[#/[p/our.bowl]/home/diary %diary-ui] ~]))
     =/  renderers  ~
-    :_  [%blue !>(renderers)]
+    :_  [%blue !>([renderers ~])]
     =/  =pith:neo  #/[p/our.bowl]/$/eyre
     =/  =binding:eyre  [~ ~[%neo %blue]]
     =/  =req:eyre:neo  [%connect binding here.bowl]
