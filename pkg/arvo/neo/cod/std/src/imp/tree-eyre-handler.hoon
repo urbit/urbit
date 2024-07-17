@@ -344,7 +344,6 @@
     ;style: {tree-style}
     ==
     ;body 
-      ::;div:  something
       ;+  (body-view bowl)
     ==
   ==
@@ -455,7 +454,6 @@
   ;div.fr.js.p2
     ;+  ;/
     =/  size  (met 3 (jam q.q.pail))
-    ::  XX:  print anyway ?
     ?:  (gth size 750)  "vase too large to print: {<size>}"
     ~(ram re (sell q.pail))
   ==
