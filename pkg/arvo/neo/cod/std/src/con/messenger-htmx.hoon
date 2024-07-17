@@ -47,9 +47,10 @@
 ::
 ++  make-chat
   =/  oninput
-    """
-    this.setAttribute("value", this.value); this.nextElementSibling.nextElementSibling.setAttribute('hx-get', '/neo/hawk{(pith-tape here.bowl)}/dms/' + this.value); htmx.process(document.body);
-    """
+    :: """
+    :: this.setAttribute("value", this.value); this.nextElementSibling.nextElementSibling.setAttribute('hx-get', '/neo/hawk{(pith-tape here.bowl)}/dms/' + this.value); htmx.process(document.body);
+    :: """
+    (trip 'this.setAttribute("value", this.value); if (this.value.includes(" ~")){this.parentNode.setAttribute("head", "new-groupchat"); this.nextElementSibling.classList.remove("hidden");}else{this.parentNode.setAttribute("head", "new-dm"); this.nextElementSibling.classList.add("hidden");}')
   ;form.fr.jc.g1.w70
     =hx-post  "/neo/hawk{(pith-tape here.bowl)}?stud=messenger-diff"
     =head  "new-dm"
