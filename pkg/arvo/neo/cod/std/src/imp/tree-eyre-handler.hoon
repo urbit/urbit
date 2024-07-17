@@ -116,7 +116,6 @@
     ^-  (quip card:neo pail:neo)
     =/  [=stud:neo =vase]  (need pal)
     =+  !<([eyre-id=@ta req=inbound-request:eyre] vase)
-    ~&  id/eyre-id
     :_  [stud vase]
     ?~  src=(~(get by deps.bowl) %src)
       =/  empty-view=manx
@@ -131,7 +130,6 @@
         empty-view
       ==
     =/  here  p.u.src
-    ~&  >>>  here/here
     ^-  (list card:neo)
     ?+    method.request.req  ~|(%unsupported-http-method !!)
       ::
@@ -148,21 +146,15 @@
             ['content-type' 'text/html']~
             empty-view
         ==
-      ~&  >>>  'in GET'
       =/  bol  *bowl:neo
       =.  here.bol  here
+      =.  our.bol  our.bowl
       =.  kids.bol  q.u.src
-      ::~&   ~(key by (~(kid of:neo kids.bol) (tail here)))
-      =/  some-view 
-      ;div
-      ;h1:  some kids
-      ==
       %:  eyre-cards
           eyre-id
           bowl
           200
           ['content-type' 'text/html']~
-          ::some-view
           (view bol)
       ==
       ::
@@ -177,6 +169,7 @@
       =/  diff-type   !<(tree-diff diff-vase)
       =/  bol  *bowl:neo
       =.  here.bol  here
+      =.  our.bol  our.bowl
       =.  kids.bol  q.u.src
       ~&  >>  diff-type/diff-type
       ?-  -.diff-type
@@ -351,6 +344,7 @@
     ;style: {tree-style}
     ==
     ;body 
+      ::;div:  something
       ;+  (body-view bowl)
     ==
   ==
@@ -411,8 +405,15 @@
   |=  [=bowl:neo =pail:neo]
   ;div
     ;div.fc.g2.bd.br2.p2
-      ;div.top.fr.jb
-        ;p.p2.hfc:  {(en-tape:pith:neo here.bowl)}
+      ;div.top.fr.jb.g2
+        ;p.p2.hfc.wf.grow:  {(en-tape:pith:neo here.bowl)}
+        ;div.wf.fr.je
+          ;a.loader.p2.bd.br2
+          =href  "/neo/tree/{(scow %p our.bowl)}/cod/std/src/pro/{(trip ?@(p.pail p.pail mark.p.pail))}"
+            ;span.loaded.hf: {<p.pail>}
+            ;span.loading.hf:  loading
+          ==
+        ==
         ;+  buttons
       ==
       ;+  (state-print pail)
@@ -437,18 +438,26 @@
       ;div.p2.hfc.p2.hover
         ;  {(en-tape:pith:neo pith)}
       ==
-      ;+  (preview-state q.saga.idea)
+      ::(preview-state q.saga.idea)
     ==
   ==
 ::
 ++  state-print
   |=  =pail:neo
   ^-  manx
+  ?:  =(p.pail %hoon)
+    =/  wain=(list @t)  (to-wain:format !<(@t q.pail))
+    ;div.fc.g1.p2
+      ;*  %+  turn  wain
+      |=  lin=@t 
+      ;p:  {(trip lin)}\0a
+    ==
   ;div.fr.js.p2
     ;+  ;/
     =/  size  (met 3 (jam q.q.pail))
+    ::  XX:  print anyway ?
     ?:  (gth size 750)  "vase too large to print: {<size>}"
-    (of-wall:format (~(win re (sell q.pail)) 0 80))
+    ~(ram re (sell q.pail))
   ==
 ::
 ++  preview-state
@@ -456,10 +465,12 @@
   ^-  manx
   ;div.fr.js.p2
     ;+  ;/
+    =/  size  (met 3 (jam q.q.pail))
+    ?:  (gth size 300)  "too-large"
     =/  state-tape  ~(ram re (sell q.pail))
-    =/  length  (lent state-tape)
-    ?:  (gth length 140)  
-      (weld (oust [140 (sub length 140)] state-tape) "...")
+    ::=/  length  (lent state-tape)
+    ::?:  (gth length 140)  
+      ::(weld (oust [140 (sub length 140)] state-tape) "...")
     state-tape
   ==
 ::
