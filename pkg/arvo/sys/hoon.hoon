@@ -13833,8 +13833,8 @@
         |=(a=axis [%& a])
       ;~  pose
         ;~(pfix lus dim:ag)
-        ;~(pfix pam (cook |=(a=@ (sub (lsh [0 +(a)] 1) 2)) dim:ag))
-        ;~(pfix bar (cook |=(a=@ (sub (lsh [0 +(a)] 1) 1)) dim:ag))
+        ;~(pfix pam (cook |=(a=@ (sub (bex +(a)) 2)) dim:ag))
+        ;~(pfix bar (cook |=(a=@ (sub (bex +(a)) 1)) dim:ag))
         ven
         (cold 1 dot)
       ==
