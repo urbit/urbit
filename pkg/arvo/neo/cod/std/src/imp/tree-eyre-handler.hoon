@@ -44,10 +44,6 @@
     ::
         %ack
       ?~  !<((unit quit:neo) vase)
-        =/  success-manx
-          ;div.p2
-            ;p:  success
-          ==
         %:  eyre-cards
         eyre-id
         bowl
@@ -89,6 +85,15 @@
       ~&  >>>  diff-tree-imp/diff
       ?-  -.diff  
         ::
+          %send-make
+        :: =/  =pith:neo  pith.diff
+        :: =/  make-stud=stud:neo  stud.diff
+        :: =/  init=(unit pail:neo)  init.diff
+        :: =/  =conf:neo  conf.diff
+        :~  
+            [pith.diff %make stud.diff init.diff conf.diff]
+        ==
+        ::
           %send-poke
         =/  =pith:neo  pith.diff
         =/  poke-stud=stud:neo  stud.diff
@@ -125,6 +130,7 @@
         empty-view
       ==
     =/  here  p.u.src
+    ~&  >>>  here/here
     ^-  (list card:neo)
     ?+    method.request.req  ~|(%unsupported-http-method !!)
       ::
@@ -161,8 +167,42 @@
       =/  diff-vase  
         (http-request [poke-stud `request:http`request.req])
       =/  diff-type   !<(tree-diff diff-vase)
+      =/  bol  *bowl:neo
+      =.  here.bol  here
+      =.  kids.bol  q.u.src
       ~&  >>  diff-type/diff-type
       ?-  -.diff-type
+        ::
+          %send-make 
+        ?:  =(stud.diff-type %vase-error)
+          %:  eyre-cards
+          eyre-id
+          bowl
+          200
+          ['content-type' 'text/html']~
+          (err-manx ~)
+          ==
+        ?:  =(stud.diff-type %vase-not-made)
+          %:  eyre-cards
+          eyre-id
+          bowl
+          200
+          ['content-type' 'text/html']~
+          (err-manx "failed to convert provided value to [=(unit pail:neo) =conf:neo] type")
+          ==
+        ::  make cards don't have %acks yet 
+        ::  sending eyre response here for now 
+        %+  welp 
+        :~  (poke-tree-card here.bowl diff-vase)
+        ==
+        %:  eyre-cards
+          eyre-id
+          bowl
+          200
+          ['content-type' 'text/html']~
+          success-manx
+          ==
+        ::
           %send-poke 
         ?:  =(stud.diff-type %vase-error)
           %:  eyre-cards
@@ -174,13 +214,11 @@
           ==
         :~  (poke-tree-card here.bowl diff-vase)
         ==
+        ::
           %send-tomb
         =/  pax=pith:neo  (tail (tail +.diff-type))
         =/  poke-card=(list card:neo)  ~[(poke-tree-card here.bowl diff-vase)]
         =/  kids  (kids-to-card pax q.u.src here.bowl here)
-        =/  bol  *bowl:neo
-        =.  here.bol  here
-        =.  kids.bol  q.u.src
         ;:  welp
           (flop kids)  
           poke-card
@@ -270,6 +308,12 @@
     ;p:  deleted
   ==
 ::
+++  success-manx
+  ^-  manx
+  ;div.p2
+    ;p:  success
+  ==
+::
 ++  view 
   |=  =bowl:neo
   ;html
@@ -311,7 +355,7 @@
   .pointer{
   cursor: pointer;
   }
-  .bd {
+  .bd{
   border: 0.8px solid black;
   }
   .mt05{
@@ -323,12 +367,6 @@
   .ml05{
   margin-left: 0.5rem;
   }
-  .mr1 {
-  margin-right: 1rem;
-  }
-  .ml1{
-  margin-left: 1rem;
-  }
   .error{
   color: #FF0000; 
   }
@@ -336,204 +374,60 @@
   background: black;
   color: white;
   }
-  .plr3{
-  padding-left: 12px;
-  padding-right: 12px;
-  }
-  .z-100{
-  z-index:100;
-  }
   .bg-white{
   background: white;
+  }
+  .hover-gray:hover{
+  background: #dbdbdb;
   }
   '''
 ::
 ++  body-view
   |=  =bowl:neo
-  ;div.fc.js.p2.wf
-    ;+  (top-menu bowl)
-    ;+  (kids-view bowl)
-  ==
-::
-++  top-menu
-  |=  =bowl:neo 
-  ;div.fc.ae.fixed.z-100.wf
-  =style 
-  """
-  top: 0;
-  left: 0;
-  """
-    ;+  (make-form bowl)
-    ;button.bd.br2.p2.mr1.mt1.bg-white
-      =onclick 
-      """
-      $(this).prev().toggleClass('hidden');
-      $(this).toggleClass('opened');
-      $(this).toggleClass('bg-white');
-      $(this).find('.open').toggleClass('hidden');
-      $(this).find('.close').toggleClass('hidden');
-      """
-      ;span.open.plr3:  V
-      ;span.close.hidden.plr3:  ^
-    ==
-  ==
-++  make-form
-  |=  =bowl:neo
-  ;form.make-form.hidden.bd.br2.fr.jb.g2.p2.wf.bg-white
-    ;input.bd.br2.p2.ml05 
-    =type  "text"
-    =placeholder  "/some/pith"
-    ;
-    ==
-    ;input.bd.br2.p2 
-    =type  "text"
-    =placeholder  "%shrub-type"
-    ;
-    ==
-    ;input.bd.br2.p2.grow
-    =type  "text"
-    =placeholder  "[=(unit pail:neo) =conf:neo]"
-    ;
-    ==
-    ;button.bd.br2.p2.mr05
-    =onclick  
-    """
-    alert('Not implemented yet!');
-    $(this).parent().toggleClass('hidden');
-    $(this).parent().next().toggleClass('opened');
-    $(this).parent().next().toggleClass('bg-white');
-    $(this).parent().next().find('.open').toggleClass('hidden');
-    $(this).parent().next().find('.close').toggleClass('hidden');
-    """
-      ;span:  make
-    ==
-  ==
-++  kids-view
-  |=  =bowl:neo
-  =/  first-kids=(list @t)  
-  :: TODO: if all kids
-  :: only pith 
-  %+  turn 
-    ::only short paths
-    %+  sort
-      %+  skim  ~(tap of:neo kids.bowl) 
-      |=  [=pith:neo *] 
-      =(1 (lent pith))
-    aor
-  |=  [=pith:neo *] 
-  %-  crip  "[{(en-tape:pith:neo pith)}]"
-  =/  row-template=tape  (join ' auto ' (weld "[first-row]" `tape`first-kids))
-  ;div
-  =style  "display: grid; grid-template-rows: {row-template}; grid-template-columns: auto; padding: 12px; margin:20px"
+  ;div.wf
     ;+
       ?~  node=(~(get of:neo kids.bowl) /)
         ;div: no kids
     =/  =pail:neo  q.saga.u.node
-    ;div 
-    =style  
-    """
-    grid-column-start: 1;
-    grid-column-end: 2; 
-    grid-row-start: first-row; 
-    grid-row-end: first-row; 
-    padding: 8px; 
-    border: 2px solid black;
-    border-radius: 6px; 
-    margin-top: 1rem;
-    margin-right: 1rem;
-    """
-      ;p: {<p.pail>}
-      ;+  (state-print pail)
+    ;div.fc.js.p2.g2
+      ;+  (shrub-view bowl pail)
+      ;+  (kids-view bowl)
     ==
+  ==
+::
+++  shrub-view 
+  |=  [=bowl:neo =pail:neo]
+  ;div
+    ;div.fc.g2.bd.br2.p2
+      ;div.top.fr.jb
+        ;p.p2.hfc:  {(en-tape:pith:neo here.bowl)}
+        ;+  buttons
+      ==
+      ;+  (state-print pail)
+      ;+  (forms bowl)
+    ==
+  ==
+++  kids-view
+  |=  =bowl:neo
+  ;div.fc.g2
     ;*
     %+  turn  
         %+  sort  ~(tap of:neo kids.bowl) 
         aor
-    |=  [=pith =idea:neo]
+    |=  [=pith:neo =idea:neo]
     ^-  manx
     ?~  pith  
-      ;div
-      =style  "visibility: hidden"
-        nothing
+      ;div.hidden
+        ;  nothing
       ==
-    ;div.fc
-    =style  "grid-column-start: {(scow %ud +((lent pith)))}; grid-column-end: {(scow %ud (add 2 (lent pith)))}; grid-row-start: {(en-tape:pith:neo [-.pith ~])};grid-row-end: {(en-tape:pith:neo [-.pith ~])}; padding: 8px; border: 2px solid black; border-radius: 6px; margin-top: 1rem; margin-right: 1rem;"
-      ;div.fc.p2
-        ;div.top.fr.jb
-          ;h3.p2.hfc.p2
-          ;  {(en-tape:pith:neo pith)}
-          ==
-          ;div.menu.p2.bd.br2.hover.pointer
-          =onclick  
-          """
-          $(this).toggleClass('opened');
-          $(this).parent().parent().parent().parent().prev().toggleClass('hidden');
-          $(this).parent().next().toggleClass('hidden');
-          """
-            ;span.s-1.wfc:  • • •
-          ==
-        ==
-        ;+  (forms bowl pith)
+    ;a.fr.jb.g1.bd.br2.hover-gray
+    =href  "/neo/tree{(en-tape:pith:neo (welp here.bowl pith))}"
+      ;div.p2.hfc.p2.hover
+        ;  {(en-tape:pith:neo pith)}
       ==
-      ;div.state.p2
-      =style  "margin-top:auto;"
-        ;+  (state-print q.saga.idea)
-      ==
+      ;+  (preview-state q.saga.idea)
     ==
   ==
-::
-++  forms
-  |=  [=bowl:neo =pith:neo]  
-  =/  =idea:neo
-    ?~  (~(get of:neo kids.bowl) pith)  *idea:neo  
-    (need (~(get of:neo kids.bowl) pith))
-  ;div.hidden.forms.fc.ae.g2.fixed.z-100.wf.p1
-  =style 
-  """
-  top: 0;
-  left: 0;
-  background: white;
-  """
-  ::  border-bottom: 2px solid black;
-    ;+  (top-menu-shrub bowl pith)
-    ;div.wf
-    ;+  (state-print q.saga.idea)
-    ==
-    ;+  (poke-form bowl pith)
-    ;+  (tomb-form bowl pith)
-  ==
-::
-++  top-menu-shrub 
-  |=  [=bowl:neo =pith:neo]
-    ;div.fr.g2.wf.mt05
-      ;h1.grow.p2:  {(en-tape:pith:neo pith)}
-      ;button.p2.bd.br2
-      =onclick  
-      """
-      $(this).toggleClass('opened');
-      $(this).parent().parent().find('.tomb-form').toggleClass('hidden');
-      $(this).parent().parent().find('.poke-form').toggleClass('hidden');
-      """
-        ;span:  tomb
-      ==
-      ;button.p2.bd.br2.mr1
-      =onclick  
-      """
-      $(this).parent().parent().prev().find('.menu').removeClass('opened');
-      $(this).parent().parent().parent().parent().parent().prev().toggleClass('hidden');
-      $(this).parent().parent().toggleClass('hidden');
-      $(this).parent().parent().find('.tomb-form').addClass('hidden');
-      $(this).parent().parent().find('.poke-form').removeClass('hidden');
-      $(this).parent().parent().parent().parent().parent().prev().find('button').removeClass('opened');
-      $(this).parent().parent().parent().parent().parent().prev().find('button').addClass('bg-white');
-      $(this).parent().parent().prev().find('.menu').addClass('bg-white');
-      $(this).parent().parent().parent().parent().parent().prev().find('button').find('.open').removeClass('hidden');
-      $(this).parent().parent().parent().parent().parent().prev().find('button').find('.close').addClass('hidden');
-      $(this).parent().parent().parent().parent().parent().prev().find('.make-form').addClass('hidden');
-      """
-        ;span.plr3:  x
-      ==
-    ==
 ::
 ++  state-print
   |=  =pail:neo
@@ -545,10 +439,154 @@
     (of-wall:format (~(win re (sell q.pail)) 0 80))
   ==
 ::
+++  preview-state
+  |=  =pail:neo
+  ^-  manx
+  ;div.fr.js.p2
+    ;+  ;/
+    =/  state-tape  ~(ram re (sell q.pail))
+    =/  length  (lent state-tape)
+    ?:  (gth length 140)  
+      (weld (oust [140 (sub length 140)] state-tape) "...")
+    state-tape
+  ==
+::
+++  buttons
+  ;div.buttons.fr.g2
+    ;button.make.p2.bd.br2.bg-white
+    =onclick  
+      """
+      $(this).toggleClass('toggled');
+      $(this).parent().find('.poke').removeClass('toggled');
+      $(this).parent().find('.tomb').removeClass('toggled');
+      $(this).parent().parent().parent().find('.forms').find('.make-form').toggleClass('hidden');
+      $(this).parent().parent().parent().find('.forms').find('.tomb-form').addClass('hidden');
+      $(this).parent().parent().parent().find('.forms').find('.poke-form').addClass('hidden');
+      """
+      ;span:  make
+    ==
+    ;button.poke.p2.bd.br2.bg-white
+    =onclick  
+      """
+      $(this).toggleClass('toggled');
+      $(this).parent().find('.make').removeClass('toggled');
+      $(this).parent().find('.tomb').removeClass('toggled');
+      $(this).parent().parent().parent().find('.forms').find('.poke-form').toggleClass('hidden');
+      $(this).parent().parent().parent().find('.forms').find('.make-form').addClass('hidden');
+      $(this).parent().parent().parent().find('.forms').find('.tomb-form').addClass('hidden');
+      """
+      ;span:  poke
+    ==
+    ;button.tomb.p2.bd.br2.bg-white
+    =onclick  
+      """
+      $(this).toggleClass('toggled');
+      $(this).parent().find('.make').removeClass('toggled');
+      $(this).parent().find('.poke').removeClass('toggled');
+      $(this).parent().parent().parent().find('.forms').find('.tomb-form').toggleClass('hidden');
+      $(this).parent().parent().parent().find('.forms').find('.make-form').addClass('hidden');
+      $(this).parent().parent().parent().find('.forms').find('.poke-form').addClass('hidden');
+      """
+      ;span:  tomb
+    ==
+  ==
+::
+++  forms
+  |=  =bowl:neo
+  ;div.forms.fc.ae.g2.wf.p1
+    ;+  (make-form bowl)
+    ;+  (poke-form bowl)
+    ;+  (tomb-form bowl)
+  ==
+::
+++  make-form
+  |=  =bowl:neo
+  ;form.make-form.hidden.bd.br2.fr.jb.g2.p2.wf.bg-white
+  =hx-post  "/neo/tree{(en-tape:pith:neo here.bowl)}?stud=tree-diff&head=send-make"
+  =hx-swap  "beforebegin"
+    ;input.hidden
+    =type   "text"
+    =name   "here"
+    =value  (en-tape:pith:neo here.bowl)
+    ;
+    ==
+    ;input.bd.br2.p2.ml05 
+    =type  "text"
+    =name  "pith"
+    =oninput  "this.setAttribute('value', this.value);"
+    =placeholder  "/some/pith"
+    =required      ""
+    ;
+    ==
+    ;input.bd.br2.p2 
+    =type  "text"
+    =name  "stud"
+    =oninput  "this.setAttribute('value', this.value);"
+    =placeholder  "%shrub-type"
+    =required      ""
+    ;
+    ==
+    ;input.bd.br2.p2.grow
+    =type  "text"
+    =name  "vase"
+    =oninput  "this.setAttribute('value', this.value);"
+    =placeholder  "[=(unit pail:neo) =conf:neo]"
+    =required      ""
+    ;
+    ==
+    ;button.bd.br2.p2.mr05.loader
+    :: =onclick  
+    :: """
+    :: $(this).parent().toggleClass('hidden');
+    :: $(this).parent().next().toggleClass('bg-white');
+    :: $(this).parent().next().find('.open').toggleClass('hidden');
+    :: $(this).parent().next().find('.close').toggleClass('hidden');
+    :: """
+      ;span.loaded:  make
+      ;span.loading:  loading
+    ==
+  ==
+::
+++  poke-form
+  |=  =bowl:neo
+  ^-  manx
+  ;form.poke-form.hidden.bd.br2.fr.jb.g2.p2.wf
+  =hx-post    "/neo/tree{(en-tape:pith:neo here.bowl)}?stud=tree-diff&head=send-poke"
+  =hx-swap     "beforebegin"
+    ;input.p2.bd.br2.ml05 
+    =type          "text"
+    =name          "stud"
+    =oninput       "this.setAttribute('value', this.value);"
+    =autocomplete  "off"
+    =placeholder   "%diff-type"
+    =required      ""
+    ;
+    ==
+    ;input.hidden
+    =type   "text"
+    =name   "pith"
+    =value  (en-tape:pith:neo here.bowl)
+    ;
+    ==
+    ;input.p2.bd.br2.grow
+    =type          "text"
+    =name          "vase"
+    =oninput       "this.setAttribute('value', this.value);"
+    =autocomplete  "off"
+    =placeholder   "[@ @]"
+    =required      ""
+    ;
+    ==
+    ;button.loader.bd.br2.mr05
+      ;span.loaded:  poke
+      ;span.loading:  loading
+    ==
+  ==
+::
 ++  tomb-form
-  |=  [=bowl:neo =pith:neo]
+  |=  =bowl:neo
   =/  warning  
-  ?~  ~(key by (~(kid of:neo kids.bowl) pith))  
+  ?~  ~(key by (~(kid of:neo kids.bowl) here.bowl))  
     "Are you sure you want to delete this shrub?"
   "Are you sure you want to delete this shrub and all their kids?"
   ^-  manx
@@ -564,56 +602,19 @@
     ==
     ;div.fr.jc.g8.p2
       ;button.tomb-trigger.hfc.p2.red-hover
-      =onclick  "$(this).parent().parent().parent().parent().parent().addClass('hidden');"
+    ::   =onclick  "$(this).parent().parent().parent().parent().parent().addClass('hidden');"
       =name     "pith"
-      =value    (en-tape:pith:neo (welp here.bowl pith))
+      =value    (en-tape:pith:neo here.bowl)
         ;span:  yes
       ==
       ;span.hfc.p2.red-hover.pointer
       =onclick  
       """
       $(this).parent().parent().addClass('hidden');
-      $(this).parent().parent().parent().find('.poke-form').toggleClass('hidden');
-      $(this).parent().parent().prev().prev().find('.tomb').removeClass('opened')
+      $(this).parent().parent().parent().parent().find('.top').find('.buttons').find('.tomb').toggleClass('toggled');
       """
         ;span:  no
       ==
-    ==
-  ==
-::
-++  poke-form
-  |=  [=bowl:neo =pith:neo]
-  ^-  manx
-  ;form.poke-form.bd.br2.fr.jb.g2.p2.wf
-  =hx-post    "/neo/tree{(en-tape:pith:neo here.bowl)}?stud=tree-diff&head=send-poke"
-  =hx-swap     "beforebegin"
-    ;input.p2.bd.br2.ml05 
-    =type          "text"
-    =name          "stud"
-    =oninput       "this.setAttribute('value', this.value);"
-    =autocomplete  "off"
-    =placeholder   "%diff-type"
-    =required      ""
-    ;
-    ==
-    ;input.hidden
-    =type   "text"
-    =name   "pith"
-    =value  (en-tape:pith:neo (welp here.bowl pith))
-    ;
-    ==
-    ;input.p2.bd.br2.grow
-    =type          "text"
-    =name          "vase"
-    =oninput       "this.setAttribute('value', this.value);"
-    =autocomplete  "off"
-    =placeholder   "[@ @]"
-    =required      ""
-    ;
-    ==
-    ;button.loader.bd.br2.mr05
-      ;span.loaded:  poke
-      ;span.loading:  loading
     ==
   ==
 ::
