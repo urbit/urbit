@@ -1029,7 +1029,7 @@
       (error-response 405 "may only GET scries")
     =/  req  (parse-request-line url.request)
     =/  fqp  (fully-qualified site.req)
-    =/  mym  (scry-mime now rof ext.req site.req)
+    =/  mym  (scry-mime now rof [~ ~] ext.req site.req)
     ?:  ?=(%| -.mym)  (error-response 500 p.mym)
     =*  mime  p.mym
     %-  handle-response
@@ -3312,7 +3312,7 @@
   /(scot %p ship)/[app]/(scot %p from)
 ::
 ++  scry-mime
-  |=  [now=@da rof=roof ext=(unit @ta) pax=path]
+  |=  [now=@da rof=roof =gang ext=(unit @ta) pax=path]
   |^  ^-  (each mime tape)
   ::  parse
   ::
@@ -3325,7 +3325,7 @@
   ?~  u  [%| "invalid scry path"]
   ::  perform scry
   ::
-  ?~  res=(rof [~ ~] /eyre u.u)  [%| "failed scry"]
+  ?~  res=(rof gang /eyre u.u)  [%| "failed scry"]
   ?~  u.res                  [%| "no scry result"]
   =*  mark   p.u.u.res
   =*  vase   q.u.u.res
@@ -4171,19 +4171,17 @@
     ?~  val=val.u.entry                ~
     ?:  &(auth.u.val !=([~ ~] lyc))    ~
     ``noun+!>(u.val)
-  :: private endpoints
-  ?.  ?=([~ ~] lyc)  ~
   ::
   ?:  &(?=(%x ren) ?=([%mime @ *] tyl))
     =*  vew   i.t.tyl
     =*  rest  t.t.tyl
     =/  =beak  -.bem
-    =/  mym  (scry-mime now rof ~ [%$ vew (en-beam beak rest)])
+    =/  mym  (scry-mime now rof lyc ~ [%$ vew (en-beam beak rest)])
     ?:  ?=(%| -.mym)  [~ ~]
     =*  mime  p.mym
     :^  ~  ~  %noun
     !>  ^-  cache-entry
-    :-  auth=%|
+    :-  ?=(^ lyc)
     :+  %payload
       :-  200
       ^=  headers
@@ -4191,6 +4189,9 @@
           ['content-type' (rsh 3 (spat p.mime))]
       ==
     data=[~ q.mime]
+  :: private endpoints
+  ::
+  ?.  ?=([~ ~] lyc)  ~
   ::
   ?:  &(?=(%x ren) ?=(%$ syd))
     =,  server-state.ax
@@ -4227,7 +4228,7 @@
       %*(. *request:http header-list ['cookie' u.cookies]~)
     ::
         [%'_~_' *]
-      =/  mym  (scry-mime now rof (deft:de-purl:html tyl))
+      =/  mym  (scry-mime now rof lyc (deft:de-purl:html tyl))
       ?:  ?=(%| -.mym)  [~ ~]
       ``noun+!>(p.mym)
     ==
