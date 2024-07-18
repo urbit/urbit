@@ -64,6 +64,7 @@
   ++  init
     |=  pal=(unit pail:neo)
     ^-  (quip card:neo pail:neo)
+    ~&  >  'on-init of diary-ui'
     =/  [=stud:neo =vase]  (need pal)
     (render [bowl vase])
   --

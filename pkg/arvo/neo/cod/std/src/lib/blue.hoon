@@ -1,4 +1,6 @@
 /@  renderer
+/-  manx-utils
+/-  html-utils
 |%
 ::
 ::  Create a placeholder div and renderer for this child.
@@ -9,12 +11,12 @@
   =/  id  #/[uv/(end 3^4 eny.bowl)]
   :-  
   ;div.fr.g2
-    =id  (trip (snag 0 (pout id)))
+    =name  (trip (snag 0 (pout id)))
     Child
   ==
   :+  :(welp #/neo/blue sesh id)
     %make
-  :+  %renderer 
+  :+  renderer 
     `[%renderer !>([id ~])]
   (~(gas by *crew:neo) src/pax ~)
 ::
@@ -34,7 +36,17 @@
 ++  swap
   |=  [main=manx sub=manx id=road:neo]
   ^-  manx
-  main
+  =/  name  (trip (snag 0 (pout id)))
+  =/  hu  ~(. mx:html-utils main)
+  =/  c=con:hu
+    |=  [=path =manx]
+    ^-  ?
+    =/  mu  ~(. manx-utils manx)
+    =(name (got:mu %name))
+  =/  t=tan:hu
+    |=  [=path =manx]
+    sub
+  (wit:hu [c t])
 ::
 ++  gift-ui
   |=  [=gift:neo =bowl:neo]

@@ -28,10 +28,12 @@
     =/  state  !<(blue q.pail)
     ?+    stud  ~|(bad-stud/stud !!)
         %eyre-task
+      ~&  >  'blue got an HTTP request'
       =+  !<(=task:eyre:neo vax)
       =/  [eyre-id=@ta req=inbound-request:eyre]  task
-      =/  inner=pith:neo  
+      =/  inner=pith:neo
         (pave:neo pax:(parse-url:serv request.req))
+      ~&  >  inner   :: /~met/home/diary
       ?.  authenticated.req
         =/  eyre=pith:neo  #/[p/our.bowl]/$/eyre
         :_  pail
@@ -48,11 +50,12 @@
             !>  
             :-  renderers.state
             (~(put by sessions.state) sesh task)
-        :~  :+  (welp here.bowl sesh) 
-              %make
-            :+  %diary-ui  ::  XX (~(got by renderers.state) inner)
-              `[%renderer !>([sesh ~])]
-            (~(gas by *crew:neo) src/inner ~)
+        :~  :*  (welp here.bowl sesh) 
+                %make
+                %diary-ui  ::  XX (~(got by renderers.state) inner)
+                `[%renderer !>([sesh ~])]
+                (~(gas by *crew:neo) src/inner ~)
+            ==
         ==
       ::
           ::  POST: forward poke as manx to session specified by URL
@@ -75,11 +78,12 @@
         ::  gift: A renderer's manx has updated after
         ::        an http request, and now we must respond
         %gift
+      ~&  >  '%gift case of blue'
       :_  pail
       =/  sesh  (gift-session:b !<(gift:neo vax))
       =/  ui  (session-ui:b [bowl sesh])
       =/  [eyre-id=@ta req=inbound-request:eyre]
-        (~(got by sessions.state) sesh)
+        (~(got by sessions.state) sesh)  :: XX sesh needs to be a unit
       ^-  (list card:neo)
       %:  eyre-cards
         eyre-id
@@ -118,7 +122,5 @@
   :~  [pith %poke eyre-sign/!>(head)]
       [pith %poke eyre-sign/!>(data)]
       [pith %poke eyre-sign/!>(done)]
-      [here.bowl %cull ~]  :: XX is this necessary?
-      [here.bowl %tomb ~]
   ==
 --
