@@ -2006,6 +2006,8 @@
         [%pack ~]                                       ::  compact memory
         [%trim p=@ud]                                   ::  trim kernel state
         [%logs =told]                                   ::  system output
+        [%meme p=(list quac)]                           ::  memory report
+        [%quac ~]                                       ::  memory runtime
     ==                                                  ::
   +$  task                                              ::  in request ->$
     $~  [%vega ~]                                       ::
@@ -2015,6 +2017,8 @@
         [%heft ~]                                       ::  memory report
         $>(%init vane-task)                             ::  after gall ready
         [%logs p=(unit ~)]                              ::  watch system output
+        [%mass ~]                                       ::  run memory report
+        [%quac p=(list quac)]                           ::  memory runtime
         [%meld ~]                                       ::  unify memory
         [%pack ~]                                       ::  compact memory
         [%seat =desk]                                   ::  install desk
@@ -2098,6 +2102,9 @@
     $:  ses=@tas                                        ::  target session
         dill-belt                                       ::  input
     ==                                                  ::
+  +$  quac                                              ::  memory report
+    $~  ['' 0 ~]
+    [name=@t size=@ud quacs=(list quac)]
   --  ::dill
 ::                                                      ::::
 ::::                    ++eyre                            ::  (1e) http-server
