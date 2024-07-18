@@ -37,6 +37,7 @@
     |=  [=stud:neo =vase]
     ^-  (quip card:neo pail:neo)
     ~&  >  stud/stud
+    ~&  ?:  =(stud %ack)  !<((unit quit:neo) vase)  'not an %ack'
     =/  this  !<([eyre-id=@ta req=inbound-request:eyre] q.pail)
     =/  eyre-id  eyre-id.this
     :_  eyre-task/q.pail
@@ -44,14 +45,18 @@
     ::
         %ack
       ?~  !<((unit quit:neo) vase)
-        %:  eyre-cards
-        eyre-id
-        bowl
-        200
-        ['content-type' 'text/html']~
-        success-manx
-        ==
+      ~&  >  pail/pail
+      ~
+      ::  on recieving empty ack we do nothing till we get %ack for %tomb cards 
+        :: %:  eyre-cards
+        :: eyre-id
+        :: bowl
+        :: 200
+        :: ['content-type' 'text/html']~
+        :: success-manx
+        :: ==
       =/  =quit:neo  (need !<((unit quit:neo) vase))
+      ~&  >>  got-quit/quit
       ::  if not goof crush 404
       ?+  -.quit  
         %:  eyre-cards
@@ -83,27 +88,21 @@
         %tree-diff
       =/  diff  !<(tree-diff vase)
       ~&  >>>  diff-tree-imp/diff
+      =,  diff
       ?-  -.diff  
         ::
           %send-make
-        :: =/  =pith:neo  pith.diff
-        :: =/  make-stud=stud:neo  stud.diff
-        :: =/  init=(unit pail:neo)  init.diff
-        :: =/  =conf:neo  conf.diff
         :~  
-            [pith.diff %make stud.diff init.diff conf.diff]
+            [pith %make stud init conf]
         ==
         ::
           %send-poke
-        =/  =pith:neo  pith.diff
-        =/  poke-stud=stud:neo  stud.diff
         =/  vax  vase.diff
         :~  
-            [pith %poke [poke-stud vax]]
+            [pith %poke [stud vax]]
         ==
         ::
           %send-tomb
-        =/  =pith:neo  +.diff
         ~&  >>>  pith-tomb/pith
         :~  
             [pith %cull ~]
@@ -220,16 +219,16 @@
         =/  pax=pith:neo  (tail (tail +.diff-type))
         =/  poke-card=(list card:neo)  ~[(poke-tree-card here.bowl diff-vase)]
         =/  kids  (kids-to-card pax q.u.src here.bowl here)
-        ;:  welp
-          (flop kids)  
-          poke-card
-          %:  eyre-cards
-          eyre-id
-          bowl
-          200
-          ['content-type' 'text/html']~
-          (view bol)
-          ==
+        ::;:  welp
+          (flop kids)
+        ::  poke-card
+        ::   %:  eyre-cards
+        ::   eyre-id
+        ::   bowl
+        ::   200
+        ::   ['content-type' 'text/html']~
+        ::   (view bol)
+        ::   ==
         ==
       ==
     ==
@@ -268,33 +267,11 @@
   |=  [=pith:neo =lore:neo here=pith:neo head-pith=pith:neo]
   ^-  (list card:neo)
   =/  cards  *(list card:neo)
-  =/  kids  (get-kids pith lore)
+  =/  kids  ~(tap in ~(key by ~(tar of:neo lore)))
   ?~  kids  ~
   %+  turn  kids
     |=  p=pith:neo 
     (poke-tree-card here !>([%send-tomb (welp head-pith p)]))
-::
-++  get-kids
-  |=  [=pith:neo =lore:neo]
-  =|  i=@
-  ^-  (list pith:neo)
-  =+  piths=(full-pith pith lore)
-  |-
-  ?:  =(i (lent piths))  piths
-    =/  p=pith:neo  (snag i piths)
-    ?~  (~(kid of:neo lore) p)  
-      $(i +(i))
-    =/  grand-kids  (full-pith p lore)
-    $(i +(i), piths (welp piths grand-kids))
-::
-++  full-pith
-  |=  [parent=pith:neo =lore:neo]
-  ^-  (list pith:neo)
-  ?~  (~(kid of:neo lore) parent)  ~
-  %+  turn  ~(tap in ~(key by (~(kid of:neo lore) parent)))  
-      |=  p=pith:neo 
-      %+  welp  parent
-      p
 ::
 ++  err-manx       
   |=  =tape
@@ -437,6 +414,7 @@
       ;div.p2.hfc.p2.hover
         ;  {(en-tape:pith:neo pith)}
       ==
+      ::for some reason broken when trying to jam vase that's too large 
       ::(preview-state q.saga.idea)
     ==
   ==
@@ -521,6 +499,12 @@
   ==
 ::
 ++  make-form
+::  needs more inputs 
+::  instead of one for [=(unit pail:neo) =conf:neo] type
+::  will have one for stud:neo  
+::  one for vase 
+::  one for conf??? 
+::  or need different parser to hoon 
   |=  =bowl:neo
   ;form.make-form.hidden.bd.br2.fr.jb.g2.p2.wf.bg-white
   =hx-post  "/neo/tree{(en-tape:pith:neo here.bowl)}?stud=tree-diff&head=send-make"
@@ -614,7 +598,7 @@
   ;form.tomb-form.hidden.bd.br2.p2.wf
   =style  "border: 2px solid #FF0000; border-radius: 6px;"
   =hx-post     "/neo/tree{(en-tape:pith:neo here.bowl)}?stud=tree-diff&head=send-tomb"
-  =hx-trigger  "click from:find .tomb-trigger"
+  ::=hx-trigger  "click from:find .tomb-trigger"
   ::  FIX THIS
 ::   =hx-target   "previous .loader"
 ::   =hx-swap     "innerHTML"
