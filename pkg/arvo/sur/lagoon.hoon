@@ -16,7 +16,7 @@
   ==
 ::
 +$  kind              ::  $kind:  type of array scalars
-  $?  %real           ::  IEEE 754 float
+  $?  %i754           ::  IEEE 754 float
       %uint           ::  unsigned integer
       %int2           ::  2s-complement integer (/lib/twoc)
       :: %cplx           ::  BLAS-compatible packed floats
