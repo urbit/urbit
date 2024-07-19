@@ -5385,9 +5385,9 @@
                 %heer
               =/  =pact:pact  (parse-packet p.task)
               ?-  -.pact
-                %page  (ev-pact-page lane.task +.pact)  :: XX ignore hops, uses ?=(~ next.pact) == %direct-lane instead
+                %page  (ev-pact-page +.pact)
                 %peek  (ev-pact-peek +.pact)
-                %poke  (ev-pact-poke lane.task hops=0 +.pact)  ::  XX hops.task vs direct.task
+                %poke  (ev-pact-poke +.pact)  ::  XX hops.task vs direct.task
               ==
             ::  %message-response-entry-point
             ::
@@ -5461,10 +5461,7 @@
           +|  %packet-entry-points
           ::
           ++  ev-pact-poke
-            ::  XX  hops, maybe used to for trace logging?
-            ::      used `direct=?` instead?
-            ::
-            |=  [=lane:pact hops=@ =ack=name:pact =poke=name:pact =data:pact]
+            |=  [=ack=name:pact =poke=name:pact =data:pact]
             ^+  ev-core
             ::  XX dispatch/hairpin &c
             ::
@@ -5517,15 +5514,6 @@
               ev-core  :: XX TODO log
             ::
             =.  per  her.poke-name^+.u.chum-state
-            ::  evict old lanes; keep the last 5
-            ::  XX  =(0 hops) == %direct-lane
-            ::
-            =.  route.sat.per
-              ?:  ?&  ?=(^ route.sat.per)
-                      =([=(0 hops) lane] i.route.sat.per)
-                  ==
-                route.sat.per
-              [[=(0 hops) lane] (scag 5 route.sat.per)]
             ::  update and print connection status
             ::
             =.  ev-core  (ev-update-qos %live last-contact=now)
@@ -5561,10 +5549,10 @@
             =/  res=(unit (unit cage))  (ev-peek ~ /ames %x (name-to-beam name))
             ?.  ?=([~ ~ ^] res)
               ev-core
-            (ev-emit hen %give %push ~ !<(@ q.u.u.res))  :: XX lanes
+            (ev-emit hen %give %push ~ !<(@ q.u.u.res))
           ::
           ++  ev-pact-page
-            |=  [=lane:pact =name:pact =data:pact =next:pact]
+            |=  [=name:pact =data:pact =next:pact]
             ^+  ev-core
             ::  check for pending request (peek|poke)
             ::
@@ -5573,26 +5561,6 @@
               ev-core
             ?>  ?=([~ %known *] chum)  ::  XX alien agenda
             =.  per  [ship +.u.chum]
-            ::  evict old lanes; keep the last 5
-            ::
-            =.  route.sat.per
-              %+  weld
-                ?:  ?&  ?=(^ route.sat.per)
-                        =([direct=?=(~ next) lane] i.route.sat.per)
-                    ==
-                  ~
-                ?~  next
-                  ::  if the lane is direct use that as the next candidate
-                  ::
-                  [direct=%.y lane]~
-                ::  if the lane is indirect, it comes from a relay that we have
-                ::  already used in route.sat.per. (head next) should have the
-                ::  next hop in the routing chain, which will become our next
-                ::  candidate lane
-                ::
-                ~
-              %+  scag  5
-              (weld (turn next (lead direct=%.n)) route.sat.per)
             =*  pit  pit.sat.per
             =/  [=space cyf=(unit @) key=@ =inner=path]
               (ev-decrypt-path pat.name ship)
