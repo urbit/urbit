@@ -1590,23 +1590,29 @@
         ^-  ?
         =(0 (~(dif fe 7) a b))  :: XX jet for constant-time
       ::
+      ++  etch-binding
+        |=  binding
+        ^-  @
+        =/  pax  (spat path)
+        (can 3 [(met 3 pax) pax] [32 root] [1 0b1] ~)
+      ::
       ++  sign
         |=  [sek=@uxI =binding]
         ^-  @uxJ
-        (sigh:as:(nol:nu:crub:crypto sek) (jam binding))
+        (sigh:as:(nol:nu:crub:crypto sek) (etch-binding binding))
       ::
       ++  verify-sig
         |=  [pub=@uxI sig=@uxJ =binding]
         ^-  ?
-        (safe:as:(com:nu:crub:crypto pub) sig (jam binding))
+        (safe:as:(com:nu:crub:crypto pub) sig (etch-binding binding))
       ::
       ++  mac
         |=  [key=@uxI =binding]
         ^-  @uxH
-        (keyed-hash key 16 (jam binding))
+        (keyed-hash key 16 (etch-binding binding))
       ::
       ++  verify-mac
-        |=  [key=@uxI tag=@uxI =binding]  ::  [key=@uxI tag=@uxH =binding]
+        |=  [key=@uxI tag=@uxH =binding]
         ^-  ?
         (const-cmp tag (mac key binding))
       ::
@@ -1614,8 +1620,8 @@
         |=  [key=@uxI iv=@ msg=byts]
         ^+  msg
         =/  x  (xchacha:chacha:crypto 8 key (hash 24 iv))
-        =;  =octs  +(p.octs)^(can 3 octs [1 0x1] ~)
-        (chacha:crypto 8 key.x nonce.x 0 msg)
+        =/  =octs  (chacha:crypto 8 key.x nonce.x 0 msg)
+        +(p.octs)^(can 3 octs [1 0x1] ~)
       ::
       ++  decrypt
         |=  [key=@uxI iv=@ =byts]
@@ -1630,20 +1636,19 @@
         |=  [key=@uxI =path]
         ^-  @
         =/  keys  (hash 64 key)
-        =/  pat  (jam path)
+        =/  pat  (spat path)
         =/  tag  (keyed-hash (rsh 8 keys) 16 pat)
         =/  cyf  (encrypt (end 8 keys) tag (met 3 pat)^pat)
-        (jam [tag cyf])
+        (can 3 cyf [16 tag] ~)
       ::
       ++  open-path
         |=  [key=@uxI sealed=@]
         ^-  path
         =/  keys  (hash 64 key)
-        =+  ;;([tag=@ cyf=byts] (cue sealed))
-        =/  pat  dat:(decrypt (end 8 keys) tag cyf)
-        :: ?>  (const-cmp tag (keyed-hash (rsh 8 keys) 16 pat))   :: XX FIXME
-        ~|  pat
-        ;;(path (cue pat))
+        =/  [tag=@ cyf=@]  [(end [3 16] sealed) (rsh [3 16] sealed)]
+        =/  pat  dat:(decrypt (end 8 keys) tag (met 3 cyf)^cyf)
+        ?>  (const-cmp tag (keyed-hash (rsh 8 keys) 16 pat))
+        (stab pat)
       ::
       --
     ::
@@ -5314,12 +5319,12 @@
           ::
           ++  ev-decrypt-path
             |=  [=path =ship]
-            ^-  [=space (unit cyf=@) key=@ inner=^path]  :: XX remove key
+            ^-  [=space (unit cyf=@) key=@uxI inner=^path]  :: XX remove key
             =/  tyl=(pole knot)  path
             ?+    tyl  !!
                 [%publ lyf=@ pat=*]  :: unencrypted
               =+  per=(ev-got-per ship)
-              [publ/(slav %ud lyf.tyl) ~ public-key.sat.per pat.tyl]
+              [publ/(slav %ud lyf.tyl) ~ `@`public-key.sat.per pat.tyl]
             ::
                 [%chum lyf=@ her=@ hyf=@ pat=[cyf=@ ~]]  :: encrypted with eddh key
               =/  lyf  (slaw %ud lyf.tyl)
@@ -5332,11 +5337,11 @@
               =+  per=(ev-got-per her)         :: XX ev-get-per
               :: ::  ?>  ?=(%known -.sat.per)  :: XX wat if %alien?
               :: ?.  =(u.hyf life.sat.per)   !!  :: XX
-              =*  key  symmetric-key.sat.per
+              =*  key  `@`symmetric-key.sat.per
               :^    [%chum life.ames-state her life.sat.per key]
                   cyf
                 key
-              (open-path:crypt `@`key u.cyf)
+              (open-path:crypt key u.cyf)
             ::
                 [%shut kid=@ pat=[cyf=@ ~]]  :: encrypted with group key
               =/  kid  (slaw %ud kid.tyl)
@@ -5362,7 +5367,7 @@
             ~|  [key=key aut=p.auth ful=ful rut=rut]  =-  ?>(- -)  ::  log crash
             ?-  -.auth
               %&  (verify-sig:crypt key p.auth ful rut)
-              %|  (verify-mac:crypt `@`key p.auth ful rut)
+              %|  (verify-mac:crypt key p.auth ful rut)
             ==
           ::
           +|  %entry-points
