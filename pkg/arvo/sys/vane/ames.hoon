@@ -5373,7 +5373,7 @@
                    ::  ?(%plea %keen %cork) request tasks are called directly
                    ::
                    $%  $<(%mess $>(%heer task))  ::  XX common tasks
-                       [%mess (unit lane:pact) =mess dud=(unit goof)]
+                       [%mess =mess dud=(unit goof)]
                    ==
                 --
             ::
@@ -7866,7 +7866,7 @@
                           :_  tang.u.dud
                           leaf+"mesa: %heer crashed {<mote.u.dud>}"
                       `ames-state
-              %mess  ev-abet:(ev-call:ev-core %mess lane.task mess.task dud)
+              %mess  ev-abet:(ev-call:ev-core %mess mess.task dud)
             ==
           ::
           =<  ev-abet
@@ -7899,7 +7899,7 @@
             %heer      (ev-call:ev-core task)  ::  XX dud
           ::  from packet layer or XX
           ::
-            %mess      (ev-call:ev-core %mess lane.task mess.task ~)
+            %mess      (ev-call:ev-core %mess mess.task ~)
           ==
           ::
         [moves vane-gate]
