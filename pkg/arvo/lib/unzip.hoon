@@ -328,7 +328,8 @@
   =.  i  i.length
   ::  BLOCK TYPE 1 OR 2 DISTANCE CODE
   =/  distance-code  ?~  distance-codes
-    `[code=@ud i=@ud]`[(swp 0 (cut 0 [i 5] bitstream.input)) (add i 5)]
+    =/  code  (swp-bits [5 (cut 0 [i 5] bitstream.input)])
+    `[code=@ud i=@ud]`[`@ud`data.code (add i 5)]
   (get-code input distance-codes i)
   =.  i  i.distance-code
   =/  distance
@@ -533,7 +534,7 @@
 
 
   ::  ----------------------------
-  :: DECOMPRESS COMPRESSED BLOCKS
+  ::  DECOMPRESS COMPRESSED BLOCKS
   ::  ----------------------------
 
   =.  i  (mul i 8)
