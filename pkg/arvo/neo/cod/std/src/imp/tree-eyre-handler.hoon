@@ -17,7 +17,6 @@
 ++  poke   (sy %tree-diff %ack ~)
 ++  kids  *kids:neo
 ++  deps 
-:: static dep to imp folder to create new shrub 
   %-  ~(gas by *band:neo)
   :~  :-  %src
       ^-  fief:neo
@@ -45,9 +44,9 @@
     ::
         %ack
       ?~  !<((unit quit:neo) vase)
-      ~&  >  pail/pail
       ~
-      ::  on recieving empty ack we do nothing till we get %ack for %tomb cards 
+      ::  on recieving empty ack we do nothing till we get %ack for %tomb cards fixed
+      ::  would be nice to have one %ack or even one card for tomb-stoning shrub and all their kids 
         :: %:  eyre-cards
         :: eyre-id
         :: bowl
@@ -57,6 +56,7 @@
         :: ==
       =/  =quit:neo  (need !<((unit quit:neo) vase))
       ~&  >>  got-quit/quit
+      ::  XX: ADD 404 MANX
       ::  if not goof crush 404
       ?+  -.quit  
         %:  eyre-cards
@@ -66,22 +66,13 @@
         ['content-type' 'text/html']~
         *manx
         ==
-      ::  if goof return err stack trace 
           %goof
-        =/  =tang  +.quit
-        =/  trace-manx
-          ;div.p2
-            ;*  %+  turn  tang
-              |=  =tank
-              ^-  manx
-              (err-manx ~(ram re tank))
-          ==
         %:  eyre-cards
         eyre-id
         bowl
         200
         ['content-type' 'text/html']~
-        trace-manx
+        (err-trace-manx +.quit)
         ==
       ==
       ::
@@ -108,6 +99,8 @@
             [pith %cull ~]
             [pith %tomb ~]
         ==
+        ::  
+          %req-parsing-err  ~
       ==
     ==
   ++  init 
@@ -174,24 +167,9 @@
       ?-  -.diff-type
         ::
           %send-make 
-        ?:  =(stud.diff-type %vase-error)
-          %:  eyre-cards
-          eyre-id
-          bowl
-          200
-          ['content-type' 'text/html']~
-          (err-manx ~)
-          ==
-        ?:  =(stud.diff-type %vase-not-made)
-          %:  eyre-cards
-          eyre-id
-          bowl
-          200
-          ['content-type' 'text/html']~
-          (err-manx "failed to convert provided value to [=(unit pail:neo) =conf:neo] type")
-          ==
-        ::  make cards don't have %acks yet 
+        ::  %make cards don't have error(%goof) %acks yet 
         ::  sending eyre response here for now 
+        ::  XX:  should wait a few seconds and update whole page 
         %+  welp 
         :~  (poke-tree-card here.bowl diff-vase)
         ==
@@ -204,14 +182,6 @@
           ==
         ::
           %send-poke 
-        ?:  =(stud.diff-type %vase-error)
-          %:  eyre-cards
-          eyre-id
-          bowl
-          200
-          ['content-type' 'text/html']~
-          (err-manx ~)
-          ==
         :~  (poke-tree-card here.bowl diff-vase)
         ==
         ::
@@ -219,9 +189,9 @@
         =/  pax=pith:neo  (tail (tail +.diff-type))
         =/  poke-card=(list card:neo)  ~[(poke-tree-card here.bowl diff-vase)]
         =/  kids  (kids-to-card pax q.u.src here.bowl here)
-        ::;:  welp
+        ;:  welp
           (flop kids)
-        ::  poke-card
+          poke-card
         ::   %:  eyre-cards
         ::   eyre-id
         ::   bowl
@@ -230,6 +200,15 @@
         ::   (view bol)
         ::   ==
         ==
+        ::
+          %req-parsing-err
+        %:  eyre-cards
+          eyre-id
+          bowl
+          200
+          ['content-type' 'text/html']~
+          (err-trace-manx tang.diff-type)
+          ==
       ==
     ==
   --
@@ -272,6 +251,15 @@
   %+  turn  kids
     |=  p=pith:neo 
     (poke-tree-card here !>([%send-tomb (welp head-pith p)]))
+::
+++  err-trace-manx
+|=  =tang
+  ;div.p2
+    ;*  %+  turn  tang
+      |=  =tank
+      ^-  manx
+      (err-manx ~(ram re tank))
+  ==
 ::
 ++  err-manx       
   |=  =tape
@@ -384,6 +372,7 @@
       ;div.top.fr.jb.g2
         ;p.p2.hfc.wf.grow:  {(en-tape:pith:neo here.bowl)}
         ;div.wf.fr.je
+          ::  XX: move this down underneath buttons
           ;a.loader.p2.bd.br2
           =href  "/neo/tree/{(scow %p our.bowl)}/cod/std/src/pro/{(trip ?@(p.pail p.pail mark.p.pail))}"
             ;span.loaded.hf: {<p.pail>}
@@ -415,6 +404,7 @@
         ;  {(en-tape:pith:neo pith)}
       ==
       ::for some reason broken when trying to jam vase that's too large 
+      ::
       ::(preview-state q.saga.idea)
     ==
   ==
@@ -422,6 +412,7 @@
 ++  state-print
   |=  =pail:neo
   ^-  manx
+  ::  XX:  check if has imports display next to pro %hoon file a-tag 
   ?:  =(p.pail %hoon)
     =/  wain=(list @t)  (to-wain:format !<(@t q.pail))
     ;div.fc.g1.p2
@@ -458,9 +449,10 @@
       $(this).toggleClass('toggled');
       $(this).parent().find('.poke').removeClass('toggled');
       $(this).parent().find('.tomb').removeClass('toggled');
-      $(this).parent().parent().parent().find('.forms').find('.make-form').toggleClass('hidden');
-      $(this).parent().parent().parent().find('.forms').find('.tomb-form').addClass('hidden');
-      $(this).parent().parent().parent().find('.forms').find('.poke-form').addClass('hidden');
+      $(this).parent().parent().parent().find('.make-form').toggleClass('hidden');
+      $(this).parent().parent().parent().find('.tomb-form').addClass('hidden');
+      $(this).parent().parent().parent().find('.poke-form').addClass('hidden');
+      $(this).parent().parent().parent().find('.error-box').html('')
       """
       ;span:  make
     ==
@@ -470,9 +462,10 @@
       $(this).toggleClass('toggled');
       $(this).parent().find('.make').removeClass('toggled');
       $(this).parent().find('.tomb').removeClass('toggled');
-      $(this).parent().parent().parent().find('.forms').find('.poke-form').toggleClass('hidden');
-      $(this).parent().parent().parent().find('.forms').find('.make-form').addClass('hidden');
-      $(this).parent().parent().parent().find('.forms').find('.tomb-form').addClass('hidden');
+      $(this).parent().parent().parent().find('.poke-form').toggleClass('hidden');
+      $(this).parent().parent().parent().find('.make-form').addClass('hidden');
+      $(this).parent().parent().parent().find('.tomb-form').addClass('hidden');
+      $(this).parent().parent().parent().find('.error-box').html('')
       """
       ;span:  poke
     ==
@@ -482,9 +475,10 @@
       $(this).toggleClass('toggled');
       $(this).parent().find('.make').removeClass('toggled');
       $(this).parent().find('.poke').removeClass('toggled');
-      $(this).parent().parent().parent().find('.forms').find('.tomb-form').toggleClass('hidden');
-      $(this).parent().parent().parent().find('.forms').find('.make-form').addClass('hidden');
-      $(this).parent().parent().parent().find('.forms').find('.poke-form').addClass('hidden');
+      $(this).parent().parent().parent().find('.tomb-form').toggleClass('hidden');
+      $(this).parent().parent().parent().find('.make-form').addClass('hidden');
+      $(this).parent().parent().parent().find('.poke-form').addClass('hidden');
+      $(this).parent().parent().parent().find('.error-box').html('')
       """
       ;span:  tomb
     ==
@@ -492,23 +486,21 @@
 ::
 ++  forms
   |=  =bowl:neo
-  ;div.forms.fc.ae.g2.wf.p1
+  ;div.forms.fc.as.g2.wf.p1
+    ;div.error-box
+    ;
+    ==
     ;+  (make-form bowl)
     ;+  (poke-form bowl)
     ;+  (tomb-form bowl)
   ==
 ::
 ++  make-form
-::  needs more inputs 
-::  instead of one for [=(unit pail:neo) =conf:neo] type
-::  will have one for stud:neo  
-::  one for vase 
-::  one for conf??? 
-::  or need different parser to hoon 
   |=  =bowl:neo
   ;form.make-form.hidden.bd.br2.fr.jb.g2.p2.wf.bg-white
   =hx-post  "/neo/tree{(en-tape:pith:neo here.bowl)}?stud=tree-diff&head=send-make"
-  =hx-swap  "beforebegin"
+  =hx-swap     "innerHTML"
+  =hx-target  ".error-box"
     ;input.hidden
     =type   "text"
     =name   "here"
@@ -531,11 +523,27 @@
     =required      ""
     ;
     ==
+    ;input.bd.br2.p2 
+    =type  "text"
+    =name  "head-pail"
+    =oninput  "this.setAttribute('value', this.value);"
+    =placeholder  "%state-type"
+    =required      ""
+    ;
+    ==
     ;input.bd.br2.p2.grow
     =type  "text"
     =name  "vase"
     =oninput  "this.setAttribute('value', this.value);"
-    =placeholder  "[=(unit pail:neo) =conf:neo]"
+    =placeholder  "state value"
+    =required      ""
+    ;
+    ==
+    ;input.bd.br2.p2.grow
+    =type  "text"
+    =name  "conf"
+    =oninput  "this.setAttribute('value', this.value);"
+    =placeholder  "(map term pith:neo)"
     =required      ""
     ;
     ==
@@ -557,7 +565,8 @@
   ^-  manx
   ;form.poke-form.hidden.bd.br2.fr.jb.g2.p2.wf
   =hx-post    "/neo/tree{(en-tape:pith:neo here.bowl)}?stud=tree-diff&head=send-poke"
-  =hx-swap     "beforebegin"
+  =hx-swap     "innerHTML"
+  =hx-target  ".error-box"
     ;input.p2.bd.br2.ml05 
     =type          "text"
     =name          "stud"

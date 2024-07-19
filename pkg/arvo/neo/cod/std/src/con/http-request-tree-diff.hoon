@@ -17,24 +17,37 @@
         %-  trip  (got:bod 'here')
         %-  trip  find-pith
     stap
-  =/  =stud:neo  bod-to-stud
-  ~&  >  got-bad-vase/(got:bod 'vase')
-  ?~  (rush (got:bod 'vase') vest) 
-    [head (pave:neo path) %vase-error [~ ~]]
-  =/  vax=vase  bod-to-vase
-  ~&  vase/-.vax 
-  ?.  |(=(-:!>([*(unit pail:neo) *conf:neo]) -.vax) =(-:!>([~ ~]) -.vax))
-    [head (pave:neo path) %vase-not-made [~ ~]]
-  =/  tail-made  !<([(unit pail:neo) conf:neo] vax)
-  [head (pave:neo path) stud tail-made]
+  =/  =stud:neo  (to-stud find-stud)
+  =/  mule-vax=(each vase tang)  
+    %-  mule 
+      |.
+      (to-hoon (got:bod 'vase'))
+  ~&  >  mule-vase/mule-vax
+  ?:  ?=(%| -.mule-vax)
+    [%req-parsing-err p.mule-vax]
+  =/  vax=vase  p.mule-vax
+  =/  pail-head=stud:neo  (to-stud (got:bod 'head-pail'))
+  =/  mule-conf=(each conf:neo tang)  
+    %-  mule  
+      |.  
+      !<  conf:neo  (to-hoon (got:bod 'conf'))
+  ~&  >  [%got mule-conf]
+  ?:  ?=(%| -.mule-conf)
+    [%req-parsing-err p.mule-conf]
+  =/  =conf:neo  p.mule-conf
+  [head (pave:neo path) stud [(some [pail-head vax]) conf]]
   ::
     %send-poke
   =/  =pith:neo  bod-to-pith
-  =/  =stud:neo  bod-to-stud
-  ~&  >  got-bad-vase/(got:bod 'vase')
-  ?~  (rush (got:bod 'vase') vest) 
-    [head pith %vase-error !>(~)]
-  =/  vax=vase  bod-to-vase
+  =/  =stud:neo  (to-stud find-stud)
+  =/  mule-vax=(each vase tang)  
+    %-  mule 
+      |.
+      (to-hoon (got:bod 'vase'))
+  ~&  >  mule-vase/mule-vax
+  ?:  ?=(%| -.mule-vax)
+    [%req-parsing-err p.mule-vax]
+  =/  vax=vase  p.mule-vax
   [head pith stud vax]
   ::
     %send-tomb
@@ -51,15 +64,19 @@
 ++  find-pith
   %-  got:bod  'pith'
 ::
-++  bod-to-vase
-  ^-  vase
-  %+  slap  !>(.)
-    %-  ream   (got:bod 'vase')
+++  find-stud  
+  %-  got:bod  'stud'
 ::
-++  bod-to-stud
+++  to-stud
+  |=  =cord
   ^-  stud:neo
   !<  @tas 
     %+  slap  !>(~) 
-      %-  ream  (got:bod 'stud')
+      %-  ream  cord
 ::
+++  to-hoon
+  |=  hoon=cord 
+    ^-  vase
+    %+  slap  (slop !>(..zuse) !>(neo))
+      %-  ream  hoon
 --
