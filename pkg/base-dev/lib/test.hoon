@@ -40,7 +40,7 @@
     %|  ~
     %&  ['expected failure - succeeded' ~]
   ==
-::  +expect-runs: kicks a trap, expecting success; returns trace on failure
+::  +expect-success: kicks a trap, expecting success; returns trace on failure
 ::
 ++  expect-success
   |=  a=(trap)
