@@ -1596,11 +1596,22 @@
         =/  pax  (spat path)
         (met 3 pax)^pax
       ::
+      ++  sift-path
+        |=  =octs
+        ^-  path
+        (stab q.octs)
+      ::
       ++  etch-binding
         |=  =binding
         ^-  octs
         =/  pax  (etch-path path.binding)
         [(add p.pax 32) (can 3 pax [32 root.binding] ~)]
+      ::
+      ++  crypt
+        |=  [key=@uxI iv=octs msg=octs]
+        ^-  octs
+        =/  x  (xchacha:chacha:crypto 8 key (hash 24 iv))
+        (chacha:crypto 8 key.x nonce.x 0 msg)
       ::
       ++  sign
         |=  [sek=@uxI =binding]
@@ -1623,37 +1634,37 @@
         (const-cmp tag (mac key binding))
       ::
       ++  encrypt
-        |=  [key=@uxI iv=@ msg=octs]
-        ^-  octs
-        =/  x  (xchacha:chacha:crypto 8 key (hash 24 (met 3 iv)^iv))
-        =/  =octs  (chacha:crypto 8 key.x nonce.x 0 msg)
-        +(p.octs)^(can 3 octs [1 0x1] ~)
+        |=  [key=@uxI iv=@ msg=@]
+        ^-  @
+        =/  =octs  (crypt key (met 3 iv)^iv (met 3 msg)^msg)
+        (can 3 octs [1 0x1] ~)
       ::
       ++  decrypt
-        |=  [key=@uxI iv=@ cyf=octs]
-        ^-  octs
-        =/  wid  (dec p.cyf)
-        ?>  =(0x1 (cut 3 [wid 1] q.cyf))
-        =/  x  (xchacha:chacha:crypto 8 key (hash 24 (met 3 iv)^iv))
-        (chacha:crypto 8 key.x nonce.x 0 wid^q.cyf)
+        |=  [key=@uxI iv=@ cyf=@]
+        ^-  @
+        =/  wid  (dec (met 3 cyf))
+        ?>  =(0x1 (cut 3 [wid 1] cyf))
+        q:(crypt key (met 3 iv)^iv wid^cyf)
       ::
       ++  seal-path
         |=  [key=@uxI =path]
-        ^-  octs
+        ^-  @
         =/  keys  (hash 64 32^key)
         =/  pat  (etch-path path)
         =/  tag  (keyed-hash (rsh 8 keys) 16 pat)
-        =/  cyf  (encrypt (end 8 keys) tag pat)
-        [(add p.cyf 16) (can 3 [16 tag] cyf ~)]
+        =/  cyf  (crypt (end 8 keys) 16^tag pat)
+        (can 3 [16 tag] cyf [1 0x1] ~)
       ::
       ++  open-path
         |=  [key=@uxI sealed=@]
         ^-  path
         =/  keys  (hash 64 32^key)
+        =/  wid  (dec (met 3 sealed))
+        ?>  =(0x1 (cut 3 [wid 1] sealed))
         =/  [tag=@ cyf=@]  [(end [3 16] sealed) (rsh [3 16] sealed)]
-        =/  pat  (decrypt (end 8 keys) tag (met 3 cyf)^cyf)
+        =/  pat  (crypt (end 8 keys) 16^tag wid^cyf)
         ?>  (const-cmp tag (keyed-hash (rsh 8 keys) 16 pat))
-        (stab q.pat)
+        (sift-path pat)
       ::
       --
     ::
@@ -5301,7 +5312,7 @@
                 ?.  =(u.hyf life.sat.per)   !!  :: XX
                 symmetric-key.sat.per
               =*  iv  u.pyf  :: XX
-              q:(decrypt:crypt `@`key u.cyf (met 3 ser)^ser)
+              (decrypt:crypt `@`key u.cyf ser)
             ::
                 [%shut kid=@ cyf=@ ~]  :: encrypted with group key
               =/  kid  (slaw %ud kid.tyl)
@@ -5310,7 +5321,7 @@
               ::  ?>  ?=(%known -.sat.per)
               ?~  key=(get:key-chain client-chain.sat.per u.kid)
                 !!  ::  XX handle
-              q:(decrypt:crypt -.u.key u.cyf (met 3 ser)^ser)
+              (decrypt:crypt -.u.key u.cyf ser)
             ==
           ::
           ++  ev-decrypt-spac
@@ -5318,8 +5329,8 @@
             ^+  ser
             ?-  -.space
               %publ  ser
-              %shut  q:(decrypt:crypt key.space (need cyf) (met 3 ser)^ser)
-              %chum  q:(decrypt:crypt key.space (need cyf) (met 3 ser)^ser)
+              %shut  (decrypt:crypt key.space (need cyf) ser)
+              %chum  (decrypt:crypt key.space (need cyf) ser)
             ==
           ::
           ++  ev-decrypt-path
@@ -6057,14 +6068,14 @@
               :~  (scot %ud our-life.space)
                   (scot %p her.space)
                   (scot %ud her-life.space)
-                  (scot %uv q:(seal-path:crypt `@`key.space path))
+                  (scot %uv (seal-path:crypt `@`key.space path))
               ==
             ::
                 %shut  :: encrypted with group key
               :: key provided by the %keen task, or retrieved from client-chain.per.sat
               ::
               =/  cyf  (seal-path:crypt key.space path)
-              /shut/[(scot %ud kid.space)]/[(scot %uv q.cyf)]
+              /shut/[(scot %ud kid.space)]/[(scot %uv cyf)]
             ==
           ::
           ++  ev-get-page
@@ -7480,8 +7491,8 @@
             =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
             =/  ful  (en-beam bem)
             =/  ser  (jam gag)
-            =/  cyr  (encrypt:crypt key cyf (met 3 ser)^ser)
-            ``[%message !>([%hmac (mac:crypt key ful (root:lss cyr)) q.cyr])]
+            =/  cyr  (encrypt:crypt key cyf ser)
+            ``[%message !>([%hmac (mac:crypt key ful (root:lss (met 3 cyr)^cyr)) cyr])]
           ::
           ++  ev-peek-shut
             |=  [bem=beam kid=@ cyf=@uv]
@@ -7500,9 +7511,9 @@
             =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
             =/  ful  (en-beam bem)
             =/  ser  (jam gag)
-            =/  cyr  (encrypt:crypt -.u.key iv=cyf (met 3 ser)^ser)
-            =/  sig  (sign:crypt -.u.key ful (root:lss cyr))
-            ``[%message !>([%sign sig q.cyr])]
+            =/  cyr  (encrypt:crypt -.u.key iv=cyf ser)
+            =/  sig  (sign:crypt -.u.key ful (root:lss (met 3 cyr)^cyr))
+            ``[%message !>([%sign sig cyr])]
           ::
           ++  ev-peek-flow
             |=  [bone=@ud load=?(%plea %boon %ack-plea %ack-boon %nax) rcvr=ship mess=@ud]
