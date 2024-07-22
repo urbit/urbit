@@ -67,7 +67,9 @@
 ++  gift-session
   |=  =gift:neo
   ^-  road:neo
-  =-  ?~  -  !!  :: if no top-level gifts, ignore request
+  =-  ?~  -  
+        ~|('gift-session crash' !!)
+        :: if no top-level gifts, ignore request
       -<-
   %+  skim
     ~(tap of:neo gift)

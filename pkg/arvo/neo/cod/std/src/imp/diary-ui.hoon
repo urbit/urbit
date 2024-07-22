@@ -1,5 +1,6 @@
 /@  renderer
 /@  diary-diff
+/-  serv=sky-server
 /-  feather-icons
 /-  manx-utils
 /-  b=blue
@@ -7,12 +8,12 @@
 =<
 |%
 ++  state  pro/%renderer
-++  poke   (sy %manx %rely %gift ~)
+++  poke   (sy %http-request %rely %gift ~)
 ++  kids
   :+  ~  %y
   %-  malt
   :~  :-  [|/%uv |]
-      [pro/%renderer (sy %manx ~)]
+      [pro/%renderer (sy %http-request ~)]
   ==
 ++  deps
   %-  ~(gas by *band:neo)
@@ -38,8 +39,9 @@
         %gift
       (render-child:b [!<(gift:neo vax) bowl q.pail])
     ::
-    ::  A poke comes in as a manx. Forward it and wait for %rely.
-        %manx
+    ::  A poke comes in as a POST request. 
+    ::  Forward it and wait for %rely.
+        %http-request
       =;  poke
         :_  pail
         :~  :+  p:(~(got by deps.bowl) %src) 
@@ -47,8 +49,8 @@
             [%diary-diff !>(poke)]
         ==
       ^-  diary-diff
-      =/  post  !<(manx vax)
-      =/  mu  ~(. manx-utils post)
+      =/  body  (parse-body:serv !<(request:http vax))
+      =/  mu  ~(. manx-utils body)
       =/  head  (@tas (got:mu %head))
       ?+    head  !!
           %put-entry
@@ -64,7 +66,6 @@
   ++  init
     |=  pal=(unit pail:neo)
     ^-  (quip card:neo pail:neo)
-    ~&  >  'on-init of diary-ui'
     =/  [=stud:neo =vase]  (need pal)
     (render [bowl vase])
   --
