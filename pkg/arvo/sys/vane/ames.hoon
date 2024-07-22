@@ -7800,6 +7800,21 @@
                   ~
                 :^  ~  ~  %whit
                 !>([boq=u.boq (met u.boq (jam ?~(u.res ~ [p q.q]:u.u.res)))])
+              ::  verify packet auth
+              ::
+                  [%veri typ=?(%sign %hmac) her=@ aut=@ rut=@ pat=*]
+                =/  her  (slaw %p her.tyl)
+                =/  aut  (slaw %uv aut.tyl)
+                =/  rut  (slaw %uv rut.tyl)
+                ?:  |(?=(~ her) ?=(~ aut) ?=(~ rut))
+                  [~ ~]
+                =/  key  key:(ev-decrypt-path pat.tyl u.her)
+                =/  ful  (en-beam [[u.her %$ ud+1] pat.tyl])
+                :^  ~  ~  %flag  !>  :: XX is this right?
+                ?-  typ.tyl
+                  %sign  (verify-sig:crypt key u.aut ful u.rut)
+                  %hmac  (verify-mac:crypt key u.aut ful u.rut)
+                ==
             ::
               ==
             ::  only respond for the local identity, %$ desk, current timestamp
