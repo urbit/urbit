@@ -63,28 +63,20 @@
       ==
     ::
         ::  gift: A renderer's state has updated.
-        ::        Forward to corresponding eyre-id.
+        ::        If top-level, forward to corresponding eyre-id.
         %gift
       =/  gift  !<(gift:neo vax)
       =/  sesh  (gift-session:b gift)
-      =/  =mode:neo  mode:(~(got of:neo gift) sesh)
-      =/  eyre-id  (~(got by sessions.state) sesh)
+      ?~  sesh
+        [~ pail]
+      =/  =mode:neo  mode:(~(got of:neo gift) u.sesh)
+      =/  eyre-id  (~(got by sessions.state) u.sesh)
       ::
-      =/  ui  (session-ui:b [bowl sesh])
+      =/  ui  (session-ui:b [bowl u.sesh])
       =/  data=sign:eyre:neo  
         :*  eyre-id 
             %data
             `(as-octt:mimes:html (en-xml:html ui))
-        ==
-      ::
-      =/  head=sign:eyre:neo  
-        :*  eyre-id 
-            %head 
-            200
-            :~  ['Content-Type' 'text/event-stream']
-                ['Cache-Control' 'no-cache']
-                ['Connection' 'keep-alive']
-            ==
         ==
       ::
       :_  pail
@@ -97,7 +89,19 @@
         :~  [- %poke eyre-sign/!>(data)]
         ==
           %add
-        :~  [- %poke eyre-sign/!>(head)]
+        :~  :*  - 
+                %poke 
+                :-  %eyre-sign
+                !>
+                :*  eyre-id 
+                    %head 
+                    200
+                    :~  ['Content-Type' 'text/event-stream']
+                        ['Cache-Control' 'no-cache']
+                        ['Connection' 'keep-alive']
+                    ==
+                ==
+            ==
             [- %poke eyre-sign/!>(data)]
         ==
       ==
