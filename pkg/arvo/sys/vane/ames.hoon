@@ -2338,6 +2338,10 @@
               ++  migrate-peer
                 |=  =bone
                 =.  peer-core  (on-migrate:peer-core bone)
+                ::  XX  defer migrating the peer until we can read from their
+                ::  namespace that they have migrated us?
+                ::  XX  requires a namespace for migrated peers
+                ::
                 =<  abut
                 =<  abet
                 (call:(abed:mi:peer-core bone) %done ok=%.y)
@@ -2568,7 +2572,9 @@
               |=  ship=(unit ship)
               |^  ^+  event-core
               ?^  ship
-                (migrate-peer u.ship (~(got by peers.ames-state) u.ship))
+                ?~  peer=(~(get by peers.ames-state) u.ship)
+                  event-core
+                (migrate-peer u.ship u.peer)
               %-  ~(rep by peers.ames-state)
               |=  [[=^ship state=ship-state] core=_event-core]
               ?:  ?=(%alien -.state)  core
@@ -3122,6 +3128,8 @@
                       =;  [* core=_fo-core]
                         [moves state]:core
                       %+  roll  (weld live ~(tap to unsent-messages.pump))
+                      ::
+                      ::  XX remove current?
                       ::
                       |=  [=message current=_current.pump core=_fo-core]
                       :-  +(current)
@@ -6468,8 +6476,11 @@
                 %.  `*error
                 fo-take-done:fo-core(pending-ack.state %.y)
               ::
-              ::
               =/  =wire  (fo-wire %van)
+              ?:  &(=(vane %$) ?=([%ahoy ~] payload) ?=([%mesa ~] path)):plea
+                ::  migrated %ahoy pleas are always acked
+                ::
+                (fo-take-done:fo-core(pending-ack.state %.y) ~)
               ?.  &(=(vane %$) ?=([%cork ~] payload) ?=([%cork ~] path)):plea
                 =.  fo-core
                   ?+  vane.plea  ~|  %mesa-evil-vane^our^her^vane.plea  !!
@@ -8364,7 +8375,7 @@
         ::  from the first time, %ames will produce %0 axle in ++stay
         ::
         !!  ::  $(+<.old %adult, +>.old state.old)
-      ?:  ?=(%0 -.old)
+      ?:  ?=(%0 -.old)  :: XX make it %22
          ~&  priv.old
         :: =.  peers.old  ~
         :: =.   chums.old  ~
