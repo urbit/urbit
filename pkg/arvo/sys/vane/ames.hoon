@@ -1644,7 +1644,7 @@
         =/  pat  (etch-path path)
         =/  tag  (keyed-hash (rsh 8 keys) 16 pat)
         =/  cyf  (encrypt (end 8 keys) tag pat)
-        [(add p.cyf 16) (can 3 cyf [16 tag] ~)]
+        [(add p.cyf 16) (can 3 [16 tag] cyf ~)]
       ::
       ++  open-path
         |=  [key=@uxI sealed=@]
