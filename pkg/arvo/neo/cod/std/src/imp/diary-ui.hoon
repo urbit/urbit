@@ -34,7 +34,8 @@
     ^-  (quip card:neo pail:neo)
     ?+    stud  !!
         %rely
-      (render [bowl q.pail])
+      =/  dep  p:(~(got by deps.bowl) %src) 
+      (reset:b [bowl %diary-ui pail dep])
     ::
         %gift
       (render-child:b [!<(gift:neo vax) bowl q.pail])

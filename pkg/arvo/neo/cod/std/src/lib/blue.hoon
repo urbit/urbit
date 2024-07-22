@@ -2,6 +2,21 @@
 /-  manx-utils
 /-  html-utils
 |%
+++  reset
+  |=  [=bowl:neo =stud:neo =pail:neo dep=pith:neo]
+  =/  p
+    %+  welp  
+      ~[[%p our.bowl] %blue]
+    session:!<(renderer q.pail)
+  :_  pail
+  :~  [p %tomb ~]
+      :*  p
+          %make
+          stud
+          `[%renderer pail]
+          (~(gas by *crew:neo) src/dep ~)
+      ==
+  ==
 ::
 ::  Create a placeholder div and renderer for this child.
 ++  recur
