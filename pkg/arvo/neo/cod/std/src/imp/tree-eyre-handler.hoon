@@ -39,14 +39,6 @@
     =/  this  !<([eyre-id=@ta req=inbound-request:eyre] q.pail)
     =/  eyre-id  eyre-id.this
     :_  eyre-task/q.pail
-    ?~  src=(~(get by deps.bowl) %src)  
-      %:(empty-view-cards eyre-id bowl 404)
-    ?~  (~(get of:neo q.u.src) /)
-      %:(empty-view-cards eyre-id bowl 200)
-    =/  bol  *bowl:neo
-    =.  here.bol  p.u.src
-    =.  our.bol  our.bowl
-    =.  kids.bol  q.u.src
     ?+  stud  !!
     ::
         %ack
@@ -58,7 +50,7 @@
         :: bowl
         :: 200
         :: ['content-type' 'text/html']~
-        :: (view bol success-manx)
+        :: success-manx
         :: ==
       =/  =quit:neo  (need !<((unit quit:neo) vase))
       ?+  -.quit  %:(empty-view-cards eyre-id bowl 404)
