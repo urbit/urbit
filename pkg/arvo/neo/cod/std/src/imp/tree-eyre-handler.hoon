@@ -608,7 +608,7 @@
   |=  =bowl:neo
   ^-  manx
   ;form.poke-form.hidden.bd.br2.fr.jb.g2.p2.wf
-  =hx-post  "/neo/tree{(en-tape:pith:neo here.bowl)}?stud=tree-diff&head=send-poke"
+  =hx-post    "/neo/tree{(en-tape:pith:neo here.bowl)}?stud=tree-diff&head=send-poke"
   =hx-swap    "innerHTML"
   =hx-target  ".error-box"
     ;input.p2.bd.br2
