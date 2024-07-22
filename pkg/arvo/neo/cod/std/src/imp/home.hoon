@@ -5,6 +5,7 @@
 /*  tasks
 /*  messenger
 /*  introduction
+/*  developer-environment-setup
 ^-  kook:neo
 |%
 ++  state  pro/%home
@@ -45,7 +46,8 @@
         [#/[p/our.bowl]/home/docs/tutorials/messenger %make %sail `sail/!>([messenger 'prose p-page mw-page ma' ~]) ~]
         [#/[p/our.bowl]/home/docs/tutorials/tasks %make %sail `sail/!>([tasks 'prose p-page mw-page ma' ~]) ~]
       ::
-        [#/[p/our.bowl]/home/docs/guides %make %folder `folder/!>([%feather ~]) ~]
+        [#/[p/our.bowl]/home/docs/guides %make %folder `folder/!>([%development %feather ~]) ~]
+        [#/[p/our.bowl]/home/docs/guides/development %make %sail `sail/!>([developer-environment-setup 'prose p-page mw-page ma' ~]) ~]
         [#/[p/our.bowl]/home/docs/guides/feather %make %sail `sail/!>([feather-intro 'prose p-page mw-page ma' ~]) ~]
     ==
   ++  poke

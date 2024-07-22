@@ -121,7 +121,6 @@
           par.emit('todo-save');
           """
       ;button.p-1.b1.br1.bd1.hover
-        =onclick
         ; delete
       ==
       ;div.grow;

@@ -362,7 +362,7 @@
     '}'
   ++  lift
     ^-  manx
-    ;div.hawk.fc.wf.hf
+    ;div.hawk.fc.wf.hf.br1
       =id  "hawk-{idt}"
       =hawk-id  (scow %da id)
       =slot  slot-tag
@@ -384,9 +384,9 @@
       ==
     ==
   ++  header
-    ;header.b2.p1.frw.g1.ac
+    ;header.b2.frw.g1.ac
       =id  "hawk-header-{idt}"
-      =style  "border: 2px solid var(--b2);"
+      =style  "padding: 0 4px;"
       ;button
         =class  "p1 hover b2 br1 bd0 {(trip ?:(has-app '' 'toggled'))}"
         =onclick
@@ -413,7 +413,7 @@
               ;+  chevron-right.feather-icons
             ==
             ;a
-              =class  "hover b2 br1 {pad} s0 loader fc ac jc"
+              =class  "hover b2 {pad} s0 loader fc ac jc"
               =style  "height: 2rem;"
               =href  "/neo/hawk{(en-tape:pith:neo (scag +(a) here))}"
               ;span.loaded
@@ -429,7 +429,7 @@
         ;div.grow;
       ==
       ;form
-        =class  "hawk-tog grow fr m0 relative {(trip ?:(has-app 'hidden' ''))}"
+        =class  "hawk-tog grow fr ac m0 relative {(trip ?:(has-app 'hidden' ''))}"
         =style  "height: 2rem;"
         =hx-get  "/neo/hawk"
         =hx-target  "closest .hawk"
@@ -442,8 +442,8 @@
             ==
           ==
         ==
-        ;input.p-1.br1.b1.wf.s0.loaded.grow.bd0
-          =style  "margin-left: 5px;"
+        ;input.br1.b1.wf.s0.loaded.grow.bd0
+          =style  "margin-left: 5px; padding: 2px 4px;"
           =type  "text"
           =value  (en-tape:pith:neo here)
           =oninput
