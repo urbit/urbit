@@ -250,8 +250,6 @@
     ?:  &(=(%dif mode) =(q.q:(need old) q.poem))
       ::  ~&  %dupe-skipping
       `loam
-    :: ~&  >  before/fil.loam
-    :: ~&  >>  after/(put:on:soil:neo u.fil.loam [p.p .]:poem)
     ~|  overwrite-soil/p.p.poem
     ?>  !(has:on:soil:neo u.fil.loam p.p.poem)
     :-  [p.p.poem mode]^~
