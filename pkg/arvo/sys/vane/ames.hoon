@@ -1661,8 +1661,8 @@
         =/  keys  (hash 64 32^key)
         =/  wid  (dec (met 3 sealed))
         ?>  =(0x1 (cut 3 [wid 1] sealed))
-        =/  [tag=@ cyf=@]  [(end [3 16] sealed) (rsh [3 16] sealed)]
-        =/  pat  (crypt (end 8 keys) 16^tag wid^cyf)
+        =/  [tag=@ux cyf=@ux]  [(end [3 16] sealed) (rsh [3 16] sealed)]
+        =/  pat  (crypt (end 8 keys) 16^tag (sub wid 16)^cyf)
         ?>  (const-cmp tag (keyed-hash (rsh 8 keys) 16 pat))
         (sift-path pat)
       ::
@@ -7554,7 +7554,6 @@
               :: =+  core=(ev-abed:ev-core [now eny rof] ~[//scry])
               =*  core  ev-core
               =/  tyl=(pole knot)  s.bem
-              ~&   tyl/tyl
               ?+    tyl  ~
               ::  publisher-side, batch-level
               ::
