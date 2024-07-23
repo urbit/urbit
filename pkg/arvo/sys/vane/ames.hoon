@@ -8172,12 +8172,14 @@
         (call:ames hen dud soft+hear/lane^blob)
       ?.  ?=([~ %known *] +.ship-state)
         ::  XX weird; log
+        ~&  [%hear-unknown sndr.shot]
         `vane-gate
       ::  XX  TODO: check if we are in fact tracking this path
       ::  XX  (necessary?)
       ::
-      =/  [=peep =meow]  (sift-purr `@ux`content.shot)
-      =/  =path  (slag 3 path.peep)
+      ~&  [%hear-migrated sndr.shot]
+      :: =/  [=peep =meow]  (sift-purr `@ux`content.shot)
+      :: =/  =path  (slag 3 path.peep)
       ::  old response, no-op. If we can find the peer in chums, it means that
       ::  they sent an %ahoy plea, but they haven't heard our %ack, and have not
       ::  migrated us.
