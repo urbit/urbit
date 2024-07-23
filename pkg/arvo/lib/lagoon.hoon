@@ -1,8 +1,9 @@
 /-  lagoon
+!:
 =+  lagoon
 ::                                                    ::
 ::::                    ++la                          ::  (2v) vector/matrix ops
-~%  %lagoon  ..part  ~
+~%  %non  ..part  ~  :: nest non in hex for now
 |%
 ::  +lake: set +la params
 ::
@@ -16,7 +17,7 @@
 ++  la
   ^|
   =+  [rnd=*rounding-mode]
-  ~/  %la-core
+  ~/  %lagoon
   |%
   ::
   ::  Utilities
@@ -268,9 +269,12 @@
     (^mod (^div len wid) num)
   ::
   ++  ravel
-    ~/  %ravel
+    :: ~/  %ravel
     |=  a=ray
     ^-  (list @)
+    :: ~&  >  a
+    :: ~&  >>  (rip bloq.meta.a data.a)
+    :: ~&  >>>  (snip (rip bloq.meta.a data.a))
     (snip (rip bloq.meta.a data.a))
   ::
   ++  en-ray    :: baum to ray
@@ -898,7 +902,9 @@
   ++  add
     ~/  %add-rays
     |=  [a=ray b=ray]
+    ~&  >  %add-rays
     ^-  ray
+    ~&  >>  [a b]
     (bin-op a b (fun-scalar meta.a %add))
   ::
   ++  sub
