@@ -13,7 +13,7 @@
       :*  p
           %make
           stud
-          `[%renderer pail]
+          `pail
           (~(gas by *crew:neo) src/dep ~)
       ==
   ==
@@ -41,10 +41,10 @@
   ^-  (quip card:neo pail:neo)
   =/  state  !<(renderer vase)
   =/  ui  (need ui.state)
-  =/  sesh  (gift-session gift)
+  =/  sesh  (get-session gift)
   ?~  sesh
     [~ renderer/vase]
-  =/  sub  (session-ui [bowl u.sesh])
+  =/  sub  (get-ui [bowl u.sesh])
   =/  new  (swap [ui sub u.sesh])
   [~ renderer/!>([session.state new])]
 ::
@@ -66,7 +66,7 @@
   (wit:hu [c t])
 ::
 ::  Get the current UI from the renderer matching this session
-++  session-ui
+++  get-ui
   |=  [=bowl:neo sesh=road:neo]
   ^-  manx
   =/  =idea:neo  (~(got of:neo kids.bowl) sesh)
@@ -75,7 +75,7 @@
 ::
 ::  Find which immediate child this gift came from.
 ::  If not from an immediate child, return null.
-++  gift-session
+++  get-session
   |=  =gift:neo
   ^-  (unit road:neo)
   =-  ?~  -  

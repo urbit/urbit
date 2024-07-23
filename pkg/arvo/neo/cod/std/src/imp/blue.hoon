@@ -20,6 +20,9 @@
 ::
 ++  form
   |_  [=bowl:neo =aeon:neo =pail:neo]
+  ++  init
+    |=  pal=(unit pail:neo)
+    [~ [%blue !>([~ ~])]]
   ++  poke
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo pail:neo)
@@ -42,10 +45,7 @@
           ::       and wait for its manx as a %gift
           %'GET'
         =/  sesh=road:neo  #/[uv/(end 3^4 eny.bowl)]
-        :_  :-  %blue 
-            !>
-            :-  renderers.state 
-            (~(put by sessions.state) [sesh eyre-id])
+        :_  blue/!>([renderers.state `eyre-id])
         :~  :*  (welp here.bowl sesh) 
                 %make
                 %diary-ui  ::  XX (~(got by renderers.state) inner)
@@ -63,56 +63,41 @@
       ==
     ::
         ::  gift: A renderer's state has updated.
-        ::        If top-level, forward to corresponding eyre-id.
+        ::        If top-level and in response to a request, 
+        ::        forward to corresponding eyre-id.
         %gift
+      ?~  open-eyre-id.state  [~ pail]
+      =/  id  u.open-eyre-id.state
       =/  gift  !<(gift:neo vax)
-      =/  sesh  (gift-session:b gift)
-      ?~  sesh
-        [~ pail]
-      =/  =mode:neo  mode:(~(got of:neo gift) u.sesh)
-      =/  eyre-id  (~(got by sessions.state) u.sesh)
-      ::
-      =/  ui  (session-ui:b [bowl u.sesh])
-      =/  data=sign:eyre:neo  
-        :*  eyre-id 
-            %data
-            `(as-octt:mimes:html (en-xml:html ui))
-        ==
-      ::
-      :_  pail
+      =/  sesh  (get-session:b gift)
+      ?~  sesh  [~ pail]
+      :_  blue/!>([renderers.state ~])
       ^-  (list card:neo)
       =+  #/[p/our.bowl]/$/eyre
-      ?-    mode
-          %del  
-        ~|('%blue got a %del gift' !!)
-          %dif  
-        :~  [- %poke eyre-sign/!>(data)]
-        ==
-          %add
-        :~  :*  - 
-                %poke 
-                :-  %eyre-sign
-                !>
-                :*  eyre-id 
-                    %head 
-                    200
-                    :~  ['Content-Type' 'text/event-stream']
-                        ['Cache-Control' 'no-cache']
-                        ['Connection' 'keep-alive']
-                    ==
-                ==
-            ==
-            [- %poke eyre-sign/!>(data)]
-        ==
+      :~  :*  - 
+              %poke 
+              %eyre-sign
+              !>
+              :^    id 
+                  %head 
+                200
+              ['content-type' 'text/html']~
+          ==
+      ::
+          :*  - 
+              %poke 
+              %eyre-sign
+              !>
+              :+  id 
+                %data
+              :-  ~
+              %-  as-octt:mimes:html
+              %-  en-xml:html
+              (get-ui:b [bowl u.sesh])
+          ==
+      ::
+          [- %poke eyre-sign/!>([id %done ~])]
       ==
-    ==
-  ++  init
-    |=  pal=(unit pail:neo)
-    :_  [%blue !>([~ ~])]
-    =/  =pith:neo  #/[p/our.bowl]/$/eyre
-    =/  =binding:eyre  [~ ~[%neo %blue]]
-    =/  =req:eyre:neo  [%connect binding here.bowl]
-    :~  [pith %poke eyre-req/!>(req)]
     ==
   --
 --
