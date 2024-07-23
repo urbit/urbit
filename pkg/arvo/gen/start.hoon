@@ -22,6 +22,7 @@
       "Or run a system-changing generator with a '|' like this:"
       "  |hi ~zod"
       "  |install ~paldev %pals"
+      "(Some commands will only work on a live ship, not a development fake ship.)"
       "For more help on generators and threads:"
       "  +help"
       "Finally, to close this process, type:"
