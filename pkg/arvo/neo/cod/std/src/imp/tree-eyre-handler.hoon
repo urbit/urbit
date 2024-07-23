@@ -36,27 +36,36 @@
     |=  [=stud:neo =vase]
     ^-  (quip card:neo pail:neo)
     ~&  >  stud/stud
-    =/  this  !<([eyre-id=@ta req=inbound-request:eyre] q.pail)
-    =/  eyre-id  eyre-id.this
     :_  eyre-task/q.pail
+    ?~  src=(~(get by deps.bowl) %src)  ~
+    ?~  (~(get of:neo q.u.src) /)  ~
+    =/  here  p.u.src
     ?+  stud  !!
     ::
         %ack
-      ?~  !<((unit quit:neo) vase)  ~
-      ::  on recieving empty ack we do nothing till we get %ack for %tomb cards fixed
-      ::  would be nice to have one %ack or even one card for tomb-stoning shrub and all their kids 
-        :: %:  eyre-cards
-        :: eyre-id
-        :: bowl
-        :: 200
-        :: ['content-type' 'text/html']~
-        :: success-manx
-        :: ==
-      =/  =quit:neo  (need !<((unit quit:neo) vase))
-      ?+  -.quit  %:(empty-view-cards eyre-id bowl 404)
-          %goof
+      ?~  !<((unit quit:neo) vase)  
+        ?:  =(*pail:neo pail)  ~
+        =/  this  !<([eyre-id=@ta req=inbound-request:eyre] q.pail)
+        =/  location
+          %-  crip 
+            %+  weld  "/neo/tree" 
+              (en-tape:pith:neo here)
         %:  eyre-cards
-        eyre-id
+        eyre-id.this
+        bowl
+        200
+        :~  
+          'content-type'^'text/html'
+          'HX-Redirect'^location
+        ==
+        *manx
+        ==
+      =/  =quit:neo  (need !<((unit quit:neo) vase))
+      ?+  -.quit  ~
+          %goof
+        =/  this  !<([eyre-id=@ta req=inbound-request:eyre] q.pail)
+        %:  eyre-cards
+        eyre-id.this
         bowl
         200
         ['content-type' 'text/html']~
@@ -65,6 +74,8 @@
       ==
       ::
         %tree-diff
+      =/  this  !<([eyre-id=@ta req=inbound-request:eyre] q.pail)
+      =/  eyre-id  eyre-id.this
       =/  diff  !<(tree-diff vase)
       ~&  >>>  diff-tree-imp/diff
       =,  diff
@@ -78,14 +89,14 @@
           %send-poke
         =/  vax  vase.diff
         :~  
-            [pith %poke [stud vax]]
+            [here %poke [stud vax]]
         ==
         ::
-          %send-tomb
-        ~&  >>>  pith-tomb/pith
+          %send-cull
+        ~&  >>>  pith-cull/here
         :~  
-            [pith %cull ~]
-            [pith %tomb ~]
+            [here %cull ~]
+            :: [here %tomb ~]
         ==
         ::  
           %req-parsing-err  ~
@@ -115,7 +126,7 @@
           bowl
           200
           ['content-type' 'text/html']~
-          (view bol *manx)
+          (view bol)
       ==
       ::
         %'POST'
@@ -148,28 +159,32 @@
             'content-type'^'text/html'
             'HX-Redirect'^location
           ==
-          (view bol success-manx)
+          *manx
           ==
         ::
           %send-poke 
         :~  (poke-tree-card here.bowl diff-vase)
         ==
         ::
-          %send-tomb
-        =/  pax=pith:neo  (tail (tail +.diff-type))
+          %send-cull
         =/  poke-card=(list card:neo)  ~[(poke-tree-card here.bowl diff-vase)]
-        =/  kids  (kids-to-card pax q.u.src here.bowl here)
-        ::;:  welp
-          :: (flop kids)
+        =/  location  
+          %-  crip 
+            %+  weld  "/neo/tree" 
+              (en-tape:pith:neo (snip here))
+        ;:  welp
           poke-card
-        ::   %:  eyre-cards
-        ::   eyre-id
-        ::   bowl
-        ::   200
-        ::   ['content-type' 'text/html']~
-        ::   (view bol *manx)
-        ::   ==
-        ::==
+          %:  eyre-cards
+          eyre-id
+          bowl
+          200
+          :~
+            'content-type'^'text/html'
+            'HX-Redirect'^location
+          ==
+          *manx
+          ==
+        ==
         ::
           %req-parsing-err
         %:  eyre-cards
@@ -226,16 +241,6 @@
   ^-  card:neo
   [here %poke %tree-diff vax]
 ::
-++  kids-to-card
-  |=  [=pith:neo =lore:neo here=pith:neo head-pith=pith:neo]
-  ^-  (list card:neo)
-  =/  cards  *(list card:neo)
-  =/  kids  ~(tap in ~(key by ~(tar of:neo lore)))
-  ?~  kids  ~
-  %+  turn  kids
-    |=  p=pith:neo 
-    (poke-tree-card here !>([%send-tomb (welp head-pith p)]))
-::
 ++  err-trace-manx
 |=  =tang
 ^-  manx
@@ -255,14 +260,8 @@
     ;p:  deleted
   ==
 ::
-++  success-manx
-  ^-  manx
-  ;div.p2
-    ;p:  success
-  ==
-::
 ++  view 
-  |=  [=bowl:neo err-trace=manx]
+  |=  =bowl:neo
   ^-  manx
   ;html
     ;head
@@ -287,7 +286,7 @@
     ;style: {tree-style}
     ==
     ;body 
-      ;+  (body-view bowl err-trace)
+      ;+  (body-view bowl)
     ==
   ==
 ::
@@ -306,21 +305,8 @@
   .bd{
   border: 0.8px solid black;
   }
-  .mt05{
-  margin-top: 0.5rem;
-  }
-  .mr05{
-  margin-right: 0.5rem;
-  }
-  .ml05{
-  margin-left: 0.5rem;
-  }
   .error{
   color: #FF0000; 
-  }
-  .opened{
-  background: black;
-  color: white;
   }
   .bg-white{
   background: white;
@@ -328,13 +314,10 @@
   .hover-grey:hover{
   background: #dbdbdb;
   }
-  .hover-lg:hover{
-  background: #ededed;
-  }
   '''
 ::
 ++  body-view
-  |=  [=bowl:neo err-trace=manx]
+  |=  =bowl:neo
   ^-  manx
   ;div.wf
     ;+
@@ -342,13 +325,13 @@
         ;div: no kids
     =/  =pail:neo  q.saga.u.node
     ;div.fc.js.p2.g2
-      ;+  (shrub-view bowl pail err-trace)
+      ;+  (shrub-view bowl pail)
       ;+  (kids-view bowl)
     ==
   ==
 ::
 ++  shrub-view 
-  |=  [=bowl:neo =pail:neo err-trace=manx]
+  |=  [=bowl:neo =pail:neo]
   ^-  manx
   ;div
     ;div.fc.g2.bd.br2.p2
@@ -364,14 +347,14 @@
         ==
         ;div.fr.je.grow.g2
           ;+  (pro-files pail bowl)
-          ;a.loader.p2.bd.br2.hover-lg
+          ;a.loader.p2.bd.br2.hover-grey
           =href  "/neo/tree/{(scow %p our.bowl)}/cod/std/src/pro/{(trip ?@(p.pail p.pail mark.p.pail))}"
             ;span.loaded.hf: {<p.pail>}
             ;span.loading.hf:  loading
           ==
         ==
       ==
-      ;+  (forms bowl err-trace)
+      ;+  (forms bowl)
       ;+  ?:  =(p.pail %hoon)
         (state-print pail)
       ;div.hidden
@@ -456,7 +439,7 @@
     |=  =pro:ford:neo
     ~&  >>>  -:!>(stud.pro)
     ^-  manx
-    ;a.loader.bd.br2.p2.hover-lg
+    ;a.loader.bd.br2.p2.hover-grey
       =href  "/neo/tree/{(scow %p our.bowl)}/cod/std/src/pro/{(trip ?@(stud.pro stud.pro mark.stud.pro))}"
         ;span.loaded.hfc: {<stud.pro>}
         ;span.loading.hfc:  loading
@@ -466,14 +449,14 @@
 ++  buttons
   ^-  manx
   ;div.buttons.fr.g2
-    ;button.make.p2.bd.br2.bg-white.hover-lg
+    ;button.make.p2.bd.br2.bg-white.hover-grey
     =onclick  
       """
       $(this).toggleClass('toggled');
       $(this).parent().find('.poke').removeClass('toggled');
-      $(this).parent().find('.tomb').removeClass('toggled');
+      $(this).parent().find('.cull').removeClass('toggled');
       $(this).parent().parent().parent().find('.make-form').toggleClass('hidden');
-      $(this).parent().parent().parent().find('.tomb-form').addClass('hidden');
+      $(this).parent().parent().parent().find('.cull-form').addClass('hidden');
       $(this).parent().parent().parent().find('.poke-form').addClass('hidden');
       $(this).parent().parent().parent().find('.error-box').html('')
       """
@@ -484,46 +467,39 @@
       """
       $(this).toggleClass('toggled');
       $(this).parent().find('.make').removeClass('toggled');
-      $(this).parent().find('.tomb').removeClass('toggled');
+      $(this).parent().find('.cull').removeClass('toggled');
       $(this).parent().parent().parent().find('.poke-form').toggleClass('hidden');
       $(this).parent().parent().parent().find('.make-form').addClass('hidden');
-      $(this).parent().parent().parent().find('.tomb-form').addClass('hidden');
+      $(this).parent().parent().parent().find('.cull-form').addClass('hidden');
       $(this).parent().parent().parent().find('.error-box').html('')
       """
       ;span:  poke
     ==
-    ;button.tomb.p2.bd.br2.bg-white.hover-grey
+    ;button.cull.p2.bd.br2.bg-white.hover-grey
     =onclick  
       """
       $(this).toggleClass('toggled');
       $(this).parent().find('.make').removeClass('toggled');
       $(this).parent().find('.poke').removeClass('toggled');
-      $(this).parent().parent().parent().find('.tomb-form').toggleClass('hidden');
+      $(this).parent().parent().parent().find('.cull-form').toggleClass('hidden');
       $(this).parent().parent().parent().find('.make-form').addClass('hidden');
       $(this).parent().parent().parent().find('.poke-form').addClass('hidden');
       $(this).parent().parent().parent().find('.error-box').html('')
       """
-      ;span:  tomb
+      ;span:  cull
     ==
   ==
 ::
 ++  forms
-  |=  [=bowl:neo err-trace=manx]
+  |=  =bowl:neo
   ^-  manx
-    ;div.forms.fc.as.g2.wf.p1
+    ;div.forms.fc.as.g2.wf
       ;div.error-box
-      ;+  
-        ?:  =(*manx err-trace)
-          ;div.hidden
-          ;
-          ==
-        ;div
-        ;+  err-trace
-        ==
+      ;
       ==
       ;+  (make-form bowl)
       ;+  (poke-form bowl)
-      ;+  (tomb-form bowl)
+      ;+  (cull-form bowl)
     ==
 ::
 ++  make-form
@@ -612,12 +588,6 @@
     =required      ""
     ;
     ==
-    ;input.hidden
-    =type   "text"
-    =name   "pith"
-    =value  (en-tape:pith:neo here.bowl)
-    ;
-    ==
     ;input.p2.bd.br2.grow
     =type          "text"
     =name          "vase"
@@ -627,33 +597,31 @@
     =required      ""
     ;
     ==
-    ;button.loader.bd.br2.mr05
+    ;button.loader.bd.br2
       ;span.loaded:  poke
       ;span.loading:  loading
     ==
   ==
 ::
-++  tomb-form
+++  cull-form
   |=  =bowl:neo
   =/  warning  "Are you sure you want to delete this shrub and all their kids?"
   ^-  manx
-  ;form.tomb-form.hidden.bd.br2.p2.wf
+  ;form.cull-form.hidden.bd.br2.p2.wf
   =style    "border: 2px solid #FF0000; border-radius: 6px;"
-  =hx-post  "/neo/tree{(en-tape:pith:neo here.bowl)}?stud=tree-diff&head=send-tomb"
+  =hx-post  "/neo/tree{(en-tape:pith:neo here.bowl)}?stud=tree-diff&head=send-cull"
     ;div.fc.ac
       ;p:  {warning}
     ==
     ;div.fr.jc.g8.p2
-      ;button.tomb-trigger.hfc.p2.red-hover
-      =name   "pith"
-      =value  (en-tape:pith:neo here.bowl)
+      ;button.cull-trigger.hfc.p2.red-hover
         ;span:  yes
       ==
       ;span.hfc.p2.red-hover.pointer
       =onclick  
       """
       $(this).parent().parent().addClass('hidden');
-      $(this).parent().parent().parent().parent().find('.top').find('.buttons').find('.tomb').toggleClass('toggled');
+      $(this).parent().parent().parent().parent().find('.top').find('.buttons').find('.cull').toggleClass('toggled');
       """
         ;span:  no
       ==

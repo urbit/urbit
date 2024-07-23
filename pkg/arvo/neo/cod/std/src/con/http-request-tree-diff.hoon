@@ -18,42 +18,33 @@
         %-  trip  find-pith
     stap
   =/  =stud:neo  (to-stud find-stud)
+  =/  pail-head=stud:neo  (to-stud (got:bod 'head-pail'))
   =/  mule-vax=(each vase tang)  
     %-  mule 
       |.
       (to-hoon (got:bod 'vase'))
-  ~&  >  mule-vase/mule-vax
-  ?:  ?=(%| -.mule-vax)
-    [%req-parsing-err p.mule-vax]
+  ?:  ?=(%| -.mule-vax)  [%req-parsing-err p.mule-vax]
   =/  vax=vase  p.mule-vax
-  =/  pail-head=stud:neo  (to-stud (got:bod 'head-pail'))
   =/  mule-conf=(each conf:neo tang)  
     %-  mule  
       |.  
       !<  conf:neo  (to-hoon (got:bod 'conf'))
-  ~&  >  [%got mule-conf]
-  ?:  ?=(%| -.mule-conf)
-    [%req-parsing-err p.mule-conf]
+  ?:  ?=(%| -.mule-conf)  [%req-parsing-err p.mule-conf]
   =/  =conf:neo  p.mule-conf
   [head (pave:neo path) stud [(some [pail-head vax]) conf]]
   ::
     %send-poke
-  =/  =pith:neo  bod-to-pith
   =/  =stud:neo  (to-stud find-stud)
   =/  mule-vax=(each vase tang)  
     %-  mule 
       |.
       (to-hoon (got:bod 'vase'))
-  ~&  >  mule-vase/mule-vax
-  ?:  ?=(%| -.mule-vax)
-    [%req-parsing-err p.mule-vax]
+  ?:  ?=(%| -.mule-vax)  [%req-parsing-err p.mule-vax]
   =/  vax=vase  p.mule-vax
-  [head pith stud vax]
+  [head stud vax]
   ::
-    %send-tomb
-  ~&  >>>  pith/(got:bod 'pith')
-  =/  =pith:neo  bod-to-pith
-  [head pith]
+    %send-cull
+  [head ~]
 ==  
 |%
 ++  bod-to-pith
