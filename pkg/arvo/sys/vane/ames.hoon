@@ -1533,23 +1533,21 @@
     ::
     ++  get-forward-lanes-mesa  ::  XX refactor get-forward-lanes
       |=  [our=@p fren=fren-state chums=(map ship chum-state)]
-      ~
-      :: ^-  (list lane:pact)
-      :: (turn route.fren tail)
-      :: =;  zar=(trap (list lane:pact))
-      ::   ?~  route.fren  $:zar
-      ::   =*  rot  i.route.fren
-      ::   ?:(direct.rot [lane.rot ~] [lane.rot $:zar])
-      :: ::
-      :: |.  ^-  (list lane)
-      :: ?:  ?=(%czar (clan:title sponsor.fren))
-      ::   ?:  =(our sponsor.fren)
-      ::     ~
-      ::   [%& sponsor.fren]~
-      :: =/  next  (~(get by chums) sponsor.fren)
-      :: ?.  ?=([~ %known *] next)
-      ::   ~
-      :: $(fren +.u.next)
+      ^-  (list lane:pact)
+      =;  zar=(trap (list lane:pact))
+        ?~  route.fren  $:zar
+        =*  rot  i.route.fren
+        ?:(direct.rot [lane.rot ~] [lane.rot $:zar])
+      ::
+      |.  ^-  (list lane:pact)
+      ?:  ?=(%czar (clan:title sponsor.fren))
+        ?:  =(our sponsor.fren)
+          ~
+        [`@ux`sponsor.fren]~
+      =/  next  (~(get by chums) sponsor.fren)
+      ?.  ?=([~ %known *] next)
+        ~
+      $(fren +.u.next)
     ::
     ++  key-chain  ((on ,@ ,[key=@ =path]) lte)
     ::
@@ -5049,6 +5047,7 @@
             =/  who  (slaw %p her.tyl)
             ?~  who  [~ ~]
             =/  peer  (~(get by peers.ames-state) u.who)
+            =/  chum  (~(get by chums.ames-state) u.who)
             ?+    req.tyl  [~ ~]
                 ~
               ?~  peer
@@ -5080,7 +5079,20 @@
                 ~
               ?:  ?=([~ %known *] peer)
                 (get-forward-lanes our +.u.peer peers.ames-state)
-              =/  sax  (rof ~ /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
+              ?:  ?=([~ %known *] chum)
+                =/  lanes=(list lane:pact)
+                  (get-forward-lanes-mesa our +.u.chum chums.ames-state)
+                %+  turn  lanes
+                |=  =lane:pact
+                ^-  ^lane
+                ?@  lane
+                  [%.y `@p`lane]
+                :-  %.n
+                %+  can  3
+                :~  4^p.lane
+                    2^q.lane
+                ==
+              =/  sax  (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
               ?.  ?=([~ ~ *] sax)
                 ~
               =/  gal  (rear ;;((list ship) q.q.u.u.sax))
@@ -6817,9 +6829,16 @@
                 =.  ev-core
                   %-  ev-emit
                   :*  unix-duct.ames-state  %give  %nail  ship
-                      ?:  ?=(%chum -.peer)
+                      ?.  ?=(%chum -.peer)
+                        (get-forward-lanes our +.u.peer peers.ames-state)
+                      ^-  (list lane)
+                      ::  XX refactor
+                      %+  turn
                         (get-forward-lanes-mesa our +.u.peer chums.ames-state)
-                      (get-forward-lanes our +.u.peer peers.ames-state)
+                      |=  =lane:pact
+                      ^-  (each @pC address)
+                      ?>  ?=(@ lane)
+                      [%.y `@pC`lane]
                   ==
                 ::  if one of our sponsors breached, give the updated list to vere
                 ::
@@ -6891,9 +6910,16 @@
                 =.  ev-core
                   %-  ev-emit
                   :*  unix-duct.ames-state  %give  %nail  ship
-                      ?:  ?=(%chum -.peer)
+                      ?.  ?=(%chum -.peer)
+                        (get-forward-lanes our +.u.peer peers.ames-state)
+                      ^-  (list lane)
+                      ::  XX refactor
+                      %+  turn
                         (get-forward-lanes-mesa our +.u.peer chums.ames-state)
-                      (get-forward-lanes our +.u.peer peers.ames-state)
+                      |=  =lane:pact
+                      ^-  (each @pC address)
+                      ?>  ?=(@ lane)  :: XX FIXME
+                      [%.y `@pC`lane]
                   ==
                 ::
                 sy-core
@@ -7065,9 +7091,16 @@
                 =?  ev-core  ?=(%czar (clan:title ship))
                   %-  ev-emit
                   :*  unix-duct.ames-state  %give  %nail  ship
-                      ?:  ?=(%chum -.peer)
+                      ?.  ?=(%chum -.peer)
+                        (get-forward-lanes our +.peer peers.ames-state)
+                      ^-  (list lane)
+                      ::  XX  refactor
+                      %+  turn
                         (get-forward-lanes-mesa our +.peer chums.ames-state)
-                      (get-forward-lanes our +.peer peers.ames-state)
+                      |=  =lane:pact
+                      ^-  (each @pC address)
+                      ?>  ?=(@ lane)  ::  XX FIXME
+                      [%.y `@pC`lane]
                   ==
                 ::
                 ::  automatically set galaxy route, since unix handles lookup
@@ -7533,7 +7566,6 @@
               :: =+  core=(ev-abed:ev-core [now eny rof] ~[//scry])
               =*  core  ev-core
               =/  tyl=(pole knot)  s.bem
-              ~&   tyl/tyl
               ?+    tyl  ~
               ::  publisher-side, batch-level
               ::
@@ -7789,7 +7821,8 @@
                 ==
               ~
             ::
-            ::  /ax/peers/[ship]               ship-state
+            ::  /ax/chums/[ship]                 chum-state
+            ::  /ax/chums/[ship]/forward-lane    lanes
             ::
             ?.  ?=(%x car)  ~
             =/  tyl=(pole knot)  s.bem
@@ -7797,14 +7830,44 @@
             ::
             ?.  =([~ ~] lyc)  ~
             ?+    tyl  ~
-                  [%chums her=@ ~]
-                =/  who  (slaw %p her.tyl)
-                ?~  who  [~ ~]
-                ?~  chum=(~(get by chums.ames-state) u.who)
+                [%chums her=@ req=*]
+              =/  who  (slaw %p her.tyl)
+              ?~  who  [~ ~]
+              =/  chum  (~(get by chums.ames-state) u.who)
+              ?+    req.tyl  [~ ~]
+                  ~
+                ?~  chum
                   ~&  (~(get by peers.ames-state) u.who)
                   [~ ~]
                 ?>  ?=(%known -.u.chum)
                 ``noun+!>(u.chum)
+                ::
+                  [%forward-lane ~]
+                ::
+                ::  this duplicates the routing hack from +send-blob:event-core
+                ::  so long as neither the peer nor the peer's sponsoring galaxy is us,
+                ::  and the peer has been reached recently:
+                ::
+                ::    - no route to the peer, or peer has not been contacted recently:
+                ::      send to the peer's sponsoring galaxy
+                ::    - direct route to the peer: use that
+                ::    - indirect route to the peer: send to both that route and the
+                ::      the peer's sponsoring galaxy
+                ::
+                :^  ~  ~  %noun
+                !>  ^-  (list lane:pact)
+                ?:  =(our u.who)
+                  ~
+                ?:  ?=([~ %known *] chum)
+                  (get-forward-lanes-mesa our +.u.chum chums.ames-state)
+                =/  sax  (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
+                ?.  ?=([~ ~ *] sax)
+                  ~
+                =/  gal  (rear ;;((list ship) q.q.u.u.sax))
+                ?:  =(our gal)
+                  ~
+                [`@ux`gal]~
+              ==
             ==
           ::
           +|  %internals
