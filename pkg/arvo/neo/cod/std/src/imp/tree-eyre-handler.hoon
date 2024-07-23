@@ -159,8 +159,8 @@
         =/  pax=pith:neo  (tail (tail +.diff-type))
         =/  poke-card=(list card:neo)  ~[(poke-tree-card here.bowl diff-vase)]
         =/  kids  (kids-to-card pax q.u.src here.bowl here)
-        ;:  welp
-          (flop kids)
+        ::;:  welp
+          :: (flop kids)
           poke-card
         ::   %:  eyre-cards
         ::   eyre-id
@@ -169,7 +169,7 @@
         ::   ['content-type' 'text/html']~
         ::   (view bol *manx)
         ::   ==
-        ==
+        ::==
         ::
           %req-parsing-err
         %:  eyre-cards
