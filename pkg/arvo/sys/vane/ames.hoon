@@ -1531,15 +1531,11 @@
     ::
     +|  %helpers
     ::
-    ++  get-forward-lanes-mesa  ::  XX refactor get-forward-lanes
+    ++  get-forward-lanes-mesa
       |=  [our=@p fren=fren-state chums=(map ship chum-state)]
       ^-  (list lane:pact)
-      =;  zar=(trap (list lane:pact))
-        ?~  route.fren  $:zar
-        =*  rot  i.route.fren
-        ?:(direct.rot [lane.rot ~] [lane.rot $:zar])
-      ::
-      |.  ^-  (list lane:pact)
+      ?^  lane.fren
+        (drop lane.fren)
       ?:  ?=(%czar (clan:title sponsor.fren))
         ?:  =(our sponsor.fren)
           ~
@@ -2998,7 +2994,7 @@
                 ^+  peer-core
                 =|  fren=fren-state
                 |^  =:        -.fren  azimuth-state=-.peer-state
-                          route.fren  get-route
+                           lane.fren  get-lane
                             qos.fren  qos.peer-state
                          corked.fren  divide-bones
                         ossuary.fren  align-bones
@@ -3287,13 +3283,12 @@
                     [pax %chum life.ames-state her life.per key]
                   ==
                 ::
-                ++  get-route
-                  ^-  (list [direct=? =lane:pact])
+                ++  get-lane
+                  ^-  (unit lane:pact)
                   ?~  route.peer-state  ~
+                  ?.  direct.u.route.peer-state  ~
                   =*  lane  lane.u.route.peer-state
-                  :_  ~
-                  :-  direct.u.route.peer-state
-                  ^-  lane:pact
+                  %-  some
                   ?-  -.lane
                     %&  `@ux`p.lane  ::  galaxy
                   ::
@@ -5425,10 +5420,10 @@
             ::
                 %heer
               =/  =pact:pact  (parse-packet p.task)
-              ?-  -.pact
-                %page  (ev-pact-page +.pact)
-                %peek  (ev-pact-peek +.pact)
-                %poke  (ev-pact-poke +.pact)  ::  XX hops.task vs direct.task
+              ?-  +<.pact
+                %page  (ev-pact-page lane.task hop.pact +>.pact)
+                %peek  (ev-pact-peek +>.pact)
+                %poke  (ev-pact-poke lane.task hop.pact +>.pact)
               ==
             ::  %message-response-entry-point
             ::
@@ -5502,7 +5497,7 @@
           +|  %packet-entry-points
           ::
           ++  ev-pact-poke
-            |=  [=ack=name:pact =poke=name:pact =data:pact]
+            |=  [=lane:pact hop=@ud =ack=name:pact =poke=name:pact =data:pact]
             ^+  ev-core
             ::  XX dispatch/hairpin &c
             ::
@@ -5555,6 +5550,8 @@
               ev-core  :: XX TODO log
             ::
             =.  per  her.poke-name^+.u.chum-state
+            ::
+            =.  ev-core  (ev-update-lane lane hop)
             ::  update and print connection status
             ::
             =.  ev-core  (ev-update-qos %live last-contact=now)
@@ -5593,7 +5590,7 @@
             (ev-emit hen %give %push ~ !<(@ q.u.u.res))
           ::
           ++  ev-pact-page
-            |=  [=name:pact =data:pact =next:pact]
+            |=  [=lane:pact hop=@ud =name:pact =data:pact =next:pact]
             ^+  ev-core
             ::  check for pending request (peek|poke)
             ::
@@ -5608,6 +5605,8 @@
             =*  sealed-path  pat.name
             ?~  res=(~(get by pit) sealed-path)
               ev-core
+            ::
+            =.  ev-core  (ev-update-lane lane hop)
             ::  update and print connection status
             ::
             =.  ev-core  (ev-update-qos %live last-contact=now)
@@ -5637,7 +5636,7 @@
               ~&  >>  "request next fragment"^fag
               ::  request next fragment
               ::
-              (ev-push-pact %peek name(wan [%data 0]))
+              (ev-push-pact 0 %peek name(wan [%data 0]))
             ::
                 %data
               :: ?>  =(13 boq.name)  :: non-standard
@@ -5703,7 +5702,7 @@
                   =-  known/sat.per(pit -)
                   %+  ~(put by pit)  sealed-path  :: XX was outer-path?
                   u.res(ps `[state ~[dat.data]])
-                (ev-push-pact %peek name(wan [%data counter.state]))
+                (ev-push-pact 0 %peek name(wan [%data counter.state]))
               ::  yes, we do have packet state already
               ::
               =*  ps  u.ps.u.res
@@ -5732,7 +5731,7 @@
               ?.  =(+(fag) leaves.los.ps)
                 ::  request next fragment
                 ::
-                (ev-push-pact %peek name(wan [%data counter.los.ps]))
+                (ev-push-pact 0 %peek name(wan [%data counter.los.ps]))
               ::  yield complete message
               ::
               ~&  >>  "yield complete message"^fag
@@ -6000,7 +5999,7 @@
             =.  sat.per
               =/  her  (~(got by chums.ames-state) ship)
               ?>(?=([%known *] her) +.her)
-            (ev-push-pact page/[name u.page ~])
+            (ev-push-pact 0 page/[name u.page ~])
           ::
           ++  ev-make-mess
             |=  [p=spar q=(unit path) spac=(unit space)]
@@ -6050,7 +6049,7 @@
             ^-  pact:pact
             =/  nam  [[ship.p per-rift] [13 ~] path.p]
             ?~  q
-              [%peek nam]
+              [hop=0 %peek nam]
             ::  XX if path will be too long, put in [tmp] and use that path
             :: (mes:plot:d (en:name:d [[her=~nec rif=40] [boq=0 wan=~] pat=['c~_h' ~]]))
             :: [bloq=q=3 step=r=12]
@@ -6072,7 +6071,7 @@
             ?~  page=(ev-get-page man)
               ~&  >>>  no-page/man
               *pact:pact
-            [%poke nam man u.page]
+            [hop=0 %poke nam man u.page]
           ::
           ++  ev-make-path
             |=  [=space =path]
@@ -6105,7 +6104,7 @@
               (ev-peek ~ /ames %x (name-to-beam name))  :: XX
             ?.  ?=([~ ~ *] res)  ~
             =;  page=pact:pact
-              ?>(?=(%page -.page) `q.page)
+              ?>(?=(%page +<.page) `q.page)
             =>  [res=res de=de:pact]
             ~>  %memo./ames/get-page
             -:($:de ;;(@ q.q.u.u.res))
@@ -6847,8 +6846,8 @@
                   =.  +>.u.peer  +:*fren-state
                   ::  XX  reinitialize galaxy route if applicable
                   ::
-                  =?  route.+.u.peer  =(%czar (clan:title ship))
-                    [direct=%.y lane=`@ux`ship]~
+                  =?  lane.+.u.peer  =(%czar (clan:title ship))
+                    (some `@ux`ship)
                   (~(put by chums.ames-state) ship u.peer)
                 =?  peers.ames-state  ?=(%ship -.peer)
                   ::  XX  reinitialize galaxy route if applicable
@@ -7138,8 +7137,8 @@
                 ::  automatically set galaxy route, since unix handles lookup
                 ::
                 ?:  ?=(%chum -.peer)
-                  =?  route.peer  ?=(%czar (clan:title ship))
-                    [direct=%.y lane=`@ux`ship]~
+                  =?  lane.peer  ?=(%czar (clan:title ship))
+                    (some `@ux`ship)
                   =.  chums.ames-state
                     (~(put by chums.ames-state) ship known/+.peer)
                   [%chum known/+.peer]^sy-core
@@ -7266,25 +7265,12 @@
               |=  [=ship =lane:pact]
               ^+  sy-core
               ?:  =(%czar (clan:title ship))
-                :: %-  %^  ev-trace  odd.veb  ship
-                ::   |.("ignoring %dear lane {(scow %if ip)}:{(scow %ud pt)} for galaxy")
                 sy-core
               =/  peer  (sy-find-peer ship)
               ?.  ?=([?(%ship %chum) ~ %known *] peer)
-                :: %-  %^  ev-trace  odd.veb  ship
-                ::   |.("no peer-state for ship, ignoring %dear")
                 sy-core
-              :: %-  %^  ev-trace  rcv.veb  ship
-              ::   |.("incoming %dear lane {(scow %if ip)}:{(scow %ud pt)}")
               =?  chums.ames-state  ?=(%chum -.peer)
-                ::  evict old lanes; keep the last 5
-                ::
-                =.  route.+.u.peer
-                  ?:  ?&  ?=(^ route.+.u.peer)
-                          =([direct=%.y lane] i.route.+.u.peer)
-                      ==
-                    route.+.u.peer
-                  [[direct=%.y lane] (scag 5 route.+.u.peer)]
+                =.  lane.+.u.peer  `lane
                 (~(put by chums.ames-state) ship u.peer)
               =?  peers.ames-state  ?=(%ship -.peer)
                 =/  =^lane
@@ -7311,10 +7297,11 @@
               ?.  ?=([?(%ship %chum) ~ %known *] peer)
                 %-  (slog leaf+"ames: no peer-state for {(scow %p ship)}, ignoring" ~)
                 sy-core
-              =.  route.+.u.peer  ~
               =?  chums.ames-state  ?=(%chum -.peer)
+                =.  lane.+.u.peer  ~
                 (~(put by chums.ames-state) ship u.peer)
               =?  peers.ames-state  ?=(%ship -.peer)
+                =.  route.+.u.peer  ~
                 (~(put by peers.ames-state) ship u.peer)
               =.  ev-core
                 (ev-emit unix-duct.ames-state %give %nail ship ~)
@@ -7705,7 +7692,7 @@
                     ==
                   ~  :: non-standard proofs for later
                 =;  [nam=name:pact dat=data:pact]
-                  =/  pac=pact:pact  [%page nam dat ~]
+                  =/  pac=pact:pact  [hop=0 %page nam dat ~]
                   ?:  (gth fag tot.dat)
                     [~ ~]
                   ?.  ser.pac.nex
@@ -7939,14 +7926,22 @@
             ::
             (ev-emit hen %pass /qos %d %flog %text u.text)
           ::
+          ++  ev-update-lane
+            |=  [=lane:pact hop=@ud]
+            ^+  ev-core
+            =?  chums.ames-state  !=(0 hop)
+              %+  ~(put by chums.ames-state)  ship.per
+              known/sat.per(lane `lane)
+            ev-core
+          ::
           ++  ev-push-pact  :: XX forwarding?
             |=  =pact:pact
             ^+  ev-core
             =;  lanes=(list lane:pact:ames)
               %+  ev-emit  unix-duct.ames-state
               [%give %push lanes p:(fax:plot (en:^pact pact))]
-            ?^  route.sat.per
-              (turn route.sat.per tail)
+            ?^  lane.sat.per
+              (drop lane.sat.per)
             ::  find .ship.sat.per sponsor galaxy's lane
             ::
             =/  sax

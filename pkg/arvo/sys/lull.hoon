@@ -873,7 +873,7 @@
         [%load ?(%mesa %ames)]                ::  load core for new peers; XX make it term for flexibility?
         [%back (unit ship)]                   ::  per-peer regression
     ::
-        [%heer p=@]                           :: receive a packet
+        [%heer =lane:pact p=@]                :: receive a packet
         [%mess =mess]                         :: receive a message
         [%moke =space =spar =path]            :: initiate %poke request
         [%meek =space =spar]                  :: initiate %peek request
@@ -1636,7 +1636,7 @@
   +$  fren-state
     $+  fren-state
     $:  azimuth-state
-        route=(list [direct=? =lane:pact])  :: XX hop missing in pact
+        lane=(unit lane:pact)
         =qos
         corked=(set side)  ::  can be +peeked in the namespace
                           ::  XX how many flows to keep here?
@@ -1850,30 +1850,31 @@
                       [%is p=@isH q=@udE]
                   ==
         +$  next  (list lane)
-        +$  pact  $%  [%page p=name q=data r=next]
-                      [%poke p=name q=name r=data]
-                      [%peek p=name]
-                  ==
+        +$  pact  $:  hop=@ud
+                      $%  [%page p=name q=data r=next]
+                          [%poke p=name q=name r=data]
+                          [%peek p=name]
+                  ==  ==
         --
     ::
     |%
     ++  en
       |=  pak=pact
       ^-  plot
+      =*  typ  +<.pak
       =/  bod=plot
-        ?-  -.pak
+        ?-  typ
           %page  [(en:^name p.pak) (en:^data q.pak) (en:^next r.pak)]
           %peek  (en:^name p.pak)
           %poke  [(en:^name p.pak) (en:^name q.pak) (en:^data r.pak)]
         ==
       =/  hed=plot
         =/  nex=@B
-          ?.  ?=(%page -.pak)  0b0
+          ?.  ?=(%page typ)  0b0
           ?~  r.pak            0b0
           ?^  t.r.pak          0b11
           ?:(?=([%if *] i.r.pak) 0b1 0b10)
-        =/  hop  0 :: XX
-        (en:head nex -.pak hop (mug p:(fax:plot bod)))
+        (en:head nex typ hop.pak (mug p:(fax:plot bod)))
       [hed bod]
     ::
     ++  de
@@ -1886,15 +1887,15 @@
           %page  =^  nam  b  ((de:^name b) dat)
                 =^  dat  b  ((de:^data b) dat)
                 =^  nex  b  ((de:^next b nex.hed) ^dat)
-                [[typ.hed nam dat nex] b]
+                [[hop.hed [typ.hed nam dat nex]] b]
         ::
           %peek  =^  nam  b  ((de:^name b) dat)
-                [[typ.hed nam] b]
+                [[hop.hed [typ.hed nam]] b]
         ::
           %poke  =^  nam  b  ((de:^name b) dat)
                 =^  dam  b  ((de:^name b) dat)
                 =^  dat  b  ((de:^data b) dat)
-                [[typ.hed nam dam dat] b]
+                [[hop.hed [typ.hed nam dam dat]] b]
         ==
       =/  gum
         (end [0 20] (mug (cut -.c [(rig b -.c) +.c] dat)))
@@ -2162,10 +2163,11 @@
   ::
   ++  generator
     |%
+    +$  gen  $-(@uvJ [* @uvJ])
     ++  just  |*(a=* |=(eny=@uvJ [a (shaz eny)]))
     ::
     ++  cook
-      |*  [a=$-(* *) b=$-(@uvJ [* @uvJ])]
+      |*  [a=$-(* *) b=gen]
       |=  eny=@uvJ
       =^  c  eny  (b eny)
       [(a c) eny]
@@ -2202,7 +2204,7 @@
       [(cut boq [a 1] src) eny]
     ::
     ++  many
-      |*  [[min=@ud max=@ud] gen=$-(@uvJ [* @uvJ])]
+      |*  [[min=@ud max=@ud] =gen]
       |=  eny=@uvJ
       =^  a  eny  ((rand max) eny)
       ?:  (lth a min)  $
@@ -2213,14 +2215,14 @@
       $(lit [b lit], i +(i))
     ::
     ++  both
-      |*  [l=$-(@uvJ [* @uvJ]) r=$-(@uvJ [* @uvJ])]
+      |*  [l=gen r=gen]
       |=  eny=@uvJ
       =^  a  eny  (l eny)
       =^  b  eny  (r eny)
       [[a b] eny]
     ::
     ++  pick
-      |*  [l=$-(@uvJ [* @uvJ]) r=$-(@uvJ [* @uvJ])]
+      |*  [l=gen r=gen]
       |=  eny=@uvJ
       =^  a  eny  (flag eny)
       (?:(a l r) eny)
@@ -2305,10 +2307,11 @@
           ++  pact-auth
             (pick (just ~) (both (just ~) (pick hash (both hash hash))))
           ++  auth
-            %+  pick  (just ~)
-            %+  pick
+            ;:  pick
+              (just ~)
               :(both (just %1) hash hash)
-            :(both (just %0) mess-auth pact-auth)
+              :(both (just %0) mess-auth pact-auth)
+            ==
           --
       ^-  $-(@uvJ [data:pact @uvJ])
       :(both frag auth (bits & ^~((bex 16))))
@@ -2317,19 +2320,20 @@
       =>  |%
           ++  port  (aura 'udE')
           --
-      %+  pick
+      ;:  pick
         (bits & 256)
-      %+  pick
         :(both (just %if) (aura 'ifF') port)
-      :(both (just %is) (aura 'isH') port)
+        :(both (just %is) (aura 'isH') port)
+      ==
     ::
     ++  pactt
       ^-  $-(@uvJ [pact:pact @uvJ])
-      %+  pick
-        (both (just %peek) name)
-      %+  pick
-        :(both (just %page) name data (many [0 2] lane))
-      :(both (just %poke) name name data)
+      =/  hop  (rand 7)
+      ;:  pick
+        :(both hop (just %peek) name)
+        :(both hop (just %page) name data (many [0 2] lane))
+        :(both hop (just %poke) name name data)
+      ==
     --
   ::
   ++  test
