@@ -5996,7 +5996,8 @@
               [[our rift.ames-state] [13 ~] (ev-make-path space path)]
             ?~  page=(ev-get-page name)
               ev-core
-            =.  sat.per
+            =.  per
+              :-  ship
               =/  her  (~(got by chums.ames-state) ship)
               ?>(?=([%known *] her) +.her)
             (ev-push-pact 0 page/[name u.page ~])
