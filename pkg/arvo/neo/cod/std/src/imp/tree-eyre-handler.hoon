@@ -56,9 +56,13 @@
         200
         :~  
           'content-type'^'text/html'
-          'HX-Redirect'^location
+          'HX-Refresh'^'true'
+          ::'HX-Redirect'^location
+          ::'HX-Reswap'^'outerHTML'
         ==
-        *manx
+        ;div
+        ;  success 
+        ==
         ==
       =/  =quit:neo  (need !<((unit quit:neo) vase))
       ?+  -.quit  ~
@@ -144,10 +148,6 @@
           %send-make 
         ::  %make cards don't have error(%goof) %acks yet 
         ::  sending eyre response here for now
-        =/  location  
-          %-  crip 
-            %+  weld  "/neo/tree" 
-              (en-tape:pith:neo here)
         %+  welp 
         :~  (poke-tree-card here.bowl diff-vase)
         ==
@@ -157,7 +157,7 @@
           200
           :~
             'content-type'^'text/html'
-            'HX-Redirect'^location
+            'HX-Refresh'^'true'
           ==
           *manx
           ==
@@ -248,8 +248,8 @@
     ;*  %+  turn  tang
       |=  =tank
       ^-  manx
-      ;div.wf.fr.js.p1.error
-        ;span:  {~(ram re tank)}
+      ;div.wf.fr.js.p1.error.monospace
+        ;  {~(ram re tank)}
       ==
   ==
 ::
@@ -294,6 +294,24 @@
   ^~
   %-  trip 
   '''
+  @font-face {
+  font-family: 'Urbit Sans';
+  src: url("https://media.urbit.org/fonts/UrbitSans/UrbitSansVFWeb-Regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 600;
+  }
+  body{
+  font-family: 'Urbit Sans';
+  font-size: 15px;
+  }
+  input{
+  font-family: 'monospace', monospace;
+  font-size: 13px;
+  }
+  .monospace{
+  font-family: 'monospace', monospace;
+  font-size: 13px;
+  }
   .red-hover:hover{
   background-color: #FF0000; 
   color: white;
@@ -302,7 +320,7 @@
   .pointer{
   cursor: pointer;
   }
-  .bd{
+  .bd.bd2{
   border: 0.8px solid black;
   }
   .error{
@@ -334,7 +352,7 @@
   |=  [=bowl:neo =pail:neo]
   ^-  manx
   ;div
-    ;div.fc.g2.bd.br2.p2
+    ;div.fc.g2.bd.bd2.br2.p2
       ;div.top.fr.jb.g2
         ;p.p2.hfc.wf.grow:  {(en-tape:pith:neo here.bowl)}
         ;+  buttons
@@ -347,7 +365,7 @@
         ==
         ;div.fr.je.grow.g2
           ;+  (pro-files pail bowl)
-          ;a.loader.p2.bd.br2.hover-grey
+          ;a.loader.p2.bd.bd2.br2.hover-grey
           =href  "/neo/tree/{(scow %p our.bowl)}/cod/std/src/pro/{(trip ?@(p.pail p.pail mark.p.pail))}"
             ;span.loaded.hf: {<p.pail>}
             ;span.loading.hf:  loading
@@ -376,7 +394,7 @@
       ;div.hidden
         ;  nothing
       ==
-    ;a.fr.jb.g1.bd.br2.hover-grey
+    ;a.fr.jb.g1.bd.bd2.br2.hover-grey
     =href  "/neo/tree{(en-tape:pith:neo (welp here.bowl pith))}"
       ;div.p2.hfc.p2.hover
         ;  {(en-tape:pith:neo pith)}
@@ -392,12 +410,13 @@
   ^-  manx
   ?:  =(p.pail %hoon)
     =/  wain=(list @t)  (to-wain:format !<(@t q.pail))
-    ;div.fc.g1.p2.grow
-      ;*  %+  turn  wain
+    ;div.fc.g1.p2.grow.monospace
+      ;* 
+      %+  turn  wain
       |=  lin=@t 
-      ;p:  {(trip lin)}\0a
+      ;p.monospace:  {(trip lin)}\0a
     ==
-  ;div.fr.js.p2
+  ;div.fr.js.p2.monospace
     ;+  ;/
     =/  size  (met 3 (jam q.q.pail))
     ?:  (gth size 750)  "vase too large to print: {<size>}"
@@ -439,7 +458,7 @@
     |=  =pro:ford:neo
     ~&  >>>  -:!>(stud.pro)
     ^-  manx
-    ;a.loader.bd.br2.p2.hover-grey
+    ;a.loader.bd.bd2.br2.p2.hover-grey
       =href  "/neo/tree/{(scow %p our.bowl)}/cod/std/src/pro/{(trip ?@(stud.pro stud.pro mark.stud.pro))}"
         ;span.loaded.hfc: {<stud.pro>}
         ;span.loading.hfc:  loading
@@ -449,7 +468,7 @@
 ++  buttons
   ^-  manx
   ;div.buttons.fr.g2
-    ;button.make.p2.bd.br2.bg-white.hover-grey
+    ;button.make.p2.bd.bd2.br2.hover-grey.b-3.bg-white
     =onclick  
       """
       $(this).toggleClass('toggled');
@@ -462,7 +481,7 @@
       """
       ;span:  make
     ==
-    ;button.poke.p2.bd.br2.bg-white.hover-grey
+    ;button.poke.p2.bd.bd2.br2.hover-grey.bg-white
     =onclick  
       """
       $(this).toggleClass('toggled');
@@ -475,7 +494,7 @@
       """
       ;span:  poke
     ==
-    ;button.cull.p2.bd.br2.bg-white.hover-grey
+    ;button.cull.p2.bd.bd2.br2.hover-grey.bg-white
     =onclick  
       """
       $(this).toggleClass('toggled');
@@ -505,7 +524,7 @@
 ++  make-form
   |=  =bowl:neo
   ^-  manx
-  ;form.make-form.hidden.bd.br2.fc.g2.p2.wf.bg-white.hfc
+  ;form.make-form.hidden.bd.bd2.br2.fc.g2.p2.wf.hfc  ::  .bg-white
   =hx-post    "/neo/tree{(en-tape:pith:neo here.bowl)}?stud=tree-diff&head=send-make"
   =hx-swap    "innerHTML"
   =hx-target  ".error-box"
@@ -516,7 +535,7 @@
       =value  (en-tape:pith:neo here.bowl)
       ;
       ==
-      ;input.bd.br2.p2.grow
+      ;input.bd.bd2.br2.p2.grow
       =type          "text"
       =name          "pith"
       =oninput       "this.setAttribute('value', this.value);"
@@ -524,7 +543,7 @@
       =required      ""
       ;
       ==
-      ;input.bd.br2.p2 
+      ;input.bd.bd2.br2.p2 
       =type          "text"
       =name          "stud"
       =oninput       "this.setAttribute('value', this.value);"
@@ -532,7 +551,7 @@
       =required      ""
       ;
       ==
-      ;input.bd.br2.p2 
+      ;input.bd.bd2.br2.p2 
       =type          "text"
       =name          "head-pail"
       =oninput       "this.setAttribute('value', this.value);"
@@ -542,7 +561,7 @@
       ==
     ==
     ;div.fr.g2
-      ;input.bd.br2.p2.grow
+      ;input.bd.bd2.br2.p2.grow
       =type          "text"
       =name          "vase"
       =oninput       "this.setAttribute('value', this.value);"
@@ -550,7 +569,7 @@
       =required      ""
       ;
       ==
-      ;input.bd.br2.p2.grow
+      ;input.bd.bd2.br2.p2.grow
       =type          "text"
       =name          "conf"
       =oninput       "this.setAttribute('value', this.value);"
@@ -558,7 +577,7 @@
       =required      ""
       ;
       ==
-      ;button.bd.br2.p2.loader
+      ;button.bd.bd2.br2.p2.loader
     :: =onclick  
     :: """
     :: $(this).parent().toggleClass('hidden');
@@ -575,11 +594,12 @@
 ++  poke-form
   |=  =bowl:neo
   ^-  manx
-  ;form.poke-form.hidden.bd.br2.fr.jb.g2.p2.wf
+  ;form.poke-form.hidden.bd.bd2.br2.fr.jb.g2.p2.wf
   =hx-post    "/neo/tree{(en-tape:pith:neo here.bowl)}?stud=tree-diff&head=send-poke"
-  =hx-swap    "innerHTML"
+  =hx-reswap  "true"
+  ::=hx-swap    "innerHTML"
   =hx-target  ".error-box"
-    ;input.p2.bd.br2
+    ;input.p2.bd.bd2.br2
     =type          "text"
     =name          "stud"
     =oninput       "this.setAttribute('value', this.value);"
@@ -588,7 +608,7 @@
     =required      ""
     ;
     ==
-    ;input.p2.bd.br2.grow
+    ;input.p2.bd.bd2.br2.grow
     =type          "text"
     =name          "vase"
     =oninput       "this.setAttribute('value', this.value);"
@@ -597,7 +617,7 @@
     =required      ""
     ;
     ==
-    ;button.loader.bd.br2
+    ;button.loader.bd.bd2.br2
       ;span.loaded:  poke
       ;span.loading:  loading
     ==
@@ -607,7 +627,7 @@
   |=  =bowl:neo
   =/  warning  "Are you sure you want to delete this shrub and all their kids?"
   ^-  manx
-  ;form.cull-form.hidden.bd.br2.p2.wf
+  ;form.cull-form.hidden.bd.bd2.br2.p2.wf
   =style    "border: 2px solid #FF0000; border-radius: 6px;"
   =hx-post  "/neo/tree{(en-tape:pith:neo here.bowl)}?stud=tree-diff&head=send-cull"
     ;div.fc.ac
