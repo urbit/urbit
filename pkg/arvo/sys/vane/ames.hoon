@@ -7950,7 +7950,7 @@
             ::  find .ship.sat.per sponsor galaxy's lane
             ::
             =/  sax
-              (rof ~ /sax %j `beam`[[our %saxo %da now] /(scot %p ship.per)])
+              (rof [~ ~] /sax %j `beam`[[our %saxo %da now] /(scot %p ship.per)])
             ?.  ?=([~ ~ *] sax)
               ~  :: XX log
             =/  gal  (rear ;;((list ship) q.q.u.u.sax))  :: XX only galaxy
