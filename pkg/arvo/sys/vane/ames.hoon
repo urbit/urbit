@@ -6000,6 +6000,14 @@
               :-  ship
               =/  her  (~(got by chums.ames-state) ship)
               ?>(?=([%known *] her) +.her)
+            ::  XX  check here if we have a lane, and if not, assume that it came
+            ::  via a sponsor, to avoid breaking symmetric routing
+            ::  XX  unnecessary? vere wil probably ignore this lane
+            ::
+            =?  route.sat.per  ?=(~ route.sat.per)
+              :: XX  this is a hack; sat.per is not persisted
+              ::
+              [%.n `@ux`(^^sein:title rof /ames our now our)]~
             (ev-push-pact 0 page/[name u.page ~])
           ::
           ++  ev-make-mess
