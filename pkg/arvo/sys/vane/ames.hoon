@@ -6042,7 +6042,7 @@
               =.  pit  (~(put by pit) path.p new)
               ?:(?=(%known -.her) her(pit pit) her(pit pit))   ::  XX find-fork
             ::
-            =.  sat.per  ?>(?=([%known *] her) +.her)
+            =.  per  [ship.p ?>(?=([%known *] her) +.her)]
             (ev-push-pact (ev-make-pact p q rift spac))
           ::
           ++  ev-make-pact
