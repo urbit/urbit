@@ -250,7 +250,9 @@
 |%
 ++  manx-to-octs
   |=  man=manx
-  (as-octt:mimes:html (en-xml:html man))
+  %-  as-octt:mimes:html
+  %+  welp  "<!DOCTYPE html>"
+  (en-xml:html man)
 ::
 ++  eyre-cards
   |=  [eyre-id=@ta =bowl:neo status=@ud =header-list:http =manx]

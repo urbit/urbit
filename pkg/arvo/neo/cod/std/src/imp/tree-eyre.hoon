@@ -23,6 +23,7 @@
       =/  [eyre-id=@ta req=inbound-request:eyre]  task
       :_  sig/!>(~)
       =/  doc
+        %+  weld  "<!DOCTYPE html>"
         %-  en-xml:html
         ;html
           ;body
