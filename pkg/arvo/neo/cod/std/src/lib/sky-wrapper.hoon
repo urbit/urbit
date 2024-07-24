@@ -1,10 +1,6 @@
-/@  sky
-/@  sky-settings
 /-  feather-icons
 /*  date-now
 /*  a-i-r
-/*  s-k-y
-/*  wi-nd
 /*  feather
 /*  reset
 /*  hawk-icon
@@ -12,24 +8,7 @@
 /*  htmx-js
 /*  htmx-response-targets
 /*  htmx-idiomorph
-:-  [%sky %$ %htmx]
-|=  =sky
-|=  =bowl:neo
-^-  manx
-|^
-  =;  m
-    %-  lift
-    ?:  menu.sky  m
-    m(a.g [[%closed ""] a.g.m])
-  ^-  manx
-  ;s-k-y.wf.hf.relative
-    =our  (scow %p our.bowl)
-    =style  "opacity: var(--sky-opacity); padding: var(--sky-outer-gap);"
-    =id  "air"
-    =hawks  "{<open.sky>}"
-    ;*  p:(spin (scag open.sky hawks.sky) 0 ha-wk)
-  ==
-::
+|_  =bowl:neo
 ++  hawks-moved-js
   ::  js to run whenever the order or number of hawks changed.
   ::  it will:
@@ -56,184 +35,6 @@
   """
   --{(trip key)}: {(trip val)};
   """
-++  theme-style
-  =/  settings
-    ^-  (unit sky-settings)
-    =/  s  (~(get of:neo kids.bowl) /settings)
-    ?~  s  ~
-    :-  ~
-    !<  sky-settings
-    q.q.saga.u.s
-  ;style
-    ;+  ;/
-    ?~  settings
-      ""
-    """
-    html \{
-      {(map-to-css-tape u.settings)}
-    }
-    """
-  ==
-++  menu-btn
-  =;  m
-    ?:  menu.sky  m
-    m(a.g [[%closed ""] a.g.m])
-  ^-  manx
-  ;button.hover.f2.b2.fc.ac.jc.air-btn.wf
-    =slot  "button"
-    =onclick  "this.parentNode.toggleAttribute('closed'); this.toggleAttribute('closed');"
-    =hx-post  "/neo/hawk/{<our.bowl>}/sky?stud=sky-diff"
-    =head  "menu"
-    =hx-target  "this"
-    =hx-swap  "none"
-    =style  "height: 2rem;"
-    ; ~
-  ==
-++  menu-btn-style
-  ;style
-    ;+  ;/  %-  trip
-    '''
-    .air-btn {
-      position: relative;
-      border-radius: 3px;
-    }
-    @media(max-width: 900px) {
-      .air-btn {
-        position: absolute;
-        bottom: 45px;
-        left: 25px;
-        padding: 30px;
-        width: 70px;
-        height: 70px;
-        z-index: 10;
-        border-radius: 50px;
-        border: 1px solid var(--b3);
-      }
-      a-i-r {
-        padding: 0 !important;
-      }
-    }
-    '''
-  ==
-++  ha-wk
-  |=  [[id=@da =pith] a=@]
-  :_  +(a)
-  =/  ext
-    ?:  =(pith /)  ""
-    (en-tape:pith:neo pith)
-  =/  idt  `tape`(zing (scan +:(scow %da id) (most dot (star ;~(less dot prn)))))
-  ;wi-nd
-    ::  =sandbox  "allow-scripts allow-forms allow-same-origin"
-    =slot  "s{<a>}"
-    ::  =here  "/neo/hawk{ext}?slot={<a>}&hawk-id={<id>}&no-save"
-    =here  ext
-    ;
-  ==
-++  nav
-  ;nav.wf.hf.p2.fc.g2.sky-nav
-    =slot  "nav"
-    ;div.nav-refresher.loader.p3
-      =hx-get  "/neo/sky"
-      =hx-swap  "outerHTML"
-      =hx-target  "closest nav"
-      =hx-select  "nav.sky-nav"
-      =hx-trigger  "refresh"
-      ;span.loaded;
-      ;span.loading
-        ;+  loading.feather-icons
-      ==
-    ==
-    ;+  new-tab
-    ;*
-    =<  p
-    %^    spin
-        hawks.sky
-      0
-    |=  [[id=@da =pith] a=@]
-    :_  +(a)
-    =/  idt  `tape`(zing (scan +:(scow %da id) (most dot (star ;~(less dot prn)))))
-    =/  color  (trip ?:((lth a open.sky) 'b2' 'b1'))
-    =/  close-hawk-js
-      %-  trip
-      '''
-      let toClose = parseInt(this.getAttribute('close'));
-      let air = $('a-i-r');
-      let num = parseInt(air.attr('hawks'));
-      let hawks = air.children('[slot]').filter('.hawk');
-      if (toClose < num) {
-        air.attr('hawks', hawks.length-1);
-      }
-      hawks.each(function() {
-        let slot = parseInt($(this).attr('slot').slice(1));
-        if (slot == toClose) {
-          $(this).remove();
-        }
-      });
-      $(this).emit('hawks-moved');
-      '''
-    =/  maximize-hawk-js
-      %-  trip
-      '''
-      let air = $('a-i-r');
-      let num = parseInt(air.attr('hawks'));
-      air.attr('hawks', num+1);
-      let toMax = '#hawk-' + this.getAttribute('hawk');
-      $(toMax).attr('slot', 's-1');
-      '''
-    ;div
-      =id  "hawk-tab-{idt}"
-      =hx-ext  "ignore:html-enc"
-      =class  "fr ac br1 {color}"
-      ;button
-        =class  "loader p2 tl br1 hover grow {color}"
-        =hx-post  "/neo/hawk/{<our.bowl>}/sky?stud=sky-diff&head=maximize&slot={<a>}"
-        =hx-on-htmx-before-send  maximize-hawk-js
-        =hx-on-htmx-after-request
-          """
-          $(this).emit('hawks-moved');
-          """
-        =hawk  idt
-        =hx-target  "find .loading"
-        ::  =hx-swap  "outerHTML"
-        =hx-swap  "none"
-        ;span.loaded: {(en-tape:pith:neo pith)}
-        ;span.loading
-          ;+  loading.feather-icons
-        ==
-      ==
-      ;button
-        =class  "loader p2 tl br1 hover {color}"
-        =close  "{<a>}"
-        =hx-post  "/neo/hawk/{<our.bowl>}/sky?stud=sky-diff&head=close&slot={<a>}"
-        =hx-swap  "none"
-        =hx-on-htmx-after-request  close-hawk-js
-        ;span.loaded.f3
-          ;+  close.feather-icons
-        ==
-        ;span.loading
-          ;+  loading.feather-icons
-        ==
-      ==
-    ==
-  ==
-++  new-tab
-  ::  XX optimistically render
-  ;button.loader.b2.p2.tc.br1.hover.wfc.s-1
-    =hx-ext  "ignore:html-enc"
-    =hx-post  "/neo/hawk/{<our.bowl>}/sky?stud=sky-diff&head=new-hawk"
-    =hx-target  "find .loading"
-    =hx-swap  "outerHTML"
-    =hx-on-htmx-after-request  "$(this).emit('hawks-moved')"
-    =type  "button"
-    =hx-vals  (trip 'js:{now: urbitTimestamp()}')
-    ;span.loaded.fr.ac.js.g2
-      ;+  add.feather-icons
-      ;span.f3: new window
-    ==
-    ;span.loading
-      ;+  loading:feather-icons
-    ==
-  ==
 ++  eye
   ;div#eye.fixed.hidden
     =style  "bottom: 30px; left: 30px;"
@@ -356,7 +157,6 @@
   :~
     ['name' s+'sky']
     ['description' s+'an urbit namespace viewer']
-    ['start_url' s+'http://localhost/neo/sky']  ::  XX
     ['display' s+'standalone']
     ['background_color' s+'black']
     :+  'icons'  %a
@@ -427,7 +227,7 @@
   ;html
     ;head
       ;meta(charset "UTF-8");
-      ;title: s k y
+      ;title: hawk
       ;script: {(trip jquery)}
       ;script: {(trip htmx-js)}
       ;script: {(trip htmx-response-targets)}
@@ -443,11 +243,6 @@
       ::    =src  "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.15.1/cdn/shoelace.js"
       ::    ;
       ::  ==
-      ;link
-        =href  "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-        =rel  "stylesheet"
-        ;
-      ==
       ;meta
         =name  "viewport"
         =content
@@ -477,14 +272,6 @@
       ;style: {(trip reset)}
       ;style: {(trip feather)}
       ;script
-        ;+  ;/
-        """
-        const sharedStyles = new CSSStyleSheet();
-        sharedStyles.replaceSync(`{(trip reset)}\0a{(trip feather)}`);
-        document.adoptedStyleSheets = [sharedStyles];
-        """
-      ==
-      ;script
         ;+  ;/  %-  trip
         '''
         window.log = function() {
@@ -493,11 +280,7 @@
           }
         };
         jQuery.fn.log = function (msg) {
-          if (msg) {
-            console.log(msg, this);
-          } else {
-            console.log(this);
-          }
+          console.log(this);
           return this;
         };
         jQuery.fn.emit = function (name) {
@@ -505,15 +288,6 @@
             new Event(
               name,
               { bubbles: true, cancelable: true, composed: true }
-            )
-          );
-          return this;
-        };
-        jQuery.fn.poke = function (name) {
-          (this[0]).dispatchEvent(
-            new Event(
-              name,
-              { bubbles: false, cancelable: true, composed: true }
             )
           );
           return this;
@@ -572,16 +346,9 @@
             $('a-i-r').emit('hawks-moved');
           }
         }
-        window.addEventListener('message', function(event) {
-          let wid = event.data.wid;
-          let path = event.data.path;
-          document.querySelector(`[wid='${wid}']`)?.setAttribute('here', path);
-        });
         '''
       ==
       ;script: {(trip a-i-r)}
-      ;script: {(trip s-k-y)}
-      ;script: {(trip wi-nd)}
       ;script: {(trip date-now)}
       ;+  favicon
       ;+  manifest
@@ -591,7 +358,6 @@
       =hx-swap  "outerHTML"
       =hx-boost  "true"
       =hx-history  "false"
-      =hx-replace-url  "/neo/sky"
       =our  (scow %p our.bowl)
       =style
         """
@@ -602,8 +368,58 @@
         """
       ;+  in
       ;+  eye
-      ;+  menu-btn-style
-      ;+  theme-style
+      ;+  stub-styling
     ==
   ==
+++  stub-styling
+;style
+  ;+  ;/  %-  trip
+  '''
+  html {
+    --line-height: 1.4;
+    --sky-outer-gap: 8px;
+    --dark-b-1: #225511;
+    --dark-b3: #555555;
+    --light-b-1: #55dd33;
+    --letter-spacing: 0.024em;
+    --dark-f-2: #ccbb33;
+    --light-b1: #cccccc;
+    --light-b0: #dddddd;
+    --light-b3: #aaaaaa;
+    --light-b-3: #dd5522;
+    --dark-b4: #666666;
+    --light-f2: #444444;
+    --dark-b-3: #551111;
+    --dark-f4: #888888;
+    --dark-f-3: #ee7755;
+    --light-b-2: #ddaa33;
+    --sky-opacity: 0.88;
+    --dark-b0: #222222;
+    --light-b2: #bbbbbb;
+    --light-f-3: #993311;
+    --light-f1: #333333;
+    --dark-f-1: #55cc33;
+    --dark-b1: #333333;
+    --dark-f1: #cccccc;
+    --light-f3: #555555;
+    --light-b4: #999999;
+    --sky-bg-url: ;
+    --dark-f3: #aaaaaa;
+    --light-f0: #111111;
+    --sky-bg-size: contain;
+    --light-f4: #777777;
+    --1in: 4px;
+    --font-mono: monospace;
+    --dark-f0: #eeeeee;
+    --sky-inner-gap: 8px;
+    --dark-b2: #444444;
+    --dark-b-2: #555511;
+    --font: Urbit Sans, sans-serif;
+    --mono-scale: 0.8;
+    --light-f-2: #aaaa22;
+    --dark-f2: #bbbbbb;
+    --light-f-1: #339911;
+  }
+  '''
+==
 --

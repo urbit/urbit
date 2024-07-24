@@ -704,3 +704,6 @@ button {
   user-select: none;
   cursor: pointer;
 }
+.grabber {
+  cursor: grab;
+}
