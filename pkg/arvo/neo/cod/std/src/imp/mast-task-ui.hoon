@@ -41,13 +41,22 @@
       ::
           [%click %submit ~]
         =/  text=@t
-          ~|  %task-input-fail
           (~(got by data.event) '/task-input/value')
         :_  pail
         :~  :-  p:(~(got by deps.bowl) %src)
             :+  %poke 
               %task-diff
             !>([%new [text %.y %.y ~] %.y])
+        ==
+      ::
+          [%click %checkbox ~]
+        =/  t=pith  #/placeholder
+          ::(~(got by data.event) '/task-input/value') :: XX encode this
+        :_  pail
+        :~  :-  t
+            :+  %poke 
+              %task-diff
+            !>([%edit 'placeholder' %.y])  :: XX get text from issue
         ==
       ==
     ::
@@ -85,7 +94,7 @@
     ;div
       ;textarea(id "task-input", style "height: 10rem; width: 25rem; margin-block: 1rem;");
       ;button
-        =event  "/click/submit"
+        =event  "/click/new"
         =return  "/task-input/value"
         ;+  ;/  "Enter"
       ==
@@ -95,11 +104,18 @@
     ^-  manx
     ;div
       ;*  %+  turn
-            %~  val  by
+            %~  tap  by
             (~(del by tasks) /)
-          |=  [text=cord done=? kids-done=? order=(list pith)]
+          |=  [=pith =task]
           ;div
-            ;p: {(trip text)}
+            ;p: {(trip text.task)}
+            :: ;input
+            ::   =type   "checkbox"
+            ::   =name   "done"
+            ::   =event  "/click/checkbox"
+            ::   =return  :: XX what to return here?
+            ::   ;
+            :: ==
           ==
     ==
   --
