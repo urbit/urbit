@@ -5551,9 +5551,9 @@
             ::
             =.  per  her.poke-name^+.u.chum-state
             ::
-            =.  ev-core  (ev-update-lane lane hop)
+            =.  per  (ev-update-lane lane hop)
             ::  update and print connection status
-            ::
+            ::  XX  this is implicitly updating chums.state;
             =.  ev-core  (ev-update-qos %live last-contact=now)
             ?.  =(1 tot.data)
               =/  =dire  :: flow swtiching
@@ -5606,9 +5606,9 @@
             ?~  res=(~(get by pit) sealed-path)
               ev-core
             ::
-            =.  ev-core  (ev-update-lane lane hop)
+            =.  per  (ev-update-lane lane hop)
             ::  update and print connection status
-            ::
+            ::  XX  this is implicitly updating chums.state;
             =.  ev-core  (ev-update-qos %live last-contact=now)
             ::
             =/  [typ=?(%auth %data) fag=@ud]
@@ -6004,10 +6004,10 @@
             ::  via a sponsor, to avoid breaking symmetric routing
             ::  XX  unnecessary? vere wil probably ignore this lane
             ::
-            =?  route.sat.per  ?=(~ route.sat.per)
+            =?  lane.sat.per  ?=(~ lane.sat.per)
               :: XX  this is a hack; sat.per is not persisted
               ::
-              [%.n `@ux`(^^sein:title rof /ames our now our)]~
+              [~ `@ux`(^^sein:title rof /ames our now our)]
             (ev-push-pact 0 page/[name u.page ~])
           ::
           ++  ev-make-mess
@@ -7937,11 +7937,9 @@
           ::
           ++  ev-update-lane
             |=  [=lane:pact hop=@ud]
-            ^+  ev-core
-            =?  chums.ames-state  !=(0 hop)
-              %+  ~(put by chums.ames-state)  ship.per
-              known/sat.per(lane `lane)
-            ev-core
+            ^+  per
+            ?.  =(0 hop)  per
+            per(lane.sat `lane)
           ::
           ++  ev-push-pact  :: XX forwarding?
             |=  =pact:pact
