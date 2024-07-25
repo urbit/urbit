@@ -5551,7 +5551,7 @@
             ::
             =.  per  her.poke-name^+.u.chum-state
             ::
-            =.  per  (ev-update-lane lane hop)
+            =.  per  (ev-update-lane lane hop ~)
             ::  update and print connection status
             ::  XX  this is implicitly updating chums.state;
             =.  ev-core  (ev-update-qos %live last-contact=now)
@@ -5606,7 +5606,7 @@
             ?~  res=(~(get by pit) sealed-path)
               ev-core
             ::
-            =.  per  (ev-update-lane lane hop)
+            =.  per  (ev-update-lane lane hop next)
             ::  update and print connection status
             ::  XX  this is implicitly updating chums.state;
             =.  ev-core  (ev-update-qos %live last-contact=now)
@@ -7917,6 +7917,7 @@
           ::
           ::  XX  refactor; merge with +ev-update-qos in |pe:ames
           ::  +ev-update-qos: update and maybe print connection status
+          ::  XX rethink how to update chums state; +abet pattern?
           ::
           ++  ev-update-qos
             |=  new=qos
@@ -7936,29 +7937,36 @@
             (ev-emit hen %pass /qos %d %flog %text u.text)
           ::
           ++  ev-update-lane
-            |=  [=lane:pact hop=@ud]
+            |=  [=lane:pact hop=@ud next=(list lane:pact)]
             ^+  per
-            ?.  =(0 hop)  per
-            per(lane.sat `lane)
+            ?:  =(0 hop)
+              per(lane.sat `lane)
+            ?~  next  per
+            per(lane.sat `i.next)
           ::
           ++  ev-push-pact  :: XX forwarding?
             |=  =pact:pact
             ^+  ev-core
-            =;  lanes=(list lane:pact:ames)
-              %+  ev-emit  unix-duct.ames-state
-              [%give %push lanes p:(fax:plot (en:^pact pact))]
-            ?^  lane.sat.per
-              (drop lane.sat.per)
             ::  find .ship.sat.per sponsor galaxy's lane
             ::
-            =/  sax
-              (rof [~ ~] /sax %j `beam`[[our %saxo %da now] /(scot %p ship.per)])
-            ?.  ?=([~ ~ *] sax)
-              ~  :: XX log
-            =/  gal  (rear ;;((list ship) q.q.u.u.sax))  :: XX only galaxy
-            ?:  =(our gal)
-              ~  :: XX log
-            [`@ux`gal]~
+            =/  spon=(unit @ux)
+              =/  sax
+                (rof [~ ~] /sax %j `beam`[[our %saxo %da now] /(scot %p ship.per)])
+              ?.  ?=([~ ~ *] sax)
+                ~  :: XX log
+              =/  gal  (rear ;;((list ship) q.q.u.u.sax))  :: XX only galaxy
+              ?:  =(our gal)
+                ~  :: XX log
+              [~ `@ux`gal]
+            =/  lanes=(list lane:pact:ames)
+              %+  weld
+                (drop spon)
+              ?~  lane.sat.per
+                ~
+              (drop lane.sat.per)
+            ~&  pushin-pact-on/lanes
+            %+  ev-emit  unix-duct.ames-state
+            [%give %push lanes p:(fax:plot (en:^pact pact))]
           ::
           --
       ::
