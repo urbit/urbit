@@ -50,8 +50,21 @@
           ~|(%diary-input-fail !!)
         =/  dif=diary-diff
           [%put-entry now.bowl u.dat]
+        =/  dst=pith:neo
+          p:(~(got by deps.bowl) %diary)
         :_  pail
-        :~  [#/[p/our.bowl]/mast-diary-demo %poke diary-diff/!>(dif)]
+        :~  [dst %poke diary-diff/!>(dif)]
+        ==
+        ::
+          [%click %delete @ta ~]
+        =/  key=@da
+          (slav %da i.t.t.path.eve)
+        =/  dif=diary-diff
+          [%del-entry key]
+        =/  dst=pith:neo
+          p:(~(got by deps.bowl) %diary)
+        :_  pail
+        :~  [dst %poke diary-diff/!>(dif)]
         ==
         ::
       ==
@@ -104,9 +117,15 @@
     ;div
       ;*  %+  turn  diary-entries
           |=  [date=@da =txt]
+          =/  key=tape  <date>
           ;div
+            =key  key
             ;p: {(pretty-date date)}
             ;p: {(trip txt)}
+            ;button
+              =event  "/click/delete/{key}"
+              ;+  ;/  "✖"
+            ==
           ==
     ==
   ::

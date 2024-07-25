@@ -2387,12 +2387,19 @@
       =/  dst=(unit pith:neo)
         ?.  &(?=(^ jon) ?=(%o -.jon))
           ~
-        =/  str=(unit json)  (~(get by p.jon) 'path')
+        =/  str=(unit json)  (~(get by p.jon) 'pith')
         ?.  &(?=(^ str) ?=(^ u.str) ?=(%s -.u.str))
           ~
-        (rush p.u.str stap)
+        :-  ~
+        %+  turn  (stab p.u.str)
+        |=  i=@ta
+        %-  iota
+        =+  v=(slay i)
+        ?>  &(?=(^ v) ?=(%$ -.u.v))
+        ?:  =(~.tas p.p.u.v)
+          q.p.u.v
+        p.u.v
       ?~  dst  ~|(eyre-channel-req-missing-pith/jon !!)
-      =.  u.dst  [p/our.bowl u.dst]
       =.  jon
         ?.  &(?=(^ jon) ?=(%o -.jon))
           ~

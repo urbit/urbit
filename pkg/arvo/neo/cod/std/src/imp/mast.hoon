@@ -1,4 +1,5 @@
 /-  mast
+/*  mast-js
 =<
 ^-  kook:neo
 |%
@@ -7,7 +8,7 @@
 ++  kids
   :+  ~  %y
   %-  my
-  :~  [[|/%p &] [%pro %manx] (sy %sig ~)] :: fix
+  :~  [[|/%p |] [%pro %manx] (sy %sig ~)] :: fix
       [[&/%aft |/%p |] [%pro %manx] ~]
   ==
 ++  deps   *deps:neo
@@ -31,13 +32,13 @@
       ==
     :_  sig/!>(rig)
     :~  [pith %poke eyre-req/!>(req)]
-        [(snoc here.bowl p/ship.src.bowl) %make made.rig]  :: temporary
+        [(snoc here.bowl p/ship.src.bowl) %make made.rig]
     ==
   ::
   ++  poke
     |=  [sud=stud:neo vaz=vase]
     ^-  (quip card:neo pail:neo)
-    ~&  mast-poke/sud
+    :: ~&  mast-poke/sud
     =+  !<(=rig:mast q.pail)
     ?+  sud  ~|(bad-stud/sud !!)
       ::
@@ -103,14 +104,16 @@
                 cards
               %+  snoc
                 (~(gale res bowl) u.rid sail rig)
-              [(welp here.bowl #/aft/[p/boat]) %make [%manx [~ manx/!>(sail)] ~]]
+              (new-aft-sail sail boat here.bowl)
           ==
         ?+  mode.loot.i.rum
           $(rum t.rum)
           ::
             %add
-          ~&  >>>  missing-eyre-id/pith.i.rum
-          $(rum t.rum)
+          %=  $
+            rum    t.rum
+            cards  (snoc cards (new-aft-sail sail boat here.bowl))
+          ==
           ::
             %dif
           =/  aft=manx
@@ -127,7 +130,7 @@
                 cards
               %+  snoc
                 (~(gust res bowl) rig aft sail)
-              [(welp here.bowl #/aft/[p/boat]) %make [%manx [~ manx/!>(sail)] ~]]
+              (new-aft-sail sail boat here.bowl)
           ==
           ::
         ==
@@ -165,10 +168,10 @@
     %_    sail
         a.g
       ^-  mart
-      :*  [%pith <^-(path ?>(?=(^ here.bowl) (pout:neo t.here.bowl)))>]  :: destination path to shrub from neo
-          [%app "neo"] 
+      :*  [%pith <^-(path (pout:neo here.bowl))>]  :: destination path to shrub from neo
           [%path <^-(path (snoc base-sub.rig (scot %p ship.src.bowl)))>]  :: sub path, shrub to eyre
           [%ship +:(scow %p our.bowl)]
+          [%app "neo"]
           a.g.sail
       ==
         c.i.c
@@ -239,10 +242,54 @@
   ::
   --
 ::
+++  new-aft-sail
+  |=  [sail=manx boat=@p base=pith:neo]
+  ^-  card:neo
+  [(welp base #/aft/[p/boat]) %make [%manx [~ manx/!>(sail)] ~]]
+::
 ++  parse-channel-data
   |=  jon=json
   ^-  crow:mast
   ((ot ~[path+pa data+(om so)]):dejs:format jon)
+::
+++  script-node
+  ^-  manx
+  ;script: {(trip mast-js)}
+::
+++  hoist
+  |=  root=manx
+  |^  ^-  manx
+  (tanx root "0" "~")
+  ++  tanx
+    |=  [m=manx key=tape pkey=tape]
+    =/  fkey=tape  (getv a.g.m %key)
+    =/  nkey=tape  ?~(fkey key fkey)
+    ?:  =(%$ n.g.m)
+      ;span
+        =mast  "text"
+        =key    nkey
+        =pkey   pkey
+        ;+  m
+      ==
+    =:  a.g.m  %-  mart  
+          ?~  fkey
+            [[%key nkey] [[%pkey pkey] a.g.m]]
+          [[%pkey pkey] a.g.m]
+        c.m  (tarl c.m nkey)
+    ==
+    m
+  ++  tarl
+    |=  [m=marl key=tape]
+    =/  i=@ud  0
+    |-  ^-  marl
+    ?~  m
+      ~
+    :-  %^  tanx  
+          (manx i.m) 
+        (weld (scow %ud i) (weld "-" key))
+      key
+    $(m t.m, i +(i))
+  --
 ::
 ++  algo
   |=  [old=marl new=marl]
@@ -390,41 +437,6 @@
     ==
   $(jold t.jold, j +(j))
 ::
-++  hoist
-  |=  root=manx
-  |^  ^-  manx
-  (tanx root "0" "~")
-  ++  tanx
-    |=  [m=manx key=tape pkey=tape]
-    =/  fkey=tape  (getv a.g.m %key)
-    =/  nkey=tape  ?~(fkey key fkey)
-    ?:  =(%$ n.g.m)
-      ;span
-        =mast  "text"
-        =key    nkey
-        =pkey   pkey
-        ;+  m
-      ==
-    =:  a.g.m  %-  mart  
-          ?~  fkey
-            [[%key nkey] [[%pkey pkey] a.g.m]]
-          [[%pkey pkey] a.g.m]
-        c.m  (tarl c.m nkey)
-    ==
-    m
-  ++  tarl
-    |=  [m=marl key=tape]
-    =/  i=@ud  0
-    |-  ^-  marl
-    ?~  m
-      ~
-    :-  %^  tanx  
-          (manx i.m) 
-        (weld (scow %ud i) (weld "-" key))
-      key
-    $(m t.m, i +(i))
-  --
-::
 ++  getv
   |=  [m=mart tag=@tas]
   ^-  tape
@@ -481,259 +493,5 @@
       mx
     i.ml
   $(ml t.ml, j +(j))
-::
-++  paru
-  |=  turl=tape
-  ^-  path
-  =/  tacc=tape  ~
-  =/  pacc=path  ~
-  |-
-  ?~  turl
-    ?~  tacc
-      pacc
-    (snoc pacc (crip tacc))
-  ?:  =('/' i.turl)
-    ?~  tacc
-      $(turl t.turl)
-    %=  $
-      turl  t.turl
-      tacc  ~
-      pacc  (snoc pacc (crip tacc))
-    ==
-  $(turl t.turl, tacc (snoc tacc i.turl))
-::
-++  script-node
-  ^-  manx
-  ;script
-    ;+  ;/  script
-  ==
-::
-++  script
-  ^~
-  %-  trip
-  '''
-  let pith;
-  let ship;
-  let app;
-  let displayUpdatePath;
-  let channelMessageId = 0;
-  let eventSource;
-  const channelId = `${Date.now()}${Math.floor(Math.random() * 100)}`;
-  const channelPath = `${window.location.origin}/~/channel/${channelId}`;
-  addEventListener('DOMContentLoaded', async () => {
-      pith = document.documentElement.getAttribute('pith');
-      ship = document.documentElement.getAttribute('ship');
-      app = document.documentElement.getAttribute('app');
-      displayUpdatePath = document.documentElement.getAttribute('path');
-      await connectToShip();
-      let eventElements = document.querySelectorAll('[event]');
-      eventElements.forEach(el => setEventListeners(el));
-  });
-  function setEventListeners(el) {
-      const eventTags = el.getAttribute('event');
-      const returnTags = el.getAttribute('return');
-      eventTags.split(/\s+/).forEach(eventStr => {
-          const eventType = eventStr.split('/', 2)[1];
-          el[`on${eventType}`] = (e) => pokeShip(e, eventStr, returnTags);
-      });
-  };
-  async function connectToShip() {
-      try {
-          const storageKey = `${ship}${app}${displayUpdatePath}`;
-          let storedId = localStorage.getItem(storageKey);
-          localStorage.setItem(storageKey, channelId);
-          if (storedId) {
-              const delPath = `${window.location.origin}/~/channel/${storedId}`;
-              await fetch(delPath, {
-                  method: 'PUT',
-                  body: JSON.stringify([{
-                      id: channelMessageId,
-                      action: 'delete'
-                  }])
-              });
-          };
-          const body = JSON.stringify(makeSubscribeBody());
-          await fetch(channelPath, { 
-              method: 'PUT',
-              body
-          });
-          eventSource = new EventSource(channelPath);
-          eventSource.addEventListener('message', handleChannelStream);
-      } catch (error) {
-          console.error(error);
-      };
-  };
-  function pokeShip(event, tagString, dataString) {
-      try {
-          let data = {};
-          if (dataString) {
-              const dataToReturn = dataString.split(/\s+/);
-              dataToReturn.forEach(dataTag => {
-                  let splitDataTag = dataTag.split('/');
-                  if (splitDataTag[0] === '') splitDataTag.shift();
-                  const kind = splitDataTag[0];
-                  const key = splitDataTag.pop();
-                  if (kind === 'event') {
-                      if (!(key in event)) {
-                          console.error(`Property: ${key} does not exist on the event object`);
-                          return;
-                      };
-                      data[dataTag] = String(event[key]);
-                  } else if (kind === 'target') {
-                      if (!(key in event.currentTarget)) {
-                          console.error(`Property: ${key} does not exist on the target object`);
-                          return;
-                      };
-                      data[dataTag] = String(event.currentTarget[key]);
-                  } else {
-                      const elementId = splitDataTag.join('/');
-                      const linkedEl = document.getElementById(elementId);
-                      if (!linkedEl) {
-                          console.error(`No element found for id: ${kind}`);
-                          return;
-                      };
-                      if (!(key in linkedEl)) {
-                          console.error(`Property: ${key} does not exist on the object with id: ${elementId}`);
-                          return;
-                      };
-                      data[dataTag] = String(linkedEl[key]);
-                  };
-              });
-          };
-          fetch(channelPath, {
-              method: 'PUT',
-              body: JSON.stringify(makePokeBody({
-                  path: tagString,
-                  data
-              }))
-          });
-      } catch (error) {
-          console.error(error);
-      };
-  };
-  function handleChannelStream(event) {
-      try {
-          const streamResponse = JSON.parse(event.data);
-          if (streamResponse.response !== 'diff') return;
-          fetch(channelPath, {
-              method: 'PUT',
-              body: JSON.stringify(makeAck(streamResponse.id))
-          });
-          const htmlData = streamResponse.json;
-          if (!htmlData) return;
-          let container = document.createElement('template');
-          container.innerHTML = htmlData;
-          if (container.content.firstElementChild.childNodes.length === 0) return;
-          // const navUrl = container.content.firstElementChild.getAttribute('url');
-          // if (navUrl && (navUrl !== window.location.pathname)) {
-          //     history.pushState({}, '', navUrl);
-          // };
-          while (container.content.firstElementChild.children.length > 0) {
-              let gustChild = container.content.firstElementChild.firstElementChild;
-              if (gustChild.tagName === 'D') {
-                  for (const att of gustChild.attributes) {
-                      const dkey = att.value;
-                      document.querySelector(`[key="${dkey}"]`).remove();
-                  };
-                  gustChild.remove();
-              } else if (gustChild.tagName === 'N') {
-                  const nodeKey = gustChild.firstElementChild.getAttribute('key');
-                  const parentKey = gustChild.firstElementChild.getAttribute('pkey');
-                  const appendIndex = gustChild.id;
-                  let domParent = document.querySelector(`[key="${parentKey}"]`);
-                  domParent.insertBefore(gustChild.firstElementChild, domParent.children[appendIndex]);
-                  let appendedChild = domParent.querySelector(`[key="${nodeKey}"]`);
-                  if (appendedChild.getAttribute('event')) {
-                      setEventListeners(appendedChild);
-                  };
-                  if (appendedChild.childElementCount > 0) {
-                      let needingListeners = appendedChild.querySelectorAll('[event]');
-                      needingListeners.forEach(child => setEventListeners(child));
-                  };
-                  appendedChild = appendedChild.nextElementSibling;
-                  gustChild.remove();
-              } else if (gustChild.tagName === 'M') {
-                  const nodeKey = gustChild.getAttribute('key');
-                  const nodeIndex = gustChild.id;
-                  let existentNode = document.querySelector(`[key="${nodeKey}"]`);
-                  let childAtIndex = existentNode.parentElement.children[nodeIndex];
-                  if (existentNode.nextElementSibling 
-                  && (existentNode.nextElementSibling.getAttribute('key') 
-                  === childAtIndex.getAttribute('key'))) {
-                      existentNode.parentElement.insertBefore(existentNode, childAtIndex.nextElementSibling);
-                  } else {
-                      existentNode.parentElement.insertBefore(existentNode, childAtIndex);
-                  };
-                  gustChild.remove();
-              } else if (gustChild.tagName === 'C') {
-                  const nodeKey = gustChild.getAttribute('key');
-                  const attToRem = gustChild.getAttribute('rem')?.slice(0, -1).split(' ') ?? [];
-                  let existentNode = document.querySelector(`[key="${nodeKey}"]`);
-                  attToRem.forEach(att => {
-                      if (att === 'event') {
-                          const eventType = existentNode.getAttribute('event').split('/', 2)[1];
-                          existentNode[`on${eventType}`] = null;
-                      };
-                      existentNode.removeAttribute(att);
-                  });
-                  gustChild.removeAttribute('key');
-                  gustChild.removeAttribute('rem');
-                  for (const att of gustChild.attributes) {
-                      existentNode.setAttribute(att.name, att.value);
-                      if (att.name === 'event') {
-                          const eventType = existentNode.getAttribute('event').split('/', 2)[1];
-                          existentNode[`on${eventType}`] = null;
-                          setEventListeners(existentNode);
-                      };
-                  };
-                  gustChild.remove();
-              } else {
-                  const nodeKey = gustChild.getAttribute('key');
-                  let existentNode = document.querySelector(`[key="${nodeKey}"]`);
-                  existentNode.replaceWith(gustChild);
-                  let replacedNode = document.querySelector(`[key="${nodeKey}"]`);
-                  if (replacedNode.getAttribute('event')) {
-                      setEventListeners(replacedNode);
-                  };
-                  if (replacedNode.childElementCount > 0) {
-                      let needingListeners = replacedNode.querySelectorAll('[event]');
-                      needingListeners.forEach(child => setEventListeners(child));
-                  };
-              };
-          };
-      } catch (error) {
-          console.error(error);
-      };
-  };
-  function makeSubscribeBody() {
-      channelMessageId++;
-      return [{
-          id: channelMessageId,
-          action: 'subscribe',
-          ship: ship,
-          app: app,
-          path: displayUpdatePath
-      }];
-  };
-  function makePokeBody(jsonData) {
-      channelMessageId++;
-      return [{
-          id: channelMessageId,
-          action: 'poke',
-          ship: ship,
-          app: app,
-          mark: 'json',
-          json: { path: pith, data: jsonData }
-      }];
-  };
-  function makeAck(eventId) {
-      channelMessageId++;
-      return [{
-          id: channelMessageId,
-          action: 'ack',
-          "event-id": eventId
-      }];
-  };
-  '''
 ::
 --
