@@ -407,7 +407,6 @@ class extends HTMLElement {
     })
     $(this).on('drag-start', (e) => {
       $(this.windows).attr('dragging', '');
-      $(this.gid('nav')).addClass('active');
     })
     $(this).on('drag-end', (e) => {
       $(this.windows).removeAttr('dragging');

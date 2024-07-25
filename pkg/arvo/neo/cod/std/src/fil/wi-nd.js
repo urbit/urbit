@@ -72,7 +72,7 @@ class extends HTMLElement {
          }
        }
       </style>
-      <div hidden id="drag-overlay"></div>
+      <div id="drag-overlay" class="hidden"></div>
       <header class="b2 p1 fr ac js g2">
         <button class="p-1 s-1 b3 br1 hover" id="tree-toggle"><span class="mso">sort</span></button>
         <div id="breadcrumbs" class="grow fr g1 af js"></div>
@@ -125,10 +125,12 @@ class extends HTMLElement {
 
     $(this.gid('dragger')).off();
     $(this.gid('dragger')).on('dragstart', (e) => {
-      $(this).emit('drag-start');
       e.originalEvent.dataTransfer.setData('text/plain', this.getAttribute('wid'));
     })
-    $(this.gid('dragger')).on('dragend', () => {
+    $(this.gid('dragger')).on('dragenter', (e) => {
+      $(this).emit('drag-start');
+    })
+    $(this.gid('dragger')).on('dragend', (e) => {
       $(this).emit('drag-end');
     })
 
@@ -150,7 +152,6 @@ class extends HTMLElement {
     })
     $(this).on('drop', (e) => {
       e.preventDefault();
-      $(this).removeClass('dragging');
       $(this).emit('drag-end');
       let wid = e.originalEvent.dataTransfer.getData('text/plain');
       let wind = $(`[wid='${wid}']`);
@@ -202,9 +203,9 @@ class extends HTMLElement {
     } else if (name === "dragging") {
       if (newValue === null) {
         $(this).removeClass('dragging');
-        $(this.gid('drag-overlay')).hide();
+        $(this.gid('drag-overlay')).addClass('hidden');
       } else {
-        $(this.gid('drag-overlay')).show();
+        $(this.gid('drag-overlay')).removeClass('hidden');
       }
     }
   }
