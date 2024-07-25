@@ -46,10 +46,6 @@
       ?~  !<((unit quit:neo) vase)  
         ?:  =(*pail:neo pail)  ~
         =/  this  !<([eyre-id=@ta req=inbound-request:eyre] q.pail)
-        =/  location
-          %-  crip 
-            %+  weld  "/neo/tree" 
-              (en-tape:pith:neo here)
         %:  eyre-cards
         eyre-id.this
         bowl
@@ -57,12 +53,8 @@
         :~  
           'content-type'^'text/html'
           'HX-Refresh'^'true'
-          ::'HX-Redirect'^location
-          ::'HX-Reswap'^'outerHTML'
         ==
-        ;div
-        ;  success 
-        ==
+        *manx
         ==
       =/  =quit:neo  (need !<((unit quit:neo) vase))
       ?+  -.quit  ~
@@ -596,8 +588,7 @@
   ^-  manx
   ;form.poke-form.hidden.bd.bd2.br2.fr.jb.g2.p2.wf
   =hx-post    "/neo/tree{(en-tape:pith:neo here.bowl)}?stud=tree-diff&head=send-poke"
-  =hx-reswap  "true"
-  ::=hx-swap    "innerHTML"
+  =hx-swap    "outterHTML"
   =hx-target  ".error-box"
     ;input.p2.bd.bd2.br2
     =type          "text"
