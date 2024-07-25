@@ -15,7 +15,7 @@
 =<
 ^-  kook:neo
 |%
-++  state  pro/%sig
+++  state  pro/%eyre-id
 ++  poke   (sy %tree-diff %ack %eyre-task ~)
 ++  kids  *kids:neo
 ++  deps   
@@ -36,7 +36,7 @@
   |_  [=bowl:neo =aeon:neo =pail:neo]
   ++  init
     |=  pal=(unit pail:neo)
-    :_  sig/!>(~)
+    :_  eyre-id/!>(*@ta)
     =/  =pith:neo  #/[p/our.bowl]/$/eyre
     =/  =binding:eyre  [~ ~[%neo %tree]]
     =/  =req:eyre:neo  [%connect binding here.bowl]
@@ -46,9 +46,9 @@
   ++  poke
     |=  [=stud:neo =vase]
     ^-  (quip card:neo pail:neo)
-    :_  sig/!>(~)
     ?+  stud  ~|(bad-stud/stud !!)
         %tree-diff  
+      :_  eyre-id/q.pail
       =/  diff  !<(tree-diff vase)
       ~&  >>>  diff-tree-imp/diff
       =,  diff
@@ -73,36 +73,38 @@
         ::  
           %req-parsing-err  ~
       ==
-        %ack  ~
-      :: ?~  !<((unit quit:neo) vase)  
-      ::   ?:  =(*pail:neo pail)  ~
-      ::   =/  this  !<([eyre-id=@ta req=inbound-request:eyre] q.pail)
-      ::   %:  eyre-cards
-      ::   eyre-id.this
-      ::   bowl
-      ::   200
-      ::   :~  
-      ::     'content-type'^'text/html'
-      ::     'HX-Refresh'^'true'
-      ::   ==
-      ::   *manx
-      ::   ==
-      :: =/  =quit:neo  (need !<((unit quit:neo) vase))
-      :: ?+  -.quit  ~
-      ::     %goof
-      ::   =/  this  !<([eyre-id=@ta req=inbound-request:eyre] q.pail)
-      ::   %:  eyre-cards
-      ::   eyre-id.this
-      ::   bowl
-      ::   200
-      ::   ['content-type' 'text/html']~
-      ::   (err-trace-manx +.quit)
-      ::   ==
-      :: ==
+        %ack  
+      :_  eyre-id/q.pail
+      ?~  !<((unit quit:neo) vase)
+        ?:  =(*pail:neo pail)  ~
+        =/  this  !<([eyre-id=@ta req=inbound-request:eyre] q.pail)
+        %:  eyre-cards
+        eyre-id.this
+        bowl
+        200
+        :~  
+          'content-type'^'text/html'
+          'HX-Refresh'^'true'
+        ==
+        *manx
+        ==
+      =/  =quit:neo  (need !<((unit quit:neo) vase))
+      ?+  -.quit  ~
+          %goof
+        =/  eyre-id  !<(@ta q.pail)
+        %:  eyre-cards
+        eyre-id
+        bowl
+        200
+        ['content-type' 'text/html']~
+        (err-trace-manx +.quit)
+        ==
+      ==
         %eyre-task
       =+  !<(=task:eyre:neo vase)
       =/  [eyre-id=@ta req=inbound-request:eyre]  task
       ?.  authenticated.req
+        :_  eyre-id/q.pail
         =/  eyre=pith:neo  #/[p/our.bowl]/$/eyre
         %+  ~(respond neo:srv eyre)   eyre-id
         (login-redirect:gen:srv request.req)
@@ -110,21 +112,19 @@
       =/  inner=pith:neo  (pave:neo pax.purl)
       =/  src  (~(got by deps.bowl) %src)
       =/  here  (tail inner)
-      ~&  >>  inner/inner
       ?+    method.request.req  ~|(%unsupported-http-method !!)
         ::
           %'GET'
+        =/  kids=(list pith:neo)  (get-kids here q.src)
+        :_  eyre-id/q.pail
         %:  eyre-cards
             eyre-id
             bowl
             200
             ['content-type' 'text/html']~
             ?~  idea=(~(get of:neo q.src) here)
-              ;div
-                ;h1: nothing here
-              ==
+              (view inner [%$ !>(~)] kids bowl)
             =/  local=pail:neo  q.saga:(need idea)
-            =/  kids=(list pith:neo)  (get-kids here q.src)
             (view inner local kids bowl)
           ==
         ::
@@ -138,6 +138,7 @@
         =/  diff-type   !<(tree-diff diff-vase)
         ?-  -.diff-type
           %send-make 
+        :_  eyre-id/q.pail
         ::  %make cards don't have error(%goof) %acks yet 
         ::  sending eyre response here for now
         %+  welp 
@@ -153,10 +154,12 @@
           ==
           *manx
           ==
-          %send-poke 
+          %send-poke
+        :_  eyre-id/!>(eyre-id)
         :~  (poke-tree-card here.bowl diff-vase)
         ==
           %send-cull
+        :_  eyre-id/q.pail
         =/  poke-card=(list card:neo)  ~[(poke-tree-card here.bowl diff-vase)]
         =/  location  
           %-  crip 
@@ -176,6 +179,7 @@
           ==
         ::
           %req-parsing-err
+        :_  eyre-id/q.pail
         %:  eyre-cards
           eyre-id
           bowl
@@ -221,13 +225,18 @@
   =|  i=@
   ^-  (list pith:neo)
   =+  piths=(full-pith pith lore)
+  =/  short-piths  ~(tap in ~(key by (~(kid of:neo lore) pith)))
   |-
   ?:  =(i (lent piths))  piths
     =/  p=pith:neo  (snag i piths)
     ?~  (~(kid of:neo lore) p)  
       $(i +(i))
     =/  grand-kids  (full-pith p lore)
-    $(i +(i), piths (welp piths grand-kids))
+    $(i +(i), piths (welp short-piths grand-kids))
+::
+++  get-idea
+|=  [=lore:neo =pith:neo]
+~
 ::
 ++  full-pith
   |=  [parent=pith:neo =lore:neo]
@@ -235,8 +244,9 @@
   ?~  (~(kid of:neo lore) parent)  ~
   %+  turn  ~(tap in ~(key by (~(kid of:neo lore) parent)))  
       |=  p=pith:neo 
-      %+  welp  parent
-      p
+      ?.  (gth (lent parent) 1)
+        %+  welp  parent  p
+      %+  welp  (tail parent)  p
 ::
 ++  err-trace-manx
 |=  =tang
@@ -275,7 +285,9 @@
     ;style: {tree-style}
     ==
     ;body 
-      ;+  (body-view here pail kids bowl)
+      ;+  ?:  &(=(kids ~) =(pail [%$ !>(~)]))
+        (nothing-view here)
+      (body-view here pail kids bowl)
     ==
   ==
 ::
@@ -323,6 +335,13 @@
   }
   '''
 ::
+++  nothing-view
+  |=  here=pith:neo
+  ^-  manx
+  ;div.wf.fc.ac.p6
+    ;h1:  nothing at {(en-tape:pith:neo here)}
+  ==
+::
 ++  body-view
   |=  [here=pith:neo =pail:neo kids=(list pith:neo) =bowl:neo]
   ^-  manx
@@ -332,7 +351,7 @@
     ::     ;div: no kids
     ;div.fc.js.p2.g2
       ;+  (shrub-view here pail bowl)
-      ;+  (kids-view pail kids bowl)
+      ;+  (kids-view here pail kids)
     ==
   ==
 ::
@@ -369,7 +388,7 @@
     ==
   ==
 ++  kids-view
-  |=  [=pail:neo kids=(list pith:neo) =bowl:neo]
+  |=  [here=pith:neo =pail:neo kids=(list pith:neo)]
   ^-  manx
   ;div.fc.g2
     ;*
@@ -383,7 +402,7 @@
         ;  nothing
       ==
     ;a.fr.jb.g1.bd.bd2.br2.hover-grey
-    =href  "/neo/tree/{(scow %p our.bowl)}{(en-tape:pith:neo pith)}"
+    =href  "/neo/tree{(en-tape:pith:neo (weld here pith))}"
       ;div.p2.hfc.p2.hover
         ;  {(en-tape:pith:neo pith)}
       ==
@@ -556,6 +575,7 @@
 ::
 ++  poke-form
   |=  here=pith:neo
+  ~&  pokes/here
   ^-  manx
   ;form.poke-form.hidden.bd.bd2.br2.fr.jb.g2.p2.wf
   =hx-post    "/neo/tree{(en-tape:pith:neo here)}?stud=tree-diff&head=send-poke"
@@ -563,7 +583,7 @@
   =hx-target  ".error-box"
     ;input.hidden
     =type   "text"
-    =name   "here"
+    =name   "pith"
     =value  (en-tape:pith:neo here)
     ;
     ==
