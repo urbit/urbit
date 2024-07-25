@@ -161,7 +161,7 @@
         =/  location  
           %-  crip 
             %+  weld  "/neo/tree" 
-              (en-tape:pith:neo (snip here))
+              (en-tape:pith:neo (snip inner))
         %+  welp
           poke-card
           %:  eyre-cards
