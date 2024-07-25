@@ -39,7 +39,7 @@
       ?+    path.event
         ~|(missing-event-handler-for/path.event !!)
       ::
-          [%click %submit ~]
+          [%click %new ~]
         =/  text=@t
           (~(got by data.event) '/task-input/value')
         :_  pail
