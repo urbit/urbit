@@ -1531,25 +1531,19 @@
     ::
     +|  %helpers
     ::
-    ++  get-forward-lanes-mesa  ::  XX refactor get-forward-lanes
+    ++  get-forward-lanes-mesa
       |=  [our=@p fren=fren-state chums=(map ship chum-state)]
-      ~
-      :: ^-  (list lane:pact)
-      :: (turn route.fren tail)
-      :: =;  zar=(trap (list lane:pact))
-      ::   ?~  route.fren  $:zar
-      ::   =*  rot  i.route.fren
-      ::   ?:(direct.rot [lane.rot ~] [lane.rot $:zar])
-      :: ::
-      :: |.  ^-  (list lane)
-      :: ?:  ?=(%czar (clan:title sponsor.fren))
-      ::   ?:  =(our sponsor.fren)
-      ::     ~
-      ::   [%& sponsor.fren]~
-      :: =/  next  (~(get by chums) sponsor.fren)
-      :: ?.  ?=([~ %known *] next)
-      ::   ~
-      :: $(fren +.u.next)
+      ^-  (list lane:pact)
+      ?^  lane.fren
+        (drop lane.fren)
+      ?:  ?=(%czar (clan:title sponsor.fren))
+        ?:  =(our sponsor.fren)
+          ~
+        [`@ux`sponsor.fren]~
+      =/  next  (~(get by chums) sponsor.fren)
+      ?.  ?=([~ %known *] next)
+        ~
+      $(fren +.u.next)
     ::
     ++  key-chain  ((on ,@ ,[key=@ =path]) lte)
     ::
@@ -1590,70 +1584,91 @@
         ^-  ?
         =(0 (~(dif fe 7) a b))  :: XX jet for constant-time
       ::
+      ++  etch-path
+        |=  =path
+        ^-  octs
+        =/  pax  (spat path)
+        (met 3 pax)^pax
+      ::
+      ++  sift-path
+        |=  =octs
+        ^-  path
+        (stab q.octs)
+      ::
+      ++  etch-binding
+        |=  =binding
+        ^-  octs
+        =/  pax  (etch-path path.binding)
+        [(add p.pax 32) (can 3 pax [32 root.binding] ~)]
+      ::
+      ++  crypt
+        |=  [key=@uxI iv=octs msg=octs]
+        ^-  octs
+        =/  x  (xchacha:chacha:crypto 8 key (hash 24 iv))
+        (chacha:crypto 8 key.x nonce.x 0 msg)
+      ::
       ++  sign
         |=  [sek=@uxI =binding]
         ^-  @uxJ
-        (sigh:as:(nol:nu:crub:crypto sek) (jam binding))
+        (sign-octs:ed:crypto (etch-binding binding) sek)
       ::
       ++  verify-sig
         |=  [pub=@uxI sig=@uxJ =binding]
         ^-  ?
-        (safe:as:(com:nu:crub:crypto pub) sig (jam binding))
+        (veri-octs:ed:crypto sig (etch-binding binding) pub)
       ::
       ++  mac
         |=  [key=@uxI =binding]
         ^-  @uxH
-        (keyed-hash key 16 (jam binding))
+        (keyed-hash key 16 (etch-binding binding))
       ::
       ++  verify-mac
-        |=  [key=@uxI tag=@uxI =binding]  ::  [key=@uxI tag=@uxH =binding]
+        |=  [key=@uxI tag=@uxH =binding]
         ^-  ?
         (const-cmp tag (mac key binding))
       ::
       ++  encrypt
-        |=  [key=@uxI iv=@ msg=byts]
-        ^+  msg
-        =/  x  (xchacha:chacha:crypto 8 key (hash 24 iv))
-        =;  =octs  +(p.octs)^(can 3 octs [1 0x1] ~)
-        (chacha:crypto 8 key.x nonce.x 0 msg)
+        |=  [key=@uxI iv=@ msg=@]
+        ^-  @
+        =/  =octs  (crypt key (met 3 iv)^iv (met 3 msg)^msg)
+        (can 3 octs [1 0x1] ~)
       ::
       ++  decrypt
-        |=  [key=@uxI iv=@ =byts]
-        ^+  byts
-        ~|  [key=key iv=iv byts=byts]
-        =/  wid  (dec wid.byts)
-        ?>  =(0x1 (cut 3 [wid 1] dat.byts))
-        =/  x  (xchacha:chacha:crypto 8 key (hash 24 iv))
-        (chacha:crypto 8 key.x nonce.x 0 wid^dat.byts)
+        |=  [key=@uxI iv=@ cyf=@]
+        ^-  @
+        =/  wid  (dec (met 3 cyf))
+        ?>  =(0x1 (cut 3 [wid 1] cyf))
+        q:(crypt key (met 3 iv)^iv wid^cyf)
       ::
       ++  seal-path
         |=  [key=@uxI =path]
         ^-  @
-        =/  keys  (hash 64 key)
-        =/  pat  (jam path)
+        =/  keys  (hash 64 32^key)
+        =/  pat  (etch-path path)
         =/  tag  (keyed-hash (rsh 8 keys) 16 pat)
-        =/  cyf  (encrypt (end 8 keys) tag (met 3 pat)^pat)
-        (jam [tag cyf])
+        =/  cyf  (crypt (end 8 keys) 16^tag pat)
+        (can 3 [16 tag] cyf [1 0x1] ~)
       ::
       ++  open-path
         |=  [key=@uxI sealed=@]
         ^-  path
-        =/  keys  (hash 64 key)
-        =+  ;;([tag=@ cyf=byts] (cue sealed))
-        =/  pat  dat:(decrypt (end 8 keys) tag cyf)
-        :: ?>  (const-cmp tag (keyed-hash (rsh 8 keys) 16 pat))   :: XX FIXME
-        ~|  pat
-        ;;(path (cue pat))
+        =/  keys  (hash 64 32^key)
+        =/  wid  (dec (met 3 sealed))
+        ?>  =(0x1 (cut 3 [wid 1] sealed))
+        =/  [tag=@ux cyf=@ux]  [(end [3 16] sealed) (rsh [3 16] sealed)]
+        =/  pat  (crypt (end 8 keys) 16^tag (sub wid 16)^cyf)
+        ?>  (const-cmp tag (keyed-hash (rsh 8 keys) 16 pat))
+        (sift-path pat)
       ::
       --
     ::
     ++  hash
-      |=  [out=@ud msg=@]
-      (blake3:blake:crypto out (met 3 msg)^msg)
+      |=  [out=@ud msg=octs]
+      (blake3:blake:crypto out msg)
     ::
     ++  keyed-hash
-      |=  [key=@uxI out=@ud msg=@]
-      ((keyed:blake3:blake:crypto 32^key) out (met 3 msg)^msg)
+      |=  [key=@uxI out=@ud msg=octs]
+      ((keyed:blake3:blake:crypto 32^key) out msg)
     ::
     +|  %flow-gifts
     ::
@@ -2979,7 +2994,7 @@
                 ^+  peer-core
                 =|  fren=fren-state
                 |^  =:        -.fren  azimuth-state=-.peer-state
-                          route.fren  get-route
+                           lane.fren  get-lane
                             qos.fren  qos.peer-state
                          corked.fren  divide-bones
                         ossuary.fren  align-bones
@@ -3268,13 +3283,12 @@
                     [pax %chum life.ames-state her life.per key]
                   ==
                 ::
-                ++  get-route
-                  ^-  (list [direct=? =lane:pact])
+                ++  get-lane
+                  ^-  (unit lane:pact)
                   ?~  route.peer-state  ~
+                  ?.  direct.u.route.peer-state  ~
                   =*  lane  lane.u.route.peer-state
-                  :_  ~
-                  :-  direct.u.route.peer-state
-                  ^-  lane:pact
+                  %-  some
                   ?-  -.lane
                     %&  `@ux`p.lane  ::  galaxy
                   ::
@@ -5057,6 +5071,7 @@
             =/  who  (slaw %p her.tyl)
             ?~  who  [~ ~]
             =/  peer  (~(get by peers.ames-state) u.who)
+            =/  chum  (~(get by chums.ames-state) u.who)
             ?+    req.tyl  [~ ~]
                 ~
               ?~  peer
@@ -5088,7 +5103,20 @@
                 ~
               ?:  ?=([~ %known *] peer)
                 (get-forward-lanes our +.u.peer peers.ames-state)
-              =/  sax  (rof ~ /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
+              ?:  ?=([~ %known *] chum)
+                =/  lanes=(list lane:pact)
+                  (get-forward-lanes-mesa our +.u.chum chums.ames-state)
+                %+  turn  lanes
+                |=  =lane:pact
+                ^-  ^lane
+                ?@  lane
+                  [%.y `@p`lane]
+                :-  %.n
+                %+  can  3
+                :~  4^p.lane
+                    2^q.lane
+                ==
+              =/  sax  (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
               ?.  ?=([~ ~ *] sax)
                 ~
               =/  gal  (rear ;;((list ship) q.q.u.u.sax))
@@ -5299,7 +5327,7 @@
                 ?.  =(u.hyf life.sat.per)   !!  :: XX
                 symmetric-key.sat.per
               =*  iv  u.pyf  :: XX
-              dat:(decrypt:crypt `@`key u.cyf (met 3 ser)^ser)
+              (decrypt:crypt `@`key u.cyf ser)
             ::
                 [%shut kid=@ cyf=@ ~]  :: encrypted with group key
               =/  kid  (slaw %ud kid.tyl)
@@ -5308,7 +5336,7 @@
               ::  ?>  ?=(%known -.sat.per)
               ?~  key=(get:key-chain client-chain.sat.per u.kid)
                 !!  ::  XX handle
-              dat:(decrypt:crypt -.u.key u.cyf (met 3 ser)^ser)
+              (decrypt:crypt -.u.key u.cyf ser)
             ==
           ::
           ++  ev-decrypt-spac
@@ -5316,18 +5344,18 @@
             ^+  ser
             ?-  -.space
               %publ  ser
-              %shut  dat:(decrypt:crypt key.space (need cyf) (met 3 ser)^ser)
-              %chum  dat:(decrypt:crypt key.space (need cyf) (met 3 ser)^ser)
+              %shut  (decrypt:crypt key.space (need cyf) ser)
+              %chum  (decrypt:crypt key.space (need cyf) ser)
             ==
           ::
           ++  ev-decrypt-path
             |=  [=path =ship]
-            ^-  [=space (unit cyf=@) key=@ inner=^path]  :: XX remove key
+            ^-  [=space (unit cyf=@) key=@uxI inner=^path]  :: XX remove key
             =/  tyl=(pole knot)  path
             ?+    tyl  !!
                 [%publ lyf=@ pat=*]  :: unencrypted
               =+  per=(ev-got-per ship)
-              [publ/(slav %ud lyf.tyl) ~ public-key.sat.per pat.tyl]
+              [publ/(slav %ud lyf.tyl) ~ `@`public-key.sat.per pat.tyl]
             ::
                 [%chum lyf=@ her=@ hyf=@ pat=[cyf=@ ~]]  :: encrypted with eddh key
               =/  lyf  (slaw %ud lyf.tyl)
@@ -5340,11 +5368,11 @@
               =+  per=(ev-got-per her)         :: XX ev-get-per
               :: ::  ?>  ?=(%known -.sat.per)  :: XX wat if %alien?
               :: ?.  =(u.hyf life.sat.per)   !!  :: XX
-              =*  key  symmetric-key.sat.per
+              =*  key  `@`symmetric-key.sat.per
               :^    [%chum life.ames-state her life.sat.per key]
                   cyf
                 key
-              (open-path:crypt `@`key u.cyf)
+              (open-path:crypt key u.cyf)
             ::
                 [%shut kid=@ pat=[cyf=@ ~]]  :: encrypted with group key
               =/  kid  (slaw %ud kid.tyl)
@@ -5370,7 +5398,7 @@
             ~|  [key=key aut=p.auth ful=ful rut=rut]  =-  ?>(- -)  ::  log crash
             ?-  -.auth
               %&  (verify-sig:crypt key p.auth ful rut)
-              %|  (verify-mac:crypt `@`key p.auth ful rut)
+              %|  (verify-mac:crypt key p.auth ful rut)
             ==
           ::
           +|  %entry-points
@@ -5381,7 +5409,7 @@
                    ::  ?(%plea %keen %cork) request tasks are called directly
                    ::
                    $%  $<(%mess $>(%heer task))  ::  XX common tasks
-                       [%mess (unit lane:pact) =mess dud=(unit goof)]
+                       [%mess =mess dud=(unit goof)]
                    ==
                 --
             ::
@@ -5392,10 +5420,10 @@
             ::
                 %heer
               =/  =pact:pact  (parse-packet p.task)
-              ?-  -.pact
-                %page  (ev-pact-page lane.task +.pact)  :: XX ignore hops, uses ?=(~ next.pact) == %direct-lane instead
-                %peek  (ev-pact-peek +.pact)
-                %poke  (ev-pact-poke lane.task hops=0 +.pact)  ::  XX hops.task vs direct.task
+              ?-  +<.pact
+                %page  (ev-pact-page lane.task hop.pact +>.pact)
+                %peek  (ev-pact-peek +>.pact)
+                %poke  (ev-pact-poke lane.task hop.pact +>.pact)
               ==
             ::  %message-response-entry-point
             ::
@@ -5469,10 +5497,7 @@
           +|  %packet-entry-points
           ::
           ++  ev-pact-poke
-            ::  XX  hops, maybe used to for trace logging?
-            ::      used `direct=?` instead?
-            ::
-            |=  [=lane:pact hops=@ =ack=name:pact =poke=name:pact =data:pact]
+            |=  [=lane:pact hop=@ud =ack=name:pact =poke=name:pact =data:pact]
             ^+  ev-core
             ::  XX dispatch/hairpin &c
             ::
@@ -5525,17 +5550,10 @@
               ev-core  :: XX TODO log
             ::
             =.  per  her.poke-name^+.u.chum-state
-            ::  evict old lanes; keep the last 5
-            ::  XX  =(0 hops) == %direct-lane
             ::
-            =.  route.sat.per
-              ?:  ?&  ?=(^ route.sat.per)
-                      =([=(0 hops) lane] i.route.sat.per)
-                  ==
-                route.sat.per
-              [[=(0 hops) lane] (scag 5 route.sat.per)]
+            =.  per  (ev-update-lane lane hop ~)
             ::  update and print connection status
-            ::
+            ::  XX  this is implicitly updating chums.state;
             =.  ev-core  (ev-update-qos %live last-contact=now)
             ?.  =(1 tot.data)
               =/  =dire  :: flow swtiching
@@ -5569,10 +5587,10 @@
             =/  res=(unit (unit cage))  (ev-peek ~ /ames %x (name-to-beam name))
             ?.  ?=([~ ~ ^] res)
               ev-core
-            (ev-emit hen %give %push ~ !<(@ q.u.u.res))  :: XX lanes
+            (ev-emit hen %give %push ~ !<(@ q.u.u.res))
           ::
           ++  ev-pact-page
-            |=  [=lane:pact =name:pact =data:pact =next:pact]
+            |=  [=lane:pact hop=@ud =name:pact =data:pact =next:pact]
             ^+  ev-core
             ::  check for pending request (peek|poke)
             ::
@@ -5581,34 +5599,16 @@
               ev-core
             ?>  ?=([~ %known *] chum)  ::  XX alien agenda
             =.  per  [ship +.u.chum]
-            ::  evict old lanes; keep the last 5
-            ::
-            =.  route.sat.per
-              %+  weld
-                ?:  ?&  ?=(^ route.sat.per)
-                        =([direct=?=(~ next) lane] i.route.sat.per)
-                    ==
-                  ~
-                ?~  next
-                  ::  if the lane is direct use that as the next candidate
-                  ::
-                  [direct=%.y lane]~
-                ::  if the lane is indirect, it comes from a relay that we have
-                ::  already used in route.sat.per. (head next) should have the
-                ::  next hop in the routing chain, which will become our next
-                ::  candidate lane
-                ::
-                ~
-              %+  scag  5
-              (weld (turn next (lead direct=%.n)) route.sat.per)
             =*  pit  pit.sat.per
             =/  [=space cyf=(unit @) key=@ =inner=path]
               (ev-decrypt-path pat.name ship)
             =*  sealed-path  pat.name
             ?~  res=(~(get by pit) sealed-path)
               ev-core
-            ::  update and print connection status
             ::
+            =.  per  (ev-update-lane lane hop next)
+            ::  update and print connection status
+            ::  XX  this is implicitly updating chums.state;
             =.  ev-core  (ev-update-qos %live last-contact=now)
             ::
             =/  [typ=?(%auth %data) fag=@ud]
@@ -5636,7 +5636,7 @@
               ~&  >>  "request next fragment"^fag
               ::  request next fragment
               ::
-              (ev-push-pact %peek name(wan [%data 0]))
+              (ev-push-pact 0 %peek name(wan [%data 0]))
             ::
                 %data
               :: ?>  =(13 boq.name)  :: non-standard
@@ -5702,7 +5702,7 @@
                   =-  known/sat.per(pit -)
                   %+  ~(put by pit)  sealed-path  :: XX was outer-path?
                   u.res(ps `[state ~[dat.data]])
-                (ev-push-pact %peek name(wan [%data counter.state]))
+                (ev-push-pact 0 %peek name(wan [%data counter.state]))
               ::  yes, we do have packet state already
               ::
               =*  ps  u.ps.u.res
@@ -5731,7 +5731,7 @@
               ?.  =(+(fag) leaves.los.ps)
                 ::  request next fragment
                 ::
-                (ev-push-pact %peek name(wan [%data counter.los.ps]))
+                (ev-push-pact 0 %peek name(wan [%data counter.los.ps]))
               ::  yield complete message
               ::
               ~&  >>  "yield complete message"^fag
@@ -5996,10 +5996,19 @@
               [[our rift.ames-state] [13 ~] (ev-make-path space path)]
             ?~  page=(ev-get-page name)
               ev-core
-            =.  sat.per
+            =.  per
+              :-  ship
               =/  her  (~(got by chums.ames-state) ship)
               ?>(?=([%known *] her) +.her)
-            (ev-push-pact page/[name u.page ~])
+            ::  XX  check here if we have a lane, and if not, assume that it came
+            ::  via a sponsor, to avoid breaking symmetric routing
+            ::  XX  unnecessary? vere wil probably ignore this lane
+            ::
+            =?  lane.sat.per  ?=(~ lane.sat.per)
+              :: XX  this is a hack; sat.per is not persisted
+              ::
+              [~ `@ux`(^^sein:title rof /ames our now our)]
+            (ev-push-pact 0 page/[name u.page ~])
           ::
           ++  ev-make-mess
             |=  [p=spar q=(unit path) spac=(unit space)]
@@ -6041,7 +6050,7 @@
               =.  pit  (~(put by pit) path.p new)
               ?:(?=(%known -.her) her(pit pit) her(pit pit))   ::  XX find-fork
             ::
-            =.  sat.per  ?>(?=([%known *] her) +.her)
+            =.  per  [ship.p ?>(?=([%known *] her) +.her)]
             (ev-push-pact (ev-make-pact p q rift spac))
           ::
           ++  ev-make-pact
@@ -6049,7 +6058,7 @@
             ^-  pact:pact
             =/  nam  [[ship.p per-rift] [13 ~] path.p]
             ?~  q
-              [%peek nam]
+              [hop=0 %peek nam]
             ::  XX if path will be too long, put in [tmp] and use that path
             :: (mes:plot:d (en:name:d [[her=~nec rif=40] [boq=0 wan=~] pat=['c~_h' ~]]))
             :: [bloq=q=3 step=r=12]
@@ -6071,7 +6080,7 @@
             ?~  page=(ev-get-page man)
               ~&  >>>  no-page/man
               *pact:pact
-            [%poke nam man u.page]
+            [hop=0 %poke nam man u.page]
           ::
           ++  ev-make-path
             |=  [=space =path]
@@ -6104,7 +6113,7 @@
               (ev-peek ~ /ames %x (name-to-beam name))  :: XX
             ?.  ?=([~ ~ *] res)  ~
             =;  page=pact:pact
-              ?>(?=(%page -.page) `q.page)
+              ?>(?=(%page +<.page) `q.page)
             =>  [res=res de=de:pact]
             ~>  %memo./ames/get-page
             -:($:de ;;(@ q.q.u.u.res))
@@ -6846,8 +6855,8 @@
                   =.  +>.u.peer  +:*fren-state
                   ::  XX  reinitialize galaxy route if applicable
                   ::
-                  =?  route.+.u.peer  =(%czar (clan:title ship))
-                    [direct=%.y lane=`@ux`ship]~
+                  =?  lane.+.u.peer  =(%czar (clan:title ship))
+                    (some `@ux`ship)
                   (~(put by chums.ames-state) ship u.peer)
                 =?  peers.ames-state  ?=(%ship -.peer)
                   ::  XX  reinitialize galaxy route if applicable
@@ -6860,9 +6869,16 @@
                 =.  ev-core
                   %-  ev-emit
                   :*  unix-duct.ames-state  %give  %nail  ship
-                      ?:  ?=(%chum -.peer)
+                      ?.  ?=(%chum -.peer)
+                        (get-forward-lanes our +.u.peer peers.ames-state)
+                      ^-  (list lane)
+                      ::  XX refactor
+                      %+  turn
                         (get-forward-lanes-mesa our +.u.peer chums.ames-state)
-                      (get-forward-lanes our +.u.peer peers.ames-state)
+                      |=  =lane:pact
+                      ^-  (each @pC address)
+                      ?>  ?=(@ lane)
+                      [%.y `@pC`lane]
                   ==
                 ::  if one of our sponsors breached, give the updated list to vere
                 ::
@@ -6934,9 +6950,16 @@
                 =.  ev-core
                   %-  ev-emit
                   :*  unix-duct.ames-state  %give  %nail  ship
-                      ?:  ?=(%chum -.peer)
+                      ?.  ?=(%chum -.peer)
+                        (get-forward-lanes our +.u.peer peers.ames-state)
+                      ^-  (list lane)
+                      ::  XX refactor
+                      %+  turn
                         (get-forward-lanes-mesa our +.u.peer chums.ames-state)
-                      (get-forward-lanes our +.u.peer peers.ames-state)
+                      |=  =lane:pact
+                      ^-  (each @pC address)
+                      ?>  ?=(@ lane)  :: XX FIXME
+                      [%.y `@pC`lane]
                   ==
                 ::
                 sy-core
@@ -7108,16 +7131,23 @@
                 =?  ev-core  ?=(%czar (clan:title ship))
                   %-  ev-emit
                   :*  unix-duct.ames-state  %give  %nail  ship
-                      ?:  ?=(%chum -.peer)
+                      ?.  ?=(%chum -.peer)
+                        (get-forward-lanes our +.peer peers.ames-state)
+                      ^-  (list lane)
+                      ::  XX  refactor
+                      %+  turn
                         (get-forward-lanes-mesa our +.peer chums.ames-state)
-                      (get-forward-lanes our +.peer peers.ames-state)
+                      |=  =lane:pact
+                      ^-  (each @pC address)
+                      ?>  ?=(@ lane)  ::  XX FIXME
+                      [%.y `@pC`lane]
                   ==
                 ::
                 ::  automatically set galaxy route, since unix handles lookup
                 ::
                 ?:  ?=(%chum -.peer)
-                  =?  route.peer  ?=(%czar (clan:title ship))
-                    [direct=%.y lane=`@ux`ship]~
+                  =?  lane.peer  ?=(%czar (clan:title ship))
+                    (some `@ux`ship)
                   =.  chums.ames-state
                     (~(put by chums.ames-state) ship known/+.peer)
                   [%chum known/+.peer]^sy-core
@@ -7244,25 +7274,12 @@
               |=  [=ship =lane:pact]
               ^+  sy-core
               ?:  =(%czar (clan:title ship))
-                :: %-  %^  ev-trace  odd.veb  ship
-                ::   |.("ignoring %dear lane {(scow %if ip)}:{(scow %ud pt)} for galaxy")
                 sy-core
               =/  peer  (sy-find-peer ship)
               ?.  ?=([?(%ship %chum) ~ %known *] peer)
-                :: %-  %^  ev-trace  odd.veb  ship
-                ::   |.("no peer-state for ship, ignoring %dear")
                 sy-core
-              :: %-  %^  ev-trace  rcv.veb  ship
-              ::   |.("incoming %dear lane {(scow %if ip)}:{(scow %ud pt)}")
               =?  chums.ames-state  ?=(%chum -.peer)
-                ::  evict old lanes; keep the last 5
-                ::
-                =.  route.+.u.peer
-                  ?:  ?&  ?=(^ route.+.u.peer)
-                          =([direct=%.y lane] i.route.+.u.peer)
-                      ==
-                    route.+.u.peer
-                  [[direct=%.y lane] (scag 5 route.+.u.peer)]
+                =.  lane.+.u.peer  `lane
                 (~(put by chums.ames-state) ship u.peer)
               =?  peers.ames-state  ?=(%ship -.peer)
                 =/  =^lane
@@ -7271,8 +7288,14 @@
                 =.  route.+.u.peer  `[direct=%.y lane]
                 (~(put by peers.ames-state) ship u.peer)
               =.  ev-core
-                (ev-emit unix-duct.ames-state %give %nail ship ~)
-                :: (ev-emit unix-duct.ames-state %give %nail ship ~[lane])
+                =/  =^lane  :: XX refactor
+                  ?@  lane  [%.y `@pC`lane]
+                  :-  %.n
+                  %+  can  3
+                  :~  4^p.lane
+                      2^q.lane
+                  ==
+                (ev-emit unix-duct.ames-state %give %nail ship ~[lane])
               sy-core
             ::
             ::  +sy-tame: handle request to delete a route
@@ -7289,10 +7312,11 @@
               ?.  ?=([?(%ship %chum) ~ %known *] peer)
                 %-  (slog leaf+"ames: no peer-state for {(scow %p ship)}, ignoring" ~)
                 sy-core
-              =.  route.+.u.peer  ~
               =?  chums.ames-state  ?=(%chum -.peer)
+                =.  lane.+.u.peer  ~
                 (~(put by chums.ames-state) ship u.peer)
               =?  peers.ames-state  ?=(%ship -.peer)
+                =.  route.+.u.peer  ~
                 (~(put by peers.ames-state) ship u.peer)
               =.  ev-core
                 (ev-emit unix-duct.ames-state %give %nail ship ~)
@@ -7513,8 +7537,8 @@
             =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
             =/  ful  (en-beam bem)
             =/  ser  (jam gag)
-            =/  cyr  (encrypt:crypt key cyf (met 3 ser)^ser)
-            ``[%message !>([%hmac (mac:crypt key ful (root:lss cyr)) dat.cyr])]
+            =/  cyr  (encrypt:crypt key cyf ser)
+            ``[%message !>([%hmac (mac:crypt key ful (root:lss (met 3 cyr)^cyr)) cyr])]
           ::
           ++  ev-peek-shut
             |=  [bem=beam kid=@ cyf=@uv]
@@ -7533,9 +7557,9 @@
             =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
             =/  ful  (en-beam bem)
             =/  ser  (jam gag)
-            =/  cyr  (encrypt:crypt -.u.key iv=cyf (met 3 ser)^ser)
-            =/  sig  (sign:crypt -.u.key ful (root:lss cyr))
-            ``[%message !>([%sign sig dat.cyr])]
+            =/  cyr  (encrypt:crypt -.u.key iv=cyf ser)
+            =/  sig  (sign:crypt -.u.key ful (root:lss (met 3 cyr)^cyr))
+            ``[%message !>([%sign sig cyr])]
           ::
           ++  ev-peek-flow
             |=  [bone=@ud load=?(%plea %boon %ack-plea %ack-boon %nax) rcvr=ship mess=@ud]
@@ -7576,7 +7600,6 @@
               :: =+  core=(ev-abed:ev-core [now eny rof] ~[//scry])
               =*  core  ev-core
               =/  tyl=(pole knot)  s.bem
-              ~&   tyl/tyl
               ?+    tyl  ~
               ::  publisher-side, batch-level
               ::
@@ -7684,7 +7707,7 @@
                     ==
                   ~  :: non-standard proofs for later
                 =;  [nam=name:pact dat=data:pact]
-                  =/  pac=pact:pact  [%page nam dat ~]
+                  =/  pac=pact:pact  [hop=0 %page nam dat ~]
                   ?:  (gth fag tot.dat)
                     [~ ~]
                   ?.  ser.pac.nex
@@ -7822,6 +7845,21 @@
                   ~
                 :^  ~  ~  %whit
                 !>([boq=u.boq (met u.boq (jam ?~(u.res ~ [p q.q]:u.u.res)))])
+              ::  verify packet auth
+              ::
+                  [%veri typ=?(%sign %hmac) her=@ aut=@ rut=@ pat=*]
+                =/  her  (slaw %p her.tyl)
+                =/  aut  (slaw %uv aut.tyl)
+                =/  rut  (slaw %uv rut.tyl)
+                ?:  |(?=(~ her) ?=(~ aut) ?=(~ rut))
+                  [~ ~]
+                =/  key  key:(ev-decrypt-path pat.tyl u.her)
+                =/  ful  (en-beam [[u.her %$ ud+1] pat.tyl])
+                :^  ~  ~  %flag  !>  :: XX is this right?
+                ?-  typ.tyl
+                  %sign  (verify-sig:crypt key u.aut ful u.rut)
+                  %hmac  (verify-mac:crypt key u.aut ful u.rut)
+                ==
             ::
               ==
             ::  only respond for the local identity, %$ desk, current timestamp
@@ -7832,7 +7870,8 @@
                 ==
               ~
             ::
-            ::  /ax/peers/[ship]               ship-state
+            ::  /ax/chums/[ship]                 chum-state
+            ::  /ax/chums/[ship]/forward-lane    lanes
             ::
             ?.  ?=(%x car)  ~
             =/  tyl=(pole knot)  s.bem
@@ -7840,20 +7879,51 @@
             ::
             ?.  =([~ ~] lyc)  ~
             ?+    tyl  ~
-                  [%chums her=@ ~]
-                =/  who  (slaw %p her.tyl)
-                ?~  who  [~ ~]
-                ?~  chum=(~(get by chums.ames-state) u.who)
+                [%chums her=@ req=*]
+              =/  who  (slaw %p her.tyl)
+              ?~  who  [~ ~]
+              =/  chum  (~(get by chums.ames-state) u.who)
+              ?+    req.tyl  [~ ~]
+                  ~
+                ?~  chum
                   ~&  (~(get by peers.ames-state) u.who)
                   [~ ~]
                 ?>  ?=(%known -.u.chum)
                 ``noun+!>(u.chum)
+                ::
+                  [%forward-lane ~]
+                ::
+                ::  this duplicates the routing hack from +send-blob:event-core
+                ::  so long as neither the peer nor the peer's sponsoring galaxy is us,
+                ::  and the peer has been reached recently:
+                ::
+                ::    - no route to the peer, or peer has not been contacted recently:
+                ::      send to the peer's sponsoring galaxy
+                ::    - direct route to the peer: use that
+                ::    - indirect route to the peer: send to both that route and the
+                ::      the peer's sponsoring galaxy
+                ::
+                :^  ~  ~  %noun
+                !>  ^-  (list lane:pact)
+                ?:  =(our u.who)
+                  ~
+                ?:  ?=([~ %known *] chum)
+                  (get-forward-lanes-mesa our +.u.chum chums.ames-state)
+                =/  sax  (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
+                ?.  ?=([~ ~ *] sax)
+                  ~
+                =/  gal  (rear ;;((list ship) q.q.u.u.sax))
+                ?:  =(our gal)
+                  ~
+                [`@ux`gal]~
+              ==
             ==
           ::
           +|  %internals
           ::
           ::  XX  refactor; merge with +ev-update-qos in |pe:ames
           ::  +ev-update-qos: update and maybe print connection status
+          ::  XX rethink how to update chums state; +abet pattern?
           ::
           ++  ev-update-qos
             |=  new=qos
@@ -7872,24 +7942,37 @@
             ::
             (ev-emit hen %pass /qos %d %flog %text u.text)
           ::
+          ++  ev-update-lane
+            |=  [=lane:pact hop=@ud next=(list lane:pact)]
+            ^+  per
+            ?:  =(0 hop)
+              per(lane.sat `lane)
+            ?~  next  per
+            per(lane.sat `i.next)
+          ::
           ++  ev-push-pact  :: XX forwarding?
             |=  =pact:pact
             ^+  ev-core
-            =;  lanes=(list lane:pact:ames)
-              %+  ev-emit  unix-duct.ames-state
-              [%give %push lanes p:(fax:plot (en:^pact pact))]
-            ?^  route.sat.per
-              (turn route.sat.per tail)
             ::  find .ship.sat.per sponsor galaxy's lane
             ::
-            =/  sax
-              (rof ~ /sax %j `beam`[[our %saxo %da now] /(scot %p ship.per)])
-            ?.  ?=([~ ~ *] sax)
-              ~  :: XX log
-            =/  gal  (rear ;;((list ship) q.q.u.u.sax))  :: XX only galaxy
-            ?:  =(our gal)
-              ~  :: XX log
-            [`@ux`gal]~
+            =/  spon=(unit @ux)
+              =/  sax
+                (rof [~ ~] /sax %j `beam`[[our %saxo %da now] /(scot %p ship.per)])
+              ?.  ?=([~ ~ *] sax)
+                ~  :: XX log
+              =/  gal  (rear ;;((list ship) q.q.u.u.sax))  :: XX only galaxy
+              ?:  =(our gal)
+                ~  :: XX log
+              [~ `@ux`gal]
+            =/  lanes=(list lane:pact:ames)
+              %+  weld
+                (drop spon)
+              ?~  lane.sat.per
+                ~
+              (drop lane.sat.per)
+            ~&  pushin-pact-on/lanes
+            %+  ev-emit  unix-duct.ames-state
+            [%give %push lanes p:(fax:plot (en:^pact pact))]
           ::
           --
       ::
@@ -7909,7 +7992,7 @@
                           :_  tang.u.dud
                           leaf+"mesa: %heer crashed {<mote.u.dud>}"
                       `ames-state
-              %mess  ev-abet:(ev-call:ev-core %mess lane.task mess.task dud)
+              %mess  ev-abet:(ev-call:ev-core %mess mess.task dud)
             ==
           ::
           =<  ev-abet
@@ -7942,7 +8025,7 @@
             %heer      (ev-call:ev-core task)  ::  XX dud
           ::  from packet layer or XX
           ::
-            %mess      (ev-call:ev-core %mess lane.task mess.task ~)
+            %mess      (ev-call:ev-core %mess mess.task ~)
           ==
           ::
         [moves vane-gate]
@@ -8116,12 +8199,14 @@
         (call:ames hen dud soft+hear/lane^blob)
       ?.  ?=([~ %known *] +.ship-state)
         ::  XX weird; log
+        ~&  [%hear-unknown sndr.shot]
         `vane-gate
       ::  XX  TODO: check if we are in fact tracking this path
       ::  XX  (necessary?)
       ::
-      =/  [=peep =meow]  (sift-purr `@ux`content.shot)
-      =/  =path  (slag 3 path.peep)
+      ~&  [%hear-migrated sndr.shot]
+      :: =/  [=peep =meow]  (sift-purr `@ux`content.shot)
+      :: =/  =path  (slag 3 path.peep)
       ::  old response, no-op. If we can find the peer in chums, it means that
       ::  they sent an %ahoy plea, but they haven't heard our %ack, and have not
       ::  migrated us.

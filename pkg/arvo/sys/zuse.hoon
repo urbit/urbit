@@ -1186,6 +1186,11 @@
     ++  sign                                            ::  certify
       ~/  %sign
       |=  [m=@ se=@]  ^-  @
+      (sign-octs (met 3 m)^m se)
+    ::                                                  ::  ++sign-octs:ed:crypto
+    ++  sign-octs                                       ::  certify octs
+      ~/  %sign-octs
+      |=  [m=octs se=@]  ^-  @
       =+  sk=(suck se)
       =+  pk=(cut 0 [b b] sk)
       =+  h=(shal (rsh [0 3] b) sk)
@@ -1195,27 +1200,23 @@
           (lsh [0 3] (cut 0 [3 (sub b 5)] h))
       =+  ^=  r
           =+  hm=(cut 0 [b b] h)
-          =+  ^=  i
-              %+  can  0
-              :~  [b hm]
-                  [(met 0 m) m]
-              ==
-          (shaz i)
+          =+  i=(can 3 [32 hm] m ~)
+          (shal (add 32 p.m) i)
       =+  rr=(scam bb r)
       =+  ^=  ss
           =+  er=(etch rr)
-          =+  ^=  ha
-              %+  can  0
-              :~  [b er]
-                  [b pk]
-                  [(met 0 m) m]
-              ==
-          (~(sit fo l) (add r (mul (shaz ha) a)))
+          =+  ha=(can 3 [32 er] [32 pk] m ~)
+          (~(sit fo l) (add r (mul (shal (add 64 p.m) ha) a)))
       (can 0 ~[[b (etch rr)] [b ss]])
     ::                                                  ::  ++veri:ed:crypto
     ++  veri                                            ::  validate
       ~/  %veri
       |=  [s=@ m=@ pk=@]  ^-  ?
+      (veri-octs s (met 3 m)^m pk)
+    ::                                                  ::  ++veri-octs:ed:crypto
+    ++  veri-octs                                       ::  validate octs
+      ~/  %veri-octs
+      |=  [s=@ m=octs pk=@]  ^-  ?
       ?:  (gth (div b 4) (met 3 s))  |
       ?:  (gth (div b 8) (met 3 pk))  |
       =+  cb=(rsh [0 3] b)
@@ -1224,8 +1225,8 @@
       =+  aa=(deco pk)
       ?~  aa  |
       =+  ss=(cut 0 [b b] s)
-      =+  ha=(can 3 ~[[cb (etch u.rr)] [cb pk] [(met 3 m) m]])
-      =+  h=(shaz ha)
+      =+  ha=(can 3 ~[[cb (etch u.rr)] [cb pk] m])
+      =+  h=(shal (add 64 p.m) ha)
       =((scam bb ss) (ward u.rr (scam u.aa h)))
     --  ::ed
   ::                                                    ::
