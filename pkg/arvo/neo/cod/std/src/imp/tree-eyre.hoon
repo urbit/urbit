@@ -1,49 +1,32 @@
 /@  eyre-reqs
-/-  serv=server
+/-  serv=sky-server
+/-  srv=server
 ^-  kook:neo
 |%
 ++  state  pro/%sig
 ++  poke   (sy %eyre-task ~)
-++  kids
-  :+  ~  %y
-  %-  ~(gas by *lads:neo)
-  ~
-++  deps
-  %-  ~(gas by *band:neo)
-  ~
-::
+++  kids  *kids:neo
+++  deps   *deps:neo
 ++  form
   |_  [=bowl:neo =aeon:neo =pail:neo]
   ++  poke
-    |=  [=stud:neo vax=vase]
+    |=  [=stud:neo =vase]
     ^-  (quip card:neo pail:neo)
-    ?+    stud  ~|(bad-stud/stud !!)
+    ?+  stud  ~|(bad-stud/stud !!)
         %eyre-task
-      =+  !<(=task:eyre:neo vax)
+      =+  !<(=task:eyre:neo vase)
       =/  [eyre-id=@ta req=inbound-request:eyre]  task
+      ?.  authenticated.req
+        =/  eyre=pith:neo  #/[p/our.bowl]/$/eyre
+        :_  pail
+        %+  ~(respond neo:srv eyre)   eyre-id
+        (login-redirect:gen:srv request.req)
+      =/  purl  (parse-url:serv request.req)
+      =/  inner=pith:neo  (pave:neo pax.purl)
+      =/  =crew:neo  (~(gas by *crew:neo) src/inner ~)
+      =/  =made:neo  [%tree-eyre-handler `[stud vase] crew]
       :_  sig/!>(~)
-      =/  doc
-        %+  weld  "<!DOCTYPE html>"
-        %-  en-xml:html
-        ;html
-          ;body
-            ;style
-              ;+  ;/  %-  trip
-              '''
-              body {
-                color: red;
-              }
-              '''
-            ==
-            ;h1: tree stub: {(trip url.request.req)}
-          ==
-        ==
-      =/  head=sign:eyre:neo  [eyre-id %head [200 ~]]
-      =/  data=sign:eyre:neo  [eyre-id %data `(as-octt:mimes:html doc)]
-      =/  done=sign:eyre:neo  [eyre-id %done ~]
-      :~  [#/[p/our.bowl]/$/eyre %poke eyre-sign/!>(head)]
-          [#/[p/our.bowl]/$/eyre %poke eyre-sign/!>(data)]
-          [#/[p/our.bowl]/$/eyre %poke eyre-sign/!>(done)]
+      :~  [(welp here.bowl #/[uv/(end 3^4 eny.bowl)]) %make made]
       ==
     ==
   ++  init

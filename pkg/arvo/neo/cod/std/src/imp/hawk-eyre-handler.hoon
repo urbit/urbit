@@ -10,7 +10,7 @@
 ++  state  pro/%eyre-task
 ++  poke   *(set stud:neo)
 ++  kids  *kids:neo
-++  deps
+++  deps  
   %-  ~(gas by *band:neo)
   :~  :-  %src
       ^-  fief:neo
