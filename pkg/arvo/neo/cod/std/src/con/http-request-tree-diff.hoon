@@ -11,14 +11,6 @@
 ?+  head  ~|  [%unknown-head head]  !!
   ::
     %send-make
-  ~&  >>>  here/(got:bod 'here')
-  ~&  >  pith/find-pith
-  =/  =path
-    %+  scan 
-      %+  welp  
-        %-  trip  (got:bod 'here')
-        %-  trip  find-pith
-    stap
   =/  =stud:neo  (to-stud find-stud)
   =/  pail-head=stud:neo  (to-stud (got:bod 'head-pail'))
   =/  mule-vax=(each vase tang)  
@@ -33,7 +25,7 @@
       !<  conf:neo  (to-hoon (got:bod 'conf'))
   ?:  ?=(%| -.mule-conf)  [%req-parsing-err p.mule-conf]
   =/  =conf:neo  p.mule-conf
-  [head (pave:neo path) stud [(some [pail-head vax]) conf]]
+  [head *pith:neo stud [(some [pail-head vax]) conf]]
   ::
     %send-poke
   =/  =pith:neo  bod-to-pith
