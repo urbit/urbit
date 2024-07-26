@@ -272,9 +272,6 @@
     :: ~/  %ravel
     |=  a=ray
     ^-  (list @)
-    ~&  >  a
-    ~&  >>  (rip bloq.meta.a data.a)
-    ~&  >>>  (snip (rip bloq.meta.a data.a))
     (snip (rip bloq.meta.a data.a))
   ::
   ++  en-ray    :: baum to ray
@@ -902,9 +899,7 @@
   ++  add
     ~/  %add-rays
     |=  [a=ray b=ray]
-    ~&  >  %add-rays
     ^-  ray
-    ~&  >>  [a b]
     (bin-op a b (fun-scalar meta.a %add))
   ::
   ++  sub
