@@ -7288,8 +7288,14 @@
                 =.  route.+.u.peer  `[direct=%.y lane]
                 (~(put by peers.ames-state) ship u.peer)
               =.  ev-core
-                (ev-emit unix-duct.ames-state %give %nail ship ~)
-                :: (ev-emit unix-duct.ames-state %give %nail ship ~[lane])
+                =/  =^lane  :: XX refactor
+                  ?@  lane  [%.y `@pC`lane]
+                  :-  %.n
+                  %+  can  3
+                  :~  4^p.lane
+                      2^q.lane
+                  ==
+                (ev-emit unix-duct.ames-state %give %nail ship ~[lane])
               sy-core
             ::
             ::  +sy-tame: handle request to delete a route
