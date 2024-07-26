@@ -73,27 +73,27 @@ class extends HTMLElement {
        }
       </style>
       <div id="drag-overlay" class="hidden"></div>
-      <header class="b2 p1 fr ac js g2">
-        <button class="p-1 s-1 b3 br1 hover" id="tree-toggle"><span class="mso">sort</span></button>
+      <header class="b2 fr af js g1">
+        <button class="p2 s-1 b2 br1 hover" id="tree-toggle"><span class="mso">sort</span></button>
         <div id="breadcrumbs" class="grow fr g1 af js"></div>
         <form id="searchbar" class="grow fr hidden">
-          <input id="input-here" class="f2 grow b0 br1 p-1 s-1"/>
+          <input id="input-here" class="f2 grow b2 br1 p-1 s-1" style="outline: none;" />
         </form>
-        <div id="axns" class="fr g2">
+        <div id="axns" class="fr">
           <button
-            class="p1 s-1 b2 hover br1"
+            class="p1 s-1 b2 hover br1 fc jc ac"
             onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('minimize'))"
             >
             <span class="mso">minimize</span>
           </button>
           <button
-            class="p1 s-1 b2 hover br1"
+            class="p1 s-1 b2 hover br1 fc jc ac"
             onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('close'))"
             >
             <span class="mso">close</span>
           </button>
           <div
-            class="p1 s-1 b2 grabber f3"
+            class="p1 s-1 b2 grabber f4 fc jc ac"
             draggable="true"
             id="dragger"
             >
@@ -183,12 +183,13 @@ class extends HTMLElement {
       }
     } else if (name === "searching") {
       if (newValue === null) {
-       $(this.gid('breadcrumbs')).removeClass('hidden');
-       $(this.gid('searchbar')).addClass('hidden');
+        $(this.gid('breadcrumbs')).removeClass('hidden');
+        $(this.gid('searchbar')).addClass('hidden');
       } else {
-       $(this.gid('breadcrumbs')).addClass('hidden');
-       $(this.gid('searchbar')).removeClass('hidden');
-       this.gid('input-here').focus();
+        $(this.gid('breadcrumbs')).addClass('hidden');
+        $(this.gid('searchbar')).removeClass('hidden');
+        this.gid('input-here').focus();
+        this.gid('input-here').setSelectionRange(999,999);
       }
     } else if (name === "current") {
       if (newValue === null) {

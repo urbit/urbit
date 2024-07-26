@@ -468,7 +468,7 @@ class extends HTMLElement {
     $(this.windows).each(function(i) {
       let wind = this;
       let tab = document.createElement('div');
-      $(tab).addClass('b2 br1 fr ac js g1 bd1');
+      $(tab).addClass('b2 br1 fr af js bd1');
       if (i < hawks) {
         $(tab).addClass('toggled');
       }
