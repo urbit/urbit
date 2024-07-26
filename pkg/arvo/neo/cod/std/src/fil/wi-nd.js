@@ -104,6 +104,7 @@ class extends HTMLElement {
       <div id="tabs" class="fc grow">
       </div>
     `
+    this.intervalId = null;
   }
   connectedCallback() {
     $(this.gid('searchbar')).off();
@@ -120,7 +121,11 @@ class extends HTMLElement {
     });
     $(this.gid('tree-toggle')).off();
     $(this.gid('tree-toggle')).on('click', (e) => {
-      this.toggleAttribute('current');
+      if ($(this).attr('current') === '/neo/tree') {
+        $(this).attr('current', '/neo/hawk');
+      } else {
+        $(this).attr('current', '/neo/tree');
+      }
     });
 
     $(this.gid('dragger')).off();
@@ -166,21 +171,47 @@ class extends HTMLElement {
       $(this).emit('fix-slots');
     })
     this.setAttribute('wid', `${Date.now()}`);
+
+    // poll iframes for changes every 350ms
+    this.intervalId = setInterval(() => {
+      let here = this.getAttribute('here');
+      $(this.gid('tabs')).children().each(function() {
+        this.contentWindow.postMessage(here);
+      });
+    }, 350);
+
+    $(this).on('iframe-moved', (e) => {
+      this.prefixWhichChanged = e.detail.prefix;
+      $(this).attr('here', e.detail.here);
+    });
+  }
+  disconnectedCallback() {
+    if (this.intervalId !== null) {
+      clearInterval(this.intervalId);
+      this.intervalId = null;
+    }
   }
   attributeChangedCallback(name, oldValue, newValue) {
     //
     if (name === "here") {
-      if (oldValue !== newValue) {
-        let tabs = $(this.gid('tabs'));
-        tabs.children().remove();
-        let hawk = this.createIframe('/neo/hawk', newValue, $(this).attr('current') != undefined);
-        let tree = this.createIframe('/neo/tree', newValue, $(this).attr('current') == undefined);
-        tabs.append(hawk);
-        tabs.append(tree);
-        this.buildBreadcrumbs();
-        $(this.gid('input-here')).val(newValue);
-        $(this).emit('here-moved');
-      }
+      let prefixes = ["/neo/hawk", "/neo/tree"];
+      let keepPrefix = this.prefixWhichChanged;
+      this.prefixWhichChanged = undefined;
+      let rebuildPrefixes = prefixes.filter(p => p != keepPrefix);
+
+      // remove non-changed iframes
+      $(this.gid('tabs')).children().filter(function() {
+        return rebuildPrefixes.includes($(this).attr('prefix'));
+      }).remove();
+
+      // rebuild non-changed iframes
+      rebuildPrefixes.forEach(p => {
+        let frame = this.createIframe(p, newValue, ($(this).attr('current') || '/neo/hawk') == p);
+        $(this.gid('tabs')).append(frame);
+      });
+      this.buildBreadcrumbs();
+      $(this.gid('input-here')).val(newValue);
+      $(this).emit('here-moved');
     } else if (name === "searching") {
       if (newValue === null) {
         $(this.gid('breadcrumbs')).removeClass('hidden');
@@ -193,14 +224,9 @@ class extends HTMLElement {
       }
     } else if (name === "current") {
       if (newValue === null) {
-        $(this.gid('tabs')).children(`[prefix='/neo/hawk']`).show()
-        $(this.gid('tabs')).children(`[prefix='/neo/tree']`).hide();
-        $(this.gid('tree-toggle')).removeClass('toggled');
-      } else {
-        $(this.gid('tabs')).children(`[prefix='/neo/hawk']`).hide()
-        $(this.gid('tabs')).children(`[prefix='/neo/tree']`).show();
-        $(this.gid('tree-toggle')).addClass('toggled');
+        newValue = "/neo/hawk"
       }
+      $(this.gid('tabs')).children().hide().filter(`[prefix='${newValue}']`).show();
     } else if (name === "dragging") {
       if (newValue === null) {
         $(this).removeClass('dragging');
@@ -220,13 +246,13 @@ class extends HTMLElement {
     let here = this.getAttribute("here") || "/";
     return here.slice(1).split("/").filter(s => !!s.trim().length);
   }
-  createIframe(prefix, here, hidden) {
+  createIframe(prefix, here, open) {
     let el = document.createElement('iframe');
     el.setAttribute('prefix', prefix);
     el.setAttribute('lazy', '');
     el.setAttribute('src', prefix+here);
     el.setAttribute('style', 'width: 100%; flex-grow: 1; border: none; background: var(--b0);');
-    if (hidden) {
+    if (!open) {
       el.hidden = true;
     }
     el.addEventListener('load', () => {
@@ -235,26 +261,19 @@ class extends HTMLElement {
     return el;
   }
   registerServiceWorker(iframe, prefix) {
-    const iframeWindow = iframe.contentWindow;
-    const iframeDoc = iframeWindow.document;
+    //  for convenience, this part is inject by wi-nd.
+    //  in future, due to the need to sandbox the iframes,
+    //  this must be provided by the iframe's contents.
+    const iframeDoc = iframe.contentWindow.document;
     let wid = this.getAttribute('wid');
-    let pre = prefix.length;
     const inlineScript = iframeDoc.createElement('script');
     inlineScript.textContent = `
-      function notifySky() {
-        window.parent.postMessage({wid: '${wid}', path: window.location.pathname.slice(${pre})}, '*');
-      }
-      window.addEventListener('beforeunload', function (e) {
-        notifySky();
-      });
-      window.addEventListener('htmx:beforeHistorySave', function (e) {
-        notifySky();
-      });
-      window.addEventListener('htmx:beforeRequest', function (e) {
-        notifySky();
-      });
-      window.addEventListener('htmx:afterSwap', function (e) {
-        notifySky();
+      window.addEventListener('message', (event) => {
+        let windowHere = event.data;
+        let here = window.location.pathname.slice(${prefix.length});
+        if (here != windowHere) {
+          window.parent.postMessage({wid: '${wid}', here: here, prefix: '${prefix}'}, '*');
+        }
       });
     `;
     iframeDoc.body.appendChild(inlineScript);
@@ -265,7 +284,7 @@ class extends HTMLElement {
     //
     this.path.forEach((p, i) => {
       let chevron = $(document.createElement('span'));
-      chevron.addClass('s-2 f4 o6 fc ac jc');
+      chevron.addClass('s-2 f4 o6 fc ac jc no-select');
       chevron.text('›');
       breadcrumbs.append(chevron);
       //

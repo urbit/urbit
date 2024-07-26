@@ -148,8 +148,10 @@
         }
         window.addEventListener('message', function(event) {
           let wid = event.data.wid;
-          let path = event.data.path;
-          document.querySelector(`[wid='${wid}']`)?.setAttribute('here', path);
+          let here = event.data.here;
+          let prefix = event.data.prefix;
+          let wind = document.querySelector(`[wid='${wid}']`);
+          $(wind).poke('iframe-moved', {here, prefix})
         });
         '''
       ==

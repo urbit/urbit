@@ -93,20 +93,20 @@
         }
         return this;
       };
-      jQuery.fn.emit = function (name) {
+      jQuery.fn.emit = function (name, detail) {
         (this[0]).dispatchEvent(
-          new Event(
+          new CustomEvent(
             name,
-            { bubbles: true, cancelable: true, composed: true }
+            { detail, bubbles: true, cancelable: true, composed: true }
           )
         );
         return this;
       };
-      jQuery.fn.poke = function (name) {
+      jQuery.fn.poke = function (name, detail) {
         (this[0]).dispatchEvent(
-          new Event(
+          new CustomEvent(
             name,
-            { bubbles: false, cancelable: true, composed: true }
+            { detail, bubbles: false, cancelable: true, composed: true }
           )
         );
         return this;
