@@ -272,9 +272,9 @@
     :: ~/  %ravel
     |=  a=ray
     ^-  (list @)
-    :: ~&  >  a
-    :: ~&  >>  (rip bloq.meta.a data.a)
-    :: ~&  >>>  (snip (rip bloq.meta.a data.a))
+    ~&  >  a
+    ~&  >>  (rip bloq.meta.a data.a)
+    ~&  >>>  (snip (rip bloq.meta.a data.a))
     (snip (rip bloq.meta.a data.a))
   ::
   ++  en-ray    :: baum to ray

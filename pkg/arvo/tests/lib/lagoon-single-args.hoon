@@ -1383,4 +1383,15 @@
   %+  is-equal
     canon-ones-3x3-6u
   assay-ones-3x3-6u
+
+++  test-linspace
+  ;:  weld
+  %+  expect-eq
+    !>  0x1.3f80.0000.3f66.6664.3f4c.cccb.3f33.3332.3f19.9999.3eff.ffff.3ecc.cccc.3e99.9999.3e4c.cccc.3dcc.cccc.0000.0000
+    !>  data:(linspace:la [~[11] 5 %i754 ~] [.0 .1] 11)
+  %-  expect-eq
+    !>  0x1.0000.0000.3dcc.ccc4.3e4c.ccc8.3e99.9997.3ecc.ccca.3eff.fffd.3f19.9998.3f33.3332.3f4c.cccc.3f66.6666.3f80.0000
+    !>  data:(linspace:la [~[11] 5 %i754 ~] [.1 .0] 11)
+  ==
+
 --
