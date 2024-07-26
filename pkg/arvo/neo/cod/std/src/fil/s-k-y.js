@@ -309,6 +309,13 @@ class extends HTMLElement {
           <div id="tabs" class="fc g2"></div>
         </div>
         <footer class="fc g2">
+          <div class="bd1 br1 p2 fc g1">
+            <p class="bold f-3">This is a developer alpha.</p>
+            <p class="s-1">
+              Your data in this app is NOT private from the rest of the network
+              and will NOT persist across upgrades.
+            </p>
+          </div>
           <select class="fr p2 br1 bd1 b0">
             <option>workspace 1</option>
             <option>workspace 2</option>
