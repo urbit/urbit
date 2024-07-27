@@ -1384,19 +1384,19 @@
     canon-ones-3x3-6u
   assay-ones-3x3-6u
 
-:: ++  test-linspace-asc  ^-  tang
-::   =/  canon-linspace-11  (en-ray:la [meta=[shape=~[11] bloq=5 kind=%i754 prec=~] baum=~[0x0 0x3dcc.cccc 0x3e4c.cccc 0x3e99.9999 0x3ecc.cccc 0x3eff.ffff 0x3f19.9999 0x3f33.3332 0x3f4c.cccb 0x3f66.6664 0x3f80.0000]])
-::   =/  assay-linspace-11  (linspace:la [~[11] 5 %i754 ~] [.0 .1] 11)
-::   %+  is-equal
-::     canon-linspace-11
-::   assay-linspace-11
+++  test-linspace-asc  ^-  tang
+  =/  canon-linspace-11  (en-ray:la [meta=[shape=~[11] bloq=5 kind=%i754 prec=~] baum=~[0x0 0x3dcc.cccc 0x3e4c.cccc 0x3e99.9999 0x3ecc.cccc 0x3eff.ffff 0x3f19.9999 0x3f33.3332 0x3f4c.cccc 0x3f66.6665 0x3f80.0000]])
+  =/  assay-linspace-11  (linspace:la [~[11] 5 %i754 ~] [.0 .1] 11)
+  %+  is-equal
+    canon-linspace-11
+  assay-linspace-11
 
-:: ++  test-linspace-des  ^-  tang
-::   =/  canon-linspace-11  (en-ray:la [meta=[shape=~[11] bloq=5 kind=%i754 prec=~] baum=~[0x3f80.0000 0x3f66.6666 0x3f4c.cccc 0x3f33.3332 0x3f19.9998 0x3eff.fffd 0x3ecc.ccca 0x3e99.9997 0x3e4c.ccc8 0x3dcc.ccc4 0x0]])
-::   =/  assay-linspace-11  (linspace:la [~[11] 5 %i754 ~] [.1 .0] 11)
-::   %+  is-equal
-::     canon-linspace-11
-::   assay-linspace-11
+++  test-linspace-des  ^-  tang
+  =/  canon-linspace-11  (en-ray:la [meta=[shape=~[11] bloq=5 kind=%i754 prec=~] baum=~[0x3f80.0000 0x3f66.6666 0x3f4c.cccd 0x3f33.3333 0x3f19.999a 0x3f00.0000 0x3ecc.ccce 0x3e99.999c 0x3e4c.ccd0 0x3dcc.ccd8 0x0]])
+  =/  assay-linspace-11  (linspace:la [~[11] 5 %i754 ~] [.1 .0] 11)
+  %+  is-equal
+    canon-linspace-11
+  assay-linspace-11
 
 ++  test-max-2-4r  ^-  tang
   =/  input-max-2-4r  (en-ray:la [meta=[shape=~[2] bloq=4 kind=%i754 prec=~] baum=(reap 2 .~~0.0)])
