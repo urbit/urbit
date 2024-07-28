@@ -147,11 +147,14 @@
           return `~${year}.${month}.${date}..${hour}.${min}.${sec}`;
         }
         window.addEventListener('message', function(event) {
+          if (event.data?.messagetype !== 'sky-poll-response') return;
           let wid = event.data.wid;
           let here = event.data.here;
           let prefix = event.data.prefix;
           let wind = document.querySelector(`[wid='${wid}']`);
-          $(wind).poke('iframe-moved', {here, prefix})
+          if (wind) {
+            $(wind).poke('iframe-moved', {here, prefix})
+          }
         });
         '''
       ==

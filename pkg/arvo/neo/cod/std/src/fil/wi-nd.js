@@ -176,7 +176,7 @@ class extends HTMLElement {
     this.intervalId = setInterval(() => {
       let here = this.getAttribute('here');
       $(this.gid('tabs')).children().each(function() {
-        this.contentWindow.postMessage(here);
+        this.contentWindow.postMessage({ messagetype: "sky-poll", here});
       });
     }, 350);
 
@@ -269,10 +269,15 @@ class extends HTMLElement {
     const inlineScript = iframeDoc.createElement('script');
     inlineScript.textContent = `
       window.addEventListener('message', (event) => {
-        let windowHere = event.data;
+        if (event.data?.messagetype !== 'sky-poll') return;
+        let windowHere = event.data.here;
+        if (!windowHere) {
+          console.error('bad here', event.data);
+          return;
+        }
         let here = window.location.pathname.slice(${prefix.length});
         if (here != windowHere) {
-          window.parent.postMessage({wid: '${wid}', here: here, prefix: '${prefix}'}, '*');
+          window.parent.postMessage({messagetype: 'sky-poll-response',  wid: '${wid}', here: here, prefix: '${prefix}'}, '*');
         }
       });
     `;
