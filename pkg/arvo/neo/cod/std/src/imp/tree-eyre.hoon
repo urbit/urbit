@@ -72,6 +72,7 @@
         ::  
           %req-parsing-err  ~
       ==
+      ::
         %ack  
       :_  eyre-id/q.pail
       =/  eyre-id  !<(@ta q.pail)
@@ -108,6 +109,14 @@
       =/  inner=pith:neo  (pave:neo pax.purl)
       =/  src  (~(got by deps.bowl) %src)
       =/  here  (tail inner)
+      =+  ^=  resp
+          :*  
+            eyre-id
+            bowl 
+            200 
+            headers=`header-list:http`['content-type'^'text/html']~ 
+            manx=*manx
+          ==
       ?+    method.request.req  ~|(%unsupported-http-method !!)
         ::
           %'GET'
@@ -116,32 +125,19 @@
             |=  =pith:neo
             ;;  pith:neo
             %+  slag  (lent here)  pith
+        =.  manx.resp              
+          ?~  idea=(~(get of:neo q.src) here)
+            (view inner [%$ !>(~)] kids bowl)
+          =/  local=pail:neo  q.saga:(need idea)
+          (view inner local kids bowl)
         :_  eyre-id/q.pail
-        %:  eyre-cards
-            eyre-id
-            bowl
-            200
-            ['content-type' 'text/html']~
-            ?~  idea=(~(get of:neo q.src) here)
-              (view inner [%$ !>(~)] kids bowl)
-            =/  local=pail:neo  q.saga:(need idea)
-            (view inner local kids bowl)
-          ==
+        %-  eyre-cards  resp
         ::
           %'POST'
         =/  poke-stud
           ^-  stud:neo
           ~|  %no-stud-specified
           (~(got by pam.purl) 'stud')
-        =+  
-        ^=  resp
-          :*  
-            eyre-id
-            bowl 
-            200 
-            headers=`header-list:http`['content-type'^'text/html']~ 
-            manx=*manx
-          ==
         =/  diff-vase  (http-request [poke-stud `request:http`request.req])
         =/  tree-diff  !<(tree-diff diff-vase)
         ?-  -.tree-diff
@@ -157,7 +153,7 @@
         %+  welp 
           :~  (poke-tree-card here.bowl !>(diff))
           ==
-        (eyre-cards resp)
+        %-  eyre-cards  resp
         ::
           %send-poke
         :_  eyre-id/!>(eyre-id)
@@ -175,12 +171,12 @@
           %+  snoc  headers.resp  'HX-Redirect'^location
         %+  welp
           poke-card
-        (eyre-cards resp)
+        %-  eyre-cards  resp
         ::
           %req-parsing-err
         :_  eyre-id/q.pail
         =.  manx.resp  (err-trace-manx tang.tree-diff)
-        (eyre-cards resp)
+        %-  eyre-cards  resp
         ==
       ==
     ==
