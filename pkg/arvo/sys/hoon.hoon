@@ -9613,7 +9613,9 @@
       ==
         [%cell *]
       ?-  ref
-        [%cell *]   (cell $(sut p.sut, ref p.ref) $(sut q.sut, ref q.ref))
+        [%cell *]   =+  hed=$(sut p.sut, ref p.ref)
+                    ?:  ?=(%void hed)  %void
+                    (cell hed $(sut q.sut, ref q.ref))
         *           $(sut ref, ref sut)
       ==
     ::
