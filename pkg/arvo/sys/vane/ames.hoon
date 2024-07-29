@@ -5199,8 +5199,13 @@
           +|  %helpers
           ::
           ++  ev-core  .
-          ++  ev-abet  moves^ames-state
+          ++  ev-abet
+            =.  chums.ames-state
+              (~(put by chums.ames-state) per(sat known/sat.per))
+            moves^ames-state
+          ::
           ++  ev-abed  |=(=duct ev-core(hen duct))
+          ++  ev-foco  |=(=_per ev-core(per per))
           ++  ev-emit  |=(=move ev-core(moves [move moves]))
           ++  ev-emil  |=(mos=(list move) ev-core(moves (weld mos moves)))
           ::
@@ -5507,29 +5512,6 @@
             ::    - validation should crash event or ensure that no state is changed
             ::  XX  parse path to get: requester, rift, bone, message
             ::
-            =/  chum-state  (~(get by chums.ames-state) her.poke-name)
-            ?:  ?&  ?=(%pawn (clan:title her.poke-name))
-                    |(?=(~ chum-state) ?=([~ %alien *] chum-state))
-                ==
-              =?  chum-state  ?=(~ chum-state)
-                ::  first time: upgrade to %comet and +peek attestation proof
-                ::
-                `alien/*ovni-state
-              ?>  ?=([~ %alien *] chum-state)
-              ?:  ?=(^ pit.u.chum-state)
-                ::  still waiting to hear attestation proof
-                ::
-                ev-core
-              =.  chums.ames-state
-                (~(put by chums.ames-state) her.poke-name u.chum-state)
-              ::  start peeking the attestation proof
-              ::
-              (ev-read-proof her.poke-name)
-            ?.  ?=([~ %known *] chum-state)
-              ::  request public keys from %jael and drop the packet; it'll be re-send
-              ::
-              (ev-enqueue-alien-todo her.poke-name chum-state |=(ovni-state +<))
-            ::
             ::  path validation/decryption
             ::
             ~|  path-decryption-failed/pat.ack-name^pat.poke-name
@@ -5549,8 +5531,6 @@
               ~&  >  %poke-for-other^[rcvr.pok our]
               ev-core  :: XX TODO log
             ::
-            =.  per  her.poke-name^+.u.chum-state
-            ::
             =.  per  (ev-update-lane lane hop ~)
             ::  update and print connection status
             ::  XX  this is implicitly updating chums.state;
@@ -5568,10 +5548,8 @@
               [%pass wire %a meek/[space [her pat]:poke-name]]
             ::  authenticate one-fragment message
             ::
-            ?>  %^    ev-authenticate
-                    (root:lss (met 3 dat.data)^dat.data)
-                  aut.data
-                poke-name
+            ?>  %-  ev-authenticate
+                [(root:lss (met 3 dat.data)^dat.data) aut.data poke-name]
             ::
             %:  ev-mess-poke
               ~   :: XX refactor function signature
@@ -5594,14 +5572,9 @@
             ^+  ev-core
             ::  check for pending request (peek|poke)
             ::
-            =*  ship  her.name
-            ?~  chum=(~(get by chums.ames-state) ship)
-              ev-core
-            ?>  ?=([~ %known *] chum)  ::  XX alien agenda
-            =.  per  [ship +.u.chum]
             =*  pit  pit.sat.per
             =/  [=space cyf=(unit @) key=@ =inner=path]
-              (ev-decrypt-path pat.name ship)
+              (ev-decrypt-path pat.name ship.per)
             =*  sealed-path  pat.name
             ?~  res=(~(get by pit) sealed-path)
               ev-core
@@ -5627,9 +5600,8 @@
               ~&  >>>  auth/proof
               ?>  (ev-authenticate (recover-root:verifier:lss proof) aut.data name)
               =/  state  (init:verifier:lss tot.data proof)
-              =.  chums.ames-state
-                %+  ~(put by chums.ames-state)  her.name
-                =-  known/sat.per(pit -)
+              =.  per
+                =-  per(pit.sat -)
                 %+  ~(put by pit)  sealed-path
                 u.res(ps `[state ~])
               ::
@@ -5753,17 +5725,17 @@
             |=  [=spar =auth:mess res=@]  ::  XX res and path.spar have been decrypted
             ^+  ev-core
             =*  ship  ship.spar
-            ?~  rs=(~(get by chums.ames-state) ship)
-              ev-core
-            ?>  ?=([~ %known *] rs)  ::  XX alien agenda
+            ?>  =(ship.per ship.spar)
+            :: ?~  rs=(~(get by chums.ames-state) ship)
+            ::   ev-core
+            :: ?>  ?=([~ %known *] rs)  ::  XX alien agenda
             =+  path=?~(sealed-path path.spar u.sealed-path)
-            ?~  ms=(~(get by pit.u.rs) path)
+            ?~  ms=(~(get by pit.sat.per) path)
               ev-core
-            =.  per  ship^+.u.rs
+            :: =.  per  ship^+.u.rs
             ::
             ::  XX validate response
-            =.  pit.u.rs           (~(del by pit.u.rs) path)
-            =.  chums.ames-state   (~(put by chums.ames-state) ship u.rs)
+            =.  pit.sat.per  (~(del by pit.sat.per) path)
             ~|   gage-res-failed/`@ux`res
             =+  ;;(=gage:mess (cue res))
             ?>  ?=(^ gage)
@@ -5785,7 +5757,7 @@
             ::  the packet layer has already validated that this is a valid %poke
             ::
             ::  XX ev-got-per; assumes that %aliens are checked in the packet layer
-            =.  per  (ev-got-per ship.pok-spar)
+            :: =.  per  (ev-got-per ship.pok-spar)
             :: ::  ?>  ?=(%known -.sat.per)
             ::
             =/  =dire  :: flow swtiching
@@ -5980,6 +5952,11 @@
           ::
           +|  %message-constructor
           ::
+          ::  these arms are the only ones that don't retrieve the peer from
+          ::  the door's sample sat.per, and therefore don't use the +abed/+abet
+          ::  pattern due to the way comets are handled in ++ev-make-mess when
+          ::  reading attestation proofs.
+          ::
           ++  ev-make-peek
             |=  [=space p=spar]
             (ev-make-mess p ~ `space)
@@ -6168,15 +6145,10 @@
             ^+  ev-core
             ?~  ms=(~(get by pit.sat.per) path)
               ev-core
-            =;  core=_ev-core
-              %_    core
-                  chums.ames-state
-                (~(put by chums.ames-state) [ship known/sat]:per.core)
-              ==
             ?:  all
               =.  pit.sat.per  (~(del by pit.sat.per) path)
               (ev-give-response for.u.ms path ~)
-            =.  for.u.ms     (~(del in for.u.ms) hen)
+            =.  for.u.ms  (~(del in for.u.ms) hen)
             =.  pit.sat.per
               ?~  for.u.ms
                 (~(del by pit.sat.per) path)
@@ -7929,9 +7901,7 @@
             |=  new=qos
             ^+  ev-core
             =*  old  qos.sat.per
-            =.  chums.ames-state
-              =.  qos.sat.per  new
-              (~(put by chums.ames-state) [ship known/sat]:per)
+            =.  qos.sat.per  new
             =/  text
               %^  qos-update-text  ship.per  %ames
               [old new [kay.veb ships]:bug.ames-state]
@@ -8111,7 +8081,7 @@
     +|  %entry-points
     ::
     ++  call
-      |=  =task
+      |=  [dud=(unit goof) =task]
       ?+  -.task  !!
         %load  `vane-gate(ames-state ames-state(core +.task))
         %plea  (pe-plea +.task)
@@ -8120,9 +8090,14 @@
         %whit  (pe-whit +.task)
         %yawn  (pe-cancel all=| +.task)
         %wham  (pe-cancel all=& +.task)
+      ::  |mesa tasks
+      ::
+        %heer  (pe-heer dud +.task)
+        %mess  (pe-mess dud +.task)
+      ::
       ==
     ::
-    +|  %internals
+    +|  %common-tasks
     ::
     ++  pe-plea
       |=  [=ship =plea]
@@ -8233,6 +8208,95 @@
         todos(peeks (~(put ju peeks.todos) path hen))
       moves^vane-gate
     ::
+    +|  %mesa-tasks
+    ::
+    ++  pe-heer
+      |=  [dud=(unit goof) =lane:pact blob=@]
+      ::
+      ::  XX  handle .dud
+      ::
+      ::  XX find peer first; if regressing back to |ames, we could hear old
+      ::  |mesa tasks
+      ::
+      =/  =pact:pact  (parse-packet blob)
+      =^  moves  ames-state
+        ?-    +<.pact
+            %page  ::(ev-pact-page lane hop.pact +>.pact)
+          ?~  chum=(~(get by chums.ames-state) her.p.pact)
+            ::  XX weird page; log
+            `ames-state
+          ?>  ?=([~ %known *] chum)  ::  XX alien agenda? log?
+          =<  ev-abet
+          %.  [lane hop.pact +>.pact]
+          ev-pact-page:(ev-foco:me-core her.p.pact +.u.chum)
+        ::
+            %peek
+          ev-abet:(ev-pact-peek:me-core +>.pact)
+        ::
+            %poke  ::(ev-pact-poke lane hop.pact +>.pact)
+        ::
+          =*  her  her.q.pact  :: her from poke-path
+          =/  chum-state  (~(get by chums.ames-state) her)
+          ?:  ?&  ?=(%pawn (clan:title her))
+                  |(?=(~ chum-state) ?=([~ %alien *] chum-state))
+              ==
+            =?  chum-state  ?=(~ chum-state)
+              ::  first time: upgrade to %comet and +peek attestation proof
+              ::
+              `alien/*ovni-state
+            ?>  ?=([~ %alien *] chum-state)
+            ?:  ?=(^ pit.u.chum-state)
+              ::  still waiting to hear attestation proof
+              ::
+              `ames-state
+            =.  chums.ames-state
+              (~(put by chums.ames-state) her u.chum-state)
+            ::  start peeking the attestation proof
+            ::
+            ev-abet:(ev-read-proof:me-core her)
+          ::
+          ?.  ?=([~ %known *] chum-state)
+            ::  request public keys from %jael; drop the packet, it'll be re-send
+            ::
+            =<  ev-abet
+            %-  ev-enqueue-alien-todo:me-core
+            [her chum-state |=(ovni-state +<)]
+          =<  ev-abet
+          %.  [lane hop.pact +>.pact]
+          ev-pact-poke:(ev-foco:me-core her +.u.chum-state)
+        ::
+        ==
+      moves^vane-gate
+    ::
+    ++  pe-mess  :: XX refactor
+      |=  [dud=(unit goof) =mess]
+      =^  moves  ames-state
+        =<  ev-abet
+        ?-    -.mess
+            %poke
+          ?~  chum=(~(get by chums.ames-state) ship.p.mess)
+            me-core
+          ::  XX  this assumes that %aliens are checked in the packet layer
+          ?>  ?=([~ %known *] chum)  ::  XX alien agenda?
+          (ev-mess-poke:(ev-foco:me-core ship.p.mess +.u.chum) dud +.mess)
+        ::
+            %peek
+          ?~  chum=(~(get by chums.ames-state) ship.p.mess)
+            me-core
+          ::  XX  this assumes that %aliens are checked in the packet layer
+          ?>  ?=([~ %known *] chum)  ::  XX alien agenda?
+          (ev-mess-peek:(ev-foco:me-core ship.p.mess +.u.chum) p.mess)
+        ::
+            %page
+          ?~  chum=(~(get by chums.ames-state) ship.p.mess)
+            me-core
+          ::  XX  this assumes that %aliens are checked in the packet layer
+          ?>  ?=([~ %known *] chum)  ::  XX alien agenda?
+          (ev-mess-page:(ev-foco:me-core ship.p.mess +.u.chum) [p q r]:mess)
+        ::
+        ==
+      moves^vane-gate
+    ::
     --
 ::
 |%
@@ -8253,9 +8317,11 @@
     (~(pe-hear pe-core hen) dud +.task)
     ::  %mesa-only tasks
     ::
-      ?(%meek %moke %mage %heer %mess %back)
+      ?(%heer %mess)
+    (~(call pe-core hen) dud task)
     ::  XX can we call the wrong core? still check if ship has migrated?
     ::
+      ?(%meek %moke %mage %back)
     (call:mesa hen dud soft/task)
     ::  flow-independent tasks
     ::
@@ -8264,7 +8330,7 @@
     ::  common tasks
     ::
       ?(%plea %cork %keen %yawn %wham %load %whit)  :: XX make %whit only for |mesa
-    (~(call pe-core hen) task)
+    (~(call pe-core hen) dud task)
     ::  core-dependent tasks
     ::
       ?(%prod %trim)
