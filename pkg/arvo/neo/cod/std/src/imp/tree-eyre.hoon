@@ -113,13 +113,18 @@
           :*  
             eyre-id
             bowl 
-            200 
+            status=200 
             headers=`header-list:http`['content-type'^'text/html']~ 
             manx=*manx
           ==
       ?+    method.request.req  ~|(%unsupported-http-method !!)
         ::
           %'GET'
+        ?.  =((head inner) p/our.bowl)
+          =.  status.resp  404
+          =.  manx.resp  ;div:  not on your ship
+          :_  eyre-id/q.pail
+          %-  eyre-cards  resp
         =/  kids=(list pith:neo)  
           %+  turn  (get-kids here q.src)
             |=  =pith:neo
@@ -234,6 +239,7 @@
   =/  bod  ~(. by pam)
   =/  parent=pith:neo  (pave:neo (stab (got:bod 'here')))
   =/  child  (got:bod 'pith')
+  ?~  child  parent
   =/  child-pith  
     !<  pith:neo
     %+  slap  (slop !>(..zuse) !>(bowl))
@@ -336,13 +342,26 @@
   |=  here=pith:neo
   =/  parent  (en-tape:pith:neo (snip here))
   ^-  manx
-  ;div.p4
-    ;div.wf.fc.ac.g2.p6.bd.bd2.br2
-      ;h1:  nothing at {(en-tape:pith:neo here)}
-      ;a.loader.p2.bd.bd2.br2.hover-grey
-      =href  "/neo/tree{parent}"
-        ;span.loaded.hf: go back to {parent}
-        ;span.loading.hf:  loading
+  ;div.p2
+    ;div.wf.fc.p2.ac.g2.bd.bd2.br2
+      ;div.top.fr.jb.g2.wf
+        ;h1.p2:  nothing at {(en-tape:pith:neo here)}
+        ;div.buttons.fr.g2
+          ;a.loader.p2.tc.hover-grey.bd.bd2.br2.grow
+          =href  "/neo/tree{parent}"
+            ;span.loaded.hf: back to {parent}
+            ;span.loading.hf:  loading
+          ==
+          ;+  make-btn
+        ==
+      ==
+      ;div.fr.jb.g2.wf
+        ;div.forms.fc.as.g2.wf
+          ;div.error-box
+          ;
+          ==
+          ;+  (make-form here |)
+        ==
       ==
     ==
   ==
@@ -450,19 +469,7 @@
 ++  buttons
   ^-  manx
   ;div.buttons.fr.g2
-    ;button.make.p2.bd.bd2.br2.hover-grey.bg-white
-    =onclick  
-      """
-      $(this).toggleClass('toggled');
-      $(this).parent().find('.poke').removeClass('toggled');
-      $(this).parent().find('.cull').removeClass('toggled');
-      $(this).parent().parent().parent().find('.make-form').toggleClass('hidden');
-      $(this).parent().parent().parent().find('.cull-form').addClass('hidden');
-      $(this).parent().parent().parent().find('.poke-form').addClass('hidden');
-      $(this).parent().parent().parent().find('.error-box').html('')
-      """
-      ;span:  make
-    ==
+    ;+  make-btn
     ;button.poke.p2.bd.bd2.br2.hover-grey.bg-white
     =onclick  
       """
@@ -491,6 +498,21 @@
     ==
   ==
 ::
+++  make-btn
+  ;button.make.p2.bd.bd2.br2.hover-grey.bg-white
+  =onclick  
+    """
+    $(this).toggleClass('toggled');
+    $(this).parent().find('.poke').removeClass('toggled');
+    $(this).parent().find('.cull').removeClass('toggled');
+    $(this).parent().parent().parent().find('.make-form').toggleClass('hidden');
+    $(this).parent().parent().parent().find('.cull-form').addClass('hidden');
+    $(this).parent().parent().parent().find('.poke-form').addClass('hidden');
+    $(this).parent().parent().parent().find('.error-box').html('')
+    """
+    ;span:  make
+  ==
+::
 ++  forms
   |=  here=pith:neo
   ^-  manx
@@ -498,13 +520,13 @@
       ;div.error-box
       ;
       ==
-      ;+  (make-form here)
+      ;+  (make-form here &)
       ;+  (poke-form here)
       ;+  (cull-form here)
     ==
 ::
 ++  make-form
-  |=  here=pith:neo
+  |=  [here=pith:neo main=?]
   ^-  manx
   ;form.make-form.hidden.bd.bd2.br2.fc.g2.p2.wf.hfc
   =hx-post    "/neo/tree{(en-tape:pith:neo here)}?stud=tree-diff&head=send-make"
@@ -517,12 +539,16 @@
       =value  (en-tape:pith:neo here)
       ;
       ==
+      ;+  
+      =;  m
+      ?.  main  -
+      m(a.g [[%required ""] a.g.m])
+      ^-  manx
       ;input.bd.bd2.br2.p2.grow
       =type          "text"
       =name          "pith"
       =oninput       "this.setAttribute('value', this.value);"
       =placeholder   "/some/pith"
-      =required      ""
       ;
       ==
       ;input.bd.bd2.br2.p2 
