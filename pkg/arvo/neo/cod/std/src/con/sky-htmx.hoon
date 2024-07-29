@@ -18,19 +18,8 @@
     =our  (scow %p our.bowl)
     =style  "opacity: var(--sky-opacity); padding: var(--sky-outer-gap);"
     =id  "air"
-    =hawks  "{<open.sky>}"
-    ;*
-    =<  p
-    %^    spin
-        hawks.sky
-      0
-    |=  [[id=@da =pith:neo] a=@]
-    :_  +(a)
-    ;wi-nd
-      =slot  "s{<a>}"
-      =here  (en-tape:pith:neo pith)
-      ;
-    ==
+    =windows-open  "{<open.sky>}"
+    ;
   ==
 ::
 ++  map-to-css-tape

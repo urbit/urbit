@@ -6,8 +6,8 @@ class extends HTMLElement {
       "wid",
       "here",
       "searching",  // boolean. true is user is using the search bar in the header
-      "tabs",    // currently unused. soon be space-separated list of iframe prefixes for each renderer
-      "current", // currently boolean. soon interpret to match prefix(tab)
+      "tabs",       // currently unused. soon be space-separated list of iframe prefixes for each renderer
+      "current",    // currently boolean. soon interpret to match prefix(tab)
       "dragging",
     ];
   }

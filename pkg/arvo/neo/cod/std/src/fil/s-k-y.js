@@ -2,7 +2,7 @@ customElements.define('s-k-y',
 class extends HTMLElement {
   static get observedAttributes() {
     //
-    return ["our", "closed", "hawks"];
+    return ["our", "closed", "windows-open"];
   }
   constructor() {
     //
@@ -285,9 +285,6 @@ class extends HTMLElement {
           >
           <span class="p1 s-1 bold">~</span>
         </button>
-        <button class="p2 br1 bd1 b2 hover o7 hideable toggled">1</button>
-        <button class="p2 br1 bd1 b2 hover o7 hideable">2</button>
-        <button class="p2 br1 bd1 b2 hover o7 hideable">3</button>
         <button class="p2 br1 bd1 b3 hover f3"><span class="mso">settings</span></button>
         <button class="p2 br1 bd1 b3 hover f3"><span class="mso">notifications</span></button>
       </div>
@@ -316,18 +313,6 @@ class extends HTMLElement {
               and will NOT persist across upgrades.
             </p>
           </div>
-          <select class="fr p2 br1 bd1 b0">
-            <option>workspace 1</option>
-            <option>workspace 2</option>
-            <option>workspace 3</option>
-          </select>
-          <button
-            onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('open-settings'))"
-            class="p2 br1 bd1 b3 hover fr g3 ac f3 hideable"
-            >
-            <span class="mso">settings</span>
-            settings
-          </button>
           <button
             onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('open-settings'))"
             class="p2 br1 bd1 b3 hover fr g3 ac f3 hideable"
@@ -335,6 +320,21 @@ class extends HTMLElement {
             <span class="mso">notifications</span>
             notifications
           </button>
+          <div class="fr g2">
+            <button
+              onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('open-settings'))"
+              class="p2 br1 bd1 b3 hover fr g3 ac f3 hideable grow"
+              >
+              <span class="mso">settings</span>
+              settings
+            </button>
+            <button
+              onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('open-settings'))"
+              class="p2 br1 bd1 b3 hover fr g3 ac f3 hideable"
+              >
+              <span class="mso">question_mark</span>
+            </button>
+          </div>
         </footer>
       </nav>
       <main>
@@ -346,8 +346,8 @@ class extends HTMLElement {
       <slot id="default" style="display: none;"></slot>
     `
   }
-  get hawks() {
-    return parseInt(this.getAttribute("hawks") || "0");
+  get windowsOpen() {
+    return parseInt(this.getAttribute("windows-open") || "0");
   }
   get our() {
     return this.getAttribute('our');
@@ -373,6 +373,7 @@ class extends HTMLElement {
     $(this).off();
     $(this).on("sky-open", (e) => {
       this.toggleAttribute("closed");
+      $(this).poke('save-layout');
     })
     $(this).on('fix-slots', () => {
       this.fixSlots();
@@ -452,13 +453,18 @@ class extends HTMLElement {
       let wind = $(`[wid='${wid}']`);
       wind.poke('minimize');
     });
+    //
+    $(this).on("save-layout", () => {
+      this.saveLayout();
+    });
+    this.restoreLayout();
   }
   attributeChangedCallback(name, oldValue, newValue) {
     //
     if (name === "closed") {
       this.classList.toggle("closed");
-    } else if (name === "hawks") {
-      this.qs("main").className = `open-${this.hawks}`;
+    } else if (name === "windows-open") {
+      this.qs("main").className = `open-${this.windowsOpen}`;
     }
   }
   renderIcon(name) {
@@ -470,13 +476,13 @@ class extends HTMLElement {
   renderTabs() {
     let tabs = $(this.gid('tabs'));
     tabs.children().remove();
-    let hawks = this.hawks;
+    let windowsOpen = this.windowsOpen;
     let that = this;
     $(this.windows).each(function(i) {
       let wind = this;
       let tab = document.createElement('div');
       $(tab).addClass('b2 br1 fr af js bd1');
-      if (i < hawks) {
+      if (i < windowsOpen) {
         $(tab).addClass('toggled');
       }
 
@@ -494,7 +500,7 @@ class extends HTMLElement {
       $(min).on('click', () => {
         $(wind).emit('minimize-window');
       });
-      if (i >= hawks) {
+      if (i >= windowsOpen) {
         $(min).hide();
       }
 
@@ -510,6 +516,7 @@ class extends HTMLElement {
       $(tab).append(close);
       tabs.append(tab);
     })
+    $(this).poke('save-layout');
   }
   fixSlots() {
     let slotted = $(this.windows).filter('[slot]').get().slice(0, 3);
@@ -519,9 +526,51 @@ class extends HTMLElement {
     })
   }
   growFlock() {
-    $(this).attr('hawks', Math.min(3, this.hawks + 1));
+    $(this).attr('windows-open', Math.min(3, this.windowsOpen + 1));
   }
   shrinkFlock() {
-    $(this).attr('hawks', Math.max(0, this.hawks - 1));
+    $(this).attr('windows-open', Math.max(0, this.windowsOpen - 1));
+  }
+  saveLayout() {
+    let layout = {
+      closed: this.hasAttribute('closed'),
+      windowsOpen: parseInt(this.getAttribute('windows-open')),
+      windows: $(this).children('wi-nd').get().map(w => {
+        return {
+          here: w.getAttribute('here'),
+          slot: w.getAttribute('slot'),
+        }
+      })
+    }
+    localStorage.setItem('sky-layout', JSON.stringify(layout))
+  }
+  restoreLayout() {
+    let layoutString = localStorage.getItem('sky-layout');
+    if (!!layoutString) {
+      let layout = JSON.parse(layoutString);
+      $(this).attr('closed', layout.closed ? '' : null);
+      $(this).attr('windows-open', `${layout.windowsOpen}`);
+      $(this).children('wi-nd').remove();
+      layout.windows.forEach(w => {
+        let wind = document.createElement('wi-nd');
+        $(wind).attr('here', w.here);
+        $(wind).attr('slot', !!w.slot ? w.slot : null);
+        $(this).append(wind);
+      })
+    } else {
+      // create initial layout
+      let layout = {
+        closed: false,
+        windowsOpen: 1,
+        windows: [
+          {
+            here: `/${this.our}/home`,
+            slot: 's0'
+          }
+        ]
+      }
+      localStorage.setItem('sky-layout', JSON.stringify(layout))
+      this.restoreLayout();
+    }
   }
 });
