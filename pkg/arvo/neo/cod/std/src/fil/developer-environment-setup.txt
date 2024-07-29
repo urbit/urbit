@@ -16,3 +16,4 @@ If you want to work from the GitHub repo…
 This will start the %neo agent which runs the Shrubbery prototype. Once that's finished booting, which will take a few minutes, go to `<localhost:port>/neo/sky` to access Sky.
 
 When you want to move changes from your local repo to the fakeship, repeat the `rsync -avL` command above. The %neo agent can do incremental builds and will make changes to your `/con` and `/imp` files as you'd expect, but if you make a change to a `/pro` file you'll have to `|nuke %neo` and `|revive %neo`.
+

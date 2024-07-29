@@ -14,7 +14,7 @@ class extends HTMLElement {
          box-sizing: border-box;
        }
        ::slotted(*) {
-         overflow: auto;
+         /* overflow: auto; */
        }
        :host {
          display: grid;

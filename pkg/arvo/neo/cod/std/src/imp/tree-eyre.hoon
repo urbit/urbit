@@ -31,7 +31,7 @@
           `lash:neo`[any/~ ~]
       ==
   ==
-++  form 
+++  form
   |_  [=bowl:neo =aeon:neo =pail:neo]
   ++  init
     |=  pal=(unit pail:neo)
