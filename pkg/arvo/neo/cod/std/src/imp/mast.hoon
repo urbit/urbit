@@ -113,7 +113,6 @@
           =/  aft=^sail
             =/  sal=(unit ^sail)  (~(get by aft.rig) [rope boat])
             ?^  sal  u.sal
-            ~&  >>>  missing-aft-sail/[rope boat]
             (hoist [[%html ~] [[%head ~] ~] [[%body ~] ~] ~])
           =/  sub=path  (sub-path (~(got by subs.rig) [rope boat]))
           %=  $

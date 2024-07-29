@@ -22,7 +22,11 @@ function setEventListeners(el) {
     const returnTags = el.getAttribute('return');
     eventTags.split(/\s+/).forEach(eventStr => {
         const eventType = eventStr.split('/', 2)[1];
-        el[`on${eventType}`] = (e) => pokeShip(e, eventStr, returnTags);
+        if (eventType === 'submit') {
+            el['onsubmit'] = (e) => handleForm(e, eventStr);
+        } else {
+            el[`on${eventType}`] = (e) => pokeShip(e, eventStr, returnTags);
+        };
     });
 };
 async function connectToShip() {
@@ -88,6 +92,24 @@ function pokeShip(event, tagString, dataString) {
                 };
             });
         };
+        fetch(channelPath, {
+            method: 'PUT',
+            body: JSON.stringify(makePokeBody({
+                rope,
+                path: tagString,
+                data
+            }))
+        });
+    } catch (error) {
+        console.error(error);
+    };
+};
+function handleForm(event, tagString) {
+    try {
+        event.preventDefault();
+        let data = {};
+        const formData = new FormData(event.target);
+        formData.forEach((v, k) => { data[k] = v });
         fetch(channelPath, {
             method: 'PUT',
             body: JSON.stringify(makePokeBody({

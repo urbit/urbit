@@ -29,10 +29,9 @@
   ++  init
     |=  pal=(unit pail:neo)
     ^-  (quip card:neo pail:neo)
-    =/  diary-entries
-      (get-diary-entries deps.bowl)
+    =/  diary-entries  (get-diary-entries deps.bowl)
     :-  ~
-    manx/!>((render [diary-entries ~]))
+    manx/!>((render (get-render-data bowl)))
   ::
   ++  poke
     |=  [sud=stud:neo vaz=vase]
@@ -43,26 +42,18 @@
       =/  eve  !<(ui-event vaz)
       ?+  path.eve  ~|(missing-event-handler-for/path.eve !!)
         ::
-          [%click %submit ~]
-        =/  dat=(unit @t)
-          (~(get by data.eve) '/diary-input/value')
-        ?~  dat
-          ~|(%diary-input-fail !!)
-        =/  dif=diary-diff
-          [%put-entry now.bowl u.dat]
-        =/  dst=pith:neo
-          p:(~(got by deps.bowl) %src)
+          [%submit %diary-form ~]
+        =/  dat=@t          (~(got by data.eve) 'diary-input')
+        =/  dif=diary-diff  [%put-entry now.bowl dat]
+        =/  dst=pith:neo    p:(~(got by deps.bowl) %src)
         :_  pail
         :~  [dst %poke diary-diff/!>(dif)]
         ==
         ::
           [%click %delete @ta ~]
-        =/  key=@da
-          (slav %da i.t.t.path.eve)
-        =/  dif=diary-diff
-          [%del-entry key]
-        =/  dst=pith:neo
-          p:(~(got by deps.bowl) %src)
+        =/  key=@da         (slav %da i.t.t.path.eve)
+        =/  dif=diary-diff  [%del-entry key]
+        =/  dst=pith:neo    p:(~(got by deps.bowl) %src)
         :_  pail
         :~  [dst %poke diary-diff/!>(dif)]
         ==
@@ -70,9 +61,7 @@
       ==
       ::
         %rely
-      =/  diary-entries
-        (get-diary-entries deps.bowl)
-      `manx/!>((render [diary-entries ~]))
+      `manx/!>((render (get-render-data bowl)))
       ::
     ==
   ::
@@ -81,10 +70,14 @@
 ::
 |%
 ::
++$  render-data
+  $:  diary-entries=(list [date=@da =txt])
+      selection=(unit @da)
+  ==
+::
 ++  render
-  |_  $:  diary-entries=(list [date=@da =txt])
-          selection=(unit @da)
-      ==
+  |_  render-data
+  ::
   ++  $
     ^-  manx
     ;html
@@ -103,13 +96,10 @@
   ::
   ++  diary-form
     ^-  manx
-    ;div
-      ;textarea(id "diary-input", style "height: 10rem; width: 25rem; margin-block: 1rem;");
-      ;button
-        =event  "/click/submit"
-        =return  "/diary-input/value"
-        ;+  ;/  "Enter"
-      ==
+    ;form
+      =event  "/submit/diary-form"
+      ;textarea(name "diary-input", style "height: 10rem; width: 25rem; margin-block: 1rem;");
+      ;button: Enter
     ==
   ::
   ++  diary-items
@@ -131,31 +121,36 @@
   ::
   --
 ::  ::  ::  ::  ::  ::  ::  ::  ::  ::
+++  get-render-data
+  |=  =bowl:neo
+  ^-  render-data
+  :*  (get-diary-entries deps.bowl)
+      (get-selection kids.bowl)
+  ==
+::
 ++  get-diary-entries
-  |=  sam=(map term (pair pith:neo lore:neo))
+  |=  deps=(map term (pair pith:neo lore:neo))
   ^-  (list [date=@da =txt])
-  =/  dat=(unit (pair pith:neo lore:neo))
-    (~(get by sam) %src)
-  ?~  dat
-    ~|(%no-diary !!)
-  =/  pod=(list [date=@da =txt])
-    %+  turn  ~(tap by kid.q.u.dat)
+  =/  data=(unit (pair pith:neo lore:neo))
+    (~(get by deps) %src)
+  ?~  data  ~|(%no-diary !!)
+  =/  entries=(list [date=@da =txt])
+    %+  turn  ~(tap by kid.q.u.data)
     |=  (pair iota:neo (axal:neo idea:neo))
-    ?>  &(?=(^ p) ?=(%da -.p))
-    ?>  ?=(^ fil.q)
+    ?>  &(?=(^ p) ?=(%da -.p) ?=(^ fil.q))
     [+.p !<(txt q.pail.u.fil.q)]
-  %+  sort  pod
+  %+  sort  entries
   |=  (pair [date=@da =txt] [date=@da =txt])
   (gth date.p date.q)
 ::
 ++  get-selection
-  |=  sam=(axal:neo idea:neo)
+  |=  kids=(axal:neo idea:neo)
   ^-  (unit @da)
-  =/  dat=(unit (axal:neo idea:neo))
-    (~(get by kid.sam) %selection)
-  ?~  dat  ~
-  ?~  fil.u.dat  ~
-  [~ !<(@da q.pail.u.fil.u.dat)]
+  =/  data=(unit (axal:neo idea:neo))
+    (~(get by kid.kids) %selection)
+  ?~  data  ~
+  ?~  fil.u.data  ~
+  [~ !<(@da q.pail.u.fil.u.data)]
 ::
 ++  pretty-date  :: from diary-htmx
   |=  date=@da
