@@ -77,7 +77,13 @@ class extends HTMLElement {
         <button class="p2 s-1 b2 br1 hover" id="tree-toggle"><span class="mso">sort</span></button>
         <div id="breadcrumbs" class="grow fr g1 af js"></div>
         <form id="searchbar" class="grow fr hidden">
-          <input id="input-here" class="f2 grow b2 br1 p-1 s-1" style="outline: none;" />
+          <input
+            id="input-here"
+            class="f0 grow b2 br1 p-1 s-1"
+            style="outline: none;"
+            autocomplete="off"
+            spellcheck="false"
+          />
         </form>
         <div id="axns" class="fr">
           <button

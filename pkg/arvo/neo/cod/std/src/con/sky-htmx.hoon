@@ -14,10 +14,8 @@
     ?:  menu.sky  m
     m(a.g [[%closed ""] a.g.m])
   ^-  manx
-  ;s-k-y.wf.hf.relative
+  ;s-k-y
     =our  (scow %p our.bowl)
-    =style  "opacity: var(--sky-opacity); padding: var(--sky-outer-gap);"
-    =id  "air"
     =windows-open  "{<open.sky>}"
     ;
   ==
@@ -90,6 +88,7 @@
     ['start_url' s+'http://localhost/neo/sky']  ::  XX
     ['display' s+'standalone']
     ['background_color' s+'black']
+    ['theme_color' s+'black']
     :+  'icons'  %a
     :~
       %-  pairs:enjs:format
