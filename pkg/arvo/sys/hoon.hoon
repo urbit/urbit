@@ -9594,13 +9594,16 @@
     ~/  %fuse
     |=  ref=type
     =+  bix=*(set [type type])
+    =+  rev=|
     |-  ^-  type
     ?:  ?|(=(sut ref) =(%noun ref))
       sut
     ?-    sut
         [%atom *]
       ?-    ref
-          [%atom *]   =+  foc=?:((fitz p.ref p.sut) p.sut p.ref)
+          [%atom *]   =/  foc
+                        =+  fit=(fitz ?:(rev [p.sut p.ref] [p.ref p.sut]))
+                        ?:(fit p.sut p.ref)
                       ?^  q.sut
                         ?^  q.ref
                           ?:  =(q.sut q.ref)
@@ -9609,14 +9612,14 @@
                         [%atom foc q.sut]
                       [%atom foc q.ref]
           [%cell *]   %void
-          *           $(sut ref, ref sut)
+          *           $(sut ref, ref sut, rev !rev)
       ==
         [%cell *]
       ?-  ref
         [%cell *]   =+  hed=$(sut p.sut, ref p.ref)
                     ?:  ?=(%void hed)  %void
                     (cell hed $(sut q.sut, ref q.ref))
-        *           $(sut ref, ref sut)
+        *           $(sut ref, ref sut, rev !rev)
       ==
     ::
         [%core *]  $(sut repo)
