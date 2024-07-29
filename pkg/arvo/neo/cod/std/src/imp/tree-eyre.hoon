@@ -450,7 +450,7 @@
 ++  buttons
   ^-  manx
   ;div.buttons.fr.g2
-    ;button.make.p2.bd.bd2.br2.hover-grey.b-3.bg-white
+    ;button.make.p2.bd.bd2.br2.hover-grey.bg-white
     =onclick  
       """
       $(this).toggleClass('toggled');
@@ -506,7 +506,7 @@
 ++  make-form
   |=  here=pith:neo
   ^-  manx
-  ;form.make-form.hidden.bd.bd2.br2.fc.g2.p2.wf.hfc  ::  .bg-white
+  ;form.make-form.hidden.bd.bd2.br2.fc.g2.p2.wf.hfc
   =hx-post    "/neo/tree{(en-tape:pith:neo here)}?stud=tree-diff&head=send-make"
   =hx-swap    "innerHTML"
   =hx-target  ".error-box"
@@ -559,7 +559,7 @@
       =required      ""
       ;
       ==
-      ;button.loader.bd.bd2.br2
+      ;button.loader.bd.bd2.br2.hover-grey
         ;span.loaded.p2:  make
         ;span.loading.p2:  loading
       ==
@@ -597,7 +597,7 @@
     =required      ""
     ;
     ==
-    ;button.loader.bd.bd2.br2
+    ;button.loader.bd.bd2.br2.hover-grey
       ;span.loaded.p2:  poke
       ;span.loading.p2:  loading
     ==
