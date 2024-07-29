@@ -1,3 +1,4 @@
+let rope;
 let pith;
 let path;
 let ship;
@@ -7,6 +8,7 @@ let eventSource;
 const channelId = `${Date.now()}${Math.floor(Math.random() * 100)}`;
 const channelPath = `${window.location.origin}/~/channel/${channelId}`;
 addEventListener('DOMContentLoaded', async () => {
+    rope = Number(document.documentElement.getAttribute('rope'));
     pith = document.documentElement.getAttribute('pith');
     path = document.documentElement.getAttribute('path');
     ship = document.documentElement.getAttribute('ship');
@@ -89,6 +91,7 @@ function pokeShip(event, tagString, dataString) {
         fetch(channelPath, {
             method: 'PUT',
             body: JSON.stringify(makePokeBody({
+                rope,
                 path: tagString,
                 data
             }))
@@ -106,6 +109,7 @@ function handleChannelStream(event) {
             body: JSON.stringify(makeAck(streamResponse.id))
         });
         const htmlData = streamResponse.json;
+        // console.log(htmlData);
         if (!htmlData) return;
         let container = document.createElement('template');
         container.innerHTML = htmlData;

@@ -16,7 +16,7 @@
 ++  deps
   ^-  deps:neo
   %-  my
-  :~  :^  %diary  &  [pro/%diary (sy %diary-diff ~)]
+  :~  :^  %src  &  [pro/%diary (sy %diary-diff ~)]
       :+  ~  %y
       %-  my
       :~  [[|/%da |] only/%txt ~]
@@ -51,7 +51,7 @@
         =/  dif=diary-diff
           [%put-entry now.bowl u.dat]
         =/  dst=pith:neo
-          p:(~(got by deps.bowl) %diary)
+          p:(~(got by deps.bowl) %src)
         :_  pail
         :~  [dst %poke diary-diff/!>(dif)]
         ==
@@ -62,7 +62,7 @@
         =/  dif=diary-diff
           [%del-entry key]
         =/  dst=pith:neo
-          p:(~(got by deps.bowl) %diary)
+          p:(~(got by deps.bowl) %src)
         :_  pail
         :~  [dst %poke diary-diff/!>(dif)]
         ==
@@ -135,7 +135,7 @@
   |=  sam=(map term (pair pith:neo lore:neo))
   ^-  (list [date=@da =txt])
   =/  dat=(unit (pair pith:neo lore:neo))
-    (~(get by sam) %diary)
+    (~(get by sam) %src)
   ?~  dat
     ~|(%no-diary !!)
   =/  pod=(list [date=@da =txt])
