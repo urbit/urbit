@@ -7752,13 +7752,19 @@
                         !=(0 fag)
                     ==
                   ~  :: non-standard proofs for later
-                =;  [nam=name:pact dat=data:pact]
+                =;  [nam=name:pact dat=data:pact pairs=(list (unit [l=@ux r=@ux]))]
                   =/  pac=pact:pact  [hop=0 %page nam dat ~]
                   ?:  (gth fag tot.dat)
                     [~ ~]
                   ?.  ser.pac.nex
-                    ``[%packet !>(pac)]
-                  ``[%atom !>(p:(fax:plot (en:pact pac)))]
+                    ``[%packet !>([pac pairs])]
+                  =;  airs=@ux
+                    ``[%atom !>([p:(fax:plot (en:pact pac)) airs])]
+                  %+  rep  6
+                  %+  turn  pairs
+                  |=  p=(unit [l=@ux r=@ux])
+                  ?~  p  0
+                  (rep 5 ~[l.u.p r.u.p])
                 ::
                 ?-    typ.wan.pac.nex
                     %auth
@@ -7771,7 +7777,7 @@
                     ~>  %memo./ames/lss-auth
                     (build:lss (met 3 ser)^ser)
                   =/  dat  [wid aut (rep 8 proof.lss-proof)]  :: XX types
-                  [nam dat]
+                  [nam dat ~]
                 ::
                     %data
                   =/  lss-proof
@@ -7802,7 +7808,10 @@
                     [%1 u.p]
                   ::
                   =/  dat  [wid aut (cut boq [fag 1] ser)]
-                  [nam dat]
+                  =/  pairs
+                    =/  per  (bex (sub boq 13))
+                    (swag [+((mul per fag)) (dec per)] pairs.lss-proof)
+                  [nam dat pairs]
                 ==
               ::
               ::  XX need a single namespace entrypoint to validate
