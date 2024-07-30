@@ -7509,15 +7509,15 @@
             =/  view  ?@(vew.u.inn vew.u.inn (cat 3 [way car]:vew.u.inn))
             ?~  res=(rof ~ /ames/publ view bem.u.inn)
               ~
-            =*  priv  priv.ames-state
+            =/  priv=@uxI  (end 8 (rsh 3 priv.ames-state))  :: extract ed25519 key
             ::  XX  rift.ames-state
-            =>  [bem=bem res=res priv=priv.ames-state ..crypt]
+            =>  [bem=bem res=res priv=priv ..crypt]
             ~>  %memo./ames/publ
             =/  gag  ?~(u.res ~ [p q.q]:u.u.res)  :: XX how does receiver distinguish these?
             =/  ful  (en-beam bem)
             =/  ser  (jam gag)  :: unencrypted
             :^  ~  ~  %message
-            !>([%sign (sign:crypt `@`priv ful (root:lss (met 3 ser)^ser)) ser])
+            !>([%sign (sign:crypt priv ful (root:lss (met 3 ser)^ser)) ser])
           ::
           ++  ev-peek-chum
             |=  [bem=beam her=@p lyf=@ud hyf=@ud cyf=@uv]
@@ -7554,11 +7554,13 @@
             ::  XX  rift.ames-state
             =>  [key=key cyf=cyf bem=bem res=res ..crypt]
             ~>  %memo./ames/shut
+            =/  cry=@uxI  (rsh 8 (rsh 3 -.u.key))
+            =/  sgn=@uxI  (end 8 (rsh 3 -.u.key))
             =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
             =/  ful  (en-beam bem)
             =/  ser  (jam gag)
-            =/  cyr  (encrypt:crypt -.u.key iv=cyf ser)
-            =/  sig  (sign:crypt -.u.key ful (root:lss (met 3 cyr)^cyr))
+            =/  cyr  (encrypt:crypt cry iv=cyf ser)
+            =/  sig  (sign:crypt sgn ful (root:lss (met 3 cyr)^cyr))
             ``[%message !>([%sign sig cyr])]
           ::
           ++  ev-peek-flow
