@@ -43,12 +43,12 @@
     ==
   ::
   ++  poke
-    |=  [=stud:neo =vase]
+    |=  [=stud:neo vax=vase]
     ^-  (quip card:neo pail:neo)
     ?+  stud  ~|(bad-stud/stud !!)
         %tree-diff  
       :_  eyre-id/q.pail
-      =/  diff  !<(tree-diff vase)
+      =/  diff  !<(tree-diff vax)
       ~&  >>>  diff-tree-imp/diff
       =,  diff
       ?-  -.diff  
@@ -59,9 +59,8 @@
         ==
         ::
           %send-poke
-        =/  vax  vase.diff
         :~  
-            [pith %poke [stud.diff vax]]
+            [pith %poke [stud.diff vase.diff]]
         ==
         ::
           %send-cull
@@ -70,7 +69,16 @@
             [pith %cull ~]
         ==
         ::  
-          %req-parsing-err  ~
+          %req-parsing-err
+        ~&  >  tang
+        ~&  !<(@ta q.pail)
+        %:  eyre-cards
+        !<(@ta q.pail)
+        bowl 
+        200 
+        ['content-type'^'text/html']~ 
+        (err-trace-manx tang)
+        ==
       ==
       ::
         %ack  
@@ -84,13 +92,13 @@
             headers=`header-list:http`['content-type'^'text/html']~ 
             manx=*manx
           ==
-      ?~  !<((unit quit:neo) vase)
+      ?~  !<((unit quit:neo) vax)
         =.  headers.resp  
           %+  snoc  headers.resp  
           'HX-Refresh'^'true'
         (eyre-cards resp)
       ?:  =(*pail:neo pail)  ~
-      =/  =quit:neo  (need !<((unit quit:neo) vase))
+      =/  =quit:neo  (need !<((unit quit:neo) vax))
       ?+  -.quit  ~
           %goof
         =.  manx.resp  (err-trace-manx +.quit)
@@ -98,14 +106,15 @@
       ==
       ::
         %eyre-task
-      =+  !<(=task:eyre:neo vase)
+      =+  !<(=task:eyre:neo vax)
       =/  [eyre-id=@ta req=inbound-request:eyre]  task
+      =/  request=request:http  request.req
       ?.  authenticated.req
         :_  eyre-id/q.pail
         =/  eyre=pith:neo  #/[p/our.bowl]/$/eyre
         %+  ~(respond neo:srv eyre)   eyre-id
-        (login-redirect:gen:srv request.req)
-      =/  purl  (parse-url:serv request.req)
+        (login-redirect:gen:srv request)
+      =/  purl  (parse-url:serv request)
       =/  inner=pith:neo  (pave:neo pax.purl)
       =/  src  (~(got by deps.bowl) %src)
       =/  here  (tail inner)
@@ -117,13 +126,13 @@
             headers=`header-list:http`['content-type'^'text/html']~ 
             manx=*manx
           ==
-      ?+    method.request.req  ~|(%unsupported-http-method !!)
+      ?+    method.request  ~|(%unsupported-http-method !!)
         ::
           %'GET'
+        :_  eyre-id/q.pail
         ?.  =((head inner) p/our.bowl)
           =.  status.resp  404
           =.  manx.resp  ;div:  not on your ship
-          :_  eyre-id/q.pail
           %-  eyre-cards  resp
         =/  kids=(list pith:neo)  
           %+  turn  (get-kids here q.src)
@@ -135,7 +144,6 @@
             (view inner [%$ !>(~)] kids bowl)
           =/  local=pail:neo  q.saga:(need idea)
           (view inner local kids bowl)
-        :_  eyre-id/q.pail
         %-  eyre-cards  resp
         ::
           %'POST'
@@ -143,45 +151,73 @@
           ^-  stud:neo
           ~|  %no-stud-specified
           (~(got by pam.purl) 'stud')
-        =/  diff-vase  (http-request [poke-stud `request:http`request.req])
+        =/  diff-vase  (http-request [poke-stud `request:http`request])
         =/  tree-diff  !<(tree-diff diff-vase)
         ?-  -.tree-diff
         ::
-          %send-make
-        ::  %make cards don't have error(%goof) %acks yet 
-        ::  sending eyre response here for now
-        =+  diff=tree-diff
-        =.  pith.diff  (get-pith request.req bowl)
-        =.  headers.resp  
-          %+  snoc  headers.resp  'HX-Refresh'^'true'
-        :_  eyre-id/q.pail
-        %+  welp 
-          :~  (poke-tree-card here.bowl !>(diff))
+            %send-make
+          ::  %make cards don't have error(%goof) %acks yet 
+          ::  sending eyre response here for now
+          :_  eyre-id/!>(eyre-id)
+          =/  mule-vax=(each vase tang)
+            %-  mule  |.
+            %+  to-hoon  bowl
+            (get-by-name request 'vase') 
+          =/  mule-conf=(each conf:neo tang)
+            %-  mule  |.  
+            !<  conf:neo  
+            %+  to-hoon  bowl
+            (get-by-name request 'conf') 
+          ?:  ?=(%| -.mule-vax)
+            (poke-tree-card here.bowl !>([%req-parsing-err p.mule-vax]))
+          =/  vax=vase  p.mule-vax
+          ?:  ?=(%| -.mule-conf)
+            (poke-tree-card here.bowl !>([%req-parsing-err p.mule-conf]))
+          =/  =conf:neo  p.mule-conf
+          =+  diff=tree-diff
+          =.  init.diff
+            %-  some  
+            :-  p:(need init.diff)
+                vax
+          =.  conf.diff  conf
+          =.  pith.diff  (get-pith bowl request) 
+          =.  headers.resp  
+            %+  snoc  headers.resp  
+            'HX-Refresh'^'true'
+          %+  welp 
+            (poke-tree-card here.bowl !>(diff))
+            %-  eyre-cards  resp
+          ::
+            %send-poke
+          :_  eyre-id/!>(eyre-id)  
+          =/  mule-vax
+            %-  mule  |.
+            %+  to-hoon  bowl
+            (get-by-name request 'vase')
+          ?-  -.mule-vax
+              %|  
+            (poke-tree-card here.bowl !>([%req-parsing-err p.mule-vax]))
+            ::
+              %&
+            =+  diff=tree-diff 
+            =.  vase.diff  p.mule-vax
+            (poke-tree-card here.bowl !>(diff))
           ==
-        %-  eyre-cards  resp
-        ::
-          %send-poke
-        :_  eyre-id/!>(eyre-id)
-        :~  (poke-tree-card here.bowl diff-vase)
-        ==
-        ::
-          %send-cull
-        :_  eyre-id/q.pail
-        =/  poke-card=(list card:neo)  ~[(poke-tree-card here.bowl diff-vase)]
-        =/  location  
-          %-  crip 
-            %+  weld  "/neo/tree" 
-              (en-tape:pith:neo (snip inner))
-        =.  headers.resp  
-          %+  snoc  headers.resp  'HX-Redirect'^location
-        %+  welp
-          poke-card
-        %-  eyre-cards  resp
-        ::
-          %req-parsing-err
-        :_  eyre-id/q.pail
-        =.  manx.resp  (err-trace-manx tang.tree-diff)
-        %-  eyre-cards  resp
+          ::
+            %send-cull
+          :_  eyre-id/q.pail
+          =/  poke-card=(list card:neo)  (poke-tree-card here.bowl diff-vase)
+          =/  location  
+            %-  crip 
+              %+  weld  "/neo/tree" 
+                (en-tape:pith:neo (snip inner))
+          =.  headers.resp  
+            %+  snoc  headers.resp  'HX-Redirect'^location
+          %+  welp
+            poke-card
+          %-  eyre-cards  resp
+          ::
+            %req-parsing-err  [~ eyre-id/q.pail]
         ==
       ==
     ==
@@ -208,8 +244,9 @@
 ::
 ++  poke-tree-card
   |=  [here=pith:neo vax=vase]
-  ^-  card:neo
-  [here %poke %tree-diff vax]
+  ^-  (list card:neo)
+  :~  [here %poke %tree-diff vax]
+  ==
 ::
 ++  get-kids
   |=  [=pith:neo =lore:neo]
@@ -233,18 +270,29 @@
     %+  welp  parent  p
 ::
 ++  get-pith
-  |=  [req=request:http =bowl:neo]
+  |=  [=bowl:neo req=request:http]
   ^-  pith:neo
+  =/  parent=pith:neo  
+    %-  pave:neo 
+    %-  stab  (get-by-name req 'here')
+  =/  kid  (get-by-name req 'pith')
+  ?~  kid  parent
+  =/  kid-pith  !<  pith:neo  (to-hoon bowl kid)
+  (welp parent kid-pith)
+::
+++  get-by-name
+  |=  [req=request:http hoon=cord]
+  ^-  cord
   =/  pam  (~(uni by pam:(parse-url:serv req)) (parse-form-body:serv req))
   =/  bod  ~(. by pam)
-  =/  parent=pith:neo  (pave:neo (stab (got:bod 'here')))
-  =/  child  (got:bod 'pith')
-  ?~  child  parent
-  =/  child-pith  
-    !<  pith:neo
-    %+  slap  (slop !>(..zuse) !>(bowl))
-    %-  ream  child
-  (welp parent child-pith)
+  ?~  value=(get:bod hoon)  ''
+  u:value
+::
+++  to-hoon
+  |=  [=bowl:neo =cord]
+  ^-  vase
+  %+  slap  :(slop !>(..zuse) !>(bowl) !>(neo))
+  %-  ream  cord
 ::
 ++  err-trace-manx
 |=  =tang
@@ -530,7 +578,7 @@
   ^-  manx
   ;form.make-form.hidden.bd.bd2.br2.fc.g2.p2.wf.hfc
   =hx-post    "/neo/tree{(en-tape:pith:neo here)}?stud=tree-diff&head=send-make"
-  =hx-swap    "innerHTML"
+  =hx-swap    "outterHTML"
   =hx-target  ".error-box"
     ;div.fr.g2
       ;input.hidden
