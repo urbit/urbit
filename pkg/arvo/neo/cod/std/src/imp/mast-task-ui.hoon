@@ -44,19 +44,13 @@
           (~(got by data.event) 'task-input')
         :_  pail
         :~  :-  p:(~(got by deps.bowl) %src)
-            :+  %poke 
+            :+  %poke
               %task-diff
             !>([%new [text %.y %.y ~] %.y])
         ==
       :: 
-          [%checkbox * ~]
-        ~&  >  path.event
-        =/  inner  (oust [0 1] (pave:neo path.event))
-        ~&  >>  inner
-        ::=/  sub=pith
-        ::  :~  :-  %ud
-        ::      (slav %ud i.t.t.path.event)
-        ::  ==
+          [%click %checkbox * ~]
+        =/  inner  (oust [0 2] (pave:neo path.event))
         =/  =lore:neo  q:(~(got by deps.bowl) %src)
         =/  =idea:neo  (~(got of:neo lore) inner)
         =/  t  !<(task q.pail.idea)
@@ -113,16 +107,22 @@
             (~(del by tasks) /)
           |=  [=pith =task]
           =/  key  (en-tape:pith:neo pith)
-          ~&  >>  (welp "/checkbox" key)
           ;div
             ;p: {(trip text.task)}
-            ;input
-              =id     "task-checkbox"
-              =type   "checkbox"
-              =name   "done"
-              =event  (welp "/checkbox" key)
-              ;
-            ==
+          ::
+            ;+
+              =;  m
+                ?:  done.task
+                  m(a.g [[%checked ""] a.g.m])
+                m
+              ^-  manx
+              ;input
+                =id     "task-checkbox"
+                =type   "checkbox"
+                =name   "done"
+                =event  (welp "/click/checkbox" key)
+                ;
+              ==
           ==
     ==
   --
