@@ -39,24 +39,29 @@
       ?+    path.event
         ~|(missing-event-handler-for/path.event !!)
       ::
-          [%click %new ~]
+          [%submit %new-task ~]
         =/  text=@t
-          (~(got by data.event) '/task-input/value')
+          (~(got by data.event) 'task-input')
         :_  pail
         :~  :-  p:(~(got by deps.bowl) %src)
             :+  %poke 
               %task-diff
             !>([%new [text %.y %.y ~] %.y])
         ==
-      ::
-          [%click %checkbox ~]
-        =/  t=pith  #/placeholder
-          ::(~(got by data.event) '/task-input/value') :: XX encode this
+      :: 
+          [%click %checkbox @ ~]
+        =/  sub=pith
+          :~  :-  %ud
+              (slav %ud i.t.t.path.event)
+          ==
+        =/  =lore:neo  q:(~(got by deps.bowl) %src)
+        =/  =idea:neo  (~(got of:neo lore) sub)
+        =/  t  !<(task q.pail.idea)
         :_  pail
-        :~  :-  t
+        :~  :-  (welp p:(~(got by deps.bowl) %src) sub)
             :+  %poke 
               %task-diff
-            !>([%edit 'placeholder' %.y])  :: XX get text from issue
+            !>([%edit text.t !done.t])
         ==
       ==
     ::
@@ -91,13 +96,10 @@
   ::
   ++  task-form
     ^-  manx
-    ;div
-      ;textarea(id "task-input", style "height: 10rem; width: 25rem; margin-block: 1rem;");
-      ;button
-        =event  "/click/new"
-        =return  "/task-input/value"
-        ;+  ;/  "Enter"
-      ==
+    ;form
+      =event  "/submit/new-task"
+      ;textarea(name "task-input", style "height: 10rem; width: 25rem; margin-block: 1rem;");
+      ;button: Enter
     ==
   ::
   ++  subtasks
@@ -107,15 +109,17 @@
             %~  tap  by
             (~(del by tasks) /)
           |=  [=pith =task]
+          =/  key  (en-tape:pith:neo pith)
+          ~&  >>  key
           ;div
             ;p: {(trip text.task)}
-            :: ;input
-            ::   =type   "checkbox"
-            ::   =name   "done"
-            ::   =event  "/click/checkbox"
-            ::   =return  :: XX what to return here?
-            ::   ;
-            :: ==
+            ;input
+              =id     "task-checkbox"
+              =type   "checkbox"
+              =name   "done"
+              =event  "/click/checkbox/{key}"
+              ;
+            ==
           ==
     ==
   --
