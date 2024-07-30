@@ -25,6 +25,6 @@
   |%
   ++  noun  (list ^tank)                                ::  clam from %noun
   ++  tank  |=(a=^tank [a]~)
-  ++  txt   |=(wain (turn tank))
+  ++  txt   |=(=wain (turn wain tank))
   --
 --
