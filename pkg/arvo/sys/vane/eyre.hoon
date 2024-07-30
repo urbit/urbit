@@ -4160,7 +4160,7 @@
     !>  ^-  (unit @t)
     =<  eauth-url:eauth:authentication
     (per-server-event [eny *duct now rof] server-state.ax)
- ::
+  ::
   ?:  ?=([%cache @ @ ~] tyl)
     ?.  &(?=(%x ren) ?=(%$ syd))  ~
     =,  server-state.ax
@@ -4172,24 +4172,61 @@
     ?:  &(auth.u.val !=([~ ~] lyc))    ~
     ``noun+!>(u.val)
   ::
-  ?:  &(?=(%x ren) ?=([%mime @ *] tyl))
-    =*  vew   i.t.tyl
-    =*  rest  t.t.tyl
-    =/  =beak  -.bem
-    =/  mym  (scry-mime now rof lyc ~ [%$ vew (en-beam beak rest)])
-    ?:  ?=(%| -.mym)  [~ ~]
+  ?:  &(?=(%x ren) ?=([%range @ @ @ *] tyl))
+    |^
+    =/  beg=(unit @ud)  (slaw %ud i.t.tyl)
+    =/  end=(unit @ud)  (slaw %ud i.t.t.tyl)
+    ?:  ?|  &(?=(~ beg) !=(%$ i.t.tyl))
+            &(?=(~ end) !=(%$ i.t.t.tyl))
+        ==
+      [~ ~]
+    =*  vew   i.t.t.t.tyl
+    =*  rest  t.t.t.t.tyl
+    =/  mym  (scry-mime now rof lyc ~ [%$ vew (en-beam -.bem rest)])
+    ?:  ?=(%| -.mym)  ~
     =*  mime  p.mym
+    ?~  range=(get-range [beg end] p.q.mime)
+      ~
+    =/  =octs
+      %-  as-octs:mimes:html
+      (cut 3 [p.u.range +((sub q.u.range p.u.range))] q.q.mime)
     :^  ~  ~  %noun
     !>  ^-  cache-entry
     :-  ?=(^ lyc)
     :+  %payload
-      :-  200
-      ^=  headers
+      :-  ?:(=(p.q.mime p.octs) 200 206)
       :~  ['accept-ranges' 'bytes']
           ['content-type' (rsh 3 (spat p.mime))]
+          ['content-length' (crip (a-co:co p.octs))]
+          :-  'content-range'
+          %+  rap  3
+          :~  'bytes '
+              (crip (a-co:co p.u.range))  '-'
+              (crip (a-co:co q.u.range))  '/'
+              (crip (a-co:co p.q.mime))
+          ==
       ==
-    data=[~ q.mime]
-  :: private endpoints
+    data=[~ octs]
+    ::
+    ++  get-range
+      |=  [req=(pair (unit @ud) (unit @ud)) len=@ud]
+      ^-  (unit (pair @ud @ud))
+      ?+    req  ~
+          [^ ~]
+        ?:  (gth u.p.req (dec len))  ~
+        `[u.p.req (dec len)]
+      ::
+          [~ ^]
+        ?.  (gth u.q.req 0)  ~
+        `[(sub len (min len u.q.req)) (dec len)]
+      ::
+          [^ ^]
+        ?:  |((gth u.p.req (dec len)) (gth u.p.req u.q.req))
+          ~
+        `[u.p.req (min (dec len) u.q.req)]
+      ==
+    --
+  ::  private endpoints
   ::
   ?.  ?=([~ ~] lyc)  ~
   ::
