@@ -9,9 +9,19 @@
 =/  m  (strand ,vase)
 ^-  form:m
 ;<  =bowl:spider  bind:m  get-bowl:strandio
-=/  desk  ;;(term +<.q.arg)
+=/  desk-branch-dir  +<.q.arg
 =/  repo  ;;(path +>.q.arg)
-=/  branch=cord  'master'
+=/  [desk=term branch=cord dir=cord]
+  ?+    desk-branch-dir  ~|(%weird-input !!)
+      term
+    [desk-branch-dir 'master' 'desk']
+  ::
+      [desk=term branch=cord]
+    [desk branch 'desk']:desk-branch-dir
+  ::
+      [desk=term branch=cord dir=cord]
+    [desk branch dir]:desk-branch-dir
+  ==
 ~&  >  "Building desk {<desk>} from https://github.com{<repo>}:{(trip branch)}."
 =/  tid  `cord`(cat 3 'strand_' (scot %uv (sham %retrieve-gh eny.bowl)))
 ;<  ~       bind:m  %-  watch-our:strandio
@@ -26,7 +36,7 @@
                                 `tid
                                 byk.bowl(r da+now.bowl)
                                 %retrieve-gh
-                                !>(`[repo branch])
+                                !>(`[repo branch dir])
                     ==      ==
 ;<  =cage   bind:m  (take-fact:strandio /awaiting/[tid])
 ;<  ~       bind:m  (take-kick:strandio /awaiting/[tid])
@@ -34,7 +44,7 @@
   (strand-fail:strandio !<([term tang] q.cage))
 ?>  ?=(%thread-done p.cage)
 ?~  q.q.cage
-  ~&  >>>  "No files found at /desk in repo."
+  ~&  >>>  "No files found at /{(trip dir)} in repo."
   (strand-fail:strand %no-desk-in-repo ~)
 ~&  >  "Successfully retrieved files."
 =/  fil  ;;((list (pair path (pair @ud @))) q.q.cage)
