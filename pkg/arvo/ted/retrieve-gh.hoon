@@ -48,6 +48,12 @@
 =/  repo=path    ;;(path +<.q.arg)
 =/  branch=cord  ;;(cord +>-.q.arg)
 =/  dir=cord     ;;(cord +>+.q.arg)
+?<  |(=(0 dir) =('/' dir))                               ::  sanitize dir
+=/  dir-len=@  (met 3 dir)
+=?  .  =('/' (cut 3 [0 1] dir))                          ::  /dir -> dir
+  .(dir (cut 3 [1 dir-len] dir), dir-len (dec dir-len))
+=?  dir  =('/' (cut 3 [(dec dir-len) 1] dir))            ::  dir/ -> dir
+  (cut 3 [0 (dec dir-len)] dir)
 ~&  >  "Retrieving latest commit from https://github.com{<repo>}."
 =/  tid  `cord`(cat 3 'strand_' (scot %uv (sham %retrieve-latest-commit eny.bowl)))
 ;<  ~       bind:m  %-  watch-our:strandio
@@ -93,6 +99,7 @@
 ::
 ~&  >  "Retrieving file URLs in /{(trip dir)}."
 =/  sob=(list (pair path (pair @ud @)))  ~
+=/  path-dir=path  (stab (add '/' (lsh [3 1] dir)))
 |-
 ?~  res  (pure:m !>(`(list (pair path (pair @ud @)))`sob))
 ~&  >>  path.i.res
@@ -104,6 +111,11 @@
   (strand-fail:strand %no-body ~)
 =/  t  (trip (cat 3 '/' path.i.res))
 =/  i  (need (find "." t))
-=/  p  (oust [0 1] (stab (crip (cass (snap t i '/')))))
+=/  p
+  =/  p-prefixed  (stab (crip (cass (snap t i '/'))))
+  |-  ^-  path
+  ?~  path-dir  p-prefixed
+  ?>  =(i.path-dir -.p-prefixed)
+  $(path-dir t.path-dir, p-prefixed +.p-prefixed)
 =/  s  [p data.u.full-file.client-response.q.new]
 $(sob [s sob], res t.res)
