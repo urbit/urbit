@@ -389,10 +389,10 @@
         :-  [shape.meta.ray bloq %i754 fxp.meta.ray]
         %+  turn  (ravel ray)
         ?+  bloq  !!
-          %7  sun:rq
-          %6  sun:rd
-          %5  sun:rs
-          %4  sun:rh
+          %7  ~(sun rq rnd)
+          %6  ~(sun rd rnd)
+          %5  ~(sun rs rnd)
+          %4  ~(sun rh rnd)
         ==
       ==
       ::
@@ -405,10 +405,10 @@
         :-  [shape.meta.ray bloq %uint fxp.meta.ray]
         %+  turn  (ravel ray)
         ?+  bloq.meta.ray  !!
-          %7  |=(a=@rq ^-(@u (^div (need (toi:rq a)) 2)))
-          %6  |=(a=@rd ^-(@u (^div (need (toi:rd a)) 2)))
-          %5  |=(a=@rs ^-(@u (^div (need (toi:rs a)) 2)))
-          %4  |=(a=@rh ^-(@u (^div (need (toi:rh a)) 2)))
+          %7  |=(a=@rq ^-(@u (^div (need (~(toi rq rnd) a)) 2)))
+          %6  |=(a=@rd ^-(@u (^div (need (~(toi rd rnd) a)) 2)))
+          %5  |=(a=@rs ^-(@u (^div (need (~(toi rs rnd) a)) 2)))
+          %4  |=(a=@rh ^-(@u (^div (need (~(toi rh rnd) a)) 2)))
         ==
           :: %i754 -> %i754
           %i754
@@ -512,40 +512,39 @@
     ::
     ?+    bloq.meta  !!
         %7
-      =/  ba  (sub:rq b a)
+      =/  ba  (~(sub rq rnd) b a)
       =/  bad  `(list @)`~[a]
       |-  ^-  baum
-      ?:  (?:((lth:rq ba .~~~0) lth:rq gth:rq) (add:rq (snag 0 bad) d) b)
+      ?:  (?:((~(lth rq rnd) ba .~~~0) ~(lth rq rnd) ~(gth rq rnd)) (~(add rq rnd) (snag 0 bad) d) b)
         =.  shape.meta  ~[(lent bad)]
         [meta (flop bad)]
-      $(bad [(add:rq (snag 0 bad) d) bad])
+      $(bad [(~(add rq rnd) (snag 0 bad) d) bad])
       ::
         %6
-      =/  ba  (sub:rd b a)
+      =/  ba  (~(sub rd rnd) b a)
       =/  bad  `(list @)`~[a]
       |-  ^-  baum
-      ?:  (?:((lth:rd ba .~0) lth:rd gth:rd) (add:rd (snag 0 bad) d) b)
+      ?:  (?:((~(lth rd rnd) ba .~0) ~(lth rd rnd) ~(gth rd rnd)) (~(add rd rnd) (snag 0 bad) d) b)
         =.  shape.meta  ~[(lent bad)]
         [meta (flop bad)]
-      $(bad [(add:rd (snag 0 bad) d) bad])
+      $(bad [(~(add rd rnd) (snag 0 bad) d) bad])
       ::
         %5
-      =/  ba  (sub:rs b a)
+      =/  ba  (~(sub rs rnd) b a)
       =/  bad  `(list @)`~[a]
       |-  ^-  baum
-      ?:  (?:((lth:rs ba .0) lth:rs gth:rs) (add:rs (snag 0 bad) d) b)
+      ?:  (?:((~(lth rs rnd) ba .0) ~(lth rs rnd) ~(gth rs rnd)) (~(add rs rnd) (snag 0 bad) d) b)
         =.  shape.meta  ~[(lent bad)]
         [meta (flop bad)]
-      $(bad [(add:rs (snag 0 bad) d) bad])
+      $(bad [(~(add rs rnd) (snag 0 bad) d) bad])
       ::
         %4
-      =/  ba  (sub:rh b a)
+      =/  ba  (~(sub rh rnd) b a)
       =/  bad  `(list @)`~[a]
       |-  ^-  baum
-      ?:  (?:((lth:rh ba .~~0) lth:rh gth:rh) (add:rh (snag 0 bad) d) b)
-        =.  shape.meta  ~[(lent bad)]
+      ?:  (?:((~(lth rh rnd) ba .~~0) ~(lth rh rnd) ~(gth rh rnd)) (~(add rh rnd) (snag 0 bad) d) b)
         [meta (flop bad)]
-      $(bad [(add:rh (snag 0 bad) d) bad])
+      $(bad [(~(add rh rnd) (snag 0 bad) d) bad])
     ==
   ::  Produce a 1-dimensional range along one dimension
   ::  as [a b] with number of steps n.
@@ -557,47 +556,47 @@
     ^-  ray
     =.  shape.meta  ~[n]
     =.  kind.meta  %i754
-    %-  spac
+    ?<  =(n 0)
+    ?:  =(n 1)  (en-ray meta ~[a])
     %-  en-ray
     :-  meta
     ::
     ?+    bloq.meta  !!
         %7
-      =/  ba  (sub:rq b a)
-      =/  d  (div:rq ba (sun:rq (dec n)))
-      =/  bad  `(list @)`~[a]
+      =/  ba  (~(sub rq rnd) b a)
+      =/  d  (~(div rq rnd) ba (~(sun rq rnd) (dec n)))
+      =|  bad=(list @)
       =|  i=@ud
       |-  ^-  ndray
-      ::  we compare to +(+(i)) b/c a is already in there and b is now added
-      ?:  =(n +(+(i)))  (flop [b bad])
-      $(i +(i), bad [(add:rq (snag 0 bad) d) bad])
+      ?:  (^lte n +(i))  (flop [b bad])
+      $(i +(i), bad [(~(add rq rnd) a (~(mul rq rnd) (~(sun rq rnd) i) d)) bad])
       ::
         %6
-      =/  ba  (sub:rd b a)
-      =/  d  (div:rd ba (sun:rd (dec n)))
-      =/  bad  `(list @)`~[a]
+      =/  ba  (~(sub rd rnd) b a)
+      =/  d  (~(div rd rnd) ba (~(sun rd rnd) (dec n)))
+      =|  bad=(list @)
       =|  i=@ud
       |-  ^-  ndray
-      ?:  =(n +(+(i)))  (flop [b bad])
-      $(i +(i), bad [(add:rd (snag 0 bad) d) bad])
+      ?:  (^lte n +(i))  (flop [b bad])
+      $(i +(i), bad [(~(add rd rnd) a (~(mul rd rnd) (~(sun rd rnd) i) d)) bad])
       ::
         %5
-      =/  ba  (sub:rs b a)
-      =/  d  (div:rs ba (sun:rs (dec n)))
-      =/  bad  `(list @)`~[a]
+      =/  ba  (~(sub rs rnd) b a)
+      =/  d  (~(div rs rnd) ba (~(sun rs rnd) (dec n)))
+      =|  bad=(list @)
       =|  i=@ud
       |-  ^-  ndray
-      ?:  =(n +(+(i)))  (flop [b bad])
-      $(i +(i), bad [(add:rs (snag 0 bad) d) bad])
+      ?:  (^lte n +(i))  (flop [b bad])
+      $(i +(i), bad [(~(add rs rnd) a (~(mul rs rnd) (~(sun rs rnd) i) d)) bad])
       ::
         %4
-      =/  ba  (sub:rh b a)
-      =/  d  (div:rh ba (sun:rh (dec n)))
-      =/  bad  `(list @)`~[a]
+      =/  ba  (~(sub rh rnd) b a)
+      =/  d  (~(div rh rnd) ba (~(sun rh rnd) (dec n)))
+      =|  bad=(list @)
       =|  i=@ud
       |-  ^-  ndray
-      ?:  =(n +(+(i)))  (flop [b bad])
-      $(i +(i), bad [(add:rh (snag 0 bad) d) bad])
+      ?:  (^lte n +(i))  (flop [b bad])
+      $(i +(i), bad [(~(add rh rnd) a (~(mul rh rnd) (~(sun rh rnd) i) d)) bad])
     ==
   ::  Coerce 1D array along specified dimension with given overall
   ::  dimensionality.
@@ -1116,19 +1115,19 @@
       ?+    bloq  !!
           %7
         ?+  fun  !!
-          %abs  |=(b=@ ?:((gte:rq b .~~~0) b (mul:rq b .~~~-1)))
+          %abs  |=(b=@ ?:((~(gte rq rnd) b .~~~0) b (~(mul rq rnd) b .~~~-1)))
         ==
           %6
         ?+  fun  !!
-          %abs  |=(b=@ ?:((gte:rd b .~0) b (mul:rd b .~-1)))
+          %abs  |=(b=@ ?:((~(gte rd rnd) b .~0) b (~(mul rd rnd) b .~-1)))
         ==
           %5
         ?+  fun  !!
-          %abs  |=(b=@ ?:((gte:rs b .0) b (mul:rs b .-1)))
+          %abs  |=(b=@ ?:((~(gte rs rnd) b .0) b (~(mul rs rnd) b .-1)))
         ==
           %4
         ?+  fun  !!
-          %abs  |=(b=@ ?:((gte:rh b .~~0) b (mul:rh b .~~-1)))
+          %abs  |=(b=@ ?:((~(gte rh rnd) b .~~0) b (~(mul rh rnd) b .~~-1)))
         ==
       ==
     ==
