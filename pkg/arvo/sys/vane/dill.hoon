@@ -266,6 +266,13 @@
     ?<  ?=(%crud -.task)
     [%crud -.task tang.u.dud]
   ::
+  ::
+  ?:  ?=(%born -.task)
+    ?~  hey.all
+      [~ ..^$]
+    ?:  ?=(~ mem.all)
+      [~ ..^$]
+    [[u.hey.all %give %quac ~]~ ..^$]
   ::  the boot event passes thru %dill for initial duct distribution
   ::
   ?:  ?=(%boot -.task)
@@ -373,8 +380,11 @@
   ::
   ?:  ?=(%mass -.task)
     ?>  ?=(^ hey.all)
+    ?:  =(~ mem.all)
+      =.  mem.all  (~(put in mem.all) hen)
+      [[u.hey.all %give %quac ~]~ ..^$]
     =.  mem.all  (~(put in mem.all) hen)
-    [[u.hey.all %give %quac ~]~ ..^$]
+    [~ ..^$]
   ::  %quac is a memory report from the runtime
   ::
   ?:  ?=(%quac -.task)

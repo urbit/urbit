@@ -2011,7 +2011,8 @@
     ==                                                  ::
   +$  task                                              ::  in request ->$
     $~  [%vega ~]                                       ::
-    $%  [%boot lit=? p=*]                               ::  weird %dill boot
+    $%  $>(%born vane-task)                             ::  new unix process
+        [%boot lit=? p=*]                               ::  weird %dill boot
         [%crop p=@ud]                                   ::  trim kernel state
         [%flog p=flog]                                  ::  wrapped error
         [%heft ~]                                       ::  memory report
