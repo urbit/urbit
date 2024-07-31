@@ -146,6 +146,8 @@
 body {
   font-family: var(--font);
   letter-spacing: var(--letter-spacing);
+  background: var(--b0);
+  color: var(--f0);
   line-height: 1;
   height: 100%;
 }
@@ -201,14 +203,23 @@ button {
 .wf {
   width: 100%;
 }
+.mwf {
+  max-width: 100%;
+}
 .mw-page {
   max-width: 650px;
 }
 .hf {
   height: 100%;
 }
+.mhf {
+  max-height: 100%;
+}
 .hfc {
   height: fit-content;
+}
+.contain {
+  object-fit: contain;
 }
 .mono {
   font-family: var(--font-mono), monospace;
@@ -633,6 +644,15 @@ button {
     display: block;
     counter-increment: line;
 }
+.pointer {
+  cursor: pointer;
+}
+.grabber {
+  cursor: grab;
+}
+.no-select {
+  user-select: none;
+}
 .prose h1 {
   font-size: 1.45rem;
   margin: 1rem 0;
@@ -649,21 +669,23 @@ button {
   font-weight: bold;
 }
 .prose p {
-  margin-bottom: 1rem;
+  margin: 1rem 0;
   line-height: var(--line-height);
 }
 .prose img {
+  margin: 1rem 0;
   max-width: 100%;
   display: block;
   max-height: 350px;
 }
 .prose details {
-  margin-bottom: 1rem;
+  margin: 1rem 0;
 }
 .prose a {
   text-decoration: underline;
 }
 .prose blockquote {
+  margin: 1rem 0;
   margin-left: 10px;
   border-left: 2px solid var(--b3);
   padding: 4px;
@@ -677,39 +699,35 @@ button {
   width: 100%;
   display: block;
   padding: 8px;
+  margin: 1rem 0;
+  background-color: var(--b1);
 }
 .prose code {
   font-family: var(--font-mono);
   font-size: calc(1em * var(--mono-scale));
   color: var(--f2);
 }
+.prose hr {
+  margin: 2rem 0;
+}
 .prose ul,
 .prose ol {
   padding-left: 29px;
   line-height: calc(calc(1 + var(--line-height)) / 2);
-  margin-bottom: 0.6rem;
+  margin: 1rem 0;
 }
 .prose ul p,
 .prose ol p {
-  margin-bottom: 0;
+  margin: 0;
   line-height: var(--line-height);
 }
 .prose ul ul,
 .prose ol ul,
 .prose ul ol,
 .prose ol ol {
-  margin-bottom: 0;
+  margin: 0;
 }
 .prose summary {
   user-select: none;
   cursor: pointer;
-}
-.pointer {
-  cursor: pointer;
-}
-.grabber {
-  cursor: grab;
-}
-.no-select {
-  user-select: none;
 }
