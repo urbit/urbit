@@ -5348,14 +5348,59 @@
               %chum  (decrypt:crypt key.space (need cyf) ser)
             ==
           ::
+          ++  ev-sig-key
+            |=  [=path =ship]
+            ^-  @uxI
+            =/  tyl=(pole knot)  path
+            ?+    tyl  !!
+                [%publ lyf=@ pat=*]
+              =/  per  (ev-got-per ship)
+              (end 8 (rsh 3 public-key.sat.per))
+            ::
+                [%chum lyf=@ her=@ hyf=@ pat=[cyf=@ ~]]
+              =/  her  (slaw %p her.tyl)
+              ?>  ?=(^ her)
+              =/  her=@p  ?:(=(u.her our) ship u.her)
+              =/  per  (ev-got-per her)
+              (end 8 (rsh 3 symmetric-key.sat.per))
+            ::
+                [%shut kid=@ pat=[cyf=@ ~]]
+              =/  kid  (slaw %ud kid.tyl)
+              ?>  ?=(^ kid)
+              =/  per  (ev-got-per ship)
+              ?~  key=(get:key-chain client-chain.sat.per u.kid)
+                !!  :: XX handle
+              (end 8 (rsh 3 -.u.key))
+            ==
+          ::
+          ++  ev-mac-key
+            |=  [=path =ship]
+            ^-  @uxI
+            =/  tyl=(pole knot)  path
+            ?+    tyl  !!
+                [%chum lyf=@ her=@ hyf=@ pat=[cyf=@ ~]]
+              =/  her  (slaw %p her.tyl)
+              ?>  ?=(^ her)
+              =/  her=@p  ?:(=(u.her our) ship u.her)
+              =/  per  (ev-got-per her)
+              (rsh 8 (rsh 3 symmetric-key.sat.per))
+            ::
+                [%shut kid=@ pat=[cyf=@ ~]]
+              =/  kid  (slaw %ud kid.tyl)
+              ?>  ?=(^ kid)
+              =/  per  (ev-got-per ship)
+              ?~  key=(get:key-chain client-chain.sat.per u.kid)
+                !!  :: XX handle
+              (rsh 8 (rsh 3 -.u.key))
+            ==
+          ::
           ++  ev-decrypt-path
             |=  [=path =ship]
-            ^-  [=space (unit cyf=@) key=@uxI inner=^path]  :: XX remove key
+            ^-  [=space (unit cyf=@) inner=^path]
             =/  tyl=(pole knot)  path
             ?+    tyl  !!
                 [%publ lyf=@ pat=*]  :: unencrypted
-              =+  per=(ev-got-per ship)
-              [publ/(slav %ud lyf.tyl) ~ `@`public-key.sat.per pat.tyl]
+              [publ/(slav %ud lyf.tyl) ~ pat.tyl]
             ::
                 [%chum lyf=@ her=@ hyf=@ pat=[cyf=@ ~]]  :: encrypted with eddh key
               =/  lyf  (slaw %ud lyf.tyl)
@@ -5368,11 +5413,11 @@
               =+  per=(ev-got-per her)         :: XX ev-get-per
               :: ::  ?>  ?=(%known -.sat.per)  :: XX wat if %alien?
               :: ?.  =(u.hyf life.sat.per)   !!  :: XX
-              =*  key  `@`symmetric-key.sat.per
-              :^    [%chum life.ames-state her life.sat.per key]
-                  cyf
-                key
-              (open-path:crypt key u.cyf)
+              =*  key  symmetric-key.sat.per
+              =/  cry=@uxI  (rsh 8 (rsh 3 key))
+              :+  [%chum life.ames-state her life.sat.per key]
+                cyf
+              (open-path:crypt cry u.cyf)
             ::
                 [%shut kid=@ pat=[cyf=@ ~]]  :: encrypted with group key
               =/  kid  (slaw %ud kid.tyl)
@@ -5393,12 +5438,10 @@
             ^-  ?
             ?>  ?=([%0 *] aut)
             =*  auth  p.aut
-            =/  key  key:(ev-decrypt-path [pat her]:name)
             =/  ful  (en-beam [[her.name %$ ud+1] pat.name])
-            ~|  [key=key aut=p.auth ful=ful rut=rut]  =-  ?>(- -)  ::  log crash
             ?-  -.auth
-              %&  (verify-sig:crypt key p.auth ful rut)
-              %|  (verify-mac:crypt key p.auth ful rut)
+              %&  (verify-sig:crypt (ev-sig-key [pat her]:name) p.auth ful rut)
+              %|  (verify-mac:crypt (ev-mac-key [pat her]:name) p.auth ful rut)
             ==
           ::
           +|  %entry-points
@@ -5535,7 +5578,7 @@
             ~|  path-decryption-failed/pat.ack-name^pat.poke-name
             =/  ack=(pole iota)
               (ev-validate-path inner:(ev-decrypt-path pat.ack-name her.poke-name))
-            =/  [=space cyf=(unit @) key=@ =inner=path]
+            =/  [=space cyf=(unit @) =inner=path]
               (ev-decrypt-path [pat her]:poke-name)
             =/  pok=(pole iota)  (ev-validate-path inner-path)
             ::
@@ -5600,7 +5643,7 @@
             ?>  ?=([~ %known *] chum)  ::  XX alien agenda
             =.  per  [ship +.u.chum]
             =*  pit  pit.sat.per
-            =/  [=space cyf=(unit @) key=@ =inner=path]
+            =/  [=space cyf=(unit @) =inner=path]
               (ev-decrypt-path pat.name ship)
             =*  sealed-path  pat.name
             ?~  res=(~(get by pit) sealed-path)
@@ -7853,12 +7896,11 @@
                 =/  rut  (slaw %uv rut.tyl)
                 ?:  |(?=(~ her) ?=(~ aut) ?=(~ rut))
                   [~ ~]
-                =/  key  key:(ev-decrypt-path pat.tyl u.her)
                 =/  ful  (en-beam [[u.her %$ ud+1] pat.tyl])
                 :^  ~  ~  %flag  !>  :: XX is this right?
                 ?-  typ.tyl
-                  %sign  (verify-sig:crypt key u.aut ful u.rut)
-                  %hmac  (verify-mac:crypt key u.aut ful u.rut)
+                  %sign  (verify-sig:crypt (ev-sig-key pat.tyl u.her) u.aut ful u.rut)
+                  %hmac  (verify-mac:crypt (ev-mac-key pat.tyl u.her) u.aut ful u.rut)
                 ==
             ::
               ==
