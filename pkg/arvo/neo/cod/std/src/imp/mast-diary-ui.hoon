@@ -29,7 +29,6 @@
   ++  init
     |=  pal=(unit pail:neo)
     ^-  (quip card:neo pail:neo)
-    =/  diary-entries  (get-diary-entries deps.bowl)
     :-  ~
     manx/!>((render (get-render-data bowl)))
   ::

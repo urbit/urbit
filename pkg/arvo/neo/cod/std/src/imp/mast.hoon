@@ -163,12 +163,12 @@
     #/[p/our]/mast
   ::
   ++  session
-    |=  [=rope src=@p]
+    |=  [=rope =boat]
     ^-  pith:neo
     =/  here  here
     ?>  &(?=(^ here) ?=(^ t.here))
     %_  here
-      t.t  #/[ud/rope]/[p/src]
+      t.t  #/[ud/rope]/[p/boat]
     ==
   ::
   --
