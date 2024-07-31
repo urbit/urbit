@@ -18,13 +18,13 @@
     ==
   ++  txt
     ^-  wain
-    %+  turn  tan
+    %+  turn  (flop tan)
     |=(=tank (crip ~(ram re tank)))
   --
 ++  grab                                                ::  convert from
   |%
   ++  noun  (list ^tank)                                ::  clam from %noun
   ++  tank  |=(a=^tank [a]~)
-  ++  txt   |=(=wain (turn wain tank))
+  ++  txt   |=(=wain (flop (turn wain tank)))
   --
 --
