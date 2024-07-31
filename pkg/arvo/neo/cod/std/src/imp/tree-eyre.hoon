@@ -134,11 +134,17 @@
           =.  status.resp  404
           =.  manx.resp  ;div:  not on your ship
           %-  eyre-cards  resp
-        =/  kids=(list pith:neo)  
-          %+  turn  (get-kids here q.src)
-            |=  =pith:neo
-            ;;  pith:neo
-            %+  slag  (lent here)  pith
+        =/  kids=(list pith:neo)  ~(tap in ~(key by (~(kid of:neo q.src) here)))
+        ::  
+        ::%+  turn 
+        ::  ~(tap in ~(key by (~(kid of:neo q.src) here)))
+        :: |=  p=pith:neo
+        :: (head p)
+        ~&  here
+          :: %+  turn  (get-kids here q.src)
+          ::   |=  =pith:neo
+          ::   ;;  pith:neo
+          ::   %+  slag  (lent here)  pith
         =.  manx.resp              
           ?~  idea=(~(get of:neo q.src) here)
             (view inner [%$ !>(~)] kids bowl)
@@ -159,20 +165,19 @@
           ::  %make cards don't have error(%goof) %acks yet 
           ::  sending eyre response here for now
           :_  eyre-id/!>(eyre-id)
-          =/  mule-vax=(each vase tang)
-            %-  mule  |.
-            %+  to-hoon  bowl
-            (get-by-name request 'vase') 
+          =/  mule-vax  (mule-vase bowl request)
           =/  mule-conf=(each conf:neo tang)
             %-  mule  |.  
             !<  conf:neo  
             %+  to-hoon  bowl
             (get-by-name request 'conf') 
-          ?:  ?=(%| -.mule-vax)
-            (poke-tree-card here.bowl !>([%req-parsing-err p.mule-vax]))
+          ?:  |(?=(%| -.mule-vax) ?=(%| -.mule-conf))
+          %+  poke-tree-card  here.bowl
+            !>  :-  %req-parsing-err
+            ?:  ?=(%| -.mule-vax)
+              p.mule-vax
+            p.mule-conf
           =/  vax=vase  p.mule-vax
-          ?:  ?=(%| -.mule-conf)
-            (poke-tree-card here.bowl !>([%req-parsing-err p.mule-conf]))
           =/  =conf:neo  p.mule-conf
           =+  diff=tree-diff
           =.  init.diff
@@ -190,10 +195,7 @@
           ::
             %send-poke
           :_  eyre-id/!>(eyre-id)  
-          =/  mule-vax
-            %-  mule  |.
-            %+  to-hoon  bowl
-            (get-by-name request 'vase')
+          =/  mule-vax  (mule-vase bowl request)
           ?-  -.mule-vax
               %|  
             (poke-tree-card here.bowl !>([%req-parsing-err p.mule-vax]))
@@ -280,6 +282,13 @@
   =/  kid-pith  !<  pith:neo  (to-hoon bowl kid)
   (welp parent kid-pith)
 ::
+++  mule-vase
+  |=  [=bowl:neo req=request:http]
+  ^-  (each vase tang)
+  %-  mule  |.
+  %+  to-hoon  bowl
+  (get-by-name req 'vase') 
+::
 ++  get-by-name
   |=  [req=request:http hoon=cord]
   ^-  cord
@@ -301,7 +310,7 @@
     ;*  %+  turn  tang
       |=  =tank
       ^-  manx
-      ;div.wf.fr.js.p1.error.monospace
+      ;div.wf.fr.js.p1.error.mono
         ;  {~(ram re tank)}
       ==
   ==
@@ -343,6 +352,7 @@
   ==
 ::
 ++  tree-style 
+    :: font-size: calc(2 * var(--font-size));
   ^~
   %-  trip 
   '''
@@ -352,37 +362,48 @@
   font-style: normal;
   font-weight: 600;
   }
+  :root {
+  --font: 'Urbit Sans', normal;
+  }
+  *{
+  font-size: calc(1.2 * var(--font-size));
+  }
   body{
-  font-family: 'Urbit Sans';
-  font-size: 15px;
+  font-family: var(--font);
+  background: var(--b0);
+  color: var(--f0);
   }
   input{
-  font-family: 'monospace', monospace;
-  font-size: 13px;
-  }
-  .monospace{
-  font-family: 'monospace', monospace;
-  font-size: 13px;
+  font-family: var(--font-mono);
+  font-size: calc(1em * var(--mono-scale));
   }
   .red-hover:hover{
   background-color: #FF0000; 
-  color: white;
+  color: var(--b0);
   border-radius: 6px;
   }
   .pointer{
   cursor: pointer;
   }
   .bd.bd2{
-  border: 0.8px solid black;
+  border: 1.2px solid var(--f1);
   }
   .error{
   color: #FF0000; 
   }
   .bg-white{
-  background: white;
+  background: var(--b2);
   }
   .hover-grey:hover{
-  background: #dbdbdb;
+  background: var(--b4);
+  }
+  @media (max-width: 900px) {
+  * {
+  font-size: calc(1.1 * var(--font-size));
+  }
+  input {
+  font-size: calc(0.9em * var(--mono-scale));
+  }
   }
   '''
 ::
@@ -479,13 +500,13 @@
   ^-  manx
   ?:  =(p.pail %hoon)
     =/  wain=(list @t)  (to-wain:format !<(@t q.pail))
-    ;div.fc.g1.p2.grow.monospace
+    ;div.fc.g1.p2.grow
       ;* 
       %+  turn  wain
       |=  lin=@t 
-      ;p.monospace:  {(trip lin)}\0a
+      ;p.mono:  {(trip lin)}\0a
     ==
-  ;div.fr.js.p2.monospace
+  ;div.fr.js.p2.mono
     ;+  ;/
     =/  size  (met 3 (jam q.q.pail))
     ?:  (gth size 750)  "vase too large to print: {<size>}"
@@ -529,7 +550,7 @@
       $(this).parent().parent().parent().find('.cull-form').addClass('hidden');
       $(this).parent().parent().parent().find('.error-box').html('')
       """
-      ;span:  poke
+      ;span.p2:  poke
     ==
     ;button.cull.p2.bd.bd2.br2.hover-grey.bg-white
     =onclick  
@@ -542,7 +563,7 @@
       $(this).parent().parent().parent().find('.poke-form').addClass('hidden');
       $(this).parent().parent().parent().find('.error-box').html('')
       """
-      ;span:  cull
+      ;span.p2:  cull
     ==
   ==
 ::
@@ -558,7 +579,7 @@
     $(this).parent().parent().parent().find('.poke-form').addClass('hidden');
     $(this).parent().parent().parent().find('.error-box').html('')
     """
-    ;span:  make
+    ;span.p2:  make
   ==
 ::
 ++  forms
