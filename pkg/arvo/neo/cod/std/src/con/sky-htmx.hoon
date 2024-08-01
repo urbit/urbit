@@ -14,23 +14,10 @@
     ?:  menu.sky  m
     m(a.g [[%closed ""] a.g.m])
   ^-  manx
-  ;s-k-y.wf.hf.relative
+  ;s-k-y
     =our  (scow %p our.bowl)
-    =style  "opacity: var(--sky-opacity); padding: var(--sky-outer-gap);"
-    =id  "air"
-    =hawks  "{<open.sky>}"
-    ;*
-    =<  p
-    %^    spin
-        hawks.sky
-      0
-    |=  [[id=@da =pith:neo] a=@]
-    :_  +(a)
-    ;wi-nd
-      =slot  "s{<a>}"
-      =here  (en-tape:pith:neo pith)
-      ;
-    ==
+    =windows-open  "{<open.sky>}"
+    ;
   ==
 ::
 ++  map-to-css-tape
@@ -101,6 +88,7 @@
     ['start_url' s+'http://localhost/neo/sky']  ::  XX
     ['display' s+'standalone']
     ['background_color' s+'black']
+    ['theme_color' s+'black']
     :+  'icons'  %a
     :~
       %-  pairs:enjs:format

@@ -2,7 +2,11 @@ customElements.define('s-k-y',
 class extends HTMLElement {
   static get observedAttributes() {
     //
-    return ["our", "closed", "hawks"];
+    return [
+      "our",
+      "open",
+      "windows-open",
+    ];
   }
   constructor() {
     //
@@ -40,47 +44,48 @@ class extends HTMLElement {
        * {
          box-sizing: border-box;
        }
-       ::slotted(*) {
-         /* overflow: auto; */
-       }
        :host {
-         display: grid;
          width: 100%;
          height: 100%;
          max-height: 100%;
          overflow: hidden;
          margin: 0;
-         grid-template-columns: 230px auto;
-         grid-template-rows: auto 1fr;
-         grid-template-areas:
-         "tray main"
-         "nav main";
-       }
-       :host(.closed) {
+         position: relative;
+         opacity: var(--sky-opacity, 1);
+         padding: var(--sky-outer-gap, 8px);
+
+         display: grid;
          grid-template-columns: 50px auto;
          grid-template-rows: auto 1fr;
          grid-template-areas:
          "tray main"
          "tray main";
        }
-       :host(.closed) #nav {
-         display: none;
+       :host(.open) {
+         grid-template-columns: 260px auto;
+         grid-template-rows: auto 1fr;
+         grid-template-areas:
+         "tray main"
+         "nav main";
+       }
+       :host(.open) #nav {
+         display: flex;
        }
        #nav {
          grid-area: nav;
-         display: flex;
+         display: none;
          flex-direction: column;
          justify-content: flex-start;
          align-items: stretch;
          gap: 12px;
          overflow: auto;
        }
-       :host(.closed) #tray {
-         display: flex;
+       :host(.open) #tray {
+         display: none;
        }
        #tray {
          grid-area: tray;
-         display: none;
+         display: flex;
          padding-bottom: 15px;
        }
        /*
@@ -221,25 +226,25 @@ class extends HTMLElement {
            "tray";
            padding: 0 !important;
          }
-         :host(.closed) {
+         :host(.open) {
            grid-template-columns: auto;
            grid-template-rows: 1fr auto;
            grid-template-areas:
            "nav"
            "tray";
          }
-         :host(.closed) main {
+         :host(.open) main {
            display: none;
          }
-         :host(:not(.closed)) main {
+         :host(:not(.open)) main {
            display: grid;
            grid-template-columns: auto;
            grid-template-rows: auto;
            grid-template-areas:
            "s0";
          }
-         :host(.closed) #tray,
-         :host(:not(.closed)) #tray {
+         :host(.open) #tray,
+         :host(:not(.open)) #tray {
            display: flex;
            flex-direction: row;
            padding: 6px 6px 10px 6px;
@@ -270,12 +275,6 @@ class extends HTMLElement {
          main #s3 {
            display: none !important;
          }
-         :host(.closed) #nav {
-           display: flex;
-         }
-         :host(:not(.closed)) #nav {
-           display: none;
-         }
        }
       </style>
       <div id="tray" class="fc g2 js af">
@@ -285,57 +284,115 @@ class extends HTMLElement {
           >
           <span class="p1 s-1 bold">~</span>
         </button>
-        <button class="p2 br1 bd1 b2 hover o7 hideable toggled">1</button>
-        <button class="p2 br1 bd1 b2 hover o7 hideable">2</button>
-        <button class="p2 br1 bd1 b2 hover o7 hideable">3</button>
-        <button class="p2 br1 bd1 b3 hover f3"><span class="mso">settings</span></button>
-        <button class="p2 br1 bd1 b3 hover f3"><span class="mso">notifications</span></button>
-      </div>
-      <nav id="nav" class="fc g8" style="padding-bottom: 15px;">
         <button
-          class="br1 p1 b2 hover fc jc ac hideable"
-          onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('sky-open', {bubbles:true, composed: true}))"
+          class="p2 br1 bd1 b3 hover f3"
+          onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('toggle-notifications'))"
           >
-          <span class="p1 s-1 bold">~</span>
+          <span class="mso">notifications</span>
         </button>
-        <div class="fc g3 grow scroll-y">
+        <button
+          class="p2 br1 bd1 b3 hover f3"
+          onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('toggle-settings'))"
+          >
+          <span class="mso">settings</span>
+        </button>
+      </div>
+      <nav id="nav" class="fc" style="padding-bottom: 15px;">
+        <div id="tab-controller" class="fc g3 grow">
           <button
-            onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('new-window'))"
-            class="wfc p2 br1 bd1 b2 hover fr g3 ac"
+            class="br1 p1 b2 hover fc jc ac hideable"
+            onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('sky-open', {bubbles:true, composed: true}))"
             >
-            <span class="mso">add</span>
-            <span class="f3">new window</span>
+            <span class="p1 s-1 bold">~</span>
           </button>
-          <div id="tabs" class="fc g2"></div>
-        </div>
-        <footer class="fc g2">
-          <div class="bd1 br1 p2 fc g1">
-            <p class="bold f-3">This is a developer alpha.</p>
-            <p class="s-1">
-              Your data in this app is NOT private from the rest of the network
-              and will NOT persist across upgrades.
-            </p>
+          <div class="fc g3 grow scroll-y">
+            <button
+              onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('new-window'))"
+              class="wfc p2 br1 bd1 b2 hover fr g3 ac"
+              >
+              <span class="mso">add</span>
+              <span class="f3">new window</span>
+            </button>
+            <div id="tabs" class="fc g2"></div>
+            <div class="grow"></div>
+            <div class="bd1 br1 p2 fc g1">
+              <p class="bold f-3">This is a developer alpha.</p>
+              <p class="s-1">
+                Your data in this app is NOT private from the rest of the network
+                and will NOT persist across upgrades.
+              </p>
+            </div>
           </div>
-          <select class="fr p2 br1 bd1 b0">
-            <option>workspace 1</option>
-            <option>workspace 2</option>
-            <option>workspace 3</option>
-          </select>
+          <footer class="fc g2">
+            <button
+              onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('toggle-notifications'))"
+              class="p2 br1 bd1 b3 hover fr g3 ac f3 hideable"
+              >
+              <span class="mso">notifications</span>
+              notifications
+            </button>
+            <div class="fr g2">
+              <button
+                onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('toggle-settings'))"
+                class="p2 br1 bd1 b3 hover fr g3 ac f3 hideable grow"
+                >
+                <span class="mso">settings</span>
+                settings
+              </button>
+              <button
+                onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('toggle-help'))"
+                class="p2 br1 bd1 b3 hover fr g3 ac f3 hideable"
+                >
+                <span class="mso">question_mark</span>
+              </button>
+            </div>
+          </footer>
+        </div>
+        <div id="notifications" class="fc g3 grow scroll-y hidden">
           <button
-            onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('open-settings'))"
-            class="p2 br1 bd1 b3 hover fr g3 ac f3 hideable"
+            onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('toggle-notifications'))"
+            class="p2 br1 bd1 b3 hover fr g3 ac f3"
             >
-            <span class="mso">settings</span>
-            settings
+            <span class="mso">close</span>
+            close
           </button>
+          <h1>Notifications</h1>
+          <div class="f-3">Not yet implemented</div>
+        </div>
+        <div id="settings" class="fc g3 grow scroll-y hidden">
           <button
-            onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('open-settings'))"
-            class="p2 br1 bd1 b3 hover fr g3 ac f3 hideable"
+            onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('toggle-settings'))"
+            class="p2 br1 bd1 b3 hover fr g3 ac f3"
             >
-            <span class="mso">notifications</span>
-            notifications
+            <span class="mso">close</span>
+            close
           </button>
-        </footer>
+          <h1>Settings</h1>
+          <div class="f-3">Not yet implemented</div>
+          <div class="mt1">This is where you will configure your theme.</div>
+        </div>
+        <div id="help" class="fc g3 grow scroll-y hidden">
+          <button
+            onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('toggle-help'))"
+            class="p2 br1 bd1 b3 hover fr g3 ac f3"
+            >
+            <span class="mso">close</span>
+            close
+          </button>
+          <div class="prose">
+            <h1>Help</h1>
+            <details class="br1 bd1">
+              <summary class="br1 b2 hover p2">Install Sky as a PWA</summary>
+              <div class="p2">
+                <h3>Desktop</h3>
+                <ol>
+                  <li>Open this page in Chrome</li>
+                  <li>Click the "Install" button that appears in the searchbar.</li>
+                </ol>
+              </div>
+            </details>
+          </div>
+        </div>
       </nav>
       <main>
         <slot name="s0" id="s0"></slot>
@@ -346,8 +403,8 @@ class extends HTMLElement {
       <slot id="default" style="display: none;"></slot>
     `
   }
-  get hawks() {
-    return parseInt(this.getAttribute("hawks") || "0");
+  get windowsOpen() {
+    return parseInt(this.getAttribute("windows-open") || "0");
   }
   get our() {
     return this.getAttribute('our');
@@ -366,13 +423,17 @@ class extends HTMLElement {
   qs(sel) {
     return this.shadowRoot.querySelector(sel);
   }
+  qsa(sel) {
+    return this.shadowRoot.querySelectorAll(sel);
+  }
   gid(id) {
     return this.shadowRoot.getElementById(id);
   }
   connectedCallback() {
     $(this).off();
     $(this).on("sky-open", (e) => {
-      this.toggleAttribute("closed");
+      this.toggleAttribute("open");
+      $(this).poke('save-layout');
     })
     $(this).on('fix-slots', () => {
       this.fixSlots();
@@ -452,13 +513,57 @@ class extends HTMLElement {
       let wind = $(`[wid='${wid}']`);
       wind.poke('minimize');
     });
+    //
+    $(this).on("toggle-notifications", () => {
+      if (this.getAttribute('open') === 'notifications') {
+        this.setAttribute('open', '');
+      } else {
+        this.setAttribute('open', 'notifications');
+      }
+    })
+    $(this).on("toggle-settings", () => {
+      if (this.getAttribute('open') === 'settings') {
+        this.setAttribute('open', '');
+      } else {
+        this.setAttribute('open', 'settings');
+      }
+    })
+    $(this).on("toggle-help", () => {
+      if (this.getAttribute('open') === 'help') {
+        this.setAttribute('open', '');
+      } else {
+        this.setAttribute('open', 'help');
+      }
+    })
+    $(this).on("save-layout", () => {
+      this.saveLayout();
+    });
+    this.restoreLayout();
   }
   attributeChangedCallback(name, oldValue, newValue) {
     //
-    if (name === "closed") {
-      this.classList.toggle("closed");
-    } else if (name === "hawks") {
-      this.qs("main").className = `open-${this.hawks}`;
+    if (name === "open") {
+      $(this.gid('notifications')).addClass('hidden');
+      $(this.gid('settings')).addClass('hidden');
+      $(this.gid('help')).addClass('hidden');
+      $(this.gid('tab-controller')).addClass('hidden');
+      if (newValue ===  null) {
+        $(this).removeClass("open");
+      } else if (newValue === 'notifications') {
+        $(this).addClass("open");
+        $(this.gid('notifications')).removeClass('hidden');
+      } else if (newValue === 'settings') {
+        $(this).addClass("open");
+        $(this.gid('settings')).removeClass('hidden');
+      } else if (newValue === 'help') {
+        $(this).addClass("open");
+        $(this.gid('help')).removeClass('hidden');
+      } else {
+        $(this).addClass("open");
+        $(this.gid('tab-controller')).removeClass('hidden');
+      }
+    } else if (name === "windows-open") {
+      this.qs("main").className = `open-${this.windowsOpen}`;
     }
   }
   renderIcon(name) {
@@ -470,13 +575,13 @@ class extends HTMLElement {
   renderTabs() {
     let tabs = $(this.gid('tabs'));
     tabs.children().remove();
-    let hawks = this.hawks;
+    let windowsOpen = this.windowsOpen;
     let that = this;
     $(this.windows).each(function(i) {
       let wind = this;
       let tab = document.createElement('div');
       $(tab).addClass('b2 br1 fr af js bd1');
-      if (i < hawks) {
+      if (i < windowsOpen) {
         $(tab).addClass('toggled');
       }
 
@@ -494,7 +599,7 @@ class extends HTMLElement {
       $(min).on('click', () => {
         $(wind).emit('minimize-window');
       });
-      if (i >= hawks) {
+      if (i >= windowsOpen) {
         $(min).hide();
       }
 
@@ -510,6 +615,7 @@ class extends HTMLElement {
       $(tab).append(close);
       tabs.append(tab);
     })
+    $(this).poke('save-layout');
   }
   fixSlots() {
     let slotted = $(this.windows).filter('[slot]').get().slice(0, 3);
@@ -519,9 +625,51 @@ class extends HTMLElement {
     })
   }
   growFlock() {
-    $(this).attr('hawks', Math.min(3, this.hawks + 1));
+    $(this).attr('windows-open', Math.min(3, this.windowsOpen + 1));
   }
   shrinkFlock() {
-    $(this).attr('hawks', Math.max(0, this.hawks - 1));
+    $(this).attr('windows-open', Math.max(0, this.windowsOpen - 1));
+  }
+  saveLayout() {
+    let layout = {
+      open: this.hasAttribute('open'),
+      windowsOpen: parseInt(this.getAttribute('windows-open')),
+      windows: $(this).children('wi-nd').get().map(w => {
+        return {
+          here: w.getAttribute('here'),
+          slot: w.getAttribute('slot'),
+        }
+      })
+    }
+    localStorage.setItem('sky-layout', JSON.stringify(layout))
+  }
+  restoreLayout() {
+    let layoutString = localStorage.getItem('sky-layout');
+    if (!!layoutString) {
+      let layout = JSON.parse(layoutString);
+      $(this).attr('open', layout.open ? '' : null);
+      $(this).attr('windows-open', `${layout.windowsOpen}`);
+      $(this).children('wi-nd').remove();
+      layout.windows.forEach(w => {
+        let wind = document.createElement('wi-nd');
+        $(wind).attr('here', w.here);
+        $(wind).attr('slot', !!w.slot ? w.slot : null);
+        $(this).append(wind);
+      })
+    } else {
+      // create initial layout
+      let layout = {
+        open: false,
+        windowsOpen: 1,
+        windows: [
+          {
+            here: `/${this.our}/home`,
+            slot: 's0'
+          }
+        ]
+      }
+      localStorage.setItem('sky-layout', JSON.stringify(layout))
+      this.restoreLayout();
+    }
   }
 });
