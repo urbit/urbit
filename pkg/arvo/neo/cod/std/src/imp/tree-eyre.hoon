@@ -398,12 +398,35 @@
   background: var(--b4);
   }
   @media (max-width: 900px) {
-  * {
-  font-size: calc(1.1 * var(--font-size));
-  }
-  input {
-  font-size: calc(0.9em * var(--mono-scale));
-  }
+    * {
+    font-size: calc(1.2 * var(--font-size));
+    }
+    input {
+    font-size: calc(1em * var(--mono-scale));
+    }
+    .top, .pro-btn, .import-btn, .buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    }
+    .buttons, .form-btn {
+    display: flex;
+    justify-content: end;
+    }
+    .make-form, .poke-form, .cull-form, .part-make-form{
+    display: flex;
+    flex-direction: column;
+    }
+    .cull-btn{
+    justify-content: space-around;
+    }
+    .red-hover{
+    margin-top: 1rem;
+    background-color: #FF0000; 
+    color: var(--b0);
+    border-radius: 6px;
+    padding: 4px;
+    }
   }
   '''
 ::
@@ -451,14 +474,14 @@
   ;div
     ;div.fc.g2.bd.bd2.br2.p2
       ;div.top.fr.jb.g2
-        ;p.p2.hfc.wf.grow:  {(en-tape:pith:neo here)}
+        ;p.p2.hfc.wfh.grow:  {(en-tape:pith:neo here)}
         ;+  buttons
       ==
       ;div.fr.jb.g2
         ;+  ?.  =(p.pail %hoon)
           (state-print pail)
         empty-manx
-        ;div.fr.je.grow.g2
+        ;div.fr.je.grow.g2.pro-btn
           ;+  (pro-files pail here bowl)
           ;+  ?:  =(p.pail %$)
             empty-manx
@@ -525,7 +548,7 @@
     (scan (trip !<(@t q.pail)) (rein:ford:neo name))
   ?:  ?=(%| -.fool)  
     empty-manx
-  ;div.fr.g2
+  ;div.fr.g2.import-btn
     ;*  %+  turn  pro.p.fool
     |=  =pro:ford:neo
     ^-  manx
@@ -601,7 +624,7 @@
   =hx-post    "/neo/tree{(en-tape:pith:neo here)}?stud=tree-diff&head=send-make"
   =hx-swap    "outterHTML"
   =hx-target  ".error-box"
-    ;div.fr.g2
+    ;div.fr.g2.part-make-form
       ;input.hidden
       =type   "text"
       =name   "here"
@@ -637,7 +660,7 @@
       ;
       ==
     ==
-    ;div.fr.g2
+    ;div.fr.g2.part-make-form
       ;input.bd.bd2.br2.p2.grow
       =type          "text"
       =name          "vase"
@@ -654,9 +677,11 @@
       =required      ""
       ;
       ==
-      ;button.loader.bd.bd2.br2.hover-grey
-        ;span.loaded.p2:  make
-        ;span.loading.p2:  loading
+      ;div.form-btn
+        ;button.loader.bd.bd2.br2.hover-grey.p2
+          ;span.loaded.p2:  make
+          ;span.loading.p2:  loading
+        ==
       ==
     ==
   ==
@@ -692,9 +717,11 @@
     =required      ""
     ;
     ==
-    ;button.loader.bd.bd2.br2.hover-grey
-      ;span.loaded.p2:  poke
-      ;span.loading.p2:  loading
+    ;div.form-btn
+      ;button.loader.bd.bd2.br2.hover-grey.p2
+        ;span.loaded.p2:  poke
+        ;span.loading.p2:  loading
+      ==
     ==
   ==
 ::
@@ -708,11 +735,11 @@
     ;div.fc.ac
       ;p:  {warning}
     ==
-    ;div.fr.jc.g8.p2
+    ;div.fr.jc.g8.p2.cull-btn
       ;button.cull-trigger.hfc.p2.red-hover
       =name     "pith"
       =value    (en-tape:pith:neo here)
-        ;span:  yes
+        ;span.p2:  yes
       ==
       ;span.hfc.p2.red-hover.pointer
       =onclick  
@@ -720,7 +747,7 @@
       $(this).parent().parent().addClass('hidden');
       $(this).parent().parent().parent().parent().find('.top').find('.buttons').find('.cull').toggleClass('toggled');
       """
-        ;span:  no
+        ;span.p2:  no
       ==
     ==
   ==

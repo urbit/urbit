@@ -28,7 +28,7 @@
 ::
 ::  list of kids piths from lore with full pith
 ::
-++  kids-full-pith
+++  full-pith
   |=  [parent=pith:neo =lore:neo]
   ^-  (list pith:neo)
   ?~  (~(kid of:neo lore) parent)  ~
