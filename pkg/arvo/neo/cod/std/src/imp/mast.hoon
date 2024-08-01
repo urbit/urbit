@@ -1,12 +1,11 @@
 /@  ui-event
-/@  mast-temporary-pro
 /@  mast-bind
 /*  mast-js
 =<
 ^-  kook:neo
 |%
 ++  state  [%pro %sig]
-++  poke   (sy %mast-temporary-pro %mast-bind %eyre-task %eyre-chan-task %gift ~)
+++  poke   (sy %mast-bind %eyre-task %eyre-chan-task %gift ~)
 ++  deps   *deps:neo
 ++  kids
   :+  ~  %y
@@ -21,7 +20,12 @@
     |=  pal=(unit pail:neo)
     ^-  (quip card:neo pail:neo)
     ~&  >  %mast-init
-    [~ sig/!>(*rig)]
+    =/  =pith:neo      #/[p/our.bowl]/$/eyre
+    =/  =binding:eyre  [~ /mast]
+    =/  =req:eyre:neo  [%connect binding ~(here moor our.bowl)]
+    :_  sig/!>(*rig)
+    :~  [pith %poke eyre-req/!>(req)]
+    ==
   ::
   ++  poke
     |=  [sud=stud:neo vaz=vase]
@@ -29,20 +33,6 @@
     :: ~&  mast-poke/sud
     =+  !<(=rig q.pail)
     ?+  sud  !!
-      ::
-        %mast-temporary-pro        :: sky bind and session creation via http
-      ?>  =(our.bowl ship.src.bowl)
-      =+  !<(bind=mast-temporary-pro vaz)
-      =/  =rope          (mug view.bind src.bind)
-      =/  =boat          our.bowl
-      =/  at=pith:neo    (~(session moor our.bowl) rope boat)
-      =/  =made:neo      [view.bind ~ (my [%src src.bind] ~)]
-      =.  open-http.rig  (~(put by open-http.rig) [rope boat] rid.bind)
-      :: ~&  >>  open-http/rid.bind
-      :_  sig/!>(rig)
-      :~  [at %cull ~]
-          [at %make made]
-      ==
       ::
         %mast-bind                 :: bind outside of sky
       ?>  =(our.bowl ship.src.bowl)
@@ -58,13 +48,17 @@
       :~  [pith %poke eyre-req/!>(req)]
       ==
       ::
-        %eyre-task                 :: session creation via http outside of sky
+        %eyre-task                 :: session creation via http
       =+  !<([rid=@ta req=inbound-request:eyre] vaz)
       ?.  authenticated.req   [(~(make-auth-redirect res bowl) rid) pail]
       ?+  method.request.req  [(~(make-400 res bowl) rid) pail]
         ::
           %'GET'
-        =/  =bind  (~(got by endpoints.rig) (stab url.request.req))
+        =/  url=path  (stab url.request.req)
+        =/  =bind
+          ?:  ?=([%mast ^] url)
+            [i.t.url (pave:neo t.t.url)]
+          (~(got by endpoints.rig) url)
         =/  =rope  (mug view.bind src.bind)
         =/  =boat  ship.src.bowl
         ?.  ?|  =(our.bowl boat)
