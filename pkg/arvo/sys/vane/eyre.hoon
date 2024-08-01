@@ -4176,17 +4176,18 @@
     |^
     =/  beg=(unit @ud)  (slaw %ud i.t.tyl)
     =/  end=(unit @ud)  (slaw %ud i.t.t.tyl)
-    ?:  ?|  &(?=(~ beg) !=(%$ i.t.tyl))
-            &(?=(~ end) !=(%$ i.t.t.tyl))
-        ==
-      [~ ~]
     =*  vew   i.t.t.t.tyl
     =*  rest  t.t.t.t.tyl
     =/  mym  (scry-mime now rof lyc ~ [%$ vew (en-beam -.bem rest)])
     ?:  ?=(%| -.mym)  ~
     =*  mime  p.mym
     ?~  range=(get-range [beg end] p.q.mime)
-      ~
+      :^  ~  ~  %noun
+      !>  ^-  cache-entry
+      :-  ?=(^ lyc)
+      :+  %payload  [416 ~]
+      `(as-octs:mimes:html 'requested range not satisfiable')
+    ::
     =/  =octs
       %-  as-octs:mimes:html
       (cut 3 [p.u.range +((sub q.u.range p.u.range))] q.q.mime)
