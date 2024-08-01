@@ -7739,6 +7739,7 @@
                 =/  mes=auth:mess  ?:(?=(%sign typ.msg) &+aut.msg |+aut.msg)
                 =*  ser  ser.msg
                 =/  wid  (met boq ser)
+                =/  tot  (met 13 ser)
                 ?<  ?=(%0 wid)  :: XX is this true?
                 =/  nit=?  |    :: XX refactor
                 |-  ^-  (unit (unit cage))
@@ -7776,7 +7777,7 @@
                     =>  [ser=ser ..lss]
                     ~>  %memo./ames/lss-auth
                     (build:lss (met 3 ser)^ser)
-                  =/  dat  [wid aut (rep 8 proof.lss-proof)]  :: XX types
+                  =/  dat  [tot aut (rep 8 proof.lss-proof)]  :: XX types
                   [nam dat ~]
                 ::
                     %data
@@ -7807,7 +7808,7 @@
                       ~
                     [%1 u.p]
                   ::
-                  =/  dat  [wid aut (cut boq [fag 1] ser)]
+                  =/  dat  [tot aut (cut boq [fag 1] ser)]
                   =/  pairs
                     =/  per  (bex (sub boq 13))
                     (swag [+((mul per fag)) (dec per)] pairs.lss-proof)
