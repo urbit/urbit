@@ -53,6 +53,7 @@ class extends HTMLElement {
          position: relative;
          opacity: var(--sky-opacity, 1);
          padding: var(--sky-outer-gap, 8px);
+         background-color: var(--b1);
 
          display: grid;
          grid-template-columns: 50px auto;
@@ -367,9 +368,7 @@ class extends HTMLElement {
             <span class="mso">close</span>
             close
           </button>
-          <h1>Settings</h1>
-          <div class="f-3">Not yet implemented</div>
-          <div class="mt1">This is where you will configure your theme.</div>
+          <feather-settings></feather-settings>
         </div>
         <div id="help" class="fc g3 grow scroll-y hidden">
           <button

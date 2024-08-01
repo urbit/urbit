@@ -2,6 +2,7 @@
 /@  sky-settings
 /-  sky-server
 /*  s-k-y
+/*  feather-settings
 /*  wi-nd
 /*  hawk-icon
 :-  [%sky %$ %htmx]
@@ -147,6 +148,7 @@
         '''
       ==
       ;script: {(trip s-k-y)}
+      ;script: {(trip feather-settings)}
       ;script: {(trip wi-nd)}
       ;+  favicon
       ;+  manifest
