@@ -6160,7 +6160,8 @@
               ?>(?=(%page +<.page) `q.page)
             =>  [res=res de=de:pact]
             ~>  %memo./ames/get-page
-            -:($:de ;;(@ q.q.u.u.res))
+            =/  [pac=@ hax=@]  ;;([@ @] q.q.u.u.res)
+            -:($:de pac)
           ::
           +|  %fren-helpers
           ::
