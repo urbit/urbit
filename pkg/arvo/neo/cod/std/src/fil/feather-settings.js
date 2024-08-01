@@ -60,8 +60,6 @@ class extends HTMLElement {
     `
   }
   setCss(variable, unit, value) {
-    console.log('setting css', variable, unit, value)
-    document.documentElement.style
-           .setProperty('--'+variable, `${value}${unit||''}`, 'important');
+    $(this).emit('feather-css-change', {variable, unit, value});
   }
 });

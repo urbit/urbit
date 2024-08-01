@@ -135,6 +135,14 @@
           let sec = String(now.getSeconds()).padStart(2, '0');
           return `~${year}.${month}.${date}..${hour}.${min}.${sec}`;
         }
+        document.addEventListener('feather-css-change', (e) => {
+          document.documentElement.style
+            .setProperty('--'+e.detail.variable, `${e.detail.value}${e.detail.unit||''}`, 'important');
+          $('wi-nd').poke('feather-css-change', e.detail)
+        })
+        window.addEventListener('resize', () => {
+          $('s-k-y').attr('open', null);
+        })
         window.addEventListener('message', function(event) {
           if (event.data?.messagetype !== 'sky-poll-response') return;
           let wid = event.data.wid;
