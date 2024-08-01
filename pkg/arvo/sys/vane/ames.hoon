@@ -5383,7 +5383,8 @@
               ?>  ?=(^ her)
               =/  her=@p  ?:(=(u.her our) ship u.her)
               =/  per  (ev-got-per her)
-              (rsh 8 (rsh 3 symmetric-key.sat.per))
+              ?>  (lte (met 3 symmetric-key.sat.per) 32)
+              `@uxI`symmetric-key.sat.per
             ::
                 [%shut kid=@ pat=[cyf=@ ~]]
               =/  kid  (slaw %ud kid.tyl)
@@ -5391,7 +5392,8 @@
               =/  per  (ev-got-per ship)
               ?~  key=(get:key-chain client-chain.sat.per u.kid)
                 !!  :: XX handle
-              (rsh 8 (rsh 3 -.u.key))
+              ?>  (lte (met 3 -.u.key) 32)
+              `@uxI`-.u.key
             ==
           ::
           ++  ev-decrypt-path
@@ -5413,11 +5415,10 @@
               =+  per=(ev-got-per her)         :: XX ev-get-per
               :: ::  ?>  ?=(%known -.sat.per)  :: XX wat if %alien?
               :: ?.  =(u.hyf life.sat.per)   !!  :: XX
-              =*  key  symmetric-key.sat.per
-              =/  cry=@uxI  (rsh 8 (rsh 3 key))
+              =*  key  `@uxI`symmetric-key.sat.per
               :+  [%chum life.ames-state her life.sat.per key]
                 cyf
-              (open-path:crypt cry u.cyf)
+              (open-path:crypt key u.cyf)
             ::
                 [%shut kid=@ pat=[cyf=@ ~]]  :: encrypted with group key
               =/  kid  (slaw %ud kid.tyl)
