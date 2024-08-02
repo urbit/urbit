@@ -199,8 +199,8 @@
         a.g
       ^-  mart
       :*  [%rope (y-co:co rope)]                            :: id of bind target for an event poke
-          [%pith <`path`(pout:neo ~(here moor our.bowl))>]  :: destination path, neo to shrub
-          [%path <`path`(sub-path buoy)>]                   :: sub path, shrub to eyre
+          [%pith (en-tape:pith:neo ~(here moor our.bowl))]  :: destination path, neo to shrub
+          [%path (spud (sub-path buoy))]                    :: sub path, shrub to eyre
           [%ship +:(scow %p our.bowl)]
           [%app "neo"]
           a.g.sail

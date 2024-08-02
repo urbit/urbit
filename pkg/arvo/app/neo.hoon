@@ -2390,15 +2390,7 @@
         =/  str=(unit json)  (~(get by p.jon) 'pith')
         ?.  &(?=(^ str) ?=(^ u.str) ?=(%s -.u.str))
           ~
-        :-  ~
-        %+  turn  (stab p.u.str)
-        |=  i=@ta
-        %-  iota
-        =+  v=(slay i)
-        ?>  &(?=(^ v) ?=(%$ -.u.v))
-        ?:  =(~.tas p.p.u.v)
-          q.p.u.v
-        p.u.v
+        [~ (pave:neo (stab p.u.str))]
       ?~  dst  ~|(eyre-channel-req-missing-pith/jon !!)
       =.  jon
         ?.  &(?=(^ jon) ?=(%o -.jon))

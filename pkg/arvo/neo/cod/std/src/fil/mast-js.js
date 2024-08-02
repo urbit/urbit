@@ -62,6 +62,7 @@ function pokeShip(event, eventType, eventAttr, returnAttrVals) {
         event.preventDefault();
         const formData = new FormData(event.target);
         formData.forEach((v, k) => { uiEventData[k] = v });
+        event.target.reset();
     };
     fetch(channelPath, {
         method: 'PUT',
