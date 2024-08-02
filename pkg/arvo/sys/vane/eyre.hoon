@@ -4185,7 +4185,9 @@
       :^  ~  ~  %noun
       !>  ^-  cache-entry
       :-  ?=(^ lyc)
-      :+  %payload  [416 ~]
+      :+  %payload
+        :-  416
+        ['content-range' (cat 3 'bytes */' (crip (a-co:co p.q.mime)))]^~
       `(as-octs:mimes:html 'requested range not satisfiable')
     ::
     =/  =octs
