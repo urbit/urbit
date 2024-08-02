@@ -38,12 +38,19 @@
 ::
 ::  (unit pail) from lore 
 ::
-++  pail-from-lore
+++  get-pail-by-pith
   |=  [=lore:neo =pith:neo]
   ^-  (unit pail:neo)
-  =/  id=(unit idea:neo)  (~(get of:neo lore) pith)
-  ?~  id  ~
-  `q.saga:(need id)
+  =/  idea=(unit idea:neo)  (~(get of:neo lore) pith)
+  ?~  idea  ~
+  `pail:(need idea)
+::
+++  get-vase-by-pith
+  |=  [=lore:neo =pith:neo]
+  ^-  (unit vase)
+  =/  idea=(unit idea:neo)  (~(get of:neo lore) pith)
+  ?~  idea  ~
+  `q.pail:(need idea)
 ::
 ::  get pail.saga from idea 
 ::  
@@ -51,4 +58,21 @@
 ::   |=  =idea:neo
 ::   ^-  pail:neo
 ::   q.saga:(need idea)
+::
+++  en-pith
+  |=  =cord
+  ^-  pith
+  %-  pave:neo
+  ;;  path
+  %-  stub  cord
+::
+:: ???
+::
+++  en-tape-mast
+  |=  [vm=@tas =pith:neo]
+  ^-  tape
+  %-  en-tape:pith:neo
+  %+  welp  /[vm]
+  pith
+::
 --
