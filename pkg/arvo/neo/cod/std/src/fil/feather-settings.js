@@ -26,12 +26,12 @@ class extends HTMLElement {
         ${this.partSlider('Inner gap size', 'sky-inner-gap', 'px', 0, 30, 1)}
       </div>
       <div class="fc g4">
-        ${this.partSlider('Base font size', '1in', 'px', 1, 8, 0.01)}
-        ${this.partSlider('Monospaced font scale', 'mono-scale', 'px', 0.3, 1.7, 0.01)}
-        ${this.partSlider('Letter spacing', 'letter-spacing', 'px', -1, 3, 0.001)}
+        ${this.partSlider('Base font size', '1in', 'px', 3, 6, 0.01)}
+        ${this.partSlider('Monospaced font scale', 'mono-scale', null, 0.3, 1.7, 0.01)}
+        ${this.partSlider('Letter spacing', 'letter-spacing', 'em', -0.1, 0.4, 0.001)}
         ${this.partSlider('Line height', 'line-height', null, 0.7, 2, 0.01)}
-        ${this.partDropdown('Main font', 'font', this.mainFonts)}
-        ${this.partDropdown('Monospaced font', 'font-mono', this.monoFonts)}
+        ${this.partDropdown('Main font', 'font', this.mainFonts, 'sans-serif')}
+        ${this.partDropdown('Monospaced font', 'font-mono', this.monoFonts, 'monospace')}
       </div>
       <div class="fc g1">
         <div class="fr g2">${this.partColor('b4', 'b4')}${this.partColor('f4', 'f4')}</div>
@@ -46,7 +46,7 @@ class extends HTMLElement {
       <div>
         <button
           class="p-1 br1 b1 bd1"
-          onclick="$(this).host().poke('reset')"
+          onclick="$(this).host().emit('feather-reset')"
           >
           Reset to defaults
         </button>
@@ -55,7 +55,7 @@ class extends HTMLElement {
   }
   connectedCallback() {
     $(this).off();
-    $(this).on('reset', () => {
+    $(this).on('feather-reset', () => {
       //
       localStorage.removeItem('feather-settings');
       document.documentElement.style = '';
@@ -77,30 +77,21 @@ class extends HTMLElement {
   }
   get mainFonts() {
     return [
-       "DM Sans"
-      ,"Lato"
-      ,"Georgia"
-      ,"Optima"
-      ,"DejaVu Sans"
-      ,"Palatino"
-      ,"Montserrat"
-      ,"Verdana"
-      ,"Gill Sans"
-      ,"Helvetica Neue"
-      ,"Open Sans"
-      ,"Roboto"
-      ,"Arial"
-      ,"Futura"
-      ,"PT Sans"
+      ["'DM Sans'", "DM Sans"],
+      ["'Lato'", "Lato"],
+      ["'Georgia'", "Georgia"],
+      ["'Verdana'", "Verdana"],
+      ["'Gill Sans'", "Gill Sans"],
+      ["'Helvetica Neue'", "Helvetica Neue"],
+      ["'Arial'", "Arial"],
+      ["'Futura'", "Futura"],
     ]
   }
   get monoFonts() {
     return [
-       "Andale Mono"
-      ,"Courier New"
-      ,"Courier"
-      ,"Monaco"
-      ,"Spot Mono"
+      ["'Andale Mono'" ,"Andale Mono"],
+      ["'Courier'" ,"Courier"],
+      ["'Monaco'" ,"Monaco"],
     ]
   }
   get currentFeatherRules() {
@@ -127,7 +118,7 @@ class extends HTMLElement {
       { variable: 'mono-scale', unit: ''},
       { variable: 'line-height', unit: ''},
       { variable: 'sky-opacity', unit: ''},
-      { variable: 'letter-spacing', unit: 'px'},
+      { variable: 'letter-spacing', unit: 'em'},
       { variable: 'sky-outer-gap', unit: 'px'},
       { variable: 'sky-inner-gap', unit: 'px'},
       { variable: '1in', unit: 'px'},
@@ -159,7 +150,7 @@ class extends HTMLElement {
       </label>
     `
   }
-  partDropdown(label, variable, options) {
+  partDropdown(label, variable, options, defaultName) {
     return `
       <label class="fc g1">
         <span class="s-1 f2">${label}</span>
@@ -173,7 +164,8 @@ class extends HTMLElement {
             value: this.value
           }])"
         >
-          ${options.map(o => '<option value="' + o + '">' + o + '</option>')}
+          <option value="">${defaultName || ''}</option>
+          ${options.map(o => '<option value="' + o[0] + '">' + o[1] + '</option>').join('')}
         </select>
       </label>
     `
@@ -200,6 +192,7 @@ class extends HTMLElement {
       let el = this.gid(`in-${r.variable}`);
       if (el) {
         el.value = r.value;
+        el.setAttribute('value', r.value);
       }
     });
   }

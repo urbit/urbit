@@ -104,8 +104,8 @@ i {
   --sky-outer-gap: 8px;
   --sky-inner-gap: 8px;
 
-  --font: 'Arial', sans-serif;
-  --font-mono: 'Monaco', monospace;
+  --font: 'Arial';
+  --font-mono: 'Monaco';
   --mono-scale: 0.8;
   --letter-spacing: 0.024em;
   --line-height: 1.4;
@@ -240,6 +240,7 @@ i {
 }
 html {
   height: 100%;
+  font-family: sans-serif;
 }
 body {
   margin: 0;
@@ -249,7 +250,7 @@ body {
   font-feature-settings: normal;
   font-variation-settings: normal;
   min-height: 100%;
-  font-family: var(--font);
+  font-family: var(--font, sans-serif);
   letter-spacing: var(--letter-spacing);
   line-height: var(--line-height);
 }
@@ -324,7 +325,7 @@ body {
   object-fit: contain;
 }
 .mono {
-  font-family: var(--font-mono);
+  font-family: var(--font-mono, monospace);
   font-size: calc(1em * var(--mono-scale));
 }
 .italic {
@@ -795,7 +796,7 @@ body {
   color: var(--f2);
 }
 .prose pre {
-  font-family: var(--font-mono);
+  font-family: var(--font-mono, monospace);
   font-size: calc(1em * var(--mono-scale));
   overflow-x: auto;
   width: 100%;
@@ -805,7 +806,7 @@ body {
   background-color: var(--b1);
 }
 .prose code {
-  font-family: var(--font-mono);
+  font-family: var(--font-mono, monospace);
   font-size: calc(1em * var(--mono-scale));
   color: var(--f2);
 }

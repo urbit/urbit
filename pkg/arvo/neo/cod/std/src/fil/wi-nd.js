@@ -198,6 +198,13 @@ class extends HTMLElement {
         });
       });
     });
+    $(this).on('reset-feather-values', (e) => {
+      $(this.gid('tabs')).children().each(function() {
+        this.contentWindow.postMessage({
+          messagetype: "feather-reset",
+        });
+      });
+    });
   }
   disconnectedCallback() {
     if (this.intervalId !== null) {
@@ -313,6 +320,9 @@ class extends HTMLElement {
                 r.value+r.unit,
               );
           })
+        }
+        else if (event.data?.messagetype === 'feather-reset') {
+          document.documentElement.style = '';
         }
       });
     `;

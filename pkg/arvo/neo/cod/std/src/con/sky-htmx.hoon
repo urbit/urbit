@@ -109,6 +109,14 @@
           let rules = document.querySelector('s-k-y').currentFeatherRules;
           localStorage.setItem('feather-settings', JSON.stringify(rules));
         });
+        document.addEventListener('feather-reset', (e) => {
+          let windows = document.querySelectorAll('wi-nd');
+          windows.forEach(w => {
+            $(w).poke('reset-feather-values')
+          })
+          let rules = document.querySelector('s-k-y').currentFeatherRules;
+          localStorage.setItem('feather-settings', JSON.stringify(rules));
+        });
         let rules = JSON.parse(localStorage.getItem('feather-settings') || '[]');
         rules.forEach(r => {
           document.documentElement.style
