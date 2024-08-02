@@ -3,7 +3,6 @@
 /-  serv=sky-server
 /-  srv=server
 /*  feather
-/*  reset
 /*  jquery
 /*  htmx-js
 /*  htmx-response-targets
@@ -331,7 +330,6 @@
         =src  "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.15.1/cdn/shoelace.js"
         ;
       ==
-    ;style: {(trip reset)}
     ;style: {(trip feather)}
     ;style: {tree-style}
     ==

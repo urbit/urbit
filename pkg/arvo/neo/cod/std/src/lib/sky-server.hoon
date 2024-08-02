@@ -1,5 +1,4 @@
 /*  feather
-/*  reset
 /*  jquery
 /*  htmx-js
 /*  htmx-dom-enc
