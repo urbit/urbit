@@ -104,8 +104,8 @@ i {
   --sky-outer-gap: 8px;
   --sky-inner-gap: 8px;
 
-  --font: 'Arial';
-  --font-mono: 'Monaco';
+  --font: 'Arial', sans-serif;
+  --font-mono: 'Monaco', monospace;
   --mono-scale: 0.8;
   --letter-spacing: 0.024em;
   --line-height: 1.4;
@@ -249,7 +249,7 @@ body {
   font-feature-settings: normal;
   font-variation-settings: normal;
   min-height: 100%;
-  font-family: var(--font), sans-serif;
+  font-family: var(--font);
   letter-spacing: var(--letter-spacing);
   line-height: var(--line-height);
 }
@@ -324,7 +324,7 @@ body {
   object-fit: contain;
 }
 .mono {
-  font-family: var(--font-mono), monospace;
+  font-family: var(--font-mono);
   font-size: calc(1em * var(--mono-scale));
 }
 .italic {
@@ -852,8 +852,8 @@ input[type=range] {
 input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 8px;
-  height: 8px;
+  width: 0.8em;
+  height: 0.8em;
   background: var(--f0);
   cursor: pointer;
   border-radius: 50%;
@@ -861,8 +861,8 @@ input[type=range]::-webkit-slider-thumb {
 }
 
 input[type=range]::-moz-range-thumb {
-  width: 8px;
-  height: 8px;
+  width: 0.8em;
+  height: 0.8em;
   background: var(--f0);
   cursor: pointer;
   border-radius: 50%;
