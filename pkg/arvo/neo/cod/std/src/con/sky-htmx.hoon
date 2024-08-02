@@ -30,34 +30,6 @@
   """
   --{(trip key)}: {(trip val)};
   """
-++  theme-style
-  =/  body-style
-    """
-    body \{
-      background-color: var(--b1);
-      background-image: var(--sky-bg-url);
-      background-size: var(--sky-bg-size);
-      background-repeat: var(--sky-bg-repeat);
-    }
-    """
-  =/  settings
-    ^-  (unit sky-settings)
-    =/  s  (~(get of:neo kids.bowl) /settings)
-    ?~  s  ~
-    :-  ~
-    !<  sky-settings
-    q.q.saga.u.s
-  ;style
-    ;+  ;/
-    ?~  settings
-      body-style
-    """
-    {body-style}
-    html \{
-      {(map-to-css-tape u.settings)}
-    }
-    """
-  ==
 ++  icon-url
   ^~
   %-  trip
@@ -125,32 +97,43 @@
       ;script
         ;+  ;/  %-  trip
         '''
-        function urbitTimestamp() {
-          let now = new Date();
-          let year = now.getFullYear();
-          let month = now.getMonth() + 1;
-          let date = now.getDate();
-          let hour = String(now.getHours()).padStart(2, '0');
-          let min = String(now.getMinutes()).padStart(2, '0');
-          let sec = String(now.getSeconds()).padStart(2, '0');
-          return `~${year}.${month}.${date}..${hour}.${min}.${sec}`;
-        }
-        document.addEventListener('feather-css-change', (e) => {
+        document.addEventListener('feather-changed', (e) => {
+          e.detail.forEach(r => {
+            document.documentElement.style
+              .setProperty('--'+r.variable, `${r.value}${r.unit||''}`);
+          })
+          let windows = document.querySelectorAll('wi-nd');
+          windows.forEach(w => {
+            $(w).poke('set-feather-values', e.detail)
+          })
+          let rules = document.querySelector('s-k-y').currentFeatherRules;
+          localStorage.setItem('feather-settings', JSON.stringify(rules));
+        });
+        let rules = JSON.parse(localStorage.getItem('feather-settings') || '[]');
+        rules.forEach(r => {
           document.documentElement.style
-            .setProperty('--'+e.detail.variable, `${e.detail.value}${e.detail.unit||''}`, 'important');
-          $('wi-nd').poke('feather-css-change', e.detail)
+            .setProperty('--'+r.variable, `${r.value}${r.unit||''}`);
         })
         window.addEventListener('resize', () => {
           $('s-k-y').attr('open', null);
-        })
+        });
         window.addEventListener('message', function(event) {
-          if (event.data?.messagetype !== 'sky-poll-response') return;
-          let wid = event.data.wid;
-          let here = event.data.here;
-          let prefix = event.data.prefix;
-          let wind = document.querySelector(`[wid='${wid}']`);
-          if (wind) {
-            $(wind).poke('iframe-moved', {here, prefix})
+          if (event.data?.messagetype == 'sky-poll-response') {
+            let wid = event.data.wid;
+            let here = event.data.here;
+            let prefix = event.data.prefix;
+            let wind = document.querySelector(`[wid='${wid}']`);
+            if (wind) {
+              $(wind).poke('iframe-moved', {here, prefix})
+            }
+          }
+          else if (event.data?.messagetype == 'iframe-wants-feather') {
+            let rules = document.querySelector('s-k-y').currentFeatherRules;
+            let wid = event.data.wid;
+            let wind = document.querySelector(`[wid='${wid}']`);
+            if (wind) {
+              $(wind).poke('set-feather-values', rules)
+            }
           }
         });
         '''
@@ -169,7 +152,6 @@
       =hx-replace-url  "/neo/sky"
       =our  (scow %p our.bowl)
       ;+  in
-      ;+  theme-style
     ==
   ==
 --

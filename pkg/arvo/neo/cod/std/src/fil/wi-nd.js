@@ -190,9 +190,12 @@ class extends HTMLElement {
       this.prefixWhichChanged = e.detail.prefix;
       $(this).attr('here', e.detail.here);
     });
-    $(this).on('feather-css-change', (e) => {
+    $(this).on('set-feather-values', (e) => {
       $(this.gid('tabs')).children().each(function() {
-        this.contentWindow.postMessage({ messagetype: "feather-change", ...e.detail});
+        this.contentWindow.postMessage({
+          messagetype: "feather-change",
+          rules: e.detail
+        });
       });
     });
   }
@@ -279,6 +282,12 @@ class extends HTMLElement {
     let wid = this.getAttribute('wid');
     const inlineScript = iframeDoc.createElement('script');
     inlineScript.textContent = `
+      window.parent.postMessage(
+        {
+          messagetype: 'iframe-wants-feather',
+          wid: '${wid}',
+        }, '*'
+      );
       window.addEventListener('message', (event) => {
         if (event.data?.messagetype === 'sky-poll') {
           let windowHere = event.data.here;
@@ -288,13 +297,22 @@ class extends HTMLElement {
           }
           let here = window.location.pathname.slice(${prefix.length});
           if (here != windowHere) {
-            window.parent.postMessage({messagetype: 'sky-poll-response',  wid: '${wid}', here: here, prefix: '${prefix}'}, '*');
+            window.parent.postMessage({
+              messagetype: 'sky-poll-response',
+              wid: '${wid}',
+              here: here,
+              prefix: '${prefix}'
+            }, '*');
           }
         }
         else if (event.data?.messagetype === 'feather-change') {
-          document.documentElement.style
-            .setProperty('--'+event.data.variable, event.data.value+event.data.unit, 'important');
-
+          event.data.rules.forEach(r => {
+            document.documentElement.style
+              .setProperty(
+                '--'+r.variable,
+                r.value+r.unit,
+              );
+          })
         }
       });
     `;

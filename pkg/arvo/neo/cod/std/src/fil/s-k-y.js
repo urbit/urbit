@@ -97,7 +97,7 @@ class extends HTMLElement {
          display: grid;
          grid-area: main;
          overflow: hidden;
-         padding-left: var(--sky-inner-gap);
+         padding-left: var(--sky-inner-gap, 8px);
        }
        #s0, #s1, #s2, #s3 {
          overflow: auto;
@@ -196,7 +196,7 @@ class extends HTMLElement {
        main.open-2 #s0,
        main.open-3 #s0,
        main.open-4 #s0 {
-         padding-right: var(--sky-inner-gap);
+         padding-right: var(--sky-inner-gap, 8px);
        }
        main.open-1 #s1,
        main.open-2 #s1 {
@@ -204,7 +204,7 @@ class extends HTMLElement {
        }
        main.open-3 #s1,
        main.open-4 #s1 {
-         padding-bottom: var(--sky-inner-gap);
+         padding-bottom: var(--sky-inner-gap, 8px);
        }
        main.open-1 #s2,
        main.open-2 #s2,
@@ -212,7 +212,7 @@ class extends HTMLElement {
          padding-right: 0;
        }
        main.open-4 #s2 {
-         padding-right: var(--sky-inner-gap);
+         padding-right: var(--sky-inner-gap, 8px);
        }
        /*
         *  mobile
@@ -292,7 +292,7 @@ class extends HTMLElement {
           <span class="mso">notifications</span>
         </button>
         <button
-          class="p2 br1 bd1 b3 hover f3"
+          class="p2 br1 bd1 b3 hover f3 hidden"
           onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('toggle-settings'))"
           >
           <span class="mso">settings</span>
@@ -407,6 +407,9 @@ class extends HTMLElement {
   }
   get our() {
     return this.getAttribute('our');
+  }
+  get currentFeatherRules() {
+    return this.qs('feather-settings').currentFeatherRules;
   }
   get windows() {
     let slots = $(this).children('wi-nd[slot]').get().toSorted((a, b) => {

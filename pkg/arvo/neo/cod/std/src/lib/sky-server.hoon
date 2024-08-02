@@ -67,13 +67,12 @@
       =rel  "stylesheet"
       ;
     ==
-    ;style: {(trip reset)}
     ;style: {(trip feather)}
     ;script
       ;+  ;/
       """
       const sharedStyles = new CSSStyleSheet();
-      sharedStyles.replaceSync(`{(trip reset)}\0a{(trip feather)}`);
+      sharedStyles.replaceSync(`{(trip feather)}`);
       document.adoptedStyleSheets = [sharedStyles];
       """
     ==
@@ -93,6 +92,11 @@
         }
         return this;
       };
+      jQuery.fn.host = function () {
+        let first = this[0];
+        let h = first.getRootNode().host;
+        return $(h);
+      }
       jQuery.fn.emit = function (name, detail) {
         (this[0]).dispatchEvent(
           new CustomEvent(

@@ -1,15 +1,110 @@
-/**    feather.css
-  *      ~2024.4.6
-  *
-  *    styling resets
-  *    and
-  *    utility classes
-  *
-  **/
+/*  feather.css  */
+
+
+/*
+ *  part 1: resets
+ *
+ */
+
+
+/* Box sizing rules */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+/* Prevent font size inflation */
+html {
+  -moz-text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+
+/* Remove default margin in favour of better control in authored CSS */
+body, h1, h2, h3, h4, p,
+figure, blockquote, dl, dd {
+  margin-block-end: 0;
+}
+
+/* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
+ul[role='list'],
+ol[role='list'] {
+  list-style: none;
+}
+
+/* Set shorter line heights on headings and interactive elements */
+h1, h2, h3, h4,
+button, input, label {
+  line-height: 1.1;
+}
+
+button, summary {
+  cursor: pointer;
+}
+
+/* Balance text wrapping on headings */
+h1, h2,
+h3, h4 {
+  text-wrap: balance;
+}
+
+a {
+  text-decoration: none;
+  color: currentColor;
+}
+
+/* Make images easier to work with */
+img,
+picture {
+  max-width: 100%;
+  display: block;
+}
+
+/* Inherit as much as possible*/
+input, button,
+textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+  border: inherit;
+  background: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+}
+textarea {
+  resize: none;
+}
+
+/* Make sure textareas without a rows attribute are not tiny */
+textarea:not([rows]) {
+  min-height: 10em;
+}
+
+/* Anything that has been anchored to should have extra scroll margin */
+:target {
+  scroll-margin-block: 5ex;
+}
+
+b {
+  font-weight: bold;
+}
+i {
+  font-style: italic;
+}
+
+/*
+ *  part 2: variables
+ *
+ */
 
 :root {
+  --sky-opacity: 0.95;
+  --sky-outer-gap: 8px;
+  --sky-inner-gap: 8px;
 
-  --font: 'Arial', sans-serif;
+  --font: 'Arial';
   --font-mono: 'Monaco';
   --mono-scale: 0.8;
   --letter-spacing: 0.024em;
@@ -133,29 +228,36 @@
     --f4:  var(--dark-f4);
   }
 }
+
+/*
+ *  part 1: page styling
+ *
+ */
+
 * {
+  /* do i really  need this */
   font-size: var(--font-size);
 }
-/*
-@media (max-width: 900px) {
-  :root {
-    --font-size: calc(1.3 * var(--font-size));
-  }
-}
-*/
-body {
-  font-family: var(--font);
-  letter-spacing: var(--letter-spacing);
-  background: var(--b0);
-  color: var(--f0);
-  line-height: 1;
+html {
   height: 100%;
 }
-button {
-  border: inherit;
-  background: inherit;
-  color: inherit;
+body {
+  margin: 0;
+  height: 100%;
+  color: var(--f0);
+  background: var(--b0);
+  font-feature-settings: normal;
+  font-variation-settings: normal;
+  min-height: 100%;
+  font-family: var(--font), sans-serif;
+  letter-spacing: var(--letter-spacing);
+  line-height: var(--line-height);
 }
+
+/*
+ *  part 4: utility classes
+ *
+ */
 
 .break {
   word-break: break-word;
@@ -730,4 +832,39 @@ button {
 .prose summary {
   user-select: none;
   cursor: pointer;
+}
+
+/*
+ *  part 5: input styling
+ *
+ */
+
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 5px;
+  background: var(--f4);
+  outline: none;
+  border-radius: 5px;
+}
+
+/* Style the slider thumb */
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 8px;
+  height: 8px;
+  background: var(--f0);
+  cursor: pointer;
+  border-radius: 50%;
+  border: none;
+}
+
+input[type=range]::-moz-range-thumb {
+  width: 8px;
+  height: 8px;
+  background: var(--f0);
+  cursor: pointer;
+  border-radius: 50%;
+  border: none;
 }
