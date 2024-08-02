@@ -2354,4 +2354,21 @@
     canon-min-3x3-6u
   assay-min-3x3-6u
 
+++  test-unsigned-mmul-4r  ^-  tang
+  =/  meta-3x3-5  [~[3 3] 5 %i754 ~]
+  =/  assay-3x3-5-i  (eye:la meta-3x3-5)
+  =/  assay-3x3-5  (en-ray:la [meta-3x3-5 ~[~[1 2 3] ~[4 5 6] ~[7 8 9]]])
+  =/  canon-3x3-5  (en-ray:la [meta-3x3-5 ~[~[30 36 42] ~[66 81 96] ~[102 126 150]]])
+  ;:  weld
+    %+  expect-eq
+      !>(canon-3x3-5)
+      !>((mmul:la assay-3x3-5 assay-3x3-5))
+    %+  expect-eq
+      !>(assay-3x3-5)
+      !>((mmul:la assay-3x3-5 assay-3x3-5-i))
+    %+  expect-eq
+      !>((en-ray:la [[~[3 1] 5 %uint ~] ~[~[6] ~[15] ~[24]]]))
+      !>((mmul:la assay-3x3-5 (ones:la [~[3 1] 5 %uint ~])))
+  ==
+
 --

@@ -12,7 +12,7 @@
   $:  shape=(list @)  ::  list of dimension lengths
       =bloq           ::  logarithm of bitwidth
       =kind           ::  name of data type
-      fxp=(unit prec) ::  fixed-point scale
+      tail=*          ::  placeholder for future data (jet convenience)
   ==
 ::
 +$  kind              ::  $kind:  type of array scalars

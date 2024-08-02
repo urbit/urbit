@@ -311,7 +311,7 @@
       |-
       ?:  =(0x1 data.ray)  (welp ;;((list ndray) fin) ~[;;((list ndray) els)])
       %=  $
-        els   (snip (rip bloq (cut bloq [0 +((snag 0 dims))] data:(spac `^ray`[[~[(snag 0 dims) 1] bloq kind fxp] `@ux`data.ray]))))
+        els   (snip (rip bloq (cut bloq [0 +((snag 0 dims))] data:(spac `^ray`[[~[(snag 0 dims) 1] bloq kind tail] `@ux`data.ray]))))
         fin   ?~  els  fin  :: skip on first row
               ?~  fin  `(list (list ndray))`~[;;((list ndray) els)]
               (welp ;;((list (list ndray)) fin) ~[;;((list ndray) els)])
@@ -381,12 +381,12 @@
           :: %uint -> %uint
           %uint
         %-  en-ray
-        :-  [shape.meta.ray bloq %uint fxp.meta.ray]
+        :-  [shape.meta.ray bloq %uint tail.meta.ray]
         data:(de-ray ray)
           :: %uint -> %i754
           %i754
         %-  en-ray
-        :-  [shape.meta.ray bloq %i754 fxp.meta.ray]
+        :-  [shape.meta.ray bloq %i754 tail.meta.ray]
         %+  turn  (ravel ray)
         ?+  bloq  !!
           %7  ~(sun rq rnd)
@@ -402,7 +402,7 @@
           :: XXX will incorrectly convert negative values to %uint
           %uint
         %-  en-ray
-        :-  [shape.meta.ray bloq %uint fxp.meta.ray]
+        :-  [shape.meta.ray bloq %uint tail.meta.ray]
         %+  turn  (ravel ray)
         ?+  bloq.meta.ray  !!
           %7  |=(a=@rq ^-(@u (^div (need (~(toi rq rnd) a)) 2)))
@@ -414,7 +414,7 @@
           %i754
         ?>  &((^gte bloq %4) (^lte bloq %7))
         %-  en-ray
-        :-  [shape.meta.ray bloq %i754 fxp.meta.ray]
+        :-  [shape.meta.ray bloq %i754 tail.meta.ray]
         data:(de-ray ray)
       ==
     ==
@@ -790,7 +790,7 @@
     ^-  ray
     %-  en-ray
     ^-  baum
-    :-  `meta`[~[-.shape 1] bloq kind fxp]
+    :-  `meta`[~[-.shape 1] bloq kind tail]
     ^-  ndray
     %+  turn
       `(list @)`(flop (gulf 0 (dec -.shape)))
