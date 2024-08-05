@@ -1601,10 +1601,12 @@
         =/  pax  (etch-path path.binding)
         [(add p.pax 32) (can 3 pax [32 root.binding] ~)]
       ::
+      ++  kdf  kdf:blake3:blake:crypto
+      ::
       ++  crypt
         |=  [key=@uxI iv=octs msg=octs]
         ^-  octs
-        =/  x  (xchacha:chacha:crypto 8 key (hash 24 iv))
+        =/  x  (xchacha:chacha:crypto 8 key (kdf 24 "mesa-crypt-iv" iv))
         (chacha:crypto 8 key.x nonce.x 0 msg)
       ::
       ++  sign
@@ -1643,7 +1645,7 @@
       ++  seal-path
         |=  [key=@uxI =path]
         ^-  @
-        =/  keys  (hash 64 32^key)
+        =/  keys  (kdf 64 "mesa-aead" 32^key)
         =/  pat  (etch-path path)
         =/  tag  (keyed-hash (rsh 8 keys) 16 pat)
         =/  cyf  (crypt (end 8 keys) 16^tag pat)
@@ -1652,7 +1654,7 @@
       ++  open-path
         |=  [key=@uxI sealed=@]
         ^-  path
-        =/  keys  (hash 64 32^key)
+        =/  keys  (kdf 64 "mesa-aead" 32^key)
         =/  wid  (dec (met 3 sealed))
         ?>  =(0x1 (cut 3 [wid 1] sealed))
         =/  [tag=@ux cyf=@ux]  [(end [3 16] sealed) (rsh [3 16] sealed)]
@@ -1661,10 +1663,6 @@
         (sift-path pat)
       ::
       --
-    ::
-    ++  hash
-      |=  [out=@ud msg=octs]
-      (blake3:blake:crypto out msg)
     ::
     ++  keyed-hash
       |=  [key=@uxI out=@ud msg=octs]
@@ -6828,8 +6826,7 @@
             ++  sy-plug
               |=  =path
               ^+  sy-core
-              =/  key=@
-                sec:ex:(pit:nu:crub:crypto 512 (shaz eny)) :: TODO: check key width
+              =/  key=@  (kdf:crypt 32 "mesa-chum-key" eny)
               =/  kid=@ud
                 ?~  latest=(ram:key-chain server-chain.ames-state)
                   1
