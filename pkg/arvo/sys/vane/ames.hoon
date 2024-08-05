@@ -5350,26 +5350,12 @@
             |=  [=path =ship]
             ^-  @uxI
             =/  tyl=(pole knot)  path
-            ?+    tyl  !!
-                [%publ lyf=@ pat=*]
-              =/  per  (ev-got-per ship)
-              (end 8 (rsh 3 public-key.sat.per))
-            ::
-                [%chum lyf=@ her=@ hyf=@ pat=[cyf=@ ~]]
-              =/  her  (slaw %p her.tyl)
-              ?>  ?=(^ her)
-              =/  her=@p  ?:(=(u.her our) ship u.her)
-              =/  per  (ev-got-per her)
-              (end 8 (rsh 3 symmetric-key.sat.per))
-            ::
-                [%shut kid=@ pat=[cyf=@ ~]]
-              =/  kid  (slaw %ud kid.tyl)
-              ?>  ?=(^ kid)
-              =/  per  (ev-got-per ship)
-              ?~  key=(get:key-chain client-chain.sat.per u.kid)
-                !!  :: XX handle
-              (end 8 (rsh 3 -.u.key))
-            ==
+            ?>  ?=(tyl [%publ lyf=@ pat=*])
+            =/  lyf  (slaw %ud lyf.tyl)
+            ?>  ?=(^ lyf)
+            =/  sat=fren-state  sat:(ev-got-per ship)
+            ?>  =(life.sat u.lyf)
+            (end 8 (rsh 3 public-key.sat))
           ::
           ++  ev-mac-key
             |=  [=path =ship]
@@ -5380,15 +5366,15 @@
               =/  her  (slaw %p her.tyl)
               ?>  ?=(^ her)
               =/  her=@p  ?:(=(u.her our) ship u.her)
-              =/  per  (ev-got-per her)
-              ?>  (lte (met 3 symmetric-key.sat.per) 32)
-              `@uxI`symmetric-key.sat.per
+              =/  sat=fren-state  sat:(ev-got-per her)
+              ?>  (lte (met 3 symmetric-key.sat) 32)
+              `@uxI`symmetric-key.sat
             ::
                 [%shut kid=@ pat=[cyf=@ ~]]
               =/  kid  (slaw %ud kid.tyl)
               ?>  ?=(^ kid)
-              =/  per  (ev-got-per ship)
-              ?~  key=(get:key-chain client-chain.sat.per u.kid)
+              =/  sat=fren-state  sat:(ev-got-per ship)
+              ?~  key=(get:key-chain client-chain.sat u.kid)
                 !!  :: XX handle
               ?>  (lte (met 3 -.u.key) 32)
               `@uxI`-.u.key
