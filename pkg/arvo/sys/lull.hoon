@@ -3506,8 +3506,9 @@
         =.  in.strand-input
           ?~  in.strand-input  ~
           =/  in  u.in.strand-input
-          ?.  ?=(%agent -.in)      `in
-          ?.  ?=(%fact -.sign.in)  `in
+          ?.  ?=(%agent -.in)                  `in
+          ?.  ?=(%fact -.sign.in)              `in
+          ?:  ?=(%thread-done p.cage.sign.in)  `in
           ::
           :-  ~
           :^  %agent  wire.in  %fact
