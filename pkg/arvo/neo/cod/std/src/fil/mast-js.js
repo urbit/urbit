@@ -3,11 +3,13 @@ let pith;
 let path;
 let ship;
 let app;
-let channelMessageId = 0;
+let channelMessageId;
+let subscriptionId;
 let eventSource;
 const channelId = `${Date.now()}${Math.floor(Math.random() * 100)}`;
 const channelPath = `${window.location.origin}/~/channel/${channelId}`;
 addEventListener('DOMContentLoaded', async () => {
+    channelMessageId = 0;
     rope = Number(document.documentElement.getAttribute('rope'));
     pith = document.documentElement.getAttribute('pith');
     path = document.documentElement.getAttribute('path');
@@ -18,30 +20,33 @@ addEventListener('DOMContentLoaded', async () => {
     eventElements.forEach(el => setEventListeners(el));
 });
 async function connectToShip() {
-    try {
-        const storageKey = `${ship}${app}${path}`;
-        let storedId = localStorage.getItem(storageKey);
-        localStorage.setItem(storageKey, channelId);
-        if (storedId) {
-            const delPath = `${window.location.origin}/~/channel/${storedId}`;
-            await fetch(delPath, {
-                method: 'PUT',
-                body: JSON.stringify([{
-                    id: channelMessageId,
-                    action: 'delete'
-                }])
-            });
-        };
-        const body = JSON.stringify(makeSubscribeBody());
-        await fetch(channelPath, { 
+    const storageKey = `${rope}${ship}`;
+    let storedStr = localStorage.getItem(storageKey);
+    localStorage.setItem(storageKey, `${channelMessageId} ${channelId}`);
+    if (storedStr) {
+        const storedIds = storedStr.split(' ');
+        const oldPath = `${window.location.origin}/~/channel/${storedIds[1]}`;
+        fetch(oldPath, {
             method: 'PUT',
-            body
+            body: JSON.stringify([
+                {
+                    id: channelMessageId,
+                    action: 'unsubscribe',
+                    subscription: Number(storedIds[0])
+                },
+                {
+                    id: channelMessageId++,
+                    action: 'delete'
+                }
+            ])
         });
-        eventSource = new EventSource(channelPath);
-        eventSource.addEventListener('message', handleChannelStream);
-    } catch (error) {
-        console.error(error);
     };
+    await fetch(channelPath, { 
+        method: 'PUT',
+        body: JSON.stringify(makeSubscribeBody(channelMessageId))
+    });
+    eventSource = new EventSource(channelPath);
+    eventSource.addEventListener('message', handleChannelStream);
 };
 function setEventListeners(el) {
     const eventAttrVals = el.getAttribute('event');
@@ -215,8 +220,7 @@ function handleChannelStream(event) {
         };
     });
 };
-function makeSubscribeBody() {
-    channelMessageId++;
+function makeSubscribeBody(channelMessageId) {
     return [{
         id: channelMessageId,
         action: 'subscribe',
