@@ -124,99 +124,83 @@ function handleReturnAttr(event, returnAttrVals) {
     return returnData;
 };
 function handleChannelStream(event) {
-    try {
-        const streamResponse = JSON.parse(event.data);
-        if (streamResponse.response !== 'diff') return;
-        fetch(channelPath, {
-            method: 'PUT',
-            body: JSON.stringify(makeAck(streamResponse.id))
-        });
-        const htmlData = streamResponse.json;
-        // console.log(htmlData);
-        if (!htmlData) return;
-        let container = document.createElement('template');
-        container.innerHTML = htmlData;
-        if (container.content.firstElementChild.childNodes.length === 0) return;
-        // const navUrl = container.content.firstElementChild.getAttribute('url');
-        // if (navUrl && (navUrl !== window.location.pathname)) {
-        //     history.pushState({}, '', navUrl);
-        // };
-        while (container.content.firstElementChild.children.length > 0) {
-            let gustChild = container.content.firstElementChild.firstElementChild;
-            if (gustChild.tagName === 'D') {
-                for (const att of gustChild.attributes) {
-                    const dkey = att.value;
-                    document.querySelector(`[key="${dkey}"]`).remove();
-                };
-                gustChild.remove();
-            } else if (gustChild.tagName === 'N') {
-                const nodeKey = gustChild.firstElementChild.getAttribute('key');
-                const parentKey = gustChild.firstElementChild.getAttribute('pkey');
-                const appendIndex = gustChild.id;
-                let domParent = document.querySelector(`[key="${parentKey}"]`);
-                domParent.insertBefore(gustChild.firstElementChild, domParent.children[appendIndex]);
-                let appendedChild = domParent.querySelector(`[key="${nodeKey}"]`);
-                if (appendedChild.getAttribute('event')) {
-                    setEventListeners(appendedChild);
-                };
-                if (appendedChild.childElementCount > 0) {
-                    let needingListeners = appendedChild.querySelectorAll('[event]');
-                    needingListeners.forEach(child => setEventListeners(child));
-                };
-                appendedChild = appendedChild.nextElementSibling;
-                gustChild.remove();
-            } else if (gustChild.tagName === 'M') {
-                const nodeKey = gustChild.getAttribute('key');
-                const nodeIndex = gustChild.id;
-                let existentNode = document.querySelector(`[key="${nodeKey}"]`);
-                let childAtIndex = existentNode.parentElement.children[nodeIndex];
-                if (existentNode.nextElementSibling 
-                && (existentNode.nextElementSibling.getAttribute('key') 
-                === childAtIndex.getAttribute('key'))) {
-                    existentNode.parentElement.insertBefore(existentNode, childAtIndex.nextElementSibling);
-                } else {
-                    existentNode.parentElement.insertBefore(existentNode, childAtIndex);
-                };
-                gustChild.remove();
-            } else if (gustChild.tagName === 'C') {
-                const nodeKey = gustChild.getAttribute('key');
-                const attToRem = gustChild.getAttribute('rem')?.slice(0, -1).split(' ') ?? [];
-                let existentNode = document.querySelector(`[key="${nodeKey}"]`);
-                attToRem.forEach(att => {
-                    if (att === 'event') {
-                        const eventType = existentNode.getAttribute('event').split('/', 2)[1];
-                        existentNode[`on${eventType}`] = null;
-                    };
-                    existentNode.removeAttribute(att);
+    const streamResponse = JSON.parse(event.data);
+    fetch(channelPath, {
+        method: 'PUT',
+        body: JSON.stringify(makeAck(streamResponse.id))
+    });
+    if (streamResponse.response !== 'diff') return;
+    const gust = streamResponse.json;
+    if (!gust) return;
+    // console.log(gust);
+    gust.forEach(gustObj => {
+        switch (gustObj.p) {
+            case 'd':
+                gustObj.q.forEach(key => {
+                    document.querySelector(`[key="${key}"]`).remove();
                 });
-                gustChild.removeAttribute('key');
-                gustChild.removeAttribute('rem');
-                for (const att of gustChild.attributes) {
-                    existentNode.setAttribute(att.name, att.value);
-                    if (att.name === 'event') {
-                        const eventType = existentNode.getAttribute('event').split('/', 2)[1];
-                        existentNode[`on${eventType}`] = null;
-                        setEventListeners(existentNode);
+                break;
+            case 'n':
+                let parent = document.querySelector(`[key="${gustObj.q}"]`);
+                if (gustObj.r === 0) {
+                    parent.insertAdjacentHTML('afterbegin', gustObj.s);
+                } else if (gustObj.r === parent.childNodes.length) {
+                    parent.insertAdjacentHTML('beforeend', gustObj.s);
+                } else {
+                    let indexTarget = parent.childNodes[gustObj.r];
+                    if (indexTarget.nodeType === 1) {
+                        indexTarget.insertAdjacentHTML('beforebegin', gustObj.s);
+                    } else {
+                        let placeholder = document.createElement('div');
+                        parent.insertBefore(placeholder, indexTarget);
+                        placeholder = parent.childNodes[gustObj.r];
+                        placeholder.outerHTML = gustObj.s;
                     };
                 };
-                gustChild.remove();
-            } else {
-                const nodeKey = gustChild.getAttribute('key');
-                let existentNode = document.querySelector(`[key="${nodeKey}"]`);
-                existentNode.replaceWith(gustChild);
-                let replacedNode = document.querySelector(`[key="${nodeKey}"]`);
-                if (replacedNode.getAttribute('event')) {
-                    setEventListeners(replacedNode);
+                let newNode = parent.childNodes[gustObj.r];
+                if (newNode.getAttribute('event')) {
+                    setEventListeners(newNode);
                 };
-                if (replacedNode.childElementCount > 0) {
-                    let needingListeners = replacedNode.querySelectorAll('[event]');
+                if (newNode.childElementCount > 0) {
+                    let needingListeners = newNode.querySelectorAll('[event]');
                     needingListeners.forEach(child => setEventListeners(child));
                 };
-            };
+                break;
+            case 'm':
+                let fromNode = document.querySelector(`[key="${gustObj.q}"]`);
+                const fromIndex = [ ...fromNode.parentNode.childNodes ].indexOf(fromNode);
+                if (fromIndex < gustObj.r) gustObj.r++;
+                let toNode = fromNode.parentNode.childNodes[gustObj.r];
+                fromNode.parentNode.insertBefore(fromNode, toNode);
+                break;
+            case 'c':
+                let targetNode = document.querySelector(`[key="${gustObj.q}"]`);
+                if (gustObj.r.length) {
+                    gustObj.r.forEach(attr => {
+                        if (attr === 'event') {
+                            let eventVal = targetNode.getAttribute('event').split('/');
+                            if (eventVal[0] === '') eventVal.shift();
+                            const eventType = eventVal[0];
+                            targetNode[`on${eventType}`] = null;
+                        };
+                        targetNode.removeAttribute(attr);
+                    });
+                };
+                if (gustObj.s.length) {
+                    gustObj.s.forEach(attr => {
+                        const name = attr[0];
+                        const value = attr[1];
+                        targetNode.setAttribute(name, value);
+                        if (name === 'event') setEventListeners(targetNode);
+                    });
+                };
+                break;
+            case 't':
+                let textWrapperNode = document.querySelector(`[key="${gustObj.q}"]`);
+                textWrapperNode.textContent = gustObj.r;
+                break;
         };
-    } catch (error) {
-        console.error(error);
-    };
+    });
 };
 function makeSubscribeBody() {
     channelMessageId++;

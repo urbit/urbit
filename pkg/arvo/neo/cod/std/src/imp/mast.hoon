@@ -221,19 +221,10 @@
     :-  #/[p/our.bowl]/$/eyre
     :-  %poke
     :-  %eyre-chan-gift
-    !>
-    ^-  chan-gift:eyre:neo
+    !>  ^-  chan-gift:eyre:neo
     :-  sub
-    %-  tape:enjs:format
-    %-  en-xml:html
-    :: ~&  >>  gust/(algo c.i.t.c.old c.i.t.c.new)
-    ^-  manx
-    ;g
-      =url  v.i.a.g.new
-      ;*  %+  algo
-        c.i.t.c.old
-      c.i.t.c.new
-    ==
+    ^-  json
+    [%a (algo c.i.t.c.old c.i.t.c.new)]
   ::
   ++  make-400
     |=  rid=@ta
@@ -274,235 +265,309 @@
   --
 ::
 ++  hoist
-  |=  root=manx
-  |^  ^-  manx
-  (tanx root "0" "~")
-  ++  tanx
-    |=  [m=manx key=tape pkey=tape]
-    =/  fkey=tape  (getv a.g.m %key)
-    =/  nkey=tape  ?~(fkey key fkey)
+  |_  root=manx
+  ++  $
+    ^-  manx
+    (anx root ["" ~])
+  ++  anx
+    |=  [m=manx key=(pair tape (list @))]
+    ^-  manx
+    =/  fkey=@t  (getv %key a.g.m)
+    =/  nkey=(pair tape (list @))  ?~(fkey key [((w-co:co 1) `@uw`(mug fkey)) ~])
+    =/  ntap=tape  (weld p.nkey ((w-co:co 1) `@uw`(jam q.nkey)))
     ?:  =(%$ n.g.m)
-      ;span
-        =mast  "text"
-        =key    nkey
-        =pkey   pkey
+      ;t-
+        =key  ntap
         ;+  m
       ==
-    =:  a.g.m  %-  mart  
-          ?~  fkey
-            [[%key nkey] [[%pkey pkey] a.g.m]]
-          [[%pkey pkey] a.g.m]
-        c.m  (tarl c.m nkey)
+    %_    m
+        a.g
+      ^-  mart  
+      ?~  fkey
+        [[%key ntap] a.g.m]
+      a.g.m
+        c
+      (arl c.m nkey)
     ==
-    m
-  ++  tarl
-    |=  [m=marl key=tape]
-    =/  i=@ud  0
+  ++  arl
+    |=  [m=marl key=(pair tape (list @))]
+    =|  i=@
     |-  ^-  marl
-    ?~  m
-      ~
-    :-  %^  tanx  
-          (manx i.m) 
-        (weld (scow %ud i) (weld "-" key))
-      key
+    ?~  m  ~
+    :-  %+  anx
+          i.m
+        key(q [i q.key])
     $(m t.m, i +(i))
   --
 ::
 ++  algo
   |=  [old=marl new=marl]
-  ^-  marl
-  =/  i=@ud  0
-  =/  acc=marl  ~
-  |-
+  =|  i=@ud
+  =|  pkey=@t
+  =|  acc=(list json)
+  |-  ^-  (list json)
   ?~  new
-    ?.  =(~ old)
-      ?:  =(%skip -.-.-.old)
-        $(old +.old)
-      :_  acc
-      :_  ~
-      :-  %d
-      =/  c=@ud  0
-      |-  ^-  mart
-      ?~  old
-        ~
-      :-  :-  (crip (weld "d" <c>)) 
-        (getv a.g.i.old %key)
-      $(old t.old, c +(c))
-    acc
-  ?:  &(?=(^ old) =(%skip -.-.-.old))
-    $(old t.old)
-  ?:  =(%m n.g.i.new)
-    $(new t.new, i +(i), acc (snoc acc i.new))
-  =/  j=@ud  0
+    ?~  old
+      acc
+    ?:  =(%skip- n.g.i.old)
+      %=  $
+        old  t.old
+      ==
+    :_  acc
+    ^-  json
+    :-  %o
+    %-  my
+    :~  ['p' [%s 'd']]
+        ['q' [%a (turn old |=(m=manx [%s (getv %key a.g.m)]))]]
+    ==
+  ?:  &(?=(^ old) =(%skip- n.g.i.old))
+    %=  $
+      old  t.old
+    ==
+  ?:  =(%move- n.g.i.new)
+    %=  $
+      new  t.new
+      i    +(i)
+      acc
+        %+  snoc  acc
+        ^-  json
+        :-  %o
+        %-  my
+        :~  ['p' [%s 'm']]
+            ['q' [%s (getv %key a.g.i.new)]]
+            ['r' [%n (getv %i a.g.i.new)]]
+        ==
+    ==
+  =|  j=@ud
   =/  jold=marl  old
-  =/  nkey=[n=mane k=tape]  [n.g.i.new (getv a.g.i.new %key)]
-  |-
+  =/  nkey=[n=mane k=@t]  [n.g.i.new (getv %key a.g.i.new)]
+  |-  ^-  (list json)
   ?~  new
     !!
   ?~  jold
     %=  ^$
       new  t.new
       i    +(i)
-      acc  %+  snoc  acc
-        ;n(id <i>)
-          ;+  i.new
+      acc
+        %+  snoc  acc
+        ^-  json
+        :-  %o
+        %-  my
+        :~  ['p' [%s 'n']]
+            ['q' [%s pkey]]
+            ['r' [%n (scot %ud i)]]
+            ['s' [%s (crip (en-xml:html i.new))]]
         ==
     ==
   ?~  old
     !!
-  ?:  =(%skip n.g.i.jold)
-    $(jold t.jold, j +(j))
-  ?:  .=(nkey [n.g.i.jold (getv a.g.i.jold %key)])
+  ?:  =(%skip- n.g.i.jold)
+    %=  $
+      jold  t.jold
+      j     +(j)
+    ==
+  ?:  =(nkey [n.g.i.jold (getv %key a.g.i.jold)])
     ?.  =(0 j)
-      =/  n=@ud  0
+      =|  n=@ud
       =/  nnew=marl  new
-      =/  okey=[n=mane k=tape]  [n.g.i.old (getv a.g.i.old %key)]
-      |-
+      =/  okey=[n=mane k=@t]  [n.g.i.old (getv %key a.g.i.old)]
+      |-  ^-  (list json)
       ?~  nnew
-        ^^$(old (snoc t.old i.old))
-      ?:  =(%m n.g.i.nnew)
-        $(nnew t.nnew, n +(n))
-      =/  nnky=[n=mane k=tape]  [n.g.i.nnew (getv a.g.i.nnew %key)]
-      ?.  .=(okey nnky)
-        $(nnew t.nnew, n +(n))
-      ?:  (gte n j)
-        =/  aupd=mart  (upda a.g.i.old a.g.i.nnew)
-        ?~  aupd
-          %=  ^^$
-            old  c.i.old
-            new  c.i.nnew
-            i    0
-            acc
-              %=  ^^$
-                old  t.old
-                new  %^  newm  new  n
-                  ;m(id <(add n i)>, key k.nnky);
-              ==
-          ==
         %=  ^^$
-          old  c.i.old
-          new  c.i.nnew
-          i    0
+          old  (snoc t.old i.old)
+        ==
+      ?:  =(%move- n.g.i.nnew)
+        %=  $
+          nnew  t.nnew
+          n     +(n)
+        ==
+      =/  nnky=[n=mane k=@t]  [n.g.i.nnew (getv %key a.g.i.nnew)]
+      ?.  =(okey nnky)
+        %=  $
+          nnew  t.nnew
+          n     +(n)
+        ==
+      ?:  (gte n j)
+        =/  aupd  (upda a.g.i.old a.g.i.nnew)
+        %=  ^^$
+          old   c.i.old
+          new   c.i.nnew
+          pkey  k.nnky
+          i     0
           acc
             %=  ^^$
               old  t.old
-              new  %^  newm  new  n
-                ;m(id <(add n i)>, key k.nnky);
-              acc  :_  acc
-                [[%c [[%key k.nnky] aupd]] ~]
+              new
+                %^  newm  new  n
+                ;move-(i (scow %ud (add n i)), key (trip k.nnky));
+              acc
+                ?:  &(?=(~ del.aupd) ?=(~ new.aupd))
+                  acc
+                :_  acc
+                ^-  json
+                :-  %o
+                %-  my
+                :~  ['p' [%s 'c']]
+                    ['q' [%s k.nnky]]
+                    ['r' [%a del.aupd]]
+                    ['s' [%a new.aupd]]
+                ==
             ==
         ==
-      =/  aupd=mart  (upda a.g.i.jold a.g.i.new)
-      ?~  aupd
-        %=  ^^$
-          old  c.i.jold
-          new  c.i.new
-          i    0
-          acc
-            %=  ^^$
-              old  (newm old j ;skip;)
-              new  t.new
-              i    +(i)
-              acc  %+  snoc  acc
-                ;m(id <i>, key k.nkey);
-            ==
-        ==
+      =/  aupd  (upda a.g.i.jold a.g.i.new)
       %=  ^^$
-        old  c.i.jold
-        new  c.i.new
-        i    0
+        old   c.i.jold
+        new   c.i.new
+        pkey  k.nkey
+        i     0
         acc
           %=  ^^$
-            old  (newm old j ;skip;)
+            old  (newm old j ;skip-;)
             new  t.new
             i    +(i)
-            acc  :-  [[%c [[%key k.nkey] aupd]] ~]
-              %+  snoc
+            acc
+              =.  acc
+                %+  snoc  acc
+                ^-  json
+                :-  %o
+                %-  my
+                :~  ['p' [%s 'm']]
+                    ['q' [%s k.nkey]]
+                    ['r' [%n (scot %ud i)]]
+                ==
+              ?:  &(?=(~ del.aupd) ?=(~ new.aupd))
                 acc
-              ;m(id <i>, key k.nkey);
+              :_  acc
+              ^-  json
+              :-  %o
+              %-  my
+              :~  ['p' [%s 'c']]
+                  ['q' [%s k.nkey]]
+                  ['r' [%a del.aupd]]
+                  ['s' [%a new.aupd]]
+              ==
           ==
       ==
-    ?:  =("text" (getv a.g.i.new %mast))
-      ?:  =(+.-.+.-.-.+.-.old +.-.+.-.-.+.-.new)
-        ^$(old t.old, new t.new, i +(i))
+    ?:  =(%t- n.g.i.new)
+      ?:  ?&  ?=(^ c.i.old)  ?=(^ c.i.new)
+              ?=(^ a.g.i.c.i.old)  ?=(^ a.g.i.c.i.new)
+              =(v.i.a.g.i.c.i.old v.i.a.g.i.c.i.new)
+          ==
+        %=  ^$
+          old  t.old
+          new  t.new
+          i    +(i)
+        ==
+      =/  txt=@t
+        ?.  &(?=(^ c.i.new) ?=(^ a.g.i.c.i.new))
+          ''
+        (crip v.i.a.g.i.c.i.new)
       %=  ^$
         old  t.old
         new  t.new
         i    +(i)
-        acc  [i.new acc]
+        acc
+          :_  acc
+          ^-  json
+          :-  %o
+          %-  my
+          :~  ['p' [%s 't']]
+              ['q' [%s (getv %key a.g.i.new)]]
+              ['r' [%s txt]]
+          ==
       ==
-    =/  aupd=mart  (upda a.g.i.old a.g.i.new)
-    ?~  aupd
-      %=  ^$
-        old  c.i.old
-        new  c.i.new
-        i    0
-        acc  ^$(old t.old, new t.new, i +(i))
-      ==
+    =/  aupd  (upda a.g.i.old a.g.i.new)
     %=  ^$
-      old  c.i.old
-      new  c.i.new
-      i    0
+      old   c.i.old
+      new   c.i.new
+      pkey  k.nkey
+      i     0
       acc
         %=  ^$
           old  t.old
           new  t.new
           i    +(i)
-          acc  :_  acc
-            [[%c [[%key k.nkey] aupd]] ~]
+          acc
+            ?:  &(?=(~ del.aupd) ?=(~ new.aupd))
+              acc
+            :_  acc
+            ^-  json
+            :-  %o
+            %-  my
+            :~  ['p' [%s 'c']]
+                ['q' [%s k.nkey]]
+                ['r' [%a del.aupd]]
+                ['s' [%a new.aupd]]
+            ==
         ==
     ==
-  $(jold t.jold, j +(j))
+  %=  $
+    jold  t.jold
+    j     +(j)
+  ==
 ::
 ++  getv
-  |=  [m=mart tag=@tas]
-  ^-  tape
-  ?~  m
-    ~
-  ?:  =(n.i.m tag)
-    v.i.m
+  |=  [t=@tas m=mart]
+  ^-  @t
+  ?~  m  ''
+  ?:  =(n.i.m t)
+    (crip v.i.m)
   $(m t.m)
 ::
 ++  upda
   |=  [om=mart nm=mart]
-  =/  acc=mart  ~
-  |-  ^-  mart
+  =|  acc=[del=(list json) new=(list json)]
+  |-  ^+  acc
   ?~  nm
     ?~  om
       acc
-    :_  acc
-    :-  %rem
-    =/  omom=mart  om
-    |-
-    ?~  omom
-      ~
-    =/  nom=tape  +:<n.i.omom>
-    |-
-    ?~  nom
-      [' ' ^$(omom t.omom)]
-    [i.nom $(nom t.nom)]
-  =/  i=@ud  0
+    %_    acc
+        del
+      %+  turn  om
+      |=  [n=mane *]
+      [%s `@t`?>(?=(@ n) n)]
+    ==
+  =|  i=@ud
   =/  com=mart  om
-  |-
+  |-  ^+  acc
   ?~  nm
     !!
   ?~  com
-    ^$(nm t.nm, acc [i.nm acc])
+    %=  ^$
+      nm  t.nm
+      new.acc
+        :_  new.acc
+        :-  %a
+        :~  [%s `@t`?>(?=(@ n.i.nm) n.i.nm)]
+            [%s (crip v.i.nm)]
+        ==
+    ==
   ?~  om
     !!
   ?:  =(n.i.com n.i.nm)
     ?:  =(v.i.com v.i.nm)
-      ^$(om (oust [i 1] (mart om)), nm t.nm)
+      %=  ^$
+        om  (oust [i 1] (mart om))
+        nm  t.nm
+      ==
     %=  ^$
-      om  (oust [i 1] (mart om))
-      nm  t.nm
-      acc  [i.nm acc]
+      om   (oust [i 1] (mart om))
+      nm   t.nm
+      new.acc
+        :_  new.acc
+        :-  %a
+        :~  [%s `@t`?>(?=(@ n.i.nm) n.i.nm)]
+            [%s (crip v.i.nm)]
+        ==
     ==
-  $(com t.com, i +(i))
+  %=  $
+    com  t.com
+    i    +(i)
+  ==
 ::
 ++  newm
   |=  [ml=marl i=@ud mx=manx]
-  =/  j=@ud  0
+  =|  j=@ud
   |-  ^-  marl
   ?~  ml
     ~
