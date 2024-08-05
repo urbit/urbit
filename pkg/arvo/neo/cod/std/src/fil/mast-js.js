@@ -54,6 +54,10 @@ function setEventListeners(el) {
     });
 };
 function pokeShip(event, eventType, eventAttr, returnAttrVals) {
+    const jsOnEvent = event.target.getAttribute('js-on-event');
+    if (jsOnEvent) {
+        eval?.(jsOnEvent);
+    };
     let uiEventData = {};
     if (returnAttrVals) {
         uiEventData = handleReturnAttr(event, returnAttrVals);
@@ -137,7 +141,12 @@ function handleChannelStream(event) {
         switch (gustObj.p) {
             case 'd':
                 gustObj.q.forEach(key => {
-                    document.querySelector(`[key="${key}"]`).remove();
+                    let toRemove = document.querySelector(`[key="${key}"]`)
+                    const jsOnDelete = toRemove.getAttribute('js-on-delete');
+                    if (jsOnDelete) {
+                        eval?.(jsOnDelete);
+                    };
+                    toRemove.remove();
                 });
                 break;
             case 'n':
@@ -164,6 +173,10 @@ function handleChannelStream(event) {
                 if (newNode.childElementCount > 0) {
                     let needingListeners = newNode.querySelectorAll('[event]');
                     needingListeners.forEach(child => setEventListeners(child));
+                };
+                const jsOnAdd = newNode.getAttribute('js-on-add');
+                if (jsOnAdd) {
+                    eval?.(jsOnAdd);
                 };
                 break;
             case 'm':

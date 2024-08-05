@@ -212,11 +212,6 @@
   ++  gust                         ::  ::  :: send a diff update
     |=  [sub=path old=sail new=sail]
     ^-  (list card:neo)
-    ?~  c.old  !!
-    ?~  c.new  !!
-    ?~  t.c.old  !!  :: fix
-    ?~  t.c.new  !!
-    ?~  a.g.new  !!
     :_  ~
     :-  #/[p/our.bowl]/$/eyre
     :-  %poke
@@ -224,7 +219,20 @@
     !>  ^-  chan-gift:eyre:neo
     :-  sub
     ^-  json
-    [%a (algo c.i.t.c.old c.i.t.c.new)]
+    :-  %a
+    %+  algo
+      ?.  ?&  =(%html n.g.old)
+            ?=(^ c.old)  ?=(^ t.c.old)
+            =(%body n.g.i.t.c.old)
+          ==
+        [old ~]
+      [i.t.c.old ~]
+    ?.  ?&  =(%html n.g.new)
+            ?=(^ c.new)  ?=(^ t.c.new)
+            =(%body n.g.i.t.c.new)
+        ==
+      [new ~]
+    [i.t.c.new ~]
   ::
   ++  make-400
     |=  rid=@ta
@@ -265,10 +273,17 @@
   --
 ::
 ++  hoist
-  |_  root=manx
+  |_  =sail
   ++  $
     ^-  manx
-    (anx root ["" ~])
+    ?.  ?&  =(%html n.g.sail)
+            ?=(^ c.sail)  ?=(^ t.c.sail)
+            =(%body n.g.i.t.c.sail)
+        ==
+      (anx sail ["" ~])
+    %_  sail
+      i.t.c  (anx i.t.c.sail ["" ~])
+    ==
   ++  anx
     |=  [m=manx key=(pair tape (list @))]
     ^-  manx
