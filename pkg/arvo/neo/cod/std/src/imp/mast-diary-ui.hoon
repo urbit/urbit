@@ -82,23 +82,59 @@
     ;html
       ;head
         ;meta(charset "utf-8");
-      ==
-      ;body
-        =style  "margin: 0; width: 100%; display: grid; place-items: center;"
-        ;main
-          ;h1: Diary
-          ;+  diary-form
-          ;+  diary-items
+        ;script
+          ;+  ;/
+            %-  trip
+            '''
+            function setLoading(idStr) {
+              let target = document.getElementById(idStr);
+              target.className = 'loading';
+            };
+            function setLoaded(idStr) {
+              let target = document.getElementById(idStr);
+              target.className = 'loaded';
+            };
+            '''
         ==
+        ;style
+          ;+  ;/
+            %-  trip
+            '''
+            .loading {
+              background-color: orange;
+            }
+            .loaded {
+              background-color: green;
+            }
+            '''
+        ==
+      ==
+      ;+  body
+    ==
+  ::
+  ++  body
+    ^-  manx
+    ;body
+      =style  "margin: 0; width: 100%; display: grid; place-items: center;"
+      ;main
+        ;h1: Diary
+        ;+  diary-form
+        ;+  diary-items
       ==
     ==
   ::
   ++  diary-form
     ^-  manx
     ;form
-      =event  "/submit/diary-form"
-      ;textarea(name "diary-input", style "height: 10rem; width: 25rem; margin-block: 1rem;");
-      ;button: Enter
+      =event        "/submit/diary-form"
+      =js-on-event  "setLoading('form-button');"
+      ;textarea
+        =name         "diary-input"
+        =placeholder  "Today, I ..."
+        =style        "height: 10rem; width: 25rem; margin-block: 1rem;"
+        ;*  ~
+      ==
+      ;button#form-button.loaded: Enter
     ==
   ::
   ++  diary-items
@@ -109,10 +145,13 @@
           =/  key=tape  <date>
           ;div
             =key  key
+            =js-on-add  "setLoaded('form-button');"
             ;p: {(pretty-date date)}
             ;p: {(trip txt)}
-            ;button
-              =event  "/click/delete/{key}"
+            ;button.loaded
+              =event        "/click/delete/{key}"
+              =js-on-event  "setLoading('{key}');"
+              =id           key
               ;+  ;/  "✖"
             ==
           ==

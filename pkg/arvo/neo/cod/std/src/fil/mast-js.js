@@ -54,9 +54,9 @@ function setEventListeners(el) {
     });
 };
 function pokeShip(event, eventType, eventAttr, returnAttrVals) {
-    const jsOnEvent = event.target.getAttribute('js-on-event');
+    const jsOnEvent = event.currentTarget.getAttribute('js-on-event');
     if (jsOnEvent) {
-        eval?.(jsOnEvent);
+        eval?.(`"use strict"; ${jsOnEvent}`);
     };
     let uiEventData = {};
     if (returnAttrVals) {
@@ -64,9 +64,9 @@ function pokeShip(event, eventType, eventAttr, returnAttrVals) {
     };
     if (eventType === 'submit') {
         event.preventDefault();
-        const formData = new FormData(event.target);
+        const formData = new FormData(event.currentTarget);
         formData.forEach((v, k) => { uiEventData[k] = v });
-        event.target.reset();
+        event.currentTarget.reset();
     };
     fetch(channelPath, {
         method: 'PUT',
@@ -144,7 +144,7 @@ function handleChannelStream(event) {
                     let toRemove = document.querySelector(`[key="${key}"]`)
                     const jsOnDelete = toRemove.getAttribute('js-on-delete');
                     if (jsOnDelete) {
-                        eval?.(jsOnDelete);
+                        eval?.(`"use strict"; ${jsOnDelete}`);
                     };
                     toRemove.remove();
                 });
@@ -176,7 +176,7 @@ function handleChannelStream(event) {
                 };
                 const jsOnAdd = newNode.getAttribute('js-on-add');
                 if (jsOnAdd) {
-                    eval?.(jsOnAdd);
+                    eval?.(`"use strict"; ${jsOnAdd}`);
                 };
                 break;
             case 'm':

@@ -587,8 +587,8 @@
   ?~  ml
     ~
   :-  ?:  =(i j)
-      mx
-    i.ml
+        mx
+      i.ml
   $(ml t.ml, j +(j))
 ::
 --
