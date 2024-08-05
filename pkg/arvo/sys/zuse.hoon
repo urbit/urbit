@@ -2367,6 +2367,12 @@
         ::
         ++  keyed  |=(key=octs hash(cv q.key, flags f-keyedhash))
         ::
+        ++  kdf
+          |=  [out=@ud ctx=tape seed=octs]
+          ^-  @ux
+          =/  der  (hash(cv iv, flags f-derivekeyctx) 32 (lent ctx)^(crip ctx))
+          (hash(cv der, flags f-derivekeymat) out seed)
+        ::
         ++  hash
           ~/  %hash
           |=  [out=@ud msg=octs]
