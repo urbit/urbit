@@ -5667,39 +5667,13 @@
               (ev-push-pact 0 %peek name(wan [%data 0]))
             ::
                 %data
-              :: ?>  =(13 boq.name)  :: non-standard
               ::  do we have packet state already?
               ::
               ?~  ps.u.res
-                ::  XX is this a complete message?
-                ::
-                ?:  ?&  =(+(fag) tot.data)    :: XX can tot.data be 0 ?
-                        !=(1 tot.data)
-                        ::  XX (gth (met 3 dat.data) 1.024) ??
-                    ==
-                  ::  XX  authenticate jumbo frame
-                  ::  ?>  (ev-authenticate (root:lss (met 3 dat.data)^dat.data) aut.data name)
-                  ::  yield complete message
-                  ::
-                  =/  =spar  [her.name inner-path]
-                  =/  =auth:mess  [%| *@uxH] :: XX p.aut.data is ~
-                  ::  if %chum/%shut, we need to pass the sealed-path to find it
-                  ::  in the pit.fren-state and then remove it
-                  ::
-                  =/  res=@  (ev-decrypt-spac space dat.data cyf)
-                  %*  $  ev-mess-page
-                    sealed-path  `sealed-path
-                  ::
-                    +<  [spar auth res]
-                  ==
-                ::  no; then this should be the first fragment, and auth should be present
-                ::
-                ~|  [fag=fag name=name data=data]
-                ?>  =(0 fag)
-                ?>  ?=([%0 *] aut.data)
-                ::  is this a standalone message?
+                ::  is this this a standalone message?
                 ::
                 ?:  =(1 tot.data)
+                  ?>  ?=(%& -.aut.data)
                   ?>  (ev-authenticate (root:lss (met 3 dat.data)^dat.data) aut.data name)
                   =/  =spar  [her.name inner-path]
                   =/  =auth:mess  p.aut.data
@@ -5708,29 +5682,9 @@
                   ::  in the pit.fren-state and then remove it
                   ::
                   %*($ ev-mess-page sealed-path `sealed-path, +< spar^auth^res)
-                ::  no; then the proof should be inlined; verify it
-                ::  (otherwise, we should have received an %auth packet already)
+                ::  XX handle out-of-order packet
                 ::
-                ?>  (lte tot.data 4)
-                =/  proof=(list @ux)
-                  =>  aut.data
-                  ?>  ?=([%0 *] .)
-                  ?~(q ~ ?@(u.q [u.q ~] [p q ~]:u.q))
-                =.  proof  (complete-inline-proof:verifier:lss proof 1.024^dat.data)
-                ?>  (ev-authenticate (recover-root:verifier:lss proof) aut.data name)
-                =/  state  (init:verifier:lss tot.data proof)
-                =.  state  (verify-msg:verifier:lss state 1.024^dat.data ~)
-                ~&  proof/proof
-                ~&  tot/tot.data
-                ::  initialize packet state and request next fragment
-                ::
-                ~&  >>  "request next fragment"^fag
-                =.  chums.ames-state
-                  %+  ~(put by chums.ames-state)  her.name
-                  =-  known/sat.per(pit -)
-                  %+  ~(put by pit)  sealed-path  :: XX was outer-path?
-                  u.res(ps `[state ~[dat.data]])
-                (ev-push-pact 0 %peek name(wan [%data counter.state]))
+                !!
               ::  yes, we do have packet state already
               ::
               =*  ps  u.ps.u.res
@@ -5738,9 +5692,8 @@
                 ev-core
               ::  extract the pair (if present) and verify
               ::
-              =/  pair=(unit [l=@ux r=@ux])
-                ?~  aut.data  ~
-                `?>(?=([%1 *] .) p):aut.data
+              ?>  ?=(%| -.aut.data)
+              =/  pair=(unit [l=@ux r=@ux])  p.aut.data
               ::  update packet state
               ::
               =/  leaf=octs
@@ -7756,43 +7709,22 @@
                   =/  nam  [[our rif] [boq ?:(nit ~ [%auth fag])] pat]
                   ::  NB: root excluded as it can be recalculated by the client
                   ::
-                  =/  aut  [%0 mes ~]
                   =/  lss-proof
                     =>  [ser=ser ..lss]
                     ~>  %memo./ames/lss-auth
                     (build:lss (met 3 ser)^ser)
-                  =/  dat  [tot aut (rep 8 proof.lss-proof)]  :: XX types
+                  =/  dat  [tot [%& mes] (rep 8 proof.lss-proof)]  :: XX types
                   [nam dat ~]
                 ::
                     %data
                   =/  lss-proof
                     =>  [ser=ser ..lss]
-                    :: ~>  %bout.[1 %hint-data-lss]
                     ~>  %memo./ames/lss-data
-                    :: ~&  data-lss/(met 3 ser)
-                    :: ~>  %bout.[1 %data-lss]
                     (build:lss (met 3 ser)^ser)
                   =/  nam  [[our rif] [boq ?:(nit ~ [%data fag])] pat]
-                  =/  aut=auth:pact
-                    ?:  &((lte wid 4) =(0 fag))
-                      :: inline (or absent) proof
-                      ::
-                      :+  %0  mes
-                      ?:  =(1 wid)  ~
-                      =/  tal  (tail proof.lss-proof)
-                      ?:  ?=(?(%1 %2) wid)
-                        ?>  ?=([* ~] tal)
-                        `i.tal
-                      ?>  ?=([* * ~] tal)
-                      `[i i.t]:tal
-                    ::
-                    :: full proof; provide a pair of sibling hashes
-                    ::
-                    ?~  p=(snag fag pairs.lss-proof)
-                      ~
-                    [%1 u.p]
+                  =/  pair  (snag fag pairs.lss-proof)
                   ::
-                  =/  dat  [tot aut (cut boq [fag 1] ser)]
+                  =/  dat  [tot [%| pair] (cut boq [fag 1] ser)]
                   =/  pairs
                     =/  per  (bex (sub boq 13))
                     (swag [+((mul per fag)) (dec per)] pairs.lss-proof)

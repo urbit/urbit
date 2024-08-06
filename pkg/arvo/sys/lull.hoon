@@ -1830,20 +1830,10 @@
               pat=path
           ==
         +$  auth
+          ::  %& for auth packet
+          ::  %| for data packets
           ::
-          ::  %0 for fragment 0 or auth packet
-          ::    ~      for 1-fragment message and auth packets
-          ::    [~ %&] for >4-fragment messages
-          ::    [~ %&] for 2-fragment messages
-          ::    [~ %|] for 3-4-fragment
-          ::
-          ::  %1 for fragments 1 - N/2
-          ::  ~  for fragments (N/2)+1 - N
-          ::
-          $@  ~
-          $%  [%0 p=auth:mess q=(unit $@(@uxI (pair @uxI @uxI)))]
-              [%1 p=(pair @uxI @uxI)]
-          ==
+          (each auth:mess (unit (pair @uxI @uxI)))
         +$  data  [tot=frag aut=auth:pact dat=@]
         +$  lane  $@  @ux
                   $%  [%if p=@ifF q=@udE]
@@ -2073,24 +2063,21 @@
       ^-  plot
       =/  lot  (met 3 (end 5 tot))
       ::
-      =/  [[aul=@ubB aum=plat:plot] aur=@ubB aup=plat:plot]
-        ?~  aut           [[0b0 0] 0b0 0]
-        ?:  ?=(%1 -.aut)  [[0b1 [32 p]] 0b10 [32 q]]:p.aut
-        :-  =>  p.aut
-            ?:(?=(%& -) [0b10 64 p] [0b11 32 p])
-        =/  [aur=@ubB has=(list plat:plot)]
-          ?~    q.aut  [0b0 ~]
-          ?@  u.q.aut  [0b1 [1 u.q.aut] ~]
-          [0b10 [[1 p] [1 q] ~]:u.q.aut]
-        [aur s+~ 8 has]
+      =/  [aub=@ubB aum=plat:plot]
+        ?-  aut
+          [%& %& *]   [0b0 64 +.p.aut]
+          [%& %| *]   [0b1 32 +.p.aut]
+          [%| ~]      [0b10 0]
+          [%| ^]      [0b11 s+~ 8 [1 p] [1 q] ~]:u.p.aut
+        ==
       ::
       =/  len  (met 3 dat)
       =/  nel  (met 3 len)
       =/  men=(pair @B @A)
         ?:((lth nel 3) [nel 0] [0b11 1])
       :+  bloq=3
-        [s+~ 0 [2 (dec lot)] [2 aul] [2 aur] [2 p.men] ~]
-      [[lot tot] aum aup [q.men nel] [nel len] [len dat] ~]
+        [s+~ 0 [2 (dec lot)] [2 aub] [2 0] [2 p.men] ~]
+      [[lot tot] aub aum [q.men nel] [nel len] [len dat] ~]
     ::
     ++  de
       |=  a=bite
@@ -2098,33 +2085,27 @@
       |=  dat=@
       ^-  [data:pact boq=bloq sep=step]
       =^  c  b
-        ((hew b dat) [bot=2 [aul=2 aur=2] men=2])
+        ((hew b dat) [bot=2 [aut=[typ=1 val=1] nil=2] men=2])
       =.  b  [3 (rig b 3)]
       =^  d  b
         %-  (hew b dat)
-        :^    tot=+(bot.c)
-            aum=?+(aul.c 0x0 %0b10 `@`64, %0b11 `@`32)
-          aup=?+(aur.c 0x0 %0b1 `@`32, %0b10 [`@`32 `@`32])
+        :+  tot=+(bot.c)
+          ^=  aut
+          ?+  aut.c  !!
+            [%0b0 %0b0]  `@`64
+            [%0b0 %0b1]  `@`32
+            [%0b1 %0b0]  0x0
+            [%0b1 %0b1]  [`@`32 `@`32]
+          ==
         nel=?.(=(3 men.c) 0 1)
       ::
       =/  aut=auth:pact
-        =/  mes=(unit auth:mess)
-          ?+  aul.c  !!
-            %0b0   ?>(=(0b0 aur.c) ~)
-            %0b1   ?>(=(0b10 aur.c) ~)
-            %0b10  `&+aum.d
-            %0b11  `|+aum.d
-          ==
-        =/  pac=(unit $@(@uxI (pair @uxI @uxI)))
-          ?+  aur.c  !!
-            %0b0   ?>(=(0 aup.d) ~)
-            %0b1   ?>(?=(@ aup.d) `aup.d)
-            %0b10  ?>(?=(^ aup.d) `aup.d)
-          ==
-        ?^  mes  [%0 u.mes pac]
-        ?:  =(0b0 aul.c)  ~
-        ?>  &(=(0b1 aul.c) ?=([~ @ @] pac))
-        [%1 u.pac]
+        ?+  aut.c  !!
+          [%0b0 %0b0]  [%& %& ?>(?=(@ aut.d) aut.d)]
+          [%0b0 %0b1]  [%& %| ?>(?=(@ aut.d) aut.d)]
+          [%0b1 %0b0]  [%| ~]
+          [%0b1 %0b1]  [%| ?>(?=(^ aut.d) `aut.d)]
+        ==
       ::
       =/  nel  ?.(=(3 men.c) men.c nel.d)
       =^  len  sep.b  [(cut 3 [sep.b nel] dat) (add sep.b nel)]
@@ -2304,13 +2285,10 @@
           ++  hash  (aura 'uxI')
           ++  mess-auth
             (pick (both (just %&) (aura 'uxJ')) (both (just %|) hash))
-          ++  pact-auth
-            (pick (just ~) (both (just ~) (pick hash (both hash hash))))
           ++  auth
             ;:  pick
-              (just ~)
-              :(both (just %1) hash hash)
-              :(both (just %0) mess-auth pact-auth)
+              :(both (just %|) (pick (just ~) :(both (just ~) hash hash)))
+              :(both (just %&) mess-auth)
             ==
           --
       ^-  $-(@uvJ [data:pact @uvJ])
