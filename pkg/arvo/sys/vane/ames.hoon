@@ -6129,7 +6129,7 @@
             ^-  (unit data:pact)
             =/  res=(unit (unit cage))
               (ev-peek ~ /ames-get-page %x (name-to-beam name))  :: XX
-            ?.  ?=([~ ~ %message *] res)
+            ?.  ?=([~ ~ %atom *] res)
               ~
             =;  page=pact:pact
               ?>(?=(%page +<.page) `q.page)
@@ -7236,13 +7236,14 @@
                 %+  ev-emit  [//keys]~
                 [%pass /public-keys %j %public-keys [n=ship ~ ~]]
               ::
-              =.  core  (ev-foco ship +.u.u.per-sat)
+              =.  core  (ev-foco:core ship +.u.u.per-sat)
+              ::
               %-  ~(rep by pit.sat.per.core)
               |=  [[=path req=request-state] core=_core]
               ~&  re-sending/path
               ::  XX  restore this when fixing +ev-update-qos
-              =*  peer  sat.per
-              =*  ship  ship.per
+              =*  peer  sat.per.core
+              =*  ship  ship.per.core
               ::  update and print connection status
               ::
               =/  expiry=@da  (add ~s30 last-contact.qos.peer)
