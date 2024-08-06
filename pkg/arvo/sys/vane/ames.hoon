@@ -7252,8 +7252,8 @@
               ::  if =(~ pay.req); %naxplanation, %cork or external (i.e. not
               ::  coming from %ames) $peek request
               ::
-              %+  ev-push-pact
-                (ev-make-pact ack=[ship path] pay.req rift.peer)
+              %+  ev-push-pact:core
+                (ev-make-pact:core ack=[ship path] pay.req rift.peer)
               lane.peer
             ::  +sy-snub: handle request to change ship blacklist
             ::
