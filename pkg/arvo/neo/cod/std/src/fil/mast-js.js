@@ -51,27 +51,51 @@ async function connectToShip() {
 function setEventListeners(el) {
     const eventAttrVals = el.getAttribute('event');
     const returnAttrVals = el.getAttribute('return');
+    const throttleMs = Number(el.getAttribute('throttle')) * 1000;
+    const debounceMs = Number(el.getAttribute('debounce')) * 1000;
     eventAttrVals.split(/\s+/).forEach(eventAttr => {
         let splitEventAttr = eventAttr.split('/');
         if (splitEventAttr[0] === '') splitEventAttr.shift();
         const eventType = splitEventAttr[0];
-        el[`on${eventType}`] = (e) => pokeShip(e, eventType, eventAttr, returnAttrVals);
+        if (throttleMs) {
+            el[`on${eventType}`] = pokeThrottle(throttleMs, eventType, eventAttr, returnAttrVals);
+        } else if (debounceMs) {
+            el[`on${eventType}`] = pokeDebounce(debounceMs, eventType, eventAttr, returnAttrVals);
+        } else {
+            el[`on${eventType}`] = (e) => pokeShip(e, e.currentTarget, eventType, eventAttr, returnAttrVals);
+        };
     });
 };
-function pokeShip(event, eventType, eventAttr, returnAttrVals) {
-    const jsOnEvent = event.currentTarget.getAttribute('js-on-event');
+function pokeThrottle(ms, ...pokeArgs) {
+    let ready = true;
+    return (e) => {
+        if (!ready) return;
+        ready = false;
+        window.setTimeout(() => { ready = true; }, ms);
+        pokeShip(e, e.currentTarget, ...pokeArgs);
+    };
+};
+function pokeDebounce(ms, ...pokeArgs) {
+    let timeoutId = null;
+    return (e) => {
+        window.clearTimeout(timeoutId);
+        timeoutId = window.setTimeout(() => pokeShip(e, e.target, ...pokeArgs), ms);
+    };
+};
+function pokeShip(event, target, eventType, eventAttr, returnAttrVals) {
+    const jsOnEvent = target.getAttribute('js-on-event');
     if (jsOnEvent) {
         eval?.(`"use strict"; ${jsOnEvent}`);
     };
     let uiEventData = {};
     if (returnAttrVals) {
-        uiEventData = handleReturnAttr(event, returnAttrVals);
+        uiEventData = handleReturnAttr(event, target, returnAttrVals);
     };
     if (eventType === 'submit') {
         event.preventDefault();
-        const formData = new FormData(event.currentTarget);
+        const formData = new FormData(target);
         formData.forEach((v, k) => { uiEventData[k] = v });
-        event.currentTarget.reset();
+        target.reset();
     };
     fetch(channelPath, {
         method: 'PUT',
@@ -82,7 +106,7 @@ function pokeShip(event, eventType, eventAttr, returnAttrVals) {
         }))
     });
 };
-function handleReturnAttr(event, returnAttrVals) {
+function handleReturnAttr(event, target, returnAttrVals) {
     let returnData = {};
     returnAttrVals.split(/\s+/).forEach(returnAttr => {
         let splitReturnAttr = returnAttr.split('/');
@@ -98,7 +122,7 @@ function handleReturnAttr(event, returnAttrVals) {
         } else {
             let returnObj;
             if (returnObjSelector === 'target') {
-                returnObj = event.currentTarget;
+                returnObj = target;
             } else {
                 const linkedEl = document.getElementById(returnObjSelector);
                 if (!linkedEl) {
