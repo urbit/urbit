@@ -22,6 +22,17 @@
       :: strip first 2 segments (/neo/hawk)
   :-  (slag 2 -.parsed)
   (~(uni by (malt +.parsed)) (malt header-list.request))
+++  parse-url-frfr
+  |=  =request:http
+  ^-  [pax=path pam=(map @t @t)]
+  =/  parsed
+    %+  rash  url.request
+    ;~  plug
+        ;~(pfix fas (more fas smeg:de-purl:html))
+        yque:de-purl:html
+    ==
+  :-  -.parsed
+  (~(uni by (malt +.parsed)) (malt header-list.request))
 ++  parse-body
   |=  =request:http
   ^-  manx
