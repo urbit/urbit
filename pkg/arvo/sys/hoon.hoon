@@ -6405,6 +6405,7 @@
     [%dbug p=spot q=hoon]                               ::  debug info in trace
     [%eror p=tape]                                      ::  assembly error
     [%hand p=type q=nock]                               ::  premade result
+    [%fuse p=type q=wing]                               ::  lazy specialization
     [%note p=note q=hoon]                               ::  annotate
     [%fits p=hoon q=wing]                               ::  underlying ?=
     [%knit p=(list woof)]                               ::  assemble string
@@ -9160,16 +9161,13 @@
           |=  a=type
           ?.  pol
             (crop(sut a) ref)
-          =/  [typ=type nam=(map term (trel axis type type))]
+          =/  [typ=type nam=(map term (pair axis type))]
             (flux(sut a) ref)
-          =;  t=tune
-            [%face t typ]
+          ?:  ?=(%void typ)  %void
+          %-  (curr face typ)
           %-  ~(rep by nam)
-          =/  bas  (tend p.p.fid)
-          |=  [[l=term a=axis o=type n=type] t=tune]
-          =-  t(p -)
-          %+  ~(put by p.t)  l
-          `[%hand (fuse(sut o) n) [%0 (peg bas a)]]
+          |=  [[l=term a=axis n=type] t=tune]
+          t(p (~(put by p.t) l `[%fuse n &+a ~]))
     ==
   ::
   ++  duck  ^-(tank ~(duck us sut))
@@ -9528,9 +9526,13 @@
     |=  [way=vial gen=hoon]
     ^-  port
     =+  hup=~(reek ap gen)
-    ?~  hup
-      [%| (mint %noun gen)]
-    (find way u.hup)
+    ?^  hup
+      (find way u.hup)
+    =+  tok=(mint %noun gen)
+    ?.  ?=([%0 @] q.tok)
+      [%| tok]
+    ::TODO  could optimize on %9 also
+    [%& `vein`[`p.q.tok ~] `opal`[%& p.tok]]
   ::
   ++  fine
     ~/  %fine
@@ -9650,9 +9652,9 @@
   ++  flux
     ~/  %flux
     |=  ref=type
-    ::  nam: pattern-name to axis with [old new] types
+    ::  nam: pattern-name to [axis pattern-type]
     ::
-    =|  nam=(map term (trel axis type type))
+    =|  nam=(map term (pair axis type))
     ^-  [typ=type nam=_nam]
     =|  hid=_|
     =|  bix=(set [type type])
@@ -9695,7 +9697,7 @@
                    %_  $
                      sut  q.sut
                      hid  &
-                     nam  (~(put by nam) p.sut [axe ref q.sut])
+                     nam  (~(put by nam) p.sut [axe q.sut])
                    ==
     ::
         [%fork *]  =^  s  nam
@@ -10058,6 +10060,7 @@
     ::
         [%dtwt *]  [(nice bool) [%3 q:$(gen p.gen, gol %noun)]]
         [%hand *]  [p.gen q.gen]
+        [%fuse *]  =+($(gen [%cnts q.gen ~]) [(fuse(sut p) p.gen) q])
         [%ktbr *]  =+(vat=$(gen p.gen) [(nice (wrap(sut p.vat) %iron)) q.vat])
     ::
         [%ktls *]
@@ -10607,6 +10610,7 @@
       [%dtts *]  bool
       [%dtwt *]  bool
       [%hand *]  p.gen
+      [%fuse *]  (fuse(sut $(gen [%cnts q.gen ~])) p.gen)
       [%ktbr *]  (wrap(sut $(gen p.gen)) %iron)
       [%ktls *]  $(gen p.gen)
       [%ktpm *]  (wrap(sut $(gen p.gen)) %zinc)
