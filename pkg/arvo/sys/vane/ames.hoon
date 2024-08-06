@@ -6007,10 +6007,12 @@
           ::  pattern due to the way comets are handled in ++ev-make-mess when
           ::  reading attestation proofs.
           ::
+          ::  XX remove all spaces from the task, and make the paths at the callsite?
+          ::
           ++  ev-make-peek  |=([=space p=spar] (ev-make-mess p ~))
           ++  ev-make-poke
             |=  [=space =ack=spar =poke=path]
-            ::  XX  make all paths with the %mako task is sent?
+            ::  XX  make all paths when the %mako task is sent?
             ::
             =.  path.ack-spar   (ev-make-path space path.ack-spar)
             =.  poke-path
@@ -7222,34 +7224,27 @@
                 ::  XX  this shouldn't be needed
                 ::  XX  only if %alien
                 ~&  retrieving-keys-again/ship
-                (ev-emit [//keys]~ %pass /public-keys %j %public-keys [n=ship ~ ~])
-                ::  %alien or missing
-              =.  per  [ship +.u.u.per-sat]
-              ::  ?>  ?=(%known -.sat.per)
-              =/  =space
-                ::  the %chum namespace is only used if the associated path
-                ::  in the pit has a payload (i.e. belongs to a flow)
-                ::
-                chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
-              %-  ~(rep by pit.sat.per)
+                %+  ev-emit  [//keys]~
+                [%pass /public-keys %j %public-keys [n=ship ~ ~]]
+              ::
+              =.  core  (ev-foco ship +.u.u.per-sat)
+              %-  ~(rep by pit.sat.per.core)
               |=  [[=path req=request-state] core=_core]
               ~&  re-sending/path
               ::  XX  restore this when fixing +ev-update-qos
-              ::  =*  peer  sat.per.core
               =*  peer  sat.per
+              =*  ship  ship.per
               ::  update and print connection status
               ::
-              :: =/  expiry=@da  (add ~s30 last-contact.qos.peer)
-              :: =/  new=qos
-              ::   ?.  (gte now expiry)  qos.peer
-              ::   [%dead now]
-              :: =.  core  (ev-update-qos:core new)
+              =/  expiry=@da  (add ~s30 last-contact.qos.peer)
+              =/  new=qos     ?.((gte now expiry) qos.peer [%dead now])
+              =.  core  (ev-update-qos:core new)
               ::  if =(~ pay.req); %naxplanation, %cork or external (i.e. not
               ::  coming from %ames) $peek request
               ::
               %+  ev-push-pact
-                (ev-make-pact ship.per^path pay.req rift.peer)
-              lane.sat.per
+                (ev-make-pact ack=[ship path] pay.req rift.peer)
+              lane.peer
             ::  +sy-snub: handle request to change ship blacklist
             ::
             ++  sy-snub
@@ -7936,7 +7931,6 @@
           ::
           ::  XX  refactor; merge with +ev-update-qos in |pe:ames
           ::  +ev-update-qos: update and maybe print connection status
-          ::  XX rethink how to update chums state; +abet pattern?
           ::
           ++  ev-update-qos
             |=  new=qos
