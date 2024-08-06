@@ -1861,8 +1861,8 @@
       =/  hed=plot
         =/  nex=@B
           ?.  ?=(%page typ)  0b0
-          ?~  r.pak            0b0
-          ?^  t.r.pak          0b11
+          ?~  r.pak          0b0
+          ?^  t.r.pak        0b11
           ?:(?=([%if *] i.r.pak) 0b1 0b10)
         (en:head nex typ hop.pak (mug p:(fax:plot bod)))
       [hed bod]
@@ -2077,7 +2077,7 @@
         ?:((lth nel 3) [nel 0] [0b11 1])
       :+  bloq=3
         [s+~ 0 [2 (dec lot)] [2 aub] [2 0] [2 p.men] ~]
-      [[lot tot] aub aum [q.men nel] [nel len] [len dat] ~]
+      [[lot tot] aum [q.men nel] [nel len] [len dat] ~]
     ::
     ++  de
       |=  a=bite
@@ -2085,26 +2085,26 @@
       |=  dat=@
       ^-  [data:pact boq=bloq sep=step]
       =^  c  b
-        ((hew b dat) [bot=2 [aut=[typ=1 val=1] nil=2] men=2])
+        ((hew b dat) [bot=2 [aub=2 nil=2] men=2])
       =.  b  [3 (rig b 3)]
       =^  d  b
         %-  (hew b dat)
         :+  tot=+(bot.c)
-          ^=  aut
-          ?+  aut.c  !!
-            [%0b0 %0b0]  `@`64
-            [%0b0 %0b1]  `@`32
-            [%0b1 %0b0]  0x0
-            [%0b1 %0b1]  [`@`32 `@`32]
+          ^=  aub
+          ?+  aub.c  !!
+            %0b0   `@`64
+            %0b1   `@`32
+            %0b10  `@`0
+            %0b11  [`@`32 `@`32]
           ==
         nel=?.(=(3 men.c) 0 1)
       ::
       =/  aut=auth:pact
-        ?+  aut.c  !!
-          [%0b0 %0b0]  [%& %& ?>(?=(@ aut.d) aut.d)]
-          [%0b0 %0b1]  [%& %| ?>(?=(@ aut.d) aut.d)]
-          [%0b1 %0b0]  [%| ~]
-          [%0b1 %0b1]  [%| ?>(?=(^ aut.d) `aut.d)]
+        ?+  aub.c  !!
+          %0b0   [%& %& ?>(?=(@ aub.d) aub.d)]
+          %0b1   [%& %| ?>(?=(@ aub.d) aub.d)]
+          %0b10  [%| ~]
+          %0b11  [%| ?>(?=(^ aub.d) `aub.d)]
         ==
       ::
       =/  nel  ?.(=(3 men.c) men.c nel.d)
