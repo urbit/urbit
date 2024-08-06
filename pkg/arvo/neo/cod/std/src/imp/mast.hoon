@@ -302,6 +302,11 @@
         [[%key ntap] a.g.m]
       a.g.m
         c
+      ?:  ?|  =(%input n.g.m)  =(%textarea n.g.m)
+              =(%script n.g.m)  =(%img n.g.m)
+              =(%link n.g.m)  =(%hr n.g.m)
+          ==
+        c.m
       (arl c.m nkey)
     ==
   ++  arl
@@ -335,6 +340,8 @@
     :~  ['p' [%s 'd']]
         ['q' [%a (turn old |=(m=manx [%s (getv %key a.g.m)]))]]
     ==
+  ?:  =(%$ n.g.i.new)
+    acc
   ?:  &(?=(^ old) =(%skip- n.g.i.old))
     %=  $
       old  t.old
