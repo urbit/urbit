@@ -2,6 +2,7 @@
 /@  tree-diff
 /-  serv=sky-server
 /-  srv=server
+/-  su=shrub-utils
 /*  feather
 /*  jquery
 /*  htmx-js
@@ -133,11 +134,7 @@
           =.  status.resp  404
           =.  manx.resp  ;div:  not on your ship
           %-  eyre-cards  resp
-        =/  kids=(list pith:neo)  
-          %+  turn  (get-kids here q.src)
-            |=  =pith:neo
-            ;;  pith:neo
-            %+  slag  (lent here)  pith
+        =/  kids=(list pith:neo)  (kids-at-pith:su q.src here)
         =.  manx.resp              
           ?~  idea=(~(get of:neo q.src) here)
             (view inner [%$ !>(~)] kids bowl)
@@ -158,20 +155,19 @@
           ::  %make cards don't have error(%goof) %acks yet 
           ::  sending eyre response here for now
           :_  eyre-id/!>(eyre-id)
-          =/  mule-vax=(each vase tang)
-            %-  mule  |.
-            %+  to-hoon  bowl
-            (get-by-name request 'vase') 
+          =/  mule-vax  (mule-vase bowl request)
           =/  mule-conf=(each conf:neo tang)
             %-  mule  |.  
             !<  conf:neo  
             %+  to-hoon  bowl
             (get-by-name request 'conf') 
-          ?:  ?=(%| -.mule-vax)
-            (poke-tree-card here.bowl !>([%req-parsing-err p.mule-vax]))
+          ?:  |(?=(%| -.mule-vax) ?=(%| -.mule-conf))
+          %+  poke-tree-card  here.bowl
+            !>  :-  %req-parsing-err
+            ?:  ?=(%| -.mule-vax)
+              p.mule-vax
+            p.mule-conf
           =/  vax=vase  p.mule-vax
-          ?:  ?=(%| -.mule-conf)
-            (poke-tree-card here.bowl !>([%req-parsing-err p.mule-conf]))
           =/  =conf:neo  p.mule-conf
           =+  diff=tree-diff
           =.  init.diff
@@ -189,10 +185,7 @@
           ::
             %send-poke
           :_  eyre-id/!>(eyre-id)  
-          =/  mule-vax
-            %-  mule  |.
-            %+  to-hoon  bowl
-            (get-by-name request 'vase')
+          =/  mule-vax  (mule-vase bowl request)
           ?-  -.mule-vax
               %|  
             (poke-tree-card here.bowl !>([%req-parsing-err p.mule-vax]))
@@ -264,7 +257,7 @@
   |=  [parent=pith:neo =lore:neo]
   ^-  (list pith:neo)
   ?~  (~(kid of:neo lore) parent)  ~
-  %+  turn  ~(tap in ~(key by (~(kid of:neo lore) parent)))  
+  %+  turn  (kids-at-pith:su lore parent)
     |=  p=pith:neo 
     %+  welp  parent  p
 ::
@@ -278,6 +271,13 @@
   ?~  kid  parent
   =/  kid-pith  !<  pith:neo  (to-hoon bowl kid)
   (welp parent kid-pith)
+::
+++  mule-vase
+  |=  [=bowl:neo req=request:http]
+  ^-  (each vase tang)
+  %-  mule  |.
+  %+  to-hoon  bowl
+  (get-by-name req 'vase') 
 ::
 ++  get-by-name
   |=  [req=request:http hoon=cord]
@@ -300,7 +300,7 @@
     ;*  %+  turn  tang
       |=  =tank
       ^-  manx
-      ;div.wf.fr.js.p1.error.monospace
+      ;div.wf.fr.js.p1.error.mono
         ;  {~(ram re tank)}
       ==
   ==
@@ -333,7 +333,7 @@
     ;style: {(trip feather)}
     ;style: {tree-style}
     ==
-    ;body 
+    ;body
       ;+  ?:  &(=(kids ~) =(pail [%$ !>(~)]))
         (nothing-view here)
       (body-view here pail kids bowl)
@@ -344,43 +344,50 @@
   ^~
   %-  trip 
   '''
-  @font-face {
-  font-family: 'Urbit Sans';
-  src: url("https://media.urbit.org/fonts/UrbitSans/UrbitSansVFWeb-Regular.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 600;
-  }
-  body{
-  font-family: 'Urbit Sans';
-  font-size: 15px;
+  *{
+  font-size: calc(1.2 * var(--font-size));
   }
   input{
-  font-family: 'monospace', monospace;
-  font-size: 13px;
-  }
-  .monospace{
-  font-family: 'monospace', monospace;
-  font-size: 13px;
+  font-family: var(--font-mono);
+  font-size: calc(1em * var(--mono-scale));
   }
   .red-hover:hover{
   background-color: #FF0000; 
-  color: white;
+  color: var(--b0);
   border-radius: 6px;
   }
-  .pointer{
-  cursor: pointer;
-  }
   .bd.bd2{
-  border: 0.8px solid black;
+  border: 1.2px solid var(--f1);
   }
   .error{
   color: #FF0000; 
   }
-  .bg-white{
-  background: white;
-  }
-  .hover-grey:hover{
-  background: #dbdbdb;
+  @media (max-width: 900px) {
+    * {
+    font-size: calc(1.2 * var(--font-size));
+    }
+    input {
+    font-size: calc(1em * var(--mono-scale));
+    }
+    .top, .pro-btn, .import-btn, .buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    }
+    .buttons, .form-btn {
+    display: flex;
+    justify-content: end;
+    }
+    .cull-btn{
+    justify-content: space-around;
+    }
+    .red-hover{
+    margin-top: 1rem;
+    background-color: #FF0000; 
+    color: var(--b0);
+    border-radius: 6px;
+    padding: 4px;
+    }
   }
   '''
 ::
@@ -393,7 +400,7 @@
       ;div.top.fr.jb.g2.wf
         ;h1.p2:  nothing at {(en-tape:pith:neo here)}
         ;div.buttons.fr.g2
-          ;a.loader.p2.tc.hover-grey.bd.bd2.br2.grow
+          ;a.loader.p2.tc.hover.b0.bd.bd2.br2.grow
           =href  "/neo/tree{parent}"
             ;span.loaded.hf: back to {parent}
             ;span.loading.hf:  loading
@@ -428,18 +435,18 @@
   ;div
     ;div.fc.g2.bd.bd2.br2.p2
       ;div.top.fr.jb.g2
-        ;p.p2.hfc.wf.grow:  {(en-tape:pith:neo here)}
+        ;p.p2.hfc.wfh.grow:  {(en-tape:pith:neo here)}
         ;+  buttons
       ==
       ;div.fr.jb.g2
         ;+  ?.  =(p.pail %hoon)
           (state-print pail)
         empty-manx
-        ;div.fr.je.grow.g2
+        ;div.fr.je.grow.g2.pro-btn
           ;+  (pro-files pail here bowl)
           ;+  ?:  =(p.pail %$)
             empty-manx
-          ;a.loader.p2.bd.bd2.br2.hover-grey
+          ;a.loader.p2.bd.bd2.br2.hover.b0
           =href  "/neo/tree/{(scow %p our.bowl)}/cod/std/src/pro/{(trip ?@(p.pail p.pail mark.p.pail))}"
             ;span.loaded.hf: {<p.pail>}
             ;span.loading.hf:  loading
@@ -464,7 +471,7 @@
     ^-  manx
     ?~  pith  
       empty-manx
-    ;a.fr.jb.g1.bd.bd2.br2.hover-grey
+    ;a.fr.jb.g1.bd.bd2.br2.hover.b0
     =href  "/neo/tree{(en-tape:pith:neo (weld here pith))}"
       ;div.p2.hfc.p2.hover
         ;  {(en-tape:pith:neo pith)}
@@ -477,13 +484,13 @@
   ^-  manx
   ?:  =(p.pail %hoon)
     =/  wain=(list @t)  (to-wain:format !<(@t q.pail))
-    ;div.fc.g1.p2.grow.monospace
+    ;div.fc.g1.p2.grow
       ;* 
       %+  turn  wain
       |=  lin=@t 
-      ;p.monospace:  {(trip lin)}\0a
+      ;p.mono:  {(trip lin)}\0a
     ==
-  ;div.fr.js.p2.monospace
+  ;div.fr.js.p2.mono
     ;+  ;/
     =/  size  (met 3 (jam q.q.pail))
     ?:  (gth size 750)  "vase too large to print: {<size>}"
@@ -502,11 +509,11 @@
     (scan (trip !<(@t q.pail)) (rein:ford:neo name))
   ?:  ?=(%| -.fool)  
     empty-manx
-  ;div.fr.g2
+  ;div.fr.g2.import-btn
     ;*  %+  turn  pro.p.fool
     |=  =pro:ford:neo
     ^-  manx
-    ;a.loader.bd.bd2.br2.p2.hover-grey
+    ;a.loader.bd.bd2.br2.p2.hover.b0
       =href  "/neo/tree/{(scow %p our.bowl)}/cod/std/src/pro/{(trip ?@(stud.pro stud.pro mark.stud.pro))}"
         ;span.loaded.hfc: {<stud.pro>}
         ;span.loading.hfc:  loading
@@ -516,7 +523,7 @@
   ^-  manx
   ;div.buttons.fr.g2
     ;+  make-btn
-    ;button.poke.p2.bd.bd2.br2.hover-grey.bg-white
+    ;button.poke.p2.bd.bd2.br2.hover.b2
     =onclick  
       """
       $(this).toggleClass('toggled');
@@ -527,9 +534,9 @@
       $(this).parent().parent().parent().find('.cull-form').addClass('hidden');
       $(this).parent().parent().parent().find('.error-box').html('')
       """
-      ;span:  poke
+      ;span.p2:  poke
     ==
-    ;button.cull.p2.bd.bd2.br2.hover-grey.bg-white
+    ;button.cull.p2.bd.bd2.br2.hover.b2
     =onclick  
       """
       $(this).toggleClass('toggled');
@@ -540,12 +547,12 @@
       $(this).parent().parent().parent().find('.poke-form').addClass('hidden');
       $(this).parent().parent().parent().find('.error-box').html('')
       """
-      ;span:  cull
+      ;span.p2:  cull
     ==
   ==
 ::
 ++  make-btn
-  ;button.make.p2.bd.bd2.br2.hover-grey.bg-white
+  ;button.make.p2.bd.bd2.br2.hover.b2
   =onclick  
     """
     $(this).toggleClass('toggled');
@@ -556,7 +563,7 @@
     $(this).parent().parent().parent().find('.poke-form').addClass('hidden');
     $(this).parent().parent().parent().find('.error-box').html('')
     """
-    ;span:  make
+    ;span.p2:  make
   ==
 ::
 ++  forms
@@ -578,7 +585,7 @@
   =hx-post    "/neo/tree{(en-tape:pith:neo here)}?stud=tree-diff&head=send-make"
   =hx-swap    "outterHTML"
   =hx-target  ".error-box"
-    ;div.fr.g2
+    ;div.frw.g2
       ;input.hidden
       =type   "text"
       =name   "here"
@@ -597,7 +604,7 @@
       =placeholder   "/some/pith"
       ;
       ==
-      ;input.bd.bd2.br2.p2 
+      ;input.bd.bd2.br2.p2.grow
       =type          "text"
       =name          "stud"
       =oninput       "this.setAttribute('value', this.value);"
@@ -605,7 +612,7 @@
       =required      ""
       ;
       ==
-      ;input.bd.bd2.br2.p2 
+      ;input.bd.bd2.br2.p2.grow
       =type          "text"
       =name          "head-pail"
       =oninput       "this.setAttribute('value', this.value);"
@@ -614,7 +621,7 @@
       ;
       ==
     ==
-    ;div.fr.g2
+    ;div.frw.g2
       ;input.bd.bd2.br2.p2.grow
       =type          "text"
       =name          "vase"
@@ -631,9 +638,11 @@
       =required      ""
       ;
       ==
-      ;button.loader.bd.bd2.br2.hover-grey
-        ;span.loaded.p2:  make
-        ;span.loading.p2:  loading
+      ;div.form-btn
+        ;button.loader.bd.bd2.br2.hover.b0.p2
+          ;span.loaded.p2:  make
+          ;span.loading.p2:  loading
+        ==
       ==
     ==
   ==
@@ -641,7 +650,7 @@
 ++  poke-form
   |=  here=pith:neo
   ^-  manx
-  ;form.poke-form.hidden.bd.bd2.br2.fr.jb.g2.p2.wf
+  ;form.poke-form.hidden.bd.bd2.br2.frw.jb.g2.p2.wf
   =hx-post    "/neo/tree{(en-tape:pith:neo here)}?stud=tree-diff&head=send-poke"
   =hx-swap    "outterHTML"
   =hx-target  ".error-box"
@@ -669,9 +678,11 @@
     =required      ""
     ;
     ==
-    ;button.loader.bd.bd2.br2.hover-grey
-      ;span.loaded.p2:  poke
-      ;span.loading.p2:  loading
+    ;div.form-btn
+      ;button.loader.bd.bd2.br2.hover.b0.p2
+        ;span.loaded.p2:  poke
+        ;span.loading.p2:  loading
+      ==
     ==
   ==
 ::
@@ -685,11 +696,11 @@
     ;div.fc.ac
       ;p:  {warning}
     ==
-    ;div.fr.jc.g8.p2
+    ;div.fr.jc.g8.p2.cull-btn
       ;button.cull-trigger.hfc.p2.red-hover
       =name     "pith"
       =value    (en-tape:pith:neo here)
-        ;span:  yes
+        ;span.p2:  yes
       ==
       ;span.hfc.p2.red-hover.pointer
       =onclick  
@@ -697,7 +708,7 @@
       $(this).parent().parent().addClass('hidden');
       $(this).parent().parent().parent().parent().find('.top').find('.buttons').find('.cull').toggleClass('toggled');
       """
-        ;span:  no
+        ;span.p2:  no
       ==
     ==
   ==
