@@ -9157,7 +9157,19 @@
       %|  sut
       %&  =<  q
           %+  take  p.p.fid
-          |=(a=type ?:(pol (fuse(sut a) ref) (crop(sut a) ref)))
+          |=  a=type
+          ?.  pol
+            (crop(sut a) ref)
+          =/  [typ=type nam=(map term (trel axis type type))]
+            (flux(sut a) ref)
+          =;  t=tune
+            [%face t typ]
+          %-  ~(rep by nam)
+          =/  bas  (tend p.p.fid)
+          |=  [[l=term a=axis o=type n=type] t=tune]
+          =-  t(p -)
+          %+  ~(put by p.t)  l
+          `[%hand (fuse(sut o) n) [%0 (peg bas a)]]
     ==
   ::
   ++  duck  ^-(tank ~(duck us sut))
@@ -9633,6 +9645,75 @@
     ::
         %noun       ref
         %void       %void
+    ==
+  ::
+  ++  flux
+    ~/  %flux
+    |=  ref=type
+    ::  nam: pattern-name to axis with [old new] types
+    ::
+    =|  nam=(map term (trel axis type type))
+    ^-  [typ=type nam=_nam]
+    =|  hid=_|
+    =|  bix=(set [type type])
+    =+  rev=|
+    =+  axe=1
+    ::
+    |-  ^+  [*type nam]
+    ?:  ?|(=(sut ref) =(%noun ref))
+      [sut nam]
+    ?-    sut
+        [%atom *]
+      ?-    ref
+          [%atom *]   :_  nam
+                      =+  foc=?:((fitz p.ref p.sut) p.sut p.ref)
+                      ?^  q.sut
+                        ?^  q.ref
+                          ?:  =(q.sut q.ref)
+                            [%atom foc q.sut]
+                          %void
+                        [%atom foc q.sut]
+                      [%atom foc q.ref]
+          [%cell *]   [%void nam]
+          *           $(sut ref, ref sut, rev !rev)
+      ==
+        [%cell *]
+      ?-  ref
+        [%cell *]   =^  l  nam  $(axe (peg axe 2), sut p.sut, ref p.ref)
+                    =^  r  nam  $(axe (peg axe 3), sut q.sut, ref q.ref)
+                    [(cell l r) nam]
+        *           $(sut ref, ref sut, rev !rev)
+      ==
+    ::
+        [%core *]  $(sut repo)
+    ::
+        [%face *]  ?.  rev
+                     =^  a  nam  $(sut q.sut)
+                     [(face p.sut a) nam]
+                   ?:  |(hid ?=(^ p.sut))
+                     $(sut q.sut)
+                   %_  $
+                     sut  q.sut
+                     hid  &
+                     nam  (~(put by nam) p.sut [axe ref q.sut])
+                   ==
+    ::
+        [%fork *]  =^  s  nam
+                     %-  ~(rep in p.sut)
+                     |=  [t=type s=(list type) n=_nam]
+                     =^  a  n  ^$(sut t)
+                     [[a s] n]
+                   [(fork s) nam]
+    ::
+        [%hint *]  =^  a  nam  $(sut q.sut)
+                   [(hint p.sut a) nam]
+        [%hold *]
+      ?:  (~(has in bix) [sut ref])
+        ~>(%mean.'fuse-loop' !!)
+      $(sut repo, bix (~(put in bix) [sut ref]))
+    ::
+        %noun       [ref nam]
+        %void       [%void nam]
     ==
   ::
   ++  gain
