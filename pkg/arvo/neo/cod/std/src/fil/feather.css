@@ -72,6 +72,8 @@ textarea, select {
   color: inherit;
   letter-spacing: inherit;
   line-height: inherit;
+  outline: none;
+  accent-color: black;
 }
 textarea {
   resize: none;
@@ -705,7 +707,9 @@ body {
 .border {
   border: 0.8px solid var(--f3);
 }
-
+.br0 {
+  border-radius: 0px;
+}
 .br1 {
   border-radius: 3px;
 }
@@ -773,7 +777,7 @@ body {
 }
 .prose p {
   margin: 1rem 0;
-  line-height: var(--line-height);
+  line-height: 1.4;
 }
 .prose img {
   margin: 1rem 0;
