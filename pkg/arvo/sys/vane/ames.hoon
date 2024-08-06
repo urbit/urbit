@@ -5350,7 +5350,7 @@
             |=  [=path =ship]
             ^-  @uxI
             =/  tyl=(pole knot)  path
-            ?>  ?=(tyl [%publ lyf=@ pat=*])
+            ?>  ?=([%publ lyf=@ pat=*] tyl)
             =/  lyf  (slaw %ud lyf.tyl)
             ?>  ?=(^ lyf)
             =/  sat=fren-state  sat:(ev-got-per ship)
@@ -6812,7 +6812,7 @@
             ++  sy-plug
               |=  =path
               ^+  sy-core
-              =/  key=@  (kdf:crypt 32 "mesa-chum-key" eny)
+              =/  key=@  (kdf:crypt 32 "mesa-chum-key" 32^eny)
               =/  kid=@ud
                 ?~  latest=(ram:key-chain server-chain.ames-state)
                   1
