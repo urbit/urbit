@@ -5580,6 +5580,8 @@
             ::  XX  this is implicitly updating chums.state;
             =.  ev-core  (ev-update-qos %live last-contact=now)
             ?.  =(1 tot.data)
+              ::  XX before start peeking, check that his has been already acked
+              ::
               =/  =dire  :: flow swtiching
                 %*(fo-flip-dire fo side *@ud^(fo-infer-dire:fo load.pok))  :: XX assert load is plea/boon
               ::  XX move to arm
@@ -5618,7 +5620,7 @@
             ::
             =*  pit  pit.sat.per
             =/  [=space cyf=(unit @) =inner=path]
-              (ev-decrypt-path pat.name ship)
+              (ev-decrypt-path pat.name ship.per)
             =*  sealed-path  pat.name
             ?~  res=(~(get by pit) sealed-path)
               ev-core
@@ -5652,7 +5654,7 @@
               ~&  >>  "request next fragment"^fag
               ::  request next fragment
               ::
-              (ev-push-pact 0 %peek name(wan [%data 0]))
+              (ev-push-pact [hop=0 %peek name(wan [%data 0])] lane.sat.per)
             ::
                 %data
               :: ?>  =(13 boq.name)  :: non-standard
@@ -5718,7 +5720,9 @@
                   =-  known/sat.per(pit -)
                   %+  ~(put by pit)  sealed-path  :: XX was outer-path?
                   u.res(ps `[state ~[dat.data]])
-                (ev-push-pact 0 %peek name(wan [%data counter.state]))
+                %+  ev-push-pact
+                  [hop=0 %peek name(wan [%data counter.state])]
+                lane.sat.per
               ::  yes, we do have packet state already
               ::
               =*  ps  u.ps.u.res
@@ -5747,7 +5751,9 @@
               ?.  =(+(fag) leaves.los.ps)
                 ::  request next fragment
                 ::
-                (ev-push-pact 0 %peek name(wan [%data counter.los.ps]))
+                %+  ev-push-pact
+                  [hop=0 %peek name(wan [%data counter.los.ps])]
+                lane.sat.per
               ::  yield complete message
               ::
               ~&  >>  "yield complete message"^fag
@@ -6001,14 +6007,28 @@
           ::  pattern due to the way comets are handled in ++ev-make-mess when
           ::  reading attestation proofs.
           ::
-          ++  ev-make-peek
-            |=  [=space p=spar]
-            (ev-make-mess p ~ `space)
-          ::
+          ++  ev-make-peek  |=([=space p=spar] (ev-make-mess p ~))
           ++  ev-make-poke
             |=  [=space =ack=spar =poke=path]
+            ::  XX  make all paths with the %mako task is sent?
+            ::
             =.  path.ack-spar   (ev-make-path space path.ack-spar)
-            (ev-make-mess ack-spar `poke-path `space)
+            =.  poke-path
+              =?  space  ?=(?(%publ %chum) -.space)
+                ::  switch life(s) and ship, for payloads
+                ::  XX  test that these lifes are correctly checked in the +scry handler
+                ::
+                ::  lifes need to be switched since for %pokes,
+                ::  this is a payload in our namespace
+                ::
+                ?:  ?=(%publ -.space)
+                  space(life life.ames-state)
+                space(our-life her-life.space, her-life our-life.space, her ship.ack-spar)
+              (ev-make-path space poke-path)
+            ::
+            ::  ack and poke paths are already encrypted at this point
+            ::
+            (ev-make-mess ack-spar `poke-path)
           ::
           ++  ev-make-page
             |=  [=space spar]
@@ -6017,22 +6037,17 @@
               [[our rift.ames-state] [13 ~] (ev-make-path space path)]
             ?~  page=(ev-get-page name)
               ev-core
-            =.  per
-              :-  ship
-              =/  her  (~(got by chums.ames-state) ship)
-              ?>(?=([%known *] her) +.her)
+            %+  ev-push-pact
+              [hop=0 page/[name u.page ~]]
             ::  XX  check here if we have a lane, and if not, assume that it came
             ::  via a sponsor, to avoid breaking symmetric routing
             ::  XX  unnecessary? vere wil probably ignore this lane
-            ::
-            =?  lane.sat.per  ?=(~ lane.sat.per)
-              :: XX  this is a hack; sat.per is not persisted
-              ::
-              [~ `@ux`(^^sein:title rof /ames our now our)]
-            (ev-push-pact 0 page/[name u.page ~])
+            ?^  lane.sat.per
+              lane.sat.per
+            [~ `@ux`(^^sein:title rof /ames our now ship.per)]
           ::
           ++  ev-make-mess
-            |=  [p=spar q=(unit path) spac=(unit space)]
+            |=  [p=spar q=(unit path)]
             ^+  ev-core
             =/  [=rift her=chum-state]
               =/  her  (~(get by chums.ames-state) ship.p)
@@ -6054,15 +6069,7 @@
                 u.res(for (~(put in for.u.res) hen))
               ?:(?=(%known -.her) her(pit pit) her(pit pit))   ::  XX find-fork
             ::
-            ?:  ?&  ?=(^ q)
-                    =;  res=(unit (unit cage))
-                      !?=([~ ~ %message *] res)
-                    ?~  inn=(inner-path-to-beam our u.q)
-                      ~
-                    (rof ~ /ames/make/mess [%ax bem]:u.inn)
-                ==
-              ~|  q
-              !! :: XX wat do?
+            =/  =pact:pact  (ev-make-pact p q rift)
             =|  new=request-state
             =.  for.new   (~(put in for.new) hen)
             =.  pay.new   q
@@ -6071,11 +6078,10 @@
               =.  pit  (~(put by pit) path.p new)
               ?:(?=(%known -.her) her(pit pit) her(pit pit))   ::  XX find-fork
             ::
-            =.  per  [ship.p ?>(?=([%known *] her) +.her)]
-            (ev-push-pact (ev-make-pact p q rift spac))
+            (ev-push-pact pact ?:(?=(%alien -.her) ~ lane.her))
           ::
           ++  ev-make-pact
-            |=  [p=spar q=(unit path) =per=rift spac=(unit space)]
+            |=  [p=spar q=(unit path) =per=rift]
             ^-  pact:pact
             =/  nam  [[ship.p per-rift] [13 ~] path.p]
             ?~  q
@@ -6086,22 +6092,11 @@
             ::  =/  has  (shax u.u.res)
             ::  =.  tmchums.ames-state  (~(put by tmchums.ames-state) has [%some-envelope original-path u.u.res])
             ::  //ax/[$ship]//1/temp/[hash]
-            ::  switch life(s) for payloads
-            ::  XX  test that these lifes are correctly checked in the +scry handler
             ::
-            ?>  ?=(^ spac)
-            =?  u.spac  ?=(?(%publ %chum) -.u.spac)
-              ?:  ?=(%publ -.u.spac)
-                u.spac(life life.ames-state)
-              u.spac(our-life her-life.u.spac, her-life our-life.u.spac, her ship.p)
+            =/  man=name:pact  [[our rift.ames-state] [13 ~] u.q]
             ::
-            =/  man=name:pact
-              [[our rift.ames-state] [13 ~] (ev-make-path u.spac u.q)]  :: XX add namespace before
-            ::
-            ?~  page=(ev-get-page man)
-              ~&  >>>  no-page/man
-              *pact:pact
-            [hop=0 %poke nam man u.page]
+            ~|  [%no-page man=man]
+            [hop=0 %poke nam man (need (ev-get-page man))]
           ::
           ++  ev-make-path
             |=  [=space =path]
@@ -6131,8 +6126,9 @@
             |=  =name:pact
             ^-  (unit data:pact)
             =/  res=(unit (unit cage))
-              (ev-peek ~ /ames %x (name-to-beam name))  :: XX
-            ?.  ?=([~ ~ *] res)  ~
+              (ev-peek ~ /ames-get-page %x (name-to-beam name))  :: XX
+            ?.  ?=([~ ~ %message *] res)
+              ~
             =;  page=pact:pact
               ?>(?=(%page +<.page) `q.page)
             =>  [res=res de=de:pact]
@@ -7251,9 +7247,9 @@
               ::  if =(~ pay.req); %naxplanation, %cork or external (i.e. not
               ::  coming from %ames) $peek request
               ::
-              =;  =pact:pact
-                (ev-push-pact pact)
-              (ev-make-pact ship.per^path pay.req rift.peer `space)  :: XX can't memoize?
+              %+  ev-push-pact
+                (ev-make-pact ship.per^path pay.req rift.peer)
+              lane.sat.per
             ::  +sy-snub: handle request to change ship blacklist
             ::
             ++  sy-snub
@@ -7966,28 +7962,33 @@
             per(lane.sat `i.next)
           ::
           ++  ev-push-pact  :: XX forwarding?
-            |=  =pact:pact
+            |=  [=pact:pact lane=(unit lane:pact:ames)]
             ^+  ev-core
-            ::  find .ship.sat.per sponsor galaxy's lane
-            ::
-            =/  spon=(unit @ux)
-              =/  sax
-                (rof [~ ~] /sax %j `beam`[[our %saxo %da now] /(scot %p ship.per)])
-              ?.  ?=([~ ~ *] sax)
-                ~  :: XX log
-              =/  gal  (rear ;;((list ship) q.q.u.u.sax))  :: XX only galaxy
-              ?:  =(our gal)
-                ~  :: XX log
-              [~ `@ux`gal]
+            =/  =ship
+              ?-  +<.pact  ::  XX
+                %peek  her.p.pact
+                %poke  her.p.pact
+                %page  her.p.pact
+              ==
             =/  lanes=(list lane:pact:ames)
               %+  weld
-                (drop spon)
-              ?~  lane.sat.per
-                ~
-              (drop lane.sat.per)
+                (drop (ev-get-sponsor ship))
+              ?~(lane ~ (drop lane))
             ~&  pushin-pact-on/lanes
             %+  ev-emit  unix-duct.ames-state
             [%give %push lanes p:(fax:plot (en:^pact pact))]
+          ::
+          ++  ev-get-sponsor
+            |=  =ship
+            ^-  (unit @ux)
+            =/  sax
+              (rof [~ ~] /sax %j `beam`[[our %saxo %da now] /(scot %p ship)])
+            ?.  ?=([~ ~ *] sax)
+              ~  :: XX log
+            =/  gal  (rear ;;((list ^ship) q.q.u.u.sax))  :: XX only galaxy
+            ?:  =(our gal)
+              ~  :: XX log
+            [~ `@ux`gal]
           ::
           --
       ::
