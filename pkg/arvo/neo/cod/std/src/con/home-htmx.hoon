@@ -6,7 +6,7 @@
 |^
   ;div.wf.hf.relative
     ;div.fc.g5.ma.mw-page.p-page
-      ;+  menu
+      :: ;+  menu
       ;+  apps
     ==
   ==

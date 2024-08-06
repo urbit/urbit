@@ -43,6 +43,8 @@
       (error p.fool)
     ::
         %.y
+      ~&  >>>  far-fool/far.p.fool
+      ~&  >>>  fal-fool/fal.p.fool
       ;div.frw.g2.p1.wfc
         ;*
         %+  turn  pro.p.fool

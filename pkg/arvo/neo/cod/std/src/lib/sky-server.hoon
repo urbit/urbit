@@ -1,11 +1,15 @@
 /*  feather
-/*  reset
 /*  jquery
 /*  htmx-js
 /*  htmx-dom-enc
 /*  htmx-response-targets
+/*  htmx-idiomorph
+/*  htmx-morph-config
 /*  date-now
 |%
+::
+::  backend
+::
 ++  parse-url
   |=  =request:http
   ^-  [pax=path pam=(map @t @t)]
@@ -65,19 +69,20 @@
     ;script: {(trip htmx-js)}
     ;script: {(trip htmx-response-targets)}
     ;script: {(trip htmx-dom-enc)}
+    ;script: {(trip htmx-idiomorph)}
+    ;script: {(trip htmx-morph-config)}
     ;script: {(trip date-now)}
     ;link
       =href  "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
       =rel  "stylesheet"
       ;
     ==
-    ;style: {(trip reset)}
     ;style: {(trip feather)}
     ;script
       ;+  ;/
       """
       const sharedStyles = new CSSStyleSheet();
-      sharedStyles.replaceSync(`{(trip reset)}\0a{(trip feather)}`);
+      sharedStyles.replaceSync(`{(trip feather)}`);
       document.adoptedStyleSheets = [sharedStyles];
       """
     ==
@@ -97,6 +102,11 @@
         }
         return this;
       };
+      jQuery.fn.host = function () {
+        let first = this[0];
+        let h = first.getRootNode().host;
+        return $(h);
+      }
       jQuery.fn.emit = function (name, detail) {
         (this[0]).dispatchEvent(
           new CustomEvent(

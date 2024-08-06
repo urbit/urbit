@@ -160,6 +160,27 @@ This document uses it.
 ==
 
 
+;div.f2.mono
+  ;div.fr.g4.p2.bd1.br1(style "margin-top: 50px;")
+    ;div.p2.br1.b1;
+    ;div.p2.br1.b1.tc.basis-half: basis-half
+    ;div.p2.br1.b1;
+  ==
+
+  ;div.fr.g4.p2.bd1.br1(style "margin-top: 20px;")
+    ;div.p2.br1.b1;
+    ;div.p2.br1.b1.tc.basis-full: basis-full
+    ;div.p2.br1.b1;
+  ==
+
+  ;div.fr.g4.p2.bd1.br1(style "margin-top: 20px;")
+    ;div.p2.br1.b1;
+    ;div.p2.br1.b1.tc.basis-none: basis-none
+    ;div.p2.br1.b1;
+  ==
+==
+
+
 -----------------------------------------------
 ## Typography
 

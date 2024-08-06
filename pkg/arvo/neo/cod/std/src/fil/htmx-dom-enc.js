@@ -13,3 +13,4 @@ htmx.defineExtension('dom-enc', {
     return (xmls.serializeToString(elt));
   }
 });
+
