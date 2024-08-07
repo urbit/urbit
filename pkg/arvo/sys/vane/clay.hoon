@@ -954,7 +954,6 @@
       %-  mean
       =/  lyn  p.hair
       =/  col  q.hair
-      %-  flop
       ^-  (list tank)
       :~  leaf+"syntax error at [{<lyn>} {<col>}] in {<pax>}"
         ::
@@ -4559,7 +4558,7 @@
       |^  =/  res  (mule |.(read))
           ?:  ?=(%& -.res)  p.res
           %.  [[~ ~] ..park]
-          (slog leaf+"clay: read-at-tako fail {<[desk=syd mun]>}" p.res)
+          (slog leaf+"clay: read-at-tako fail {<[desk=syd mun]>}" (flop p.res))
       ::
       ++  read
         ^-  [(unit (unit cage)) _..park]
