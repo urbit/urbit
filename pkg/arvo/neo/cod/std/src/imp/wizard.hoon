@@ -2,6 +2,7 @@
 /@  wizard-poke
 /-  serv=sky-server
 /-  srv=server
+/-  manx-utils
 =<
 ^-  kook:neo
 |%
@@ -15,7 +16,7 @@
     |=  pal=(unit pail:neo)
     :_  wizard/!>(~)
     =/  =pith:neo  #/[p/our.bowl]/$/eyre
-    =/  =binding:eyre  [~ ~[%neo %wizard]]
+    =/  =binding:eyre  [~ ~[%wizard]]
     =/  =req:eyre:neo  [%connect binding here.bowl]
     :~  [pith %poke eyre-req/!>(req)]
     ==
@@ -38,22 +39,20 @@
       :_  pail
       =+  !<(=task:eyre:neo vax)
       =/  [eyre-id=@ta req=inbound-request:eyre]  task
-      =/  request=request:http  request.req
       ?.  authenticated.req
         %+  ~(respond neo:srv #/[p/our.bowl]/$/eyre)
           eyre-id
-        (login-redirect:gen:srv request)
+        (login-redirect:gen:srv request.req)
       =/  purl  (parse-url:serv request.req)
-      =/  =pith:neo  (pave:neo pax:purl)
-      ?+    method.request  ~|(%unsupported-http-method !!)
+      =/  the-pith  (pave:neo pax:purl)
+      ?+    method.request.req  ~|(%unsupported-http-method !!)
         ::
         ::  Serve either the wizard chooser
         ::  or a specific wizard.
           %'GET'
-        ~&  >  pith
-        =/  renderer  (snag 1 pith)
+        ~&  >  the-pith
+        =/  renderer  (snag 1 the-pith)
         ~&  >  renderer
-        ?^  renderer  ~|('Second iota in URL must be a @tas.' !!)
         =+  #/[p/our.bowl]/$/eyre
         :~  (head-card - eyre-id)
         ::
@@ -65,31 +64,81 @@
                   %data
                 :-  ~
                 %-  manx-to-octs
-                ?:  =(~ renderer)
+                ?:  =([%n ~] renderer)
                   chooser
+                ?^  renderer  
+                  ~|('Second iota in URL must be a @tas.' !!)
                 (~(got by state) renderer)
             ==
         ::
             (done-card - eyre-id)
         ==
         ::
-        ::  Unpack into a made:neo, %make it,
+        ::  Unpack request into a made:neo, %make it,
         ::  and then redirect to tree/new-shrub.
           %'POST'
-        ~
-        ::=/  name  ::  XX ensure they encode this too
-        ::=/  loc  (weld pith name)
-        :::~  :*  (weld pith name)
-        ::        %make
-        ::        (~(got by pam.purl) 'made')  :: XX what style of encoding feels good here?
-        ::    ==
-        
-        :::~  (head-card - eyre-id)
-        ::    (redirect:srv (crip (en-tape:pith:neo loc)))
-        ::    (done-card - eyre-id)
-        ::==
-        
-        ::==
+        =/  body=(map @t @t)
+          (parse-form-body:serv request.req)
+        ::
+        =/  name=pith
+          %-  pave:neo
+          %-  stab
+          (~(got by body) 'pith')
+        =/  loc=pith
+          %+  weld 
+            (oust [0 2] the-pith)
+          name
+        ::
+        =/  stud=@tas
+          !<  @tas
+          %+  slap
+            !>(~)
+          %-  ream
+          (~(got by body) 'stud')
+        ::
+        =/  head-pail=@tas
+          !<  @tas
+          %+  slap
+            !>(~)
+          %-  ream
+          (~(got by body) 'head-pail')
+        ::
+        =/  vase=vase
+          %+  slap  
+            !>(..zuse)
+          %-  ream 
+          (~(got by body) 'vase')
+        ::
+        =/  conf=conf:neo
+          =/  c  (~(get by body) 'vase')
+          ?~  c  ~
+          !<  conf:neo  
+          %+  slap  
+            !>(..zuse)
+          %-  ream 
+          (need c)
+        ::
+        =+  #/[p/our.bowl]/$/eyre
+        :~  :*  loc
+                %make
+                stud
+                [~ head-pail vase]
+                conf
+            ==
+          ::
+            (head-card - eyre-id)
+          ::
+            :*  -
+                %poke
+                %eyre-sign
+                !>
+                :+  eyre-id
+                  %data
+                (redirect:gen:srv (crip (en-tape:pith:neo loc)))
+            ==
+          ::
+            (done-card - eyre-id)
+        ==
       ==
     ==
   --
