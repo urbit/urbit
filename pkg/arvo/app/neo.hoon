@@ -1566,6 +1566,8 @@
   =.  run
     (emit (do-card #/[p/our.bowl]/blue %make %blue ~ ~))
   =.  run
+    (emit (do-card #/[p/our.bowl]/mast %make %mast ~ ~))
+  =.  run
     (emit (do-card #/[p/our.bowl]/srv/tree %make %tree-eyre ~ (~(gas by *crew:neo) src/#/[p/our.bowl] ~)))
   run
   ++  pess  |=(=post:neo (~(pith press post) %out))

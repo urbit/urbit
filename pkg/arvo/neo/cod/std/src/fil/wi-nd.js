@@ -6,8 +6,9 @@ class extends HTMLElement {
       "wid",
       "here",
       "searching",  // boolean. true is user is using the search bar in the header
-      "strategies",       // currently unused. soon be space-separated list of iframe prefixes for each renderer
-      "current",    // currently boolean. soon interpret to match prefix(tab)
+      "strategies", // space-separated list of iframe prefixes
+      "current",    // current iframe strategy
+      "menu",
       "dragging",
     ];
   }
@@ -74,7 +75,7 @@ class extends HTMLElement {
       </style>
       <div id="drag-overlay" class="hidden"></div>
       <header class="b2 fr af js g1">
-        <button class="p2 s-1 b2 br1 hover" id="tree-toggle"><span class="mso">sort</span></button>
+        <button class="p2 s-1 b2 br1 hover" id="menu-toggle"><span class="mso">sort</span></button>
         <div id="breadcrumbs" class="grow fr g1 af js"></div>
         <form id="searchbar" class="grow fr hidden">
           <input
@@ -107,6 +108,9 @@ class extends HTMLElement {
           </div>
         </div>
       </header>
+      <div id="menu" class="b2 p3 hidden fc g3">
+        <h1>menu</h1>
+      </div>
       <div id="tabs" class="fc grow">
       </div>
     `
@@ -132,6 +136,10 @@ class extends HTMLElement {
       } else {
         $(this).attr('current', '/neo/tree');
       }
+    });
+    $(this.gid('menu-toggle')).off();
+    $(this.gid('menu-toggle')).on('click', (e) => {
+      this.toggleAttribute('menu');
     });
 
     $(this.gid('dragger')).off();
@@ -177,6 +185,7 @@ class extends HTMLElement {
       $(this).emit('fix-slots');
     })
     this.setAttribute('wid', `${Date.now()}`);
+    this.buildMenu()
 
     // poll iframes for changes every 350ms
     this.intervalId = setInterval(() => {
@@ -215,36 +224,16 @@ class extends HTMLElement {
   attributeChangedCallback(name, oldValue, newValue) {
     //
     if (name === "here") {
-      console.log(newValue, this.defaultStrategies[newValue]);
-      let defaultPrefixes = ["/neo/hawk", "/neo/tree"];
-      let prefixes = !this.defaultStrategies ?
-                     defaultPrefixes
-             :
-                     this.defaultStrategies[newValue] || defaultPrefixes;
-      console.log('prefixes', prefixes);
-      let keepPrefix = this.prefixWhichChanged;
-      this.prefixWhichChanged = undefined;
-      let rebuildPrefixes = prefixes.filter(p => p != keepPrefix);
-
-      // remove non-changed iframes
-      //$(this.gid('tabs')).children().filter(function() {
-      //  return rebuildPrefixes.includes($(this).attr('prefix'));
-      //}).remove();
-
-      // rebuild non-changed iframes
-      //rebuildPrefixes.forEach(p => {
-      //  let frame = this.createIframe(p, newValue, ($(this).attr('current') || '/neo/hawk') == p);
-      //  $(this.gid('tabs')).append(frame);
-      //});
+      this.setAttribute('strategies', (this.defaultStrategies[newValue] || []).join(' '))
       $(this.gid('tabs')).children().remove();
-      prefixes.forEach((p, i) => {
-        let frame = this.createIframe(p, newValue, i == 0);
-        $(this.gid('tabs')).append(frame);
-      });
+      let frame = this.createIframe(this.current, newValue, true);
+      $(this.gid('tabs')).append(frame);
       this.buildBreadcrumbs();
+      this.buildMenu()
       $(this.gid('input-here')).val(newValue);
       $(this).emit('here-moved');
-    } else if (name === "searching") {
+    }
+    else if (name === "searching") {
       if (newValue === null) {
         $(this.gid('breadcrumbs')).removeClass('hidden');
         $(this.gid('searchbar')).addClass('hidden');
@@ -254,12 +243,26 @@ class extends HTMLElement {
         this.gid('input-here').focus();
         this.gid('input-here').setSelectionRange(999,999);
       }
-    } else if (name === "current") {
+    }
+    else if (name === "current") {
+      $(this.gid('tabs')).children().remove();
+      let frame = this.createIframe(this.current, this.here, true);
+      $(this.gid('tabs')).append(frame);
+      this.buildMenu()
+    }
+    else if (name === "menu") {
       if (newValue === null) {
-        newValue = "/neo/hawk"
+        $(this.gid('menu')).addClass('hidden');
+        $(this.gid('menu-toggle')).removeClass('toggled');
+      } else {
+        $(this.gid('menu')).removeClass('hidden');
+        $(this.gid('menu-toggle')).addClass('toggled');
       }
-      $(this.gid('tabs')).children().hide().filter(`[prefix='${newValue}']`).show();
-    } else if (name === "dragging") {
+    }
+    else if (name === "strategies") {
+      this.buildMenu()
+    }
+    else if (name === "dragging") {
       if (newValue === null) {
         $(this).removeClass('dragging');
         $(this.gid('drag-overlay')).addClass('hidden');
@@ -274,16 +277,26 @@ class extends HTMLElement {
   gid(id) {
     return this.shadowRoot.getElementById(id);
   }
+  get here() {
+    return this.getAttribute("here") || "/";
+  }
   get path() {
-    let here = this.getAttribute("here") || "/";
-    return here.slice(1).split("/").filter(s => !!s.trim().length);
+    return this.here.slice(1).split("/").filter(s => !!s.trim().length);
   }
   get defaultStrategies() {
-    let strats = this.parentNode?.getAttribute('default-strategies')
+    let strats = document.querySelector('s-k-y')?.getAttribute('default-strategies');
     return JSON.parse(strats || '{}');
   }
+  get strategies() {
+    return [...(this.getAttribute('strategies') || '').split(' ').map(m => {
+      return m.trim();
+    }).filter(f => !!f), '/neo/tree'];
+  }
+  get current() {
+    let c = this.getAttribute('current');
+    return (c || this.strategies[0]);
+  }
   createIframe(prefix, here, open) {
-    console.log('creating iframe', prefix, here);
     let el = document.createElement('iframe');
     el.setAttribute('prefix', prefix);
     el.setAttribute('lazy', '');
@@ -368,5 +381,37 @@ class extends HTMLElement {
       $(this).attr('searching', '');
     });
     breadcrumbs.append(spacer);
+  }
+  buildMenu() {
+    let menu = this.gid('menu');
+    $(menu).children().remove();
+    //
+    let cur = document.createElement('h1');
+    cur.textContent = 'current: ' + this.current;
+    menu.appendChild(cur);
+    //
+    let strats = document.createElement('div');
+    $(strats).addClass('frw g2 ac js');
+    //
+    this.strategies.forEach(s => {
+      let strat = document.createElement('button');
+      $(strat).on('click', (e) => {
+        $(this).attr('current', s)
+      })
+      $(strat).addClass('b1 br1 bd1 p-1');
+      if (s === this.current) {
+        $(strat).addClass('toggled');
+      }
+      strat.textContent = s;
+      strats.appendChild(strat)
+    })
+    //
+    let inp = document.createElement('input');
+    $(inp).attr('type', 'text');
+    $(inp).addClass('br1 bd1 p-1 b0');
+    $(inp).attr('placeholder', '/any/strategy');
+    $(inp).on('change', (e) => {$(this).attr('current', e.target.value)});
+    strats.appendChild(inp);
+    menu.appendChild(strats);
   }
 });

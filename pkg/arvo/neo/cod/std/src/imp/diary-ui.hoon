@@ -46,7 +46,7 @@
         %'POST'
       =;  poke
         :_  [stud vase]
-        :~  :+  p:(~(got by deps.bowl) %src) 
+        :~  :+  p:(~(got by deps.bowl) %src)
               %poke
             [%diary-diff !>(poke)]
         ==
@@ -56,9 +56,8 @@
       =/  head  (@tas (got:mu %head))
       ?+    head  !!
           %put-entry
-        =/  id  (slav %da (vol:mu "now"))
         =/  text  (vol:mu "text")
-        [%put-entry id text]
+        [%put-entry now.bowl text]
       ::
           %del-entry
         [%del-entry (slav %da (got:mu %diary-id))]
@@ -73,11 +72,11 @@
   =+  #/[p/our.bowl]/$/eyre
   :~  (head-card - eyre-id)
   ::
-      :*  - 
-          %poke 
+      :*  -
+          %poke
           %eyre-sign
           !>
-          :+  eyre-id 
+          :+  eyre-id
             %data
           :-  ~
           %-  manx-to-octs
@@ -93,11 +92,11 @@
 ++  head-card
   |=  [=pith eyre-id=@ta]
   :*  pith
-      %poke 
+      %poke
       %eyre-sign
       !>
       :^    eyre-id
-          %head 
+          %head
         200
       ['content-type' 'text/html']~
   ==
@@ -120,37 +119,23 @@
       ==
       ;body
         =hx-ext  "dom-enc"
-        ;div.p-page
-          ;div.ma.fc.g2.mw-page
-            ;+  form-put-entry
-            ;*
-            %-  turn
-            :_  link-entry
-            %+  sort
-              %~  tap
-                of:neo
-              %.  /
-              %~  del 
-                of:neo
-              q:(~(got by deps.bowl) %src)
-            |=  [a=[=pith *] b=[=pith *]]
-            (gth ->.pith.a ->.pith.b)
-          == 
+        ;main.p-page.mw-page.ma.fc.g5
+          ;h1.bold.f-2: BLUE
+          ;+  diary-form
+          ;+  diary-items
+          ;+  refresher
         ==
       ==
     ==
   ::
-  ++  form-put-entry
-    ;form.fc.g2
-      =style         "margin-bottom: 30px;"
-      =hx-post       "{(en-tape:pith:neo name)}"
-      =hx-on-submit  "this.reset()"
+  ++  diary-form
+    ;form.fc.g2.as
+      =hx-post       (en-tape:pith:neo name)
       =hx-target     "closest .p-page"
       =hx-select     ".p-page"
       =hx-swap       "outerHTML"
       =head          "put-entry"
-      ;date-now(name "now");
-      ;textarea.p2.bd1.br1
+      ;textarea.p2.bd1.br1.wf
         =name  "text"
         =placeholder  "today, i ..."
         =oninput  "this.setAttribute('value', this.value)"
@@ -160,37 +145,44 @@
         ;
       ==
       ;button.p2.b1.br1.bd1.wfc.hover.loader
-        ;span.loaded.s2: create
+        ;span.loaded: create
         ;span.loading
           ;+  loading.feather-icons
         ==
       ==
     ==
   ::
+  ++  diary-items
+    ;div#items.fc.g2
+      ;*
+      %-  turn
+      :_  link-entry
+      %+  sort
+        %~  tap
+          of:neo
+        %.  /
+        %~  del
+          of:neo
+        q:(~(got by deps.bowl) %src)
+      |=  [a=[=pith *] b=[=pith *]]
+      (gth ->.pith.a ->.pith.b)
+    ==
+    ::
   ++  link-entry
     |=  [pax=pith =idea:neo]
     =/  tape  (trip !<(@t q.q.saga.idea))
-    =/  subject-end  (fall (find [10]~ tape) 56)
-    =/  subject  (scag subject-end tape)
-    =/  id  (trip (snag 0 (pout pax)))
     ;div.fr.g2
-      ;a.p2.br1.grow.b1.hover.loader
-        ::  =href  "{(en-tape:pith:neo (weld /neo/blue sesh))}/{id}"
-        ;div.loaded.fc.g1.js.as.g2
-          ;span.f3: {(pretty-date `@da`->:pax)}
-          ;span.bold: {subject}
-        ==
-        ;span.loading
-          ;+  loading.feather-icons
-        ==
+      ;div.fc.g1.grow.br1.p-2.b1
+        ;span.f3: {(pretty-date `@da`->:pax)}
+        ;span.bold: {tape}
       ==
-      ;button.p2.br1.fr.g2.b1.hover.fc.ac.jc.loader
-        =hx-post  "{(en-tape:pith:neo name)}"
-        =head  "del-entry"
+      ;button.p2.br1.b1.hover.loader
+        =hx-post  (en-tape:pith:neo name)
+        =head          "del-entry"
         =hx-target     "closest .p-page"
         =hx-select     ".p-page"
         =hx-swap  "outerHTML"
-        =diary-id  id
+        =diary-id  (trip (snag 0 (pout pax)))
         ;span.loaded
           ;+  close.feather-icons
         ==
@@ -198,6 +190,15 @@
           ;+  loading.feather-icons
         ==
       ==
+    ==
+  ++  refresher
+    ;div
+      =hx-get  (en-tape:pith:neo name)
+      =hx-target     "#items"
+      =hx-select     "#items"
+      =hx-swap       "outerHTML"
+      =hx-trigger    "every 10s"
+      ;
     ==
   ::
   ++  pretty-date
