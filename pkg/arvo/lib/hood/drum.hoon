@@ -396,7 +396,7 @@
            =?  +>.$  !=(%hush lev)
              (se-text "crud: %{(trip p.told)} event failed")
            ?.  =(%loud lev)  +>.$
-           (se-dump q.told)
+           (se-dump (flop q.told))
     %talk  (se-dump (flop p.told))  ::NOTE  +se-dump flops internally
     %text  (se-text p.told)
   ==
