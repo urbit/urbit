@@ -20,6 +20,8 @@ class extends HTMLElement {
        }
       </style>
       <h1>Settings</h1>
+      <form class="fc g7" onsubmit="event.preventDefault(); $(this).host().get(0).sendForm();">
+        <button class="p2 br1 bd1 b1">submit</button>
       <div class="fc g3">
         ${this.partSlider('Opacity', 'sky-opacity', null, 0.1, 1, 0.01)}
         ${this.partSlider('Outer gap size', 'sky-outer-gap', 'px', 0, 30, 1)}
@@ -51,13 +53,13 @@ class extends HTMLElement {
           Reset to defaults
         </button>
       </div>
+      </form>
     `
   }
   connectedCallback() {
     $(this).off();
     $(this).on('feather-reset', () => {
       //
-      localStorage.removeItem('feather-settings');
       document.documentElement.style = '';
       this.populateFromCurrent();
     });
@@ -129,6 +131,10 @@ class extends HTMLElement {
       let value = !!r.unit?.length ? already.slice(0, 0 - r.unit.length) :  already;
       return {value, ...r}
     })
+  }
+  sendForm() {
+    console.log('send form');
+    fetch('/sky')
   }
   partSlider(label, variable, unit, min, max, step) {
     return `

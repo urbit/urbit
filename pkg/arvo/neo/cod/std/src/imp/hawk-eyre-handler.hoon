@@ -108,7 +108,6 @@
       =;  c
         ?:  (~(has by pam.purl) 'no-save')  c
         c
-        :: [(sky-move-tab bol slot) c]
       %:  eyre-cards
           eyre-id
           bowl
@@ -280,10 +279,6 @@
       ==
     ==
   ==
-++  sky-move-tab
-  |=  [=bowl:neo slot=@ud]
-  ::  assumes location of sky is /sky
-  [#/[p/our.bowl]/sky %poke %sky-diff !>([%move-tab slot here.bowl])]
 ++  default-refresher
   |=  =pith
   =/  tath  (en-tape:pith:neo pith)

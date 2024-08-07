@@ -6,6 +6,7 @@ class extends HTMLElement {
       "our",
       "open",
       "windows-open",
+      "default-strategies",
     ];
   }
   constructor() {

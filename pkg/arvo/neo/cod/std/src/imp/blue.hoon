@@ -18,9 +18,8 @@
     |=  pal=(unit pail:neo)
     :_  sig/!>(~)
     =/  =pith:neo  #/[p/our.bowl]/$/eyre
-    =/  =binding:eyre  [~ ~[%blue]]
-    =/  =req:eyre:neo  [%connect binding here.bowl]
-    :~  [pith %poke eyre-req/!>(req)]
+    :~  [pith %poke eyre-req/!>([%connect [~ ~[%blue]] here.bowl])]
+        [pith %poke eyre-req/!>([%connect [~ ~[%sky]] here.bowl])]
     ==
   ++  poke
     |=  [=stud:neo vax=vase]
@@ -31,11 +30,24 @@
       =/  [eyre-id=@ta req=inbound-request:eyre]  task
       =/  inner=pith:neo
         (pave:neo pax:(parse-url-frfr:serv request.req))
+      ::
+      ::  handle the /sky route
+      ?:  =(%sky (snag 0 inner))
+        :_  sig/!>(~)
+        :~  :*  (welp here.bowl [[%ta eyre-id] ~])
+                %make
+                %sky-ui
+                `[%eyre-task !>(task)]
+                (~(gas by *crew:neo) src/#/[p/our.bowl]/sky ~)
+            ==
+        ==
+      ::
+      ::  handle everything under /blue
       =/  renderer  (snag 1 inner)
       ?^  renderer
         ~|('Second iota in URL must be a @tas.' !!)
       :_  sig/!>(~)
-      :~  :*  (welp here.bowl [[%ta eyre-id] ~]) 
+      :~  :*  (welp here.bowl [[%ta eyre-id] ~])
               %make
               renderer
               `[%eyre-task !>(task)]

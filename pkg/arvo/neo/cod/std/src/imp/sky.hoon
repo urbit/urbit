@@ -1,15 +1,10 @@
-/@  sky
-/@  sky-diff
+/-  serv=sky-server
 |%
-++  state  pro/%sky
-++  poke   (sy %sky %sky-diff ~)
+++  state  pro/%sig
+++  poke   (sy %gift ~)
 ++  kids
   :+  ~  %y
-  %-  ~(gas by *lads:neo)
-  :~
-    :-  [&/%settings |]
-    [pro/%sky-settings (sy %sky-settings ~)]
-  ==
+  schema.serv
 ++  deps   *deps:neo
 ++  form
   ^-  form:neo
@@ -17,96 +12,27 @@
   ++  poke
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo pail:neo)
-    =+  !<(this=sky q.pail)
-    ?+  stud  !!
-      %sky  [~ sky/vax]
-      %sky-diff
-        =/  poke  !<(sky-diff vax)
-        ?+  -.poke  !!
-          %menu
-            :-  ~
-            =.  menu.this  menu.poke
-            sky/!>(this)
-          %new-hawk
-            :-  ~
-            =.  hawks.this  [[now.poke #/[p/our.bowl]/home] hawks.this]
-            =.  open.this  (min 4 +(open.this))
-            sky/!>(this)
-          %move-tab
-            :-  ~
-            =.  hawks.this  (snap hawks.this slot.poke [now.bowl pith.poke])
-            sky/!>(this)
-          %minimize
-            :-  ~
-            =.  hawks.this
-              ;:  welp
-                (scag slot.poke hawks.this)
-                (slag +(slot.poke) hawks.this)
-                [(snag slot.poke hawks.this) ~]
-              ==
-            =.  open.this  (dec open.this)
-            sky/!>(this)
-        ::
-          %maximize
-            :-  ~
-            =.  hawks.this
-              ;:  welp
-                [(snag slot.poke hawks.this) ~]
-                (scag slot.poke hawks.this)
-                (slag +(slot.poke) hawks.this)
-              ==
-            =?    open.this
-                (gte slot.poke open.this)
-              (min 4 +(open.this))
-            sky/!>(this)
-          %close
-            :-  ~
-            =.  hawks.this  (oust [slot.poke 1] hawks.this)
-            =?    open.this
-                (lth slot.poke open.this)
-              (dec open.this)
-            sky/!>(this)
-          %slide-up
-            :-  ~
-            =?  hawks.this
-              (gth slot.poke 0)
-              ;:  welp
-                (scag (dec slot.poke) hawks.this)
-                [(snag slot.poke hawks.this) ~]
-                [(snag (dec slot.poke) hawks.this) ~]
-                (slag +(slot.poke) hawks.this)
-              ==
-            sky/!>(this)
-          %slide-down
-            :-  ~
-            =?  hawks.this
-              (lth slot.poke 3)
-              ;:  welp
-                (scag slot.poke hawks.this)
-                [(snag +(slot.poke) hawks.this) ~]
-                [(snag slot.poke hawks.this) ~]
-                (slag (add 2 slot.poke) hawks.this)
-              ==
-            sky/!>(this)
-          ::
-        ==
-      ::
-    ==
+    :-  ~
+    pail
   ++  init
     |=  pal=(unit pail:neo)
     ^-  (quip card:neo pail:neo)
-    :-
-      :~  [(welp here.bowl /settings) %make %sky-settings ~ ~]
-          [~[p/our.bowl %home] %make %home ~ ~]
-      ==
-    :-  %sky
-    !>
-    :*
-      :~
-        [now.bowl ~[p/our.bowl %home]]
-      ==
-      1
-      %.y
+    :_
+      ::  return pail
+      :::-  %manx
+      ::!>
+      ::;div: initializing sky
+      :-  %sig
+      !>
+      ~
+    ::
+    =/  =pith:neo  #/[p/our.bowl]/$/eyre
+    =/  =binding:eyre  [~ ~[%neo %sky]]
+    =/  =req:eyre:neo  [%connect binding here.bowl]
+    ::
+    ::  return cards
+    :~
+      [~[p/our.bowl %home] %make %home ~ ~]
     ==
   --
 --

@@ -1562,7 +1562,7 @@
   =.  run
     (emit (do-card #/[p/our.bowl]/srv/hawk %make %hawk-eyre ~ ~))
   =.  run
-    (emit (do-card #/[p/our.bowl]/srv/sky %make %sky-eyre ~ ~))
+    (emit (do-card #/[p/our.bowl]/blue %make %blue ~ ~))
   =.  run
     (emit (do-card #/[p/our.bowl]/srv/tree %make %tree-eyre ~ (~(gas by *crew:neo) src/#/[p/our.bowl] ~)))
   run

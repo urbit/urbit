@@ -1,3 +1,4 @@
+/@  order
 /*  feather
 /*  jquery
 /*  htmx-js
@@ -7,6 +8,38 @@
 /*  htmx-morph-config
 /*  date-now
 |%
+::
+::  types
+::
+++  schema
+  ^-  lads:neo
+  %-  ~(gas by *lads:neo)
+  :~
+    ::  /theme/css-variable-name=@ta = variable-value=@t
+    :-  [&/%theme |/%tas |]  [pro/%txt (sy %txt ~)]
+    ::
+    ::  /window/session-name=@ta/open = @ud
+    :-  [&/%window &/%sessions |]  [pro/%order (sy %order ~)]
+    ::
+    ::  /window/session-name=@ta/open = @ud
+    :-  [&/%window |/%ta &/%open |]  [pro/%ud (sy %ud ~)]
+    ::
+    ::  /window/session-name=@ta/menu = ?
+    :-  [&/%window |/%ta &/%menu |]  [pro/%flag (sy %flag ~)]
+    ::
+    ::  /window/session-name=@ta/order = (list pith)
+    :-  [&/%window |/%ta &/%slots |]  [pro/%order (sy %order ~)]
+    ::
+    ::  /window/session-name=@ta/wid=@uv/here = pith
+    :-  [&/%window |/%ta |/%uv &/%here |]  [pro/%pith (sy %pith ~)]
+    ::
+    ::  /window/session-name=@ta/wid=@uv/strategies = (list pith)
+    :-  [&/%window |/%ta |/%uv &/%strategies |]  [pro/%order (sy %order ~)]
+    ::
+    ::  /strategy/~zod/... = (list pith)
+    :-  [&/%strategy &]  [pro/%order (sy %order ~)]
+    ::
+  ==
 ::
 ::  backend
 ::

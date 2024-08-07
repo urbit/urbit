@@ -6,7 +6,7 @@ class extends HTMLElement {
       "wid",
       "here",
       "searching",  // boolean. true is user is using the search bar in the header
-      "tabs",       // currently unused. soon be space-separated list of iframe prefixes for each renderer
+      "strategies",       // currently unused. soon be space-separated list of iframe prefixes for each renderer
       "current",    // currently boolean. soon interpret to match prefix(tab)
       "dragging",
     ];
@@ -215,19 +215,30 @@ class extends HTMLElement {
   attributeChangedCallback(name, oldValue, newValue) {
     //
     if (name === "here") {
-      let prefixes = ["/neo/hawk", "/neo/tree"];
+      console.log(newValue, this.defaultStrategies[newValue]);
+      let defaultPrefixes = ["/neo/hawk", "/neo/tree"];
+      let prefixes = !this.defaultStrategies ?
+                     defaultPrefixes
+             :
+                     this.defaultStrategies[newValue] || defaultPrefixes;
+      console.log('prefixes', prefixes);
       let keepPrefix = this.prefixWhichChanged;
       this.prefixWhichChanged = undefined;
       let rebuildPrefixes = prefixes.filter(p => p != keepPrefix);
 
       // remove non-changed iframes
-      $(this.gid('tabs')).children().filter(function() {
-        return rebuildPrefixes.includes($(this).attr('prefix'));
-      }).remove();
+      //$(this.gid('tabs')).children().filter(function() {
+      //  return rebuildPrefixes.includes($(this).attr('prefix'));
+      //}).remove();
 
       // rebuild non-changed iframes
-      rebuildPrefixes.forEach(p => {
-        let frame = this.createIframe(p, newValue, ($(this).attr('current') || '/neo/hawk') == p);
+      //rebuildPrefixes.forEach(p => {
+      //  let frame = this.createIframe(p, newValue, ($(this).attr('current') || '/neo/hawk') == p);
+      //  $(this.gid('tabs')).append(frame);
+      //});
+      $(this.gid('tabs')).children().remove();
+      prefixes.forEach((p, i) => {
+        let frame = this.createIframe(p, newValue, i == 0);
         $(this.gid('tabs')).append(frame);
       });
       this.buildBreadcrumbs();
@@ -267,7 +278,12 @@ class extends HTMLElement {
     let here = this.getAttribute("here") || "/";
     return here.slice(1).split("/").filter(s => !!s.trim().length);
   }
+  get defaultStrategies() {
+    let strats = this.parentNode?.getAttribute('default-strategies')
+    return JSON.parse(strats || '{}');
+  }
   createIframe(prefix, here, open) {
+    console.log('creating iframe', prefix, here);
     let el = document.createElement('iframe');
     el.setAttribute('prefix', prefix);
     el.setAttribute('lazy', '');
