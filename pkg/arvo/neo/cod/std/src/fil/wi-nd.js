@@ -214,6 +214,13 @@ class extends HTMLElement {
         });
       });
     });
+    $(this).on('bookmark-renderer', (e) => {
+      this.setAttribute('strategies', (this.getAttribute('strategies') || '') + ' ' + e.detail);
+    });
+    $(this).on('unbookmark-renderer', (e) => {
+      let newstrats = this.strategies.slice(0, -1).filter(s => s != e.detail);
+      this.setAttribute('strategies', newstrats);
+    });
   }
   disconnectedCallback() {
     if (this.intervalId !== null) {
@@ -386,32 +393,75 @@ class extends HTMLElement {
     let menu = this.gid('menu');
     $(menu).children().remove();
     //
-    let cur = document.createElement('h1');
-    cur.textContent = 'current: ' + this.current;
-    menu.appendChild(cur);
+    let top = $(`
+      <div class="fc">
+        <span class="s-2 f3">current renderer</span>
+        <div class="fr g3 ac js">
+          <h4 style="padding: 6px 0;"></h4>
+          <button
+            id="bm-save-btn"
+            class="p1 s-1 f2 br1 bd1 b1 wfc"
+            >
+            save
+          </button>
+          <button
+            id="bm-del-btn"
+            class="p1 s-1 f-3 br1 bd1 b1 wfc hidden"
+            >
+            unsave
+          </button>
+        </div>
+      </div>
+    `);
+    $(top).find('h4').text(this.current);
+    if (this.strategies.includes(this.current)) {
+      $(top).find('#bm-save-btn').addClass('hidden')
+    }
+    $(top).find('#bm-save-btn').on('click', (e) => {
+      $(this).emit('bookmark-renderer', this.current)
+    });
+    if (this.strategies.slice(0, -1).includes(this.current)) {
+      $(top).find('#bm-del-btn').removeClass('hidden')
+    }
+    $(top).find('#bm-del-btn').on('click', (e) => {
+      $(this).emit('unbookmark-renderer', this.current)
+    });
+    menu.appendChild(top.get(0));
     //
-    let strats = document.createElement('div');
-    $(strats).addClass('frw g2 ac js');
+    let bookmarks = $(`
+      <div class="fc">
+        <span class="s-2 f3">bookmarks</span>
+        <div class="frw g2 ac js">
+        </div>
+      </div>
+    `);
     //
     this.strategies.forEach(s => {
-      let strat = document.createElement('button');
-      $(strat).on('click', (e) => {
+      let bookmark = $(`<button class="b1 br1 bd1 p-1 wfc"></button>`);
+      bookmark.text(s);
+      $(bookmark).on('click', (e) => {
         $(this).attr('current', s)
       })
-      $(strat).addClass('b1 br1 bd1 p-1');
       if (s === this.current) {
-        $(strat).addClass('toggled');
+        $(bookmark).addClass('toggled');
       }
-      strat.textContent = s;
-      strats.appendChild(strat)
+      bookmarks.find('.frw').append(bookmark);
     })
+    menu.appendChild(bookmarks.get(0));
     //
-    let inp = document.createElement('input');
-    $(inp).attr('type', 'text');
-    $(inp).addClass('br1 bd1 p-1 b0');
-    $(inp).attr('placeholder', '/any/strategy');
-    $(inp).on('change', (e) => {$(this).attr('current', e.target.value)});
-    strats.appendChild(inp);
-    menu.appendChild(strats);
+    let any = $(`
+      <form class="fr g1 af js wf" onsubmit="event.preventDefault()">
+        <label class="fr g1 ac js grow">
+          <span class="s-2 f3 hidden">renderer</span>
+          <input type="text" class="grow br1 bd1 p-1 b0 wf" autocomplete="off" required placeholder="/any/renderer" />
+        </label>
+        <button class="p-1 br1 bd1 b1 hover">submit</button>
+      </form>
+    `);
+    any.on('submit', (e) => {
+      e.preventDefault();
+      $(this).attr('current', any.find('input').val());
+    })
+    menu.appendChild(any.get(0));
   }
 });
