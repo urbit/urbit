@@ -2063,7 +2063,7 @@
                       ^=     keys  keys
                       ^=  sponsor  `(^sein:title sndr.shot)
                   ==
-                =+  ev-core=~(ev-abed mesa [duct sndr.shot^*fren-state])
+                =+  ev-core=~(ev-core mesa [duct sndr.shot^*fren-state])
                 =^  moves  ames-state
                   =<  ev-abet
                   sy-abet:(sy-publ:sy:ev-core / [%full (my [sndr.shot point]~)])
@@ -3050,7 +3050,7 @@
                       =/  =^duct
                         (~(gut by by-bone.ossuary.peer-state) bone [/ames]~)
                       =/  core
-                        %*  .  fo:~(ev-abed mesa [duct her^fren])
+                        %*  .  fo:~(ev-core mesa [duct her^fren])
                           flows.sat.per  (~(put by flows) bone^dire flow)  :: XX check that we don't add naxplanation flows here
                         ==
                       (fo-abed:core duct bone dire)
@@ -5931,6 +5931,7 @@
             ::  for %poke payloads "external" -- triggered by hearing a request
             ::
             ?:  =(%pok were)
+              ::  XX ack-path not used
               (ev-mess-poke ~ ack-path=our^/ her^(pout message-path) q.sage)
             ::  wires are tagged ?(%int %ext) so we can diferentiate if we are
             ::  proessing an ack or a naxplanation payload
@@ -5955,6 +5956,7 @@
                 by-duct.ossuary  (~(del by by-duct.ossuary) (ev-got-duct bone))   ::  XX bone^side=%for
                 by-bone.ossuary  (~(del by by-bone.ossuary) bone)                 ::  XX bone^side=%for
               ==
+            :: XX  call fo-abet:fo-core instead
             %_    ev-core
                 ames-state
               ames-state(chums (~(put by chums.ames-state) [ship known/sat]:per))
@@ -6514,8 +6516,9 @@
                 (fo-take-done:fo-core(pending-ack.state %.y) ~)
               ?.  &(=(vane %$) ?=([%cork ~] payload) ?=([%cork ~] path)):plea
                 =.  fo-core
+                  %-  fo-emit
                   ?+  vane.plea  ~|  %mesa-evil-vane^our^her^vane.plea  !!
-                    ?(%c %e %g %j)  (fo-emit hen %pass wire vane.plea plea/her^plea)
+                    ?(%c %e %g %j)  [hen %pass wire vane.plea %plea her plea]
                   ==
                 ::
                 fo-core(pending-ack.state %.y)
@@ -7982,7 +7985,7 @@
             %+  ev-emit  unix-duct.ames-state
             [%give %push lanes p:(fax:plot (en:^pact pact))]
           ::
-          ++  ev-get-sponsor
+          ++  ev-get-sponsor  :: XX move to %helper core?
             |=  =ship
             ^-  (unit @ux)
             =/  sax
@@ -8004,7 +8007,28 @@
         =+  ev-core=(ev-abed:ev-core hen)
         ::
         =^  moves  ames-state
-          ::  handle error notification
+          ::  handle error notifications
+          ::
+          ::   we can crash somewhere in the packet layer, while handling a packet
+          ::   the packet could be a one fragment poke, an ack or
+          ::   a multiple-fragment poke payload, that the packet layer has send a +peek for.
+          ::   crashes in the packet layer shouldn't be handled, since that can mean a malformed
+          ::   message that the sender has given us.
+          ::
+          ::  if we crash in the message layer, the message and everyting has been decrypted and validated
+          ::  so we could be crashing while handing a %plea or a %boon, or an %ack.
+          ::  a crash while handling a %plea needs to be handled to then expose a %naxplanation (blank error for security)
+          ::  in our namespace.
+          ::
+          ::  %boon are always acked, but we should print the error.
+          ::
+          ::  if we crashed processig an ack, the other end is missbehaving—sending something that's not a [%message %ack error=?]
+          ::  so we print it but do nothing else, since we need to continue peeking until they fix their problem...
+          ::
+          ::  what to do with peers that we know are missbehaving? can we have a namespace that records network incidents,
+          ::  so if something failed and we know a peer has broken flows, we can confirm that they have fixed the problem?
+          ::  what does this gives us? we still need to track in state this broken peers, and we don't know if new flows
+          ::  will still have the problem.
           ::
           ?^  dud
             ?+  -.task  ev-abet:(~(sy-crud sy:ev-core hen) -.task tang.u.dud)
@@ -8076,12 +8100,9 @@
           ::  vane gifts
           ::
             [%gall %flub ~]  (ev-take-flub:ev-core wire)
-            [@ %done *]      (ev-poke-done:ev-core [wire error.sign])
-          ::
-          ::  vane gifts
-          ::
-            [@ %boon *]  (ev-take-boon:ev-core [wire %boon payload.sign])
-            [@ %noon *]  (ev-take-boon:ev-core [wire %noon id.sign payload.sign])
+            [@ %done *]      (ev-poke-done:ev-core wire error.sign)
+            [@ %boon *]      (ev-take-boon:ev-core wire %boon payload.sign)
+            [@ %noon *]      (ev-take-boon:ev-core wire %noon [id payload]:sign)
           ::
           ::  network responses: acks/naxplanation payloads
           ::                     reentrant from %ames (either message or packet layer)
@@ -8283,7 +8304,7 @@
             %peek
           ev-abet:(ev-pact-peek:me-core +>.pact)
         ::
-            %poke  ::(ev-pact-poke lane hop.pact +>.pact)
+            %poke
         ::
           =*  her  her.q.pact  :: her from poke-path
           =/  chum-state  (~(get by chums.ames-state) her)
