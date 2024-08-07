@@ -1820,7 +1820,7 @@
   ::
   ++  pact
     =>  |%
-        +$  frag  @udF
+        +$  frag  @udG
         +$  ship  @pH
         +$  rift  @udF
         +$  bloq  @D
@@ -2005,8 +2005,11 @@
       =/  ryf  ?~(rif 0 (dec (met 3 rif)))  :: XX is rift always non-zero?
       =+  ^=  [nit tau gaf gyf fag]
         ?~  wan  [0b1 0b0 0b0 0 0]
-        =/  gyf  ?~(fag.wan 1 (met 3 (end 5 fag.wan)))
-        [0b0 ?:(?=(%auth typ.wan) 0b1 0b0) (dec gyf) gyf fag.wan]
+        =/  [gaf=@ gyf=@]
+          ?:  (lte fag.wan 0xff)         [0 8]
+          ?:  (lte fag.wan 0xffff)       [1 16]
+          ?:  (lte fag.wan 0xffff.ffff)  [2 32]  [3 64]
+        [0b0 ?:(?=(%auth typ.wan) 0b1 0b0) gaf gyf fag.wan]
       ::
       =/  tap  =-([p=(met 3 -) q=-] `@t`(rap 3 (join '/' pat)))
       ?>  &(?=(^ pat) (lth p.tap ^~((bex 16)))) :: XX truncate instead?
@@ -2027,7 +2030,7 @@
         %-  (hew b pat)
         :^    who=[her=(bex +(ran.c)) rif=+(ryf.c)]
             boq=1
-          fag=?:(=(0b1 nit.c) 0 +(gaf.c))
+          fag=?:(=(0b1 nit.c) 0 (bex gaf.c))
         tap=2
       ::
       ::  XX ?<  =(0 tap.d)
