@@ -2026,11 +2026,16 @@
         ((hew b pat) [ran=2 ryf=2 nit=1 tau=1 gaf=2])
       ::
       =.  b  [3 (rig b 3)]
+      =/  bis=@
+        ?:  =(0 gaf.c)  8
+        ?:  =(1 gaf.c)  16
+        ?:  =(2 gaf.c)  32
+        64
       =^  d  b
         %-  (hew b pat)
         :^    who=[her=(bex +(ran.c)) rif=+(ryf.c)]
             boq=1
-          fag=?:(=(0b1 nit.c) 0 (bex gaf.c))
+          fag=?:(=(0b1 nit.c) 0 bis)
         tap=2
       ::
       ::  XX ?<  =(0 tap.d)
