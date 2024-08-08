@@ -2005,10 +2005,8 @@
       =/  ryf  ?~(rif 0 (dec (met 3 rif)))  :: XX is rift always non-zero?
       =+  ^=  [nit tau gaf gyf fag]
         ?~  wan  [0b1 0b0 0b0 0 0]
-        =/  [gaf=@ gyf=@]
-          ?:  (lte fag.wan 0xff)         [0 8]
-          ?:  (lte fag.wan 0xffff)       [1 16]
-          ?:  (lte fag.wan 0xffff.ffff)  [2 32]  [3 64]
+        =/  gaf  (dec (met 3 fag.wan))
+        =/  gyf  (bex (add 3 gaf))
         [0b0 ?:(?=(%auth typ.wan) 0b1 0b0) gaf gyf fag.wan]
       ::
       =/  tap  =-([p=(met 3 -) q=-] `@t`(rap 3 (join '/' pat)))
@@ -2026,16 +2024,12 @@
         ((hew b pat) [ran=2 ryf=2 nit=1 tau=1 gaf=2])
       ::
       =.  b  [3 (rig b 3)]
-      =/  bis=@
-        ?:  =(0 gaf.c)  8
-        ?:  =(1 gaf.c)  16
-        ?:  =(2 gaf.c)  32
-        64
+      =/  gyf  (bex (add 3 gaf.c))
       =^  d  b
         %-  (hew b pat)
         :^    who=[her=(bex +(ran.c)) rif=+(ryf.c)]
             boq=1
-          fag=?:(=(0b1 nit.c) 0 bis)
+          fag=?:(=(0b1 nit.c) 0 gyf)
         tap=2
       ::
       ::  XX ?<  =(0 tap.d)
