@@ -5202,8 +5202,9 @@
           ++  ev-abet
             =.  chums.ames-state
               (~(put by chums.ames-state) per(sat known/sat.per))
-            moves^ames-state
+            ev-abut
           ::
+          ++  ev-abut  moves^ames-state
           ++  ev-abed  |=(=duct ev-core(hen duct))
           ++  ev-foco  |=(=_per ev-core(per per))
           ++  ev-emit  |=(=move ev-core(moves [move moves]))
@@ -6004,11 +6005,6 @@
           ::
           +|  %message-constructor
           ::
-          ::  these arms are the only ones that don't retrieve the peer from
-          ::  the door's sample sat.per, and therefore don't use the +abed/+abet
-          ::  pattern due to the way comets are handled in ++ev-make-mess when
-          ::  reading attestation proofs.
-          ::
           ::  XX remove all spaces from the task, and make the paths at the callsite?
           ::
           ++  ev-make-peek  |=([=space p=spar] (ev-make-mess p ~))
@@ -6049,6 +6045,11 @@
             ?^  lane.sat.per
               lane.sat.per
             [~ `@ux`(^^sein:title rof /ames our now ship.per)]
+          ::
+          ::  this arm is the only one that don't retrieve the peer from
+          ::  the door's sample sat.per, and therefore don't use the +abed/+abet
+          ::  pattern due to the way comets are handled in ++ev-make-mess when
+          ::  reading attestation proofs.
           ::
           ++  ev-make-mess
             |=  [p=spar q=(unit path)]
@@ -8210,7 +8211,11 @@
       ?:  ?=(%ames -.ship-state)
         (call:ames hen ~ soft+keen/sec^ship^path)
       =^  moves  ames-state
-        =<  ev-abet
+        =<  ev-abut  ::  XX  due to the way we deal with comet attestations, we
+                     ::  cant' call the normal +ev-abet arm since we are not
+                     ::  touching per.sat.ev-core in ++ev-make-peek, so calling
+                     ::  +ev-abet will discard any changes made
+                     ::
         ?:  ?=([~ %known *] +.ship-state)
           (%*(ev-req-peek me-core per ship^+.u.ship-state) sec path)
         ::
@@ -8264,20 +8269,11 @@
       `vane-gate
     ::
     ++  pe-whit  :: XX add sec
-      |=  [boq=@ud spar:^ames]
-      =/  ship-state  (pe-find-peer ship)
+      |=  [boq=@ud =spar:^ames]
+      =/  ship-state  (pe-find-peer ship.spar)
       ?:  ?=(%ames -.ship-state)
         ~&(%whit-is-not-supported-in-ames `vane-gate)
-      =^  moves  ames-state
-        =.  path  [%a %x '1' %$ %whit (scot %ud boq) path]
-        =<  ev-abet
-        ?:  ?=([~ %known *] +.ship-state)
-          (%*(ev-req-peek me-core per ship^+.u.ship-state) sec=~ path)  ::  XX sec
-        ::
-        %^  ev-enqueue-alien-todo:me-core  ship  +.ship-state
-        |=  todos=ovni-state:me-core
-        todos(peeks (~(put ju peeks.todos) path hen))
-      moves^vane-gate
+      (pe-keen ~ spar(path [%a %x '1' %$ %whit (scot %ud boq) path.spar]))
     ::
     +|  %mesa-tasks
     ::
