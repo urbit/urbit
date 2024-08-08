@@ -52,8 +52,7 @@
         ;~(pfix fas (more fas smeg:de-purl:html))
         yque:de-purl:html
     ==
-      :: strip first 2 segments (/neo/hawk)
-  :-  (slag 2 -.parsed)
+  :-  -.parsed
   (~(uni by (malt +.parsed)) (malt header-list.request))
 ++  parse-url-frfr
   |=  =request:http
