@@ -46,7 +46,6 @@
       ;form.fc.g2
         =style   "margin-bottom: 30px;"
         =method  "post"
-        =action  "/wizard/nested-text{(en-tape:pith:neo here.bowl)}"
         ;input.p2.bd1.br1
           =name  "pith"
           =placeholder  "name"
