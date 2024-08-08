@@ -121,7 +121,7 @@
         %+  welp
           %+  ~(respond neo:srv #/[p/our.bowl]/$/eyre)
             eyre-id
-          (redirect:gen:srv (en-cord:pith:neo (welp #/tree loc)))
+          [[301 ['location' (en-cord:pith:neo (welp #/tree loc))]~] ~]
         :~  :*  loc
                 %make
                 stud

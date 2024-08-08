@@ -144,7 +144,7 @@
             ==
             ;div.b0.p-page.wf.hf.fc.g2.as
               ;a.p2.br1.bd1.b1.hover.loader.block
-                =href  "/neo/hawk{(spud pax.purl)}"
+                =href  "/neo/hawk{(spud (slag 1 pax.purl))}"
                 ;span.loaded: reload
                 ;span.loading
                   ;+  loading.feather-icons
@@ -207,7 +207,7 @@
             ==
             ;div.b0.p-page.wf.hf.fc.g2.as
               ;a.p2.br1.bd1.b1.hover.loader.block
-                =href  "/neo/hawk{(spud pax.purl)}"
+                =href  "/neo/hawk{(spud (slag 1 pax.purl))}"
                 ;span.loaded: reload
                 ;span.loading
                   ;+  loading.feather-icons
