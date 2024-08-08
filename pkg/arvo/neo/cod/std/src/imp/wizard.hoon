@@ -50,9 +50,7 @@
         ::  Serve either the wizard chooser
         ::  or a specific wizard.
           %'GET'
-        ~&  >  the-pith
         =/  renderer  (snag 1 the-pith)
-        ~&  >  renderer
         =+  #/[p/our.bowl]/$/eyre
         :~  (head-card - eyre-id)
         ::
@@ -65,7 +63,7 @@
                 :-  ~
                 %-  manx-to-octs
                 ?:  =([%n ~] renderer)
-                  chooser
+                  (chooser [~(key by state) the-pith])
                 ?^  renderer  
                   ~|('Second iota in URL must be a @tas.' !!)
                 (~(got by state) renderer)
@@ -80,14 +78,14 @@
         =/  body=(map @t @t)
           (parse-form-body:serv request.req)
         ::
-        =/  name=pith
-          %-  pave:neo
-          %-  stab
-          (~(got by body) 'pith')
         =/  loc=pith
           %+  weld 
             (oust [0 2] the-pith)
-          name
+          !<  pith:neo
+          %+  slap  
+            !>(..zuse)
+          %-  ream 
+          (~(got by body) 'pith')
         ::
         =/  stud=@tas
           !<  @tas
@@ -110,7 +108,7 @@
           (~(got by body) 'vase')
         ::
         =/  conf=conf:neo
-          =/  c  (~(get by body) 'vase')
+          =/  c  (~(get by body) 'conf')
           ?~  c  ~
           !<  conf:neo  
           %+  slap  
@@ -118,26 +116,16 @@
           %-  ream 
           (need c)
         ::
-        =+  #/[p/our.bowl]/$/eyre
+        %+  welp
+          %+  ~(respond neo:srv #/[p/our.bowl]/$/eyre)
+            eyre-id
+          (redirect:gen:srv (en-cord:pith:neo (welp #/tree loc)))
         :~  :*  loc
                 %make
                 stud
                 [~ head-pail vase]
                 conf
             ==
-          ::
-            (head-card - eyre-id)
-          ::
-            :*  -
-                %poke
-                %eyre-sign
-                !>
-                :+  eyre-id
-                  %data
-                (redirect:gen:srv (crip (en-tape:pith:neo loc)))
-            ==
-          ::
-            (done-card - eyre-id)
         ==
       ==
     ==
@@ -166,14 +154,41 @@
   (as-octt:mimes:html (en-xml:html man))
 ::
 ++  chooser
+  |=  [options=(set stud:neo) the-pith=pith]
+  ::=/  oninput
+  ::  """
+  ::  this.setAttribute("value", this.value); 
+  ::  this.nextElementSibling.nextElementSibling.setAttribute('action', '/wizard/' + this.value + {(en-tape:pith:neo (oust [0 2] the-pith))}); 
+  ::  """
   ;html
     ;head
       ;meta(charset "UTF-8");
       ;title: Wizards
+      ;*  standard-head-tags:serv
     ==
     ;body
-      ;p
-        ; Placeholder  :: XX dropdown goes here
+      ;form
+        =method  "get"
+        =action  "/wizard/nested-text{(en-tape:pith:neo (oust [0 2] the-pith))}"
+        ::  /wizard/input-value/(oust [0 2] the-pith)
+        ;select
+          =name  "choice"
+          :: =oninput  oninput
+          ;*
+          %+  turn
+            ~(tap in options)
+          |=  =stud:neo
+          ?^  stud  :: XX will need to change this someday
+            ~|("The stud you chose isn't a @tas. Let the devs know if you ever see this error." !!)
+          ^-  manx
+          ;option  
+            {(trip stud)}
+          ==
+        ==
+        ;button
+          =type  "submit"
+          ; Submit
+        ==
       ==
     ==
   ==

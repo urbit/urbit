@@ -1,4 +1,5 @@
 /@  txt
+/-  srv=sky-server
 ::
 ^-  kook:neo
 =<
@@ -36,35 +37,43 @@
 ++  wizard
   |=  =bowl:neo
   ^-  manx
-  ;form.fc.g2
-    =style   "margin-bottom: 30px;"
-    =method  "post"
-    =action  "/wizard/nested-text/{(en-tape:pith:neo here.bowl)}"
-    ;textarea.p2.bd1.br1
-      =name  "pith"
-      =placeholder  "name"
-      =rows  "1"
-      ;
+  ;html
+    ;head
+      ;meta(charset "utf-8");
+      ;*  standard-head-tags:srv
     ==
-    ;textarea.hidden
-      =name  "stud"
-      =value  "%txt"
-      ;
-    ==
-    ;textarea.hidden
-      =name  "head-pail"
-      =value  "%txt"
-      ;
-    ==
-    ;textarea.p2.bd1.br1
-      =name  "vase"
-      =placeholder  "text"
-      =rows  "3"
-      ;
-    ==
-    ;button
-      =type  "submit"
-      ; Submit
+    ;body
+      ;form.fc.g2
+        =style   "margin-bottom: 30px;"
+        =method  "post"
+        =action  "/wizard/nested-text{(en-tape:pith:neo here.bowl)}"
+        ;input.p2.bd1.br1
+          =name  "pith"
+          =placeholder  "name"
+          =rows  "1"
+          ;
+        ==
+        ;input.hidden
+          =name  "stud"
+          =value  "%nested-txt"
+          ;
+        ==
+        ;input.hidden
+          =name  "head-pail"
+          =value  "%txt"
+          ;
+        ==
+        ;input.p2.bd1.br1
+          =name  "vase"
+          =placeholder  "text"
+          =rows  "3"
+          ;
+        ==
+        ;button
+          =type  "submit"
+          ; Submit
+        ==
+      ==
     ==
   ==
 --
