@@ -1287,6 +1287,10 @@
     ==
   +$  task
     (pair @ta inbound-request:^eyre)
+  +$  chan-task
+    json
+  +$  chan-gift
+    [sub=path dat=json]
   --
 ::  +clay: Filesystem overlay
 ::

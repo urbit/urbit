@@ -257,6 +257,7 @@
     %noun            (on-noun q.vase)
     %neo-raw-poke    (on-move (poke:harden !<(raw-poke:neo vase)))
     %handle-http-request  (handle-http-request:sttp !<([@ta inbound-request:eyre] vase))
+    %json                 (handle-eyre-chan-request:sttp !<(json vase))
   ==
 ++  on-noun
   |=  non=*
@@ -322,6 +323,7 @@
     [%sync rest=*]  (on-peer-sync (pave:neo rest.pole) stop)
     [%fetch rest=*]  ?:(stop run (on-peer-fetch (pave:neo rest.pole)))
     [%http-response *]   run
+    [%eyre-chan *]  run
   ==
 ::
 ++  on-peer-fetch
@@ -2314,10 +2316,11 @@
   ++  call
     |=  [src=pith:neo dst=pith:neo =note:neo]
     ?>  ?=(%poke -.note) :: XX: all shanes should be virtualised and hand deliver acks
-    ?+  p.pail.note  ~|(bad-eyre-call/p.pail.note !!)
-      %ack         run
-      %eyre-req    (on-eyre-req !<(req:eyre:neo q.pail.note))
-      %eyre-sign  (on-eyre-sign src !<(sign:eyre:neo q.pail.note))
+    ?+  p.pail.note    ~|(bad-eyre-call/p.pail.note !!)
+      %ack             run
+      %eyre-req        (on-eyre-req !<(req:eyre:neo q.pail.note))
+      %eyre-sign       (on-eyre-sign src !<(sign:eyre:neo q.pail.note))
+      %eyre-chan-gift  (on-eyre-chan-gift !<(chan-gift:eyre:neo q.pail.note))
     ==
     +$  request-line
       $:  [ext=(unit @ta) site=(list @t)]
@@ -2350,6 +2353,13 @@
         %data  `http-response-data/!>(dat.gift)
         %done  ~
       ==
+    ::
+    ++  on-eyre-chan-gift
+      |=  [sub=path dat=json]
+      ^+  run
+      =/  cag=cage  [%json !>(dat)]
+      (give %fact ~[sub] cag)
+    ::
     ++  match-binding
       =|  test=(list @t)
       |=  site=(list @t)
@@ -2370,6 +2380,27 @@
       =.  by-id.eyre.unix     (~(put by by-id.eyre.unix) eyre-id u.bin)
       =.  by-pith.eyre.unix  (~(put by by-pith.eyre.unix) u.bin eyre-id)
       =/  =card:neo  [u.bin %poke eyre-task/!>(`task:eyre:neo`[eyre-id req])]
+      =/  =move:neo  [#/[p/our.bowl]/$/eyre card]
+      (emit (do-move move))
+    ::
+    ++  handle-eyre-chan-request
+      |=  jon=json
+      ^+  run
+      =/  dst=(unit pith:neo)
+        ?.  &(?=(^ jon) ?=(%o -.jon))
+          ~
+        =/  str=(unit json)  (~(get by p.jon) 'pith')
+        ?.  &(?=(^ str) ?=(^ u.str) ?=(%s -.u.str))
+          ~
+        [~ (pave:neo (stab p.u.str))]
+      ?~  dst  ~|(eyre-channel-req-missing-pith/jon !!)
+      =.  jon
+        ?.  &(?=(^ jon) ?=(%o -.jon))
+          ~
+        =/  dat=(unit json)  (~(get by p.jon) 'data')
+        ?~  dat  ~
+        u.dat
+      =/  =card:neo  [u.dst %poke eyre-chan-task/!>(`chan-task:eyre:neo`jon)]
       =/  =move:neo  [#/[p/our.bowl]/$/eyre card]
       (emit (do-move move))
     --
