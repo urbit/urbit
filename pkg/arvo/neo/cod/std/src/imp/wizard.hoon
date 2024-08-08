@@ -157,11 +157,6 @@
 ::
 ++  chooser
   |=  [options=(set stud:neo) the-pith=pith]
-  ::=/  oninput
-  ::  """
-  ::  this.setAttribute("value", this.value); 
-  ::  this.nextElementSibling.nextElementSibling.setAttribute('action', '/wizard/' + this.value + {(en-tape:pith:neo (oust [0 2] the-pith))}); 
-  ::  """
   ;html
     ;head
       ;meta(charset "UTF-8");
@@ -169,28 +164,22 @@
       ;*  standard-head-tags:serv
     ==
     ;body
-      ;form
-        =method  "get"
-        =action  "/wizard/nested-text{(en-tape:pith:neo (oust [0 2] the-pith))}"
-        ::  /wizard/input-value/(oust [0 2] the-pith)
-        ;select
-          =name  "choice"
-          :: =oninput  oninput
-          ;*
-          %+  turn
-            ~(tap in options)
-          |=  =stud:neo
-          ?^  stud  :: XX will need to change this someday
-            ~|("The stud you chose isn't a @tas. Let the devs know if you ever see this error." !!)
-          ^-  manx
-          ;option  
-            {(trip stud)}
-          ==
+      ;*
+      %+  turn
+        ~(tap in options)
+      |=  =stud:neo
+      ?^  stud  :: XX will need to change this someday
+        ~|("The stud you chose isn't a @tas. Let the devs know if you ever see this error." !!)
+      ^-  manx
+      =/  link=tape
+        ;:  welp 
+          "/wizard/" 
+          (trip stud) 
+          (en-tape:pith:neo (oust [0 2] the-pith))
         ==
-        ;button
-          =type  "submit"
-          ; Submit
-        ==
+      ;a
+        =href  link
+        ; {(trip stud)} 
       ==
     ==
   ==
