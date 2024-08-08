@@ -369,7 +369,9 @@ class extends HTMLElement {
             <span class="mso">close</span>
             close
           </button>
-          <feather-settings></feather-settings>
+          <slot name="theme">
+            <feather-settings></feather-settings>
+          </slot>
         </div>
         <div id="help" class="fc g3 grow scroll-y hidden">
           <button
@@ -541,7 +543,6 @@ class extends HTMLElement {
     $(this).on("save-layout", () => {
       this.saveLayout();
     });
-    this.restoreLayout();
   }
   attributeChangedCallback(name, oldValue, newValue) {
     //
@@ -568,6 +569,10 @@ class extends HTMLElement {
     } else if (name === "windows-open") {
       this.qs("main").className = `open-${this.windowsOpen}`;
     }
+  }
+  get defaultStrategies() {
+    let strats = this.getAttribute('default-strategies')
+    return JSON.parse(strats || '{}');
   }
   renderIcon(name) {
     let s = document.createElement('span');
@@ -646,7 +651,7 @@ class extends HTMLElement {
     }
     localStorage.setItem('sky-layout', JSON.stringify(layout))
   }
-  restoreLayout() {
+  deprectatedRestoreLayout() {
     let layoutString = localStorage.getItem('sky-layout');
     if (!!layoutString) {
       let layout = JSON.parse(layoutString);
@@ -672,7 +677,7 @@ class extends HTMLElement {
         ]
       }
       localStorage.setItem('sky-layout', JSON.stringify(layout))
-      this.restoreLayout();
+      this.deprecatedRestoreLayout();
     }
   }
 });

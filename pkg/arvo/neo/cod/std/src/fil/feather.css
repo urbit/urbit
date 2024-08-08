@@ -102,7 +102,7 @@ i {
  */
 
 :root {
-  --sky-opacity: 0.95;
+  --sky-opacity: 1;
   --sky-outer-gap: 8px;
   --sky-inner-gap: 8px;
 
@@ -162,36 +162,36 @@ i {
   --light-b-3: #dd5522;
   --light-b-2: #ddaa33;
   --light-b-1: #55dd33;
-  --light-b0: #dddddd;
-  --light-b1: #cccccc;
-  --light-b2: #bbbbbb;
-  --light-b3: #aaaaaa;
-  --light-b4: #999999;
+  --light-b0: #dddded;
+  --light-b1: #ccccdc;
+  --light-b2: #bbbbcb;
+  --light-b3: #aaaaba;
+  --light-b4: #9999a9;
   --light-f-3: #993311;
   --light-f-2: #aaaa22;
   --light-f-1: #339911;
-  --light-f0: #111111;
-  --light-f1: #333333;
-  --light-f2: #444444;
-  --light-f3: #555555;
-  --light-f4: #777777;
+  --light-f0: #111131;
+  --light-f1: #333353;
+  --light-f2: #444464;
+  --light-f3: #555575;
+  --light-f4: #777797;
 
   --dark-b-3: #551111;
   --dark-b-2: #555511;
   --dark-b-1: #225511;
-  --dark-b0: #222222;
-  --dark-b1: #333333;
-  --dark-b2: #444444;
-  --dark-b3: #555555;
-  --dark-b4: #666666;
+  --dark-b0: #222232;
+  --dark-b1: #333343;
+  --dark-b2: #444454;
+  --dark-b3: #555565;
+  --dark-b4: #666676;
   --dark-f-3: #ee7755;
   --dark-f-2: #ccbb33;
   --dark-f-1: #55cc33;
-  --dark-f0: #eeeeee;
-  --dark-f1: #cccccc;
-  --dark-f2: #bbbbbb;
-  --dark-f3: #aaaaaa;
-  --dark-f4: #888888;
+  --dark-f0: #eeeefe;
+  --dark-f1: #ccccdc;
+  --dark-f2: #bbbbcb;
+  --dark-f3: #aaaada;
+  --dark-f4: #8888a8;
 
   --b-3: var(--light-b-3);
   --b-2: var(--light-b-2);
@@ -237,7 +237,6 @@ i {
  */
 
 * {
-  /* do i really  need this */
   font-size: var(--font-size);
 }
 html {
@@ -253,6 +252,7 @@ body {
   font-variation-settings: normal;
   min-height: 100%;
   font-family: var(--font, sans-serif);
+  font-size: var(--font-size);
   letter-spacing: var(--letter-spacing);
   line-height: var(--line-height);
 }

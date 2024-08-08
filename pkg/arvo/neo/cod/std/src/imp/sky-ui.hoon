@@ -1,6 +1,5 @@
 /@  order
 /-  serv=sky-server
-/-  manx-utils
 /*  s-k-y
 /*  wi-nd
 /*  feather-settings

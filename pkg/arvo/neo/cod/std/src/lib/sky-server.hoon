@@ -15,8 +15,9 @@
   ^-  lads:neo
   %-  ~(gas by *lads:neo)
   :~
-    ::  /theme/css-variable-name=@ta = variable-value=@t
-    :-  [&/%theme |/%tas |]  [pro/%txt (sy %txt ~)]
+    ::  /theme/css-variable-name=@ta/unit-suffix = variable-value=@t
+    :-  [&/%theme |/%tas &/%value |]  [pro/%txt (sy %txt ~)]
+    :-  [&/%theme |/%tas &/%unit |]  [pro/%txt (sy %txt ~)]
     ::
     ::  /window/session-name=@ta/open = @ud
     :-  [&/%window &/%sessions |]  [pro/%order (sy %order ~)]
