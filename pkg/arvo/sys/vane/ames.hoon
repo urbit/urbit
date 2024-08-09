@@ -5421,12 +5421,11 @@
           ++  ev-authenticate
             |=  [rut=@uxI aut=auth:pact =name:pact]
             ^-  ?
-            ?>  ?=([%0 *] aut)
-            =*  auth  p.aut
+            ?>  ?=([%& *] aut)
             =/  ful  (en-beam [[her.name %$ ud+1] pat.name])
-            ?-  -.auth
-              %&  (verify-sig:crypt (ev-sig-key [pat her]:name) p.auth ful rut)
-              %|  (verify-mac:crypt (ev-mac-key [pat her]:name) p.auth ful rut)
+            ?-  -.p.aut
+              %&  (verify-sig:crypt (ev-sig-key [pat her]:name) p.p.aut ful rut)
+              %|  (verify-mac:crypt (ev-mac-key [pat her]:name) p.p.aut ful rut)
             ==
           ::
           +|  %entry-points
