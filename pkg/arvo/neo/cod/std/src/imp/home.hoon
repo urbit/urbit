@@ -51,6 +51,8 @@
         [#/[p/our.bowl]/home/docs/guides/development %make %sail `sail/!>([developer-environment-setup 'prose p-page mw-page ma' ~]) ~]
         [#/[p/our.bowl]/home/docs/guides/feather %make %sail `sail/!>([feather-intro 'prose p-page mw-page ma' ~]) ~]
         [#/[p/our.bowl]/home/docs/guides/axal-core %make %sail `sail/!>([axal 'prose p-page mw-page ma' ~]) ~]
+      ::
+        [#/[p/our.bowl]/sky/strategy/[p/our.bowl]/home %make %order `order/!>([#/hawk ~]) ~]
     ==
   ++  poke
     |=  =pail:neo

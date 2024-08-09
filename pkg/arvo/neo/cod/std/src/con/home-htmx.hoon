@@ -79,7 +79,7 @@
         =hx-target  "closest .hawk"
         =hx-swap  "outerHTML"
         =hx-indicator  "this"
-        =href  (trip (spat ['neo' 'hawk' path]))
+        =href  (trip (spat ['hawk' path]))
         ;span.loaded: {(trip (snag 0 (pout:neo pith)))}
         ;span.loading.s2
           ;+  loading.feather-icons

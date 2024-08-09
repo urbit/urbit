@@ -445,8 +445,9 @@ class extends HTMLElement {
     })
     $(this).on('new-window', () => {
       let wind = document.createElement('wi-nd');
-      $(wind).attr('here', `/${this.our}/home`);
-      $(wind).attr('renderer', '/tree');
+      let here = `/${this.our}/home`;
+      $(wind).attr('here', here);
+      $(wind).attr('renderer', this.chooseStrategy(here));
       $(wind).attr('slot', `s-1`);
       $(this).append(wind);
       this.growFlock();
@@ -574,6 +575,11 @@ class extends HTMLElement {
   get defaultStrategies() {
     let strats = this.getAttribute('default-strategies')
     return JSON.parse(strats || '{}');
+  }
+  chooseStrategy(here) {
+    let strats = this.defaultStrategies;
+    let strat = strats[here] || ['/tree'];
+    return strat[0];
   }
   renderIcon(name) {
     let s = document.createElement('span');
