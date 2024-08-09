@@ -1,6 +1,7 @@
 /@  eyre-reqs
 /-  serv=sky-server
 /-  srv=server
+/*  feather
 ^-  kook:neo
 |%
 ++  state  pro/%sig
@@ -20,6 +21,9 @@
     =/  =pith:neo  #/[p/our.bowl]/$/eyre
     :~  [pith %poke eyre-req/!>([%connect [~ ~[%blue]] here.bowl])]
         [pith %poke eyre-req/!>([%connect [~ ~[%sky]] here.bowl])]
+        ::
+        ::  bind static files
+        [#/[p/our.bowl]/static/feather %make %css `css/!>(feather) ~]
     ==
   ++  poke
     |=  [=stud:neo vax=vase]

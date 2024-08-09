@@ -53,7 +53,7 @@
 ++  eyre-cards
   |=  [=bowl:neo [eyre-id=@ta req=inbound-request:eyre]]
   =/  =pith:neo  #/[p/our.bowl]/$/eyre
-  =/  mume=(unit mime)  (the-mime bowl)
+  =/  mume=(unit mime)  (get-mime bowl)
   ?~  mume
     =/  headers  ['content-type' 'text/plain']~
     =/  data  `(as-octs:mimes:html 'not found')
@@ -68,20 +68,16 @@
     [pith %poke eyre-sign/!>([eyre-id %head 200 headers])]
     [pith %poke eyre-sign/!>([eyre-id %data `q.mime])]
     [pith %poke eyre-sign/!>([eyre-id %done ~])]
+    [here.bowl %tomb ~]
   ==
 ::
-++  the-mime
+++  get-mime
   |=  =bowl:neo
   ^-  (unit mime)
   =/  src  (~(get by deps.bowl) %src)
-  ?~  src
-    ~&  'nothing here'
-    ~
+  ?~  src  ~
   =/  udea=(unit idea:neo)  (~(get of:neo q.u.src) /)
-  ?~  udea
-    ~&  'no conversion to mime'
-    ~
-  :-  ~
-  ~&  q.pail.u.udea
-  !<(mime q.pail.u.udea)
+  ?~  udea  ~
+  %-  mole
+  |.  `mime`!<(mime q.pail.u.udea)
 --

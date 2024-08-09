@@ -87,6 +87,7 @@
       ==
   ::
       (done-card - eyre-id)
+      [here.bowl %tomb ~]
   ==
 ::
 ++  head-card
