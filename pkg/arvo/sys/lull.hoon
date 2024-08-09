@@ -2005,7 +2005,7 @@
       =/  ryf  ?~(rif 0 (dec (met 3 rif)))  :: XX is rift always non-zero?
       =+  ^=  [nit tau gaf gyf fag]
         ?~  wan  [0b1 0b0 0b0 0 0]
-        =/  gaf  (dec (xeb (met 3 fag.wan)))
+        =/  gaf  (dec (xeb (met 3 (max 1 fag.wan))))
         =/  gyf  (bex (add 3 gaf))
         [0b0 ?:(?=(%auth typ.wan) 0b1 0b0) gaf gyf fag.wan]
       ::
