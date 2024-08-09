@@ -51,7 +51,7 @@
     =/  =tape  (scow %ud value)
     ;html
       ;head
-        ;title: txt
+        ;title: ud
         ;link
           =rel  "stylesheet"
           =href  "/blue/blue-mime/{(scow %p our.bowl)}/static/feather"

@@ -446,6 +446,7 @@ class extends HTMLElement {
     $(this).on('new-window', () => {
       let wind = document.createElement('wi-nd');
       $(wind).attr('here', `/${this.our}/home`);
+      $(wind).attr('renderer', '/tree');
       $(wind).attr('slot', `s-1`);
       $(this).append(wind);
       this.growFlock();

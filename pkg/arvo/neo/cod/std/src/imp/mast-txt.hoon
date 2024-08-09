@@ -52,40 +52,18 @@
     ;html
       ;head
         ;title: txt
-        ;style
-          ;+  ;/  %-  trip
-          '''
-          * {
-            box-sizing: border-box;
-          }
-          html {
-            height: 100%;
-          }
-          body {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            margin: 0;
-          }
-          textarea {
-            margin: 0;
-            border: none;
-            padding: 10px;
-            font-family: monospace;
-            background: black;
-            color: white;
-            width: 100%;
-            flex-grow: 1;
-            user-resize: none;
-          }
-          '''
+        ;link
+          =rel  "stylesheet"
+          =href  "/blue/blue-mime/{(scow %p our.bowl)}/static/feather"
+          ;
         ==
       ==
-      ;body
-        ;textarea
+      ;body.p2
+        ;textarea.wf.hf.bd1.br1.b0.p1.mono
           =event  "/input/form"
           =return  "/target/value"
           =debounce  "0.5"
+          =placeholder  "txt"
           =autocomplete  "off"
           =spellcheck  "false"
           ;+  ;/  tape
