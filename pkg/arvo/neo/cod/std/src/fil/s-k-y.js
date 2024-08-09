@@ -359,7 +359,9 @@ class extends HTMLElement {
             close
           </button>
           <h1>Notifications</h1>
-          <div class="f-3">Not yet implemented</div>
+          <slot name="notifications">
+            <div class="f3 wf hf fc jc ac">Nothing to see right now</div>
+          </slot>
         </div>
         <div id="settings" class="fc g3 grow scroll-y hidden">
           <button
@@ -369,9 +371,7 @@ class extends HTMLElement {
             <span class="mso">close</span>
             close
           </button>
-          <slot name="theme">
-            <feather-settings></feather-settings>
-          </slot>
+          <slot name="theme"></slot>
         </div>
         <div id="help" class="fc g3 grow scroll-y hidden">
           <button

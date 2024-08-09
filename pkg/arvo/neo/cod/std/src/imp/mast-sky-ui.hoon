@@ -2,10 +2,6 @@
 /@  txt
 /@  order
 /-  serv=sky-server
-/*  s-k-y
-/*  wi-nd
-/*  feather-settings
-/*  hawk-icon
 ^-  kook:neo
 =<
 |%
@@ -70,6 +66,7 @@
       =our  (scow %p our.bowl)
       =default-strategies  default-strategies-json
       ;+  form-theme
+      ;+  notifications
     ==
   ++  lor
     ^-  lore:neo
@@ -132,17 +129,9 @@
     """
     --{(trip name)}: {(trip val)}{(trip suffix)};
     """
-  ++  icon-url
-    ^~
-    %-  trip
-    %^    cat
-        3
-      'data:image/png;base64,'
-    %-  ~(en base64:mimes:html & |)
-    (as-octs:mimes:html hawk-icon)
   ++  favicon
     ^~
-    =;  m  m(a.g [[%href icon-url] a.g.m])
+    =;  m  m(a.g [[%href "/blue/blue-mime/{(scow %p our.bowl)}/static/hawk-icon"] a.g.m])
     ^-  manx
     ;link
       =rel  "icon"
@@ -168,7 +157,7 @@
       :~
         %-  pairs:enjs:format
         :~
-          ['src' s+(crip icon-url)]
+          ['src' s+(crip "/blue/blue-mime/{(scow %p our.bowl)}/static/hawk-icon")]
           ['sizes' s+'196x196']
           ['type' s+'image/png']
         ==
@@ -341,6 +330,12 @@
         ; Reset to default
       ==
     ==
+  ++  notifications
+    ;div.fc.g2(slot "notifications")
+      ;div.p3.br1.bd1: first
+      ;div.p3.br1.bd1: second
+      ;div.p3.br1.bd1: third
+    ==
   ++  lift
     |=  in=manx
     ^-  manx
@@ -350,11 +345,6 @@
         ;meta(charset "UTF-8");
         ;title: sky
         ;*  standard-head-tags.serv
-        ;meta
-          =name  "htmx-config"
-          =content  (trip '{"ignoreTitle":"true"}')
-          ;
-        ==
         ;script
           ;+  ;/  %-  trip
           '''
@@ -399,18 +389,12 @@
           });
           '''
         ==
-        ;script: {(trip s-k-y)}
-        ;script: {(trip feather-settings)}
-        ;script: {(trip wi-nd)}
+        ;script(src "/blue/blue-mime/{(scow %p our.bowl)}/static/s-k-y");
+        ;script(src "/blue/blue-mime/{(scow %p our.bowl)}/static/wi-nd");
         ;+  favicon
         ;+  manifest
       ==
       ;body
-        =hx-ext  "response-targets"
-        =hx-swap  "outerHTML"
-        =hx-boost  "true"
-        =hx-history  "false"
-        =hx-replace-url  "/neo/sky"
         ;+  in
       ==
     ==

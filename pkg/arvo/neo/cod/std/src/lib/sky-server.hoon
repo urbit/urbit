@@ -6,7 +6,6 @@
 /*  htmx-response-targets
 /*  htmx-idiomorph
 /*  htmx-morph-config
-/*  date-now
 |%
 ::
 ::  types
@@ -102,9 +101,6 @@
     ;script: {(trip htmx-js)}
     ;script: {(trip htmx-response-targets)}
     ;script: {(trip htmx-dom-enc)}
-    ;script: {(trip htmx-idiomorph)}
-    ;script: {(trip htmx-morph-config)}
-    ;script: {(trip date-now)}
     ;link
       =href  "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
       =rel  "stylesheet"

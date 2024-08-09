@@ -2,10 +2,13 @@
 /-  serv=sky-server
 /-  srv=server
 /*  feather
+/*  s-k-y
+/*  wi-nd
+/*  hawk-icon
 ^-  kook:neo
 |%
 ++  state  pro/%sig
-++  poke   (sy %eyre-task ~)
+++  poke   (sy %eyre-task %bind-static-assets ~)
 ++  kids
   :+  ~  %y
   %-  malt
@@ -22,13 +25,22 @@
     :~  [pith %poke eyre-req/!>([%connect [~ ~[%blue]] here.bowl])]
         [pith %poke eyre-req/!>([%connect [~ ~[%sky]] here.bowl])]
         ::
-        ::  bind static files
-        [#/[p/our.bowl]/static/feather %make %css `css/!>(feather) ~]
+        ::  bind static assets
+        [here.bowl %poke bind-static-assets/!>(~)]
     ==
   ++  poke
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo pail:neo)
     ?+    stud  ~|(bad-stud/stud !!)
+        %bind-static-assets
+      :_  sig/!>(~)
+      :~
+        [#/[p/our.bowl]/static/feather %make %css `css/!>(feather) ~]
+        [#/[p/our.bowl]/static/s-k-y %make %js `js/!>(s-k-y) ~]
+        [#/[p/our.bowl]/static/wi-nd %make %js `js/!>(wi-nd) ~]
+        [#/[p/our.bowl]/static/hawk-icon %make %png `png/!>(hawk-icon) ~]
+      ==
+      ::
         %eyre-task
       =+  !<(=task:eyre:neo vax)
       =/  [eyre-id=@ta req=inbound-request:eyre]  task
