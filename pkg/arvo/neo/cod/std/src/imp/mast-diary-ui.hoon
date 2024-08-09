@@ -1,8 +1,6 @@
 /@  ui-event
 /@  txt
 /@  diary-diff
-/-  serv=sky-server
-/-  feather-icons
 ^-  kook:neo
 =<
 |%
@@ -74,6 +72,7 @@
 +$  render-data
   $:  diary-entries=(list [date=@da =txt])
       selection=(unit @da)
+      =bowl:neo
   ==
 ::
 ++  render
@@ -84,7 +83,11 @@
     ;html
       ;head
         ;meta(charset "utf-8");
-        ;*  standard-head-tags.serv
+        ;link
+          =href  "/blue/blue-mime/{(scow %p our.bowl)}/static/feather"
+          =rel  "stylesheet"
+          ;
+        ==
         ;script
           ;+  ;/
             %-  trip
@@ -127,8 +130,8 @@
       ==
       ;button#form-button.loader.b1.p2.br1.bd1.wfc.hover
         ;span.loaded: create
-        ;span.loading
-          ;+  loading.feather-icons
+        ;span.loading.s-2.f4
+          ; loading
         ==
       ==
     ==
@@ -151,10 +154,10 @@
               =js-on-event  "setLoading('{key}');"
               =id           key
               ;span.loaded
-                ;+  close.feather-icons
+                ; X
               ==
-              ;span.loading
-                ;+  loading.feather-icons
+              ;span.loading.s-2.f4
+                ; loading
               ==
             ==
           ==
@@ -167,6 +170,7 @@
   ^-  render-data
   :*  (get-diary-entries deps.bowl)
       (get-selection kids.bowl)
+      bowl
   ==
 ::
 ++  get-diary-entries

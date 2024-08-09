@@ -898,3 +898,10 @@ input[type=range]::-moz-range-thumb {
   border-radius: 50%;
   border: none;
 }
+
+button:focus {
+  filter: brightness(115%);
+}
+input:focus {
+  filter: brightness(115%);
+}

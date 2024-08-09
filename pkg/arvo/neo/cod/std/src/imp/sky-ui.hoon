@@ -68,6 +68,7 @@
       ==
   ::
       (done-card - eyre-id)
+      [here.bowl %cull ~]
       [here.bowl %tomb ~]
   ==
 ::

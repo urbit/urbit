@@ -68,6 +68,7 @@
     [pith %poke eyre-sign/!>([eyre-id %head 200 headers])]
     [pith %poke eyre-sign/!>([eyre-id %data `q.mime])]
     [pith %poke eyre-sign/!>([eyre-id %done ~])]
+    [here.bowl %cull ~]
     [here.bowl %tomb ~]
   ==
 ::
