@@ -44,7 +44,7 @@
     %+  expect-eq
       !>  `*`0
       !>  (slum min (slum min 0^0 0) 0^0)
-  ==1
+  ==
 ::  comparison gates don't crash if the inputs are equal cells
 ::
 ++  test-eq-cells
