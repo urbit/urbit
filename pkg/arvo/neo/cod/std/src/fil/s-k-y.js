@@ -412,7 +412,7 @@ class extends HTMLElement {
     return this.getAttribute('our');
   }
   get currentFeatherRules() {
-    return this.qs('feather-settings').currentFeatherRules;
+    return this.qs('feather-settings')?.currentFeatherRules || [];
   }
   get windows() {
     let slots = $(this).children('wi-nd[slot]').get().toSorted((a, b) => {

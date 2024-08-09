@@ -390,10 +390,10 @@ class extends HTMLElement {
     $(menu).children().remove();
     //
     let top = $(`
-      <div class="fc">
+      <div class="fc g1">
         <span class="s-2 f3">renderer</span>
         <div class="fr g3 ac js">
-          <h4 style="padding: 6px 0;"></h4>
+          <h4></h4>
           <button
             id="bm-save-btn"
             class="p1 s-1 f2 br1 bd1 b1 wfc"
@@ -425,7 +425,7 @@ class extends HTMLElement {
     menu.appendChild(top.get(0));
     //
     let bookmarks = $(`
-      <div class="fc">
+      <div class="fc g1">
         <span class="s-2 f3">bookmarks</span>
         <div class="frw g2 ac js">
         </div>
@@ -447,10 +447,7 @@ class extends HTMLElement {
     //
     let any = $(`
       <form class="fr g1 af js wf" onsubmit="event.preventDefault()">
-        <label class="fr g1 ac js grow">
-          <span class="s-2 f3 hidden">renderer</span>
-          <input type="text" class="grow br1 bd1 p-1 b0 wf" autocomplete="off" required placeholder="/any/renderer" />
-        </label>
+        <input type="text" class="grow br1 bd1 p-1 b0 wf" autocomplete="off" required placeholder="/any/renderer" />
         <button class="p-1 br1 bd1 b1 hover">submit</button>
       </form>
     `);
