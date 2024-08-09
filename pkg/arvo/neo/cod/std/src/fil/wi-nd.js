@@ -129,14 +129,6 @@ class extends HTMLElement {
     $(this.gid('input-here')).on('blur', (e) => {
       $(this).removeAttr('searching');
     });
-    $(this.gid('tree-toggle')).off();
-    $(this.gid('tree-toggle')).on('click', (e) => {
-      if ($(this).attr('current') === '/neo/tree') {
-        $(this).attr('current', '/neo/hawk');
-      } else {
-        $(this).attr('current', '/neo/tree');
-      }
-    });
     $(this.gid('menu-toggle')).off();
     $(this.gid('menu-toggle')).on('click', (e) => {
       this.toggleAttribute('menu');
@@ -297,7 +289,7 @@ class extends HTMLElement {
   get strategies() {
     return [...(this.getAttribute('strategies') || '').split(' ').map(m => {
       return m.trim();
-    }).filter(f => !!f), '/neo/tree'];
+    }).filter(f => !!f), '/tree'];
   }
   get current() {
     let c = this.getAttribute('current');

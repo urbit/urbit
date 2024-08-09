@@ -193,7 +193,7 @@
   ;div.absolute
     =style  "top: 1em; left: 1em;"
     ;div.loader.refresher
-      =hx-get  "{(en-tape:pith:neo :(weld /neo/hawk here.bowl))}?no-save"
+      =hx-get  "{(en-tape:pith:neo :(weld /hawk here.bowl))}?no-save"
       =hx-trigger  "every 7s, accel-refresh"
       =hx-target  "closest .top"
       =hx-select  ".top"

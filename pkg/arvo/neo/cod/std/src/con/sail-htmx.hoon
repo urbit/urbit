@@ -62,7 +62,7 @@
   ;form.fc.p1.g1.hidden.grow.basis-half.scroll-y.relative
     =id  "editor-{id}"
     =style  "min-width: 300px; height: 100%;"
-    =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=sail"
+    =hx-post  "/hawk{(en-tape:pith:neo here.bowl)}?stud=sail"
     =hx-swap  "innerHTML"
     =hx-select  "main > div"
     =hx-target  "#viewer-{id}"

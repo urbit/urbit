@@ -5,7 +5,7 @@
 |=  =bowl:neo
 ;form.fc.p2.wf.hf.relative
   =here  (en-tape:pith:neo here.bowl)
-  =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=txt&refresh"
+  =hx-post  "/hawk{(en-tape:pith:neo here.bowl)}?stud=txt&refresh"
   =hx-trigger  "input changed delay:0.4s from:find textarea"
   =hx-swap  "none"
   ;div.htmx-indicator.absolute

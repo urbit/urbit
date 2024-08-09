@@ -46,7 +46,7 @@
         ;div.wf.hf.fc.jc.ac.g2
           ;h1: nothing here
           ;a.b1.br1.bd1.hover.loader.p2
-            =href  "/neo/hawk/{(scow %p our.bowl)}/home"
+            =href  "/hawk/{(scow %p our.bowl)}/home"
             ;span.loaded: go home
             ;span.loading
               ;+  loading.feather-icons
@@ -143,7 +143,7 @@
             ==
             ;div.b0.p-page.wf.hf.fc.g2.as
               ;a.p2.br1.bd1.b1.hover.loader.block
-                =href  "/neo/hawk{(spud (slag 1 pax.purl))}"
+                =href  "/hawk{(spud (slag 1 pax.purl))}"
                 ;span.loaded: reload
                 ;span.loading
                   ;+  loading.feather-icons
@@ -206,7 +206,7 @@
             ==
             ;div.b0.p-page.wf.hf.fc.g2.as
               ;a.p2.br1.bd1.b1.hover.loader.block
-                =href  "/neo/hawk{(spud (slag 1 pax.purl))}"
+                =href  "/hawk{(spud (slag 1 pax.purl))}"
                 ;span.loaded: reload
                 ;span.loading
                   ;+  loading.feather-icons
@@ -283,7 +283,7 @@
   |=  =pith
   =/  tath  (en-tape:pith:neo pith)
   ;div.loading
-    =hx-get  "/neo/hawk{tath}"
+    =hx-get  "/hawk{tath}"
     =hx-target  "closest .rendered"
     =hx-select  ".rendered"
     =hx-trigger  "load once"
@@ -303,7 +303,7 @@
       =/  =pail:neo  q.saga.u.node
       ;div.fc.g2.as.p2
         ;a.p1.mono.f2.b1.br1.bd1.hover.loader
-          =href  "/neo/hawk/{(scow %p our.bowl)}/cod/std/src/pro/{(trip ?@(p.pail p.pail mark.p.pail))}"
+          =href  "/hawk/{(scow %p our.bowl)}/cod/std/src/pro/{(trip ?@(p.pail p.pail mark.p.pail))}"
           ;span.loaded: {<p.pail>}
           ;span.loading
             ;+  loading.feather-icons
@@ -336,7 +336,7 @@
     :-  ~
     =/  tape  (en-tape:pith:neo pith)
     ;a.p2.b1.br1.bd1.hover.loader
-      =href  "/neo/hawk{(en-tape:pith:neo here.bowl)}{tape}"
+      =href  "/hawk{(en-tape:pith:neo here.bowl)}{tape}"
       ;span.loaded: {tape}
       ;span.loading
         ;+  loading.feather-icons

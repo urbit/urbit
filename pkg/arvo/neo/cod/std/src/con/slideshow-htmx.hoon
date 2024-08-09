@@ -18,7 +18,7 @@
   =/  cls  "p-1 br1 b1 hover"
   ;form.p2.frw.js.ac.g3.sticky.wf
     =style  "top:0; left: 0;"
-    =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=slideshow-diff"
+    =hx-post  "/hawk{(en-tape:pith:neo here.bowl)}?stud=slideshow-diff"
     =hx-swap  "none"
     =head  "mode"
     ;button
@@ -64,7 +64,7 @@
     ;form
       =class  "fc p1 g1 scroll-y relative grow"
       =style  "min-width: 300px; height: 100%;"
-      =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=slideshow"
+      =hx-post  "/hawk{(en-tape:pith:neo here.bowl)}?stud=slideshow"
       =hx-swap  "morph"
       =hx-target  "closest .slideshow"
       =hx-select  ".slideshow"
@@ -155,7 +155,7 @@
   =/  hid  ?:(=(%present mode.slideshow) "" "hidden")
   ;form
     =class  "deck b0 sh-tab grow basis-half scroll-x scroll-y wf hf {hid}"
-    =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=slideshow-diff"
+    =hx-post  "/hawk{(en-tape:pith:neo here.bowl)}?stud=slideshow-diff"
     =hx-trigger  "sh-change-slide"
     =hx-swap  "none"
     =head  "slide"

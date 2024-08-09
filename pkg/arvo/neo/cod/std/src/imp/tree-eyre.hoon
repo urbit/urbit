@@ -201,7 +201,7 @@
           =/  poke-card=(list card:neo)  (poke-tree-card here.bowl diff-vase)
           =/  location  
             %-  crip 
-              %+  weld  "/neo/tree" 
+              %+  weld  "/tree" 
                 (en-tape:pith:neo (snip inner))
           =.  headers.resp  
             %+  snoc  headers.resp  'HX-Redirect'^location
@@ -401,7 +401,7 @@
         ;h1.p2:  nothing at {(en-tape:pith:neo here)}
         ;div.buttons.fr.g2
           ;a.loader.p2.tc.hover.b0.bd.bd2.br2.grow
-          =href  "/neo/tree{parent}"
+          =href  "/tree{parent}"
             ;span.loaded.hf: back to {parent}
             ;span.loading.hf:  loading
           ==
@@ -447,7 +447,7 @@
           ;+  ?:  =(p.pail %$)
             empty-manx
           ;a.loader.p2.bd.bd2.br2.hover.b0
-          =href  "/neo/tree/{(scow %p our.bowl)}/cod/std/src/pro/{(trip ?@(p.pail p.pail mark.p.pail))}"
+          =href  "/tree/{(scow %p our.bowl)}/cod/std/src/pro/{(trip ?@(p.pail p.pail mark.p.pail))}"
             ;span.loaded.hf: {<p.pail>}
             ;span.loading.hf:  loading
           ==
@@ -472,7 +472,7 @@
     ?~  pith  
       empty-manx
     ;a.fr.jb.g1.bd.bd2.br2.hover.b0
-    =href  "/neo/tree{(en-tape:pith:neo (weld here pith))}"
+    =href  "/tree{(en-tape:pith:neo (weld here pith))}"
       ;div.p2.hfc.p2.hover
         ;  {(en-tape:pith:neo pith)}
       ==
@@ -514,7 +514,7 @@
     |=  =pro:ford:neo
     ^-  manx
     ;a.loader.bd.bd2.br2.p2.hover.b0
-      =href  "/neo/tree/{(scow %p our.bowl)}/cod/std/src/pro/{(trip ?@(stud.pro stud.pro mark.stud.pro))}"
+      =href  "/tree/{(scow %p our.bowl)}/cod/std/src/pro/{(trip ?@(stud.pro stud.pro mark.stud.pro))}"
         ;span.loaded.hfc: {<stud.pro>}
         ;span.loading.hfc:  loading
     ==
@@ -582,7 +582,7 @@
   |=  [here=pith:neo main=?]
   ^-  manx
   ;form.make-form.hidden.bd.bd2.br2.fc.g2.p2.wf.hfc
-  =hx-post    "/neo/tree{(en-tape:pith:neo here)}?stud=tree-diff&head=send-make"
+  =hx-post    "/tree{(en-tape:pith:neo here)}?stud=tree-diff&head=send-make"
   =hx-swap    "outterHTML"
   =hx-target  ".error-box"
     ;div.frw.g2
@@ -651,7 +651,7 @@
   |=  here=pith:neo
   ^-  manx
   ;form.poke-form.hidden.bd.bd2.br2.frw.jb.g2.p2.wf
-  =hx-post    "/neo/tree{(en-tape:pith:neo here)}?stud=tree-diff&head=send-poke"
+  =hx-post    "/tree{(en-tape:pith:neo here)}?stud=tree-diff&head=send-poke"
   =hx-swap    "outterHTML"
   =hx-target  ".error-box"
     ;input.hidden
@@ -692,7 +692,7 @@
   ^-  manx
   ;form.cull-form.hidden.bd.bd2.br2.p2.wf
   =style    "border: 2px solid #FF0000; border-radius: 6px;"
-  =hx-post  "/neo/tree{(en-tape:pith:neo here)}?stud=tree-diff&head=send-cull"
+  =hx-post  "/tree{(en-tape:pith:neo here)}?stud=tree-diff&head=send-cull"
     ;div.fc.ac
       ;p:  {warning}
     ==

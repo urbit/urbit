@@ -12,7 +12,7 @@
     =label  "iframe"
     =here  (en-tape:pith:neo here.bowl)
     ;form.fr
-      =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=iframe"
+      =hx-post  "/hawk{(en-tape:pith:neo here.bowl)}?stud=iframe"
       =hx-swap  "none"
       =style  "border-bottom: 1px solid #777;"
       ;input.p2.grow
