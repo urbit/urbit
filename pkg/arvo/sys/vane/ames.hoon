@@ -5582,7 +5582,7 @@
             ::  update and print connection status
             ::  XX  this is implicitly updating chums.state;
             =.  ev-core  (ev-update-qos %live last-contact=now)
-            ?.  =(1 tot.data)
+            ?.  =(1 (met 13 tob.data))
               =/  =dire  :: flow swtiching
                 %*(fo-flip-dire fo side *@ud^(fo-infer-dire:fo load.pok))  :: XX assert load is plea/boon
               ::  XX move to arm
@@ -5638,22 +5638,24 @@
             ::  XX  this is implicitly updating chums.state;
             =.  ev-core  (ev-update-qos %live last-contact=now)
             ::
+            =/  tof  (met 13 tob.data)  :: total fragments
+            ::
             =/  [typ=?(%auth %data) fag=@ud]
               ?~  wan.name
-                [?:((gth tot.data 4) %auth %data) 0]
+                [?:((gth tof 1) %auth %data) 0]
               [typ fag]:wan.name
             ::
             ?-    typ
                 %auth
               ?.  ?|  ?=(~ ps.u.res)
                       =(0 fag)
-                      (gth tot.data 4)
+                      (gth tof 1)
                   ==
                 ev-core
               =/  proof=(list @ux)  (rip 8 dat.data)
               ~&  >>>  auth/proof
               ?>  (ev-authenticate (recover-root:verifier:lss proof) aut.data name)
-              =/  state  (init:verifier:lss tot.data proof)
+              =/  state  (init:verifier:lss tof proof)
               =.  chums.ames-state
                 %+  ~(put by chums.ames-state)  her.name
                 =-  known/sat.per(pit -)
@@ -5671,7 +5673,7 @@
               ?~  ps.u.res
                 ::  is this this a standalone message?
                 ::
-                ?:  =(1 tot.data)
+                ?:  =(1 (met 13 tob.data))
                   ?>  ?=(%& -.aut.data)
                   ?>  (ev-authenticate (root:lss (met 3 dat.data)^dat.data) aut.data name)
                   =/  =spar  [her.name inner-path]
@@ -7675,12 +7677,12 @@
                 =/  mes=auth:mess  ?:(?=(%sign typ.msg) &+aut.msg |+aut.msg)
                 =*  ser  ser.msg
                 =/  wid  (met boq ser)
-                =/  tot  (met 13 ser)
+                =/  tob  (met 3 ser)
                 ?<  ?=(%0 wid)  :: XX is this true?
                 =/  nit=?  |    :: XX refactor
                 |-  ^-  (unit (unit cage))
                 ?~  wan.pac.nex
-                  $(nit &, wan.pac.nex [?:((gth wid 4) %auth %data) 0])
+                  $(nit &, wan.pac.nex [?:((gth wid 1) %auth %data) 0])
                 ::
                 =*  fag  fag.wan.pac.nex
                 ?.  (gth wid fag)
@@ -7691,7 +7693,7 @@
                   ~  :: non-standard proofs for later
                 =;  [nam=name:pact dat=data:pact pairs=(list (unit [l=@ux r=@ux]))]
                   =/  pac=pact:pact  [hop=0 %page nam dat ~]
-                  ?:  (gth fag tot.dat)
+                  ?:  (gth fag (met 13 tob.dat))
                     [~ ~]
                   ?.  ser.pac.nex
                     ``[%packet !>([pac pairs])]
@@ -7712,7 +7714,7 @@
                     =>  [ser=ser ..lss]
                     ~>  %memo./ames/lss-auth
                     (build:lss (met 3 ser)^ser)
-                  =/  dat  [tot [%& mes] (rep 8 proof.lss-proof)]  :: XX types
+                  =/  dat  [tob [%& mes] (rep 8 proof.lss-proof)]  :: XX types
                   [nam dat ~]
                 ::
                     %data
@@ -7721,9 +7723,12 @@
                     ~>  %memo./ames/lss-data
                     (build:lss (met 3 ser)^ser)
                   =/  nam  [[our rif] [boq ?:(nit ~ [%data fag])] pat]
-                  =/  pair  (snag fag pairs.lss-proof)
-                  ::
-                  =/  dat  [tot [%| pair] (cut boq [fag 1] ser)]
+                  =/  aut
+                    ?:  =(wid 1)
+                      [%& mes]  :: single-fragment special case
+                    [%| (snag fag pairs.lss-proof)]
+                    ::
+                  =/  dat  [tob aut (cut boq [fag 1] ser)]
                   =/  pairs
                     =/  per  (bex (sub boq 13))
                     (swag [+((mul per fag)) (dec per)] pairs.lss-proof)

@@ -1834,7 +1834,7 @@
           ::  %| for data packets
           ::
           (each auth:mess (unit (pair @uxI @uxI)))
-        +$  data  [tot=frag aut=auth:pact dat=@]
+        +$  data  [tob=@ud aut=auth:pact dat=@]
         +$  lane  $@  @ux
                   $%  [%if p=@ifF q=@udE]
                       [%is p=@isH q=@udE]
@@ -2003,11 +2003,11 @@
       ^-  plot
       =/  ran  ?~(her 0 (xeb (dec (met 4 (end 7 her)))))
       =/  ryf  ?~(rif 0 (dec (met 3 rif)))  :: XX is rift always non-zero?
-      =+  ^=  [nit tau gaf gyf fag]
-        ?~  wan  [0b1 0b0 0b0 0 0]
+      =/  [nit=@ tau=@ gaf=@ gyf=@ fag=@]
+        ?~  wan
+          [0b1 0b0 0b0 0 0]
         =/  gaf  (dec (xeb (met 3 (max 1 fag.wan))))
-        =/  gyf  (bex (add 3 gaf))
-        [0b0 ?:(?=(%auth typ.wan) 0b1 0b0) gaf gyf fag.wan]
+        [0b0 ?:(?=(%auth typ.wan) 0b1 0b0) gaf (bex gaf) fag.wan]
       ::
       =/  tap  =-([p=(met 3 -) q=-] `@t`(rap 3 (join '/' pat)))
       ?>  &(?=(^ pat) (lth p.tap ^~((bex 16)))) :: XX truncate instead?
@@ -2024,12 +2024,11 @@
         ((hew b pat) [ran=2 ryf=2 nit=1 tau=1 gaf=2])
       ::
       =.  b  [3 (rig b 3)]
-      =/  gyf  (bex (add 3 gaf.c))
       =^  d  b
         %-  (hew b pat)
         :^    who=[her=(bex +(ran.c)) rif=+(ryf.c)]
             boq=1
-          fag=?:(=(0b1 nit.c) 0 gyf)
+          fag=?:(=(0b1 nit.c) 0 (bex gaf.c))
         tap=2
       ::
       ::  XX ?<  =(0 tap.d)
@@ -2061,9 +2060,10 @@
   ++  data
     |%
     ++  en
-      |=  [tot=frag:pact aut=auth:pact dat=@]
+      |=  [tob=@ud aut=auth:pact dat=@]
       ^-  plot
-      =/  lot  (met 3 (end 5 tot))
+      =/  lot  (dec (xeb (met 3 (max 1 tob))))
+      ?>  (lte lot 3)
       ::
       =/  [aub=@ubB aum=plat:plot]
         ?-  aut
@@ -2078,8 +2078,8 @@
       =/  men=(pair @B @A)
         ?:((lth nel 3) [nel 0] [0b11 1])
       :+  bloq=3
-        [s+~ 0 [2 (dec lot)] [2 aub] [2 0] [2 p.men] ~]
-      [[lot tot] aum [q.men nel] [nel len] [len dat] ~]
+        [s+~ 0 [2 lot] [2 aub] [2 0] [2 p.men] ~]
+      [[(bex lot) tob] aum [q.men nel] [nel len] [len dat] ~]
     ::
     ++  de
       |=  a=bite
@@ -2087,11 +2087,11 @@
       |=  dat=@
       ^-  [data:pact boq=bloq sep=step]
       =^  c  b
-        ((hew b dat) [bot=2 [aub=2 nil=2] men=2])
+        ((hew b dat) [lot=2 [aub=2 nil=2] men=2])
       =.  b  [3 (rig b 3)]
       =^  d  b
         %-  (hew b dat)
-        :+  tot=+(bot.c)
+        :+  tob=(bex lot.c)
           ^=  aub
           ?+  aub.c  !!
             %0b0   `@`64
@@ -2112,7 +2112,7 @@
       =/  nel  ?.(=(3 men.c) men.c nel.d)
       =^  len  sep.b  [(cut 3 [sep.b nel] dat) (add sep.b nel)]
       =^  dat  sep.b  [(cut 3 [sep.b len] dat) (add sep.b len)]
-      [[tot.d aut dat] b]
+      [[tob.d aut dat] b]
     --
   ::
   ++  name-to-beam
