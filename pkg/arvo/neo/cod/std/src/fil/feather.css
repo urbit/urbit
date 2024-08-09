@@ -724,10 +724,35 @@ body {
   filter: invert(20%);
 }
 .toggled {
-  filter: invert(100%);
+  opacity: 80%;
+}
+.toggled .b0,
+.toggled.b0 {
+  color: var(--b0);
+  background-color: var(--f0);
+}
+.toggled .b1,
+.toggled.b1 {
+  color: var(--b1);
+  background-color: var(--f1);
+}
+.toggled .b2,
+.toggled.b2 {
+  color: var(--b2);
+  background-color: var(--f2);
+}
+.toggled .b3,
+.toggled.b3 {
+  color: var(--b3);
+  background-color: var(--f3);
+}
+.toggled .b4,
+.toggled.b4 {
+  color: var(--b4);
+  background-color: var(--f4);
 }
 .hover.toggled:hover {
-  filter: invert(100%);
+  filter: brightness(80%);
 }
 .active,
 .selected {
