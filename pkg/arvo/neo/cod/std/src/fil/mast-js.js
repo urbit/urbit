@@ -1,49 +1,45 @@
 let rope;
 let pith;
-let path;
 let ship;
-let app;
 let channelMessageId;
 let subscriptionId;
 let eventSource;
+const baseSubPath = '/eyre-chan/mast';
 const channelId = `${Date.now()}${Math.floor(Math.random() * 100)}`;
 const channelPath = `${window.location.origin}/~/channel/${channelId}`;
+const gallApp = 'neo';
 addEventListener('DOMContentLoaded', async () => {
     channelMessageId = 0;
     rope = Number(document.documentElement.getAttribute('rope'));
     pith = document.documentElement.getAttribute('pith');
-    path = document.documentElement.getAttribute('path');
     ship = document.documentElement.getAttribute('ship');
-    app = document.documentElement.getAttribute('app');
     await connectToShip();
     let eventElements = document.querySelectorAll('[event]');
     eventElements.forEach(el => setEventListeners(el));
+    handleKidElements([...document.getElementsByTagName('kid')]);
 });
 async function connectToShip() {
     const storageKey = `${rope}${ship}`;
     let storedStr = localStorage.getItem(storageKey);
     localStorage.setItem(storageKey, `${channelMessageId} ${channelId}`);
-    if (storedStr) {
-        const storedIds = storedStr.split(' ');
-        const oldPath = `${window.location.origin}/~/channel/${storedIds[1]}`;
-        fetch(oldPath, {
-            method: 'PUT',
-            body: JSON.stringify([
-                {
-                    id: channelMessageId,
-                    action: 'unsubscribe',
-                    subscription: Number(storedIds[0])
-                },
-                {
-                    id: channelMessageId++,
-                    action: 'delete'
-                }
-            ])
-        });
-    };
+    // if (storedStr) {
+    //     const storedIds = storedStr.split(' ');
+    //     const oldPath = `${window.location.origin}/~/channel/${storedIds[1]}`;
+    //     fetch(oldPath, {
+    //         method: 'PUT',
+    //         body: JSON.stringify([
+    //             {
+    //                 id: channelMessageId++,
+    //                 action: 'delete'
+    //             }
+    //         ])
+    //     });
+    // };
+    let key = document.body.getAttribute('key');
+    console.log('ROOT SUB PATH ---->', `${baseSubPath}/${key}`);
     await fetch(channelPath, { 
         method: 'PUT',
-        body: JSON.stringify(makeSubscribeBody(channelMessageId))
+        body: JSON.stringify(makeSubscribeBody(channelMessageId, `${baseSubPath}/${key}`))
     });
     eventSource = new EventSource(channelPath);
     eventSource.addEventListener('message', handleChannelStream);
@@ -157,15 +153,17 @@ function handleReturnAttr(event, target, returnAttrVals) {
     return returnData;
 };
 function handleChannelStream(event) {
+    console.log('stream hit :)');
     const streamResponse = JSON.parse(event.data);
+    console.log('stream response: ', streamResponse);
+    if (streamResponse.response !== 'diff') return;
     fetch(channelPath, {
         method: 'PUT',
         body: JSON.stringify(makeAck(streamResponse.id))
     });
-    if (streamResponse.response !== 'diff') return;
     const gust = streamResponse.json;
     if (!gust) return;
-    // console.log(gust);
+    console.log(gust);
     gust.forEach(gustObj => {
         switch (gustObj.p) {
             case 'd':
@@ -196,16 +194,23 @@ function handleChannelStream(event) {
                     };
                 };
                 let newNode = parent.childNodes[gustObj.r];
-                if (newNode.getAttribute('event')) {
-                    setEventListeners(newNode);
-                };
-                if (newNode.childElementCount > 0) {
-                    let needingListeners = newNode.querySelectorAll('[event]');
-                    needingListeners.forEach(child => setEventListeners(child));
-                };
-                const jsOnAdd = newNode.getAttribute('js-on-add');
-                if (jsOnAdd) {
-                    eval?.(`"use strict"; ${jsOnAdd}`);
+                if (newNode.nodeType === 1) {
+                    if (newNode.getAttribute('event')) {
+                        setEventListeners(newNode);
+                    };
+                    if (newNode.childElementCount > 0) {
+                        let needingListeners = newNode.querySelectorAll('[event]');
+                        needingListeners.forEach(child => setEventListeners(child));
+                    };
+                    if (newNode.nodeName === 'KID') {
+                        handleKidElements([newNode]);
+                    } else {
+                        handleKidElements([...newNode.getElementsByTagName('kid')]);
+                    };
+                    const jsOnAdd = newNode.getAttribute('js-on-add');
+                    if (jsOnAdd) {
+                        eval?.(`"use strict"; ${jsOnAdd}`);
+                    };
                 };
                 break;
             case 'm':
@@ -241,16 +246,33 @@ function handleChannelStream(event) {
                 let textWrapperNode = document.querySelector(`[key="${gustObj.q}"]`);
                 textWrapperNode.textContent = gustObj.r;
                 break;
+            case 'k':
+                console.log('KID CASE HIT');
+                let kidPlaceholder = document.querySelector(`[key="${gustObj.q}"]`);
+                kidPlaceholder.outerHTML = gustObj.r;
+                let kid = document.querySelector(`[key="${gustObj.q}"]`);
+                handleKidElements([...kid.getElementsByTagName('kid')]);
+                break;
         };
     });
 };
-function makeSubscribeBody(channelMessageId) {
+function handleKidElements(kidElements) {
+    kidElements.forEach(el => {
+        let key = el.getAttribute('key');
+        channelMessageId++;
+        fetch(channelPath, { 
+            method: 'PUT',
+            body: JSON.stringify(makeSubscribeBody(channelMessageId, `${baseSubPath}/${key}`))
+        });
+    });
+};
+function makeSubscribeBody(channelMessageId, subPath) {
     return [{
         id: channelMessageId,
         action: 'subscribe',
         ship: ship,
-        app: app,
-        path: path
+        app: gallApp,
+        path: subPath
     }];
 };
 function makePokeBody(jsonData) {
@@ -259,7 +281,7 @@ function makePokeBody(jsonData) {
         id: channelMessageId,
         action: 'poke',
         ship: ship,
-        app: app,
+        app: gallApp,
         mark: 'json',
         json: { pith: pith, data: jsonData }
     }];

@@ -70,7 +70,8 @@
 |%
 ::
 +$  render-data
-  $:  diary-entries=(list [date=@da =txt])
+  $:  =bowl:neo
+      diary-entries=(list [date=@da =txt =pith:neo])
       selection=(unit @da)
   ==
 ::
@@ -141,13 +142,14 @@
     ^-  manx
     ;div
       ;*  %+  turn  diary-entries
-          |=  [date=@da =txt]
+          |=  [date=@da =txt pit=pith:neo]
           =/  key=tape  <date>
           ;div
             =key  key
             =js-on-add  "setLoaded('form-button');"
             ;p: {(pretty-date date)}
             ;p: {(trip txt)}
+            ;kid(view "mast-txt-ui", pith (en-tape:pith:neo pit));
             ;button.loaded
               =event        "/click/delete/{key}"
               =js-on-event  "setLoading('{key}');"
@@ -162,23 +164,24 @@
 ++  get-render-data
   |=  =bowl:neo
   ^-  render-data
-  :*  (get-diary-entries deps.bowl)
+  :*  bowl
+      (get-diary-entries deps.bowl)
       (get-selection kids.bowl)
   ==
 ::
 ++  get-diary-entries
   |=  deps=(map term (pair pith:neo lore:neo))
-  ^-  (list [date=@da =txt])
+  ^-  (list [date=@da =txt =pith:neo])
   =/  data=(unit (pair pith:neo lore:neo))
     (~(get by deps) %src)
   ?~  data  ~|(%no-diary !!)
-  =/  entries=(list [date=@da =txt])
+  =/  entries=(list [date=@da =txt =pith:neo])
     %+  turn  ~(tap by kid.q.u.data)
     |=  (pair iota:neo (axal:neo idea:neo))
     ?>  &(?=(^ p) ?=(%da -.p) ?=(^ fil.q))
-    [+.p !<(txt q.pail.u.fil.q)]
+    [+.p !<(txt q.pail.u.fil.q) (snoc p.u.data p)]
   %+  sort  entries
-  |=  (pair [date=@da =txt] [date=@da =txt])
+  |=  (pair [date=@da =txt =pith:neo] [date=@da =txt =pith:neo])
   (gth date.p date.q)
 ::
 ++  get-selection
