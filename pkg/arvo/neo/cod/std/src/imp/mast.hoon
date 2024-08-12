@@ -77,9 +77,9 @@
           [(~(make-403 res bowl) rid) pail]
         =/  at=pith:neo    (~(session moor our.bowl) rope boat)
         =/  =made:neo      [view.bind ~ (my [%src src.bind] ~)]
-        =/  pending        (~(get by branch-pending-map.rig) [rope boat])
-        =.  branch-pending-map.rig
-          (~(put by branch-pending-map.rig) [rope boat] [rid ?~(pending ~ u.pending)])
+        =/  wat            (~(get by waiting.rig) [rope boat])
+        =.  waiting.rig
+          (~(put by waiting.rig) [rope boat] [rid ?~(wat ~ u.wat)])
         :_  sig/!>(rig)
         :~  [at %cull ~]
             [at %make made]
@@ -100,7 +100,7 @@
         =/  =rope  =/(ud (rear (snip pith.i.rum)) ?>(&(?=(^ ud) ?=(%ud -.ud)) +.ud))
         =/  =boat  =/(p (rear pith.i.rum) ?>(&(?=(^ p) ?=(%p -.p)) +.p))
         =/  =buoy  (mug [brig.rig rope boat])
-        =/  =sail  (hoist buoy brig.rig boat !<(sail q.pail.u.jig))
+        =/  =sail  (hoist buoy brig.rig rope boat !<(sail q.pail.u.jig))
         =/  aft=(unit ^sail)  (~(get by aft.rig) [rope boat])
         ?:  =(%dif mode.loot.i.rum)
           :: handle sail component diff
@@ -108,69 +108,56 @@
             $(rum t.rum)
           =/  sub=path   (sub-path buoy)
           =/  =diff      (luff u.aft sail)
-          =^  kid-cards  branch-pending-map.rig
-            (make-kids our.bowl boat p.diff [buoy rope] branch-pending-map.rig)
+          =^  kid-cards  waiting.rig
+            (make-kids our.bowl boat p.diff [[buoy rope] ~] waiting.rig)
           %=  $
             aft.rig  (~(put by aft.rig) [rope boat] sail)
             cards    (welp cards ?~(q.diff kid-cards [(~(gust res bowl) sub [%a q.diff]) kid-cards]))
             rum      t.rum
           ==
         :: handle sail component creation
-        =/  pending-keys=(list branch-builder-key)  (~(got by branch-pending-map.rig) [rope boat])
-        =:  branch-pending-map.rig  (~(del by branch-pending-map.rig) [rope boat])
-            aft.rig  (~(put by aft.rig) [rope boat] sail)
+        =/  build-keys   (~(got by waiting.rig) [rope boat])
+        =/  kid-els      (find-kid-els sail)
+        =/  kid-ropes    (turn kid-els |=(=bind (mug bind)))
+        =^  kid-cards  waiting.rig
+          (make-kids our.bowl boat kid-els build-keys waiting.rig)
+        =:  waiting.rig  (~(del by waiting.rig) [rope boat])
+            aft.rig      (~(put by aft.rig) [rope boat] sail)
+            cards        ?~(kid-cards cards (weld cards kid-cards))
           ==
-        =/  kid-els=(list bind)  (find-kid-els sail)
-        =/  kids-pending=(list ^rope)  (turn kid-els |=(=bind (mug bind)))
-        =^  kid-cards  branch-pending-map.rig
-          (make-kids our.bowl boat kid-els [buoy rope] branch-pending-map.rig)
-        =?  cards  ?=(^ kid-els)
-          (weld cards kid-cards)
-        :: --- resolve sail component creation and send either a gale or gust
-        :: this means recursing through the list value of the first map,
-        :: and handling each by getting the branch being built from the second map;
-        :: if the map doesn't have an entry for this key, then resolve the current sail immediately;
-        :: if an entry is found then insert this sail into the associated kid placeholder in the found sail,
-        :: and if the pending set is null after deleting the entry for this session, then resolve it;
-        :: else update the second map with the inserted sail and leave it to be resolved later.
-        :: 
         |-  ^-  (quip card:neo ^rig)
-        ?~  pending-keys
+        ?~  build-keys
           ^$(rum t.rum)
-        =/  pending-branch=(unit branch-being-built)  (~(get by branch-builder-map.rig) i.pending-keys)
-        ?~  pending-branch
+        =/  buil  (~(get by building.rig) i.build-keys)
+        ?~  buil
           ?^  kid-els
             %=  $
-              pending-keys  t.pending-keys
-              branch-builder-map.rig
-                (~(put by branch-builder-map.rig) i.pending-keys [(silt kids-pending) sail])
+              build-keys    t.build-keys
+              building.rig  (~(put by building.rig) i.build-keys [(silt kid-ropes) sail])
             ==
           %=  $
-            pending-keys  t.pending-keys
+            build-keys  t.build-keys
             cards
               %+  weld  cards
-              ?@  i.pending-keys
-                (~(gale res bowl) i.pending-keys sail)
-              [(~(gust res bowl) [(sub-path buoy.i.pending-keys) (make-gust-kid sail)]) ~]
+              ?@  i.build-keys
+                (~(gale res bowl) i.build-keys sail)
+              [(~(gust res bowl) [(sub-path buoy.i.build-keys) (make-gust-kid sail)]) ~]
           ==
-        =:  sail.u.pending-branch
-              (insert-kid-sail buoy sail.u.pending-branch sail)
-            pending-kid-shrubs.u.pending-branch
-              (~(del in pending-kid-shrubs.u.pending-branch) rope)
+        =:  sail.u.buil       (insert-kid-sail buoy sail.u.buil sail)
+            remaining.u.buil  (~(del in remaining.u.buil) rope)
           ==
-        =?  pending-kid-shrubs.u.pending-branch  ?=(^ kid-els)
-          (~(gas in pending-kid-shrubs.u.pending-branch) kids-pending)
-        ?^  pending-kid-shrubs.u.pending-branch
-          $(pending-keys t.pending-keys)
+        =?  remaining.u.buil  ?=(^ kid-els)
+          (~(gas in remaining.u.buil) kid-ropes)
+        ?^  remaining.u.buil
+          $(build-keys t.build-keys)
         %=  $
-          pending-keys  t.pending-keys
-          branch-builder-map.rig
-            (~(del by branch-builder-map.rig) i.pending-keys)
+          build-keys    t.build-keys
+          building.rig  (~(del by building.rig) i.build-keys)
           cards
             %+  weld  cards
-            ?@  i.pending-keys
-              (~(gale res bowl) i.pending-keys sail.u.pending-branch)
-            [(~(gust res bowl) [(sub-path buoy.i.pending-keys) (make-gust-kid sail.u.pending-branch)]) ~]
+            ?@  i.build-keys
+              (~(gale res bowl) i.build-keys sail.u.buil)
+            [(~(gust res bowl) [(sub-path buoy.i.build-keys) (make-gust-kid sail.u.buil)]) ~]
         ==
       [cards sig/!>(rig)]
       ::
@@ -192,19 +179,18 @@
 +$  sail  manx
 +$  diff  (pair (list bind) (list json))
 ::
-+$  branch-builder-key     $@(@ta [=buoy =rope])  :: eyre-id, or cell of the origin node's sub id to branch root's rope
-+$  branch-pending-map     (map [rope boat] (list branch-builder-key))
-+$  pending-kid-shrubs     (set rope)
-+$  branch-being-built     [=pending-kid-shrubs =sail]
-+$  branch-builder-map     (map branch-builder-key branch-being-built)
++$  waiting    (map [rope boat] (list to-build))  :: sail component makes waiting to be handled
++$  building   (map to-build [=remaining =sail])  :: sail component updates being built
++$  to-build   $@(@ta [=buoy =rope])              :: eyre-id, or parent sail component's sub id and root's rope
++$  remaining  (set rope)                         :: remaining nodes to complete a sail component update
 ::
-+$  rig                            ::  ::  :: mast state
-  $:  =branch-pending-map
-      =branch-builder-map
-      endpoints=(map path bind)        :: urls to view+src bindings (non-sky)
-      public=(set rope)                :: view+src bindings served beyond =(ship.src our)
-      aft=(map [rope boat] sail)       :: most recent sail state by session
-      =brig
++$  rig                            :: mast state
+  $:  =brig
+      =waiting
+      =building
+      endpoints=(map path bind)    :: urls to view+src bindings (non-sky)
+      public=(set rope)            :: view+src bindings served beyond =(ship.src our)
+      aft=(map [rope boat] sail)   :: most recent sail state by session
   ==
 ::
 ++  moor                           :: assumes mast shrub location at /our-ship/mast
@@ -322,29 +308,25 @@
   =|  acc=(list bind)
   |-  ^-  (list bind)
   ?:  =(%kid n.g.m)
-    [(make-kid-bind a.g.m) acc]
+    :_  acc
+    :-  (getv %view a.g.m)
+    (pave:neo (stab (getv %pith a.g.m)))
   |-  ^-  (list bind)
   ?~  c.m  acc
   $(c.m t.c.m, acc ^$(m i.c.m))
-::
-++  make-kid-bind
-  |=  =mart
-  ^-  bind
-  :-  (getv %view mart)
-  (pave:neo (stab (getv %pith mart)))
 ::
 ++  make-kids
   |=  $:  our=@p
           =boat
           bin=(list bind)
-          key=branch-builder-key
-          pen=branch-pending-map
+          new=(list to-build)
+          wat=waiting
       ==
   =|  car=(list card:neo)
-  |-  ^-  (quip card:neo branch-pending-map)
-  ?~  bin  [car pen]
+  |-  ^-  (quip card:neo waiting)
+  ?~  bin  [car wat]
   =/  =rope         (mug i.bin)
-  =/  ding          (~(get by pen) [rope boat])
+  =/  rest          (~(get by wat) [rope boat])
   =/  at=pith:neo   (~(session moor our) rope boat)
   %=  $
     bin  t.bin
@@ -352,21 +334,23 @@
       :+  [at %cull ~]
         [at %make [view.i.bin ~ (my [%src src.i.bin] ~)]]
       car
-    pen
-      (~(put by pen) [rope boat] [key ?~(ding ~ u.ding)])
+    wat
+      (~(put by wat) [rope boat] ?~(rest new (weld new u.rest)))
   ==
 ::
 ++  prepare-kid-sail
   |=  m=manx
   ^-  manx
   ?:  &(=(%html n.g.m) ?=(^ c.m) ?=(^ t.c.m) =(%body n.g.i.t.c.m))
-    i.t.c.m(n.g %kid)
+    i.t.c.m(n.g %div)
   m
 ::
 ++  make-gust-kid
   |=  m=manx
   ^-  json
   =.  m  (prepare-kid-sail m)
+  :-  %a
+  :_  ~
   :-  %o
   %-  my
   :~  ['p' [%s 'k']]
@@ -390,18 +374,28 @@
     [i.c.par(c $(c.par c.i.c.par)) $(c.par t.c.par)]
   ==
 ::
+++  prepare-root-mart
+  |=  [=rope m=mart]
+  ^-  mart
+  :-  [%rope (y-co:co rope)]
+  |-  ^-  mart
+  ?~  m  ~
+  ?:  |(=(%key n.i.m) =(%rope n.i.m))
+    $(m t.m)
+  [i.m $(m t.m)]
+::
 ++  hoist                          :: process gifted sail
-  |_  [=buoy =brig =boat =sail]
+  |_  [=buoy =brig =rope =boat =sail]
   ++  $
     ^-  manx
-    =/  root-key=tape  (y-co:co buoy)  :: currently assumes =(~ fkey) on root (body)
+    =/  root-key=tape  (y-co:co buoy)
     ?.  ?&  =(%html n.g.sail)
             ?=(^ c.sail)  ?=(^ t.c.sail)
             =(%body n.g.i.t.c.sail)
         ==
-      (anx sail [root-key ~])
+      (anx sail(a.g (prepare-root-mart rope a.g.sail)) [root-key ~])
     %_  sail
-      i.t.c  (anx i.t.c.sail [root-key ~])
+      i.t.c  (anx i.t.c.sail(a.g (prepare-root-mart rope a.g.i.t.c.sail)) [root-key ~])
     ==
   ++  anx
     |=  [m=manx key=(pair tape (list @))]
@@ -415,12 +409,17 @@
       =/  =view         (getv %view a.g.m)
       =/  pit=@t        (getv %pith a.g.m)
       =/  src=pith:neo  (pave:neo (stab pit))
-      =/  =rope         (mug view src)
-      =/  =^buoy        (mug [brig rope boat])
-      =/  kid-key=tape  (y-co:co buoy)
-      %_  m
-        a.g  [[%key kid-key] [%view (trip view)] [%pith (trip pit)] ~]
-        c    ~
+      =/  kid-rope      (mug view src)
+      =/  kid-buoy      (mug [brig kid-rope boat])
+      %_    m
+          c
+        ~
+          a.g
+        :~  [%key (y-co:co kid-buoy)]
+            [%view (trip view)]
+            [%pith (trip pit)]
+            [%rope (y-co:co kid-rope)]
+        ==
       ==
     ?:  =(%$ n.g.m)
       ;t-

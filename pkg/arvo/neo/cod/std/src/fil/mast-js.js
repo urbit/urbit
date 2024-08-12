@@ -1,4 +1,3 @@
-let rope;
 let pith;
 let ship;
 let channelMessageId;
@@ -10,7 +9,6 @@ const channelPath = `${window.location.origin}/~/channel/${channelId}`;
 const gallApp = 'neo';
 addEventListener('DOMContentLoaded', async () => {
     channelMessageId = 0;
-    rope = Number(document.documentElement.getAttribute('rope'));
     pith = document.documentElement.getAttribute('pith');
     ship = document.documentElement.getAttribute('ship');
     await connectToShip();
@@ -19,9 +17,9 @@ addEventListener('DOMContentLoaded', async () => {
     handleKidElements([...document.getElementsByTagName('kid')]);
 });
 async function connectToShip() {
-    const storageKey = `${rope}${ship}`;
-    let storedStr = localStorage.getItem(storageKey);
-    localStorage.setItem(storageKey, `${channelMessageId} ${channelId}`);
+    // const storageKey = `${rope}${ship}`;
+    // let storedStr = localStorage.getItem(storageKey);
+    // localStorage.setItem(storageKey, `${channelMessageId} ${channelId}`);
     // if (storedStr) {
     //     const storedIds = storedStr.split(' ');
     //     const oldPath = `${window.location.origin}/~/channel/${storedIds[1]}`;
@@ -79,6 +77,8 @@ function pokeDebounce(ms, ...pokeArgs) {
     };
 };
 function pokeShip(event, target, eventType, eventAttr, returnAttrVals) {
+    let parentComponent = target.closest('[rope]');
+    const rope = Number(parentComponent.getAttribute('rope'));
     const jsOnEvent = target.getAttribute('js-on-event');
     if (jsOnEvent) {
         eval?.(`"use strict"; ${jsOnEvent}`);
