@@ -1735,11 +1735,15 @@
         ?.  ?=([~ ~ *] tuc)  ~
         `!<(tube:clay q.u.u.tuc)
       ?~  tub
-        ((slog leaf+"peek no tube from {(trip have)} to {(trip want)}" ~) ~)
+        =/  msg  "%{(trip agent-name)}: ".
+                 "peek no tube from {(trip have)} to {(trip want)}"
+        ((slog leaf+msg ~) ~)
       =/  res  (mule |.((u.tub vase)))
       ?:  ?=(%& -.res)
         ``want^p.res
-      ((slog leaf+"peek failed tube from {(trip have)} to {(trip want)}" ~) ~)
+      =/  msg  "%{(trip agent-name)}: ".
+               "peek failed tube from {(trip have)} to {(trip want)}"
+      ((slog leaf+msg ~) ~)
     ::  +ap-move: send move
     ::
     ++  ap-move
