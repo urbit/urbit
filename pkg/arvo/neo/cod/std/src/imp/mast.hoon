@@ -146,10 +146,13 @@
         =:  sail.u.buil       (insert-kid-sail buoy sail.u.buil sail)
             remaining.u.buil  (~(del in remaining.u.buil) rope)
           ==
-        =?  remaining.u.buil  ?=(^ kid-els)
+        =?  remaining.u.buil  ?=(^ kid-ropes)
           (~(gas in remaining.u.buil) kid-ropes)
         ?^  remaining.u.buil
-          $(build-keys t.build-keys)
+          %=  $
+            build-keys    t.build-keys
+            building.rig  (~(put by building.rig) i.build-keys u.buil)
+          ==
         %=  $
           build-keys    t.build-keys
           building.rig  (~(del by building.rig) i.build-keys)
