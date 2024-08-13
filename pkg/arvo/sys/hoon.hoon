@@ -3246,6 +3246,46 @@
       ++  yer  31.536.000             ::  (mul 365 day)
   --
 ::
+::  +msec
+::
+::  Convert from a value in milliseconds to Urbit relative time, @dr.
+::  Examples:
+::    > `@ux`(msec 1)
+::    0x41.8937.4bc6.a7ef
+::    > `@dr`(msec 1)
+::    ~s0..0041.8937.4bc6.a7ef
+::  Source:
+++  msec
+  |=  t=@ud
+  ^-  @dr
+  (mul t (div ~s1 1.000))
+::  +usec
+::
+::  Convert from a value in microseconds to Urbit relative time, @dr.
+::  Examples:
+::    > `@ux`(usec 1)
+::    0x10c6.f7a0.b5ed
+::    > `@dr`(usec 1)
+::    ~s0..0000.10c6.f7a0.b5ed
+::  Source:
+++  usec
+  |=  t=@ud
+  ^-  @dr
+  (mul t (div ~s1 1.000.000))
+::  +nsec
+::
+::  Convert from a value in nanoseconds to Urbit relative time, @dr.
+::  Examples:
+::    > `@ux`(nsec 1)
+::    0x4.4b82.fa09
+::    > `@dr`(nsec 1)
+::    ~s0..0000.0004.4b82.fa09
+::  Source:
+++  nsec
+  |=  t=@ud
+  ^-  @dr
+  (mul t (div ~s1 1.000.000.000))
+::
 ::    3d: SHA hash family
 +|  %sha-hash-family
 ::
