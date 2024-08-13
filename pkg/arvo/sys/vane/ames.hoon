@@ -5638,7 +5638,7 @@
             ::  XX  this is implicitly updating chums.state;
             =.  ev-core  (ev-update-qos %live last-contact=now)
             ::
-            =/  tof  (met 13 tob.data)  :: total fragments
+            =/  tof  (div-ceil:base64:mimes:html tob.data 1.024)  ::  XX please change me
             ::
             =/  [typ=?(%auth %data) fag=@ud]
               ?~  wan.name
@@ -7693,7 +7693,7 @@
                   ~  :: non-standard proofs for later
                 =;  [nam=name:pact dat=data:pact pairs=(list (unit [l=@ux r=@ux]))]
                   =/  pac=pact:pact  [hop=0 %page nam dat ~]
-                  ?:  (gth fag (met 13 tob.dat))
+                  ?:  (gth fag (div-ceil:base64:mimes:html tob.dat 1.024))  :: XX also change me
                     [~ ~]
                   ?.  ser.pac.nex
                     ``[%packet !>([pac pairs])]
