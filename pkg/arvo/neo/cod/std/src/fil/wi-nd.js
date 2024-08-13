@@ -121,6 +121,7 @@ class extends HTMLElement {
     $(this.gid('searchbar')).on('submit', (e) => {
       e.preventDefault();
       this.setAttribute('here', $(this.gid('input-here')).val());
+      this.setAttribute('renderer', this.strategies[0]);
       this.rebuildIframe();
     });
     $(this.gid('input-here')).off();
@@ -383,6 +384,7 @@ class extends HTMLElement {
       crumb.text(i === 0 ? "/" : this.path[i]);
       crumb.on('click', () => {
         $(this).attr('here', "/"+this.path.slice(0, i+1).join("/"));
+        $(this).attr('renderer', this.strategies[0]);
         this.rebuildIframe();
       });
       breadcrumbs.append(crumb);
