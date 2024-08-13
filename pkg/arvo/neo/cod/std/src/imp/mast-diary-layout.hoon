@@ -1,3 +1,4 @@
+/*  feather
 =>  |%
     ::
     ++  render-sail
@@ -6,9 +7,23 @@
       ;html
         ;head
           ;meta(charset "utf-8");
+          ;style: {(trip feather)}
+          ;script
+            ;+  ;/
+              %-  trip
+              '''
+              function setLoading(idStr) {
+                let target = document.getElementById(idStr);
+                target.classList.add('htmx-request');
+              };
+              function setLoaded(idStr) {
+                let target = document.getElementById(idStr);
+                target.classList.remove('htmx-request');
+              };
+              '''
+          ==
         ==
         ;body
-          ;h1: This is a static sail component
           ;kid(view "mast-diary-ui", pith (en-tape:pith:neo dep));
         ==
       ==

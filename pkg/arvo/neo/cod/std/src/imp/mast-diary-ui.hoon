@@ -29,13 +29,15 @@
   ++  init
     |=  pal=(unit pail:neo)
     ^-  (quip card:neo pail:neo)
-    :-  ~
-    manx/!>((render (get-render-data bowl)))
+    [~ manx/!>((render (get-render-data bowl)))]
   ::
   ++  poke
     |=  [sud=stud:neo vaz=vase]
     ^-  (quip card:neo pail:neo)
     ?+  sud  ~|(bad-stud/sud !!)
+      ::
+        %rely
+      [~ manx/!>((render (get-render-data bowl)))]
       ::
         %ui-event
       =/  eve  !<(ui-event vaz)
@@ -59,9 +61,6 @@
         ::
       ==
       ::
-        %rely
-      `manx/!>((render (get-render-data bowl)))
-      ::
     ==
   ::
   --
@@ -70,9 +69,9 @@
 |%
 ::
 +$  render-data
-  $:  =bowl:neo
-      diary-entries=(list [date=@da =txt =pith:neo])
+  $:  diary-entries=(list [date=@da =txt =pith:neo])
       selection=(unit @da)
+      =bowl:neo
   ==
 ::
 ++  render
@@ -83,6 +82,25 @@
     ;html
       ;head
         ;meta(charset "utf-8");
+        ;link
+          =href  "/blue/blue-mime/{(scow %p our.bowl)}/static/feather"
+          =rel   "stylesheet"
+          ;
+        ==
+        ;script
+          ;+  ;/
+            %-  trip
+            '''
+            function setLoading(idStr) {
+              let target = document.getElementById(idStr);
+              target.classList.add('htmx-request');
+            };
+            function setLoaded(idStr) {
+              let target = document.getElementById(idStr);
+              target.classList.remove('htmx-request');
+            };
+            '''
+        ==
       ==
       ;+  body
     ==
@@ -90,9 +108,8 @@
   ++  body
     ^-  manx
     ;body
-      =style  "margin: 0; width: 100%; display: grid; place-items: center;"
-      ;main
-        ;h1: Diary
+      ;main.p-page.mw-page.ma.fc.g5
+        ;h1.bold.f-3: MAST
         ;+  diary-form
         ;+  diary-items
       ==
@@ -100,31 +117,47 @@
   ::
   ++  diary-form
     ^-  manx
-    ;form
+    ;form.fc.g2.as
       =event        "/submit/diary-form"
-      ;textarea
+      =js-on-event  "setLoading('form-button');"
+      ;textarea.p2.br1.bd1.wf
         =name         "diary-input"
-        =placeholder  "Today, I ..."
-        =style        "height: 10rem; width: 25rem; margin-block: 1rem;"
+        =required     ""
+        =placeholder  "today, I ..."
+        =rows         "5"
         ;*  ~
       ==
-      ;button#form-button.loaded: Enter
+      ;button#form-button.loader.b1.p2.br1.bd1.wfc.hover
+        ;span.loaded: create
+        ;span.loading.s-2.f4
+          ; loading
+        ==
+      ==
     ==
   ::
   ++  diary-items
     ^-  manx
-    ;div
+    ;div.fc.g2
       ;*  %+  turn  diary-entries
           |=  [date=@da =txt pit=pith:neo]
           =/  key=tape  <date>
-          ;div
+          ;div.fr.af.g2
             =key  key
-            ;p: {(pretty-date date)}
-            ;kid(view "mast-txt-ui", pith (en-tape:pith:neo pit));
-            ;button.loaded
+            =js-on-add  "setLoaded('form-button');"
+            ;div.fc.g1.grow.br1.p-2.b1
+              ;p.f3: {(pretty-date date)}
+              ;kid(view "mast-txt-ui", pith (en-tape:pith:neo pit));
+            ==
+            ;button.loader.p2.br1.b1.hover
               =event        "/click/delete/{key}"
+              =js-on-event  "setLoading('{key}');"
               =id           key
-              ;+  ;/  "✖"
+              ;span.loaded
+                ; X
+              ==
+              ;span.loading.s-2.f4
+                ; loading
+              ==
             ==
           ==
     ==
@@ -134,9 +167,9 @@
 ++  get-render-data
   |=  =bowl:neo
   ^-  render-data
-  :*  bowl
-      (get-diary-entries deps.bowl)
+  :*  (get-diary-entries deps.bowl)
       (get-selection kids.bowl)
+      bowl
   ==
 ::
 ++  get-diary-entries
