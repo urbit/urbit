@@ -58,11 +58,17 @@ function setEventListeners(el) {
         if (splitEventAttr[0] === '') splitEventAttr.shift();
         const eventType = splitEventAttr[0];
         if (throttleMs) {
-            el[`on${eventType}`] = pokeThrottle(throttleMs, eventType, eventAttr, returnAttrVals);
+            el.addEventListener(eventType, (e) => {
+                pokeThrottle(throttleMs, eventType, eventAttr, returnAttrVals)
+            });
         } else if (debounceMs) {
-            el[`on${eventType}`] = pokeDebounce(debounceMs, eventType, eventAttr, returnAttrVals);
+            el.addEventListener(eventType, (e) => {
+                pokeDebounce(debounceMs, eventType, eventAttr, returnAttrVals);
+            })
         } else {
-            el[`on${eventType}`] = (e) => pokeShip(e, e.currentTarget, eventType, eventAttr, returnAttrVals);
+            el.addEventListener(eventType, (e) => {
+                pokeShip(e, e.currentTarget, eventType, eventAttr, returnAttrVals);
+            })
         };
     });
 };
