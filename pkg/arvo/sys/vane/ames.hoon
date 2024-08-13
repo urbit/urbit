@@ -5638,7 +5638,7 @@
             ::  XX  this is implicitly updating chums.state;
             =.  ev-core  (ev-update-qos %live last-contact=now)
             ::
-            =/  tof  (div-ceil:base64:mimes:html tob.data 1.024)  ::  XX please change me
+            =/  tof  (div (add tob.data 1.023) 1.024)
             ::
             =/  [typ=?(%auth %data) fag=@ud]
               ?~  wan.name
@@ -7693,7 +7693,7 @@
                   ~  :: non-standard proofs for later
                 =;  [nam=name:pact dat=data:pact pairs=(list (unit [l=@ux r=@ux]))]
                   =/  pac=pact:pact  [hop=0 %page nam dat ~]
-                  ?:  (gth fag (div-ceil:base64:mimes:html tob.dat 1.024))  :: XX also change me
+                  ?:  (gth fag (div (add tob.dat 1.023) 1.024))
                     [~ ~]
                   ?.  ser.pac.nex
                     ``[%packet !>([pac pairs])]
@@ -7945,7 +7945,6 @@
               ?~  lane.sat.per
                 ~
               (drop lane.sat.per)
-            ~&  pushin-pact-on/lanes
             %+  ev-emit  unix-duct.ames-state
             [%give %push lanes p:(fax:plot (en:^pact pact))]
           ::
