@@ -499,7 +499,7 @@
       (en-ray [~[n] bloq.meta %uint ~] (gulf 0 (dec n)))
     shape.meta
   ::  Produce a 1-dimensional range along one dimension
-  ::  as [a b) with interval d.
+  ::  as [a, b) with interval d.
   ::  Only produces %i754.
   ::
   ++  range
@@ -515,7 +515,7 @@
       =/  ba  (~(sub rq rnd) b a)
       =/  bad  `(list @)`~[a]
       |-  ^-  baum
-      ?:  (?:((~(lth rq rnd) ba .~~~0) ~(lth rq rnd) ~(gth rq rnd)) (~(add rq rnd) (snag 0 bad) d) b)
+      ?:  (?:((~(lth rq rnd) ba .~~~0) ~(lte rq rnd) ~(gte rq rnd)) (~(add rq rnd) (snag 0 bad) d) b)
         =.  shape.meta  ~[(lent bad)]
         [meta (flop bad)]
       $(bad [(~(add rq rnd) (snag 0 bad) d) bad])
@@ -524,7 +524,7 @@
       =/  ba  (~(sub rd rnd) b a)
       =/  bad  `(list @)`~[a]
       |-  ^-  baum
-      ?:  (?:((~(lth rd rnd) ba .~0) ~(lth rd rnd) ~(gth rd rnd)) (~(add rd rnd) (snag 0 bad) d) b)
+      ?:  (?:((~(lth rd rnd) ba .~0) ~(lte rd rnd) ~(gte rd rnd)) (~(add rd rnd) (snag 0 bad) d) b)
         =.  shape.meta  ~[(lent bad)]
         [meta (flop bad)]
       $(bad [(~(add rd rnd) (snag 0 bad) d) bad])
@@ -533,7 +533,7 @@
       =/  ba  (~(sub rs rnd) b a)
       =/  bad  `(list @)`~[a]
       |-  ^-  baum
-      ?:  (?:((~(lth rs rnd) ba .0) ~(lth rs rnd) ~(gth rs rnd)) (~(add rs rnd) (snag 0 bad) d) b)
+      ?:  (?:((~(lth rs rnd) ba .0) ~(lte rs rnd) ~(gte rs rnd)) (~(add rs rnd) (snag 0 bad) d) b)
         =.  shape.meta  ~[(lent bad)]
         [meta (flop bad)]
       $(bad [(~(add rs rnd) (snag 0 bad) d) bad])
@@ -542,7 +542,7 @@
       =/  ba  (~(sub rh rnd) b a)
       =/  bad  `(list @)`~[a]
       |-  ^-  baum
-      ?:  (?:((~(lth rh rnd) ba .~~0) ~(lth rh rnd) ~(gth rh rnd)) (~(add rh rnd) (snag 0 bad) d) b)
+      ?:  (?:((~(lth rh rnd) ba .~~0) ~(lte rh rnd) ~(gte rh rnd)) (~(add rh rnd) (snag 0 bad) d) b)
         [meta (flop bad)]
       $(bad [(~(add rh rnd) (snag 0 bad) d) bad])
     ==
