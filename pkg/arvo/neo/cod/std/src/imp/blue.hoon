@@ -31,15 +31,15 @@
       =/  inner=pith:neo
         (pave:neo pax:(parse-url-frfr:serv request.req))
       ::
-      ::  handle the /sky route
+      ::  redirect /sky to the mast renderer
       ?:  =(%sky (snag 0 inner))
         :_  sig/!>(~)
-        :~  :*  (welp here.bowl [[%ta eyre-id] ~])
-                %make
-                %sky-ui
-                `[%eyre-task !>(task)]
-                (~(gas by *crew:neo) src/#/[p/our.bowl]/sky ~)
-            ==
+        =/  =pith:neo  #/[p/our.bowl]/$/eyre
+        =/  loc  (crip "/mast/mast-sky-ui/{(scow %p our.bowl)}/sky")
+        :~
+          [pith %poke eyre-sign/!>([eyre-id %head 307 ['Location' loc]~])]
+          [pith %poke eyre-sign/!>([eyre-id %data ~])]
+          [pith %poke eyre-sign/!>([eyre-id %done ~])]
         ==
       ::
       ::  handle everything under /blue

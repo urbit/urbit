@@ -36,6 +36,10 @@
       =/  dst=pith:neo    p:(~(got by deps.bowl) %src)
       ?+  rod  ~|(missing-event-handler-for/path.eve !!)
         ::
+          [%click %default-theme ~]
+        :_  pail
+        ~(default-theme-cards render bowl)
+        ::
           [%change %theme ~]
         =/  dat  ~(. by data.eve)
         =/  name  `@tas`(got:dat '/target/data-name')
@@ -76,7 +80,7 @@
       ;+  form-theme
       ;+  notifications
     ==
-  ++  wer
+  ++  dst
     ^-  pith:neo
     p:(~(got by deps.bowl) %src)
   ++  lor
@@ -130,7 +134,21 @@
         jon
       pave:neo
     :~
-      [:(welp wer #/strategy here) %make %order `order/!>(strats) ~]
+      [:(welp dst #/strategy here) %make %order `order/!>(strats) ~]
+    ==
+  ::
+  ++  default-theme-cards
+    ^-  (list card:neo)
+    ::
+    %-  zing
+    ^-  (list (list card:neo))
+    %+  turn  (dap /theme)
+    |=  [rel=pith:neo =idea:neo]
+    =/  p  :(welp dst #/theme rel)
+    ~&  del-theme/p
+    :~
+      [p %cull ~]
+      [p %tomb ~]
     ==
   ::
   ++  theme-rules
@@ -170,7 +188,6 @@
         ^-  manx
         ;input
           =event  "/change/theme"
-          =debounce  "0.4"
           =data-name  (trip name)
           =data-unit  (trip nit)
           =autocomplete  "off"
@@ -311,7 +328,8 @@
         ==
       ==
       ;button.p2.br1.bd1.b1
-        =onclick  "document.documentElement.style = ''"
+        =event  "/click/default-theme"
+        =js-on-event  "document.documentElement.style = ''"
         ; Reset to default
       ==
     ==

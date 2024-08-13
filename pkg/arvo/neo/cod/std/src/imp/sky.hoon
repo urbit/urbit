@@ -44,15 +44,9 @@
       !>
       ~
     ::
-    =/  =pith:neo  #/[p/our.bowl]/$/eyre
-    =/  =binding:eyre  [~ ~[%neo %sky]]
-    =/  =req:eyre:neo  [%connect binding here.bowl]
-    ::
     ::  return cards
     :~
       [~[p/our.bowl %home] %make %home ~ ~]
-      ::
-      ::  bind static assets
       [here.bowl %poke bind-static-assets/!>(~)]
     ==
   --

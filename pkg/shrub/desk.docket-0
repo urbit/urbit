@@ -2,7 +2,7 @@
     info+'Shrubbery namespace browser.'
     color+0xdd.dddd
     image+'https://storage.googleapis.com/tlon-prod-memex-assets/simsur-ronbet/2024.6.19..16.56.27..5ced.9168.72b0.20c4-sky-icon.png'
-    site+/neo/sky
+    site+/sky
     version+[0 0 1]
     website+'https://github.com/urbit/shrub'
     license+'MIT'
