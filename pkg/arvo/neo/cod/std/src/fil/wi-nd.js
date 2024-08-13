@@ -209,10 +209,12 @@ class extends HTMLElement {
     });
     $(this).on('bookmark-renderer', (e) => {
       this.setAttribute('strategies', (this.getAttribute('strategies') || '') + ' ' + e.detail);
+      $(this).emit('strategy-change', this.strategyPoke);
     });
     $(this).on('unbookmark-renderer', (e) => {
       let newstrats = this.strategies.slice(0, -1).filter(s => s != e.detail);
       this.setAttribute('strategies', newstrats);
+      $(this).emit('strategy-change', this.strategyPoke);
     });
   }
   disconnectedCallback() {
@@ -288,6 +290,13 @@ class extends HTMLElement {
     return [...(this.getAttribute('strategies') || '').split(' ').map(m => {
       return m.trim();
     }).filter(f => !!f), '/tree'];
+  }
+  get strategyPoke() {
+    let poke = {
+      here: this.here,
+      strategies: this.strategies.slice(0, -1)
+    }
+    return JSON.stringify(poke);
   }
   get renderer() {
     let c = this.getAttribute('renderer');

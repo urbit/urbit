@@ -12,7 +12,7 @@
   ^-  deps:neo
   %-  my
   :~  :^  %src  &  [pro/%sig ~]
-      :+  ~  %y
+      :+  ~  %z
       schema.serv
   ==
 ++  form
@@ -45,6 +45,12 @@
           [(welp dst #/theme/[name]/unit) %make %txt `txt/!>((got:dat '/target/data-unit')) ~]
           [(welp dst #/theme/[name]/value) %make %txt `txt/!>((got:dat '/target/value')) ~]
         ==
+      ::
+          [%strategy-change %sky ~]
+        =/  dat  ~(. by data.eve)
+        =/  detail  (got:dat '/event/detail')
+        :_  pail
+        (~(strategy-change-cards render bowl) (need (de:json:html detail)))
       ==
       ::
         %rely
@@ -64,10 +70,15 @@
     %-  lift
     ;s-k-y
       =our  (scow %p our.bowl)
+      =event  "/strategy-change/sky"
+      =return  "/event/detail"
       =default-strategies  default-strategies-json
       ;+  form-theme
       ;+  notifications
     ==
+  ++  wer
+    ^-  pith:neo
+    p:(~(got by deps.bowl) %src)
   ++  lor
     ^-  lore:neo
     q:(~(got by deps.bowl) %src)
@@ -105,6 +116,23 @@
     ^-  json
     [%s (crip (en-tape:pith:neo v))]
     ::
+  ++  strategy-change-cards
+    |=  jon=json
+    ^-  (list card:neo)
+    =/  here
+      %-  pave:neo
+      %-  (ot ~[here+pa]):dejs:format
+      jon
+    ::
+    =/  strats=order
+      %+  turn
+        %-  (ot ~[strategies+(ar pa)]):dejs:format
+        jon
+      pave:neo
+    :~
+      [:(welp wer #/strategy here) %make %order `order/!>(strats) ~]
+    ==
+  ::
   ++  theme-rules
     ^-  (list [@t @t @t])
     =/  data-map  (dar /theme)
@@ -258,7 +286,7 @@
     ['"Monaco", monospace' 'Monaco']
     ['"Andale Mono", monospace' 'Andale Mono']
   ==
-++  form-theme
+  ++  form-theme
     ::
     ::  MAINTENTANCE NOTE: THE DEFAULT VALUES OF THESE FORMS MUST LINE
     ::    UP WITH THE DEFAULT VARIABLE VALUES IN FEATHER.CSS
