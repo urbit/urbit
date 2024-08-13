@@ -157,49 +157,6 @@
     """
     --{(trip name)}: {(trip val)}{(trip suffix)};
     """
-  ++  favicon
-    ^~
-    =;  m  m(a.g [[%href "/blue/blue-mime/{(scow %p our.bowl)}/static/hawk-icon"] a.g.m])
-    ^-  manx
-    ;link
-      =rel  "icon"
-      =type  "image/png"
-      ;
-    ==
-  ++  manifest-url
-    ^~
-    %-  trip
-    %^    cat
-        3
-      'data:application/json;utf-8,'
-    %-  en:json:html
-    %-  pairs:enjs:format
-    :~
-      ['name' s+'sky']
-      ['description' s+'an urbit namespace viewer']
-      ['start_url' s+'http://localhost/neo/sky']  ::  XX
-      ['display' s+'standalone']
-      ['background_color' s+'black']
-      ['theme_color' s+'black']
-      :+  'icons'  %a
-      :~
-        %-  pairs:enjs:format
-        :~
-          ['src' s+(crip "/blue/blue-mime/{(scow %p our.bowl)}/static/hawk-icon")]
-          ['sizes' s+'196x196']
-          ['type' s+'image/png']
-        ==
-      ==
-    ==
-  ++  manifest
-    ^~
-    =;  m  m(a.g [[%href manifest-url] a.g.m])
-    ^-  manx
-    ;link
-      =rel  "manifest"
-      ;
-    ==
-  ::
   ++  css-input
     |=  [label=tape name=@t nit=@t =mart fallback=@t]
     ^-  manx
@@ -419,8 +376,14 @@
         ==
         ;script(src "/blue/blue-mime/{(scow %p our.bowl)}/static/s-k-y");
         ;script(src "/blue/blue-mime/{(scow %p our.bowl)}/static/wi-nd");
-        ;+  favicon
-        ;+  manifest
+        ;link
+          =rel  "icon"
+          =type  "image/png"
+          =href  "/blue/blue-mime/{(scow %p our.bowl)}/static/hawk-icon";
+        ;link
+          =rel  "manifest"
+          =crossorigin  "use-credentials"
+          =href  "/blue/blue-mime/{(scow %p our.bowl)}/static/sky-manifest";
       ==
       ;body
         ;+  in
