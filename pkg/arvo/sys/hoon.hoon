@@ -9611,6 +9611,8 @@
     =+  rev=|
     |-  ^-  type
     ?:  ?|(=(sut ref) =(%noun ref))
+      ?:  &(!rev ?=([%face *] sut))
+        q.sut
       sut
     ?-    sut
         [%atom *]
