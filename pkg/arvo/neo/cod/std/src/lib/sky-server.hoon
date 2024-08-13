@@ -1,11 +1,7 @@
 /@  order
 /*  feather
-/*  jquery
-/*  htmx-js
 /*  htmx-dom-enc
 /*  htmx-response-targets
-/*  htmx-idiomorph
-/*  htmx-morph-config
 |%
 ::
 ::  types
@@ -84,6 +80,13 @@
 ::
 ::  frontend
 ::
+++  old-standard-head-tags
+  ^-  marl
+  ;=
+    ;script(src "https://unpkg.com/htmx.org@2.0.2");
+    ;script: {(trip htmx-response-targets)}
+    ;script: {(trip htmx-dom-enc)}
+  ==
 ++  standard-head-tags
   ^-  marl
   ;=
@@ -97,16 +100,12 @@
         """
       ;
     ==
-    ;script: {(trip jquery)}
-    ;script: {(trip htmx-js)}
-    ;script: {(trip htmx-response-targets)}
-    ;script: {(trip htmx-dom-enc)}
+    ;script(src "https://code.jquery.com/jquery-3.7.1.min.js");
     ;link
       =href  "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
       =rel  "stylesheet"
       ;
     ==
-    ;style: {(trip feather)}
     ;script
       ;+  ;/
       """

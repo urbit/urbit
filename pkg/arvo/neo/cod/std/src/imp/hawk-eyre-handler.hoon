@@ -378,6 +378,7 @@
       ;meta(charset "UTF-8");
       ;title: hawk
       ;*  standard-head-tags.sky-server
+      ;*  old-standard-head-tags.sky-server
       ;meta
         =name  "htmx-config"
         =content  (trip '{"ignoreTitle":"true"}')
@@ -385,7 +386,7 @@
       ==
     ==
     ;body
-      =hx-ext  "dom-enc,response-targets,morph"
+      =hx-ext  "dom-enc,response-targets"
       =hx-swap  "outerHTML"
       =hx-boost  "true"
       ;+  in
