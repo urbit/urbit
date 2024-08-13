@@ -9601,16 +9601,15 @@
     ?-    sut
         [%atom *]
       ?-    ref
-          [%atom *]   =/  foc
-                        =+  fit=(fitz ?:(rev [p.sut p.ref] [p.ref p.sut]))
-                        ?:(fit p.sut p.ref)
-                      ?^  q.sut
-                        ?^  q.ref
-                          ?:  =(q.sut q.ref)
-                            [%atom foc q.sut]
+          [%atom *]   =+  [a b]=?:(rev [ref sut] [sut ref])
+                      =+  foc=?:((fitz p.b p.a) p.a p.b)
+                      ?^  q.a
+                        ?^  q.b
+                          ?:  =(q.a q.b)
+                            [%atom foc q.a]
                           %void
-                        [%atom foc q.sut]
-                      [%atom foc q.ref]
+                        [%atom foc q.a]
+                      [%atom foc q.b]
           [%cell *]   %void
           *           $(sut ref, ref sut, rev !rev)
       ==
