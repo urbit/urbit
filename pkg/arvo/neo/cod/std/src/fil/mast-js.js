@@ -1,43 +1,33 @@
 let pith;
 let ship;
-let channelMessageId;
-let subscriptionId;
 let eventSource;
-const baseSubPath = '/eyre-chan/mast';
+let activeSubIds= {};
+let channelMessageId = 0;
 const channelId = `${Date.now()}${Math.floor(Math.random() * 100)}`;
 const channelPath = `${window.location.origin}/~/channel/${channelId}`;
+const baseSubPath = '/eyre-chan/mast';
 const gallApp = 'neo';
 addEventListener('DOMContentLoaded', async () => {
-    channelMessageId = 0;
     pith = document.documentElement.getAttribute('pith');
     ship = document.documentElement.getAttribute('ship');
-    await connectToShip();
+    let subKey = document.body.getAttribute('key');
+    if (!subKey) subKey = document.body.firstElementChild.getAttribute('key');
+    await connectToShip(subKey);
     let eventElements = document.querySelectorAll('[event]');
     eventElements.forEach(el => setEventListeners(el));
-    handleKidElements([...document.getElementsByTagName('kid')]);
+    handleKidElements([...document.querySelectorAll('[kid]')]);
+    window.addEventListener('beforeunload', () => {
+        const subKeys = [...document.querySelectorAll('[kid]')].map(el => {
+            el.getAttribute('key');
+        });
+        subKeys.push(subKey);
+        closeSubscriptions(subKeys);
+    });
 });
-async function connectToShip() {
-    // const storageKey = `${rope}${ship}`;
-    // let storedStr = localStorage.getItem(storageKey);
-    // localStorage.setItem(storageKey, `${channelMessageId} ${channelId}`);
-    // if (storedStr) {
-    //     const storedIds = storedStr.split(' ');
-    //     const oldPath = `${window.location.origin}/~/channel/${storedIds[1]}`;
-    //     fetch(oldPath, {
-    //         method: 'PUT',
-    //         body: JSON.stringify([
-    //             {
-    //                 id: channelMessageId++,
-    //                 action: 'delete'
-    //             }
-    //         ])
-    //     });
-    // };
-    let key = document.body.getAttribute('key');
-    console.log('ROOT SUB PATH ---->', `${baseSubPath}/${key}`);
+async function connectToShip(subKey) {
     await fetch(channelPath, { 
         method: 'PUT',
-        body: JSON.stringify(makeSubscribeBody(channelMessageId, `${baseSubPath}/${key}`))
+        body: JSON.stringify(makeSubscribeBody(subKey))
     });
     eventSource = new EventSource(channelPath);
     eventSource.addEventListener('message', handleChannelStream);
@@ -153,7 +143,6 @@ function handleReturnAttr(event, target, returnAttrVals) {
     return returnData;
 };
 function handleChannelStream(event) {
-    console.log('stream hit :)');
     const streamResponse = JSON.parse(event.data);
     console.log('stream response: ', streamResponse);
     if (streamResponse.response !== 'diff') return;
@@ -161,17 +150,21 @@ function handleChannelStream(event) {
         method: 'PUT',
         body: JSON.stringify(makeAck(streamResponse.id))
     });
-    const gust = streamResponse.json;
-    if (!gust) return;
-    console.log(gust);
-    gust.forEach(gustObj => {
+    if (!Object.values(activeSubIds).includes(streamResponse.id)) return;
+    streamResponse.json.forEach(gustObj => {
         switch (gustObj.p) {
             case 'd':
                 gustObj.q.forEach(key => {
-                    let toRemove = document.querySelector(`[key="${key}"]`)
+                    let toRemove = document.querySelector(`[key="${key}"]`);
                     const jsOnDelete = toRemove.getAttribute('js-on-delete');
                     if (jsOnDelete) {
                         eval?.(`"use strict"; ${jsOnDelete}`);
+                    };
+                    let kidEls = [...toRemove.querySelectorAll('[kid]')];
+                    if (toRemove.hasAttribute('kid')) kidEls.push(toRemove);
+                    if (kidEls.length > 0) {
+                        const subKeys = kidEls.map(el => el.getAttribute('key'));
+                        closeSubscriptions(subKeys);
                     };
                     toRemove.remove();
                 });
@@ -200,7 +193,7 @@ function handleChannelStream(event) {
                     };
                     if (newNode.childElementCount > 0) {
                         let needingListeners = newNode.querySelectorAll('[event]');
-                        needingListeners.forEach(child => setEventListeners(child));
+                        needingListeners.forEach(el => setEventListeners(el));
                     };
                     if (newNode.nodeName === 'KID') {
                         handleKidElements([newNode]);
@@ -247,10 +240,16 @@ function handleChannelStream(event) {
                 textWrapperNode.textContent = gustObj.r;
                 break;
             case 'k':
-                console.log('KID CASE HIT');
                 let kidPlaceholder = document.querySelector(`[key="${gustObj.q}"]`);
                 kidPlaceholder.outerHTML = gustObj.r;
                 let kid = document.querySelector(`[key="${gustObj.q}"]`);
+                if (kid.hasAttribute('event')) {
+                    setEventListeners(kid);
+                };
+                if (kid.childElementCount > 0) {
+                    let needingListeners = kid.querySelectorAll('[event]');
+                    needingListeners.forEach(el => setEventListeners(el));
+                };
                 handleKidElements([...kid.getElementsByTagName('kid')]);
                 break;
         };
@@ -259,20 +258,37 @@ function handleChannelStream(event) {
 function handleKidElements(kidElements) {
     kidElements.forEach(el => {
         let key = el.getAttribute('key');
-        channelMessageId++;
         fetch(channelPath, { 
             method: 'PUT',
-            body: JSON.stringify(makeSubscribeBody(channelMessageId, `${baseSubPath}/${key}`))
+            body: JSON.stringify(makeSubscribeBody(key))
         });
     });
 };
-function makeSubscribeBody(channelMessageId, subPath) {
+function closeSubscriptions(keyArray) {
+    const actionArray = keyArray.map(key => {
+        channelMessageId++;
+        const subMsgId = activeSubIds[key];
+        delete activeSubIds[key];
+        return {
+            id: channelMessageId,
+            action: 'unsubscribe',
+            subscription: subMsgId
+        };
+    });
+    fetch(channelPath, {
+        method: 'PUT',
+        body: JSON.stringify(actionArray)
+    });
+};
+function makeSubscribeBody(subKey) {
+    channelMessageId++;
+    activeSubIds[subKey] = channelMessageId;
     return [{
         id: channelMessageId,
         action: 'subscribe',
         ship: ship,
         app: gallApp,
-        path: subPath
+        path: `${baseSubPath}/${subKey}`
     }];
 };
 function makePokeBody(jsonData) {

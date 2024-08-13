@@ -83,32 +83,6 @@
     ;html
       ;head
         ;meta(charset "utf-8");
-        ;script
-          ;+  ;/
-            %-  trip
-            '''
-            function setLoading(idStr) {
-              let target = document.getElementById(idStr);
-              target.className = 'loading';
-            };
-            function setLoaded(idStr) {
-              let target = document.getElementById(idStr);
-              target.className = 'loaded';
-            };
-            '''
-        ==
-        ;style
-          ;+  ;/
-            %-  trip
-            '''
-            .loading {
-              background-color: orange;
-            }
-            .loaded {
-              background-color: green;
-            }
-            '''
-        ==
       ==
       ;+  body
     ==
@@ -128,7 +102,6 @@
     ^-  manx
     ;form
       =event        "/submit/diary-form"
-      =js-on-event  "setLoading('form-button');"
       ;textarea
         =name         "diary-input"
         =placeholder  "Today, I ..."
@@ -146,13 +119,10 @@
           =/  key=tape  <date>
           ;div
             =key  key
-            =js-on-add  "setLoaded('form-button');"
             ;p: {(pretty-date date)}
-            ;p: {(trip txt)}
             ;kid(view "mast-txt-ui", pith (en-tape:pith:neo pit));
             ;button.loaded
               =event        "/click/delete/{key}"
-              =js-on-event  "setLoading('{key}');"
               =id           key
               ;+  ;/  "✖"
             ==

@@ -87,7 +87,7 @@
         ::
       ==
       ::
-        %gift
+        %gift                      :: sail component update
       =/  rum=(list [=pith:neo =loot:neo])  ~(tap of:neo !<(gift:neo vaz))
       =^  cards  rig
         =|  cards=(list card:neo)
@@ -345,8 +345,8 @@
   |=  m=manx
   ^-  manx
   ?:  &(=(%html n.g.m) ?=(^ c.m) ?=(^ t.c.m) =(%body n.g.i.t.c.m))
-    i.t.c.m(n.g %div)
-  m
+    i.t.c.m(n.g %div, a.g [[%kid ""] a.g.i.t.c.m])
+  m(a.g [[%kid ""] a.g.m])
 ::
 ++  make-gust-kid
   |=  m=manx
