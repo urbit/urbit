@@ -86,7 +86,7 @@
     ;div.fr.g2
       ;a.b1.br1.hover.p3.s1.bd1.fr.ac.jb.loader.grow
         =hx-target  "closest .hawk"
-        =href  (trip (spat ['neo' 'hawk' path]))
+        =href  (trip (spat ['hawk' path]))
         ;span.loaded: {(trip (snag 0 (pout pith)))}
         ;span.loading
           ;+  loading.feather-icons
