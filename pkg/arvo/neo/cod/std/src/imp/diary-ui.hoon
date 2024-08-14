@@ -117,6 +117,7 @@
     ^-  manx
     ;html
       ;head
+        ;*  old-standard-head-tags:serv
         ;*  standard-head-tags:serv
       ==
       ;body
