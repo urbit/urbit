@@ -49,17 +49,23 @@
   ++  $
     ^-  manx
     =/  =tape  (trip value)
+    =/  =iota  (rear p:(~(got by deps.bowl) %src))
     ;html
       ;head
-        ;title: txt
+        ;title: {(trip ?@(iota iota (scot iota)))} [txt]
         ;link
           =rel  "stylesheet"
           =href  "/blue/blue-mime/{(scow %p our.bowl)}/static/feather"
           ;
         ==
+        ;link
+          =rel  "icon"
+          =href  "https://em-content.zobj.net/source/google/298/page-facing-up_1f4c4.png"
+          ;
+        ==
       ==
       ;body.p2
-        ;textarea.wf.hf.bd1.br1.b0.p1.mono
+        ;textarea.wf.hf.b0.p2.mono.s0
           =event  "/input/form"
           =return  "/target/value"
           =debounce  "0.5"

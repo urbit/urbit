@@ -83,9 +83,15 @@
     ;html
       ;head
         ;meta(charset "utf-8");
+        ;title: diary
         ;link
           =href  "/blue/blue-mime/{(scow %p our.bowl)}/static/feather"
           =rel  "stylesheet"
+          ;
+        ==
+        ;link
+          =href  "https://em-content.zobj.net/source/microsoft-teams/363/memo_1f4dd.png"
+          =rel  "icon"
           ;
         ==
         ;script
@@ -131,7 +137,7 @@
       ;button#form-button.loader.b1.p2.br1.bd1.wfc.hover
         ;span.loaded: create
         ;span.loading.s-2.f4
-          ; loading
+          ; ...
         ==
       ==
     ==

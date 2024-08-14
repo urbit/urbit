@@ -105,6 +105,7 @@ i {
   --sky-opacity: 1;
   --sky-outer-gap: 8px;
   --sky-inner-gap: 8px;
+  --sky-window-border: 2px;
 
   --font: 'Arial';
   --font-mono: 'Monaco';
@@ -157,6 +158,12 @@ i {
   --38in: calc(38 * var(--1in));
   --39in: calc(39 * var(--1in));
   --40in: calc(40 * var(--1in));
+
+
+  --br0: 0px;
+  --br1: 3px;
+  --br2: 6px;
+  --br3: 12px;
 
 
   --light-b-3: #dd5522;
@@ -348,6 +355,9 @@ body {
 }
 .pre-line {
   white-space: pre-line;
+}
+.pre-wrap {
+  white-space: pre-wrap;
 }
 
 .tl {
@@ -703,21 +713,17 @@ body {
 .bd3 {
   border: 2px solid var(--f1);
 }
-/* deprecated */
-.border {
-  border: 0.8px solid var(--f3);
-}
 .br0 {
-  border-radius: 0px;
+  border-radius: var(--br0);
 }
 .br1 {
-  border-radius: 3px;
+  border-radius: var(--br1);
 }
 .br2 {
-  border-radius: 6px;
+  border-radius: var(--br2);
 }
 .br3 {
-  border-radius: 12px;
+  border-radius: var(--br3);
 }
 
 .hover:hover {
@@ -865,7 +871,7 @@ body {
 }
 
 /*
- *  part 5: input styling
+ *  part 5: styling for inputs and chrome
  *
  */
 
@@ -905,3 +911,25 @@ button:focus {
 input:focus {
   filter: brightness(115%);
 }
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+/* Scrollbar Handle */
+::-webkit-scrollbar-thumb {
+    background-color: var(--b4); /* Color of the scrollbar handle */
+    border-radius: var(--br1); /* Roundness of the scrollbar handle */
+}
+
+/* Scrollbar Handle on Hover */
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--b3); /* Color of the scrollbar handle when hovered */
+}
+
+/* Scrollbar Track Background */
+::-webkit-scrollbar-track {
+    background: var(--b2); /* Background color of the scrollbar track */
+}
+
+scrollbar-width: thick; /* Width of the scrollbar */
+scrollbar-color: var(--b4) var(--b3); /* Scrollbar handle color and track color */

@@ -215,7 +215,7 @@
           =value  (trip ?~(tem fallback value.u.tem))
           =return  "/target/value /target/data-name /target/data-unit"
           =oninput  "$(this).emit('feather-changed', [\{variable:'{(trip name)}', unit: '', value: this.value}])"
-          =class  "wf"
+          =class  "grow"
           =type  "color";
     ==
   ++  css-select
@@ -268,8 +268,9 @@
     ;div.fc.g5(slot "theme")
       ;div.fc.g3
         ;+  (css-input "Opacity" 'sky-opacity' '' ~[[%type "range"] [%min "0.1"] [%max "1"] [%step "0.01"]] '1')
-        ;+  (css-input "Outer gap" 'sky-outer-gap' '' ~[[%type "range"] [%min "0"] [%max "45"] [%step "1"]] '8')
-        ;+  (css-input "Inner gap" 'sky-inner-gap' '' ~[[%type "range"] [%min "0"] [%max "45"] [%step "1"]] '8')
+        ;+  (css-input "Outer gap" 'sky-outer-gap' 'px' ~[[%type "range"] [%min "0"] [%max "45"] [%step "1"]] '8')
+        ;+  (css-input "Inner gap" 'sky-inner-gap' 'px' ~[[%type "range"] [%min "0"] [%max "45"] [%step "1"]] '8')
+        ;+  (css-input "Window border" 'sky-window-border' 'px' ~[[%type "range"] [%min "0"] [%max "4"] [%step "0.01"]] '2')
       ==
       ;div.fc.g5
         ;+  (css-input "Base font size" '1in' 'px' ~[[%type "range"] [%min "2.5"] [%max "5.5"] [%step "0.01"]] '4')
@@ -379,6 +380,22 @@
               let wind = document.querySelector(`[wid='${wid}']`);
               if (wind) {
                 $(wind).poke('iframe-moved', {here, prefix})
+              }
+            }
+            else if (event.data?.messagetype == 'sky-poll-response-favicon') {
+              let wid = event.data.wid;
+              let favicon = event.data.favicon;
+              let wind = document.querySelector(`[wid='${wid}']`);
+              if (wind) {
+                $(wind).poke('favicon-changed', favicon)
+              }
+            }
+            else if (event.data?.messagetype == 'sky-poll-response-title') {
+              let wid = event.data.wid;
+              let title = event.data.title;
+              let wind = document.querySelector(`[wid='${wid}']`);
+              if (wind) {
+                $(wind).poke('title-changed', title)
               }
             }
             else if (event.data?.messagetype == 'iframe-wants-feather') {

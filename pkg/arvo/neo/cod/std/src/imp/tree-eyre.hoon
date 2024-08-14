@@ -4,9 +4,6 @@
 /-  srv=server
 /-  su=shrub-utils
 /*  feather
-/*  jquery
-/*  htmx-js
-/*  htmx-response-targets
 />  htmx
 /<  node
 /<  http-request
@@ -314,11 +311,11 @@
   ;html
     ;head
       ;meta(charset "UTF-8");
-      ;title: tree
-      ;script: {(trip jquery)}
-      ;script: {(trip htmx-js)}
-      ;script: {(trip htmx-response-targets)}
+      ;title: tree  {(en-tape:pith:neo here)}
+      ;script(src "https://unpkg.com/htmx.org@2.0.2");
+      ;script(src "https://code.jquery.com/jquery-3.7.1.min.js");
       ;style: {(trip feather)}
+      ;link(rel "icon", href "https://em-content.zobj.net/source/google/387/potted-plant_1fab4.png");
     ==
     ;body.top
       ;main.mw-page.p-page.ma.fc.g6
@@ -375,7 +372,7 @@
   ^-  manx
   ;div
     ;div.fc.g2
-      ;div.top.frw.ac.g2.p3.br1.bd1
+      ;div.top.frw.ac.g2.p3
         ;h1.grow:  {(en-tape:pith:neo here)}
         ;+  buttons
       ==
@@ -415,7 +412,7 @@
       ;span.loaded: {<p.pail>}
       ;span.loading:  loading
     ==
-    ;pre.mono.p2.scroll-x.scroll-y
+    ;div.pre-wrap.break.mono.p2.scroll-y
       =style  "max-height: 400px;"
       ;+
       ;/
