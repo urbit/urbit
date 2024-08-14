@@ -5867,8 +5867,8 @@
           %h  $(a t.a, h.rop (add q.i.a h.rop))
           %m  $(a t.a, m.rop (add q.i.a m.rop))
           %s  $(a t.a, s.rop (add q.i.a s.rop))
-          %ms   $(a t.a, f.rop ?~(f.rop ~[(mul q.i.a 0x41)] ~[(add (mul q.i.a 0x41) i.f.rop)]))
-          %mis  $(a t.a, f.rop ?~(f.rop ~[(mul q.i.a (bex 6))] ~[(add (mul q.i.a (bex 6)) i.f.rop)]))
+          %ms   $(a t.a, f.rop (flop (rip 4 (add (rap 4 f.rop) (mul q.i.a 0x41.8937.4bc6.a7ef)))))
+          %mis  $(a t.a, f.rop (flop (rip 4 (add (rap 4 f.rop) (mul q.i.a (bex 54))))))
         ==
       ;~  plug
         %+  most
