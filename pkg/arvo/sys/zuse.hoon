@@ -6008,8 +6008,8 @@
       ~/  %adler32
       |=  a=octs
       ^-  @uxF
-      ::  .base: Adler-32 checksum is computed modulo 65.521 --
-      ::  a largest prime number less than 65.536
+      ::  .base Adler-32 checksum is computed modulo 65.521 --
+      ::  the largest prime number less than 65.536
       ::
       =*  base  65.521
       ::  .nmax: maximum number of bytes that can be added without
@@ -6042,9 +6042,9 @@
       %+  add
         (mod adler base)
       (lsh [3 2] (mod sum2 base))
-      ::  +adler32-sum: perform adler32 summation for a run
-      ::  of .len bytes starting at .i
-      ::
+    ::  +adler32-sum: perform adler32 summation for a run
+    ::  of .len bytes starting at .i
+    ::
     ++  adler32-sum
       |=  [adler=@uxE sum2=@uxE i=@ud len=@ud a=octs]
       =+  end=(add i len)
@@ -6056,4 +6056,31 @@
       $(i +(i))
     --
   --
+  ::
+  ++  crc
+    ~%  %crc  ..crc  ~
+    |%
+    ++  crc32
+      ~/  %crc32
+      |=  data=octs
+      ^-  @uxF
+      ?:  =(p.data 0)
+        0x0
+      =/  input-list  (weld (rip 3 q.data) (reap (sub p.data (met 3 q.data)) 0))
+      %+  mix  0xffff.ffff
+      %+  roll  input-list
+      |:  [a=1 acc=0xffff.ffff]
+      (mix (snag (dis (mix acc a) 0xff) crc32-table) (rsh [0 8] acc))
+    ::
+    ++  crc32-table
+      ^~
+      ^-  (list @ux)
+      %+  turn  (gulf 0 255)
+      |=  i=@
+      %+  roll  (gulf 0 7)
+      |:  [a=1 acc=i]
+      ?:  (gth (dis acc 1) 0)
+        (mix 0xedb8.8320 (rsh [0 1] acc))
+      (rsh [0 1] acc)
+    --
 --
