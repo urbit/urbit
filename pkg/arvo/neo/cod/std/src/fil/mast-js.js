@@ -41,7 +41,7 @@ async function connectToShip() {
             ])
         });
     };
-    await fetch(channelPath, { 
+    await fetch(channelPath, {
         method: 'PUT',
         body: JSON.stringify(makeSubscribeBody(channelMessageId))
     });
@@ -58,17 +58,19 @@ function setEventListeners(el) {
         if (splitEventAttr[0] === '') splitEventAttr.shift();
         const eventType = splitEventAttr[0];
         if (throttleMs) {
-            el.addEventListener(eventType, (e) => {
+            el.addEventListener(
+                eventType,
                 pokeThrottle(throttleMs, eventType, eventAttr, returnAttrVals)
-            });
+            );
         } else if (debounceMs) {
-            el.addEventListener(eventType, (e) => {
-                pokeDebounce(debounceMs, eventType, eventAttr, returnAttrVals);
-            })
+            el.addEventListener(
+                eventType,
+                pokeDebounce(debounceMs, eventType, eventAttr, returnAttrVals)
+            );
         } else {
             el.addEventListener(eventType, (e) => {
-                pokeShip(e, e.currentTarget, eventType, eventAttr, returnAttrVals);
-            })
+                pokeShip(e, e.currentTarget, eventType, eventAttr, returnAttrVals)
+            });
         };
     });
 };
