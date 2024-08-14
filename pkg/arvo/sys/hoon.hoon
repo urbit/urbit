@@ -5834,6 +5834,7 @@
 ::
 ++  so
   ~%  %so  +  ~
+  !:
   |%
   ++  bisk
     ~+
@@ -5856,7 +5857,7 @@
       (cook |=(det=date `dime`[%da (year det)]) when)
     ::
       %+  cook
-        |=  [a=(list [p=?(%d %h %m %s) q=@]) b=(list @)]
+        |=  [a=(list [p=?(%d %h %m %s %ms %mis) q=@]) b=(list @)]
         =+  rop=`tarp`[0 0 0 0 b]
         |-  ^-  dime
         ?~  a
@@ -5866,6 +5867,8 @@
           %h  $(a t.a, h.rop (add q.i.a h.rop))
           %m  $(a t.a, m.rop (add q.i.a m.rop))
           %s  $(a t.a, s.rop (add q.i.a s.rop))
+          %ms   $(a t.a, f.rop ?~(f.rop ~[(mul q.i.a 0x41)] ~[(add (mul q.i.a 0x41) i.f.rop)]))
+          %mis  $(a t.a, f.rop ?~(f.rop ~[(mul q.i.a (bex 6))] ~[(add (mul q.i.a (bex 6)) i.f.rop)]))
         ==
       ;~  plug
         %+  most
@@ -5875,7 +5878,9 @@
           ;~(pfix (just 'h') (stag %h dim:ag))
           ;~(pfix (just 'm') (stag %m dim:ag))
           ;~(pfix (just 's') (stag %s dim:ag))
-        ==
+          ;~  pose  ;~(pfix (jest 'ms') (stag %ms dim:ag))
+                    ;~(pfix (jest 'mis') (stag %mis hex:ag))
+        ==  ==
         ;~(pose ;~(pfix ;~(plug dot dot) (most dot qix:ab)) (easy ~))
       ==
     ::
