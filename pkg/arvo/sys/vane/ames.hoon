@@ -5559,12 +5559,15 @@
             ::
             ::  path validation/decryption
             ::
-            ~|  path-decryption-failed/pat.ack-name^pat.poke-name
             =/  ack=(pole iota)
+              ~|  ack-path/pat.ack-name^pat.poke-name
               (ev-validate-path inner:(ev-decrypt-path pat.ack-name her.poke-name))
             =/  [=space cyf=(unit @) =inner=path]
+              ~|  inner-path/pat.ack-name^pat.poke-name
               (ev-decrypt-path [pat her]:poke-name)
-            =/  pok=(pole iota)  (ev-validate-path inner-path)
+            =/  pok=(pole iota)
+              ~|  pok/pat.ack-name^pat.poke-name
+              (ev-validate-path inner-path)
             ::
             ~|  path-validation-failed/ack^pok
             ?>  &(?=(flow-pith ack) ?=(flow-pith pok))
@@ -6098,7 +6101,7 @@
               ?>(?=(%page +<.page) `q.page)
             =>  [res=res de=de:pact]
             ~>  %memo./ames/get-page
-            =/  [pac=@ hax=@]  ;;([@ @] q.q.u.u.res)
+            =/  [pac=@ hax=@ pof=@]  ;;([@ @ @] q.q.u.u.res)
             -:($:de pac)
           ::
           +|  %fren-helpers
@@ -7697,14 +7700,14 @@
                     [~ ~]
                   ?.  ser.pac.nex
                     ``[%packet !>([pac pairs])]
-                  =/  pof=@ux  (can 3 (turn proof |=(p=@ux 32^p)))
+                  =/  pof=@ux  (rep 8 proof)
                   =;  airs=@ux
                     ``[%atom !>([p:(fax:plot (en:pact pac)) airs pof])]
-                  %+  rep  6
+                  %+  rep  9
                   %+  turn  pairs
                   |=  p=(unit [l=@ux r=@ux])
                   ?~  p  0
-                  (rep 5 ~[l.u.p r.u.p])
+                  (rep 8 ~[l.u.p r.u.p])
                 ::
                 ?-    typ.wan.pac.nex
                     %auth
