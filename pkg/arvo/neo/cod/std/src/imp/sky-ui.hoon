@@ -2,7 +2,6 @@
 /-  serv=sky-server
 /*  s-k-y
 /*  wi-nd
-/*  feather-settings
 /*  hawk-icon
 ^-  kook:neo
 =<
@@ -265,7 +264,6 @@
           '''
         ==
         ;script: {(trip s-k-y)}
-        ;script: {(trip feather-settings)}
         ;script: {(trip wi-nd)}
         ;+  favicon
         ;+  manifest

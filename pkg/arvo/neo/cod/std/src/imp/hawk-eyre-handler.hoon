@@ -376,19 +376,27 @@
   ;html
     ;head
       ;meta(charset "UTF-8");
-      ;title: hawk
+      ;title: htmx
       ;*  standard-head-tags.sky-server
+      ;*  old-standard-head-tags.sky-server
       ;meta
         =name  "htmx-config"
         =content  (trip '{"ignoreTitle":"true"}')
         ;
       ==
+      ;link(rel "icon", href "https://em-content.zobj.net/source/microsoft/309/feather_1fab6.png");
     ==
     ;body
-      =hx-ext  "dom-enc,response-targets,morph"
+      =hx-ext  "dom-enc,response-targets"
       =hx-swap  "outerHTML"
       =hx-boost  "true"
       ;+  in
+      ;script
+        ;+  ;/  %-  trip
+        '''
+        document.title = window.location.pathname.slice(5);
+        '''
+      ==
     ==
   ==
 --

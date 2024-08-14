@@ -26,9 +26,12 @@
     =/  [=stud:neo =vase]  (need pal)
     =+  !<(=task:eyre:neo vase)
     =/  [eyre-id=@ta req=inbound-request:eyre]  task
-    ?.  authenticated.req
-      :_  [stud vase]
-      (unauth-cards [bowl task])
+    ::
+    ::  XX  make secure
+    ::
+    ::  ?.  authenticated.req
+    ::    :_  [stud vase]
+    ::    (unauth-cards [bowl task])
     ?+    method.request.req  ~|(%unsupported-http-method !!)
         %'GET'
       :_  [stud vase]

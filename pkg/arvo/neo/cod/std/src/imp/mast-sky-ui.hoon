@@ -12,7 +12,7 @@
   ^-  deps:neo
   %-  my
   :~  :^  %src  &  [pro/%sig ~]
-      :+  ~  %y
+      :+  ~  %z
       schema.serv
   ==
 ++  form
@@ -36,6 +36,10 @@
       =/  dst=pith:neo    p:(~(got by deps.bowl) %src)
       ?+  rod  ~|(missing-event-handler-for/path.eve !!)
         ::
+          [%click %default-theme ~]
+        :_  pail
+        ~(default-theme-cards render bowl)
+        ::
           [%change %theme ~]
         =/  dat  ~(. by data.eve)
         =/  name  `@tas`(got:dat '/target/data-name')
@@ -45,6 +49,12 @@
           [(welp dst #/theme/[name]/unit) %make %txt `txt/!>((got:dat '/target/data-unit')) ~]
           [(welp dst #/theme/[name]/value) %make %txt `txt/!>((got:dat '/target/value')) ~]
         ==
+      ::
+          [%strategy-change %sky ~]
+        =/  dat  ~(. by data.eve)
+        =/  detail  (got:dat '/event/detail')
+        :_  pail
+        (~(strategy-change-cards render bowl) (need (de:json:html detail)))
       ==
       ::
         %rely
@@ -64,10 +74,15 @@
     %-  lift
     ;s-k-y
       =our  (scow %p our.bowl)
+      =event  "/strategy-change/sky"
+      =return  "/event/detail"
       =default-strategies  default-strategies-json
       ;+  form-theme
       ;+  notifications
     ==
+  ++  dst
+    ^-  pith:neo
+    p:(~(got by deps.bowl) %src)
   ++  lor
     ^-  lore:neo
     q:(~(got by deps.bowl) %src)
@@ -105,6 +120,37 @@
     ^-  json
     [%s (crip (en-tape:pith:neo v))]
     ::
+  ++  strategy-change-cards
+    |=  jon=json
+    ^-  (list card:neo)
+    =/  here
+      %-  pave:neo
+      %-  (ot ~[here+pa]):dejs:format
+      jon
+    ::
+    =/  strats=order
+      %+  turn
+        %-  (ot ~[strategies+(ar pa)]):dejs:format
+        jon
+      pave:neo
+    :~
+      [:(welp dst #/strategy here) %make %order `order/!>(strats) ~]
+    ==
+  ::
+  ++  default-theme-cards
+    ^-  (list card:neo)
+    ::
+    %-  zing
+    ^-  (list (list card:neo))
+    %+  turn  (dap /theme)
+    |=  [rel=pith:neo =idea:neo]
+    =/  p  :(welp dst #/theme rel)
+    ~&  del-theme/p
+    :~
+      [p %cull ~]
+      [p %tomb ~]
+    ==
+  ::
   ++  theme-rules
     ^-  (list [@t @t @t])
     =/  data-map  (dar /theme)
@@ -129,49 +175,6 @@
     """
     --{(trip name)}: {(trip val)}{(trip suffix)};
     """
-  ++  favicon
-    ^~
-    =;  m  m(a.g [[%href "/blue/blue-mime/{(scow %p our.bowl)}/static/hawk-icon"] a.g.m])
-    ^-  manx
-    ;link
-      =rel  "icon"
-      =type  "image/png"
-      ;
-    ==
-  ++  manifest-url
-    ^~
-    %-  trip
-    %^    cat
-        3
-      'data:application/json;utf-8,'
-    %-  en:json:html
-    %-  pairs:enjs:format
-    :~
-      ['name' s+'sky']
-      ['description' s+'an urbit namespace viewer']
-      ['start_url' s+'http://localhost/neo/sky']  ::  XX
-      ['display' s+'standalone']
-      ['background_color' s+'black']
-      ['theme_color' s+'black']
-      :+  'icons'  %a
-      :~
-        %-  pairs:enjs:format
-        :~
-          ['src' s+(crip "/blue/blue-mime/{(scow %p our.bowl)}/static/hawk-icon")]
-          ['sizes' s+'196x196']
-          ['type' s+'image/png']
-        ==
-      ==
-    ==
-  ++  manifest
-    ^~
-    =;  m  m(a.g [[%href manifest-url] a.g.m])
-    ^-  manx
-    ;link
-      =rel  "manifest"
-      ;
-    ==
-  ::
   ++  css-input
     |=  [label=tape name=@t nit=@t =mart fallback=@t]
     ^-  manx
@@ -185,7 +188,6 @@
         ^-  manx
         ;input
           =event  "/change/theme"
-          =debounce  "0.4"
           =data-name  (trip name)
           =data-unit  (trip nit)
           =autocomplete  "off"
@@ -213,7 +215,7 @@
           =value  (trip ?~(tem fallback value.u.tem))
           =return  "/target/value /target/data-name /target/data-unit"
           =oninput  "$(this).emit('feather-changed', [\{variable:'{(trip name)}', unit: '', value: this.value}])"
-          =class  "wf"
+          =class  "grow"
           =type  "color";
     ==
   ++  css-select
@@ -258,7 +260,7 @@
     ['"Monaco", monospace' 'Monaco']
     ['"Andale Mono", monospace' 'Andale Mono']
   ==
-++  form-theme
+  ++  form-theme
     ::
     ::  MAINTENTANCE NOTE: THE DEFAULT VALUES OF THESE FORMS MUST LINE
     ::    UP WITH THE DEFAULT VARIABLE VALUES IN FEATHER.CSS
@@ -266,8 +268,9 @@
     ;div.fc.g5(slot "theme")
       ;div.fc.g3
         ;+  (css-input "Opacity" 'sky-opacity' '' ~[[%type "range"] [%min "0.1"] [%max "1"] [%step "0.01"]] '1')
-        ;+  (css-input "Outer gap" 'sky-outer-gap' '' ~[[%type "range"] [%min "0"] [%max "45"] [%step "1"]] '8')
-        ;+  (css-input "Inner gap" 'sky-inner-gap' '' ~[[%type "range"] [%min "0"] [%max "45"] [%step "1"]] '8')
+        ;+  (css-input "Outer gap" 'sky-outer-gap' 'px' ~[[%type "range"] [%min "0"] [%max "45"] [%step "1"]] '8')
+        ;+  (css-input "Inner gap" 'sky-inner-gap' 'px' ~[[%type "range"] [%min "0"] [%max "45"] [%step "1"]] '8')
+        ;+  (css-input "Window border" 'sky-window-border' 'px' ~[[%type "range"] [%min "0"] [%max "4"] [%step "0.01"]] '2')
       ==
       ;div.fc.g5
         ;+  (css-input "Base font size" '1in' 'px' ~[[%type "range"] [%min "2.5"] [%max "5.5"] [%step "0.01"]] '4')
@@ -326,7 +329,8 @@
         ==
       ==
       ;button.p2.br1.bd1.b1
-        =onclick  "document.documentElement.style = ''"
+        =event  "/click/default-theme"
+        =js-on-event  "document.documentElement.style = ''"
         ; Reset to default
       ==
     ==
@@ -378,6 +382,22 @@
                 $(wind).poke('iframe-moved', {here, prefix})
               }
             }
+            else if (event.data?.messagetype == 'sky-poll-response-favicon') {
+              let wid = event.data.wid;
+              let favicon = event.data.favicon;
+              let wind = document.querySelector(`[wid='${wid}']`);
+              if (wind) {
+                $(wind).poke('favicon-changed', favicon)
+              }
+            }
+            else if (event.data?.messagetype == 'sky-poll-response-title') {
+              let wid = event.data.wid;
+              let title = event.data.title;
+              let wind = document.querySelector(`[wid='${wid}']`);
+              if (wind) {
+                $(wind).poke('title-changed', title)
+              }
+            }
             else if (event.data?.messagetype == 'iframe-wants-feather') {
               let rules = document.querySelector('s-k-y').currentFeatherRules;
               let wid = event.data.wid;
@@ -391,8 +411,14 @@
         ==
         ;script(src "/blue/blue-mime/{(scow %p our.bowl)}/static/s-k-y");
         ;script(src "/blue/blue-mime/{(scow %p our.bowl)}/static/wi-nd");
-        ;+  favicon
-        ;+  manifest
+        ;link
+          =rel  "icon"
+          =type  "image/png"
+          =href  "/blue/blue-mime/{(scow %p our.bowl)}/static/hawk-icon";
+        ;link
+          =rel  "manifest"
+          =crossorigin  "use-credentials"
+          =href  "/blue/blue-mime/{(scow %p our.bowl)}/static/sky-manifest";
       ==
       ;body
         ;+  in

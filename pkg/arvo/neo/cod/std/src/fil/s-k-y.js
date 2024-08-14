@@ -64,7 +64,7 @@ class extends HTMLElement {
          "tray main";
        }
        :host(.open) {
-         grid-template-columns: 260px auto;
+         grid-template-columns: 320px auto;
          grid-template-rows: auto 1fr;
          grid-template-areas:
          "tray main"
@@ -107,6 +107,9 @@ class extends HTMLElement {
          grid-area: btn;
          height: fit-content;
        }
+       #s-none {
+         grid-area: void;
+       }
        #s0 {
          grid-area: s0;
        }
@@ -123,7 +126,13 @@ class extends HTMLElement {
          grid-template-columns: 1fr;
          grid-template-rows: 1fr;
          grid-template-areas:
-         ".";
+         "void";
+       }
+       main #s-none {
+         display: none;
+       }
+       main.open-0 #s-none {
+         display: flex;
        }
        main.open-0 #s0,
        main.open-0 #s1,
@@ -317,7 +326,7 @@ class extends HTMLElement {
             </button>
             <div id="tabs" class="fc g2"></div>
             <div class="grow"></div>
-            <div class="bd1 br1 p2 fc g1">
+            <div class="bd1 br1 p2 fc g1 o6">
               <p class="bold f-3">This is a developer alpha.</p>
               <p class="s-1">
                 Your data in this app is NOT private from the rest of the network
@@ -350,7 +359,7 @@ class extends HTMLElement {
             </div>
           </footer>
         </div>
-        <div id="notifications" class="fc g3 grow scroll-y hidden">
+        <div id="notifications" class="p2 fc g3 grow scroll-y hidden">
           <button
             onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('toggle-notifications'))"
             class="p2 br1 bd1 b3 hover fr g3 ac f3"
@@ -363,7 +372,7 @@ class extends HTMLElement {
             <div class="f3 wf hf fc jc ac">Nothing to see right now</div>
           </slot>
         </div>
-        <div id="settings" class="fc g3 grow scroll-y hidden">
+        <div id="settings" class="p2 fc g3 grow scroll-y hidden">
           <button
             onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('toggle-settings'))"
             class="p2 br1 bd1 b3 hover fr g3 ac f3"
@@ -373,7 +382,7 @@ class extends HTMLElement {
           </button>
           <slot name="theme"></slot>
         </div>
-        <div id="help" class="fc g3 grow scroll-y hidden">
+        <div id="help" class="p2 fc g3 grow scroll-y hidden">
           <button
             onclick="this.getRootNode().host.dispatchEvent(new CustomEvent('toggle-help'))"
             class="p2 br1 bd1 b3 hover fr g3 ac f3"
@@ -397,6 +406,9 @@ class extends HTMLElement {
         </div>
       </nav>
       <main>
+        <slot name="s-none" id="s-none">
+          <div class="wf hf b0 br1 fc ac jc f4">no windows open</div>
+        </slot>
         <slot name="s0" id="s0"></slot>
         <slot name="s1" id="s1"></slot>
         <slot name="s2" id="s2"></slot>
@@ -545,6 +557,7 @@ class extends HTMLElement {
     $(this).on("save-layout", () => {
       this.saveLayout();
     });
+    this.qs("main").className = `open-${this.windowsOpen}`;
   }
   attributeChangedCallback(name, oldValue, newValue) {
     //
@@ -600,10 +613,17 @@ class extends HTMLElement {
         $(tab).addClass('toggled');
       }
 
-      let max = document.createElement('button');
-      $(max).text($(wind).attr('here'));
-      $(max).addClass('b2 hover br1 bd0 p2 grow tl');
-      max.style = 'overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-align: left;';
+      let max = $(`
+        <button
+          class="b2 hover br1 bd0 p2 grow tl fr g2 ac js"
+          style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-align: left;"
+          >
+          <img src="${wind.getAttribute('favicon')}" style="width: 20px; height: 20px;" />
+          <span style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-align: left;">
+            ${$(wind).attr('title') || $(wind).attr('here')}
+          </span>
+        </button>
+      `)
       $(max).on('click', () => {
         $(wind).emit('maximize-window');
       });

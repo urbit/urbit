@@ -10,6 +10,8 @@ class extends HTMLElement {
       "renderer",    // current iframe strategy
       "menu",
       "dragging",
+      "title",
+      "favicon",
     ];
   }
   constructor() {
@@ -53,6 +55,7 @@ class extends HTMLElement {
          height: 100%;
          overflow: hidden;
          border-radius: 3px;
+         border: var(--sky-window-border, 1px) solid var(--b2);
        }
        #drag-overlay {
          background: blue;
@@ -75,7 +78,7 @@ class extends HTMLElement {
       </style>
       <div id="drag-overlay" class="hidden"></div>
       <header class="b2 fr af js g1">
-        <button class="p2 s-1 b2 br1 hover" id="menu-toggle"><span class="mso">sort</span></button>
+        <button class="p2 s-1 b2 hover mono toggled f0" id="menu-toggle"></button>
         <div id="breadcrumbs" class="grow fr g1 af js"></div>
         <form id="searchbar" class="grow fr hidden">
           <input
@@ -121,6 +124,7 @@ class extends HTMLElement {
     $(this.gid('searchbar')).on('submit', (e) => {
       e.preventDefault();
       this.setAttribute('here', $(this.gid('input-here')).val());
+      this.setAttribute('renderer', this.strategies[0]);
       this.rebuildIframe();
     });
     $(this.gid('input-here')).off();
@@ -183,11 +187,34 @@ class extends HTMLElement {
     // poll iframes for changes every 350ms
     this.intervalId = setInterval(() => {
       let here = this.getAttribute('here');
+      let favicon = this.getAttribute('favicon');
+      let title = this.getAttribute('title');
       $(this.gid('tabs')).children().each(function() {
-        this.contentWindow.postMessage({ messagetype: "sky-poll", here});
+        this.contentWindow.postMessage({
+          messagetype: "sky-poll",
+          here,
+          favicon,
+          title,
+        });
       });
     }, 350);
 
+    $(this).on('title-changed', (e) => {
+      if (!!e.detail) {
+        $(this).attr('title', e.detail);
+      } else {
+        $(this).attr('title', null);
+      }
+      $(this).emit('here-moved');
+    });
+    $(this).on('favicon-changed', (e) => {
+      if (!!e.detail) {
+        $(this).attr('favicon', e.detail);
+      } else {
+        $(this).attr('favicon', null);
+      }
+      $(this).emit('here-moved');
+    });
     $(this).on('iframe-moved', (e) => {
       $(this).attr('renderer', e.detail.prefix);
       $(this).attr('here', e.detail.here);
@@ -209,10 +236,12 @@ class extends HTMLElement {
     });
     $(this).on('bookmark-renderer', (e) => {
       this.setAttribute('strategies', (this.getAttribute('strategies') || '') + ' ' + e.detail);
+      $(this).emit('strategy-change', this.strategyPoke);
     });
     $(this).on('unbookmark-renderer', (e) => {
       let newstrats = this.strategies.slice(0, -1).filter(s => s != e.detail);
       this.setAttribute('strategies', newstrats);
+      $(this).emit('strategy-change', this.strategyPoke);
     });
   }
   disconnectedCallback() {
@@ -242,6 +271,7 @@ class extends HTMLElement {
       }
     }
     else if (name === "renderer") {
+      $(this.gid('menu-toggle')).text(this.prettyCurrent)
       if (oldValue !== newValue) {
         this.rebuildIframe();
       }
@@ -250,10 +280,10 @@ class extends HTMLElement {
     else if (name === "menu") {
       if (newValue === null) {
         $(this.gid('menu')).addClass('hidden');
-        $(this.gid('menu-toggle')).removeClass('toggled');
+        $(this.gid('menu-toggle')).removeClass('o7');
       } else {
         $(this.gid('menu')).removeClass('hidden');
-        $(this.gid('menu-toggle')).addClass('toggled');
+        $(this.gid('menu-toggle')).addClass('o7');
       }
     }
     else if (name === "strategies") {
@@ -289,9 +319,57 @@ class extends HTMLElement {
       return m.trim();
     }).filter(f => !!f), '/tree'];
   }
+  get strategyPoke() {
+    let poke = {
+      here: this.here,
+      strategies: this.strategies.slice(0, -1)
+    }
+    return JSON.stringify(poke);
+  }
   get renderer() {
     let c = this.getAttribute('renderer');
     return (c || this.strategies[0]);
+  }
+  get rendererLabels() {
+    //
+    //  this is assuming a naming structure that should
+    //  not need to be assumed. fix this thix this fix this
+    //  ... eventually
+    //
+    return {
+      "/hawk": () => "htmx",
+      "/tree": () => "tree",
+      //
+      "/mast": (x) => {
+        let words = x.split("/").map(s => s.trim()).filter(s => !!s);
+        if (words.length != 2) {
+          words = ["mast", "mast-error"];
+        }
+        return words[1].split('-').slice(1).join(' ');
+      },
+      //
+      "/blue": (x) => {
+        let words = x.split("/").map(s => s.trim()).filter(s => !!s);
+        if (words.length != 2) {
+          words = ["b", "b-error"];
+        }
+        return words[1].split('-').slice(1).join(' ');
+      },
+    }
+  }
+  labelLookup(renderer) {
+    let entries = Object.entries(this.rendererLabels);
+    let entry = entries.filter(([k, v]) => renderer.startsWith(k))[0];
+    if (!entry) return;
+    return entry[1](renderer);
+  }
+  get prettyCurrent() {
+    let r = this.renderer;
+    let m = this.labelLookup(r)
+    if (m) {
+      return m;
+    }
+    return r
   }
   createIframe(prefix, here, open) {
     let el = document.createElement('iframe');
@@ -329,10 +407,6 @@ class extends HTMLElement {
       window.addEventListener('message', (event) => {
         if (event.data?.messagetype === 'sky-poll') {
           let windowHere = event.data.here;
-          if (!windowHere) {
-            console.error('bad here', event.data);
-            return;
-          }
           let here = window.location.pathname.slice(${prefix.length});
           if (here != windowHere) {
             window.parent.postMessage({
@@ -342,6 +416,33 @@ class extends HTMLElement {
               prefix: '${prefix}'
             }, '*');
           }
+
+          let windowFavicon = event.data.favicon || "";
+          let faviconEl = document.querySelector('link[rel="icon"]');
+          let favicon;
+          if (faviconEl) {
+            favicon = new URL(faviconEl.href, document.baseURI).href;
+          } else {
+            favicon = "";
+          }
+          if (favicon != windowFavicon) {
+            window.parent.postMessage({
+              messagetype: 'sky-poll-response-favicon',
+              wid: '${wid}',
+              favicon: favicon,
+            }, '*');
+          }
+
+          let windowTitle = event.data.title || "";
+          let title = document.title || "";
+          if (title != windowTitle) {
+            window.parent.postMessage({
+              messagetype: 'sky-poll-response-title',
+              wid: '${wid}',
+              title: title,
+            }, '*');
+          }
+
         }
         else if (event.data?.messagetype === 'feather-change') {
           event.data.rules.forEach(r => {
@@ -366,14 +467,17 @@ class extends HTMLElement {
     this.path.forEach((p, i) => {
       let chevron = $(document.createElement('span'));
       chevron.addClass('s-2 f4 o6 fc ac jc no-select');
-      chevron.text('›');
+      if (i > 0) {
+        chevron.text('›');
+      }
       breadcrumbs.append(chevron);
       //
       let crumb = $(document.createElement('button'));
       crumb.addClass((i === 0 ? 'p-1' : 'p1') + ' b2 hover br1 s-1 f2');
-      crumb.text(i === 0 ? "/" : this.path[i]);
+      crumb.text((i === 0 && this.path[0].startsWith('~')) ? "/" : this.path[i]);
       crumb.on('click', () => {
         $(this).attr('here', "/"+this.path.slice(0, i+1).join("/"));
+        $(this).attr('renderer', this.strategies[0]);
         this.rebuildIframe();
       });
       breadcrumbs.append(crumb);
@@ -406,6 +510,15 @@ class extends HTMLElement {
             >
             unsave
           </button>
+          <div class="grow"></div>
+          <a
+            href="${this.renderer}${this.here}"
+            class="p-1 s-1 f0 br1 bd2 b2 wfc fr ac js g1"
+            target="_blank"
+            >
+            <span>pop-out</span>
+            <span class="mso">arrow_outward</span>
+          </a>
         </div>
       </div>
     `);
@@ -434,7 +547,7 @@ class extends HTMLElement {
     //
     this.strategies.forEach(s => {
       let bookmark = $(`<button class="b1 br1 bd1 p-1 wfc"></button>`);
-      bookmark.text(s);
+      bookmark.text(this.labelLookup(s) || s);
       $(bookmark).on('click', (e) => {
         $(this).attr('renderer', s)
       })
