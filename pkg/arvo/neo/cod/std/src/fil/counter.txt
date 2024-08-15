@@ -360,7 +360,7 @@ This converts data stored as the `number` protocol (which is just a `@ud`) to th
     ::
     ::  hx-post will issue a POST request to the provided
     ::  url and swap the response into the DOM
-    =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=counter-diff"
+    =hx-post  "/hawk{(en-tape:pith:neo here.bowl)}?stud=counter-diff"
     ::
     ::  hx-target specifies the target for hx-post's DOM
     ::  swap: the element with class "loading"

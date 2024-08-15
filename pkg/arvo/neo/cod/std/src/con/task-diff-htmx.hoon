@@ -5,7 +5,7 @@
 |=  =bowl:neo
 ^-  manx
 ;div.loading
-  =hx-get        "/neo/hawk{(en-tape:pith:neo here.bowl)}"
+  =hx-get        "/hawk{(en-tape:pith:neo here.bowl)}"
   =hx-target     "closest .hawk"
   =hx-indicator  "closest .loader"
   =hx-swap       "innerHTML"

@@ -48,7 +48,7 @@
   ==
 ++  in
   ;form.fc.grow
-    =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=hoon"
+    =hx-post  "/hawk{(en-tape:pith:neo here.bowl)}?stud=hoon"
     =hx-trigger  "input changed delay:0.4s from:find textarea"
     =hx-on-htmx-after-request  "$(this).closest('.top').find('.refresher').emit('accel-refresh');"
     =hx-swap  "none"
@@ -87,7 +87,7 @@
     ;div.fr.g3.ac
       =id  "conf-dep-{tap}"
       ;button.bd1.br1.p-1.b1.hover.loader
-        =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=del-dep"
+        =hx-post  "/hawk{(en-tape:pith:neo here.bowl)}?stud=del-dep"
         =hx-swap  "outerHTML"
         =hx-target  "find .loading"
         =tap  tap
@@ -104,7 +104,7 @@
   ==
 ++  add-dep
   ;form.frw.js.g2
-    =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=add-dep"
+    =hx-post  "/hawk{(en-tape:pith:neo here.bowl)}?stud=add-dep"
     =hx-swap  "outerHTML"
     =hx-target  "find .loading"
     =hx-on-htmx-after-request  "$(this).find('input').attr('value', '');this.reset();"
@@ -152,7 +152,7 @@
     =/  tap  (en-tape:pith:neo (snip (snip (snip here.bowl))))
     ;div.frw.g2.ac
       ;button.bd1.br1.p-1.b1.hover.loader
-        =hx-post  "/neo/hawk{tap}?stud=send-poke"
+        =hx-post  "/hawk{tap}?stud=send-poke"
         =hx-swap  "none"
         =pith  pit
         =x  (scow %ud +:x)
@@ -163,7 +163,7 @@
         ==
       ==
       ;button.bd1.br1.p-1.b1.hover.loader
-        =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=del-poke"
+        =hx-post  "/hawk{(en-tape:pith:neo here.bowl)}?stud=del-poke"
         =hx-swap  "outerHTML"
         =hx-target  "find .loading"
         =pith  pit
@@ -180,7 +180,7 @@
   ==
 ++  add-poke
   ;form.fr.js.hf.g2
-    =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=add-poke"
+    =hx-post  "/hawk{(en-tape:pith:neo here.bowl)}?stud=add-poke"
     =hx-swap  "outerHTML"
     =hx-target  "find .loading"
     =hx-on-htmx-after-request  "$(this).find('input').attr('value', '');this.reset();"

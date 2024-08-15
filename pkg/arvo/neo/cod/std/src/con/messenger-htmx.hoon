@@ -47,11 +47,12 @@
 ::
 ++  make-chat
   =/  oninput
-    """
-    this.setAttribute("value", this.value); this.nextElementSibling.nextElementSibling.setAttribute('hx-get', '/neo/hawk{(pith-tape here.bowl)}/dms/' + this.value); htmx.process(document.body);
-    """
+    :: """
+    :: this.setAttribute("value", this.value); this.nextElementSibling.nextElementSibling.setAttribute('hx-get', '/hawk{(pith-tape here.bowl)}/dms/' + this.value); htmx.process(document.body);
+    :: """
+    (trip 'this.setAttribute("value", this.value); if (this.value.includes(" ~")){this.parentNode.setAttribute("head", "new-groupchat"); this.nextElementSibling.classList.remove("hidden");}else{this.parentNode.setAttribute("head", "new-dm"); this.nextElementSibling.classList.add("hidden");}')
   ;form.fr.jc.g1.w70
-    =hx-post  "/neo/hawk{(pith-tape here.bowl)}?stud=messenger-diff"
+    =hx-post  "/hawk{(pith-tape here.bowl)}?stud=messenger-diff"
     =head  "new-dm"
     =hx-swap  "none"
     =hx-on-htmx-after-request  "$(this).find('.redirect').emit('messenger-created')"
@@ -104,7 +105,7 @@
           +:;;([%p @p] (rear pith))
         ^-   manx
         ;a.br1.hover.b0.fr.jb.wf.bc1
-        =href  "/neo/hawk{(pith-tape here.bowl)}{(pith-tape pith)}"
+        =href  "/hawk{(pith-tape here.bowl)}{(pith-tape pith)}"
         =hx-swap  "innerHTML"
           ;h3.s-1.p2:  {<ship>}
         ==
@@ -126,7 +127,7 @@
   ;div.wf.br1.fc.g1
     ;div.fr.g1
       ;a.br1.hover.fr.jb.g2.wf.bc1.b0
-      =href  "/neo/hawk{(pith-tape here.bowl)}{(pith-tape pith)}"
+      =href  "/hawk{(pith-tape here.bowl)}{(pith-tape pith)}"
       =hx-swap  "innerHTML"
         ;h3.s-1.p2:  {(trip chat)}
         ;h3.s-1.p2:  {<org>}

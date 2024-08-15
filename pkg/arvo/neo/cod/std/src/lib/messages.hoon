@@ -46,7 +46,7 @@
   ;div.absolute.hidden
     =style  "top: 1em; left: 1em;"
     ;div.loader.refresher
-      =hx-get  "{(en-tape:pith:neo :(weld /neo/hawk here.bowl))}?no-save"
+      =hx-get  "{(en-tape:pith:neo :(weld /hawk here.bowl))}?no-save"
       =hx-on-htmx-after-request  "let msgs = $(this).closest('.messages')[0]; maybeScrollToBottom(msgs);"
       =hx-trigger  "every 7s, refresh"
       =hx-target  "closest .top"
@@ -124,7 +124,7 @@
   ^-  manx
   ;form.fr.g1.wf.af.js
     =style  "grid-area: sender;"
-    =hx-post  "/neo/hawk{(pith-tape (welp here.bowl location))}?stud=message"
+    =hx-post  "/hawk{(pith-tape (welp here.bowl location))}?stud=message"
     =hx-on-htmx-after-request  "$(this).emit('message-sent');"
     =hx-swap  "none"
     =hx-on-submit  "this.reset()"

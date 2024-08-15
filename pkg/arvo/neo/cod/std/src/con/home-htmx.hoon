@@ -6,7 +6,7 @@
 |^
   ;div.wf.hf.relative
     ;div.fc.g5.ma.mw-page.p-page
-      ;+  menu
+      :: ;+  menu
       ;+  apps
     ==
   ==
@@ -28,7 +28,7 @@
         ;
       ==
       ;a.p2.b1.hover.loader.br2.bd1.fr.jc.ac.f3
-        =href  "/neo/hawk/{<our.bowl>}/sky/settings"
+        =href  "/hawk/{<our.bowl>}/sky/settings"
         ;span.loaded
           ;+  settings.feather-icons
         ==
@@ -50,7 +50,7 @@
   ==
 ++  apps
   ;form.frw.g3.ac.jc.wfc.ma
-    =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=home"
+    =hx-post  "/hawk{(en-tape:pith:neo here.bowl)}?stud=home"
     =hx-swap  "none"
     =hx-indicator  "#indicator-{id}"
     ;*
@@ -79,7 +79,7 @@
         =hx-target  "closest .hawk"
         =hx-swap  "outerHTML"
         =hx-indicator  "this"
-        =href  (trip (spat ['neo' 'hawk' path]))
+        =href  (trip (spat ['hawk' path]))
         ;span.loaded: {(trip (snag 0 (pout:neo pith)))}
         ;span.loading.s2
           ;+  loading.feather-icons

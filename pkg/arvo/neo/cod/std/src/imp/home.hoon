@@ -6,6 +6,7 @@
 /*  messenger
 /*  introduction
 /*  developer-environment-setup
+/*  axal
 ^-  kook:neo
 |%
 ++  state  pro/%home
@@ -46,9 +47,12 @@
         [#/[p/our.bowl]/home/docs/tutorials/messenger %make %sail `sail/!>([messenger 'prose p-page mw-page ma' ~]) ~]
         [#/[p/our.bowl]/home/docs/tutorials/tasks %make %sail `sail/!>([tasks 'prose p-page mw-page ma' ~]) ~]
       ::
-        [#/[p/our.bowl]/home/docs/guides %make %folder `folder/!>([%development %feather ~]) ~]
+        [#/[p/our.bowl]/home/docs/guides %make %folder `folder/!>([%development %feather %axal-core ~]) ~]
         [#/[p/our.bowl]/home/docs/guides/development %make %sail `sail/!>([developer-environment-setup 'prose p-page mw-page ma' ~]) ~]
         [#/[p/our.bowl]/home/docs/guides/feather %make %sail `sail/!>([feather-intro 'prose p-page mw-page ma' ~]) ~]
+        [#/[p/our.bowl]/home/docs/guides/axal-core %make %sail `sail/!>([axal 'prose p-page mw-page ma' ~]) ~]
+      ::
+        [#/[p/our.bowl]/sky/strategy/[p/our.bowl]/home %make %order `order/!>([#/hawk ~]) ~]
     ==
   ++  poke
     |=  =pail:neo

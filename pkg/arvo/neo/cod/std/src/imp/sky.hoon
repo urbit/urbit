@@ -1,15 +1,15 @@
-/@  sky
-/@  sky-diff
+/-  serv=sky-server
+/*  feather
+/*  s-k-y
+/*  wi-nd
+/*  hawk-icon
+=<
 |%
-++  state  pro/%sky
-++  poke   (sy %sky %sky-diff ~)
+++  state  pro/%sig
+++  poke   (sy %gift %bind-static-assets ~)
 ++  kids
-  :+  ~  %y
-  %-  ~(gas by *lads:neo)
-  :~
-    :-  [&/%settings |]
-    [pro/%sky-settings (sy %sky-settings ~)]
-  ==
+  :+  ~  %z
+  schema.serv
 ++  deps   *deps:neo
 ++  form
   ^-  form:neo
@@ -17,96 +17,60 @@
   ++  poke
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo pail:neo)
-    =+  !<(this=sky q.pail)
-    ?+  stud  !!
-      %sky  [~ sky/vax]
-      %sky-diff
-        =/  poke  !<(sky-diff vax)
-        ?+  -.poke  !!
-          %menu
-            :-  ~
-            =.  menu.this  menu.poke
-            sky/!>(this)
-          %new-hawk
-            :-  ~
-            =.  hawks.this  [[now.poke #/[p/our.bowl]/home] hawks.this]
-            =.  open.this  (min 4 +(open.this))
-            sky/!>(this)
-          %move-tab
-            :-  ~
-            =.  hawks.this  (snap hawks.this slot.poke [now.bowl pith.poke])
-            sky/!>(this)
-          %minimize
-            :-  ~
-            =.  hawks.this
-              ;:  welp
-                (scag slot.poke hawks.this)
-                (slag +(slot.poke) hawks.this)
-                [(snag slot.poke hawks.this) ~]
-              ==
-            =.  open.this  (dec open.this)
-            sky/!>(this)
-        ::
-          %maximize
-            :-  ~
-            =.  hawks.this
-              ;:  welp
-                [(snag slot.poke hawks.this) ~]
-                (scag slot.poke hawks.this)
-                (slag +(slot.poke) hawks.this)
-              ==
-            =?    open.this
-                (gte slot.poke open.this)
-              (min 4 +(open.this))
-            sky/!>(this)
-          %close
-            :-  ~
-            =.  hawks.this  (oust [slot.poke 1] hawks.this)
-            =?    open.this
-                (lth slot.poke open.this)
-              (dec open.this)
-            sky/!>(this)
-          %slide-up
-            :-  ~
-            =?  hawks.this
-              (gth slot.poke 0)
-              ;:  welp
-                (scag (dec slot.poke) hawks.this)
-                [(snag slot.poke hawks.this) ~]
-                [(snag (dec slot.poke) hawks.this) ~]
-                (slag +(slot.poke) hawks.this)
-              ==
-            sky/!>(this)
-          %slide-down
-            :-  ~
-            =?  hawks.this
-              (lth slot.poke 3)
-              ;:  welp
-                (scag slot.poke hawks.this)
-                [(snag +(slot.poke) hawks.this) ~]
-                [(snag slot.poke hawks.this) ~]
-                (slag (add 2 slot.poke) hawks.this)
-              ==
-            sky/!>(this)
-          ::
-        ==
-      ::
+    ?+    stud  ~|(bad-stud/stud !!)
+        %gift
+      [~ sig/!>(~)]
+    ::
+        %bind-static-assets
+      :_  sig/!>(~)
+      :~
+        [#/[p/our.bowl]/static/feather %make %css `css/!>(feather) ~]
+        [#/[p/our.bowl]/static/s-k-y %make %js `js/!>(s-k-y) ~]
+        [#/[p/our.bowl]/static/wi-nd %make %js `js/!>(wi-nd) ~]
+        [#/[p/our.bowl]/static/hawk-icon %make %png `png/!>(hawk-icon) ~]
+        [#/[p/our.bowl]/static/sky-manifest %make %json `json/!>(~(manifest web bowl)) ~]
+      ==
     ==
+      ::
   ++  init
     |=  pal=(unit pail:neo)
     ^-  (quip card:neo pail:neo)
-    :-
-      :~  [(welp here.bowl /settings) %make %sky-settings ~ ~]
-          [~[p/our.bowl %home] %make %home ~ ~]
-      ==
-    :-  %sky
-    !>
-    :*
-      :~
-        [now.bowl ~[p/our.bowl %home]]
-      ==
-      1
-      %.y
+    :_
+      ::  return pail
+      :::-  %manx
+      ::!>
+      ::;div: initializing sky
+      :-  %sig
+      !>
+      ~
+    ::
+    ::  return cards
+    :~
+      [~[p/our.bowl %home] %make %home ~ ~]
+      [here.bowl %poke bind-static-assets/!>(~)]
     ==
   --
 --
+::
+|%  ++  web  |_  =bowl:neo
+++  manifest
+  ^-  json
+  %-  pairs:enjs:format
+  :~
+    ['name' s+'sky']
+    ['description' s+'an urbit namespace viewer']
+    ['start_url' s+'/sky']
+    ['display' s+'standalone']
+    ['background_color' s+'black']
+    ['theme_color' s+'black']
+    :+  'icons'  %a
+    :~
+      %-  pairs:enjs:format
+      :~
+        ['src' s+(crip "/blue/blue-mime/{(scow %p our.bowl)}/static/hawk-icon")]
+        ['sizes' s+'196x196']
+        ['type' s+'image/png']
+      ==
+    ==
+  ==
+--  --

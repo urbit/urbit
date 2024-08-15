@@ -31,7 +31,7 @@
         %+  ~(respond neo:srv eyre)   eyre-id
         (login-redirect:gen:srv request.req)
       =/  purl  (parse-url:serv request.req)
-      =/  inner=pith:neo  (pave:neo pax.purl)
+      =/  inner=pith:neo  (pave:neo (slag 1 pax.purl))
       =/  =crew:neo  (~(gas by *crew:neo) src/inner ~)
       =/  =made:neo  [%hawk-eyre-handler `[stud vax] crew]
       :_  sig/!>(~)
@@ -42,7 +42,7 @@
     |=  pal=(unit pail:neo)
     :_  sig/!>(~)
     =/  =pith:neo  #/[p/our.bowl]/$/eyre
-    =/  =binding:eyre  [~ ~[%neo %hawk]]
+    =/  =binding:eyre  [~ ~[%hawk]]
     =/  =req:eyre:neo  [%connect binding here.bowl]
     :~  [pith %poke eyre-req/!>(req)]
     ==

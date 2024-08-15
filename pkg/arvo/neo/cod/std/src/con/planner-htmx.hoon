@@ -17,7 +17,7 @@
 +$  pent  (pair @da planner-entry)
 ++  post-url
   ;:  welp
-    "/neo/hawk"
+    "/hawk"
     (en-tape:pith:neo here.bowl)
     "?stud=planner-diff"
   ==

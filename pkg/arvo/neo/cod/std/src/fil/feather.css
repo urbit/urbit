@@ -1,20 +1,118 @@
-/**    feather.css
-  *      ~2024.4.6
-  *
-  *    styling resets
-  *    and
-  *    utility classes
-  *
-  **/
+/*  feather.css  */
+
+
+/*
+ *  part 1: resets
+ *
+ */
+
+
+/* Box sizing rules */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+/* Prevent font size inflation */
+html {
+  -moz-text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+
+/* Remove default margin in favour of better control in authored CSS */
+body, h1, h2, h3, h4, p,
+figure, blockquote, dl, dd {
+  margin-block-end: 0;
+}
+
+/* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
+ul[role='list'],
+ol[role='list'] {
+  list-style: none;
+}
+
+/* Set shorter line heights on headings and interactive elements */
+h1, h2, h3, h4,
+button, input, label {
+  line-height: 1.1;
+}
+
+button, summary {
+  cursor: pointer;
+}
+
+/* Balance text wrapping on headings */
+h1, h2,
+h3, h4 {
+  text-wrap: balance;
+}
+
+a {
+  text-decoration: none;
+  color: currentColor;
+}
+
+/* Make images easier to work with */
+img,
+picture {
+  max-width: 100%;
+  display: block;
+}
+
+/* Inherit as much as possible*/
+input, button,
+textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+  border: inherit;
+  background: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  outline: none;
+  accent-color: black;
+}
+textarea {
+  resize: none;
+}
+
+/* Make sure textareas without a rows attribute are not tiny */
+textarea:not([rows]) {
+  min-height: 10em;
+}
+
+/* Anything that has been anchored to should have extra scroll margin */
+:target {
+  scroll-margin-block: 5ex;
+}
+
+b {
+  font-weight: bold;
+}
+i {
+  font-style: italic;
+}
+
+/*
+ *  part 2: variables
+ *
+ */
 
 :root {
+  --sky-opacity: 1;
+  --sky-outer-gap: 8px;
+  --sky-inner-gap: 8px;
+  --sky-window-border: 2px;
 
-  /* --font: 'Urbit Sans';
-     --font-mono: 'Monaco';
-     --mono-scale: 0.8;
-     --letter-spacing: 0.024em;
-     --line-height: 1.4;
-   */
+  --font: 'Arial';
+  --font-mono: 'Monaco';
+  --mono-scale: 0.8;
+  --letter-spacing: 0.024em;
+  --line-height: 1.4;
+
   --0in: calc(0 * var(--1in));
   --1in: 4px;
   --font-size: calc(4 * var(--1in));
@@ -62,40 +160,46 @@
   --40in: calc(40 * var(--1in));
 
 
-  /* --light-b-3: #dd5522;
-     --light-b-2: #ddaa33;
-     --light-b-1: #55dd33;
-     --light-b0: #dddddd;
-     --light-b1: #cccccc;
-     --light-b2: #bbbbbb;
-     --light-b3: #aaaaaa;
-     --light-b4: #999999;
-     --light-f-3: #993311;
-     --light-f-2: #aaaa22;
-     --light-f-1: #339911;
-     --light-f0: #111111;
-     --light-f1: #333333;
-     --light-f2: #444444;
-     --light-f3: #555555;
-     --light-f4: #777777;
+  --br0: 0px;
+  --br1: 3px;
+  --br2: 6px;
+  --br3: 12px;
 
-     --dark-b-3: #551111;
-     --dark-b-2: #555511;
-     --dark-b-1: #225511;
-     --dark-b0: #222222;
-     --dark-b1: #333333;
-     --dark-b2: #444444;
-     --dark-b3: #555555;
-     --dark-b4: #666666;
-     --dark-f-3: #ee7755;
-     --dark-f-2: #ccbb33;
-     --dark-f-1: #55cc33;
-     --dark-f0: #eeeeee;
-     --dark-f1: #cccccc;
-     --dark-f2: #bbbbbb;
-     --dark-f3: #aaaaaa;
-     --dark-f4: #888888;
-   */
+
+  --light-b-3: #dd5522;
+  --light-b-2: #ddaa33;
+  --light-b-1: #55dd33;
+  --light-b0: #dddded;
+  --light-b1: #ccccdc;
+  --light-b2: #bbbbcb;
+  --light-b3: #aaaaba;
+  --light-b4: #9999a9;
+  --light-f-3: #993311;
+  --light-f-2: #aaaa22;
+  --light-f-1: #339911;
+  --light-f0: #111131;
+  --light-f1: #333353;
+  --light-f2: #444464;
+  --light-f3: #555575;
+  --light-f4: #777797;
+
+  --dark-b-3: #551111;
+  --dark-b-2: #555511;
+  --dark-b-1: #225511;
+  --dark-b0: #222232;
+  --dark-b1: #333343;
+  --dark-b2: #444454;
+  --dark-b3: #555565;
+  --dark-b4: #666676;
+  --dark-f-3: #ee7755;
+  --dark-f-2: #ccbb33;
+  --dark-f-1: #55cc33;
+  --dark-f0: #eeeefe;
+  --dark-f1: #ccccdc;
+  --dark-f2: #bbbbcb;
+  --dark-f3: #aaaada;
+  --dark-f4: #8888a8;
+
   --b-3: var(--light-b-3);
   --b-2: var(--light-b-2);
   --b-1: var(--light-b-1);
@@ -133,27 +237,37 @@
     --f4:  var(--dark-f4);
   }
 }
+
+/*
+ *  part 1: page styling
+ *
+ */
+
 * {
   font-size: var(--font-size);
 }
-/*
-@media (max-width: 900px) {
-  :root {
-    --font-size: calc(1.3 * var(--font-size));
-  }
-}
-*/
-body {
-  font-family: var(--font);
-  letter-spacing: var(--letter-spacing);
-  line-height: 1;
+html {
   height: 100%;
+  font-family: sans-serif;
 }
-button {
-  border: inherit;
-  background: inherit;
-  color: inherit;
+body {
+  margin: 0;
+  height: 100%;
+  color: var(--f0);
+  background: var(--b0);
+  font-feature-settings: normal;
+  font-variation-settings: normal;
+  min-height: 100%;
+  font-family: var(--font, sans-serif);
+  font-size: var(--font-size);
+  letter-spacing: var(--letter-spacing);
+  line-height: var(--line-height);
 }
+
+/*
+ *  part 4: utility classes
+ *
+ */
 
 .break {
   word-break: break-word;
@@ -201,17 +315,26 @@ button {
 .wf {
   width: 100%;
 }
+.mwf {
+  max-width: 100%;
+}
 .mw-page {
   max-width: 650px;
 }
 .hf {
   height: 100%;
 }
+.mhf {
+  max-height: 100%;
+}
 .hfc {
   height: fit-content;
 }
+.contain {
+  object-fit: contain;
+}
 .mono {
-  font-family: var(--font-mono), monospace;
+  font-family: var(--font-mono, monospace);
   font-size: calc(1em * var(--mono-scale));
 }
 .italic {
@@ -232,6 +355,9 @@ button {
 }
 .pre-line {
   white-space: pre-line;
+}
+.pre-wrap {
+  white-space: pre-wrap;
 }
 
 .tl {
@@ -587,29 +713,52 @@ button {
 .bd3 {
   border: 2px solid var(--f1);
 }
-/* deprecated */
-.border {
-  border: 0.8px solid var(--f3);
+.br0 {
+  border-radius: var(--br0);
 }
-
 .br1 {
-  border-radius: 3px;
+  border-radius: var(--br1);
 }
 .br2 {
-  border-radius: 6px;
+  border-radius: var(--br2);
 }
 .br3 {
-  border-radius: 12px;
+  border-radius: var(--br3);
 }
 
 .hover:hover {
   filter: invert(20%);
 }
 .toggled {
-  filter: invert(100%);
+  opacity: 80%;
+}
+.toggled .b0,
+.toggled.b0 {
+  color: var(--b0);
+  background-color: var(--f0);
+}
+.toggled .b1,
+.toggled.b1 {
+  color: var(--b1);
+  background-color: var(--f1);
+}
+.toggled .b2,
+.toggled.b2 {
+  color: var(--b2);
+  background-color: var(--f2);
+}
+.toggled .b3,
+.toggled.b3 {
+  color: var(--b3);
+  background-color: var(--f3);
+}
+.toggled .b4,
+.toggled.b4 {
+  color: var(--b4);
+  background-color: var(--f4);
 }
 .hover.toggled:hover {
-  filter: invert(100%);
+  filter: brightness(80%);
 }
 .active,
 .selected {
@@ -633,6 +782,15 @@ button {
     display: block;
     counter-increment: line;
 }
+.pointer {
+  cursor: pointer;
+}
+.grabber {
+  cursor: grab;
+}
+.no-select {
+  user-select: none;
+}
 .prose h1 {
   font-size: 1.45rem;
   margin: 1rem 0;
@@ -649,21 +807,23 @@ button {
   font-weight: bold;
 }
 .prose p {
-  margin-bottom: 1rem;
-  line-height: var(--line-height);
+  margin: 1rem 0;
+  line-height: 1.4;
 }
 .prose img {
+  margin: 1rem 0;
   max-width: 100%;
   display: block;
   max-height: 350px;
 }
 .prose details {
-  margin-bottom: 1rem;
+  margin: 1rem 0;
 }
 .prose a {
   text-decoration: underline;
 }
 .prose blockquote {
+  margin: 1rem 0;
   margin-left: 10px;
   border-left: 2px solid var(--b3);
   padding: 4px;
@@ -671,36 +831,105 @@ button {
   color: var(--f2);
 }
 .prose pre {
-  font-family: var(--font-mono);
+  font-family: var(--font-mono, monospace);
   font-size: calc(1em * var(--mono-scale));
   overflow-x: auto;
   width: 100%;
   display: block;
   padding: 8px;
+  margin: 1rem 0;
+  background-color: var(--b1);
 }
 .prose code {
-  font-family: var(--font-mono);
+  font-family: var(--font-mono, monospace);
   font-size: calc(1em * var(--mono-scale));
   color: var(--f2);
+}
+.prose hr {
+  margin: 2rem 0;
 }
 .prose ul,
 .prose ol {
   padding-left: 29px;
   line-height: calc(calc(1 + var(--line-height)) / 2);
-  margin-bottom: 0.6rem;
+  margin: 1rem 0;
 }
 .prose ul p,
 .prose ol p {
-  margin-bottom: 0;
+  margin: 0;
   line-height: var(--line-height);
 }
 .prose ul ul,
 .prose ol ul,
 .prose ul ol,
 .prose ol ol {
-  margin-bottom: 0;
+  margin: 0;
 }
 .prose summary {
   user-select: none;
   cursor: pointer;
 }
+
+/*
+ *  part 5: styling for inputs and chrome
+ *
+ */
+
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 5px;
+  background: var(--f4);
+  outline: none;
+  border-radius: 5px;
+}
+
+/* Style the slider thumb */
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 0.8em;
+  height: 0.8em;
+  background: var(--f0);
+  cursor: pointer;
+  border-radius: 50%;
+  border: none;
+}
+
+input[type=range]::-moz-range-thumb {
+  width: 0.8em;
+  height: 0.8em;
+  background: var(--f0);
+  cursor: pointer;
+  border-radius: 50%;
+  border: none;
+}
+
+button:focus {
+  filter: brightness(115%);
+}
+input:focus {
+  filter: brightness(115%);
+}
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+/* Scrollbar Handle */
+::-webkit-scrollbar-thumb {
+    background-color: var(--b4); /* Color of the scrollbar handle */
+    border-radius: var(--br1); /* Roundness of the scrollbar handle */
+}
+
+/* Scrollbar Handle on Hover */
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--b3); /* Color of the scrollbar handle when hovered */
+}
+
+/* Scrollbar Track Background */
+::-webkit-scrollbar-track {
+    background: var(--b2); /* Background color of the scrollbar track */
+}
+
+scrollbar-width: thick; /* Width of the scrollbar */
+scrollbar-color: var(--b4) var(--b3); /* Scrollbar handle color and track color */

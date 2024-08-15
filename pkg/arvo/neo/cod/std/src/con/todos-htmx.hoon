@@ -7,7 +7,7 @@
   =/  hide-hid  ?:(show-done.todo "" "hide-hidden")
   ;div
     =class  "p-page todo-top mw-page ma {hide-hid}"
-    =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=todos"
+    =hx-post  "/hawk{(en-tape:pith:neo here.bowl)}?stud=todos"
     =hx-swap  "none"
     =hx-target  "this"
     =hx-trigger  "todo-save, todo-save-name delay:0.4s"

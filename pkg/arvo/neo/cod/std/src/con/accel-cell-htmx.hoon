@@ -4,7 +4,7 @@
 |=  =bowl:neo
 |^
   ;form.fr.af.js.hf
-    =hx-post  "/neo/hawk{(en-tape:pith:neo (snip (snip here.bowl)))}?stud=accel-diff"
+    =hx-post  "/hawk{(en-tape:pith:neo (snip (snip here.bowl)))}?stud=accel-diff"
     =hx-trigger  "input changed delay:0.4s from:find textarea, input changed delay:0.4s from:[name='a']"
     =hx-swap  "outerHTML"
     =hx-target  "#spinner .loading"
