@@ -5676,11 +5676,11 @@
               ?~  ps.u.res
                 ::  is this this a standalone (jumbo or 1-frag) message?
                 ::
-                ?:  ?|  =(tob.data (met 3 dat.data))
-                        =(1 (div (add tob.data 1.023) 1.024))  :: XX redundant?
-                    ==
+                =/  mod  (bex (dec boq.name))  :: XX unguarded
+                ?:  =(1 (div (add tob.data (dec mod)) mod))
+                  ~&  [tob=tob.data met=(met 3 dat.data)]
                   ?>  ?=(%& -.aut.data)
-                  ?>  (ev-authenticate (root:lss (met 3 dat.data)^dat.data) aut.data name)
+                  ?>  (ev-authenticate (root:lss tob.data^dat.data) aut.data name)
                   =/  =spar  [her.name inner-path]
                   =/  =auth:mess  p.aut.data
                   =/  res=@  (ev-decrypt-spac space dat.data cyf)
@@ -7736,7 +7736,7 @@
                     ::
                   =/  dat  [tob aut (cut boq [fag 1] ser)]
                   =/  pairs
-                    =/  per  (bex (sub boq 13))
+                    =/  per  (bex (sub boq 13))  ::  XX  unguarded
                     (swag [+((mul per fag)) (dec per)] pairs.lss-proof)
                   [nam dat pairs proof.lss-proof]
                 ==
