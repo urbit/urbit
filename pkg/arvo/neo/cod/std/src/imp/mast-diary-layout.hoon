@@ -24,7 +24,7 @@
           ==
         ==
         ;body
-          ;kid(view "mast-diary-ui", pith (en-tape:pith:neo dep));
+          ;imp_mast-diary-ui: {(en-tape:pith:neo dep)}
         ==
       ==
     ::

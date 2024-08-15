@@ -146,7 +146,7 @@
             =js-on-add  "setLoaded('form-button');"
             ;div.fc.g1.grow.br1.p-2.b1
               ;p.f3: {(pretty-date date)}
-              ;kid(view "mast-txt-ui", pith (en-tape:pith:neo pit));
+              ;imp_mast-txt-ui: {(en-tape:pith:neo pit)}
             ==
             ;button.loader.p2.br1.b1.hover
               =event        "/click/delete/{key}"

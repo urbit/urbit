@@ -110,32 +110,32 @@
             $(rum t.rum)
           =/  sub=path   (sub-path buoy)
           =/  =diff      (luff u.aft sail)
-          =^  kid-cards  waiting.rig
-            (make-kids our.bowl boat p.diff [[buoy rope] ~] waiting.rig)
+          =^  imp-cards  waiting.rig
+            (make-imps our.bowl boat p.diff [[buoy rope] ~] waiting.rig)
           %=  $
             aft.rig  (~(put by aft.rig) [rope boat] sail)
-            cards    (welp cards ?~(q.diff kid-cards [(~(gust res bowl) sub [%a q.diff]) kid-cards]))
+            cards    (welp cards ?~(q.diff imp-cards [(~(gust res bowl) sub [%a q.diff]) imp-cards]))
             rum      t.rum
           ==
         :: handle sail component creation
         =/  build-keys   (~(got by waiting.rig) [rope boat])
-        =/  kid-els      (find-kid-els sail)
-        =/  kid-ropes    (turn kid-els |=(=bind (mug bind)))
-        =^  kid-cards  waiting.rig
-          (make-kids our.bowl boat kid-els build-keys waiting.rig)
+        =/  imp-els      (find-imp-els sail)
+        =/  imp-ropes    (turn imp-els |=(=bind (mug bind)))
+        =^  imp-cards  waiting.rig
+          (make-imps our.bowl boat imp-els build-keys waiting.rig)
         =:  waiting.rig  (~(del by waiting.rig) [rope boat])
             aft.rig      (~(put by aft.rig) [rope boat] sail)
-            cards        ?~(kid-cards cards (weld cards kid-cards))
+            cards        ?~(imp-cards cards (weld cards imp-cards))
           ==
         |-  ^-  (quip card:neo ^rig)
         ?~  build-keys
           ^$(rum t.rum)
         =/  buil  (~(get by building.rig) i.build-keys)
         ?~  buil
-          ?^  kid-els
+          ?^  imp-els
             %=  $
               build-keys    t.build-keys
-              building.rig  (~(put by building.rig) i.build-keys [(silt kid-ropes) sail])
+              building.rig  (~(put by building.rig) i.build-keys [(silt imp-ropes) sail])
             ==
           %=  $
             build-keys  t.build-keys
@@ -143,13 +143,13 @@
               %+  weld  cards
               ?@  i.build-keys
                 (~(gale res bowl) i.build-keys sail)
-              [(~(gust res bowl) [(sub-path buoy.i.build-keys) (make-gust-kid sail)]) ~]
+              [(~(gust res bowl) [(sub-path buoy.i.build-keys) (make-imp-gust sail)]) ~]
           ==
-        =:  sail.u.buil       (insert-kid-sail buoy sail.u.buil sail)
+        =:  sail.u.buil       (insert-imp-sail buoy sail.u.buil sail)
             remaining.u.buil  (~(del in remaining.u.buil) rope)
           ==
-        =?  remaining.u.buil  ?=(^ kid-ropes)
-          (~(gas in remaining.u.buil) kid-ropes)
+        =?  remaining.u.buil  ?=(^ imp-ropes)
+          (~(gas in remaining.u.buil) imp-ropes)
         ?^  remaining.u.buil
           %=  $
             build-keys    t.build-keys
@@ -162,7 +162,7 @@
             %+  weld  cards
             ?@  i.build-keys
               (~(gale res bowl) i.build-keys sail.u.buil)
-            [(~(gust res bowl) [(sub-path buoy.i.build-keys) (make-gust-kid sail.u.buil)]) ~]
+            [(~(gust res bowl) [(sub-path buoy.i.build-keys) (make-imp-gust sail.u.buil)]) ~]
         ==
       [cards sig/!>(rig)]
       ::
@@ -308,19 +308,21 @@
   ::
   --
 ::
-++  find-kid-els
+++  find-imp-els
   |=  m=manx
   =|  acc=(list bind)
   |-  ^-  (list bind)
-  ?:  =(%kid n.g.m)
+  ?:  ?&  ?=([%imp @] n.g.m)
+          ?=(^ c.m)  ?=(^ a.g.i.c.m)
+      ==
     :_  acc
-    :-  (getv %view a.g.m)
-    (pave:neo (stab (getv %pith a.g.m)))
+    :-  +.n.g.m
+    (pave:neo (stab (crip v.i.a.g.i.c.m)))
   |-  ^-  (list bind)
   ?~  c.m  acc
   $(c.m t.c.m, acc ^$(m i.c.m))
 ::
-++  make-kids
+++  make-imps
   |=  $:  our=@p
           =boat
           bin=(list bind)
@@ -343,17 +345,19 @@
       (~(put by wat) [rope boat] ?~(rest new (weld new u.rest)))
   ==
 ::
-++  prepare-kid-sail
+++  prepare-imp-sail
   |=  m=manx
   ^-  manx
-  ?:  &(=(%html n.g.m) ?=(^ c.m) ?=(^ t.c.m) =(%body n.g.i.t.c.m))
-    i.t.c.m(n.g %div, a.g [[%kid ""] a.g.i.t.c.m])
-  m(a.g [[%kid ""] a.g.m])
+  ?:  ?&  =(%html n.g.m)  ?=(^ c.m)  ?=(^ t.c.m)
+          =(%body n.g.i.t.c.m)
+      ==
+    i.t.c.m(n.g %div)
+  m
 ::
-++  make-gust-kid
+++  make-imp-gust
   |=  m=manx
   ^-  json
-  =.  m  (prepare-kid-sail m)
+  =.  m  (prepare-imp-sail m)
   :-  %a
   :_  ~
   :-  %o
@@ -363,19 +367,23 @@
       ['r' [%s (crip (en-xml:html m))]]
   ==
 ::
-++  insert-kid-sail
-  |=  [=buoy par=manx kid=manx]
+++  insert-imp-sail
+  |=  [=buoy par=manx imp=manx]
   ^-  manx
-  =.  kid       (prepare-kid-sail kid)
+  =.  imp       (prepare-imp-sail imp)
   =/  key=tape  (y-co:co buoy)
-  ?:  &(=(%kid n.g.par) ?=(^ (find [key/key ~] a.g.par)))
-    kid
+  ?:  ?&  ?=([%imp @] n.g.par)
+          ?=(^ (find [key/key ~] a.g.par))
+      ==
+    imp
   %_    par
       c
     |-  ^-  marl
     ?~  c.par  ~
-    ?:  &(=(%kid n.g.i.c.par) ?=(^ (find [key/key ~] a.g.i.c.par)))
-      [kid t.c.par]
+    ?:  ?&  ?=([%imp @] n.g.i.c.par)
+            ?=(^ (find [key/key ~] a.g.i.c.par))
+        ==
+      [imp t.c.par]
     [i.c.par(c $(c.par c.i.c.par)) $(c.par t.c.par)]
   ==
 ::
@@ -410,20 +418,17 @@
     =/  ntap=tape
       ?~  q.nkey  p.nkey
       (weld p.nkey ((w-co:co 1) `@uw`(jam q.nkey)))
-    ?:  =(%kid n.g.m)
-      =/  =view         (getv %view a.g.m)
-      =/  pit=@t        (getv %pith a.g.m)
-      =/  src=pith:neo  (pave:neo (stab pit))
-      =/  kid-rope      (mug view src)
-      =/  kid-buoy      (mug [brig kid-rope boat])
+    ?:  ?&  ?=([%imp @] n.g.m)
+            ?=(^ c.m)  ?=(^ a.g.i.c.m)
+        ==
+      =/  =view         +.n.g.m
+      =/  src=pith:neo  (pave:neo (stab (crip v.i.a.g.i.c.m)))
+      =/  imp-rope      (mug view src)
+      =/  imp-buoy      (mug [brig imp-rope boat])
       %_    m
-          c
-        ~
           a.g
-        :~  [%key (y-co:co kid-buoy)]
-            [%view (trip view)]
-            [%pith (trip pit)]
-            [%rope (y-co:co kid-rope)]
+        :~  [%key (y-co:co imp-buoy)]
+            [%rope (y-co:co imp-rope)]
         ==
       ==
     ?:  =(%$ n.g.m)
@@ -524,9 +529,9 @@
       new  t.new
       i    +(i)
       p.acc
-        ?.  |(=(%kid n.g.i.new) ?=(^ c.i.new))
+        ?.  |(?=([%imp @] n.g.i.new) ?=(^ c.i.new))
           p.acc
-        (weld p.acc (find-kid-els i.new))
+        (weld p.acc (find-imp-els i.new))
       q.acc
         %+  snoc  q.acc
         ^-  json

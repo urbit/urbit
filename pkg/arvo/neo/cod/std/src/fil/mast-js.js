@@ -15,9 +15,9 @@ addEventListener('DOMContentLoaded', async () => {
     await connectToShip(subKey);
     let eventElements = document.querySelectorAll('[event]');
     eventElements.forEach(el => setEventListeners(el));
-    handleKidElements([...document.querySelectorAll('[kid]')]);
+    handleImpElements([...document.querySelectorAll('[rope]')]);
     window.addEventListener('beforeunload', () => {
-        const subKeys = [...document.querySelectorAll('[kid]')].map(el => {
+        const subKeys = [...document.querySelectorAll('[rope]')].map(el => {
             el.getAttribute('key');
         });
         subKeys.push(subKey);
@@ -160,10 +160,10 @@ function handleChannelStream(event) {
                     if (jsOnDelete) {
                         eval?.(`"use strict"; ${jsOnDelete}`);
                     };
-                    let kidEls = [...toRemove.querySelectorAll('[kid]')];
-                    if (toRemove.hasAttribute('kid')) kidEls.push(toRemove);
-                    if (kidEls.length > 0) {
-                        const subKeys = kidEls.map(el => el.getAttribute('key'));
+                    let impEls = [...toRemove.querySelectorAll('[rope]')];
+                    if (toRemove.hasAttribute('rope')) impEls.push(toRemove);
+                    if (impEls.length > 0) {
+                        const subKeys = impEls.map(el => el.getAttribute('key'));
                         closeSubscriptions(subKeys);
                     };
                     toRemove.remove();
@@ -195,10 +195,10 @@ function handleChannelStream(event) {
                         let needingListeners = newNode.querySelectorAll('[event]');
                         needingListeners.forEach(el => setEventListeners(el));
                     };
-                    if (newNode.nodeName === 'KID') {
-                        handleKidElements([newNode]);
+                    if (newNode.hasAttribute('rope')) {
+                        handleImpElements([newNode]);
                     } else {
-                        handleKidElements([...newNode.getElementsByTagName('kid')]);
+                        handleImpElements([...newNode.querySelectorAll('[rope]')]);
                     };
                     const jsOnAdd = newNode.getAttribute('js-on-add');
                     if (jsOnAdd) {
@@ -240,23 +240,23 @@ function handleChannelStream(event) {
                 textWrapperNode.textContent = gustObj.r;
                 break;
             case 'k':
-                let kidPlaceholder = document.querySelector(`[key="${gustObj.q}"]`);
-                kidPlaceholder.outerHTML = gustObj.r;
-                let kid = document.querySelector(`[key="${gustObj.q}"]`);
-                if (kid.hasAttribute('event')) {
-                    setEventListeners(kid);
+                let impPlaceholder = document.querySelector(`[key="${gustObj.q}"]`);
+                impPlaceholder.outerHTML = gustObj.r;
+                let imp = document.querySelector(`[key="${gustObj.q}"]`);
+                if (imp.hasAttribute('event')) {
+                    setEventListeners(imp);
                 };
-                if (kid.childElementCount > 0) {
-                    let needingListeners = kid.querySelectorAll('[event]');
+                if (imp.childElementCount > 0) {
+                    let needingListeners = imp.querySelectorAll('[event]');
                     needingListeners.forEach(el => setEventListeners(el));
                 };
-                handleKidElements([...kid.getElementsByTagName('kid')]);
+                handleImpElements([...imp.querySelectorAll('[rope]')]);
                 break;
         };
     });
 };
-function handleKidElements(kidElements) {
-    kidElements.forEach(el => {
+function handleImpElements(impElements) {
+    impElements.forEach(el => {
         let key = el.getAttribute('key');
         fetch(channelPath, { 
             method: 'PUT',
