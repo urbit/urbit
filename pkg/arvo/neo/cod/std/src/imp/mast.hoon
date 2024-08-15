@@ -21,7 +21,6 @@
     ^-  (quip card:neo pail:neo)
     ~&  >  %mast-init
     =|  =rig
-    =.  brig.rig       eny.bowl
     =/  =pith:neo      #/[p/our.bowl]/$/eyre
     =/  =binding:eyre  [~ /mast]
     =/  =req:eyre:neo  [%connect binding ~(here moor our.bowl)]
@@ -101,8 +100,8 @@
           $(rum t.rum)
         =/  =rope  =/(ud (rear (snip pith.i.rum)) ?>(&(?=(^ ud) ?=(%ud -.ud)) +.ud))
         =/  =boat  =/(p (rear pith.i.rum) ?>(&(?=(^ p) ?=(%p -.p)) +.p))
-        =/  =buoy  (mug [brig.rig rope boat])
-        =/  =sail  (hoist buoy brig.rig rope boat !<(sail q.pail.u.jig))
+        =/  =buoy  (mug [rope boat])
+        =/  =sail  (hoist buoy rope boat !<(sail q.pail.u.jig))
         =/  aft=(unit ^sail)  (~(get by aft.rig) [rope boat])
         ?:  =(%dif mode.loot.i.rum)
           :: handle sail component diff
@@ -178,8 +177,7 @@
 +$  view  @tas                     :: view imp
 +$  bind  [=view src=pith:neo]     :: view to src binding
 +$  rope  @                        :: view+src bind id (mug bind)
-+$  buoy  @                        :: channel subscription id (mug [brig rope boat])
-+$  brig  @uvJ                     :: channel subscription secret
++$  buoy  @                        :: channel subscription id (mug [rope boat])
 +$  boat  @p                       :: src ship session id
 +$  sail  manx
 +$  diff  (pair (list bind) (list json))
@@ -190,8 +188,7 @@
 +$  remaining  (set rope)                         :: remaining nodes to complete a sail component update
 ::
 +$  rig                            :: mast state
-  $:  =brig
-      =waiting
+  $:  =waiting
       =building
       endpoints=(map path bind)    :: urls to view+src bindings (non-sky)
       public=(set rope)            :: view+src bindings served beyond =(ship.src our)
@@ -398,7 +395,7 @@
   [i.m $(m t.m)]
 ::
 ++  hoist                          :: process gifted sail
-  |_  [=buoy =brig =rope =boat =sail]
+  |_  [=buoy =rope =boat =sail]
   ++  $
     ^-  manx
     =/  root-key=tape  (y-co:co buoy)
@@ -424,7 +421,7 @@
       =/  =view         +.n.g.m
       =/  src=pith:neo  (pave:neo (stab (crip v.i.a.g.i.c.m)))
       =/  imp-rope      (mug view src)
-      =/  imp-buoy      (mug [brig imp-rope boat])
+      =/  imp-buoy      (mug [imp-rope boat])
       %_    m
           a.g
         :~  [%key (y-co:co imp-buoy)]

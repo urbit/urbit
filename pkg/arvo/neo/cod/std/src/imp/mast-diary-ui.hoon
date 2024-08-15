@@ -29,15 +29,13 @@
   ++  init
     |=  pal=(unit pail:neo)
     ^-  (quip card:neo pail:neo)
-    [~ manx/!>((render (get-render-data bowl)))]
+    :-  ~
+    manx/!>((render (get-render-data bowl)))
   ::
   ++  poke
     |=  [sud=stud:neo vaz=vase]
     ^-  (quip card:neo pail:neo)
     ?+  sud  ~|(bad-stud/sud !!)
-      ::
-        %rely
-      [~ manx/!>((render (get-render-data bowl)))]
       ::
         %ui-event
       =/  eve  !<(ui-event vaz)
@@ -61,6 +59,9 @@
         ::
       ==
       ::
+        %rely
+      `manx/!>((render (get-render-data bowl)))
+      ::
     ==
   ::
   --
@@ -69,7 +70,7 @@
 |%
 ::
 +$  render-data
-  $:  diary-entries=(list [date=@da =txt =pith:neo])
+  $:  diary-entries=(list [date=@da =txt])
       selection=(unit @da)
       =bowl:neo
   ==
@@ -82,9 +83,15 @@
     ;html
       ;head
         ;meta(charset "utf-8");
+        ;title: diary
         ;link
           =href  "/blue/blue-mime/{(scow %p our.bowl)}/static/feather"
-          =rel   "stylesheet"
+          =rel  "stylesheet"
+          ;
+        ==
+        ;link
+          =href  "https://em-content.zobj.net/source/microsoft-teams/363/memo_1f4dd.png"
+          =rel  "icon"
           ;
         ==
         ;script
@@ -121,16 +128,16 @@
       =event        "/submit/diary-form"
       =js-on-event  "setLoading('form-button');"
       ;textarea.p2.br1.bd1.wf
-        =name         "diary-input"
-        =required     ""
+        =name  "diary-input"
+        =required  ""
         =placeholder  "today, I ..."
-        =rows         "5"
+        =rows  "5"
         ;*  ~
       ==
       ;button#form-button.loader.b1.p2.br1.bd1.wfc.hover
         ;span.loaded: create
         ;span.loading.s-2.f4
-          ; loading
+          ; ...
         ==
       ==
     ==
@@ -139,14 +146,14 @@
     ^-  manx
     ;div.fc.g2
       ;*  %+  turn  diary-entries
-          |=  [date=@da =txt pit=pith:neo]
+          |=  [date=@da =txt]
           =/  key=tape  <date>
           ;div.fr.af.g2
             =key  key
             =js-on-add  "setLoaded('form-button');"
             ;div.fc.g1.grow.br1.p-2.b1
               ;p.f3: {(pretty-date date)}
-              ;imp_mast-txt-ui: {(en-tape:pith:neo pit)}
+              ;p.bold: {(trip txt)}
             ==
             ;button.loader.p2.br1.b1.hover
               =event        "/click/delete/{key}"
@@ -174,17 +181,17 @@
 ::
 ++  get-diary-entries
   |=  deps=(map term (pair pith:neo lore:neo))
-  ^-  (list [date=@da =txt =pith:neo])
+  ^-  (list [date=@da =txt])
   =/  data=(unit (pair pith:neo lore:neo))
     (~(get by deps) %src)
   ?~  data  ~|(%no-diary !!)
-  =/  entries=(list [date=@da =txt =pith:neo])
+  =/  entries=(list [date=@da =txt])
     %+  turn  ~(tap by kid.q.u.data)
     |=  (pair iota:neo (axal:neo idea:neo))
     ?>  &(?=(^ p) ?=(%da -.p) ?=(^ fil.q))
-    [+.p !<(txt q.pail.u.fil.q) (snoc p.u.data p)]
+    [+.p !<(txt q.pail.u.fil.q)]
   %+  sort  entries
-  |=  (pair [date=@da =txt =pith:neo] [date=@da =txt =pith:neo])
+  |=  (pair [date=@da =txt] [date=@da =txt])
   (gth date.p date.q)
 ::
 ++  get-selection
