@@ -1,49 +1,33 @@
-let rope;
 let pith;
-let path;
 let ship;
-let app;
-let channelMessageId;
-let subscriptionId;
 let eventSource;
+let activeSubIds= {};
+let channelMessageId = 0;
 const channelId = `${Date.now()}${Math.floor(Math.random() * 100)}`;
 const channelPath = `${window.location.origin}/~/channel/${channelId}`;
+const baseSubPath = '/eyre-chan/mast';
+const gallApp = 'neo';
 addEventListener('DOMContentLoaded', async () => {
-    channelMessageId = 0;
-    rope = Number(document.documentElement.getAttribute('rope'));
     pith = document.documentElement.getAttribute('pith');
-    path = document.documentElement.getAttribute('path');
     ship = document.documentElement.getAttribute('ship');
-    app = document.documentElement.getAttribute('app');
-    await connectToShip();
+    let subKey = document.body.getAttribute('key');
+    if (!subKey) subKey = document.body.firstElementChild.getAttribute('key');
+    await connectToShip(subKey);
     let eventElements = document.querySelectorAll('[event]');
     eventElements.forEach(el => setEventListeners(el));
-});
-async function connectToShip() {
-    const storageKey = `${rope}${ship}`;
-    let storedStr = localStorage.getItem(storageKey);
-    localStorage.setItem(storageKey, `${channelMessageId} ${channelId}`);
-    if (storedStr) {
-        const storedIds = storedStr.split(' ');
-        const oldPath = `${window.location.origin}/~/channel/${storedIds[1]}`;
-        fetch(oldPath, {
-            method: 'PUT',
-            body: JSON.stringify([
-                {
-                    id: channelMessageId,
-                    action: 'unsubscribe',
-                    subscription: Number(storedIds[0])
-                },
-                {
-                    id: channelMessageId++,
-                    action: 'delete'
-                }
-            ])
+    handleImpElements([...document.querySelectorAll('[rope]')]);
+    window.addEventListener('beforeunload', () => {
+        const subKeys = [...document.querySelectorAll('[rope]')].map(el => {
+            el.getAttribute('key');
         });
-    };
-    await fetch(channelPath, {
+        subKeys.push(subKey);
+        closeSubscriptions(subKeys);
+    });
+});
+async function connectToShip(subKey) {
+    await fetch(channelPath, { 
         method: 'PUT',
-        body: JSON.stringify(makeSubscribeBody(channelMessageId))
+        body: JSON.stringify(makeSubscribeBody(subKey))
     });
     eventSource = new EventSource(channelPath);
     eventSource.addEventListener('message', handleChannelStream);
@@ -91,6 +75,8 @@ function pokeDebounce(ms, ...pokeArgs) {
     };
 };
 function pokeShip(event, target, eventType, eventAttr, returnAttrVals) {
+    let parentComponent = target.closest('[rope]');
+    const rope = Number(parentComponent.getAttribute('rope'));
     const jsOnEvent = target.getAttribute('js-on-event');
     if (jsOnEvent) {
         eval?.(`"use strict"; ${jsOnEvent}`);
@@ -166,22 +152,27 @@ function handleReturnAttr(event, target, returnAttrVals) {
 };
 function handleChannelStream(event) {
     const streamResponse = JSON.parse(event.data);
+    // console.log(streamResponse);
+    if (streamResponse.response !== 'diff') return;
     fetch(channelPath, {
         method: 'PUT',
         body: JSON.stringify(makeAck(streamResponse.id))
     });
-    if (streamResponse.response !== 'diff') return;
-    const gust = streamResponse.json;
-    if (!gust) return;
-    // console.log(gust);
-    gust.forEach(gustObj => {
+    if (!Object.values(activeSubIds).includes(streamResponse.id)) return;
+    streamResponse.json.forEach(gustObj => {
         switch (gustObj.p) {
             case 'd':
                 gustObj.q.forEach(key => {
-                    let toRemove = document.querySelector(`[key="${key}"]`)
+                    let toRemove = document.querySelector(`[key="${key}"]`);
                     const jsOnDelete = toRemove.getAttribute('js-on-delete');
                     if (jsOnDelete) {
                         eval?.(`"use strict"; ${jsOnDelete}`);
+                    };
+                    let impEls = [...toRemove.querySelectorAll('[rope]')];
+                    if (toRemove.hasAttribute('rope')) impEls.push(toRemove);
+                    if (impEls.length > 0) {
+                        const subKeys = impEls.map(el => el.getAttribute('key'));
+                        closeSubscriptions(subKeys);
                     };
                     toRemove.remove();
                 });
@@ -204,16 +195,23 @@ function handleChannelStream(event) {
                     };
                 };
                 let newNode = parent.childNodes[gustObj.r];
-                if (newNode.getAttribute('event')) {
-                    setEventListeners(newNode);
-                };
-                if (newNode.childElementCount > 0) {
-                    let needingListeners = newNode.querySelectorAll('[event]');
-                    needingListeners.forEach(child => setEventListeners(child));
-                };
-                const jsOnAdd = newNode.getAttribute('js-on-add');
-                if (jsOnAdd) {
-                    eval?.(`"use strict"; ${jsOnAdd}`);
+                if (newNode.nodeType === 1) {
+                    if (newNode.getAttribute('event')) {
+                        setEventListeners(newNode);
+                    };
+                    if (newNode.childElementCount > 0) {
+                        let needingListeners = newNode.querySelectorAll('[event]');
+                        needingListeners.forEach(el => setEventListeners(el));
+                    };
+                    if (newNode.hasAttribute('rope')) {
+                        handleImpElements([newNode]);
+                    } else {
+                        handleImpElements([...newNode.querySelectorAll('[rope]')]);
+                    };
+                    const jsOnAdd = newNode.getAttribute('js-on-add');
+                    if (jsOnAdd) {
+                        eval?.(`"use strict"; ${jsOnAdd}`);
+                    };
                 };
                 break;
             case 'm':
@@ -249,16 +247,56 @@ function handleChannelStream(event) {
                 let textWrapperNode = document.querySelector(`[key="${gustObj.q}"]`);
                 textWrapperNode.textContent = gustObj.r;
                 break;
+            case 'k':
+                let impPlaceholder = document.querySelector(`[key="${gustObj.q}"]`);
+                impPlaceholder.outerHTML = gustObj.r;
+                let imp = document.querySelector(`[key="${gustObj.q}"]`);
+                if (imp.hasAttribute('event')) {
+                    setEventListeners(imp);
+                };
+                if (imp.childElementCount > 0) {
+                    let needingListeners = imp.querySelectorAll('[event]');
+                    needingListeners.forEach(el => setEventListeners(el));
+                };
+                handleImpElements([...imp.querySelectorAll('[rope]')]);
+                break;
         };
     });
 };
-function makeSubscribeBody(channelMessageId) {
+function handleImpElements(impElements) {
+    impElements.forEach(el => {
+        let key = el.getAttribute('key');
+        fetch(channelPath, { 
+            method: 'PUT',
+            body: JSON.stringify(makeSubscribeBody(key))
+        });
+    });
+};
+function closeSubscriptions(keyArray) {
+    const actionArray = keyArray.map(key => {
+        channelMessageId++;
+        const subMsgId = activeSubIds[key];
+        delete activeSubIds[key];
+        return {
+            id: channelMessageId,
+            action: 'unsubscribe',
+            subscription: subMsgId
+        };
+    });
+    fetch(channelPath, {
+        method: 'PUT',
+        body: JSON.stringify(actionArray)
+    });
+};
+function makeSubscribeBody(subKey) {
+    channelMessageId++;
+    activeSubIds[subKey] = channelMessageId;
     return [{
         id: channelMessageId,
         action: 'subscribe',
         ship: ship,
-        app: app,
-        path: path
+        app: gallApp,
+        path: `${baseSubPath}/${subKey}`
     }];
 };
 function makePokeBody(jsonData) {
@@ -267,7 +305,7 @@ function makePokeBody(jsonData) {
         id: channelMessageId,
         action: 'poke',
         ship: ship,
-        app: app,
+        app: gallApp,
         mark: 'json',
         json: { pith: pith, data: jsonData }
     }];
