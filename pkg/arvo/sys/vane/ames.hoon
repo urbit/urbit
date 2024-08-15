@@ -5674,9 +5674,11 @@
               ::  do we have packet state already?
               ::
               ?~  ps.u.res
-                ::  is this this a standalone message?
+                ::  is this this a standalone (jumbo or 1-frag) message?
                 ::
-                ?:  =(1 (met 13 tob.data))
+                ?:  ?|  =(tob.data (met 3 dat.data))
+                        =(1 (div (add tob.data 1.023) 1.024))  :: XX redundant?
+                    ==
                   ?>  ?=(%& -.aut.data)
                   ?>  (ev-authenticate (root:lss (met 3 dat.data)^dat.data) aut.data name)
                   =/  =spar  [her.name inner-path]
