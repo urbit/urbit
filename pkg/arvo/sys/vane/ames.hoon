@@ -5585,7 +5585,7 @@
             ::  update and print connection status
             ::  XX  this is implicitly updating chums.state;
             =.  ev-core  (ev-update-qos %live last-contact=now)
-            ?.  =(1 (met 13 tob.data))
+            ?.  =(1 (div (add tob.data 1.023) 1.024))
               =/  =dire  :: flow swtiching
                 %*(fo-flip-dire fo side *@ud^(fo-infer-dire:fo load.pok))  :: XX assert load is plea/boon
               ::  XX move to arm
