@@ -144,7 +144,7 @@ function handleReturnAttr(event, target, returnAttrVals) {
 };
 function handleChannelStream(event) {
     const streamResponse = JSON.parse(event.data);
-    console.log('stream response: ', streamResponse);
+    // console.log(streamResponse);
     if (streamResponse.response !== 'diff') return;
     fetch(channelPath, {
         method: 'PUT',

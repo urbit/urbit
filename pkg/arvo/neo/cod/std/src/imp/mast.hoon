@@ -44,8 +44,10 @@
       =/  =req:eyre:neo  [%connect binding ~(here moor our.bowl)]
       =/  =rope          (mug bind)
       =.  endpoints.rig  (~(put by endpoints.rig) url.bind [view.bind src.bind])
-      =?  public.rig  public.bind
-        (~(put in public.rig) rope)
+      =.  public.rig
+        ?:  public.bind
+          (~(put in public.rig) rope)
+        (~(del in public.rig) rope)
       :_  sig/!>(rig)
       :~  [pith %poke eyre-req/!>(req)]
       ==
@@ -87,7 +89,7 @@
         ::
       ==
       ::
-        %gift                      :: sail component update
+        %gift                      :: sail component updates
       =/  rum=(list [=pith:neo =loot:neo])  ~(tap of:neo !<(gift:neo vaz))
       =^  cards  rig
         =|  cards=(list card:neo)
@@ -245,8 +247,8 @@
       :~  [%pith (en-tape:pith:neo ~(here moor our.bowl))]
           [%ship +:(scow %p our.bowl)]
       ==
-    ?:  ?&  =(%html n.g.sail)
-            ?=(^ c.sail)  ?=(^ t.c.sail)
+    ?:  ?&  =(%html n.g.sail)  ?=(^ c.sail)
+            =(%head n.g.i.c.sail)  ?=(^ t.c.sail)
             =(%body n.g.i.t.c.sail)
         ==
       %_  sail
@@ -254,8 +256,8 @@
         c.i.c  (snoc c.i.c.sail script-node)
       ==
     ^-  manx
-    :-  [%html ~]
-    :~  [[%head mart] [script-node ~]]
+    :-  [%html mart]
+    :~  [[%head ~] [script-node ~]]
         ?:(=(%body n.g.sail) sail [[%body ~] [sail ~]])
     ==
   ::

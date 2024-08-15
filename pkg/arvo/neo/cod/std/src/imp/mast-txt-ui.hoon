@@ -3,38 +3,24 @@
 /@  diary-diff
 =>  |%
     ::
-    ++  sail
-      |_  =txt
+    ++  render-sail
+      |=  =bowl:neo
+      ^-  manx
+      =;  text=tape
       ::
-      ++  $
-        ^-  manx
-        ;html
-          ;head
-            ;meta(charset "utf-8");
-          ==
-          ;+  body
-        ==
-      ::
-      ++  body
-        ^-  manx
-        =/  tex=tape  (trip txt)
-        ;body
-          ;p: {tex}
+        ;div
+          ;p: {text}
           ;textarea
             =event     "/input/text"
             =return    "/target/value"
             =debounce  "0.7"
-            ;+  ;/  tex
+            ;+  ;/  text
           ==
         ==
       ::
-      --
-    ::
-    ++  get-deps-data
-      |=  =bowl:neo
-      ^-  txt
       =/  dep  (~(got by deps.bowl) %src)
-      ?~  fil.q.dep  ''
+      ?~  fil.q.dep  ""
+      %-  trip
       !<(txt q.pail.u.fil.q.dep)
     ::
     --
@@ -56,7 +42,7 @@
   ++  init
     |=  pal=(unit pail:neo)
     ^-  (quip card:neo pail:neo)
-    [~ manx/!>((sail (get-deps-data bowl)))]
+    [~ manx/!>((render-sail bowl))]
   ::
   ++  poke
     |=  [sud=stud:neo vaz=vase]
@@ -64,7 +50,7 @@
     ?+  sud  !!
       ::
         %rely
-      [~ manx/!>((sail (get-deps-data bowl)))]
+      [~ manx/!>((render-sail bowl))]
       ::
         %ui-event
       =/  eve  !<(ui-event vaz)
