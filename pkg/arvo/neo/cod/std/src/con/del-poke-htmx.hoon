@@ -4,7 +4,7 @@
 |=  del=del-poke
 |=  =bowl:neo
 ;div.loading
-  =hx-get  "/neo/hawk{(en-tape:pith:neo here.bowl)}?no-save"
+  =hx-get  "/hawk{(en-tape:pith:neo here.bowl)}?no-save"
   =hx-trigger  "load"
   =hx-swap  "morph"
   =hx-target  "closest .accel-cell"

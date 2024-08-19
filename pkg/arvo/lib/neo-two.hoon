@@ -273,7 +273,7 @@
     =/  [iot=iota lo=loam:dirt:neo]  i.kids
     =/  pit=pith:neo  (snoc pith iot)
     =/  [loot=(list loot:neo) lom=loam:dirt:neo]
-      (make(loam lo) [[+(case) *oath:neo] ~])
+      (make(loam lo) [[+(~(case plow lo)) *oath:neo] ~])
     =.  grit  (welp grit (turn loot (lead pit)))
     =.  kid.l  (~(put by kid.l) iot lom)
     $(kids t.kids) ::

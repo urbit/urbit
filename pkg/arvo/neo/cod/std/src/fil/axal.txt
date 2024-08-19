@@ -1,0 +1,284 @@
+# Axal guide
+
+`+axal` is the recursive tree type that Shrubbery uses to build the namespace.
+
+For userspace developers, axals are useful when you're writing UIs and you want to work with the descendants of whichever shrub you're viewing in the frontend. (e.g. You're rendering a todo item and you want to render its sub-tasks, which are nodes beneath the main task in the namespace.)
+
+We work with axals using the `+of` core defined in `/sur/neo.hoon`, whose arms are documented below.
+
+The `+axal` type itself looks like this.
+
+```
+++  axal
+  |$  [item]
+  [fil=(unit item) kid=(map iota $)]
+```
+
+One way to think of the Shrubbery namespace is as a filesystem, where files could be data, code, or something in between. So the `+axal` represents a directory of such files. The `fil` is the state of the file, which may or may not be null. The `kid` map stores everything below this file in the directory. The map's keys are the path segments immediately below this layer of the directory, and its values are the subtrees that correspond to those paths.
+
+***
+
+## `+del`
+
+Delete a node.
+
+```
+++  del
+  |=  pax=pith
+  ^+  fat
+  ?~  pax  [~ kid.fat]
+  =/  kid  (~(get by kid.fat) i.pax)
+  ?~  kid  fat
+  fat(kid (~(put by kid.fat) i.pax $(fat u.kid, pax t.pax)))
+```
+
+Returns an axal with the node at path `pax` removed.
+
+## `+dip`
+
+Descend to the axal at the given path. 
+
+```
+++  dip
+  |=  pax=pith
+  ^+  fat
+  ?~  pax  fat
+  =/  kid  (~(get by kid.fat) i.pax)
+  ?~  kid  [~ ~]
+  $(fat u.kid, pax t.pax)
+```
+
+Returns an axal whose uppermost node is the node at the given path `pax`.
+
+## `+fit`
+
+Fetch file at the longest existing prefix of this path.
+
+```
+++  fit
+  |=  pax=pith
+  ^+  [pax fil.fat]
+  ?~  pax  [~ fil.fat]
+  =/  kid  (~(get by kid.fat) i.pax)
+  ?~  kid  [pax fil.fat]
+  =/  low  $(fat u.kid, pax t.pax)
+  ?~  +.low
+    [pax fil.fat]
+  low
+```
+
+Returns a `(pair pith *)` where `*` is the node at the given path `pax`.
+
+## `+gas`
+
+Merge a list of `(pair pith *)` with the axal.
+
+(Note: currently broken.)
+
+```
+++  gas
+  |*  lit=(list (pair pith _?>(?=(^ fil.fat) u.fil.fat)))
+  ^+  fat
+  ?~  lit  fat
+  $(fat (put p.i.lit q.i.lit), lit t.lit)
+```
+
+Returns an axal.
+
+## `+get`
+
+Get a node.
+
+```
+++  get
+  |=  pax=pith
+  fil:(dip pax)
+```
+
+Returns a unit of the node.
+
+## `+got`
+
+Get a node, error if the node doesn't exist.
+
+```
+++  got
+  |=  pax=pith
+  ~|  missing-room/pax
+  (need (get pax))
+```
+
+Returns the node or errors.
+
+## `+gut`
+
+Get a node, with a default to fall back on.
+
+```
+++  gut
+  |*  [pax=pith dat=*]
+  =>  .(dat `_?>(?=(^ fil.fat) u.fil.fat)`dat, pax `pith`pax)
+  ^+  dat
+  (fall (get pax) dat)
+```
+
+Returns the node if it exists, return the default noun `dat` if not.
+
+## `+has`
+
+Check if the axal contains a node as this path.
+
+```
+++  has
+  |=  pax=pith
+  !=(~ (get pax))
+```
+
+Returns `%.y` if the node exists, `%.n` if not.
+
+## `+kids`
+
+Get the kids of the node at the given path.
+
+```
+++  kids
+  |=  pax=pith
+  ^-  (axil _?>(?=(^ fil.fat) u.fil.fat))
+  :-  (get pax)
+  (kid pax)
+```
+
+Returns an [`axil`](https://docs.urbit.org/language/hoon/reference/arvo#axil), for secret reasons.
+
+## `+lop`
+
+Recursively remove nodes from the tree. 
+
+```
+++  lop
+  |=  pax=pith
+  ^+  fat
+  ?~  pax  fat
+  |-
+  ?~  t.pax  fat(kid (~(del by kid.fat) i.pax))
+  =/  kid  (~(get by kid.fat) i.pax)
+  ?~  kid  fat
+  fat(kid (~(put by kid.fat) i.pax $(fat u.kid, pax t.pax)))
+```
+
+Returns an axal.
+
+If given path `/foo/bar/baz`, `+lop` will remove the nodes at addressses `/foo`, `/bar`, and `/baz`. Removing `/foo` does not remove its children at `/bar` and `/baz`.
+
+## `+parent`
+
+Walk up the axal, starting at the node specified by `cur` to find the closest ancestor node with state.
+
+```
+++  parent
+  =|  res=(unit pith)
+  =|  cur=pith
+  |=  pax=pith
+  |-  ^+  res
+  ?~  pax
+    res
+  =?  res  ?=(^ fil.fat)
+    `cur
+  =/  nex  (~(get by kid.fat) i.pax)
+  ?~  nex
+    res
+  $(fat u.nex, pax t.pax, cur (snoc cur i.pax))
+```
+
+Returns a `(unit pith)` of the closest ancestor node with state.
+
+## `+put`
+
+Add a node to the axal.
+
+```
+++  put
+  |*  [pax=pith dat=*]
+  ^+  fat
+  =>  .(dat `_?>(?=(^ fil.fat) u.fil.fat)`dat, pax `pith`pax)
+  |-  ^+  fat
+  ?~  pax  fat(fil `dat)
+  =/  kid  (~(gut by kid.fat) i.pax ^+(fat [~ ~]))
+  fat(kid (~(put by kid.fat) i.pax $(fat kid, pax t.pax)))
+```
+
+Returns an axal with the given node `dat` added at the given path `pax`.
+
+## `+snip`
+
+Prune empty nodes from the descendants of this node.
+
+```
+++  snip
+  |-  ^+  fat
+  =*  loop  $
+  %_    fat
+      kid
+    %-  ~(run by kid.fat)
+    |=  f=_fat
+    ?^  fil.f
+      [`u.fil.f ~]
+    loop(fat f)
+  ==
+```
+
+Returns an `axal`.
+
+## `+tap`
+
+Flatten the axal into a list.
+
+```
+++  tap
+  =|  pax=pith
+  =|  out=(list (pair pith _?>(?=(^ fil.fat) u.fil.fat)))
+  |-  ^+   out
+  =?  out  ?=(^ fil.fat)  :_(out [pax u.fil.fat])
+  =/  kid  ~(tap by kid.fat)
+  |-  ^+   out
+  ?~  kid  out
+  %=  $
+    kid  t.kid
+    out  ^$(pax (weld pax /[p.i.kid]), fat q.i.kid)
+  ==
+```
+
+Returns a `(list (pair pith *))` where `*` is the type of the nodes in the axal given as the `+of` door's sample.
+
+## `+tar`
+
+Flatten the axal into a map.
+
+```
+++  tar
+  (~(gas by *(map pith _?>(?=(^ fil.fat) u.fil.fat))) tap)
+--
+```
+
+Returns a `(map pith *)` where `*` is the type of the node in the axal given as the `+of` door's sample.
+
+## `+view`
+
+View a subtree of the sample axal.
+
+```
+++  view
+  =|  res=(map pith _?>(?=(^ fil.fat) u.fil.fat))
+  |=  [=care pax=pith]
+  =.  fat  (dip pax)
+  =?  res  ?=(^ fil.fat)
+   (~(put by res) ~ u.fil.fat)
+  ?+  care  !!
+    %x  res
+    %y  =.(fat snip (~(uni by res) tar))
+    %z  (~(uni by res) tar)
+  ==
+```
+
+Returns a subtree of the sample axal. Depending on the given care this subtree will be the node at the given path, the node and its immediate children, or the entire subtree below the node at the given path.
+

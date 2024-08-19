@@ -4,7 +4,7 @@
 |=  =planner-diff
 |=  =bowl:neo
 ;div.loading
-  =hx-get  "/neo/hawk{(en-tape:pith:neo here.bowl)}"
+  =hx-get  "/hawk{(en-tape:pith:neo here.bowl)}"
   =hx-target  "closest .planner"
   =hx-select  ".planner"
   =hx-indicator  "closest .loader"

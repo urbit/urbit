@@ -20,14 +20,14 @@
   ^-  path
   ?>  ?=(@ q.post)
   =/  dsk
-    /neo/hawk/src/std
+    /hawk/src/std
   %+  welp  dsk
   /[p.post]/[q.post]
 ::
 ++  apex
   ^-  manx
   ;form.wf.hf.hoon.fc
-    =hx-put  "{(en-tape:pith:neo (welp /neo/hawk here.bowl))}?stud=hoon"
+    =hx-put  "{(en-tape:pith:neo (welp /hawk here.bowl))}?stud=hoon"
     =hx-trigger  "click from:find button, keydown[metaKey&&key=='Enter']"
     =hx-target  "closest .hoon"
     =hx-swap  "morph"
@@ -43,6 +43,8 @@
       (error p.fool)
     ::
         %.y
+      ~&  >>>  far-fool/far.p.fool
+      ~&  >>>  fal-fool/fal.p.fool
       ;div.frw.g2.p1.wfc
         ;*
         %+  turn  pro.p.fool

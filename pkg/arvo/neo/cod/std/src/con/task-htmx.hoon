@@ -126,7 +126,7 @@
   ::  <form> that keeps track of tasks order, sends %reorder
   ::  poke if tasks are manually reordered by the user
   ;form.fc.g1
-    =hx-post       "/neo/hawk{(pith-tape here.bowl)}?stud=task-diff"
+    =hx-post       "/hawk{(pith-tape here.bowl)}?stud=task-diff"
     =head          "reorder"
     =hx-indicator  ".reorder-indicator"
     =hx-swap       "none"
@@ -169,7 +169,7 @@
       ::  div that sends %edit poke when input with class="text"
       ::  or input with class "done" are being changed
       ;div.fr.ac.g1.grow
-        =hx-post     "/neo/hawk{pt}?stud=task-diff"
+        =hx-post     "/hawk{pt}?stud=task-diff"
         =hx-trigger  "input changed delay:0.4s from:find .text, input from:find .done"
         =hx-swap     "none"
         =head        "edit"
@@ -268,7 +268,7 @@
     ::  a-tag, opens subtask view with spinner logic on loading
     ;a.p2.br1.hover.action.mono.fr.g2.loader
       =hx-indicator  "this"
-      =href          "/neo/hawk{(pith-tape here.bowl)}{(pith-tape pith)}"
+      =href          "/hawk{(pith-tape here.bowl)}{(pith-tape pith)}"
       =hx-swap       "innerHTML"
       ;span.b1.br1.p2.hfc.loaded:  →
       ;span.b1.br1.p2.hfc.loading
@@ -308,7 +308,7 @@
     ::  and after request been sent removes subtask div from DOM
     ;button.b1.br1.p2.hover.loader.hfc
       =type                  "button"
-      =hx-post               "/neo/hawk{(pith-tape here.bowl)}?stud=task-diff"
+      =hx-post               "/hawk{(pith-tape here.bowl)}?stud=task-diff"
       =hx-target             "find .loading"
       =hx-swap               "outerHTML"
       =hx-on--after-request  "this.parentNode.parentNode.remove();"
@@ -332,7 +332,7 @@
   =style  "padding-top:8px;"
     ::  form for %new poke POST request
     ;form.fr.g1
-      =hx-post    "/neo/hawk{(pith-tape here.bowl)}?stud=task-diff"
+      =hx-post    "/hawk{(pith-tape here.bowl)}?stud=task-diff"
       =head       "new"
       =hx-swap    "outerHTML"
       =hx-target  "find button .loading"

@@ -1,6 +1,5 @@
 bin/* filter=lfs diff=lfs merge=lfs -text
 bin/*/* filter=lfs diff=lfs merge=lfs -text
-pkg/arvo/**/*.css binary
 pkg/arvo/app/naive/logs.eth-logs filter=lfs diff=lfs merge=lfs -text
 **/package-lock.json binary merge=theirs
 pkg/arvo/tmp/garden.jam filter=lfs diff=lfs merge=lfs -text

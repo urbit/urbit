@@ -10,7 +10,7 @@
     %new
   ;div.fr
   ;div.loading
-    =hx-get  "/neo/hawk{(en-tape:pith:neo here.bowl)}"
+    =hx-get  "/hawk{(en-tape:pith:neo here.bowl)}"
     =hx-target  "table"
     =hx-select  "table"
     =hx-indicator  "closest .loader"
@@ -19,7 +19,7 @@
     ; +++
   ==
   ;div.loading
-    =hx-get  "/neo/hawk{(en-tape:pith:neo here.bowl)}/{<row.a>}/{<column.a>}"
+    =hx-get  "/hawk{(en-tape:pith:neo here.bowl)}/{<row.a>}/{<column.a>}"
     =hx-target  "#config"
     =hx-select  "#config"
     =hx-indicator  "closest .loader"

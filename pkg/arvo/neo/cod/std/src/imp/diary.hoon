@@ -38,7 +38,7 @@
           ::  path contains any @da, and %.n is there
           ::  to signify that the pith can not have more
           ::  fields afterwards
-          [[%.n %da] %.n]
+          [[%.n %da] %.y]
       ::
       ::  lash:neo is (pair curb:neo (set stud:neo))
       ::  curb:neo defines the kids' state

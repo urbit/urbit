@@ -72,6 +72,7 @@
 +$  render-data
   $:  diary-entries=(list [date=@da =txt])
       selection=(unit @da)
+      =bowl:neo
   ==
 ::
 ++  render
@@ -82,30 +83,29 @@
     ;html
       ;head
         ;meta(charset "utf-8");
+        ;title: diary
+        ;link
+          =href  "/blue/blue-mime/{(scow %p our.bowl)}/static/feather"
+          =rel  "stylesheet"
+          ;
+        ==
+        ;link
+          =href  "https://em-content.zobj.net/source/microsoft-teams/363/memo_1f4dd.png"
+          =rel  "icon"
+          ;
+        ==
         ;script
           ;+  ;/
             %-  trip
             '''
             function setLoading(idStr) {
               let target = document.getElementById(idStr);
-              target.className = 'loading';
+              target.classList.add('htmx-request');
             };
             function setLoaded(idStr) {
               let target = document.getElementById(idStr);
-              target.className = 'loaded';
+              target.classList.remove('htmx-request');
             };
-            '''
-        ==
-        ;style
-          ;+  ;/
-            %-  trip
-            '''
-            .loading {
-              background-color: orange;
-            }
-            .loaded {
-              background-color: green;
-            }
             '''
         ==
       ==
@@ -115,9 +115,8 @@
   ++  body
     ^-  manx
     ;body
-      =style  "margin: 0; width: 100%; display: grid; place-items: center;"
-      ;main
-        ;h1: Diary
+      ;main.p-page.mw-page.ma.fc.g5
+        ;h1.bold.f-3: MAST
         ;+  diary-form
         ;+  diary-items
       ==
@@ -125,34 +124,47 @@
   ::
   ++  diary-form
     ^-  manx
-    ;form
+    ;form.fc.g2.as
       =event        "/submit/diary-form"
       =js-on-event  "setLoading('form-button');"
-      ;textarea
-        =name         "diary-input"
-        =placeholder  "Today, I ..."
-        =style        "height: 10rem; width: 25rem; margin-block: 1rem;"
+      ;textarea.p2.br1.bd1.wf
+        =name  "diary-input"
+        =required  ""
+        =placeholder  "today, I ..."
+        =rows  "5"
         ;*  ~
       ==
-      ;button#form-button.loaded: Enter
+      ;button#form-button.loader.b1.p2.br1.bd1.wfc.hover
+        ;span.loaded: create
+        ;span.loading.s-2.f4
+          ; ...
+        ==
+      ==
     ==
   ::
   ++  diary-items
     ^-  manx
-    ;div
+    ;div.fc.g2
       ;*  %+  turn  diary-entries
           |=  [date=@da =txt]
           =/  key=tape  <date>
-          ;div
+          ;div.fr.af.g2
             =key  key
             =js-on-add  "setLoaded('form-button');"
-            ;p: {(pretty-date date)}
-            ;p: {(trip txt)}
-            ;button.loaded
+            ;div.fc.g1.grow.br1.p-2.b1
+              ;p.f3: {(pretty-date date)}
+              ;p.bold: {(trip txt)}
+            ==
+            ;button.loader.p2.br1.b1.hover
               =event        "/click/delete/{key}"
               =js-on-event  "setLoading('{key}');"
               =id           key
-              ;+  ;/  "✖"
+              ;span.loaded
+                ; X
+              ==
+              ;span.loading.s-2.f4
+                ; loading
+              ==
             ==
           ==
     ==
@@ -164,6 +176,7 @@
   ^-  render-data
   :*  (get-diary-entries deps.bowl)
       (get-selection kids.bowl)
+      bowl
   ==
 ::
 ++  get-diary-entries

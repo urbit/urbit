@@ -32,7 +32,7 @@
     ==
   ==
 ++  my-address
-  (en-tape:pith:neo :(weld /neo/hawk here.bowl))
+  (en-tape:pith:neo :(weld /hawk here.bowl))
 ++  form-new-ship
   ^-  manx
   ;form.fr.jc.p3

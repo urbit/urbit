@@ -39,14 +39,14 @@
   ::    class="fc g2"
   ::    style="margin-bottom: 30px"
   ::    head="put-entry"
-  ::    hx-post="/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=diary-diff"
+  ::    hx-post="/hawk{(en-tape:pith:neo here.bowl)}?stud=diary-diff"
   ::    hx-on-submit="this.reset()"
   ::    hx-target="find .loading"
   ::    hx-swap="outerHTML"
   ::  >
   ;form.fc.g2
     =style         "margin-bottom: 30px;"
-    =hx-post       "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=diary-diff"
+    =hx-post       "/hawk{(en-tape:pith:neo here.bowl)}?stud=diary-diff"
     =hx-on-submit  "this.reset()"
     =hx-target     "find .loading"
     =hx-swap       "outerHTML"
@@ -97,10 +97,10 @@
   ;div.fr.g2
     ::  <a
     ::    class="p2 br1 grow b1 hover loader"
-    ::    href="{(en-tape:pith:neo (weld /neo/hawk here.bowl))}/{id}"
+    ::    href="{(en-tape:pith:neo (weld /hawk here.bowl))}/{id}"
     ::  >
     ;a.p2.br1.grow.b1.hover.loader
-      =href  "{(en-tape:pith:neo (weld /neo/hawk here.bowl))}/{id}"
+      =href  "{(en-tape:pith:neo (weld /hawk here.bowl))}/{id}"
       ::  <div class="loaded fc g1 js as g2">
       ;div.loaded.fc.g1.js.as.g2
         ::  <span class="f3">{YYYY-MM-DD}</span>
@@ -114,7 +114,7 @@
       ==  ::  </span>
     ==  ::  </a>
     ;button.p2.br1.fr.g2.b1.hover.fc.ac.jc.loader
-      =hx-post  "/neo/hawk{(en-tape:pith:neo here.bowl)}?stud=diary-diff"
+      =hx-post  "/hawk{(en-tape:pith:neo here.bowl)}?stud=diary-diff"
       =head  "del-entry"
       =hx-target  "find .loading"
       =hx-swap  "outerHTML"

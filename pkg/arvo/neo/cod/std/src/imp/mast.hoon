@@ -20,10 +20,11 @@
     |=  pal=(unit pail:neo)
     ^-  (quip card:neo pail:neo)
     ~&  >  %mast-init
+    =|  =rig
     =/  =pith:neo      #/[p/our.bowl]/$/eyre
     =/  =binding:eyre  [~ /mast]
     =/  =req:eyre:neo  [%connect binding ~(here moor our.bowl)]
-    :_  sig/!>(*rig)
+    :_  sig/!>(rig)
     :~  [pith %poke eyre-req/!>(req)]
     ==
   ::
@@ -40,12 +41,22 @@
       =/  =pith:neo      #/[p/our.bowl]/$/eyre
       =/  =binding:eyre  [~ url.bind]
       =/  =req:eyre:neo  [%connect binding ~(here moor our.bowl)]
-      =/  =rope          (mug view.bind src.bind)
+      =/  =rope          (mug bind)
       =.  endpoints.rig  (~(put by endpoints.rig) url.bind [view.bind src.bind])
-      =?  public.rig  public.bind
-        (~(put in public.rig) rope)
+      =.  public.rig
+        ?:  public.bind
+          (~(put in public.rig) rope)
+        (~(del in public.rig) rope)
       :_  sig/!>(rig)
       :~  [pith %poke eyre-req/!>(req)]
+      ==
+      ::
+        %eyre-chan-task            :: channel poke from the client
+      =+  !<(jon=json vaz)
+      =/  =crow  (parse-channel-data jon)
+      :_  pail
+      :~  :-  (~(session moor our.bowl) rope.crow ship.src.bowl)
+          [%poke ui-event/!>(`ui-event`[path.crow data.crow])]
       ==
       ::
         %eyre-task                 :: session creation via http
@@ -59,7 +70,7 @@
           ?:  ?=([%mast ^] url)
             [i.t.url (pave:neo t.t.url)]
           (~(got by endpoints.rig) url)
-        =/  =rope  (mug view.bind src.bind)
+        =/  =rope  (mug bind)
         =/  =boat  ship.src.bowl
         ?.  ?|  =(our.bowl boat)
                 (~(has in public.rig) rope)
@@ -67,8 +78,9 @@
           [(~(make-403 res bowl) rid) pail]
         =/  at=pith:neo    (~(session moor our.bowl) rope boat)
         =/  =made:neo      [view.bind ~ (my [%src src.bind] ~)]
-        =.  open-http.rig  (~(put by open-http.rig) [rope boat] rid)
-        :: ~&  >>  open-http/rid
+        =/  wat            (~(get by waiting.rig) [rope boat])
+        =.  waiting.rig
+          (~(put by waiting.rig) [rope boat] [rid ?~(wat ~ u.wat)])
         :_  sig/!>(rig)
         :~  [at %cull ~]
             [at %make made]
@@ -76,9 +88,8 @@
         ::
       ==
       ::
-        %gift
+        %gift                      :: sail component updates
       =/  rum=(list [=pith:neo =loot:neo])  ~(tap of:neo !<(gift:neo vaz))
-      =/  rng  ~(. og eny.bowl)
       =^  cards  rig
         =|  cards=(list card:neo)
         |-  ^-  (quip card:neo ^rig)
@@ -87,44 +98,72 @@
         =/  jig=(unit idea:neo)  (~(get of:neo kids.bowl) pith.i.rum)
         ?~  jig
           $(rum t.rum)
-        =/  =sail  (hoist !<(sail q.pail.u.jig))
         =/  =rope  =/(ud (rear (snip pith.i.rum)) ?>(&(?=(^ ud) ?=(%ud -.ud)) +.ud))
         =/  =boat  =/(p (rear pith.i.rum) ?>(&(?=(^ p) ?=(%p -.p)) +.p))
-        =/  rid=(unit @ta)  (~(get by open-http.rig) [rope boat])
-        ?^  rid
-          :: ~&  >  close-http/u.rid
-          =^  =buoy  rng  (rads:rng 1.000.000.000.000)
-          %=  $
-            open-http.rig  (~(del by open-http.rig) [rope boat])
-            subs.rig       (~(put by subs.rig) [rope boat] buoy)
-            aft.rig        (~(put by aft.rig) [rope boat] sail)
-            cards          (weld cards (~(gale res bowl) u.rid rope buoy sail))
-            rum            t.rum
-          ==
-        ?+  mode.loot.i.rum  $(rum t.rum)
-          ::
-            %dif
-          =/  aft=^sail
-            =/  sal=(unit ^sail)  (~(get by aft.rig) [rope boat])
-            ?^  sal  u.sal
-            (hoist [[%html ~] [[%head ~] ~] [[%body ~] ~] ~])
-          =/  sub=path  (sub-path (~(got by subs.rig) [rope boat]))
+        =/  =buoy  (mug [rope boat])
+        =/  =sail  (hoist buoy rope boat !<(sail q.pail.u.jig))
+        =/  aft=(unit ^sail)  (~(get by aft.rig) [rope boat])
+        ?:  =(%dif mode.loot.i.rum)
+          :: handle sail component diff
+          ?~  aft
+            $(rum t.rum)
+          =/  sub=path   (sub-path buoy)
+          =/  =diff      (luff u.aft sail)
+          =^  imp-cards  waiting.rig
+            (make-imps our.bowl boat p.diff [[buoy rope] ~] waiting.rig)
           %=  $
             aft.rig  (~(put by aft.rig) [rope boat] sail)
-            cards    (weld cards (~(gust res bowl) sub aft sail))
+            cards    (welp cards ?~(q.diff imp-cards [(~(gust res bowl) sub [%a q.diff]) imp-cards]))
             rum      t.rum
           ==
-          ::
+        :: handle sail component creation
+        =/  build-keys   (~(got by waiting.rig) [rope boat])
+        =/  imp-els      (find-imp-els sail)
+        =/  imp-ropes    (turn imp-els |=(=bind (mug bind)))
+        =^  imp-cards  waiting.rig
+          (make-imps our.bowl boat imp-els build-keys waiting.rig)
+        =:  waiting.rig  (~(del by waiting.rig) [rope boat])
+            aft.rig      (~(put by aft.rig) [rope boat] sail)
+            cards        ?~(imp-cards cards (weld cards imp-cards))
+          ==
+        |-  ^-  (quip card:neo ^rig)
+        ?~  build-keys
+          ^$(rum t.rum)
+        =/  buil  (~(get by building.rig) i.build-keys)
+        ?~  buil
+          ?^  imp-els
+            %=  $
+              build-keys    t.build-keys
+              building.rig  (~(put by building.rig) i.build-keys [(silt imp-ropes) sail])
+            ==
+          %=  $
+            build-keys  t.build-keys
+            cards
+              %+  weld  cards
+              ?@  i.build-keys
+                (~(gale res bowl) i.build-keys sail)
+              [(~(gust res bowl) [(sub-path buoy.i.build-keys) (make-imp-gust sail)]) ~]
+          ==
+        =:  sail.u.buil       (insert-imp-sail buoy sail.u.buil sail)
+            remaining.u.buil  (~(del in remaining.u.buil) rope)
+          ==
+        =?  remaining.u.buil  ?=(^ imp-ropes)
+          (~(gas in remaining.u.buil) imp-ropes)
+        ?^  remaining.u.buil
+          %=  $
+            build-keys    t.build-keys
+            building.rig  (~(put by building.rig) i.build-keys u.buil)
+          ==
+        %=  $
+          build-keys    t.build-keys
+          building.rig  (~(del by building.rig) i.build-keys)
+          cards
+            %+  weld  cards
+            ?@  i.build-keys
+              (~(gale res bowl) i.build-keys sail.u.buil)
+            [(~(gust res bowl) [(sub-path buoy.i.build-keys) (make-imp-gust sail.u.buil)]) ~]
         ==
       [cards sig/!>(rig)]
-      ::
-        %eyre-chan-task
-      =+  !<(jon=json vaz)
-      =/  =crow  (parse-channel-data jon)
-      :_  pail
-      :~  :-  (~(session moor our.bowl) rope.crow ship.src.bowl)
-          [%poke ui-event/!>(`ui-event`[path.crow data.crow])]
-      ==
       ::
     ==
   ::
@@ -137,16 +176,23 @@
   [=rope =path data=(map @t @t)]
 +$  view  @tas                     :: view imp
 +$  bind  [=view src=pith:neo]     :: view to src binding
-+$  rope  @                        :: view+src bind id
-+$  buoy  @                        :: channel subscription id
++$  rope  @                        :: view+src bind id (mug bind)
++$  buoy  @                        :: channel subscription id (mug [rope boat])
 +$  boat  @p                       :: src ship session id
 +$  sail  manx
-+$  rig                            ::  ::  :: mast state
-  $:  open-http=(map [rope boat] @ta)  :: eyre ids pending session creation
-      endpoints=(map path bind)        :: urls to view+src bindings (non-sky)
-      public=(set rope)                :: view+src bindings served beyond =(ship.src our)
-      subs=(map [rope boat] buoy)      :: eyre channel subscription ids by session
-      aft=(map [rope boat] sail)       :: most recent sail state by session
++$  diff  (pair (list bind) (list json))
+::
++$  waiting    (map [rope boat] (list to-build))  :: sail component makes waiting to be handled
++$  building   (map to-build [=remaining =sail])  :: sail component updates being built
++$  to-build   $@(@ta [=buoy =rope])              :: eyre-id, or parent sail component's sub id and root's rope
++$  remaining  (set rope)                         :: remaining nodes to complete a sail component update
+::
++$  rig                            :: mast state
+  $:  =waiting
+      =building
+      endpoints=(map path bind)    :: urls to view+src bindings (non-sky)
+      public=(set rope)            :: view+src bindings served beyond =(ship.src our)
+      aft=(map [rope boat] sail)   :: most recent sail state by session
   ==
 ::
 ++  moor                           :: assumes mast shrub location at /our-ship/mast
@@ -170,7 +216,7 @@
 ++  sub-path
   |=  =buoy
   ^-  path
-  /eyre-chan/mast/(scot %ud buoy)
+  /eyre-chan/mast/(crip (y-co:co buoy))
 ::
 ++  script-node
   ^-  manx
@@ -184,10 +230,9 @@
 ++  res
   |_  =bowl:neo
   ::
-  ++  gale                         ::  ::  :: send a full page
-    |=  [rid=@ta =rope =buoy =sail]
+  ++  gale                         :: send a full page
+    |=  [rid=@ta =sail]
     ^-  (list card:neo)
-    ?>  ?=(^ c.sail)
     %^    make-direct-http-cards
         rid
       [200 ['Content-Type' 'text/html'] ~]
@@ -195,44 +240,32 @@
     ^-  octs
     %-  as-octt:mimes:html
     %-  en-xml:html
-    %_    sail
-        a.g
-      ^-  mart
-      :*  [%rope (y-co:co rope)]                            :: id of bind target for an event poke
-          [%pith (en-tape:pith:neo ~(here moor our.bowl))]  :: destination path, neo to shrub
-          [%path (spud (sub-path buoy))]                    :: sub path, shrub to eyre
+    =/  =mart
+      :~  [%pith (en-tape:pith:neo ~(here moor our.bowl))]
           [%ship +:(scow %p our.bowl)]
-          [%app "neo"]
-          a.g.sail
       ==
-        c.i.c
-      (marl [script-node c.i.c.sail])
+    ?:  ?&  =(%html n.g.sail)  ?=(^ c.sail)
+            =(%head n.g.i.c.sail)  ?=(^ t.c.sail)
+            =(%body n.g.i.t.c.sail)
+        ==
+      %_  sail
+        a.g    (weld mart a.g.sail)
+        c.i.c  (snoc c.i.c.sail script-node)
+      ==
+    ^-  manx
+    :-  [%html mart]
+    :~  [[%head ~] [script-node ~]]
+        ?:(=(%body n.g.sail) sail [[%body ~] [sail ~]])
     ==
   ::
-  ++  gust                         ::  ::  :: send a diff update
-    |=  [sub=path old=sail new=sail]
-    ^-  (list card:neo)
-    :_  ~
+  ++  gust                         :: send a diff update
+    |=  [sub=path dif=json]
+    ^-  card:neo
     :-  #/[p/our.bowl]/$/eyre
     :-  %poke
     :-  %eyre-chan-gift
     !>  ^-  chan-gift:eyre:neo
-    :-  sub
-    ^-  json
-    :-  %a
-    %+  algo
-      ?.  ?&  =(%html n.g.old)
-            ?=(^ c.old)  ?=(^ t.c.old)
-            =(%body n.g.i.t.c.old)
-          ==
-        [old ~]
-      [i.t.c.old ~]
-    ?.  ?&  =(%html n.g.new)
-            ?=(^ c.new)  ?=(^ t.c.new)
-            =(%body n.g.i.t.c.new)
-        ==
-      [new ~]
-    [i.t.c.new ~]
+    [sub dif]
   ::
   ++  make-400
     |=  rid=@ta
@@ -272,24 +305,129 @@
   ::
   --
 ::
-++  hoist
-  |_  =sail
+++  find-imp-els
+  |=  m=manx
+  =|  acc=(list bind)
+  |-  ^-  (list bind)
+  ?:  ?&  ?=([%imp @] n.g.m)
+          ?=(^ c.m)  ?=(^ a.g.i.c.m)
+      ==
+    :_  acc
+    :-  +.n.g.m
+    (pave:neo (stab (crip v.i.a.g.i.c.m)))
+  |-  ^-  (list bind)
+  ?~  c.m  acc
+  $(c.m t.c.m, acc ^$(m i.c.m))
+::
+++  make-imps
+  |=  $:  our=@p
+          =boat
+          bin=(list bind)
+          new=(list to-build)
+          wat=waiting
+      ==
+  =|  car=(list card:neo)
+  |-  ^-  (quip card:neo waiting)
+  ?~  bin  [car wat]
+  =/  =rope         (mug i.bin)
+  =/  rest          (~(get by wat) [rope boat])
+  =/  at=pith:neo   (~(session moor our) rope boat)
+  %=  $
+    bin  t.bin
+    car
+      :+  [at %cull ~]
+        [at %make [view.i.bin ~ (my [%src src.i.bin] ~)]]
+      car
+    wat
+      (~(put by wat) [rope boat] ?~(rest new (weld new u.rest)))
+  ==
+::
+++  prepare-imp-sail
+  |=  m=manx
+  ^-  manx
+  ?:  ?&  =(%html n.g.m)  ?=(^ c.m)  ?=(^ t.c.m)
+          =(%body n.g.i.t.c.m)
+      ==
+    i.t.c.m(n.g %div)
+  m
+::
+++  make-imp-gust
+  |=  m=manx
+  ^-  json
+  =.  m  (prepare-imp-sail m)
+  :-  %a
+  :_  ~
+  :-  %o
+  %-  my
+  :~  ['p' [%s 'k']]
+      ['q' [%s (getv %key a.g.m)]]
+      ['r' [%s (crip (en-xml:html m))]]
+  ==
+::
+++  insert-imp-sail
+  |=  [=buoy par=manx imp=manx]
+  ^-  manx
+  =.  imp       (prepare-imp-sail imp)
+  =/  key=tape  (y-co:co buoy)
+  ?:  ?&  ?=([%imp @] n.g.par)
+          ?=(^ (find [key/key ~] a.g.par))
+      ==
+    imp
+  %_    par
+      c
+    |-  ^-  marl
+    ?~  c.par  ~
+    ?:  ?&  ?=([%imp @] n.g.i.c.par)
+            ?=(^ (find [key/key ~] a.g.i.c.par))
+        ==
+      [imp t.c.par]
+    [i.c.par(c $(c.par c.i.c.par)) $(c.par t.c.par)]
+  ==
+::
+++  prepare-root-mart
+  |=  [=rope m=mart]
+  ^-  mart
+  :-  [%rope (y-co:co rope)]
+  |-  ^-  mart
+  ?~  m  ~
+  ?:  |(=(%key n.i.m) =(%rope n.i.m))
+    $(m t.m)
+  [i.m $(m t.m)]
+::
+++  hoist                          :: process gifted sail
+  |_  [=buoy =rope =boat =sail]
   ++  $
     ^-  manx
+    =/  root-key=tape  (y-co:co buoy)
     ?.  ?&  =(%html n.g.sail)
             ?=(^ c.sail)  ?=(^ t.c.sail)
             =(%body n.g.i.t.c.sail)
         ==
-      (anx sail ["" ~])
+      (anx sail(a.g (prepare-root-mart rope a.g.sail)) [root-key ~])
     %_  sail
-      i.t.c  (anx i.t.c.sail ["" ~])
+      i.t.c  (anx i.t.c.sail(a.g (prepare-root-mart rope a.g.i.t.c.sail)) [root-key ~])
     ==
   ++  anx
     |=  [m=manx key=(pair tape (list @))]
     ^-  manx
     =/  fkey=@t  (getv %key a.g.m)
     =/  nkey=(pair tape (list @))  ?~(fkey key [((w-co:co 1) `@uw`(mug fkey)) ~])
-    =/  ntap=tape  (weld p.nkey ((w-co:co 1) `@uw`(jam q.nkey)))
+    =/  ntap=tape
+      ?~  q.nkey  p.nkey
+      (weld p.nkey ((w-co:co 1) `@uw`(jam q.nkey)))
+    ?:  ?&  ?=([%imp @] n.g.m)
+            ?=(^ c.m)  ?=(^ a.g.i.c.m)
+        ==
+      =/  =view         +.n.g.m
+      =/  src=pith:neo  (pave:neo (stab (crip v.i.a.g.i.c.m)))
+      =/  imp-rope      (mug view src)
+      =/  imp-buoy      (mug [imp-rope boat])
+      %_    m
+          a.g
+        :~  [%key (y-co:co imp-buoy)]
+            [%rope (y-co:co imp-rope)]
+        ==
+      ==
     ?:  =(%$ n.g.m)
       ;t-
         =key  ntap
@@ -305,6 +443,7 @@
       ?:  ?|  =(%input n.g.m)  =(%textarea n.g.m)
               =(%script n.g.m)  =(%img n.g.m)
               =(%link n.g.m)  =(%hr n.g.m)
+              =(%meta n.g.m)  =(%base n.g.m)
           ==
         c.m
       (arl c.m nkey)
@@ -320,12 +459,25 @@
     $(m t.m, i +(i))
   --
 ::
-++  algo
-  |=  [old=marl new=marl]
+++  luff                           :: produce a sail diff for the client
+  |=  [oldx=manx newx=manx]
+  =/  [old=marl new=marl]
+    :-  ?.  ?&  =(%html n.g.oldx)
+              ?=(^ c.oldx)  ?=(^ t.c.oldx)
+              =(%body n.g.i.t.c.oldx)
+            ==
+          [oldx ~]
+        [i.t.c.oldx ~]
+    ?.  ?&  =(%html n.g.newx)
+            ?=(^ c.newx)  ?=(^ t.c.newx)
+            =(%body n.g.i.t.c.newx)
+        ==
+      [newx ~]
+    [i.t.c.newx ~]
   =|  i=@ud
   =|  pkey=@t
-  =|  acc=(list json)
-  |-  ^-  (list json)
+  =|  acc=diff
+  |-  ^-  diff
   ?~  new
     ?~  old
       acc
@@ -333,12 +485,15 @@
       %=  $
         old  t.old
       ==
-    :_  acc
-    ^-  json
-    :-  %o
-    %-  my
-    :~  ['p' [%s 'd']]
-        ['q' [%a (turn old |=(m=manx [%s (getv %key a.g.m)]))]]
+    %_    acc
+        q
+      :_  q.acc
+      ^-  json
+      :-  %o
+      %-  my
+      :~  ['p' [%s 'd']]
+          ['q' [%a (turn old |=(m=manx [%s (getv %key a.g.m)]))]]
+      ==
     ==
   ?:  =(%$ n.g.i.new)
     acc
@@ -350,8 +505,8 @@
     %=  $
       new  t.new
       i    +(i)
-      acc
-        %+  snoc  acc
+      q.acc
+        %+  snoc  q.acc
         ^-  json
         :-  %o
         %-  my
@@ -363,15 +518,19 @@
   =|  j=@ud
   =/  jold=marl  old
   =/  nkey=[n=mane k=@t]  [n.g.i.new (getv %key a.g.i.new)]
-  |-  ^-  (list json)
+  |-  ^-  diff
   ?~  new
     !!
   ?~  jold
     %=  ^$
       new  t.new
       i    +(i)
-      acc
-        %+  snoc  acc
+      p.acc
+        ?.  |(?=([%imp @] n.g.i.new) ?=(^ c.i.new))
+          p.acc
+        (weld p.acc (find-imp-els i.new))
+      q.acc
+        %+  snoc  q.acc
         ^-  json
         :-  %o
         %-  my
@@ -393,7 +552,7 @@
       =|  n=@ud
       =/  nnew=marl  new
       =/  okey=[n=mane k=@t]  [n.g.i.old (getv %key a.g.i.old)]
-      |-  ^-  (list json)
+      |-  ^-  diff
       ?~  nnew
         %=  ^^$
           old  (snoc t.old i.old)
@@ -421,11 +580,11 @@
               old  t.old
               new
                 %^  newm  new  n
-                ;move-(i (scow %ud (add n i)), key (trip k.nnky));
-              acc
+                ;move-(i (y-co:co (add n i)), key (trip k.nnky));
+              q.acc
                 ?:  &(?=(~ del.aupd) ?=(~ new.aupd))
-                  acc
-                :_  acc
+                  q.acc
+                :_  q.acc
                 ^-  json
                 :-  %o
                 %-  my
@@ -447,9 +606,9 @@
             old  (newm old j ;skip-;)
             new  t.new
             i    +(i)
-            acc
-              =.  acc
-                %+  snoc  acc
+            q.acc
+              =.  q.acc
+                %+  snoc  q.acc
                 ^-  json
                 :-  %o
                 %-  my
@@ -458,8 +617,8 @@
                     ['r' [%n (scot %ud i)]]
                 ==
               ?:  &(?=(~ del.aupd) ?=(~ new.aupd))
-                acc
-              :_  acc
+                q.acc
+              :_  q.acc
               ^-  json
               :-  %o
               %-  my
@@ -488,8 +647,8 @@
         old  t.old
         new  t.new
         i    +(i)
-        acc
-          :_  acc
+        q.acc
+          :_  q.acc
           ^-  json
           :-  %o
           %-  my
@@ -509,10 +668,10 @@
           old  t.old
           new  t.new
           i    +(i)
-          acc
+          q.acc
             ?:  &(?=(~ del.aupd) ?=(~ new.aupd))
-              acc
-            :_  acc
+              q.acc
+            :_  q.acc
             ^-  json
             :-  %o
             %-  my
@@ -536,7 +695,7 @@
     (crip v.i.m)
   $(m t.m)
 ::
-++  upda
+++  upda                           :: produce an attribute list diff
   |=  [om=mart nm=mart]
   =|  acc=[del=(list json) new=(list json)]
   |-  ^+  acc
