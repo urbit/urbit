@@ -455,7 +455,7 @@ class extends HTMLElement {
     $(this).on('fix-slots', () => {
       this.fixSlots();
     })
-    $(this).on('new-window', () => {
+    $(this).on('new-window', (e) => {
       let wind = document.createElement('wi-nd');
       let here = `/${this.our}/home`;
       $(wind).attr('here', here);
@@ -558,6 +558,7 @@ class extends HTMLElement {
       this.saveLayout();
     });
     this.qs("main").className = `open-${this.windowsOpen}`;
+    this.restoreLayout();
   }
   attributeChangedCallback(name, oldValue, newValue) {
     //
@@ -613,17 +614,19 @@ class extends HTMLElement {
         $(tab).addClass('toggled');
       }
 
-      let max = $(`
-        <button
-          class="b2 hover br1 bd0 p2 grow tl fr g2 ac js"
-          style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-align: left;"
-          >
-          <img src="${wind.getAttribute('favicon')}" style="width: 20px; height: 20px;" />
-          <span style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-align: left;">
-            ${$(wind).attr('title') || $(wind).attr('here')}
-          </span>
-        </button>
-      `)
+      let mux = document.createElement('button');
+      mux.className = "b2 hover br1 bd0 p2 grow tl fr g2 ac js"
+      mux.style = "overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-align: left;"
+      let im = wind.getAttribute('favicon') ? `
+        <img src="${wind.getAttribute('favicon')}" style="width: 20px; height: 20px;" />
+        ` : ``;
+      mux.innerHTML = `
+        ${im}
+        <span style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-align: left;">
+          ${$(wind).attr('tab-title') || $(wind).attr('here')}
+        </span>
+      `;
+      let max = $(mux);
       $(max).on('click', () => {
         $(wind).emit('maximize-window');
       });
@@ -673,12 +676,14 @@ class extends HTMLElement {
         return {
           here: w.getAttribute('here'),
           slot: w.getAttribute('slot'),
+          strategies: w.getAttribute('strategies'),
+          renderer: w.getAttribute('renderer'),
         }
       })
     }
     localStorage.setItem('sky-layout', JSON.stringify(layout))
   }
-  deprectatedRestoreLayout() {
+  restoreLayout() {
     let layoutString = localStorage.getItem('sky-layout');
     if (!!layoutString) {
       let layout = JSON.parse(layoutString);
@@ -688,6 +693,8 @@ class extends HTMLElement {
       layout.windows.forEach(w => {
         let wind = document.createElement('wi-nd');
         $(wind).attr('here', w.here);
+        $(wind).attr('renderer', w.renderer);
+        $(wind).attr('strategies', w.strategies);
         $(wind).attr('slot', !!w.slot ? w.slot : null);
         $(this).append(wind);
       })
@@ -699,12 +706,14 @@ class extends HTMLElement {
         windows: [
           {
             here: `/${this.our}/home`,
+            renderer: `/hawk`,
+            strategies: ``,
             slot: 's0'
           }
         ]
       }
       localStorage.setItem('sky-layout', JSON.stringify(layout))
-      this.deprecatedRestoreLayout();
+      this.restoreLayout();
     }
   }
 });

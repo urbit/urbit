@@ -10,7 +10,7 @@ class extends HTMLElement {
       "renderer",    // current iframe strategy
       "menu",
       "dragging",
-      "title",
+      "tab-title",
       "favicon",
     ];
   }
@@ -188,22 +188,22 @@ class extends HTMLElement {
     this.intervalId = setInterval(() => {
       let here = this.getAttribute('here');
       let favicon = this.getAttribute('favicon');
-      let title = this.getAttribute('title');
+      let tabTitle = this.getAttribute('tab-title');
       $(this.gid('tabs')).children().each(function() {
         this.contentWindow.postMessage({
           messagetype: "sky-poll",
           here,
           favicon,
-          title,
+          tabTitle,
         });
       });
     }, 350);
 
     $(this).on('title-changed', (e) => {
       if (!!e.detail) {
-        $(this).attr('title', e.detail);
+        $(this).attr('tab-title', e.detail);
       } else {
-        $(this).attr('title', null);
+        $(this).attr('tab-title', null);
       }
       $(this).emit('here-moved');
     });
@@ -433,13 +433,13 @@ class extends HTMLElement {
             }, '*');
           }
 
-          let windowTitle = event.data.title || "";
+          let windowTitle = event.data.tabTitle || "";
           let title = document.title || "";
           if (title != windowTitle) {
             window.parent.postMessage({
               messagetype: 'sky-poll-response-title',
               wid: '${wid}',
-              title: title,
+              tabTitle: title,
             }, '*');
           }
 

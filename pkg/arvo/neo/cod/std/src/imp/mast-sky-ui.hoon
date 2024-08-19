@@ -392,7 +392,7 @@
             }
             else if (event.data?.messagetype == 'sky-poll-response-title') {
               let wid = event.data.wid;
-              let title = event.data.title;
+              let title = event.data.tabTitle;
               let wind = document.querySelector(`[wid='${wid}']`);
               if (wind) {
                 $(wind).poke('title-changed', title)
