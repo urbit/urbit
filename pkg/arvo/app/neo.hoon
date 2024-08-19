@@ -92,7 +92,12 @@
   ++  on-load
     |=  vax=vase
     =+  !<(sta=state-0 vax)
-    `this(state sta)
+    ?:  ripe.old
+      `this(state sta)
+    =^  cards  state
+      abet:boot:run
+    [cards this]
+  ::
   ++  on-poke
     |=  =cage
     ^-  (quip card _this)
