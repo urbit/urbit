@@ -6055,7 +6055,6 @@
       =.  sum2  (add sum2 adler)
       $(i +(i))
     --
-  --
   ::
   ++  crc
     ~%  %crc  ..crc  ~
@@ -6083,4 +6082,5 @@
         (mix 0xedb8.8320 (rsh [0 1] acc))
       (rsh [0 1] acc)
     --
+  --
 --
