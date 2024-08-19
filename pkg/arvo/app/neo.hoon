@@ -92,7 +92,7 @@
   ++  on-load
     |=  vax=vase
     =+  !<(sta=state-0 vax)
-    ?:  ripe.old
+    ?:  ripe.sta
       `this(state sta)
     =^  cards  state
       abet:boot:run
