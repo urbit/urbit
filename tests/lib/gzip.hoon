@@ -80,7 +80,7 @@
   %+  expect-eq
   !>  [30 0x2e6c.6169.7265.7461.6d20.6465.7070.697a.2065.6c70.6d61.7865.2074.726f.6853]
   !>  (gzip [62 0x1e.6f1c.edbe.0003.d1cc.4cca.2d49.2c4d.c851.4d48.282c.caa8.5549.c82d.cc48.ad48.512a.2fc8.ce0b.4232.0074.7874.2e74.726f.6873.0300.6642.2f46.0a08.8b1f])
-++  test-leading-zeros
+++  test-missing-leading-zeros
   %-  expect-fail
   |.  (gzip [31 0x1.d202.ef8d.00ff.fe00.0101.0066.7472.2e6d.6572.6f6c.0300.64de.33b2.0808.8b1f])
 ++  test-lorem-ipsum
