@@ -64,8 +64,8 @@
           ;
         ==
       ==
-      ;body.p2
-        ;textarea.wf.hf.b0.p2.mono.s0
+      ;body
+        ;textarea.wf.hf.b0.p3.mono.s0
           =event  "/input/form"
           =return  "/target/value"
           =debounce  "0.5"
