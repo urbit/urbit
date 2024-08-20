@@ -7743,7 +7743,7 @@
                   =/  dat  [tob aut (cut boq [fag 1] ser)]
                   =/  pairs
                     =/  per  (bex (sub boq 13))  ::  XX  unguarded
-                    (swag [+((mul per fag)) (dec per)] pairs.lss-proof)
+                    (swag [(mul per fag) (dec per)] pairs.lss-proof)
                   [nam dat pairs proof.lss-proof]
                 ==
               ::
