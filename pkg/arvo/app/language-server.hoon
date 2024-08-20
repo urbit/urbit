@@ -5,7 +5,7 @@
     easy-print=language-server-easy-print,
     rune-snippet=language-server-rune-snippet,
     build=language-server-build,
-    default-agent, verb
+    default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
 +$  lsp-req
@@ -44,6 +44,7 @@
   ==
 --
 ^-  agent:gall
+%-  agent:dbug
 %+  verb  |
 =|  state-zero
 =*  state  -
@@ -76,6 +77,7 @@
     ^+  on-poke:*agent:gall
     |=  [=mark =vase]
     ^-  (quip card _this)
+    ?>  (team:title [our src]:bowl)
     =^  cards  state
       ?+    mark  (on-poke:def mark vase)
           %language-server-rpc-notification
@@ -196,7 +198,7 @@
   %+  turn
     ~(tap in ~(key by builds))
   |=  uri=@t
-  [%pass /ford/[uri] %arvo %c %warp our.bow %home ~]
+  [%pass /ford/[uri] %arvo %c %warp our.bow %base ~]
 ::
 ++  handle-did-close
   |=  [uri=@t version=(unit @)]
@@ -208,7 +210,7 @@
   =.  builds
     (~(del by builds) uri)
   :_  state
-  [%pass /ford/[uri] %arvo %c %warp our.bow %home ~]~
+  [%pass /ford/[uri] %arvo %c %warp our.bow %base ~]~
 ::
 ++  handle-did-save
   |=  [uri=@t version=(unit @)]
@@ -240,18 +242,29 @@
   ?>  ?=([%writ *] gift)
   =/  uri=@t
     (snag 1 path)
-  =;  res=(quip card _state)
-    [(snoc -.res (build-file | uri path)) +.res]
+  =/  loc=^path  (uri-to-path:build uri)
+  =;  [res=(quip card _state) dek=desk]
+    [(snoc -.res (build-file | uri loc `dek)) +.res]
   ?~  p.gift
-    [~ state]
+    [[~ state] %base]
   =.  builds
     (~(put by builds) uri q.r.u.p.gift)
   =.  ford-diagnostics
     (~(del by ford-diagnostics) uri)
-  =+  .^(=open:clay %cs /(scot %p our.bow)/home/(scot %da now.bow)/open/foo)
-  =/  =type  -:(open (uri-to-path:build uri))
+  =/  bek  byk.bow(r da+now.bow)
+  =/  desks=(list desk)  ~(tap in .^((set desk) %cd (en-beam bek /)))
+  =|  dek=desk
+  |-
+  ?~  desks  [[~ state] %base]
+  =.  dek  ?:  =(%kids i.desks)  %base  i.desks
+  =/  exists=?  .^(? %cu (en-beam bek(q dek) loc))
+  ?.  exists  $(desks t.desks)
+  =+  .^(=open:clay %cs /(scot %p our.bow)/[dek]/(scot %da now.bow)/open/foo)
+  =/  =type  -:(open loc)
+
   =.  preludes
     (~(put by preludes) uri type)
+  :_  dek
   :_  state
   (give-rpc-notification (get-diagnostics uri))
 ::
@@ -265,19 +278,28 @@
   (get-parser-diagnostics uri)
 ::
 ++  build-file
-  |=  [eager=? uri=@t =path]
+  |=  [eager=? uri=@t =path desk=(unit desk)]
   ^-  card
   =/  =rave:clay
     ?:  eager
       [%sing %a da+now.bow path]
     [%next %a da+now.bow path]
-  [%pass /ford/[uri] %arvo %c %warp our.bow %home `rave]
+  =/  des=^desk  ?^  desk  u.desk  %base
+  [%pass /ford/[uri] %arvo %c %warp our.bow des `rave]
 ::
 ++  handle-did-open
   |=  item=text-document-item:lsp-sur
   ^-  (quip card _state)
   =/  =path
     (uri-to-path:build uri.item)
+  =/  bek  byk.bow
+  =/  desks=(list desk)  ~(tap in .^((set desk) %cd (en-beam bek /)))
+  =|  dek=desk
+  |-
+  ?~  desks  [~ state]
+  =.  dek  ?:  =(%kids i.desks)  %base  i.desks
+  =/  exists=?  .^(? %cu (en-beam bek(q dek) path)) 
+  ?.  exists  $(desks t.desks)
   ?:  ?=(%sys -.path)
     `state
   =/  buf=wall
@@ -287,7 +309,7 @@
   :_  state
   %+  weld
     (give-rpc-notification (get-diagnostics uri.item))
-  [(build-file & uri.item path) ~]
+  [(build-file & uri.item path `dek) ~]
 ::
 ++  get-parser-diagnostics
   |=  uri=@t

@@ -1,5 +1,5 @@
 import { BaseState } from '../state/base';
-import { GroupState as State } from '../state/group';
+import useGroupState, { GroupState as State } from '../state/group';
 
 type GroupState = State & BaseState<State>;
 
@@ -27,7 +27,9 @@ const progress = (json: any, state: GroupState): GroupState => {
     state.pendingJoin[resource].progress = progress;
     if(progress === 'done') {
       setTimeout(() => {
-        delete state.pendingJoin[resource];
+        useGroupState.getState().set((state) => {
+          delete state.pendingJoin[resource];
+        });
       }, 10000);
     }
   }

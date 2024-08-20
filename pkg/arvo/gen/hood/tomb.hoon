@@ -1,0 +1,1 @@
+clay/tomb.hoon

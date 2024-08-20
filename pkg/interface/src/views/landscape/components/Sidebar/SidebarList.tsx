@@ -1,8 +1,9 @@
 import React, { ReactElement, useCallback } from 'react';
-import { AppAssociations, Associations, Graph, UnreadStats } from '@urbit/api';
+import { Associations, Graph, Unreads } from '@urbit/api';
 import { patp, patp2dec } from 'urbit-ob';
+import _ from 'lodash';
 
-import { SidebarAssociationItem, SidebarDmItem } from './SidebarItem';
+import { SidebarAssociationItem, SidebarDmItem, SidebarPendingItem } from './SidebarItem';
 import useGraphState, { useInbox } from '~/logic/state/graph';
 import useHarkState from '~/logic/state/hark';
 import { alphabeticalOrder, getResourcePath, modulo } from '~/logic/lib/util';
@@ -11,11 +12,11 @@ import { Workspace } from '~/types/workspace';
 import useMetadataState from '~/logic/state/metadata';
 import { useHistory } from 'react-router';
 import { useShortcut } from '~/logic/state/settings';
+import useGroupState from '~/logic/state/group';
+import useInviteState from '~/logic/state/invite';
 
-function sidebarSort(
-  associations: AppAssociations,
-  unreads: Record<string, Record<string, UnreadStats>>
-): Record<SidebarSort, (a: string, b: string) => number> {
+function sidebarSort(unreads: Unreads, pending: string[]): Record<SidebarSort, (a: string, b: string) => number> {
+  const { associations } = useMetadataState.getState();
   const alphabetical = (a: string, b: string) => {
     const aAssoc = associations[a];
     const bAssoc = associations[b];
@@ -26,18 +27,21 @@ function sidebarSort(
   };
 
   const lastUpdated = (a: string, b: string) => {
-    const aAssoc = associations[a];
-    const bAssoc = associations[b];
-    const aResource = aAssoc?.resource;
-    const bResource = bAssoc?.resource;
-
+    const aPend = pending.includes(a);
+    const bPend = pending.includes(b);
+    if(aPend && !bPend) {
+      return -1;
+    }
+    if(bPend && !aPend) {
+      return 1;
+    }
     const aUpdated = a.startsWith('~')
-      ?  (unreads?.[`/ship/~${window.ship}/dm-inbox`]?.[`/${patp2dec(a)}`]?.last || 0)
-      :  ((unreads?.[aResource]?.['/']?.last) || 0);
+      ?  (unreads?.[`/graph/~${window.ship}/dm-inbox/${patp2dec(a)}`]?.last || 0)
+      :  (unreads?.[`/graph/${a.slice(6)}`]?.last || 0);
 
     const bUpdated = b.startsWith('~')
-      ?  (unreads?.[`/ship/~${window.ship}/dm-inbox`]?.[`/${patp2dec(b)}`]?.last || 0)
-      :  ((unreads?.[bResource]?.['/']?.last) || 0);
+      ?  (unreads?.[`/graph/~${window.ship}/dm-inbox/${patp2dec(b)}`]?.last || 0)
+      :  (unreads?.[`/graph/${b.slice(6)}`]?.last || 0);
 
     return bUpdated - aUpdated || alphabetical(a, b);
   };
@@ -48,7 +52,7 @@ function sidebarSort(
   };
 }
 
-function getItems(associations: Associations, workspace: Workspace, inbox: Graph) {
+function getItems(associations: Associations, workspace: Workspace, inbox: Graph, pending: string[]) {
    const filtered = Object.keys(associations.graph).filter((a) => {
      const assoc = associations.graph[a];
      if(!('graph' in assoc.metadata.config)) {
@@ -80,8 +84,11 @@ function getItems(associations: Associations, workspace: Workspace, inbox: Graph
    });
   const direct: string[] = workspace.type !== 'messages' ? []
     : inbox.keys().map(x => patp(x.toString()));
+  const pend = workspace.type !== 'messages'
+    ? []
+    : pending
 
-  return [...filtered, ...direct];
+  return _.union(direct, pend, filtered);
 }
 
 export function SidebarList(props: {
@@ -93,12 +100,22 @@ export function SidebarList(props: {
 }): ReactElement {
   const { selected, config, workspace } = props;
   const associations = useMetadataState(state => state.associations);
+  const groups = useGroupState(s => s.groups);
   const inbox = useInbox();
-  const unreads = useHarkState(s => s.unreads.graph);
   const graphKeys = useGraphState(s => s.graphKeys);
+  const pendingDms = useGraphState(s => [...s.pendingDms].map(s => `~${s}`));
+  const pendingGroupChats = useGroupState(s => _.pickBy(s.pendingJoin, (req, rid) => !(rid in groups) && req.app === 'graph'));
+  const inviteGroupChats = useInviteState(
+    s => Object.values(s.invites?.['graph'] || {})
+    .map(inv => {
+      return `/ship/~${inv.resource.ship}/${inv.resource.name}`
+    }).filter(group => !(group in groups))
+  );
+  const pending = [...pendingDms, ...Object.keys(pendingGroupChats), ...inviteGroupChats];
+  const unreads = useHarkState(s => s.unreads);
 
-  const ordered = getItems(associations, workspace, inbox)
-    .sort(sidebarSort(associations.graph, unreads)[config.sortBy]);
+  const ordered = getItems(associations, workspace, inbox, pending)
+    .sort(sidebarSort(unreads, pending)[config.sortBy]);
 
   const history = useHistory();
 
@@ -112,10 +129,16 @@ export function SidebarList(props: {
     if(newChannel.startsWith('~')) {
       path = `/~landscape/messages/dm/${newChannel}`;
     } else {
-      const { metadata, resource } = associations.graph[ordered[newIdx]];
-      const joined = graphKeys.has(resource.slice(7));
-      if ('graph' in metadata.config) {
-        path = getResourcePath(workspace, resource, joined, metadata.config.graph);
+      const association = associations.graph[ordered[newIdx]];
+      if(!association) {
+        path = `/~landscape/messages`
+        return;
+      } else {
+        const { metadata, resource } = association;
+        const joined = graphKeys.has(resource.slice(7));
+        if ('graph' in metadata.config) {
+          path = getResourcePath(workspace, resource, joined, metadata.config.graph);
+        }
       }
     }
     history.push(path);
@@ -134,7 +157,22 @@ export function SidebarList(props: {
   return (
     <>
       {ordered.map((pathOrShip) => {
-        return pathOrShip.startsWith('/') ? (
+        return pathOrShip.startsWith('~') ? (
+            <SidebarDmItem
+              key={pathOrShip}
+              ship={pathOrShip}
+              workspace={workspace}
+              selected={pathOrShip === selected}
+              pending={pending.includes(pathOrShip)}
+            />
+
+          ) : pending.includes(pathOrShip) ? (
+            <SidebarPendingItem
+              key={pathOrShip}
+              path={pathOrShip}
+              selected={pathOrShip === selected}
+            />
+          ) : (
           <SidebarAssociationItem
             key={pathOrShip}
             selected={pathOrShip === selected}
@@ -142,15 +180,7 @@ export function SidebarList(props: {
             hideUnjoined={config.hideUnjoined}
             workspace={workspace}
           />
-          ) : (
-            <SidebarDmItem
-              key={pathOrShip}
-              ship={pathOrShip}
-              workspace={workspace}
-              selected={pathOrShip === selected}
-            />
-
-          );
+          ) ;
       })}
     </>
   );

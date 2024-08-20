@@ -1,22 +1,23 @@
-import { Content, createPost, fetchIsAllowed, Post, removePosts } from '@urbit/api';
-import { Association } from '@urbit/api/metadata';
+import { Association, Content, createPost, deSig, fetchIsAllowed, isWriter, Post, removePosts, resourceFromPath } from '@urbit/api';
 import { BigInteger } from 'big-integer';
+import _ from 'lodash';
 import React, {
-  ReactElement, useCallback,
+  ReactElement,
+  useCallback,
   useEffect,
-
-  useMemo, useState
+  useMemo,
+  useState
 } from 'react';
-import { isWriter, resourceFromPath } from '~/logic/lib/group';
-import { getPermalinkForGraph } from '~/logic/lib/permalinks';
-import useGraphState, { useGraphForAssoc } from '~/logic/state/graph';
-import { useGroupForAssoc } from '~/logic/state/group';
-import useHarkState from '~/logic/state/hark';
-import { Loading } from '~/views/components/Loading';
-import { ChatPane } from './components/ChatPane';
+import shallow from 'zustand/shallow';
 import airlock from '~/logic/api';
 import { disallowedShipsForOurContact } from '~/logic/lib/contact';
-import shallow from 'zustand/shallow';
+import { getPermalinkForGraph } from '~/logic/lib/permalinks';
+import { toHarkPath } from '~/logic/lib/util';
+import useGraphState, { useGraphForAssoc } from '~/logic/state/graph';
+import { useGroupForAssoc } from '~/logic/state/group';
+import useHarkState, { useHarkStat } from '~/logic/state/hark';
+import { Loading } from '~/views/components/Loading';
+import { ChatPane } from './components/ChatPane';
 
 const getCurrGraphSize = (ship: string, name: string) => {
   const { graphs } = useGraphState.getState();
@@ -35,10 +36,9 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
   const [toShare, setToShare] = useState<string[] | string | undefined>();
   const group = useGroupForAssoc(association)!;
   const graph = useGraphForAssoc(association);
-  const unreads = useHarkState(state => state.unreads);
-  const unreadCount =
-    (unreads.graph?.[resource]?.['/']?.unreads as number) || 0;
-  const canWrite = group ? isWriter(group, resource) : false;
+  const stats = useHarkStat(toHarkPath(association.resource));
+  const unreadCount = stats.count;
+  const canWrite = group ? isWriter(group, resource, window.ship) : false;
   const [
     getNewest,
     getOlderSiblings,
@@ -90,12 +90,12 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
   );
 
   const isAdmin = useMemo(
-    () => (group ? group.tags.role.admin.has(`~${window.ship}`) : false),
+    () => (group ? _.includes(group.tags.role.admin, deSig(window.ship)) : false),
     [group]
   );
 
-  const fetchMessages = useCallback(async (newer: boolean) => {
-    const pageSize = 100;
+const fetchMessages = useCallback(async (newer: boolean) => {
+  const pageSize = 100;
 
     const [, , ship, name] = resource.split('/');
     const graphSize = graph?.size ?? 0;
@@ -115,14 +115,14 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
         pageSize,
         `/${index.toString()}`
       );
-      return expectedSize !== getCurrGraphSize(ship.slice(1), name);
+      return expectedSize !== getCurrGraphSize(deSig(ship), name);
     } else {
       const index = graph.peekSmallest()?.[0];
       if (!index) {
         return false;
       }
       await getOlderSiblings(ship, name, pageSize, `/${index.toString()}`);
-      const currSize = getCurrGraphSize(ship.slice(1), name);
+      const currSize = getCurrGraphSize(deSig(ship), name);
       console.log(currSize);
       const done = expectedSize !== currSize;
       return done;
@@ -140,7 +140,7 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
   }, [resource]);
 
   const dismissUnread = useCallback(() => {
-    useHarkState.getState().readCount(association.resource);
+    useHarkState.getState().readCount(toHarkPath(association.resource));
   }, [association.resource]);
 
   const getPermalink = useCallback(

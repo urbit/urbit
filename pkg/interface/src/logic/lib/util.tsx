@@ -2,16 +2,11 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import _ from 'lodash';
 import { patp2dec } from 'urbit-ob';
 import f  from 'lodash/fp';
-import { Association, Contact, Patp } from '@urbit/api';
+import { Association, Patp } from '@urbit/api';
 import { enableMapSet } from 'immer';
-import useSettingsState from '../state/settings';
 /* eslint-disable max-lines */
-import anyAscii from 'any-ascii';
-import { sigil as sigiljs, stringRenderer } from '@tlon/sigil-js';
 import bigInt, { BigInteger } from 'big-integer';
-import { foregroundFromBackground } from '~/logic/lib/sigil';
 import { IconRef, Workspace } from '~/types';
-import useContactState from '../state/contact';
 
 enableMapSet();
 
@@ -56,8 +51,11 @@ export function parentPath(path: string) {
  * string -> enabled feed
  */
 export function getFeedPath(association: Association): string | null | undefined {
-  const { metadata = { config: {} } } = association;
-  if (metadata.config && 'group' in metadata?.config && metadata.config?.group) {
+  const metadata = association?.metadata;
+  if(!metadata) {
+    return undefined;
+  }
+  if (metadata?.config && 'group' in metadata?.config && metadata.config?.group) {
     if ('resource' in metadata.config.group) {
       return metadata.config.group.resource;
     }
@@ -227,6 +225,18 @@ export function deSig(ship: string): string {
     return '';
   }
   return ship.replace('~', '');
+}
+
+export function preSig(ship: string): string {
+  if (!ship) {
+    return '';
+  }
+
+  if (ship.trim().startsWith('~')) {
+    return ship.trim();
+  }
+
+  return '~'.concat(ship.trim());
 }
 
 export function uxToHex(ux: string) {
@@ -399,7 +409,8 @@ export function getContactDetails(contact: any) {
   return { nickname, color, member, avatar };
 }
 
-export function stringToSymbol(str: string) {
+export async function stringToSymbol(str: string) {
+  const anyAscii = (await import('any-ascii')).default;
   const ascii = anyAscii(str);
   let result = '';
   for (let i = 0; i < ascii.length; i++) {
@@ -459,13 +470,6 @@ export function pluralize(text: string, isPlural = false, vowel = false) {
   return isPlural ? `${text}s` : `${vowel ? 'an' : 'a'} ${text}`;
 }
 
-// Hide is an optional second parameter for when this function is used in class components
-export function useShowNickname(contact: Contact | null, hide?: boolean): boolean {
-  const hideState = useSettingsState(state => state.calm.hideNicknames);
-  const hideNicknames = typeof hide !== 'undefined' ? hide : hideState;
-  return Boolean(contact && contact.nickname && !hideNicknames);
-}
-
 interface useHoveringInterface {
   hovering: boolean;
   bind: {
@@ -498,7 +502,7 @@ const DM_REGEX = /ship\/~([a-z]|-)*\/dm--/;
 export function getItemTitle(association: Association): string {
   if (DM_REGEX.test(association.resource)) {
     const [, , ship, name] = association.resource.split('/');
-    if (ship.slice(1) === window.ship) {
+    if (deSig(ship) === window.ship) {
       return cite(`~${name.slice(4)}`);
     }
     return cite(ship);
@@ -509,22 +513,6 @@ export function getItemTitle(association: Association): string {
 export const svgDataURL = svg => 'data:image/svg+xml;base64,' + btoa(svg);
 
 export const svgBlobURL = svg => URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
-
-export const favicon = () => {
-  let background = '#ffffff';
-  const contacts = useContactState.getState().contacts;
-  if (Object.prototype.hasOwnProperty.call(contacts, `~${window.ship}`)) {
-    background = `#${uxToHex(contacts[`~${window.ship}`].color)}`;
-  }
-  const foreground = foregroundFromBackground(background);
-  const svg = sigiljs({
-    patp: window.ship,
-    renderer: stringRenderer,
-    size: 16,
-    colors: [background, foreground]
-  });
-  return svg;
-};
 
 export function binaryIndexOf(arr: BigInteger[], target: BigInteger): number | undefined {
   let leftBound = 0;
@@ -554,3 +542,25 @@ export async function jsonFetch<T>(info: RequestInfo, init?: RequestInit): Promi
 export function clone<T>(a: T) {
   return JSON.parse(JSON.stringify(a)) as T;
 }
+
+export function toHarkPath(path: string, index = '') {
+  return `/graph/${path.slice(6)}${index}`;
+}
+
+export function toHarkPlace(graph: string, index = '') {
+  return {
+    desk: (window as any).desk,
+    path: toHarkPath(graph, index)
+  };
+}
+
+export function createStorageKey(name: string): string {
+  return `~${window.ship}/${window.desk}/${name}`;
+}
+
+// for purging storage with version updates
+export function clearStorageMigration<T>() {
+  return {} as T;
+}
+
+export const storageVersion = parseInt(process.env.LANDSCAPE_STORAGE_VERSION, 10);

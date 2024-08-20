@@ -1,5 +1,5 @@
 import { Box, Row, SegmentedProgressBar, Text } from '@tlon/indigo-react';
-import { joinError, joinProgress, JoinRequest, hideGroup } from '@urbit/api';
+import { joinError, joinProgress, JoinRequest } from '@urbit/api';
 import React, { useCallback } from 'react';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import airlock from '~/logic/api';
@@ -24,10 +24,8 @@ export function JoiningStatus(props: JoiningStatusProps) {
   const desc = description?.[current] || '';
   const isError = joinError.indexOf(status.progress as any) !== -1;
   const onHide = useCallback(
-    async () => {
- await airlock.poke(hideGroup(resource));
-},
-    [resource]
+    async () => { },
+    []
   );
   return (
     <Row

@@ -7,12 +7,12 @@ import {
   Group,
   markCountAsRead,
   addPost,
+  isWriter,
   resourceFromPath
 } from '@urbit/api';
 import bigInt from 'big-integer';
 import { FormikHelpers } from 'formik';
 import React, { useEffect, useMemo } from 'react';
-import { isWriter } from '~/logic/lib/group';
 import { getUnreadCount } from '~/logic/lib/hark';
 import { referenceToPermalink } from '~/logic/lib/permalinks';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
@@ -25,6 +25,7 @@ import { CommentItem } from './CommentItem';
 import airlock from '~/logic/api';
 import useGraphState from '~/logic/state/graph';
 import { useHistory } from 'react-router';
+import { toHarkPath, toHarkPlace } from '~/logic/lib/util';
 
 interface CommentsProps {
   comments: GraphNode;
@@ -126,15 +127,17 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
   const children = Array.from(comments.children);
 
   useEffect(() => {
+    console.log(parentIndex);
     return () => {
-      airlock.poke(markCountAsRead(association.resource));
+      airlock.poke(markCountAsRead(toHarkPlace(association.resource, parentIndex)));
     };
-  }, [comments.post?.index]);
+  }, [comments.post?.index, association.resource]);
 
   const unreads = useHarkState(state => state.unreads);
-  const readCount = children.length - getUnreadCount(unreads, association.resource, parentIndex);
+  const harkPath = toHarkPath(association.resource, parentIndex);
+  const readCount = children.length - getUnreadCount(unreads, harkPath);
 
-  const canComment = isWriter(group, association.resource) || association.metadata.vip === 'reader-comments';
+  const canComment = isWriter(group, association.resource, window.ship) || association.metadata.vip === 'reader-comments';
 
   return (
     <Col {...rest} minWidth={0}>

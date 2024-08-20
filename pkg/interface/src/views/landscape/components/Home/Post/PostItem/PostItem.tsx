@@ -1,11 +1,10 @@
 import { Box, Col, Row, Text } from '@tlon/indigo-react';
-import { Association, GraphNode, Group, Post } from '@urbit/api';
+import { Association, GraphNode, Group, Post, isWriter } from '@urbit/api';
 import { BigInteger } from 'big-integer';
 import { History } from 'history';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useHistory } from 'react-router';
 import { getPostRoute } from '~/logic/lib/graph';
-import { isWriter } from '~/logic/lib/group';
 import { useHovering } from '~/logic/lib/util';
 import { Mention } from '~/views/components/MentionText';
 import PostInput from '../PostInput';
@@ -61,7 +60,7 @@ function PostItem(props: PostItemProps) {
     if (index && index.length > 0) {
       return true;
     }
-    return isWriter(group, association.resource);
+    return isWriter(group, association.resource, window.ship);
   }, [group, association.resource, vip, index]);
 
   const navigateToChildren = useCallback(() => {

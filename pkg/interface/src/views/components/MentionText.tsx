@@ -2,8 +2,9 @@ import { Text } from '@tlon/indigo-react';
 import { Contact, Content, Group } from '@urbit/api';
 import React from 'react';
 import { referenceToPermalink } from '~/logic/lib/permalinks';
-import { cite, deSig, useShowNickname } from '~/logic/lib/util';
+import { cite, deSig } from '~/logic/lib/util';
 import { useContact } from '~/logic/state/contact';
+import { useShowNickname } from '~/logic/state/settings';
 import { PropFunc } from '~/types';
 import ProfileOverlay from '~/views/components/ProfileOverlay';
 import RichText from '~/views/components/RichText';
@@ -39,8 +40,9 @@ export function MentionText(props: MentionTextProps) {
 export function Mention(props: {
   ship: string;
   first?: boolean;
+  emphasis?: 'bold' | 'italic';
 } & PropFunc<typeof Text>) {
-  const { ship, first = false, ...rest } = props;
+  const { ship, first = false, emphasis, ...rest } = props;
   const contact = useContact(`~${deSig(ship)}`);
   const showNickname = useShowNickname(contact);
   const name = showNickname ? contact?.nickname : cite(ship);
@@ -50,8 +52,10 @@ export function Mention(props: {
         marginLeft={first? 0 : 1}
         marginRight={1}
         px={1}
+        bold={emphasis === 'bold' ? true : false}
         bg='washedBlue'
         color='blue'
+        fontStyle={emphasis === 'italic' ? 'italic' : undefined}
         fontSize={showNickname ? 1 : 0}
         mono={!showNickname}
         title={showNickname ? cite(ship) : contact?.nickname}

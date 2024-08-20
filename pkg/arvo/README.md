@@ -23,9 +23,9 @@ To boot a fake ship from your development files, run `urbit` with the following 
 urbit -F zod -A /path/to/arvo -c fakezod
 ```
 
-Mount Arvo's filesystem allows you to update its contents through Unix. To do so, run `|mount` in dojo. It is most common to `|mount /=home=`.
+Mount Arvo's filesystem allows you to update its contents through Unix. To do so, run `|mount` in dojo. It is most common to `|mount /=base=`.
 
-To create a custom pill (bootstrapping object) from the files loaded into the home desk, run `.my/pill +solid`. Your pill will appear in `/path/to/fakezod/.urb/put/my.pill`.
+To create a custom pill (bootstrapping object) from the files loaded into the base desk, run `.my/pill +solid`. Your pill will appear in `/path/to/fakezod/.urb/put/my.pill`.
 
 To boot a fake ship with a custom pill, use the `-B` flag:
 

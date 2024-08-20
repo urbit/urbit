@@ -1,6 +1,7 @@
 import React, {
   MouseEvent,
   useCallback,
+  useEffect,
   useMemo,
   useState
 } from 'react';
@@ -14,7 +15,8 @@ import {
   allSystemStyle,
   Icon,
   Row,
-  Col
+  Col,
+  Text
 } from '@tlon/indigo-react';
 
 import { TruncatedText } from '~/views/components/TruncatedText';
@@ -23,11 +25,13 @@ import { IconRef, PropFunc } from '~/types';
 import { system } from 'styled-system';
 import { Association, GraphConfig, ReferenceContent } from '@urbit/api';
 import { Link } from 'react-router-dom';
-import { referenceToPermalink } from '~/logic/lib/permalinks';
+import { AppPermalink, referenceToPermalink } from '~/logic/lib/permalinks';
 import useMetadataState from '~/logic/state/metadata';
 import { RemoteContentWrapper } from './wrapper';
-import { useEmbed } from '~/logic/state/embed';
+import { Suspender } from '~/logic/lib/suspend';
 import { IS_SAFARI } from '~/logic/lib/platform';
+import useDocketState, { useTreaty } from '~/logic/state/docket';
+import { AppTile } from '~/views/apps/permalinks/embed';
 
 interface RemoteContentEmbedProps {
   url: string;
@@ -40,13 +44,14 @@ function onStopProp<T extends HTMLElement>(e: MouseEvent<T>) {
 
 type ImageProps = PropFunc<typeof BaseImage> & {
   objectFit?: string;
+  stretch?: boolean;
 };
 
 const Image = styled.img(system({ objectFit: true }), ...allSystemStyle);
 export function RemoteContentImageEmbed(
   props: ImageProps & RemoteContentEmbedProps
 ) {
-  const { url, ...rest } = props;
+  const { url, stretch, ...rest } = props;
   const [noCors, setNoCors] = useState(false);
   const { hovering, bind } = useHovering();
   // maybe images aren't set up for CORS embeds
@@ -55,7 +60,13 @@ export function RemoteContentImageEmbed(
   }, []);
 
   return (
-    <Box height="100%" width="100%" position="relative" {...bind} {...rest}>
+    <Box
+      height={stretch ? "100%" : "192px"}
+      width={stretch ? "100%" : "192px"}
+      position="relative"
+      {...bind}
+      {...rest}
+    >
       <BaseAnchor
         position="absolute"
         top={2}
@@ -80,11 +91,13 @@ export function RemoteContentImageEmbed(
         referrerPolicy="no-referrer"
         flexShrink={0}
         src={url}
-        height="100%"
+        height={stretch ? "100%" : "192px"}
+        maxWidth={stretch ? "100%" : "192px"}
         width="100%"
-        objectFit="contain"
+        objectFit="cover"
         borderRadius={2}
         onError={onError}
+        style={{ imageRendering: '-webkit-optimize-contrast' }}
         {...props}
       />
     </Box>
@@ -217,9 +230,39 @@ export function RemoteContentPermalinkEmbed(props: {
     return <RemoteContentPermalinkEmbedGraph {...permalink} />;
   } else if (permalink.type === 'group') {
     return <RemoteContentPermalinkEmbedGroup {...permalink} />;
+  } else if (permalink.type === 'app') {
+    return <RemoteContentPermalinkEmbedApp {...permalink} />;
   }
 
   return null;
+}
+
+function RemoteContentPermalinkEmbedApp({ link, ship, desk }: Omit<AppPermalink, 'type'>) {
+  const treaty = useTreaty(ship, desk);
+
+  useEffect(() => {
+    if (!treaty) {
+      useDocketState.getState().requestTreaty(ship, desk);
+    }
+  }, [treaty, ship, desk]);
+
+  return (
+    <Col
+      width="100%"
+      height="100%"
+      padding={3}
+      borderRadius={3}
+      justifyContent="space-around"
+      alignItems="center"
+    >
+      {treaty && (
+        <>
+          <AppTile color="washedGray" marginRight={0} {...treaty} />
+          <Row><Text fontSize="1" color="gray">App: {treaty.title}</Text></Row>
+        </>
+      )}
+    </Col>
+  );
 }
 
 function RemoteContentPermalinkEmbedGroup(props: {
@@ -277,6 +320,7 @@ type RemoteContentOembedProps = {
   renderUrl?: boolean;
   thumbnail?: boolean;
   tall?: boolean;
+  oembed: Suspender<any>;
 } & RemoteContentEmbedProps &
   PropFunc<typeof Box>;
 
@@ -290,10 +334,9 @@ export const RemoteContentOembed = React.forwardRef<
   HTMLDivElement,
   RemoteContentOembedProps
 >((props, ref) => {
-  const { url, renderUrl = false, thumbnail = false, ...rest } = props;
-  const oembed = useEmbed(url);
+  const { url, oembed, renderUrl = false, thumbnail = false, ...rest } = props;
+
   const embed = oembed.read();
-  const fallbackError  = new Error('fallback');
 
   const [aspect, width, height] = useMemo(() => {
     if(!('height' in embed && typeof embed.height === 'number'
@@ -331,11 +374,9 @@ export const RemoteContentOembed = React.forwardRef<
             dangerouslySetInnerHTML={{ __html: embed.html }}
           ></EmbedBox>
         </EmbedContainer>
-      ) : renderUrl ? (
+      ) : (
         <RemoteContentEmbedFallback url={url} />
-        ) : (() => {
- throw fallbackError;
-})()
+        )
       }
     </Col>
   );

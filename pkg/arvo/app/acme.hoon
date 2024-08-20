@@ -346,6 +346,7 @@
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
+    ?>  (team:title [our src]:bowl)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
         %acme-order  (poke-acme-order:ac !<((set turf) vase))
@@ -460,7 +461,7 @@
   :-  ~
   ^-  octs
   =;  pro=json
-    (as-octt:mimes:html (en-json:html (sign:jws key.act pro bod)))
+    (as-octs:mimes:html (en:json:html (sign:jws key.act pro bod)))
   :-  %o  %-  my  :~
     nonce+s+non
     url+s+(crip (en-purl:html url))
@@ -487,7 +488,7 @@
   ::
   ?.  =(400 p.rep)  |
   ?~  r.rep  |
-  =/  jon=(unit json)  (de-json:html q.u.r.rep)
+  =/  jon=(unit json)  (de:json:html q.u.r.rep)
   ?~  jon  |
   =('urn:ietf:params:acme:error:badNonce' type:(error:grab u.jon))
 ::  +rate-limited: handle Acme service rate-limits
@@ -496,7 +497,7 @@
   |=  [try=@ud act=@tas spur=wire bod=(unit octs)]
   ^+  this
   =/  jon=(unit json)
-    ?~(bod ~ (de-json:html q.u.bod))
+    ?~(bod ~ (de:json:html q.u.bod))
   ?~  jon
     ::  no details, back way off
     ::  XX specifically based on wire
@@ -584,11 +585,12 @@
       ~|  [%no-next-domain idx=idx]
       (head (skim pending |=([turf idx=@ud ?] =(idx ^idx))))
     ::  XX should confirm that :turf points to us
-    ::  confirms that domain exists (and an urbit is on :80)
+    ::  confirms that domain exists (and an urbit is on the standard port)
     ::
+    =/  sec=?  p:.^(hart:eyre %e /(scot %p our.bow)/host/(scot %da now.bow))
     =/  =purl
-        :-  [sec=| por=~ host=[%& turf.next]]
-        [[ext=`~.udon path=/static] query=~]
+        :-  [sec=sec por=~ host=[%& turf.next]]
+        [[ext=~ path=/'~debug'] query=~]
     =/  =wire
       (acme-wire try %validate-domain /idx/(scot %ud idx.next))
     (emit (request wire purl %get ~ ~))
@@ -754,9 +756,8 @@
     ?>  ?=(%wake sas.u.rod)
     =*  aut  u.active.aut.u.rod
     =/  pat=path  /'.well-known'/acme-challenge/[tok.cal.aut]
-    ::  note: requires port 80, just as the ACME service will
-    ::
-    =/  url=purl  [[sec=| por=~ hos=[%& dom.aut]] [ext=~ pat] hed=~]
+    =/  sec=?  p:.^(hart:eyre %e /(scot %p our.bow)/host/(scot %da now.bow))
+    =/  url=purl  [[sec=sec por=~ hos=[%& dom.aut]] [ext=~ pat] hed=~]
     ::  =/  url=purl  [[sec=| por=`8.081 hos=[%& /localhost]] [ext=~ pat] hed=~]
     ::  XX idx in wire?
     ::
@@ -839,7 +840,7 @@
       ?:  (lth try 10)
         (retry:effect try %directory / (min ~m30 (backoff try)))
       (emil (notify (failure-message directory-base) [(sell !>(rep)) ~]))
-    =.  dir  (directory:grab (need (de-json:html q:(need r.rep))))
+    =.  dir  (directory:grab (need (de:json:html q:(need r.rep))))
     ?~(reg.act register:effect this)
   ::  +nonce: accept new nonce and trigger next effect
   ::
@@ -883,7 +884,7 @@
       ?~  r.rep
         (scot %da now.bow)
       =/  bod=acct:body
-        (acct:grab (need (de-json:html q.u.r.rep)))
+        (acct:grab (need (de:json:html q.u.r.rep)))
       ?>  ?=(%valid sas.bod)
       wen.bod
     =.  reg.act  `[wen loc]
@@ -913,7 +914,7 @@
     ::  XX check status
     ::
     =/  bod=order:body
-      (order:grab (need (de-json:html q:(need r.rep))))
+      (order:grab (need (de:json:html q:(need r.rep))))
     =/  dom=(set turf)  ~(key by dom.u.next-order)
     ::  XX maybe generate key here?
     ::
@@ -956,7 +957,7 @@
       ::
       (emil (notify (failure-message ego.u.rod) [(sell !>(rep)) ~]))
     =/  bod=order:body
-      (order:grab (need (de-json:html q:(need r.rep))))
+      (order:grab (need (de:json:html q:(need r.rep))))
     ?+  sas.bod
       ~&  [%check-order-status-unknown sas.bod]
       this
@@ -1063,7 +1064,7 @@
       ::
       (emil (notify (failure-message i.pending.aut.u.rod) [(sell !>(rep)) ~]))
     =/  bod=auth:body
-      (auth:grab (need (de-json:html q:(need r.rep))))
+      (auth:grab (need (de:json:html q:(need r.rep))))
     =/  cal=trial
        ::  XX parse token to verify url-safe base64?
        ::
@@ -1147,7 +1148,7 @@
       ::  XX get challenge, confirm urn:ietf:params:acme:error:connection
       ::
       ::  =/  err=error:body
-      ::    (error:grab (need (de-json:html q:(need r.rep))))
+      ::    (error:grab (need (de:json:html q:(need r.rep))))
       ::  ?:  =('urn:ietf:params:acme:error:malformed' status.err)
       ::
       =<  cancel-order:effect
@@ -1155,7 +1156,7 @@
        'unable to finalize domain validation challenge'
       (emil (notify msg [(sell !>(rep)) ~]))
     =/  bod=challenge:body
-      (challenge:grab (need (de-json:html q:(need r.rep))))
+      (challenge:grab (need (de:json:html q:(need r.rep))))
     ::  XX check for other possible values in 200 response
     ::  note: may have already been validated
     ::
@@ -1300,11 +1301,11 @@
     ~&  [%failed-order-history fal.hit]
     this
   ::
-    ::  install privkey and cert .pem from /=home=/acme, ignores app state
+    ::  install privkey and cert .pem from /=base=/acme, ignores app state
     ::TODO  refactor this out of %acme, see also arvo#1151
     ::
       %install-from-clay
-    =/  bas=path  /(scot %p our.bow)/home/(scot %da now.bow)/acme
+    =/  bas=path  /(scot %p our.bow)/base/(scot %da now.bow)/acme
     =/  key=wain  .^(wain %cx (weld bas /privkey/pem))
     =/  cer=wain  .^(wain %cx (weld bas /cert/pem))
     (emit %pass /install %arvo %e %rule %cert `[key cer])

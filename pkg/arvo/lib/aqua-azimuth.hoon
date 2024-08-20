@@ -14,7 +14,7 @@
   |=  [our=ship her=ship uf=unix-effect azi=az-state]
   ^-  (unit card:agent:gall)
   =,  enjs:format
-  =/  ask  (extract-request uf 'http://localhost:8545/')
+  =/  ask  (extract-request uf 'http://fake.aqua.domain/')
   ?~  ask
     ~
   ?~  body.request.u.ask
@@ -57,7 +57,7 @@
   ++  get-single-req
     |=  req=@t
     =/  batch
-      ((ar:dejs:format same) (need (de-json:html req)))
+      ((ar:dejs:format same) (need (de:json:html req)))
     ?>  ?=([* ~] batch)
     i.batch
   ::
@@ -110,8 +110,7 @@
     |=  [req=@t result=json]
     ^-  card:agent:gall
     =/  resp
-      %-  crip
-      %-  en-json:html
+      %-  en:json:html
       :-  %a  :_  ~
       %-  pairs
       :~  id+s+(get-id req)
@@ -122,7 +121,7 @@
       :_  ~
       :*  %event
           her
-          //http-client/0v1n.2m9vh
+          /i/http-client/0v1n.2m9vh
           %receive
           num.u.ask
           [%start [200 ~] `(as-octs:mimes:html resp) &]

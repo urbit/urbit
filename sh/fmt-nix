@@ -9,4 +9,4 @@ cd "${0%/*}/.."
 echo "Formatting Nix"
 
 find . -type f -name '*.nix' \
-    -exec nixfmt {} \+
+    -exec nixpkgs-fmt {} \+

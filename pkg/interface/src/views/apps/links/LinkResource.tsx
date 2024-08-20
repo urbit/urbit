@@ -1,6 +1,5 @@
 import { Box, Center, Col, LoadingSpinner, Text } from '@tlon/indigo-react';
-import { Group } from '@urbit/api';
-import { Association } from '@urbit/api/metadata';
+import { Association, deSig, Group } from '@urbit/api';
 import bigInt from 'big-integer';
 import React, { useEffect } from 'react';
 import { Link, Route, Switch, useLocation } from 'react-router-dom';
@@ -31,7 +30,7 @@ export function LinkResource(props: LinkResourceProps) {
   const associations = useMetadataState(state => state.associations);
 
   const [, , ship, name] = rid.split('/');
-  const resourcePath = `${ship.slice(1)}/${name}`;
+  const resourcePath = `${deSig(ship)}/${name}`;
   const resource: any = associations.graph[rid]
     ? associations.graph[rid]
     : { metadata: {} };

@@ -1,12 +1,12 @@
-import { isChannelAdmin } from '~/logic/lib/group';
+import { isChannelAdmin } from '@urbit/api';
 import { cite } from '~/logic/lib/util';
+import { createJoinParams } from '~/views/landscape/components/Join/Join';
 
 const makeIndexes = () => new Map([
     ['ships', []],
     ['commands', []],
     ['subscriptions', []],
     ['groups', []],
-    ['apps', []],
     ['other', []]
   ]);
 
@@ -49,51 +49,27 @@ const commandIndex = function (currentGroup, groups, associations) {
   const association = currentGroup ? associations?.groups?.[currentGroup] : null;
   const canAdd =
     (group && association)
-    ? (association.metadata.vip === 'member-metadata' || isChannelAdmin(group, currentGroup))
+    ? (association.metadata.vip === 'member-metadata' || isChannelAdmin(group, currentGroup, window.ship))
     : !currentGroup; // home workspace or hasn't loaded
   const workspace = currentGroup || '/home';
   commands.push(result('Groups: Create', '/~landscape/new', 'Groups', null));
   if (canAdd) {
     commands.push(result('Channel: Create', `/~landscape${workspace}/new`, 'Groups', null));
   }
-  commands.push(result('Groups: Join', '/~landscape/join', 'Groups', null));
+  commands.push(result('Groups: Join', createJoinParams('groups'), 'Groups', null));
 
   return commands;
-};
-
-const appIndex = function (apps) {
-  // all apps are indexed from launch data
-  // indexed into 'apps'
-  const applications = [];
-  Object.keys(apps)
-    .filter((e) => {
-      return !['weather','clock'].includes(e);
-    })
-    .sort((a, b) => {
-      return a.localeCompare(b);
-    })
-    .map((e) => {
-      const obj = result(
-        apps[e].type?.basic?.title || apps[e].type.custom?.tile || e,
-        apps[e]?.type.basic?.linkedUrl || apps[e]?.type.custom?.linkedUrl || '',
-        apps[e]?.type?.basic?.title || apps[e].type.custom?.tile || e,
-        null
-      );
-      applications.push(obj);
-    });
-  return applications;
 };
 
 const otherIndex = function(config) {
   const other = [];
   const idx = {
     mychannel: result('My Channels', '/~landscape/home', 'home', null),
-    updates: result('Notifications', '/~notifications', 'inbox', null),
     profile: result('Profile', `/~profile/~${window.ship}`, 'profile', null),
+    updates: result('Notifications', '/~notifications', 'notifications', null),
     messages: result('Messages', '/~landscape/messages', 'messages', null),
     logout: result('Log Out', '/~/logout', 'logout', null)
   };
-  other.push(result('Tutorial', '/?tutorial=true', 'tutorial', null));
   for(const cat of config.categories) {
     if(idx[cat]) {
       other.push(idx[cat]);
@@ -103,7 +79,7 @@ const otherIndex = function(config) {
   return other;
 };
 
-export default function index(contacts, associations, apps, currentGroup, groups, hide): Map<string, OmniboxItem[]> {
+export default function index(contacts, associations, currentGroup, groups, hide): Map<string, OmniboxItem[]> {
   const indexes = makeIndexes();
   indexes.set('ships', shipIndex(contacts));
   // all metadata from all apps is indexed
@@ -165,7 +141,6 @@ export default function index(contacts, associations, apps, currentGroup, groups
   indexes.set('commands', commandIndex(currentGroup, groups, associations));
   indexes.set('subscriptions', subscriptions);
   indexes.set('groups', landscape);
-  indexes.set('apps', appIndex(apps));
   indexes.set('other', otherIndex(hide));
 
   return indexes;

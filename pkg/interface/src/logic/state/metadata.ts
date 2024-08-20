@@ -7,14 +7,18 @@ import {
   reduceStateN
 } from './base';
 import airlock from '~/logic/api';
+import history from '~/logic/lib/history';
 import { reduce } from '../reducers/metadata-update';
+import { getNotificationRedirectFromLink } from '../lib/notificationRedirects';
 
 export const METADATA_MAX_PREVIEW_WAIT = 150000;
 
 export interface MetadataState {
   associations: Associations;
+  loaded: boolean;
   getPreview: (group: string) => Promise<MetadataUpdatePreview
   >;
+  onLoad: () => void;
   previews: {
     [group: string]: MetadataUpdatePreview
   }
@@ -24,6 +28,7 @@ export interface MetadataState {
 const useMetadataState = createState<MetadataState>(
   'Metadata',
   (set, get) => ({
+    loaded: false,
     associations: {
       groups: {},
       graph: {}
@@ -51,9 +56,12 @@ const useMetadataState = createState<MetadataState>(
         }
         throw e;
       }
+    },
+    onLoad: () => {
+      handleGridRedirect();
     }
   }),
-  [],
+  ['loaded'],
   [
     (set, get) =>
       createSubscription('metadata-store', '/all', (j) => {
@@ -64,6 +72,12 @@ const useMetadataState = createState<MetadataState>(
       })
   ]
 );
+
+const { graph, groups } = useMetadataState.getState().associations;
+
+if (Object.keys(graph).length > 0 || Object.keys(groups).length > 0) {
+  handleGridRedirect();
+}
 
 export function useAssocForGraph(graph: string) {
   return useMetadataState(
@@ -107,6 +121,17 @@ export function usePreview(group: string) {
   const preview = previews[group];
 
   return { error, preview };
+}
+
+function handleGridRedirect() {
+  const query = new URLSearchParams(window.location.search);
+
+  if(query.has('grid-note')) {
+    history.push(getNotificationRedirectFromLink(query.get('grid-note')));
+  } else if(query.has('grid-link')) {
+    const link = decodeURIComponent(query.get('grid-link')!);
+    history.push(`/perma${link}`);
+  }
 }
 
 export function useGraphsForGroup(group: string) {

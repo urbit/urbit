@@ -1,5 +1,4 @@
-import { Content, GraphNode, Post, TextContent } from '@urbit/api';
-import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
+import { BigIntOrderedMap, Content, GraphNode, Post, TextContent } from '@urbit/api';
 import bigInt, { BigInteger } from 'big-integer';
 import { buntPost } from '~/logic/lib/post';
 import { unixToDa } from '~/logic/lib/util';

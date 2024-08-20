@@ -49,6 +49,7 @@
   +*  this  .
       do    ~(. +> bowl)
       def   ~(. (default-agent this %|) bowl)
+      bec   byk.bowl(r da+now.bowl)
   ::
   ++  on-init   on-init:def
   ++  on-save   !>(state)
@@ -57,6 +58,7 @@
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
+    ?>  (team:title [our src]:bowl)
     ?.  ?=(%noun mark)  [~ this]
     =/  =command  !<(command vase)
     ?-  -.command
@@ -117,6 +119,7 @@
   --
 ::
 |_  =bowl:gall
+++  bec  byk.bowl(r da+now.bowl)
 ++  poke-spider
   |=  [=path our=@p =cage]
   ^-  card
@@ -137,9 +140,7 @@
   ^-  (list card)
   =/  tid=@ta
     :((cury cat 3) dap.bowl '--' node-id '--' (scot %uv eny.bowl))
-  =/  args
-    :^  ~  `tid  %eth-send-txs
-    !>([node step txs])
+  =/  args  [~ `tid bec %eth-send-txs !>([node step txs])]
   :~  (watch-spider /send/[tid] our.bowl /thread-result/[tid])
       (poke-spider /send/[tid] our.bowl %spider-start !>(args))
   ==
@@ -151,7 +152,7 @@
   .^  (list cord)
     %cx
     (scot %p our.bowl)
-    %home
+    %base
     (scot %da now.bowl)
     path
   ==

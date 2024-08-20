@@ -1,5 +1,4 @@
-import { ContactUpdate, GroupUpdate, InviteUpdate, MetadataUpdate } from '@urbit/api';
-import { SettingsUpdate } from '@urbit/api/settings';
+import { ContactUpdate, GroupUpdate, InviteUpdate, MetadataUpdate, SettingsUpdate } from '@urbit/api';
 import { ConnectionStatus } from './connection';
 import { LaunchUpdate, WeatherState } from './launch-update';
 import { LocalUpdate } from './local-update';

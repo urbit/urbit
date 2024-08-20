@@ -1,0 +1,110 @@
+Usage:
+
+    |merge %destination-desk ~source-ship %source-desk
+    |merge %destination-desk ~source-ship %source-desk, =gem %strategy
+    |merge %destination-desk ~source-ship %source-desk, =cas ud+5
+
+We support various merge strategies.  A "commit" is a snapshot of
+the files with a list of parents plus a date.   Most commits have
+one parent; a "merge" commit is a commit with two parents.  The
+%base desk starts with an initial commit with no parents; commits
+with several parents ("octopus merges") are possible but we don't
+generate them right now.
+                                                                      
+Unless otherwise specified, all of the following create a new commit
+with the source and destination commits as parents.
+                                                                      
+Several strategies need a "merge-base".  They find it by identifying
+the most recent common ancestor of the two desks.  If none, fail
+with %merge-no-merge-base; if there are two or more, pick one.
+                                                                      
+%init: the only way to create a desk.  Not a true merge, since it
+simply assigns the source commit to the destination.
+                                                                      
+%fine: if source or destination are in the ancestry of each other,
+use the newer one; else abort.  If the destination is ahead of the
+source, succeed but do nothing.  If the source is ahead of the
+destination, assign the next revision number to the source commit.
+Some call this "fast-forward".
+                                                                      
+%meet: combine changes, failing if both sides changed the same file.
+Specifically, take diff(merge-base,source) and
+diff(merge-base,destination) and combine them as long as those diffs
+touch different files.
+                                                                      
+%mate: combine changes, failing if both sides changed the same part
+of a file.  Identical to %meet, except that some marks, like %hoon,
+allow intelligent merge of changes to different parts of a file.
+                                                                      
+%meld: combine changes; if both sides changed the same part of a
+file, use the version of the file in the merge-base.
+                                                                      
+%only-this: create a merge commit with exactly the contents of the
+destination desk.
+                                                                      
+%only-that: create a merge commit with exactly the contents of the
+source commit.
+                                                                      
+%take-this: create a merge commit with exactly the contents of the
+destination desk except take any files from the source commit which
+are not in the destination desk.
+                                                                      
+%take-that: create a merge commit with exactly the contents of the
+source commit except preserve any files from the destination desk
+which are not in the source commit.
+                                                                      
+%meet-this: merge as in %meet, except if both sides changed the same
+file, use the version in the destination desk.
+                                                                      
+%meet-that: merge as in %meet, except if both sides changed the same
+file, use the version in the source commit.
+                                                                      
+# Examples and notes:
+                                                                      
+The most common merge strategy is %mate, which is a normal 3-way
+merge which aborts on conflict.
+                                                                      
+%take-that is useful to "force" an OTA.  After running %take-that,
+you're guaranteed to have exactly the files in the source commit plus
+any files you separately added.
+                                                                      
+We speak of merging into a destination *desk* from a source *commit*
+because while you can only merge on top of a desk, you can merge from
+historical commits.  For example,
+                                                                      
+    |merge %old our %base, =cas ud+5, =gem %init
+                                                                      
+will create a new desk called %old with the 5th commit in %base.
+You can revert the contents of a desk to what they were yesterday
+with
+                                                                      
+    |merge %base our %base, =cas da+(sub now ~d1), =gem %only-that
+                                                                      
+Note this is a normal %only-that merge, which means you're creating a
+*new* commit with the old *contents*.
+                                                                      
+%meld is rarely used on its own, however if you specify %auto or
+omit the merge strategy, %kiln will run a %meld merge into a scratch
+desk and then annotate the conflicts there.
+                                                                      
+If you resolve merge conflicts manually, for example by mounting the
+desks, copying the files in unix and then running |commit, you
+should usually run an %only-this merge.  This will not change the
+newly-fixed contents of your desk, but it will record that the merge
+happened so that those conflicts don't reappear in later merges.
+                                                                      
+If you get a %merge-no-merge-base error, this means you're trying to
+merge two desks which have no common ancestors.  You need to give
+them a common ancestor by choosing a merge strategy which doesn't
+need a merge-base, like %only-this, %only-that, %take-this, or
+%take-that.
+                                                                      
+%take-this could be useful to install 3rd party software, but you
+couldn't get subsequent updates this way, since the files would
+already exist in the destination desk.  Something like "take only
+the files which aren't in my OTA source or any other 3rd party app"
+would be basically correct.  This would require a parameter listing
+the desks to not conflict with.
+                                                                      
+%meet-this and %meet-that imply the existence of %mate-this and
+%mate-that, but those don't exist yet.

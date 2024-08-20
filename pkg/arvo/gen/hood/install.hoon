@@ -1,0 +1,1 @@
+clay/install.hoon

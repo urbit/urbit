@@ -5,7 +5,7 @@
 ::
 |%
 +$  state-0  [%0 passcode=(unit @t)]
-+$  card  card:agent:gall
++$  card     card:agent:gall
 --
 ::
 =|  state-0
@@ -43,7 +43,7 @@
     |=  [=mark =vase]
     ^-  (quip card _this)
     ?:  ?=(%noun mark)
-      ?>  (team:title [our src]:bowl)
+      ?>  =(our src):bowl
       =/  code  !<((unit @t) vase)
       =/  msg=tape
         ?~  code
@@ -55,6 +55,14 @@
         """
       %-  (slog leaf+msg ~)
       [~ this(passcode code)]
+    ?:  ?=(%json mark)
+      ?>  =(our src):bowl
+      =/  jon=json  !<(json vase)
+      =,  dejs:format
+      =/  cmd
+        ((of clear-eyre-cache+(ot url+so ~) ~) jon)
+      ?>  ?=(%clear-eyre-cache -.cmd)
+      [[%pass /cmd %arvo %e %set-response +.cmd ~]~ this]
     ?.  ?=(%handle-http-request mark)
       (on-poke:def mark vase)
     =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
@@ -132,6 +140,12 @@
   =?  site  ?=([%'~debug' *] site)  t.site
   ?~  ext
     $(ext `%html, site [%index ~]) ::NOTE  hack
+  ::  serve dynamic session.js
+  ::
+  ?:  =([/js/session `%js] [site ext])
+    %-  js-response:gen
+    %-  as-octt:mimes:html
+    "window.ship = '{(slag 1 (scow %p our.bowl))}';"
   ::  if not json, serve static file
   ::
   ?.  ?=([~ %json] ext)
@@ -310,6 +324,19 @@
         'action'^(render-action:v-eyre action)
     ==
   ::
+    ::  /eyre/cache.json
+    ::
+      [%eyre %cache ~]
+    %-  some
+    :-  %a
+    %+  turn  (sort ~(tap by cache:v-eyre) aor)
+    |=  [url=@t aeon=@ud val=(unit cache-entry:eyre)]
+    %-  pairs
+    :~  'url'^s+url
+        'aeon'^(numb aeon)
+        'val'^?~(val ~ (render-cache-entry:v-eyre u.val))
+    ==
+  ::
     ::  /eyre/connections.json
     ::
       [%eyre %connections ~]
@@ -355,16 +382,58 @@
     ::
       [%eyre %authentication ~]
     %-  some
-    :-  %a
-    %+  turn
-      %+  sort  ~(tap by sessions:auth-state:v-eyre)
-      |=  [[@uv a=session:eyre] [@uv b=session:eyre]]
-      (gth expiry-time.a expiry-time.b)
-    |=  [cookie=@uv session:eyre]
+    =/  auth  auth-state:v-eyre
     %-  pairs
-    :~  'cookie'^s+(end [3 4] (rsh [3 2] (scot %x (shax cookie))))
-        'expiry'^(time expiry-time)
-        'channels'^(numb ~(wyt in channels))
+    :~  :-  'sessions'
+        :-  %a
+        %+  turn
+          %+  sort  ~(tap by sessions.auth)
+          |=  [[@uv a=session:eyre] [@uv b=session:eyre]]
+          (gth expiry-time.a expiry-time.b)
+        |=  [cookie=@uv session:eyre]
+        %-  pairs
+        :~  'cookie'^s+(scot %uv cookie)
+            'identity'^(render-identity:v-eyre identity)
+            'expiry'^(time expiry-time)
+            'channels'^(numb ~(wyt in channels))
+        ==
+      ::
+        :-  'visitors'
+        :-  %a
+        %+  turn
+          %+  sort  ~(tap by visitors.auth)
+          |=  [[@uv a=visitor:eyre] [@uv b=visitor:eyre]]
+          ?@  +.a  &
+          ?@  +.b  |
+          (aor (scot %p ship.a) (scot %p ship.b))
+        |=  [nonce=@uv v=visitor:eyre]
+        %-  pairs
+        :+  'nonce'^s+(scot %uv nonce)
+          'duct'^?~(duct.v ~ a+(turn u.duct.v path))
+        ?@  +.v  ['sesh' s+(scot %uv sesh.v)]~
+        :~  'pend'^b+?=(^ pend.v)
+            'ship'^(ship ship.v)
+            'last'^s+last.v
+            'toke'^?~(toke.v ~ s+(scot %uv u.toke.v))
+        ==
+      ::
+        :-  'visiting'
+        :-  %a
+        %-  zing
+        %+  turn
+          %+  sort  ~(tap by visiting.auth)
+          |=  [[a=@p *] [b=@p *]]
+          (aor (scot %p a) (scot %p b))
+        |=  [who=@p q=(qeu @uv) m=(map @uv portkey)]
+        %+  turn  ~(tap by m)
+        |=  [nonce=@uv p=portkey]
+        %-  pairs
+        :+  'who'^(ship who)
+          'nonce'^s+(scot %uv nonce)
+        ?@  p  ['made' (time made.p)]~
+        :~  ['pend' b+?=(^ pend.p)]
+            ['toke' ?~(toke.p ~ s+(scot %uv u.toke.p))]
+        ==
     ==
   ::
     ::  /eyre/channels.json
@@ -377,6 +446,7 @@
     |=  [key=@t channel:eyre]
     %-  pairs
     :~  'session'^s+key
+        'identity'^(render-identity:v-eyre identity)
         'connected'^b+!-.state
         'expiry'^?-(-.state %& (time date.p.state), %| ~)
         'next-id'^(numb next-id)
@@ -418,17 +488,20 @@
 ++  apps
   |%
   ++  all
-    ^-  (list term)
-    %+  murn
-      (scry (list path) %ct %home /app)
-    |=  =path
-    ^-  (unit term)
-    ?.  ?=([%app @ %hoon ~] path)  ~
-    `i.t.path
+    ^-  (list dude:gall)
+    %-  zing
+    ^-  (list (list dude:gall))
+    %+  turn
+      ~(tap in (scry (set desk) %cd %$ /))
+    |=  =desk
+    ^-  (list dude:gall)
+    =-  (turn ~(tap in -) head)
+    ;;  (set [dude:gall ?])  ::TODO  for some reason we need this?
+    (scry (set [dude:gall ?]) %ge desk /$)
   ::
   ++  running
     |=  app=term
-    (scry ? %gu app ~)
+    (scry ? %gu app /$)
   ::
   ++  dbugable
     |=  app=term
@@ -514,13 +587,14 @@
       %-  pairs
       :~  'messages'^(numb (lent messages))
           'packets'^(numb ~(wyt in packets))
-          'heeds'^(set-array heeds from-duct)
+          'keens'^(set-array ~(key by keens) path)
       ==
     ::
     ::  json for known peer is structured to closely match the peer-state type.
     ::  where an index is specified, the array is generally sorted by those.
     ::
     ::  { life: 123,
+    ::    rift: 0,
     ::    route: { direct: true, lane: 'something' },
     ::    qos: { kind: 'status', last-contact: 123456 },  // ms timestamp
     ::    flows: { forward: [snd, rcv, ...], backward: [snd, rcv, ...] }
@@ -574,13 +648,56 @@
     ::      duct: ['/paths', ...],
     ::      message-num: 123
     ::    }, ...],
-    ::    heeds: [['/paths', ...] ...]
+    ::    closing: [bone, ..., bone],
+    ::    corked: [bone, ..., bone],
+    ::    scries:
+    ::    ->  { =path
+    ::          keen-state: {
+    ::            wan: [                  //request packets, sent
+    ::              { frag: 1234,
+    ::                size: 1234,         // size, in bytes
+    ::                last-sent: 123456,  //  ms timestamp
+    ::                retries: 123,
+    ::                skips: 123
+    ::              }, ...
+    ::            ],
+    ::            nex: [                  //  request packets, unsent
+    ::              { frag: 1234,
+    ::                size: 1234,         // size, in bytes
+    ::                last-sent: 123456,  //  ms timestamp
+    ::                retries: 123,
+    ::                skips: 123
+    ::              }, ...
+    ::            ],
+    ::            hav: [                  //  response packets, backward
+    ::              {fra: 1234,
+    ::               meow: { num: 1234, size: 1234}
+    ::              }, ...
+    ::            ],
+    ::            num-fragments: 1234,
+    ::            num-received: 1234,
+    ::            next-wake: 123456,  // ms timestamp
+    ::            listeners: [['/paths', ...] ...],
+    ::            metrics: {
+    ::              rto: 123,  // seconds
+    ::              rtt: 123,  // seconds
+    ::              rttvar: 123,
+    ::              ssthresh: 123,
+    ::              num-live: 123,
+    ::              cwnd: 123,
+    ::              counter: 123
+    ::            }
+    ::          }
+    ::        }
     ::  }
     ::
     ++  known
       |=  peer-state
       %-  pairs
       :~  'life'^(numb life)
+          ::  TODO: needs to be updated in /pkg/interface/dbug
+          ::
+          'rift'^(numb rift)
         ::
           :-  'route'
           %+  maybe  route
@@ -610,8 +727,8 @@
           |^  =/  mix=(list flow)
                 =-  (sort - dor)
                 %+  welp
-                  (turn ~(tap by snd) (tack %snd))
-                (turn ~(tap by rcv) (tack %rcv))
+                  (turn ~(tap by snd) (tack %snd closing corked))
+                (turn ~(tap by rcv) (tack %rcv closing corked))
               =/  [forward=(list flow) backward=(list flow)]
                 %+  skid  mix
                 |=  [=bone *]
@@ -623,6 +740,8 @@
           ::
           +$  flow
             $:  =bone
+                closing=?
+                corked=?
               ::
                 $=  state
                 $%  [%snd message-pump-state]
@@ -631,17 +750,17 @@
             ==
           ::
           ++  tack
-            |*  =term
+            |*  [=term closing=(set bone) corked=(set bone)]
             |*  [=bone =noun]
-            [bone [term noun]]
+            [bone (~(has in closing) bone) (~(has in corked) bone) [term noun]]
           ::
           ++  build
             |=  flow
             ^-  json
             %+  frond  -.state
             ?-  -.state
-              %snd  (snd-with-bone ossuary bone +.state)
-              %rcv  (rcv-with-bone ossuary bone +.state)
+              %snd  (snd-with-bone ossuary bone closing corked +.state)
+              %rcv  (rcv-with-bone ossuary bone closing corked +.state)
             ==
           --
         ::
@@ -654,18 +773,24 @@
               (bone-to-pairs bone ossuary)
           ==
         ::
-          'heeds'^(set-array heeds from-duct)
+          'closing'^(set-array closing numb)
+        ::
+          'corked'^(set-array corked numb)
+        ::
+          'scries'^(scries ~(tap by keens))
       ==
     ::
     ++  snd-with-bone
-      |=  [=ossuary =bone message-pump-state]
+      |=  [=ossuary =bone closing=? corked=? message-pump-state]
       ^-  json
       %-  pairs
-      :*  'current'^(numb current)
+      :*  'closing'^b+closing
+          'corked'^b+corked
+          'current'^(numb current)
           'next'^(numb next)
         ::
           :-  'unsent-messages'  ::  as byte sizes
-          (set-array unsent-messages (cork (cury met 3) numb))
+          (set-array unsent-messages (cork jam (cork (cury met 3) numb)))
         ::
           'unsent-fragments'^(numb (lent unsent-fragments))  ::  as lent
         ::
@@ -692,7 +817,7 @@
                   'fragment-num'^(numb fragment-num)
                   'num-fragments'^(numb num-fragments)
                   'last-sent'^(time last-sent)
-                  'retries'^(numb retries)
+                  'tries'^(numb tries)
                   'skips'^(numb skips)
               ==
             ::
@@ -703,7 +828,7 @@
                   'rtt'^(numb (div rtt ~s1))
                   'rttvar'^(numb (div rttvar ~s1))
                   'ssthresh'^(numb ssthresh)
-                  'num-live'^(numb num-live)
+                  'num-live'^(numb ~(wyt by live))
                   'cwnd'^(numb cwnd)
                   'counter'^(numb counter)
               ==
@@ -713,10 +838,12 @@
       ==
     ::
     ++  rcv-with-bone
-      |=  [=ossuary =bone message-sink-state]
+      |=  [=ossuary =bone closing=? corked=? message-sink-state]
       ^-  json
       %-  pairs
-      :*  'last-acked'^(numb last-acked)
+      :*  'closing'^b+closing
+          'corked'^b+corked
+          'last-acked'^(numb last-acked)
           'last-heard'^(numb last-heard)
         ::
           :-  'pending-vane-ack'
@@ -760,6 +887,67 @@
     ++  from-duct
       |=  =duct
       a+(turn duct path)
+    ::
+    ++  scries
+      |=  keens=(list [^path keen-state])
+      ^-  json
+      :-  %a
+      %+  turn  keens
+      |=  [=^path keen=keen-state]
+      %-  pairs
+      :~  'scry-path'^(^path path)
+          'keen-state'^(parse-keens keen)
+      ==
+    ::
+    ++  parse-keens
+      |=  keen-state
+      |^  ^-  json
+      %-  pairs
+      :~  :-  %wan
+          a/(turn (tap:((on @ud want) lte) wan) |=([@ a=_+6:wants] (wants a)))
+        ::
+          'nex'^a/(turn nex wants)
+        ::
+          :-  'hav'
+          :-  %a
+          %+  turn  hav
+          |=  [fra=@ud meow]
+          %-  pairs
+          :~  'fra'^(numb fra)
+            ::
+              :-  'meow'
+              %-  pairs
+              :~  'num'^(numb num)
+                  'size'^(numb (met 3 dat))
+          ==  ==
+        ::
+          'num-fragments'^(numb num-fragments)
+          'num-received'^(numb num-received)
+          'next-wake'^(maybe next-wake time)
+          'listeners'^(set-array listeners from-duct)
+        ::
+          ::  XX  refactor (see metric in snd-with-bone)
+          :-  'metrics'
+          %-  pairs
+          =,  metrics
+          :~  'rto'^(numb (div rto ~s1))  ::TODO  milliseconds?
+              'rtt'^(numb (div rtt ~s1))
+              'rttvar'^(numb (div rttvar ~s1))
+              'ssthresh'^(numb ssthresh)
+              'cwnd'^(numb cwnd)
+              'counter'^(numb counter)
+      ==  ==
+      ::
+      ++  wants
+        |=  [fra=@ud =hoot packet-state]
+        %-  pairs
+        :~  'frag'^(numb fra)
+            'size'^(numb (met 3 hoot))
+            'last-sent'^(time last-sent)
+            'tries'^(numb tries)
+            'skips'^(numb skips)
+        ==
+      --
     --
   --
 ::
@@ -777,7 +965,7 @@
 ++  v-clay
   =,  clay
   |%
-  ++  start-path  /(scot %p our.bowl)/home/(scot %da now.bowl)
+  ++  start-path  /(scot %p our.bowl)/base/(scot %da now.bowl)
   ::
   +$  commit
     [=tako parents=(list tako) children=(list tako) wen=@da content-hash=@uvI]
@@ -788,8 +976,8 @@
     =/  heads=(list [tako desk])
       %+  turn  ~(tap in desks)
       |=  =desk
-      =+  .^(=dome %cv /(scot %p our.bowl)/[desk]/(scot %da now.bowl))
-      =/  =tako  (~(got by hit.dome) let.dome)
+      =+  .^(=domo %cv /(scot %p our.bowl)/[desk]/(scot %da now.bowl))
+      =/  =tako  (~(got by hit.domo) let.domo)
       [tako desk]
     =/  yakis=(set yaki)
       %-  silt
@@ -867,6 +1055,9 @@
   ++  bindings
     (scry ,(list [=binding =duct =action]) %e %bindings ~)
   ::
+  ++  cache
+    (scry ,(map url=@t [aeon=@ud (unit cache-entry)]) %e %cache ~)
+  ::
   ++  connections
     (scry ,(map duct outstanding-connection) %e %connections ~)
   ::
@@ -876,6 +1067,16 @@
   ++  channel-state
     (scry ^channel-state %e %channel-state ~)
   ::
+  ++  render-identity
+    |=  =identity
+    ^-  json
+    %-  ship:enjs:format
+    ?-  -.identity
+      %ours  our.bowl
+      %fake  who.identity
+      %real  who.identity
+    ==
+  ::
   ++  render-action
     |=  =action
     ^-  json
@@ -883,6 +1084,27 @@
     ?+  -.action  -.action
       %gen  :((cury cat 3) '+' (spat [desk path]:generator.action))
       %app  (cat 3 ':' app.action)
+    ==
+  ::
+  ++  render-cache-entry
+    |=  cache-entry
+    ^-  json
+    %-  pairs:enjs:format
+    :~  'auth'^b+auth
+        'payload'^(render-simple-payload simple-payload.body)
+    ==
+  ::
+  ++  render-simple-payload
+    |=  simple-payload:http
+    ^-  json
+    =,  enjs:format
+    %-  pairs
+    :~  'status'^(numb status-code.response-header)
+        'data'^?~(data ~ (numb p.u.data))
+      ::
+        :+  'headers'  %a
+        %+  turn  headers.response-header
+        |=([k=@t v=@t] (pairs 'key'^s+k 'value'^s+v ~))
     ==
   --
 ::

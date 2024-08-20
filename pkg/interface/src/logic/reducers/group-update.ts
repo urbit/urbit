@@ -1,11 +1,9 @@
-import { Enc } from '@urbit/api';
 import {
+  Enc,
   Group,
-
-  GroupPolicy, GroupUpdate,
-
+  GroupUpdate,
   InvitePolicy, InvitePolicyDiff, OpenPolicy, OpenPolicyDiff, Tags
-} from '@urbit/api/groups';
+} from '@urbit/api';
 import _ from 'lodash';
 import { Cage } from '~/types/cage';
 import { resourceAsPath } from '../lib/util';
@@ -15,26 +13,10 @@ import { GroupState as State } from '../state/group';
 type GroupState = BaseState<State> & State;
 
 function decodeGroup(group: Enc<Group>): Group {
-  const members = new Set(group.members);
-  const res = {
+  return {
     ...group,
-    members,
-    tags: decodeTags(group.tags),
-    policy: decodePolicy(group.policy)
+    tags: decodeTags(group.tags)
   };
-  return res;
-}
-
-function decodePolicy(policy: Enc<GroupPolicy>): GroupPolicy {
-  if ('invite' in policy) {
-    const { invite } = policy;
-    return { invite: { pending: new Set(invite.pending) } };
-  } else {
-    const { open } = policy;
-    return {
-      open: { banned: new Set(open.banned), banRanks: new Set(open.banRanks) }
-    };
-  }
 }
 
 function decodeTags(tags: Enc<Tags>): Tags {
@@ -42,11 +24,11 @@ function decodeTags(tags: Enc<Tags>): Tags {
     tags,
     (acc, ships: any, key): Tags => {
       if (key.search(/\\/) === -1) {
-        acc.role[key] = new Set(ships);
+        acc.role[key] = ships;
         return acc;
       } else {
         const [app, tag, resource] = key.split('\\');
-        _.set(acc, [app, resource, tag], new Set(ships));
+        _.set(acc, [app, resource, tag], ships);
         return acc;
       }
     },
@@ -81,9 +63,9 @@ const addGroup = (json: GroupUpdate, state: GroupState): GroupState => {
     const { resource, policy, hidden } = json.addGroup;
     const resourcePath = resourceAsPath(resource);
     state.groups[resourcePath] = {
-      members: new Set(),
-      tags: { role: { admin: new Set([window.ship]) } },
-      policy: decodePolicy(policy),
+      members: [],
+      tags: { role: { admin: [window.ship] } },
+      policy,
       hidden
     };
   }
@@ -107,13 +89,19 @@ const addMembers = (json: GroupUpdate, state: GroupState): GroupState => {
       return;
     }
     for (const member of ships) {
-      state.groups[resourcePath].members.add(member);
-      if (
-          'invite' in state.groups[resourcePath].policy &&
-          state.groups[resourcePath].policy['invite'].pending.has(member)
-         ) {
-           state.groups[resourcePath].policy['invite'].pending.delete(member);
-         }
+      const members = state.groups[resourcePath].members;
+      if (!_.includes(members, member)) {
+        members.push(member);
+      }
+
+      const policy = state.groups[resourcePath].policy;
+      if ('invite' in policy) {
+        const invites = (policy as InvitePolicy).invite;
+
+        if (invites && _.includes(invites.pending, member)) {
+          _.remove(invites.pending, item => item === member);
+        }
+      }
     }
   }
   return state;
@@ -124,7 +112,7 @@ const removeMembers = (json: GroupUpdate, state: GroupState): GroupState => {
     const { resource, ships } = json.removeMembers;
     const resourcePath = resourceAsPath(resource);
     for (const member of ships) {
-      state.groups[resourcePath].members.delete(member);
+      _.remove(state.groups[resourcePath].members, item => item === member);
     }
   }
   return state;
@@ -179,12 +167,14 @@ const inviteChangePolicy = (diff: InvitePolicyDiff, policy: InvitePolicy) => {
   if ('addInvites' in diff) {
     const { addInvites } = diff;
     for (const ship of addInvites) {
-      policy.invite.pending.add(ship);
+      if (!_.includes(policy.invite.pending, ship)) {
+        policy.invite.pending.push(ship);
+      }
     }
   } else if ('removeInvites' in diff) {
     const { removeInvites } = diff;
     for (const ship of removeInvites) {
-      policy.invite.pending.delete(ship);
+      _.remove(policy.invite.pending, item => item === ship);
     }
   } else {
     console.log('bad policy change');
@@ -195,22 +185,24 @@ const openChangePolicy = (diff: OpenPolicyDiff, policy: OpenPolicy) => {
   if ('allowRanks' in diff) {
     const { allowRanks } = diff;
     for (const rank of allowRanks) {
-      policy.open.banRanks.delete(rank);
+      _.remove(policy.open.banRanks, item => item === rank);
     }
   } else if ('banRanks' in diff) {
     const { banRanks } = diff;
     for (const rank of banRanks) {
-      policy.open.banRanks.delete(rank);
+      _.remove(policy.open.banRanks, item => item === rank);
     }
   } else if ('allowShips' in diff) {
     const { allowShips } = diff;
     for (const ship of allowShips) {
-      policy.open.banned.delete(ship);
+      _.remove(policy.open.banned, item => item === ship);
     }
   } else if ('banShips' in diff) {
     const { banShips } = diff;
     for (const ship of banShips) {
-      policy.open.banned.add(ship);
+      if (!_.includes(policy.open.banned, ship)) {
+        policy.open.banned.push(ship);
+      }
     }
   } else {
     console.log('bad policy change');

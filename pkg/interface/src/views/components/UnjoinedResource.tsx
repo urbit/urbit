@@ -1,6 +1,5 @@
 import { Box, Center, Col, Text } from '@tlon/indigo-react';
-import { joinGraph } from '@urbit/api/graph';
-import { Association, GraphConfig } from '@urbit/api/metadata';
+import { Association, GraphConfig, joinGraph } from '@urbit/api';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useQuery } from '~/logic/lib/useQuery';

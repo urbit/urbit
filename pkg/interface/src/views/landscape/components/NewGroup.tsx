@@ -45,7 +45,7 @@ export function NewGroup(): ReactElement {
     async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
       try {
         const { title, description, isPrivate } = values;
-        const name = stringToSymbol(title.trim());
+        const name = await stringToSymbol(title.trim());
         const policy: Enc<GroupPolicy> = isPrivate
           ? {
               invite: {

@@ -1,0 +1,99 @@
+
+name: vere
+
+on:
+  workflow_call:
+    inputs:
+      upload:
+        description: 'upload binaries to gcp'
+        type: boolean
+        default: false
+        required: false
+      pace:
+        description: 'release pace'
+        type: string
+        default: 'edge'
+        required: false
+      next:
+        description: 'next kelvin version branch name'
+        type: string
+        default: null
+        required: false
+    secrets:
+      CACHIX_AUTH_TOKEN:
+        required: false
+      GCP_CREDENTIALS:
+        required: false
+      GCS_SERVICE_ACCOUNT_KEY:
+        required: false
+      GCS_PROJECT:
+        required: false
+
+  workflow_dispatch:
+    inputs:
+      upload:
+        description: 'upload binaries to gcp'
+        type: boolean
+        default: false
+        required: false
+      pace:
+        description: 'release pace'
+        type: choice
+        options:
+        - edge
+        - soon
+        - live
+
+jobs:
+  urbit:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest, type: linux }
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      # We only want the extra nix config on linux, where it is necessary
+      # for the docker build. We don't want in on Mac, where it isn't but
+      # it breaks the nix install. The two `if` clauses should be mutually
+      # exclusive
+      - uses: cachix/install-nix-action@v27
+        with:
+          extra_nix_config: |
+            system-features = nixos-test benchmark big-parallel kvm
+        if: ${{ matrix.type == 'linux' }}
+      - uses: cachix/install-nix-action@v27
+        if: ${{ matrix.os != 'ubuntu-latest' }}
+
+      - uses: cachix/cachix-action@v15
+        with:
+          name: ares
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - if: ${{ matrix.os == 'ubuntu-latest' }}
+        name: run urbit-tests
+        run: |
+          if [[ "${{ inputs.next }}" == "next/kelvin/"* ]]; then
+            next=$(echo ${{ inputs.next }} | sed 's/[^0-9]//g')
+            base="https://bootstrap.urbit.org/vere/next/kelvin/${next}"
+          elif [[ "${{ github.head_ref }}" == "next/kelvin"* ]]; then
+            next=$(echo ${{ github.head_ref }} | sed 's/[^0-9]//g')
+            base="https://bootstrap.urbit.org/vere/next/kelvin/${next}"
+          else
+            base="https://bootstrap.urbit.org/vere/${{ inputs.pace }}"
+          fi
+          vere=$(curl ${base}/last)
+          url="$(echo ${base}/v${vere}/vere-v${vere}-linux-x86_64)"
+          echo $vere
+          echo $url
+          curl -Lo urbit "$url"
+          chmod +x urbit
+          git add urbit
+
+          nix flake check --keep-build-log -L

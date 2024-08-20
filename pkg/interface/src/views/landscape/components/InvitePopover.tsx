@@ -5,14 +5,12 @@ import {
 
     Row, Text
 } from '@tlon/indigo-react';
-import { invite } from '@urbit/api/groups';
-import { Association } from '@urbit/api/metadata';
+import { Association, invite, resourceFromPath } from '@urbit/api';
 import { Form, Formik } from 'formik';
 import _ from 'lodash';
 import React, { useCallback, useRef } from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import * as Yup from 'yup';
-import { resourceFromPath } from '~/logic/lib/group';
 import { useOutsideClick } from '~/logic/lib/useOutsideClick';
 import { deSig } from '~/logic/lib/util';
 import { Workspace } from '~/types/workspace';

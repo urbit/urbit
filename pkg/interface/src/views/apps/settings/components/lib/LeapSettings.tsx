@@ -4,7 +4,6 @@ import {
     ManagedCheckboxField, Text
 } from '@tlon/indigo-react';
 import { Form, useFormikContext } from 'formik';
-import { putEntry } from '@urbit/api/settings';
 import _ from 'lodash';
 import React from 'react';
 import useSettingsState, { selectSettingsState } from '~/logic/state/settings';
@@ -15,7 +14,6 @@ import {
 import { FormikOnBlur } from '~/views/components/FormikOnBlur';
 import { ShuffleFields } from '~/views/components/ShuffleFields';
 import { BackButton } from './BackButton';
-import airlock from '~/logic/api';
 
 const labels: Record<LeapCategories, string> = {
   mychannel: 'My Channels',
@@ -60,11 +58,12 @@ export function LeapSettings() {
   };
 
   const onSubmit = async (values: FormSchema) => {
+    const { putEntry } = useSettingsState.getState();
     const result = values.categories.reduce(
       (acc, { display, category }) => (display ? [...acc, category] : acc),
       [] as LeapCategories[]
     );
-    await airlock.poke(putEntry('leap', 'categories', result));
+    await putEntry('leap', 'categories', result);
   };
 
   return (

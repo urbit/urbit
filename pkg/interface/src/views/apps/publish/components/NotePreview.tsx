@@ -1,6 +1,5 @@
 import { Box, Col, Icon, Image, Row, Text } from '@tlon/indigo-react';
-import { Group } from '@urbit/api';
-import { GraphNode } from '@urbit/api/graph';
+import { Group, GraphNode } from '@urbit/api';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Link } from 'react-router-dom';
@@ -10,7 +9,7 @@ import {
     getLatestRevision,
     getSnippet
 } from '~/logic/lib/publish';
-import useHarkState from '~/logic/state/hark';
+import { useHarkStat } from '~/logic/state/hark';
 import Author from '~/views/components/Author';
 
 interface NotePreviewProps {
@@ -67,14 +66,15 @@ export function NotePreview(props: NotePreviewProps) {
   const url = `${props.baseUrl}/note/${noteId}`;
 
   const [, title, body] = getLatestRevision(node);
-  const appPath = `/ship/${props.host}/${props.book}`;
-  const unreads = useHarkState(state => state.unreads.graph?.[appPath]);
+  const harkPath = `/graph/${props.host}/${props.book}`;
+  const bookStats = useHarkStat(harkPath);
+  const noteStats = useHarkStat(`${harkPath}/${noteId}`);
   // @ts-ignore hark will have to choose between sets and numbers
-  const isUnread = (unreads?.['/'].unreads ?? new Set()).has(`/${noteId}/1/1`);
+  const isUnread = bookStats.each.includes(`/${noteId}`);
 
   const snippet = getSnippet(body);
 
-  const commColor = (unreads?.[`/${noteId}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
+  const commColor = noteStats.count > 0 ? 'blue' : 'gray';
 
   const cursorStyle = post.pending ? 'default' : 'pointer';
 

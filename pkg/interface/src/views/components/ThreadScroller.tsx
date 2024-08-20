@@ -1,9 +1,7 @@
 import { BigInteger } from 'big-integer';
 import React from 'react';
 import VirtualScroller, { VirtualScrollerProps } from './VirtualScroller';
-
-import { arrToString } from '@urbit/api/lib/BigIntArrayOrderedMap';
-import { FlatGraphNode } from '@urbit/api';
+import { arrToString, FlatGraphNode } from '@urbit/api';
 
 type ThreadScrollerProps = Omit<
   VirtualScrollerProps<BigInteger[], FlatGraphNode>,

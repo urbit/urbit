@@ -1,0 +1,1 @@
+clay/new-desk.hoon

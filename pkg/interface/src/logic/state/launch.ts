@@ -4,7 +4,6 @@ import {
   createSubscription,
   reduceStateN
 } from './base';
-import airlock from '~/logic/api';
 import { reduce } from '../reducers/launch-update';
 import _ from 'lodash';
 
@@ -16,10 +15,6 @@ export interface LaunchState {
   };
   weather: WeatherState | null | Record<string, never> | boolean;
   userLocation: string | null;
-  baseHash: string | null;
-  runtimeLag: boolean;
-  getRuntimeLag: () => Promise<void>;
-  getBaseHash: () => Promise<void>;
 }
 
 // @ts-ignore investigate zustand types
@@ -30,23 +25,7 @@ const useLaunchState = createState<LaunchState>(
     tileOrdering: [],
     tiles: {},
     weather: null,
-    userLocation: null,
-    baseHash: null,
-    runtimeLag: false,
-    getBaseHash: async () => {
-      const baseHash = await airlock.scry({
-        app: 'file-server',
-        path: '/clay/base/hash'
-      });
-      set({ baseHash });
-    },
-    getRuntimeLag: async () => {
-      const runtimeLag = await airlock.scry({
-        app: 'launch',
-        path: '/runtime-lag'
-      });
-      set({ runtimeLag });
-    }
+    userLocation: null
   }),
   ['weather'],
   [

@@ -1,10 +1,9 @@
 import { Box, Col, Text } from '@tlon/indigo-react';
-import { Association, Graph, Group } from '@urbit/api';
+import { Association, deSig, Graph, Group, isWriter } from '@urbit/api';
 import bigInt, { BigInteger } from 'big-integer';
 import React, {
   Component, ReactNode
 } from 'react';
-import { isWriter } from '~/logic/lib/group';
 import { GraphScroller } from '~/views/components/GraphScroller';
 import { LinkItem } from './components/LinkItem';
 import LinkSubmit from './components/LinkSubmit';
@@ -40,7 +39,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
 
   canWrite() {
     const { group, association } = this.props;
-    return isWriter(group, association.resource);
+    return isWriter(group, association.resource, window.ship);
   }
 
   renderItem = React.forwardRef<HTMLDivElement>(({ index }: RendererProps, ref) => {
@@ -73,7 +72,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
           >
             <LinkSubmit
               name={name}
-              ship={ship.slice(1)}
+              ship={deSig(ship)}
             />
           </Col>
           { typeof post !== 'string' && <LinkItem {...linkProps} /> }
@@ -109,7 +108,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
           {this.canWrite() ? (
             <LinkSubmit
               name={name}
-              ship={ship.slice(1)}
+              ship={deSig(ship)}
             />
           ) : (
             <Text>

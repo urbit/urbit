@@ -1,5 +1,4 @@
-import { Association } from '@urbit/api/metadata';
-import { AppName } from '@urbit/api';
+import { AppName, Association } from '@urbit/api';
 import React, { ReactElement } from 'react';
 import Helmet from 'react-helmet';
 import { Route, Switch } from 'react-router-dom';
@@ -26,7 +25,7 @@ export function Resource(props: ResourceProps): ReactElement {
   const notificationsCount = useHarkState(state => state.notificationsCount);
   const associations = useMetadataState(state => state.associations);
   const contacts = useContactState(state => state.contacts);
-  let app = association['app-name'];
+  let app: string = association['app-name'];
   if (association?.metadata?.config && 'graph' in association.metadata.config) {
     app = association.metadata.config.graph as AppName;
   }

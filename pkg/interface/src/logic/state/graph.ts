@@ -1,12 +1,12 @@
-import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import { patp2dec } from 'urbit-ob';
 import shallow from 'zustand/shallow';
-
-import { Association, deSig, GraphNode, Graphs, FlatGraphs, resourceFromPath, ThreadGraphs, getGraph, getShallowChildren, setScreen } from '@urbit/api';
+import {
+  Association, BigIntOrderedMap, deSig, GraphNode, Graphs, FlatGraphs, resourceFromPath, ThreadGraphs, getGraph, getShallowChildren, setScreen,
+  addDmMessage, addPost, Content, getDeepOlderThan, getFirstborn, getNewest, getNode, getOlderSiblings, getYoungerSiblings, markPending, Post, addNode, GraphNodePoke, getKeys
+} from '@urbit/api';
 import { useCallback } from 'react';
 import { createState, createSubscription, reduceStateN, pokeOptimisticallyN } from './base';
 import airlock from '~/logic/api';
-import { addDmMessage, addPost, Content, getDeepOlderThan, getFirstborn, getNewest, getNode, getOlderSiblings, getYoungerSiblings, markPending, Post, addNode, GraphNodePoke } from '@urbit/api/graph';
 import { GraphReducer, reduceDm } from '../reducers/graph-update';
 import _ from 'lodash';
 import { clone } from '../lib/util';
@@ -25,6 +25,8 @@ export interface GraphState {
   pendingDms: Set<string>;
   screening: boolean;
   graphTimesentMap: Record<number, string>;
+  getKeys(): Promise<void>;
+  getShallowChildren: (ship: string, name: string, index?: string) => Promise<void>;
   getDeepOlderThan: (ship: string, name: string, count: number, start?: string) => Promise<void>;
   getNewest: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
   getOlderSiblings: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
@@ -53,7 +55,7 @@ const useGraphState = createState<GraphState>('Graph', (set, get) => ({
     const promise = airlock.poke(poke);
     const pending = clone(poke);
     markPending(pending.json['add-nodes'].nodes);
-    pending.json['add-nodes'].resource.ship = pending.json['add-nodes'].resource.ship.slice(1);
+    pending.json['add-nodes'].resource.ship = deSig(pending.json['add-nodes'].resource.ship);
     GraphReducer({
       'graph-update': pending.json
     });
@@ -64,7 +66,7 @@ const useGraphState = createState<GraphState>('Graph', (set, get) => ({
     const promise = airlock.thread(thread);
     const { body } = clone(thread);
     markPending(body['add-nodes'].nodes);
-    body['add-nodes'].resource.ship = body['add-nodes'].resource.ship.slice(1);
+    body['add-nodes'].resource.ship = deSig(body['add-nodes'].resource.ship);
     GraphReducer({
       'graph-update': body,
       'graph-update-flat': body,
@@ -77,7 +79,7 @@ const useGraphState = createState<GraphState>('Graph', (set, get) => ({
     const promise = airlock.thread(thread);
     const { body } = clone(thread);
     markPending(body['add-nodes'].nodes);
-    body['add-nodes'].resource.ship = body['add-nodes'].resource.ship.slice(1);
+    body['add-nodes'].resource.ship = deSig(body['add-nodes'].resource.ship);
     GraphReducer({
       'graph-update': body,
       'graph-update-flat': body,
@@ -148,15 +150,11 @@ const useGraphState = createState<GraphState>('Graph', (set, get) => ({
   setScreen: (screen: boolean) => {
     const poke = setScreen(screen);
     pokeOptimisticallyN(useGraphState, poke, reduceDm);
+  },
+  getKeys: async () => {
+    const keys = await airlock.scry(getKeys());
+    GraphReducer(keys);
   }
-  // getKeys: async () => {
-  //   const api = useApi();
-  //   const keys = await api.scry({
-  //     app: 'graph-store',
-  //     path: '/keys'
-  //   });
-  //   graphReducer(keys);
-  // },
   // getTags: async () => {
   //   const api = useApi();
   //   const tags = await api.scry({
@@ -256,9 +254,17 @@ const useGraphState = createState<GraphState>('Graph', (set, get) => ({
     if(j) {
       reduceStateN(get(), j, reduceDm);
     }
-  })
+  })],
+  {
+    graphs: {},
+    looseNodes: {},
+    graphTimesentMap: {},
+    flatGraphs: {},
+    threadGraphs: {},
+    pendingDms: new Set<string>()
+  }
 
-]);
+);
 
 export function useGraph(ship: string, name: string) {
   return useGraphState(

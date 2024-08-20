@@ -18,15 +18,23 @@
   |=  [our=ship who=@p]
   ^-  (list card:agent:gall)
   %+  emit-aqua-events  our
-  [%event who [//newt/0v1n.2m9vh %born ~]]~
+  [%event who [/a/newt/0v1n.2m9vh %born ~]]~
 ::
 ++  handle-send
-  |=  [our=ship now=@da sndr=@p way=wire %send lan=lane:ames pac=@]
+  =,  ames
+  |=  [our=ship now=@da sndr=@p way=wire %send lan=lane pac=@]
   ^-  (list card:agent:gall)
   =/  rcvr=ship  (lane-to-ship lan)
   =/  hear-lane  (ship-to-lane sndr)
+  =/  =shot      (sift-shot pac)
+  ?:  &(!sam.shot req.shot)  :: is fine request
+    =/  [%0 =peep]  (sift-wail `@ux`content.shot)
+    %+  emit-aqua-events  our
+    :_  ~
+    :-  %read
+    [[[rcvr rcvr-tick.shot] path.peep] [hear-lane sndr-tick.shot] num.peep]
   %+  emit-aqua-events  our
-  [%event rcvr //newt/0v1n.2m9vh %hear hear-lane pac]~
+  [%event rcvr /a/newt/0v1n.2m9vh %hear hear-lane pac]~
 ::  +lane-to-ship: decode a ship from an aqua lane
 ::
 ::    Special-case one comet, since its address doesn't fit into a lane.
@@ -70,5 +78,5 @@
     ==
   [cards this]
 ::
-++  handle-arvo-response  _!!
+++  handle-arvo-response  |=(* !!)
 --

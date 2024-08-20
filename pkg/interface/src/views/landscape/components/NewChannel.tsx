@@ -4,13 +4,12 @@ import {
   ManagedTextInputField as Input,
   Text
 } from '@tlon/indigo-react';
-import { addTag, createManagedGraph, createUnmanagedGraph } from '@urbit/api';
+import { addTag, createManagedGraph, createUnmanagedGraph, resourceFromPath } from '@urbit/api';
 import { Form, Formik } from 'formik';
 import _ from 'lodash';
 import React, { ReactElement } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import * as Yup from 'yup';
-import { resourceFromPath } from '~/logic/lib/group';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import { deSig, parentPath, stringToSymbol } from '~/logic/lib/util';
 import useGroupState from '~/logic/state/group';
@@ -49,6 +48,7 @@ type NewChannelProps = {
 
 export function NewChannel(props: NewChannelProps): ReactElement {
   const history = useHistory();
+  const match = useRouteMatch();
   const { group, workspace, existingMembers, ...rest } = props;
   const groups = useGroupState(state => state.groups);
   const waiter = useWaitForProps({ groups }, 5000);
@@ -70,7 +70,7 @@ export function NewChannel(props: NewChannelProps): ReactElement {
   const onSubmit = async (values: FormSchema, actions) => {
     const name = channelName(values);
     const resId: string =
-      stringToSymbol(values.name) +
+      await stringToSymbol(values.name) +
       (workspace?.type !== 'messages'
         ? `-${Math.floor(Math.random() * 10000)}`
         : '');
@@ -121,9 +121,9 @@ export function NewChannel(props: NewChannelProps): ReactElement {
         );
       }
       actions.setStatus({ success: null });
-      const resourceUrl = location.pathname.includes('/messages')
+      const resourceUrl = match.url.includes('/messages')
         ? '/~landscape/messages'
-        : parentPath(location.pathname);
+        : parentPath(match.path);
       history.push(
         `${resourceUrl}/resource/${moduleType}/ship/~${window.ship}/${resId}`
       );

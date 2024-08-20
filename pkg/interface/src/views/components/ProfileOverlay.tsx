@@ -19,9 +19,8 @@ import { getRelativePosition } from '~/logic/lib/relativePosition';
 import { Sigil } from '~/logic/lib/sigil';
 import { useCopy } from '~/logic/lib/useCopy';
 import { useOutsideClick } from '~/logic/lib/useOutsideClick';
-import { useShowNickname } from '~/logic/lib/util';
 import { useContact } from '~/logic/state/contact';
-import useSettingsState, { SettingsState } from '~/logic/state/settings';
+import useSettingsState, { SettingsState, useShowNickname } from '~/logic/state/settings';
 import { Portal } from './Portal';
 import { ProfileStatus } from './ProfileStatus';
 import RichText from './RichText';
@@ -35,11 +34,14 @@ const FixedOverlay = styled(Col)`
   transition: all 0.1s ease-out;
 `;
 
-type ProfileOverlayProps = BoxProps & {
-  ship: string;
-  children?: ReactNode;
-  color?: string;
-};
+interface ProfileOverlayProps extends BoxProps {
+  /**
+   * A valid patp (without sig)
+   */
+  ship: string,
+  children?: ReactNode,
+  color?: string,
+}
 
 const selSettings = (s: SettingsState) => [s.calm.hideAvatars, s.calm.hideNicknames];
 

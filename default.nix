@@ -1,3 +1,4 @@
+
 /* Examples
 
    Shared urbit and urbit-worker binaries:
@@ -13,10 +14,6 @@
      $ nix-build -A urbit --argstr crossSystem x86_64-unknown-linux-musl \
                           --arg enableStatic true
 
-   Static urbit-king binary:
-
-     $ nix-build -A hs.urbit-king.components.exes.urbit-king --arg enableStatic true
-
    Static release tarball:
 
      $ nix-build -A tarball --arg enableStatic true
@@ -27,15 +24,6 @@
      $ nix-build -A brass.build
      $ nix-build -A solid.build
 
-   Run the king-haskell checks (.tests are _build_ the test code, .checks _runs_):
-
-     $ nix-build -A hs.urbit-king.checks.urbit-king-tests
-
-   Build a specific Haskell package from ./pkg/hs:
-
-     $ nix-build -A hs.urbit-noun.components.library
-     $ nix-build -A hs.urbit-atom.components.benchmarks.urbit-atom-bench
-     $ nix-build -A hs.urbit-atom.components.tests.urbit-atom-tests
 */
 
 # The build system where packages will be _built_.
@@ -51,8 +39,10 @@
   # Overlays to apply to the last package set in cross compilation.
 , crossOverlays ? [ ]
   # Whether to use pkgs.pkgsStatic.* to obtain statically linked package
-  # dependencies - ie. when building fully-static libraries or executables. 
-, enableStatic ? false }:
+  # dependencies - ie. when building fully-static libraries or executables.
+, enableStatic ? false
+  # release channel (when static)
+, verePace ? "" }:
 
 let
 
@@ -67,7 +57,10 @@ let
       if system == "x86_64-linux" && crossSystem == null && enableStatic then
         "x86_64-unknown-linux-musl"
       else
-        crossSystem;
+        if system == "aarch64-linux" && crossSystem == null && enableStatic then
+          "aarch64-unknown-linux-musl"
+        else
+          crossSystem;
   };
 
   # Use nixpkgs' top-level/static overlay if enableStatic = true.
@@ -75,7 +68,7 @@ let
 
   # Enrich the global package set with our local functions and packages.
   # Cross vs static build dependencies can be selectively overridden for
-  # inputs like python and haskell-nix
+  # inputs like python etc.
   callPackage =
     pkgsNative.lib.callPackageWith (pkgsStatic // libLocal // pkgsLocal);
 
@@ -85,19 +78,11 @@ let
   # Local vendored packages defined in ./pkg.
   # For non-vendored nixpkgs specific package overrides, see ./nix/overlays.
   pkgsLocal = {
-    argon2u = callPackage ./nix/pkgs/argon2u { };
-
     ca-bundle = callPackage ./nix/pkgs/ca-bundle { };
-
-    ed25519 = callPackage ./nix/pkgs/ed25519 { };
 
     ent = callPackage ./nix/pkgs/ent { };
 
-    ge-additions = callPackage ./nix/pkgs/ge-additions { };
-
-    libaes_siv = callPackage ./nix/pkgs/libaes_siv { };
-
-    libscrypt = callPackage ./nix/pkgs/libscrypt { };
+    libaes_siv = callPackage ./nix/pkgs/libaes_siv { inherit (pkgsNative) cmake; };
 
     murmur3 = callPackage ./nix/pkgs/murmur3 { };
 
@@ -113,49 +98,35 @@ let
 
     solid = callPackage ./nix/pkgs/pill/solid.nix { };
 
-    urbit = callPackage ./nix/pkgs/urbit { inherit enableStatic; };
+    marsSources = callPackage ./nix/pkgs/marsSources { };
+
+    urcrypt = callPackage ./nix/pkgs/urcrypt { inherit enableStatic; };
 
     docker-image = callPackage ./nix/pkgs/docker-image { };
-
-    hs = callPackage ./nix/pkgs/hs {
-      inherit enableStatic;
-      inherit (pkgsCross) haskell-nix;
-    };
   };
 
   # Additional top-level packages and attributes exposed for convenience.
   pkgsExtra = with pkgsLocal; rec {
     # Expose packages with local customisations (like patches) for dev access.
-    inherit (pkgsCross) libsigsegv;
+    inherit (pkgsStatic) libsigsegv lmdb;
 
-    # Collect haskell check (aka "run the tests") attributes so we can run every
-    # test for our local haskell packages, similar to the urbit-tests attribute.
-    hs-checks = (pkgsNative.recurseIntoAttrs
-      (libLocal.collectHaskellComponents pkgsLocal.hs)).checks;
-
-    urbit-debug = urbit.override { enableDebug = true; };
     urbit-tests = libLocal.testFakeShip {
-      inherit herb;
       inherit arvo;
 
-      urbit = urbit-debug;
       pill = solid.lfs;
     };
 
-    ivory-ropsten = ivory.override { arvo = arvo.ropsten; };
-    brass-ropsten = brass.override { arvo = arvo.ropsten; };
+    ivory-goerli = ivory.override { arvo = arvo.goerli; };
+    brass-goerli = brass.override { arvo = arvo.goerli; };
 
     # Create a .tgz of the primary binaries.
     tarball = let
       name = "urbit-v${urbit.version}-${urbit.system}";
-      urbit-king = hs.urbit-king.components.exes.urbit-king;
     in libLocal.makeReleaseTarball {
       inherit name;
 
       contents = {
         "${name}/urbit" = "${urbit}/bin/urbit";
-        "${name}/urbit-worker" = "${urbit}/bin/urbit-worker";
-        "${name}/urbit-king" = "${urbit-king}/bin/urbit-king";
       };
     };
 

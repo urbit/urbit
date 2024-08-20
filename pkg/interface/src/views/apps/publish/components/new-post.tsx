@@ -1,5 +1,4 @@
-import { addNodes, Association } from '@urbit/api';
-import { Graph } from '@urbit/api/graph';
+import { addNodes, Association, Graph } from '@urbit/api';
 import { FormikHelpers } from 'formik';
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';

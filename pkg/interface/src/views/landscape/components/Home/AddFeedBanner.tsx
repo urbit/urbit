@@ -1,8 +1,7 @@
 import { Button, Icon, Row, Text } from '@tlon/indigo-react';
-import { disableGroupFeed } from '@urbit/api/graph';
+import { disableGroupFeed, resourceFromPath } from '@urbit/api';
 import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { resourceFromPath } from '~/logic/lib/group';
 import airlock from '~/logic/api';
 
 export const AddFeedBanner = (props) => {

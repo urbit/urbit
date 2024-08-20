@@ -3,7 +3,7 @@ import { Box, Row, Text } from '@tlon/indigo-react';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import Author from '~/views/components/Author';
 import { useHistory } from 'react-router';
-import { acceptDm, declineDm } from '@urbit/api/graph';
+import { acceptDm, declineDm } from '@urbit/api';
 import airlock from '~/logic/api';
 
 export function PendingDm(props: { ship: string; }) {

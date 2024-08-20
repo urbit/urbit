@@ -1,4 +1,4 @@
-import { InviteUpdate } from '@urbit/api/invite';
+import { InviteUpdate } from '@urbit/api';
 import _ from 'lodash';
 import { BaseState } from '../state/base';
 import { InviteState as State } from '../state/invite';
@@ -8,6 +8,7 @@ type InviteState = State & BaseState<State>;
 const initial = (json: InviteUpdate, state: InviteState): InviteState => {
   const data = _.get(json, 'initial', false);
   if (data) {
+    state.loaded = true;
     state.invites = data;
   }
   return state;

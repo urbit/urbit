@@ -15,11 +15,12 @@ export function useResize<T extends HTMLElement>(
         callback(entry, observer);
       }
     }
+    let el = ref.current;
     const resizeObs = new ResizeObserver(observer);
-    resizeObs.observe(ref.current, { box: 'border-box' });
+    resizeObs.observe(el, { box: 'border-box' });
 
     return () => {
-      resizeObs.unobserve(ref.current);
+      resizeObs.unobserve(el);
     };
   }, [callback]);
 
