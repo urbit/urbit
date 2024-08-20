@@ -7496,11 +7496,13 @@
             =/  view  ?@(vew.u.inn vew.u.inn (cat 3 [way car]:vew.u.inn))
             ?~  res=(rof ~ /ames/publ view bem.u.inn)
               ~
+            ?~  u.res
+              [~ ~]
             =/  priv=@uxI  (end 8 (rsh 3 priv.ames-state))  :: extract ed25519 key
             ::  XX  rift.ames-state
             =>  [bem=bem res=res priv=priv ..crypt]
             ~>  %memo./ames/publ
-            =/  gag  ?~(u.res ~ [p q.q]:u.u.res)  :: XX how does receiver distinguish these?
+            =/  gag  [p q.q]:u.u.res  :: XX how does receiver distinguish these?
             =/  ful  (en-beam bem)
             =/  ser  (jam gag)  :: unencrypted
             :^  ~  ~  %message
@@ -7518,10 +7520,12 @@
               ~
             ?~  res=(rof `[her ~ ~] /ames/chum vew.u.inn bem.u.inn)
               ~
+            ?~  u.res
+              [~ ~]
             =>  [key=u.key cyf=cyf bem=bem res=res ..crypt] :: XX rift.ames-state
             ~>  %memo./ames/chum
             :: XX rift.ames-state
-            =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
+            =/  gag  [p q.q]:u.u.res
             =/  ful  (en-beam bem)
             =/  ser  (jam gag)
             =/  cyr  (encrypt:crypt key cyf ser)
@@ -7538,12 +7542,14 @@
               ~
             ?~  res=(rof [~ ~] /ames/shut vew.u.inn bem.u.inn)
               ~
+            ?~  u.res
+              [~ ~]
             ::  XX  rift.ames-state
             =>  [key=key cyf=cyf bem=bem res=res ..crypt]
             ~>  %memo./ames/shut
             =/  cry=@uxI  (rsh 8 (rsh 3 -.u.key))
             =/  sgn=@uxI  (end 8 (rsh 3 -.u.key))
-            =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
+            =/  gag  [p q.q]:u.u.res
             =/  ful  (en-beam bem)
             =/  ser  (jam gag)
             =/  cyr  (encrypt:crypt cry iv=cyf ser)
