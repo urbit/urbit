@@ -1,6 +1,34 @@
 |=  *
 ~%  %hone  ..part  ~
 |%
+++  m
+  |%
+  ++  bind
+    |=  [lov=love fun=$-(vase love)]
+    ?.  ?=(%& -.lov)
+      lov
+    (fun p.lov)
+  --
++$  fear  [err=tang sut=vase]
++$  hate  [gen=hoon sut=vase]
++$  love  (each vase fear)
+++  rind
+  |=  [l=love f=$-(vase love)]
+  ^-  love
+  ?:  ?=(%& -.l)
+    (f p.l)
+  l
+::
+++  pure
+  |=  vax=vase
+  ^-  love
+  [%& vax]
+++  steal
+  |=  =love
+  ^-  vase
+  ?>  ?=(%& -.love)
+  p.love
+::
 ++  ut
   ~%    %ut
       +>+
@@ -621,7 +649,7 @@
         |%
         ++  halp  |~  [jut=* a=hoon]
                   ^-  fleg
-                  (bent jut %noun a)
+                  (steal (bent jut %noun a))
         ++  vant
           |%  ++  trep  |:  $:,[a=type b=wing c=type]
                         ^-  [axis type]
@@ -710,7 +738,7 @@
       =+  ;;([hud=poly sat=type gen=hoon] .*(bic [%0 (peg p.q.lop 3)]))
       ::  ~&  %easy
       ::  XX set vet to | if hud is wet
-      (bent(sut sat) bic %noun gen)
+      (steal (bent(sut sat) bic %noun gen))
     ::  ~&  %not-so-hard
     ::  ~&  pqlop=p.q.lop
     ::  ~&  %maybe-so-hard
@@ -1566,115 +1594,128 @@
   ++  bent
     ~/  %bent
     |=  [jut=noun gol=type gen=hoon]
-    |^  ^-  vase
+    |^  ^-  love
     %-  %-  slog  :_  ~
         :^  %palm  [" : " ~ ~ ~]
           ?@(-.gen ?~(-.gen %buck -.gen) %cons)
         [(sell sut jut) ~]
+    =*  loop  $
+    ^-  love
     ?:  ?&(=(%void sut) !?=([%dbug *] gen))
       ?.  |(!vet ?=([%lost *] gen) ?=([%zpzp *] gen))
-        ~>(%mean.'mint-vain' !!)
-      ~>  %mean.'bent-vain'
-      [%void !!]
+        [%| ~[leaf/"mint-vain"] [sut jut]]
+      ^-  love
+      [%| ~[leaf/"bent-vain"] [sut jut]]
     ?-    gen
     ::
         [^ *]
-      =+  hed=$(gen p.gen, gol %noun)
-      =+  tal=$(gen q.gen, gol %noun)
-      [(nice [%cell p.hed p.tal]) [q.hed q.tal]]
+      ;<  hed=vase  _rind  loop(gen p.gen, gol %noun)
+      ;<  tel=vase  _rind  loop(gen q.gen, gol %noun)
+      (pure (nice cell/[p.hed p.tel]) [q.hed q.tel])
     ::
-        [%brcn *]  (grow %gold p.gen %dry [%$ 1] q.gen)
-        [%brpt *]  (grow %gold p.gen %wet [%$ 1] q.gen)
-        [%cnts *]  (~(bent et p.gen q.gen) jut gol)
-        [%dtkt *]  pile
-        [%dtls *]  [(nice [%atom %$ ~]) +((@ q:$(gen p.gen, gol [%atom %$ ~])))]
-        [%sand *]  [(nice (play gen)) q.gen]
-        [%rock *]  [(nice (play gen)) q.gen]
+        [%brcn *]  (pure (grow %gold p.gen %dry [%$ 1] q.gen))
+        [%brpt *]  (pure (grow %gold p.gen %wet [%$ 1] q.gen))
+        [%cnts *]  (pure (~(bent et p.gen q.gen) jut gol))
+        [%dtkt *]  (pure pile)
+        [%dtls *]  (pure [(nice [%atom %$ ~]) +((@ q:(steal $(gen p.gen, gol [%atom %$ ~]))))])
+        [%sand *]  (pure [(nice (play gen)) q.gen])
+        [%rock *]  (pure [(nice (play gen)) q.gen])
         [%dttr *]
-      [(nice %noun) .*(q:$(gen p.gen, gol %noun) q:$(gen q.gen, gol %noun))]
+      %-  pure
+      [(nice %noun) .*(q:(steal $(gen p.gen, gol %noun)) q:(steal $(gen q.gen, gol %noun)))]
     ::
         [%dtts *]
-      =+  [one two]=[$(gen p.gen, gol %noun) $(gen q.gen, gol %noun)]
-      [(nice bool) =(q.one q.two)]
+      ;<  one=vase  _rind  loop(gen p.gen, gol %noun)
+      ;<  two=vase  _rind  loop(gen q.gen, gol %noun)
+      (pure (nice bool) =(q.one q.two))
     ::
-        [%dtwt *]  [(nice bool) .?(q:$(gen p.gen, gol %noun))]
-        [%hand *]  pile
-        [%ktbr *]  =+(vat=$(gen p.gen) [(nice (wrap(sut p.vat) %iron)) q.vat])
+        [%dtwt *]  (pure [(nice bool) .?(q:(steal $(gen p.gen, gol %noun)))])
+        [%hand *]  (pure pile)
+        [%ktbr *]  =+(vat=(steal $(gen p.gen)) (pure [(nice (wrap(sut p.vat) %iron)) q.vat]))
         [%ktls *]
-      =+(hif=(nice (play p.gen)) [hif q:$(gen q.gen, gol hif)])
+      =+  hif=(nice (play p.gen))
+      ;<  in=vase  _rind  loop(gen q.gen, gol hif)
+      (pure hif q.in)
     ::
-        [%ktpm *]  =+(vat=$(gen p.gen) [(nice (wrap(sut p.vat) %zinc)) q.vat])
+        [%ktpm *]  
+      ;<  vat=vase  _rind  loop(gen p.gen)
+      (pure [(nice (wrap(sut p.vat) %zinc)) q.vat])
+    ::
         [%ktsg *]  $(gen p.gen)  ::  XX blow
-        [%tune *]  [(face p.gen sut) jut]
-        [%ktwt *]  =+(vat=$(gen p.gen) [(nice (wrap(sut p.vat) %lead)) q.vat])
+        [%tune *]  (pure [(face p.gen sut) jut])
+        [%ktwt *]
+      ;<  vat=vase  _rind  loop(gen p.gen)
+      (pure [(nice (wrap(sut p.vat) %lead)) q.vat])
     ::
         [%note *]
-      =+  hum=$(gen q.gen)
-      [(hint [sut p.gen] p.hum) q.hum]
+      ;<  hum=vase  _rind  loop(gen q.gen)
+      (pure (hint [sut p.gen] p.hum) q.hum)
     ::
-        [%sgzp *]  ~_(duck(sut (play p.gen)) $(gen q.gen))
+        [%sgzp *]  ~_(duck(sut (play p.gen)) loop(gen q.gen))
         [%sggr *]  ::  !!  hmm how to jet
       ?:  ?=([%fast *] p.gen)
-        pile
-      $(gen q.gen)
+        (pure pile)
+      loop(gen q.gen)
     ::
         [%tsgr *]
-      =+  fid=$(gen p.gen, gol %noun)
-      $(sut p.fid, jut q.fid, gen q.gen)
+      ;<  fid=vase  _rind  loop(gen p.gen, gol %noun)
+      loop(sut p.fid, jut q.fid, gen q.gen)
     ::
         [%tscm *]
       $(gen q.gen, sut (busk p.gen))
     ::
         [%wtcl *]
-      =+  nor=$(gen p.gen, gol bool)
+      ;<  nor=vase  _rind  loop(gen p.gen, gol bool)
       =+  fex=(gain p.gen)
       =+  wux=(lose p.gen)
       =+  hiq=(play(sut fex) q.gen)
       =+  ran=(play(sut wux) r.gen)
-      :-  (fork hiq ran ~)
-      ?:  =(0 q.nor)
-        q:$(sut fex, gen q.gen)
-      q:$(sut wux, gen r.gen)
+      ;<  vax=vase  _rind  
+        ?:  =(0 q.nor)
+          loop(sut fex, gen q.gen)
+        loop(sut wux, gen r.gen)
+      (pure [(fork hiq ran ~) q.vax])
     ::
-        [%wthx *]  pile
-        [%fits *]  pile
+        [%wthx *]  (pure pile)
+        [%fits *]  (pure pile)
     ::
         [%dbug *]
       ~_  (show %o p.gen)
-      $(gen q.gen)
+      loop(gen q.gen)
     ::
-        [%zpcm *]  [(nice (play p.gen)) q.gen]          ::  XX validate!
-        [%lost *]  pile
+        [%zpcm *]  (pure [(nice (play p.gen)) q.gen])          ::  XX validate!
+        [%lost *]  (pure pile)
         [%zpmc *]
-      =+  vos=$(gol %noun, gen q.gen)
-      =+  ref=p:$(gol %noun, gen p.gen)
-      [(nice (cell ref p.vos)) burp(sut p.vos) q.vos]
+      ;<  vos=vase  _rind  loop(gol %noun, gen q.gen)
+      ;<  ref=vase  _rind  loop(gol %noun, gen p.gen)
+      (pure (nice (cell p.ref p.vos)) burp(sut p.vos) q.vos)
     ::
         [%zpgl *]
-      :-  (nice (play [%kttr p.gen]))
-      =<  q
-      %_    $
-          gol  %noun
-          gen
-        :^    %wtcl
-            :+  %cncl  [%limb %levi]
-            :~  [%tsgr [%zpgr [%kttr p.gen]] [%$ 2]]
-                [%tsgr q.gen [%$ 2]]
-            ==
-          [%tsgr q.gen [%$ 3]]
-        [%zpzp ~]
-      ==
+      ;<  in=vase  _rind
+        %_    loop
+            gol  %noun
+            gen
+          :^    %wtcl
+              :+  %cncl  [%limb %levi]
+              :~  [%tsgr [%zpgr [%kttr p.gen]] [%$ 2]]
+                  [%tsgr q.gen [%$ 2]]
+              ==
+            [%tsgr q.gen [%$ 3]]
+          [%zpzp ~]
+        ==
+      (pure (nice (play kttr/p.gen)) q.in)
     ::
-        [%zpts *]  pile
+        [%zpts *]  (pure pile)
         [%zppt *]  ?:((feel p.gen) $(gen q.gen) $(gen r.gen))
     ::
-        [%zpzp ~]  ~>(%mean.'bent-zap' !!)
+        [%zpzp ~]  `love`[%| ~[leaf/"bent-zap"] [sut jut]]
         *
       =+  doz=~(open ap gen)
       ?:  =(doz gen)
         ~_  (show [%c 'hoon'] [%q gen])
-        ~>(%mean.'mint-open' !!)
-      $(gen doz)
+        ^-  love
+        [%| ~[leaf/"mint-open"] [sut jut]]
+      loop(gen doz)
     ==
     ::
     ++  pile
@@ -1691,7 +1732,7 @@
     ++  grow
       |=  [mel=vair nym=(unit term) hud=poly ruf=hoon dom=(map term tome)]
       ^-  vase
-      =+  dan=^$(gen ruf, gol %noun)
+      =+  dan=(steal ^$(gen ruf, gol %noun))
       =+  pul=(mane gol mel nym hud dom)
       [(nice p.pul) q.pul q.dan]
     --
@@ -2731,6 +2772,12 @@
   --
 ::
 ++  slip
-  |=  [vax=vase gen=hoon]  ^-  vase
-  (~(bent ut p.vax) q.vax %noun gen)
+  |=  [vax=vase gen=hoon]  ^-  ~
+  =/  =love  (~(bent ut p.vax) q.vax %noun gen)
+  ?:  ?=(%& -.love)
+    %-  (slog leaf/"Success" (sell p.love) ~)
+    ~
+  %-  (slog leaf/"Failure" (sell sut.p.love) err.p.love)
+  ~
+::
 --
