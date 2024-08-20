@@ -5,28 +5,32 @@
   |%
   ++  bind
     |=  [lov=love fun=$-(vase love)]
-    ?.  ?=(%& -.lov)
+    ?.  ?=(%pure -.lov)
       lov
     (fun p.lov)
   --
 +$  fear  [err=tang sut=vase]
 +$  hate  [gen=hoon sut=vase]
-+$  love  (each vase fear)
++$  love  
+  $%  [%fear fear]
+      [%hate hate]
+      [%pure p=vase]
+  ==
 ++  rind
   |=  [l=love f=$-(vase love)]
   ^-  love
-  ?:  ?=(%& -.l)
+  ?:  ?=(%pure -.l)
     (f p.l)
   l
 ::
 ++  pure
   |=  vax=vase
   ^-  love
-  [%& vax]
+  [%pure vax]
 ++  steal
   |=  =love
   ^-  vase
-  ?>  ?=(%& -.love)
+  ?>  ?=(%pure -.love)
   p.love
 ::
 ++  ut
@@ -74,13 +78,23 @@
       %tack   tack
       %toss   toss
       %wrap   wrap
+      %steps  steps
+      %clr    clr
+      %step   step
     ==
   =+  :*  fan=*(set [type hoon])
           rib=*(set [type type hoon])
           vet=`?`&
+          steps=*(unit @ud)
       ==
   =+  sut=`type`%noun
   |%
+  ++  clr
+    ..clr(steps ~)
+  ++  step
+    |=  sep=@ud
+    ..step(steps `sep)
+  ::
   ++  clip
     |=  ref=type
     ?>  ?|(!vet (nest(sut ref) & sut))
@@ -1603,9 +1617,13 @@
     ^-  love
     ?:  ?&(=(%void sut) !?=([%dbug *] gen))
       ?.  |(!vet ?=([%lost *] gen) ?=([%zpzp *] gen))
-        [%| ~[leaf/"mint-vain"] [sut jut]]
+        [%fear ~[leaf/"mint-vain"] [sut jut]]
       ^-  love
-      [%| ~[leaf/"bent-vain"] [sut jut]]
+      [%fear ~[leaf/"bent-vain"] [sut jut]]
+    ?:  =(steps `0)
+      [%hate gen [sut jut]]
+    =?  steps  ?=(^ steps)
+      `(dec u.steps)
     ?-    gen
     ::
         [^ *]
@@ -1653,6 +1671,8 @@
     ::
         [%sgzp *]  ~_(duck(sut (play p.gen)) loop(gen q.gen))
         [%sggr *]  ::  !!  hmm how to jet
+      ?:  ?=(%hate p.gen)
+        [%hate q.gen [sut jut]]
       ?:  ?=([%fast *] p.gen)
         (pure pile)
       loop(gen q.gen)
@@ -1708,13 +1728,13 @@
         [%zpts *]  (pure pile)
         [%zppt *]  ?:((feel p.gen) $(gen q.gen) $(gen r.gen))
     ::
-        [%zpzp ~]  `love`[%| ~[leaf/"bent-zap"] [sut jut]]
+        [%zpzp ~]  `love`[%fear ~[leaf/"bent-zap"] [sut jut]]
         *
       =+  doz=~(open ap gen)
       ?:  =(doz gen)
         ~_  (show [%c 'hoon'] [%q gen])
         ^-  love
-        [%| ~[leaf/"mint-open"] [sut jut]]
+        [%fear ~[leaf/"mint-open"] [sut jut]]
       loop(gen doz)
     ==
     ::
@@ -2772,12 +2792,33 @@
   --
 ::
 ++  slip
-  |=  [vax=vase gen=hoon]  ^-  ~
+  |=  [vax=vase gen=hoon]  ^-  love
   =/  =love  (~(bent ut p.vax) q.vax %noun gen)
-  ?:  ?=(%& -.love)
-    %-  (slog leaf/"Success" (sell p.love) ~)
-    ~
-  %-  (slog leaf/"Failure" (sell sut.p.love) err.p.love)
-  ~
+  %.  love
+  (print-love love)
+++  print-love
+  |=  =love
+  ^+  same
+  ?-  -.love
+      %pure
+    (slog leaf/"Success" (sell p.love) ~)
+      %fear
+    (slog leaf/"Failure" (sell sut.love) err.love)
+      %hate
+    (slog leaf/"Paused" (sell sut.love) ~)
+  ==
+++  cont
+  |=  =love
+  ^+  love
+  ?.  ?=(%hate -.love)
+    (mean leaf/"Bad debugger state" ~)
+  (slip sut.love gen.love)
+::
+++  step
+  |=  [count=@ud vax=vase gen=hoon]  ^-  love
+  =/  uta  (~(step ut p.vax) count)
+  =/  =love  (bent:uta q.vax %noun gen)
+  %.  love
+  (print-love love)
 ::
 --
