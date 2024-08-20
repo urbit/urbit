@@ -6102,8 +6102,8 @@
             =;  page=pact:pact
               ?>(?=(%page +<.page) `q.page)
             =>  [res=res de=de:pact]
-            ~>  %memo./ames/get-page
-            =/  [pac=@ hax=@ pof=@]  ;;([@ @ @] q.q.u.u.res)
+            ~>  %memo./ames/get-page  :: XX unnecessary?
+            =+  ;;([pac=@ *] q.q.u.u.res)
             -:($:de pac)
           ::
           +|  %fren-helpers
@@ -7709,12 +7709,11 @@
                   ?.  ser.pac.nex
                     ``[%packet !>([pac pairs])]
                   =/  pof=@ux  (rep 8 proof)
-                  =;  airs=@ux
+                  =;  airs=(list @ux)
                     ``[%atom !>([p:(fax:plot (en:pact pac)) airs pof])]
-                  %+  rep  9
                   %+  turn  pairs
                   |=  p=(unit [l=@ux r=@ux])
-                  ?~  p  0
+                  ?~  p  0x0
                   (rep 8 ~[l.u.p r.u.p])
                 ::
                 ?-    typ.wan.pac.nex
