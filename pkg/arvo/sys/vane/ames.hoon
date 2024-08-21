@@ -5588,16 +5588,20 @@
             ?.  =(1 (div (add tob.data 1.023) 1.024))
               =/  =dire  :: flow swtiching
                 %*(fo-flip-dire fo side *@ud^(fo-infer-dire:fo load.pok))  :: XX assert load is plea/boon
-              ::  XX move to arm
-              =/  =wire
-                %.  %pok
-                fo-wire:(fo-abed:fo hen bone.pok dire)
+              ::
+              =+  fo-core=(fo-abed:fo hen bone.pok dire)
+              ?:  (fo-message-is-acked:fo-core mess.pok)
+                ::  don't peek if the message havs been already acked
+                ~&  >>  "fo-message-is-acked"
+                ::
+                fo-abet:(fo-send-ack:fo-core mess.pok)
               =/  =^space
                 chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
               %+  ev-emit  hen
-              [%pass wire %a meek/[space [her pat]:poke-name]]
+              [%pass (fo-wire:fo-core %pok) %a meek/[space [her pat]:poke-name]]
             ::  authenticate one-fragment message
             ::
+            ~|  data=data
             ?>  %^    ev-authenticate
                     (root:lss (met 3 dat.data)^dat.data)
                   aut.data
@@ -6243,6 +6247,15 @@
               ?:  &(?=(%poke command) ?=(%bak dire.side))  %boon        ::  /~a/poke/~b/bak
               ?:  &(?=(%ack command) ?=(%for dire.side))   %ack-boon    ::  /~b/ack/~a/bak
               ?>  &(?=(%ack command) ?=(%bak dire.side))   %ack-plea    ::  /~b/ack/~a/for
+            ::
+            ++  fo-message-is-acked  |=(seq=@ud =(seq last-acked.state))
+            ++  fo-message-not-in-range
+              |=  seq=@ud
+              ^-  ?
+              ?&  (gth seq +(last-acked.state))           ::  future ack
+                  ?|  (lte seq last-acked.state)
+                      (gth (sub last-acked.state seq) 10) ::  too far ack
+              ==  ==
             ::
             +|  %builders
             ::
