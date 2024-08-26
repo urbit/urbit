@@ -3,7 +3,7 @@
 ::  get list of kids piths from lore
 ::
 ++  kids-at-pith
-  |=  [=lore:neo =pith:neo]
+  |=  [lore=(axal:neo *) =pith:neo]
   ^-  (list pith:neo) 
   %~  tap  in 
   %~  key  by
@@ -45,6 +45,25 @@
   ?~  idea  ~
   `pail:(need idea)
 ::
+++  got-pail-by-pith
+  |=  [=lore:neo =pith:neo]
+  ^-  pail:neo
+  =/  =idea:neo  (~(got of:neo lore) pith)
+  pail.idea
+::
+++  get-pail-saga-by-pith
+  |=  [=lore:neo =pith:neo]
+  ^-  (unit pail:neo)
+  =/  idea=(unit idea:neo)  (~(get of:neo lore) pith)
+  ?~  idea  ~
+  `q.saga:(need idea)
+::
+++  got-pail-saga-by-pith
+  |=  [=lore:neo =pith:neo]
+  ^-  pail:neo
+  =/  idea=idea:neo  (~(got of:neo lore) pith)
+  q.saga:idea
+::
 ++  get-vase-by-pith
   |=  [=lore:neo =pith:neo]
   ^-  (unit vase)
@@ -52,27 +71,37 @@
   ?~  idea  ~
   `q.pail:(need idea)
 ::
-::  get pail.saga from idea 
-::  
-:: ++  pail-from-idea
-::   |=  =idea:neo
-::   ^-  pail:neo
-::   q.saga:(need idea)
+++  got-vase-by-pith
+  |=  [=lore:neo =pith:neo]
+  ^-  vase
+  =/  =idea:neo  (~(got of:neo lore) pith)
+  q.pail:idea
+::
+++  get-vase-saga-by-pith
+  |=  [=lore:neo =pith:neo]
+  ^-  (unit vase)
+  =/  idea=(unit idea:neo)  (~(get of:neo lore) pith)
+  ?~  idea  ~
+  `q.q.saga:(need idea)
+::
+++  got-vase-saga-by-pith
+  |=  [=lore:neo =pith:neo]
+  ^-  vase
+  =/  idea=idea:neo  (~(got of:neo lore) pith)
+  q.q.saga:idea
 ::
 ++  en-pith
   |=  =cord
   ^-  pith
   %-  pave:neo
   ;;  path
-  %-  stub  cord
+  %-  stab  cord
 ::
-:: ???
+::  produce list of values in axal
 ::
-++  en-tape-mast
-  |=  [vm=@tas =pith:neo]
-  ^-  tape
-  %-  en-tape:pith:neo
-  %+  welp  /[vm]
-  pith
+++  val
+|=  axal=(axal:neo *)
+^-  (list *)
+~(val by ~(tar of:neo axal))
 ::
 --
