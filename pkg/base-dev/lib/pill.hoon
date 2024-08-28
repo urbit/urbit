@@ -11,6 +11,7 @@
           boot-ova=(list)
           kernel-ova=(list unix-event)
           userspace-ova=(list unix-event)
+          cache=(list)
   ==  ==
 ::
 +$  unix-event
@@ -232,14 +233,15 @@
   ::    filesystem sync event.
   ::
   :+  %pill  %solid
-  :+  boot-ova  ~
-  =.  dez  (snoc dez [%base bas])
-  %+  weld
-    %+  turn  dez 
-    |=  [dek=desk bas=path] 
-    (file-ovum [dek bas exc])
-  ?.  prime  ~
-  [(prep-ovum (turn dez tail))]~
+  :^  boot-ova  ~
+    =.  dez  (snoc dez [%base bas])
+    %+  weld
+      %+  turn  dez
+      |=  [dek=desk bas=path]
+      (file-ovum [dek bas exc])
+    ?.  prime  ~
+    [(prep-ovum (turn dez tail))]~
+  cas=~
 ::
 ++  brass
   ::  sys: root path to boot system, `/~me/[desk]/now/sys`
@@ -278,20 +280,26 @@
         compiler-source
         arvo-source
     ==
-  ::  a pill is a 3-tuple of event-lists: [boot kernel userspace]
-  ::
-  :+  %pill  %brass
-  :+  boot-ova
+  =/  kernel-ova=(list unix-event)
     :~  (boot-ovum compiler-source arvo-source)
         (file-ovum2 [bas exc])
     ==
-  =.  dez  (snoc dez [%base bas])
-  %+  weld
-    %+  turn  dez 
-    |=  [dek=desk bas=path] 
-    (file-ovum [dek bas exc])
-  ?.  prime  ~
-  [(prep-ovum (turn dez tail))]~
+  ::
+  =/  cas  (mice [(weld boot-ova `(list)`kernel-ova) [2 [0 3] 0 2]] _~)
+  ~&  >>>  (lent ~(tap by +.cas))
+  ::
+  ::  a pill is a 3-tuple of event-lists: [boot kernel userspace]
+  ::
+  :+  %pill  %brass
+  :^    boot-ova  kernel-ova
+    =.  dez  (snoc dez [%base bas])
+    %+  weld
+      %+  turn  dez
+      |=  [dek=desk bas=path]
+      (file-ovum [dek bas exc])
+    ?.  prime  ~
+    [(prep-ovum (turn dez tail))]~
+  ~(tap by +.cas)
 ::
 ++  ivory
   |=  sys=path
@@ -309,7 +317,7 @@
       =/  nok  !.
         =>  *[ver=(trap vase) ~]
         !=  q:$:ver
-      ivory/[nok ver ~]
+      ivory/[nok ver ~ ~]
   ::
   ++  build-sys
     |=  [sub=(trap vase) nam=term]  ^-  (trap vase)
@@ -371,6 +379,184 @@
         `(prep-ovum (en-beam beak /) ~)
       ::
         `[/d/install/[as] [%seat as]]
+    ==
+  --
+::  +mice: %memo hint caching version of mink
+::
+++  mice  !.
+  |=  $:  [subject=* formula=*]
+          scry=$-(^ (unit (unit)))
+      ==
+  =|  trace=(list [@ta *])
+  =|  memo=(map)
+  |^  ^-  [tone _memo]
+      ?+  formula  :_(memo [%2 trace])
+          [^ *]
+        =^  head  memo  $(formula -.formula)
+        ?.  ?=(%0 -.head)  [head memo]
+        =^  tail  memo  $(formula +.formula)
+        :_  memo
+        ?.  ?=(%0 -.tail)  tail
+        [%0 product.head product.tail]
+      ::
+           [%0 axis=@]
+         :_  memo
+         =/  part  (frag axis.formula subject)
+         ?~  part  [%2 trace]
+         [%0 u.part]
+      ::
+           [%1 constant=*]
+         :_(memo [%0 constant.formula])
+      ::
+          [%2 subject=* formula=*]
+        =^  subject  memo  $(formula subject.formula)
+        ?.  ?=(%0 -.subject)  [subject memo]
+        =^  formula  memo  $(formula formula.formula)
+        ?.  ?=(%0 -.formula)  [formula memo]
+        %=  $
+          subject  product.subject
+          formula  product.formula
+        ==
+      ::
+          [%3 argument=*]
+        =^  argument  memo  $(formula argument.formula)
+        :_  memo
+        ?.  ?=(%0 -.argument)  argument
+        [%0 .?(product.argument)]
+      ::
+          [%4 argument=*]
+        =^  argument  memo  $(formula argument.formula)
+        :_  memo
+        ?.  ?=(%0 -.argument)  argument
+        ?^  product.argument  [%2 trace]
+        [%0 .+(product.argument)]
+      ::
+          [%5 a=* b=*]
+        =^  a  memo  $(formula a.formula)
+        ?.  ?=(%0 -.a)  [a memo]
+        =^  b  memo  $(formula b.formula)
+        :_  memo
+        ?.  ?=(%0 -.b)  b
+        [%0 =(product.a product.b)]
+      ::
+          [%6 test=* yes=* no=*]
+        =^  result  memo  $(formula test.formula)
+        ?.  ?=(%0 -.result)  [result memo]
+        ?+  product.result  :_(memo [%2 trace])
+          %&  $(formula yes.formula)
+          %|  $(formula no.formula)
+        ==
+      ::
+          [%7 subject=* next=*]
+        =^  subject  memo  $(formula subject.formula)
+        ?.  ?=(%0 -.subject)  [subject memo]
+        %=  $
+          subject  product.subject
+          formula  next.formula
+        ==
+      ::
+          [%8 head=* next=*]
+        =^  head  memo  $(formula head.formula)
+        ?.  ?=(%0 -.head)  [head memo]
+        %=  $
+          subject  [product.head subject]
+          formula  next.formula
+        ==
+      ::
+          [%9 axis=@ core=*]
+        =^  core  memo  $(formula core.formula)
+        ?.  ?=(%0 -.core)  [core memo]
+        =/  arm  (frag axis.formula product.core)
+        ?~  arm  :_(memo [%2 trace])
+        %=  $
+          subject  product.core
+          formula  u.arm
+        ==
+      ::
+          [%10 [axis=@ value=*] target=*]
+        ?:  =(0 axis.formula)  :_(memo [%2 trace])
+        =^  target  memo  $(formula target.formula)
+        ?.  ?=(%0 -.target)  [target memo]
+        =^  value  memo  $(formula value.formula)
+        :_  memo
+        ?.  ?=(%0 -.value)  value
+        =/  mutant=(unit *)
+          (edit axis.formula product.target product.value)
+        ?~  mutant  [%2 trace]
+        [%0 u.mutant]
+      ::
+          [%11 tag=@ next=*]
+        :: ~&  >  [%11 `@t`tag.formula]
+        =^  next  memo  $(formula next.formula)
+        :_  memo
+        ?.  ?=(%0 -.next)  next
+        :-  %0
+        .*  subject
+        [11 tag.formula 1 product.next]
+      ::
+          [%11 [tag=@ clue=*] next=*]
+        =^  clue  memo  $(formula clue.formula)
+        ?.  ?=(%0 -.clue)  [clue memo]
+        ?:  ?=(%memo tag.formula)
+          ?^  hit=(~(get by memo) subject next.formula)
+            [[%0 u.hit] memo]
+          =/  ton  (mink [subject next.formula] scry)
+          ?.  ?=(%0 -.ton)
+            [ton memo]
+          [ton (~(put by memo) [subject next.formula] product.ton)]
+        =^  next  memo
+          =?    trace
+              ?=(?(%hunk %hand %lose %mean %spot) tag.formula)
+            [[tag.formula product.clue] trace]
+          $(formula next.formula)
+        :_  memo
+        ?.  ?=(%0 -.next)  next
+        :-  %0
+        .*  subject
+        [11 [tag.formula 1 product.clue] 1 product.next]
+      ::
+          [%12 ref=* path=*]
+        =^  ref  memo  $(formula ref.formula)
+        ?.  ?=(%0 -.ref)  [ref memo]
+        =^  path  memo  $(formula path.formula)
+        :_  memo
+        ?.  ?=(%0 -.path)  path
+        =/  result  (scry product.ref product.path)
+        ?~  result
+          [%1 product.path]
+        ?~  u.result
+          [%2 [%hunk product.ref product.path] trace]
+        [%0 u.u.result]
+      ==
+  ::
+  ++  frag
+    |=  [axis=@ noun=*]
+    ^-  (unit)
+    ?:  =(0 axis)  ~
+    |-  ^-  (unit)
+    ?:  =(1 axis)  `noun
+    ?@  noun  ~
+    =/  pick  (cap axis)
+    %=  $
+      axis  (mas axis)
+      noun  ?-(pick %2 -.noun, %3 +.noun)
+    ==
+  ::
+  ++  edit
+    |=  [axis=@ target=* value=*]
+    ^-  (unit)
+    ?:  =(1 axis)  `value
+    ?@  target  ~
+    =/  pick  (cap axis)
+    =/  mutant
+      %=  $
+        axis    (mas axis)
+        target  ?-(pick %2 -.target, %3 +.target)
+      ==
+    ?~  mutant  ~
+    ?-  pick
+      %2  `[u.mutant +.target]
+      %3  `[-.target u.mutant]
     ==
   --
 --

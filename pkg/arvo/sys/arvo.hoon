@@ -779,7 +779,9 @@
       ~>  %slog.[0 leaf+"1-c (compiling compiler, wait a few minutes)"]
       =/  compiler-tool
         ~>  %bout
-        .*([compiler-gate noun/hoon.log] [%9 2 %10 [6 %0 3] %0 2])
+        =>  [compiler-gate=compiler-gate hoon-log=hoon.log]
+        ~>  %memo./boot/brass
+        .*([compiler-gate noun/hoon-log] [%9 2 %10 [6 %0 3] %0 2])
       ::
       ::  switch to the second-generation compiler.  we want to be
       ::  able to generate matching reflection nouns even if the
@@ -798,20 +800,27 @@
       ~>  %slog.[0 leaf+"1-e"]
       =/  kernel-span
         ~>  %bout
-        -:.*([compiler-gate -.compiler-tool '+>'] [%9 2 %10 [6 %0 3] %0 2])
+        =>  [compiler-gate=compiler-gate compiler-tool-dos=-.compiler-tool]
+        ~>  %memo./boot/brass
+        -:.*([compiler-gate compiler-tool-dos '+>'] [%9 2 %10 [6 %0 3] %0 2])
       ::
       ::  compile the arvo source against the kernel core.
       ::
       ~>  %slog.[0 leaf+"1-f"]
       =/  kernel-tool
         ~>  %bout
-        .*([compiler-gate kernel-span arvo.log] [%9 2 %10 [6 %0 3] %0 2])
+        =>  [compiler-gate=compiler-gate kernel-span=kernel-span arvo-log=arvo.log]
+        ~>  %memo./boot/brass
+        .*([compiler-gate kernel-span arvo-log] [%9 2 %10 [6 %0 3] %0 2])
       ::
       ::  create the arvo kernel, whose subject is the kernel core.
       ::
       ~>  %slog.[0 leaf+"1-g"]
       ~>  %bout
-      [.*(+>.compiler-gate +.kernel-tool) epic.log]
+      :_  epic.log
+      =>  [compiler-gate-sev=+>.compiler-gate kernel-tool-tre=+.kernel-tool]
+      ~>  %memo./boot/brass
+      .*(compiler-gate-sev kernel-tool-tre)
     --
   ::
   ::  |adapt
@@ -1511,8 +1520,10 @@
           ^+  ..pith
           =^  job=oped  fat.mod.sol  (~(adorn adapt fat.mod.sol) del all)
           =?  lul.mod.sol  ?=(^ lul.job)
+            ~>  %memo./boot/brass
             (smit:va "lull" pit /sys/lull/hoon u.lul.job)
           =?  zus.mod.sol  ?=(^ zus.job)
+            ~>  %memo./boot/brass
             (smit:va "zuse" lul.mod.sol /sys/zuse/hoon u.zus.job)
           %-  %+  need:wyrd   kel.ver.zen
               :~  lull/;;(@ud q:(slap lul.mod.sol limb/%lull))
@@ -1907,10 +1918,10 @@
       ::
       =^  job=oped:part  taf  (~(adorn adapt:part taf) del |)
       =?  lul  ?=(^ lul.job)
-       `(smit "lull" |.(pit) /sys/lull/hoon u.lul.job)
+        `(smit "lull" |.(pit) /sys/lull/hoon u.lul.job)
       =?  zus  ?=(^ zus.job)
         ?.  ?=(^ lul)
-         ~|(%larval-need-lull !!)
+          ~|(%larval-need-lull !!)
         `(smit "zuse" u.lul /sys/zuse/hoon u.zus.job)
       =?  van  !=(~ van.job)    ::  XX TMI
         ?.  ?=(^ zus)
