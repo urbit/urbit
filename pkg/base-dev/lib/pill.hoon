@@ -241,7 +241,7 @@
       (file-ovum [dek bas exc])
     ?.  prime  ~
     [(prep-ovum (turn dez tail))]~
-  cas=~
+  cache=~
 ::
 ++  brass
   ::  sys: root path to boot system, `/~me/[desk]/now/sys`
@@ -285,8 +285,10 @@
         (file-ovum2 [bas exc])
     ==
   ::
-  =/  cas  (mice [(weld boot-ova `(list)`kernel-ova) [2 [0 3] 0 2]] _~)
-  ~&  >>>  (lent ~(tap by +.cas))
+  =/  cache=(list)
+    %~  tap  by
+    +:(mice [boot-ova [2 [0 3] 0 2]] _~)
+  ~&  >>>  (lent cache)
   ::
   ::  a pill is a 3-tuple of event-lists: [boot kernel userspace]
   ::
@@ -299,7 +301,7 @@
       (file-ovum [dek bas exc])
     ?.  prime  ~
     [(prep-ovum (turn dez tail))]~
-  ~(tap by +.cas)
+  cache
 ::
 ++  ivory
   |=  sys=path
@@ -390,7 +392,7 @@
   =|  trace=(list [@ta *])
   =|  memo=(map)
   |^  ^-  [tone _memo]
-      ?+  formula  :_(memo [%2 trace])
+      ?+  formula  [[%2 trace] memo]
           [^ *]
         =^  head  memo  $(formula -.formula)
         ?.  ?=(%0 -.head)  [head memo]
@@ -399,14 +401,14 @@
         ?.  ?=(%0 -.tail)  tail
         [%0 product.head product.tail]
       ::
-           [%0 axis=@]
-         :_  memo
-         =/  part  (frag axis.formula subject)
-         ?~  part  [%2 trace]
-         [%0 u.part]
+          [%0 axis=@]
+        :_  memo
+        =/  part  (frag axis.formula subject)
+        ?~  part  [%2 trace]
+        [%0 u.part]
       ::
-           [%1 constant=*]
-         :_(memo [%0 constant.formula])
+          [%1 constant=*]
+        [[%0 constant.formula] memo]
       ::
           [%2 subject=* formula=*]
         =^  subject  memo  $(formula subject.formula)
@@ -442,7 +444,7 @@
           [%6 test=* yes=* no=*]
         =^  result  memo  $(formula test.formula)
         ?.  ?=(%0 -.result)  [result memo]
-        ?+  product.result  :_(memo [%2 trace])
+        ?+  product.result  [[%2 trace] memo]
           %&  $(formula yes.formula)
           %|  $(formula no.formula)
         ==
@@ -464,17 +466,10 @@
         ==
       ::
           [%9 axis=@ core=*]
-        =^  core  memo  $(formula core.formula)
-        ?.  ?=(%0 -.core)  [core memo]
-        =/  arm  (frag axis.formula product.core)
-        ?~  arm  :_(memo [%2 trace])
-        %=  $
-          subject  product.core
-          formula  u.arm
-        ==
+        [(mink [subject formula] scry) memo]
       ::
           [%10 [axis=@ value=*] target=*]
-        ?:  =(0 axis.formula)  :_(memo [%2 trace])
+        ?:  =(0 axis.formula)  [[%2 trace] memo]
         =^  target  memo  $(formula target.formula)
         ?.  ?=(%0 -.target)  [target memo]
         =^  value  memo  $(formula value.formula)
