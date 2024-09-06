@@ -5588,16 +5588,20 @@
             ?.  =(1 (div (add tob.data 1.023) 1.024))
               =/  =dire  :: flow swtiching
                 %*(fo-flip-dire fo side *@ud^(fo-infer-dire:fo load.pok))  :: XX assert load is plea/boon
-              ::  XX move to arm
-              =/  =wire
-                %.  %pok
-                fo-wire:(fo-abed:fo hen bone.pok dire)
+              ::
+              =+  fo-core=(fo-abed:fo hen bone.pok dire)
+              ?:  (fo-message-is-acked:fo-core mess.pok)
+                ::  don't peek if the message havs been already acked
+                ~&  >>  "fo-message-is-acked"
+                ::
+                fo-abet:(fo-send-ack:fo-core mess.pok)
               =/  =^space
                 chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
               %+  ev-emit  hen
-              [%pass wire %a meek/[space [her pat]:poke-name]]
+              [%pass (fo-wire:fo-core %pok) %a meek/[space [her pat]:poke-name]]
             ::  authenticate one-fragment message
             ::
+            ~|  data=data
             ?>  %^    ev-authenticate
                     (root:lss (met 3 dat.data)^dat.data)
                   aut.data
@@ -6102,8 +6106,8 @@
             =;  page=pact:pact
               ?>(?=(%page +<.page) `q.page)
             =>  [res=res de=de:pact]
-            ~>  %memo./ames/get-page
-            =/  [pac=@ hax=@ pof=@]  ;;([@ @ @] q.q.u.u.res)
+            ~>  %memo./ames/get-page  :: XX unnecessary?
+            =+  ;;([pac=@ *] q.q.u.u.res)
             -:($:de pac)
           ::
           +|  %fren-helpers
@@ -6243,6 +6247,15 @@
               ?:  &(?=(%poke command) ?=(%bak dire.side))  %boon        ::  /~a/poke/~b/bak
               ?:  &(?=(%ack command) ?=(%for dire.side))   %ack-boon    ::  /~b/ack/~a/bak
               ?>  &(?=(%ack command) ?=(%bak dire.side))   %ack-plea    ::  /~b/ack/~a/for
+            ::
+            ++  fo-message-is-acked  |=(seq=@ud =(seq last-acked.state))
+            ++  fo-message-not-in-range
+              |=  seq=@ud
+              ^-  ?
+              ?&  (gth seq +(last-acked.state))           ::  future ack
+                  ?|  (lte seq last-acked.state)
+                      (gth (sub last-acked.state seq) 10) ::  too far ack
+              ==  ==
             ::
             +|  %builders
             ::
@@ -7496,11 +7509,13 @@
             =/  view  ?@(vew.u.inn vew.u.inn (cat 3 [way car]:vew.u.inn))
             ?~  res=(rof ~ /ames/publ view bem.u.inn)
               ~
+            ?~  u.res
+              [~ ~]
             =/  priv=@uxI  (end 8 (rsh 3 priv.ames-state))  :: extract ed25519 key
             ::  XX  rift.ames-state
             =>  [bem=bem res=res priv=priv ..crypt]
             ~>  %memo./ames/publ
-            =/  gag  ?~(u.res ~ [p q.q]:u.u.res)  :: XX how does receiver distinguish these?
+            =/  gag  [p q.q]:u.u.res  :: XX how does receiver distinguish these?
             =/  ful  (en-beam bem)
             =/  ser  (jam gag)  :: unencrypted
             :^  ~  ~  %message
@@ -7518,10 +7533,12 @@
               ~
             ?~  res=(rof `[her ~ ~] /ames/chum vew.u.inn bem.u.inn)
               ~
+            ?~  u.res
+              [~ ~]
             =>  [key=u.key cyf=cyf bem=bem res=res ..crypt] :: XX rift.ames-state
             ~>  %memo./ames/chum
             :: XX rift.ames-state
-            =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
+            =/  gag  [p q.q]:u.u.res
             =/  ful  (en-beam bem)
             =/  ser  (jam gag)
             =/  cyr  (encrypt:crypt key cyf ser)
@@ -7538,12 +7555,14 @@
               ~
             ?~  res=(rof [~ ~] /ames/shut vew.u.inn bem.u.inn)
               ~
+            ?~  u.res
+              [~ ~]
             ::  XX  rift.ames-state
             =>  [key=key cyf=cyf bem=bem res=res ..crypt]
             ~>  %memo./ames/shut
             =/  cry=@uxI  (rsh 8 (rsh 3 -.u.key))
             =/  sgn=@uxI  (end 8 (rsh 3 -.u.key))
-            =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
+            =/  gag  [p q.q]:u.u.res
             =/  ful  (en-beam bem)
             =/  ser  (jam gag)
             =/  cyr  (encrypt:crypt cry iv=cyf ser)
@@ -7703,12 +7722,11 @@
                   ?.  ser.pac.nex
                     ``[%packet !>([pac pairs])]
                   =/  pof=@ux  (rep 8 proof)
-                  =;  airs=@ux
+                  =;  airs=(list @ux)
                     ``[%atom !>([p:(fax:plot (en:pact pac)) airs pof])]
-                  %+  rep  9
                   %+  turn  pairs
                   |=  p=(unit [l=@ux r=@ux])
-                  ?~  p  0
+                  ?~  p  0x0
                   (rep 8 ~[l.u.p r.u.p])
                 ::
                 ?-    typ.wan.pac.nex
@@ -7737,7 +7755,7 @@
                   =/  dat  [tob aut (cut boq [fag 1] ser)]
                   =/  pairs
                     =/  per  (bex (sub boq 13))  ::  XX  unguarded
-                    (swag [+((mul per fag)) (dec per)] pairs.lss-proof)
+                    (swag [(mul per fag) (dec per)] pairs.lss-proof)
                   [nam dat pairs proof.lss-proof]
                 ==
               ::

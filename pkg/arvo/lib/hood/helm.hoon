@@ -181,11 +181,11 @@
   ==
 ::
 ++  poke-send-hi
-  |=  [her=ship mes=(unit tape)]  =<  abet
+  |=  [her=ship mes=@]  =<  abet
   %-  emit
   :*  %pass  /helm/hi/(scot %p her)
       %agent  [her %hood]  %poke
-      %helm-hi  !>(?~(mes '' (crip u.mes)))
+      %helm-hi  !>(mes)
   ==
 ::
 ++  poke-send-ahoy
@@ -208,7 +208,9 @@
   ?:  =(%fail mes)
     ~&  %poke-hi-fail
     !!
-  abet:(flog %text "< {<src.bowl>}: {(trip mes)}")
+   ~&  [%is =(mes (crip (reap (met 3 mes) 'A')))]
+  abet:(flog %text "< {<src.bowl>}: {(scow %ud (met 3 mes))}")
+  :: abet:(flog %text "< {<src.bowl>}: {(trip mes)}")
 ::
 ++  poke-ames-prod
   |=  ships=(list ship)
