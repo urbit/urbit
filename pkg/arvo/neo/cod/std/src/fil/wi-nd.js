@@ -315,9 +315,14 @@ class extends HTMLElement {
     return JSON.parse(strats || '{}');
   }
   get strategies() {
-    return [...(this.getAttribute('strategies') || '').split(' ').map(m => {
-      return m.trim();
-    }).filter(f => !!f), '/tree'];
+    const userStrategies = (this.getAttribute('strategies') || '')
+      .split(' ')
+      .map(m => m.trim())
+      .filter(f => !!f);
+  
+    const uniqueStrategies = new Set([...userStrategies, '/hawk', '/tree', '/self']);
+  
+    return [...uniqueStrategies];
   }
   get strategyPoke() {
     let poke = {
@@ -337,8 +342,9 @@ class extends HTMLElement {
     //  ... eventually
     //
     return {
-      "/hawk": () => "htmx",
+      "/hawk": () => "hawk",
       "/tree": () => "tree",
+      "/self": () => "self",
       //
       "/mast": (x) => {
         let words = x.split("/").map(s => s.trim()).filter(s => !!s);
@@ -493,7 +499,7 @@ class extends HTMLElement {
     let menu = this.gid('menu');
     $(menu).children().remove();
     //
-    let top = $(`
+    /*let top = $(`
       <div class="fc g1">
         <span class="s-2 f3">renderer</span>
         <div class="fr g3 ac js">
@@ -521,8 +527,23 @@ class extends HTMLElement {
           </a>
         </div>
       </div>
+    `);*/
+    let top = $(`
+      <div class="fc g1">
+        <div class="fr g3 ac js">
+          <div class="grow"></div>
+          <a
+            href="${this.renderer}${this.here}"
+            class="p-1 s-1 f0 br1 bd2 b2 wfc fr ac js g1"
+            target="_blank"
+            >
+            <span>pop-out</span>
+            <span class="mso">arrow_outward</span>
+          </a>
+        </div>
+      </div>
     `);
-    $(top).find('h4').text(this.renderer);
+    /*$(top).find('h4').text(this.renderer);
     if (this.strategies.includes(this.renderer)) {
       $(top).find('#bm-save-btn').addClass('hidden')
     }
@@ -534,12 +555,12 @@ class extends HTMLElement {
     }
     $(top).find('#bm-del-btn').on('click', (e) => {
       $(this).emit('unbookmark-renderer', this.renderer)
-    });
-    menu.appendChild(top.get(0));
+    });*/
+    //menu.appendChild(top.get(0));
     //
     let bookmarks = $(`
       <div class="fc g1">
-        <span class="s-2 f3">bookmarks</span>
+        <span class="s-2 f3">renderers</span>
         <div class="frw g2 ac js">
         </div>
       </div>
