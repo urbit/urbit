@@ -1,5 +1,4 @@
 /-  lagoon
-!:
 =+  lagoon
 ::                                                    ::
 ::::                    ++la                          ::  (2v) vector/matrix ops
@@ -241,7 +240,7 @@
     %=  $
       idx         +(idx)
       shape.meta  t.shape.meta
-      res         [(^mul (^pow 2 bloq.meta) stride) res]
+      res         [(^mul (pow 2 bloq.meta) stride) res]
     ==
   ::
   ++  get-dim  :: convert scalar index to n-dimensional index
@@ -1026,7 +1025,7 @@
         %mul  |=([b=_1 c=_1] (~(sit fe bloq) (^mul b c)))
         %div  |=([b=_1 c=_1] (~(sit fe bloq) (^div b c)))
         %mod  |=([b=@ c=@] (~(sit fe bloq) (^mod b c)))
-        %pow  |=([b=@ c=@] (~(sit fe bloq) (^pow b c)))
+        %pow  |=([b=@ c=@] (~(sit fe bloq) (pow b c)))
         ::%exp  |=([b=@ c=@] (~(sit fe bloq) (^pow b c)))
         ::%log  |=([b=@ c=@] (~(sit fe bloq) (^pow b c)))
         %gth  |=([b=@ c=@] !(^gth b c))
