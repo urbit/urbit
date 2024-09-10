@@ -11012,6 +11012,7 @@
                 $%  [%mato p=term]                      ::
                     [%core p=(list @ta) q=wine]         ::
                     [%face p=term q=wine]               ::
+                    [%lens p=(set term) q=wine]         ::
                     [%list p=term q=wine]               ::
                     [%pear p=term q=@]                  ::
                     [%bcwt p=(list wine)]               ::
@@ -11076,6 +11077,12 @@
           [%face *]
         =^  cox  gid  $(q.ham q.q.ham)
         :_(gid [%palm [['=' ~] ~ ~ ~] [%leaf (trip p.q.ham)] cox ~])
+      ::
+          [%lens *]
+        =^  cox  gid  $(q.ham q.q.ham)
+        =/  nos=tank
+          [%rose ["," "\{" "}"] `(list tank)`(sort ~(tap in p.q.ham) aor)]
+        :_(gid [%palm ["≛" ~ ~ ~] cox nos ~])
       ::
           [%list *]
         =^  cox  gid  $(q.ham q.q.ham)
@@ -11210,6 +11217,9 @@
       ?~  wal
         ~
       [~ %palm [['=' ~] ~ ~ ~] [%leaf (trip p.q.ham)] u.wal ~]
+    ::
+        [%lens *]
+      $(q.ham q.q.ham)
     ::
         [%list *]
       ?:  =(~ lum)
@@ -11415,7 +11425,10 @@
     ::
         [%face *]
       =+  yad=$(sut q.sut)
-      ?^(p.sut yad [p.yad [%face p.sut q.yad]])
+      :-  p.yad
+      ?@  p.sut
+        [%face p.sut q.yad]
+      [%lens ~(key by p.p.sut) q.yad]
     ::
         [%fork *]
       =+  yed=(sort ~(tap in p.sut) aor)
