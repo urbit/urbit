@@ -9164,6 +9164,7 @@
           =/  [typ=type nam=(map term (pair axis type))]
             (flux(sut a) ref)
           ?:  ?=(%void typ)  %void
+          ?:  =(~ nam)  typ  ::NOTE  tmi
           %-  (curr face typ)
           %-  ~(rep by nam)
           |=  [[l=term a=axis n=type] t=tune]
