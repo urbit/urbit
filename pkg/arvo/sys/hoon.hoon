@@ -5875,24 +5875,6 @@
           ;~(pfix (just 'h') (stag %h dim:ag))
           ;~(pfix (just 'm') (stag %m dim:ag))
           ;~(pfix (just 's') (stag %s dim:ag))
-          ;~  pose  ;~(pfix (jest 'ms') (stag %ms dim:ag))     :: out of 1000
-                    ;~(pfix (jest 'mis') (stag %mis dim:ag))   :: out of 1024
-          ==
-          ;~  pose  ;~(pfix (jest 'us') (stag %us dim:ag))     :: out of 1000
-                    ;~(pfix (jest 'uis') (stag %uis dim:ag))   :: out of 1024
-          ==
-          ;~  pose  ;~(pfix (jest 'ns') (stag %ns dim:ag))     :: out of 1000
-                    ;~(pfix (jest 'nis') (stag %nis dim:ag))   :: out of 1024
-          ==
-          ;~  pose  ;~(pfix (jest 'ps') (stag %ps dim:ag))     :: out of 1000
-                    ;~(pfix (jest 'pis') (stag %pis dim:ag))   :: out of 1024
-          ==
-          ;~  pose  ;~(pfix (jest 'fs') (stag %fs dim:ag))     :: out of 1000
-                    ;~(pfix (jest 'fis') (stag %fis dim:ag))   :: out of 1024
-          ==
-          ;~  pose  ;~(pfix (jest 'as') (stag %as dim:ag))     :: out of 1000
-                    ;~(pfix (jest 'ais') (stag %ais dim:ag))   :: out of 1024
-          ==
         ==
         ;~(pose ;~(pfix ;~(plug dot dot) (most dot qix:ab)) (easy ~))
       ==
