@@ -5850,23 +5850,13 @@
       ==
       (stag %ud dem:ag)
     ==
-  +$  times  ?(%d %h %m %s %ms %mis %us %uis %ns %nis %ps %pis %fs %fis %as %ais)
-  ::  Zero-pad the length of a list by prefixing 0x0 elements.
-  ++  pad
-    |=  [a=(list @) b=@]
-    ^-  (list @)
-    ?:  (lth b (lent a))  a
-    =/  i  (lent a)
-    |-
-    ?:  =(b i)  a
-    $(i +(i), a [0x0 a])
   ++  crub
     ~+
     ;~  pose
       (cook |=(det=date `dime`[%da (year det)]) when)
     ::
       %+  cook
-        |=  [a=(list (pair times @)) b=(list @)]
+        |=  [a=(list [p=?(%d %h %m %s) q=@]) b=(list @)]
         =+  rop=`tarp`[0 0 0 0 b]
         |-  ^-  dime
         ?~  a
@@ -5876,126 +5866,6 @@
           %h  $(a t.a, h.rop (add q.i.a h.rop))
           %m  $(a t.a, m.rop (add q.i.a m.rop))
           %s  $(a t.a, s.rop (add q.i.a s.rop))
-          %ms
-            =/  tym  (rip 4 (add (rap 4 f.rop) (mul q.i.a 0x41.8937.4bc6.a7ef)))
-            %=  $
-              a   ?.  (gth (lent tym) 4)
-                    t.a
-                  `(list (pair times @))`(snoc `(list (pair times @))`t.a `(pair times @)`[%s (rap 4 (slag 4 tym))])
-              f.rop  ?.  (gth (lent tym) 4)
-                    tym
-                  (scag 4 tym)
-            ==
-          %mis
-            =/  tym  (rip 4 (add (rap 4 f.rop) (mul q.i.a (bex 54))))
-            %=  $
-              a   ?.  (gth (lent tym) 4)
-                    t.a
-                  `(list (pair times @))`(snoc `(list (pair times @))`t.a `(pair times @)`[%s (rap 4 (slag 4 tym))])
-              f.rop  ?.  (gth (lent tym) 4)
-                    tym
-                  (scag 4 tym)
-            ==
-          %us
-            =/  tym  (pad (rip 4 (add (rap 4 f.rop) (mul q.i.a 0x10c6.f7a0.b5ed))) 4)
-            %=  $
-              a   ?.  (gth (lent tym) 4)
-                    t.a
-                  `(list (pair times @))`(snoc `(list (pair times @))`t.a `(pair times @)`[%s (rap 4 (slag 4 tym))])
-              f.rop  ?.  (gth (lent tym) 4)
-                    tym
-                  (scag 4 tym)
-            ==
-          %uis
-            =/  tym  (pad (rip 4 (add (rap 4 f.rop) (mul q.i.a (bex 54)))) 4)
-            %=  $
-              a   ?.  (gth (lent tym) 4)
-                    t.a
-                  `(list (pair times @))`(snoc `(list (pair times @))`t.a `(pair times @)`[%s (rap 4 (slag 4 tym))])
-              f.rop  ?.  (gth (lent tym) 4)
-                    tym
-                  (scag 4 tym)
-            ==
-          %ns
-            =/  tym  (pad (rip 4 (add (rap 4 f.rop) (mul q.i.a 0x4.4b82.fa09))) 4)
-            %=  $
-              a   ?.  (gth (lent tym) 4)
-                    t.a
-                  `(list (pair times @))`(snoc `(list (pair times @))`t.a `(pair times @)`[%s (rap 4 (slag 4 tym))])
-              f.rop  ?.  (gth (lent tym) 4)
-                    tym
-                  (scag 4 tym)
-            ==
-          %nis
-            =/  tym  (pad (rip 4 (add (rap 4 f.rop) (mul q.i.a (bex 34)))) 4)
-            %=  $
-              a   ?.  (gth (lent tym) 4)
-                    t.a
-                  `(list (pair times @))`(snoc `(list (pair times @))`t.a `(pair times @)`[%s (rap 4 (slag 4 tym))])
-              f.rop  ?.  (gth (lent tym) 4)
-                    tym
-                  (scag 4 tym)
-            ==
-          %ps
-            =/  tym  (pad (rip 4 (add (rap 4 f.rop) (mul q.i.a 0x119.7998))) 4)
-            %=  $
-              a   ?.  (gth (lent tym) 4)
-                    t.a
-                  `(list (pair times @))`(snoc `(list (pair times @))`t.a `(pair times @)`[%s (rap 4 (slag 4 tym))])
-              f.rop  ?.  (gth (lent tym) 4)
-                    tym
-                  (scag 4 tym)
-            ==
-          %pis
-            =/  tym  (pad (rip 4 (add (rap 4 f.rop) (mul q.i.a (bex 24)))) 4)
-            %=  $
-              a   ?.  (gth (lent tym) 4)
-                    t.a
-                  `(list (pair times @))`(snoc `(list (pair times @))`t.a `(pair times @)`[%s (rap 4 (slag 4 tym))])
-              f.rop  ?.  (gth (lent tym) 4)
-                    tym
-                  (scag 4 tym)
-            ==
-          %fs
-            =/  tym  (pad (rip 4 (add (rap 4 f.rop) (mul q.i.a 0x480e))) 4)
-            %=  $
-              a   ?.  (gth (lent tym) 4)
-                    t.a
-                  `(list (pair times @))`(snoc `(list (pair times @))`t.a `(pair times @)`[%s (rap 4 (slag 4 tym))])
-              f.rop  ?.  (gth (lent tym) 4)
-                    tym
-                  (scag 4 tym)
-            ==
-          %fis
-            =/  tym  (pad (rip 4 (add (rap 4 f.rop) (mul q.i.a (bex 14)))) 4)
-            %=  $
-              a   ?.  (gth (lent tym) 4)
-                    t.a
-                  `(list (pair times @))`(snoc `(list (pair times @))`t.a `(pair times @)`[%s (rap 4 (slag 4 tym))])
-              f.rop  ?.  (gth (lent tym) 4)
-                    tym
-                  (scag 4 tym)
-            ==
-          %as
-            =/  tym  (pad (rip 4 (add (rap 4 f.rop) (mul q.i.a 0x12))) 4)
-            %=  $
-              a   ?.  (gth (lent tym) 4)
-                    t.a
-                  `(list (pair times @))`(snoc `(list (pair times @))`t.a `(pair times @)`[%s (rap 4 (slag 4 tym))])
-              f.rop  ?.  (gth (lent tym) 4)
-                    tym
-                  (scag 4 tym)
-            ==
-          %ais
-            =/  tym  (pad (rip 4 (add (rap 4 f.rop) (mul q.i.a (bex 4)))) 4)
-            %=  $
-              a   ?.  (gth (lent tym) 4)
-                    t.a
-                  `(list (pair times @))`(snoc `(list (pair times @))`t.a `(pair times @)`[%s (rap 4 (slag 4 tym))])
-              f.rop  ?.  (gth (lent tym) 4)
-                    tym
-                  (scag 4 tym)
-            ==
         ==
       ;~  plug
         %+  most
