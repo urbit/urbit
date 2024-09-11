@@ -1890,7 +1890,13 @@
             ~>  %slog.[0 leaf/"{cap}: {(scow uv+(mug txt))}"]
             %-  road  |.
             ~_  leaf/"{cap}: build failed"
-            (swat sub (rain pax txt))
+            =>  [tap=sub pax=pax txt=txt ..rain]
+            ~>  %memo./boot/brass
+            =/  gen  (rain pax txt)
+            ^-  (trap vase)
+            =/  gun  (~(mint ut p:$:tap) %noun gen)
+            |.  ~+
+            [p.gun .*(q:$:tap q.gun)]
           --
       ::
       |=  [grub fil=(list (pair path (cask)))]

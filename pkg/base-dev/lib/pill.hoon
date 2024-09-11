@@ -280,6 +280,7 @@
         compiler-source
         arvo-source
     ==
+  ::
   =/  kernel-ova=(list unix-event)
     :~  (boot-ovum compiler-source arvo-source)
         (file-ovum2 [bas exc])
@@ -287,7 +288,7 @@
   ::
   =/  cache=(list)
     %~  tap  by
-    +:(mice [boot-ova [2 [0 3] 0 2]] _~)
+    +:(mice [(weld boot-ova `(list)`(turn kernel-ova (lead *@da))) [2 [0 3] 0 2]] _~)
   ~&  >>>  (lent cache)
   ::
   ::  a pill is a 3-tuple of event-lists: [boot kernel userspace]
