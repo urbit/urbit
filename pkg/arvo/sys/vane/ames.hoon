@@ -6233,9 +6233,10 @@
             ::
             ++  fo-infer-dire
               |=  command=?(%plea %boon %ack-plea %ack-boon %nax)  ::  to %lull
-              ?+  command  !!  ::  XX naxplanation
+              ?-  command
                 %plea      %for
                 %boon      %bak
+                %nax       %bak  ::  XX naxplanation read only by plea sender?
                 %ack-plea  %bak
                 %ack-boon  %for
               ==
