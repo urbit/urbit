@@ -592,7 +592,7 @@ class extends HTMLElement {
   }
   chooseStrategy(here) {
     let strats = this.defaultStrategies;
-    let strat = strats[here] || ['/tree'];
+    let strat = strats[here] || ['/self'];
     return strat[0];
   }
   renderIcon(name) {

@@ -1,134 +1,185 @@
-/@  txt         ::  @t
-/@  diary       ::  name=@t
-/@  diary-diff  ::  ?([%put-entry id=@da =txt] [%del-entry id=@da])
-::
-::  outer core of a shrub: define state, pokes,
-::  dependencies, and kids
+/@  diary     
+/@  diary-diff
+/-  oxy=oxygen
+/-  feather-icons
+/-  serv=sky-server
 ^-  kook:neo
 |%
-::
-::  diary's state is a %diary, just a @t
-++  state
-  ^-  curb:neo
-  [%pro %diary]
-::
-::  diary takes pokes with stud %diary-diff
-++  poke
-  ^-  (set stud:neo)
-  (sy %diary-diff ~)
-::
-::  constrain shrubs below diary in the namespace
-::  by defining the types of their state and pokes
+++  state  pro/%diary
+++  poke   (sy %diary-diff %eyre-task ~)
+++  deps  *deps:neo
 ++  kids
-  ::
-  ::  kids:neo is a (unit port:neo)
-  ^-  kids:neo
   %-  some
-  ::
-  ::  port:neo is (pair dare:neo lads:neo)
-  ::  dare:neo is ?(%y %z)
-  ::  if %y, only constrain our immediate children
-  ::  if %z, recursively constrain all descendants
   :-  %y
-  ::  lads:neo is (map pish:neo lash:neo)
   %-  ~(gas by *lads:neo)
-  :~  :-  ::
-          ::  pish:neo
-          ::  to simplify: [%.n @da] means the kid's
-          ::  path contains any @da, and %.n is there
-          ::  to signify that the pith can not have more
-          ::  fields afterwards
-          [[%.n %da] %.y]
-      ::
-      ::  lash:neo is (pair curb:neo (set stud:neo))
-      ::  curb:neo defines the kids' state
-      ::  (set stud:neo) defines the kids' pokes
-      [[%only %txt] ~]
+  :~  :-  [|/%da &]
+      [only/%txt ~]
   ==
 ::
-::  diary has no other shrubs as dependencies
-++  deps
-  ^-  deps:neo
-  *deps:neo
-::
-::  inner core, business logic
 ++  form
   ^-  form:neo
+  =<
   |_  [=bowl:neo =aeon:neo =pail:neo]
-  ::
-  ::  if diary has no existing state, return
-  ::  the bunt of the state type, otherwise
-  ::  return the existing state
+  +*  web  ~(. +> [bowl pail])
   ++  init
     |=  old=(unit pail:neo)
     ^-  (quip card:neo pail:neo)
-    :-  ~
+    :-  [(bind:oxy bowl) ~]
     ?~  old
-      [%diary !>(*diary)]
+      diary/!>(*diary)
     u.old
   ::
   ++  poke
     |=  [=stud:neo vax=vase]
     ^-  (quip card:neo pail:neo)
-    ?>  =(%diary p.pail)
-    ?>  =(%diary-diff stud)
-    =/  state  !<(diary q.pail)
-    =/  act    !<(diary-diff vax)
-    ::
-    ::  assert the poke comes from our ship
-    ::  src.bowl:neo is (pair ship pith)
     ?>  =(our ship.src):bowl
-    ?-    -.act
-       %put-entry
-      ::   return unchanged state
-      :_  [%diary !>(state)]
-      ::
-      ::  create list of one card:neo
-      ::  card:neo is (pair pith:neo note:neo)
-      :~  :-  %+  welp
-                ::
-                ::  here.bowl is the path of this shrub
-                ::  /path/to/diary
-                here.bowl
-              ::
-              ::  append post id
-              ::  /path/to/diary/~2024.6.3..14.07.15..7098
-              ~[[%da id.act]]
+    ?+    stud  !!
+        %eyre-task
+      (handle:web !<(task:eyre:neo vax))
+        %diary-diff
+      =/  act  !<(diary-diff vax)
+      :_  pail
+      :~  ?-    -.act
+              %put-entry  
+            :-  (welp here.bowl [[%da id.act] ~])
+            [%make %txt `[%txt !>(txt.act)] ~]
           ::
-          ::  this note will %make a new shrub
-          ::  at the pith we defined above
-          ^-  note:neo
-          ::  [%make stud:neo (unit pail:neo) conf:neo]
-          :*  %make
-              ::
-              ::  new shrub has the implementation %txt
-              ::  see /imp/txt.hoon, a stub that allows
-              ::  you to create a %txt in the namespace
-              %txt
-              ::
-              ::  new shrub's initial state
-              ::  is the text from the poke
-              `[%txt !>(txt.act)]
-              ::
-              ::  conf:neo is (map term pith:neo)
-              ::  declare this new shrub's dependencies
-              ::  which are also shrubs; diary has none
-              ~
+              %del-entry  
+            :-  (welp here.bowl [[%da id.act] ~])
+            [%cull ~]
           ==
       ==
+    ==
+  --
+  ::
+  |_  [=bowl:neo =pail:neo]
+  ++  handle
+    |=  [eyre-id=@ta req=inbound-request:eyre]
+    ^-  (quip card:neo pail:neo)
+    :_  pail
+    ?+    method.request.req  
+        ~|(%unsupported-http-method !!)
     ::
-        %del-entry
-      ::  return unchanged state
-      :_  [%diary !>(state)]
+        %'GET'
+      =;  manx
+        (respond:oxy [bowl eyre-id req manx])
+      %~  render
+        ui
+      (pave:neo pax:(parse-url:oxy request.req))
+    ::
+        %'POST'
+      =;  poke
+        [here.bowl %poke [%diary-diff !>(poke)]]~
+      ^-  diary-diff
+      =/  body  (parse-body:oxy request.req)
+      =/  mu  ~(. manx-utils:oxy body)
+      =/  head  (@tas (got:mu %head))
+      ?+    head  !!
+          %put-entry
+        =/  text  (vol:mu "text")
+        [%put-entry now.bowl text]
       ::
-      ::  send a %cull note to /path/to/diary/<id>
-      ::  this will delete the diary entry.
-      :~  :-  %+  welp
-                here.bowl
-              ~[[%da id.act]]
-          ^-  note:neo
-          [%cull ~]
+          %del-entry
+        [%del-entry (slav %da (got:mu %diary-id))]
       ==
     ==
+  ::
+  ++  ui
+    |_  here=pith
+    ++  render
+      ^-  manx
+      ;html
+        ;head
+          ;*  old-standard-head-tags:serv
+          ;*  standard-head-tags:serv
+        ==
+        ;body
+          =hx-ext  "dom-enc"
+          ;main.p-page.mw-page.ma.fc.g5
+            ;h1.bold.f-3: Diary
+            ;+  diary-form
+            ;+  diary-items
+            ;+  refresher
+          ==
+        ==
+      ==
+    ::
+    ++  diary-form
+      ;form.fc.g2.as
+        =hx-post       (en-tape:pith:neo here)
+        =hx-target     "closest .p-page"
+        =hx-select     ".p-page"
+        =hx-swap       "outerHTML"
+        =head          "put-entry"
+        ;textarea.p2.bd1.br1.wf
+          =name  "text"
+          =placeholder  "today, i ..."
+          =oninput  "this.setAttribute('value', this.value)"
+          =rows  "5"
+          =required  ""
+          =autocomplete  "off"
+          ;
+        ==
+        ;button.p2.b1.br1.bd1.wfc.hover.loader
+          ;span.loaded: create
+          ;span.loading
+            ;+  loading.feather-icons
+          ==
+        ==
+      ==
+    ::
+    ++  diary-items
+      ;div#items.fc.g2
+        ;*
+        %-  turn
+        :_  link-entry
+        %+  sort
+          %~  tap
+            of:neo
+          (~(del of:neo kids.bowl) /)
+        |=  [a=[=pith *] b=[=pith *]]
+        (gth ->.pith.a ->.pith.b)
+      ==
+    ::
+    ++  link-entry
+      |=  [pax=pith =idea:neo]
+      =/  tape  (trip !<(@t q.q.saga.idea))
+      ;div.fr.g2
+        ;div.fc.g1.grow.br1.p-2.b1
+          ;span.f3: {(pretty-date `@da`->:pax)}
+          ;span.bold: {tape}
+        ==
+        ;button.p2.br1.b1.hover.loader
+          =hx-post  (en-tape:pith:neo here)
+          =head          "del-entry"
+          =hx-target     "closest .p-page"
+          =hx-select     ".p-page"
+          =hx-swap  "outerHTML"
+          =diary-id  (trip (snag 0 (pout pax)))
+          ;span.loaded
+            ;+  close.feather-icons
+          ==
+          ;span.loading
+            ;+  loading.feather-icons
+          ==
+        ==
+      ==
+    ::
+    ++  refresher
+      ;div
+        =hx-get  (en-tape:pith:neo here)
+        =hx-target     "#items"
+        =hx-select     "#items"
+        =hx-swap       "outerHTML"
+        =hx-trigger    "every 10s"
+        ;
+      ==
+    ::
+    ++  pretty-date
+      |=  date=@da
+      ^-  tape
+      =/  d  (yore date)
+      "{(y-co:co y:d)}-{(y-co:co m:d)}-{(y-co:co d:t:d)}"
+    --
   --
 --
