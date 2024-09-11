@@ -2053,6 +2053,7 @@
 +$  tang  (list tank)                                   ::  bottom-first error
 ::                                                      ::
 +$  iota                                                ::  typed path segment
+  $+  iota
   $~  [%n ~]
   $@  @tas
   $%  [%ub @ub]  [%uc @uc]  [%ud @ud]  [%ui @ui]
@@ -2077,6 +2078,7 @@
 ::           flat-mid, open, close
 ::
 +$  tank
+  $+  tank
   $~  leaf/~
   $@  cord
   $%  [%leaf p=tape]
@@ -4264,9 +4266,9 @@
   ::  ?.  ((sane a) b)  !!
   b
 ::
-++  trim                                                ::  tape split
-  |=  [a=@ b=tape]
-  ^-  [p=tape q=tape]
+++  trim                                                ::  list split
+  |*  [a=@ b=(list)]
+  ^+  [p=b q=b]
   ?~  b
     [~ ~]
   ?:  =(0 a)
@@ -6392,6 +6394,7 @@
       ==
   --                                                    ::
 +$  hoon                                                ::  hoon AST
+  $+  hoon
   $~  [%zpzp ~]                                         ::
   $^  [p=hoon q=hoon]                                   ::
   $%                                                    ::
@@ -6545,7 +6548,8 @@
               [%know p=stud]                            ::  global standard
               [%made p=term q=(unit (list wing))]       ::  structure
           ==                                            ::
-+$  type  $~  %noun                                     ::
++$  type  $+  type
+          $~  %noun                                     ::
           $@  $?  %noun                                 ::  any nouns
                   %void                                 ::  no noun
               ==                                        ::
@@ -13829,8 +13833,8 @@
         |=(a=axis [%& a])
       ;~  pose
         ;~(pfix lus dim:ag)
-        ;~(pfix pam (cook |=(a=@ ?:(=(0 a) 0 (mul 2 +($(a (dec a)))))) dim:ag))
-        ;~(pfix bar (cook |=(a=@ ?:(=(0 a) 1 +((mul 2 $(a (dec a)))))) dim:ag))
+        ;~(pfix pam (cook |=(a=@ (sub (bex +(a)) 2)) dim:ag))
+        ;~(pfix bar (cook |=(a=@ (sub (bex +(a)) 1)) dim:ag))
         ven
         (cold 1 dot)
       ==

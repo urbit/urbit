@@ -42,8 +42,8 @@
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
-    ?>  =(our src):bowl
     ?:  ?=(%noun mark)
+      ?>  =(our src):bowl
       =/  code  !<((unit @t) vase)
       =/  msg=tape
         ?~  code
@@ -56,6 +56,7 @@
       %-  (slog leaf+msg ~)
       [~ this(passcode code)]
     ?:  ?=(%json mark)
+      ?>  =(our src):bowl
       =/  jon=json  !<(json vase)
       =,  dejs:format
       =/  cmd
@@ -586,7 +587,6 @@
       %-  pairs
       :~  'messages'^(numb (lent messages))
           'packets'^(numb ~(wyt in packets))
-          'heeds'^(set-array heeds from-duct)
           'keens'^(set-array ~(key by keens) path)
       ==
     ::
@@ -650,7 +650,6 @@
     ::    }, ...],
     ::    closing: [bone, ..., bone],
     ::    corked: [bone, ..., bone],
-    ::    heeds: [['/paths', ...] ...]
     ::    scries:
     ::    ->  { =path
     ::          keen-state: {
@@ -777,8 +776,6 @@
           'closing'^(set-array closing numb)
         ::
           'corked'^(set-array corked numb)
-        ::
-          'heeds'^(set-array heeds from-duct)
         ::
           'scries'^(scries ~(tap by keens))
       ==

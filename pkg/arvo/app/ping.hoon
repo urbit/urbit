@@ -141,6 +141,9 @@
   ?.  =(our src):bowl    :: don't crash, this is where pings are handled
     `this
   ::
+  ?:  ?=(%czar (clan:title our.bowl))
+    `this
+  ::
   =^  cards  state
     ?:  ?=([%kick ?] q.vase)
       =?  mode.state  =(+.q.vase %.y)
@@ -156,6 +159,7 @@
 ++  on-peek
   |=  =path
   ^-  (unit (unit cage))
+  ?<  ?=([%x %whey ~] path)
   ``noun+!>(state)
 ::  +on-agent: handle ames ack
 ::
@@ -182,6 +186,8 @@
   =^  cards  state
     ?+    wire  `state
         [%wait *]
+      ?:  ?=(%czar (clan:title our.bowl))
+        `state
       ?.  ?=(%formal mode.state)  `state
       ?>  ?=(%wake +<.sign-arvo)
       ?^  error.sign-arvo
