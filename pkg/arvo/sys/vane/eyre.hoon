@@ -3157,6 +3157,8 @@
     ::    the client.
     ::
     =/  request-line  (parse-request-line url)
+    ?:  =([[~ ~] ~] request-line)
+      [[%four-oh-four ~] url]
     =/  parsed-url=(list @t)  site.request-line
     =?  parsed-url  ?=([%'~' %channel-jam *] parsed-url)
       parsed-url(i.t %channel)
