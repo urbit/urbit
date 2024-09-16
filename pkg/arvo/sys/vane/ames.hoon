@@ -5942,15 +5942,7 @@
     |^
     =/  van  ?@(vis.nom (end 3 vis.nom) way.vis.nom)
     =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
-    ?.  =(%c van)
-      (en-hunk (rof ~ /ames nom))
-    =+  pem=(rof [~ ~] /ames nom(vis %cp))
-    ?.  ?=(^ pem)    ~
-    ?.  ?=(^ u.pem)  ~
-    ~|  u.u.pem
-    =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
-    ?.  =([%black ~ ~] rul.r.per)  ~
-    (en-hunk (rof [~ ~] /ames nom))
+    (en-hunk (rof ~ /ames nom))
     ::
     ++  en-hunk
       |=  res=(unit (unit cage))
@@ -6025,7 +6017,7 @@
           ~
         ?:  ?=([~ %known *] peer)
           (get-forward-lanes our +.u.peer peers.ames-state)
-        =/  sax  (rof ~ /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
+        =/  sax  (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
         ?.  ?=([~ ~ *] sax)
           ~
         =/  gal  (rear ;;((list ship) q.q.u.u.sax))
@@ -6091,6 +6083,33 @@
     ::
         [%protocol %version ~]
       ``noun+!>(protocol-version)
+    ::
+        [%boot ~]
+      =/  who
+        =/  ship  our
+        |-
+        ^-  @p
+        =/  next  (^^sein:title rof /ames our now ship)
+        ?:  ?=(%czar (clan:title next))
+          next
+        $(ship next)
+      =/  per  (~(get by peers.ames-state) who)
+      ?.  ?=([~ %known *] per)  ``noun+!>(~)
+      =,  u.per
+      =/  ducs
+        %+  skim
+          ~(tap in ~(key by by-duct.ossuary))
+        |=  =duct
+        =(-.duct /gall/sys/way/(scot %p who)/ping)
+      ?~  ducs  ``noun+!>(~)
+      =/  ping-bone
+        (~(got by by-duct.ossuary) -.ducs)
+      =/  ping-snd=message-pump-state
+        (~(got by snd) ping-bone)
+      :^  ~  ~  %noun
+      !>  :*  ~  who  rift.ames-state  life.ames-state
+              ping-bone  current.ping-snd  next.ping-snd
+          ==
     ::
     ==
   ::

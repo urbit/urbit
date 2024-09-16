@@ -37,28 +37,28 @@
     !>  ?=(^ zar)
 ::
 ++  test-veri-good
-  =/  sed  [~zod 1 sec ~]
+  =/  fed  [~zod 1 sec ~]
   %+  expect-eq
-    !>  &+sed
-    !>  (veri:dawn ~zod sed pot ~)
+    !>  &+[[%2 ~] ~zod 0 [1 sec]~]
+    !>  (veri:dawn ~zod fed pot ~)
 ::
 ++  test-veri-not-spawned
-  =/  sed  [~zod 1 sec ~]
+  =/  fed  [~zod 1 sec ~]
   %+  expect-eq
     !>  |+[%not-keyed ~]
-    !>  (veri:dawn ~zod sed =>(pot .(net ~)) ~)
+    !>  (veri:dawn ~zod fed =>(pot .(net ~)) ~)
 ::
 ++  test-veri-wrong-key
-  =/  sed  [~zod 1 sec:ex:(pit:nu:crub:crypto 24 %foo) ~]
+  =/  fed  [~zod 1 sec:ex:(pit:nu:crub:crypto 24 %foo) ~]
   %+  expect-eq
     !>  |+[%key-mismatch ~]
-    !>  (veri:dawn ~zod sed pot ~)
+    !>  (veri:dawn ~zod fed pot ~)
 ::
 ++  test-veri-life-mismatch
-  =/  sed  [~zod 2 sec ~]
+  =/  fed  [~zod 2 sec ~]
   %+  expect-eq
     !>  |+[%life-mismatch ~]
-    !>  (veri:dawn ~zod sed pot ~)
+    !>  (veri:dawn ~zod fed pot ~)
 ::
 ++  test-veri-bad-multikey
   =/  fed=feed:jael
@@ -77,48 +77,48 @@
     !>  (veri:dawn ~zod [[%1 ~] ~zod ~] pot ~)
 ::
 ++  test-veri-already-booted
-  =/  sed  [~zod 1 sec ~]
+  =/  fed  [~zod 1 sec ~]
   ;:  weld
     %+  expect-eq
       !>  |+[%already-booted ~]
-      !>  (veri:dawn ~zod sed pot `[1 |])
+      !>  (veri:dawn ~zod fed pot `[1 |])
   ::
     %+  expect-eq
       !>  |+[%already-booted ~]
-      !>  (veri:dawn ~zod sed pot `[2 &])
+      !>  (veri:dawn ~zod fed pot `[2 &])
   ==
 ::
 ++  test-veri-earl-good
   =/  cub  (pit:nu:crub:crypto 24 %foo)
   =/  who  ~simtel-mithet-dozzod-dozzod
-  =/  sed
+  =/  fed
     =/  sig
       %-  sign:as:(nol:nu:crub:crypto sec)
       (shaf %earl (sham who 1 pub:ex:cub))
-    [who 1 sec:ex:cub `sig]
+    [[%2 ~] who 0 [1 sec:ex:cub]~]
   %+  expect-eq
-    !>  &+sed
-    !>  (veri:dawn who sed pot ~)
+    !>  &+fed
+    !>  (veri:dawn who fed pot ~)
 ::
 ++  test-veri-earl-parent-not-keyed
   =/  cub  (pit:nu:crub:crypto 24 %foo)
   =/  who  ~simtel-mithet-dozzod-dozzod
-  =/  sed
+  =/  fed
     =/  sig
       %-  sign:as:(nol:nu:crub:crypto sec)
       (shaf %earl (sham who 1 pub:ex:cub))
-    [who 1 sec:ex:cub `sig]
+    [[%2 ~] who 0 [1 sec:ex:cub]~]
   %+  expect-eq
-    !>  &+sed
-    !>  (veri:dawn who sed =>(pot .(net ~)) ~)
+    !>  &+fed
+    !>  (veri:dawn who fed =>(pot .(net ~)) ~)
 ::
 ++  test-veri-pawn-good
   =/  cub  (pit:nu:crub:crypto 24 %foo)
   =/  who=ship  `@`fig:ex:cub
-  =/  sed  [who 1 sec:ex:cub ~]
+  =/  fed  [who 1 sec:ex:cub ~]
   %+  expect-eq
-    !>  &+sed
-    !>  (veri:dawn who sed *point:azimuth-types ~)
+    !>  &+[[%2 ~] who 0 [1 sec:ex:cub]~]
+    !>  (veri:dawn who fed *point:azimuth-types ~)
 ::
 ++  test-veri-pawn-key-mismatch
   =/  cub  (pit:nu:crub:crypto 24 %foo)

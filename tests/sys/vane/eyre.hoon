@@ -1312,7 +1312,8 @@
     ++  ex-keen
       |=  =time
       %+  ex  ~[/http-blah]
-      =.  time  (sub time (mod time ~h1))
+      ::TODO  want to access eauth-cache-rounding:eyre-gate here but can't..?
+      =.  time  (sub time (mod time ~m5))
       [%pass wire %a %keen ~ ~sampel /e/x/(scot %da time)//eauth/url]
     ::
     ++  ex-yawn
@@ -1367,7 +1368,7 @@
   ;<  ~  bind:m
     %+  expect-moves  mos
     :~  (ex-keen now)
-        (ex-wait /eauth/expire/visitors/(scot %uv nonce) (add now ~m5))
+        (ex-wait /eauth/expire/visitors/(scot %uv nonce) (add now eauth-timeout:eyre-gate))
     ==
   ::  ~sampel gets back to us with a url, we redirect the requester
   ::
@@ -1428,7 +1429,7 @@
   ;<  =time  bind:m  get-now
   ::  expiry timer fires, we serve a response and delete the attempt
   ::
-  ;<  ~  bind:m  (wait ~m5)
+  ;<  ~  bind:m  (wait eauth-timeout:eyre-gate)
   ;<  mos=(list move)  bind:m
     =/  =^wire  /eauth/expire/visitors/(scot %uv nonce)
     (take wire ~[/http-blah] %behn %wake ~)
@@ -1518,7 +1519,7 @@
   ;<  ~  bind:m
     %+  expect-moves  mos
     :~  (ex-plea ~hoster %0 %open 0vnonce `0v4.qkgot.d07e3.pi1qd.m1bhj.ti8bo)
-        (ex-wait /eauth/expire/visiting/~hoster/0vnonce (add now ~m5))
+        (ex-wait /eauth/expire/visiting/~hoster/0vnonce (add now eauth-timeout:eyre-gate))
     ==
   ::  upon receiving an %okay from ~hoster, redirect the user
   ::
