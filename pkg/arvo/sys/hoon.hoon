@@ -10928,7 +10928,7 @@
                ids=(map type @)                         ::  types id
                dep=@ud                                  ::  remaining depth
                veb=?(%base %most %lest)                 ::  current verbosity
-               pin=*                                    ::  (map @tas ppin)
+               pin=vase                                 ::  (map term ppin)
           ==
       +$  base  $-([tase meta] (unit [meta tank]))      ::  base printer
       +$  ppin  $-([tase meta base] (unit [meta tank])) ::  custom printer
@@ -10936,12 +10936,12 @@
   ::
   |_  $:  dep=@ud                                       ::  maximum depth
           veb=?(%base %most %lest)                      ::  default verbosity
-          pin=(map @tas ppin)                           ::  print overrides
+          pin=(map term ppin)                           ::  print overrides
       ==
   ::
   ++  draw                                              ::  print type/vase
     |=  inp=tase 
-    +:(need (disc inp [~ ~ dep veb pin]))
+    +:(need (disc inp [~ ~ dep veb !>(pin)]))
   ::
   ++  disc                                              ::  base printer
     |=  [inp=tase eta=meta]
