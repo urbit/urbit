@@ -20,7 +20,7 @@
     +$  conf                                            ::  prettyprinter settings
       $:  dep=@ud                                       ::  maximum depth
           veb=?(%base %most %lest)                      ::  default verbosity
-          pin=(map @tas ppin:us)                        ::  print overrides
+          pin=(map term ppin:us)                        ::  print overrides
       ==                                                ::
     +$  session                                         ::  per conversation
       $:  say=sole-share                                ::  command-line state
