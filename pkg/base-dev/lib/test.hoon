@@ -21,13 +21,13 @@
         (bas - eta)
     =/  custom-printers=(map term ppin:us)  (my [[%face face-printer] ~])
     :~
-      :+  %palm  [": " ~ ~ ~] 
+      :+  %palm  [": " ~ ~ ~]
       [leaf+"expected" (~(draw us 20 %most custom-printers) [%| expected]) ~]
       :+  %palm  [": " ~ ~ ~]
       [leaf+"actual" (~(draw us 20 %most custom-printers) [%| actual]) ~]
     ==
   ::
-  =?  result  !(~(nest ut p.expected) | p.actual)
+  =?  result  !(~(nest ut p.actual) | p.expected)
     %+  weld  result
     ^-  tang
     :~  :+  %palm  [": " ~ ~ ~]
