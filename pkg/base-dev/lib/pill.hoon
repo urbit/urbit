@@ -2,6 +2,7 @@
 ::
 /-  dice
 ^?
+=<
 |%
 ::
 +$  pill
@@ -288,7 +289,7 @@
   ::
   =/  cache=(list)
     %~  tap  by
-    +:(mice [(weld boot-ova `(list)`(turn kernel-ova (lead *@da))) [2 [0 3] 0 2]] _~)
+    +:(mice (weld boot-ova `(list)`(turn kernel-ova (lead *@da))) [2 [0 3] 0 2])
   ~&  >>>  (lent cache)
   ::
   ::  a pill is a 3-tuple of event-lists: [boot kernel userspace]
@@ -384,14 +385,21 @@
         `[/d/install/[as] [%seat as]]
     ==
   --
+--
+~%  %non  ..part  ~
 ::  +mice: %memo hint caching version of mink
 ::
+|%
 ++  mice  !.
-  |=  $:  [subject=* formula=*]
-          scry=$-(^ (unit (unit)))
-      ==
+  ~/  %mice
+  |=  [subject=* formula=*]
+  =/  scry=$-(^ (unit (unit)))  _~
   =|  trace=(list [@ta *])
   =|  memo=(map)
+  =;  [ton=tone mem=_memo]
+    ?.  ?=(%0 -.ton)
+      [ton ~]
+    [ton mem]
   |^  ^-  [tone _memo]
       ?+  formula  [[%2 trace] memo]
           [^ *]
