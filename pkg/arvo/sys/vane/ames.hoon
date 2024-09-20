@@ -3155,7 +3155,6 @@
                     %-  ~(rep by rcv.peer-state)
                     |=  [[=^bone sink=message-sink-state] flows=_flows.fren]
                     ::  drop any partially received messages in live-messages
-                    ::  and reset last-heard.
                     ::
                     ::  if this was a naxplanation bone but we haven't finished
                     ::  sink it, also drop it. the message pump has enough
@@ -7520,7 +7519,7 @@
             =/  priv=@uxI  (end 8 (rsh 3 priv.ames-state))  :: extract ed25519 key
             ::  XX  rift.ames-state
             =>  [bem=bem res=res priv=priv ..crypt]
-            :: ~>  %memo./ames/publ
+            ~>  %memo./ames/publ
             =/  gag  [p q.q]:u.u.res  :: XX how does receiver distinguish these?
             =/  ful  (en-beam bem)
             =/  ser  (jam gag)  :: unencrypted
@@ -7542,7 +7541,7 @@
             ?~  u.res
               [~ ~]
             =>  [key=u.key cyf=cyf bem=bem res=res ..crypt] :: XX rift.ames-state
-            :: ~>  %memo./ames/chum
+            ~>  %memo./ames/chum
             :: XX rift.ames-state
             =/  gag  [p q.q]:u.u.res
             =/  ful  (en-beam bem)
@@ -7565,7 +7564,7 @@
               [~ ~]
             ::  XX  rift.ames-state
             =>  [key=key cyf=cyf bem=bem res=res ..crypt]
-            :: ~>  %memo./ames/shut
+            ~>  %memo./ames/shut
             =/  cry=@uxI  (rsh 8 (rsh 3 -.u.key))
             =/  sgn=@uxI  (end 8 (rsh 3 -.u.key))
             =/  gag  [p q.q]:u.u.res
@@ -7742,7 +7741,7 @@
                   ::
                   =/  lss-proof
                     =>  [ser=ser ..lss]
-                    :: ~>  %memo./ames/lss-auth
+                    ~>  %memo./ames/lss-auth
                     (build:lss (met 3 ser)^ser)
                   =/  dat  [tob [%& mes] (rep 8 proof.lss-proof)]  :: XX types
                   [nam dat ~ ~]
@@ -7750,7 +7749,7 @@
                     %data
                   =/  lss-proof
                     =>  [ser=ser ..lss]
-                    :: ~>  %memo./ames/lss-data
+                    ~>  %memo./ames/lss-data
                     (build:lss (met 3 ser)^ser)
                   =/  nam  [[our rif] [boq ?:(nit ~ [%data fag])] pat]
                   =/  aut
@@ -8399,21 +8398,21 @@
          ~&  priv.old
         :: =.  peers.old  ~
         :: =.   chums.old  ~
-          :: %-  ~(run by chums.old)
-          :: |=  =chum-state
-          :: ?:  ?=(%alien -.chum-state)
-          ::   ~&  %cleaning-alien
-          ::   chum-state
-          ::   :: chum-state(pit ~)
+        ::   %-  ~(run by chums.old)
+        ::   |=  =chum-state
+        ::   ?:  ?=(%alien -.chum-state)
+        ::     ~&  %cleaning-alien
+        ::     chum-state
+        ::     :: chum-state(pit ~)
 
-          :: %_  chum-state
-          ::   flows    ~&  %cleaning-flows  ~
-          ::   pit      ~&  %cleaning-pit  ~
-          ::   corked   ~
-          ::   ossuary  =|  =ossuary  ossuary
-          ::           ::  %_  ossuary
-          ::             :: next-bone  40
-          :: ==        :: ==
+        ::   %_  chum-state
+        ::     flows    ~&  %cleaning-flows  ~
+        ::     pit      ~&  %cleaning-pit  ~
+        ::     corked   ~
+        ::     ossuary  =|  =ossuary  ossuary
+        ::             ::  %_  ossuary
+        ::               :: next-bone  40
+        ::   ==        :: ==
         vane-gate(ames-state old)
       ::
       ?>  ?=([@ %adult *] old)
