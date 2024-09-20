@@ -5477,7 +5477,6 @@
               :+  (add 4 next-bone)
                 (~(put by by-duct) hen next-bone)
               (~(put by by-bone) next-bone hen)
-            ::
             ::  handle cork
             ::
             =/  cork=?  =([%$ /cork %cork ~] vane^wire^payload)
@@ -6317,9 +6316,13 @@
               ?-    -.poke
                   ?(%plea %boon)
                 ?:  |((fo-to-close poke) (~(has in corked.sat.per) side))
+                  ~&  >>>  %to-close-corked
                   ::  XX log
                   fo-core
-                fo-send(loads.state (put:fo-mop loads.state next-load.state poke))
+                =:  next-load.state  +(next-load.state)
+                    loads.state      (put:fo-mop loads.state next-load.state poke)
+                  ==
+                fo-send
                 ::
                   %sink
                 ~|  mess.poke
@@ -6401,13 +6404,11 @@
               =+  num=(wyt:fo-mop loads)
               ?:  =(0 num)
                 fo-core
-              ?.  (lte num send-window.state)
+              ?.  (gth send-window.state 0)
                 fo-core
               ::
               =^  [seq=@ud request=mesa-message]  loads  (pop:fo-mop loads)
-              =:  send-window.state  (dec send-window.state)
-                  next-load.state    +(next-load.state)
-                ==
+              =.  send-window.state  (dec send-window.state)
               ::  XX %ames call itself with a %moke task
               ::  on a wire used to infer the listener (the %poke %plea request; this)
               ::  when getting the %response $page with the %ack (tagged with %int)
@@ -6570,18 +6571,21 @@
               ::  increase the send-window so we can send the next message
               ::
               =.  send-window.state  +(send-window.state)
+              =.  can-be-corked
+                ?&  closing.state      ::  we sent a %cork %plea
+                    ?=(~ loads.state)  ::  nothing else is pending
+                ==
               =.  fo-core
-                =.  can-be-corked
-                  ?&  closing.state      ::  we sent a %cork %plea
-                      ?=(~ loads.state)  ::  nothing else is pending
-                  ==
-                ?:  ?|  ?=(%bak dire)  ::  %boon %ack; assumed %acked from vane
-                        can-be-corked  ::  %cork %ack; implicit ack
-                    ==
-                  fo-core
-                ::  don't give %done for %boon and %cork; implicit %ack
-                ::
-                (fo-emit (ev-got-duct bone) %give %done ~)
+                =~  fo-send  ::  send next messages
+                  ::
+                    ?:  ?|  ?=(%bak dire)  ::  %boon %ack; assumed %acked from vane
+                            can-be-corked  ::  %cork %ack; implicit ack
+                        ==
+                      fo-core
+                    ::  don't give %done for %boon and %cork; implicit %ack
+                    ::
+                    (fo-emit (ev-got-duct bone) %give %done ~)
+                ==
               ::  are there any cached acks?
               ::
               ?~  cack=(pry:fo-cac cache.state)  fo-core
@@ -6616,6 +6620,7 @@
               ::  increase the send-window so we can send the next message
               ::
               =.  send-window.state  +(send-window.state)
+              =.  fo-core            fo-send  ::  send next messages
               ::  XX check path.spar
               ::  XX path.spar will be the full namespace path, peel off before?
               ::  XX clear timer for the failed %poke
