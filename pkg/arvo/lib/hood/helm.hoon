@@ -420,11 +420,13 @@
     =/  parsed=(unit @if)
       %+  rush  q.data.u.full-file.res
       =+  tod=(sear |=(a=@ `(unit @)`?:((gth a 255) ~ `a)) (ape:ag ted:ab))
+      %+  ifix  [(star ace) (star ;~(pose ace (just '\0a')))]
       (bass 256 ;~(plug tod (stun [3 3] ;~(pfix dot tod))))
     ?~  parsed
       =/  v6=(unit)
         %+  rush  q.data.u.full-file.res
         =+  tod=(bass 16 ;~(plug six:ab (stun [0 3] six:ab)))
+        %+  ifix  [(star ace) (star ;~(pose ace (just '\0a')))]
         (bass 65.536 ;~(plug tod (stun [7 7] ;~(pfix col tod))))
       ?^  v6
         (strand-fail:rand %dns-ip-ipv6 ~)
