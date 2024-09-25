@@ -43,7 +43,7 @@
 ++  axle
   $:  ::  date: date at which http-server's state was updated to this data structure
       ::
-      date=%~2023.5.15
+      date=%~2024.8.20
       ::  server-state: state of inbound requests
       ::
       =server-state
@@ -992,10 +992,33 @@
       %^  return-static-data-on-duct  200  'text/plain'
       (as-octs:mimes:html (scot %p our))
     ::
+        %ip
+      (handle-ip address request)
+    ::
         %four-oh-four
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 authenticated url.request ~)
     ==
+  ::  +handle-ip: respond with the requester's ip
+  ::
+  ++  handle-ip
+    |=  [=address =request:http]
+    ^-  (quip move server-state)
+    ?.  =(%'GET' method.request)
+      %^  return-static-data-on-duct  405  'text/html'
+      (error-page 405 & url.request "may only GET ip")
+    %^  return-static-data-on-duct  200  'text/plain'
+    =/  ip=@t
+      ?-    address
+          [%ipv4 *]
+        (crip (tail ~(rend co [%$ %if +.address])))
+      ::
+          [%ipv6 *]
+        %-  crip
+        %+  scan  ~(rend co [%$ %is +.address])
+        ;~(pfix dot (star ;~(pose (cold ':' dot) next)))
+      ==  
+    (as-octs:mimes:html ip)
   ::  +handle-name: respond with the requester's @p
   ::
   ++  handle-name
@@ -1195,7 +1218,7 @@
         %channel
       on-cancel-request:by-channel
     ::
-        ?(%scry %four-oh-four %name %host)
+        ?(%scry %four-oh-four %name %host %ip)
       ::  it should be impossible for these to be asynchronous
       ::
       !!
@@ -3416,6 +3439,7 @@
           [[~ /~/scry] duct [%scry ~]]
           [[~ /~/name] duct [%name ~]]
           [[~ /~/host] duct [%host ~]]
+          [[~ /~/ip] duct [%ip ~]]
       ==
     [~ http-server-gate]
   ::  %trim: in response to memory pressure
@@ -3564,10 +3588,12 @@
         %turf
       =*  domains  domains.server-state.ax
       =/  mod=(set turf)
-        ?:  ?=(%put action.http-rule.task)
-          (~(put in domains) turf.http-rule.task)
-        (~(del in domains) turf.http-rule.task)
-      ?:  =(domains mod)
+        ?-  -.action.http-rule.task
+          %put  (~(put in domains) turf.action.http-rule.task)
+          %del  (~(del in domains) turf.action.http-rule.task)
+          %new  turfs.action.http-rule.task
+        ==
+      ?:  &(!?=(%new -.action.http-rule.task) =(domains mod))
         [~ http-server-gate]
       =.  domains  mod
       :_  http-server-gate
@@ -3908,6 +3934,7 @@
             [date=%~2023.3.16 server-state=server-state-2]
             [date=%~2023.4.11 server-state-3]
             [date=%~2023.5.15 server-state]
+            [date=%~2024.8.20 server-state]
         ==
       ::
       +$  server-state-0
@@ -4103,8 +4130,19 @@
       bindings.old
     ==
   ::
+  ::  adds /~/ip
+  ::
       %~2023.5.15
+    %=    $
+        date.old  %~2024.8.20
+    ::
+        bindings.old
+      (insert-binding [[~ /~/ip] outgoing-duct.old [%ip ~]] bindings.old)
+    ==
+  ::
+      %~2024.8.20
     http-server-gate(ax old)
+  ::
   ==
 ::  +stay: produce current state
 ::
@@ -4208,6 +4246,8 @@
     %connections           ``noun+!>(connections.server-state.ax)
     %authentication-state  ``noun+!>(auth.server-state.ax)
     %channel-state         ``noun+!>(channel-state.server-state.ax)
+    %domains               ``noun+!>(domains.server-state.ax)
+    %ports                 ``noun+!>(ports.server-state.ax)
     ::
       %host
     %-  (lift (lift |=(a=hart:eyre [%hart !>(a)])))
