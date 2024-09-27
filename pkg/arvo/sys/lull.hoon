@@ -1820,7 +1820,7 @@
   ::
   ++  pact
     =>  |%
-        +$  frag  @udF
+        +$  frag  @udG
         +$  ship  @pH
         +$  rift  @udF
         +$  bloq  @D
@@ -1830,21 +1830,11 @@
               pat=path
           ==
         +$  auth
+          ::  %& for auth packet
+          ::  %| for data packets
           ::
-          ::  %0 for fragment 0 or auth packet
-          ::    ~      for 1-fragment message and auth packets
-          ::    [~ %&] for >4-fragment messages
-          ::    [~ %&] for 2-fragment messages
-          ::    [~ %|] for 3-4-fragment
-          ::
-          ::  %1 for fragments 1 - N/2
-          ::  ~  for fragments (N/2)+1 - N
-          ::
-          $@  ~
-          $%  [%0 p=auth:mess q=(unit $@(@uxI (pair @uxI @uxI)))]
-              [%1 p=(pair @uxI @uxI)]
-          ==
-        +$  data  [tot=frag aut=auth:pact dat=@]
+          (each auth:mess (unit (pair @uxI @uxI)))
+        +$  data  [tob=@ud aut=auth:pact dat=@]
         +$  lane  $@  @ux
                   $%  [%if p=@ifF q=@udE]
                       [%is p=@isH q=@udE]
@@ -1871,8 +1861,8 @@
       =/  hed=plot
         =/  nex=@B
           ?.  ?=(%page typ)  0b0
-          ?~  r.pak            0b0
-          ?^  t.r.pak          0b11
+          ?~  r.pak          0b0
+          ?^  t.r.pak        0b11
           ?:(?=([%if *] i.r.pak) 0b1 0b10)
         (en:head nex typ hop.pak (mug p:(fax:plot bod)))
       [hed bod]
@@ -2013,10 +2003,11 @@
       ^-  plot
       =/  ran  ?~(her 0 (xeb (dec (met 4 (end 7 her)))))
       =/  ryf  ?~(rif 0 (dec (met 3 rif)))  :: XX is rift always non-zero?
-      =+  ^=  [nit tau gaf gyf fag]
-        ?~  wan  [0b1 0b0 0b0 0 0]
-        =/  gyf  ?~(fag.wan 1 (met 3 (end 5 fag.wan)))
-        [0b0 ?:(?=(%auth typ.wan) 0b1 0b0) (dec gyf) gyf fag.wan]
+      =/  [nit=@ tau=@ gaf=@ gyf=@ fag=@]
+        ?~  wan
+          [0b1 0b0 0b0 0 0]
+        =/  gaf  (dec (xeb (met 3 (max 1 fag.wan))))  :: XX xeb wrong here; fragments > 0xffff?
+        [0b0 ?:(?=(%auth typ.wan) 0b1 0b0) gaf (bex gaf) fag.wan]
       ::
       =/  tap  =-([p=(met 3 -) q=-] `@t`(rap 3 (join '/' pat)))
       ?>  &(?=(^ pat) (lth p.tap ^~((bex 16)))) :: XX truncate instead?
@@ -2037,7 +2028,7 @@
         %-  (hew b pat)
         :^    who=[her=(bex +(ran.c)) rif=+(ryf.c)]
             boq=1
-          fag=?:(=(0b1 nit.c) 0 +(gaf.c))
+          fag=?:(=(0b1 nit.c) 0 (bex gaf.c))
         tap=2
       ::
       ::  XX ?<  =(0 tap.d)
@@ -2069,28 +2060,26 @@
   ++  data
     |%
     ++  en
-      |=  [tot=frag:pact aut=auth:pact dat=@]
+      |=  [tob=@ud aut=auth:pact dat=@]
       ^-  plot
-      =/  lot  (met 3 (end 5 tot))
+      =/  lot  (dec (met 3 (max 1 tob)))
+      ?>  (lte lot 3)
       ::
-      =/  [[aul=@ubB aum=plat:plot] aur=@ubB aup=plat:plot]
-        ?~  aut           [[0b0 0] 0b0 0]
-        ?:  ?=(%1 -.aut)  [[0b1 [32 p]] 0b10 [32 q]]:p.aut
-        :-  =>  p.aut
-            ?:(?=(%& -) [0b10 64 p] [0b11 32 p])
-        =/  [aur=@ubB has=(list plat:plot)]
-          ?~    q.aut  [0b0 ~]
-          ?@  u.q.aut  [0b1 [1 u.q.aut] ~]
-          [0b10 [[1 p] [1 q] ~]:u.q.aut]
-        [aur s+~ 8 has]
+      =/  [aub=@ubB aum=plat:plot]
+        ?-  aut
+          [%& %& *]   [0b0 64 +.p.aut]
+          [%& %| *]   [0b10 16 +.p.aut]
+          [%| ~]      [0b1 0]
+          [%| ^]      [0b11 s+~ 8 [1 p] [1 q] ~]:u.p.aut
+        ==
       ::
       =/  len  (met 3 dat)
       =/  nel  (met 3 len)
       =/  men=(pair @B @A)
         ?:((lth nel 3) [nel 0] [0b11 1])
       :+  bloq=3
-        [s+~ 0 [2 (dec lot)] [2 aul] [2 aur] [2 p.men] ~]
-      [[lot tot] aum aup [q.men nel] [nel len] [len dat] ~]
+        [s+~ 0 [2 lot] [2 aub] [2 0] [2 p.men] ~]
+      [[(bex lot) tob] aum [q.men nel] [nel len] [len dat] ~]
     ::
     ++  de
       |=  a=bite
@@ -2098,38 +2087,32 @@
       |=  dat=@
       ^-  [data:pact boq=bloq sep=step]
       =^  c  b
-        ((hew b dat) [bot=2 [aul=2 aur=2] men=2])
+        ((hew b dat) [lot=2 [aub=2 nil=2] men=2])
       =.  b  [3 (rig b 3)]
       =^  d  b
         %-  (hew b dat)
-        :^    tot=+(bot.c)
-            aum=?+(aul.c 0x0 %0b10 `@`64, %0b11 `@`32)
-          aup=?+(aur.c 0x0 %0b1 `@`32, %0b10 [`@`32 `@`32])
+        :+  tob=(bex lot.c)
+          ^=  aub
+          ?+  aub.c  !!
+            %0b0   `@`64
+            %0b10  `@`16
+            %0b1   `@`0
+            %0b11  [`@`32 `@`32]
+          ==
         nel=?.(=(3 men.c) 0 1)
       ::
       =/  aut=auth:pact
-        =/  mes=(unit auth:mess)
-          ?+  aul.c  !!
-            %0b0   ?>(=(0b0 aur.c) ~)
-            %0b1   ?>(=(0b10 aur.c) ~)
-            %0b10  `&+aum.d
-            %0b11  `|+aum.d
-          ==
-        =/  pac=(unit $@(@uxI (pair @uxI @uxI)))
-          ?+  aur.c  !!
-            %0b0   ?>(=(0 aup.d) ~)
-            %0b1   ?>(?=(@ aup.d) `aup.d)
-            %0b10  ?>(?=(^ aup.d) `aup.d)
-          ==
-        ?^  mes  [%0 u.mes pac]
-        ?:  =(0b0 aul.c)  ~
-        ?>  &(=(0b1 aul.c) ?=([~ @ @] pac))
-        [%1 u.pac]
+        ?+  aub.c  !!
+          %0b0   [%& %& ?>(?=(@ aub.d) aub.d)]
+          %0b10  [%& %| ?>(?=(@ aub.d) aub.d)]
+          %0b1   [%| ~]
+          %0b11  [%| ?>(?=(^ aub.d) `aub.d)]
+        ==
       ::
       =/  nel  ?.(=(3 men.c) men.c nel.d)
       =^  len  sep.b  [(cut 3 [sep.b nel] dat) (add sep.b nel)]
       =^  dat  sep.b  [(cut 3 [sep.b len] dat) (add sep.b len)]
-      [[tot.d aut dat] b]
+      [[tob.d aut dat] b]
     --
   ::
   ++  name-to-beam
@@ -2304,13 +2287,10 @@
           ++  hash  (aura 'uxI')
           ++  mess-auth
             (pick (both (just %&) (aura 'uxJ')) (both (just %|) hash))
-          ++  pact-auth
-            (pick (just ~) (both (just ~) (pick hash (both hash hash))))
           ++  auth
             ;:  pick
-              (just ~)
-              :(both (just %1) hash hash)
-              :(both (just %0) mess-auth pact-auth)
+              :(both (just %|) (pick (just ~) :(both (just ~) hash hash)))
+              :(both (just %&) mess-auth)
             ==
           --
       ^-  $-(@uvJ [data:pact @uvJ])

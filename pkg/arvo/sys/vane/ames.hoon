@@ -1601,10 +1601,12 @@
         =/  pax  (etch-path path.binding)
         [(add p.pax 32) (can 3 pax [32 root.binding] ~)]
       ::
+      ++  kdf  kdf:blake3:blake:crypto
+      ::
       ++  crypt
         |=  [key=@uxI iv=octs msg=octs]
         ^-  octs
-        =/  x  (xchacha:chacha:crypto 8 key (hash 24 iv))
+        =/  x  (xchacha:chacha:crypto 8 key (kdf 24 "mesa-crypt-iv" iv))
         (chacha:crypto 8 key.x nonce.x 0 msg)
       ::
       ++  sign
@@ -1643,7 +1645,7 @@
       ++  seal-path
         |=  [key=@uxI =path]
         ^-  @
-        =/  keys  (hash 64 32^key)
+        =/  keys  (kdf 64 "mesa-aead" 32^key)
         =/  pat  (etch-path path)
         =/  tag  (keyed-hash (rsh 8 keys) 16 pat)
         =/  cyf  (crypt (end 8 keys) 16^tag pat)
@@ -1652,7 +1654,7 @@
       ++  open-path
         |=  [key=@uxI sealed=@]
         ^-  path
-        =/  keys  (hash 64 32^key)
+        =/  keys  (kdf 64 "mesa-aead" 32^key)
         =/  wid  (dec (met 3 sealed))
         ?>  =(0x1 (cut 3 [wid 1] sealed))
         =/  [tag=@ux cyf=@ux]  [(end [3 16] sealed) (rsh [3 16] sealed)]
@@ -1661,10 +1663,6 @@
         (sift-path pat)
       ::
       --
-    ::
-    ++  hash
-      |=  [out=@ud msg=octs]
-      (blake3:blake:crypto out msg)
     ::
     ++  keyed-hash
       |=  [key=@uxI out=@ud msg=octs]
@@ -3157,7 +3155,6 @@
                     %-  ~(rep by rcv.peer-state)
                     |=  [[=^bone sink=message-sink-state] flows=_flows.fren]
                     ::  drop any partially received messages in live-messages
-                    ::  and reset last-heard.
                     ::
                     ::  if this was a naxplanation bone but we haven't finished
                     ::  sink it, also drop it. the message pump has enough
@@ -5358,26 +5355,12 @@
             |=  [=path =ship]
             ^-  @uxI
             =/  tyl=(pole knot)  path
-            ?+    tyl  !!
-                [%publ lyf=@ pat=*]
-              =/  per  (ev-got-per ship)
-              (end 8 (rsh 3 public-key.sat.per))
-            ::
-                [%chum lyf=@ her=@ hyf=@ pat=[cyf=@ ~]]
-              =/  her  (slaw %p her.tyl)
-              ?>  ?=(^ her)
-              =/  her=@p  ?:(=(u.her our) ship u.her)
-              =/  per  (ev-got-per her)
-              (end 8 (rsh 3 symmetric-key.sat.per))
-            ::
-                [%shut kid=@ pat=[cyf=@ ~]]
-              =/  kid  (slaw %ud kid.tyl)
-              ?>  ?=(^ kid)
-              =/  per  (ev-got-per ship)
-              ?~  key=(get:key-chain client-chain.sat.per u.kid)
-                !!  :: XX handle
-              (end 8 (rsh 3 -.u.key))
-            ==
+            ?>  ?=([%publ lyf=@ pat=*] tyl)
+            =/  lyf  (slaw %ud lyf.tyl)
+            ?>  ?=(^ lyf)
+            =/  sat=fren-state  sat:(ev-got-per ship)
+            ?>  =(life.sat u.lyf)
+            (end 8 (rsh 3 public-key.sat))
           ::
           ++  ev-mac-key
             |=  [=path =ship]
@@ -5388,15 +5371,15 @@
               =/  her  (slaw %p her.tyl)
               ?>  ?=(^ her)
               =/  her=@p  ?:(=(u.her our) ship u.her)
-              =/  per  (ev-got-per her)
-              ?>  (lte (met 3 symmetric-key.sat.per) 32)
-              `@uxI`symmetric-key.sat.per
+              =/  sat=fren-state  sat:(ev-got-per her)
+              ?>  (lte (met 3 symmetric-key.sat) 32)
+              `@uxI`symmetric-key.sat
             ::
                 [%shut kid=@ pat=[cyf=@ ~]]
               =/  kid  (slaw %ud kid.tyl)
               ?>  ?=(^ kid)
-              =/  per  (ev-got-per ship)
-              ?~  key=(get:key-chain client-chain.sat.per u.kid)
+              =/  sat=fren-state  sat:(ev-got-per ship)
+              ?~  key=(get:key-chain client-chain.sat u.kid)
                 !!  :: XX handle
               ?>  (lte (met 3 -.u.key) 32)
               `@uxI`-.u.key
@@ -5443,12 +5426,11 @@
           ++  ev-authenticate
             |=  [rut=@uxI aut=auth:pact =name:pact]
             ^-  ?
-            ?>  ?=([%0 *] aut)
-            =*  auth  p.aut
+            ?>  ?=([%& *] aut)
             =/  ful  (en-beam [[her.name %$ ud+1] pat.name])
-            ?-  -.auth
-              %&  (verify-sig:crypt (ev-sig-key [pat her]:name) p.auth ful rut)
-              %|  (verify-mac:crypt (ev-mac-key [pat her]:name) p.auth ful rut)
+            ?-  -.p.aut
+              %&  (verify-sig:crypt (ev-sig-key [pat her]:name) p.p.aut ful rut)
+              %|  (verify-mac:crypt (ev-mac-key [pat her]:name) p.p.aut ful rut)
             ==
           ::
           +|  %entry-points
@@ -5500,7 +5482,6 @@
               :+  (add 4 next-bone)
                 (~(put by by-duct) hen next-bone)
               (~(put by by-bone) next-bone hen)
-            ::
             ::  handle cork
             ::
             =/  cork=?  =([%$ /cork %cork ~] vane^wire^payload)
@@ -5559,12 +5540,15 @@
             ::
             ::  path validation/decryption
             ::
-            ~|  path-decryption-failed/pat.ack-name^pat.poke-name
             =/  ack=(pole iota)
+              ~|  ack-path/pat.ack-name^pat.poke-name
               (ev-validate-path inner:(ev-decrypt-path pat.ack-name her.poke-name))
             =/  [=space cyf=(unit @) =inner=path]
+              ~|  inner-path/pat.ack-name^pat.poke-name
               (ev-decrypt-path [pat her]:poke-name)
-            =/  pok=(pole iota)  (ev-validate-path inner-path)
+            =/  pok=(pole iota)
+              ~|  pok/pat.ack-name^pat.poke-name
+              (ev-validate-path inner-path)
             ::
             ~|  path-validation-failed/ack^pok
             ?>  &(?=(flow-pith ack) ?=(flow-pith pok))
@@ -5580,23 +5564,27 @@
             ::  update and print connection status
             ::  XX  this is implicitly updating chums.state;
             =.  ev-core  (ev-update-qos %live last-contact=now)
-            ?.  =(1 tot.data)
+            ?.  =(1 (div (add tob.data 1.023) 1.024))
               =/  =dire  :: flow swtiching
                 %*(fo-flip-dire fo side *@ud^(fo-infer-dire:fo load.pok))  :: XX assert load is plea/boon
               ::
               =+  fo-core=(fo-abed:fo hen bone.pok dire)
               ?:  (fo-message-is-acked:fo-core mess.pok)
                 ::  don't peek if the message havs been already acked
-                ev-core
-              =/  =wire  (fo-wire:fo-core %pok)
+                ~&  >>  "fo-message-is-acked"
+                ::
+                fo-abet:(fo-send-ack:fo-core mess.pok)
               =/  =^space
                 chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
               %+  ev-emit  hen
-              [%pass wire %a meek/[space [her pat]:poke-name]]
+              [%pass (fo-wire:fo-core %pok) %a meek/[space [her pat]:poke-name]]
             ::  authenticate one-fragment message
             ::
-            ?>  %-  ev-authenticate
-                [(root:lss (met 3 dat.data)^dat.data) aut.data poke-name]
+            ~|  data=data
+            ?>  %^    ev-authenticate
+                    (root:lss (met 3 dat.data)^dat.data)
+                  aut.data
+                poke-name
             ::
             %:  ev-mess-poke
               ~   :: XX refactor function signature
@@ -5631,24 +5619,27 @@
             ::  XX  this is implicitly updating chums.state;
             =.  ev-core  (ev-update-qos %live last-contact=now)
             ::
+            =/  tof  (div (add tob.data 1.023) 1.024)
+            ::
             =/  [typ=?(%auth %data) fag=@ud]
               ?~  wan.name
-                [?:((gth tot.data 4) %auth %data) 0]
+                [?:((gth tof 1) %auth %data) 0]
               [typ fag]:wan.name
             ::
             ?-    typ
                 %auth
               ?.  ?|  ?=(~ ps.u.res)
                       =(0 fag)
-                      (gth tot.data 4)
+                      (gth tof 1)
                   ==
                 ev-core
               =/  proof=(list @ux)  (rip 8 dat.data)
               ~&  >>>  auth/proof
               ?>  (ev-authenticate (recover-root:verifier:lss proof) aut.data name)
-              =/  state  (init:verifier:lss tot.data proof)
-              =.  per
-                =-  per(pit.sat -)
+              =/  state  (init:verifier:lss tof proof)
+              =.  chums.ames-state
+                %+  ~(put by chums.ames-state)  her.name
+                =-  known/sat.per(pit -)
                 %+  ~(put by pit)  sealed-path
                 u.res(ps `[state ~])
               ::
@@ -5658,40 +5649,16 @@
               (ev-push-pact [hop=0 %peek name(wan [%data 0])] lane.sat.per)
             ::
                 %data
-              :: ?>  =(13 boq.name)  :: non-standard
               ::  do we have packet state already?
               ::
               ?~  ps.u.res
-                ::  XX is this a complete message?
+                ::  is this this a standalone (jumbo or 1-frag) message?
                 ::
-                ?:  ?&  =(+(fag) tot.data)    :: XX can tot.data be 0 ?
-                        !=(1 tot.data)
-                        ::  XX (gth (met 3 dat.data) 1.024) ??
-                    ==
-                  ::  XX  authenticate jumbo frame
-                  ::  ?>  (ev-authenticate (root:lss (met 3 dat.data)^dat.data) aut.data name)
-                  ::  yield complete message
-                  ::
-                  =/  =spar  [her.name inner-path]
-                  =/  =auth:mess  [%| *@uxH] :: XX p.aut.data is ~
-                  ::  if %chum/%shut, we need to pass the sealed-path to find it
-                  ::  in the pit.fren-state and then remove it
-                  ::
-                  =/  res=@  (ev-decrypt-spac space dat.data cyf)
-                  %*  $  ev-mess-page
-                    sealed-path  `sealed-path
-                  ::
-                    +<  [spar auth res]
-                  ==
-                ::  no; then this should be the first fragment, and auth should be present
-                ::
-                ~|  [fag=fag name=name data=data]
-                ?>  =(0 fag)
-                ?>  ?=([%0 *] aut.data)
-                ::  is this a standalone message?
-                ::
-                ?:  =(1 tot.data)
-                  ?>  (ev-authenticate (root:lss (met 3 dat.data)^dat.data) aut.data name)
+                =/  mod  (bex (dec boq.name))  :: XX unguarded
+                ?:  =(1 (div (add tob.data (dec mod)) mod))
+                  ~&  [tob=tob.data met=(met 3 dat.data)]
+                  ?>  ?=(%& -.aut.data)
+                  ?>  (ev-authenticate (root:lss tob.data^dat.data) aut.data name)
                   =/  =spar  [her.name inner-path]
                   =/  =auth:mess  p.aut.data
                   =/  res=@  (ev-decrypt-spac space dat.data cyf)
@@ -5699,31 +5666,9 @@
                   ::  in the pit.fren-state and then remove it
                   ::
                   %*($ ev-mess-page sealed-path `sealed-path, +< spar^auth^res)
-                ::  no; then the proof should be inlined; verify it
-                ::  (otherwise, we should have received an %auth packet already)
+                ::  XX handle out-of-order packet
                 ::
-                ?>  (lte tot.data 4)
-                =/  proof=(list @ux)
-                  =>  aut.data
-                  ?>  ?=([%0 *] .)
-                  ?~(q ~ ?@(u.q [u.q ~] [p q ~]:u.q))
-                =.  proof  (complete-inline-proof:verifier:lss proof 1.024^dat.data)
-                ?>  (ev-authenticate (recover-root:verifier:lss proof) aut.data name)
-                =/  state  (init:verifier:lss tot.data proof)
-                =.  state  (verify-msg:verifier:lss state 1.024^dat.data ~)
-                ~&  proof/proof
-                ~&  tot/tot.data
-                ::  initialize packet state and request next fragment
-                ::
-                ~&  >>  "request next fragment"^fag
-                =.  chums.ames-state
-                  %+  ~(put by chums.ames-state)  her.name
-                  =-  known/sat.per(pit -)
-                  %+  ~(put by pit)  sealed-path  :: XX was outer-path?
-                  u.res(ps `[state ~[dat.data]])
-                %+  ev-push-pact
-                  [hop=0 %peek name(wan [%data counter.state])]
-                lane.sat.per
+                !!
               ::  yes, we do have packet state already
               ::
               =*  ps  u.ps.u.res
@@ -5731,9 +5676,8 @@
                 ev-core
               ::  extract the pair (if present) and verify
               ::
-              =/  pair=(unit [l=@ux r=@ux])
-                ?~  aut.data  ~
-                `?>(?=([%1 *] .) p):aut.data
+              ?>  ?=(%| -.aut.data)
+              =/  pair=(unit [l=@ux r=@ux])  p.aut.data
               ::  update packet state
               ::
               =/  leaf=octs
@@ -6107,7 +6051,7 @@
             |=  [=space =path]
             ^+  path
             =>  [space=space path=path ..crypt]
-            ~>  %memo./ames/mess-spac
+            :: ~>  %memo./ames/mess-spac
             ?-    -.space
                 %publ  `^path`[%publ (scot %ud life.space) path]  :: unencrypted
             ::
@@ -6137,8 +6081,9 @@
             =;  page=pact:pact
               ?>(?=(%page +<.page) `q.page)
             =>  [res=res de=de:pact]
-            ~>  %memo./ames/get-page
-            -:($:de ;;(@ q.q.u.u.res))
+            :: ~>  %memo./ames/get-page  :: XX unnecessary?
+            =+  ;;([pac=@ *] q.q.u.u.res)
+            -:($:de pac)
           ::
           +|  %fren-helpers
           ::
@@ -6258,9 +6203,10 @@
             ::
             ++  fo-infer-dire
               |=  command=?(%plea %boon %ack-plea %ack-boon %nax)  ::  to %lull
-              ?+  command  !!  ::  XX naxplanation
+              ?-  command
                 %plea      %for
                 %boon      %bak
+                %nax       %bak  ::  XX naxplanation read only by plea sender?
                 %ack-plea  %bak
                 %ack-boon  %for
               ==
@@ -6341,9 +6287,13 @@
               ?-    -.poke
                   ?(%plea %boon)
                 ?:  |((fo-to-close poke) (~(has in corked.sat.per) side))
+                  ~&  >>>  %to-close-corked
                   ::  XX log
                   fo-core
-                fo-send(loads.state (put:fo-mop loads.state next-load.state poke))
+                =:  next-load.state  +(next-load.state)
+                    loads.state      (put:fo-mop loads.state next-load.state poke)
+                  ==
+                fo-send
                 ::
                   %sink
                 ~|  mess.poke
@@ -6425,13 +6375,11 @@
               =+  num=(wyt:fo-mop loads)
               ?:  =(0 num)
                 fo-core
-              ?.  (lte num send-window.state)
+              ?.  (gth send-window.state 0)
                 fo-core
               ::
               =^  [seq=@ud request=mesa-message]  loads  (pop:fo-mop loads)
-              =:  send-window.state  (dec send-window.state)
-                  next-load.state    +(next-load.state)
-                ==
+              =.  send-window.state  (dec send-window.state)
               ::  XX %ames call itself with a %moke task
               ::  on a wire used to infer the listener (the %poke %plea request; this)
               ::  when getting the %response $page with the %ack (tagged with %int)
@@ -6595,18 +6543,21 @@
               ::  increase the send-window so we can send the next message
               ::
               =.  send-window.state  +(send-window.state)
+              =.  can-be-corked
+                ?&  closing.state      ::  we sent a %cork %plea
+                    ?=(~ loads.state)  ::  nothing else is pending
+                ==
               =.  fo-core
-                =.  can-be-corked
-                  ?&  closing.state      ::  we sent a %cork %plea
-                      ?=(~ loads.state)  ::  nothing else is pending
-                  ==
-                ?:  ?|  ?=(%bak dire)  ::  %boon %ack; assumed %acked from vane
-                        can-be-corked  ::  %cork %ack; implicit ack
-                    ==
-                  fo-core
-                ::  don't give %done for %boon and %cork; implicit %ack
-                ::
-                (fo-emit (ev-got-duct bone) %give %done ~)
+                =~  fo-send  ::  send next messages
+                  ::
+                    ?:  ?|  ?=(%bak dire)  ::  %boon %ack; assumed %acked from vane
+                            can-be-corked  ::  %cork %ack; implicit ack
+                        ==
+                      fo-core
+                    ::  don't give %done for %boon and %cork; implicit %ack
+                    ::
+                    (fo-emit (ev-got-duct bone) %give %done ~)
+                ==
               ::  are there any cached acks?
               ::
               ?~  cack=(pry:fo-cac cache.state)  fo-core
@@ -6641,6 +6592,7 @@
               ::  increase the send-window so we can send the next message
               ::
               =.  send-window.state  +(send-window.state)
+              =.  fo-core            fo-send  ::  send next messages
               ::  XX check path.spar
               ::  XX path.spar will be the full namespace path, peel off before?
               ::  XX clear timer for the failed %poke
@@ -6810,8 +6762,7 @@
             ++  sy-plug
               |=  =path
               ^+  sy-core
-              =/  key=@
-                sec:ex:(pit:nu:crub:crypto 512 (shaz eny)) :: TODO: check key width
+              =/  key=@  (kdf:crypt 32 "mesa-chum-key" 32^eny)
               =/  kid=@ud
                 ?~  latest=(ram:key-chain server-chain.ames-state)
                   1
@@ -7530,11 +7481,13 @@
             =/  view  ?@(vew.u.inn vew.u.inn (cat 3 [way car]:vew.u.inn))
             ?~  res=(rof ~ /ames/publ view bem.u.inn)
               ~
+            ?~  u.res
+              [~ ~]
             =/  priv=@uxI  (end 8 (rsh 3 priv.ames-state))  :: extract ed25519 key
             ::  XX  rift.ames-state
             =>  [bem=bem res=res priv=priv ..crypt]
             ~>  %memo./ames/publ
-            =/  gag  ?~(u.res ~ [p q.q]:u.u.res)  :: XX how does receiver distinguish these?
+            =/  gag  [p q.q]:u.u.res  :: XX how does receiver distinguish these?
             =/  ful  (en-beam bem)
             =/  ser  (jam gag)  :: unencrypted
             :^  ~  ~  %message
@@ -7552,10 +7505,12 @@
               ~
             ?~  res=(rof `[her ~ ~] /ames/chum vew.u.inn bem.u.inn)
               ~
+            ?~  u.res
+              [~ ~]
             =>  [key=u.key cyf=cyf bem=bem res=res ..crypt] :: XX rift.ames-state
             ~>  %memo./ames/chum
             :: XX rift.ames-state
-            =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
+            =/  gag  [p q.q]:u.u.res
             =/  ful  (en-beam bem)
             =/  ser  (jam gag)
             =/  cyr  (encrypt:crypt key cyf ser)
@@ -7572,12 +7527,14 @@
               ~
             ?~  res=(rof [~ ~] /ames/shut vew.u.inn bem.u.inn)
               ~
+            ?~  u.res
+              [~ ~]
             ::  XX  rift.ames-state
             =>  [key=key cyf=cyf bem=bem res=res ..crypt]
             ~>  %memo./ames/shut
             =/  cry=@uxI  (rsh 8 (rsh 3 -.u.key))
             =/  sgn=@uxI  (end 8 (rsh 3 -.u.key))
-            =/  gag  ?~(u.res ~ [p q.q]:u.u.res)
+            =/  gag  [p q.q]:u.u.res
             =/  ful  (en-beam bem)
             =/  ser  (jam gag)
             =/  cyr  (encrypt:crypt cry iv=cyf ser)
@@ -7716,11 +7673,12 @@
                 =/  mes=auth:mess  ?:(?=(%sign typ.msg) &+aut.msg |+aut.msg)
                 =*  ser  ser.msg
                 =/  wid  (met boq ser)
+                =/  tob  (met 3 ser)
                 ?<  ?=(%0 wid)  :: XX is this true?
                 =/  nit=?  |    :: XX refactor
                 |-  ^-  (unit (unit cage))
                 ?~  wan.pac.nex
-                  $(nit &, wan.pac.nex [?:((gth wid 4) %auth %data) 0])
+                  $(nit &, wan.pac.nex [?:((gth wid 1) %auth %data) 0])
                 ::
                 =*  fag  fag.wan.pac.nex
                 ?.  (gth wid fag)
@@ -7729,57 +7687,48 @@
                         !=(0 fag)
                     ==
                   ~  :: non-standard proofs for later
-                =;  [nam=name:pact dat=data:pact]
+                =;  [nam=name:pact dat=data:pact pairs=(list (unit [l=@ux r=@ux])) proof=(list @ux)]
                   =/  pac=pact:pact  [hop=0 %page nam dat ~]
-                  ?:  (gth fag tot.dat)
+                  ?:  (gth fag (div (add tob.dat 1.023) 1.024))
                     [~ ~]
                   ?.  ser.pac.nex
-                    ``[%packet !>(pac)]
-                  ``[%atom !>(p:(fax:plot (en:pact pac)))]
+                    ``[%packet !>([pac pairs])]
+                  =/  pof=@ux  (rep 8 proof)
+                  =;  airs=(list @ux)
+                    ``[%atom !>([p:(fax:plot (en:pact pac)) airs pof])]
+                  %+  turn  pairs
+                  |=  p=(unit [l=@ux r=@ux])
+                  ?~  p  0x0
+                  (rep 8 ~[l.u.p r.u.p])
                 ::
                 ?-    typ.wan.pac.nex
                     %auth
                   =/  nam  [[our rif] [boq ?:(nit ~ [%auth fag])] pat]
                   ::  NB: root excluded as it can be recalculated by the client
                   ::
-                  =/  aut  [%0 mes ~]
                   =/  lss-proof
                     =>  [ser=ser ..lss]
                     ~>  %memo./ames/lss-auth
                     (build:lss (met 3 ser)^ser)
-                  =/  dat  [wid aut (rep 8 proof.lss-proof)]  :: XX types
-                  [nam dat]
+                  =/  dat  [tob [%& mes] (rep 8 proof.lss-proof)]  :: XX types
+                  [nam dat ~ ~]
                 ::
                     %data
                   =/  lss-proof
                     =>  [ser=ser ..lss]
-                    :: ~>  %bout.[1 %hint-data-lss]
                     ~>  %memo./ames/lss-data
-                    :: ~&  data-lss/(met 3 ser)
-                    :: ~>  %bout.[1 %data-lss]
                     (build:lss (met 3 ser)^ser)
                   =/  nam  [[our rif] [boq ?:(nit ~ [%data fag])] pat]
-                  =/  aut=auth:pact
-                    ?:  &((lte wid 4) =(0 fag))
-                      :: inline (or absent) proof
-                      ::
-                      :+  %0  mes
-                      ?:  =(1 wid)  ~
-                      =/  tal  (tail proof.lss-proof)
-                      ?:  ?=(?(%1 %2) wid)
-                        ?>  ?=([* ~] tal)
-                        `i.tal
-                      ?>  ?=([* * ~] tal)
-                      `[i i.t]:tal
+                  =/  aut
+                    ?:  =(wid 1)
+                      [%& mes]  :: single-fragment special case
+                    [%| (snag fag pairs.lss-proof)]
                     ::
-                    :: full proof; provide a pair of sibling hashes
-                    ::
-                    ?~  p=(snag fag pairs.lss-proof)
-                      ~
-                    [%1 u.p]
-                  ::
-                  =/  dat  [wid aut (cut boq [fag 1] ser)]
-                  [nam dat]
+                  =/  dat  [tob aut (cut boq [fag 1] ser)]
+                  =/  pairs
+                    =/  per  (bex (sub boq 13))  ::  XX  unguarded
+                    (swag [(mul per fag) (dec per)] pairs.lss-proof)
+                  [nam dat pairs proof.lss-proof]
                 ==
               ::
               ::  XX need a single namespace entrypoint to validate
@@ -8528,21 +8477,21 @@
          ~&  priv.old
         :: =.  peers.old  ~
         :: =.   chums.old  ~
-          :: %-  ~(run by chums.old)
-          :: |=  =chum-state
-          :: ?:  ?=(%alien -.chum-state)
-          ::   ~&  %cleaning-alien
-          ::   chum-state
-          ::   :: chum-state(pit ~)
+        ::   %-  ~(run by chums.old)
+        ::   |=  =chum-state
+        ::   ?:  ?=(%alien -.chum-state)
+        ::     ~&  %cleaning-alien
+        ::     chum-state
+        ::     :: chum-state(pit ~)
 
-          :: %_  chum-state
-          ::   flows    ~&  %cleaning-flows  ~
-          ::   pit      ~&  %cleaning-pit  ~
-          ::   corked   ~
-          ::   ossuary  =|  =ossuary  ossuary
-          ::           ::  %_  ossuary
-          ::             :: next-bone  40
-          :: ==        :: ==
+        ::   %_  chum-state
+        ::     flows    ~&  %cleaning-flows  ~
+        ::     pit      ~&  %cleaning-pit  ~
+        ::     corked   ~
+        ::     ossuary  =|  =ossuary  ossuary
+        ::             ::  %_  ossuary
+        ::               :: next-bone  40
+        ::   ==        :: ==
         vane-gate(ames-state old)
       ::
       ?>  ?=([@ %adult *] old)
