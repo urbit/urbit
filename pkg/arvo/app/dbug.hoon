@@ -42,8 +42,8 @@
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
-    ?>  =(our src):bowl
     ?:  ?=(%noun mark)
+      ?>  =(our src):bowl
       =/  code  !<((unit @t) vase)
       =/  msg=tape
         ?~  code
@@ -56,6 +56,7 @@
       %-  (slog leaf+msg ~)
       [~ this(passcode code)]
     ?:  ?=(%json mark)
+      ?>  =(our src):bowl
       =/  jon=json  !<(json vase)
       =,  dejs:format
       =/  cmd

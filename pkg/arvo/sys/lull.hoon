@@ -2885,15 +2885,20 @@
         [%pack ~]                                       ::  compact memory
         [%trim p=@ud]                                   ::  trim kernel state
         [%logs =told]                                   ::  system output
+        [%meme p=(list quac)]                           ::  memory report
+        [%quac ~]                                       ::  memory runtime
     ==                                                  ::
   +$  task                                              ::  in request ->$
     $~  [%vega ~]                                       ::
-    $%  [%boot lit=? p=*]                               ::  weird %dill boot
+    $%  $>(%born vane-task)                             ::  new unix process
+        [%boot lit=? p=*]                               ::  weird %dill boot
         [%crop p=@ud]                                   ::  trim kernel state
         [%flog p=flog]                                  ::  wrapped error
         [%heft ~]                                       ::  memory report
         $>(%init vane-task)                             ::  after gall ready
         [%logs p=(unit ~)]                              ::  watch system output
+        [%mass ~]                                       ::  run memory report
+        [%quac p=(list quac)]                           ::  memory runtime
         [%meld ~]                                       ::  unify memory
         [%pack ~]                                       ::  compact memory
         [%seat =desk]                                   ::  install desk
@@ -2977,6 +2982,9 @@
     $:  ses=@tas                                        ::  target session
         dill-belt                                       ::  input
     ==                                                  ::
+  +$  quac                                              ::  memory report
+    $~  ['' 0 ~]
+    [name=@t size=@ud quacs=(list quac)]
   --  ::dill
 ::                                                      ::::
 ::::                    ++eyre                            ::  (1e) http-server
@@ -3358,6 +3366,13 @@
         ::  respond with the @p of the ship serving the response
         ::
         [%host ~]
+        ::  returns data used to verify sync status between ship and network
+        ::  in double boot protection
+        ::
+        [%boot ~]
+        :: responds with the @p of the galaxy of the provided ship
+        ::
+        [%sponsor ~]
         ::  respond with the default file not found page
         ::
         [%four-oh-four ~]
@@ -3597,6 +3612,17 @@
   ::
   +$  rout  [p=(list host) q=path r=oryx s=path]        ::  http route (new)
   +$  user  knot                                        ::  username
+  ::
+  ::  Boot response
+  ::
+  +$  boot
+    $:  %1
+        sponsor=ship
+        =rift
+        =life
+        bone=(unit @udbone)
+        last-acked=(unit @udmessagenum)
+    ==
   --  ::eyre
 ::                                                      ::::
 ::::                    ++gall                            ::  (1g) extensions
@@ -3690,6 +3716,7 @@
     ==  ==
   ::
   +$  bowl                                              ::  standard app state
+    $+  gall-agent-bowl                                 ::
     $:  $:  our=ship                                    ::  host
             src=ship                                    ::  guest
             dap=term                                    ::  agent
@@ -3733,8 +3760,11 @@
     =<  form
     |%
     +$  step  (quip card form)
-    +$  card  (wind note gift)
+    +$  card
+      $+  gall-agent-card
+      (wind note gift)
     +$  note
+      $+  gall-agent-note
       $%  [%agent [=ship name=term] =task]
           [%arvo note-arvo]
           [%pyre =tang]
@@ -3750,6 +3780,7 @@
           [%keen secret=? spar:ames]
       ==
     +$  task
+      $+  gall-agent-task
       $%  [%watch =path]
           [%watch-as =mark =path]
           [%leave ~]
@@ -3757,12 +3788,14 @@
           [%poke-as =mark =cage]
       ==
     +$  gift
+      $+  gall-agent-gift
       $%  [%fact paths=(list path) =cage]
           [%kick paths=(list path) ship=(unit ship)]
           [%watch-ack p=(unit tang)]
           [%poke-ack p=(unit tang)]
       ==
     +$  sign
+      $+  gall-agent-sign
       $%  [%poke-ack p=(unit tang)]
           [%watch-ack p=(unit tang)]
           [%fact =cage]
@@ -3936,11 +3969,10 @@
   ::  +feed: potential boot parameters
   ::
   +$  feed
-    $^  [[%1 ~] who=ship kyz=(list [lyf=life key=ring])]
-    seed
-  ::  +seed: individual boot parameters
-  ::
-  +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
+    $^  $%  [[%1 ~] who=ship kyz=(list [lyf=life key=ring])]
+            [[%2 ~] who=ship ryf=rift kyz=(list [lyf=life key=ring])]
+        ==
+    [who=ship lyf=life key=ring sig=(unit oath:pki)]
   ::
   +$  task                                            ::  in request ->$
     $~  [%vega ~]                                     ::
@@ -3964,7 +3996,7 @@
     ==                                                ::
   ::
   +$  dawn-event
-    $:  =seed
+    $:  =feed
         spon=(list [=ship point:azimuth-types])
         czar=(map ship [=rift =life =pass])
         turf=(list turf)
@@ -4203,14 +4235,19 @@
   |%
   +$  card  card:agent:gall
   +$  input
+    $+  input
     $%  [%poke =cage]
         [%sign =wire =sign-arvo]
         [%agent =wire =sign:agent:gall]
         [%watch =path]
     ==
-  +$  strand-input  [=bowl in=(unit input)]
+  +$  error  (pair term $+(tang tang))
+  +$  strand-input
+    $+  strand-input
+    [=bowl in=(unit input)]
   +$  tid   @tatid
   +$  bowl
+    $+  strand-bowl
     $:  our=ship
         src=ship
         tid=tid
@@ -4238,27 +4275,29 @@
   ::
   ++  strand-output-raw
     |*  a=mold
+    $+  strand-output-raw
     $~  [~ %done *a]
     $:  cards=(list card)
         $=  next
         $%  [%wait ~]
             [%skip ~]
             [%cont self=(strand-form-raw a)]
-            [%fail err=(pair term tang)]
+            [%fail err=error]
             [%done value=a]
         ==
     ==
   ::
   ++  strand-form-raw
     |*  a=mold
+    $+  strand-form-raw
     $-(strand-input (strand-output-raw a))
   ::
   ::  Abort strand computation with error message
   ::
   ++  strand-fail
-    |=  err=(pair term tang)
+    |=  =error
     |=  strand-input
-    [~ %fail err]
+    [~ %fail error]
   ::
   ::  Asynchronous transcaction monad.
   ::
@@ -4271,11 +4310,11 @@
   ++  strand
     |*  a=mold
     |%
-    ++  output  (strand-output-raw a)
+    ++  output  $+(output (strand-output-raw a))
     ::
     ::  Type of an strand computation.
     ::
-    ++  form  (strand-form-raw a)
+    ++  form  $+(form (strand-form-raw a))
     ::
     ::  Monadic pure.  Identity computation for bind.
     ::
@@ -4354,8 +4393,9 @@
         =.  in.strand-input
           ?~  in.strand-input  ~
           =/  in  u.in.strand-input
-          ?.  ?=(%agent -.in)      `in
-          ?.  ?=(%fact -.sign.in)  `in
+          ?.  ?=(%agent -.in)                  `in
+          ?.  ?=(%fact -.sign.in)              `in
+          ?:  ?=(%thread-done p.cage.sign.in)  `in
           ::
           :-  ~
           :^  %agent  wire.in  %fact
