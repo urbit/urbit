@@ -5973,27 +5973,9 @@
             ::  ack and poke paths are already encrypted at this point
             ::
             (ev-make-mess ack-spar `poke-path)
-          ::
-          ++  ev-make-page
-            |=  [=space spar]
-            ^+  ev-core
-            =/  =name:pact
-              [[our rift.ames-state] [13 ~] (ev-make-path space path)]
-            ?~  page=(ev-get-page name)
-              ev-core
-            %+  ev-push-pact
-              [hop=0 page/[name u.page ~]]
-            ::  XX  check here if we have a lane, and if not, assume that it came
-            ::  via a sponsor, to avoid breaking symmetric routing
-            ::  XX  unnecessary? vere wil probably ignore this lane
-            ?^  lane.sat.per
-              lane.sat.per
-            [~ `@ux`(^^sein:title rof /ames our now ship.per)]
-          ::
-          ::  this arm is the only one that don't retrieve the peer from
-          ::  the door's sample sat.per, and therefore don't use the +abed/+abet
-          ::  pattern due to the way comets are handled in ++ev-make-mess when
-          ::  reading attestation proofs.
+          ::  +ev-make-mess: this arm doesn't use the peer from the door's
+          ::  sample sat.per, due to the way comets are handled in when reading
+          ::  attestation proofs.and therefore don't use the +abed/+abet pattern
           ::
           ++  ev-make-mess
             |=  [p=spar q=(unit path)]
@@ -6623,7 +6605,21 @@
               ::
               =/  =path   (fo-ack-path seq her)
               =/  =space  chum/[life.ames-state her [life symmetric-key]:sat.per]
-              (fo-emit hen %pass /make-page %a mage/[space her^path])
+              =/  =name:pact
+                [[our rift.ames-state] [13 ~] (ev-make-path space path)]
+              ?~  page=(ev-get-page name)
+                :: XX !!? log?
+                fo-core
+              =;  core=_ev-core
+                fo-core(ev-core core)
+              %+  ev-push-pact
+                [hop=0 page/[name u.page ~]]
+              ::  XX  check here if we have a lane, and if not, assume that it came
+              ::  via a sponsor, to avoid breaking symmetric routing
+              ::  XX  unnecessary? vere wil probably ignore this lane
+              ?^  lane.sat.per
+                lane.sat.per
+              [~ `@ux`(^^sein:title rof /ames our now ship.per)]
             ::
             ++  fo-peek-naxplanation
               |=  seq=@ud
@@ -8013,7 +8009,7 @@
           ::
             %meek  (ev-make-peek:ev-core +.task)
             %moke  (ev-make-poke:ev-core +.task)
-            %mage  (ev-make-page:ev-core +.task)
+            %mage  !!  :: XX remove
           ::  from unix
           ::
             %heer      (ev-call:ev-core task)  ::  XX dud
