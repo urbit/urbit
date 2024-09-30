@@ -1917,7 +1917,7 @@
       ::
       =^  job=oped:part  taf  (~(adorn adapt:part taf) del |)
       =?  lul  ?=(^ lul.job)
-        `(smit "lull" |.(pit) /sys/lull/hoon u.lul.job)
+        `(smit "lull" =>(pit=pit |.(pit)) /sys/lull/hoon u.lul.job)
       =?  zus  ?=(^ zus.job)
         ?.  ?=(^ lul)
           ~|(%larval-need-lull !!)
