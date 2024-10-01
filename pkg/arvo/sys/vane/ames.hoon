@@ -5805,6 +5805,8 @@
           ++  ev-take-wake
             |=  [=wire error=(unit tang)]
             ^+  ev-core
+            =?  ev-core  ?=(^ error)   :: XX use verbosity flag
+              (ev-emit hen %pass /crud %d %flog %crud %wake-error u.error)
             =>  .(wire `(pole iota)`(ev-pave wire))
             ?.  ?=([%mesa %dead-flow ~] wire)
               ~&  %evil-behn-timer^wire  ev-core
@@ -5820,10 +5822,10 @@
             =.  ev-core
               %+  ev-emit  ~[/ames]
               [%pass /mesa/dead-flow %b %wait `@da`(add now ~m2)]
-            =+  ames-core=(ev:ames hen ames-state)
-            =^  moves  ames-state  abet:(wake-dead-flows:ames-core error)
+            =^  ames-moves  ames-state
+              abet:(wake-dead-flows:(ev:ames hen ames-state) error)
             =.  ev-core  sy-abet:sy-prod:sy
-            (ev-emil moves)
+            (ev-emil ames-moves)
           ::
           ++  ev-take-flub
             |=  =wire
@@ -8057,7 +8059,6 @@
             `ames-state
           ::
           =<  ev-abet
-          ~|  sign=sign
           ?+  sign  ev-core  ::  ~&(mesa-take-sign/[&1^&2]:sign ev-core)
             [%behn %wake *]  (ev-take-wake:ev-core [wire error.sign])
           ::
