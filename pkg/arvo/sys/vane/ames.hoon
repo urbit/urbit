@@ -7500,7 +7500,7 @@
             =/  priv=@uxI  (end 8 (rsh 3 priv.ames-state))  :: extract ed25519 key
             ::  XX  rift.ames-state
             =>  [bem=bem res=res priv=priv ..crypt]
-            ~>  %memo./ames/publ
+            :: ~>  %memo./ames/publ
             =/  gag  [p q.q]:u.u.res  :: XX how does receiver distinguish these?
             =/  ful  (en-beam bem)
             =/  ser  (jam gag)  :: unencrypted
@@ -7522,7 +7522,7 @@
             ?~  u.res
               [~ ~]
             =>  [key=u.key cyf=cyf bem=bem res=res ..crypt] :: XX rift.ames-state
-            ~>  %memo./ames/chum
+            :: ~>  %memo./ames/chum
             :: XX rift.ames-state
             =/  gag  [p q.q]:u.u.res
             =/  ful  (en-beam bem)
@@ -7545,7 +7545,7 @@
               [~ ~]
             ::  XX  rift.ames-state
             =>  [key=key cyf=cyf bem=bem res=res ..crypt]
-            ~>  %memo./ames/shut
+            :: ~>  %memo./ames/shut
             =/  cry=@uxI  (rsh 8 (rsh 3 -.u.key))
             =/  sgn=@uxI  (end 8 (rsh 3 -.u.key))
             =/  gag  [p q.q]:u.u.res
@@ -7722,7 +7722,7 @@
                   ::
                   =/  lss-proof
                     =>  [ser=ser ..lss]
-                    ~>  %memo./ames/lss-auth
+                    :: ~>  %memo./ames/lss-auth
                     (build:lss (met 3 ser)^ser)
                   =/  dat  [tob [%& mes] (rep 8 proof.lss-proof)]  :: XX types
                   [nam dat ~ ~]
@@ -7730,7 +7730,7 @@
                     %data
                   =/  lss-proof
                     =>  [ser=ser ..lss]
-                    ~>  %memo./ames/lss-data
+                    :: ~>  %memo./ames/lss-data
                     (build:lss (met 3 ser)^ser)
                   =/  nam  [[our rif] [boq ?:(nit ~ [%data fag])] pat]
                   =/  aut
