@@ -137,7 +137,7 @@
     +$  note
       $~  [%b %wait *@da]
       $%  $:  %a
-              $>(?(%deep %keen %meek %moke %mage %prod) task)
+              $>(?(%deep %keen %meek %moke %prod) task)
           ==
           $:  %b
               $>(?(%wait %rest) task:behn)
@@ -8027,7 +8027,6 @@
           ::
             %meek  (ev-make-peek:ev-core +.task)
             %moke  (ev-make-poke:ev-core +.task)
-            %mage  !!  :: XX remove
           ::  from unix
           ::
             %heer      (ev-call:ev-core task)  ::  XX dud
@@ -8351,7 +8350,7 @@
     (~(call pe-core hen) dud task)
     ::  XX can we call the wrong core? still check if ship has migrated?
     ::
-      ?(%meek %moke %mage %back)
+      ?(%meek %moke %back)
     (call:mesa hen dud soft/task)
     ::  flow-independent tasks
     ::

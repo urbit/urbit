@@ -877,7 +877,6 @@
         [%mess =mess]                         :: receive a message
         [%moke =space =spar =path]            :: initiate %poke request
         [%meek =space =spar]                  :: initiate %peek request
-        [%mage =space =spar]                  :: send %page of data
     ==
   ::
   ::  $gift: effect from ames
