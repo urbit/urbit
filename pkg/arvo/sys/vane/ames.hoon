@@ -6498,6 +6498,8 @@
               =:  last-acked.state   seq
                   pending-ack.state  %.n
                 ==
+              =?  fo-core  ?=(^ error)   :: XX use verbosity flag
+                (fo-emit hen %pass /crud %d %flog %crud u.error)
               =?  nax.state  ?=(^ error)
                 =?  nax.state  (gth seq 10)
                   ::  only keep the last 10 nacks
@@ -6575,17 +6577,21 @@
               =/  next-load=@ud  ?~(next=(ram:fo-mop loads.state) 1 key.u.next)
               ?:  (gth seq next-load)
                 :: XX log?
+                ~&  >>  "fo-take-naxplanation: future message, no-op"
                 fo-core
               ::  if all pokes have been processed no-op
               ::
               ?~  first=(pry:fo-mop loads.state)
+                ~&  >>  "fo-take-naxplanation: all pokes have been processed, no-op"
                 fo-core
               :: XX  if the ack we receive is not for the first, no-op
               :: XX as currently implemented we only hear for the naxplanation of the
               ::  oldest message
               ::
               ?.  =(key.u.first seq)
+                ~&  >>  "fo-take-naxplanation: naxplanation is not for the first load, no-op"
                 fo-core
+              ~&  >  "fo-take-naxplanation: seq={<seq>}"
               ::  ack is for the first, oldest pending-ack set message, remove it
               ::
               =^  *  loads.state  (del:fo-mop loads.state seq)
@@ -6619,6 +6625,7 @@
             ::
             ++  fo-send-ack
               |=  seq=@ud
+              ^+  fo-core
               ::  emit (n)ack to unix; see +fo-peek where the (n)ack is produced
               ::
               =/  =path   (fo-ack-path seq her)
@@ -7213,6 +7220,7 @@
               ::  XX  restore this when fixing +ev-update-qos
               =*  peer  sat.per.core
               =*  ship  ship.per.core
+              ~&  ship/ship
               ::  update and print connection status
               ::
               =/  expiry=@da  (add ~s30 last-contact.qos.peer)
