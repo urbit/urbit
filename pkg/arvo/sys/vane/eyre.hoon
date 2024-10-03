@@ -809,8 +809,31 @@
     ::      perhaps that distinction, where userspace requests are async, but
     ::      eyre-handled requests are always synchronous, provides a fruitful
     ::      angle for refactoring...
-    =^  [suv=@uv =identity som=(list move)]  state
+    =^  ?(invalid=@uv [suv=@uv =identity som=(list move)])  state
       (session-for-request:authentication request)
+    ?@  -
+      ::  the request provided a session cookie that's not (or no longer)
+      ::  valid. to make sure they're aware, tell them 401
+      ::
+      ::NOTE  some code duplication with below, but request handling deserves
+      ::      a refactor anyway
+      =.  connections.state
+        ::NOTE  required by +handle-response.
+        ::      the session identity we provide here doesn't actually exist.
+        ::      that's fine: we call +handle-response for this connection right
+        ::      away, that no-ops for the non-existing session, and then
+        ::      deletes the connection from state.
+        %+  ~(put by connections.state)  duct
+        ^-  outstanding-connection
+        [action [| secure address request] [invalid %fake *@p] ~ 0]
+      ::  their cookie was invalid, make sure they expire it
+      ::
+      %-  handle-response
+      :*  %start
+          [401 ['set-cookie' (session-cookie-string:authentication invalid |)]~]
+          `(as-octs:mimes:html 'bad session auth')
+          complete=%.y
+      ==
     =;  [moz=(list move) sat=server-state]
       [(weld som moz) sat]
     ::
@@ -1475,20 +1498,20 @@
       (~(raw og (shas %fake-name eny)) 128)
     ::  +session-for-request: get the session details for the request
     ::
-    ::    creates a guest session if the request does not have a valid session.
+    ::    returns the @ case if an invalid session is provided.
+    ::    creates a guest session if the request does not have any session.
     ::    there is no need to call +give-session-tokens after this, because
-    ::    guest session do not make valid "auth session" tokens.
+    ::    guest sessions do not make valid "auth session" tokens.
     ::
     ++  session-for-request
       |=  =request:http
-      ^-  [[session=@uv =identity moves=(list move)] server-state]
-      =*  new  (start-session %guest)
+      ^-  [$@(session=@uv [session=@uv =identity moves=(list move)]) server-state]
       ?~  sid=(session-id-from-request request)
-        new
+        (start-session %guest)
       ?~  ses=(~(get by sessions.auth.state) u.sid)
-        new
+        [u.sid state]
       ?:  (gth now expiry-time.u.ses)
-        new
+        [u.sid state]
       [[u.sid identity.u.ses ~] state]
     ::  +close-session: delete a session and its associated channels
     ::
