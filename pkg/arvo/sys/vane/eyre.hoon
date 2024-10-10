@@ -43,7 +43,7 @@
 ++  axle
   $:  ::  date: date at which http-server's state was updated to this data structure
       ::
-      date=%~2023.5.15
+      date=%~2024.6.1
       ::  server-state: state of inbound requests
       ::
       =server-state
@@ -992,9 +992,136 @@
       %^  return-static-data-on-duct  200  'text/plain'
       (as-octs:mimes:html (scot %p our))
     ::
+        %boot
+      (handle-boot identity request)
+    ::
+        %sponsor
+      (handle-sponsor identity request)
+    ::
         %four-oh-four
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 authenticated url.request ~)
+    ==
+  ::  Get current sponsor of ship
+  ::
+  ++  galaxy-for
+    |=  =ship
+    ^-  @p
+    =/  next  (^^sein:title rof /eyre our now ship)
+    ?:  ?=(%czar (clan:title next))
+      next
+    $(ship next)
+  ::
+  ++  handle-sponsor
+    |=  [=identity =request:http]
+    ^-  (quip move server-state)
+    =/  crumbs  q:(rash url.request apat:de-purl:html)
+    ?.  ?=([@t @t @t ~] crumbs)
+      %^  return-static-data-on-duct  400  'text/html'
+      %:  error-page
+        400
+        &
+        url.request
+        "Invalid input: Expected /~/boot/<ship=@p>"
+      ==
+    =/  ship
+      %+  slaw
+        %p
+      i.t.t.crumbs
+    ?~  ship
+      %^  return-static-data-on-duct  400  'text/html'
+      %:  error-page
+        400
+        &
+        url.request
+        "Invalid input: Expected /~/boot/<ship=@p>"
+      ==
+    %^  return-static-data-on-duct  200  'text/plain'
+    (as-octs:mimes:html (scot %p (galaxy-for u.ship)))
+  ::  Returns peer-state data for verifying sync status between ship and network.
+  ::  Takes two path parameters - ship=@p and optional bone=@u.
+  ::
+  ::  Responds with a @uw jam of a noun containing:
+  ::  version, sponsor, rift, life, bone as a unit (null if not provided), and
+  ::  the last-acked message-num of the provided ship and bone as a unit (null if
+  ::  bone is not provided).
+  ::
+  ::  Responds with a 404 error-page if either:
+  ::  - Peer is not %known
+  ::  - Bone was not found under peer (assuming bone was provided)
+  ::
+  ++  handle-boot
+    |=  [=identity =request:http]
+    ^-  (quip move server-state)
+    ?.  =(%'GET' method.request)
+      %^  return-static-data-on-duct  405  'text/html'
+      (error-page 405 & url.request "may only GET boot data")
+    =/  crumbs  q:(rash url.request apat:de-purl:html)
+    ?.  ?=([@t @t @t *] crumbs)
+      %^  return-static-data-on-duct  400  'text/html'
+      %:  error-page
+        400
+        &
+        url.request
+        "Invalid input: Expected /~/boot/<ship=@p> or /~/boot/<ship=@p>/<bone=@u>"
+      ==
+    =/  ship  %+(slaw %p i.t.t.crumbs)
+    =/  bone
+      %+  slaw
+        %ud
+      ?:  ?=([@t @t @t @t ~] crumbs)
+        i.t.t.t.crumbs
+      ''
+    ?:  ?|  ?=(~ ship)
+            ?&(?=([@t @t @t @t ~] crumbs) ?=(~ bone))
+        ==
+      %^  return-static-data-on-duct  400  'text/html'
+      %:  error-page
+        400
+        &
+        url.request
+        "Invalid input: Expected /~/boot/<ship=@p> or /~/boot/<ship=@p>/<bone=@u>"
+      ==
+    =/  des=(unit (unit cage))
+      %:  rof
+        [~ ~]
+        /eyre
+        %ax
+        [our %$ da+now]
+        /peers/(scot %p u.ship)
+      ==
+    ?.  ?=([~ ~ %noun *] des)
+      %^  return-static-data-on-duct  404  'text/html'
+      (error-page 404 & url.request "Peer {(scow %p u.ship)} not found.")
+    =/  ship-state
+      !<  ship-state:ames  q.u.u.des
+    ?>  ?=(%known -.ship-state)
+    ?~  bone
+      %^  return-static-data-on-duct  200  'application/octet-stream'
+      %-  as-octs:mimes:html
+      %-  jam
+      ^-  boot
+      [%1 (galaxy-for u.ship) rift.-.+.ship-state life.-.+.ship-state ~ ~]
+    =/  rcv=(map bone:ames message-sink-state:ames)  rcv.+.ship-state
+    =/  mss=(unit message-sink-state:ames)  (~(get by rcv) u.bone)
+    ?~  mss
+      %^  return-static-data-on-duct  404  'text/html'
+      %:  error-page
+        404
+        &
+        url.request
+        "Bone {(scow %u u.bone)} of peer {(scow %p u.ship)} not found."
+      ==
+    %^  return-static-data-on-duct  200  'application/octet-stream'
+    %-  as-octs:mimes:html
+    %-  jam
+    ^-  boot
+    :*  %1
+        (galaxy-for u.ship)
+        rift.-.+.ship-state
+        life.-.+.ship-state
+        bone
+        [~ last-acked.u.mss]
     ==
   ::  +handle-name: respond with the requester's @p
   ::
@@ -1018,7 +1145,7 @@
       (error-response 405 "may only GET scries")
     =/  req  (parse-request-line url.request)
     =/  fqp  (fully-qualified site.req)
-    =/  mym  (scry-mime now rof ext.req site.req)
+    =/  mym  (scry-mime now rof [~ ~] ext.req site.req)
     ?:  ?=(%| -.mym)  (error-response 500 p.mym)
     =*  mime  p.mym
     %-  handle-response
@@ -1195,7 +1322,7 @@
         %channel
       on-cancel-request:by-channel
     ::
-        ?(%scry %four-oh-four %name %host)
+        ?(%scry %four-oh-four %name %host %boot %sponsor)
       ::  it should be impossible for these to be asynchronous
       ::
       !!
@@ -3306,7 +3433,7 @@
   /(scot %p ship)/[app]/(scot %p from)
 ::
 ++  scry-mime
-  |=  [now=@da rof=roof ext=(unit @ta) pax=path]
+  |=  [now=@da rof=roof =gang ext=(unit @ta) pax=path]
   |^  ^-  (each mime tape)
   ::  parse
   ::
@@ -3319,7 +3446,7 @@
   ?~  u  [%| "invalid scry path"]
   ::  perform scry
   ::
-  ?~  res=(rof [~ ~] /eyre u.u)  [%| "failed scry"]
+  ?~  res=(rof gang /eyre u.u)  [%| "failed scry"]
   ?~  u.res                  [%| "no scry result"]
   =*  mark   p.u.u.res
   =*  vase   q.u.u.res
@@ -3421,6 +3548,8 @@
           [[~ /~/scry] duct [%scry ~]]
           [[~ /~/name] duct [%name ~]]
           [[~ /~/host] duct [%host ~]]
+          [[~ /~/boot] duct [%boot ~]]
+          [[~ /~/sponsor] duct [%sponsor ~]]
       ==
     [~ http-server-gate]
   ::  %trim: in response to memory pressure
@@ -3913,6 +4042,7 @@
             [date=%~2023.3.16 server-state=server-state-2]
             [date=%~2023.4.11 server-state-3]
             [date=%~2023.5.15 server-state]
+            [date=%~2024.6.1 server-state]
         ==
       ::
       +$  server-state-0
@@ -4108,7 +4238,21 @@
       bindings.old
     ==
   ::
+  ::  adds /~/boot and /~/sponsor
+  ::
       %~2023.5.15
+    %=  $
+        date.old  %~2024.6.1
+    ::
+        bindings.old
+      %+  insert-binding
+        [[~ /~/boot] outgoing-duct.old [%boot ~]]
+      %+  insert-binding
+        [[~ /~/sponsor] outgoing-duct.old [%sponsor ~]]
+      bindings.old
+    ==
+  ::
+      %~2024.6.1
     http-server-gate(ax old)
   ==
 ::  +stay: produce current state
@@ -4154,7 +4298,7 @@
     !>  ^-  (unit @t)
     =<  eauth-url:eauth:authentication
     (per-server-event [eny *duct now rof] server-state.ax)
- ::
+  ::
   ?:  ?=([%cache @ @ ~] tyl)
     ?.  &(?=(%x ren) ?=(%$ syd))  ~
     =,  server-state.ax
@@ -4165,8 +4309,68 @@
     ?~  val=val.u.entry                ~
     ?:  &(auth.u.val !=([~ ~] lyc))    ~
     ``noun+!>(u.val)
-  :: private endpoints
+  ::
+  ?:  &(?=(%x ren) ?=([%range @ @ @ *] tyl))
+    |^
+    =/  beg=(unit @ud)  (slaw %ud i.t.tyl)
+    =/  end=(unit @ud)  (slaw %ud i.t.t.tyl)
+    =*  vew   i.t.t.t.tyl
+    =*  rest  t.t.t.t.tyl
+    =/  mym  (scry-mime now rof lyc ~ [%$ vew (en-beam -.bem rest)])
+    ?:  ?=(%| -.mym)  ~
+    =*  mime  p.mym
+    ?~  range=(get-range [beg end] p.q.mime)
+      :^  ~  ~  %noun
+      !>  ^-  cache-entry
+      :-  ?=(^ lyc)
+      :+  %payload
+        :-  416
+        ['content-range' (cat 3 'bytes */' (crip (a-co:co p.q.mime)))]^~
+      `(as-octs:mimes:html 'requested range not satisfiable')
+    ::
+    =/  =octs
+      %-  as-octs:mimes:html
+      (cut 3 [p.u.range +((sub q.u.range p.u.range))] q.q.mime)
+    :^  ~  ~  %noun
+    !>  ^-  cache-entry
+    :-  ?=(^ lyc)
+    :+  %payload
+      :-  ?:(=(p.q.mime p.octs) 200 206)
+      :~  ['accept-ranges' 'bytes']
+          ['content-type' (rsh 3 (spat p.mime))]
+          ['content-length' (crip (a-co:co p.octs))]
+          :-  'content-range'
+          %+  rap  3
+          :~  'bytes '
+              (crip (a-co:co p.u.range))  '-'
+              (crip (a-co:co q.u.range))  '/'
+              (crip (a-co:co p.q.mime))
+          ==
+      ==
+    data=[~ octs]
+    ::
+    ++  get-range
+      |=  [req=(pair (unit @ud) (unit @ud)) len=@ud]
+      ^-  (unit (pair @ud @ud))
+      ?+    req  ~
+          [^ ~]
+        ?:  (gth u.p.req (dec len))  ~
+        `[u.p.req (dec len)]
+      ::
+          [~ ^]
+        ?.  (gth u.q.req 0)  ~
+        `[(sub len (min len u.q.req)) (dec len)]
+      ::
+          [^ ^]
+        ?:  |((gth u.p.req (dec len)) (gth u.p.req u.q.req))
+          ~
+        `[u.p.req (min (dec len) u.q.req)]
+      ==
+    --
+  ::  private endpoints
+  ::
   ?.  ?=([~ ~] lyc)  ~
+  ::
   ?:  &(?=(%x ren) ?=(%$ syd))
     =,  server-state.ax
     ?+  tyl  ~
@@ -4202,7 +4406,7 @@
       %*(. *request:http header-list ['cookie' u.cookies]~)
     ::
         [%'_~_' *]
-      =/  mym  (scry-mime now rof (deft:de-purl:html tyl))
+      =/  mym  (scry-mime now rof lyc (deft:de-purl:html tyl))
       ?:  ?=(%| -.mym)  [~ ~]
       ``noun+!>(p.mym)
     ==
