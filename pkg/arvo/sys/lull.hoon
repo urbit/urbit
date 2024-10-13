@@ -1647,6 +1647,7 @@
         ::              path=ack-path  /~nec/ack/~zod/flow/bone=0/mess=1/frag=1
         ::
         pit=(map path request-state)
+        pot=(jug wire path)      ::  each wire represents a flow, the value is its associated peeks for the acks
         =client=chain            ::  stores keys for %shut requests
     ==
   ::
