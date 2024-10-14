@@ -1685,7 +1685,7 @@
 |=  [now=@da eny=@uvJ rof=roof]
 =*  vane-gate  .
 ::
-=>  ::  pre/post migrated core handler
+=>  ::  network protocol core handlers
     ::
     |%
     ++  ames
@@ -2335,12 +2335,14 @@
                 ::  XX  requires a namespace for migrated peers
                 ::
                 ~&  migrating/ship.deep
-                :: =+  ?>  ?=([@ =ship *] deep)  ship=ship.deep
-                :: =-  ~?  (~(has by peers.ames-state) ship)  %peers-gone
-                ::     ~?  (~(has by chums.ames-state) ship)  %chums-ahoy
-                ::     -
-                =<  abut  :: delete ship from .peers
-                =~  (call:(abed:mi:peer-core bone) %done ok=%.y)
+                =<  :: delete ship from .peers
+                    ::
+                    pe-abel
+                =~  ::  ack ahoy plea
+                    ::
+                    (call:(abed:mi:peer-core bone) %done ok=%.y)
+                    ::  migrate all flows
+                    ::
                     (on-migrate bone)
                 ==
               ::
@@ -2366,7 +2368,9 @@
               ::
               ++  cork-bone
                 |=  =bone
-                =~(abet:(on-cork-flow:peer-core bone) (emit duct %give %done ~))
+                =~  abet:(on-cork-flow:peer-core bone)
+                    (emit duct %give %done ~)
+                ==
               ::
               ++  kill-bone  |=(=bone abet:(on-kill-flow:peer-core bone))
               --
@@ -2583,7 +2587,7 @@
                 ^+  event-core
                 ?>  ?=([%known *] ship-state)
                 =+  pe-core=(abed-peer:pe ship +.ship-state)
-                abut:(on-migrate:pe-core next-bone.ossuary.peer-state.pe-core)  :: XX (dec next-bone)
+                pe-abel:(on-migrate:pe-core next-bone.ossuary.peer-state.pe-core)  :: XX (dec next-bone)
               ::
               --
             ::
@@ -2753,7 +2757,7 @@
                   (~(put by peers.ames-state) her %known peer-state)
                 event-core
               ::
-              ++  abut
+              ++  pe-abel ::  XX ++abel?
                 ^+  event-core
                 =.  peers.ames-state  (~(del by peers.ames-state) her)
                 event-core
@@ -5966,6 +5970,8 @@
               %.  [%van done/error]
               fo-take:(fo-abed:fo hen bone dire=%bak)
             ::
+            ::  XX move to separate core
+            ::
             +|  %message-constructor
             ::
             ::  XX remove all spaces from the task, and make the paths at the callsite?
@@ -6415,9 +6421,9 @@
                 =/  =space   chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
                 =/  =wire    (fo-wire %int)
                 =?  pot.sat.per  ?=(%bak dire)
-                  ::  for subscription flows, we track those paths in reference to
-                  ::  the wire associated with the flow so if we cork the flow we
-                  ::  can easily retrieve those paths and remove them from the .pit
+                  ::  for subscription flows (i.e. %boons), we track the peeks
+                  ::  for acks under the flow wire so if we cork the flow we
+                  ::  can easily retrieve all paths and remove them from the pit
                   ::
                   ::  XX impure abet pattern; move elsewhere?
                   ::
@@ -6870,7 +6876,6 @@
                       =([%ud 1] r.bem)
                       =(%x car)
                   ==
-                :: =+  core=(ev-abed:ev-core [now eny rof] ~[//scry])
                 =*  core  ev-core
                 =/  tyl=(pole knot)  s.bem
                 ~&  `path`tyl
