@@ -3,7 +3,7 @@
 |%
 +|  %global
 ::
-++  arvo  %237
+++  arvo  %236
 ::
 ::  $arch: node identity
 ::  $axal: fundamental node, recursive (trie)
@@ -208,9 +208,9 @@
   ==
 +$  heir
   $%  $:  %grub
-          $%  [?(%240 %239 %238 %237) =grub]
+          $%  [?(%240 %239 %238 %237 %236) =grub]
       ==  ==
-      [?(%240 %239 %238 %237) =debt =soul]
+      [?(%240 %239 %238 %237 %236) =debt =soul]
   ==
 +$  plan  (pair germ (list move))
 +$  soul
@@ -1082,10 +1082,10 @@
         ::
         ++  update
           ~/  %update
-          |=  [las=vase nex=vase]
+          |=  [las=vase nex=vase now=@da rof=rook]
           ^-  vase
           =/  sam=vase  (slap (slym las *vane-sample) [%limb %stay])
-          =/  gat=vase  (slap (slym nex *vane-sample) [%limb %load])
+          =/  gat=vase  (slap (slym nex now eny=*@uvJ rof) [%limb %load])
           (slam gat sam)
         --
     ::
@@ -1248,7 +1248,7 @@
         ==
       ::  apply remaining update
       ::
-      =.  ..this  (~(lod what:pith fil.debt) kel.debt)
+      =.  ..this  (~(lod what:pith fil.debt now.sol peek) kel.debt)
       ::  send upgrade notifications
       ::
       =+  [wir car]=[/arvo vega/~]
@@ -1485,7 +1485,7 @@
       ::    +mod: update the modules of the kernel
       ::
       ++  what
-        |_  fil=(list (pair path (cask)))
+        |_  [fil=(list (pair path (cask))) now=@da rof=rook]
         ::
         ++  kel
           ^+  ..pith
@@ -1525,7 +1525,7 @@
             ^+  van
             =/  nex  (create:va our zus.mod.sol nam /sys/vane/[nam]/hoon txt)
             =/  nav  (~(get by van) nam)
-            =?  nex  ?=(^ nav)  (update:va vase.u.nav nex)
+            =?  nex  ?=(^ nav)  (update:va vase.u.nav nex now rof)
             (~(put by van) nam (settle:va nex))
           ==
         --
@@ -1546,7 +1546,7 @@
                  (emit $/~ (spam /arvo !>(waif)))
         ::
           %verb  ..pith(lac.fad ?~(p.waif !lac.fad u.p.waif))
-          %what  ~(kel what p.waif)
+          %what  ~(kel what p.waif now.sol ^peek)
           %whey  ..pith(out [[//arvo mass/whey] out])
         ::
             %whiz
@@ -1768,7 +1768,7 @@
   ::
   =.  sol
     ?-  -.hir
-      ?(%240 %239 %238 %237)  soul.hir
+      ?(%240 %239 %238 %237 %236)  soul.hir
     ==
   ::  clear compiler caches
   ::
