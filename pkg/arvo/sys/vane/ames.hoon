@@ -1682,6 +1682,7 @@
 =|  ames-state=axle
 =*  unix-duct  unix-duct.ames-state
 ::
+:: =|  moz=(list move)  :: XX extracted from the ++load arm
 |=  [now=@da eny=@uvJ rof=roof]
 =*  vane-gate  .
 ::
@@ -1710,7 +1711,8 @@
             ++  emit  |=  =move
                       event-core(moves [move moves])
             ++  emil  |=(mos=_moves event-core(moves (weld (flop mos) moves)))
-            ++  channel-state  [life crypto-core bug]:ames-state
+            ++  crypto-core    (nol:nu:crub:crypto priv.ames-state)
+            ++  channel-state  [life.ames-state crypto-core bug.ames-state]
             ++  ev-trace
               |=  [verb=? =ship print=(trap tape)]
               ^+  same
@@ -2708,10 +2710,11 @@
             ++  attestation-packet
               |=  [her=ship =her=life]
               ^-  blob
+              =+  crypto-core=(nol:nu:crub:crypto priv.ames-state)
               %-  etch-shot
               %-  etch-open-packet
-              :_  crypto-core.ames-state
-              :*  ^=  public-key  pub:ex:crypto-core.ames-state
+              :_  crypto-core
+              :*  ^=  public-key  pub:ex:crypto-core
                   ^=        sndr  our
                   ^=   sndr-life  life.ames-state
                   ^=        rcvr  her
@@ -4392,11 +4395,12 @@
                     ::
                     ++  keys
                       |%
+                      ++  crypto-core  (nol:nu:crub:crypto priv.ames-state)
                       ++  mess
                         |=  [=ship life=@ud =path dat=$@(~ (cask))]
                         (jam +<)
                       ::
-                      ++  sign  sigh:as:crypto-core.ames-state
+                      ++  sign  sigh:as:crypto-core
                       ::
                       ++  veri-fra
                         |=  [=path fra=@ud dat=@ux sig=@]
@@ -7095,16 +7099,16 @@
                     [~ ~]
                   ::
                   =+  core=(ev:ames ~[//attestation] ames-state)
+                  =+  crypto-core=(nol:nu:crub:crypto priv.ames-state)
                   =/  comet-proof=open-packet
-                    :*  pub:ex:crypto-core.ames-state
+                    :*  pub:ex:crypto-core
                         our
                         life.ames-state
                         u.rcvr
                         u.life
                     ==
-                  =*  priv  priv.ames-state
                   :+  ~  ~
-                  [%message !>((sign:as:(nol:nu:crub:crypto priv) (jam comet-proof)))]
+                  [%message !>((sign:as:crypto-core (jam comet-proof)))]
                 ::  weight of a noun bounded at .pat, as measured by .boq
                 ::
                     [%whit boq=@ pat=*]
@@ -7646,8 +7650,8 @@
                 ::   =-  ~&  priv/-  -
                 ::   (rof [~ ~] /ames %j `beam`[[our %vein %da now] /1])  :: XX remove
                 =/  crypto-core     (nol:nu:crub:crypto priv.ames-state)
-                =/  =private-key    sec:ex:crypto-core
-                =/  =symmetric-key  (derive-symmetric-key public-key private-key)
+                =/  pk=private-key  sec:ex:crypto-core
+                =/  =symmetric-key  (derive-symmetric-key public-key pk)
                 ::
                 =/  peer
                   ::  XX if the peer doesn't previously exist we insert it
@@ -8462,7 +8466,7 @@
   ==
 ::  +stay: extract state before reload
 ::
-++  stay  ames-state
+++  stay  [%22 ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
@@ -8539,9 +8543,9 @@
                   $%  [%larva *]
                       [%adult state=ames-state-21]
               ==  ==
-              axle  :: [%0 *]  :: XX restore when changing types in %lull
+              [%22 axle]
           ==
-      =|  moz=(list move)
+      =|  moz=(list move)  :: XX not used; emit moves on load?
       |-  ^+  vane-gate
       ::
       ?:  ?=([@ %larva *] old)
@@ -8550,7 +8554,7 @@
         ::  from the first time, %ames will produce %0 axle in ++stay
         ::
         !!  ::  $(+<.old %adult, +>.old state.old)
-      ?:  ?=(%0 -.old)  :: XX make it %22
+      ?:  ?=(%22 -.old)
         ::  ~&  priv.old
         :: =.  peers.old    ~
         :: =.   chums.old   ~
@@ -8569,7 +8573,7 @@
         ::             ::  %_  ossuary
         ::               :: next-bone  40
         ::   ==        :: ==
-        vane-gate(ames-state old)
+        vane-gate(ames-state +.old)
       ::
       ?>  ?=([@ %adult *] old)
       ?:  ?=(%5 -.old)   $(old 6+adult/(state-5-to-6 state.old))
@@ -8603,7 +8607,7 @@
           %+  skim
             ;;  (list [@da duct])
             =<  q.q  %-  need  %-  need
-            (rof [~ ~] /ames %bx [[our %$ da+now] /debug/timers])   ::  XX can't scry on ++load
+            (rof [~ ~] /ames %bx [[our %$ da+now] /debug/timers])
           |=([@da =duct] ?=([[%ames %recork *] *] duct))
         ==
       ::
@@ -8621,14 +8625,13 @@
         :: =.  moz
         ::   =+  ev-core=(ev [now eny rof] [/saxo]~ ames-state)
         ::   :_  moz
-        ::   :: [unix-duct.state.old %give %saxo get-sponsors:ev-core]  ::  XX can't scry on ++load
-                                                                        ::  ask %jael to give us this on ++take
+        ::   :: [unix-duct.state.old %give %saxo get-sponsors:ev-core]  ::  ask %jael to give us this on ++take
         ::   [[//ames/0v0]~ %give %saxo get-sponsors:ev-core]
         $(old 20+adult/(state-19-to-20 state.old))
       ::
       ?:  ?=(%20 -.old)  $(old 21+adult/(state-20-to-21 state.old))
       ::  XX  emit move to start %dead-flow timers
-      ?>  ?=(%21 -.old)  $(old (state-21-to-0 state.old))
+      ?>  ?=(%21 -.old)  $(old 22+(state-21-to-22 state.old))
   ::
   |%
   ++  our-beam  `beam`[[our %rift %da now] /(scot %p our)]
@@ -8665,7 +8668,7 @@
       ?:  ?=(%pawn (clan:title ship))  0
       ;;  @ud
       =<  q.q  %-  need  %-  need
-      (rof [~ ~] /ames %j `beam`[[our %rift %da now] /(scot %p ship)])  ::  XX can't scry on ++load
+      (rof [~ ~] /ames %j `beam`[[our %rift %da now] /(scot %p ship)])
     :-   -.ship-state
     :_  +.peer-state
     =,  -.peer-state
@@ -8746,7 +8749,7 @@
   ++  state-12-to-13
     |=  old=ames-state-12
     ^-  ames-state-13
-    =+  !<(=rift q:(need (need (rof [~ ~] /ames %j our-beam))))  ::  XX can't scry on ++load
+    =+  !<(=rift q:(need (need (rof [~ ~] /ames %j our-beam))))
     =+  pk=sec:ex:crypto-core.old
     :*  peers=(~(run by peers.old) ship-state-12-to-13)
         unix-duct.old
@@ -8788,7 +8791,7 @@
   ++  state-14-to-15
     |=  old=ames-state-14
     ^-  ames-state-15
-    old(rift !<(=rift q:(need (need (rof [~ ~] /ames %j our-beam)))))  ::  XX can't scry on ++load
+    old(rift !<(=rift q:(need (need (rof [~ ~] /ames %j our-beam)))))
   ::
   ++  state-15-to-16
     |=  old=ames-state-15
@@ -8921,12 +8924,17 @@
       ==
     ==
   ::
-  ++  state-21-to-0
+  ++  state-21-to-22
     |=  old=ames-state-21
     ^-  axle
-    :-  %0
-    %=  old
-      chain  [server-chain=chain.old priv=sec:ex:crypto-core.old chums=~ %ames]
+    ::  removes crypto cores and adds the private key to the state
+    ::
+    =,  old
+    :*  peers  unix-duct  life  rift  bug  snub  cong  dead
+        server-chain=chain
+        priv=sec:ex:crypto-core
+        chums=~
+        %ames
     ==
   --
 ::  +scry: dereference namespace
