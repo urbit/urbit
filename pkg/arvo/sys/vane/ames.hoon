@@ -137,7 +137,7 @@
     +$  note
       $~  [%b %wait *@da]
       $%  $:  %a
-              $>(?(%deep %keen %meek %moke %prod) task)
+              $>(?(%deep %keen %meek %moke %mage %prod) task)
           ==
           $:  %b
               $>(?(%wait %rest) task:behn)
@@ -231,6 +231,8 @@
         |-  ^+  sorted
         ?:  =(index num-fragments)
           sorted
+        ~?  >>>  !(~(has by fragments) index)
+          whoops/index
         $(index +(index), sorted [(~(got by fragments) index) sorted])
       ::
       (cue (rep packet-size (flop sorted)))
@@ -6017,6 +6019,33 @@
               ::  ack and poke paths are already encrypted at this point
               ::
               (ev-make-mess ack-spar `poke-path)
+            ::
+            ++  ev-make-page
+              |=  [=space spar]
+              ^+  ev-core
+              =+  per=(ev-get-per ship)
+              ?.  ?=([~ ~ %known *] per)
+                ~&  >>>  %missing-peer
+                ev-core  ::  %alien or missing
+              =*  sat  +.u.u.per
+              =/  =name:pact
+                [[our rift.ames-state] [13 ~] (ev-make-path space path)]
+              ?~  page=(ev-get-page name)
+                ev-core
+              ::  XX the use case for sending pages are acks, that fit in one
+              ::  (bloq=13) fragment. no-op if bigger than that?
+              ::
+              ::  XX only allow %ames to send %mage task? (by inspecting the duct?)
+              ::
+              %+  ev-push-pact
+                [hop=0 page/[name u.page ~]]
+              ::  XX  check here if we have a lane, and if not, assume that it came
+              ::  via a sponsor, to avoid breaking symmetric routing
+              ::  XX  unnecessary? vere wil probably ignore this lane
+              ?^  lane.sat
+                lane.sat
+              [~ `@ux`(^^sein:title rof /ames our now ship)]
+            ::
             ::  +ev-make-mess: this arm doesn't use the peer from the door's
             ::  sample sat.per, due to the way comets are handled in when reading
             ::  attestation proofs, and therefore the +abed/+abet pattern can't be
@@ -6150,8 +6179,8 @@
             ++  ev-got-duct
               |=  =bone
               ^-  duct
-              ::  ?>  ?=(%known -.sat.per)
-              ~|(%dangling-bone^ship.per^bone (~(got by by-bone.ossuary.sat.per) bone))
+              ~|  %dangling-bone^ship.per^bone
+              (~(got by by-bone.ossuary.sat.per) bone)
             ::
             +|  %peek-subscribers
             ::
@@ -6205,7 +6234,6 @@
               ++  fo-abet
                 ^+  ev-core
                 =.  flows.sat.per  (~(put by flows.sat.per) bone^dire state)
-                ~&  fo-abet/her
                 %_    ev-core
                     ames-state
                   ames-state(chums (~(put by chums.ames-state) her known/sat.per))
@@ -6675,29 +6703,6 @@
               ::
               +|  %internals
               ::
-              ++  fo-send-ack
-                |=  seq=@ud
-                ^+  fo-core
-                ::  emit (n)ack to unix; see +fo-peek where the (n)ack is produced
-                ::
-                =/  =path   (fo-ack-path seq her)
-                =/  =space  chum/[life.ames-state her [life symmetric-key]:sat.per]
-                =/  =name:pact
-                  [[our rift.ames-state] [13 ~] (ev-make-path space path)]
-                ?~  page=(ev-get-page name)
-                  :: XX !!? log?
-                  fo-core
-                =;  core=_ev-core
-                  fo-core(ev-core core)
-                %+  ev-push-pact
-                  [hop=0 page/[name u.page ~]]
-                ::  XX  check here if we have a lane, and if not, assume that it came
-                ::  via a sponsor, to avoid breaking symmetric routing
-                ::  XX  unnecessary? vere wil probably ignore this lane
-                ?^  lane.sat.per
-                  lane.sat.per
-                [~ `@ux`(^^sein:title rof /ames our now ship.per)]
-              ::
               ++  fo-peek-naxplanation
                 |=  seq=@ud
                 ::  XX %ames call itself with a %meek task
@@ -6709,6 +6714,15 @@
                   chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
                 =/  =path   (ev-make-path space (fo-nax-path seq our))
                 (fo-emit hen %pass wire %a meek/[space her^path])
+              ::
+              ++  fo-send-ack
+                |=  seq=@ud
+                ::  emit (n)ack to unix; see +fo-peek where the (n)ack is produced
+                ::
+                =/  =path  (fo-ack-path seq her)
+                =/  =space
+                  chum/[life.ames-state her [life symmetric-key]:sat.per]
+                (fo-emit [/ames]~ %pass /make-page %a mage/[space her^path])
               ::
               --
             ::
@@ -6895,9 +6909,7 @@
                       =([%ud 1] r.bem)
                       =(%x car)
                   ==
-                =*  core  ev-core
                 =/  tyl=(pole knot)  s.bem
-                ~&  `path`tyl
                 ?+    tyl  ~
                 ::  publisher-side, batch-level
                 ::
@@ -6936,7 +6948,6 @@
                   =?  typ.pat.tyl  ?=(%init typ.pat.tyl)
                     %data
                   $(batch [;;(@ q.q.u.u.res) batch])
-                ::
                 ::  publisher-side, protocol-level
                 ::
                     [%mess ryf=@ res=*]
@@ -7048,7 +7059,6 @@
                       (swag [(mul per fag) (dec per)] pairs.lss-proof)
                     [nam dat pairs proof.lss-proof]
                   ==
-                ::
                 ::  XX need a single namespace entrypoint to validate
                 ::     generically any authentication tag for a message
                 ::
@@ -7059,7 +7069,7 @@
                     [%publ lyf=@ pat=*]
                   =/  lyf  (slaw %ud lyf.tyl)
                   ?~  lyf  [~ ~]
-                  (ev-peek-publ:core bem u.lyf pat.tyl)
+                  (ev-peek-publ bem u.lyf pat.tyl)
                 ::  publisher-side, message-level (two-party encrypted namespace)
                 ::
                     [%chum lyf=@ her=@ hyf=@ cyf=@ ~]
@@ -7069,7 +7079,7 @@
                   =/  cyf  (slaw %uv cyf.tyl)
                   ?:  |(?=(~ lyf) ?=(~ her) ?=(~ hyf) ?=(~ cyf))
                     [~ ~]
-                  (ev-peek-chum:core bem u.her u.lyf u.hyf u.cyf)
+                  (ev-peek-chum bem u.her u.lyf u.hyf u.cyf)
                 ::  publisher-side, message-level (group encrypted namespace)
                 ::
                     [%shut kid=@ cyf=@ ~]
@@ -7077,7 +7087,7 @@
                   =/  cyf  (slaw %uv cyf.tyl)
                   ?:  |(?=(~ kid) ?=(~ cyf))
                     [~ ~]
-                  (ev-peek-shut:core bem u.kid u.cyf)
+                  (ev-peek-shut bem u.kid u.cyf)
                 ::  publisher-side, flow-level
                 ::
                     [%flow bone=@ load=?(%plea %boon %ack-plea %ack-boon %nax) rcvr=@ mess=@ ~]
@@ -7086,7 +7096,7 @@
                   =/  mess  (slaw %ud mess.tyl)
                   ?:  |(?=(~ bone) ?=(~ rcvr) ?=(~ mess))
                     [~ ~]
-                  (ev-peek-flow:core u.bone load.tyl u.rcvr u.mess)
+                  (ev-peek-flow u.bone load.tyl u.rcvr u.mess)
                 ::  client %mesa %corks, flow-level
                 ::
                     [%flow bone=@ %cork rcvr=@ ~]
@@ -8116,6 +8126,7 @@
           ::
             %meek  ev-abut:(ev-make-peek:ev-core +.task)
             %moke  ev-abut:(ev-make-poke:ev-core +.task)
+            %mage  ev-abut:(ev-make-page:ev-core +.task)
           ==
           ::
         [moves vane-gate]
@@ -8419,7 +8430,7 @@
   ?-    -.task
     ::  %ames-only tasks
     ::
-      ?(%kroc %deep %chum %cong %mate %stir)
+      ?(%kroc %deep %chum %cong %mate %stir)  :: XX %chum to common tasks
     ::  XX can we call the wrong core? still check if ship has migrated?
     ::
     (call:ames hen dud soft/task)
@@ -8433,7 +8444,7 @@
     (~(call pe-core hen) dud task)
     ::  XX can we call the wrong core? still check if ship has migrated?
     ::
-      ?(%meek %moke %back)
+      ?(%meek %moke %mage %back)
     (call:mesa hen dud soft/task)
     ::  flow-independent tasks
     ::
@@ -8561,7 +8572,7 @@
               [%22 axle]
           ==
       =|  moz=(list move)  :: XX not used; emit moves on load?
-      |-  ^+  vane-gate
+      |-  ^+  vane-gate    ::  ^-  [(list move) _vane-gate]
       ::
       ?:  ?=([@ %larva *] old)
         ::  XX we need to handle the %larva type to account for %larval ++stay
@@ -8571,8 +8582,8 @@
         !!  ::  $(+<.old %adult, +>.old state.old)
       ?:  ?=(%22 -.old)
         ::  ~&  priv.old
-        :: =.  peers.old    ~
-        :: =.   chums.old   ~
+        :: =.  peers.old   ~
+        :: =.  chums.old   ~
         ::   %-  ~(run by chums.old)
         ::   |=  =chum-state
         ::   ?:  ?=(%alien -.chum-state)

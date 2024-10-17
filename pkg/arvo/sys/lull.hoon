@@ -873,10 +873,11 @@
         [%load ?(%mesa %ames)]                ::  load core for new peers; XX make it term for flexibility?
         [%back (unit ship)]                   ::  per-peer regression
     ::
-        [%heer =lane:pact p=@]                :: receive a packet
-        [%mess =mess]                         :: receive a message
-        [%moke =space =spar =path]            :: initiate %poke request
-        [%meek =space =spar]                  :: initiate %peek request
+        [%heer =lane:pact p=@]          :: receive a packet
+        [%mess =mess]                   :: receive a message
+        [%moke =space =spar =path]      :: initiate %poke request
+        [%meek =space =spar]            :: initiate %peek request
+        [%mage =space =spar]            :: send %page of data; intended for acks
     ==
   ::
   ::  $gift: effect from ames
