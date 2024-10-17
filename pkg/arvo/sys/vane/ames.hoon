@@ -5566,13 +5566,12 @@
               (ev-emit:ev-core [/ames]~ %pass /clog %g clog/u.id)
             ::
             ++  ev-req-peek
-              |=  [sec=(unit [kid=@ key=@]) =path]
+              |=  [=space =path]
               ^+  ev-core
               ::  +sy-plug should have already stored [kid key path] in chain.ames-state
               ::  on the server, and the client would have retrieved the key via
               ::  the %ames key exchange. here we store it in their peer state
               ::
-              =/  =space  ?~(sec publ/life.sat.per shut/[kid key]:u.sec)
               ::
               =?  chums.ames-state  ?=(%shut -.space)
                 %+  ~(put by chums.ames-state)  ship.per
@@ -7596,10 +7595,15 @@
                   =^  moves  ames-state
                     =+  peer-core=(abed:pe:ames-core ship)
                     =<  abet  ^+  ames-core
-                    =<  abet  ^+  peer-core
-                    %-  ~(rep by keens.todos)
-                    |=  [[=path ducts=(set duct)] cor=_peer-core]
-                    (~(rep in ducts) |=([=duct c=_cor] (on-keen:c path duct)))
+                    =.  ames-core
+                      =<  abet  ^+  peer-core
+                      %-  ~(rep by keens.todos)
+                      |=  [[=path ducts=(set duct)] cor=_peer-core]
+                      (~(rep in ducts) |=([=duct c=_cor] (on-keen:c path duct)))
+                    ::
+                    %-  ~(rep by chums.todos)
+                    |=  [[=path ducts=(set duct)] cor=_ames-core]
+                    (~(rep in ducts) |=([=duct c=_cor] (on-chum:c ship^path)))
                   ::
                   (sy-emil moves)
                 ::
@@ -7612,7 +7616,8 @@
                     sy-core
                   ::  init ev-core with provided chum-state
                   ::
-                  =+  ev-core=%*(. ev-core:ev per ship^+.chum-state)
+                  =+  per=ship^+.chum-state
+                  =+  ev-core=(ev-foco:ev-core:ev per)
                   ::
                   =.  ev-core
                     ::  apply outgoing messages
@@ -7624,13 +7629,24 @@
                       (ev-req-plea:(ev-abed:c duct) +.mess)
                     ==
                   =.  ev-core
-                    ::  apply remote scry requests
+                    ::  apply (public) remote scry requests
                     ::
                     %-  ~(rep by peeks.todos)
                     |=  [[=path ducts=(set duct)] core=_ev-core]
                     %-  ~(rep in ducts)
                     |=  [=duct c=_core]
-                    (ev-req-peek:(ev-abed:c duct) ~ path)
+                    (ev-req-peek:(ev-abed:c duct) publ/life.+.per path)
+                  ::
+                  =.  ev-core
+                    ::  apply (two-party) remote scry requests
+                    ::
+                    %-  ~(rep by chums.todos)
+                    |=  [[=path ducts=(set duct)] core=_ev-core]
+                    %-  ~(rep in ducts)
+                    |=  [=duct c=_core]
+                    =/  space
+                      chum/[life.ames-state ship [life symmetric-key]:sat.per.c]
+                    (ev-req-peek:(ev-abed:c duct) space path)
                   ::
                   =^  moves  ames-state  ev-abet:ev-core
                   sy-core
@@ -8215,6 +8231,7 @@
         %plea  (pe-plea +.task)
         %cork  (pe-cork +.task)
         %keen  (pe-keen +.task)
+        %chum  (pe-chum +.task)
         %whit  (pe-whit +.task)
         %yawn  (pe-cancel all=| +.task)
         %wham  (pe-cancel all=& +.task)
@@ -8273,13 +8290,38 @@
                      ::  +ev-abet will discard any changes made
                      ::
         ?:  ?=([~ %known *] +.ship-state)
-          (%*(ev-req-peek me-core per ship^+.u.ship-state) sec path)
+          =*  sat     +.u.ship-state
+          =/  =space  ?~(sec publ/life.sat shut/[idx key]:u.sec)
+          (%*(ev-req-peek me-core per ship^sat) space path)
         ::
+        :: XX: key exchange over ames forces all encrypted scries to be
+        :: to a known peer
+        ?>  ?=(~ sec)
         %^  ev-enqueue-alien-todo:me-core  ship  +.ship-state
         |=  todos=ovni-state:me-core
         todos(peeks (~(put ju peeks.todos) path hen))
       moves^vane-gate
-      ::
+    ::
+    ++  pe-chum
+      |=  spar:^ames
+      =/  ship-state  (pe-find-peer ship)
+      ?:  ?=(%ames -.ship-state)
+        (call:ames hen ~ soft+chum/ship^path)
+      =^  moves  ames-state
+        =<  ev-abut  ::  XX  due to the way we deal with comet attestations, we
+                     ::  cant' call the normal +ev-abet arm since we are not
+                     ::  touching per.sat.ev-core in ++ev-make-peek, so calling
+                     ::  +ev-abet would discard any changes made to the state
+                     ::
+        ?:  ?=([~ %known *] +.ship-state)
+          =*  sat    +.u.ship-state
+          =/  space  chum/[life.ames-state ship [life symmetric-key]:sat]
+          (%*(ev-req-peek me-core per ship^sat) space path)
+        ::
+        %^  ev-enqueue-alien-todo:me-core  ship  +.ship-state
+        |=  todos=ovni-state:me-core
+        todos(chums (~(put ju chums.todos) path hen))
+      moves^vane-gate
     ::
     ++  pe-cancel
       |=  [all=? =spar]
@@ -8430,7 +8472,7 @@
   ?-    -.task
     ::  %ames-only tasks
     ::
-      ?(%kroc %deep %chum %cong %mate %stir)  :: XX %chum to common tasks
+      ?(%kroc %deep %cong %mate %stir)  :: XX %chum to common tasks
     ::  XX can we call the wrong core? still check if ship has migrated?
     ::
     (call:ames hen dud soft/task)
@@ -8452,7 +8494,7 @@
     (call:mesa hen dud soft/task)
     ::  common tasks
     ::
-      ?(%plea %cork %keen %yawn %wham %load %whit)  :: XX make %whit only for |mesa
+      ?(%plea %cork %keen %chum %yawn %wham %load %whit)  :: XX make %whit only for |mesa?
     (~(call pe-core hen) dud task)
     ::  core-dependent tasks
     ::

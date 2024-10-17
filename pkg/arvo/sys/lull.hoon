@@ -1628,6 +1628,7 @@
     $+  ovni-state
     $:  pokes=(list [=duct message=mesa-message])
         peeks=(jug path duct)
+        chums=(jug path duct)
         pit=(map path request-state)  ::  XX only for comets
     ==
   ::
