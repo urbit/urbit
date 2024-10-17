@@ -873,11 +873,11 @@
         [%load ?(%mesa %ames)]                ::  load core for new peers; XX make it term for flexibility?
         [%back (unit ship)]                   ::  per-peer regression
     ::
-        [%heer =lane:pact p=@]                :: receive a packet
-        [%mess =mess]                         :: receive a message
-        [%moke =space =spar =path]            :: initiate %poke request
-        [%meek =space =spar]                  :: initiate %peek request
-        [%mage =space =spar]                  :: send %page of data
+        [%heer =lane:pact p=@]          :: receive a packet
+        [%mess =mess]                   :: receive a message
+        [%moke =space =spar =path]      :: initiate %poke request
+        [%meek =space =spar]            :: initiate %peek request
+        [%mage =space =spar]            :: send %page of data; intended for acks
     ==
   ::
   ::  $gift: effect from ames
@@ -1564,12 +1564,10 @@
     [16 %0b11]
   ::
   +$  axle
-    $:  %0
-        peers=(map ship ship-state)
+    $:  peers=(map ship ship-state)
         unix-duct=_`duct`[//ames/0v0 ~]
         =life
         =rift
-        crypto-core=acru
         =bug
         snub=[form=?(%allow %deny) ships=(set ship)]
         cong=[msg=_5 mem=_100.000]
@@ -1578,12 +1576,12 @@
             cork=[%cork (unit dead-timer)]
         ==
         ::
-        =server=chain  ::  for serving %shut requests
-        priv=private-key    ::  XX remove if we use the crypto core?
-        chums=(map ship chum-state)  ::  XX migrated peers
-        core=_`?(%ames %mesa)`%ames          ::  XX use migrated core by default
+        =server=chain                       ::  for serving %shut requests
+        priv=private-key
+        chums=(map ship chum-state)         ::  XX migrated peers
+        core=_`?(%ames %mesa)`%ames         ::  XX use migrated core by default
         ::  TODOs
-        :: XX tmp=(map @ux page)   :: temporary hash-addressed bindings
+        :: XX tmp=(map @ux page)            :: temporary hash-addressed bindings
     ==
   ::
   +$  dead-timer  [=duct =wire date=@da]
@@ -1630,6 +1628,7 @@
     $+  ovni-state
     $:  pokes=(list [=duct message=mesa-message])
         peeks=(jug path duct)
+        chums=(jug path duct)
         pit=(map path request-state)  ::  XX only for comets
     ==
   ::
@@ -1648,6 +1647,7 @@
         ::              path=ack-path  /~nec/ack/~zod/flow/bone=0/mess=1/frag=1
         ::
         pit=(map path request-state)
+        pot=(jug wire path)      ::  each wire represents a flow, the value is its associated peeks for the acks
         =client=chain            ::  stores keys for %shut requests
     ==
   ::
