@@ -2340,7 +2340,7 @@
                 =<  :: delete ship from .peers
                     ::
                     pe-abel
-                =~  ::  ack ahoy plea
+                =~  ::  ack ahoy plea, if we don't crash (i.e. have live flows)
                     ::
                     (call:(abed:mi:peer-core bone) %done ok=%.y)
                     ::  migrate all flows
@@ -3093,8 +3093,24 @@
                         %-  flop
                         %+  roll  (tap:queue fragments)
                         |=  [[* partial-rcv-message] total=(list message)]
+                        ~|  [total=total n=num-fragments f=~(wyt by fragments)]
                         :_  total
                         ;;  message
+                        ::  if we are in the middle of sending a message,
+                        ::  assemble fragments will crash for any acked fragment
+                        ::  since it has been removed from the queue.
+                        ::
+                        ::  this will cancel the migration for both sender
+                        ::  (when acked) and receiver of the ahoy plea.
+                        ::
+                        ::    - for the sender, the ahoy plea will be resend,
+                        ::      and always acked by the receiver if they
+                        ::      succesfully migrated
+                        ::
+                        ::    - for the receiver, if they are sending us
+                        ::      anything, they won't ack the ahoy plea and
+                        ::      we will keep resending it.
+                        ::
                         :_  (assemble-fragments num-fragments fragments)
                         ?:  =(%0 (mod bone 4))  %plea
                         ?:  =(%1 (mod bone 4))  %boon
@@ -3161,13 +3177,14 @@
                   ::  backward flows
                   ::
                   =.  flows.fren
-                    ::  XX the %ahoy flow is not migrated properly since
-                    ::     at this point we have not acked it yet
-                    ::
                     %-  ~(rep by rcv.peer-state)
                     |=  [[=^bone sink=message-sink-state] flows=_flows.fren]
-                    ::  drop any partially received messages in live-messages
+                    ::  if we have partially received messages in live-messages
+                    ::  crash, since we need to wait to receive the full message
+                    ::  to properly complete the migration
                     ::
+                    ?^  live-messages.sink
+                      !!
                     ::  if this was a naxplanation bone but we haven't finished
                     ::  sink it, also drop it. the message pump has enough
                     ::  information to know that we need to start +peeking it.
@@ -5235,7 +5252,6 @@
             ::
             ++  ev-core  .
             ++  ev-abet
-              ~&  ev-abet/ship.per
               =.  chums.ames-state
                 (~(put by chums.ames-state) per(sat known/sat.per))
               ev-abut
@@ -5612,7 +5628,6 @@
                 ?:  (fo-message-is-acked:fo-core mess.pok)
                   ::  don't peek if the message havs been already acked
                   ~&  >>  "fo-message-is-acked"
-                  ::
                   fo-abet:(fo-send-ack:fo-core mess.pok)
                 =/  =^space
                   chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
