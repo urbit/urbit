@@ -1684,10 +1684,25 @@
 =|  ames-state=axle
 =*  unix-duct  unix-duct.ames-state
 ::
-:: =|  moz=(list move)  :: XX extracted from the ++load arm
+=<  ::  TODO implement %larval core
+    ::
+    =*  adult-gate  .
+    ::
+    |=  [now=@da eny=@ rof=roof]
+    =*  larval-gate  .
+    =*  adult-core   (adult-gate +<)
+    ::
+    |%
+    ++  call  call:adult-core
+    ++  take  take:adult-core
+    ++  stay  [%22 larva/ames-state]
+    ++  load  load:adult-core
+    ++  scry  scry:adult-core
+    --
+::  %adult core
+::
 |=  [now=@da eny=@uvJ rof=roof]
 =*  vane-gate  .
-::
 =>  ::  network protocol core handlers
     ::
     |%
@@ -1700,7 +1715,7 @@
           ++  ev
             =|  moves=(list move)
             ~%  %event-gate  ..ev  ~
-            |=  [=duct ames-state=axle]
+            |=  [[now=@da eny=@uvJ rof=roof] =duct ames-state=axle]
             =*  veb  veb.bug.ames-state
             =|  cork-bone=(unit bone)  ::  modified by +on-kroc
             =|  vane=?(%fine %ames)
@@ -2065,7 +2080,8 @@
                       ^=     keys  keys
                       ^=  sponsor  `(^sein:title sndr.shot)
                   ==
-                =+  ev-core=~(ev-core ev:mesa [duct sndr.shot^*fren-state])
+                =+  mesa-core=(mesa now^eny^rof)
+                =+  ev-core=~(ev-core ev:mesa-core [duct sndr.shot^*fren-state])
                 =^  moves  ames-state
                   sy-abet:(sy-publ:sy:ev-core / [%full (my [sndr.shot point]~)])
                 (emil moves)
@@ -3061,8 +3077,9 @@
                     =/  fo-core
                       =/  =^duct
                         (~(gut by by-bone.ossuary.peer-state) bone [/ames]~)
+                      =+  mesa-core=(mesa now eny rof)
                       =/  core
-                        %*  .  fo:~(ev-core ev:mesa [duct her^fren])
+                        %*  .  fo:~(ev-core ev:mesa-core [duct her^fren])
                           flows.sat.per  (~(put by flows) bone^dire flow)  :: XX check that we don't add naxplanation flows here
                         ==
                       (fo-abed:core duct bone dire)
@@ -3273,7 +3290,7 @@
                   ~&  make-peeks-for/her
                   =/  ev-core
                     =/  chums  (~(put by chums.ames-state) her known/fren)
-                    %*  ev-core  ev:mesa
+                    %*  ev-core  ev:(mesa now^eny^rof)
                       per               her^fren
                       chums.ames-state  chums
                     ==
@@ -4870,6 +4887,7 @@
           --
       ::  adult ames, after metamorphosis from larva
       ::
+      |=  [now=@da eny=@uvJ rof=roof]
       =*  veb  veb.bug.ames-state
       |%
       ::  +call: handle request $task
@@ -4880,7 +4898,7 @@
         ::
         ~|  wrapped-task
         =/  =task       ((harden task) wrapped-task)
-        =/  event-core  (ev duct ames-state)
+        =/  event-core  (ev now^eny^rof duct ames-state)
         ::
         =^  moves  ames-state
           =<  abet
@@ -4920,7 +4938,7 @@
         ?^  dud
           ~|(%ames-take-dud (mean tang.u.dud))
         ::
-        =/  event-core  (ev duct ames-state)
+        =/  event-core  (ev now^eny^rof duct ames-state)
         ::
         =^  moves  ames-state
           ?:  ?=([%gall %unto *] sign)
@@ -5238,6 +5256,7 @@
       --
     ::
     ++  mesa
+      |=  [now=@da eny=@uvJ rof=roof]
       ::
       =>  |%
           ::  inner event-handling core
@@ -7122,7 +7141,7 @@
                   ?:  |(?=(~ life) ?=(~ rcvr))
                     [~ ~]
                   ::
-                  =+  core=(ev:ames ~[//attestation] ames-state)
+                  =+  core=(ev:ames now^eny^rof ~[//attestation] ames-state)
                   =+  crypto-core=(nol:nu:crub:crypto priv.ames-state)
                   =/  comet-proof=open-packet
                     :*  pub:ex:crypto-core
@@ -7358,7 +7377,7 @@
               =.  flow.dead.ames-state
                 flow/`[~[/ames] /mesa/dead-flow `@da`(add now ~m2)]
               =^  ames-moves  ames-state
-                abet:(wake-dead-flows:(ev:ames hen ames-state) error)
+                abet:(wake-dead-flows:(ev:ames now^eny^rof hen ames-state) error)
               =^  prod-moves  ames-state
                 sy-prod
               %-  sy-emil
@@ -7566,7 +7585,7 @@
                   ^+  sy-core
                   ::  init event-core:ames
                   ::
-                  =/  ames-core  (ev:ames hen ames-state)
+                  =/  ames-core  (ev:ames now^eny^rof hen ames-state)
                   ::  if we're a comet, send self-attestation packet first
                   ::
                   =?  ames-core  =(%pawn (clan:title our))
@@ -7699,7 +7718,7 @@
                   ::  based on the chosen core in state; see find-peer
                   ?:  ?=(%chum wer)
                     chum/`fren-state`sat:(ev-gut-per:ev ship)
-                  ship/(gut-peer-state:(ev:ames hen ames-state) ship)
+                  ship/(gut-peer-state:(ev:ames now^eny^rof hen ames-state) ship)
                 =.  life.peer           life.point
                 =.  rift.peer           rift.point
                 =.  public-key.peer     public-key
@@ -7969,7 +7988,7 @@
               ++  regress-flows
                 |=  [her=^ship fren=fren-state state=axle]
                 ^-  (quip move axle)
-                =+  event-core=(ev:ames hen state)
+                =+  event-core=(ev:ames now^eny^rof hen state)
                 =/  peer=peer-state  (got-peer-state:event-core her)
                 =+  peer-core=(abed-peer:pe:event-core her peer)
                 =;  core=_peer-core
@@ -8005,7 +8024,7 @@
               ++  regress-peeks
                 |=  [her=^ship fren=fren-state peer=peer-state]
                 ^-  (quip move axle)
-                =+  event-core=(ev:ames hen ames-state)
+                =+  event-core=(ev:ames now^eny^rof hen ames-state)
                 =;  core=_event-core
                   abet:core
                 %-  ~(rep by pit.fren)
@@ -8031,7 +8050,8 @@
                 ::
                 =.  path
                   =/  [=space pax=^path]
-                    [space inner]:(ev-decrypt-path:ev:mesa path her)
+                    =+  mesa-core=(mesa now^eny^rof)
+                    [space inner]:(ev-decrypt-path:ev:mesa-core path her)
                   ?-    -.space
                       %publ  pax
                   ::
@@ -8203,12 +8223,13 @@
 ::
 =>  ::  per-peer core-routing migration check
     ::
-    |_  hen=duct
+    |_  [hen=duct now=@da eny=@ rof=roof]
     ::
     +|  %helpers
     ::
     ++  pe-core  .
-    ++  me-core  (ev-abed:ev:mesa hen)
+    ++  me-core  (ev-abed:ev:(mesa now^eny^rof) hen)
+    ++  am-core  (ames now^eny^rof)
     ++  pe-abed  |=(=duct pe-core(hen duct))
     ::
     ++  pe-find-peer
@@ -8250,7 +8271,7 @@
       =/  ship-state  (pe-find-peer ship)
       ::
       ?:  ?=(%ames -.ship-state)
-        (call:ames hen ~ soft+plea/ship^plea)
+        (call:am-core hen ~ soft+plea/ship^plea)
       =^  moves  ames-state
         =<  ev-abet
         ?:  ?=([~ %known *] +.ship-state)
@@ -8267,7 +8288,7 @@
       =/  ship-state  (pe-find-peer her)
       ::
       ?:  ?=(%ames -.ship-state)
-        (call:ames hen ~ soft+cork/ship)
+        (call:am-core hen ~ soft+cork/ship)
       =^  moves  ames-state
         =<  ev-abet
         ?:  ?=([~ %known *] +.ship-state)
@@ -8282,7 +8303,7 @@
       |=  [sec=(unit [idx=@ key=@]) spar:^ames]
       =/  ship-state  (pe-find-peer ship)
       ?:  ?=(%ames -.ship-state)
-        (call:ames hen ~ soft+keen/sec^ship^path)
+        (call:am-core hen ~ soft+keen/sec^ship^path)
       =^  moves  ames-state
         =<  ev-abut  ::  XX  due to the way we deal with comet attestations, we
                      ::  cant' call the normal +ev-abet arm since we are not
@@ -8306,7 +8327,7 @@
       |=  spar:^ames
       =/  ship-state  (pe-find-peer ship)
       ?:  ?=(%ames -.ship-state)
-        (call:ames hen ~ soft+chum/ship^path)
+        (call:am-core hen ~ soft+chum/ship^path)
       =^  moves  ames-state
         =<  ev-abut  ::  XX  due to the way we deal with comet attestations, we
                      ::  cant' call the normal +ev-abet arm since we are not
@@ -8328,7 +8349,7 @@
       =/  ship-state  (pe-find-peer ship.spar)
       ::
       ?:  ?=(%ames -.ship-state)
-        (call:ames hen ~ %soft ?:(all %wham %yawn) spar)
+        (call:am-core hen ~ %soft ?:(all %wham %yawn) spar)
       =^  moves  ames-state
         =<  ev-abet
         ?.  ?=([~ %known *] +.ship-state)
@@ -8346,7 +8367,7 @@
       ?:  ?=([%ames *] ship-state)
         ::  both for %ames and %fine
         ::
-        (call:ames hen dud soft+hear/lane^blob)
+        (call:am-core hen dud soft+hear/lane^blob)
       ?.  ?=([~ %known *] +.ship-state)
         ::  XX weird; log
         ~&  [%hear-unknown sndr.shot]
@@ -8468,6 +8489,8 @@
 ++  call
   |=  [hen=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _vane-gate]
+  =+  me-core=(mesa now eny rof)
+  =+  am-core=(ames now eny rof)
   =/  =task  ((harden task) wrapped-task)
   ?-    -.task
     ::  %ames-only tasks
@@ -8475,32 +8498,32 @@
       ?(%kroc %deep %cong %mate %stir)  :: XX %chum to common tasks
     ::  XX can we call the wrong core? still check if ship has migrated?
     ::
-    (call:ames hen dud soft/task)
+    (call:am-core hen dud soft/task)
     ::  %hear; check if this is coming from in-progress migrating flows
     ::
       %hear
-    (~(pe-hear pe-core hen) dud +.task)
+    (~(pe-hear pe-core hen now eny rof) dud +.task)
     ::  %mesa-only tasks
     ::
       ?(%heer %mess)
-    (~(call pe-core hen) dud task)
+    (~(call pe-core hen now eny rof) dud task)
     ::  XX can we call the wrong core? still check if ship has migrated?
     ::
       ?(%meek %moke %mage %back)
-    (call:mesa hen dud soft/task)
+    (call:me-core hen dud soft/task)
     ::  flow-independent tasks
     ::
       ?(%vega %init %born %snub %spew %stun %sift %plug %dear %init %tame)
-    (call:mesa hen dud soft/task)
+    (call:me-core hen dud soft/task)
     ::  common tasks
     ::
       ?(%plea %cork %keen %chum %yawn %wham %load %whit)  :: XX make %whit only for |mesa?
-    (~(call pe-core hen) dud task)
+    (~(call pe-core hen now eny rof) dud task)
     ::  core-dependent tasks
     ::
       ?(%prod %trim)
-    =^  ames-moves  vane-gate  (call:ames hen ~ soft+task)
-    =^  mesa-moves  vane-gate  (call:mesa hen ~ soft+task)
+    =^  ames-moves  vane-gate  (call:am-core hen ~ soft+task)
+    =^  mesa-moves  vane-gate  (call:me-core hen ~ soft+task)
     [(weld ames-moves mesa-moves) vane-gate]
   ::
   ==
@@ -8509,22 +8532,24 @@
   |=  [=wire =duct dud=(unit goof) =sign]
   ^-  [(list move) _vane-gate]
   =*  sample  +<
+  =+  me-core=(mesa now eny rof)
+  =+  am-core=(ames now eny rof)
   ?^  dud
     ~|(%ames-take-dud (mean tang.u.dud))
     ::
   ?:  ?=([?(%turf %mesa %private-keys %public-keys) *] wire)
-    (take:mesa sample)
+    (take:me-core sample)
   =/  parsed-wire  (parse-bone-wire wire)
   ?:  ?=(~ parsed-wire)
-    (take:ames sample)
+    (take:am-core sample)
   ::  XX log
   ::  migrate wire if the peer is in chums
   ::
   =/  ship-state  (pe-find-peer her.u.parsed-wire)
   ?:  ?=(%ames -.ship-state)
-    (take:ames sample)
+    (take:am-core sample)
   ?:  ?=(%old -.u.parsed-wire)  `vane-gate  :: drop old wires
-  %-  take:mesa
+  %-  take:me-core
   :_  +.sample
   ^-  ^wire
   :~  %mesa  %flow  %van  %bak
@@ -8534,7 +8559,7 @@
   ==
 ::  +stay: extract state before reload
 ::
-++  stay  [%22 ames-state]
+++  stay  [%22 adult/ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
@@ -8611,18 +8636,13 @@
                   $%  [%larva *]
                       [%adult state=ames-state-21]
               ==  ==
-              [%22 axle]
+              [%22 ?(%larva %adult) state=axle]
           ==
       =|  moz=(list move)  :: XX not used; emit moves on load?
       |-  ^+  vane-gate    ::  ^-  [(list move) _vane-gate]
       ::
-      ?:  ?=([@ %larva *] old)
-        ::  XX we need to handle the %larva type to account for %larval ++stay
-        ::  but all live ships should have metamorphosed and if booting
-        ::  from the first time, %ames will produce %0 axle in ++stay
-        ::
-        !!  ::  $(+<.old %adult, +>.old state.old)
-      ?:  ?=(%22 -.old)
+      ~&    [-.old +<.old]
+      ?:  ?=([%22 *] old)
         ::  ~&  priv.old
         :: =.  peers.old   ~
         :: =.  chums.old   ~
@@ -8641,8 +8661,15 @@
         ::             ::  %_  ossuary
         ::               :: next-bone  40
         ::   ==        :: ==
-        vane-gate(ames-state +.old)
+        vane-gate(ames-state state.old)
       ::
+      ?:  ?=([@ %larva *] old)
+        ::  XX we need to handle the %larva type to account for %larval ++stay
+        ::  but all live ships should have metamorphosed and if booting
+        ::  from the first time, %ames will produce %22 %pupa/%axle in ++stay
+        ::
+        ::  XX larva migrations
+        !!  ::  $(+<.old %adult, +>.old state.old)
       ?>  ?=([@ %adult *] old)
       ?:  ?=(%5 -.old)   $(old 6+adult/(state-5-to-6 state.old))
       ?:  ?=(%6 -.old)   $(old 7+adult/(state-6-to-7 state.old))
@@ -8699,7 +8726,7 @@
       ::
       ?:  ?=(%20 -.old)  $(old 21+adult/(state-20-to-21 state.old))
       ::  XX  emit move to start %dead-flow timers
-      ?>  ?=(%21 -.old)  $(old 22+(state-21-to-22 state.old))
+      ?>  ?=(%21 -.old)  $(old 22+adult/(state-21-to-22 state.old))
   ::
   |%
   ++  our-beam  `beam`[[our %rift %da now] /(scot %p our)]
@@ -9011,6 +9038,8 @@
   ^-  roon
   |=  [lyc=gang pov=path car=term bem=beam]
   =*  sample  +<
+  =+  me-core=(mesa now eny rof)
+  =+  am-core=(ames now eny rof)
   ?:  ?&  =(our p.bem)
           =(%$ q.bem)
           =([%ud 1] r.bem)
@@ -9019,7 +9048,7 @@
     =/  tyl=(pole knot)  s.bem
     ?+    tyl  ~
         ?([%fine %shut kef=@ enc=@ ~] [%chum her=@ lyf=@ cyf=@ ~])
-      (scry:ames sample)
+      (scry:am-core sample)
     ::
         $?  [%hunk lop=@t len=@t pat=*]
             [%mess ryf=@ res=*]
@@ -9031,7 +9060,7 @@
             [%comet %proof rcvr=@ life=@ ~]
             [%whit boq=@ pat=*]
         ==
-      (scry:mesa sample)
+      (scry:me-core sample)
     ==
   ::
   ?.  ?&  =(our p.bem)
@@ -9045,12 +9074,12 @@
   ::  public endpoints
   ::
   ?:  ?=([%fine %hunk lop=@t len=@t pax=^] tyl)
-    (scry:ames sample)
+    (scry:am-core sample)
   ::  private endpoints
   ::
   ?.  =([~ ~] lyc)  ~
-  ?+  tyl   (scry:ames sample)
-    [%chums her=@ ~]  (scry:mesa sample)
+  ?+  tyl   (scry:am-core sample)
+    [%chums her=@ ~]  (scry:me-core sample)
   ==
 ::
 --
