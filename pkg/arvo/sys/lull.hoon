@@ -1572,8 +1572,9 @@
         snub=[form=?(%allow %deny) ships=(set ship)]
         cong=[msg=_5 mem=_100.000]
         $=  dead                            ::  dead-flow consolidation timers
-        $:  flow=[%flow (unit dead-timer)]
-            cork=[%cork (unit dead-timer)]
+        $:  flow=[%flow (unit dead-timer)]  ::  ... for |ames
+            chum=[%chum (unit dead-timer)]  ::  ... for |mesa
+            cork=[%cork (unit dead-timer)]  ::  ... for %nacked corks
         ==
         ::
         =server=chain                       ::  for serving %shut requests
