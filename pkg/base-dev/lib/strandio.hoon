@@ -345,6 +345,24 @@
   ;<  ~  bind:m  (send-wait until)
   (take-wake `until)
 ::
+++  mass
+  =/  m  (strand ,(list quac:dill))
+  ^-  form:m
+  =/  =card:agent:gall  [%pass /mass %arvo %d %mass ~]
+  ;<  ~  bind:m  (send-raw-card card)
+  ;<  quz=(list quac:dill)  bind:m  take-meme
+  (pure:m quz)
+::
+++  take-meme
+  =/  m  (strand ,(list quac:dill))
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+  in.tin  `[%skip ~]
+    ~  `[%wait ~]
+      [~ %sign [%mass ~] %dill %meme *]
+    `[%done p.sign-arvo.u.in.tin]
+  ==
+::
 ++  keen
   |=  [=wire =spar:ames]
   =/  m  (strand ,~)

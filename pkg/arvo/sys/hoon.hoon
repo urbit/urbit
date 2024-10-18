@@ -2,11 +2,11 @@
 ::::    /sys/hoon                                       ::
   ::                                                    ::
 =<  ride
-=>  %138  =>
+=>  %137  =>
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
-~%  %k.138  ~  ~                                        ::
+~%  %k.137  ~  ~                                        ::
 |%
 ++  hoon-version  +
 --  =>
@@ -4266,9 +4266,9 @@
   ::  ?.  ((sane a) b)  !!
   b
 ::
-++  trim                                                ::  tape split
-  |=  [a=@ b=tape]
-  ^-  [p=tape q=tape]
+++  trim                                                ::  list split
+  |*  [a=@ b=(list)]
+  ^+  [p=b q=b]
   ?~  b
     [~ ~]
   ?:  =(0 a)
@@ -8606,7 +8606,7 @@
       [%cnhp ~(factory ax p.gen) q.gen]
     ::
         [%tsbr *]
-      [%tsls ~(example ax p.gen) q.gen]
+      [%tsls [%kttr p.gen] q.gen]
     ::
         [%tstr *]
       :+  %tsgl

@@ -159,6 +159,7 @@
 ++  on-peek
   |=  =path
   ^-  (unit (unit cage))
+  ?<  ?=([%x %whey ~] path)
   ``noun+!>(state)
 ::  +on-agent: handle ames ack
 ::

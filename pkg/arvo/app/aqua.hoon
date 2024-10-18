@@ -893,13 +893,13 @@
     ?:  ?=(%czar (clan:title ship))
       [a-point]~
     [a-point $(who ship)]
-  =/  =seed:jael
+  =/  =feed:jael
     =/  life-rift=[lyfe=life rut=rift]
       ?:  =(%earl clan)  [1 0]
       (~(got by lives.azi.piers) who)
     =/  =life  lyfe.life-rift
     [who life sec:ex:(get-keys:aqua-azimuth who life) ~]
-  :*  seed
+  :*  feed
       spon
       get-czars
       ~[~['arvo' 'netw' 'ork']]
