@@ -197,13 +197,25 @@
 ::
 ++  take-ahoy
   |=  [way=wire error=(unit error:ames)]
-  ?^  error
-    ::  XX retry?
-    ::
-    %-  (slog %take-ahoy u.error)
-    abet
   ?>  ?=([@ ~] way)
-  abet:(emit %pass /helm/migrate %arvo %a %mate (slaw %p i.way))
+  ?~  error
+    abet:(emit %pass /helm/migrate %arvo %a %mate (slaw %p i.way))
+  ~&  >>>  %ahoy-crash
+  ::  XX retry?
+  ::
+  %-  (slog %take-ahoy u.error)
+  abet:(emit %pass `wire`[%helm %ahoy-crash way] %arvo %b %wait (add now.bowl ~s30)) :: XX exp backoff?
+::
+++  take-ahoy-crash
+  |=  [way=wire error=(unit tang)]
+  ?>  ?=([@ ~] way)
+  ?~  error
+    (poke-send-ahoy (slav %p i.way))
+  ~&  >>>  %ahoy-wake-crash
+  ::  XX retry?
+  ::
+  %-  (slog %take-ahoy-wake-crash u.error)
+  abet:(emit %pass `wire`[%helm %ahoy-crash way] %arvo %b %wait (add now.bowl ~s30)) :: XX exp backoff?
 ::
 ++  poke-hi
   |=  mes=@t
@@ -352,6 +364,8 @@
                       ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
     [%ahoy *]         %+  take-ahoy  t.wire
                       ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
+    [%ahoy-crash *]   %+  take-ahoy-crash  t.wire
+                      ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
     [%pass *]         abet
   ==
 --
