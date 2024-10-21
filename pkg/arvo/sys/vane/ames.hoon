@@ -1687,6 +1687,19 @@
 =<  ::  %larval core
     ::
     =*  adult-gate  .
+    ::  Queued events are a remainer of past version of the ames-core, and are
+    ::  still supported only for backward compatibility (i.e. ships migrating
+    ::  from an old version of %ames)
+    ::
+    ::  The purpose of the larval-core is to allow emitting moves and reading
+    ::  from the arvo namespace in migrations to newer version of %ames. In the
+    ::  past the purpose of the larval-core was to wait for a %born event that
+    ::  sets up the unix-duct from the ames IO driver but as of the Directed
+    ::  Messaging release...
+    ::
+    ::   ... unix-duct is hardcoded?
+    ::   ... unix-duct is a (unit) so we no-op if it doesn't exist when we try to use it?
+    ::
     =|  queued-events=(qeu queued-event)
     =|  $=  cached-state
         %-  unit
@@ -1739,6 +1752,9 @@
       ::
       =^  molt-moves  larval-core  molt
       ::
+      ::  XX  start draining queued events and then metamorphose
+      ::
+      :: ?~  queued-events
       ?:  &(!=(~ unix-duct.ames-state.adult-gate) =(~ queued-events))
         =^  moves  adult-gate  (call:adult-core duct dud task)
         ~>  %slog.0^leaf/"ames: metamorphosis"
@@ -1766,7 +1782,6 @@
       [~ larval-gate]
     ::
     ++  take  ~&  %larva-take
-
       |=  [=wire =duct dud=(unit goof) =sign]
       ?^  dud
         ~|(%ames-larval-take-dud (mean tang.u.dud))
@@ -1781,6 +1796,10 @@
       ::
       ?.  =(/larva wire)
         =.  queued-events  (~(put to queued-events) %take wire duct sign)
+        ::  we don't need to set up the /larva timer since a %born task
+        ::  will always go into the %larval core, enqueueing it and setting up
+        ::  the timer there
+        ::
         [~ larval-gate]
       ::  larval event drainage timer; pop and process a queued event
       ::
@@ -4135,7 +4154,9 @@
                     =^  forward-moves  flow
                       =;  [* core=_fo-core]
                         [moves state]:core
-                      %+  roll  (weld live ~(tap to unsent-messages.pump))
+                      =+  un=~(tap to unsent-messages.pump)
+                      ~?  ?=(^ un)  %stil-have-unsent
+                      %+  roll  (weld live un)
                       ::
                       ::  XX remove current?
                       ::
@@ -7084,7 +7105,7 @@
               :: (mes:plot:d (en:name:d [[her=~nec rif=40] [boq=0 wan=~] pat=['c~_h' ~]]))
               :: [bloq=q=3 step=r=12]
               ::  =/  has  (shax u.u.res)
-              ::  =.  tmchums.ames-state  (~(put by tmchums.ames-state) has [%some-envelope original-path u.u.res])
+              ::  =.  tmp.chums.ames-state  (~(put by tmchums.ames-state) has [%some-envelope original-path u.u.res])
               ::  //ax/[$ship]//1/temp/[hash]
               ::
               =/  man=name:pact  [[our rift.ames-state] [13 ~] u.q]
@@ -8171,6 +8192,24 @@
                     ~
                   ?~  chum
                     ~&  (~(get by peers.ames-state) u.who)
+                    :: ~&  u.who
+                    :: ~&  ~(key by peers.ames-state)
+                    :: =+  peer=(~(got by peers.ames-state) u.who)
+                    :: =/  packet-queue
+                    ::   %-  (ordered-map live-packet-key live-packet-val)
+                    ::   lte-packets
+                    :: =+  ?.  ?=([%known *] peer)  ~
+                    ::   %+  roll  ~(tap by snd.peer)
+                    ::   |=  [[bone message-pump-state] _~]
+                    ::   ~&  unsent-messages/~(wyt by unsent-messages)
+                    ::   ~&  unsent-fragments/(lent unsent-fragments)
+                    ::   =+  list=(tap:packet-queue live.packet-pump-state)
+                    ::   ~&  %+  turn  list
+                    ::       |=  [k=live-packet-key v=live-packet-val]
+                    ::       k^num-fragments/num-fragments.v
+                    ::   ~
+                    :: ~&  >>>  %out
+                    ::
                     [~ ~]
                   ?>  ?=(%known -.u.chum)
                   ``noun+!>(u.chum)
@@ -8344,12 +8383,9 @@
               ::
               =.  chum.dead.ames-state
                 chum/`[~[/ames] /mesa/retry `@da`(add now ~m2)]
-              =^  ames-moves  ames-state
-                abet:(wake-dead-flows:(ev:ames now^eny^rof hen ames-state) error)
-              =^  prod-moves  ames-state
-                sy-prod
+              =^  prod-moves  ames-state  sy-prod
               %-  sy-emil
-              :_  (weld ames-moves prod-moves)
+              :_  prod-moves
               [~[/ames] %pass /mesa/retry %b %wait `@da`(add now ~m2)]
             ::
             ++  sy-publ
@@ -9461,6 +9497,10 @@
   =+  me-core=(mesa now eny rof)
   =+  am-core=(ames now eny rof)
   =/  =task  ((harden task) wrapped-task)
+  ?:  &(?=(~ unix-duct.ames-state) ?=(?(%hear %heer) -.task))
+    ::  drop incoming packets until we get a %born
+    ::
+    `vane-gate
   ?-    -.task
     ::  %ames-only tasks
     ::
@@ -9518,6 +9558,7 @@
   ?:  ?=(%ames -.ship-state)
     (take:am-core sample)
   ?:  ?=(%old -.u.parsed-wire)  `vane-gate  :: drop old wires
+  ~&  >>  %migrating-wire
   %-  take:me-core
   :_  +.sample
   ^-  ^wire
