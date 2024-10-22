@@ -4057,18 +4057,19 @@
                     =?  bone  =(%1 (mod bone 4))
                       (mix 0b1 bone)
                     =.    closing.flow  (~(has in closing.peer-state) bone)
-                    =.  next-load.flow  next.pump
+                    ~&  dire^bone=bone
                     ::  initialize fo-core
                     ::
                     =/  fo-core
                       =/  =^duct
                         (~(gut by by-bone.ossuary.peer-state) bone [/ames]~)
                       =+  mesa-core=(mesa now eny rof)
-                      =/  core
-                        %*  .  fo:~(ev-core ev:mesa-core [duct her^fren])
-                          flows.sat.per  (~(put by flows) bone^dire flow)  :: XX check that we don't add naxplanation flows here
-                        ==
-                      (fo-abed:core duct bone dire)
+                      :: XX check that we don't add a naxplanation .flow here
+                      ::
+                      =.  flows.fren  (~(put by flows.fren) bone^dire flow)
+                      %.  [duct bone dire]
+                      fo-abed:fo:~(ev-core ev:mesa-core [duct her^fren])
+                    ::
                     =?  moves  !=(current.pump next.pump)
                       =*  live  live.packet-pump-state.pump
                       =/  current-live=?
@@ -4079,7 +4080,7 @@
                       ::  we are still expecting an ack or a naxplanation for
                       ::  the current message. if there packet-pump has not
                       ::  state about current.pump, it means that we have heard
-                      ::  the %nack, and clear everything, but deffered
+                      ::  the %nack, and clear everything, but defered
                       ::  incrementing current until the naxplanation arrives.
                       ::
                       ::  the sender of the naxplanation will have bind it in
@@ -4092,82 +4093,58 @@
                     ::  receiver will droppped any partially received fragments
                     ::  so the full message will need to be resent.
                     ::
-                    =/  live=(list message)
-                      =+  queue=((on ,@ud partial-rcv-message) lte)
-                      =;  fragments
+                    =/  live=(list [message-num message])
+                      =+  queue=((on ,@ud message-blob) lte)
+                      ::  every fragment contains the actual message as a blob
+                      ::  we loop over every unsent and live fragments and save
+                      ::  the blobs for each message
+                      ::
+                      =;  blobs
                         %-  flop
-                        %+  roll  (tap:queue fragments)
-                        |=  [[* partial-rcv-message] total=(list message)]
-                        ~|  [total=total n=num-fragments f=~(wyt by fragments)]
-                        :_  total
-                        ;;  message
-                        ::  if we are in the middle of sending a message,
-                        ::  assemble fragments will crash for any acked fragment
-                        ::  since it has been removed from the queue.
-                        ::
-                        ::  this will cancel the migration for both sender
-                        ::  (when acked) and receiver of the ahoy plea.
-                        ::
-                        ::    - for the sender, the ahoy plea will be resend,
-                        ::      and always acked by the receiver if they
-                        ::      succesfully migrated
-                        ::
-                        ::    - for the receiver, if they are sending us
-                        ::      anything, they won't ack the ahoy plea and
-                        ::      we will keep resending it.
-                        ::
-                        :_  (assemble-fragments num-fragments fragments)
+                        %+  roll  (tap:queue blobs)
+                        |=  $:  [=message-num =message-blob]
+                                blobs=(list [message-num message])
+                            ==
+                        :_  blobs
+                        :-  message-num
+                        ;;  message  :_  (cue message-blob)
                         ?:  =(%0 (mod bone 4))  %plea
                         ?:  =(%1 (mod bone 4))  %boon
                         ?>  =(%3 (mod bone 4))  %naxplanation
-                      |^
-                      =/  unsent=((mop ,@ud partial-rcv-message) lte)
+                      =/  unsent=((mop ,@ud message-blob) lte)
                         %+  roll  unsent-fragments.pump
                         |=  $:  static-fragment
-                                live=((mop ,@ud partial-rcv-message) lte)
+                                msg=((mop ,@ud message-blob) lte)
                             ==
                         ~|  [seq=message-num current=current.pump]
                         ?>  =(message-num current.pump)  :: XX
-                        %-  acc-fragments
-                        [message-num num-fragments fragment-num fragment live]
-                      ::  fragments of the current message could be in unsent
-                      ::  (rejected by the packet pump due to congestion) but
-                      ::  some could be live, so we need to get those before
-                      ::  assembling.
+                        (put:queue msg [message-num `@`fragment])
                       ::
                       %+  roll
                         (tap:packet-queue:$:pu:mu live.packet-pump-state.pump)
                       |=  [[live-packet-key live-packet-val] acc=_unsent]
-                      %-  acc-fragments
-                      [message-num num-fragments fragment-num fragment acc]
-                      ::
-                      ++  acc-fragments
-                        |=  $:  seq=@ud  n-fags=@ud  n-fag=@ud  fag=fragment
-                                acc=((mop ,@ud partial-rcv-message) lte)
-                            ==
-                        =/  fags  ?~(val=(get:queue acc seq) ~ fragments:u.val)
-                        %+  put:queue  acc
-                        [seq n-fags recv=*@ud (~(put by fags) n-fag fag)]
-                      ::
-                      --
+                      (put:queue acc [message-num `@`fragment])
                     ::
                     =^  forward-moves  flow
-                      =;  [* core=_fo-core]
+                      =;  core=_fo-core
                         [moves state]:core
-                      =+  un=~(tap to unsent-messages.pump)
-                      ~?  ?=(^ un)  %stil-have-unsent
-                      %+  roll  (weld live un)
+                      =/  unsent=(list [message-num message])
+                        %-  flop
+                        =<  msgs
+                        %-  ~(rep by unsent-messages.pump)
+                        |=  [=message num=_next.pump msgs=(list [@ud message])]
+                        :-  +(num)
+                        [num^message msgs]
+                      %+  roll  (weld live unsent)
                       ::
-                      ::  XX remove current?
-                      ::
-                      |=  [=message current=_current.pump core=_fo-core]
-                      :-  +(current)
+                      |=  [[=message-num =message] core=_fo-core]
+                      ~&  migrating/-.message^msg=message-num
                       ?.  ?=(%naxplanation -.message)
-                        (fo-call:core message)
+                        (fo-call:core(next-load.state message-num) message)
                       ::  if we are still sending a %naxplanation, we need to
                       ::  put it in our namespace so the other ship reads it
                       ::
-                      %_    fo-core
+                      %_    core
                           nax.state
                         %-  ~(put by nax.state.core)
                         [message-num error]:message
@@ -4186,12 +4163,6 @@
                   =.  flows.fren
                     %-  ~(rep by rcv.peer-state)
                     |=  [[=^bone sink=message-sink-state] flows=_flows.fren]
-                    ::  if we have partially received messages in live-messages
-                    ::  crash, since we need to wait to receive the full message
-                    ::  to properly complete the migration
-                    ::
-                    ?^  live-messages.sink
-                      !!
                     ::  if this was a naxplanation bone but we haven't finished
                     ::  sink it, also drop it. the message pump has enough
                     ::  information to know that we need to start +peeking it.
@@ -9575,8 +9546,8 @@
 ++  load  ~&  %adult-load
   |=  state=axle
   ::  ~&  priv.state
-  :: =.  peers.state   ~
-  :: =.  chums.state   ~
+  =.  peers.state   ~
+  =.  chums.state   ~
   ::   %-  ~(run by chums.state)
   ::   |=  =chum-state
   ::   ?:  ?=(%alien -.chum-state)
