@@ -1576,7 +1576,7 @@
   ::
   +$  axle
     $:  peers=(map ship ship-state)
-        unix-duct=_`duct`[//ames/0v0 ~]
+        =unix=duct  ::  [//ames/0v0 ~]
         =life
         =rift
         =bug
@@ -1913,7 +1913,7 @@
       ^-  plot
       =/  tip  ?-(typ %page 0b1, %peek 0b10, %poke 0b11)
       =.  hop  (min 7 hop)
-      =*  tok  [32 ~tasfyn-partyv]
+      =*  tok  [32 0x67e0.0200]
       :-  bloq=0
       [[2 0] [2 nex] [3 ver=1] [2 tip] [3 hop] [20 gum] tok ~]
     ::
@@ -1926,7 +1926,7 @@
         ((hew b dat) [res=2 nex=2 ver=3 tip=2 hop=3 gum=20 tok=32])
       ?>  =(0 res.c)
       ?>  =(1 ver.c)
-      ?>  =(~tasfyn-partyv tok.c)
+      ?>  =(0x67e0.0200 tok.c)
       =/  typ  ?+(tip.c !! %0b1 %page, %0b10 %peek, %0b11 %poke)
       [[nex.c typ hop.c gum.c] b]
     --

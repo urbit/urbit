@@ -1751,35 +1751,22 @@
       ::  before processing events, make sure we have state loaded
       ::
       =^  molt-moves  larval-core  molt
+      ::  start draining queued events and then metamorphose
       ::
-      ::  XX  start draining queued events and then metamorphose
-      ::
-      :: ?~  queued-events
-      ?:  &(!=(~ unix-duct.ames-state.adult-gate) =(~ queued-events))
-        =^  moves  adult-gate  (call:adult-core duct dud task)
-        ~>  %slog.0^leaf/"ames: metamorphosis"
-        [(weld molt-moves moves) adult-gate]
-      ::  drop incoming packets until we metamorphose
-      ::
-      ?:  ?=(%hear -.task)
-        [~ larval-gate]
-      ::  %born: set .unix-duct and start draining .queued-events
-      ::
-      ?:  ?=(%born -.task)
-        ::  process %born using wrapped adult ames
-        ::
-        =^  moves  adult-gate  (call:adult-core duct dud task)
-        =.  moves  (weld molt-moves moves)
-        ::  kick off a timer to process the first of .queued-events
-        ::
-        =.  moves  :_(moves [duct %pass /larva %b %wait now])
-        [moves larval-gate]
-      ::  any other event: enqueue it until we have a .unix-duct
-      ::
-      ::    XX what to do with errors?
-      ::
-      =.  queued-events  (~(put to queued-events) %call duct task)
-      [~ larval-gate]
+      =^  queu-moves  adult-gate
+        =|  moves=(list move)
+        |-  ?:  =(~ queued-events)
+          [(flop moves) adult-gate]
+        =^  first-event  queued-events  ~(get to queued-events)
+        =^  event-moves  adult-gate
+          ?-  -.first-event
+            %call  (call:adult-core [duct ~ wrapped-task]:+.first-event)
+            %take  (take:adult-core [wire duct ~ sign]:+.first-event)
+          ==
+        $(moves (weld event-moves moves))
+      =^  call-moves  adult-gate  (call:adult-core duct dud task)
+      ~>  %slog.0^leaf/"ames: metamorphosis on %call"
+      [:(weld molt-moves queu-moves call-moves) adult-gate]
     ::
     ++  take  ~&  %larva-take
       |=  [=wire =duct dud=(unit goof) =sign]
@@ -1787,68 +1774,23 @@
         ~|(%ames-larval-take-dud (mean tang.u.dud))
       ::
       =^  molt-moves  larval-core  molt
+      ::  start draining queued events and then metamorphose
       ::
-      ?:  &(!=(~ unix-duct.ames-state.adult-gate) =(~ queued-events))
-        =^  moves  adult-gate  (take:adult-core wire duct dud sign)
-        ~>  %slog.0^leaf/"ames: metamorphosis"
-        [(weld molt-moves moves) adult-gate]
-      ::  enqueue event if not a larval drainage timer
-      ::
-      ?.  =(/larva wire)
-        =.  queued-events  (~(put to queued-events) %take wire duct sign)
-        ::  we don't need to set up the /larva timer since a %born task
-        ::  will always go into the %larval core, enqueueing it and setting up
-        ::  the timer there
-        ::
-        [~ larval-gate]
-      ::  larval event drainage timer; pop and process a queued event
-      ::
-      ?.  ?=([%behn %wake *] sign)
-        ~>  %slog.0^leaf/"ames: larva: strange sign"
-        [~ larval-gate]
-      ::  if crashed, print, dequeue, and set next drainage timer
-      ::
-      ?^  error.sign
-        ::  .queued-events should never be ~ here, but if it is, don't crash
-        ::
-        ?:  =(~ queued-events)
-          =/  =tang  [leaf/"ames: cursed metamorphosis" u.error.sign]
-          =/  moves  [duct %pass /larva-crash %d %flog %crud %larva tang]~
-          [moves adult-gate]
-        ::  dequeue and discard crashed event
-        ::
-        =.  queued-events  +:~(get to queued-events)
-        ::  .queued-events has been cleared; metamorphose
-        ::
-        ?~  queued-events
-          ~>  %slog.0^leaf/"ames: metamorphosis"
-          [~ adult-gate]
-        ::  set timer to drain next event
-        ::
-        =/  moves
-          =/  =tang  [leaf/"ames: larva: drain crash" u.error.sign]
-          :~  [duct %pass /larva-crash %d %flog %crud %larva tang]
-              [duct %pass /larva %b %wait now]
-          ==
-        [moves larval-gate]
-      ::  normal drain timer; dequeue and run event
+      =^  queu-moves  adult-gate
+        =|  moves=(list move)
+        |-  ?:  =(~ queued-events)
+          [(flop moves) adult-gate]
       ::
       =^  first-event  queued-events  ~(get to queued-events)
-      =^  moves  adult-gate
-        ?-  -.first-event
-          %call  (call:adult-core [duct ~ wrapped-task]:+.first-event)
-          %take  (take:adult-core [wire duct ~ sign]:+.first-event)
-        ==
-      =.  moves  (weld molt-moves moves)
-      ::  .queued-events has been cleared; done!
-      ::
-      ?~  queued-events
-        ~>  %slog.0^leaf/"ames: metamorphosis"
-        [moves adult-gate]
-      ::  set timer to drain next event
-      ::
-      =.  moves  :_(moves [duct %pass /larva %b %wait now])
-      [moves larval-gate]
+        =^  event-moves  adult-gate
+          ?-  -.first-event
+            %call  (call:adult-core [duct ~ wrapped-task]:+.first-event)
+            %take  (take:adult-core [wire duct ~ sign]:+.first-event)
+          ==
+        $(moves (weld event-moves moves))
+      =^  take-moves  adult-gate  (take:adult-core wire duct dud sign)
+      ~>  %slog.0^leaf/"ames: metamorphosis on %take"
+      [:(weld molt-moves queu-moves take-moves) adult-gate]
     ::
     ++  stay  ~&  %larva-stay  [%22 adult/ames-state]  :: [%22 larva/ames-state]
     ++  scry  ~&  %larva-scry  scry:adult-core
@@ -3450,7 +3392,12 @@
                 (request-attestation u.ship)
               ::
               ?:  ?=([%dead-flow ~] wire)
-                set-dead-flow-timer:(wake-dead-flows error)
+                =?  event-core  =(^ unix-duct)
+                  (wake-dead-flows error)
+                =+  ?:  =(~ unix-duct)  ~
+                    %-  (slog leaf+"ames: unix-duct still pending; resetting dead-flow")
+                    ~
+                set-dead-flow-timer:event-core
               ::
               ?.  ?=([%recork ~] wire)
                 =/  res=(unit ?([%fine her=ship =^wire] [%pump her=ship =bone]))
@@ -3482,6 +3429,9 @@
               =.  cork.dead.ames-state
                 cork/`[~[/ames] /recork `@da`(add now ~d1)]
               ::
+              ?:  =(~ unix-duct)
+                %-  (slog leaf+"ames: unix-duct still pending; resetting recork-timer")
+                event-core
               ?^  error
                 %-  (slog 'ames: recork timer failed' u.error)
                 event-core
@@ -3889,14 +3839,16 @@
               ++  on-wake
                 |=  [=bone error=(unit tang)]
                 ^+  peer-core
-                ::  if we previously errored out, print and reset timer for later
+                =?  peer-core  ?=(^ error)
+                  (pe-emit duct %pass /wake-fail %d %flog %crud %ames-wake u.error)
+                ::  if we are still waiting for the %born task, reset timer
+                ::
+                ::  if we previously errored out, print and reset timer
                 ::
                 ::    This really shouldn't happen, but if it does, make sure we
                 ::    don't brick either this messaging flow or Behn.
                 ::
-                ?^  error
-                  =.  peer-core
-                    (pe-emit duct %pass /wake-fail %d %flog %crud %ames-wake u.error)
+                ?:  |(?=(^ error) =(~ unix-duct))
                   ::
                   ?~  message-pump-state=(~(get by snd.peer-state) bone)
                     peer-core
@@ -5679,8 +5631,16 @@
                 ::
                 ++  fi-take-wake
                   ^+  fine
+                  ::  XX move this to the =(^ unix-duct) branch?
+                  ::
                   =.  next-wake.keen  ~
                   =.  peer-core   (update-qos %fine qos:(is-peer-dead now peer-state))
+                  =.  metrics.keen  %*(on-timeout fi-gauge vane %fine)
+                  ::
+                  ?:  =(~ unix-duct)
+                    ::  no-op; fi-abet will reset the timer
+                    ::
+                    fine
                   ::  has the direct route expired?
                   ::
                   =/  old-route  route.peer-state
@@ -5690,7 +5650,6 @@
                     :*  unix-duct.ames-state  %give  %nail  her
                         (get-forward-lanes our peer-state peers.ames-state)
                     ==
-                  =.  metrics.keen  %*(on-timeout fi-gauge vane %fine)
                   =^  want=(unit want)  wan.keen
                     ?~  res=(pry:fi-mop wan.keen)  `wan.keen
                     (del:fi-mop wan.keen key.u.res)
@@ -8244,6 +8203,9 @@
             ++  ev-push-pact  :: XX forwarding?
               |=  [=pact:pact lane=(unit lane:pact:ames)]
               ^+  ev-core
+              ?:  =(~ unix-duct)
+                %-  (slog leaf+"ames: unix-duct still pending; will retry %push")
+                ev-core
               =/  =ship
                 ?-  +<.pact  ::  XX
                   %peek  her.p.pact
@@ -8824,6 +8786,9 @@
             ++  sy-stun
               |=  =stun
               ^+  sy-core
+              ?:  =(~ unix-duct)
+                %-  (slog leaf+"ames: unix-duct still pending; no-op")
+                sy-core
               :: %-  %^  ev-trace  sun.veb  ship.stun
               ::     =/  lane=tape
               ::       ?:  &
@@ -8846,6 +8811,9 @@
             ++  sy-dear
               |=  [=ship =lane:pact]
               ^+  sy-core
+              ?:  =(~ unix-duct)
+                %-  (slog leaf+"ames: unix-duct still pending; no-op")
+                sy-core
               ?:  =(%czar (clan:title ship))
                 sy-core
               =/  peer  (sy-find-peer ship)
@@ -8874,6 +8842,9 @@
             ++  sy-tame
               |=  =ship
               ^+  sy-core
+              ?:  =(~ unix-duct)
+                %-  (slog leaf+"ames: unix-duct still pending; no-op")
+                sy-core
               ?:  =(%czar (clan:title ship))
                 %-  %+  slog
                   leaf+"ames: bad idea to %tame galaxy {(scow %p ship)}, ignoring"
@@ -9150,6 +9121,13 @@
         ::
         =+  ev-core=(ev-abed:ev hen)
         =^  moves  ames-state
+          ?:  ?=([%mesa %ask *] wire)
+            :_  ames-state  :_  ~
+            :+  hen  %pass
+            ?+  t.t.wire  ~|(%unexpected-ask-wire !!)
+                     [%turf *]  [/turf %j %turf ~]
+              [%public-keys *]  [/public-keys %j %public-keys [n=our ~ ~]]
+            ==
           ?:  ?=([%gall %unto *] sign)  :: XX from poking %ping app
             `ames-state
           ::
@@ -9471,6 +9449,9 @@
   ?:  &(?=(~ unix-duct.ames-state) ?=(?(%hear %heer) -.task))
     ::  drop incoming packets until we get a %born
     ::
+    ::    this also prevents %nail gifts in the following scenarios:
+    ::      - on-hear-open/on-hear-shut for new routes
+    ::      -
     `vane-gate
   ?-    -.task
     ::  %ames-only tasks
@@ -9518,9 +9499,16 @@
     ~|(%ames-take-dud (mean tang.u.dud))
     ::
   ?:  ?=([?(%turf %mesa %private-keys %public-keys) *] wire)
-    (take:me-core sample)
+    ?.  &(?=(?(%turf %public-keys) -.wire) ?=(~ unix-duct))
+      (take:me-core sample)
+    ::  If the unix-duct is not set, we defer applying %public-keys and %turf
+    ::  gifts (which can trigger other gifts to be sent to unix) by setting up
+    ::  a timer that will request them again
+    ::
+    :_  vane-gate
+    [~[/ames] %pass `^wire`[%mesa %ask wire] %b %wait `@da`(add now ~s30)]~
   =/  parsed-wire  (parse-bone-wire wire)
-  ?:  ?=(~ parsed-wire)
+  ?:  ?=(~ parsed-wire)  :: XX ?=(^ parsed-wire)
     (take:am-core sample)
   ::  XX log
   ::  migrate wire if the peer is in chums
@@ -9534,9 +9522,9 @@
   :_  +.sample
   ^-  ^wire
   :~  %mesa  %flow  %van  %bak
-     (scot %p her.u.parsed-wire)
-     (scot %ud rift.u.parsed-wire)
-     (scot %ud (mix 0b1 bone.u.parsed-wire))
+    (scot %p her.u.parsed-wire)
+    (scot %ud rift.u.parsed-wire)
+    (scot %ud (mix 0b1 bone.u.parsed-wire))
   ==
 ::  +stay: extract state before reload
 ::
@@ -9546,8 +9534,8 @@
 ++  load  ~&  %adult-load
   |=  state=axle
   ::  ~&  priv.state
-  =.  peers.state   ~
-  =.  chums.state   ~
+  :: =.  peers.state   ~
+  :: =.  chums.state   ~
   ::   %-  ~(run by chums.state)
   ::   |=  =chum-state
   ::   ?:  ?=(%alien -.chum-state)
