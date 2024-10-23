@@ -192,11 +192,21 @@
   ==
 ::
 ++  poke-send-ahoy
-  |=  her=ship  =<  abet
-  (emit %pass /helm/ahoy/[(scot %p her)] %arvo %a %plea her %$ /mesa %ahoy ~)
+  |=  [her=ship test=?]  =<  abet
+  =/  =wire
+    :+  %helm  %ahoy
+    ?.(test /[(scot %p her)] /test)
+  =/  =path  ?:(test /test /mesa)
+  (emit %pass wire %arvo %a %plea her %$ path %ahoy ~)
 ::
 ++  take-ahoy
   |=  [way=wire error=(unit error:ames)]
+  ?:  ?=([%test *] way)
+    ?~  error
+      ~&  >  %migration-worked
+      abet
+    %-  (slog %take-ahoy-test u.error)
+    abet
   ?>  ?=([@ ~] way)
   ?~  error
     abet:(emit %pass /helm/migrate %arvo %a %mate (slaw %p i.way))
@@ -210,7 +220,7 @@
   |=  [way=wire error=(unit tang)]
   ?>  ?=([@ ~] way)
   ?~  error
-    (poke-send-ahoy (slav %p i.way))
+    (poke-send-ahoy (slav %p i.way) |)
   ~&  >>>  %ahoy-wake-crash
   ::  XX retry?
   ::

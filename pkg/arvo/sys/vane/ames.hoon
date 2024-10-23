@@ -5246,7 +5246,7 @@
                     ::
                     =/  =wire  (make-bone-wire her her-rift.channel bone)
                     =.  peer-core
-                      =+  ;;  =plea  message
+                      =+  ;;(=plea message)
                       ?.  =(vane.plea %$)
                         ?+    vane.plea  ~|(ames-evil-vane/our^her^vane.plea !!)
                             ?(%c %e %g %j)
@@ -5259,8 +5259,14 @@
                       ::
                       ?+    -.payload.plea  !!
                           %ahoy
-                        ?>  ?=(%mesa -.path.plea)
-                        (pe-emit duct %pass wire %a %deep %ahoy her bone)
+                        ?:  ?=(%mesa -.path.plea)
+                          (pe-emit duct %pass wire %a %deep %ahoy her bone)
+                        ?>  ?=(%test -.path.plea)
+                        ::  check that we can migrate this peer, without
+                        ::  modifying the state
+                        ::
+                        =+  (on-migrate bone)
+                        (pe-emit duct %give %done ~)
                       ::
                           %cork
                         ?>  ?=(%flow -.path.plea)
