@@ -1755,7 +1755,8 @@
       ::
       =^  queu-moves  adult-gate
         =|  moves=(list move)
-        |-  ?:  =(~ queued-events)
+        |-  ^+  [moves adult-gate]
+        ?:  =(~ queued-events)
           [(flop moves) adult-gate]
         =^  first-event  queued-events  ~(get to queued-events)
         =^  event-moves  adult-gate
@@ -1764,6 +1765,7 @@
             %take  (take:adult-core [wire duct ~ sign]:+.first-event)
           ==
         $(moves (weld event-moves moves))
+      ::
       =^  call-moves  adult-gate  (call:adult-core duct dud task)
       ~>  %slog.0^leaf/"ames: metamorphosis on %call"
       [:(weld molt-moves queu-moves call-moves) adult-gate]
@@ -1778,16 +1780,18 @@
       ::
       =^  queu-moves  adult-gate
         =|  moves=(list move)
-        |-  ?:  =(~ queued-events)
+        |-  ^+  [moves adult-gate]
+        ?:  =(~ queued-events)
           [(flop moves) adult-gate]
-      ::
-      =^  first-event  queued-events  ~(get to queued-events)
+        ::
+        =^  first-event  queued-events  ~(get to queued-events)
         =^  event-moves  adult-gate
           ?-  -.first-event
             %call  (call:adult-core [duct ~ wrapped-task]:+.first-event)
             %take  (take:adult-core [wire duct ~ sign]:+.first-event)
           ==
         $(moves (weld event-moves moves))
+      ::
       =^  take-moves  adult-gate  (take:adult-core wire duct dud sign)
       ~>  %slog.0^leaf/"ames: metamorphosis on %take"
       [:(weld molt-moves queu-moves take-moves) adult-gate]
@@ -4023,17 +4027,25 @@
                       fo-abed:fo:~(ev-core ev:mesa-core [duct her^fren])
                     ::
                     =?  moves  !=(current.pump next.pump)
+                      ::  we are waiting for an %ack, or have heard a %nack and
+                      ::  so we defer processing it until we receive the
+                      ::  naxplanation
+                      ::
                       =*  live  live.packet-pump-state.pump
                       =/  current-live=?
                         %-  ~(rep by live)
-                        |=  [[live-packet-key *] has=_|]
-                        =(message-num current.pump)
-                      ?:  current-live  moves
-                      ::  we are still expecting an ack or a naxplanation for
-                      ::  the current message. if there packet-pump has not
-                      ::  state about current.pump, it means that we have heard
-                      ::  the %nack, and clear everything, but defered
-                      ::  incrementing current until the naxplanation arrives.
+                        |=  [[live-packet-key *] has=_`?`%.n]
+                        |(has =(message-num current.pump))
+                      ?:  current-live
+                        ::  the packet pump has live fragments for current so
+                        ::  we haven't receive either the %ack or %nack, and are
+                        ::  still sending the message.
+                        ::
+                        moves
+                      ::  if there packet-pump has not state about current.pump,
+                      ::  it means that we have heard the %nack, and clear
+                      ::  everything, but defered incrementing current until the
+                      ::  naxplanation arrives.
                       ::
                       ::  the sender of the naxplanation will have bind it in
                       ::  their namespace, so we start +peeking it
@@ -4123,11 +4135,21 @@
                       ::  %naxplanation %ack on receiver; skip bone
                       flows
                     =/  =dire
-                       ?:  =(%0 (mod bone 4))  %for  :: receiving %boon(s)
-                       %bak  ::  receiving plea(s)
+                       ?:  =(%0 (mod bone 4))  %for  ::  receiving %boon(s)
+                       ?>  =(%1 (mod bone 4))  %bak  ::  receiving %plea(s)
+                    =?  bone  =(%1 (mod bone 4))
+                      ::  in the new protocol we use %for/%bak to distinguish
+                      ::  between sending/receiving pleas, and collapse the
+                      ::  two pieces of state (snd and rcv) into the flow
+                      ::  state that has both %outgoing (e.g. send %watch %plea)
+                      ::  and %incoming (e.g. receive a %boon %fact) sections
+                      ::
+                      (mix 0b1 bone)
                     =/  flow=flow-state
-                      =?  bone  =(%1 (mod bone 4))
-                        (mix 0b1 bone)
+                      ::  this flow could be part of a subscription flow (both
+                      ::  outgoing and incoming payloads) so we need to retrieve
+                      ::  or produce the bunt if we were only receiving
+                      ::
                       (~(gut by flows) bone^dire *flow-state)
                     =:      closing.flow  (~(has in closing.peer-state) bone)
                                line.flow  last-acked.sink
@@ -4139,8 +4161,18 @@
                         pending-ack.flow  %.n  ::  ?=(^ pending-vane-ack.sink)
                       ::
                           nax.flow
+                        ::  carry over live naxplanations we have just migrated
+                        ::
                         %-  ~(gas by *_nax.flow)
-                        ::  XX  when a message in nacked (e.g. 25), we add it to
+                        ::  if there are entries in nax.sink, we have nacked a
+                        ::  plea/boon, but we were waiting on the naxplanation
+                        ::  to be acked.
+                        ::
+                        ::  naxplanations are not sent anymore, just exposed
+                        ::  in the namespace.
+                        ::
+                        ::  XX
+                        ::  when a message in nacked (e.g. 25), we add it to
                         ::  nax.sink and create a %naxplanation message (e.g. 1
                         ::  first ever naxplanation sent) that contains the
                         ::  nacked sequence number (25), and is sent to the
@@ -4161,36 +4193,17 @@
                         ::  nacked, but that seems ok since the message won't be
                         ::  there anyway.
                         ::
-                        ::  for the migration, this could mean that there are
-                        ::  gaps in the sequence of messages that we have nacked
-                        ::  so the fact that there are messages in nax.sink
-                        ::  doesn't mean that we can say: "if a sequence number
-                        ::  higher than what's in the queue is not in nax.sink,
-                        ::  we can we assume that it has not been nacked?".
+                        %+  turn  ~(tap in nax.sink)
+                        |=  =message-num
+                        :-  message-num
+                        ?~  migrated-nax=(~(get by nax.flow) message-num)
+                          *error
+                        ::  if this is a live naxplation, keep the stack trace
                         ::
-                        ::  Because of this is better to draw a "line" by adding
-                        ::  last-acked.sink to line.flow and dropping any reads
-                        ::  to acks older than that sequence number, and not
-                        ::  migrate anything in nax.sink.
-                        ::
-                        =-  ~
-                        ::  if there are entries in nax/sink, we have nacked a
-                        ::  plea/boon, but we were waiting on the naxplanation.
-                        ::
-                        ::  naxplanations are not sent anymore, just exposed
-                        ::  in the namespace.
-                        ::
-                        ::  peeks for naxplanation won't be triggered in the
-                        ::  migration but rather from the re-send of the orginal
-                        ::  messages in the message pump
-                        ::
-                        (turn ~(tap in nax.sink) (late *error))
+                        u.migrated-nax
                       ==
-                    =?  bone  =(%1 (mod bone 4))
-                      (mix 0b1 bone)
                     (~(put by flows) bone^dire flow)
                   ::  naxplanations
-                  ::  XX  check that this is true
                   ::  XX entries in nax.peer-state have not been used
                   ::
                   moves^flows.fren
@@ -5200,7 +5213,10 @@
                   =.  peer-core
                     (send-shut-packet bone message-num %| %| ok lag=`@dr`0)
                   ?~  next=~(top to pending-vane-ack.state)  sink
-                  (handle-sink message-num.u.next message.u.next ok)
+                  ::  u.next has not been sent to the vane so we assume ok=%.y;
+                  ::  +done will be called again in the case of error
+                  ::
+                  (handle-sink message-num.u.next message.u.next ok=%.y)
                 ::
                 +|  %implementation
                 ::  +handle-sink: dispatch message
@@ -7337,8 +7353,28 @@
                   ?~(nax=(~(get by nax.state) seq) ~ `nax/u.nax)
                 ::
                     ?(%ack-plea %ack-boon)
-                  ?:  (lte seq line.state)
+                  ?:  (~(has by nax.state) seq)
+                    ::  if we have naxplanation state for this message—even
+                    ::  for pre-migration messages—we can guarantee that
+                    ::  the message was nacked
+                    ::
+                    `ack/error=%.y
+                  ?:  (lth seq line.state)
                     ::  refuse to answer for pre-migration messages
+                    ::
+                    ::  XX can we guarantee that line.state was an ack?
+
+                    ::  In theory we can't guarantee it just by looking at the
+                    ::  sate of the flow, but, if it was a %nack we would have
+                    ::  state in nax.state for live naxplanations and if the
+                    ::  naxplanation had suceeded then they are not going to
+                    ::  resend the payload anymore.
+                    ::
+                    ::  if line.state was an %ack but it got lost we can not
+                    ::  know for sure, but, because we were not removing the
+                    ::  correct message from nax.sink it's very likely that
+                    ::  if line.state is not in nax.state that's because it
+                    ::  was indeed a %nack.
                     ::
                     ~
                   ?:  ?&  (lth seq last-acked.state)
@@ -7351,7 +7387,7 @@
                     ::  refuse to answer for future acks
                     ::
                     ~
-                  `ack/(~(has by nax.state) seq)
+                  `ack/error=%.n
                 ::
                     %cork
                   ?.  (~(has in corked.sat.per) side)  ~
