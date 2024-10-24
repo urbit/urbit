@@ -9176,9 +9176,13 @@
           ?:  ?=([%mesa %ask *] wire)
             :_  ames-state  :_  ~
             :+  hen  %pass
-            ?+  t.t.wire  ~|(%unexpected-ask-wire !!)
-                     [%turf *]  [/turf %j %turf ~]
-              [%public-keys *]  [/public-keys %j %public-keys [n=our ~ ~]]
+            ?+  t.t.wire  ~|(unexpected-ask-wire/wire !!)
+                [%turf *]
+              [/turf %j %turf ~]
+            ::
+                [%public-keys @ *]
+              ~&  requesting-keys-for/i.t.t.t.wire
+              [/public-keys %j %public-keys [n=(slav %p i.t.t.t.wire) ~ ~]]
             ==
           ?:  ?=([%gall %unto *] sign)  :: XX from poking %ping app
             `ames-state
@@ -9551,14 +9555,31 @@
     ~|(%ames-take-dud (mean tang.u.dud))
     ::
   ?:  ?=([?(%turf %mesa %private-keys %public-keys) *] wire)
-    ?.  &(?=(?(%turf %public-keys) -.wire) ?=(~ unix-duct))
+    ?.  ?&  ?=(?(%turf %public-keys) -.wire)
+            ?=(~ unix-duct)
+        ==
       (take:me-core sample)
     ::  If the unix-duct is not set, we defer applying %public-keys and %turf
     ::  gifts (which can trigger other gifts to be sent to unix) by setting up
     ::  a timer that will request them again
     ::
+    ~&  %setting-ask-timer
     :_  vane-gate
-    [~[/ames] %pass `^wire`[%mesa %ask wire] %b %wait `@da`(add now ~s30)]~
+    =/  wires=(list ^wire)
+      ?:  ?=(%turf -.wire)  [%mesa %ask wire]~
+      ?>  ?=([%jael %public-keys *] sign)
+      =/  gift=public-keys-result:jael  +>.sign
+      ?.  ?=(%full -.gift)
+        ~&(unexpected-ask-gift/-.gift ~)
+      =/  ships=(set ship)  ~(key by points.gift)
+      %-  ~(rep in ships)
+      |=  [=ship wires=(list ^wire)]
+      :_  wires
+      [%mesa %ask /public-keys/[(scot %p ship)]]
+    %+  turn  wires
+    |=  =^wire
+    ^-  move
+    [~[/ames] %pass wire %b %wait `@da`(add now ~s30)]
   =/  parsed-wire  (parse-bone-wire wire)
   ?:  ?=(~ parsed-wire)  :: XX ?=(^ parsed-wire)
     (take:am-core sample)
