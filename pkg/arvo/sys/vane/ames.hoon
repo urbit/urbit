@@ -3290,7 +3290,7 @@
                 =<  :: delete ship from .peers
                     ::
                     pe-abel
-                =~  ::  ack ahoy plea, if we don't crash (i.e. have live flows)
+                =~  ::  ack ahoy plea, if we don't crash
                     ::
                     (call:(abed:mi:peer-core bone) %done ok=%.y)
                     ::  migrate all flows
@@ -4113,6 +4113,9 @@
                         %-  ~(put by nax.state.core)
                         [message-num error]:message
                       ==
+                    ::  all live messages processed; set next seq payload
+                    ::
+                    =.  next-load.flow  next.pump
                     ::
                     :_  (~(put by flows) [bone dire] flow)
                     =.  moves  (weld forward-moves moves)
@@ -4214,8 +4217,8 @@
                   ~&  make-peeks-for/her
                   =/  ev-core
                     =/  chums  (~(put by chums.ames-state) her known/fren)
-                    %*  ev-core  ev:(mesa now^eny^rof)
-                      per               her^fren
+                    %*  ev-core  ev:(mesa now eny rof)
+                      per               [her fren]
                       chums.ames-state  chums
                     ==
                   =*  per  peer-state
