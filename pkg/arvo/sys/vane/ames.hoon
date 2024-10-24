@@ -5260,7 +5260,7 @@
                       ::  using %$ as the recipient vane to handle peers
                       ::  that have not migrated into the new protocol
                       ::
-                      ?+    -.payload.plea  !!
+                      ?+    -.payload.plea  ~|(weird-migration-plea/plea !!)
                           %ahoy
                         ?:  ?=(%mesa -.path.plea)
                           (pe-emit duct %pass wire %a %deep %ahoy her bone)
@@ -5268,7 +5268,14 @@
                         ::  check that we can migrate this peer, without
                         ::  modifying the state
                         ::
-                        =+  (on-migrate bone)
+                        =/  ahoy-state=axle
+                          ~|(%migrate-crashed ames-state:(on-migrate bone))
+                        =/  sy-core
+                          %*  sy-core  sy:(mesa now eny rof)
+                            ames-state  ahoy-state
+                          ==
+                        =/  back-state=axle
+                          ~|(%regress-crashed ames-state:(sy-back:sy-core `her))
                         (pe-emit duct %give %done ~)
                       ::
                           %cork
