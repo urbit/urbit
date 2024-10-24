@@ -868,16 +868,27 @@
         [%stir arg=@t]
         $>(%trim vane-task)
         $>(%vega vane-task)
+    ::  all tasks before the ones bellow, if changed, would need an adapter
+    ::  function in the larval-core +load arm, to change the events to their
+    ::  latest version, as it exists here in %lull.
     ::
-        [%mate (unit ship)]                   ::  per-peer migration
-        [%load ?(%mesa %ames)]                ::  load core for new peers; XX make it term for flexibility?
-        [%back (unit ship)]                   ::  per-peer regression
+    ::  where (i.e. from what version of the ames-state) to do the task would
+    ::  depend on when the task was introduced—%heed and %jilt were introduced
+    ::  in state %4, and removed in %21; %kroc was introduced in state %10,
+    ::  modified in %17...
     ::
-        [%heer =lane:pact p=@]                :: receive a packet
-        [%mess =mess]                         :: receive a message
-        [%moke =space =spar =path]            :: initiate %poke request
-        [%meek =space =spar]                  :: initiate %peek request
-        [%mage =space =spar]                  :: send %page of data
+    ::  when changing any of the tasks above, please follow the same pattern that
+    ::  exists in ames.hoon.
+    ::
+        [%mate (unit ship)]             ::  per-peer migration
+        [%load ?(%mesa %ames)]          ::  load core for new peers; XX make it term for flexibility?
+        [%back (unit ship)]             ::  per-peer regression
+    ::
+        [%heer =lane:pact p=@]          :: receive a packet
+        [%mess =mess]                   :: receive a message
+        [%moke =space =spar =path]      :: initiate %poke request
+        [%meek =space =spar]            :: initiate %peek request
+        [%mage =space =spar]            :: send %page of data; intended for acks
     ==
   ::
   ::  $gift: effect from ames
@@ -1564,26 +1575,25 @@
     [16 %0b11]
   ::
   +$  axle
-    $:  %0
-        peers=(map ship ship-state)
-        unix-duct=_`duct`[//ames/0v0 ~]
+    $:  peers=(map ship ship-state)
+        =unix=duct  ::  [//ames/0v0 ~]
         =life
         =rift
-        crypto-core=acru
         =bug
         snub=[form=?(%allow %deny) ships=(set ship)]
         cong=[msg=_5 mem=_100.000]
         $=  dead                            ::  dead-flow consolidation timers
-        $:  flow=[%flow (unit dead-timer)]
-            cork=[%cork (unit dead-timer)]
+        $:  flow=[%flow (unit dead-timer)]  ::  ... for |ames
+            chum=[%chum (unit dead-timer)]  ::  ... for |mesa
+            cork=[%cork (unit dead-timer)]  ::  ... for %nacked corks
         ==
         ::
-        =server=chain  ::  for serving %shut requests
-        priv=private-key    ::  XX remove if we use the crypto core?
-        chums=(map ship chum-state)  ::  XX migrated peers
-        core=_`?(%ames %mesa)`%ames          ::  XX use migrated core by default
+        =server=chain                       ::  for serving %shut requests
+        priv=private-key
+        chums=(map ship chum-state)         ::  XX migrated peers
+        core=_`?(%ames %mesa)`%ames         ::  XX use migrated core by default
         ::  TODOs
-        :: XX tmp=(map @ux page)   :: temporary hash-addressed bindings
+        :: XX tmp=(map @ux page)            :: temporary hash-addressed bindings
     ==
   ::
   +$  dead-timer  [=duct =wire date=@da]
@@ -1630,6 +1640,7 @@
     $+  ovni-state
     $:  pokes=(list [=duct message=mesa-message])
         peeks=(jug path duct)
+        chums=(jug path duct)
         pit=(map path request-state)  ::  XX only for comets
     ==
   ::
@@ -1648,6 +1659,7 @@
         ::              path=ack-path  /~nec/ack/~zod/flow/bone=0/mess=1/frag=1
         ::
         pit=(map path request-state)
+        pot=(jug wire path)      ::  each wire represents a flow, the value is its associated peeks for the acks
         =client=chain            ::  stores keys for %shut requests
     ==
   ::
@@ -1901,7 +1913,7 @@
       ^-  plot
       =/  tip  ?-(typ %page 0b1, %peek 0b10, %poke 0b11)
       =.  hop  (min 7 hop)
-      =*  tok  [32 ~tasfyn-partyv]
+      =*  tok  [32 0x67e0.0200]
       :-  bloq=0
       [[2 0] [2 nex] [3 ver=1] [2 tip] [3 hop] [20 gum] tok ~]
     ::
@@ -1914,7 +1926,7 @@
         ((hew b dat) [res=2 nex=2 ver=3 tip=2 hop=3 gum=20 tok=32])
       ?>  =(0 res.c)
       ?>  =(1 ver.c)
-      ?>  =(~tasfyn-partyv tok.c)
+      ?>  =(0x67e0.0200 tok.c)
       =/  typ  ?+(tip.c !! %0b1 %page, %0b10 %peek, %0b11 %poke)
       [[nex.c typ hop.c gum.c] b]
     --
