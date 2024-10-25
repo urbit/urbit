@@ -1536,8 +1536,10 @@
     ++  get-forward-lanes-mesa
       |=  [our=@p fren=fren-state chums=(map ship chum-state)]
       ^-  (list lane:pact)
-      ?^  lane.fren
-        (drop lane.fren)
+      =;  zar=(trap (list lane:pact))
+        ?~  lane.fren  $:zar
+        [u.lane.fren $:zar]
+      |.  ^-  (list lane:pact)
       ?:  ?=(%czar (clan:title sponsor.fren))
         ?:  =(our sponsor.fren)
           ~
@@ -6094,19 +6096,6 @@
                 ~
               ?:  ?=([~ %known *] peer)
                 (get-forward-lanes our +.u.peer peers.ames-state)
-              ?:  ?=([~ %known *] chum)
-                =/  lanes=(list lane:pact)
-                  (get-forward-lanes-mesa our +.u.chum chums.ames-state)
-                %+  turn  lanes
-                |=  =lane:pact
-                ^-  ^lane
-                ?@  lane
-                  [%.y `@p`lane]
-                :-  %.n
-                %+  can  3
-                :~  4^p.lane
-                    2^q.lane
-                ==
               =/  sax  (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
               ?.  ?=([~ ~ *] sax)
                 ~
@@ -8170,6 +8159,7 @@
                 =/  who  (slaw %p her.tyl)
                 ?~  who  [~ ~]
                 =/  chum  (~(get by chums.ames-state) u.who)
+                =/  peer  (~(get by peers.ames-state) u.who)
                 ?+    req.tyl  [~ ~]
                     ~
                   ?~  chum
@@ -8209,15 +8199,29 @@
                   ::      the peer's sponsoring galaxy
                   ::
                   :^  ~  ~  %noun
-                  !>  ^-  (list lane:pact)
+                  !>  ^-  (list lane:pact)  :: XX [sponsor=@p (list lane:pact)]
                   ?:  =(our u.who)
                     ~
-                  ?:  ?=([~ %known *] chum)
-                    (get-forward-lanes-mesa our +.u.chum chums.ames-state)
-                  =/  sax  (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
+                  =/  sax
+                    (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
                   ?.  ?=([~ ~ *] sax)
                     ~
                   =/  gal  (rear ;;((list ship) q.q.u.u.sax))
+                  :-  `@ux`gal  :: XX we shouldn't fake this as as lane
+                  ?:  ?=([~ %known *] peer)
+                    %+  turn  (get-forward-lanes our +.u.peer peers.ames-state)
+                    |=  lane=(each @p address)
+                    ?-    -.lane
+                        %&  `@ux`p.lane
+                    ::
+                        %|
+                      :+    %if
+                        ip=`@if`(end [0 32] p.lane)
+                      pt=`@ud`(cut 0 [32 16] p.lane)
+                    ==
+                  ?:  ?=([~ %known *] chum)
+                    (get-forward-lanes-mesa our +.u.chum chums.ames-state)
+                  ~&  %alien-lanes
                   ?:  =(our gal)
                     ~
                   [`@ux`gal]~
@@ -8531,9 +8535,14 @@
                     %+  turn
                       (get-forward-lanes-mesa our +.u.peer chums.ames-state)
                     |=  =lane:pact
-                    ^-  (each @pC address)
-                    ?>  ?=(@ lane)  :: XX FIXME
-                    [%.y `@pC`lane]
+                    ^-  ^lane
+                    ?@  lane
+                      [%.y `@p`lane]
+                    :-  %.n
+                    %+  can  3
+                    :~  4^p.lane
+                        2^q.lane
+                    ==
                 ==
               ::  +on-publ-full: handle new pki data for peer(s)
               ::
@@ -8728,9 +8737,14 @@
                       %+  turn
                         (get-forward-lanes-mesa our +.peer chums.ames-state)
                       |=  =lane:pact
-                      ^-  (each @pC address)
-                      ?>  ?=(@ lane)  ::  XX FIXME
-                      [%.y `@pC`lane]
+                      ^-  ^lane
+                      ?@  lane
+                        [%.y `@p`lane]
+                      :-  %.n
+                      %+  can  3
+                      :~  4^p.lane
+                          2^q.lane
+                      ==
                   ==
                 ::
                 ::  automatically set galaxy route, since unix handles lookup
