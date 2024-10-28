@@ -957,6 +957,10 @@
   ++  mo-nuke
     |=  [prov=path dap=dude]
     ^+  mo-core
+    =?  mo-core  (~(has by blocked.state) dap)
+      =/  num-movs=@  ~(wyt by (~(got by blocked.state) dap))
+      ~>  %slog.0^leaf/"gall: deleted {<num-movs>} blocked moves for {<dap>}"
+      mo-core(blocked.state (~(del by blocked.state) dap))
     =/  yoke=(unit yoke)  (~(get by yokes.state) dap)
     ?:  |(?=(~ yoke) ?=(%nuke -.u.yoke))
       ~>  %slog.0^leaf/"gall: ignoring %nuke for {<dap>}, not running"
