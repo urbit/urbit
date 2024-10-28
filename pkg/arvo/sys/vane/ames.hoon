@@ -2768,7 +2768,10 @@
         ?~  bone=(bone-ok u.parsed wire rift.peer-state.peer-core)
           event-core
         ::
-        abet:(check-clog:(on-memo:peer-core u.bone [%boon payload]) u.bone id)
+        =.  peer-core  (on-memo:peer-core u.bone [%boon payload])
+        =?  peer-core  (gte now (add ~s30 last-contact.qos.peer-state.peer-core))
+          (check-clog:peer-core u.bone id)
+        abet:peer-core
       ::  +on-take-boon: receive request to give message to peer
       ::
       ++  on-take-boon
@@ -4854,7 +4857,10 @@
             =.  peer-core
               (send-shut-packet bone message-num %| %| ok lag=`@dr`0)
             ?~  next=~(top to pending-vane-ack.state)  sink
-            (handle-sink message-num.u.next message.u.next ok)
+            ::  u.next has not been sent to the vane so we assume ok=%.y;
+            ::  +done will be called again in the case of error
+            ::
+            (handle-sink message-num.u.next message.u.next ok=%.y)
           ::
           +|  %implementation
           ::  +handle-sink: dispatch message
@@ -5936,15 +5942,7 @@
     |^
     =/  van  ?@(vis.nom (end 3 vis.nom) way.vis.nom)
     =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
-    ?.  =(%c van)
-      (en-hunk (rof ~ /ames nom))
-    =+  pem=(rof [~ ~] /ames nom(vis %cp))
-    ?.  ?=(^ pem)    ~
-    ?.  ?=(^ u.pem)  ~
-    ~|  u.u.pem
-    =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
-    ?.  =([%black ~ ~] rul.r.per)  ~
-    (en-hunk (rof [~ ~] /ames nom))
+    (en-hunk (rof ~ /ames nom))
     ::
     ++  en-hunk
       |=  res=(unit (unit cage))
@@ -6019,7 +6017,7 @@
           ~
         ?:  ?=([~ %known *] peer)
           (get-forward-lanes our +.u.peer peers.ames-state)
-        =/  sax  (rof ~ /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
+        =/  sax  (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
         ?.  ?=([~ ~ *] sax)
           ~
         =/  gal  (rear ;;((list ship) q.q.u.u.sax))
