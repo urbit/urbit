@@ -4,7 +4,7 @@
 =>  ..part
 ~%  %lull  ..part  ~
 |%
-++  lull  %323
+++  lull  %322
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
@@ -1521,6 +1521,7 @@
         [%crew ~]                                       ::  permission groups
         [%crow nom=@ta]                                 ::  group usage
         [%drop des=desk]                                ::  cancel pending merge
+        [%esse des=desk ese=?]                          ::  edit essential desk
         [%info des=desk dit=nori]                       ::  internal edit
         $>(%init vane-task)                             ::  report install
         [%into des=desk all=? fis=mode]                 ::  external edit
@@ -2006,15 +2007,20 @@
         [%pack ~]                                       ::  compact memory
         [%trim p=@ud]                                   ::  trim kernel state
         [%logs =told]                                   ::  system output
+        [%meme p=(list quac)]                           ::  memory report
+        [%quac ~]                                       ::  memory runtime
     ==                                                  ::
   +$  task                                              ::  in request ->$
     $~  [%vega ~]                                       ::
-    $%  [%boot lit=? p=*]                               ::  weird %dill boot
+    $%  $>(%born vane-task)                             ::  new unix process
+        [%boot lit=? p=*]                               ::  weird %dill boot
         [%crop p=@ud]                                   ::  trim kernel state
         [%flog p=flog]                                  ::  wrapped error
         [%heft ~]                                       ::  memory report
         $>(%init vane-task)                             ::  after gall ready
         [%logs p=(unit ~)]                              ::  watch system output
+        [%mass ~]                                       ::  run memory report
+        [%quac p=(list quac)]                           ::  memory runtime
         [%meld ~]                                       ::  unify memory
         [%pack ~]                                       ::  compact memory
         [%seat =desk]                                   ::  install desk
@@ -2098,6 +2104,9 @@
     $:  ses=@tas                                        ::  target session
         dill-belt                                       ::  input
     ==                                                  ::
+  +$  quac                                              ::  memory report
+    $~  ['' 0 ~]
+    [name=@t size=@ud quacs=(list quac)]
   --  ::dill
 ::                                                      ::::
 ::::                    ++eyre                            ::  (1e) http-server
@@ -2482,6 +2491,13 @@
         ::  respond with the ip address of the requester
         ::
         [%ip ~]
+        ::  returns data used to verify sync status between ship and network
+        ::  in double boot protection
+        ::
+        [%boot ~]
+        :: responds with the @p of the galaxy of the provided ship
+        ::
+        [%sponsor ~]
         ::  respond with the default file not found page
         ::
         [%four-oh-four ~]
@@ -2725,6 +2741,17 @@
   ::
   +$  rout  [p=(list host) q=path r=oryx s=path]        ::  http route (new)
   +$  user  knot                                        ::  username
+  ::
+  ::  Boot response
+  ::
+  +$  boot
+    $:  %1
+        sponsor=ship
+        =rift
+        =life
+        bone=(unit @udbone)
+        last-acked=(unit @udmessagenum)
+    ==
   --  ::eyre
 ::                                                      ::::
 ::::                    ++gall                            ::  (1g) extensions
@@ -3071,11 +3098,10 @@
   ::  +feed: potential boot parameters
   ::
   +$  feed
-    $^  [[%1 ~] who=ship kyz=(list [lyf=life key=ring])]
-    seed
-  ::  +seed: individual boot parameters
-  ::
-  +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
+    $^  $%  [[%1 ~] who=ship kyz=(list [lyf=life key=ring])]
+            [[%2 ~] who=ship ryf=rift kyz=(list [lyf=life key=ring])]
+        ==
+    [who=ship lyf=life key=ring sig=(unit oath:pki)]
   ::
   +$  task                                            ::  in request ->$
     $~  [%vega ~]                                     ::
@@ -3099,7 +3125,7 @@
     ==                                                ::
   ::
   +$  dawn-event
-    $:  =seed
+    $:  =feed
         spon=(list [=ship point:azimuth-types])
         czar=(map ship [=rift =life =pass])
         turf=(list turf)

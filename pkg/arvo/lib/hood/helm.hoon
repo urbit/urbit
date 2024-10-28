@@ -78,13 +78,16 @@
   ?.  =(our.bowl who.fed)
     ~&  [%wrong-private-key-ship who.fed]
     this
+  =/  kyz=(list [lyf=life key=ring])
+    ?:  ?=([%1 ~] -.fed)  kyz.fed
+    kyz.fed
   =|  caz=(list card)
   %-  emil
   |-
-  ?~  kyz.fed  (flop caz)
+  ?~  kyz  (flop caz)
   %=  $
-    kyz.fed  t.kyz.fed
-    caz      [[%pass / %arvo %j %rekey i.kyz.fed] caz]
+    kyz  t.kyz
+    caz  [[%pass / %arvo %j %rekey i.kyz] caz]
   ==
 ::
 ++  ames-secret
