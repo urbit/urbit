@@ -6193,6 +6193,7 @@
           ==
       ::
       --
+    ::  directed MESsAging
     ::
     ++  mesa
       |=  [now=@da eny=@uvJ rof=roof]
@@ -6216,7 +6217,7 @@
                 (~(put by chums.ames-state) per(sat known/sat.per))
               ev-abut
             ::
-            ++  ev-abut  moves^ames-state
+            ++  ev-abut  moves^ames-state  :: XX antipattern; remove
             ++  ev-abed  |=(=duct ev-core(hen duct))
             ++  ev-foco  |=(=_per ev-core(per per))
             ++  ev-emit  |=(=move ev-core(moves [move moves]))
@@ -6834,7 +6835,11 @@
                 =+  ;;(comet-proof=open-packet (cue signed))
                 ::  update comet's keys
                 ::
-                (ev-register-comet ship.p.sage comet-proof signature signed)
+                =^  moves  ames-state
+                  =<  al-abet
+                  %-  al-register-comet:(al-abed:al hen)
+                  [ship.p.sage comet-proof signature signed]
+                (ev-emil moves)
               =,  u.flow-wire
               =.  per  (ev-got-per her)
               ?:  (lth rift rift.sat.per)
@@ -7702,79 +7707,6 @@
                 (fo-emit [/ames]~ %pass /make-page %a mage/[space her^path])
               ::
               --
-            ::
-            +|  %aliens-and-comets
-            ::  +ev-enqueue-alien-todo: helper to enqueue a pending request
-            ::
-            ::    Also requests key and life from Jael on first request.
-            ::    If talking to a comet, requests attestation packet.
-            ::
-            ++  ev-enqueue-alien-todo
-              |=  $:  =ship
-                      chum-state=(unit chum-state)
-                      mutate=$-(ovni-state ovni-state)
-                  ==
-              ^+  ev-core
-              ::  create a default $ovni-state on first contact
-              ::
-              =/  [already-pending=? todos=ovni-state]
-                ?~  chum-state
-                  [%.n *ovni-state]
-                [%.y ?>(?=(%alien -.u.chum-state) +.u.chum-state)]
-              ::  mutate .todos and apply to permanent state
-              ::
-              =.  todos  (mutate todos)
-              ~&  ev-enqueue-alien-todo/ship
-              =.  chums.ames-state  (~(put by chums.ames-state) ship %alien todos)
-              ?:  already-pending
-                ev-core
-              ::
-              ?:  =(%pawn (clan:title ship))
-                (ev-read-proof ship)
-              ::  NB: we specifically look for this wire in +public-keys-give in
-              ::  Jael.  if you change it here, you must change it there.
-              ::
-              (ev-emit hen %pass /public-keys %j %public-keys [n=ship ~ ~])
-            ::
-            ++  ev-register-comet
-              |=  [comet=@p open-packet signature=@ signed=@]  :: XX to %lull
-              ^+  ev-core
-              =/  crub  (com:nu:crub:crypto public-key)
-              ::  verify signature
-              ::
-              ?>  (safe:as:crub signature signed)
-              ::  assert the contents of the proof match those of a comet
-              ::
-              ?>  &(=(sndr comet) =(sndr-life 1))
-              ::  assert the contents of the proof match ours
-              ::
-              ?>  &(=(rcvr our) =(rcvr-life life.ames-state))
-              ::  only a star can sponsor a comet
-              ::
-              ?>  =(%king (clan:title (^sein:title comet)))
-              ::  comet public-key must hash to its @p address
-              ::
-              ?>  =(comet fig:ex:crub)
-              =/  keys
-                (~(put by *(map life [suite=@ud pass])) life=1 suite=1 public-key)
-              ::  insert comet
-              ::
-              =|  =point:jael
-              =^  moves  ames-state
-                =>  %^  ~(sy-publ sy hen)  /comet  %full
-                    %+  ~(put by *(map ship point:jael))  comet
-                    point(rift 0, life 1, keys keys, sponsor `(^sein:title comet))
-                sy-abet
-              ev-core
-            ::
-            ++  ev-read-proof
-              |=  comet=ship
-              =/  =wire   /mesa/comet/pof
-              =/  =space  [%publ 1]
-              =/  =path
-                %+  ev-make-path  space
-                /comet/proof/[(scot %p our)]/[(scot %p life.ames-state)]
-              (ev-emit hen %pass wire %a meek/[space comet path])
             ::
             +|  %namespaces
             ::
@@ -8666,7 +8598,7 @@
                     (ev-req-peek:(ev-abed:c duct) space path)
                   ::
                   =^  moves  ames-state  ev-abet:ev-core
-                  sy-core
+                  (sy-emil moves)
                 ::
                 --
               ::  on-publ-rift: XX
@@ -8813,6 +8745,10 @@
               ?.  ?=([~ ~ %known *] per-sat)
                 ::  XX  this shouldn't be needed
                 ::  XX  only if %alien
+                ?:  ?=(%pawn (clan:title ship))
+                  ::  XX resend attestation request
+                  ::
+                  [moves state]
                 ~&  retrieving-keys-again/ship
                 :_  state
                 :_  moves
@@ -9102,6 +9038,98 @@
             ::
             --
           ::
+          +|  %aliens-and-comets
+          ::
+          ++  al
+            =|  moves=(list move)
+            ::
+            |_  hen=duct
+            ::
+            +|  %helpers
+            ::
+            ++  al-core  .
+            ++  al-abet  [moves ames-state]
+            ++  al-abed  |=(=duct al-core(hen duct))
+            ++  al-emit  |=(=move al-core(moves [move moves]))
+            ++  al-emil  |=(mos=(list move) al-core(moves (weld mos moves)))
+            ::
+            +|  %entry-points
+            ::  +ev-enqueue-alien-todo: helper to enqueue a pending request
+            ::
+            ::    Also requests key and life from Jael on first request.
+            ::    If talking to a comet, requests attestation packet.
+            ::
+            ++  al-enqueue-alien-todo
+              |=  $:  =ship
+                      chum-state=(unit chum-state)
+                      mutate=$-(ovni-state ovni-state)
+                  ==
+              ^+  al-core
+              ::  create a default $ovni-state on first contact
+              ::
+              =/  [already-pending=? todos=ovni-state]
+                ?~  chum-state
+                  [%.n *ovni-state]
+                [%.y ?>(?=(%alien -.u.chum-state) +.u.chum-state)]
+              ::  mutate .todos and apply to permanent state
+              ::
+              =.  todos  (mutate todos)
+              ~&  al-enqueue-alien-todo-mesa/ship
+              =.  chums.ames-state
+                (~(put by chums.ames-state) ship %alien todos)
+              ?:  already-pending
+                al-core
+              ::
+              ?:  =(%pawn (clan:title ship))
+                (al-read-proof ship)
+              ::  NB: we specifically look for this wire in +public-keys-give in
+              ::  Jael.  if you change it here, you must change it there.
+              ::
+              (al-emit hen %pass /public-keys %j %public-keys [n=ship ~ ~])
+            ::
+            ++  al-register-comet
+              |=  [comet=@p open-packet signature=@ signed=@]  :: XX to %lull
+              ^+  al-core
+              =/  crub  (com:nu:crub:crypto public-key)
+              ::  verify signature
+              ::
+              ?>  (safe:as:crub signature signed)
+              ::  assert the contents of the proof match those of a comet
+              ::
+              ?>  &(=(sndr comet) =(sndr-life 1))
+              ::  assert the contents of the proof match ours
+              ::
+              ?>  &(=(rcvr our) =(rcvr-life life.ames-state))
+              ::  only a star can sponsor a comet
+              ::
+              ?>  =(%king (clan:title (^sein:title comet)))
+              ::  comet public-key must hash to its @p address
+              ::
+              ?>  =(comet fig:ex:crub)
+              =/  keys
+                (~(put by *(map life [suite=@ud pass])) life=1 suite=1 public-key)
+              ::  insert comet
+              ::
+              =|  =point:jael
+              =^  moves  ames-state
+                =>  %^  ~(sy-publ sy hen)  /comet  %full
+                    %+  ~(put by *(map ship point:jael))  comet
+                    point(rift 0, life 1, keys keys, sponsor `(^sein:title comet))
+                sy-abet
+              (al-emil moves)
+            ::
+            ++  al-read-proof
+              |=  comet=ship
+              ^+  al-core
+              =/  =wire   /mesa/comet/pof
+              =/  =space  [%publ 1]
+              =/  =path
+                %+  ev-make-path:ev  space
+                /comet/proof/[(scot %p our)]/[(scot %p life.ames-state)]
+              (al-emit hen %pass wire %a meek/[space comet path])
+            ::
+            --
+          ::
           --
       ::
       |%
@@ -9251,10 +9279,11 @@
     +|  %helpers
     ::
     ++  pe-core  .
-    ++  me-core  (ev-abed:ev:(mesa now eny rof) hen)
+    ++  me-core  (mesa now eny rof)
     ++  am-core  (ames now eny rof)
+    ++  ev-core  (ev-abed:ev:me-core hen)
+    ++  al-core  (al-abed:al:me-core hen)
     ++  pe-abed  |=(=duct pe-core(hen duct))
-    ::
     ++  pe-find-peer
       |=  =ship
       ^-  $%  [%ames (unit ship-state)]
@@ -9296,29 +9325,33 @@
       ?:  ?=(%ames -.ship-state)
         (call:am-core hen ~ soft+plea/ship^plea)
       =^  moves  ames-state
-        =<  ev-abet
         ?:  ?=([~ %known *] +.ship-state)
-          (%*(ev-req-plea me-core per ship^+.u.ship-state) plea)
+          =<  ev-abet
+          %.  plea
+          ev-req-plea:(ev-foco:ev-core ship +.u.ship-state)
         ::
-        %^  ev-enqueue-alien-todo:me-core  ship  +.ship-state
-        |=  todos=ovni-state:me-core
+        =<  al-abet
+        %^  al-enqueue-alien-todo:al-core  ship  +.ship-state
+        |=  todos=ovni-state:ev-core
         todos(pokes [[hen^plea/plea] pokes.todos])
       moves^vane-gate
     ::
     ++  pe-cork
-      |=  her=ship
+      |=  =ship
       =/  =plea  [%$ /cork %cork ~]
-      =/  ship-state  (pe-find-peer her)
+      =/  ship-state  (pe-find-peer ship)
       ::
       ?:  ?=(%ames -.ship-state)
         (call:am-core hen ~ soft+cork/ship)
       =^  moves  ames-state
-        =<  ev-abet
         ?:  ?=([~ %known *] +.ship-state)
-          (%*(ev-req-plea me-core per her^+.u.ship-state) plea)
+          =<  ev-abet
+          %.  plea
+          ev-req-plea:(ev-foco:ev-core ship +.u.ship-state)
         ::
-        %^  ev-enqueue-alien-todo:me-core  her  +.ship-state
-        |=  todos=ovni-state:me-core
+        =<  al-abet
+        %^  al-enqueue-alien-todo:al-core  ship  +.ship-state
+        |=  todos=ovni-state:ev-core
         todos(pokes [[hen^plea/plea] pokes.todos])
       moves^vane-gate
     ::
@@ -9328,21 +9361,23 @@
       ?:  ?=(%ames -.ship-state)
         (call:am-core hen ~ soft+keen/sec^ship^path)
       =^  moves  ames-state
-        =<  ev-abut  ::  XX  due to the way we deal with comet attestations, we
-                     ::  cant' call the normal +ev-abet arm since we are not
-                     ::  touching per.sat.ev-core in ++ev-make-peek, so calling
-                     ::  +ev-abet will discard any changes made
-                     ::
         ?:  ?=([~ %known *] +.ship-state)
+          =<  ev-abut  ::  XX  due to the way we deal with comet attestations, we
+                      ::  cant' call the normal +ev-abet arm since we are not
+                      ::  touching per.sat.ev-core in ++ev-make-peek, so calling
+                      ::  +ev-abet will discard any changes made
+                      ::
           =*  sat     +.u.ship-state
           =/  =space  ?~(sec publ/life.sat shut/[idx key]:u.sec)
-          (%*(ev-req-peek me-core per ship^sat) space path)
+          %.  [space path]
+          ev-req-peek:(ev-foco:ev-core ship sat)
         ::
+        =<  al-abet
         :: XX: key exchange over ames forces all encrypted scries to be
         :: to a known peer
         ?>  ?=(~ sec)
-        %^  ev-enqueue-alien-todo:me-core  ship  +.ship-state
-        |=  todos=ovni-state:me-core
+        %^  al-enqueue-alien-todo:al-core  ship  +.ship-state
+        |=  todos=ovni-state:ev-core
         todos(peeks (~(put ju peeks.todos) path hen))
       moves^vane-gate
     ::
@@ -9352,18 +9387,20 @@
       ?:  ?=(%ames -.ship-state)
         (call:am-core hen ~ soft+chum/ship^path)
       =^  moves  ames-state
-        =<  ev-abut  ::  XX  due to the way we deal with comet attestations, we
-                     ::  cant' call the normal +ev-abet arm since we are not
-                     ::  touching per.sat.ev-core in ++ev-make-peek, so calling
-                     ::  +ev-abet would discard any changes made to the state
-                     ::
         ?:  ?=([~ %known *] +.ship-state)
+          =<  ev-abut  ::  XX  due to the way we deal with comet attestations, we
+                      ::  cant' call the normal +ev-abet arm since we are not
+                      ::  touching per.sat.ev-core in ++ev-make-peek, so calling
+                      ::  +ev-abet would discard any changes made to the state
+                      ::
           =*  sat    +.u.ship-state
           =/  space  chum/[life.ames-state ship [life symmetric-key]:sat]
-          (%*(ev-req-peek me-core per ship^sat) space path)
+          %.  [space path]
+          ev-req-peek:(ev-foco:ev-core ship sat)
         ::
-        %^  ev-enqueue-alien-todo:me-core  ship  +.ship-state
-        |=  todos=ovni-state:me-core
+        =<  al-abet
+        %^  al-enqueue-alien-todo:al-core  ship  +.ship-state
+        |=  todos=ovni-state:ev-core
         todos(chums (~(put ju chums.todos) path hen))
       moves^vane-gate
     ::
@@ -9377,8 +9414,9 @@
         =<  ev-abet
         ?.  ?=([~ %known *] +.ship-state)
           ::  XX delete from alien agenda?
-          ~&("peer still alien, skip peek cancel" me-core)
-        (%*(ev-cancel-peek me-core per ship.spar^+.u.ship-state) all path.spar)
+          ~&("peer still alien, skip peek cancel" ev-core)
+        %.  [all path.spar]
+       ev-cancel-peek:(ev-foco:ev-core ship.spar +.u.ship-state)
       moves^vane-gate
     ::
     ++  pe-hear
@@ -9438,41 +9476,43 @@
           ?>  ?=([~ %known *] chum)  ::  XX alien agenda? log?
           =<  ev-abet
           %.  [lane hop.pact +>.pact]
-          ev-pact-page:(ev-foco:me-core her.p.pact +.u.chum)
+          ev-pact-page:(ev-foco:ev-core her.p.pact +.u.chum)
         ::
             %peek
-          ev-abet:(ev-pact-peek:me-core +>.pact)
+          ev-abet:(ev-pact-peek:ev-core +>.pact)
         ::
             %poke
           =*  her  her.q.pact  :: her from poke-path
           =/  chum-state  (~(get by chums.ames-state) her)
-          ?:  ?&  ?=(%pawn (clan:title her))
+          ?.  ?&  ?=(%pawn (clan:title her))
                   |(?=(~ chum-state) ?=([~ %alien *] chum-state))
               ==
-            =?  chum-state  ?=(~ chum-state)
-              ::  first time: upgrade to %comet and +peek attestation proof
+            ?.  ?=([~ %known *] chum-state)
+              ::  request public keys from %jael; drop the packet, it'll be re-send
               ::
-              `alien/*ovni-state
-            ?>  ?=([~ %alien *] chum-state)
-            ?:  ?=(^ pit.u.chum-state)
-              ::  still waiting to hear attestation proof
-              ::
-              `ames-state
-            =.  chums.ames-state
-              (~(put by chums.ames-state) her u.chum-state)
-            ::  start peeking the attestation proof
-            ::
-            ev-abet:(ev-read-proof:me-core her)
-          ::
-          ?.  ?=([~ %known *] chum-state)
-            ::  request public keys from %jael; drop the packet, it'll be re-send
-            ::
+              =<  al-abet
+              %-  al-enqueue-alien-todo:al-core
+              [her chum-state |=(ovni-state +<)]
             =<  ev-abet
-            %-  ev-enqueue-alien-todo:me-core
-            [her chum-state |=(ovni-state +<)]
-          =<  ev-abet
-          %.  [lane hop.pact +>.pact]
-          ev-pact-poke:(ev-foco:me-core her +.u.chum-state)
+            %.  [lane hop.pact +>.pact]
+            ev-pact-poke:(ev-foco:ev-core her +.u.chum-state)
+          =?  chum-state  ?=(~ chum-state)
+            ::  first time: upgrade to %alien and +peek attestation proof
+            ::
+            `alien/*ovni-state
+          ?>  ?=([~ %alien *] chum-state)
+          ?:  ?=(^ pit.u.chum-state)
+            ~&  >>  %still-peeking-attestation
+            ::  still waiting to hear attestation proof
+            ::
+            `ames-state
+          =.  chums.ames-state
+            ~&  putting-in-chums/her
+            (~(put by chums.ames-state) her u.chum-state)
+          ~&  >>  %start-peeking-attestation
+          ::  start peeking the attestation proof
+          ::
+          al-abet:(al-read-proof:al-core her)
         ::
         ==
       moves^vane-gate
@@ -9484,24 +9524,24 @@
         ?-    -.mess
             %poke
           ?~  chum=(~(get by chums.ames-state) ship.p.mess)
-            me-core
+            ev-core
           ::  XX  this assumes that %aliens are checked in the packet layer
           ?>  ?=([~ %known *] chum)  ::  XX alien agenda?
-          (ev-mess-poke:(ev-foco:me-core ship.p.mess +.u.chum) dud +.mess)
+          (ev-mess-poke:(ev-foco:ev-core ship.p.mess +.u.chum) dud +.mess)
         ::
             %peek
           ?~  chum=(~(get by chums.ames-state) ship.p.mess)
-            me-core
+            ev-core
           ::  XX  this assumes that %aliens are checked in the packet layer
           ?>  ?=([~ %known *] chum)  ::  XX alien agenda?
-          (ev-mess-peek:(ev-foco:me-core ship.p.mess +.u.chum) p.mess)
+          (ev-mess-peek:(ev-foco:ev-core ship.p.mess +.u.chum) p.mess)
         ::
             %page
           ?~  chum=(~(get by chums.ames-state) ship.p.mess)
-            me-core
+            ev-core
           ::  XX  this assumes that %aliens are checked in the packet layer
           ?>  ?=([~ %known *] chum)  ::  XX alien agenda?
-          (ev-mess-page:(ev-foco:me-core ship.p.mess +.u.chum) [p q r]:mess)
+          (ev-mess-page:(ev-foco:ev-core ship.p.mess +.u.chum) [p q r]:mess)
         ::
         ==
       moves^vane-gate
