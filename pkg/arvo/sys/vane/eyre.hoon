@@ -2328,7 +2328,14 @@
                 ['cache-control' 'no-cache']
                 ['connection' 'keep-alive']
             ==
-            (wall-to-octs wall)
+          ::
+            ::  if we wouldn't otherwise send any data, send an early heartbeat
+            ::  instead. some clients won't consider the connection established
+            ::  until they've heard some bytes come over the wire.
+            ::
+            ?.  =(~ wall)  (wall-to-octs wall)
+            (some (as-octs:mimes:html ':\0a'))
+          ::
             complete=%.n
         ==
       ::  associate this duct with this session key
