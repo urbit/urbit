@@ -748,6 +748,20 @@
     [%app1 %poke %handle-http-request response]
   (expect-moves mos mov-1 mov-2 ~)
 ::
+++  test-bad-auth-401
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  ~  bind:m  perform-init-wo-timer
+  ::  request made with unrecognized session should 401 & redirect
+  ::
+  ;<  ~  bind:m  |=(=state [%& ~ state(sesh `'urbauth-~nul=0v0')])
+  ;<  mos=(list move)  bind:m  (get '/' ~)
+  ;<  ex-rs=$-(move tang)  bind:m
+    %^  make-ex-resp  401
+      ['set-cookie' 'urbauth-~nul=0v0; Path=/; Max-Age=0']~
+    `(as-octs:mimes:html 'bad session auth')
+  (expect-moves mos ex-rs ~)
+::
 ++  test-generator
   %-  eval-mare
   =/  m  (mare ,~)
@@ -1698,7 +1712,7 @@
   ;<  ~  bind:m  (setup-for-eauth 'http://client.com')
   ::  visitor attempts to approve an eauth attempt without being authenticated
   ::
-  ;<  ~  bind:m  |=(=state [%& ~ state(sesh `'urbauth-~nul=0v0')])
+  ;<  ~  bind:m  |=(=state [%& ~ state(sesh ~)])
   ;<  mos=(list move)  bind:m
     =/  body  'server=~hoster&nonce=0vnonce'
     (post '/~/eauth' ~ body)
