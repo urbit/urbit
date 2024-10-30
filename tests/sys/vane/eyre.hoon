@@ -78,6 +78,17 @@
     (pure:m ~)
   (fail tang)
 ::
+::  stupid way to normalize header order while maintaining ordering for
+::  headers whose field-name occurs multiple times
+++  header-sort
+  |=  heads=header-list:http
+  %+  roll  heads
+  |=  [head=[k=@t v=@t] heads=header-list:http]
+  ?~  heads  [head]~
+  ?:  =(k.head key.i.heads)     [i.heads $(heads t.heads)]
+  ?.  (aor k.head key.i.heads)  [i.heads $(heads t.heads)]
+  [head heads]
+::
 ++  call
   |=  [=duct wrapped-task=(hobo task:eyre-gate)]
   =/  m  (mare ,(list move))
@@ -220,7 +231,9 @@
   ;:  weld
     (expect-eq !>(status) !>(status-code.response-header.http-event.p.card.mov))
     (expect-eq !>(body) !>(data.http-event.p.card.mov))
-    (expect-eq !>(headers) !>(headers.response-header.http-event.p.card.mov))
+  ::
+    %+  expect-eq  !>((header-sort headers))
+    !>((header-sort headers.response-header.http-event.p.card.mov))
   ==
 ++  ex-start-response
   |=  [status=@ud headers=header-list:http body=(unit octs)]
@@ -232,7 +245,9 @@
   ;:  weld
     (expect-eq !>(status) !>(status-code.response-header.http-event.p.card.mov))
     (expect-eq !>(body) !>(data.http-event.p.card.mov))
-    (expect-eq !>(headers) !>(headers.response-header.http-event.p.card.mov))
+  ::
+    %+  expect-eq  !>((header-sort headers))
+    !>((header-sort headers.response-header.http-event.p.card.mov))
   ==
 ::
 ++  ex-continue-response
