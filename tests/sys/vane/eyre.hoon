@@ -218,10 +218,11 @@
   (expect-eq !>([duct=~[/unix] %give %sessions tokens]) !>(mov))
 ::
 ++  ex-response
+  =/  =duct  [/http-blah ~]
   |=  [status=@ud headers=header-list:http body=(unit octs)]
   |=  mov=move
   ^-  tang
-  ?.  ?=([[[%http-blah ~] ~] %give %response %start * * %.y] mov)
+  ?.  ?=([* %give %response %start * * %.y] mov)
     [leaf+"expected %response, got: {<mov>}" ~]
   =?  headers  ?=(^ body)
     %+  weld  headers
@@ -229,6 +230,7 @@
         ['set-cookie' g-sook]
     ==
   ;:  weld
+    (expect-eq !>(duct) !>(duct.mov))
     (expect-eq !>(status) !>(status-code.response-header.http-event.p.card.mov))
     (expect-eq !>(body) !>(data.http-event.p.card.mov))
   ::
@@ -236,13 +238,15 @@
     !>((header-sort headers.response-header.http-event.p.card.mov))
   ==
 ++  ex-start-response
+  =/  =duct  [/http-blah ~]
   |=  [status=@ud headers=header-list:http body=(unit octs)]
   |=  mov=move
   ^-  tang
-  ?.  ?=([[[%http-blah ~] ~] %give %response %start * * %.n] mov)
+  ?.  ?=([* %give %response %start * * %.n] mov)
     [leaf+"expected start %response, got: {<mov>}" ~]
   =.  headers  (weld headers ~[g-head])
   ;:  weld
+    (expect-eq !>(duct) !>(duct.mov))
     (expect-eq !>(status) !>(status-code.response-header.http-event.p.card.mov))
     (expect-eq !>(body) !>(data.http-event.p.card.mov))
   ::
