@@ -828,10 +828,14 @@
         [action [| secure address request] [invalid %fake *@p] ~ 0]
       ::  their cookie was invalid, make sure they expire it
       ::
+      =/  bod=octs  (as-octs:mimes:html 'bad session auth')
       %-  handle-response
       :*  %start
-          [401 ['set-cookie' (session-cookie-string:authentication invalid |)]~]
-          `(as-octs:mimes:html 'bad session auth')
+          :-  401
+          :~  ['set-cookie' (session-cookie-string:authentication invalid |)]
+              ['content-length' (crip (a-co:co p.bod))]
+          ==
+          `bod
           complete=%.y
       ==
     =;  [moz=(list move) sat=server-state]
