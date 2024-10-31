@@ -9503,7 +9503,6 @@
           al-abet:(al-read-proof:al-core her lane)
         ::
         ==
-      ~&  moves/moves
       moves^vane-gate
     ::
     ++  pe-mess  :: XX refactor
