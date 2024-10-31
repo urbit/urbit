@@ -1597,22 +1597,15 @@
     ==
   ::
   +$  dead-timer  [=duct =wire date=@da]
-  ::  +address: client IP address
-  ::
-  :: +$  address
-  ::   $%  [%ipv4 @if]
-  ::       [%ipv6 @is]
-  ::       ::  [%ames @p]
-  ::   ==
   ::
   +$  space
     $%  [%publ =life]
         [%chum =our=life her=ship =her=life key=@]
         [%shut kid=@ key=@uxI]
     ==
-  :: +$  lane           (each @pC address)
   ::  [0 %for]    =>  %poke: %plea %watch  =>  [0 %bak]
   ::  [0 %for]   <=   %poke: %boon        <=   [0 %bak]
+  ::
   ::  +load: payloads bounded in the namespace
   ::
   +$  load           ?(%plea %boon %ack-plea %ack-boon %nax %cork)
@@ -1625,23 +1618,13 @@
     $+  chum-state
     $%  [%known fren-state]
         [%alien ovni-state]
-        :: [%comet comet-state]  :: XX
     ==
-  ::
-  +$  comet-state
-    ::  XX move this into ovni-state?
-    ::  ovni-state needs to exist if we try to comunicate before the proof
-    ::  comes back with the comet's keys, so we can later upgrade those
-    ::  pokes/peeks into real requests
-    ::
-    [life=_1 rift=_0 pit=(map path request-state) =ovni-state]
   ::
   +$  ovni-state
     $+  ovni-state
     $:  pokes=(list [=duct message=mesa-message])
         peeks=(jug path duct)
         chums=(jug path duct)
-        pit=(map path request-state)  ::  XX only for comets
     ==
   ::
   +$  fren-state
@@ -1650,7 +1633,7 @@
         lane=(unit lane:pact)
         =qos
         corked=(set side)  ::  can be +peeked in the namespace
-                          ::  XX how many flows to keep here?
+                           ::  XX how many flows to keep here?
         =ossuary      ::  XX redefine ossuary in terms of bone^side
         flows=(map side flow-state)
       ::  outgoing/incoming requests
@@ -1709,6 +1692,7 @@
         ::  outbound %poke payloads, bounded in the ship's namespace
         ::  always and only for requests
         ::
+        $=  snd
         $:  %outbound
           ::  as soon as we can read the ack for the %poke we remove it from
           ::  the queue since that proof that they have processed the message
@@ -1725,7 +1709,6 @@
           ::
           ::  XX option to include messages that won't be bounded into the namespace (two-layer queue)
           loads=((mop ,@ud mesa-message) lte)  :: all unacked
-          cache=((mop ,@ud ?) lte)             :: out-of-order acks
           next-load=_1 :: next %poke to send, always +(last-acked)
           ::  XX how is this calculated?
           ::  XX inferred by the dumb internal congestion control
@@ -1733,13 +1716,15 @@
           ::
           send-window-max=_1  :: how many pleas i can send
           send-window=_1      ::
+          :: cache=((mop ,@ud ?) lte)  :: out-of-order acks XX TODO
         ==
         ::  incoming %pokes, pending their ack from the vane
         ::
+        $=  rcv
         $:  %incoming
           ::  acks can be +peek'ed via a well-formed path with a known structure
-          ::    e.g. /floe/bone=0/~nec/ack/~zod/bak/ack=1 (as stored in the producer of the ack)
-          ::                                          (the reader will be using bone=0)
+          ::    e.g. /flow/bone=0/~nec/ack/~zod/bak/ack=1 (as stored in the producer of the ack)
+          ::                                               (the reader will be using bone=0)
           ::
           last-acked=@ud  :: for acking old duplicates (only 10)
                           :: and dropping future acks
@@ -1887,17 +1872,17 @@
       =+  ^=  [pac c]
         ?-  typ.hed
           %page  =^  nam  b  ((de:^name b) dat)
-                =^  dat  b  ((de:^data b) dat)
-                =^  nex  b  ((de:^next b nex.hed) ^dat)
-                [[hop.hed [typ.hed nam dat nex]] b]
+                 =^  dat  b  ((de:^data b) dat)
+                 =^  nex  b  ((de:^next b nex.hed) ^dat)
+                 [[hop.hed [typ.hed nam dat nex]] b]
         ::
           %peek  =^  nam  b  ((de:^name b) dat)
-                [[hop.hed [typ.hed nam]] b]
+                 [[hop.hed [typ.hed nam]] b]
         ::
           %poke  =^  nam  b  ((de:^name b) dat)
-                =^  dam  b  ((de:^name b) dat)
-                =^  dat  b  ((de:^data b) dat)
-                [[hop.hed [typ.hed nam dam dat]] b]
+                 =^  dam  b  ((de:^name b) dat)
+                 =^  dat  b  ((de:^data b) dat)
+                 [[hop.hed [typ.hed nam dam dat]] b]
         ==
       =/  gum
         (end [0 20] (mug (cut -.c [(rig b -.c) +.c] dat)))
