@@ -9187,7 +9187,7 @@
             %back  sy-abet:(sy-back:sy-core +.task)
           ::  from internal %ames request
           ::
-            ?(%meek %moke %make)  co-abet:(co-call:co-core task)
+            ?(%meek %moke %mage)  co-abet:(co-call:co-core task)
           ==
           ::
         [moves vane-gate]
@@ -9503,6 +9503,7 @@
           al-abet:(al-read-proof:al-core her lane)
         ::
         ==
+      ~&  moves/moves
       moves^vane-gate
     ::
     ++  pe-mess  :: XX refactor
@@ -9540,7 +9541,6 @@
 ++  call
   |=  [hen=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _vane-gate]
-  ~&  %adult-call
   =+  me-core=(mesa now eny rof)
   =+  am-core=(ames now eny rof)
   =/  =task  ((harden task) wrapped-task)
