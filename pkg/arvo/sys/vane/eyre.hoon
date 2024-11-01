@@ -2355,7 +2355,14 @@
                 ['cache-control' 'no-cache']
                 ['connection' 'keep-alive']
             ==
-            (wall-to-octs wall)
+          ::
+            ::  if we wouldn't otherwise send any data, send an early heartbeat
+            ::  instead. some clients won't consider the connection established
+            ::  until they've heard some bytes come over the wire.
+            ::
+            ?.  =(~ wall)  (wall-to-octs wall)
+            (some (as-octs:mimes:html ':\0a'))
+          ::
             complete=%.n
         ==
       ::  associate this duct with this session key
@@ -3106,6 +3113,11 @@
     =/  aeon  ?^(prev=(~(get by cache.state) url) +(aeon.u.prev) 1)
     =.  cache.state  (~(put by cache.state) url [aeon entry])
     :_  state
+    ::NOTE  during boot, userspace might've sent us this before we received
+    ::      our first %born, with which we initialize the outgoing-duct.
+    ::      it's fine to hold off on the %grow here, we'll re-send them
+    ::      whenever we finally receive the %born.
+    ?:  =(~ outgoing-duct.state)  ~
     [outgoing-duct.state %give %grow /cache/(scot %ud aeon)/(scot %t url)]~
   ::  +add-binding: conditionally add a pairing between binding and action
   ::
