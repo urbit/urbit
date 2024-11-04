@@ -501,33 +501,6 @@
     |
   $(path t.path, gol t.gol)
 ::
-++  is-peer-dead
-  |=  [now=@da =peer-state]
-  ^+  peer-state
-  =/  expiry=@da  (add ~s30 last-contact.qos.peer-state)
-  =?  -.qos.peer-state  (gte now expiry)
-    %dead
-  peer-state
-::
-++  update-peer-route
-  |=  [peer=ship =peer-state]
-  ^+  peer-state
-  ::   If the peer is not responding, mark the .lane.route as
-  ::   indirect.  The next packets we emit will be sent to the
-  ::   receiver's sponsorship chain in case the receiver's
-  ::   transport address has changed and this lane is no longer
-  ::   valid.
-  ::
-  ::   If .peer is a galaxy, the lane will always remain direct.
-  ::
-  ?.  ?&  ?=(%dead -.qos.peer-state)
-          ?=(^ route.peer-state)
-          direct.u.route.peer-state
-          !=(%czar (clan:title peer))
-      ==
-    peer-state
-  peer-state(direct.u.route %.n)
-::
 ++  poke-ping-app
   |=  [=duct our=ship poke=?(%stop %once [%kick fail=?])]
   ^-  move
@@ -2273,6 +2246,41 @@
         =<  q.q  %-  need  %-  need
         (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p our)])
       ::
+      +|  %routes
+      ::
+      ++  is-peer-dead
+        |=  [peer=ship =peer-state]
+        ^-  ?
+        ?&  ?=(^ route.peer-state)
+            direct.u.route.peer-state
+            !=(%czar (clan:title peer))
+            ::  if we haven't tried to contact the peer, there hasn't been any
+            ::  /pump or /fine timers that could have turned the peer to %dead
+            ::  and we haven't received any packets from the peer, check if
+            ::  the peer is actually dead
+            ::
+            ?|  ?=(%dead -.qos.peer-state)
+                (gte now (add ~s30 last-contact.qos.peer-state))
+        ==  ==
+      ::
+      ++  update-peer-route
+        |=  [peer=ship =peer-state]
+        ^+  peer-state
+        ::   If the peer is not responding, mark the .lane.route as
+        ::   indirect.  The next packets we emit will be sent to the
+        ::   receiver's sponsorship chain in case the receiver's
+        ::   transport address has changed and this lane is no longer
+        ::   valid.
+        ::
+        ::   If .peer is a galaxy, the lane will always remain direct.
+        ::
+        ?.  (is-peer-dead peer peer-state)
+          peer-state
+        ?.  ?=(^ route.peer-state)
+          peer-state
+        peer-state(direct.u.route %.n)
+      ::
+      ::
       +|  %tasks
       ::  +on-take-flub: vane not ready to process message, pretend it
       ::                 was never delivered
@@ -3816,7 +3824,10 @@
             (pe-emit duct %pass wire %b %wait (add now.channel ~s30))
           ::  update and print connection state
           ::
-          =.  peer-core   (update-qos %ames qos:(is-peer-dead now peer-state))
+          =/  expiry=@da  (add ~s30 last-contact.qos.peer-state)
+          =?  -.qos.peer-state  (gte now expiry)
+            %dead
+          =.  peer-core   (update-qos %ames qos.peer-state)
           ::  expire direct route if the peer is not responding
           ::
           =/  old-route  route.peer-state
@@ -5280,7 +5291,10 @@
           ++  fi-take-wake
             ^+  fine
             =.  next-wake.keen  ~
-            =.  peer-core   (update-qos %fine qos:(is-peer-dead now peer-state))
+            =/  expiry=@da  (add ~s30 last-contact.qos.peer-state)
+            =?  -.qos.peer-state  (gte now expiry)
+              %dead
+            =.  peer-core   (update-qos %fine qos.peer-state)
             ::  has the direct route expired?
             ::
             =/  old-route  route.peer-state
@@ -6015,15 +6029,24 @@
         !>  ^-  (list lane)
         ?:  =(our u.who)
           ~
-        ?:  ?=([~ %known *] peer)
-          (get-forward-lanes our +.u.peer peers.ames-state)
-        =/  sax  (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
-        ?.  ?=([~ ~ *] sax)
-          ~
-        =/  gal  (rear ;;((list ship) q.q.u.u.sax))
-        ?:  =(our gal)
-          ~
-        [%& gal]~
+        =/  sax
+          (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
+        =/  gal=(unit @p)
+          ?.  ?=([~ ~ *] sax)
+            ~
+          `(rear ;;((list ship) q.q.u.u.sax))
+        ?.  ?=([~ %known *] peer)
+          ?~  gal
+            ~
+          ::  if the peer is %alien or missing, send to the sponsor galaxy
+          ::
+          ?:(=(our u.gal) ~ [%& u.gal]~)
+        =/  ev-core  (ev [now eny rof] [//scry]~ ames-state)
+        ?:  (is-peer-dead:ev-core u.who +.u.peer)
+          ::  if the peer is %dead, send to the sponsor galaxy
+          ::
+          ?~(gal ~ [%& u.gal]~)
+        (get-forward-lanes our +.u.peer peers.ames-state)
       ==
     ::
         [%bones her=@ ~]
