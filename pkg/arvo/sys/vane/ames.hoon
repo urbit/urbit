@@ -3819,10 +3819,7 @@
           ^+  peer-core
           ::  update and print connection status
           ::
-          =/  expiry=@da  (add ~s30 last-contact.qos.peer-state)
-          =?  -.qos.peer-state  (gte now expiry)
-            %dead
-          =.  peer-core   (update-qos %ames qos.peer-state)
+          =.  peer-core  (update-qos %ames %live last-contact=now)
           ::
           =/  =bone  bone.shut-packet
           ::
@@ -5189,10 +5186,7 @@
             |=  [[=full=^path num=@ud] =meow =lane:ames]
             ^+  fine
             =/  og  fine
-            =/  expiry=@da  (add ~s30 last-contact.qos.peer-state)
-            =?  -.qos.peer-state  (gte now expiry)
-              %dead
-            =.  peer-core   (update-qos %fine qos.peer-state)
+            =.  peer-core  (update-qos %fine %live last-contact=now)
             ::  handle empty
             ?:  =(0 num.meow)
               ?>  =(~ dat.meow)
