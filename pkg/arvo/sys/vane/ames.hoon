@@ -6064,15 +6064,7 @@
     |^
     =/  van  ?@(vis.nom (end 3 vis.nom) way.vis.nom)
     =/  kyr  ?@(vis.nom (rsh 3 vis.nom) car.vis.nom)
-    ?.  =(%c van)
-      (en-hunk (rof ~ /ames nom))
-    =+  pem=(rof [~ ~] /ames nom(vis %cp))
-    ?.  ?=(^ pem)    ~
-    ?.  ?=(^ u.pem)  ~
-    ~|  u.u.pem
-    =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
-    ?.  =([%black ~ ~] rul.r.per)  ~
-    (en-hunk (rof [~ ~] /ames nom))
+    (en-hunk (rof ~ /ames nom))
     ::
     ++  en-hunk
       |=  res=(unit (unit cage))

@@ -675,8 +675,6 @@
 ++  error-page
   |=  [code=@ud authorized=? url=@t t=tape]
   ^-  octs
-  ::
-  =/  code-as-tape=tape  (format-ud-as-integer code)
   =/  message=tape
     ?+  code  "{(scow %ud code)} Error"
       %400  "Bad Request"
@@ -691,7 +689,7 @@
   %-  en-xml:html
   ;html
     ;head
-      ;title:"{code-as-tape} {message}"
+      ;title:"{(a-co:co code)} {message}"
     ==
     ;body
       ;h1:"{message}"
@@ -703,15 +701,6 @@
           ~
     ==
   ==
-::  +format-ud-as-integer: prints a number for consumption outside urbit
-::
-++  format-ud-as-integer
-  |=  a=@ud
-  ^-  tape
-  ?:  =(0 a)  ['0' ~]
-  %-  flop
-  |-  ^-  tape
-  ?:(=(0 a) ~ [(add '0' (mod a 10)) $(a (div a 10))])
 ::  +host-matches: %.y if the site :binding should be used to handle :host
 ::
 ++  host-matches
@@ -967,7 +956,7 @@
           (delete-header:http 'content-length' headers.response-header.result)
         ::
         %^  set-header:http  'content-length'
-          (crip (format-ud-as-integer p.u.data.result))
+          (crip (a-co:co p.u.data.result))
         headers.response-header.result
       ::
       %-  handle-response
@@ -1037,7 +1026,7 @@
         :-  status-code=200
         ^=  headers
           :~  ['content-type' (rsh 3 (spat p.mime))]
-              ['content-length' (crip (format-ud-as-integer p.q.mime))]
+              ['content-length' (crip (a-co:co p.q.mime))]
               ['cache-control' ?:(fqp 'max-age=31536000' 'no-cache')]
           ==
         data=[~ q.mime]
@@ -1222,7 +1211,7 @@
         :-  status-code=code
         ^=  headers
           :~  ['content-type' content-type]
-              ['content-length' (crip (format-ud-as-integer p.data))]
+              ['content-length' (crip (a-co:co p.data))]
           ==
         data=[~ data]
         complete=%.y
@@ -1572,7 +1561,7 @@
       %-  crip
       =;  max-age=tape
         "urbauth-{(scow %p our)}={(scow %uv session)}; Path=/; Max-Age={max-age}"
-      %-  format-ud-as-integer
+      %-  a-co:co
       ?.  extend  0
       (div (msec:milly session-timeout) 1.000)
     ::
@@ -2339,7 +2328,14 @@
                 ['cache-control' 'no-cache']
                 ['connection' 'keep-alive']
             ==
-            (wall-to-octs wall)
+          ::
+            ::  if we wouldn't otherwise send any data, send an early heartbeat
+            ::  instead. some clients won't consider the connection established
+            ::  until they've heard some bytes come over the wire.
+            ::
+            ?.  =(~ wall)  (wall-to-octs wall)
+            (some (as-octs:mimes:html ':\0a'))
+          ::
             complete=%.n
         ==
       ::  associate this duct with this session key
@@ -2852,7 +2848,7 @@
       ~%  %eyre-tape-to-wall  ..part  ~
       |=  [event-id=@ud =tape]
       ^-  wall
-      :~  (weld "id: " (format-ud-as-integer event-id))
+      :~  (weld "id: " (a-co:co event-id))
           (weld "data: " tape)
           ""
       ==
@@ -3090,6 +3086,11 @@
     =/  aeon  ?^(prev=(~(get by cache.state) url) +(aeon.u.prev) 1)
     =.  cache.state  (~(put by cache.state) url [aeon entry])
     :_  state
+    ::NOTE  during boot, userspace might've sent us this before we received
+    ::      our first %born, with which we initialize the outgoing-duct.
+    ::      it's fine to hold off on the %grow here, we'll re-send them
+    ::      whenever we finally receive the %born.
+    ?:  =(~ outgoing-duct.state)  ~
     [outgoing-duct.state %give %grow /cache/(scot %ud aeon)/(scot %t url)]~
   ::  +add-binding: conditionally add a pairing between binding and action
   ::
