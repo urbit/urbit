@@ -3969,7 +3969,9 @@
           =/  =path  (slag 3 path.peep)
           ::
           ?.  (~(has by keens) path)
-            ~&(dead-response/peep peer-core)
+            %.  peer-core
+            %^  trace-fine  fin.veb  her
+            [ships.bug.ames-state |.("dead response {(spud path)}")]
           fi-abet:(fi-rcv:(abed:fi path) peep meow lane)
         ::
         ++  on-keen
