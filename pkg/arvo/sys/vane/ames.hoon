@@ -2292,11 +2292,11 @@
       ::
       +|  %routes
       ::
-      ++  is-peer-dead
+      ++  is-route-dead
         |=  [peer=ship =peer-state]
         ^-  ?
         ?&  ?=(^ route.peer-state)
-            direct.u.route.peer-state
+            direct.u.route.peer-state  ::  XX what about indirect routes?
             !=(%czar (clan:title peer))
             ::  if we haven't tried to contact the peer, there hasn't been any
             ::  /pump or /fine timers that could have turned the peer to %dead
@@ -2318,11 +2318,11 @@
         ::
         ::   If .peer is a galaxy, the lane will always remain direct.
         ::
-        ?.  (is-peer-dead peer peer-state)
+        ?.  (is-route-dead peer peer-state)
           peer-state
         ?.  ?=(^ route.peer-state)
           peer-state
-        peer-state(direct.u.route %.n)
+        peer-state(direct.u.route %.n, -.qos %dead)
       ::
       +|  %tasks
       ::  +on-take-flub: vane not ready to process message, pretend it
@@ -3054,22 +3054,41 @@
           cor
         (on-wake:cor bone error)
       ::
-      ++  check-dead-routes
+      ++  expire-dead-routes
         |=  error=(unit tang)
         ^+  event-core
-        %-  ~(rep by peers.ames-state:event-core)
-        |=  [[=ship =ship-state] core=_event-core]
-        ^+  event-core
-        =/  peer-state=(unit peer-state)  (get-peer-state:core ship)
-        ?~  peer-state  core
-        =/  old-route  route.u.peer-state
-        =.  u.peer-state  (update-peer-route ship u.peer-state)
-        =?  core  !=(old-route route.u.peer-state)
-          %-  emit
-          :*  unix-duct.ames-state  %give  %nail  ship
-              (get-forward-lanes our u.peer-state peers.ames-state)
-          ==
-        abet:(abed-peer:pe:core ship u.peer-state)
+        =^  total-dead  event-core
+          %-  ~(rep by peers.ames-state:event-core)
+          |=  [[=ship =ship-state] n=@ core=_event-core]
+          ?~  peer-state=(get-peer-state:core ship)
+            [n core]
+          ::
+          =*  peer     u.peer-state
+          =/  old-qos  -.qos.peer
+          =/  old-rot  route.peer
+          =.  peer     (update-peer-route ship peer)
+          =/  expired=?
+            ?&  !=(old-qos -.qos.peer)    ::  .route and .qos have changed...
+                !=(old-rot route.peer)    ::
+                ?=([~ %.n *] route.peer)  ::  ...to indirect and %dead
+                ?=(%dead -.qos.peer)      ::
+            ==
+          ::
+          :-  ?:(expired +(n) n)
+          ::
+          %-  (ev-trace:core &(expired kay.veb) ship |.("route has expired"))
+          =?  core  expired
+            %-  emit:core
+            :*  unix-duct.ames-state  %give  %nail  ship
+                (get-forward-lanes our peer peers.ames-state)
+            ==
+          abet:(abed-peer:pe:core ship peer)
+        ::
+        =+  ?.  &(!=(0 total-dead) kay.veb)
+              ~
+            %-  (slog leaf/"ames: {<`@`total-dead>} routes have expired" ~)
+            ~
+        event-core
       ::  +on-take-wake: receive wakeup or error notification from behn
       ::
       ++  on-take-wake
@@ -3093,7 +3112,7 @@
           set-dead-flow-timer:(wake-dead-flows error)
         ::
         ?:  ?=([%routes ~] wire)
-          set-dead-routes-timer:(check-dead-routes error)
+          set-dead-routes-timer:(expire-dead-routes error)
         ::
         ?.  ?=([%recork ~] wire)
           =/  res=(unit ?([%fine her=ship =^wire] [%pump her=ship =bone]))
@@ -3908,9 +3927,9 @@
           =.  peer-core   (update-qos %ames qos.peer-state)
           ::  expire direct route if the peer is not responding
           ::
-          =/  old-route  route.peer-state
+          =/  old-route   route.peer-state
           =.  peer-state  (update-peer-route her peer-state)
-          =?  peer-core  !=(old-route route.peer-state)
+          =?  peer-core   !=(old-route route.peer-state)
             %-  pe-emit
             :*  unix-duct.ames-state  %give  %nail  her
                 (get-forward-lanes our peer-state peers.ames-state)
@@ -5375,9 +5394,9 @@
             =.  peer-core   (update-qos %fine qos.peer-state)
             ::  has the direct route expired?
             ::
-            =/  old-route  route.peer-state
+            =/  old-route   route.peer-state
             =.  peer-state  (update-peer-route her peer-state)
-            =?  peer-core  !=(old-route route.peer-state)
+            =?  peer-core   !=(old-route route.peer-state)
               %-  pe-emit
               :*  unix-duct.ames-state  %give  %nail  her
                   (get-forward-lanes our peer-state peers.ames-state)
@@ -6137,8 +6156,8 @@
           ::
           ?:(=(our u.gal) ~ [%& u.gal]~)
         =/  ev-core  (ev [now eny rof] [//scry]~ ames-state)
-        ?:  (is-peer-dead:ev-core u.who +.u.peer)
-          ::  if the peer is %dead, send to the sponsor galaxy
+        ?:  (is-route-dead:ev-core u.who +.u.peer)
+          ::  if the route is %dead, send to the sponsor galaxy
           ::
           ?~(gal ~ [%& u.gal]~)
         (get-forward-lanes our +.u.peer peers.ames-state)
