@@ -1145,8 +1145,14 @@
   ++  he-errd                                           ::  reject update
     |=  [rev=(unit sole-edit) err=@u]  ^+  +>
     =+  red=(fall rev [%nop ~])       ::  required for error location sync
+    =?  red  =(%mor -:red)
+      =/  rel  ;;((list sole-edit) +:red)
+      =/  idx  (find `(list sole-edit)`[%del `@ud`err]~ rel)
+      ?.  ?=(^ idx)
+        red
+      [%mor (oust [+:idx (lent rel)] rel)]
     =^  lic  say  (~(transmit sole say) red)
-    (he-diff %mor [%det lic] [%err err] ~)
+    (he-diff %mor [%det lic] [%err (lent buf.say)] ~)
   ::
   ++  he-pone                                           ::  clear prompt
     ^+  .
@@ -1359,8 +1365,14 @@
     ::  ~&  [%his-clock ler.cal]
     ::  ~&  [%our-clock ven.say]
     =^  dat  say  (~(transceive sole say) cal)
-    ?.  ?&  ?=(%del -.dat)
-            =(+(p.dat) (lent buf.say))
+    =/  len  (lent buf.say)
+    ?.  ?|  ?&  ?=(%del -.dat)
+                =(+(p.dat) len)
+            ==
+            ?&  ?=([%mor ^] dat)
+                =(%del +<-:dat)
+                =(+(;;(@ud +<+:dat)) len)
+            ==
         ==
       +>.$
     =+  foy=(he-dope (tufa buf.say))
