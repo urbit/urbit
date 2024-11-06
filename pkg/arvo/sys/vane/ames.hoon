@@ -6762,7 +6762,7 @@
               ?~  flow-wire=(ev-validate-wire wire)
                 ::  only wires related to known peers allowed
                 ::
-                  ev-core
+                ev-core
               =,  u.flow-wire
               =.  per  [her (got-per her)]
               ?:  (lth rift rift.sat.per)
@@ -6829,13 +6829,13 @@
                   by-duct.ossuary  (~(del by by-duct.ossuary) (ev-got-duct bone))   ::  XX bone^side=%for
                   by-bone.ossuary  (~(del by by-bone.ossuary) bone)                 ::  XX bone^side=%for
                 ==
-              :: XX  call fo-abet:fo-core instead
+              :: XX  remove ev-abet will update put sat.per in .chums
               ~&  ev-take-response/ship.per
               %_    ev-core
                   ames-state
                 ames-state(chums (~(put by chums.ames-state) [ship known/sat]:per))
               ==
-            ::  +ev-take-done: m,vane responses
+            ::  +ev-take-done: vane responses
             ::
             ++  ev-take-boon
               |=  [=wire =gift]
@@ -6927,7 +6927,8 @@
               ::
               ++  fo-abet
                 ^+  ev-core
-                =.  flows.sat.per  (~(put by flows.sat.per) bone^dire state)
+                =?  flows.sat.per  !fo-corked
+                  (~(put by flows.sat.per) bone^dire state)
                 %_    ev-core
                     ames-state
                   ames-state(chums (~(put by chums.ames-state) her known/sat.per))
@@ -6944,14 +6945,15 @@
                   ames-state(chums (~(put by chums.ames-state) her known/sat.per))
                 ev-core
               ::
-              ++  fo-emit      |=(=move fo-core(moves [move moves]))
-              ++  fo-emil      |=(mos=(list move) fo-core(moves (weld mos moves)))
+              ++  fo-emit  |=(=move fo-core(moves [move moves]))
+              ++  fo-emil  |=(mos=(list move) fo-core(moves (weld mos moves)))
               ++  fo-to-close
                 ::  if the flow is in closing, only allow sending the %cork %plea
                 ::
                 |=  poke=mesa-message
                 ?&(closing.state !=(poke [%plea %$ /cork %cork ~]))
               ::
+              ++  fo-corked     (~(has in corked.sat.per) side)
               ++  fo-flip-dire  ?:(=(dire %for) %bak %for)
               ::  +fo-infer-dire: infer the side that's producing this payload
               ::  (e.g. when hearing a +peek request for this path, if the payload
@@ -7057,12 +7059,25 @@
                     ::  XX log
                     fo-core
                   ~|  mess.poke
+                  ::  check that the message can be acked
+                  ::
+                  ?:  (gth seq.poke +(last-acked.rcv))
+                    ::  no-op if future message
+                    ~&  :-  %future-boon-ack
+                            duct=hen^bone=bone^seq=seq.poke^last-acked=last-acked.rcv
+                    fo-core
+                  ?:  (lte seq.poke last-acked.rcv)
+                    ?:  (gth (sub last-acked.rcv seq.poke) 10)
+                      ~&  %drop-old-seq  ::  XX  use verbosity logs
+                      fo-core
+                    ~&  %already-acked  ::  XX  use verbosity logs
+                    (fo-send-ack seq.poke)
                   ::  a %plea sinks on the backward receiver (from a forward flow)
                   ::  a %boon sinks on the forward receiver (from a backward flow)
                   ::
                   ?-  dire
-                    %bak  ?>(?=(%plea -.mess.poke) (fo-sink-plea [seq +.mess ok]:poke))
-                    %for  ?>(?=(%boon -.mess.poke) (fo-sink-boon [seq +.mess ok]:poke))
+                    %bak  ?>(?=(%plea -.mess.poke) (fo-sink-plea [+.mess ok]:poke))
+                    %for  ?>(?=(%boon -.mess.poke) (fo-sink-boon [+.mess ok]:poke))
                   ==
                 ==
               ::
@@ -7180,7 +7195,7 @@
                 =/  [ack=spar poke=path]
                   :_  (fo-pok-path seq her)
                   :-  her
-                  ::  an %ack is on the other side; flip direction
+                  ::  %ack is on the other side; flip direction
                   ::
                   (%*(fo-ack-path fo-core dire.side fo-flip-dire) seq our)
                 =/  =space   chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
@@ -7199,20 +7214,8 @@
               +|  %request-receiver
               ::
               ++  fo-sink-boon
-                |=  [seq=@ud message=* ok=?]
+                |=  [message=* ok=?]
                 ^+  fo-core
-                ::  XX check that the message can be acked (not in future, or far back past)
-                ::
-                ?:  (gth seq +(last-acked.rcv))
-                  ::  no-op if future message
-                  ~&  future-boon-ack/duxt=hen^bone=bone^seq=seq^last-acked=last-acked.rcv
-                  fo-core
-                ?:  (lte seq last-acked.rcv)
-                  ?:  (gth (sub last-acked.rcv seq) 10)
-                    ~&  %drop-old-seq  ::  XX  use verbosity logs
-                    fo-core
-                  ~&  %already-acked  ::  XX  use verbosity logs
-                  (fo-send-ack seq)
                 =.  fo-core  (fo-emit (ev-got-duct bone) %give %boon message)
                 ::  handle a previous crash
                 ::  XX revisit
@@ -7230,34 +7233,20 @@
                 (fo-send-ack last-acked.rcv)
               ::
               ++  fo-sink-plea
-                |=  [seq=@ud =plea ok=?]
+                |=  [=plea ok=?]
                 ^+  fo-core
+                =.  pending-ack.rcv  %.y
                 ::  receiver of a %plea request
                 ::
-                ::  XX check that the message can be acked (not in future, or far back past)
-                ::
-                ?:  (gth seq +(last-acked.rcv))
-                  ::  no-op if future message
-                  ~&  future-plea-ack/bone=bone^seq=seq^last-acked=last-acked.rcv
-                  fo-core
-                ?:  (lte seq last-acked.rcv)
-                  ?:  (gth (sub last-acked.rcv seq) 10)
-                    ~&  %drop-old-seq  ::  XX  use verbosity logs
-                    fo-core
-                  ::  XX  use verbosity logs
-                  (fo-send-ack seq)
                 ?.  ok
-                  =.  pending-ack.rcv  %.y
                   (fo-take-done:fo-core `*error)
                 ::
-                =/  =wire  (fo-wire %van)
                 ?:  &(=(vane %$) ?=([%ahoy ~] payload) ?=([%mesa ~] path)):plea
                   ::  migrated %ahoy pleas are always acked
                   ::
-                  =.  pending-ack.rcv  %.y
                   (fo-take-done:fo-core ~)
                 ?.  &(=(vane %$) ?=([%cork ~] payload) ?=([%cork ~] path)):plea
-                  =.  pending-ack.rcv  %.y
+                  =/  =wire  (fo-wire %van)
                   %-  fo-emit
                   ?+  vane.plea  ~|  %mesa-evil-vane^our^her^vane.plea  !!
                     ?(%c %e %g %j)  [hen %pass wire vane.plea %plea her plea]
@@ -7272,10 +7261,9 @@
                   ::  after reading the ack from our namespace
                   ::
                   =/  =space  chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
-                  =/  =path   (make-space-path space (fo-cor-path seq our))
+                  =/  =path   (make-space-path space (fo-cor-path seq=0 our))
                   [hen %pass wire=(fo-wire %cor) %a meek/space^her^path]
                 ::  XX just fo-core(closing.state %.y)?
-                =.  pending-ack.rcv  %.y
                 (fo-take-done:fo-core(closing.state %.y) ~)
               ::
               +|  %from-vane
@@ -7340,7 +7328,7 @@
                 ::
                 =.  send-window.snd  +(send-window.snd)
                 =.  can-be-corked
-                  ?&  closing.state      ::  we sent a %cork %plea
+                  ?&  closing.state    ::  we sent a %cork %plea
                       ?=(~ loads.snd)  ::  nothing else is pending
                   ==
                 ~?  closing.state  "flow in closing"
@@ -7405,6 +7393,11 @@
                 ::
                 ?>  ?=([%message *] gage)
                 =+  ;;([%nax =error] +.gage)  ::  XX
+                ::  if the bone belongs to a closing flow and we got a
+                ::  naxplanation, don't relay ack to the client vane
+                ::
+                ?:  closing.state
+                  fo-core
                 (fo-emit (ev-got-duct bone) %give %done `error)
               ::
               ++  fo-take-client-cork
