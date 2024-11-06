@@ -547,33 +547,6 @@
         |
       $(path t.path, gol t.gol)
     ::
-    ++  is-peer-dead
-      |=  [now=@da =peer-state]
-      ^+  peer-state
-      =/  expiry=@da  (add ~s30 last-contact.qos.peer-state)
-      =?  -.qos.peer-state  (gte now expiry)
-        %dead
-      peer-state
-    ::
-    ++  update-peer-route
-      |=  [peer=ship =peer-state]
-      ^+  peer-state
-      ::   If the peer is not responding, mark the .lane.route as
-      ::   indirect.  The next packets we emit will be sent to the
-      ::   receiver's sponsorship chain in case the receiver's
-      ::   transport address has changed and this lane is no longer
-      ::   valid.
-      ::
-      ::   If .peer is a galaxy, the lane will always remain direct.
-      ::
-      ?.  ?&  ?=(%dead -.qos.peer-state)
-              ?=(^ route.peer-state)
-              direct.u.route.peer-state
-              !=(%czar (clan:title peer))
-          ==
-        peer-state
-      peer-state(direct.u.route %.n)
-    ::
     ++  poke-ping-app
       |=  [=duct our=ship poke=?(%stop %once [%kick fail=?])]
       ^-  move
@@ -658,6 +631,27 @@
     ::    snub:        blocklist for incoming packets
     ::    cong:        parameters for marking a flow as clogged
     ::    dead:        dead flow consolidation timer and recork timer, if set
+    ::
+    ::
+    +$  ames-state-22
+      $+  ames-state-22
+      $:  peers=(map ship ship-state)
+          =unix=duct
+          =life
+          =rift
+          crypto-core=acru:ames
+          =bug
+          snub=[form=?(%allow %deny) ships=(set ship)]
+          cong=[msg=_5 mem=_100.000]
+        ::
+          $=  dead
+          $:  flow=[%flow (unit dead-timer)]
+              cork=[%cork (unit dead-timer)]
+              rots=[%rots (unit dead-timer)]
+          ==
+        ::
+          =chain
+        ==
     ::
     +$  ames-state-21
       $+  ames-state-21
@@ -1781,7 +1775,7 @@
 =<  ::  %larval core
     ::
     =*  adult-gate  .
-    ::  Queued events are a remainer of past version of the ames-core, and are
+    ::  Queued events are a remainder of past version of the ames-core, and are
     ::  still supported only for backward compatibility (i.e. ships migrating
     ::  from an old version of %ames)
     ::
@@ -1815,7 +1809,8 @@
             [%19 ames-state-19]
             [%20 ames-state-20]
             [%21 ames-state-21]
-            [%22 axle]
+            [%22 ames-state-22]
+            [%23 axle]
         ==
     ::
     ::
@@ -1890,7 +1885,7 @@
       ~>  %slog.0^leaf/"ames: metamorphosis on %take"
       [:(weld molt-moves queu-moves take-moves) adult-gate]
     ::
-    ++  stay  ~&  %larva-stay  [%22 adult/ames-state]  :: [%22 larva/ames-state]
+    ++  stay  ~&  %larva-stay  [%23 larva/ames-state]
     ++  scry  ~&  %larva-scry  scry:adult-core
     ++  load  ~&  %larva-load
       |=  $=  old
@@ -2020,30 +2015,37 @@
                   ==
                   [%adult state=ames-state-21]
               ==  ==
-              $:  %22                            :: Directed Messaging
-                %adult                           ::   (removes larval stay
-                state=axle                       ::    and queued-events)
+              $:  %22                            :: start dead /routes timer
+              $%  $:  %larva
+                      events=(qeu queued-event)
+                      state=ames-state-22
+                  ==
+                  [%adult state=ames-state-22]
+              ==  ==
+              $:  %23                            :: Directed Messaging
+                  ?(%adult %larva)               ::   (removes queued-events)
+                  state=axle
           ==  ==
       |^  ?-  old
           [%4 %adult *]
         =.  cached-state  `[%4 state.old]
-        ~>  %slog.0^leaf/"ames: larva %4 reload"
+        ~>  %slog.1^leaf/"ames: larva %4 reload"
         larval-gate
       ::
           [%4 %larva *]
         =.  cached-state  `[%4 state.old]
-        ~>  %slog.0^leaf/"ames: larva %5 load"
+        ~>  %slog.1^leaf/"ames: larva %5 load"
         larval-gate
       ::
           [%5 %adult *]
         =.  cached-state  `[%5 state.old]
-        ~>  %slog.0^leaf/"ames: larva %5 reload"
+        ~>  %slog.1^leaf/"ames: larva %5 reload"
         larval-gate
       ::
           [%5 %larva *]
-        ~>  %slog.0^leaf/"ames: larva %5 load"
+        ~>  %slog.1^leaf/"ames: larva %5 load"
         =.  cached-state   `[%5 state.old]
-        =.  queued-events   %-  event-20-to-21
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             %-  event-12-til-16-to-17
                             %-  event-9-til-11-to-12
@@ -2052,13 +2054,13 @@
       ::
           [%6 %adult *]
         =.  cached-state  `[%6 state.old]
-        ~>  %slog.0^leaf/"ames: larva %6 reload"
+        ~>  %slog.1^leaf/"ames: larva %6 reload"
         larval-gate
       ::
           [%6 %larva *]
-        ~>  %slog.0^leaf/"ames: larva %6 load"
+        ~>  %slog.1^leaf/"ames: larva %6 load"
         =.  cached-state   `[%6 state.old]
-        =.  queued-events   %-  event-20-to-21
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             %-  event-12-til-16-to-17
                             %-  event-9-til-11-to-12
@@ -2067,13 +2069,13 @@
       ::
           [%7 %adult *]
         =.  cached-state  `[%7 state.old]
-        ~>  %slog.0^leaf/"ames: larva %7 reload"
+        ~>  %slog.1^leaf/"ames: larva %7 reload"
         larval-gate
       ::
           [%7 %larva *]
-        ~>  %slog.0^leaf/"ames: larva %7 load"
+        ~>  %slog.1^leaf/"ames: larva %7 load"
         =.  cached-state   `[%7 state.old]
-        =.  queued-events   %-  event-20-to-21
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             %-  event-12-til-16-to-17
                             %-  event-9-til-11-to-12
@@ -2082,13 +2084,13 @@
       ::
           [%8 %adult *]
         =.  cached-state  `[%8 state.old]
-        ~>  %slog.0^leaf/"ames: larva %8 reload"
+        ~>  %slog.1^leaf/"ames: larva %8 reload"
         larval-gate
       ::
           [%8 %larva *]
-        ~>  %slog.0^leaf/"ames: larva %8 load"
+        ~>  %slog.1^leaf/"ames: larva %8 load"
         =.  cached-state   `[%8 state.old]
-        =.  queued-events   %-  event-20-to-21
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             %-  event-12-til-16-to-17
                             %-  event-9-til-11-to-12
@@ -2097,13 +2099,13 @@
       ::
           [%9 %adult *]
         =.  cached-state  `[%9 state.old]
-        ~>  %slog.0^leaf/"ames: larva %9 reload"
+        ~>  %slog.1^leaf/"ames: larva %9 reload"
         larval-gate
       ::
           [%9 %larva *]
-        ~>  %slog.0^leaf/"ames: larva %9 load"
+        ~>  %slog.1^leaf/"ames: larva %9 load"
         =.  cached-state   `[%9 state.old]
-        =.  queued-events   %-  event-20-to-21
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             %-  event-12-til-16-to-17
                             %-  event-9-til-11-to-12
@@ -2112,13 +2114,13 @@
       ::
           [%10 %adult *]
         =.  cached-state  `[%10 state.old]
-        ~>  %slog.0^leaf/"ames: larva %10 reload"
+        ~>  %slog.1^leaf/"ames: larva %10 reload"
         larval-gate
       ::
           [%10 %larva *]
         ~>  %slog.1^leaf/"ames: larva %10 load"
         =.  cached-state   `[%10 state.old]
-        =.  queued-events   %-  event-20-to-21
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             %-  event-12-til-16-to-17
                             %-  event-9-til-11-to-12
@@ -2127,13 +2129,13 @@
       ::
           [%11 %adult *]
         =.  cached-state  `[%11 state.old]
-        ~>  %slog.0^leaf/"ames: larva %11 reload"
+        ~>  %slog.1^leaf/"ames: larva %11 reload"
         larval-gate
       ::
           [%11 %larva *]
         ~>  %slog.1^leaf/"ames: larva %11 load"
         =.  cached-state   `[%11 state.old]
-        =.  queued-events   %-  event-20-to-21
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             %-  event-12-til-16-to-17
                             %-  event-9-til-11-to-12
@@ -2142,13 +2144,13 @@
       ::
           [%12 %adult *]
         =.  cached-state  `[%12 state.old]
-        ~>  %slog.0^leaf/"ames: larva %12 reload"
+        ~>  %slog.1^leaf/"ames: larva %12 reload"
         larval-gate
       ::
           [%12 %larva *]
         ~>  %slog.1^leaf/"ames: larva %12 load"
         =.  cached-state   `[%12 state.old]
-        =.  queued-events   %-  event-20-to-21
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             %-  event-12-til-16-to-17
                             events.old
@@ -2156,13 +2158,13 @@
       ::
           [%13 %adult *]
         =.  cached-state  `[%13 state.old]
-        ~>  %slog.0^leaf/"ames: larva %13 reload"
+        ~>  %slog.1^leaf/"ames: larva %13 reload"
         larval-gate
       ::
           [%13 %larva *]
         ~>  %slog.1^leaf/"ames: larva %13 load"
         =.  cached-state   `[%13 state.old]
-        =.  queued-events   %-  event-20-to-21
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             %-  event-12-til-16-to-17
                             events.old
@@ -2170,13 +2172,13 @@
       ::
           [%14 %adult *]
         =.  cached-state  `[%14 state.old]
-        ~>  %slog.0^leaf/"ames: larva %14 reload"
+        ~>  %slog.1^leaf/"ames: larva %14 reload"
         larval-gate
       ::
           [%14 %larva *]
         ~>  %slog.1^leaf/"ames: larva %14 load"
         =.  cached-state   `[%14 state.old]
-        =.  queued-events   %-  event-20-to-21
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             %-  event-12-til-16-to-17
                             events.old
@@ -2190,7 +2192,7 @@
           [%15 %larva *]
         ~>  %slog.1^leaf/"ames: larva %15 load"
         =.  cached-state   `[%15 state.old]
-        =.  queued-events   %-  event-20-to-21
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             %-  event-12-til-16-to-17
                             events.old
@@ -2198,13 +2200,13 @@
       ::
           [%16 %adult *]
         =.  cached-state  `[%16 state.old]
-        ~>  %slog.0^leaf/"ames: larva %16 reload"
+        ~>  %slog.1^leaf/"ames: larva %16 reload"
         larval-gate
       ::
           [%16 %larva *]
         ~>  %slog.1^leaf/"ames: larva %16 load"
         =.  cached-state   `[%16 state.old]
-        =.  queued-events   %-  event-20-to-21
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             %-  event-12-til-16-to-17
                             events.old
@@ -2212,55 +2214,55 @@
       ::
           [%17 %adult *]
         =.  cached-state  `[%17 state.old]
-        ~>  %slog.0^leaf/"ames: larva %17 reload"
+        ~>  %slog.1^leaf/"ames: larva %17 reload"
         larval-gate
       ::
           [%17 %larva *]
         ~>  %slog.1^leaf/"ames: larva %17 load"
         =.  cached-state   `[%17 state.old]
-        =.  queued-events   %-  event-20-to-21
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             events.old
         larval-gate
       ::
           [%18 %adult *]
         =.  cached-state  `[%18 state.old]
-        ~>  %slog.0^leaf/"ames: larva %18 reload"
+        ~>  %slog.1^leaf/"ames: larva %18 reload"
         larval-gate
       ::
           [%18 %larva *]
         ~>  %slog.1^leaf/"ames: larva %18 load"
         =.  cached-state   `[%18 state.old]
-        =.  queued-events   %-  event-20-to-21
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             events.old
         larval-gate
       ::
           [%19 %adult *]
         =.  cached-state  `[%19 state.old]
-        ~>  %slog.0^leaf/"ames: larva %19 reload"
+        ~>  %slog.1^leaf/"ames: larva %19 reload"
         larval-gate
       ::
           [%19 %larva *]
         ~>  %slog.1^leaf/"ames: larva %19 load"
         =.  cached-state   `[%19 state.old]
-        =.  queued-events  (event-20-to-21 events.old)
+        =.  queued-events  (event-20-to-last events.old)
         larval-gate
       ::
           [%20 %adult *]
         =.  cached-state  `[%20 state.old]
-        ~>  %slog.0^leaf/"ames: larva %20 reload"
+        ~>  %slog.1^leaf/"ames: larva %20 reload"
         larval-gate
       ::
           [%20 %larva *]
         ~>  %slog.1^leaf/"ames: larva %20 load"
         =.  cached-state  `[%20 state.old]
-        =.  queued-events  (event-20-to-21 events.old)
+        =.  queued-events  (event-20-to-last events.old)
         larval-gate
       ::
           [%21 %adult *]
         =.  cached-state  `[%21 state.old]
-        ~>  %slog.0^leaf/"ames: larva %21 reload"
+        ~>  %slog.1^leaf/"ames: larva %21 reload"
         larval-gate
       ::
           [%21 %larva *]
@@ -2269,9 +2271,28 @@
         =.  queued-events  events.old
         larval-gate
       ::
-          [%22 *]
-        ~>  %slog.1^leaf/"ames: adult %22 reload"  :: XX %larva?
-        (load:adult-core state.old)
+          [%22 %adult *]
+        =.  cached-state  `[%22 state.old]
+        ~>  %slog.1^leaf/"ames: larva %22 reload"
+        larval-gate
+      ::
+          [%22 %larva *]
+        =.  cached-state  `[%22 state.old]
+        ~>  %slog.1^leaf/"ames: larva %22 load"
+        =.  queued-events  events.old
+        larval-gate
+      ::
+          [%23 *]
+        ?-    +<.old
+            %larva
+          =.  cached-state  `[%23 state.old]
+          ~>  %slog.1^leaf/"ames: larva %23 reload"
+          larval-gate
+        ::
+            %adult
+          ~>  %slog.1^leaf/"ames: adult %23 reload"
+          (load:adult-core state.old)
+        ==
       ==
       ::
       ++  event-9-til-11-to-12
@@ -2329,7 +2350,7 @@
           [%deep %nack ship.task nack-bone.task ;;(message [hed msg])]
         ==
       ::
-      ++  event-20-to-21
+      ++  event-20-to-last
         |=  events=(qeu queued-event-19-and-20)
         ^-  (qeu queued-event)
         %-  ~(rep in events)
@@ -2346,7 +2367,7 @@
       |^  ^+  [moz larval-core]
       ?~  cached-state  [~ larval-core]
       =*  old  u.cached-state
-      ?:  ?=(%22 -.old)
+      ?:  ?=(%23 -.old)
         ::  no state migrations left; update state, clear cache, and exit
         ::
         =.  ames-state.adult-gate  +.old
@@ -2406,10 +2427,18 @@
         $(cached-state `20+(state-19-to-20 +.old))
       ::
       ?:  ?=(%20 -.old)  $(cached-state `21+(state-20-to-21 +.old))
-      ?>  ?=(%21 -.old)
+      ?:  ?=(%21 -.old)
+        %_    $
+            cached-state  `22+(state-21-to-22 +.old)
+        ::
+            moz
+          ^-  (list move)
+          [[/ames]~ %pass /routes %b %wait `@da`(add now ~m2)]^moz
+        ==
+      ?>  ?=(%22 -.old)
       ~>  %slog.0^leaf/"ames: init |mesa retry timer"
       %_  $
-        cached-state  `22+(state-21-to-22 +.old)
+        cached-state  `23+(state-22-to-23 +.old)
       ::
           moz
         [[/ames]~ %pass /mesa/retry %b %wait `@da`(add now ~m2)]^moz
@@ -2707,21 +2736,32 @@
       ::
       ++  state-21-to-22
         |=  old=ames-state-21
+        ^-  ames-state-22
+        %=    old
+            cork.dead
+          :-  cork.dead.old
+          rots/`[~[/ames] /routes `@da`(add now ~m2)]
+        ==
+      ::
+      ++  state-22-to-23
+        |=  old=ames-state-22
         ^-  axle
         ::  removes crypto cores and adds the private key to the state
         ::
         =,  old
         :*  peers  unix-duct  life  rift  bug  snub  cong
           ::
-            :+  flow.dead  ::  preserve |ames dead-flow consolidation
-              chum/`[~[/ames] /mesa/dead-flow `@da`(add now ~m2)]
-            cork.dead
+            :^    flow.dead  ::  preserve |ames dead-flow consolidation
+                chum/`[~[/ames] /mesa/dead-flow `@da`(add now ~m2)]
+              cork.dead
+            rots.dead
           ::
             server-chain=chain
             priv=sec:ex:crypto-core
             chums=~
             %ames
         ==
+      ::
       --
     ::
     --
@@ -2791,6 +2831,40 @@
               ;;  (list ship)
               =<  q.q  %-  need  %-  need
               (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p our)])
+            ::
+            +|  %routes
+            ::
+            ++  is-route-dead
+              |=  [peer=ship =peer-state]
+              ^-  ?
+              ?&  ?=(^ route.peer-state)
+                  direct.u.route.peer-state  ::  XX what about indirect routes?
+                  !=(%czar (clan:title peer))
+                  ::  if we haven't tried to contact the peer, there hasn't been any
+                  ::  /pump or /fine timers that could have turned the peer to %dead
+                  ::  and we haven't received any packets from the peer, check if
+                  ::  the peer is actually dead
+                  ::
+                  ?|  ?=(%dead -.qos.peer-state)
+                      (gte now (add ~s30 last-contact.qos.peer-state))
+              ==  ==
+            ::
+            ++  update-peer-route
+              |=  [peer=ship =peer-state]
+              ^+  peer-state
+              ::   If the peer is not responding, mark the .lane.route as
+              ::   indirect.  The next packets we emit will be sent to the
+              ::   receiver's sponsorship chain in case the receiver's
+              ::   transport address has changed and this lane is no longer
+              ::   valid.
+              ::
+              ::   If .peer is a galaxy, the lane will always remain direct.
+              ::
+              ?.  (is-route-dead peer peer-state)
+                peer-state
+              ?.  ?=(^ route.peer-state)
+                peer-state
+              peer-state(direct.u.route %.n, -.qos %dead)
             ::
             +|  %tasks
             ::  +on-take-flub: vane not ready to process message, pretend it
@@ -3449,6 +3523,12 @@
               =.  flow.dead.ames-state.event-core
                 flow/`[~[/ames] /dead-flow `@da`(add now ~m2)]
               (emit ~[/ames] %pass /dead-flow %b %wait `@da`(add now ~m2))
+            ::
+            ++  set-dead-routes-timer
+              ^+  event-core
+              =.  rots.dead.ames-state.event-core
+                rots/`[~[/ames] /routes `@da`(add now ~m2)]
+              (emit ~[/ames] %pass /routes %b %wait `@da`(add now ~m2))
             :: +wake-dead-flows: call on-wake on all dead flows, discarding any
             ::                   ames-state changes
             ::
@@ -3470,6 +3550,42 @@
                   ==
                 cor
               (on-wake:cor bone error)
+            ::
+            ++  expire-dead-routes
+              |=  error=(unit tang)
+              ^+  event-core
+              =^  total-dead  event-core
+                %-  ~(rep by peers.ames-state:event-core)
+                |=  [[=ship =ship-state] n=@ core=_event-core]
+                ?~  peer-state=(get-peer-state:core ship)
+                  [n core]
+                ::
+                =*  peer     u.peer-state
+                =/  old-qos  -.qos.peer
+                =/  old-rot  route.peer
+                =.  peer     (update-peer-route ship peer)
+                =/  expired=?
+                  ?&  !=(old-qos -.qos.peer)    ::  .route and .qos have changed...
+                      !=(old-rot route.peer)    ::
+                      ?=([~ %.n *] route.peer)  ::  ...to indirect and %dead
+                      ?=(%dead -.qos.peer)      ::
+                  ==
+                ::
+                :-  ?:(expired +(n) n)
+                ::
+                %-  (ev-trace:core &(expired kay.veb) ship |.("route has expired"))
+                =?  core  expired
+                  %-  emit:core
+                  :*  unix-duct.ames-state  %give  %nail  ship
+                      (get-forward-lanes our peer peers.ames-state)
+                  ==
+                abet:(abed-peer:pe:core ship peer)
+              ::
+              =+  ?.  &(!=(0 total-dead) kay.veb)
+                    ~
+                  %-  (slog leaf/"ames: {<`@`total-dead>} routes have expired" ~)
+                  ~
+              event-core
             ::  +on-take-wake: receive wakeup or error notification from behn
             ::
             ++  on-take-wake
@@ -3496,6 +3612,9 @@
                     %-  (slog leaf+"ames: unix-duct still pending; resetting dead-flow" ~)
                     ~
                 set-dead-flow-timer:event-core
+              ::
+              ?:  ?=([%routes ~] wire)
+                set-dead-routes-timer:(expire-dead-routes error)
               ::
               ?.  ?=([%recork ~] wire)
                 =/  res=(unit ?([%fine her=ship =^wire] [%pump her=ship =bone]))
@@ -3878,7 +3997,10 @@
                 ^+  peer-core
                 ::  update and print connection status
                 ::
-                =.  peer-core  (update-qos %ames %live last-contact=now)
+                =/  expiry=@da  (add ~s30 last-contact.qos.peer-state)
+                =?  -.qos.peer-state  (gte now expiry)
+                  %dead
+                =.  peer-core   (update-qos %ames qos.peer-state)
                 ::
                 =/  =bone  bone.shut-packet
                 ::
@@ -3962,12 +4084,15 @@
                   (pe-emit duct %pass wire %b %wait (add now.channel ~s30))
                 ::  update and print connection state
                 ::
-                =.  peer-core   (update-qos %ames qos:(is-peer-dead now peer-state))
+                =/  expiry=@da  (add ~s30 last-contact.qos.peer-state)
+                =?  -.qos.peer-state  (gte now expiry)
+                  %dead
+                =.  peer-core   (update-qos %ames qos.peer-state)
                 ::  expire direct route if the peer is not responding
                 ::
-                =/  old-route  route.peer-state
+                =/  old-route   route.peer-state
                 =.  peer-state  (update-peer-route her peer-state)
-                =?  peer-core  !=(old-route route.peer-state)
+                =?  peer-core   !=(old-route route.peer-state)
                   %-  pe-emit
                   :*  unix-duct  %give  %nail  her
                       (get-forward-lanes our peer-state peers.ames-state)
@@ -5575,7 +5700,10 @@
                   |=  [[=full=^path num=@ud] =meow =lane]
                   ^+  fine
                   =/  og  fine
-                  =.  peer-core  (update-qos %fine %live last-contact=now)
+                  =/  expiry=@da  (add ~s30 last-contact.qos.peer-state)
+                  =?  -.qos.peer-state  (gte now expiry)
+                    %dead
+                  =.  peer-core   (update-qos %fine qos.peer-state)
                   ::  handle empty
                   ?:  =(0 num.meow)
                     ?>  =(~ dat.meow)
@@ -5760,7 +5888,10 @@
                   ::  XX move this to the =(^ unix-duct) branch?
                   ::
                   =.  next-wake.keen  ~
-                  =.  peer-core   (update-qos %fine qos:(is-peer-dead now peer-state))
+                  =/  expiry=@da  (add ~s30 last-contact.qos.peer-state)
+                  =?  -.qos.peer-state  (gte now expiry)
+                    %dead
+                  =.  peer-core     (update-qos %fine qos.peer-state)
                   =.  metrics.keen  %*(on-timeout fi-gauge vane %fine)
                   ::
                   ?:  =(~ unix-duct)
@@ -5769,9 +5900,9 @@
                     fine
                   ::  has the direct route expired?
                   ::
-                  =/  old-route  route.peer-state
+                  =/  old-route   route.peer-state
                   =.  peer-state  (update-peer-route her peer-state)
-                  =?  peer-core  !=(old-route route.peer-state)
+                  =?  peer-core   !=(old-route route.peer-state)
                     %-  pe-emit
                     :*  unix-duct  %give  %nail  her
                         (get-forward-lanes our peer-state peers.ames-state)
@@ -6186,15 +6317,24 @@
               !>  ^-  (list lane)
               ?:  =(our u.who)
                 ~
-              ?:  ?=([~ %known *] peer)
-                (get-forward-lanes our +.u.peer peers.ames-state)
-              =/  sax  (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
-              ?.  ?=([~ ~ *] sax)
-                ~
-              =/  gal  (rear ;;((list ship) q.q.u.u.sax))
-              ?:  =(our gal)
-                ~
-              [%& gal]~
+              =/  sax
+                (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
+              =/  gal=(unit @p)
+                ?.  ?=([~ ~ *] sax)
+                  ~
+                `(rear ;;((list ship) q.q.u.u.sax))
+              ?.  ?=([~ %known *] peer)
+                ?~  gal
+                  ~
+                ::  if the peer is %alien or missing, send to the sponsor galaxy
+                ::
+                ?:(=(our u.gal) ~ [%& u.gal]~)
+              =/  ev-core  (ev [now eny rof] [//scry]~ ames-state)
+              ?:  (is-route-dead:ev-core u.who +.u.peer)
+                ::  if the peer is %dead, send to the sponsor galaxy
+                ::
+                ?~(gal ~ [%& u.gal]~)
+              (get-forward-lanes our +.u.peer peers.ames-state)
             ==
           ::
               [%bones her=@ ~]
@@ -7844,11 +7984,21 @@
                     ~
                   =/  sax
                     (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
-                  ?.  ?=([~ ~ *] sax)
+                  =/  gal=(unit @p)
+                    ?.  ?=([~ ~ *] sax)
+                      ~
+                    `(rear ;;((list ship) q.q.u.u.sax))
+                  ?~  gal
                     ~
-                  =/  gal  (rear ;;((list ship) q.q.u.u.sax))
-                  :-  `@ux`gal  :: XX we shouldn't fake this as as lane
+                  :-  `@ux`u.gal  :: XX we shouldn't fake this as as lane
+                  ?:  ?=([~ %known *] chum)
+                    (get-forward-lanes-mesa our +.u.chum chums.ames-state)
                   ?:  ?=([~ %known *] peer)
+                    =/  ev-core  (ev:ames [now eny rof] [//scry]~ ames-state)
+                    ?:  (is-route-dead:ev-core u.who +.u.peer)
+                      ::  if the peer is %dead, send to the sponsor galaxy
+                      ::
+                      [`@ux`u.gal]~
                     %+  turn  (get-forward-lanes our +.u.peer peers.ames-state)
                     |=  lane=(each @p address)
                     ?-    -.lane
@@ -7859,12 +8009,10 @@
                         ip=`@if`(end [0 32] p.lane)
                       pt=`@ud`(cut 0 [32 16] p.lane)
                     ==
-                  ?:  ?=([~ %known *] chum)
-                    (get-forward-lanes-mesa our +.u.chum chums.ames-state)
                   ~&  %alien-lanes
-                  ?:  =(our gal)
+                  ?:  =(our u.gal)
                     ~
-                  [`@ux`gal]~
+                  [`@ux`u.gal]~
                 ==
               ==
             ::
@@ -7932,14 +8080,31 @@
                 (sy-emit ~[/ames] %pass /mesa/retry %b %wait `@da`(add now ~m2))
               =?  chum.dead.ames-state  ?=(~ +.chum.dead.ames-state)
                 chum/`[~[/ames] /mesa/retry `@da`(add now ~m2)]
+              =^  cork-moves  cork.dead.ames-state
+                ?.  ?=(~ +.cork.dead.ames-state)
+                  `cork.dead.ames-state
+                :-  [~[/ames] %pass /recork %b %wait `@da`(add now ~d1)]~
+                cork/`[~[/ames] /recork `@da`(add now ~d1)]
+              ::
+              =^  rots-moves  rots.dead.ames-state
+                ?.  ?=(~ +.rots.dead.ames-state)
+                  `rots.dead.ames-state
+                :-  [~[/ames] %pass /routes %b %wait `@da`(add now ~m2)]~
+                rots/`[~[/ames] /routes `@da`(add now ~m2)]
+              ::
               =.  sy-core
                 %-  sy-emil
-                ^-  (list move)
-                :~  [hen %give %turf turfs]
-                    [hen %give %saxo sy-get-sponsors]
-                    (poke-ping-app hen our %kick fail=%.n)
+                ;:  weld
+                  cork-moves
+                  rots-moves
+                ::
+                  ^-  (list move)
+                  :~  [hen %give %turf turfs]
+                      [hen %give %saxo sy-get-sponsors]
+                      (poke-ping-app hen our %kick fail=%.n)
+                  ==
                 ==
-              sy-core(ames-state ames-state(unix-duct hen))
+                sy-core(ames-state ames-state(unix-duct hen))
             ::  +sy-init: first boot; subscribe to our info from jael
             ::
             ++  sy-init
@@ -9031,6 +9196,7 @@
                 %page  her.p.pact
               ==
             =/  lanes=(list lane:pact:ames)
+              :: :-  [%if ip=.206.189.218.58 port=52.510]
               %+  weld
                 (drop (get-sponsor ship))
               ?~(lane ~ (drop lane))
@@ -9635,29 +9801,36 @@
   ==
 ::  +stay: extract state before reload
 ::
-++  stay  ~&  %adult-stay   [%22 adult/ames-state]
+++  stay  ~&  %adult-stay   [%23 adult/ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load  ~&  %adult-load
   |=  state=axle
    ~&  priv.state
   :: =.  peers.state  ~
-  :: =.  chums.state  ~
+  :: =.  chums.state  ::~
   ::   %-  ~(run by chums.state)
   ::   |=  =chum-state
   ::   ?:  ?=(%alien -.chum-state)
   ::     ~&  %cleaning-alien
   ::     chum-state
   ::     :: chum-state(pit ~)
+  ::   =.  flows.chum-state
+  ::     (~(del by flows.chum-state) [12^%for])
+  ::   =.  pit.chum-state  ~
+  ::   =/  duct  (~(got by by-bone.ossuary.chum-state) 12)
+  ::   =.  by-duct.ossuary.chum-state  (~(del by by-duct.ossuary.chum-state) duct)
+  ::   =.  by-bone.ossuary.chum-state  (~(del by by-bone.ossuary.chum-state) 12)
 
-  ::   %_  chum-state
-  ::     flows    ~&  %cleaning-flows  ~
-  ::     pit      ~&  %cleaning-pit  ~
-  ::     corked   ~
-  ::     ossuary  =|  =ossuary  ossuary
-  ::             ::  %_  ossuary
-  ::               :: next-bone  40
-  ::   ==        :: ==
+  ::   chum-state
+    :: %_  chum-state
+    ::   flows    ~&  %cleaning-flows  ~
+    ::   pit      ~&  %cleaning-pit  ~
+    ::   corked   ~
+    ::   ossuary  =|  =ossuary  ossuary
+    ::           ::  %_  ossuary
+    ::             :: next-bone  40
+    :: ==        :: ==
   vane-gate(ames-state state)
 ::  +scry: dereference namespace
 ::

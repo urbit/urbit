@@ -1586,6 +1586,7 @@
         $:  flow=[%flow (unit dead-timer)]  ::  ... for |ames
             chum=[%chum (unit dead-timer)]  ::  ... for |mesa
             cork=[%cork (unit dead-timer)]  ::  ... for %nacked corks
+            rots=[%rots (unit dead-timer)]  ::  ... fir expiring direct routes
         ==
         ::
         =server=chain                       ::  for serving %shut requests
