@@ -2964,13 +2964,6 @@
                 $(bones t.bones)
               ::
               --
-            ::  +on-cong: adjust congestion control parameters
-            ::
-            ++  on-cong
-              |=  [msg=@ud mem=@ud]
-              ^+  event-core
-              =.  cong.ames-state  msg^mem
-              event-core
             ::  +on-stir: recover from timer desync, setting new timers as needed
             ::
             ::    .arg can be %rift or %dead
@@ -6088,7 +6081,6 @@
           ?+  -.task  !!  ::  XX mesa tasks; no-op?
             %hear  (on-hear:event-core [lane blob ~]:task)
             %prod  (on-prod:event-core ships.task)
-            %cong  (on-cong:event-core [msg mem]:task)
             %stir  (on-stir:event-core arg.task)
             %trim  on-trim:event-core
             %plea  (on-plea:event-core [ship plea]:task)
@@ -8115,8 +8107,12 @@
                   [hen %pass /public-keys %j %public-keys [n=our ~ ~]]
               ==
             ::
-            ++  sy-crud
-              |=(=error (sy-emit hen %pass /crud %d %flog %crud error))
+            ::  +on-cong: adjust congestion control parameters
+            ::
+            ++  sy-cong  |=([msg=@ud mem=@ud] sy-core(cong.ames-state msg^mem))
+            ::  +sy-crud: handle event failure; print to dill
+            ::
+            ++  sy-crud  |=(e=error (sy-emit hen %pass /crud %d %flog %crud e))
             ::  +sy-plug: handle key reservation
             ::
             ++  sy-plug
@@ -9354,11 +9350,12 @@
           ?+  -.task
               ::  ?(%plea %keen %cork) calls are handled directly in |peer
               ::
-              `ames-state ::  XX TODO: ?(%trim %stir %cong)
+              `ames-state ::  XX TODO: ?(%trim %stir)
           ::
             %vega  `ames-state  ::  handle kernel reload
             %init  sy-abet:sy-init:sy-core
             %born  sy-abet:sy-born:sy-core
+            %cong  sy-abet:sy-cong:sy-core
             %plug  sy-abet:(sy-plug:sy-core path.task)
             %prod  sy-prod:sy-core  ::  XX handle ships=(list @p)
             %snub  sy-abet:(sy-snub:sy-core [form ships]:task)
@@ -9737,7 +9734,7 @@
   ?-    -.task
     ::  %ames-only tasks
     ::
-      ?(%kroc %deep %cong %mate %stir)  :: XX %chum to common tasks
+      ?(%kroc %deep %mate %stir)  :: XX %chum to common tasks
     ::  XX can we call the wrong core? still check if ship has migrated?
     ::
     (call:am-core hen dud soft/task)
@@ -9755,7 +9752,7 @@
     (call:me-core hen dud soft/task)
     ::  flow-independent tasks
     ::
-      ?(%vega %init %born %snub %spew %stun %sift %plug %dear %init %tame)
+      ?(%vega %init %born %snub %spew %stun %sift %plug %dear %init %tame %cong)
     (call:me-core hen dud soft/task)
     ::  common tasks
     ::
