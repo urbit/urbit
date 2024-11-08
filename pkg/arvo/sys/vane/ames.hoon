@@ -8269,13 +8269,39 @@
                   ::
                   (on-publ-full (my [ship point]~))
                 ::
+                =/  old-key       symmetric-key.+.u.peer
                 =/  crypto-core   (nol:nu:crub:crypto priv.ames-state)
                 =/  =private-key  sec:ex:crypto-core
+                =/  new-key       (derive-symmetric-key public-key private-key)
+                ::  recalculate paths in the .pit using the new key
                 ::
-                =.  symmetric-key.+.u.peer
-                  (derive-symmetric-key public-key private-key)
-                =.  life.+.u.peer        life
-                =.  public-key.+.u.peer  public-key
+                =?  peer  ?=([%chum ~ %known *] peer)
+                  =;  pit=_pit.u.peer
+                    peer(pit.u pit)
+                  %-  ~(rep by pit.u.peer)
+                  |=  [[=path req=request-state] pit=(map path request-state)]
+                  =/  [=space ack=^path]
+                    [space inner]:(ev-decrypt-path:ev path ship)
+                  =.  space
+                    ?+  -.space  space
+                      %publ  space(life life)
+                      %chum  space(her-life life, key new-key)
+                    ==
+                  =.  path  (make-space-path space ack)
+                  =?  pay.req  ?=(^ pay.req)
+                    =/  [=^space poke=^path]
+                      [space inner]:(ev-decrypt-path:ev u.pay.req ship)
+                    =.  space
+                      ?+  -.space  space  :: for %publ, our life hansn't changed
+                        %chum  space(our-life life, key new-key)
+                      ==
+                    `(make-space-path space poke)
+                  (~(put by pit) path req(ps ~))  :: XX drop any partially received state
+                ::  update values
+                ::
+                =.  symmetric-key.+.u.peer  new-key
+                =.  life.+.u.peer           life
+                =.  public-key.+.u.peer     public-key
                 ::
                 =?  chums.ames-state  ?=(%chum -.peer)
                   (~(put by chums.ames-state) ship u.peer)
@@ -8853,8 +8879,7 @@
                 ::
                 =.  path
                   =/  [=space pax=^path]
-                    =+  mesa-core=(mesa now^eny^rof)
-                    [space inner]:(ev-decrypt-path:ev:mesa-core path her)
+                    [space inner]:(ev-decrypt-path:ev path her)
                   ?-    -.space
                       %publ  pax
                   ::
@@ -9164,6 +9189,7 @@
               =/  man=name:pact  [[our rift.ames-state] [13 ~] u.q]
               ::
               ?~  page=(co-get-page man)
+                ::  XX
                 ~&  [%no-page man=man]  ~
               `[hop=0 %poke nam man u.page]
             ::
@@ -9570,7 +9596,6 @@
       ^-  [(list move) _vane-gate]
       =/  =shot       (sift-shot blob)
       =/  ship-state  (pe-find-peer sndr.shot)
-      ~&  hear-from/sndr.shot^-.ship-state
       ?:  ?=([%ames *] ship-state)
         ::  both for %ames and %fine
         ::
