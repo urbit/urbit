@@ -8147,7 +8147,7 @@
               ::
               =.  chum.dead.ames-state
                 chum/`[~[/ames] /mesa/retry `@da`(add now ~m2)]
-              =^  prod-moves  ames-state  sy-prod
+              =^  prod-moves  ames-state  (sy-prod ~)
               %-  sy-emil
               :_  prod-moves
               [~[/ames] %pass /mesa/retry %b %wait `@da`(add now ~m2)]
@@ -8609,51 +8609,64 @@
               sy-core
             ::
             ++  sy-prod
-              ^-  (quip move axle)
-              %-  ~(rep by chums.ames-state)
-              |=  [[=ship =chum-state] moves=(list move) state=_ames-state]
-              =+  per-sat=(get-per:ev ship)
-              ~&  ship
-              ?.  ?=([~ ~ %known *] per-sat)
-                :_  state
-                ::  XX  this shouldn't be needed
-                ::  XX  only if %alien
-                ?:  ?=(%pawn (clan:title ship))
-                  ::  XX resend attestation request?
+              |=  ships=(list @p)
+              |^  ^-  (quip move axle)
+              ?:  =(~ ships)
+                (~(rep by chums.ames-state) prod-peer)
+              =|  moves=(list move)
+              |-
+              ?~  ships  [moves ames-state]
+              =^  new-moves  ames-state
+                ?~  peer=(~(get by chums.ames-state) i.ships)
+                  `ames-state
+                (prod-peer [i.ships u.peer] moves ames-state)
+              $(ships t.ships, moves (weld moves new-moves))
+              ::
+              ++  prod-peer
+                |=  [[=ship =chum-state] moves=(list move) state=_ames-state]
+                =+  per-sat=(get-per:ev ship)
+                ~&  ship
+                ?.  ?=([~ ~ %known *] per-sat)
+                  :_  state
+                  ::  XX  this shouldn't be needed
+                  ::  XX  only if %alien
+                  ?:  ?=(%pawn (clan:title ship))
+                    ::  XX resend attestation request?
+                    ::
+                    =/  spon=@p  (^sein:title ship)
+                    ?:  =(our spon)  moves  ::  XX  don't send to ourselves
+                    moves:(~(al-read-proof al ~[/ames]) ship `@ux`spon)
+                  ~&  retrieving-keys-again/ship
+                  :_  moves
+                  [[//keys]~ %pass /public-keys %j %public-keys ship ~ ~]
+                ::
+                =+  core=~(ev-core ev hen ship +.u.u.per-sat)
+                ::
+                =^  resend-moves  state
+                  =;  c=_core  ev-abet:c
+                  %-  ~(rep by pit.sat.per.core)
+                  |=  [[=path req=request-state] core=_core]
+                  ::  XX  restore this when fixing +ev-update-qos
+                  =*  peer  sat.per.core
+                  =*  ship  ship.per.core
+                  ::  update and print connection status
                   ::
-                  =/  spon=@p  (^sein:title ship)
-                  ?:  =(our spon)  moves  ::  XX  don't send to ourselves
-                  moves:(~(al-read-proof al ~[/ames]) ship `@ux`spon)
-                ~&  retrieving-keys-again/ship
-                :_  moves
-                [[//keys]~ %pass /public-keys %j %public-keys ship ~ ~]
-              ::
-              =+  core=~(ev-core ev hen ship +.u.u.per-sat)
-              ::
-              =^  resend-moves  state
-                =;  c=_core  ev-abet:c
-                %-  ~(rep by pit.sat.per.core)
-                |=  [[=path req=request-state] core=_core]
-                ::  XX  restore this when fixing +ev-update-qos
-                =*  peer  sat.per.core
-                =*  ship  ship.per.core
-                ::  update and print connection status
-                ::
-                =/  expiry=@da  (add ~s30 last-contact.qos.peer)
-                =/  new=qos     ?.((gte now expiry) qos.peer [%dead now])
-                ::  if =(~ pay.req); %naxplanation, %cork or external (i.e. not
-                ::  coming from %ames) $peek request
-                ::
-                =>  .(core (ev-update-qos:core new))
-                ?~  pact=(co-make-pact:co ack=[ship path] pay.req rift.peer)
-                  ::  XX don't crash since we are going to block the queue
-                  ev-core:core
-                ?:  =(~ unix-duct)
-                  %-  (slog leaf+"ames: unix-duct still pending; will retry %push" ~)
-                  ev-core:core
-                (ev-emit:core (push-pact u.pact lane.peer))
-              :_  state
-              (weld moves resend-moves)
+                  =/  expiry=@da  (add ~s30 last-contact.qos.peer)
+                  =/  new=qos     ?.((gte now expiry) qos.peer [%dead now])
+                  ::  if =(~ pay.req); %naxplanation, %cork or external (i.e. not
+                  ::  coming from %ames) $peek request
+                  ::
+                  =>  .(core (ev-update-qos:core new))
+                  ?~  pact=(co-make-pact:co ack=[ship path] pay.req rift.peer)
+                    ::  XX don't crash since we are going to block the queue
+                    ev-core:core
+                  ?:  =(~ unix-duct)
+                    %-  (slog leaf+"ames: unix-duct still pending; will retry %push" ~)
+                    ev-core:core
+                  (ev-emit:core (push-pact u.pact lane.peer))
+                :_  state
+                (weld moves resend-moves)
+              --
             ::  +sy-snub: handle request to change ship blacklist
             ::
             ++  sy-snub
@@ -9357,7 +9370,7 @@
             %born  sy-abet:sy-born:sy-core
             %cong  sy-abet:sy-cong:sy-core
             %plug  sy-abet:(sy-plug:sy-core path.task)
-            %prod  sy-prod:sy-core  ::  XX handle ships=(list @p)
+            %prod  (sy-prod:sy-core ships.task)
             %snub  sy-abet:(sy-snub:sy-core [form ships]:task)
             %stun  sy-abet:(sy-stun:sy-core stun.task)
             %dear  sy-abet:(sy-dear:sy-core +.task)
