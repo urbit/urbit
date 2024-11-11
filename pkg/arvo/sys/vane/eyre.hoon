@@ -3090,6 +3090,7 @@
     =/  aeon  ?^(prev=(~(get by cache.state) url) +(aeon.u.prev) 1)
     =.  cache.state  (~(put by cache.state) url [aeon entry])
     :_  state
+    ?~  outgoing-duct.state  ~
     [outgoing-duct.state %give %grow /cache/(scot %ud aeon)/(scot %t url)]~
   ::  +add-binding: conditionally add a pairing between binding and action
   ::
