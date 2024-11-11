@@ -9080,9 +9080,9 @@
             +|  %entry-points
             ::
             ++  co-call
-              |=  task=$>(?(%meek %moke %mage) task)
+              |=  =task
               ^+  co-core
-              ?-  -.task
+              ?+  -.task  ~|(-.task !!)
                 %mage  (co-make-page +.task)
                 %meek  (co-make-peek +.task)
                 %moke  (co-make-poke +.task)
