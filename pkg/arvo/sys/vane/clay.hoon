@@ -318,7 +318,7 @@
           $>(%what waif)                                ::
       ==                                                ::
       $:  %a                                            ::  to %ames
-          $>(?(%plea %keen %yawn %whit) task:ames)      ::
+          $>(?(%plea %keen %yawn %whey) task:ames)      ::
       ==                                                ::
       $:  %b                                            ::  to %behn
           $>  $?  %drip                                 ::

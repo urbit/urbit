@@ -197,7 +197,7 @@
     `[%done +>.sign-arvo.u.in.tin]
   ==
 ::
-++  take-size
+++  take-whey
   |=  =wire
   =/  m  (strand ,[spar:ames fragment-size=@ud num-fragments=@ud])
   ^-  form:m
@@ -213,7 +213,7 @@
     ?~  q.sage
       [boq=13 tot=0]
     =<  [boq tot]
-    ;;([%whit boq=@ud tot=@ud] q.sage)
+    ;;([%whey boq=@ud tot=@ud] q.sage)
   ==
 ::
 ++  take-message
@@ -420,11 +420,11 @@
   ^-  form:m
   (send-raw-card %pass wire %arvo %a %yawn spar)
 ::
-++  whit
+++  whey
   |=  [=wire boq=@ud =spar:ames]
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass wire %arvo %a %whit boq spar)
+  (send-raw-card %pass wire %arvo %a %whey boq spar)
 ::
 ++  sleep
   |=  for=@dr
