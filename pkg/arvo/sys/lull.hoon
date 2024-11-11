@@ -856,7 +856,6 @@
         [%yawn spar]
         [%wham spar]
         [%plug =path]
-        [%whit boq=@ud spar]
     ::
         $>(%born vane-task)
         $>(%init vane-task)
@@ -868,27 +867,28 @@
         [%stir arg=@t]
         $>(%trim vane-task)
         $>(%vega vane-task)
-    ::  all tasks before the ones bellow, if changed, would need an adapter
-    ::  function in the larval-core +load arm, to change the events to their
-    ::  latest version, as it exists here in %lull.
+    ::  all tasks above, if changed, would need an adapter function in the
+    ::  larval-core +load arm, to change the events to their latest version, as
+    ::  they exists here in %lull.
     ::
     ::  where (i.e. from what version of the ames-state) to do the task would
     ::  depend on when the task was introduced—%heed and %jilt were introduced
     ::  in state %4, and removed in %21; %kroc was introduced in state %10,
     ::  modified in %17...
     ::
-    ::  when changing any of the tasks above, please follow the same pattern that
-    ::  exists in ames.hoon.
+    ::  when changing any of the tasks above, please follow the same patterns
+    ::  that exists in ames.hoon.
     ::
-        [%mate (unit ship)]             ::  per-peer migration
-        [%load ?(%mesa %ames)]          ::  load core for new peers; XX make it term for flexibility?
-        [%back (unit ship)]             ::  per-peer regression
+        [%mate (unit ship)]           ::  per-peer migration
+        [%load ?(%mesa %ames)]        ::  load core for new peers; XX make it term for flexibility?
+        [%back (unit ship)]           ::  per-peer regression
     ::
-        [%heer =lane:pact p=@]          :: receive a packet
-        [%mess =mess]                   :: receive a message
-        [%moke =space =spar =path]      :: initiate %poke request
-        [%meek =space =spar]            :: initiate %peek request
-        [%mage =space =spar]            :: send %page of data; intended for acks
+        [%heer =lane:pact p=@]        ::  receive a packet
+        [%mess =mess]                 ::  receive a message
+        [%moke =space =spar =path]    ::  initiate %poke request
+        [%meek =space =spar]          ::  initiate %peek request
+        [%mage =space =spar]          ::  send %page of data; intended for acks
+        [%whey boq=@ud spar]          ::  weight of a noun, measured by .boq
     ==
   ::
   ::  $gift: effect from ames
