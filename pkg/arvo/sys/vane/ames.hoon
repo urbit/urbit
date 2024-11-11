@@ -9803,7 +9803,7 @@
     ::  gifts (which can trigger other gifts to be sent to unix) by setting up
     ::  a timer that will request them again
     ::
-    ~&  %setting-ask-timer
+    ~>  %slog.0^leaf/"ames: setting %ask timer for {<ship>}"
     :_  vane-gate
     =/  wires=(list ^wire)
       ?:  ?=(%turf -.wire)  [%mesa %ask wire]~
