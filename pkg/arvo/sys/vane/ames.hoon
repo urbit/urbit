@@ -9407,8 +9407,8 @@
               [/turf %j %turf ~]
             ::
                 [%public-keys @ *]
-              ~&  requesting-keys-for/i.t.t.t.wire
-              [/public-keys %j %public-keys [n=(slav %p i.t.t.t.wire) ~ ~]]
+              %.  [/public-keys %j %public-keys [n=(slav %p i.t.t.t.wire) ~ ~]]
+              (slog leaf/"ames: got %ask, get keys for {(trip i.t.t.t.wire)}" ~)
             ==
           ?:  ?=([%gall %unto *] sign)  :: XX from poking %ping app
             `ames-state
@@ -9803,10 +9803,11 @@
     ::  gifts (which can trigger other gifts to be sent to unix) by setting up
     ::  a timer that will request them again
     ::
-    ~>  %slog.0^leaf/"ames: setting %ask timer for {<ship>}"
     :_  vane-gate
     =/  wires=(list ^wire)
-      ?:  ?=(%turf -.wire)  [%mesa %ask wire]~
+      ?:  ?=(%turf -.wire)
+        ~>  %slog.0^leaf/"ames: unix-duct missing; delay %turf"
+        [%mesa %ask wire]~
       ?>  ?=([%jael %public-keys *] sign)
       =/  gift=public-keys-result:jael  +>.sign
       ?.  ?=(%full -.gift)
@@ -9814,6 +9815,7 @@
       =/  ships=(set ship)  ~(key by points.gift)
       %-  ~(rep in ships)
       |=  [=ship wires=(list ^wire)]
+      ~>  %slog.0^leaf/"ames: unix-duct missing; delay {<i.wire>} for {<ship>}"
       :_  wires
       [%mesa %ask /public-keys/[(scot %p ship)]]
     %+  turn  wires
