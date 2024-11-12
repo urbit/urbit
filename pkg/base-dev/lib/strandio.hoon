@@ -205,7 +205,7 @@
   ?+    in.tin  `[%skip ~]
       ~  `[%wait ~]
     ::
-      [~ %sign * %ames %mess-response sage=*]
+      [~ %sign * %ames %sage sage=*]
     ?.  =(wire wire.u.in.tin)
       `[%skip ~]
     =/  =sage:mess:ames  sage.sign-arvo.u.in.tin
@@ -224,7 +224,7 @@
   ?+    in.tin  `[%skip ~]
       ~  `[%wait ~]
     ::
-      [~ %sign * %ames %mess-response sage=*]
+      [~ %sign * %ames %sage sage=*]
     ?.  =(wire wire.u.in.tin)
       `[%skip ~]
     `[%done sage.sign-arvo.u.in.tin]

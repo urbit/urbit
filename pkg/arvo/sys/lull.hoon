@@ -843,7 +843,7 @@
   ::
   +$  task
     $%  [%hear =lane =blob]
-        [%dear =ship =lane:pact]
+        [%dear =ship =lane]
         [%cork =ship]
         [%tame =ship]
         [%kroc bones=(list [ship bone])]
@@ -929,8 +929,8 @@
         [%saxo sponsors=(list ship)]
     ::
         [%push p=(list lane:pact) q=@]   :: send a request/response packet
-        [%mess-response =sage:mess]      :: XX (names) produce deserialized response message
-        [%response load=$>(%page mess)]  :: XX (names) produce serialized response message
+        [%sage =sage:mess]               :: give deserialized/open payload
+        $>(%page mess)                   :: give serialized/sealed payload
     ==
   ::
   ::::                                                  ::  (1a2)
@@ -1802,11 +1802,11 @@
     =>  |%
         +$  auth  (each @uxJ @uxH) :: &+sig, |+hmac
         +$  gage  $@(~ page)
-        +$  sage  (pair [=ship =path] gage)
+        +$  sage  (pair spar gage)
         --
-    $%  [%page (trel [=ship =path] auth @)]
-        [%peek p=[=ship =path]]
-        [%poke p=[=ship =path] q=sage]
+    $%  [%page (trel spar auth @)]
+        [%peek spar]
+        [%poke (pair spar sage)]
     ==
   ::
   ::  packet de/serialization

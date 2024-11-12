@@ -122,7 +122,7 @@
     |%
     +$  sign
       $~  [%behn %wake ~]
-      $%  [%ames $>(?(%tune %mess-response) gift)]
+      $%  [%ames $>(?(%tune %sage) gift)]
           [%behn $>(%wake gift:behn)]
           [%gall $>(?(%flub %unto) gift:gall)]
           [%jael $>(?(%private-keys %public-keys %turf) gift:jael)]
@@ -654,12 +654,11 @@
         ==
     ::
     +$  ames-state-21
-      $+  ames-state-21
       $:  peers=(map ship ship-state)
           =unix=duct
           =life
           =rift
-          crypto-core=acru
+          crypto-core=acru:ames
           =bug
           snub=[form=?(%allow %deny) ships=(set ship)]
           cong=[msg=_5 mem=_100.000]
@@ -1471,9 +1470,8 @@
     ::  $queued-event: event to be handled after initial boot completes
     ::
     +$  queued-event
-      $+  queued-event
       $%  [%call =duct wrapped-task=(hobo task)]
-          [%take =wire =duct =sign]
+          [%take =wire =duct sign=*]
       ==
     ::  $message-pump-task: job for |message-pump
     ::
@@ -1709,7 +1707,7 @@
     ::
     +$  flow-sign
       $%  $>(?(%flub %done) gift:gall)       :: from vanes
-          [%mess-response seq=@ud sage:mess] :: added seq number to %response
+          [%sage seq=@ud sage:mess]          :: added seq number to %response
       ==
     ::
     +|  %top-level-paths
@@ -1875,7 +1873,7 @@
         =^  event-moves  adult-gate
           ?-  -.first-event
             %call  (call:adult-core [duct ~ wrapped-task]:+.first-event)
-            %take  (take:adult-core [wire duct ~ sign]:+.first-event)
+            %take  `adult-gate  ::  (take:adult-core [wire duct ~ sign]:+.first-event)
           ==
         $(moves (weld event-moves moves))
       ::
@@ -2445,6 +2443,7 @@
       ++  state-4-to-5
         |=  ames-state=ames-state-4
         ^-  ames-state-5
+        ~>  %slog.0^leaf/"ames: migrating from state %4 to %5"
         =.  peers.ames-state
           %-  ~(run by peers.ames-state)
           |=  ship-state=ship-state-4
@@ -2462,6 +2461,7 @@
       ++  state-5-to-6
         |=  ames-state=ames-state-5
         ^-  ames-state-6
+        ~>  %slog.0^leaf/"ames: migrating from state %5 to %6"
         :_  +.ames-state
         %-  ~(urn by peers.ames-state)
         |=  [=ship ship-state=ship-state-5]
@@ -2484,6 +2484,7 @@
       ++  state-6-to-7
         |=  ames-state=ames-state-6
         ^-  ames-state-7
+        ~>  %slog.0^leaf/"ames: migrating from state %6 to %7"
         :_  +.ames-state
         %-  ~(run by peers.ames-state)
         |=  ship-state=ship-state-6
@@ -2498,6 +2499,7 @@
       ++  state-7-to-8
         |=  ames-state=ames-state-7
         ^-  ames-state-8
+        ~>  %slog.0^leaf/"ames: migrating from state %7 to %8"
         =,  ames-state
         :*  peers  unix-duct  life  crypto-core  bug
             *(set wire)
@@ -2506,6 +2508,7 @@
       ++  state-8-to-9
         |=  ames-state=ames-state-8
         ^-  ames-state-9
+        ~>  %slog.0^leaf/"ames: migrating from state %8 to %9"
         =,  ames-state
         :*  peers  unix-duct  life  crypto-core  bug  corks
             *(set ship)
@@ -2514,6 +2517,7 @@
       ++  state-9-to-10
         |=  ames-state=ames-state-9
         ^-  ames-state-10
+        ~>  %slog.0^leaf/"ames: migrating from state %9 to %10"
         =,  ames-state
         :*  peers  unix-duct  life  crypto-core
             %=  bug.ames-state
@@ -2525,6 +2529,7 @@
       ++  state-10-to-11
         |=  ames-state=ames-state-10
         ^-  ames-state-11
+        ~>  %slog.0^leaf/"ames: migrating from state %10 to %11"
         =,  ames-state
         :*  peers  unix-duct  life  crypto-core  bug  corks  snub
             ::  5 messages and 100Kb of data outstanding
@@ -2535,6 +2540,7 @@
       ++  state-11-to-12
         |=  ames-state=ames-state-11
         ^-  ames-state-12
+        ~>  %slog.0^leaf/"ames: migrating from state %11 to %12"
         :_  =,  ames-state
             :*  unix-duct
                 life
@@ -2556,6 +2562,7 @@
       ++  state-12-to-13
         |=  old=ames-state-12
         ^-  ames-state-13
+        ~>  %slog.0^leaf/"ames: migrating from state %12 to %13"
         =+  !<(=rift q:(need (need (rof [~ ~] /ames %j our-beam))))
         =+  pk=sec:ex:crypto-core.old
         :*  peers=(~(run by peers.old) ship-state-12-to-13)
@@ -2580,6 +2587,7 @@
       ++  state-13-to-14
         |=  old=ames-state-13
         ^-  ames-state-14
+        ~>  %slog.0^leaf/"ames: migrating from state %13 to %14"
         =-  old(peers -)
         %-  ~(run by peers.old)
         |=  old=ship-state-13
@@ -2598,11 +2606,13 @@
       ++  state-14-to-15
         |=  old=ames-state-14
         ^-  ames-state-15
+        ~>  %slog.0^leaf/"ames: migrating from state %14 to %15"
         old(rift !<(=rift q:(need (need (rof [~ ~] /ames %j our-beam)))))
       ::
       ++  state-15-to-16
         |=  old=ames-state-15
         ^-  ames-state-16
+        ~>  %slog.0^leaf/"ames: migrating from state %15 to %16"
         ::  re-initialize default congestion control values, if bunted
         ::
         old(cong ?.(=(cong.old [0 0]) cong.old [5 100.000]))
@@ -2610,6 +2620,7 @@
       ++  state-16-to-17
         |=  old=ames-state-16
         ^-  ames-state-17
+        ~>  %slog.0^leaf/"ames: migrating from state %16 to %17"
         %=    old
             cong
           :+  cong.old
@@ -2671,6 +2682,7 @@
       ++  state-18-to-19
         |=  old=ames-state-18
         ^-  ames-state-19
+        ~>  %slog.0^leaf/"ames: migrating from state %18 to %19"
         %=    old
         ::
             dead  [dead.old ~]
@@ -2712,6 +2724,7 @@
       ++  state-19-to-20
         |=  old=ames-state-19
         ^-  ames-state-20
+        ~>  %slog.0^leaf/"ames: migrating from state %19 to %20"
         %=  old
           veb.bug  [&1 &2 &3 &4 &5 &6 &7 &8 |8 %.n]:veb.bug.old
         ==
@@ -2719,6 +2732,7 @@
       ++  state-20-to-21
         |=  old=ames-state-20
         ^-  ames-state-21
+        ~>  %slog.0^leaf/"ames: migrating from state %20 to %21"
         %=     old
             peers
           %-  ~(run by peers.old)
@@ -2734,6 +2748,7 @@
       ++  state-21-to-22
         |=  old=ames-state-21
         ^-  ames-state-22
+        ~>  %slog.0^leaf/"ames: migrating from state %21 to %22"
         %=    old
             cork.dead
           :-  cork.dead.old
@@ -2742,6 +2757,7 @@
       ::
       ++  state-22-to-23
         |=  old=ames-state-22
+        ~>  %slog.0^leaf/"ames: migrating from state %22 to %23"
         ^-  axle
         ::  removes crypto cores and adds the private key to the state
         ::
@@ -2749,7 +2765,7 @@
         :*  peers  unix-duct  life  rift  bug  snub  cong
           ::
             :^    flow.dead  ::  preserve |ames dead-flow consolidation
-                chum/`[~[/ames] /mesa/dead-flow `@da`(add now ~m2)]
+                chum/`[~[/ames] /mesa/retry `@da`(add now ~m2)]
               cork.dead
             rots.dead
           ::
@@ -2947,12 +2963,7 @@
                 |=  her=ship
                 ^+  event-core
                 =/  par  (get-peer-state her)
-                ?~  par
-                  ::  XX  this shouldn't be needed
-                  ::  XX  only if %alien
-                  ~&  >>  rettrieve-keys-again/her
-                  (emit [//keys]~ %pass /public-keys %j %public-keys [n=her ~ ~])
-                  :: event-core
+                ?~  par  event-core
                 =/  peer-core  (abed-peer:pe her u.par)
                 =/  bones  ~(tap in ~(key by snd.u.par))
                 |-  ^+  event-core
@@ -6955,7 +6966,7 @@
               =/  fo-core
                 ::  XX parse $ack payload in here, and call task instead?
                 %-  fo-take:(fo-abed:fo hen bone dire)
-                [were mess-response/[mess.message-path sage]]
+                [were sage/[mess.message-path sage]]
               ::
               ?.  can-be-corked.fo-core
                 fo-abet:fo-core
@@ -7025,7 +7036,7 @@
               ^+  ev-core
               %-  ~(rep in listeners)
               |=  [hen=duct c=_ev-core]
-              (ev-emit:c hen %give %mess-response ship.per^path gage)
+              (ev-emit:c hen %give %sage ship.per^path gage)
             ::
             ++  ev-cancel-peek
               |=  [all=? =path]  :: XX namespace?
@@ -7221,12 +7232,12 @@
                 |=  [=were sign=flow-sign]
                 ^+  fo-core
                 ?+    were  !!  :: %pok is handle outside, in the message layer
-                    %nax  ?>(?=(%mess-response -.sign) (fo-take-nax +.sign))
-                    %ack  ?>(?=(%mess-response -.sign) (fo-take-ack +.sign))
-                    %cor  ?>(?=(%mess-response -.sign) (fo-take-cor +>.sign))
+                    %nax  ?>(?=(%sage -.sign) (fo-take-nax +.sign))
+                    %ack  ?>(?=(%sage -.sign) (fo-take-ack +.sign))
+                    %cor  ?>(?=(%sage -.sign) (fo-take-cor +>.sign))
                   ::
                     %van
-                  ?+  -.sign  !!  :: %mess-response doesn't come from vanes
+                  ?+  -.sign  !!  :: %sage doesn't come from vanes
                     %done  (fo-take-done +.sign)  :: ack from client vane
                     %flub  =.(pending-ack.rcv %.n fo-core)
                   ==
@@ -8700,7 +8711,7 @@
             :: +sy-dear: handle lane from unix
             ::
             ++  sy-dear
-              |=  [=ship =lane:pact]
+              |=  [=ship =lane]
               ^+  sy-core
               ?:  =(~ unix-duct)
                 %-  (slog leaf+"ames: unix-duct still pending; no-op" ~)
@@ -8711,21 +8722,20 @@
               ?.  ?=([?(%ship %chum) ~ %known *] peer)
                 sy-core
               =?  chums.ames-state  ?=(%chum -.peer)
-                =.  lane.+.u.peer  `lane
+                =.  lane.+.u.peer
+                  :-  ~
+                  ^-  lane:pact
+                  ?-  -.lane
+                      %&  `@ux`p.lane
+                  ::
+                      %|
+                    :-  %if
+                    [ip=`@if`(end [0 32] p.lane) pt=`@ud`(cut 0 [32 16] p.lane)]
+                  ==
                 (~(put by chums.ames-state) ship u.peer)
               =?  peers.ames-state  ?=(%ship -.peer)
-                =/  =^lane
-                  ?@  lane  [%& `@p`lane]
-                  [%| (can 3 (met 3 p.lane)^p.lane 2^q.lane ~)]
                 =.  route.+.u.peer  `[direct=%.y lane]
                 (~(put by peers.ames-state) ship u.peer)
-              =/  =^lane  :: XX refactor
-                ?@  lane  [%.y `@pC`lane]
-                :-  %.n
-                %+  can  3
-                :~  4^p.lane
-                    2^q.lane
-                ==
               (sy-emit unix-duct %give %nail ship ~[lane])
             ::
             ::  +sy-tame: handle request to delete a route
@@ -9057,6 +9067,13 @@
               =.  ames-state
                 ::  discard moves; %nail gift is included in +sy-publ
                 ::
+                =/  =^lane
+                  ?@  lane  [%.y `@p`lane]
+                  :-  %.n
+                  %+  can  3
+                  :~  4^p.lane
+                      2^q.lane
+                  ==
                 ames-state:(sy-dear:sy her.name lane)
               al-core
             ::
@@ -9431,10 +9448,10 @@
             [@ %boon *]      ev-abet:(ev-take-boon:ev-core wire %boon payload.sign)
             [@ %noon *]      ev-abet:(ev-take-boon:ev-core wire %noon [id payload]:sign)
           ::
-          ::  network responses: acks/naxplanation payloads
-          ::                     reentrant from %ames (either message or packet layer)
+          ::  remote responses: acks/naxplanation payloads
+          ::    reentrant from %ames (from either message or packet layer)
           ::
-            [%ames %mess-response *]
+            [%ames %sage *]
           ::
             =<  ev-abet
             =/  response-pith  `(pole iota)`(mesa-pave:ev-core wire)
@@ -9716,11 +9733,11 @@
           (ev-mess-poke:(ev-foco:ev-core ship.p.mess +.u.chum) dud +.mess)
         ::
             %peek
-          ?~  chum=(~(get by chums.ames-state) ship.p.mess)
+          ?~  chum=(~(get by chums.ames-state) ship.mess)
             ev-core
           ::  XX  this assumes that %aliens are checked in the packet layer
           ?>  ?=([~ %known *] chum)  ::  XX alien agenda?
-          (ev-mess-peek:(ev-foco:ev-core ship.p.mess +.u.chum) p.mess)
+          (ev-mess-peek:(ev-foco:ev-core ship.mess +.u.chum) [ship path]:mess)
         ::
             %page
           ?~  chum=(~(get by chums.ames-state) ship.p.mess)
@@ -9822,6 +9839,7 @@
     |=  =^wire
     ^-  move
     [~[/ames] %pass wire %b %wait `@da`(add now ~s30)]
+  ::  XX revisit, looks wrong
   =/  parsed-wire  (parse-bone-wire wire)
   ?:  ?=(~ parsed-wire)  :: XX ?=(^ parsed-wire)
     (take:am-core sample)
