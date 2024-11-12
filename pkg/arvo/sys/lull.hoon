@@ -2398,6 +2398,7 @@
         [%crew ~]                                       ::  permission groups
         [%crow nom=@ta]                                 ::  group usage
         [%drop des=desk]                                ::  cancel pending merge
+        [%esse des=desk ese=?]                          ::  edit essential desk
         [%info des=desk dit=nori]                       ::  internal edit
         $>(%init vane-task)                             ::  report install
         [%into des=desk all=? fis=mode]                 ::  external edit
@@ -3364,6 +3365,9 @@
         ::  respond with the @p of the ship serving the response
         ::
         [%host ~]
+        ::  respond with the ip address of the requester
+        ::
+        [%ip ~]
         ::  returns data used to verify sync status between ship and network
         ::  in double boot protection
         ::
@@ -3416,10 +3420,14 @@
     $%  :: %cert: set or clear certificate and keypair
         ::
         [%cert cert=(unit [key=wain cert=wain])]
-        :: %turf: add or remove established dns binding
+        :: %turf: add remove or reset established dns binding
         ::
-        [%turf action=?(%put %del) =turf]
-    ==
+        $:  %turf 
+            $=  action
+            $%  [%put =turf]
+                [%del =turf]
+                [%new turfs=(set turf)]
+    ==  ==  ==
   ::  +address: client IP address
   ::
   +$  address

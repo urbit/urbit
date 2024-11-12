@@ -1,3 +1,4 @@
+!:
 ::  clay (4c), revision control
 ::
 ::  The way to understand Clay is to take it section-by-section:
@@ -151,6 +152,7 @@
       per=regs                                          ::  read perms per path
       pew=regs                                          ::  write perms per path
       fiz=melt                                          ::  state for mega merges
+      ese=?                                             ::  essential desk?
   ==
 ::
 ::  Over-the-wire backfill request/response
@@ -336,6 +338,7 @@
                   %pork                                 ::
                   %warp                                 ::
                   %werp                                 ::
+                  %zeal                                 ::
               ==                                        ::
           task                                          ::
       ==                                                ::
@@ -1333,9 +1336,18 @@
       ruf(hoy (~(put by hoy.ruf) her run(rus rug)))
     ::  save domestic +room
     ::
+    =/  ese=?
+      =/  dojo=(unit dojo)
+        (~(get by dos.rom.ruf) syd)
+      ?~(dojo %.n ese.u.dojo)
+    =/  =dojo
+      :*  qyx.red  dom.red
+          per.red  pew.red
+          fiz.red  ese
+      ==
     %=  ruf
       hun.rom  (need hun)
-      dos.rom  (~(put by dos.rom.ruf) syd [qyx dom per pew fiz]:red)
+      dos.rom  (~(put by dos.rom.ruf) syd dojo)
     ==
   ::
   ++  apex
@@ -1826,6 +1838,7 @@
                 %+  levy  ~(tap by tore:(lu now rof hen ruf))
                 |=  [=desk =zest wic=(set weft)]
                 ?|  =(%base desk)
+                    !ese:(~(got by dos.rom.ruf) desk)
                     !?=(%live zest)
                     !=(~ (~(int in wic) kel))
                 ==
@@ -2269,8 +2282,11 @@
       ^+  ..park
       ?>  =(~ pud)
       =.  pud  `[syd yoki]
-      |^  %.  [hen %slip %c %pork ~]
-          emit:(pass-what files)
+      |^
+      =.  ..park
+        %-  emit  suspend-non-essentials
+      %.  [hen %slip %c %pork ~]
+      emit:(pass-what files)
       ::
       ++  files
         ^-  (list (pair path (cask)))
@@ -2292,6 +2308,24 @@
         |=  fil=(list (pair path (cask)))
         ^+  ..park
         (emit hen %pass /what %$ what/fil)
+      ::
+      ++  suspend-non-essentials
+        =/  lit=(list [desk zest])
+          %+  turn
+            ~(tap by dos.rom.ruf)
+          |=  [=desk =dojo]
+          [desk ?:(ese.dojo %live %held)]
+        =/  sus=(list [desk zest])
+          %+  skim
+            lit
+          |=  [=desk =zest]  ?=(%held zest)
+        :*  hen
+            %pass
+            /kiln/bump/zeal
+            %c
+            %zeal
+            sus
+        ==
       --
     --
   ::
@@ -4832,7 +4866,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%14                                       ::  vane version
+    $:  ver=%15                                       ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
@@ -4900,6 +4934,19 @@
       %drop
     ~&  %clay-idle
     [~ ..^$]
+  ::
+      %esse
+    ?:  ?=(%base des.req)
+      %-  (slog 'clay: base is always essential' ~)
+      [~ ..^$]
+    =.  dos.rom.ruf
+      %+  ~(jab by dos.rom.ruf)
+        des.req
+      |=  =dojo
+      dojo(ese ese.req)
+    =^  mos  ruf
+      abet:wick:((de now rof hen ruf) our %base)
+    [mos ..^$]
   ::
       %info
     ?:  ?=(%| -.dit.req)
@@ -5189,7 +5236,8 @@
 ++  load
   =>  |%
       +$  raft-any
-        $%  [%14 raft-14]
+        $%  [%15 raft-15]
+            [%14 raft-14]
             [%13 raft-13]
             [%12 raft-12]
             [%11 raft-11]
@@ -5198,6 +5246,33 @@
             [%8 raft-8]
             [%7 raft-7]
             [%6 raft-6]
+        ==
+      +$  raft-15
+        $+  raft-15
+        $:  rom=room-15
+            hoy=(map ship rung-14)
+            ran=rang
+            fad=*
+            mon=(map term beam)
+            hez=(unit duct)
+            cez=(map @ta crew)
+            tyr=(set duct)
+            tur=rock:tire
+            pud=(unit [=desk =yoki])
+            sad=(map ship @da)
+            bug=[veb=@ mas=@]
+        ==
+      +$  room-15
+        $:  hun=duct
+            dos=(map desk dojo-15)
+        ==
+      +$  dojo-15
+        $:  qyx=cult
+            dom=dome-13
+            per=regs
+            pew=regs
+            fiz=melt
+            ese=?
         ==
       ::  We redefine the latest raft with * for the the ford caches.
       ::  +clear-cache upgrades to +raft
@@ -5586,7 +5661,8 @@
   =?  old  ?=(%11 -.old)  12+(raft-11-to-12 +.old)
   =?  old  ?=(%12 -.old)  13+(raft-12-to-13 +.old)
   =?  old  ?=(%13 -.old)  14+(raft-13-to-14 +.old)
-  ?>  ?=(%14 -.old)
+  =?  old  ?=(%14 -.old)  15+(raft-14-to-15 +.old)
+  ?>  ?=(%15 -.old)
   ..^^$(ruf (clear-cache +.old))
   ::
   ::  We clear the ford cache so we don't have to know how to upgrade
@@ -5594,13 +5670,13 @@
   ::  Also, many of the results would be different if zuse is different.
   ::
   ++  clear-cache
-    |=  raf=raft-14
+    |=  raf=raft-15
     ^-  raft
     %=    raf
         fad  *flow
         dos.rom
       %-  ~(run by dos.rom.raf)
-      |=  doj=dojo-13
+      |=  doj=dojo-15
       ^-  dojo
       doj(fod.dom *flue)
     ::
@@ -5897,6 +5973,18 @@
         ==
       ==
     ==
+  ::
+  ::  +raft-14-to-15: add ese
+  ::
+  ++  raft-14-to-15
+    |=  raf=raft-14
+    ^-  raft-15
+    %=  raf
+      dos.rom
+      %-  ~(run by dos.rom.raf)
+      |=  d=dojo-13
+      d(fiz [fiz.d ese=%.y])
+    ==
   --
 ::
 ++  scry                                              ::  inspect
@@ -5968,6 +6056,7 @@
         %rang   ``[%rang !>(ran.ruf)]
         %tomb   ``[%flag !>((tomb t.path))]
         %cult   ``[%cult !>((cult t.path))]
+        %esse   (esse t.path)
         %flow   ``[%flow !>(fad.ruf)]
         %domes  domes
         %tire   ``[%tire !>(tore:(lu now rof *duct ruf))]
@@ -6009,6 +6098,15 @@
       %mult  [%mult mool.rove]
       %many  [%many [track moat]:rove]
     ==
+  ::
+  ++  esse
+    |=  =path
+    ^-  (unit (unit cage))
+    ?~  path
+      [~ ~]
+    =/  =desk
+      i.path
+    ``[%esse !>(ese:(~(got by dos.rom.ruf) desk))]
   ::
   ::  True if file is accessible
   ::
@@ -6091,7 +6189,7 @@
   =/  flo  ~
   =+  `flow`flo
   :-  ver
-  ^-  raft-14:load
+  ^-  raft-15:load
   %=    ruf
       fad  flo
       dos.rom
