@@ -1471,7 +1471,7 @@
     ::
     +$  queued-event
       $%  [%call =duct wrapped-task=(hobo task)]
-          [%take =wire =duct sign=*]
+          [%take =wire =duct =sign]
       ==
     ::  $message-pump-task: job for |message-pump
     ::
@@ -1873,7 +1873,7 @@
         =^  event-moves  adult-gate
           ?-  -.first-event
             %call  (call:adult-core [duct ~ wrapped-task]:+.first-event)
-            %take  `adult-gate  ::  (take:adult-core [wire duct ~ sign]:+.first-event)
+            %take  (take:adult-core [wire duct ~ sign]:+.first-event)
           ==
         $(moves (weld event-moves moves))
       ::
