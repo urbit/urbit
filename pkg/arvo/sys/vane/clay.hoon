@@ -318,7 +318,7 @@
           $>(%what waif)                                ::
       ==                                                ::
       $:  %a                                            ::  to %ames
-          $>(?(%plea %keen %yawn %whit) task:ames)      ::
+          $>(?(%plea %keen %yawn %whey) task:ames)      ::
       ==                                                ::
       $:  %b                                            ::  to %behn
           $>  $?  %drip                                 ::
@@ -363,7 +363,7 @@
                   %done                                 ::  (n)ack
                   %lost                                 ::  lost boon
                   %tune                                 ::  |fine response
-                  %mess-response                        ::  |mesa response
+                  %sage                                 ::  |mesa response
               ==                                        ::
           gift:ames                                     ::
       ==                                                ::
@@ -6228,7 +6228,7 @@
       %-  (slog leaf+"clay: lost backfill from {<tea>}" ~)
       [~ ..^$]
     ::
-        ?(%boon %tune %mess-response)
+        ?(%boon %tune %sage)
       =/  her=ship   (slav %p i.t.tea)
       =/  =desk      (slav %tas i.t.t.tea)
       =/  index=@ud  (slav %ud i.t.t.t.tea)
@@ -6251,7 +6251,7 @@
           ::
           %-  (slog leaf+"clay: got null from {<her>}, falling back to ames" ~)
           abet:(retry-with-ames:den %back-index index)
-        =?  den  ?=(?(%tune %mess-response) +<.hin)
+        =?  den  ?=(?(%tune %sage) +<.hin)
           (cancel-scry-timeout:den index)
         abet:abet:(take-backfill:(foreign-update:den index) u.fell)
       [mos ..^$]
@@ -6358,7 +6358,7 @@
       ::
       %boon  !!
       %tune  !!
-      %mess-response  !!
+      %sage  !!
       %lost  !!
       %unto  !!
       %wris  ~&  %strange-wris  !!

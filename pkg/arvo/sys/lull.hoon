@@ -843,7 +843,7 @@
   ::
   +$  task
     $%  [%hear =lane =blob]
-        [%dear =ship =lane:pact]
+        [%dear =ship =lane]
         [%cork =ship]
         [%tame =ship]
         [%kroc bones=(list [ship bone])]
@@ -856,7 +856,6 @@
         [%yawn spar]
         [%wham spar]
         [%plug =path]
-        [%whit boq=@ud spar]
     ::
         $>(%born vane-task)
         $>(%init vane-task)
@@ -868,16 +867,28 @@
         [%stir arg=@t]
         $>(%trim vane-task)
         $>(%vega vane-task)
+    ::  all tasks above, if changed, would need an adapter function in the
+    ::  larval-core +load arm, to change the events to their latest version, as
+    ::  they exists here in %lull.
     ::
-        [%mate (unit ship)]                   ::  per-peer migration
-        [%load ?(%mesa %ames)]                ::  load core for new peers; XX make it term for flexibility?
-        [%back (unit ship)]                   ::  per-peer regression
+    ::  where (i.e. from what version of the ames-state) to do the task would
+    ::  depend on when the task was introduced—%heed and %jilt were introduced
+    ::  in state %4, and removed in %21; %kroc was introduced in state %10,
+    ::  modified in %17...
     ::
-        [%heer =lane:pact p=@]                :: receive a packet
-        [%mess =mess]                         :: receive a message
-        [%moke =space =spar =path]            :: initiate %poke request
-        [%meek =space =spar]                  :: initiate %peek request
-        [%mage =space =spar]                  :: send %page of data
+    ::  when changing any of the tasks above, please follow the same patterns
+    ::  that exists in ames.hoon.
+    ::
+        [%mate (unit ship)]           ::  per-peer migration
+        [%load ?(%mesa %ames)]        ::  load core for new peers; XX make it term for flexibility?
+        [%back (unit ship)]           ::  per-peer regression
+    ::
+        [%heer =lane:pact p=@]        ::  receive a packet
+        [%mess =mess]                 ::  receive a message
+        [%moke =space =spar =path]    ::  initiate %poke request
+        [%meek =space =spar]          ::  initiate %peek request
+        [%mage =space =spar]          ::  send %page of data; intended for acks
+        [%whey boq=@ud spar]          ::  weight of a noun, measured by .boq
     ==
   ::
   ::  $gift: effect from ames
@@ -918,8 +929,8 @@
         [%saxo sponsors=(list ship)]
     ::
         [%push p=(list lane:pact) q=@]   :: send a request/response packet
-        [%mess-response =sage:mess]      :: XX (names) produce deserialized response message
-        [%response load=$>(%page mess)]  :: XX (names) produce serialized response message
+        [%sage =sage:mess]               :: give deserialized/open payload
+        $>(%page mess)                   :: give serialized/sealed payload
     ==
   ::
   ::::                                                  ::  (1a2)
@@ -1564,45 +1575,38 @@
     [16 %0b11]
   ::
   +$  axle
-    $:  %0
-        peers=(map ship ship-state)
-        unix-duct=_`duct`[//ames/0v0 ~]
+    $:  peers=(map ship ship-state)
+        =unix=duct  ::  [//ames/0v0 ~]
         =life
         =rift
-        crypto-core=acru
         =bug
         snub=[form=?(%allow %deny) ships=(set ship)]
         cong=[msg=_5 mem=_100.000]
         $=  dead                            ::  dead-flow consolidation timers
-        $:  flow=[%flow (unit dead-timer)]
-            cork=[%cork (unit dead-timer)]
+        $:  flow=[%flow (unit dead-timer)]  ::  ... for |ames
+            chum=[%chum (unit dead-timer)]  ::  ... for |mesa
+            cork=[%cork (unit dead-timer)]  ::  ... for %nacked corks
+            rots=[%rots (unit dead-timer)]  ::  ... fir expiring direct routes
         ==
         ::
-        =server=chain  ::  for serving %shut requests
-        priv=private-key    ::  XX remove if we use the crypto core?
-        chums=(map ship chum-state)  ::  XX migrated peers
-        core=_`?(%ames %mesa)`%ames          ::  XX use migrated core by default
+        =server=chain                       ::  for serving %shut requests
+        priv=private-key
+        chums=(map ship chum-state)         ::  XX migrated peers
+        core=_`?(%ames %mesa)`%ames         ::  XX use migrated core by default
         ::  TODOs
-        :: XX tmp=(map @ux page)   :: temporary hash-addressed bindings
+        :: XX tmp=(map @ux page)            :: temporary hash-addressed bindings
     ==
   ::
   +$  dead-timer  [=duct =wire date=@da]
-  ::  +address: client IP address
-  ::
-  :: +$  address
-  ::   $%  [%ipv4 @if]
-  ::       [%ipv6 @is]
-  ::       ::  [%ames @p]
-  ::   ==
   ::
   +$  space
     $%  [%publ =life]
         [%chum =our=life her=ship =her=life key=@]
         [%shut kid=@ key=@uxI]
     ==
-  :: +$  lane           (each @pC address)
   ::  [0 %for]    =>  %poke: %plea %watch  =>  [0 %bak]
   ::  [0 %for]   <=   %poke: %boon        <=   [0 %bak]
+  ::
   ::  +load: payloads bounded in the namespace
   ::
   +$  load           ?(%plea %boon %ack-plea %ack-boon %nax %cork)
@@ -1615,22 +1619,13 @@
     $+  chum-state
     $%  [%known fren-state]
         [%alien ovni-state]
-        :: [%comet comet-state]  :: XX
     ==
-  ::
-  +$  comet-state
-    ::  XX move this into ovni-state?
-    ::  ovni-state needs to exist if we try to comunicate before the proof
-    ::  comes back with the comet's keys, so we can later upgrade those
-    ::  pokes/peeks into real requests
-    ::
-    [life=_1 rift=_0 pit=(map path request-state) =ovni-state]
   ::
   +$  ovni-state
     $+  ovni-state
     $:  pokes=(list [=duct message=mesa-message])
         peeks=(jug path duct)
-        pit=(map path request-state)  ::  XX only for comets
+        chums=(jug path duct)
     ==
   ::
   +$  fren-state
@@ -1639,7 +1634,7 @@
         lane=(unit lane:pact)
         =qos
         corked=(set side)  ::  can be +peeked in the namespace
-                          ::  XX how many flows to keep here?
+                           ::  XX how many flows to keep here?
         =ossuary      ::  XX redefine ossuary in terms of bone^side
         flows=(map side flow-state)
       ::  outgoing/incoming requests
@@ -1648,6 +1643,7 @@
         ::              path=ack-path  /~nec/ack/~zod/flow/bone=0/mess=1/frag=1
         ::
         pit=(map path request-state)
+        pot=(jug wire path)      ::  each wire represents a flow, the value is its associated peeks for the acks
         =client=chain            ::  stores keys for %shut requests
     ==
   ::
@@ -1697,6 +1693,7 @@
         ::  outbound %poke payloads, bounded in the ship's namespace
         ::  always and only for requests
         ::
+        $=  snd
         $:  %outbound
           ::  as soon as we can read the ack for the %poke we remove it from
           ::  the queue since that proof that they have processed the message
@@ -1713,7 +1710,6 @@
           ::
           ::  XX option to include messages that won't be bounded into the namespace (two-layer queue)
           loads=((mop ,@ud mesa-message) lte)  :: all unacked
-          cache=((mop ,@ud ?) lte)             :: out-of-order acks
           next-load=_1 :: next %poke to send, always +(last-acked)
           ::  XX how is this calculated?
           ::  XX inferred by the dumb internal congestion control
@@ -1721,13 +1717,15 @@
           ::
           send-window-max=_1  :: how many pleas i can send
           send-window=_1      ::
+          :: cache=((mop ,@ud ?) lte)  :: out-of-order acks XX TODO
         ==
         ::  incoming %pokes, pending their ack from the vane
         ::
+        $=  rcv
         $:  %incoming
           ::  acks can be +peek'ed via a well-formed path with a known structure
-          ::    e.g. /floe/bone=0/~nec/ack/~zod/bak/ack=1 (as stored in the producer of the ack)
-          ::                                          (the reader will be using bone=0)
+          ::    e.g. /flow/bone=0/~nec/ack/~zod/bak/ack=1 (as stored in the producer of the ack)
+          ::                                               (the reader will be using bone=0)
           ::
           last-acked=@ud  :: for acking old duplicates (only 10)
                           :: and dropping future acks
@@ -1804,11 +1802,11 @@
     =>  |%
         +$  auth  (each @uxJ @uxH) :: &+sig, |+hmac
         +$  gage  $@(~ page)
-        +$  sage  (pair [=ship =path] gage)
+        +$  sage  (pair spar gage)
         --
-    $%  [%page (trel [=ship =path] auth @)]
-        [%peek p=[=ship =path]]
-        [%poke p=[=ship =path] q=sage]
+    $%  [%page (trel spar auth @)]
+        [%peek spar]
+        [%poke (pair spar sage)]
     ==
   ::
   ::  packet de/serialization
@@ -1875,17 +1873,17 @@
       =+  ^=  [pac c]
         ?-  typ.hed
           %page  =^  nam  b  ((de:^name b) dat)
-                =^  dat  b  ((de:^data b) dat)
-                =^  nex  b  ((de:^next b nex.hed) ^dat)
-                [[hop.hed [typ.hed nam dat nex]] b]
+                 =^  dat  b  ((de:^data b) dat)
+                 =^  nex  b  ((de:^next b nex.hed) ^dat)
+                 [[hop.hed [typ.hed nam dat nex]] b]
         ::
           %peek  =^  nam  b  ((de:^name b) dat)
-                [[hop.hed [typ.hed nam]] b]
+                 [[hop.hed [typ.hed nam]] b]
         ::
           %poke  =^  nam  b  ((de:^name b) dat)
-                =^  dam  b  ((de:^name b) dat)
-                =^  dat  b  ((de:^data b) dat)
-                [[hop.hed [typ.hed nam dam dat]] b]
+                 =^  dam  b  ((de:^name b) dat)
+                 =^  dat  b  ((de:^data b) dat)
+                 [[hop.hed [typ.hed nam dam dat]] b]
         ==
       =/  gum
         (end [0 20] (mug (cut -.c [(rig b -.c) +.c] dat)))
@@ -1901,7 +1899,7 @@
       ^-  plot
       =/  tip  ?-(typ %page 0b1, %peek 0b10, %poke 0b11)
       =.  hop  (min 7 hop)
-      =*  tok  [32 ~tasfyn-partyv]
+      =*  tok  [32 0x67e0.0200]
       :-  bloq=0
       [[2 0] [2 nex] [3 ver=1] [2 tip] [3 hop] [20 gum] tok ~]
     ::
@@ -1914,7 +1912,7 @@
         ((hew b dat) [res=2 nex=2 ver=3 tip=2 hop=3 gum=20 tok=32])
       ?>  =(0 res.c)
       ?>  =(1 ver.c)
-      ?>  =(~tasfyn-partyv tok.c)
+      ?>  =(0x67e0.0200 tok.c)
       =/  typ  ?+(tip.c !! %0b1 %page, %0b10 %peek, %0b11 %poke)
       [[nex.c typ hop.c gum.c] b]
     --

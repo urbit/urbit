@@ -43,7 +43,7 @@
     public-key
   =/  cub  (pit:nu:crub:crypto 512 (shaz (jam mon life=1 eny)))
   =/  =feed:jael
-    [[%2 ~] mon 1 [0 sec:ex:cub]~]
+    [[%2 ~] mon rift=0 [life=1 sec:ex:cub]~]
   %-  %-  slog
       :~  leaf+"moon: {(scow %p mon)}"
           leaf+(scow %uw (jam feed))

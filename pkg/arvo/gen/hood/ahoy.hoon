@@ -4,4 +4,4 @@
   ::
 /?    310
 :-  %say
-|=([^ [who=ship ~] ~] helm-send-ahoy/who)
+|=([^ [who=ship test=? ~] ~] helm-send-ahoy/who^test)
