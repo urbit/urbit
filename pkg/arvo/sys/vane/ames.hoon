@@ -6120,7 +6120,7 @@
             `ames-state
           ::
           =<  abet
-          ?+  sign  ~&(ames-take-sign/[&1^&2]:sign event-core)
+          ?+  sign  ~&(ames-weird-take-sign/[&1^&2]:sign^wire event-core)
             [@ %done *]  (on-take-done:event-core wire error.sign)
             [@ %boon *]  (on-take-boon:event-core wire payload.sign)
             [@ %noon *]  (on-take-noon:event-core wire id.sign payload.sign)
@@ -7002,7 +7002,9 @@
               ?:  (lth rift rift.sat.per)
                 :: XX log
                 ev-core  ::  ignore events from an old rift
-              ?>  ?=([%van %bak] [were dire])  ::  vane acks happen on backward flows
+              ::  vane acks happen on backward flows
+              ::
+              ?>  ?=([%van %bak] [were dire])
               %+  ev-req-boon  bone
               ?+  -.gift  !!
                 %boon  `payload.gift
@@ -9820,44 +9822,50 @@
     ::  gifts (which can trigger other gifts to be sent to unix) by setting up
     ::  a timer that will request them again
     ::
-    :_  vane-gate
-    =/  wires=(list ^wire)
-      ?:  ?=(%turf -.wire)
-        ~>  %slog.0^leaf/"ames: unix-duct missing; delay %turf"
-        [%mesa %ask wire]~
-      ?>  ?=([%jael %public-keys *] sign)
-      =/  gift=public-keys-result:jael  +>.sign
-      ?.  ?=(%full -.gift)
-        ~&(unexpected-ask-gift/-.gift ~)
-      =/  ships=(set ship)  ~(key by points.gift)
-      %-  ~(rep in ships)
-      |=  [=ship wires=(list ^wire)]
-      ~>  %slog.0^leaf/"ames: unix-duct missing; delay {<i.wire>} for {<ship>}"
-      :_  wires
-      [%mesa %ask /public-keys/[(scot %p ship)]]
-    %+  turn  wires
-    |=  =^wire
-    ^-  move
-    [~[/ames] %pass wire %b %wait `@da`(add now ~s30)]
-  ::  XX revisit, looks wrong
-  =/  parsed-wire  (parse-bone-wire wire)
-  ?:  ?=(~ parsed-wire)  :: XX ?=(^ parsed-wire)
+    =;  wires=(list ^wire)
+      :_  vane-gate
+      %+  turn  wires
+      |=  =^wire
+      ^-  move
+      [~[/ames] %pass wire %b %wait `@da`(add now ~s30)]
+    ?:  ?=(%turf -.wire)
+      ~>  %slog.0^leaf/"ames: unix-duct missing; delay %turf"
+      [%mesa %ask wire]~
+    ?>  ?=([%jael %public-keys *] sign)
+    =/  gift=public-keys-result:jael  +>.sign
+    ?.  ?=(%full -.gift)
+      ~&(unexpected-ask-gift/-.gift ~)
+    =/  ships=(set ship)  ~(key by points.gift)
+    %-  ~(rep in ships)
+    |=  [=ship wires=(list ^wire)]
+    ~>  %slog.0^leaf/"ames: unix-duct missing; delay {<i.wire>} for {<ship>}"
+    :_  wires
+    [%mesa %ask /public-keys/[(scot %p ship)]]
+  ?~  parsed-wire=(parse-bone-wire wire)
+    ::  not a /bone wire—used when passing %pleas to a local vane; use |ames
+    ::  (if the peer has been migrated we will no-op there)
+    ::
     (take:am-core sample)
-  ::  XX log
-  ::  migrate wire if the peer is in chums
-  ::
   =/  ship-state  (pe-find-peer her.u.parsed-wire)
   ?:  ?=(%ames -.ship-state)
     (take:am-core sample)
-  ?:  ?=(%old -.u.parsed-wire)  `vane-gate  :: drop old wires
-  ~&  >>  %migrating-wire
+  ::  /bone wire for a migrated peer; migrate wire
+  ::
+  %-  (slog leaf+"ames: migrating wire: {<wire>}" ~)
   %-  take:me-core
   :_  +.sample
   ^-  ^wire
   :~  %mesa  %flow  %van  %bak
     (scot %p her.u.parsed-wire)
-    (scot %ud rift.u.parsed-wire)
-    (scot %ud (mix 0b1 bone.u.parsed-wire))
+  ::
+    %+  scot  %ud
+    ?.  ?=(%old -.u.parsed-wire)  ::  XX  drop old wires? revisit
+      rift.u.parsed-wire
+    rift:(got-per:me-core her.u.parsed-wire)
+  ::
+    %+  scot  %ud
+    %+  mix   0b1  ::  flip bit; the wire is tagged with %bak
+    ?-(u.parsed-wire [%new *] bone.u.parsed-wire, [%old *] bone.u.parsed-wire)
   ==
 ::  +stay: extract state before reload
 ::
