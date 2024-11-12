@@ -1439,6 +1439,46 @@
     ?~  ref
       [%give %writ riot]
     [%pass /drip %b %drip !>([%writ riot])]
+
+  ::
+  ::  +get-kelvin: read the desk's kernel version from /sys/kelvin
+  ::
+  ++  get-kelvin
+    |=  =yoki
+    ^-  waft
+    |^  ?-    -.yoki
+            %|
+          %-  lobe-to-waft
+          ~>  %mean.(cat 3 'clay: missing /sys/kelvin on ' syd)
+          ~|  ~(key by q.p.yoki)
+          (~(got by q.p.yoki) /sys/kelvin)
+        ::
+            %&
+          =/  fil=(each page lobe)
+            ~>  %mean.(cat 3 'clay: missing /sys/kelvin on ' syd)
+            ~|  ~(key by q.p.yoki)
+            (~(got by q.p.yoki) /sys/kelvin)
+          ?-    -.fil
+              %&  (page-to-waft p.fil)
+              %|  (lobe-to-waft p.fil)
+          ==
+        ==
+    ::
+    ++  lobe-to-waft
+      |=  =lobe
+      ^-  waft
+      =/  peg=(unit page)  (~(get by lat.ran) lobe)
+      ?~  peg  ~|([%sys-kelvin-tombstoned syd] !!)
+      (page-to-waft u.peg)
+    ::
+    ++  page-to-waft
+      |=  =page
+      ^-  waft
+      ?+    p.page  ~|(clay-bad-kelvin-mark/p.page !!)
+          %kelvin  ;;(waft q.page)
+          %mime    (cord-to-waft q.q:;;(mime q.page))
+      ==
+    --
   ::
   ++  case-to-date
     |=  =case
@@ -2027,45 +2067,6 @@
         |
       %-  ~(any in invalid)
       |=(p=path &((is-kernel-path p) !?=([%sys %vane *] p)))
-    ::
-    ::  +get-kelvin: read the desk's kernel version from /sys/kelvin
-    ::
-    ++  get-kelvin
-      |=  =yoki
-      ^-  waft
-      |^  ?-    -.yoki
-              %|
-            %-  lobe-to-waft
-            ~>  %mean.(cat 3 'clay: missing /sys/kelvin on ' syd)
-            ~|  ~(key by q.p.yoki)
-            (~(got by q.p.yoki) /sys/kelvin)
-          ::
-              %&
-            =/  fil=(each page lobe)
-              ~>  %mean.(cat 3 'clay: missing /sys/kelvin on ' syd)
-              ~|  ~(key by q.p.yoki)
-              (~(got by q.p.yoki) /sys/kelvin)
-            ?-    -.fil
-                %&  (page-to-waft p.fil)
-                %|  (lobe-to-waft p.fil)
-            ==
-          ==
-      ::
-      ++  lobe-to-waft
-        |=  =lobe
-        ^-  waft
-        =/  peg=(unit page)  (~(get by lat.ran) lobe)
-        ?~  peg  ~|([%sys-kelvin-tombstoned syd] !!)
-        (page-to-waft u.peg)
-      ::
-      ++  page-to-waft
-        |=  =page
-        ^-  waft
-        ?+    p.page  ~|(clay-bad-kelvin-mark/p.page !!)
-            %kelvin  ;;(waft q.page)
-            %mime    (cord-to-waft q.q:;;(mime q.page))
-        ==
-      --
     ::
     ::  Find which files changed or were deleted
     ::
@@ -3215,7 +3216,18 @@
   ::
   ++  set-zest                                          ::  [goad] <
     |=  liv=zest
-    =?  liv  =(%base syd)  %live
+    ?:  =(%base syd)
+      ..park(liv.dom %live)
+    ?.  ?=(%live liv)
+      ..park(liv.dom liv)
+    =/  kel=(set weft)
+      %-  waft-to-wefts
+      %+  fall
+        (mole |.((get-kelvin %| (aeon-to-yaki:ze let.dom))))
+      [[%1 ~] ~]
+    ?.  (~(has in kel) zuse+zuse)
+      =/  msg  "clay: can't set {<syd>} live, it doesn't support zuse {<zuse>}"
+      ((slog leaf+msg ~) ..park)
     ..park(liv.dom liv)
   ::
   ++  rise                                              ::  [goad] <
@@ -4593,7 +4605,7 @@
       |^  =/  res  (mule |.(read))
           ?:  ?=(%& -.res)  p.res
           %.  [[~ ~] ..park]
-          (slog leaf+"clay: read-at-tako fail {<[desk=syd mun]>}" p.res)
+          (slog leaf+"clay: read-at-tako fail {<[desk=syd mun]>}" (flop p.res))
       ::
       ++  read
         ^-  [(unit (unit cage)) _..park]
