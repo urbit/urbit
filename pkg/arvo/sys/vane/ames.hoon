@@ -3552,10 +3552,9 @@
               =^  total-dead  event-core
                 %-  ~(rep by peers.ames-state:event-core)
                 |=  [[=ship =ship-state] n=@ core=_event-core]
-                ?~  peer-state=(get-peer-state:core ship)
+                ?.  ?=(%known -.ship-state)
                   [n core]
-                ::
-                =*  peer     u.peer-state
+                =*  peer     +.ship-state
                 =/  old-qos  -.qos.peer
                 =/  old-rot  route.peer
                 =.  peer     (update-peer-route ship peer)
@@ -3566,10 +3565,12 @@
                       ?=(%dead -.qos.peer)      ::
                   ==
                 ::
-                :-  ?:(expired +(n) n)
+                ?.  expired
+                  [n core]
+                :-  +(n)
                 ::
                 %-  (ev-trace:core &(expired kay.veb) ship |.("route has expired"))
-                =?  core  expired
+                =.  core
                   %-  emit:core
                   :*  unix-duct.ames-state  %give  %nail  ship
                       (get-forward-lanes our peer peers.ames-state)
