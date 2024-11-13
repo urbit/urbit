@@ -2279,15 +2279,9 @@
         larval-gate
       ::
           [%23 *]
-        ?-    +<.old
-            %larva
-          =.  cached-state  `[%23 state.old]
-          ~>  %slog.1^leaf/"ames: larva %23 load"
-          larval-gate
-        ::
-            %adult
-          ~>  %slog.1^leaf/"ames: adult %23 reload"
-          (load:adult-core state.old)
+        ?-  +<.old
+          %larva  larval-gate
+          %adult  (load:adult-core state.old)
         ==
       ==
       ::

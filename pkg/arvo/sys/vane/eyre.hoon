@@ -1022,7 +1022,7 @@
         %-  crip
         %+  scan  ~(rend co [%$ %is +.address])
         ;~(pfix dot (star ;~(pose (cold ':' dot) next)))
-      ==  
+      ==
     (as-octs:mimes:html ip)
   ::  Get current sponsor of ship
   ::
