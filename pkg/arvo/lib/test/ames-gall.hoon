@@ -38,10 +38,8 @@
   =.  life.ames-state.nec  nec.life
   =.  rift.ames-state.nec  nec.rift
   =.  rof.nec  |=(* ``[%noun !>(*(list turf))])
-  =.  crypto-core.ames-state.nec  nec:crypto-core
-  =.  priv.ames-state.nec  sec:ex:crypto-core.ames-state.nec
-  =/  nec-pub  pub:ex:crypto-core.ames-state.nec
-  =/  nec-sec  sec:ex:crypto-core.ames-state.nec
+  =/  nec-pub  pub:ex:nec:crypto-core
+  =.  priv.ames-state.nec  sec:ex:nec:crypto-core
   ::  create ~bud
   ::
   =/  bud  (ames-raw ~bud)
@@ -50,13 +48,13 @@
   =.  life.ames-state.bud  bud.life
   =.  rift.ames-state.bud  bud.rift
   =.  rof.bud  |=(* ``[%noun !>(*(list turf))])
-  =.  crypto-core.ames-state.bud  bud:crypto-core
-  =.  priv.ames-state.bud  sec:ex:crypto-core.ames-state.bud
-  =/  bud-pub  pub:ex:crypto-core.ames-state.bud
-  =/  bud-sec  sec:ex:crypto-core.ames-state.bud
+  =/  bud-pub  pub:ex:bud:crypto-core
+  =.  priv.ames-state.bud  sec:ex:bud:crypto-core
   ::
-  =/  nec-sym  (derive-symmetric-key:ames-raw bud-pub nec-sec)
-  =/  bud-sym  (derive-symmetric-key:ames-raw nec-pub bud-sec)
+  =/  nec-sym  (derive-symmetric-key:ames-raw bud-pub priv.ames-state.nec)
+  =/  bud-sym  (derive-symmetric-key:ames-raw nec-pub priv.ames-state.bud)
+  ~&  nec-sym/nec-sym
+  ~&  bud-sym/bud-sym
   ?>  =(nec-sym bud-sym)
   ::  create ~zod
   ::
@@ -66,70 +64,44 @@
   =.  life.ames-state.zod  zod.life
   =.  rift.ames-state.zod  zod.rift
   =.  rof.zod  |=(* ``[%noun !>(*(list turf))])
-  =.  crypto-core.ames-state.zod  zod:crypto-core
-  =.  priv.ames-state.zod  sec:ex:crypto-core.ames-state.zod
   =/  zod-pub  0w9M.E8uEq.bMUA6.w3JpW.1mp5L.Olult.RbUD8.zKS7S.6ULTf.2Vu1e.X82gL.sJpEJ.1laGg.OqNMv.Lczji.r12Pn.~Z7bb.GCvty
   =/  zod-sec  0w84.0MwlQ.y2Ly9.6HVmH.8SYwo.EvuLC.f5YRw.T2NzD.EHtjZ.gpHZb.J0Pu5.aTGVL.UugSA.EZ~E9.~PODC.cohVD.B1zWj.ZWnJ2
+  =.  priv.ames-state.zod  zod-sec
   ::
-  =/  nec-sym  0wRP.97l8B.vvz64.3eFJz.lEp0u.8KKj-.0MiR6.8nbji.DBNki
-  =/  zod-sym  0wRP.97l8B.vvz64.3eFJz.lEp0u.8KKj-.0MiR6.8nbji.DBNki
-  ?>  =(nec-sym zod-sym)
-  ::  tell ~nec about ~zod
+  :: =/  nec-sym  0wRP.97l8B.vvz64.3eFJz.lEp0u.8KKj-.0MiR6.8nbji.DBNki
+  :: =/  zod-sym  0wRP.97l8B.vvz64.3eFJz.lEp0u.8KKj-.0MiR6.8nbji.DBNki
+  :: ?>  =(nec-sym zod-sym)
   ::
-  =.  chums.ames-state.nec
-    %+  ~(put by chums.ames-state.nec)  ~zod
-    =|  =fren-state:ames
-    =.  -.fren-state
-      :*  symmetric-key=zod-sym
-          life=zod.life
-          rift=zod.rift
-          public-key=zod-pub
-          sponsor=~zod
-      ==
-    =.  route.fren-state  [direct=%.y *lane:pact:ames]~
-    [%known fren-state]
   ::  tell ~nec about ~bud
   ::
-  =.  chums.ames-state.nec
-    %+  ~(put by chums.ames-state.nec)  ~bud
-    =|  =fren-state:ames
-    =.  -.fren-state
+  =.  peers.ames-state.nec
+    %+  ~(put by peers.ames-state.nec)  ~bud
+    =|  =peer-state:ames-raw
+    =.  -.peer-state
       :*  symmetric-key=bud-sym
           life=bud.life
           rift=bud.rift
           public-key=bud-pub
           sponsor=~bud
       ==
-    =.  route.fren-state  [direct=%.y *lane:pact:ames]~
-    [%known fren-state]
-  ::  tell ~zod about ~nec
-  ::
-  =.  chums.ames-state.zod
-    %+  ~(put by chums.ames-state.zod)  ~nec
-    =|  =fren-state:ames
-    =.  -.fren-state
-      :*  symmetric-key=nec-sym
-          life=nec.life
-          rift=nec.rift
-          public-key=nec-pub
-          sponsor=~nec
-      ==
-    =.  route.fren-state  [direct=%.y *lane:pact:ames]~
-    [%known fren-state]
+    =.  route.peer-state  `[direct=%.y %& ~bud]
+    [%known peer-state]
   ::  tell ~bud about ~nec
   ::
-  =.  chums.ames-state.bud
-    %+  ~(put by chums.ames-state.bud)  ~nec
-    =|  =fren-state:ames
-    =.  -.fren-state
+  ~&  >>  "tell ~bud about ~nec"^nec-sym
+  =.  peers.ames-state.bud
+    %+  ~(put by peers.ames-state.bud)  ~nec
+    =|  =peer-state:ames-raw
+    =.  -.peer-state
       :*  symmetric-key=nec-sym
           life=nec.life
           rift=nec.rift
           public-key=nec-pub
           sponsor=~nec
       ==
-    =.  route.fren-state  [direct=%.y *lane:pact:ames]~
-    [%known fren-state]
+    =.  route.peer-state  `[direct=%.y %& ~nec]
+    [%known peer-state]
+  ::
   ::  metamorphose
   ::
   =>  .(nec +:(call:(nec) ~[//unix] ~ %born ~))
@@ -211,7 +183,7 @@
   |=  [pac=(list move:ames-bunt) exp=noun]
   ~|  pac
   ?~  pac  (expect-eq !>(0) !>(1))
-  ?.  ?=([duct=^ [%give [%mess-response *]]] i.pac)
+  ?.  ?=([duct=^ [%give [%sage *]]] i.pac)
     :: ~&  i.pac
     $(pac t.pac)
   :: ~|  i.pac
@@ -223,11 +195,11 @@
 ++  ames-make-pact
   |=  [=ames-gate =spar:ames =path =per=rift =space:ames-bunt]
   ^-  @
-  =/  ames-core  (ames-gate now=~1111.1.1 eny=`@`0xdead.beef *roof)
-  =/  mesa-core
-    (ev-abed:ev-core:mesa:ames-core [//test]~)
-  =/  =pact:pact:ames-bunt  (ev-make-pact:mesa-core spar `path per-rift `space)
-  p:(fax:plot:ames-bunt (en:pact:ames-bunt pact))
+  =/  sample     [now=~1111.1.1 eny=`@`0xdead.beef *roof]
+  =/  ames-core  (ames-gate sample)
+  ?~  pact=(co-make-pact:co:(mesa:ames-core sample) spar `path per-rift)
+    !!
+  p:(fax:plot (en:pact:ames u.pact))
 ::
 ++  ames-scry-payload
   |=  [=ames-gate =ship =path]
@@ -289,37 +261,38 @@
   |=  [=ames-gate =wire =duct sign=sign:ames-bunt =roof]
   %.  [wire duct dud=~ sign]
   take:(ames-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
-:: ++  ames-scry-hunk
-::   |=  $:  =ames-gate
-::           [now=@da eny=@ =roof]
-::           our=ship
-::           [lop=@ud len=@ud pax=path]
-::       ==
-::   ^-  [sig=@ux meows=(list @ux)]
-::   =/  =beam
-::     :-  [our %$ da+now]
-::     (welp /fine/hunk/[(scot %ud lop)]/[(scot %ud len)] pax)
-::   =+  pat=(spat pax)
-::   =+  wid=(met 3 pat)
-::   ?>  (lte wid 384)
-::   =/  meows
-::     !<  (list @ux)
-::     =<  q
-::     %-  need  %-  need
-::     (scry:(ames-gate now eny roof) ~ / %x beam)
-::   ::
-::   =/  paz=(list have:ames)
-::     %+  spun  meows
-::     |=  [blob=@ux num=_1]
-::     ^-  [have:ames _num]
-::     :_  +(num)
-::     [num (sift-meow:ames blob)]
-::   ::
-::   :-  sig:(sift-roar:ames-raw (lent paz) (flop paz))
-::   %+  spun  meows
-::   |=  [meow=@ux num=_1]
-::   :_  +(num)
-::   (can 3 4^num 2^wid wid^`@`pat (met 3 meow)^meow ~)
+::
+++  ames-scry-hunk
+  |=  $:  =ames-gate
+          [now=@da eny=@ =roof]
+          our=ship
+          [lop=@ud len=@ud pax=path]
+      ==
+  ^-  [sig=@ux meows=(list @ux)]
+  =/  =beam
+    :-  [our %$ da+now]
+    (welp /fine/hunk/[(scot %ud lop)]/[(scot %ud len)] pax)
+  =+  pat=(spat pax)
+  =+  wid=(met 3 pat)
+  ?>  (lte wid 384)
+  =/  meows
+    !<  (list @ux)
+    =<  q
+    %-  need  %-  need
+    (scry:(ames-gate now eny roof) ~ / %x beam)
+  ::
+  =/  paz=(list have:ames)
+    %+  spun  meows
+    |=  [blob=@ux num=_1]
+    ^-  [have:ames _num]
+    :_  +(num)
+    [num (sift-meow:ames blob)]
+  ::
+  :-  sig:(sift-roar:ames-raw (lent paz) (flop paz))
+  %+  spun  meows
+  |=  [meow=@ux num=_1]
+  :_  +(num)
+  (can 3 4^num 2^wid wid^`@`pat (met 3 meow)^meow ~)
 ::
 ++  ames-scry-peer
   |=  $:  =ames-gate
@@ -327,9 +300,9 @@
           our=ship
           her=ship
       ==
-  ^-  fren-state:ames
+  ^-  peer-state:ames
   =-  ?>(?=(%known -<) ->)
-  !<  chum-state:ames
+  !<  ship-state:ames
   =<  q
   %-  need  %-  need
   %-  scry:(ames-gate now eny roof)
