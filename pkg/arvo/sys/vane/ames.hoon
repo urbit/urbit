@@ -6542,6 +6542,12 @@
               ::
                   %heer
                 =/  =pact:pact  (parse-packet p.task)
+                ::  XX set .per in the door sample extracting the ship and
+                ::  the %chum if it existst; currently this arm is only called
+                ::  in call:mesa when handling errors, and the inner pact/mess
+                ::  arms are called directly in the |pe core, using ev-foco to
+                ::  focus of the $fren, on enqueing an alien todo
+                ::
                 ?-  +<.pact
                   %page  (ev-pact-page lane.task hop.pact +>.pact)
                   %peek  (ev-pact-peek +>.pact)
@@ -6558,6 +6564,12 @@
                   =^  moves  ames-state
                     sy-abet:(~(sy-crud sy hen) %mess tang.u.dud.task)
                   (ev-emil moves)
+                ::  XX set .per in the door sample extracting the ship and
+                ::  the %chum if it existst; currently this arm is only called
+                ::  in call:mesa when handling errors, and the inner pact/mess
+                ::  arms are called directly in the |pe core, using ev-foco to
+                ::  focus of the $fren, on enqueing an alien todo
+                ::
                 ?-  -.mess.task
                   %page  (ev-mess-page +.mess.task)
                   %peek  (ev-mess-peek +.mess.task)
@@ -6739,14 +6751,12 @@
                     ==
                   ev-core
                 =/  proof=(list @ux)  (rip 8 dat.data)
-                ~&  >>>  auth/proof
                 ?>  (authenticate (recover-root:verifier:lss proof) aut.data name)
                 =/  state  (init:verifier:lss tof proof)
-                =.  chums.ames-state
-                  %+  ~(put by chums.ames-state)  her.name
-                  =-  known/sat.per(pit -)
-                  %+  ~(put by pit)  sealed-path
-                  u.res(ps `[state ~])
+                =.  sat.per
+                  %_  sat.per
+                    pit  (~(put by pit) sealed-path u.res(ps `[state ~]))
+                  ==
                 ::
                 ~&  >>  "request next fragment"^fag
                 ::  request next fragment
@@ -6766,6 +6776,7 @@
                   =/  mod  (bex (dec boq.name))  :: XX unguarded
                   ?:  =(1 (div (add tob.data (dec mod)) mod))
                     ~&  [tob=tob.data met=(met 3 dat.data)]
+                    ~|  aut.data
                     ?>  ?=(%& -.aut.data)
                     ?>  (authenticate (root:lss tob.data^dat.data) aut.data name)
                     =/  =spar       [her.name inner-path]
@@ -6793,13 +6804,13 @@
                   ?.  =(+(fag) leaves.los.ps)
                     1.024^dat.data
                   (met 3 dat.data)^dat.data
+                ~|  los.ps^leaf^pair
                 =.  los.ps   (verify-msg:verifier:lss los.ps [leaf pair])
                 =.  fags.ps  [dat.data fags.ps]
-                =.  chums.ames-state
-                  %+  ~(put by chums.ames-state)  her.name
-                  =-  known/sat.per(pit -)
-                  %+  ~(put by pit)  sealed-path
-                  u.res
+                =.  sat.per
+                  %_  sat.per
+                    pit  (~(put by pit) sealed-path u.res(ps `ps))
+                  ==
                 ::  is the message incomplete?
                 ::
                 ?.  =(+(fag) leaves.los.ps)
@@ -7781,6 +7792,7 @@
                   =*  ser  ser.msg
                   =/  wid  (met boq ser)
                   =/  tob  (met 3 ser)
+                  ~&  wid=wid^tob=tob^boq=boq
                   ?<  ?=(%0 wid)  :: XX is this true?
                   =/  nit=?  |    :: XX refactor
                   |-  ^-  (unit (unit cage))
