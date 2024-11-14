@@ -2,7 +2,7 @@
 ::
 /+  *test, v=test-mesa-gall
 =+  [nec-life=2 bud-life=3]
-=+  (nec-bud:v [nec-life bud-life] nec=0 bud=0)
+=+  (ames-nec-bud:v [nec-life bud-life] nec=0 bud=0)
 |%
 ++  dbug  `?`&
 ++  make-roof
@@ -10,73 +10,97 @@
   ^-  roof
   |=  [lyc=gang pov=path vis=view bem=beam]
   ^-  (unit (unit cage))
-  ~&  s.bem^pax
-  ?.  &(=(s.bem pax) |(=(vis %x) =(vis [%$ %x]) =(vis [%g %x])))  [~ ~]
+  ~&  >>>  make-roof/s.bem^pax^vis
+  ?.  &(=(s.bem pax) |(=(vis %x) =(vis [%$ %x]) =(vis [%g %x]) =(vis [%a %x])))
+    [~ ~]
   ``val
 ::
 ++  test-watch
   %-  run-chain
   |.  :-  %|
-  =/  poke-plea  [%g /ge/pok [%0 %m noun/0]]
-  =/  poke-path  //x/1//flow/0/~nec/poke/~bud/for/1
-  =/  ack-path   //x/1//flow/0/~bud/ack/~nec/bak/1
   ::
-  =/  ack-wire   /flow/int/for/~bud/0/0/1
-  =/  vane-wire  /flow/out/bak/~nec/0/0/1
-  =/  make-poke=[%make-poke space:mesa =spar:ames =path]
-    [%make-poke %publ^life=bud-life [~bud ack-path] poke-path]
+  =/  key-1  =<  symmetric-key
+    ^-  fren-state:ames
+    %:  ames-scry-peer:v
+      nec
+      [~1111.1.10 0xdead.beef *roof]
+      [~nec ~bud]
+    ==
+  =/  key  `@uv`49.444.113.421.508.228.869.460.528.530.323.207.394.851.818.486.403.699.510.004.444.292.293.148.898.490
+  ~&  [key-1 key]
+  =/  =space:ames
+    [%chum our-life=bud-life her=~nec her-life=nec-life key]
+  =/  poke-space
+    ?>  ?=(%chum -.space)
+    space(our-life her-life.space, her-life our-life.space, her ~bud)
+
+    :: :-  %chum
+    :: ::  lifes need to be switched since for %pokes,
+    :: ::  this is a payload in our namespace
+    :: [nec-life ~bud bud-life `@`key]
+  ::
+  =/  poke-plea  [%g /ge/pok [%0 %m noun/0]]
+  =/  poke-path  /flow/0/plea/~bud/1
+  =/  ack-path   /flow/0/ack-plea/~nec/1
+  ::
+  =/  ack-wire   /mesa/flow/ack/for/~bud/0/0
+  =/  vane-wire  /mesa/flow/van/bak/~nec/0/0
+  =/  ack-full-path=path  (make-space-path.nec space %a %x '1' %$ ack-path)
+  =/  pok-full-path=path
+    (make-space-path.nec poke-space %a %x '1' %$ poke-path)
+  =/  moke=[%moke space:ames =spar:ames =path]
+    [%moke space [~bud %a %x '1' %$ ack-path] %a %x '1' %$ poke-path]
+  =/  mage=[%mage space:ames =spar:ames]
+    [%mage space [~nec %a %x '1' %$ ack-path]]
   ::
   ~?  >  dbug  'send %poke-plea to ~bud'
-  =^  moves-1  mesa.nec
-    %:    mesa-check-call:v  mesa.nec
+  =^  moves-1  nec
+    %:    ames-check-call:v  nec
         [~1111.1.1 0xdead.beef *roof]
     ::
       [~[/poke] %plea ~bud poke-plea]
     ::
       :~  :-  ~[/poke]
-          [%pass ack-wire %m make-poke]
+          [%pass ack-wire %a moke]
       ==
     ==
   ::
-  =/  ack-full-path  (weld /publ/[(scot %ud bud-life)] ack-path)
-  =/  pok-full-path  (weld /publ/[(scot %ud nec-life)] poke-path)
   :-  moves-1  |.  :-  %|
   ~?  >  dbug  '~nec makes $pact and sends it'
-  =/  poke-roof  (make-roof /flow/0/~nec/poke/~bud/for/1 message+!>(poke-plea))
-  =^  moves-2  mesa.nec
-    %:    mesa-check-call:v  mesa.nec
+  =/  poke-roof  (make-roof /flow/0/plea/~bud/1 message+!>(poke-plea))
+  =^  moves-2  nec
+    %:    ames-check-call:v  nec
         [~1111.1.1 0xdead.beef poke-roof]
     ::
-      [~[/flow/int/for/~bud/0/0/1 /poke] make-poke]
+      [~[ack-wire /poke] moke]
     ::
       =/  blob=@
-        %:   mesa-make-pact:v  mesa.nec
-          ~bud^ack-full-path
-          poke-path
+        %:   ames-make-pact:v  nec
+          `spar:ames`[~bud ack-full-path]
+          pok-full-path
           rift=0
-          publ/bud-life
+          poke-roof
         ==
-      :~  [~[//unix] %give %send lanes=~ blob]
+      :~  [~[//unix] %give %push lanes=~[0x0] blob]
       ==
     ==
   ::
   :-  moves-2  |.  :-  %|
   ~?  >  dbug  '~bud hears %poke-plea from ~nec'
-  =/  message=mess:mesa
+  =/  message=mess:ames
     ::  XX  the message layer should only get the inner path (from rift onwards)
     ::
     :*  %poke
         [~bud ack-path]
         [~nec poke-path]
-        auth=&+*@uxJ
-        page=message/poke-plea
+        page=[%message plea/poke-plea]
     ==
   ::
-  =^  moves-3  mesa.bud
-    %:  mesa-check-call:v  mesa.bud
+  =^  moves-3  bud
+    %:  ames-check-call:v  bud
       [~1111.1.2 0xbeef.dead *roof]
       :-  ~[//unix]
-      [%mess lane=`*@ux message]
+      [%mess message]
     ::
       :~  :-  ~[//unix]
           [%pass vane-wire %g %plea ~nec poke-plea]
@@ -89,25 +113,29 @@
     %+  expect-eq
     !>  %.y
     !>  =/  flows  =<  flows
-          %:  mesa-scry-peer:v
-            mesa.bud
+          ^-  fren-state:ames
+          %:  ames-scry-peer:v
+            bud
             [~1111.1.10 0xdead.beef *roof]
             [~bud ~nec]
           ==
         ?&  (~(has by flows) 0 %bak)
-            pending-ack:(~(got by flows) 0 %bak)
+            pending-ack.rcv:(~(got by flows) 0 %bak)
         ==
   ::
   :-  moves-4  |.  :-  %|
   ~?  >  dbug  '%gall gives %done to %ames'
-  =^  moves-5  mesa.bud
-    %:  mesa-check-take:v  mesa.bud
+  =^  moves-5  bud
+    %:  ames-check-take:v  bud
       [~1111.1.2 0xbeef.dead *roof]
       :+  vane-wire
         ~[//unix]
       [%gall %done ~]
     ::
-      ~  :: XX emit ack to unix
+      :~  :-  ~[/ames]
+          [%pass /make-page %a mage]
+      ==
+      :: XX emit ack to unix
       :: :~  :-  ~[//unix]
       ::     :*  %give  %send  [%& ~nec]
       ::         0x2.0219.8100.0485.5530.3c88.9068.3cc6.484e.
@@ -121,30 +149,32 @@
     %+  expect-eq
     !>  1
     !>  =/  flows  =<  flows
-          %:  mesa-scry-peer:v
-            mesa.bud
+          ^-  fren-state:ames
+          %:  ames-scry-peer:v
+            bud
             [~1111.1.10 0xdead.beef *roof]
             [~bud ~nec]
           ==
-        last-acked:(~(got by flows) 0 %bak)
+        last-acked.rcv:(~(got by flows) 0 %bak)
   ::
-  ~?  >  dbug  'poke payload is accesible at /~nec/poke/~bud/flow/0/for/1'
+  ~?  >  dbug  'poke payload is accesible at /flow/0/plea/~bud/1'
   :-  moves-6  |.  :-  %|
   =/  moves-7
     %+  expect-eq
     !>  plea/poke-plea
     !>  !<  page
         =<  ?>  ?=(%message p)  q
-        (mesa-scry-payload:v mesa.nec ~nec poke-path)
+        =/  poke-roof  (make-roof /flow/0/plea/~bud/1 message+!>(poke-plea))
+        (ames-scry-payload:v nec ~nec %a %x '1' %$ poke-path)
   ::
   :-  moves-7  |.  :-  %|
   ~?  >  dbug  '~nec hears %ack from ~bud, gives to gall'
-  =^  moves-8  mesa.nec
-    %:    mesa-check-take:v  mesa.nec
+  =^  moves-8  nec
+    %:    ames-check-take:v  nec
         [~1111.1.1 0xdead.beef *roof]
       :+  ack-wire
         ~[/poke]
-      [%mesa %response %page ~bud^ack-path &+0x0 `page`message/[%ack error=|]]
+      [%ames %sage ~bud^[%a %x '1' %$ ack-path] `page`message/[%ack error=|]]
     ::
       :~  :-  ~[/poke]
           [%give %done ~]
@@ -156,19 +186,21 @@
     %+  expect-eq
     !>  ~
     !>  =/  flows  =<  flows
-          %:  mesa-scry-peer:v
-            mesa.nec
+          ^-  fren-state:ames
+          %:  ames-scry-peer:v
+            nec
             [~1111.1.10 0xdead.beef *roof]
             [~nec ~bud]
           ==
-        loads:(~(got by flows) 0 %for)
+        loads.snd:(~(got by flows) 0 %for)
   ~?  >  dbug  '~nec %ames next bone is 1'
   :-  moves-9  |.  :-  %&
     %+  expect-eq
-    !>  1
+    !>  4
     !>  =<  next-bone.ossuary
-        %:  mesa-scry-peer:v
-          mesa.nec
+        ^-  fren-state:ames
+        %:  ames-scry-peer:v
+          nec
           [~1111.1.10 0xdead.beef *roof]
           [~nec ~bud]
         ==

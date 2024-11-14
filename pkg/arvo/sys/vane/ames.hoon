@@ -6489,7 +6489,7 @@
               |=  [=path =ship]
               ^-  [=space (unit cyf=@) inner=^path]
               =/  tyl=(pole knot)  path
-              ?+    tyl  !!
+              ?+    tyl  ~|(ev-decrypt-path/tyl !!)
                   [%publ lyf=@ pat=*]  :: unencrypted
                 [publ/(slav %ud lyf.tyl) ~ pat.tyl]
               ::
@@ -9719,11 +9719,13 @@
         =<  ev-abet
         ?-    -.mess
             %poke
-          ?~  chum=(~(get by chums.ames-state) ship.p.mess)
+          ?.  =(our ship.p.mess)
+            ev-core
+          ?~  chum=(~(get by chums.ames-state) ship.p.q.mess)
             ev-core
           ::  XX  this assumes that %aliens are checked in the packet layer
           ?>  ?=([~ %known *] chum)  ::  XX alien agenda?
-          (ev-mess-poke:(ev-foco:ev-core ship.p.mess +.u.chum) dud +.mess)
+          (ev-mess-poke:(ev-foco:ev-core ship.p.q.mess +.u.chum) dud +.mess)
         ::
             %peek
           ?~  chum=(~(get by chums.ames-state) ship.mess)
