@@ -10,7 +10,6 @@
   ^-  roof
   |=  [lyc=gang pov=path vis=view bem=beam]
   ^-  (unit (unit cage))
-  ~&  >>>  make-roof/s.bem^pax^vis
   ?.  &(=(s.bem pax) |(=(vis %x) =(vis [%$ %x]) =(vis [%g %x]) =(vis [%a %x])))
     [~ ~]
   ``val
@@ -32,12 +31,10 @@
     [%chum our-life=bud-life her=~nec her-life=nec-life key]
   =/  poke-space
     ?>  ?=(%chum -.space)
+    ::  lifes need to be switched since for %pokes,
+    ::  this is a payload in our namespace
+    ::
     space(our-life her-life.space, her-life our-life.space, her ~bud)
-
-    :: :-  %chum
-    :: ::  lifes need to be switched since for %pokes,
-    :: ::  this is a payload in our namespace
-    :: [nec-life ~bud bud-life `@`key]
   ::
   =/  poke-plea  [%g /ge/pok [%0 %m noun/0]]
   =/  poke-path  /flow/0/plea/~bud/1
@@ -164,7 +161,6 @@
     !>  plea/poke-plea
     !>  !<  page
         =<  ?>  ?=(%message p)  q
-        =/  poke-roof  (make-roof /flow/0/plea/~bud/1 message+!>(poke-plea))
         (ames-scry-payload:v nec ~nec %a %x '1' %$ poke-path)
   ::
   :-  moves-7  |.  :-  %|
