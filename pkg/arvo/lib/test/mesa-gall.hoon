@@ -148,14 +148,15 @@
   |=  [=ames-gate =duct pac=(list move:ames-bunt) =roof]
   ^-  [(list move:ames-bunt) ^ames-gate]
   ~|  pac
-  ?>  ?=([[* [%give [%send *]]] ~] pac)
+  ?>  ?=([[* [%give [%push *]]] ~] pac)
   =/  ames-core  (ames-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
   %-  call:ames-core
-  ~!  blob.p.card.i.pac
-  [duct dud=~ %soft `task:ames`[%heer *lane:pact:ames blob.p.card.i.pac]]
+  ~!  p.card.i.pac
+  [duct dud=~ %soft `task:ames`[%heer *lane:pact:ames q.p.card.i.pac]]
 ::
 ++  ames-expect-msg
   |=  [pac=(list move:ames-bunt) exp=noun]
+  ~|  pac
   ?>  ?=([[* [%give [%sage *]]] ~] pac)
   ~!  card.i.pac
   ?>  ?=([%sage ^ [@tas *]] p.card.i.pac)
