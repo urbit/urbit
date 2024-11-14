@@ -3604,7 +3604,7 @@
               ?:  ?=([%dead-flow ~] wire)
                 =?  event-core  =(^ unix-duct)
                   (wake-dead-flows error)
-                =+  ?:  =(~ unix-duct)  ~
+                =+  ?.  =(~ unix-duct)  ~
                     %-  (slog leaf+"ames: unix-duct still pending; resetting dead-flow" ~)
                     ~
                 set-dead-flow-timer:event-core
