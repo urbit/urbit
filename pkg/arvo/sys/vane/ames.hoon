@@ -322,7 +322,7 @@
     ::  +encode-keys-packet: create key request $packet
     ::
     ++  encode-keys-packet
-      :: ~/  %encode-keys-packet
+      ~/  %encode-keys-packet
       |=  [sndr=ship rcvr=ship sndr-life=life]
       ^-  shot
       :*  [sndr rcvr]
@@ -471,7 +471,7 @@
     ::  +etch-shut-packet: encrypt and packetize a $shut-packet
     ::
     ++  etch-shut-packet
-      :: ~/  %etch-shut-packet
+      ~/  %etch-shut-packet
       :: TODO add rift to signed messages to prevent replay attacks?
       ::
       |=  $:  =shut-packet
@@ -507,7 +507,7 @@
     ::  +sift-shut-packet: decrypt a $shut-packet from a $shot
     ::
     ++  sift-shut-packet
-      :: ~/  %sift-shut-packet
+      ~/  %sift-shut-packet
       |=  [=shot =symmetric-key sndr-life=@ rcvr-life=@]
       ^-  (unit shut-packet)
       ?.  ?&  =(sndr-tick.shot (mod sndr-life 16))
@@ -3082,7 +3082,7 @@
             ::  +on-hear-packet: handle mildly processed packet receipt
             ::
             ++  on-hear-packet
-              :: ~/  %on-hear-packet
+              ~/  %on-hear-packet
               |=  [=lane =shot dud=(unit goof)]
               ^+  event-core
               %-  (ev-trace rcv.veb sndr.shot |.("received packet"))
@@ -3113,7 +3113,7 @@
             ::    provided by Vere.
             ::
             ++  on-hear-forward
-              :: ~/  %on-hear-forward
+              ~/  %on-hear-forward
               |=  [=lane =shot dud=(unit goof)]
               ^+  event-core
               %-  %^  ev-trace  for.veb  sndr.shot
@@ -3133,7 +3133,7 @@
             ::  +on-hear-keys: handle receipt of attestion request
             ::
             ++  on-hear-keys
-              :: ~/  %on-hear-keys
+              ~/  %on-hear-keys
               |=  [=lane =shot dud=(unit goof)]
               =+  %^  ev-trace  msg.veb  sndr.shot
                   |.("requested attestation")
@@ -3144,7 +3144,7 @@
             ::  +on-hear-open: handle receipt of plaintext comet self-attestation
             ::
             ++  on-hear-open
-              :: ~/  %on-hear-open
+              ~/  %on-hear-open
               |=  [=lane =shot dud=(unit goof)]
               ^+  event-core
               =+  %^  ev-trace  msg.veb  sndr.shot
@@ -3694,8 +3694,10 @@
               ?:  ?=([~ %known *] ship-state)
                 ?~  sec
                   abet:(on-keen:(abed-peer:pe ship +.u.ship-state) path duct)
-                =.  chain.u.ship-state  (put:on:chain chain.u.ship-state [idx key /]:u.sec)
-                =.  peers.ames-state  (~(put by peers.ames-state) ship u.ship-state)
+                =.  chain.u.ship-state
+                  (put:on:chain chain.u.ship-state [idx key /]:u.sec)
+                =.  peers.ames-state
+                  (~(put by peers.ames-state) ship u.ship-state)
                 =/  enc
                   (scot %uv (en:crub:crypto key.u.sec (spat path)))
                 =/  lav  /a/x/1//fine/shut/(scot %ud idx.u.sec)/[enc]
@@ -3993,10 +3995,7 @@
                 ^+  peer-core
                 ::  update and print connection status
                 ::
-                =/  expiry=@da  (add ~s30 last-contact.qos.peer-state)
-                =?  -.qos.peer-state  (gte now expiry)
-                  %dead
-                =.  peer-core   (update-qos %ames qos.peer-state)
+                =.  peer-core  (update-qos %ames %live last-contact=now)
                 ::
                 =/  =bone  bone.shut-packet
                 ::
@@ -5696,10 +5695,7 @@
                   |=  [[=full=^path num=@ud] =meow =lane]
                   ^+  fine
                   =/  og  fine
-                  =/  expiry=@da  (add ~s30 last-contact.qos.peer-state)
-                  =?  -.qos.peer-state  (gte now expiry)
-                    %dead
-                  =.  peer-core   (update-qos %fine qos.peer-state)
+                  =.  peer-core  (update-qos %fine %live last-contact=now)
                   ::  handle empty
                   ?:  =(0 num.meow)
                     ?>  =(~ dat.meow)
@@ -8125,7 +8121,7 @@
             ++  sy-plug
               |=  =path
               ^+  sy-core
-              =/  key=@  (kdf:crypt 32 "mesa-chum-key" 32^eny)
+              =/  key=@  (kdf:crypt 32 "mesa-shut-key" 32^eny)
               =/  kid=@ud
                 ?~  latest=(ram:key-chain server-chain.ames-state)
                   1
