@@ -47,7 +47,7 @@
     [%moke space [~bud %a %x '1' %$ ack-path] %a %x '1' %$ poke-path]
   =/  mage=[%mage space:ames =spar:ames]
     [%mage space [~nec %a %x '1' %$ ack-path]]
-  =/  poke-roof  (make-roof /flow/0/plea/~bud/1 message+!>(poke-plea))
+  =/  poke-roof  (make-roof poke-path message+!>(poke-plea))
   ::  preamble
   ::
   =^  *  nec
@@ -55,6 +55,7 @@
   ::
   =^  *  nec
     (ames-call:v nec ~[ack-wire /poke] moke poke-roof)
+  ::
   =/  message=mess:ames
     [%poke [~bud ack-path] [~nec poke-path] page=[%message plea/poke-plea]]
   ::
@@ -93,8 +94,6 @@
   =/  boon-path  /flow/0/boon/~nec/1
   =/  ack-path   /flow/0/ack-boon/~bud/1
   =/  ack-wire   /mesa/flow/ack/bak/~nec/0/0
-  :: =/  make-poke=[%make-poke space:ames spar:ames path]
-  ::   [%make-poke publ/nec-life [~nec ack-path] boon-path]
   =/  ack-full-path=path  (make-space-path.nec space %a %x '1' %$ ack-path)
   =/  bon-full-path=path
     (make-space-path.nec boon-space %a %x '1' %$ boon-path)
@@ -111,8 +110,6 @@
       ==
     ==
 ::
-  :: =/  ack-full-path   (weld /publ/[(scot %ud nec-life)] ack-path)
-  :: =/  boon-full-path  (weld /publ/[(scot %ud bud-life)] boon-path)
   :-  moves-1  |.  :-  %|
   ~?  >  dbug  '~bud makes $pact and sends it'
   =/  bon-roof  (make-roof /flow/0/boon/~nec/1 message+!>(poke-boon))

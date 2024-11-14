@@ -6702,7 +6702,10 @@
                 (ev-peek ~ /ames %x (name-to-beam name))
               ?.  ?=([~ ~ ^] res)
                 ev-core
-              (ev-emit hen %give %push ~ !<(@ q.u.u.res))
+              ?.  ?=([%atom *] u.u.res)
+                ev-core  ::  XX support both %atom and %packet
+              =+  !<([dat=@ pairs=(list @ux) pof=@ux] q.u.u.res)
+              (ev-emit hen %give %push ~ dat)
             ::
             ++  ev-pact-page
               |=  [=lane:pact hop=@ud =name:pact =data:pact =next:pact]
