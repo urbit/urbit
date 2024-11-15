@@ -6159,10 +6159,6 @@
           ::
           ?:(=(our u.gal) ~ [%& u.gal]~)
         =/  ev-core  (ev [now eny rof] [//scry]~ ames-state)
-        ?:  (is-route-dead:ev-core u.who +.u.peer)
-          ::  if the route is %dead, send to the sponsor galaxy
-          ::
-          ?~(gal ~ [%& u.gal]~)
         (get-forward-lanes our +.u.peer peers.ames-state)
       ==
     ::
