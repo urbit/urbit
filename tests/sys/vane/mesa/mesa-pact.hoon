@@ -12,7 +12,6 @@
       ^-  roof
       |=  [lyc=gang pov=path vis=view bem=beam]
       ^-  (unit (unit cage))
-      ~&  s.bem^pax
       ?.  ?&(=(s.bem pax) |(=(vis %x) =(vis [%g %x]) =(vis %gx) =(vis %ax)))
         [~ ~]
       ``val
@@ -33,31 +32,25 @@
   =^  moves-3  ames.nec  (ames-reply:v ames.nec ~[/pact] moves-2 bex-roof) :: "ok, here is the complete message"
   (ames-expect-msg:v moves-3 dat)
 ::
-:: ++  test-mesa-peek-inline-proof
-::   ~?  >  dbug  'test-mesa-peek-inline-proof'
-::   ::  3-fragment message; proof is inlined into first response
-::   ::
-::   =/  dat          (bex (bex 14))
-::   =/  =space:ames  publ/bud-life
-::   =/  bex-roof     (make-roof //some/data/atom atom+!>(dat))
-::   =/  pat          /g/x/0/dap//some/data/atom
-::   =^  moves-1  ames.nec
-::       (ames-call:v ames.nec [~[/pact] [%keen ~ ~bud pat] bex-roof])
-::   ~&  %moves-1
-::   =^  moves-2  ames.bud  (ames-reply:v ames.bud ~[/pact] moves-1 bex-roof) :: "ok, here is the 1st fragment"
-::   ~&  %moves-2
-::   =^  moves-3  ames.nec  (ames-reply:v ames.nec ~[/pact] moves-2 bex-roof) :: "ok, give me the 2nd fragment"
-::   ~&  %moves-3
-::   =^  moves-4  ames.bud  (ames-reply:v ames.bud ~[/pact] moves-3 bex-roof) :: "ok, here is the 2nd fragment"
-::   ~&  %moves-4
-::   =^  moves-5  ames.nec  (ames-reply:v ames.nec ~[/pact] moves-4 bex-roof) :: "ok, give me the 3rd fragment"
-::   ~&  %moves-5
-::   =^  moves-6  ames.bud  (ames-reply:v ames.bud ~[/pact] moves-5 bex-roof) :: "ok, here is the 3rd fragment"
-::   ~&  %moves-6
-::   =^  moves-7  ames.nec  (ames-reply:v ames.nec ~[/pact] moves-6 bex-roof) :: "ok, here is the complete message"
-::   =^  moves-8  ames.nec  (ames-reply:v ames.nec ~[/pact] moves-7 bex-roof) :: "ok, here is the complete message"
-::   ~&  moves-8
-::   (ames-expect-msg:v moves-8 dat)
+++  test-mesa-peek-inline-proof
+  ~?  >  dbug  'test-mesa-peek-inline-proof'
+  ::  3-fragment message; proof is sent standalone as first response
+  ::
+  =/  dat          (bex (bex 14))
+  =/  =space:ames  publ/bud-life
+  =/  bex-roof     (make-roof //some/data/atom atom+!>(dat))
+  =/  pat          /g/x/0/dap//some/data/atom
+  =^  moves-1  ames.nec
+      (ames-call:v ames.nec [~[/pact] [%keen ~ ~bud pat] bex-roof])
+  =^  moves-2  ames.bud  (ames-reply:v ames.bud ~[/pact] moves-1 bex-roof) :: "ok, here is the 1st fragment (auth)"
+  =^  moves-3  ames.nec  (ames-reply:v ames.nec ~[/pact] moves-2 bex-roof) :: "ok, give me the 1st fragment (data)"
+  =^  moves-4  ames.bud  (ames-reply:v ames.bud ~[/pact] moves-3 bex-roof) :: "ok, here is the 1st fragment (data)"
+  =^  moves-5  ames.nec  (ames-reply:v ames.nec ~[/pact] moves-4 bex-roof) :: "ok, give me the 2rd fragment (data)"
+  =^  moves-6  ames.bud  (ames-reply:v ames.bud ~[/pact] moves-5 bex-roof) :: "ok, here is the 2rd fragment (data)"
+  =^  moves-7  ames.nec  (ames-reply:v ames.nec ~[/pact] moves-6 bex-roof) :: "ok, give me the 3rd fragment (data)"
+  =^  moves-8  ames.bud  (ames-reply:v ames.bud ~[/pact] moves-7 bex-roof) :: "ok, here is the 3rd fragment (data)"
+  =^  moves-9  ames.nec  (ames-reply:v ames.nec ~[/pact] moves-8 bex-roof) :: "ok, here is the complete message"
+  (ames-expect-msg:v moves-9 dat)
 ::
 :: ++  test-mesa-peek-standalone-proof
 ::   ~?  >  dbug  'test-mesa-peek-standalone-proof'
