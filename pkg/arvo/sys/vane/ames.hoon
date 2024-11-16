@@ -3579,8 +3579,8 @@
               ::
               =+  ?.  &(!=(0 total-dead) kay.veb)
                     ~
-                  %-  (slog leaf/"ames: {<`@`total-dead>} routes have expired" ~)
-                  ~
+                  %.  ~
+                  (slog leaf/"ames: {<`@`total-dead>} routes have expired" ~)
               event-core
             ::  +on-take-wake: receive wakeup or error notification from behn
             ::
@@ -4077,16 +4077,13 @@
                   ::
                   =/  =wire  (make-pump-timer-wire her bone)
                   (pe-emit duct %pass wire %b %wait (add now.channel ~s30))
+                ::  expire direct route if the peer is not responding;
                 ::  update and print connection state
-                ::
-                =/  expiry=@da  (add ~s30 last-contact.qos.peer-state)
-                =?  -.qos.peer-state  (gte now expiry)
-                  %dead
-                =.  peer-core   (update-qos %ames qos.peer-state)
-                ::  expire direct route if the peer is not responding
+                ::  (routes/qos for galaxies will remain direct/%live)
                 ::
                 =/  old-route   route.peer-state
                 =.  peer-state  (update-peer-route her peer-state)
+                =.  peer-core   (update-qos %ames qos.peer-state)
                 =?  peer-core   !=(old-route route.peer-state)
                   %-  pe-emit
                   :*  unix-duct  %give  %nail  her
@@ -5877,12 +5874,14 @@
                 ::
                 ++  fi-take-wake
                   ^+  fine
-                  ::  XX move this to the =(^ unix-duct) branch?
                   ::
                   =.  next-wake.keen  ~
-                  =/  expiry=@da  (add ~s30 last-contact.qos.peer-state)
-                  =?  -.qos.peer-state  (gte now expiry)
-                    %dead
+                  ::  has the direct route expired?
+                  ::
+                  =/  old-route     route.peer-state
+                  ::  routes/qos for galaxies will remain direct/%live
+                  ::
+                  =.  peer-state    (update-peer-route her peer-state)
                   =.  peer-core     (update-qos %fine qos.peer-state)
                   =.  metrics.keen  %*(on-timeout fi-gauge vane %fine)
                   ::
@@ -5890,10 +5889,6 @@
                     ::  no-op; fi-abet will reset the timer
                     ::
                     fine
-                  ::  has the direct route expired?
-                  ::
-                  =/  old-route   route.peer-state
-                  =.  peer-state  (update-peer-route her peer-state)
                   =?  peer-core   !=(old-route route.peer-state)
                     %-  pe-emit
                     :*  unix-duct  %give  %nail  her
@@ -6321,10 +6316,6 @@
                 ::
                 ?:(=(our u.gal) ~ [%& u.gal]~)
               =/  ev-core  (ev [now eny rof] [//scry]~ ames-state)
-              ?:  (is-route-dead:ev-core u.who +.u.peer)
-                ::  if the peer is %dead, send to the sponsor galaxy
-                ::
-                ?~(gal ~ [%& u.gal]~)
               (get-forward-lanes our +.u.peer peers.ames-state)
             ==
           ::
@@ -6995,7 +6986,7 @@
                   ames-state
                 ames-state(chums (~(put by chums.ames-state) [ship known/sat]:per))
               ==
-            ::  +ev-take-done: vane responses
+            ::  +ev-take-boon: vane responses
             ::
             ++  ev-take-boon
               |=  [=wire =gift]
@@ -7955,7 +7946,7 @@
                 ~
               ::
               ::  /ax/chums/[ship]                 chum-state
-              ::  /ax/chums/[ship]/forward-lane    lanes
+              ::  /ax/chums/[ship]/lanes           $@(gal=@ux $%([%if ... [%is))
               ::
               ?.  ?=(%x car)  ~
               =/  tyl=(pole knot)  s.bem
@@ -8005,10 +7996,6 @@
                     (get-forward-lanes-mesa our +.u.chum chums.ames-state)
                   ?:  ?=([~ %known *] peer)
                     =/  ev-core  (ev:ames [now eny rof] [//scry]~ ames-state)
-                    ?:  (is-route-dead:ev-core u.who +.u.peer)
-                      ::  if the peer is %dead, send to the sponsor galaxy
-                      ::
-                      [`@ux`u.gal]~
                     %+  turn  (get-forward-lanes our +.u.peer peers.ames-state)
                     |=  lane=(each @p address)
                     ?-    -.lane
@@ -8059,6 +8046,22 @@
               ^-  duct
               ~|  %dangling-bone^ship.per^bone
               (~(got by by-bone.ossuary.sat.per) bone)
+            ::
+            +|  %routes
+            ::
+            ++  ev-is-lane-dead
+              |=  [fren=ship =fren-state]
+              ^-  ?
+              ?&  ?=(^ lane.fren-state)
+                  !=(%czar (clan:title fren))
+                  ::  if we haven't tried to contact the fren, there hasn't been any
+                  ::  /pump or /fine timers that could have turned the fren to %dead
+                  ::  and we haven't received any packets from the fren, check if
+                  ::  the peer is actually dead
+                  ::
+                  ?|  ?=(%dead -.qos.fren-state)
+                      (gte now (add ~s30 last-contact.qos.fren-state))
+              ==  ==
             ::
             --
           ::  system/internal: %born, %heed, %kroc, %prod...
@@ -8669,12 +8672,11 @@
                   =*  ship  ship.per.core
                   ::  update and print connection status
                   ::
-                  =/  expiry=@da  (add ~s30 last-contact.qos.peer)
-                  =/  new=qos     ?.((gte now expiry) qos.peer [%dead now])
+                  =?  core  (ev-is-lane-dead:core ship peer)
+                     (ev-update-qos:core dead/now)
                   ::  if =(~ pay.req); %naxplanation, %cork or external (i.e. not
                   ::  coming from %ames) $peek request
                   ::
-                  =>  .(core (ev-update-qos:core new))
                   ?~  pact=(co-make-pact:co ack=[ship path] pay.req rift.peer)
                     ::  XX don't crash since we are going to block the queue
                     ev-core:core
@@ -8684,6 +8686,7 @@
                   (ev-emit:core (push-pact u.pact lane.peer))
                 :_  state
                 (weld moves resend-moves)
+              ::
               --
             ::  +sy-snub: handle request to change ship blacklist
             ::

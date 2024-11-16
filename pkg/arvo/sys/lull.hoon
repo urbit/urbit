@@ -1637,10 +1637,10 @@
                            ::  XX how many flows to keep here?
         =ossuary      ::  XX redefine ossuary in terms of bone^side
         flows=(map side flow-state)
-      ::  outgoing/incoming requests
-        ::  write-data: path=pok-path  /~zod/poke/~nec/flow/bone=0/mess=1/frag=1
+      ::  outgoing/incoming requests  - sndr -    - rcvr -
+        ::  write-data: path=pok-path  (~zod) /poke/~nec/flow/bone=0/mess=1
         ::  read data:  path=pek-path
-        ::              path=ack-path  /~nec/ack/~zod/flow/bone=0/mess=1/frag=1
+        ::              path=ack-path  (~nec) /ack/~zod/flow/bone=0/mess=1
         ::
         pit=(map path request-state)
         pot=(jug wire path)      ::  each wire represents a flow, the value is its associated peeks for the acks
@@ -3422,7 +3422,7 @@
         [%cert cert=(unit [key=wain cert=wain])]
         :: %turf: add remove or reset established dns binding
         ::
-        $:  %turf 
+        $:  %turf
             $=  action
             $%  [%put =turf]
                 [%del =turf]
