@@ -7266,16 +7266,16 @@
                   =+  flow-state=[bone=bone seq=seq.poke last=last-acked.rcv]
                   ?:  (gth seq.poke +(last-acked.rcv))
                     ::  no-op if future message
-                    :: %-  %+  ev-tace  odd.veb.bug.ames-state
-                    ::     !.("skip sink; future ack {<flow-state>}")
+                    %-  %+  ev-tace  odd.veb.bug.ames-state
+                        |.("skip sink; future ack {<flow-state>}")
                     fo-core
                   ?:  (lte seq.poke last-acked.rcv)
                     ?:  (gth (sub last-acked.rcv seq.poke) 10)
-                      :: %-  %+  ev-tace  odd.veb.bug.ames-state
-                      ::     !.("skip sink; {<flow-state>}")
+                      %-  %+  ev-tace  odd.veb.bug.ames-state
+                          |.("skip sink; {<flow-state>}")
                       fo-core
-                    :: %-  %+  ev-tace  odd.veb.bug.ames-state
-                    ::     !.("dup ack {<flow-state>}")
+                    %-  %+  ev-tace  odd.veb.bug.ames-state
+                        |.("dup ack {<flow-state>}")
                     (fo-send-ack seq.poke)
                   ::  a %plea sinks on the backward receiver (from a forward flow)
                   ::  a %boon sinks on the forward receiver (from a backward flow)
@@ -7322,7 +7322,7 @@
                     ::  refuse to answer for pre-migration messages
                     ::
                     ::  XX can we guarantee that line.state was an ack?
-
+                    ::
                     ::  In theory we can't guarantee it just by looking at the
                     ::  sate of the flow, but, if it was a %nack we would have
                     ::  state in nax.rcv for live naxplanations and if the
@@ -7550,7 +7550,6 @@
                     ?:  ?|  ?=(%bak dire)
                             can-be-corked
                         ==
-                      ~&  "skipping ack"
                       fo-core
                     (fo-emit (ev-got-duct bone) %give %done ~)
                 ==
