@@ -72,7 +72,7 @@
   ::
   =/  =space:ames
     [%chum our-life=bud-life her=~nec her-life=nec-life key]
-  =/  full-nax-path=path  (make-space-path.nec space %a %x '1' %$ nax-path)
+  =/  full-nax-path=path  [%a %x '1' %$ nax-path]
   =/  meek=[%meek space:ames =spar:ames]
     [%meek space ~bud full-nax-path]
   ~?  >  dbug  '~nec hears %nack, produces %meek request'

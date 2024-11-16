@@ -1706,8 +1706,8 @@
     +|  %flow-signs
     ::
     +$  flow-sign
-      $%  $>(?(%flub %done) gift:gall)       :: from vanes
-          [%sage seq=@ud sage:mess]          :: added seq number to %response
+      $%  $>(?(%flub %done) gift:gall)  :: from vanes
+          [%sage seq=@ud sage:mess]     :: added seq number to %response
       ==
     ::
     +|  %top-level-paths
@@ -6612,10 +6612,10 @@
             ++  ev-req-peek
               |=  [=space =path]
               ^+  ev-core
-              ::  +sy-plug should have already stored [kid key path] in chain.ames-state
-              ::  on the server, and the client would have retrieved the key via
-              ::  the %ames key exchange. here we store it in their peer state
-              ::
+              ::  +sy-plug should have already stored [kid key path] in
+              ::  .chain.ames-state on the server, and the client would have
+              ::  retrieved the key via the %ames key exchange. here we store it
+              ::  in their peer state
               ::
               =?  chums.ames-state  ?=(%shut -.space)
                 %+  ~(put by chums.ames-state)  ship.per
@@ -6625,9 +6625,7 @@
                   (put:key-chain client-chain.sat.per kid.space key.space path)
                 ==
               =^  moves  ames-state
-                =<  co-abet
-                %-  co-make-peek:(co-abed:co hen)
-                [space ship.per (make-space-path space path)]
+                co-abet:(co-make-peek:(co-abed:co hen) space ship.per path)
               (ev-emil moves)
             ::
             +|  %packet-entry-points
@@ -7400,8 +7398,8 @@
                   ::
                   =/  =space  =,  sat.per
                     chum/[life our life.ames-state symmetric-key]
-                  =/  =path   (make-space-path space (fo-cor-path seq=0 our))
-                  [hen %pass wire=(fo-wire %cor) %a meek/space^her^path]
+                  :+  hen  %pass
+                  [(fo-wire %cor) %a meek/[space her (fo-cor-path seq=0 our)]]
                 ::  XX just fo-core(closing.state %.y)?
                 (fo-take-done:fo-core(closing.state %.y) ~)
               ::
@@ -7565,8 +7563,8 @@
                 =/  =wire  (fo-wire %nax)
                 =/  =space
                   chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
-                =/  =path   (make-space-path space (fo-nax-path seq our))
-                (fo-emit hen %pass wire %a meek/[space her^path])
+                %+  fo-emit  hen
+                [%pass wire %a meek/[space her (fo-nax-path seq our)]]
               ::
               ++  fo-send-ack
                 |=  seq=@ud
@@ -9120,7 +9118,10 @@
             ::
             ::  XX remove all spaces from the task, and make the paths at the callsite?
             ::
-            ++  co-make-peek  |=([=space p=spar] (co-make-mess p ~))
+            ++  co-make-peek
+              |=  [=space =spar]
+              (co-make-mess spar(path (make-space-path space path.spar)) ~)
+            ::
             ++  co-make-poke
               |=  [=space =ack=spar =poke=path]
               ::  XX  make all paths when the %mako task is sent?
