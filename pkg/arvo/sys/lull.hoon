@@ -980,13 +980,13 @@
     $:  snd=_`?`%.n  ::  sending packets
         rcv=_`?`%.n  ::  receiving packets
         odd=_`?`%.n  ::  unusual events
-        msg=_`?`%.n  ::  message-level events
+        msg=_`?`%.n  ::  message-level events (including flows)
         ges=_`?`%.n  ::  congestion control
         for=_`?`%.n  ::  packet forwarding
         rot=_`?`%.n  ::  routing attempts
         kay=_`?`%.n  ::  is ok/not responding
         fin=_`?`%.n  ::  remote-scry
-        sun=_`?`%.n  ::  STUN
+        sun=_`?`%.n  ::  system level logs (STUN, keys, lanes...)
     ==
   ::
   +$  bug

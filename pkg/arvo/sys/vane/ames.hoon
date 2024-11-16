@@ -90,7 +90,12 @@
     ::  +trace: print if .verb is set and we're tracking .ship
     ::
     ++  trace
-      |=  [mode=?(%ames %fine) verb=? =ship ships=(set ship) print=(trap tape)]
+      |=  $:  mode=?(%ames %fine %mesa)
+              verb=?
+              =ship
+              ships=(set ship)
+              print=(trap tape)
+          ==
       ^+  same
       ?.  verb
         same
@@ -4124,7 +4129,7 @@
                 =/  =path  (slag 3 path.peep)
                 ::
                 ?.  (~(has by keens) path)
-                  %-  (fi-trace:fi fin.veb |.("dead-response {path}"))
+                  %-  (fi-trace:fi fin.veb |.("dead-response {(spud path)}"))
                   peer-core
                 fi-abet:(fi-rcv:(abed:fi path) peep meow lane)
               ::
@@ -6436,6 +6441,10 @@
             ++  ev-foco  |=(=_per ev-core(per per))
             ++  ev-emit  |=(=move ev-core(moves [move moves]))
             ++  ev-emil  |=(mos=(list move) ev-core(moves (weld mos moves)))
+            ++  ev-tace
+              |=  [verb=? print=(trap tape)]
+              ^+  same
+              (trace %mesa verb ship.per ships.bug.ames-state print)
             ::
             +|  %flow-wires
             ::
@@ -6635,11 +6644,12 @@
               ^+  ev-core
               ::  XX dispatch/hairpin &c
               ::
-              ::  - pre-check that we want to process this poke (recognize ack path, ship not blacklisted, &c)
+              ::  - pre-check that we want to process this poke
+              ::    (recognize ack path, ship not blacklisted, &c)
               ::  - initialize our own outbound request for the poke payload
               ::  - start processing the part of the poke payload we already have
-              ::    - validation should crash event or ensure that no state is changed
-              ::  XX  parse path to get: requester, rift, bone, message
+              ::    - validation should crash event/no-op to ensure that no
+              ::      state is changed
               ::
               ::  path validation/decryption
               ::
@@ -6667,15 +6677,27 @@
               ::  update and print connection status
               ::
               =.  ev-core  (ev-update-qos %live last-contact=now)
+              ::
+              %-  (ev-tace rcv.veb.bug.ames-state |.("heering poke packet"))
+              ::
               ?.  =(1 (div (add tob.data 1.023) 1.024))
+                %-  %+  ev-tace  msg.veb.bug.ames-state
+                    |.("hear uncomplete message")
                 =/  =dire  :: flow swtiching
                   %*(fo-flip-dire fo side *@ud^(fo-infer-dire:fo load.pok))  :: XX assert load is plea/boon
                 ::
                 =+  fo-core=(fo-abed:fo hen bone.pok dire)
                 ?:  (fo-message-is-acked:fo-core mess.pok)
                   ::  don't peek if the message havs been already acked
-                  ~&  >>  "fo-message-is-acked"
+                  ::
+                  %-  %+  ev-tace  odd.veb.bug.ames-state
+                      |.("poke [bon, seq]={<[bone mess]:pok>} already acked")
+                  ::
                   fo-abet:(fo-send-ack:fo-core mess.pok)
+                ::
+                %-  %+  ev-tace  fin.veb.bug.ames-state
+                    |.("start peeking for poke payload")
+                ::
                 =/  =^space
                   chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
                 %+  ev-emit  hen
@@ -6699,6 +6721,10 @@
               |=  =name:pact
               ?.  =(our her.name)
                 ev-core
+              ::
+              %-  %+  ev-tace  [|(rcv fin)]:veb.bug.ames-state
+                  |.("heering peek packet")
+              ::
               =/  res=(unit (unit cage))
                 (ev-peek ~ /ames %x (name-to-beam name))
               ?.  ?=([~ ~ ^] res)
@@ -6719,6 +6745,8 @@
               =*  sealed-path  pat.name
               ?~  res=(~(get by pit) sealed-path)
                 ev-core
+              ::
+              %-  (ev-tace rcv.veb.bug.ames-state |.("heering page packet"))
               ::
               =.  per  (ev-update-lane lane hop next)
               ::  update and print connection status
@@ -6834,8 +6862,13 @@
               ^+  ev-core
               =*  ship  ship.spar
               ?>  =(ship.per ship.spar)
+              ::
               =+  path=?~(sealed-path path.spar u.sealed-path)
+              %-  %+  ev-tace  msg.veb.bug.ames-state
+                  |.("hear complete page for {(spud path)}")
               ?~  ms=(~(get by pit.sat.per) path)
+                %-  %+  ev-tace  odd.veb.bug.ames-state
+                    |.("path missing from the .pit")
                 ev-core
               ::  XX validate response
               =.  pit.sat.per  (~(del by pit.sat.per) path)
@@ -6860,6 +6893,7 @@
               ::  the packet layer has already validated that this is a valid %poke
               ::
               ::  XX assumes that %aliens are checked in the packet layer
+              ::  XX assumes that .per in the sample is set by the packet layer
               ::
               =/  =dire  :: flow swtiching
                 %*(fo-flip-dire fo side *@ud^(fo-infer-dire:fo load.pok))  :: XX assert load is plea/boon
@@ -6872,6 +6906,9 @@
                 ?>  =(%bak dire)  ::  %pleas(s) and %corks sink backward
                 ?>  ?=([%plea *] +.gage)
                 ;;([%plea plea] +.gage)
+              ::
+              %-  %+  ev-tace  msg.veb.bug.ames-state
+                  |.("hear complete {<-.req>} message")
               ::
               =<  fo-abet
               %.  [%sink mess.pok req ?=(~ dud)]
@@ -6894,29 +6931,34 @@
               |=  =wire
               ^+  ev-core
               ?~  flow-wire=(ev-validate-wire wire)
+                %-  %+  ev-tace  odd.veb.bug.ames-state
+                      |.("weird wire on %flub {(spud wire)}")
                 ev-core
               =,  u.flow-wire
               =.  per  [her (got-per her)]
-              :: ::  ?>  ?=(%known -.sat.per)
               ?:  (lth rift rift.sat.per)
-                :: XX log
-                ev-core  ::  ignore events from an old rift
+                %-  %+  ev-tace  odd.veb.bug.ames-state
+                      |.("ignore %flub for old rift")
+                ev-core
               ?>  ?=([%van %bak] [were dire])
               fo-abet:(fo-take:(fo-abed:fo hen bone dire=%bak) %van flub/~)
-            ::  +ev-take-response: receive remote responses
+            ::  +ev-take-sage: receive remote responses
             ::
-            ++  ev-take-response
+            ++  ev-take-sage
               |=  [=wire =sage:mess]
               ^+  ev-core
               ?~  flow-wire=(ev-validate-wire wire)
+                %-  %+  ev-tace  odd.veb.bug.ames-state
+                    |.("weird wire on %sage {(spud wire)}")
                 ::  only wires related to known peers allowed
                 ::
                 ev-core
               =,  u.flow-wire
               =.  per  [her (got-per her)]
               ?:  (lth rift rift.sat.per)
-                :: XX log
-                ev-core  ::  ignore events from an old rift
+                %-  %+  ev-tace  odd.veb.bug.ames-state
+                    |.("ignore %sage for old rift")
+                ev-core
               ::
               =/  message-path=(pole iota)  (validate-path path.p.sage)
               ::
@@ -6979,7 +7021,7 @@
                   by-bone.ossuary  (~(del by by-bone.ossuary) bone)                 ::  XX bone^side=%for
                 ==
               :: XX  remove ev-abet will update put sat.per in .chums
-              ~&  ev-take-response/ship.per
+              ~&  ev-take-sage/ship.per
               %_    ev-core
                   ames-state
                 ames-state(chums (~(put by chums.ames-state) [ship known/sat]:per))
@@ -6990,12 +7032,15 @@
               |=  [=wire =gift]
               ^+  ev-core
               ?~  flow-wire=(ev-validate-wire wire)
+                %-  %+  ev-tace  odd.veb.bug.ames-state
+                    |.("weird wire on %boon {(spud wire)}")
                 ev-core
               =,  u.flow-wire
               =.  per  [her (got-per her)]
               ?:  (lth rift rift.sat.per)
-                :: XX log
-                ev-core  ::  ignore events from an old rift
+                %-  %+  ev-tace  odd.veb.bug.ames-state
+                    |.("ignore %boon for old rift")
+                ev-core
               ::  vane acks happen on backward flows
               ::
               ?>  ?=([%van %bak] [were dire])
@@ -7010,12 +7055,15 @@
               |=  [=wire error=(unit error)]
               ^+  ev-core
               ?~  flow-wire=(ev-validate-wire wire)
+                %-  %+  ev-tace  odd.veb.bug.ames-state
+                    |.("weird wire on %boon {(spud wire)}")
                 ev-core
               =,  u.flow-wire
               =.  per  [her (got-per her)]
               ?:  (lth rift rift.sat.per)
-                :: XX log
-                ev-core  ::  ignore events from an old rift
+                %-  %+  ev-tace  odd.veb.bug.ames-state
+                    |.("ignore %boon for old rift")
+                ev-core
               ?>  ?=([%van %bak] [were dire])  ::  vane acks happen on backward flows
               ::
               =<  fo-abet
@@ -7032,11 +7080,15 @@
               ^+  ev-core
               %-  ~(rep in listeners)
               |=  [hen=duct c=_ev-core]
-              (ev-emit:c hen %give %sage ship.per^path gage)
+              %.  (ev-emit:c hen %give %sage ship.per^path gage)
+              %+  ev-tace  fin.veb.bug.ames-state
+              |.("give page={(spud path)} for={(turn hen (cork spud crip))}")
             ::
             ++  ev-cancel-peek
               |=  [all=? =path]  :: XX namespace?
               ^+  ev-core
+              %-  %+  ev-tace  fin.veb.bug.ames-state
+                  |.("cancel peek path={(spud path)}}")
               ?~  ms=(~(get by pit.sat.per) path)
                 ev-core
               ?:  all
@@ -7188,9 +7240,14 @@
                 ?-    -.poke
                     ?(%plea %boon)
                   ?:  |((fo-to-close poke) (~(has in corked.sat.per) side))
-                    ~&  >>>  skip-sending/-.poke
-                    ::  XX log
+                    %-  %+  ev-tace  odd.veb.bug.ames-state
+                        ?:  (fo-to-close poke)
+                          |.("skip send; flow {<bone>} is closing")
+                        |.("skip send; flow {<bone>} has been corked")
                     fo-core
+                  %-  %+  ev-tace  msg.veb.bug.ames-state
+                      |.("send {<-.poke>} message")
+                  ::
                   =:  next-load.snd  +(next-load.snd)
                       loads.snd      (put:fo-mop loads.snd next-load.snd poke)
                     ==
@@ -7198,22 +7255,27 @@
                   ::
                     %sink
                   ?:  |((fo-to-close mess.poke) (~(has in corked.sat.per) side))
-                    ~&  >>>  skip-sinking/-.poke
-                    ::  XX log
+                    %-  %+  ev-tace  odd.veb.bug.ames-state
+                        ?:  (fo-to-close mess.poke)
+                          |.("skip sink; flow {<bone>} is closing")
+                        |.("skip sink; flow {<bone>} has been corked")
                     fo-core
                   ~|  mess.poke
                   ::  check that the message can be acked
                   ::
+                  =+  flow-state=[bone=bone seq=seq.poke last=last-acked.rcv]
                   ?:  (gth seq.poke +(last-acked.rcv))
                     ::  no-op if future message
-                    ~&  :-  %future-boon-ack
-                            duct=hen^bone=bone^seq=seq.poke^last-acked=last-acked.rcv
+                    :: %-  %+  ev-tace  odd.veb.bug.ames-state
+                    ::     !.("skip sink; future ack {<flow-state>}")
                     fo-core
                   ?:  (lte seq.poke last-acked.rcv)
                     ?:  (gth (sub last-acked.rcv seq.poke) 10)
-                      ~&  %drop-old-seq  ::  XX  use verbosity logs
+                      :: %-  %+  ev-tace  odd.veb.bug.ames-state
+                      ::     !.("skip sink; {<flow-state>}")
                       fo-core
-                    ~&  %already-acked  ::  XX  use verbosity logs
+                    :: %-  %+  ev-tace  odd.veb.bug.ames-state
+                    ::     !.("dup ack {<flow-state>}")
                     (fo-send-ack seq.poke)
                   ::  a %plea sinks on the backward receiver (from a forward flow)
                   ::  a %boon sinks on the forward receiver (from a backward flow)
@@ -7334,8 +7396,10 @@
                   ::  %ack is on the other side; flip direction
                   ::
                   (%*(fo-ack-path fo-core dire.side fo-flip-dire) seq our)
-                =/  =space   chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
-                =/  =wire    (fo-wire %ack)
+                =/  =space
+                  :-  %chum
+                  [life.sat.per our life.ames-state symmetric-key.sat.per]
+                =/  =wire  (fo-wire %ack)
                 =?  pot.sat.per  ?=(%bak dire)
                   ::  for subscription flows (i.e. %boons), we track the peeks
                   ::  for acks under the flow wire so if we cork the flow we
@@ -7380,6 +7444,8 @@
                 ?:  &(=(vane %$) ?=([%ahoy ~] payload) ?=([%mesa ~] path)):plea
                   ::  migrated %ahoy pleas are always acked
                   ::
+                  %-  %+  ev-tace  odd.veb.bug.ames-state
+                      |.("acking migrated %ahoy plea")
                   (fo-take-done:fo-core ~)
                 ?.  &(=(vane %$) ?=([%cork ~] payload) ?=([%cork ~] path)):plea
                   =/  =wire  (fo-wire %van)
@@ -7398,6 +7464,10 @@
                   ::
                   =/  =space  =,  sat.per
                     chum/[life our life.ames-state symmetric-key]
+                  ::
+                  %-  %+  ev-tace  fin.veb.bug.ames-state
+                      |.("start peeking for %cork flow={<bone>}")
+                  ::
                   :+  hen  %pass
                   [(fo-wire %cor) %a meek/[space her (fo-cor-path seq=0 our)]]
                 ::  XX just fo-core(closing.state %.y)?
@@ -7501,22 +7571,26 @@
                 ::
                 =/  next-load=@ud  ?~(next=(ram:fo-mop loads.snd) 1 key.u.next)
                 ?:  (gth seq next-load)
-                  :: XX log?
-                  ~&  >>  "fo-take-naxplanation: future message, no-op"
+                  %-  %+  ev-tace  odd.veb.bug.ames-state
+                      |.("no op; future %naxplanation {<[bone=bone seq=seq]>}")
                   fo-core
                 ::  if all pokes have been processed no-op
                 ::
                 ?~  first=(pry:fo-mop loads.snd)
-                  ~&  >>  "fo-take-naxplanation: all pokes have been processed, no-op"
+                  %-  %+  ev-tace  odd.veb.bug.ames-state
+                      |.("no op; no message to %naxplain {<[bone=bone seq=seq]>}")
                   fo-core
                 :: XX  if the ack we receive is not for the first, no-op
                 :: XX as currently implemented we only hear for the naxplanation of the
                 ::  oldest message
                 ::
                 ?.  =(key.u.first seq)
-                  ~&  >>  "fo-take-naxplanation: naxplanation is not for the first load, no-op"
+                  %-  %+  ev-tace  odd.veb.bug.ames-state
+                      |.("no op; %naxplanation is not for the first load {<[bone=bone seq=seq]>}")
                   fo-core
                 ~&  >  "fo-take-naxplanation: seq={<seq>}"
+                %-  %+  ev-tace  msg.veb.bug.ames-state
+                    |.("take % naxplanation {<[bone=bone seq=seq]>}")
                 ::  ack is for the first, oldest pending-ack set message, remove it
                 ::
                 =^  *  loads.snd  (del:fo-mop loads.snd seq)
@@ -7560,6 +7634,10 @@
                 ::  when getting the %response $page with or %naxplanation payloads
                 ::  (tagged with %nax)
                 ::
+                  ::
+                  %-  %+  ev-tace  fin.veb.bug.ames-state
+                      |.("start peeking for %naxplanation {<[bone=bone seq=seq]>}")
+                  ::
                 =/  =wire  (fo-wire %nax)
                 =/  =space
                   chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
@@ -7568,6 +7646,8 @@
               ::
               ++  fo-send-ack
                 |=  seq=@ud
+                  %-  %+  ev-tace  msg.veb.bug.ames-state
+                      |.("acking {<[bone=bone seq=seq]>} message")
                 ::  emit (n)ack to unix; see +fo-peek where the (n)ack is produced
                 ::
                 =/  =path  (fo-ack-path seq her)
@@ -8700,19 +8780,15 @@
               ?:  =(~ unix-duct)
                 %-  (slog leaf+"ames: unix-duct still pending; no-op" ~)
                 sy-core
-              :: %-  %^  ev-trace  sun.veb  ship.stun
-              ::     =/  lane=tape
-              ::       ?:  &
-              ::         ::  turn off until correct parsing ip/port in ames.c
-              ::         ::  (see https://github.com/urbit/vere/pull/623)
-              ::         ""
-              ::       ?:  ?=(%& -.lane.stun)
-              ::         "from {<p.lane.stun>}"
-              ::       =,  lane.stun
-              ::       =/  ip=@if  (end [0 32] p)
-              ::       =/  pt=@ud  (cut 0 [32 16] p)
-              ::       "lane {(scow %if ip)}:{((d-co:co 1) pt)} ({(scow %ux p)})"
-              ::     |.("inject %stun {<-.stun>} {lane}")
+              %-  %+  %*(ev-tace ev ship.per ship.stun)  sun.veb.bug.ames-state
+                  =/  lane=tape
+                    ?:  ?=(%& -.lane.stun)
+                      "from {<p.lane.stun>}"
+                    =,  lane.stun
+                    =/  ip=@if  (end [0 32] p)
+                    =/  pt=@ud  (cut 0 [32 16] p)
+                    "lane {(scow %if ip)}:{((d-co:^co 1) pt)} ({(scow %ux p)})"
+                  |.("inject %stun {<-.stun>} {lane}")
               %-  sy-emit
               %^  poke-ping-app  unix-duct  our
               ?.  ?=(%fail -.stun)  -.stun
@@ -9256,6 +9332,8 @@
                 %poke  her.p.pact
                 %page  her.p.pact
               ==
+            %-  %+  %*(ev-tace ev ship.per ship)  snd.veb.bug.ames-state
+                |.("pushing {<-.pact>} packet")
             =/  lanes=(list lane:pact:ames)
               :: :-  [%if ip=.206.189.218.58 port=52.510]
               %+  weld
@@ -9473,7 +9551,7 @@
                 ::  packet, and then given back to the flow layer that called them
                 ::
                 ?([%keen ~] ev-flow-wire:ev-core)
-              ev-take-response:ev-core  ::  %ack and %naxplanation payload
+              ev-take-sage:ev-core  ::  %ack and %naxplanation payload
             ==
           ::
           ==
