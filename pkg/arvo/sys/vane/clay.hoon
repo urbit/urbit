@@ -4780,7 +4780,9 @@
       |-  ^-  [load:gall state:ford:fusion]
       ?~  bill.i.sat
         [~ nub.f]
-      =^  =vase  nub.f  (build-file:f /app/[i.bill.i.sat]/hoon)
+      =^  =vase  nub.f
+        %-  road  |.
+        (build-file:f /app/[i.bill.i.sat]/hoon)
       =/  agent  ~|  [%building-app bill.i.sat]  !<(agent:gall vase)
       =^  lid  nub.f  $(bill.i.sat t.bill.i.sat)
       [[[i.bill.i.sat [our desk.i.sat da+now] agent] lid] nub.f]
