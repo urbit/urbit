@@ -6539,9 +6539,11 @@
               ::
               =/  cork=?  =([%$ /cork %cork ~] vane^wire^payload)
               ?:  &(cork !(~(has by by-bone.ossuary.sat.per) bone))
-                ~&  "trying to cork {<bone=bone>}, not in the ossuary, ignoring"
+                %-  %+  ev-tace  odd.veb.bug.ames-state
+                    |.("corking {<bone=bone>}, not in the ossuary, ignoring")
                 ev-core
-              ~?  cork  "marking flow {<bone>} as closing"
+              %-  %+  ev-tace  sun.veb.bug.ames-state
+                  |.("marking flow {<bone>} as closing")
               =+  fo-core=(fo-abed:fo hen bone dire=%for)
               =<  fo-abet
               %.  plea/[vane wire payload]
@@ -6609,7 +6611,6 @@
               ?>  &(?=(flow-pith ack) ?=(flow-pith pok))
               ::
               ?.  =(her.ack-name our)  ::  do we need to respond to this ack?
-                ~&  >>  %not-our-ack^her.ack-name^our
                 %-  %+  ev-tace  odd.veb.bug.ames-state
                     |.("not our ack rcvr={<her.ack-name>}; skip")
                 ev-core  :: XX TODO log
@@ -6726,7 +6727,7 @@
                     pit  (~(put by pit) sealed-path u.res(ps `[state ~]))
                   ==
                 ::
-                ~&  >>  "request next fragment"^fag
+                %-  (ev-tace snd.veb.bug.ames-state |.("request frag={<fag>}"))
                 ::  request next fragment
                 ::
                 ?:  =(~ unix-duct)
@@ -6787,13 +6788,18 @@
                   ?:  =(~ unix-duct)
                     %-  (slog leaf+"ames: unix-duct still pending; will retry %push" ~)
                     ev-core
+                  ::
+                  %-  %+  ev-tace  snd.veb.bug.ames-state
+                      |.("request frag={<counter.los.ps>}")
+                  ::
                   %-  ev-emit
                   %+  push-pact
                     [hop=0 %peek name(wan [%data counter.los.ps])]
                   lane.sat.per
                 ::  yield complete message
                 ::
-                ~&  >>  "yield complete message"^fag
+                %-  (ev-tace rcv.veb.bug.ames-state |.("yield full message"))
+
                 =/  =spar  [her.name inner-path]
                 =/  =auth:mess  [%| *@uxH] :: XX should be stored in ps?
                 =/  res=@  (ev-decrypt-spac space (rep 13 (flop fags.ps)) cyf)
@@ -6926,7 +6932,6 @@
                   %-  ~(rep in (~(get ju pot.sat.per) ack-wire))
                   |=  [=ack=path pit=_pit.sat.per]
                   (~(del by pit) ack-path)
-                ~&  deleting-pot/ack-wire
                 =.  pot.sat.per  (~(del by pot.sat.per) ack-wire)
                 ::  if we don't crash, the client has removed the flow,
                 ::  and have succesfully +peek'ed the %cork
@@ -6960,7 +6965,6 @@
               ::
               ?.  can-be-corked.fo-core
                 fo-abet:fo-core
-              ~&  "read ack for cork flow={<bone>}"
               ::  we received the %ack for the %cork %plea;
               ::  remove the flow and it's associated bone in the ossuary;
               ::  expose %cork flow in the namespace "~(put in corked)"
@@ -6975,7 +6979,6 @@
                   by-bone.ossuary  (~(del by by-bone.ossuary) bone)                 ::  XX bone^side=%for
                 ==
               :: XX  remove ev-abet will update put sat.per in .chums
-              ~&  ev-take-sage/ship.per
               %_    ev-core
                   ames-state
                 ames-state(chums (~(put by chums.ames-state) [ship known/sat]:per))
@@ -7144,7 +7147,6 @@
                 =:  flows.sat.per   (~(del by flows.sat.per) bone^dire)
                     corked.sat.per  (~(put in corked.sat.per) bone^dire)
                   ==
-                ~&  fo-abel/her
                 =.  ames-state
                   ames-state(chums (~(put by chums.ames-state) her known/sat.per))
                 ev-core
@@ -7351,7 +7353,6 @@
                 ::
                     %cork
                   ?.  (~(has in corked.sat.per) side)  ~
-                  ~&  >>  is-corked/side
                   `gone/~
                 ::
                     ?(%plea %boon)
@@ -7509,12 +7510,12 @@
                 ?~  first=(pry:fo-mop loads.snd)
                   fo-core
                 ?>  ?=([%message *] gage)
-                ~&  >>  %about-to-crash
                 =+  ;;([%ack error=?] +.gage)  ::  XX
                 ?.  =(key.u.first seq)
                   ::  XX we shouldn't see this since send-window is always 1
                   ::
-                  ~&  >>>  out-of-order-ack/seq=seq^first=key.u.first
+                  %-  %+  ev-tace  odd.veb.bug.ames-state
+                      |.("out of order ack [{<seq=seq^first=key.u.first>}]")
                   :: if the ack we receive is not for the first, save it
                   ::  XX if error, start +peeking right away?
                   ::
@@ -7523,7 +7524,6 @@
                   :: fo-core(cache.state (put:fo-cac cache.state seq error))
                 |-  ^+  fo-core
                 ?:  error
-                  ~&  >>  "error: start %peek for naxplanation "^gage
                   ::  if error start %peek for naxplanation
                   ::
                   (fo-peek-naxplanation seq)
@@ -7585,9 +7585,9 @@
                 ::
                 ?.  =(key.u.first seq)
                   %-  %+  ev-tace  odd.veb.bug.ames-state
-                      |.("no op; %naxplanation is not for the first load {<[bone=bone seq=seq]>}")
+                      |.("no op; %naxplanation not for the first load {<[bone=bone seq=seq]>}")
                   fo-core
-                ~&  >  "fo-take-naxplanation: seq={<seq>}"
+                ::
                 %-  %+  ev-tace  msg.veb.bug.ames-state
                     |.("take % naxplanation {<[bone=bone seq=seq]>}")
                 ::  ack is for the first, oldest pending-ack set message, remove it
@@ -7633,10 +7633,9 @@
                 ::  when getting the %response $page with or %naxplanation payloads
                 ::  (tagged with %nax)
                 ::
-                  ::
-                  %-  %+  ev-tace  fin.veb.bug.ames-state
-                      |.("start peeking for %naxplanation {<[bone=bone seq=seq]>}")
-                  ::
+                %-  %+  ev-tace  fin.veb.bug.ames-state
+                    |.("start peeking for %naxplanation {<[bone=bone seq=seq]>}")
+                ::
                 =/  =wire  (fo-wire %nax)
                 =/  =space
                   chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
@@ -7646,8 +7645,8 @@
               ++  fo-send-ack
                 |=  seq=@ud
                   %-  %+  ev-tace  msg.veb.bug.ames-state
-                      =+  ack=?~((~(get by nax.rcv) seq) "acking" "nacking")
-                      |.("{ack} {<[bone=bone seq=seq]>} message")
+                      =+  ack=?~((~(get by nax.rcv) seq) "ack" "nack")
+                      |.("{ack} message {<[bone=bone seq=seq]>}")
                 ::  emit (n)ack to unix; see +fo-peek where the (n)ack is produced
                 ::
                 =/  =path  (fo-ack-path seq her)
@@ -7749,9 +7748,19 @@
               ^+  sy-core
               =?  sy-core  ?=(^ error)   :: XX use verbosity flag
                 (sy-emit hen %pass /crud %d %flog %crud %wake-error u.error)
-              =>  .(wire `(pole iota)`(mesa-pave:ev wire))
+              ?:  ?=([%mesa %ask gift=@ *] wire)
+                =+  gift=`(pole iota)`(mesa-pave:ev t.t.wire)
+                ?+  gift  ~&(unexpected-ask-wire/gift sy-core)
+                    [%turf *]
+                  (sy-emit hen %pass /turf %j %turf ~)
+                ::
+                    [%public-keys ship=@ *]
+                  %^  sy-emit  hen  %pass
+                  [/public-keys %j %public-keys [n=(slav %p ship.gift) ~ ~]]
+                ==
               ?.  ?=([%mesa %retry ~] wire)
-                ~&  %evil-behn-timer^wire  sy-core
+                ~&  >>>  %evil-behn-timer^wire
+                sy-core
               ::  XX log if error
               ::  XX if we wake up too early, no-op, otherwise set new timer
               ::  XX if timed-out, update qos
@@ -7761,7 +7770,10 @@
               ::
               =.  chum.dead.ames-state
                 chum/`[~[/ames] /mesa/retry `@da`(add now ~m2)]
-              =^  prod-moves  ames-state  (sy-prod ~)
+              =^  prod-moves  ames-state
+                ::  if there's been an error, reset the timer and skip %proding
+                ::
+                ?^(error `ames-state (sy-prod ~))
               %-  sy-emil
               :_  prod-moves
               [~[/ames] %pass /mesa/retry %b %wait `@da`(add now ~m2)]
@@ -8260,13 +8272,12 @@
                   =;  c=_core  ev-abet:c
                   %-  ~(rep by pit.sat.per.core)
                   |=  [[=path req=request-state] core=_core]
-                  ::  XX  restore this when fixing +ev-update-qos
                   =*  peer  sat.per.core
                   =*  ship  ship.per.core
                   ::  update and print connection status
                   ::
                   =?  core  (ev-is-lane-dead:core ship peer)
-                      (ev-update-qos:core dead/now)
+                    (ev-update-qos:core dead/now)
                   ::  if =(~ pay.req); %naxplanation, %cork or external (i.e. not
                   ::  coming from %ames) $peek request
                   ::
@@ -8274,8 +8285,8 @@
                     ::  XX don't crash since we are going to block the queue
                     ev-core:core
                   ?:  =(~ unix-duct)
-                    %-  (slog leaf+"ames: unix-duct still pending; will retry %push" ~)
-                    ev-core:core
+                    %.  ev-core:core
+                    (slog leaf+"ames: unix-duct still pending; retry %push" ~)
                   (ev-emit:core (push-pact u.pact lane.peer))
                 :_  state
                 (weld moves resend-moves)
@@ -9454,16 +9465,6 @@
         ::
         =+  ev-core=(ev-abed:ev hen)
         =^  moves  ames-state
-          ?:  ?=([%mesa %ask *] wire)
-            :_  ames-state  :_  ~
-            :+  hen  %pass
-            ?+  t.t.wire  ~|(unexpected-ask-wire/wire !!)
-                [%turf *]
-              [/turf %j %turf ~]
-            ::
-                [%public-keys @ *]
-              [/public-keys %j %public-keys [n=(slav %p i.t.t.t.wire) ~ ~]]
-            ==
           ?:  ?=([%gall %unto *] sign)  :: XX from poking %ping app
             `ames-state
           ::
@@ -9490,7 +9491,6 @@
           ::
             [%ames %sage *]
           ::
-            ~&  >  "proicessing %sage"
             =<  ev-abet
             =/  response-pith  `(pole iota)`(mesa-pave:ev-core wire)
             %.  [wire +>.sign]
