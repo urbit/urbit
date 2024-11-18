@@ -6115,7 +6115,7 @@
           ?+  sign  ~&(ames-weird-take-sign/[&1^&2]:sign^wire event-core)
             [@ %done *]  (on-take-done:event-core wire error.sign)
             [@ %boon *]  (on-take-boon:event-core wire payload.sign)
-            [@ %noon *]  (on-take-noon:event-core wire id.sign payload.sign)
+            [@ %noon *]  (on-take-noon:event-core wire payload.sign id.sign)
           ::
             [%ames %tune *]  (on-tune:event-core wire [[ship path] roar]:sign)
           ::
