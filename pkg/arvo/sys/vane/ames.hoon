@@ -6521,7 +6521,7 @@
                   -.u.key
                 (open-path:crypt -.u.key u.cyf)
               ==
-            ::            ::
+            ::
             +|  %request-flow
             ::
             ++  ev-req-plea
@@ -6584,306 +6584,325 @@
             ::
             +|  %packet-entry-points
             ::
-            ++  ev-pact-poke
-              |=  [dud=(unit goof) =lane:pact hop=@ud =ack=name:pact =poke=name:pact =data:pact]
-              ^+  ev-core
-              ::  XX dispatch/hairpin &c
-              ::
-              ::  - pre-check that we want to process this poke
-              ::    (recognize ack path, ship not blacklisted, &c)
-              ::  - initialize our own outbound request for the poke payload
-              ::  - start processing the part of the poke payload we already have
-              ::    - validation should crash event/no-op to ensure that no
-              ::      state is changed
-              ::
-              ::  path validation/decryption
-              ::
-              =/  ack=(pole iota)
-                ~|  ack-path/pat.ack-name^pat.poke-name
-                (validate-path inner:(ev-decrypt-path pat.ack-name her.poke-name))
-              =/  [=space cyf=(unit @) =inner=path]
-                ~|  inner-path/pat.ack-name^pat.poke-name
-                (ev-decrypt-path [pat her]:poke-name)
-              =/  pok=(pole iota)
-                ~|  pok/pat.ack-name^pat.poke-name
-                (validate-path inner-path)
-              ::
-              ?>  &(?=(flow-pith ack) ?=(flow-pith pok))
-              ::
-              ?.  =(her.ack-name our)  ::  do we need to respond to this ack?
-                %-  %+  ev-tace  odd.veb.bug.ames-state
-                    |.("not our ack rcvr={<her.ack-name>}; skip")
-                ev-core  :: XX TODO log
-              ?.  =(rcvr.pok our)  ::  are we the receiver of the poke?
-                %-  %+  ev-tace  odd.veb.bug.ames-state
-                    |.("poke for {<rcvr.pok>} not us; skip")
-                ev-core  :: XX TODO log
-              ::
-              =.  per  (ev-update-lane lane hop ~)
-              ::  update and print connection status
-              ::
-              =.  ev-core  (ev-update-qos %live last-contact=now)
-              ::
-              %-  (ev-tace rcv.veb.bug.ames-state |.("hear poke packet"))
-              ::
-              ?.  =(1 (div (add tob.data 1.023) 1.024))
-                %-  %+  ev-tace  msg.veb.bug.ames-state
-                    |.("hear uncomplete message")
-                =/  =dire  :: flow swtiching
-                  %*(fo-flip-dire fo side *@ud^(fo-infer-dire:fo load.pok))  :: XX assert load is plea/boon
+            ++  ev-pact
+              |%
+              ++  hear-poke
+                |=  [dud=(unit goof) =lane:pact =pact:pact]
+                ^+  ev-core
+                ?>  ?=(%poke +<.pact)
+                =*  data     data.pact
+                =*  our-ack  her.ack.pact
+                =*  her-pok  her.pok.pact
+
+                ::  XX dispatch/hairpin &c
                 ::
-                =+  fo-core=(fo-abed:fo hen bone.pok dire)
-                ?:  (fo-message-is-acked:fo-core mess.pok)
-                  ::  don't peek if the message havs been already acked
+                ::  - pre-check that we want to process this poke
+                ::    (recognize ack path, ship not blacklisted, &c)
+                ::  - initialize our own outbound request for the poke payload
+                ::  - start processing the part of the poke payload we already have
+                ::    - validation should crash event/no-op to ensure that no
+                ::      state is changed
+                ::
+                =/  [=space cyf=(unit @) =inner-poke=path]
+                  ~|  inner-path/[pat.ack^pat.pok]:pact
+                  (ev-decrypt-path [pat her]:pok.pact)
+                ::
+                =/  [pok=(pole iota) ack=(pole iota)]
+                  ::  path validation/decryption
                   ::
+                  :-  (validate-path inner-poke-path)
+                  (validate-path inner:(ev-decrypt-path [pat.ack her.pok]:pact))
+                ::
+                ?>  &(?=(flow-pith ack) ?=(flow-pith pok))
+                ?.  =(our-ack our)  ::  do we need to respond to this ack?
                   %-  %+  ev-tace  odd.veb.bug.ames-state
-                      |.("poke [bon, seq]={<[bone mess]:pok>} already acked")
-                  ::
-                  fo-abet:(fo-send-ack:fo-core mess.pok)
-                ::
-                %-  %+  ev-tace  fin.veb.bug.ames-state
-                    |.("start peeking for poke payload")
-                ::
-                =/  =^space
-                  chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
-                %+  ev-emit  hen
-                [%pass (fo-wire:fo-core %pok) %a meek/[space [her pat]:poke-name]]
-              ::  authenticate one-fragment message
-              ::
-              ?>  %^    authenticate
-                      (root:lss (met 3 dat.data)^dat.data)
-                    aut.data
-                  poke-name
-              ::
-              %:  ev-mess-poke
-                dud
-                her.ack-name^(pout ack)  ::  XX not used
-                her.poke-name^(pout pok)
-                ;;(gage:mess (cue (ev-decrypt-spac space dat.data cyf)))
-              ==
-            ::
-            ++  ev-pact-peek
-              |=  =name:pact
-              ?.  =(our her.name)
-                ev-core
-              ::
-              %-  %+  ev-tace  [|(rcv fin)]:veb.bug.ames-state
-                  |.("heering peek packet")
-              ::
-              =/  res=(unit (unit cage))
-                (peek ~ /ames %x (name-to-beam name))
-              ?.  ?=([~ ~ ^] res)
-                ev-core
-              ?.  ?=([%atom *] u.u.res)
-                ev-core  ::  XX support both %atom and %packet
-              =+  !<([dat=@ pairs=(list @ux) pof=@ux] q.u.u.res)
-              (ev-emit hen %give %push ~ dat)
-            ::
-            ++  ev-pact-page
-              |=  [dud=(unit goof) =lane:pact hop=@ud =name:pact =data:pact =next:pact]
-              ^+  ev-core
-              ::  check for pending request (peek|poke)
-              ::
-              =*  pit  pit.sat.per
-              =/  [=space cyf=(unit @) =inner=path]
-                (ev-decrypt-path pat.name ship.per)
-              =*  sealed-path  pat.name
-              ?~  res=(~(get by pit) sealed-path)
-                ev-core
-              ::
-              %-  (ev-tace rcv.veb.bug.ames-state |.("hear page packet"))
-              ::
-              =+  ?~  dud  ~
-                  %.  ~
-                  =*  mot  mote.u.dud
-                  %+  slog  leaf+"mesa: page from {<ship.per>} crashed {<mot>}"
-                  ?.  msg.veb.bug.ames-state  ~
-                  tang.u.dud
-              ::
-              =.  per  (ev-update-lane lane hop next)
-              ::  update and print connection status
-              ::
-              =.  ev-core  (ev-update-qos %live last-contact=now)
-              ::
-              =/  tof  (div (add tob.data 1.023) 1.024)
-              ::
-              =/  [typ=?(%auth %data) fag=@ud]
-                ?~  wan.name
-                  [?:((gth tof 1) %auth %data) 0]
-                [typ fag]:wan.name
-              ::
-              ?-    typ
-                  %auth
-                ?.  ?|  ?=(~ ps.u.res)
-                        =(0 fag)
-                        (gth tof 1)
-                    ==
+                      |.("not our ack rcvr={<our-ack>}; skip")
                   ev-core
-                =/  proof=(list @ux)  (rip 8 dat.data)
-                ?>  (authenticate (recover-root:verifier:lss proof) aut.data name)
-                =/  state  (init:verifier:lss tof proof)
-                =.  sat.per
-                  %_  sat.per
-                    pit  (~(put by pit) sealed-path u.res(ps `[state ~]))
-                  ==
-                ::
-                %-  (ev-tace snd.veb.bug.ames-state |.("request frag={<fag>}"))
-                ::  request next fragment
-                ::
-                ?:  =(~ unix-duct)
-                  %-  (slog leaf+"ames: unix-duct still pending; will retry %push" ~)
+                ?.  =(rcvr.pok our)  ::  are we the receiver of the poke?
+                  %-  %+  ev-tace  odd.veb.bug.ames-state
+                      |.("poke for {<rcvr.pok>} not us; skip")
                   ev-core
-                %-  ev-emit
-                (push-pact [hop=0 %peek name(wan [%data 0])] lane.sat.per)
-              ::
-                  %data
-                ::  do we have packet state already?
+                ?.  =(her-pok rcvr.ack)  ::  do ack and pokes match?
+                  %-  %+  ev-tace  odd.veb.bug.ames-state
+                      |.("ack {<rcvr.ack>} and poke {<her-pok>} missmatch; skip")
+                  ev-core
                 ::
-                ?~  ps.u.res
-                  ::  is this this a standalone (jumbo or 1-frag) message?
+                =.  per  (ev-update-lane lane hop.pact ~)
+                ::  update and print connection status
+                ::
+                =.  ev-core  (ev-update-qos %live last-contact=now)
+                ::
+                %-  (ev-tace rcv.veb.bug.ames-state |.("hear poke packet"))
+                ::
+                ?.  =(1 (div (add tob.data.pact 1.023) 1.024))
+                  %-  %+  ev-tace  msg.veb.bug.ames-state
+                      |.("hear incomplete message")
                   ::
-                  =/  mod  (bex (dec boq.name))  :: XX unguarded
-                  ?:  =(1 (div (add tob.data (dec mod)) mod))
-                    ~&  [tob=tob.data met=(met 3 dat.data)]
-                    ~|  aut.data
-                    ?>  ?=(%& -.aut.data)
-                    ?>  (authenticate (root:lss tob.data^dat.data) aut.data name)
-                    =/  =spar       [her.name inner-path]
-                    =/  =auth:mess  p.aut.data
-                    =/  res=@       (ev-decrypt-spac space dat.data cyf)
-                    ::  if %chum/%shut, we need to pass the sealed-path to find it
-                    ::  in the pit.fren-state and then remove it
+                  =/  =dire  :: flow swtiching
+                    %*(fo-flip-dire fo side *@ud^(fo-infer-dire:fo load.pok))  :: XX assert load is plea/boon
+                  ::
+                  =+  fo-core=(fo-abed:fo hen bone.pok dire)
+                  ?:  (fo-message-is-acked:fo-core mess.pok)
+                    ::  don't peek if the message havs been already acked
                     ::
-                    %*($ ev-mess-page sealed-path `sealed-path, +< spar^auth^res)
-                  ::  XX handle out-of-order packet
+                    %-  %+  ev-tace  odd.veb.bug.ames-state
+                        |.("poke [bon, seq]={<[bone mess]:pok>} already acked")
+                    ::
+                    fo-abet:(fo-send-ack:fo-core mess.pok)
                   ::
-                  !!
-                ::  yes, we do have packet state already
+                  %-  %+  ev-tace  fin.veb.bug.ames-state
+                      |.("start peeking for poke payload")
+                  ::
+                  =/  =^space
+                    chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
+                  %+  ev-emit  hen
+                  [%pass (fo-wire:fo-core %pok) a+meek/[space [her pat]:pok.pact]]
+                ::  authenticate one-fragment message
                 ::
-                =*  ps  u.ps.u.res
-                ?.  =(counter.los.ps fag)
+                ?>  %-  authenticate
+                    [(root:lss (met 3 dat.data)^dat.data) aut.data pok.pact]
+                ::
+                %:  hear-poke:ev-mess
+                  dud
+                  [her pat]:ack.pact
+                  [her pat]:pok.pact
+                  ;;(gage:mess (cue (ev-decrypt-spac space dat.data cyf)))
+                ==
+              ::
+              ++  hear-peek
+                |=  =name:pact
+                ?.  =(our her.name)
                   ev-core
-                ::  extract the pair (if present) and verify
                 ::
-                ?>  ?=(%| -.aut.data)
-                =/  pair=(unit [l=@ux r=@ux])  p.aut.data
-                ::  update packet state
+                %-  %+  ev-tace  [|(rcv fin)]:veb.bug.ames-state
+                    |.("heering peek packet")
                 ::
-                =/  leaf=octs
-                  ?.  =(+(fag) leaves.los.ps)
-                    1.024^dat.data
-                  (met 3 dat.data)^dat.data
-                ~|  los.ps^leaf^pair
-                =.  los.ps   (verify-msg:verifier:lss los.ps [leaf pair])
-                =.  fags.ps  [dat.data fags.ps]
-                =.  sat.per
-                  %_  sat.per
-                    pit  (~(put by pit) sealed-path u.res(ps `ps))
-                  ==
-                ::  is the message incomplete?
+                =/  res=(unit (unit cage))
+                  (peek ~ /ames %x (name-to-beam name))
+                ?.  ?=([~ ~ ^] res)
+                  ev-core
+                ?.  ?=([%atom *] u.u.res)
+                  ev-core  ::  XX support both %atom and %packet
+                =+  !<([dat=@ pairs=(list @ux) pof=@ux] q.u.u.res)
+                (ev-emit hen %give %push ~ dat)
+              ::
+              ++  hear-page
+                |=  [dud=(unit goof) =lane:pact hop=@ud =name:pact =data:pact =next:pact]
+                ^+  ev-core
+                ::  check for pending request (peek|poke)
                 ::
-                ?.  =(+(fag) leaves.los.ps)
+                =*  pit  pit.sat.per
+                =/  [=space cyf=(unit @) =inner=path]
+                  (ev-decrypt-path pat.name ship.per)
+                =*  sealed-path  pat.name
+                ?~  res=(~(get by pit) sealed-path)
+                  ev-core
+                ::
+                %-  (ev-tace rcv.veb.bug.ames-state |.("hear page packet"))
+                ::
+                =+  ?~  dud  ~
+                    %.  ~
+                    =*  mot  mote.u.dud
+                    %+  slog  leaf+"mesa: page from {<ship.per>} crashed {<mot>}"
+                    ?.  msg.veb.bug.ames-state  ~
+                    tang.u.dud
+                ::
+                =.  per  (ev-update-lane lane hop next)
+                ::  update and print connection status
+                ::
+                =.  ev-core  (ev-update-qos %live last-contact=now)
+                ::
+                =/  tof  (div (add tob.data 1.023) 1.024)
+                ::
+                =/  [typ=?(%auth %data) fag=@ud]
+                  ?~  wan.name
+                    [?:((gth tof 1) %auth %data) 0]
+                  [typ fag]:wan.name
+                ::
+                ?-    typ
+                    %auth
+                  ?.  ?|  ?=(~ ps.u.res)
+                          =(0 fag)
+                          (gth tof 1)
+                      ==
+                    ev-core
+                  =/  proof=(list @ux)  (rip 8 dat.data)
+                  ?>  (authenticate (recover-root:verifier:lss proof) aut.data name)
+                  =/  state  (init:verifier:lss tof proof)
+                  =.  sat.per
+                    %_  sat.per
+                      pit  (~(put by pit) sealed-path u.res(ps `[state ~]))
+                    ==
+                  ::
+                  %-  (ev-tace snd.veb.bug.ames-state |.("request frag={<fag>}"))
                   ::  request next fragment
                   ::
                   ?:  =(~ unix-duct)
                     %-  (slog leaf+"ames: unix-duct still pending; will retry %push" ~)
                     ev-core
-                  ::
-                  %-  %+  ev-tace  snd.veb.bug.ames-state
-                      |.("request frag={<counter.los.ps>}")
-                  ::
                   %-  ev-emit
-                  %+  push-pact
-                    [hop=0 %peek name(wan [%data counter.los.ps])]
-                  lane.sat.per
-                ::  yield complete message
+                  (push-pact [hop=0 %peek name(wan [%data 0])] lane.sat.per)
                 ::
-                %-  (ev-tace rcv.veb.bug.ames-state |.("yield full message"))
-
-                =/  =spar  [her.name inner-path]
-                =/  =auth:mess  [%| *@uxH] :: XX should be stored in ps?
-                =/  res=@  (ev-decrypt-spac space (rep 13 (flop fags.ps)) cyf)
-                ::  if %chum/%shut, we need to pass the sealed-path to find it
-                ::  in the pit.fren-state and then remove it f
-                ::
-                %*($ ev-mess-page sealed-path `sealed-path, +< [spar auth res])
-              ==
+                    %data
+                  ::  do we have packet state already?
+                  ::
+                  ?~  ps.u.res
+                    ::  is this this a standalone (jumbo or 1-frag) message?
+                    ::
+                    =/  mod  (bex (dec boq.name))  :: XX unguarded
+                    ?:  =(1 (div (add tob.data (dec mod)) mod))
+                      ~&  [tob=tob.data met=(met 3 dat.data)]
+                      ~|  aut.data
+                      ?>  ?=(%& -.aut.data)
+                      ?>  (authenticate (root:lss tob.data^dat.data) aut.data name)
+                      =/  =spar       [her.name inner-path]
+                      =/  =auth:mess  p.aut.data
+                      =/  res=@       (ev-decrypt-spac space dat.data cyf)
+                      ::  if %chum/%shut, we need to pass the sealed-path to find it
+                      ::  in the pit.fren-state and then remove it
+                      ::
+                      %*  $  hear-page:ev-mess
+                        sealed-path  `sealed-path
+                        +<           spar^auth^res
+                      ==
+                    ::  XX handle out-of-order packet
+                    ::
+                    !!
+                  ::  yes, we do have packet state already
+                  ::
+                  =*  ps  u.ps.u.res
+                  ?.  =(counter.los.ps fag)
+                    ev-core
+                  ::  extract the pair (if present) and verify
+                  ::
+                  ?>  ?=(%| -.aut.data)
+                  =/  pair=(unit [l=@ux r=@ux])  p.aut.data
+                  ::  update packet state
+                  ::
+                  =/  leaf=octs
+                    ?.  =(+(fag) leaves.los.ps)
+                      1.024^dat.data
+                    (met 3 dat.data)^dat.data
+                  ~|  los.ps^leaf^pair
+                  =.  los.ps   (verify-msg:verifier:lss los.ps [leaf pair])
+                  =.  fags.ps  [dat.data fags.ps]
+                  =.  sat.per
+                    %_  sat.per
+                      pit  (~(put by pit) sealed-path u.res(ps `ps))
+                    ==
+                  ::  is the message incomplete?
+                  ::
+                  ?.  =(+(fag) leaves.los.ps)
+                    ::  request next fragment
+                    ::
+                    ?:  =(~ unix-duct)
+                      %-  (slog leaf+"ames: unix-duct still pending; will retry %push" ~)
+                      ev-core
+                    ::
+                    %-  %+  ev-tace  snd.veb.bug.ames-state
+                        |.("request frag={<counter.los.ps>}")
+                    ::
+                    %-  ev-emit
+                    %+  push-pact
+                      [hop=0 %peek name(wan [%data counter.los.ps])]
+                    lane.sat.per
+                  ::  yield complete message
+                  ::
+                  %-  (ev-tace rcv.veb.bug.ames-state |.("yield full message"))
+                  ::
+                  =/  =spar  [her.name inner-path]
+                  =/  =auth:mess  [%| *@uxH] :: XX should be stored in ps?
+                  =/  res=@  (ev-decrypt-spac space (rep 13 (flop fags.ps)) cyf)
+                  ::  if %chum/%shut, we need to pass the sealed-path to find it
+                  ::  in the pit.fren-state and then remove it f
+                  ::
+                  %*  $  hear-page:ev-mess
+                    sealed-path  `sealed-path
+                    +<           [spar auth res]
+                  ==
+                ==
+              ::
+              --
             ::
             +|  %messages-entry-point
             ::
             ::  XX call +ev-update-qos again in the message layer?
             ::
-            ++  ev-mess-page
-              =|  sealed-path=(unit path)   ::  XX set if coming from the packet layer
-              |=  [=spar =auth:mess res=@]  ::  XX res and path.spar have been decrypted
-              ^+  ev-core
-              =*  ship  ship.spar
-              ?>  =(ship.per ship.spar)
+            ++  ev-mess
+              |%
+              ++  hear-page
+                =|  sealed-path=(unit path)   ::  XX set if coming from the packet layer
+                |=  [=spar =auth:mess res=@]  ::  XX res and path.spar have been decrypted
+                ^+  ev-core
+                =*  ship  ship.spar
+                ?>  =(ship.per ship.spar)
+                ::
+                =+  path=?~(sealed-path path.spar u.sealed-path)
+                ?~  ms=(~(get by pit.sat.per) path)
+                  %-  %+  ev-tace  odd.veb.bug.ames-state
+                      |.("path missing from the .pit")
+                  ev-core
+                ::  XX validate response
+                =.  pit.sat.per  (~(del by pit.sat.per) path)
+                ~|  gage-res-failed/`@ux`res
+                =+  ;;(=gage:mess (cue res))
+                ?>  ?=(^ gage)
+                (ev-give-response for.u.ms path.spar gage)
               ::
-              =+  path=?~(sealed-path path.spar u.sealed-path)
-              ?~  ms=(~(get by pit.sat.per) path)
-                %-  %+  ev-tace  odd.veb.bug.ames-state
-                    |.("path missing from the .pit")
+              ++  hear-poke
+                |=  [dud=(unit goof) =ack=spar =pok=spar =gage:mess]
+                ^+  ev-core
+                ::  XX  we punch through the message layer directly from the
+                ::  packet layer, so ack/poke path validation happens there
+                ::
+                :: =/  ack=(pole iota)  (mesa-pave path.ack-spar)
+                =/  pok=(pole iota)  (mesa-pave path.pok-spar)
+                ?>  ?=(flow-pith pok)
+                ::
+                =+  ?~  dud  ~
+                    %.  ~
+                    %+  slog  leaf+"mesa: message crashed {<mote.u.dud>}"
+                    ::  XX what if the crash is due to path validation
+                    ::  and we can't infer the sequence number?
+                    ?.  msg.veb.bug.ames-state  ~
+                    :-  >[bone=bone message-num=mess]:pok<
+                    tang.u.dud
+                ::  XX  the packet layer has validated that this is a %poke for us
+                ::
+                ::  XX assumes that %aliens are checked in the packet layer
+                ::  XX assumes that .per in the sample is set by the packet layer
+                ::
+                =/  =dire  :: flow swtiching
+                  %*(fo-flip-dire fo side *@ud^(fo-infer-dire:fo load.pok))  :: XX assert load is plea/boon
+                ::
+                =/  req=mesa-message
+                  ~|  gage-parsing-failed/gage
+                  ?>  ?=([%message *] gage)  :: XX [%message %mark *] ??
+                  ?:  =(%for dire)  ::  %boon(s) sink forward (reversed %plea direction)
+                    ?>(?=([%boon *] +.gage) +.gage)
+                  ?>  =(%bak dire)  ::  %pleas(s) and %corks sink backward
+                  ?>  ?=([%plea *] +.gage)
+                  ;;([%plea plea] +.gage)
+                ::
+                %-  %+  ev-tace  msg.veb.bug.ames-state
+                    |.("hear complete {<-.req>} message")
+                ::
+                =<  fo-abet
+                %.  [%sink mess.pok req ?=(~ dud)]
+                fo-call:(fo-abed:fo hen bone.pok dire)
+              ::
+              ++  hear-peek
+                |=  =spar
+                ?.  =(our ship.spar)
+                  ev-core
+                =/  res=(unit (unit cage))
+                  !!  :: scry for path
+                ?.  ?=([~ ~ ^] res)
+                  ev-core
+                ::  XX [%give %response %page p.mess [p q.q]:u.u.res]
                 ev-core
-              ::  XX validate response
-              =.  pit.sat.per  (~(del by pit.sat.per) path)
-              ~|  gage-res-failed/`@ux`res
-              =+  ;;(=gage:mess (cue res))
-              ?>  ?=(^ gage)
-              (ev-give-response for.u.ms path.spar gage)
-            ::
-            ++  ev-mess-poke  :: XX refactor function signature; ack-spar not used
-              |=  [dud=(unit goof) =ack=spar =pok=spar =gage:mess]
-              ^+  ev-core
-              =/  pok=(pole iota)  (mesa-pave path.pok-spar)
-              ?.  ?=(flow-pith pok)
-                ::  XX  ~|  poke-path-failed/path.pok-spar
-                %-  %+  ev-tace  odd.veb.bug.ames-state
-                    |.("poke path validation failed {(spud path.pok-spar)}")
-                ev-core
               ::
-              =+  ?~  dud  ~
-                  %.  ~
-                  %+  slog  leaf+"mesa: message crashed {<mote.u.dud>}"
-                  ::  XX what if the crash is due to path validation
-                  ::  and we can't infer the sequence number?
-                  ?.  msg.veb.bug.ames-state  ~
-                  :-  >[bone=bone message-num=mess]:pok<
-                  tang.u.dud
-              ::  XX  the packet layer has validated that this is a %poke for us
-              ::
-              ::  XX assumes that %aliens are checked in the packet layer
-              ::  XX assumes that .per in the sample is set by the packet layer
-              ::
-              =/  =dire  :: flow swtiching
-                %*(fo-flip-dire fo side *@ud^(fo-infer-dire:fo load.pok))  :: XX assert load is plea/boon
-              ::
-              =/  req=mesa-message
-                ~|  gage-parsing-failed/gage
-                ?>  ?=([%message *] gage)  :: XX [%message %mark *] ??
-                ?:  =(%for dire)  ::  %boon(s) sink forward (reversed %plea direction)
-                  ?>(?=([%boon *] +.gage) +.gage)
-                ?>  =(%bak dire)  ::  %pleas(s) and %corks sink backward
-                ?>  ?=([%plea *] +.gage)
-                ;;([%plea plea] +.gage)
-              ::
-              %-  %+  ev-tace  msg.veb.bug.ames-state
-                  |.("hear complete {<-.req>} message")
-              ::
-              =<  fo-abet
-              %.  [%sink mess.pok req ?=(~ dud)]
-              fo-call:(fo-abed:fo hen bone.pok dire)
-            ::
-            ++  ev-mess-peek
-              |=  =spar
-              ?.  =(our ship.spar)
-                ev-core
-              =/  res=(unit (unit cage))
-                !!  :: scry for path
-              ?.  ?=([~ ~ ^] res)
-                ev-core
-              ::  XX [%give %response %page p.mess [p q.q]:u.u.res]
-              ev-core
+              --
             ::
             +|  %take-responses
             ::
@@ -6954,7 +6973,8 @@
               ::
               ?:  =(%pok were)
                 ::  XX ack-path not used
-                (ev-mess-poke ~ ack-path=our^/ her^(pout message-path) q.sage)
+                %-  hear-poke:ev-mess
+                [dud=~ ack-path=our^/ her^(pout message-path) q.sage]
               ::  wires are tagged ?(%ack %nax) so we can diferentiate if we are
               ::  proessing an ack or a naxplanation payload
               ::
@@ -7457,7 +7477,7 @@
                   ==
                 ::  publisher receives %cork
                 ::  mark flow as closing
-                ::  publish %cork %ack (in +ev-mess-poke) in corked.sat.per
+                ::  publish %cork %ack (in +hear-poke:ev-mess) in corked.sat.per
                 ::
                 =.  fo-core
                   %-  fo-emit
@@ -8839,7 +8859,7 @@
               ?.  ?=([~ ~ %atom *] res)
                 ~
               =;  page=pact:pact
-                ?>(?=(%page +<.page) `q.page)
+                ?>(?=(%page +<.page) `data.page)
               =>  [res=res de=de:pact]
               :: ~>  %memo./ames/get-page  :: XX unnecessary?
               =+  ;;([pac=@ *] q.q.u.u.res)
@@ -9290,9 +9310,9 @@
             ?<  =(~ unix-duct)
             =/  =ship
               ?-  +<.pact  ::  XX
-                %peek  her.p.pact
-                %poke  her.p.pact
-                %page  her.p.pact
+                %peek  her.name.pact
+                %poke  her.ack.pact
+                %page  her.name.pact
               ==
             ::
             %-  %+  %*(ev-tace ev ship.per ship)  snd.veb.bug.ames-state
@@ -9712,13 +9732,13 @@
       =^  moves  ames-state
         ?-    +<.pact
             %page
-          ?~  chum=(~(get by chums.ames-state) her.p.pact)
+          ?~  chum=(~(get by chums.ames-state) her.name.pact)
             ::  XX weird page; log
             `ames-state
           ?:  ?=([~ %known *] chum)  ::  XX alien agenda? log?
             =<  ev-abet
             %.  [dud lane hop.pact +>.pact]
-            ev-pact-page:(ev-foco:ev-core her.p.pact +.u.chum)
+            hear-page:ev-pact:(ev-foco:ev-core her.name.pact +.u.chum)
           ::  if alien this can only be a comet attestation proof
           ::
           =<  al-abet
@@ -9727,11 +9747,11 @@
         ::
             %peek
           ?~  dud
-            ev-abet:(ev-pact-peek:ev-core +>.pact)
+            ev-abet:(hear-peek:ev-pact:ev-core +>.pact)
           sy-abet:(~(sy-crud sy:me-core hen) %peek tang.u.dud)
         ::
             %poke
-          =*  her  her.q.pact  :: her from poke-path
+          =*  her  her.pok.pact  :: her from poke-path
           =/  chum-state  (~(get by chums.ames-state) her)
           ?.  ?&  ?=(%pawn (clan:title her))
                   |(?=(~ chum-state) ?=([~ %alien *] chum-state))
@@ -9743,8 +9763,8 @@
               %-  al-enqueue-alien-todo:al-core
               [her chum-state |=(ovni-state +<)]
             =<  ev-abet
-            %.  [dud lane hop.pact +>.pact]
-            ev-pact-poke:(ev-foco:ev-core her +.u.chum-state)
+            %.  [dud lane hop.pact %poke +>.pact]
+            hear-poke:ev-pact:(ev-foco:ev-core her +.u.chum-state)
           =?  chums.ames-state  ?=(~ chum-state)
             ::  first time: upgrade to %alien and +peek attestation proof
             ::
@@ -9777,21 +9797,24 @@
             ev-core
           ::  XX  this assumes that %aliens are checked in the packet layer
           ?>  ?=([~ %known *] chum)  ::  XX alien agenda?
-          (ev-mess-poke:(ev-foco:ev-core ship.p.q.mess +.u.chum) dud +.mess)
+          %.  [dud +.mess]
+          hear-poke:ev-mess:(ev-foco:ev-core ship.p.q.mess +.u.chum)
         ::
             %peek
           ?~  chum=(~(get by chums.ames-state) ship.mess)
             ev-core
           ::  XX  this assumes that %aliens are checked in the packet layer
           ?>  ?=([~ %known *] chum)  ::  XX alien agenda?
-          (ev-mess-peek:(ev-foco:ev-core ship.mess +.u.chum) [ship path]:mess)
+          %.  +.mess
+          hear-peek:ev-mess:(ev-foco:ev-core ship.mess +.u.chum)
         ::
             %page
           ?~  chum=(~(get by chums.ames-state) ship.p.mess)
             ev-core
           ::  XX  this assumes that %aliens are checked in the packet layer
           ?>  ?=([~ %known *] chum)  ::  XX alien agenda?
-          (ev-mess-page:(ev-foco:ev-core ship.p.mess +.u.chum) [p q r]:mess)
+          %.  +.mess
+          hear-page:ev-mess:(ev-foco:ev-core ship.p.mess +.u.chum)
         ::
         ==
       moves^vane-gate

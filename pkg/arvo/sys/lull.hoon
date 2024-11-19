@@ -1839,9 +1839,9 @@
                   ==
         +$  next  (list lane)
         +$  pact  $:  hop=@ud
-                      $%  [%page p=name q=data r=next]
-                          [%poke p=name q=name r=data]
-                          [%peek p=name]
+                      $%  [%page =name =data =next]
+                          [%poke ack=name pok=name =data]
+                          [%peek =name]
                   ==  ==
         --
     ::
@@ -1852,16 +1852,16 @@
       =*  typ  +<.pak
       =/  bod=plot
         ?-  typ
-          %page  [(en:^name p.pak) (en:^data q.pak) (en:^next r.pak)]
-          %peek  (en:^name p.pak)
-          %poke  [(en:^name p.pak) (en:^name q.pak) (en:^data r.pak)]
+          %page  [(en:^name name.pak) (en:^data data.pak) (en:^next next.pak)]
+          %peek  (en:^name name.pak)
+          %poke  [(en:^name ack.pak) (en:^name pok.pak) (en:^data data.pak)]
         ==
       =/  hed=plot
         =/  nex=@B
           ?.  ?=(%page typ)  0b0
-          ?~  r.pak          0b0
-          ?^  t.r.pak        0b11
-          ?:(?=([%if *] i.r.pak) 0b1 0b10)
+          ?~  next.pak       0b0
+          ?^  t.next.pak     0b11
+          ?:(?=([%if *] i.next.pak) 0b1 0b10)
         (en:head nex typ hop.pak (mug p:(fax:plot bod)))
       [hed bod]
     ::
