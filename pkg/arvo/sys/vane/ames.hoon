@@ -2834,8 +2834,8 @@
               =<  abet
               ?+  sign  ~&(ames-weird-take-sign/[&1^&2]:sign^wire event-core)
                 [@ %done *]  (on-take-done:event-core wire error.sign)
-                [@ %boon *]  (on-take-boon:event-core wire +.sign)
-                [@ %noon *]  (on-take-noon:event-core wire +.sign)
+                [@ %boon *]  (on-take-boon:event-core wire +>.sign)
+                [@ %noon *]  (on-take-noon:event-core wire +>.sign)
               ::
                 [%ames %tune *]  (on-tune:event-core wire [+>- roar]:sign)
               ::
@@ -3392,7 +3392,7 @@
           =/  peer-core  (abed-got:pe her.u.parsed)
           ?~  bone=(bone-ok u.parsed wire rift.peer-state.peer-core)
             event-core
-          abet:(on-memo:peer-core u.bone [%boon payload])
+          abet:(on-memo:peer-core u.bone %boon payload)
         ::  +on-plea: handle request to send message
         ::
         ++  on-plea
@@ -6530,8 +6530,8 @@
               ::
                 [%gall %flub ~]  ev-abet:(ev-take-flub:ev-core wire)
                 [@ %done *]      ev-abet:(ev-poke-done:ev-core wire error.sign)
-                [@ %boon *]      ev-abet:(ev-take-boon:ev-core wire boon/+.sign)
-                [@ %noon *]      ev-abet:(ev-take-boon:ev-core wire noon/+.sign)
+                [@ %boon *]      ev-abet:(ev-take-boon:ev-core wire +.sign)
+                [@ %noon *]      ev-abet:(ev-take-boon:ev-core wire +.sign)
               ::
               ::  remote responses: acks/naxplanation payloads
               ::    reentrant from %ames (from either message or packet layer)
@@ -6716,6 +6716,7 @@
           =^  moves-a  ames-state  ev-abet
           =^  moves-b  ames-state
             co-abet:(co-make-peek:(co-abed:co hen) space ship.per path)
+          =.  sat.per  (got-per ship.per)
           (ev-emil (weld moves-a moves-b))
         ::
         +|  %packet-entry-points
@@ -6811,7 +6812,7 @@
               ev-core
             ::
             %-  %+  ev-tace  [|(rcv fin)]:veb.bug.ames-state
-                |.("heering peek packet")
+                |.("hear peek packet")
             ::
             =/  res=(unit (unit cage))
               (peek ~ /ames %x (name-to-beam name))
@@ -6836,7 +6837,9 @@
               (ev-decrypt-path pat.name ship.per)
             =*  sealed-path  pat.name
             ?~  res=(~(get by pit) sealed-path)
-              ev-core
+              %.  ev-core
+              %+  ev-tace  odd.veb.bug.ames-state
+              |.("missing page from pit {(spud sealed-path)}")
             ::
             %-  (ev-tace rcv.veb.bug.ames-state |.("hear page packet"))
             ::
@@ -7519,16 +7522,14 @@
               `ack/error=%.n
             ::
                 %cork
-              ?.  (~(has in corked.sat.per) side)  ~
+              ?.  (~(has in corked.sat.per) side)
+                ~
               `gone/~
             ::
                 ?(%plea %boon)
-              ?~  v=(get:fo-mop loads.snd seq)   ~
-              ?>  =(load -.u.v)
-              ?-  -.u.v
-                %plea  `plea/[vane path payload]:u.v
-                %boon  `boon/payload.u.v
-              ==
+              ?~  v=(get:fo-mop loads.snd seq)
+                ~
+              ?>(=(load -.u.v) `u.v)
             ==
           ::
           +|  %request-sender

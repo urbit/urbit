@@ -88,7 +88,6 @@
     [%known peer-state]
   ::  tell ~bud about ~nec
   ::
-  ~&  >>  "tell ~bud about ~nec"^nec-sym
   =.  peers.ames-state.bud
     %+  ~(put by peers.ames-state.bud)  ~nec
     =|  =peer-state:ames-raw

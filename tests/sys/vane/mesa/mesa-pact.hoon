@@ -85,9 +85,9 @@
       /mess/0/pact/13/pure/init
     /publ/[(scot %ud nec-life)]/g/x/0/dap//some/data/atom
   ?~  res
-    ~&  %sig  ~
+    ~
   ?~  u.res
-    ~&  %inner-sig  ~
+    ~
   =+  !<([=pact:pact:ames.nec (list (unit [l=@ux r=@ux]))] q.u.u.res)
   ~&  >  test-mesa-ns/-.pact
   ~
