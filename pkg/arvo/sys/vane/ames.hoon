@@ -6804,8 +6804,8 @@
             ::
             %:  hear-poke:ev-mess
               dud
-              [her pat]:ack.pact
-              [her pat]:pok.pact
+              [her.ack.pact (pout ack)]
+              [her.pok.pact (pout pok)]
               ;;(gage:mess (cue (ev-decrypt-spac space dat.data cyf)))
             ==
           ::
@@ -6845,13 +6845,6 @@
               |.("missing page from pit {(spud sealed-path)}")
             ::
             %-  (ev-tace rcv.veb.bug.ames-state |.("hear page packet"))
-            ::
-            =+  ?~  dud  ~
-                %.  ~
-                =*  mot  mote.u.dud
-                %+  slog  leaf+"mesa: page from {<ship.per>} crashed {<mot>}"
-                ?.  msg.veb.bug.ames-state  ~
-                tang.u.dud
             ::
             =.  per  (ev-update-lane lane hop.pact next.pact)
             ::  update and print connection status
