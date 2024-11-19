@@ -3674,7 +3674,7 @@
             (request-attestation u.ship)
           ::
           ?:  ?=([%dead-flow ~] wire)
-            =?  event-core  =(^ unix-duct)
+            =?  event-core  ?=(^ unix-duct)
               (wake-dead-flows error)
             =+  ?.  =(~ unix-duct)  ~
                 %.  ~
