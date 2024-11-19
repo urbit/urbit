@@ -2869,7 +2869,10 @@
         ++  emit  |=(=move event-core(moves [move moves]))
         ++  emil  |=(mos=_moves event-core(moves (weld (flop mos) moves)))
         ::
-        ++  crypto-core    (nol:nu:crub:crypto priv.ames-state)
+        ++  crypto-core
+          =>  [priv=priv.ames-state ..crypto]
+          ~>(%memo./ames/crypto-core (nol:nu:crub:crypto priv))
+        ::
         ++  channel-state  [life.ames-state crypto-core bug.ames-state]
         ++  ev-trace
           |=  [verb=? =ship print=(trap tape)]
@@ -3948,7 +3951,6 @@
         ++  attestation-packet
           |=  [her=ship =her=life]
           ^-  blob
-          =+  crypto-core=(nol:nu:crub:crypto priv.ames-state)
           %-  etch-shot
           %-  etch-open-packet
           :_  crypto-core
@@ -3988,7 +3990,7 @@
             |=  [=ship peer=^peer-state]
             %_  peer-core
               peer-state  peer
-                channel  [[our ship] now channel-state -.peer]
+                channel   [[our ship] now channel-state -.peer]
             ==
           ::
           ++  abort  event-core  :: keeps moves, discards state changes
@@ -5668,7 +5670,6 @@
                 ::
                 ++  keys
                   |%
-                  ++  crypto-core  (nol:nu:crub:crypto priv.ames-state)
                   ++  mess
                     |=  [=ship life=@ud =path dat=$@(~ (cask))]
                     (jam +<)
@@ -8047,7 +8048,6 @@
               (on-publ-full (my [ship point]~))
             ::
             =/  old-key       symmetric-key.+.u.peer
-            =/  crypto-core   (nol:nu:crub:crypto priv.ames-state)
             =/  =private-key  sec:ex:crypto-core
             =/  new-key       (derive-symmetric-key public-key private-key)
             ::  recalculate paths in the .pit using the new key
@@ -8291,7 +8291,6 @@
             ::   =-  ~&  priv/-  -
             ::   (rof [~ ~] /ames %j `beam`[[our %vein %da now] /1])
             ::
-            =/  crypto-core     (nol:nu:crub:crypto priv.ames-state)
             =/  pk=private-key  sec:ex:crypto-core
             =/  =symmetric-key  (derive-symmetric-key public-key pk)
             ::
@@ -9343,7 +9342,6 @@
               [~ ~]
             ::
             =+  core=(ev:ames now^eny^rof ~[//attestation] ames-state)
-            =+  crypto-core=(nol:nu:crub:crypto priv.ames-state)
             =/  =open-packet
               [pub:ex:crypto-core our life.ames-state u.rcvr u.life]
             :+  ~  ~
@@ -9548,6 +9546,10 @@
           ?>  (lte (met 3 -.u.key) 32)
           `@uxI`-.u.key
         ==
+      ::
+      ++  crypto-core
+        =>  [priv=priv.ames-state ..crypto]
+        ~>(%memo./mesa/crypto-core (nol:nu:crub:crypto priv))
       ::
       +|  %fren-helpers
       ::
