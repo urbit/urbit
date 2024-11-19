@@ -7005,14 +7005,15 @@
             =/  pok=(pole iota)  (mesa-pave path.pok-spar)
             ?>  ?=(flow-pith pok)
             ::
-            =+  ?~  dud  ~
-                %.  ~
-                %+  slog  leaf+"mesa: message crashed {<mote.u.dud>}"
-                ::  XX what if the crash is due to path validation
-                ::  and we can't infer the sequence number?
-                ?.  msg.veb.bug.ames-state  ~
-                :-  >[bone=bone message-num=mess]:pok<
-                tang.u.dud
+            ::  XX printed in the packet layer
+            :: =+  ?~  dud  ~
+            ::     %.  ~
+            ::     %+  slog  leaf+"mesa: message crashed {<mote.u.dud>}"
+            ::     ::  XX what if the crash is due to path validation
+            ::     ::  and we can't infer the sequence number?
+            ::     ?.  msg.veb.bug.ames-state  ~
+            ::     :-  >[bone=bone message-num=mess]:pok<
+            ::     tang.u.dud
             ::  XX  the packet layer has validated that this is a %poke for us
             ::
             ::  XX assumes that %aliens are checked in the packet layer
@@ -7022,23 +7023,11 @@
               :: XX assert load is plea/boon
               %*(fo-flip-dire fo side *@ud^(fo-infer-dire:fo load.pok))
             ::
-            ::  move this assertion to the flow layer? so we can %nax malformed
-            ::  payloads?
-            ::
-            =/  req=mesa-message
-              ~|  gage-parsing-failed/gage
-              ?>  ?=([%message *] gage)  :: XX [%message %mark *] ??
-              ?:  =(%for dire)  ::  %boon(s) sink forward
-                ?>(?=([%boon *] +.gage) +.gage)
-              ?>  =(%bak dire)  ::  %pleas(s) and %corks sink backward
-              ?>  ?=([%plea *] +.gage)
-              ;;([%plea plea] +.gage)
-            ::
             %-  %+  ev-tace  msg.veb.bug.ames-state
-                |.("hear complete {<-.req>} message")
+                |.("hear complete message {<[bone=bone mess=mess]:pok^dire>}")
             ::
             =<  fo-abet
-            %.  [%sink mess.pok req ?=(~ dud)]
+            %.  [%sink mess.pok gage ?=(~ dud)]
             fo-call:(fo-abed:fo hen bone.pok dire)
           ::
           ++  hear-peek
@@ -7404,7 +7393,7 @@
           ++  fo-call
             =>  |%
                 +$  poke-task
-                  $%  [%sink seq=@ud mess=mesa-message ok=?]
+                  $%  [%sink seq=@ud =gage:mess ok=?]
                       ::  XX remove %fo-planation from lull
                       mesa-message
                   ==
@@ -7430,13 +7419,12 @@
               fo-send
               ::
                 %sink
-              ?:  |((fo-to-close mess.poke) (~(has in corked.sat.per) side))
+              ?:  |(closing.state (~(has in corked.sat.per) side))
                 %-  %+  ev-tace  odd.veb.bug.ames-state
-                    ?:  (fo-to-close mess.poke)
+                    ?:  closing.state
                       |.("skip sink; flow {<bone>} is closing")
                     |.("skip sink; flow {<bone>} has been corked")
                 fo-core
-              ~|  mess.poke
               ::  check that the message can be acked
               ::
               =+  flow-state=[bone=bone seq=seq.poke last=last-acked.rcv]
@@ -7456,9 +7444,13 @@
               ::  a %plea sinks on the backward receiver (from a forward flow)
               ::  a %boon sinks on the forward receiver (from a backward flow)
               ::
+              ?.  ?=([%message mark *] gage.poke)
+                %-  %+  ev-tace  odd.veb.bug.ames-state
+                    |.("no op; weird %message gage {<-.gage.poke>}")
+                fo-core
               ?-  dire
-                %bak  ?>(?=(%plea -.mess.poke) (fo-sink-plea [+.mess ok]:poke))
-                %for  ?>(?=(%boon -.mess.poke) (fo-sink-boon [+.mess ok]:poke))
+                %bak  (fo-sink-plea [+.gage ok]:poke)
+                %for  (fo-sink-boon [+.gage ok]:poke)
               ==
             ==
           ::
@@ -7575,11 +7567,14 @@
           +|  %request-receiver
           ::
           ++  fo-sink-boon
-            |=  [message=* ok=?]
+            |=  [=page ok=?]
             ^+  fo-core
-            =.  fo-core  (fo-emit (ev-got-duct bone) %give %boon message)
+            ?.  ?=([%boon *] page)
+              %-  %+  ev-tace  odd.veb.bug.ames-state
+                  |.("no op; weird %boon page {<-.page>}")
+              fo-core
+            =.  fo-core  (fo-emit (ev-got-duct bone) %give %boon +.page)
             ::  handle a previous crash
-            ::  XX revisit
             ::
             =?  moves  !ok
               ::  we previously crashed on this message; notify client vane
@@ -7594,7 +7589,7 @@
             (fo-send-ack last-acked.rcv)
           ::
           ++  fo-sink-plea
-            |=  [=plea ok=?]
+            |=  [=page ok=?]
             ^+  fo-core
             =.  pending-ack.rcv  %.y
             ::  receiver of a %plea request
@@ -7602,11 +7597,14 @@
             ?.  ok
               (fo-take-done:fo-core `*error)
             ::
+            =+  ;;([%plea =plea] page)
+            ::
             ?:  &(=(vane %$) ?=([%ahoy ~] payload) ?=([%mesa ~] path)):plea
               ::  migrated %ahoy pleas are always acked
               ::
               %-  %+  ev-tace  odd.veb.bug.ames-state
                   |.("acking migrated %ahoy plea")
+              ::
               (fo-take-done:fo-core ~)
             ?.  &(=(vane %$) ?=([%cork ~] payload) ?=([%cork ~] path)):plea
               =/  =wire  (fo-wire %van)
@@ -9756,6 +9754,14 @@
       ::
       ::  XX find peer first; if regressing back to |ames, we could hear old
       ::  |mesa tasks
+      ::
+      =+  ?~  dud  ~
+          %.  ~
+          %+  slog  leaf+"mesa: packet crashed {<mote.u.dud>}"
+          ::  XX what if the crash is due to path validation
+          ::  and we can't infer the sequence number?
+          ?.  =+  [msg rcv]:veb.bug.ames-state  |(-< ->)  ~
+          tang.u.dud
       ::
       =/  =pact:pact  (parse-packet blob)  :: XX handle crash here?
       =^  moves  ames-state
