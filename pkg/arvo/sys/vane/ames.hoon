@@ -9190,14 +9190,42 @@
           %sign  (verify-sig:crypt (sig-key pat.tyl u.her) u.aut ful u.rut)
           %hmac  (verify-mac:crypt (mac-key pat.tyl u.her) u.aut ful u.rut)
         ==
-      ::  metadata query
+      ::  metadata query; XX only flow information supported
       ::
       ++  peek-meta
         |=  tyl=(pole knot)
         ^-  (unit (unit cage))
         ?>  ?=([%meta pat=*] tyl)
-        ::  XX implement
-        ~
+        =/  [ship=(unit ship) bone=(unit bone) =dire]
+          ?+    pat.tyl  [~ ~ *dire]
+              [%ship ship=@ flow=[%flow bone=@ =dire *]]
+            :+  (slaw %p ship.pat.tyl)
+              (slaw %ud bone.flow.pat.tyl)
+            dire.flow.pat.tyl
+          ==
+        ?:  |(?=(~ ship) ?=(~ bone))
+          [~ ~]
+        =+  per-sat=(get-per u.ship)
+        ?.  ?=([~ ~ %known *] per-sat)
+          ~  ::  %alien or missing
+        =+  ev-core=(ev-foco:ev u.ship +.u.u.per-sat)
+        =+  fo-core=(fo-abed:fo:ev-core ~[//scry] u.bone dire)
+        =+  state:fo-core
+        ?>  ?=([@ @ %flow @ @ qery=*] pat.tyl)
+        ?+    qery.pat.tyl  ~
+            ~          ~ :: XX implement full meta
+            [%clos ~]  ``message/!>(clogs/closing)
+            [%lods ~]  ``message/!>(lods/(wyt:fo-mop:fo-core loads.snd))
+          ::
+            [%mess mess=@ m-qery=*]
+          =/  mess=(unit @ud)  (slaw %ud mess.qery.pat.tyl)
+          ?:  ?=(~ mess)
+            [~ ~]
+          ?+  m-qery.qery.pat.tyl  ~
+            [%whey ~]  ~
+            [%naxp ~]  ``message/!>(naxp/(~(has by nax.rcv) u.mess))
+          ==
+        ==
       ::
       ++  peek
         ^-  roon
@@ -9719,7 +9747,7 @@
       (pe-keen ~ spar(path [%a %x '1' %$ %whey (scot %ud boq) path.spar]))
     ::
     ++  pe-meta
-      |=  =spar:^ames
+      |=  =spar
       =/  ship-state  (pe-find-peer ship.spar)
       ?:  ?=(%ames -.ship-state)
         ~&(%meta-is-not-supported-in-ames `vane-gate)
@@ -9732,7 +9760,7 @@
           ==
         ::  encrypted using %chum namespace
         ::
-        (pe-chum spar(path [%a %x '1' %$ %meta path.spar]))
+        (pe-chum spar(path [%a %x '1' %$ %meta %ship (scot %p our) path.spar]))
       ==
     ::
     +|  %mesa-tasks
