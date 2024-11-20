@@ -8235,7 +8235,8 @@
                 %-  ~(rep in ducts)
                 |=  [=duct c=_core]
                 =/  space
-                  chum/[life.ames-state ship [life symmetric-key]:sat.per.c]
+                  :-  %chum
+                  [life.sat.per.c our life.ames-state symmetric-key.sat.per.c]
                 (ev-req-peek:(ev-abed:c duct) space path)
               ::
               =^  moves  ames-state  ev-abet:ev-core
@@ -9693,7 +9694,7 @@
         ?:  ?=([~ %known *] +.ship-state)
           =<  ev-abet
           =*  sat    +.u.ship-state
-          =/  space  chum/[life.ames-state ship [life symmetric-key]:sat]
+          =/  space  chum/[life.sat our life.ames-state symmetric-key.sat]
           %.  [space path]
           ev-req-peek:(ev-foco:ev-core ship sat)
         ::
@@ -9751,12 +9752,12 @@
       ::
       `vane-gate
     ::
-    ++  pe-whey  :: XX add sec
+    ++  pe-whey
       |=  [boq=@ud =spar:^ames]
       =/  ship-state  (pe-find-peer ship.spar)
       ?:  ?=(%ames -.ship-state)
         ~&(%whey-is-not-supported-in-ames `vane-gate)
-      (pe-keen ~ spar(path [%a %x '1' %$ %whey (scot %ud boq) path.spar]))
+      (pe-chum spar(path [%a %x '1' %$ %whey (scot %ud boq) path.spar]))
     ::
     ++  pe-meta
       |=  =spar
