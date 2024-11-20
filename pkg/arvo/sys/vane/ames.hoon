@@ -9618,8 +9618,6 @@
       ::
         %heer  (pe-heer dud +.task)
         %mess  (pe-mess dud +.task)
-        %whey  (pe-whey +.task)
-        %meta  (pe-meta +.task)
       ::
       ==
     ::
@@ -9751,30 +9749,6 @@
           |.("hear ames packet for migrated peer; ignore")
       ::
       `vane-gate
-    ::
-    ++  pe-whey
-      |=  [boq=@ud =spar:^ames]
-      =/  ship-state  (pe-find-peer ship.spar)
-      ?:  ?=(%ames -.ship-state)
-        ~&(%whey-is-not-supported-in-ames `vane-gate)
-      (pe-chum spar(path [%a %x '1' %$ %whey (scot %ud boq) path.spar]))
-    ::
-    ++  pe-meta
-      |=  =spar
-      =/  ship-state  (pe-find-peer ship.spar)
-      ?:  ?=(%ames -.ship-state)
-        ~&(%meta-is-not-supported-in-ames `vane-gate)
-      ?+    path.spar  ~&(%meta-query-not-supported `vane-gate)
-          $%  [%flow bone=@ =dire ~]
-              [%flow bone=@ =dire %clos ~]
-              [%flow bone=@ =dire %lods ~]
-              [%flow bone=@ =dire %mess mess=@ %whey ~]
-              [%flow bone=@ =dire %mess mess=@ %naxp ~]
-          ==
-        ::  encrypted using %chum namespace
-        ::
-        (pe-chum spar(path [%a %x '1' %$ %meta %ship (scot %p our) path.spar]))
-      ==
     ::
     +|  %mesa-tasks
     ::
@@ -9913,7 +9887,7 @@
     (~(pe-hear pe-core hen) dud +.task)
     ::  %mesa-only tasks
     ::
-      ?(%heer %mess %whey %meta)
+      ?(%heer %mess)
     (~(call pe-core hen) dud task)
     ::  XX can we call the wrong core? still check if ship has migrated?
     ::

@@ -888,8 +888,6 @@
         [%moke =space =spar =path]    ::  initiate %poke request
         [%meek =space =spar]          ::  initiate %peek request
         [%mage =space =spar]          ::  send %page of data; intended for acks
-        [%whey boq=@ud spar]          ::  weight of a noun, measured by .boq
-        [%meta spar]                  ::  metadata query about a path
     ==
   ::
   ::  $gift: effect from ames

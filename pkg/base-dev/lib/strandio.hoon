@@ -424,7 +424,34 @@
   |=  [=wire boq=@ud =spar:ames]
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass wire %arvo %a %whey boq spar)
+  ::  encrypted using %chum namespace
+  ::
+  =.  path.spar  [%a %x '1' %$ %whey %ship (scot %ud boq) path.spar]
+  (send-raw-card %pass wire %arvo %a %chum spar)
+::
+++  meta
+  |=  [=wire =spar:ames]
+  =/  m  (strand ,~)
+  ^-  form:m
+  ?+    path.spar  (pure:m ~)
+      $%  [%flow bone=@ =dire:ames ~]
+          [%flow bone=@ =dire:ames %clos ~]
+          [%flow bone=@ =dire:ames %line ~]
+          [%flow bone=@ =dire:ames %lods ~]
+          [%flow bone=@ =dire:ames %next ~]
+          [%flow bone=@ =dire:ames %last ~]
+          [%flow bone=@ =dire:ames %mess mess=@ %whey ~]
+          [%flow bone=@ =dire:ames %mess mess=@ %naxp ~]
+      ==
+    ::  encrypted using %chum namespace
+    ::
+    ~&  >  path.spar
+    ;<  our=@p  bind:m  get-our
+    %-  send-raw-card
+    :*  %pass  wire  %arvo  %a  %chum
+        spar(path [%a %x '1' %$ %meta %ship (scot %p our) path.spar])
+    ==
+  ==
 ::
 ++  sleep
   |=  for=@dr
