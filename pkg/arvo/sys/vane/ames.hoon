@@ -9190,6 +9190,14 @@
           %sign  (verify-sig:crypt (sig-key pat.tyl u.her) u.aut ful u.rut)
           %hmac  (verify-mac:crypt (mac-key pat.tyl u.her) u.aut ful u.rut)
         ==
+      ::  metadata query
+      ::
+      ++  peek-meta
+        |=  tyl=(pole knot)
+        ^-  (unit (unit cage))
+        ?>  ?=([%meta pat=*] tyl)
+        ::  XX implement
+        ~
       ::
       ++  peek
         ^-  roon
@@ -9209,9 +9217,10 @@
               [%shut kid=@ cyf=@ ~]                       (peek-shut bem tyl)
               [%flow bone=@ =load rcvr=@ mess=@ ~]        (peek-flow tyl)
               [%flow bone=@ %cork rcvr=@ ~]               (peek-cork tyl)
-              [%pawn %proof rcvr=@ life=@ ~]             (peek-pawn tyl)
+              [%pawn %proof rcvr=@ life=@ ~]              (peek-pawn tyl)
               [%whey boq=@ pat=*]                         (peek-whey tyl)
               [%veri ?(%sign %hmac) her=@ aut=@ rut=@ *]  (peek-veri tyl)
+              [%meta pat=*]                               (peek-meta tyl)
           ::  publisher-side, protocol-level
           ::
               [%mess ryf=@ res=*]
@@ -9562,13 +9571,14 @@
         %cork  (pe-cork +.task)
         %keen  (pe-keen +.task)
         %chum  (pe-chum +.task)
-        %whey  (pe-whey +.task)
         %yawn  (pe-cancel all=| +.task)
         %wham  (pe-cancel all=& +.task)
       ::  |mesa tasks
       ::
         %heer  (pe-heer dud +.task)
         %mess  (pe-mess dud +.task)
+        %whey  (pe-whey +.task)
+        %meta  (pe-meta +.task)
       ::
       ==
     ::
@@ -9708,6 +9718,23 @@
         ~&(%whey-is-not-supported-in-ames `vane-gate)
       (pe-keen ~ spar(path [%a %x '1' %$ %whey (scot %ud boq) path.spar]))
     ::
+    ++  pe-meta
+      |=  =spar:^ames
+      =/  ship-state  (pe-find-peer ship.spar)
+      ?:  ?=(%ames -.ship-state)
+        ~&(%meta-is-not-supported-in-ames `vane-gate)
+      ?+    path.spar  ~&(%meta-query-not-supported `vane-gate)
+          $%  [%flow bone=@ =dire ~]
+              [%flow bone=@ =dire %clos ~]
+              [%flow bone=@ =dire %lods ~]
+              [%flow bone=@ =dire %mess mess=@ %whey ~]
+              [%flow bone=@ =dire %mess mess=@ %naxp ~]
+          ==
+        ::  encrypted using %chum namespace
+        ::
+        (pe-chum spar(path [%a %x '1' %$ %meta path.spar]))
+      ==
+    ::
     +|  %mesa-tasks
     ::
     ++  pe-heer
@@ -9845,7 +9872,7 @@
     (~(pe-hear pe-core hen) dud +.task)
     ::  %mesa-only tasks
     ::
-      ?(%heer %mess)
+      ?(%heer %mess %whey %meta)
     (~(call pe-core hen) dud task)
     ::  XX can we call the wrong core? still check if ship has migrated?
     ::
@@ -9857,7 +9884,7 @@
     (call:me-core sample)
     ::  common tasks
     ::
-      ?(%plea %cork %keen %chum %yawn %wham %load %whey) :: XX %whey only |mesa?
+      ?(%plea %cork %keen %chum %yawn %wham %load)
     (~(call pe-core hen) dud task)
     ::  core-dependent tasks
     ::
