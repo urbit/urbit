@@ -8999,15 +8999,17 @@
         --
       ::
       +|  %namespaces
+      ::  publisher-side, message-level (public namespace)
       ::
       ++  peek-publ
-        |=  [bem=beam lyf=@ud =path]
+        |=  [bem=beam tyl=(pole knot)]
         ^-  (unit (unit cage))
-        ?~  lyf
-          [~ ~]
-        ?.  =(lyf life.ames-state)
+        ?>  ?=([%publ lyf=@ pat=*] tyl)
+        =/  lyf  (slaw %ud lyf.tyl)
+        ?~  lyf  [~ ~]
+        ?.  =(u.lyf life.ames-state)
           ~
-        ?~  inn=(inner-path-to-beam our path)
+        ?~  inn=(inner-path-to-beam our pat.tyl)
           [~ ~]
         =/  view  ?@(vew.u.inn vew.u.inn (cat 3 [way car]:vew.u.inn))
         ?~  res=(rof ~ /ames/publ view bem.u.inn)
@@ -9023,22 +9025,30 @@
         =/  ser  (jam gag)  :: unencrypted
         :^  ~  ~  %message
         !>([%sign (sign:crypt priv ful (root:lss (met 3 ser)^ser)) ser])
+      ::  publisher-side, message-level (two-party encrypted namespace)
       ::
       ++  peek-chum
-        |=  [bem=beam her=@p lyf=@ud hyf=@ud cyf=@uv]
+        |=  [bem=beam tyl=(pole knot)]
         ^-  (unit (unit cage))
-        ?.  =(lyf life.ames-state)
+        ?>  ?=([%chum lyf=@ her=@ hyf=@ cyf=@ ~] tyl)
+        =/  lyf  (slaw %ud lyf.tyl)
+        =/  her  (slaw %p her.tyl)
+        =/  hyf  (slaw %ud hyf.tyl)
+        =/  cyf  (slaw %uv cyf.tyl)
+        ?:  |(?=(~ lyf) ?=(~ her) ?=(~ hyf) ?=(~ cyf))
+          [~ ~]
+        ?.  =(u.lyf life.ames-state)
           ~
-        ?~  key=(get-key-for her hyf)
+        ?~  key=(get-key-for u.her u.hyf)
           ~
-        =/  pat=path  (open-path:crypt u.key cyf)
+        =/  pat=path  (open-path:crypt u.key u.cyf)
         ?~  inn=(inner-path-to-beam our pat)
           ~
-        ?~  res=(rof `[her ~ ~] /ames/chum vew.u.inn bem.u.inn)
+        ?~  res=(rof `[u.her ~ ~] /ames/chum vew.u.inn bem.u.inn)
           ~
         ?~  u.res
           [~ ~]
-        =>  [key=u.key cyf=cyf bem=bem res=res ..crypt] :: XX rift.ames-state
+        =>  [key=u.key cyf=u.cyf bem=bem res=res ..crypt] :: XX rift.ames-state
         :: ~>  %memo./ames/chum
         :: XX rift.ames-state
         =/  gag  [p q.q]:u.u.res
@@ -9047,13 +9057,19 @@
         =/  cyr  (encrypt:crypt key cyf ser)
         :+  ~  ~
         message/!>([%hmac (mac:crypt key ful (root:lss (met 3 cyr)^cyr)) cyr])
+      ::  publisher-side, message-level (group encrypted namespace)
       ::
       ++  peek-shut
-        |=  [bem=beam kid=@ cyf=@uv]
+        |=  [bem=beam tyl=(pole knot)]
         ^-  (unit (unit cage))
-        ?~  key=(get:key-chain server-chain.ames-state kid)
+        ?>  ?=([%shut kid=@ cyf=@ ~] tyl)
+        =/  kid  (slaw %ud kid.tyl)
+        =/  cyf  (slaw %uv cyf.tyl)
+        ?:  |(?=(~ kid) ?=(~ cyf))
+          [~ ~]
+        ?~  key=(get:key-chain server-chain.ames-state u.kid)
           ~
-        =/  pat  (open-path:crypt -.u.key cyf)
+        =/  pat  (open-path:crypt -.u.key u.cyf)
         ::  XX check path prefix
         ?~  inn=(inner-path-to-beam our pat)
           ~
@@ -9062,7 +9078,7 @@
         ?~  u.res
           [~ ~]
         ::  XX  rift.ames-state
-        =>  [key=key cyf=cyf bem=bem res=res ..crypt]
+        =>  [key=key cyf=u.cyf bem=bem res=res ..crypt]
         :: ~>  %memo./ames/shut
         =/  cry=@uxI  (rsh 8 (rsh 3 -.u.key))
         =/  sgn=@uxI  (end 8 (rsh 3 -.u.key))
@@ -9072,17 +9088,24 @@
         =/  cyr  (encrypt:crypt cry iv=cyf ser)
         =/  sig  (sign:crypt sgn ful (root:lss (met 3 cyr)^cyr))
         ``[%message !>([%sign sig cyr])]
+      ::  publisher-side, flow-level
       ::
       ++  peek-flow
-        |=  [bone=@ud =load rcvr=ship mess=@ud]
+        |=  tyl=(pole knot)
         ^-  (unit (unit cage))
-        =+  per-sat=(get-per rcvr)
+        ?>  ?=([%flow bone=@ =load rcvr=@ mess=@ ~] tyl)
+        =/  bone  (slaw %ud bone.tyl)
+        =/  rcvr  (slaw %p rcvr.tyl)
+        =/  mess  (slaw %ud mess.tyl)
+        ?:  |(?=(~ bone) ?=(~ rcvr) ?=(~ mess))
+          [~ ~]
+        =+  per-sat=(get-per u.rcvr)
         ?.  ?=([~ ~ %known *] per-sat)
           ~  ::  %alien or missing
-        =+  ev-core=(ev-foco:ev rcvr +.u.u.per-sat)
-        =/  dire=?(%for %bak)  (fo-infer-dire:fo:ev-core load)
-        ?:  ?&  (~(has in corked.sat.per.ev-core) bone dire)
-                |(?=(%ack-plea load) ?=(%ack-boon load))
+        =+  ev-core=(ev-foco:ev u.rcvr +.u.u.per-sat)
+        =/  dire=?(%for %bak)  (fo-infer-dire:fo:ev-core load.tyl)
+        ?:  ?&  (~(has in corked.sat.per.ev-core) u.bone dire)
+                |(?=(%ack-plea load.tyl) ?=(%ack-boon load.tyl))
             ==
             :: ~&  >>>  corked-flow-dropping/load^corked.sat.per  :: XX remove
             ::  if the flow is corked, block
@@ -9091,23 +9114,82 @@
             ~  ::  XX  [~ ~]
         ::
         =/  res=(unit page)
-          %.  [load mess]
-          fo-peek:(fo-abed:fo:ev-core ~[//scry] bone dire)
+          %.  [load.tyl u.mess]
+          fo-peek:(fo-abed:fo:ev-core ~[//scry] u.bone dire)
         ?~(res ~ ``[%message !>(u.res)])
+      ::  client %mesa %corks, flow-level
       ::
       ++  peek-cork
-        |=  [bone=@ud rcvr=ship]
+        |=  tyl=(pole knot)
         ^-  (unit (unit cage))
-        =+  per-sat=(get-per rcvr)
+        ?>  ?=([%flow bone=@ %cork rcvr=@ ~] tyl)
+        =/  bone  (slaw %ud bone.tyl)
+        =/  rcvr  (slaw %p rcvr.tyl)
+        ?:  |(?=(~ bone) ?=(~ rcvr))
+          [~ ~]
+        =+  per-sat=(get-per u.rcvr)
         ?.  ?=([~ ~ %known *] per-sat)
           ~  ::  %alien or missing
-        =+  ev-core=(ev-foco:ev rcvr +.u.u.per-sat)
+        =+  ev-core=(ev-foco:ev u.rcvr +.u.u.per-sat)
         =/  res=(unit page)
           %.  [%cork *@ud]
           :: XX allow to read "server" corks
           ::
-          fo-peek:(fo-abed:fo:ev-core ~[//scry] bone dire=%for)
+          fo-peek:(fo-abed:fo:ev-core ~[//scry] u.bone dire=%for)
         ?~(res ~ ``[%message !>(u.res)])
+      ::  comet attestations
+      ::
+      ++  peek-pawn
+        |=  tyl=(pole knot)
+        ^-  (unit (unit cage))
+        ?>  ?=([%comet %proof rcvr=@ life=@ ~] tyl)
+        ::  only comets have this
+        ::
+        ?.  ?=(%pawn (clan:title our))
+          [~ ~]
+        =/  rcvr  (slaw %p rcvr.tyl)
+        =/  life  (slaw %ud life.tyl)
+        ?:  |(?=(~ life) ?=(~ rcvr))
+          [~ ~]
+        ::
+        =+  core=(ev:ames now^eny^rof ~[//attestation] ames-state)
+        =/  =open-packet
+          [pub:ex:crypto-core our life.ames-state u.rcvr u.life]
+        :+  ~  ~
+        [%message !>(proof/(sign:as:crypto-core (jam open-packet)))]
+      ::  publisher-side, weight of a noun bounded at .pat, as measured by .boq
+      ::
+      ++  peek-whey
+        |=  tyl=(pole knot)
+        ^-  (unit (unit cage))
+        ?>  ?=([%whey boq=@ pat=*] tyl)
+        =/  boq  (slaw %ud boq.tyl)
+        ?~  boq  [~ ~]
+        ?~  inn=(inner-path-to-beam our pat.tyl)
+          ~
+        ::  XX only public data supported
+        ::
+        ?~  res=(rof ~ /ames/whey vew.u.inn bem.u.inn)
+          ~
+        :^  ~  ~  %whey
+        !>([boq=u.boq (met u.boq (jam ?~(u.res ~ [p q.q]:u.u.res)))])
+      ::  receiver-side, verify packet auth
+      ::
+      ++  peek-veri
+        |=  tyl=(pole knot)
+        ^-  (unit (unit cage))
+        ?>  ?=([%veri typ=?(%sign %hmac) her=@ aut=@ rut=@ pat=*] tyl)
+        =/  her  (slaw %p her.tyl)
+        =/  aut  (slaw %uv aut.tyl)
+        =/  rut  (slaw %uv rut.tyl)
+        ?:  |(?=(~ her) ?=(~ aut) ?=(~ rut))
+          [~ ~]
+        =/  ful  (en-beam [[u.her %$ ud+1] pat.tyl])
+        :^  ~  ~  %flag  !>  :: XX is this right?
+        ?-  typ.tyl
+          %sign  (verify-sig:crypt (sig-key pat.tyl u.her) u.aut ful u.rut)
+          %hmac  (verify-mac:crypt (mac-key pat.tyl u.her) u.aut ful u.rut)
+        ==
       ::
       ++  peek
         ^-  roon
@@ -9120,44 +9202,16 @@
             ==
           =/  tyl=(pole knot)  s.bem
           ?+    tyl  ~
-          ::  publisher-side, batch-level
-          ::
-              [%hunk lop=@t len=@t pat=*]
+            ::  message-level namespaces
             ::
-            ?>  ?=  [%mess ryf=@ %pact boq=@ %etch typ=?(%data %init) res=*]
-                    pat.tyl
-            =/  [lop=@ len=@]
-              [(slav %ud lop.tyl) (slav %ud len.tyl)]
-            =*  scry  $
-            ::
-            =|  batch=(list @)
-            ::
-            :^  ~  ~  %batch
-            !>  %-  flop
-            |-  ^-  (list @)
-            ?:  =(lop len)
-              batch
-            =*  fag  lop
-            =/  =path
-              ?:  =(%init typ.pat.tyl)
-                pat.tyl
-              ?>  ?=([fag=@ pat=*] res.pat.tyl)
-              pat.tyl(fag.res (scot %ud fag))
-            =?  fag  ?=(%data typ.pat.tyl)
-              +(fag)
-            =/  res=(unit (unit cage))
-              scry(lyc ~, pov /ames/batch, s.bem path)
-            ?~  res
-              batch
-            ?:  ?=(~ u.res)
-              batch
-            ?.  ?=([%atom *] u.u.res)
-              batch
-            =?  res.pat.tyl  ?=(%init typ.pat.tyl)
-              `^path`[fag='0' res.pat.tyl]
-            =?  typ.pat.tyl  ?=(%init typ.pat.tyl)
-              %data
-            $(batch [;;(@ q.q.u.u.res) batch])
+              [%publ lyf=@ pat=*]                         (peek-publ bem tyl)
+              [%chum lyf=@ her=@ hyf=@ cyf=@ ~]           (peek-chum bem tyl)
+              [%shut kid=@ cyf=@ ~]                       (peek-shut bem tyl)
+              [%flow bone=@ =load rcvr=@ mess=@ ~]        (peek-flow tyl)
+              [%flow bone=@ %cork rcvr=@ ~]               (peek-cork tyl)
+              [%pawn %proof rcvr=@ life=@ ~]             (peek-pawn tyl)
+              [%whey boq=@ pat=*]                         (peek-whey tyl)
+              [%veri ?(%sign %hmac) her=@ aut=@ rut=@ *]  (peek-veri tyl)
           ::  publisher-side, protocol-level
           ::
               [%mess ryf=@ res=*]
@@ -9279,92 +9333,6 @@
           ::
           ::  /ax/[$ship]//1/validate-message/[auth-string]/[blake3-hash]/[path]
           ::
-          ::  publisher-side, message-level (public namespace)
-          ::
-              [%publ lyf=@ pat=*]
-            =/  lyf  (slaw %ud lyf.tyl)
-            ?~  lyf  [~ ~]
-            (peek-publ bem u.lyf pat.tyl)
-          ::  publisher-side, message-level (two-party encrypted namespace)
-          ::
-              [%chum lyf=@ her=@ hyf=@ cyf=@ ~]
-            =/  lyf  (slaw %ud lyf.tyl)
-            =/  her  (slaw %p her.tyl)
-            =/  hyf  (slaw %ud hyf.tyl)
-            =/  cyf  (slaw %uv cyf.tyl)
-            ?:  |(?=(~ lyf) ?=(~ her) ?=(~ hyf) ?=(~ cyf))
-              [~ ~]
-            (peek-chum bem u.her u.lyf u.hyf u.cyf)
-          ::  publisher-side, message-level (group encrypted namespace)
-          ::
-              [%shut kid=@ cyf=@ ~]
-            =/  kid  (slaw %ud kid.tyl)
-            =/  cyf  (slaw %uv cyf.tyl)
-            ?:  |(?=(~ kid) ?=(~ cyf))
-              [~ ~]
-            (peek-shut bem u.kid u.cyf)
-          ::  publisher-side, flow-level
-          ::
-              [%flow bone=@ =load rcvr=@ mess=@ ~]
-            =/  bone  (slaw %ud bone.tyl)
-            =/  rcvr  (slaw %p rcvr.tyl)
-            =/  mess  (slaw %ud mess.tyl)
-            ?:  |(?=(~ bone) ?=(~ rcvr) ?=(~ mess))
-              [~ ~]
-            (peek-flow u.bone load.tyl u.rcvr u.mess)
-          ::  client %mesa %corks, flow-level
-          ::
-              [%flow bone=@ %cork rcvr=@ ~]
-            =/  bone  (slaw %ud bone.tyl)
-            =/  rcvr  (slaw %p rcvr.tyl)
-            ?:  |(?=(~ bone) ?=(~ rcvr))
-              [~ ~]
-            (peek-cork u.bone u.rcvr)
-          ::  comet attestations
-          ::
-              [%comet %proof rcvr=@ life=@ ~]
-            ::  only comets have this
-            ::
-            ?.  ?=(%pawn (clan:title our))
-              [~ ~]
-            =/  rcvr  (slaw %p rcvr.tyl)
-            =/  life  (slaw %ud life.tyl)
-            ?:  |(?=(~ life) ?=(~ rcvr))
-              [~ ~]
-            ::
-            =+  core=(ev:ames now^eny^rof ~[//attestation] ames-state)
-            =/  =open-packet
-              [pub:ex:crypto-core our life.ames-state u.rcvr u.life]
-            :+  ~  ~
-            [%message !>(proof/(sign:as:crypto-core (jam open-packet)))]
-          ::  weight of a noun bounded at .pat, as measured by .boq
-          ::
-              [%whey boq=@ pat=*]
-            =/  boq  (slaw %ud boq.tyl)
-            ?~  boq  [~ ~]
-            ?~  inn=(inner-path-to-beam our pat.tyl)
-              ~
-            ::  XX only public data supported
-            ::
-            ?~  res=(rof ~ /ames/whey vew.u.inn bem.u.inn)
-              ~
-            :^  ~  ~  %whey
-            !>([boq=u.boq (met u.boq (jam ?~(u.res ~ [p q.q]:u.u.res)))])
-          ::  verify packet auth
-          ::
-              [%veri typ=?(%sign %hmac) her=@ aut=@ rut=@ pat=*]
-            =/  her  (slaw %p her.tyl)
-            =/  aut  (slaw %uv aut.tyl)
-            =/  rut  (slaw %uv rut.tyl)
-            ?:  |(?=(~ her) ?=(~ aut) ?=(~ rut))
-              [~ ~]
-            =/  ful  (en-beam [[u.her %$ ud+1] pat.tyl])
-            :^  ~  ~  %flag  !>  :: XX is this right?
-            ?-  typ.tyl
-              %sign  (verify-sig:crypt (sig-key pat.tyl u.her) u.aut ful u.rut)
-              %hmac  (verify-mac:crypt (mac-key pat.tyl u.her) u.aut ful u.rut)
-            ==
-        ::
           ==
         ::  only respond for the local identity, %$ desk, current timestamp
         ::
