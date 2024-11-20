@@ -9167,9 +9167,8 @@
         ?~  boq  [~ ~]
         ?~  inn=(inner-path-to-beam our pat.tyl)
           ~
-        ::  XX only public data supported
         ::
-        ?~  res=(rof ~ /ames/whey vew.u.inn bem.u.inn)
+        ?~  res=(rof [~ ~] /ames/whey vew.u.inn bem.u.inn)
           ~
         :^  ~  ~  %whey
         !>([boq=u.boq (met u.boq (jam ?~(u.res ~ [p q.q]:u.u.res)))])
@@ -9210,12 +9209,15 @@
           ~  ::  %alien or missing
         =+  ev-core=(ev-foco:ev u.ship +.u.u.per-sat)
         =+  fo-core=(fo-abed:fo:ev-core ~[//scry] u.bone dire)
-        =+  state:fo-core
         ?>  ?=([@ @ %flow @ @ qery=*] pat.tyl)
+        =,  state:fo-core
         ?+    qery.pat.tyl  ~
             ~          ~ :: XX implement full meta
             [%clos ~]  ``message/!>(clogs/closing)
+            [%line ~]  ``message/!>(line/line)
             [%lods ~]  ``message/!>(lods/(wyt:fo-mop:fo-core loads.snd))
+            [%next ~]  ``message/!>(next/next-load.snd)
+            [%last ~]  ``message/!>(last/last-acked.rcv)
           ::
             [%mess mess=@ m-qery=*]
           =/  mess=(unit @ud)  (slaw %ud mess.qery.pat.tyl)
@@ -9238,19 +9240,27 @@
             ==
           =/  tyl=(pole knot)  s.bem
           ?+    tyl  ~
-            ::  message-level namespaces
+            ::  message-level public namespaces
             ::
               [%publ lyf=@ pat=*]                         (peek-publ bem tyl)
               [%chum lyf=@ her=@ hyf=@ cyf=@ ~]           (peek-chum bem tyl)
               [%shut kid=@ cyf=@ ~]                       (peek-shut bem tyl)
+              [%pawn %proof rcvr=@ life=@ ~]              (peek-pawn tyl)
+            ::  message-level private namespaces
+            ::
+              $%([%flow *] [%pawn *] [%whey *] [%meta *])
+            ?:  =(~ lyc)  ~
+            ?+  tyl  ~
               [%flow bone=@ =load rcvr=@ mess=@ ~]        (peek-flow tyl)
               [%flow bone=@ %cork rcvr=@ ~]               (peek-cork tyl)
-              [%pawn %proof rcvr=@ life=@ ~]              (peek-pawn tyl)
               [%whey boq=@ pat=*]                         (peek-whey tyl)
-              [%veri ?(%sign %hmac) her=@ aut=@ rut=@ *]  (peek-veri tyl)
               [%meta pat=*]                               (peek-meta tyl)
-          ::  publisher-side, protocol-level
-          ::
+            ==
+            ::  client-side, protocol-level (authentication namespace)
+            ::
+              [%veri ?(%sign %hmac) her=@ aut=@ rut=@ *]  (peek-veri tyl)
+            ::  publisher-side, protocol-level
+            ::
               [%mess ryf=@ res=*]
             =/  ryf  (slaw %ud ryf.tyl)
             ?~  ryf  [~ ~]
@@ -9594,6 +9604,8 @@
     ++  call
       |=  [dud=(unit goof) =task]
       ?+  -.task  !!
+      ::  common tasks
+      ::
         %load  `vane-gate(ames-state ames-state(core +.task))
         %plea  (pe-plea +.task)
         %cork  (pe-cork +.task)
@@ -9601,7 +9613,7 @@
         %chum  (pe-chum +.task)
         %yawn  (pe-cancel all=| +.task)
         %wham  (pe-cancel all=& +.task)
-      ::  |mesa tasks
+      ::  |mesa only tasks
       ::
         %heer  (pe-heer dud +.task)
         %mess  (pe-mess dud +.task)
@@ -10024,9 +10036,19 @@
           =(%x car)
       ==
     =/  tyl=(pole knot)  s.bem
+    ?.  =(~ lyc)
+      ::  private, message-level namespaces
+      ::
+      ?.(?=(?(%flow %cork %whey %meta) -.tyl) ~ (scry:me-core sample))
     ?+    -.tyl  ~
-      ?(%fine %chum)                                      (scry:am-core sample)
-      ?(%hunk %mess %publ %chum %shut %flow %pawn %whey)  (scry:me-core sample)
+        %fine                                   (scry:am-core sample)
+        ?(%mess %publ %chum %shut %veri %pawn)  (scry:me-core sample)
+      ::
+        %chum
+      ?+  +.tyl  ~
+        [our=@ lyf=@ cyf=@ ~]                   (scry:am-core sample)
+        [lyf=@ her=@ hyf=@ cyf=@ ~]             (scry:me-core sample)
+      ==
     ==
   ::
   ?.  ?&  =(our p.bem)
