@@ -7321,13 +7321,17 @@
           ::
           ++  fo-infer-dire
             |=  =load
-            ?+  load     !!    ::  XX %cor is always %for (client-cork)
+            ?-  load
               %plea      %for
               %boon      %bak
               %nax       %bak  ::  XX naxplanation read only by plea sender?
               %ack-plea  %bak
               %ack-boon  %for
+            ::  read cork on the other side
+            ::
+              %cork      ?:(=(%bak dire) %for %bak)
             ==
+          ::
           ::  +fo-add-command: when binding a payload we produce
           ::
           ++  fo-infer-load
@@ -7355,14 +7359,14 @@
           ++  fo-nax-path  |=([s=@ r=@p] (fo-path s %nax r))
           ++  fo-cor-path  |=([s=@ r=@p] (fo-path s %cork r))
           ++  fo-path
-            |=  [seq=@ud =load rcvr=@p]  :: XX lead from lull
+            |=  [seq=@ud =load rcvr=@p]
             ^-  path
             :*  vane=%a  care=%x  case='1'  desk=%$
               ::
                 %flow  (scot %ud bone)  load  rcvr=(scot %p rcvr)
               ::  %corks refers to the whole flow; skip the sequence number
               ::
-                ?:(=(%cork load) ~ [(scot %ud seq) ~])
+                ?:(=(%cork load) [(fo-infer-dire load) ~] [(scot %ud seq) ~])
             ==
           ::
           ++  fo-wire
@@ -7615,6 +7619,9 @@
                   |.("start peeking for %cork flow={<bone>}")
               ::
               :+  hen  %pass
+              ::  we are on the %bak side; for-cor-path will read the %cork
+              ::  on the %for side
+              ::
               [(fo-wire %cor) %a meek/[chum-to-our her (fo-cor-path seq=0 our)]]
             ::  XX just fo-core(closing.state %.y)?
             ::
@@ -9130,7 +9137,7 @@
       ++  peek-cork
         |=  tyl=(pole knot)
         ^-  (unit (unit cage))
-        ?>  ?=([%flow bone=@ %cork rcvr=@ ~] tyl)
+        ?>  ?=([%flow bone=@ %cork rcvr=@ dire=?(%for %bak) ~] tyl)
         =/  bone  (slaw %ud bone.tyl)
         =/  rcvr  (slaw %p rcvr.tyl)
         ?:  |(?=(~ bone) ?=(~ rcvr))
@@ -9141,9 +9148,7 @@
         =+  ev-core=(ev-foco:ev u.rcvr +.u.u.per-sat)
         =/  res=(unit page)
           %.  [%cork *@ud]
-          :: XX allow to read "server" corks
-          ::
-          fo-peek:(fo-abed:fo:ev-core ~[//scry] u.bone dire=%for)
+          fo-peek:(fo-abed:fo:ev-core ~[//scry] u.bone dire.tyl)
         ?~(res ~ ``[%message !>(u.res)])
       ::  comet attestations
       ::
@@ -9260,7 +9265,7 @@
             ?:  =(~ lyc)  ~
             ?+  tyl  ~
               [%flow bone=@ =load rcvr=@ mess=@ ~]        (peek-flow tyl)
-              [%flow bone=@ %cork rcvr=@ ~]               (peek-cork tyl)
+              [%flow bone=@ %cork rcvr=@ ?(%for %bak) ~]  (peek-cork tyl)
               [%whey boq=@ pat=*]                         (peek-whey tyl)
               [%meta pat=*]                               (peek-meta tyl)
             ==
