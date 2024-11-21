@@ -28,13 +28,7 @@
   =/  key  `@uv`49.444.113.421.508.228.869.460.528.530.323.207.394.851.818.486.403.699.510.004.444.292.293.148.898.490
   ~&  [key-1 key]
   =/  =space:ames
-    [%chum our-life=bud-life her=~nec her-life=nec-life key]
-  =/  poke-space
-    ?>  ?=(%chum -.space)
-    ::  lifes need to be switched since for %pokes,
-    ::  this is a payload in our namespace
-    ::
-    space(our-life her-life.space, her-life our-life.space, her ~bud)
+    [%chum server-life=bud-life client=~nec client-life=nec-life key]
   =/  poke-plea  [%x /ge/pok [%0 %m noun/0]]
   =/  poke-path  /flow/0/plea/~bud/1
   =/  ack-path   /flow/0/ack-plea/~nec/1
@@ -44,9 +38,6 @@
   =/  vane-wire  /mesa/flow/van/bak/~nec/0/0
   =/  nax-wire   /mesa/flow/nax/for/~bud/0/0
   ::
-  =/  ack-full-path=path  (make-space-path.nec space %a %x '1' %$ ack-path)
-  =/  pok-full-path=path
-    (make-space-path.nec poke-space %a %x '1' %$ poke-path)
   =/  moke=[%moke space:ames =spar:ames =path]
     [%moke space [~bud %a %x '1' %$ ack-path] %a %x '1' %$ poke-path]
   =/  poke-roof  (make-roof poke-path message+!>(plea/poke-plea))

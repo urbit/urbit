@@ -1600,8 +1600,8 @@
   ::
   +$  space
     $%  [%publ =life]
-        [%chum =our=life her=ship =her=life key=@]
         [%shut kid=@ key=@uxI]
+        [%chum =server=life client=ship =client=life key=@]
     ==
   ::  [0 %for]    =>  %poke: %plea %watch  =>  [0 %bak]
   ::  [0 %for]   <=   %poke: %boon        <=   [0 %bak]

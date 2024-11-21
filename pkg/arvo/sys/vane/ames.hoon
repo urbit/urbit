@@ -1586,9 +1586,9 @@
           %chum  :: encrypted with eddh key
         :-  %chum
         ^+  path
-        :~  (scot %ud our-life.space)
-            (scot %p her.space)
-            (scot %ud her-life.space)
+        :~  (scot %ud server-life.space)
+            (scot %p client.space)
+            (scot %ud client-life.space)
             (scot %uv (seal-path:crypt `@`key.space path))
         ==
       ::
@@ -6641,7 +6641,7 @@
             :: ?>  ?=(%known -.sat.per)  :: XX wat if %alien?
             :: ?.  =(u.hyf life.sat.per)   !!  :: XX handle?
             =*  key  `@uxI`symmetric-key.sat
-            :+  [%chum life.ames-state her life.sat key]
+            :+  [%chum server=life.ames-state client=her life.sat key]
               cyf
             (open-path:crypt key u.cyf)
           ::
@@ -6793,8 +6793,7 @@
               %-  %+  ev-tace  fin.veb.bug.ames-state
                   |.("start peeking for poke payload")
               ::
-              =/  =^space
-                chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
+              =/  =^space  chum-to-our
               %+  ev-emit  hen
               [%pass (fo-wire:fo-core %pok) a+meek/[space [her pat]:pok.pact]]
             ::  authenticate one-fragment message
@@ -7542,9 +7541,7 @@
               ::  %ack is on the other side; flip direction
               ::
               (%*(fo-ack-path fo-core dire.side fo-flip-dire) seq our)
-            =/  =space
-              :-  %chum
-              [life.sat.per our life.ames-state symmetric-key.sat.per]
+            =/  =space  chum-to-our
             =/  =wire  (fo-wire %ack)
             =?  pot.sat.per  ?=(%bak dire)
               ::  for subscription flows (i.e. %boons), we track the peeks
@@ -7614,14 +7611,11 @@
               ::  start %peek request to check if they have corked the flow
               ::  after reading the ack from our namespace
               ::
-              =/  =space  =,  sat.per
-                chum/[life our life.ames-state symmetric-key]
-              ::
               %-  %+  ev-tace  fin.veb.bug.ames-state
                   |.("start peeking for %cork flow={<bone>}")
               ::
               :+  hen  %pass
-              [(fo-wire %cor) %a meek/[space her (fo-cor-path seq=0 our)]]
+              [(fo-wire %cor) %a meek/[chum-to-our her (fo-cor-path seq=0 our)]]
             ::  XX just fo-core(closing.state %.y)?
             ::
             (fo-take-done:fo-core(closing.state %.y) ~)
@@ -7783,9 +7777,8 @@
             %-  %+  ev-tace  fin.veb.bug.ames-state
                 |.("start peeking for %naxplanation {<[bone=bone seq=seq]>}")
             ::
-            =/  =wire  (fo-wire %nax)
-            =/  =space
-              chum/[life.sat.per our life.ames-state symmetric-key.sat.per]
+            =/  =wire   (fo-wire %nax)
+            =/  =space  chum-to-our
             %+  fo-emit  hen
             [%pass wire %a meek/[space her (fo-nax-path seq our)]]
           ::
@@ -7796,12 +7789,23 @@
                   |.("{ack} message {<[bone=bone seq=seq]>}")
             ::  emit (n)ack to unix; see +fo-peek where the (n)ack is produced
             ::
-            =/  =path  (fo-ack-path seq her)
-            =/  =space
-              chum/[life.ames-state her [life symmetric-key]:sat.per]
+            =/  =path   (fo-ack-path seq her)
+            =/  =space  chum-to-her
             (fo-emit [/ames]~ %pass /make-page %a mage/[space her^path])
           ::
           --
+        ::
+        +|  %space-helpers
+        ::  +chum-to-our: refers to payloads bounded in other peer's namespace
+        ::
+        ++  chum-to-our
+          :-  %chum
+          [server=life.sat.per client=our life.ames-state symmetric-key.sat.per]
+        ::  +chum-to-her: refers to payloads bounded in our namespace
+        ::
+        ++  chum-to-her
+          :-  %chum
+          [server=life.ames-state [client=ship [life symmetric-key]:sat]:per]
         ::
         --
       ::
@@ -8051,17 +8055,23 @@
               =/  [=space ack=^path]
                 [space inner]:(ev-decrypt-path:ev path ship)
               =.  space
+                ::  update life/keys in the space; for acks, update the client
+                ::
                 ?+  -.space  space
                   %publ  space(life life)
-                  %chum  space(her-life life, key new-key)
+                  %chum  space(client-life life, key new-key)
                 ==
               =.  path  (make-space-path space ack)
+              ::  only recalculate poke paths if there's an associated payload
+              ::
               =?  pay.req  ?=(^ pay.req)
                 =/  [=^space poke=^path]
                   [space inner]:(ev-decrypt-path:ev u.pay.req ship)
+                ::  for poke paths, update the server life
+                ::
                 =.  space
                   ?+  -.space  space  :: for %publ, our life hansn't changed
-                    %chum  space(our-life life, key new-key)
+                    %chum  space(server-life life, key new-key)
                   ==
                 `(make-space-path space poke)
               (~(put by pit) path req(ps ~))  :: XX drop any partially state
@@ -8234,10 +8244,7 @@
                 |=  [[=path ducts=(set duct)] core=_ev-core]
                 %-  ~(rep in ducts)
                 |=  [=duct c=_core]
-                =/  space
-                  :-  %chum
-                  [life.sat.per.c our life.ames-state symmetric-key.sat.per.c]
-                (ev-req-peek:(ev-abed:c duct) space path)
+                (ev-req-peek:(ev-abed:c duct) space=chum-to-our:c path)
               ::
               =^  moves  ames-state  ev-abet:ev-core
               (sy-emil moves)
@@ -8875,7 +8882,7 @@
         ::
         ++  co-make-poke
           |=  [=space =ack=spar =poke=path]
-          ::  XX  make all paths when the %mako task is sent?
+          ::  XX  make all paths when the %moke task is sent?
           ::
           =.  path.ack-spar   (make-space-path space path.ack-spar)
           =.  poke-path
@@ -8889,9 +8896,9 @@
               ?:  ?=(%publ -.space)
                 space(life life.ames-state)
               %_  space
-                  our-life  her-life.space
-                  her-life  our-life.space
-                  her       ship.ack-spar
+                  server-life  client-life.space
+                  client-life  server-life.space
+                  client       ship.ack-spar
               ==
             (make-space-path space poke-path)
           ::
@@ -8993,7 +9000,7 @@
           =;  page=pact:pact
             ?>(?=(%page +<.page) `data.page)
           =>  [res=res de=de:pact]
-          :: ~>  %memo./ames/get-page  :: XX unnecessary?
+          :: ~>  %memo./ames/get-page
           =+  ;;([pac=@ *] q.q.u.u.res)
           -:($:de pac)
         ::
@@ -9690,11 +9697,9 @@
         (call:am-core hen ~ soft+chum/ship^path)
       =^  moves  ames-state
         ?:  ?=([~ %known *] +.ship-state)
+          =+  ev-core=(ev-foco:ev-core ship +.u.ship-state)
           =<  ev-abet
-          =*  sat    +.u.ship-state
-          =/  space  chum/[life.sat our life.ames-state symmetric-key.sat]
-          %.  [space path]
-          ev-req-peek:(ev-foco:ev-core ship sat)
+          (ev-req-peek:ev-core chum-to-our:ev-core path)
         ::
         =<  al-abet
         %^  al-enqueue-alien-todo:al-core  ship  +.ship-state

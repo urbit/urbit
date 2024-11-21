@@ -28,13 +28,17 @@
   =/  key  `@uv`49.444.113.421.508.228.869.460.528.530.323.207.394.851.818.486.403.699.510.004.444.292.293.148.898.490
   ~&  [key-1 key]
   =/  =space:ames
-    [%chum our-life=bud-life her=~nec her-life=nec-life key]
+    [%chum server-life=bud-life client=~nec client-life=nec-life key]
   =/  poke-space
     ?>  ?=(%chum -.space)
     ::  lifes need to be switched since for %pokes,
     ::  this is a payload in our namespace
     ::
-    space(our-life her-life.space, her-life our-life.space, her ~bud)
+    %_  space
+      server-life  client-life.space
+      client-life  server-life.space
+      client       ~bud
+    ==
   ::
   =/  poke-plea  [%g /ge/pok [%0 %m noun/0]]
   =/  poke-path  /flow/0/plea/~bud/1
