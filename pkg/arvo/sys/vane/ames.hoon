@@ -1742,6 +1742,7 @@
           [%ud bone=@ud]
           %cork             :: XX allow to read "server" corks
           [%p rcvr=@p]
+          =dire
           ~
       ==
     ::
@@ -7076,6 +7077,18 @@
             ::  validate %cork path
             ::
             ?>  ?=(cork-pith message-path)
+            ?:  =(%bak dire.message-path)
+              ::  the server is only reading corks on the forward side, the one
+              ::  that sent the %cork, on the original flow (coming on a %watch)
+              ::
+              ::  we need to crash to make sure no state is changed, and the
+              ::  path remains in the .pit
+              ::
+              ::    XX this implies a protocol error
+              ::
+              !!
+            %-  %+  ev-tace  msg.veb.bug.ames-state
+                |.("client cork processed; deleting {<bone=bone>}")
             =+  fo-core=(fo-abed:fo hen bone dire=%bak)
             =/  ack-wire=^wire  (fo-wire:fo-core %ack)
             =.  pit.sat.per
@@ -7093,15 +7106,6 @@
           ::
           ?>  ?=(flow-pith message-path)
           ::
-          ::  XX replaced by the flow "dire"ction ?(%for %bak)
-          ::  based on the bone we can know if this payload is an ack?
-          ::  bone=0                                   bone=1
-          ::  response   <=  ack payloads        =>       response
-          ::             <=  boon/poke payloads  =>
-          ::
-          ::  bones for acks are "internal", -- triggered by internal requests
-          ::  for %poke payloads "external" -- triggered by hearing a request
-          ::
           ?:  =(%pok were)
             ::  XX ack-path not used
             %-  hear-poke:ev-mess
@@ -7116,6 +7120,8 @@
           ::
           ?.  can-be-corked.fo-core
             fo-abet:fo-core
+          %-  %+  ev-tace  msg.veb.bug.ames-state
+              |.("hear cork ack; deleting {<bone=bone>}; expose client cork")
           ::  we received the %ack for the %cork %plea;
           ::  remove the flow and it's associated bone in the ossuary;
           ::  expose %cork flow in the namespace "~(put in corked)"
@@ -7679,6 +7685,8 @@
               ::  if error start %peek for naxplanation
               ::
               (fo-peek-naxplanation seq)
+            %-  %+  ev-tace  msg.veb.bug.ames-state
+                |.("hear ack for {<seq=seq>}")
             ::  ack is for the first, oldest pending-ack sent message;
             ::  remove it and XX start processing cached acks
             ::
@@ -7690,10 +7698,6 @@
               ?&  closing.state    ::  we sent a %cork %plea
                   ?=(~ loads.snd)  ::  nothing else is pending
               ==
-            ~?  closing.state  "flow in closing"
-            ~?  ?=(~ loads.snd)  "nothing pending"
-            ~?  can-be-corked
-              "flow about to be corked flow={<bone>} seq={<seq>} "
             =~  ::  send next messages
                 ::
                 fo-send
@@ -9109,6 +9113,8 @@
         |=  tyl=(pole knot)
         ^-  (unit (unit cage))
         ?>  ?=([%flow bone=@ =load rcvr=@ mess=@ ~] tyl)
+        ?:  =(%cork load.tyl)
+          (peek-cork tyl)
         =/  bone  (slaw %ud bone.tyl)
         =/  rcvr  (slaw %p rcvr.tyl)
         =/  mess  (slaw %ud mess.tyl)
@@ -9137,7 +9143,7 @@
       ++  peek-cork
         |=  tyl=(pole knot)
         ^-  (unit (unit cage))
-        ?>  ?=([%flow bone=@ %cork rcvr=@ dire=?(%for %bak) ~] tyl)
+        ?>  ?=([%flow bone=@ %cork rcvr=@ =dire ~] tyl)
         =/  bone  (slaw %ud bone.tyl)
         =/  rcvr  (slaw %p rcvr.tyl)
         ?:  |(?=(~ bone) ?=(~ rcvr))
@@ -9264,8 +9270,7 @@
               $%([%flow *] [%pawn *] [%whey *] [%meta *])
             ?:  =(~ lyc)  ~
             ?+  tyl  ~
-              [%flow bone=@ =load rcvr=@ mess=@ ~]        (peek-flow tyl)
-              [%flow bone=@ %cork rcvr=@ ?(%for %bak) ~]  (peek-cork tyl)
+              [%flow bone=@ load rcvr=@ mess=@ ~]         (peek-flow tyl)
               [%whey boq=@ pat=*]                         (peek-whey tyl)
               [%meta pat=*]                               (peek-meta tyl)
             ==
