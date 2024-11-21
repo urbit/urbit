@@ -7900,17 +7900,17 @@
           =?  sy-core  ?=(^ error)   :: XX use verbosity flag
             (sy-emit hen %pass /crud %d %flog %crud %wake-error u.error)
           ?:  ?=([%mesa %ask gift=@ *] wire)
-            =+  gift=`(pole iota)`(mesa-pave:ev t.t.wire)
-            ?+  gift  ~&(unexpected-ask-wire/gift sy-core)
+            =/  iota=(pole iota)  (mesa-pave:ev t.t.wire)
+            ?+  iota  ~&(unexpected-ask-wire/iota sy-core)
                 [%turf *]
               (sy-emit hen %pass /turf %j %turf ~)
             ::
-                [%public-keys ship=@ *]
+                [%public-keys [%p ship=@] *]
               %^  sy-emit  hen  %pass
-              [/public-keys %j %public-keys [n=(slav %p ship.gift) ~ ~]]
+              [/public-keys %j %public-keys [ship.iota ~ ~]]
             ==
           ?.  ?=([%mesa %retry ~] wire)
-            ~&  >>>  %evil-behn-timer^wire
+             ~&  >>>  %evil-behn-timer^wire
             sy-core
           ::  XX log if error
           ::  XX if we wake up too early, no-op, otherwise set new timer
@@ -8102,8 +8102,8 @@
             ::
             =/  peer  (sy-find-peer ship)
             ?.  ?=([?(%ship %chum) ~ %known *] peer)
-              %-  (slog leaf+"ames: missing peer-state, ignoring" ~)
-              sy-core
+              %.  sy-core
+              (slog leaf+"ames: missing peer {<ship>} on new sponsor, skip" ~)
             =.  sponsor.+.u.peer   u.sponsor
             =?  chums.ames-state  ?=(%chum -.peer)
               (~(put by chums.ames-state) ship u.peer)
