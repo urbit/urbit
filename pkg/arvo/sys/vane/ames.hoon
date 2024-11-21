@@ -9152,10 +9152,9 @@
         ?.  ?=([~ ~ %known *] per-sat)
           ~  ::  %alien or missing
         =+  ev-core=(ev-foco:ev u.rcvr +.u.u.per-sat)
-        =/  res=(unit page)
-          %.  [%cork *@ud]
-          fo-peek:(fo-abed:fo:ev-core ~[//scry] u.bone dire.tyl)
-        ?~(res ~ ``[%message !>(u.res)])
+        ?.  (~(has in corked.+.u.u.per-sat) side=[u.bone dire.tyl])
+          ~
+        ``[%message !>(gone/~)]
       ::  comet attestations
       ::
       ++  peek-pawn
@@ -9233,6 +9232,7 @@
         ?+    qery.pat.tyl  ~
             ~          ~ :: XX implement full meta
             [%clos ~]  ``message/!>(clogs/closing)
+            [%cork ~]  ?~(r=(fo-peek:fo-core %cork 0) ~ ``[%message !>(u.r)])
             [%line ~]  ``message/!>(line/line)
             [%lods ~]  ``message/!>(lods/(wyt:fo-mop:fo-core loads.snd))
             [%next ~]  ``message/!>(next/next-load.snd)

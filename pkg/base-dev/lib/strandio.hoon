@@ -436,6 +436,7 @@
   ?+    path.spar  (pure:m ~)
       $%  [%flow bone=@ =dire:ames ~]
           [%flow bone=@ =dire:ames %clos ~]
+          [%flow bone=@ =dire:ames %cork ~]
           [%flow bone=@ =dire:ames %line ~]
           [%flow bone=@ =dire:ames %lods ~]
           [%flow bone=@ =dire:ames %next ~]
