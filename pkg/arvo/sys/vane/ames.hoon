@@ -7910,7 +7910,7 @@
               [/public-keys %j %public-keys [ship.iota ~ ~]]
             ==
           ?.  ?=([%mesa %retry ~] wire)
-             ~&  >>>  %evil-behn-timer^wire
+            ~&  >>>  %evil-behn-timer^wire
             sy-core
           ::  XX log if error
           ::  XX if we wake up too early, no-op, otherwise set new timer

@@ -3218,6 +3218,8 @@
     |=  liv=zest
     ?:  =(%base syd)
       ..park(liv.dom %live)
+    ?:  =(%kids syd)
+      ..park(liv.dom %dead)
     ?.  ?=(%live liv)
       ..park(liv.dom liv)
     =/  kel=(set weft)
