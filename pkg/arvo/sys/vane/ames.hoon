@@ -1581,6 +1581,7 @@
       ^+  path
       =>  [space=space path=path ..crypt]
       ?-    -.space
+          %none  path
           %publ  `^path`[%publ (scot %ud life.space) path]  :: unencrypted
       ::
           %chum  :: encrypted with eddh key
@@ -3373,7 +3374,7 @@
           `bone
         ::
         ++  on-take-noon
-          |=  [=wire payload=* id=*]
+          |=  [=wire id=* payload=*]
           ^+  event-core
           ?~  parsed=(parse-bone-wire wire)
             ~>  %slog.0^leaf/"ames: dropping malformed wire: {(spud wire)}"
@@ -6617,9 +6618,9 @@
           |=  [=space ser=@ cyf=(unit @)]
           ^+  ser
           ?-  -.space
-            %publ  ser
-            %shut  (decrypt:crypt key.space (need cyf) ser)
-            %chum  (decrypt:crypt key.space (need cyf) ser)
+            ?(%none %publ)  ser
+            %shut           (decrypt:crypt key.space (need cyf) ser)
+            %chum           (decrypt:crypt key.space (need cyf) ser)
           ==
         ::
         ++  ev-decrypt-path
@@ -6678,11 +6679,18 @@
           =/  cork=?  =([%$ /cork %cork ~] vane^wire^payload)
           ?:  &(cork !(~(has by by-bone.ossuary.sat.per) bone))
             %-  %+  ev-tace  odd.veb.bug.ames-state
-                |.("corking {<bone=bone>}, not in the ossuary, ignoring")
+                |.("{<bone=bone>} not in the ossuary; ignore cork")
             ev-core
-          %-  %+  ev-tace  sun.veb.bug.ames-state
-              |.("marking flow {<bone>} as closing")
           =+  fo-core=(fo-abed:fo hen bone dire=%for)
+          %-  %+  ev-tace  msg.veb.bug.ames-state
+              =+  msg=?:(cork %cork %plea)
+              |.("send {<msg>} {<[bone=bone seq=next-load.snd.fo-core]>}")
+          ::
+          ~?  >>  cork  hen
+          ?:  closing.state.fo-core
+            %-  %+  ev-tace  odd.veb.bug.ames-state
+                |.("flow {<bone=bone>} in closing; skip")
+            ev-core
           =<  fo-abet
           %.  plea/[vane wire payload]
           fo-call:fo-core(closing.state cork)
@@ -6792,11 +6800,10 @@
                 fo-abet:(fo-send-ack:fo-core mess.pok)
               ::
               %-  %+  ev-tace  fin.veb.bug.ames-state
-                  |.("start peeking for poke payload")
+                  |.("peek for poke payload {<[flow=bone seq=mess]:pok>}")
               ::
-              =/  =^space  chum-to-our
-              %+  ev-emit  hen
-              [%pass (fo-wire:fo-core %pok) a+meek/[space [her pat]:pok.pact]]
+              %^  ev-emit  hen  %pass
+              [(fo-wire:fo-core %pok) %a %meek [none/~ [her pat]:pok.pact]]
             ::  authenticate one-fragment message
             ::
             ?>  %-  authenticate
@@ -7016,9 +7023,6 @@
               :: XX assert load is plea/boon
               %*(fo-flip-dire fo side *@ud^(fo-infer-dire:fo load.pok))
             ::
-            %-  %+  ev-tace  msg.veb.bug.ames-state
-                |.("hear complete message {<[bone=bone mess=mess]:pok^dire>}")
-            ::
             =<  fo-abet
             %.  [%sink mess.pok gage ?=(~ dud)]
             fo-call:(fo-abed:fo hen bone.pok dire)
@@ -7088,16 +7092,26 @@
               ::
               !!
             %-  %+  ev-tace  msg.veb.bug.ames-state
-                |.("client cork processed; deleting {<bone=bone>}")
+                |.("client cork processed; delete {<bone=bone>}")
             =+  fo-core=(fo-abed:fo hen bone dire=%bak)
-            =/  ack-wire=^wire  (fo-wire:fo-core %ack)
             =.  pit.sat.per
-              %-  ~(rep in (~(get ju pot.sat.per) ack-wire))
-              |=  [=ack=path pit=_pit.sat.per]
-              (~(del by pit) ack-path)
-            =.  pot.sat.per  (~(del by pot.sat.per) ack-wire)
+              ::  if there's any unsent boon payload in the pit, delete it
+              ::
+              =<  pit=-
+              ::
+              =*  pit  pit.sat.per
+              %^  (dip:fo-mop:fo-core ,pit=_pit)  loads.snd.state.fo-core
+                pit
+              |=  [=_pit seq=@ud req=mesa-message]
+              :+  ~  |
+              =/  =path  ::  the ack for the boon is on the forward side
+                (%*(fo-ack-path fo-core dire.side %for) seq our)
+              =.  path  (make-space-path chum-to-our path)
+              ~?  >>  !(~(has by pit) path)
+                "path {<(spud path)>} not in the pit"
+              (~(del by pit) path)
             ::  if we don't crash, the client has removed the flow,
-            ::  and have succesfully +peek'ed the %cork
+            ::  and we have succesfully +peek'ed the %cork
             ::
             =<  fo-abel
             %.(sage fo-take-cor:fo-core)
@@ -7121,7 +7135,7 @@
           ?.  can-be-corked.fo-core
             fo-abet:fo-core
           %-  %+  ev-tace  msg.veb.bug.ames-state
-              |.("hear cork ack; deleting {<bone=bone>}; expose client cork")
+              |.("hear cork ack; delete {<bone=bone>}")
           ::  we received the %ack for the %cork %plea;
           ::  remove the flow and it's associated bone in the ossuary;
           ::  expose %cork flow in the namespace "~(put in corked)"
@@ -7133,7 +7147,7 @@
               flows            (~(del by flows) bone^dire)
               corked           (~(put in corked) bone^dire)
               ::  XX bone^side=%for
-              ::  assumest that all bones inthe ossuary are %forward
+              ::  assumess that all bones int he ossuary are %forward
               ::
               by-duct.ossuary  (~(del by by-duct.ossuary) (ev-got-duct bone))
               by-bone.ossuary  (~(del by by-bone.ossuary) bone)
@@ -7199,7 +7213,7 @@
           |=  [hen=duct c=_ev-core]
           %.  (ev-emit:c hen %give %sage ship.per^path gage)
           %+  ev-tace  fin.veb.bug.ames-state
-          |.("give page={(spud path)} for={(turn hen (cork spud crip))}")
+          |.("give page={(spud path)}")
         ::
         ++  ev-cancel-peek
           |=  [all=? =path]  :: XX namespace?
@@ -7412,8 +7426,6 @@
                       |.("skip send; flow {<bone>} is closing")
                     |.("skip send; flow {<bone>} has been corked")
                 fo-core
-              %-  %+  ev-tace  msg.veb.bug.ames-state
-                  |.("send {<-.poke>} message")
               ::
               =:  next-load.snd  +(next-load.snd)
                   loads.snd      (put:fo-mop loads.snd next-load.snd poke)
@@ -7423,9 +7435,10 @@
                 %sink
               ?:  |(closing.state (~(has in corked.sat.per) side))
                 %-  %+  ev-tace  odd.veb.bug.ames-state
+                    =+  ;;(mess=@tas +<.gage.poke)
                     ?:  closing.state
-                      |.("skip sink; flow {<bone>} is closing")
-                    |.("skip sink; flow {<bone>} has been corked")
+                      |.("skip {<mess>}; flow in closing flow={<bone>}")
+                    |.("skip {<mess>}; flow is corked flow={<bone>} ")
                 fo-core
               ::  check that the message can be acked
               ::
@@ -7553,14 +7566,6 @@
               (%*(fo-ack-path fo-core dire.side fo-flip-dire) seq our)
             =/  =space  chum-to-our
             =/  =wire  (fo-wire %ack)
-            =?  pot.sat.per  ?=(%bak dire)
-              ::  for subscription flows (i.e. %boons), we track the peeks
-              ::  for acks under the flow wire so if we cork the flow we
-              ::  can easily retrieve all paths and remove them from the pit
-              ::
-              ::  XX impure abet pattern; move elsewhere?
-              ::
-              (~(put ju pot.sat.per) wire (make-space-path space path.ack))
             =.  fo-core  (fo-emit hen %pass wire %a moke/[space ack poke])
             loop
           ::
@@ -7586,6 +7591,8 @@
             ::  ack unconditionally
             ::
             =.  last-acked.rcv  +(last-acked.rcv)
+            %-  %+  ev-tace  msg.veb.bug.ames-state
+                |.("hear complete %boon {<[bone=bone seq=last-acked.rcv]>}")
             (fo-send-ack last-acked.rcv)
           ::
           ++  fo-sink-plea
@@ -7598,6 +7605,8 @@
               (fo-take-done:fo-core `*error)
             ::
             =+  ;;([%plea =plea] page)
+            %-  %+  ev-tace  msg.veb.bug.ames-state
+                |.("hear complete %plea {<[bone=bone seq=+(last-acked.rcv)]>}")
             ::
             ?:  &(=(vane %$) ?=([%ahoy ~] payload) ?=([%mesa ~] path)):plea
               ::  migrated %ahoy pleas are always acked
@@ -7622,7 +7631,7 @@
               ::  after reading the ack from our namespace
               ::
               %-  %+  ev-tace  fin.veb.bug.ames-state
-                  |.("start peeking for %cork flow={<bone>}")
+                  |.("peek for for %cork flow={<bone>}")
               ::
               :+  hen  %pass
               ::  we are on the %bak side; for-cor-path will read the %cork
@@ -7673,7 +7682,7 @@
               ::  XX we shouldn't see this since send-window is always 1
               ::
               %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("out of order ack [{<seq=seq^first=key.u.first>}]")
+                  |.("hear out of order ack [{<seq=seq^first=key.u.first>}]")
               :: if the ack we receive is not for the first, save it
               ::  XX if error, start +peeking right away?
               ::
@@ -7745,7 +7754,7 @@
               fo-core
             ::
             %-  %+  ev-tace  msg.veb.bug.ames-state
-                |.("take % naxplanation {<[bone=bone seq=seq]>}")
+                |.("take %naxplanation {<[bone=bone seq=seq]>}")
             ::  ack is for the first, oldest pending-ack set message, remove it
             ::
             =^  *  loads.snd  (del:fo-mop loads.snd seq)
@@ -7786,7 +7795,7 @@
             |=  seq=@ud
             ::
             %-  %+  ev-tace  fin.veb.bug.ames-state
-                |.("start peeking for %naxplanation {<[bone=bone seq=seq]>}")
+                |.("peek for %naxplanation {<[bone=bone seq=seq]>}")
             ::
             =/  =wire   (fo-wire %nax)
             =/  =space  chum-to-our
@@ -8678,7 +8687,7 @@
               =/  [=space pax=^path]
                 [space inner]:(ev-decrypt-path:ev path her)
               ?-    -.space
-                  %publ  pax
+                  ?(%none %publ)  pax
               ::
                   %chum
                 =/  cyf

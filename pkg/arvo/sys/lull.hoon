@@ -1599,7 +1599,9 @@
   +$  dead-timer  [=duct =wire date=@da]
   ::
   +$  space
-    $%  [%publ =life]
+    $~  none/~
+    $%  [%none ~]
+        [%publ =life]
         [%shut kid=@ key=@uxI]
         [%chum =server=life client=ship =client=life key=@]
     ==
@@ -1642,7 +1644,7 @@
         ::              path=ack-path  (~nec) /ack/~zod/flow/bone=0/mess=1
         ::
         pit=(map path request-state)
-        pot=(jug wire path)      ::  each wire represents a flow, the value is its associated peeks for the acks
+        pot=(jug wire path)      ::  XX remove
         =client=chain            ::  stores keys for %shut requests
     ==
   ::

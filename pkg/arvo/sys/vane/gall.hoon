@@ -1381,6 +1381,7 @@
         ==
       =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
       ap-core
+    ::
     ++  ap-match-coop
       |=  =path
       ^-  (unit coop)
@@ -1393,9 +1394,8 @@
         (ap-request-brood wire spar)
       =.  ken.yoke  (~(put ju ken.yoke) spar wire)
       (ap-pass wire %arvo %a %keen ~ spar)
-    ::
-    ::
     ::  +ap-tend: bind path in namespace, encrypted
+    ::
     ++  ap-tend
       |=  [=coop =path =page]
       ?~  cop=(~(get-hutch of-farm sky.yoke) coop)
