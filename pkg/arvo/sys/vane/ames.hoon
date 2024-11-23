@@ -7093,28 +7093,11 @@
               !!
             %-  %+  ev-tace  msg.veb.bug.ames-state
                 |.("client cork processed; delete {<bone=bone>}")
-            =+  fo-core=(fo-abed:fo hen bone dire=%bak)
-            =.  pit.sat.per
-              ::  if there's any unsent boon payload in the pit, delete it
-              ::
-              =<  pit=-
-              ::
-              =*  pit  pit.sat.per
-              %^  (dip:fo-mop:fo-core ,pit=_pit)  loads.snd.state.fo-core
-                pit
-              |=  [=_pit seq=@ud req=mesa-message]
-              :+  ~  |
-              =/  =path  ::  the ack for the boon is on the forward side
-                (%*(fo-ack-path fo-core dire.side %for) seq our)
-              =.  path  (make-space-path chum-to-our path)
-              ~?  >>  !(~(has by pit) path)
-                "path {<(spud path)>} not in the pit"
-              (~(del by pit) path)
             ::  if we don't crash, the client has removed the flow,
             ::  and we have succesfully +peek'ed the %cork
             ::
             =<  fo-abel
-            %.(sage fo-take-cor:fo-core)
+            %.(sage fo-take-cor:(fo-abed:fo hen bone dire=%bak))
           ::
           ::  XX  validate that wire and path match?
           ::
@@ -7132,31 +7115,18 @@
             %-  fo-take:(fo-abed:fo hen bone dire)
             [were sage/[mess.message-path sage]]
           ::
+          =>  fo-core
+          ::
           ?.  can-be-corked.fo-core
-            fo-abet:fo-core
-          %-  %+  ev-tace  msg.veb.bug.ames-state
-              |.("hear cork ack; delete {<bone=bone>}")
+            fo-abet
           ::  we received the %ack for the %cork %plea;
           ::  remove the flow and it's associated bone in the ossuary;
           ::  expose %cork flow in the namespace "~(put in corked)"
           ::
-          ::  XX to arm
-          =.  sat.per
-            =,  sat.per
-            %_  sat.per
-              flows            (~(del by flows) bone^dire)
-              corked           (~(put in corked) bone^dire)
-              ::  XX bone^side=%for
-              ::  assumess that all bones int he ossuary are %forward
-              ::
-              by-duct.ossuary  (~(del by by-duct.ossuary) (ev-got-duct bone))
-              by-bone.ossuary  (~(del by by-bone.ossuary) bone)
-            ==
-          :: XX  remove ev-abet will update put sat.per in .chums
-          %_    ev-core
-              ames-state
-            ames-state(chums (~(put by chums.ames-state) [ship known/sat]:per))
-          ==
+          %-  %+  ev-tace  msg.veb.bug.ames-state
+              |.("hear cork ack; delete {<bone=bone>}")
+          ::
+          fo-abel
         ::  +ev-take-boon: vane responses
         ::
         ++  ev-take-boon
@@ -7318,9 +7288,40 @@
           ++  fo-abel
             ^+  ev-core
             ::
-            =:  flows.sat.per   (~(del by flows.sat.per) bone^dire)
-                corked.sat.per  (~(put in corked.sat.per) bone^dire)
+            =:           flows.sat.per   (~(del by flows.sat.per) bone^dire)
+                         corked.sat.per  (~(put in corked.sat.per) bone^dire)
+            ::
+                by-bone.ossuary.sat.per
+              ?:  =(%bak dire)  by-bone.ossuary.sat.per
+              (~(del by by-bone.ossuary.sat.per) bone)
+            ::
+                by-duct.ossuary.sat.per
+              ?:  =(%bak dire)  by-duct.ossuary.sat.per
+              (~(del by by-duct.ossuary.sat.per) (ev-got-duct bone))
+            ::
+                pit.sat.per
+                  ?:  =(%for dire)  pit.sat.per
+                  ::  if there's any unsent boon payload in the pit, delete it
+                  ::
+                  =;  [pit=_pit.sat.per loads=_loads.snd]
+                    pit
+                  ::
+                  %^  (dip:fo-mop _pit.sat.per)  loads.snd
+                    pit.sat.per
+                  |=  [=_pit.sat.per seq=@ud req=mesa-message]
+                  :+  ~  |
+                  ::  the ack for the boon is always on the forward side
+                  ::
+                  =/  =path   (%*(fo-ack-path fo-core dire.side %for) seq our)
+                  =.  path    (make-space-path chum-to-our path)
+                  %-  %+  ev-tace  fin.veb.bug.ames-state
+                      ?:  (~(has by pit) path)
+                        |.("remove boon path={(spud path)}")
+                      |.("path {<(spud path)>} not in the pit")
+                  ::
+                  (~(del by pit) path)
               ==
+            ::
             =.  ames-state
               ames-state(chums (~(put by chums.ames-state) her known/sat.per))
             ev-core
@@ -7410,7 +7411,6 @@
             =>  |%
                 +$  poke-task
                   $%  [%sink seq=@ud =gage:mess ok=?]
-                      ::  XX remove %fo-planation from lull
                       mesa-message
                   ==
                 --
@@ -7631,7 +7631,7 @@
               ::  after reading the ack from our namespace
               ::
               %-  %+  ev-tace  fin.veb.bug.ames-state
-                  |.("peek for for %cork flow={<bone>}")
+                  |.("peek for %cork flow={<bone>}")
               ::
               :+  hen  %pass
               ::  we are on the %bak side; for-cor-path will read the %cork
@@ -7846,10 +7846,11 @@
         +|  %entry-points
         ::
         ++  sy-born
+          %-  (slog leaf+"ames: unix-duct received on %born" ~)
+          ::
           =/  turfs
             ;;  (list turf)
             =<  q.q  %-  need  %-  need
-            =-  ~&  now  -
             (rof [~ ~] /ames %j `beam`[[our %turf %da now] /])
           ::
           =?  sy-core  ?=(~ +.chum.dead.ames-state)
@@ -7909,7 +7910,6 @@
             .+(key.u.latest)
           =.  server-chain.ames-state
             (put:key-chain server-chain.ames-state kid [key path])
-          ~&  >  plug/[kid key path]
           ::  kid^key kill be used by remote %keen task when sending $peek
           ::
           (sy-emit hen %give %stub kid key)
@@ -8358,7 +8358,6 @@
               =?  lane.peer  ?=(%czar (clan:title ship))
                 (some `@ux`ship)
               =.  chums.ames-state
-              ~&  insert-ship-state/ship
                 (~(put by chums.ames-state) ship known/+.peer)
               [%chum known/+.peer]^sy-core
             ::
@@ -8426,7 +8425,6 @@
           ++  prod-peer
             |=  [[=ship =chum-state] moves=(list move) state=_ames-state]
             =+  per-sat=(get-per:ev ship)
-            ~&  ship
             ?.  ?=([~ ~ %known *] per-sat)
               :_  state
               ::  XX  this shouldn't be needed
@@ -8536,7 +8534,7 @@
             sy-core
           ?:  =(%czar (clan:title ship))
             %-  %+  slog
-              leaf+"ames: bad idea to %tame galaxy {(scow %p ship)}, ignoring"
+                leaf+"ames: bad idea to %tame galaxy {(scow %p ship)}, ignoring"
             ~
             sy-core
           =/  peer  (sy-find-peer ship)
@@ -9498,7 +9496,7 @@
           ==
         ::
         %-  %+  %*(ev-tace ev ship.per ship)  snd.veb.bug.ames-state
-            |.("pushing {<-.pact>} packet")
+            |.("pushing {<+<.pact>} packet")
         ::
         =/  lanes=(list lane:pact:ames)
           :: :-  [%if ip=.206.189.218.58 port=52.510]

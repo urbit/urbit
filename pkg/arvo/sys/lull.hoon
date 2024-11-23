@@ -1644,7 +1644,6 @@
         ::              path=ack-path  (~nec) /ack/~zod/flow/bone=0/mess=1
         ::
         pit=(map path request-state)
-        pot=(jug wire path)      ::  XX remove
         =client=chain            ::  stores keys for %shut requests
     ==
   ::
