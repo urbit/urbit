@@ -4117,13 +4117,14 @@
           ++  on-memo
             |=  [=bone =message]
             ^+  peer-core
+            =+  log="ames: ({<her>}) ignoring {<-.message>} on "
             ?:  ?&  (~(has in closing.peer-state) bone)
                     !=(message [%plea %$ /flow %cork ~])
                 ==
-              ~>  %slog.0^leaf/"ames: ignoring message on closing bone {<bone>}"
+              ~>  %slog.0^leaf/(weld log "closing bone {<bone>}")
               peer-core
             ?:  (~(has in corked.peer-state) bone)
-              ~>  %slog.0^leaf/"ames: ignoring message on corked bone {<bone>}"
+              ~>  %slog.0^leaf/(weld log "corked bone {<bone>}")
               peer-core
             ::
             abet:(call:(abed:mu bone) %memo message)
@@ -4609,9 +4610,7 @@
             ::
             ::  TODO use +trace
             ~>  %slog.0^leaf/"ames: recork {<her i.boz>}"
-            =/  =plea     [%$ /flow [%cork ~]]
-            =/  =message  [%plea plea]
-            (on-memo i.boz message)
+            (on-memo i.boz %plea %$ /flow [%cork ~])
           ::  +handle-cork: handle flow kill after server ames has taken %done
           ::
           ++  handle-cork
@@ -6388,19 +6387,35 @@
               [%rift ~]
             ``noun+!>(rift.ames-state)
           ::
-              [%corked her=@ ~]
+              [%corked her=@ req=*]
             =/  who  (slaw %p her.tyl)
             ?~  who  [~ ~]
             =/  per  (~(get by peers.ames-state) u.who)
             ?.  ?=([~ %known *] per)  [~ ~]
-            ``noun+!>(corked.u.per)
+            ?+  req.tyl  [~ ~]
+                ~
+              ``noun+!>(corked.u.per)
+            ::
+                [bone=@ ~]
+              ?~  bone=(slaw %ud bone.req.tyl)
+                [~ ~]
+              ``atom+!>((~(has in corked.u.per) u.bone))
+            ==
           ::
-              [%closing her=@ ~]
+              [%closing her=@ req=*]
             =/  who  (slaw %p her.tyl)
             ?~  who  [~ ~]
             =/  per  (~(get by peers.ames-state) u.who)
             ?.  ?=([~ %known *] per)  [~ ~]
-            ``noun+!>(closing.u.per)
+            ?+  req.tyl  [~ ~]
+                ~
+              ``noun+!>(closing.u.per)
+            ::
+                [bone=@ ~]
+              ?~  bone=(slaw %ud bone.req.tyl)
+                [~ ~]
+              ``atom+!>((~(has in closing.u.per) u.bone))
+            ==
           ::
               [%protocol %version ~]
             ``noun+!>(protocol-version)

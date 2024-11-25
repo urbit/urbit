@@ -281,6 +281,11 @@
   |=  veb=(list verb:gall)  =<  abet
   (emit %pass /helm %arvo %g %spew veb)
 ::
+++  poke-gall-lave
+  |=  [dry=? subs=(list [?(%g %a) ship term duct])]  =<  abet
+  ?:  dry  this
+  (emit %pass /helm %arvo %g %lave subs)
+::
 ++  poke-ames-wake
   |=  ~  =<  abet
   (emit %pass /helm %arvo %a %stir '')
@@ -599,6 +604,7 @@
     %helm-doff             =;(f (f !<(_+<.f vase)) poke-doff)
     %helm-gall-sift        =;(f (f !<(_+<.f vase)) poke-gall-sift)
     %helm-gall-verb        =;(f (f !<(_+<.f vase)) poke-gall-verb)
+    %helm-gall-lave        =;(f (f !<(_+<.f vase)) poke-gall-lave)
     %helm-hi               =;(f (f !<(_+<.f vase)) poke-hi)
     %helm-pans             =;(f (f !<(_+<.f vase)) poke-pans)
     %helm-mass             =;(f (f !<(_+<.f vase)) poke-mass)
