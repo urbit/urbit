@@ -3501,6 +3501,9 @@
         ++  on-kroc
           |=  bones=(list [ship bone])
           ^+  event-core
+          ?:  &
+            %-  (slog 'ames: %kroc task not allowed; TBD in |mesa' ~)
+            event-core
           %+  roll  bones
           |=  [[=ship =bone] co=_event-core]
           (%*(on-cork co cork-bone `bone) ship)
