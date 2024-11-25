@@ -13,19 +13,19 @@
 ++  test-vectors
   ^-  tang
   |^  ;:  weld
-        %+  category  "puck"
-        (zing (turn vectors check-puck))
+        %+  category  "luck"
+        (zing (turn vectors check-luck))
         %+  category  "sign"
         (zing (turn vectors check-sign))
         %+  category  "veri"
         (zing (turn vectors check-veri))
       ==
   ::
-  ++  check-puck
+  ++  check-luck
     |=  vector
     %+  expect-eq
       !>  pk
-      !>  `@ux`(puck seed)
+      !>  `@ux`pub:(luck seed)
   ::
   ++  check-sign
     |=  vector

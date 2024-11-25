@@ -1154,60 +1154,94 @@
       %+  ward
         (scam a-point-decoded a)
       (scam b-point-decoded b)
+    ::                                                  ::  ++scad:ed:crypto
+    ++  scad                                            ::  scalar addition on public and private keys
+      ~/  %scad
+      |=  [pub=@ sek=@ sca=@]
+      ^-  [pub=@ sek=@]
+      [(scap pub sca) (scas sek sca)]
+    ::                                                  ::  ++scas:ed:crypto
+    ++  scas                                            ::  scalar addition on private key
+      ~/  %scas
+      |=  [sek=@ sca=@]
+      ^-  @
+      ?>  (lte (met 3 sek) 64)
+      ?>  (lte (met 3 sca) 32)
+      =/  n  (dis sca (con (lsh [3 31] 0x7f) (fil 3 31 0xff)))
+      =/  s0  (cut 0 [0 b] sek)
+      =/  s1  (cut 0 [b b] sek)
+      =/  ns0  (~(sit fo l) (add s0 n))
+      =/  ns1  (shal 64 (can 0 ~[[b s1] [b sca]]))
+      (can 0 ~[[b ns0] [b ns1]])
+    ::                                                  ::  ++scap:ed:crypto
+    ++  scap                                            ::  scalar addition on public key
+      ~/  %scap
+      |=  [pub=@ sca=@]
+      ^-  @
+      ?>  (lte (met 3 pub) 32)
+      ?>  (lte (met 3 sca) 32)
+      =/  n  (dis sca (con (lsh [3 31] 0x7f) (fil 3 31 0xff)))
+      (etch (ward (need (deco pub)) (scam bb n)))
     ::                                                  ::  ++puck:ed:crypto
-    ++  puck                                            ::  public key
+    ++  puck                                            ::  pubkey from seed
       ~/  %puck
-      |=  sk=@I  ^-  @
-      ?:  (gth (met 3 sk) 32)  !!
-      =+  h=(shal (rsh [0 3] b) sk)
+      |=  sed=@I
+      pub:(luck sed)
+    ::                                                  ::  ++luck:ed:crypto
+    ++  luck                                            ::  keypair from seed
+      ~/  %luck
+      |=  sed=@I
+      ^-  [pub=@ sek=@]
+      ?>  (lte (met 0 sed) b)
+      =+  h=(shal (rsh [0 3] b) sed)
       =+  ^=  a
           %+  add
             (bex (sub b 2))
           (lsh [0 3] (cut 0 [3 (sub b 5)] h))
       =+  aa=(scam bb a)
-      (etch aa)
-    ::                                                  ::  ++suck:ed:crypto
-    ++  suck                                            ::  keypair from seed
-      |=  se=@I  ^-  @uJ
-      =+  pu=(puck se)
-      (can 0 ~[[b se] [b pu]])
+      [(etch aa) (can 0 ~[[b a] [b (cut 0 [b b] h)]])]
     ::                                                  ::  ++shar:ed:crypto
     ++  shar                                            ::  curve25519 secret
       ~/  %shar
-      |=  [pub=@ sek=@]
+      |=  [pub=@ sed=@]
       ^-  @ux
-      =+  exp=(shal (rsh [0 3] b) (suck sek))
-      =.  exp  (dis exp (can 0 ~[[3 0] [251 (fil 0 251 1)]]))
-      =.  exp  (con exp (lsh [3 31] 0b100.0000))
-      =+  prv=(end 8 exp)
+      =+  prv=(end [0 b] sek:(luck sed))
+      =.  pub  +:(need (deco pub))
       =+  crv=(fra.fq (sum.fq 1 pub) (dif.fq 1 pub))
       (curt prv crv)
     ::                                                  ::  ++sign:ed:crypto
     ++  sign                                            ::  certify
       ~/  %sign
-      |=  [m=@ se=@]  ^-  @
-      (sign-octs (met 3 m)^m se)
+      |=  [m=@ sed=@]  ^-  @
+      (sign-raw m (luck sed))
+    ::                                                  ::  ++sign-raw:ed:crypto
+    ++  sign-raw                                        ::  certify
+      ~/  %sign-raw
+      |=  [m=@ pub=@ sek=@]  ^-  @
+      (sign-octs-raw (met 3 m)^m pub sek)
     ::                                                  ::  ++sign-octs:ed:crypto
     ++  sign-octs                                       ::  certify octs
       ~/  %sign-octs
-      |=  [m=octs se=@]  ^-  @
-      =+  sk=(suck se)
-      =+  pk=(cut 0 [b b] sk)
-      =+  h=(shal (rsh [0 3] b) sk)
-      =+  ^=  a
-          %+  add
-            (bex (sub b 2))
-          (lsh [0 3] (cut 0 [3 (sub b 5)] h))
+      |=  [m=octs sed=@]  ^-  @
+      (sign-octs-raw m (luck sed))
+    ::                                                  ::  ++sign-octs-raw:ed:crypto
+    ++  sign-octs-raw                                       ::  certify octs
+      ~/  %sign-octs-raw
+      |=  [m=octs pub=@ sek=@]  ^-  @
+      ?>  (lte (met 0 pub) b)
+      ?>  (lte (met 0 sek) (mul b 2))
+      =+  cb=(rsh [0 3] b)
+      =+  a=(cut 3 [0 cb] sek)
       =+  ^=  r
-          =+  hm=(cut 0 [b b] h)
-          =+  i=(can 3 [32 hm] m ~)
-          (shal (add 32 p.m) i)
+          =+  hm=(cut 3 [cb cb] a)
+          =+  i=(can 3 [cb hm] m ~)
+          (shal (add cb p.m) i)
       =+  rr=(scam bb r)
       =+  ^=  ss
           =+  er=(etch rr)
-          =+  ha=(can 3 [32 er] [32 pk] m ~)
-          (~(sit fo l) (add r (mul (shal (add 64 p.m) ha) a)))
-      (can 0 ~[[b (etch rr)] [b ss]])
+          =+  ha=(can 3 [cb er] [cb pub] m ~)
+          (~(sit fo l) (add r (mul (shal (add (mul cb 2) p.m) ha) a)))
+      (can 3 ~[[cb (etch rr)] [cb ss]])
     ::                                                  ::  ++veri:ed:crypto
     ++  veri                                            ::  validate
       ~/  %veri
@@ -1226,7 +1260,7 @@
       ?~  aa  |
       =+  ss=(cut 0 [b b] s)
       =+  ha=(can 3 ~[[cb (etch u.rr)] [cb pk] m])
-      =+  h=(shal (add 64 p.m) ha)
+      =+  h=(shal (add (mul 2 cb) p.m) ha)
       =((scam bb ss) (ward u.rr (scam u.aa h)))
     --  ::ed
   ::                                                    ::
