@@ -3480,6 +3480,10 @@
           =^  =bone  peer-core
             ?^  cork-bone  [u.cork-bone peer-core]
             (bind-duct:peer-core duct)
+          ?:  (~(has in closing.peer-state.peer-core) bone)
+            %-  %^  ev-trace  odd.veb  ship
+                |.("flow in closing bone={<bone>}; skip %cork")
+            event-core
           ::
           ?.  (~(has by by-bone.ossuary.peer-state.peer-core) bone)
             %.  event-core
