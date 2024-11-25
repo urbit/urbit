@@ -5598,7 +5598,11 @@
               ::
               ++  ha-boon
                 ^+  sink
-                ?:  |(closing corked)  sink
+                ?:  |(closing corked)
+                  %-  %+  pe-trace  odd.veb  |.
+                      =/  dat  [her bone=bone message-num=message-num]
+                      "skip sink boon {<dat>}, flow in closing"
+                sink
                 %-  %+  pe-trace  msg.veb  |.
                     ::  XX -.task not visible, FIXME
                     ::
@@ -6684,13 +6688,17 @@
           =+  fo-core=(fo-abed:fo hen bone dire=%for)
           %-  %+  ev-tace  msg.veb.bug.ames-state
               =+  msg=?:(cork %cork %plea)
-              |.("send {<msg>} {<[bone=bone seq=next-load.snd.fo-core]>}")
+              =*  next  next-load.snd.fo-core
+              |.("send {<msg>} {<[bone=bone seq=next path=(spud wire)]>}")
           ::
           ~?  >>  cork  hen
           ?:  closing.state.fo-core
             %-  %+  ev-tace  odd.veb.bug.ames-state
                 |.("flow {<bone=bone>} in closing; skip")
             ev-core
+          %-  %+  ev-tace  &(cork sun.veb.bug.ames-state)
+              |.("set flow {<bone=bone>} in closing")
+          ::
           =<  fo-abet
           %.  plea/[vane wire payload]
           fo-call:fo-core(closing.state cork)
@@ -6704,9 +6712,11 @@
           =.  ev-core  fo-abet:(fo-call:fo-core boon/load)
           ?~  id
             ev-core
-          ?.  %+  gth  (wyt:fo-mop:fo-core loads.snd.state.fo-core)
+          ?.  %+  gth  (wyt:fo-mop loads.snd.state):fo-core
               msg.cong.ames-state
             ev-core
+          %-  %+  ev-tace  sun.veb.bug.ames-state
+              |.("clog flow {<bone=bone>}")
           (ev-emit:ev-core [/ames]~ %pass /clog %g clog/u.id)
         ::
         ++  ev-req-peek
@@ -7136,18 +7146,18 @@
             %-  %+  ev-tace  odd.veb.bug.ames-state
                 |.("weird wire on %boon {(spud wire)}")
             ev-core
-          =,  u.flow-wire
+          =*  her  her.u.flow-wire
           =.  per  [her (got-per her)]
-          ?:  (lth rift rift.sat.per)
+          ?:  (lth rift.u.flow-wire rift.sat.per)
             %-  %+  ev-tace  odd.veb.bug.ames-state
                 |.("ignore %boon for old rift")
             ev-core
           ::  vane acks happen on backward flows
           ::
-          ?>  ?=([%van %bak] [were dire])
-          %+  ev-req-boon  bone
+          ?>  ?=([%van %bak] [were dire]:u.flow-wire)
+          %+  ev-req-boon  bone.u.flow-wire
           ?+  -.gift  !!
-            %boon  `payload.gift
+            %boon  [id=~ payload.gift]
             %noon  [`id payload]:gift
           ==
         ::  +ev-poke-done: vane acks
@@ -7288,8 +7298,8 @@
           ++  fo-abel
             ^+  ev-core
             ::
-            =:           flows.sat.per   (~(del by flows.sat.per) bone^dire)
-                         corked.sat.per  (~(put in corked.sat.per) bone^dire)
+            =:   flows.sat.per  (~(del by flows.sat.per) bone^dire)
+                corked.sat.per  (~(put in corked.sat.per) bone^dire)
             ::
                 by-bone.ossuary.sat.per
               ?:  =(%bak dire)  by-bone.ossuary.sat.per
@@ -7695,7 +7705,7 @@
               ::
               (fo-peek-naxplanation seq)
             %-  %+  ev-tace  msg.veb.bug.ames-state
-                |.("hear ack for {<seq=seq>}")
+                |.("hear ack for {<[bone=bone seq=seq]>}")
             ::  ack is for the first, oldest pending-ack sent message;
             ::  remove it and XX start processing cached acks
             ::
@@ -9145,7 +9155,7 @@
           %.  [load.tyl u.mess]
           fo-peek:(fo-abed:fo:ev-core ~[//scry] u.bone dire)
         ?~(res ~ ``[%message !>(u.res)])
-      ::  client %mesa %corks, flow-level
+      ::  client/server %mesa %corks, flow-level
       ::
       ++  peek-cork
         |=  tyl=(pole knot)
