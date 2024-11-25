@@ -46,11 +46,11 @@
 ++  test-fine
   %-  run-chain
   |.  :-  %|
-  =+  (nec-bud:v life=[nec=1 bud=1] rift=[nec=1 bud=1])
+  =+  (nec-bud-zod:v life=[nec=1 bud=1 zod=1] rift=[nec=1 bud=1 zod=1])
   ::  uncomment to turn on verbose debug output
-  ::=^  *  ames.nec
+  :: =^  *  ames.nec
   ::  (ames-call:v ames.nec ~[/none] [%spew ~[%msg %snd %rcv %odd]] *roof)
-  ::=^  *  ames.bud
+  :: =^  *  ames.bud
   ::  (ames-call:v ames.bud ~[/none] [%spew ~[%msg %snd %rcv %odd]] *roof)
   =/  scry-path=path       /c/x/1/kids/sys/kelvin
   =/  fine-behn-wire=wire  (weld /fine/behn/wake/~bud scry-path)
@@ -206,7 +206,7 @@
 ++  test-fine-misordered
   %-  run-chain
   |.  :-  %|
-  =+  (nec-bud:v life=[nec=1 bud=1] rift=[nec=1 bud=1])
+  =+  (nec-bud-zod:v life=[nec=1 bud=1 zod=1] rift=[nec=1 bud=1 zod=1])
   ::  uncomment to turn on verbose debug output
   ::=^  *  ames.nec
   ::  (ames-call:v ames.nec ~[/none] [%spew ~[%msg %snd %rcv %odd]] *roof)

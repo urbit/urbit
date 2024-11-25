@@ -848,7 +848,7 @@
         ::
           :-  'pending-vane-ack'
           =-  a+(turn - numb)
-          (sort (turn ~(tap in pending-vane-ack) head) dor)  ::  sort by msg #
+          (sort (turn ~(tap in pending-vane-ack) ^head) dor)  ::  sort by msg #
         ::
           :-  'live-messages'
           :-  %a

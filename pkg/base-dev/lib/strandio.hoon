@@ -197,6 +197,39 @@
     `[%done +>.sign-arvo.u.in.tin]
   ==
 ::
+++  take-whey
+  |=  =wire
+  =/  m  (strand ,[spar:ames fragment-size=@ud num-fragments=@ud])
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+    in.tin  `[%skip ~]
+      ~  `[%wait ~]
+    ::
+      [~ %sign * %ames %sage sage=*]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    =/  =sage:mess:ames  sage.sign-arvo.u.in.tin
+    :^  ~  %done  spar=p.sage
+    ?~  q.sage
+      [boq=13 tot=0]
+    =<  [boq tot]
+    ;;([%whey boq=@ud tot=@ud] q.sage)
+  ==
+::
+++  take-message
+  |=  =wire
+  =/  m  (strand ,sage:mess:ames)
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+    in.tin  `[%skip ~]
+      ~  `[%wait ~]
+    ::
+      [~ %sign * %ames %sage sage=*]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done sage.sign-arvo.u.in.tin]
+  ==
+::
 ++  take-near
   |=  =wire
   =/  m  (strand ,[spar:ames (unit (unit page))])
@@ -345,17 +378,81 @@
   ;<  ~  bind:m  (send-wait until)
   (take-wake `until)
 ::
+++  mass
+  =/  m  (strand ,(list quac:dill))
+  ^-  form:m
+  =/  =card:agent:gall  [%pass /mass %arvo %d %mass ~]
+  ;<  ~  bind:m  (send-raw-card card)
+  ;<  quz=(list quac:dill)  bind:m  take-meme
+  (pure:m quz)
+::
+++  take-meme
+  =/  m  (strand ,(list quac:dill))
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+  in.tin  `[%skip ~]
+    ~  `[%wait ~]
+      [~ %sign [%mass ~] %dill %meme *]
+    `[%done p.sign-arvo.u.in.tin]
+  ==
+::
 ++  keen
   |=  [=wire =spar:ames]
   =/  m  (strand ,~)
   ^-  form:m
   (send-raw-card %pass wire %arvo %a %keen ~ spar)
 ::
+++  meen
+  |=  [=wire =spar:ames sec=(unit [@ @])]
+  =/  m  (strand ,~)
+  ^-  form:m
+  (send-raw-card %pass wire %arvo %a %keen sec spar)
+::
 ++  keen-shut
   |=  [=wire =spar:ames]
   =/  m  (strand ,~)
   ^-  form:m
   (send-raw-card %pass wire %keen & spar)
+::
+++  yawn
+  |=  [=wire =spar:ames]
+  =/  m  (strand ,~)
+  ^-  form:m
+  (send-raw-card %pass wire %arvo %a %yawn spar)
+::
+++  whey
+  |=  [=wire boq=@ud =spar:ames]
+  =/  m  (strand ,~)
+  ^-  form:m
+  ::  encrypted using %chum namespace
+  ::
+  =.  path.spar  [%a %x '1' %$ %whey %ship (scot %ud boq) path.spar]
+  (send-raw-card %pass wire %arvo %a %chum spar)
+::
+++  meta
+  |=  [=wire =spar:ames]
+  =/  m  (strand ,~)
+  ^-  form:m
+  ?+    path.spar  (pure:m ~)
+      $%  [%flow bone=@ =dire:ames ~]
+          [%flow bone=@ =dire:ames %clos ~]
+          [%flow bone=@ =dire:ames %cork ~]
+          [%flow bone=@ =dire:ames %line ~]
+          [%flow bone=@ =dire:ames %lods ~]
+          [%flow bone=@ =dire:ames %next ~]
+          [%flow bone=@ =dire:ames %last ~]
+          [%flow bone=@ =dire:ames %mess mess=@ %whey ~]
+          [%flow bone=@ =dire:ames %mess mess=@ %naxp ~]
+      ==
+    ::  encrypted using %chum namespace
+    ::
+    ~&  >  path.spar
+    ;<  our=@p  bind:m  get-our
+    %-  send-raw-card
+    :*  %pass  wire  %arvo  %a  %chum
+        spar(path [%a %x '1' %$ %meta %ship (scot %p our) path.spar])
+    ==
+  ==
 ::
 ++  sleep
   |=  for=@dr
@@ -614,6 +711,14 @@
     (strand-fail %list-tree >arg< ~)
   (pure:m !<((list path) q.r.u.riot))
 ::
+++  list-desk
+  |=  [[=ship =desk =case] =spur]
+  =*  arg  +<
+  =/  m  (strand arch)
+  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %y case spur)
+  ?~  riot
+    (strand-fail %list-desk >arg< ~)
+  (pure:m !<(arch q.r.u.riot))
 ::  Take Clay read result
 ::
 ++  take-writ

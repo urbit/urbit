@@ -28,8 +28,8 @@
   =+  [out adult]=(call:gall-core duct=~[/init] dud=~ task=[%init ~])
   adult
 ::
-++  ames-nec-bud-zod
-  |=  [life=[nec=@ud bud=@ud zod=@ud] rift=[nec=@ud bud=@ud zod=@ud]]
+++  ames-nec-bud
+  |=  [life=[nec=@ud bud=@ud] rift=[nec=@ud bud=@ud]]
   ::  create ~nec
   ::
   =/  nec  (ames-raw ~nec)
@@ -53,82 +53,61 @@
   ::
   =/  nec-sym  (derive-symmetric-key:ames-raw bud-pub priv.ames-state.nec)
   =/  bud-sym  (derive-symmetric-key:ames-raw nec-pub priv.ames-state.bud)
-  ~&  nec-sym/nec-sym
-  ~&  bud-sym/bud-sym
   ?>  =(nec-sym bud-sym)
-  ::  create ~zod
-  ::
-  =/  zod  (ames-raw ~zod)
-  =.  now.zod  ~1111.1.1
-  =.  eny.zod  0v3f.arfnf
-  =.  life.ames-state.zod  zod.life
-  =.  rift.ames-state.zod  zod.rift
-  =.  rof.zod  |=(* ``[%noun !>(*(list turf))])
-  =/  zod-pub  0w9M.E8uEq.bMUA6.w3JpW.1mp5L.Olult.RbUD8.zKS7S.6ULTf.2Vu1e.X82gL.sJpEJ.1laGg.OqNMv.Lczji.r12Pn.~Z7bb.GCvty
-  =/  zod-sec  0w84.0MwlQ.y2Ly9.6HVmH.8SYwo.EvuLC.f5YRw.T2NzD.EHtjZ.gpHZb.J0Pu5.aTGVL.UugSA.EZ~E9.~PODC.cohVD.B1zWj.ZWnJ2
-  =.  priv.ames-state.zod  zod-sec
-  ::
-  :: =/  nec-sym  0wRP.97l8B.vvz64.3eFJz.lEp0u.8KKj-.0MiR6.8nbji.DBNki
-  :: =/  zod-sym  0wRP.97l8B.vvz64.3eFJz.lEp0u.8KKj-.0MiR6.8nbji.DBNki
-  :: ?>  =(nec-sym zod-sym)
-  ::
   ::  tell ~nec about ~bud
   ::
-  =.  peers.ames-state.nec
-    %+  ~(put by peers.ames-state.nec)  ~bud
-    =|  =peer-state:ames-raw
-    =.  -.peer-state
+  =.  chums.ames-state.nec
+    %+  ~(put by chums.ames-state.nec)  ~bud
+    =|  =fren-state:ames
+    =.  -.fren-state
       :*  symmetric-key=bud-sym
           life=bud.life
           rift=bud.rift
           public-key=bud-pub
           sponsor=~bud
       ==
-    =.  route.peer-state  `[direct=%.y %& ~bud]
-    [%known peer-state]
+    =.  lane.fren-state  `*lane:pact:ames
+    [%known fren-state]
   ::  tell ~bud about ~nec
   ::
-  =.  peers.ames-state.bud
-    %+  ~(put by peers.ames-state.bud)  ~nec
-    =|  =peer-state:ames-raw
-    =.  -.peer-state
+  =.  chums.ames-state.bud
+    %+  ~(put by chums.ames-state.bud)  ~nec
+    =|  =fren-state:ames
+    =.  -.fren-state
       :*  symmetric-key=nec-sym
           life=nec.life
           rift=nec.rift
           public-key=nec-pub
           sponsor=~nec
       ==
-    =.  route.peer-state  `[direct=%.y %& ~nec]
-    [%known peer-state]
-  ::
+    =.  lane.fren-state  `*lane:pact:ames
+    [%known fren-state]
   ::  metamorphose
   ::
   =>  .(nec +:(call:(nec) ~[//unix] ~ %born ~))
   =>  .(bud +:(call:(bud) ~[//unix] ~ %born ~))
-  =>  .(zod +:(call:(zod) ~[//unix] ~ %born ~))
   ::
-  [nec=nec bud=bud zod=zod]
+  [nec=nec bud=bud]
 --
 ::  forward-declare to avoid repeated metamorphoses
 ::
 =/  gall-adult  (make-gall ~zod)
-=/  ames-adult  nec:(ames-nec-bud-zod [1 1 1] [0 0 0])
+=/  ames-adult  nec:(ames-nec-bud [1 1] [0 0])
 ::  main core
 ::
 |%
 +$  gall-gate  _gall-adult
 +$  ames-gate  _ames-adult
 ::
-++  nec-bud-zod
-  |=  [life=[nec=@ud bud=@ud zod=@ud] rift=[nec=@ud bud=@ud zod=@ud]]
-  =/  a  (ames-nec-bud-zod [nec bud zod]:life [nec bud zod]:rift)
+++  nec-bud
+  |=  [life=[nec=@ud bud=@ud] rift=[nec=@ud bud=@ud]]
+  =/  a  (ames-nec-bud [nec bud]:life [nec bud]:rift)
   =/  gall-nec  (make-gall ~nec)
   =.  gall-nec  (load-agent ~nec gall-nec %sub test-sub)
   =/  gall-bud  (make-gall ~bud)
   =.  gall-bud  (load-agent ~bud gall-bud %pub test-pub)
   :*  nec=[ames=nec.a gall=gall-nec]
       bud=[ames=bud.a gall=gall-bud]
-      zod=ames=zod.a
   ==
 ::  +gall-check-call: run gall task, assert produces expected-moves
 ::
@@ -168,35 +147,29 @@
 ++  ames-reply
   |=  [=ames-gate =duct pac=(list move:ames-bunt) =roof]
   ^-  [(list move:ames-bunt) ^ames-gate]
-  :: ~&  pac/pac
-  ?~  pac  `ames-gate
-  ?.  ?=([duct=^ [%give [%push *]]] i.pac)
-    :: ~&  i.pac
-    $(pac t.pac)
-  :: ~&  q.p.card.i.pac
+  ~|  pac
+  ?>  ?=([[* [%give [%push *]]] ~] pac)
   =/  ames-core  (ames-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
   %-  call:ames-core
+  ~!  p.card.i.pac
   [duct dud=~ %soft `task:ames`[%heer *lane:pact:ames q.p.card.i.pac]]
 ::
 ++  ames-expect-msg
   |=  [pac=(list move:ames-bunt) exp=noun]
   ~|  pac
-  ?~  pac  (expect-eq !>(0) !>(1))
-  ?.  ?=([duct=^ [%give [%sage *]]] i.pac)
-    :: ~&  i.pac
-    $(pac t.pac)
-  :: ~|  i.pac
-  :: ~!  sage.p.card.i.pac
-  :: ~&  sage.p.card.i.pac
-  ?>  ?=([^ ^] sage.p.card.i.pac)
+  ?>  ?=([[* [%give [%sage *]]] ~] pac)
+  ~!  card.i.pac
+  ?>  ?=([%sage ^ [@tas *]] p.card.i.pac)
+  ~|  q.sage.p.card.i.pac
   (expect-eq !>(q.q.sage.p.card.i.pac) !>(exp))
 ::
 ++  ames-make-pact
-  |=  [=ames-gate =spar:ames =path =per=rift =space:ames-bunt]
+  |=  [=ames-gate =spar:ames =path =per=rift poke-roof=roof]
   ^-  @
-  =/  sample     [now=~1111.1.1 eny=`@`0xdead.beef *roof]
+  =/  sample     [now=~1111.1.1 eny=`@`0xdead.beef poke-roof]
   =/  ames-core  (ames-gate sample)
-  ?~  pact=(co-make-pact:co:(mesa:ames-core sample) spar `path per-rift)
+  =/  mesa-core  (mesa:ames-core sample)
+  ?~  pact=(co-make-pact:co:mesa-core spar `path per-rift)
     !!
   p:(fax:plot (en:pact:ames u.pact))
 ::
@@ -299,17 +272,13 @@
           our=ship
           her=ship
       ==
-  ^-  peer-state:ames
+  ^-  fren-state:ames
   =-  ?>(?=(%known -<) ->)
-  !<  ship-state:ames
+  !<  chum-state:ames
   =<  q
   %-  need  %-  need
   %-  scry:(ames-gate now eny roof)
-  [[~ ~] / %x [[our %$ da+now] /peers/(scot %p her)]]
-::
-++  ames-scry-gate
-  |=  [[now=@da eny=@ =roof] =ames-gate]
-  scry:(ames-gate now eny roof)
+  [[~ ~] / %x [[our %$ da+now] /chums/(scot %p her)]]
 ::
 ++  gall-scry-nonce
   |=  $:  =gall-gate

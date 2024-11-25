@@ -763,7 +763,7 @@
       ::
       =?  mo-core
           &(?=(^ err) |(?=(%watch-as remote-request) ?=(%watch remote-request)))
-        (mo-pass sys+wire %a %cork ship)
+        (mo-pass sys+wire a/cork+ship)
       ::
       ?-  remote-request
         %watch-as  (mo-give %unto %watch-ack err)
@@ -776,7 +776,7 @@
         ::  the /nacked-leaves timer will re-send the %leave eventually.
         ::
         ?~  err
-          (mo-pass sys+wire %a %cork ship)
+          (mo-pass sys+wire a/cork+ship)
         ::  if first time hearing a %nack for a %leave, after upgrade
         ::  or if all outstanding %leaves have been handled, set up timer
         ::
@@ -803,7 +803,7 @@
             =/  key  [[%sys wire] hen]
             =?  outstanding.state  =(~ (~(gut by outstanding.state) key ~))
               (~(del by outstanding.state) key)
-            (mo-pass [%sys wire] %a %cork ship)
+            (mo-pass sys+wire a/cork+ship)
       ==
     ::
         [%ames %lost *]
@@ -1170,7 +1170,6 @@
         %u  [%leave ~]
       ==
     (mo-pass wire %g %deal [ship our /] agent-name deal)
-
   ::  +mo-spew: handle request to set verbosity toggles on debug output
   ::
   ++  mo-spew
@@ -1382,6 +1381,7 @@
         ==
       =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
       ap-core
+    ::
     ++  ap-match-coop
       |=  =path
       ^-  (unit coop)
@@ -1394,9 +1394,8 @@
         (ap-request-brood wire spar)
       =.  ken.yoke  (~(put ju ken.yoke) spar wire)
       (ap-pass wire %arvo %a %keen ~ spar)
-    ::
-    ::
     ::  +ap-tend: bind path in namespace, encrypted
+    ::
     ++  ap-tend
       |=  [=coop =path =page]
       ?~  cop=(~(get-hutch of-farm sky.yoke) coop)
@@ -1739,11 +1738,15 @@
         ?.  ?=([~ ~ *] tuc)  ~
         `!<(tube:clay q.u.u.tuc)
       ?~  tub
-        ((slog leaf+"peek no tube from {(trip have)} to {(trip want)}" ~) ~)
+        =/  msg  "%{(trip agent-name)}: ".
+                 "peek no tube from {(trip have)} to {(trip want)}"
+        ((slog leaf+msg ~) ~)
       =/  res  (mule |.((u.tub vase)))
       ?:  ?=(%& -.res)
         ``want^p.res
-      ((slog leaf+"peek failed tube from {(trip have)} to {(trip want)}" ~) ~)
+      =/  msg  "%{(trip agent-name)}: ".
+               "peek failed tube from {(trip have)} to {(trip want)}"
+      ((slog leaf+msg ~) ~)
     ::  +ap-move: send move
     ::
     ++  ap-move
@@ -2379,7 +2382,7 @@
       =+  ;;(=fine-request noun)
       =<  mo-abet
       (mo-handle-key-request:mo-core ship agent-name path.fine-request)
-    ?>  ?=([%ge @ ~] path)
+    ?>  ?=([?(%ge %gm) @ ~] path)
     =/  agent-name  i.t.path
     ::
     =+  ;;(=ames-request-all noun)
