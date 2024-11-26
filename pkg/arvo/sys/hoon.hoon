@@ -1,6 +1,7 @@
 ::
 ::::    /sys/hoon                                       ::
   ::                                                    ::
+!:
 =<  ride
 =>  %138  =>
 ::                                                      ::
@@ -9323,6 +9324,178 @@
                 ==
     ==    ==
   ::
+  ++  fynd  ::  nu-find
+    =<  find
+    |%
+    ++  find
+      |=  [way=vial hyp=wing]
+      ^-  port
+      ~_  (show [%c %find] %l hyp)
+      ~_  (dunk 'top find')
+      =+  (fond way hyp)
+      ?+  -<  !!
+        %pale  [%& [`axis]~ opal]
+        %faux  [%| type nock]
+      ==
+    ::
+    +$  pony
+      $%  [%pale =axis =opal]
+          [%fail skip=@ud]
+          [%faux =type =nock]
+          [%void ~]
+      ==
+    ::
+    ++  fond
+      |=  [way=vial hyp=wing]
+      ^-  pony
+      %+  reel  hyp
+      |=  [heg=limb out=$~([%pale 1 %& sut] pony)]
+      ?+  -.out  out
+        %faux  ::  weird, could also call +fxnd, fully reentrant
+               =+  fex=(mint(sut type.out) %noun [%wing heg ~])
+               [%faux p.fex (comb nock.out q.fex)]
+        %pale  =.  sut
+                ?-  -.opal.out
+                  %&  p.opal.out
+                  %|  (fork (turn ~(tap in q.opal.out) head))
+                ==
+              =/  nex  (fxnd way heg)
+              ?+  -.nex  nex
+                %faux  nex(nock (comb [%0 axis.out] nock.nex))
+                %pale  nex(axis (peg axis.out axis.nex))
+              ==
+      ==
+    ::
+    ++  fxnd  ::  new!
+      |=  [way=vial heg=limb]
+      ^-  pony
+      ~_  (dunk 'fxnd top')
+      ~_  way
+      ~_  >heg=heg<
+      =>  .(heg ?^(heg heg [%| p=0 q=(some heg)]))
+      ?:  ?=(%& -.heg)
+        ::  resolve the tree address directly
+        ::
+        [%pale p.heg %& (peek way p.heg)]
+      =/  axe  1
+      =|  gil=(set type)
+      |-  ^-  pony
+      ~_  >fxnd-loop-axe=axe<
+      ~_  (dunk 'fxnd loop')
+      ?~  q.heg
+        ?>  =(0 p.heg)  ::  no skipping on bare com
+        [%pale axe %& ?:(?=([%face *] sut) q.sut sut)]
+      ?-  sut
+        %void      [%void ~]
+        %noun      [%fail p.heg]
+        [%atom *]  [%fail p.heg]
+        [%cell *]  =+  taf=$(axe (peg axe 2), sut p.sut)
+                   ?.  ?=(%fail -.taf)  taf
+                   $(axe (peg axe 3), p.heg skip.taf, sut q.sut)
+        [%hint *]  $(sut repo)
+        [%hold *]  ?:  (~(has in gil) sut)  [%void ~]
+                   $(gil (~(put in gil) sut), sut repo)
+      ::
+          [%core *]
+        =^  zem  p.heg
+          ?~  zem=(loot u.q.heg q.r.q.sut)  [~ p.heg]
+          ?:(=(0 p.heg) [zem 0] [~ (dec p.heg)])
+        ?^  zem
+          :+  %pale  axe
+          =/  zut=foot
+            ?:(?=(%wet q.p.q.sut) [%wet q.u.zem] [%dry q.u.zem])
+          [%| (peg 2 p.u.zem) [[sut zut] ~ ~]]
+        =+  pec=(peel way r.p.q.sut)
+        ?.  sam.pec  [%fail p.heg]
+        ?:  con.pec  $(sut p.sut, axe (peg axe 3))
+        $(sut (peek(sut p.sut) way 2), axe (peg axe 6))
+      ::
+          [%face *]
+        ?@  p.sut
+          ?:  =(u.q.heg p.sut)
+            ?:  =(0 p.heg)  [%pale axe %& q.sut]
+            [%fail (dec p.heg)]
+          [%fail p.heg]
+        =<  ?~  tyr=(~(get by p.p.sut) u.q.heg)
+              next
+            ?~  u.tyr  ::NOTE  supported type-wise, but not used in practice
+              ~|(%fxnd-tyr-lost !!)
+            ?.  =(0 p.heg)
+              next(p.heg (dec p.heg))
+            =+  hup=~(reek ap u.u.tyr)
+            ?~  hup
+              ::NOTE  we ignore our vial .way
+              =+  myn=(mint %noun u.u.tyr)
+              [%faux p.myn (comb [%0 axe] q.myn)]
+            =+  fyn=(fond way u.hup)  ::NOTE  re-entrant
+            ?+  -.fyn  fyn
+              %pale  fyn(axis (peg axe axis.fyn))
+              %faux  fyn(nock (comb [%0 axe] nock.fyn))
+            ==
+        |%
+        ++  next
+          |-  ^-  pony
+          ?~  q.p.sut
+            ^$(sut q.sut)
+          ::NOTE  we ignore our vial .way
+          =+  tiv=(mint(sut q.sut) %noun i.q.p.sut)
+          =+  fid=^$(sut p.tiv, axe 1, gil ~)
+          ?:  ?=(%void -.fid)  fid
+          ?:  ?=(%fail -.fid)
+            $(q.p.sut t.q.p.sut, p.heg skip.fid)
+          =;  vat=(pair type nock)
+            [%faux p.vat (comb (comb [%0 axe] q.tiv) q.vat)]
+          ?-    -.fid
+            %pale  ?-  -.opal.fid
+                    %&  [p.opal.fid %0 axis.fid]  ::TODO  doesn't _need_ to be synthetic
+                    %|  [(fire ~(tap in q.opal.fid)) %9 p.opal.fid %0 axis.fid]
+                  ==
+            %faux  +.fid
+          ==
+        --
+      ::
+          [%fork *]
+        :: %+  roll  ~(tap in p.sut)  ::~(rep in p.sut)
+        :: |=  [=type som=$~([%void ~] pony)]
+        :: %.  [^$(sut type) som]
+        :: twin
+        ~_  (dunk 'whatever')
+        =+  wiz=(turn ~(tap in p.sut) |=(a=type ^$(sut a)))
+        ?~  wiz  [%void ~]
+        |-  ^-  pony
+        ?~  t.wiz  i.wiz
+        (twin i.wiz $(wiz t.wiz))
+      ==
+    ::
+    ++  twin
+      |=  [hax=pony yor=pony]
+      ^-  pony
+      ~_  leaf+"find-fork"
+      ?:  =(hax yor)  hax
+      ?:  ?=(%void -.hax)  yor
+      ?:  ?=(%void -.yor)  hax
+      ::TODO  maybe produce failure instead of asserting (for +feel)
+      ?:  ?=(?(%fail %faux) -.hax)
+        ?>  ?&  ?=(?(%fail %faux) -.yor)
+                ?=(%faux -.hax)
+                ?=(%faux -.yor)
+                =(nock.hax nock.yor)
+            ==
+        [%faux (fork type.hax type.yor ~) nock.hax]
+      ~_  -.yor
+      :: ~_  (dunk(sut type) 'yor or something')
+      ?>  ?=(%pale -.yor)
+      ?>  =(axis.hax axis.yor)
+      ?:  &(?=(%& -.opal.hax) ?=(%& -.opal.yor))
+        :+  %pale  axis.hax
+        [%& (fork p.opal.hax p.opal.yor ~)]
+      ?>  &(?=(%| -.opal.hax) ?=(%| -.opal.yor))
+      ?>  =(p.opal.hax p.opal.yor)
+      =+  wal=(~(uni in q.opal.hax) q.opal.yor)
+      :+  %pale  axis.hax
+      [%| p.opal.hax wal]
+    --
+  ::
   ++  fond
     ~/  %fond
     |=  [way=vial hyp=wing]
@@ -9375,6 +9548,7 @@
                     ?:  =(hax yor)  hax
                     ?~  hax  yor
                     ?~  yor  hax
+                    ::TODO  maybe produce failure instead of asserting (for +feel)
                     ?:  ?=(%| -.hax)
                       ?>  ?&  ?=(%| -.yor)
                               ?=(%| -.p.hax)
@@ -9470,6 +9644,7 @@
               --
             ::
                 [%fork *]
+              ::TODO  +rep:in
               =+  wiz=(turn ~(tap in p.sut) |=(a=type ^$(sut a)))
               ?~  wiz  ~
               |-  ^-  pony
@@ -9484,19 +9659,7 @@
       --
     ==
   ::
-  ++  find
-    ~/  %find
-    |=  [way=vial hyp=wing]
-    ^-  port
-    ~_  (show [%c %find] %l hyp)
-    =-  ?@  -  !!
-        ?-    -<
-          %&  [%& p.-]
-          %|  ?-  -.p.-
-                %|  [%| p.p.-]
-                %&  !!
-        ==    ==
-    (fond way hyp)
+  ++  find  fynd
   ::
   ++  fend
     |=  [way=vial hyp=wing]
@@ -9530,11 +9693,11 @@
   ++  fire
     |=  hag=(list [p=type q=foot])
     ^-  type
-    ?:  ?=([[* [%wet ~ %1]] ~] hag)
+    ?:  ?=([[* [%wet ~ %1]] ~] hag)  ::NOTE  ~ as in %$
       p.i.hag
     %-  fork
     %+  turn
-      hag.$
+      hag.$  ::TODO  ??
     |=  [p=type q=foot]
     ?.  ?=([%core *] p)
       ~_  (dunk %fire-type)
@@ -10880,7 +11043,7 @@
     ^=  wib
     |-  ^-  [p=(unit axis) q=(list [p=type q=foot])]
     ?~  men
-      [*(unit axis) ~]
+      [*(unit axis) ~]  ::NOTE  unit non-null everywhere else
     =+  geq=(tack(sut p.i.men) hyp mur)
     =+  mox=$(men t.men)
     [(mate p.mox `_p.mox`[~ p.geq]) [[q.geq q.i.men] q.mox]]
@@ -11273,8 +11436,8 @@
     =-  [p.tez (doge q.p.tez q.tez)]
     ^=  tez
     ^-  [p=[p=(map type @) q=(map @ wine)] q=wine]
-    ?:  (~(meet ut sut) -:!>(*type))
-      [dex %type]
+    :: ?:  (~(meet ut sut) -:!>(*type))
+    ::   [dex %type]
     ?-    sut
         %noun      [dex sut]
         %void      [dex sut]
