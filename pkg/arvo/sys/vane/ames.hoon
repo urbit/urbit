@@ -9455,12 +9455,49 @@
         ::
         ?.  =([~ ~] lyc)  ~
         ?+    tyl  ~
+            [%corked her=@ =dire req=*]
+          =/  who  (slaw %p her.tyl)
+          ?~  who  [~ ~]
+          =/  per  (~(get by chums.ames-state) u.who)
+          ?.  ?=([~ %known *] per)
+            ~
+          ?+  req.tyl  ~
+              ~
+            ``noun+!>(corked.u.per)
+          ::
+              [bone=@ ~]
+            ?~  bone=(slaw %ud bone.req.tyl)
+              [~ ~]
+            ``atom+!>((~(has in corked.u.per) u.bone dire.tyl))
+          ==
+        ::
+            [%closing her=@ =dire req=*]
+          =/  who  (slaw %p her.tyl)
+          ?~  who  [~ ~]
+          =/  per  (~(get by chums.ames-state) u.who)
+          ?.  ?=([~ %known *] per)
+            ~
+          ?+    req.tyl  ~
+              ~
+            :^  ~  ~  %atom  !>
+            %-  ~(rep by flows.u.per)
+            |=  [[=side flow=flow-state] clo=(set side)]
+            ?.(closing.flow clo (~(put in clo) side))
+          ::
+              [bone=@ ~]
+            ?~  bone=(slaw %ud bone.req.tyl)
+              [~ ~]
+            =+  ev-core=(ev-foco:ev u.who +.u.per)
+            =+  fo-core=(fo-abed:fo:ev-core ~[//scry] u.bone dire.tyl)
+            ``atom+!>(closing.state.fo-core)
+          ==
+        ::
             [%chums her=@ req=*]
           =/  who  (slaw %p her.tyl)
           ?~  who  [~ ~]
           =/  chum  (~(get by chums.ames-state) u.who)
           =/  peer  (~(get by peers.ames-state) u.who)
-          ?+    req.tyl  [~ ~]
+          ?+    req.tyl  ~
               ~
             ?~  chum
               ~&  (~(get by peers.ames-state) u.who)
@@ -9511,6 +9548,7 @@
             ?:  =(our u.gal)
               ~
             [`@ux`u.gal]~
+          ::
           ==
         ==
       ::
@@ -10095,8 +10133,14 @@
   ::  private endpoints
   ::
   ?.  =([~ ~] lyc)  ~
-  ?+  tyl  (scry:am-core sample)             ::  |ames scry endpoints
-    [%chums her=@ *]  (scry:me-core sample)  ::  |mesa scry endpoints
+  ?+    tyl             (scry:am-core sample)          ::  |ames scry endpoints
+      [%chums her=@ *]  (scry:me-core sample)          ::  |mesa scry endpoints
+  ::
+      [?(%closing %corked %bones %snd-bones) her=@ *]
+    =/  who  (slaw %p her.tyl)
+    ?~  who  [~ ~]
+    =/  wer  -:(pe-find-peer u.who)
+    %.(sample ?:(?=(%ames wer) scry:am-core scry:me-core))
   ==
 ::
 --
