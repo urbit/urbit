@@ -5637,10 +5637,9 @@
                       ~|(%regress-crashed ames-state:(sy-back:sy-core `her))
                     ::  compare pre/post migrated states
                     ::
-                    ?.    %+  migration-test
-                        (~(got by peers.ahoy-state) her)
-                      (~(got by peers.back-state) her)
-                      peer-core
+                    ?>  %+  migration-test
+                      (~(got by peers.ahoy-state) her)
+                    (~(got by peers.back-state) her)
                     ::
                     (pe-emit duct %give %done ~)
                   ::
