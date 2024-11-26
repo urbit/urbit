@@ -9479,7 +9479,7 @@
             ~
           ?+    req.tyl  ~
               ~
-            :^  ~  ~  %atom  !>
+            :^  ~  ~  %noun  !>
             %-  ~(rep by flows.u.per)
             |=  [[=side flow=flow-state] clo=(set side)]
             ?.(closing.flow clo (~(put in clo) side))
