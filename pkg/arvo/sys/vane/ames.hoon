@@ -8693,15 +8693,19 @@
             ^+  sy-core
             =|  peer=peer-state
             =:      -.peer  azimuth-state=-.fren
-                route.peer  ~  ::  get-route
+                route.peer  (get-route lane.fren)
                   qos.peer  qos.fren
-                corked.peer  (divide-bones corked.fren)
+               corked.peer  (divide-bones corked.fren)
               ossuary.peer  ossuary.fren
                 chain.peer  client-chain.fren
             ==
+            =.  peers.ames-state  (~(put by peers.ames-state) ship %known peer)
             ::
             =^  peek-moves  ames-state  (regress-peeks ship fren peer)
             =^  flow-moves  ames-state  (regress-flows ship fren ames-state)
+            ::  delete ship from .chums
+            ::
+            =.  chums.ames-state  (~(del by chums.ames-state) ship)
             ::
             (sy-emil (weld peek-moves flow-moves))
           ::
@@ -8793,6 +8797,19 @@
               ==
             ::
             (on-keen:core ~ her path)
+          ::
+          ++  get-route
+            |=  lane=(unit lane:pact)
+            ^-  (unit [direct=? =^lane])
+            ?~  lane  ~
+            :-  ~
+            ?@  u.lane
+              [direct=%.y %.y `@p`u.lane]
+            :+  direct=%.n   %.n
+            %+  can  3
+            :~  4^p.u.lane
+                2^q.u.lane
+            ==
           ::
           --
         ::
