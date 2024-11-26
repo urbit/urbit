@@ -31,6 +31,9 @@
     |=  [flow acc=@]
     ?.(corked acc +(acc))
   :-  dry
+  =-  ::  XX only handle "local" subscription desync (i.e. don't %cork)
+      ::
+      (skim - |=(v=[?(%g %a) *] ?=(%g v)))
   ::  a %g tag signals that the subscription exists only in %gall
   ::  tagging it with %a signals that the flow also exists in %ames
   ::
@@ -59,11 +62,14 @@
   ?.  ?=([[%gall %sys %req @ @ *] [%ames %bone @ @ @ *] *] duct)
     subs
   =*  app    &5:i.duct
-  =*  rift   &4:i.t.duct
+  =*  rift   &4:i.t.duct  :: XX ?
   =/  =bone  (slav %ud &5:i.t.duct)
-  =/  scry
-    |=  =term
-    /(scot %p p.bec)//(scot %da now)/[term]/(scot %p ship)/(scot %ud bone)
-  =+  .^(corked=? %ax (scry %corked))
+  =+  .^  corked=?  %ax
+        ^-  ^path
+        :~  (scot %p p.bec)  %$  (scot %da now)
+            %corked   (scot %p ship)  %bak
+            (scot %ud bone)
+        ==
+      ==
   (~(add ja subs) [ship `@ta`app path] [bone corked ship app duct])
 --
