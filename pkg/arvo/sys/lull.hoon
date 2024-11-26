@@ -877,10 +877,10 @@
     ::  modified in %17...
     ::
     ::  when changing any of the tasks above, please follow the same patterns
-    ::  that exists in ames.hoon.
+    ::  that exist in ames.hoon.
     ::
         [%mate (unit ship)]           ::  per-peer migration
-        [%load ?(%mesa %ames)]        ::  load core for new peers; XX make it term for flexibility?
+        [%load ?(%mesa %ames)]        ::  load core for new peers; XX [... term]
         [%back (unit ship)]           ::  per-peer regression
     ::
         [%heer =lane:pact p=@]        ::  receive a packet

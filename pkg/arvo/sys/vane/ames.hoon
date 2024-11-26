@@ -1757,6 +1757,59 @@
           ~
       ==
     ::
+    +|  %migration
+    ::
+    ++  print-check
+      |=  [=term check=?]
+      ^+  check
+      ?:  check  check
+      %-  (slog leaf/"{(trip term)}: failed" ~)
+      check
+    ::  +migration-test: .ames is the original state before %ahoy
+    ::                   .back is the regressed state, from $chums to %ships
+    ::
+    ++  migration-test
+      |=  [ames=ship-state back=ship-state]
+      ^-  ?
+      ?>  =(-.ames -.back)     :: both %known or %alien
+      ?:  ?=(%alien -.ames)
+        =(ames back)
+      ::
+      ?&  ?=(%known -.back)
+          %+  print-check  %azimuth-state  =(+<.ames +<.back)
+          ~&  [route.ames route.back]  ::  %+  print-check  %route          =(route.ames route.back)
+          ~&  [qos.ames qos.back]  :: %+  print-check  %qos            =(qos.ames qos.back)
+          %+  print-check  %ossuary        =(ossuary.ames ossuary.back)
+          %+  print-check  %closing        =(closing.ames closing.back)
+          %+  print-check  %corked         =(corked.ames corked.back)
+          %+  print-check  %chain          =(chain.ames chain.back)
+          %+  print-check  %keens          =(keens.ames keens.back)
+          %+  print-check  %nax            =(nax.ames nax.back)  :: XX ?
+        ::  forward flows
+        ::
+          =(~(wyt by snd.ames) ~(wyt by snd.back))
+          =(~ (~(dif in ~(key by snd.ames)) ~(key by snd.back)))
+        ::
+          %-  ~(rep by snd.ames)
+          |=  [[=bone pump=message-pump-state] ok=?]
+          =+  back-pump=(~(got by snd.back) bone)
+          ?&  ok
+              =(current.pump current.back-pump)
+              =(next.pump next.back-pump)
+          ==
+        ::  backwards flows
+        ::
+          =(~(wyt by rcv.ames) ~(wyt by rcv.back))
+          =(~ (~(dif in ~(key by rcv.ames)) ~(key by rcv.back)))
+        ::
+          %-  ~(rep by rcv.ames)
+          |=  [[=bone sink=message-sink-state] ok=?]
+          =+  back-sink=(~(got by rcv.back) bone)
+          ?&  ok
+              =(last-acked.sink last-acked.back-sink)
+          ==
+      ==
+    ::
     --
 ::  external vane interface
 ::
@@ -3534,7 +3587,8 @@
             ::  namespace that they have migrated us?
             ::  XX  requires a namespace for migrated peers
             ::
-            ~&  migrating/ship.deep
+            %-  %^  ev-trace  sun.veb  ship.deep
+                |.("migrating to |mesa")
             =<  :: delete ship from .peers
                 ::
                 pe-abel
@@ -4265,12 +4319,13 @@
             =^  poke-moves  flows.fren  (make-flows fren)
             =^  peek-moves  ames-state  (make-peeks fren)
             ::  XX  needed?  peek/poke-moves will have %send moves already
+            ::
             ::  enqueue a %prod to start sending unsent messages, after
             ::  all the %mokes (which trigger +peeks for %acks) have been
             ::  processed
             ::
-            =/  prod-move=(list move)  [[/ames]~ %pass /mate %a %prod ~]~
-            ::  .her is fully migrated, +abul will delete it from peers.
+            =/  prod-move=(list move)  [[/ames]~ %pass /mate %a %prod ~[her]]~
+            ::  .her is fully migrated, +pe-abel will delete it from peers.
             ::
             peer-core(event-core (emil (weld poke-moves peek-moves)))
             ::
@@ -5580,6 +5635,13 @@
                       ==
                     =/  back-state=axle
                       ~|(%regress-crashed ames-state:(sy-back:sy-core `her))
+                    ::  compare pre/post migrated states
+                    ::
+                    ?.    %+  migration-test
+                        (~(got by peers.ahoy-state) her)
+                      (~(got by peers.back-state) her)
+                      peer-core
+                    ::
                     (pe-emit duct %give %done ~)
                   ::
                       %cork
