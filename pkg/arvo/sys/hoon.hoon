@@ -11058,12 +11058,12 @@
             =-  ?~(- ~ `[->- [%rose [" " "$-(" ")"] [+>+<.u.res ->+ ~]]])
             =+  (mule |.((~(play ut typ(r.p.q %gold)) q.n.q.q.n.q.r.q.typ)))
             ?-  -<
-              %&  (disc [%& p.-] -.u.res)
+              %&  (disc [%& p.-] eta)
               %|  `[-.u.res leaf+"###"]
             ==
         =-  `[-.u.res -]
         :+  %rose  [[' ' ~] ['<' ~] ['>' ~]]
-        :_   ?:  ?=(%lest veb)  ~  ::  <payload>
+        :_   ?:  ?=(%lest veb)  ~  ::  payload
              ?:  ?&  ?=([%rose *] +.u.res)
                      =([[' ' ~] ['<' ~] ['>' ~]] p.+.u.res)
                   ==
@@ -11073,7 +11073,7 @@
                     q.+.u.res
                   [i.q.+.u.res ~]
               [+.u.res ~]
-        :-  %leaf   :: <battery>
+        :-  %leaf   ::  battery
         %+  rip  3
         %^  cat  3
           ?~  q.r.q.typ  '__'
@@ -11081,12 +11081,10 @@
           ?~(q.q.tom '__' ?~(p.n.q.q.tom '$' p.n.q.q.tom))
         %^  cat  3
         ?-(r.p.q.typ %gold '.', %iron '|', %lead '?', %zinc '&')
-        %^  cat  3
         %~  rent  co
-        :+  %$  %ud  %-  dec
+        :+  %$  %ud
         %-  ~(rep by (~(run by q.r.q.typ) |=(tome ~(wyt by q.+<))))
         |=([[@ a=@u] b=@u] (add a b))
-        '+'
       ::
       ++  hint
         ?>  ?=([%hint *] typ)
