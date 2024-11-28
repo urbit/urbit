@@ -270,7 +270,7 @@
   ::  mold generator: produces a mold of a null-terminated list of the
   ::  homogeneous type {a}.
   ::
-  $@(~ [i=item t=(list item)])
+  $+(list $@(~ [i=item t=(list item)]))
 ::
 ++  lone
   |$  [item]
