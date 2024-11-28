@@ -879,7 +879,7 @@
     ::  when changing any of the tasks above, please follow the same patterns
     ::  that exist in ames.hoon.
     ::
-        [%mate (unit ship)]           ::  per-peer migration
+        [%mate (unit ship) dry=?]     ::  per-peer migration
         [%load ?(%mesa %ames)]        ::  load core for new peers; XX [... term]
         [%back (unit ship)]           ::  per-peer regression
     ::

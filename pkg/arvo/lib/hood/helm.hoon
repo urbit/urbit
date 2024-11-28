@@ -197,21 +197,24 @@
   |=  [her=ship test=?]  =<  abet
   =/  =wire
     :+  %helm  %ahoy
-    ?.(test /[(scot %p her)] /test)
+    ?.(test /(scot %p her) /test-10/(scot %p her))
   =/  =path  ?:(test /test /mesa)
   (emit %pass wire %arvo %a %plea her %$ path %ahoy ~)
 ::
 ++  take-ahoy
   |=  [way=wire error=(unit error:ames)]
-  ?:  ?=([%test *] way)
+  ?:  ?=([%test-10 @ *] way)
     ?~  error
-      ~&  >  %migration-worked
-      abet
+      ~&  >   %migration-test-worked
+      ~&  >>  %test-local-migration
+      abet:(emit %pass /helm/migrate %arvo %a %mate (slaw %p i.t.way) dry=%.y)
     %-  (slog %take-ahoy-test u.error)
     abet
   ?>  ?=([@ ~] way)
   ?~  error
-    abet:(emit %pass /helm/migrate %arvo %a %mate (slaw %p i.way))
+      ~&  >   %remote-migration-worked
+      ~&  >>  %try-local-migration
+    abet:(emit %pass /helm/migrate %arvo %a %mate (slaw %p i.way) dry=%.n)
   ~&  >>>  %ahoy-crash
   ::  XX retry?
   ::
