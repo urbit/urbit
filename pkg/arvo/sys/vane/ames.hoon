@@ -9987,7 +9987,14 @@
     ++  pe-hear
       |=  [dud=(unit goof) =lane =blob]
       ^-  [(list move) _vane-gate]
-      =/  =shot       (sift-shot blob)
+      =/  =shot  (sift-shot blob)
+      ::
+      ?:  .=  =(%deny form.snub.ames-state)
+          (~(has in ships.snub.ames-state) sndr.shot)
+        %-  %+  %*(ev-tace ev-core her sndr.shot)  rcv.veb.bug.ames-state
+            |.("snubbed")
+        `vane-gate
+      ::
       =/  ship-state  (pe-find-peer sndr.shot)
       ?:  ?=([%ames *] ship-state)
         ::  both for %ames and %fine
