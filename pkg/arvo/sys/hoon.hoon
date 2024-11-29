@@ -9156,7 +9156,7 @@
           |=(a=type ?:(pol (fuse(sut a) ref) (crop(sut a) ref)))
     ==
   ::
-  ++  duck  ^-(tank (~(draw us 30 %base ~) [%& sut]))
+  ++  duck  ^-(tank (draw:us [%& sut] [30 %base ~]))
   ++  dune  |.(duck)
   ++  dunk
     |=  paz=term  ^-  tank
@@ -10920,28 +10920,30 @@
       [%hold *]  $(sut repo)
     ==
   --
-++  us                                                  ::  pretty printer
-  =>  |%
+++  us                                                  ::  prettyprinter
+  =>  |%                                                ::
       +$  tase  (each type vase)                        ::  type/vase
       +$  meta                                          ::  recursion metadata
+          $~  [~ ~ 30 %base ~]                          ::
           $:   saw=(set tase)                           ::  recursive types
                ids=(map type @)                         ::  types id
-               dep=@ud                                  ::  remaining depth
+               dep=@ud                                  ::  maximum depth
                veb=?(%base %most %lest)                 ::  current verbosity
-               pin=vase                                 ::  (map term ppin)
-          ==
+               pin=(map term ppin)                      ::  print overrides
+          ==                                            ::
       +$  base  $-([tase meta] (unit [meta tank]))      ::  base printer
       +$  ppin  $-([tase meta base] (unit [meta tank])) ::  custom printer
       --
   ::
-  |_  $:  dep=@ud                                       ::  maximum depth
-          veb=?(%base %most %lest)                      ::  default verbosity
-          pin=(map term ppin)                           ::  print overrides
-      ==
+  |%
   ::
   ++  draw                                              ::  print type/vase
-    |=  inp=tase 
-    +:(need (disc inp [~ ~ dep veb !>(pin)]))
+    |=  $:  inp=tase
+            dep=@ud
+            veb=?(%base %most %lest)
+            pin=(map term ppin)
+        ==
+    +:(need (disc inp [~ ~ dep veb pin]))
   ::
   ++  disc                                              ::  base printer
     |=  [inp=tase eta=meta]
@@ -10953,7 +10955,7 @@
     ::
     ++  dial                                            ::  call printer
       |=  mar=term
-      ?~  custom=(~(get by pin) mar)
+      ?~  custom=(~(get by pin.eta) mar)
         (defs mar)
       (u.custom inp eta disc)
     ::
@@ -10994,10 +10996,10 @@
       ::
       ++  noun
         ?-   -.inp
-          %&  `[eta [%leaf "*"]]  
+          %&  `[eta [%leaf "*"]]
           %|  =-  (disc inp(p.p -) eta)
               ?@  q.p.inp  [%atom %$ ~]
-              [%cell %noun %noun]  
+              [%cell %noun %noun]
         ==
       ::
       ++  void  ?:(-.inp ~ `[eta [%leaf "#!"]])
@@ -11005,7 +11007,7 @@
       ++  atom
         ?>  ?=([%atom *] typ)
         ?-  -.inp
-          %&  ?~  q.typ 
+          %&  ?~  q.typ
                 `[eta [%leaf '@' (trip p.typ)]]
               `[eta [%leaf '%' ~(rend co [%$ p.typ u.q.typ])]]
           %|  ?~  q.typ
@@ -11056,22 +11058,22 @@
                 ?=([%rose * ^] +.u.res)
             ==
             =-  ?~(- ~ `[->- [%rose [" " "$-(" ")"] [+>+<.u.res ->+ ~]]])
-            =+  (mule |.((~(play ut typ(r.p.q %gold)) q.n.q.q.n.q.r.q.typ)))
+            =+  (mule |.((~(play ut typ(r.p.q %gold)) q.n.q.q.n.q.r.q.typ)))        
             ?-  -<
               %&  (disc [%& p.-] eta)
               %|  `[-.u.res leaf+"###"]
             ==
         =-  `[-.u.res -]
         :+  %rose  [[' ' ~] ['<' ~] ['>' ~]]
-        :_   ?:  ?=(%lest veb)  ~  ::  payload
+        :_   ?:  ?=(%lest veb.eta)  [[%leaf "..."] ~]    ::  payload
              ?:  ?&  ?=([%rose *] +.u.res)
                      =([[' ' ~] ['<' ~] ['>' ~]] p.+.u.res)
                   ==
                   ?:  ?|  ?=(@ q.+.u.res)
-                          ?=(%most veb)
+                          ?=(%most veb.eta)
                       ==
                     q.+.u.res
-                  [i.q.+.u.res ~]
+                  [i.q.+.u.res [%leaf "..."] ~]
               [+.u.res ~]
         :-  %leaf   ::  battery
         %+  rip  3
@@ -11091,11 +11093,11 @@
         =+  hin=?-(-.inp %& inp(p q.typ), %| inp(p.p q.typ))
         ?.  ?=([%know *] q.p.typ)
           (disc hin eta)
-        ?^  custom=?^(p.q.p.typ ~ (~(get by pin) p.q.p.typ))
+        ?^  custom=?^(p.q.p.typ ~ (~(get by pin.eta) p.q.p.typ))
           (u.custom hin eta disc)  
-        ?:  ?=(%most veb)  ::  %most ignore hint 
+        ?:  ?=(%most veb.eta)  ::  %most ignore hint 
           (disc hin eta)  
-        ?:  ?&(?=(%lest veb) -.inp)  ::  %lest print name
+        ?:  ?&(?=(%lest veb.eta) -.inp)  ::  %lest print name
           ?@  tud=p.q.p.typ  `[eta (cat 3 '#' mark.tud)]
           `[eta (rap 3 '#' auth.tud '+' (spat type.tud) ~)]
         ?^  p.q.p.typ  (disc hin eta)
@@ -11107,7 +11109,7 @@
         ?>  ?=([%face *] typ)
         =+  ?-(-.inp %& inp(p q.typ), %| inp(p.p q.typ))
         ?~  res=(disc - eta)  ~
-        ?:  |(?=(^ p.typ) ?=(%lest veb))  res  ::  %lest hide face
+        ?:  |(?=(^ p.typ) ?=(%lest veb.eta))  res  ::  %lest hide face
         `[-.u.res [%palm [['=' ~] ~ ~ ~] [%leaf (trip p.typ)] +.u.res ~]]
       ::
       ++  fork
@@ -11163,7 +11165,7 @@
         ?-  -.inp
           %&  ?~  res=(disc inp(p +<+<+>.yed) eta)  ~
               `[->- [%rose [" " "(list " ")"] [->+ ~]]]
-          %|  (disc(veb %lest) inp eta(veb %lest))
+          %|  (disc inp eta(veb %lest))
         ==
       ::
       ++  path
@@ -11307,7 +11309,7 @@
   |=  vax=vase
   ^-  tank
   ~|  %sell
-  (~(draw us 30 %base ~) [%| vax])
+  (draw:us [%| vax] [30 %base ~])
 ::
 ::  +skol:  $-(type tank) using duck.
 ::

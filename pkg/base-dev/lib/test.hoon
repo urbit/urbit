@@ -22,9 +22,9 @@
     =/  custom-printers=(map term ppin:us)  (my [[%face face-printer] ~])
     :~
       :+  %palm  [": " ~ ~ ~]
-      [leaf+"expected" (~(draw us 20 %most custom-printers) [%| expected]) ~]
+      [leaf+"expected" (draw:us [%| expected] [20 %most custom-printers]) ~]
       :+  %palm  [": " ~ ~ ~]
-      [leaf+"actual" (~(draw us 20 %most custom-printers) [%| actual]) ~]
+      [leaf+"actual" (draw:us [%| actual] [20 %most custom-printers]) ~]
     ==
   ::
   =?  result  !(~(nest ut p.actual) | p.expected)

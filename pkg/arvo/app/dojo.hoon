@@ -641,7 +641,7 @@
                     %0  ~
                     %1  =+  ses=(~(get by hoc.state) id)
                         =+  ?~(ses [30 %base ~] cof.u.ses)
-                        [[%rose [~ "  " ~] (~(draw us -) [%& p.q.cay]) ~] maar]
+                        [[%rose [~ "  " ~] (draw:us [%& p.q.cay] -) ~] maar]
                     %2  [[%rose [~ "  " ~] (dy-show-type-noun p.q.cay) ~] maar]
                     ::%3  handled above
                     %4  ~
@@ -682,7 +682,7 @@
       %+  dy-rash  %tan
       %-  welp  :_  tan
       =+  cof==+((~(get by hoc.state) id) ?~(- [30 %base ~] cof.u.-))
-      ?+  p.cay  [(~(draw us cof) [%| q.cay]) ~]
+      ?+  p.cay  [(draw:us [%| q.cay] cof) ~]
         %tang  ;;(tang q.q.cay)
         %httr
           =+  hit=;;(httr:eyre q.q.cay)
@@ -891,7 +891,7 @@
           (fall kuv !>(~))
         ~_  'dojo: bad-keyword (supplied sample incorrect)'
         ~_  'dojo: keywords allowed'
-        ~_  (~(draw us cof) [%& p:(fall kuv !>(~))])
+        ~_  (draw:us [%& p:(fall kuv !>(~))] cof)
         %+  slap
           (with-faces kuv+(need kuv) rep+(with-faces soz) ~)
         :+  %cncb  [%kuv]~
@@ -912,9 +912,9 @@
         ::  [ven poz kev] can't nest in som
         ::
         :~  'dojo: nest-need'
-            (~(draw us cof) [%& p.som])
+            (draw:us [%& p.som] cof)
             'dojo: nest-have'
-            (~(draw us cof) [%& p.sam])
+            (draw:us [%& p.sam] cof)
             'dojo: bad gate lost-argument (generator incorrect)'
         ==
       ::
@@ -923,9 +923,9 @@
         ::  ven can't nest in head
         ::
         :~  'dojo: nest-need'
-            (~(draw us cof) [%& p.hed])
+            (draw:us [%& p.hed] cof)
             'dojo: nest-have'
-            (~(draw us cof) [%& p.ven])
+            (draw:us [%& p.ven] cof)
             'dojo: bad gate event-sample (generator incorrect)'
         ==
       ::
@@ -938,18 +938,18 @@
         ::  argument required, but nothing can nest
         ::
         :~  'dojo: nest-need'
-            (~(draw us cof) [%& p.zop])
+            (draw:us [%& p.zop] cof)
             'dojo: nest-have'
-            (~(draw us cof) [%& p.poz])
+            (draw:us [%& p.poz] cof)
             'dojo: bad gate impossible-nest (generator incorrect)'
         ==
       ::  poz doesn't nest in zop
       ::
       ?<  (~(nest ut p.zop) | p.poz)
       :~  'dojo: nest-need'
-          (~(draw us cof) [%& p.zop])
+          (draw:us [%& p.zop] cof)
           'dojo: nest-have'
-          (~(draw us cof) [%& p.poz])
+          (draw:us [%& p.poz] cof)
           'dojo: bad-argument (supplied sample incorrect)'
       ==
     ::
