@@ -11058,7 +11058,7 @@
                 ?=([%rose * ^] +.u.res)
             ==
             =-  ?~(- ~ `[->- [%rose [" " "$-(" ")"] [+>+<.u.res ->+ ~]]])
-            =+  (mule |.((~(play ut typ(r.p.q %gold)) q.n.q.q.n.q.r.q.typ)))        
+            =+  (mule |.((~(play ut typ(r.p.q %gold)) q.n.q.q.n.q.r.q.typ)))
             ?-  -<
               %&  (disc [%& p.-] eta)
               %|  `[-.u.res leaf+"###"]
