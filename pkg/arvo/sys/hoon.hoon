@@ -11035,7 +11035,7 @@
         =-  ?~(- ~ `[->- [%rose [[' ' ~] ['[' ~] [']' ~]] ->+]])
         =-  ?.  ?=([^ ^] -)  ~
             ?.  ?&  ?=([%rose *] +.u.tal)
-                    =([[' ' ~] ['[' ~] [']' ~]] p.+.u.tal) 
+                    =([[' ' ~] ['[' ~] [']' ~]] p.+.u.tal)
                 ==
               `[-.u.tal [+.u.hed +.u.tal ~]]
             `[-.u.tal (weld [+.u.hed ~] q.+.u.tal)]
@@ -11094,9 +11094,9 @@
         ?.  ?=([%know *] q.p.typ)
           (disc hin eta)
         ?^  custom=?^(p.q.p.typ ~ (~(get by pin.eta) p.q.p.typ))
-          (u.custom hin eta disc)  
-        ?:  ?=(%most veb.eta)  ::  %most ignore hint 
-          (disc hin eta)  
+          (u.custom hin eta disc)
+        ?:  ?=(%most veb.eta)  ::  %most ignore hint
+          (disc hin eta)
         ?:  ?&(?=(%lest veb.eta) -.inp)  ::  %lest print name
           ?@  tud=p.q.p.typ  `[eta (cat 3 '#' mark.tud)]
           `[eta (rap 3 '#' auth.tud '+' (spat type.tud) ~)]
@@ -11133,13 +11133,13 @@
         ?-  -.inp
           %&  =+  lef=|=(num=@ud ['#' ~(rend co [%$ %ud num])])
               ?^  hey=(~(get by ids.eta) typ)
-                `[eta [%leaf (lef u.hey)]]  
+                `[eta [%leaf (lef u.hey)]]
               ?:  (~(has in saw.eta) inp)
                 =+  dyr=+(~(wyt by ids.eta))
                 `[eta(ids (~(put by ids.eta) typ dyr)) [%leaf (lef dyr)]]
               =+  dox=doxx(typ ~(repo ut typ))
               ?~  rom=(disc inp(p dox) eta(saw (~(put in saw.eta) inp)))  ~
-              :-  ~ 
+              :-  ~
               :-  eta(ids ids.-.u.rom, dep dep.-.u.rom)
               ?~  rey=(~(get by ids.-.u.rom) typ)  +.u.rom
               [%palm [['.' ~] ~ ~ ~] [%leaf '^' (lef u.rey)] +.u.rom ~]
@@ -11147,7 +11147,7 @@
               %+  disc  inp(p.p doxx(typ ~(repo ut typ)))
               eta(saw (~(put in saw.eta) inp))
         ==
-      :: 
+      ::
       ++  unit
         ?>  ?=([%fork *] typ)
         =+  yed=(sort ~(tap in p.typ) aor)
@@ -11171,11 +11171,11 @@
       ++  path
         ?-  -.inp
           %&  `[eta [%leaf '/' ~]]
-          %|  ?~  res=(deck ;;((^list *) q.p.inp) [%atom %tas ~])  ~ 
+          %|  ?~  res=(deck ;;((^list *) q.p.inp) [%atom %tas ~])  ~
               =+  (turn ->+ |=(lef=tank ?>(?=([%leaf *] lef) [%leaf +.p.lef])))
               `[-.u.res [%rose [['/' ~] ['/' ~] ~] -]]
           ==
-      :: 
+      ::
       ++  tape
         ?-  -.inp
           %&  `[eta [%leaf '"' '"' ~]]
@@ -11258,7 +11258,7 @@
       [[+.u.res tan.acc] err.acc]
     ::
     ++  doxx                                            ::  apply heuristics
-      =+  tep=typ  
+      =+  tep=typ
       |-  ?:  ?=(?([%hint *] [%hold *]) tep)  $(tep ~(repo ut tep))
           ?.  ?=([%fork *] tep)  typ
           =+  yed=(sort ~(tap in p.tep) aor)

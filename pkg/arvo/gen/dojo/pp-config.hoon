@@ -1,4 +1,4 @@
-::  |pp-config: update %dojo's pretty printer settings. 
+::  |pp-config: update %dojo's pretty printer settings.
 ::
 ::      > :dojo|pp-config [%verbosity %lest]
 ::    set verbosity to %lest
@@ -29,4 +29,3 @@
         [[=arg ~] ~]
     ==
 [%pp-config arg]
-
