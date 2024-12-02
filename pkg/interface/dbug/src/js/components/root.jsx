@@ -79,7 +79,7 @@ export class Root extends Component {
           render={(props) => {
             return (
               <Skeleton status={state.status} selected="ames">
-                <Ames peers={state.peers} />
+                <Ames peers={state.peers} chums={state.chums}/>
               </Skeleton>
             );
           }}

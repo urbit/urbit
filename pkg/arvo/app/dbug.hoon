@@ -271,6 +271,29 @@
   ::
     ::  /azimuth/status
   ::
+    ::  /ames/all.json
+    ::
+      [%ames %all ~]
+    =/  [known-chum=(list [^ship *]) alien-chum=(list [^ship *])]
+      %+  skid  ~(tap by chums:v-ames)
+      |=  [^ship kind=?(%alien %known)]
+      ?=(%known kind)
+    =/  [known-peer=(list [^ship *]) alien-peer=(list [^ship *])]
+      %+  skid  ~(tap by peers:v-ames)
+      |=  [^ship kind=?(%alien %known)]
+      ?=(%known kind)
+    %-  some
+    %-  pairs
+    :~  :-  'peers'
+        %-  pairs
+        :~  'known'^a+(turn (turn known-peer head) ship)
+            'alien'^a+(turn (turn alien-peer head) ship)
+        ==
+        :-  'chums'
+        %-  pairs
+        :~  'known'^a+(turn (turn known-chum head) ship)
+            'alien'^a+(turn (turn alien-chum head) ship)
+    ==  ==
     ::  /ames/peer.json
     ::
       [%ames %peer ~]
@@ -587,6 +610,7 @@
 ::
 ++  v-ames
   |%
+  ++  all    (scry (map ship [?(%peer %chum) ?(%alien %known)]) %ax %$ /chums/all)
   ++  peers  (scry (map ship ?(%alien %known)) %ax %$ /peers)
   ++  chums  (scry (map ship ?(%alien %known)) %ax %$ /chums)
   ++  peer
@@ -1033,7 +1057,7 @@
                 ^-  flow
                 [side (~(has in corked) side) state]
               =/  [forward=(list flow) backward=(list flow)]
-                (skid mix |=([=side *] =(dire %for)))
+                (skid mix |=([side *] =(dire %for)))
               %-  pairs
               :~  ['forward' a+(turn forward build)]
                   ['backward' a+(turn backward build)]
@@ -1048,11 +1072,7 @@
           ++  build
             |=  flow
             ^-  json
-            %+  frond  dire.side
-            ?-  dire.side
-              %for  (flow-with-side ossuary side corked state)
-              %bak  (flow-with-side ossuary side corked state)
-            ==
+            (flow-with-side ossuary side corked state)
           --
         ::
           :-  'corked'

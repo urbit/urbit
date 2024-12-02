@@ -9667,63 +9667,82 @@
             ``atom+!>(closing.state.fo-core)
           ==
         ::
-            [%chums her=@ req=*]
-          =/  who  (slaw %p her.tyl)
-          ?~  who  [~ ~]
-          =/  chum  (~(get by chums.ames-state) u.who)
-          =/  peer  (~(get by peers.ames-state) u.who)
-          ?+    req.tyl  ~
+            [%chums req=*]
+          ?-    req.tyl
               ~
-            ?~  chum
-              ~&  (~(get by peers.ames-state) u.who)
-              ::
-              [~ ~]
-            ``noun+!>(u.chum)
-            ::
-              [%lanes ~]
-            ::
-            ::  this duplicates the routing hack from +send-blob:event-core
-            ::  so long as neither the peer nor the peer's sponsoring galaxy is
-            ::  us, and the peer has been reached recently:
-            ::
-            ::    - no route to the peer, or peer has not been reached recently:
-            ::      send to the peer's sponsoring galaxy
-            ::    - direct route to the peer: use that
-            ::    - indirect route to the peer: send to both that route and the
-            ::      the peer's sponsoring galaxy
-            ::
             :^  ~  ~  %noun
-            !>  ^-  (list lane:pact)  :: XX [sponsor=@p (list lane:pact)]
-            ?:  =(our u.who)
-              ~
-            =/  sax
-              (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
-            =/  gal=(unit @p)
-              ?.  ?=([~ ~ *] sax)
-                ~
-              `(rear ;;((list ship) q.q.u.u.sax))
-            ?~  gal
-              ~
-            :-  `@ux`u.gal  :: XX we shouldn't fake this as as lane
-            ?:  ?=([~ %known *] chum)
-              (get-forward-lanes-mesa our +.u.chum chums.ames-state)
-            ?:  ?=([~ %known *] peer)
-              =/  ev-core  (ev:ames [now eny rof] [//scry]~ ames-state)
-              %+  turn  (get-forward-lanes our +.u.peer peers.ames-state)
-              |=  lane=(each @p address)
-              ?-    -.lane
-                  %&  `@ux`p.lane
-              ::
-                  %|
-                :+    %if
-                  ip=`@if`(end [0 32] p.lane)
-                pt=`@ud`(cut 0 [32 16] p.lane)
-              ==
-            ~&  %alien-lanes
-            ?:  =(our u.gal)
-              ~
-            [`@ux`u.gal]~
+            !>  ^-  (map ship ?(%alien %known))
+            (~(run by chums.ames-state) ^head)
           ::
+              [%all ~]
+            :^  ~  ~  %noun
+            =|  out=(map ship [?(%peer %chum) ?(%alien %known)])
+            !>  ^+  out
+            =/  chums=_out
+              (~(run by chums.ames-state) |=(chum-state chum/+<-))
+            =/  peers=_out
+              (~(run by peers.ames-state) |=(ship-state peer/+<-))
+            %-  ~(gas by *_out)
+            (weld ~(tap by chums) ~(tap by peers))
+          ::
+              [her=@ req=*]
+            =/  who  (slaw %p her.req.tyl)
+            ?~  who
+              [~ ~]
+            =/  chum  (~(get by chums.ames-state) u.who)
+            =/  peer  (~(get by peers.ames-state) u.who)
+            ?+    req.req.tyl  ~
+                ~
+              ?~  chum
+                ~&  (~(get by peers.ames-state) u.who)
+                ::
+                [~ ~]
+              ``noun+!>(u.chum)
+              ::
+                [%lanes ~]
+              ::  this duplicates the routing hack from +send-blob:event-core
+              ::  so long as neither the peer nor the peer's sponsoring galaxy is
+              ::  us, and the peer has been reached recently:
+              ::
+              ::    - no route to the peer, or peer has not been reached recently:
+              ::      send to the peer's sponsoring galaxy
+              ::    - direct route to the peer: use that
+              ::    - indirect route to the peer: send to both that route and the
+              ::      the peer's sponsoring galaxy
+              ::
+              :^  ~  ~  %noun
+              !>  ^-  (list lane:pact)  :: XX [sponsor=@p (list lane:pact)]
+              ?:  =(our u.who)
+                ~
+              =/  sax
+                (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
+              =/  gal=(unit @p)
+                ?.  ?=([~ ~ *] sax)
+                  ~
+                `(rear ;;((list ship) q.q.u.u.sax))
+              ?~  gal
+                ~
+              :-  `@ux`u.gal  :: XX we shouldn't fake this as as lane
+              ?:  ?=([~ %known *] chum)
+                (get-forward-lanes-mesa our +.u.chum chums.ames-state)
+              ?:  ?=([~ %known *] peer)
+                =/  ev-core  (ev:ames [now eny rof] [//scry]~ ames-state)
+                %+  turn  (get-forward-lanes our +.u.peer peers.ames-state)
+                |=  lane=(each @p address)
+                ?-    -.lane
+                    %&  `@ux`p.lane
+                ::
+                    %|
+                  :+    %if
+                    ip=`@if`(end [0 32] p.lane)
+                  pt=`@ud`(cut 0 [32 16] p.lane)
+                ==
+              ~&  %alien-lanes
+              ?:  =(our u.gal)
+                ~
+              [`@ux`u.gal]~
+            ::
+            ==
           ==
         ==
       ::
@@ -10315,8 +10334,8 @@
   ::  private endpoints
   ::
   ?.  =([~ ~] lyc)  ~
-  ?+    tyl             (scry:am-core sample)          ::  |ames scry endpoints
-      [%chums her=@ *]  (scry:me-core sample)          ::  |mesa scry endpoints
+  ?+    tyl       (scry:am-core sample)          ::  |ames scry endpoints
+      [%chums *]  (scry:me-core sample)          ::  |mesa scry endpoints
   ::
       [?(%closing %corked %bones %snd-bones) her=@ *]
     =/  who  (slaw %p her.tyl)
