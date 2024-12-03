@@ -638,6 +638,49 @@
     ::    dead:        dead flow consolidation timer and recork timer, if set
     ::
     ::
+  +$  fren-state-23
+    $:  azimuth-state
+        lane=(unit lane:pact)
+        =qos
+        corked=(set side)  ::  can be +peeked in the namespace
+                           ::  XX how many flows to keep here?
+        =ossuary      ::  XX redefine ossuary in terms of bone^side
+        flows=(map side flow-state)
+      ::  outgoing/incoming requests  - sndr -    - rcvr -
+        ::  write-data: path=pok-path  (~zod) /poke/~nec/flow/bone=0/mess=1
+        ::  read data:  path=pek-path
+        ::              path=ack-path  (~nec) /ack/~zod/flow/bone=0/mess=1
+        ::
+        pit=(map path request-state)
+        pot=(jug wire path)
+        =client=chain            ::  stores keys for %shut requests
+    ==
+  +$  chum-state-23
+    $%  [%known fren-state-23]
+        [%alien ovni-state]
+    ==
+    +$  axle-23
+      $:  peers=(map ship ship-state)
+          =unix=duct  ::  [//ames/0v0 ~]
+          =life
+          =rift
+          =bug
+          snub=[form=?(%allow %deny) ships=(set ship)]
+          cong=[msg=_5 mem=_100.000]
+          $=  dead                            ::  dead-flow consolidation timers
+          $:  flow=[%flow (unit dead-timer)]  ::  ... for |ames
+              chum=[%chum (unit dead-timer)]  ::  ... for |mesa
+              cork=[%cork (unit dead-timer)]  ::  ... for %nacked corks
+              rots=[%rots (unit dead-timer)]  ::  ... fir expiring direct routes
+          ==
+          ::
+          =server=chain                       ::  for serving %shut requests
+          priv=private-key
+          chums=(map ship chum-state-23)         ::  XX migrated peers
+          core=_`?(%ames %mesa)`%ames         ::  XX use migrated core by default
+          ::  TODOs
+          :: XX tmp=(map @ux page)            :: temporary hash-addressed bindings
+      ==
     +$  ames-state-22
       $+  ames-state-22
       $:  peers=(map ship ship-state)
@@ -2076,7 +2119,7 @@
               ==  ==
               $:  %23                            :: Directed Messaging
                   ?(%adult %larva)               ::   (removes queued-events)
-                  state=axle
+                  state=axle-23
           ==  ==
       |^  ?-  old
           [%4 %adult *]
@@ -10285,7 +10328,7 @@
 ::  +load: load in old state after reload
 ::
 ++  load
-  |=  state=axle
+  |=  state=axle-23
   :: =.  peers.state  (~(del by peers.state) ~fyr)
   :: =.  chums.state    ~
     :: %-  ~(run by chums.state)
@@ -10302,6 +10345,18 @@
     ::           ::  %_  ossuary
     ::             :: next-bone  40
     :: ==        :: ==
+  =/  state=axle
+    %=     state
+        chums
+      %-  ~(run by chums.state)
+      |=  s=chum-state-23
+      ^-  chum-state
+      ?:  ?=(%alien -.s)
+        s
+      :*  %known   +<.s   lane.s  qos.s  corked.s  ossuary.s  flows.s
+          pit.s  client-chain.s
+      ==
+    ==
   vane-gate(ames-state state)
 ::  +scry: dereference namespace
 ::
