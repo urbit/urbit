@@ -2119,7 +2119,7 @@
               ==  ==
               $:  %23                            :: Directed Messaging
                   ?(%adult %larva)               ::   (removes queued-events)
-                  state=axle-23
+                  state=axle
           ==  ==
       |^  ?-  old
           [%4 %adult *]
@@ -10328,7 +10328,7 @@
 ::  +load: load in old state after reload
 ::
 ++  load
-  |=  state=axle-23
+  |=  state=axle
   :: =.  peers.state  (~(del by peers.state) ~fyr)
   :: =.  chums.state    ~
     :: %-  ~(run by chums.state)
@@ -10345,18 +10345,18 @@
     ::           ::  %_  ossuary
     ::             :: next-bone  40
     :: ==        :: ==
-  =/  state=axle
-    %=     state
-        chums
-      %-  ~(run by chums.state)
-      |=  s=chum-state-23
-      ^-  chum-state
-      ?:  ?=(%alien -.s)
-        s
-      :*  %known   +<.s   lane.s  qos.s  corked.s  ossuary.s  flows.s
-          pit.s  client-chain.s
-      ==
-    ==
+  :: =/  state=axle
+  ::   %=     state
+  ::       chums
+  ::     %-  ~(run by chums.state)
+  ::     |=  s=chum-state-23
+  ::     ^-  chum-state
+  ::     ?:  ?=(%alien -.s)
+  ::       s
+  ::     :*  %known   +<.s   lane.s  qos.s  corked.s  ossuary.s  flows.s
+  ::         pit.s  client-chain.s
+  ::     ==
+  ::   ==
   vane-gate(ames-state state)
 ::  +scry: dereference namespace
 ::
