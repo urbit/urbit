@@ -6678,7 +6678,7 @@
                 [@ %boon *]      ev-abet:(ev-take-boon:ev-core wire +.sign)
                 [@ %noon *]      ev-abet:(ev-take-boon:ev-core wire +.sign)
               ::
-              ::  remote responses: acks/naxplanation payloads
+              ::  remote responses: acks/poke/cork/naxplanation payloads
               ::    reentrant from %ames (from either message or packet layer)
               ::
                 [%ames %sage *]
@@ -6988,14 +6988,14 @@
             =*  her-pok  her.pok.pact
             ::  check for pending request (peek|poke)
             ::
-            =/  [=space cyf=(unit @) =inner=path]
-              (ev-decrypt-path pat.name her)
             =*  sealed-path  pat.name
             ?~  res=(~(get by pit.per) sealed-path)
               %.  ev-core
               %+  ev-tace  odd.veb.bug.ames-state
               |.("missing page from pit {(spud sealed-path)}")
             ::
+            =/  [=space cyf=(unit @) =inner=path]
+              (ev-decrypt-path pat.name her)
             %-  (ev-tace rcv.veb.bug.ames-state |.("hear page packet"))
             ::
             =.  per  (ev-update-lane lane hop.pact next.pact)
@@ -7020,8 +7020,8 @@
               =/  proof=(list @ux)  (rip 8 dat.data)
               ?>  %-  authenticate
                   [(recover-root:verifier:lss proof) aut.data name]
-              =/  state  (init:verifier:lss tof proof)
-              =.  pit.per   (~(put by pit.per) sealed-path u.res(ps `[state ~]))
+              =/  state    (init:verifier:lss tof proof)
+              =.  pit.per  (~(put by pit.per) sealed-path u.res(ps `[state ~]))
               ::
               %-  (ev-tace snd.veb.bug.ames-state |.("request frag={<fag>}"))
               ::  request next fragment
@@ -8152,13 +8152,26 @@
                 (some `@ux`ship)
               (~(put by chums.ames-state) ship u.peer)
             =?  peers.ames-state  ?=(%ship -.peer)
+              =.  +>.u.peer  +:*peer-state
               ::  XX  reinitialize galaxy route if applicable
               ::
               =?  route.+.u.peer  =(%czar (clan:title ship))
                 `[direct=%.y %& ship]
-              =.  +>.u.peer  +:*peer-state
               (~(put by peers.ames-state) ship u.peer)
+            ::  cancel all timers related to .ship
             ::
+            =?  sy-core    ?=(%ship -.peer)
+              %+  roll  ~(tap by snd.u.peer)
+              |=  [[=snd=bone =message-pump-state] core=_sy-core]
+              ^+  core
+              ::
+              ?~  next-wake=next-wake.packet-pump-state.message-pump-state
+                core
+              ::  note: copies +on-pump-rest:message-pump
+              ::
+              =/  wire  (make-pump-timer-wire ship snd-bone)
+              =/  duct  ~[/ames]
+              (sy-emit:core duct %pass wire %b %rest u.next-wake)
             =.  sy-core
               %-  sy-emit
               :*  unix-duct  %give  %nail  ship
@@ -8234,7 +8247,7 @@
                     %chum  space(server-life life, key new-key)
                   ==
                 `(make-space-path space poke)
-              (~(put by pit) path req(ps ~))  :: XX drop any partially state
+              (~(put by pit) path req(ps ~))  :: XX drop any partial state
             ::  update values
             ::
             =.  symmetric-key.+.u.peer  new-key
