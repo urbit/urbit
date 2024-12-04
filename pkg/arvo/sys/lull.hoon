@@ -877,10 +877,10 @@
     ::  modified in %17...
     ::
     ::  when changing any of the tasks above, please follow the same patterns
-    ::  that exists in ames.hoon.
+    ::  that exist in ames.hoon.
     ::
-        [%mate (unit ship)]           ::  per-peer migration
-        [%load ?(%mesa %ames)]        ::  load core for new peers; XX make it term for flexibility?
+        [%mate (unit ship) dry=?]     ::  per-peer migration
+        [%load ?(%mesa %ames)]        ::  load core for new peers; XX [... term]
         [%back (unit ship)]           ::  per-peer regression
     ::
         [%heer =lane:pact p=@]        ::  receive a packet
@@ -1710,7 +1710,7 @@
           ::
           ::  XX option to include messages that won't be bounded into the namespace (two-layer queue)
           loads=((mop ,@ud mesa-message) lte)  :: all unacked
-          next-load=_1 :: next %poke to send, always +(last-acked)
+          next=_1                              :: =(next +(last-acked))
           ::  XX how is this calculated?
           ::  XX inferred by the dumb internal congestion control
           ::  XX and by vere if we have a smart interpreter?
@@ -3653,6 +3653,7 @@
         [%nuke =dude]                                   ::  delete agent
         [%doff dude=(unit dude) ship=(unit ship)]       ::  kill subscriptions
         [%rake dude=(unit dude) all=?]                  ::  reclaim old subs
+        [%lave subs=(list [?(%g %a) ship dude duct])]   ::  delete stale bitt(s)
         $>(%init vane-task)                             ::  set owner
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade

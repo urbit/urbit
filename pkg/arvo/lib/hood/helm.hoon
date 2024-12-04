@@ -197,21 +197,24 @@
   |=  [her=ship test=?]  =<  abet
   =/  =wire
     :+  %helm  %ahoy
-    ?.(test /[(scot %p her)] /test)
+    ?.(test /(scot %p her) /test-10/(scot %p her))
   =/  =path  ?:(test /test /mesa)
   (emit %pass wire %arvo %a %plea her %$ path %ahoy ~)
 ::
 ++  take-ahoy
   |=  [way=wire error=(unit error:ames)]
-  ?:  ?=([%test *] way)
+  ?:  ?=([%test-10 @ *] way)
     ?~  error
-      ~&  >  %migration-worked
-      abet
+      ~&  >   %migration-test-worked
+      ~&  >>  %test-local-migration
+      abet:(emit %pass /helm/migrate %arvo %a %mate (slaw %p i.t.way) dry=%.y)
     %-  (slog %take-ahoy-test u.error)
     abet
   ?>  ?=([@ ~] way)
   ?~  error
-    abet:(emit %pass /helm/migrate %arvo %a %mate (slaw %p i.way))
+      ~&  >   %remote-migration-worked
+      ~&  >>  %try-local-migration
+    abet:(emit %pass /helm/migrate %arvo %a %mate (slaw %p i.way) dry=%.n)
   ~&  >>>  %ahoy-crash
   ::  XX retry?
   ::
@@ -280,6 +283,11 @@
 ++  poke-gall-verb
   |=  veb=(list verb:gall)  =<  abet
   (emit %pass /helm %arvo %g %spew veb)
+::
+++  poke-gall-lave
+  |=  [dry=? subs=(list [?(%g %a) ship term duct])]  =<  abet
+  ?:  dry  this
+  (emit %pass /helm %arvo %g %lave subs)
 ::
 ++  poke-ames-wake
   |=  ~  =<  abet
@@ -599,6 +607,7 @@
     %helm-doff             =;(f (f !<(_+<.f vase)) poke-doff)
     %helm-gall-sift        =;(f (f !<(_+<.f vase)) poke-gall-sift)
     %helm-gall-verb        =;(f (f !<(_+<.f vase)) poke-gall-verb)
+    %helm-gall-lave        =;(f (f !<(_+<.f vase)) poke-gall-lave)
     %helm-hi               =;(f (f !<(_+<.f vase)) poke-hi)
     %helm-pans             =;(f (f !<(_+<.f vase)) poke-pans)
     %helm-mass             =;(f (f !<(_+<.f vase)) poke-mass)

@@ -148,7 +148,7 @@
   |=  [=ames-gate =duct pac=(list move:ames-bunt) =roof]
   ^-  [(list move:ames-bunt) ^ames-gate]
   ~|  pac
-  ?>  ?=([[* [%give [%push *]]] ~] pac)
+  ?>  ?=([[* [%give [%push *]]] *] pac)
   =/  ames-core  (ames-gate now=~1111.1.1 eny=`@`0xdead.beef roof)
   %-  call:ames-core
   ~!  p.card.i.pac
@@ -157,7 +157,7 @@
 ++  ames-expect-msg
   |=  [pac=(list move:ames-bunt) exp=noun]
   ~|  pac
-  ?>  ?=([[* [%give [%sage *]]] ~] pac)
+  ?>  ?=([[* [%give [%sage *]]] *] pac)
   ~!  card.i.pac
   ?>  ?=([%sage ^ [@tas *]] p.card.i.pac)
   ~|  q.sage.p.card.i.pac
