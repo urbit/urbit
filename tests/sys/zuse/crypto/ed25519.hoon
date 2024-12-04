@@ -1,7 +1,7 @@
 ::  tests for the ed25519 signature algorithm
 ::
 /+  *test
-=,  ed:crypto:z
+=,  ed:crypto
 |%
 ::
 ::  Test vectors from Section 7.1 of RFC 8032:
