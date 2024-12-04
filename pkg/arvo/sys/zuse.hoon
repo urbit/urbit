@@ -1020,6 +1020,7 @@
   ++  ed
     =>
       =+  =+  [b=256 q=(sub (bex 255) 19)]
+          =+  cb=(rsh [0 3] b)
           =+  fq=~(. fo q)
           =+  ^=  l
                %+  add
@@ -1027,12 +1028,15 @@
                27.742.317.777.372.353.535.851.937.790.883.648.493
           =+  d=(dif.fq 0 (fra.fq 121.665 121.666))
           =+  ii=(exp.fq (div (dec q) 4) 2)
-          [b=b q=q fq=fq l=l d=d ii=ii]
+          [b=b cb=cb q=q fq=fq l=l d=d ii=ii]
       ~%  %coed  ..part  ~
       |%
       ::                                                ::  ++norm:ed:crypto
       ++  norm                                          ::
         |=(x=@ ?:(=(0 (mod x 2)) x (sub q x)))
+      ::                                                ::  ++neg:ed:crypto
+      ++  neg                                           ::
+        |=(pp=[@ @] pp(- (dif:fq 0 -.pp)))
       ::                                                ::  ++xrec:ed:crypto
       ++  xrec                                          ::  recover x-coord
         |=  y=@  ^-  @
@@ -1102,16 +1106,17 @@
     ~%  %ed  +  ~
     |%
     ::
+    ++  point-neg
+      ~/  %point-neg
+      |=  [a-point=@udpoint]
+      ^-  @udpoint
+      (etch (neg (need (deco a-point))))
+    ::
     ++  point-add
       ~/  %point-add
       |=  [a-point=@udpoint b-point=@udpoint]
       ^-  @udpoint
-      ::
-      =/  a-point-decoded=[@ @]  (need (deco a-point))
-      =/  b-point-decoded=[@ @]  (need (deco b-point))
-      ::
-      %-  etch
-      (ward a-point-decoded b-point-decoded)
+      (etch (ward (need (deco a-point)) (need (deco b-point))))
     ::
     ++  scalarmult
       ~/  %scalarmult
@@ -1127,61 +1132,52 @@
       ~/  %scalarmult-base
       |=  scalar=@udscalar
       ^-  @udpoint
-      %-  etch
-      (scam bb scalar)
+      (scalarmult scalar (etch bb))
     ::
     ++  add-scalarmult-scalarmult-base
       ~/  %add-scalarmult-scalarmult-base
       |=  [a=@udscalar a-point=@udpoint b=@udscalar]
       ^-  @udpoint
       ::
-      =/  a-point-decoded=[@ @]  (need (deco a-point))
-      ::
-      %-  etch
-      %+  ward
-        (scam bb b)
-      (scam a-point-decoded a)
+      %+  point-add
+        (scalarmult-base b)
+      (scalarmult a a-point)
     ::
     ++  add-double-scalarmult
       ~/  %add-double-scalarmult
       |=  [a=@udscalar a-point=@udpoint b=@udscalar b-point=@udpoint]
       ^-  @udpoint
-      ::
-      =/  a-point-decoded=[@ @]  (need (deco a-point))
-      =/  b-point-decoded=[@ @]  (need (deco b-point))
-      ::
-      %-  etch
-      %+  ward
-        (scam a-point-decoded a)
-      (scam b-point-decoded b)
+      %+  point-add
+        (scalarmult a a-point)
+      (scalarmult b b-point)
     ::                                                  ::  ++scad:ed:crypto
     ++  scad                                            ::  scalar addition on public and private keys
       ~/  %scad
-      |=  [pub=@ sek=@ sca=@]
-      ^-  [pub=@ sek=@]
+      |=  [pub=@udpoint sek=@udscalar sca=@udscalar]
+      ^-  [pub=@udpoint sek=@udscalar]
       [(scap pub sca) (scas sek sca)]
     ::                                                  ::  ++scas:ed:crypto
     ++  scas                                            ::  scalar addition on private key
       ~/  %scas
-      |=  [sek=@ sca=@]
+      |=  [sek=@udscalar sca=@udscalar]
       ^-  @
-      ?>  (lte (met 3 sek) 64)
-      ?>  (lte (met 3 sca) 32)
-      =/  n  (dis sca (con (lsh [3 31] 0x7f) (fil 3 31 0xff)))
+      ?>  (lte (met 3 sek) (mul 2 cb))
+      ?>  (lte (met 3 sca) (mul 2 cb))
+      =/  n  (dis sca (con (lsh [3 (dec cb)] 0x7f) (fil 3 (dec cb) 0xff)))
       =/  s0  (cut 0 [0 b] sek)
       =/  s1  (cut 0 [b b] sek)
       =/  ns0  (~(sit fo l) (add s0 n))
-      =/  ns1  (shal 64 (can 0 ~[[b s1] [b sca]]))
+      =/  ns1  (shal (mul 2 cb) (can 0 ~[[b s1] [b sca]]))
       (can 0 ~[[b ns0] [b ns1]])
     ::                                                  ::  ++scap:ed:crypto
     ++  scap                                            ::  scalar addition on public key
       ~/  %scap
-      |=  [pub=@ sca=@]
+      |=  [pub=@udpoint sca=@udscalar]
       ^-  @
-      ?>  (lte (met 3 pub) 32)
-      ?>  (lte (met 3 sca) 32)
-      =/  n  (dis sca (con (lsh [3 31] 0x7f) (fil 3 31 0xff)))
-      (etch (ward (need (deco pub)) (scam bb n)))
+      ?>  (lte (met 3 pub) cb)
+      ?>  (lte (met 3 sca) cb)
+      =/  n  (dis sca (con (lsh [3 (dec cb)] 0x7f) (fil 3 (dec cb) 0xff)))
+      (point-add pub (scalarmult-base n))
     ::                                                  ::  ++puck:ed:crypto
     ++  puck                                            ::  pubkey from seed
       ~/  %puck
@@ -1191,20 +1187,21 @@
     ++  luck                                            ::  keypair from seed
       ~/  %luck
       |=  sed=@I
-      ^-  [pub=@ sek=@]
+      ^-  [pub=@udpoint sek=@udscalar]
       ?>  (lte (met 0 sed) b)
       =+  h=(shal (rsh [0 3] b) sed)
       =+  ^=  a
           %+  add
             (bex (sub b 2))
           (lsh [0 3] (cut 0 [3 (sub b 5)] h))
-      =+  aa=(scam bb a)
-      [(etch aa) (can 0 ~[[b a] [b (cut 0 [b b] h)]])]
+      =+  aa=(scalarmult-base a)
+      [aa (can 0 ~[[b a] [b (cut 0 [b b] h)]])]
     ::                                                  ::  ++shar:ed:crypto
     ++  shar                                            ::  curve25519 secret
       ~/  %shar
       |=  [pub=@ sed=@]
       ^-  @ux
+      =>  .(pub `@udpoint`pub)
       =+  prv=(end [0 b] sek:(luck sed))
       =.  pub  +:(need (deco pub))
       =+  crv=(fra.fq (sum.fq 1 pub) (dif.fq 1 pub))
@@ -1217,7 +1214,7 @@
     ::                                                  ::  ++sign-raw:ed:crypto
     ++  sign-raw                                        ::  certify
       ~/  %sign-raw
-      |=  [m=@ pub=@ sek=@]  ^-  @
+      |=  [m=@ pub=@udpoint sek=@udscalar]  ^-  @
       (sign-octs-raw (met 3 m)^m pub sek)
     ::                                                  ::  ++sign-octs:ed:crypto
     ++  sign-octs                                       ::  certify octs
@@ -1225,23 +1222,19 @@
       |=  [m=octs sed=@]  ^-  @
       (sign-octs-raw m (luck sed))
     ::                                                  ::  ++sign-octs-raw:ed:crypto
-    ++  sign-octs-raw                                       ::  certify octs
+    ++  sign-octs-raw                                   ::  certify octs
       ~/  %sign-octs-raw
-      |=  [m=octs pub=@ sek=@]  ^-  @
-      ?>  (lte (met 0 pub) b)
-      ?>  (lte (met 0 sek) (mul b 2))
-      =+  cb=(rsh [0 3] b)
-      =+  a=(cut 3 [0 cb] sek)
+      |=  [m=octs pub=@udpoint sek=@udscalar]  ^-  @
+      =+  a=(cut 0 [0 b] sek)
       =+  ^=  r
-          =+  hm=(cut 3 [cb cb] a)
+          =+  hm=(cut 0 [b b] sek)
           =+  i=(can 3 [cb hm] m ~)
           (shal (add cb p.m) i)
-      =+  rr=(scam bb r)
+      =+  rr=(scalarmult-base (~(sit fo l) r))
       =+  ^=  ss
-          =+  er=(etch rr)
-          =+  ha=(can 3 [cb er] [cb pub] m ~)
+          =+  ha=(can 3 [cb rr] [cb pub] m ~)
           (~(sit fo l) (add r (mul (shal (add (mul cb 2) p.m) ha) a)))
-      (can 3 ~[[cb (etch rr)] [cb ss]])
+      (can 0 ~[[b rr] [b ss]])
     ::                                                  ::  ++veri:ed:crypto
     ++  veri                                            ::  validate
       ~/  %veri
@@ -1251,17 +1244,15 @@
     ++  veri-octs                                       ::  validate octs
       ~/  %veri-octs
       |=  [s=@ m=octs pk=@]  ^-  ?
-      ?:  (gth (div b 4) (met 3 s))  |
-      ?:  (gth (div b 8) (met 3 pk))  |
-      =+  cb=(rsh [0 3] b)
-      =+  rr=(deco (cut 0 [0 b] s))
-      ?~  rr  |
-      =+  aa=(deco pk)
-      ?~  aa  |
+      =-  (fall - |)
+      %-  mole  |.  ^-  ?
+      ?:  (gth (met 3 s) (div b 4))  |
+      ?:  (gth (met 3 pk) (div b 8))  |
+      =+  rr=(cut 0 [0 b] s)
       =+  ss=(cut 0 [b b] s)
-      =+  ha=(can 3 ~[[cb (etch u.rr)] [cb pk] m])
-      =+  h=(shal (add (mul 2 cb) p.m) ha)
-      =((scam bb ss) (ward u.rr (scam u.aa h)))
+      =+  ha=(can 3 ~[[cb rr] [cb pk] m])
+      =+  h=(~(sit fo l) (shal (add (mul 2 cb) p.m) ha))
+      =(rr (add-scalarmult-scalarmult-base h (point-neg pk) ss))
     --  ::ed
   ::                                                    ::
   ::::                    ++scr:crypto                  ::  (2b3) scrypt
