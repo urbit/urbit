@@ -10977,8 +10977,6 @@
             %list  list
             %tape  tape
             %path  path
-            %wall  wall
-            %wain  wain
             %tree  tree
             %map   map
             %set   set
@@ -11171,7 +11169,7 @@
       ++  path
         ?-  -.inp
           %&  `[eta [%leaf '/' ~]]
-          %|  ?~  res=(deck ;;((^list *) q.p.inp) [%atom %tas ~])  ~
+          %|  ?~  res=(deck (flop ;;((^list *) q.p.inp)) [%atom %tas ~])  ~
               =+  (turn ->+ |=(lef=tank ?>(?=([%leaf *] lef) [%leaf +.p.lef])))
               `[-.u.res [%rose [['/' ~] ['/' ~] ~] -]]
           ==
@@ -11180,20 +11178,6 @@
         ?-  -.inp
           %&  `[eta [%leaf '"' '"' ~]]
           %|  `[eta [%leaf (dash (^tape q.p.inp) '"' "\{")]]
-        ==
-      ::
-      ++  wain
-        ?-  -.inp
-          %&  `[eta [%rose [" " "(list " ")"] [%leaf "@t"]~]]
-          %|  =+  (turn ;;((^list *) q.p.inp) |=(t=* [%leaf [;;(cord t) ~]]))
-              `[eta [%rose [[' ' ~] ['<' '|' ~] ['|' '>' ~]] -]]
-        ==
-      ::
-      ++  wall
-        ?-  -.inp
-          %&  `[eta [%rose [" " "(list " ")"] [%leaf "tape"]~]]
-          %|   =+  (turn ;;((^list *) q.p.inp) |=(t=* [%leaf ;;(^tape t)]))
-              `[eta [%rose [[' ' ~] ['<' '<' ~] ['>' '>' ~]] -]]
         ==
       ::
       ++  tree
@@ -11265,9 +11249,7 @@
           ?.  ?=([* [[%cell [%face %i *] [%face %t *]] ~]] yed)  typ
           =+  yod=+<+<+>.yed
           =+  tag=|=(mar=term [%hint [tep %know mar] tep])
-          |-  ?:  =(-:!>(*tape) yod)       (tag %wall)
-              ?:  ?=([%atom %'tD' ~] yod)  (tag %tape)
-              ?:  ?=([%atom %t ~] yod)     (tag %wain)
+          |-  ?:  ?=([%atom %'tD' ~] yod)  (tag %tape)
               ?:  ?=([%atom %ta ~] yod)    (tag %path)
               ?.  ?=(?([%hint *] [%hold *]) yod)  typ
               $(yod ~(repo ut yod))
