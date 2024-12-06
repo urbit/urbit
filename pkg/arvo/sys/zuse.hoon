@@ -1106,6 +1106,16 @@
     ~%  %ed  +  ~
     |%
     ::
+    ++  recs
+      ~/  %recs
+      |=  a=@udscalar
+      (~(sit fo l) a)
+    ::
+    ++  smac
+      ~/  %smac
+      |=  [a=@udscalar b=@udscalar c=@udscalar]
+      (recs (add (mul a b) c))
+    ::
     ++  point-neg
       ~/  %point-neg
       |=  [a-point=@udpoint]
@@ -1122,6 +1132,7 @@
       ~/  %scalarmult
       |=  [a=@udscalar a-point=@udpoint]
       ^-  @udpoint
+      =.  a  (recs a)
       ::
       =/  a-point-decoded=[@ @]  (need (deco a-point))
       ::
@@ -1166,7 +1177,7 @@
       =/  n  (dis sca (con (lsh [3 (dec cb)] 0x7f) (fil 3 (dec cb) 0xff)))
       =/  s0  (cut 0 [0 b] sek)
       =/  s1  (cut 0 [b b] sek)
-      =/  ns0  (~(sit fo l) (add s0 n))
+      =/  ns0  (recs (add s0 n))
       =/  ns1  (shal (mul 2 cb) (can 0 ~[[b s1] [b sca]]))
       (can 0 ~[[b ns0] [b ns1]])
     ::                                                  ::  ++scap:ed:crypto
@@ -1230,10 +1241,11 @@
           =+  hm=(cut 0 [b b] sek)
           =+  i=(can 3 [cb hm] m ~)
           (shal (add cb p.m) i)
-      =+  rr=(scalarmult-base (~(sit fo l) r))
+      =+  rr=(scalarmult-base r)
       =+  ^=  ss
           =+  ha=(can 3 [cb rr] [cb pub] m ~)
-          (~(sit fo l) (add r (mul (shal (add (mul cb 2) p.m) ha) a)))
+          (smac (shal (add (mul cb 2) p.m) ha) a r)
+          ::(~(sit fo l) (add r (mul (shal (add (mul cb 2) p.m) ha) a)))
       (can 0 ~[[b rr] [b ss]])
     ::                                                  ::  ++veri:ed:crypto
     ++  veri                                            ::  validate
@@ -1251,7 +1263,7 @@
       =+  rr=(cut 0 [0 b] s)
       =+  ss=(cut 0 [b b] s)
       =+  ha=(can 3 ~[[cb rr] [cb pk] m])
-      =+  h=(~(sit fo l) (shal (add (mul 2 cb) p.m) ha))
+      =+  h=(shal (add (mul 2 cb) p.m) ha)
       =(rr (add-scalarmult-scalarmult-base h (point-neg pk) ss))
     --  ::ed
   ::                                                    ::
