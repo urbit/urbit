@@ -11052,7 +11052,7 @@
       ++  core
         ?>  ?=([%core *] typ)
         ?~  res=(disc [%& p.typ] eta)  ~
-        ?:  ?&  ?=([[%$ * [[%$ @ *] ~ ~]] ~ ~] q.r.q.typ)  ::  gate
+        ?:  ?&  ?=([[%$ * [[%$ *] ~ ~]] ~ ~] q.r.q.typ)  ::  gate
                 ?=([%rose * ^] +.u.res)
             ==
             =-  ?~(- ~ `[->- [%rose [" " "$-(" ")"] [+>+<.u.res ->+ ~]]])
@@ -11163,13 +11163,14 @@
         ?-  -.inp
           %&  ?~  res=(disc inp(p +<+<+>.yed) eta)  ~
               `[->- [%rose [" " "(list " ")"] [->+ ~]]]
-          %|  (disc inp eta(veb %lest))
+          %|  ?~  res=(deck ;;((^list *) q.p.inp) +<+<+>.yed)  ~
+              `[-.u.res [%rose [" " "~[" "]"] +.u.res]]
         ==
       ::
       ++  path
         ?-  -.inp
           %&  `[eta [%leaf '/' ~]]
-          %|  ?~  res=(deck (flop ;;((^list *) q.p.inp)) [%atom %tas ~])  ~
+          %|  ?~  res=(deck ;;((^list *) q.p.inp) [%atom %tas ~])  ~
               =+  (turn ->+ |=(lef=tank ?>(?=([%leaf *] lef) [%leaf +.p.lef])))
               `[-.u.res [%rose [['/' ~] ['/' ~] ~] -]]
           ==
@@ -11201,7 +11202,7 @@
           %&  ?~  key=(disc inp(p +<+>:tip) eta)  ~
               ?~  val=(disc inp(p +>+>:tip) eta(ids ids.-.u.key))  ~
               `[-.u.val [%rose [" " "(map " ")"] [+.u.key +.u.val ~]]]
-          %|   ?~  res=(deck ~(tap by ;;((^map * *) q.p.inp)) tip)  ~
+          %|   ?~  res=(deck (flop ~(tap by ;;((^map * *) q.p.inp))) tip)  ~
               `[-.u.res [%rose [[' ' ~] ['{' ~] ['}' ~]] +.u.res]]
         ==
       ::
@@ -11213,7 +11214,7 @@
         ?-  -.inp
           %&  ?~  res=(disc inp(p +<+<+>.yed) eta)  ~
               `[-.u.res [%rose [" " "(set " ")"] [+.u.res ~]]]
-          %|  ?~  res=(deck ~(tap in ;;((^set *) q.p.inp)) +<+<+>.yed)  ~
+          %|  ?~  res=(deck (flop ~(tap in ;;((^set *) q.p.inp))) +<+<+>.yed)  ~
               `[-.u.res [%rose [[' ' ~] ['{' ~] ['}' ~]] +.u.res]]
         ==
       ::
@@ -11234,9 +11235,8 @@
       |=  [items=(list *) typ=type]
       =-  ^-  (unit [meta (list tank)])
           ?:  err.-  ~
-          ?.  (gth (lent tan.-) dep.eta)  `[eta tan.-]
-          `[eta (snoc (scag dep.eta tan.-) [%leaf "[...]"])]
-      %+  roll  items
+          `[eta tan.-]
+      %+  reel  items
       |:  [n=`*`~ acc=[tan=`(list tank)`~ err=`?`%.n]]
       ?~  res=(disc [%| [typ n]] eta)  acc(err &)
       [[+.u.res tan.acc] err.acc]
