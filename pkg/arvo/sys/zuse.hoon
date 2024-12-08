@@ -1132,12 +1132,11 @@
       ~/  %scalarmult
       |=  [a=@udscalar a-point=@udpoint]
       ^-  @udpoint
-      =.  a  (recs a)
       ::
       =/  a-point-decoded=[@ @]  (need (deco a-point))
       ::
       %-  etch
-      (scam a-point-decoded a)
+      (scam a-point-decoded (recs a))
     ::
     ++  scalarmult-base
       ~/  %scalarmult-base
@@ -1217,6 +1216,16 @@
       =.  pub  +:(need (deco pub))
       =+  crv=(fra.fq (sum.fq 1 pub) (dif.fq 1 pub))
       (curt prv crv)
+    ::                                                  ::  ++slar:ed:crypto
+    ++  slar                                            ::  curve25519 secret
+      ~/  %slar
+      |=  [pub=@ sek=@]
+      ^-  @ux
+      =>  .(pub `@udpoint`pub)
+      =+  prv=(end [0 b] sek)
+      =.  pub  +:(need (deco pub))
+      =+  crv=(fra.fq (sum.fq 1 pub) (dif.fq 1 pub))
+      (curt prv crv)
     ::                                                  ::  ++sign:ed:crypto
     ++  sign                                            ::  certify
       ~/  %sign
@@ -1245,26 +1254,26 @@
       =+  ^=  ss
           =+  ha=(can 3 [cb rr] [cb pub] m ~)
           (smac (shal (add (mul cb 2) p.m) ha) a r)
-          ::(~(sit fo l) (add r (mul (shal (add (mul cb 2) p.m) ha) a)))
       (can 0 ~[[b rr] [b ss]])
     ::                                                  ::  ++veri:ed:crypto
     ++  veri                                            ::  validate
       ~/  %veri
-      |=  [s=@ m=@ pk=@]  ^-  ?
-      (veri-octs s (met 3 m)^m pk)
+      |=  [s=@ m=@ pub=@]  ^-  ?
+      (veri-octs s (met 3 m)^m pub)
     ::                                                  ::  ++veri-octs:ed:crypto
     ++  veri-octs                                       ::  validate octs
       ~/  %veri-octs
-      |=  [s=@ m=octs pk=@]  ^-  ?
+      |=  [s=@ m=octs pub=@]  ^-  ?
       =-  (fall - |)
       %-  mole  |.  ^-  ?
       ?:  (gth (met 3 s) (div b 4))  |
-      ?:  (gth (met 3 pk) (div b 8))  |
+      ?:  (gth (met 3 pub) (div b 8))  |
+      ?:  (gth (met 3 q.m) p.m)  |
       =+  rr=(cut 0 [0 b] s)
       =+  ss=(cut 0 [b b] s)
-      =+  ha=(can 3 ~[[cb rr] [cb pk] m])
+      =+  ha=(can 3 ~[[cb rr] [cb pub] m])
       =+  h=(shal (add (mul 2 cb) p.m) ha)
-      =(rr (add-scalarmult-scalarmult-base h (point-neg pk) ss))
+      =(rr (add-scalarmult-scalarmult-base h (point-neg pub) ss))
     --  ::ed
   ::                                                    ::
   ::::                    ++scr:crypto                  ::  (2b3) scrypt

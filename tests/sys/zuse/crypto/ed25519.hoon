@@ -9,6 +9,11 @@
 ::
 +$  vector  [seed=@ux pk=@ux msg=@ux sig=@ux]
 ::
+++  test-shar
+  %+  expect-eq
+    !>  (shar (puck (shax 'foo')) (shax 'bar'))
+    !>  (slar (puck (shax 'foo')) sek:(luck (shax 'bar')))
+::
 ++  test-vectors
   ^-  tang
   |^  ;:  weld
