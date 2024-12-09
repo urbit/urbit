@@ -104,9 +104,14 @@
           %verb  (pass /verb %$ kyz)
         ::
             %seat
-          %^  pass  /seat  %g
-          :+  %deal   [our our /dill]
-          [%hood %poke %kiln-install !>([desk.kyz our desk.kyz])]
+          =.  +>
+            %^  pass   /seat  %g
+            :+  %deal  [our our /dill]
+            [%hood %poke %kiln-install !>([desk.kyz our desk.kyz])]
+          ::
+          %^  pass   /seat  %g
+          :+  %deal  [our our /dill]
+          [%hood %poke %kiln-essential-desk !>([desk.kyz %.y])]
         ==
       ::
       ++  crud
