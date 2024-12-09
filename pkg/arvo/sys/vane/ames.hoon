@@ -7484,6 +7484,47 @@
           ::
           ++  fo-corked     (~(has in corked.per) side)
           ++  fo-flip-dire  ?:(=(dire %for) %bak %for)
+          ::  path examples
+          ::
+          ::  the path refers to where the payload is stored.
+          ::
+          ::  side=[bone=0 %for] (e.g. sends %plea: %watch, %poke, %leave, %cork)
+          ::  Options to consider:
+          ::
+          ::  [from=~zod] (*) /flow/bone=0/payload=plea         /to=~nec/mess=1
+          ::                  /flow/bone=0/payload=poke/dire=for/to=~nec/mess=1
+          ::  plea $page: (*) [tag=%plea *page]
+          ::                  [tag=%poke *page] ?
+          ::  the path tells us that this is plea handling so we assert:
+          ::  ?>  ?=(%plea -.sage)
+          ::
+          ::  subscriptions:
+          ::
+          ::              (*) /flow/bone=0/payload=ack-boon     /to=~nec/mess=1
+          ::                  /flow/bone=0/payload=ack/dire=for /to=~nec/mess=1
+          ::
+          ::  side=[bone=0 %bak] (e.g. sends %boon: %fact, %kick)
+          ::
+          ::  Options to consider:
+          ::
+          ::  [from=~nec] (*) /flow/bone=0/payload=ack-plea     /to=~zod/mess=1
+          ::                  /flow/bone=0/payload=klea         /to=~zod/mess=1
+          ::                  /flow/bone=0/payload=ack-bak      /to=~zod/mess=1
+          ::                  /flow/bone=0/payload=ack/dire=bak /to=~zod/mess=1
+          ::  ack $page:  (*) [%ack *page]
+          ::                  [?(%ack-plea %ack-boon) *page]
+          ::  subscriptions:
+          ::
+          ::              (*) /flow/bone=0/payload=boon         /to=~zod/mess=1
+          ::                  /flow/bone=0/payload=poke/dire=bak/to=~zod/mess=1
+          ::
+          ::  $page:      (*) [tag=%boon *page]
+          ::                  [tag=%poke *page] ?
+          ::  the path tells us that this is boon handling so we assert:
+          ::  ?>  ?=(%boon -.sage)
+          ::
+          ::  (*): currently used in ames.hoon, in the |mesa core
+          ::
           ::  +fo-infer-dire: infer the side that's producing this payload
           ::  (e.g. when hearing a +peek request for this path, if the load
           ::  is a %plea, is always produced on the %for side)
