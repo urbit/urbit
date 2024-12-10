@@ -9323,6 +9323,162 @@
                 ==
     ==    ==
   ::
+  ++  fynd  ::  nu-find
+    =<  find
+    |%
+    ++  find
+      |=  [way=vial hyp=wing]
+      ^-  port
+      =+  (fond way hyp)
+      ?+  -<  !!
+        %pale  [%& vein opal]
+        %faux  [%| type nock]
+      ==
+    ::
+    +$  pony
+      $%  [%pale =vein =opal]
+          [%fail skip=@ud]
+          [%faux =type =nock]
+          [%void ~]
+      ==
+    ::
+    ++  fond
+      |=  [way=vial hyp=wing]
+      ^-  pony
+      %+  reel  hyp
+      |=  [heg=limb out=$~([%pale ~ %& sut] pony)]
+      ?+  -.out  out
+        %faux  ::  weird, could also call +fxnd, fully reentrant
+               =+  fex=(mint(sut type.out) %noun [%wing heg ~])
+               [%faux p.fex (comb nock.out q.fex)]
+        %pale  =.  sut
+                 ?-  -.opal.out
+                   %&  p.opal.out
+                   %|  (fork (turn ~(tap in q.opal.out) head))
+                 ==
+               =/  nex  (fxnd way heg)
+               ?+  -.nex  nex
+                 %faux  nex(nock (comb [%0 (tend vein.out)] nock.nex))
+                 %pale  nex(vein (weld vein.nex vein.out))
+               ==
+      ==
+    ::
+    ++  fxnd
+      |=  [way=vial heg=limb]
+      ^-  pony
+      =>  .(heg ?^(heg heg [%| p=0 q=(some heg)]))
+      ?:  ?=(%& -.heg)
+        ::  resolve the tree address directly
+        ::
+        [%pale [`p.heg]~ %& (peek way p.heg)]
+      =/  axe  1
+      =|  gil=(set type)
+      |-  ^-  pony
+      ?~  q.heg
+        ?>  =(0 p.heg)  ::  no skipping on bare com
+        [%pale [~ `axe ~] %& ?:(?=([%face *] sut) q.sut sut)]
+      ?-  sut
+        %void      [%void ~]
+        %noun      [%fail p.heg]
+        [%atom *]  [%fail p.heg]
+        [%cell *]  =+  taf=$(axe (peg axe 2), sut p.sut)
+                   ?.  ?=(%fail -.taf)  taf
+                   $(axe (peg axe 3), p.heg skip.taf, sut q.sut)
+        [%hint *]  $(sut repo)
+        [%hold *]  ?:  (~(has in gil) sut)  [%void ~]
+                   $(gil (~(put in gil) sut), sut repo)
+      ::
+          [%core *]
+        =^  zem  p.heg
+          ?~  zem=(loot u.q.heg q.r.q.sut)  [~ p.heg]
+          ?:(=(0 p.heg) [zem 0] [~ (dec p.heg)])
+        ?^  zem
+          :+  %pale  [`axe ~]
+          =/  zut=foot
+            ?:(?=(%wet q.p.q.sut) [%wet q.u.zem] [%dry q.u.zem])
+          [%| (peg 2 p.u.zem) [[sut zut] ~ ~]]
+        =+  pec=(peel way r.p.q.sut)
+        ?.  sam.pec  [%fail p.heg]
+        ?:  con.pec  $(sut p.sut, axe (peg axe 3))
+        $(sut (peek(sut p.sut) way 2), axe (peg axe 6))
+      ::
+          [%face *]
+        ?@  p.sut
+          ?:  =(u.q.heg p.sut)
+            ?:  =(0 p.heg)  [%pale [~ `axe ~] %& q.sut]
+            [%fail (dec p.heg)]
+          [%fail p.heg]
+        =<  ?~  tyr=(~(get by p.p.sut) u.q.heg)
+              next
+            ?~  u.tyr  ::NOTE  supported type-wise, but not used in practice
+              ~|(%fxnd-tyr-lost !!)
+            ?.  =(0 p.heg)
+              next(p.heg (dec p.heg))
+            =+  hup=~(reek ap u.u.tyr)
+            ?~  hup
+              ::NOTE  we ignore our vial .way
+              =+  myn=(mint %noun u.u.tyr)
+              [%faux p.myn (comb [%0 axe] q.myn)]
+            =+  fyn=(fond way u.hup)  ::NOTE  re-entrant
+            ?+  -.fyn  fyn
+              %pale  fyn(vein (weld vein.fyn `vein`[~ `axe ~]))
+              %faux  fyn(nock (comb [%0 axe] nock.fyn))
+            ==
+        |%
+        ++  next
+          |-  ^-  pony
+          ?~  q.p.sut
+            ^$(sut q.sut)
+          ::NOTE  we ignore our vial .way
+          =+  tiv=(mint(sut q.sut) %noun i.q.p.sut)
+          =+  fid=^$(sut p.tiv, axe 1, gil ~)
+          ?:  ?=(%void -.fid)  fid
+          ?:  ?=(%fail -.fid)
+            $(q.p.sut t.q.p.sut, p.heg skip.fid)
+          =;  vat=(pair type nock)
+            [%faux p.vat (comb (comb [%0 axe] q.tiv) q.vat)]
+          ?-    -.fid
+            %pale  ?-  -.opal.fid
+                    %&  [p.opal.fid %0 (tend vein.fid)]  ::TODO  doesn't _need_ to be synthetic
+                    %|  [(fire ~(tap in q.opal.fid)) %9 p.opal.fid %0 (tend vein.fid)]
+                  ==
+            %faux  +.fid
+          ==
+        --
+      ::
+          [%fork *]
+        %-  ~(rep in p.sut)
+        |=  [=type som=$~([%void ~] pony)]
+        (twin [^$(sut type) som])
+      ==
+    ::
+    ++  twin
+      |=  [hax=pony yor=pony]
+      ^-  pony
+      ~_  leaf+"find-fork"
+      ?:  =(hax yor)  hax
+      ?:  ?=(%void -.hax)  yor
+      ?:  ?=(%void -.yor)  hax
+      ::TODO  maybe produce failure instead of asserting (for +feel)
+      ?:  ?=(?(%fail %faux) -.hax)
+        ?>  ?&  ?=(?(%fail %faux) -.yor)
+                ?=(%faux -.hax)
+                ?=(%faux -.yor)
+                =(nock.hax nock.yor)
+            ==
+        [%faux (fork type.hax type.yor ~) nock.hax]
+      ?>  ?=(%pale -.yor)
+      ?>  =(vein.hax vein.yor)
+      ?:  &(?=(%& -.opal.hax) ?=(%& -.opal.yor))
+        :+  %pale  vein.hax
+        [%& (fork p.opal.hax p.opal.yor ~)]
+      ?>  &(?=(%| -.opal.hax) ?=(%| -.opal.yor))
+      ?>  =(p.opal.hax p.opal.yor)
+      =+  wal=(~(uni in q.opal.hax) q.opal.yor)
+      :+  %pale  vein.hax
+      [%| p.opal.hax wal]
+    --
+  ::
   ++  fond
     ~/  %fond
     |=  [way=vial hyp=wing]
@@ -9484,19 +9640,7 @@
       --
     ==
   ::
-  ++  find
-    ~/  %find
-    |=  [way=vial hyp=wing]
-    ^-  port
-    ~_  (show [%c %find] %l hyp)
-    =-  ?@  -  !!
-        ?-    -<
-          %&  [%& p.-]
-          %|  ?-  -.p.-
-                %|  [%| p.p.-]
-                %&  !!
-        ==    ==
-    (fond way hyp)
+  ++  find  fynd
   ::
   ++  fend
     |=  [way=vial hyp=wing]
