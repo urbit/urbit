@@ -4664,9 +4664,8 @@
             ++  get-lane
               ^-  (unit lane:pact)
               ?~  route.peer-state  ~
-              ?.  direct.u.route.peer-state  ~
               =*  lane  lane.u.route.peer-state
-              %-  some
+              :-  ~
               ?-  -.lane
                 %&  `@ux`p.lane  ::  galaxy
               ::
