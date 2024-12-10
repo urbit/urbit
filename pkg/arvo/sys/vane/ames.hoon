@@ -1777,7 +1777,13 @@
       ::
       ?&  ?=(%known -.back)
           %+  print-check  %keys     =(+<.ames +<.back)
-          %+  print-check  %route    =(route.ames route.back)
+          %+  print-check  %route    ?|  ?&  ?=(~ route.ames)
+                                             =(route.ames route.back)
+                                         ==
+                                         ?&  ?=(^ route.ames)  ?=(^ route.back)
+                                             .=  lane.u.route.ames
+                                                 lane.u.route.back
+                                     ==  ==
           %+  print-check  %qos      =(-.qos.ames -.qos.back)
           %+  print-check  %ossuary  =(ossuary.ames ossuary.back)
           %+  print-check  %closing  =(closing.ames closing.back)
