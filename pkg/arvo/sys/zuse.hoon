@@ -1090,6 +1090,7 @@
       ::                                                ::  ++deco:ed:crypto
       ++  deco                                          ::  decode point
         |=  s=@  ^-  (unit [@ @])
+        ?>  (lte (met 3 s) cb)
         =+  y=(cut 0 [0 (dec b)] s)
         =+  si=(cut 0 [(dec b) 1] s)
         =+  x=(xrec y)
@@ -1198,7 +1199,7 @@
       ~/  %luck
       |=  sed=@I
       ^-  [pub=@udpoint sek=@udscalar]
-      ?>  (lte (met 0 sed) b)
+      ?>  (lte (met 3 sed) cb)
       =+  h=(shal (rsh [0 3] b) sed)
       =+  ^=  a
           %+  add
@@ -1211,16 +1212,14 @@
       ~/  %shar
       |=  [pub=@ sed=@]
       ^-  @ux
-      =>  .(pub `@udpoint`pub)
-      =+  prv=(end [0 b] sek:(luck sed))
-      =.  pub  +:(need (deco pub))
-      =+  crv=(fra.fq (sum.fq 1 pub) (dif.fq 1 pub))
-      (curt prv crv)
+      (slar pub sek:(luck sed))
     ::                                                  ::  ++slar:ed:crypto
     ++  slar                                            ::  curve25519 secret
       ~/  %slar
       |=  [pub=@ sek=@]
       ^-  @ux
+      ?>  (lte (met 3 pub) cb)
+      ?>  (lte (met 3 sek) (mul 2 cb))
       =>  .(pub `@udpoint`pub)
       =+  prv=(end [0 b] sek)
       =.  pub  +:(need (deco pub))
@@ -1245,6 +1244,9 @@
     ++  sign-octs-raw                                   ::  certify octs
       ~/  %sign-octs-raw
       |=  [m=octs pub=@udpoint sek=@udscalar]  ^-  @
+      ?>  (lte (met 3 pub) cb)
+      ?>  (lte (met 3 sek) cb)
+      ?>  (lte (met 3 q.m) p.m)
       =+  a=(cut 0 [0 b] sek)
       =+  ^=  r
           =+  hm=(cut 0 [b b] sek)
