@@ -4466,31 +4466,28 @@
                   ::  we loop over every unsent and live fragments and save
                   ::  the blobs for each message
                   ::
-                  =;  blobs
-                    %-  flop
-                    %+  roll  (tap:queue blobs)
-                    |=  $:  [=message-num =message-blob]
-                            blobs=(list [message-num message])
-                        ==
-                    :_  blobs
-                    :-  message-num
-                    ;;  message  :_  (cue message-blob)
-                    ?:  =(%0 (mod original-bone 4))  %plea
-                    ?:  =(%1 (mod original-bone 4))  %boon
-                    ?>  =(%3 (mod original-bone 4))  %naxplanation
-                  =/  unsent=((mop ,@ud message-blob) lte)
+                  =|  blobs=((mop ,@ud message-blob) lte)
+                  =.  blobs
                     %+  roll  unsent-fragments.pump
-                    |=  $:  static-fragment
-                            msg=((mop ,@ud message-blob) lte)
-                        ==
-                    ~|  [seq=message-num current=current.pump]
-                    ?>  (gth message-num current.pump)  :: XX
-                    (put:queue msg [message-num `@`fragment])
+                    |=  [static-fragment acc=_blobs]
+                    (put:queue acc [message-num `@`fragment])
                   ::
-                  %+  roll
-                    (tap:packet-queue:$:pu:mu live.packet-pump-state.pump)
-                  |=  [[live-packet-key live-packet-val] acc=_unsent]
-                  (put:queue acc [message-num `@`fragment])
+                  =.  blobs
+                    %+  roll
+                      (tap:packet-queue:$:pu:mu live.packet-pump-state.pump)
+                    |=  [[live-packet-key live-packet-val] acc=_blobs]
+                    (put:queue acc [message-num `@`fragment])
+                  %-  flop
+                  %+  roll  (tap:queue blobs)
+                  |=  $:  [=message-num =message-blob]
+                          blobs=(list [message-num message])
+                      ==
+                  :_  blobs
+                  :-  message-num
+                  ;;  message  :_  (cue message-blob)
+                  ?:  =(%0 (mod original-bone 4))  %plea
+                  ?:  =(%1 (mod original-bone 4))  %boon
+                  ?>  =(%3 (mod original-bone 4))  %naxplanation
                 ::
                 =^  forward-moves  flow
                   =;  core=_fo-core
