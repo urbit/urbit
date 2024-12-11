@@ -1270,7 +1270,6 @@
       %-  mole  |.  ^-  ?
       ?:  (gth (met 3 s) (div b 4))  |
       ?:  (gth (met 3 pub) (div b 8))  |
-      ?:  (gth (met 3 q.m) p.m)  |
       =+  rr=(cut 0 [0 b] s)
       =+  ss=(cut 0 [b b] s)
       =+  ha=(can 3 ~[[cb rr] [cb pub] m])
