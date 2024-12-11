@@ -1339,6 +1339,7 @@
     =/  ese=?
       =/  dojo=(unit dojo)
         (~(get by dos.rom.ruf) syd)
+      ?:  =(%base syd)  %.y
       ?~(dojo %.n ese.u.dojo)
     =/  =dojo
       :*  qyx.red  dom.red

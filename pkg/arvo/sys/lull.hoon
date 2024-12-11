@@ -3979,7 +3979,8 @@
     $^  $%  [[%1 ~] who=ship kyz=(list [lyf=life key=ring])]
             [[%2 ~] who=ship ryf=rift kyz=(list [lyf=life key=ring])]
         ==
-    [who=ship lyf=life key=ring sig=(unit oath:pki)]
+    seed
+  +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
   ::
   +$  task                                            ::  in request ->$
     $~  [%vega ~]                                     ::
@@ -4521,7 +4522,7 @@
       $>(%hail task:dill)
       ::  %ames: hear packet
       ::
-      $>(%hear task:ames)
+      $>(?(%hear %heer) task:ames)
       ::  %clay: external edit
       ::
       $>(%into task:clay)
@@ -4533,6 +4534,9 @@
       ::  %clay: load blob store
       ::
       $>(%prep task:clay)
+      ::  %clay: set essential desk
+      ::
+      $>(%esse task:clay)
       ::  %eyre: learn ports of live http servers
       ::
       $>(%live task:eyre)

@@ -1777,10 +1777,18 @@
       ::
       ?&  ?=(%known -.back)
           %+  print-check  %keys     =(+<.ames +<.back)
-          %+  print-check  %route    =(route.ames route.back)
+          %+  print-check  %route    ?|  ?&  ?=(~ route.ames)
+                                             =(route.ames route.back)
+                                         ==
+                                         ?&  ?=(^ route.ames)  ?=(^ route.back)
+                                             .=  lane.u.route.ames
+                                                 lane.u.route.back
+                                     ==  ==
           %+  print-check  %qos      =(-.qos.ames -.qos.back)
           %+  print-check  %ossuary  =(ossuary.ames ossuary.back)
           %+  print-check  %closing  =(closing.ames closing.back)
+          =-  ~?  !-  [ames=corked.ames back=corked.back]
+              -
           %+  print-check  %corked   =(corked.ames corked.back)
           %+  print-check  %chain    =(chain.ames chain.back)
           %+  print-check  %keens    =(keens.ames keens.back)
@@ -1793,11 +1801,11 @@
           ?:  =(%3 (mod bone 4))  ok  :: ignore naxplanation bones
           =+  back-pump=(~(got by snd.back) bone)
           ?&  ok
-              =-  ~?  !-  [bone=bone pump back-pump]
+              =-  ~?  !-  [bone=bone ames=current.pump back=current.back-pump]
                   -
               %+  print-check  %forward-flows-current
               =(current.pump current.back-pump)
-              =-  ~?  !-  [bone=bone pump back-pump]
+              =-  ~?  !-  [bone=bone ames=next.pump back=next.back-pump]
                   -
               %+  print-check  %forward-flows-next
               =(next.pump next.back-pump)
@@ -1812,7 +1820,8 @@
           ?:  =(%2 (mod bone 4))  ok  :: ignore naxplanation %ack bones
           =+  back-sink=(~(got by rcv.back) bone)
           ?&  ok
-              =-  ~?  !-  [bone=bone sink back-sink]
+              =-  ~?  !-
+                    [bone=bone ames=last-acked.sink back=last-acked.back-sink]
                   -
               %+  print-check  %backwards-flows-acked
               =(last-acked.sink last-acked.back-sink)
@@ -3598,15 +3607,15 @@
             ::
             %-  %^  ev-trace  sun.veb  ship.deep
                 |.("migrating to |mesa")
-            =<  :: delete ship from .peers
-                ::
-                pe-abel
             =~  ::  ack ahoy plea, if we don't crash
                 ::
-                (call:(abed:mi:peer-core bone) %done ok=%.y)
+                abet:(call:(abed:mi:peer-core bone) %done ok=%.y)
                 ::  migrate all flows
                 ::
-                (on-migrate bone)
+                on-migrate
+                :: after migration succeeds, delete ship from .peers
+                ::
+                pe-abel
             ==
           ::
           ++  send-nack-trace
@@ -3893,19 +3902,20 @@
           ?^  ship
             ?~  peer=(~(get by peers.ames-state) u.ship)
               event-core
-            (migrate-peer u.ship u.peer)
+            (migrate-peer u.ship u.peer event-core)
           %-  ~(rep by peers.ames-state)
           |=  [[=^ship state=ship-state] core=_event-core]
           ?:  ?=(%alien -.state)  core
-          (migrate-peer ship state)
+          (migrate-peer ship state core)
           ::
           ++  migrate-peer
-            |=  [=^ship =ship-state]
-            ^+  event-core
+            |=  [=^ship =ship-state core=_event-core]
+            ^+  core
             ?>  ?=([%known *] ship-state)
-            =+  pe-core=(abed-peer:pe ship +.ship-state)
-            :: XX (dec next-bone) ?
-            pe-abel:(on-migrate:pe-core next-bone.ossuary.peer-state.pe-core)
+            =+  peer-core=(abed-peer:pe:core ship +.ship-state)
+            ?:  dry
+              ?>(on-migration-test:peer-core core)
+            pe-abel:on-migrate:peer-core
           ::
           --
         ::
@@ -4316,9 +4326,9 @@
             ::
             recork-one
           ::
+          +|  %migration
+          ::
           ++  on-migrate
-            |=  =bone  :: XX do something with bone? save high water mark
-                        :: XX remove bone; it's just next-bone.ossuary
             ^+  peer-core
             =|  fren=fren-state
             |^  =:         -.fren  azimuth-state=-.peer-state
@@ -4344,14 +4354,21 @@
             ++  align-bones
               ^+  ossuary.peer-state
               ::  XX update ossuary in terms of [bone=@ud dire=?(%for %bak)]
+              ::  XX assumes every bone  in the ossuary is forward
               ::
               ossuary.peer-state
             ::
             ++  divide-bones
               ^-  (set side)
               %-  ~(rep in corked.peer-state)
-              |=  [=^bone corked=_corked.fren]
-              (~(put in corked) bone ?:(=(%0 (mod bone 4)) %for %bak))
+              |=  [=bone corked=_corked.fren]
+              ?:  =(%3 (mod bone 4))
+                ::  XX shouldn't happen
+                ~&  >>>  "wrong state of the corked set"
+                !!
+              %+  ~(put in corked)
+                ?.(=(%1 (mod bone 4)) bone (mix 0b1 bone))
+              ?:(=(%0 (mod bone 4)) %for %bak)
             ::
             ++  make-flows
               |=  fren=fren-state
@@ -4361,7 +4378,7 @@
               ::
               =^  moves  flows.fren
                 %-  ~(rep by snd.peer-state)
-                |=  $:  [=^bone pump=message-pump-state]
+                |=  $:  [=bone pump=message-pump-state]
                         moves=(list move)
                         flows=_flows.fren
                     ==
@@ -4371,10 +4388,10 @@
                   %bak  :: (1) sink %plea; (0) send %boon; (3)send/(2)sink %nax
                 ::
                 :: ?:  =(%3 (mod bone 4))
-                ::   ::  naxplanation bones are not migrated, but we account for
-                ::   ::  them in nax.rcv.flow-state, porting the last acked message
-                ::   ::  XX entries in nax.peer-state have not been used
-                ::   ::
+                ::   naxplanation bones are not migrated, but we account for
+                ::   them in nax.rcv.flow-state, porting the last acked message
+                ::   XX entries in nax.peer-state have not been used
+                ::
                 ::   =.  bone  (mix 0b1 (mix 0b10 bone))  ::  reference flow
                 ::   =/  live=?  !=(current.pump next.pump)
                 ::   =.  nax.rcv.flow
@@ -4394,7 +4411,6 @@
                   (mix 0b1 (mix 0b10 bone))   ::  from %3 to [%0 dire=%bak]
                 =?    closing.flow  !naxp-bone
                   (~(has in closing.peer-state) bone)
-                ~&  dire^bone=bone
                 ::  initialize fo-core
                 ::
                 =/  fo-core
@@ -4450,31 +4466,28 @@
                   ::  we loop over every unsent and live fragments and save
                   ::  the blobs for each message
                   ::
-                  =;  blobs
-                    %-  flop
-                    %+  roll  (tap:queue blobs)
-                    |=  $:  [=message-num =message-blob]
-                            blobs=(list [message-num message])
-                        ==
-                    :_  blobs
-                    :-  message-num
-                    ;;  message  :_  (cue message-blob)
-                    ?:  =(%0 (mod original-bone 4))  %plea
-                    ?:  =(%1 (mod original-bone 4))  %boon
-                    ?>  =(%3 (mod original-bone 4))  %naxplanation
-                  =/  unsent=((mop ,@ud message-blob) lte)
+                  =|  blobs=((mop ,@ud message-blob) lte)
+                  =.  blobs
                     %+  roll  unsent-fragments.pump
-                    |=  $:  static-fragment
-                            msg=((mop ,@ud message-blob) lte)
-                        ==
-                    ~|  [seq=message-num current=current.pump]
-                    ?>  (gth message-num current.pump)  :: XX
-                    (put:queue msg [message-num `@`fragment])
+                    |=  [static-fragment acc=_blobs]
+                    (put:queue acc [message-num `@`fragment])
                   ::
-                  %+  roll
-                    (tap:packet-queue:$:pu:mu live.packet-pump-state.pump)
-                  |=  [[live-packet-key live-packet-val] acc=_unsent]
-                  (put:queue acc [message-num `@`fragment])
+                  =.  blobs
+                    %+  roll
+                      (tap:packet-queue:$:pu:mu live.packet-pump-state.pump)
+                    |=  [[live-packet-key live-packet-val] acc=_blobs]
+                    (put:queue acc [message-num `@`fragment])
+                  %-  flop
+                  %+  roll  (tap:queue blobs)
+                  |=  $:  [=message-num =message-blob]
+                          blobs=(list [message-num message])
+                      ==
+                  :_  blobs
+                  :-  message-num
+                  ;;  message  :_  (cue message-blob)
+                  ?:  =(%0 (mod original-bone 4))  %plea
+                  ?:  =(%1 (mod original-bone 4))  %boon
+                  ?>  =(%3 (mod original-bone 4))  %naxplanation
                 ::
                 =^  forward-moves  flow
                   =;  core=_fo-core
@@ -4489,7 +4502,6 @@
                   %+  roll  (weld live unsent)
                   ::
                   |=  [[=message-num =message] core=_fo-core]
-                  ~&  migrating/-.message^msg=message-num
                   ?.  ?=(%naxplanation -.message)
                     %.  message
                     fo-call:core(next.snd.state message-num)
@@ -4526,32 +4538,32 @@
               ::
               =.  flows.fren
                 %-  ~(rep by rcv.peer-state)
-                |=  [[b=^bone sink=message-sink-state] flows=_flows.fren]
+                |=  [[=bone sink=message-sink-state] flows=_flows.fren]
                 ::  if this was a naxplanation bone but we haven't finished
                 ::  sink it, also drop it. the message pump has enough
                 ::  information to know that we need to start +peeking it.
                 ::
-                ?:  =(%2 (mod b 4))
+                ?:  =(%2 (mod bone 4))
                   ::  %naxplanation %ack on receiver; skip bone
                   flows
                 =/  =dire
-                  ?:  =(%0 (mod b 4))  %for  ::  receiving %boon(s)
-                  ?>  =(%1 (mod b 4))  %bak  ::  receiving %plea(s)
-                =?  b  =(%1 (mod b 4))
+                  ?:  =(%0 (mod bone 4))  %for  ::  receiving %boon(s)
+                  ?>  =(%1 (mod bone 4))  %bak  ::  receiving %plea(s)
+                =?  bone  =(%1 (mod bone 4))
                   ::  in the new protocol we use %for/%bak to distinguish
                   ::  between sending/receiving pleas, and collapse the
                   ::  two pieces of state (snd and rcv) into the flow
                   ::  state that has both %outgoing (e.g. send %watch %plea)
                   ::  and %incoming (e.g. receive a %boon %fact) sections
                   ::
-                  (mix 0b1 b)
+                  (mix 0b1 bone)
                 =/  flow=flow-state
                   ::  this flow could be part of a subscription flow (both
                   ::  outgoing and incoming payloads) so we need to retrieve
                   ::  or produce the bunt if we were only receiving
                   ::
-                  (~(gut by flows) b^dire *flow-state)
-                =:         closing.flow  (~(has in closing.peer-state) b)
+                  (~(gut by flows) bone^dire *flow-state)
+                =:         closing.flow  (~(has in closing.peer-state) bone)
                               line.flow  last-acked.sink
                     last-acked.rcv.flow  last-acked.sink
                     ::  XX if there's a pending-vane ack it should have
@@ -4602,7 +4614,7 @@
                     ::
                     u.migrated-nax
                   ==
-                (~(put by flows) b^dire flow)
+                (~(put by flows) bone^dire flow)
               ::
               moves^flows.fren
             ::
@@ -4653,9 +4665,8 @@
             ++  get-lane
               ^-  (unit lane:pact)
               ?~  route.peer-state  ~
-              ?.  direct.u.route.peer-state  ~
               =*  lane  lane.u.route.peer-state
-              %-  some
+              :-  ~
               ?-  -.lane
                 %&  `@ux`p.lane  ::  galaxy
               ::
@@ -4666,6 +4677,22 @@
               ==
             ::
             --
+          ::
+          ++  on-migration-test
+            ^-  ?
+            =/  ahoy-state=axle  ~|(%migrate-crashed ames-state:on-migrate)
+            =/  back-state=axle
+              =<  ames-state
+              ~|  %regress-crashed
+              %.  [~ her]
+              %*  sy-back  sy:(mesa now eny rof)
+                ames-state  ahoy-state
+              ==
+            ::  compare pre/post migrated states
+            ::
+            %+  migration-test
+              (~(got by peers.ames-state) her)
+            (~(got by peers.back-state) her)
           ::
           +|  %implementation
           ::  +send-shut-packet: fire encrypted packet at rcvr (maybe sponsors)
@@ -5661,20 +5688,7 @@
                     ::  check that we can migrate this peer, without
                     ::  modifying the state
                     ::
-                    =/  ahoy-state=axle
-                      ~|(%migrate-crashed ames-state:(on-migrate bone))
-                    =/  back-state=axle
-                      =<  ames-state
-                      ~|  %regress-crashed
-                      %.  [~ her]
-                      %*  sy-back  sy:(mesa now eny rof)
-                        ames-state  ahoy-state
-                      ==
-                    ::  compare pre/post migrated states
-                    ::
-                    ?>  %+  migration-test
-                      (~(got by peers.ames-state) her)
-                    (~(got by peers.back-state) her)
+                    ?>  on-migration-test
                     ::
                     %-  %^  ev-trace  sun.veb  her
                         |.("migrating {<her>} succeded")
@@ -6688,7 +6702,7 @@
                 %.  [wire +>.sign]
                 ?+    response-pith   ~|  %mesa-evil-response-wire^wire  !!
                     ?([%keen ~] ev-flow-wire:ev-core)
-                  ev-take-sage:ev-core  ::  %ack and %naxplanation payload
+                  ev-take-sage:ev-core
                 ==
               ::
               ==
@@ -6750,9 +6764,8 @@
           |=  =wire
           ^-  (unit ev-flow-wire)
           =>  .(wire `(pole iota)`(mesa-pave wire))
-          ?:   ?=(ev-flow-wire wire)
-            `wire
-          ~>(%slog.0^leaf/"mesa: malformed wire: {(spud (pout wire))}" ~)
+          ?.  ?=(ev-flow-wire wire)  ~
+          `wire
         ::
         ++  ev-decrypt-spac
           |=  [=space ser=@ cyf=(unit @)]
@@ -7219,10 +7232,10 @@
           ::
           =/  message-path=(pole iota)  (validate-path path.p.sage)
           ::
-          ?:  =(were %cor)
-            ::  validate %cork path
+          ?:  =(%cor were.u.flow-wire)
+            ::  validate %cork path and wire—only the %bak side reads %corks
             ::
-            ?>  ?=(cork-pith message-path)
+            ?>  &(?=(cork-pith message-path) =(%bak dire.u.flow-wire))
             ?:  =(%bak dire.message-path)
               ::  the server is only reading corks on the forward side, the one
               ::  that sent the %cork, on the original flow (coming on a %watch)
@@ -7475,6 +7488,47 @@
           ::
           ++  fo-corked     (~(has in corked.per) side)
           ++  fo-flip-dire  ?:(=(dire %for) %bak %for)
+          ::  path examples
+          ::
+          ::  the path refers to where the payload is stored.
+          ::
+          ::  side=[bone=0 %for] (e.g. sends %plea: %watch, %poke, %leave, %cork)
+          ::  Options to consider:
+          ::
+          ::  [from=~zod] (*) /flow/bone=0/payload=plea         /to=~nec/mess=1
+          ::                  /flow/bone=0/payload=poke/dire=for/to=~nec/mess=1
+          ::  plea $page: (*) [tag=%plea *page]
+          ::                  [tag=%poke *page] ?
+          ::  the path tells us that this is plea handling so we assert:
+          ::  ?>  ?=(%plea -.sage)
+          ::
+          ::  subscriptions:
+          ::
+          ::              (*) /flow/bone=0/payload=ack-boon     /to=~nec/mess=1
+          ::                  /flow/bone=0/payload=ack/dire=for /to=~nec/mess=1
+          ::
+          ::  side=[bone=0 %bak] (e.g. sends %boon: %fact, %kick)
+          ::
+          ::  Options to consider:
+          ::
+          ::  [from=~nec] (*) /flow/bone=0/payload=ack-plea     /to=~zod/mess=1
+          ::                  /flow/bone=0/payload=klea         /to=~zod/mess=1
+          ::                  /flow/bone=0/payload=ack-bak      /to=~zod/mess=1
+          ::                  /flow/bone=0/payload=ack/dire=bak /to=~zod/mess=1
+          ::  ack $page:  (*) [%ack *page]
+          ::                  [?(%ack-plea %ack-boon) *page]
+          ::  subscriptions:
+          ::
+          ::              (*) /flow/bone=0/payload=boon         /to=~zod/mess=1
+          ::                  /flow/bone=0/payload=poke/dire=bak/to=~zod/mess=1
+          ::
+          ::  $page:      (*) [tag=%boon *page]
+          ::                  [tag=%poke *page] ?
+          ::  the path tells us that this is boon handling so we assert:
+          ::  ?>  ?=(%boon -.sage)
+          ::
+          ::  (*): currently used in ames.hoon, in the |mesa core
+          ::
           ::  +fo-infer-dire: infer the side that's producing this payload
           ::  (e.g. when hearing a +peek request for this path, if the load
           ::  is a %plea, is always produced on the %for side)
@@ -8771,6 +8825,7 @@
           ++  divide-bones
             |=  bones=(set side)
             ^-  (set bone)
+            ~&  >>  corked-bones/bones
             %-  ~(rep in bones)
             |=  [side corked=(set bone)]
             (~(put in corked) ?:(?=(%for dire) bone (mix 0b1 bone)))
@@ -8796,11 +8851,12 @@
                 cor
               ::  init message-pump with highest sent and acked messages
               ::
-              =.  snd.peer-state.core
+              =?  snd.peer-state.core  (gth next.snd.state 1)
+                ::  if we haven't sent anything, skip entry in .snd map
+                ::
                 =|  pump=message-pump-state
                 %+  ~(put by snd.peer-state.core)  bone
                 =*  next  next.snd.state
-                ?<  =(0 next)
                 ?~  loads.snd.state
                   pump(next next, current next)
                 pump(current (dec next), next (dec next))
@@ -8813,6 +8869,10 @@
               `[| (on-memo:cor bone req)]
             ::  message-sink
             ::
+            ?:  =(0 last-acked.rcv.state)
+              ::  if we haven't acked anything, skip entry in .rcv map
+              ::
+              core
             ::
             =|  sink=message-sink-state
             ::  if the flow is in closing we need to stop +peeking for the %cork
@@ -10224,12 +10284,25 @@
   =+  am-core=(ames now eny rof)
   ?^  dud
     ~|(%ames-take-dud (mean tang.u.dud))
-    ::
+  ::
   ?:  ?=([?(%turf %mesa %private-keys %public-keys) *] wire)
     ?.  ?&  ?=(?(%turf %public-keys) -.wire)
             ?=(~ unix-duct)
         ==
-      (take:me-core sample)
+      ?~  flow-wire=(ev-validate-wire:ev:me-core wire)
+        (take:me-core sample)
+      ::  if this is a flow wire for a regressed peer, migrate wire & use |ames
+      ::
+      ?:  =(%mesa -:(pe-find-peer her.u.flow-wire))
+        (take:me-core sample)
+      ::  /flow wire for a migrated peer; migrate wire
+      ::
+      %-  (slog leaf+"mesa: migrating wire: {<wire>}" ~)
+      ::
+      %+  take:am-core
+        %^  make-bone-wire  her.u.flow-wire  rift.u.flow-wire
+        (mix 0b1 bone.u.flow-wire)
+      +.sample
     ::  If the unix-duct is not set, we defer applying %public-keys and %turf
     ::  gifts (which can trigger other gifts to be sent to unix) by setting up
     ::  a timer that will request them again
@@ -10286,7 +10359,7 @@
 ::
 ++  load
   |=  state=axle
-  :: =.  peers.state  (~(del by peers.state) ~fyr)
+  :: =.  peers.state   (~(del by peers.state) ~fyr)
   :: =.  chums.state    ~
     :: %-  ~(run by chums.state)
     :: |=  =chum-state
