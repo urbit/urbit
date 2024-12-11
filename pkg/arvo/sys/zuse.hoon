@@ -2195,6 +2195,7 @@
         ::  checks sizes
         (make-k:curve hash private-key)
       ++  priv-to-pub
+        ~/  %priv-to-pub
         |=  private-key=@
         ::  checks sizes
         (priv-to-pub:curve private-key)
