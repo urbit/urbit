@@ -6764,9 +6764,8 @@
           |=  =wire
           ^-  (unit ev-flow-wire)
           =>  .(wire `(pole iota)`(mesa-pave wire))
-          ?:   ?=(ev-flow-wire wire)
-            `wire
-          ~>(%slog.0^leaf/"mesa: malformed wire: {(spud (pout wire))}" ~)
+          ?.  ?=(ev-flow-wire wire)  ~
+          `wire
         ::
         ++  ev-decrypt-spac
           |=  [=space ser=@ cyf=(unit @)]
@@ -10285,12 +10284,25 @@
   =+  am-core=(ames now eny rof)
   ?^  dud
     ~|(%ames-take-dud (mean tang.u.dud))
-    ::
+  ::
   ?:  ?=([?(%turf %mesa %private-keys %public-keys) *] wire)
     ?.  ?&  ?=(?(%turf %public-keys) -.wire)
             ?=(~ unix-duct)
         ==
-      (take:me-core sample)
+      ?~  flow-wire=(ev-validate-wire:ev:me-core wire)
+        (take:me-core sample)
+      ::  if this is a flow wire for a regressed peer, migrate wire & use |ames
+      ::
+      ?:  =(%mesa -:(pe-find-peer her.u.flow-wire))
+        (take:me-core sample)
+      ::  /flow wire for a migrated peer; migrate wire
+      ::
+      %-  (slog leaf+"mesa: migrating wire: {<wire>}" ~)
+      ::
+      %+  take:am-core
+        %^  make-bone-wire  her.u.flow-wire  rift.u.flow-wire
+        (mix 0b1 bone.u.flow-wire)
+      +.sample
     ::  If the unix-duct is not set, we defer applying %public-keys and %turf
     ::  gifts (which can trigger other gifts to be sent to unix) by setting up
     ::  a timer that will request them again
