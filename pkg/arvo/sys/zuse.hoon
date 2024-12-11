@@ -1245,8 +1245,7 @@
       ~/  %sign-octs-raw
       |=  [m=octs pub=@udpoint sek=@udscalar]  ^-  @
       ?>  (lte (met 3 pub) cb)
-      ?>  (lte (met 3 sek) cb)
-      ?>  (lte (met 3 q.m) p.m)
+      ?>  (lte (met 3 sek) (mul 2 cb))
       =+  a=(cut 0 [0 b] sek)
       =+  ^=  r
           =+  hm=(cut 0 [b b] sek)
