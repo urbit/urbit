@@ -4411,7 +4411,6 @@
                   (mix 0b1 (mix 0b10 bone))   ::  from %3 to [%0 dire=%bak]
                 =?    closing.flow  !naxp-bone
                   (~(has in closing.peer-state) bone)
-                ~&  dire^bone=bone
                 ::  initialize fo-core
                 ::
                 =/  fo-core
@@ -4506,7 +4505,6 @@
                   %+  roll  (weld live unsent)
                   ::
                   |=  [[=message-num =message] core=_fo-core]
-                  ~&  migrating/-.message^msg=message-num
                   ?.  ?=(%naxplanation -.message)
                     %.  message
                     fo-call:core(next.snd.state message-num)
