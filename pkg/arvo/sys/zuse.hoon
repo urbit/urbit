@@ -1090,7 +1090,7 @@
       ::                                                ::  ++deco:ed:crypto
       ++  deco                                          ::  decode point
         |=  s=@  ^-  (unit [@ @])
-        ?>  (lte (met 3 s) cb)
+        ?.  (lte (met 3 s) cb)  ~
         =+  y=(cut 0 [0 (dec b)] s)
         =+  si=(cut 0 [(dec b) 1] s)
         =+  x=(xrec y)
