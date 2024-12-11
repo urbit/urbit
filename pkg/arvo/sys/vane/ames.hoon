@@ -2920,7 +2920,7 @@
             [moves vane-gate]
           ::  +scry: dereference namespace
           ::
-          ++  scry  ry
+          ++  scry  ^scry
           --
       ~%  %per-event  ..trace  ~
       |%
@@ -4401,7 +4401,7 @@
                 ::   (~(put by flows) bone^dire flow)
                 ?:  =(%2 (mod bone 4))
                   ::  XX this shouldn't exist
-                  ~&  >>>  %weird-naxp-ack-bone
+                  ~&  >>>  weird-naxp-ack-bone/bone=bone
                   moves^flows
                 =/  naxp-bone=?  =(%3 (mod bone 4))
                 =/  original-bone  bone
@@ -4409,8 +4409,7 @@
                   (mix 0b1 bone)              ::  from %1 to [%0 dire=%bak]
                 =?  bone  =(%3 (mod bone 4))
                   (mix 0b1 (mix 0b10 bone))   ::  from %3 to [%0 dire=%bak]
-                =?    closing.flow  !naxp-bone
-                  (~(has in closing.peer-state) bone)
+                =.  closing.flow  (~(has in closing.peer-state) bone)
                 ::  initialize fo-core
                 ::
                 =/  fo-core
@@ -4440,7 +4439,7 @@
                     ::
                     moves
                   ::
-                  ?.  naxp-bone
+                  ?:  naxp-bone
                     ::  sanity check that this is not a naxplanation bone
                     ::
                     ~&  >>>  weird-naxp-flow-got-nacked/bone=bone
@@ -4477,6 +4476,7 @@
                       (tap:packet-queue:$:pu:mu live.packet-pump-state.pump)
                     |=  [[live-packet-key live-packet-val] acc=_blobs]
                     (put:queue acc [message-num `@`fragment])
+                  ~&  >  blobs/blobs
                   %-  flop
                   %+  roll  (tap:queue blobs)
                   |=  $:  [=message-num =message-blob]
@@ -4499,15 +4499,18 @@
                     |=  [=message num=_next.pump msgs=(list [@ud message])]
                     :-  +(num)
                     [num^message msgs]
+                  ~&  >>  live/live
                   %+  roll  (weld live unsent)
                   ::
                   |=  [[=message-num =message] core=_fo-core]
                   ?.  ?=(%naxplanation -.message)
+                    ~&  >  %send-message
                     %.  message
                     fo-call:core(next.snd.state message-num)
                   ::  if we are still sending a %naxplanation, we need to
                   ::  put it in our namespace so the other ship reads it
                   ::
+                  ~&  >  %bind-naxplanation
                   %_    core
                       nax.rcv.state
                     %-  ~(put by nax.rcv.state.core)
@@ -6271,9 +6274,9 @@
           --
         ::
         --
-      ::  |ry: dereference namespace
+      ::  |scry: dereference namespace
       ::
-      ++  ry
+      ++  scry
         ^-  roon
         |=  [lyc=gang pov=path car=term bem=beam]
         ^-  (unit (unit cage))
@@ -7567,6 +7570,7 @@
           +|  %builders
           ::
           ++  fo-mop       ((on ,@ud mesa-message) lte)
+          ++  fo-nax       ((on ,@ud [?(%wait %done) error]) lte)
           ++  fo-cac       ((on ,@ud ?) lte)
           ++  fo-ack-path  |=([s=@ r=@p] (fo-path s (fo-infer-load %ack) r))
           ++  fo-pok-path  |=([s=@ r=@p] (fo-path s (fo-infer-load %poke) r))
@@ -7861,14 +7865,17 @@
           ++  fo-take-ack
             |=  [seq=@ud =spar =gage:mess]
             ^+  fo-core
-            ::  only handle acks for %pokes that have been sent
-            ::
-            ?.  (lth seq next.snd)
-              :: XX log?
-              fo-core
             ::  if all pokes have been processed no-op
             ::
             ?~  first=(pry:fo-mop loads.snd)
+              %-  %+  ev-tace  odd.veb.bug.ames-state
+                  |.("no message to %ack {<[bone=bone seq=seq]>}")
+              fo-core
+            ::  only handle acks for %pokes that have been sent
+            ::
+            ?.  (lth seq next.snd)
+              %-  %+  ev-tace  odd.veb.bug.ames-state
+                  |.("old %ack {<[bone=bone seq=seq]>}")
               fo-core
             ?>  ?=([%message *] gage)
             =+  ;;([%ack error=?] +.gage)  ::  XX
@@ -7876,7 +7883,7 @@
               ::  XX we shouldn't see this since send-window is always 1
               ::
               %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("hear out of order ack [{<seq=seq^first=key.u.first>}]")
+                  |.("hear out of order ack {<[seq=seq first=key.u.first]>}")
               :: if the ack we receive is not for the first, save it
               ::  XX if error, start +peeking right away?
               ::
@@ -7924,49 +7931,55 @@
           ::
           ++  fo-take-nax
             |=  [seq=@ud =spar =gage:mess]
-            ^+  fo-core
-            ::  XX same as fo-take-ack refactor
+            =/  first       (pry:fo-mop loads.snd)
+            =/  no-pokes=?  ?=(~ first)
+            =/  miss-nax=?  &(?=(^ first) !=(key.u.first seq))
             ::
-            =/  next=@ud  ?~(next=(ram:fo-mop loads.snd) 1 key.u.next)
-            ?:  (gth seq next)
+            =?  fo-core  no-pokes
               %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("no op; future %naxplanation {<[bone=bone seq=seq]>}")
-              fo-core
-            ::  if all pokes have been processed no-op
-            ::
-            ?~  first=(pry:fo-mop loads.snd)
-              %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("no op; no message to %naxplain {<[bone=bone seq=seq]>}")
+                  |.("no message to %naxplain {<[bone=bone seq=seq]>}")
               fo-core
             :: XX  if the ack we receive is not for the first, no-op
-            :: XX  as currently implemented we only hear for the naxplanation of
+            :: XX  as currently implemented we only hear the naxplanation of
             ::     the oldest message
             ::
-            ?.  =(key.u.first seq)
+            =?  fo-core  miss-nax
               %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("no op; missordered %naxplanation {<[bone=bone seq=seq]>}")
+                  |.("missordered %naxplanation {<[bone=bone seq=seq]>}")
               fo-core
+            ::  XX  use .nax.snd to confirm that we are waiting for this %naxp
             ::
-            %-  %+  ev-tace  msg.veb.bug.ames-state
-                |.("take %naxplanation {<[bone=bone seq=seq]>}")
-            ::  ack is for the first, oldest pending-ack set message, remove it
+            ::  naxplanation should be for the first, oldest pending message
             ::
-            =^  *  loads.snd  (del:fo-mop loads.snd seq)
+            =?  loads.snd  &(!no-pokes !miss-nax)  +:(del:fo-mop loads.snd seq)
             ::  increase the send-window so we can send the next message
+            ::  XX
             ::
-            =.  send-window.snd  +(send-window.snd)
+            =?  send-window.snd  (lth send-window.snd send-window-max.snd)
+              +(send-window.snd)
             =.  fo-core          fo-send  ::  send next messages
             ::  XX check path.spar
             ::  XX path.spar will be the full namespace path, peel off before?
-            ::  XX clear timer for the failed %poke
             ::
             ?>  ?=([%message *] gage)
             =+  ;;([%nax =error] +.gage)  ::  XX
             ::  if the bone belongs to a closing flow and we got a
             ::  naxplanation, don't relay ack to the client vane
             ::
-            ?:  closing.state
+            ?:  closing.state  fo-core
+            ?:  miss-nax       fo-core
+            ::
+            ::  if there are no unacked messages in the queue, this naxplanation
+            ::  should be from migrating a nacked flow.
+            ::  XX check what happens if the naxplanation comes in again
+            ::
+            ?.  &(no-pokes =(seq (dec next.snd)))
+              %-  %+  ev-tace  odd.veb.bug.ames-state
+                  |.("weird %naxplanation {<[bone=bone seq=seq]>}; skip")
               fo-core
+            %-  %+  ev-tace  msg.veb.bug.ames-state
+                |.("take %naxplanation {<[bone=bone seq=seq]>}")
+            ::
             (fo-emit (ev-got-duct bone) %give %done `error)
           ::
           ++  fo-take-cor
