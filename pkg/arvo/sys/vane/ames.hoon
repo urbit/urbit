@@ -6702,7 +6702,7 @@
                 %.  [wire +>.sign]
                 ?+    response-pith   ~|  %mesa-evil-response-wire^wire  !!
                     ?([%keen ~] ev-flow-wire:ev-core)
-                  ev-take-sage:ev-core  ::  %ack and %naxplanation payload
+                  ev-take-sage:ev-core
                 ==
               ::
               ==
@@ -7233,10 +7233,10 @@
           ::
           =/  message-path=(pole iota)  (validate-path path.p.sage)
           ::
-          ?:  =(were %cor)
-            ::  validate %cork path
+          ?:  =(%cor were.u.flow-wire)
+            ::  validate %cork path and wire—only the %bak side reads %corks
             ::
-            ?>  ?=(cork-pith message-path)
+            ?>  &(?=(cork-pith message-path) =(%bak dire.u.flow-wire))
             ?:  =(%bak dire.message-path)
               ::  the server is only reading corks on the forward side, the one
               ::  that sent the %cork, on the original flow (coming on a %watch)
