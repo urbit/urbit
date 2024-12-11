@@ -7934,6 +7934,7 @@
             =/  first       (pry:fo-mop loads.snd)
             =/  no-pokes=?  ?=(~ first)
             =/  miss-nax=?  &(?=(^ first) !=(key.u.first seq))
+            =/  next-msg=@  next.snd  ::  cache
             ::
             =?  fo-core  no-pokes
               %-  %+  ev-tace  odd.veb.bug.ames-state
@@ -7973,9 +7974,11 @@
             ::  should be from migrating a nacked flow.
             ::  XX check what happens if the naxplanation comes in again
             ::
-            ?.  &(no-pokes =(seq (dec next.snd)))
+            ?.  ?|  !no-pokes  ::  there were unacked messages
+                    &(no-pokes =(seq (dec next-msg)))  :: nacked, migrated msg
+                ==
               %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("weird %naxplanation {<[bone=bone seq=seq]>}; skip")
+                  |.("weird %naxp {<[bone=bone seq=seq next=next-msg]>}; skip")
               fo-core
             %-  %+  ev-tace  msg.veb.bug.ames-state
                 |.("take %naxplanation {<[bone=bone seq=seq]>}")
