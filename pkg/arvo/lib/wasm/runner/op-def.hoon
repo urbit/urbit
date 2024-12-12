@@ -294,14 +294,14 @@
   ++  mem-store
     |=  [index=@ size=@ content=@ buffer=@ n-pages=@]
     ^-  (unit [buffer=@ n-pages=@])
-    ?.  (lth (add index size) (mul n-pages page-size))
+    ?.  (lte (add index size) (mul n-pages page-size))
       ~
     `[(sew 3 [index size content] buffer) n-pages]
   ::
   ++  mem-load
     |=  [index=@ size=@ buffer=@ n-pages=@]
     ^-  (unit @)
-    ?.  (lth (add index size) (mul n-pages page-size))
+    ?.  (lte (add index size) (mul n-pages page-size))
       ~
     `(cut 3 [index size] buffer)
   ::
@@ -926,6 +926,10 @@
           ~[%i32]
         ::  local memory
         ::
+        =/  memory-section  memory-section.module.store.l
+        =/  limits  -.memory-section
+        ?.  (lte-lim (add n-pages.p.memo a) limits)
+          l(va.stack [^~((en-si 32 -1)) rest])
         %=  l
           va.stack  [n-pages.p.memo rest]
           mem.store  `[buffer.p.memo (add n-pages.p.memo a)]
@@ -1319,14 +1323,16 @@
         %-  mayb
         |=  v=@
         ^-  @
-        (bit:rs (sea:rd v))
+        =/  sig=@  (rsh 0^63 v)
+        (con (bit:rs (sea:rd v)) (lsh 0^31 sig))
       ::
       ++  promote
         |=  *
         %-  mayb
         |=  v=@
         ^-  @
-        (bit:rd (sea:rs v))
+        =/  sig=@  (rsh 0^31 v)
+        (con (bit:rd (sea:rs v)) (lsh 0^63 sig))
       ::
       ++  reinterpret
         |=  *
@@ -1429,6 +1435,7 @@
             =/  ill=@s  (new:si & (bex (dec size)))  ::  unrepresentable
             |=  [v=@ w=@]
             ^-  (unit @)
+            ?:  =(0 w)  ~
             %-  bind  :_  (cury en-si size)
             %-  (flit |=(=@s !=(s ill)))
             %+  fra:si
@@ -1450,6 +1457,7 @@
         =/  ill=@s  (new:si & (bex (dec base)))  ::  unrepresentable
         |=  [v=@ w=@]
         ^-  (unit @)
+        ?:  =(0 w)  ~
         %-  bind  :_  (cury en-si base)
         %-  (flit |=(=@s !=(s ill)))
         %+  rem:si
@@ -1582,11 +1590,8 @@
             ==
         |=  [v=@ w=@]
         ^-  @
-        =/  [fn-1=fn fn-2=fn]  [(sea:r v) (sea:r w)]
-        ?:  |(=(%n -.fn-1) =(%n -.fn-2))  0
-        ?:  &(?=(%f -.fn-1) ?=(%f -.fn-2) =(0 a.fn-1) =(0 a.fn-2))
-          1
-        ?:(=(v w) 1 0)
+        ?:  (equ:r v w)  1
+        0
       ::
       ++  ne
         |=  i=instruction
@@ -1603,11 +1608,8 @@
             ==
         |=  [v=@ w=@]
         ^-  @
-        =/  [fn-1=fn fn-2=fn]  [(sea:r v) (sea:r w)]
-        ?:  |(=(%n -.fn-1) =(%n -.fn-2))  1
-        ?:  &(?=(%f -.fn-1) ?=(%f -.fn-2) =(0 a.fn-1) =(0 a.fn-2))
-          0
-        ?:(!=(v w) 1 0)
+        ?:  !(equ:r v w)  1
+        0
       ::
       ++  lt
         |=  i=instruction
@@ -1641,28 +1643,52 @@
       ::
       ++  gt
         |=  i=instruction
+        %-  mayb
         ?>  ?=(%gt -.i)
         |=  [v=@ w=@]
-        ^-  (unit @)
-        %.  [w v]
-        (lt ;;(instruction [%lt +.i]))
+        ^-  @
+        ?-    type.i
+            %f32  ?:((gth:rs v w) 1 0)
+            %f64  ?:((gth:rd v w) 1 0)
+        ::
+            *
+          %-  need
+          %.  [w v]
+          (lt ;;(instruction [%lt +.i]))
+        ==
       ::
       ++  le
         |=  i=instruction
+        %-  mayb
         ?>  ?=(%le -.i)
         |=  [v=@ w=@]
-        ^-  (unit @)
-        ?:  =(v w)  `1
-        %.  [v w]
-        (lt ;;(instruction [%lt +.i]))
+        ^-  @
+        ?-    type.i
+            %f32  ?:((lte:rs v w) 1 0)
+            %f64  ?:((lte:rd v w) 1 0)
+        ::
+            *
+          ?:  =(v w)  1
+          %-  need
+          %.  [v w]
+          (lt ;;(instruction [%lt +.i]))
+        ==
       ::
       ++  ge
         |=  i=instruction
+        %-  mayb
         ?>  ?=(%ge -.i)
         |=  [v=@ w=@]
-        ^-  (unit @)
-        %.  [w v]
-        (le ;;(instruction [%le +.i]))
+        ^-  @
+        ?-    type.i
+            %f32  ?:((gte:rs v w) 1 0)
+            %f64  ?:((gte:rd v w) 1 0)
+        ::
+            *
+          %-  need
+          %.  [w v]
+          (le ;;(instruction [%le +.i]))
+        ==
       ::
       --
     --

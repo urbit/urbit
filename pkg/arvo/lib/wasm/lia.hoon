@@ -16,11 +16,15 @@
   ~%  %run-once-inner-v0  +>+  ~
   |=  [[binary=octs imp=import] hint=term script-in=form:m]
   ::
-  :: ~&  !.(call+!=(call))                 ::  [9 20 0 7]        kick
-  :: ~&  !.(memread+!=(memread))           ::  [9 374 0 7]       kick
-  :: ~&  !.(memwrite+!=(memwrite))         ::  [9 92 0 7]        kick
-  :: ~&  !.(call-ext+!=(call-ext))         ::  [9 2986 0 7]      kick
-  :: ~&  !.(runnable+!=(runnable))         ::  [9 372 0 7]
+  :: ~&  !.(call+!=(call))                 ::  [9 20 0 63]      kick
+  :: ~&  !.(memread+!=(memread))           ::  [9 3.006 0 63]   kick
+  :: ~&  !.(memwrite+!=(memwrite))         ::  [9 750 0 63]     kick
+  :: ~&  !.(call-ext+!=(call-ext))         ::  [9 1.498 0 63]   kick
+  :: ~&  !.(global-set+!=(global-set))     ::  [9 92 0 63]      kick
+  :: ~&  !.(global-get+!=(global-get))     ::  [9 186 0 63]     kick
+  :: ~&  !.(memory-size+!=(memory-size))   ::  [9 748 0 63]
+  :: ~&  !.(memory-grow+!=(memory-grow))   ::  [9 12.021 0 63]  kick
+  :: ~&  !.(runnable+!=(runnable))         ::  [9 3.004 0 63]
   :: ~&  'from runnable:'
   :: ~&  !.(try-m+!=(try):runnable)        ::  [9 21 0 1]  kick x2
   :: ~&  !.(catch-m+!=(catch):runnable)    ::  [9 4 0 1]   kick x2
@@ -63,16 +67,6 @@
 ++  run
   ~/  %run-v0
   |=  [input=run-input =seed hint=term]
-  ::
-  :: ~&  !.(call+!=(call))                 ::  [9 20 0 7]        kick
-  :: ~&  !.(memread+!=(memread))           ::  [9 374 0 7]       kick
-  :: ~&  !.(memwrite+!=(memwrite))         ::  [9 92 0 7]        kick
-  :: ~&  !.(call-ext+!=(call-ext))         ::  [9 2986 0 7]      kick
-  :: ~&  !.(runnable+!=(runnable))         ::  [9 372 0 7]
-  :: ~&  'from runnable:'
-  :: ~&  !.(try-m+!=(try):runnable)        ::  [9 21 0 1]  kick x2
-  :: ~&  !.(catch-m+!=(catch):runnable)    ::  [9 4 0 1]   kick x2
-  :: ~&  !.(return-m+!=(return):runnable)  ::  [9 20 0 1]  kick
   ::
   =,  engine-sur
   =/  m  runnable
@@ -169,6 +163,7 @@
   ^-  form:m
   |=  sat=lia-state
   :: ~&  !.(memread-ctx+!=(ctx))
+  =.  ptr  (mod ptr ^~((bex 32)))
   ?~  mem.p.sat  [2+~ sat]
   =,  u.mem.p.sat
   ?:  (gth (add ptr len) (mul n-pages page-size))
@@ -182,6 +177,7 @@
   ^-  form:m
   |=  sat=lia-state
   :: ~&  !.(memwrite-ctx+!=(ctx))
+  =.  ptr  (mod ptr ^~((bex 32)))
   ?~  mem.p.sat  [2+~ sat]
   =,  u.mem.p.sat
   ?:  (gth (add ptr len) (mul n-pages page-size))
@@ -197,6 +193,60 @@
   ?~  q.sat
     [1+[name args] sat]
   [0+i.q.sat sat(q t.q.sat)]
+::
+++  global-set
+  |=  [name=cord value=@]
+  =/  m  (script ,~)
+  ^-  form:m
+  |=  sat=lia-state
+  =/  exports  export-section.module.p.sat
+  |-  ^-  output:m
+  ?~  exports
+    ~|("exported global not found" !!)
+  ?.  =(name name.i.exports)
+    $(exports t.exports)
+  =/  =export-desc  export-desc.i.exports
+  =+  glob=(glob:grab:op-def i.export-desc p.sat)
+  ?:  ?=(%| -.glob)
+    ~|("non-local global set" !!)
+  =.  globals.p.sat
+    (snap globals.p.sat p.p.glob (val-to-coin:op-def value q.p.glob))
+  [0+~ sat]
+::
+++  global-get
+  |=  name=cord
+  =/  m  (script @)
+  ^-  form:m
+  |=  sat=lia-state
+  =/  exports  export-section.module.p.sat
+  |-  ^-  output:m
+  ?~  exports
+    ~|("exported global not found" !!)
+  ?.  =(name name.i.exports)
+    $(exports t.exports)
+  =/  =export-desc  export-desc.i.exports
+  =+  glob=(glob:grab:op-def i.export-desc p.sat)
+  ?:  ?=(%| -.glob)
+    ~|("non-local global get" !!)
+  [0+;;(@ (coin-to-val:op-def q.p.glob)) sat]
+::
+++  memory-size
+  =/  m  (script @)
+  ^-  form:m
+  |=  sat=lia-state
+  ?~  mem.p.sat
+    ~|("no memory" !!)
+  [0+n-pages.u.mem.p.sat sat]
+::
+++  memory-grow  ::  returns old size in pages
+  |=  delta=@
+  =/  m  (script @)
+  ^-  form:m
+  |=  sat=lia-state
+  ?~  mem.p.sat
+    ~|("no memory" !!)
+  :-  0+n-pages.u.mem.p.sat
+  sat(n-pages.u.mem.p (add delta n-pages.u.mem.p.sat))
 ::
 ::  misc
 ::
