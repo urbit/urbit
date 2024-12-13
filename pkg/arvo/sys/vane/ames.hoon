@@ -7257,6 +7257,13 @@
             ::  that sent the %cork, on the original flow (coming on a %watch)
             ::
             =/  =side  [bone dire]:u.flow-wire
+            ?:  (~(has in corked.per) side)
+              %-  %+  ev-tace  odd.veb.bug.ames-state
+                  |.("unexpected %gone $page; ignore")
+              ::  this shouldn't happen since fo-abel should have deleted the
+              ::  entry in the .pit when hearing the %ack for the %cork $plea
+              ::
+              ev-core
             %-  %+  ev-tace  msg.veb.bug.ames-state
                 |.("cork received; delete {<side>}")
             ::  if we don't crash, the client has removed the flow,
@@ -7462,10 +7469,16 @@
               (~(del by by-duct.ossuary.per) (ev-got-duct bone))
             ::
                 pit.per
-                  ::  remove any unsent boon/cork payload in the pit
-                  ::
                   =;  [pit=_pit.per *]
-                    pit
+                    ::  a forward flow can be deleted when we hear an %ack for a
+                    ::  %cork $plea, or a %gone $page for a corked flow +peek.
+                    ::
+                    ::  for the %ack, there could be a path in the .pit to read
+                    ::  if the flow has been corked, so we can just derive it
+                    ::  based on the flow-state, and attempt to delete it.
+                    ::
+                    %-  ~(del by pit)
+                    (make-space-path chum-to-our (fo-cor-path seq=0 our))
                   ::
                   %^  (dip:fo-mop _pit.per)  loads.snd
                     pit.per
@@ -7474,11 +7487,13 @@
                   =/  =path
                     %+  make-space-path  chum-to-our
                     %.  [seq our]
+                    ::  remove any unsent boon or cork $plea ack path in the pit
+                    ::
                     %*(fo-ack-path fo-core dire.side fo-flip-dire)
-                  %-  %+  ev-tace  fin.veb.bug.ames-state
-                      ?.  (~(has by pit) path)
-                        |.("path {<(spud path)>} not in the pit")
-                      =+  load=?:(?=(%for dire) "%cork" "%bone")
+                  =+  ?.  (~(has by pit) path)  ~
+                      %.  ~
+                      %+  ev-tace  fin.veb.bug.ames-state
+                      =+  load=?:(?=(%for dire) "%cork" "%boon")
                       |.("remove {load} path={(spud path)}")
                   ::
                   (~(del by pit) path)
@@ -7820,7 +7835,7 @@
                   |.("acking migrated %ahoy plea")
               ::
               (fo-take-done:fo-core ~)
-            ?.  &(=(vane %$) ?=([%cork ~] payload) ?=([%cork ~] path)):plea
+            ?.  &(=(%$ vane) ?=([%cork ~] payload) ?=([%flow ~] path)):plea
               =/  =wire  (fo-wire %van)
               %-  fo-emit
               ?+  vane.plea  ~|  %mesa-evil-vane^our^her^vane.plea  !!
