@@ -6728,9 +6728,7 @@
         ::
         ++  ev-core  .
         ++  ev-abet
-          =.  chums.ames-state
-            (~(put by chums.ames-state) her %known per)
-          moves^ames-state
+          [moves ames-state(chums (~(put by chums.ames-state) her %known per))]
         ::
         ++  ev-abed  |=(=duct ev-core(hen duct))
         ++  ev-foco  |=([her=ship per=_per] ev-core(her her, per per))
@@ -7056,7 +7054,6 @@
                 ::
                 =/  mod  (bex (dec boq.name))  :: XX unguarded
                 ?:  =(1 (div (add tob.data (dec mod)) mod))
-                  ~&  [tob=tob.data met=(met 3 dat.data)]
                   ~|  aut.data
                   ?>  ?=(%& -.aut.data)
                   ?>  %-  authenticate
@@ -7484,8 +7481,6 @@
           ++  fo-emit  |=(=move fo-core(moves [move moves]))
           ++  fo-emil  |=(mos=(list move) fo-core(moves (weld mos moves)))
           ++  fo-to-close
-            ::  if the flow is in closing, only allow sending the %cork %plea
-            ::
             |=  poke=mesa-message
             ?&(closing.state !=(poke [%plea %$ /cork %cork ~]))
           ::
@@ -7620,7 +7615,7 @@
               ?:  |((fo-to-close poke) (~(has in corked.per) side))
                 %-  %+  ev-tace  odd.veb.bug.ames-state
                     ?:  (fo-to-close poke)
-                      |.("skip send; flow {<bone>} is closing")
+                      |.("skip %cork $plea; flow {<bone>} is closing")
                     |.("skip send; flow {<bone>} has been corked")
                 fo-core
               ::
@@ -8007,10 +8002,9 @@
             %-  %+  ev-tace  fin.veb.bug.ames-state
                 |.("peek for %naxplanation {<[bone=bone seq=seq]>}")
             ::
-            =/  =wire   (fo-wire %nax)
-            =/  =space  chum-to-our
-            %+  fo-emit  hen
-            [%pass wire %a meek/[space her (fo-nax-path seq our)]]
+            =/  =wire    (fo-wire %nax)
+            =/  =space   chum-to-our
+            (fo-emit hen [%pass wire %a meek/[space her (fo-nax-path seq our)]])
           ::
           ++  fo-send-ack
             |=  seq=@ud
@@ -9639,7 +9633,6 @@
             =*  ser  ser.msg
             =/  wid  (met boq ser)
             =/  tob  (met 3 ser)
-            ~&  wid=wid^tob=tob^boq=boq
             ?<  ?=(%0 wid)  :: XX is this true?
             =/  nit=?  |    :: XX refactor
             |-  ^-  (unit (unit cage))
@@ -9789,47 +9782,46 @@
               ``noun+!>(u.chum)
               ::
                 [%lanes ~]
-              ::  this duplicates the routing hack from +send-blob:event-core
-              ::  so long as neither the peer nor the peer's sponsoring galaxy is
+              ::  this duplicates the routing hack from +send-blob:event-core so
+              ::  long as neither the peer nor the peer's sponsoring galaxy is
               ::  us, and the peer has been reached recently:
               ::
-              ::    - no route to the peer, or peer has not been reached recently:
-              ::      send to the peer's sponsoring galaxy
-              ::    - direct route to the peer: use that
-              ::    - indirect route to the peer: send to both that route and the
-              ::      the peer's sponsoring galaxy
+              ::  - no route to the peer, or peer has not been reached recently:
+              ::    send to the peer's sponsoring galaxy
+              ::  - direct route to the peer: use that
+              ::  - indirect route to the peer: send to both that route and the
+              ::    the peer's sponsoring galaxy
               ::
-              :^  ~  ~  %noun
-              !>  ^-  (list lane:pact)  :: XX [sponsor=@p (list lane:pact)]
               ?:  =(our u.who)
                 ~
               =/  sax
-                (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
+                (rof [~ ~] /ames j/`beam`[[our %saxo %da now] /(scot %p u.who)])
               =/  gal=(unit @p)
                 ?.  ?=([~ ~ *] sax)
                   ~
                 `(rear ;;((list ship) q.q.u.u.sax))
               ?~  gal
                 ~
-              :-  `@ux`u.gal  :: XX we shouldn't fake this as as lane
+              :^  ~  ~  %noun
+              !>  ^-  [sponsor=@p (list lane:pact)]
+              :-  u.gal
               ?:  ?=([~ %known *] chum)
                 (get-forward-lanes-mesa our +.u.chum chums.ames-state)
-              ?:  ?=([~ %known *] peer)
-                =/  ev-core  (ev:ames [now eny rof] [//scry]~ ames-state)
-                %+  turn  (get-forward-lanes our +.u.peer peers.ames-state)
-                |=  lane=(each @p address)
-                ?-    -.lane
-                    %&  `@ux`p.lane
+              ?.  ?=([~ %known *] peer)
+                %-  %+  %*(ev-tace ev-core:ev her u.who)  odd.veb.bug.ames-state
+                    |.("alien peek for lanes")
                 ::
-                    %|
-                  :+    %if
-                    ip=`@if`(end [0 32] p.lane)
-                  pt=`@ud`(cut 0 [32 16] p.lane)
-                ==
-              ~&  %alien-lanes
-              ?:  =(our u.gal)
-                ~
-              [`@ux`u.gal]~
+                ?:(=(our u.gal) ~ [`@ux`u.gal]~)
+              %+  turn  (get-forward-lanes our +.u.peer peers.ames-state)
+              |=  lane=(each @p address)
+              ?-    -.lane
+                  %&  `@ux`p.lane
+              ::
+                  %|
+                :+    %if
+                  ip=`@if`(end [0 32] p.lane)
+                pt=`@ud`(cut 0 [32 16] p.lane)
+              ==
             ::
             ==
           ==
