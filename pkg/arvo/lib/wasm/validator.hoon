@@ -152,7 +152,7 @@
     ?:  &(?=(^ memo) (gth len-memos 0))  |+'multiple memos'
     ?^  memo  &+memo
     ?:  =(len-memos 0)  &+~
-    =/  lim  -.memory-section.m
+    =/  lim=limits  -.memory-section.m
     ?.  (validate-limits lim)  |+'invalid limits local memory'
     ?:  &(?=(%ceil -.lim) (gth q.lim (bex 16)))  |+'mem limit too big'
     &+`-.memory-section.m
