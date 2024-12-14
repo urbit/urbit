@@ -21,8 +21,8 @@
     =.  bytes
       %+  weld  bytes
       ^-  tape
-      (reap (sub p.wasm (min p.wasm (lent bytes))) '\00')
-    (scan bytes ;~(sfix module:r (star next)))
+      (reap (sub p.wasm (lent bytes)) '\00')
+    (scan bytes module:r)
     ::
     ::  |r: core with parsing rules.
     ::  Parsing rules often use the same name as the types
@@ -161,7 +161,7 @@
         (stun [n n] rul)
       ==
     ::
-    ++  name     (cook crip (vec prn))
+    ++  name     (cook crip (vec next))
     ++  vec-u32  (vec u32)
     ++  num-type
       %+  cook  |=(num-type:sur +<)
@@ -749,7 +749,7 @@
     ::
     ++  start-section
       %+  cook  |=(start-section:sur +<)
-      (punt u32)
+      (stag ~ u32)
     ::  Element section
     ::
     ++  elem-section
@@ -965,7 +965,7 @@
     ::
     ++  datacnt-section
       %+  cook  |=(datacnt-section:sur +<)
-      (punt u32)
+      (stag ~ u32)
     ::
     ++  module
       %+  cook  |=(module:sur +<)

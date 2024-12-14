@@ -152,6 +152,9 @@
     ?:  &(?=(^ memo) (gth len-memos 0))  |+'multiple memos'
     ?^  memo  &+memo
     ?:  =(len-memos 0)  &+~
+    =/  lim  -.memory-section.m
+    ?.  (validate-limits lim)  |+'invalid limits local memory'
+    ?:  &(?=(%ceil -.lim) (gth q.lim (bex 16)))  |+'mem limit too big'
     &+`-.memory-section.m
   ::
   ++  v-global-section
@@ -258,6 +261,8 @@
             n-funcs-import=@
             =store
         ==
+    ?.  =((lent code-section.m) (lent function-section.m))
+      |+'mismatching lengths of function and code sections'
     =/  idx=@  n-funcs-import
     =/  r  (result ,~)
     |-  ^-  form:r
@@ -281,6 +286,7 @@
     =/  data  i.data-section.m
     ?:  ?=(%pass -.data)
       $(data-section.m t.data-section.m)
+    ?~  memo.store  |+'no memory to copy data to'
     ?:  ?=(%const -.off.data)
       ?.  ?=(%i32 -.p.off.data)  |+'type error in data offset'
       $(data-section.m t.data-section.m)

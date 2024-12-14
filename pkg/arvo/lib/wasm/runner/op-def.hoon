@@ -1323,16 +1323,14 @@
         %-  mayb
         |=  v=@
         ^-  @
-        =/  sig=@  (rsh 0^63 v)
-        (con (bit:rs (sea:rd v)) (lsh 0^31 sig))
+        (bit:rs (sea:rd v))
       ::
       ++  promote
         |=  *
         %-  mayb
         |=  v=@
         ^-  @
-        =/  sig=@  (rsh 0^31 v)
-        (con (bit:rd (sea:rs v)) (lsh 0^63 sig))
+        (bit:rd (sea:rs v))
       ::
       ++  reinterpret
         |=  *
@@ -1454,12 +1452,11 @@
           ?:  =(0 w)  ~
           `(mod v w)
         =/  base=@  ?-(type.i %i32 32, %i64 64)
-        =/  ill=@s  (new:si & (bex (dec base)))  ::  unrepresentable
         |=  [v=@ w=@]
         ^-  (unit @)
         ?:  =(0 w)  ~
-        %-  bind  :_  (cury en-si base)
-        %-  (flit |=(=@s !=(s ill)))
+        :-  ~
+        %+  en-si  base
         %+  rem:si
           (to-si base v)
         (to-si base w)
@@ -1540,6 +1537,12 @@
         =/  [fn-1=fn fn-2=fn]  [(sea:r v) (sea:r w)]
         ?:  =(%n -.fn-1)  v
         ?:  =(%n -.fn-2)  w
+        ?:  ?&  ?=(%f -.fn-1)
+                ?=(%f -.fn-2)
+                =(0 a.fn-1)
+                =(0 a.fn-2)
+            ==
+          (^max v w)  ::  return zero with negative sign if present
         ?:((lth:r v w) v w)
       ::
       ++  max
@@ -1556,6 +1559,12 @@
         =/  [fn-1=fn fn-2=fn]  [(sea:r v) (sea:r w)]
         ?:  =(%n -.fn-1)  v
         ?:  =(%n -.fn-2)  w
+        ?:  ?&  ?=(%f -.fn-1)
+                ?=(%f -.fn-2)
+                =(0 a.fn-1)
+                =(0 a.fn-2)
+            ==
+          (^min v w)  ::  return zero with positive sign if present
         ?:((gth:r v w) v w)
       ::
       ++  copysign
