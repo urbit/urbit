@@ -12,12 +12,17 @@
         $<(%ref coin-wasm)
     ==
   ::
-  +$  import
+  ++  import
+    |$  [acc]
+    %+  pair  acc
     %+  map  (pair cord cord)
     $-  (list coin-wasm)
-    (script-raw-form (list coin-wasm))
+    (script-raw-form (list coin-wasm) acc)
   ::
-  +$  lia-state  (trel store (list (list lia-value)) import)
+  ++  lia-state
+    |$  [acc]
+    (trel store (list (list lia-value)) (import acc))
+  ::
   ++  script-yield
     |$  [a]
     $%  [%0 p=a]
@@ -26,61 +31,62 @@
     ==
   ::
   ++  script-result
-    |$  [a]
-    [(script-yield a) lia-state]
+    |$  [m-yil m-acc]
+    [(script-yield m-yil) (lia-state m-acc)]
   ::
   ++  script-raw-form
-    |*  a=mold
-    $-(lia-state (script-result a))
+    |*  [yil=mold acc=mold]
+    $-((lia-state acc) (script-result yil acc))
   ::
   ++  script
-    |*  a=mold
+    |*  [m-yil=mold m-acc=mold]
     |%
-    ++  output  (script-result a)
-    ++  yield  (script-yield a)
-    ++  form  (script-raw-form a)
+    ++  output  (script-result m-yil m-acc)
+    ++  yield  (script-yield m-yil)
+    ++  form  (script-raw-form m-yil m-acc)
+    ++  m-sat  (lia-state m-acc)
     ++  return  ::  pure
-      |=  arg=a
+      |=  arg=m-yil
       :: =*  sam  +<
       ^-  form
-      |=  s=lia-state
+      |=  s=m-sat
       :: ~&  !.(ret-sam+!=(sam))
       [0+arg s]
     ::
     ++  try  ::  monadic bind
-      |*  b=mold
-      |=  [m-b=(script-raw-form b) gat=$-(b form)]
+      |*  m-mond=mold
+      |=  [mond=(script-raw-form m-mond m-acc) cont=$-(m-mond form)]
       :: =*  sam  +<
       ^-  form
-      |=  s=lia-state
+      |=  s=m-sat
       :: ~&  !.(try-sam+!=(sam))
-      =^  b-yil=(script-yield b)  s  (m-b s)
+      =^  mond-yil=(script-yield m-mond)  s  (mond s)
       ^-  output
-      ?.  ?=(%0 -.b-yil)  [b-yil s]
-      ((gat p.b-yil) s)
+      ?.  ?=(%0 -.mond-yil)  [mond-yil s]
+      ((cont p.mond-yil) s)
     ::
     ++  catch  ::  bind either
-      |*  b=mold
+      |*  m-mond=mold
       |=  $:
-            $:  m-try=(script-raw-form b)
-                m-err=(script-raw-form b)
+            $:  try=(script-raw-form m-mond m-acc)
+                err=(script-raw-form m-mond m-acc)
             ==
-            gat=$-(b form)
+            cont=$-(m-mond form)
           ==
       ^-  form
-      |=  s=lia-state
-      =^  try-yil=(script-yield b)  s  (m-try s)
+      |=  s=m-sat
+      =^  try-yil=(script-yield m-mond)  s  (try s)
       ^-  output
       ?:  ?=(%0 -.try-yil)
-        ((gat p.try-yil) s)
+        ((cont p.try-yil) s)
       ?:  ?=(%1 -.try-yil)
         [try-yil s]
-      =^  err-yil  s  (m-err s)
+      =^  err-yil  s  (err s)
       ?.  ?=(%0 -.err-yil)  [err-yil s]
-      ((gat p.err-yil) s)
+      ((cont p.err-yil) s)
     ::
     --  ::  |script
-  ::
+  :: ::
   +$  seed
     ::  Lia formal state, assumes that the past script evaluates to %0 or %1
     ::  static fields assumed to not change between invocations
@@ -94,9 +100,9 @@
     ::
     $:
       module=octs
-      past=(script-raw-form (list lia-value))
+      past=(script-raw-form (list lia-value) *)
       shop=(list (list lia-value))
-      =import
+      import=(import *)
     ==
   --
 --  ::  |lia-sur
