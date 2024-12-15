@@ -209,6 +209,8 @@
   =+  glob=(glob:grab:op-def i.export-desc p.sat)
   ?:  ?=(%| -.glob)
     ~|("non-local global set" !!)
+  =/  glob-type=global:wasm-sur  (snag p.p.glob global-section.module.p.sat)
+  ?>  ?=(%var m.glob-type)
   =.  globals.p.sat
     (snap globals.p.sat p.p.glob (val-to-coin:op-def value q.p.glob))
   [0+~ sat]
