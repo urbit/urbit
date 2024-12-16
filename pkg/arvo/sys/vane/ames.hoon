@@ -8990,7 +8990,7 @@
               ::  XX  dropping any +peeks for %corks and %naxplanations
               ::      can this makes us end up in a bad state?
               ::
-              =?  for  ?=([[%mesa %flow *] *] hen)
+              =?  for  ?=([[%ames %mesa %flow *] *] hen)
                 (~(del in for) hen)
               for
             ?~  listeners.keen  core
