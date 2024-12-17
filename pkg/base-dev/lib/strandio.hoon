@@ -426,7 +426,7 @@
   ^-  form:m
   ::  encrypted using %chum namespace
   ::
-  =.  path.spar  [%a %x '1' %$ %whey %ship (scot %ud boq) path.spar]
+  =.  path.spar  [%a %x '1' %$ %whey (scot %ud boq) path.spar]
   (send-raw-card %pass wire %arvo %a %chum spar)
 ::
 ++  meta
