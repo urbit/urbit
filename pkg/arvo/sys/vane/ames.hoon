@@ -6960,11 +6960,8 @@
               %-  %+  ev-tace  msg.veb.bug.ames-state
                   |.("hear incomplete message")
               ::
-              =/  =dire  :: flow swtiching
-                :: XX assert load is plea/boon?
-                %*(fo-flip-dire fo side *@ud^(fo-infer-dire:fo load.pok))
-              ::
-              =+  fo-core=(fo-abed:fo hen bone.pok dire)
+              :: XX assert load is plea/boon?
+              =+  fo-core=(fo-abed:fo hen bone.pok (fo-switch-side:fo load.pok))
               ?:  (fo-message-is-acked:fo-core mess.pok)
                 ::  don't peek if the message havs been already acked
                 ::
@@ -7187,13 +7184,10 @@
             ::  XX assumes that %aliens are checked in the packet layer
             ::  XX assumes that .per in the sample is set by the packet layer
             ::
-            =/  =dire  :: flow swtiching
-              :: XX assert load is plea/boon
-              %*(fo-flip-dire fo side *@ud^(fo-infer-dire:fo load.pok))
-            ::
             =<  fo-abet
             %.  [%sink mess.pok gage ?=(~ dud)]
-            fo-call:(fo-abed:fo hen bone.pok dire)
+            :: XX assert load is plea/boon
+            fo-call:(fo-abed:fo hen bone.pok (fo-switch-side:fo load.pok))
           ::
           ++  hear-peek
             |=  =spar
@@ -7510,8 +7504,23 @@
             ?&(closing.state !=(poke [%plea %$ /flow %cork ~]))
           ::
           ++  fo-corked     (~(has in corked.per) side)
+          ++  fo-switch-side
+            |=  =load
+            ^+  dire
+            %*(fo-flip-dire fo dire.side (fo-infer-dire:fo load))
+          ::
           ++  fo-flip-dire  ?:(=(dire %for) %bak %for)
           ::  path examples
+
+          :: where=@p  [in the protocol namespace; redundant with to]
+
+          :: /flow/[bone]/[payload]/[to]/[seq]  :: %plea
+          :: /flow/[bone]/[payload]/[to]/[seq]  :: %boon
+          :: /flow/[bone]/[payload]/[to]/seq    :: %ack
+          :: /flow/[bone]/[payload]/[to]/[seq]  :: %nax
+          :: ::  meta paths
+          :: ::
+          :: /flow/bone/payload/to      :: %corks (meta)
           ::
           ::  the path refers to where the payload is stored.
           ::
@@ -7909,7 +7918,7 @@
               :: fo-core(cache.state (put:fo-cac cache.state seq error))
             |-  ^+  fo-core
             ?:  error
-              ::  if error start %peek for naxplanation
+              ::  if error start +peek for naxplanation
               ::
               (fo-peek-naxplanation seq)
             %-  %+  ev-tace  msg.veb.bug.ames-state
@@ -9459,8 +9468,8 @@
         ?.  ?=([~ ~ %known *] per-sat)
           ~  ::  %alien or missing
         =+  ev-core=(ev-foco:ev u.rcvr +.u.u.per-sat)
-        =/  dire=?(%for %bak)  (fo-infer-dire:fo:ev-core load.tyl)
-        ?:  ?&  (~(has in corked.per.ev-core) u.bone dire)
+        =/  =side  [u.bone (fo-infer-dire:fo:ev-core load.tyl)]
+        ?:  ?&  (~(has in corked.per.ev-core) side)
                 |(?=(%ack-plea load.tyl) ?=(%ack-boon load.tyl))
             ==
             :: ~&  >>>  corked-flow-dropping/load^corked.per  :: XX remove
@@ -9471,7 +9480,7 @@
         ::
         =/  res=(unit page)
           %.  [load.tyl u.mess]
-          fo-peek:(fo-abed:fo:ev-core ~[//scry] u.bone dire)
+          fo-peek:(fo-abed:fo:ev-core ~[//scry] side)
         ?~(res ~ ``[%message !>(u.res)])
       ::  client/server %mesa %corks, flow-level
       ::
