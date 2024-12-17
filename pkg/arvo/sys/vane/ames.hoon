@@ -9529,9 +9529,12 @@
         =+  per-sat=(get-per u.ship)
         ?.  ?=([~ ~ %known *] per-sat)
           ~  ::  %alien or missing
-        =+  ev-core=(ev-foco:ev u.ship +.u.u.per-sat)
-        =+  fo-core=(fo-abed:fo:ev-core ~[//scry] u.bone dire)
         ?>  ?=([@ @ %flow @ @ qery=*] pat.tyl)
+        =+  ev-core=(ev-foco:ev u.ship +.u.u.per-sat)
+        =/  =side  [u.bone dire]
+        =+  fo-core=(fo-abed:fo:ev-core ~[//scry] side)
+        ?.  (~(has by flows.per.fo-core) side)
+          ~
         =,  state:fo-core
         ?+    qery.pat.tyl  ~
             ~          ~ :: XX implement full meta
