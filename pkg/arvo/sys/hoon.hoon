@@ -10966,6 +10966,90 @@
     ++  mup  |=(* (scot %p (mug +<)))
     --
   ::
+  +$  zipper  (list zipp)  ::  children before parents
+  +$  zipp
+    $%  [%head type]
+        [%tail type]
+        [%core coil]
+        [%hint (pair type note)]
+        [%face $@(term tune)]
+        [%fork (set zipper)]
+        ::NOTE  %holds have been unwrapped
+    ==
+  ++  unzip
+    |=  [way=?(%rite %both) hyp=wing]
+    ^-  (unit zipper)
+    |^  fxnd
+    ::
+    :: +$  puny
+    ::   $%  [%zips zipper]
+    ::       [%fail skip=@ud]
+    ::       [%faux ~]
+    ::   ==
+    ++  fxnd  ::  per limb
+      |=  [way=vial heg=limb]
+      ^-  (unit zipper)
+      =>  .(heg ?^(heg heg [%| p=0 q=(some heg)]))
+      =/  hax=(unit axis)
+        ?.  |(?=(@ heg) ?=(%| -.heg))
+          `p.heg
+        =/  =pony:fynd
+          (fxnd:fynd way heg)
+        ?-  -.pony
+          %pale  `(tend vein.pony)
+          %fail  !!
+          %faux  ~
+          %void  ~
+        ==
+      ?~  hax  ~
+      =*  axe  u.hax
+      ::  resolve the tree address directly
+      ::
+      ::TODO  unwrap subj type to appropriate depth
+      =|  zips=zipper
+      |-
+      ?:  =(1 p.heg)
+        `zips
+      =+  [now lat]=(cap p.heg)^(mas p.heg)
+      ::TODO  mb unify with logic for names
+      ?-  sut
+        %noun  $(sut [%cell %noun %noun])
+        %cell  ?:  =(2 now)
+                  $(p.heg lat, sut p.sut, zips [[%head q.sut] zips])
+                $(p.heg lat, sut q.sut, zips [[%tail p.sut] zips])
+        %core  ?:  =(2 now)
+                  $(sut repo)
+                ::  wrong because of variance, sue me
+                $(p.heg lat, sut p.sut, zips [[%core q.sut] zips])
+        %face  $(sut q.sut, zips [[%face p.sut] zips])
+        %hint  $(sut q.sut, zips [[%hint p.sut] zips])
+        %hold  $(sut repo)  ::TODO  track in state
+      ::
+          %fork
+        =-  `[[%fork -] zips]
+        %-  ~(run in p.sut)
+        |=(t=type (need ^$(sut t, zips ~)))
+      ==
+    --
+  ::
+  ++  modify-and-zip
+    |=  [=zipper =type]
+    ^-  ^type
+    ?:  ?=(%void type)  type
+    ?~  zipper  type
+    =-  $(type -, zipper t.zipper)
+    |-
+    ?-  -.i.zipper
+      %head  [%cell type +.i.zipper]
+      %tail  [%cell +.i.zipper type]
+      %core  [%core type +.i.zipper]
+      %hint  [%hint +.i.zipper type]
+      %face  [%face +.i.zipper type]
+    ::
+        %fork
+      [%fork (~(run in +.i.zipper) |=(=zipp ^$(i.zipper zipp)))]
+    ==
+  ::
   ++  take
     |=  [vit=vein duz=$-(type type)]
     ^-  (pair axis type)
