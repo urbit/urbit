@@ -6704,22 +6704,20 @@
                 sy-abet:(~(sy-emit sy hen) unix-duct %give %turf +>.sign)
               ::  vane gifts
               ::
-                [%gall %flub ~]  ev-abet:(ev-take-flub:ev-core wire)
-                [@ %done *]      ev-abet:(ev-poke-done:ev-core wire error.sign)
-                [@ %boon *]      ev-abet:(ev-take-boon:ev-core wire +.sign)
-                [@ %noon *]      ev-abet:(ev-take-boon:ev-core wire +.sign)
+                  ?([%gall %flub ~] [@ %done *] [@ %boon *] [@ %noon *])
+                ev-abet:(ev-take:ev-core wire +.sign)
               ::
               ::  remote responses: acks/poke/cork/naxplanation payloads
               ::    reentrant from %ames (from either message or packet layer)
               ::
                 [%ames %sage *]
-              ::
                 =<  ev-abet
                 =/  response-pith  `(pole iota)`(mesa-pave:ev-core wire)
-                %.  [wire +>.sign]
+                %.  [wire +.sign]
                 ?+    response-pith   ~|  %mesa-evil-response-wire^wire  !!
                     ?([%keen ~] ev-flow-wire:ev-core)
-                  ev-take-sage:ev-core
+                  ::ev-take-sage:ev-core
+                  ev-take:ev-core
                 ==
               ::
               ==
@@ -6902,6 +6900,10 @@
           =^  moves-a  ames-state  ev-abet
           =^  moves-b  ames-state
             co-abet:(co-make-peek:(co-abed:co hen) space her path)
+          ::  update per in the door's sample with the updated value from
+          ::  ames-state; removing this will discard the last change when doing
+          ::  +ev-abet
+          ::
           =.  per  (got-per her)
           (ev-emil (weld moves-a moves-b))
         ::
@@ -6959,7 +6961,6 @@
             ?.  =(1 (div (add tob.data.pact 1.023) 1.024))
               %-  %+  ev-tace  msg.veb.bug.ames-state
                   |.("hear incomplete message")
-              ::
               :: XX assert load is plea/boon?
               =+  fo-core=(fo-abed:fo hen bone.pok (fo-switch-side:fo load.pok))
               ?:  (fo-message-is-acked:fo-core mess.pok)
@@ -7204,53 +7205,60 @@
         ::
         +|  %take-responses
         ::
-        ++  ev-take-flub
-          |=  =wire
+        ++  ev-take
+          |=  $:  =wire
+                  $=  sign
+                  $~  flub/~
+                  $%([%flub ~] $>(?(%noon %boon %done %sage) gift))
+              ==
           ^+  ev-core
           ?~  flow-wire=(ev-validate-wire wire)
             %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("weird wire on %flub {(spud wire)}")
+                  |.("weird wire on {<(trip -.sign)>} {(spud wire)}")
             ev-core
           =.  her  her.u.flow-wire
           =.  per  (got-per her)
           ?:  (lth rift.u.flow-wire rift.per)
             %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("ignore %flub for old rift")
+                  |.("ignore {<(trip -.sign)>} for old rift")
             ev-core
+          ?:  ?=(%sage -.sign)
+            (ev-take-sage +.sign [were bone dire]:u.flow-wire)
+          ::  after %sage, all signs happen on backward flows
+          ::
           ?>  ?=([%van %bak] [were dire]:u.flow-wire)
-          =<  fo-abet
-          (fo-take:(fo-abed:fo hen bone.u.flow-wire dire=%bak) %van %flub ~)
+          =+  fo-core=(fo-abed:fo hen bone.u.flow-wire dire=%bak)
+          ?-  -.sign
+            ::  XX for %done, we ack one message at at time, seq is not needed?
+            ::  XX use it as an assurance check?
+            ::
+            ?(%flub %done)  fo-abet:(fo-take:fo-core %van sign)
+          ::
+              ?(%boon %noon)
+            %+  ev-req-boon  bone.u.flow-wire
+            ?-(-.sign %boon [id=~ payload.sign], %noon [`id payload]:sign)
+          ==
+        ::
         ::  +ev-take-sage: receive remote responses
         ::
         ++  ev-take-sage
-          |=  [=wire =sage:mess]
+          |=  [=sage:mess =were =side]
           ^+  ev-core
-          ?~  flow-wire=(ev-validate-wire wire)
-            %-  %+  ev-tace  odd.veb.bug.ames-state
-                |.("weird wire on %sage {(spud wire)}")
-            ::  only wires related to known peers allowed
-            ::
-            ev-core
-          =.  her  her.u.flow-wire
-          =.  per  (got-per her)
-          ?:  (lth rift.u.flow-wire rift.per)
-            %-  %+  ev-tace  odd.veb.bug.ames-state
-                |.("ignore %sage for old rift")
-            ev-core
           ::
           =/  message-path=(pole iota)  (validate-path path.p.sage)
+          =+  fo-core=(fo-abed:fo hen side)
           ::
-          ?:  =(%cor were.u.flow-wire)
+          ?:  =(%cor were)
             ::  validate %cork path and wire
             ::
             ?>  ?&  ?=(cork-pith message-path)
-                    ?|  &(=(%for dire.message-path) =(%bak dire.u.flow-wire))
-                        &(=(%bak dire.message-path) =(%for dire.u.flow-wire))
+                    ?|  &(=(%for dire.message-path) =(%bak dire.side))
+                        &(=(%bak dire.message-path) =(%for dire.side))
                 ==  ==
             ::  the server is reading corks on the forward side, the one
             ::  that sent the %cork, on the original flow (coming on a %watch)
             ::
-            =/  =side  [bone dire]:u.flow-wire
+
             ?:  (~(has in corked.per) side)
               %-  %+  ev-tace  odd.veb.bug.ames-state
                   |.("unexpected %gone $page; ignore")
@@ -7263,24 +7271,22 @@
             ::  if we don't crash, the client has removed the flow,
             ::  and we have succesfully +peek'ed the %cork
             ::
-            fo-abel:(fo-take-cor:(fo-abed:fo hen side) sage)
+            fo-abel:(fo-take-cor:fo-core sage)
           ::
           ::  XX  validate that wire and path match?
           ::
           ?>  ?=(flow-pith message-path)
           ::
-          ?:  =(%pok were.u.flow-wire)
+          ?:  =(%pok were)
             ::  XX ack-path not used
             %-  hear-poke:ev-mess
             [dud=~ ack-path=our^/ her^(pout message-path) q.sage]
           ::  wires are tagged ?(%ack %nax) so we can diferentiate if we are
           ::  proessing an ack or a naxplanation payload
           ::
-          =/  fo-core
-            =,  u.flow-wire
+          =.  fo-core
             ::  XX parse $ack payload in here, and call task instead?
-            %-  fo-take:(fo-abed:fo hen bone dire)
-            [were sage/[mess.message-path sage]]
+            (fo-take:fo-core were sage/[mess.message-path sage])
           ::
           ?.  can-be-corked.fo-core
             fo-abet:fo-core
@@ -7289,55 +7295,9 @@
           ::  expose %cork flow in the namespace "~(put in corked)"
           ::
           %-  %+  ev-tace  msg.veb.bug.ames-state
-              |.("hear cork ack; delete {<bone=bone.u.flow-wire>}")
+              |.("hear cork ack; delete {<bone=bone>}")
           ::
           fo-abel:fo-core
-        ::  +ev-take-boon: vane responses
-        ::
-        ++  ev-take-boon
-          |=  [=wire =gift]
-          ^+  ev-core
-          ?~  flow-wire=(ev-validate-wire wire)
-            %-  %+  ev-tace  odd.veb.bug.ames-state
-                |.("weird wire on %boon {(spud wire)}")
-            ev-core
-          =.  her  her.u.flow-wire
-          =.  per  (got-per her)
-          ?:  (lth rift.u.flow-wire rift.per)
-            %-  %+  ev-tace  odd.veb.bug.ames-state
-                |.("ignore %boon for old rift")
-            ev-core
-          ::  vane acks happen on backward flows
-          ::
-          ?>  ?=([%van %bak] [were dire]:u.flow-wire)
-          %+  ev-req-boon  bone.u.flow-wire
-          ?+  -.gift  !!
-            %boon  [id=~ payload.gift]
-            %noon  [`id payload]:gift
-          ==
-        ::  +ev-poke-done: vane acks
-        ::
-        ++  ev-poke-done
-          |=  [=wire error=(unit error)]
-          ^+  ev-core
-          ?~  flow-wire=(ev-validate-wire wire)
-            %-  %+  ev-tace  odd.veb.bug.ames-state
-                |.("weird wire on %boon {(spud wire)}")
-            ev-core
-          =.  her  her.u.flow-wire
-          =.  per  (got-per her)
-          ?:  (lth rift.u.flow-wire rift.per)
-            %-  %+  ev-tace  odd.veb.bug.ames-state
-                |.("ignore %boon for old rift")
-            ev-core
-          ?>  ?=([%van %bak] [were dire]:u.flow-wire)
-          ::
-          =<  fo-abet
-          ::  XX since we ack one message at at time, seq is not needed?
-          ::  XX use it as an assurance check?
-          ::
-          %.  [%van done/error]
-          fo-take:(fo-abed:fo hen bone.u.flow-wire dire=%bak)
         ::
         +|  %peek-subscribers
         ::
@@ -7503,7 +7463,7 @@
             |=  poke=mesa-message
             ?&(closing.state !=(poke [%plea %$ /flow %cork ~]))
           ::
-          ++  fo-corked     (~(has in corked.per) side)
+          ++  fo-corked  (~(has in corked.per) side)
           ++  fo-switch-side
             |=  =load
             ^+  dire
@@ -7585,7 +7545,7 @@
             ?:  &(?=(%ack command) ?=(%for dire.side))   %ack-boon
             ?>  &(?=(%ack command) ?=(%bak dire.side))   %ack-plea
           ::
-          ++  fo-message-is-acked  |=(seq=@ud =(seq last-acked.rcv))
+          ++  fo-message-is-acked  |=(seq=@ud (lte seq last-acked.rcv))
           ++  fo-message-not-in-range
             |=  seq=@ud
             ^-  ?
@@ -7644,7 +7604,7 @@
             ::
             ?-    -.poke
                 ?(%plea %boon)
-              ?:  |((fo-to-close poke) (~(has in corked.per) side))
+              ?:  |((fo-to-close poke) fo-corked)
                 %-  %+  ev-tace  odd.veb.bug.ames-state
                     ?:  (fo-to-close poke)
                       |.("skip %cork $plea; flow {<bone>} is closing")
@@ -7761,7 +7721,7 @@
               `ack/error=%.n
             ::
                 %cork
-              ?.  (~(has in corked.per) side)
+              ?.  fo-corked
                 ~
               `gone/~
             ::
