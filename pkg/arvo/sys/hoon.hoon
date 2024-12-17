@@ -10980,6 +10980,13 @@
     |=  [way=?(%rite %both) hyp=wing]
     ^-  (unit zipper)
     |^  fxnd
+    +$  puny
+      $%  [%pale axe=@ud zips=zipper]
+          [%fail skip=@ud]
+          [%faux ~]
+          [%void ~]
+      ==
+
     ::
     :: +$  puny
     ::   $%  [%zips zipper]
@@ -10990,46 +10997,121 @@
       |=  [way=vial heg=limb]
       ^-  (unit zipper)
       =>  .(heg ?^(heg heg [%| p=0 q=(some heg)]))
-      =/  hax=(unit axis)
-        ?.  |(?=(@ heg) ?=(%| -.heg))
-          `p.heg
-        =/  =pony:fynd
-          (fxnd:fynd way heg)
-        ?-  -.pony
-          %pale  `(tend vein.pony)
-          %fail  !!
-          %faux  ~
-          %void  ~
-        ==
-      ?~  hax  ~
-      =*  axe  u.hax
+      ::=/  hax=(unit axis)
+      ::  ?.  |(?=(@ heg) ?=(%| -.heg))
+      ::    `p.heg
+      ::  =/  =pony:fynd
+      ::    (fxnd:fynd way heg)
+      ::  ?-  -.pony
+      ::    %pale  `(tend vein.pony)
+      ::    %fail  !!
+      ::    %faux  ~
+      ::    %void  ~
+      ::  ==
+      ::?~  hax  ~
+      ::=*  axe  u.hax
       ::  resolve the tree address directly
       ::
       ::TODO  unwrap subj type to appropriate depth
-      =|  zips=zipper
-      |-
-      ?:  =(1 p.heg)
-        `zips
-      =+  [now lat]=(cap p.heg)^(mas p.heg)
-      ::TODO  mb unify with logic for names
+      ?.  |(?=(@ heg) ?=(%| -.heg))
+        =|  zips=zipper
+        |-
+        ?:  =(1 p.heg)
+          `zips
+        =+  [now lat]=(cap p.heg)^(mas p.heg)
+        ::TODO  mb unify with logic for names
+        ?-  sut
+          %noun  $(sut [%cell %noun %noun])
+          %cell  ?:  =(2 now)
+                    $(p.heg lat, sut p.sut, zips [[%head q.sut] zips])
+                  $(p.heg lat, sut q.sut, zips [[%tail p.sut] zips])
+          %core  ?:  =(2 now)
+                    $(sut repo)
+                  ::  wrong because of variance, sue me
+                  $(p.heg lat, sut p.sut, zips [[%core q.sut] zips])
+          %face  $(sut q.sut, zips [[%face p.sut] zips])
+          %hint  $(sut q.sut, zips [[%hint p.sut] zips])
+          %hold  $(sut repo)  ::TODO  track in state
+        ::
+            %fork
+          =-  `[[%fork -] zips]
+          %-  ~(run in p.sut)
+          |=(t=type (need ^$(sut t, zips ~)))
+        ==
+      =/  axe  1
+      =|  gil=(set type)
+      =-  ?.(?=([~ ~ *] -) - -(u.u (flop u.u)))
+      |-  ^-  (unit (each [p=axis q=zipper] @ud))
+      ::  XX: (unit (each @ud zipper))
+      ?~  q.heg
+        ?>  =(0 p.heg)  ::  no skipping on bare com
+        [%pale [~ `axe ~] %& ?:(?=([%face *] sut) q.sut sut)]
       ?-  sut
-        %noun  $(sut [%cell %noun %noun])
-        %cell  ?:  =(2 now)
-                  $(p.heg lat, sut p.sut, zips [[%head q.sut] zips])
-                $(p.heg lat, sut q.sut, zips [[%tail p.sut] zips])
-        %core  ?:  =(2 now)
-                  $(sut repo)
-                ::  wrong because of variance, sue me
-                $(p.heg lat, sut p.sut, zips [[%core q.sut] zips])
-        %face  $(sut q.sut, zips [[%face p.sut] zips])
-        %hint  $(sut q.sut, zips [[%hint p.sut] zips])
-        %hold  $(sut repo)  ::TODO  track in state
+        %void      `&+p.heg
+        %noun      `&+p.heg
+        [%atom *]  `&+p.heg
+        [%cell *]  =+  taf=$(axe (peg axe 2), sut p.sut)
+                   ?~  taf  ~
+                   ?:  ?=([~ %& *] taf)
+                       `&+[p.p.u.taf [[%head q.sut] q.p.u.taf]]
+                   ::  thread skip count, should be in our return
+                   =+  taf=$(axe (peg axe 3), sut q.sut, p.heg p.u.taf)
+                   ?.  ?=([~ %& *] taf)  taf
+                   `&+[p.p.u.taf [[%tail p.sut] q.p.u.taf]]
+        [%hint *]  =+  taf=$(sut repo)
+                   ?.  ?=([~ %& *] taf)  taf
+                   `&+[p.p.u.taf [[%hint p.sut] q.p.u.taf]]
+        [%hold *]  ?:  (~(has in gil) sut)  ~ :: XX: need special failure here and void
+                   $(gil (~(put in gil) sut), sut repo)
       ::
-          %fork
-        =-  `[[%fork -] zips]
-        %-  ~(run in p.sut)
-        |=(t=type (need ^$(sut t, zips ~)))
+          [%core *]
+        =^  zem  p.heg
+          ?~  zem=(loot u.q.heg q.r.q.sut)  [~ p.heg]
+          ?:(=(0 p.heg) [zem 0] [~ (dec p.heg)])
+        ?^  zem  `|+(dec p.heg)
+        :: XX: add variance
+        =+  taf=$(axe (peg axe 3), sut p.sut)
+        ?.  ?=([~ %& *] taf)  taf
+        `&+[p.p.u.taf [[%core u.sut] q.p.u.taf]]
+      ::
+          [%face *]
+        ?@  p.sut
+          ?:  =(u.q.heg p.sut)
+            ?:  =(0 p.heg)  `&+[[%face p.sut] ~]
+            `|+(dec p.eg)
+          `|+p.heg
+        ~ :: XX edit thru synthetic
+      ::
+          [%fork *]
+        %-  ~(rep in p.sut)
+        |=  [=type som=$~([%void ~] pony)]
+        (twin [^$(sut type) som])
       ==
+    ::
+    ++  twin
+      |=  [hax=puny yor=puny]
+      ^-  (unit [p=@ud q=(unit (set zipper))])
+      ~_  leaf+"find-fork"
+      ?:  =(hax yor)  hax
+      ?:  ?=(%void -.hax)
+        ?:  ?=(%fail -.yor)  [axe.yor ~]
+        ?.  ?=(%pale -.yor)  ~
+        yor(zips [zips.yor ~])
+      ?:  ?=(%void -.yor) 
+        ?:  ?=(%fail -.hax)  [axe.hax ~]
+        ?.  ?=(%pale -.hax)  ~
+        hax(zips [zips.hax ~])
+      ::TODO  maybe produce failure instead of asserting (for +feel)
+      ?:  ?=(?(%fail %faux) -.hax)
+        ?>  ?&  ?=(?(%fail %faux) -.yor)
+                ?=(%faux -.hax)
+                ?=(%faux -.yor)
+                =(nock.hax nock.yor)
+            ==
+        [%faux ~]
+      ?>  &(?=(%pale hax) ?=(%pale yor))
+      ?.  =(axe.hax axe.yor)  !!
+      pale+axe.hax^(~(gas in *(set zipper)) hax yor)
     --
   ::
   ++  modify-and-zip
