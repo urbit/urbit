@@ -1735,7 +1735,16 @@
           =load
           =dire
           [%p rcvr=@p]
-          [%ud mess=@ud]  ::  not used by %cork payloads
+          [%ud mess=@ud]
+          ~
+      ==
+    ::
+    +$  cork-pith
+      $:  %flow
+          [%ud bone=@ud]
+          =load
+          =dire
+          [%p rcvr=@p]
           ~
       ==
     ::
@@ -7242,7 +7251,7 @@
           ?:  =(%cor were)
             ::  validate %cork path and wire
             ::
-            ?>  ?&  ?=(flow-pith message-path)
+            ?>  ?&  ?=(cork-pith message-path)
                     ?|  &(=(%for dire.message-path) =(%bak dire.side))
                         &(=(%bak dire.message-path) =(%for dire.side))
                 ==  ==
@@ -7616,7 +7625,7 @@
               %-  %+  ev-tace  snd.veb.bug.ames-state
                   |.
                   %+  weld  "send dupe ack {<flow-state>} for "
-                  ?-(dire %bak "%boon", %for "%plea")
+                  ?-(dire %bak "%plea", %for "%boon")
               ::
               (fo-send-ack seq)
             ::
@@ -9400,7 +9409,7 @@
       ++  peek-cork
         |=  tyl=(pole knot)
         ^-  (unit (unit cage))
-        ?>  ?=([%flow bone=@ %cork rcvr=@ =dire ~] tyl)
+        ?>  ?=([%flow bone=@ %cork =dire rcvr=@ ~] tyl)
         =/  bone  (slaw %ud bone.tyl)
         =/  rcvr  (slaw %p rcvr.tyl)
         ?:  |(?=(~ bone) ?=(~ rcvr))
@@ -9530,7 +9539,7 @@
               $%([%flow *] [%pawn *] [%whey *] [%meta *])
             ?:  =(~ lyc)  ~
             ?+  tyl  ~
-              [%flow bone=@ load dire rcvr=@ mess=@ ~]    (peek-flow tyl)
+              [%flow bone=@ load dire rcvr=@ *]           (peek-flow tyl)
               [%whey boq=@ pat=*]                         (peek-whey tyl)
               [%meta pat=*]                               (peek-meta tyl)
             ==
