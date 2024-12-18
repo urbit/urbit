@@ -1610,7 +1610,7 @@
   ::
   ::  +load: payloads bounded in the namespace
   ::
-  +$  load           ?(%plea %boon %ack-plea %ack-boon %nax %cork)
+  +$  load           ?(%poke %ack %naxp %cork)
   ::  +dire: side of the flow (%bak: %boon sender; %for: %plea sender)
   ::
   +$  dire           ?(%bak %for)
