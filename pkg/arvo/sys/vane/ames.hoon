@@ -1698,7 +1698,7 @@
     ::
     +$  flow-sign
       $%  $>(?(%flub %done) gift:gall)  :: from vanes
-          [%sage seq=@ud sage:mess]     :: added seq number to %response
+          [%sage seq=@ud sage:mess]     :: added seq number to %sage
       ==
     ::
     +|  %top-level-paths
@@ -1733,6 +1733,7 @@
       $:  %flow
           [%ud bone=@ud]
           =load
+          =dire
           [%p rcvr=@p]
           [%ud mess=@ud]
           ~
@@ -1741,9 +1742,9 @@
     +$  cork-pith
       $:  %flow
           [%ud bone=@ud]
-          %cork             :: XX allow to read "server" corks
-          [%p rcvr=@p]
+          =load
           =dire
+          [%p rcvr=@p]
           ~
       ==
     ::
@@ -1777,10 +1778,17 @@
       ::
       ?&  ?=(%known -.back)
           %+  print-check  %keys     =(+<.ames +<.back)
-          %+  print-check  %route    =(route.ames route.back)
-          %+  print-check  %qos      =(-.qos.ames -.qos.back)
+          %+  print-check  %route    ?|  ?&  ?=(~ route.ames)
+                                             =(route.ames route.back)
+                                         ==
+                                         ?&  ?=(^ route.ames)  ?=(^ route.back)
+                                             .=  lane.u.route.ames
+                                                 lane.u.route.back
+                                     ==  ==
           %+  print-check  %ossuary  =(ossuary.ames ossuary.back)
           %+  print-check  %closing  =(closing.ames closing.back)
+          =-  ~?  !-  [ames=corked.ames back=corked.back]
+              -
           %+  print-check  %corked   =(corked.ames corked.back)
           %+  print-check  %chain    =(chain.ames chain.back)
           %+  print-check  %keens    =(keens.ames keens.back)
@@ -1793,11 +1801,11 @@
           ?:  =(%3 (mod bone 4))  ok  :: ignore naxplanation bones
           =+  back-pump=(~(got by snd.back) bone)
           ?&  ok
-              =-  ~?  !-  [bone=bone pump back-pump]
+              =-  ~?  !-  [bone=bone ames=current.pump back=current.back-pump]
                   -
               %+  print-check  %forward-flows-current
               =(current.pump current.back-pump)
-              =-  ~?  !-  [bone=bone pump back-pump]
+              =-  ~?  !-  [bone=bone ames=next.pump back=next.back-pump]
                   -
               %+  print-check  %forward-flows-next
               =(next.pump next.back-pump)
@@ -1812,7 +1820,8 @@
           ?:  =(%2 (mod bone 4))  ok  :: ignore naxplanation %ack bones
           =+  back-sink=(~(got by rcv.back) bone)
           ?&  ok
-              =-  ~?  !-  [bone=bone sink back-sink]
+              =-  ~?  !-
+                    [bone=bone ames=last-acked.sink back=last-acked.back-sink]
                   -
               %+  print-check  %backwards-flows-acked
               =(last-acked.sink last-acked.back-sink)
@@ -2911,7 +2920,7 @@
             [moves vane-gate]
           ::  +scry: dereference namespace
           ::
-          ++  scry  ry
+          ++  scry  ^scry
           --
       ~%  %per-event  ..trace  ~
       |%
@@ -3598,15 +3607,15 @@
             ::
             %-  %^  ev-trace  sun.veb  ship.deep
                 |.("migrating to |mesa")
-            =<  :: delete ship from .peers
-                ::
-                pe-abel
             =~  ::  ack ahoy plea, if we don't crash
                 ::
-                (call:(abed:mi:peer-core bone) %done ok=%.y)
+                abet:(call:(abed:mi:peer-core bone) %done ok=%.y)
                 ::  migrate all flows
                 ::
-                (on-migrate bone)
+                on-migrate
+                :: after migration succeeds, delete ship from .peers
+                ::
+                pe-abel
             ==
           ::
           ++  send-nack-trace
@@ -3893,19 +3902,20 @@
           ?^  ship
             ?~  peer=(~(get by peers.ames-state) u.ship)
               event-core
-            (migrate-peer u.ship u.peer)
+            (migrate-peer u.ship u.peer event-core)
           %-  ~(rep by peers.ames-state)
           |=  [[=^ship state=ship-state] core=_event-core]
           ?:  ?=(%alien -.state)  core
-          (migrate-peer ship state)
+          (migrate-peer ship state core)
           ::
           ++  migrate-peer
-            |=  [=^ship =ship-state]
-            ^+  event-core
+            |=  [=^ship =ship-state core=_event-core]
+            ^+  core
             ?>  ?=([%known *] ship-state)
-            =+  pe-core=(abed-peer:pe ship +.ship-state)
-            :: XX (dec next-bone) ?
-            pe-abel:(on-migrate:pe-core next-bone.ossuary.peer-state.pe-core)
+            =+  peer-core=(abed-peer:pe:core ship +.ship-state)
+            ?:  dry
+              ?>(on-migration-test:peer-core core)
+            pe-abel:on-migrate:peer-core
           ::
           --
         ::
@@ -4316,9 +4326,9 @@
             ::
             recork-one
           ::
+          +|  %migration
+          ::
           ++  on-migrate
-            |=  =bone  :: XX do something with bone? save high water mark
-                        :: XX remove bone; it's just next-bone.ossuary
             ^+  peer-core
             =|  fren=fren-state
             |^  =:         -.fren  azimuth-state=-.peer-state
@@ -4344,14 +4354,21 @@
             ++  align-bones
               ^+  ossuary.peer-state
               ::  XX update ossuary in terms of [bone=@ud dire=?(%for %bak)]
+              ::  XX assumes every bone  in the ossuary is forward
               ::
               ossuary.peer-state
             ::
             ++  divide-bones
               ^-  (set side)
               %-  ~(rep in corked.peer-state)
-              |=  [=^bone corked=_corked.fren]
-              (~(put in corked) bone ?:(=(%0 (mod bone 4)) %for %bak))
+              |=  [=bone corked=_corked.fren]
+              ?:  =(%3 (mod bone 4))
+                ::  XX shouldn't happen
+                ~&  >>>  "wrong state of the corked set"
+                !!
+              %+  ~(put in corked)
+                ?.(=(%1 (mod bone 4)) bone (mix 0b1 bone))
+              ?:(=(%0 (mod bone 4)) %for %bak)
             ::
             ++  make-flows
               |=  fren=fren-state
@@ -4361,7 +4378,7 @@
               ::
               =^  moves  flows.fren
                 %-  ~(rep by snd.peer-state)
-                |=  $:  [=^bone pump=message-pump-state]
+                |=  $:  [=bone pump=message-pump-state]
                         moves=(list move)
                         flows=_flows.fren
                     ==
@@ -4371,10 +4388,10 @@
                   %bak  :: (1) sink %plea; (0) send %boon; (3)send/(2)sink %nax
                 ::
                 :: ?:  =(%3 (mod bone 4))
-                ::   ::  naxplanation bones are not migrated, but we account for
-                ::   ::  them in nax.rcv.flow-state, porting the last acked message
-                ::   ::  XX entries in nax.peer-state have not been used
-                ::   ::
+                ::   naxplanation bones are not migrated, but we account for
+                ::   them in nax.rcv.flow-state, porting the last acked message
+                ::   XX entries in nax.peer-state have not been used
+                ::
                 ::   =.  bone  (mix 0b1 (mix 0b10 bone))  ::  reference flow
                 ::   =/  live=?  !=(current.pump next.pump)
                 ::   =.  nax.rcv.flow
@@ -4384,7 +4401,7 @@
                 ::   (~(put by flows) bone^dire flow)
                 ?:  =(%2 (mod bone 4))
                   ::  XX this shouldn't exist
-                  ~&  >>>  %weird-naxp-ack-bone
+                  ~&  >>>  weird-naxp-ack-bone/bone=bone
                   moves^flows
                 =/  naxp-bone=?  =(%3 (mod bone 4))
                 =/  original-bone  bone
@@ -4392,9 +4409,6 @@
                   (mix 0b1 bone)              ::  from %1 to [%0 dire=%bak]
                 =?  bone  =(%3 (mod bone 4))
                   (mix 0b1 (mix 0b10 bone))   ::  from %3 to [%0 dire=%bak]
-                =?    closing.flow  !naxp-bone
-                  (~(has in closing.peer-state) bone)
-                ~&  dire^bone=bone
                 ::  initialize fo-core
                 ::
                 =/  fo-core
@@ -4424,7 +4438,7 @@
                     ::
                     moves
                   ::
-                  ?.  naxp-bone
+                  ?:  naxp-bone
                     ::  sanity check that this is not a naxplanation bone
                     ::
                     ~&  >>>  weird-naxp-flow-got-nacked/bone=bone
@@ -4450,31 +4464,29 @@
                   ::  we loop over every unsent and live fragments and save
                   ::  the blobs for each message
                   ::
-                  =;  blobs
-                    %-  flop
-                    %+  roll  (tap:queue blobs)
-                    |=  $:  [=message-num =message-blob]
-                            blobs=(list [message-num message])
-                        ==
-                    :_  blobs
-                    :-  message-num
-                    ;;  message  :_  (cue message-blob)
-                    ?:  =(%0 (mod original-bone 4))  %plea
-                    ?:  =(%1 (mod original-bone 4))  %boon
-                    ?>  =(%3 (mod original-bone 4))  %naxplanation
-                  =/  unsent=((mop ,@ud message-blob) lte)
+                  =|  blobs=((mop ,@ud message-blob) lte)
+                  =.  blobs
                     %+  roll  unsent-fragments.pump
-                    |=  $:  static-fragment
-                            msg=((mop ,@ud message-blob) lte)
-                        ==
-                    ~|  [seq=message-num current=current.pump]
-                    ?>  (gth message-num current.pump)  :: XX
-                    (put:queue msg [message-num `@`fragment])
+                    |=  [static-fragment acc=_blobs]
+                    (put:queue acc [message-num `@`fragment])
                   ::
-                  %+  roll
-                    (tap:packet-queue:$:pu:mu live.packet-pump-state.pump)
-                  |=  [[live-packet-key live-packet-val] acc=_unsent]
-                  (put:queue acc [message-num `@`fragment])
+                  =.  blobs
+                    %+  roll
+                      (tap:packet-queue:$:pu:mu live.packet-pump-state.pump)
+                    |=  [[live-packet-key live-packet-val] acc=_blobs]
+                    (put:queue acc [message-num `@`fragment])
+                  ~&  >  blobs/blobs
+                  %-  flop
+                  %+  roll  (tap:queue blobs)
+                  |=  $:  [=message-num =message-blob]
+                          blobs=(list [message-num message])
+                      ==
+                  :_  blobs
+                  :-  message-num
+                  ;;  message  :_  (cue message-blob)
+                  ?:  =(%0 (mod original-bone 4))  %plea
+                  ?:  =(%1 (mod original-bone 4))  %boon
+                  ?>  =(%3 (mod original-bone 4))  %naxplanation
                 ::
                 =^  forward-moves  flow
                   =;  core=_fo-core
@@ -4486,16 +4498,29 @@
                     |=  [=message num=_next.pump msgs=(list [@ud message])]
                     :-  +(num)
                     [num^message msgs]
+                  ~&  >>  live/live
                   %+  roll  (weld live unsent)
                   ::
                   |=  [[=message-num =message] core=_fo-core]
-                  ~&  migrating/-.message^msg=message-num
                   ?.  ?=(%naxplanation -.message)
-                    %.  message
+                    ~&  >  %send-message
+                    =?  core  ?=([%plea %$ [%flow ~] %cork ~] message)
+                      ::  if we are sending a %cork, we don't know if the other
+                      ::  side has corked the flow after receiving it, and the
+                      ::  %ack got lost, so we could still be trying to send the
+                      ::  %plea and it'll be dropped since the flow is corked.
+                      ::
+                      ::  At the same time that we are sending the %cork, we
+                      ::  +peek for the %cork on the %bak side, and as soon as
+                      ::  we can readu it, we %cork the flow.
+                      ::
+                      fo-peek-cork:core
+                    %.  [%pump message]
                     fo-call:core(next.snd.state message-num)
                   ::  if we are still sending a %naxplanation, we need to
                   ::  put it in our namespace so the other ship reads it
                   ::
+                  ~&  >  %bind-naxplanation
                   %_    core
                       nax.rcv.state
                     %-  ~(put by nax.rcv.state.core)
@@ -4504,6 +4529,10 @@
                 ::  all live messages processed; set next seq payload
                 ::
                 =.  next.snd.flow  next.pump
+                ::  any pending %cork should be already in the load queue
+                ::
+                =.  closing.flow  (~(has in closing.peer-state) bone)
+                ::
                 ::  XX  do we care about this?
                 ::
                 ::  if this was a naxplanation flow (bone=%3) we migrate the
@@ -4526,32 +4555,32 @@
               ::
               =.  flows.fren
                 %-  ~(rep by rcv.peer-state)
-                |=  [[b=^bone sink=message-sink-state] flows=_flows.fren]
+                |=  [[=bone sink=message-sink-state] flows=_flows.fren]
                 ::  if this was a naxplanation bone but we haven't finished
                 ::  sink it, also drop it. the message pump has enough
                 ::  information to know that we need to start +peeking it.
                 ::
-                ?:  =(%2 (mod b 4))
+                ?:  =(%2 (mod bone 4))
                   ::  %naxplanation %ack on receiver; skip bone
                   flows
                 =/  =dire
-                  ?:  =(%0 (mod b 4))  %for  ::  receiving %boon(s)
-                  ?>  =(%1 (mod b 4))  %bak  ::  receiving %plea(s)
-                =?  b  =(%1 (mod b 4))
+                  ?:  =(%0 (mod bone 4))  %for  ::  receiving %boon(s)
+                  ?>  =(%1 (mod bone 4))  %bak  ::  receiving %plea(s)
+                =?  bone  =(%1 (mod bone 4))
                   ::  in the new protocol we use %for/%bak to distinguish
                   ::  between sending/receiving pleas, and collapse the
                   ::  two pieces of state (snd and rcv) into the flow
                   ::  state that has both %outgoing (e.g. send %watch %plea)
                   ::  and %incoming (e.g. receive a %boon %fact) sections
                   ::
-                  (mix 0b1 b)
+                  (mix 0b1 bone)
                 =/  flow=flow-state
                   ::  this flow could be part of a subscription flow (both
                   ::  outgoing and incoming payloads) so we need to retrieve
                   ::  or produce the bunt if we were only receiving
                   ::
-                  (~(gut by flows) b^dire *flow-state)
-                =:         closing.flow  (~(has in closing.peer-state) b)
+                  (~(gut by flows) bone^dire *flow-state)
+                =:         closing.flow  (~(has in closing.peer-state) bone)
                               line.flow  last-acked.sink
                     last-acked.rcv.flow  last-acked.sink
                     ::  XX if there's a pending-vane ack it should have
@@ -4602,7 +4631,7 @@
                     ::
                     u.migrated-nax
                   ==
-                (~(put by flows) b^dire flow)
+                (~(put by flows) bone^dire flow)
               ::
               moves^flows.fren
             ::
@@ -4653,9 +4682,8 @@
             ++  get-lane
               ^-  (unit lane:pact)
               ?~  route.peer-state  ~
-              ?.  direct.u.route.peer-state  ~
               =*  lane  lane.u.route.peer-state
-              %-  some
+              :-  ~
               ?-  -.lane
                 %&  `@ux`p.lane  ::  galaxy
               ::
@@ -4666,6 +4694,22 @@
               ==
             ::
             --
+          ::
+          ++  on-migration-test
+            ^-  ?
+            =/  ahoy-state=axle  ~|(%migrate-crashed ames-state:on-migrate)
+            =/  back-state=axle
+              =<  ames-state
+              ~|  %regress-crashed
+              %.  [~ her]
+              %*  sy-back  sy:(mesa now eny rof)
+                ames-state  ahoy-state
+              ==
+            ::  compare pre/post migrated states
+            ::
+            %+  migration-test
+              (~(got by peers.ames-state) her)
+            (~(got by peers.back-state) her)
           ::
           +|  %implementation
           ::  +send-shut-packet: fire encrypted packet at rcvr (maybe sponsors)
@@ -5661,20 +5705,7 @@
                     ::  check that we can migrate this peer, without
                     ::  modifying the state
                     ::
-                    =/  ahoy-state=axle
-                      ~|(%migrate-crashed ames-state:(on-migrate bone))
-                    =/  back-state=axle
-                      =<  ames-state
-                      ~|  %regress-crashed
-                      %.  [~ her]
-                      %*  sy-back  sy:(mesa now eny rof)
-                        ames-state  ahoy-state
-                      ==
-                    ::  compare pre/post migrated states
-                    ::
-                    ?>  %+  migration-test
-                      (~(got by peers.ames-state) her)
-                    (~(got by peers.back-state) her)
+                    ?>  on-migration-test
                     ::
                     %-  %^  ev-trace  sun.veb  her
                         |.("migrating {<her>} succeded")
@@ -6257,9 +6288,9 @@
           --
         ::
         --
-      ::  |ry: dereference namespace
+      ::  |scry: dereference namespace
       ::
-      ++  ry
+      ++  scry
         ^-  roon
         |=  [lyc=gang pov=path car=term bem=beam]
         ^-  (unit (unit cage))
@@ -6567,7 +6598,7 @@
           ==
       ::
       --
-    ::  directed MESsAging
+    ::  directed M E S s A ging
     ::
     ++  mesa
       |=  [now=@da eny=@uvJ rof=roof]
@@ -6673,22 +6704,20 @@
                 sy-abet:(~(sy-emit sy hen) unix-duct %give %turf +>.sign)
               ::  vane gifts
               ::
-                [%gall %flub ~]  ev-abet:(ev-take-flub:ev-core wire)
-                [@ %done *]      ev-abet:(ev-poke-done:ev-core wire error.sign)
-                [@ %boon *]      ev-abet:(ev-take-boon:ev-core wire +.sign)
-                [@ %noon *]      ev-abet:(ev-take-boon:ev-core wire +.sign)
+                  ?([%gall %flub ~] [@ %done *] [@ %boon *] [@ %noon *])
+                ev-abet:(ev-take:ev-core wire +.sign)
               ::
               ::  remote responses: acks/poke/cork/naxplanation payloads
               ::    reentrant from %ames (from either message or packet layer)
               ::
                 [%ames %sage *]
-              ::
                 =<  ev-abet
                 =/  response-pith  `(pole iota)`(mesa-pave:ev-core wire)
-                %.  [wire +>.sign]
+                %.  [wire +.sign]
                 ?+    response-pith   ~|  %mesa-evil-response-wire^wire  !!
                     ?([%keen ~] ev-flow-wire:ev-core)
-                  ev-take-sage:ev-core  ::  %ack and %naxplanation payload
+                  ::ev-take-sage:ev-core
+                  ev-take:ev-core
                 ==
               ::
               ==
@@ -6711,9 +6740,7 @@
         ::
         ++  ev-core  .
         ++  ev-abet
-          =.  chums.ames-state
-            (~(put by chums.ames-state) her %known per)
-          moves^ames-state
+          [moves ames-state(chums (~(put by chums.ames-state) her %known per))]
         ::
         ++  ev-abed  |=(=duct ev-core(hen duct))
         ++  ev-foco  |=([her=ship per=_per] ev-core(her her, per per))
@@ -6750,9 +6777,8 @@
           |=  =wire
           ^-  (unit ev-flow-wire)
           =>  .(wire `(pole iota)`(mesa-pave wire))
-          ?:   ?=(ev-flow-wire wire)
-            `wire
-          ~>(%slog.0^leaf/"mesa: malformed wire: {(spud (pout wire))}" ~)
+          ?.  ?=(ev-flow-wire wire)  ~
+          `wire
         ::
         ++  ev-decrypt-spac
           |=  [=space ser=@ cyf=(unit @)]
@@ -6816,7 +6842,7 @@
             (~(put by by-bone) next-bone hen)
           ::  handle cork
           ::
-          =/  cork=?  =([%$ /cork %cork ~] vane^wire^payload)
+          =/  cork=?  =([%$ /flow %cork ~] vane^wire^payload)
           ?:  &(cork !(~(has by by-bone.ossuary.per) bone))
             %-  %+  ev-tace  odd.veb.bug.ames-state
                 |.("{<bone=bone>} not in the ossuary; ignore cork")
@@ -6836,16 +6862,15 @@
               |.("set flow {<bone=bone>} in closing")
           ::
           =<  fo-abet
-          %.  plea/[vane wire payload]
+          %.  [%pump %plea vane wire payload]
           fo-call:fo-core(closing.state cork)
         ::
         ++  ev-req-boon
           |=  [=bone id=(unit *) load=*]
           ^+  ev-core
-          ::  XX handle corked/closing bones
           ::
           =+  fo-core=(fo-abed:fo hen bone dire=%bak)
-          =.  ev-core  fo-abet:(fo-call:fo-core boon/load)
+          =.  ev-core  fo-abet:(fo-call:fo-core %pump %boon load)
           ?~  id
             ev-core
           ?.  %+  gth  (wyt:fo-mop loads.snd.state):fo-core
@@ -6874,6 +6899,10 @@
           =^  moves-a  ames-state  ev-abet
           =^  moves-b  ames-state
             co-abet:(co-make-peek:(co-abed:co hen) space her path)
+          ::  update per in the door's sample with the updated value from
+          ::  ames-state; removing this will discard the last change when doing
+          ::  +ev-abet
+          ::
           =.  per  (got-per her)
           (ev-emil (weld moves-a moves-b))
         ::
@@ -6931,12 +6960,8 @@
             ?.  =(1 (div (add tob.data.pact 1.023) 1.024))
               %-  %+  ev-tace  msg.veb.bug.ames-state
                   |.("hear incomplete message")
-              ::
-              =/  =dire  :: flow swtiching
-                :: XX assert load is plea/boon?
-                %*(fo-flip-dire fo side *@ud^(fo-infer-dire:fo load.pok))
-              ::
-              =+  fo-core=(fo-abed:fo hen bone.pok dire)
+              :: XX assert load is plea/boon?
+              =+  fo-core=(fo-abed:fo hen [bone dire]:ack)
               ?:  (fo-message-is-acked:fo-core mess.pok)
                 ::  don't peek if the message havs been already acked
                 ::
@@ -7040,7 +7065,6 @@
                 ::
                 =/  mod  (bex (dec boq.name))  :: XX unguarded
                 ?:  =(1 (div (add tob.data (dec mod)) mod))
-                  ~&  [tob=tob.data met=(met 3 dat.data)]
                   ~|  aut.data
                   ?>  ?=(%& -.aut.data)
                   ?>  %-  authenticate
@@ -7144,7 +7168,8 @@
             ::
             :: =/  ack=(pole iota)  (mesa-pave path.ack-spar)
             =/  pok=(pole iota)  (mesa-pave path.pok-spar)
-            ?>  ?=(flow-pith pok)
+            =/  ack=(pole iota)  (mesa-pave path.ack-spar)
+            ?>  &(?=(flow-pith pok) ?=(flow-pith ack))
             ::
             ::  XX printed in the packet layer
             :: =+  ?~  dud  ~
@@ -7160,13 +7185,10 @@
             ::  XX assumes that %aliens are checked in the packet layer
             ::  XX assumes that .per in the sample is set by the packet layer
             ::
-            =/  =dire  :: flow swtiching
-              :: XX assert load is plea/boon
-              %*(fo-flip-dire fo side *@ud^(fo-infer-dire:fo load.pok))
-            ::
-            =<  fo-abet
-            %.  [%sink mess.pok gage ?=(~ dud)]
-            fo-call:(fo-abed:fo hen bone.pok dire)
+            :: XX assert load is plea/boon
+           =<  fo-abet
+           %.  [%sink mess.pok gage ?=(~ dud)]
+           fo-call:(fo-abed:fo hen [bone dire]:ack)
           ::
           ++  hear-peek
             |=  =spar
@@ -7183,80 +7205,88 @@
         ::
         +|  %take-responses
         ::
-        ++  ev-take-flub
-          |=  =wire
+        ++  ev-take
+          |=  $:  =wire
+                  $=  sign
+                  $~  flub/~
+                  $%([%flub ~] $>(?(%noon %boon %done %sage) gift))
+              ==
           ^+  ev-core
           ?~  flow-wire=(ev-validate-wire wire)
             %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("weird wire on %flub {(spud wire)}")
+                  |.("weird wire on {<(trip -.sign)>} {(spud wire)}")
             ev-core
           =.  her  her.u.flow-wire
           =.  per  (got-per her)
           ?:  (lth rift.u.flow-wire rift.per)
             %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("ignore %flub for old rift")
+                  |.("ignore {<(trip -.sign)>} for old rift")
             ev-core
+          ?:  ?=(%sage -.sign)
+            (ev-take-sage +.sign [were bone dire]:u.flow-wire)
+          ::  after %sage, all signs happen on backward flows
+          ::
           ?>  ?=([%van %bak] [were dire]:u.flow-wire)
-          =<  fo-abet
-          (fo-take:(fo-abed:fo hen bone.u.flow-wire dire=%bak) %van %flub ~)
+          =+  fo-core=(fo-abed:fo hen bone.u.flow-wire dire=%bak)
+          ?-  -.sign
+            ::  XX for %done, we ack one message at at time, seq is not needed?
+            ::  XX use it as an assurance check?
+            ::
+            ?(%flub %done)  fo-abet:(fo-take:fo-core %van sign)
+          ::
+              ?(%boon %noon)
+            %+  ev-req-boon  bone.u.flow-wire
+            ?-(-.sign %boon [id=~ payload.sign], %noon [`id payload]:sign)
+          ==
+        ::
         ::  +ev-take-sage: receive remote responses
         ::
         ++  ev-take-sage
-          |=  [=wire =sage:mess]
+          |=  [=sage:mess =were =side]
           ^+  ev-core
-          ?~  flow-wire=(ev-validate-wire wire)
-            %-  %+  ev-tace  odd.veb.bug.ames-state
-                |.("weird wire on %sage {(spud wire)}")
-            ::  only wires related to known peers allowed
-            ::
-            ev-core
-          =.  her  her.u.flow-wire
-          =.  per  (got-per her)
-          ?:  (lth rift.u.flow-wire rift.per)
-            %-  %+  ev-tace  odd.veb.bug.ames-state
-                |.("ignore %sage for old rift")
-            ev-core
           ::
           =/  message-path=(pole iota)  (validate-path path.p.sage)
+          =+  fo-core=(fo-abed:fo hen side)
           ::
-          ?:  =(were %cor)
-            ::  validate %cork path
+          ?:  =(%cor were)
+            ::  validate %cork path and wire
             ::
-            ?>  ?=(cork-pith message-path)
-            ?:  =(%bak dire.message-path)
-              ::  the server is only reading corks on the forward side, the one
-              ::  that sent the %cork, on the original flow (coming on a %watch)
+            ?>  ?&  ?=(cork-pith message-path)
+                    ?|  &(=(%for dire.message-path) =(%bak dire.side))
+                        &(=(%bak dire.message-path) =(%for dire.side))
+                ==  ==
+            ::  the server is reading corks on the forward side, the one
+            ::  that sent the %cork, on the original flow (coming on a %watch)
+            ::
+
+            ?:  (~(has in corked.per) side)
+              %-  %+  ev-tace  odd.veb.bug.ames-state
+                  |.("unexpected %gone $page; ignore")
+              ::  this shouldn't happen since fo-abel should have deleted the
+              ::  entry in the .pit when hearing the %ack for the %cork $plea
               ::
-              ::  we need to crash to make sure no state is changed, and the
-              ::  path remains in the .pit
-              ::
-              ::    XX this implies a protocol error
-              ::
-              !!
+              ev-core
             %-  %+  ev-tace  msg.veb.bug.ames-state
-                |.("client cork processed; delete {<bone=bone.u.flow-wire>}")
+                |.("cork received; delete {<side>}")
             ::  if we don't crash, the client has removed the flow,
             ::  and we have succesfully +peek'ed the %cork
             ::
-            =<  fo-abel
-            %.(sage fo-take-cor:(fo-abed:fo hen bone.u.flow-wire dire=%bak))
+            fo-abel:(fo-take-cor:fo-core sage)
           ::
           ::  XX  validate that wire and path match?
           ::
           ?>  ?=(flow-pith message-path)
           ::
-          ?:  =(%pok were.u.flow-wire)
+          ?:  =(%pok were)
             ::  XX ack-path not used
             %-  hear-poke:ev-mess
             [dud=~ ack-path=our^/ her^(pout message-path) q.sage]
           ::  wires are tagged ?(%ack %nax) so we can diferentiate if we are
           ::  proessing an ack or a naxplanation payload
           ::
-          =/  fo-core
-            =,  u.flow-wire
+          =.  fo-core
             ::  XX parse $ack payload in here, and call task instead?
-            %-  fo-take:(fo-abed:fo hen bone dire)
-            [were sage/[mess.message-path sage]]
+            (fo-take:fo-core were sage/[mess.message-path sage])
           ::
           ?.  can-be-corked.fo-core
             fo-abet:fo-core
@@ -7265,55 +7295,9 @@
           ::  expose %cork flow in the namespace "~(put in corked)"
           ::
           %-  %+  ev-tace  msg.veb.bug.ames-state
-              |.("hear cork ack; delete {<bone=bone.u.flow-wire>}")
+              |.("hear cork ack; delete {<bone=bone>}")
           ::
           fo-abel:fo-core
-        ::  +ev-take-boon: vane responses
-        ::
-        ++  ev-take-boon
-          |=  [=wire =gift]
-          ^+  ev-core
-          ?~  flow-wire=(ev-validate-wire wire)
-            %-  %+  ev-tace  odd.veb.bug.ames-state
-                |.("weird wire on %boon {(spud wire)}")
-            ev-core
-          =.  her  her.u.flow-wire
-          =.  per  (got-per her)
-          ?:  (lth rift.u.flow-wire rift.per)
-            %-  %+  ev-tace  odd.veb.bug.ames-state
-                |.("ignore %boon for old rift")
-            ev-core
-          ::  vane acks happen on backward flows
-          ::
-          ?>  ?=([%van %bak] [were dire]:u.flow-wire)
-          %+  ev-req-boon  bone.u.flow-wire
-          ?+  -.gift  !!
-            %boon  [id=~ payload.gift]
-            %noon  [`id payload]:gift
-          ==
-        ::  +ev-poke-done: vane acks
-        ::
-        ++  ev-poke-done
-          |=  [=wire error=(unit error)]
-          ^+  ev-core
-          ?~  flow-wire=(ev-validate-wire wire)
-            %-  %+  ev-tace  odd.veb.bug.ames-state
-                |.("weird wire on %boon {(spud wire)}")
-            ev-core
-          =.  her  her.u.flow-wire
-          =.  per  (got-per her)
-          ?:  (lth rift.u.flow-wire rift.per)
-            %-  %+  ev-tace  odd.veb.bug.ames-state
-                |.("ignore %boon for old rift")
-            ev-core
-          ?>  ?=([%van %bak] [were dire]:u.flow-wire)
-          ::
-          =<  fo-abet
-          ::  XX since we ack one message at at time, seq is not needed?
-          ::  XX use it as an assurance check?
-          ::
-          %.  [%van done/error]
-          fo-take:(fo-abed:fo hen bone.u.flow-wire dire=%bak)
         ::
         +|  %peek-subscribers
         ::
@@ -7439,24 +7423,30 @@
               (~(del by by-duct.ossuary.per) (ev-got-duct bone))
             ::
                 pit.per
-                  ?:  =(%for dire)  pit.per
-                  ::  if there's any unsent boon payload in the pit, delete it
-                  ::
-                  =;  [pit=_pit.per loads=_loads.snd]
-                    pit
+                  =;  [pit=_pit.per *]
+                    ::  a forward flow can be deleted when we hear an %ack for a
+                    ::  %cork $plea, or a %gone $page for a corked flow +peek.
+                    ::
+                    ::  for the %ack, there could be a path in the .pit to read
+                    ::  if the flow has been corked, so we can just derive it
+                    ::  based on the flow-state, and attempt to delete it.
+                    ::
+                    %-  ~(del by pit)
+                    (make-space-path chum-to-our (fo-cor-path seq=0 our))
                   ::
                   %^  (dip:fo-mop _pit.per)  loads.snd
                     pit.per
                   |=  [=_pit.per seq=@ud req=mesa-message]
                   :+  ~  |
-                  ::  the ack for the boon is always on the forward side
-                  ::
-                  =/  =path   (%*(fo-ack-path fo-core dire.side %for) seq our)
-                  =.  path    (make-space-path chum-to-our path)
-                  %-  %+  ev-tace  fin.veb.bug.ames-state
-                      ?:  (~(has by pit) path)
-                        |.("remove boon path={(spud path)}")
-                      |.("path {<(spud path)>} not in the pit")
+                  =/  =path
+                    ::  remove any unsent boon or cork $plea ack path in the pit
+                    ::
+                    (make-space-path chum-to-our (fo-ack-path seq our))
+                  =+  ?.  (~(has by pit) path)  ~
+                      %.  ~
+                      %+  ev-tace  fin.veb.bug.ames-state
+                      =+  load=?:(?=(%for dire) "%cork" "%boon")
+                      |.("remove {load} path={(spud path)}")
                   ::
                   (~(del by pit) path)
               ==
@@ -7468,40 +7458,67 @@
           ++  fo-emit  |=(=move fo-core(moves [move moves]))
           ++  fo-emil  |=(mos=(list move) fo-core(moves (weld mos moves)))
           ++  fo-to-close
-            ::  if the flow is in closing, only allow sending the %cork %plea
-            ::
             |=  poke=mesa-message
-            ?&(closing.state !=(poke [%plea %$ /cork %cork ~]))
+            ?&(closing.state !=(poke [%plea %$ /flow %cork ~]))
           ::
           ++  fo-corked     (~(has in corked.per) side)
           ++  fo-flip-dire  ?:(=(dire %for) %bak %for)
+          ::  path examples
+
+          :: where=@p  [in the protocol namespace; redundant with to]
+
+          :: /flow/[bone]/[payload]/[to]/[seq]  :: %plea
+          :: /flow/[bone]/[payload]/[to]/[seq]  :: %boon
+          :: /flow/[bone]/[payload]/[to]/seq    :: %ack
+          :: /flow/[bone]/[payload]/[to]/[seq]  :: %nax
+          :: ::  meta paths
+          :: ::
+          :: /flow/bone/payload/to      :: %corks (meta)
+          ::
+          ::  the path refers to where the payload is stored.
+          ::
+          ::  side=[bone=0 %for] (e.g. sends %plea: %watch, %poke, %leave, %cork)
+          ::  Options to consider:
+          ::
+          ::  [from=~zod] (*) /flow/bone=0/payload=plea         /to=~nec/mess=1
+          ::                  /flow/bone=0/payload=poke/dire=for/to=~nec/mess=1
+          ::  plea $page: (*) [tag=%plea *page]
+          ::                  [tag=%poke *page] ?
+          ::  the path tells us that this is plea handling so we assert:
+          ::  ?>  ?=(%plea -.sage)
+          ::
+          ::  subscriptions:
+          ::
+          ::              (*) /flow/bone=0/payload=ack-boon     /to=~nec/mess=1
+          ::                  /flow/bone=0/payload=ack/dire=for /to=~nec/mess=1
+          ::
+          ::  side=[bone=0 %bak] (e.g. sends %boon: %fact, %kick)
+          ::
+          ::  Options to consider:
+          ::
+          ::  [from=~nec] (*) /flow/bone=0/payload=ack-plea     /to=~zod/mess=1
+          ::                  /flow/bone=0/payload=klea         /to=~zod/mess=1
+          ::                  /flow/bone=0/payload=ack-bak      /to=~zod/mess=1
+          ::                  /flow/bone=0/payload=ack/dire=bak /to=~zod/mess=1
+          ::  ack $page:  (*) [%ack *page]
+          ::                  [?(%ack-plea %ack-boon) *page]
+          ::  subscriptions:
+          ::
+          ::              (*) /flow/bone=0/payload=boon         /to=~zod/mess=1
+          ::                  /flow/bone=0/payload=poke/dire=bak/to=~zod/mess=1
+          ::
+          ::  $page:      (*) [tag=%boon *page]
+          ::                  [tag=%poke *page] ?
+          ::  the path tells us that this is boon handling so we assert:
+          ::  ?>  ?=(%boon -.sage)
+          ::
+          ::  (*): currently used in ames.hoon, in the |mesa core
+          ::
           ::  +fo-infer-dire: infer the side that's producing this payload
           ::  (e.g. when hearing a +peek request for this path, if the load
           ::  is a %plea, is always produced on the %for side)
           ::
-          ++  fo-infer-dire
-            |=  =load
-            ?-  load
-              %plea      %for
-              %boon      %bak
-              %nax       %bak  ::  XX naxplanation read only by plea sender?
-              %ack-plea  %bak
-              %ack-boon  %for
-            ::  read cork on the other side
-            ::
-              %cork      ?:(=(%bak dire) %for %bak)
-            ==
-          ::
-          ::  +fo-add-command: when binding a payload we produce
-          ::
-          ++  fo-infer-load
-            |=  command=?(%ack %poke)
-            ?:  &(?=(%poke command) ?=(%for dire.side))  %plea
-            ?:  &(?=(%poke command) ?=(%bak dire.side))  %boon
-            ?:  &(?=(%ack command) ?=(%for dire.side))   %ack-boon
-            ?>  &(?=(%ack command) ?=(%bak dire.side))   %ack-plea
-          ::
-          ++  fo-message-is-acked  |=(seq=@ud =(seq last-acked.rcv))
+          ++  fo-message-is-acked  |=(seq=@ud (lte seq last-acked.rcv))
           ++  fo-message-not-in-range
             |=  seq=@ud
             ^-  ?
@@ -7513,20 +7530,24 @@
           +|  %builders
           ::
           ++  fo-mop       ((on ,@ud mesa-message) lte)
+          ++  fo-nax       ((on ,@ud [?(%wait %done) error]) lte)
           ++  fo-cac       ((on ,@ud ?) lte)
-          ++  fo-ack-path  |=([s=@ r=@p] (fo-path s (fo-infer-load %ack) r))
-          ++  fo-pok-path  |=([s=@ r=@p] (fo-path s (fo-infer-load %poke) r))
-          ++  fo-nax-path  |=([s=@ r=@p] (fo-path s %nax r))
+          ::  all path builders refers to payloads on the other side from ours
+          ::  so the direction is always flipped
+          ::
+          ++  fo-ack-path  |=([s=@ r=@p] (fo-path s %ack r))
+          ++  fo-pok-path  |=([s=@ r=@p] (fo-path s %poke r))
+          ++  fo-nax-path  |=([s=@ r=@p] (fo-path s %naxp r))
           ++  fo-cor-path  |=([s=@ r=@p] (fo-path s %cork r))
           ++  fo-path
-            |=  [seq=@ud =load rcvr=@p]
+            |=  [seq=@ud =load server=@p]
             ^-  path
             :*  vane=%a  care=%x  case='1'  desk=%$
               ::
-                %flow  (scot %ud bone)  load  rcvr=(scot %p rcvr)
+                %flow  (scot %ud bone)  load  fo-flip-dire  (scot %p server)
               ::  %corks refers to the whole flow; skip the sequence number
               ::
-                ?:(=(%cork load) [(fo-infer-dire load) ~] [(scot %ud seq) ~])
+                ?:(=(%cork load) ~ [(scot %ud seq) ~])
             ==
           ::
           ++  fo-wire
@@ -7547,67 +7568,68 @@
           +|  %entry-points
           ::
           ++  fo-call
-            =>  |%
-                +$  poke-task
-                  $%  [%sink seq=@ud =gage:mess ok=?]
-                      mesa-message
-                  ==
-                --
-            ::
-            |=  poke=poke-task
+            |=  $=  poke
+                $%  [%pump mesa-message]             :: outgoing payloads
+                    [%sink seq=@ud =gage:mess ok=?]  :: incoming payloads
+                ==
             ^+  fo-core
             ::
-            ?-    -.poke
-                ?(%plea %boon)
-              ?:  |((fo-to-close poke) (~(has in corked.per) side))
+            |^  ?-(-.poke %pump (pump +.poke), %sink (sink +.poke))
+            ::
+            ++  pump
+              |=  load=mesa-message
+              ?:  |((fo-to-close load) fo-corked)
                 %-  %+  ev-tace  odd.veb.bug.ames-state
-                    ?:  (fo-to-close poke)
-                      |.("skip send; flow {<bone>} is closing")
+                    ?:  (fo-to-close load)
+                      |.("skip %cork $plea; flow {<bone>} is closing")
                     |.("skip send; flow {<bone>} has been corked")
                 fo-core
               ::
               =:   next.snd   +(next.snd)
-                  loads.snd   (put:fo-mop loads.snd next.snd poke)
+                  loads.snd   (put:fo-mop loads.snd next.snd load)
                 ==
               fo-send
+            ::
+            ++  sink
+              |=  [seq=@ud =gage:mess ok=?]
+              ?.  ?=([%message mark *] gage)
+                %-  %+  ev-tace  odd.veb.bug.ames-state
+                    |.("no op; weird %message gage {<-.gage>}")
+                fo-core
               ::
-                %sink
               ?:  |(closing.state (~(has in corked.per) side))
                 %-  %+  ev-tace  odd.veb.bug.ames-state
-                    =+  ;;(mess=@tas +<.gage.poke)
+                    =+  ;;(mess=@tas +<.gage)
                     ?:  closing.state
                       |.("skip {<mess>}; flow in closing flow={<bone>}")
                     |.("skip {<mess>}; flow is corked flow={<bone>} ")
                 fo-core
               ::  check that the message can be acked
               ::
-              =+  flow-state=[bone=bone seq=seq.poke last=last-acked.rcv]
-              ?:  (gth seq.poke +(last-acked.rcv))
+              =+  flow-state=[bone=bone seq=seq last=last-acked.rcv]
+              ?:  (gth seq +(last-acked.rcv))
                 ::  no-op if future message
                 ::
                 %-  %+  ev-tace  odd.veb.bug.ames-state
                     |.("skip sink; future ack {<flow-state>}")
                 fo-core
-              ?:  (lte seq.poke last-acked.rcv)
-                ?:  (gth (sub last-acked.rcv seq.poke) 10)
-                  %-  %+  ev-tace  odd.veb.bug.ames-state
-                      |.("skip sink; {<flow-state>}")
-                  fo-core
-                %-  %+  ev-tace  snd.veb.bug.ames-state
-                    |.("send dupe ack {<flow-state>}")
-                (fo-send-ack seq.poke)
-              ::  a %plea sinks on the backward receiver (from a forward flow)
-              ::  a %boon sinks on the forward receiver (from a backward flow)
-              ::
-              ?.  ?=([%message mark *] gage.poke)
+              ?.  (lte seq last-acked.rcv)
+                ::  a %plea sinks on the backward receiver (from a forward flow)
+                ::  a %boon sinks on the forward receiver (from a backward flow)
+                ::
+                %.([+.gage ok] ?-(dire %bak fo-sink-plea, %for fo-sink-boon))
+              ?:  (gth (sub last-acked.rcv seq) 10)
                 %-  %+  ev-tace  odd.veb.bug.ames-state
-                    |.("no op; weird %message gage {<-.gage.poke>}")
+                    |.("skip sink; {<flow-state>}")
                 fo-core
-              ?-  dire
-                %bak  (fo-sink-plea [+.gage ok]:poke)
-                %for  (fo-sink-boon [+.gage ok]:poke)
-              ==
-            ==
+              %-  %+  ev-tace  snd.veb.bug.ames-state
+                  |.
+                  %+  weld  "send dupe ack {<flow-state>} for "
+                  ?-(dire %bak "%plea", %for "%boon")
+              ::
+              (fo-send-ack seq)
+            ::
+            --
           ::
           ++  fo-take
             |=  [=were sign=flow-sign]
@@ -7631,10 +7653,11 @@
             ::  %ack and %nax can be both %for (%plea) and %bak (%boon)
             ::
             ?-    load
-                %nax
-              ?~(nax=(~(get by nax.rcv) seq) ~ `nax/u.nax)
+                %naxp  ?~(nax=(~(get by nax.rcv) seq) ~ `nax/u.nax)
+                %cork  ?.(fo-corked ~ `gone/~)
+                %poke  ?~(v=(get:fo-mop loads.snd seq) ~ `u.v)
             ::
-                ?(%ack-plea %ack-boon)
+                %ack
               ?:  (~(has by nax.rcv) seq)
                 ::  if we have naxplanation state for this message—even
                 ::  for pre-migration messages—we can guarantee that
@@ -7666,20 +7689,11 @@
                 ::
                 ~
               ?.  =(seq last-acked.rcv)
-                ::  refuse to answer for future acks
+                ::  refuse to answer to future acks
                 ::
                 ~
               `ack/error=%.n
             ::
-                %cork
-              ?.  (~(has in corked.per) side)
-                ~
-              `gone/~
-            ::
-                ?(%plea %boon)
-              ?~  v=(get:fo-mop loads.snd seq)
-                ~
-              ?>(=(load -.u.v) `u.v)
             ==
           ::
           +|  %request-sender
@@ -7699,11 +7713,11 @@
             =.  send-window.snd  (dec send-window.snd)
             ::
             =/  [ack=spar poke=path]
-              :_  (fo-pok-path seq her)
-              :-  her
-              ::  %ack is on the other side; flip direction
+              ::  fo-path builders refer to the other side, but %poke is on our
+              ::  side; flip direction
               ::
-              (%*(fo-ack-path fo-core dire.side fo-flip-dire) seq our)
+              :-  [her (fo-ack-path seq our)]
+              (%*(fo-pok-path fo-core dire.side fo-flip-dire) seq her)
             =/  =space  chum-to-our
             =/  =wire  (fo-wire %ack)
             =.  fo-core  (fo-emit hen %pass wire %a moke/[space ack poke])
@@ -7755,7 +7769,7 @@
                   |.("acking migrated %ahoy plea")
               ::
               (fo-take-done:fo-core ~)
-            ?.  &(=(vane %$) ?=([%cork ~] payload) ?=([%cork ~] path)):plea
+            ?.  &(=(%$ vane) ?=([%cork ~] payload) ?=([%flow ~] path)):plea
               =/  =wire  (fo-wire %van)
               %-  fo-emit
               ?+  vane.plea  ~|  %mesa-evil-vane^our^her^vane.plea  !!
@@ -7766,18 +7780,13 @@
             ::  publish %cork %ack (in +hear-poke:ev-mess) in corked.per
             ::
             =.  fo-core
-              %-  fo-emit
               ::  start %peek request to check if they have corked the flow
               ::  after reading the ack from our namespace
               ::
               %-  %+  ev-tace  fin.veb.bug.ames-state
                   |.("peek for %cork flow={<bone>}")
               ::
-              :+  hen  %pass
-              ::  we are on the %bak side; for-cor-path will read the %cork
-              ::  on the %for side
-              ::
-              [(fo-wire %cor) %a meek/[chum-to-our her (fo-cor-path seq=0 our)]]
+              fo-peek-cork
             ::  XX just fo-core(closing.state %.y)?
             ::
             (fo-take-done:fo-core(closing.state %.y) ~)
@@ -7807,14 +7816,17 @@
           ++  fo-take-ack
             |=  [seq=@ud =spar =gage:mess]
             ^+  fo-core
-            ::  only handle acks for %pokes that have been sent
-            ::
-            ?.  (lth seq next.snd)
-              :: XX log?
-              fo-core
             ::  if all pokes have been processed no-op
             ::
             ?~  first=(pry:fo-mop loads.snd)
+              %-  %+  ev-tace  odd.veb.bug.ames-state
+                  |.("no message to %ack {<[bone=bone seq=seq]>}")
+              fo-core
+            ::  only handle acks for %pokes that have been sent
+            ::
+            ?.  (lth seq next.snd)
+              %-  %+  ev-tace  odd.veb.bug.ames-state
+                  |.("old %ack {<[bone=bone seq=seq]>}")
               fo-core
             ?>  ?=([%message *] gage)
             =+  ;;([%ack error=?] +.gage)  ::  XX
@@ -7822,7 +7834,7 @@
               ::  XX we shouldn't see this since send-window is always 1
               ::
               %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("hear out of order ack [{<seq=seq^first=key.u.first>}]")
+                  |.("hear out of order ack {<[seq=seq first=key.u.first]>}")
               :: if the ack we receive is not for the first, save it
               ::  XX if error, start +peeking right away?
               ::
@@ -7831,7 +7843,9 @@
               :: fo-core(cache.state (put:fo-cac cache.state seq error))
             |-  ^+  fo-core
             ?:  error
-              ::  if error start %peek for naxplanation
+              ::  XX  make error=(unit error), and include the naxplanation there
+              ::
+              ::  if error start +peek for naxplanation
               ::
               (fo-peek-naxplanation seq)
             %-  %+  ev-tace  msg.veb.bug.ames-state
@@ -7871,48 +7885,58 @@
           ++  fo-take-nax
             |=  [seq=@ud =spar =gage:mess]
             ^+  fo-core
-            ::  XX same as fo-take-ack refactor
+            =/  first       (pry:fo-mop loads.snd)
+            =/  no-pokes=?  ?=(~ first)
+            =/  miss-nax=?  &(?=(^ first) !=(key.u.first seq))
+            =/  next-msg=@  next.snd  ::  cache
             ::
-            =/  next=@ud  ?~(next=(ram:fo-mop loads.snd) 1 key.u.next)
-            ?:  (gth seq next)
+            =?  fo-core  no-pokes
               %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("no op; future %naxplanation {<[bone=bone seq=seq]>}")
-              fo-core
-            ::  if all pokes have been processed no-op
-            ::
-            ?~  first=(pry:fo-mop loads.snd)
-              %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("no op; no message to %naxplain {<[bone=bone seq=seq]>}")
+                  |.("no message to %naxplain {<[bone=bone seq=seq]>}")
               fo-core
             :: XX  if the ack we receive is not for the first, no-op
-            :: XX  as currently implemented we only hear for the naxplanation of
+            :: XX  as currently implemented we only hear the naxplanation of
             ::     the oldest message
             ::
-            ?.  =(key.u.first seq)
+            =?  fo-core  miss-nax
               %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("no op; missordered %naxplanation {<[bone=bone seq=seq]>}")
+                  |.("missordered %naxplanation {<[bone=bone seq=seq]>}")
               fo-core
+            ::  XX  use .nax.snd to confirm that we are waiting for this %naxp
             ::
-            %-  %+  ev-tace  msg.veb.bug.ames-state
-                |.("take %naxplanation {<[bone=bone seq=seq]>}")
-            ::  ack is for the first, oldest pending-ack set message, remove it
+            ::  naxplanation should be for the first, oldest pending message
             ::
-            =^  *  loads.snd  (del:fo-mop loads.snd seq)
+            =?  loads.snd  &(!no-pokes !miss-nax)  +:(del:fo-mop loads.snd seq)
             ::  increase the send-window so we can send the next message
+            ::  XX
             ::
-            =.  send-window.snd  +(send-window.snd)
+            =?  send-window.snd  (lth send-window.snd send-window-max.snd)
+              +(send-window.snd)
             =.  fo-core          fo-send  ::  send next messages
             ::  XX check path.spar
             ::  XX path.spar will be the full namespace path, peel off before?
-            ::  XX clear timer for the failed %poke
             ::
             ?>  ?=([%message *] gage)
             =+  ;;([%nax =error] +.gage)  ::  XX
             ::  if the bone belongs to a closing flow and we got a
             ::  naxplanation, don't relay ack to the client vane
             ::
-            ?:  closing.state
+            ?:  closing.state  fo-core
+            ?:  miss-nax       fo-core
+            ::
+            ::  if there are no unacked messages in the queue, this naxplanation
+            ::  should be from migrating a nacked flow.
+            ::  XX check what happens if the naxplanation comes in again
+            ::
+            ?.  ?|  !no-pokes  ::  there were unacked messages
+                    &(no-pokes =(seq (dec next-msg)))  :: nacked, migrated msg
+                ==
+              %-  %+  ev-tace  odd.veb.bug.ames-state
+                  |.("weird %naxp {<[bone=bone seq=seq next=next-msg]>}; skip")
               fo-core
+            %-  %+  ev-tace  msg.veb.bug.ames-state
+                |.("take %naxplanation {<[bone=bone seq=seq]>}")
+            ::
             (fo-emit (ev-got-duct bone) %give %done `error)
           ::
           ++  fo-take-cor
@@ -7920,39 +7944,49 @@
             ^+  fo-core
             ::  sanity checks on the state of the flow
             ::
-            ~|  [%fo-take-client-cork gage/gage state]
-            ?>
-            ?&  ?=([%message %gone ~] gage)         ::  corked flow received
-                !pending-ack.rcv                    ::  no pending acks
-                closing.state                       ::  flow is in closing
-                !(~(has by nax.rcv) last-acked.rcv) ::  %cork was not nacked
-            ==
+            ?>  ?&  ?=([%message %gone ~] gage)         ::  corked page received
+                    closing.state                       ::  flow is in closing
+                    !pending-ack.rcv                    ::  no pending acks
+                ==
+            ?:  ?=(%bak dire)
+              ~|  [%fo-take-client-cork gage/gage state]
+              ?>  !(~(has by nax.rcv) last-acked.rcv)   ::  %cork was not nacked
+              fo-core
+            ~|  [%fo-take-server-cork gage/gage state]
+            ?~  first=(pry:fo-mop loads.snd)  !!
+            ?>  ?&  =(1 (wyt:fo-mop loads.snd))         ::  %cork is unacked
+                    ?=([%plea %$ [%flow ~] %cork ~] val.u.first)
+                ==
             fo-core
           ::
           +|  %internals
           ::
           ++  fo-peek-naxplanation
             |=  seq=@ud
-            ::
+            ^+  fo-core
             %-  %+  ev-tace  fin.veb.bug.ames-state
                 |.("peek for %naxplanation {<[bone=bone seq=seq]>}")
             ::
-            =/  =wire   (fo-wire %nax)
-            =/  =space  chum-to-our
-            %+  fo-emit  hen
-            [%pass wire %a meek/[space her (fo-nax-path seq our)]]
+            =/  =wire    (fo-wire %nax)
+            =/  =space   chum-to-our
+            (fo-emit hen [%pass wire %a meek/[space her (fo-nax-path seq our)]])
           ::
           ++  fo-send-ack
             |=  seq=@ud
-              %-  %+  ev-tace  msg.veb.bug.ames-state
-                  =+  ack=?~((~(get by nax.rcv) seq) "ack" "nack")
-                  |.("{ack} message {<[bone=bone seq=seq]>}")
+            ^+  fo-core
+            %-  %+  ev-tace  msg.veb.bug.ames-state
+                =+  ack=?~((~(get by nax.rcv) seq) "ack" "nack")
+                |.("{ack} message {<[bone=bone seq=seq]>}")
             ::  emit (n)ack to unix; see +fo-peek where the (n)ack is produced
             ::
-            =/  =path   (fo-ack-path seq her)
-            =/  =space  chum-to-her
-            (fo-emit [/ames]~ %pass /make-page %a mage/[space her^path])
+            =/  =path  (%*(fo-ack-path fo-core dire.side fo-flip-dire) seq her)
+            (fo-emit [/ames]~ %pass /make-page %a mage/[chum-to-her her^path])
           ::
+          ++  fo-peek-cork
+            %^  fo-emit  hen  %pass
+            ::  for-cor-path will produce a path for the %cork on the other side
+            ::
+            [(fo-wire %cor) %a meek/[chum-to-our her (fo-cor-path seq=0 our)]]
           --
         ::
         +|  %space-helpers
@@ -8771,6 +8805,7 @@
           ++  divide-bones
             |=  bones=(set side)
             ^-  (set bone)
+            ~&  >>  corked-bones/bones
             %-  ~(rep in bones)
             |=  [side corked=(set bone)]
             (~(put in corked) ?:(?=(%for dire) bone (mix 0b1 bone)))
@@ -8796,11 +8831,12 @@
                 cor
               ::  init message-pump with highest sent and acked messages
               ::
-              =.  snd.peer-state.core
+              =?  snd.peer-state.core  (gth next.snd.state 1)
+                ::  if we haven't sent anything, skip entry in .snd map
+                ::
                 =|  pump=message-pump-state
                 %+  ~(put by snd.peer-state.core)  bone
                 =*  next  next.snd.state
-                ?<  =(0 next)
                 ?~  loads.snd.state
                   pump(next next, current next)
                 pump(current (dec next), next (dec next))
@@ -8813,12 +8849,19 @@
               `[| (on-memo:cor bone req)]
             ::  message-sink
             ::
+            ?:  =(0 last-acked.rcv.state)
+              ::  if we haven't acked anything, skip entry in .rcv map
+              ::
+              core
             ::
             =|  sink=message-sink-state
             ::  if the flow is in closing we need to stop +peeking for the %cork
             ::  (in +regress-peek) and remove the flow on our side
             ::
-            ?:  closing.state
+            =?  closing.peer-state.core  closing.state
+              (~(put in closing.peer-state.core) bone)
+            ?:  &(?=(%bak dire) closing.state)
+              ~&  >  %flow-in-closing^bone
               ::  this is going to reset timers for %boon/%naxplanations that
               ::  don't exist (probably fine?)
               ::
@@ -8882,7 +8925,7 @@
               ::  XX  dropping any +peeks for %corks and %naxplanations
               ::      can this makes us end up in a bad state?
               ::
-              =?  for  ?=([[%mesa %flow *] *] hen)
+              =?  for  ?=([[%ames %mesa %flow *] *] hen)
                 (~(del in for) hen)
               for
             ?~  listeners.keen  core
@@ -9211,13 +9254,14 @@
           =/  nam  [[ship.p per-rift] [13 ~] path.p]
           ?~  q
             `[hop=0 %peek nam]
+          ::  XX assert that the serializes path fits in the MTU
           ::  XX if path will be too long, put in [tmp] and use that path
           ::  %-  mess:plot:d
           ::  (en:name:d [[her=~nec rif=40] [boq=0 wan=~] pat=['c~_h' ~]]))
           ::  [bloq=q=3 step=r=12]
           ::  =/  has  (shax u.u.res)
-          ::  =.  tmp.chums.ames-state
-          ::    %+  ~(put by tmchums.ames-state)  has
+          ::  =.  tmp-chums.ames-state
+          ::    %+  ~(put by tmp-chums.ames-state)  has
           ::    [%some-envelope original-path u.u.res])
           ::  //ax/[$ship]//1/temp/[hash]
           ::
@@ -9339,9 +9383,9 @@
       ++  peek-flow
         |=  tyl=(pole knot)
         ^-  (unit (unit cage))
-        ?>  ?=([%flow bone=@ =load rcvr=@ mess=@ ~] tyl)
-        ?:  =(%cork load.tyl)
+        ?:  ?=([%flow bone=@ %cork pat=*] tyl)
           (peek-cork tyl)
+        ?>  ?=([%flow bone=@ =load =dire rcvr=@ mess=@ ~] tyl)
         =/  bone  (slaw %ud bone.tyl)
         =/  rcvr  (slaw %p rcvr.tyl)
         =/  mess  (slaw %ud mess.tyl)
@@ -9351,26 +9395,21 @@
         ?.  ?=([~ ~ %known *] per-sat)
           ~  ::  %alien or missing
         =+  ev-core=(ev-foco:ev u.rcvr +.u.u.per-sat)
-        =/  dire=?(%for %bak)  (fo-infer-dire:fo:ev-core load.tyl)
-        ?:  ?&  (~(has in corked.per.ev-core) u.bone dire)
-                |(?=(%ack-plea load.tyl) ?=(%ack-boon load.tyl))
-            ==
+        =+  fo-core=(fo-abed:fo:ev-core ~[//scry] side=[u.bone dire.tyl])
+        ?:  &(?=(%ack load.tyl) fo-corked:fo-core)
             :: ~&  >>>  corked-flow-dropping/load^corked.per  :: XX remove
             ::  if the flow is corked, block
             ::  XX when are corked bones evicted?
             ::
             ~  ::  XX  [~ ~]
         ::
-        =/  res=(unit page)
-          %.  [load.tyl u.mess]
-          fo-peek:(fo-abed:fo:ev-core ~[//scry] u.bone dire)
-        ?~(res ~ ``[%message !>(u.res)])
+        ?~(res=(fo-peek:fo-core load.tyl u.mess) ~ ``[%message !>(u.res)])
       ::  client/server %mesa %corks, flow-level
       ::
       ++  peek-cork
         |=  tyl=(pole knot)
         ^-  (unit (unit cage))
-        ?>  ?=([%flow bone=@ %cork rcvr=@ =dire ~] tyl)
+        ?>  ?=([%flow bone=@ %cork =dire rcvr=@ ~] tyl)
         =/  bone  (slaw %ud bone.tyl)
         =/  rcvr  (slaw %p rcvr.tyl)
         ?:  |(?=(~ bone) ?=(~ rcvr))
@@ -9452,9 +9491,12 @@
         =+  per-sat=(get-per u.ship)
         ?.  ?=([~ ~ %known *] per-sat)
           ~  ::  %alien or missing
-        =+  ev-core=(ev-foco:ev u.ship +.u.u.per-sat)
-        =+  fo-core=(fo-abed:fo:ev-core ~[//scry] u.bone dire)
         ?>  ?=([@ @ %flow @ @ qery=*] pat.tyl)
+        =+  ev-core=(ev-foco:ev u.ship +.u.u.per-sat)
+        =/  =side  [u.bone dire]
+        =+  fo-core=(fo-abed:fo:ev-core ~[//scry] side)
+        ?.  (~(has by flows.per.fo-core) side)
+          ~
         =,  state:fo-core
         ?+    qery.pat.tyl  ~
             ~          ~ :: XX implement full meta
@@ -9497,7 +9539,7 @@
               $%([%flow *] [%pawn *] [%whey *] [%meta *])
             ?:  =(~ lyc)  ~
             ?+  tyl  ~
-              [%flow bone=@ load rcvr=@ mess=@ ~]         (peek-flow tyl)
+              [%flow bone=@ load dire rcvr=@ *]           (peek-flow tyl)
               [%whey boq=@ pat=*]                         (peek-whey tyl)
               [%meta pat=*]                               (peek-meta tyl)
             ==
@@ -9563,7 +9605,6 @@
             =*  ser  ser.msg
             =/  wid  (met boq ser)
             =/  tob  (met 3 ser)
-            ~&  wid=wid^tob=tob^boq=boq
             ?<  ?=(%0 wid)  :: XX is this true?
             =/  nit=?  |    :: XX refactor
             |-  ^-  (unit (unit cage))
@@ -9713,47 +9754,46 @@
               ``noun+!>(u.chum)
               ::
                 [%lanes ~]
-              ::  this duplicates the routing hack from +send-blob:event-core
-              ::  so long as neither the peer nor the peer's sponsoring galaxy is
+              ::  this duplicates the routing hack from +send-blob:event-core so
+              ::  long as neither the peer nor the peer's sponsoring galaxy is
               ::  us, and the peer has been reached recently:
               ::
-              ::    - no route to the peer, or peer has not been reached recently:
-              ::      send to the peer's sponsoring galaxy
-              ::    - direct route to the peer: use that
-              ::    - indirect route to the peer: send to both that route and the
-              ::      the peer's sponsoring galaxy
+              ::  - no route to the peer, or peer has not been reached recently:
+              ::    send to the peer's sponsoring galaxy
+              ::  - direct route to the peer: use that
+              ::  - indirect route to the peer: send to both that route and the
+              ::    the peer's sponsoring galaxy
               ::
-              :^  ~  ~  %noun
-              !>  ^-  (list lane:pact)  :: XX [sponsor=@p (list lane:pact)]
               ?:  =(our u.who)
                 ~
               =/  sax
-                (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p u.who)])
+                (rof [~ ~] /ames j/`beam`[[our %saxo %da now] /(scot %p u.who)])
               =/  gal=(unit @p)
                 ?.  ?=([~ ~ *] sax)
                   ~
                 `(rear ;;((list ship) q.q.u.u.sax))
               ?~  gal
                 ~
-              :-  `@ux`u.gal  :: XX we shouldn't fake this as as lane
+              :^  ~  ~  %noun
+              !>  ^-  [sponsor=@p (list lane:pact)]
+              :-  u.gal
               ?:  ?=([~ %known *] chum)
                 (get-forward-lanes-mesa our +.u.chum chums.ames-state)
-              ?:  ?=([~ %known *] peer)
-                =/  ev-core  (ev:ames [now eny rof] [//scry]~ ames-state)
-                %+  turn  (get-forward-lanes our +.u.peer peers.ames-state)
-                |=  lane=(each @p address)
-                ?-    -.lane
-                    %&  `@ux`p.lane
+              ?.  ?=([~ %known *] peer)
+                %-  %+  %*(ev-tace ev-core:ev her u.who)  odd.veb.bug.ames-state
+                    |.("alien peek for lanes")
                 ::
-                    %|
-                  :+    %if
-                    ip=`@if`(end [0 32] p.lane)
-                  pt=`@ud`(cut 0 [32 16] p.lane)
-                ==
-              ~&  %alien-lanes
-              ?:  =(our u.gal)
-                ~
-              [`@ux`u.gal]~
+                ?:(=(our u.gal) ~ [`@ux`u.gal]~)
+              %+  turn  (get-forward-lanes our +.u.peer peers.ames-state)
+              |=  lane=(each @p address)
+              ?-    -.lane
+                  %&  `@ux`p.lane
+              ::
+                  %|
+                :+    %if
+                  ip=`@if`(end [0 32] p.lane)
+                pt=`@ud`(cut 0 [32 16] p.lane)
+              ==
             ::
             ==
           ==
@@ -9945,7 +9985,7 @@
     ::
     ++  pe-cork
       |=  =ship
-      =/  =plea  [%$ /cork %cork ~]
+      =/  =plea  [%$ /flow %cork ~]
       =/  ship-state  (pe-find-peer ship)
       ::
       ?:  ?=(%ames -.ship-state)
@@ -10224,12 +10264,25 @@
   =+  am-core=(ames now eny rof)
   ?^  dud
     ~|(%ames-take-dud (mean tang.u.dud))
-    ::
+  ::
   ?:  ?=([?(%turf %mesa %private-keys %public-keys) *] wire)
     ?.  ?&  ?=(?(%turf %public-keys) -.wire)
             ?=(~ unix-duct)
         ==
-      (take:me-core sample)
+      ?~  flow-wire=(ev-validate-wire:ev:me-core wire)
+        (take:me-core sample)
+      ::  if this is a flow wire for a regressed peer, migrate wire & use |ames
+      ::
+      ?:  =(%mesa -:(pe-find-peer her.u.flow-wire))
+        (take:me-core sample)
+      ::  /flow wire for a migrated peer; migrate wire
+      ::
+      %-  (slog leaf+"mesa: migrating wire: {<wire>}" ~)
+      ::
+      %+  take:am-core
+        %^  make-bone-wire  her.u.flow-wire  rift.u.flow-wire
+        (mix 0b1 bone.u.flow-wire)
+      +.sample
     ::  If the unix-duct is not set, we defer applying %public-keys and %turf
     ::  gifts (which can trigger other gifts to be sent to unix) by setting up
     ::  a timer that will request them again
@@ -10286,7 +10339,7 @@
 ::
 ++  load
   |=  state=axle
-  :: =.  peers.state  (~(del by peers.state) ~fyr)
+  :: =.  peers.state   (~(del by peers.state) ~fyr)
   :: =.  chums.state    ~
     :: %-  ~(run by chums.state)
     :: |=  =chum-state

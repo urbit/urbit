@@ -208,7 +208,7 @@
       ~&  >   %migration-test-worked
       ~&  >>  %test-local-migration
       abet:(emit %pass /helm/migrate %arvo %a %mate (slaw %p i.t.way) dry=%.y)
-    %-  (slog %take-ahoy-test u.error)
+    %-  (slog %take-ahoy-test-failed u.error)
     abet
   ?>  ?=([@ ~] way)
   ?~  error
@@ -218,7 +218,7 @@
   ~&  >>>  %ahoy-crash
   ::  XX retry?
   ::
-  %-  (slog %take-ahoy u.error)
+  %-  (slog %take-ahoy-failed u.error)
   abet:(emit %pass `wire`[%helm %ahoy-crash way] %arvo %b %wait (add now.bowl ~s30)) :: XX exp backoff?
 ::
 ++  take-ahoy-crash

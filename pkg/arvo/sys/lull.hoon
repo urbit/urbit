@@ -1610,7 +1610,7 @@
   ::
   ::  +load: payloads bounded in the namespace
   ::
-  +$  load           ?(%plea %boon %ack-plea %ack-boon %nax %cork)
+  +$  load           ?(%poke %ack %naxp %cork)
   ::  +dire: side of the flow (%bak: %boon sender; %for: %plea sender)
   ::
   +$  dire           ?(%bak %for)
@@ -1699,24 +1699,23 @@
           ::  the queue since that proof that they have processed the message
           ::
           ::  (n)acks are considered payload responses, and are part of
-          ::  received pokes, so we track them in last-acked and nax
+          ::  received pokes, so we track them in the nax map
           ::
           ::  both for boons and pleas, and per (seq)message
           ::  the ordered map guarantees that we receive the acks in ordered
           ::  if (dec received-ack=@ud) has not been acked, we drop it
           ::
           ::  payloads can be +peek'ed via a well-formed path with a known structure
-          ::  e.g.  /flow/bone=0/~zod/poke/~nec/for/seq=1
+          ::  e.g.  /flow/bone=0/plea/~zod/seq=1
           ::
           ::  XX option to include messages that won't be bounded into the namespace (two-layer queue)
-          loads=((mop ,@ud mesa-message) lte)  :: all unacked
-          next=_1                              :: =(next +(last-acked))
-          ::  XX how is this calculated?
-          ::  XX inferred by the dumb internal congestion control
-          ::  XX and by vere if we have a smart interpreter?
+          loads=((mop ,@ud mesa-message) lte)         :: all unacked
+          next=_1                                     :: =(next +(last-acked))
           ::
-          send-window-max=_1  :: how many pleas i can send
-          send-window=_1      ::
+          send-window-max=_1                          :: how many pleas to send
+          send-window=_1                              ::
+          ::nax=(map seq=@ud [?(%wait %done) error])    :: last 10 nacked messages
+          ::nax=((mop seq=,@ud [?(%wait %done) error]) lte)
           :: cache=((mop ,@ud ?) lte)  :: out-of-order acks XX TODO
         ==
         ::  incoming %pokes, pending their ack from the vane
@@ -1724,20 +1723,18 @@
         $=  rcv
         $:  %incoming
           ::  acks can be +peek'ed via a well-formed path with a known structure
-          ::    e.g. /flow/bone=0/~nec/ack/~zod/bak/ack=1 (as stored in the producer of the ack)
-          ::                                               (the reader will be using bone=0)
+          ::  (as stored in the producer of the ack)
+          ::    e.g. /flow/bone=0/ack-{plea-boon}/~zod/seq=1
           ::
-          last-acked=@ud  :: for acking old duplicates (only 10)
-                          :: and dropping future acks
-                          :: only +(last-acked) messages are handled
-                          :: duplicate heards, are looked up in pending-ack
-                          ::
-          pending-ack=_`?`%.n  :: there's only one pending ack
-                               :: to guarantee that messages are delivered
-                               :: in order
-                               :: also used to not duplicate sending the ack to the vane
+          last-acked=@ud           :: for acking old duplicates (only 10)
+                                   :: and dropping future acks
+                                   :: only +(last-acked) messages are handled
+                                   ::
+          pending-ack=_`?`%.n      :: there's only one pending ack to guarantee
+                                   :: that messages are delivered in order
+                                   :: and to only send the ack to the vane once
           nax=(map seq=@ud error)  :: messages you have nacked,
-                            ::  for every seq in the set (last-acked - 10 <= ack <= last-acked)
+                                   :: (last-acked - 10 <= ack <= last-acked)
     ==  ==
   ::  atom ops
   ::
@@ -3979,7 +3976,8 @@
     $^  $%  [[%1 ~] who=ship kyz=(list [lyf=life key=ring])]
             [[%2 ~] who=ship ryf=rift kyz=(list [lyf=life key=ring])]
         ==
-    [who=ship lyf=life key=ring sig=(unit oath:pki)]
+    seed
+  +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
   ::
   +$  task                                            ::  in request ->$
     $~  [%vega ~]                                     ::
@@ -4521,7 +4519,7 @@
       $>(%hail task:dill)
       ::  %ames: hear packet
       ::
-      $>(%hear task:ames)
+      $>(?(%hear %heer) task:ames)
       ::  %clay: external edit
       ::
       $>(%into task:clay)
@@ -4533,6 +4531,9 @@
       ::  %clay: load blob store
       ::
       $>(%prep task:clay)
+      ::  %clay: set essential desk
+      ::
+      $>(%esse task:clay)
       ::  %eyre: learn ports of live http servers
       ::
       $>(%live task:eyre)

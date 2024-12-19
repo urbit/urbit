@@ -39,8 +39,8 @@
       client       ~bud
     ==
   =/  poke-plea  [%g /ge/pok [%0 %m noun/0]]
-  =/  poke-path  /flow/0/plea/~bud/1
-  =/  ack-path   /flow/0/ack-plea/~nec/1
+  =/  poke-path  /flow/0/poke/for/~bud/1
+  =/  ack-path   /flow/0/ack/bak/~nec/1
   ::
   =/  ack-wire   /mesa/flow/ack/for/~bud/0/0
   =/  vane-wire  /mesa/flow/van/bak/~nec/0/0
@@ -98,8 +98,8 @@
       client       ~nec
     ==
   =/  poke-boon  [%x ~]  :: %kick
-  =/  boon-path  /flow/0/boon/~nec/1
-  =/  ack-path   /flow/0/ack-boon/~bud/1
+  =/  boon-path  /flow/0/poke/bak/~nec/1
+  =/  ack-path   /flow/0/ack/for/~bud/1
   =/  ack-wire   /mesa/flow/ack/bak/~nec/0/0
   =/  ack-full-path=path  (make-space-path.nec space %a %x '1' %$ ack-path)
   =/  bon-full-path=path
@@ -119,7 +119,7 @@
 ::
   :-  moves-1  |.  :-  %|
   ~?  >  dbug  '~bud makes $pact and sends it'
-  =/  bon-roof  (make-roof /flow/0/boon/~nec/1 message+!>(poke-boon))
+  =/  bon-roof  (make-roof boon-path message+!>(poke-boon))
   =^  moves-2  bud
     %:    ames-check-call:v  bud
         [~1111.1.1 0xdead.beef bon-roof]
@@ -137,7 +137,7 @@
       ==
     ==
   ::
-  ~?  >  dbug  'boon payload is accesible at /flow/0/boon/~nec/1'
+  ~?  >  dbug  'boon payload is accesible at /flow/0/poke/bak/~nec/1'
   :-  moves-2  |.  :-  %|
   =/  moves-3
     %+  expect-eq
