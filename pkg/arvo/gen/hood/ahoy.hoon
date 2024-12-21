@@ -1,7 +1,9 @@
 ::  Ahoy: migrate peer to Directed Messaging
 ::
+::    (by default it runs on dry mode)
+::
 ::::  /hoon/ahoy/hood/gen
   ::
 /?    310
 :-  %say
-|=([^ [who=ship ~] ~] helm-send-ahoy/who)
+|=([^ [who=ship ~] dry=_& ~] helm-send-ahoy/who^dry)

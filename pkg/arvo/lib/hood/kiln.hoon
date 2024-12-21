@@ -607,6 +607,7 @@
     %kiln-unmount            =;(f (f !<(_+<.f vase)) poke-unmount)
     %kiln-unsync             =;(f (f !<(_+<.f vase)) poke-unsync)
     %kiln-rate               =;(f (f !<(_+<.f vase)) poke-rate)
+    %kiln-essential-desk     =;(f (f !<(_+<.f vase)) poke-essential-desk)
   ==
 ::
 ++  poke-approve-merge
@@ -1070,6 +1071,9 @@
   |=  =sole-id:sole
   ^+  abet
   abet(sole-id `sole-id)
+++  poke-essential-desk
+  |=  [=desk ese=?]
+  abet:(emit %pass /kiln/essential-desk %arvo %c %esse desk ese)
 ::  +peer: handle %watch
 ::
 ++  peer

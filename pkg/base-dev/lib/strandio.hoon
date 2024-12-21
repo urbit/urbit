@@ -197,18 +197,23 @@
     `[%done +>.sign-arvo.u.in.tin]
   ==
 ::
-++  take-size
+++  take-whey
   |=  =wire
-  =/  m  (strand ,[spar:ames fragment-size=@ud num-fragments=@ud])
+  =/  m  (strand ,[spar:ames boq=@ud tot=@ud])
   ^-  form:m
   |=  tin=strand-input:strand
   ?+    in.tin  `[%skip ~]
       ~  `[%wait ~]
     ::
-      [~ %sign * %ames %size ^ *]
+      [~ %sign * %ames %sage sage=*]
     ?.  =(wire wire.u.in.tin)
       `[%skip ~]
-    `[%done +>.sign-arvo.u.in.tin]
+    =/  =sage:mess:ames  sage.sign-arvo.u.in.tin
+    :^  ~  %done  spar=p.sage
+    ?~  q.sage
+      [boq=13 tot=0]
+    =<  [boq tot]
+    ;;([%whey boq=@ud tot=@ud] q.sage)
   ==
 ::
 ++  take-message
@@ -219,7 +224,7 @@
   ?+    in.tin  `[%skip ~]
       ~  `[%wait ~]
     ::
-      [~ %sign * %ames %mess-response sage=*]
+      [~ %sign * %ames %sage sage=*]
     ?.  =(wire wire.u.in.tin)
       `[%skip ~]
     `[%done sage.sign-arvo.u.in.tin]
@@ -373,6 +378,24 @@
   ;<  ~  bind:m  (send-wait until)
   (take-wake `until)
 ::
+++  mass
+  =/  m  (strand ,(list quac:dill))
+  ^-  form:m
+  =/  =card:agent:gall  [%pass /mass %arvo %d %mass ~]
+  ;<  ~  bind:m  (send-raw-card card)
+  ;<  quz=(list quac:dill)  bind:m  take-meme
+  (pure:m quz)
+::
+++  take-meme
+  =/  m  (strand ,(list quac:dill))
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+  in.tin  `[%skip ~]
+    ~  `[%wait ~]
+      [~ %sign [%mass ~] %dill %meme *]
+    `[%done p.sign-arvo.u.in.tin]
+  ==
+::
 ++  keen
   |=  [=wire =spar:ames]
   =/  m  (strand ,~)
@@ -397,11 +420,39 @@
   ^-  form:m
   (send-raw-card %pass wire %arvo %a %yawn spar)
 ::
-++  whit
+++  whey
+  |=  [=wire boq=@ud =spar:ames]
+  =/  m  (strand ,~)
+  ^-  form:m
+  ::  encrypted using %chum namespace
+  ::
+  =.  path.spar  [%a %x '1' %$ %whey (scot %ud boq) path.spar]
+  (send-raw-card %pass wire %arvo %a %chum spar)
+::
+++  meta
   |=  [=wire =spar:ames]
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass wire %arvo %a %whit spar)
+  ?+    path.spar  (pure:m ~)
+      $%  [%flow bone=@ =dire:ames ~]
+          [%flow bone=@ =dire:ames %clos ~]
+          [%flow bone=@ =dire:ames %cork ~]
+          [%flow bone=@ =dire:ames %line ~]
+          [%flow bone=@ =dire:ames %lods ~]
+          [%flow bone=@ =dire:ames %next ~]
+          [%flow bone=@ =dire:ames %last ~]
+          [%flow bone=@ =dire:ames %mess mess=@ %whey ~]
+          [%flow bone=@ =dire:ames %mess mess=@ %naxp ~]
+      ==
+    ::  encrypted using %chum namespace
+    ::
+    ~&  >  path.spar
+    ;<  our=@p  bind:m  get-our
+    %-  send-raw-card
+    :*  %pass  wire  %arvo  %a  %chum
+        spar(path [%a %x '1' %$ %meta %ship (scot %p our) path.spar])
+    ==
+  ==
 ::
 ++  sleep
   |=  for=@dr
@@ -643,14 +694,14 @@
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
     ::
-      [~ %sign * %clay %size ^ *]
-    ?.  =(wire wire.u.in.tin)
-      `[%skip ~]
-    `[%done size/!>(+>.sign-arvo.u.in.tin)]
+    ::   [~ %sign * %clay %size ^ *]
+    :: ?.  =(wire wire.u.in.tin)
+    ::   `[%skip ~]
+    :: `[%done size/!>(+>.sign-arvo.u.in.tin)]
     ::
       [~ %sign * %clay %rate *]
     ?.  =(wire wire.u.in.tin)  `[%skip ~]
-    `[%done rate/!>([path.spar fragment num-fragments]:+>.sign-arvo.u.in.tin)]
+    `[%done rate/!>([path.spar boq fag tot]:+>.sign-arvo.u.in.tin)]
     ::
       [~ %sign * ?(%behn %clay) %writ *]
     ?.  =(wire wire.u.in.tin)
@@ -660,7 +711,7 @@
 ::
 ++  rate
   =>  |%
-      +$  rate  [frag=_0 num=_1]
+      +$  rate  [fag=@ud tot=@ud]
       +$  size  [fragment=@ud total=@ud]
       ++  calculate-progress
         |=  [a=@ud b=@ud]
@@ -677,10 +728,9 @@
   =|  needs=(map path total=@ud)
   =|  haves=(map path received=@ud)
   =|  total-frags=@ud
-  =|  fragment-size=@ud
   =|  received=@ud
   =|  =riot:clay
-  =|   =rate
+  =|  acc-rate=rate
   =|  last-path=path
   ;<  ~  bind:m  (send-raw-card %pass /rate %arvo %c %warp ship riff)
   ::
@@ -689,43 +739,50 @@
     (pure:m riot)
   ;<  now-1=@da  bind:m  get-time
   ;<  =cage  bind:m  (take-rate /rate)
-  ?:  ?=(%size p.cage)
-    =+  !<([[* =path] =size] q.cage)
-    =.  fragment-size  fragment.size
-    =?  total-frags  !(~(has by needs) path)
-      ::  XX we get the size multiple times...
-      (add total-frags total.size)
-    $(needs (~(put by needs) [path total.size]))
+  :: ?:  ?=(%size p.cage)
+  ::   =+  !<([[* =path] =size] q.cage)
+  ::   =.  fragment-size  fragment.size
+  ::   =?  total-frags  !(~(has by needs) path)
+  ::     ::  XX we get the size multiple times...
+  ::     (add total-frags total.size)
+  ::   $(needs (~(put by needs) [path total.size]))
   ?:  ?=(%rate p.cage)
     ;<  now-2=@da  bind:m  get-time
     =/  time=@dr  (sub now-2 now-1)
     ::
-    =+  !<([loc=path rat=^rate] q.cage)
+    =+  !<([loc=path rat=rate:ames] q.cage)
+    ?~  fag.rat
+      ::  this is the first rate after a %whey, update needs
+      ::
+      =?  tot.acc-rate  !(~(has by needs) loc)
+        (add tot.acc-rate tot.rat)  ::  save total for each file in the desk
+      $(needs (~(put by needs) [loc tot.rat]))
     ::
+    =*  current-fag  u.fag.rat
     =/  byte=@ud
       %+  div
-        (mul (div (bex fragment-size) (bex 3)) (sub frag.rat frag.rate))
+        (mul (div (bex boq.rat) (bex 3)) (sub current-fag fag.acc-rate))
       (bex 10)
     =>  .(loc `(pole knot)`loc)
     ?>  ?=([van=@t car=@t cas=@t file-path=*] loc)
-    =?  haves  =(frag num):rat
-      (~(put by haves) [`path`file-path.loc frag.rat])
+    =?  haves  =(current-fag tot.acc-rate)
+      (~(put by haves) [`path`file-path.loc current-fag])
     =/  received=@ud
-      %+  add  ?:(=(frag num):rat 0 frag.rat)
+      %+  add  ?:(=(current-fag tot.acc-rate) 0 current-fag)
       (~(rep by haves) |=([[* t=@ud] a=@ud] (add t a)))
     ;<  ~  bind:m
       ?~  sole-id  (flog-text "sole-id missing") :: XX (pure:m ~)
       %^  poke-our  %hood  %rate  !>
-      :*  ::[(abs:si int) dec]                       ::  XX rate per path
-          (calculate-progress received total-frags)  ::  XX global rate
+      :*  ::[(abs:si int) dec]                        ::  XX rate per path
+          (calculate-progress received tot.acc-rate)  ::  XX global rate
           `path`file-path.loc
           [~(wyt by haves) ~(wyt by needs)]
           ::  XX poke only one time with the total? adds extra state to %kiln...
           ::
-          [size=fragment-size total=total-frags]
+          [size=boq.rat total=tot.acc-rate]
           [byte (div time (div ~s1 1.000))]
       ==
-    $(rate rat)
+    $(fag.acc-rate current-fag)
   ?>  ?=(%writ p.cage)
   ::  XX print completion of all files -- move to %hood
   :: ;<  ~  bind:m
@@ -984,6 +1041,6 @@
   ;<  ~      bind:m  (take-kick /awaiting/[tid])
   ?+  p.cage  ~|([%strange-thread-result p.cage file tid] !!)
     %thread-done  (pure:m %& q.cage)
-    %thread-fail  (pure:m %| ;;([term tang] q.q.cage))
+    %thread-fail  (pure:m %| !<([term tang] q.cage))
   ==
 --

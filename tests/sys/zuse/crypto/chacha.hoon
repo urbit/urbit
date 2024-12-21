@@ -49,11 +49,11 @@
   ::
     %+  expect-eq
     !>  [0x8665.eeb2.69b6.87c3.1ca1.1815.f4b8.436a.bd9d.20df.6c08.300e.5d1d.8d32.4c70.4011 0x0]
-    !>  (xchacha:chacha 0x0 0x0)
+    !>  (xchacha:chacha 20 0x0 0x0)
   ::
     =*  key  (rev 3 32 0x9d23.bd41.49cb.979c.cf3c.5c94.dd21.7e98.08cb.0e50.cd0f.6781.2235.eaaf.601d.6232)
     =*  nonce  (rev 3 24 0xc047.5482.66b7.c370.d335.66a2.425c.bf30.d82d.1eaf.5294.109e)
-    =/  x  (xchacha:chacha key nonce)
+    =/  x  (xchacha:chacha 20 key nonce)
     %+  expect-eq
     !>  32^0x352d.69ec.6f39.cd82.470e.21df.54d0.0641.743f.d93a.d1b1.6756.8cde.9465.0909.12a2
     !>  `[@ @ux]`(chacha 20 key.x nonce.x 0 32^0)
