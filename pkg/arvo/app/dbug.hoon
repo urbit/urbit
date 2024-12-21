@@ -975,7 +975,7 @@
           'num-fragments'^(numb num-fragments)
           'num-received'^(numb num-received)
           'next-wake'^(maybe next-wake time)
-          'listeners'^(set-array listeners from-duct)
+          :: 'listeners'^(set-array listeners from-duct)  :: XX TODO
         ::
           ::  XX  refactor (see metric in snd-with-bone)
           :-  'metrics'
@@ -1132,40 +1132,6 @@
           (side-to-pairs side ossuary)
       ==
     ::
-    ++  for-with-side
-      |=  [=ossuary =side corked=? flow-state]
-      ^-  json
-      =+  mop=((on ,@ud mesa-message) lte)
-      %-  pairs
-      :*  'closing'^b+closing
-          'corked'^b+corked
-          'next'^(numb next.snd)
-        ::
-          :-  'unsent-messages'  ::  as byte sizes
-          =|  loads-set=(set mesa-message)
-          :: =.  loads-set
-          ::   %^  (dip:mop (set mesa-message))  loads.snd
-          ::     loads-set
-          ::   |=  [loads=(set mesa-message) seq=@ud req=mesa-message]
-          ::   [~ | (~(put in loads) req)]
-          *json
-          :: (set-array loads-set (cork jam (cork (cury met 3) numb)))
-        ::
-          (side-to-pairs side ossuary)
-      ==
-    ::
-    ++  bak-with-side
-      |=  [=ossuary =side corked=? flow-state]
-      ^-  json
-      %-  pairs
-      :*  'closing'^b+closing
-          'corked'^b+corked
-          'last-acked'^(numb last-acked.rcv)
-          'pending-ack'^b+pending-ack.rcv
-          :: 'nax'^a+(turn (sort ~(tap by nax.rcv) dor) numb)
-          (side-to-pairs side ossuary)
-      ==
-    :: ::
     ++  side-to-pairs
       |=  [=side ossuary]
       ^-  (list [@t json])
@@ -1207,7 +1173,7 @@
       |^  ^-  json
       %-  pairs
       :~  'payload'^(maybe pay path)
-          'listeners'^(set-array for from-duct)
+          ::'listeners'^(set-array for from-duct)
           'packets'^~
       ==
       ::

@@ -626,21 +626,9 @@
     ::
     +|  %statics
     ::
-    ::  $ames-state: state for entire vane
-    ::
-    ::    peers:       states of connections to other ships
-    ::    unix-duct:   handle to give moves to unix
-    ::    life:        our $life; how many times we've rekeyed
-    ::    crypto-core: interface for encryption and signing
-    ::    bug:         debug printing configuration
-    ::    snub:        blocklist for incoming packets
-    ::    cong:        parameters for marking a flow as clogged
-    ::    dead:        dead flow consolidation timer and recork timer, if set
-    ::
-    ::
     +$  ames-state-22
       $+  ames-state-22
-      $:  peers=(map ship ship-state)
+      $:  peers=(map ship ship-state-21)
           =unix=duct
           =life
           =rift
@@ -658,23 +646,62 @@
           =chain
         ==
     ::
-    +$  ames-state-21
-      $:  peers=(map ship ship-state)
-          =unix=duct
-          =life
-          =rift
-          crypto-core=acru:ames
-          =bug
-          snub=[form=?(%allow %deny) ships=(set ship)]
-          cong=[msg=_5 mem=_100.000]
-        ::
-          $=  dead
-          $:  flow=[%flow (unit dead-timer)]
-              cork=[%cork (unit dead-timer)]
-          ==
-        ::
-          =chain
+  +$  ames-state-21
+    $:  peers=(map ship ship-state-21)
+        =unix=duct
+        =life
+        =rift
+        crypto-core=acru:ames
+        =bug
+        snub=[form=?(%allow %deny) ships=(set ship)]
+        cong=[msg=_5 mem=_100.000]
+      ::
+        $=  dead
+        $:  flow=[%flow (unit dead-timer)]
+            cork=[%cork (unit dead-timer)]
         ==
+      ::
+        =chain
+      ==
+  ::
+  +$  ship-state-21
+    $+  ship-state-21
+    $%  [%alien alien-agenda-21]
+        [%known peer-state-21]
+    ==
+  ::
+  +$  alien-agenda-21
+    $+  alien-agenda-21
+    $:  messages=(list [=duct =plea])
+        packets=(set =blob)
+        keens=(jug path duct)
+        chums=(jug path duct)
+    ==
+  ::
+  +$  peer-state-21
+    $:  azimuth-state
+        route=(unit [direct=? =lane])
+        =qos
+        =ossuary
+        snd=(map bone message-pump-state)
+        rcv=(map bone message-sink-state)
+        nax=(set [=bone =message-num])
+        closing=(set bone)
+        corked=(set bone)
+        keens=(map path keen-state-21)
+        =chain
+    ==
+  +$  keen-state-21
+    $+  keen-state-21
+    $:  wan=((mop @ud want) lte)  ::  request packets, sent
+        nex=(list want)           ::  request packets, unsent
+        hav=(list have)           ::  response packets, backward
+        num-fragments=@ud
+        num-received=@ud
+        next-wake=(unit @da)
+        listeners=(set duct)
+        metrics=pump-metrics
+    ==
     ::
     +$  dead-timer       [=duct =wire date=@da]
     +$  azimuth-state    [=symmetric-key =life =rift =public-key sponsor=ship]
@@ -1221,7 +1248,7 @@
           heeds=(set duct)
           closing=(set bone)
           corked=(set bone)
-          keens=(map path keen-state)
+          keens=(map path keen-state-21)
       ==
     ::
     +$  message-pump-state-17
@@ -1433,7 +1460,7 @@
           heeds=(set duct)
           closing=(set bone)
           corked=(set bone)
-          keens=(map path keen-state)
+          keens=(map path keen-state-21)
           =chain
       ==
     ::
@@ -1828,6 +1855,58 @@
           ==
       ==
     ::
+    +|  %state-migrations
+    ::
+    +$  axle-23
+      $:  peers=(map ship ship-state-21)
+          =unix=duct  ::  [//ames/0v0 ~]
+          =life
+          =rift
+          =bug
+          snub=[form=?(%allow %deny) ships=(set ship)]
+          cong=[msg=_5 mem=_100.000]
+          $=  dead
+          $:  flow=[%flow (unit dead-timer)]
+              chum=[%chum (unit dead-timer)]
+              cork=[%cork (unit dead-timer)]
+              rots=[%rots (unit dead-timer)]
+          ==
+          ::
+          =server=chain
+          priv=private-key
+          chums=(map ship chum-state-23)
+          core=_`?(%ames %mesa)`%ames
+      ==
+    ::
+    +$  chum-state-23
+      $+  chum-state-23
+      $%  [%alien ovni-state-23]
+          [%known fren-state-23]
+      ==
+    ::
+    +$  ovni-state-23
+      $+  ovni-state-23
+      $:  pokes=(list [=duct message=mesa-message])
+          peeks=(jug path duct)
+          chums=(jug path duct)
+      ==
+    ::
+    +$  fren-state-23
+      $:  azimuth-state
+          lane=(unit lane:pact)
+          =qos
+          corked=(set side)
+          =ossuary
+          flows=(map side flow-state)
+          pit=(map path request-state-23)
+          =client=chain
+      ==
+    ::
+    +$  request-state-23
+      $:  for=(set duct)
+          pay=(unit path)
+          ps=(unit pact-state)
+      ==
     --
 ::  external vane interface
 ::
@@ -1871,7 +1950,8 @@
             [%20 ames-state-20]
             [%21 ames-state-21]
             [%22 ames-state-22]
-            [%23 axle]
+            [%23 axle-23]
+            [%24 axle]
         ==
     ::
     ::
@@ -1946,7 +2026,7 @@
       ~>  %slog.0^leaf/"ames: metamorphosis on %take"
       [:(weld molt-moves queu-moves take-moves) adult-gate]
     ::
-    ++  stay  [%23 larva/ames-state]
+    ++  stay  [%24 larva/ames-state]
     ++  scry  scry:adult-core
     ++  load
       |=  $=  old
@@ -2085,6 +2165,10 @@
               ==  ==
               $:  %23                            :: Directed Messaging
                   ?(%adult %larva)               ::   (removes queued-events)
+                  state=axle-23
+              ==
+              $:  %24                            :: groups listeners by gift
+                  ?(%adult %larva)
                   state=axle
           ==  ==
       |^  ?-  old
@@ -2344,6 +2428,11 @@
         larval-gate
       ::
           [%23 *]
+        =.  cached-state  `[%23 state.old]
+        ~>  %slog.1^leaf/"ames: larva %23 reload"
+        larval-gate
+      ::
+          [%24 *]
         ?-  +<.old
           %larva  larval-gate
           %adult  (load:adult-core state.old)
@@ -2422,7 +2511,7 @@
       |^  ^+  [moz larval-core]
       ?~  cached-state  [~ larval-core]
       =*  old  u.cached-state
-      ?:  ?=(%23 -.old)
+      ?:  ?=(%24 -.old)
         ::  no state migrations left; update state, clear cache, and exit
         ::
         [(flop moz) larval-core(ames-state.adult-gate +.old, cached-state ~)]
@@ -2489,14 +2578,16 @@
           ^-  (list move)
           [[/ames]~ %pass /routes %b %wait `@da`(add now ~m2)]^moz
         ==
-      ?>  ?=(%22 -.old)
-      ~>  %slog.0^leaf/"ames: init |mesa retry timer"
-      %_  $
-        cached-state  `23+(state-22-to-23 +.old)
-      ::
-          moz
-        [[/ames]~ %pass /mesa/retry %b %wait `@da`(add now ~m2)]^moz
-      ==
+      ?:  ?=(%22 -.old)
+        ~>  %slog.0^leaf/"ames: init |mesa retry timer"
+        %_  $
+          cached-state  `23+(state-22-to-23 +.old)
+        ::
+            moz
+          [[/ames]~ %pass /mesa/retry %b %wait `@da`(add now ~m2)]^moz
+        ==
+      ?>  ?=(%23 -.old)
+      $(cached-state `24+(state-23-to-24 +.old))
       ::
       ++  our-beam  `beam`[[our %rift %da now] /(scot %p our)]
       ++  state-4-to-5
@@ -2709,7 +2800,7 @@
           ::
           ++  keen-state-16-to-17
             |=  keen-state=keen-state-16
-            ^-  ^keen-state
+            ^-  keen-state-21
             %=  keen-state
               metrics  [rto rtt rttvar ssthresh cwnd counter]:metrics.keen-state
             ==
@@ -2796,7 +2887,7 @@
             peers
           %-  ~(run by peers.old)
           |=  s=ship-state-20
-          ^-  ship-state
+          ^-  ship-state-21
           ?:  ?=(%alien -.s)
             [%alien messages.s packets.s keens.s chums.s]
           :*  -.s  -.+.s  route.s  qos.s  ossuary.s  snd.s  rcv.s
@@ -2817,7 +2908,7 @@
       ++  state-22-to-23
         |=  old=ames-state-22
         ~>  %slog.0^leaf/"ames: migrating from state %22 to %23"
-        ^-  axle
+        ^-  axle-23
         ::  removes crypto cores and adds the private key to the state
         ::
         =,  old
@@ -2834,6 +2925,46 @@
             %ames
         ==
       ::
+      ++  state-23-to-24
+        |=  old=axle-23
+        ^-  axle
+        %=    old
+            peers
+          %-  ~(run by peers.old)
+          |=  s=ship-state-21
+          ^-  ship-state
+          ?:  ?=(%alien -.s)
+            s(chums [chums.s rates=~])
+          %=  s
+              keens
+            %-  ~(run by keens.s)
+            |=  keen=keen-state-21
+            ^-  keen-state
+            =/  listeners=(jug duct ?(%tune %rate))
+              %-  ~(rep in listeners.keen)
+              |=  [=duct l=(jug duct ?(%tune %rate))]
+              (~(put ju l) duct %tune)
+            keen(listeners listeners)
+          ==
+        ::
+            chums
+          %-  ~(run by chums.old)
+          |=  c=chum-state-23
+          ^-  chum-state
+          ?.  ?=(%known -.c)
+            c(chums [chums.c rates=~])
+          %=  c
+              pit
+            %-  ~(run by pit.c)
+            |=  req=request-state-23
+            ^-  request-state
+            =/  for=(jug duct ?(%sage %rate))
+              %-  ~(rep in for.req)
+              |=  [=duct l=(jug duct ?(%sage %rate))]
+              (~(put ju l) duct %sage)
+            req(for for)
+          ==
+        ==
       --
     ::
     --
@@ -2885,6 +3016,7 @@
                 %chum  (on-chum:event-core +.task)
                 %yawn  (on-cancel-scry:event-core | +.task)
                 %wham  (on-cancel-scry:event-core & +.task)
+                %whey  (%*(. on-keen:event-core fist &) ~ +<.task)
               ::
                 %mate  (on-mate:event-core +.task)
               ==
@@ -3839,13 +3971,16 @@
         +|  %fine-entry-points
         ::
         ++  on-keen
+          =|  fist=_| :: if fist=&, we yawn after hearing the first fragment
           |=  [sec=(unit [idx=@ key=@]) spar]
           ^+  event-core
           =+  ~:(spit path)  ::  assert length
           =/  ship-state  (~(get by peers.ames-state) ship)
           ?:  ?=([~ %known *] ship-state)
             ?~  sec
-              abet:(on-keen:(abed-peer:pe ship +.u.ship-state) path duct)
+              =<  abet
+              %.  [path duct]
+              %*(. on-keen:(abed-peer:pe ship +.u.ship-state) fist fist)
             =.  chain.u.ship-state
               (put:on:chain chain.u.ship-state [idx key /]:u.sec)
             =.  peers.ames-state
@@ -4287,14 +4422,18 @@
             fi-abet:(fi-rcv:(abed:fi path) peep meow lane)
           ::
           ++  on-keen
+            =|  fist=?
             |=  [=path =^duct]
             ^+  peer-core
+            =+  fi-core=(abed:fi path)
+            =<  fi-abet
             ?:  (~(has by keens) path)
               ::  TODO use fi-trace
               ~>  %slog.0^leaf/"fine: dupe {(spud path)}"
-              fi-abet:(fi-sub:(abed:fi path) duct)
-            =.  keens  (~(put by keens) path *keen-state)
-            fi-abet:(fi-start:(abed:fi path) duct)
+              ?.  fist
+                (fi-sub:fi-core duct)  :: subscribe to %tune gifts
+              (fi-rat:fi-core duct)    :: subscribe to %rate gifts
+            (fi-start:fi-core(keens (~(put by keens) path *keen-state)) duct)
           ::
           ::  +on-cork-flow: mark .bone as closing
           ::
@@ -4658,9 +4797,11 @@
                 ~&  skip-weird-path/path  core
               =;  [pax=^path =space]
                 =.  pax  (make-space-path space pax)
-                %-  ~(rep in listeners.keen)
-                |=  [=^duct core=_core]
-                (co-make-peek:core(hen duct) space her pax)
+                %-  ~(rep by listeners.keen)
+                |=  [[=^duct gifts=(set ?(%tune %rate))] core=_core]
+                =.  core  (co-make-peek:core(hen duct) space her pax)
+                ::  XX  call the rate task
+                core
               ::  XX unitize this and no-op if failure to convert
               ::
               ?+    pat.path  [pat.path [%publ life.per]]
@@ -5916,7 +6057,15 @@
             ::
             ++  fi-give-tune
               |=  dat=(unit roar)
-              |=([=^duct =_fine] (fi-emit:fine duct %give %tune [her path] dat))
+              |=  [[=^duct gifts=(set ?(%tune %rate))] =_fine]
+              ::  XX give rate if present
+              (fi-emit:fine duct %give %tune her^path dat)
+            ::
+            ++  fi-give-rate
+              |=  =rate
+              |=  [[=^duct gifts=(set ?(%tune %rate))] =_fine]
+              ::  XX give rate if present
+              (fi-emit:fine duct %give %rate her^path rate)
             ::
             +|  %entry-points
             ::
@@ -5981,7 +6130,12 @@
               (fi-done [sig dat]:fi-sift-full)
             ::
             ++  fi-sub
-              |=(=^duct fine(listeners.keen (~(put in listeners.keen) duct)))
+              |=  =^duct
+              fine(listeners.keen (~(put ju listeners.keen) duct %tune))
+            ::
+            ++  fi-rat
+              |=  =^duct
+              fine(listeners.keen (~(put ju listeners.keen) duct %rate))
             ::  scry is autocancelled in +abet if no more listeners
             ::
             ++  fi-unsub
@@ -5989,12 +6143,17 @@
               ^+  fine
               ?:  all
                 %-  (fi-trace fin.veb |.("unsub all {<fi-full-path>}"))
-                =.  fine  (~(rep in listeners.keen) (fi-give-tune ~))
+                =.  fine  (~(rep by listeners.keen) (fi-give-tune ~))
+                :: =.  fine  (~(rep by listeners.keen) (fi-give-rate ~))  :: XX
                 fine(listeners.keen ~)
               ::
-              ?:  (~(has in listeners.keen) duct)
+              ?:  ?|  (~(has ju listeners.keen) duct %tune)
+                      (~(has ju listeners.keen) duct %rate)
+                  ==
                 %-  (fi-trace fin.veb |.("unsub {<fi-full-path>} on {<duct>}"))
-                fine(listeners.keen (~(del in listeners.keen) duct))
+                =.  fine
+                  fine(listeners.keen (~(del ju listeners.keen) duct %rate))
+                fine(listeners.keen (~(del ju listeners.keen) duct %tune))
               ::
               %.  fine
               (fi-trace fin.veb |.("unknown {<fi-full-path>} {<duct>}"))
@@ -6038,7 +6197,15 @@
                 [[her [life.peer-state sig]] ~ ~]
               ::
               %-  (fi-trace fin.veb |.("done {(spud ful)}"))
-              (~(rep in listeners.keen) (fi-give-tune roar))
+              %-  ~(rep in listeners.keen)
+              |=  [[=^duct gifts=(set ?(%tune %rate))] =_fine]
+              %-  ~(rep in gifts)
+              |=  [gift=?(%tune %rate) f=_fine]
+              %.  [duct^gifts fine]
+              ?-  gift
+                %tune  (fi-give-tune roar)
+                %rate  (fi-give-rate boq=13 [`num-received num-fragments]:keen)
+              ==
             ::
             ++  fi-first-rcv
               |=  =meow
@@ -6064,6 +6231,18 @@
               =.      tries.want   +(tries.want)
               =.        wan.keen   (put:fi-mop wan.keen [fra .]:want)
               =.            fine   (fi-send `@ux`hoot.want)
+              =?  fine  =(0 (mod num-received.keen 100)) :: rate every 100 frags
+              ::  XX come up with a better rate
+              ::
+              :: =/  modo  (div num-fragments 10)  :: rate for 10% of total
+              :: =?  fine  ?|  =(0 (mod num-received modo))
+              ::               :: rate every 100 frags if close to finish
+              ::               ::
+              ::               ?&  =(0 (mod num-received 100))
+              ::                   (gth num-received (sub num-fragments modo))
+              ::           ==  ==
+                %-  ~(rep in listeners.keen)
+                (fi-give-rate boq=13 [`num-received num-fragments]:keen)
               $(inx +(inx))
             ::
             ++  fi-sift-full
@@ -7158,7 +7337,7 @@
             ~|  gage-res-failed/`@ux`res
             =+  ;;(=gage:mess (cue res))
             ?>  ?=(^ gage)
-            (ev-give-response for.u.ms path.spar gage)
+            (ev-give-sage for.u.ms path.spar gage)
           ::
           ++  hear-poke
             |=  [dud=(unit goof) =ack=spar =pok=spar =gage:mess]
@@ -7301,14 +7480,38 @@
         ::
         +|  %peek-subscribers
         ::
-        ++  ev-give-response
-          |=  [listeners=(set duct) =path =gage:mess]
+        ++  ev-give-sage
+          |=  [listeners=(jug duct ?(%sage %rate)) =path =gage:mess]
           ^+  ev-core
-          %-  ~(rep in listeners)
-          |=  [hen=duct c=_ev-core]
-          %.  (ev-emit:c hen %give %sage her^path gage)
+          %-  ~(rep by listeners)
+          |=  [[hen=duct gifts=(set ?(%sage %rate))] core=_ev-core]
+          ?.  (~(has in gifts) %sage)
+            %-  %+  ev-tace  |(odd.veb.bug.ames-state fin.veb.bug.ames-state)
+                |.("no %sage={(spud path)}; no-op")
+            core
+          %.  (ev-emit:core hen %give %sage her^path gage)
           %+  ev-tace  fin.veb.bug.ames-state
-          |.("give page={(spud path)}")
+          |.("give %sage={(spud path)}")
+        ::
+        ++  ev-give-rate
+          |=  [spar =rate]
+          ^+  ev-core
+          ?~  ms=(~(get by pit.per) path)
+            %-  %+  ev-tace  |(odd.veb.bug.ames-state fin.veb.bug.ames-state)
+                |.("weird %rate; missing path={(spud path)}}")
+            ev-core
+          %-  ~(rep by for.u.ms)
+          |=  [[hen=duct gifts=(set ?(%sage %rate))] core=_ev-core]
+          :: ?.  (~(has in sizes.u.rs) path)
+          ::   [s c]
+          :: =?  s  =(0 fags)
+          ::   s(sizes (~(del in sizes.s) path))
+          :: =?  c  =(0 fags)
+          ::   (ev-emit:c hen %give %size ship^path fag-size=13 total)
+          ?.  (~(has in gifts) %rate)  core
+          %.  (ev-emit:core hen %give %rate ship^path rate)
+          %+  ev-tace  fin.veb.bug.ames-state
+          |.("give %rate={(spud path)}")
         ::
         ++  ev-cancel-peek
           |=  [all=? =path]  :: XX namespace?
@@ -7316,15 +7519,36 @@
           %-  %+  ev-tace  fin.veb.bug.ames-state
               |.("cancel peek path={(spud path)}}")
           ?~  ms=(~(get by pit.per) path)
+            %-  %+  ev-tace  |(odd.veb.bug.ames-state fin.veb.bug.ames-state)
+                |.("missing cancel peek path={(spud path)}}")
             ev-core
           ?:  all
             =.  pit.per  (~(del by pit.per) path)
-            (ev-give-response for.u.ms path ~)
-          =.  for.u.ms  (~(del in for.u.ms) hen)
+            ::  XX give max %rate?
+            (ev-give-sage for.u.ms path ~)
+          =.  for.u.ms  (~(del ju for.u.ms) hen %sage)
+          =.  for.u.ms  (~(del ju for.u.ms) hen %rate)
           =.  pit.per
             ?~  for.u.ms
               (~(del by pit.per) path)
             (~(put by pit.per) path u.ms)
+          ev-core
+        ::
+        ++  ev-add-rate
+          |=  [=path freq=@ud]
+          ^+  ev-core
+          ::  path should be the one given by the first bunted %rate after
+          ::  recording interest in this path
+          ::
+          ?^  ms=(~(get by pit.per) path)
+            =.  pit.per
+              (~(put by pit.per) path u.ms(for (~(put ju for.u.ms) hen %rate)))
+            ev-core
+          ::  XX crash instead?
+          ::  interest for a %sage needs to exist before %rate
+          ::
+          %-  %+  ev-tace  |(odd.veb.bug.ames-state fin.veb.bug.ames-state)
+              |.("missing path for rate path={(spud path)}}")
           ev-core
         ::
         +|  %internals
@@ -8919,15 +9143,16 @@
             :: ?~  for.req        core  :: XX weird; log?  TMI
             =|  keen=keen-state
             =.  listeners.keen
-              %-  ~(rep in for.req)
-              |=  [hen=duct for=_for.req]
+              %-  ~(rep by for.req)
+              |=  [[hen=duct gifts=(set ?(%sage %rate))] for=_listeners.keen]
               ::  XX  inspect the duct to find %mesa wires?
               ::  XX  dropping any +peeks for %corks and %naxplanations
               ::      can this makes us end up in a bad state?
               ::
-              =?  for  ?=([[%ames %mesa %flow *] *] hen)
-                (~(del in for) hen)
-              for
+              ?:  ?=([[%ames %mesa %flow *] *] hen)
+                for
+              ::  XX  add %rate as well
+              (~(put ju for) hen %tune)
             ?~  listeners.keen  core
             ::  after filtering, all these should be external listeners
             ::
@@ -9218,35 +9443,40 @@
           [~ `@ux`(^^sein:title rof /ames our now ship)]
         ::
         ++  co-make-mess
-          |=  [ack=spar payload=(unit path)]
+          |=  [remote=spar payload=(unit path)]
           ^+  co-core
-          =/  her  (~(get by chums.ames-state) ship.ack)
+          =/  her  (~(get by chums.ames-state) ship.remote)
           ?>  ?=([~ %known *] her)
           =/  her=fren-state  +.u.her
-          ?^  res=(~(get by pit.her) path.ack)
+          ?^  res=(~(get by pit.her) path.remote)
             ?>  =(payload pay.u.res)  ::  prevent overriding payload
             =.  pit.her
-              %+  ~(put by pit.her)  path.ack
-              u.res(for (~(put in for.u.res) hen))
+              %+  ~(put by pit.her)  path.remote
+              u.res(for (~(put ju for.u.res) hen %sage))
             %_  co-core
                 chums.ames-state
-              (~(put by chums.ames-state) ship.ack known/her)
+              (~(put by chums.ames-state) ship.remote known/her)
             ==
           ::
-          ?~  pact=(co-make-pact ack payload rift.her)
-            ~|  [ack=ack payload=payload rift=rift.her]
+          ?~  pact=(co-make-pact remote payload rift.her)
+            ~|  [remote=remote payload=payload rift=rift.her]
             !!
           =|  new=request-state
-          =.  for.new   (~(put in for.new) hen)
+          =.  for.new   (~(put ju for.new) hen %sage)
           =.  pay.new   payload
           =.  chums.ames-state
-            %+  ~(put by chums.ames-state)  ship.ack
-            known/her(pit (~(put by pit.her) path.ack new))
+            %+  ~(put by chums.ames-state)  ship.remote
+            known/her(pit (~(put by pit.her) path.remote new))
           ::
           ?:  =(~ unix-duct)
             %.  co-core
             (slog leaf+"ames: unix-duct pending; will retry %push" ~)
-          (co-emit (push-pact u.pact lane.her))
+          %-  co-emil
+          :~  (push-pact u.pact lane.her)
+              :: XX bunted rate: subscribers can ignore this or use the provided
+              ::  path in the remote to subscribe to %rates
+              [hen %give %rate remote *rate]
+          ==
         ::
         ++  co-make-pact
           |=  [p=spar q=(unit path) =per=rift]
@@ -9946,7 +10176,7 @@
     ++  call
       |=  [dud=(unit goof) =task]
       ?+  -.task  !!
-      ::  common tasks
+      ::  XX common tasks; pass .dud
       ::
         %load  `vane-gate(ames-state ames-state(core +.task))
         %plea  (pe-plea +.task)
@@ -9955,6 +10185,9 @@
         %chum  (pe-chum +.task)
         %yawn  (pe-cancel all=| +.task)
         %wham  (pe-cancel all=& +.task)
+        %rate  (pe-rate dud +.task)
+        %prog  (pe-prog dud +.task)
+        %whey  (pe-whey dud +.task)
       ::  |mesa only tasks
       ::
         %heer  (pe-heer dud +.task)
@@ -10096,6 +10329,13 @@
       ::
       `vane-gate
     ::
+    ++  pe-whey
+      |=  [dud=(unit goof) spar:^ames boq=@ud]
+      =/  ship-state  (pe-find-peer ship)
+      ?:  ?=(%mesa -.ship-state)
+        (pe-chum ship %a %x '1' %$ %whey (scot %ud boq) path)
+      (call:am-core hen dud %soft %whey ship^path boq)
+    ::
     +|  %mesa-tasks
     ::
     ++  pe-heer
@@ -10203,6 +10443,32 @@
         ==
       moves^vane-gate
     ::
+    ++  pe-rate
+      |=  [dud=(unit goof) =spar =rate]
+      ::
+      =/  ship-state  (pe-find-peer ship.spar)
+      ?>  ?=(%mesa -.ship-state)
+      =^  moves  ames-state
+        ?.  ?=([~ %known *] +.ship-state)
+          !!  :: no %aliens allowed
+        =<  ev-abet
+        (ev-give-rate:(ev-foco:ev-core ship.spar +.u.ship-state) spar rate)
+      moves^vane-gate
+    ::  register interest in the %rate of the peek for this path
+    ::
+    ++  pe-prog
+      |=  [dud=(unit goof) spar freq=@ud]
+      ::  XX also for |ames; move to common tasks
+      ::
+      =/  ship-state  (pe-find-peer ship)
+      ?:  ?=(%ames -.ship-state)  !!
+      =^  moves  ames-state
+        ?.  ?=([~ %known *] +.ship-state)
+          !!  :: no %aliens allowed
+        =<  ev-abet
+        (ev-add-rate:(ev-foco:ev-core ship +.u.ship-state) path freq)
+      moves^vane-gate
+    ::
     --
 ::
 |%
@@ -10233,8 +10499,8 @@
     (~(pe-hear pe-core hen) dud +.task)
     ::  %mesa-only tasks
     ::
-      ?(%heer %mess)
-    (~(call pe-core hen) dud task)
+      ?(%heer %mess %rate)
+    (~(call pe-core hen) dud task)  :: XX  (call:me-core sample)
     ::  XX can we call the wrong core? still check if ship has migrated?
     ::
       ?(%meek %moke %mage %back)
@@ -10245,7 +10511,7 @@
     (call:me-core sample)
     ::  common tasks
     ::
-      ?(%plea %cork %keen %chum %yawn %wham %load)
+      ?(%plea %cork %keen %chum %yawn %wham %load %rate %prog %whey)
     (~(call pe-core hen) dud task)
     ::  core-dependent tasks
     ::
@@ -10334,7 +10600,7 @@
   ==
 ::  +stay: extract state before reload
 ::
-++  stay  [%23 adult/ames-state]
+++  stay  [%24 adult/ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load

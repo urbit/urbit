@@ -199,7 +199,7 @@
 ::
 ++  take-whey
   |=  =wire
-  =/  m  (strand ,[spar:ames fragment-size=@ud num-fragments=@ud])
+  =/  m  (strand ,[spar:ames boq=@ud tot=@ud])
   ^-  form:m
   |=  tin=strand-input:strand
   ?+    in.tin  `[%skip ~]
@@ -685,6 +685,115 @@
   =/  m  (strand ,riot:clay)
   ;<  ~  bind:m  (send-raw-card %pass /warp %arvo %c %warp ship riff)
   (take-writ /warp)
+::
+++  take-rate
+  |=  =wire
+  =/  m  (strand ,cage)
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+  in.tin  `[%skip ~]
+      ~  `[%wait ~]
+    ::
+    ::   [~ %sign * %clay %size ^ *]
+    :: ?.  =(wire wire.u.in.tin)
+    ::   `[%skip ~]
+    :: `[%done size/!>(+>.sign-arvo.u.in.tin)]
+    ::
+      [~ %sign * %clay %rate *]
+    ?.  =(wire wire.u.in.tin)  `[%skip ~]
+    `[%done rate/!>([path.spar boq fag tot]:+>.sign-arvo.u.in.tin)]
+    ::
+      [~ %sign * ?(%behn %clay) %writ *]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done writ/!>(+>.sign-arvo.u.in.tin)]
+  ==
+::
+++  rate
+  =>  |%
+      +$  rate  [fag=@ud tot=@ud]
+      +$  size  [fragment=@ud total=@ud]
+      ++  calculate-progress
+        |=  [a=@ud b=@ud]
+        ^-  [int=@ud dec=@ud]
+        =/  progress=@rs
+          (mul:rs (div:rs (sun:rs a) (sun:rs b)) (sun:rs 100))
+        =+  int=(need (toi:rs progress))
+        =/  dec=@ud  =,  rs
+          (abs:si (need (toi (mul .100 (sub progress (san int))))))
+        [(abs:si int) dec]
+      --
+  |=  [=ship sole-id=(unit [who=@p ses=@ta]) =riff:clay]
+  =/  m  (strand ,riot:clay)
+  =|  needs=(map path total=@ud)
+  =|  haves=(map path received=@ud)
+  =|  total-frags=@ud
+  =|  received=@ud
+  =|  =riot:clay
+  =|  acc-rate=rate
+  =|  last-path=path
+  ;<  ~  bind:m  (send-raw-card %pass /rate %arvo %c %warp ship riff)
+  ::
+  |-  ^-  form:m
+  ?:  ?=(^ riot)
+    (pure:m riot)
+  ;<  now-1=@da  bind:m  get-time
+  ;<  =cage  bind:m  (take-rate /rate)
+  :: ?:  ?=(%size p.cage)
+  ::   =+  !<([[* =path] =size] q.cage)
+  ::   =.  fragment-size  fragment.size
+  ::   =?  total-frags  !(~(has by needs) path)
+  ::     ::  XX we get the size multiple times...
+  ::     (add total-frags total.size)
+  ::   $(needs (~(put by needs) [path total.size]))
+  ?:  ?=(%rate p.cage)
+    ;<  now-2=@da  bind:m  get-time
+    =/  time=@dr  (sub now-2 now-1)
+    ::
+    =+  !<([loc=path rat=rate:ames] q.cage)
+    ?~  fag.rat
+      ::  this is the first rate after a %whey, update needs
+      ::
+      =?  tot.acc-rate  !(~(has by needs) loc)
+        (add tot.acc-rate tot.rat)  ::  save total for each file in the desk
+      $(needs (~(put by needs) [loc tot.rat]))
+    ::
+    =*  current-fag  u.fag.rat
+    =/  byte=@ud
+      %+  div
+        (mul (div (bex boq.rat) (bex 3)) (sub current-fag fag.acc-rate))
+      (bex 10)
+    =>  .(loc `(pole knot)`loc)
+    ?>  ?=([van=@t car=@t cas=@t file-path=*] loc)
+    =?  haves  =(current-fag tot.acc-rate)
+      (~(put by haves) [`path`file-path.loc current-fag])
+    =/  received=@ud
+      %+  add  ?:(=(current-fag tot.acc-rate) 0 current-fag)
+      (~(rep by haves) |=([[* t=@ud] a=@ud] (add t a)))
+    ;<  ~  bind:m
+      ?~  sole-id  (flog-text "sole-id missing") :: XX (pure:m ~)
+      %^  poke-our  %hood  %rate  !>
+      :*  ::[(abs:si int) dec]                        ::  XX rate per path
+          (calculate-progress received tot.acc-rate)  ::  XX global rate
+          `path`file-path.loc
+          [~(wyt by haves) ~(wyt by needs)]
+          ::  XX poke only one time with the total? adds extra state to %kiln...
+          ::
+          [size=boq.rat total=tot.acc-rate]
+          [byte (div time (div ~s1 1.000))]
+      ==
+    $(fag.acc-rate current-fag)
+  ?>  ?=(%writ p.cage)
+  ::  XX print completion of all files -- move to %hood
+  :: ;<  ~  bind:m
+  ::   ?~  sole-id  (flog-text "")
+  ::   =/  =sole-effect:sole
+  ::     klr+~[[[`%un ~ `%g] "file: {<file-path>} [100%]"]]
+  ::   (poke-our %hood rate/!>(sole-effect))
+  ;<  ~  bind:m
+    (poke-our %hood rate/!>([0^0 / [~(wyt in haves) ~(wyt in needs)] 0^0 0^0]))
+  =+  !<(maybe=riot:clay q.cage)
+  $(riot maybe)
 ::
 ++  read-file
   |=  [[=ship =desk =case] =spur]
