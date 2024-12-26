@@ -3390,7 +3390,7 @@
     ==
   ::
   ++  take-whey
-    |=  [kind=@ta inx=@ud =spar:ames =gage:mess:ames]
+    |=  [kind=@ta inx=@ud =spar:ames =rate:ames]
     ^+  ..take-whey
     ~|  [%take-whey kind]
     ?>  ?=(%keen-whey kind)
@@ -3398,14 +3398,10 @@
     ?>  ?=(^ ref)
     =/  sat=update-state  (~(got by bom.u.ref) inx)
     =/  bus  ?>(?=([~ ^] busy.sat) u.busy.sat)
-    =/  =rate:ames
-      ?~  gage  [boq=13 ~ tot=0]
-      =<  [boq ~ tot]
-      ;;([%whey boq=@ud tot=@ud] gage)
     %-  emil
-    :~  [duct.sat %give %rate spar rate]
+    :~  [duct.sat %give %rate spar(path path.bus) rate]
         ::  XX revisit this
-        [hen %pass (request-wire %keen-whey her syd inx) %a %yawn her path.bus]
+        [hen %pass (request-wire %keen-whey her syd inx) %a %yawn her path.spar]
     ==
   ::
   ::  Called when a foreign ship answers one of our requests.
@@ -6411,9 +6407,14 @@
           ::  no-op, if %tune after %yawn, restart downloads happen in %backfill
           ::
           `ruf
-        ?:  ?=(%rate +<.hin)  !!  :: XX given by the |fine core on first frag?
-        ?>  ?=(%sage +<.hin)
-        abet:(take-whey:den -.tea index sage.hin)
+        =/  =spar:ames  ?:(?=(%rate +<.hin) spar.hin p.sage.hin)
+        =/  =rate:ames
+          ?:  ?=(%rate +<.hin)
+            [boq fag tot]:hin
+          ?~  q.sage.hin  [boq=13 ~ tot=0]
+          =<  [boq ~ tot]
+          ;;([%whey boq=@ud tot=@ud] q.sage.hin)
+        abet:(take-whey:den -.tea index spar rate)
       [mos ..^$]
     ==
   ::
