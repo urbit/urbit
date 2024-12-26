@@ -6076,6 +6076,10 @@
               =/  req=hoot  (fi-etch-wail fra)
               =/     =want  [fra req last=now tries=1 skips=0]
               =.  wan.keen  (put:fi-mop ~ [fra .]:want)
+              =.  fine
+                :: XX bunted rate: subscribers can ignore this or use the path
+                ::  path in remote to subscribe to %rates
+                (~(rep in listeners.keen) (fi-give-rate *rate))
               (fi-send `@ux`req)
             ::
             ++  fi-rcv
@@ -6227,9 +6231,9 @@
               =.      tries.want   +(tries.want)
               =.        wan.keen   (put:fi-mop wan.keen [fra .]:want)
               =.            fine   (fi-send `@ux`hoot.want)
-              =?  fine  =(0 (mod num-received.keen 100)) :: rate every 100 frags
               ::  XX come up with a better rate
               ::
+              =?  fine  =(0 (mod num-received.keen 100)) :: rate every 100 frags
               :: =/  modo  (div num-fragments 10)  :: rate for 10% of total
               :: =?  fine  ?|  =(0 (mod num-received modo))
               ::               :: rate every 100 frags if close to finish
@@ -9476,7 +9480,7 @@
           %-  co-emil
           :~  (push-pact u.pact lane.her)
               :: XX bunted rate: subscribers can ignore this or use the provided
-              ::  path in the remote to subscribe to %rates
+              ::  path in remote to subscribe to %rates
               [hen %give %rate remote *rate]
           ==
         ::

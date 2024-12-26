@@ -6453,10 +6453,11 @@
         =/  den  ((de now rof hen ruf) her desk)
         ?:  ?=(%rate +<.hin)
           ?:  =(*rate:ames [boq fag tot]:hin)
-            ::  XX this is given is the peer has been ahoyed, non migrated
-            ::     peers get a rate:ames with ?=(~ frag.rate)
+            ::  XX this is given is the peer has been ahoyed;
+            ::  non migrated peers get a rate:ames with ?=(~ frag.rate)
             ::  XX make this turned on by the user rather than default
-            ::  if we get the bunted %rate, subscribe to progress updates
+            ::  if we get the bunted %rate, subscribe to progress updates using
+            ::  the path given by ames
             ::
             abet:(emit:den hen %pass /prog %a %prog spar.hin freq=1)
           abet:(take-rate:den -.tea index [spar boq fag tot]:hin)
