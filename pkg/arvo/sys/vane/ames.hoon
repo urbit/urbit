@@ -666,17 +666,10 @@
   ::
   +$  ship-state-21
     $+  ship-state-21
-    $%  [%alien alien-agenda-21]
+    $%  [%alien alien-agenda]
         [%known peer-state-21]
     ==
   ::
-  +$  alien-agenda-21
-    $+  alien-agenda-21
-    $:  messages=(list [=duct =plea])
-        packets=(set =blob)
-        keens=(jug path duct)
-        chums=(jug path duct)
-    ==
   ::
   +$  peer-state-21
     $:  azimuth-state
@@ -1880,16 +1873,16 @@
     ::
     +$  chum-state-23
       $+  chum-state-23
-      $%  [%alien ovni-state-23]
+      $%  [%alien ovni-state]
           [%known fren-state-23]
       ==
     ::
-    +$  ovni-state-23
-      $+  ovni-state-23
-      $:  pokes=(list [=duct message=mesa-message])
-          peeks=(jug path duct)
-          chums=(jug path duct)
-      ==
+    :: +$  ovni-state-23
+    ::   $+  ovni-state-23
+    ::   $:  pokes=(list [=duct message=mesa-message])
+    ::       peeks=(jug path duct)
+    ::       chums=(jug path duct)
+    ::   ==
     ::
     +$  fren-state-23
       $:  azimuth-state
@@ -2934,15 +2927,15 @@
           |=  s=ship-state-21
           ^-  ship-state
           ?:  ?=(%alien -.s)
-            s(chums [chums.s rates=~])
+            s
           %=  s
               keens
             %-  ~(run by keens.s)
             |=  keen=keen-state-21
             ^-  keen-state
-            =/  listeners=(jug duct ?(%tune %rate))
+            =/  listeners=(jug duct ints)
               %-  ~(rep in listeners.keen)
-              |=  [=duct l=(jug duct ?(%tune %rate))]
+              |=  [=duct l=(jug duct ints)]
               (~(put ju l) duct %tune)
             keen(listeners listeners)
           ==
@@ -2952,15 +2945,15 @@
           |=  c=chum-state-23
           ^-  chum-state
           ?.  ?=(%known -.c)
-            c(chums [chums.c rates=~])
+            c
           %=  c
               pit
             %-  ~(run by pit.c)
             |=  req=request-state-23
             ^-  request-state
-            =/  for=(jug duct ?(%sage %rate))
+            =/  for=(jug duct ints)
               %-  ~(rep in for.req)
-              |=  [=duct l=(jug duct ?(%sage %rate))]
+              |=  [=duct l=(jug duct ints)]
               (~(put ju l) duct %sage)
             req(for for)
           ==
@@ -4798,7 +4791,7 @@
               =;  [pax=^path =space]
                 =.  pax  (make-space-path space pax)
                 %-  ~(rep by listeners.keen)
-                |=  [[=^duct gifts=(set ?(%tune %rate))] core=_core]
+                |=  [[=^duct ints=(set ints)] core=_core]
                 =.  core  (co-make-peek:core(hen duct) space her pax)
                 ::  XX  call the rate task
                 core
@@ -6057,15 +6050,20 @@
             ::
             ++  fi-give-tune
               |=  dat=(unit roar)
-              |=  [[=^duct gifts=(set ?(%tune %rate))] =_fine]
-              ::  XX give rate if present
-              (fi-emit:fine duct %give %tune her^path dat)
+              |=  [[=^duct ints=(set ints)] =_fine]
+              %-  ~(rep in ints)
+              |=  [int=^ints f=_fine]
+              ?^  int  f
+              ::  XX give rate if present?
+              (fi-emit:f duct %give %tune her^path dat)
             ::
             ++  fi-give-rate
               |=  =rate
-              |=  [[=^duct gifts=(set ?(%tune %rate))] =_fine]
-              ::  XX give rate if present
-              (fi-emit:fine duct %give %rate her^path rate)
+              |=  [[=^duct ints=(set ints)] =_fine]
+              %-  ~(rep in ints)
+              |=  [int=^ints f=_fine]
+              ?@  int  f
+              (fi-emit:f duct %give %rate her^path rate(boq boq.int))
             ::
             +|  %entry-points
             ::
@@ -6135,7 +6133,7 @@
             ::
             ++  fi-rat
               |=  =^duct
-              fine(listeners.keen (~(put ju listeners.keen) duct %rate))
+              fine(listeners.keen (~(put ju listeners.keen) duct [%rate 0 0]))
             ::  scry is autocancelled in +abet if no more listeners
             ::
             ++  fi-unsub
@@ -6147,16 +6145,15 @@
                 :: =.  fine  (~(rep by listeners.keen) (fi-give-rate ~))  :: XX
                 fine(listeners.keen ~)
               ::
-              ?:  ?|  (~(has ju listeners.keen) duct %tune)
-                      (~(has ju listeners.keen) duct %rate)
-                  ==
-                %-  (fi-trace fin.veb |.("unsub {<fi-full-path>} on {<duct>}"))
-                =.  fine
-                  fine(listeners.keen (~(del ju listeners.keen) duct %rate))
-                fine(listeners.keen (~(del ju listeners.keen) duct %tune))
+              ?:  =(~ listeners.keen)  ::  XX TMI
+                %.  fine
+                (fi-trace fin.veb |.("unknown {<fi-full-path>} {<duct>}"))
+              %-  (fi-trace fin.veb |.("unsub {<fi-full-path>} on {<duct>}"))
               ::
-              %.  fine
-              (fi-trace fin.veb |.("unknown {<fi-full-path>} {<duct>}"))
+              :: ?~  ints=(~(get ju listeners.keen) duct)  fine
+              %-  ~(rep in `(set ints)`(~(get ju listeners.keen) duct))
+              |=  [=ints =_fine]
+              fine(listeners.keen (~(del ju listeners.keen) duct ints))
             ::
             +|  %implementation
             ::
@@ -6198,14 +6195,13 @@
               ::
               %-  (fi-trace fin.veb |.("done {(spud ful)}"))
               %-  ~(rep in listeners.keen)
-              |=  [[=^duct gifts=(set ?(%tune %rate))] =_fine]
-              %-  ~(rep in gifts)
-              |=  [gift=?(%tune %rate) f=_fine]
-              %.  [duct^gifts fine]
-              ?-  gift
-                %tune  (fi-give-tune roar)
-                %rate  (fi-give-rate boq=13 [`num-received num-fragments]:keen)
-              ==
+              |=  [[=^duct ints=(set ints)] =_fine]
+              %-  ~(rep in ints)
+              |=  [int=^ints f=_fine]
+              %.  [duct^ints fine]
+              ?@  int
+                (fi-give-tune roar)
+              (fi-give-rate boq=*@ [`num-received num-fragments]:keen)
             ::
             ++  fi-first-rcv
               |=  =meow
@@ -6242,7 +6238,7 @@
               ::                   (gth num-received (sub num-fragments modo))
               ::           ==  ==
                 %-  ~(rep in listeners.keen)
-                (fi-give-rate boq=13 [`num-received num-fragments]:keen)
+                (fi-give-rate boq=*@ud [`num-received num-fragments]:keen)
               $(inx +(inx))
             ::
             ++  fi-sift-full
@@ -7481,15 +7477,17 @@
         +|  %peek-subscribers
         ::
         ++  ev-give-sage
-          |=  [listeners=(jug duct ?(%sage %rate)) =path =gage:mess]
+          |=  [listeners=(jug duct ints) =path =gage:mess]
           ^+  ev-core
           %-  ~(rep by listeners)
-          |=  [[hen=duct gifts=(set ?(%sage %rate))] core=_ev-core]
-          ?.  (~(has in gifts) %sage)
+          |=  [[hen=duct ints=(set ints)] core=_ev-core]
+          %-  ~(rep by ints)
+          |=  [int=^ints c=_core]
+          ?^  int
             %-  %+  ev-tace  |(odd.veb.bug.ames-state fin.veb.bug.ames-state)
                 |.("no %sage={(spud path)}; no-op")
-            core
-          %.  (ev-emit:core hen %give %sage her^path gage)
+            c
+          %.  (ev-emit:c hen %give %sage her^path gage)
           %+  ev-tace  fin.veb.bug.ames-state
           |.("give %sage={(spud path)}")
         ::
@@ -7501,15 +7499,17 @@
                 |.("weird %rate; missing path={(spud path)}}")
             ev-core
           %-  ~(rep by for.u.ms)
-          |=  [[hen=duct gifts=(set ?(%sage %rate))] core=_ev-core]
+          |=  [[hen=duct ints=(set ints)] core=_ev-core]
           :: ?.  (~(has in sizes.u.rs) path)
           ::   [s c]
           :: =?  s  =(0 fags)
           ::   s(sizes (~(del in sizes.s) path))
           :: =?  c  =(0 fags)
           ::   (ev-emit:c hen %give %size ship^path fag-size=13 total)
-          ?.  (~(has in gifts) %rate)  core
-          %.  (ev-emit:core hen %give %rate ship^path rate)
+          %-  ~(rep by ints)
+          |=  [int=^ints c=_core]
+          ?@  int  c
+          %.  (ev-emit:c hen %give %rate ship^path rate)
           %+  ev-tace  fin.veb.bug.ames-state
           |.("give %rate={(spud path)}")
         ::
@@ -7542,7 +7542,10 @@
           ::
           ?^  ms=(~(get by pit.per) path)
             =.  pit.per
-              (~(put by pit.per) path u.ms(for (~(put ju for.u.ms) hen %rate)))
+              %+  ~(put by pit.per)  path
+              ::  ignore bloq, included in %whey namespace; only used by |fine
+              ::
+              u.ms(for (~(put ju for.u.ms) hen %rate boq=*@ud freq))
             ev-core
           ::  XX crash instead?
           ::  interest for a %sage needs to exist before %rate
@@ -9144,15 +9147,14 @@
             =|  keen=keen-state
             =.  listeners.keen
               %-  ~(rep by for.req)
-              |=  [[hen=duct gifts=(set ?(%sage %rate))] for=_listeners.keen]
+              |=  [[hen=duct ints=(set ints)] for=_listeners.keen]
               ::  XX  inspect the duct to find %mesa wires?
               ::  XX  dropping any +peeks for %corks and %naxplanations
               ::      can this makes us end up in a bad state?
               ::
               ?:  ?=([[%ames %mesa %flow *] *] hen)
                 for
-              ::  XX  add %rate as well
-              (~(put ju for) hen %tune)
+              (~(rep in ints) |=([int=^ints f=_for] (~(put ju for) hen int)))
             ?~  listeners.keen  core
             ::  after filtering, all these should be external listeners
             ::

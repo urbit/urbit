@@ -883,14 +883,15 @@
         [%load ?(%mesa %ames)]        ::  load core for new peers; XX [... term]
         [%back (unit ship)]           ::  per-peer regression
     ::
-        [%heer =lane:pact p=@]        ::  receive a packet, from unix
-        [%mess =mess]                 ::  receive a message
-        [%moke =space =spar =path]    ::  initiate %poke request
-        [%meek =space =spar]          ::  initiate %peek request
-        [%mage =space =spar]          ::  send %page of data; intended for acks
-        [%rate =spar rate]            ::  get rate for active +peek, from unix
-        [%prog spar freq=@ud]         ::  subscribe to %rate updates, every freq
-        [%whey spar boq=@ud]
+        [%heer =lane:pact p=@]       ::  receive a packet, from unix
+        [%mess =mess]                ::  receive a message (XX implement fully)
+        [%moke =space =spar =path]   ::  initiate %poke request
+        [%meek =space =spar]         ::  initiate %peek request
+        [%mage =space =spar]         ::  send %page of data; intended for acks
+        [%rate =spar rate]           ::  get rate progress for +peeks, from unix
+        [%prog spar feq=@ud]         ::  subscribe to progress updates
+        [%whey spar boq=@ud]         ::  weight of noun bounded at .path.spar
+                                     ::  as measured by .boq
     ==
   ::
   ::  $gift: effect from ames
@@ -926,7 +927,7 @@
         [%stub num=@ud key=@]
         [%near spar dat=(unit (unit page))]
         [%tune spar roar=(unit roar)]
-        [%rate =spar rate]
+        $>(%rate task)
     ::
         [%turf turfs=(list turf)]
         [%saxo sponsors=(list ship)]
@@ -1123,7 +1124,6 @@
         packets=(set =blob)
         keens=(jug path duct)
         chums=(jug path duct)
-        rates=(jug path duct)  :: XX
     ==
   +$  chain  ((mop ,@ ,[key=@ =path]) lte)
   ::  $peer-state: state for a peer with known life and keys
@@ -1172,7 +1172,7 @@
         num-fragments=@ud
         num-received=@ud
         next-wake=(unit @da)
-        listeners=(jug duct ?(%tune %rate))
+        listeners=(jug duct ints)
         metrics=pump-metrics
     ==
   +$  want
@@ -1622,6 +1622,7 @@
   ::
   +$  dire           ?(%bak %for)
   +$  side           [=bone =dire]
+  +$  ints           ?(%sage %tune [%rate boq=@ud feq=@ud])
   +$  rate           [boq=@ud fag=(unit @ud) tot=@ud]
   +$  azimuth-state  [=symmetric-key =life =rift =public-key sponsor=ship]
   +$  chum-state
@@ -1634,7 +1635,6 @@
     $:  pokes=(list [=duct message=mesa-message])
         peeks=(jug path duct)
         chums=(jug path duct)
-        rates=(jug path duct)  :: XX remove
     ==
   ::
   +$  fren-state
@@ -1655,7 +1655,7 @@
     ==
   ::
   +$  request-state
-    $:  for=(jug duct ?(%sage %rate))
+    $:  for=(jug duct ints)
         pay=(unit path)
         ps=(unit pact-state)
     ==
