@@ -127,7 +127,7 @@
     |%
     +$  sign
       $~  [%behn %wake ~]
-      $%  [%ames $>(?(%tune %sage) gift)]
+      $%  [%ames $>(?(%tune %sage %rate) gift)]
           [%behn $>(%wake gift:behn)]
           [%gall $>(?(%flub %unto) gift:gall)]
           [%jael $>(?(%private-keys %public-keys %turf) gift:jael)]
@@ -6063,6 +6063,7 @@
               %-  ~(rep in ints)
               |=  [int=^ints f=_fine]
               ?@  int  f
+              %-  (fi-trace:f fin.veb |.("rate {(spud fi-full-path)}"))
               (fi-emit:f duct %give %rate her^path rate(boq boq.int))
             ::
             +|  %entry-points
@@ -6870,6 +6871,8 @@
               ?:  ?=([%gall %unto *] sign)  :: XX from poking %ping app
                 `ames-state
               ::
+              ::  XX handle %rate for |mesa flows
+              ::
               ?+  sign  `ames-state  ::  ~&(mesa-take-sign/[&1^&2]:sign ev-core)
                 [%behn %wake *]  sy-abet:(~(sy-wake sy hen) wire error.sign)
               ::
@@ -7348,6 +7351,7 @@
             :: =/  ack=(pole iota)  (mesa-pave path.ack-spar)
             =/  pok=(pole iota)  (mesa-pave path.pok-spar)
             =/  ack=(pole iota)  (mesa-pave path.ack-spar)
+            ~|  [poke-path=pok ack-path=ack]
             ?>  &(?=(flow-pith pok) ?=(flow-pith ack))
             ::
             ::  XX printed in the packet layer
@@ -7457,9 +7461,10 @@
           ?>  ?=(flow-pith message-path)
           ::
           ?:  =(%pok were)
-            ::  XX ack-path not used
-            %-  hear-poke:ev-mess
-            [dud=~ ack-path=our^/ her^(pout message-path) q.sage]
+            %+  hear-poke:ev-mess  dud=~
+            :+  ack-path=our^(pout message-path(load %ack, dire dire.side))
+              her^(pout message-path)
+            q.sage
           ::  wires are tagged ?(%ack %nax) so we can diferentiate if we are
           ::  proessing an ack or a naxplanation payload
           ::
@@ -7492,8 +7497,7 @@
                 |.("no %sage={(spud path)}; no-op")
             c
           %.  (ev-emit:c hen %give %sage her^path gage)
-          %+  ev-tace  fin.veb.bug.ames-state
-          |.("give %sage={(spud path)}")
+          (ev-tace fin.veb.bug.ames-state |.("give %sage={(spud path)}"))
         ::
         ++  ev-give-rate
           |=  [spar =rate]
@@ -7514,8 +7518,7 @@
           |=  [int=^ints c=_core]
           ?@  int  c
           %.  (ev-emit:c hen %give %rate ship^path rate)
-          %+  ev-tace  fin.veb.bug.ames-state
-          |.("give %rate={(spud path)}")
+          (ev-tace fin.veb.bug.ames-state |.("give %rate={(spud path)}"))
         ::
         ++  ev-cancel-peek
           |=  [all=? =path]  :: XX namespace?
@@ -10485,7 +10488,7 @@
   =+  me-core=(mesa now eny rof)
   =+  am-core=(ames now eny rof)
   =/  =task  ((harden task) wrapped-task)
-  ?:  &(?=(~ unix-duct) ?=(?(%hear %heer %mess) -.task))
+  ?:  &(?=(~ unix-duct) ?=(?(%hear %heer %mess %rate) -.task))
     ::  drop incoming packets until we get a %born
     ::
     ::    this also prevents %nail gifts in the following scenarios:
@@ -10552,8 +10555,8 @@
       %-  (slog leaf+"mesa: migrating wire: {<wire>}" ~)
       ::
       %+  take:am-core
-        %^  make-bone-wire  her.u.flow-wire  rift.u.flow-wire
-        (mix 0b1 bone.u.flow-wire)
+        %-  make-bone-wire
+        [her.u.flow-wire rift.u.flow-wire (mix 0b1 bone.u.flow-wire)]
       +.sample
     ::  If the unix-duct is not set, we defer applying %public-keys and %turf
     ::  gifts (which can trigger other gifts to be sent to unix) by setting up
