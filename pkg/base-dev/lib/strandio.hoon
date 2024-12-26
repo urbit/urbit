@@ -216,18 +216,23 @@
     ;;([%whey boq=@ud tot=@ud] q.sage)
   ==
 ::
-++  take-message
-  |=  =wire
-  =/  m  (strand ,sage:mess:ames)
+++  take-sage
+  |=  =wire  ::  XX control ignoring %rate gift
+  =/  m  (strand ,cage)
   ^-  form:m
   |=  tin=strand-input:strand
   ?+    in.tin  `[%skip ~]
       ~  `[%wait ~]
     ::
-      [~ %sign * %ames %sage sage=*]
+      [~ %sign * %ames %sage *]
     ?.  =(wire wire.u.in.tin)
       `[%skip ~]
-    `[%done sage.sign-arvo.u.in.tin]
+    `[%done sage/!>(+>.sign-arvo.u.in.tin)]
+    ::
+      [~ %sign * %ames %rate *]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done rate/!>(+>.sign-arvo.u.in.tin)]
   ==
 ::
 ++  take-near
