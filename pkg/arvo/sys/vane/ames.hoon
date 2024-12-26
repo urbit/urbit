@@ -7517,8 +7517,9 @@
           %-  ~(rep by ints)
           |=  [int=^ints c=_core]
           ?@  int  c
-          %.  (ev-emit:c hen %give %rate ship^path rate)
-          (ev-tace fin.veb.bug.ames-state |.("give %rate={(spud path)}"))
+          %-  %+  ev-tace  fin.veb.bug.ames-state
+              |.("give %rate={[fag.rate (spud path)]}")
+          (ev-emit:c hen %give %rate ship^path rate)
         ::
         ++  ev-cancel-peek
           |=  [all=? =path]  :: XX namespace?
@@ -7533,8 +7534,10 @@
             =.  pit.per  (~(del by pit.per) path)
             ::  XX give max %rate?
             (ev-give-sage for.u.ms path ~)
-          =.  for.u.ms  (~(del ju for.u.ms) hen %sage)
-          =.  for.u.ms  (~(del ju for.u.ms) hen %rate)
+          =.  for.u.ms
+            %-  ~(rep by for.u.ms)
+            |=  [[hen=duct ints=(set ints)] for=_for.u.ms]
+            (~(rep by ints) |=([int=^ints f=_for] (~(del ju f) hen int)))
           =.  pit.per
             ?~  for.u.ms
               (~(del by pit.per) path)
