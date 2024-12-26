@@ -408,6 +408,12 @@
   ^-  form:m
   (send-raw-card %pass wire %arvo %a %keen sec spar)
 ::
+++  prog
+  |=  [=wire =spar:ames feq=@ud]
+  =/  m  (strand ,~)
+  ^-  form:m
+  (send-raw-card %pass wire %arvo %a %prog spar feq)
+::
 ++  keen-shut
   |=  [=wire =spar:ames]
   =/  m  (strand ,~)
