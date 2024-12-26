@@ -7493,9 +7493,8 @@
           %-  ~(rep by ints)
           |=  [int=^ints c=_core]
           ?^  int
-            %-  %+  ev-tace  |(odd.veb.bug.ames-state fin.veb.bug.ames-state)
-                |.("no %sage={(spud path)}; no-op")
-            c
+            %.  (ev-emit:c hen %give %rate her^path boq.int ~ tot=0)  ::  XX
+            (ev-tace fin.veb.bug.ames-state |.("give last %rate={(spud path)}"))
           %.  (ev-emit:c hen %give %sage her^path gage)
           (ev-tace fin.veb.bug.ames-state |.("give %sage={(spud path)}"))
         ::
