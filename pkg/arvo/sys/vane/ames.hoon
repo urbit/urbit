@@ -7517,7 +7517,7 @@
           |=  [int=^ints c=_core]
           ?@  int  c
           %-  %+  ev-tace  fin.veb.bug.ames-state
-              |.("give %rate={[fag.rate (spud path)]}")
+              |.("give %rate={(spud path)} fragments={<fag.rate>}")
           (ev-emit:c hen %give %rate ship^path rate)
         ::
         ++  ev-cancel-peek
