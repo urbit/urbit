@@ -727,6 +727,7 @@
       ++  calculate-progress
         |=  [a=@ud b=@ud]
         ^-  [int=@ud dec=@ud]
+        ~&   calculate-progress/[a b]
         =/  progress=@rs
           (mul:rs (div:rs (sun:rs a) (sun:rs b)) (sun:rs 100))
         =+  int=(need (toi:rs progress))
@@ -742,6 +743,7 @@
   =|  received=@ud
   =|  =riot:clay
   =|  acc-rate=rate
+  =|  bloq=@ud
   =|  last-path=path
   ;<  ~  bind:m  (send-raw-card %pass /rate %arvo %c %warp ship riff)
   ::
@@ -750,29 +752,25 @@
     (pure:m riot)
   ;<  now-1=@da  bind:m  get-time
   ;<  =cage  bind:m  (take-rate /rate)
-  :: ?:  ?=(%size p.cage)
-  ::   =+  !<([[* =path] =size] q.cage)
-  ::   =.  fragment-size  fragment.size
-  ::   =?  total-frags  !(~(has by needs) path)
-  ::     ::  XX we get the size multiple times...
-  ::     (add total-frags total.size)
-  ::   $(needs (~(put by needs) [path total.size]))
   ?:  ?=(%rate p.cage)
     ;<  now-2=@da  bind:m  get-time
     =/  time=@dr  (sub now-2 now-1)
     ::
-    =+  !<([loc=path rat=rate:ames] q.cage)
-    ?~  fag.rat
-      ::  this is the first rate after a %whey, update needs
+    =+  !<([loc=path =current=rate:ames] q.cage)
+    ?:  =(*rate:ames current-rate)  $  ::  ignore bunted rate
+    ::
+    =.  bloq  boq.current-rate
+    ?~  fag.current-rate
+      ::  this is the first rate after a %whey; update needs with the path
       ::
       =?  tot.acc-rate  !(~(has by needs) loc)
-        (add tot.acc-rate tot.rat)  ::  save total for each file in the desk
-      $(needs (~(put by needs) [loc tot.rat]))
+        (add tot.acc-rate tot.current-rate)  :: accumulate tot for each file in the desk
+      $(needs (~(put by needs) [loc tot.current-rate]))
     ::
-    =*  current-fag  u.fag.rat
+    =*  current-fag  u.fag.current-rate
     =/  byte=@ud
       %+  div
-        (mul (div (bex boq.rat) (bex 3)) (sub current-fag fag.acc-rate))
+        (mul (div (bex bloq) (bex 3)) (sub current-fag fag.acc-rate))
       (bex 10)
     =>  .(loc `(pole knot)`loc)
     ?>  ?=([van=@t car=@t cas=@t file-path=*] loc)
@@ -790,7 +788,7 @@
           [~(wyt by haves) ~(wyt by needs)]
           ::  XX poke only one time with the total? adds extra state to %kiln...
           ::
-          [size=boq.rat total=tot.acc-rate]
+          [bloq total=tot.acc-rate]
           [byte (div time (div ~s1 1.000))]
       ==
     $(fag.acc-rate current-fag)
