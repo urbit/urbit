@@ -6468,7 +6468,8 @@
             ::  if we get the bunted %rate, subscribe to progress updates using
             ::  the path given by ames
             ::
-            abet:(emit:den hen %pass /prog %a %prog spar.hin freq=1)
+            =/  =wire  (request-wire:den %back-index her desk index)
+            abet:(emit:den hen %pass wire %a %prog spar.hin freq=1)
           abet:(take-rate:den -.tea index [spar boq fag tot]:hin)
         ?~  fell
           ::  We shouldn't get back null on any of the fine requests we
