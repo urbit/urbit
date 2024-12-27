@@ -6398,15 +6398,23 @@
   ?:  ?=([%keen-whey @ @ @ *] tea)
     ?+    +<.hin  ~|  %clay-keen-whey-strange^+<.hin  !!
         ?(%tune %rate %sage)
+      ?:  ?=(%tune +<.hin)
+        ::  no-op, if %tune after %yawn, restart downloads happen in %backfill
+        ::
+         [~ ..^$]
       =/  her=ship   (slav %p i.t.tea)
       =/  =desk      (slav %tas i.t.t.tea)
       =/  index=@ud  (slav %ud i.t.t.t.tea)
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
-        ?:  ?=(%tune +<.hin)
-          ::  no-op, if %tune after %yawn, restart downloads happen in %backfill
-          ::
+        ::  ignore bunted rate
+        ::
+        ?:  ?&  ?=(%rate +<.hin)
+                =(*rate:ames [boq fag tot]:hin)
+            ==
           `ruf
+        ::  %rate gifts only given by |fine
+        ::
         =/  =spar:ames  ?:(?=(%rate +<.hin) spar.hin p.sage.hin)
         =/  =rate:ames
           ?:  ?=(%rate +<.hin)
