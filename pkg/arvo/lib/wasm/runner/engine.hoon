@@ -505,7 +505,11 @@
       =/  type-of-ref=(unit func-type)
         ?+    ref  ~
             [%ref %func p=[~ @]]
-          `(snag type-id:(snag u.p.ref function-section) type-section)
+          =;  =func-type
+            `func-type
+          =/  func  (func:grab u.p.ref store.l)
+          ?:  ?=(%& -.func)  (snag type-id.p.func type-section)
+          (snag type-id.p.func type-section)
         ::
             [%ref %extn p=^]
           `type.u.p.ref
