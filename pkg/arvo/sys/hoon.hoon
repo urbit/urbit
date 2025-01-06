@@ -11019,8 +11019,7 @@
                 ==
               ?.  =(q.p.inp u.q.typ)  ~
               =.  p.typ  (rash p.typ ;~(sfix (cook crip (star low)) (star hig)))
-              =+  fox=(disc inp(p.p [%atom p.typ ~]) eta)
-              ?~  fox  ~
+              ?~  fox=(disc inp(p.p [%atom p.typ ~]) eta)  ~
               ?>  ?=([%leaf ^] +.u.fox)
               ?:  ?=(?(%n %tas) p.typ)  fox
               `[eta [%leaf '%' p.+.u.fox]]
@@ -11055,12 +11054,9 @@
         ?:  ?&  ?=([[%$ * [[%$ *] ~ ~]] ~ ~] q.r.q.typ)  ::  gate
                 ?=([%rose * ^] +.u.res)
             ==
-            =-  ?~(- ~ `[->- [%rose [" " "$-(" ")"] [+>+<.u.res ->+ ~]]])
-            =+  (mule |.((~(play ut typ(r.p.q %gold)) q.n.q.q.n.q.r.q.typ)))
-            ?-  -<
-              %&  (disc [%& p.-] eta)
-              %|  `[-.u.res leaf+"###"]
-            ==
+            =+  typ=[%hold typ(r.p.q %gold) q.n.q.q.n.q.r.q.typ]
+            ?~  out=(disc [%& typ] eta)  ~
+            `[->- [%rose [" " "$-(" ")"] [+>+<.u.res +.u.out ~]]]
         =-  `[-.u.res -]
         :+  %rose  [[' ' ~] ['<' ~] ['>' ~]]
         :_   ?:  ?=(%lest veb.eta)  [[%leaf "..."] ~]    ::  payload
@@ -11093,9 +11089,9 @@
           (disc hin eta)
         ?^  custom=?^(p.q.p.typ ~ (~(get by pin.eta) p.q.p.typ))
           (u.custom hin eta disc)
-        ?:  ?=(%most veb.eta)  ::  %most ignore hint
+        ?:  ?=(%most veb.eta)  ::  %most: ignore hint
           (disc hin eta)
-        ?:  ?&(?=(%lest veb.eta) -.inp)  ::  %lest print name
+        ?:  ?&(?=(%lest veb.eta) -.inp)  ::  %lest: print name
           ?@  tud=p.q.p.typ  `[eta (cat 3 '#' mark.tud)]
           `[eta (rap 3 '#' auth.tud '+' (spat type.tud) ~)]
         ?^  p.q.p.typ  (disc hin eta)
@@ -11202,7 +11198,8 @@
           %&  ?~  key=(disc inp(p +<+>:tip) eta)  ~
               ?~  val=(disc inp(p +>+>:tip) eta(ids ids.-.u.key))  ~
               `[-.u.val [%rose [" " "(map " ")"] [+.u.key +.u.val ~]]]
-          %|   ?~  res=(deck (flop ~(tap by ;;((^map * *) q.p.inp))) tip)  ~
+          %|  =+  lis=~(tap in !<((^map * *) [-:!>(*(^map * *)) q.p.inp]))
+              ?~  res=(deck (flop lis) tip)  ~
               `[-.u.res [%rose [[' ' ~] ['{' ~] ['}' ~]] +.u.res]]
         ==
       ::
@@ -11214,7 +11211,8 @@
         ?-  -.inp
           %&  ?~  res=(disc inp(p +<+<+>.yed) eta)  ~
               `[-.u.res [%rose [" " "(set " ")"] [+.u.res ~]]]
-          %|  ?~  res=(deck (flop ~(tap in ;;((^set *) q.p.inp))) +<+<+>.yed)  ~
+          %|  =+  lis=~(tap in !<((^set *) [-:!>(*(^set *)) q.p.inp]))
+              ?~  res=(deck (flop lis) +<+<+>.yed)  ~
               `[-.u.res [%rose [[' ' ~] ['{' ~] ['}' ~]] +.u.res]]
         ==
       ::
@@ -11226,7 +11224,8 @@
         ?-  -.inp
           %&  ?~  res=(disc inp(p +<+<+>.yed) eta)  ~
               `[-.u.res [%rose [" " "(qeu " ")"] [+.u.res ~]]]
-          %|  ?~  res=(deck ~(tap to ;;((^qeu *) q.p.inp)) +<+<+>.yed)  ~
+          %|  =+  lis=~(tap to !<((^qeu *) [-:!>(*(^qeu *)) q.p.inp]))
+              ?~  res=(deck lis +<+<+>.yed)  ~
               `[-.u.res [%rose [[' ' ~] ['{' ~] ['}' ~]] +.u.res]]
         ==
       --
@@ -11247,8 +11246,8 @@
           ?.  ?=([%fork *] tep)  typ
           =+  yed=(sort ~(tap in p.tep) aor)
           ?.  ?=([* [[%cell [%face %i *] [%face %t *]] ~]] yed)  typ
-          =+  yod=+<+<+>.yed
           =+  tag=|=(mar=term [%hint [tep %know mar] tep])
+          =+  yod=+<+<+>.yed
           |-  ?:  ?=([%atom %'tD' ~] yod)  (tag %tape)
               ?:  ?=([%atom %ta ~] yod)    (tag %path)
               ?.  ?=(?([%hint *] [%hold *]) yod)  typ
