@@ -8807,7 +8807,6 @@
           ++  divide-bones
             |=  bones=(set side)
             ^-  (set bone)
-            ~&  >>  corked-bones/bones
             %-  ~(rep in bones)
             |=  [side corked=(set bone)]
             (~(put in corked) ?:(?=(%for dire) bone (mix 0b1 bone)))
@@ -8823,7 +8822,6 @@
             =+  ev-core=(ev-foco:ev her fren)
             %-  ~(rep by flows.fren)
             |=  [[side state=flow-state] core=_peer-core]
-            ~&  >>>  bone^dire
             =+  fo-core=~(. fo:ev-core hen^bone^dire state)
             ::
             =?  bone  ?=(%bak dire)  (mix 0b1 bone) :: [bone=%0 %bak] -> bone=%1
