@@ -197,13 +197,13 @@
   |=  [her=ship test=?]  =<  abet
   =/  =wire
     :+  %helm  %ahoy
-    ?.(test /(scot %p her) /test-10/(scot %p her))
+    ?.(test /(scot %p her) /test/(scot %p her))
   =/  =path  ?:(test /test /mesa)
   (emit %pass wire %arvo %a %plea her %$ path %ahoy ~)
 ::
 ++  take-ahoy
   |=  [way=wire error=(unit error:ames)]
-  ?:  ?=([%test-10 @ *] way)
+  ?:  ?=([%test @ *] way)
     ?~  error
       ~&  >   %migration-test-worked
       ~&  >>  %test-local-migration
@@ -219,7 +219,8 @@
   ::  XX retry?
   ::
   %-  (slog %take-ahoy-failed u.error)
-  abet:(emit %pass `wire`[%helm %ahoy-crash way] %arvo %b %wait (add now.bowl ~s30)) :: XX exp backoff?
+  abet
+  :: abet:(emit %pass `wire`[%helm %ahoy-crash way] %arvo %b %wait (add now.bowl ~s30)) :: XX exp backoff?
 ::
 ++  take-ahoy-crash
   |=  [way=wire error=(unit tang)]
