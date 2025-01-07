@@ -3897,7 +3897,11 @@
           |=  [ship=(unit ship) dry=?]
           |^  ^+  event-core
           =;  updated-core=_event-core
-              ?:(dry event-core updated-core)
+              ?:  dry
+                ~&  >  %test-local-migration-worked
+                event-core
+              ~&  >  %local-migration-worked
+              updated-core
           ::
           ?^  ship
             ?~  peer=(~(get by peers.ames-state) u.ship)
