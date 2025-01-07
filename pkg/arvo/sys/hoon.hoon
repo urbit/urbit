@@ -10986,119 +10986,125 @@
   ::
   ++  unzip
     |=  [way=?(%rite %both) hyp=wing]
-    ?~  hyp  !!
-    |^  ^-  zebra
-    ?+  -.out  out
-        %pale  (fxnd(sut typ.out) zap.out way heg)
-    ==
-    ++  recur
-      |=  [way=vial]
-    ++  fxnd  ::  per limb
-      |=  [way=vial heg=limb]
-      ^-  zebra
-      =>  .(heg ?^(heg heg [%| p=0 q=(some heg)]))
-      ?.  ?=(%| -.heg)
-        |-  ^-  zebra
-        ?:  =(1 p.heg)
-          pale+[0 sut $(heg 
-        =+  [now lat]=(cap p.heg)^(mas p.heg)
-        ::TODO  mb unify with logic for names
-        ?-    sut
-            ?(%void [%atom *])  %void
-            %noun  $(sut [%cell %noun %noun])
-            [%cell *]
-          ?:  =(2 now)
-            =+  taf=$(p.heg lat, sut p.sut)
-            ?.  ?=([%pale *] taf)  taf
-            taf(zap [%head q.sut zap.taf])
-          =+  taf=$(p.heg lat, sut q.sut)
-          ?.  ?=([%pale *] taf)  taf
-          taf(zap [%tail p.sut zap.taf])
-            [%core *]
-          ?:  =(2 now)
-            $(sut repo)
-          ::  wrong because of variance, sue me
+    =.  hyp  (flop hyp)
+    |-  ^-  zebra
+    ?~  hyp  [%pale 1 sut ~]
+    =/  heg  ?^(i.hyp i.hyp [%| p=0 q=(some i.hyp)])
+    ?.  ?=(%| -.heg)
+      =/  axe  p.heg
+      |-  ^-  zebra
+      ?:  =(1 p.heg)
+        =+  zaf=^$(hyp t.hyp)
+        ?.  ?=([%pale *] zaf)  zaf
+        zaf(axe (peg axe axe.zaf))
+      =+  [now lat]=(cap p.heg)^(mas p.heg)
+      ::TODO  mb unify with logic for names
+      ?-    sut
+          ?(%void [%atom *])  %void
+          %noun  $(sut [%cell %noun %noun])
+          [%cell *]
+        ?:  =(2 now)
           =+  taf=$(p.heg lat, sut p.sut)
           ?.  ?=([%pale *] taf)  taf
-          taf(zap [%core q.sut zap.taf])
-        ::
-            [%face *]
-          =+  taf=$(sut q.sut)
-          ?.  ?=([%pale *] taf)  taf
-          taf(zap [%face p.sut zap.taf])
-        ::
-            [%hint *]
-          =+  taf=$(sut q.sut)
-          ?.  ?=([%pale *] taf)  taf
-          taf(zap [%hint p.sut zap.taf])
-        ::
-            [%hold *]  $(sut repo)  ::TODO  track in state
-        ::
-            [%fork *]
-          =-  =+  fok=(fork typs)
-              ?:  ?=(%void fok)  !!
-              [%pale fok fork+zaps]
-          %-  ~(rep in p.sut)
-          |=  [t=type typs=(set type) zaps=(set zapp)]
-          =+  taf=$(sut t)
-          ?.  ?=([%pale *] taf)  acc
-          [(~(put in typs) typ.taf) (~(put in zaps) zap.taf)]
-        ==
-      =/  axe  1
-      =|  gil=(set type)
-      |-  ^-  zebra
-      ?~  q.heg
-        ?>  =(0 p.heg)  ::  no skipping on bare com
-        [%pale axe ?:(?=([%face *] sut) q.sut sut) zap]
-      ?-    sut
-          %void      %void
-          %noun      fail+p.heg
-          [%atom *]  fail+p.heg
-          [%cell *]
-        =+  taf=$(axe (peg axe 2), sut p.sut)
-        ?:  ?=(%void taf)  taf
-        ?:  ?=([%pale *] taf)
           taf(zap [%head q.sut zap.taf])
-        =+  taf=$(axe (peg axe 3), p.heg skip.taf, sut q.sut)
+        =+  taf=$(p.heg lat, sut q.sut)
         ?.  ?=([%pale *] taf)  taf
         taf(zap [%tail p.sut zap.taf])
-      ::
-          [%hint *]
-        =+  taf=$(sut repo)
-        ?.  ?=([%pale *] taf)  taf
-        taf(zap [%hint p.sut zap.taf])
-      ::
-          [%hold *]
-        ?:  (~(has in gil) sut)  %void :: XX: need special failure here and void
-        $(gil (~(put in gil) sut), sut repo)
-      ::
           [%core *]
-        =^  zem  p.heg
-          ?~  zem=(loot u.q.heg q.r.q.sut)  [~ p.heg]
-          ?:(=(0 p.heg) [zem 0] [~ (dec p.heg)])
-        ?^  zem  [%pale axe sut zap]
-        :: XX: add variance
-        =+  taf=$(axe (peg axe 3), sut p.sut)
+        ?:  =(2 now)
+          $(sut repo)
+        ::  wrong because of variance, sue me
+        =+  taf=$(p.heg lat, sut p.sut)
         ?.  ?=([%pale *] taf)  taf
         taf(zap [%core q.sut zap.taf])
       ::
           [%face *]
-        ?@  p.sut
-          ?:  =(u.q.heg p.sut)
-            ?.  =(0 p.heg)  fail+(dec p.heg)
-            [%pale axe q.sut [%face p.sut zap]]
-          fail+p.heg
-        ~ :: XX edit thru synthetic
+        =+  taf=$(sut q.sut)
+        ?.  ?=([%pale *] taf)  taf
+        taf(zap [%face p.sut zap.taf])
+      ::
+          [%hint *]
+        =+  taf=$(sut q.sut)
+        ?.  ?=([%pale *] taf)  taf
+        taf(zap [%hint p.sut zap.taf])
+      ::
+          [%hold *]  $(sut repo)  ::TODO  track in state
       ::
           [%fork *]
-        %-  ~(rep in p.sut)
-        |=  [t=type axe=(unit axis) typs=(set type) zaps=(set zapp)]
-        =+  taf=$(sut t)
-        ?.  ?=([%pale *] taf)  acc
-        ?>  |(?=(~ axe) =(u.axe axe.taf))
-        [`axe.taf (~(put in typs) typ.taf) (~(put in zaps) zap.taf)]
+        !!
+        :: XX wtf axes
+        ::=-  =+  fok=(fork typs)
+        ::    ?:  ?=(%void fok)  !!
+        ::    [%pale fok fork+zaps]
+        ::%-  ~(rep in p.sut)
+        ::|=  [t=type typs=(set type) zaps=(set zapp)]
+        ::=+  taf=$(sut t)
+        ::?.  ?=([%pale *] taf)  acc
+        ::[(~(put in typs) typ.taf) (~(put in zaps) zap.taf)]
       ==
-    --
+    =/  axe  1
+    =|  gil=(set type)
+    |-  ^-  zebra
+    ?~  q.heg
+      ?>  =(0 p.heg)  ::  no skipping on bare com
+      =+  zaf=^$(hyp t.hyp, sut ?:(?=([%face *] sut) q.sut sut))
+      ?.  ?=([%pale *] zaf)  zaf
+      zaf(axe (peg axe axe.zaf))
+    ?-    sut
+        %void      %void
+        %noun      fail+p.heg
+        [%atom *]  fail+p.heg
+        [%cell *]
+      =+  taf=$(axe (peg axe 2), sut p.sut)
+      ?:  ?=(%void taf)  taf
+      ?:  ?=([%pale *] taf)
+        taf(zap [%head q.sut zap.taf])
+      =+  taf=$(axe (peg axe 3), p.heg skip.taf, sut q.sut)
+      ?.  ?=([%pale *] taf)  taf
+      taf(zap [%tail p.sut zap.taf])
+    ::
+        [%hint *]
+      =+  taf=$(sut repo)
+      ?.  ?=([%pale *] taf)  taf
+      taf(zap [%hint p.sut zap.taf])
+    ::
+        [%hold *]
+      ?:  (~(has in gil) sut)  %void :: XX: need special failure here and void
+      $(gil (~(put in gil) sut), sut repo)
+    ::
+        [%core *]
+      =^  zem  p.heg
+        ?~  zem=(loot u.q.heg q.r.q.sut)  [~ p.heg]
+        ?:(=(0 p.heg) [zem 0] [~ (dec p.heg)])
+      ?^  zem  
+        =+  zaf=^$(hyp t.hyp)
+        ?.  ?=([%pale *] zaf)  zaf
+        zaf(axe (peg axe axe.zaf))
+      :: XX: add variance
+      =+  taf=$(axe (peg axe 3), sut p.sut)
+      ?.  ?=([%pale *] taf)  taf
+      taf(zap [%core q.sut zap.taf])
+    ::
+        [%face *]
+      ?@  p.sut
+        ?:  =(u.q.heg p.sut)
+          ?.  =(0 p.heg)  fail+(dec p.heg)
+          =+  zaf=^$(hyp t.hyp, sut q.sut)
+          ?.  ?=([%pale *] zaf)  zaf
+          zaf(axe (peg axe axe.zaf), zap [%face p.sut zap.zaf])
+        fail+p.heg
+      %void :: XX edit thru synthetic
+    ::
+        [%fork *]
+      !!
+      :::: XX wtf axes
+      ::%-  ~(rep in p.sut)
+      ::|=  [t=type axe=(unit axis) typs=(set type) zaps=(set zapp)]
+      ::=+  taf=$(sut t)
+      ::?.  ?=([%pale *] taf)  acc
+      ::?>  |(?=(~ axe) =(u.axe axe.taf))
+      ::[`axe.taf (~(put in typs) typ.taf) (~(put in zaps) zap.taf)]
+    ==
   ::
   ++  modify-and-zip
     |=  [zap=zapp typ=type]
@@ -11106,7 +11112,7 @@
     ?:  ?=(%void typ)  typ
     ?~  zap  typ
     ^-  type
-    ?-  -.i.zips
+    ?-  -.zap
       %head  [%cell $(zap q.zap) p.zap]
       %tail  [%cell p.zap $(zap q.zap)]
       %core  [%core $(zap q.zap) p.zap]
