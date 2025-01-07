@@ -10966,170 +10966,155 @@
     ++  mup  |=(* (scot %p (mug +<)))
     --
   ::
-  +$  zipper  (list zipp)  ::  children before parents
-  +$  zipp
-    $%  [%head type]
-        [%tail type]
-        [%core coil]
-        [%hint (pair type note)]
-        [%face $@(term tune)]
-        [%fork (set zipper)]
+  +$  zapp
+    $@  ~
+    $%  [%head p=type q=zapp]
+        [%tail p=type q=zapp]
+        [%core p=coil q=zapp]
+        [%hint p=(pair type note) q=zapp]
+        [%face p=$@(term tune) q=zapp]
+        [%fork p=(set zapp)]
         ::NOTE  %holds have been unwrapped
     ==
+  ::
+  +$  zebra
+    $@  %void
+    $%  [%pale axe=axis typ=type zap=zapp]
+        :: XX: add axe if we want it to work w forks
+        [%fail skip=@ud]
+    ==
+  ::
   ++  unzip
     |=  [way=?(%rite %both) hyp=wing]
-    ^-  (unit zipper)
-    |^  fxnd
-    +$  puny
-      $%  [%pale axe=@ud zips=zipper]
-          [%fail skip=@ud]
-          [%faux ~]
-          [%void ~]
-      ==
-
-    ::
-    :: +$  puny
-    ::   $%  [%zips zipper]
-    ::       [%fail skip=@ud]
-    ::       [%faux ~]
-    ::   ==
+    ?~  hyp  !!
+    |^  ^-  zebra
+    ?+  -.out  out
+        %pale  (fxnd(sut typ.out) zap.out way heg)
+    ==
+    ++  recur
+      |=  [way=vial]
     ++  fxnd  ::  per limb
       |=  [way=vial heg=limb]
-      ^-  (unit zipper)
+      ^-  zebra
       =>  .(heg ?^(heg heg [%| p=0 q=(some heg)]))
-      ::=/  hax=(unit axis)
-      ::  ?.  |(?=(@ heg) ?=(%| -.heg))
-      ::    `p.heg
-      ::  =/  =pony:fynd
-      ::    (fxnd:fynd way heg)
-      ::  ?-  -.pony
-      ::    %pale  `(tend vein.pony)
-      ::    %fail  !!
-      ::    %faux  ~
-      ::    %void  ~
-      ::  ==
-      ::?~  hax  ~
-      ::=*  axe  u.hax
-      ::  resolve the tree address directly
-      ::
-      ::TODO  unwrap subj type to appropriate depth
-      ?.  |(?=(@ heg) ?=(%| -.heg))
-        =|  zips=zipper
-        |-
+      ?.  ?=(%| -.heg)
+        |-  ^-  zebra
         ?:  =(1 p.heg)
-          `zips
+          pale+[0 sut $(heg 
         =+  [now lat]=(cap p.heg)^(mas p.heg)
         ::TODO  mb unify with logic for names
-        ?-  sut
-          %noun  $(sut [%cell %noun %noun])
-          %cell  ?:  =(2 now)
-                    $(p.heg lat, sut p.sut, zips [[%head q.sut] zips])
-                  $(p.heg lat, sut q.sut, zips [[%tail p.sut] zips])
-          %core  ?:  =(2 now)
-                    $(sut repo)
-                  ::  wrong because of variance, sue me
-                  $(p.heg lat, sut p.sut, zips [[%core q.sut] zips])
-          %face  $(sut q.sut, zips [[%face p.sut] zips])
-          %hint  $(sut q.sut, zips [[%hint p.sut] zips])
-          %hold  $(sut repo)  ::TODO  track in state
+        ?-    sut
+            ?(%void [%atom *])  %void
+            %noun  $(sut [%cell %noun %noun])
+            [%cell *]
+          ?:  =(2 now)
+            =+  taf=$(p.heg lat, sut p.sut)
+            ?.  ?=([%pale *] taf)  taf
+            taf(zap [%head q.sut zap.taf])
+          =+  taf=$(p.heg lat, sut q.sut)
+          ?.  ?=([%pale *] taf)  taf
+          taf(zap [%tail p.sut zap.taf])
+            [%core *]
+          ?:  =(2 now)
+            $(sut repo)
+          ::  wrong because of variance, sue me
+          =+  taf=$(p.heg lat, sut p.sut)
+          ?.  ?=([%pale *] taf)  taf
+          taf(zap [%core q.sut zap.taf])
         ::
-            %fork
-          =-  `[[%fork -] zips]
-          %-  ~(run in p.sut)
-          |=(t=type (need ^$(sut t, zips ~)))
+            [%face *]
+          =+  taf=$(sut q.sut)
+          ?.  ?=([%pale *] taf)  taf
+          taf(zap [%face p.sut zap.taf])
+        ::
+            [%hint *]
+          =+  taf=$(sut q.sut)
+          ?.  ?=([%pale *] taf)  taf
+          taf(zap [%hint p.sut zap.taf])
+        ::
+            [%hold *]  $(sut repo)  ::TODO  track in state
+        ::
+            [%fork *]
+          =-  =+  fok=(fork typs)
+              ?:  ?=(%void fok)  !!
+              [%pale fok fork+zaps]
+          %-  ~(rep in p.sut)
+          |=  [t=type typs=(set type) zaps=(set zapp)]
+          =+  taf=$(sut t)
+          ?.  ?=([%pale *] taf)  acc
+          [(~(put in typs) typ.taf) (~(put in zaps) zap.taf)]
         ==
       =/  axe  1
       =|  gil=(set type)
-      =-  ?.(?=([~ ~ *] -) - -(u.u (flop u.u)))
-      |-  ^-  (unit (each [p=axis q=zipper] @ud))
-      ::  XX: (unit (each @ud zipper))
+      |-  ^-  zebra
       ?~  q.heg
         ?>  =(0 p.heg)  ::  no skipping on bare com
-        [%pale [~ `axe ~] %& ?:(?=([%face *] sut) q.sut sut)]
-      ?-  sut
-        %void      `&+p.heg
-        %noun      `&+p.heg
-        [%atom *]  `&+p.heg
-        [%cell *]  =+  taf=$(axe (peg axe 2), sut p.sut)
-                   ?~  taf  ~
-                   ?:  ?=([~ %& *] taf)
-                       `&+[p.p.u.taf [[%head q.sut] q.p.u.taf]]
-                   ::  thread skip count, should be in our return
-                   =+  taf=$(axe (peg axe 3), sut q.sut, p.heg p.u.taf)
-                   ?.  ?=([~ %& *] taf)  taf
-                   `&+[p.p.u.taf [[%tail p.sut] q.p.u.taf]]
-        [%hint *]  =+  taf=$(sut repo)
-                   ?.  ?=([~ %& *] taf)  taf
-                   `&+[p.p.u.taf [[%hint p.sut] q.p.u.taf]]
-        [%hold *]  ?:  (~(has in gil) sut)  ~ :: XX: need special failure here and void
-                   $(gil (~(put in gil) sut), sut repo)
+        [%pale axe ?:(?=([%face *] sut) q.sut sut) zap]
+      ?-    sut
+          %void      %void
+          %noun      fail+p.heg
+          [%atom *]  fail+p.heg
+          [%cell *]
+        =+  taf=$(axe (peg axe 2), sut p.sut)
+        ?:  ?=(%void taf)  taf
+        ?:  ?=([%pale *] taf)
+          taf(zap [%head q.sut zap.taf])
+        =+  taf=$(axe (peg axe 3), p.heg skip.taf, sut q.sut)
+        ?.  ?=([%pale *] taf)  taf
+        taf(zap [%tail p.sut zap.taf])
+      ::
+          [%hint *]
+        =+  taf=$(sut repo)
+        ?.  ?=([%pale *] taf)  taf
+        taf(zap [%hint p.sut zap.taf])
+      ::
+          [%hold *]
+        ?:  (~(has in gil) sut)  %void :: XX: need special failure here and void
+        $(gil (~(put in gil) sut), sut repo)
       ::
           [%core *]
         =^  zem  p.heg
           ?~  zem=(loot u.q.heg q.r.q.sut)  [~ p.heg]
           ?:(=(0 p.heg) [zem 0] [~ (dec p.heg)])
-        ?^  zem  `|+(dec p.heg)
+        ?^  zem  [%pale axe sut zap]
         :: XX: add variance
         =+  taf=$(axe (peg axe 3), sut p.sut)
-        ?.  ?=([~ %& *] taf)  taf
-        `&+[p.p.u.taf [[%core u.sut] q.p.u.taf]]
+        ?.  ?=([%pale *] taf)  taf
+        taf(zap [%core q.sut zap.taf])
       ::
           [%face *]
         ?@  p.sut
           ?:  =(u.q.heg p.sut)
-            ?:  =(0 p.heg)  `&+[[%face p.sut] ~]
-            `|+(dec p.eg)
-          `|+p.heg
+            ?.  =(0 p.heg)  fail+(dec p.heg)
+            [%pale axe q.sut [%face p.sut zap]]
+          fail+p.heg
         ~ :: XX edit thru synthetic
       ::
           [%fork *]
         %-  ~(rep in p.sut)
-        |=  [=type som=$~([%void ~] pony)]
-        (twin [^$(sut type) som])
+        |=  [t=type axe=(unit axis) typs=(set type) zaps=(set zapp)]
+        =+  taf=$(sut t)
+        ?.  ?=([%pale *] taf)  acc
+        ?>  |(?=(~ axe) =(u.axe axe.taf))
+        [`axe.taf (~(put in typs) typ.taf) (~(put in zaps) zap.taf)]
       ==
-    ::
-    ++  twin
-      |=  [hax=puny yor=puny]
-      ^-  (unit [p=@ud q=(unit (set zipper))])
-      ~_  leaf+"find-fork"
-      ?:  =(hax yor)  hax
-      ?:  ?=(%void -.hax)
-        ?:  ?=(%fail -.yor)  [axe.yor ~]
-        ?.  ?=(%pale -.yor)  ~
-        yor(zips [zips.yor ~])
-      ?:  ?=(%void -.yor) 
-        ?:  ?=(%fail -.hax)  [axe.hax ~]
-        ?.  ?=(%pale -.hax)  ~
-        hax(zips [zips.hax ~])
-      ::TODO  maybe produce failure instead of asserting (for +feel)
-      ?:  ?=(?(%fail %faux) -.hax)
-        ?>  ?&  ?=(?(%fail %faux) -.yor)
-                ?=(%faux -.hax)
-                ?=(%faux -.yor)
-                =(nock.hax nock.yor)
-            ==
-        [%faux ~]
-      ?>  &(?=(%pale hax) ?=(%pale yor))
-      ?.  =(axe.hax axe.yor)  !!
-      pale+axe.hax^(~(gas in *(set zipper)) hax yor)
     --
   ::
   ++  modify-and-zip
-    |=  [=zipper =type]
-    ^-  ^type
-    ?:  ?=(%void type)  type
-    ?~  zipper  type
-    =-  $(type -, zipper t.zipper)
-    |-
-    ?-  -.i.zipper
-      %head  [%cell type +.i.zipper]
-      %tail  [%cell +.i.zipper type]
-      %core  [%core type +.i.zipper]
-      %hint  [%hint +.i.zipper type]
-      %face  [%face +.i.zipper type]
+    |=  [zap=zapp typ=type]
+    ^-  type
+    ?:  ?=(%void typ)  typ
+    ?~  zap  typ
+    ^-  type
+    ?-  -.i.zips
+      %head  [%cell $(zap q.zap) p.zap]
+      %tail  [%cell p.zap $(zap q.zap)]
+      %core  [%core $(zap q.zap) p.zap]
+      %hint  [%hint p.zap $(zap q.zap)]
+      %face  [%face p.zap $(zap q.zap)]
     ::
         %fork
-      [%fork (~(run in +.i.zipper) |=(=zipp ^$(i.zipper zipp)))]
+      [%fork (~(run in p.zap) |=(zup=zapp ^$(zap zup)))]
     ==
   ::
   ++  take
