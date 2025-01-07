@@ -4373,7 +4373,6 @@
             ++  make-flows
               |=  fren=fren-state
               ^-  (quip move (map side flow-state))
-              ~&  make-flow-for/her
               ::  forward flows
               ::
               =^  moves  flows.fren
@@ -4475,7 +4474,6 @@
                       (tap:packet-queue:$:pu:mu live.packet-pump-state.pump)
                     |=  [[live-packet-key live-packet-val] acc=_blobs]
                     (put:queue acc [message-num `@`fragment])
-                  ~&  >  blobs/blobs
                   %-  flop
                   %+  roll  (tap:queue blobs)
                   |=  $:  [=message-num =message-blob]
@@ -4498,7 +4496,6 @@
                     |=  [=message num=_next.pump msgs=(list [@ud message])]
                     :-  +(num)
                     [num^message msgs]
-                  ~&  >>  live/live
                   %+  roll  (weld live unsent)
                   ::
                   |=  [[=message-num =message] core=_fo-core]
@@ -4638,7 +4635,6 @@
             ++  make-peeks
               |=  fren=fren-state
               ^-  (quip move axle)
-              ~&  make-peeks-for/her
               =/  co-core
                 =/  chums  (~(put by chums.ames-state) her known/fren)
                 %*  co-core  co:(mesa now eny rof)
