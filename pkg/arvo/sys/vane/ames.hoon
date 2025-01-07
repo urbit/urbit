@@ -3605,8 +3605,9 @@
             ::  namespace that they have migrated us?
             ::  XX  requires a namespace for migrated peers
             ::
-            %-  %^  ev-trace  sun.veb  ship.deep
-                |.("migrating to |mesa")
+            :: %-  %^  ev-trace  sun.veb  ship.deep
+            ::     |.("migrating to |mesa")
+            ~&  >>  "migrating to |mesa"
             =~  ::  ack ahoy plea, if we don't crash
                 ::
                 abet:(call:(abed:mi:peer-core bone) %done ok=%.y)
