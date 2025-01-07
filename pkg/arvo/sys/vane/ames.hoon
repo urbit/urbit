@@ -8385,7 +8385,7 @@
               =.  ames-core
                 %+  reel  messages.todos
                 |=  [[=duct =plea] core=_ames-core]
-                ?:  ?=(%$ -.plea)
+                ?:  =(plea [%$ /flow %cork ~])
                   (on-cork:core(duct duct) ship)
                 (on-plea:core(duct duct) ship plea)
               ::  apply outgoing packet blobs
