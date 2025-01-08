@@ -1828,6 +1828,7 @@
           ==
       ==
     ::
+    ++  regression-test  !!  :: XX TODO
     --
 ::  external vane interface
 ::
@@ -7769,12 +7770,34 @@
                   |.("acking migrated %ahoy plea")
               ::
               (fo-take-done:fo-core ~)
-            ?.  &(=(%$ vane) ?=([%cork ~] payload) ?=([%flow ~] path)):plea
+            ?.  =(%$ vane.plea)
               =/  =wire  (fo-wire %van)
               %-  fo-emit
               ?+  vane.plea  ~|  %mesa-evil-vane^our^her^vane.plea  !!
                 ?(%c %e %g %j)  [hen %pass wire vane.plea %plea her plea]
               ==
+            ?:  ?=([%back ~] payload.plea)
+              ::  ack %rege plea
+              ::
+              =.  fo-core  (fo-take-done:fo-core ~)
+              ?+    path.plea  ~|  %mesa-evil-rege^our^her^path.plea  !!
+                  [%test %ames ~]
+                ?>  (regression-test(ames-state ames-state:fo-abet:fo-core) her)
+                fo-core
+              ::
+                  [%ames ~]
+                ::  regress peer back to ames
+                ::
+                =^  moves  ames-state
+                  =<  sy-abet
+                  ~|  %regress-crashed
+                  %.  [`her dry=%.n]
+                  %*  sy-rege  sy
+                    ames-state  ames-state:fo-abet:fo-core
+                  ==
+                (fo-emil moves)
+              ==
+            ?>  &(?=([%cork ~] payload) ?=([%flow ~] path)):plea
             ::  publisher receives %cork
             ::  mark flow as closing
             ::  publish %cork %ack (in +hear-poke:ev-mess) in corked.per
@@ -8771,6 +8794,13 @@
         ++  sy-rege
           |=  [ship=(unit ship) dry=?]
           |^  ^+  sy-core
+          =;  updated-core=_sy-core
+              ?:  dry
+                ~&  >  %test-local-regression-worked
+                sy-core
+              ~&  >  %local-regression-worked
+              updated-core
+          ::
           ?^  ship
             =/  =chum-state  (~(got by chums.ames-state) u.ship)
             ?.  ?=([%known *] chum-state)
@@ -9896,6 +9926,24 @@
       ++  crypto-core
         =>  [priv=priv.ames-state ..crypto]
         ~>(%memo./mesa/crypto-core (nol:nu:crub:crypto priv))
+      ::
+      ++  regression-test
+        |=  her=ship
+        ^-  ?
+        =/  rege-state=axle
+          ~|  %regress-crashed
+          ames-state:(sy-rege:sy `her dry=%.n)
+        =/  ahoy-state=axle
+          ~|  %migrate-crashed
+          =+  event-core=(ev:ames now^eny^rof ~[//rege] rege-state)
+          =/  peer=peer-state  (got-peer-state:event-core her)
+          ames-state:on-migrate:(abed-peer:pe:event-core her peer)
+        ::  XX  compare pre/post migrated states
+        ::
+        :: %+  regression-test
+        ::   (~(got by chums.ames-state) her)
+        :: (~(got by chums.ahoy-state) her)
+        &
       ::
       +|  %fren-helpers
       ::

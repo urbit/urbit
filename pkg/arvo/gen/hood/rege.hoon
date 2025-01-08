@@ -6,4 +6,4 @@
   ::
 /?    310
 :-  %say
-|=([^ [who=ship ~] dry=_& ~] helm-send-regress/who^dry)
+|=([^ [who=ship ~] dry=_& ~] helm-send-rege/who^dry)
