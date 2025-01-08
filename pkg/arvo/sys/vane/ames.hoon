@@ -7167,7 +7167,6 @@
             ::  XX  we punch through the message layer directly from the
             ::  packet layer, so ack/poke path validation happens there
             ::
-            :: =/  ack=(pole iota)  (mesa-pave path.ack-spar)
             =/  pok=(pole iota)  (mesa-pave path.pok-spar)
             =/  ack=(pole iota)  (mesa-pave path.ack-spar)
             ?>  &(?=(flow-pith pok) ?=(flow-pith ack))
@@ -7279,9 +7278,11 @@
           ?>  ?=(flow-pith message-path)
           ::
           ?:  =(%pok were)
-            ::  XX ack-path not used
             %-  hear-poke:ev-mess
-            [dud=~ ack-path=our^/ her^(pout message-path) q.sage]
+            :^    dud=~
+                ack-path=our^(pout message-path(load %ack, dire dire.side))
+              her^(pout message-path)
+            q.sage
           ::  wires are tagged ?(%ack %nax) so we can diferentiate if we are
           ::  proessing an ack or a naxplanation payload
           ::
