@@ -8240,8 +8240,13 @@
                     (get-forward-lanes-mesa our +.u.peer chums.ames-state)
                   |=  =lane:pact
                   ^-  (each @pC address)
-                  ?>  ?=(@ lane)
-                  [%.y `@pC`lane]
+                  ?@  lane
+                    [%.y `@p`lane]
+                  :-  %.n
+                  %+  can  3
+                  :~  4^p.lane
+                      2^q.lane
+                  ==
               ==
             ::  if one of our sponsors breached, give the updated list to vere
             ::
