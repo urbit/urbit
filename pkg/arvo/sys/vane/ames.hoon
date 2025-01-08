@@ -237,7 +237,7 @@
         ?:  =(index num-fragments)
           sorted
         ~?  >>>  !(~(has by fragments) index)
-          whoops/index
+          whoops-assemble-fragments/index
         $(index +(index), sorted [(~(got by fragments) index) sorted])
       ::
       (cue (rep packet-size (flop sorted)))
@@ -6834,28 +6834,26 @@
         ++  ev-req-plea
           |=  [vane=@tas =wire payload=*]
           ^+  ev-core
+          =/  cork=?  =([%$ /flow %cork ~] vane^wire^payload)
           =^  bone  ossuary.per  ::  XX  to arm?
             =,  ossuary.per
+            ?:  cork
+              ~|  "flow not in the ossuary; ignore cork"
+              [(~(got by by-duct) hen) ossuary.per]
             ?^  bone=(~(get by by-duct) hen)
               [u.bone ossuary.per]
             :-  next-bone  ^+  ossuary.per
             :+  (add 4 next-bone)
               (~(put by by-duct) hen next-bone)
             (~(put by by-bone) next-bone hen)
-          ::  handle cork
           ::
-          =/  cork=?  =([%$ /flow %cork ~] vane^wire^payload)
-          ?:  &(cork !(~(has by by-bone.ossuary.per) bone))
-            %-  %+  ev-tace  odd.veb.bug.ames-state
-                |.("{<bone=bone>} not in the ossuary; ignore cork")
-            ev-core
           =+  fo-core=(fo-abed:fo hen bone dire=%for)
+          ::
           %-  %+  ev-tace  msg.veb.bug.ames-state
               =+  msg=?:(cork %cork %plea)
               =*  next  next.snd.fo-core
               |.("send {<msg>} {<[bone=bone seq=next path=(spud wire)]>}")
           ::
-          ~?  >>  cork  hen
           ?:  closing.state.fo-core
             %-  %+  ev-tace  odd.veb.bug.ames-state
                 |.("flow {<bone=bone>} in closing; skip")
