@@ -11129,6 +11129,7 @@
           ?.  =(0 p.heg)  fail+(dec p.heg)
           =/  zap=zapp  ?:(?=([* ~ ~] zaps) n.zaps fork+zaps)
           `zebra`[%pale u.axe fok zap]
+      ::  XX: rather than using rep, we should fail early
       %-  ~(rep in p.sut)
       |=  [t=type axe=(unit axis) typs=(set type) zaps=(set zapp)]
       =+  taf=^$(sut t)
