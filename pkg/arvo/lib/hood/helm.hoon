@@ -233,7 +233,7 @@
   %-  (slog %take-ahoy-wake-crash u.error)
   abet:(emit %pass `wire`[%helm %ahoy-crash way] %arvo %b %wait (add now.bowl ~s30)) :: XX exp backoff?
 ::
-++  poke-send-regress
+++  poke-send-rege
   |=  [her=ship test=?]  =<  abet
   =/  =wire
     :+  %helm  %rege
@@ -241,24 +241,24 @@
   =/  =path  ?:(test /test/ames /ames)
   (emit %pass wire %arvo %a %plea her %$ path %back ~)
 ::
-++  take-regress
+++  take-rege
   |=  [way=wire error=(unit error:ames)]
   ?:  ?=([%test @ *] way)
     ?~  error
-      ~&  >   %regress-test-worked
-      ~&  >>  %test-local-regress
+      ~&  >   %rege-test-worked
+      ~&  >>  %test-local-rege
       abet:(emit %pass /helm/migrate %arvo %a %rege (slaw %p i.t.way) dry=%.y)
-    %-  (slog %take-regress-test-failed u.error)
+    %-  (slog %take-rege-test-failed u.error)
     abet
   ?>  ?=([@ ~] way)
   ?~  error
       ~&  >   %remote-regress-worked
-      ~&  >>  %try-local-regress
+      ~&  >>  %try-local-rege
     abet:(emit %pass /helm/migrate %arvo %a %rege (slaw %p i.way) dry=%.n)
-  ~&  >>>  %regress-crash
+  ~&  >>>  %rege-crash
   ::  XX retry?
   ::
-  %-  (slog %take-regress-failed u.error)
+  %-  (slog %take-rege-failed u.error)
   abet
   :: abet:(emit %pass `wire`[%helm %ahoy-crash way] %arvo %b %wait (add now.bowl ~s30)) :: XX exp backoff?
 ::
@@ -649,6 +649,7 @@
     %helm-rekey            =;(f (f !<(_+<.f vase)) poke-rekey)
     %helm-send-hi          =;(f (f !<(_+<.f vase)) poke-send-hi)
     %helm-send-ahoy        =;(f (f !<(_+<.f vase)) poke-send-ahoy)
+    %helm-send-rege        =;(f (f !<(_+<.f vase)) poke-send-rege)
     %helm-serve            =;(f (f !<(_+<.f vase)) poke-serve)
     %helm-trim             =;(f (f !<(_+<.f vase)) poke-trim)
     %helm-verb             =;(f (f !<(_+<.f vase)) poke-verb)
@@ -681,7 +682,7 @@
                       ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
     [%ahoy *]         %+  take-ahoy  t.wire
                       ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
-    [%back *]         %+  take-regress  t.wire
+    [%rege *]         %+  take-rege  t.wire
                       ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
     [%ahoy-crash *]   %+  take-ahoy-crash  t.wire
                       ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
