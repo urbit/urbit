@@ -734,6 +734,7 @@
 ++  weld                                                ::  concatenate
   ~/  %weld
   |*  [a=(list) b=(list)]
+  ~!  weld=+<
   =>  .(a ^.(homo a), b ^.(homo b))
   |-  ^+  b
   ?~  a  b
@@ -780,7 +781,6 @@
   |=  [a=bloq b=(list [p=step q=@])]
   ^-  @
   ?~  b  0
-  ~!  welp=b
   (add (end [a p.i.b] q.i.b) (lsh [a p.i.b] $(b t.b)))
 ::
 ++  cat                                                 ::  concatenate
@@ -11046,7 +11046,8 @@
           [%fork *]
         =-  =+  fok=(fork ~(tap in typs))
             ?:  ?=(%void fok)  !!
-            `zebra`[%pale axe fok fork+zaps]
+            =/  zap=zapp  ?:(?=([* ~ ~] zaps) n.zaps fork+zaps)
+            `zebra`[%pale axe fok zap]
         %-  ~(rep in p.sut)
         |=  [t=type axe=axis typs=(set type) zaps=(set zapp)]
         ^+  +<+
@@ -11114,10 +11115,12 @@
       zaf(axe (peg axe axe.zaf), zap [%face p.sut zap.zaf])
     ::
         [%fork *]
-      =-  =+  fok=(fork ~(tap in typs))
+      =-  ?~  axe  fail+p.heg
+          =+  fok=(fork ~(tap in typs))
           ?:  ?=(%void fok)  !!
-          ?>  ?=(^ axe)
-          `zebra`[%pale u.axe fok fork+zaps]
+          ?.  =(0 p.heg)  fail+(dec p.heg)
+          =/  zap=zapp  ?:(?=([* ~ ~] zaps) n.zaps fork+zaps)
+          `zebra`[%pale u.axe fok zap]
       %-  ~(rep in p.sut)
       |=  [t=type axe=(unit axis) typs=(set type) zaps=(set zapp)]
       =+  taf=^$(sut t)
@@ -11187,7 +11190,7 @@
     =+  zeb=(unzip %rite hyp)
     ?>  ?=([%pale *] zeb)
     :-  axe.zeb
-    (modify-and-zip(sut typ.zeb) zap.zeb)
+    (modify-and-zip(sut mur) zap.zeb)
   ::
   ++  tend
     |=  vit=vein
