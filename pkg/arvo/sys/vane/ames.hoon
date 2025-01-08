@@ -4700,18 +4700,18 @@
           ++  on-migration-test
             ^-  ?
             =/  ahoy-state=axle  ~|(%migrate-crashed ames-state:on-migrate)
-            =/  back-state=axle
+            =/  rege-state=axle
               =<  ames-state
               ~|  %regress-crashed
-              %.  [~ her]
-              %*  sy-back  sy:(mesa now eny rof)
+              %.  [`her dry=%.n]
+              %*  sy-rege  sy:(mesa now eny rof)
                 ames-state  ahoy-state
               ==
             ::  compare pre/post migrated states
             ::
             %+  migration-test
               (~(got by peers.ames-state) her)
-            (~(got by peers.back-state) her)
+            (~(got by peers.rege-state) her)
           ::
           +|  %implementation
           ::  +send-shut-packet: fire encrypted packet at rcvr (maybe sponsors)
@@ -5702,7 +5702,7 @@
                 =+  ;;(=plea message)
                 ?:  ?&  =(%$ vane.plea)
                         ?=(%ahoy -.payload.plea)
-                        ?=(%test -.path.plea)
+                        ?=([%test %mesa ~] path.plea)
                     ==
                     ::  check that we can migrate this peer, without
                     ::  modifying the state
@@ -6672,9 +6672,9 @@
                 %tame  sy-abet:(sy-tame:sy-core ship.task)
                 %sift  sy-abet:(sy-sift:sy-core ships.task)
                 %spew  sy-abet:(sy-spew:sy-core veb.task)
-              ::  migration
+              ::  regression
               ::
-                %back  sy-abet:(sy-back:sy-core +.task)
+                %rege  sy-abet:(sy-rege:sy-core +.task)
               ::  from internal %ames request
               ::
                 ?(%meek %moke %mage)  co-abet:(co-call:co-core task)
@@ -8770,8 +8770,8 @@
             ==
           sy-core
         ::
-        ++  sy-back
-          |=  ship=(unit ship)
+        ++  sy-rege
+          |=  [ship=(unit ship) dry=?]
           |^  ^+  sy-core
           ?^  ship
             =/  =chum-state  (~(got by chums.ames-state) u.ship)
@@ -10237,7 +10237,7 @@
     (~(call pe-core hen) dud task)
     ::  XX can we call the wrong core? still check if ship has migrated?
     ::
-      ?(%meek %moke %mage %back)
+      ?(%meek %moke %mage %rege)
     (call:me-core sample)
     ::  flow-independent tasks
     ::

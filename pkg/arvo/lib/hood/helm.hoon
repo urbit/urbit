@@ -198,7 +198,7 @@
   =/  =wire
     :+  %helm  %ahoy
     ?.(test /(scot %p her) /test/(scot %p her))
-  =/  =path  ?:(test /test /mesa)
+  =/  =path  ?:(test /test/mesa /mesa)
   (emit %pass wire %arvo %a %plea her %$ path %ahoy ~)
 ::
 ++  take-ahoy
@@ -232,6 +232,35 @@
   ::
   %-  (slog %take-ahoy-wake-crash u.error)
   abet:(emit %pass `wire`[%helm %ahoy-crash way] %arvo %b %wait (add now.bowl ~s30)) :: XX exp backoff?
+::
+++  poke-send-regress
+  |=  [her=ship test=?]  =<  abet
+  =/  =wire
+    :+  %helm  %rege
+    ?.(test /(scot %p her) /test/(scot %p her))
+  =/  =path  ?:(test /test/ames /ames)
+  (emit %pass wire %arvo %a %plea her %$ path %back ~)
+::
+++  take-regress
+  |=  [way=wire error=(unit error:ames)]
+  ?:  ?=([%test @ *] way)
+    ?~  error
+      ~&  >   %regress-test-worked
+      ~&  >>  %test-local-regress
+      abet:(emit %pass /helm/migrate %arvo %a %rege (slaw %p i.t.way) dry=%.y)
+    %-  (slog %take-regress-test-failed u.error)
+    abet
+  ?>  ?=([@ ~] way)
+  ?~  error
+      ~&  >   %remote-regress-worked
+      ~&  >>  %try-local-regress
+    abet:(emit %pass /helm/migrate %arvo %a %rege (slaw %p i.way) dry=%.n)
+  ~&  >>>  %regress-crash
+  ::  XX retry?
+  ::
+  %-  (slog %take-regress-failed u.error)
+  abet
+  :: abet:(emit %pass `wire`[%helm %ahoy-crash way] %arvo %b %wait (add now.bowl ~s30)) :: XX exp backoff?
 ::
 ++  poke-hi
   |=  mes=@t
@@ -651,6 +680,8 @@
     [%moon-breach *]  %+  take-wake-moon-breach  t.wire
                       ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
     [%ahoy *]         %+  take-ahoy  t.wire
+                      ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
+    [%back *]         %+  take-regress  t.wire
                       ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
     [%ahoy-crash *]   %+  take-ahoy-crash  t.wire
                       ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
