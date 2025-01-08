@@ -11005,6 +11005,7 @@
     =/  heg  ?^(i.hyp i.hyp [%| p=0 q=(some i.hyp)])
     ?.  ?=(%| -.heg)
       =/  axe  p.heg
+      =|  gil=(set type)
       |-  ^-  zebra
       ?:  =(1 p.heg)
         =+  zaf=^$(hyp t.hyp)
@@ -11041,7 +11042,7 @@
         ?.  ?=([%pale *] taf)  taf
         taf(zap [%hint p.sut zap.taf])
       ::
-          [%hold *]  $(sut repo)  ::TODO  track in state
+          [%hold *]  $(sut repo) :: XX: i think for axis case, no state?
       ::
           [%fork *]
         =-  =+  fok=(fork ~(tap in typs))
@@ -11059,6 +11060,8 @@
     =|  gil=(set type)
     |-  ^-  zebra
     ?~  q.heg
+      :: XX what do we do for different values of p.heg?
+      :: XX current behavior only strips faces at end of edit iirc
       ?>  =(0 p.heg)  ::  no skipping on bare com
       =+  zaf=^$(hyp t.hyp, sut ?:(?=([%face *] sut) q.sut sut))
       ?.  ?=([%pale *] zaf)  zaf
@@ -11106,7 +11109,12 @@
           ?.  ?=([%pale *] zaf)  zaf
           zaf(axe (peg axe axe.zaf), zap [%face p.sut zap.zaf])
         fail+p.heg
-      ?~  tyr=(~(get by p.p.sut) u.q.heg)  fail+p.heg
+      :: XX: edit through bridges?
+      :: also should the end goal maybe use bridges instead of aliases?
+      ?~  tyr=(~(get by p.p.sut) u.q.heg)
+        =+  taf=$(sut q.sut)
+        ?.  ?=([%pale *] taf)  taf
+        taf(zap [%face p.sut zap.taf])
       ?.  =(0 p.heg)  fail+(dec p.heg)
       ?~  u.tyr  ~|(%unzip-tyr-lost !!)
       ?~  hup=~(reek ap u.u.tyr)  !!
@@ -11124,6 +11132,7 @@
       %-  ~(rep in p.sut)
       |=  [t=type axe=(unit axis) typs=(set type) zaps=(set zapp)]
       =+  taf=^$(sut t)
+      ::  XX not handling fails
       ?.  ?=([%pale *] taf)  +<+.$
       ?>  |(?=(~ axe) =(u.axe axe.taf))
       [`axe.taf (~(put in typs) typ.taf) (~(put in zaps) zap.taf)]
@@ -11187,6 +11196,9 @@
     |=  [hyp=wing mur=type]
     ^-  (pair axis type)
     ~_  (show [%c %tack] %l hyp)
+    ::~|  hyp=hyp
+    ::~_  ~(duck us face+sut+sut) 
+    ::~_  ~(duck us face+mur+mur) 
     =+  zeb=(unzip %rite hyp)
     ?>  ?=([%pale *] zeb)
     :-  axe.zeb
