@@ -780,6 +780,7 @@
   |=  [a=bloq b=(list [p=step q=@])]
   ^-  @
   ?~  b  0
+  ~!  welp=b
   (add (end [a p.i.b] q.i.b) (lsh [a p.i.b] $(b t.b)))
 ::
 ++  cat                                                 ::  concatenate
@@ -9640,7 +9641,19 @@
       --
     ==
   ::
-  ++  find  fynd
+  ++  find
+    ~/  %find
+    |=  [way=vial hyp=wing]
+    ^-  port
+    ~_  (show [%c %find] %l hyp)
+    =-  ?@  -  !!
+        ?-    -<
+          %&  [%& p.-]
+          %|  ?-  -.p.-
+                %|  [%| p.p.-]
+                %&  !!
+        ==    ==
+    (fond way hyp)
   ::
   ++  fend
     |=  [way=vial hyp=wing]
@@ -11031,16 +11044,15 @@
           [%hold *]  $(sut repo)  ::TODO  track in state
       ::
           [%fork *]
-        !!
-        :: XX wtf axes
-        ::=-  =+  fok=(fork typs)
-        ::    ?:  ?=(%void fok)  !!
-        ::    [%pale fok fork+zaps]
-        ::%-  ~(rep in p.sut)
-        ::|=  [t=type typs=(set type) zaps=(set zapp)]
-        ::=+  taf=$(sut t)
-        ::?.  ?=([%pale *] taf)  acc
-        ::[(~(put in typs) typ.taf) (~(put in zaps) zap.taf)]
+        =-  =+  fok=(fork ~(tap in typs))
+            ?:  ?=(%void fok)  !!
+            `zebra`[%pale axe fok fork+zaps]
+        %-  ~(rep in p.sut)
+        |=  [t=type axe=axis typs=(set type) zaps=(set zapp)]
+        ^+  +<+
+        =+  taf=^$(sut t)
+        ?.  ?=([%pale *] taf)  +<+.$
+        [axe.taf (~(put in typs) typ.taf) (~(put in zaps) zap.taf)]
       ==
     =/  axe  1
     =|  gil=(set type)
@@ -11093,25 +11105,32 @@
           ?.  ?=([%pale *] zaf)  zaf
           zaf(axe (peg axe axe.zaf), zap [%face p.sut zap.zaf])
         fail+p.heg
-      %void :: XX edit thru synthetic
+      ?~  tyr=(~(get by p.p.sut) u.q.heg)  fail+p.heg
+      ?.  =(0 p.heg)  fail+(dec p.heg)
+      ?~  u.tyr  ~|(%unzip-tyr-lost !!)
+      ?~  hup=~(reek ap u.u.tyr)  !!
+      =+  zaf=^$(hyp (weld (flop u.hup) t.hyp), sut q.sut)
+      ?.  ?=([%pale *] zaf)  zaf
+      zaf(axe (peg axe axe.zaf), zap [%face p.sut zap.zaf])
     ::
         [%fork *]
-      !!
-      :::: XX wtf axes
-      ::%-  ~(rep in p.sut)
-      ::|=  [t=type axe=(unit axis) typs=(set type) zaps=(set zapp)]
-      ::=+  taf=$(sut t)
-      ::?.  ?=([%pale *] taf)  acc
-      ::?>  |(?=(~ axe) =(u.axe axe.taf))
-      ::[`axe.taf (~(put in typs) typ.taf) (~(put in zaps) zap.taf)]
+      =-  =+  fok=(fork ~(tap in typs))
+          ?:  ?=(%void fok)  !!
+          ?>  ?=(^ axe)
+          `zebra`[%pale u.axe fok fork+zaps]
+      %-  ~(rep in p.sut)
+      |=  [t=type axe=(unit axis) typs=(set type) zaps=(set zapp)]
+      =+  taf=^$(sut t)
+      ?.  ?=([%pale *] taf)  +<+.$
+      ?>  |(?=(~ axe) =(u.axe axe.taf))
+      [`axe.taf (~(put in typs) typ.taf) (~(put in zaps) zap.taf)]
     ==
   ::
   ++  modify-and-zip
-    |=  [zap=zapp typ=type]
+    |=  [zap=zapp]
     ^-  type
-    ?:  ?=(%void typ)  typ
-    ?~  zap  typ
-    ^-  type
+    ?:  ?=(%void sut)  sut
+    ?~  zap  sut
     ?-  -.zap
       %head  [%cell $(zap q.zap) p.zap]
       %tail  [%cell p.zap $(zap q.zap)]
@@ -11163,10 +11182,12 @@
   ::
   ++  tack
     |=  [hyp=wing mur=type]
+    ^-  (pair axis type)
     ~_  (show [%c %tack] %l hyp)
-    =+  fid=(find %rite hyp)
-    ?>  ?=(%& -.fid)
-    (take p.p.fid |=(type mur))
+    =+  zeb=(unzip %rite hyp)
+    ?>  ?=([%pale *] zeb)
+    :-  axe.zeb
+    (modify-and-zip(sut typ.zeb) zap.zeb)
   ::
   ++  tend
     |=  vit=vein
@@ -14223,6 +14244,13 @@
   =+  vaz=vast
   ~|  bon
   (scan (trip txt) (full (ifix [gay gay] tall:vaz(wer bon))))
+::
+++  train                                                ::  parse with % path
+  |=  [bon=path txt=@]
+  ^-  hoon
+  =+  vaz=vast
+  ~|  bon
+  (scan (trip txt) (full (ifix [gay gay] tall:vaz(wer bon, bug &))))
 ::
 ++  ream                                                ::  parse cord to hoon
   |=  txt=@
