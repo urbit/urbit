@@ -3925,6 +3925,82 @@
           ::
           --
         ::
+        ++  on-ack-ahoy
+          |=  =shot
+          ^+  event-core
+          ?.  sam.shot
+            %-  (ev-trace odd.veb sndr.shot |.("weird no ames"))
+            event-core
+          =/  =chum-state  (~(got by chums.ames-state) sndr.shot)
+          ?>  ?=([%known *] chum-state)
+          =/  =channel    [[our sndr.shot] now channel-state +<.chum-state]
+          =?  event-core  !=(sndr-tick.shot (mod her-life.channel 16))
+            %.  event-core
+            %^  ev-trace  odd.veb  sndr.shot
+            |.  ^-  tape
+            =/  sndr  [sndr-tick=sndr-tick.shot her-life=her-life.channel]
+            "sndr-tick mismatch {<sndr>}"
+          =?  event-core  !=(rcvr-tick.shot (mod our-life.channel 16))
+            %.  event-core
+            %^  ev-trace  odd.veb  sndr.shot
+            |.  ^-  tape
+            =/  rcvr  [rcvr-tick=rcvr-tick.shot our-life=our-life.channel]
+            "rcvr-tick mismatch {<rcvr>}"
+          =/  shut-packet=(unit shut-packet)
+            (sift-shut-packet shot [symmetric-key her-life our-life]:channel)
+          ?~  shut-packet
+            %-  (ev-trace odd.veb sndr.shot |.("weird shut-packet"))
+            event-core
+          =/  =bone         bone.u.shut-packet
+          =/  =message-num  message-num.u.shut-packet
+          ?.  ?=(%& -.meat.u.shut-packet)
+            %-  (ev-trace odd.veb sndr.shot |.("ignoring ack"))
+            ::  ignore acks
+            ::
+            event-core
+          =/  [num-fragments=@ud =fragment-num =fragment]  +.meat.u.shut-packet
+          ?.  &(=(num-fragments 1) =(fragment-num 0))
+            %-  (ev-trace odd.veb sndr.shot |.("ignore multi-fragment pleas"))
+            ::  ignore multi-fragment pleas
+            ::
+            event-core
+          =/  blob=*  (cue (rep packet-size [fragment]~))
+          ?.  ?=(^ ;;((soft [%$ [%mesa ~] %ahoy ~]) blob))
+            %-  (ev-trace odd.veb sndr.shot |.("ignore non ahoy pleas"))
+            ::  ignore single-fragment non %ahoy pleas
+            ::
+            event-core
+          ::  single-fragment %ahoy plea for migrated peer; always ack
+          ::
+          ::  check that chums has in fact the flow in chums for the
+          ::  corresponding bone in the shut-packet
+          ::
+          =+  ev-core=(ev-foco:ev:(mesa now eny rof) sndr.shot +.chum-state)
+          =+  fo-core=(fo-abed:fo:ev-core ~[//scry] side=[(mix 1 bone) %bak])
+          ?~  res=(fo-peek:fo-core %ack message-num)
+            %-  (ev-trace odd.veb sndr.shot |.("ack missing"))
+            event-core
+          ?.  ?=([%ack error=@] u.res)
+            %-  (ev-trace odd.veb sndr.shot |.("weird ack"))
+            event-core
+          %-  (ev-trace snd.veb sndr.shot |.("send migrated ack"))
+          ::
+          =/  ok=?  ;;(? +.u.res)
+          =/  ack-packet=^shut-packet
+            :-  (mix 1 bone.u.shut-packet)
+            [message-num.u.shut-packet %| %| ok lag=*@dr]
+          %:  send-blob  for=|  sndr.shot
+            %-  etch-shot
+            %:  etch-shut-packet:ames
+              ack-packet
+              symmetric-key.channel
+              our               sndr.shot
+              our-life.channel  her-life.channel
+            ==
+          ::
+            ship-state=~  :: send-blob finds the migrated peer in chums.ames-state
+          ==
+        ::
         +|  %implementation
         ::  +enqueue-alien-todo: helper to enqueue a pending request
         ::
@@ -3985,14 +4061,36 @@
           %-  (ev-trace rot.veb final-ship |.("send-blob: to {<ship>}"))
           |-
           |^  ^+  event-core
-              ?.  ?=([~ %known *] ship-state)
+              =/  chum-state=(unit chum-state)
+                (~(get by chums.ames-state) ship)
+              ?.  ?|  ?=([~ %known *] chum-state)
+                      ?=([~ %known *] ship-state)
+                  ==
                 ?:  ?=(%pawn (clan:title ship))
                   (try-next-sponsor (^sein:title ship))
+                ::  by default, %aliens are saved in peer.ames-state
+                ::  XX use chums.ames-state as default
+                ::
                 %^  enqueue-alien-todo  ship  ship-state
                 |=  todos=alien-agenda
                 todos(packets (~(put in packets.todos) blob))
               ::
-              =/  =peer-state  +.u.ship-state
+              =/  [sponsor=@p route=(unit [direct=? =lane])]
+                ?:  ?=([~ %known *] ship-state)
+                  [sponsor route]:u.ship-state
+                ?>  ?=([~ %known *] chum-state)
+                :-  sponsor.u.chum-state
+                ::  XX refactor to arm (see sy-rege:sy:mesa)
+                ::
+                ?~  lane.u.chum-state  ~
+                :-  ~
+                ?@  u.lane.u.chum-state
+                  [direct=%.y %.y `@p`u.lane.u.chum-state]
+                :+  direct=%.n   %.n
+                %+  can  3
+                :~  4^p.u.lane.u.chum-state
+                    2^q.u.lane.u.chum-state
+                ==
               ::
               ::  XX  routing hack to mimic old ames.
               ::
@@ -4006,18 +4104,18 @@
                           !=(%czar (clan:title ship))
                       ==
                   ==
-                (try-next-sponsor sponsor.peer-state)
+                (try-next-sponsor sponsor)
               ::
               ?:  =(our ship)
                 ::  if forwarding, don't send to sponsor to avoid loops
                 ::
                 ?:  for
                   event-core
-                (try-next-sponsor sponsor.peer-state)
+                (try-next-sponsor sponsor)
               ::
-              ?~  route=route.peer-state
+              ?~  route
                 %-  (ev-trace rot.veb final-ship |.("no route to:  {<ship>}"))
-                (try-next-sponsor sponsor.peer-state)
+                (try-next-sponsor sponsor)
               ::
               %-  (ev-trace rot.veb final-ship |.("trying route: {<ship>}"))
               =.  event-core
@@ -4025,7 +4123,7 @@
               ::
               ?:  direct.u.route
                 event-core
-              (try-next-sponsor sponsor.peer-state)
+              (try-next-sponsor sponsor)
           ::
           ++  try-next-sponsor
             |=  sponsor=^ship
@@ -4173,7 +4271,6 @@
             ?:  (is-corked bone)  peer-core
             ::  Just try again on error, printing trace
             ::
-
             ::    Note this implies that vanes should never crash on %done,
             ::    since we have no way to continue using the flow if they do.
             ::
@@ -10132,13 +10229,17 @@
       ?:  ?=([%ames *] ship-state)
         ::  both for %ames and %fine
         ::
-        (call:am-core hen dud soft+hear/lane^blob)
+        (call:am-core hen dud %soft %hear lane blob)
       ?.  ?=([~ %known *] +.ship-state)
         ::
         %-  %+  %*(ev-tace ev-core her sndr.shot)  odd.veb.bug.ames-state
             |.("hear ames packet for migrated (alien) peer; ignore")
         ::
         `vane-gate
+      ::  old response, no-op. If we can find the peer in chums, it means that
+      ::  they sent an %ahoy plea, we migrated them, but they haven't heard our
+      ::  %ack, and have not migrated us.
+      ::
       ::  XX  TODO: check if we are in fact tracking this path
       ::  XX  (necessary?)
       ::
@@ -10153,9 +10254,12 @@
       ::  resend the message as soon as they migrate us.
       ::
       %-  %+  %*(ev-tace ev-core her sndr.shot)  odd.veb.bug.ames-state
-          |.("hear ames packet for migrated peer; ignore")
+          |.("hear ames packet for migrated peer")
       ::
-      `vane-gate
+      =^  moves  ames-state
+        =<  abet
+        %.(shot on-ack-ahoy:(ev:(ames now eny rof) now^eny^rof hen ames-state))
+      [moves vane-gate]
     ::
     +|  %mesa-tasks
     ::
