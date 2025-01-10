@@ -9956,7 +9956,6 @@
             |.("pushing {<+<.pact>} packet")
         ::
         =/  lanes=(list lane:pact:ames)
-          :: :-  [%if ip=.206.189.218.58 port=52.510]
           %+  weld
             (drop (get-sponsor ship))
           ?~(lane ~ (drop lane))
@@ -10056,6 +10055,8 @@
         ::   (~(got by chums.ames-state) her)
         :: (~(got by chums.ahoy-state) her)
         &
+      ::
+      ++  validate-poke  !! :: XX TODO
       ::
       +|  %fren-helpers
       ::
@@ -10294,38 +10295,120 @@
           sy-abet:(~(sy-crud sy:me-core hen) %peek tang.u.dud)
         ::
             %poke
-          =*  her  her.pok.pact  :: her from poke-path
+          =*  data     data.pact
+          =*  our-ack  her.ack.pact
+          =*  her-pok  her.pok.pact
+          ::
           ?:  .=  =(%deny form.snub.ames-state)
-              (~(has in ships.snub.ames-state) her)
-            %-  %+  %*(ev-tace ev-core her her)  rcv.veb.bug.ames-state
+              (~(has in ships.snub.ames-state) her-pok)
+            %-  %+  %*(ev-tace ev-core her her-pok)  rcv.veb.bug.ames-state
                 |.("snubbed")
             `ames-state
-          =/  chum-state  (~(get by chums.ames-state) her)
-          ?.  ?&  ?=(%pawn (clan:title her))
-                  |(?=(~ chum-state) ?=([~ %alien *] chum-state))
+          =/  chum-state  (pe-find-peer her-pok)
+          ?:  ?=([%ames *] chum-state)
+            ::  peer has been regressed to %ames (or XX?)
+            ?.  =(1 (div (add tob.data.pact 1.023) 1.024))
+              ::  only deal with single-fragment %rege pleas
+              ::
+              `ames-state
+            ?.  ?=([~ %known *] +.chum-state)
+              ::  XX handle?
+              `ames-state
+            ::
+            =/  =peer-state     +.u.+.chum-state
+            =/  =azimuth-state  -.peer-state
+            =+  ames-core=(ev:ames now^eny^rof ~[//rege] ames-state)
+            =+  peer-core=(abed-peer:pe:ames-core her-pok peer-state)
+            =|  per=fren-state
+            =.  -.per  azimuth-state
+            =/  ev-core
+              %*  ev-core  (ev-abed:ev:(mesa now eny rof) hen)
+                chums.ames-state  (~(put by chums.ames-state) her-pok known/per)
               ==
-            ?.  ?=([~ %known *] chum-state)
+            ::  XX refactor; same as hear-poke:ev-pact:ev:mesa
+            ::
+            =/  [=space cyf=(unit @) =inner-poke=path]
+              ~|  inner-path/[pat.ack^pat.pok]:pact
+              (ev-decrypt-path:ev-core [pat her]:pok.pact)
+            ::
+            =/  [pok=(pole iota) ack=(pole iota)]
+              ::  path validation/decryption
+              ::
+              :-  (validate-path inner-poke-path)
+              %-  validate-path
+              inner:(ev-decrypt-path:ev-core [pat.ack her.pok]:pact)
+            ::
+            ?>  &(?=(flow-pith ack) ?=(flow-pith pok))
+            ?.  =(our-ack our)  ::  do we need to respond to this ack?
+              %-  %+  %*(ev-tace ev-core her her-pok)  odd.veb.bug.ames-state
+                  |.("not our ack rcvr={<our-ack>}; skip")
+              `ames-state
+            ?.  =(rcvr.pok our)  ::  are we the receiver of the poke?
+              %-  %+  %*(ev-tace ev-core her her-pok)  odd.veb.bug.ames-state
+                  |.("poke for {<rcvr.pok>} not us; skip")
+              `ames-state
+            ?.  =(her-pok rcvr.ack)  ::  do ack and pokes match?
+              %-  %+  %*(ev-tace ev-core her her-pok)  odd.veb.bug.ames-state
+                  |.("ack {<rcvr.ack>} and poke {<her-pok>} missmatch; skip")
+              `ames-state
+            ::  authenticate one-fragment message
+            ::
+            ?>  %-  authenticate:me-core
+                [(root:lss (met 3 dat.data)^dat.data) aut.data pok.pact]
+            =+  ;;  =gage:mess
+                    (cue (ev-decrypt-spac:ev-core space dat.data cyf))
+            ?.  ?=([%message mark *] gage)
+              %-  %+  %*(ev-tace ev-core her her-pok)  odd.veb.bug.ames-state
+                  |.("no op; weird %message gage {<-.gage>}")
+              `ames-state
+            ?:  ?=(%boon +<.gage)
+              `ames-state  :: XX ignore boons
+            =+  ;;([%plea =plea] +.gage)
+            ?.  ?=([%$ path=[%ames ~] payload=[%back ~]] plea)
+              `ames-state  :: XX ignore non %rege plea
+            ::  produce mesa ack
+            ::
+            ::  XX check that we have acked this message?
+            ::
+            =/  moves=(list move)
+              ::  create temporary flow for ack payload
+              ::
+              =.  flows.per
+                =|  state=flow-state
+                %-  ~(put by flows.per)
+                [[bone dire]:ack state(last-acked.rcv mess.pok)]
+              =<  moves
+              %.  [space her-pok (pout ack)]
+              %*  co-make-page  co:me-core
+                chums.ames-state  (~(put by chums.ames-state) her-pok known/per)
+              ==
+            [moves ames-state]
+          ?.  ?&  ?=(%pawn (clan:title her-pok))
+                  |(?=(~ +.chum-state) ?=([~ %alien *] +.chum-state))
+              ==
+            ?.  ?=([~ %known *] +.chum-state)
               ::  request keys from %jael; drop the packet, it'll be re-send
               ::
               =<  al-abet
               %-  al-enqueue-alien-todo:al-core
-              [her chum-state |=(ovni-state +<)]
+              [her-pok +.chum-state |=(ovni-state +<)]
+            =/  fren=fren-state  +.u.+.chum-state
             =<  ev-abet
             %.  [dud lane hop.pact %poke +>.pact]
-            hear-poke:ev-pact:(ev-foco:ev-core her +.u.chum-state)
-          =?  chums.ames-state  ?=(~ chum-state)
+            hear-poke:ev-pact:(ev-foco:ev-core her-pok fren)
+          =?  chums.ames-state  ?=(~ +.chum-state)
             ::  first time: upgrade to %alien and +peek attestation proof
             ::
-            (~(put by chums.ames-state) her alien/*ovni-state)
+            (~(put by chums.ames-state) her-pok alien/*ovni-state)
           ::  XX only peek if chum-state was ~?
           ::  still waiting to hear attestation proof; no-op
           ::
           :: `ames-state
           ::
-          %-  %+  %*(ev-tace ev-core her her)  fin.veb.bug.ames-state
+          %-  %+  %*(ev-tace ev-core her her-pok)  fin.veb.bug.ames-state
               |.("peek for comet attestation")
           ::
-          al-abet:(al-read-proof:al-core her lane)
+          al-abet:(al-read-proof:al-core her-pok lane)
         ::
         ==
       moves^vane-gate
