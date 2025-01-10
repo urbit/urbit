@@ -6736,6 +6736,7 @@
       ++  ev
         ::
         =|  moves=(list move)
+        =|  delete-per=?(%.y %.n)
         ::
         |_  [hen=duct her=ship per=fren-state]
         ::
@@ -6743,7 +6744,9 @@
         ::
         ++  ev-core  .
         ++  ev-abet
-          [moves ames-state(chums (~(put by chums.ames-state) her %known per))]
+          :-  moves
+          ?:  delete-per  ames-state
+          ames-state(chums (~(put by chums.ames-state) her %known per))
         ::
         ++  ev-abed  |=(=duct ev-core(hen duct))
         ++  ev-foco  |=([her=ship per=_per] ev-core(her her, per per))
@@ -7186,9 +7189,11 @@
             ::  XX assumes that .per in the sample is set by the packet layer
             ::
             :: XX assert load is plea/boon
-           =<  fo-abet
-           %.  [%sink mess.pok gage ?=(~ dud)]
-           fo-call:(fo-abed:fo hen [bone dire]:ack)
+            =/  fo-core
+              %.  [%sink mess.pok gage ?=(~ dud)]
+              fo-call:(fo-abed:fo hen [bone dire]:ack)
+            =.  ev-core  fo-abet:fo-core
+            ev-core(delete-per delete-per.fo-core)
           ::
           ++  hear-peek
             |=  =spar
@@ -7385,6 +7390,7 @@
           ::  flows exist only for known peers
           ::
           =|  can-be-corked=?(%.y %.n)
+          =|  delete-per=?(%.y %.n)
           ::
           |_  [[hen=duct =side] state=flow-state]
           +*  bone  bone.side
@@ -7403,6 +7409,8 @@
           ::
           ++  fo-abet
             ^+  ev-core
+            ?:  delete-per
+              ev-core(delete-per delete-per)
             =?  flows.per  !fo-corked
               (~(put by flows.per) bone^dire state)
             %_    ev-core
@@ -7796,7 +7804,7 @@
                   %*  sy-rege  sy
                     ames-state  ames-state:fo-abet:fo-core
                   ==
-                (fo-emil moves)
+                (fo-emil:fo-core(delete-per %.y) moves)
               ==
             ?>  &(?=([%cork ~] payload) ?=([%flow ~] path)):plea
             ::  publisher receives %cork
@@ -8011,6 +8019,7 @@
             ::  for-cor-path will produce a path for the %cork on the other side
             ::
             [(fo-wire %cor) %a meek/[chum-to-our her (fo-cor-path seq=0 our)]]
+          ::
           --
         ::
         +|  %space-helpers
@@ -8802,9 +8811,9 @@
           |^  ^+  sy-core
           =;  updated-core=_sy-core
               ?:  dry
-                ~&  >  %test-local-regression-worked
+                ~&  >  test-local-regression-worked/ship
                 sy-core
-              ~&  >  %local-regression-worked
+              ~&  >  local-regression-worked/ship
               updated-core
           ::
           ?^  ship
