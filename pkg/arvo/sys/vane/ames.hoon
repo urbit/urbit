@@ -10245,9 +10245,6 @@
       ::
       :: =/  [=peep =meow]  (sift-purr `@ux`content.shot)
       :: =/  =path  (slag 3 path.peep)
-      ::  old response, no-op. If we can find the peer in chums, it means that
-      ::  they sent an %ahoy plea, but they haven't heard our %ack, and have not
-      ::  migrated us.
       ::
       ::  any %fine requests should have been migrated and responses should
       ::  only come via %heer or %mess. if %ames, we no-op and the %sender will
@@ -10265,9 +10262,6 @@
     ::
     ++  pe-heer
       |=  [dud=(unit goof) =lane:pact blob=@]
-      ::
-      ::  XX find peer first; if regressing back to |ames, we could hear old
-      ::  |mesa tasks
       ::
       =+  ?~  dud  ~
           %.  ~
@@ -10301,6 +10295,11 @@
         ::
             %poke
           =*  her  her.pok.pact  :: her from poke-path
+          ?:  .=  =(%deny form.snub.ames-state)
+              (~(has in ships.snub.ames-state) her)
+            %-  %+  %*(ev-tace ev-core her her)  rcv.veb.bug.ames-state
+                |.("snubbed")
+            `ames-state
           =/  chum-state  (~(get by chums.ames-state) her)
           ?.  ?&  ?=(%pawn (clan:title her))
                   |(?=(~ chum-state) ?=([~ %alien *] chum-state))
