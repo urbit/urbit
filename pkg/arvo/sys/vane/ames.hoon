@@ -5114,7 +5114,10 @@
               ?.  =(~ unsent-fragments.state)
                 ::  we have unsent fragments of the current message; feed them
                 ::
-                =^  unsent  pump  abut:(feed:packet-pump unsent-fragments.state)
+                =^  unsent  pump
+                  =<  abut
+                  %-  feed:packet-pump
+                  [unsent-fragments.state num-slots:gauge:packet-pump]
                 =.  unsent-fragments.state   unsent
                 ::  if it sent all of them, feed it more; otherwise, we're done
                 ::
@@ -5229,11 +5232,10 @@
               ::  +feed: try to send a list of packets, returning unsent ones
               ::
               ++  feed
-                |=  fragments=(list static-fragment)
+                |=  [fragments=(list static-fragment) num-slots=@ud]
                 ^+  pack
                 ::  bite off as many fragments as we can send
                 ::
-                =/  num-slots  num-slots:gauge
                 =/  sent       (scag num-slots fragments)
                 =.  unsent     (slag num-slots fragments)
                 ::  if nothing to send, we're done
@@ -5283,9 +5285,7 @@
                 ?:  =(0 sot)  pack
                 ?:  =(~ liv)  pack
                 =^  hed  liv  (pop:packet-queue liv)
-                =.  peer-core
-                  %+  send-shut-packet  bone
-                  [message-num %& +]:(to-static-fragment hed)
+                =.  pack  (feed [(to-static-fragment hed)]~ sot)
                 $(sot (dec sot))
               ::  +on-wake: handle packet timeout
               ::
