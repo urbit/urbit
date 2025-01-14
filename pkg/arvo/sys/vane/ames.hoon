@@ -10498,7 +10498,8 @@
     ::
       ?(%prod %trim)
     =^  ames-moves  vane-gate  (call:am-core sample)
-    =^  mesa-moves  vane-gate  (call:me-core sample)
+    =^  mesa-moves  vane-gate
+      (call:me-core(ames-state ames-state.vane-gate) sample)
     [(weld ames-moves mesa-moves) vane-gate]
   ::
   ==
