@@ -1548,6 +1548,7 @@
     ~/  %put
     |*  [b=* c=*]
     |-  ^+  a
+    ~!  .
     ?~  a
       [[b c] ~ ~]
     ?:  =(b p.n.a)
@@ -11123,20 +11124,26 @@
       zaf(axe (peg axe axe.zaf), zap [%face p.sut zap.zaf])
     ::
         [%fork *]
-      =-  ?~  axe  miss+p.heg
+      =-  ?~  ret  miss+p.heg
+          ?:  ?=(%| -.ret)  miss+p.ret
           =+  fok=(fork ~(tap in typs))
           ?:  ?=(%void fok)  !!
           ?.  =(0 p.heg)  miss+(dec p.heg)
           =/  zap=zapp  ?:(?=([* ~ ~] zaps) n.zaps fork+zaps)
-          `zebra`[%pale u.axe fok zap]
+          `zebra`[%pale p.ret fok zap]
+      ~|  fork=[wyt=~(wyt in p.sut) sut=sut hyp=hyp]
       ::  XX: rather than using rep, we should miss early
       %-  ~(rep in p.sut)
-      |=  [t=type axe=(unit axis) typs=(set type) zaps=(set zapp)]
+      |=  $:  t=type  ret=$@(~ (each @ud @ud))
+              typs=(set type)   zaps=(set zapp)
+          ==
       =+  taf=^$(sut t)
-      ?<  ?=([%miss *] taf)
-      ?.  ?=([%pale *] taf)  +<+.$
-      ?>  |(?=(~ axe) =(u.axe axe.taf))
-      [`axe.taf (~(put in typs) typ.taf) (~(put in zaps) zap.taf)]
+      ?:  ?=(%void taf)  +<+.$
+      ?:  ?=([%miss *] taf)
+        ?>  |(?=(~ ret) =([%| skip.taf] ret))
+        [|+skip.taf ~ ~]
+      ?>  |(?=(~ ret) =([%& axe.taf] ret))
+      [&+axe.taf (~(put in typs) typ.taf) (~(put in zaps) zap.taf)]
     ==
   ::
   ++  modify-and-zip
