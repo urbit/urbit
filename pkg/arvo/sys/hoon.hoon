@@ -11066,7 +11066,7 @@
       ?>  =(0 p.heg)  ::  no skipping on bare com
       =+  zaf=^$(hyp t.hyp, sut ?:(?=([%face *] sut) q.sut sut))
       ?.  ?=([%pale *] zaf)  zaf
-      zaf(axe (peg axe axe.zaf))
+      zaf(axe (peg axe axe.zaf), zap ?.(?=([%face *] sut) zap.zaf [%face p.sut zap.zaf]))
     ?-    sut
         %void      %void
         %noun      miss+p.heg
@@ -11090,6 +11090,7 @@
       $(gil (~(put in gil) sut), sut repo)
     ::
         [%core *]
+      ::  XX: something wrong when we hit arm
       =^  zem  p.heg
         ?~  zem=(loot u.q.heg q.r.q.sut)  [~ p.heg]
         ?:(=(0 p.heg) [zem 0] [~ (dec p.heg)])
