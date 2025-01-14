@@ -2203,7 +2203,7 @@
         |=  [cop=@ tek=@]
         ^-  @
         ?>  (lte (met 3 tek) 32)
-        ?>  (lte (met 3 tek) 33)
+        ?>  (lte (met 3 cop) 33)
         %-  compress-point
         %+  add-points
           :: validates point
