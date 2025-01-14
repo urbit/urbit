@@ -10994,7 +10994,7 @@
     $@  %void
     $%  [%pale axe=axis typ=type zap=zapp]
         :: XX: add axe if we want it to work w forks
-        [%fail skip=@ud]
+        [%miss skip=@ud]
     ==
   ::
   ++  unzip
@@ -11068,8 +11068,8 @@
       zaf(axe (peg axe axe.zaf))
     ?-    sut
         %void      %void
-        %noun      fail+p.heg
-        [%atom *]  fail+p.heg
+        %noun      miss+p.heg
+        [%atom *]  miss+p.heg
         [%cell *]
       =+  taf=$(axe (peg axe 2), sut p.sut)
       ?:  ?=(%void taf)  taf
@@ -11104,18 +11104,18 @@
         [%face *]
       ?@  p.sut
         ?:  =(u.q.heg p.sut)
-          ?.  =(0 p.heg)  fail+(dec p.heg)
+          ?.  =(0 p.heg)  miss+(dec p.heg)
           =+  zaf=^$(hyp t.hyp, sut q.sut)
           ?.  ?=([%pale *] zaf)  zaf
           zaf(axe (peg axe axe.zaf), zap [%face p.sut zap.zaf])
-        fail+p.heg
+        miss+p.heg
       :: XX: edit through bridges?
       :: also should the end goal maybe use bridges instead of aliases?
       ?~  tyr=(~(get by p.p.sut) u.q.heg)
         =+  taf=$(sut q.sut)
         ?.  ?=([%pale *] taf)  taf
         taf(zap [%face p.sut zap.taf])
-      ?.  =(0 p.heg)  fail+(dec p.heg)
+      ?.  =(0 p.heg)  miss+(dec p.heg)
       ?~  u.tyr  ~|(%unzip-tyr-lost !!)
       ?~  hup=~(reek ap u.u.tyr)  !!
       =+  zaf=^$(hyp (weld (flop u.hup) t.hyp), sut q.sut)
@@ -11123,17 +11123,17 @@
       zaf(axe (peg axe axe.zaf), zap [%face p.sut zap.zaf])
     ::
         [%fork *]
-      =-  ?~  axe  fail+p.heg
+      =-  ?~  axe  miss+p.heg
           =+  fok=(fork ~(tap in typs))
           ?:  ?=(%void fok)  !!
-          ?.  =(0 p.heg)  fail+(dec p.heg)
+          ?.  =(0 p.heg)  miss+(dec p.heg)
           =/  zap=zapp  ?:(?=([* ~ ~] zaps) n.zaps fork+zaps)
           `zebra`[%pale u.axe fok zap]
-      ::  XX: rather than using rep, we should fail early
+      ::  XX: rather than using rep, we should miss early
       %-  ~(rep in p.sut)
       |=  [t=type axe=(unit axis) typs=(set type) zaps=(set zapp)]
       =+  taf=^$(sut t)
-      ::  XX not handling fails
+      ?<  ?=([%miss *] taf)
       ?.  ?=([%pale *] taf)  +<+.$
       ?>  |(?=(~ axe) =(u.axe axe.taf))
       [`axe.taf (~(put in typs) typ.taf) (~(put in zaps) zap.taf)]
