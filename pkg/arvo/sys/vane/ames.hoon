@@ -9281,6 +9281,10 @@
         ++  co-abed  |=(=duct co-core(hen duct))
         ++  co-emit  |=(=move co-core(moves [move moves]))
         ++  co-emil  |=(mos=(list move) co-core(moves (weld mos moves)))
+        ++  co-tace
+          |=  [verb=? her=ship print=(trap tape)]
+          ^+  same
+          (trace %mesa verb her ships.bug.ames-state print)
         ::
         +|  %entry-points
         ::
@@ -9332,12 +9336,16 @@
           ^+  co-core
           =+  per=(get-per:ev ship)
           ?.  ?=([~ ~ %known *] per)
-            ~&  >>>  %missing-peer
+            %-  %^  co-tace  odd.veb.bug.ames-state  ship
+                |.("missing peer for page={(spud path)}")
             co-core  ::  %alien or missing
           =*  sat  +.u.u.per
+          =/  space-path=^path  (make-space-path space path)
           =/  =name:pact
-            [[our rift.ames-state] [13 ~] (make-space-path space path)]
+            [[our rift.ames-state] [13 ~] space-path]
           ?~  page=(co-get-page name)
+            %-  %^  co-tace  odd.veb.bug.ames-state  ship
+                |.("missing page={(spud space-path)}")
             co-core
           ::  XX the use case for sending pages are acks, that fit in one
           ::  (bloq=13) fragment. no-op if bigger than that?
@@ -10051,6 +10059,7 @@
           ames-state:on-migrate:(abed-peer:pe:event-core her peer)
         ::  XX  compare pre/post migrated states
         ::
+        ~&  >>  %regression-test
         :: %+  regression-test
         ::   (~(got by chums.ames-state) her)
         :: (~(got by chums.ahoy-state) her)
@@ -10307,6 +10316,7 @@
           =/  chum-state  (pe-find-peer her-pok)
           ?:  ?=([%ames *] chum-state)
             ::  peer has been regressed to %ames (or XX?)
+            ::
             ?.  =(1 (div (add tob.data.pact 1.023) 1.024))
               ::  only deal with single-fragment %rege pleas
               ::
@@ -10314,6 +10324,9 @@
             ?.  ?=([~ %known *] +.chum-state)
               ::  XX handle?
               `ames-state
+            ::
+            %-  %+  %*(ev-tace ev-core her her-pok)  odd.veb.bug.ames-state
+                |.("regressed peer={<her-pok>}")
             ::
             =/  =peer-state     +.u.+.chum-state
             =/  =azimuth-state  -.peer-state
@@ -10353,7 +10366,7 @@
               `ames-state
             ::  authenticate one-fragment message
             ::
-            ?>  %-  authenticate:me-core
+            ?>  %-  authenticate:ev-core
                 [(root:lss (met 3 dat.data)^dat.data) aut.data pok.pact]
             =+  ;;  =gage:mess
                     (cue (ev-decrypt-spac:ev-core space dat.data cyf))
@@ -10362,26 +10375,38 @@
                   |.("no op; weird %message gage {<-.gage>}")
               `ames-state
             ?:  ?=(%boon +<.gage)
-              `ames-state  :: XX ignore boons
+              %-  %+  %*(ev-tace ev-core her her-pok)  odd.veb.bug.ames-state
+                  |.("no op; ignore %boon")
+              `ames-state
             =+  ;;([%plea =plea] +.gage)
             ?.  ?=([%$ path=[%ames ~] payload=[%back ~]] plea)
+              %-  %+  %*(ev-tace ev-core her her-pok)  odd.veb.bug.ames-state
+                  |.("no op; ignore {(spud path.plea)} plea")
               `ames-state  :: XX ignore non %rege plea
             ::  produce mesa ack
             ::
-            ::  XX check that we have acked this message?
+            ::  XX check that we have the ack in peers.ames-state?
             ::
             =/  moves=(list move)
               ::  create temporary flow for ack payload
               ::
-              =.  flows.per
-                =|  state=flow-state
-                %-  ~(put by flows.per)
-                [[bone dire]:ack state(last-acked.rcv mess.pok)]
+              =.  chums.ames-state.me-core
+                =.  flows.per
+                  =|  state=flow-state
+                  %-  ~(put by flows.per)
+                  [[bone dire]:ack state(last-acked.rcv mess.pok)]
+                (~(put by chums.ames-state) her-pok known/per)
+              =/  flow-roof
+                ^-  roof
+                |=  [lyc=gang pov=path vis=view bem=beam]
+                ^-  (unit (unit cage))
+                ?:  =(s.bem (pout ack))
+                   (peek-flow:me-core (pout ack))
+                (rof lyc pov vis bem)
+              ::
               =<  moves
-              %.  [space her-pok (pout ack)]
-              %*  co-make-page  co:me-core
-                chums.ames-state  (~(put by chums.ames-state) her-pok known/per)
-              ==
+              %.  [space=[%none ~] spar=[her-pok pat.ack.pact]]
+              co-make-page:co:me-core(rof flow-roof)
             [moves ames-state]
           ?.  ?&  ?=(%pawn (clan:title her-pok))
                   |(?=(~ +.chum-state) ?=([~ %alien *] +.chum-state))
