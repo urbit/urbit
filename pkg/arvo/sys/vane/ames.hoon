@@ -1828,7 +1828,56 @@
           ==
       ==
     ::
-    ++  regression-test  !!  :: XX TODO
+    ++  regression-test
+      |=  [mesa=chum-state back=chum-state]
+      ^-  ?
+      ?>  =(-.mesa -.back)     :: both %known or %alien
+      ?:  ?=(%alien -.mesa)
+        =(mesa back)
+      ::
+      ?&  ?=(%known -.back)
+          %+  print-check  %keys     =(+<.mesa +<.back)
+          %+  print-check  %lane    ?|  ?&  ?=(~ lane.mesa)
+                                             =(lane.mesa lane.back)
+                                         ==
+                                         ?&  ?=(^ lane.mesa)  ?=(^ lane.back)
+                                             =(u.lane.mesa u.lane.back)
+                                     ==  ==
+          %+  print-check  %ossuary  =(ossuary.mesa ossuary.back)
+          :: %+  print-check  %closing  =(closing.mesa closing.back)
+          =-  ~?  !-  [mesa=corked.mesa back=corked.back]
+              -
+          %+  print-check  %corked   =(corked.mesa corked.back)
+          %+  print-check  %chain    =(client-chain.mesa client-chain.back)
+          :: %+  print-check  %pit      =(pit.mesa pit.back)  :: XX
+        ::  flows
+        ::
+          %+  print-check  %flows
+          ::  some flows from the mesa state (e.g. in progress corks)
+          ::  could have been removed, so we focus on the ones that exist
+          ::  after regression
+          ::
+          %-  ~(rep by flows.back)
+          |=  [[side back-flow=flow-state] ok=?]
+          ~&  >>  bone/bone
+          ~|  [%not-found side=bone^dire]
+          =+  flow=(~(got by flows.mesa) bone^dire)
+          ?&  ok
+              :: XX lines don't match for the ahoy flow
+              :: =(line.flow line.back-flow)
+              =(closing.flow closing.back-flow)
+              :: =-  ~?  !-  snd/[mesa=snd.flow back=snd.back-flow]
+              ::     -
+              =(snd.flow snd.back-flow)
+              :: =-  ~?  !-  rcv/[mesa=rcv.flow back=rcv.back-flow]
+              ::     -
+              ::  nacked pokes are not migrated
+              ::
+              .=  [last-acked pending-ack]:rcv.flow
+                  [last-acked pending-ack]:rcv.back-flow
+          ==
+      ==
+    ::
     --
 ::  external vane interface
 ::
@@ -3998,7 +4047,7 @@
               our-life.channel  her-life.channel
             ==
           ::
-            ship-state=~  :: send-blob finds the migrated peer in chums.ames-state
+            ship-state=~  :: send-blob finds the migrated peer in chums
           ==
         ::
         +|  %implementation
@@ -4546,7 +4595,7 @@
                     ::
                     ~&  >>>  weird-naxp-flow-got-nacked/bone=bone
                     moves
-                  ::  if there packet-pump has no state about current.pump,
+                  ::  if the packet-pump has no state about current.pump,
                   ::  it means that we have heard the %nack, and clear
                   ::  everything, but defered incrementing current until the
                   ::  naxplanation arrives.
@@ -7889,6 +7938,7 @@
               ?+    path.plea  ~|  %mesa-evil-rege^our^her^path.plea  !!
                   [%test %ames ~]
                 ?>  (regression-test(ames-state ames-state:fo-abet:fo-core) her)
+                ~&  >  %regression-test-worked
                 fo-core
               ::
                   [%ames ~]
@@ -10060,10 +10110,9 @@
         ::  XX  compare pre/post migrated states
         ::
         ~&  >>  %regression-test
-        :: %+  regression-test
-        ::   (~(got by chums.ames-state) her)
-        :: (~(got by chums.ahoy-state) her)
-        &
+        %+  ^regression-test
+          (~(got by chums.ames-state) her)
+        (~(got by chums.ahoy-state) her)
       ::
       ++  validate-poke  !! :: XX TODO
       ::
