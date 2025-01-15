@@ -11047,7 +11047,7 @@
       ::
           [%fork *]
         =-  =+  fok=(fork ~(tap in typs))
-            ?:  ?=(%void fok)  !!
+            ?:  ?=(%void fok)  %void
             =/  zap=zapp  ?:(?=([* ~ ~] zaps) n.zaps fork+zaps)
             `zebra`[%pale axe fok zap]
         %-  ~(rep in p.sut)
