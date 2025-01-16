@@ -1028,7 +1028,12 @@
   abet:(spam (render "cancelling sync" sud.hus her.hus syd.hus kid.u.got) ~)
 ::
 ++  poke-rate
-  |=  [[i=@ud t=@ud] file=path [have=@ud wait=@ud] [size=@ud total=@ud] [bytes=@ud ms=@ud]]
+  |=  $:  [i=@ud t=@ud]
+          file=path
+          [have=@ud wait=@ud]
+          [size=@ud total=@ud]
+          [bytes=@ud ms=@ud]
+      ==
   |^  =<  abet
   %-  emil
   ?~  sole-id  ~
@@ -1039,7 +1044,12 @@
   ++  dial
     ?:  =([0 0] [i t])  "> "
     =/  bars=@ud  (div i 2)
-    :~  [``~ " file: "]  [[`%un ~ ~] "{<file>}"]  [``~ " "]
+    ::  XX use des.file to group files by desk
+    ::
+    =>  .(file `(pole knot)`file)
+    =?  file  ?=([car=@ cas=@ des=@ pur=*] file)
+      pur.file
+    :~  [``~ " file: "]  [[`%un ~ ~] "{<`path`file>}"]  [``~ " "]
         [``~ (weld `tape`(turn (gulf 0 bars) |=(* '-')) ">")]
         [``~ " ["]
         [```color "{?:((lth i 10) "0" ~)}{<i>}.{?:((lth t 10) "0" ~)}{<t>}%"]
@@ -1058,13 +1068,13 @@
       (div:rs (sun:rs bytes) (sun:rs ms))
     =+  int=(need (toi:rs band))
     ?:  &((lth int 1.000) (gte int 100))
-      "{<(abs:si int)>} Kb/s."
+      "{<(abs:si int)>} KB/s."
     ?.  (gth int 1.000)
-      "{<(abs:si int)>} b/s."
+      "{<(abs:si int)>} B/s."
     =+  short=(div:rs band (sun:rs 1.000))
     =+  int=(need (toi:rs short))
     =+  dec=(abs:si (need (toi:rs (mul:rs .100 (sub:rs short (san:rs int))))))
-    "{<(abs:si int)>}.{<dec>} Mb/s."
+    "{<(abs:si int)>}.{<dec>} MB/s."
   --
 ::
 ++  put-sole
