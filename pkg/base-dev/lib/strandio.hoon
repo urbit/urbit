@@ -733,7 +733,6 @@
       ++  calculate-progress
         |=  [a=@ud b=@ud]
         ^-  [int=@ud dec=@ud]
-        ~&   calculate-progress/[a b]
         =/  progress=@rs
           (mul:rs (div:rs (sun:rs a) (sun:rs b)) (sun:rs 100))
         =+  int=(need (toi:rs progress))
