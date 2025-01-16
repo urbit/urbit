@@ -10,13 +10,13 @@
 |-  ^-  form:m
 ;<   =cage  bind:m  (take-sage:strandio /meen)
 ::
-?:  ?=(%rate p.cage)
-  =+  !<([=spar:ames =rate:ames] q.cage)
-  ?.  =(*rate:ames rate)
-    ::  XX print rate
-    $
-  ;<  ~  bind:m  (prog:strandio /prog spar freq=1)
-  $
+:: ?:  ?=(%rate p.cage)
+::   =+  !<([=spar:ames =rate:ames] q.cage)
+::   ?.  =(*rate:ames rate)
+::     ::  XX print rate
+::     $
+::   ;<  ~  bind:m  (prog:strandio /prog spar freq=1)
+::   $
 ::
 ?>  ?=(%sage p.cage)
 =+  !<(=sage:mess:ames q.cage)

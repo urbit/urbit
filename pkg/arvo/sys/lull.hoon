@@ -879,9 +879,9 @@
     ::  when changing any of the tasks above, please follow the same patterns
     ::  that exist in ames.hoon.
     ::
-        [%mate (unit ship) dry=?]     ::  per-peer migration
-        [%load ?(%mesa %ames)]        ::  load core for new peers; XX [... term]
-        [%back (unit ship)]           ::  per-peer regression
+        [%mate (unit ship) dry=?]    ::  per-peer migration
+        [%load ?(%mesa %ames)]       ::  load core for new peers; XX [... term]
+        [%back (unit ship)]          ::  per-peer regression
     ::
         [%heer =lane:pact p=@]       ::  receive a packet, from unix
         [%mess =mess]                ::  receive a message (XX implement fully)
@@ -889,7 +889,12 @@
         [%meek =space =spar]         ::  initiate %peek request
         [%mage =space =spar]         ::  send %page of data; intended for acks
         [%rate =spar rate]           ::  get rate progress for +peeks, from unix
-        [%prog spar feq=@ud]         ::  subscribe to progress updates
+        $:  %prog                    ::  subscribe to progress %rate
+            $%  [%keen sec=(unit [idx=@ key=@]) spar]
+                [%chum spar]
+            ==
+            feq=@ud
+        ==
         [%whey spar boq=@ud]         ::  weight of noun bounded at .path.spar
                                      ::  as measured by .boq
     ==

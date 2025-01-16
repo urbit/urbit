@@ -414,10 +414,16 @@
   (send-raw-card %pass wire %arvo %a %keen sec spar)
 ::
 ++  prog
-  |=  [=wire =spar:ames feq=@ud]
+  |=  $:  =wire
+          $=  task
+          $%  [%keen sec=(unit [idx=@ key=@]) spar:ames]
+              [%chum spar:ames]
+          ==
+          feq=@ud
+      ==
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass wire %arvo %a %prog spar feq)
+  (send-raw-card %pass wire %arvo %a %prog task feq)
 ::
 ++  keen-shut
   |=  [=wire =spar:ames]

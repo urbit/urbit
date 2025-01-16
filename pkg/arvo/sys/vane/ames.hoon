@@ -7546,9 +7546,6 @@
         ++  ev-add-rate
           |=  [=path freq=@ud]
           ^+  ev-core
-          ::  path should be the one given by the first bunted %rate after
-          ::  recording interest in this path
-          ::
           ?^  ms=(~(get by pit.per) path)
             =.  pit.per
               %+  ~(put by pit.per)  path
@@ -9482,12 +9479,7 @@
           ?:  =(~ unix-duct)
             %.  co-core
             (slog leaf+"ames: unix-duct pending; will retry %push" ~)
-          %-  co-emil
-          :~  (push-pact u.pact lane.her)
-              :: XX bunted rate: subscribers can ignore this or use the provided
-              ::  path in remote to subscribe to %rates
-              [hen %give %rate remote *rate]
-          ==
+          (co-emit (push-pact u.pact lane.her))
         ::
         ++  co-make-pact
           |=  [p=spar q=(unit path) =per=rift]
@@ -10468,14 +10460,27 @@
     ::  register interest in the %rate of the peek for this path
     ::
     ++  pe-prog
-      |=  [dud=(unit goof) spar freq=@ud]
+      |=  $:  dud=(unit goof)
+              $=  task
+              $%  [%keen sec=(unit [idx=@ key=@]) spar:ames]
+                  [%chum spar:ames]
+              ==
+              freq=@ud
+          ==
       ::  XX also for |ames; move to common tasks
       ::
+      =/  [=space =ship =path]
+        ?-  -.task
+          %chum  [chum-to-our:ev-core [ship path]:task]
+          %keen  :_  [ship path]:task
+                 ?~(sec.task publ/life.ames-state shut/u.sec.task)
+        ==
       =/  ship-state  (pe-find-peer ship)
       ?:  ?=(%ames -.ship-state)  !!
       =^  moves  ames-state
         ?.  ?=([~ %known *] +.ship-state)
           !!  :: no %aliens allowed
+        =.  path  (make-space-path space path)
         =<  ev-abet
         (ev-add-rate:(ev-foco:ev-core ship +.u.ship-state) path freq)
       moves^vane-gate

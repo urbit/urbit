@@ -1581,6 +1581,9 @@
     :-  [time path]
     %-  emil
     :~  [hen %pass wire %a %keen ~ ship path]
+        ::  XX don't subscribe to progress %rate by default
+        ::  XX use right .freq
+        [hen %pass wire %a %prog [%keen ~ ship^path] feq=0]
         [hen %pass wire %b %wait time]
     ==
   ::
@@ -3631,10 +3634,11 @@
           =.  path.i  [%c %q (scot %uv tako.i) syd path.i]
           =/  =wire  (request-wire %keen-whey her syd inx)
           ::  XX we are requesting %wheys multiple times...
-          ::  XX  this will fail if the peer has not ben %ahoyed
-          ::
+          ::  XX still true?
           :: =.  path.i  [%a %x '1' %$ %whey (scot %ud 3) path.i]
           :: =>((emit:c hen %pass wire %a %chum her path.i) ?>(?=(^ ref) .))
+          ::  XX  this will fail if the peer has not ben %ahoyed
+          ::
           =>((emit:c hen %pass wire %a %whey her^path.i boq=13) ?>(?=(^ ref) .))
         c
       |-  ^+  ..abet
@@ -6407,13 +6411,7 @@
       =/  index=@ud  (slav %ud i.t.t.t.tea)
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
-        ::  ignore bunted rate
-        ::
-        ?:  ?&  ?=(%rate +<.hin)
-                =(*rate:ames [boq fag tot]:hin)
-            ==
-          `ruf
-        ::  %rate gifts only given by |fine
+        ::  for %whey tassks, %rate gifts are only given by |fine
         ::
         =/  =spar:ames  ?:(?=(%rate +<.hin) spar.hin p.sage.hin)
         =/  =rate:ames
@@ -6461,15 +6459,6 @@
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
         ?:  ?=(%rate +<.hin)
-          ?:  =(*rate:ames [boq fag tot]:hin)
-            ::  XX this is given is the peer has been ahoyed;
-            ::  non migrated peers get a rate:ames with ?=(~ frag.rate)
-            ::  XX make this turned on by the user rather than default
-            ::  if we get the bunted %rate, subscribe to progress updates using
-            ::  the path given by ames
-            ::
-            =/  =wire  (request-wire:den %back-index her desk index)
-            abet:(emit:den hen %pass wire %a %prog spar.hin freq=1)
           abet:(take-rate:den -.tea index [spar boq fag tot]:hin)
         ?~  fell
           ::  We shouldn't get back null on any of the fine requests we
