@@ -4571,15 +4571,16 @@
             =|  fist=?
             |=  [=path =^duct]
             ^+  peer-core
-            =+  fi-core=(abed:fi path)
             =<  fi-abet
             ?:  (~(has by keens) path)
+              =+  fi-core=(abed:fi path)
               ::  TODO use fi-trace
               ~>  %slog.0^leaf/"fine: dupe {(spud path)}"
               ?.  fist
                 (fi-sub:fi-core duct)  :: subscribe to %tune gifts
               (fi-rat:fi-core duct)    :: subscribe to %rate gifts
-            (fi-start:fi-core(keens (~(put by keens) path *keen-state)) duct)
+            =.  keens  (~(put by keens) path *keen-state)
+            (fi-start:(abed:fi path) duct)
           ::
           ::  +on-cork-flow: mark .bone as closing
           ::
@@ -7632,7 +7633,7 @@
           ::  expose %cork flow in the namespace "~(put in corked)"
           ::
           %-  %+  ev-tace  msg.veb.bug.ames-state
-              |.("hear cork ack; delete {<bone=bone>}")
+              |.("hear cork ack; delete {<bone=bone.side>}")
           ::
           fo-abel:fo-core
         ::
@@ -9289,10 +9290,6 @@
               ::  don't exist (probably fine?)
               ::
               (handle-cork:core bone)
-            ::  drop any pending ack state and past naxplanations
-            ::  XX  if some is still actively reading a naxplanation,
-            ::      do we need to send it?
-            ::  XX  better to drop any peeks for %naxplanations, %corks?
             ::
             =.  last-acked.sink      last-acked.rcv.state
             =.  last-heard.sink      last-acked.rcv.state
