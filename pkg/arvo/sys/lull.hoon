@@ -869,19 +869,19 @@
         $>(%vega vane-task)
     ::  all tasks above, if changed, would need an adapter function in the
     ::  larval-core +load arm, to change the events to their latest version, as
-    ::  they exists here in %lull.
+    ::  they exist here in %lull.
     ::
-    ::  where (i.e. from what version of the ames-state) to do the task would
-    ::  depend on when the task was introduced—%heed and %jilt were introduced
-    ::  in state %4, and removed in %21; %kroc was introduced in state %10,
-    ::  modified in %17...
+    ::  where (i.e. from what version of the ames-state) to do the migration
+    ::  depends on when the task was introduced (e.g. %heed and %jilt were
+    ::  introduced in state %4, and removed in %21; %kroc was introduced in
+    ::  state %10, modified in %17...)
     ::
     ::  when changing any of the tasks above, please follow the same patterns
     ::  that exist in ames.hoon.
     ::
-        [%mate (unit ship) dry=?]    ::  per-peer migration
-        [%load ?(%mesa %ames)]       ::  load core for new peers; XX [... term]
-        [%back (unit ship)]          ::  per-peer regression
+        [%mate (unit ship) dry=?]     ::  per-peer migration
+        [%rege (unit ship) dry=?]     ::  per-peer regression
+        [%load ?(%mesa %ames)]        ::  load core for new peers; XX [... term]
     ::
         [%heer =lane:pact p=@]       ::  receive a packet, from unix
         [%mess =mess]                ::  receive a message (XX implement fully)

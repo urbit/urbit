@@ -5362,7 +5362,7 @@
             fiz=melt
             ese=?
         ==
-      ::  We redefine the latest raft with * for the the ford caches.
+      ::  We redefine the latest raft with * for the ford caches.
       ::  +clear-cache upgrades to +raft
       ::
       +$  raft-14
