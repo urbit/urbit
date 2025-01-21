@@ -9149,11 +9149,11 @@
   ++  cool
     |=  [pol=? hyp=wing ref=type]
     ^-  type
-    =+  fid=(find %both hyp)
-    ?-  -.fid
-      %|  sut
-      %&  =<  q
-          %+  take  p.p.fid
+    =+  zeb=(unzip %both hyp)
+    ?+  zeb  sut
+      [%pale *]
+          =<  q
+          %+  take  zeb
           |=(a=type ?:(pol (fuse(sut a) ref) (crop(sut a) ref)))
     ==
   ::
@@ -9882,11 +9882,11 @@
     ?:  ?=([%wtts *] gen)
       (cool how q.gen (play ~(example ax p.gen)))
     ?:  ?=([%wthx *] gen)
-      =+  fid=(find %both q.gen)
-      ?-  -.fid
-        %|  sut
-        %&  =<  q
-            %+  take  p.p.fid
+      =+  zeb=(unzip %both q.gen)
+      ?+  zeb  sut
+        [%pale *]
+            =<  q
+            %+  take  zeb
             |=(a=type ?:(how ~(gain ar a p.gen) ~(lose ar a p.gen)))
       ==
     ?:  ?&(how ?=([%wtpm *] gen))
@@ -11016,6 +11016,7 @@
       ::TODO  mb unify with logic for names
       ?-    sut
           ?(%void [%atom *])  %void
+          :: why don't we just return noun?
           %noun  $(sut [%cell %noun %noun])
           [%cell *]
         ?:  =(2 now)
@@ -11063,7 +11064,10 @@
     ?~  q.heg
       :: XX what do we do for different values of p.heg?
       :: XX current behavior only strips faces at end of edit iirc
+      :: XX update: edit never strips faces, and seems to fail if
+      :: com appears anywhere but the last limb resolution
       ?>  =(0 p.heg)  ::  no skipping on bare com
+      :: should maybe be face, hint, if hold, repo, then do check?
       =+  zaf=^$(hyp t.hyp, sut ?:(?=([%face *] sut) q.sut sut))
       ?.  ?=([%pale *] zaf)  zaf
       zaf(axe (peg axe axe.zaf), zap ?.(?=([%face *] sut) zap.zaf [%face p.sut zap.zaf]))
@@ -11164,42 +11168,43 @@
     ==
   ::
   ++  take
-    |=  [vit=vein duz=$-(type type)]
+    |=  [zeb=$>(%pale zebra) duz=$-(type type)]
     ^-  (pair axis type)
-    :-  (tend vit)
-    =.  vit  (flop vit)
-    |-  ^-  type
-    ?~  vit  (duz sut)
-    ?~  i.vit
-      |-  ^-  type
-      ?+  sut      ^$(vit t.vit)
-        [%face *]  (face p.sut ^$(vit t.vit, sut q.sut))
-        [%hint *]  (hint p.sut ^$(sut q.sut))
-        [%fork *]  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
-        [%hold *]  $(sut repo)
-      ==
-    =+  vil=*(set type)
-    |-  ^-  type
-    ?:  =(1 u.i.vit)
-      ^$(vit t.vit)
-    =+  [now lat]=(cap u.i.vit)^(mas u.i.vit)
-    ?-  sut
-      %noun      $(sut [%cell %noun %noun])
-      %void      %void
-      [%atom *]  %void
-      [%cell *]  ?:  =(2 now)
-                   (cell $(sut p.sut, u.i.vit lat) q.sut)
-                  (cell p.sut $(sut q.sut, u.i.vit lat))
-      [%core *]  ?:  =(2 now)
-                   $(sut repo)
-                 (core $(sut p.sut, u.i.vit lat) q.sut)
-      [%face *]  (face p.sut $(sut q.sut))
-      [%fork *]  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
-      [%hint *]  (hint p.sut $(sut q.sut))
-      [%hold *]  ?:  (~(has in vil) sut)
-                   %void
-                 $(sut repo, vil (~(put in vil) sut))
-    ==
+    axe.zeb^(modify-and-zip(sut (duz typ.zeb)) zap.zeb)
+    :::-  (tend vit)
+    ::=.  vit  (flop vit)
+    ::|-  ^-  type
+    ::?~  vit  (duz sut)
+    ::?~  i.vit
+    ::  |-  ^-  type
+    ::  ?+  sut      ^$(vit t.vit)
+    ::    [%face *]  (face p.sut ^$(vit t.vit, sut q.sut))
+    ::    [%hint *]  (hint p.sut ^$(sut q.sut))
+    ::    [%fork *]  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
+    ::    [%hold *]  $(sut repo)
+    ::  ==
+    ::=+  vil=*(set type)
+    ::|-  ^-  type
+    ::?:  =(1 u.i.vit)
+    ::  ^$(vit t.vit)
+    ::=+  [now lat]=(cap u.i.vit)^(mas u.i.vit)
+    ::?-  sut
+    ::  %noun      $(sut [%cell %noun %noun])
+    ::  %void      %void
+    ::  [%atom *]  %void
+    ::  [%cell *]  ?:  =(2 now)
+    ::               (cell $(sut p.sut, u.i.vit lat) q.sut)
+    ::              (cell p.sut $(sut q.sut, u.i.vit lat))
+    ::  [%core *]  ?:  =(2 now)
+    ::               $(sut repo)
+    ::             (core $(sut p.sut, u.i.vit lat) q.sut)
+    ::  [%face *]  (face p.sut $(sut q.sut))
+    ::  [%fork *]  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
+    ::  [%hint *]  (hint p.sut $(sut q.sut))
+    ::  [%hold *]  ?:  (~(has in vil) sut)
+    ::               %void
+    ::             $(sut repo, vil (~(put in vil) sut))
+    ::==
   ::
   ++  tack
     |=  [hyp=wing mur=type]
