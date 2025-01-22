@@ -125,7 +125,11 @@
 ++  channel-timeout  ~h12
 ::  session-timeout: the delay before an idle session expires
 ::
-++  session-timeout  ~d7
+++  session-timeout
+  |%
+  ++  auth   ~d30
+  ++  guest  ~d7
+  --
 ::  eauth-timeout: max time we wait for remote scry response before serving 504
 ::  eauth-cache-rounding: scry case rounding for cache hits & clock skew aid
 ::
@@ -1528,7 +1532,7 @@
       ::
       =?  headers.response-header.response  =(u.sid session-id)
         :_  headers.response-header.response
-        ['set-cookie' (session-cookie-string session-id |)]
+        ['set-cookie' (session-cookie-string session-id ~)]
       ::  close the session as requested, then send the response
       ::
       =^  moz1  state  (close-session u.sid all)
@@ -1593,15 +1597,18 @@
       |=  kind=?(%local %guest [%eauth who=@p])
       ^-  [[session=@uv =identity moves=(list move)] server-state]
       =;  [key=@uv sid=identity]
+        =/  timeout=@dr
+          =,  session-timeout
+          ?:(?=(%guest kind) guest auth)
         :-  :+  key  sid
             ::  if no session existed previously, we must kick off the
             ::  session expiry timer
             ::
             ?^  sessions.auth.state  ~
-            [duct %pass /sessions/expire %b %wait (add now session-timeout)]~
+            [duct %pass /sessions/expire %b %wait (add now timeout)]~
         =-  state(sessions.auth -)
         %+  ~(put by sessions.auth.state)  key
-        [sid (add now session-timeout) ~]
+        [sid (add now timeout) ~]
       ::  create a new session with a fake identity
       ::
       =/  sik=@uv  new-session-key
@@ -1705,14 +1712,15 @@
     ::  +session-cookie-string: compose session cookie
     ::
     ++  session-cookie-string
-      |=  [session=@uv extend=?]
+      |=  [session=@uv extend=(unit ?(%auth %guest))]
       ^-  @t
       %-  crip
       =;  max-age=tape
         "urbauth-{(scow %p our)}={(scow %uv session)}; Path=/; Max-Age={max-age}"
       %-  a-co:co
-      ?.  extend  0
-      (div (msec:milly session-timeout) 1.000)
+      ?~  extend  0
+      =,  session-timeout
+      (div (msec:milly ?-(u.extend %auth auth, %guest guest)) 1.000)
     ::
     ::
     ++  eauth
@@ -1872,7 +1880,7 @@
           =^  moz3  state
             =;  hed  (handle-response %start 303^hed ~ &)
             :~  ['location' last]
-                ['set-cookie' (session-cookie-string sid &)]
+                ['set-cookie' (session-cookie-string sid `%auth)]
             ==
           [:(weld moz1 moz2 moz3) state]
         ::  +on-fail: we crashed or received an empty %tune, clean up
@@ -3126,17 +3134,20 @@
             =*  inbound     inbound-request.u.connection-state
             =*  headers     headers.response-header.http-event
             ::
-            ?.  (~(has by sessions) session-id)
+            ?~  ses=(~(get by sessions) session-id)
               ::  if the session has expired since the request was opened,
               ::  tough luck, we don't create/revive sessions here
               ::
               [response-header.http-event sessions]
-            :_  %+  ~(jab by sessions)  session-id
-                |=  =session
-                session(expiry-time (add now session-timeout))
+            =/  kind  ?:(?=(%fake -.identity.u.ses) %guest %auth)
+            =/  timeout
+              =,  session-timeout
+              ?:(?=(%guest kind) guest auth)
+            :_  %+  ~(put by sessions)  session-id
+                u.ses(expiry-time (add now timeout))
             =-  response-header.http-event(headers -)
             =/  cookie=(pair @t @t)
-              ['set-cookie' (session-cookie-string session-id &)]
+              ['set-cookie' (session-cookie-string session-id `kind)]
             |-
             ?~  headers
               [cookie ~]
