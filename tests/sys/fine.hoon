@@ -3,6 +3,7 @@
 /+  *test, v=test-ames-gall
 /*  kelvin  %hoon  /sys/kelvin
 =>  |%
+    ++  dbug  `?`|
     ++  kelvin-roof
       ^-  roof
       ::
@@ -45,17 +46,17 @@
 ++  test-fine
   %-  run-chain
   |.  :-  %|
-  =+  (nec-bud:v life=[nec=1 bud=1] rift=[nec=1 bud=1])
+  =+  (nec-bud-zod:v life=[nec=1 bud=1 zod=1] rift=[nec=1 bud=1 zod=1])
   ::  uncomment to turn on verbose debug output
-  ::=^  *  ames.nec
+  :: =^  *  ames.nec
   ::  (ames-call:v ames.nec ~[/none] [%spew ~[%msg %snd %rcv %odd]] *roof)
-  ::=^  *  ames.bud
+  :: =^  *  ames.bud
   ::  (ames-call:v ames.bud ~[/none] [%spew ~[%msg %snd %rcv %odd]] *roof)
   =/  scry-path=path       /c/x/1/kids/sys/kelvin
   =/  fine-behn-wire=wire  (weld /fine/behn/wake/~bud scry-path)
   =/  future-path=path     /c/x/5/kids/sys/kelvin
   =/  future-behn=wire     (weld /fine/behn/wake/~bud future-path)
-  =/  =task:ames           [%keen ~bud scry-path]
+  =/  =task:ames           [%keen ~ ~bud scry-path]
   ::
   =/  request=shot:ames
     :*  [sndr=~nec rcvr=~bud]
@@ -65,7 +66,7 @@
         origin=~
         content=(etch-request-content ~nec (weld /~bud/1/1 scry-path) 1)
     ==
-  ~&  >  'poke requester %ames with a %keen task'
+  ~?  >  dbug  'poke requester %ames with a %keen task'
   =^  t1  ames.nec
     %:  ames-check-call:v  ames.nec
       [~1111.1.1 0xdead.beef *roof]
@@ -76,7 +77,7 @@
       ==
     ==
   ::
-  ~&  >  'poke requester %ames with a second %keen task'
+  ~?  >  dbug  'poke requester %ames with a second %keen task'
   :-  t1  |.  :-  %|
   =^  t2  ames.nec
     %:  ames-check-call:v  ames.nec
@@ -92,14 +93,14 @@
     ?~  keen=(~(get by keens.peer) scry-path)
       ~
     listeners:u.keen
-  ~&  >  'checks two listeners for the requested scry path'
+  ~?  >  dbug  'checks two listeners for the requested scry path'
   =/  t3=tang
     %+  expect-eq
       !>((sy ~[~[/keen-duct-1] ~[/keen-duct-2]]))
     !>(listeners)
   ::
   :-  t3  |.  :-  %|
-  ~&  >  'gives a remote scry response to listeners'
+  ~?  >  dbug  'gives a remote scry response to listeners'
   =/  [sig=@ux meows=(list @ux)]
     %:  ames-scry-hunk:v  ames.bud
       [~1111.1.2 0xbeef.dead kelvin-roof]
@@ -143,18 +144,18 @@
         origin=~
         content=(etch-request-content ~nec (weld /~bud/1/1 future-path) 1)
     ==
-  ~&  >  'poke requester %ames with a %keen task for a future case'
+  ~?  >  dbug  'poke requester %ames with a %keen task for a future case'
   =^  t5  ames.nec
     %:  ames-check-call:v  ames.nec
       [~1111.1.1 0xdead.beef *roof]
-      [~[/keen-duct-3] %keen ~bud future-path]
+      [~[/keen-duct-3] %keen ~ ~bud future-path]
       :~  [~[//unix] [%give %send [%& ~bud] (etch-shot:ames request)]]
           [~[//unix] %pass future-behn %b %wait ~1111.1.1..00.00.01]
       ==
     ==
   ::
   :-  t5  |.  :-  %|
-  ~&  >  'cancel %keen task, from requester'
+  ~?  >  dbug  'cancel %keen task, from requester'
   =^  t6  ames.nec
     %:  ames-check-call:v  ames.nec
       [~1111.1.1 0xdead.beef *roof]
@@ -163,26 +164,26 @@
     ==
   ::
   :-  t6  |.  :-  %|
-  ~&  >  'poke requester %ames with a new %keen task for a future case'
+  ~?  >  dbug  'poke requester %ames with a new %keen task for a future case'
   =^  t7  ames.nec
     %:  ames-check-call:v  ames.nec
       [~1111.1.1 0xdead.beef *roof]
-      [~[/keen-duct-4] %keen ~bud future-path]
+      [~[/keen-duct-4] %keen ~ ~bud future-path]
       :~  [~[//unix] [%give %send [%& ~bud] (etch-shot:ames request)]]
           [~[//unix] %pass future-behn %b %wait ~1111.1.1..00.00.01]
       ==
     ==
   ::
   :-  t7  |.  :-  %|
-  ~&  >  'poke requester %ames with a second %keen task for a future case'
+  ~?  >  dbug  'poke requester %ames with a second %keen task for a future case'
   =^  t8  ames.nec
     %:  ames-check-call:v  ames.nec
       [~1111.1.1 0xdead.beef *roof]
-      [~[/keen-duct-5] %keen ~bud future-path]
+      [~[/keen-duct-5] %keen ~ ~bud future-path]
       ~
     ==
   :-  t8  |.  :-  %|
-  ~&  >  'cancel scry for all listeners (%wham)'
+  ~?  >  dbug  'cancel scry for all listeners (%wham)'
   =^  t9  ames.nec
     %:  ames-check-call:v  ames.nec
       [~1111.1.1 0xdead.beef *roof]
@@ -199,13 +200,13 @@
     ?~  keen=(~(get by keens.peer) scry-path)
       ~
     listeners:u.keen
-  ~&  >  'checks no more listeners'
+  ~?  >  dbug  'checks no more listeners'
   (expect-eq !>(~) !>(listeners))
 ::
 ++  test-fine-misordered
   %-  run-chain
   |.  :-  %|
-  =+  (nec-bud:v life=[nec=1 bud=1] rift=[nec=1 bud=1])
+  =+  (nec-bud-zod:v life=[nec=1 bud=1 zod=1] rift=[nec=1 bud=1 zod=1])
   ::  uncomment to turn on verbose debug output
   ::=^  *  ames.nec
   ::  (ames-call:v ames.nec ~[/none] [%spew ~[%msg %snd %rcv %odd]] *roof)
@@ -213,7 +214,7 @@
   ::  (ames-call:v ames.bud ~[/none] [%spew ~[%msg %snd %rcv %odd]] *roof)
   =/  scry-path=path       /g/x/0/dap//some/data/atom
   =/  fine-behn-wire=wire  (weld /fine/behn/wake/~bud scry-path)
-  =/  =task:ames           [%keen ~bud scry-path]
+  =/  =task:ames           [%keen ~ ~bud scry-path]
   ::
   =/  requests=(list shot:ames)
     %+  turn  (gulf 1 3)
@@ -229,7 +230,7 @@
   =+  ^=  [req1 req2 req3]
     ?>  ?=([^ ^ ^ *] requests)
     [i i.t i.t.t]:requests
-  ~&  >  'poke requester %ames with a %keen task'
+  ~?  >  dbug  'poke requester %ames with a %keen task'
   =^  t1  ames.nec
     %:  ames-check-call:v  ames.nec
       [~1111.1.1 0xdead.beef *roof]
@@ -265,7 +266,7 @@
     [[~bud [1 sig]] ~ ~]
   ::
   :-  t1  |.  :-  %|
-  ~&  >  'hear first response fragment'
+  ~?  >  dbug  'hear first response fragment'
   =^  t2  ames.nec
     %:  ames-check-call:v  ames.nec
       [~1111.1.2 0xbeef.dead *roof]
@@ -282,7 +283,7 @@
     ==
   ::
   :-  t2  |.  :-  %|
-  ~&  >  'hear third response fragment'
+  ~?  >  dbug  'hear third response fragment'
   =^  t3  ames.nec
     %:  ames-check-call:v  ames.nec
       [~1111.1.2 0xbeef.dead *roof]
@@ -294,7 +295,7 @@
       ~
     ==
   :-  t3  |.  :-  %&
-  ~&  >  'hear second response fragment'
+  ~?  >  dbug  'hear second response fragment'
   =^  t4  ames.nec
     %:  ames-check-call:v  ames.nec
       [~1111.1.3 0xbeef.dead *roof]

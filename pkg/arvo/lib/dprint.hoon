@@ -77,6 +77,7 @@
 ::  +hunt: door used for refining the type while searching for doccords
 ::
 ++  hunt
+  =|  gil=(set type)
   |_  [topics=(lest term) sut=type]
   +*  this  .
   ::
@@ -255,7 +256,8 @@
     ^-  (unit item)
     ?>  ?=([%face *] sut)
     ::  TODO: handle tune case
-    ?>  ?=(term p.sut)
+    ?.  ?=(term p.sut)
+      return-item:this(sut q.sut)
     =*  compiled-against  return-item:this(sut q.sut)
     `[%face (trip p.sut) *what compiled-against]
   ::
@@ -318,7 +320,14 @@
         [%face *]  return-face
         [%fork *]  return-fork
         [%hint *]  return-hint
-        [%hold *]  return-item:this(sut (~(play ut p.sut) q.sut))
+        [%hold *]
+      ?:  (~(has in gil) sut)
+        ~
+      =<  return-item
+      %=  this
+        gil  (~(put in gil) sut)
+        sut  (~(play ut p.sut) q.sut)
+      ==  
     ==
   ::
   ++  return-hint-core
@@ -419,7 +428,7 @@
 ::    docs for the arm itself, docs for the product of the arm, and
 ::    if the arm builds a core, docs for the default arm of that core.
 ::
-::    .adoc: docs written above the the arm
+::    .adoc: docs written above the arm
 ::    .pdoc: docs for the product of the arm
 ::    .cdoc: docs for the default arm of the core produced by the arm
 ++  arm-docs

@@ -168,7 +168,7 @@
     ::
       ;~  pfix  tis
         ;~  pose
-          (parse-variable (jest %dir) ;~(pfix ace :(stag 0 %ex parse-rood)))
+          (parse-variable (cold %dir (jest 'dir ')) :(stag 0 %ex parse-rood))
           (parse-variable sym ;~(pfix ace parse-source))
         ==
       ==
@@ -299,10 +299,18 @@
     ==
   ::
   ++  parse-thread
+    |^
+    %+  cook
+      |=([d=@tas a=(list @tas)] ?~(a [desk=d term=%$] [desk=d term=`@tas`(join-hep a)]))
     ;~  plug
       ;~(pose ;~(sfix sym zap) (easy q.dir))
-      sym
+      (most fas sym)
     ==
+    ++  join-hep
+      |=  a=(list @tas)
+      ^-  @tas
+      (crip (zing (join "-" (turn a |=(b=@tas (trip b))))))
+    --
   ::
   ++  parse-hoon    tall:hoon-parser
   ::
@@ -552,7 +560,7 @@
       ?:  ?=([%show %3] -.mad)
         (dy-rash %tan (dy-show-source q.mad) ~)
       ?:  ?=(%brev -.mad)
-        ?:  ?=(?(%eny %now %our) p.mad)
+        ?:  ?=(?(%eny %now %our %help) p.mad)
           (dy-rash %tan (cat 3 p.mad ' is immutable') ~)
         =.  var  (~(del by var) p.mad)
         =<  dy-amok
@@ -807,7 +815,7 @@
     ::
     ++  dy-run-generator
       !.
-      |=  [cay=cage cig=dojo-config]
+      |=  [cay=cage cig=dojo-config =desk]
       ^+  +>+>
       ?.  (~(nest ut [%cell [%atom %$ ~] %noun]) | p.q.cay)
         ::  naked generator; takes one argument
@@ -850,7 +858,7 @@
       |.  ^-  vase
       =/  gat=vase  (slot 3 q.cay)
       =/  som=vase  (slot 6 gat)
-      =/  ven=vase  !>([now=now.hid eny=eny.hid bec=he-beak])
+      =/  ven=vase  !>([now=now.hid eny=eny.hid bec=he-beak(q.dir desk)])
       =/  poz=vase  (dy-sore p.cig)
       =/  kev=vase
         =/  kuv=(unit vase)  (slew 7 som)
@@ -990,7 +998,7 @@
           %te  (dy-wool-poke p.bil q.bil)
           %ex  (dy-mere p.bil)
           %dv  (dy-sing hand+q.bil %a p.bil (snoc q.bil %hoon))
-          %ge  (dy-run-generator (dy-cage p.p.p.bil) q.p.bil)
+          %ge  (dy-run-generator (dy-cage p.p.p.bil) q.p.bil desk.q.p.p.bil)
           %sa
         =/  has-mark  .?((get-fit:clay he-beak %mar p.bil))
         ?.  has-mark
@@ -1066,9 +1074,12 @@
       :-  %noun
       =/  vaz=(list [term vase])
         (turn ~(tap by var) |=([lal=term cag=cage] [lal q.cag]))
+      =.  vaz  (weld ~[`[term vase]`[`@tas`%help !>(dy-help-message)]] vaz)
       =/  sut  (slop !>([our=our now=now eny=eny]:hid) !>(..zuse))
       =?  sut  ?=(^ vaz)  (slop (with-faces vaz) sut)
       (slap sut hoon)
+    ::
+    ++  dy-help-message  'For more information please type +start'
     ::
     ++  dy-step                                         ::  advance project
       |=  nex=@ud
@@ -1748,6 +1759,7 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card:agent:gall _..on-init)
+  ?>  (team:title [our src]:hid)
   =^  moves  state
     ^-  (quip card:agent:gall house)
     ?+  mark  ~|([%dojo-poke-bad-mark mark] !!)

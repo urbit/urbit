@@ -3,7 +3,7 @@
 |%
 +|  %global
 ::
-++  arvo  %237
+++  arvo  %236
 ::
 ::  $arch: node identity
 ::  $axal: fundamental node, recursive (trie)
@@ -208,9 +208,9 @@
   ==
 +$  heir
   $%  $:  %grub
-          $%  [?(%240 %239 %238 %237) =grub]
+          $%  [?(%240 %239 %238 %237 %236) =grub]
       ==  ==
-      [?(%240 %239 %238 %237) =debt =soul]
+      [?(%240 %239 %238 %237 %236) =debt =soul]
   ==
 +$  plan  (pair germ (list move))
 +$  soul
@@ -352,7 +352,9 @@
   ?~  dat=(rof lyc pov u.mon)  ~
   ?~  u.dat  [~ ~]
   =*  vax  q.u.u.dat
-  ?.  ?&  ?=(^ ref)
+  ?.  =>  [ref=ref vax=p=p.vax hoon-version=hoon-version wa=wa worm=worm]
+      ~>  %memo./arvo/look                  ::  with memoization
+      ?&  ?=(^ ref)
           =(hoon-version -.ref)
           -:(~(nets wa *worm) +.ref p.vax)
       ==
@@ -1766,7 +1768,7 @@
   ::
   =.  sol
     ?-  -.hir
-      ?(%240 %239 %238 %237)  soul.hir
+      ?(%240 %239 %238 %237 %236)  soul.hir
     ==
   ::  clear compiler caches
   ::

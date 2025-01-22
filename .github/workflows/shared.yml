@@ -55,7 +55,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           lfs: true
 
@@ -63,15 +63,15 @@ jobs:
       # for the docker build. We don't want in on Mac, where it isn't but
       # it breaks the nix install. The two `if` clauses should be mutually
       # exclusive
-      - uses: cachix/install-nix-action@v20
+      - uses: cachix/install-nix-action@v27
         with:
           extra_nix_config: |
             system-features = nixos-test benchmark big-parallel kvm
         if: ${{ matrix.type == 'linux' }}
-      - uses: cachix/install-nix-action@v20
+      - uses: cachix/install-nix-action@v27
         if: ${{ matrix.os != 'ubuntu-latest' }}
 
-      - uses: cachix/cachix-action@v10
+      - uses: cachix/cachix-action@v15
         with:
           name: ares
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}

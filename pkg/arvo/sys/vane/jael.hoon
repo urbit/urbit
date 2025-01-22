@@ -236,7 +236,7 @@
     ::
     ::  boot from keys
     ::    $:  %dawn
-    ::        =seed
+    ::        =feed
     ::        spon=ship
     ::        czar=(map ship [=rift =life =pass])
     ::        turf=(list turf)
@@ -247,25 +247,26 @@
         %dawn
       ::  single-homed
       ::
-      ~|  [our who.seed.tac]
-      ?>  =(our who.seed.tac)
-      ::  save our parent signature (only for moons)
-      ::
-      =.  sig.own.pki  sig.seed.tac
+      ?>  ?=([%2 ~] -.feed.tac)
+      ~|  [our who.feed.tac]
+      ?>  =(our who.feed.tac)
       ::  load our initial public key
       ::
       =/  spon-ship=(unit ship)
         =/  flopped-spon  (flop spon.tac)
         ?~(flopped-spon ~ `ship.i.flopped-spon)
+      =/  kyz=(list [lyf=life key=ring])  kyz.feed.tac
+      ?~  kyz  !!
+      =/  ky=[lyf=life key=ring]  i.kyz
       =.  pos.zim.pki
-        =/  cub  (nol:nu:crub:crypto key.seed.tac)
+        =/  cub  (nol:nu:crub:crypto key.ky)
         %+  ~(put by pos.zim.pki)
           our
-        [0 lyf.seed.tac (my [lyf.seed.tac [1 pub:ex:cub]] ~) spon-ship]
+        [0 lyf.ky (my [lyf.ky [1 pub:ex:cub]] ~) spon-ship]
       ::  our initial private key
       ::
-      =.  lyf.own.pki  lyf.seed.tac
-      =.  jaw.own.pki  (my [lyf.seed.tac key.seed.tac] ~)
+      =.  lyf.own.pki  lyf.ky
+      =.  jaw.own.pki  (malt kyz)
       ::  XX save sponsor in .own.pki
       ::  XX reconcile with .dns.eth
       ::  set initial domains
@@ -654,7 +655,10 @@
   ++  public-keys-give
     |=  [yen=(set duct) =public-keys-result]
     |^
-    =+  yez=(sort ~(tap in yen) sorter)
+    =/  yaz  %+  skid  ~(tap in yen)
+      |=  d=duct
+      &(?=([[%ames @ @ *] *] d) !=(%public-keys i.t.i.d))
+    =/  yez  (weld p.yaz (sort q.yaz sorter))
     |-  ^+  this-su
     ?~  yez  this-su
     =*  d  i.yez
@@ -667,7 +671,9 @@
     $(yez t.yez)
     ::
     ::  We want to notify Ames, then Clay, then Gall.  This happens to
-    ::  be alphabetical, but this is mostly a coincidence.
+    ::  be alphabetical, but this is mostly a coincidence. We also have
+    ::  to notify Gall the vane before we notify any Gall agents, so we
+    ::  can kiss the coincidence goodbye.
     ::
     ++  sorter
       |=  [a=duct b=duct]
@@ -675,6 +681,8 @@
         |
       ?.  ?=([[@ *] *] b)
         &
+      ?:  &(?=([[%gall *] *] a) ?=([[%gall *] *] b))
+        ?=([%gall %sys *] i.a)
       (lth (end 3 i.i.a) (end 3 i.i.b))
     --
   ::
@@ -1065,7 +1073,7 @@
   ::
   ::  XX review for security, stability, cases other than now
   ::
-  ?.  =(lot [%$ %da now])  ~
+  ?.  &(=(lot [%$ %da now]) =([~ ~] lyc))  ~
   ::
   ?:  &(?=(%x ren) =(tyl //whey))
     =/  maz=(list mass)
@@ -1175,9 +1183,12 @@
     [~ ~ %noun !>(u.r)]
   ::
       %vile
-    =*   life  lyf.own.pki.lex
-    =/  =seed  [our life (~(got by jaw.own.pki.lex) life) ~]
-    [~ ~ %atom !>((jam seed))]
+    =*  life  lyf.own.pki.lex
+    =*  rift
+      ?:  fak.own.pki.lex  0  ::  fake ships always have rift=0
+      rift:(~(got by pos.zim.pki.lex) our)
+    =/  =feed  [[%2 ~] our rift [life (~(got by jaw.own.pki.lex) life)]~]
+    [~ ~ %atom !>((jam feed))]
   ::
       %deed
     ?.  ?=([@ @ ~] tyl)  [~ ~]
@@ -1233,8 +1244,8 @@
     =/  sec  (~(got by jaw.own.pki.lex) u.lyf)
     =/  moon-sec  (shaf %earl (sham our u.lyf sec u.who))
     =/  cub  (pit:nu:crub:crypto 128 moon-sec)
-    =/  =seed  [u.who 1 sec:ex:cub ~]
-    ``[%seed !>(seed)]
+    =/  =feed  [[%2 ~] u.who 0 [1 sec:ex:cub]~]
+    ``[%feed !>(feed)]
   ::
       %sein
     ?.  ?=([@ ~] tyl)  [~ ~]
@@ -1271,6 +1282,18 @@
       %turf
     ?.  ?=(~ tyl)  [~ ~]
     [~ ~ %noun !>(tuf.own.pki.lex)]
+  ::
+      %puby                                            ::  unitized public-key
+    ?.  ?=([@ @ ~] tyl)  [~ ~]
+    ?.  =([%& our] why)
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    =/  lif  (slaw %p i.t.tyl)
+    ?~  who  [~ ~]
+    ?~  lif  [~ ~]
+    =/  pos  (~(get by pos.zim.pki.lex) u.who)
+    ?~  pos  ``[%noun !>(~)]
+    ``[%noun !>((~(get by keys.u.pos) u.lif))]
   ==
 ::                                                      ::  ++stay
 ++  stay                                                ::  preserve
