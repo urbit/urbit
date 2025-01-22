@@ -6984,9 +6984,9 @@
         +|  %request-flow
         ::
         ++  ev-req-plea
-          |=  [vane=@tas =wire payload=*]
+          |=  [vane=@tas =path payload=*]
           ^+  ev-core
-          =/  cork=?  =([%$ /flow %cork ~] vane^wire^payload)
+          =/  cork=?  =([%$ /flow %cork ~] vane^path^payload)
           =^  bone  ossuary.per  ::  XX  to arm?
             =,  ossuary.per
             ?:  cork
@@ -7004,7 +7004,7 @@
           %-  %+  ev-tace  msg.veb.bug.ames-state
               =+  msg=?:(cork %cork %plea)
               =*  next  next.snd.fo-core
-              |.("send {<msg>} {<[bone=bone seq=next path=(spud wire)]>}")
+              |.("send {<msg>} {<[bone=bone seq=next path=(spud path)]>}")
           ::
           ?:  closing.state.fo-core
             %-  %+  ev-tace  odd.veb.bug.ames-state
@@ -7014,7 +7014,7 @@
               |.("set flow {<bone=bone>} in closing")
           ::
           =<  fo-abet
-          %.  [%pump %plea vane wire payload]
+          %.  [%pump %plea vane path payload]
           fo-call:fo-core(closing.state cork)
         ::
         ++  ev-req-boon
@@ -7022,6 +7022,10 @@
           ^+  ev-core
           ::
           =+  fo-core=(fo-abed:fo hen bone dire=%bak)
+          %-  %+  ev-tace  msg.veb.bug.ames-state
+              =*  next  next.snd.fo-core
+              |.("send %boon {<[bone=bone seq=next]>}")
+          ::
           =.  ev-core  fo-abet:(fo-call:fo-core %pump %boon load)
           ?~  id
             ev-core
@@ -7450,7 +7454,7 @@
           ::  expose %cork flow in the namespace "~(put in corked)"
           ::
           %-  %+  ev-tace  msg.veb.bug.ames-state
-              |.("hear cork ack; delete {<bone=bone>}")
+              |.("hear cork ack; delete {<bone=bone.side>}")
           ::
           fo-abel:fo-core
         ::
@@ -7604,7 +7608,8 @@
                       %.  ~
                       %+  ev-tace  fin.veb.bug.ames-state
                       =+  load=?:(?=(%for dire) "%cork" "%boon")
-                      |.("remove {load} path={(spud path)}")
+                      =+  flow-info=[side=side seq=seq]
+                      |.("remove {load} {<flow-info>} path={(spud path)}")
                   ::
                   (~(del by pit) path)
               ==
