@@ -4339,6 +4339,8 @@
           ++  check-clog
             |=  [=bone id=*]
             ^+  peer-core
+            ?:  (~(has in corked.peer-state) bone)
+              peer-core
             =/  pump=message-pump-state  (~(got by snd.peer-state) bone)
             ?:  (gth ~(wyt in unsent-messages.pump) msg.cong.ames-state)
               (pe-emit [/ames]~ %pass /clog %g %clog id)
@@ -4348,7 +4350,7 @@
           ++  on-memo
             |=  [=bone =message]
             ^+  peer-core
-            =+  log="ames: ({<her>}) ignoring {<-.message>} on "
+            =+  log="ames: {<her>} ignoring {<-.message>} on "
             ?:  ?&  (~(has in closing.peer-state) bone)
                     !=(message [%plea %$ /flow %cork ~])
                 ==
