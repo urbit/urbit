@@ -131,7 +131,7 @@
 ++  arrows
   :: =*  ctx  .
   |*  m-acc=mold
-  |%
+  ^?  |%
   ++  m-sat  (lia-state m-acc)
   ++  call
     |=  [name=cord args=(list @)]
