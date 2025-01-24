@@ -6925,13 +6925,28 @@
               ~
           ==
         ::
+        +$  ev-bone-wire
+          $:  %bone
+              [%p her=@p]
+              [%ud rift=@ud]
+              [%ud bone=@ud]
+              ~
+          ==
+        ::
         +|  %validation
         ::
-        ++  ev-validate-wire
+        ++  ev-parse-flow-wire
           |=  =wire
           ^-  (unit ev-flow-wire)
           =>  .(wire `(pole iota)`(mesa-pave wire))
           ?.  ?=(ev-flow-wire wire)  ~
+          `wire
+        ::
+        ++  ev-parse-bone-wire
+          |=  =wire
+          ^-  (unit ev-bone-wire)
+          =>  .(wire `(pole iota)`(mesa-pave wire))
+          ?.  ?=(ev-bone-wire wire)  ~
           `wire
         ::
         ++  ev-decrypt-spac
@@ -7369,30 +7384,38 @@
                   $%([%flub ~] $>(?(%noon %boon %done %sage) gift))
               ==
           ^+  ev-core
-          ?~  flow-wire=(ev-validate-wire wire)
+          ?^  flow-wire=(ev-parse-flow-wire wire)
+            =.  her  her.u.flow-wire
+            =.  per  (got-per her)
+            ?:  (lth rift.u.flow-wire rift.per)
+              %-  %+  ev-tace  odd.veb.bug.ames-state
+                    |.("ignore {<(trip -.sign)>} for old rift")
+              ev-core
+            ?>  ?=(%sage -.sign)
+             (ev-take-sage +.sign [were bone dire]:u.flow-wire)
+          ?~  bone-wire=(ev-parse-bone-wire wire)
             %-  %+  ev-tace  odd.veb.bug.ames-state
                   |.("weird wire on {<(trip -.sign)>} {(spud wire)}")
             ev-core
-          =.  her  her.u.flow-wire
+          =.  her  her.u.bone-wire
           =.  per  (got-per her)
-          ?:  (lth rift.u.flow-wire rift.per)
+          ?:  (lth rift.u.bone-wire rift.per)
             %-  %+  ev-tace  odd.veb.bug.ames-state
                   |.("ignore {<(trip -.sign)>} for old rift")
             ev-core
-          ?:  ?=(%sage -.sign)
-            (ev-take-sage +.sign [were bone dire]:u.flow-wire)
           ::  after %sage, all signs happen on backward flows
           ::
-          ?>  ?=([%van %bak] [were dire]:u.flow-wire)
-          =+  fo-core=(fo-abed:fo hen bone.u.flow-wire dire=%bak)
-          ?-  -.sign
+          =?  bone.u.bone-wire  =(%1 (mod bone.u.bone-wire 2))
+            (mix 0b1 bone.u.bone-wire)
+          =+  fo-core=(fo-abed:fo hen bone.u.bone-wire dire=%bak)
+          ?+  -.sign  !!  :: %sage shouldn't use bone wires
             ::  XX for %done, we ack one message at at time, seq is not needed?
             ::  XX use it as an assurance check?
             ::
             ?(%flub %done)  fo-abet:(fo-take:fo-core %van sign)
           ::
               ?(%boon %noon)
-            %+  ev-req-boon  bone.u.flow-wire
+            %+  ev-req-boon  bone.u.bone-wire
             ?-(-.sign %boon [id=~ payload.sign], %noon [`id payload]:sign)
           ==
         ::
@@ -7627,9 +7650,9 @@
           ++  fo-corked     (~(has in corked.per) side)
           ++  fo-flip-dire  ?:(=(dire %for) %bak %for)
           ::  path examples
-
+          ::
           :: where=@p  [in the protocol namespace; redundant with to]
-
+          ::
           :: /flow/[bone]/[payload]/[to]/[seq]  :: %plea
           :: /flow/[bone]/[payload]/[to]/[seq]  :: %boon
           :: /flow/[bone]/[payload]/[to]/seq    :: %ack
@@ -7716,17 +7739,19 @@
           ++  fo-wire
             |=  =were
             ^-  wire
-            ::  %for: %plea(s) are always sent forward, %boon(s) %bak. both
-            ::  .to-vane and .dire are asserted when receiving the vane %ack
-            ::  since they will always be %van and %bak
+            :: add rift to avoid dangling bones from previous eras
             ::
-            :~  %mesa  %flow  were  dire
-                rcvr=[(scot %p her)]
-              :: add rift to avoid dangling bones from previous eras
+            =?  bone  &(?=(%bak dire) ?=(%van were))
+              (mix 0b1 bone)
+            =+  cont=[[(scot %p her)] [(scot %ud rift.per)] [(scot %ud bone)] ~]
+            ?:  ?=(%van were)
+              ::  to be backward-compatibi, to/from vane wires use the same
+              ::  format as ames
               ::
-                rift=[(scot %ud rift.per)]
-                bone=[(scot %ud bone)]
-            ==
+              [%bone cont]
+            ::  %for: %plea(s) are always sent forward, %boon(s) %bak.
+            ::
+            [%mesa %flow were dire cont]
           ::
           +|  %entry-points
           ::
@@ -7934,6 +7959,7 @@
               (fo-take-done:fo-core ~)
             ?.  =(%$ vane.plea)
               =/  =wire  (fo-wire %van)
+              ~&  >>  wire/wire^path.plea
               %-  fo-emit
               ?+  vane.plea  ~|  %mesa-evil-vane^our^her^vane.plea  !!
                 ?(%c %e %g %j)  [hen %pass wire vane.plea %plea her plea]
@@ -9880,8 +9906,14 @@
             ==
           ~
         ::
-        ::  /ax/chums/[ship]                 chum-state
-        ::  /ax/chums/[ship]/lanes           $@(gal=@ux $%([%if ... [%is))
+        ::  /ax/corked/[ship]/[?(%for %bak)]           (set side)
+        ::  /ax/corked/[ship]/[?(%for %bak)]/[bone]    ?(%.y %.n)
+        ::  /ax/closing/[ship]/[?(%for %bak)]          (set side)
+        ::  /ax/closing/[ship]/[?(%for %bak)]/[bone]   ?(%.y %.n)
+        ::  /ax/closing/[ship]/lanes           $@(gal=@ux $%([%if ... [%is))
+        ::  /ax/chums/[ship]                   chum-state
+        ::  /ax/chums/[ship]/lanes             $@(gal=@ux $%([%if ... [%is))
+        ::  /ax/ahoyed/[ship]                  ?(%.y %.n)
         ::
         ?.  ?=(%x car)  ~
         =/  tyl=(pole knot)  s.bem
@@ -10002,6 +10034,11 @@
             ::
             ==
           ==
+        ::
+            [%ahoyed her=@ ~]
+          =/  who  (slaw %p her.tyl)
+          ?~  who  [~ ~]
+          ``atom+!>((~(has by chums.ames-state) u.who))
         ==
       ::
       +|  %helpers
@@ -10598,20 +10635,12 @@
     ?.  ?&  ?=(?(%turf %public-keys) -.wire)
             ?=(~ unix-duct)
         ==
-      ?~  flow-wire=(ev-validate-wire:ev:me-core wire)
+      ?~  flow-wire=(ev-parse-flow-wire:ev:me-core wire)
         (take:me-core sample)
-      ::  if this is a flow wire for a regressed peer, migrate wire & use |ames
-      ::
+      %.  sample
       ?:  =(%mesa -:(pe-find-peer her.u.flow-wire))
-        (take:me-core sample)
-      ::  /flow wire for a migrated peer; migrate wire
-      ::
-      %-  (slog leaf+"mesa: migrating wire: {<wire>}" ~)
-      ::
-      %+  take:am-core
-        %^  make-bone-wire  her.u.flow-wire  rift.u.flow-wire
-        (mix 0b1 bone.u.flow-wire)
-      +.sample
+        take:me-core
+      take:am-core
     ::  If the unix-duct is not set, we defer applying %public-keys and %turf
     ::  gifts (which can trigger other gifts to be sent to unix) by setting up
     ::  a timer that will request them again
@@ -10641,26 +10670,10 @@
     ::
     (take:am-core sample)
   =/  ship-state  (pe-find-peer her.u.parsed-wire)
+  %.  sample
   ?:  ?=(%ames -.ship-state)
-    (take:am-core sample)
-  ::  /bone wire for a migrated peer; migrate wire
-  ::
-  %-  (slog leaf+"ames: migrating wire: {<wire>}" ~)
-  %-  take:me-core
-  :_  +.sample
-  ^-  ^wire
-  :~  %mesa  %flow  %van  %bak
-    (scot %p her.u.parsed-wire)
-  ::
-    %+  scot  %ud
-    ?.  ?=(%old -.u.parsed-wire)  ::  XX  drop old wires? revisit
-      rift.u.parsed-wire
-    rift:(got-per:me-core her.u.parsed-wire)
-  ::
-    %+  scot  %ud
-    %+  mix   0b1  ::  flip bit; the wire is tagged with %bak
-    ?-(u.parsed-wire [%new *] bone.u.parsed-wire, [%old *] bone.u.parsed-wire)
-  ==
+    take:am-core
+  take:me-core
 ::  +stay: extract state before reload
 ::
 ++  stay  [%23 adult/ames-state]
@@ -10729,8 +10742,8 @@
   ::  private endpoints
   ::
   ?.  =([~ ~] lyc)  ~
-  ?+    tyl       (scry:am-core sample)          ::  |ames scry endpoints
-      [%chums *]  (scry:me-core sample)          ::  |mesa scry endpoints
+  ?+    tyl       (scry:am-core sample)            ::  |ames scry endpoints
+      [?(%chums %ahoyed) *]  (scry:me-core sample) ::  |mesa scry endpoints
   ::
       [?(%closing %corked %bones %snd-bones) her=@ *]
     =/  who  (slaw %p her.tyl)
