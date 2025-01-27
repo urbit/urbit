@@ -61,18 +61,13 @@
     subs
   ?.  ?=([[%gall %sys %req @ @ *] *] duct)
     subs
-  ?.  ?|  ?=([^ [%ames %bone @ @ @ ~] *] duct)                         :: regged
-          ?=([^ [%mesa %flow %van %bak her=@ rift=@ bone=@ ~] *] duct) :: ahoyed
-      ==
+  ?.  ?=([^ [%ames %bone @ @ @ ~] *] duct)
     subs
   =*  app    &5:i.duct
   :: =*  rift   &4:i.t.duct  :: XX ?
   =/  [=bone scry-path=^path]
     =/  =bone
-      ?:  ?=([[%ames %bone @ @ @ ~] *] t.duct)
-        (slav %ud &5:i.t.duct)
-      ?>  ?=([[%mesa %flow %van %bak her=@ rift=@ bone=@ *] *] t.duct)
-      (slav %ud &7:i.t.duct)
+      (slav %ud &5:i.t.duct)
     ::
     =+  .^  ahoyed=?  %ax
           [(scot %p p.bec) %$ (scot %da now) %ahoyed (scot %p ship) ~]

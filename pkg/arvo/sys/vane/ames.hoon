@@ -7745,8 +7745,8 @@
               (mix 0b1 bone)
             =+  cont=[[(scot %p her)] [(scot %ud rift.per)] [(scot %ud bone)] ~]
             ?:  ?=(%van were)
-              ::  to be backward-compatibi, to/from vane wires use the same
-              ::  format as ames
+              ::  to be backward-compatible, to/from vane wires use the same
+              ::  format as ames; =(%van were) in the wise is not used
               ::
               [%bone cont]
             ::  %for: %plea(s) are always sent forward, %boon(s) %bak.
