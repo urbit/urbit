@@ -7121,12 +7121,13 @@
                   |.("ack {<rcvr.ack>} and poke {<her-pok>} missmatch; skip")
               ev-core
             ::
+            ::
+            %-  (ev-tace rcv.veb.bug.ames-state |.("hear poke packet"))
+            ::
             =.  per  (ev-update-lane lane hop.pact ~)
             ::  update and print connection status
             ::
             =.  ev-core  (ev-update-qos %live last-contact=now)
-            ::
-            %-  (ev-tace rcv.veb.bug.ames-state |.("hear poke packet"))
             ::
             ?.  =(1 (div (add tob.data.pact 1.023) 1.024))
               %-  %+  ev-tace  msg.veb.bug.ames-state
@@ -7533,8 +7534,19 @@
           |=  [=lane:pact hop=@ud next=(list lane:pact)]
           ^+  per
           ?:  =(0 hop)
+            %-  %+  ev-tace  rcv.veb.bug.ames-state
+                |.("hear direct packet")
             per(lane `lane)
-          ?~  next  per
+          ?~  next
+            %-  %+  ev-tace  rcv.veb.bug.ames-state
+                |.("hear indirect packet hop={<hop>}; no next lane")
+            per
+          =/  lane=tape
+            ?@  i.next
+              "from {<`@p`i.next>}"
+            "lane={(scow %if p.i.next)}:{((d-co:^co 1) q.i.next)}"
+          %-  %+  ev-tace  rcv.veb.bug.ames-state
+              |.("hear indirect packet hop={<hop>} {lane}")
           per(lane `i.next)
         ::
         ++  ev-got-duct
