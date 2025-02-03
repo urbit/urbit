@@ -10399,16 +10399,20 @@
       =^  moves  ames-state
         ?-    +<.pact
             %page
-          ?~  chum=(~(get by chums.ames-state) her.name.pact)
-            ::  XX weird page; log
+          =*  her  her.name.pact
+          =/  chum-state  (pe-find-peer her)
+          ?.  ?=([%mesa *] chum-state)
+            %-  %+  %*(ev-tace ev-core her her)  odd.veb.bug.ames-state
+                |.("hear page for regressed chum")
             `ames-state
-          ?:  ?=([~ %known *] chum)  ::  XX alien agenda? log?
-            =<  ev-abet
-            %.  [dud lane hop.pact %page +>.pact]
-            hear-page:ev-pact:(ev-foco:ev-core her.name.pact +.u.chum)
-          ::  if alien this can only be a comet attestation proof
-          ::
-          al-abet:(al-take-proof:al-core lane hop.pact +>.pact)
+          ?.  ?=([~ %known *] +.chum-state)
+            ::  if alien this can only be a comet attestation proof
+            ::
+            al-abet:(al-take-proof:al-core lane hop.pact +>.pact)
+          =/  =fren-state  +.u.+.chum-state
+          =<  ev-abet
+          %.  [dud lane hop.pact %page +>.pact]
+          hear-page:ev-pact:(ev-foco:ev-core her.name.pact fren-state)
         ::
             %peek
           ?~  dud
@@ -10657,9 +10661,15 @@
       ?~  flow-wire=(ev-parse-flow-wire:ev:me-core wire)
         (take:me-core sample)
       %.  sample
-      ?:  =(%mesa -:(pe-find-peer her.u.flow-wire))
-        take:me-core
-      take:am-core
+      ?:  =(%ames -:(pe-find-peer her.u.flow-wire))
+        take:am-core
+      ::  XX this shouldn't happen. /mesa wires are used for peeking poke
+      ::  payloads, naxplanations and corks. if the peer has been regressed, all
+      ::  those peeks are dropped and the regression logic should guarantee that
+      ::  whatever state is pending gets handled now using the |ames core.
+      ::
+      ~>  %slog.0^leaf/"mesa: taking weird sign={<-.sign>} for (spud wire)"
+      take:me-core
     ::  If the unix-duct is not set, we defer applying %public-keys and %turf
     ::  gifts (which can trigger other gifts to be sent to unix) by setting up
     ::  a timer that will request them again
