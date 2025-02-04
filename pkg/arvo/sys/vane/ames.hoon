@@ -9664,9 +9664,8 @@
         ?.  ?=([~ ~ %known *] per-sat)
           ~  ::  %alien or missing
         =+  ev-core=(ev-foco:ev u.rcvr +.u.u.per-sat)
-        ?.  (~(has in corked.+.u.u.per-sat) side=[u.bone dire.tyl])
-          ~
-        ``[%message !>(gone/~)]
+        =+  fo-core=(fo-abed:fo:ev-core ~[//scry] side=[u.bone dire.tyl])
+        ?~(res=(fo-peek:fo-core %cork 0) ~ ``[%message !>(u.res)])
       ::  comet attestations
       ::
       ++  peek-pawn
@@ -10104,6 +10103,11 @@
         |=  [=ship =life]
         ^-  (unit pass)
         =+  chum=(~(get by chums.ames-state) ship)
+        =+  peer=(~(get by peers.ames-state) ship)
+        ?:  &(?=(^ peer) ?=(~ chum))
+          ::  migrated peer; no-op
+          ::
+          ~
         ?.  ?=([~ %known *] chum)
           =<  `pass  :: XX check suite?
           ;;  [suite=@ud =pass]
