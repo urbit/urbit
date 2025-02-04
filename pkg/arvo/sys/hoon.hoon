@@ -11001,7 +11001,7 @@
     $%  [%pale axe=axis typ=type zap=zapp]
         :: XX: add axe if we want it to work w forks
         [%miss skip=@ud]
-        [%faux =type =nock]
+        [%faux ~]
     ==
   ::
   ++  unzip
@@ -11122,18 +11122,24 @@
           zaf(axe (peg axe axe.zaf), zap [%face p.sut zap.zaf])
         miss+p.heg
       :: XX: edit through bridges?
-      :: also should the end goal maybe use bridges instead of aliases?
       ?~  tyr=(~(get by p.p.sut) u.q.heg)
-        =+  taf=$(sut q.sut)
-        ?.  ?=([%pale *] taf)  taf
-        taf(zap [%face p.sut zap.taf])
+        =+  biz=q.p.sut
+        |-  ^-  zebra
+        ?~  biz
+          =+  taf=^$(sut q.sut)
+          ?.  ?=([%pale *] taf)  taf
+          taf(zap [%face p.sut zap.taf])
+        ::NOTE  we ignore our vial .way
+        =+  tiv=(mint(sut q.sut) %noun i.biz)
+        =+  fid=^$(sut p.tiv, axe 1, gil ~)
+        ?:  ?=(%void fid)  fid
+        ?:  ?=(%miss -.fid)
+          $(biz t.biz, p.heg skip.fid)
+        [%faux ~]
       ?.  =(0 p.heg)  miss+(dec p.heg)
       ?~  u.tyr  ~|(%unzip-tyr-lost !!)
       ?~  hup=~(reek ap u.u.tyr)
-        =+  myn=(mint %noun u.u.tyr)
-        =+  out=[type=p.myn nock=(comb [%0 axe] q.myn)]
-        =+  fex=(mint(sut type.out) %noun [%wing t.hyp])
-        [%faux p.fex (comb nock.out q.fex)]
+        [%faux ~]
       =+  zaf=^$(hyp (weld (flop u.hup) t.hyp), sut q.sut)
       ?.  ?=([%pale *] zaf)  zaf
       zaf(axe (peg axe axe.zaf), zap [%face p.sut zap.zaf])
