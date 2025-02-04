@@ -4664,7 +4664,7 @@
                       ::
                       ::  At the same time that we are sending the %cork, we
                       ::  +peek for the %cork on the %bak side, and as soon as
-                      ::  we can readu it, we %cork the flow.
+                      ::  we can read it, we %cork the flow.
                       ::
                       fo-peek-cork:core
                     %.  [%pump message]
@@ -7186,13 +7186,13 @@
             ::  check for pending request (peek|poke)
             ::
             =*  sealed-path  pat.name
+            =/  [=space cyf=(unit @) =inner=path]
+              (ev-decrypt-path pat.name her)
             ?~  res=(~(get by pit.per) sealed-path)
               %.  ev-core
               %+  ev-tace  odd.veb.bug.ames-state
-              |.("missing page from pit {(spud sealed-path)}")
+              |.("missing page from pit {(spud inner-path)}")
             ::
-            =/  [=space cyf=(unit @) =inner=path]
-              (ev-decrypt-path pat.name her)
             %-  (ev-tace rcv.veb.bug.ames-state |.("hear page packet"))
             ::
             =.  per  (ev-update-lane lane hop.pact next.pact)
@@ -10446,7 +10446,7 @@
               `ames-state
             ::
             %-  %+  %*(ev-tace ev-core her her-pok)  odd.veb.bug.ames-state
-                |.("regressed peer={<her-pok>}")
+                |.("hear poke for regressed")
             ::
             =/  =peer-state     +.u.+.chum-state
             =/  =azimuth-state  -.peer-state
@@ -10505,6 +10505,8 @@
               `ames-state  :: XX ignore non %rege plea
             ::  produce mesa ack
             ::
+            %-  %+  %*(ev-tace ev-core her her-pok)  snd.veb.bug.ames-state
+                |.("ack %rege plea")
             ::  XX check that we have the ack in peers.ames-state?
             ::
             =/  moves=(list move)
