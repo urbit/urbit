@@ -9643,19 +9643,19 @@
       --
     ==
   ::
-  ++  find
-    ~/  %find
-    |=  [way=vial hyp=wing]
-    ^-  port
-    ~_  (show [%c %find] %l hyp)
-    =-  ?@  -  !!
-        ?-    -<
-          %&  [%& p.-]
-          %|  ?-  -.p.-
-                %|  [%| p.p.-]
-                %&  !!
-        ==    ==
-    (fond way hyp)
+  ++  find  fynd
+    :: ~/  %find
+    :: |=  [way=vial hyp=wing]
+    :: ^-  port
+    :: ~_  (show [%c %find] %l hyp)
+    :: =-  ?@  -  !!
+    ::     ?-    -<
+    ::       %&  [%& p.-]
+    ::       %|  ?-  -.p.-
+    ::             %|  [%| p.p.-]
+    ::             %&  !!
+    ::     ==    ==
+    :: (fond way hyp)
   ::
   ++  fend
     |=  [way=vial hyp=wing]
