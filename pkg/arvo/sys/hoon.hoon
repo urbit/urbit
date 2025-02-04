@@ -9438,6 +9438,7 @@
           ?:  ?=(%fail -.fid)
             $(q.p.sut t.q.p.sut, p.heg skip.fid)
           =;  vat=(pair type nock)
+            ::TODO  we never get a pale out of this... but that matches old +find
             [%faux p.vat (comb (comb [%0 axe] q.tiv) q.vat)]
           ?-    -.fid
             %pale  ?-  -.opal.fid
@@ -9746,14 +9747,17 @@
   ++  fuse
     ~/  %fuse
     |=  ref=type
-    =+  bix=*(set [type type])
+    =+  bix=*(set [? type type])
+    =+  rev=|
     |-  ^-  type
     ?:  ?|(=(sut ref) =(%noun ref))
       sut
     ?-    sut
         [%atom *]
       ?-    ref
-          [%atom *]   =+  foc=?:((fitz p.ref p.sut) p.sut p.ref)
+          [%atom *]   =/  foc
+                        =+  fit=(fitz ?:(rev [p.sut p.ref] [p.ref p.sut]))
+                        ?:(fit p.sut p.ref)
                       ?^  q.sut
                         ?^  q.ref
                           ?:  =(q.sut q.ref)
@@ -9762,12 +9766,12 @@
                         [%atom foc q.sut]
                       [%atom foc q.ref]
           [%cell *]   %void
-          *           $(sut ref, ref sut)
+          *           $(sut ref, ref sut, rev !rev)
       ==
         [%cell *]
       ?-  ref
         [%cell *]   (cell $(sut p.sut, ref p.ref) $(sut q.sut, ref q.ref))
-        *           $(sut ref, ref sut)
+        *           $(sut ref, ref sut, rev !rev)
       ==
     ::
         [%core *]  $(sut repo)
@@ -9775,9 +9779,9 @@
         [%fork *]  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
         [%hint *]  (hint p.sut $(sut q.sut))
         [%hold *]
-      ?:  (~(has in bix) [sut ref])
+      ?:  (~(has in bix) [rev sut ref])
         ~>(%mean.'fuse-loop' !!)
-      $(sut repo, bix (~(put in bix) [sut ref]))
+      $(sut repo, bix (~(put in bix) [rev sut ref]))
     ::
         %noun       ref
         %void       %void
@@ -9823,6 +9827,7 @@
     ::
     %-  ~(gas by *(map @ud hoon))
     =|  yeb=(list (pair @ud hoon))
+    ^+  yeb
     =+  axe=1
     |^  ?-  dom
           ~        yeb
@@ -10987,7 +10992,7 @@
         [%core p=coil q=zapp]
         [%hint p=(pair type note) q=zapp]
         [%face p=$@(term tune) q=zapp]
-        [%fork p=(set zapp)]
+        [%fork p=(set (pair type zapp))]
         ::NOTE  %holds have been unwrapped
     ==
   ::
@@ -10996,6 +11001,7 @@
     $%  [%pale axe=axis typ=type zap=zapp]
         :: XX: add axe if we want it to work w forks
         [%miss skip=@ud]
+        [%faux =type =nock]
     ==
   ::
   ++  unzip
@@ -11047,16 +11053,16 @@
           [%hold *]  $(sut repo) :: XX: i think for axis case, no state?
       ::
           [%fork *]
-        =-  =+  fok=(fork ~(tap in typs))
-            ?:  ?=(%void fok)  %void
-            =/  zap=zapp  ?:(?=([* ~ ~] zaps) n.zaps fork+zaps)
-            `zebra`[%pale axe fok zap]
+        =-  ?:  =(~ typs)  %void
+            ?:  ?=([* ~ ~] typs)
+              [%pale axe n.typs]
+            [%pale axe %void fork+typs]
         %-  ~(rep in p.sut)
-        |=  [t=type axe=axis typs=(set type) zaps=(set zapp)]
+        |=  [t=type axe=axis typs=(set (pair type zapp))]
         ^+  +<+
         =+  taf=^$(sut t)
         ?.  ?=([%pale *] taf)  +<+.$
-        [axe.taf (~(put in typs) typ.taf) (~(put in zaps) zap.taf)]
+        [axe.taf (~(put in typs) [typ zap]:taf)]
       ==
     =/  axe  1
     =|  gil=(set type)
@@ -11077,7 +11083,7 @@
         [%atom *]  miss+p.heg
         [%cell *]
       =+  taf=$(axe (peg axe 2), sut p.sut)
-      ?:  ?=(%void taf)  taf
+      ?:  ?=(?(%void [%faux *]) taf)  taf
       ?:  ?=([%pale *] taf)
         taf(zap [%head q.sut zap.taf])
       =+  taf=$(axe (peg axe 3), p.heg skip.taf, sut q.sut)
@@ -11098,7 +11104,7 @@
       =^  zem  p.heg
         ?~  zem=(loot u.q.heg q.r.q.sut)  [~ p.heg]
         ?:(=(0 p.heg) [zem 0] [~ (dec p.heg)])
-      ?^  zem  
+      ?^  zem
         =+  zaf=^$(hyp t.hyp)
         ?.  ?=([%pale *] zaf)  zaf
         zaf(axe (peg axe axe.zaf))
@@ -11123,7 +11129,11 @@
         taf(zap [%face p.sut zap.taf])
       ?.  =(0 p.heg)  miss+(dec p.heg)
       ?~  u.tyr  ~|(%unzip-tyr-lost !!)
-      ?~  hup=~(reek ap u.u.tyr)  !!
+      ?~  hup=~(reek ap u.u.tyr)
+        =+  myn=(mint %noun u.u.tyr)
+        =+  out=[type=p.myn nock=(comb [%0 axe] q.myn)]
+        =+  fex=(mint(sut type.out) %noun [%wing t.hyp])
+        [%faux p.fex (comb nock.out q.fex)]
       =+  zaf=^$(hyp (weld (flop u.hup) t.hyp), sut q.sut)
       ?.  ?=([%pale *] zaf)  zaf
       zaf(axe (peg axe axe.zaf), zap [%face p.sut zap.zaf])
@@ -11131,51 +11141,55 @@
         [%fork *]
       =-  ?~  ret  miss+p.heg
           ?:  ?=(%| -.ret)  miss+p.ret
-          =+  fok=(fork ~(tap in typs))
-          ?:  ?=(%void fok)  !!
+          ?:  =(~ typs)  !!
           ?.  =(0 p.heg)  miss+(dec p.heg)
-          =/  zap=zapp  ?:(?=([* ~ ~] zaps) n.zaps fork+zaps)
-          `zebra`[%pale p.ret fok zap]
+          ?:  ?=([* ~ ~] typs)
+            [%pale p.ret n.typs]
+          [%pale p.ret %void fork+typs]
       ~|  fork=[wyt=~(wyt in p.sut) sut=sut hyp=hyp]
       ::  XX: rather than using rep, we should miss early
       %-  ~(rep in p.sut)
       |=  $:  t=type  ret=$@(~ (each @ud @ud))
-              typs=(set type)   zaps=(set zapp)
+              typs=(set (pair type zapp))
           ==
       =+  taf=^$(sut t)
-      ?:  ?=(%void taf)  +<+.$
+      ::XX  WRONG. for %faux, would have to check it against our accumulator
+      ?:  ?=(?(%void [%faux *]) taf)  +<+.$
       ?:  ?=([%miss *] taf)
         ?>  |(?=(~ ret) =([%| skip.taf] ret))
-        [|+skip.taf ~ ~]
+        [|+skip.taf ~]
       ?>  |(?=(~ ret) =([%& axe.taf] ret))
-      [&+axe.taf (~(put in typs) typ.taf) (~(put in zaps) zap.taf)]
+      [&+axe.taf (~(put in typs) [typ zap]:taf)]
     ==
   ::
   ++  modify-and-zip
-    |=  [zap=zapp]
+    ::TODO  smart constructors?
+    |=  [zap=zapp duz=$-(type type)]
     ^-  type
-    ?:  ?=(%void sut)  sut
-    ?~  zap  sut
+    ?~  zap  (duz sut)
     ?-  -.zap
-      %head  [%cell $(zap q.zap) p.zap]
-      %tail  [%cell p.zap $(zap q.zap)]
-      %core  [%core $(zap q.zap) p.zap]
-      %hint  [%hint p.zap $(zap q.zap)]
-      %face  [%face p.zap $(zap q.zap)]
+      %head  (cell $(zap q.zap) p.zap)
+      %tail  (cell p.zap $(zap q.zap))
+      %core  (core $(zap q.zap) p.zap)
+      %hint  (hint p.zap $(zap q.zap))
+      %face  (face p.zap $(zap q.zap))
     ::
         %fork
-      [%fork (~(run in p.zap) |=(zup=zapp ^$(zap zup)))]
+      %-  fork
+      %+  turn  ~(tap in p.zap)
+      |=  [tup=type zup=zapp]
+      ^$(sut tup, zap zup)
     ==
   ::
   ++  take
-    |=  [zeb=$>(%pale zebra) duz=$-(type type)]
+    |=  [zeb=$~([%pale 1 *type *zapp] $>(%pale zebra)) duz=$-(type type)]
     ^-  (pair axis type)
-    axe.zeb^(modify-and-zip(sut (duz typ.zeb)) zap.zeb)
-    :::-  (tend vit)
-    ::=.  vit  (flop vit)
-    ::|-  ^-  type
-    ::?~  vit  (duz sut)
-    ::?~  i.vit
+    axe.zeb^(modify-and-zip(sut typ.zeb) zap.zeb duz)
+    :: :-  (tend vit)
+    :: =.  vit  (flop vit)
+    :: |-  ^-  type
+    :: ?~  vit  (duz sut)
+    :: ?~  i.vit
     ::  |-  ^-  type
     ::  ?+  sut      ^$(vit t.vit)
     ::    [%face *]  (face p.sut ^$(vit t.vit, sut q.sut))
@@ -11183,12 +11197,12 @@
     ::    [%fork *]  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
     ::    [%hold *]  $(sut repo)
     ::  ==
-    ::=+  vil=*(set type)
-    ::|-  ^-  type
-    ::?:  =(1 u.i.vit)
+    :: =+  vil=*(set type)
+    :: |-  ^-  type
+    :: ?:  =(1 u.i.vit)
     ::  ^$(vit t.vit)
-    ::=+  [now lat]=(cap u.i.vit)^(mas u.i.vit)
-    ::?-  sut
+    :: =+  [now lat]=(cap u.i.vit)^(mas u.i.vit)
+    :: ?-  sut
     ::  %noun      $(sut [%cell %noun %noun])
     ::  %void      %void
     ::  [%atom *]  %void
@@ -11204,19 +11218,20 @@
     ::  [%hold *]  ?:  (~(has in vil) sut)
     ::               %void
     ::             $(sut repo, vil (~(put in vil) sut))
-    ::==
+    :: ==
   ::
   ++  tack
     |=  [hyp=wing mur=type]
     ^-  (pair axis type)
     ~_  (show [%c %tack] %l hyp)
     ::~|  hyp=hyp
-    ::~_  ~(duck us face+sut+sut) 
-    ::~_  ~(duck us face+mur+mur) 
+    ::~_  ~(duck us face+sut+sut)
+    ::~_  ~(duck us face+mur+mur)
     =+  zeb=(unzip %rite hyp)
     ?>  ?=([%pale *] zeb)
     :-  axe.zeb
-    (modify-and-zip(sut mur) zap.zeb)
+    ::TODO  can't just pass +same lol
+    (modify-and-zip(sut typ.zeb) zap.zeb |=(type mur))
   ::
   ++  tend
     |=  vit=vein
