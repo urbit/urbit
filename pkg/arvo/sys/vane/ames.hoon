@@ -10661,14 +10661,14 @@
       ?~  flow-wire=(ev-parse-flow-wire:ev:me-core wire)
         (take:me-core sample)
       %.  sample
-      ?:  =(%ames -:(pe-find-peer her.u.flow-wire))
-        take:am-core
+      ?:  =(%mesa -:(pe-find-peer her.u.flow-wire))
+        take:me-core
       ::  XX this shouldn't happen. /mesa wires are used for peeking poke
       ::  payloads, naxplanations and corks. if the peer has been regressed, all
       ::  those peeks are dropped and the regression logic should guarantee that
       ::  whatever state is pending gets handled now using the |ames core.
       ::
-      ~>  %slog.0^leaf/"mesa: taking weird sign={<-.sign>} for (spud wire)"
+      ~>  %slog.0^leaf/"mesa: taking weird {<[[- +<]:sign]>} for {(spud wire)}"
       take:me-core
     ::  If the unix-duct is not set, we defer applying %public-keys and %turf
     ::  gifts (which can trigger other gifts to be sent to unix) by setting up
@@ -10695,7 +10695,7 @@
     [%mesa %ask /public-keys/[(scot %p ship)]]
   ?~  parsed-wire=(parse-bone-wire wire)
     ::  not a /bone wire—used when passing %pleas to a local vane; use |ames
-    ::  (if the peer has been migrated we will no-op there)
+    ::  XX this is not a |mesa wire so it shouldn't happen for migrated flows
     ::
     (take:am-core sample)
   =/  ship-state  (pe-find-peer her.u.parsed-wire)
