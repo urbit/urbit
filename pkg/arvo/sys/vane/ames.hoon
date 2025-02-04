@@ -9671,7 +9671,7 @@
       ++  peek-pawn
         |=  tyl=(pole knot)
         ^-  (unit (unit cage))
-        ?>  ?=([%comet %proof rcvr=@ life=@ ~] tyl)
+        ?>  ?=([%pawn %proof rcvr=@ life=@ ~] tyl)
         ::  only comets have this
         ::
         ?.  ?=(%pawn (clan:title our))
@@ -10434,21 +10434,18 @@
                 |.("snubbed")
             `ames-state
           =/  chum-state  (pe-find-peer her-pok)
-          ?:  ?=([%ames *] chum-state)
+          ?:  ?=([%ames ~ %known *] chum-state)
             ::  peer has been regressed to %ames (or XX?)
             ::
             ?.  =(1 (div (add tob.data.pact 1.023) 1.024))
               ::  only deal with single-fragment %rege pleas
               ::
               `ames-state
-            ?.  ?=([~ %known *] +.chum-state)
-              ::  XX handle?
-              `ames-state
             ::
             %-  %+  %*(ev-tace ev-core her her-pok)  odd.veb.bug.ames-state
                 |.("hear poke for regressed")
             ::
-            =/  =peer-state     +.u.+.chum-state
+            =/  =peer-state     +.u.chum-state
             =/  =azimuth-state  -.peer-state
             =+  ames-core=(ev:ames now^eny^rof ~[//rege] ames-state)
             =+  peer-core=(abed-peer:pe:ames-core her-pok peer-state)
@@ -10530,6 +10527,9 @@
               %.  [space=[%none ~] spar=[her-pok pat.ack.pact]]
               co-make-page:co:me-core(rof flow-roof)
             [moves ames-state]
+          =?  chum-state  ?=([%ames *] chum-state)
+            [%mesa *(unit ^chum-state)]
+          ?>  ?=([%mesa *] chum-state)
           ?.  ?&  ?=(%pawn (clan:title her-pok))
                   |(?=(~ +.chum-state) ?=([~ %alien *] +.chum-state))
               ==
