@@ -7121,8 +7121,9 @@
             ?.  ?&  =(our rcvr.pok)      ::  are we the receiver of the poke?
                     =(rift.per rif-pok)  ::  at their current rift
                 ==
+              =+  rifs=[her=rift.per pac=rif-pok]
               %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("poke for {<rcvr.pok>} not us; skip")
+                  |.("poke for {<rcvr.pok>} at rifts={<rifs>}; skip")
               ev-core
             ?.  =(her-pok rcvr.ack)      ::  do ack and pokes match?
               %-  %+  ev-tace  odd.veb.bug.ames-state
