@@ -1884,6 +1884,7 @@
 |=  our=ship
 =|  ames-state=axle
 =*  unix-duct  unix-duct.ames-state
+=*  our-rift   rift.ames-state
 ::
 =<  ::  %larval core
     ::
@@ -7087,7 +7088,9 @@
             ?>  ?=(%poke +<.pact)
             =*  data     data.pact
             =*  our-ack  her.ack.pact
+            =*  rif-ack  rif.ack.pact
             =*  her-pok  her.pok.pact
+            =*  rif-pok  rif.pok.pact
             ::  XX dispatch/hairpin &c
             ::
             ::  - pre-check that we want to process this poke
@@ -7108,19 +7111,23 @@
               (validate-path inner:(ev-decrypt-path [pat.ack her.pok]:pact))
             ::
             ?>  &(?=(flow-pith ack) ?=(flow-pith pok))
-            ?.  =(our-ack our)  ::  do we need to respond to this ack?
+            ?.  ?&  =(our our-ack)       ::  do we need to respond to this ack?
+                    =(our-rift rif-ack)  ::  at the current rift
+                ==
               %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("not our ack rcvr={<our-ack>}; skip")
+                  =+  rifs=[our=our-rift pac=rif-ack]
+                  |.("not our ack rcvr={<our-ack>} rifs={<rifs>}; skip")
               ev-core
-            ?.  =(rcvr.pok our)  ::  are we the receiver of the poke?
+            ?.  ?&  =(our rcvr.pok)      ::  are we the receiver of the poke?
+                    =(rift.per rif-pok)  ::  at their current rift
+                ==
               %-  %+  ev-tace  odd.veb.bug.ames-state
                   |.("poke for {<rcvr.pok>} not us; skip")
               ev-core
-            ?.  =(her-pok rcvr.ack)  ::  do ack and pokes match?
+            ?.  =(her-pok rcvr.ack)      ::  do ack and pokes match?
               %-  %+  ev-tace  odd.veb.bug.ames-state
                   |.("ack {<rcvr.ack>} and poke {<her-pok>} missmatch; skip")
               ev-core
-            ::
             ::
             %-  (ev-tace rcv.veb.bug.ames-state |.("hear poke packet"))
             ::
@@ -7182,7 +7189,6 @@
             ?>  ?=(%page +<.pact)
             =*  data     data.pact
             =*  name     name.pact
-            =*  her-pok  her.pok.pact
             ::  check for pending request (peek|poke)
             ::
             =*  sealed-path  pat.name
@@ -7194,6 +7200,11 @@
               |.("missing page from pit {(spud inner-path)}")
             ::
             %-  (ev-tace rcv.veb.bug.ames-state |.("hear page packet"))
+            ::
+            ?.  =(rift.per rif.name)
+              %-  %+  ev-tace  odd.veb.bug.ames-state
+                  |.("wrong rift {<[rift.per rif.name]>}; skip")
+              ev-core
             ::
             =.  per  (ev-update-lane lane hop.pact next.pact)
             ::  update and print connection status
@@ -7920,8 +7931,8 @@
               ::
               :-  [her (fo-ack-path seq our)]
               (%*(fo-pok-path fo-core dire.side fo-flip-dire) seq her)
-            =/  =space  chum-to-our
-            =/  =wire  (fo-wire %ack)
+            =/   =space  chum-to-our  ::  XX the namespace refers to the ack
+            =/    =wire  (fo-wire %ack)
             =.  fo-core  (fo-emit hen %pass wire %a moke/[space ack poke])
             loop
           ::
@@ -8457,7 +8468,7 @@
             =/  sponsors  (~(gas in *(set ^ship)) sy-get-sponsors)
             =?  sy-core  (~(has in sponsors) ship)
               (sy-emit unix-duct %give %saxo ~(tap in sponsors))
-            :: ::
+            ::
             sy-core
           ::  +on-publ-rekey: handle new key for peer
           ::
