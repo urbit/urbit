@@ -7135,7 +7135,8 @@
             =.  per  (ev-update-lane lane hop.pact ~)
             ::  update and print connection status
             ::
-            =.  ev-core  (ev-update-qos %live last-contact=now)
+            =?  ev-core  ?=(^ lane.per)  (ev-update-qos %live last-contact=now)
+            =?  ev-core  ?=(~ lane.per)  (ev-update-qos %dead last-contact=now)
             ::
             ?.  =(1 (div (add tob.data.pact 1.023) 1.024))
               %-  %+  ev-tace  msg.veb.bug.ames-state
@@ -8679,6 +8680,7 @@
                     %plea
                   (ev-req-plea:(ev-abed:c duct) +.mess)
                 ==
+              ::
               =.  ev-core
                 ::  apply (public) remote scry requests
                 ::
@@ -9249,6 +9251,11 @@
         ++  al-abed  |=(=duct al-core(hen duct))
         ++  al-emit  |=(=move al-core(moves [move moves]))
         ++  al-emil  |=(mos=(list move) al-core(moves (weld mos moves)))
+        ++  al-tace
+          |=  [verb=? her=ship print=(trap tape)]
+          ^+  same
+          (trace %mesa verb her ships.bug.ames-state print)
+        ::
         ::
         +|  %entry-points
         ::  +ev-enqueue-alien-todo: helper to enqueue a pending request
@@ -9305,13 +9312,19 @@
           ::
           ?>  =(comet fig:ex:crub)
           =/  keys  (~(put by *(map life [suite=@ud pass])) 1 1 public-key)
-          =/  ship-state  (~(get by peers.ames-state) comet)
+          =/  ship-state  (~(get by chums.ames-state) comet)
           ?:  ?=([~ %known *] ship-state)
             al-core
           ::  insert comet
           ::
           =?  chums.ames-state  =(~ ship-state)
             (~(put by chums.ames-state) comet %alien *ovni-state)
+          ?>  ?=([~ %alien *] ship-state)
+          %-  %^  al-tace  sun.veb.bug.ames-state  comet
+              =+  :+  pokes=(lent pokes.u.ship-state)
+                    peeks=~(wyt by peeks.u.ship-state)
+                  chums=~(wyt by chums.u.ship-state)
+              |.("processing todos: {<pokes>} {<peeks>} {<chums>}")
           =^  moves  ames-state
             =<  sy-abet
             %^  ~(sy-publ sy hen)  /comet  %full
@@ -9335,6 +9348,8 @@
           ::
           ?~  pact=(co-make-pact:co `spar`comet^path ~ rift=0)
             !!
+          %-  %^  al-tace  fin.veb.bug.ames-state  comet
+              |.("peek for attestation proof")
           (al-emit (push-pact u.pact (make-lanes comet `lane *qos)))
         ::
         ++  al-take-proof
@@ -9345,6 +9360,8 @@
           ?>  ?=([%publ @ *] pat.name)
           =+  path=(validate-path +>.pat.name)
           ?>  ?=(poof-pith path)
+          %-  %^  al-tace  rcv.veb.bug.ames-state  her.name
+              |.("hear attestation proof")
           ::  this is an attestation for us, at our current life
           ::
           ?>  &(=(our rcvr.path) =(life.path life.ames-state))
@@ -9352,7 +9369,9 @@
           ::
           ?>  =(1 (div (add tob.data 1.023) 1.024))
           ?>  ?=(%& -.aut.data)
-          ::  XX restore
+          ::
+          ~|  [name=name data=data]
+          ::  XX FIXME
           :: ?>  (authenticate (root:lss tob.data^dat.data) aut.data name)
           =+  ;;(proof=gage:mess (cue dat.data))
           ?>  ?=([%message %proof *] proof)
@@ -10487,7 +10506,7 @@
               `ames-state
             ?.  =(rcvr.pok our)  ::  are we the receiver of the poke?
               %-  %+  %*(ev-tace ev-core her her-pok)  odd.veb.bug.ames-state
-                  |.("poke for {<rcvr.pok>} not us; skip")
+                  |.("poke for {<rcvr.pok>} not us  ; skip")
               `ames-state
             ?.  =(her-pok rcvr.ack)  ::  do ack and pokes match?
               %-  %+  %*(ev-tace ev-core her her-pok)  odd.veb.bug.ames-state
