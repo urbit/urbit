@@ -366,7 +366,7 @@
                   %done                                 ::  (n)ack
                   %lost                                 ::  lost boon
                   %tune                                 ::  |fine response
-                  %rate                                 ::  scry progress
+                  %rate                                 ::  scry progress rate
                   %sage                                 ::  |mesa response
               ==                                        ::
           gift:ames                                     ::
