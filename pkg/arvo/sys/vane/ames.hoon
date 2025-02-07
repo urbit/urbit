@@ -1754,7 +1754,7 @@
       $:  %pawn
           %proof
           [%p rcvr=@p]
-          [%ud life=@ud]
+          [%ud life=@ud]  :: XX reddundant?
           ~
       ==
     ::
@@ -9371,14 +9371,17 @@
           ?>  ?=(%& -.aut.data)
           ::
           ~|  [name=name data=data]
-          ::  XX FIXME
-          :: ?>  (authenticate (root:lss tob.data^dat.data) aut.data name)
+          ::
           =+  ;;(proof=gage:mess (cue dat.data))
           ?>  ?=([%message %proof *] proof)
           ::  XX refactor with sift-open-packet
           ::
           =+  ;;  [signature=@ signed=@]  (cue ;;(@ +>.proof))
           =+  ;;  =open-packet            (cue signed)
+          ?>  %*  $  authenticate
+                pub  `public-key.open-packet
+                +<   [(root:lss tob.data^dat.data) aut.data name]
+              ==
           =.  al-core
             (al-register-comet her.name open-packet signature signed)
           =.  ames-state
@@ -10150,14 +10153,23 @@
         `symmetric-key.+.u.chum
       ::
       ++  authenticate
+        =|  pub=(unit public-key)
         |=  [rut=@uxI aut=auth:pact =name:pact]
         ^-  ?
         ?>  ?=([%& *] aut)
         =/  ful  (en-beam [[her.name %$ ud+1] pat.name])
-        ?-  -.p.aut
-          %&  (verify-sig:crypt (sig-key [pat her]:name) p.p.aut ful rut)
-          %|  (verify-mac:crypt (mac-key [pat her]:name) p.p.aut ful rut)
-        ==
+        ?~  pub
+          ?-  -.p.aut
+            %&  (verify-sig:crypt (sig-key [pat her]:name) p.p.aut ful rut)
+            %|  (verify-mac:crypt (mac-key [pat her]:name) p.p.aut ful rut)
+          ==
+        ?>  ?=(%pawn (clan:title her.name))
+        =>  .(pat.name `(pole knot)`pat.name)
+        ?>  ?=([%publ lyf=@ pat=*] pat.name)
+        =/  lyf  (slaw %ud lyf.pat.name)
+        ?>  ?=(^ lyf)
+        ?>  =(1 u.lyf)
+        (verify-sig:crypt (end 8 (rsh 3 u.pub)) p.p.aut ful rut)
       ::
       ++  sig-key
         |=  [=path =ship]
