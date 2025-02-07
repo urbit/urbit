@@ -9324,7 +9324,7 @@
               =+  :+  pokes=(lent pokes.u.ship-state)
                     peeks=~(wyt by peeks.u.ship-state)
                   chums=~(wyt by chums.u.ship-state)
-              |.("processing todos: {<pokes>} {<peeks>} {<chums>}")
+              |.("todos: {<pokes=pokes>} {<peeks=peeks>} {<chums=chums>}")
           =^  moves  ames-state
             =<  sy-abet
             %^  ~(sy-publ sy hen)  /comet  %full
@@ -9357,7 +9357,9 @@
           ^+  al-core
           ?.  ?=(%pawn (clan:title her.name))
             al-core
-          ?>  ?=([%publ @ *] pat.name)
+          ::
+          ?>  ?=([%publ lyf=%'1' res=*] pat.name)
+          ::
           =+  path=(validate-path +>.pat.name)
           ?>  ?=(poof-pith path)
           %-  %^  al-tace  rcv.veb.bug.ames-state  her.name
@@ -9374,14 +9376,17 @@
           ::
           =+  ;;(proof=gage:mess (cue dat.data))
           ?>  ?=([%message %proof *] proof)
-          ::  XX refactor with sift-open-packet
+          ::  XX refactor with sift-open-packet?
           ::
           =+  ;;  [signature=@ signed=@]  (cue ;;(@ +>.proof))
           =+  ;;  =open-packet            (cue signed)
-          ?>  %*  $  authenticate
-                pub  `public-key.open-packet
-                +<   [(root:lss tob.data^dat.data) aut.data name]
-              ==
+          ::
+          ?>  %-  verify-sig:crypt
+              :^    (end 8 (rsh 3 public-key.open-packet))
+                  p.p.aut.data
+                (en-beam [[her.name %$ ud+1] pat.name])
+              (root:lss tob.data^dat.data)
+          ::
           =.  al-core
             (al-register-comet her.name open-packet signature signed)
           =.  ames-state
@@ -9526,7 +9531,7 @@
           ?:  =(~ unix-duct)
             %.  co-core
             (slog leaf+"ames: unix-duct pending; will retry %push" ~)
-          (co-emit (push-pact u.pact (make-lanes ship.ack [lane qos]:per)))
+          (co-emit (push-pact u.pact (make-lanes ship.remote [lane qos]:per)))
         ::
         ++  co-make-pact
           |=  [p=spar q=(unit path) =per=rift]
@@ -10153,23 +10158,14 @@
         `symmetric-key.+.u.chum
       ::
       ++  authenticate
-        =|  pub=(unit public-key)
         |=  [rut=@uxI aut=auth:pact =name:pact]
         ^-  ?
         ?>  ?=([%& *] aut)
         =/  ful  (en-beam [[her.name %$ ud+1] pat.name])
-        ?~  pub
-          ?-  -.p.aut
-            %&  (verify-sig:crypt (sig-key [pat her]:name) p.p.aut ful rut)
-            %|  (verify-mac:crypt (mac-key [pat her]:name) p.p.aut ful rut)
-          ==
-        ?>  ?=(%pawn (clan:title her.name))
-        =>  .(pat.name `(pole knot)`pat.name)
-        ?>  ?=([%publ lyf=@ pat=*] pat.name)
-        =/  lyf  (slaw %ud lyf.pat.name)
-        ?>  ?=(^ lyf)
-        ?>  =(1 u.lyf)
-        (verify-sig:crypt (end 8 (rsh 3 u.pub)) p.p.aut ful rut)
+        ?-  -.p.aut
+          %&  (verify-sig:crypt (sig-key [pat her]:name) p.p.aut ful rut)
+          %|  (verify-mac:crypt (mac-key [pat her]:name) p.p.aut ful rut)
+        ==
       ::
       ++  sig-key
         |=  [=path =ship]
