@@ -43,7 +43,7 @@
   =/  ack-path   /flow/0/ack/bak/~nec/1
   ::
   =/  ack-wire   /mesa/flow/ack/for/~bud/0/0
-  =/  vane-wire  /mesa/flow/van/bak/~nec/0/0
+  =/  vane-wire  /bone/~nec/0/1
   ::
   =/  ack-full-path=path  (make-space-path.nec space %a %x '1' %$ ack-path)
   =/  moke=[%moke space:ames =spar:ames =path]
