@@ -91,7 +91,7 @@
       ::  verb: verbosity
       ::
       verb=@
-      ::  check-session-timer: set to false for ships prior to ~2025.01.31,
+      ::  check-session-timer: set to true for ships prior to ~2025.01.31,
       ::                       who may have been affected by urbit/urbit#7103
       ::
       check-session-timer=_|
