@@ -3572,6 +3572,24 @@
       ::  must be appended because we delete off front
       ::
       =.  need.sat  (welp need.sat (missing-lobes nako))
+      =.  ..foreign-update
+        ::  we request sizes for all the paths in the desk to know beforehand
+        ::  how much data we are expecting
+        ::  XX better to request the size of the whole desk instead?
+        ::  XX desk size namespace?
+        ::
+        %+  roll  need.sat
+        |=  [i=$@(lobe [=tako =path =lobe]) c=_..foreign-update]
+        ?@  i  c
+        =?  c  ?=(^ path.i)
+          =.  path.i  [%c %q (scot %uv tako.i) syd path.i]
+          =/  =wire  (request-wire %keen-whey her syd inx)
+          :: =.  path.i  [%a %x '1' %$ %whey (scot %ud 3) path.i]
+          :: =>((emit:c hen %pass wire %a %chum her path.i) ?>(?=(^ ref) .))
+          ::  XX  this will fail if the peer has not ben %ahoyed
+          ::
+          =>((emit:c hen %pass wire %a %whey her^path.i boq=13) ?>(?=(^ ref) .))
+        c
       =.  nako.sat  (~(put to nako.sat) ~ nako)
       work
     ::
@@ -3622,25 +3640,6 @@
       ^+  ..abet
       ?.  =(~ busy.sat)  ::NOTE  tmi
         ..abet
-      =.  ..foreign-update
-        ::  we request sizes for all the paths in the desk to know beforehand
-        ::  how much data we are expecting XX better to request the size of the
-        ::  whole desk instead?
-        ::
-        %+  roll  need.sat
-        |=  [i=$@(lobe [=tako =path =lobe]) c=_..foreign-update]
-        ?@  i  c
-        =?  c  ?=(^ path.i)
-          =.  path.i  [%c %q (scot %uv tako.i) syd path.i]
-          =/  =wire  (request-wire %keen-whey her syd inx)
-          ::  XX we are requesting %wheys multiple times...
-          ::  XX still true?
-          :: =.  path.i  [%a %x '1' %$ %whey (scot %ud 3) path.i]
-          :: =>((emit:c hen %pass wire %a %chum her path.i) ?>(?=(^ ref) .))
-          ::  XX  this will fail if the peer has not ben %ahoyed
-          ::
-          =>((emit:c hen %pass wire %a %whey her^path.i boq=13) ?>(?=(^ ref) .))
-        c
       |-  ^+  ..abet
       ?~  need.sat
         ::  NB: if you change to release nakos as we get enough lobes

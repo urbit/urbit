@@ -762,11 +762,11 @@
     =/  time=@dr  (sub now-2 now-1)
     ::
     =+  !<([loc=path =current=rate:ames] q.cage)
-    ?:  =(*rate:ames current-rate)  $  ::  ignore bunted rate
+    ?:  =(*rate:ames current-rate)  $  ::  XX ignore bunted rate
     ::
     =.  bloq  boq.current-rate
     ?~  fag.current-rate
-      ::  this is the first rate after a %whey; update needs with the path
+      ::  this is the first rate after a %whey; update $needs with the path
       ::
       =?  tot.acc-rate  !(~(has by needs) loc)
         (add tot.acc-rate tot.current-rate)  :: accumulate tot for each file in the desk
