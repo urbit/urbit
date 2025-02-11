@@ -43,7 +43,7 @@
 ++  axle
   $:  ::  date: date at which http-server's state was updated to this data structure
       ::
-      date=%~2024.8.20
+      date=%~2025.1.31
       ::  server-state: state of inbound requests
       ::
       =server-state
@@ -91,6 +91,10 @@
       ::  verb: verbosity
       ::
       verb=@
+      ::  check-session-timer: set to true for ships prior to ~2025.01.31,
+      ::                       who may have been affected by urbit/urbit#7103
+      ::
+      check-session-timer=_|
   ==
 ::  channel-request: an action requested on a channel
 ::
@@ -3573,6 +3577,43 @@
           ['content-length' (crip (a-co:co p.data))]
       ==
     [duct %give %response %start 500^head `data &]~
+  ::  due to an error handling bug in earlier versions of +take,
+  ::  we may need to make sure the timeout timer for sessions still exists.
+  ::  see also urbit/urbit#7103
+  ::
+  ?:  check-session-timer.server-state.ax
+    ::  we do this cleanup exactly once
+    ::
+    =.  check-session-timer.server-state.ax  |
+    ::  if there are no sessions after running the +call,
+    ::  we don't need a timer, so we don't need to set it
+    ::
+    ::NOTE  hazard, must get state from .etc going forward
+    =/  [moz=(list move) etc=_http-server-gate]  $
+    :_  etc
+    ^-  (list move)
+    ?:  =(~ sessions.auth.server-state.ax.etc)  moz
+    ::  if .moz is already setting the timer,
+    ::  we don't need to do it here
+    ::
+    ?:  %+  lien  moz
+        |=  m=move
+        ?=([* %pass [%sessions %expire ~] *] m)
+      moz
+    ::  find out from behn if there isn't already a timer set.
+    ::  this is not ideal, but we have no other way of knowing,
+    ::  and don't want to set duplicate timers...
+    ::
+    ?:  ?~  res=(rof [~ ~] /eyre %bx [our %$ da+now] /debug/timers)  |
+        ?~  u.res  |
+        %+  lien  !<((list [@da ^duct]) q.u.u.res)
+        |=  [@da d=^duct]
+        ?=([[%eyre %sessions %expire ~] *] d)
+      moz
+    ::  we need a timer, but aren't setting one, and don't have one,
+    ::  so prepend a session expire timer to the .moz
+    ::
+    [[duct %pass /sessions/expire %b %wait now] moz]
   ::  %init: tells us what our ship name is
   ::
   ?:  ?=(%init -.task)
@@ -3961,7 +4002,13 @@
     ?>  ?=([%behn %wake *] sign)
     ::
     ?^  error.sign
-      [[duct %slip %d %flog %crud %wake u.error.sign]~ http-server-gate]
+      :_  http-server-gate
+      ::  we must not drop the timer! so we kick the can down the road a day,
+      ::  and hope it will run successfully later...
+      ::
+      :~  [duct %slip %d %flog %crud %wake u.error.sign]
+          [duct %pass /sessions/expire %b %wait (add now ~d1)]
+      ==
     ::NOTE  we are not concerned with expiring channels that are still in
     ::      use. we require acks for messages, which bump their session's
     ::      timer. channels have their own expiry timer, too.
@@ -4084,8 +4131,9 @@
             [date=%~2023.2.17 server-state=server-state-1]
             [date=%~2023.3.16 server-state=server-state-2]
             [date=%~2023.4.11 server-state-3]
-            [date=%~2023.5.15 server-state]
-            [date=%~2024.8.20 server-state]
+            [date=%~2023.5.15 server-state-4]
+            [date=%~2024.8.20 server-state-4]
+            [date=%~2025.1.31 server-state]
         ==
       ::
       +$  server-state-0
@@ -4183,6 +4231,20 @@
             unacked=(map @ud @ud)
             subscriptions=(map @ud [ship=@p app=term =path duc=duct])
             heartbeat=(unit timer)
+        ==
+      ::
+      +$  server-state-4
+        $:  bindings=(list [=binding =duct =action])
+            cache=(map url=@t [aeon=@ud val=(unit cache-entry)])
+            =cors-registry
+            connections=(map duct outstanding-connection)
+            auth=authentication-state
+            =channel-state
+            domains=(set turf)
+            =http-config
+            ports=[insecure=@ud secure=(unit @ud)]
+            outgoing-duct=duct
+            verb=@
         ==
       --
   |=  old=axle-any
@@ -4298,6 +4360,12 @@
     ==
   ::
       %~2024.8.20
+    %=  $
+      date.old  %~2025.1.31
+      verb.old  [verb.old check-session-timer=&]
+    ==
+  ::
+      %~2025.1.31
     http-server-gate(ax old)
   ::
   ==
