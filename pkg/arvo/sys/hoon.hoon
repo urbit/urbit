@@ -9333,12 +9333,12 @@
       ^-  port
       =+  (fond way hyp)
       ?+  -<  !!
-        %pale  [%& vein opal]
+        %pale  [%& [`axis ~] opal]
         %faux  [%| type nock]
       ==
     ::
     +$  pony
-      $%  [%pale =vein =opal]
+      $%  [%pale =axis =opal]
           [%fail skip=@ud]
           [%faux =type =nock]
           [%void ~]
@@ -9348,7 +9348,7 @@
       |=  [way=vial hyp=wing]
       ^-  pony
       %+  reel  hyp
-      |=  [heg=limb out=$~([%pale ~ %& sut] pony)]
+      |=  [heg=limb out=$~([%pale 1 %& sut] pony)]
       ?+  -.out  out
         %faux  ::  weird, could also call +fxnd, fully reentrant
                =+  fex=(mint(sut type.out) %noun [%wing heg ~])
@@ -9360,8 +9360,8 @@
                  ==
                =/  nex  (fxnd way heg)
                ?+  -.nex  nex
-                 %faux  nex(nock (comb [%0 (tend vein.out)] nock.nex))
-                 %pale  nex(vein (weld vein.nex vein.out))
+                 %faux  nex(nock (comb [%0 axis.out] nock.nex))
+                 %pale  nex(axis (peg axis.out axis.nex))
                ==
       ==
     ::
@@ -9372,13 +9372,13 @@
       ?:  ?=(%& -.heg)
         ::  resolve the tree address directly
         ::
-        [%pale [`p.heg]~ %& (peek way p.heg)]
+        [%pale p.heg %& (peek way p.heg)]
       =/  axe  1
       =|  gil=(set type)
       |-  ^-  pony
       ?~  q.heg
         ?>  =(0 p.heg)  ::  no skipping on bare com
-        [%pale [~ `axe ~] %& ?:(?=([%face *] sut) q.sut sut)]
+        [%pale axe %& ?:(?=([%face *] sut) q.sut sut)]
       ?-  sut
         %void      [%void ~]
         %noun      [%fail p.heg]
@@ -9395,7 +9395,7 @@
           ?~  zem=(loot u.q.heg q.r.q.sut)  [~ p.heg]
           ?:(=(0 p.heg) [zem 0] [~ (dec p.heg)])
         ?^  zem
-          :+  %pale  [`axe ~]
+          :+  %pale  axe
           =/  zut=foot
             ?:(?=(%wet q.p.q.sut) [%wet q.u.zem] [%dry q.u.zem])
           [%| (peg 2 p.u.zem) [[sut zut] ~ ~]]
@@ -9407,7 +9407,7 @@
           [%face *]
         ?@  p.sut
           ?:  =(u.q.heg p.sut)
-            ?:  =(0 p.heg)  [%pale [~ `axe ~] %& q.sut]
+            ?:  =(0 p.heg)  [%pale axe %& q.sut]
             [%fail (dec p.heg)]
           [%fail p.heg]
         =<  ?~  tyr=(~(get by p.p.sut) u.q.heg)
@@ -9423,7 +9423,7 @@
               [%faux p.myn (comb [%0 axe] q.myn)]
             =+  fyn=(fond way u.hup)  ::NOTE  re-entrant
             ?+  -.fyn  fyn
-              %pale  fyn(vein (weld vein.fyn `vein`[~ `axe ~]))
+              %pale  fyn(axis (peg axe axis.fyn))
               %faux  fyn(nock (comb [%0 axe] nock.fyn))
             ==
         |%
@@ -9442,8 +9442,8 @@
             [%faux p.vat (comb (comb [%0 axe] q.tiv) q.vat)]
           ?-    -.fid
             %pale  ?-  -.opal.fid
-                    %&  [p.opal.fid %0 (tend vein.fid)]  ::TODO  doesn't _need_ to be synthetic
-                    %|  [(fire ~(tap in q.opal.fid)) %9 p.opal.fid %0 (tend vein.fid)]
+                    %&  [p.opal.fid %0 axis.fid]  ::TODO  doesn't _need_ to be synthetic
+                    %|  [(fire ~(tap in q.opal.fid)) %9 p.opal.fid %0 axis.fid]
                   ==
             %faux  +.fid
           ==
@@ -9471,14 +9471,14 @@
             ==
         [%faux (fork type.hax type.yor ~) nock.hax]
       ?>  ?=(%pale -.yor)
-      ?>  =(vein.hax vein.yor)
+      ?>  =(axis.hax axis.yor)
       ?:  &(?=(%& -.opal.hax) ?=(%& -.opal.yor))
-        :+  %pale  vein.hax
+        :+  %pale  axis.hax
         [%& (fork p.opal.hax p.opal.yor ~)]
       ?>  &(?=(%| -.opal.hax) ?=(%| -.opal.yor))
       ?>  =(p.opal.hax p.opal.yor)
       =+  wal=(~(uni in q.opal.hax) q.opal.yor)
-      :+  %pale  vein.hax
+      :+  %pale  axis.hax
       [%| p.opal.hax wal]
     --
   ::
