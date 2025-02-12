@@ -89,7 +89,7 @@
   :-  t2  |.  :-  %|
   =/  peer=peer-state:ames
     (ames-scry-peer:v ames.nec [~1111.1.8 0xbeef.dead *roof] [~nec ~bud])
-  =/  listeners=(set duct)
+  =/  listeners=(jug duct ints:ames)
     ?~  keen=(~(get by keens.peer) scry-path)
       ~
     listeners:u.keen
@@ -97,7 +97,7 @@
   =/  t3=tang
     %+  expect-eq
       !>((sy ~[~[/keen-duct-1] ~[/keen-duct-2]]))
-    !>(listeners)
+    !>(~(key by listeners))
   ::
   :-  t3  |.  :-  %|
   ~?  >  dbug  'gives a remote scry response to listeners'
@@ -129,9 +129,9 @@
           (etch-shot:ames response)
       ==
       :~  [~[//fine] %pass /qos %d %flog %text "; ~bud is your neighbor"]
-          [~[/keen-duct-2] %give %rate [~bud scry-path] 1^1]
+          :: [~[/keen-duct-2] %give %rate [~bud scry-path] 1^1]
           [~[/keen-duct-2] %give %tune [~bud scry-path] roar]
-          [~[/keen-duct-1] %give %rate [~bud scry-path] 1^1]
+          :: [~[/keen-duct-1] %give %rate [~bud scry-path] 1^1]
           [~[/keen-duct-1] %give %tune [~bud scry-path] roar]
           [~[//unix] %pass fine-behn-wire %b %rest ~1111.1.1..00.00.01]
       ==
@@ -198,12 +198,12 @@
   :-  t9  |.  :-  %&
   =/  peer=peer-state:ames
     (ames-scry-peer:v ames.nec [~1111.1.8 0xbeef.dead *roof] [~nec ~bud])
-  =/  listeners=(set duct)
+  =/  listeners=(jug duct ints:ames)
     ?~  keen=(~(get by keens.peer) scry-path)
       ~
     listeners:u.keen
   ~?  >  dbug  'checks no more listeners'
-  (expect-eq !>(~) !>(listeners))
+  (expect-eq !>(~) !>(~(key by listeners)))
 ::
 ++  test-fine-misordered
   %-  run-chain
@@ -305,7 +305,7 @@
       :*  %hear  [%& ~bud]
           (etch-shot:ames resp2)
       ==
-      :~  [~[/keen-duct-1] %give %rate [~bud scry-path] 3^3]
+      :~  ::[~[/keen-duct-1] %give %rate [~bud scry-path] 3^3]
           [~[/keen-duct-1] %give %tune [~bud scry-path] roar]
           [~[//unix] %pass fine-behn-wire %b %rest ~1111.1.2..00.02.00]
       ==

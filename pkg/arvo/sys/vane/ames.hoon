@@ -6218,7 +6218,7 @@
               |=  [int=^ints f=_fine]
               ?@  int  f
               %-  (fi-trace:f fin.veb |.("rate {(spud fi-full-path)}"))
-              (fi-emit:f duct %give %rate her^path rate(boq boq.int))
+              (fi-emit:f duct %give %rate her^path rate)
             ::
             +|  %entry-points
             ::
@@ -6231,10 +6231,10 @@
               =/  req=hoot  (fi-etch-wail fra)
               =/     =want  [fra req last=now tries=1 skips=0]
               =.  wan.keen  (put:fi-mop ~ [fra .]:want)
-              =.  fine
-                :: XX bunted rate: subscribers can ignore this or use the path
-                ::  path in remote to subscribe to %rates
-                (~(rep in listeners.keen) (fi-give-rate *rate))
+              :: =.  fine
+              ::   :: XX bunted rate: subscribers can ignore this or use the path
+              ::   ::  path in remote to subscribe to %rates
+              ::   (~(rep in listeners.keen) (fi-give-rate *rate))
               (fi-send `@ux`req)
             ::
             ++  fi-rcv
@@ -6292,7 +6292,9 @@
             ::
             ++  fi-rat
               |=  =^duct
-              fine(listeners.keen (~(put ju listeners.keen) duct [%rate 0 0]))
+              =.  listeners.keen
+                (~(put ju listeners.keen) duct [%rate response-size 0])
+              fine
             ::  scry is autocancelled in +abet if no more listeners
             ::
             ++  fi-unsub
@@ -6360,7 +6362,7 @@
               %.  [duct^ints fine]
               ?@  int
                 (fi-give-tune roar)
-              (fi-give-rate boq=*@ [`num-received num-fragments]:keen)
+              (fi-give-rate boq=response-size [`num-received num-received]:keen)
             ::
             ++  fi-first-rcv
               |=  =meow
@@ -6397,7 +6399,7 @@
               ::                   (gth num-received (sub num-fragments modo))
               ::           ==  ==
                 %-  ~(rep in listeners.keen)
-                (fi-give-rate boq=*@ud [`num-received num-fragments]:keen)
+                (fi-give-rate response-size [`num-received num-fragments]:keen)
               $(inx +(inx))
             ::
             ++  fi-sift-full
