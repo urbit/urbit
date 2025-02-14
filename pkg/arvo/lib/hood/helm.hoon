@@ -268,7 +268,7 @@
   ?:  =(%fail mes)
     ~&  %poke-hi-fail
     !!
-  abet:(flog %text "< {<src.bowl>}: {(scow %ud (met 3 mes))}")
+  abet:(flog %text "< {<src.bowl>}: {(trip mes)}")
 ::
 ++  poke-ames-prod
   |=  ships=(list ship)
