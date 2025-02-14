@@ -201,7 +201,7 @@
   ::    axis within head/tail
   ::
   ::  computes the axis of `a` within either the head or tail of a noun
-  ::  (depends whether `a` lies within the head or tail).
+  ::  (depends whether `a` lies within the the head or tail).
   |=  a=@
   ^-  @
   ?-  a

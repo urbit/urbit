@@ -1,11 +1,12 @@
 /-  *hood
-/+  strandio
+/+  strandio, sole
 =,  clay
 =,  space:userlib
 =,  format
 =*  dude  dude:gall
 |%
-+$  state     state-11
++$  state     state-12
++$  state-12  [%12 pith-12]
 +$  state-11  [%11 pith-11]
 +$  state-10  [%10 pith-10]
 +$  state-9   [%9 pith-9]
@@ -20,7 +21,8 @@
 +$  state-0   [%0 pith-0]
 +$  any-state
   $~  *state
-  $%  state-11
+  $%  state-12
+      state-11
       state-10
       state-9
       state-8
@@ -34,6 +36,7 @@
       state-0
   ==
 ::
++$  pith-12  [sole-id=(unit sole-id:sole) pith-11]
 +$  pith-11
   $:  rem=(map desk per-desk)
       nyz=@ud
@@ -506,7 +509,10 @@
            [nun kid let ~ ~ |]
     ==
   ::
-  ?>  ?=(%11 -.old)
+  =?  old  ?=(%11 -.old)
+    [%12 sole-id=~ +.old]
+  ::
+  ?>  ?=(%12 -.old)
   =.  state  old
   abet:(emil cards-9)
 ::
@@ -600,6 +606,7 @@
     %kiln-uninstall          =;(f (f !<(_+<.f vase)) poke-uninstall)
     %kiln-unmount            =;(f (f !<(_+<.f vase)) poke-unmount)
     %kiln-unsync             =;(f (f !<(_+<.f vase)) poke-unsync)
+    %kiln-rate               =;(f (f !<(_+<.f vase)) poke-rate)
     %kiln-essential-desk     =;(f (f !<(_+<.f vase)) poke-essential-desk)
   ==
 ::
@@ -1020,6 +1027,60 @@
   =.  zyn  (~(del by zyn) hus)
   abet:(spam (render "cancelling sync" sud.hus her.hus syd.hus kid.u.got) ~)
 ::
+++  poke-rate
+  |=  $:  [i=@ud t=@ud]
+          file=path
+          [have=@ud wait=@ud]
+          [size=@ud total=@ud]
+          [bytes=@ud ms=@ud]
+      ==
+  |^  =<  abet
+  %-  emil
+  ?~  sole-id  ~
+  =/  =sole-effect:sole  pro+[& %$ dial]
+  [%give %fact [(id-to-path:sole u.sole-id)]~ sole-effect/!>(sole-effect)]~
+  ::
+  ++  color  ?:(=(i 100) %g %y)
+  ++  dial
+    ?:  =([0 0] [i t])  "> "
+    =/  bars=@ud  (div i 2)
+    ::  XX use des.file to group files by desk
+    ::
+    =>  .(file `(pole knot)`file)
+    =?  file  ?=([car=@ cas=@ des=@ pur=*] file)
+      pur.file
+    :~  [``~ " file: "]  [[`%un ~ ~] "{<`path`file>}"]  [``~ " "]
+        [``~ (weld `tape`(turn (gulf 0 bars) |=(* '-')) ">")]
+        [``~ " ["]
+        [```color "{?:((lth i 10) "0" ~)}{<i>}.{?:((lth t 10) "0" ~)}{<t>}%"]
+        [``~ "] [ "]
+        [``~ "{<have>}/{<wait>} done"]
+        [``~ "] ("]
+        [```%r bandwith]  :: XX color to show increase/decreaase in bandwith
+        [``~ ")"]
+    ==
+  ::
+  ++  bandwith  :: XX some other smarter way to get the right unit
+    ^-  tape
+    =/  band
+      %+  mul:rs  .1e3
+      ?:  =(0 ms)  (sun:rs bytes)
+      (div:rs (sun:rs bytes) (sun:rs ms))
+    =+  int=(need (toi:rs band))
+    ?:  &((lth int 1.000) (gte int 100))
+      "{<(abs:si int)>} KB/s."
+    ?.  (gth int 1.000)
+      "{<(abs:si int)>} B/s."
+    =+  short=(div:rs band (sun:rs 1.000))
+    =+  int=(need (toi:rs short))
+    =+  dec=(abs:si (need (toi:rs (mul:rs .100 (sub:rs short (san:rs int))))))
+    "{<(abs:si int)>}.{<dec>} MB/s."
+  --
+::
+++  put-sole
+  |=  =sole-id:sole
+  ^+  abet
+  abet(sole-id `sole-id)
 ++  poke-essential-desk
   |=  [=desk ese=?]
   abet:(emit %pass /kiln/essential-desk %arvo %c %esse desk ese)
@@ -1140,7 +1201,6 @@
   :~  [%pass /commit %arvo %c [%dirk mon.commit-timer]]
       [%pass way.commit-timer %arvo %b [%wait nex.commit-timer]]
   ==
-::
 ::
 ++  spam
   |=  mes=(list tank)
@@ -1343,7 +1403,7 @@
     ?.  (~(has by zyx) syd her sud)
       (pure:m !>(%done))
     ~>  %slog.(fmt "downloading update for {here}")
-    ;<  =riot:clay  bind:m  (warp:strandio her sud ~ %sing %v ud+let /)
+    ;<  =riot:clay  bind:m  (rate:strandio her sole-id sud ~ %sing %v ud+let /)
     ?>  ?=(^ riot)
     (pure:m !>(%done))
   ::
@@ -1384,6 +1444,8 @@
       ?:  ?=(%| -.p.sign-arvo)
         ::  ~>  %slog.(fmt "download failed into {here}; retrying sync")
         ::  %-  (slog p.p.sign-arvo)
+        ::  XX notify clay to remove the thread from the listeners?
+        ::
         =.  ..abet  drop
         init
       ::
