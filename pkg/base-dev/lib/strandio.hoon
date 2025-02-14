@@ -230,6 +230,29 @@
     `[%done sage.sign-arvo.u.in.tin]
   ==
 ::
+++  take-message
+  =>  |%  +$  out  $%  [%sage sage:mess:ames]
+                       [%tune spar:ames (unit roar:ames)]
+                   ==
+      --
+  |=  =wire
+  =/  m  (strand ,out)
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+    in.tin  `[%skip ~]
+      ~  `[%wait ~]
+    ::
+      [~ %sign * %ames %sage sage=*]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done %sage sage.sign-arvo.u.in.tin]
+    ::
+      [~ %sign * %ames %tune ^ *]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done %tune +>.sign-arvo.u.in.tin]
+  ==
+::
 ++  take-near
   |=  =wire
   =/  m  (strand ,[spar:ames (unit (unit page))])

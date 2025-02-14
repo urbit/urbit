@@ -270,12 +270,15 @@
   :: abet:(emit %pass `wire`[%helm %ahoy-crash way] %arvo %b %wait (add now.bowl ~s30)) :: XX exp backoff?
 ::
 ++  poke-hi
-  |=  mes=@t
+  |=  mes=@t  =<  abet
   ~|  %poke-hi-fail
   ?:  =(%fail mes)
     ~&  %poke-hi-fail
     !!
-  abet:(flog %text "< {<src.bowl>}: {(trip mes)}")
+  =+  size=(met 3 mes)
+  =+  hash=`@ux`(mug mes)
+  %+  flog  %text
+  "< {<src.bowl>}: {?:((gth size 100) <[hash=hash size=size]> (trip mes))}"
 ::
 ++  poke-ames-prod
   |=  ships=(list ship)
