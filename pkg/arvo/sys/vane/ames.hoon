@@ -3950,11 +3950,7 @@
           |=  [ship=(unit ship) dry=?]
           |^  ^+  event-core
           =;  updated-core=_event-core
-              ?:  dry
-                ~&  >  %test-local-migration-worked
-                event-core
-              ~&  >  %local-migration-worked
-              updated-core
+              ?:(dry event-core updated-core)
           ::
           ?^  ship
             ?~  peer=(~(get by peers.ames-state) u.ship)
@@ -3971,7 +3967,10 @@
             ?>  ?=([%known *] ship-state)
             =+  peer-core=(abed-peer:pe:core ship +.ship-state)
             ?:  dry
-              ?>(on-migration-test:peer-core core)
+              ~?  >>>  !on-migration-test:peer-core
+                %local-test-migration-failed
+              core
+            ~&  >  %local-migration-worked
             pe-abel:on-migrate:peer-core
           ::
           --
