@@ -201,6 +201,13 @@
   =/  =path  ?:(test /test/mesa /mesa)
   (emit %pass wire %arvo %a %plea her %$ path %ahoy ~)
 ::
+++  poke-mass-mate
+  |=  test=?
+  =/  =wire
+    :+  %helm  %mate
+    ?.(test ~ /test)
+  abet:(emit %pass wire %arvo %a %mate ~ dry=%.y)
+::
 ++  take-ahoy
   |=  [way=wire error=(unit error:ames)]
   ?:  ?=([%test @ *] way)
@@ -649,6 +656,7 @@
     %helm-rekey            =;(f (f !<(_+<.f vase)) poke-rekey)
     %helm-send-hi          =;(f (f !<(_+<.f vase)) poke-send-hi)
     %helm-send-ahoy        =;(f (f !<(_+<.f vase)) poke-send-ahoy)
+    %helm-mass-mate        =;(f (f !<(_+<.f vase)) poke-mass-mate)
     %helm-send-rege        =;(f (f !<(_+<.f vase)) poke-send-rege)
     %helm-serve            =;(f (f !<(_+<.f vase)) poke-serve)
     %helm-trim             =;(f (f !<(_+<.f vase)) poke-trim)

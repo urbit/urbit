@@ -4656,7 +4656,6 @@
                   ::
                   |=  [[=message-num =message] core=_fo-core]
                   ?.  ?=(%naxplanation -.message)
-                    ~&  >  %send-message
                     =?  core  ?=([%plea %$ [%flow ~] %cork ~] message)
                       ::  if we are sending a %cork, we don't know if the other
                       ::  side has corked the flow after receiving it, and the
@@ -4673,7 +4672,6 @@
                   ::  if we are still sending a %naxplanation, we need to
                   ::  put it in our namespace so the other ship reads it
                   ::
-                  ~&  >  %bind-naxplanation
                   %_    core
                       nax.rcv.state
                     %-  ~(put by nax.rcv.state.core)
