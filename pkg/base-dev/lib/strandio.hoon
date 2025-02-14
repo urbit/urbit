@@ -216,7 +216,7 @@
     ;;([%whey boq=@ud tot=@ud] q.sage)
   ==
 ::
-++  take-message
+++  take-sage
   |=  =wire
   =/  m  (strand ,sage:mess:ames)
   ^-  form:m
@@ -435,12 +435,7 @@
   ^-  form:m
   ?+    path.spar  (pure:m ~)
       $%  [%flow bone=@ =dire:ames ~]
-          [%flow bone=@ =dire:ames %clos ~]
-          [%flow bone=@ =dire:ames %cork ~]
-          [%flow bone=@ =dire:ames %line ~]
-          [%flow bone=@ =dire:ames %lods ~]
-          [%flow bone=@ =dire:ames %next ~]
-          [%flow bone=@ =dire:ames %last ~]
+          [%flow bone=@ =dire:ames ?(%clos %cork %line %lods %next %last) ~]
           [%flow bone=@ =dire:ames %mess mess=@ %whey ~]
           [%flow bone=@ =dire:ames %mess mess=@ %naxp ~]
       ==
