@@ -464,7 +464,6 @@
       ==
     ::  encrypted using %chum namespace
     ::
-    ~&  >  path.spar
     ;<  our=@p  bind:m  get-our
     %-  send-raw-card
     :*  %pass  wire  %arvo  %a  %chum
