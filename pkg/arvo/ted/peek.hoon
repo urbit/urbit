@@ -10,9 +10,11 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([~ =spar:ames sec=(unit [idx=@ key=@])] arg)
-;<    ~   bind:m  (meen:strandio /meen spar sec)
-;<  =out  bind:m  (take-message:strandio /meen)
+=+  !<([~ =spar:ames sec=$@(%chum (unit [idx=@ key=@]))] arg)
+;<    ~   bind:m
+  ?@  sec  (chum:strandio /peek spar)
+  (meen:strandio /peek spar sec)
+;<  =out  bind:m  (take-message:strandio /peek)
 =/  =sage:mess:ames
   ?-  -.out
     %sage  sage.out

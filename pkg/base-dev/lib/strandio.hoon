@@ -431,6 +431,12 @@
   ^-  form:m
   (send-raw-card %pass wire %arvo %a %keen sec spar)
 ::
+++  chum
+  |=  [=wire =spar:ames]
+  =/  m  (strand ,~)
+  ^-  form:m
+  (send-raw-card %pass wire %arvo %a %chum spar)
+::
 ++  keen-shut
   |=  [=wire =spar:ames]
   =/  m  (strand ,~)
