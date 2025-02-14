@@ -7984,7 +7984,6 @@
               (fo-take-done:fo-core ~)
             ?.  =(%$ vane.plea)
               =/  =wire  (fo-wire %van)
-              ~&  >>  wire/wire^path.plea
               %-  fo-emit
               ?+  vane.plea  ~|  %mesa-evil-vane^our^her^vane.plea  !!
                 ?(%c %e %g %j)  [hen %pass wire vane.plea %plea her plea]
