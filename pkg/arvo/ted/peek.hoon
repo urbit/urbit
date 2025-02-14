@@ -2,12 +2,25 @@
 /+  strandio
 =,  strand=strand:spider
 ^-  thread:spider
+=>  |%  +$  out  $%  [%sage =sage:mess:ames]
+                     [%tune (pair spar:ames (unit roar:ames))]
+                 ==
+    --
+::
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
 =+  !<([~ =spar:ames sec=(unit [idx=@ key=@])] arg)
-;<                ~  bind:m  (meen:strandio /meen spar sec)
-;<  =sage:mess:ames  bind:m  (take-sage:strandio /meen)
+;<    ~   bind:m  (meen:strandio /meen spar sec)
+;<  =out  bind:m  (take-message:strandio /meen)
+=/  =sage:mess:ames
+  ?-  -.out
+    %sage  sage.out
+    %tune  :-  p.+.out
+           ?~  q.+.out  ~
+           ?~  q.dat.u.q.+.out  ~
+           u.q.dat.u.q.+.out
+  ==
 ?~  q.sage
   (pure:m !>(~))
 ::

@@ -20,6 +20,7 @@
   ?:  &((lth kilo 1.000) (gte kilo 100))
     "{<kilo>} KB"
   ?.  (gth kilo 1.000)
+    ?:  =(1 kilo)  "{<kilo>} byte"
     "{<kilo>} bytes"
   =+  short=(div:rs (sun:rs kilo) (sun:rs 1.000))
   =+  int=(need (toi:rs short))
