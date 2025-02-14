@@ -1884,8 +1884,8 @@
         ==
       =/  gum
         (end [0 20] (mug (cut -.c [(rig b -.c) +.c] dat)))
-      :: ~&  gum.hed^gum
-      ::?>(=(gum.hed gum) [pac c])  :: XX jumbo fragments have wrong mug
+      ~|  gum.hed^gum
+      ?>  =(gum.hed gum)  :: XX jumbo fragments have wrong mug; fixed?
       [pac c]
     --
   ::
