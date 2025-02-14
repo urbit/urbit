@@ -41,8 +41,8 @@
     ==
   ::
   =/  poke-plea  [%g /ge/pok [%0 %m noun/0]]
-  =/  poke-path  /flow/0/plea/~bud/1
-  =/  ack-path   /flow/0/ack-plea/~nec/1
+  =/  poke-path  /flow/0/poke/for/~bud/1
+  =/  ack-path   /flow/0/ack/bak/~nec/1
   ::
   =/  ack-wire   /mesa/flow/ack/for/~bud/0/0
   =/  vane-wire  /mesa/flow/van/bak/~nec/0/0
@@ -68,7 +68,7 @@
   ::
   :-  moves-1  |.  :-  %|
   ~?  >  dbug  '~nec makes $pact and sends it'
-  =/  poke-roof  (make-roof /flow/0/plea/~bud/1 message+!>(poke-plea))
+  =/  poke-roof  (make-roof poke-path message+!>(poke-plea))
   =^  moves-2  nec
     %:    ames-check-call:v  nec
         [~1111.1.1 0xdead.beef poke-roof]
@@ -158,7 +158,7 @@
           ==
         last-acked.rcv:(~(got by flows) 0 %bak)
   ::
-  ~?  >  dbug  'poke payload is accesible at /flow/0/plea/~bud/1'
+  ~?  >  dbug  'poke payload is accesible at /flow/0/poke/for/~bud/1'
   :-  moves-6  |.  :-  %|
   =/  moves-7
     %+  expect-eq

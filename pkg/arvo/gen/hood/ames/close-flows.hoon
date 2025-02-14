@@ -109,7 +109,7 @@
   ::  know if this is a %poke, or a pre-nonce subscription that got desynced.
   ::
   ::  The safes way is s to check if we got a %nack, which will make sure to not
-  ::  %cork an active %poke, at the cost of not closing the the first pre-nonce
+  ::  %cork an active %poke, at the cost of not closing the first pre-nonce
   ::  (re)subscription.
   ::
   (got-nacked bone)

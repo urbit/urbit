@@ -1339,6 +1339,7 @@
     =/  ese=?
       =/  dojo=(unit dojo)
         (~(get by dos.rom.ruf) syd)
+      ?:  =(%base syd)  %.y
       ?~(dojo %.n ese.u.dojo)
     =/  =dojo
       :*  qyx.red  dom.red
@@ -5290,7 +5291,7 @@
             fiz=melt
             ese=?
         ==
-      ::  We redefine the latest raft with * for the the ford caches.
+      ::  We redefine the latest raft with * for the ford caches.
       ::  +clear-cache upgrades to +raft
       ::
       +$  raft-14

@@ -405,7 +405,7 @@
 ::
 ++  cookie-string
   %^  cat  3  cookie-value
-  '; Path=/; Max-Age=604800'
+  '; Path=/; Max-Age=2592000'
 ::
 ++  cookie  ['cookie' cookie-value]~
 ::
@@ -1393,8 +1393,15 @@
   ::
   ;<  mos=(list move)  bind:m  final
   ;<  ~  bind:m
+    =/  nook
+      ::  a new cookie gets generated with the proper expiry time.
+      ::  the fact that the token here matches the +g-cook one is a side-effect
+      ::  of eyre killing the old session first, and the tests passing a static
+      ::  entropy value.
+      ::
+      'urbauth-~nul=0v5.gbhev.sbeh0.3rov1.o6ibh.a3t9r; Path=/; Max-Age=2592000'
     %+  expect-moves  mos
-    :~  (ex-response 303 ~['location'^'/final' g-head] ~)
+    :~  (ex-response 303 ~['location'^'/final' 'set-cookie'^nook] ~)
     ==
   (pure:m ~)
 ::
