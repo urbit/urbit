@@ -1791,8 +1791,10 @@
               -
           %+  print-check  %corked   =(corked.ames corked.back)
           %+  print-check  %chain    =(chain.ames chain.back)
-          %+  print-check  %keens    =(keens.ames keens.back)
-          %+  print-check  %nax      =(nax.ames nax.back)  :: XX ?
+          =-  ~?  !-  [ames=keens.ames back=keens.back]
+              -
+          %+  print-check  %keens   =(~(key by keens.ames) ~(key by keens.back))
+          %+  print-check  %nax     =(nax.ames nax.back)  :: XX ?
         ::  forward flows
         ::
           %+  print-check  %forward-flows
@@ -1859,7 +1861,6 @@
           ::
           %-  ~(rep by flows.back)
           |=  [[side back-flow=flow-state] ok=?]
-          ~&  >>  bone/bone
           ~|  [%not-found side=bone^dire]
           =+  flow=(~(got by flows.mesa) bone^dire)
           ?&  ok
@@ -4807,13 +4808,12 @@
                 ::
                 ~&  skip-weird-path/path  core
               =;  [pax=^path =space]
-                =.  pax  (make-space-path space pax)
                 %-  ~(rep in listeners.keen)
                 |=  [=^duct core=_core]
                 (co-make-peek:core(hen duct) space her pax)
               ::  XX unitize this and no-op if failure to convert
               ::
-              ?+    pat.path  [pat.path [%publ life.per]]
+              ?+    pat.path  [path [%publ life.per]]
                 ::
                   [%fine %shut idx=@ cyf=@]
                 =/  idx=@ud    (slav %ud idx.pat.path)
@@ -5857,8 +5857,9 @@
                     ::
                     ?>  on-migration-test
                     ::
-                    %-  %^  ev-trace  sun.veb  her
-                        |.("migrating {<her>} succeded")
+                    :: %-  %^  ev-trace  sun.veb  her
+                    ::     |.("migrating {<her>} test succeded")
+                    ~&  >  "migrating {<her>} test succeded"
                     ::
                     (done ok=%.y)
                 =.  peer-core
