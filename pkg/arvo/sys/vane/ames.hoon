@@ -9168,19 +9168,14 @@
             ?:  ?=(^ pay.req)  core  :: flows are migrated separatedly
             :: ?~  for.req        core  :: XX weird; log?  TMI
             =|  keen=keen-state
-            =.  listeners.keen
-              %-  ~(rep in for.req)
-              |=  [hen=duct for=_for.req]
-              ::  XX  inspect the duct to find %mesa wires?
-              ::  XX  dropping any +peeks for %corks and %naxplanations
-              ::      can this makes us end up in a bad state?
-              ::
-              =?  for  ?=([[%ames %mesa %flow *] *] hen)
-                (~(del in for) hen)
-              for
-            ?~  listeners.keen  core
-            ::  after filtering, all these should be external listeners
+            %-  ~(rep in for.req)
+            |=  [hen=duct c=_core]
+            ::  XX  inspect the duct to find %mesa wires?
+            ::  XX  dropping any +peeks for %corks and %naxplanations
+            ::      can this makes us end up in a bad state?
             ::
+            ?:  ?=([[%ames %mesa %flow *] *] hen)
+              c
             =.  path
               =/  [=space pax=^path]
                 [space inner]:(ev-decrypt-path:ev path her)
@@ -9198,7 +9193,7 @@
                 /a/x/1//fine/shut/(scot %ud kid.space)/[enc]
               ==
             ::
-            (on-keen:core ~ her path)
+            (on-keen:core(duct hen) ~ her path)
           ::
           ++  get-route
             |=  lane=(unit lane:pact)
