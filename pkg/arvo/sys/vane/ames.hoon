@@ -9503,30 +9503,30 @@
           (make-lanes ship [lane qos]:sat)
         ::
         ++  co-make-mess
-          |=  [ack=spar payload=(unit path)]
+          |=  [remote=spar payload=(unit path)]
           ^+  co-core
-          =/  her  (~(get by chums.ames-state) ship.ack)
+          =/  her  (~(get by chums.ames-state) ship.remote)
           ?>  ?=([~ %known *] her)
           =/  per=fren-state  +.u.her
-          ?^  res=(~(get by pit.per) path.ack)
+          ?^  res=(~(get by pit.per) path.remote)
             ?>  =(payload pay.u.res)  ::  prevent overriding payload
             =.  pit.per
-              %+  ~(put by pit.per)  path.ack
+              %+  ~(put by pit.per)  path.remote
               u.res(for (~(put in for.u.res) hen))
             %_  co-core
                 chums.ames-state
-              (~(put by chums.ames-state) ship.ack known/per)
+              (~(put by chums.ames-state) ship.remote known/per)
             ==
           ::
-          ?~  pact=(co-make-pact ack payload rift.per)
-            ~|  [ack=ack payload=payload rift=rift.per]
+          ?~  pact=(co-make-pact remote payload rift.per)
+            ~|  [remote=remote payload=payload rift=rift.per]
             !!
           =|  new=request-state
           =.  for.new   (~(put in for.new) hen)
           =.  pay.new   payload
           =.  chums.ames-state
-            %+  ~(put by chums.ames-state)  ship.ack
-            known/per(pit (~(put by pit.per) path.ack new))
+            %+  ~(put by chums.ames-state)  ship.remote
+            known/per(pit (~(put by pit.per) path.remote new))
           ::
           ?:  =(~ unix-duct)
             %.  co-core
