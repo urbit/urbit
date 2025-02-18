@@ -7798,8 +7798,8 @@
           ?:  all
             %-  ~(rep in ls)
             |=  [[=duct =^path] core=_ev-core]
-            ?~  ms=(~(get by pit.per) path)  core
-            =.  pit.per  (~(del by pit.per) path)
+            ?~  ms=(~(get by pit.per.core) path)  core
+            =.  pit.per.core  (~(del by pit.per.core) path)
             ?>  (~(has in ~(key by for.u.ms)) duct)
             =.  core  (ev-give-rate:core for.u.ms her^path *rate)
             (ev-give-sage:core for.u.ms path ~)
